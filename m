@@ -1,55 +1,74 @@
-From: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
-Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
-Date: Mon, 29 Mar 2004 15:53:39 -0500 (EST)
-Message-ID: <20040329205339.74202.qmail@web25004.mail.ukl.yahoo.com>
-References: <406885F1.9040409@mrs.umn.edu>
+From: markw@osdl.org
+Subject: Re: Reiser4 needs more testers
+Date: Mon, 29 Mar 2004 13:29:20 -0800 (PST)
+Message-ID: <200403292129.i2TLTN204307@mail.osdl.org>
+References: <40687354.1060604@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17580-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17581-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <406885F1.9040409@mrs.umn.edu>
+In-Reply-To: <40687354.1060604@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grant Miner <mine0057@mrs.umn.edu>, reiserfs-list@namesys.com
+To: reiser@namesys.com
+Cc: Nikita@namesys.com, Reiserfs-Dev@namesys.com, Reiserfs-List@namesys.com, Linux-Kernel@Vger.Kernel.ORG, cliff@lindows.com, tom.welch@lindows.com, garloff@suse.de, drobbins@gentoo.org, reiserrf@hotmail.com
 
-Grant Miner wrote:
+It's an OLTP database workload, but it is the one with all those fsyncs
+that Nikita pointed out.
 
-> Someone mentioned earlier, and I like just the at
-> sign: @ Think of it 
-> short for "attributes".
+Mark
+
+On 29 Mar, Hans Reiser wrote:
+> This was the parallel fsync benchmark?
 > 
-> file/@/uid
+> Hans
 > 
-> The nice thing about @ is it shows up early
-> lexicographically, it's 
-> short and unlikely to be used.
+> markw@osdl.org wrote:
+> 
+>>I've run through another test on STP with the latest snapshot against
+>>reiser4 and reiserfs for comparison.  Reiser4 still seems to be lagging
+>>behind reiserfs in our DBT-2 workload (the bigger number is better in
+>>the metric):
+>>
+>>          metric  url to test results
+>>          ------  ---------------------------------
+>>reiser4   1208    http://khack.osdl.org/stp/290774/
+>>reiserfs  1819    http://khack.osdl.org/stp/290775/
+>>
+>>Mark
+>>
+>>On 26 Mar, Hans Reiser wrote:
+>>  
+>>
+>>>We have one NFS related bug remaining, and one mmap all of memory 
+>>>related bug (and performance issue) that you can hit using iozone.  We 
+>>>will fix both of these in next week's snapshot, they were both multi-day 
+>>>bug fixes.  When they are fixed, unless users/distros find bugs next 
+>>>week we will submit it for inclusion in the -mm and then the official 
+>>>kernel.
+>>>
+>>>We hope it is now fairly stable for average users if you avoid those two 
+>>>issues (we need to get rid of those dire warnings about its 
+>>>stability...., we will remember that next snapshot....;-) )
+>>>
+>>>We need a lot more real user testers, because we have run out of scripts 
+>>>that can crash it, and there are distros that would like to ship it 
+>>>soon.  Please also complain to vitaly@namesys.com and ramon@namesys.com 
+>>>about poor documentation, etc., ....
+>>>
+>>>The new reiser4 snapshot (against 2.6.5-rc2) is available at
+>>>
+>>>http://www.namesys.com/snapshots/2004.03.26/
+>>>    
+>>>
+>>
+>>
+>>
+>>  
+>>
+> 
+> 
 
-I like it.  XSL also uses this symbol re: XML
-attributes.  Other benefits:
-- Doesn't need to be translated.
-- Available on all int'l keyboards.
-- Easy to remember.
-- Less likely to cause name clash than a word.
-
-Another favourite in that big thread we had on this
-subject was "+" for the same reasons.  Either would be
-more than fine with me, although I lean away from "@"
-because the mnemonic only makes sense in English,
-whereas "+" can mean "additional info" in any
-language.
-
-> This name is
-> important to pick well 
-> because it will likely set a long precedent. 
-
-Absolutely.
-
-What would be involved in making this type of change? 
-(No time to get familiar with Reiser4 code yet...)
-
-
-______________________________________________________________________ 
-Post your free ad now! http://personals.yahoo.ca
