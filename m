@@ -1,57 +1,55 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: The situation at hand and in the future
-Date: Mon, 31 May 2004 16:14:25 -0500
-Message-ID: <40BBA031.7090701@slaphack.com>
-References: <20040527200127.GS4990@nysv.org> <200405272105.i4RL5LDh026210@turing-police.cc.vt.edu> <40B6670D.9060408@slaphack.com> <20040528063324.GT4990@nysv.org> <40B89C9C.5050307@slaphack.com> <20040529154917.GW4990@nysv.org> <40B919DF.3040408@slaphack.com> <20040530122713.GX4990@nysv.org> <40BA802C.5070907@slaphack.com> <20040531083835.GB4990@nysv.org> <40BB4B79.8020000@slaphack.com> <87fz9gikco.fsf@uhoreg.ca>
+Date: Mon, 31 May 2004 16:15:57 -0500
+Message-ID: <40BBA08D.5000404@slaphack.com>
+References: <20040527200127.GS4990@nysv.org> <200405272105.i4RL5LDh026210@turing-police.cc.vt.edu> <40B6670D.9060408@slaphack.com> <20040528063324.GT4990@nysv.org> <40B89C9C.5050307@slaphack.com> <20040529154917.GW4990@nysv.org>            <40B919DF.3040408@slaphack.com> <200405311831.i4VIV1H7031045@turing-police.cc.vt.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18937-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18938-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <87fz9gikco.fsf@uhoreg.ca>
+In-Reply-To: <200405311831.i4VIV1H7031045@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: reiserfs-list@namesys.com
+To: Valdis.Kletnieks@vt.edu
+Cc: =?ISO-8859-1?Q?Markus=5FT=F6rnqvist?= <mjt@nysv.org>, reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
 
 
-Hubert Chan wrote:
-[ ... ]
-| But without a high-level overview of all the files, and how they all fit
-| together, it's still hard to read.
+Valdis.Kletnieks@vt.edu wrote:
+| On Sat, 29 May 2004 18:16:47 CDT, David Masover said:
+|
+|
+|>$ ln -s /tmp/foobar cipher
+|>
+|>Of course, the nice thing here is that at least 'ln' refuses to create a
+|>broken symlink, not sure about more low-level things.
+[...]
+| What did you mean by "broken" in that context?
 
-True.  Actually, one of the most desirable traits of a hacker is the
-ability to take any reference and learn from it as if it were a
-tutorial.  I know people who can hear me talk about things like
-filesystems for a full 5 minutes, and at the end of it come back to me
-and say they understood everything, they just need a few definitions
-(like what a filesystem is).
-
-But, to make it more accessible to other hackers, someone should
-eventually do such a thing.  I probably will as I go -- if I read the
-reiser4 code this summer, I will post a 'reiser4 cheit sheet' or something.
+Exactly what you meant.  Not sure where I got that idea, though I didn't
+actaully test it.
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQLugMHgHNmZLgCUhAQK2yQ//TNnS8k0CMG+redCoGlBstaPlJ53vcL90
-9TkrNryd/WqfmdwJo9O79Mqtpc8je23DVeo+4Ti3aKHXZp+R0Fs8FSb/ij/rs2jD
-vVfE6bfbSFHne0FCPeucnWad910kHUWcaopgm8nQOu049JbfGFr00XC1kwVwygw+
-66RoYwX0Ql0YZbueZhElXY66MOS/EM+X/V6sWvVWLGWWZHgUGFyGXjY3ixudeLMG
-cuy7gAkRLyt7VhfI8CT9RD0340RT1XSOmuFClm6gIZ7Oq097U/D5/ArugtvKe7TI
-swdcjl+WmiLO9VraW/1x5dXXghZFAxHEUQFtoy6Yjx3Pv7+B5NSx97IP0AdDzSXT
-NYErwJAOfHjnaQbUzsTEp7FrpJo8N/QjznfRzhbNqxaD6zF+OgQ0WE7rg7j5hFVr
-e/cjQaLGyVWDTzTzHqmWRezPtTQp1pe53jcEA3XiNMk9/56BNyRxHNV1cEw/+jSg
-tcbRodCBLrJ7FaNDTuY0/sb4jQ6OOPcz8nTAT51QA76bwI0ruE4Fnp0R8bkYWGbr
-D/rpczs7q8qOU7864usAKbyraPtTkcyNc32qf2U8/sHSgxmHEAJwxM3MkZ9wH2ND
-D0EdIqUrHT6YPK3r5EwlsO8oKtGQSlJTK0X+wbjniTA/I84/wPj5tA9NAmJp0Aik
-EhT5z3D3mcc=
-=u0RU
+iQIVAwUBQLugjHgHNmZLgCUhAQINOw//b479rqnxQQHWvEkDHyOc9iE1Hq5+65c+
+A2TpcTzGyxUIrHr8FbqSLC0HIysLnu8+hL1JE6XG5awn1/2N6twkOhu2ff4cFevM
+84V1qI7luXwbHlhuge+RSIPCezkj+XoO35HCUbmdW70YPgpMezbEAZoYcXyMBuK7
+824hQ82nMibPIdC+6UmL114zaDVBnOs/VH+9yhhRq0fTFQxE6LL9eSbr57Ef0iDh
+wVcUs5UDwlh3+DuuFsG3YuuPlzOSYhGJynIQNARUllvmlhC7QRnAPpx3urly2jzH
+qqx4G6TgyZX/HVijZiyU+hnHmcC4WLpnXRRFDl3YsFsigENNc+jg+6ddvZLcxggw
+8h5rMNmCcUgKYYifDSaP5P9afALgMS2FL7mNT5U0wfkxFyZM+lvOqB1KBuhhyZgq
+QCkpMRxvpyNwwDSj5YngB/ZAzM3zZFto8PkXwyrgnC4+0nd2QNTyYe+Ot1FUdBeZ
+yOCVlQxEdGPaDY4JlFgws3+Z/gTaPEXKWCYI099ULJ05N+yKd9zoViwMYB9ID9+Z
+gCo+0sOsTwR/johGrBMoqQYYGhXkWzw2WuKYp2SpImzbmdJ3Vesdcy7zfE5JfvKD
+wapPly/25foVCKhuP6ODNG7tXT9Q/NIvPMEAlQa5cPMA+iiOwyZQwr3KiaBgxXcT
+y8bgfuqfgAY=
+=7HMS
 -----END PGP SIGNATURE-----
