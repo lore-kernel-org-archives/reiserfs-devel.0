@@ -1,103 +1,100 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Recursive modfied-timestamp?
-Date: Fri, 31 Dec 2004 16:49:06 -0600
-Message-ID: <41D5D762.8050603@slaphack.com>
-References: <200412311047.14634.namesys.Sch@ttgen.net>
+From: Fred Schaettgen <namesys.Sch@ttgen.net>
+Subject: Re: Recursive modified-timestamp?
+Date: Sat, 1 Jan 2005 01:43:48 +0100
+Message-ID: <200501010143.48592.namesys.Sch@ttgen.net>
+References: <200412311047.14634.namesys.Sch@ttgen.net> <41D5D762.8050603@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23011-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23012-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200412311047.14634.namesys.Sch@ttgen.net>
+In-Reply-To: <41D5D762.8050603@slaphack.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Fred Schaettgen <namesys.Sch@ttgen.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Friday 31 December 2004 23:49, David Masover wrote:
+...
+> Seems like all of those are really problems of caching/metadata, or more
+> accurately, "things which Make would understand".  How about some more
+> general way of caching or cache invalidation?
 
+An entry in a metadata cache must become invalid if the corresponding file 
+changes. That's exactly what my question was about. I don't want the 
+filesystem to manage the metadata, just an efficient way to find files with 
+outdated metadata. From an application's point of view, the recursive 
+modified-timestamps look like the most intuitive solution for me. 
 
+> Here's how I would do it.  I'd make a standard for object dependencies
+> within the filesystem, some way like "make".  This is the same thing I
+> ranted about as a way for accessing the contents of zipfiles as part of
+> the filesystem, without a performance hit.  (cat foo.zip/bar.txt)
 
-Fred Schaettgen wrote:
-| Hi,
-|
-| Does reiser4 support something like recursive
-last-modified-timestamps? What I
-| mean is an attribute which contains the latest modification date of all
-| subdirectories and files below a given directory.
+I don't want to see that much in the file system itself. I wouldn't even care 
+if these timestamps had to be retrieved with the help of a userspace daemon 
+and a library. But without some help of the filesystem itself you always have 
+to traverse the whole directory tree to find modified files. 
 
-Actually, I'm not sure about that, but reiser4 supports plugins.  Maybe
-there's a kind of plugin which does what you want.  Or maybe you haven't
-defined "what you want" properly?  (see below)
+> For instance, your search engine needs an index, which depends on (is
+> built from) all the files in the filesystem except itself.  Thus you
+> might have an index for each folder (starting with /).  Each index
+> depends on the indices of its subdirectories.  When a search is run,
+> everything has to be rebuilt, in "make"-like fashion, but it gives you
+> one global place to add the "many things that could be done" to improve
+> performance for all systems that do this kind of thing -- search engins,
+> locate, build systems, fsview, and backup tools.
 
-[...]
-| The purpose btw. is to find all modified files in a tree as fast as
-possible.
-| There are quite a lot of application which would benefit from it: desktop
-| search engines, locate, build systems, tools which visualize contents
-of a
-| file system (like fsview in KDE), backup tools etc.
+How would the filesystem help in that scenario? It could invalidate or delete 
+the (sub)index or metadata cache if one of the files it depends on changes, 
+ok. But can't you do that just as efficiently in userspace if the filesystems 
+just provides the recursive timestamps?
 
-Seems like all of those are really problems of caching/metadata, or more
-accurately, "things which Make would understand".  How about some more
-general way of caching or cache invalidation?
+...
+> Seems like people use things like FAM nowdays.  But you're
+> right, there needs to be a better way.  For instance, your desktop
+> search engine should only rebuild even the stat data when a user enters
+> a query, but it should be able to do it quickly (without searching the
+> whole tree).
 
-Here's how I would do it.  I'd make a standard for object dependencies
-within the filesystem, some way like "make".  This is the same thing I
-ranted about as a way for accessing the contents of zipfiles as part of
-the filesystem, without a performance hit.  (cat foo.zip/bar.txt)
+Yes, this is the problem. And recursively propagating modification timestamps 
+look like a good solution to me. I am not saying that the file system should 
+do that iself. Timestamps with this modified semantics would just exist as an 
+interface to the applications. But the filesystem must help to keep these 
+timestamps up to date.
 
-For instance, your search engine needs an index, which depends on (is
-built from) all the files in the filesystem except itself.  Thus you
-might have an index for each folder (starting with /).  Each index
-depends on the indices of its subdirectories.  When a search is run,
-everything has to be rebuilt, in "make"-like fashion, but it gives you
-one global place to add the "many things that could be done" to improve
-performance for all systems that do this kind of thing -- search engins,
-locate, build systems, fsview, and backup tools.
+The file system itself could help for instance by providing a new 
+"change-monitor"-flag for a file. This flag would be set only from userspace 
+and reset when the file is modified. If the flag is still set when the file 
+is being modified, the filesystem would then create a symlink or something 
+like for the file in a special directory.
+The contents of this changed-files-directory will then be collected and 
+removed by a daemon, which manages the recursive-mtime-database (no matter if 
+they are stored as extended attributes or in a Berkely DB or whatever).
+Now each application which has to manage a metadata cache could ask that 
+daemon for the rec-mtime of / first and descent deeper if the rec-mtime is 
+more recent than a stored timestamp etc.
+Actually the "flag" would have to be something like a list of path names, 
+since a file can be hard linked, but that doesn't change much (I hope).
 
-| I know that modifying an attibute recursively on every update of the
-stat data
-| would have a huge perfomance impact, but there are many things that
-could be
-| done to keep the extra load low for most of the time.
+With this approach, most of the work can be delayed until an application 
+actually asks for rec-mtimes. The overhead while writing to a file (when the 
+stat data is updated) would be to check if the change monitor flag is set and 
+only if it is, remove it and put one - or sometimes a few - symlinks into the 
+special folder with links to changed files.
+Until this point there is no propagating changes up till "/". That would all 
+be done by a userspace daemon at a later time. 
+If just the test for the existance of the change monitor flag could be made 
+efficient enough, then the overhead during regular operation would be 
+negligible. 
+I hope that this outline was clear enough to let you tell me if this is 
+possible or why it isn't :)
 
-Which of these things benefits from being _in_ the filesystem?  Not that
-I don't like your approach (see above), I just want you to think harder
-about it.
+bye and a happy new year to one half of the world!
+Fred
 
-| It seem very likely that this is an idea which was discussed over and
-over
-| again already, but I really didn't find much about it. As a KDE
-developer,
-| I'm not much involved in filesystems, so maybe I'm just looking for
-the wrong
-| keywords?
-
-Maybe.  Seems like people use things like FAM nowdays.  But you're
-right, there needs to be a better way.  For instance, your desktop
-search engine should only rebuild even the stat data when a user enters
-a query, but it should be able to do it quickly (without searching the
-whole tree).
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQdXXYngHNmZLgCUhAQJN2hAAkSk54jLWiKm6fhSp5+/gdhkps6LjsIHA
-FOuKX62YQdUm+3oNfM+dm+r0Unkx5+NDbojxDujcezy1DHxUJKb1syhU3lE+IngE
-XLIy3+GhoJSX0d8VLP9CALMpYVqlJbmvp9Xj6bSpqErTOKxeY18hHqG7ZljVQQfT
-jQjg99pE4uDRQXVfJzygCep6sbjcB6aFFrfwDOmFpv6Qfp5Dho/Ladqm/v85S45H
-NEuTeYVwyzuvSah8BqMQJTmtdfY2GdwcKAfQ6g3i/ATC0GdDrou1R+2YDdBkTYvM
-uGw+P8qKmQw+q/WgXJjx0WFnAZHqHVayXMqdwPr4bONXdUPb5IHR7PXjxjB2acui
-WuzsQ9tLupuBOpr0tiDbJlm7+ozHudShydbPRRQTop0FbZKecLrw1aA+MLg+krRs
-waX9Shs24JWh/3MXZlO4I3os4nFLnhgOiHuNRVv4iZt7aAurvWYmWR5iCELvzwil
-Sv6pxpHfu8F0sNzhnoKloj75zYCvNjzsINSepckqlt3zuBmlExXKpLf1pRWkNaA2
-Q6oewc9ppFwhErD9+Tn177HIDZMiWhwDopMxyWp8CcNvcY7M9p5uGVAyq6/vSQcc
-yky8clLnpU9NTMNDrp7WIA0srpUP8DZYyFqzzQC+ePREO9n3LnB1RU3CNqGT8xoR
-f8TIvSw26zU=
-=v/lu
------END PGP SIGNATURE-----
+-- 
+Fred Schaettgen
+Sch@ttgen.net
