@@ -1,105 +1,35 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Garbage collection for files (was Re: More on Hard Links (was
- A bold idea (Re: Carrying Attributes too Far)))
-Date: Sun, 07 Dec 2003 06:27:12 +0300
-Message-ID: <3FD29E10.3050203@namesys.com>
-References: <2342084747-BeMail@cr593174-a>	<3FD0912C.1090700@ninja.dynup.net>	<16336.37772.88198.217245@laputa.namesys.com>	<3FD0AB30.6060305@namesys.com> <16336.45022.572929.274859@laputa.namesys.com> <3FD135F5.804@ninja.dynup.net>
+From: Wes Gray <smiths@alumni.cse.ucsc.edu>
+Subject: Can't mount / at boot as of kernel 2.4.21
+Date: Sat, 6 Dec 2003 22:29:44 -0800
+Message-ID: <20031207062944.GB1925@beavis>
+Reply-To: smiths@alumni.cse.ucsc.edu
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16272-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16273-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FD135F5.804@ninja.dynup.net>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Masover <jedi@ninja.dynup.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-The approaches nikita suggests don't seem very efficient for the no loop 
-case. 
+My root is reiserfs, and works fine for kernel 2.4.20, but as of 2.4.21
+during boot it mounts readonly OK, but when it goes to remount read-write,
+the command:
 
-Hans
+mount / -n -o remount,rw
 
-David Masover wrote:
+fails with "mount: / not mounted already, or bad option".
 
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
->
->
-> I will step aside and let the smart people figure this out.  Only one 
-> real suggestion -- most directories will not have loops.  I'm not sure 
-> how, but I'd imagine it's possible to use refcounts there and other 
-> forms of garbage collection elsewhere.  I felt my refcount-based idea 
-> was clean and cool-looking, but I have had approximately 10-15 mins of 
-> experience in this subject.
->
-> Only one question -- does it work for rm -rf?
->
-> Thread below:
->
-> Nikita Danilov wrote:
->
->> Hans Reiser writes:
->> > Nikita Danilov wrote:
->> > > > But if multiple hard-links to the directories
->> > >are allowed, file system is an arbitrary graph. It makes little 
->> sense to
->> > >try to stretch reference counting to work in this situation. There 
->> are
->> > >much more efficient forms of garbage collection for this.
->> > >
->> > >Nikita.
->> > >
->> > >
->> > >  > >
->> > Educate us, I am curious.
->>
->> http://citeseer.nj.nec.com/jones03garbage.html is a recent bibliography
->> in this subject, containing more than 20000 references. I am afraid this
->> is little too much for a brief description. But basically, instead of
->> reclaiming garbage when "last reference" goes out, collectors typically
->> run periodically trying to find unreachable objects. Common way to do so
->> is to find -reachable- ones, and then to declare the rest
->> unreachable. Also, do avoid scanning the whole heap^Wfile system,
->> objects are segregated into "generations", and allocation is tuned so
->> that there are no references from object older generation to younger
->> one. Some smart techniques (like colored pointers) are used to avoid
->> garbage collection to proceed concurrently with mutators. And so
->> on. Large field for an experimentation.
->>
->> > > -- > Hans
->> >
->> Nikita.
->>
->> >  
->>
->
-> -----BEGIN PGP SIGNATURE-----
-> Version: GnuPG v1.2.3 (GNU/Linux)
-> Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
->
-> iQIVAwUBP9E1+QisZLIF6uqOAQJ4VQ/+MZizcUlDJ2Zbb7zteUP8upK3f9a2Z/qY
-> hEtWrTAqP2/zpLf68GR0OkfPnwe7g3h9NYvCWSJ5j3tt3lr7TS/PcPoMWn8cv+7j
-> wQoJRwI6rVb7FkCuOu/s8qSMG47dww/3Ao1jc2eFngT16ghIgDPEBBL0DwwqSbsG
-> NrNevs1yDqO+qRlsoHbe6oqz+55BEtwc/APnBKHzXj8dDNevv5PEx7WwH12A+tRe
-> etMxXygc7OTqk7miH00OTH5+afnJEgF0JiWwMDUsDiYTT54Cl4a9E+nUzm0kp5SI
-> R0VYHgNkxTQ692SPE2Zdl+xSVaPq9N9byfDZdTO4jfSp9zx3PA6HfG+Lc30o0IAZ
-> VGKfV3+wV0jnIE/Ek3pFDv1Xn1gAtM3htfIvFZSvysEC4Km0UkvIOgsQyZByh3fq
-> Dzop9pjmM/CMLfu/Z+4APQ4j8Mt3nCSvEPnTgrp8D7ptpkq/1nhCzS1Ej42+XQZ+
-> h/7pyE15wrC8EyVUgVQMDZa1n6R1k+w/VvsNhMqfuTaTfXJBWaiq0Chj6QMfX6nx
-> kBRjzudFkh5Sg2Kf7vwwv+aH/wd0F953BnFq6Ceg2FAV6Mt308aHI9JnBSP08uIz
-> my/p1fLxhwyEZ1MzBJC97rQivRa2WUXrDwnC6duHbTg8A913tiW5lXIvEIooarOR
-> IFSQ2vdEzio=
-> =X4Fs
-> -----END PGP SIGNATURE-----
->
->
->
+This problem is very similar to FAQ question #11, but the error message
+is different and I've tried "reiserfsck --rebuild-sb" and it said my
+superblock was fine.  I'm wondering what other "sanity checks" were added
+to the kernel though.
 
+It is possible there is an error in the boot scripts and it is trying
+to remount an fs that is not mounted at all, but this is not a
+problem with previous kernel versions.  Did it become pickier about this?
 
--- 
-Hans
-
-
+I am running Gentoo with reiserfs-v0.3.0.3 and reiserfsprogs-v3.6.8.
