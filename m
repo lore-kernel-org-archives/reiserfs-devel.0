@@ -1,40 +1,31 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: =?koi8-r?B?09TSwc7O?=
-	=?koi8-r?B?wdEg2sHQydPYINc=?= dmesg
-Date: Tue, 24 Sep 2002 12:38:47 +0400
-Message-ID: <20020924123847.A22203@namesys.com>
-References: <3D902295.6010700@ap-plastic.ru>
+From: berthiaume_wayne@emc.com
+Subject: Data Shredding on a Journal Filesystem
+Date: Tue, 24 Sep 2002 17:12:03 -0400
+Message-ID: <93F527C91A6ED411AFE10050040665D0049C0072@corpusmx1.us.dg.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11520-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+	boundary="----_=_NextPart_000_01C2640F.07C42FA0"
+Return-path: <reiserfs-list-return-11521-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3D902295.6010700@ap-plastic.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Anton Erofeevskij <ae@ap-plastic.ru>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+------_=_NextPart_000_01C2640F.07C42FA0
+Content-Type: text/plain;
+	charset="iso-8859-1"
 
-On Tue, Sep 24, 2002 at 02:30:13PM +0600, Anton Erofeevskij wrote:
+	Hello fellow ReiserFS fans. I'm in search of a data shredder for use
+on reiserfs and am wondering if anyone knows of one. It would need to
+effectively remove any trace both in the journal and on the disk itself any
+and all data pertaining to a file. I'm not sure, but I thought at one time
+Hans was talking about something this himself. I have looked at shred() but
+it does not work with journalling filesystems.
+Most appreciatively,
+Wayne
 
-> [root@cpq370 root]# uname -a
-> Linux cpq370.plastic 2.4.12 #7 SMP =F7=D4=D2 =EF=CB=D4 16 09:43:09 YEKST =
-2001 i686=20
-> unknown
-> PAP-5710: reiserfs_paste_into_item: entry or pasted byte ([22 172943=20
-> 0x1281001 IND]) exists
 
-This is known race between two processes writing into file's hole located
-at the end of a file.
-This problem is fixed in 2.4.18.
-Though this problem is not very dangerous by itself, you'd better
-upgrade your kernel because there are more dangerous bugs present
-in kernels prior to 2.4.18 including several data corrupting ones.
 
-Bye,
-    Oleg
+------_=_NextPart_000_01C2640F.07C42FA0--
