@@ -1,83 +1,35 @@
-From: "Barry, Christopher" <cbarry@infiniconsys.com>
-Subject: OT:RE: How to mount reiserfs with a relocated journal? -- Figured out
-Date: Fri, 11 Jul 2003 02:04:28 -0400
-Message-ID: <08628CA53C6CBA4ABAFB9E808A5214CB4BDF42@mercury.infiniconsys.com>
+From: Toby Dickenson <tdickenson@geminidataloggers.com>
+Subject: Re: Advangates (A file-based interface for mount)
+Date: Fri, 11 Jul 2003 07:59:52 +0100
+Message-ID: <200307110759.52384.tdickenson@geminidataloggers.com>
+References: <3F078EF1.6090908@mrs.umn.edu> <3F0C89FC.8060604@mrs.umn.edu> <20030710025545.GB1160@vestdata.no>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14877-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14878-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
+In-Reply-To: <20030710025545.GB1160@vestdata.no>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Ragnar =?iso-8859-15?q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>, reiserfs-list@namesys.com
 
-If radical speed is what you want, then you want what we make.
-InfinIO 7000/InfiniServ 7000/and the new 32xx series coming soon.
-www.infinicon.com
+On Thursday 10 July 2003 03:55, Ragnar Kj=F8rstad wrote:
 
--Christopher
+> The last problem, which I don't see an easy solution for, is that the
+> filesystem-code in the kernel dosn't do sufficient data-checking that
+> it's safe to run it on user-controlled data. I'm sure that for most if
+> not all filesystems it will be possible to corrupt the metadata in a way
+> that will make the kernel crash or lock up - in some cases it may even
+> be possible to corrupt the data in such a way that it becomes a
+> security-problem? How could this be solved?
 
------Original Message-----
-From: Doug Bazarnic [mailto:doug@cavecreek.net]
-Sent: Friday, July 11, 2003 1:58 AM
-To: 'Oleg Drokin'
-Cc: reiserfs-list@namesys.com
-Subject: RE: How to mount reiserfs with a relocated journal? -- Figured
-out
+I would hope that the filesystems commonly used on removable media would tr=
+y=20
+to defend against this. Is this hoping too much?
 
-
-I've heard that using flash card memory (solid state devices) increases
-performance -- roughly 20-30%.   With the slower write speeds of 4 - 6
-MByte/sec,  I'm not sure if it would truly be faster.
-
-I haven't time to test anything yet myself.
-
-The flash card is supposed to have a life greater than 1 million writes
-to it, so I don't know how well it will hold up in real life.  We're
-just looking for more speed.   We tend to rotate our database servers
-every 3 months or so, for something newer and faster.
-
-If the flash card does die, can't we just do a tree rebuild?
-
-Doug
-
-
------Original Message-----
-From: Oleg Drokin [mailto:green@namesys.com]=20
-Sent: Thursday, July 10, 2003 10:47 PM
-To: Doug Bazarnic
-Cc: reiserfs-list@namesys.com
-Subject: Re: How to mount reiserfs with a relocated journal? -- Figured
-out
-
-Hello!
-
-On Thu, Jul 10, 2003 at 08:26:19PM -0700, Doug Bazarnic wrote:
-
-> Any way, is there a down side to using a large journal?  8193 vs
-~125000
-> block size?   Right now, I've allocated the entire 512 meg flash card
-> for the journal size.  =20
-
-Well, if your flash card will die, you have possibly more data to loose.
-Also keep in mind that journal header gets updated for every transaction
-(in fact the should be batched so this should not be so hard hit, esp.
-for large journals, but still).
-
-Hm, I think for large journals you may also want to increase journal
-flushtime.
-Unfortunatelly this is hardwired to be once in 5 seconds.
-fs/reiserfs/journal.c and look for
-"interruptible_sleep_on_timeout(&reiserfs_commit_thread_wait, 5 * HZ)
-;",
-change 5 to whatever number of seconds you may want. May and will lead
-to increased memory consumption when
-combined with large journals, though.
-
-Bye,
-    Oleg
-
-
+=2D-=20
+Toby Dickenson
+http://www.geminidataloggers.com/people/tdickenson
