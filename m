@@ -1,35 +1,69 @@
-From: Redeeman <redeeman@redeeman.linux.dk>
-Subject: Re: Snapshot Compatibility
-Date: Sat, 27 Mar 2004 10:29:50 +0100
-Message-ID: <1080379790.5151.0.camel@redeeman.linux.dk>
-References: <3DF9165145FACB4C96977FF650C1E9040C469D41@its-mail1.its.corp.gwl.com>
+From: Piotr Neuman <sikkh@wp.pl>
+Subject: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Date: Sat, 27 Mar 2004 15:37:52 +0100
+Message-ID: <200403271537.52955.sikkh@wp.pl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17524-reiserfs=m.gmane.org@namesys.com>
+Content-Type: Multipart/Mixed;
+  boundary="Boundary-00=_AHZZAFg9rZ7UYdB"
+Return-path: <reiserfs-list-return-17526-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3DF9165145FACB4C96977FF650C1E9040C469D41@its-mail1.its.corp.gwl.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: Reiserfs-List@namesys.com
 
-On Sat, 2004-03-27 at 03:00, Burnes, James wrote:
-> The recent announcement says that the latest reiser4 snapshot includes
-> patches for the 2.6.5-rc2 kernel.  Does anyone know if these patches are
-> compatible with Andrew Morton's 2.6.5-rc2-mm4 release?
-> 
-i didnt test yet, usually it is, but i believe the newer mms arent, they
-WIDELY differ from vanilla, but just try to apply and see what happens
-:>
-> Thx,
-> 
-> jim burnes
-> security engineer
-> great-west, denver
->  
--- 
-Regards, Redeeman
-redeeman@metanurb.dk
+--Boundary-00=_AHZZAFg9rZ7UYdB
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
+The new naming scheme for plugins ("metas" in snapshot 2004.03.26) may on 
+certain occasions cause name clashes. This patch changes "metas" into 
+"..metas" which should avoid this problem in most cases.
+
+This is a very simple patch so changing "..metas" that to any other desired 
+value is also easy.
+
+Regards to reiser4 team.
+
+diff -ruN /home/peter/linux/fs/reiser4/plugin/pseudo/pseudo.c 
+linux/fs/reiser4/plugin/pseudo/pseudo.c
+--- /home/peter/linux/fs/reiser4/plugin/pseudo/pseudo.c	2004-03-27 
+14:50:58.000000000 +0100
++++ linux/fs/reiser4/plugin/pseudo/pseudo.c	2004-03-27 14:51:19.788181928 
++0100
+@@ -1224,7 +1224,7 @@
+ 			.type_id = REISER4_PSEUDO_PLUGIN_TYPE,
+ 			.id = PSEUDO_METAS_ID,
+ 			.pops = NULL,
+-			.label = "metas",
++			.label = "..metas",
+ 			.desc = "meta-files",
+ 			.linkage = TYPE_SAFE_LIST_LINK_ZERO
+ 		},
+
+--Boundary-00=_AHZZAFg9rZ7UYdB
+Content-Type: text/x-diff;
+  charset="us-ascii";
+  name="reiser4.metas.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="reiser4.metas.patch"
+
+diff -ruN /home/peter/linux/fs/reiser4/plugin/pseudo/pseudo.c linux/fs/reiser4/plugin/pseudo/pseudo.c
+--- /home/peter/linux/fs/reiser4/plugin/pseudo/pseudo.c	2004-03-27 14:50:58.000000000 +0100
++++ linux/fs/reiser4/plugin/pseudo/pseudo.c	2004-03-27 14:51:19.788181928 +0100
+@@ -1224,7 +1224,7 @@
+ 			.type_id = REISER4_PSEUDO_PLUGIN_TYPE,
+ 			.id = PSEUDO_METAS_ID,
+ 			.pops = NULL,
+-			.label = "metas",
++			.label = "..metas",
+ 			.desc = "meta-files",
+ 			.linkage = TYPE_SAFE_LIST_LINK_ZERO
+ 		},
+
+--Boundary-00=_AHZZAFg9rZ7UYdB--
