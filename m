@@ -1,66 +1,42 @@
-From: Robert Brockway <robert@timetraveller.org>
-Subject: Possible problem with Firewire device
-Date: Sat, 17 Aug 2002 11:28:59 +1000 (EST)
-Message-ID: <Pine.LNX.4.44.0208171042410.10279-100000@avon.timetraveller.org>
+From: Antonie Nygma <darkenigma80@yahoo.com>
+Subject: mounting reiserfs from win98
+Date: Fri, 16 Aug 2002 20:46:45 -0700 (PDT)
+Message-ID: <20020817034645.7861.qmail@web21402.mail.yahoo.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11216-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11217-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Hi all.  I have an external HD casing with an ATA/Firewire bridge built
-in.  A 3.5" ATA66/100 drive is put in the casing and it connects to the
-box through firewire.
+hi!
 
-I've got a 15Gb ATA66 drive in the casing right now.
+i recently reformatted all my linux
+(reiserfs)partitions on a dual-boot hdd, leaving only
+the /home partition intact. during fresh installation
+it stalled and i'd like to backup some files in /home
+to win98 partition so i can remove the old partitions
+& re-created them again.
 
-The whole drive is in a single partition.  I've been running ext2/3 on the
-drive for some months under a number of 2.4 kernels without issue.  I
-decided to convert it to Reiserfs the other day.
+consulting filesystems HOWTO, i found some tools
+(LTOOLS) that could mount linux FS (ext2fs)
+transparently from win9x, but it doesn't work properly
+(gives error like: bad magic number). i suspect this
+is because i use reiserfs instead.
 
-I was able to mkreiserfs without error on the partition (which is mapped
-into the system as /dev/sda1).
+i'm not sure whether further works are being done for
+LTOOLS; and i'm interested to make it work for
+reiserfs. is there any other tools that have already
+been written to do this?
 
-I was then able to mount the drive as /backup.  No problem.
+thanks,
+antonie
 
-I then kicked off a backup job which grabs a tar file of my system,
-excluding /proc,/tmp and other areas that aren't to be backed up.  This is
-a home grown script I've been using for ages.
-
-The tar should have come out at about 7.5Gb (no compression).  The tar
-seemed to be fine until it got to about 382Mb.  At this point the tar
-stopped.  The process was still running but was not hitting the disk.  I
-left this for several minutes with no change.  The process didn't accept a
-SIGTERM or a SIGKILL.  Unable to umount the device in any way I then
-attempted a reboot.  The reboot command hung for several minutes and I
-eventually had to power cycle the box to recover.  On reboot /backup
-mounted fine and the tar file was still present.
-
-I immediately remade the filesystem as ext3 as this is actually a
-production box (handling mostly non-interactive jobs like mail I'm pleased
-to say).  I was then able to run my backup successfully onto the ext3 FS.
-
-Kernel version:	Modular Vanilla 2.4.19.
-
-Reiserfsprogs:	3.x.1b
-
-The Reiserfs on the root filesystem was built under Debian's 2.4bf kernel
-as part of a Debian 3.0r0 install recently and works perfectly.
-
-Due to the nature of the system I was not able to experiment extensively
-but do have the opportunity to take the system down later to test this a
-bit better if needed (right after taking a backup :)
-
-If any further info is required I'm happy to supply it.
-
-Rob
-
--- Robert Brockway B.Sc. email: robert@timetraveller.org  ICQ: 104781119
-   Linux counter project ID #16440 (http://counter.li.org)
-   "The earth is but one country and mankind its citizens" -Baha'u'llah
-
+__________________________________________________
+Do You Yahoo!?
+HotJobs - Search Thousands of New Jobs
+http://www.hotjobs.com
