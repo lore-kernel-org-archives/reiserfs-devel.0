@@ -1,86 +1,54 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Bug#263348: linux-kernel-headers: asm/unaligned.h on powerpc
- is useless if __KERNEL__ is undefined
-Date: Mon, 09 Aug 2004 10:52:34 -0700
-Message-ID: <4117B9E2.5090906@namesys.com>
-References: <20040806220432.GA2291@raptus.homelinux.net> <20040806225006.GA2688@raptus.homelinux.net> <81r7qg6g3u.wl@omega.webmasters.gr.jp> <20040809175027.GB2072@raptus.homelinux.net>
+From: Tom Lanyon <tomlanyon@gmail.com>
+Subject: Re: Apache2 problems
+Date: Tue, 10 Aug 2004 03:29:17 +0930
+Message-ID: <cd32a06204080910594f9db8f@mail.gmail.com>
+References: <cd32a06204080910256de4cc0e@mail.gmail.com> <20040809172923.GQ1284@nysv.org> <4117B948.7050708@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20096-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20097-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040809175027.GB2072@raptus.homelinux.net>
+In-Reply-To: <4117B948.7050708@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Domenico Andreoli <cavok@debian.org>
-Cc: GOTO Masanori <gotom@debian.or.jp>, 263348@bugs.debian.org, reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Markus =?unknown-8bit?q?T=F6rnqvist?= <mjt@nysv.org>, reiserfs-list@namesys.com
 
-Domenico Andreoli wrote:
+Hehe yeah I understood too... i'm compiling new kernel with newer
+reiser4 now to see if it helps..
 
->On Mon, Aug 09, 2004 at 02:21:57PM +0900, GOTO Masanori wrote:
->  
+On Mon, 09 Aug 2004 10:50:00 -0700, Hans Reiser <reiser@namesys.com> wrote:
+> Markus T=F6rnqvist wrote:
+>=20
+> >On Tue, Aug 10, 2004 at 02:55:55AM +0930, Tom Lanyon wrote:
+> >
+> >
+> >>This is reiser4-2004.07.23-19.37-linux-2.6.8-rc2-bk4.diff  on a
+> >>2.6.8-rc2 kernel.
+> >>
+> >>
+> >
+> >I would suggest
+> >
+> forgot the not ;-), but I at least understood you.
+>=20
+>=20
+>=20
+> > using such an old snapshot.
+> >
+> >According to Namesys (Zam iirc) the bug has been fixed.
+> >
+> >
+> >
+> >>I'm about to try the latest snapshot on a vanilla 2.6.8-rc3 and see if
+> >>it helps..
+> >>
+> >>
+> >
+> >Please do.
+> >
+> >
+> >
+>=20
 >
->>At Sat, 7 Aug 2004 00:50:06 +0200,
->>Domenico Andreoli wrote:
->>    
->>
->>>i have attached a workaround for bug #263348 in case nobody wants to
->>>fix it linux-kernel-headers.
->>>
->>>it should work although being not that elegant. i know it is fragile
->>>since relies on _PPC_ERRNO_H macro being defined by asm/errno.h on
->>>powerpc and that could change in any moment.
->>>
->>>      
->>>
->
->the header file used is actually asm/byteroder.h and macro is
->_PPC_BYTEORDER_H. 1:3.6.18-2 used asm/error.h but this broke things in
->a manner i didn't understand.
->
->  
->
->>Looking through the kernel source, it seems lkh should be fixed.  I
->>put the patch to lkh cvs.
->>
->>    
->>
->
->good :)
->
->  
->
->>However, now we're base-freeze period, and at least I don't decide to
->>put new lkh package -18 into unstable and testing-proposed-updates
->>yet, so it's good idea to put workaround fix for reiserfsprogs.
->>
->>    
->>
->
->already put, uploaded and successfully built :)
->
->  
->
->>BTW, I think reiserfsprogs is tightly coupled with the kernel version,
->>so I wonder it's OK to use lkh package, instead of using kernel
->>headers which are included from the latest kernel source to
->>reiserfsprogs.
->>
->>    
->>
->
->don't know, Hans Reiser should be able to answer this question.
->
->cheers
->domenico
->
->-----[ Domenico Andreoli, aka cavok
-> --[ http://people.debian.org/~cavok/gpgkey.asc
->   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
->
->
->  
->
-vitaly is the maintainer for progs.  Vitaly?
