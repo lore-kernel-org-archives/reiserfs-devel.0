@@ -1,42 +1,38 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: speedup patch for 2.4.19-pre6
-Date: Thu, 11 Apr 2002 23:49:44 +0200
-Message-ID: <200204112349.44268.Dieter.Nuetzel@hamburg.de>
-References: <200204112344.41906.Dieter.Nuetzel@hamburg.de>
+From: Chris Mason <mason@suse.com>
+Subject: Re: Large Partition Performance Test
+Date: 11 Apr 2002 18:11:23 -0400
+Message-ID: <1018563083.14483.100.camel@tiny>
+References: <20020411181459.69516.qmail@web10002.mail.yahoo.com>
+	<20020411234316.A3749@namesys.com>  <20020411202856.GA26083@matrix.wg>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10050-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10051-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <200204112344.41906.Dieter.Nuetzel@hamburg.de>
+In-Reply-To: <20020411202856.GA26083@matrix.wg>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Oleg Drokin <green@namesys.com>
-Cc: Chris Mason <mason@suse.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Dirk Mueller <dmuell@gmx.net>
+Cc: reiserfs-list@namesys.com
 
-On Thursday 11 April 2002 :44, Dieter N=FCtzel wrote:
+On Thu, 2002-04-11 at 16:28, Dirk Mueller wrote:
+> On Don, 11 Apr 2002, Oleg Drokin wrote:
+> 
+> > 4 minutes 20 seconds to write 1.6G of data even in the beginning?!
+> > This sounds too slow to me. Though RAID5 certainly can slow things down.
+> 
+> Its not the RAID,I can reproduce it: 
+> 
+> day/hour 00 00 seconds = 691
+> day/hour 00 01 seconds = 720
+> 
+> this seems to be highly CPU bound, because it hardly ever accessed the 
+> harddisk. it spends 60% in kernel space cpu though. 
 
-> My slow IBM DDRS-34560D disk.
-> SunWave1 /home/nuetzel# hdparm -tT /dev/sdb5
+Then I would expect the new allocator in busy_skip mode to fix it.  But,
+having profiling on would tell us for sure.
 
-Ups, dbench 32 was the test prog.
+-chris
 
-> /dev/sdb5:
->  Timing buffer-cache reads:   128 MB in  0.76 seconds =3D168.42 MB/sec
->  Timing buffered disk reads:  64 MB in  5.48 seconds =3D 11.68 MB/sec
->
-> mount		Throughput
-> -			28.8716 MB/sec (NB=3D36.0895 MB/sec  288.716 MBit/sec)
-> 			13.850u 56.380s 2:27.31 47.6%   0+0k 0+0io 938pf+0w
->
-> notail		30.2834 MB/sec (NB=3D37.8543 MB/sec  302.834 MBit/sec)
-> 			14.600u 53.660s 2:20.50 48.5%   0+0k 0+0io 938pf+0w
->
-> iicache		30.9775 MB/sec (NB=3D38.7219 MB/sec  309.775 MBit/sec)
-> 			14.320u 52.970s 2:17.37 48.9%   0+0k 0+0io 938pf+0w
->
-> iicache,notail	31.6363 MB/sec (NB=3D39.5453 MB/sec  316.363 MBit/sec)
-> 			14.340u 50.040s 2:14.53 47.8%   0+0k 0+0io 938pf+0w
 
--Dieter
