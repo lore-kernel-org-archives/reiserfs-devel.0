@@ -1,72 +1,71 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: Re: reiser4 debugging status info
-Date: Fri, 15 Aug 2003 20:14:18 +0400
-Message-ID: <16189.1754.116380.909774@laputa.namesys.com>
-References: <3F3CFE6B.1010700@namesys.com>
-	<16189.659.769102.828401@laputa.namesys.com>
-	<3F3D0575.1020504@namesys.com>
+From: Vadim <vadim_t@teleline.es>
+Subject: vs-5150: search_by_key: invalid format found in block 30690. Fsck?
+Date: Fri, 15 Aug 2003 19:39:02 +0200
+Message-ID: <200308151939.03324.vadim_t@teleline.es>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15327-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-15328-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3F3D0575.1020504@namesys.com>
+Content-Description: clearsigned data
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Reiserfs List <reiserfs-list@namesys.com>, Oleg Drokin <green@namesys.com>
+Content-Type: Text/Plain; charset="us-ascii"
+To: reiserfs mailing list <reiserfs-list@namesys.com>
 
-Hans Reiser writes:
- > Nikita Danilov wrote:
- > 
- > >Hans Reiser writes:
- > > > Since some of you have started to play with reiser4, I think we should 
- > > > probably send a paragraph describing our debugging status every day or 
- > > > so until it becomes more stable.
- > > > 
- > > > So here is an excerpt from Oleg's timesheet that may interest those of you experimenting with reiser4.
- > > > 
- > > > +		 Experimenting with reiser4, found that tail conversion process
- > > > +		 changes modification time of a file converted which confuses
- > > > +		 bitkeeper and potenionally a lot more applications.
- > > > +		 Found one of the places and working with Nikita on fixing that
- > > > +		 one, but that did not help, looking for other code pieces that
- > > > +		 might lead to this, have not finished.
- > > > +		 Nikita committed some fixes that are supposedly important and
- > > > +		 should be enough to make new release (with 64 bit fixes and
- > > > +		 progs fixes), unfortunately new code crashes on fsx very
- > > > +		 quickly which makes it not suitable for release. Looking for
- > > > +		 cause, exchanging informations with Nikita.
- > > > 
- > >
- > >We used to have "News" section on our web site. Probably this is more
- > >relevant place than mailing list.
- > >
- > > > 
- > > > 
- > > > -- 
- > > > Hans
- > > > 
- > > > 
- > >
- > >Nikita.
- > >
- > >
- > >  
- > >
- > nobody ever read that, and I think the mailing list is much more 
- > appropriate than the website, because the website had problems with 
- > being obsolete when it had the News section.
+=2D----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-I think best way to settle this is to ask list readers. :)
+I just noticed quite a lot of those:
 
- > 
- > -- 
- > Hans
- > 
+vs-5150: search_by_key: invalid format found in block 9170. Fsck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to=20
+find stat data of [3614 3618 0x0 SD]
+is_tree_node: node level 65448 does not match to the expected one=20
+1
+vs-5150: search_by_key: invalid format found in block 14568.=20
+=46sck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to=20
+find stat data of [8839 12110 0x0 SD]
+is_tree_node: node level 17741 does not match to the expected one=20
+1
+vs-5150: search_by_key: invalid format found in block 26324.=20
+=46sck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to=20
+find stat data of [32635 32751 0x0 SD]
+is_tree_node: node level 0 does not match to the expected one 1
+vs-5150: search_by_key: invalid format found in block 30690.=20
+=46sck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to=20
+find stat data of [39269 39617 0x0 SD]
+is_tree_node: node level 0 does not match to the expected one 1
+vs-5150: search_by_key: invalid format found in block 30690.=20
+=46sck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to=20
+find stat data of [39269 39617 0x0 SD]
+is_tree_node: node level 0 does not match to the expected one 1
+vs-5150: search_by_key: invalid format found in block 30690.=20
+=46sck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to=20
+find stat data of [39269 39617 0x0 SD]
+is_tree_node: node level 0 does not match to the expected one 1
+vs-5150: search_by_key: invalid format found in block 30690.=20
+=46sck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to=20
+find stat data of [39269 39617 0x0 SD]
 
-Nikita.
+The disk seems to be good, no errors, kernel is 2.4.21 with LVM=20
+1.0.7.
 
- > 
+Why does this error happen? Is it a bug fixed in a later version?
+BTW, it'd be nice if it told me what partition it happened on.
+=2D----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.2 (GNU/Linux)
+
+iD8DBQE/PRq2vCkUtBccqkoRAnCPAJ9+BXblT9ML5ljIgfKf3Bp1mZ9E9wCgohN+
+3NMCsV5AMbNKnuU8S9HAgL8=3D
+=3DGk0C
+=2D----END PGP SIGNATURE-----
+
