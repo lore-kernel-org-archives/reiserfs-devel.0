@@ -1,74 +1,47 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: I would like to see ReiserFS V3 enter a feature freeze real soon.
-Date: Mon, 31 May 2004 09:48:00 -0700
-Message-ID: <40BB61C0.5020902@namesys.com>
-References: <20040528122854.GA23491@clipper.ens.fr>	 <1085748363.22636.3102.camel@watt.suse.com>	 <1085750828.1914.385.camel@tribesman.namesys.com> <1085751695.22636.3163.camel@watt.suse.com>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: The situation at hand and in the future
+Date: Mon, 31 May 2004 13:20:55 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <87fz9gikco.fsf@uhoreg.ca>
+References: <20040527200127.GS4990@nysv.org> <200405272105.i4RL5LDh026210@turing-police.cc.vt.edu>
+ <40B6670D.9060408@slaphack.com> <20040528063324.GT4990@nysv.org>
+ <40B89C9C.5050307@slaphack.com> <20040529154917.GW4990@nysv.org>
+ <40B919DF.3040408@slaphack.com> <20040530122713.GX4990@nysv.org>
+ <40BA802C.5070907@slaphack.com> <20040531083835.GB4990@nysv.org>
+ <40BB4B79.8020000@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18932-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18933-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1085751695.22636.3163.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: Vladimir Saveliev <vs@namesys.com>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Andrew Morton <akpm@osdl.org>, Alexander Zarochentcev <zam@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-While I like and appreciate the data journaling stuff, and I think it 
-should go in, real soon now I think we should avoid adding new features 
-to V3.  Let the mission critical server folks have a reiserfs version 
-that only gets bug fixes added to it, and let V4 be for those who want 
-excitement.
+>>>>> "David" =3D=3D David Masover <ninja@slaphack.com> writes:
 
-Are there any things which Chris and Jeff think should go in besides 
-data journaling/ordering and bitmap algorithm changes?
+David> Markus T=F6rnqvist wrote:
 
-Also, I would like to see some serious benchmarks of the bitmap 
-algorithm changes before they go in.  They seem nice in theory, and some 
-users liked them for their uses, but that does not make a serious 
-scientific study.  Such a study has a high chance of making them even 
-better.;-)
+David> | Maybe I should take a vacation and learn C really well and read
+David> | all the Reiser4 code :)
 
-zam, I view you as the block allocator maintainer, please review that 
-bitmap code from Chris.
+David> I know C tolerably well, I just need to spend the time learning
+David> reiser4's code.
 
-Chris and Jeff, can you propose a benchmarking plan for the bitmap code?
+I know C, but Reiser4 is very big and contains many files.  (I'm also
+not a filesystem programmer, and also don't have much time, but that's
+beside the point ;-).)  I think that what would be most helpful is a map
+of all the source files.  Hans says that Namesys code is very well
+commented, which a very casual glance over the code seems to confirm
+(except that lines seem to be wrapped at 90 characters instead of 80!).
+But without a high-level overview of all the files, and how they all fit
+together, it's still hard to read.
 
-Hans
-
-
-Chris Mason wrote:
-
->On Fri, 2004-05-28 at 09:27, Vladimir Saveliev wrote:
->
->  
->
->>>The good news is that we tracked this one down recently.  2.6.7-rc1
->>>shouldn't do this anymore.
->>>
->>>      
->>>
->>Just out of curiosity, what was it?
->>    
->>
->
->It was a bug in reiserfs_file_write caused by the data=ordered changes. 
->I was dropping i_sem before changing i_size, and the result was that
->writepage was zeroing out bytes it thought was past the end of the file.
->
->See the recent thread with "1352 NUL bytes at the end of a page?" in the
->subject.  The funny part was that we started getting bug reports for
->this on the suse kernel just a few days before Steven Cole reported it,
->so I was able to overlap some of the bug hunting/testing.
->
->-chris
->
->
->
->
->
->  
->
+--=20
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
