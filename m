@@ -1,11 +1,11 @@
 From: Alexander Lyamin <flx@msu.ru>
 Subject: Re:  bk pull problem (reiser4)
-Date: Sat, 31 Jan 2004 10:46:02 +0300
-Message-ID: <20040131104602.D28432@t-raenon.nmd.msu.ru>
+Date: Sat, 31 Jan 2004 12:35:28 +0300
+Message-ID: <20040131123528.A31016@t-raenon.nmd.msu.ru>
 References: <200401121528.14023.rathamahata@php4.ru> <200401151803.20907.rathamahata@php4.ru>
 Reply-To: flx@msu.ru
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16669-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16671-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -19,11 +19,47 @@ To: "Sergey S. Kostyliov" <rathamahata@php4.ru>
 Cc: reiserfs-list@namesys.com
 
 
-I am looking into details on this problem right now,
-will comment in few hours. 
+here comes promised follow-up.
 
-thanks for patience.
+i investigated the problem, and it seems like there is TWO reasons
+why you could not currently pull from reiserfs public bk repository.
 
+1. in version 3.0.4 Bitmover changed their licensing, and (wow)
+put interactive confirmation in the binary, which eventually prevented
+bkd from working. (alleviated)
+
+2. 
+
+thebsh>
+=================================  Error   =================================
+Unable to obtain permission to use this version of BitKeeper (bk-3.0.4)
+from lease.openlogging.org.  That server issues certificates to use BK
+for openlogging for 30 days at a time.  The bk binary needs to be able
+to make a http connection to lease.openlogging.org at least once a month.
+
+Look at 'bk help url' if you need to tell 'bk' about a proxy.
+============================================================================
+
+thebsh>telnet lease.openlogging.org 80
+Trying 66.216.127.34...
+Connected to lease.openlogging.org.
+Escape character is '^]'.
+GET /
+
+HTTP/1.0 503 Error
+Sat, 31 Jan 2004 09:32:41 GMT
+Server: bkhttp/0.3
+Content-Type: text/html
+
+[dd]
+
+Connection closed by foreign host.
+
+
+seems like we cant acquire server certificate for some reason, i contacted
+Bitmover with this issue, and hopefully things got resolved in timely fashion.
+i'll keep you updated. thanks for patience.
+`
 Thu, Jan 15, 2004 at 06:03:20PM +0300, Sergey S. Kostyliov wrote:
 > On Monday 12 January 2004 15:28, Sergey S. Kostyliov wrote:
 > > Hello all,
