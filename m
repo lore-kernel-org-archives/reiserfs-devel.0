@@ -1,10 +1,10 @@
 From: Chris Mason <mason@suse.com>
-Subject: [PATCH] reiserfs v3 patches for 2.6.6-rc2
-Date: Fri, 23 Apr 2004 15:54:06 -0400
-Message-ID: <1082750045.12989.199.camel@watt.suse.com>
+Subject: [PATCH] 1/1 reiserfs: ignore prepared and locked buffers
+Date: Fri, 23 Apr 2004 15:57:43 -0400
+Message-ID: <1082750262.12989.204.camel@watt.suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18181-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18182-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -13,33 +13,24 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, akpm@osdl.org
 
-Hello all,
+mason@suse.com
 
-Thanks to Andrew for helping to test and feed many of the reiserfs
-patches into mainline.  I've rediffed against the current -mm and linus
-trees:
+block_write_full_page might see and lock clean metadata buffers, which leads
+to bogus vs-12339 messages.  Change the message to ignore bh locked.
 
-ftp.suse.com/pub/people/mason/patches/reiserfs/2.6.6-rc2
-
-The directory includes a series file to tell you the order to apply the
-patches.  The same series file should work with -mm kernels as well
-right now.
-
-New in this patch set is data=journal support, which fills out the
-compatibility list with the 2.4.x reiserfs data logging patches.  Other
-patches include:
-
-xattrs and acls (Jeff Mahoney)
-warning/error messages that include device names (Jeff Mahoney)
-quotas
-block allocator improvements
-metadata readahead for some types of tree searches
-
-data=journal is experimental, but most of the code changes don't kick in
-unless you mount with data=journal.
-
-The rest of the patches should be stable.
-
--chris
+Index: linux.mm/fs/reiserfs/do_balan.c
+===================================================================
+--- linux.mm.orig/fs/reiserfs/do_balan.c	2004-04-23 14:08:22.436537699 -0400
++++ linux.mm/fs/reiserfs/do_balan.c	2004-04-23 14:09:05.089418397 -0400
+@@ -1343,7 +1343,8 @@ static void check_internal_node (struct 
+ 
+ static int locked_or_not_in_tree (struct buffer_head * bh, char * which)
+ {
+-  if ( buffer_locked (bh) || !B_IS_IN_TREE (bh) ) {
++  if ( (!reiserfs_buffer_prepared(bh) && buffer_locked (bh)) || 
++        !B_IS_IN_TREE (bh) ) {
+     reiserfs_warning ("vs-12339: locked_or_not_in_tree: %s (%b)\n", which, bh);
+     return 1;
+   } 
 
 
