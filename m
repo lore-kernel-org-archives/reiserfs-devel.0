@@ -1,58 +1,44 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Wed, 01 Sep 2004 22:53:34 -0700
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <4136B55E.9080906@namesys.com>
-References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <20040902002431.GN31934@mail.shareable.org> <413694E6.7010606@slaphack.com> <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org>
+From: Jamie Lokier <jamie@shareable.org>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 2 Sep 2004 06:57:43 +0100
+Message-ID: <20040902055743.GA14177@mail.shareable.org>
+References: <20040829191044.GA10090@thundrix.ch> <3247172997-BeMail@cr593174-a> <20040831081528.GA14371@thundrix.ch> <20040901201608.GD31934@mail.shareable.org> <1094070506.28509.24.camel@shaggy.austin.ibm.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org>
+Return-path: <reiserfs-list-return-21253-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <1094070506.28509.24.camel@shaggy.austin.ibm.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dave Kleikamp <shaggy@austin.ibm.com>
+Cc: Tonnerre <tonnerre@thundrix.ch>, "Alexander G. M. Smith" <agmsmith@rogers.com>, spam@tnonline.net, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, Linus Torvalds <torvalds@osdl.org>, reiser@namesys.com, Christoph Hellwig <hch@lst.de>, fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com, vonbrand@inf.utfsm.cl
 
-Linus Torvalds wrote:
+Tonnerre wrote:
+> > > I'll write you a small daemon based on libmagic which stores the
+> > > file attributes in xattrs, or if they're not supported, in some
+> > > MacOS/Xish per-directory files. Even a file manager ("finder") can
+> > > do that, there's not even the need for a daemon.
 
->On Wed, 1 Sep 2004, David Masover wrote:
->  
->
->>And that is the right solution.  Not the only one, but the right one.
->>Caching isn't the only thing sorely in need of transaction support right
->>now.  Actually, I find it hard to think of anything on Linux which
->>shouldn't have transactions -- why should /etc/fstab or
->>/home/david/homework be more fragile than /var/lib/mysql?
->>    
->>
->
->It's easy to talk big. 
->
->It's damn hard to _implement_ a complex system, and make it stable and 
->bug-free, and support legacy applications.
->
->There is a reason why we do only what _must_ be done in kernel space.
->
->		Linus
->
->
->  
->
-Filesystems need transactions. Given that they need it, it was very 
-tempting to build an infrastructure offering some of the functionality 
-to user space, and so we did in reiser4. What we have is very 
-rudimentary, but I think I am prepared to say that important aspects of 
-high performance transactions are better done in the kernel than in user 
-space. It will be interesting to see what aspects of transaction 
-functionality belong in user space as our transactions API comes into 
-existence. Clearly there are some things about isolation that are better 
-implemented by user space because user space can make optimizations the 
-kernel doesn't know enough to make. Still, it will be interesting to see 
-how low we can make the overhead of isolation. Right now reiser4 
-supports atomicity but not isolation, which is to say we offer to 
-guarantee that a set of operations will either all survive a crash or 
-none of them will, but we don't let you roll them back without a crash. 
-(Originally I called this a transcrash rather than atomicity, but nobody 
-liked the term.) Being modest in our ambition was important to 
-performance, but maybe in time we will find a high performance way to be 
-more ambitious.
+Jamie Lokier wrote:
+> > (For example, if I edit an HTML file which is encoded in iso-8859-1,
+> > change it to utf-8 and indicate that in a META element, and save it
+> > under the same name, the full content-type should change from
+> > "text/html; charset=iso-8859-1" to "text/html; charset=utf-8".)
+> > 
+> > I don't see how you can do that without kernel support.
+
+Dave Kleikamp wrote:
+> Your html editor should do that.
+
+My html editor is "vi".  If I am supposed to manually set the
+content-type attribute after exiting vi, doesn't that rather
+invalidate the idea of a "small daemon based on libmagic" which sets
+it for me?
+
+That was the sole point of my statement.
+
+-- Jamie
