@@ -1,60 +1,39 @@
-From: Joe Wreschnig <piman@debian.org>
-Subject: Re: Fwd: reiser4 non-free?
-Date: Tue, 04 May 2004 13:44:25 -0500
-Message-ID: <1083696265.8699.2.camel@serenity>
-References: <13518599fb1119aa327235ecc3e01dc7@bouncing.localnet>
-	 <40974BB9.1000509@gmx.net> <4097C2E8.2030409@namesys.com>
-	 <20040504172017.GA8878@deprecation.cyrius.com>
-	 <4097D8DF.8010306@namesys.com>
+From: Rhyotte <rhyotte@myrealbox.com>
+Subject: Re: reiser4non-free
+Date: Tue, 04 May 2004 11:53:05 -0700
+Message-ID: <4097E691.9070001@myrealbox.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-T68lwCUL+XGDVkOg3pJf"
-Return-path: <bounce-debian-legal=debian-legal=m.gmane.org@lists.debian.org>
-In-Reply-To: <4097D8DF.8010306@namesys.com>
-Resent-Message-ID: <cD-rpC.A.CXG.ZQ-lAB@murphy>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18447-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-List-Post: <mailto:debian-legal@lists.debian.org>
-List-Help: <mailto:debian-legal-request@lists.debian.org?subject=help>
-List-Subscribe: <mailto:debian-legal-request@lists.debian.org?subject=subscribe>
-List-Unsubscribe: <mailto:debian-legal-request@lists.debian.org?subject=unsubscribe>
-List-Archive: <http://lists.debian.org/debian-legal/>
-To: Hans Reiser <reiser@namesys.com>
-Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
+   Hi all,
+  I am a normal end user, and of course new to the reiser lists. I was 
+curious enough about the new reiser to get fairly serious about "seeing" 
+who / what / where / when ect...
+@Hans - Sir on the one hand I honestly respect you and the crew making 
+Reiser4 possible. OTOH, can you all please get this leagal wrangle 
+sorted out? There are alot of end users who seriously want to get our 
+hands on the shipping Reiser4 FS!! But please, dont make me see a 
+"splash screen" upon every system bootup! The nvidia one is bad enough - 
+I wind up thinking of that one as " well my 3D acceleration is working". 
+But this aparent trend to accredit upon every fresh boot will surely 
+aggravate alot of people. For instance: Windows users wanting to migrate 
+will certainly not want to see yet more "stuff" upon bootup. IMHO, the 
+credits would be *GREAT* if they were put into the Install space. For me 
+personally that would be a very acceptable place to see that, and very 
+apropriate! I would very much like to see a "Dev-brag" as an intro as to 
+why R4FS is so awesome, then see the credits on WhoDunIt! Obviously I am 
+a pragmatic "windows" user (on a dual boot) who dont see the point of 
+being able to seriously abuse and deface a Dev-Team's seriously hard 
+work. But again please dont subject me to seeing it everytime i boot :)
 
---=-T68lwCUL+XGDVkOg3pJf
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hans and team: Thank You for all the hard work!
 
-On Tue, 2004-05-04 at 12:54, Hans Reiser wrote:
-> When you go to the opera, they don't come on stage and say buy XYZ, but=20
-> they do say something prominent on the brochure like "we thank the=20
-> generous ABC corporation for making this evening happen".  Debian should=20
-> follow that model, it works and is morally right to do.
-
-This is a very good analogy.
-
-Debian will happily print your credits in our "brochure"
-(/usr/share/doc/*reiser*/copyright), which is an optional read for
-people who want to see the opera (use the ReiserFS software). We'll even
-do it prominently, all caps, whatever. But we will not walk out on stage
-(print messages during use of the software) to advertise your
-filesystem.
-
-We do follow that model, it does work, and it is the right thing to do.
---=20
-Joe Wreschnig <piman@debian.org>
-
---=-T68lwCUL+XGDVkOg3pJf
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQBAl+SJTFkUq7Drx3cRAmnkAJ0ZvlMawwM0IL+njzuw/BUYljXOhwCgvJaO
-s5DSJSn/mV87zZ1gKi+RbHU=
-=Nusv
------END PGP SIGNATURE-----
-
---=-T68lwCUL+XGDVkOg3pJf--
-
+Gary Sheppard
