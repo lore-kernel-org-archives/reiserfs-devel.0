@@ -1,47 +1,32 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: fsck.reiser4
-Date: Mon, 22 Dec 2003 15:23:26 +0300
-Message-ID: <200312221523.26888.vitaly@namesys.com>
-References: <200312212203.52775.janfengler@web.de>
+From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Subject: Re: results of my filesystem test, xfs, jfs, ext3 and reiserfs
+Date: Mon, 22 Dec 2003 13:29:10 +0100
+Message-ID: <200312221329.10711.Dieter.Nuetzel@hamburg.de>
+References: <1072090011.4349.8.camel@redeeman.linux.dk>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16374-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16375-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200312212203.52775.janfengler@web.de>
+In-Reply-To: <1072090011.4349.8.camel@redeeman.linux.dk>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
-To: Jan Fengler <janfengler@web.de>, reiserfs-list@namesys.com
+To: Redeeman <redeeman@metanurb.dk>
+Cc: reiserfs-list@namesys.com
 
-Hello,=20
+Am Montag, 22. Dezember 2003 11:46 schrieb Redeeman:
+> i decided to make a little test between those filesystems, to test speed
+> and stability. i will not include the accurate numbers here as i have to
+> get it together, (my notes are messy :)) but i will tell how it was.
 
-On Monday 22 December 2003 00:03, Jan Fengler wrote:
-> Hello,
->
-> I have some trouble checking my reiser4 partition. I use fsck.reiser4
-> version 0.4.19 and libaal version 0.4.14 on linux-2.6.0-test11. I've
-> attached the logfile and the output from dmesg.
-> I dont know if it is a bug in fsck.reiser4, but if there is really an err=
-or
-> on my partition (everything works well 'til now), i think it should be
-> possible to correct it via fsck.
-> I've already tried to use the newest bitkeeper-sources of
-> libaal/reiserfs4progs, but the reiserfs4progs won't compile.
->
-> Thanks in advance for your attention!
-> =A0=A0=A0=A0=A0=A0=A0=A0Jan Fengler
+Reiser 3.xx _with_ data logging patches (ordered mode) or Reiser4?
 
-It seems this bug was already fixed, we have not released=20
-another reiser4progs snapshot yet, so you can wait a bit for=20
-the coming release or you can get the code from our bk=20
-repositories:
-
-bk clone bk://bk.namesys.com/bk/libaal
-bk clone bk://bk.namesys.com/bk/reiser4progs
+Greetings,
+	Dieter
 
 =2D-=20
-Thanks,
-Vitaly Fertman
+Dieter N=FCtzel
+@home: <Dieter.Nuetzel () hamburg ! de>
