@@ -1,73 +1,73 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: 2.5.46: SCSI and/or ReiserFS v3.6 broken? Kernel panic (fwd)
-Date: Thu, 7 Nov 2002 01:12:53 +0100
-Message-ID: <200211070112.53314.Dieter.Nuetzel@hamburg.de>
-References: <Pine.LNX.4.02.10211060930300.27381-100000@palpatine.science-computing.de>
+From: Todd Lyons <todd@mrball.net>
+Subject: Re: [reiserfs-dev] Re: [ANNOUNCE] reiser4 snaphots
+Date: Thu, 7 Nov 2002 01:02:56 -0800
+Message-ID: <20021107090256.GC11974@mrball.net>
+References: <9918235451.20021106132043@kgpa.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11939-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yVhtmJPUSI46BTXb"
+Return-path: <reiserfs-list-return-11940-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.02.10211060930300.27381-100000@palpatine.science-computing.de>
 Content-Disposition: inline
+In-Reply-To: <9918235451.20021106132043@kgpa.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Karsten Weiss <K.Weiss@science-computing.de>, Andrew Morton <akpm@digeo.com>
-Cc: Oliver Tennert <tennert@science-computing.de>, ReiserFS List <reiserfs-list@namesys.com>
+To: ReiserFS-List <reiserfs-list@namesys.com>
 
-Am Mittwoch, 6. November 2002 09:47 schrieb Karsten Weiss:
-> Hi Andrew!
->
-> > Dieter N=FCtzel wrote:
-> > > VFS: Cannot open root device "803" or 08:03
-> > > Please append a correct "root=3D" boot option
-> > > Kernel panic: VFS: unable to mount root fs on 08:03
-> >
-> > That was happening to me yesterday as well.  After a bit
-> > of poking around and recompiling, it mysteriously went away.
-> >
-> > The same has happened about ten times over the past few months,
-> > and rebuilding the world makes it go away.  On ext3.
-> >
-> > Something is definitely fishy.  It's unhelpful that it cures
-> > itself just as you get geared up to fix it.
-> >
-> > Does a full rebuild fix it for you?
->
-> For what it's worth (maybe it does ring a bell):
->
-> We have the same problem with kernels >=3D2.4.19 on ext3 partitions. It
-> happens in the last line of the SuSE-7.3 initial ramdisk linuxrc script.
 
-OK, it is a SuSE 7.3 based system.
-=20
-> However, if we comment out the last line of linuxrc it works:
+--yVhtmJPUSI46BTXb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have no "linuxrc" file.
+Oleg O. Ossovitskii wanted us to know:
 
-Even without initrd (didn't use it anyway) it do _NOT_ work.
+>BTW: is anywhere diff to apply Reiser4 to plain 2.5.x (not bk tree) or I h=
+ave to made this
+>manually (by hands)?
 
-> [...module loading skipped...]
-> mount -n -t proc proc /proc
-> mount -n -t ext3 /dev/sda4 /mnt
-> rm -f /mnt/.initrd 2>/dev/null
-> mkdir -p /mnt/.initrd
-> cd /mnt
-> pivot_root . .initrd
-> umount -n /.initrd/proc
-> !!!
-> exec sh -c 'umount -n /.initrd; rmdir /.initrd ; mount -n -oremount,ro /'
-> </dev/console >/dev/console 2>&1 !!!
->
-> The affected machines are HP X4000s (dual Xeon, 4 GB RAMBUS, SCSI
-> harddisks)
+It applied for me to the 2.5.45 tree with only one reject, mm/swap.c.
+It wants to add a #include, but what's there is not quite like what the
+patch expects.  You'll actually have to add two lines, not just one.
 
-With "pci=3Dnoacpi" at the boot prompt I get the aic7xxx "debug mode".
-How can I dump such stuff to a screen, file, line printer?
-=3D> SCSI and not ReiserFS
+Still compiling.  In the reiser4 code right now....well, it built and
+linked.  That's a good sign.
 
-Without 2.5.46 ;-(
+Here are the .config settings that I used:
+CONFIG_REISER4_FS=3Dm
+CONFIG_REISER4_CHECK=3Dy
+CONFIG_REISER4_DEBUG=3Dy
+CONFIG_REISER4_CHECK_STACK=3Dy
+CONFIG_REISER4_DEBUG_MODIFY=3Dy
+CONFIG_REISER4_DEBUG_MEMCPY=3Dy
+CONFIG_REISER4_DEBUG_NODE=3Dy
+CONFIG_REISER4_ZERO_NEW_NODE=3Dy
+CONFIG_REISER4_TRACE=3Dy
+CONFIG_REISER4_STATS=3Dy
+CONFIG_REISER4_DEBUG_OUTPUT=3Dy
+# CONFIG_REISER4_NOOPT is not set
 
-=2DDieter
+Curious if anybody feels that I should have chosen different values for
+any of the options.
+--=20
+Blue skies...		Todd
+| Get a bigger hammer!   |  Normal?  Normal is a setting on       |
+| http://www.mrball.net  |  my dryer.                             |
+| http://faq.mrball.net  |     BayCon 2001 http://www.baycon.org  |
+   Linux kernel 2.5.45   1 user,  load average: 1.19, 0.88, 0.40
+
+--yVhtmJPUSI46BTXb
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.7 (GNU/Linux)
+
+iD8DBQE9yixAIBT1264ScBURAjTUAJ9gkleVQpBLBkQTVtrp8nqwVcY8VwCcCyqm
+Io75H4P6lAVxpqKPLtfHde4=
+=XXsy
+-----END PGP SIGNATURE-----
+
+--yVhtmJPUSI46BTXb--
