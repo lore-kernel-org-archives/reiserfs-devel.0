@@ -1,33 +1,93 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: what happened to reiser4-for-2.6?
-Date: Sun, 03 Apr 2005 10:28:55 -0700
-Message-ID: <425027D7.8040801@namesys.com>
-References: <424F1B57.7030707@slaphack.com>
+From: Dan Oglesby <doglesby@teleformix.com>
+Subject: Re: ReiserFS 3.6 errors
+Date: Sun, 03 Apr 2005 21:58:31 -0500
+Message-ID: <4250AD57.1000309@teleformix.com>
+References: <42497B29.4020506@teleformix.com> <1112112098.4766.597.camel@tribesman.namesys.com> <42497F90.9000500@teleformix.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23765-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23766-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <424F1B57.7030707@slaphack.com>
+In-Reply-To: <42497F90.9000500@teleformix.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Dan Oglesby <doglesby@teleformix.com>
+Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
 
-David Masover wrote:
+Dan Oglesby wrote:
+> Vladimir Saveliev wrote:
+> 
+>> Hello
+>>
+>> On Tue, 2005-03-29 at 19:58, Dan Oglesby wrote:
+>>  
+>>
+>>> Greetings,
+>>>
+>>> I just finished installing a machine that uses ReiserFS v3.6 
+>>> filesystems, one of which is on a RAID-5 device off of a 3Ware 7506 
+>>> controller.
+>>>
+>>> After the build, a stress test was run that generates a lot of disk 
+>>> I/O, and I saw the following in dmesg:
+>>>
+>>> vs-500: unknown uniqueness 1162690892
+>>> vs-500: unknown uniqueness 1162690892
+>>> vs-500: unknown uniqueness 1162690892
+>>> vs-500: unknown uniqueness 1162690892
+>>> vs-500: unknown uniqueness 1162690892
+>>> vs-500: unknown uniqueness 1162690892
+>>> , item_len 14136, item_location 10272, free_space(entry_count) 11827
+>>> vs-5150: search_by_key: invalid format found in block 2029494. Fsck?
+>>> vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find 
+>>> stat data of [40 171378 0x0 SD]
+>>> is_leaf: item location seems wrong (second one): *3.6* [40 357194 0x0 
+>>> SD], item_len 44, item_location 2412, free_space(entry_count) 65535
+>>> vs-5150: search_by_key: invalid format found in block 3864557. Fsck?
+>>> vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find 
+>>> stat data of [40 357181 0x0 SD]
+>>> vs-500: unknown uniqueness 1647255672
+>>> vs-500: unknown uniqueness 1647255672
+>>> vs-500: unknown uniqueness 1647255672
+>>> vs-500: unknown uniqueness 1647255672
+>>> vs-500: unknown uniqueness 1647255672
+>>> vs-500: unknown uniqueness 1647255672
+>>> , item_len 27951, item_location 29803, free_space(entry_count) 28265
+>>> vs-5150: search_by_key: invalid format found in block 4488286. Fsck?
+>>> vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find 
+>>> stat data of [40 453681 0x0 SD]
+>>>
+>>> I did see something in the FAQ about requiring a reboot after 
+>>> changing partitions on a disk.  Unfortunately, I didn't see this 
+>>> until after the machine was built.  Could these errors be caused from 
+>>> a lack of a reboot between partitioning the disk and running mkreiserfs?
+>>>
+>>>   
+>>
+>> I do not think so.
+>>
+>>  
+>>
+>>> This is on a RedHat 7.3 system, using kernel 2.4.20.
+>>>   
+>>
+>> 2.4.20 is quite old. Would it be possible to use newer kernel? 2.4.29,
+>> namely?
+>>
+>>  
+>>
+> At this point I cannot update the kernel.  I am using the 2.4.20 kernel 
+> due to limitations of some of the software that runs on this machine.
+> 
+> I am going to take another look at the hardware (make sure everything's 
+> cabled properly, etc), reinstall the OS, and remake the filesystems.
+> 
 
-> reiser4-for-2.6 stops at 2.6.10, and after that, all I can find are
-> patches to mm.  Reiser4 seems stable for me, mm does not.  Are there
-> still patches somewhere?
+After recreating the reiserfs filesystems, making no other changes, I 
+see zero errors in dmesg.
 
-There was a 2.6.11 patch on our website last week, but I did hear that
-vs had found a bug, so maybe he pulled it.  On monday he will tell us.
+Machines have had stress testing performed, no problems so far.
 
->
-> Also, whoever's in charge of this list, I know my address was bouncing
-> mail for a bit -- did I get kicked from the list, or is there just no
-> traffic these days?
-
-No traffic.
+--Dan
