@@ -1,66 +1,21 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: Was able to reproduce "cp: cannot stat file.x: Input/output error"
-Date: Mon, 09 Aug 2004 23:21:17 -0400
-Message-ID: <200408100321.i7A3LHxu027087@turing-police.cc.vt.edu>
-References: <20040807065039.5BF4E15CBC@mail03.powweb.com>
-            <41148997.4070404@namesys.com>
+From: Ramachandra K <ariston@gmail.com>
+Subject: Re: implementing reiserfs in C++ for a new OS
+Date: Mon, 9 Aug 2004 22:26:24 -0700
+Message-ID: <71d3364904080922267e8c14af@mail.gmail.com>
+References: <71d3364904080706112e72fb6b@mail.gmail.com> <41151698.3020508@namesys.com> <71d3364904080907361d3d7064@mail.gmail.com> <41178FA8.80107@futuretg.com> <20040809151252.GN1284@nysv.org> <411796CC.6070509@futuretg.com> <20040809153556.GO1284@nysv.org> <20040809170145.GE5429@parcelfarce.linux.theplanet.co.uk> <20040809172437.GP1284@nysv.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1028717064P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20113-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20114-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Sat, 07 Aug 2004 00:49:43 PDT."
-             <41148997.4070404@namesys.com> 
+In-Reply-To: <20040809172437.GP1284@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: David Dabbs <david@dabbs.net>, 'ReiserFS List' <reiserfs-list@namesys.com>
-
---==_Exmh_1028717064P
 Content-Type: text/plain; charset="us-ascii"
-Content-Id: <12297.1092108075.1@turing-police.cc.vt.edu>
+To: reiserfs-list@namesys.com
 
-On Sat, 07 Aug 2004 00:49:43 PDT, Hans Reiser said:
+Let me clarify that the nature of Capital project is academic research.
 
-> >I think I have discovered the problem - unless there was a reason mongo was
-> >issuing mount/unmount commands at the start/end of a mongo 'run' as well as
-> >before/after _each phase_.
-
-> Probably someone wanted to separate the measurement of the phases.  It 
-> has been a while since I read mongo.....
-
-Note that an unmount/mount pair will force a flush of all dirtied pages in the
-in-memory file cache, and *really* not return until it's really done and really
-out on disk.  In addition, sync() will force stuff to disk, but *not* invalidate
-in-cache pages - more drastic measures are needed if you want to benchmark
-with a cold cache (which is almost a must if you're doing actual filesystem
-benchmarking, as otherwise you're benching the in-core cache instead).
-
-As an aside, although the Linux fs/buffer:do_sync() won't return until it's
-all really done, there is no mandate that the sync() syscall wait (and in fact,
-is the source of the old "type 'sync' three times, then 'halt'" - the second
-and third times you typed sync and hit return hopefully gave the I/O scheduled
-by the *first* sync time to complete.  At least one 'Unix for Dummies' book
-proved their lack of depth of understanding when they recommended:
-
-# sync;sync;sync;halt
-
-;)
-
-
---==_Exmh_1028717064P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFBGD8scC3lWbTT17ARAiFzAJ9skWNu1U4Pfgl3e5Lwljc8I23Y4wCgzfDT
-RlDYg6cNnzvi4Ww3fOKWceM=
-=9e0o
------END PGP SIGNATURE-----
-
---==_Exmh_1028717064P--
+rgds
+Ram
