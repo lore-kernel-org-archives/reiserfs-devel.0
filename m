@@ -1,33 +1,32 @@
-From: Szakacsits Szabolcs <szaka@sienet.hu>
-Subject: Re: Re: Formatted over NTFS
-Date: Thu, 4 Mar 2004 11:50:56 +0100 (MET)
-Message-ID: <Pine.LNX.4.21.0403041121140.25854-100000@mlf.linux.rulez.org>
-References: <20040304084219.NOLN5247.out014.verizon.net@outgoing.verizon.net>
+From: Pascal Gienger <pascal.gienger@uni-konstanz.de>
+Subject: Re: [Jfs-discussion] Re: Desktop Filesystem Benchmarks in 2.6.3
+Date: Thu,  4 Mar 2004 15:37:47 +0100
+Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <1078411067.40473f3b6b835@webmail.uni-konstanz.de>
+References: <4044119D.6050502@andrew.cmu.edu>  <40453538.8050103@animezone.org> <20040303014115.GP19111@khan.acc.umu.se>  <200403030700.57164.robin.rosenberg.lists@dewire.com> <1078307033.904.1.camel@teapot.felipe-alfaro.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17075-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <20040304084219.NOLN5247.out014.verizon.net@outgoing.verizon.net>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
+In-Reply-To: <1078307033.904.1.camel@teapot.felipe-alfaro.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: gmartyn@verizon.net
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Felipe Alfaro Solana <felipe_alfaro@linuxmail.org>
+Cc: Robin Rosenberg <robin.rosenberg.lists@dewire.com>, David Weinehall <david@southpole.se>, Andrew Ho <andrewho@animezone.org>, Dax Kelson <dax@gurulabs.com>, Peter Nelson <pnelson@andrew.cmu.edu>, Hans Reiser <reiser@namesys.com>, linux-kernel <linux-kernel@vger.kernel.org>, ext2-devel@lists.sourceforge.net, ext3-users@redhat.com, jfs-discussion@oss.software.ibm.com, reiserfs-list@namesys.com, linux-xfs@oss.sgi.com
 
+Quoting Felipe Alfaro Solana <felipe_alfaro@linuxmail.org>:
 
-On Thu, 4 Mar 2004 gmartyn@verizon.net wrote:
-> Find a program like Easy Recovery Professional. It will recover anything, 
-> unless the place on disk that the file was stored has been completely written 
-> over. It will recover files from NTFS even if both the MFT and the backup MFT 
-> have been destroyed. Unfortunately it's also expensive as hell. Retail is 
-> $1,500. The lite version is $89, but only recovers 25 files at a time. 
+> But XFS easily breaks down due to media defects. Once ago I used
+> XFS,
+> but I lost all data on one of my volumes due to a bad block on my
+> hard
+> disk. XFS was unable to recover from the error, and the XFS recovery
+> tools were unable to deal with the error.
 
-There are free tools doing the same. Search sourceforge, freshmeat, etc.
+1. How long ago is "Once ago"? Did you report that to the xfs
+developers?
+2. Speaking for servers, we live in a RAID and/or SAN-world. The media
+error issue is a non-issue.
 
-It could be also coded (probably in some hours) using libntfs from
-ntfsprogs, most needed code is already there.
+Just my $0.02,
 
-	Szaka
-
+Pascal
