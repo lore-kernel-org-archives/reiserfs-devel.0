@@ -1,66 +1,51 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: fsck.reiser4 wrong size error (?)
-Date: Fri, 13 Aug 2004 00:08:15 +0400
-Message-ID: <20040812200815.GB13834@backtop.namesys.com>
-References: <cd32a06204080910256de4cc0e@mail.gmail.com> <200408102156.00690.vitaly@namesys.com> <200408102009.39695.frbiscani@jumpy.it> <200408122138.46787.frbiscani@jumpy.it>
+From: "Lamont R. Peterson" <lamont@gurulabs.com>
+Subject: Re: SMART Self-Test Reports UNC Errors on Dell Latitude D800
+	Hitachi Travelstar DK23FB
+Date: Thu, 12 Aug 2004 14:18:59 -0600
+Message-ID: <1092341939.2251.3.camel@wraith.lrp.advansoft.us>
+References: <1092327723.16346.7.camel@turing.optivel.com>
+	 <200408121932.08943.bernd-schubert@web.de>
+Reply-To: lamont@gurulabs.com
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20241-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-y8Rx9vlu66t3SN/OjbNc"
+Return-path: <reiserfs-list-return-20242-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200408122138.46787.frbiscani@jumpy.it>
+In-Reply-To: <200408121932.08943.bernd-schubert@web.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Francesco Biscani <frbiscani@jumpy.it>
-Cc: reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Thu, Aug 12, 2004 at 09:38:46PM +0200, Francesco Biscani wrote:
-> On Tuesday 10 August 2004 20:09, Francesco Biscani wrote:
-> > Hi,
-> >
-> > > are messages about 'wrong size' or about 'wrong bytes' or both?
-> >
-> > I'm _almost_ sure it's about "wrong bytes". I'll confirm ASAP. Are they
-> > potentially harmful?
-> >
-> > Oh, BTW, "debugfs -C" worked ok here.
-> >
-> > Regards,
-> >
-> >   Francesco
-> 
-> An update for those interested:
-> 
-> - it was a "wrong bytes" message. All the bytes of affected objects were 
-> doubled. Corrected with --fix and using now auto-snapshot for 2.6.8-rc4-mm1. 
-> Let's see if it happens again.
-> - debugfs -C worked ok also on my / partition.
-> 
-> BTW, debugfs -p showed also that the default plugin for fibration was changed, 
-> from dot-o to ext-1. But if I create a dir it is still dot-o-fibrated. Am I 
-> missing something here? Should I mount with some special options to have 
-> ext-1 fibration as default?
+--=-y8Rx9vlu66t3SN/OjbNc
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-a. mkfs.reiser4 has options to set default fibration plugin.
-b. you can change fibration plugin for empty dir through metas/ interface.
+On Thu, 2004-08-12 at 11:32, Bernd Schubert wrote:
+> Whats your definition of 'reformating'? Its certainly not=20
+> 'mkreiserfs /dev/my_partition'. You would need a tool for a low level for=
+mat=20
+> of the disk, I don't know if there are any for IDE disks.
 
-darkstar:/mnt/testfs # mkdir foo
-darkstar:/mnt/testfs # cat foo/metas/plugin/fibration ; echo
-2 ext-1 fibrate file by single character extension
-darkstar:/mnt/testfs # echo -e "dot-o\0" > foo/metas/plugin/fibration
-darkstar:/mnt/testfs # cat foo/metas/plugin/fibration ; echo
-1 dot-o fibrate .o files separately
+SpinRite
 
-darkstar:/mnt/testfs # mkdir foo/bar
-darkstar:/mnt/testfs # cat foo/bar/metas/plugin/fibration
-1 dot-o fibrate .o files separately
+[SNIP]
+--=20
+Lamont R. Peterson <lamont@gurulabs.com>
+Senior Instructor
+Guru Labs, L.C. http://www.GuruLabs.com/
 
-> Thanks,
-> 
->   Francesco
+--=-y8Rx9vlu66t3SN/OjbNc
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
--- 
-Alex.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQBBG9CyRK8Q4zt1QRURAgE+AKCgLSLVRBu8cNlaiOLIIwrztS+ijACcDvJ1
+nPo9JZDty6tmgHW1mWVLtiQ=
+=1Qb9
+-----END PGP SIGNATURE-----
+
+--=-y8Rx9vlu66t3SN/OjbNc--
+
