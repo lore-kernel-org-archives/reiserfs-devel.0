@@ -1,39 +1,114 @@
-From: Bingner Sam J Contractor PACAF CSS/SCHE <Sam.Bingner@hickam.af.mil>
-Subject: RE: Reiserfs oops
-Date: Thu, 10 Apr 2003 18:32:05 -0000
-Message-ID: <A6B0BFA3B496A24488661CC25B9A0EFA0325C65E@himl07.hickam.pacaf.ds.af.mil>
+From: Christian Folini <christian.folini@netnea.com>
+Subject: rebuild-tree hangs
+Date: Fri, 11 Apr 2003 03:53:12 +0200
+Message-ID: <20030411015312.GA20912@coloppl>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13636-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13637-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Anders Widman' <andewid@tnonline.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-RAID0 = appending or striping, no redundancy
-RAID1 = mirroring
+Hello,
 
-http://www.cs.wustl.edu/cs/cs/archive/CS401_SP01/mar23/slide3.html
+Doing a rebuild tree on a 50GB partition hanged
+with a 2GB log-file of the same line.
 
-> -----Original Message-----
-> From: Anders Widman [mailto:andewid@tnonline.net]
-> Sent: Thursday, April 10, 2003 8:27 AM
-> To: reiserfs-list@namesys.com
-> Subject: Re: Reiserfs oops
-> 
-> 
-> >>         Oleg, I'm seeing the attached oops's when a hard 
-> drive failure is
-> >> encountered. There are four drives in RAID 1. Is it normal 
-> for reiserfs to
-> >> oops when a drive fails?
-> 
-> You mean raid5/raid0 ?
-> 
-> Is  not RAID1 = striping without redundancy? Or am I the one who is to
-> tried right now? ;)
-> 
+These are my infos:
+machine: AMD 1800+
+drive:  IC35L120AVVA07-0, ATA DISK drive
+ (It's an IBM 120GB Diskstar (?))
+kernel: vanilla 2.4.20
+distribution: debian testing/unstable
+
+reiserfsprogs: debian 3.6.4-4
+
+reiserfs log-file:
+head: 
+
+******************************************************
+* Warning: The dma on your hard drive is turned off. *
+* This may really slow down the fsck process.        *
+******************************************************
+####### Pass 0 #######
+7545 directory entries were hashed with "r5" hash.
+####### Pass 1 #######
+####### Pass 2 #######
+do_pass_2: The block (level=35848, nr_items=39427, free_space=30815
+rdkey), marked as a leaf on the first two passes, is not a leaf! Will be
+skipped.
+
+tail:
+do_pass_2: The block (level=35848, nr_items=39427, free_space=30815
+rdkey), marked as a leaf on the first two passes, is not a leaf! Will be
+skipped.
+do_pass_2: The block (level=35848, nr_items=39427, free_space=30815
+rdkey), marked as a leaf on the first two passes, is not a leaf! Will be
+skipped.
+do_pass_2: The block (level=35848, nr_items=39427, free_space=30815
+rdkey), marked as a leaf on the first two passes, is not a leaf! Will be
+skipped.
+do_pass_2: The block (level=35848, nr_items=39427, free_space=30815
+rdkey), marked as a leaf on the first two passes, is not a leaf! Will be
+skipped.
+do_pass_2: The block (level=35848, nr_items=39427, free_space=30815
+rdkey), marked as a leaf on the first two passes, is not a leaf! Will be
+skipped.
+do_pass_2: The block (level=35848, nr_items=39427, free_space=30815
+rdkey), marked as a leaf on the first two passes, is not a leaf! Will be
+skipped.
+do_pass_2: The block (level=35848, nr_items=39427, free_space=30815
+rdkey), marked as a leaf on the first two passes, is not a leaf! Will be
+skipped.
+do_pass_2: The block (level=35848, nr_items=39427, free_space=30815
+rdkey), marked as a leaf on the first two passes, is not a leaf! Will be
+skipped.
+do_pass_2: The block (level=35848, nr_items=39427, free_space=30815
+rdkey), marked as a leaf on the first two passes, is not a leaf! Will be
+skipped.
+do_pass_2: The block (level=35848, nr_items=39427, free_s
+
+                                                    ^^^^^^hang
+
+root@coloppl:/home/dune73/data# l reiserfsck-hdb8-11042003.log 
+-rw-r--r--    1 root     root     2147483648 2003-04-11 03:32
+reiserfsck-hdb8-11042003.log
+
+
+The fsck hanged litterally immediately after starting pass 2.
+Screen:
+
+Pass 2:
+0%....20%....40%..                                             left 342,
+0 /sec
+
+
+afterwards i tried to rebuild my superblock. Did not help
+anymore...
+
+It says:
+
+Do you want to run this program?[N/Yes] (note need to type Yes if you
+do):Yes
+super.c 218 rebuild_sb
+Reiserfs with standard journal found, but there was specified a journal
+dev
+
+No log-file returned.
+
+
+I am not subscribed to this mailinglist, please get back via
+private mail.
+
+Any help would be appreciated.
+
+Christian Folini - loosing a lot of radio-shows he had no
+space to backup
+
+-- 
+Christian Folini - <christian.folini@netnea.com>
