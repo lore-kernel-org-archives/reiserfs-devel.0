@@ -1,60 +1,90 @@
-From: Spam <spam@tnonline.net>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Wed, 1 Sep 2004 01:20:58 +0200
-Message-ID: <875639874.20040901012058@tnonline.net>
-References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl>
- <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org>
- <m3eklm9ain.fsf@zoo.weinigel.se>
-Reply-To: Spam <spam@tnonline.net>
+Date: Tue, 31 Aug 2004 20:10:04 -0500
+Message-ID: <4135216C.5090308@slaphack.com>
+References: <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <20040826100530.GA20805@taniwha.stupidest.org> <20040826110258.GC30449@mail.shareable.org> <20040827210638.GE709@openzaurus.ucw.cz> <4133CDA6.4060105@slaphack.com> <20040831082144.GA535@elf.ucw.cz>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21190-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21191-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <m3eklm9ain.fsf@zoo.weinigel.se>
+In-Reply-To: <20040831082144.GA535@elf.ucw.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Christer Weinigel <christer@weinigel.se>
-Cc: Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Pavel Machek <pavel@ucw.cz>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-  
+Pavel Machek wrote:
+| Hi!
+|
+|
+|>| uservfs does
+|>|
+|>| cd foo.deb#uar
+|>cd foo.deb/ar
+|>| vs.
+|>| cd foo.deb#udeb
+|>cd foo.deb/deb
+|>
+|>and why would you want that, instead of just:
+|>cd foo.deb	# for the ar
+|>dpkg -i foo.deb	# for the deb
+|
+|
+| Because I want to see contents of that .deb package, nicely parsed?
+|
+|
+|>Just want to extract the tar file?  Maybe something like
+|>cat foo.tgz/gunzip
+|>In which case (of course) foo.tgz/gunzip has exactly the same directory
+|>contents as foo.tgz
+|
+|
+| Yes, that would work.
+|
+|
+|>In fact, for just about any syntax anyone could suggest, I can't really
+|>see why you can't just replace all weird symbols with a slash and a
+|>symbol.  Instead of
+|>	foo.tgz#utar
+|>you have
+|>	foo.tgz/#/utar
+|>Only difference is, some things which used to require special tools can
+|>now be serviced by less than what's in busybox.
+|
+|
+| That would work, too. I do not get your comment about busybox.
 
-> Linus Torvalds <torvalds@osdl.org> writes:
+Busybox is a bare minimum of unix tools, yet still includes things like
+tar/bz2.  With such a system, you can use the most basic (sub-GNU)
+versions of tools like cp, cat, sh, ls, and so on, to do much more
+complex operations.  What's more, you can see everything you can do to a
+file just by looking at it.  I can certainly imagine doing
+	cat foo.tgz/metas/README
+rather than a google search for tgz, followed by a "man tar" and "man
+gzip". Assuming I know nothing about tar/gzip files, it's a lot easier
+as a new user to have one common interface for everything -- including
+docs.  Fewer commands to memorize, faster to learn new stuff.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
->> In a graphical environment, the "icon" stream is a good example of this.
->> It literally has _nothing_ to do with the data in the main stream. The
->> only linkage is a totally non-technical one, where the user wanted to
->> associate a secondary stream with the main stream _without_ altering the
->> main one. THAT is where named streams make sense.
-
-> I think that the "icon" argument for named streams is a silly
-> argument, since different users may want to have different icons for
-> the same file.  Say that I want /usr/bin/emacs to have the enterprise
-> icon and someone else wants the gnu head icon.  And besides, root owns
-> the file anyways, so neither of us mortal users should be able to add
-> a stream to it.
-
-  Yet again are we thinking in blocking ways. Firstly this was an
-  example. Usually, though, most users accept the default icon for a
-  file. If they do not they can still change the icon for the link
-  they make on their start-menu/home folder/etc.
-
-> Another reason for named streams that usually crops up is the ability
-> set a "preferred application" for a certain file, so that when I
-> double click on a document I want to open it with antiword instead of
-> openoffice.  But the same contra-argument applies here, different
-> users have different preferences.
-
-  I can make the same argument as for the icons.
-
-> I can see the argument for having the equivalent of Content-type or
-> Content-transfer-encoding as a named stream though.
-
-  That would be a nice thing.
-
->   /Christer
-
-
+iQIVAwUBQTUha3gHNmZLgCUhAQKRJw/7BUEm41gKZGoVj7gOkcUVe/SRdTs9WtTL
+jkjCX8Zzr/1nnAKTHLqNJEiAJ68Ndf+dRhDfL5y6dDHhOy/Dx+38SzsWz+dQnMJ0
+Fiq5fFDO/DTd0UPecXYPhBrtVeCdfjyyENhgRgJud6D8F39qvLWrZFUsIkjAA3lj
+nzZ/48jRPDWT/mF6JJmv0RfVvNtMWh9HUcW/i0+n4WZU1yFp6jyiF5ExCOP84z3x
+yXQ4Q9hnjgt52MDJTrGsCDvfCSQscQilxvXbl0iaozquIhG9Jz1XNYpij2XUygFi
+RDc1LA1k74VvbWahlkdfbTI+3P4qeMYGBblmfwXVDRwW0i4NH7X0/6xcnr1QjaK/
+f/7EHBz0wnkIG4OpcGWzu9ik4WOR0WXapKrd938XC/mG+WzIluJlQsxG1A2HoRqg
+R66E/mVMVvHJWnJjrW6s10WIemPiKnuXgeIVPifsw81DLXlZ3wxjlZU3iuo7xked
+O6wNDFQBWQR8kv+EMDIt3gtbUdB+5KpxGR+Yli0AjxEdpdk3oZTfe5XQiNdJhcl5
+xrcomVKXGvR96IlNUwHy1EsQk5LySMl101vJIS4z6i7lAIM5CQ1d6eOZrPp/DBOP
+Rw0KoQaiPd3SKNMgoyWSKQL6h85i1PRUN62WH0T2NRU1fZ3EazpiRZr+fuaFqFT9
+Wk2lkDvm5yw=
+=ShWo
+-----END PGP SIGNATURE-----
