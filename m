@@ -1,50 +1,48 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: vs-7000 errors after disks forced online in a RAID5 HW setup
-Date: Wed, 19 May 2004 10:21:00 +0400
-Message-ID: <1084947659.1431.120.camel@tribesman.namesys.com>
-References: <20040519014933.4d9b5d3e@philou.gramoulle.local>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: ReiserFS Maximum file size (in practice)
+Date: Wed, 19 May 2004 12:33:16 +0400
+Message-ID: <20040519083316.GJ16332@backtop.namesys.com>
+References: <40AA74CA.5040306@suse.com> <1084927507.27142.2.camel@watt.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-18759-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18761-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040519014933.4d9b5d3e@philou.gramoulle.local>
+Content-Disposition: inline
+In-Reply-To: <1084927507.27142.2.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-9"
-To: Philippe =?ISO-8859-1?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Cc: ReiserFS Mailing List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <mason@suse.com>
+Cc: Jeff Mahoney <jeffm@suse.com>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Hello
+On Tue, May 18, 2004 at 08:45:07PM -0400, Chris Mason wrote:
+> On Tue, 2004-05-18 at 16:40, Jeff Mahoney wrote:
+> > Hey all -
+> > 
+> > The ReiserFS FAQ that we quote and point people to when they ask 
+> > questions about limits in ReiserFS states that the maxmimum file size 
+> > for a reiserfs v3 filesystem is 2^60-1. However, the actual limits, in 
+> > practice, are far less.
+> > 
+> > I tried to create a 3 TB sparse file, and ended up getting told it was 
+> > too large. 2 TB was too large also, just under 2 TB was ok.
+> > 
+> > This is a result of super->s_maxbytes = (512LL << 32) - s->s_blocksize;, 
+> > in fs/reiserfs/super.c, which is set so that i_blocks isn't overflowed.
+> > 
+> > Other filesystems that have the ability to cross the 2 TB limit on file 
+> > sizes simply ignore the limit and allow i_blocks to wrap. There's really 
+> > no reason we can't do the same.
+> > 
+> > The patch is attached.
+> 
+> Are quotas happy with this?
 
-On Wed, 2004-05-19 at 03:49, Philippe Gramoull=E9 wrote:
->  Hello,
->=20
-> Yesterday, we were hit with a hardware failure that left us with no choic=
-e that forcing a failed disk online
-> , in a HW RAID5 setup on one of our NFS server.
->=20
-> Now, logs are filled with :
->=20
-> vs-7000: search_by_entry_key: search_by_key returned item position =3D=3D=
- 0<4>zam-7001: io error in reiserfs_find_entry
-> vs-7000: search_by_entry_key: search_by_key returned item position =3D=3D=
- 0<4>zam-7001: io error in reiserfs_find_entry
-> vs-7000: search_by_entry_key: search_by_key returned item position =3D=3D=
- 0<4>zam-7001: io error in reiserfs_find_entry
->=20
-> etc...
->=20
-> Can i skip the reiserfsck --check and do directly a reiserfsck --rebuild-=
-tree ?
-> (around 470Go of data , 70% of the available space)
->=20
+quota database initialization is affected, I guess.
 
-Yes, reiserfsck --check will probably say you to do that
+> -chris
 
-> Thanks,
->=20
-> Philippe
->=20
-
+-- 
+Alex.
