@@ -1,45 +1,29 @@
-From: Oleg Drokin <green@namesys.com>
+From: Julian Picht <JPicht85@web.de>
 Subject: Re: data loss with reiserfs
-Date: Fri, 21 Jun 2002 21:25:43 +0400
-Message-ID: <20020621212543.A1160@namesys.com>
-References: <200206211920.38534.JPicht85@web.de>
+Date: Fri, 21 Jun 2002 19:59:17 +0200
+Sender: JPicht85@web.de
+Message-ID: <200206211959.17837.JPicht85@web.de>
+References: <200206211920.38534.JPicht85@web.de> <20020621212543.A1160@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10784-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10785-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <200206211920.38534.JPicht85@web.de>
+In-Reply-To: <20020621212543.A1160@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julian Picht <JPicht85@web.de>
-Cc: reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
 
-Hello!
+> you mean
+> umount /dev/hdb3 ; reiserfsck --check /dev/hdb3
+> produces error about device being already mounted?
+Yes
 
-On Fri, Jun 21, 2002 at 07:21:37PM +0200, Julian Picht wrote:
+> Anything interesting in logs?
+Not in that logs I looked in.
 
-> So i wanted to do "reiserfsck" but when I mounted the drive read/write it said
-> ----------------------
-> reiserfsck 3.x.1b (2002)
-> Will read-only check consistency of the filesystem on /dev/hdb3
-> Will put log info to 'stdout'
-> 
-> Do you want to run this program?[N/Yes] (note need to type Yes):Yes
-> ###########
-> reiserfsck --check started at Fri Jun 21 19:13:18 2002
-> ###########
-> Device /dev/hdb3 is mounted w/ write permissions, can not check it
-> ----------------------
-> When I mounted it read only it said the same, also when I did not mount the 
-> device at all: the same message.
+> I hope /dev/hdb3 is not your root device?
+Well... it is.
 
-you mean
-umount /dev/hdb3 ; reiserfsck --check /dev/hdb3
-produces error about device being already mounted?
-Anything interesting in logs?
-I hope /dev/hdb3 is not your root device?
-
-Bye,
-    Oleg
+greetings Julian Picht
