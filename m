@@ -1,46 +1,57 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
+From: "Henrique Faria" <henrique@streamworks.com.br>
 Subject: Re: Data loss during power off
-Date: Thu, 27 Jun 2002 12:58:56 +0400
-Message-ID: <15642.54224.10820.439183@laputa.namesys.com>
-References: <20020626183449.28888.qmail@hm47.locaweb.com.br>
-	<15642.50802.781189.290156@laputa.namesys.com>
-	<20020627105350.18f49649.philippe.gramoulle@mmania.com>
+Date: Thu, 27 Jun 2002 12:36:07
+Message-ID: <20020627153607.1352.qmail@hm47.locaweb.com.br>
+References: <1025189617.1657.19.camel@tiny>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10864-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10865-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020627105350.18f49649.philippe.gramoulle@mmania.com>
+In-Reply-To: <1025189617.1657.19.camel@tiny>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Philippe =?ISO-8859-1?B?R3JhbW91bGzp?= <philippe.gramoulle@mmania.com>
-Cc: reiserfs <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Chris Mason <mason@suse.com>, Henrique Faria <henrique@streamworks.com.br>, reiserfs-list@namesys.com
 
-Philippe Gramoull=E9 writes:
- > On Thu, 27 Jun 2002 12:01:54 +0400
- > Nikita Danilov <Nikita@namesys.com> wrote:
- >=20
- >   |   > By the way, when reiser4 will be available?
- >   | =20
- >   |  See http://www.namesys.com:
- >   | =20
- >   |  Reiser4 is due 30 Sept. 2001.
- >   | =20
- >=20
- > <grin>
- > Well, too bad it's been out since almost a year and nobody knew about  ;=
-o))
- > </grin>
+I'll try the patch! Can JOURNAL_MAX_TRANS_AGE be zero? Do I need to set up
+JOURNAL_MAX_COMMIT_AGE too?
 
-I have done too much debugging recently, it seems...
+On 27 Jun 2002 10:53:37 -0400, Chris Mason <mason@suse.com> escreveu :
 
- >=20
- > Still, i'll definitely look for 30 Sept. 2002 :o)
- >=20
- > Cheers,
- >=20
- > Philippe
- >=20
-
-Nikita.
+> De: Chris Mason <mason@suse.com>
+> Data: 27 Jun 2002 10:53:37 -0400
+> Para: Henrique Faria <henrique@streamworks.com.br>
+> Assunto: Re: [reiserfs-list] Data loss during power off
+> 
+> On Tue, 2002-06-25 at 17:09, Henrique Faria wrote:
+> > Hello!
+> > We're using reiserfs 3.6.25 and linux 2.4.18, in a 256 MB flash memory
+card,
+> > to develop a game. Data is written all the time, in local files, by the
+main
+> > process. The "power off" test has to be done, for the machines will be
+> > turned off with no shutdown process.
+> > What's happening: pressing the power off button (during data writing)
+makes
+> > data to be lost. Is it possible to force the data to be written in the
+file
+> > system? I tried to change the JOURNAL_MAX_TRANS_AGE and the
+> > JOURNAL_MAX_COMMIT_AGE consts. Less data is lost, but I still get some
+loss.
+> > Thanks,
+> 
+> The data logging patches also include data=ordered mode.  Using that,
+> plus setting the max trans age (or max batch count), will flush data
+> blocks right away.
+> 
+> I'm waiting for a tester to confirm I've fixed the page locking problem
+> w/writepage in the current data logging patch, then I'll do a new
+> release.
+> 
+> -chris
+> 
+> 
+> 
+> 
+> 
