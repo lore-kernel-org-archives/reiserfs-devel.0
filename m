@@ -1,78 +1,67 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Fri, 03 Sep 2004 12:02:49 -0400
-Message-ID: <1094227041.6301.21.camel@watt.suse.com>
-References: <20040826150202.GE5733@mail.shareable.org>
-	 <200408282314.i7SNErYv003270@localhost.localdomain>
-	 <20040901200806.GC31934@mail.shareable.org>
-	 <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
-	 <20040902002431.GN31934@mail.shareable.org> <413694E6.7010606@slaphack.com>
-	 <Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org>
-	 <4136A14E.9010303@slaphack.com>
-	 <Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org>
-	 <4136C876.5010806@namesys.com>
-	 <Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org>
-	 <4136E0B6.4000705@namesys.com>  <14260000.1094149320@flay>
-	 <1094154744.12730.64.camel@voyager.localdomain>
-	 <4137BC3C.4010207@slaphack.com>  <413810B6.7020805@namesys.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21439-reiserfs=m.gmane.org@namesys.com>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
+Subject: Re: silent semantic changes with reiser4
+Date: Fri, 03 Sep 2004 13:12:47 -0400
+Message-ID: <200409031712.i83HCmEN027415@laptop11.inf.utfsm.cl>
+References: <gj@pointblue.com.pl>
+Return-path: <reiserfs-list-return-21440-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <413810B6.7020805@namesys.com>
+In-Reply-To: Message from =?UTF-8?B?R3J6ZWdvcnogSmHFm2tpZXdpY3o=?= <gj@pointblue.com.pl> 
+   of "Fri, 03 Sep 2004 06:36:41 +0200." <4137F4D9.7040206@pointblue.com.pl> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: David Masover <ninja@slaphack.com>, Steve Bergman <steve@rueb.com>, "Martin J. Bligh" <mbligh@aracnet.com>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, reiserfs <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: =?UTF-8?B?R3J6ZWdvcnogSmHFm2tpZXdpY3o=?= <gj@pointblue.com.pl>
+Cc: Jamie Lokier <jamie@shareable.org>, Rik van Riel <riel@redhat.com>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Fri, 2004-09-03 at 02:35, Hans Reiser wrote:
+=?UTF-8?B?R3J6ZWdvcnogSmHFm2tpZXdpY3o=?= <gj@pointblue.com.pl> said:
+> Jamie Lokier wrote:
+> >Note that file-as-directory doesn't imply that you can store just
+> >anything into those directories.
 
-> All this stuff about how no filesystem should be allowed to have 
-> semantic features others don't, it seems very Bolshevist to me.
-> 
-> Let Linux have an ecosystem with a diverse ecology of filesystems, and 
-> the features that work will reproduce to other filesystems.  I thought 
-> that was the Linus way?
-> 
+> >Is it a problem to decree that "file data MUST NOT be stored in a
+> >metadata directory; only non-essential metadata and data computed from
+> >the file data may be stored"?
 
-There's no reason you can't have semantics the other filesystems don't. 
-There's also no reason you shouldn't continue researching in any
-direction you choose.
+> That's exactly what folks seem to lost in this debate.
+> We (developers) want to have files as dirs to:
+> * be able to extract/modify file part on fly. For instance, simple .iso 
+> file, without need to mount it over loop (btw, if someone is going to 
+> redesign VFS, can we handle that kinda case too please?), .tar, or 
+> unzipped (kernel can handle zips) "streams". File is a stream, why 
+> shouldn't I have a chance to grab a stream out of archive/image than ?
 
-When you submit to the kernel (even just -mm), call the FS stable and
-suggest people start broadly using it, you're telling them the parts you
-have submitted are in fact fixed and reliable.
+ISO9660 is designed for read-only, i.e., modifying something in the middle
+is probably as hard to do as just unpack/modify/repack. Same for tar, cpio,
+and compressed versions of same. No gain, for a major hassle implementing
+this.
 
-This implies you are done changing the semantics you have submitted,
-which also implies you would like applications to start seriously using
-it.  Those application writers will want other filesystems to be able to
-support these new semantics, which means they should have a race free
-framework vetted by the kernel community and available for reuse by the
-other filesystems.  In other words, the semantics should be in the VFS,
-without any requirement other FS's implement them, but the possibility
-for every FS to implement them.
+> * be able to store metadata, that doesn't matter on copy, and even 
+> should not be copied sometimes. Things like thumbnails, metainformation 
+> (used for search). All of these extracted from acctual file (either by 
+> VFS 'plugins', or by userspace application), and saved there so that it 
+> can be used later on. So we save some time on extracting it.
 
-If you don't want the framework to be agreed on by the community and
-available for other implementations, you either haven't stabilized the
-semantics, or you don't want anyone else using them.  Either way, it
-precludes inclusion in the kernel.  There are simply higher expectations
-for a filesystem in these cases, and a higher burden for stable
-semantics and interfaces.
+You save iff the resources spent updating this stuff is less than
+recomputing on the fly each time. Also, placing random stuff in the kernel
+is _not_ "zero cost", it is _very_ expensive (kernel memory is always
+resident, kernel code is _extremely_ critical, once it is in the kernel it
+is very hard to change interfaces). Besides, this kind of "metadata" will
+most probably be different for each user, and a user should also be able to
+associate it to files she has no write right on. I.e., keep it in a
+per-user directory, managed by whatever GUI tools she uses.
 
-This doesn't mean new semantics are impossible, it just means that
-constantly changing semantics of the filesystem core are bad for users
-and applications.  They belong in patches that live outside the kernel
-until they are sufficiently researched to justify their inclusion.
-
-The biggest victim of this discussion is the non-semantic part of
-reiser4.  You've done a huge amount of research that is being held back
-because you haven't separated the semantic research from the storage
-layer areas.  If the storage layers are ready now, please please just
-submit them.
-
--chris
-
-
+What you (developer) wish for and what kernel hackers are able to deliver
+aren't the same. As it stands this is a badly-thought-through proposal,
+with very complex ramifications that few here are aware of (see Al Viro's
+and Linus' posts about locking; it breaks the fundamental principle that
+something is a file or a directory, so this would break many applications),
+and no clean solutions as of now.
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
