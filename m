@@ -1,25 +1,36 @@
-From: Tom Vier <tmv@comcast.net>
-Subject: Re: write barrier patches for 2.4.21
-Date: Tue, 26 Aug 2003 17:46:24 -0400
-Message-ID: <20030826214624.GA410@zero>
-References: <20030825170849.GA14811@mfa.kfki.hu>
-Reply-To: Tom Vier <tmv@comcast.net>
+From: Tupshin Harper <tupshin@tupshin.com>
+Subject: small problem configuring and installing reiser4progs
+Date: Tue, 26 Aug 2003 18:11:06 -0700
+Message-ID: <3F4C052A.2010200@tupshin.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15446-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15447-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030825170849.GA14811@mfa.kfki.hu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Reiserfs List <reiserfs-list@namesys.com>
 
-anyone working on scsi wb's? there was a long thread on l-k about wb's, but
-i wasn't aware what came of it.
+I just downloaded and installed reiser4progs-0.4.12 and libaal-0.4.9. 
+This was the first install of either of these, and I ran into the 
+following problem:
+configured and make installed libaal-0.4.9
+configure of reiser4progs ends with the following:
+checking whether -falign-loops works... yes
+checking for aal_device_open in -laal... yes
+checking aal/aal.h usability... yes
+checking aal/aal.h presence... yes
+checking for aal/aal.h... yes
+checking for libaal version = 0.4.9... no
 
--- 
-Tom Vier <tmv@comcast.net>
-DSA Key ID 0xE6CB97DA
+It ends there, without any indication that there was a fatal error, but 
+it didn't build the Makefiles. So, two problems...insufficient error 
+reporting, as well as a slight problem with the process. After running 
+ldconfig, configure works just fine.
+
+-Tupshin
+
+
+
