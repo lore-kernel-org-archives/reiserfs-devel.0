@@ -1,46 +1,78 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: fsck in background?
-Date: Tue, 8 Apr 2003 18:28:24 +0400
-Message-ID: <20030408182824.A17750@namesys.com>
-References: <3E8818CD.1000500@dotcom.pl> <20030331144609.B1430@namesys.com> <3E929926.3020705@dotcom.pl>
+From: Hans Reiser <reiser@namesys.com>
+Subject: [Fwd: european linux kernel consortium for EU fap6 funding purposes]
+Date: Tue, 08 Apr 2003 22:54:06 +0400
+Message-ID: <3E931ACE.7060505@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-13615-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ boundary="------------080802050203090900060601"
+Return-path: <reiserfs-list-return-13617-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3E929926.3020705@dotcom.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+To: Reiserfs-List@namesys.com
+
+--------------080802050203090900060601
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
-To: myciel <myciel@dotcom.pl>
-Cc: reiserfs-list@namesys.com
 
-Hello!
 
-On Tue, Apr 08, 2003 at 11:40:54AM +0200, myciel wrote:
-> >We have a patch that significantly speeds things up.
-> >In the similar case 28+ years estimated for pass 0 turned into 208 hours 
-> >total
-> >operations after speedup patch was applied.
-> >We plan to include it into reiserfsprogs 3.6.6-pre1, but if you need that 
-> >urgently,
-> >tell us.
-> thanks for answer, so please let me know where I can get the patch.
+-- 
+Hans
 
-It is now included into reiserfsprogs 3.6.6-pre1, you can get it from
-ftp://ftp.namesys.com/pub/reiserfsprogs/pre/reiserfsprogs-3.6.6-pre1.tar.gz
 
-> And I have another question - again maybe this is not good idea, but:
-> if we can fsck of snapshot (without error fixing), so maybe
-> it would be possible to store output data from readonly fscking
-> and just feed reiserfsck in rw mode to avoid scanning whole fs during 
-> repairing,
-> and fix only corrupted places found during readonly scan?
+--------------080802050203090900060601
+Content-Type: message/rfc822;
+ name="european linux kernel consortium for EU fap6 funding purposes"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="european linux kernel consortium for EU fap6 funding purposes"
 
-Well, this is still pretty complicated.
-Nodes might have been shifted around compared to the snapshot we did the checking on.
+Message-ID: <3E931A34.9050505@namesys.com>
+Date: Tue, 08 Apr 2003 22:51:32 +0400
+From: Hans Reiser <reiser@namesys.com>
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.3b) Gecko/20030210
+X-Accept-Language: en-us, en
+MIME-Version: 1.0
+To: Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: european linux kernel consortium for EU fap6 funding purposes
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Bye,
-    Oleg
+I'd like to apply for funding from the EU, because I have the impression 
+that they would like to fund things like linux kernel research and they 
+have a lot of money in the budget for such things.  This would mean 
+being brain drained to the EU, but hey, Europe is a nice place for the 
+most part....
+
+I have been reading through their funding literature, and they want to 
+fund consortiums of entities from 3 different member states.  I would 
+like to find appropriate partners for namesys.uk, and create a consortium. 
+
+Linus, I imagine this won't interest you, but please issue such 
+instructions on the matter as you choose if you have any time and 
+interest for this.  If you'd like to be brain-drained to the EU let me 
+know....;-)
+
+The premise would be that we are developing the linux kernel in a free 
+software collaborative effort that is open to all Europeans to 
+participate in and that furthers the European national interest.  A 
+better linux kernel will substantially reduce the cost of EU 
+e-government while providing its citizens with an open infrastructure.  
+Unless they are crazy, if we form a substantive consortium with serious 
+proposals, they will give us large amounts of money.;-)
+
+Readers are warned, it takes more than one ream of paper to learn how to 
+apply, so the process is not for the casual.
+
+http://europa.eu.int/comm/research/fp6/index_en.html has the reams of 
+paper you'll need to read if this interests you.
+
+-- 
+Hans
+
+
+
+--------------080802050203090900060601--
+
