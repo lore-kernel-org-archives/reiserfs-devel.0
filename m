@@ -1,70 +1,89 @@
-From: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Subject: Re: [PATCH CFT] tons of logging patches
-Date: Tue, 04 Jun 2002 06:16:11 +0200
-Message-ID: <3CFC3F0B.6060707@mb.tu-ilmenau.de>
-References: <1023076301.22608.1778.camel@tiny> 	<3CFC1CB5.8040102@mb.tu-ilmenau.de> <1023159462.31682.54.camel@tiny>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: EVMS Reiser FSIM
+Date: Tue, 4 Jun 2002 10:09:09 +0400
+Message-ID: <20020604100909.A1389@namesys.com>
+References: <OFB5110BE1.9C046DEC-ON85256BCD.00735354@pok.ibm.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10498-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10499-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <OFB5110BE1.9C046DEC-ON85256BCD.00735354@pok.ibm.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Steve Pratt <slpratt@us.ibm.com>
+Cc: reiserfs-list@namesys.com
 
-On 06/04/2002 04:57 AM, Chris Mason wrote:
-> On Mon, 2002-06-03 at 21:49, Manuel Krause wrote:
-> 
-> 
->>Now it is "only":
->>Kernel.2.4.19-pre9
->>ReiserFS.pending.01..03,05 (rest doesn't cooperate cleanly)
->>ReiserFS.mason.01..03 (maybe slightly modified for this)
->>rml.preempt-kernel (          -"-                 )
->>
->>/ mounted -o noatime,notail,data=logging
-> 
-> 
-> Ah, still on the todo list for the current patch is safe handling of
-> remount.  
+Hello!
 
-O.k.
+On Mon, Jun 03, 2002 at 04:03:32PM -0500, Steve Pratt wrote:
+ 
+> Let me know if this still doesn't work.
 
- >
-> Currently data=logging and data=ordered are ignored on
-> remount, which is probably why your results were so fast in data logging
-> mode.
+Ok, now I am able to compile and boot the kernel, and evms gui starts up.
 
-Yes, as-is on SuSE typical bootup. But, o.k., I know to handle,  I've 
-changed and reset my lilo-setup accordingly to your mail...
+But now the problem is all the screens except plugin lists are empty.
 
-So, I just retested, with your recommended append to lilo.conf 
-"rootflags=data=journal" -- but timings stay the same. And mount says 
-still the same, too:
-/dev/hda7 on / type reiserfs (rw,noatime,notail,data=logging)
+Whenever I select some operation from the menu (create, convert or whatever),
+I am represented with empty window that says "No items were found matching
+the search criteria" (sometimes the window is persent instantly, sometimes
+there is a windo with some items, but when I choose one of the items
+and press "Next" button, the empty window appears).
 
-So should you be glad or not!?
-The NS7 and OOo.1.0 load timings are generally measured in secs +-1 and 
-stay to be faster, like I posted before.
+I read the FAQ and since I run non-devfs enabled kernel, I run
+evms_devnode_fixup. First time it failed:
+# ./evms_devnode_fixup
+evms_devnode_fixup -- updating the EVMS device node tree...
+evms_devnode_fixup -- ERROR: return code from evms_update_evms_dev_tree() was -9.
 
-> 
-> You'll want to pass rootflags=data=ordered or rootflags=data=journal at
-> the lilo prompt.
-> 
-> -chris
-> 
+Second time it succeed:
+# ./evms_devnode_fixup
+evms_devnode_fixup -- updating the EVMS device node tree...
+evms_devnode_fixup -- Finished.
 
-No, no mistake on this way, on my side, really, you could finally (if 
-you don't find a solution within your new coding) blame it to my bad 
-previous patches' setup... ;-)))
-(yes, finally -- at the real end, of course!!! ;-)  )
+But still not a single entry in evsmgui tool.
 
-Thank you, works very well,
+# ./evms_gather_info
+############################################################
+                    Data from /proc/evms
+############################################################
 
-Manuel
 
-P.S.: Please, keep me informed, as Namesys seems to need a pushup for 
-2.4. kernels... ;-) Sorry, Hans! ;-)
+/proc/evms/info:
+Enterprise Volume Management System: Info
+EVMS info level: 5 (default).
+EVMS kernel version: 1.1.0
+EVMS IOCTL interface version: 10.0.0
+EVMS Common Services version: 0.6.0
 
+
+/proc/evms/volumes:
+Enterprise Volume Management System: Volumes
+major   minor          #blocks type   flags name
+
+
+
+/proc/evms/plugins:
+Enterprise Volume Management System: Plugins
+ ---------Plugin----------      required services
+ ----id----        version      version
+
+
+
+############################################################
+                  Data from the EVMS Engine
+############################################################
+
+
+./evms_gather_info: /usr/local/evms: is a directory
+
+
+What should I do to get something to appear in the disks/slices/whatever
+lists so I can play with it?
+
+Thank you.
+
+Bye,
+    Oleg
