@@ -1,29 +1,93 @@
-From: Spam <spam@tnonline.net>
-Subject: Repacker output
-Date: Wed, 22 Sep 2004 02:25:27 +0200
-Message-ID: <1943875361.20040922022527@tnonline.net>
-Reply-To: Spam <spam@tnonline.net>
+From: Ash <ashrat@gmail.com>
+Subject: Re: ReiserFS post-crash issues
+Date: Wed, 22 Sep 2004 16:46:55 +0530
+Message-ID: <e96ff12004092204165a7ee8b8@mail.gmail.com>
+References: <e96ff120040921013254b63c93@mail.gmail.com>
+	 <4150423F.3020804@namesys.com>
+Reply-To: Ash <ashrat@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21869-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21871-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <4150423F.3020804@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
+
+Agreed.
+And I did see that introducing 'fsync's in my test does make the
+creates persistent.
+However my concern is that ReiserFS performance degrades substantially
+in this case
+as compared to other filesystems.
+For example, creating 50K 0 byte files took less than 2-3 seconds
+without the fsyncs after ever
+create,  while introducing the fsyncs increased the time to 87 secs.
+This time was way higher than other filesystems like XFS or JFS for
+the same test.
+
+Thanks,
+Ash
 
 
-  I have a suggestion about the repacker output. Currently the
-  repacker shows something like this:
-
-Repacker: I am alive, pid = 7716
-reiser4 repacker: 4395 formatted node(s) processed, 16858 unformatted node(s) processed, ret = 0
-
-  What I'd like to see is that both lines contained which device that
-  was processed. The second line should contain the pid too. This
-  would make it easier to read and follow what is happening and where.
-
-  ~S
-
+On Tue, 21 Sep 2004 08:01:19 -0700, Hans Reiser <reiser@namesys.com> wrote:
+> FS operations are not persistent unless you fsync or wait long enough.
+> That is the expected norm for unix fs design.
+> 
+> Hans
+> 
+> 
+> 
+> Ash wrote:
+> 
+> >Hi
+> >
+> >I have been running a few tests on ReiserFS to check durability of
+> >common filesystem operations.
+> >For example, create a certain number of files and crash the machine
+> >(poweroff) immediately after this.
+> >On rebooting, check the number of files actually present on the
+> >filesystem after log replay.
+> >
+> >Similarly, I tried for some other operations like rename, link and delete.
+> >I am using a C program with open, rename and link system calls to
+> >perform these operations respectively
+> >and crashing the system using a network power switch immediately after
+> >my C program finishes doing its stuff.
+> >So the delay in-between completion of the operations and the machine crashing
+> >should be, according to me, less than 1-2 seconds (which is the time
+> >required to establish a telnet connection to the power switch)
+> >
+> >It seems that ReiserFS operations are not durable for most of the cases I tried.
+> >
+> >For file create, when tried with 50K, 100K and 1M files, I got
+> >34224, 99492, and 998594 files respectively after system rebooted from the
+> >crash. Similarly for operations like rename and link, the number of files
+> >renamed or linked after reboot is less than what the filesystem reports prior
+> >to the crash.
+> >
+> >Now introducing a fsync() after every open() call does solve the problem
+> >but the performance degradation seen is very high. In fact, I did notice
+> >the related discussion on the FAQ at namesys.com.
+> >
+> >Also, operations like rename, link and delete also seem to give problems.
+> >
+> >However, with other filesystems like XFS, I get much better results (almost
+> >100% durability) on similar tests.
+> >
+> >I am using ReiserFS with linux kernel 2.6.7
+> >
+> >Any comments/suggestions will be helpful.
+> >
+> >Thanks,
+> >Ash
+> >
+> >
+> >
+> >
+> 
+>
