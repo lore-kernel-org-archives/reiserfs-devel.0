@@ -1,75 +1,55 @@
-From: Helge Hafting <helge.hafting@hist.no>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 09:51:39 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <412D968B.9030107@hist.no>
-References: <Pine.LNX.4.44.0408252052420.13240-100000@chimarrao.boston.redhat.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Using fs views to isolate untrusted processes: I need an assistant
+ architect in the USA for Phase I of a DARPA funded linux kernel project
+Date: Thu, 26 Aug 2004 00:52:36 -0700
+Message-ID: <412D96C4.3030302@namesys.com>
+References: <410D96DC.1060405@namesys.com> <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com> <20040825205618.GA7992@hockin.org> <30958D95-F6ED-11D8-A7C9-000393ACC76E@mac.com> <412D2BD2.2090408@sun.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.44.0408252052420.13240-100000@chimarrao.boston.redhat.com>
+Return-path: <reiserfs-list-return-20578-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <412D2BD2.2090408@sun.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Rik van Riel <riel@redhat.com>
-Cc: Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Mike Waychison <Michael.Waychison@Sun.COM>
+Cc: Kyle Moffett <mrmacman_g4@mac.com>, Tim Hockin <thockin@hockin.org>, LKML <linux-kernel@vger.kernel.org>, Rik van Riel <riel@redhat.com>, ReiserFS List <reiserfs-list@namesys.com>, George Beshers <gbeshers@comcast.net>
 
-Rik van Riel wrote:
+Mike Waychison wrote:
 
->On Thu, 26 Aug 2004, Mikulas Patocka wrote:
->  
 >
->>On Wed, 25 Aug 2004, Linus Torvalds wrote:
->>    
->>
 >
->  
->
->>>One way to solve it is to just realize that a final slash at the end
->>>implies pretty strongly that you want to treat it as a directory. So what
->>>you do is:
->>>      
->>>
->>Stupid question: who will use it? And why?
->>    
->>
->
->I've got a stupid question too.  How do you back up these
->things ?
->
->If your backup program reads them as a file and restores
->them as a file, you might lose your directory-inside-the-file
->magic.
->
->If your backup program dives into the file despite stat()
->saying it's a file and you restore your backup, how are the
->"file is a file" semantics preserved ?
->
->  
->
->Obviously this is something that needs to be sorted out at
->the VFS layer.  A filesystem specific backup and restore
->program isn't desirable, if only because then there'd be
->no way for Hans's users to switch to reiser5 in 2010 ;)
->
->  
->
-Sure, this sort of thing must be sorted out at the VFS layer.
-And a backup program working on such a filesystem
-will need to know that something can be a file, a directory - or both.
+> If I understand what Hans is looking to get done, he's asking for
+> someone to architect a system where any given process can be restricted
+> to seeing/accessing a subset of the namespace (in the sense of "a tree
+> of directories/files").  Eg: process Foo is allowed access to write to
+> /etc/group, but _not_ allowed access to /etc/shadow, under any
+> circumstances && Foo will be run as root.  Hell, maybe Foo is never able
+> to even _see_ /etc/shadow (making it a true shadow file :).
 
-So an old "tar" won't get this right as it will assume that an object
-is either file or directory.  The change to get it right won't be
-that big - just notice that an object is both, then backup the
-ordinary file contents as usual, before recursing into the
-directory it also provides and backup stuff there as usual.
+You are correct, you cannot even see /etc/shadow.
 
-The resulting .tar can of course only be unpacked properly
-on a fs supporting file-as-directory, similiar to how a .tar of
-a fs with links only will unpack properly on a fs supporting links.
+The term mask may be more communicative than view.  We are starting to 
+use the term mask.
 
-I don't see much problems for userland.  Old apps will keep working,
-as the new features is a superset.  Those who care about
-file-as-directory extras will provide patches for "tar" and friends,
-after that the extras become useable.
+>
+> Hans, correct me if I misunderstood.
+>
+> [*] Somebody really should s/struct namespace/struct mounttable/g (or
+> even mounttree) on the kernel sources.  'Namespace' isn't very
+> descriptive and it leads to confusion :(
+>
+> --
+> Mike Waychison
+> Sun Microsystems, Inc.
+> 1 (650) 352-5299 voice
+> 1 (416) 202-8336 voice
+> http://www.sun.com
+>
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> NOTICE:  The opinions expressed in this email are held by me,
+> and may not represent the views of Sun Microsystems, Inc.
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Helge Hafting
