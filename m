@@ -1,16 +1,16 @@
 From: David Masover <jedi@ninja.dynup.net>
-Subject: grub (Re: V4 status)
-Date: Wed, 03 Dec 2003 19:24:21 -0600
-Message-ID: <3FCE8CC5.7040400@ninja.dynup.net>
-References: <16333.14692.61778.304155@pc7.dolda2000.com>	 <3FCD47C4.50500@ninja.dynup.net> <1070465380.4451.0.camel@redeeman.linux.dk>
+Subject: pseudo files (Re: V4 status)
+Date: Wed, 03 Dec 2003 19:33:30 -0600
+Message-ID: <3FCE8EEA.8060407@ninja.dynup.net>
+References: <16333.14692.61778.304155@pc7.dolda2000.com>	<3FCD47C4.50500@ninja.dynup.net>	<3FCE39B8.20307@namesys.com> <16334.15412.686909.927196@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16220-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16221-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1070465380.4451.0.camel@redeeman.linux.dk>
+In-Reply-To: <16334.15412.686909.927196@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
@@ -18,29 +18,42 @@ To: reiserfs-list@namesys.com
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
+cool, thanks.
 
+>That's unfortunately very hard to do if you are using usual system calls
+>(like readdir(2), or open(2)), because they are tunneled through VFS
+>that enforces some semantics.
+>  
 >
-> >reiserfs 3.6 works perfect in grub here
+Enforces as in, if I enter the name of a directory, it adds a / to it 
+before it passes to the filesystem?
+I know it doesn't chop off trailing slashes (except in Reiser4, for 
+obvious reasons).
+Or, as this has a serious potential for becoming offtopic, can you point 
+me to some reading material?
 
-It may have worked for me, with notail, but I have heard too many 
-stories.  Anyway, /boot is 5-10 megs, usually not mounted, so I see no 
-performance loss using ext3 there.
+>Another problem ("ls seems to know it's a file") is with user level
+>programs that are sometimes too smart.
+>  
+>
+Maybe I'll try to fix that.  Intelligence seems to be the easiest thing 
+to remove from a program.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.3 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBP86MxgisZLIF6uqOAQLc2xAAgCp7HIDmsWiHW2PHS8aXT/TzzJQjbExP
-u+xZZNlmOYPZ+Klzj6CTjuWnC16GbG/TqKtAl5jQ0AIGNKoydPpcHGXFhyQCBbPU
-aan0/WWR1QLV75EIL5x3R5kgO6jI2AHlxcDpRlvKJIdS3Q8iw/KB3L6nO/xqgba4
-C0SJg8WPvgGtC/JGOaU8JvIbVeasHogY+HH0HZ6zWuFEckGGjoTiQj7yTDFdCKBg
-JtsWS7jJ24KdFR0NMOJQTJOOM8z9n9gOIHod5rzP8g7tSprZunJOZsSq8E3pLd5m
-wSebBC09VYuND6byxyI/HfywVehg+Xx0lbpr6LH3gjp8jg+oR3uO6SoSpsWPEmWP
-3B5Ruivlp1EDMWjDIDUjanwroIRR0Yv3efGwORYUFnxQMGNy6HLmazgJ66lsA9Vq
-e/bMIDflf6Gp86aH+gTlSOVfc/H23gzjWsz6VdpUvYoZe7PxtEipw6Wokx+v1gS1
-imR3/qgHkPmltN+RkSNU0+SjTxKQsSuX++DmQ1j3/VW0mARIwdz4UGi+xNzHH7AC
-HXat5yqlzRJexgYVjXFs+ptdG6aPpoStR3hiTGCTZgAscWxE6pb/vrlCYt+WTQFR
-w1mVufQVpQ0ZYEsYYw5s8//igMapxmm4JpbCebxyV+sPORBnBDPmKsNBH8639QlG
-onUku5zQmjY=
-=p/Gi
+iQIVAwUBP86O6gisZLIF6uqOAQKepQ//Vl/JRzKc7NkzWDi1KuIjR6D5/tljQlOD
+O3ZYhv42Ugfk3J+HEF61ObeahPUqjpBXiEV9WKKp/m39EmdF3xyO7FvfiUwtwOVG
+yLvhz/dE8WaUD4MQPVO/E0qZ+/cVb0qzfuBBdeGrTgfb/2F3oUIkiWjI7ftkpfaZ
+spljQljQgO5fyvkaTYsjJ30hEJKBUHcYyMQ101FuSKOpuV0ZSrHIGlYaVC+8TJMl
+DKdx0rfkoBAFEtgwkeoigYslBUurfJbscHLNVMIlsI3rhufIJ5sn3OEyl8animI0
+XFG6ljDATMnGYYy2g7pat226a2l9skzEsMtcCH/XrWweX17QRCgZdOZSkzKosaXX
+paeX4Qn0l64Q4eH4mc5p8Rsx1qWe/pQW8wZouCrgfwaZl2dMxHJtFZNxGVcp+A9/
+nHVXRv24mLIQ1jAIMIk+O8so/YQTvFEHbu18BxgTKPNuDsyKPDgr0EguTwHf907w
+tGMi931qtaoLuPXSE38/e0et5r9+fOLB9lE+uUNmV6xxFtNh3dMlStbdzuZ8wfYa
+cd5sTq9F7Irm7TPxRBd7TTjREEcQYfhyZelmkuZI9eA7aU4WD6RDYziGp87mmevD
+NjHzD6D1lKJGX8NW84Nxh/KP8N93LceG6282u9krYxQAY7x47L9AgGsRG/g8zfyw
+0+qY2yoVngE=
+=bdb/
 -----END PGP SIGNATURE-----
 
