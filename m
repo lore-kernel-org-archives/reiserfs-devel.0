@@ -1,115 +1,93 @@
-From: Locke <locke@oceanfree.net>
-Subject: Filesystem corruption
-Date: Thu, 14 Aug 2003 00:05:28 +0800
-Message-ID: <3F3A61C8.4060504@oceanfree.net>
+From: Boris Tschirschwitz <boris@math.ubc.ca>
+Subject: Re: reiser4 snapshot
+Date: Wed, 13 Aug 2003 09:34:18 -0700
+Sender: news <news@sea.gmane.org>
+Message-ID: <pan.2003.08.13.16.34.15.398355@math.ubc.ca>
+References: <16183.48363.884605.564937@laputa.namesys.com> <pan.2003.08.12.00.32.11.185228@math.ubc.ca> <20030812060542.GA5363@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
- boundary="------------070108010801020502040705"
-Return-path: <reiserfs-list-return-15303-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-15304-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
---------------070108010801020502040705
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+Today I tried applying the patch to 2.6.0-test3-mm2, and, yes, some
+patches failed. I'll just append the output for the failed hunks.
+I guess it gets less surprising the more we get away from 'mm0'.
 
-  Hi,
+Boris.
 
-    I've got a problem with reiserfs today while I was trying to access 
-my network files. I tried browsing my network drive and found out that 
-some of my directories were empty. So I unmounted the partition and ran 
-reiserfsck(3.6.8), it said I had 4 corruptions and told me to run 
---rebuild-tree. And so I did and it recovered only 7.8GB of 47.8GB of 
-the files. I'm guessing the reason why it recovered so little was 
-because that because I was running a 7.8GB+40GB LVM and the 40GB 
-pyhsical volume wasn't working and left it with only 7.8GB.
+bobele linux # patch -p 1 < ../reiser4.diff
+patching file arch/i386/kernel/entry.S
+Hunk #1 FAILED at 878.
+1 out of 1 hunk FAILED -- saving rejects to file arch/i386/kernel/entry.S.rej
+patching file fs/Kconfig
+patching file fs/Makefile
+Hunk #1 FAILED at 86.
+1 out of 1 hunk FAILED -- saving rejects to file fs/Makefile.rej
+patching file fs/buffer.c
+Hunk #1 succeeded at 262 (offset 37 lines).
+patching file fs/fs-writeback.c
+patching file fs/inode.c
+Hunk #1 succeeded at 990 (offset 2 lines).
+Hunk #2 succeeded at 1017 (offset 2 lines).
+patching file fs/jbd/transaction.c
+patching file fs/sysfs/inode.c
+patching file include/asm-i386/unistd.h
+Hunk #1 FAILED at 277.
+Hunk #2 succeeded at 398 (offset 3 lines).
+1 out of 2 hunks FAILED -- saving rejects to file include/asm-i386/unistd.h.rej
+patching file include/linux/fs.h
+Hunk #2 succeeded at 861 (offset 6 lines).
+Hunk #3 succeeded at 1233 (offset 6 lines).
+patching file include/linux/init_task.h
+Hunk #1 FAILED at 107.
+1 out of 1 hunk FAILED -- saving rejects to file include/linux/init_task.h.rej
 
-Here's the specs of my system:   linux-2.4.21, reisfs-3.6.8, LVM-1.0.7 
-(7.8GB + 40GB)
-Partitions:
-    /dev/hda (ext2)    /   3.2GB
-    /dev/hdb+/dev/hdg => /dev/main_vg/storage_lv(reiserfs)   
-/mnt/storage   47.8GB
 
-Here's some output of dmesg at the point where I discovered the problem:
+On Tue, 12 Aug 2003 10:05:42 +0400, Oleg Drokin wrote:
 
-is_tree_node: node level 0 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 8838461. Fsck?
-is_tree_node: node level 0 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 8838461. Fsck?
-is_tree_node: node level 0 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 11534730. Fsck?
-is_tree_node: node level 0 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 8838461. Fsck?
-is_tree_node: node level 0 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 8838461. Fsck?
-is_tree_node: node level 0 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 3412777. Fsck?
-is_tree_node: node level 0 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 11534730. Fsck?
-is_tree_node: node level 0 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 11604101. Fsck?
-is_tree_node: node level 0 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 11534730. Fsck?
+> Hello!
+> 
+> On Mon, Aug 11, 2003 at 05:32:25PM -0700, Boris Tschirschwitz wrote:
+> 
+>> I thought I'd give it a try on 2.6.0-test3-mm1. Even with 'make
+>> mrproper' before compiling, I get the following error message:
+>> (Is there any interest in such error reports?)
+> 
+> Yes, there is.
+> 
+>> bobele linux # make bzImage
+>>   CHK     include/linux/version.h
+>>   UPD     include/linux/version.h
+>>   Making asm->asm-i386 symlink
+>>   CC      scripts/empty.o
+>>   MKELF   scripts/elfconfig.h
+>>   HOSTCC  scripts/file2alias.o
+>>   HOSTCC  scripts/modpost.o
+>>   HOSTLD  scripts/modpost
+>>   SPLIT   include/linux/autoconf.h -> include/config/* CC     
+>>   arch/i386/kernel/asm-offsets.s CHK     include/asm-i386/asm_offsets.h
+>>   UPD     include/asm-i386/asm_offsets.h CC      init/main.o
+>> In file included from include/linux/unistd.h:9,
+>>                  from init/main.c:18:
+>> include/asm/unistd.h: In function `reiser4': include/asm/unistd.h:400:
+>> error: `__NR_reiser4' undeclared (first use in this function)
+>> include/asm/unistd.h:400: error: (Each undeclared identifier is reported
+>> only once include/asm/unistd.h:400: error: for each function it appears
+>> in.) make[1]: *** [init/main.o] Error 1
+>> make: *** [init] Error 2
+> 
+> Hm, this is strange.
+> __NR_reiser4 is clearly defined in include/asm-i386/unistd.h
+> 
+> Probably you had that part of the patch rejected? Can you please verify?
+> 
+> Bye,
+>     Oleg
 
-reiserfs: checking transaction log (device 3a:00) ...
-is_tree_node: node level 32769 does not match to the expected one 1
-vs-5150: search_by_key: invalid format found in block 5505049. Fsck?
-vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat 
-data of [1 2 0x0 SD]
-Using r5 hash to sort names
-is_tree_node: node level 0 does not match to the expected one 2
-vs-5150: search_by_key: invalid format found in block 2412772. Fsck?
-vs-2140: finish_unfinished: search_by_key returned -2
-ReiserFS version 3.6.25
-reiserfs: checking transaction log (device 3a:00) ...
-is_leaf: free space seems wrong: level=1, nr_items=1, free_space=778 rdkey
-vs-5150: search_by_key: invalid format found in block 5505049. Fsck?
-vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat 
-data of [1 2 0x0 SD]
-Using r5 hash to sort names
-is_tree_node: node level 0 does not match to the expected one 2
-vs-5150: search_by_key: invalid format found in block 2412772. Fsck?
-vs-2140: finish_unfinished: search_by_key returned -2
-ReiserFS version 3.6.25
-VFS: Can't find ext3 filesystem on dev lvm(58,0).
-reiserfs: checking transaction log (device 3a:00) ...
-is_leaf: free space seems wrong: level=1, nr_items=1, free_space=778 rdkey
-vs-5150: search_by_key: invalid format found in block 5505049. Fsck?
-vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat 
-data of [1 2 0x0 SD]
-Using r5 hash to sort names
-is_tree_node: node level 0 does not match to the expected one 2
-vs-5150: search_by_key: invalid format found in block 2412772. Fsck?
-vs-2140: finish_unfinished: search_by_key returned -2
-ReiserFS version 3.6.25
-
-And also when rebooting after the corruption I saw several error 
-messages for all drives, hda, hdb and hdg
-**
-
-hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
-hda: dma_intr: error=0x84 { DriveStatusError BadCRC }
-hda: dma_intr: status=0x51 { DriveReady SeekComplete Error }
-hda: dma_intr: error=0x84 { DriveStatusError BadCRC }
-
-**The messages are copied from the FAQ in namesys.com because they 
-looked similar so I'm not sure if they're the exactly same.
-
-I tried loading a previous kernel(2.4.20) and the error messages were 
-gone, this was probably because of some errors I made when configuring 
-the 2.4.21 kernel. It was the first time I've compiled the kernel 
-without thoroughly checking the configurations and now I suffer the 
-consequences.
-
-Is there anything I can try to recover more data?
-
-Regards,
-Kent
-
---------------070108010801020502040705--
 
