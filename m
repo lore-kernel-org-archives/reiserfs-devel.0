@@ -1,31 +1,41 @@
-From: Sander <sander@humilis.net>
-Subject: Re: reiser4 for 2.6.10 and reiser4 update for 2.6.10-rc3-mm1
-Date: Thu, 30 Dec 2004 19:32:59 +0100
-Message-ID: <20041230183259.GE5206@favonius>
-References: <41B4A035.2020509@namesys.com> <1104430148.7086.11.camel@tribesman.namesys.com>
-Reply-To: sander@humilis.net
+From: Esben Stien <b0ef@esben-stien.name>
+Subject: Re: Congratulations! we have got hash function screwed up
+Date: Thu, 30 Dec 2004 19:16:22 +0100
+Message-ID: <87mzvvodmx.fsf@quasar.esben-stien.name>
+References: <77912E9FD42896419D1CEF15E1C397A58AFCF1@london.jaguarfreightservices.local>
+	<m38y7gx8kq.fsf@merlin.emma.line.org>
+	<20041230235911.4911a20c.hihone@bigpond.net.au>
+	<m3sm5nj2ef.fsf@merlin.emma.line.org>
+	<87is6jpvdu.fsf@quasar.esben-stien.name>
+	<20041230174732.GB5206@favonius>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-22963-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22964-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1104430148.7086.11.camel@tribesman.namesys.com>
+In-Reply-To: <20041230174732.GB5206@favonius> (sander@humilis.net's message
+ of "Thu, 30 Dec 2004 18:47:32 +0100")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: Hans Reiser <reiser@namesys.com>, Clifford Beshers <clifford.beshers@lindows.com>, "reiserfs-dev@namesys.com" <reiserfs-dev@namesys.com>, reiserfs-list@namesys.com, grev@namesys.com
+To: sander@humilis.net
+Cc: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>, hihone@bigpond.net.au, reiserfs-list@namesys.com
 
-Vladimir Saveliev wrote (ao):
-> you can get latest reiser4 for 2.6.10
-> (ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.10/reiser4-for-2.6.10-1.gz)
-> and update for 2.6.10-rc3-mm1
-> (ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.10-rc3-mm1/reiser4-update-for-2.6.10-rc3-mm1-1.gz).
+Sander <sander@humilis.net> writes:
 
-Thank you all! Was looking forward to it.
+> Maybe you can clue them in the wonderful world of making backups?
 
-Will this update also be in the next -mm kernel?
+This is not always the case, btw
 
-Does this update make reiser4 ready for Opteron systems?
+This might be caused by a faulty application as well if the system is
+not secure enough.
+
+Tools to scan the partition and give a list of possible restores
+should not be hard to implement. 
+
+-- 
+Esben Stien is b0ef@esben-stien.name
+http://www.esben-stien.name
+irc://irc.esben-stien.name/%23contact
+[sip|iax]:b0ef@esben-stien.name
