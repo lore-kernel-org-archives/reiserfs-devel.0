@@ -1,41 +1,48 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Mount fails after reiserfsck --rebuild-tree failure
-Date: Thu, 18 Mar 2004 00:34:22 +0300
-Message-ID: <200403180034.22132.vitaly@namesys.com>
-References: <40588E59.8080002@viva-solutions.com> <200403180021.23171.vitaly@namesys.com>
+From: "daniel.poelzleithner" <poelzi@poelzi.org>
+Subject: Re: can't find a reiserfs file ssytem! 2
+Date: Wed, 17 Mar 2004 23:29:35 +0100
+Message-ID: <4058D14F.4060800@poelzi.org>
+References: <20040317140309.ABECF3982E7@ws5-1.us4.outblaze.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17288-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17289-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200403180021.23171.vitaly@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <20040317140309.ABECF3982E7@ws5-1.us4.outblaze.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: KAA <kaa@viva-solutions.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Cc: reiserfs-list@namesys.com
 
-On Thursday 18 March 2004 00:31, Vitaly Fertman wrote:
-> Hello,
->
-> > so I've unmounted array fsck'ed it (unfortunately didn't save output of
-> > first fsck but it failed and recommended to do --rebuild-tree)
-> > since that time fsck --rebuild-tree /dev/md0 fails with the same error
-> > all the time:
-> >
-> > build_the_tree: Nothing but leaves are expected. Block 292951 - unknown
-> >
-> > Aborted
-> >
-> > is there any way to get my data back?
-> > thanks in advance!
->
-> You rebuilt your raid and this problem appeared, this really looks
-> like a hardware problem, check your raid again please.
-> If the problem in the code I can check how reiserfsck handles this
-I mean   ... in the reiserfsprogs code ... 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
--- 
-Thanks,
-Vitaly Fertman
+mite pascoff wrote:
+
+| my problem partition is 15GB large and dd stoped after copying 2GB of
+data with a messige like:
+| File size limit exceeded
+| So I began testing this part/image of the problem partition
+
+Looks for me like a dd without large file support. Try a new version
+that support 64 bit file sizes or another too.
+
+
+regards
+~ Daniel
+
+- --
+nihil me cirumdat
+
+.. . .. ... . . .. . ... . .. . ... . . .
+pgp key @ http://files.poelzi.org/pgp.txt
+ED80 E53D 5269 4BB1 1E73 3A53 CBF9 A421 0A7B 003D
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+Comment: Using GnuPG with Debian - http://enigmail.mozdev.org
+
+iD8DBQFAWNFOy/mkIQp7AD0RArv1AJ0YutkLleaLPwN8QwWL0cvt2D5g2gCdEIyX
+h+1MLLHm96PwpctrRMYo6Ak=
+=lqMp
+-----END PGP SIGNATURE-----
