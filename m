@@ -1,45 +1,28 @@
-From: Spam <spam@tnonline.net>
+From: Chris Wedgwood <cw@f00f.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 11:59:59 +0200
-Message-ID: <1565398922.20040826115959@tnonline.net>
-References: <20040825152805.45a1ce64.akpm@osdl.org>
- <112698263.20040826005146@tnonline.net>
- <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org>
- <1453698131.20040826011935@tnonline.net>
- <20040825163225.4441cfdd.akpm@osdl.org>
- <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net>
- <1093480940.2748.35.camel@entropy> <20040826044425.GL5414@waste.org>
- <1093496948.2748.69.camel@entropy> <20040826053200.GU31237@waste.org>
-Reply-To: Spam <spam@tnonline.net>
+Date: Thu, 26 Aug 2004 03:05:30 -0700
+Message-ID: <20040826100530.GA20805@taniwha.stupidest.org>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20615-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20616-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826053200.GU31237@waste.org>
+Content-Disposition: inline
+In-Reply-To: <20040826010049.GA24731@mail.shareable.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Matt Mackall <mpm@selenic.com>
-Cc: Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Jamie Lokier <jamie@shareable.org>
+Cc: viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
->> cp, grep, cat, and tar will continue to work just fine on files with
->> multiple streams.
+On Thu, Aug 26, 2004 at 02:00:49AM +0100, Jamie Lokier wrote:
 
-> Find some silly person with an iBook and open a shell on OS X. Use cp
-> to copy a file with a resource fork. Oh look, the Finder has no idea
-> what the new file is, even though it looks exactly identical in the
-> shell. Isn't that _wonderful_? Now try cat < a > b on a file with a
-> fork. How is that ever going to work?
+> One of the big potential uses for file-as-directory is to go inside
+> archive files, ELF files, .iso files and so on in a convenient way.
 
-  It  should  work  on  the main file, the extra streams and meta data
-  won't be copied.  Just as it is now with special attributes etc. Cat
-  reads the content of a file stream, not the file container.
-
-> I like cat < a > b. You can keep your progress.
+Arguably this belongs in userspace --- and people have put it there.
 
 
-
-
-
+  --cw
