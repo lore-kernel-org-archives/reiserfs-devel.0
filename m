@@ -1,77 +1,50 @@
-From: Wes Janzen <superchkn@sbcglobal.net>
-Subject: Re: FS Corruption with VIA MVP3 + UDMA/DMA
-Date: Mon, 14 Jul 2003 09:13:47 -0500
-Message-ID: <3F12BA9B.6040404@sbcglobal.net>
-References: <16128.19218.139117.293393@charged.uio.no> <3F007EBF.9020506@sbcglobal.net> <3F10729F.7070701@sbcglobal.net> <20030714090615.GA6334@tentacle.sectorb.msk.ru>
+From: "Barry, Christopher" <cbarry@infiniconsys.com>
+Subject: RE: reiserfs with mosix ?
+Date: Mon, 14 Jul 2003 10:38:54 -0400
+Message-ID: <08628CA53C6CBA4ABAFB9E808A5214CB0179043E@mercury.infiniconsys.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
- boundary="------------010103060503010407030908"
-Return-path: <reiserfs-list-return-14931-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-14932-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030714090615.GA6334@tentacle.sectorb.msk.ru>
+content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "Vladimir B. Savkin" <master@sectorb.msk.ru>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs <reiserfs-list@namesys.com>
 
---------------010103060503010407030908
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+Nope. You'll need Sistina's GFS for that. Also, do to locking semantics, =
+I'm unsure of the effectiveness of this arrangement with Samba. You'll =
+need to verify it with Sistina. Also, the power of MOSIX is in many =
+small long-duration processes that can be migrated from the initial =
+starting host to other MOSIX enabled machines. I'm not sure that the =
+scenario you articulate would be a good fit for this. Possibly LVS or =
+Heartbeat would be a better fit.
 
-Hi,
+Regards,
 
-Spread spectrum is disabled in my BIOS as I heard that it could cause 
-issues in some cases.
+--
+Christopher Barry
+Manager of Information Systems
+InfiniCon Systems
+http://www.infiniconsys.com
 
-I never had the DMA timeout issue, it just silently corrupts data ;-(
 
-Just to add to things that probably aren't causing the problems, my PCI 
-bus is running at 33MHz as the FSB of 100MHz is in spec for this board.
 
-Vladimir B. Savkin wrote:
+-----Original Message-----
+From: ipguy [mailto:ipguy@optushome.com.au]
+Sent: Monday, July 14, 2003 8:03 AM
+To: reiserfs
+Subject: reiserfs with mosix ?
 
->Hi!
->
->On Sat, Jul 12, 2003 at 03:42:07PM -0500, Wes Janzen wrote:
->  
->
->>Thanks for the suggestions, here's what I've tried to solve the problem:
->>-->Tested system memory for 4 consecutive days with memtest86
->>-->Replaced SDRAM with new modules tested in every DIMM slot
->>-->Tried the ac patch on 2.5.69
->>-->Clocked K6-2 back to 350 from 400 (FSB still 100Mhz)
->>-->Played with PCI settings in the BIOS
->>-->Removed all other cards except AGP video card
->>-->Disabled all other integrated peripherals in the BIOS (only serial 
->>and parallel in this case).
->>-->Reverted to BIOS defaults.
->>
->>    
->>
->
->I was using PA2013, and was having problems with IDE too.
->The data corruption was solved after turning off "Spread spectrum
->modulated" feature in the BIOS setup (AFAIR this misfeature is ON
->by default). But I wasn't able to get on-board IDE working right
->nevertheless. For some strange reason it was OK with kernel 2.2.15
->but produced DMA timeouts with every later kernel version I tested.
->Yes, I did try copying VIA IDE driver from 2.2.15 to later kernel,
->it still didn't help. So I ended up with Promise controller too :(
->
->:wq
->                                        With best regards, 
->                                           Vladimir Savkin. 
->
->-
->To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->the body of a message to majordomo@vger.kernel.org
->More majordomo info at  http://vger.kernel.org/majordomo-info.html
->Please read the FAQ at  http://www.tux.org/lkml/
->
->  
->
 
---------------010103060503010407030908--
+hi all
+i'm thinking of building a mosix cluster using the "reiserfs" and am
+enquiring about weather the fs is able to be used as a global fs ?
+specifically, i'm setting up two samba servers with a mosix cluster
+connected to a single raid array..
+
+-ipguy
+
 
