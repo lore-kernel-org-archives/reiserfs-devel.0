@@ -1,34 +1,36 @@
-From: Christoph Hellwig <hch@infradead.org>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: silent semantic changes with reiser4
-Date: Fri, 27 Aug 2004 10:19:56 +0100
-Message-ID: <20040827101956.B29672@infradead.org>
-References: <Pine.LNX.4.58.0408261217140.2304@ppc970.osdl.org> <Pine.LNX.4.44.0408261607070.27909-100000@chimarrao.boston.redhat.com> <20040826204841.GC5733@mail.shareable.org> <20040826205218.GE1570@legion.cup.hp.com>
+Date: Fri, 27 Aug 2004 12:19:54 +0300
+Message-ID: <20040827091954.GZ1284@nysv.org>
+References: <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <412DA40B.5040806@namesys.com> <20040826183532.GP1501@ca-server1.us.oracle.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20900-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20901-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040826205218.GE1570@legion.cup.hp.com>; from jra@samba.org on Thu, Aug 26, 2004 at 01:52:18PM -0700
+In-Reply-To: <20040826183532.GP1501@ca-server1.us.oracle.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeremy Allison <jra@samba.org>
-Cc: Jamie Lokier <jamie@shareable.org>, Rik van Riel <riel@redhat.com>, Linus Torvalds <torvalds@osdl.org>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>, Jamie Lokier <jamie@shareable.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, Aug 26, 2004 at 01:52:18PM -0700, Jeremy Allison wrote:
-> On Thu, Aug 26, 2004 at 09:48:41PM +0100, Jamie Lokier wrote:
-> > 
-> > This is why I favour storing all essential metadata (about the file's
-> > content) inside the file's contents, the primary stream.
-> > 
-> > We have another problem: what happens when users want to transfer data
-> > from Windows (with secondary streams) and MacOS (with resource forks)?
-> 
-> I can tell you that - right now we (Samba) has to drop all but the primary stream,
-> because the Linux filesystems don't have data stream support. Oh look,
-> we're losing user data (that's a *bad* thing :-).
+On Thu, Aug 26, 2004 at 11:35:32AM -0700, Joel Becker wrote:
+>	Question:  Is "cat /foo/bar/baz.tar.gz/metas" the attribute
+>directory or a directory in the tarball named "metas"?
 
-Maybe you should learn from netatalk.
+This has been fought over on the reiserfs-list ad nauseaum, but
+it's a valid point.
+
+That's why I tend to rename metas/ into ..metas/ to avoid
+name clashes, even if I've never had a directory named metas/
+apart from what Reiser4 ships.
+
+It is then debatable if it should be renamed before it's too
+late, have it renamable in the kernel configs (and the name
+exported via /sys or something) or just leave it be.
+
+-- 
+mjt
 
