@@ -1,44 +1,43 @@
-From: Redeeman <redeeman@metanurb.dk>
-Subject: Re: 4.0 stable ?
-Date: Mon, 12 Jan 2004 10:50:13 +0100
-Message-ID: <1073901013.10428.1.camel@redeeman.linux.dk>
-References: <1157.192.168.0.97.1073894170.squirrel@sml.dyndns.org>
-	 <16386.26113.665652.955743@laputa.namesys.com>
-Reply-To: redeeman@metanurb.dk
+From: "Sergey S. Kostyliov" <rathamahata@php4.ru>
+Subject: bk pull problem (reiser4)
+Date: Mon, 12 Jan 2004 15:28:14 +0300
+Message-ID: <200401121528.14023.rathamahata@php4.ru>
+Reply-To: "Sergey S. Kostyliov" <rathamahata@php4.ru>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16454-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16455-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16386.26113.665652.955743@laputa.namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Mon, 2004-01-12 at 10:16, Nikita Danilov wrote:
-> Thomas Graham writes:
->  > when does it stable anyway ?!
->  > 
-> 
-> It depends on your definition of stable. It is stable for ordinary use,
-> and as far as I know people are using it for home directories for some
-> time already. It is still possible to crash it under stress test if one
-> is inventive enough and has enough time to waste.
-> 
-my definition of stable is when namesys.com doesent say "reiser4 final
-testing, and will ship soon!" :)
-you know, when its marked stable :)
+Hello all,
 
-do you have a small idea of when? i have a 300gb hd waiting for
-partitioning just because i want reiser4 ;)
+I can not pull from reiser4 tree,
+bk pull is just waited indefinitely:
+rathamahata@arise reiser4 $ bk parent
+Parent repository is bk://bk.namesys.com/bk/reiser4
+rathamahata@arise reiser4 $ bk pull
+Pull bk://bk.namesys.com/bk/reiser4
+  -> file://usr/local/src/bk/reiser4
+(nothing more)
 
-> Nikita.
+but bk clone is still posiible.
+
+traceroute to thebsh.namesys.com (212.16.7.65), 30 hops max, 40 byte packets
+ 1  breuss-10.ws.ehouse.ru (192.168.114.10)  1.251 ms  2.773 ms  28.617 ms
+ 2  hobbit-gw.ehouse.ru (193.111.92.33)  11.445 ms  9.780 ms  9.920 ms
+ 3  express-ehouse.express.ru (212.24.42.9)  9.884 ms  9.800 ms  9.914 ms
+ 4  LYNX-M9.ATM6-0.30.M9-R1.msu.net (193.232.127.230)  4.985 ms  12.488 ms  4.978 ms
+ 5  LYNX-M9.ATM6-0.30.M9-R1.msu.net (193.232.127.230)  6.080 ms  5.403 ms *
+ 6  thebsh.namesys.com (212.16.7.65)  5.847 ms  5.469 ms  5.147 ms
 
 -- 
-Regards, Redeeman
-()  ascii ribbon campaign - against html e-mail 
-/\                        - against microsoft attachments
-
+                   Best regards,
+                   Sergey S. Kostyliov <rathamahata@php4.ru>
+                   Public PGP key: http://sysadminday.org.ru/rathamahata.asc
 
