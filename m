@@ -1,10 +1,10 @@
 From: Alex Zarochentsev <zam@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Sun, 29 Aug 2004 15:52:53 +0400
-Message-ID: <20040829115253.GK5108@backtop.namesys.com>
+Date: Sun, 29 Aug 2004 15:55:03 +0400
+Message-ID: <20040829115503.GL5108@backtop.namesys.com>
 References: <20040826132439.GA1188@lst.de> <1093527307.11694.23.camel@leto.cs.pocnet.net> <20040826134034.GA1470@lst.de> <1093528683.11694.36.camel@leto.cs.pocnet.net> <412E786E.5080608@namesys.com> <16687.9051.311225.697109@thebsh.namesys.com> <412F7A59.8060508@namesys.com> <1093645747.17445.19.camel@voyager.localdomain> <41302C39.2080100@namesys.com> <1093687768.8097.25.camel@voyager.localdomain>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21049-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21050-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -15,7 +15,7 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Steve Bergman <steve@rueb.com>
-Cc: Hans Reiser <reiser@namesys.com>, Nikita Danilov <nikita@clusterfs.com>, reiserfs <reiserfs-list@namesys.com>
+Cc: Hans Reiser <reiser@namesys.com>, Nikita Danilov <nikita@clusterfs.com>, reiserfs <reiserfs-list@namesys.com>, linux-kernel@vger.kernel.org
 
 On Sat, Aug 28, 2004 at 05:09:28AM -0500, Steve Bergman wrote:
 > On Fri, 2004-08-27 at 23:54 -0700, Hans Reiser wrote:
