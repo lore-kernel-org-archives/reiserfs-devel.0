@@ -1,76 +1,68 @@
-From: Matt Mackall <mpm@selenic.com>
-Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 00:32:00 -0500
-Message-ID: <20040826053200.GU31237@waste.org>
-References: <20040825152805.45a1ce64.akpm@osdl.org> <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1093480940.2748.35.camel@entropy> <20040826044425.GL5414@waste.org> <1093496948.2748.69.camel@entropy>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Using fs views to isolate untrusted processes: I need an assistant
+ architect in the USA for Phase I of a DARPA funded linux kernel project
+Date: Wed, 25 Aug 2004 23:31:53 -0700
+Message-ID: <412D83D9.2050503@namesys.com>
+References: <410D96DC.1060405@namesys.com> <Pine.LNX.4.44.0408251624540.5145-100000@chimarrao.boston.redhat.com> <20040825205618.GA7992@hockin.org> <412D0339.3080601@sun.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20573-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20575-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1093496948.2748.69.camel@entropy>
+In-Reply-To: <412D0339.3080601@sun.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nicholas Miell <nmiell@gmail.com>
-Cc: Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Mike Waychison <Michael.Waychison@Sun.COM>
+Cc: Tim Hockin <thockin@hockin.org>, Rik van Riel <riel@redhat.com>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Wed, Aug 25, 2004 at 10:09:08PM -0700, Nicholas Miell wrote:
-> On Wed, 2004-08-25 at 21:44, Matt Mackall wrote:
-> > On Wed, Aug 25, 2004 at 05:42:21PM -0700, Nicholas Miell wrote:
-> > > On Wed, 2004-08-25 at 16:46, Wichert Akkerman wrote:
-> > > > Previously Jeremy Allison wrote:
-> > > > > Multiple-data-stream files are something we should offer, definately (IMHO).
-> > > > > I don't care how we do it, but I know it's something we need as application
-> > > > > developers.
-> > > > 
-> > > > Aside from samba, is there any other application that has a use for
-> > > > them? 
-> > > > 
-> > > 
-> > > Anything that currently stores a file's metadata in another file really
-> > > wants this right now. Things like image thumbnails, document summaries,
-> > > digital signatures, etc.
-> > 
-> > That is _highly_ debatable. I would much rather have my cp and grep
-> > and cat and tar and such continue to work than have to rewrite every
-> > tool because we've thrown the file-is-a-stream-of-bytes concept out
-> > the window. Never mind that I've got thumbnails, document summaries,
-> > and digital signatures already.
-> > 
-> > While the number of annoying properties of files with forks is
-> > practically endless, the biggest has got to be utter lack of
-> > portability. How do you stick the thing in an attachment or on an ftp
-> > site? Well you can't because it's NOT A FILE. 
-> > 
-> > A file is a stream of bytes.
-> 
-> "OMG! It breaks tar and email!!!" argument doesn't fly. Things break all
-> the time and are fixed. It's called progress.
+Mike Waychison wrote:
 
-What it breaks is the concept of a file. In ways that are ill-defined,
-not portable, hard to work with, and needlessly complex. Along the
-way, it breaks every single application that ever thought it knew what
-a file was.
+> Tim Hockin wrote:
+>
+> >On Wed, Aug 25, 2004 at 04:25:24PM -0400, Rik van Riel wrote:
+>
+> >>>You can think of this as chroot on steroids.
+> >>
+> >>Sounds like what you want is pretty much the namespace stuff
+> >>that has been in the kernel since the early 2.4 days.
+> >>
+> >>No need to replicate VFS functionality inside the filesystem.
+>
+>
+> >When I was at Sun, we talked a lot about this.  Mike, does Sun have any
+> >iterest in this?
+>
+>
+> Not that I know of.  I believe the functionality Hans is looking for has
+> already been handled by SELinux.
 
-Progress? No, this has been done before. Various dead operating
-systems have done it or similar and regretted it. Most recently MacOS,
-which jumped through major hurdles to begin purging themselves of
-resource forks when they went to OS X. They're still there, but
-heavily deprecated.
+Everybody who takes a 3 minute read of SELinux keeps saying it has, but 
+it hasn't quite, not when you look at the details.  SELinux is not 
+written by filesystem folks, and there are scalability details that matter.
 
-> cp, grep, cat, and tar will continue to work just fine on files with
-> multiple streams.
+> What is needed (if it doesn't already
+> exist) is a tool to gather these 'viewprints' automagically.
 
-Find some silly person with an iBook and open a shell on OS X. Use cp
-to copy a file with a resource fork. Oh look, the Finder has no idea
-what the new file is, even though it looks exactly identical in the
-shell. Isn't that _wonderful_? Now try cat < a > b on a file with a
-fork. How is that ever going to work?
+It doesn't exist, and viewprints are also not stored with executables 
+either, so it is not process oriented.
 
-I like cat < a > b. You can keep your progress.
+People think the problem is allowing the OS to enact fine grained 
+security.  It is not.  The problem is allowing the user to enact fine 
+grained security, and without a lot of work to automate it, users will 
+continue to be unable to bear that time cost.
 
--- 
-Mathematics is the supreme nostalgia of our time.
+>
+> --
+> Mike Waychison
+> Sun Microsystems, Inc.
+> 1 (650) 352-5299 voice
+> 1 (416) 202-8336 voice
+> http://www.sun.com
+>
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> NOTICE:  The opinions expressed in this email are held by me,
+> and may not represent the views of Sun Microsystems, Inc.
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
