@@ -1,59 +1,86 @@
-From: Adam Nielsen <a.nielsen@optushome.com.au>
-Subject: Re: BUG: Replaying ReiserFS log causes hard lockup
-Date: Fri, 26 Mar 2004 22:34:43 +1000
-Message-ID: <20040326223443.2e5011fa.a.nielsen@optushome.com.au>
-References: <20040325204836.07bcf910.a.nielsen@optushome.com.au>
-	<1080213348.1976.277.camel@tribesman.namesys.com>
-	<1080219262.14742.146.camel@watt.suse.com>
-	<20040326220107.333b23e8.a.nielsen@optushome.com.au>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: NFS issues with reiserfs 3.6? ext3 works...
+Date: Fri, 26 Mar 2004 16:18:26 +0300
+Message-ID: <1080307106.5920.1.camel@tribesman.namesys.com>
+References: <20040326115302.GD1315@mathematik.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17491-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17492-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040326220107.333b23e8.a.nielsen@optushome.com.au>
+In-Reply-To: <20040326115302.GD1315@mathematik.uni-bielefeld.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Bernhard Sadlowski <sadlowsk@mathematik.uni-bielefeld.de>
+Cc: reiserfs-list@namesys.com
 
-> Then it locks.  Once it printed the message about INIT starting after
-> this, so I guess it's something around this point that's causing the
-> problem.  However since it seems to be a *really* bad lock, I don't
-> know how to proceed :-(
+Hello
 
-Ok, I've done some more fiddling and I think I've narrowed the problem
-down to the SATA driver.  Since the kernel used to boot, then it
-started locking up during booting, I was trying to work out what could
-cause this.  I tried wiggling the SATA cable again, and that fixed
-it - I could boot Linux again.
+On Fri, 2004-03-26 at 14:53, Bernhard Sadlowski wrote:
+> Hi!
+> 
+> A short question:
+> 
+> What are the remaining differences between reiserfs and ext3 regarding
+> NFS? 
+> 
 
-Wiggling the SATA cable while Linux was loaded didn't seem to cause a
-problem, so I started dd reading off a ton of data and started fiddling
-with the cable.  I couldn't seem to fault anything, so I tried
-unplugging the cable altogether (as SATA is hot swappable.) Obviously
-everything accessing the drive paused, and when I plugged the cable back
-into the drive it seemed as though everything resumed again (because the
-drive started reading off a ton of data due to dd running.)  However,
-after a few seconds the drive stopped reading, and dd wouldn't
-terminate.  I tried switching to another VT and logging in, but after I
-typed in my login name it froze too.  It seems that if the drive gets
-disconnected and reconnected, everything accessing it stops (I'm
-guessing due to a driver problem.)
+We thought no before your mail
 
-I'm still not sure why it would lock up during boot, but perhaps when
-the SATA hardware is initialised the drive disconnects and reconnects,
-and if it hasn't reconnected by the time something (e.g. ReiserFS) wants
-to access the disk, that causes the lockup - only since the lock happens
-in the kernel, it completely locks everything up.  Of course, this is
-just a wild guess, but given the behaviour it does seem like a
-possibility.  Especially if hotswapping is a feature not yet implemented
-in the driver (which is quite likely, as it is still only in the testing
-stage.)
+> Details:
+> 
+> I have two Linux machines with current kernel 2.4.25 and two
+> Directories on the NFS Server dematl04:
+> 
+> dematl04:/vol01 (ext3 fs)
+> dematl04:/raid  (reiserfs 3.6)
+> 
+> On both machines we use Helios Ethershare (a commercial software for
+> print and fileservices for Macintosh). Helios Ethershare uses and
+> updates a file .Desktop every time some mac is creating, writing or
+> changing files in a Macintosh volume.  The "dt" utility has to be used
+> in a shell for mkdir, rm, mv, touch, ... I guess it has to lock this
+> file whilche applying changes.
+> 
+> # dt
+> Usage: dt { rm | rmdir | mv | cp | set | ls | mkdir | touch |
+>             upd | chmod | chown | chgrp | idinfo | iddump }
+> 
+> Reiserfs:
+> 
+> root@dematl04:/raid/arc_04# dt mkdir test1
+> -> works
+> 
+> Same volume mounted per NFS on a second machine:
+> 
+> root@dematl08:/assets/ts04/arc_04# dt mkdir test2
+> dt mkdir: (dematl04) Error -5031 occured!: /raid/assets/ts04/arc_04: error accessing desktop lock '.DeskServer'
+> -> does not work 
+> 
 
-Anyway, thanks for all your help, and I might try to find the SI3512
-driver people and see what they think.  Wish me luck ;-)
+Can you run this under strace?
 
-Cheers,
-Adam.
+> Ext3:
+> 
+> root@dematl04:/vol01# dt mkdir test1
+> -> works
+> 
+> Same volume mounted per NFS on a second machine:
+> 
+> root@dematl08:/vol01# dt mkdir test2
+> -> works
+> 
+> Helios Ethershare is also running on Solaris 8 and the tests above
+> succeed between two Solaris machines. I can provide on request the
+> strace output of "dt mkdir test3" on the NFS client. They were to big
+> for the list.
+> 
+> Is this some known locking difference/bug in reiserfs?
+> Will reiser4 be more "compatible" with NFS?
+> 
+> Thanks,
+> Bernhard
+> 
+
