@@ -1,64 +1,63 @@
-From: Vitaly Fertman <vitaly@namesys.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: Tree issues, fsck output
-Date: Wed, 30 Jun 2004 13:24:34 +0400
-Message-ID: <200406301324.34713.vitaly@namesys.com>
-References: <20040629201956.GK4990@nysv.org> <20040630064547.GL4990@nysv.org> <20040630090322.GM4990@nysv.org>
+Date: Wed, 30 Jun 2004 12:42:25 +0300
+Message-ID: <20040630094225.GN4990@nysv.org>
+References: <20040629201956.GK4990@nysv.org> <20040630064547.GL4990@nysv.org> <20040630090322.GM4990@nysv.org> <200406301324.34713.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19455-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19456-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040630090322.GM4990@nysv.org>
 Content-Disposition: inline
+In-Reply-To: <200406301324.34713.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Markus =?koi8-r?q?T=F6rnqvist?= <mjt@nysv.org>, reiserfs-list@namesys.com
-Cc: sikkh@wp.pl
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: reiserfs-list@namesys.com, sikkh@wp.pl
 
-On Wednesday 30 June 2004 13:03, Markus T=F6rnqvist wrote:
-> On Wed, Jun 30, 2004 at 09:45:47AM +0300, Markus T=F6rnqvist wrote:
-> >So now I'll just compile the new auto-snapshot and see what happens...
->
-> It did not work.
->
-> http://mjt.nysv.org/reiser/Reiser4-2004.06.29/
-> Pictures once again courtesy of my trusty phone, so the quality truly
-> does suck.
->
-> So, err, I'm doing a plain fsck now again, to see if that is the result
-> of some corruption, but it went to the extremely non-verbose semantic
-> tree pass...
+On Wed, Jun 30, 2004 at 01:24:34PM +0400, Vitaly Fertman wrote:
+>it prints all found corruptions. could you send them ?
 
-it prints all found corruptions. could you send them ?
+The thing is, now that 2.6.7-mm4, latest auto-snapshot, failed,
+I didn't get any errors with fsck... So it seems my filesystem
+is all alright, at least for the time being.
 
-btw, I hvae already added gauge to the semantic pass. Hopefully will
-release another progs snapshot or internal-snapshot on days.
+>btw, I hvae already added gauge to the semantic pass. Hopefully will
+>release another progs snapshot or internal-snapshot on days.
 
-> I'm at a loss here, if the new kernel doesn't bother to boot and the
-> old one doesn't really work.
+That would be great!
+Any hints on what else to expect beyond the gauge?-)
 
-if I recall correctly the only corruption was wrong directory entry, right?
-or it fould some more while you were sleeping?
+>if I recall correctly the only corruption was wrong directory entry, right?
+>or it fould some more while you were sleeping?
 
-> Vitaly, do you have some ideas for me? Do you want my metadata somewhere?
+Nope, nada, the last I pasted to you, libmp4, was also the last failure.
+Then I think I posted here that xmms wouldn't reinstall and there were
+bad ELF headers.
 
-could you run fsck.reiser4 in check mode again after rebuilding to be sure =
+>could you run fsck.reiser4 in check mode again after rebuilding to be sure 
+>that evth has been fixed. If you have matadata packed before rebuilding, 
+>not after, and you can provide them for downloading, it would be useful.
 
-that evth has been fixed. If you have matadata packed before rebuilding,=20
-not after, and you can provide them for downloading, it would be useful.
+I'm taking a debugfs.reiser4 -P /dev/hda1 now.
+Then I will run additional stuff, but it still seems like the FS is ok....
 
-> I doubt anyone checked yet if the mainline 2.6.7 port of the snapshot
-> I used was to blame, but at least now I'm trying with a standard one..
->
-> If the semantic tree pass goes cleanly and the fs is consistent, I will
-> try older auto-snapshots, despite the fact that the earlier mm's are
-> not highly recommended.
+>> If the semantic tree pass goes cleanly and the fs is consistent, I will
+>> try older auto-snapshots, despite the fact that the earlier mm's are
+>> not highly recommended.
+>to reproduce this we need to know which steps lead to such corruptions.
 
-to reproduce this we need to know which steps lead to such corruptions.
+Yeah, but it ain't easy.
+I'd like to hear what changes were made when porting the snapshot
+to mainline. If that could possibly induce corruption.
 
---=20
-Thanks,
-Vitaly Fertman
+Anyway, I think this part of the discussion is redundant, as the big
+problem now remaining is that the 2004.06.29 auto-snapshot doesn't
+boot. If it presents these problems, with sibling check and all that
+enabled, I will have more details for you.
+
+-- 
+mjt
 
