@@ -1,34 +1,39 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Question on IICACHE and mount info (2.4.19-pre5)
-Date: Fri, 5 Apr 2002 17:37:17 +0400
-Message-ID: <20020405173717.A1635@namesys.com>
-References: <3CACE903.30901@mb.tu-ilmenau.de> <20020405090248.A6915@namesys.com> <3CADA627.7080800@mb.tu-ilmenau.de>
+From: Benjamin Scott <bscott@ntisys.com>
+Subject: Re: Silly question, defrag
+Date: Fri, 5 Apr 2002 08:50:15 -0500 (EST)
+Sender: bscott@ntisys.com
+Message-ID: <Pine.LNX.4.44.0204050840330.6398-100000@dragon.inside.ntisys.com>
+References: <20020405053125.GA2724@willow.seitz.com>
 Mime-Version: 1.0
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <3CADA627.7080800@mb.tu-ilmenau.de>
+In-Reply-To: <20020405053125.GA2724@willow.seitz.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: "Yury Yu. Rupasov" <yura@yura.polnet.botik.ru>, reiserfs-list <reiserfs-list@namesys.com>
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-Hello!
+On Fri, 5 Apr 2002, at 12:31am, Ross Vandegrift wrote:
+>> I think it would seem likely that, once a filesystem does become fragmented,
+>> performance is going to suck mud.
+> 
+> I'm curious though - shouldn't the elevator read algorithms take care of
+> this, for the most part?  If you wait to do a read until you have a few,
+> and read sequentially across the disk, you won't be hit with any seeks.
 
-On Fri, Apr 05, 2002 at 03:27:03PM +0200, Manuel Krause wrote:
-> >>Seems like some things have gone with the latest patches which worked 
-> >>before? It's o.k., of course, if "iicache" doesn't show up for now, I 
-> >>know it's for testing only (yes, it would be very nice!). But the 
-> >>"notail" thing worked before!
-> >Which "notail" thing?
-> Mmmh. I only repeated myself? I wanted to say that the "notail" mount 
-> option showed up in "# cat /proc/mounts" some weeks ago, IIRC.
+  I am no expert, but I suspect there is only so much the elevator can do.  
+For a moderately small read, I image your scenario would work.  But given a
+larger read and enough fragmentation, you are going to have to seek all over
+the place.  Sure, you could increase the wait time in the elevator, and use
+tons of buffers to re-order reads, but you will eventually start spending so
+many resources on the elevator that you are back to a performance problem
+again.
 
-Actually function to implement correct /proc/mounts output
-for reiserfs never was implemented, though I think I will return to it.
-But right now there are more important stuff to do.
+-- 
+Ben Scott <bscott@ntisys.com>
+| The opinions expressed in this message are those of the author and do not |
+| necessarily represent the views or policy of any other person, entity or  |
+| organization.  All information is provided without warranty of any kind.  |
 
-Bye,
-    Oleg
+
