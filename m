@@ -1,76 +1,53 @@
 From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 12:48:43 +0100
-Message-ID: <20040826114843.GE30449@mail.shareable.org>
-References: <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1939276887.20040826114028@tnonline.net> <20040826024956.08b66b46.akpm@osdl.org> <839984491.20040826122025@tnonline.net> <20040826032457.21377e94.akpm@osdl.org> <742303812.20040826125114@tnonline.net> <20040826035500.00b5df56.akpm@osdl.org>
+Date: Thu, 26 Aug 2004 12:58:56 +0100
+Message-ID: <20040826115856.GF30449@mail.shareable.org>
+References: <112698263.20040826005146@tnonline.net> <Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org> <1453698131.20040826011935@tnonline.net> <20040825163225.4441cfdd.akpm@osdl.org> <20040825233739.GP10907@legion.cup.hp.com> <20040825234629.GF2612@wiggy.net> <1939276887.20040826114028@tnonline.net> <20040826024956.08b66b46.akpm@osdl.org> <839984491.20040826122025@tnonline.net> <m3llg2m9o0.fsf@zoo.weinigel.se>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20644-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20645-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040826035500.00b5df56.akpm@osdl.org>
+In-Reply-To: <m3llg2m9o0.fsf@zoo.weinigel.se>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@osdl.org>
-Cc: Spam <spam@tnonline.net>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Christer Weinigel <christer@weinigel.se>
+Cc: Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Andrew Morton wrote:
-> No.  All of the applications which you initially identified can be
-> implemented by putting the various bits of data into a single file and
-> getting applications to agree on the format of that file.
-> 
-> For example, some image file formats already support embedded metadata, do
-> they not?
+Christer Weinigel wrote:
+> all applicatons that copy files will fail to copy the streams.  So
+> no working cp command, no nautilus nor konqueror without changes to
+> the application.
 
-Same for MP3s and their metadata tags.  _That_ kind of data should be
-part of the contents of the file: it is intended to be transported.
+No true.  A lot of the fancy stuff depends on metadata which is merely
+another view of the serialised contents in the flat file.  Nautilus &
+Konqueror thumbnails are an example of that (I gave a few more in
+other mails).  cp works fine with that, and so does ftp.  The metadata
+is just recalculated when it's needed from the target file.
 
-It is useful to auto-extract it from the file's data stream, using
-format-specific programs, and offer that metadata in separate files
-where it is easy to use e.g. by shell scripts and indexing programs,
-which can then work independently of file formats.
+> And if you have to change the applications anyway, isn't it much
+> better to agree on a shared library in userspace that everyone uses?
+> Which has the added bonus that it can be made to work on top of
+> Linux, Windows, Ultrix and VMS?
 
-That kind of metadata should be _derived_ from the file's data stream,
-and ideally the extraction should be automatic, with userspace
-assistance.  It may be useful for the filesystem to record what's
-extracted, for fast access and indexing.
+Ideally yes, a shared library _or_ at least an agreed representation.
 
-The same applies to thumbnails.  The only difference is that these may
-take longer to compute.  But they're the same thing: something
-calculated from the file's data stream, which may (or may not) be
-stored in the filesystem so it doesn't have to be recomputed each
-time.  It might even be worth expiring the metadata from disk if it
-hasn't been used for a while and can be recomputed.
+However, with filesystem support you can improve performance by
+avoiding unneed serialisation (write to your huge *Office
+presentation, read it from another program, no need to wait for the
+slow tar+compress stage yet it's _as if_ those were done), retain
+computed metadata with coherency guarantees (e.g. real time search
+indexes, crypto digests and such), and let the filesystem decide when
+best to prune computed metadata or convert representations.
 
-These are the same as looking into archives or structured files.  The
-only difference is that the unpacked views might not be stored on the
-filesystem (but they might be, if the filesystem knows how to cache
-views for faster future access).[*]
+All of these things can work with a combination of userspace plugins
+(not the same as reiser4 plugins), and filesystem support.
 
-Those are all examples of data derived from the data stream of a flat
-file.  They are useful applications, and all work fine with FTP, cp,
-cat <a >b, and email attachments, _no application changes required_.
-
-There's another kind of metadata which isn't intended for transport.
-That would be things like the classic attributes: permissions,
-timestamps.  It would also include things like author information when
-the file format cannot carry it.
+Without the filesystem support, you can still use the userspace
+plugins -- so apps would still be portable -- but you don't get the
+extras mentioned above.
 
 -- Jamie
-
-
-[*] - A fancier variant, which is hard without good fs support, it
-writing to structured files through a view.  I.e. modifying files
-inside a .tar.gz, or (this is useful) inside an
-{MS,Open,Gnome,K}Office container file or *SQL database table.  To do
-this efficiently, the file's main data stream is regenerated on demand
-from the view's data.  As I said, it requires good, special fs support
-to do it efficiently (fancy caching).  With appropriate userspace
-libraries you can make apps work with container files on all other
-OSes (just like .tar.gz and *Office containers at the moment) but are
-significantly faster to work with on Linux (no need to serialise and
-(de-)compress except on demand) and more visible to the standard unix
-scripting tools.
