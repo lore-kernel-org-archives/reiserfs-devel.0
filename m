@@ -1,24 +1,28 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH]: reiser4 [0/8] overview
-Date: Thu, 31 Oct 2002 16:07:38 +0000
+From: Alexander Viro <viro@math.psu.edu>
+Subject: Re: [PATCH]: reiser4 [8/8] reiser4 code
+Date: Thu, 31 Oct 2002 11:08:04 -0500 (EST)
 Sender: linux-kernel-owner@vger.kernel.org
-Message-ID: <20021031160738.A9446@infradead.org>
-References: <15809.21545.509551.601735@laputa.namesys.com>
+Message-ID: <Pine.GSO.4.21.0210311107230.16688-100000@weyl.math.psu.edu>
+References: <15809.21549.198584.599023@laputa.namesys.com>
 Mime-Version: 1.0
 Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <15809.21545.509551.601735@laputa.namesys.com>; from Nikita@Namesys.COM on Thu, Oct 31, 2002 at 07:02:49PM +0300
+In-Reply-To: <15809.21549.198584.599023@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Nikita Danilov <Nikita@Namesys.COM>
-Cc: Linus Torvalds <Torvalds@Transmeta.COM>, Linux Kernel Mailing List <Linux-Kernel@Vger.Kernel.ORG>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Cc: Linus Torvalds <Torvalds@Transmeta.COM>, Linux Kernel Mailing List <Linux-Kernel@vger.kernel.org>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-On Thu, Oct 31, 2002 at 07:02:49PM +0300, Nikita Danilov wrote:
-> Hello, Linus,
+
+
+On Thu, 31 Oct 2002, Nikita Danilov wrote:
+
+> Hello, Linus, hyva poika,
 > 
-> This message starts set of 8 patches against your current BK tree to
-> include reiser4.
+> Reiser4 code proper is 2M. Patch is available at
+> 
+> http://namesys.com/snapshots/2002.10.31/fs_reiser4.diff
+> 
+> If you want, we can send it to you as source tar ball.
 
-You don't want to tell the world you aim for inclusion of a filesystem
-that has been publically available for not even a week, do you? :)
+And you want that to be reviewed until tonight?
