@@ -1,52 +1,58 @@
-From: Christer Weinigel <christer@weinigel.se>
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: The argument for fs assistance in handling archives
-Date: 02 Sep 2004 20:38:19 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <m3llfsikis.fsf@zoo.weinigel.se>
-References: <20040826150202.GE5733@mail.shareable.org>
-	<200408282314.i7SNErYv003270@localhost.localdomain>
-	<20040901200806.GC31934@mail.shareable.org>
-	<Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
-	<20040902002431.GN31934@mail.shareable.org>
-	<413694E6.7010606@slaphack.com>
-	<Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org>
-	<4136A14E.9010303@slaphack.com>
-	<Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org>
-	<4136C876.5010806@namesys.com>
-	<Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org>
-	<4136E0B6.4000705@namesys.com> <14260000.1094149320@flay>
+Date: Thu, 02 Sep 2004 14:42:34 -0400
+Sender: news <news@sea.gmane.org>
+Message-ID: <87eklky0kl.fsf@uhoreg.ca>
+References: <20040826150202.GE5733@mail.shareable.org> <4136E0B6.4000705@namesys.com>
+ <1117111836.20040902115249@tnonline.net>
+ <200409021327.22998.v13@priest.com>
+ <16695.12190.58678.877396@gargle.gargle.HOWL>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <14260000.1094149320@flay>
+Return-path: <reiserfs-list-return-21306-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Martin J. Bligh" <mbligh@aracnet.com>
-Cc: Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-"Martin J. Bligh" <mbligh@aracnet.com> writes:
+>>>>> "John" == John Stoffel <stoffel@lucent.com> writes:
 
-> > For 30 years nothing much has happened in Unix filesystem semantics 
-> > because of sheer cowardice 
-> 
-> Or because it works fine, and isn't broken.
+V13> I believe you mean something simillar to:
+V13> file1.txt;1
+V13> file1.txt;2
+V13> file1.txt;3 (yeap, it's VMS)
 
-I've heard the same argument a lot of times.  People complaining that
-Unix is so seventies because it sticks to the old boring philosophy of
-everything is a file and that a file is a stream of bytes, nothing
-more.  Modern operating systems such as VMS with basic database
-handling in the OS itself, or MacOS or NT with named streams is so
-much more modern.  Why don't we get with the times?
+[...]
 
-It may be because just because of the simplicity it's fairly easy to
-use, harder to break och does one thing well.  If you want structured
-storage, use a database, on top of the low level primitives, or use
-multiple files in a directory.  Why complicate things?
+John> In any case, while I do like this feature, I'm not sure how we
+John> would cleanly implement this inside the unix namespace, or if
+John> inside a new namespace, how that new namespace would be joined
+John> with a standard Unix one.
 
-  /Christer
+  file1.txt/..version/1
+
+or, for those version control systems like svn and arch where the
+version number refers to the version of the whole project tree:
+
+  project/..version/1/file1.txt
+
+You could even export strange things like:
+
+  project/..by-date/2004-08-24/file1.txt
+
+to see what the file looked like on August 24.  Or
+
+  project/..diff/3-1/file1.txt
+
+to see a diff between version 3 and 1.
 
 -- 
-"Just how much can I get away with and still go to heaven?"
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
-Freelance consultant specializing in device driver programming for Linux 
-Christer Weinigel <christer@weinigel.se>  http://www.weinigel.se
