@@ -1,51 +1,55 @@
-From: Alexandre Ratti <alex@gabuzomeu.net>
-Subject: Re: New error when running script on ReiserFS partition
-Date: Mon, 23 Dec 2002 14:07:23 +0100
-Message-ID: <4.3.2.7.2.20021223135710.00b52c68@mail.poulpe.net>
+From: Russell Coker <bofh@coker.com.au>
+Subject: Re: what do you do that stresses your filesystem?
+Date: Mon, 23 Dec 2002 14:21:52 +0100
+Message-ID: <200212231421.52052.bofh@coker.com.au>
+References: <3E06F360.7000708@namesys.com>
+Reply-To: Russell Coker <bofh@coker.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12211-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-12212-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3E06F360.7000708@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
-Cc: Oleg Drokin <green@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>, ReiserFS <reiserfs-list@namesys.com>
 
-Hello,
-
-
->Date: Thu, 12 Dec 2002 15:27:07 +0100
->From: Alexandre Ratti <alex@gabuzomeu.net>
-
->At 17:07 12/12/2002 +0300, Oleg Drokin wrote:
->>On Thu, Dec 12, 2002 at 02:54:33PM +0100, Alexandre Ratti wrote:
->> > I got a new error when my backup script ran today. (See [1] for previous
->> > message sent on Tuesday). This script runs on a large ReiserFS partition.
->> > System is Debian Woody with recompiled 2.4.19 kernel.
-
->>While this is certainly a piece of reiserfs code, the crash address makes no
->>sence at all. Can you please run memtest86 for some time to confirm that 
->>your memory is still ok?
+On Mon, 23 Dec 2002 12:28, Hans Reiser wrote:
+> We were discussing how to optimize reiser4 best, and came to realize
+> that us developers did not have a good enough intuition for what users
+> do that stresses their filesystem enough that they care about its
+> performance.
 >
->It's running now; I'll let you know what the results are. (I last ran 
->memtest86 in October when I set up this box and the memory was fine at 
->that time.)
+> Booting the machine seems like one activity that many users end up
+> waiting on the FS for.  Yes?
 
-I ran tests and watched the system for some time. The memory was fine, but 
-I believe now that the problem was due to an old, flaky ISA graphic card.
+Yes, although there are other factors than the file system which determine 
+boot time.  Different types of init scripts can probably improve performance 
+more than anything you could do to a file system.
 
-The backup script has been running fine for more than a week now, so the 
-problem looks fixed.
+Also if you have a rack-mount server then it'll probably take 2 minutes or 
+more to go through the BIOS checks so FS delays will seem like nothing by 
+comparison.
 
+> Starting up complex and big applications like xemacs and mozilla would
+> be another.  Yes?
 
-Thanks for your input.
+Yes, particularly KDE.  Although I don't do it often enough to care so much.
 
-Alexandre
+> Others?
 
+Mail serving with Maildir storage.  Rsync of gigebytes of files.  Kernel 
+compiles.  Debian package installation.
 
-[1] History: http://marc.theaimsgroup.com/?t=103955025600002&r=1&w=2
+Also there are some issues where Linux does not perform well, such as typing 
+"sync" on a machine that has a heavy write load (which can take an indefinate 
+amount of time).
 
+-- 
+http://www.coker.com.au/bonnie++/     Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/       Postal SMTP/POP benchmark
+http://www.coker.com.au/projects.html Projects I am working on
+http://www.coker.com.au/~russell/     My home page
 
