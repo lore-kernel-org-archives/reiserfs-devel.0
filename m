@@ -1,63 +1,45 @@
-From: Chris Mason <mason@suse.com>
+From: Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
 Subject: Re: write barrier patches for 2.4.21
-Date: 28 Aug 2003 21:44:34 -0400
-Message-ID: <1062121473.5322.161.camel@tiny.suse.com>
+Date: Fri, 29 Aug 2003 03:56:08 +0200
+Message-ID: <m33cfl9qh3.fsf@merlin.emma.line.org>
 References: <20030825170849.GA14811@mfa.kfki.hu> <20030826214624.GA410@zero>
-	 <20030827064103.GA29131@namesys.com> <20030827220337.GB4886@zero>
-	 <1062031059.5324.111.camel@tiny.suse.com>
-	 <20030828170725.GB21352@matchmail.com> <20030829000730.GA9019@zero>
-	 <20030829011852.GI21352@matchmail.com>
+	<20030827064103.GA29131@namesys.com> <20030827220337.GB4886@zero>
+	<1062031059.5324.111.camel@tiny.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15487-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15488-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030829011852.GI21352@matchmail.com>
+In-Reply-To: <1062031059.5324.111.camel@tiny.suse.com> (Chris Mason's
+ message of "27 Aug 2003 20:37:40 -0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Mike Fedyk <mfedyk@matchmail.com>
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <mason@suse.com>
 Cc: Tom Vier <tmv@comcast.net>, Reiserfs List <reiserfs-list@namesys.com>
 
-On Thu, 2003-08-28 at 21:18, Mike Fedyk wrote:
->  
-> > i'm not sure what you mean. chris is just saying tcq makes performance w/o
-> > write cache better. i WOULD like to see wb's used w/ scsi. it would be nice
-> > to be able to safely enable write cache on my drives.
-> 
-> I'm just trying to clairify that it looks like TCQ shows exactly what it
-> happening in the drive's cache, and that's why with tcq the wb's aren't
-> explicitly needed.
-> 
-> With ide without tcq and with write caching, it accepts the write request
-> and says it's complete when it's actually still in the disks cache, not on
-> the platters yet.
-> 
-> Contrast that to TCQ (IDE or SCSI), where the write request is sent to the
-> drive, and once it hits the platter, the tcq command completes and notifies
-> the host OS (Linux in this case) that it's done.  And SCSI with no TCQ is
-> like IDE with no write cache.
-> 
-> Do I have that right?
+Chris Mason <mason@suse.com> writes:
 
-Pretty much.  If your tag depth is set right, you get the benefits of
-writeback caching without the risk.  But your workload has to be right.
+> On Wed, 2003-08-27 at 18:03, Tom Vier wrote:
+>> On Wed, Aug 27, 2003 at 10:41:03AM +0400, Oleg Drokin wrote:
+>> > There was a discussion about that on Kernel Summit 2003 and general opinion was that SCSI
+>> > does not need the WB stuff at all as it does the correct thing anyway.
+>> 
+>> i found this, but no real details. do you have a better link? or could you
+>> tell me why scsi drives don't need wb's? afaik, they don't have nvram cache.
+>> so, the danger is still there, even if small (unless i'm wrong).
+>> 
+>> http://lwn.net/Articles/40850/
+>> 
+>
+> scsi drives don't really need them because most scsi drives don't have
+> write back caching on by default,
 
-Picture one process doing synchronous io writes.  He's only going to
-generate one tag and then wait on it.  With writeback cache, the drive
-will return immediately, but with just tcq you'll still have to wait.
+They don't? That's not what I've seen on some of the recent drives I
+bought. The OEM manuals should have details.
 
-For the one writer workload with the barrier patches, the writeback
-cache disk will be just as slow as the tcq disk.  This is usually what
-you want, since if you're taking the time to do synchronous IO it's
-because you want to know the data is really on disk (or on battery
-backed cache somewhere).
+-- 
+Matthias Andree
 
--chris
-
-
-
-
-
-
+Encrypt your mail: my GnuPG key ID is 0x052E7D95
