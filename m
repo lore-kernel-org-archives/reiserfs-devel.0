@@ -1,38 +1,62 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: implementing reiserfs in C++ for a new OS
-Date: Thu, 12 Aug 2004 17:47:20 +0300
-Message-ID: <20040812144720.GG1284@nysv.org>
-References: <41194690.5050908@namesys.com> <1365645117.20040811065416@tnonline.net> <20040811073959.GV1284@nysv.org> <4119D468.8080104@futuretg.com> <20040811090033.GX1284@nysv.org> <4119EA9B.7090503@futuretg.com> <20040811105442.GY1284@nysv.org> <411A0D42.8020204@futuretg.com> <20040811123909.GZ1284@nysv.org> <20040811232207.GB18105@zero>
+From: "Michael G. Morey" <mmorey@optivel.com>
+Subject: SMART Self-Test Reports UNC Errors on Dell Latitude D800 Hitachi
+	Travelstar DK23FB
+Date: Thu, 12 Aug 2004 11:22:03 -0500
+Message-ID: <1092327723.16346.7.camel@turing.optivel.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20230-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-d/2u5zOjFMOso/hIHO+q"
+Return-path: <reiserfs-list-return-20231-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20040811232207.GB18105@zero>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tom Vier <tmv@comcast.net>
-Cc: reiserfs-list@namesys.com
+To: Reiser Filesystem User List <reiserfs-list@namesys.com>
 
-On Wed, Aug 11, 2004 at 07:22:07PM -0400, Tom Vier wrote:
->i hate the dmca as much as anyone, but wealth (money or resources) means
->more "freedom" everywhere. it means the freedom to take more risks, make more
->investments (thereby allowing you to pay people to make things to patent,
->for example). but this is a little offtopic. 8)
+--=-d/2u5zOjFMOso/hIHO+q
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-But without patents you wouldn't have to be rich to have something patented,
-as the system would not exist. Nor would you gain anything by running to
-the patent office, first in line, to have your everyday idea patented for
-your own profit.
+All,
 
-You are also right about the investments, but that's only one type of
-freedom. I just wish the guys who made it rich in stocks or other types
-of investment would use their money smartly and not just collect a heap
-of it to sit on.
+I've installed and run the smartmontools package backported to Debian
+GNU/Linux 3.0r1 from http://www.backports.org, and have run the short
+and extended Offline self tests.  The results are as follows:
 
--- 
-mjt
+smartctl version 5.32 Copyright (C) 2002-4 Bruce Allen
+Home page is http://smartmontools.sourceforge.net/
+
+=3D=3D=3D START OF READ SMART DATA SECTION =3D=3D=3D
+SMART Self-test log structure revision number 1
+Num  Test_Description    Status                  Remaining=20
+LifeTime(hours)  LBA_of_first_error
+# 1  Extended offline    Completed: read failure       80%    =20
+4089         8371832
+# 2  Short offline       Completed without error       00%    =20
+4088         -
+# 3  Short offline       Completed without error       00%       =20
+0         -
+
+My manager suggested that I reformat the partitions (we use ReiserFS
+3.6), to mark the bad blocks.  Is this a viable option?  Can the drive
+be salvaged, or should it be replaced?
+
+Thanks in advance.
+--=20
+Michael G. Morey <mmorey@optivel.com>
+Optivel
+
+--=-d/2u5zOjFMOso/hIHO+q
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQBBG5krUxCoiYM0uf4RAhtGAJ9W319p6pSMSLtOHn1LRelDtyum/ACfVrXm
+R+NjJmNe6G4ivyerJIgpvV8=
+=ymns
+-----END PGP SIGNATURE-----
+
+--=-d/2u5zOjFMOso/hIHO+q--
 
