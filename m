@@ -1,59 +1,138 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Any new patches against 2.6.6 available?
-Date: Wed, 12 May 2004 19:29:29 +0300
-Message-ID: <20040512162929.GP29226@nysv.org>
-References: <200405101635.05839.matthias.wieser@hiasl.net> <20040510152746.GV29226@nysv.org> <20040510165859.GW29226@nysv.org> <200405111014.21208.rmeijer@internet.gr>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: 2 Terabyte install
+Date: Wed, 12 May 2004 09:59:06 -0700
+Message-ID: <40A257DA.2010903@namesys.com>
+References: <409AC2FF.7080800@lindows.com> <1083917932.14089.281.camel@tribesman.namesys.com> <409BB690.6030604@namesys.com> <409BBDC9.3030809@lindows.com> <409FB387.8080804@namesys.com> <40A19147.4010703@lindows.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18630-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18631-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200405111014.21208.rmeijer@internet.gr>
+In-Reply-To: <40A19147.4010703@lindows.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Raymond A. Meijer" <rmeijer@internet.gr>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Clifford Beshers <clifford.beshers@lindows.com>
+Cc: Vladimir Saveliev <vs@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>, Vitaly Fertman <vitaly@namesys.com>
 
-On Tue, May 11, 2004 at 10:14:21AM +0300, Raymond A. Meijer wrote:
+Clifford Beshers wrote:
+
+> Thanks for the help everyone.  In the end, it turned out that sfdisk 
+> is indeed the culprit.  We created a 2.1T partition with fdisk, then 
+> asked sfdisk for the size and it said: -92,xxx,xxx.  Unfortunately, 
+> this means we have to either fix it or find an alternate solution to 
+> creating partitions.
+
+We can probably fix it for you if you like....
+
+>   If the word ``parted'' is on the tip of your tongue  I'll bet you 
+> haven't actually used the thing...
 >
->Can't we get it through ftp/http?
+> There were a few bugs of ours that acted as red herrings, but Linspire 
+> is now up and running on this system with ReiserFS 3 and kernel 2.6.5.
+>
+> While I'm here, I have some other questions:
+>
+>     * What is the time complexity of mounting a ReiserFS partition? 
+>       It seems to be proportional to the size of the partition?  Is it
+>       different for Reiser4?
+>     * Is there a tool to determine the type of file system on a
+>       partition without mounting it?
+>
+is the time a problem in practice, or just a curiousity point?
 
-I succumbed and downloaded the free-ish crippleware version of BK
-and did pulls on the URLs
-
-bk://bk.namesys.com/bk/reiser4-linux-2.5
-bk://bk.namesys.com/bk/reiser4
-
-And there's all sorts of puzzling stuff:
-
---- drivers/char/ftape/zftape/zftape-eof.c      2004-05-12 19:16:11.000000000
-+0300
-+++ /usr/src/linux-2.6.6-rc3-mm2/drivers/char/ftape/zftape/zftape-eof.c
-2004-05-12 18:50:46.000000000 +0300
-@@ -123,7 +123,7 @@
-        while (ptr + 3 < limit) {
- 
-                if (get_unaligned((__u32*)ptr)) {
--                       ++(__u32*)ptr;
-+                       ptr += sizeof(__u32);
-                } else {
-                        return ptr;
-                }
-
-Is this for real by Namesys or just a sign that the bk pull was really old?
-
-What's the policy, should I just copy everything over on top of my
-linux-2.6.6-rc3-mm2 directory and hope it works?
-
-I sort of think the name -2.5 is a remnant from a former era, but I'd rather
-not waste my time on some olde wylde goose chase.
-
-The reiser4 repository apparently doesn't contain any core changes, so,
-what's up? Or am I too stupid to see something obvious?-)
-
--- 
-mjt
+> Cliff
+>
+> Hans Reiser wrote:
+>
+>> Clifford Beshers wrote:
+>>
+>>> Thanks Hans, but no need.  I found the page in the FAQ about three 
+>>> minutes after I posted.  I get so used to google finding me the 
+>>> right things, I occasionally forget to just go to the place I know 
+>>> should have the answers.
+>>>
+>>> So far, I know that sfdisk choked on creating the partition, but 
+>>> that fdisk succeeded.  After that the install proceeded normally, 
+>>> but the system didn't reboot.  I have to go get details on why, but 
+>>> my guessis either lilo or a missing module in the initrd.
+>>
+>>
+>> If you want us to research the problem source for you further, let us 
+>> know.  Be  suspicious of the device driver....
+>>
+>>>
+>>> Hans Reiser wrote:
+>>>
+>>>> Vladimir Saveliev wrote:
+>>>>
+>>>>> Hello
+>>>>>
+>>>>> On Fri, 2004-05-07 at 02:58, Clifford Beshers wrote:
+>>>>>  
+>>>>>
+>>>>>> What are the current size limitations for 
+>>>>>> disks/partitions/filesystems
+>>>>>> with the following combinations?  My googling has produced
+>>>>>> inconsistent answers.
+>>>>>>        { linux 2.4.24, linux 2.6.5 } X { reiserfs3, reiser4 }
+>>>>>>   
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>> http://namesys.com/faq.html#reiserfsspecs
+>>>>>
+>>>>>  
+>>>>>
+>>>>>> We have a new machine with a 3-ware 8 port controller (looks like a
+>>>>>> scsi controller to the system, but actually drives 8 ide 
+>>>>>> drives).  We
+>>>>>> have 8 x 300GB drives attached for a total > 2TB.
+>>>>>>
+>>>>>> Our IT guy has been unable to install Linspire on it (linux 2.6.5,
+>>>>>> reiserfs3).  I'm about to go look in more detail, but I thought I'd
+>>>>>> find out what the bounds were for sure.
+>>>>>>
+>>>>>>   
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>> I assume mkreiserfs was not the reason why you guys failed to install
+>>>>> linux on your hardware. It works for > 2tb devices.
+>>>>>
+>>>>>  
+>>>>>
+>>>>>> Thanks,
+>>>>>>
+>>>>>> Cliff
+>>>>>>
+>>>>>> -- 
+>>>>>>
+>>>>>> This message contains information which may be confidential and 
+>>>>>> privileged. Unless you are the addressee (or authorized to 
+>>>>>> receive for the addressee), you may not use, copy or disclose to 
+>>>>>> anyone the message or any information contained in the message. 
+>>>>>> If you have received the message in error, please advise the 
+>>>>>> sender and delete the message.  Thank you.
+>>>>>>   
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>  
+>>>>>
+>>>> Please provide exact answer to this question about what are V3 
+>>>> limits.  Vitaly, please assist.
+>>>
+>>>
+>>>
+>>>
+>>>
+>>>
+>>
 
