@@ -1,72 +1,100 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiser4 plugins
-Date: Sat, 28 Aug 2004 02:53:29 -0700
-Message-ID: <41305619.9030401@namesys.com>
-References: <20040825152805.45a1ce64.akpm@osdl.org>	<412D9FE6.9050307@namesys.com>	<20040826014542.4bfe7cc3.akpm@osdl.org>	<1093522729.9004.40.camel@leto.cs.pocnet.net>	<20040826124929.GA542@lst.de>	<1093525234.9004.55.camel@leto.cs.pocnet.net>	<20040826130718.GB820@lst.de>	<1093526273.11694.8.camel@leto.cs.pocnet.net>	<20040826132439.GA1188@lst.de>	<1093527307.11694.23.camel@leto.cs.pocnet.net>	<20040826134034.GA1470@lst.de>	<1093528683.11694.36.camel@leto.cs.pocnet.net>	<412E786E.5080608@namesys.com>	<16687.9051.311225.697109@thebsh.namesys.com>	<412F7A59.8060508@namesys.com> <16687.33718.571411.76990@thebsh.namesys.com>
+Subject: Re: silent semantic changes with reiser4
+Date: Sat, 28 Aug 2004 02:54:52 -0700
+Message-ID: <4130566C.8020604@namesys.com>
+References: <20040824202521.GA26705@lst.de>	<412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com> <412E10A2.1020801@pobox.com> <412EEC07.30707@namesys.com> <412F7B6D.6010305@pobox.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20963-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20964-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <16687.33718.571411.76990@thebsh.namesys.com>
+In-Reply-To: <412F7B6D.6010305@pobox.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Nikita Danilov <nikita@clusterfs.com>
-Cc: Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>
+To: Will Dyson <will_dyson@pobox.com>
+Cc: Andrew Morton <akpm@osdl.org>, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
 
-Nikita Danilov wrote:
+I think there are two ways to analyze the code boundary issue.  One is 
+"does it belong in the kernel?"  Another is, "does it belong in the 
+filesystem. and if so should name resolution in a filesystem be split 
+into two parts, one in kernel, and one in user space."  In ten years I 
+might have the knowledge needed to make such a split, but I know for 
+sure that I don't know how to do it today without regretting it 
+tomorrow, and I don't really have confidence that I will ever be able to 
+do it without losing performance.
 
-> > >Whoever sponsors the benchmark usually wins. Had you forgotten that
-> > >mongo setup used by http://www.namesys.com/benchmarks.html was specially
-> > >`tuned' to reach peak reiser4 performance? Remember why you decided to
-> > >turn OVERWRITE and MODIFY phases off?
->
-What I should have done was what I did with fsync performance.  With 
-fsync performance I told people that we had not yet tuned for it, please 
-wait a bit and we will tune for it, for now it sucks.
-
-Instead what I did was discuss with Zam at the time how it could be 
-fixed, leave it off the website until Zam was given a chance to fix it, 
-and then I managed to forget about it.   After release one remembers 
-what all the things that should have been fixed before release were, sigh.
-
-Zam and I both know what is needed to fix performance in these phases, 
-and I just spoke with him on the phone.  I imagine it is 2 weeks of work 
-for him, but it could be up to 6 weeks.  He will comment later.
-
-The fix should consist of the following:
-
-1) tweak the relocation policies (zam will say more about this, as he is 
-the maintainer of them)
-
-2) optimize overwrite set so that in the modify phase we behave like a 
-write twice journaling filesystem, which means implement a reserved for 
-the journal only area that exists as long as plenty of disk space is free.
-
-3) finish the repacker (but we won't do that this month....)
-
-The modify phase, which picks a random block to modify, is a worst case 
-for a wandering log without a repacker.  We could actually do very very 
-well at that kind of activity with a repacker, probably better than a 
-fixed journal, but for now we should try acting like a write twice 
-journal for atoms that small.
-
-So, having realized my error thanks to the gracious kindness of how you 
-pointed it out, we will modify the web site to say that we are not yet 
-tuned for and currently suck at modifying random blocks in the middle of 
-files, and appending small amounts to the end of them, and overwriting 
-small files, but that we think we know what is needed to fix those things.
-
-I think your characterization of my reasons was unkind and also unfair.  
-I will pass on saying similarly unkind things about you as you are 
-mostly a good person.  You never did seem to understand me.  You didn't 
-understand the reasons for my technical designs (when they worked it 
-made no sense to you that they did), and you didn't understand me as a 
-person. 
-
-I wish you well in your new job, and thank you for the hard work you did 
-for me.
+Glad that BeFS finds the new model better.:)
 
 Hans
+
+Will Dyson wrote:
+
+> Hans Reiser wrote:
+>
+>> Will Dyson wrote:
+>>
+>>>
+>>> In the original BeOS, they solved the problem by having the 
+>>> filesystem driver itself take a text query string and parse it, 
+>>> returning a list of inodes that match. The whole business of parsing 
+>>> a query string in the kernel (let alone in the filesystem driver) 
+>>> has always seemed ugly to me. 
+>>
+>>
+>> Why?
+>
+>
+> Hmm. Trying to explain aesthetic judgments is always fun, but I'll try.
+>
+> String parsing bloats the kernel with code that will be called rarely, 
+> and doing it inside the filesystem module makes for duplicate code if 
+> more than one filesystem does it. But a good common parser routine (or 
+> a kernel api that takes a pre-compiled parse tree) would reduce the 
+> bad taste.
+>
+> The real objection I have is that it puts the kernel in the position 
+> of doing more work than it has to for the system to operate correctly 
+> and efficiently. The user wants to know what files match a certain set 
+> of criteria. The filesystem provides special features which can 
+> greatly accelerate some searches. Does it make more sense to move the 
+> functionality of /usr/bin/find into the kernel, or to export the index 
+> information so that an enhanced version of find can make use of it?
+>
+> I don't think having find in the kernel would be worth the cost or 
+> complexity.
+>
+> However, now that I've had to think about it while writing the above, 
+> it occurs to me that if we wanted to offer something like the beos's 
+> live queries, doing it in the kernel might be the way to go.
+>
+> For the 99.9% of people who were not beos users back in the day, the 
+> "live query" was a way to register a query string with the kernel, so 
+> that you got notifications when the list of files matching the query 
+> changed. It was pretty cool, but this is really just blue-skying since 
+> I am not stepping up to write such a beast any time soon.
+>
+>>> However, the best alternative I've come up with is to simply export 
+>>> the index data as a special file (perhaps in sysfs?) and have 
+>>> userspace responsible for searching the index.
+>>
+>>
+>> That is the best implementation suggestion I've heard for splitting 
+>> the filesystem into two parts, one in user space and one in kernel, 
+>> but I still don't trust it to work well.
+>
+>
+> Why not? And if it really splits the filesystem into two parts depends 
+> on which of the two following statements you agree with more:
+>
+> "Fast searching is a feature of the filesystem"
+> "Maintaining indexes is a feature of the filesystem"
+>
+>
+> PS.
+> The file-as-directory attribute/stream/whatever model is a much better 
+> fit for befs's internals than the xattr api. If the kernel supported 
+> it, I would enable support for it in befs.
+>
+
