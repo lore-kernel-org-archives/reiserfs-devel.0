@@ -1,64 +1,51 @@
-From: Heinz-Josef Claes <hjclaes@web.de>
-Subject: Re: Calling stat with millions of files
-Date: Tue, 08 Jun 2004 14:00:54 +0200
-Message-ID: <1086696053.2690.37.camel@schlappix.schnulli.de>
-References: <Pine.LNX.4.58.0406071735290.30177@localhost.localdomain>
-	 <1086688996.1829.79.camel@tribesman.namesys.com>
+From: "Andrew Snare" <asnare@allshare.nl>
+Subject: Block corruption
+Date: Tue, 08 Jun 2004 15:36:09 +0200
+Message-ID: <s0c5dcfa.013@allshare.nl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19084-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19085-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1086688996.1829.79.camel@tribesman.namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
+Cc: Paul Wagland <PWagland@allshare.nl>
 
-> On Tue, 2004-06-08 at 01:54, Ross Skaliotis wrote:
-> > We have a backup system (backupPC) that is responsible for backing up
-> > millions of files and holding over 2 TB of data. The backup system saves
-> > space by creating hard links where it can. This actually reduces the total
-> > size down to 200 GB, however there are still millions of files/hard links.
-> > 
-> > What does this have to do with reiserfs? Well, the partition runs reiserfs
-> > 3.6. Over the course of a few months (and the addition of millions more
-> > files/hard links) the performance of the filesystem has become painfully
-> > slow.
-> > 
-> > In a directory of ~1000 files, running 'ls -l' or 'stat *' takes 45
-> > seconds to complete (assuming nothing is previously cached). We are using
-> > the r5 hash, and mount the filesystem with noatime. No one directory has
-> > (or will ever have) more than about 2000 files and hard links inside.
-> 
+Hi,
 
-Do you have these problems only if you have a lot of files in a
-directory or also with smaller directories. I'm using storebackup (which
-also uses hard links) for a backup and never had these problems - even
-on a slow machine. (I'm using reiserfs 3.6 _with_ tail packing and r5
-hash.)
+After a few 2.6.6 oopsen and --rebuild-trees on some filesystems, we've
+still got some bad-block errors that are proving troublesome. In
+particular, we appear to have 3 bad blocks:
 
-Do you also have these problems when performing a backup?
+vs-5150: search_by_key: invalid format found in block 5963192. Fsck?
+vs-13070: reiserfs_read_locked_inode: i/o failure occurred trying to
+find stat data of [52570 52653 0x0 SD]
+vs-5150: search_by_key: invalid format found in block 5946544. Fsck?
+vs-13070: reiserfs_read_locked_inode: i/o failure occurred trying to
+find stat data of [46770 46771 0x0 SD]
+vs-5150: search_by_key: invalid format found in block 10058201. Fsck?
+vs-13070: reiserfs_read_locked_inode: i/o failure occurred trying to
+find stat data of [111684 111687 0x0 SD]
 
-> > Is this performance decrease when calling stat to be expected with
-> > increasing millions of files/hard links? Would XFS or another filesystem
-> > get around this somehow? 
-> 
-> I guess that filesystem which stores on-disk inodes groupped together
-> would perform better for this kind of workload.
-> 
-> > I'd rather not use reiserfs4, as this is a
-> > production backup server and needs to be as stable as possible.
-> > 
-> > Thanks very much for your help,
-> > 
-> > -Ross Skaliotis
-> > 
--- 
-Heinz-Josef Claes                     hjclaes@web.de
-project: http://sourceforge.net/projects/storebackup
-      -> snapshot-like backup to another disk
+It's a hardware RAID-5 configuration that has no errors, so we know
+it's not a hardware problem; this points to corruption in one or more of
+our 11 reiserfs filesystems.
 
+Is it possible to:
 
+1) Work out which of the 11 filesystems these errors are referring to?
+Preferably while the system is mounted. I see a block number, but
+several of our filesystems are large enough to have a block number that
+big.
+2) Work out which directory/file is corrupted? In the past whenever we
+did a --rebuild-tree we ended up with quite a lot of stuff in
+lost+found, so we'd like to try and work out where it's coming from if
+possible.
 
+Thanks in advance,
+
+ - Andrew Snare
