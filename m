@@ -1,34 +1,32 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: http://www.namesys.com/snapshots/2004.07.13-internal.testing/
-Date: Tue, 13 Jul 2004 14:27:58 +0400
-Message-ID: <200407131427.58912.vitaly@namesys.com>
-References: <200406150022.34578.vitaly@namesys.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: sets (was: Re: http://www.namesys.com/snapshots/2004.07.13-internal.testing/)
+Date: Tue, 13 Jul 2004 13:36:27 +0300
+Message-ID: <20040713103627.GD4990@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19593-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19594-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200406150022.34578.vitaly@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Hello All,
+On Tue, Jul 13, 2004 at 02:27:58PM +0400, Vitaly Fertman wrote:
+>
+>and again, it should be used with the last auto reiser4 snapshots 
+>only as the latest 'stable' reiser4 snapshot (2004.03.26) does not 
+>support plugin sets in StatDatas.
 
-This snapshot contains updated reiser4progs-0.5.6 and libaal-0.5.3.
-Grub patch is the same.
+This may be a bit off-topic, so I broke it to its own thread.
 
-It includes many bug fixes against the previous snapshot, also 
-improved gauges and user wanrnings and some speedups.
+Are hsets already implemented? Are they coming, if not?
 
-and again, it should be used with the last auto reiser4 snapshots 
-only as the latest 'stable' reiser4 snapshot (2004.03.26) does not 
-support plugin sets in StatDatas.
+Thanks!
 
 -- 
-Thanks,
-Vitaly Fertman
+mjt
 
