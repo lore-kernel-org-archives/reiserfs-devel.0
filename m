@@ -1,62 +1,46 @@
-From: Voicu Liviu <liviu.voicu@huji.ac.il>
+From: Oleg Drokin <green@namesys.com>
 Subject: Re: ReiserFS causes CPU high usage?!
-Date: Fri, 28 Feb 2003 16:08:07 +0200
-Message-ID: <200302281608.07667.liviu.voicu@huji.ac.il>
-References: <200302280011.14488.liviu.voicu@huji.ac.il> <200302281552.10657.liviu.voicu@huji.ac.il> <20030228170240.A11516@namesys.com>
+Date: Fri, 28 Feb 2003 17:07:37 +0300
+Message-ID: <20030228170737.B11516@namesys.com>
+References: <200302280011.14488.liviu.voicu@huji.ac.il> <200302281500.37328.liviu.voicu@huji.ac.il> <20030228140627.I24291@humilis> <200302281511.56997.liviu.voicu@huji.ac.il>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13023-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13024-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030228170240.A11516@namesys.com>
-Content-Description: clearsigned data
 Content-Disposition: inline
+In-Reply-To: <200302281511.56997.liviu.voicu@huji.ac.il>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: Text/Plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Voicu Liviu <liviu.voicu@huji.ac.il>
 Cc: ookhoi@humilis.net, reiserfs-list@namesys.com
 
-=2D----BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hello!
 
-On Friday 28 February 2003 16:02, Oleg Drokin wrote:
-> Hello!
->
-> On Fri, Feb 28, 2003 at 03:52:10PM +0200, Voicu Liviu wrote:
-> > > > Do you think this kernel will boot? The computer is 45 minutes far
-> > > > away from my location is it will not be nice :-)
-> > >
-> > > I think yes, but can't say for sure, and don't count on what strangers
-> > > tell you. Besides, 45 minutes sounds like a perfect bike trip. ;-)
-> >
-> > Naaaaaaaah :-)
-> > If you haven't seen yet the news, we had snow in Jerusalem so it's cold
-> > and wet :p
->
-> Anyway this is very strange.
-> Perhaps you may want to dig "low latency" patches and give them a try.
+On Fri, Feb 28, 2003 at 03:11:56PM +0200, Voicu Liviu wrote:
 
-Already have it:
+> > You said you had problem with that too, but that is really weird as X
+> > would not want 100% cpu.
+> > In an other mail you write that your compiles are very fast. If a new
+> > kernel doesn't solve your problem, and compiles are very fast anyway, I
+> > would say: don't do that then (the renice to -10), or renice to -5 or
+> > some value which does not bother you.
+> I don't want to renice compilation threads, only X to get more responsives 
+> from it...but this locks me out :-)
 
-[*] Low latency scheduling
- [*] Control low latency with sysctl
+Hm, but if you do not renice X, it works ok?
 
-> Bye,
->     Oleg
+I just noticed:
+> Mem:   255948k av,  250540k used,    5408k free,       0k shrd,   28344k buff
+>         59512k active,             119096k inactive
+> Swap:  514072k av,     144k used,  513928k free                  122280k
 
-=2D --=20
-Voicu Liviu
+So if you add X and kde (and other heavy stuff to that), you basically have no RAM,
+so probably all the slowdown is from constant swapping.
+Just run top when you see the interactive slowdown and look at the swapin/swapout ratio
+and swap isage in top & /proc/stat
 
-Hebrew University of Jerusalem
-Rothberg International School
-Assistant Programmer & Network Support
-=2D----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.1 (GNU/Linux)
-
-iD8DBQE+X21HczD4Ii52ssMRAmaUAJ0TpD1Vv7Ho3MnsjY7uc+bE4opeywCffNXM
-6JZie8+mZrLlGU172DBa+jU=3D
-=3DRGLE
-=2D----END PGP SIGNATURE-----
-
+Bye,
+    Oleg
