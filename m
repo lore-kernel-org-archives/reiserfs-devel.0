@@ -1,38 +1,37 @@
-From: mjt@nysv.org (Markus  =?ISO-8859-1?Q?=20T=F6rnqvist?=)
+From: Andrew Morton <akpm@osdl.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 12:37:41 +0300
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040826093741.GU1284@nysv.org>
-References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825152805.45a1ce64.akpm@osdl.org> <412D9FE6.9050307@namesys.com> <20040826093407.GB28854@lst.de>
+Date: Thu, 26 Aug 2004 02:49:56 -0700
+Message-ID: <20040826024956.08b66b46.akpm@osdl.org>
+References: <20040824202521.GA26705@lst.de>
+	<412CEE38.1080707@namesys.com>
+	<20040825152805.45a1ce64.akpm@osdl.org>
+	<112698263.20040826005146@tnonline.net>
+	<Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org>
+	<1453698131.20040826011935@tnonline.net>
+	<20040825163225.4441cfdd.akpm@osdl.org>
+	<20040825233739.GP10907@legion.cup.hp.com>
+	<20040825234629.GF2612@wiggy.net>
+	<1939276887.20040826114028@tnonline.net>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20040826093407.GB28854@lst.de>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-20613-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <1939276887.20040826114028@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Spam <spam@tnonline.net>
+Cc: wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Thu, Aug 26, 2004 at 11:34:07AM +0200, Christoph Hellwig wrote:
+Spam <spam@tnonline.net> wrote:
 >
->Dou you know a nice thing?  We (as in the Linux Community) don't have to
->compete with anyone.  Sure, we're usually trying to be better than
->anyone else, but unlike companies under maret pressure we can wait until
->something is ready.
+>    Yes,  for  example  documents,  image  files  etc. The multiple data
+>    streams  can  contain thumbnails, info about who is editing the file
+>    (useful for networked files) etc. Could be used for version handling
+>    and much more.
 
-It won't get ready unless it's made ready, yes?
+All of which can be handled in userspace library code.
 
-And what about the time when people will move away from Linux because
-Linux has nothing but crappy file systems to offer?
-Sure, it's not that we'd have to compete, but...
-
->Again, if you think you want your work in Linux cooperate with the Linux
->Developers, and as you have seen in this thread there's a pretty broad
->consensus that we want things working at the VFS (and actually working
->of course)
-
-So move it into VFS. Neext! ;)
-
--- 
-mjt
-
+What compelling reason is there for doing this in the kernel?
