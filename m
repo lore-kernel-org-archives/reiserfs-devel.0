@@ -1,66 +1,65 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Subject: Re: reiserfsprogs 3.6.16 release
-Date: Fri, 14 May 2004 00:54:45 +0200
-Message-ID: <20040514005445.4946e2a3@philou.gramoulle.local>
-References: <200405132235.15380.vitaly@namesys.com>
-	<20040513203526.GA2007@raptus.homelinux.org>
-	<200405140045.45433.vitaly@namesys.com>
-	<20040513221153.GA11191@raptus.homelinux.org>
+From: Michael James <Michael.James@csiro.au>
+Subject: Re: plugin for cached network file system
+Date: Fri, 14 May 2004 12:07:17 +1000
+Message-ID: <200405141207.17471.Michael.James@csiro.au>
+References: <200405131059.22693.Michael.James@csiro.au> <200405131653.52862.Michael.James@csiro.au> <40A39B3E.3080701@namesys.com>
+Reply-To: Michael.James@csiro.au
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="Multipart=_Fri__14_May_2004_00_54_45_+0200_YbIQ/GfS2XMqpwNG"
-Return-path: <reiserfs-list-return-18666-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18671-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040513221153.GA11191@raptus.homelinux.org>
+In-Reply-To: <40A39B3E.3080701@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
---Multipart=_Fri__14_May_2004_00_54_45_+0200_YbIQ/GfS2XMqpwNG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+> >>>Michael James asked:
+> >>>
+> >>>How hard would it be to write a Reiser4 plug-in
+> >>>to implement a network file system with a cache on the local disk?
 
 
-Hello,
+> >On Thursday 13 May 2004 15:49, Hans Reiser wrote:
+> >
+> >>It is easy to do a hack, and hard to do it right so that the world would 
+> >>want to drop nfs and move to it.  We are trying to find a sponsor to do 
+> >>it right, and have a proposal called Reiser5 that costs $1.8 million, 
+> >>and provides global scalability (which nfs/afs/clusterfs/intermezzo do 
+> >>not, in my view).
 
-The attached patch fixes the compilation issue.
+NFS has its strength: Easy, overlays onto an existing (trusted) filesystem
+ and its many weaknesses: bad locking, single server, etc.
+AFS and its derivatives Coda and Intermezzo
+ use ACLs which map badly in a Unix environment.
+Also to support disconnected operation so they need to be complete copies,
+ (no good for my case) and because of the penalty of re-syncing on re-connect
+ they aren't designed for big partitions (again no good).
+Lustre I need to study more.
 
-Thanks,
+It's Hans' determination to to go right down to basics and do it properly
+ that makes me think reiserfs could be the one to carry Linux to new levels.
 
-Philippe
+That said, I don't have $1.8 M or even the time to spend it
+ before my last kludge (rsync complete local copies onto the nodes)
+ turns around and bites me. (the files grew, not enough space anymore)
 
---Multipart=_Fri__14_May_2004_00_54_45_+0200_YbIQ/GfS2XMqpwNG
-Content-Type: text/plain;
- name="misc.h.diff"
-Content-Disposition: attachment;
- filename="misc.h.diff"
-Content-Transfer-Encoding: 7bit
+So I'm still looking for the, "Don't worry, be scrappy" solution.
 
---- reiserfsprogs-3.6.16.orig/include/misc.h	2004-02-17 13:20:40.000000000 +0100
-+++ reiserfsprogs-3.6.16.patched/include/misc.h	2004-05-14 00:49:31.000000000 +0200
-@@ -154,14 +154,11 @@
-     tmp >>= from;\
-     return tmp;
- 
--#if 0
- #ifndef major
- #define major(rdev)      ((rdev)>>8)
- #define minor(rdev)      ((rdev) & 0xff)
- #endif /* major */
--#endif
- 
--#if 0
- #ifndef SCSI_DISK_MAJOR
- #define SCSI_DISK_MAJOR(maj) ((maj) == SCSI_DISK0_MAJOR || \
- 			     ((maj) >= SCSI_DISK1_MAJOR && (maj) <= SCSI_DISK7_MAJOR))
-@@ -184,6 +181,5 @@
- 			     (maj) == IDE4_MAJOR || (maj) == IDE5_MAJOR)
- #endif /* IDE9_MAJOR */
- #endif /* IDE_DISK_MAJOR */
--#endif
- 
- #endif /* REISERFS_MISC_H */
 
---Multipart=_Fri__14_May_2004_00_54_45_+0200_YbIQ/GfS2XMqpwNG--
+> >On Friday 14 May 2004 01:58, Hans Reiser wrote:
+>
+> I am very skeptical of the value of it (that is how NFS came about, just 
+> doing things quickly....), but to answer the question asked, it would be 
+> easy.
+
+Where do I start?
+
+-- 
+Michael James                         michael.james@csiro.au
+System Administrator                    voice:  02 6246 5040
+CSIRO Bioinformatics Facility             fax:  02 6246 5166
+
