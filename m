@@ -1,78 +1,57 @@
-From: Christian Mayrhuber <christian.mayrhuber@gmx.net>
+From: Helge Hafting <helgehaf@aitel.hist.no>
 Subject: Re: file as a directory
-Date: Sat, 27 Nov 2004 14:14:18 +0100
-Message-ID: <200411271414.18801.christian.mayrhuber@gmx.net>
-References: <2c59f00304112205546349e88e@mail.gmail.com> <200411262213.58242.christian.mayrhuber@gmx.net> <1101553779.3680.28.camel@grape.st-and.ac.uk>
+Date: Sun, 28 Nov 2004 19:53:34 +0100
+Message-ID: <20041128185334.GA5329@hh.idb.hist.no>
+References: <2c59f00304112205546349e88e@mail.gmail.com> <41A1FFFC.70507@hist.no> <20041125230937.GA2909@elf.ucw.cz>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22599-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22605-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1101553779.3680.28.camel@grape.st-and.ac.uk>
 Content-Disposition: inline
+In-Reply-To: <20041125230937.GA2909@elf.ucw.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Cc: reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Helge Hafting <helge.hafting@hist.no>, Amit Gud <amitgud1@gmail.com>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-On Saturday 27 November 2004 12:09, Peter Foldiak wrote:
-> On Fri, 2004-11-26 at 21:13, Christian Mayrhuber wrote:
-> > Regarding namespace unification + XPath:
-> > For files: cat /etc/passwd/[. = "joe"] should work like in XPath.
+On Fri, Nov 26, 2004 at 12:09:37AM +0100, Pavel Machek wrote:
+> Hi!
+> > >
+> > You won't get .tar or .tar.gz support in the VFS, for a few simple reasons:
+> > 1. .tar and .tar.gz are complicated formats, and are therefore better
+> >   left to userland.  You can get some of the same effect by using a shared
+> >   library that redefines fopen() and fread() though.  It'll work fine for
+> >   the vast majority of apps that happens to use the C library.
 > 
-> I don't understand this. Why would you need the "."? And why the /
-> between passwd and [ ?
-Yes, I was confused by /etc/passwd/[username] in an earlier email.
-I think we both mean basically the same.
+> It is not same effect -- with shared library you get no caching. And
+> that hurts a lot.
+> 
+The compressed file is still cached, and the library can cache
+file contents in a shared mapping.  It does not have to
+be a per-process thing.
 
-> /etc/passwd/joe/shell
+> >   It is hard to make a guaranteed bug-free decompressor that
+> >   is efficient and works with a finite amount of memory.  The kernel
+> >   needs all that - userland doesn't.
 > 
-> whould be the shell joe uses.
-Yes.
+> If you have bug in decompressor, you are screwed, anyway, because you
+> get remote user exploit when mozilla gets the file from
+> web. Oops. [Ok, you at least do not get remote root exploit, but...]
+> 
+I don't worry about mozilla exploits - you get those from
+nasty webpages as well.  I worried about a decompressor
+cras (or random memory overwrite).  A userland implementation
+will crash that particular userland process, with no ill effects on 
+the rest of the system. 
 
-> So by default, /etc/passwd/joe should be equivalent to /etc/passwd[user
-> = "joe"]
-Yes.
-/etc/passwd/joe/shell would be equivalent to
-/etc/passwd[shell = "/bin/bash"]/joe/shell if joe has bash as shell, right?
+A kernelside crash is much worse - it can hang the kernel and/or
+mess up any process.  As for exploits - an in-kernel exploit
+is even worse than a root exploit.  There are plenty
+of thing even root can't do - at least not in 
+straightforward ways.  The kernel has no limitations
+whatsoever for what may go wrong.
 
-> 
-> But you should be able to select based on fullname too:
-> 
-> /etc/passwd[fullname = "Joe Smith"]
-Ok.
-This means that any XPath like expression will need to return a directory 
-entry representing a restricted view on the /etc/passwd contents.
-The result of 'ls /etc/passwd[fullname = "Joe Smith"]' would be alike
-'drwxr-xr-x  2 root root 48 2004-11-27 13:48 joe', right?
-
-> 
-> and
-> 
-> /etc/passwd[shell = "/bin/bash"]/user
-> 
-> should give you the user names of all users whose shell is /bin/bash,
-> right?
-I'm confused again.
-I expected 'ls /etc/passwd[shell = "/bin/bash"]/user' to give you the
-passwd entries of "user" and 'ls /etc/passwd[shell = "/bin/bash"]/' to
-give the users that have a bash shell.
-
-
-> > # cd /etc/passwd/
-> > # ls -a *
-> > . .. .... joe root
-> > # cd joe
-> > # ls
-> > gid home passwd shell uid
-> 
-> yes, but where is the username? that would be the first one listed here,
-> right?
-joe is the username and a directory. There is no username entry in the
-joe directory, because the username is already in the directory.
-You can rename a user by renaming joe. 'mv joe newname'.
-
--- 
-lg, Chris
+Helge Hafting
