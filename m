@@ -1,78 +1,71 @@
 From: Helge Hafting <helgehaf@aitel.hist.no>
 Subject: Re: silent semantic changes with reiser4
-Date: Sat, 28 Aug 2004 18:49:31 +0200
-Message-ID: <20040828164931.GA24868@hh.idb.hist.no>
-References: <helge.hafting@hist.no> <412D9FFA.6030307@hist.no> <200408261817.i7QIH35O002702@localhost.localdomain>
+Date: Sat, 28 Aug 2004 19:05:15 +0200
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <20040828170515.GB24868@hh.idb.hist.no>
+References: <Pine.LNX.4.44.0408272158560.10272-100000@chimarrao.boston.redhat.com> <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20999-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <200408261817.i7QIH35O002702@localhost.localdomain>
+In-Reply-To: <Pine.LNX.4.58.0408271902410.14196@ppc970.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Helge Hafting <helge.hafting@hist.no>, Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>, Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="utf-8"
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: Rik van Riel <riel@redhat.com>, Spam <spam@tnonline.net>, Jamie Lokier <jamie@shareable.org>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Diego Calleja <diegocg@teleline.es>, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com, Al Viro <viro@parcelfarce.linux.theplanet.co.uk>
 
-On Thu, Aug 26, 2004 at 02:17:03PM -0400, Horst von Brand wrote:
-> Helge Hafting <helge.hafting@hist.no> said:
-> > Matt Mackall wrote:
-> 
-> [...]
-> 
-> > >Find some silly person with an iBook and open a shell on OS X. Use cp
-> > >to copy a file with a resource fork. Oh look, the Finder has no idea
-> > >what the new file is, even though it looks exactly identical in the
-> > >shell. Isn't that _wonderful_? 
-> 
-> > It is what I'd expect.
-> 
-> Great. That means that all the tools of the trade stop working. Sounds like
-> show-killer feature to me.
->
-All wrong.  Feel free to dislike the concept all you want, but don't provide 
-false arguments.  I am sure you can think up some _good_ ones, if
-you feel so strongly about this.
+On Fri, Aug 27, 2004 at 07:05:35PM -0700, Linus Torvalds wrote:
+>=20
+>=20
+> On Fri, 27 Aug 2004, Rik van Riel wrote:
+> >=20
+> > Thing is, there is no way to distinguish between what are
+> > virtual files and what are actual streams hidden inside a
+> > file.  You don't know what should and shouldn't be backed
+> > up...
+>=20
+> I think that lack of distinguishing poiwer is more serious for=20
+> directories. The more I think I think about it, the more I wonder whe=
+ther=20
+> Solaris did things right - having a special operation to "cross the=20
+> boundary".
+>=20
+> I suspect Solaris did it that way because it's a hell of a lot easier=
+ to=20
+> do it like that, but regardless, it would solve the issue of real=20
+> directories having both real children _and_ the "extra streams".
 
-_No_ tool "stop working" with such a fs.  Of course the new
-feature (file-as-directory) may not be supported - which is a problem
-only for files that use the new feature.  Stick a lot of ordinary
-files and directories in such a fs, and the tools works as before
-with no breakage.  People obviously won't deploy new features before
-they are useable - the fs have to come first.  Then the tools,
-and widespread use only after that.  This is similiar to other extensions 
-like ACLs which many tools don't understand.  They're still useable though.
+There are many ways of doing this. Several extra streams to a directory
+that aren't ordinary files in the directory?
 
-Of course file-as-directory can have pilot uses like the often
-mentioned thumbnails - because it doesn't matter if those aren't
-backed up or get lost at random during the experimental phase.
+It seems to me that we can get a lot of nice functionality in a simpler=
+ way:
+Instead of thinking about a number of streams attached to something
+that is either an ordinary file or directory, just say that the only
+change will be that a directory may have a _single_ file stream in
+addition to being a plain directory.
 
- 
-> >                         Now, use cp -R to copy  the file
-> > _with its directory_,
-> 
-> Either it is a file or a directory. Make up your mind. 
+The conceptual change is smaller.  Still you achieve multiple
+streams, the "main" stream in such a dir+file is the single stream
+attached to the directory.  All the "extra streams" are files inside th=
+e=20
+(normal) directory.
 
-Wrong again.  The file-as-directory concept means that
-a filename refers to something that is a file, or a directory,
-or both.  That's the point of it.  Being both isn't
-possible with current filesystems (except reiser4) of course, 
-but file-as-directory is a proposed _extension_.  
+* This way, the extra streams aren't "special" in any way and
+  should work fine with existing tools.=20
+* Serving such a filesystem to clients that use multiple streams
+  will allow any number of streams per file for them
+* Moving the directory+file thing will move both the directory and
+  the special stream, and all the extra streams follow because they're
+  =EF=BF=BDpart of the directory as usual=EF=BF=BD.
 
-> If you have no clear
-> distinction, you'll only get messed up. Badly.
->
-The distinction is clear enough - three options instead of two.
- 
-> Excuse me, I must grab my sickness bag here.
-
-Oh, very impressive.  Please take a look at what we're talking
-about before attacking.   
+If the VFS is to be extended in order to support file-as-directory (or
+vice versa) then hopefully it can be done in a simple way.
 
 Helge Hafting
-
-
-
+=20
+-
+To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
+" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
