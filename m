@@ -1,63 +1,44 @@
-From: Alexander Lyamin <flx@msu.ru>
-Subject: Re:  reiser4 plugins (was: silent semantic changes with reiser4)
-Date: Sat, 28 Aug 2004 23:23:50 +0400
+From: Linus Torvalds <torvalds@osdl.org>
+Subject: Re:   reiser4 plugins (was: silent semantic changes with reiser4)
+Date: Sat, 28 Aug 2004 12:26:39 -0700 (PDT)
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040828192350.GI6746@alias>
-References: <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de> <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de> <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de> <20040828105929.GB6746@alias> <20040828111233.GA11339@lst.de> <20040828120502.GE6746@alias> <20040828135655.GA13380@lst.de>
-Reply-To: flx@msu.ru
+Message-ID: <Pine.LNX.4.58.0408281223390.2295@ppc970.osdl.org>
+References: <412D9FE6.9050307@namesys.com> <20040826014542.4bfe7cc3.akpm@osdl.org>
+ <1093522729.9004.40.camel@leto.cs.pocnet.net> <20040826124929.GA542@lst.de>
+ <1093525234.9004.55.camel@leto.cs.pocnet.net> <20040826130718.GB820@lst.de>
+ <1093526273.11694.8.camel@leto.cs.pocnet.net> <20040826132439.GA1188@lst.de>
+ <20040828105929.GB6746@alias> <Pine.LNX.4.58.0408281011280.2295@ppc970.osdl.org>
+ <20040828190350.GA14152@alias>
 Mime-Version: 1.0
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20040828135655.GA13380@lst.de>
+In-Reply-To: <20040828190350.GA14152@alias>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@lst.de>, flx@msu.ru, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, torvalds@osdl.org, reiserfs-list@namesys.com
+To: Alexander Lyamin <flx@msu.ru>
+Cc: Christoph Hellwig <hch@lst.de>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-Sat, Aug 28, 2004 at 03:56:55PM +0200, Christoph Hellwig wrote:
-> On Sat, Aug 28, 2004 at 04:05:02PM +0400, Alexander Lyamin wrote:
-> > > But one could even say VFS is integral part of a linux filesystem as
-> > > it does most of the work a filesystem driver does in other operating
-> > > systems.
-> > 
-> > theres no "linux filesystem". there are "linux filesystems".
-> > thanks god.
+
+
+On Sat, 28 Aug 2004, Alexander Lyamin wrote:
 > 
-> a linux filesystem, not the linux filesystem, please read again.
-> 
-> > But I it would be really grate if you'll elaborate your sentence with
-> > example of VFS functionality (lack of it) on said "other operating systems"
-> > and if you'll define "most of work".
-> 
-> most trivial example is namespace locking, in *BSD, Windows, SVR4 and
-> derivates it's done in the lowlevel filesystem.  In plan9, Linux and
-> soon DragonlyBSD it's done in the VFS. 
+> Considering "amazing PR skills" of Hans Reiser it was the only viable way
+> to get this changes in VFS. Cause, ironically, mr. Hellwig that currently
+> demand it to be scrapped out or go in VFS would instakill Hans Reiser
+> (i know many people would:) if he only touched holy cow of VFS for any
+> reiser4 purpose.
 
-ok. good examples.
+Hey, you don't have to try to convince me - I haven't been arguing against 
+the reiser4 approach. I think it's a prototyping scheme, and quite frankly 
+I don't think you _can_ get the name lookup right without real VFS support 
+(races, namespaces etc are just not something you can solve in the 
+filesystem). 
 
-> 
-> > > > P.S. I imagine, how much flamed it would be if reiser4 made any intensive
-> > > > changes in linux VFS code...
-> > > 
-> > > It really depends on how you sent them.  If you had a big patch without
-> > > explanations - sure.
-> > It would work with small tweaks, but you just can take a look at reiser4
-> > code and you'll understand that it just could not be chopped in
-> > "set of small patches" altough it could be documented better ofcourse,
-> > but its really well commented already.
-> > 
-> > some times, some approaches to  some problems  just would not work.
-> 
-> You still haven't even bother explaining what you want to do.  It's hard
-> to argue against vague uncertainity.
+But the fact that name lookup does seriously need VFS support means that I 
+don't think we want to merge reiser4 as-is. No way. That doesn't mean that 
+I think reiser4 was _wrong_.
 
- o files as directories -  no oppinion on that.
-                            
- o metafiles -   AFAIK it was product of Nikita Danilov just playing and fooling.
+And I certainly agree that there are personality issues, and they are not 
+all just Hans' ;)
 
-Probably solution that will satisfy you is to have "legacy (dumb?) mode" which
-is leaving all this fancy stuff out of sight.
-
--- 
-"the liberation loophole will make it clear.."
-lex lyamin
+			Linus
