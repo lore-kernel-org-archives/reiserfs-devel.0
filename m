@@ -1,51 +1,38 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: v4 resizer?
-Date: Fri, 16 Jul 2004 14:54:38 -0500
-Message-ID: <40F8327E.8030304@slaphack.com>
-References: <40F79A88.1040803@slaphack.com> <20040716113450.GS4990@nysv.org>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Again, some bad Reiser4 (ReiserFS) 'reviews'
+Date: Fri, 16 Jul 2004 21:32:54 -0700
+Message-ID: <40F8ABF6.8080809@namesys.com>
+References: <200407150025.30908.Dieter.Nuetzel@hamburg.de> <40F6C548.7030805@namesys.com> <20040715182209.GK21140@backtop.namesys.com> <20040716092927.GQ4990@nysv.org> <40F831F5.5090700@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-19663-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19664-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040716113450.GS4990@nysv.org>
+In-Reply-To: <40F831F5.5090700@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
-Cc: reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, Alex Zarochentsev <zam@namesys.com>, Dieter N?tzel <Dieter.Nuetzel@hamburg.de>, reiserfs-list@namesys.com, rufus@hackish.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+David Masover wrote:
 
-
-
-Markus T=F6rnqvist wrote:
-
-| Maybe this is where the wizened master tells his young grasshopper to
-| have patience, for life is like a beanstock, isn't it?
-
-Only if someone can assure me that the on-disk format will not change
-until there's a resizer available.
-
-
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQPgyfXgHNmZLgCUhAQJlaQ//WOHjEvPpuBqJyqH/jYqC339a4AtN+Y9d
-x0DOZ1y8iCN05PMcN8cOpdJBItt9WqFUrAjB/NlVx+mbTRSWxrDXu97xtoHkfijR
-SxmTOpRWmktIoZqNF8CmtarBcnX32mahyoq8Ippkx+ottFJjBwea3WjB200FTdE9
-MGxaHpt8Beyg2pvTOssjYvRKsD08KH0/uIjHXpspbffqppKlq644f7x5U56SOpMT
-MHow7PBfWaka5mzN6jOOCmlagTX2+wg+gR7QVkjD5ANykaKYojfdMYo76SK74pD6
-DNSbzFnTC0Msvy9eKQgpPs9KgP2t2Cf4BZT1lbBEPGRkRTfhapKmDw08jx6ZiPXD
-womvJQOrMWd9zKOcZU7YtwdyXe5SqZJxR5O2AiVVHaiKnKpP1TComyt8WsMMMHwC
-LEfIlzTGfmmHREElZeTVPkHrPu+w96yEEqaaPbWVzeaym6xO5HLGd9WE+ZHTG8rn
-a6bJJADHtVFZPFYKRqyGTY/fOBvqXDeYeXsgPa0SXxZFVKFb+CWGwfDaFg3Sc5Gg
-jEpRaGG1Bmz/ABoQWbhHlhIa7zDN5rUFpXL3atIEhBzRVaxxo+5545SAiJmyqoeP
-otJBCNkluqkB5B2Tl3mxhvmSMzRPJT8dgiSLL+Ubi4HeI3q1W0YZxfNTA6FpwFIE
-FTkFWuL1NpM=3D
-=3DwbKb
------END PGP SIGNATURE-----
+>
+>
+> Markus T=F6rnqvist wrote:
+>
+> | This always puzzles me. Would not ext-1-fibre give the same results for
+> | .o files but also the same bonus with all source code and such with .c
+> | and .h?
+>
+> For that matter, what about for generic extensions?  Take this perl
+> pseudocode:
+>
+> if ($file->[name} =3D~  /.\.(\w{1,4})$/) {
+>     $file->fibrate_by($1);
+> }
+>
+>
+>
+Please consider creating a plugin.;-)   In C....;-)
