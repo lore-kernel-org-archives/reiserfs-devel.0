@@ -1,46 +1,31 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+From: Andrew Morton <akpm@digeo.com>
 Subject: Re: 2.5.46: SCSI and/or ReiserFS v3.6 broken? Kernel panic
-Date: Wed, 6 Nov 2002 00:21:01 +0100
-Message-ID: <200211060021.01178.Dieter.Nuetzel@hamburg.de>
-References: <200211060006.10425.Dieter.Nuetzel@hamburg.de> <1036537937.24354.337.camel@tiny>
+Date: Tue, 05 Nov 2002 15:19:59 -0800
+Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <3DC8521F.47270896@digeo.com>
+References: <200211060006.10425.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11923-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <1036537937.24354.337.camel@tiny>
-Content-Disposition: inline
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
-To: Chris Mason <mason@suse.com>
+To: Dieter =?iso-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
 Cc: Linux Kernel List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Am Mittwoch, 6. November 2002 00:12 schrieb Chris Mason:
-> On Tue, 2002-11-05 at 18:06, Dieter N=FCtzel wrote:
-> > VFS: Cannot open root device "803" or 08:03
-> > Please append a correct "root=3D" boot option
-> > Kernel panic: VFS: unable to mount root fs on 08:03
-> >
-> > With and without HugeTLB file system support.
-> > With and without ACPI, APIC.
-> >
-> > Worked all the time before.
->
-> Is aic7xxx still in your config?  I'm using 2.5.45 here without
-> problems.
+Dieter N=FCtzel wrote:
+>=20
+> VFS: Cannot open root device "803" or 08:03
+> Please append a correct "root=3D" boot option
+> Kernel panic: VFS: unable to mount root fs on 08:03
+>=20
 
-As always.
-2.5.45 and before are running fine;-(
+That was happening to me yesterday as well.  After a bit
+of poking around and recompiling, it mysteriously went away.
 
-CONFIG_SCSI_AIC7XXX=3Dy
-CONFIG_AIC7XXX_CMDS_PER_DEVICE=3D253
-CONFIG_AIC7XXX_RESET_DELAY_MS=3D1500
-CONFIG_AIC7XXX_BUILD_FIRMWARE=3Dy
+The same has happened about ten times over the past few months,
+and rebuilding the world makes it go away.  On ext3.
 
-My kernel .config file change only for some little cruft which didn't compi=
-le=20
-for one or the other kernel version.
+Something is definitely fishy.  It's unhelpful that it cures
+itself just as you get geared up to fix it.
 
-=2DDieter
+Does a full rebuild fix it for you?
