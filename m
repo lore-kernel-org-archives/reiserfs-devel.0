@@ -1,32 +1,50 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Recent spam
-Date: Fri, 6 Jun 2003 18:38:56 +0400
-Message-ID: <20030606143856.GA6029@namesys.com>
-References: <3EDAEEBE.3050202@netscape.net> <1054820341.23131.126.camel@tiny.suse.com> <3EDF5618.5090904@namesys.com> <200306060548.44154.russell@coker.com.au> <3EE04C02.2090707@namesys.com> <1054890172.1075.14.camel@localhost> <3EE0A627.4080702@namesys.com>
+From: Russell Coker <russell@coker.com.au>
+Subject: Re: How to build a big file server
+Date: Sat, 7 Jun 2003 01:15:51 +1000
+Message-ID: <200306070115.51648.russell@coker.com.au>
+References: <1054800852.1997.15.camel@wusel.schnulli.de> <200306060143.13516.sam@vilain.net> <3EE077E5.2030003@inway.cz>
+Reply-To: Russell Coker <russell@coker.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14478-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14479-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3EE077E5.2030003@inway.cz>
 Content-Disposition: inline
-In-Reply-To: <3EE0A627.4080702@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Soeren Sonnenburg <reiserfs@nn7.de>, Alexander Lyamin <flx@namesys.com>, Russell Coker <russell@coker.com.au>, reiserfs-list <reiserfs-list@namesys.com>
+To: "Vitezslav T. Se'm" <travis@inway.cz>
+Cc: reiserfs-list@namesys.com
 
-Hello!
+On Fri, 6 Jun 2003 21:15, Vitezslav T. Se'm wrote:
+> This is not about performace mostly, but about reliability. When U have
+> 2 disks on one ribon, there is a serious problem, when one of them
+> crash, because in 99% cases, the other disk stops responding to. This is
+> IDE, not SCSI,
 
-On Fri, Jun 06, 2003 at 06:33:11PM +0400, Hans Reiser wrote:
+The same problem occurs on SCSI.
 
-> Happy to remove you and anyone else who lists us in the spamcop database.
+If you buy a serious storage system from Sun such as an A5000 which is 
+correctly configured then you will expect to have multiple RAID-5's, where 
+for each RAID-5 you have no more than one disk on any given SCSI channel 
+(cable), and the hot-spare disks are on a separate channel too.
 
-It is impossible to list someone in spamcop database.
-Instead you just forward mails that contains spam there, and based on the headers
-the spamcop software decides what was the injection point of spam and adds this point
-to its database.
+In any situation where you have a bus with multiple devices connected to it 
+then a single device can kill the entire bus if it breaks in the wrong way.  
+I've seen this happen in Ethernet hubs, SCSI, IDE, PCI, and ISA.
 
-Bye,
-    Oleg
+As to which buses are most prone to such errors, all evidence that I am aware 
+of is anecdotal.  For PCI you usually don't have much choice, machines with 
+hot-swap PCI and multiple independant PCI buses are very rare, ISA is history 
+so it's not something we have to worry about.  For SCSI and IDE you want to 
+be able to lose a cable without losing the system if you want reliability.  
+You just don't want Ethernet hubs.
+
+-- 
+http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
+http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
+http://www.coker.com.au/~russell/  My home page
+
