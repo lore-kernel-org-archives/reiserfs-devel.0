@@ -1,54 +1,74 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: reiser4 and swsusp (take 2)
-Date: Fri, 26 Mar 2004 12:22:19 +0300
-Message-ID: <20040326092219.GX15733@backtop.namesys.com>
-References: <200403252244.39083.filipe@rnl.ist.utl.pt>
+From: Bernhard Sadlowski <sadlowsk@mathematik.uni-bielefeld.de>
+Subject: NFS issues with reiserfs 3.6? ext3 works...
+Date: Fri, 26 Mar 2004 12:53:02 +0100
+Sender: Bernhard Sadlowski <sadlowsk@Mathematik.Uni-Bielefeld.DE>
+Message-ID: <20040326115302.GD1315@mathematik.uni-bielefeld.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17488-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17489-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200403252244.39083.filipe@rnl.ist.utl.pt>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Filipe Almeida <filipe@rnl.ist.utl.pt>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Thu, Mar 25, 2004 at 10:44:37PM +0000, Filipe Almeida wrote:
-> Hi,
-> 
-> I believe I have found the issue with software suspend and the repacker.
-> The refrigerator() call inside prepare_repacking_session() is called regularly 
-> and should work as expected. The problem is that the software suspend system, 
-> before signaling all kernel threads, calls sys_sync() to flush the buffers 
-> out to disk. If sys_sync() is called while the repacker is running, it will 
+Hi!
 
-PF_FREEZE is not set yet?
+A short question:
 
-> only return at the end of the repacker run. 
+What are the remaining differences between reiserfs and ext3 regarding
+NFS? 
 
-It is a wrong behavior, regardless to sw suspend.
-However, the repacker is not a goal for the next reiser4 snapshot.
-Its (repacker) development is dalayed until we get reiser4 stable.
+Details:
 
-> So, if you start the repacker and 
-> call software suspend, the system will only suspend at the end of repacking, 
-> which could be a really long time.
-> 
-> Hope it helps...
+I have two Linux machines with current kernel 2.4.25 and two
+Directories on the NFS Server dematl04:
 
-great thanks.
+dematl04:/vol01 (ext3 fs)
+dematl04:/raid  (reiserfs 3.6)
 
-> 
-> Regards,
-> Filipe Almeida
-> 
-> --
-> Filipe Almeida <filipe@rnl.ist.utl.pt>
-> http://mega.ist.utl.pt/~filipe/
+On both machines we use Helios Ethershare (a commercial software for
+print and fileservices for Macintosh). Helios Ethershare uses and
+updates a file .Desktop every time some mac is creating, writing or
+changing files in a Macintosh volume.  The "dt" utility has to be used
+in a shell for mkdir, rm, mv, touch, ... I guess it has to lock this
+file whilche applying changes.
 
--- 
-Alex.
+# dt
+Usage: dt { rm | rmdir | mv | cp | set | ls | mkdir | touch |
+            upd | chmod | chown | chgrp | idinfo | iddump }
+
+Reiserfs:
+
+root@dematl04:/raid/arc_04# dt mkdir test1
+-> works
+
+Same volume mounted per NFS on a second machine:
+
+root@dematl08:/assets/ts04/arc_04# dt mkdir test2
+dt mkdir: (dematl04) Error -5031 occured!: /raid/assets/ts04/arc_04: error accessing desktop lock '.DeskServer'
+-> does not work 
+
+Ext3:
+
+root@dematl04:/vol01# dt mkdir test1
+-> works
+
+Same volume mounted per NFS on a second machine:
+
+root@dematl08:/vol01# dt mkdir test2
+-> works
+
+Helios Ethershare is also running on Solaris 8 and the tests above
+succeed between two Solaris machines. I can provide on request the
+strace output of "dt mkdir test3" on the NFS client. They were to big
+for the list.
+
+Is this some known locking difference/bug in reiserfs?
+Will reiser4 be more "compatible" with NFS?
+
+Thanks,
+Bernhard
