@@ -1,51 +1,42 @@
-From: Francois-Rene Rideau <fare@tunes.org>
-Subject: mkreiserfs -s 1024 makes unmountable partitions
-Date: Sun, 26 Jan 2003 19:18:16 +0100
-Sender: Francois-Rene Rideau <fare@Samaris.tunes.org>
-Message-ID: <20030126181816.GA1274@Kadath>
-References: <20030117221535.GA945@Kadath> <20030118080941.B5575@humilis> <20030118115142.B21932@namesys.com> <20030117221535.GA945@Kadath> <20030118080941.B5575@humilis> <20030118115724.GA946@Kadath> <20030121213336.GA6756@hell.mine.nu> <20030122065712.D5575@humilis> <20030122100342.GA14100@hell.mine.nu> <20030124222823.GA15643@hell.mine.nu>
-Reply-To: Francois-Rene Rideau <fare@tunes.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12489-reiserfs=m.gmane.org@namesys.com>
+From: eazgwmir@umail.furryterror.org (Zygo Blaxell)
+Subject: Re: Hard disk crash and solution
+Date: 26 Jan 2003 14:42:59 -0500
+Message-ID: <b11do3$74q$1@satsuki.furryterror.org>
+References: <IKENJBHCILNPNAGHKCHFOEDMCCAA.Art@chello.nl>
+Return-path: <reiserfs-list-return-12490-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030124222823.GA15643@hell.mine.nu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Hi! No hard disk crash today (I'm just disabling the DMA )-" )
-However, I've tried to make small reiserfs partitions,
-and was annoyed at the journal taking a significant size of the disk:
-32MB is 50% of my 64MB /boot partition, and 40% of the whole
-of my server's 80MB harddisk.
+In article <IKENJBHCILNPNAGHKCHFOEDMCCAA.Art@chello.nl>,
+Niek <Art@chello.nl> wrote:
+>Title: IBM DTLA 307045 Hard disk crash
+>
+>I bought this disk (46 GB) about two years ago. One of the best they
+>claimed.
+[...]
+>What is the fucking MBTF of these drives?? Is it close to one year like I
+>experienced?
 
-I saw that mkreiserfs had an option -s to select the size of the journal,
-and tried to use it to make a 4MB journal:
-	mkreiserfs -s 1024 /dev/hdc1
-However, whereas mkreiserfs didn't complain, the resulting partition
-was unmountable by linux. In the syslogs, the kernel complains:
-read_super_block: can't find a reiserfs filesystem on (dev 16:01, block 128=
-, size 512)
-read_super_block: can't find a reiserfs filesystem on (dev 16:01, block 16,=
- size 512)
+My employer used a total of 13 of these drives (various sizes, but all the
+same family) for RAID arrays.  We originally purchased 10, and replaced
+the first 3 to die under IBM warranty.  After the first 3, we started
+replacing dead disks with some other brand of drive.  In the end 9 of the
+IBM drives died.  Some days two or three disks would fail at a time.
+We didn't bother waiting for the last 4, but presumably they would have
+died if we hadn't replaced all of them.  We took the rest of them apart
+to use as cubicle wall decorations, shaving mirrors, etc.
 
-I there a way to make a reiserfs partition with a small journal?
-32MB is really a waste, on some partitions.
-Would a small kernel patch do it?
-In any case, I think that it is a bug that mkreiserfs doesn't check
-the consistency of its parameters with what the kernel is able to handle.
+Even worse, for about 6 hours before some of them died, they randomly
+flipped a few bits here and there in the data, which made RAID 
+redundancy useless.
 
-PS: I'm using debian's reiserfsprogs 1:3.6.4-2 and linux kernel 2.4.20.
-
-Cheers!
-
-[ Fran=E7ois-Ren=E9 =D0VB Rideau | Reflection&Cybernethics | http://fare.tu=
-nes.org ]
-[  TUNES project for a Free Reflective Computing System  | http://tunes.org=
-  ]
-You can only find happiness by striving towards something else.
+-- 
+Zygo Blaxell (Laptop) <zblaxell@feedme.hungrycats.org>
+GPG = D13D 6651 F446 9787 600B AD1E CCF3 6F93 2823 44AD
