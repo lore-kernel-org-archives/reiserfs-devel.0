@@ -1,56 +1,90 @@
-From: "Fabiano Reis" <silos.reis@ig.com.br>
-Subject: Re: mount hang on kernel 2.6
-Date: Mon, 8 Mar 2004 09:47:51 -0300
-Message-ID: <007801c4050b$91aa1b00$3f32a8c0@ds.ig.com.br>
-References: <20040307_223203_003004.silos.reis@ig.com.br> <1078700846.25077.205.camel@watt.suse.com>
+From: Nick Vahalik <nick@nsanity.com>
+Subject: Reiserfs Data Recovery
+Date: Mon, 08 Mar 2004 08:22:49 -0600
+Message-ID: <404C81B9.4050504@nsanity.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-17118-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17119-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
+Hello,
 
-Good point. I will try it.
+System: Slackware 9.1
+Dual P3 1Ghz/133Mhz FSB
+1 GB Ram PC133 Ram
+Running Hardware Raid1 on top of a highpoint 37x2 raid controller
+2x80 GB Drives
 
-Thanks!
+My system crashed yesterday (xscreensaver... bah!) and when I rebooted 
+my /raid partition wouldn't mount. So I ran reiserfsck /dev/sda1 and it 
+said I needed to rebuild my superblock because my Root Super Block 0 was 
+corrupt. So I ran reiserfsck --rebuild-sb /dev/sda1 and after that it 
+was saying that it failed and I needed to run reiserfsck --rebuild-tree. 
+Well, I did and about an hour later I get something like this (the log 
+is about 80k):
+1537 directory entries were hashed with not set hash.
+112120 directory entries were hashed with "r5" hash.
+Selected hash ("r5") does not match to the hash set in the super block 
+(not set).
+"r5" hash is selected
+Flushing..finished
+Read blocks (but not data blocks) 38667615
+Leaves among those 56626
+- corrected leaves 2478
+- leaves all contents of which could not be saved and deleted 19
+pointers in indirect items to wrong area 5167 (zeroed)
+Objectids found 116706
 
------ Original Message -----=20
-From: "Chris Mason" <mason@suse.com>
-To: "Fabiano Reis" <silos.reis@ig.com.br>
-Cc: <reiserfs-list@namesys.com>
-Sent: Sunday, March 07, 2004 8:07 PM
-Subject: Re: mount hang on kernel 2.6
+Pass 1 (will try to insert 56607 leaves):
+####### Pass 1 #######
+Looking for allocable blocks .. finished
+0%pass1: block 65604, item 16, entry 4: The entry "P313"?" of the [50706 
+50722 0x1 DIR (3)] is hashed with not set whereas proper hash is "r5" - 
+deleted
+pass1: block 65604, item 16, entry 9: The entry "P313"?" of the [50706 
+50722 0x1 DIR (3)] is hashed with not set whereas proper hash is "r5" - 
+deleted
+pass1.c 408 pass1_correct_leaf
+pass1_correct_leaf: block 65636, item 0, pointer 7: The wrong pointer 
+(2224053807) in the file [50872 50891]. Must be fixed on pass0.
+Aborted
 
+So, I figured I'd run it once more and just hope and pray that it would 
+kinda fix itself, and well, I got the same thing again:
 
-> On Sun, 2004-03-07 at 17:32, Fabiano Reis wrote:
-> > Hi list,
-> >
-> > I=B4m having problems to mount a reiserfs filesystem using kernel 2.6.3=
- on
-> > RedHat 9.
-> >
-> > The fs I=B4m trying to mount was formated using kernel 2.4.20-24.9 (the
-latest
-> > kernel for RH9) with ReiserFS version 3.6.25 (from dmesg) and
-reiserfsprogs
-> > 3.6.4 (from reiserfsck -v command)
-> >
-> > I upgraded to kernel 2.6.3 (rpm from
-> > http://people.redhat.com/arjanv/2.6/RPMS.kernel/)
-> >
-> > The symptom: When I execute the command
-> >
->
-> Can you reproduce with a vanilla or -mm kernel?
->
-> -chris
->
->
->
+1200 directory entries were hashed with not set hash.
+110404 directory entries were hashed with "r5" hash.
+"r5" hash is selected
+Flushing..finished
+Read blocks (but not data blocks) 38667391
+Leaves among those 56589
+- corrected leaves 2484
+- leaves all contents of which could not be saved and deleted 28
+pointers in indirect items to wrong area 4947 (zeroed)
+Objectids found 116691
 
+Pass 1 (will try to insert 56561 leaves):
+####### Pass 1 #######
+Looking for allocable blocks .. finished
+0%pass1: block 65540, item 19, entry 0: The entry "" of the [50257 50323 
+0x1 DIR (3)] is hashed with not set whereas proper hash is "r5" - deleted
+pass1: block 65540, item 19, entry 0: The entry ".." of the [50257 50323 
+0x2 DIR (3)] is hashed with not set whereas proper hash is "r5" - deleted
+pass1.c 408 pass1_correct_leaf left 56393, 0 /sec
+pass1_correct_leaf: block 65604, item 2, pointer 1: The wrong pointer 
+(1) in the file [50696 50698]. Must be fixed on pass0.
+Aborted
+
+It looks like the numbers are getting smaller, but all I know is that it 
+still won't mount... and I have everything on this partition... this was 
+my backup (I just reformatted) and without this data I am seriously 
+screwed. Will normal data recovery methods work (like, Encase or 
+Ontrack?) or is there a better way?
+
+Nick Vahalik
