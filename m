@@ -1,49 +1,61 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Subject: Re: I oppose Chris and Jeff's patch to add an unnecessary additional
- namespace to ReiserFS
-Date: Tue, 27 Apr 2004 14:07:40 -0400
-Sender: linux-kernel-owner@vger.kernel.org
-Message-ID: <408EA16C.4030102@pobox.com>
-References: <1082750045.12989.199.camel@watt.suse.com> <408D3FEE.1030603@namesys.com> <20040426203314.A6973@infradead.org> <408E986F.90506@namesys.com> <20040427183400.A20221@infradead.org> <408E9F42.2080804@namesys.com>
+From: Bruce Guenter <lists-reiserfs-list@bruce-guenter.dyndns.org>
+Subject: Re: Reiserfs concurrent write problems
+Date: Tue, 27 Apr 2004 14:15:59 -0600
+Message-ID: <20040427201559.GA17186@em.ca>
+References: <20040426172648.GA22918@em.ca> <1083000970.30344.50.camel@watt.suse.com> <20040427161544.GA27873@em.ca> <1083088841.30344.131.camel@watt.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org-S264254AbUD0SMs@vger.kernel.org>
-In-Reply-To: <408E9F42.2080804@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
+Return-path: <reiserfs-list-return-18257-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <1083088841.30344.131.camel@watt.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Chris Mason <mason@suse.com>, Linus Torvalds <torvalds@osdl.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, akpm@osdl.org
+To: reiserfs-list@namesys.com
 
-Hans Reiser wrote:
-> Christoph Hellwig wrote:
-> 
->>> Did you notice that V4 blows XFS and ReiserFS V3 away in 
->>> benchmarks?    That is what I have been doing for 3 years....
->>>
->>> See www.namesys.com for details.
->>>   
->>
->>
->> see www.microsoft.com why Windows is much better than Linux.  Yeah, 
->> thanks.
->>  
->>
-> Ask the users whether their laptops, etc.,  seem to go a lot faster with 
-> V4.  They seem to be pretty happy with it.
-> 
-> V4 fixed all of V3's serious performance flaws, and totally obsoletes 
-> it.    I am very happy with it.
+--rwEMma7ioTxnRzrJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Apr 27, 2004 at 02:00:41PM -0400, Chris Mason wrote:
+> Good to hear, could I trouble you to ping me (or better yet
+> reiserfs-list) when you have the graphs updated?
 
-For the present thread, this is irrelevant, as the irreverent responses 
-hinted at:
+For sure.
 
-Regardless of _any_ features or fixes in V4, reiserfs V3 will be used in 
-production system for years.  Minor feature additions to an existing 
-filesystem make it far easier for kernel engineers and sysadmins to 
-assess the impact on their systems -- which is typically of less impact 
-than switching to a new filesystem.
+> Other notes about 2.6.6-rc2-mm2, it has some ext3 optimizations as well,
+> you might want to rebenchmark there.
 
-	Jeff
+I am re-running all of the benchmarks, actually, as well as doing some
+tweaking to the XFS options.
 
+> reiserfs defaults to -o
+> data=3Dordered in the 2.6.6-rc2 (and -mm), you should get slightly better
+> numbers with -o data=3Dwriteback.
 
+I will try that, as well as data=3Djournal (which I understand is one of
+the new features in the -mm patches).  The production system will not
+run data=3Dwriteback, but it is still a useful number.
+
+Thanks.
+--=20
+Bruce Guenter <bruceg@em.ca> http://em.ca/~bruceg/ http://untroubled.org/
+OpenPGP key: 699980E8 / D0B7 C8DD 365D A395 29DA  2E2A E96F B2DC 6999 80E8
+
+--rwEMma7ioTxnRzrJ
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQFAjr9+6W+y3GmZgOgRAiq8AJkBoWk6rkxY7CNTZ/RyPFm3sgJkrQCfQ60N
+eHB94LnLL3zBVcVoC7jb9vI=
+=AETk
+-----END PGP SIGNATURE-----
+
+--rwEMma7ioTxnRzrJ--
