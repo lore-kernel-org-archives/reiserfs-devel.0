@@ -1,9 +1,9 @@
 From: rwhron@earthlink.net
 Subject: Re: oops from 2.5.42-mm3 running lilo on reiserfs
-Date: Wed, 16 Oct 2002 00:30:42 -0400
-Message-ID: <20021016043041.GA10674@rushmore>
+Date: Wed, 16 Oct 2002 00:34:49 -0400
+Message-ID: <20021016043449.GA11922@rushmore>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11709-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11710-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -13,44 +13,31 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: akpm@digeo.com
-Cc: reiserfs-list@namesys.com
+Cc: mason@suse.com, reiserfs-list@namesys.com
 
->> While running lilo I got this oops:
->>
->>  kernel BUG at mm/highmem.c:177!
->>  invalid operand: 0000
+Andrew Morton wrote:
+> Bah, stupid reiserfs list bounces non-subscribers.
 
-> Just delete it I think:
+:) that's why i'm on the list.
 
-Yep, that fixes it.  By the way, system responsiveness
-with all this stuff running is impressive:
+> Could you please let me know if this patch fixed it?
 
-Linux Test Project's runalltests.sh (lots of I/O).
-configure/make/make test Python-2.2.2 (all tests okay)
-setiathome  (cpu bound)
-mp3blaster
-lilo in a loop every 30 seconds.
+Yes, your patch below fixes it.
 
-mp3blaster was only quiet about 5 seconds during
-a point when runalltests.sh was executing 100
-CPU bound threads.  (float_bessel is the test)
-There was no skipping during the test that writes
-to all free memory + 600 megs swap. :)
 
-2 python audio tests block on /dev/audio, but
-that's expected.
+ fs/reiserfs/ioctl.c |    1 -
+ 1 files changed, 1 deletion(-)
 
-You once had a 2.4 patch so lilo wouldn't wait too
-long when there is a lot of I/O going on.  A couple
-of the LTP tests would make lilo pause ~ 60 seconds:
-growfiles -b -e 1 -i 0 -L 120 -u -g 4090 -T 100 -t 408990 -l -C 10 -c 1000 -S 10 -f Lgf02_
-growfiles -b -e 1 -i 0 -L 120 -u -g 5000 -T 100 -t 499990 -l -C 10 -c 1000 -S 10 -f Lgf03_
+--- 2.5.42/fs/reiserfs/ioctl.c~reiserfs-kmap-fix        Tue Oct 15 20:15:01 2002
++++ 2.5.42-akpm/fs/reiserfs/ioctl.c     Tue Oct 15 20:15:39 2002
+@@ -80,7 +80,6 @@ int reiserfs_unpack (struct inode * inod
+     /* conversion can change page contents, must flush */
+     flush_dcache_page(page) ;
+     REISERFS_I(inode)->i_flags |= i_nopack_mask;
+-    kunmap(page) ; /* mapped by prepare_write */
 
-Those run for 120 seconds each in sync mode.  
-
-I can enter and exit X with no problem.
-2.5.42-mm3 is comfortable on my main box.
-Thanks for making it so good.
+ out_unlock:
+     unlock_page(page) ;
 
 -- 
 Randy Hron
