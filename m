@@ -1,41 +1,54 @@
-From: "leonardo morrell" <brynna@academycougars.com>
-Subject: Fw: important improved memory
-Date: Sat, 07 Aug 2004 19:57:24 +0800
-Message-ID: <55B6E03F.2383BEE@academycougars.com>
-Reply-To: "leonardo morrell" <brynna@academycougars.com>
+From: Ramachandra K <ariston@gmail.com>
+Subject: implementing reiserfs in C++ for a new OS
+Date: Sat, 7 Aug 2004 18:41:31 +0530
+Message-ID: <71d3364904080706112e72fb6b@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20056-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20057-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: austin krstic <jmacd@namesys.com>
-Cc: dean ekstein <krieg@namesys.com>, thurman anton <vs@namesys.com>, jasper schaefer <reiserfs-list@namesys.com>, kareem kalinoski <kaser@namesys.com>
+To: reiserfs-list@namesys.com
 
-manspaklianna shimaukccs-ether semi-finished
+Hello,
 
+I am planning to implement ReiserFS on my operating system named Capital 
+(www.mitpune.com/research/capital1.html). To give a brief background - 
+Capital is a 32-bit Object Oriented operating system for the Intel
+i386 range of
+microprocessors. Capital's features include multithreading,virtual memory 
+and a VFS interface.
 
-stop the pai_n, here's how: vico-din
+The implementation language of Capital is C++ and hence I, along with my
+team, would like to implement ReiserFS from scratch in C++. I know that
+this is a daunting task requiring considerable effort. The main motivation,
+in addition to implementing an efficient file system for my operating system,
+is to acquire an in depth understanding of the principles behind the design
+of ReiserFS and possibly come up with some new ideas.
 
-BgysvgeIbxqrfhog http://dj.h.sites2766tads.us/f74m/
+It would be of great help if I can get some pointers about how do I go about
+understanding ReiserFS.
 
+Currently I have got a bird's eye view of ReiserFS (plugins, items,
+dancing trees etc).
+But I am still grappling with the following issues:
 
+1)I have not been able to get any information about the on-disk structure
+(i.e where is the superblock, bitmaps etc). I guess I can get it by
+reading the source
+ (probably mkreiserfs code would also be helpful). Is there any other
+source of information ?
 
+2)All the information that is available at namesys.com is about Reiser4 and
+I would like to know where I could get more information about version 3.
 
+I would greatly appreciate suggestions and pointers to more information.
 
------Original Message-----
-From: Jacobs [mailto:wgw@bbqxequ.com] 
-To: truman scarles; nigel mcclung 
-Sent: Wednesday, August, 2004 3:38 PM
-Subject: important improved memory
+(Please CC the replies to me as I am currently not subscribed to the
+mailing list)
 
-
-
-A similar study focusing on Klebsiella bacteraemia found an advantage for
-combination therapy only among patients with hypotension15 while other
-studies have not found such an advantage 1012 88 
-esfuerzo 16 bromear 03  desvalor  cominear  ape`tala
-
+rgds
+Ram
