@@ -1,196 +1,98 @@
 From: Michael Barry <jabbera@gmail.com>
-Subject: Re: Possible bug: clog length 0
-Date: Tue, 9 Nov 2004 12:43:34 -0500
-Message-ID: <662c77ee041109094365d0be89@mail.gmail.com>
-References: <662c77ee04102420101ae1a40@mail.gmail.com>
-	 <417C85A2.9030701@namesys.com>
-	 <1098715787.3475.118.camel@tribesman.namesys.com>
+Subject: Re: reiser4 and reiserfs co-existence?
+Date: Tue, 9 Nov 2004 12:47:07 -0500
+Message-ID: <662c77ee04110909473d0f6dd3@mail.gmail.com>
+References: <b28a886104110808555d3f59dc@mail.gmail.com>
+	 <1099933755.13138.4.camel@localhost>
+	 <b28a886104110823161fe3a30d@mail.gmail.com>
+	 <1099997754.1373.72.camel@tribesman.namesys.com>
+	 <b28a886104110907416476fb50@mail.gmail.com>
 Reply-To: Michael Barry <jabbera@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22322-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22323-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1098715787.3475.118.camel@tribesman.namesys.com>
+In-Reply-To: <b28a886104110907416476fb50@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: Jeremy West <jkwest@gmail.com>
+Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
-Sorry to bring up such and old thread, but I was wondering if any
-progress has been made. I just don't feel like reformatting my var
-partition:-)
+This is the exact same problem I am having. I just bumped the thread
+actually. If you enable debig mode instead of your system freezing you
+will get a stack trace. That trace is available in my thread labeled
+possible bug: clog 0.
 
-Thanks for your time,
 Mike
 
 
-On Mon, 25 Oct 2004 18:49:47 +0400, Vladimir Saveliev <vs@namesys.com> wrote:
-> Hello
+On Tue, 9 Nov 2004 10:41:25 -0500, Jeremy West <jkwest@gmail.com> wrote:
+> Yes, I have a source code tarball that can't be built correctly.  You
+> can get this file from other places, but it might be best to test
+> exactly what I'm using.  I'm building php, and applying this patch.
+> 
+> www.jeremysplace.org/php-4.3.9.tar.bz2
+> http://www.jeremysplace.org/php-4.3.6-includepath.diff
+> 
+> To answer Markus's question.  I'm not having any bus errors .... yet.
+> At least I hope I don't get any.  I like to deal with one problem at a
+> time.  I will reboot my machine into a LiveCD, and debug some reiser4
+> for you.  How's best to do this anyway.  The debug script that you
+> referenced won't find anything unless something odd happens, right?
+> What does the script do?  I guess this is a stupid question, huh?
 > 
 > 
 > 
-> On Mon, 2004-10-25 at 08:48, Hans Reiser wrote:
-> > Vitaly, can you fix this? If not, give it to vs to fix.
+> On Tue, 09 Nov 2004 13:55:54 +0300, Vladimir Saveliev <vs@namesys.com> wrote:
+> > Hello
 > >
-> > Hans
+> > On Tue, 2004-11-09 at 10:16, Jeremy West wrote:
+> > > Ok.  I think I may have found a glitch in reiser4.  It seems that my
+> > > freezing coincidentally happened every time I tried installing php.
+> > > Each time my system froze, the php build would crap out at the same
+> > > point.  Basically the bulid would say that it was running the
+> > > pear-installer program, then give me a segmentation fault.
 > >
-> > Michael Barry wrote:
+> > Do i understand correctly that you have a source code tar ball which can
+> > not be built in reiser4 filesystem? Where can i find it?
 > >
-> > >I would like to being by thanking anyone for thier time who can help
-> > >me with this.
+> >
+> >
 > > >
-> > >I am installing php currently. When the installation gets to a certain
-> > >step the php process freezes in state D(Disk Sleep). This process
-> > >cannot be killed with kill -9. When I checked my log files I saw "clog
-> > >length 0" repeated many times. I traced this text to the reiserfs4
-> > >code. I then compiled my kernel 2.6.9-mm1 (note: this also occurs with
-> > >2.6.8.1-mm4) with reiserfs4 with all debug options.
-> > >
-> > >Note: This possible bug is repoduceable and always freezes at the same point.
-> > >
-> > >When I recompile php, now I get an oops earlier in the installation
-> > >process. The following is my log file output:
+> > > So ... it seems to me that reiser4 is having some issues handling
+> > > segfault events.  I'm not sure how to tell what caused the segfault.
+> > > I don't think it's memory, because it happens in the same spot of the
+> > > build every time.  I've done this 4 times now.  That is not random.
 > > >
 > > >
-> > >
-> > >clog length 0
-> > >reiser4[php(17428)]: object_lookup (fs/reiser4/search.c:397)[nikita-2104]:
-> > >code: -503 at fs/reiser4/plugin/file/file.c:803
-> > >reiser4 panicked cowardly: assertion failed:
-> > >lock_stack_isclean(get_current_lock_stack())
-> > >context: trace_flags: 0
-> > >pid: 17428, comm: php
-> > >        lock stack:
-> > >.... nr_signaled 0
-> > >.... curpri high
-> > >.... current locks:
-> > >...... write: c000000000007bb2
-> > >...... write: c000000000007bb2
-> > >...... write: c000000000007bb3
-> > >        atom: refcount: 2 id: 1 flags: 0 txnh_count: 1 capture_count:
-> > >10050 stage: 1 start: 4294698070, flushed: 0
-> > >------------[ cut here ]------------
-> > >kernel BUG at fs/reiser4/debug.c:131!
-> > >invalid operand: 0000 [#1]
-> > >SMP
-> > >Modules linked in: sg sr_mod
-> > >CPU:    0
-> > >EIP:    0060:[<c018edfc>]    Not tainted VLI
-> > >EFLAGS: 00010246   (2.6.9-mm1)
-> > >EIP is at reiser4_do_panic+0x230/0x2d8
-> > >eax: c050cb08   ebx: c050cb00   ecx: c050cb00   edx: c050cb00
-> > >esi: c996c000   edi: c996d4b4   ebp: c996d42c   esp: c996d26c
-> > >ds: 007b   es: 007b   ss: 0068
-> > >Process php (pid: 17428, threadinfo=c996c000 task=c9bf2020)
-> > >Stack: cec03200 00000001 c03f193b c996d298 c0401527 00000323 c996d2c0 c7cb4188
-> > >       c01dfb79 c03f1926 c0403858 c03f8573 c03baf67 c03f8483 0000018d 00000002
-> > >       c5bc6500 c01b799f c018f142 c01f058e c996d398 00000000 00000000 00000000
-> > >Call Trace:
-> > > [<c01dfb79>] object_lookup+0x1a9/0x451
-> > > [<c01b799f>] coord_is_existing_item+0xd9/0x1e8
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c01f058e>] reiser4_blocknr_is_sane_for+0x27/0xf8
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c0222cc7>] num_of_items_node40+0x24/0x1b5
-> > > [<c023a2f3>] estimate_cde+0x8c/0x192
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c01b799f>] coord_is_existing_item+0xd9/0x1e8
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c01e549e>] xmemcpy+0x21/0x25
-> > > [<c018f805>] return_err+0x1c/0xa0
-> > > [<c0223a18>] key_at_node40+0x5d/0x141
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c01e54ea>] xmemset+0x22/0x26
-> > > [<c028293e>] hint_validate+0x53/0x181
-> > > [<c01e54ea>] xmemset+0x22/0x26
-> > > [<c0281278>] find_file_item+0x312/0x440
-> > > [<c028485b>] readpage_unix_file+0x19e/0xc02
-> > > [<c0222cc7>] num_of_items_node40+0x24/0x1b5
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c01ffb74>] reiser4_readpage+0xdf/0x2cd
-> > > [<c0222cc7>] num_of_items_node40+0x24/0x1b5
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c013d191>] page_cache_read+0xa1/0xd5
-> > > [<c013d4f4>] filemap_nopage+0x32f/0x3a6
-> > > [<c0286ac3>] unix_file_filemap_nopage+0x56/0xd8
-> > > [<c0286a6d>] unix_file_filemap_nopage+0x0/0xd8
-> > > [<c014b5d7>] do_no_page+0xba/0x30f
-> > > [<c02a00e8>] vsprintf+0x27/0x2b
-> > > [<c014ba28>] handle_mm_fault+0xf4/0x16c
-> > > [<c01174c1>] do_page_fault+0x1c4/0x60a
-> > > [<c01c31ee>] try_capture_block+0x253/0x719
-> > > [<c013bf48>] add_to_page_cache+0xbe/0xc3
-> > > [<c01aa29e>] check_lock_object+0x17/0x186
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c01aa1f3>] znode_is_any_locked+0x7c/0x87
-> > > [<c0222cc7>] num_of_items_node40+0x24/0x1b5
-> > > [<c018efe1>] schedulable+0x8/0x79
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c018efe1>] schedulable+0x8/0x79
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c01b799f>] coord_is_existing_item+0xd9/0x1e8
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c0222cc7>] num_of_items_node40+0x24/0x1b5
-> > > [<c0222cc7>] num_of_items_node40+0x24/0x1b5
-> > > [<c0223351>] length_by_coord_node40+0x52/0x2c7
-> > > [<c01b799f>] coord_is_existing_item+0xd9/0x1e8
-> > > [<c01172fd>] do_page_fault+0x0/0x60a
-> > > [<c0105a09>] error_code+0x2d/0x38
-> > > [<c018007b>] load_aout_binary+0x456/0x711
-> > > [<c02a0dda>] __copy_user_zeroing_intel+0x16/0xac
-> > > [<c02a0f44>] __copy_from_user_ll+0x68/0x6c
-> > > [<c0241b7a>] paste_tail+0x159/0x40f
-> > > [<c0241a21>] paste_tail+0x0/0x40f
-> > > [<c0228769>] create_item_node40+0x867/0xa1b
-> > > [<c01a66c0>] carry_insert_flow+0x225/0x363
-> > > [<c019f9ac>] carry_on_level+0x98/0x487
-> > > [<c01a0c5e>] lock_carry_level+0x66/0x153
-> > > [<c0140372>] perthread_pages_reserve+0x64/0x133
-> > > [<c019f660>] carry+0x1dc/0x490
-> > > [<c01af6cf>] insert_flow+0x115/0x1e4
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c0222cc7>] num_of_items_node40+0x24/0x1b5
-> > > [<c0162ed0>] inode_add_bytes+0x28/0x74
-> > > [<c0243caa>] write_tail+0x1a8/0x232
-> > > [<c02852ff>] should_have_notail+0x40/0x4a
-> > > [<c0243b02>] write_tail+0x0/0x232
-> > > [<c0243b02>] write_tail+0x0/0x232
-> > > [<c0286517>] append_and_or_overwrite+0x516/0x94c
-> > > [<c01baa49>] check_block_counters+0x6d/0x19a
-> > > [<c0287b61>] flow_by_inode_unix_file+0x62/0x165
-> > > [<c0286a05>] write_flow+0xb8/0x107
-> > > [<c01bd3e6>] grabbed2free+0x67/0xdc
-> > > [<c0286d2e>] write_file+0x7a/0xe5
-> > > [<c028700a>] write_unix_file+0x271/0x3c0
-> > > [<c018f142>] get_current_trace_flags+0xc/0xe4
-> > > [<c01ff17c>] reiser4_write+0x191/0x44b
-> > > [<c01fefeb>] reiser4_write+0x0/0x44b
-> > > [<c015959b>] vfs_write+0xb0/0x119
-> > > [<c01596d5>] sys_write+0x51/0x80
-> > > [<c0104f7f>] syscall_call+0x7/0xb
-> > >Code: 44 ff ff ff 8b 11 85 d2 0f 84 3a ff ff ff 8b 00 39 c8 0f 85 30
-> > >ff ff ff 39 42 04 0f 85 27 ff ff ff b8 08 cb 50 c0 e8 cc 93 21
-> > >00 <0f> 0b 83 00 3c 19 3f c0 c7 04 24 5c af 41 c0 c7 44 24 04 a0 c6
-> > >
-> 
-> This looks like a problem we are debugging a fix for. Michael, we will
-> let you know when we are done. As a temporary workaround, using reiser4
-> made without tails (mkfs.reiser4 -o formatting=extent40) should protect
-> against this problem.
-> 
-> > >
-> > >Michael
-> > >
-> > >
-> > >
+> > > On Mon, 08 Nov 2004 18:09:15 +0100, Redeeman <redeeman@metanurb.dk> wrote:
+> > > > On Mon, 2004-11-08 at 11:55 -0500, Jeremy West wrote:
+> > > >
+> > > >
+> > > > > HI,
+> > > > >
+> > > > > I'm new to the list.  I've taken the plunge and tasted the speed of
+> > > > > reiser4.  Excellent work.  I think I've stumbled upon a bug though.  I
+> > > > > have another partition formatted as reiserfs 3.6.  When I mount this
+> > > > > partition and listen to music from it, my reiser4 / partition stops
+> > > > > responding.  I mean every command I issue to the kernel results in a
+> > > > > segmentation fault.  Has anyone else had this problem?
+> > > > >
+> > > > > I'm using redeeman-sources, based on mm-sources patch set.
+> > > > how old would this happen to be? i mean.. give a uname -a
+> > > > --
+> > > > Redeeman <redeeman@metanurb.dk>
+> > > >
+> > > >
 > > >
 > >
 > >
 > 
+> --
+> Jeremy West
+> //---------------------------
+> "I had a life once... now I have a computer and DSL"
 >
