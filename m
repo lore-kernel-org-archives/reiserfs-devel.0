@@ -1,34 +1,44 @@
-From: Gustavo Zacarias <gustavo@zacarias.com.ar>
-Subject: Re: journal-2018 trouble?
-Date: Tue, 25 Mar 2003 13:08:27 -0300
-Message-ID: <3E807EFB.4080105@zacarias.com.ar>
-References: <200303242255.48998.gustavo@zacarias.com.ar> <20030325093230.A32093@namesys.com> <20030325172448.A8645@namesys.com>
+From: Yury Umanets <umka@namesys.com>
+Subject: Re: "Unformat" a ReiserFS partition : a testimony :-)
+Date: Tue, 25 Mar 2003 20:40:03 +0300
+Message-ID: <3E809473.9070607@namesys.com>
+References: <3E7F5E33.4020709@info.ucl.ac.be> <3E7F9FD1.7060801@namesys.com> <200303252025.38861.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13379-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13380-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030325172448.A8645@namesys.com>
+In-Reply-To: <200303252025.38861.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com, grev@namesys.com
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: Nicolas Vanderavero <nv@info.ucl.ac.be>, reiserfs-list@namesys.com
 
-Oleg Drokin wrote:
+Vitaly Fertman wrote:
 
-> Ok, here's supposed fix.
-> If you have not did rebuild-sb, you might want to try it.
-> 
-> (for those using data-logging patches, you do not need this patch as it does correct thing already).
+>Hi,
+>
+>On Tuesday 25 March 2003 03:16, Yury Umanets wrote:
+>  
+>
+>  
+>
+>>P.S. Please read http://www.namesys.com/support.html. Can you as for
+>>support?
+>>    
+>>
 
-Hi.
-Yes, i haven't rebuilt it yet, i was hopeful a patch would arrive soon.
-Life is beautiful, no more journal-2018's, it works :-)
-I guess i should rebuild the journal anyway right?
-BTW, it's reiserfsutils shipped with redhat 7.3 which was used to build 
-the filesystem (3.x.0j).
-Thanks, bye.
+>It seems that Nicolas does not need our support as he wrote about his 
+>result how he had successfully unformatted the fs. 
+>
+>  
+>
+I'm sorry, it was deep night here and probably I was not carefull enough 
+when read Nikolas email.
+
+-- 
+Yury Umanets
 
 
