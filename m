@@ -1,52 +1,38 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: carrying links too far? (was Re: A bold idea (Re: Carrying
- Attributes too Far))
-Date: Sat, 06 Dec 2003 21:26:37 -0500
-Sender: news <news@sea.gmane.org>
-Message-ID: <878ylps6qq.fsf@uhoreg.ca>
-References: <1065247084.3f7e616c94ec9@webmail.st-andrews.ac.uk> <3FCE3716.8000509@namesys.com>
- <1070584227.3fcfd1a3d67f4@webmail.st-andrews.ac.uk>
- <3FD00272.7040607@ninja.dynup.net>
- <1070617453.5605.13.camel@schlappix.schnulli.de>
- <3FD08F73.4070404@ninja.dynup.net> <87zne7xltp.fsf@uhoreg.ca>
- <1070750513.3fd25b311ae75@webmail.st-andrews.ac.uk>
- <3FD27FF2.3000907@ninja.dynup.net>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Subject: Re: More on Hard Links (was A bold idea (Re: Carrying Attributes too
+ Far))
+Date: Sat, 06 Dec 2003 21:42:16 -0500 EST
+Message-ID: <5450026541-BeMail@cr593174-a>
+References: <3FD27DA3.7030309@ninja.dynup.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16269-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16270-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3FD27DA3.7030309@ninja.dynup.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: David Masover <jedi@ninja.dynup.net>
+Cc: reiserfs-list@namesys.com
 
->>>>> "David" == David Masover <jedi@ninja.dynup.net> writes:
+David Masover wrote on Sat, 06 Dec 2003 19:08:51 -0600:
+> Most of the time, rename over an existing file needs only a single 
+> deletion, and renaming over a directory is (last I checked) impossible 
+> with standard tools without removing or renaming the directory first.  
 
-[...]
+Correct.  But that's just a convention.  Perhaps it could be changed
+to distinguish between  move a b/  and  mv a b  where one would move
+"a" into "b" and the other would overwrite "b".
 
-David> I guess the main problem I have with this is that it only works
-David> when we're talking about all the filesystems on the local
-David> machine, and then only so far.  It kind of falls apart with
-David> removable filesystems like floppies and cds.
+> Can we do that?  Last I checked, the file utilities (or maybe the fs 
+> itself) won't let you move a directory to a child of itself, or a child 
+> of a child of itself.
 
-And network mounts.
+Actually, if you try that with the BeOS file system I was talking
+about, it will detect the isolation of a large part of the name
+space (by doing the graph traversal) and reject the operation.  It
+could just as easily allow it (it would delete the isolated files and directories), but that would be a bad design choice for normal users.
 
-OK, another problem with Leo's scheme (and with hardlinking across
-filesystems).  If I create a hardlink from partition A to partition B
-(i.e. the file physically resides on partition B), and then unmount
-partition B, I should still be able to access the file, since hardlink
-semantics stipulate that the "link" on partition A is the actual file
-itself, and not just a pointer.  But the file is not accessible, since
-partition B is unmounted.  So things break.
-
-Hmm.  Maybe later I'll write a couple of paragraphs on why it is
-impossible to handle cross-filesystem hardlinking in any sane way.
-
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
+- Alex
