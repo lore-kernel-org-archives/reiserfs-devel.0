@@ -1,32 +1,29 @@
 From: Oliver Neukum <oliver@neukum.org>
-Subject: Re: The argument for fs assistance in handling archives
-Date: Thu, 2 Sep 2004 13:09:04 +0200
-Message-ID: <200409021309.04780.oliver@neukum.org>
-References: <20040826150202.GE5733@mail.shareable.org> <4136E0B6.4000705@namesys.com> <1117111836.20040902115249@tnonline.net>
+Subject: Re: silent semantic changes with reiser4
+Date: Thu, 2 Sep 2004 13:13:11 +0200
+Message-ID: <200409021313.11063.oliver@neukum.org>
+References: <Pine.LNX.4.44.0408261011410.27909-100000@chimarrao.boston.redhat.com> <20040901202641.GJ4455@legion.cup.hp.com> <1094118524.4842.27.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-21272-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21273-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1117111836.20040902115249@tnonline.net>
+In-Reply-To: <1094118524.4842.27.camel@localhost.localdomain>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Spam <spam@tnonline.net>
-Cc: Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Jeremy Allison <jra@samba.org>, Jamie Lokier <jamie@shareable.org>, Trond Myklebust <trond.myklebust@fys.uio.no>, Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>, Rik van Riel <riel@redhat.com>, Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, Linus Torvalds <torvalds@osdl.org>, reiser@namesys.com, hch@lst.de, Linux Filesystem Development <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, flx@namesys.com, reiserfs-list@namesys.com
 
-Am Donnerstag, 2. September 2004 11:52 schrieb Spam:
-> =A0 Btw, version control for ordinary files would be a great feature. I
-> =A0 think something like it is available through Windows 2000/3 server.
-> =A0 Isn't it called "Shadow Copies". It works over network shares. :)
->=20
-> =A0 It allows you to restore previous versions of the file even if you
-> =A0 delete or overwrite it.
+Am Donnerstag, 2. September 2004 11:48 schrieb Alan Cox:
+> What I don't understand is the tie between Linux having such streams and
+> Windows doing it for Samba to work. Netatalk has always handle this for
+> Macintosh and portably. Presumably any Samba support would need to
+> handle OS's without wacky files for portability too ?
 
-There's no need to do that in kernel, unless you want to be able
-to force it unto users.
+Can you do an atomic rename of all streams without kernel support?
 
 	Regards
 		Oliver
