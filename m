@@ -1,48 +1,67 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: [ANNOUNCE] new reiser4 snapshot released.
-Date: Mon, 29 Mar 2004 08:19:56 -0800
-Message-ID: <40684CAC.3030702@namesys.com>
-References: <16484.24086.167505.94478@laputa.namesys.com> <1080321833.19218.7.camel@localhost.localdomain> <16484.29281.375363.39808@laputa.namesys.com> <40646424.7000407@namesys.com> <20040329050047.GB19805@chepelov.org>
+From: Mike Fedyk <mfedyk@matchmail.com>
+Subject: Re: reiserfs logging patches udpated
+Date: Mon, 29 Mar 2004 10:49:06 -0800
+Message-ID: <40686FA2.1010501@matchmail.com>
+References: <1080149399.14737.77.camel@watt.suse.com>	 <20040324143516.3162cbfe.akpm@osdl.org>	 <1080168379.14743.124.camel@watt.suse.com>	 <200403250147.54246.bernd-schubert@web.de> <40625867.4060800@matchmail.com>	 <1080224062.26677.3.camel@watt.suse.com> <406343F1.2050504@matchmail.com> <1080247847.2926.0.camel@watt.suse.com> <4068203E.4050700@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-17573-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17574-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040329050047.GB19805@chepelov.org>
+In-Reply-To: <4068203E.4050700@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Cyrille Chepelov <cyrille@chepelov.org>
-Cc: Nikita Danilov <Nikita@Namesys.COM>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Chris Mason <mason@suse.com>, Bernd Schubert <bernd-schubert@web.de>, reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>
 
-Cyrille Chepelov wrote:
-
->Le Fri, Mar 26, 2004, =C3  09:11:00AM -0800, Hans Reiser a =E9crit:
->
-> =20
->
->>Nikita, would you confirm that the default fibration is to sort all=20
->>files with '.' as the penultimate character by their last character=20
->>first and then by the rest of the name in the usual lexicographic order? =
-
->>(If that is not the default, then please make it the default.)
->>   =20
+Hans Reiser wrote:
+> Chris Mason wrote:
+> 
+>> On Thu, 2004-03-25 at 15:41, Mike Fedyk wrote:
+>>  
 >>
->
->Wouldn't it be slightly beneficial to expand this policy to not just
->look for extensions matching .*\.(?) but .*\.(.*) as well?
->
->	-- Cyrille, needing some time to dive back into reiser4 testing
->
-> =20
->
-I thought about that, but other than compiles I don't know of an=20
-application that would benefit from this performance wise, and compiles=20
-usually have . as the penultimate character in their fileset filenames. =20
-I would actually much like to get feedback from others on this.
+>>> Chris Mason wrote:
+>>>   
+>>>
+>>>> On Wed, 2004-03-24 at 22:56, Mike Fedyk wrote:
+>>>>
+>>>>
+>>>>     
+>>>>
+>>>>> And after having the difference of a block level journal (ext3), 
+>>>>> instead of a "virtual" journal(reiserfs, jfs, xfs) explained to me 
+>>>>> (check the ext3-users archives...) -- and how it can save your ass 
+>>>>> when there are hardware problems.  I was convinced and switched 
+>>>>> everything back to ext3.
+>>>>>       
+>>>>
+>>>> reiserfs does block based logging ;-)
+>>>>     
+>>>
+>>> I stand corrected.
+>>>
+>>> Thanks Chris, I feel much better about reiserfs now, especially with 
+>>> your ordered/data journaling patches.
+>>>   
+>>
+>>
+>> One other point, the current patch set only does data=ordered.  I wanted
+>> that fully stabilized before I enabled data=journal.
+>>
+>> -chris
+>>
+>>
+>>
+>>
+>>  
+>>
+> what is a virtual journal?
+> 
 
---=20
-Hans
-
-
+The basic idea of virtual vs block journals, is that instead of using a 
+few bytes to describe what you're changing in (for instance) the inode 
+table (or equivalent), ext3 (and reiser3 thanks to info from Chris 
+Mason) copies entire inode table block (usually 1-4k depending on block 
+size) into the journal.
