@@ -1,32 +1,35 @@
-From: Jake Maciejewski <maciejej@msoe.edu>
-Subject: Re: making reiser4/AMD64 hardlock
-Date: Fri, 12 Nov 2004 14:03:41 -0600
-Message-ID: <1100289821.8382.13.camel@localhost>
-References: <1099472359.8158.36.camel@localhost>
-	 <1100073674.31776.21.camel@localhost>
-	 <1100102927.1659.64.camel@tribesman.namesys.com>
-	 <200411122117.39613.vitaly@namesys.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: A real panic
+Date: Sat, 13 Nov 2004 14:04:55 +0200
+Message-ID: <20041113120455.GI26192@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22367-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22371-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200411122117.39613.vitaly@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Good point. Unfortunately, I wiped out the corrupt filesystem to test
-2.6.10-rc1. I didn't notice any corruption in my most recent test, but
-if it ever happens again, I'll do a --check after --build-fs and post
-the results. 
+Hi
 
-On Fri, 2004-11-12 at 21:17 +0300, Vitaly Fertman wrote:
-> Would you also run fsck.reiser4 --check on the device after fsck.reiser4 --build-fs
-> to find out if fs is fixed or not before continue using it ?
+I fixed the issues with Bus errors, that was because of a broken /bin/rmdir
+binary :)
+However, I compiled the kernel with all sorts of debugs, trying to catch what
+caused the Bus errors and got a nice ancillary effect. 
+
+Nov 13 13:38:21 shrike kernel: reiser4 panicked cowardly: assertion failed: !memcmp(inode->u.generic_ip, sd->body, (size_t) length + 1)
+
+The forensics data is at http://mjt.nysv.org/reiser/2004.11.13.forensics/
+
+The Reiser4 version is backported from -mm something by Piotr Neuman.
+
+Thanks!
+
 -- 
-Jake Maciejewski <maciejej@msoe.edu>
+mjt
+
 
