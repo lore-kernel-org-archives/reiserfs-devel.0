@@ -1,62 +1,97 @@
-From: Linus Torvalds <torvalds@osdl.org>
+From: Christophe Saout <christophe@saout.de>
 Subject: Re: silent semantic changes with reiser4
-Date: Wed, 25 Aug 2004 14:00:01 -0700 (PDT)
-Message-ID: <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org>
+Date: Wed, 25 Aug 2004 23:00:00 +0200
+Message-ID: <1093467601.9749.14.camel@leto.cs.pocnet.net>
 References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
- <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>
- <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk>
+	 <20040825200859.GA16345@lst.de>
+	 <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>
+	 <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20524-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-P50iur+ziqPql9646vnW"
+Return-path: <reiserfs-list-return-20525-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: viro@parcelfarce.linux.theplanet.co.uk
-Cc: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
+--=-P50iur+ziqPql9646vnW
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
+Am Mittwoch, den 25.08.2004, 21:42 +0100 schrieb :
 
-On Wed, 25 Aug 2004 viro@parcelfarce.linux.theplanet.co.uk wrote:
->
-> On Wed, Aug 25, 2004 at 01:22:55PM -0700, Linus Torvalds wrote:
-> > 
+> > > For one thing _I_ didn't decide about xattrs anyway.  And I still
+> > > haven't seen a design from you on -fsdevel how you try to solve the
+> > > problems with files as directories.
+> >=20
+> > Hey, files-as-directories are one of my pet things, so I have to side w=
+ith=20
+> > Hans on this one. I think it just makes sense. A hell of a lot more sen=
+se=20
+> > than xattrs, anyway, since it allows scripts etc standard tools to touc=
+h=20
+> > the attributes.
+> >=20
 > > It's the UNIX way.
-> 
+>=20
 > Not if you allow link(2) on them.
 
-Heh. I don't think that's a very strong argument against being "unixy", 
-considering how traditional unix _used_ to handle directories.
+That doesn't make sense anyway. (actually, I tried what happens and the
+result was an Oops ;))
 
-mkdir/rmdir/rename only came later. Now, obviously they did come later for 
-a good reason, but still..
+It should be completely forbidden to link into a meta-directory or out
+of such a directory. You could think of those meta-directory as a sysfs
+for that inode. Of course it's not an own filesystem and that means that
+there need to be a lot of security precautions in the VFS layer. Where
+something like that belongs anyway, if done correctly.
 
-The interesting part is that thanks to the dcache, we should be perfectly
-able to actually _see_ circular links etc, so some of the problems with 
-linking directories should actually be quite solvable - something that is 
-_not_ true for a traditional UNIX VFS layer.
+>   And not if you design and market your
+> stuff as a general-purpose backdoor into kernel.  Note how *EVERY* *DAMN*
+> *OPERATION* is made possible to override by "plugins".  Which is the reas=
+on
+> for deadlocks in question, BTW.
 
-Of course, the dcache introduces some new problems of its own wrt
-directory aliasing, but I don't actually think that should be fundamental
-either. Treating them more as a "static mountpoint" from an FS angle and
-less as a traditional Unix hardlink should be doable, I'd have thought.
+What do you mean? If you tell that file that you want it to be
+compressed or encrypted or modify some attributes (like ACLs) this isn't
+necessarily a backdoor.
 
-(Also, it's entirely possible that the filesystem may not support some of
-the more esoteric linking/renaming operations. For example, in a
-traditional xattrs setup where the xattr is linked on-disk with the file
-it is associated with, you simply _can't_ link it somewhere else, or
-rename it to any other directory. That's not a VFS layer issue, obviously,
-but I thought I'd bring up the point that file-as-dir cases may have
-limitations that normal files don't have).
+> Don't fool yourself - that's what Hans is selling.  Target market: ISV.
+> Marketed product: a set of hooks, the wider the better, no matter how
+> little sense it makes.  The reason for doing that outside of core kernel:
+> bypassing any review and being able to control the product being sold (se=
+e
+> above).
 
->  And not if you design and market your stuff as a general-purpose
-> backdoor into kernel.
+Yes, I don't think it was a good idea either. Probably someone should
+remove these features and make it a "normal" filesystem. The people who
+need it now can turn it on again and a real solution could be worked out
+in Linux 2.7.
 
-Now that's a separate argument, and not one I'm personally interested in
-arguing at least right now. I haven't actually looked at the reiser4 code,
-so I'm really _only_ arguing against special-case attributes.
+I wouldn't use it on a public server anyway now because I'm not
+convinced some malicious guy could find a way to exploit that. What if
+you changed into a meta directory using ftp and some manage to break
+things? This might be very dangerous.
 
-		Linus
+I personally think that the idea of doing something like this (I'm not
+speaking of the current implementation which I think is really bad) is
+the right way to go in the long term.
+
+
+--=-P50iur+ziqPql9646vnW
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: Dies ist ein digital signierter Nachrichtenteil
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQBBLP3QZCYBcts5dM0RAm6vAJ0Tp4cjC+VjlzXQBpQTlQhENgBeCQCeIJWq
+A+PI0RhfPqccic2Ue7FBCLM=
+=EjhV
+-----END PGP SIGNATURE-----
+
+--=-P50iur+ziqPql9646vnW--
+
