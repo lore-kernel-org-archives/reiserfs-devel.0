@@ -1,57 +1,40 @@
-From: Voicu Liviu <liviu.voicu@huji.ac.il>
-Subject: Re: ReiserFS causes CPU high usage?!
-Date: Fri, 28 Feb 2003 14:42:06 +0200
-Message-ID: <200302281442.06876.liviu.voicu@huji.ac.il>
-References: <200302280011.14488.liviu.voicu@huji.ac.il> <200302281439.24760.liviu.voicu@huji.ac.il> <20030228133836.D24291@humilis>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Getopt improvements
+Date: Fri, 28 Feb 2003 15:41:57 +0300
+Message-ID: <20030228154157.A10830@namesys.com>
+References: <3E5D26A2.7010804@suse.com> <20030227092551.C28643@namesys.com> <3E5E312C.50406@suse.com> <3E5E730C.7030804@namesys.com> <3E5E84B2.90708@suse.com> <3E5E92BA.4090307@namesys.com> <20030228100147.A878@namesys.com> <3E5F504A.6010902@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12984-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12985-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030228133836.D24291@humilis>
-Content-Description: clearsigned data
 Content-Disposition: inline
+In-Reply-To: <3E5F504A.6010902@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: Text/Plain; charset="us-ascii"
-To: ookhoi@humilis.net
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Jeff Mahoney <jeffm@suse.com>, Reiserfs List <reiserfs-list@namesys.com>
 
-=2D----BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hello!
 
-On Friday 28 February 2003 14:38, Ookhoi wrote:
-> Voicu Liviu wrote (ao):
-> > On Friday 28 February 2003 14:35, Ookhoi wrote:
-> > > Voicu Liviu wrote (ao):
-> > > > Now do you understand? I'm even afraid to renice my XFree to -10 cuz
-> > > > I'll remain blocked out of the box :-)
-> > >
-> > > Did you actually try?
-> >
-> > Yep
->
-> Ok. Can you provide top output?
+On Fri, Feb 28, 2003 at 03:04:26PM +0300, Hans Reiser wrote:
+> >>>  For the simple cases (which also happen to be all we have right 
+> >>>now), yes, I think that my implementation is cleaner. It allows the 
+> >>>simple use of mutually exclusive options, through the "no" prefix, and 
+> >>>clearing of the other bits in a multivalue option.  For now, that's 
+> >>>all we need - and it's a valid argument for using my code. However, 
+> >>>what I like about Oleg's implementation is that if you have an option 
+> >>>that excludes other options (even when it's not multivalue), it can 
+> >>>clear those bits as well.
+> >>It clears them without failing, yes?  Not sure I like that.
+> >Hm, why should it fail?
+> Incompatible options should fail as they represent error.  Feel free to 
+> argue with that.
 
-Not right now because the computer is 40 minutes far away of me but I can=20
-connect via ssh and try to install 'mozilla' for example with nice -10 and=
-=20
-post here the top snapshot
-OK?
+Hm, I am not going to argue. But we never had this kind of logic.
+Usually the latest-specified option was taking effect.
 
-
-=2D --=20
-Voicu Liviu
-
-Hebrew University of Jerusalem
-Rothberg International School
-Assistant Programmer & Network Support
-=2D----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.1 (GNU/Linux)
-
-iD8DBQE+X1keczD4Ii52ssMRAouMAJ9edVTo0CY9q0WtEl6H8GfLxf8mEwCfSnfR
-ackDgpUBvazSbMm7pzlcog4=3D
-=3DRgWd
-=2D----END PGP SIGNATURE-----
-
+Bye,
+    Oleg
