@@ -1,74 +1,49 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Comparison of notail and notail,iicache(14)
- 2.4.19-pre7
-Date: Thu, 25 Apr 2002 14:37:29 +0400
-Message-ID: <3CC7DC69.4060302@namesys.com>
-References: <3CC730DC.1000602@mb.tu-ilmenau.de> <3CC736DC.3060300@mb.tu-ilmenau.de>
+From: Anders Widman <andewid@tnonline.net>
+Subject: Kernel dump/segmentation failt
+Date: Thu, 25 Apr 2002 13:57:17 +0200
+Message-ID: <5412403953.20020425135717@tnonline.net>
+Reply-To: ReiserFS List <reiserfs-list@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10161-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10162-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
-Cc: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Manuel Krause wrote:
 
-> On 04/25/2002 12:25 AM, Manuel Krause wrote:
->
->> Hi all!
->>
->> I tried the patch linux-2.4.19p6-iicache-new-14.patch on 2.4.19-pre7 
->> in addition to Olegs first speedup patches, some AA and AKPM ones and 
->> made a comparison of my backup timings:
->>
->> /dev/hda11             5550248   4804584    745664  87% /mnt/beta
->>
->> noatime,notail:
->> ---------------
->> to udma-33       real   9m46.648s   user 0m1.970s   sys 1m45.070s
->>                         7.800 MB/s      (used FS)
->>            back to udma-66  real  11m 7.432s   user 0m1.940s   sys 
->> 1m43.530s
->>                         7.030 MB/s      (unused FS)
->>     noatime,notail,iicache (new-14):
->> --------------------------------
->> to udma-33       real   9m38.230s    user 0m1.970s   sys 1m48.670s
->>                         8.114 MB/s      (unused FS)
->>                                  +1.45% rate (first copy)
->>                back to udma-66  real  10m54.870s    user 0m2.230s   
->> sys 1m46.280s
->>                         7.165 MB/s      (unused FS)
->>                              +1.92% rate (second copy)
->> 020424 23:55
->>
->>
->> File size distribution statistics are available upon requst.
->>
->
->
-> Sorry, I just see I've always forgotten to mention I use RMLs preempt 
-> + lock-break patches, too. More info upon a stable configuration on 
-> this setup for dd backups and VMware sessions - just mail. (Just in 
-> case someone faced same problems I did.)
->
-> Thanks
-> and best wishes, again,
->
->
->
-> Manuel
->
->
->
->
-Manuel, when you combine this many patches, and compare them all 
-combined to no patches, it becomes hard to say exactly which patches are 
-worth accepting into the main line even if all combined they are faster.
+  After running reiserfsck -S --ebuild-tree to restore a filesystem I
+  get lots of folders and files in lost+found named with numbers like
+  2_1328. This is itself isn't the biggest problems. All subfolders
+  are named correktly, as the files in those subfolders.
 
-Hans
+  However, when I try to change anything in the lost+found folder I
+  get a segmentation fault and a kernel dump. I am using latest
+  reiserfs tools with kernel 2.4.18-6 and kernel 2.4.18-7:
 
+  ~~~~~~~~~~~~~~~~~~~~
+Apr 25 12:24:22 server kernel: kernel BUG at namei.c:1160!
+Apr 25 12:24:22 server kernel: invalid operand: 0000
+Apr 25 12:24:22 server kernel: CPU:    0
+Apr 25 12:24:22 server kernel: EIP:    0010:[<c017ad24>]    Not tainted  
+Apr 25 12:24:22 server kernel: EFLAGS: 00010297
+Apr 25 12:24:22 server kernel: eax: 00000000   ebx: dac57d1c   ecx: 062bb000   edx: dac57e0c
+Apr 25 12:24:22 server kernel: esi: ffffffff   edi: dac57c7c   ebp: dab22c80   esp: dac57c40
+Apr 25 12:24:22 server kernel: ds: 0018   es: 0018   ss: 0018 
+Apr 25 12:24:22 server kernel: Process mv (pid: 1536, stackpage=dac57000)
+Apr 25 12:24:22 server kernel: Stack: 00000002 00000000 dac57ca8 dac57d48 00000000 00000000 00000000 c0298f48
+Apr 25 12:24:22 server kernel:        00000001 00000039 000f65d1 df638000 00001000 c0137088 00003a00 db084ba0
+Apr 25 12:24:22 server kernel:        00000003 daf9a060 00000001 daf9a418 00000008 00000002 daf9aeb0 00000000
+Apr 25 12:24:22 server kernel: Call Trace: [<c0137088>] [<c018af9b>] [<c018abff>] [<c0137088>] [<c0179773>]
+Apr 25 12:24:22 server kernel:    [<c01663e1>] [<c0140590>] [<c012657e>] [<c0126e7a>] [<c0140b79>] [<c013e120>]
+Apr 25 12:24:22 server kernel:    [<c013ee99>] [<c0140d7a>] [<c013dedd>] [<c010899b>]
+Apr 25 12:24:22 server kernel:
+Apr 25 12:24:22 server kernel: Code: 0f 0b 88 04 8e 49 29 c0 8b 84 24 cc 01 00 00 8b 94 c4 d0 01
+  ~~~~~~~~~~~~~~~~~~~~
+If I am mounting as read only I can read all files without a kernel
+dump or segmentation fault.
+
+//Anders
 
