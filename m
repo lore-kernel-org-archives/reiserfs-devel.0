@@ -1,65 +1,96 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: AMD64 progress?
-Date: Mon, 7 Feb 2005 16:29:35 +0300
-Message-ID: <20050207132934.GA7482@backtop.namesys.com>
-References: <20050114201751.GB5883@backtop.namesys.com> <Pine.LNX.4.44.0501152102230.10167-100000@ccc7.wpi.edu>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: missing files?
+Date: Mon, 7 Feb 2005 18:38:00 +0300
+Message-ID: <200502071838.00396.vitaly@namesys.com>
+References: <1107318853.18354.214122527@webmail.messagingengine.com> <200502041433.27112.vitaly@namesys.com> <1107621069.13887.214400623@webmail.messagingengine.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="UlVJffcvxoiEqYs2"
+Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1107621069.13887.214400623@webmail.messagingengine.com>
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44.0501152102230.10167-100000@ccc7.wpi.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Isaac Chanin <chanin@WPI.EDU>
+Content-Type: text/plain; charset="us-ascii"
+To: Michael Styer <michael@styer.net>
 Cc: reiserfs-list@namesys.com
 
---UlVJffcvxoiEqYs2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Saturday 05 February 2005 19:31, Michael Styer wrote:
+> On Fri, 4 Feb 2005, Vitaly Fertman said:
+> > so what I do not understand is why reiserfsck does not report any
+> > problem to you. Which reiserfsprogs do you have? have you 'umount &
+> > mount ro' or 'remount,ro', btw? reiser4 does not do 'remount,ro'
+> > properly yet. have you run fsck.reiser4 on umounted fs?
+>
+> Hmm. I did 'remount,ro', actually; didn't realize that it wouldn't work
+> with reiser4. I have version 1.0.3 of the Gentoo reiser4progs package;
+> fsck.reiser4, mkfs.reiser4 and debugfs.reiser4 all report version 1.0.3.
+> I concluded that fsck.reiser4 wasn't reporting problems just on the
+> basis of the lack of problems noted in the /var/log/messages output on
+> boot, but I hadn't run it manually.
+>
+> OK. So I killed everything that was keeping /usr busy and unmounted it.
+> I ran debugfs.reiser4 on /dev/hdb1 unmounted. Then I mounted the
+> partition ( 'mount -t reiser 4 -o ro,noatime /dev/hdb1 /usr' ). Now
+> debugfs.reiser4 dies with this output:
+>
+>     Fatal: Can't read master super block. Error: Can't open
+>     reiser4 on /usr
+>
+> and fsck.reiser4 says this:
+>
+>     Fatal: Can't read master superblock. Fatal: Failed to open the
+>     reiser4 backup. Fatal: Cannot open the FileSysten on (/usr).
+>
+>     1 fatal corruptions were detected in SuperBlock. Run with --build-sb
+>     option to fix them.
 
-Hello,
+what version of reiser4progs have you created this fs with? 
+it looks like the version 1.0.3 cannot open the fs due to some 
+changes in the format.
 
-On Sat, Jan 15, 2005 at 09:26:01PM -0500, Isaac Chanin wrote:
-> 
-> Also tested this patch, similar results as to what I've been getting - 
-> ie. working for awhile (more than a few hours even this time, but that 
-> could just be coincidence, i suppose) and then going down with the normal 
-> reiser4_find_next_zero_bit(bnode_working_data(bnode), end_offset, 
-> start_offset) >= end_offset error.  For the exact message see 
-> http://users.wpi.edu/~chanin/r4newpatch.txt.
-> 
+> I have the output of my first debugfs run if that would be helpful. I'll
+> put it up for download on the same IP with the filename of
+> mas.devhdb1_unmounted.bz2. I'm going to reboot so that you can get that
+> file (this is my webserver as well...).
 
-please try attached patch (it is for fs/reiser4 subtree)
+ok
+
+> Regarding the output of fsck.reiser4, it suggests to run fsck.reiser4
+> --build-sb. What's that going to do to my filesystem? Am I likely to
+> lose the contents (i.e. is it like reformatting) or will it fix the
+> structure without causing data loss? At the minute it seems I still have
+> access to the filesystem, so I could tar everything up now before
+> rebuilding the superblock if doing so would mean losing that data.
+
+backups are never useless.
+
+> Do you have any suggestions or advice as to what I should do from here?
+
+it depends on the reiser4progs version you created the fs with.
+if it was 1.0.2, you can just run 'fsck.reiser4 --build-sb <device>', 
+of the 1.0.3 version, it will add reiser4 backup info properly.
+
+if nothing has been changed on the fs since mas.devhdb1_unmounted.bz2
+was created, you will get 2 fs corruptions that can be fixed with 
+'fsck.reiser4 --build-fs <device>' only. about 90 leaves will be cut off
+the tree and will be inserted leaf-by-leaf and after that not inserted 
+item-by-item.
+
+btw, it is possible to run 
+	fsck.reiser4 --build-sb --build-fs <device>
+to fix it all together. 
+
+> Thanks very much for your help; I appreciate your taking the time to
+> help me out with this.
+>
+> Michael
+>
+> PS: I've included the list address again in case this discussion might
+> be helpful to anyone else.
 
 -- 
-Alex.
+Thanks,
+Vitaly Fertman
 
---UlVJffcvxoiEqYs2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="bitmap-amd64-fix-2.diff"
-
-===== plugin/space/bitmap.c 1.186 vs edited =====
---- 1.186/plugin/space/bitmap.c	Wed Jan 19 18:52:52 2005
-+++ edited/plugin/space/bitmap.c	Mon Feb  7 16:18:37 2005
-@@ -165,7 +165,7 @@
- static int
- find_next_zero_bit_in_word(ulong_t word, int start_bit)
- {
--	ulong_t mask = 1 << start_bit;
-+	ulong_t mask = 1UL << start_bit;
- 	int i = start_bit;
- 
- 	while ((word & mask) != 0) {
-@@ -235,7 +235,7 @@
- 	assert ("zam-965", start_bit < BITS_PER_LONG);
- 	assert ("zam-966", start_bit >= 0);
- 
--	bit_mask = (1 << nr);
-+	bit_mask = (1UL << nr);
- 
- 	while (bit_mask != 0) {
- 		if (bit_mask & word)
-
---UlVJffcvxoiEqYs2--
