@@ -1,38 +1,70 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Clean datalogging patch set for 2.4.21-pre6 (-aa)/-pre7 ?
-Date: 16 Apr 2003 09:29:27 -0400
-Message-ID: <1050499766.10795.142.camel@tiny.suse.com>
-References: <200304061014.48917.Dieter.Nuetzel@hamburg.de>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Status of reiserfs in Redhat 2.4.7-10 kernel ?
+Date: Wed, 16 Apr 2003 19:58:30 +0400
+Message-ID: <3E9D7DA6.8040507@namesys.com>
+References: <Pine.NEB.4.44.0304151610230.25702-100000@slick.sigje.org>	 <3E9D0744.9090907@namesys.com> <1050499043.10791.137.camel@tiny.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-13673-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-13675-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200304061014.48917.Dieter.Nuetzel@hamburg.de>
+In-Reply-To: <1050499043.10791.137.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: ahorn@deorth.org, reiserfs-list@namesys.com
 
-On Sun, 2003-04-06 at 04:14, Dieter N=FCtzel wrote:
-> I'm running the below on-top of 2.4.21-pre6-jam1 (-aa).
-> Some handwork needed.
->=20
-> 03-2.4.21-pre6-relocation-6.diff
-> 04-reiserfs-sync_fs-1.diff
-> 05-2.4.21-pre6-data-logging-36.diff
-> 08-2.4.21-pre6-reiserfs-quota-26.diff
-> 09-kinoded-8.diff
-> 11.dirty-inodes-for-kinoded.diff
-> search_reada-4.diff
->=20
-> except (to many rejects):
-> iget5_locked_for_2.4.21-pre5-datalogging.diff
+Chris Mason wrote:
 
-I'm rediffing things this week, hopefully I'll post an update on friday.
+>On Wed, 2003-04-16 at 03:33, Hans Reiser wrote:
+>
+>  
+>
+>>I am afraid that I can only say that Redhat kernels are not standard 
+>>kernels, and non-standard kernels should not be preferred for use in 
+>>production systems.  They are not as well tested (or as debugged) as 
+>>Linus/Marcelo kernels.  Linus/Marcelo kernels are the official kernels, 
+>>and Linus and Marcelo, not RedHat or any other distro, are the Linux 
+>>kernel maintainers.  I personally try to avoid any use of a non-standard 
+>>kernel in systems I care about because I know that no distro has the 
+>>testing ability of those who test the Marcelo kernels, and Marcelo's 
+>>level of skill and caution exceeds that of any other maintainer I am 
+>>familiar with in detail, but I am more conservative than most.
+>>    
+>>
+>
+>Grin, Hans and I have had this debate before, you might want to read
+>through the reiserfs list archives for all the details.  Just look for
+>the thread where Hubert Mantel most recently posted.
+>
+>The short version is that I would pick a current vendor kernel over a
+>current vanilla kernel any day for heavy production use.    In terms of
+>performance and stability the vendor kernel will usually do better.  The
+>kinds of QA done on large hardware and heavy workloads is significantly
+>better before a vendor release than a vanilla release.
+>
+>The problem is in defining 'current'.  I haven't followed the rhas
+>releases enough to know if they still qualify.
+>
+>Anyway there's no need to start that debate again, neither Hans nor I
+>have changed our minds ;-)  
+>
+>-chris
+>
+>
+>
+>
+>  
+>
+Test suites cannot compete with real users.  Marcelo gets lots of real 
+users before he releases a final version, and the distros don't.  
+However, I would also add that a conservative person would wait until a 
+few weeks after Marcelo releases, and confirm that it really was stable 
+according to those on the linux kernel mailing list.
 
--chris
+-- 
+Hans
 
 
