@@ -1,15 +1,38 @@
-From: Szakacsits Szabolcs <szaka@sienet.hu>
-Subject: [benchmark] seek optimization
-Date: Wed, 14 Jul 2004 15:52:11 +0200 (MEST)
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <Pine.LNX.4.21.0407141345040.29248-100000@mlf.linux.rulez.org>
+From: "Guy" <bugzilla@watkins-home.com>
+Subject: RE: [benchmark] seek optimization
+Date: Wed, 14 Jul 2004 12:33:32 -0400
+Message-ID: <200407141633.i6EGXW317797@watkins-home.com>
+References: <Pine.LNX.4.21.0407141345040.29248-100000@mlf.linux.rulez.org>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19614-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <Pine.LNX.4.21.0407141345040.29248-100000@mlf.linux.rulez.org>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: 'Szakacsits Szabolcs' <szaka@sienet.hu>, linux-fsdevel@vger.kernel.org
+Cc: reiserfs-list@namesys.com, linux-ntfs-dev@lists.sourceforge.net, 'Marcel Hilzinger' <mhilzinger@linuxnewmedia.de>, 'Per Olofsson' <pelle@dsv.su.se>
+
+You said "both partitions were on the same disk."  The poor disk must be
+seeking like crazy!  Any seeks related to the filesystem may be masked,
+since a seek was going to occur any how.
+
+Consider having the 2 partitions on 2 different disks!
+
+Guy
+
+-----Original Message-----
+From: linux-fsdevel-owner@vger.kernel.org
+[mailto:linux-fsdevel-owner@vger.kernel.org] On Behalf Of Szakacsits
+Szabolcs
+Sent: Wednesday, July 14, 2004 9:52 AM
 To: linux-fsdevel@vger.kernel.org
-Cc: reiserfs-list@namesys.com, linux-ntfs-dev@lists.sourceforge.net, Marcel Hilzinger <mhilzinger@linuxnewmedia.de>, Per Olofsson <pelle@dsv.su.se>
+Cc: reiserfs-list@namesys.com; linux-ntfs-dev@lists.sourceforge.net; Marcel
+Hilzinger; Per Olofsson
+Subject: [benchmark] seek optimization
 
 
 Hello,
