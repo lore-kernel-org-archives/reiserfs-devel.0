@@ -1,148 +1,131 @@
-From: "Steve Pratt" <slpratt@us.ibm.com>
-Subject: Re: EVMS Reiser FSIM
-Date: Fri, 31 May 2002 12:40:19 -0500
-Message-ID: <OF9CB2A45A.30F7F73A-ON85256BCA.005DD6AD@pok.ibm.com>
+From: Billy Transue <bill@black9.net>
+Subject: Re: Problem with my HDD
+Date: 31 May 2002 13:49:42 -0500
+Message-ID: <1022870982.641.6.camel@threshold>
+References: <200205311828.27837.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10473-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-10476-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+In-Reply-To: <200205311828.27837.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andrew Clausen <clausen@gnu.org>
-Cc: Yury Umanets <umka@namesys.com>, reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
+Thanks, I had no idea it allocated all the space right away, but it
+still didn't work, the file got a bit bigger, not much.  It was=20
+73728 bytes big, I let the process run til my computer suddenly crashed,
+here is an excert from syslog, there was ton of lines just like the
+first 3 shown, from 12:01 til this last one then the kernel panic.  It
+should be noted I've been getting kernel panics before too.  I think my
+2nd chip of memory is bad.  I'm taking it out after I type this,
+hopefully no kernel panics til then.  Any advice?
 
-Andrew Clausen wrote:
+May 31 12:19:09 threshold kernel: hdd: read_intr: status=3D0x59 {
+DriveReady SeekComplete DataRequest Error }
+May 31 12:19:09 threshold kernel: hdd: read_intr: error=3D0x40 {
+UncorrectableError }, LBAsect=3D11310269, sector=3D446
+May 31 12:19:09 threshold kernel: end_request: I/O error, dev 16:45
+(hdd), sector 446
+May 31 12:19:14 threshold kernel: CPU 0: Machine Check Exception:
+0000000000000004
 
->On Thu, May 30, 2002 at 02:02:06PM -0500, Steve Pratt wrote:
->> >Me too.  Just the ext2 maintainer doesn't like this approach, so
->> >I'm going to need to push a bit harder (and I don't have time now)
->>
->> That is the major benefit of current EVMS implementation, I don't need
-the
->> FS developers to actually do anything.
+Love,
+Billy
 
->Well, I prefer to leave a system broken than to patch over it.
->Leaving it broken encourages someone to fix it properly.  (And also,
->saves me time from doing work that won't be used long-term)
-
->I doubt a philosophy like that would go down to well in IBM, but
->I think it's one reason for GNU/Linux's success.  (It is a good
->philosophy if you don't have many resources... but IBM has different
->problems... like solving real-world problems to get $$$ ;)
-
-Correct.
-
->> >I believe his point was: it would be possible to write non-GPL FSIMs.
->> >(The GPL is probably unenforceable for "plugins")
->>
->> Yes, this would allow a FSIM plugin(GPL or not) to invoke non-GPL
->> utilities.
-
->Yura and rms weren't too excited about this possibility.  I'm not
->either, but I think the system architecture is more important than
->the licence in this case (the practical difference the licence thing
->would make is sooo small...)
-
-I agree that system architecture should be the driving force.  That said,
-how I or anyone else codes a particular FSIM does not mean that someone
-else can't write one differently (read still using fork/exec) and get
-around the GPL.
-
->> >The obvious long-term solution is to get jfs people to make a decent
->> >library.  fork/pipe is Wrong.
->>
->> I agree that libraries have advantages.  When available, we can always
->> changes the FSIMs.  I could probably make all the necessary the changes
-in
->> a couple of days.
-
->Right.
-
->> To have multiple components and libraries interact safely and correctly
->> there must be a structure for each to adhere to. As you point out, one
-did
->> not exist in Linux.  EVMS created one.  Is it perfect, absolutely not,
-but
->> I think it is pretty good.
-
->Well, it would be nice if it was more componentized, with less
->cross-dependencies, etc.  More minimalist.
-
-Ideally yes, I just don't think that it is possible (reasonable).
-
->> For example we added a S/390 segment manager
->> and a GPT segment manager without having to change a single API or line
-of
->> common code.  Must be pretty modular if we can accomplish that.
-
->No, it just means your abstraction for seg managers is, actually,
-abstract.
->(libparted has the same properties... except perhaps for flags)
->I think it's good that you have those properties, but you lack some
-others:
->(1) portability
->(2) you didn't reuse linux-lvm code... which is a result of (1), right?
->(The engine wants to talk to the EVMS engine, not the linux-lvm kernel
->implementation.  This enforces lots of coupling, making reuse of linux-lvm
->too hard)
->(3) it seems complicated.  Lots of ideas that look similar aren't
->actually grouped together to share code.  (FSIMs and plugins share
->a lot, for example)
-
-1.portable to what?
-
-2. No, not a result of 1.  A result of we didn't like the code. (and
-apparently neither did the LVM guys since they re-wrote it as well in
-LVM2).  We did re-use the bulk of MD so it is not that we couldn't have.
-
-Coupling is not always a bad thing.  It allows us to offer greater
-functionality to the user.  fisk, lvm and MD all have the ability to
-destroy each others data without knowing it because that are not coupled.
-In EVMS we can prevent these types of interaction problems.
-
-3. Yes, it is complicated, that is why no one has attempted this before.
-
-As for sharing of code, you obviously haven't looked at any of it.  Just
-because an FSIM and a Segment manager have a entry point with a similar
-name, doesn't mean they do the same thing.  I challenge you to go into an
-FSIM and find code that is duplicated in any non-FSIM plugin.  FSIMs do
-filesystems, other plugins do volumes, not the same thing.  Why does parted
-have ped_device_open and ped_file_system_open? Why not 1 API, they both do
-open, must be duplication of code.
-
-
-><> 2 weeks
->> ago the support for Resiser was just an entry in a todo list, now it is
->> done, not bad since I spent less than half my time on it.
-
->I'm sure you could use libreiserfs in the same amount of time,
->and make something that integrates with EVMS much better ;)
-
-True.
-
->> We will continue to look for ways to improve EVMS, but I think the time
-has
->> passed for major architecture changes.
-
->Well, I think the above are major changes, and useful to make.
->That said, 'major' doesn't mean time-consuming.  It just means
->lots of change.  (But, in my experience, just lots of cut&paste)
-
-Other than having FSIMs use libraries, I'm not sure what changes you are
-refering to.
-
->I think it's adventurous to claim that any piece of software has
->"passed the time for major architecture changes".  Name one project
->that declared that 5 years ago, and hasn't made such changes.
->Bonus points if they were the first to implement that class of
->system.  (EVMS is basically in that boat!)
-
-Point taken.  Time will tell.
-
-Steve
-
+On Fri, 2002-05-31 at 11:28, Dieter N=FCtzel wrote:
+> On Friday 31 May 2002 04:20,  Billy Transue wrote:
+>=20
+> [-]
+> > I've suffered a very similar problem and posted to the list earlier, I
+> > did, dd_resuce -l dd.log /dev/hdd5 ./hdd5 and winded up w/ this:
+> > dd_rescue: (info): ipos:         0.0k, opos:         0.0k,
+> > xferd:         0.0k
+> >                    errs:      0, errxfer:         0.0k,
+> > succxfer:         0.0k
+> >              +curr.rate:        0kB/s, avg.rate:        0kB/s,
+> > avg.load:  0.0%
+> >
+> > it never changed, the file created hdd5 was 65536 bytes large.  The log
+> > file was empty.  Am I doing something wrong?  Any info would be
+> > appreciated.  Thanks in advance.
+>=20
+> Bill, have you ever tried the (r)evers mode?
+> A valid run on a 859.412k partition should look like this:
+>=20
+> SunWave1 /tmp# time dd_rescue -r -l dd_rescue-sdb8.log /dev/sdb8 sdb8
+> dd_rescue: (info): ipos:    859446.0k, opos:    859446.0k, xferd:        =
+ 0.0k
+>              -  *  errs:      0, errxfer:         0.0k, succxfer:        =
+ 0.0k
+>              +curr.rate:        0kB/s, avg.rate:        0kB/s, avg.load: =
+96.1%
+> dd_rescue: (warning): /dev/sdb8 (859446.0k): Input/output error!
+> dd_rescue: (info): ipos:    859445.5k, opos:    859445.5k, xferd:        =
+ 0.5k
+>              -  *  errs:      1, errxfer:         0.5k, succxfer:        =
+ 0.0k
+>              +curr.rate:      197kB/s, avg.rate:        0kB/s, avg.load: =
+96.0%
+> dd_rescue: (warning): /dev/sdb8 (859445.5k): Input/output error!
+> dd_rescue: (info): ipos:    859445.0k, opos:    859445.0k, xferd:        =
+ 1.0k
+>              -  *  errs:      2, errxfer:         1.0k, succxfer:        =
+ 0.0k
+>              +curr.rate:      252kB/s, avg.rate:        0kB/s, avg.load: =
+95.9%
+> dd_rescue: (warning): /dev/sdb8 (859445.0k): Input/output error!
+> dd_rescue: (info): ipos:    859444.5k, opos:    859444.5k, xferd:        =
+ 1.5k
+>              -  *  errs:      3, errxfer:         1.5k, succxfer:        =
+ 0.0k
+>              +curr.rate:      261kB/s, avg.rate:        1kB/s, avg.load: =
+95.8%
+> dd_rescue: (warning): /dev/sdb8 (859444.5k): Input/output error!
+> dd_rescue: (info): ipos:        54.0k, opos:        54.0k, xferd:    8593=
+92.0k
+>              -     errs:      4, errxfer:         2.0k, succxfer:    8593=
+90.0k
+>              +curr.rate:     2413kB/s, avg.rate:     2219kB/s, avg.load: =
+ 4.5%
+> Summary for /dev/sdb8 -> sdb8:
+> dd_rescue: (info): ipos:         0.0k, opos:         0.0k, xferd:    8594=
+46.0k
+>              -     errs:      4, errxfer:         2.0k, succxfer:    8594=
+44.0k
+>              +curr.rate:     2201kB/s, avg.rate:     2217kB/s, avg.load: =
+ 4.5%
+> 0.530u 16.960s 6:27.67 4.5%     0+0k 0+0io 122pf+0w
+>=20
+> SunWave1 /tmp# l dd_rescue-sdb8.log sdb8
+> -rw-r-----    1 root     root         1713 Mai 31 18:15 dd_rescue-sdb8.lo=
+g
+> -rw-r-----    1 root     root     880072704 Mai 31 18:15 sdb8
+>=20
+> Are you sure that you had write permission and enough space (!!!) on your=
+=20
+> destination (in your case the current working directory)?
+>=20
+> dd_rescue seems to allocate the whole needed disk space at the beginning!
+>=20
+> Good luck!
+>=20
+> -Dieter
+>=20
+> BTW I've had "recovered" several (Winbloze) disks of our customers with=20
+> dd_rescue. But *nix FSes are much better to recover because of the better=
+ FS=20
+> redundancy and fsck tools after the dd_rescue run.
+>=20
+> --=20
+> Dieter N=FCtzel
+> Graduate Student, Computer Science
+>=20
+> University of Hamburg
+> Department of Computer Science
+> @home: Dieter.Nuetzel@hamburg.de
 
 
