@@ -1,36 +1,36 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: reiserfsprogs release
-Date: Wed, 26 Jun 2002 19:37:26 +0200
-Message-ID: <200206261937.26316.Dieter.Nuetzel@hamburg.de>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Fwd: Re: [reiserfs-list] superblock problem
+Date: Wed, 26 Jun 2002 22:08:02 +0400
+Message-ID: <200206262208.02793.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-10857-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-10858-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: Hans Reiser <reiser@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="macroman"
+To: Jakub =?utf-8?q?Ambro=C5=BCewicz?= <ja@vigor.com.pl>, reiserfs-list@namesys.com
 
-On Die, 25 Jun 2002, Vitaly Fertman wrote:
-
-> that reiserfsprogs-3.x.1c-pre6 which you can find on our ftp=20
-> site seems to be stable and they are going to become a new=20
-> release within next few days. We encourge you to test it and=20
-> to report about any possible problem.
-
-Can you than pump the version number to the OSS/Linux standard like Hans=20
-agreed lately before you release it, please?
-
-Thanks,
-	Dieter
-
---=20
-Dieter N=FCtzel
-Graduate Student, Computer Science
-
-University of Hamburg
-Department of Computer Science
-@home: Dieter.Nuetzel@hamburg.de
-
+CkhpLCBpdCBzZWVtcyB5b3UgZGlkIG5vdCBnZXQgbXkgZmlyc3QgZW1haWwuCgotLS0tLS0tLS0t
+ICBGb3J3YXJkZWQgTWVzc2FnZSAgLS0tLS0tLS0tLQoKU3ViamVjdDogUmU6IFtyZWlzZXJmcy1s
+aXN0XSBzdXBlcmJsb2NrIHByb2JsZW0KRGF0ZTogV2VkLCAyNiBKdW4gMjAwMiAxNjozNzoxOCAr
+MDQwMApGcm9tOiBWaXRhbHkgRmVydG1hbiA8dml0YWx5QG5hbWVzeXMuY29tPgpUbzogSmFrdWIg
+QW1icm/FvGV3aWN6IDxqYUB2aWdvci5jb20ucGw+CgpIaSBKYWt1YiwKCndoaWNoIHZlcnNpb24g
+b2YgcmVpc2VyZnNwcm9ncyBkbyB5b3UgdXNlPwpZb3UgZ290IHdyb25nIHN1cGVyIGJsb2NrIGZv
+cm1hdCBpbiBibG9jayAxNiwKd2hhdCBkaWQgeW91IGFuc3dlciBvbiB0aGUgcXVlc3Rpb24gYWJv
+dXQKc3VwZXIgYmxvY2sgZm9ybWF0IGJlZm9yZSByZWJ1aWxkaW5nPwoKPiBIaQo+Cj4gSSBqdXN0
+IGxvc3QgbXkgc3VwZXJibG9jay4gTm90IGEgYmlnIGRlYWwsIGkKPiByZWlzZXJmc2NrIC0tcmV1
+aWxkLXNiIGl0LCB0aGVuIC0tcmVidWlsZC10cmVlLgo+IEFmdGVyIHRoYXQgaSBtYWRlIC0tY2hl
+Y2sgYW5kIGl0IGZvdW5kIG5vCj4gZXJyb3JzLiBCdXQgaXQncyB1bm1vdW50YWJsZS4uLgo+IER1
+cmluZyBib290IG15IGtlcm5lbCAoMi40LjE4LCBEZWJpYW4vV29vZHkpIHN0YXRlczoKPgo+IHN1
+cGVyLTQ1OTogcmVhZF9zdXBlcl9ibG9jazogc3VwZXIgZm91bmQgYXQgYmxvY2sgMTYKPiBpcyB3
+aXRoaW4gaXRzIG93biBsb2cuIEl0IG11c3Qgbm90IGJlIG9mIHRoaXMgdHlwZS4KPiByZWFkX3N1
+cGVyX2Jsb2NrOiBjYW4ndCBmaW5kIGEgcmVpc2VyZnMgZmlsZXN5c3RlbQo+IG9uIGRldiAxNjo0
+MiBibG9jayA4LCBzaXplIDEwMjQKPgo+IFNvIGkgdGhvdWdodCBtYXliZSBpIHVzZWQgd3Jvbmcg
+dmVyc2lvbiBhbmQgdHJpZWQKPiBhbGwgb2YgdGhlIG9wdGlvbnMsIHN0aWxsIG5vIHJlc3VsdC4g
+QW5kIG5vdyBpIHN0dWNrCj4gd2l0aCBkaXNrIGZ1bGwgb2YgZGF0YSB3aGljaCBpIGNhbid0IGdl
+dC4KPiBTbywgaXMgdGhlcmUgYSBtZXRob2QgdG8gbW91bnR8Zml4IHRoaXMgcGFydGl0aW9uLCBv
+cgo+IGNvcHkgZmlsZXMgb3V0IGZyb20gaXQ/Cj4KPiBKQQoKLS0KClRoYW5rcywKVml0YWx5IEZl
+cnRtYW4KCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0KCi0tIAoKVGhhbmtzLApWaXRhbHkgRmVydG1hbgo=
