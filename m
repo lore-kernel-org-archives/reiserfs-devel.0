@@ -1,44 +1,62 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Reiserfs Data Recovery (SOLVED)
-Date: Mon, 15 Mar 2004 19:32:41 +0300
-Message-ID: <200403151932.41036.vitaly@namesys.com>
-References: <404E8665.7090305@nsanity.com> <200403130001.57937.vitaly@namesys.com> <4055D064.1000604@nsanity.com>
+From: Vince <fuzzy77@free.fr>
+Subject: Re: status of grub reiser4 support ?
+Date: Mon, 15 Mar 2004 17:52:32 +0100
+Message-ID: <4055DF50.4030105@free.fr>
+References: <405597B6.1000906@free.fr> <200403151715.50569.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17225-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17226-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4055D064.1000604@nsanity.com>
-Content-Disposition: inline
+In-Reply-To: <200403151715.50569.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Nick Vahalik <nick@nsanity.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>, bug-grub@gnu.org
 
-On Monday 15 March 2004 18:48, Nick Vahalik wrote:
-> Alright, so apparently it was the hardware... I'm not quite sure how,
-> exactly, but something appears to be up.  I borrowed a 200 G drive and
-> just dd'ed /dev/sda to /dev/sdb, and then reiserfscked /dev/sdb1... it
-> took a lot longer, but when It finished it got through pass 4 completely
-> and  had finished.  It had 6430 leaves it couldn't place, so they were
-> put in lost+found, and most (85%) of the files are completely intact,
-> but some of the bigger ones (divx/iso) were pretty tore up.  I also have
-> a couple of files that nautilus thinks are 1.5 exabytes, yes exabytes.
+Building succeded, this is what I have:
 
-It is legal to have a file with the size greater then the real file 
-body size. But if you do not want it, there is an option in reiserfsck 
---adjust-size that allows you to adjust the file size fo the real file 
-body size.
+diablo:/boot/grub# ll *stage*
+-rw-r--r--    1 root     root         7616 Mar 15 17:27 e2fs_stage1_5
+-rw-r--r--    1 root     root         7376 Mar 15 17:27 fat_stage1_5
+-rw-r--r--    1 root     root         6688 Mar 15 17:27 ffs_stage1_5
+-rw-r--r--    1 root     root         8224 Mar 15 17:27 jfs_stage1_5
+-rw-r--r--    1 root     root         6880 Mar 15 17:27 minix_stage1_5
+-rw-r--r--    1 root     root        54088 Mar 15 17:27 reiser4_stage1_5
+-rw-r--r--    1 root     root         9088 Mar 15 17:27 reiserfs_stage1_5
+-rw-r--r--    1 root     root          512 Mar 15 17:27 stage1
+-rw-r--r--    1 root     root       103752 Mar 15 17:27 stage2
+-rw-r--r--    1 root     root         6336 Mar 15 17:27 vstafs_stage1_5
+-rw-r--r--    1 root     root         9160 Mar 15 17:27 xfs_stage1_5
 
-> It still amazes me that even after both the drives completely passed the
-> DFT, they are still acting strange.  Heh, silly Hitachi drives.
+Unfortunately, grub under linux will encounter a segmentation as soon as 
+I try to read a file on a reiser4 partition:
+grub> cat (hd1,<TAB>
+  Possible partitions are:
+    Partition num: 0,  Filesystem type is reiser4, partition type 0xc
+    Partition num: 1,  Filesystem type is reiserfs, partition type 0x83
+    Partition num: 2,  Filesystem type is reiser4, partition type 0x83
+ 
+
+grub> cat (hd1,2)/<TAB>zsh: segmentation fault  grub
+
+Booting directly grub from the bios, reiser4 partitions are marked as 
+unknown (but I bet this is probably a stage 1/1.5/2 problem from my part)...
+
+Vince
+
+Vitaly Fertman wrote:
+> On Monday 15 March 2004 14:47, Vince wrote:
 >
-> Thanks for your time, guys.
->
-> Nick Vahalik
-
--- 
-Thanks,
-Vitaly Fertman
+>>  I'd like to know the current status of bootloaders support for
+>>reiser4. The latest patch for grub I could find is this one:
+>>http://www.namesys.com/snapshots/2003.06.06/grub-0.93-reiser4-20030606.diff
+ >> [...]
+>>Is there a more up to date patch for grub available ?
+> 
+> 
+> this is the reiser4 support patch for grub-0.94, would you try it?
+> 
+> 
