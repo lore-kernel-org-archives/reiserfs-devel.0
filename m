@@ -1,57 +1,47 @@
 From: Christer Weinigel <christer@weinigel.se>
-Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: 02 Sep 2004 20:23:09 +0200
-Sender: wingel@zoo.weinigel.se
-Message-ID: <m3pt54il82.fsf@zoo.weinigel.se>
-References: <20040901200806.GC31934@mail.shareable.org>
-	<200409021407.i82E70hx004899@laptop11.inf.utfsm.cl>
-	<20040902173214.GB24932@mail.shareable.org>
+Subject: Re: The argument for fs assistance in handling archives
+Date: 02 Sep 2004 20:38:19 +0200
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <m3llfsikis.fsf@zoo.weinigel.se>
+References: <20040826150202.GE5733@mail.shareable.org>
+	<200408282314.i7SNErYv003270@localhost.localdomain>
+	<20040901200806.GC31934@mail.shareable.org>
+	<Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org>
+	<20040902002431.GN31934@mail.shareable.org>
+	<413694E6.7010606@slaphack.com>
+	<Pine.LNX.4.58.0409012037300.2295@ppc970.osdl.org>
+	<4136A14E.9010303@slaphack.com>
+	<Pine.LNX.4.58.0409012259340.2295@ppc970.osdl.org>
+	<4136C876.5010806@namesys.com>
+	<Pine.LNX.4.58.0409020030220.2295@ppc970.osdl.org>
+	<4136E0B6.4000705@namesys.com> <14260000.1094149320@flay>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21304-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <20040902173214.GB24932@mail.shareable.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <14260000.1094149320@flay>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: "Martin J. Bligh" <mbligh@aracnet.com>
+Cc: Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Jamie Lokier <jamie@shareable.org> writes:
+"Martin J. Bligh" <mbligh@aracnet.com> writes:
 
->     1. Local Google (by which I mean a search engine on your local machine),
->        Real-time (by which I mean the results are always up to date):
+> > For 30 years nothing much has happened in Unix filesystem semantics 
+> > because of sheer cowardice 
 > 
->        Every file modified since last search is known to the query engine.
->        This is a reality: BeOS does it; WinFS is expected to do it.
-> 
->        Thus we have real-time local free text search engine, and other
->        features like searching inside files and for file names.  The
->        point is the real-time nature of it: the results you get
->        correspond to exactly the contents of the filesystem at the time of
->        the query (writes which occur _during_ a query are obviously
->        not coherent with this, but writes which complete before the
->        query, even immediately before, appear in the results).
+> Or because it works fine, and isn't broken.
 
-Can be done with dnotify/inotify and a cache daemon keeping track of
-mtime.  Yes, this will need a kernel change to make sure mtime always
-changed when the file changes, but it does not require anything else.
+I've heard the same argument a lot of times.  People complaining that
+Unix is so seventies because it sticks to the old boring philosophy of
+everything is a file and that a file is a stream of bytes, nothing
+more.  Modern operating systems such as VMS with basic database
+handling in the OS itself, or MacOS or NT with named streams is so
+much more modern.  Why don't we get with the times?
 
->     2. MP3 player scanning artists & titles:
-
-Same.
-
->     3. Email program scanning for subject lines fast:
-
-Same here.
-
->     4. Blog server caching built pages:
->     5. Programming environment scanning for tags:
->     6. File transfer program scanning for shared deltas.
-
-And so on.
+It may be because just because of the simplicity it's fairly easy to
+use, harder to break och does one thing well.  If you want structured
+storage, use a database, on top of the low level primitives, or use
+multiple files in a directory.  Why complicate things?
 
   /Christer
 
