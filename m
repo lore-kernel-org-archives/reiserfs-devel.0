@@ -1,58 +1,39 @@
-From: Tupshin Harper <tupshin@tupshin.com>
-Subject: Re: libaal compile fails
-Date: Sun, 09 Nov 2003 01:46:07 -0800
-Message-ID: <3FAE0CDF.9080104@tupshin.com>
-References: <3F9F80F0.5040206@namesys.com> <3F9F811D.7070902@namesys.com> <3FAE01DF.7090802@tupshin.com>
+From: Alejandro Sanchez Acosta <asanchez@gnome.org>
+Subject: Some more basic questions.
+Date: 10 Nov 2003 05:15:20 +0100
+Message-ID: <1068437719.3362.24.camel@voyager>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16025-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16026-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FAE01DF.7090802@tupshin.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS <reiserfs-list@namesys.com>
-Cc: Yury Umanets <umka@namesys.com>, S?valdur Gunnarsson <addi@root.is>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Tupshin Harper wrote:
+Hello,
 
-> Yury Umanets wrote:
->
->> Yury Umanets wrote:
->>
->>> >>When I try building libaal it fails with the following error message:
->>>
->> Forgot to ask. Do you use recent snapshot of libaal?
->>
-> FWIW, I get the exact same problem as Saevaldur. Using 
-> libaal-0.4.13.tar.gz, and attempting to compile on a Debian Sid x86 
-> machine. I can only imagine it's a gcc parsing bug (line 213 indeed 
-> does not have a square bracket). GCC is 3.3.2. Commenting out the 
-> check performed by that line results in a sucesful compilation.
->
-> -Tupshin
->
-A bit more info.
+I don't understand so well how the dancing trees work. I've seen in the
+documentation that are faster than B+ trees, but I don't understand the
+reason. Somebody can explain me how does it work a dancing tree and
+where does reiserfs use it?
 
-It is not a problem with the gcc version, as the same message comes from 
-3.2 and 2.95.
+Other thing that I don't understand is the cache design, where are used
+caches in the filesystem? 
 
-I'm guessing that it emerges from macros expanded through multiple 
-layers of expansion.
-BLKGETSIZE64 expands to _
-IOR(0x12, 114, sizeof(uint64_t))
+And why is better to use extents than BLOBs? A lot of databases use
+BLOB's to storage the data and get good performance with.
 
-_IOR expands to
-_IOC(_IOC_READ,(type),(nr),(_IOC_TYPECHECK(size)))
+What security features provide reiser4? I have seen that you can use
+crypto support and crypto compressing, does it support other security
+features? does it use the new CryptoAPI? 
 
-and _IOC_TYPECHECK expands to
-((sizeof(t) == sizeof(t[1]) && sizeof(t) < (1 << _IOC_SIZEBITS)) ? 
-sizeof(t) : __invalid_size_argument_for_IOC)
+And other thing, if I want to do a new plugin, what I have to do? Any
+documentation related?
 
-which is the first hint of a bracket on that line. That's as far as I'm 
-going ;-).
-
--Tupshin
+Thanks in advance.
+-- 
+Alejandro Sanchez Acosta <asanchez@gnome.org>
 
