@@ -1,85 +1,88 @@
-From: Richard Heycock <rgh@roughage.com.au>
-Subject: Re: software packaging and ReiserFS v4
-Date: Fri, 05 Sep 2003 17:08:29 +1000
-Message-ID: <1062745708.1523.21.camel@boadicea>
-References: <20030903165409.GD4714@rahul.net>
+From: Yury Umanets <umka@namesys.com>
+Subject: Re: Reiser4 input/output errors...
+Date: Fri, 05 Sep 2003 12:20:29 +0400
+Message-ID: <1062750029.8314.13.camel@haron.namesys.com>
+References: <1062453181.2791.17.camel@mikeb.staff.netnation.com>
+	 <1062479004.31361.3.camel@haron.namesys.com>
+	 <1062521517.1987.5.camel@mikeb.staff.netnation.com>
+	 <1062567211.2107.14.camel@haron.namesys.com>
+	 <1062603920.3148.125.camel@mikeb.staff.netnation.com>
+	 <1062651147.16134.1.camel@haron.namesys.com>
+	 <1062705159.4903.6.camel@mikeb.staff.netnation.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15572-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15573-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030903165409.GD4714@rahul.net>
+In-Reply-To: <1062705159.4903.6.camel@mikeb.staff.netnation.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: mikeb@netnation.com
+Cc: reiserfs-list@namesys.com
 
-On Thu, 2003-09-04 at 02:54, Bennett Todd wrote:
-> I've got this thought that ReiserFS v4 may make it possible to
-> implement a _really_ trivial software package management system,
-> with even better power than rpm.
+On Thu, 2003-09-04 at 23:52, Mike Benoit wrote:
+> [root@mikeb root]# debugfs.reiser4 -t /dev/hda8
+> debugfs.reiser4 0.4.12
+> Copyright (C) 2001, 2002, 2003 by Hans Reiser, licensing governed by
+> reiser4progs/COPYING.
 > 
-> I'm building myself a new Linux distrib; my proximate motivation is
-> that while there's lots I like about Red Hat --- in particular, rpm
-> is the best software package mgmt tool I've used or heard of ---
-> there's still a lot of accumulated cruft there.
+> NODE (21) LEVEL=2 ITEMS=1 SPACE=4020 MKFS=0x103e447b
+> FLUSH=0x4001b90100000000
+> (0) NODEPTR PLUGIN=nodeptr40 LEN=8, KEY=[29:1:0:2a:0:SD] UNITS=1
+> [22]
+> 
+> NODE (22) LEVEL=1 ITEMS=2 SPACE=3838 MKFS=0x103e447b
+> FLUSH=0xbfffe57800000000
+> (0) STATDATA PLUGIN=stat40 LEN=48, KEY=[29:1:0:2a:0:SD] UNITS=1
+> exts:           2
+> mask:           0x3
+> plugin:         sdext_lw
+> offset:         2
+> len:            14
+> mode:           drwxr-xr-x
+> nlink:          3
+> size:           2
+> plugin:         sdext_unix
+> offset:         16
+> len:            32
+> uid:            0
+> gid:            0
+> atime:          Tue Sep  2 09:39:26 2003
+> mtime:          Tue Sep  2 09:39:26 2003
+> ctime:          Tue Sep  2 09:39:26 2003
+> rdev:           0
+> bytes:          100
+> (1) CDE PLUGIN=cde_large LEN=102, KEY=[2a:0:0:0:0:NAME] UNITS=2
+> NR  NAME              OFFSET HASH                              SDKEY
+> ------------------------------------------------------------------------------
+>   0 .                     54 0000000000000000:0000000000000000
+> 0000291:000002a
+>   1 ..                    78 002e2e0000000000:0000000000000000
+> 0000291:000002a
+> 
+> 
+> Let me know if you need any more information. I'm also on IRC during PST
+> business hours, if that would be better for you to debug this issue.
+> 
+> On Wed, 2003-09-03 at 21:52, Yury Umanets wrote:
+> > On Wed, 2003-09-03 at 19:45, Mike Benoit wrote:
+> > 
+> > > > Can you run debugfs.reiser4 on /dev/hda8? What does it say?
+> > > > 
+> > 
+> > Can you print the tree?
+> > 
+> > debugfs.reiser4 -t /dev/hda8?
 
-Why not just use apt-get/dpkg? It make a mockery of rpms.
+Hm... That is strange. I supposed, that there should be lots of data.
+And I guessed, that there something like tree corruption, which may be
+discovered by tree printing.
 
-rgh
+But this is fresh filesystem. Is it had IO errors on it?
 
-> 
-> As I've gotten deeper into the project, I've had my nose rubbed in
-> the fact that rpm is the accumulating cruft heart; it's the worst.
-> Way, way overdue for a rewrite.
-> 
-> So I started fantasizing about the replacement. Some bits are easy;
-> rather than trying to write a parser for yet another poorly
-> documented subtle and complex file format like rpm spec files, the
-> spec file will simply be a Lua <URL:http://www.lua.org/> source file
-> that exports the necessary data.
-> 
-> Then I started thinking about the database that a good software
-> packging tool needs to maintain. After a bit, it hit me that
-> ReiserFS 4 would be _killer_!
-> 
-> Let the package install process deposit the "spec file" (lua data
-> decl) in /var/lib/pkg/{pkgname}. Addenda like e.g. the checksums,
-> and pre- and post-install scripts can be
-> /var/lib/pkg/{pkgname}/sha1, /var/lib/pkg/{pkgname}/pre,
-> /var/lib/pkg/{pkgname}/post, etc. Whatever open-ended addenda the
-> package should wish to keep track of on a per-package basis can be
-> simply added there.
-> 
-> The one tricky bit --- and it's the performance downfall of the
-> current rpm --- is the reverse-mapping database, the one that maps a
-> pathname of an installed file to the package that installed it.
-> Maintaining that, and ensuring its consistency with the forward
-> database, makes rpm slow.
-> 
-> With ReiserFS v4 its as natural as can be; a file /usr/bin/foo,
-> installed by a package foo, would simply have a symlink
-> 
-> 	/usr/bin/foo/pkg -> /var/lib/pkg/foo
-> 
-> Besides scaling elegantly and staying wonderfully simple, this has
-> the additional otherwise-impossible feature that the package
-> attribution automatically correctly updates if you move the file
-> (although the forward mappings within /var/lib/pkg/foo wouldn't
-> update automagically).
-> 
-> I'm continuing to do the preliminary, basic dev of my new distrib on
-> Reiser 3 w/ rpm, because they're what I've got, but when v4 comes
-> around I'm seriously hoping to re-wrap the whole schmeer taking full
-> advantage of v4 to make a very simple new package manager.
-> 
-> -Bennett
+> > 
 -- 
-"It is possible to make things of great complexity out of things
- that are very simple. There is no conservation of simplicity"
- -- Stephen Wolfram
+umka
 
-Richard Heycock <rgh@roughage.com.au>
-tel : 0410 646 369
-key fingerprint : 909D CBFA C669 AC2F A937 AFA4 661B 9D21 EAAB 4291
