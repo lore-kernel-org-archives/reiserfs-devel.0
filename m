@@ -1,32 +1,26 @@
-From: Chris Mason <mason@suse.com>
+From: "Patrick.Le-Dot@bull.net" <Patrick.Le-Dot@bull.net>
 Subject: Re: SetPageReferenced usage
-Date: Fri, 14 May 2004 09:00:44 -0400
-Message-ID: <1084539644.2583.509.camel@watt.suse.com>
-References: <200405141131.NAA159118@alpha12.frec.bull.fr>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18684-reiserfs=m.gmane.org@namesys.com>
+Date: Fri, 14 May 2004 16:11:02 +0200
+Message-ID: <200405141411.QAA249630@alpha12.frec.bull.fr>
+Return-path: <reiserfs-list-return-18686-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200405141131.NAA159118@alpha12.frec.bull.fr>
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: "Patrick.Le-Dot@bull.net" <Patrick.Le-Dot@bull.net>
+Content-Transfer-Encoding: 7bit
+To: mason@suse.com
 Cc: reiserfs-list@namesys.com
 
-On Fri, 2004-05-14 at 07:31, Patrick.Le-Dot@bull.net wrote:
-> Hi list,
-> 
-> I'm interested to understand why fs/reiserfs/file.c use SetPageReferenced
-> instead of the mark_page_accessed function (like in all others FS) ?
-> 
-> Thanks to reply to me directly as I'm not on the list.
+> From mason@suse.com Fri May 14 15:12:34 2004
+> ...
+> That would be a bug.  Thanks, I'll test the fix to make sure it doesn't
+> have any unexpected side effects.
 
-That would be a bug.  Thanks, I'll test the fix to make sure it doesn't
-have any unexpected side effects.
-
--chris
-
-
+No (bad) side effect, just better performances :
+mark_page_accessed() move the page into the active_list (under
+conditions) and this is the only difference.
+I'm confident:-)
+Patrick
