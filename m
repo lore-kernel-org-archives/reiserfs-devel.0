@@ -1,69 +1,41 @@
-From: "darren" <teodarren@myrealbox.com>
-Subject: Re: Re: reiserfs and TUX2 - 2.4.18 or 2.4.19?
-Date: Fri, 20 Dec 2002 01:08:01 +0000
-Message-ID: <1040346481.bb5f0760teodarren@myrealbox.com>
+From: grobe@gmx.net
+Subject: need for benchmarking system?
+Date: Fri, 20 Dec 2002 02:20:43 +0100 (MET)
+Message-ID: <9135.1040347243@www36.gmx.net>
 Mime-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12181-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12182-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: green@namesys.com
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hi!
+Hi List!
 
-Thanx for responding to my ques.
+As we are going to get a quite big new server in january, and as I have
+taken a lot of advantage from the reiserfs development, I wonder if I could
+contribute a bit by making a "reiserfs-large-server-test-day"?
 
-So, to make my reiserfs on my RedHat7.3 kernel the same one as the one in K=
-ernel 2.4.20, all i have to do is to patch:
+The system will be a redundant fibrechannel storage with two dual processor
+systems, about 2 Terabytes raid5. I am going to install SuSE ES8 (I usually
+install on LVM).
 
-2.4.18-pre1.pending
-2.4.18-pre2.pending
-.
-.
-2.4.18-rc1.pending
-2.4.18.pending
-2.4.19
-2.4.20
+If the reiserfs-team thinks this could be useful, please tell me the
+configuration you need (e.g. kernel 2.4.xx, 2.5.xx, reiserfs 3.xx or 4?) an=
+d how we
+should do this (benchmark scripts etc), I will try to get the specs of the
+system and see how to put this into the schedule.
 
-and so on??
+If there's no need, it just has been a silly idea of mine ;-) In fact, it's
+not so altruistic... I'm quite sure there will be running some reiser
+filesystems on the machine in the near future ;-)))
 
------Original Message-----
-From: Oleg Drokin <green@namesys.com>
-To: darren <teodarren@myrealbox.com>
-Date: Thu, 19 Dec 2002 18:58:05 +0300
-Subject: Re: reiserfs and TUX2 - 2.4.18 or 2.4.19?
+CU Lars.
 
-Hello!
-
-On Thu, Dec 19, 2002 at 11:53:49PM +0800, darren wrote:
-
-> I want to run TUX2 to serve files off my ReiserFS partition.
-> But I cannot seem to get TUX2 on kernel 2.4.19, which I would like to
-> run my reiserfs partition on.
-
-We cannot tell you anything about Tux2 because we do not know anything
-about it ;)
-
-> Should I just stick to 2.4.18 and somehow patch the reiserfs there??
-
-If you plan to run not current 2.4 kernels, you might want to
-get patches from ftp://ftp.namesys.com/pub/reiserfs-for-2.4/<version>.pendi=
-ng
-
-Where <version> next kernel version. (repeat that until you reach latest
-kernel). 
-
-But actually 2.4.18 is pretty stable and you may not want to patch it if yo=
-u
-want.
-
-Bye,
-    Oleg
-
-
+--=20
++++ GMX - Mail, Messaging & more  http://www.gmx.net +++
+NEU: Mit GMX ins Internet. Rund um die Uhr f=FCr 1 ct/ Min. surfen!
 
