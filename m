@@ -1,11 +1,11 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: mongo benchmark results
-Date: Mon, 26 Jul 2004 12:11:45 -0700
-Message-ID: <41055771.6070002@namesys.com>
+Date: Mon, 26 Jul 2004 12:18:20 -0700
+Message-ID: <410558FC.40204@namesys.com>
 References: <20040726173552.20ECA15EBD@mail03.powweb.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19821-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19822-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -60,10 +60,8 @@ David Dabbs wrote:
 >
 >  
 >
-The 4k results are also valid/important results.  I just tend to choose 
-8k for the website for various valid reasons.
+Ignore what I said about 500mb mongo, the dd gives the info desired.
 
-We probably should try 500 byte file sizes and 50mb file sizes, with 
-gamma of 0, just for fun.
-
-Hans
+I don't understand these results.  If they are correct, we have lost a 
+lot of our ext3 performance advantage, and I want to know where it 
+went.  Elena, Zam, please comment.
