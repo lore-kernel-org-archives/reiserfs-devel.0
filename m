@@ -1,167 +1,312 @@
-From: Bill Huey (hui) <bhuey@lnxw.com>
-Subject: Re: The argument for fs assistance in handling archives (was: silent semantic changes with reiser4)
-Date: Tue, 7 Sep 2004 14:44:56 -0700
-Message-ID: <20040907214456.GA6137@nietzsche.lynx.com>
-References: <20040826150202.GE5733@mail.shareable.org> <200408282314.i7SNErYv003270@localhost.localdomain> <20040901200806.GC31934@mail.shareable.org> <Pine.LNX.4.58.0409011311150.2295@ppc970.osdl.org> <1094118362.4847.23.camel@localhost.localdomain> <Pine.LNX.4.58.0409021045210.2295@ppc970.osdl.org> <1094150760.5809.30.camel@localhost.localdomain> <20040902215627.GA15688@nietzsche.lynx.com> <1094165289.6163.15.camel@localhost.localdomain>
+From: David Greaves <david@dgreaves.com>
+Subject: Re: HELP! Reiser 3.6 - attempt to access beyond end of device, then
+ oops on mount
+Date: Tue, 07 Sep 2004 22:55:50 +0100
+Message-ID: <413E2E66.4010909@dgreaves.com>
+References: <413E1C81.8000001@dgreaves.com> <413E1EFE.2080107@dgreaves.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-21595-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-21596-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1094165289.6163.15.camel@localhost.localdomain>
+In-Reply-To: <413E1EFE.2080107@dgreaves.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Bill Huey <bhuey@lnxw.com>, Linus Torvalds <torvalds@osdl.org>, Jamie Lokier <jamie@shareable.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Adrian Bunk <bunk@fs.tum.de>, Hans Reiser <reiser@namesys.com>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Greaves <david@dgreaves.com>
+Cc: reiserfs-list@namesys.com
 
-On Thu, Sep 02, 2004 at 11:48:10PM +0100, Alan Cox wrote:
-> On Iau, 2004-09-02 at 22:56, Bill Huey wrote:
-> > It also depends on who you ask. I can't take a lot of the mainstream
-> > X folks serious since they are still using integer math as parameters
-> 
-> The X folks know what they are doing. Modern X has a complete
-> compositing model. Modern X has a superb font handling system. Nobody
-> broke anything along the way. The new API's can be mixed with the old,
-> there are good fallbacks for old servers.
+So a reiserfsck --fix-fixable got it ready to remount.
 
-Keith Packard knows what he's doing. The rest that don't follow his lead
-on these issues are useless or detracting and redirecting resources away
-from critical problems that have been solved under other, more mature,
-operating systems, specifically Apple's OS X.
+So I rebooted and now have
+Sep  7 22:47:14 cu kernel: vs-4080: reiserfs_free_block: free_block 
+(dm-0:88556566)[dev:blocknr]: bit already cleared
+Sep  7 22:47:14 cu kernel: vs-4080: reiserfs_free_block: free_block 
+(dm-0:88556565)[dev:blocknr]: bit already cleared
+Sep  7 22:47:14 cu kernel: vs-4080: reiserfs_free_block: free_block 
+(dm-0:88556564)[dev:blocknr]: bit already cleared
+Sep  7 22:47:14 cu kernel: vs-4080: reiserfs_free_block: free_block 
+(dm-0:88556563)[dev:blocknr]: bit already cleared
 
-Notice, that you didn't deflect the claim that folks are still using
-integer math to draw things. This is critical...
+counting down 1 at a time at a rate of 4500/minute - I don't like the 
+look of how long this might take... 13 days to finish the mount?
 
-> In fact they are so good at it that most people don't notice beyond the
-> fact their UI looks better than before.
-> 
-> That is how you do change *right*
+Am I screwed?
 
-It's one way, but it's not top-level redesign heavily enough that you still
-have a substandard rendering system. Notice that were wasn't a mention of
-device independent rendering, WYSIWYG (what you get is what you see) in
-their rasterization model, nor was there any mention of how a scalable
-unified rasterization model used in an application. OpenStep ruled during
-it's time and rendered and generate better PostScript than Macintosh
-applications because of this unified rasterization model. Split development
-and the lack of "connecting the dots" across systems is one of the reasons
-why X has such poor app development. It takes way more time to do things
-in this environment than in other system.
+David
 
-What folks X land are missing here is a notion of design verses piecewise
-hacks to half emulate a critical function. The fault in this matter is
-really spread out to multipule camps not doing their homework regarding
-these matters.
 
-Also, there's no mention of making OpenGL a first class citizen in this
-system so that all compositing is hardware accelerate. What OS has this ?
-You guess it Apple's OS X has this with full transparency and bitmap
-backstore for region invalidating and redrawing. X currently has none of
-this stuff. You could say that this is planned in the future, but there
-has been no push for doing this in this aggressive a manner which is a
-leadership failure of that community as a whole.
+David Greaves wrote:
 
-Also, the notion of color space, not just RGB, but CMYK is a first class
-citizen in Display Postscript. X is also missing this. These aren't
-things that you can gradually add in. It's about looking at the system
-from the top-down and solving these problems using other systems that.
-
-X is at best piecewise and substandard to just about any modern rendering
-system that I've used.
-
-> > more dynamic systems. And the advent of XML (basically a primitive and
-> > flat model of what Hans is doing) for .NET style systems are going to
-> 
-> I see you don't really get XML either. XML is just an encoding. Its
-> larger and prettier than ASN.1 and easier to hack about with perl. You
-> can do the same thing with lisp lists for that matter.
-
-I get it fine. What you don't get is something called Model View Controller
-in that .NET applications have the ability to take that serialized structure,
-apart of their entire object store/serialization system and transform
-it into many views. The same widget data can be used not only to build HTML
-for a web page, but also a standard component driven GUI system a native
-windowing kit. This exploits polymorphism and how OOP should have been
-done in the first place. This use of it is very important and obviously
-useful in this case.
-
-In MVC, all data has relationships and XML s the kind of DB format that these
-systems use for object serialization. XML is the storage layer in these systems.
-It's used for every object, remote or local.
-
-This is why something like Reiser FS 4 with it's persistent object store
-capability may have a critical influence on how these systems are built.
-These systems are returning nothing but structured storage in the form
-of XML analougs.
-
-Your Perl/Python, what ever example here doesn't cut it and explicate
-how XML based system are being generically used in this sense. It's too
-technically shallow for this context.
-
-> > have been lost to older commericial interests (Microsoft Win32) and that
-> > has wiped out the fundamental classic computer science backing this from
-> > history. This simple "MP3 metadata" stuff is a very superficial example
-> > of how something like this is used.
-> 
-> The trouble with computer science is that most of it sucks in the real
-> world. We don't write our OS's in Standard ML, we don't implement some
-> of the provably secure capability computing models. At the end of the
-> day they are neat, elegant and useless to real people.
-
-Java and .NET are just those things that you have been talking about.
-As these systems become more and more prevalent (they will) they're
-influence is just the beginning. These system have pretty much happened
-overnight and can't be ignored by kernel folks.
-
-> > Unix folks tend to forget that since they either have never done this
-> > kind of programming or never understood why this existed in the first
-> > place. It's about a top-down methodology effecting the entire design of
-> > the software system, not just purity Unix. If it can be integrate
-> > smoothly into the system, then it should IMO.
-> 
-> The Unix world succeeded because Unix (at least in v7 days) was the
-> other way around to every other grungy OS on the planet. It had only
-> thing things it needed. I've used some of the grungy crawly horrors that
-> were its rivals and there is a reason they don't exist any more.
-
-Look, I agree with you for the most part about Unix, but these issues
-have to be reexamined again after some period of time has elapsed.
-
-I can only guess that some of these system are horribly implemented
-minimally, but I can't comment about their original intentions since
-I've personally never used them.
- 
-> I would sum up the essence of the unix kernel side as
-> 	- Does only what it must do
-> 	- "Makes the usual easy makes the unusual possible"
-> 	- Has an API that is small enough for developers to learn
-> 	  easily (an API so good every other OS promptly ripped it off)
-> 	  People forget the worlds of SYS$QIO, RMS, FCB's and the like
-> 
-> Its worked remarkably well for a very very long time, and most of the
-> nasties have come from people trying to break that model or not
-> understanding it.
-
-This is a difficult topic, but I don't how folks can dimiss something
-like Reiser FS semantics and the importance of systems like this for
-future software design across all application boundaries.
-
-There has to be a way of getting this stuff in and keeping the traditional
-semantics in place.
-
-I was thinking about have a dual mounted file system, one with traditional
-Unix semantics with read-only permissions, but then having it also being
-mounted in a special namespace directory structure (something like /proc)
-that would reveal other streams for "stream aware" applications with
-read/write permissions.
-
-It might solve both problems in this case. Don't know.
-
-I've been on vacation for the last couple of days at Burning Man, which
-is why this response has been delayed. :)
-
-bill
+> David Greaves wrote:
+>
+>> Hi I first got this oops 'out of the blue'
+>> Memtest seems to run fine
+>> When rebooting and remounting, it now oopses every time I remount the fs
+>
+>
+> I should have given you:
+> The reiserfs is on top of an lvm2 on top of a raid5
+> I tried booting with 2.6.6 and then 2.6.7
+>
+> dmesg:
+> Linux version 2.6.7 (root@cu.dgreaves.com) (gcc version 3.3.3 (Debian 
+> 20040422)) #1 Wed Jun 16 12:39:51 BST 2004
+> BIOS-provided physical RAM map:
+> BIOS-e820: 0000000000000000 - 000000000009e800 (usable)
+> BIOS-e820: 000000000009e800 - 00000000000a0000 (reserved)
+> BIOS-e820: 00000000000f0000 - 0000000000100000 (reserved)
+> BIOS-e820: 0000000000100000 - 000000000ffec000 (usable)
+> BIOS-e820: 000000000ffec000 - 000000000ffef000 (ACPI data)
+> BIOS-e820: 000000000ffef000 - 000000000ffff000 (reserved)
+> BIOS-e820: 000000000ffff000 - 0000000010000000 (ACPI NVS)
+> BIOS-e820: 00000000ffff0000 - 0000000100000000 (reserved)
+> 0MB HIGHMEM available.
+> 255MB LOWMEM available.
+> On node 0 totalpages: 65516
+>  DMA zone: 4096 pages, LIFO batch:1
+>  Normal zone: 61420 pages, LIFO batch:14
+>  HighMem zone: 0 pages, LIFO batch:1
+> DMI 2.3 present.
+> ACPI: RSDP (v000 ASUS                                      ) @ 0x000f6900
+> ACPI: RSDT (v001 ASUS   A7V-133  0x30303031 MSFT 0x31313031) @ 0x0ffec000
+> ACPI: FADT (v001 ASUS   A7V-133  0x30303031 MSFT 0x31313031) @ 0x0ffec080
+> ACPI: BOOT (v001 ASUS   A7V-133  0x30303031 MSFT 0x31313031) @ 0x0ffec040
+> ACPI: DSDT (v001   ASUS A7V-133  0x00001000 MSFT 0x0100000b) @ 0x00000000
+> Built 1 zonelists
+> Kernel command line: root=/dev/hda2 ro single
+> Local APIC disabled by BIOS -- reenabling.
+> Found and enabled local APIC!
+> Initializing CPU#0
+> PID hash table entries: 1024 (order 10: 8192 bytes)
+> Detected 1276.141 MHz processor.
+> Using tsc for high-res timesource
+> Console: colour VGA+ 80x25
+> Memory: 255892k/262064k available (2095k kernel code, 5440k reserved, 
+> 889k data, 160k init, 0k highmem)
+> Checking if this processor honours the WP bit even in supervisor 
+> mode... Ok.
+> Calibrating delay loop... 2506.75 BogoMIPS
+> Dentry cache hash table entries: 32768 (order: 5, 131072 bytes)
+> Inode-cache hash table entries: 16384 (order: 4, 65536 bytes)
+> Mount-cache hash table entries: 512 (order: 0, 4096 bytes)
+> CPU:     After generic identify, caps: 0183fbff c1c7fbff 00000000 
+> 00000000
+> CPU:     After vendor identify, caps: 0183fbff c1c7fbff 00000000 00000000
+> CPU: L1 I Cache: 64K (64 bytes/line), D cache 64K (64 bytes/line)
+> CPU: L2 Cache: 256K (64 bytes/line)
+> CPU:     After all inits, caps: 0183fbff c1c7fbff 00000000 00000020
+> CPU: AMD Athlon(tm) Processor stepping 02
+> Enabling fast FPU save and restore... done.
+> Checking 'hlt' instruction... OK.
+> enabled ExtINT on CPU#0
+> ESR value before enabling vector: 00000000
+> ESR value after enabling vector: 00000000
+> Using local APIC timer interrupts.
+> calibrating APIC timer ...
+> ..... CPU clock speed is 1275.0740 MHz.
+> ..... host bus clock speed is 268.0576 MHz.
+> NET: Registered protocol family 16
+> PCI: PCI BIOS revision 2.10 entry at 0xf1150, last bus=1
+> PCI: Using configuration type 1
+> mtrr: v2.0 (20020519)
+> ACPI: Subsystem revision 20040326
+> ACPI: IRQ9 SCI: Edge set to Level Trigger.
+> ACPI: Interpreter enabled
+> ACPI: Using PIC for interrupt routing
+> ACPI: PCI Interrupt Link [LNKA] (IRQs 3 4 5 6 7 9 10 *11 12 14 15)
+> ACPI: PCI Interrupt Link [LNKB] (IRQs 3 4 5 6 7 9 10 11 12 14 15) *0, 
+> disabled.
+> ACPI: PCI Interrupt Link [LNKC] (IRQs 3 4 5 6 7 9 *10 11 12 14 15)
+> ACPI: PCI Interrupt Link [LNKD] (IRQs 3 *4 5 6 7 9 10 11 12 14 15)
+> ACPI: PCI Root Bridge [PCI0] (00:00)
+> PCI: Probing PCI hardware (bus 00)
+> ACPI: PCI Interrupt Routing Table [\_SB_.PCI0._PRT]
+> SCSI subsystem initialized
+> ACPI: PCI Interrupt Link [LNKD] enabled at IRQ 4
+> ACPI: PCI Interrupt Link [LNKC] enabled at IRQ 10
+> ACPI: PCI Interrupt Link [LNKA] enabled at IRQ 11
+> PCI: Using ACPI for IRQ routing
+> spurious 8259A interrupt: IRQ7.
+> atyfb: 3D RAGE II+ (GTB) [0x4755 rev 0x9a] 4M EDO, 14.31818 MHz XTAL, 
+> 200 MHz PLL, 63 Mhz MCLK
+> fb0: ATY Mach64 frame buffer device on PCI
+> Simple Boot Flag at 0x3a set to 0x1
+> SGI XFS with ACLs, no debug enabled
+> Applying VIA southbridge workaround.
+> PCI: Disabling Via external APIC routing
+> Console: switching to colour frame buffer device 80x25
+> Uniform Multi-Platform E-IDE driver Revision: 7.00alpha2
+> ide: Assuming 33MHz system bus speed for PIO modes; override with 
+> idebus=xx
+> VP_IDE: IDE controller at PCI slot 0000:00:04.1
+> VP_IDE: chipset revision 6
+> VP_IDE: not 100% native mode: will probe irqs later
+> VP_IDE: VIA vt82c686b (rev 40) IDE UDMA100 controller on pci0000:00:04.1
+>    ide0: BM-DMA at 0xd800-0xd807, BIOS settings: hda:DMA, hdb:DMA
+>    ide1: BM-DMA at 0xd808-0xd80f, BIOS settings: hdc:DMA, hdd:DMA
+> hda: ST320420A, ATA DISK drive
+> hdb: Maxtor 5A300J0, ATA DISK drive
+> Using anticipatory io scheduler
+> ide0 at 0x1f0-0x1f7,0x3f6 on irq 14
+> hdc: Memorex 482E CD-ROM, ATAPI CD/DVD-ROM drive
+> hdd: PLEXTOR CD-R PX-W2410A, ATAPI CD/DVD-ROM drive
+> ide1 at 0x170-0x177,0x376 on irq 15
+> hda: max request size: 128KiB
+> hda: 39851760 sectors (20404 MB) w/2048KiB Cache, CHS=39535/16/63, 
+> UDMA(66)
+> hda: hda1 hda2 hda3
+> hdb: max request size: 1024KiB
+> hdb: 585940320 sectors (300001 MB) w/2048KiB Cache, CHS=36473/255/63, 
+> UDMA(100)
+> hdb: hdb1 hdb2
+> hdc: ATAPI 48X CD-ROM drive, 128kB Cache, UDMA(33)
+> Uniform CD-ROM driver Revision: 3.20
+> hdd: ATAPI 40X CD-ROM CD-R/RW drive, 4096kB Cache, UDMA(33)
+> libata version 1.02 loaded.
+> sata_promise version 1.00
+> ata1: SATA max UDMA/133 cmd 0xD100D200 ctl 0xD100D238 bmdma 0x0 irq 11
+> ata2: SATA max UDMA/133 cmd 0xD100D280 ctl 0xD100D2B8 bmdma 0x0 irq 11
+> ata3: SATA max UDMA/133 cmd 0xD100D300 ctl 0xD100D338 bmdma 0x0 irq 11
+> ata4: SATA max UDMA/133 cmd 0xD100D380 ctl 0xD100D3B8 bmdma 0x0 irq 11
+> ata1: dev 0 cfg 49:2f00 82:7c6b 83:7f09 84:4003 85:7c69 86:3e01 
+> 87:4003 88:407f
+> ata1: dev 0 ATA, max UDMA/133, 490234752 sectors: lba48
+> ata1: dev 0 configured for UDMA/133
+> scsi0 : sata_promise
+> ata2: dev 0 cfg 49:2f00 82:7c6b 83:7f09 84:4003 85:7c69 86:3e01 
+> 87:4003 88:407f
+> ata2: dev 0 ATA, max UDMA/133, 490234752 sectors: lba48
+> ata2: dev 0 configured for UDMA/133
+> scsi1 : sata_promise
+> ata3: dev 0 cfg 49:2f00 82:7c6b 83:7f09 84:4003 85:7c69 86:3e01 
+> 87:4003 88:407f
+> ata3: dev 0 ATA, max UDMA/133, 490234752 sectors: lba48
+> ata3: dev 0 configured for UDMA/133
+> scsi2 : sata_promise
+> ata4: dev 0 cfg 49:2f00 82:7c6b 83:7f09 84:4003 85:7c69 86:3e01 
+> 87:4003 88:407f
+> ata4: dev 0 ATA, max UDMA/133, 490234752 sectors: lba48
+> ata4: dev 0 configured for UDMA/133
+> scsi3 : sata_promise
+>  Vendor: ATA       Model: Maxtor 7Y250M0    Rev: YAR5
+>  Type:   Direct-Access                      ANSI SCSI revision: 05
+>  Vendor: ATA       Model: Maxtor 7Y250M0    Rev: YAR5
+>  Type:   Direct-Access                      ANSI SCSI revision: 05
+>  Vendor: ATA       Model: Maxtor 7Y250M0    Rev: YAR5
+>  Type:   Direct-Access                      ANSI SCSI revision: 05
+>  Vendor: ATA       Model: Maxtor 7Y250M0    Rev: YAR5
+>  Type:   Direct-Access                      ANSI SCSI revision: 05
+> SCSI device sda: 490234752 512-byte hdwr sectors (251000 MB)
+> SCSI device sda: drive cache: write back
+> sda: sda1
+> Attached scsi disk sda at scsi0, channel 0, id 0, lun 0
+> SCSI device sdb: 490234752 512-byte hdwr sectors (251000 MB)
+> SCSI device sdb: drive cache: write back
+> sdb: sdb1
+> Attached scsi disk sdb at scsi1, channel 0, id 0, lun 0
+> SCSI device sdc: 490234752 512-byte hdwr sectors (251000 MB)
+> SCSI device sdc: drive cache: write back
+> sdc: sdc1
+> Attached scsi disk sdc at scsi2, channel 0, id 0, lun 0
+> SCSI device sdd: 490234752 512-byte hdwr sectors (251000 MB)
+> SCSI device sdd: drive cache: write back
+> sdd: sdd1
+> Attached scsi disk sdd at scsi3, channel 0, id 0, lun 0
+> mice: PS/2 mouse device common for all mice
+> serio: i8042 AUX port at 0x60,0x64 irq 12
+> input: ImPS/2 Logitech Wheel Mouse on isa0060/serio1
+> serio: i8042 KBD port at 0x60,0x64 irq 1
+> input: AT Translated Set 2 keyboard on isa0060/serio0
+> md: linear personality registered as nr 1
+> md: raid0 personality registered as nr 2
+> md: raid1 personality registered as nr 3
+> md: raid5 personality registered as nr 4
+> raid5: measuring checksumming speed
+>   8regs     :  1700.000 MB/sec
+>   8regs_prefetch:  1608.000 MB/sec
+>   32regs    :  1300.000 MB/sec
+>   32regs_prefetch:  1296.000 MB/sec
+>   pII_mmx   :  3408.000 MB/sec
+>   p5_mmx    :  4572.000 MB/sec
+> raid5: using function: p5_mmx (4572.000 MB/sec)
+> raid6: int32x1    503 MB/s
+> raid6: int32x2    671 MB/s
+> raid6: int32x4    441 MB/s
+> raid6: int32x8    402 MB/s
+> raid6: mmxx1     1070 MB/s
+> raid6: mmxx2     1824 MB/s
+> raid6: sse1x1     980 MB/s
+> raid6: sse1x2    1667 MB/s
+> raid6: using algorithm sse1x2 (1667 MB/s)
+> md: raid6 personality registered as nr 8
+> md: md driver 0.90.0 MAX_MD_DEVS=256, MD_SB_DISKS=27
+> device-mapper: 4.1.0-ioctl (2003-12-10) initialised: dm@uk.sistina.com
+> NET: Registered protocol family 2
+> IP: routing cache hash table of 2048 buckets, 16Kbytes
+> TCP: Hash tables configured (established 16384 bind 32768)
+> ACPI: (supports S0 S1 S4 S5)
+> md: Autodetecting RAID arrays.
+> md: autorun ...
+> md: considering sdd1 ...
+> md:  adding sdd1 ...
+> md:  adding sdc1 ...
+> md:  adding sdb1 ...
+> md:  adding sda1 ...
+> md:  adding hdb1 ...
+> md: created md0
+> md: bind<hdb1>
+> md: bind<sda1>
+> md: bind<sdb1>
+> md: bind<sdc1>
+> md: bind<sdd1>
+> md: running: <sdd1><sdc1><sdb1><sda1><hdb1>
+> raid5: device sdd1 operational as raid disk 3
+> raid5: device sdc1 operational as raid disk 1
+> raid5: device sdb1 operational as raid disk 2
+> raid5: device sda1 operational as raid disk 0
+> raid5: device hdb1 operational as raid disk 4
+> raid5: allocated 5222kB for md0
+> raid5: raid level 5 set md0 active with 5 out of 5 devices, algorithm 2
+> RAID5 conf printout:
+> --- rd:5 wd:5 fd:0
+> disk 0, o:1, dev:sda1
+> disk 1, o:1, dev:sdc1
+> disk 2, o:1, dev:sdb1
+> disk 3, o:1, dev:sdd1
+> disk 4, o:1, dev:hdb1
+> md: ... autorun DONE.
+> XFS mounting filesystem hda2
+> Starting XFS recovery on filesystem: hda2 (dev: hda2)
+> Ending XFS recovery on filesystem: hda2 (dev: hda2)
+> VFS: Mounted root (xfs filesystem) readonly.
+> Freeing unused kernel memory: 160k freed
+> NET: Registered protocol family 1
+> Adding 522100k swap on /dev/hda3.  Priority:-1 extents:1
+> Installing knfsd (copyright (C) 1996 okir@monad.swb.de).
+> kjournald starting.  Commit interval 5 seconds
+> EXT3 FS on hda1, internal journal
+> EXT3-fs: mounted filesystem with ordered data mode.
+> usbcore: registered new driver usbfs
+> usbcore: registered new driver hub
+> USB Universal Host Controller Interface driver v2.2
+> uhci_hcd 0000:00:04.2: VIA Technologies, Inc. VT82xxxxx UHCI USB 1.1 
+> Controller
+> uhci_hcd 0000:00:04.2: irq 4, io base 0000d400
+> uhci_hcd 0000:00:04.2: new USB bus registered, assigned bus number 1
+> hub 1-0:1.0: USB hub found
+> hub 1-0:1.0: 2 ports detected
+> uhci_hcd 0000:00:04.3: VIA Technologies, Inc. VT82xxxxx UHCI USB 1.1 
+> Controller (#2)
+> uhci_hcd 0000:00:04.3: irq 4, io base 0000d000
+> uhci_hcd 0000:00:04.3: new USB bus registered, assigned bus number 2
+> hub 2-0:1.0: USB hub found
+> hub 2-0:1.0: 2 ports detected
+> usb 1-1: new full speed USB device using address 2
+> drivers/usb/class/usblp.c: usblp0: USB Bidirectional printer dev 2 if 
+> 0 alt 0 proto 2 vid 0x04B8 pid 0x0005
+> usbcore: registered new driver usblp
+> drivers/usb/class/usblp.c: v0.13: USB Printer Device Class driver
+>
 
