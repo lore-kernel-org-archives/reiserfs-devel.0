@@ -1,69 +1,111 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Fwd: reiser4 non-free?
-Date: Mon, 3 May 2004 20:21:46 +0300
-Message-ID: <20040503172146.GV29226@nysv.org>
-References: <20040424193246.GA2490@raptus.homelinux.org> <4091DAFE.5030809@namesys.com> <20040430055619.GD7487@archimedes.ucr.edu> <40923D1C.3090003@namesys.com> <20040430174343.GE7487@archimedes.ucr.edu> <409561EE.7030000@namesys.com> <20040502215500.GB18235@xieana.donarmstrong.com> <20040503065830.GS29226@nysv.org> <40967D41.705@namesys.com>
+Date: Mon, 03 May 2004 10:30:53 -0700
+Message-ID: <409681CD.8050709@namesys.com>
+References: <20040424193246.GA2490@raptus.homelinux.org>	 <4091DAFE.5030809@namesys.com> <20040430055619.GD7487@archimedes.ucr.edu>	 <40923D1C.3090003@namesys.com> <20040430174343.GE7487@archimedes.ucr.edu>	 <409561EE.7030000@namesys.com>	 <20040502215500.GB18235@xieana.donarmstrong.com>	 <1083537422.6293.22.camel@loke>  <40967BA1.9030401@namesys.com> <1083604769.9666.9.camel@loke>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18393-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-18394-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <40967D41.705@namesys.com>
+In-Reply-To: <1083604769.9666.9.camel@loke>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: debian-legal@lists.debian.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Martin List-Petersen <martin+debian-devel@list-petersen.net>
+Cc: Don Armstrong <don@donarmstrong.com>, debian-legal@lists.debian.org, reiserfs-list@namesys.com
 
-On Mon, May 03, 2004 at 10:11:29AM -0700, Hans Reiser wrote:
+Martin List-Petersen wrote:
 
->>Credits unread are credits unknown.
->The problem is not the end user, the problem is that distros do it 
->without the end user ever knowing that there was something to turn off.
+>On Mon, 2004-05-03 at 18:04, Hans Reiser wrote:
+>  
+>
+>>Martin List-Petersen wrote:
+>>
+>>    
+>>
+>>>On Sun, 2004-05-02 at 22:55, Don Armstrong wrote:
+>>> 
+>>>
+>>>      
+>>>
+>>>>>>Furthermore, the list of credits are still included (to my knowledge)
+>>>>>>in /usr/share/doc/resierfsprogs/README.gz.
+>>>>>>       
+>>>>>>
+>>>>>>            
+>>>>>>
+>>>>>oh, well, that is almost as good as putting them on the dark side of
+>>>>>the moon....  a credit read by no one has no meaning.
+>>>>>     
+>>>>>
+>>>>>          
+>>>>>
+>>>I don't know what you are reading once you've installed a new program on
+>>>your system, but the README, README.Debian and the man-pages are for me
+>>>usually the FIRST place, since it might hold valuable information and
+>>>safe me the trouble, which i may have, if i didn't had read it.
+>>> 
+>>>
+>>>      
+>>>
+>>I never read these (except the man pages) unless the install fails in 
+>>some way (I read the NVIDIA ones many times....), and neither do 99% of 
+>>real users, including 99% of reiserfs users.  As a user, I can handle 
+>>the distro flashing information on my screen as it installs and I can 
+>>read that, or printing credits when I select a particular package for 
+>>the install, and I can handle a tool printing credits when it starts up 
+>>(ala mkreiser4) for me to read, but going through a list of 3000 
+>>packages after the install completes and reading their readmes and 
+>>credits files just ain't gonna happen.
+>>    
+>>
+>
+>Probably not for each and every after the installation of your operating
+>system, but let's take mkreiserfs. Everyone has at some point asked
+>himself why there are two formats to choose (3.5 and 3.6)
+>
+>Thats something you definatly go for the man pages or readme for.
+>
+>And if you install packages (single) at a later time, you would often go
+>for the README. Same situation is, if you are installing from source.
+>
+>  
+>
+>>As a developer, I can probably be talked out of anything that makes the 
+>>install slower or more awkward or adds more clicks.  If there is another 
+>>paradigm in place for displaying info about the packages during the 
+>>install (I encourage you to have one), I would most likely be happy to 
+>>conform to that.
+>>    
+>>
+>
+>I think actually showing credit's, README's and other important things during install is exactly
+>the right way of going, instead of showing them any time you are using the software.
+>  
+>
+well, okay, I can be talked into that, though with random credits, 
+repetition is not repetition....
 
-Mayhaps. But it's never that easy.
+>My personal opinion (and i speak only for myself here) would be to have it come up with the default
+>screen (as any Debian package does, if there is something important) and that might include the credits.
+>You would just have to accept, that this popup can be disabled for automatic install, because an system
+>administrator, that anyway saw your credits the first time he installed it, does want to hit enter a
+>couple of times during unattended (as the name says) install.
+>  
+>
 
-Debian could quite easily have a preinstall screen with all the credits,
-but that would have to replace the mandatory showing of the credits.
-That's, as far as I'd guess, not an option, because the credits would be
-removed.
+Oh, I don't think the sysadmin or user should have to hit enter at all 
+during any install..... credits should be displayed while packages are 
+installing or bitmap blocks are being zeroed or....
 
-The credits could also go to /dev/null with a preinstall screen, but that
-would not fix the non-free issue.
+and an unattended machine should install without any clicks at all once 
+the install starts up....
 
-Also, if every software showed their credits, there would easily be a ton
-of them. But many modules do show some credits when inserted.
+If Debian would pro-actively find effective and reasonably ways to 
+credit authors, then the tension would come out of this situation....  
+The problem is when they discuss whether I would be formally satisfied 
+if the credits go to /dev/null.....
 
-I don't know, I don't have an answer to this.
-
-Except that I think it's absurd that someone would knowingly and willingly
-even want to suppress credits if they're put there. Especially in a case
-where the developer has tried to minimize them.
-
-That's still not an answer, though.
-
->There is nothing offensive about them.  We reduced them to a random 
->credit, rather than an exhaustive credit like they were.  Now users 
->might actually take the time to read them.;-)
-
-Problem is, might be as in my case, that I don't remember them...
-But when information is spewed on my screen, I tend to read it, but how
-much is a credit unremembered worth?
-
-Why is it so difficult to try to argue both sides, because both sides have
-good points?
-
-What if Debian just accepted that a clause forbidding removal of credits
-set by the copyright holder is not limiting freedom?
-
-I mean, it's not THAT major an issue. If people think the credits suck,
-they'll stick them up their /dev/null. So it's in the best interest of the
-developer to make sure they don't annoy anyone. And people should have the
-right to be credited fairly for their work if they want to.
-
--- 
-mjt
-PERKELE!
-
+Hans
