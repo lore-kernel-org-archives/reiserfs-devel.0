@@ -1,48 +1,48 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
-Subject: reiser4 snapshot
-Date: Mon, 11 Aug 2003 19:57:31 +0400
-Message-ID: <16183.48363.884605.564937@laputa.namesys.com>
+From: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
+Subject: Re: reiser4 snapshot
+Date: Mon, 11 Aug 2003 18:41:28 +0200
+Message-ID: <3F37C738.9060806@gmx.net>
+References: <16183.48363.884605.564937@laputa.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15282-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15283-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <16183.48363.884605.564937@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
-Cc: Reiserfs developers mail-list <Reiserfs-Dev@Namesys.COM>
+To: ReiserFS List <reiserfs-list@namesys.com>
+Cc: Nikita Danilov <Nikita@Namesys.COM>
 
-Hello,
+Nikita Danilov wrote:
+> Hello,
+> 
+> new reiser4 snapshot is available at 
+> 
+> http://thebsh.namesys.com/snapshots/2003.08.11/
 
-new reiser4 snapshot is available at 
++config REISER4_LARGE_KEY
++	bool "Use larger keys on reiser4 tree"
++	depends on REISER4_FS
++	default y
++	---help---
++      Make keys larger and use additional bits to order bodies of files
+within
++      a directory in the order of their names, which is what you want
++      normally. If you turn this off, file bodies will be ordered by creation
++      time, which is not optimal for most users.
++
++      Warning: flipping this option makes your file system binary
++      incompatible.
 
-http://thebsh.namesys.com/snapshots/2003.08.11/
+This needs some explanation. What happens if I have two reiser4 fs on my
+disk, one written with REISER4_LARGE_KEY, the other one without? Does it
+prevent me from mounting both filesystems at the same time? If so, will
+this change some time?
 
-**********************************************************************
-                              WARNING!!! 
-                      This code is experimental! 
-    WE ARE NOT KIDDING! DO NOT PUT ANY VALUABLE DATA ON REISER4 YET!
-**********************************************************************
 
-Lots of changes in this snapshot compared to previous one that was
-release over half of year ago.  Everything should be better and more
-stable I hope.
-
-Snapshot is released as a patch against linux-2.6.0-test3.
-
-REISER4_NOOPT config option (Disable compiler optimizations for reiser4
-code.)  is known to not compile on x86.
-
-The reiser4-kernelonly.diff file represents only required kernel
-modifications if you plan to use our reiser4 bk repository. It does not
-contains any reiser4 code
-
-The reiser4.diff is full patch with everything included.
-
-With this snapshot reiser4 supports different on-disk format by default,
-so you should recreate your reiser4 file systems.
-
-Nikita.
+Thanks,
+Carl-Daniel
 
