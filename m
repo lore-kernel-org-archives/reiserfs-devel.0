@@ -1,102 +1,115 @@
 From: Anders Widman <andewid@tnonline.net>
 Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
-Date: Wed, 12 Feb 2003 17:53:55 +0100
-Message-ID: <51115850843.20030212175355@tnonline.net>
-References: <93F527C91A6ED411AFE10050040665D0049C06D5@corpusmx1.us.dg.com>
- <200302130522.35829.sam@vilain.net>
+Date: Wed, 12 Feb 2003 17:56:58 +0100
+Message-ID: <48116033718.20030212175658@tnonline.net>
+References: <NDBBJPAGKLCMDEIEKOPBAEIMKFAA.mailinglists@websitemanagers.com.au>
+ <3452483515.20030212001747@tnonline.net> <200302121925.56902.vitaly@namesys.com>
 Reply-To: Anders Widman <andewid@tnonline.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-12725-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12726-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200302130522.35829.sam@vilain.net>
+In-Reply-To: <200302121925.56902.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-> On Wed, 12 Feb 2003 08:43, berthiaume_wayne@emc.com wrote:
->> Dirk, I'd be interested in hearing from you your performance
->> experience with ext3 when it reaches 96% full.
+> On Wednesday 12 February 2003 02:17, Anders Widman wrote:
+>> >> I've used ReiserFS in the past, but have also used ext3 on my
+>> >> user's important
+>> >> data (/home) after a good chunk of one drive was converted to
+>> >> sparse/null files due to a screwup stemming from no 'badblocks' support
+>> >> in reiserfs.  Since then, i've used ext3 as well as Reiser but recently
+>> >
+>> > I can't comment on your experience, but personally if I have a drive with
+>> > any number of badblocks (which are showing up to the fs layer, not
+>> > invisibly re-mapped by the drive) then I take the drive back and get a
+>> > replacement, or bin the drive.
+>>
+>> However,  the FS SHOULD support handling of bad blocks/clusters at the
+>> FS  layer,  even  while running in a production system. Bad blocks can
+>> pop  up  at any give time for no particular reason, and it is at these
+>> times  you  (we) need a strong and reliable filesystem that can handle
+>> and logically remap broken blocks/sectors.
+>>
+>> Sure,  a  disk  with physical errors should be replaced, but until you
+>> find out about the error on the drive the FS HAS TO HANDLE these kinds
+>> of problems.
 
-> No problem, because you get ENOSPC at 95% or 90%.
+> That is difficult to say if bad blocks should be handled at fs layer or not.
+> It would be useful to have this problem solved somehow, but harddrives with
+> their remappings looks like the proper part of doing this. And probably fs
+> layer should just skilfully use some interface for such remapping. Well,
+> remapping is probably not correct word here. Thus, Xuan Baldauf 
+> <xuan--reiserfs@baldauf.org> sent us his program once claimed that it recovered
+> blocks w/out remapping. The explanations were the following:
 
-> Hmm, another feature SysAdmins actually find useful, missing in reiserfs.
-> Along with quotas (this feature is a lazy case of a quota, really).
+>> The problem is that often multiple adjacent blocks are bad. You'll have to detect
+>> them manually. Once you know the bad blocks, just trying to overwrite them usually
+>> does not succeed because the disk wants to seek to that block exactly (which does
+>> not work for the same reason the block is bad). But if the whole track is
+>> rewritten, the bad blocks usually are gone.
+>>
+>> I suspect track wandering for this: due to small misalignments at each write, a track (or more
+>> precisely, and arc of the track which contains the block to be written) slowly wanders. If the
+>> misalignments do not zero out each other, they add up to a bias. If an arc of an has been
+>> written many times, it will have wandered under these
+>> conditions. If the wandering has
+>> progressed too far, the wandering arc slowly reaches the next neighbouring track.
+>>
+>> Now imagine an access to the wandered track: if the head seeks to the original position of the
+>> wandered track, it may not be able to read the wandered arc
+>> because it is too far away (lower
+>> signal quality). If the head seeks to the new position of the wandered arc, the signal may be
+>> interfered by the neighbouring track.
+>>
+>> Both effects may occur, which one does not really matter, both makes parts of the wandered arc
+>> inaccessible
+>>
+>> The problem is: the individual wandered arc is no longer accessible, because the disk
+>> controller cannot sync to the block it is flying over because of the bad
+>> signal-to-noise-ratio. And if the wandered arc is accessible, another write will make it
+>> further wander up to inaccessibility.
+>>
+>> But if the seek to the track of the arc which should be
+>> overwritten occurs before the wandered
+>> arc, the disk controller actually can sync to the track and then write the whole track,
+>> effectivily creating the track new and only having the bias of the not-wandered part of the
+>> track. Thus, the wandered arc has not wandered anymore compared to the other arcs of the
+>> track.
 
-> On Wed, 12 Feb 2003 18:12, Ross Vandegrift wrote:
->> You have to start your software on some kind of foundation.  Working
->> hardware sounds like a great place to me.
+> Well, it worked. We had some bad blocks on a drive, write to them failed, after using
+> this program there were no bad blocks anymore. 
 
-> Hmm, you've never heard of redundancy or fault tolerance then.
+> So it would be possible to do some actions to 1) get some blocks back in the described
+> way, 1.1) write to really bad blocks should have remaped them already here if there is
+> a space in remap area 2) save bad blocks to badblock list in fs if they are still bad -
+> out of remap area. 
+> Would be not bad to try to recover in this way already remapped blocks - do not know how
+> to get the list of them only.
 
-> What part fails the most in running systems ?  Disk platters.
+> Ok, but what if the IO error you got is not a bad block, but a bad cable? Do you want
+> the fs to work in the described way? Trying to fix all automatically? I am not sure.
 
-> CPUs might overheat and RAM might suddenly one day get a sticky bit, but as
-> you point out there ain't much you can do about it.  Except buy a Tandem,
-> or use ECC memory.
+  How about trial and (then) error? :)
 
-> But with disks, you can.  Mirroring aside, modern hard disks use S.M.A.R.T.
-> technology which claims to be able to spot failures before they happen.
-> Many BIOSes will let you turn this feature  on and off.  Of course I've
-> never actually seen it in action :-).
+> Now about the user space. Using badblocks and some programs like Xuan Baldauf sent us
+> and just trying to write to bad blocks make them being remapped - that is how you can
+> try to get rid of some amount of badblocks. Should a drive with amount of bad blocks
+> which exceeds the remap area be used? It is a realy rare case that the amount of bad
+> blocks of such a drive does not get increased - the case where you may want to continue
+> using the drive - so this is why a proper support for bad blocks was not implemented
+> in reiserfs yet. And probably it is not the most urgent thing to do.
 
-  To my experience with professionally working on the hardware systems
-  part  I  very rarely seen SMART working, and I have handled probably
-  1000's of bad drives.
+  No,  perhaps  bad  blocks  handling is not the major i mprovement we
+  need,  however  I  feel it is still an important part of any FS - to
+  handle  errors gracefully and not throw the user to ground.
 
-  SMART  sounds  good  on  paper, but in reality it does not work. The
-  reason  is  that manufacturers do not want RMAs, and if SMART worked
-  as it should they would have much higher costs with bad drives (most
-  users  run  without  knowing about them, or knowing they are covered
-  with warranty).
 
-  
-> Not only that, but re-attempting a failed read might just work.  In that
-> case, you need to freshen the data (hopefully the disk will re-map the
-> block once it sees a write), and if that fails, re-map the block. I don't
-> know if any of the other filesystems do that (I seriously doubt it), but
-> it's what Norton 4.5 on DOS used to do to `repair' faulty disks :-).
-
-  :) yes, and many other programs too. Scandisk (which I do not see as
-  a role model ;).
-
-> But doing disk repair is entirely irrelevant for a filesystem.  What's
-> important is that you don't get an Oops, a kernel Segfault or worse random
-> data corruption or file structure mangling, that the calling process gets
-> EIO instead.
-
-  Agreed,  the  FS  should not repair the drive, though it should keep
-  working when problems occur.
-
-> Stopping random corruption from violating your assumptions is extremely
-> difficult; a software engineer's nightmare :-).  However, modern disks are
-> pretty good at keeping their own CRCs, so you should expect that you can
-> always get an error code back from the OS if the data didn't come back the
-> same state you wrote it.
-
-> You (the reiserfs team) need to wire up reiserfs on a custom loopback
-> device, and selectively flick blocks to faulty and see what happens.  It's
-> just a part of stress testing.
-
-> And there is no excuse - reiserfsck should do the right thing when it
-> encounters a filesystem with bad blocks and recover what is possible,
-> marking the bad blocks as bad.  It needs dd_rescue built into its 
-> operation :-).
-
-Ok, lets not jump on the ReiserFS team. They are doing a wonderful job
-with  their  filesystem.  This  is  a  concern  for  all  FS, not only
-ReieserFS.
-
-> It must suck having a free project get only slight funding.  All of a
-> sudden a whole load of geeks get very angry and demanding.  I wish I could
-> help, but hey it's more fun to troll.^H^H^H I've got better things to do.
-
-You are free to donate your hard earned money to them.
-
- - Anders
+  - Anders
 
 
 
