@@ -1,44 +1,45 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: reiserfs errors
-Date: Tue, 9 Sep 2003 14:48:41 +0400
-Message-ID: <20030909104841.GA26689@namesys.com>
-References: <3F5CAFF9.9020205@zantaz.com>
+From: Laurenz Brein <brein@culturall.com>
+Subject: cannot mount reiserfs with nonstandard journal size
+Date: Tue, 9 Sep 2003 13:13:01 +0200
+Message-ID: <20030909111301.GA3688@WS-VPK-054>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-15605-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15606-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <3F5CAFF9.9020205@zantaz.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fong Vang <FVang@Zantaz.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+I'm using reiserfsprogs 3.6.11 on a Slackware 9.0 machine with Kernel 2.4.20
+which I patched with the patches from /pub/reiserfs-for-2.4/2.4.20-pending
 
-On Mon, Sep 08, 2003 at 09:36:09AM -0700, Fong Vang wrote:
+When I
+   mkreiserfs /dev/sdb1
+(standard journal size), I can mount the file system with
+  mount -t reiserfs /dev/sdb1 /back
+without problems.
 
-> Could someone tell me what these error messages mean (these messages 
-> appear on the console and in /var/log/messages)?
->     Aug 30 15:49:51 fongtest kernel: is_leaf: free space seems wrong: 
-> level=1, nr_items=58, free_space=12 rdkey
->     Aug 30 15:49:51 fongtest kernel: vs-5150: search_by_key: invalid 
-> format found in block 15395. Fsck?
+If, however, I create it with
+  mkreiserfs -s 1025 /dev/sdb1
+or any other journal size, the same mount will fail with
+  mount: wrong fs type, bad option, bad superblock on /dev/sdb1,
+         or too many mounted file systems
 
-This is on-disk corruption.
+Checking the file system with
+  reiserfsck /dev/sdb1
+fails with the message
+  Failed to open the journal device ((null)).
+The check works fine if I either add the --no-journal-available or the
+-j /dev/sdb1 option.
 
-> It doesn't say which device is giving this error message.
+My questions:
+- Is this behaviour correct?
+- Is there a way (mount option?) to mount reiserfs with non-standard
+  journal sizes?
 
-Yes, but newer kernels do this. (like 2.4.22)
-
-> Any help would be appreciated.
-
-Just get latest reiserfsprogs from ftp.namesys.com/pub/reiserfsprogs,
-compile it and run reiserfsck on all suspected partitions.
-Also it might be good idea to upgrade your kernel to e.g. 2.4.21
-
-Bye,
-    Oleg
+Thanks,
+Laurenz Brein
