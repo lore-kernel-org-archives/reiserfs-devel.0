@@ -1,62 +1,55 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: using of XATTRs instead of pseudo files for accessing reiser4 file attributes.
-Date: Mon, 5 Apr 2004 22:19:55 +0400
-Message-ID: <20040405181955.GB11092@backtop.namesys.com>
-References: <20040405115439.GA1924@backtop.namesys.com> <4071818C.4050609@namesys.com>
+From: Miguel <turtle.power@wanadoo.es>
+Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Date: Mon, 5 Apr 2004 22:16:03 +0200
+Message-ID: <20040405221603.6a3bd65b.turtle.power@wanadoo.es>
+References: <no.id>
+	<200404050401.i3541XVk004592@sirius.cs.pdx.edu>
+	<87fzbj9fws.fsf@uhoreg.ca>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-17731-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-17732-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <4071818C.4050609@namesys.com>
+In-Reply-To: <87fzbj9fws.fsf@uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Hubert Chan <hubert@uhoreg.ca>
 Cc: reiserfs-list@namesys.com
 
-On Mon, Apr 05, 2004 at 08:55:56AM -0700, Hans Reiser wrote:
-> We are not going to use xattrs, get that through your head.
+On Mon, 05 Apr 2004 01:01:39 -0400
+Hubert Chan <hubert@uhoreg.ca> wrote:
 
-If people found xattr support useful in reiser4, someone would implement it,
-not necessary one from reiser4 team.
+> >>>>> "The" =3D=3D The Amazing Dragon (Elliott Mitchell) <ehem@cs.pdx.edu>
+> >writes:
+>=20
+> [...]
+>=20
+> The> Good point, search engines as evidence. The problem is you're
+> only The> looking at distributions, which are going to be highly
+> similar and The> you're completely missing end users. So let us take
+> this to a full The> search engine and see what turns up...  Hmm,
+> roughly a million The> hits, let us look at a few samples:
+>=20
+> I'm only getting a bit less than 600,000.  Maybe we caught Google in
+> the middle of some reindexing.  But anyways...
+>=20
+> Most of the pages seem to be Spanish and Portuguese.  Google
+> translation translates "metas" as "goals".  Are there any Spanish or
+> Portuguese speakers on this list to confirm that?
 
-> Hans
-> 
-> Alex Zarochentsev wrote:
-> 
-> >Hello,
-> >
-> >Does anybody think that using linux extended attributes API would be good 
-> >for
-> >accessing specific reiser4 file attributes?
-> > 
-> >
-> 
-> >Currently all that stuff is exported through pseudo files under "metas"
-> >subdirectory.  It might be good for scripting but it leads to security 
-> >problems
-> >in legacy unix applications and it requires having +x permission on regular
-> >files or modifying linux VFS.  
-> >
-> >It is not a problem to have two API for accessing file attributes, XATTR 
-> >and pseudo files.  At least XATTR will be usefull in places where security
-> >matters.
-> >
-> >Regards,
-> >Alex.
-> >
-> >
-> > 
-> >
-> 
-> 
-> -- 
-> Hans
-> 
-> 
+Yes, This is correct and one time I see a project that used a file
+called metas in similar mean of the TODO file to state its goals,  but
+nothing to care about IMHO.
 
--- 
-Alex.
+ermmmm a dot doens't hurt...=20
+
+
+>=20
+> Since "goals" is a fairly common word, it probably is a bad idea to
+> use"metas" without at least some sort of prefix.
+
+
+--=20
+La resistencia es f=FAtil todos ser=E9is asimilados
