@@ -1,41 +1,36 @@
-From: Simon Robson <simon@logtel.com>
-Subject: IP Convergence 2002
-Date: Sun, 23 Jun 2002 17:54:02 +0200
-Message-ID: <20020623214056.TYKB18833.sphere@logtel.com>
-Reply-To: simon@logtel.com
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: [Fwd: Problems]
+Date: Mon, 24 Jun 2002 08:58:04 +0400
+Message-ID: <20020624085804.A4359@namesys.com>
+References: <3D136574.7090607@moredata.pt> <20020621214414.A947@namesys.com> <3D15FA4C.4080501@moredata.pt>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10806-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10808-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <3D15FA4C.4080501@moredata.pt>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/html; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Carlos Rodrigues <rcarlos@moredata.pt>
+Cc: reiserfs-list@namesys.com
 
+Hello!
 
-<html dir="rtl">
+On Sun, Jun 23, 2002 at 05:41:48PM +0100, Carlos Rodrigues wrote:
 
-<head>
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1255">
-<title>LOGTEL Computer Communications. IP Convergence 2002. August 12-14, 2002.
-</title>
-</head>
+> i run the "reiserfsck --check" with log, the file attach is the report, 
+> when i run the --rebuild-tree i wil lose my data ?
 
-<body>
+No. You shouldn't lose the data with such a corruption.
+It only indicates that some files share some data blocks.
+These blocks should be cloned.
 
-<p dir="ltr"><map name="FPMap0">
-<area href="http://www.logtel.com/conferences/ipconv02/ipconv_schd.html" shape="rect" coords="25, 26, 472, 116">
-<area coords="28, 210, 332, 240" shape="rect" href="http://www.logtel.com/conferences/ipconv02/ipconv_schd2.html#schedule">
-<area coords="301, 758, 572, 829" shape="rect" href="http://www.logtel.com/conferences/ipconv02/ipconv02_form.html">
-<area href="http://www.logtel.com" shape="rect" coords="35, 746, 279, 828">
-<area href="mailto:simon@logtel.com?subject=IP Convergence 2002 - Speaker/Sponsor&body=Yes, I want to speaker/sponsor at the IP Convergence 2002 (please, write down your name, company, and telephone for contact)." shape="rect" coords="156, 719, 558, 739">
-</map>
-<img border="0" src="http://www.logtel.com/conferences/ipconv02/ipconv_mail_e.jpg" usemap="#FPMap0" width="600" height="845"></p>
+> i've the last version of reiserfs tools "reiserfsprogs 3.x.1b", this is 
+> the last, right ?
 
-</body>
+Yes.
 
-</html>
-
+Bye,
+    Oleg
