@@ -1,52 +1,83 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: SuSE 9.0 reiserfsprogs-3.6.9. When will we see an update?
-Date: Mon, 01 Dec 2003 13:51:49 -0500
-Message-ID: <1070304708.12810.111.camel@tiny.suse.com>
-References: <200312011931.01285.Dieter.Nuetzel@hamburg.de>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: slow stat() ?
+Date: Sun, 30 Nov 2003 23:47:00 -0800
+Message-ID: <3FCAF1F4.6040106@namesys.com>
+References: <Pine.LNX.4.10.10312011155090.7555-100000@alpha.bernztech.org> <1070299845.12809.98.camel@tiny.suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-16198-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16199-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200312011931.01285.Dieter.Nuetzel@hamburg.de>
+In-Reply-To: <1070299845.12809.98.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Cc: ReiserFS-List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Chris Mason <mason@suse.com>
+Cc: bernz@bernztech.org, reiserfs-list@namesys.com
 
-On Mon, 2003-12-01 at 13:31, Dieter N=FCtzel wrote:
-> Hello Chris,
->=20
-> some time has passed...;-)
->=20
-> I had a bad system corruption due to a broken system disk. My IBM U160 di=
-sk=20
-> (DDYS-T18350; 18,2 GB; 10k RPM) was broken for the third time...
-> Now I replaced it with two (RAID1) Fujitsu MAS3184NP (U320; 18,4 GB; 15k =
-RPM;=20
-> 65-78 MB/s (inner to outer)) and SUSE 9.0 on LVM.
->=20
-> After a power loss I got some files in "lost+found" from "/opt" (last=20
-> accessed) and reiserfsck was relative slow (reiserfsprogs-3.6.9).
-> Reiserfsprogs-3.6.11 and -pre12 is way faster (on my old SuSE7.3 based sy=
-stem)=20
-> and there where some fixes.
->=20
-> I tried to compile them on SuSE 9.0 as always but I failed 'cause SuSE pa=
-tched=20
-> some things.
->=20
-> Can you give some advice?
->=20
-> Thanks and greetings.
+Chris Mason wrote:
 
-We're at 3.6.11 internally, it is part of SLES8 SP3 (which was released
-after 9.0).  I'll toss some rpms into my directory.
+>On Mon, 2003-12-01 at 12:21, David Bernick wrote:
+>  
+>
+>>Hi all,
+>>
+>>First, what I'm running Reiser on:
+>>
+>>Supermicro dual Xeon motherboard with 2x2.6Ghz xeons in hyperthreaded
+>>mode. 3ware 7500-8 (or whatever the call the 8 port ATA card) with 8x250GB
+>>disks attatched. 4GB RAM. 
+>>
+>>Software: 
+>>RedHat 9 with latest up2date
+>>Kernel 2.4.22 no patches
+>>The journal is not on a separate set of spindles.
+>>
+>>/proc/sys/vm/max-readahead=512
+>>/proc/sys/vm/min-readahead=128
+>>/proc/sys/vm/bdflush
+>>100     5000    640     2560    150     30000   60      20      0
+>>
+>>Okay. Now for the issue at hand. When the logical disk is being read from,
+>>reiser is fast and effecient. We have millions (10M?) of files (about 1M
+>>each) in thousands of directories. Reiser reads well (exporting the disk
+>>over NFS) and we're very impressed by it. It's a bit slow on the writes
+>>and the system load goes up marginally, but that's not a big deal. The
+>>thing that puzzles me is that when we perform functions like "find" or in
+>>perl "-e filename" or anything that uses fstat() or stat64() or any of
+>>those functions brings the system usage to 100% and the load climbs
+>>quickly. 
+>>
+>>Are there any patches, kernel updates, tuning, etc that can help with this
+>>problem?
+>>    
+>>
+>
+>You could boot with profile=2 and send the results of a readprofile
+>command taken after the system load goes very high.  This will slow down
+>your box for general usage, so you would only want to run with profile=2
+>for a short time.
+>
+>My guess is the stats are being done across a large directory tree and
+>this is generating lots of atime updates.  You could mount -o
+>noatime,nodiratime, which will reduce the amount of work reiserfs does
+>on each stat.
+>
+>atimes are used by many mail programs to find out the last time you read
+>your mailbox file.  nodiratime probably won't affect most applications.
+>
+>-chris
+>
+>
+>
+>
+>  
+>
+profiling will also tell you if the performance problem is in user 
+space.....;-)
 
--chris
-=20
-
+-- 
+Hans
 
 
