@@ -1,34 +1,34 @@
 From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: Any new patches against 2.6.6 available?
-Date: Mon, 10 May 2004 18:27:46 +0300
-Message-ID: <20040510152746.GV29226@nysv.org>
-References: <200405101635.05839.matthias.wieser@hiasl.net>
+Date: Mon, 10 May 2004 19:58:59 +0300
+Message-ID: <20040510165859.GW29226@nysv.org>
+References: <200405101635.05839.matthias.wieser@hiasl.net> <20040510152746.GV29226@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18578-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18580-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200405101635.05839.matthias.wieser@hiasl.net>
+In-Reply-To: <20040510152746.GV29226@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
 To: Matthias Wieser <matthias.wieser@hiasl.net>
 Cc: reiserfs-list@namesys.com
 
-On Mon, May 10, 2004 at 04:35:05PM +0200, Matthias Wieser wrote:
->I am looking for 2.6.6 patches for reiserfs
->Can somebody give a pointer when they are vailable?
+On Mon, May 10, 2004 at 06:27:46PM +0300, Markus T=F6rnqvist wrote:
+>
+>Where has Namesys hidden their legendary BitKeeper, of which I
+>have heard rumors?
+>
+>Maybe it would contain some code...
 
-Where has Namesys hidden their legendary BitKeeper, of which I
-have heard rumors?
+So, next, someone with access to BitKeeper might want to check out
+ bk://bk.namesys.com/bk/reiser4
 
-Maybe it would contain some code...
+I, for one, can't.
 
-Even an internal snapshot would satisfy my need for testing 
-the new goodies ;)
-
--- 
+--=20
 mjt
 
