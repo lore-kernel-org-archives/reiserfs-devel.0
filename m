@@ -1,48 +1,73 @@
-From: Domenico Andreoli <cavok@tiscali.it>
-Subject: typo in resizefs.reiser4 0.5.3 help message
-Date: Sat, 3 Apr 2004 16:21:42 +0200
-Sender: Domenico Andreoli <cavok@libero.it>
-Message-ID: <20040403142142.GA10183@raptus.homelinux.org>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Date: Sat, 03 Apr 2004 09:59:14 -0800
+Message-ID: <406EFB72.6000009@namesys.com>
+References: <20040402172735.76368.qmail@web25009.mail.ukl.yahoo.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="HlL+5n6rz5pIUxbD"
-Return-path: <reiserfs-list-return-17678-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17679-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <20040402172735.76368.qmail@web25009.mail.ukl.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
+Cc: reiserfs-list@namesys.com
 
---HlL+5n6rz5pIUxbD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Narcoleptic Electron wrote:
 
-hi,
+>Hans Reiser wrote: 
+>
+>  
+>
+>>Narcoleptic Electron wrote:
+>>
+>>    
+>>
+>>>1. Leave the "metas" directory as it is, for
+>>>      
+>>>
+>>storing
+>>    
+>>
+>>>the meta data hierarchy.
+>>> 
+>>>
+>>>      
+>>>
+>>We will do 1.
+>>    
+>>
+>
+>What is the plan for addressing the name clash
+>problems that this causes?  (eg. I copy a directory,
+>that happens to contain a "metas" directory, to my
+>Reiser4 partition)
+>  
+>
+these problems will not exist significantly in reality.  Look at netapps 
+and snapshots and clearcase and other filesystems, I remember wondering 
+if .snapshot could be a problem when netapps were new and it was never a 
+problem.
 
-i found a typo in resizefs.reiser4 help message, the diff is attached.
+People who find it is a problem can #define it to something else.  If 5 
+people bother to do so, I will be surprised.
 
-cheers
-domenico
+Many languages have reserved keywords.....
 
------[ Domenico Andreoli, aka cavok
- --[ http://filibusta.crema.unimi.it/~cavok/gpgkey.asc
-   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
 
---HlL+5n6rz5pIUxbD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="resizefs.reiser4.c.diff"
+>
+>______________________________________________________________________ 
+>Post your free ad now! http://personals.yahoo.ca
+>
+>
+>  
+>
 
---- resizefs.c.orig	2004-04-03 15:57:08.000000000 +0200
-+++ resizefs.c	2004-04-03 15:57:16.000000000 +0200
-@@ -44,7 +44,7 @@ static void resizefs_print_usage(char *n
- 		"                                any questions.\n"
- 		"  -f, --force                   makes resizer to use whole disk, not\n"
- 		"                                block device or mounted partition.\n"
--		"  -c, --cache N                 number of nodes in tree byffer cache\n");
-+		"  -c, --cache N                 number of nodes in tree buffer cache\n");
- }
- 
- /* Initializes exception streams used by resizefs */
 
---HlL+5n6rz5pIUxbD--
+-- 
+Hans
+
+
