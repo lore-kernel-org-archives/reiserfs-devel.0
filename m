@@ -1,43 +1,37 @@
 From: Jamie Lokier <jamie@shareable.org>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 12:02:58 +0100
-Message-ID: <20040826110258.GC30449@mail.shareable.org>
-References: <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <20040825204240.GI21964@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408251348240.17766@ppc970.osdl.org> <20040825212518.GK21964@parcelfarce.linux.theplanet.co.uk> <20040826001152.GB23423@mail.shareable.org> <20040826003055.GO21964@parcelfarce.linux.theplanet.co.uk> <20040826010049.GA24731@mail.shareable.org> <20040826100530.GA20805@taniwha.stupidest.org>
+Date: Thu, 26 Aug 2004 12:07:53 +0100
+Message-ID: <20040826110753.GD30449@mail.shareable.org>
+References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com> <20040825200859.GA16345@lst.de> <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org> <Pine.LNX.4.58.0408260204050.22259@artax.karlin.mff.cuni.cz> <Pine.LNX.4.58.0408251723540.17766@ppc970.osdl.org> <412DA11B.2070303@namesys.com> <20040826105330.GB30449@mail.shareable.org> <20040826105914.GA30795@lst.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20628-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20629-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20040826100530.GA20805@taniwha.stupidest.org>
+In-Reply-To: <20040826105914.GA30795@lst.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Wedgwood <cw@f00f.org>
-Cc: viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-Chris Wedgwood wrote:
-> On Thu, Aug 26, 2004 at 02:00:49AM +0100, Jamie Lokier wrote:
+Christoph Hellwig wrote:
+> > > being able to cat dirname/pseudos/cat and get a 
+> > > concatenation of all of the files is nice, and being able to cat 
+> > > dirname/pseudos/tar and get an archive of the directory is nice
+> > 
+> > Yes.  Being able to cd into filename.tar.gz and filename.iso is also
+> > nice, but all of these features should be supported by the VFS
+> > generically, not in any specific filesystem, and there should be a
+> > hook to invoke the various fun filesystem-independent handlers by name.
 > 
-> > One of the big potential uses for file-as-directory is to go inside
-> > archive files, ELF files, .iso files and so on in a convenient way.
-> 
-> Arguably this belongs in userspace --- and people have put it there.
+> It doesn't belong into the kernel at all.  If at all it belongs into a
+> userspace filesystems, but even in that case the magic detection of
+> which one to use is kinda hard.  You absoutely don't want to hardcode
+> file formats in the kernel.
 
-I agree that these belong in userspace, and that there's plenty* of
-userspace code doing a similar thing already.  I don't think there's
-any argument over it.
-
-However, as far as I know it's not accessible in a file-as-directory
-form as yet.  In my opinion that is the most natural form and it would
-be very intuitive to use.  I hope we can pick a useful semantics for
-them, and also provide filesystem-independent plugins with GNU
-Hurd-like per-user extensibility.
+Oh, I agree userspace should be involved.
 
 -- Jamie
 
-* plenty == too much.
-  Gnome, KDE, Emacs and Bash all see different virtual filesystems.
-  (All but Bash implement their own virtual filesystem extensions).
-  That makes them much less useful than they could be.
