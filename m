@@ -1,44 +1,60 @@
-From: Nick Urbanik <nicku@vtc.edu.hk>
-Subject: Re: How tell what version of reiserfs my filesystem is?
-Date: Fri, 05 Apr 2002 09:37:44 +0800
-Sender: nicku@nicksbox.tyict.vtc.edu.hk
-Message-ID: <3CACFFE8.6D1AA53B@vtc.edu.hk>
-References: <3CAAD745.447646E4@vtc.edu.hk> <20020403151813.A4949@namesys.com> <3CAB6EE8.E8B48CAB@vtc.edu.hk> <20020404091003.A5663@namesys.com>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: Question on IICACHE and mount info (2.4.19-pre5)
+Date: Fri, 5 Apr 2002 09:02:48 +0400
+Message-ID: <20020405090248.A6915@namesys.com>
+References: <3CACE903.30901@mb.tu-ilmenau.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <3CACE903.30901@mb.tu-ilmenau.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: ReiserFS <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-Oleg Drokin wrote:
+Hello!
 
-> > > Also with recent 2.4 kernels (2.4.17+), you can lookup this info
-> > > in the /proc filesystem if you have enabled CONFIG_REISERFS_PROC_INFO.
-> > I had it off.
-> > About CONFIG_REISERFS_PROC_INFO, Configure.help says: "This also
-> > increases amount of kernel memory required for each mount."
-> > By approximately how much does it do so?  For six large reiserfs file
-> > systems?
->
-> +8Kb of code (ie, common for no matter how much reiserfs fses you have)
-> plus ~440 bytes for each filesystem mounted for counters.
->
-> Of course there is little performance hit (cpu time eaten) to
-> actually increment these counters.
+On Fri, Apr 05, 2002 at 02:00:03AM +0200, Manuel Krause wrote:
 
-I'll enable it in my future kernel builds.  Thank you again, Oleg.
+> Is there only the addidional mount option "iicache" with this patch:
+> ftp://ftp.namesys.com/pub/reiserfs-for-2.4/testing/linux-2.4.19p4-iicache-new-5.patch 
+> ?
+> There were some more in the early versions of iicache, IIRC.
 
---
-Nick Urbanik   RHCE                                  nicku@vtc.edu.hk
-Dept. of Information & Communications Technology
-Hong Kong Institute of Vocational Education (Tsing Yi)
-Tel:   (852) 2436 8576, (852) 2436 8579          Fax: (852) 2436 8526
-PGP: 53 B6 6D 73 52 EE 1F EE EC F8 21 98 45 1C 23 7B     ID: 7529555D
-GPG: 7FFA CDC7 5A77 0558 DC7A 790A 16DF EC5B BB9D 2C24   ID: BB9D2C24
+most of other options were considered unsafe, so probably they were dropped.
 
+> But at the moment it works very well with 2.4.19-pre5 + 
+> rml.preempt+lock-break + aa.vm-33 + some other aa patches and some akpm 
+> ones.
 
+Do you see any difference with and without iicache?
 
+> When I put ",iicache" to the fstab lines of my reiserfs partitions I 
+> don't get a response from
+> # cat "/proc/fs/reiserfs/ide0(3,11)/super"
+> state:  REISERFS_VALID_FS
+> mount options:  BORDER NO_TAILS LOG
+> # cat /proc/mounts
+> /dev/root / reiserfs rw,noatime 0 0
+> /dev/hda11 /mnt/beta reiserfs rw,noatime,nosuid,nodev 0 0
+> only # mount says:
+> /dev/hda7 on / type reiserfs (rw,noatime,notail,iicache)
+> ...
+> /dev/hda11 on /mnt/beta type reiserfs 
+> (rw,nosuid,nodev,noatime,notail,iicache)
+> ...
+
+It seems this is lost piece of code, that prints this info.
+
+> Seems like some things have gone with the latest patches which worked 
+> before? It's o.k., of course, if "iicache" doesn't show up for now, I 
+> know it's for testing only (yes, it would be very nice!). But the 
+> "notail" thing worked before!
+
+Which "notail" thing?
+
+Bye,
+    Oleg
