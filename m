@@ -1,61 +1,43 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: rebuildtree dangerous?
-Date: Sun, 12 Jan 2003 20:14:45 +0300
-Message-ID: <200301122014.45839.vitaly@namesys.com>
-References: <200301121729.58989.frank.vandamme@student.kuleuven.ac.be>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Any paper on Journaling algorithm?
+Date: Mon, 13 Jan 2003 18:53:12 +0300
+Message-ID: <3E22E0E8.4080001@namesys.com>
+References: <hhr8bv7cm6.fsf@blah.pl> <20030106101149.B1881@namesys.com> <3E194161.1070306@namesys.com> <01e801c2b8ca$bf2765d0$6a01a8c0@bmoon>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-12322-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12323-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200301121729.58989.frank.vandamme@student.kuleuven.ac.be>
+In-Reply-To: <01e801c2b8ca$bf2765d0$6a01a8c0@bmoon>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Frank Van Damme <frank.vandamme@student.kuleuven.ac.be>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: bmoon <bo@anthologysolutions.com>
+Cc: reiserfs-list@namesys.com
 
+bmoon wrote:
 
-Hi,
-
-First of all I recommend to use the latest reiserfsprogs from 
-our ftp site (3.6.4, or even a 5-pre version). It would be not 
-bad to run reiserfsck from this progs in check mode again, 
-probably this fsck could fix evth with fix-fixable.
-
-On Sunday 12 January 2003 19:29, Frank Van Damme wrote:
-> Hello,
+>Hello!
 >
-> I am having an unfortunate problem with my root filesystem (system only has
-> a separate /boot), it has some files which are unreadable. That means, I
-> can't rm, chmod or even ls them even with root privileges. This is probably
-> due to too many forced poweroffs (no faulty hd according to badblocks).
-> reiserfsck --check tells me I only can correct these errors with a
-> --rebuild-tree.
+>I am investigating on the Journaling from the Reisersfs source code.
+>However, it is not easy to understand. I could not find any good reference
+>on the Journaling.
 >
-> What I want to know is: I can backups all data (no problem), but
+>Please guide me to the good reference or paper on the journaling algorithm.
 >
-> a) how big is the chance that reiserfsck will destroy the partition?
-
-Even if reiserfsck fails to recover your partition, you can email us and
-I will debug the case, fix the bug and recover your data. It happens quite
-rare now, sometimes due to hardware problems.
-
-> b) what if the procedure gets broken in the middle (power outage,...), will
-> it mean Total Destruction?
-
-You may lose some more data in this case as some updated blocks were synced
-but some are not. But it does not mean Total Destruction, of course.
-
-> I would use the reiserfs tools included on the mandrake 9.0 cdrom, since
-> this is a most convenient tool as a rescue disk. The disk in question is a
-> 10 gig ide wd-caviar:
-> /dev/hda5 reiserfs    9.1G  7.5G  1.6G  82% /
+>Thanks,
+>
+>Bo
 >
 >
-> thx in advance!
+>
+>
+>  
+>
+www.namesys.com/fast_reiser4.html
 
 -- 
+Hans
 
-Thanks,
-Vitaly Fertman
+
