@@ -1,89 +1,58 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: bug in reiser4
-Date: Tue, 29 Mar 2005 19:57:40 +0400
-Message-ID: <1112111859.4766.590.camel@tribesman.namesys.com>
-References: <Pine.LNX.4.21.0503291621200.14639-100000@hep.itp.tuwien.ac.at>
+From: Dan Oglesby <doglesby@teleformix.com>
+Subject: ReiserFS 3.6 errors
+Date: Tue, 29 Mar 2005 09:58:33 -0600
+Message-ID: <42497B29.4020506@teleformix.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-23726-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23727-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.21.0503291621200.14639-100000@hep.itp.tuwien.ac.at>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Erwin Riegler <riegler@hep.itp.tuwien.ac.at>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Hello
+Greetings,
 
-On Tue, 2005-03-29 at 18:26, Erwin Riegler wrote:
-> > Hello
-> >=20
-> > On Tue, 2005-03-29 at 15:55, Erwin Riegler wrote:
-> > > hi,
-> > > i have been using reiser4 for five months without any problems.
-> > > but suddenly i get strange error messages on the screen when=20
-> > > i try to halt the machine:
-> > >=20
-> > > # halt
-> > >=20
-> > >=20
-> > > ...
-> > >=20
-> > > reiser4[pdflush(131)]: jnode_lock_parent_coord
-> > > (fs/reiser4/flush.c:3095)[nikita-3178]:
-> > >=20
-> >=20
-> > I guess your filesystem got a corruption. Would you please fsck.reiser4
-> > it end let us know whether it found anything?
->=20
-> yes, you are right. the root partition had a corruption.=20
->=20
+I just finished installing a machine that uses ReiserFS v3.6 
+filesystems, one of which is on a RAID-5 device off of a 3Ware 7506 
+controller.
 
-I hoped that you will send us fsck.reiser4's output. That might be
-useful to guess what did cause the corruption.
+After the build, a stress test was run that generates a lot of disk I/O, 
+and I saw the following in dmesg:
 
+vs-500: unknown uniqueness 1162690892
+vs-500: unknown uniqueness 1162690892
+vs-500: unknown uniqueness 1162690892
+vs-500: unknown uniqueness 1162690892
+vs-500: unknown uniqueness 1162690892
+vs-500: unknown uniqueness 1162690892
+, item_len 14136, item_location 10272, free_space(entry_count) 11827
+vs-5150: search_by_key: invalid format found in block 2029494. Fsck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat 
+data of [40 171378 0x0 SD]
+is_leaf: item location seems wrong (second one): *3.6* [40 357194 0x0 
+SD], item_len 44, item_location 2412, free_space(entry_count) 65535
+vs-5150: search_by_key: invalid format found in block 3864557. Fsck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat 
+data of [40 357181 0x0 SD]
+vs-500: unknown uniqueness 1647255672
+vs-500: unknown uniqueness 1647255672
+vs-500: unknown uniqueness 1647255672
+vs-500: unknown uniqueness 1647255672
+vs-500: unknown uniqueness 1647255672
+vs-500: unknown uniqueness 1647255672
+, item_len 27951, item_location 29803, free_space(entry_count) 28265
+vs-5150: search_by_key: invalid format found in block 4488286. Fsck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat 
+data of [40 453681 0x0 SD]
 
-> after=20
->=20
-> 	fsck.reiser4 --build-sb
->=20
-> everything works now again.
->=20
-> thank you very much,
-> erwin
->=20
-> >=20
-> > > ...
-> > >=20
-> > > this message is repeating all the time and the system is hanging in a
-> > > never ending loop.
-> > >=20
-> > > system:
-> > >=20
-> > > debian sid
-> > > kernel: 2.6.10-cko3
-> > >=20
-> > > best,
-> > > erwin=20
-> > >=20
-> > >=20
-> > > ------------------------------------------------------------
-> > > [work address]                             [private address]
-> > > Erwin Riegler                                  Erwin Riegler
-> > > Max Planck Institute for                A=DFmayergasse 23/5/41
-> > > Mathematics in the Sciences                    A-1120 Vienna
-> > > Inselstrasse 22
-> > > D-04103 Leipzig
-> > > office: +49-341-995950-850             home: +43-660-2146904
-> > > email:  riegler@hep.itp.tuwien.ac.at                =20
-> > > web:    http://www.mis.mpg.de
-> > > ------------------------------------------------------------
-> > >=20
-> > >=20
-> >=20
->=20
->=20
+I did see something in the FAQ about requiring a reboot after changing 
+partitions on a disk.  Unfortunately, I didn't see this until after the 
+machine was built.  Could these errors be caused from a lack of a reboot 
+between partitioning the disk and running mkreiserfs?
 
+This is on a RedHat 7.3 system, using kernel 2.4.20.
+
+--Dan
