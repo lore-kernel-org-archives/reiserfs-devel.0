@@ -1,28 +1,36 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Reiserfs and recovering from the format action...
-Date: Thu, 10 Oct 2002 15:31:12 +0400
-Message-ID: <20021010153112.A3601@namesys.com>
+From: "darren" <teodarren@myrealbox.com>
+Subject: Reiserfs with Samba vs NetApp Filer
+Date: Thu, 10 Oct 2002 09:48:34 +0800
+Message-ID: <001b01c26fff$26d23850$0101a8c0@bummer>
 References: <Pine.LNX.4.33L2.0210100853240.1670-100000@localhost.localdomain>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11642-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-11643-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 In-Reply-To: <Pine.LNX.4.33L2.0210100853240.1670-100000@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Fabrizio Morbini <fabrizio.morbini@libero.it>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+Hi all,
 
-On Thu, Oct 10, 2002 at 09:01:40AM +0200, Fabrizio Morbini wrote:
-> Hi, if I format a reiserfs partition there are methods for recover it?
+I was just wondering if I should spend $$ (my company's of cos) on a
+NetApp filer...
 
-http://namesys.com/support.html
+OR
 
-Bye,
-    Oleg
+I just get one of the Dell 3650 doing nothing in the corner with RAID5
+and run Samba as a fileserver?
+
+Anyone got any benchmarks to compare the two?
+
+Is NetApp as good as its advertised?
+
+Any comments on this setup is welcomed
+
+Regards
+Darren
+
