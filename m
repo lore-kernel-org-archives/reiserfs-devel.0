@@ -1,24 +1,218 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Patch to fix typos in reiser4progs 1.0.3
-Date: Thu, 10 Feb 2005 13:14:17 +0300
-Message-ID: <200502101314.17726.vitaly@namesys.com>
-References: <420A7E7E.3050709@aon.at>
+From: Christian Placzek <kris@cp-data.de>
+Subject: Re: reiserfs3 rebuild-tree successful but no files
+Date: Thu, 10 Feb 2005 13:50:53 +0100
+Message-ID: <200502101350.53886.kris@cp-data.de>
+References: <200502082321.07706.kris@cp-data.de> <200502100754.56823.kris@cp-data.de> <1108025403.395.345.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <420A7E7E.3050709@aon.at>
+In-Reply-To: <1108025403.395.345.camel@tribesman.namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Peter Klotz <peter.klotz@aon.at>, reiserfs-list@namesys.com
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-On Thursday 10 February 2005 00:19, Peter Klotz wrote:
-> I attached a patch that fixes a few typos in reiser4progs 1.0.3.
+On Thursday 10 February 2005 09:50, you wrote:
+> Hello
+>
+> On Thu, 2005-02-10 at 09:54, Christian Placzek wrote:
+> > On Wednesday 09 February 2005 13:01, Vladimir Saveliev wrote:
+> > > Hello
+> > >
+> > > On Wed, 2005-02-09 at 12:04, Christian Placzek wrote:
+> > > > On Wednesday 09 February 2005 09:47, you wrote:
+> > > > > Hello
+> > > > >
+> > > > > On Wed, 2005-02-09 at 01:21, Christian Placzek wrote:
+> > > > > > Hello,
+> > > > > >
+> > > > > > a friend of mine shredded his data (70GB) when he tried to
+> > > > > > undelete an accidentally deleted file. He normally works with
+> > > > > > windoze. Therefore he didn't know he couldn't undelete a file on
+> > > > > > a reiserfs partition with ext2 undelete tool %-(
+> > > > > > When he called me it was already too late. He had overwritten the
+> > > > > > superblock :-(
+> > > > > >
+> > > > > > I'm still trying to rescue the data. I can see them in the image
+> > > > > > using grep or hexedit. But nothing I tried has been successful.
+> > > > > > My first steps were unmounting the partition, taking an image and
+> > > > > > working with a copy of this image using a loop back device.
+> > > > > >
+> > > > > > All files have been retrieved but were removed by reiserfsck
+> > > > > > --check although the last output says that directories and files
+> > > > > > have been linked (see below). I tried with many combinations
+> > > > > > nearly all parameters of reiserfsck: --fix-fixable
+> > > > > > --no-journal-available -S ...
+> > > > >
+> > > > > have you tried
+> > > > > reiserfsck --rebuild-tree -S
+> > > > > ?
+> > > > > If not, run it on newly created copy of shredded device.
+> > > >
+> > > > Yes, I did. The output of reiserfsck --rebuild-tree gave other
+> > > > numbers of linked directories/files. But I can't see them.
+> > > >
+> > > > > Did you look at lost+found?
+> > > >
+> > > > Shure, see below.
+> > >
+> > > can you do
+> > > debugreiserfs -p -S /dev/shredded | bzip2 -c > meta.bz2
+> >
+> > Okay, I've done two versions, one with and one without '-S'. I applied
+> > the following commands to the image copy (the image itself is untouched,
+> > I always worked with fresh copies):
+> >
+> > # reiserfsck -y /dev/loop/0 --rebuild-sb
+> > # reiserfsck -y /dev/loop/0 --check
+> > # reiserfsck -y /dev/loop/0 --rebuild-tree
+> > # debugreiserfs -p /dev/loop/0 | bzip2 -c > meta.bz2
+> > # reiserfsck -y /dev/loop/0 --rebuild-tree -S
+> > # debugreiserfs -p /dev/loop/0 | bzip2 -c > meta-S.bz2
+> >
+> > Use ftp://80.133.138.104:12121 user: marc pw: tukli
+>
+> ok.
+>
+> > Lena gave me another hint:
+> > >> Sorry, but what does df  -T say?
+> > >> Does it say that  reiserfs filesystem is mounted on /mnt/temp1?
+> > >>
+> > >> Thanks,
+> > >> Lena.
+> > >
+> > > No, it replied:
+> > > # /dev/loop/0   ext2    69529276        20  65997368   1% /mnt/temp1
+> > >
+> > > If I force mount with -t reiserfs it says:
+> > > root@marvin:/home/kris 0$ # mount -o ro -t reiserfs /dev/loop/0
+> > > /mnt/temp1/ mount: wrong fs type, bad option, bad superblock on
+> > > /dev/loop/0, or too many mounted file systems
+>
+> Yes, so, were you able to mount the filesystem eventually?
 
-Thanks a lot, applying it.
+No, I wasn't. It seems mount doesn't recognize the true file system, although 
+the magic exists.
 
-Vitaly Fertman
+<snip>
+00010000 30 76 0D 01  00 00 00 00  00 00 00 00  12 00 00 00 0v..............
+         00 00 00 00  00 20 00 00  00 04 00 00  00 00 00 00 ..... ..........
+00010020 84 03 00 00  1E 00 00 00  00 00 00 00  00 10 CC 03 ................
+         00 00 02 00  52 65 49 73  45 72 32 46  73 00 01 00 ....ReIsEr2Fs...
+00010040 00 00 00 00  00 00 1B 02  02 00 00 00  00 00 00 00 ................
+         00 00 00 00  CF DC 6B 1C  3E 77 48 3C  A7 4E 6E 84 ......k.>wH<.Nn.
+00010060 6E 8E E3 EE  00 00 00 00  00 00 00 00  00 00 00 00 n...............
+         00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00 ................
+<snip>
 
+
+Maybe the following output is the key. I did this with a fresh copy. Note the 
+number before the '$' sign in the command prompt. It's the error status of 
+the previous command.
+
+
+
+root@marvin:/home/kris 0$ # reiserfsck -y /dev/loop/0 --rebuild-sb
+reiserfsck 3.6.19 (2003 www.namesys.com)
+
+*************************************************************
+** If you are using the latest reiserfsprogs and  it fails **
+** please  email bug reports to reiserfs-list@namesys.com, **
+** providing  as  much  information  as  possible --  your **
+** hardware,  kernel,  patches,  settings,  all reiserfsck **
+** messages  (including version),  the reiserfsck logfile, **
+** check  the  syslog file  for  any  related information. **
+** If you would like advice on using this program, support **
+** is available  for $25 at  www.namesys.com/support.html. **
+*************************************************************
+
+Will check superblock and rebuild it if needed
+Will put log info to 'stdout'
+
+reiserfs_open: the reiserfs superblock cannot be found on /dev/loop/0.
+
+what the version of ReiserFS do you use[1-4]
+        (1)   3.6.x
+        (2) >=3.5.9 (introduced in the middle of 1999) (if you use linux 2.2, 
+choose this one)
+        (3) < 3.5.9 converted to new format (don't choose if unsure)
+        (4) < 3.5.9 (this is very old format, don't choose if unsure)
+        (X)   exit
+1
+
+Enter block size [4096]:
+
+
+No journal device was specified. (If journal is not available, re-run with 
+--no-journal-available option specified).
+Is journal default? (y/n)[y]:
+
+Did you use resizer(y/n)[n]:
+rebuild-sb: no uuid found, a new uuid was generated 
+(cfdc6b1c-3e77-483c-a74e-6e846e8ee3ee)
+
+rebuild-sb: You either have a corrupted journal or have just changed
+the start of the partition with some partition table editor. If you are
+sure that the start of the partition is ok, rebuild the journal header.
+Do you want to rebuild the journal header? (y/n)[n]: y
+Reiserfs super block in block 16 on 0x700 of format 3.6 with standard journal
+Count of blocks on the device: 17659440
+Number of bitmaps: 539
+Blocksize: 4096
+Free blocks (count of blocks - used [journal, bitmaps, data, reserved] 
+blocks): 0
+Root block: 0
+Filesystem is NOT clean
+Tree height: 0
+Hash function used to sort names: not set
+Objectid map size 0, max 972
+Journal parameters:
+        Device [0x0]
+        Magic [0x0]
+        Size 8193 blocks (including 1 for journal header) (first block 18)
+        Max transaction length 1024 blocks
+        Max batch size 900 blocks
+        Max commit age 30
+Blocks reserved by journal: 0
+Fs state field: 0x1:
+         some corruptions exist.
+sb_version: 2
+inode generation number: 0
+UUID: cfdc6b1c-3e77-483c-a74e-6e846e8ee3ee
+LABEL:
+Set flags in SB:
+Is this ok ? (y/n)[n]: y
+The fs may still be unconsistent. Run reiserfsck --check.
+
+root@marvin:/home/kris 1$ # reiserfsck -y /dev/loop/0 --check
+reiserfsck 3.6.19 (2003 www.namesys.com)
+
+*************************************************************
+** If you are using the latest reiserfsprogs and  it fails **
+** please  email bug reports to reiserfs-list@namesys.com, **
+** providing  as  much  information  as  possible --  your **
+** hardware,  kernel,  patches,  settings,  all reiserfsck **
+** messages  (including version),  the reiserfsck logfile, **
+** check  the  syslog file  for  any  related information. **
+** If you would like advice on using this program, support **
+** is available  for $25 at  www.namesys.com/support.html. **
+*************************************************************
+
+Will read-only check consistency of the filesystem on /dev/loop/0
+Will put log info to 'stdout'
+###########
+reiserfsck --check started at Thu Feb 10 13:16:29 2005
+###########
+Replaying journal..
+Reiserfs journal '/dev/loop/0' in blocks [18..8211]: 0 transactions replayed
+Zero bit found in on-disk bitmap after the last valid bit.
+Checking internal tree..
+
+Bad root block 0. (--rebuild-tree did not complete)
+
+Aborted
+root@marvin:/home/kris 134$ #
