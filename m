@@ -1,40 +1,33 @@
-From: Adrian Bunk <bunk@fs.tum.de>
+From: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 17:15:29 +0200
-Message-ID: <20040826151529.GF29965@fs.tum.de>
-References: <20040824202521.GA26705@lst.de> <20040825163225.4441cfdd.akpm@osdl.org> <1093510983.23289.6.camel@imp.csi.cam.ac.uk> <200408261245.47734.christian.mayrhuber@gmx.net> <20040826115229.A18013@infradead.org> <20040826124334.GA39176@dspnet.fr.eu.org>
+Date: Thu, 26 Aug 2004 18:19:59 +0300
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <200408261819.59328.vda@port.imtp.ilyichevsk.odessa.ua>
+References: <Pine.LNX.4.44.0408261011410.27909-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-20698-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.44.0408261011410.27909-100000@chimarrao.boston.redhat.com>
 Content-Disposition: inline
-In-Reply-To: <20040826124334.GA39176@dspnet.fr.eu.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Olivier Galibert <galibert@pobox.com>, Christoph Hellwig <hch@infradead.org>, Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com, Anton Altaparmakov <aia21@cam.ac.uk>, linux-fsdevel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+To: Rik van Riel <riel@redhat.com>
+Cc: Christer Weinigel <christer@weinigel.se>, Spam <spam@tnonline.net>, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Thu, Aug 26, 2004 at 02:43:34PM +0200, Olivier Galibert wrote:
-> On Thu, Aug 26, 2004 at 11:52:29AM +0100, Christoph Hellwig wrote:
-> > Sure, no one stops you from playing around with new semantics.  But please
-> > don't add them to the linux kernel stable series until we have semantics we
-> > a) want to stick to for a while and b) actually work.
-> 
-> He's not proposing to add it to 2.4, is he?
+On Thursday 26 August 2004 17:12, Rik van Riel wrote:
+> On Thu, 26 Aug 2004, Denis Vlasenko wrote:
+> > I think Hans is not planning turning old "file is a stream of bytes"
+> > into eight-stream octopus. One stream will remain as a 'main' one,
+> > which contains actual data. Others will keep metadata, etc...
+>
+> This is exactly what the Samba people want, though.
+>
+> Office suites can store a document with embedded images
+> and spread sheets "easily" by putting the text, the
+> images and spread sheets all in different file streams.
 
-2.6 is a stable series...
-
->   OG.
-
-cu
-Adrian
-
--- 
-
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+Kinda far reaching. It's hard to assess whether that is good or bad idea.
+Can we start small, like putting metadata (e.g. ACLs) into these streams?
+--
+vda
 
