@@ -1,72 +1,61 @@
-From: Alex Zarochentsev <zam@namesys.com>
-Subject: Re: tail policy question
-Date: Thu, 13 Nov 2003 13:27:35 +0300
-Message-ID: <20031113102735.GB1278@backtop.namesys.com>
-References: <Pine.GSO.4.58.0311121737100.9552@bingsun2.cc.binghamton.edu>
+From: Usuario Jose <jose@holisticas.com>
+Subject: reiser filesystem crashed
+Date: Thu, 13 Nov 2003 12:33:27 +0100
+Message-ID: <E1AKFkr-0002Ad-00@parato.holisticas.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16071-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-16072-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <Pine.GSO.4.58.0311121737100.9552@bingsun2.cc.binghamton.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Zhihui Zhang <bf20761@binghamton.edu>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-On Wed, Nov 12, 2003 at 06:23:01PM -0500, Zhihui Zhang wrote:
-> Hi,
-> 
-> I spent a little time on Reiser4 tail code and was surprised to find out
-> that the default policy given in reiser4.h is ALWAYS_TAIL_ID not
-> DEFAULT_TAIL_ID.
-> 
-> /* default tail policy plugin */
-> #define REISER4_TAIL_PLUGIN       (ALWAYS_TAIL_ID)
-> 
-> Does this mean Reiser4 always use tails no matter how large a file is by
-> default?  
 
-no. tail plugin is specified at mkfs time.  
+Hi, friends:
 
-ALWAIYS_TAIL_ID is used if disk format plugin does not override it at mount
-time.  The only one existing disk format (disk_format40) does override the
-default tail policy plugin (see
-fs/reiser4/plugin/disk_format/disk_format40.c:get_ready_format40).
+My copmputer has a hard disk with the following partition schema:
 
-You can run debugfs.reiser4 -t on a reiser4 volume with some big files and see
-extents there. :-)
 
-> I must be wrong somewhere.
+	/dev/hda1		windows backup
+	/dev/hda2		windows xp ntfs
 
-> Anyway, when tails are in use, will they incur more or less performance
-> penalty on files using them when compared to ReiserFS V3 (remember that
-> -notail mount option is sometimes preferred)?  
+/dev/hda3		win95 ext'd (LBA)
+	/dev/hda5		linux swap
+	/dev/hda6		linux  - resiserfs
 
-Tail packing uses more CPU resources than pure extents but it saves I/O
-operations.  At current state default tail policy ("smart") is preffered for
-most cases (i just do not remember when pure extents win).
+The linux partition crashed (my suspicions are after opening a 5MB pdf file=
+).=20
+Following are the messages given by reiserfsck:
 
-But, we still expect that reiser extent handling code may be optimized a lot,
-it is possible that pure extents will be better is some case as "notail" option
-in reiser3 and even better because extents are better than indirect items).
 
-> Also, does the offset part of a key for a tail item or an extent item refer
-> to the byte offset of the first byte represented by the tail or extent item?
-> In V3, I remember it is actually byte offset plus one for some reason.
-> Please clarify this for
+#reiserfs --check /dev/hda6
+Bad root block 4294967295=20
 
-yes, there is a byte offset in the reiser4 key for file body items. AFAIK no
-"plus one byte" there.
+#reiserfs --rebuild-tree /dev/hda6
+.....
+Pass 0:
+##### Pass 0 #####
+Loading on-disk bitmap .. ok, 963801 blocks marqued used
+Skipping 8406 blocks (superblock, journal.....) 955395 blocks will be read
+0% =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0left =A0955077, 318 /sec
+bread: Cannot read a block # 13236
 
-> me.
-> 
-> Thanks
-> 
-> -Zhihui
+Aborted
 
--- 
-Alex.
+#reiserfsck --rebuild-sb /dev/hda6  ----> OK
+#reiserfs --rebuild-tree /dev/hda6 =A0  -------->  same error as above.
+
+
+The information in the linux partition is very important, so:
+- Is there any way to recover it, to rebuild to filesystem or whatever?
+
+Any help would be appreciated.
+
+Thanks in advance.
+
+
+
