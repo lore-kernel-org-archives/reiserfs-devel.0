@@ -1,41 +1,48 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: new data logging patches available
-Date: Tue, 20 May 2003 17:08:15 +0200
-Message-ID: <200305201708.15517.Dieter.Nuetzel@hamburg.de>
-References: <1052400138.14612.483.camel@tiny.suse.com> <20030512113348.GA4423@namesys.com> <1053442808.9507.48.camel@tiny.suse.com>
+From: "Fred -- Speed Up --" <speedup@free.fr>
+Subject: Reiser4 bitmap & replication handling
+Date: Tue, 20 May 2003 20:33:52 +0200
+Message-ID: <002d01c31efe$5da8b5d0$b300a8c0@xpstation>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14178-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_002A_01C31F0F.208DF2D0"
+Return-path: <reiserfs-list-return-14180-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1053442808.9507.48.camel@tiny.suse.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Chris Mason <mason@suse.com>, Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Am Dienstag, 20. Mai 2003 17:00 schrieb Chris Mason:
-> On Mon, 2003-05-12 at 07:33, Oleg Drokin wrote:
-> > Hello!
-> >
-> > On Thu, May 08, 2003 at 09:22:19AM -0400, Chris Mason wrote:
-> > > These include Oleg Drokin's merge with 2.4.21-rc1 (thanks Oleg!), and
-> > > they no longer change fs/super.c:sync_supers().  I believe things are
-> > > now clean enough for me to start submitting for 2.4.22-pre once it
-> > > starts.
-> >
-> > BTW, what have happened to your work on porting this stuff to 2.5 and the
-> > whole idea of feeding this stuff into 2.5 first?
->
-> The part I wanted in 2.5 first was the sync supers change.  For now I'll
-> be happy if I can get the whole thing (without sync supers) in 2.4, so I
-> can concentrate more on 2.5 code.
+------=_NextPart_000_002A_01C31F0F.208DF2D0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-Sync super worked fine for ages, here...;-)
+I just read this article about XFS :
+http://www-106.ibm.com/developerworks/library/l-fs9.html
 
-Regards,
-	Dieter
+It says XFS uses B+Trees as Reiser4 does, and it uses this structure to =
+store not only the keys, but also the bitmap data and replicates it =
+storage trees to improve scalability and overall wide-disk performance. =
+It also tries to allocate the largest contigous blocks to a file (but =
+Reiser4 does this also), and comes close to raw performance when reading =
+large files. The article concludes XFS is faster than Reiser (3.6 I =
+think, as the article has been published in 2002 by Gentoo CEO Daniel =
+Robbins) with performance tweaks at mount time. But how does Reiser4 ?
+
+How many times does Reiser replicate and/or truncate its tree, and what =
+structure has been chosen for bitmap data ?
+Does Reiser4 divide the disk space in chunks, as XFS and ext2 do ?
+Are you implementing some special features for very large disks, RAID =
+systems and multi-processing hardware ?
+Is the developement far enough to get an idea of the final performance ? =
+I didn't remember, when do you plan to release Reiser4 ?
+
+I'm very interested in those brand new filesystem techniques, for now I =
+think we can consider that XFS and Reiser3 are very close in overall =
+performance. You're saying in the doc you'd like to keep on offering the =
+best performance in the market : are you really that far ?
+
+Fred
+------=_NextPart_000_002A_01C31F0F.208DF2D0--
 
