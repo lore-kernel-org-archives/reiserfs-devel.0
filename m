@@ -1,69 +1,39 @@
-From: "David Masover" <ninja@slaphack.com>
-Subject: Re: praise the reiser4 developers!
-Date: Sat, 10 Apr 2004 13:04:25 -0500 (CDT)
-Message-ID: <21379.208.32.105.18.1081620265.squirrel@slaphack.com>
-References: <1081542563.14002.1.camel@redeeman.linux.dk>
-    <40778EAE.2090907@namesys.com>
-Reply-To: ninja@slaphack.com
+From: Claudio Martins <ctpm@rnl.ist.utl.pt>
+Subject: Re: we got the DARPA grant to add views to Reiser4
+Date: Sat, 10 Apr 2004 20:48:18 +0100
+Message-ID: <200404102048.18800.ctpm@rnl.ist.utl.pt>
+References: <40774B15.3010703@digeo.com> <4077A6B3.1050702@edsons.demon.nl> <4077BD60.7050908@mweb.co.za>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-17834-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-17836-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40778EAE.2090907@namesys.com>
+In-Reply-To: <4077BD60.7050908@mweb.co.za>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
+Cc: Cami <camis@mweb.co.za>
 
-Hans Reiser said:
-> Redeeman wrote:
+
+On Saturday 10 April 2004 10:24, Cami wrote:
+> >> Yeah!  Details later.
+> >
+> > Congratulations!
 >
->>i must say! you own!
-quite so.
+> I'm too curious to wait, got any paper anywhere
+> that covers/explains what views is?
+>
 
->>normally when i sync my portage, the disk noises and it takes ages. with
->>reiser4 it takes no time, and the disk doesent noise at all. also, now
->>it is my connection (50kb/s) that limits the speed
+ It might be something similar to Clearcase Views, judging by what Google 
+says. Basically, on a Clearcase filesystem you set up a view to access 
+particular branches and file versions within the tree on which you want to 
+work on.
+ I really don't know if Hans was talking about a feature like Clearcase Views 
+or something else, but either way I bet it will be some interesting new 
+feature for reiser4 :-)
 
-On 768k dsl, I do notice that syncing portage does take less time.  The
-disk does spin, but it doesn't thrash -- the light stays on, but no noise.
+Claudio
 
-I haven't tried XFS, which seems like the only runner-up, but scares me
-with how many things it patches, and isn't quite as sexy with plugins.
-
-> thanks so kindly.  I think reiser4 is probably especially effective for
-> laptops.
-
-It is, in theory.  In practice, I think something other than reiser4 is
-preventing my disk from spinning down.
-
-It's been months since I've tried a snapshot, though, as my laptop is dead
-and at the manufacturer for service.  This was a hardware problem, as the
-screen is still dead even in BIOS, and reiser4 still worked when I hooked
-up to a CRT.  When it worked, though, the speed boost was pretty
-incredible.
-
-One thing I hope happens sometime -- I notice that Linux doesn't swap
-until it needs to.  This means that if I have 512 megs of RAM, and 128 or
-so is used by GNOME and such, and I let it idle, then that 128 megs never
-gets swapped out.  It would be helpful if it did -- if RAM was treated
-just like a cache, so that least-frequently-used things get swapped out /
-flushed to disk / purged from the disk cache, while more frequently used
-things stay, probably with a slant towards more recently used things.
-
-I'm sure there could be more thought put into the actual implementation
-and algorithm used.  Linux does do this nice thing of using all available
-RAM for something, the only problem is, some of the RAM that it "uses" is
-wasted because it is used so infrequently.
-
-Ultimately, this is geared towards letting my laptop drive spin down for
-longer.  I use GNOME on it to show off to people who thing Linux is not
-user-friendly, or is "a copy of Windows", but it only has 256 megs of ram,
-which doesn't leave nearly enough for reiser4's ramdisk-like operations
-(temporary changes to temporary files that should never touch disk).
-
-Normally, I sign all my emails, but I keep my PGP key on two machines
-only, and don't trust it to the webmail server.  If anyone cares, let me
-know, and I'll re-send a signed copy of this email.
