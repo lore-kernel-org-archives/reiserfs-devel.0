@@ -1,71 +1,66 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
-Subject: Re: reiserfsprogs 3.6.5-pre2 release.
-Date: Wed, 26 Feb 2003 01:54:48 +0100
-Message-ID: <20030226015448.1efac468.philippe.gramoulle@mmania.com>
-References: <200302251650.22469.vitaly@namesys.com>
-	<200302251712.45985.vitaly@namesys.com>
+From: rwhron@earthlink.net
+Subject: redundant tests in hashes.c
+Date: Tue, 25 Feb 2003 21:52:35 -0500
+Message-ID: <20030226025235.GA2560@rushmore>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12926-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12927-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200302251712.45985.vitaly@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
+There are some BUG tests in hashes.c that will never be true.
 
-Hi Vitaly,
+--- linux-2.5.63/fs/reiserfs/hashes.c.orig	2003-02-14 22:07:21.000000000 -0500
++++ linux-2.5.63/fs/reiserfs/hashes.c	2003-02-25 21:47:46.000000000 -0500
+@@ -90,10 +90,6 @@
+ 
+ 	if (len >= 12)
+ 	{
+-	    	//assert(len < 16);
+-		if (len >= 16)
+-		    BUG();
+-
+ 		a = (u32)msg[ 0]      |
+ 		    (u32)msg[ 1] << 8 |
+ 		    (u32)msg[ 2] << 16|
+@@ -116,9 +112,6 @@
+ 	}
+ 	else if (len >= 8)
+ 	{
+-	    	//assert(len < 12);
+-		if (len >= 12)
+-		    BUG();
+ 		a = (u32)msg[ 0]      |
+ 		    (u32)msg[ 1] << 8 |
+ 		    (u32)msg[ 2] << 16|
+@@ -137,9 +130,6 @@
+ 	}
+ 	else if (len >= 4)
+ 	{
+-	    	//assert(len < 8);
+-		if (len >= 8)
+-		    BUG();
+ 		a = (u32)msg[ 0]      |
+ 		    (u32)msg[ 1] << 8 |
+ 		    (u32)msg[ 2] << 16|
+@@ -154,9 +144,6 @@
+ 	}
+ 	else
+ 	{
+-	    	//assert(len < 4);
+-		if (len >= 4)
+-		    BUG();
+ 		a = b = c = d = pad;
+ 		for(i = 0; i < len; i++)
+ 		{
 
-here is an output of reiserfsck -a on a ~550 Gb Raid5 array filled about 60=
-%.
-
-# df /dev/sdb1
-Filesystem           1K-blocks      Used Available Use% Mounted on
-/dev/sdb1            572418604 335826568 236592036  59% /prod
-
-
-#  reiserfsck -V
-
-<-------------reiserfsck, 2002------------->
-reiserfsprogs 3.6.5-pre2
-
-
-# time reiserfsck -a /dev/sdb1
-Reiserfs super block in block 16 on 0x811 of format 3.6 with standard journ=
-al
-Blocks (total/free): 143109020/59148009 by 4096 bytes
-Filesystem is cleanly umounted
-Replaying journal..
-0 transactions replayed
-Checking internal tree..finished                 =20
-
-real    0m47.890s
-user    0m6.668s
-sys     0m0.732s
-
-Hope that helps.
-
-Thanks,
-
-Philippe
-
-
-On Tue, 25 Feb 2003 17:12:45 +0300
-Vitaly Fertman <vitaly@namesys.com> wrote:
-
-
-  |  Also, it would be interesting to know how much time does reiserfsck -a=
- take
-  |   on big arrays. So if you have a such, try it also please. I mean, on =
-consistent
-  |   filsystems, otherwise reiserfsck will switch to the fix-fixable mode.
-
---=20
-
-Philippe Gramoull=E9
-philippe.gramoulle@mmania.com
-Lycos Europe - NOC France
+-- 
+Randy Hron
+http://home.earthlink.net/~rwhron/kernel/bigbox.html
 
