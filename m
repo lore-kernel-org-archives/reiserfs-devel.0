@@ -1,65 +1,62 @@
-From: Nick Vahalik <nick@nsanity.com>
-Subject: Re: Reiserfs Data Recovery
-Date: Wed, 10 Mar 2004 10:54:24 -0600
-Message-ID: <404F4840.5090407@nsanity.com>
-References: <404E8665.7090305@nsanity.com>	 <1078918871.9476.116.camel@tribesman.namesys.com>	 <404F2F51.5000205@nsanity.com> <1078932372.9476.133.camel@tribesman.namesys.com>
+From: jlewis@lewis.org
+Subject: reiserfs rebuild-tree time?
+Date: Thu, 11 Mar 2004 01:27:47 -0500 (EST)
+Message-ID: <Pine.LNX.4.58.0403110111490.1969@web1.mmaero.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17166-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17170-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1078932372.9476.133.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Vladimir Saveliev wrote:
+I've got a several year old Red Hat 7.0 server with a 70gb partition on
+[adaptec i2o, 5 18gb drive] hardware raid5.  This morning, it crashed, and
+each time someone rebooted it, it would freeze|reboot|panic seconds after
+the bootup process was complete.  It seems this reiserfs partition has
+corruption, which was not properly handled in the older kernel (it's a Red
+Hat 7.0 system).
 
->Are you using reiserfsck from
->ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.13.tar.gz?
->
->If yes - please run
->debugreiserfs -p /dev/problemdevice | bzip2 -c > problemdevice.bz2
->and make problemdevice.bz2 available for downloading.
->
->It should allow us to fix reiserfsck bug.
->
->If you are using older rieserfsck (reiserfsck -V), please try with the
->one of
->ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.13.tar.gz
->  
->
-root@bardiel:~/reiserdata# debugreiserfs -V
-debugreiserfs 3.6.13 (2003 www.namesys.com)
+I booted it single user and installed the latest 7.3 kernel from the
+fedorlegacy project.  That kernel didn't crash, but instead began logging
+lots of reiserfs corruption warnings, which is actually what alerted us as
+to what the problem was.
 
-root@bardiel:~/reiserdata# debugreiserfs -p /dev/sda1 | bzip2 -c > 
-devsda1.bz2
-debugreiserfs 3.6.13 (2003 www.namesys.com)
- 
-Loading on-disk bitmap .. 38677079 bits set - done
-super block..ok
-bitmaps..(1228).. ok
-journal (from 18 to 8210)..ok
-Super block, bitmaps, journal - 9422 blocks - done, 38667657 blocks left
-0%....20%....40%....60%....80%....100%                       left 0, 
-15211 /sec
-Packed 66463 blocks:
-        compessed 63534
-        full blocks 2929
-                leaves with broken block head 55
-                corrupted leaves 83
-                internals 672
-                descriptors 0
-data packed with ratio 0.09
+reiserfsck (from reiserfsprogs-3.6.13) found problems and said it could
+not fix them without doing a --rebuild-tree.  So I ran it again with that
+option.  That was about 13 hours ago...and its still running.  I didn't
+think to redirect output to a file, but AFAIK, it's in Pass 3 now.  Lots
+of file names are scrolling by, but only on the last line of my terminal,
+so it's difficult to tell what its up to.
 
-The meta-data info can be downloaded at 
-http://24.162.126.168:8080/devsda1.bz2
-~5.3 MB
+At this point, I'm wondering how much longer this could possibly take to
+finish?  The partition has about 45gb of files (maildirs, so lots of
+files).  My next question was already answered by the FAQ...regardless of
+the safety of trying it, mounting it ro at this point to try to get to
+some of the files isn't possible.  Am I correct in assuming that stopping
+reiserfsck before the rebuild-tree finishes would be "bad"...i.e. we won't
+be able to access the data, and would have to start over anyway?
 
-Thanks
+It seems to be taking an awful long time (hours) scrolling path names
+inside the same user's maildir...so I'm beginning to wonder if it's caught
+in some sort of loop or if this maildir is just huge and its taking time
+to get through.
 
-Nick Vahalik
+Is there any possibility of getting to the data (most of it anyway) on
+this partition if we have to stop the rebuild before it completes?...i.e.
+if it really is caught in a loop.
 
+The system is a dual PIII-733.  Other than the rebuild and a few admins
+ssh'd in to keep an eye on it, the system is idle.  I'm not seeing a whole
+lot of activity (1MB/s in, 1MB/5s or so out according to vmstat) and CPU
+idle 98%.  If CPU and disk i/o aren't limiting it, what's causing the
+rebuild-tree to take so long?
+
+----------------------------------------------------------------------
+ Jon Lewis *jlewis@lewis.org*|  I route
+ Senior Network Engineer     |  therefore you are
+ Atlantic Net                |
+_________ http://www.lewis.org/~jlewis/pgp for PGP public key_________
