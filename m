@@ -1,55 +1,35 @@
-From: Terje Malmedal <terje.malmedal@usit.uio.no>
+From: Nikita Danilov <Nikita@Namesys.COM>
 Subject: Re: reiserfs and nfs.
-Date: Mon, 25 Nov 2002 19:12:19 +0100
-Sender: linux-kernel-owner@vger.kernel.org
-Message-ID: <E18GNiV-0006n8-00@aqualene.uio.no>
+Date: Mon, 25 Nov 2002 21:40:44 +0300
+Message-ID: <15842.28332.47095.407177@laputa.namesys.com>
 References: <15842.17986.416305.106123@laputa.namesys.com>
+	<E18GNiV-0006n8-00@aqualene.uio.no>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
-In-reply-to: <15842.17986.416305.106123@laputa.namesys.com> (message from
-	Nikita Danilov on Mon, 25 Nov 2002 18:48:18 +0300)
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12044-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <E18GNiV-0006n8-00@aqualene.uio.no>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nikita@Namesys.COM
+To: Terje Malmedal <terje.malmedal@usit.uio.no>
 Cc: linux-kernel@vger.kernel.org, Reiserfs-List@Namesys.COM
 
+Terje Malmedal writes:
+ > 
+ > [Nikita Danilov]
+ > > Terje Malmedal writes:
+ > >> 
 
-[Nikita Danilov]
-> Terje Malmedal writes:
->> 
->> Hi, 
->> 
->> I'm nfs-exporting a reiserfs filesystem, the problem is that the
->> inode-number as seen from the client seems to change from time to
->> time. This confuses a number of programs, for instance Emacs believes
->> that the file changed under it when this happens.
+[...]
 
-> This problem is not known. What version of reiserfs (3.5 or 3.6) and
-> kernel are you using? Is there any way to reproduce this problem?
+ > 
+ > To reproduce do something like: 
+ > $ ls -li RMAIL
+ >  387607 -rw-------    1 tm       4050     36635726 Nov 20 16:15 RMAIL
 
-On the NFS-server I'm using RedHat kernel 2.4.18-10smp, according to
-dmesg I'm using version 3.6 of reiser: 
-reiserfs: checking transaction log (device 3a:00) ...
-Using r5 hash to sort names
-ReiserFS version 3.6.25
+Is RMAIL inode number constant on the server?
 
-(The block device is LVM by the way)
-
-Clients are both Linux and Solaris. 
-
-To reproduce do something like: 
-$ ls -li RMAIL
- 387607 -rw-------    1 tm       4050     36635726 Nov 20 16:15 RMAIL
-
-on the nfs-client, (obviously on a NFS-file) and wait a bit, varying
-from a few minutes to many hours and the inode-number will be
-different. I'm guessing the period you have to wait is dependent on
-how much else is going on on the NFS-server.
-
-I have no reason to suspect any data-corruption, md5 of file as well
-as atime, ctime and mtime are unchanged.
-
--- 
- - Terje
-malmedal@usit.uio.no
+Nikita.
