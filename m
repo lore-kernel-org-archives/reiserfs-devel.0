@@ -1,36 +1,32 @@
-From: Dieter =?iso-8859-1?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: [BK] ReiserFS file write bug fix for 2.4
-Date: Wed, 11 Sep 2002 19:34:11 +0200
-Message-ID: <200209111934.11373.Dieter.Nuetzel@hamburg.de>
-References: <3D7F7783.6030804@namesys.com>
+From: Oliver Neukum <oliver@neukum.name>
+Subject: Re: Heuristic readahead for filesystems
+Date: Wed, 11 Sep 2002 19:20:58 +0200
+Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <200209111920.58952.oliver@neukum.name>
+References: <Pine.LNX.4.44L.0209111340060.1857-100000@imladris.surriel.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11420-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <3D7F7783.6030804@namesys.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner+linux-kernel=40quimby.gnus.org@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.44L.0209111340060.1857-100000@imladris.surriel.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>, marcelo@conectiva.com.br, linux-kernel@vger.kernel.org, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+Content-Type: text/plain; charset="us-ascii"
+To: Rik van Riel <riel@conectiva.com.br>, Xuan Baldauf <xuan--lkml@baldauf.org>
+Cc: linux-kernel@vger.kernel.org, Reiserfs List <reiserfs-list@namesys.com>
 
-On Wednesday 11 September 2002 19:04, Hans Reiser wrote:
-> Well, at least getting the new file write code into pre6 found this bug
-> for us....  please apply.
+Am Mittwoch, 11. September 2002 18:42 schrieb Rik van Riel:
 
-What is the "right" way to get the new block allocation going?
-The mount option (-o alloc=3Dprealloc min=3D4:preallocsize=3D9) only or bet=
-ter a=20
-"reformat"?
+> Your observation is right, but I'm not sure how much it will
+> matter if we start reading the file at stat() time or at
+> read() time.
+>
+> This is because one disk seek takes about 10 million CPU
+> cycles on modern systems and we'll have completed the stat(),
+> open() and started the read() before the disk arm has started
+> moving ;)
 
-Thanks,
-	Dieter
---=20
-Dieter N=FCtzel
-Graduate Student, Computer Science
+Do we gain by sorting the disk accesses ?
+How about savings due to better cooperation with the IO
+scheduler?
 
-University of Hamburg
-Department of Computer Science
-@home: Dieter.Nuetzel at hamburg.de (replace at with @)
-
+	Regards
+		Oliver
