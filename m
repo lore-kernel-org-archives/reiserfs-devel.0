@@ -1,43 +1,31 @@
-From: Ookhoi <ookhoi@humilis.net>
-Subject: Re: build problem BK reiser4progs: /usr/include/features.h:218:52: operator '==' has no left operand
-Date: Thu, 16 Jan 2003 21:27:23 +0100
-Message-ID: <20030116212723.W7526@humilis>
-References: <20030116145519.Q7526@humilis> <3E26BBF8.40003@namesys.com> <20030116190044.R7526@humilis> <3E26F4F3.5080801@namesys.com> <20030116192854.S7526@humilis> <3E26FD74.2080008@namesys.com> <20030116200305.T7526@humilis> <3E27055B.4090706@namesys.com> <20030116204131.V7526@humilis> <3E270D5E.7080808@namesys.com>
-Reply-To: ookhoi@humilis.net
+From: Rajeev Arora <rajeev_aurora@yahoo.com>
+Subject: reiserfsprogs version
+Date: Thu, 16 Jan 2003 15:30:50 -0800 (PST)
+Message-ID: <20030116233050.75044.qmail@web20505.mail.yahoo.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12412-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12413-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3E270D5E.7080808@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yury Umanets <umka@namesys.com>
-Cc: ookhoi@humilis.net, Reiserfs-List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Yury Umanets wrote (ao):
-> Ookhoi wrote:
-> >But, are you able to build it successful? With what tool versions if
-> >I may ask?
->
-> Yes, I'm able to build it. I'd say, currently you are one man
-> reiser4progs can't be built on box. And I don't know why :) Actulally,
-> log you've sent me contains intersting line:
->
-> checking how to recognise dependent libraries... unknown
->
-> ????
->
-> I don't know what is it :)
+Hi,
+I am using reiserfs included in linux kernel 2.4.19
+(stable). When I try to run fsck on a possibly corrupt
+FS, fsck version 3.x.1b segfaulted.
+I doubt if I am using the right version of
+reiserfsprogs, since I don't think I upgraded those
+when I upgraded the kernel.
+Can someone point me to the right reiserfsprogs?
 
-Hm :-)  I'll investigate tomorrow. I do hope I didn't waste your time on
-something stupid .. I'll let you know if I find out.
+TIA,
+Raj
 
-And if somebody (preferably with a debian sid system) is able to compile
-the reiser4progs, please let me know if you have any idea what could be
-wrong.
-
-Thanks and have a good night :-)
+__________________________________________________
+Do you Yahoo!?
+Yahoo! Mail Plus - Powerful. Affordable. Sign up now.
+http://mailplus.yahoo.com
