@@ -1,34 +1,46 @@
-From: Yury Umanets <umka@namesys.com>
-Subject: Re: ReiserFS on a flash device?
-Date: Mon, 28 Jul 2003 08:53:57 +0400
-Message-ID: <1059368036.6406.0.camel@haron.namesys.com>
-References: <200307261640.13629.swsnyder@insightbb.com>
-	 <1059303331.17569.119.camel@haron.namesys.com>
-	 <20030728023345.GD1686@matchmail.com>
+From: "Donald Thompson" <dlt@lunanet.biz>
+Subject: Mapping reiserfs errors to hardware devices or filesystems
+Date: Sun, 27 Jul 2003 23:01:01 -0600 (MDT)
+Message-ID: <54872.192.168.101.1.1059368461.squirrel@www.lunanet.biz>
+Reply-To: dlt@lunanet.biz
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15084-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15085-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030728023345.GD1686@matchmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Mike Fedyk <mfedyk@matchmail.com>
-Cc: Steve Snyder <swsnyder@insightbb.com>, ReiserFS Mailing List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-On Mon, 2003-07-28 at 06:33, Mike Fedyk wrote:
-> On Sun, Jul 27, 2003 at 02:55:31PM +0400, Yury Umanets wrote:
-> > Default journal size is too big (32MB) for usual embedded device. I
-> > mean, that flash is expensive and it is pity to loss 32MB for journal :)
-> 
-> What?  You mean it isn't reduced in size based on block device size like
-> with ext3?
+I believe I'm having a hardware issue, but I have no idea what device is
+the problem from the error messages I'm getting.
 
-Yes, is isn't. Use reiserfstune to make it smaller.
-> 
-> IIRC, it defaults to 2-4MB on a 100MB device.
--- 
-We're flying high, we're watching the world passes by...
+I'm seeing the following repeated:
 
+vs-500: unknown uniqueness 26169
+vs-500: unknown uniqueness 26169
+vs-500: unknown uniqueness 26169
+vs-500: unknown uniqueness 26169
+vs-500: unknown uniqueness 26169
+vs-500: unknown uniqueness 26169
+vs-5150: search_by_key: invalid format found in block 90922. Fsck?
+vs-13070: reiserfs_read_inode2: i/o failure occurred trying to find stat
+data of [26164 26256 0x0 SD]
+
+Its been repeating itself over several reboots. It does not seem to be
+fatal, as the system remains up and working properly.
+
+The entire system, including the root device uses reiserfs. 4 of the
+filesystems sit on logical volumes. This is a debian sid system, kernel
+2.4.20.
+
+Is there any way from the messages generated to identify what filesystem
+is having problems? I figure my only other option is to go into single
+user mode, mount everything read-only and fsck each filesystem. I'm just
+lazy and was hoping there was an easier way of tracking it down.
+
+Any help is much appreciated.
+
+-Don
