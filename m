@@ -1,72 +1,38 @@
-From: Stewart Smith <stewart@flamingspork.com>
-Subject: Re: Will Reiser4 support a "hidden" attribute?
-Date: Thu, 20 Nov 2003 16:18:44 +1100
-Message-ID: <1069305523.11497.37.camel@faith>
-References: <20031120005844.GC8854@Benine>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: restoring data from a hw-defective reiserfs 3.6 disk?
+Date: Wed, 19 Nov 2003 09:23:25 -0800
+Message-ID: <3FBBA70D.3080807@namesys.com>
+References: <68CD89E8-1558-11D8-8187-000A959DDB22@gmx.net> <1068677216.2545.1.camel@redeeman.linux.dk> <3FBBF74F.3090309@poelzi.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16128-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16129-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20031120005844.GC8854@Benine>
+In-Reply-To: <3FBBF74F.3090309@poelzi.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Guido Schimmels <guido.schimmels@freenet.de>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "daniel.poelzleithner" <poelzi@poelzi.org>
+Cc: redeeman@metanurb.dk, Reiser FS Mailing List <reiserfs-list@namesys.com>, grobe@gmx.net
 
-On Thu, 2003-11-20 at 11:58, Guido Schimmels wrote:
-> Reiser4? This would be fantastic! I'm planning to use Reiser4 for my  
-> Desktop Linux project. I need this feature to hide the Unix legacy tree  
-> like MacOS X does it and (back then) BeOS.
+daniel.poelzleithner wrote:
 
-Note that MacOS X actually accomplishes this by the GUI having a list
-(inside a file named '.hidden') of things not to show.
+>
+> Another tip is to your hd into a plastik bag and then into a fridge 
+> (not the ice box). Sometimes the motor stuck and gets free when he 
+> shrinks by the coolness.
 
-On my OSX partition, the contents of .hidden is:
-automount
-bin
-cores
-Desktop DB
-Desktop DF
-Desktop Folder
-dev
-etc
-lost+found
-mach
-mach_kernel
-mach.sym
-opt
-private
-sbin
-tmp
-Trash
-usr
-var
-VM Storage
-Volumes
+Giving it a sharp twist along the axis of rotation will have a similar 
+effect.
+
+>
+> Good luck
+>  daniel
+>
 
 
-Also, you'll notice that dot files are also hidden it the GUI.
+-- 
+Hans
 
-A patch to nautilus to do this would be pretty simple, although then you
-get into the problems of hiding a lot of stuff from the user (which you
-may not want to).
-
-OSX has the /System and /Library hierarchies that are familiar (enough)
-to mac users, and the only parts that are really hidden is all that UNIX
-stuff.
-
-Maybe a gnome-vfs layer that interfaced with the packaging system would
-make things a bit easier for newbies? i.e. essentially a drag-and-drop
-version of apt and dpkg?
-
-If you had a seperate hidden attribute (as well as the dot files
-convention) you'd have a lot of old-hat unix people not looking for such
-things, and when a 'ls -a' didn't show them, they'd assume they weren't
-there. Not good for security.
-
-Although, for things like .snapshot, which are file system provided,
-such an approach works fine.
 
