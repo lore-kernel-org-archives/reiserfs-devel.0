@@ -1,42 +1,65 @@
-From: Gergely Tamas <dice@mfa.kfki.hu>
-Subject: Re: data logging and quota updated for 2.4.23
-Date: Thu, 4 Dec 2003 17:51:31 +0100
-Message-ID: <20031204165131.GB24470@mfa.kfki.hu>
-References: <1070553889.27611.147.camel@tiny.suse.com>
+From: Stephan Seitz <nur-ab-sal@gmx.de>
+Subject: Re: Status data loggin patches?
+Date: Thu, 4 Dec 2003 17:54:26 +0100
+Message-ID: <20031204T1751.GA.40cb0.stse@fsing.fs.uni-sb.de>
+References: <20031203T1502.GA.5b882.stse@fsing.fs.uni-sb.de> <1070555939.27612.190.camel@tiny.suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-16229-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
+Return-path: <reiserfs-list-return-16230-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1070553889.27611.147.camel@tiny.suse.com>
+In-Reply-To: <1070555939.27612.190.camel@tiny.suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Chris Mason <mason@suse.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hi,
+--nFreZHaLTZJo0R7j
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- > 
- > ftp.suse.com/pub/people/mason/patches/data-logging/2.4.23
- > 
- > Will have a new version of the data logging and quota code as soon as
- > the suse mirror system copies it over.
- > 
+Hi!
 
-lftp ftp.suse.com:/pub/people/mason/patches/data-logging/2.4.23> ls
--rw-r--r--    1 suse     susewww       996 Dec 04 15:46 01-reiserfs-free-blocks.diff.gz
--rw-r--r--    1 suse     susewww      1010 Dec 04 15:46 02-akpm-b_journal_head-1.diff.gz
--rw-------    1 suse     susewww      5137 Dec 04 15:46 03-reiserfs-sync_fs-5.diff.gz
--rw-------    1 suse     susewww     39797 Dec 04 15:46 04-data-logging-40.diff.gz
--rw-------    1 suse     susewww     11680 Dec 04 15:46 05-reiserfs-quota-28.diff.gz
--rw-------    1 suse     susewww      1608 Dec 04 15:46 06-kinoded-9.diff.gz
--rw-r--r--    1 suse     susewww       396 Dec 04 15:49 06-write_times.diff.gz
--rw-r--r--    1 suse     susewww       792 Dec 04 15:50 README
+On Thu, Dec 04, 2003 at 11:38:59AM -0500, Chris Mason wrote:
+>I was trying to finalize journal-header patch, which improves
+>performance and data=3Dordered features in general.  But a few other
+>things ended up sucking down too much time and it didn't happen in time
+>for 2.4.23.  I think it is best right now for me to concentrate on 2.6
+>instead.
 
-Cannot access 03,04,05,06 ...
+Ah, thanks for the explanation and for your great work.
 
-Thanks,
-Gergely
+>> Are there versions for 2.6 to test? I would like to test the new=20
+>> kernel, but not without data logging patch.
+>2.6 data logging is coming along.  Data logging is actually a few
+>different pieces, and I'm pulling them apart for the 2.6 port.  First is
+>better performance for small transactions, second is the actual
+>data=3Dordered/data=3Djournal code.
+
+Can you give a timeline when someone can try the first patches?
+
+Shade and sweet water!
+
+	Stephan
+
+--=20
+| Stephan Seitz                   E-Mail: Nur-Ab-Sal@gmx.de |
+|          WWW: http://fsing.fs.uni-sb.de/~stse/            |
+| PGP Public Keys: http://fsing.fs.uni-sb.de/~stse/pgp.html |
+
+--nFreZHaLTZJo0R7j
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+
+iD8DBQE/z2bCXse+NwPOAZ4RAlDbAJ9pq+3fPNeAfMTIrtfGVKYCH06McgCgg9VB
+iPUlqdGqGvsInnLzjUXY85s=
+=hFVb
+-----END PGP SIGNATURE-----
+
+--nFreZHaLTZJo0R7j--
