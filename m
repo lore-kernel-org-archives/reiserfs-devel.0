@@ -1,73 +1,39 @@
-From: "Henning Westerholt" <henning-04@die.informatik.uni-siegen.de>
-Subject: fsck.reiser4 - can't find item plugin error
-Date: Thu, 19 Feb 2004 00:03:04 +0100 (CET)
-Message-ID: <47352.127.0.0.1.1077145384.squirrel@www.die.informatik.uni-siegen.de>
-Reply-To: henning-04@die.informatik.uni-siegen.de
+From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
+Subject: Re: nfs with reiserfs and ufs on freebsd
+Date: Thu, 19 Feb 2004 01:56:25 +0100
+Message-ID: <20040219015625.2b7ea991@philou.gramoulle.local>
+References: <20040218193033.74513.qmail@web80012.mail.yahoo.com>
+	<4033C4F9.2070509@gmx.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-16845-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-16846-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <4033C4F9.2070509@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: cmc2slack-lvm@yahoo.com
+Cc: Christian Mayrhuber <christian.mayrhuber@gmx.net>, reiserfs-list@namesys.com
+
 
 Hello,
 
-after three days with only minor load on this fs, fsck refuse to check my
-/tmp partition. Fsck.reiser4 produce the following error message:
+If you don't use BSD flock() nor O_EXCL in a dotlocking scheme, there shouldn't be any
+problem with NFS linux server and BSD client.
 
-Fscking the /dev/hdd6 block device.
-Will check the consistency of the Reiser4 SuperBlock.
-Will check the consistency of the Reiser4 FileSystem.
-Continue? Yes
-***** Opening the fs.
-Reiser4 was detected on the /dev/hdd6.
-Master super block (16):
-magic:       ReIsEr4
-blksize:     4096
-format:      0x0 (format40)
-label:       <none>
+Ref: http://marc.theaimsgroup.com/?l=linux-nfs&m=107039404809687&w=2
 
-Format super block (17):
-plugin:      format40
-magic:       ReIsEr40FoRmAt
-flushes:     0
-mkfs id:     0x373cff3b
-blocks:      204820
-free blocks: 204464
-root block:  505
-tail policy: 0x4 (smart)
-next oid:    0x26a4d
-file count:  37
-tree hight:  2
-key policy:  LARGE
+Thanks,
 
-***** Tree Traverse Pass: scanning the reiser4 internal tree.
-Error: Can't find item plugin by its id 0x8.
-Error: Node(501): Failed to open the item(1).
-Error: Can't find item plugin by its id 0x8.
-Read Nodes...
+Philippe
 
+On Wed, 18 Feb 2004 21:03:05 +0100
+Christian Mayrhuber <christian.mayrhuber@gmx.net> wrote:
 
-****** Twig Scan:
-
-****** Semantic Traverse Pass:
-Error: Can't find item plugin by its id 0x8.
-Time...
-Closing fs...done
-
-Operational error occured while fscking.
------
-
-Oh, and the --auto or --preen option of fsck doesn't work for me. Is this
-a know issue?
-
-
-Best regards,
-
-Henning
-
-
+  | Your information must be wrong.
+  | Reiserfs works very well with nfs since a long time ago.
+  | I don't know the exact kernel version but the nfs bugs
+  | were ironed out in the early 2.4.x kernel series.
+  | I haven't tried the combination Linux -> FreeBSD, though.
