@@ -1,92 +1,79 @@
-From: "Thorsten Kohfeldt" <thorsten.kohfeldt@gmx.de>
-Subject: Re: bug+fix in reiserfsck - reiserfscore/journal.c
-Date: Fri, 27 Feb 2004 05:44:09 +0100
-Message-ID: <006801c3fcec$59649030$e91ba8c0@thk.local>
-References: <002601c3fc49$815d1880$e91ba8c0@thk.local> <1077843286.8641.36.camel@watt.suse.com> <403EBC24.6000701@namesys.com>
-Reply-To: "Thorsten Kohfeldt" <thorsten.kohfeldt@gmx.de>
+From: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
+Subject: Re: AS performance with reiser4 on 2.6.3
+Date: Fri, 27 Feb 2004 11:43:42 +0100
+Message-ID: <403F1F5E.9000704@futuretg.com>
+References: <200402261748.i1QHmJE12429@mail.osdl.org> <16446.13520.5837.193556@laputa.namesys.com> <403EBB87.2070504@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16954-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16959-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <403EBB87.2070504@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Hans Reiser <reiser@namesys.com>, Chris Mason <mason@suse.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Cc: markw@osdl.org, Carl Johnson <cjohnson@osdl.org>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
+Dear Mark,
 
------ Original Message -----
-From: "Hans Reiser" <reiser@namesys.com>
-To: "Chris Mason" <mason@suse.com>
-Cc: "Thorsten Kohfeldt" <thorsten.kohfeldt@gmx.de>;
-<reiserfs-list@namesys.com>
-Sent: Friday, February 27, 2004 4:40 AM
-Subject: Re: bug+fix in reiserfsck - reiserfscore/journal.c
+    I appreciate the OSDL efforts and graphs you offer for ReiserFS 4, 
+but I will
+    appreciate a lot more if you adopt a distro that adopt ReiserFS 
+like: SuSE, Lindows or our FTOSX.
 
+    For us ReiserFS is important for RedHat really don't.
 
-> Chris Mason wrote:
+    So, I don't want to see again the RedHat 9, name here:
+       http://developer.osdl.org/markw/fs/dbt2_stp_results.html
+
+Thanks very much,
+Giovanni
+
+> Nikita Danilov wrote:
 >
-> >On Thu, 2004-02-26 at 04:18, Thorsten Kohfeldt wrote:
-> >
-> >
-> >>To whom it may (should!) concern,
-> >>26-FEB-2004
-> >>
-> >>after having been annoyed for quite some time by corrupt /var file
-> >>systems after
-> >>(simulated) powerloss in a SuSE 9.0 setup with reiserfs, I finally
-> >>tracked the
-> >>problem down to a nasty bug in reiserfsck - reiserfscore/journal.c
-> >>
-> >>Turned out that the journal is not always correctly replayed by
-> >>reiserfsck !
-> >>
-> >>
-> >
-> >Thank you very much for the patch, I'll review it and try to get a fix
-> >out asap inside suse.
-> >
-> >[ transaction id wrapping ]
-> >
-> >
-> >>
-> >>For a starter, I added a patch that fixes one wrap around issue inside
-> >>journal.c. Take it or leave it.
-> >>
-> >>
-> >
-> >Thanks, I'll play around with this and perhaps a few alternatives.
-> >
-> >-chris
-> >
-> >
-> >
-> >
-> Is this bug present in the mainstream kernel?  Why suse only?
+>> markw@osdl.org writes:
+>> > Hi Nick,
+>> > > I started getting some results with dbt-2 on 2.6.3 and saw that 
+>> reiser4
+>> > is doing a bit worse with the AS elevator.  Although reiser4 wasn't
+>> > doing well to begin with, compared to the other filesystems.  I have
+>> > links to the STP results on our 4-ways and 8-ways here:
+>> >     http://developer.osdl.org/markw/fs/dbt2_stp_results.html
+>>
+>> There were no changes between 2.6.2 and 2.6.3 that could affect reiser4
+>> performance, so it is not clear why numbers are so different. Probably
+>> results should be averaged over several runs.
+>>
+> The differences don't "feel" like testing error, and in any event 
+> something is seriously wrong.  That something is either poor fsync 
+> performance, or poor scalability.  In any event, please investigate, 
+> and please try such things as using capture on copy.  Mark, does this 
+> benchmark like to use fsync?
 >
-> --
-> Hans
-
-
-
-The problem is NOT located in the SuSE kernel,
-but in reiserfsprogs (at least reiserfsck/fsck.reiserfs).
-
-Because the SuSE kernel has Chris's data logging patches, I
-do NOT know wether a mainstream kernel includes that
-original reiserfsprogs reiserfscore/journal.c.
-I hereby forward that question to your core programmer team.
-
-Anyway, the problem DEFINITELY exists in the GENERAL
-version of reiserfsprogs (at least in reiserfsck).
-
-General reiserfs users are advised to patch their reiserfsprogs
-with the first inline diff of my original mail.
-
-I expect to see reiserfsprogs V 3.6.14 VERY soon.
-
-Thorsten
-
+> Thanks much mark for bringing this to our attention.
+>
+>> Also can you run test with
+>>
+>> http://www.namesys.com/snapshots/2004.02.25/extra/e_05-proc-sleep.patch
+>>
+>> applied? To use it turn CONFIG_PROC_SLEEP on (depends on
+>> CONFIG_FRAME_POINTER), and do "cat /proc/sleep" before and after test
+>> run.
+>>
+>> > > -- > Mark Wong - - markw@osdl.org
+>>
+>> Nikita.
+>> -
+>> To unsubscribe from this list: send the line "unsubscribe 
+>> linux-kernel" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Please read the FAQ at  http://www.tux.org/lkml/
+>>
+>>
+>>  
+>>
+>
+>
 
