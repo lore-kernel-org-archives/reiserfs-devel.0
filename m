@@ -1,49 +1,109 @@
-From: Chris Worley <cworley@symbionsys.com>
-Subject: Re: SUSE 9.1 with ReiserFS:  / won't fsck, but is otherwise fine
-Date: Mon, 27 Sep 2004 16:40:02 -0600
-Message-ID: <1096324801.9096.41.camel@xserver.local.net>
-References: <1095996040.10293.18.camel@xserver.local.net>
-	 <200409241116.09066.vitaly@namesys.com>
-	 <1096032016.17001.4.camel@xserver.local.net>
-	 <200409271844.11580.vitaly@namesys.com>
-	 <1096301165.9096.14.camel@xserver.local.net>  <41589155.1050405@gmx.net>
+From: f00bar <f00bar@sbcglobal.net>
+Subject: Re: I/O Errors
+Date: Mon, 27 Sep 2004 17:26:45 -0700 (PDT)
+Message-ID: <20040928002645.19446.qmail@web80810.mail.yahoo.com>
+References: <20040927155307.GC28617@backtop.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21943-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21944-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <41589155.1050405@gmx.net>
+In-Reply-To: <20040927155307.GC28617@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: evilninja <evilninja@gmx.net>
+Content-Transfer-Encoding: 7bit
+To: Alex Zarochentsev <zam@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-On Mon, 2004-09-27 at 16:16, evilninja wrote:
-> ah, now this is funny. dd doesn't care about the filesystem and can't even
-> read the device. 
-> this does not seem like a (reiser-)fs issue, more like a
-> corrupted partition table / device
+Hi Alex,
 
-I agree that it's not a reiser issue... but, how did it get mounted in
-the first place?
+Thanks for your assistance.
 
->  (if the data on
-> /dev/mapper/system-lvol0 is not (!) important, you could play around with
+When I mount the partition, (actually a logical
+volume) the following is written to syslog.
 
-I find the root partition an invaluable part of the system.  So, I'm not
-going to destroy it on purpose.  I'm not quite sure how to boot without
-a root partition ;)
+Sep 27 19:17:32 yin-yang ef_hash_table: 8192 buckets
+Sep 27 19:17:32 yin-yang z_hash_table: 8192 buckets
+Sep 27 19:17:32 yin-yang z_hash_table: 8192 buckets
+Sep 27 19:17:32 yin-yang j_hash_table: 16384 buckets
+Sep 27 19:17:32 yin-yang loading reiser4
+bitmap......done (148 jiffies)
+Sep 27 19:17:32 yin-yang d_cursor_hash_table: 256
+buckets
 
-I'm really looking for a non-destructive way to test/repair whatever has
-happened.  The partitioning seems fine (an ext3 boot directory of a few
-MB, an 8GB swap, and the root partition):
 
-   Device Boot      Start         End      Blocks   Id  System
-/dev/hda1   *           1           5       40131   83  Linux
-/dev/hda2               6         979     7823655   82  Linux swap
-/dev/hda3             980       30515   237247920   8e  Linux LVM
+I perform an "ls" the following is written to the
+console (I assume stderr) but nothing is written to
+syslog.
 
-Chris
+ls: reading directory /var/tmp/portage: Input/output
+error
+total 0
+
+
+
+The following is the output from fsck:
+
+yin-yang log # fsck.reiser4 /dev/vgsdc1/reiser4
+*******************************************************************
+This is an EXPERIMENTAL version of fsck.reiser4. Read
+README first.
+*******************************************************************
+
+Fscking the /dev/vgsdc1/reiser4 block device.
+Will check the consistency of the Reiser4 SuperBlock.
+Will check the consistency of the Reiser4 FileSystem.
+Continue?
+(Yes/No): yes
+***** fsck.reiser4 started at Mon Sep 27 19:23:14 2004
+Reiser4 journal (journal40) on /dev/vgsdc1/reiser4: 0
+transactions replayed of the total 0 blocks.
+Reiser4 fs was detected on /dev/vgsdc1/reiser4.
+Master super block (16):
+magic:          ReIsEr4
+blksize:        4096
+format:         0x0 (format40)
+uuid:           3581757c-9576-4ed6-ba21-59863d2950b1
+label:          <none>
+
+Format super block (17):
+plugin:         format40
+description:    Disk-format for reiser4, ver.
+1.0.2-pre1
+magic:          ReIsEr40FoRmAt
+flushes:        0
+mkfs id:        0x4e9bfc27
+blocks:         553984
+free blocks:    553937
+root block:     23
+tail policy:    0x2 (smart)
+next oid:       0x10000
+file count:     0
+tree height:    2
+key policy:     LARGE
+
+
+CHECKING STORAGE TREE
+        Read nodes 2
+        Nodes left in the tree 2
+                Leaves of them 1, Twigs of them 1
+        Time interval: Mon Sep 27 19:23:14 2004 - Mon
+Sep 27 19:23:14 2004
+CHECKING EXTENT REGIONS.
+        Read twigs 1
+        Time interval: Mon Sep 27 19:23:14 2004 - Mon
+Sep 27 19:23:14 2004
+CHECKING SEMANTIC TREE
+        Found 1 objects.
+        Time interval: Mon Sep 27 19:23:14 2004 - Mon
+Sep 27 19:23:14 2004
+***** fsck.reiser4 finished at Mon Sep 27 19:23:14
+2004
+Closing fs...done
+
+FS is consistent.
+
+Regards,
+John Baxter
 
