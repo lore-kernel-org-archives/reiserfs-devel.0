@@ -1,45 +1,59 @@
-From: Sam Vilain <sam@vilain.net> (by way of Sam Vilain <sam@vilain.net>)
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Corrupted/unreadable journal: reiser vs. ext3
-Date: Fri, 14 Feb 2003 13:18:33 +1300
-Sender: Sam Vilain <sv@vilain.net>
-Message-ID: <200302141318.33057.sam@vilain.net>
+Date: Fri, 14 Feb 2003 03:32:42 +0300
+Message-ID: <3E4C392A.2070909@namesys.com>
+References: <3E4AA902.86F15815@interface-ag.com> <b2h7dc$ipp$1@satsuki.furryterror.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12750-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12751-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <b2h7dc$ipp$1@satsuki.furryterror.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Zygo Blaxell <eazgwmir@umail.furryterror.org>
 Cc: reiserfs-list@namesys.com
 
-On Thu, 13 Feb 2003 16:42, Zygo Blaxell wrote:
-> Last time I checked, Windows and Mac OS come to a near total halt when
-> they see a disk error while doing a write on non-removable media, unles=
-s
-> the application goes to extraordinary lengths to handle the error
-> itself.
+Zygo Blaxell wrote:
 
-Perhaps it might, but it sure does a good job of cleaning them up with
-ScanDisk.  And it almost certainly won't BSOD for a bad sector.
+>>Hans Reiser wrote (in response to Anders Widman):
+>>    
+>>
+>>>If we handle the journal block error without downtime, the user will 
+>>>never chuck the hard drive, and that is bad in the longterm.
+>>>      
+>>>
+>>Not agreed, unless you continue without a warning.
+>>    
+>>
+>
+>I'd prefer to continue in read-only mode, and refuse further read-write
+>mounts with an error until the filesystem is fscked.
+>
+Yes, I agree with that.
 
-My experience is that it partially hangs the system while it retries the
-write, but eventually comes back and the application either has died or
-returns an error.  I actually think it's comparitively graceful.  I mean,
-Windows might crash if you sneeze at it for no reason whatsoever, but it
-handles disk errors quite well most of the time.  Baby's First FileSystem
-(FAT) just doesn't have any structure to lose, which sure makes it
-resilient.  Even if you get a bad block in the FAT it survives, because
-there are two copies of it!
+>  I really like
+>systems that can still boot and let me (attempt to) run diagnostic
+>tools even when they're otherwise really unhealthy.  I don't care if
+>recently written data is corrupt or missing--I probably didn't write to
+>the diagnostic tools within the last journal interval, and if the
+>filesystem is read-only I can't make any metadata corruption worse.
+>
+>I would think that most people notice that something's wrong if they
+>can't write to their filesystems any more.  I certainly wouldn't want
+>the filesystem to be modified if there's something known to be wrong
+>with the metadata.  But if I can't read any of the data at all because
+>some tiny part of it is suspicious, I just get annoyed.  :-P
+>
+>  
+>
 
-Windows doesn't handle resetting the IDE bus when it needs it very well,
-I've seen one disk that didn't work in Windows but worked passably in
-Linux because of this.  Of course it died a few months later :-).
---
-Sam Vilain, sam@vilain.net
+Agreed.  I think that this is actually what we do currently.  Oleg, can 
+you check that?
 
-Real software engineers like C's structured constructs, but they are
-suspicious of it because they have heard that it lets you get "close
-to the machine."
+-- 
+Hans
+
+
