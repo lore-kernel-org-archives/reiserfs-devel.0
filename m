@@ -1,41 +1,115 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: "df -i" support
-Date: Fri, 14 May 2004 15:30:33 -0400
-Message-ID: <40A51E59.5060708@suse.com>
-References: <20040513093432.52d3d7a3.turtle.power@wanadoo.es> <1084439945.14090.6209.camel@tribesman.namesys.com> <20040514173227.5b0541b5.turtle.power@wanadoo.es> <200405141655.i4EGtrAT007250@turing-police.cc.vt.edu> <20040514194040.22389128.turtle.power@wanadoo.es> <1084557009.3263.7.camel@localhost.localdomain> <20040514202627.18ddc7b2.turtle.power@wanadoo.es>            <20040514184823.GG18086@schnapps.adilger.int> <200405141906.i4EJ6gZF030124@turing-police.cc.vt.edu>
+From: Clifford Beshers <clifford.beshers@lindows.com>
+Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Date: Fri, 14 May 2004 12:41:15 -0700
+Message-ID: <40A520DB.4080200@lindows.com>
+References: <20040329185901.62166.qmail@web25008.mail.ukl.yahoo.com> <406885F1.9040409@mrs.umn.edu> <40A587FF.30103@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18703-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;boundary="------------080006040909050903050104"
+Return-path: <reiserfs-list-return-18704-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200405141906.i4EJ6gZF030124@turing-police.cc.vt.edu>
+In-Reply-To: <40A587FF.30103@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Valdis.Kletnieks@vt.edu
-Cc: Andreas Dilger <adilger@clusterfs.com>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Valdis.Kletnieks@vt.edu wrote:
-> On Fri, 14 May 2004 12:48:23 MDT, Andreas Dilger said:
-> 
-> 
->>Hmm, why wouldn't reiserfs_statfs() just use that number for the "in use"
->>inodes in the first place?  Sadly, the statfs() interface is broken in
->>the sense that it contains "total" inodes and "free" inodes instead of
->>"in use" inodes, but it shouldn't be difficult to just subtract the
->>number of in-use inodes from 2^32-1 and stick that into the "free" field
->>so that when user-space does the reverse it gets the right number.
-> 
-> 
-> If you get a multi-terabyte filesystem that contains more than 2^32-1 files,
-> things will get very pear-shaped....
+--------------080006040909050903050104
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-If you get a ReiserFS v3 filesystem to contain more than 2^32-1 files, 
-you've violated the disk format.
+Hans Reiser wrote:
 
--Jeff
+> Grant Miner wrote:
+>
+>> Someone mentioned earlier, and I like just the at sign: @ Think of it 
+>> short for "attributes".
+>>
+>> file/@/uid
+>>
+>> The nice thing about @ is it shows up early lexicographically, it's 
+>> short and unlikely to be used.  This name is important to pick well 
+>> because it will likely set a long precedent.
+>>
+> It would be a problem for utilities like scp....
+>
+Hans, are you sure?  I tried some examples and had no troubles.  From my 
+history:
 
--- 
-Jeff Mahoney
-SuSE Labs
+      588  cd ~/tmp
+      589  mkdir -p foo/@
+      590  touch foo/@/uid
+      591  scp -rp foo/@/uid stan:/tmp
+      592  ssh stan 'mkdir -p /tmp/foo/@ ; touch /tmp/foo/@/uid'
+      593  scp -rp stan:/tmp/foo/@ .
+
+I'm not sure if @ is a good choice or not, but I don't think it would 
+actually cause trouble syntactically, because everything expecting 
+hostnames looks for a colon.
+
+--
+
+This message contains information which may be confidential and privileged. Unless you are the 
+addressee (or authorized to receive for the addressee), you may not use, copy or disclose to anyone 
+the message or any information contained in the message. If you have received the message in error, 
+please advise the sender and delete the message.  Thank you.
+
+--------------080006040909050903050104
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+  <title></title>
+</head>
+<body text="#000000" bgcolor="#ffffff">
+Hans Reiser wrote:<br>
+<blockquote type="cite" cite="mid40A587FF.30103@namesys.com">Grant
+Miner wrote:
+  <br>
+  <br>
+  <blockquote type="cite">Someone mentioned earlier, and I like just
+the at sign: @ Think of it short for "attributes".
+    <br>
+    <br>
+file/@/uid
+    <br>
+    <br>
+The nice thing about @ is it shows up early lexicographically, it's
+short and unlikely to be used.&nbsp; This name is important to pick well
+because it will likely set a long precedent.
+    <br>
+    <br>
+  </blockquote>
+It would be a problem for utilities like scp....
+  <br>
+  <br>
+</blockquote>
+Hans, are you sure?&nbsp; I tried some examples and had no troubles.&nbsp; From
+my history:<br>
+<br>
+<blockquote>&nbsp; 588&nbsp; cd ~/tmp<br>
+&nbsp; 589&nbsp; mkdir -p foo/@<br>
+&nbsp; 590&nbsp; touch foo/@/uid<br>
+&nbsp; 591&nbsp; scp -rp foo/@/uid stan:/tmp<br>
+&nbsp; 592&nbsp; ssh stan 'mkdir -p /tmp/foo/@ ; touch /tmp/foo/@/uid'<br>
+&nbsp; 593&nbsp; scp -rp stan:/tmp/foo/@ .<br>
+</blockquote>
+I'm not sure if @ is a good choice or not, but I don't think it would
+actually cause trouble syntactically, because everything expecting
+hostnames looks for a colon.<br>
+<BR><PRE>
+--
+
+This message contains information which may be confidential and privileged. Unless you are the 
+addressee (or authorized to receive for the addressee), you may not use, copy or disclose to anyone 
+the message or any information contained in the message. If you have received the message in error, 
+please advise the sender and delete the message.  Thank you.
+</pre><BR></body>
+</html>
+
+--------------080006040909050903050104--
+
