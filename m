@@ -1,67 +1,66 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: minor and major locality of key in reiser4
-Date: Tue, 28 Dec 2004 19:18:14 +0300
-Message-ID: <1104250694.4673.27.camel@tribesman.namesys.com>
-References: <20041228115957.56981.qmail@web60109.mail.yahoo.com>
+From: Adrian Ulrich <reiser4@blinkenlights.ch>
+Subject: Re: Why is Reiser4 slower then ReiserFS v3
+Date: Tue, 28 Dec 2004 19:52:39 +0100
+Message-ID: <20041228195239.3a1531d5.reiser4@blinkenlights.ch>
+References: <231dafb5041227123867a2c873@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-22924-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-22925-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20041228115957.56981.qmail@web60109.mail.yahoo.com>
+In-Reply-To: <231dafb5041227123867a2c873@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Pallavi Dalya <pallavidalya@yahoo.com>
-Cc: reiser-list mailing <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Hello
+I also noticed some odd slowness of reiser4
 
-On Tue, 2004-12-28 at 14:59, Pallavi Dalya wrote:
-> hello,
->  
-> While reading a file we give the name of the file. The semantic layer
-> converts the name into key. The directory plugin item contains the key
-> for the file (which we call a common part). This key is then
-> manipulated by the storage layer to reach the actual offset we want to
-> read and we get the data.
->  
-> But how does the sematic layer converts the name in the key.
+(Running 2.6.10 using the latest 2.6.10-rcsomething reiser4 patch)
 
-Sorry, I do not understand what do you mean by "semantic layer".
 
->  I found out that the semantic layer makes use of graph and not a
-> tree. But in order to use the graph  atleast the "/" address has to be
-> stored somewhere. In which structure (e.g inode,superblock,..etc) is
-> the address stored. Also the semantic layer is the graph that means it
-> does not make use of the actual tree to find the key from the file
-> name .Again the key for a file is stored in directory pluign or
-> directory item which is stored in the tree.
+What i did:
 
-Plugin is a set of function. Item is data which can be found in reiser4
-tree if its key is known.
+ I created a small script wich creates MANY (= 195075) directories
+ like this: 1/[1-3]/[1-255]/[1-255]
 
->  That means the semantic layer has to traverse the tree to get the
-> key. but how can it traverse the tree without a key .This is rather
-> confusing.
+ After this, i ran 'sync && find . > /dev/null && rm -rf *'
 
-It traverses with key.
+ Well, it's not a good test, but compare the speed of 
+ the 'find' and 'rm -rf' part beteween ReiserFS and Reiser4 :-/
 
->  
-> Basically i want to know what actually the semantic layer does to
-> convert a filename into a key.
+reiser3
 
-please take a look at fs/reiser4/kassign.h:build_entry_key_common()
-this function is used to calculate a key of directory entry if objectid
-of directory to look through and file name are known.
+#./mkdirs.pl
+real    5m21.194s
+user    1m12.323s
+sys     4m6.740s
 
->  
-> Regards,
-> Pallavi
-> 
-> 
-> ______________________________________________________________________
->  Yahoo! Messenger - Communicate instantly..."Ping" your friends today!
-> Download Messenger Now
+#find . > /dev/null
+real    0m6.419s
+user    0m0.940s
+sys     0m5.159s
+
+#rm -rf *
+real    0m24.357s
+user    0m1.558s
+sys     0m22.797s
+
+reiser4
+
+#./mkdirs.pl
+real    6m21.996s
+user    1m13.395s
+sys     5m8.233s
+
+#find . > /dev/null
+real    0m16.006s
+user    0m3.323s
+sys     0m12.676s
+
+#rm -rf *
+real    5m58.963s  <-- OUCH!
+user    0m7.962s
+sys     5m50.870s
 
