@@ -1,35 +1,174 @@
-From: Soeren Sonnenburg <reiserfs@nn7.de>
-Subject: Re: trouble with reiserfs on ppc vs-3050:
-	wait_buffer_until_released ...
-Date: 27 Apr 2003 00:46:53 +0200
-Message-ID: <1051397193.1232.4.camel@localhost>
-References: <1051258287.5564.1.camel@fortknox>
-	 <1051259723.3513.7.camel@localhost> <20030425084742.GA22827@namesys.com>
-	 <1051261556.3513.31.camel@localhost> <20030425091916.GG10802@namesys.com>
-	 <1051263219.1642.10.camel@localhost> <20030425094630.GH10802@namesys.com>
-	 <1051265575.1656.37.camel@localhost>  <20030425102812.GA24352@namesys.com>
+From: "Serge Rodrigues" <serge@onpoi.net>
+Subject: some troubles with mounting reiserfs
+Date: Sun, 27 Apr 2003 12:25:18 +0200
+Message-ID: <000001c30ca7$50708910$0432a8c0@dell8100>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13831-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0001_01C30CB8.13F95910"
+Return-path: <reiserfs-list-return-13833-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030425102812.GA24352@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Fri, 2003-04-25 at 12:28, Oleg Drokin wrote:
-> Ok, is this a new box? any chance to check if the memory is right?
+------=_NextPart_000_0001_01C30CB8.13F95910
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-ok, so I ran the memtest tool for a night without it finding any
-errors... I did a full compare (not only md5sums) over network with the
-files I have on disk... they were the same... I let bonnie run and
-checked for corruption... nothing ... 
+Hi all,
 
-Looks like all I can do is keeping an eye on it.
+ 
 
-Soeren.
+            I have some troubles when I want to mount a reiserfs
+partition I use the command :
+
+ 
+
+            Mount -t reiserfs /dev/hdb1 /mnt/xxx
+
+ 
+
+            The result is
+
+ 
+
+            Mount : wrong fs type, bad options, bad superblock on
+/dev/hdb1 or too many mounted file systems
+
+ 
+
+            I've tried 
+
+ 
+
+fsck.reiserfs -check
+
+ 
+
+            The result :
+
+ 
+
+                        The problem has occurred looks like a hardware
+problem
+
+                        Check your hard drive badblocks
+
+ 
+
+                        Bread : Cannot read the block (17760256)
+
+ 
+
+            Try :
+
+ 
+
+            Badblocks -n -s -b 4096 /dev/hdb1 18000000 17700000
+
+ 
+
+            The Result :
+
+ 
+
+            All seems ok
+
+ 
+
+            When I use : 
+
+ 
+
+debug.reiserfs /dev/hdb1
+
+ 
+
+The Result :
+
+ 
+
+<-------------debugreiserfs, 2002------------->
+
+reiserfsprogs 3.6.4
+
+ 
+
+ 
+
+Filesystem state: consistent
+
+ 
+
+Reiserfs super block in block 16 on 0x341 of format 3.6 with standard
+journal
+
+Count of blocks on the device: 20010808
+
+Number of bitmaps: 611
+
+Blocksize: 4096
+
+Free blocks (count of blocks - used [journal, bitmaps, data, reserved]
+blocks): 11317287
+
+Root block: 8384
+
+Filesystem is cleanly umounted
+
+Tree height: 4
+
+Hash function used to sort names: "r5"
+
+Objectid map size 2, max 972
+
+Journal parameters:
+
+        Device [0x0]
+
+        Magic [0x0]
+
+        Size 8193 blocks (including 1 for journal header) (first block
+18)
+
+        Max transaction length 0 blocks
+
+        Max batch size 0 blocks
+
+        Max commit age 0
+
+Blocks reserved by journal: 0
+
+Fs state field: 0x0
+
+sb_version: 2
+
+inode generation number: 94
+
+UUID: 00000000-0000-0000-0000-000000000000
+
+LABEL:
+
+Set flags in SB:
+
+ 
+
+ 
+
+How to solve this problem ??
+
+ 
+
+ 
+
+Thx a lot
+
+ 
+
+
+------=_NextPart_000_0001_01C30CB8.13F95910--
+
 
