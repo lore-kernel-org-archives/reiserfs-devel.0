@@ -1,46 +1,46 @@
-From: Paul Jackson <pj@sgi.com>
+From: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>
 Subject: Re: silent semantic changes with reiser4
-Date: Wed, 25 Aug 2004 23:53:58 -0700
-Message-ID: <20040825235358.36626f06.pj@sgi.com>
-References: <20040824202521.GA26705@lst.de>
-	<412CEE38.1080707@namesys.com>
-	<20040825152805.45a1ce64.akpm@osdl.org>
-	<112698263.20040826005146@tnonline.net>
-	<Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org>
-	<1453698131.20040826011935@tnonline.net>
-	<20040825163225.4441cfdd.akpm@osdl.org>
-	<20040825233739.GP10907@legion.cup.hp.com>
-	<20040825234629.GF2612@wiggy.net>
-	<1093480940.2748.35.camel@entropy>
-	<20040826044425.GL5414@waste.org>
-	<1093496948.2748.69.camel@entropy>
+Date: Thu, 26 Aug 2004 10:34:38 +0300
+Sender: linux-fsdevel-owner@vger.kernel.org
+Message-ID: <200408261034.38509.vda@port.imtp.ilyichevsk.odessa.ua>
+References: <20040825152805.45a1ce64.akpm@osdl.org> <1093496948.2748.69.camel@entropy> <20040826053200.GU31237@waste.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20576-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <1093496948.2748.69.camel@entropy>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20040826053200.GU31237@waste.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Nicholas Miell <nmiell@gmail.com>
-Cc: mpm@selenic.com, wichert@wiggy.net, jra@samba.org, akpm@osdl.org, spam@tnonline.net, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+To: Matt Mackall <mpm@selenic.com>, Nicholas Miell <nmiell@gmail.com>
+Cc: Wichert Akkerman <wichert@wiggy.net>, Jeremy Allison <jra@samba.org>, Andrew Morton <akpm@osdl.org>, Spam <spam@tnonline.net>, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-> "OMG! It breaks tar and email!!!" argument doesn't fly. Things break all
-> the time and are fixed. It's called progress.
+> > > A file is a stream of bytes.
+> >
+> > "OMG! It breaks tar and email!!!" argument doesn't fly. Things break all
+> > the time and are fixed. It's called progress.
+>
+> What it breaks is the concept of a file. In ways that are ill-defined,
+> not portable, hard to work with, and needlessly complex. Along the
+> way, it breaks every single application that ever thought it knew what
+> a file was.
+>
+> Progress? No, this has been done before. Various dead operating
+> systems have done it or similar and regretted it. Most recently MacOS,
+> which jumped through major hurdles to begin purging themselves of
+> resource forks when they went to OS X. They're still there, but
+> heavily deprecated.
+>
+> > cp, grep, cat, and tar will continue to work just fine on files with
+> > multiple streams.
+>
+> Find some silly person with an iBook and open a shell on OS X. Use cp
+> to copy a file with a resource fork. Oh look, the Finder has no idea
+> what the new file is, even though it looks exactly identical in the
+> shell. Isn't that _wonderful_? Now try cat < a > b on a file with a
+> fork. How is that ever going to work?
+>
+> I like cat < a > b. You can keep your progress.
 
-Yes - we break things all the time.  But we take notice, when we are
-breaking things, of how long standing and deeply embedded they are.
-
-The deeper the roots, the more respect we show it, and the harder
-it will be to change.
-
-Heaping scorn on someone who is reluctant to change something as
-deeply embedded as "a file is a byte stream" does not further the
-discussion.
-
+cat <a >b does not preserve following file properties even on standard
+UNIX filesystems: name,owner,group,permissions.
 -- 
-                          I won't rest till it's the best ...
-                          Programmer, Linux Scalability
-                          Paul Jackson <pj@sgi.com> 1.650.933.1373
+vda
