@@ -1,90 +1,78 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: r5 hash detected, unable to force r5 hash
-Date: Sun, 21 Apr 2002 13:48:01 +0400
-Message-ID: <20020421134801.A2257@namesys.com>
-References: <20020419185715.GA3936@thebetteros.oche.de> <20020420150339.A28989@namesys.com> <20020420190025.GA6982@thebetteros.oche.de>
+From: Stefan Janecek <stefan.janecek@jku.at>
+Subject: Re: Overwritten files
+Date: 21 Apr 2002 20:00:14 +0200
+Message-ID: <1019412014.1898.4.camel@ising>
+References: <20020416105325.2a854a19.ikkeswar@dds.nl>
+	<1018978845.1035.5.camel@lappix> 
+	<20020417171507.74184f14.stefan.janecek@jku.at> 
+	<1019194872.1074.3.camel@lappix>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10096-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-10097-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <20020420190025.GA6982@thebetteros.oche.de>
+In-Reply-To: <1019194872.1074.3.camel@lappix>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com, fpage@thebetteros.oche.de
+To: reiserfs-list@namesys.com
 
-Hello!
+On Fri, 2002-04-19 at 07:41, Heinz-Josef Claes wrote:
+> Am Mit, 2002-04-17 um 17.15 schrieb Stefan Janecek:
+> > On 17 Apr 2002 07:27:37 +0200
+> > Heinz-Josef Claes <hjclaes@web.de> wrote:
+> > 
+> > > Am Die, 2002-04-16 um 10.53 schrieb Rutger Swarts:
+> > > > 
+> > > > Hi all, 
+> > > > 
+> > > > I do not know if this is the right place to post this, but I can't think of any better place, so here goes:
+> > > > 
+> > > > I recently discovered that one of my files was overwritten somehow. It resides on a reiserfs partition which is mounted read-only. The contents of the file where overwritten with parts of other files on seemingly random places and bits of ASCII text.
+> > > > 
+> > > > Looking over it now I see it contains parts of win32 applications (strings like "This program can not be run in dos mode") and XML files. I do not know if there are any other files affected by this (quite a lot of files on that partition) but I will check each file before I backup. 
+> > > > 
+> > > > Now my question:
+> > > > 
+> > > > Is this a known issue? if yes: what can I do about it? if no: what information do you need to reproduce/solve this problem? (stop it from happening again, that is)
+> > > > 
+> > > > Rutger Swarts
+> > > 
+> > > Hi,
+> > > 
+> > > do you boot the box sometimes with windows? I had a similar problem on a
+> > > laptop with windows 98 and linux (with ext2). Sometimes, windows seem to
+> > > overwrite the first partition and write onto the next one. This happend
+> > > two times in half a year. In my case, the linux installation was no
+> > > bootable any more.
+> > > 
+> > > Hope this helps,
+> > > Heinz-Josef Claes
+> > 
+> > This problem really seems to exist even though rather rarely... 
+> > I encountered it twice in about four years on a box running windows 98 - 
+> > both times it crashed while writing a rather large file, after reboot
+> > it seemed to have written on the linux partition located behind the windows
+> > partition.
+> > 
+> > If you need to know the exact windows version, harddisk and disk driver
+> > versions etc, I can try to find that box somewhere around here ...
+> > 
+> > HTH,
+> > Stefan.
+> Oops,
+> 
+> I only wanted to give a hint, that perhaps the described problem has
+> nothing to do with reiserfs. I do not have the problem any more, because
+> I don't have to user windows :-).
+.... lucky guy ;-)
 
-On Sat, Apr 20, 2002 at 09:00:25PM +0200, Frederick Page wrote:
-> >   Because it is clearly stated that if you want to convert to new hash,
-> >   you need to backup your data, reformat FS with new hash and put all the
-> >   data back.
-> I am still unable to find this in the docs. Could you please tell me,
-> which FM I obviously did not read?
+Stefan.
+> 
+> regards,
+> Heinz-Josef
+> 
+> 
+> 
 
-http://www.namesys.com/download.html lists linux kernel v2.4.18 as the
-recommended one.
-Also I remember it was mentioned somewhere that you cannot change hash that
-lightly (because I have learnt this info from somewhere ;) ), but
-I cannot find exact document right now.
-I will look deeply at Monday though.
-Man page certainly needs to clearly state you cannot change hash that easy.
-We will deal with it.
 
-> >   User errors are dealt with based on http://namesys.com/support.html
-> >   terms.
-> Feature: you can change the hash once, but then are stuck with it, you
-> cannot change it back (unless you rebuild the tree).
-
-Nope. You hit the kernel error that was fixed already.
-Fix went into 2.4.19-pre3 kernel, or thereabout. Though it was
-available as separate patch long before that.
-
-> Feature: mount does not give you any hint, that you are doing
-> something potentially harmful, which cannot be undone (reiserfsck does).
-
-Mount have nothing to do with it, it does not know anything about mount
-options.
-That was a kernel bug that allowed you to change a hash.
-
-> Feature: the documented mount-option "hash=r5" does not work, instead
-> gives message "error, r5 hash detected, unable to force r5 hash" (what
-> the message mean?). It even does this, when r5 is already in the
-> superblock.
-
-This is kernel error that is already fixed.
-
-> Feature: this "r5 detected, unable ..." persists since at least
-> September 2001.
-
-Obviously because nobody tried to used that before, I presume?
-
-> I really do appreciate your feedback, but at least I see a possibility
-> for the developer-team to improve reiserfs further. Please don't get
-
-Sure. There is always space to improve.
-Thank you very much for your feedback.
-
-> At least the mount-option "hash=r5" definately does *not* work as
-> documented. I'm still a little bit puzzled, why you did not even
-
-It did not work, I'd say.
-
-> acknowledge that, but put the blame entirely on me.
-
-If we won't do that, how can we collect our support money then? (joke).
-
-Seriously, you run old kernel, went into problems, and instead of upgrading
-to recommended kernel with recommended patches you just wrote your original
-letter.
-I think Linux is mostly "do/figure out it yourself" thing, you are either able
-to solve your problems based on information located elsewhere, or just
-do not touch anything without consulting with knowledgeable person.
-If you touched something you was not sure about and it broke - bah, bad luck.
-
-Times are changing, of course, no wonder about that.
-
-Bye,
-    Oleg
