@@ -1,51 +1,30 @@
-From: Oleg Drokin <green@namesys.com>
+From: Newsmail <newsmail@satimex.tvnet.hu>
 Subject: Re: lvm+loop-aes+reiserfs / iput deadlock fix
-Date: Thu, 30 Jan 2003 14:32:18 +0300
-Message-ID: <20030130143218.A1057@namesys.com>
+Date: Thu, 30 Jan 2003 13:43:07 +0100
+Message-ID: <5.2.0.9.2.20030130133238.03746610@pop.tvnet.hu>
 References: <5.2.0.9.2.20030129233147.02056cf8@pop.tvnet.hu>
+ <5.2.0.9.2.20030129233147.02056cf8@pop.tvnet.hu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-12557-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-12558-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <5.2.0.9.2.20030129233147.02056cf8@pop.tvnet.hu>
+In-Reply-To: <20030130143218.A1057@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 Content-Transfer-Encoding: 7bit
-To: Newsmail <newsmail@satimex.tvnet.hu>
+To: Oleg Drokin <green@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Hello!
+well, I'm using loop-aes'(loop-aes.sourceforge.net) AES128 on every HD, and 
+on top of that I use LVM, and reiserfs on top of all this. Of course I know 
+not only reiserfs changed in 2.4.20. First of all I'll set up a 2.4.20 at 
+my home pc, and I'll reproduce the problem there. then I'll try to revert 
+the 2.4.20-preX pending patches, and see what happens. if I find anything 
+I'll send it to you. if all this doesnt work out I'll set you up a remote 
+machine where the problem exists so you can investigate the problem there.
+regards,
+greg
 
-On Wed, Jan 29, 2003 at 11:34:10PM +0100, Newsmail wrote:
-> Where does process hang this time? (press SysRQ-T, decode the output and 
-> send it to me) ---->
-> could you please tell me what is SysRQ-T? btw its a remote machine...
 
-sysrq-T is combinatin of keys "Alt+PrtSc/SysRq+t" (three keys totally)
-that should be pressed simultaneusly (in this order.).
-You need to have sysrq enabled both in your kernel config and in 
-sysctl (modern discros tend to disable it for some reason).
-
-Well, if the box is remote, then may be you have serial console?
-You need to send <Break> followed by T, then (over your serial line).
-
-That will output list of currently running tasks and their stacks.
-
-> ps: well you say that its maybe a crypto-loop side problem, what I dont 
-> understand why it only came after 2.4.20-preX introduced, and it works 
-> absolutly without any problem on 2.4.19.
-
-Well, there were not only reiserfs changes in 2.4.20-pre series, you know.
-You can even take content of fs/reiserfs/{*.c,Makefile} and
-include/linux/reiserfs*.h from 2.4.19, put these into 2.4.20 kernel
-sources at appropriate places, recompile the kernel and see what will happen.
-
-I tried to write with reiserfs onto crypto-aes enabled loop device and
-wrote 20G of data (with scp) without any problems. So it seems I cannot
-reproduce that problem locally and I really need your help in debugging it.
-
-Bye,
-    Oleg
