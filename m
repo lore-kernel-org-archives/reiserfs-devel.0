@@ -1,62 +1,121 @@
-From: Dieter =?iso-8859-15?q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Subject: Re: Reiserfs with Samba vs NetApp Filer
-Date: Mon, 14 Oct 2002 23:24:14 +0200
-Message-ID: <200210142324.14617.Dieter.Nuetzel@hamburg.de>
-References: <200210121052.22603.bofh@coker.com.au> <20021014175909.GA10292@tapu.f00f.org> <200210142252.09438.bofh@coker.com.au>
+From: Nikita Danilov <Nikita@Namesys.COM>
+Subject: Re: /proc/fs/reiserfs question
+Date: Tue, 15 Oct 2002 10:45:27 +0400
+Message-ID: <15787.47495.344267.487496@laputa.namesys.com>
+References: <20021014160435.344ca55b.philippe.gramoulle@mmania.com>
+	<15786.54223.785138.49029@laputa.namesys.com>
+	<3DAB018D.2070904@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-11685-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11686-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200210142252.09438.bofh@coker.com.au>
-Content-Disposition: inline
+In-Reply-To: <3DAB018D.2070904@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Russell Coker <bofh@coker.com.au>, Chris Wedgwood <cw@f00f.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-9"
+To: Hans Reiser <reiser@namesys.com>
+Cc: =?KOI8-R?Q?Philippe_Gramoulle=27?= <philippe.gramoulle@mmania.com>, reiserfs <reiserfs-list@namesys.com>
 
-Am Montag, 14. Oktober 2002 22:52 schrieb Russell Coker:
-> On Mon, 14 Oct 2002 19:59, Chris Wedgwood wrote:
-> > On Sat, Oct 12, 2002 at 04:02:03PM -0700, The Amazing Dragon wrote:
+Hans Reiser writes:
+ > Nikita Danilov wrote:
+ >=20
+ > >Philippe Gramoull=E9 writes:
+ > > > Hi,
+ > > >=20
+ > > > Is there any documentation that gives the description for each line =
 
-[-]
-
-> > At present, you can't get 100MB/s sustained read off any IDE drive I'm
-> > aware off, not even for linear-read-out.  You *may* get 50MB/s on a
-> > high-end SCSI disk, most IDE drives seem to top out around 30MB/s.
->
-> In my tests IDE drives topped out at 30MB/s for sustained reads from the
-> start of the drive two years ago, one year ago they were approaching
-> 40MB/s.  I haven't tested the latest drives, but I expect them to be
-> faster...  Maybe the recently released IDE drives will sustain 50MB/s for
-> the first few dozen gigs at least...
-
-Very true, today.
-Maxtor, WD, IBM all aroung 45 MB/sec.
-W'll see what the next round bring (Maxtor 200-320 GB).
-
-But SCSI is there ~80 MB/sec (Maxtor, IBM) and Fujitsu is at 104/111 MB/sec=
+ > > > of each file in /proc/fs/reiserfs/sd(x,x)/*
+ > > >=20
+ > > > like what is the meaning of s_fix_nodes ? etc..
+ > >
+ > >I am afraid one has to dig it out of the sources. Here is description of
+ > >some fields displayed in "super", they pertain to the in-core
+ > >super-block:
+ > >
+ > >			"state": REISERFS_VALID_FS/REISERFS_ERROR_FS
+ > >
+ > >			"mount options": options given to mount
+ > >
+ > >			"gen. counter": file system "generation acounter"---this is
+ > >			incremented with each balancing.
+ > >
+ > >			"s_kmallocs": how many kmallocs (calls to general purpose
+ > >			kernel memory allocator) were performed by reiserfs code
+ > >
+ > >			"s_disk_reads": not maintained
+ > >
+ > >			"s_disk_writes": not maintained
+ > >
+ > >			"s_fix_nodes": how many time "fix-nodes" (1st phase of
+ > >			balancing) was performed.
+ > >
+ > >			"s_do_balance": how many times "do-balance" (2nd phase of
+ > >			balancing) was performed
+ > >
+ > >			"s_unneeded_left_neighbor": not maintained
+ > >
+ > >			"s_good_search_by_key_reada": not maintained
+ > >
+ > >			"s_bmaps": not maintained
+ > >
+ > >			"s_bmaps_without_search": not maintained
+ > >
+ > >			"s_direct2indirect": how many direct->indirect converions
+ > >			were performed
+ > >
+ > >			"s_indirect2direct": how many indirect->direct converions
+ > >			were performed
+ > >
+ > >			"max_hash_collisions": maximal hash collision met so far.
+ > >
+ > >			"breads": not maintained
+ > >
+ > >			"bread_misses": not maintained
+ > >
+ > >			"search_by_key": how many times search_by_key (main tree
+ > >			traversal routine) was called.
+ > >
+ > >			"search_by_key_fs_changed": how many times search_by_key was
+ > >			performed concurrently to balancing.
+ > >
+ > >			"search_by_key_restarted": how many times search_by_key had
+ > >			to restart due to concurrent balancing.
+ > >
+ > >			"insert_item_restarted"-------+
+ > >			"paste_into_item_restarted"   +
+ > >			"cut_from_item_restarted"     +-> how many times particular
+ > >			"delete_solid_item_restarted" +   balancing operation had to
+ > >			"delete_item_restarted"-------+   restart
+ > >
+ > >			"leaked_oid": how many object-ids (unique identifiers
+ > >			assigned to files) were missed
+ > >
+ > >			"leaves_removable": how many times three leaf nodes of the
+ > >			balanced tree were mergeable into one
+ > >
+ > >I guess we should keep this information somewhere on the web-site. If
+ > >you need more detailed info, let me know.
+ > >
+ > > >=20
+ > > > Thanks much,
+ > > >=20
+ > > > Philippe.
+ > >
+ > >Nikita.
+ > >
+ > >
+ > > =20
+ > >
+ > The unmaintained fields should be removed.  Put into post-Halloween todo=
 =20
-;-)
+ > list.
 
-> > > What astonishes me is that 66MHz 64-bit PCI is *still* confined
-> > > exclusively to high end motherboards, when even the low-end
-> > > motherboards are struggling against the bandwidth monster.
-> >
-> > Nope.  Some cheap MB's are 64/66, the Dual Athlon boards for example.
->
-> Cheap =3D=3D single CPU.
->
-> In a quick web search of some companies I buy from, one sells a single
-> dual-CPU motherboard which costs three times as much as the single-CPU
-> motherboards (which have become amazingly cheap).  However it'll end up
-> costing more because with the lack of choice I'll probably be forced to
-> spend more on other things.
+What about making them "maintained", in stead? Should be trivial.
 
-Dual Athlon MBs (760MPX, all with 64/66) are aroung 300 =A4 (EUR) here in=20
-Germany.
+ >=20
+ > Hans
+ >=20
 
-Regards,
-	Dieter
+Nikita.
