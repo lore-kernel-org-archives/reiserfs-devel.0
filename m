@@ -1,30 +1,59 @@
 From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: fscking a reiserfs 3.6 filesystem with reiser4progs 0.4.18 segfaults
-Date: Mon, 22 Dec 2003 14:54:16 +0300
-Message-ID: <200312221452.22263.vitaly@namesys.com>
-References: <3FE5A1AA.8040200@libero.it> <3FE6CCDB.2030200@libero.it>
+Subject: Re: fsck.reiser4 errors
+Date: Mon, 22 Dec 2003 15:08:36 +0300
+Message-ID: <200312221506.56809.vitaly@namesys.com>
+References: <20031213180246.3042.qmail@ninja.dynup.net> <200312151657.58459.vitaly@namesys.com> <20031220172413.17197.qmail@ninja.dynup.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16371-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-16372-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3FE6CCDB.2030200@libero.it>
+In-Reply-To: <20031220172413.17197.qmail@ninja.dynup.net>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Domenico Andreoli <cavok@libero.it>, reiserfs-list@namesys.com
+To: Jedi Ninja <jedi@ninja.dynup.net>, reiserfs-list@namesys.com
 
-> now that i look at it, fsck.reiser4 does not even check a reiser4 fs :(
+On Saturday 20 December 2003 20:24, Jedi Ninja wrote:
+> I recently reproduced the same bug, once in /tmp, and later in /home (ack).
 
-there were too many bugs fixed in reiser4progs last time and we are 
-preparing a new snapshot to be released on days.
+what same bug? That mounting hands forever? Or smth with fsck.reiser4?
 
-reiser4progs are supposed to be used with the reiser4 filesystem, 
-not reiserfs. For the reiserfs please obtain the reiserfsprogs from:
-ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.11.tar.gz
+> I have time to (try to) debug it now.  It's possible that I have some bad
+> blocks, though.  How do I check for that?
+
+/sbin/badblocks can reveal them.
+
+> As of this writing, reiser4progs won't compile.
+>
+> If I configure without --disable-Werror (as in, -Werror is enabled), I get
+> warnings that become errors about implicit, redundant, and then previous
+> definitions of aal_exception_error.
+
+you should install the latest libaal first. And the recent version has
+--enable-Werror instread, it is disabled by default now.
+
+> If I configure with --disable-Werror, make gives me errors about
+> EXCEPTION_FATAL, EXCEPTION_YESNO, and EXCEPTION_NO being undefined in
+> format40_repair.c
+>
+> I can't paste the exact errors just now, as I am writing this from lynx (my
+> /home was blown away).
+>
+> This is depressing.  I'm off to the PS2 for a day or so, then I'll re-clone
+> and try again.
+>
+> (I'm new to bk, so I guessed:  bk clone bk://somewhere?)
+
+bk clone bk://something, it will be created in the current directory.
+
+bk clone bk://bk.namesys.com/bk/libaal
+bk clone bk://bk.namesys.com/bk/reiser4progs
 
 -- 
 Thanks,
 Vitaly Fertman
+
+
