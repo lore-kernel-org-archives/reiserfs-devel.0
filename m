@@ -1,38 +1,35 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: Large Partition Performance Test
-Date: 11 Apr 2002 18:11:23 -0400
-Message-ID: <1018563083.14483.100.camel@tiny>
-References: <20020411181459.69516.qmail@web10002.mail.yahoo.com>
-	<20020411234316.A3749@namesys.com>  <20020411202856.GA26083@matrix.wg>
+From: Oleg Drokin <green@namesys.com>
+Subject: Re: speedup patch for 2.4.19-pre6
+Date: Fri, 12 Apr 2002 08:53:00 +0400
+Message-ID: <20020412085300.A6171@namesys.com>
+References: <200204112344.41906.Dieter.Nuetzel@hamburg.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10051-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10052-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-In-Reply-To: <20020411202856.GA26083@matrix.wg>
+Content-Disposition: inline
+In-Reply-To: <200204112344.41906.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Dirk Mueller <dmuell@gmx.net>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Dieter N?tzel <Dieter.Nuetzel@hamburg.de>
+Cc: Chris Mason <mason@suse.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, 2002-04-11 at 16:28, Dirk Mueller wrote:
-> On Don, 11 Apr 2002, Oleg Drokin wrote:
+Gello!
+
+On Thu, Apr 11, 2002 at 11:44:41PM +0200, Dieter N?tzel wrote:
+
+> mount		Throughput
+> -			28.8716 MB/sec (NB=36.0895 MB/sec  288.716 MBit/sec)
+> 			13.850u 56.380s 2:27.31 47.6%   0+0k 0+0io 938pf+0w
 > 
-> > 4 minutes 20 seconds to write 1.6G of data even in the beginning?!
-> > This sounds too slow to me. Though RAID5 certainly can slow things down.
-> 
-> Its not the RAID,I can reproduce it: 
-> 
-> day/hour 00 00 seconds = 691
-> day/hour 00 01 seconds = 720
-> 
-> this seems to be highly CPU bound, because it hardly ever accessed the 
-> harddisk. it spends 60% in kernel space cpu though. 
+> notail		30.2834 MB/sec (NB=37.8543 MB/sec  302.834 MBit/sec)
+> 			14.600u 53.660s 2:20.50 48.5%   0+0k 0+0io 938pf+0w
 
-Then I would expect the new allocator in busy_skip mode to fix it.  But,
-having profiling on would tell us for sure.
+Hm. What about comparing these values with values without
+speedup patch? Otherwise they are pretty meaningless, I think.
+At least for us.
 
--chris
-
-
+Bye,
+    Oleg
