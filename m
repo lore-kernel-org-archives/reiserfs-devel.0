@@ -1,54 +1,52 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: On a free repacker
-Date: Fri, 21 May 2004 15:02:05 -0400
-Message-ID: <200405211902.i4LJ25RI016978@turing-police.cc.vt.edu>
-References: <20040519192831.GL24604@nysv.org> <200405201028.13184.reiser@namesys.com> <20040520184054.GR24604@nysv.org> <40AEBBA0.6060606@namesys.com>
-            <20040521184451.GS24604@nysv.org>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: bug report?
+Date: Fri, 21 May 2004 15:11:09 -0400
+Message-ID: <40AE544D.40503@suse.com>
+References: <40AE4D4B.80803@baldauf.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_-414161018P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18813-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-18814-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Fri, 21 May 2004 21:44:51 +0300."
-             <20040521184451.GS24604@nysv.org> 
+In-Reply-To: <40AE4D4B.80803@baldauf.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
-Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Xuan Baldauf <xuan--2004.05.21--reiserfs-list--namesys.com@baldauf.org>
+Cc: reiserfs-list@namesys.com
 
---==_Exmh_-414161018P
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: quoted-printable
+Xuan Baldauf wrote:
+> Hello,
+> 
+> I just want to report what happens if a ide controller (or cabling 
+> thereof) gets mad. The reiserfs filesystem was not unmountable after 
+> that event. Maybe reiserfs should not panic in such an event? (It could 
+> keep buffers dirty and allow unclean unmounts so that the gone 
+> filesystem could be unlinked from the VFS)
 
-On Fri, 21 May 2004 21:44:51 +0300, Markus =3D?UNKNOWN?Q?T=3DF6rnqvist?=3D=
- said:
+This happens if any I/O failure occurs while accessing the journal.
 
-> However, large customers should be able to see that there's a corporate=
+I have patches that allow the filesystem to abort if an I/O failure in 
+the journal occurs. The result is that the filesystem is forced 
+read-only, processes waiting to start a transaction will be refused, and 
+existing transactions will be allowed to complete, but not commit. 
+Appropriate error codes are returned to the user.
 
-> pricing as well. If someone from a major ISP wants to buy a private
-> license for $5, it's a warning that they may abuse this :)
-> =
+Once the normal conditions for umounting a filesystem are met (no open 
+files, etc), it can be umounted normally. The resulting filesystem will 
+be identical do what would happen if the machine were simply unplugged 
+at the point of the abort. Committed transactions in the journal will be 
+replayed on remount, and life goes on. Obviously, additional action as 
+appropriate to the cause of the error may be required.
 
-> I just hope it stays affordable and simple for private people and
-> profitable for corporations :)
+Chris Mason is in the process of sending these to akpm for inclusion in 
+-mm, and ultimately in mainline. There were a number of dependencies 
+that these patches required, which have been in the process of being 
+accepted. Now that the dependencies are met, these patches can be submitted.
 
-Larry McVoy's BitKeeper licensing might be an interesting model to follow=
-=2E
-Not sure if you can make it work for a repacker thought....
+-Jeff
 
---==_Exmh_-414161018P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFArlItcC3lWbTT17ARAkBDAJ9udCf52uVRZvR0xbMZEgY/ipK9ZACg8JZk
-BgZZvGUFUEYHOKRPd+Sdb8E=
-=oq/C
------END PGP SIGNATURE-----
-
---==_Exmh_-414161018P--
+-- 
+Jeff Mahoney
+SuSE Labs
