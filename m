@@ -1,43 +1,49 @@
-From: Francois-Rene Rideau <fare@tunes.org>
-Subject: Re: recovery of crashed reiserfs disk?
-Date: Mon, 20 Jan 2003 15:20:11 +0100
-Sender: Francois-Rene Rideau <fare@Samaris.tunes.org>
-Message-ID: <20030120142011.GA4268@Kadath>
-References: <20030117221535.GA945@Kadath> <20030118080941.B5575@humilis> <20030118115142.B21932@namesys.com> <20030118100157.C5575@humilis> <20030117221535.GA945@Kadath> <20030118080941.B5575@humilis> <20030118115142.B21932@namesys.com> <20030117221535.GA945@Kadath> <20030118080941.B5575@humilis> <20030118115724.GA946@Kadath>
-Reply-To: Francois-Rene Rideau <fare@tunes.org>
+From: m96 <m96@gmx.li>
+Subject: reiserfsck bug?!? The block (.....) is in the tree already. Should
+	not happen.
+Date: 20 Jan 2003 17:59:30 +0100
+Message-ID: <1043081969.1491.36.camel@symirna.uplink.ethz.ch>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-12441-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12444-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030118115724.GA946@Kadath>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Ookhoi <ookhoi@humilis.net>, Oleg Drokin <green@namesys.com>, Xuan Baldauf <baldauf--fare--tunes.org--reiserfs-list--namesys.com@medium.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Kisses to you all! dd_rescue did save the day indeed!
-And thanks to the -a option (sparse image), I didn't even have to
-empty my other disk completely before to recover data.
+hi,
 
-/usr/src/local/dd_rescue/dd_rescue -b 32768 -B 512 -l dd_rescue.log -a -v /=
-dev/hdc4 hdc4.img
-mount -o loop -r hdc4.img /mnt -t reiserfs
+i'm new on the list and also not a reiserfs hacker. but i got the
+following problem on my box:
 
-(However I persist that such an operation would be unnecessary
-if reiserfs -- and maybe linux in general -- had an option to mount
-a block device readonly with error =3D=3D blank).
+after many frozen systems i thought it's on time to check the partition
+integrity with `reiserfsck --check <partition>' and it gave me one error
+that i can fix it only with rebuilding the tree. (i know i should make a
+backup but i didn't - and it was my usr partition... DAMN@!)
 
->> http://www.garloff.de/kurt/linux/ddrescue/
+so while running `reiserfsck --rebuild-tree <partition>' i got the
+following error in an infinite loop:
 
-[ Fran=E7ois-Ren=E9 =D0VB Rideau | Reflection&Cybernethics | http://fare.tu=
-nes.org ]
-[  TUNES project for a Free Reflective Computing System  | http://tunes.org=
-  ]
-God exists and I'm His Prophet. And He says: "Don't you believe in Me or in
-My Prophet, least you be doomed to go to Hell, for I gave you brains not to
-believe in things dogmatically and superstitiously, but to think rationally=
-."
-		-- Far=E9
+
+do_pass_2: The block (1281151) is in the tree already, Should not
+happen.
+
+
+so i had to abort it with CTRL-C. and tried again - with the same luck -
+i stuck in the same loop. and since then i can't mount my partition.
+
+does any one a way to avoid a repartitioning?
+
+if this is an unknown error, how can i provide you with more
+informations? think that this was my /usr so i'm limited to / and /var
+partitions.
+
+regards.
+
+
+-- 
+m96 <m96@gmx.li>
+
