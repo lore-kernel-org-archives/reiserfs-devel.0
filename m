@@ -1,41 +1,53 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: 2.4.21-rc3
-Date: 25 May 2003 20:27:54 +0100
-Message-ID: <1053890873.15242.0.camel@dhcp22.swansea.linux.org.uk>
-References: <200305232256.17604.russell@coker.com.au>
-	 <20030523161356.7986c5d6.pgramoul@nerim.net>
-	 <200305241712.23316.Dieter.Nuetzel@hamburg.de>
+From: Joachim Reichelt <Reichelt@gbf.de>
+Subject: timestamps
+Date: Mon, 26 May 2003 16:45:44 +0200
+Message-ID: <3ED22898.703@gbf.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-14255-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14262-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200305241712.23316.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <Dieter.Nuetzel@hamburg.de>
-Cc: Philippe =?ISO-8859-1?Q?Gramoull=E9?= <pgramoul@nerim.net>, Russell Coker <russell@coker.com.au>, reiserfs <reiserfs-list@namesys.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On Sad, 2003-05-24 at 16:12, Dieter N=C3=BCtzel wrote:
-> > IIRC, according to Alan Cox, on LKML, IDE shouldn't even work as a modu=
-le,
-> > well, if you value your data.
+Dear all,
 
-Thats only true for loading drivers into a live system where the drive
-is already active in legacy mode, and its not something 2.4.19 allowed
-so I disabled it again
+is there any way in Linux to get the time of the creation of a file or 
+better
+can i get:
 
-> > So why don't you include IDE statically in your kernel ?
->=20
-> Because it worked for ages and do NOT since 2.4.19 or so.
->=20
-> I have all SCSI and need ATA/IDE only from time to time to recover bad AT=
-A/IDE=20
-> disks for some friends or customers.
->=20
-> ATA/IDE shouldn't be demanded thing in the kernel.
+creation time (is NOT in stat)
+modification time ( is in stat m_time)
+access time ( is in stat a_time)
+c_time in stat changes, whenever a_time or m_time or ... changes, so 
+useless here.
 
-Sure. someone just has to fix the makefiles
+-- 
+Mit freundlichen Gruessen                         Best Regards
+ 
+         Joachim Reichelt
+
+			SB  - Strukturbiologie
+              GBF - Gesellschaft fuer Biotechnologische Forschung
+                    German Research Centre for Biotechnology
+
+WWW: http://www.gbf.de         _/_/_/   _/_/_/   _/_/_/_/
+EMAIL: REICHELT@gbf.de       _/    _/  _/   _/  _/
+                            _/        _/   _/  _/
+Mascheroder Weg 1          _/  _/    _/_/_/   _/_/_/
+D-38124 Braunschweig      _/    _/  _/   _/  _/
+Tel: +(49) 531 6181 352  _/    _/  _/   _/  _/
+FAX: +(49) 531 2612 388   _/_/_/  _/_/_/   _/
+
+http://struktur.gbf.de/
+
+-- Disclaimer --
+Standard > Keyword : Opinions, my own, nobody else's, whatsoever ...
+
+Man muss sich notfalls jemand mieten,
+hat man an Geist selbst nichts zu bieten!     (Heinz Erhardt)
+
 
