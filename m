@@ -1,12 +1,12 @@
 From: Chris Mason <mason@suse.com>
 Subject: Re: [PATCH CFT] tons of logging patches
-Date: 03 Jun 2002 22:20:28 -0400
-Message-ID: <1023157228.31475.38.camel@tiny>
+Date: 03 Jun 2002 22:57:42 -0400
+Message-ID: <1023159462.31682.54.camel@tiny>
 References: <1023076301.22608.1778.camel@tiny> 
 	<3CFC1CB5.8040102@mb.tu-ilmenau.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-10495-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10496-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -17,15 +17,6 @@ To: Manuel Krause <manuel.krause@mb.tu-ilmenau.de>
 Cc: reiserfs-list <reiserfs-list@namesys.com>
 
 On Mon, 2002-06-03 at 21:49, Manuel Krause wrote:
-> 
-> I really got rid of my "usual setup": the speedup-compound-patch(with 
-> iicache-15?), akpm and aa patches for this testing now (mostly due to 
-> all these many rejects I got that Dieter had promised already... and due 
-> to the fact I have no time to understand->adjust them all manually at 
-> the moment).
-> I can't believe it, really, but I even left the other settings alone... ;-)
-
-;-)
 
 > 
 > Now it is "only":
@@ -35,32 +26,14 @@ On Mon, 2002-06-03 at 21:49, Manuel Krause wrote:
 > rml.preempt-kernel (          -"-                 )
 > 
 > / mounted -o noatime,notail,data=logging
-> 
-> Related to my previous state I once assumed to be lightning-fast I get 
-> -3secs (of former 17+1secs) load time of NS7 with all my plugins and 
-> -13+10secs (of former 27+10secs) load time of OOo.1.0 on a freshly 
-> booted machine. That is really nice!
-> 
-> Now I'll see VMwares results/reliability...
-> ;-)
-> 
-> Very-very impressing, so far,
 
-Great to hear, thanks for trying things out.
+Ah, still on the todo list for the current patch is safe handling of
+remount.  Currently data=logging and data=ordered are ignored on
+remount, which is probably why your results were so fast in data logging
+mode.
 
-data=logging will be the slowest mode for everything except mail servers
-and write heavy databases (or other apps that hammer on O_SYNC/fsync). 
-This is because all the data gets written twice, once to log and once to
-the main disk.  It helps synchronous writes by writing to the log in
-quick sequential bursts, and then writing back to the main disk in
-larger chunks.
-
-data=ordered will usually be fastest for streaming appends to a file. 
-The rest of the time it will be the same or slightly slower than the
-default (data=writeback).
-
-To answer your other question, you can only select one data mode at a
-time.
+You'll want to pass rootflags=data=ordered or rootflags=data=journal at
+the lilo prompt.
 
 -chris
 
