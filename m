@@ -1,49 +1,32 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: trouble with reiserfs on ppc vs-3050: wait_buffer_until_released
- ...
-Date: Tue, 29 Apr 2003 00:14:28 +0400
-Message-ID: <3EAD8BA4.2020000@namesys.com>
-References: <1051258287.5564.1.camel@fortknox>
+From: robs@op.net
+Subject: bug report
+Date: Mon, 28 Apr 2003 16:40:49 -0400 (EDT)
+Sender: robs@max15g
+Message-ID: <Pine.LNX.4.53.0304281636140.366@max15g>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13882-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13883-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1051258287.5564.1.camel@fortknox>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Soeren Sonnenburg <kernel@nn7.de>
-Cc: reiserfs-list@namesys.com, vs@namesys.com, Alexander Lyamin <flx@namesys.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Soeren Sonnenburg wrote:
+Having difficulty recovering a damaged ReiserFS.
 
->Hi...
->
->I suddenly have a file which when I access it using gvim gives
->
->vs-3050: wait_buffer_until_released: nobody releases buffer (dev 03:07,
->size 4096, blocknr 2031616, count 3, list 0, state 0x10019, page
->c0add66540, (UPTODATE, CLEAN, UNLOCKED)). Still waiting (570000000)
->JDIRTY !WAIT
->
->and makes the whole machine hang...
->
->
->Ideas what I could do about it ?
->
->Soeren.
->
->
->
->  
->
-Let's ask Vladimir about this, I don't find it acceptable to leave a bug 
-in ReiserFS.  Probably Soeren can let us login remotely, and probably 
-flx can go ask IBM for some hardware for debugging this.
+Tried stuff- reiserfsck, reiserfstune, etc.  Seems to lead into an infinite
+loop of things to try but don't work- ie: do x, but x needs y, but y needs
+z, but z needs x.
 
--- 
-Hans
+Not sure what you need to know.
 
+"reiserfstune" man page talks about "kernel patched with special
+'relocatable journal support' patch"
 
+   - can't find that patch.
+
+Thanks!
+
+Rob
