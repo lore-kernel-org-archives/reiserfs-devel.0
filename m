@@ -1,24 +1,32 @@
-From: Pierre Abbat <phma@webjockey.net>
-Subject: Encryption
-Date: Sat, 22 Mar 2003 18:22:34 -0500
-Message-ID: <200303221822.34401.phma@webjockey.net>
+From: Yury Umanets <umka@namesys.com>
+Subject: Re: Encryption
+Date: Sun, 23 Mar 2003 02:29:23 +0300
+Message-ID: <3E7CF1D3.90703@namesys.com>
+References: <200303221822.34401.phma@webjockey.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13337-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-13338-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <200303221822.34401.phma@webjockey.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Pierre Abbat <phma@webjockey.net>
+Cc: reiserfs-list@namesys.com
 
-How is filesystem encryption going to work? Or has anyone figured that out 
-yet?
+Pierre Abbat wrote:
 
-phma
+>How is filesystem encryption going to work? Or has anyone figured that out 
+>yet?
+>
+>phma
+>  
+>
+Don't worry, it is going up :)
+
 -- 
-.i toljundi do .ibabo mi'afra tu'a do
-.ibabo damba do .ibabo do jinga
-.icu'u la ma'atman.
+Yury Umanets
+
+
