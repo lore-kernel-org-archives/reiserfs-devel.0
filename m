@@ -1,52 +1,34 @@
-From: Nikita Danilov <Nikita@Clusterfs.COM>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: Fibration questions
-Date: Thu, 22 Jul 2004 16:16:06 +0400
-Message-ID: <16639.45062.695014.910604@laputa.namesys.com>
-References: <20040721054418.1150715C23@mail03.powweb.com>
-	<40FE0B47.3010600@slaphack.com>
-	<40FF74BA.1050206@namesys.com>
+Date: Thu, 22 Jul 2004 17:39:09 +0300
+Message-ID: <20040722143909.GE4990@nysv.org>
+References: <20040721054418.1150715C23@mail03.powweb.com> <40FE0B47.3010600@slaphack.com> <40FF74BA.1050206@namesys.com> <16639.45062.695014.910604@laputa.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-19743-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-19744-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <40FF74BA.1050206@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <16639.45062.695014.910604@laputa.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: David Masover <ninja@slaphack.com>, David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Nikita Danilov <Nikita@Clusterfs.COM>
+Cc: Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, David Dabbs <david@dabbs.net>, reiserfs-list@namesys.com
 
-Hans Reiser writes:
- > David Masover wrote:
- > 
- > >
- > >
- > > Thus, a fibration plugin must rely on the name to decide how to fibrate
- > > something, because at lookup time, this plugin is asked "I'm looking for
- > > a file named foo, how is that fibrated?"
- > 
- > Yes.
- > 
- > >
- > >
- > >
- > > Also, I think I want to reimplement (a subset of) Lustre using reiser4
- > > as a cache.  If I do any coding, it'll be on that.
- > 
- > You might ask nikita if that is what they hired him away from us for.....
- > 
+On Thu, Jul 22, 2004 at 04:16:06PM +0400, Nikita Danilov wrote:
+>Ask Peter Braam (braam@clusterfs.com), whether he has any plans to use
+>reiser4 as a back-end.
+>This shouldn't be hard to implement, technically.
 
-Nope. :)
+Maybe a chance to bleed some Dell, Cray, HP and DataDirect money
+to Namesys ;)
 
-Ask Peter Braam (braam@clusterfs.com), whether he has any plans to use
-reiser4 as a back-end.
+Has Namesys contacted these guys, btw, and asked for sponsorship?
+They are probably all companies with more money than they'd know how
+to spend and they'd benefit from having the best filesystem ever.
 
-This shouldn't be hard to implement, technically.
+-- 
+mjt
 
- > >
- > >
- > 
-
-Nikita.
