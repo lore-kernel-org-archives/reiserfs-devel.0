@@ -1,57 +1,31 @@
-From: Spam <spam@tnonline.net>
+From: mjt@nysv.org (Markus  =?ISO-8859-1?Q?=20T=F6rnqvist?=)
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 15:59:24 +0200
+Date: Thu, 26 Aug 2004 16:56:22 +0300
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <1714037053.20040826155924@tnonline.net>
-References: <1453776111.20040826131547@tnonline.net>
- <Pine.LNX.4.44.0408260938340.26316-100000@chimarrao.boston.redhat.com>
-Reply-To: Spam <spam@tnonline.net>
+Message-ID: <20040826135622.GY1284@nysv.org>
+References: <412DA26C.5060604@namesys.com> <Pine.LNX.4.44.0408260927100.26316-100000@chimarrao.boston.redhat.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.44.0408260938340.26316-100000@chimarrao.boston.redhat.com>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44.0408260927100.26316-100000@chimarrao.boston.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Rik van Riel <riel@redhat.com>
-Cc: Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Cc: Hans Reiser <reiser@namesys.com>, Jeremy Allison <jra@samba.org>, Christoph Hellwig <hch@lst.de>, akpm@osdl.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, Linus Torvalds <torvalds@osdl.org>, ReiserFS List <reiserfs-list@namesys.com>
 
+On Thu, Aug 26, 2004 at 09:27:52AM -0400, Rik van Riel wrote:
+>
+>1) how do you back up and restore files with streams inside ?
 
+With a program that supports files with streams inside.
 
-> On Thu, 26 Aug 2004, Spam wrote:
+>2) how do standard unix utilities handle them ?
 
->>   Yes, JPEG, TIFF and PNG files for example. But, if you modify any of
->>   these  with  an application that doesn't support the extensions then
->>   you will loose them.
+Most likely they don't ;) That is, until they are fixed or replaced.
+I've heard of people who want xattrs to be backed up so they use star, 
+not gnu tar, already.
 
-> OK, so we've got a choice.
-
-> Either we will lose the extensions when modifying the file
-> with an unaware program, or you lose the extensions when
-> copying (or restoring from backup) using an unaware program.
-
-> Personally I'd prefer to keep the file intact when not
-> modifying it...
-
-  Backup to me is a special case, not simply a copy of files, but also
-  retaining all the extra data, info, attributes, etc, that comes with
-  the file.
-
-  Enabling  support  to  have  all  of  this  extra  stuff  below  the
-  application  level  it  will  be  possible to retain everything even
-  though applications do not support them.
-
-  Backup tools, however, must know about these new features to be able
-  to  backup  them.  And so will every tool that directly accesses the
-  filesystem instead of using the OS API for it.
-
-  And  from  I  learned  in an earlier message, tools like cp actually
-  work  on  the  fs level and themselves move the data to the new file
-  instead   of  letting  the OS handle it. This seem to me as it could
-  be  dangerous and could also prevent any kind of enhancements to the
-  FS unless every tool like cp is patched.
-  
-
-
-
-
+-- 
+mjt
 
