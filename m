@@ -1,42 +1,31 @@
 From: "John D. Heintz" <jheintz@pobox.com>
-Subject: Re: Do xml-like namespaces make sense for Reiser4? (re: metas thread)
-Date: Tue, 13 Apr 2004 13:47:12 -0500
-Message-ID: <407C35B0.3080109@pobox.com>
-References: <407AB9AE.3060801@pobox.com> <407ADCBF.8000609@namesys.com> <407AEA05.50004@pobox.com> <407BFBEA.5010006@pobox.com> <407C15D9.1080705@namesys.com> <407C1BE9.8010509@pobox.com> <407C279A.3060303@namesys.com> <407C3004.3070401@pobox.com> <407C316B.80606@namesys.com>
+Subject: Re: [PATCH] "metas" in reiserfs v4 snapshot 2004.03.26
+Date: Tue, 13 Apr 2004 14:14:46 -0500
+Message-ID: <407C3C26.8@pobox.com>
+References: <20040413180732.7450.qmail@web25004.mail.ukl.yahoo.com> <407C2E18.5070009@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-17905-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-17906-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <407C316B.80606@namesys.com>
+In-Reply-To: <407C2E18.5070009@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+Cc: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>, Beni Cherniavsky <cben@users.sourceforge.net>, reiserfs-list@namesys.com
 
 Hans Reiser wrote:
 
-> John D. Heintz wrote:
 >
->>
->> Does some sort of syntactic shorthand actually break the set 
->> theoretic naming system rules?  Or is this just something you view as 
->> needless complexity?
+> Of course, now that we have funding for views, when that is completed 
+> you will be able to specify a view that cannot access metas.
 >
->
-> precisely what syntactic shorthand?
+First, congratulations on getting the funding!
 
+Second, I'm curious! Would views enable disambiguating conflicted names 
+from plugins?
 
-
-foo/nsa:permissions -> foo/nsa.gov/secure-linux/permissions
-
-This assumes a mapping from "nsa" -> "nsa.gov/security/".
-
-The characters up to the ':' would be looked up in a namespaces map, and 
-if found the substituion would occur before further name-> object 
-resolution. I don't think this breaks the goals set out in the "Future 
-Vision" white paper, but I guess that is exactly what I am asking you ;-)
-
-John
+Thanks,
+John Heintz
