@@ -1,59 +1,43 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: fsck.reiser4 errors
-Date: Mon, 22 Dec 2003 15:08:36 +0300
-Message-ID: <200312221506.56809.vitaly@namesys.com>
-References: <20031213180246.3042.qmail@ninja.dynup.net> <200312151657.58459.vitaly@namesys.com> <20031220172413.17197.qmail@ninja.dynup.net>
+From: "David Fendrich" <david@fendrich.net>
+Subject: Re: reiserfsck 3.6.11 locks up
+Date: Mon, 22 Dec 2003 04:15:15 -0800
+Message-ID: <84c101c3c885$41f70860$74cb010a@mail2world.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-16372-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_84C2_01C3C842.33D3C860"
+Return-path: <reiserfs-list-return-16373-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20031220172413.17197.qmail@ninja.dynup.net>
-Content-Disposition: inline
+Content-Class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jedi Ninja <jedi@ninja.dynup.net>, reiserfs-list@namesys.com
+To: vitaly@namesys.com, david@fendrich.net, reiserfs-list@namesys.com
 
-On Saturday 20 December 2003 20:24, Jedi Ninja wrote:
-> I recently reproduced the same bug, once in /tmp, and later in /home (ack).
+------=_NextPart_000_84C2_01C3C842.33D3C860
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 
-what same bug? That mounting hands forever? Or smth with fsck.reiser4?
+The problem is solved. I used the 3.6.12pre version and everything went
+smooth. 
 
-> I have time to (try to) debug it now.  It's possible that I have some bad
-> blocks, though.  How do I check for that?
 
-/sbin/badblocks can reveal them.
+So reiserfsck continues to do smth but no progress anymore, right?
+Have you built the progs on the same computer where you run it?
+Would you check your memory with memtest or similar?
 
-> As of this writing, reiser4progs won't compile.
->
-> If I configure without --disable-Werror (as in, -Werror is enabled), I get
-> warnings that become errors about implicit, redundant, and then previous
-> definitions of aal_exception_error.
 
-you should install the latest libaal first. And the recent version has
---enable-Werror instread, it is disabled by default now.
+I don't think that reiserfsck continued to do anything. The whole
+computer froze, ssh went down, I couldn't even switch virtual terminals
+(I run Gentoo linux 2.4.22-ac, so yes the progs are built on the same
+computer with the only optimization being -03), but alt-sysrq worked.
+This happened twice at exactly the same place in pass 1, so anyone else
+having the same problem should try 3.6.12.
 
-> If I configure with --disable-Werror, make gives me errors about
-> EXCEPTION_FATAL, EXCEPTION_YESNO, and EXCEPTION_NO being undefined in
-> format40_repair.c
->
-> I can't paste the exact errors just now, as I am writing this from lynx (my
-> /home was blown away).
->
-> This is depressing.  I'm off to the PS2 for a day or so, then I'll re-clone
-> and try again.
->
-> (I'm new to bk, so I guessed:  bk clone bk://somewhere?)
-
-bk clone bk://something, it will be created in the current directory.
-
-bk clone bk://bk.namesys.com/bk/libaal
-bk clone bk://bk.namesys.com/bk/reiser4progs
-
--- 
 Thanks,
-Vitaly Fertman
+David 
 
+
+------=_NextPart_000_84C2_01C3C842.33D3C860--
 
