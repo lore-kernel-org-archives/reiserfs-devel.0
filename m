@@ -1,39 +1,49 @@
 From: Tonnerre <tonnerre@thundrix.ch>
 Subject: Re: silent semantic changes with reiser4
-Date: Sun, 5 Sep 2004 13:22:47 +0200
-Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040905112247.GD26560@thundrix.ch>
-References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <Pine.LNX.4.58.0408311252150.2295@ppc970.osdl.org> <20040831203226.GB16110@elf.ucw.cz> <Pine.LNX.4.58.0408311336580.2295@ppc970.osdl.org> <20040831205422.GD16110@elf.ucw.cz> <Pine.LNX.4.58.0408311357550.2295@ppc970.osdl.org> <20040831220726.GB16428@elf.ucw.cz> <m3acwa99qz.fsf@zoo.weinigel.se>
+Date: Sun, 5 Sep 2004 13:33:58 +0200
+Message-ID: <20040905113358.GE26560@thundrix.ch>
+References: <200408311931.i7VJV8kt028102@laptop11.inf.utfsm.cl> <41352279.7020307@slaphack.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/unnNtmY43mpUSKx"
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="OZkY3AIuv2LYvjdk"
+Return-path: <reiserfs-list-return-21475-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <m3acwa99qz.fsf@zoo.weinigel.se>
+In-Reply-To: <41352279.7020307@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Christer Weinigel <christer@weinigel.se>
-Cc: Pavel Machek <pavel@ucw.cz>, Linus Torvalds <torvalds@osdl.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: David Masover <ninja@slaphack.com>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Pavel Machek <pavel@ucw.cz>, Jamie Lokier <jamie@shareable.org>, Chris Wedgwood <cw@f00f.org>, viro@parcelfarce.linux.theplanet.co.uk, Linus Torvalds <torvalds@osdl.org>, Christoph Hellwig <hch@lst.de>, Hans Reiser <reiser@namesys.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-
---/unnNtmY43mpUSKx
+--OZkY3AIuv2LYvjdk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Salut,
 
-On Wed, Sep 01, 2004 at 01:19:00AM +0200, Christer Weinigel wrote:
-> To see if the original file is newer than the cached file, good old
-> mtime can be used. =20
+On Tue, Aug 31, 2004 at 08:14:33PM -0500, David Masover wrote:
+> It's not about the kernel, it's about the interface.  And see my other mail:
+> 	cat foo.zip/README
+> 	less foo.zip/contents/bar.c
+> is a lot easier than
+> 	lynx http://google.com/search?q=zip
+> 	emerge zip
+> 	man zip
+> 	unzip foo.zip
+> 	cat bar.c
+> which already assumes quite a lot of expertise.
 
-I'd not use a daemon or any  mtime for it. I'd just put it into xattrs
-and let  it up  to the applications  to poke  the values in  case they
-changed. And copy them on cp, since it would have to be changed either
-way.
+Most distros ship Ziv's packer by default.
 
-			    Tonnerre
+telnet dict.org 2628
+DEFINE * "creeping featurism"
+QUIT
 
---/unnNtmY43mpUSKx
+				Tonnerre
+
+--OZkY3AIuv2LYvjdk
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 Content-Disposition: inline
@@ -41,9 +51,9 @@ Content-Disposition: inline
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.9.2 (GNU/Linux)
 
-iD8DBQFBOvcG/4bL7ovhw40RAkoKAJ0U0fSMgumeX9eP9SUlbvMTdT61RgCfapSN
-bLBk3UvV4YdXw0VRYkbd0Zo=
-=vgc5
+iD8DBQFBOvmm/4bL7ovhw40RAr2oAJ9yvYgR+KAVz2Oh5Mh3aIonhg0G2ACcCcYZ
+sCebYJtMT9IdjwovMQjrhbA=
+=W4DV
 -----END PGP SIGNATURE-----
 
---/unnNtmY43mpUSKx--
+--OZkY3AIuv2LYvjdk--
