@@ -1,47 +1,52 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Like to help...
-Date: Tue, 05 Aug 2003 16:04:43 +0400
-Message-ID: <3F2F9D5B.2010304@namesys.com>
-References: <1060017692.1998.6.camel@EvoTMS>
+Subject: Re: rebuild fs
+Date: Tue, 05 Aug 2003 16:28:15 +0400
+Message-ID: <3F2FA2DF.3050505@namesys.com>
+References: <E5A63F34D141D111A6F4080009D70ACA346D62@imkedv_pdc> <20030805104546.GA22557@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15140-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15141-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1060017692.1998.6.camel@EvoTMS>
+In-Reply-To: <20030805104546.GA22557@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: info@netvis.co.uk
-Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
+To: Oleg Drokin <green@namesys.com>
+Cc: Thorsten Mauch <mauch@imkenberg.de>, "'reiserfs-list@namesys.com'" <reiserfs-list@namesys.com>
 
-Neil Ferguson wrote:
+Oleg Drokin wrote:
 
->Hi guys,
+>Hello!
 >
->I'm keen to improve my programming skills and would really like to help
->out with ReiserFS in some way.  Can anybody suggest any easy-to-tackle
->bug or similar that I can try my hand at?  Would be proud to help in any
->way...
+>On Tue, Aug 05, 2003 at 12:02:02PM +0200, Thorsten Mauch wrote:
 >
->Thanks!
+>  
 >
+>>But while rebuilding the tree, I got a segmentation fault. Because I didn't
+>>want to continue work on the original raid system, I copied the entire raid
+>>disk to the IDE disk.
+>>dd  if=/dev/rd/c0d0  of=/dev/hda conv=noerror,sync
+>>I tried to rebuild the fs structure again, and  I was able to access many
+>>files, but not that are important to me :(
+>>Does there is anyting I can do in this state ? does other tools then
+>>resierfsck exist ?
+>>    
+>>
 >
->Neil
+>If you are not using latest fsck version (3.6.11 as of now), try to use reiserfsprogs 3.6.11,
+>as there is slight chance it would do better.
 >
->
->---
->Neil Ferguson
->info@netvis.co.uk
->http://www.netvis.co.uk
->
->
+>Bye,
+>    Oleg
 >
 >
 >  
 >
-write a new plugin for reiser4. 
+rephrase that as, use 3.6.11, if it still fails, tell us, the segfault 
+will at least be fixed regardless of whether fsck has enough data to do 
+its job.
 
 -- 
 Hans
