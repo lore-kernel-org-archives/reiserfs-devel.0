@@ -1,38 +1,94 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Journal-601 error on Redhat 7.3 / reiserfs / ext3 / raid 5
-Date: Tue, 1 Jul 2003 09:43:39 +0400
-Message-ID: <20030701054339.GA7914@namesys.com>
-References: <3F00B119.7080701@cc.hut.fi>
+From: Manuel Krause <manuelkrause@netscape.net>
+Subject: Re: udpated data logging available
+Date: Wed, 02 Jul 2003 01:41:53 +0200
+Message-ID: <3F021C41.9090100@netscape.net>
+References: <1055764071.24111.650.camel@tiny.suse.com>	 <200306260216.41204.christian.mayrhuber@gmx.net>	 <1056592066.20899.10.camel@tiny.suse.com>	 <200306261342.08725.Dieter.Nuetzel@hamburg.de> <1056632026.20899.39.camel@tiny.suse.com> <3EFAF6D7.9040408@netscape.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14793-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-14797-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <3F00B119.7080701@cc.hut.fi>
+In-Reply-To: <3EFAF6D7.9040408@netscape.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jussi Vainionp?? <jjvainio@cc.hut.fi>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Chris Mason <mason@namesys.com>
+Cc: reiserfs-list <reiserfs-list@namesys.com>
 
-Hello!
+On 06/26/03 15:36, Manuel Krause wrote:
+> On 06/26/2003 02:53 PM, Chris Mason wrote:
+>=20
+>>On Thu, 2003-06-26 at 07:42, Dieter N=FCtzel wrote:
+>>
+>>>>Great to hear, thanks for giving it a try.  io-stalls-6 helped most when
+>>>>you've got multiple devices and a streaming write to one was slowing
+>>>>down all the others.  -7 added in a tweaked form of Andrea's elevator
+>>>>latency fixes, and they make a big difference when there's a lot of
+>>>>writes to the drive you're trying to read from.
+>>>
+>>>So, does it apply to 2.4.21-aa1 (latest is 2.4.21rc8aa1) cleanly? ;-)
+>>
+>>No, io-stalls-7 is mostly in rc8aa1 already.  The major difference is
+>>that andrea changed blk_finished_io and I added a new func to keep
+>>compatibility for external drivers.  There are a few areas where he and
+>>I chose different ways of doing things, if you're interested in helping
+>>add some measurements to our debate, I can make you a patch against aa1.
+>>
+>>>>Hopefully we'll be able to hash out something suitable for 2.4.22-pre.
+>>>
+>>>2.4.22-pre1 is out form some days...
+>>
+>>Yes.  Almost all my latency testing was done on data logging + the jh-2
+>>patch, so I'm much more confident now in that code.  Hopefully the
+>>merging will start shortly, Oleg has a queue of things he wants to get
+>>in, and we're trying to keep the rate of changes at something
+>>manageable.
+>>
+>>(quick clarification, io-stalls-7 is entirely unrelated to reiserfs, I
+>>posted it here because I thought there might be some willing testers ;-)
+>>
+>>-chris
+>=20
+> Hi,
+>=20
+> the complete data-logging patchset including the experimental ones is
+> running fine on here, kernel 2.4.21-final without quota, with
+> rml-preempt-kernel and with the "old" search_reada-4. It also ran fine
+> with the previous reiserfs-jh-1 and io-stalls-6 before.
+>=20
+> Does the search_reada-4 contradict the new code or is it even dangerous
+> to combine them (what I luckily didn't trigger so far)?
+>=20
+> Thanks,
+>=20
+>  Manuel
 
-On Tue, Jul 01, 2003 at 12:52:25AM +0300, Jussi Vainionp?? wrote:
+No answer needed so far upon search_reada-4 ?!?!
 
-> I don't think my disks are faulty, because the raid 5 / ext3 combination 
-> has ran without trouble for a year (and is still running after a few 
-> months). There were no disk-related log messages anywhere near the panic.
+If I may remind, that only patch brought 2.4.20+  +reiserfs
++data-logging to the high throughput values of 2.4.19 +reiserfs
++data-logging when copying my backup partition (around 5GB) via cp.
 
-Even though there are no disk-related messages, still reiserfs sees a failed write
-to journal which is obviously bad.
 
-> Apr 27 20:18:06 un kernel: journal-601, buffer write failed
 
-I do not know who to blame here. Try to heavily write to loop device itself (without using
-reiserfs) to see if something will break? Or bettr yet - upgrade to newer kernel and see if that's
-cures your problem?
+O.K. -- The new (experimental) patches run fine on all my previous
+simple test patterns _with_ search_reada-4 (cp my backup-partitions,
+home usage with NS 7.1 and OOo 1.1betas; VMware 3.2.1 sessions with
+defrag/SpeedDisk in Win98) with 2.4.21 +data-logging +rml-preempt-kernel.
 
-Bye,
-    Oleg
+I didn't post definite timings upon my data as using the first new
+experimental data-logging patches led to a throughput/speed improvement
+of 3% only (compared to without exp patches) what is within in the
+typical fluctuation (copying via cp). And I avoided testing without
+search_reada so far, for the reason of needed retesting back to 2.4.19
+(disk content changed).
+So, at least, I can say "It didn't get slower - but may be a bit faster
+or even another bit more. - Depends..."
+
+
+Many thanks, your work is great indeed !
+
+ Manuel
+
+
