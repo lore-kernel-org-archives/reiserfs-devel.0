@@ -1,61 +1,47 @@
-From: Yury Umanets <yury@clusterfs.com>
-Subject: Re: Reiser4 support on parted program ...
-Date: Thu, 16 Sep 2004 08:40:29 +0300
-Message-ID: <4149274D.7020102@clusterfs.com>
-References: <41472F46.4000109@futuretg.com> <41477625.304@slaphack.com> <4147E95B.8090108@futuretg.com> <20040915094952.GA5137@backtop.namesys.com> <414840FC.4090505@clusterfs.com> <20040915132013.GG26192@nysv.org> <41484449.8060301@clusterfs.com> <4148610F.5020508@futuretg.com> <414862D1.6010304@namesys.com> <41488026.6080904@clusterfs.com> <414881C5.9030501@futuretg.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: Reiserfsck --rebuild-tree rendered machine unbootable.
+Date: Thu, 16 Sep 2004 10:33:54 +0400
+Message-ID: <1095316434.1359.304.camel@tribesman.namesys.com>
+References: <20040915224812.M91258@mrbrklyn.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-21802-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-21803-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <414881C5.9030501@futuretg.com>
+In-Reply-To: <20040915224812.M91258@mrbrklyn.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
-Cc: Hans Reiser <reiser@namesys.com>, =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, Alex Zarochentsev <zam@namesys.com>, David Masover <ninja@slaphack.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: slavik914@mrbrklyn.com
+Cc: reiserfs-list@namesys.com
 
-Dr. Giovanni A. Orlando wrote:
+Hello
 
-> Yury Umanets wrote:
->
->> Hans Reiser wrote:
->>
->>> Dr. Giovanni A. Orlando wrote:
->>>
->>>>
->>>>
->>>>    As soon the installer works fine supporting Reiser4, including 
->>>> parted support
->>>>    it, I will comment in this mailing list, and offer for free 
->>>> donwload.
->>>>
->>> Reiser4 resizer is not ready for prime time, and like pseudos, 
->>> should not have been enabled before it was tested.  We are going to 
->>> send in a patch to turn it off until it is debugged.
->>
->>
->>
->> hello Hans,
->>
->> I suspect, that Dr. Giovanni A. Orlando meant offline resizer which 
->> should be in utils. Not online resizer-repacker...
->>
-> Actually, we want that reiser4 is supported inside parted program. 
-> Nothing else.
->
-> I don't think this support will enable any other support like 
-> reiser4-resize.
+On Thu, 2004-09-16 at 03:53, Steve Milo wrote:
+> Hello, I was trying to erase some files in /var/run/sysconfig and
+> /var/run/smpppd on my Suse 9.1 box.  Logged in as root I would get 'permission
+> denied' when 'ls -l' or 'rm -f'.
+> I figured perhaps the filesystem had become corrupted somehow so I decided to
+> do  a reiserfsck --rebuild-sb.  That didnt fix what I persumed was a
+> permissions issue.
+> I then ran a reiserfsck --rebuild-tree and it found quiet a few problems and
+> appeared to have fixed them.  I decided to reboot and found that my machine
+> was rendered unbootable.  It goes into grub and I can get a grub prompt but I
+> receive 'hd(0,0) wrong filesystem' or something to that effect.
+> I did not make a backup copy of my filesystem like I should have, I figured I
+> could get away with not doing so.  I guess I was wrong.
+> 
+> Any help in this matter would be appreciated.
+> 
 
-One of options provided by parted is offline resizing though...
+Did you try to boot of Suse 9,1 disk and to recover?
 
->
 > Thanks,
-> Giovanni
->
-
-
--- 
-umka
+> Steve M
+> 
+> --
+> Open WebMail Project (http://openwebmail.org)
+> 
+> 
 
