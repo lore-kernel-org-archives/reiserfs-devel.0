@@ -1,50 +1,51 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: Multiple data streams...
-Date: Thu, 03 Apr 2003 11:49:24 -0500
-Message-ID: <200304031649.h33GnOS7005132@turing-police.cc.vt.edu>
-References: <6167696812.20030402112847@tnonline.net>
-            <10168801421.20030402114712@tnonline.net>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: New gentoo bug with reiserfsprogs-3.6.5
+Date: Thu, 3 Apr 2003 20:50:08 +0400
+Message-ID: <200304032050.08685.vitaly@namesys.com>
+References: <20030403160231.GF26830@lostlogicx.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_598578308P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-13547-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-13548-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Wed, 02 Apr 2003 11:47:12 +0200."
-             <10168801421.20030402114712@tnonline.net> 
+In-Reply-To: <20030403160231.GF26830@lostlogicx.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Anders Widman <andewid@tnonline.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Brandon Low <lostlogic@gentoo.org>, reiserfs-list@namesys.com
 
---==_Exmh_598578308P
-Content-Type: text/plain; charset=us-ascii
 
-On Wed, 02 Apr 2003 11:47:12 +0200, Anders Widman <andewid@tnonline.net>  said:
+Hi, Brandon.
 
->    Some uses could be to be able to store locking information (such as
->    user,  program  etc)  or extended security features within the same
->    file as a separate data stream.
-> 
->    There  are  of  course  numerous other things data streams could be
->    used for.
+On Thursday 03 April 2003 20:02, Brandon Low wrote:
+> Greetings Reiser devs,
+>
+> I've just recieved a new bug report relating to the reiserfsprogs-3.6.5
+> version in gentoo (this includes a
+> reiserfsprogs-3.6.5-flush_buffers-bug.patch from vitaly).  Please see:
+> http://bugs.gentoo.org/show_bug.cgi?id=18612
+>
+> Based on the initial bug report, I thought it was a fault in our kernel or
+> the kernel that the user was using at least, but the user has confirmed
+> that simply reverting to reiserfsprogs-3.6.4 fixes his issues.
+>
+> Thanks!
+>
+> --Brandon Low
 
-"It's deja vu all over again" -- Yogi Berra
+reiserfsck before the version 3.6.5-pre2 did not check anything on boot.
+That is why there seems to be no problem with the previous version.
+But 
 
-MacOS had resource and data forks *WHEN*? ;)
+Apr  1 16:13:13 kenny kernel: hda: dma_intr: error=0x10 { SectorIdNotFound },
+LBAsect=78156212, sector=75907112
+Apr  1 16:13:13 kenny kernel: hda: dma_intr: status=0x51 { DriveReady
+SeekComplete Error }
 
---==_Exmh_598578308P
-Content-Type: application/pgp-signature
+means hardware problem.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.1 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+-- 
 
-iD8DBQE+jGYUcC3lWbTT17ARArwMAKDGwrp2abFg+ez/wgTwJirTZgQJOQCeMxT4
-F5q/KnbG1UVo64kggdT85k0=
-=4XvJ
------END PGP SIGNATURE-----
-
---==_Exmh_598578308P--
+Thanks,
+Vitaly Fertman
