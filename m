@@ -1,87 +1,38 @@
-From: Oleg Drokin <green@namesys.com>
+From: Kuba Ober <kuba@mareimbrium.org>
 Subject: Re: kernel panic with PAP-8252
-Date: Tue, 30 Jul 2002 17:02:31 +0400
-Message-ID: <20020730170231.A18417@namesys.com>
-References: <20020730211933.2D2F.K-MORIKAWA@stage.gr.jp> <20020730162633.A16872@namesys.com> <20020730214311.2D32.K-MORIKAWA@stage.gr.jp>
+Date: Tue, 30 Jul 2002 09:08:55 -0400
+Message-ID: <200207300908.55739.kuba@mareimbrium.org>
+References: <20020730151018.2D2C.K-MORIKAWA@stage.gr.jp> <20020730150340.A11654@namesys.com> <20020730211933.2D2F.K-MORIKAWA@stage.gr.jp>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-11100-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-11101-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
-Content-Disposition: inline
-In-Reply-To: <20020730214311.2D32.K-MORIKAWA@stage.gr.jp>
+In-Reply-To: <20020730211933.2D2F.K-MORIKAWA@stage.gr.jp>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "K. Morikawa" <k-morikawa@stage.gr.jp>
+To: "K.Morikawa" <k-morikawa@stage.gr.jp>
 Cc: reiserfs-list@namesys.com
 
-Hello!
+On wtorek 30 lipiec 2002 08:20 am, K.Morikawa wrote:
+> Hello.
+> Thank you for your reply.
+>
+> I understand that kernel-2.2.18 and reiserfs-3.5.29 is old.
+> Also reiserfs-3.5.35(latest) is fixed many bugs too.
+> However, it is unable to up the version immediately.
+> because cause of this problem is indistinct and
+> It's necessary the inspection of the middleware and application related.
 
-   This check is invalid and newer reiserfs patches are no longer checking
-   this stuff, since it is unneeded. You should upgrade your kernel,
-   or alternatively you can rebuild your kernel with CONFIG_REISERFS_CHECK
-   config option turned off, it will disable these kind of checks, but other
-   bugs won't go away, though.
+By definition, user-level, unprivileged application errors shouldn't crash the 
+kernel. So you should really forget about your application stuff and update 
+the kernel to the latest 2.2, as well as latest reiserfs for 2.2. Or else 
+you're asking for trouble.
 
-Bye,
-    Oleg   
-On Tue, Jul 30, 2002 at 09:52:40PM +0900, K. Morikawa wrote:
-> Hello!!
-> Sorry, I was mistaking a code.
-> The correct code is as follows.
-> 
-> PAP-8285: get_neighbors : invalid rdkey<0> kernel panic:
-> REISERFS: panic (device 08:31): PAP-8285: get_neighbors
-> 
-> Please support.
-> Regards.
-> 
-> Kohji Morikawa <k-morikawa@stage.gr.jp>
-> ----------------------------------------------------------------------->
-> On Tue, 30 Jul 2002 16:26:33 +0400
-> Oleg Drokin <green@namesys.com> wrote:
-> 
-> > Hello!
-> > 
-> >    There is no PAP-8252 assertion in our code (And there was no such
-> >    assertion in 3.5.29 version either (just checked)).
-> >    Can you please verify what assertion you are getting?
-> > 
-> > Bye,
-> >     Oleg
-> > On Tue, Jul 30, 2002 at 09:20:33PM +0900, K. Morikawa wrote:
-> > > Hello.
-> > > Thank you for your reply.
-> > > 
-> > > I understand that kernel-2.2.18 and reiserfs-3.5.29 is old.
-> > > Also reiserfs-3.5.35(latest) is fixed many bugs too.
-> > > However, it is unable to up the version immediately.
-> > > because cause of this problem is indistinct and
-> > > It's necessary the inspection of the middleware and application related.
-> > > 
-> > > Please investigate and advice me.
-> > > Regards
-> > > 
-> > > Kohji Morikawa <k-morikawa@stage.gr.jp>
-> > > ----------------------------------------------------------------------->
-> > > On Tue, 30 Jul 2002 15:03:40 +0400
-> > > Oleg Drokin <green@namesys.com> wrote:
-> > > 
-> > > > Hello!
-> > > > 
-> > > > On Tue, Jul 30, 2002 at 03:11:33PM +0900, K. Morikawa wrote:
-> > > > 
-> > > > > TurboLinux 6.5 Server (kernel-2.2.18 , reiserfs-3.5.29)
-> > > > 
-> > > > You should consider upgrading if not whole kernel than at least the reiserfs
-> > > > part to version 3.5.35.
-> > > > Patch can be obtained from ouf ftp site ftp.namesys.com.
-> > > > 
-> > > > Bye,
-> > > >     Oleg
-> > > 
-> 
-> ?$B?9@n <k-morikawa@stage.gr.jp>
-> ----------------------------------------------------------------------->
-> 
+Again: application stuff should not crash the kernel if the kernel is fine. So 
+even if your apps were completely broken, the kernel should be running fine. 
+If you're getting kernel crashes, it's the kernel at fault. *Do* update ASAP. 
+*Really*. You know, updating the kernel is not such a big job after all.
+
+Cheers, Kuba Ober
