@@ -1,31 +1,53 @@
-From: Anders Widman <andewid@tnonline.net>
-Subject: Re: Re: Corruption: --fix-fixable results in all nlink
-Date: Thu, 22 Aug 2002 00:11:39 +0200
-Message-ID: <18954880703.20020822001139@tnonline.net>
-References: <200208220002.17391.Dieter.Nuetzel@hamburg.de>
-Reply-To: Anders Widman <andewid@tnonline.net>
+From: Philippe =?ISO-8859-1?B?R3JhbW91bGzp?= <philippe.gramoulle@mmania.com>
+Subject: corrupted 3.5 format fs
+Date: Thu, 22 Aug 2002 06:35:12 +0200
+Message-ID: <20020822063512.54daaeaf.philippe.gramoulle@mmania.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-11279-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-11280-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200208220002.17391.Dieter.Nuetzel@hamburg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs <reiserfs-list@namesys.com>
 
-> Why not get rid of the "bad block" thing one for all.
-> If a current SCSI or ATA disk show bad blocks (the remapping do not work any 
-> longer) replace the disk! The manufacturer have to replace it if the warranty 
-> didn't expired.
+Hi,
 
-Bad Block relocation is nothing that really can be trusted, on either
-IDE nor SCSI drives. User wants their filesystem to be robust and
-safe, even if the drive has damaged blocks. Many filesystems,
-including very old ones has bad blocks handling, and it has saved many
-people from troubles too.
+Here are the results of some tests i made, playing with my home PC
+(nothing to do with production servers this time ;o)
 
-> -Dieter
+fs is /var , a 3.5 format 300Mo partition, reiserfsck from reiserfsprogs-3.6.3 
 
+I dd'ed /var to a file, losetup'ed it and made successive --check ,
+--fixable, --check and finally --rebuild-tree.
+
+After the first --check , it reported 2657 corruptions which could be fixed by
+--fix-fixable.
+So , i did and re-ran --check and came with still 1 corruption left that was
+said to be able to be corrected with --fix-fixable.
+Re-ran --fix-fixable and --check , and i still had this '1 corruption found
+which can be fixed with --fix-fixable'
+
+bad_stat_data: block 38372, [3955 5371 0x0 SD (0)], SD has bad nlink number
+
+I ran --rebuild-tree and the final corruption finally disappeared.
+
+I've packed the metadata, if you want to have a look at it.
+
+You can find the shell output here :
+
+http://philippemm.multimania.com/reiserfs/3.5_var_corrupted_fs.txt
+
+and the gzipped metadata here;
+
+http://philippemm.multimania.com/reiserfs/metadata.gz
+
+and the log files here :
+
+http://philippemm.multimania.com/reiserfs/
+
+Thanks
+
+Philippe
