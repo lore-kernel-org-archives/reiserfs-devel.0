@@ -1,54 +1,53 @@
-From: Spam <spam@tnonline.net>
+From: Christer Weinigel <christer@weinigel.se>
 Subject: Re: silent semantic changes with reiser4
-Date: Thu, 26 Aug 2004 13:17:30 +0200
-Message-ID: <507956415.20040826131730@tnonline.net>
+Date: 26 Aug 2004 13:16:31 +0200
+Sender: wingel@zoo.weinigel.se
+Message-ID: <m3llg2m9o0.fsf@zoo.weinigel.se>
 References: <20040824202521.GA26705@lst.de> <412CEE38.1080707@namesys.com>
- <20040825200859.GA16345@lst.de>
- <Pine.LNX.4.58.0408251314260.17766@ppc970.osdl.org>
- <Pine.LNX.4.58.0408260204050.22259@artax.karlin.mff.cuni.cz>
- <Pine.LNX.4.58.0408251723540.17766@ppc970.osdl.org>
- <412DA11B.2070303@namesys.com> <20040826105330.GB30449@mail.shareable.org>
- <20040826105914.GA30795@lst.de>
-Reply-To: Spam <spam@tnonline.net>
+	<20040825152805.45a1ce64.akpm@osdl.org>
+	<112698263.20040826005146@tnonline.net>
+	<Pine.LNX.4.58.0408251555070.17766@ppc970.osdl.org>
+	<1453698131.20040826011935@tnonline.net>
+	<20040825163225.4441cfdd.akpm@osdl.org>
+	<20040825233739.GP10907@legion.cup.hp.com>
+	<20040825234629.GF2612@wiggy.net>
+	<1939276887.20040826114028@tnonline.net>
+	<20040826024956.08b66b46.akpm@osdl.org>
+	<839984491.20040826122025@tnonline.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20631-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20632-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040826105914.GA30795@lst.de>
+In-Reply-To: <839984491.20040826122025@tnonline.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jamie Lokier <jamie@shareable.org>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Spam <spam@tnonline.net>
+Cc: Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, torvalds@osdl.org, reiser@namesys.com, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
+Spam <spam@tnonline.net> writes:
 
+>   Keeping stuff in the kernel should make the new features
+>   transparent to the applications.
 
-> On Thu, Aug 26, 2004 at 11:53:30AM +0100, Jamie Lokier wrote:
->> Hans Reiser wrote:
->> > being able to cat dirname/pseudos/cat and get a 
->> > concatenation of all of the files is nice, and being able to cat 
->> > dirname/pseudos/tar and get an archive of the directory is nice
->> 
->> Yes.  Being able to cd into filename.tar.gz and filename.iso is also
->> nice, but all of these features should be supported by the VFS
->> generically, not in any specific filesystem, and there should be a
->> hook to invoke the various fun filesystem-independent handlers by name.
+No, it will make just one special case, rename within the same
+filesystem, work.  (Well, two special cases, rm will also delete
+the other forks). 
 
-> It doesn't belong into the kernel at all.  If at all it belongs into a
-> userspace filesystems, but even in that case the magic detection of
-> which one to use is kinda hard.  You absoutely don't want to hardcode
-> file formats in the kernel.
+Unless we add a new copy(2) syscall (which would be nice for other
+reasons) all applicatons that copy files will fail to copy the
+streams.  So no working cp command, no nautilus nor konqueror without
+changes to the application.  And if you have to change the
+applications anyway, isn't it much better to agree on a shared library
+in userspace that everyone uses?  Which has the added bonus that it
+can be made to work on top of Linux, Windows, Ultrix and VMS?
 
-  Do  you  mean  user-level  file  system  as  a  VFS  handled by user
-  applications,  or  a  intermediate  file  system  layer  between any
-  application  and  the  real  file  system?  The latter would be good
-  enough as it would still be transparent to the applications.
+  /Christer
 
-  ~S
-  
+-- 
+"Just how much can I get away with and still go to heaven?"
 
-
-
-
+Freelance consultant specializing in device driver programming for Linux 
+Christer Weinigel <christer@weinigel.se>  http://www.weinigel.se
