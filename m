@@ -1,71 +1,37 @@
-From: Steven Cole <elenstev@mesatop.com>
+From: Mike Fedyk <mfedyk@matchmail.com>
 Subject: Re: reiser4 snapshot for August 26th.
-Date: 26 Aug 2003 13:51:22 -0600
-Message-ID: <1061927482.1666.36.camel@spc9.esa.lanl.gov>
-References: <20030826102233.GA14647@namesys.com>
-	 <1061922037.1670.3.camel@spc9.esa.lanl.gov>
-	 <20030826182609.GO5448@backtop.namesys.com>
-	 <1061926566.1076.2.camel@teapot.felipe-alfaro.com>
-	 <20030826194321.GA25730@namesys.com>
+Date: Tue, 26 Aug 2003 13:05:30 -0700
+Message-ID: <20030826200530.GC1258@matchmail.com>
+References: <20030826102233.GA14647@namesys.com> <1061922037.1670.3.camel@spc9.esa.lanl.gov> <20030826182609.GO5448@backtop.namesys.com> <1061926566.1076.2.camel@teapot.felipe-alfaro.com> <20030826194321.GA25730@namesys.com> <1061927482.1666.36.camel@spc9.esa.lanl.gov>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15435-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15436-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030826194321.GA25730@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <1061927482.1666.36.camel@spc9.esa.lanl.gov>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Oleg Drokin <green@namesys.com>
-Cc: Felipe Alfaro Solana <felipe_alfaro@linuxmail.org>, Alex Zarochentsev <zam@namesys.com>, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: Steven Cole <elenstev@mesatop.com>
+Cc: Oleg Drokin <green@namesys.com>, Felipe Alfaro Solana <felipe_alfaro@linuxmail.org>, Alex Zarochentsev <zam@namesys.com>, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 2003-08-26 at 13:43, Oleg Drokin wrote:
-> Hello!
+On Tue, Aug 26, 2003 at 01:51:22PM -0600, Steven Cole wrote:
+> I did a "time bk -r co" for the current 2.6 tree, and here
+> are the results for reiser4 and ext3 on 2.6.0-test4:
 > 
-> On Tue, Aug 26, 2003 at 09:36:07PM +0200, Felipe Alfaro Solana wrote:
-> > > Disable "reiser4 system call" (CONFIG_REISER4_FS_SYSCALL) support, it is 
-> > > not ready.
-> > [...]
-> > arch/i386/kernel/built-in.o(.data+0x7c4): In function `sys_call_table':
-> > : undefined reference to `sys_reiser4'
-> > make[2]: *** [.tmp_vmlinux1] Error 1
-> > make[1]: *** [vmlinux] Error 2
-> > [...]
-> > CONFIG_REISER4_FS=m
+> Reiser4:
+> real    1m55.077s
+> user    0m30.740s
+> sys     0m36.558s
 > 
-> Building as module is also not yet supported.
+> Ext3:
+> real    3m48.438s
+> user    0m26.400s
+> sys     0m13.205s
 > 
-Fine, then here's a patch:
 
---- linux-2.6.0-test4-r4/fs/Kconfig.orig	2003-08-26 13:44:38.165059616 -0600
-+++ linux-2.6.0-test4-r4/fs/Kconfig	2003-08-26 13:46:43.672979512 -0600
-@@ -203,6 +203,9 @@
- 	tristate "Reiser4 (EXPERIMENTAL very fast general purpose filesystem)"
- 	depends on EXPERIMENTAL
- 	---help---
-+	  Building as a module is not yet supported, so don't say 'M'
-+          unless you're a developer.
-+
- 	  Reiser4 is more than twice as fast for both reads and writes as
- 	  ReiserFS.  That means it is four times as fast as NTFS by Microsoft.
- 	  (Proper benchmarks will appear in a few months at
+Can you try ext3 with -o data=writeback, as well as xfs & reiser3?
 
-Meanwhile, reiser4 seems to be working fine and is nice and fast.
-
-I did a "time bk -r co" for the current 2.6 tree, and here
-are the results for reiser4 and ext3 on 2.6.0-test4:
-
-Reiser4:
-real    1m55.077s
-user    0m30.740s
-sys     0m36.558s
-
-Ext3:
-real    3m48.438s
-user    0m26.400s
-sys     0m13.205s
-
-Steven
-
-
+Thanks
