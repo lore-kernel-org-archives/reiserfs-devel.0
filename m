@@ -1,47 +1,69 @@
-From: Grant Miner <mine0057@mrs.umn.edu>
-Subject: Filesystem Benchmarking script w ext2
-Date: Fri, 08 Aug 2003 15:43:43 -0500
-Message-ID: <3F340B7F.6000505@mrs.umn.edu>
+From: The Amazing Dragon (Elliott Mitchell) <ehem@cs.pdx.edu>
+Subject: Re: [OT] Re: ReiserFS problems
+Date: Fri, 8 Aug 2003 17:45:43 -0700 (PDT)
+Message-ID: <200308090045.h790jh4A011655@sirius.cs.pdx.edu>
+References: <200308082259.05512.russell@coker.com.au>
+Reply-To: reiserfs-list@namesys.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------030304090906070400060603"
-Return-path: <reiserfs-list-return-15255-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-15256-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200308082259.05512.russell@coker.com.au> from "Russell Coker" at Aug 08, 2003 10:59:05 PM
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: russell@coker.com.au
+Cc: Christian Kujau <evil@g-house.de>, reiserfs-list@namesys.com
 
---------------030304090906070400060603
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+> From: Russell Coker <russell@coker.com.au>
+> On Fri, 8 Aug 2003 21:29, Christian Kujau wrote:
+> > Russell Coker wrote:
+> > > system for storing a file-system image.  If you use an XOR encryption
+> > > method it won't even hurt performance either.  :-#
+> >
+> > sorry to hop in here, but i don't understand why an algorithm like "XOR"
+> > is named "encryption" at all. isn't it that another XOR operation just
+> > delivers the cleartext again?
+> 
+> It is encryption just as is the "Caesar cipher" (of which ROT-13 is a 
+> sub-set).  It is not very good encryption, but it's enough to stop reiserfsck 
+> from doing the wrong thing as it will defeat magic number detection.
 
-Some people asked about ext2 so it is in this sample results.
+It depends what is being mentioned. If you've got a short key, say less
+than 1MB, then it is horrible encryption; take a couple minutes to find a
+cracker and your data will be out in the open pretty quickly.
 
-It seemes like there was some interest in the filesystem benchmarks, so 
-I have written a better testing script.  Take it from 
-http://umn.edu/~mine0057/bench .
-(You will need scsh to use it.)
+If the key is large, then it is a very different matter. If you've got a
+keystream that is at least as large as the data being sent, and it is
+*never* reused, then this is the "one time pad". The "one time pad" is
+not merely the best cryptosystem out there, but it is the only
+cryptosystem that is *provably* secure. The problem is that keystream it
+can *never* be reused, and must be absolutly secure (this really needs an
+incredible amount of emphasis). If you're sending a little bit of super
+sensitive data around, then it is worth trying to deal with the key
+distribution problem; otherwise, use a conventional cryptosystem.
 
-It makes it easy to select which filesytems to benchmark, and you get a 
-tab-delimited output (so you can import into Excel :).  Also, you can 
-customize the list of tests with whatever commands you wish.  If anyone 
-finds it useful, let me know so that I continue to work on it.  Attached 
-is a sample output.
+> Of course a magic number can be hit by chance given a sufficiently large 
+> amount of input data.  I imagine that a gzip file could have the ReiserFS 
+> magic data if given the right/wrong input and thus could be munged through a 
+> fsck.
 
---------------030304090906070400060603
-Content-Type: text/plain;
- name="results2.txt"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="results2.txt"
+Which as already noted is what really matters here.  :-)  Just a little
+bit of obfustication, so fsck will fail to identify the data as part of
+the filesystem, just as mere data and leave it alone.
 
-fs	bigdir	cpu 	cp	cpu 	cp2	cpu 	cp3	cpu 	cp4	cpu 	cp5	cpu 	rm	cpu 	rm2	cpu 	rm3	cpu 	sync	cpu 	total	avg
-ext2	33.01	0.235989	37.82	0.149656	43.81	0.128281	44.14	0.127096	46.09	0.121284	49.75	0.115779	15.95	0.0376176	7.66	0.0861619	15.2	0.0427632	0.43	0.	293.86	0.129109
-ext3	38.47	0.248505	94.42	0.0775259	61.35	0.119478	62.64	0.117976	62.58	0.119367	64.7	0.117156	25.14	0.0640414	7.86	0.194656	13.17	0.118451	4.94	0.00202429	435.27	0.117996
-reiser4	32.95	0.32868	33.27	0.326721	32.31	0.341071	34.48	0.327726	33.88	0.332054	31.	0.36871	17.51	0.262707	7.74	0.527132	12.97	0.341557	0.55	0.	236.66	0.337235
+Shouldn't fsck be able to deal with this anyway? Just end up with the
+file being merged into the larger filesystem? Could this be used by a
+cracker to attack a system? The use a random per-FS cookie approach seems
+like a good idea.
 
---------------030304090906070400060603--
+
+-- 
+(\___(\___(\______          --=> 8-) EHM <=--          ______/)___/)___/)
+ \   (    |         EHeM@cs.pdx.edu      PGP 8881EF59         |    )   /
+  \_  \   |  _____  -O #include <stddisclaimer.h> O-   _____  |   /  _/
+    \___\_|_/82 04 A1 3C C7 B1 37 2A*E3 6E 84 DA 97 4C 40 E6\_|_/___/
+
 
