@@ -1,44 +1,93 @@
-From: Craig Knox <crg@purplefields.com>
-Subject: Re: mm vs. official for reiser4.
-Date: Sun, 08 Feb 2004 16:50:34 +0000
-Message-ID: <E1Aps9F-00061w-00@deer.gmane.org>
-References: <4023D127.7030301@namesys.com>
+From: Filipe Almeida <filipe@rnl.ist.utl.pt>
+Subject: reiser4 and swsusp
+Date: Sun, 8 Feb 2004 19:06:39 +0000
+Message-ID: <20040208190639.GB31760@rnl.ist.utl.pt>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-5xeLmS3m2W3k2jcOhEbb"
-Return-path: <reiserfs-list-return-16726-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="C7zPtVaVf+AK4Oqc"
+Return-path: <reiserfs-list-return-16727-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4023D127.7030301@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>
+To: reiserfs-list@namesys.com
 
---=-5xeLmS3m2W3k2jcOhEbb
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+--C7zPtVaVf+AK4Oqc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, 2004-02-06 at 17:38, Hans Reiser wrote:
-> Until we have removed all bugs that we can hit with internal testing, we=20
-> will produce snapshots for use with only one kernel branch.  I am=20
-> guessing that more reiser4 testers will use Linus kernel than Morton's. =20
-> Readers should correct me if I err.....
+Hi,
+First of all let me say I am not familiar with reiser4 or swsusp internals
+but I needed a way to make reiser4 work with software suspend.
 
-I use the -mm branch and wanted to test reiser4 when I reinstalled my
-workstation the other day but it couldn't get them to play together
-nicely so am now back to using ext3.
+Below is the patch I came up with. I did a couple of suspend/resume loops on
+a system with reser4 root and everything seems to be working ok. The patch
+doesn't affect operation without swsusp.
 
---=-5xeLmS3m2W3k2jcOhEbb
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+Please check if everything is ok.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.3 (GNU/Linux)
+PS: repacker is broken on the last two snapshots. It just oops and crashes the
+machine.
 
-iD8DBQBAJmjaRVpYpM95tE0RAgKoAJ9mTsU66HEMFcvTtKjtl9gYDQmf7gCdHsL3
-l7lDXyRElErzFSY3ttaVRpk=
-=j+an
------END PGP SIGNATURE-----
+Regards,
+Filipe Almeida
 
---=-5xeLmS3m2W3k2jcOhEbb--
+--C7zPtVaVf+AK4Oqc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="reiser4-swsusp.patch"
 
+--- fs/reiser4/ktxnmgrd.c.ok	2004-02-08 03:01:49.000000000 +0000
++++ fs/reiser4/ktxnmgrd.c	2004-02-08 03:25:51.000000000 +0000
+@@ -79,11 +79,6 @@
+ 		int result;
+ 		txn_mgr *mgr;
+ 
+-		/* software suspend support. Doesn't work currently
+-		   (kcond_timedwait), also refrigerator() may schedule */
+-		if (0 && (me->flags & PF_FREEZE))
+-			refrigerator(PF_IOTHREAD);
+-
+ 		set_comm("wait");
+ 		/* wait for @ctx -> timeout or explicit wake up.
+ 
+@@ -95,6 +90,17 @@
+ 		result = kcond_timedwait(&ctx->wait,
+ 					 &ctx->guard, ctx->timeout, 1);
+ 
++		/* software suspend support. */
++		if (result != -ETIMEDOUT && result != 0
++			&& me->flags & PF_FREEZE) {
++			
++			spin_unlock(&ctx->guard);
++			refrigerator(PF_IOTHREAD);
++			spin_lock(&ctx->guard);
++			continue;
++		}
++
++
+ 		/* wake up all threads doing umount. See ktxnmgrd_detach(). */
+ 		kcond_broadcast(&ctx->loop);
+ 
+--- fs/reiser4/entd.c.ok	2004-02-08 03:22:46.000000000 +0000
++++ fs/reiser4/entd.c	2004-02-08 03:50:40.567901168 +0000
+@@ -72,8 +72,6 @@
+ 	while (1) {
+ 		int result;
+ 
+-		if (me->flags & PF_FREEZE)
+-			refrigerator(PF_IOTHREAD);
+ 
+ 		entd_set_comm(".");
+ 		spin_lock(&ctx->guard);
+@@ -90,6 +88,8 @@
+ 		entd_set_comm("!");
+ 		if (result == 0)
+ 			entd_flush(super);
++		else if (me->flags & PF_FREEZE)
++			refrigerator(PF_IOTHREAD);
+ 		else
+ 			/* some other error */
+ 			warning("nikita-3099", "Error: %i", result);
+
+--C7zPtVaVf+AK4Oqc--
