@@ -1,60 +1,45 @@
-From: evilninja <evilninja@gmx.net>
+From: Redeeman <redeeman@metanurb.dk>
 Subject: Re: I've done a very bad mistake
-Date: Thu, 01 Jul 2004 19:10:43 +0200
-Message-ID: <40E44593.7090207@gmx.net>
-References: <200407011523.48481.aotto1968@onlinehome.de> <1088696200.11333.58.camel@localhost>
+Date: Thu, 01 Jul 2004 19:33:39 +0200
+Message-ID: <1088703219.15328.6.camel@localhost>
+References: <200407011523.48481.aotto1968@onlinehome.de>
+Reply-To: redeeman@metanurb.dk
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-19482-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-19483-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1088696200.11333.58.camel@localhost>
+In-Reply-To: <200407011523.48481.aotto1968@onlinehome.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Mikael Cluseau <nwrk@nwrk.dyndns.org>
-Cc: aotto1968@t-online.de, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Reiserfs Mailinglist <reiserfs-list@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+afaik, this only overwrites the device node. recreate it, and you should
+be fine
 
-Mikael Cluseau schrieb:
-> Le jeu 01/07/2004 à 15:23, Andreas Otto a écrit :
->
->>Hi,
->>
->>  I've done as root:
->>   >> cp some_file /dev/hdb7
->
->
-> I remember that cp ask to *replace* a file, not to "put the source file
-> at the beginning of the target file". Did you really verified that your
-> partition was really modified ? I would be very surprised of this
-> attitude from cp...
+On Thu, 2004-07-01 at 15:23 +0200, Andreas Otto wrote:
+> Hi,
+> 
+>   I've done as root: 
+>    >> cp some_file /dev/hdb7
+> 
+>   /dev/hdb7 is "was :-(" a reiserfs partition.
+> 
+>   Question?
+> 
+>   I need a tool with partition as input (dev/hdb7) and all not damaged files
+>   as output
+> 
+>   for me it is very important to get a solution ... help welcome :-)
+> 
+> 
+> mfg
+> 
+>   aotto
+> 
+> 
+-- 
+Redeeman <redeeman@metanurb.dk>
 
-hm, i was curious about this and i set up a testimage via losetup, so i
-can use /dev/loop0 as it it were real devices.
-
-when cp'ing to /dev/loop0, i was able to mount /dev/loop0 again with
-reiserfs, and no files are corrupted (diff). with ext3, i had to fsck
-loop0, then one entry was taken to lost+found, but no corruptions
-present as far as diff can tell. all this was done with devfs. so, "cp"
-really writes *to* the file, it does not replace it, right?
-
-maybe the OP only has to try latest reiserfsck...
-
-just my 2¢,
-Christian.
-- --
-BOFH excuse #112:
-
-The monitor is plugged into the serial port
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iD8DBQFA5EWTC/PVm5+NVoYRAg2zAKDlrJxWjxv/8+rFoR1bVpaedEzR1ACaA6yJ
-aMJfJOfsq3TXpKbONOaiFEs=
-=Iqji
------END PGP SIGNATURE-----
