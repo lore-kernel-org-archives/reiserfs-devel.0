@@ -1,58 +1,79 @@
 From: The Amazing Dragon (Elliott Mitchell) <ehem@cs.pdx.edu>
-Subject: Re: Recent spam
-Date: Thu, 5 Jun 2003 15:45:21 -0700 (PDT)
-Message-ID: <200306052245.h55MjLNL029596@sirius.cs.pdx.edu>
+Subject: Re: How to build a big file server
+Date: Thu, 5 Jun 2003 16:49:01 -0700 (PDT)
+Message-ID: <200306052349.h55Nn1Ap005904@sirius.cs.pdx.edu>
 References: <no.id>
-Reply-To: reiserfs-list@namesys.com
+Reply-To: ehem@cs.pdx.edu
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14462-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14463-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <no.id> from "Hans Reiser" at Jun 05, 2003 06:39:20 PM
+In-Reply-To: <no.id> from "Carl-Daniel Hailfinger" at Jun 05, 2003 06:47:32 PM
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Chris Mason <mason@suse.com>, Russell Coker <russell@coker.com.au>, Soeren Sonnenburg <reiserfs@nn7.de>, reiserfs-list <reiserfs-list@namesys.com>
+To: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
+Cc: Heinz-Josef Claes <hjclaes@web.de>, Russell Coker <russell@coker.com.au>, reiserfs-list@namesys.com
 
-> From: Hans Reiser <reiser@namesys.com>
-> Chris Mason wrote:
-> >On Thu, 2003-06-05 at 09:26, Hans Reiser wrote:
-> >>This is a bit inconsiderate of you, don't you think?  Why don't you just 
-> >>unsubscribe?  I have a sysadmin with too many tasks to get them done, 
-> >>and he doesn't need his time wasted with such crap as dealing with spamcop.
+> From: Carl-Daniel Hailfinger <c-d.hailfinger.kernel.2003@gmx.net>
+> Heinz-Josef Claes wrote:
+> >From the debian web page:
 > >
-> >Honestly Hans, this has come up a bunch of times over the last few
-> >months.  The reiserfs mail server setup doesn't play nicely with
-> >automated spam reporting tools, and many people other than Russell use
-> >them.
+> > http://packages.debian.org/testing/utils/storebackup.html
 > >
-> >There have been a ton of suggestions on ways to make things better, and
-> >they range from 5 minute tasks to complex ones.  They've largely been
-> >ignored.  I'd really rather not lose valuable contributors to the list
-> >over something as stupid as spam.
+> > File comparisons are done with MD5 checksums, so no changes go
+> > unnoticed.
+> 
+> If you believe the last sentence, I have a bridge to sell.
 
-> flx is moving our webserver and mailserver, and once he has done that I 
-> will most likely pay the $25.  Unfortunately he is distracted by such 
-> tasks as talking Intel into giving us a 4-way Itanium and splicing a 
-> cable for it and installing it in its own room because it is noisy, 
-> talking AMD into giving us some sort of opteron, installing Nina's 
-> laptop, helping with the problems due to trying to use gcc 3.3, fixing 
-> the powerbutton on my computer, installing a newer version of xmms that 
-> can play CDDA out a USB sound device properly, replacing the fans on Mr. 
-> Demidov's computer so that it can run with the case on it, etc.  Giving 
-> him the additional task of dealing with spamcop is just asinine.
+Where, how large, what price, what is the expected income?
 
-In other words it is time for you to hire more help? Setting SpamAssassin
-to block rather than mark is a pretty simple change; setting the list
-server to not strip Recieved lines is also a simple change. This has
-passed the point of merely being a minor problem. Though getting $3K
-pieces of hardware to test on is good, avoiding losing $3K due to all
-your mail being blackholed is more important. Okay, getting a $100K piece
-of hardware out of Intel might be a higher priority, but you're getting
-into the danger zone where this will turn into real money being lost.
+> To be more exact: MD5 is a 128=2^7 bit hash. Assuming a file length of 4kB
+> = 2^8*4096=2^20 bits, approximately 2^(2^(20-7))= 2^8192= 10^2457
+> different files have the same hash.
+> 
+> That's right: for a given MD5 hash, there are more different files with
+> 4kB size sharing the same hash than the count of atoms in the whole
+> universe. If the files are larger, it gets worse.
+
+Yes, if you have every possible 4KB file in existance, then 4080 of those
+bytes are redundant (4096 minus 16 bytes for the hash), so 2^(4080*8) of
+all possible 4KB files would have the same MD5 hash. Very much larger
+than the number of atoms in the universe (2^265, without dark matter),
+and larger than the volume of the universe in cubic centimeters (2^280).
+
+Think of how many unique 4KB files could exist though, 2^32768. That is
+a large number. If we consider a super-huge installation, you might have
+a petabyte of storage (2^50, considerably larger than any installation
+I've ever heard of). Now if we figure an average file size of 1KB
+(extraordinarily small), then this installation will have 2^40 separate
+files. There is also the problem of the birthday paradox so once you've
+covered half the bits there is a fifty percent chance of a collision, so
+MD5 suddenly comes down to 64 bits of use before collision becomes a
+significant danger. So we are short of endangering MD5 by 24 bits, your
+chances of winning a lottery game are very much better than a 50% chance
+of a single collision.
+
+Now, the size of MD5 is small enough that there is a significant
+danger of /governments/ being able to find a couple pairs of files with
+identical MD5 hashes. A much larger danger is that some attacks have
+gotten though weakened versions of MD5. The danger of identical files
+being found by accident is utterly insignificant.
+
+This is also assuming MD5 is used for detecting identical files, more
+likely it is used to detect changes. Also do you seriously worry about
+users attempting to /prevent/ their files from being backed up?
+
+> md5sum(1) is not diff(1). Most of the time, it will suffice as el cheapo
+> replacement, but for backups it's definitely horrible. You don't store
+> your backup tapes in the microwave, do you?
+
+I'd worry more about the fireproof box your tapes are in failing in a
+fire than about finding a single pair of colliding files though.
+
+You do not know enough to disparage MD5.
 
 
 -- 
