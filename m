@@ -1,42 +1,53 @@
-From: "Raymond A. Meijer" <rmeijer@internet.gr>
-Subject: Re: After `quotacheck` ReiserFS Root Filesystem Won't Mount Read-Write
-Date: Fri, 20 Aug 2004 09:17:06 +0300
-Message-ID: <200408200917.06685.rmeijer@internet.gr>
-References: <22c16c22abfc.22abfc22c16c@optonline.net> <200408170303.41737.bernd-schubert@web.de> <412553A0.4050301@poelzi.org>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: viewprinting: what format should views be stored in?
+Date: Thu, 19 Aug 2004 23:19:37 -0700
+Message-ID: <412597F9.1010707@namesys.com>
+References: <20040819074027.8429715D94@mail03.powweb.com> <41248D43.3040905@dgreaves.com> <4124D255.2060401@comcast.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20416-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-20417-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <412553A0.4050301@poelzi.org>
-Content-Disposition: inline
+In-Reply-To: <4124D255.2060401@comcast.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: George Beshers <gbeshers@comcast.net>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri 20 August 2004 04:28, daniel.poelzleithner wrote:
+George Beshers wrote:
 
-> | "init=/bin/bash rw"
-> |
-> | Then after booting:
-> | vi /etc/fstab
-> | sync; sync;  sync
-
-> mount / -o remount,ro
 >
-> Then you can savely press the reboot button.
+>
+>
+>>
+>>
+>>> Masked Processes
+>>> - May not create hard links.
+>>> - Child processes [of a masked process] must inherit the parent's 
+>>>  "mask bit" and mask definition.
+>>>  
+>>>
+>> remind me - what is the mask tied to? UID/GID, EUID, PID, PGID? 
+>> filesystem?
+>> Hans actually says it's derived from the executable.
+>> What if it changes between two processes starting?
+>> Does the running processes mask change? (cf chmod a file - seems 
+>> reasonable but...)
+>> I'd think it needs to be pretty atomic...
+>> In fact, maybe changing masks on a running (mounted?) system is a 
+>> potential security hole and forbidden?
+>> I think I could think of race examples.
+>
+>
+> I am disinclined to tackle changing masks on the fly until I have a 
+> compelling story
+> to justify the work.
 
-Or use the Magic Sys Rq key:
+It is less work to allow changing them on the fly than to not do so, 
+since they are stored in the fs, not something loaded into the process 
+state.
 
-e -> TeRM signal to all processes
-i -> KiLL signal to all processes
-s -> Sync
-u -> Umount filesystems
-b -> reBoot
+Hans
 
-Works for me :)
-
-
-Ray
