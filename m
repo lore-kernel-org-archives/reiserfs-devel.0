@@ -1,52 +1,47 @@
-From: Oleg Drokin <green@namesys.com>
-Subject: Re: Fixing corrupt reiserfs partition when it registers as full
-Date: Thu, 5 Jun 2003 11:48:23 +0400
-Message-ID: <20030605074823.GA10373@namesys.com>
-References: <20030604221436.GA19187@pals.cwru.edu>
+From: Heinz-Josef Claes <hjclaes@web.de>
+Subject: How to build a big file server
+Date: 05 Jun 2003 10:14:13 +0200
+Message-ID: <1054800852.1997.15.camel@wusel.schnulli.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-14404-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-14405-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20030604221436.GA19187@pals.cwru.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Brian G. Olson" <bgo@cwru.edu>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello!
+Hi,
 
-On Wed, Jun 04, 2003 at 06:14:36PM -0400, Brian G. Olson wrote:
-> Okay, I've got a reiserfs partition that went bad. I'm don't know how,
-> but for some reason the partition became completely full.  Showing up as
-> 100% full using df -h. However checking all the files on the partition
-> (using du -shc) it should have been a little more than half full (2.4G
-> partition), just as I remember df -h showing the last time I checked. So
-> I unmounted it, and checked with reiserfsck --check.  Sure enough, it
-> said I had a problem and told me to do use --rebuild-tree.  Okay, I do
-> that and pass 1 completes. Then on pass 2 it says it wants to add a
-> bunch of leaves (on the order of 10,000 leaves), but of course the
-> partition registers as full so it fails. That is where I am currently
-> stuck. I can't even mount it anymore, mount says it's 'not a directory'. 
-> I'm currently using reiserfsck version 3.6.6 from the Knoppix v3.2 cd.
-> Now I'm gonna try to find a newer version to use, but in the mean time,
-> if anyone has any ideas I'd really appreciate it. Thanks
+I did't found information about my problem on namesys, so I try to ask
+here.
 
-Hm, the easiest solution is to copy entire partition with 'dd' to a bigger partition
-or to a file (and then append a file with some zeroes like this:
-"dd if=/dev/zero bs=4096 count=11000 | cat >>filewithpartition.img"),
-then run "reiserfsck --rebuild-sb" on the resulting partition or file,
-it will ask you some questions and you need to agree to a proposed fs size and you must say "no"
-to a question that asks if you did a resize.
-This will add some more space for fsck to work with.
-Then retry "reiserfsck --rebuild-tree" operation.
+I plan to build a big fileserver for Deutscher Bundestag (German
+Parliament) who is converting to linux on the server side. In the
+beginning it will be used in a testing environment and later multiple of
+them in production use.
 
-If you choose to copy image into a file, you will be able to mount the image
-using the loop device driver (-o loop option to mount command) after succesful
-finish of "reiserfsck --rebuild-tree" operation.
+Here are some questions:
 
-Bye,
-    Oleg
+- I plan to build a system with IDE 250GB drives. 7 of them for raid 5
+and one hot spare. The OS will be on separate hardware raid 1 on smaller
+disks. Does anybody have experience with IDE controlers for the big
+disks? Is it better to use hardware raid oder software raid
+(performance)?
+
+- At this time, we plan to use reiserfs. What are the advantages /
+disadvantages of using the raid 1 for journaling for the (big) raid 5
+(performance, recovery)? The system will be heavily used with
+storebackup (www.sf.net/projects/storebackup) witch means that lots of
+hard links have to be created as fast as possible.
+
+- BTW: I'm using a ZIP drive on the parallel port with reiserfs. Does it
+make sense to put the journal for the ZIP drive on the hard disk of the
+laptop?
+
+Thanks for taking your time,
+Heinz-Josef Claes
+
+
