@@ -1,39 +1,39 @@
-From: viro@parcelfarce.linux.theplanet.co.uk
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: silent semantic changes with reiser4
-Date: Mon, 30 Aug 2004 07:33:31 +0100
+Date: Mon, 30 Aug 2004 00:42:13 -0700
 Sender: linux-fsdevel-owner@vger.kernel.org
-Message-ID: <20040830063331.GI16297@parcelfarce.linux.theplanet.co.uk>
-References: <41323751.5000607@namesys.com> <20040829212700.GA16297@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408291431070.2295@ppc970.osdl.org> <1093821430.8099.49.camel@lade.trondhjem.org> <Pine.LNX.4.58.0408291641070.2295@ppc970.osdl.org> <1093830135.8099.181.camel@lade.trondhjem.org> <Pine.LNX.4.58.0408291919450.2295@ppc970.osdl.org> <20040830030157.GE16297@parcelfarce.linux.theplanet.co.uk> <Pine.LNX.4.58.0408292042380.2295@ppc970.osdl.org> <20040830044637.GF16297@parcelfarce.linux.theplanet.co.uk>
+Message-ID: <4132DA55.5080903@namesys.com>
+References: <Pine.LNX.4.44.0408271043090.10272-100000@chimarrao.boston.redhat.com> <412F7D63.4000109@namesys.com> <20040827230857.69340aec.pj@sgi.com> <20040829150231.GE9471@alias> <4132205A.9080505@namesys.com> <20040829183629.GP21964@parcelfarce.linux.theplanet.co.uk> <20040829185744.GQ21964@parcelfarce.linux.theplanet.co.uk> <41323751.5000607@namesys.com> <20040829212700.GA16297@parcelfarce.linux.theplanet.co.uk>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20040830044637.GF16297@parcelfarce.linux.theplanet.co.uk>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@osdl.org>
-Cc: Trond Myklebust <trond.myklebust@fys.uio.no>, Hans Reiser <reiser@namesys.com>, flx@msu.ru, Paul Jackson <pj@sgi.com>, riel@redhat.com, ninja@slaphack.com, diegocg@teleline.es, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, Andrew Morton <akpm@osdl.org>, wichert@wiggy.net, jra@samba.org, hch@lst.de, Linux Filesystem Development <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20040829212700.GA16297@parcelfarce.linux.theplanet.co.uk>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: viro@parcelfarce.linux.theplanet.co.uk
+Cc: flx@msu.ru, Paul Jackson <pj@sgi.com>, riel@redhat.com, ninja@slaphack.com, torvalds@osdl.org, diegocg@teleline.es, jamie@shareable.org, christophe@saout.de, vda@port.imtp.ilyichevsk.odessa.ua, christer@weinigel.se, spam@tnonline.net, akpm@osdl.org, wichert@wiggy.net, jra@samba.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, flx@namesys.com, reiserfs-list@namesys.com
 
-On Mon, Aug 30, 2004 at 05:46:37AM +0100, viro@parcelfarce.linux.theplanet.co.uk wrote:
-> Arguments about O_NOFOLLOW on the intermediate stages are bullshit, IMNSHO -
-> if they want to make some parts of tree inaccessible, they should simply
-> mkdir /tmp/FOAD; chmod 0 /tmp/FOAD; mount --bind /tmp/FOAD <blocked path>
-> in the namespace their daemon is running in.  And forget all that crap
-> about filtering pathnames and blocking symlinks on intermediate stages
-> (the latter is obviously worthless without the former since one can simply
-> substitute the symlink body in the pathname).
+I think we have to either:
 
-Ehh...  After looking at that for a while...  No, it's not that simple
-and removing the stuff that way won't do what these guys want, at least
-not without something else.  Frankly, what I've seen worries me a lot -
-it looks like there is a missing primitive here that would be saner
-than this sort of filtering.
+1) Link only to the file and not the directory in the file-directory 
+duality. This means we change the semantics of hard link so that it only 
+links to the data and the standard metadata, and the optional 
+attributes/streams/files-in-directory are not seen by the second link. 
+You can think of this as meaning that hard links only connect to the 
+file and not the directory in the file-directory wave-particle duality
 
-It appears that most of this stuff would be covered by a fast way to tell
-if the resulting object belongs to given subtree.  That could be arranged
-(not without some changes, but doable), but I'm not sure that it's enough
-to cover the stuff they are really trying to do.  It does look like an
-interesting problem and current solutions certainly suck.  And I very
-much doubt that "do a lookup if it doesn't run into anything that could
-be too tricky for our pathname-based checks, otherwise let's do it step-by-step
-from userland" is the right approach here.
+or, 2) we should ask Alexander Smith to help with applying the graph 
+traversal cycle detection code that he wrote.
+
+I can go either way contentedly for now. 2) is the right long term 
+solution. 1) is probably the right short term solution.
+
+Ok, Linus and Viro, now I see why it was hard. Being able to effectively 
+connect to compound documents only with symlinks is a bit distasteful, 
+but it is quite livable, and I very much hope you decide it is better 
+than fragmenting the namespace.
+
+Hans
+
+
+
