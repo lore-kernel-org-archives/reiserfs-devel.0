@@ -1,62 +1,64 @@
-From: Nikita Danilov <Nikita@Namesys.COM>
+From: Redeeman <redeeman@metanurb.dk>
 Subject: Re: some basic questions
-Date: Wed, 5 Nov 2003 18:15:14 +0300
-Message-ID: <16297.5122.49027.64854@laputa.namesys.com>
+Date: Wed, 05 Nov 2003 16:44:42 +0100
+Message-ID: <1068047082.32079.2.camel@redeeman.linux.dk>
 References: <1067880381.17873.9.camel@redeeman.linux.dk>
-	<1068044839.32072.0.camel@redeeman.linux.dk>
+	 <1068044839.32072.0.camel@redeeman.linux.dk>  <3FA91326.2060407@gmx.net>
+Reply-To: redeeman@metanurb.dk
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-15978-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-15979-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1068044839.32072.0.camel@redeeman.linux.dk>
+In-Reply-To: <3FA91326.2060407@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: redeeman@metanurb.dk
-Cc: Reiserfs Mailinglist <reiserfs-list@namesys.com>
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-Redeeman writes:
- > nobody seems to answer :(
+you say reiserfs and reiser4 is two diffrent things, is reiser4 a
+totally new filesystem?
 
-Sorry for delay.
+On Wed, 2003-11-05 at 16:11, Carl-Daniel Hailfinger wrote:
+> Redeeman wrote:
+> > nobody seems to answer :(
+> > 
+> > On Mon, 2003-11-03 at 18:26, Redeeman wrote:
+> > 
+> >>i am wondering about a few things. i am seriously thinking of change to
+> >>reiserfs. i experience bad stuff happen to fat32 often, and i have got
+> >>tired of it. i have a kernel with version 3.6 of reiserfs.
+> >>
+> >>will it be possible to convert to reiserfs4?
+> 
+> Not at this time. Actually reiserfs 3.6 and reiser4 are two totally
+> different entities, so it's highly unlikely.
+> 
+> >>is it possible to defragment a partition with reiserfs (or will it be in
+> >>version 4?)
+> 
+> backup with tar, delete everything, restore backup.
+> 
+> >>is it possible to undelete stuff?
+> 
+> no.
+> 
+> >>is it the correct choice for my use? (mp3, movies, cd images)
+> 
+> should be.
+> 
+> >>is there anything i should know?
+> 
+> Yes. reiser4 is not yet stable. This will not affect you if you use
+> reiserfs 3.6
+> 
+> >>thanks, and have a nice day
+> 
+> Regards,
+> Carl-Daniel
+-- 
+Regards, Redeeman
+()  ascii ribbon campaign - against html e-mail 
+/\                        - against microsoft attachments
 
- > 
- > On Mon, 2003-11-03 at 18:26, Redeeman wrote:
- > > i am wondering about a few things. i am seriously thinking of change to
- > > reiserfs. i experience bad stuff happen to fat32 often, and i have got
- > > tired of it. i have a kernel with version 3.6 of reiserfs.
- > > 
- > > will it be possible to convert to reiserfs4?
-
-There is no current plans for reiserfs->reiser4 convertor. One can use
-tar, or this http://tzukanov.narod.ru/convertfs/ (universal conversion
-utility written by some smart person).
-
- > > is it possible to defragment a partition with reiserfs (or will it be in
- > > version 4?)
-
-There is de-fragmentation utility for reiserfs, but there is for
-reiser4 (repacker).
-
- > > is it possible to undelete stuff?
-
-Not yet (neither in reiserfs nor in reiser4).
-
- > > is it the correct choice for my use? (mp3, movies, cd images)
-
-I think so.
-
- > > is there anything i should know?
-
-Reiser4 is still in the debugging, don't use it in the
-production. Reiserfs, on the other hand, is quite stable.
-
- > > 
- > > thanks, and have a nice day
-
-Nikita.
-
- > -- 
- > Regards, Redeeman
