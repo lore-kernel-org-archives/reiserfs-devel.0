@@ -1,43 +1,50 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: "df -i" support
-Date: Thu, 13 May 2004 13:19:06 +0400
-Message-ID: <1084439945.14090.6209.camel@tribesman.namesys.com>
-References: <20040513093432.52d3d7a3.turtle.power@wanadoo.es>
+From: "Lange, Michael" <Michael.Lange@temic-sds.com>
+Subject: =?iso-8859-1?Q?After_reiserfsck_--rebulid-treelogfike_doesn=B4?=
+    =?iso-8859-1?Q?t_mount=3B__bad_root_block_4294=2E=2E=2E=2E_-rebuild-tr?=
+    =?iso-8859-1?Q?ee_did_not_complete?=
+Date: Thu, 13 May 2004 12:45:09 +0200
+Message-ID: <658239FB1D8CA7499FA10CEB7CB2AF64562822@oeulw2ex01.hbi.ad.harman.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-18651-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18652-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040513093432.52d3d7a3.turtle.power@wanadoo.es>
+content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Miguel <turtle.power@wanadoo.es>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello
+help
 
-On Thu, 2004-05-13 at 11:34, Miguel wrote:
-> Hi
-> We have several machines running as MTA's using reiser for the mail
-> queue, we usually check the number of files (well an approximation)
-> using the output of "df -i" command on our monitorization plugins this
-> may be not very acurate but is very fast and didn't affect the MTA's
-> work.
-> 
-> With reiser the output of df -i is no longer usable,
+Mit freundlichen Gruessen / Best regards
 
-IIRC, reiserfs always reported -1 as a total number of inodes and a
-number of free inodes.
-At whihc kernel it was useable for you?
+Michael Lange
+Manager IT Infrastructure
 
->  we changed this to
-> "find | wc -l" variations but it hurts the performance.
-> 
-> There's a command to count the number of leafs (that's the name?) of a
-> tree from a reiser partition? or other orientative value?.(we mount
-> with notail)
-> 
-> Tnx
+Harman/Becker Automotive Systems GmbH
+S=F6flingerstrasse 100
+89077 Ulm, Germany
+Tel:  +49 / (0)731 / 3994 - 204
+Fax: +49 / (0)731 / 3994 - 61 204
+Mobil: +49 / (0)173 / 3 89 479 3
+WEB: http://www.becker.de
+     http://www.temic-sds.com
+
+
+
+*******************************************
+Diese E-Mail enthaelt vertrauliche und/oder rechtlich geschuetzte Informati=
+onen. Wenn Sie nicht der richtige Adressat sind oder diese E-Mail irrtuemli=
+ch erhalten haben, informieren Sie bitte sofort den Absender und loeschen S=
+ie diese Mail. Das unerlaubte Kopieren sowie die unbefugte Weitergabe diese=
+r Mail ist nicht gestattet.
+=20
+This e-mail may contain confidential and/or privileged information. If you =
+are not the intended recipient (or have received this e-mail in error) plea=
+se notify the sender immediately and delete this e-mail. Any unauthorized c=
+opying, disclosure or distribution of the contents in this e-mail is strict=
+ly forbidden.
+*******************************************
 
