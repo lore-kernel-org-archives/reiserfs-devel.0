@@ -1,47 +1,50 @@
-From: Todd Lyons <todd@mrball.net>
-Subject: Re: hans! i found a bug in reiser4 :((((
-Date: Mon, 19 Apr 2004 16:32:49 -0700
-Message-ID: <20040419233248.GA11539@mrball.net>
-References: <1081698647.5514.3.camel@redeeman.linux.dk> <407971B8.9090202@fbsd.za.net>
+From: Michael James <Michael.James@csiro.au>
+Subject: Re: Reiserfs, highquality meds source, low rates
+Date: Tue, 20 Apr 2004 10:54:22 +1000
+Message-ID: <200404201054.22865.Michael.James@csiro.au>
+References: <000001c425b0$1750e0b8$4fa9aa0e@fluridden.com> <200404191339.08313.tdickenson@geminidataloggers.com> <20040419134032.GD57@alias.nmd.msu.ru>
+Reply-To: Michael.James@csiro.au
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-18064-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-18065-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20040419134032.GD57@alias.nmd.msu.ru>
 Content-Disposition: inline
-In-Reply-To: <407971B8.9090202@fbsd.za.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; x-action="pgp-signed"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
+Cc: Alexander Lyamin <flx@msu.ru>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Monday 19 April 2004 23:40, Alexander Lyamin wrote:
+> > i am just not sure how to kill THIS messages which look so....
+> > they dont look like spam, even to me upon first look.
+> >=20
+>  You need more software....
 
-aquadog wanted us to know:
+While Hans doesn't want to block posts by non-subscribers,
+ could a non-subscriber return address be verified
+ in the same way as a new subscription is?
 
->I'm having the exact same problem. Doing a gentoo stage1 install,
->and it fails on glibc every time. Exact same configuraiton on reiser3 
->partition and it works no problem.
+ie: If a non-subscriber posts; they get back a letter,
+ "We recieved this posting to the Reiserfs List,
+  if you want it to appear, just hit reply."
 
-I got all excited when I first read this because I am having stability
-problems on my Gentoo box with a lone ReiserFS (3.6).  So I'm going to
-rebuild glibc with no optimizations, but I'm not running reiser4, so my
-results will probably have no bearing on things.  Doesn't hurt to try
-though.
+=46rom the list software's point of view
+ they are actually subscribing, but with delivery supressed.
 
-- -- 
-Blue skies...	Todd                   http://www.mrball.net
-        Public key:  http://www.mrball.net/todd.asc
-        Signing an email is like wearing underwear.  
-  You don't have to, but it's a really good idea to do it.
-Linux kernel 2.4.22-12.tmb.1mdk   2 users,  load average: 0.22, 0.05, 0.02
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.3 (GNU/Linux)
-Comment: http://www.mrball.net/todd.asc
+Mailman can cope with a subscriber suspending delivery, (for holidays etc)
+ it would be a case of jiggering the subscription to happen transparently.
 
-iD8DBQFAhGGgIBT1264ScBURAm0BAJ9rewJB82iXZinWVaAx9K32mP1v4ACfWUa+
-Sy9URjQSK4tbXS7rdnFaU94=
-=QhXE
------END PGP SIGNATURE-----
+Just another slightly different hoop to trip up the spammers.
+michaelj
+
+PS: Thanks for you existing labours on this list, it's appreciated.
+
+=2D-=20
+Michael James                         michael.james@csiro.au
+System Administrator                    voice:  02 6246 5040
+CSIRO Bioinformatics Facility             fax:  02 6246 5166
+
