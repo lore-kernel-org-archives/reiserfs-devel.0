@@ -1,42 +1,41 @@
-From: tim fairchild <amosf@mrbean.net.au>
-Subject: Re: Hard disk crash and solution
-Date: Mon, 3 Feb 2003 07:11:13 +1000
-Message-ID: <200302030711.13593.amosf@mrbean.net.au>
-References: <IKENJBHCILNPNAGHKCHFOEDMCCAA.Art@chello.nl> <20030127055331.E976@humilis> <20030127100349.B22720@namesys.com>
+From: Russell Coker <russell@coker.com.au>
+Subject: kernel go-slow
+Date: Mon, 3 Feb 2003 00:27:40 +0100
+Message-ID: <200302030027.40936.russell@coker.com.au>
+Reply-To: Russell Coker <russell@coker.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-12605-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-12606-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030127100349.B22720@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: ReiserFS <reiserfs-list@namesys.com>
 
-On Monday 27 Jan 2003 5:03 pm, Oleg Drokin wrote:
+I'm running a number of machines with 2.4.20 and the ReiserFS journal patches.
 
-> I bought IBM DTLA-307030 made in Hungary 2 years ago.
-> It is still working (though it already have ~1500 bad sectors remapped)
-> aside of making unusual noises when remapping bad sectors ;)
-> I may be just lucky.
-> Also I try to run it in cool environment, so that may help it too.
+One problem that has started occuring is that periodically some of the 
+machines will go really slow for a while.  It's as if the CPU speed has just 
+dropped to 1% of it's regular speed.  Then after 10 minutes or so it will 
+continue as normal.
 
-Sorry to go back off topic, but does anyone have any eperience with the more 
-recent 40gb IBM 120GP (IC35L040AVVN07) drives. I have one a few weeks old and 
-it's already making some evil sounding noises...
+Has anyone heard of such things before?
 
-tim
+I am asking here first because the ReiserFS patch is the most significant 
+kernel patch I've applied on what is otherwise a stock 2.4.20 kernel.
+
+Interestingly the machines that have the problems are not the most active in 
+the file system (mail store), but the mail spool machines.  The mail spool 
+machines do a good amount of file access (but well below the limits of the 
+hardware) and also use more memory and have large load spikes on occasion 
+(virus and spam scanning).
 
 -- 
----------------------------------------------------------
-  Tim & Therese Fairchild
-  Atchafalaya Border Collies.
-  Kuttabul, Queensland, Australia.
----------------------------------------------------------
- Email       mailto:amosf@mrbean.net.au
- Homepage    http://www.bcs4me.com
----------------------------------------------------------
- 
+http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
+http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
+http://www.coker.com.au/~russell/  My home page
 
