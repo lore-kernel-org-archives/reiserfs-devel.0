@@ -1,70 +1,72 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Fixing corrupt reiserfs partition when it registers as full
-Date: Thu, 05 Jun 2003 13:38:30 +0400
-Message-ID: <3EDF0F96.5080006@namesys.com>
-References: <20030604221436.GA19187@pals.cwru.edu> <20030605074823.GA10373@namesys.com>
+From: Christophe Saout <christophe@saout.de>
+Subject: Re: How to build a big file server
+Date: 05 Jun 2003 11:45:53 +0200
+Message-ID: <1054806353.558.16.camel@chtephan.cs.pocnet.net>
+References: <1054800852.1997.15.camel@wusel.schnulli.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-14418-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-14419-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20030605074823.GA10373@namesys.com>
+In-Reply-To: <1054800852.1997.15.camel@wusel.schnulli.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Oleg Drokin <green@namesys.com>
-Cc: "Brian G. Olson" <bgo@cwru.edu>, reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Heinz-Josef Claes <hjclaes@web.de>
+Cc: reiserfs-list@namesys.com
 
-Oleg Drokin wrote:
+Hi!
 
->Hello!
->
->On Wed, Jun 04, 2003 at 06:14:36PM -0400, Brian G. Olson wrote:
->  
->
->>Okay, I've got a reiserfs partition that went bad. I'm don't know how,
->>but for some reason the partition became completely full.  Showing up as
->>100% full using df -h. However checking all the files on the partition
->>(using du -shc) it should have been a little more than half full (2.4G
->>partition), just as I remember df -h showing the last time I checked. So
->>I unmounted it, and checked with reiserfsck --check.  Sure enough, it
->>said I had a problem and told me to do use --rebuild-tree.  Okay, I do
->>that and pass 1 completes. Then on pass 2 it says it wants to add a
->>bunch of leaves (on the order of 10,000 leaves), but of course the
->>partition registers as full so it fails. That is where I am currently
->>stuck. I can't even mount it anymore, mount says it's 'not a directory'. 
->>I'm currently using reiserfsck version 3.6.6 from the Knoppix v3.2 cd.
->>Now I'm gonna try to find a newer version to use, but in the mean time,
->>if anyone has any ideas I'd really appreciate it. Thanks
->>    
->>
->
->Hm, the easiest solution is to copy entire partition with 'dd' to a bigger partition
->or to a file (and then append a file with some zeroes like this:
->"dd if=/dev/zero bs=4096 count=11000 | cat >>filewithpartition.img"),
->then run "reiserfsck --rebuild-sb" on the resulting partition or file,
->it will ask you some questions and you need to agree to a proposed fs size and you must say "no"
->to a question that asks if you did a resize.
->This will add some more space for fsck to work with.
->Then retry "reiserfsck --rebuild-tree" operation.
->
->If you choose to copy image into a file, you will be able to mount the image
->using the loop device driver (-o loop option to mount command) after succesful
->finish of "reiserfsck --rebuild-tree" operation.
->
->Bye,
->    Oleg
->
->
->  
->
-How about Vitaly trying to get a copy and seeing if he can figure out 
-why it went bad.  You might want to ask about the history of the 
-partition and see if it is old enough to be from when we used to leak 
-space, etc.
+> I plan to build a big fileserver for Deutscher Bundestag (German
+> Parliament) who is converting to linux on the server side. In the
+> beginning it will be used in a testing environment and later multiple of
+> them in production use.
+
+Great. :-)
+
+> - I plan to build a system with IDE 250GB drives. 7 of them for raid 5
+> and one hot spare. The OS will be on separate hardware raid 1 on smaller
+> disks. Does anybody have experience with IDE controlers for the big
+> disks? Is it better to use hardware raid oder software raid
+> (performance)?
+
+I'm successfully running a bunch of servers with Promise
+Ultra100/Ultra133 controllers and software raid on it (and LVM but
+that's another story).
+
+The only problem you'll probably run into is that the PCI slots get full
+because you should only have one hard disk per cable to get the best
+performance.
+
+Also you should try use an APIC to not run into trouble with interrupts
+(I think it should work somewhat better though I cannot prove this).
+
+The only problem with that solution is that when one disk fails you'll
+have to turn of the machine and exchange the disk, and after turning it
+on fdisk it (I love the raid autodetection) and raidhotadd that disk
+manually.
+
+And I've never used software raid5, only striping over several raid1
+pairs. The cpu has to calculate the checksums. But when doing heavy disk
+IO the machines usually only use five percent of the CPU time or
+something so I don't think that should be too much of a bottleneck if
+it's a fast machine.
+
+> - At this time, we plan to use reiserfs. What are the advantages /
+> disadvantages of using the raid 1 for journaling for the (big) raid 5
+> (performance, recovery)? The system will be heavily used with
+> storebackup (www.sf.net/projects/storebackup) witch means that lots of
+> hard links have to be created as fast as possible.
+
+I haven't tested separate journals yet, but reiserfs is very fast in
+dealing with lots of files. You probably should just try it out.
+
+I don't have enough hard disks here to play with them now, but on a raid
+10 configuration here (striping over two raid1 pairs of 200 GB 7200 rpm
+disks that can do about 50MB/sec each) a cp -al takes about one minute
+over 80.000 files/directories.
 
 -- 
-Hans
-
+Christophe Saout <christophe@saout.de>
 
