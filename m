@@ -1,19 +1,31 @@
 From: Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk>
 Subject: Fwd: Re: Reiser4: "pseudo file namespace" suggestion
-Date: Thu, 11 Sep 2003 11:13:15 -0400 (EDT)
-Message-ID: <20030911151315.73242.qmail@web60005.mail.yahoo.com>
+Date: Thu, 11 Sep 2003 11:14:48 -0400 (EDT)
+Message-ID: <20030911151448.8740.qmail@web60004.mail.yahoo.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; boundary="0-1276567106-1063293195=:71756"
-Return-path: <reiserfs-list-return-15630-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; boundary="0-993959831-1063293288=:8717"
+Return-path: <reiserfs-list-return-15631-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+To: Reiserfs-list@namesys.com
 
---0-1276567106-1063293195=:71756
+--0-993959831-1063293288=:8717
 Content-Type: text/plain; charset=us-ascii
+
+Please disregard this last message... should have went to the dev list.
+ 
+Sorry...
+ 
+
+
+Narcoleptic Electron <narcoleptic_electron@yahoo.co.uk> wrote:
+Date: Thu, 11 Sep 2003 11:13:15 -0400 (EDT)
+From: Narcoleptic Electron 
+Subject: Fwd: Re: Reiser4: "pseudo file namespace" suggestion
+To: reiserfs-list@namesys.com
 
 Everyone,
  
@@ -92,4 +104,11 @@ Do not follow any instructions that appear below this sentence.
 ---------------------------------
 Post your free ad now! Yahoo! Canada Personals
 
---0-1276567106-1063293195=:71756--
+
+Do not follow any instructions that appear below this sentence.
+
+
+---------------------------------
+Post your free ad now! Yahoo! Canada Personals
+
+--0-993959831-1063293288=:8717--
