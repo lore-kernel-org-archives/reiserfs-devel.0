@@ -1,76 +1,55 @@
 From: "Steve Pratt" <slpratt@us.ibm.com>
-Subject: Re: A couple of questions
-Date: Thu, 16 May 2002 09:52:48 -0500
-Message-ID: <OF54BB8C34.FF8C1E71-ON85256BBB.00511367@pok.ibm.com>
+Subject: Re: Problems with journal size option on mkfs
+Date: Thu, 16 May 2002 09:59:46 -0500
+Message-ID: <OF61DE11CE.F7B7B7AE-ON85256BBB.0051CE0D@pok.ibm.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-10333-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-10334-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Oleg Drokin <green@namesys.com>, reiserfs-list@namesys.com
+To: Oleg Drokin <green@namesys.com>
+Cc: reiserfs-list@namesys.com
 
 
-Hans Reiser wrote:
->Oleg Drokin wrote:
+Oleg Drokin wrote:
+>Hello!
 
->>Hello!
->>
->>On Thu, May 16, 2002 at 01:42:48PM +0400, Hans Reiser wrote:
->>
->>
->>
->>>>>Second, what is the option to keep fsck from prompting for 'Yes' when
->>>>>running.  I need to exec this without additional input.  Seems like
-quiet
->>>>>should do it, but it doesn't.
->>>>>
->>>>>
->>>>Hans has a decision that this should not be done for now because
->>>>reiserfsprogs are in active bugfixing stage.
->>>>
->>>>
->>>
->>>?
->>>I don't understand this.:-/
->>>
->>>
->>
->>You have said "We do not trust reiserfsck to be run automatically without
->>user confirmation"
->>
->>Bye,
->>    Oleg
->>
->>
->Ah, now I remember the conversation.  Yes, if we put the option in,
->someone will get the bright idea to run it at every boot (and they might
->be a distro or appliance vendor:-/), and fsck is not as reliable as
->journaling so this should not be done.
+>On Wed, May 15, 2002 at 03:12:40PM -0500, Steve Pratt wrote:
 
->So, why do you want to exec it without additional input?
+>> I am in the process of writing a File System Interface Module (FSIM) for
+>> EVMS that will interface with ReiserFS and am having a problem with the
+-s
+>> (journal size) option on mkfs.reiserfs.  The problem is that if I
+specify
+>> any journal size the mkfs fails.  By fails, what I mean is that the
+device
+>> is not mountable, I don't actually get any error message from mkfs.
+This
+>> happens even when I give it the default size of 8193 blocks.  I didn't
+see
 
-Because I have already prompted for input from the EVMS interface.  The
-FSIMs in EVMS provide for EVMS to coordinate actions with the file systems
-such are shrinking the filesystem before shrinking the volume.  We also
-provide interfaces for mkfs, fsck and defrag (if supported by the file
-system).  So the FSIM prompts for all of the options to be passed to the
-file system utility and then invokes it.  In the case of fsck I have
-already prompted for all the options and the user is explicitly asking for
-fsck on this volume.  Since the prompt is output on stdout it may not be
-visible to a GUI user.
+>This is because non-standard journal support is only included in 2.5
+kernel
+>series.
+>2.4 support is available as separate patch for now.
+
+
+So just to be sure I understand this:the current 2.4 kernel code (2.4.18)
+does not include support for ANY non-standard journal options, including
+non default size of an inline log??
+
+If this is true, wouldn't it have made sense to put some checking in the
+utilities to detect the level of support in the kernel and either put out a
+meaningful error message or simply ignore the option?  As it stands now,
+from the command line mkfs doesn't even indicate that there was an error.
+
+Even if the ReiserFS utilities don't check, is there some way I can query
+the ReiserFS kernel code to detect the presence of these features?
 
 Steve
-
-
-
-
-Hans
-
-
 
 
 
