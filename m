@@ -1,30 +1,40 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: does anyone know what versions of 2.6 reiserfs is unstable in,
-	we need it for our download page warnings....
-Date: Thu, 05 Aug 2004 19:50:56 -0400
-Message-ID: <1091749855.10651.40.camel@watt.suse.com>
-References: <4112BD47.60602@namesys.com>
+From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe.gramoulle@mmania.com>
+Subject: Re: REISER4 snapshot
+Date: Fri, 6 Aug 2004 02:06:46 +0200
+Message-ID: <20040806020646.7c06278f@philou.gramoulle.local>
+References: <41112ABE.60609@namesys.com>
+	<20040804183433.GT1284@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-20030-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-20031-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4112BD47.60602@namesys.com>
+In-Reply-To: <20040804183433.GT1284@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: ReiserFS Mailing List <reiserfs-list@namesys.com>
+Cc: Markus =?ISO-8859-15?Q?T=F6rnqvist?= <mjt@nysv.org>, "Vladimir V.  Saveliev" <vs@namesys.com>, Reiserfs-dev <reiserfs-dev@namesys.com>
 
-On Thu, 2004-08-05 at 19:05, Hans Reiser wrote:
-> Thanks,
 
-The stream of bugfixes started in 2.6.4.  I would advise against using
-versions before 2.6.5.  For hardcore production use, I'd start with
-2.6.7 or 2.6.8, but that carries for the kernel as a whole.  suse also
-fixed ext3/ext2 bugs during the QA cycles for sles9.
+Hello,
 
--chris
+On Wed, 4 Aug 2004 21:34:33 +0300
+mjt@nysv.org (Markus T=F6rnqvist) wrote:
+
+  | And the somewhat gloomy question:
+  | What's the status on Faye's and Phil0u's bugs?
+
+Well, great news :) With this snapshot, it doesn't crash anymore on mount.
+
+It even survived a bonnie++ and a mongo run as well as umount.
+
+Well done :)
+
+Thanks,
+
+Philippe
+
 
 
