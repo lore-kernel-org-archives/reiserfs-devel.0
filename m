@@ -1,110 +1,87 @@
-From: Nate Diller <ndiller@namesys.com>
-Subject: Mask moderation policy
-Date: Thu, 07 Apr 2005 00:51:04 -0700
-Message-ID: <4254E668.40300@namesys.com>
+From: Mickael Marchand <Mickael.Marchand@ujf-grenoble.fr>
+Subject: reiser4: mv changes mtime ?
+Date: Thu, 07 Apr 2005 10:36:26 +0200
+Message-ID: <4254F10A.7060103@ujf-grenoble.fr>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=------------010703000400030604080409
-Return-path: <reiserfs-list-return-23796-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23797-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
---------------010703000400030604080409
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Hi,
 
-In accordance with the DARPA security masking proposal located at 
-www.namesys.com/blackbox_security.html, we have constructed a moderation 
-policy for future construction of masks.  Full details on the goals of 
-the project can be found at the URL above, and we are perhaps two weeks 
-away from an initial public beta release of the current implementation.  
-A description of the functionality can be found at 
-www.namesys.com/security_mask.html.  Briefly, the term 'mask' refers to 
-a specification of which files in the system namespace a particular 
-process is allowed to access.  This is similar to a chroot() jail, 
-except for the existence of fallthroughs, which allow access to entire 
-subtrees with one entry in the specification.  We have also implemented 
-simple methods for automatically constructing a specification by 
-observing a program's behavior, and we plan to add an interactive 
-interface providing direct control over a running process's access.  I'm 
-afraid the security_mask document is out of date with regard to this 
-access logging functionality, hopefully I will have had a chance to add 
-it by the time you are reading this...
+I am giving a shot at reiser4 to make rsync snapshots backups (using
+hard links and incremental rsync).
+this works definitely great apart from 2 minor bugs :)
 
-We feel that the attached policy is quite sufficient, since we have 
-replaced the need for a complex policy with a powerful and simple 
-implementation.  We would, however, like to solicit the input of 
-everyone who has an interest in this security policy, to ensure that it 
-meets your needs, as end users and security minded administrators.  
-Although we are far ahead of schedule in having working code at this 
-early date, we regret that we cannot yet provide the source for review 
-as well.  Hopefully the online documentation will be good enough to 
-enable you to contribute to this discussion.  Any feedback on the 
-security_mask document is welcome as well.
+1 : it seems that mv directory/ directory2/ changes the mtime of the
+directory. This is not the case with reiser3. Is this intentional ?
+(it basically breaks my recover-from-snapshots script which uses the
+mtime ;)
 
-Thanks
+2 : this was posted on lkml today but it fits better here I guess :
 
-NATE
+2.6.12-rc1-mm4 config at
+http://www-fourier.ujf-grenoble.fr/~mmarcha/config-2.6.12-rc1-mm4.gz
 
---------------010703000400030604080409
-Content-Type: text/plain;
- name="view_moderation"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="view_moderation"
+running on a bi-opteron (debian-amd64),
+I got some "flushing like mad" warning messages from reiser4 (which
+are safe apparently).
+and this soft lookup BUG caused by reiser4 I think :
 
-Since the mask implementation allows fallthrough directories, most programs
-will be effectively masked with a small number of simple entries, less then 32
-in many cases.  Furthermore, we have implemented two effective automation
-methods for mask creation, and these will continue to be improved over time. 
-Thus we can say that security masks will not require a complex moderation
-policy, since the masks will be simple to generate and their correctness will
-be easy to verify using 'ls -R'.
+BUG: soft lockup detected on CPU#0!
 
-Namesys will create a website and mailing list dedicated to creating and
-testing masks.  The list and website will be moderated by a single security
-professional, since it is expected that many masks will be trivial to verify. 
-The non-trivial masks will be evaluated by interested groups on the mailing
-list, and the moderator will have authority over the final mask or masks posted
-to the site.  A masking policy will tend to be preferred if it restricts access
-more tightly and has been tested to ensure that the program can still run
-vieunhindered.
+Modules linked in: ipv6 parport_pc parport eth1394 ehci_hcd uhci_hcd
+ohci1394 ieee1394 ohci_hcd usbcore snd_intel8x0 snd_ac97_codec snd_pcm
+snd_timer snd snd_page_alloc i2c_amd756 i2c_amd8111 i2c_isa w83781d
+i2c_sensor i2c_core e1000
+Pid: 25291, comm: pdflush Not tainted 2.6.12-rc1-mm4
+RIP: 0010:[<ffffffff8021f7de>] <ffffffff8021f7de>{protect_extent_nodes+382}
+RSP: 0018:ffff81007df45678  EFLAGS: 00000202
+RAX: ffff810015c7c5e0 RBX: ffff81007c609000 RCX: ffff81001074ba60
+RDX: ffff81001074b220 RSI: ffff81001074b1c0 RDI: ffff81001074b210
+RBP: 0000002000000000 R08: ffff81007df458a0 R09: ffff810044068e14
+R10: 000000000000001c R11: ffffffff802119a0 R12: 00007fe07df455e0
+R13: ffff81007c609004 R14: ffff81007df4565c R15: 00007fe000000001
+FS:  00002aaaaadfeae0(0000) GS:ffffffff806e7840(0000) knlGS:0000000000000000
+CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b
+CR2: 00002aaaaaac2000 CR3: 000000009bc83000 CR4: 00000000000006e0
 
-The site will include the capability for users to register as moderators, and
-display their security credentials and clearances.  These moderators can
-provide additional opinions on the effectiveness of the masks, to increase
-confidence in the posted versions.  The site will also include tracking for
-various versions for non-standard distributions or use cases.
+Call Trace:<ffffffff8021f7da>{protect_extent_nodes+378}
+<ffffffff8021c00e>{extent_size+30}
+       <ffffffff801f5df9>{txnh_get_atom+41}
+<ffffffff8021ffd2>{alloc_extent+562}
+       <ffffffff8020a0bc>{plugin_by_unsafe_id+28}
+<ffffffff80220bd1>{item_length_by_coord+17}
+       <ffffffff801f8a4f>{handle_pos_on_twig+351}
+<ffffffff801fabc6>{flush_current_atom+2022}
+       <ffffffff801f7aca>{flush_some_atom+458}
+<ffffffff801a2993>{generic_sync_sb_inodes+723}
+       <ffffffff8014cc50>{keventd_create_kthread+0}
+<ffffffff80203b85>{reiser4_sync_inodes+229}
+       <ffffffff801a2bd9>{writeback_inodes+137}
+<ffffffff8016012c>{background_writeout+124}
+       <ffffffff80160c10>{pdflush+0} <ffffffff80160d4c>{pdflush+316}
+       <ffffffff801600b0>{background_writeout+0}
+<ffffffff8014cec9>{kthread+217}
+       <ffffffff80133160>{schedule_tail+64} <ffffffff8010f59b>{child_rip+8}
+       <ffffffff8014cc50>{keventd_create_kthread+0}
+<ffffffff8014cdf0>{kthread+0}
+       <ffffffff8010f593>{child_rip+0}
 
-The ideal solution for complex masks would be a set of policies created and
-maintained by the program's user and developer community.  Such a policy could
-be integrated into the installer script to seamlessly match the local
-configuration. Since this is not realistic for the near-term, complex masks
-will be maintained on the website, and will target the Debian distribution. 
-Security minded distributions could modify and enhance the reference mask for
-their own purposes, otherwise this task would be left to the users.
+Please CC-me in answers, I am not subscribed here.
 
-How complex this needs to be in practice can only be known with experience and
-scaling.  In Phase II it probably will be wise for us to assign one person the
-task of systematically masking all of the most common network service
-providing processes, and contacting distros for participation in their betatest
-programs.  We will then start soliciting the participation of others, and that
-participation will need moderating.  It is not clear yet how substantial that
-moderation will really need to be, and it is always risky to solve problems
-whose substantiality has not yet been observed.
+Cheers,
+Mik
 
-After masks become sufficiently widely used, and critical mass is reached,
-their incorporation by the package maintainers and distros will become
-routine.  In the early stages some distros may move more quickly than package
-maintainers and try to get competitive advantage by masking all of their
-network service providing processes. There seems to be enough market pressure
-in the security area that being able to say that all of their network services
-are masked will incentivise distros doing it even in the early stages.  Package
-maintainers, because they will not control whether their users have masking
-available, and because they are large in number and thus more work for us to
-contact, will likely be last to adopt masks.
 
---------------010703000400030604080409--
+-- 
+Mickael Marchand,
+Ingenieur de recherche CNRS
+Service Informatique, Institut Fourier - UFR Maths
+Tel : 0476635655 Fax : 0476514478
