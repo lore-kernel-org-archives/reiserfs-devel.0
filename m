@@ -1,48 +1,51 @@
-From: mangoo@interia.pl
-Subject: testing compression in reiserfs4.1
-Date: 07 Apr 2005 11:03:20 +0200
-Message-ID: <20050407090320.ABD062BC072@poczta.interia.pl>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: What does reiserfs_do_truncate do?
+Date: Thu, 07 Apr 2005 16:24:09 +0400
+Message-ID: <1112876648.3777.32.camel@tribesman.namesys.com>
+References: <f8ad67b305040623316b328b52@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <reiserfs-list-return-23798-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23799-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <f8ad67b305040623316b328b52@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: "Kathy KN (HK)" <kathy.kn@gmail.com>
+Cc: reiserfs-list@namesys.com
 
-I was long looking for a Linux filesystem that would support r/w transparen=
-t compression.
+Hello
 
-jffs2 is stable, but is dedicated to flash devices mainly, and hence the ma=
-ximum size of this filesystem is 4 GB.
+On Thu, 2005-04-07 at 10:31, Kathy KN (HK) wrote:
+> Good day all,
+> 
+> I know that reiserfs_do_truncate is used to truncate
+> the tails of arbitrary files, but what does truncation
+> really do? 
 
-ext2 + compression patches does not work with 2.6 kernels, has no journalin=
-g (it's ext2, after all), and is not considered stable (which doesn't bothe=
-r me that much for my purposes).
+reiserfs stores files as a set of items in a filesystem tree which is
+built of disk blocks.
 
-IBM's jfs supports compression, but not under Linux.
+reiserfs_do_truncate removes from the tree items (or part of items) of
+file which represent portion of file which is to be truncated.
 
+> Is it an action to remove the file? 
 
-And there is (will be) reiserfs4.1, which will at last have compression sup=
-port?
+it is to make file of shorter size. File deletion uses it to make file
+of zero length - that is to remove all file items.
 
-Is it to be released anytime soon?
+> What do
+> you mean by packing the tails? 
 
-If not, where can I get 4.1 sources and how can I patch my kernel with the =
-current, most up-to-date reiserfs4.1-alpha-don't-use version?
+packing tails in reiserfs means to store last incomplete block of file
+in a formatted node(s) so that one formatted node may contains tails of
+several files.
 
-Features I need is compression, hardlinks and read/write (of course) - is t=
-he current state OK to test it on a /mnt/test partition with non-critical d=
-ata?
-
-
-Tomek
-
-
-------------------------------------------------------------------
-Jan Pawel II 1920 - 2005
-http://link.interia.pl/f1871 
+> Compressing it or
+> to delete them or?
+> 
+> Kathy
+> 
 
