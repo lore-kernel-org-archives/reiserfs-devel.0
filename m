@@ -1,56 +1,41 @@
-From: Nikita Danilov <nikita@clusterfs.com>
-Subject: Re: Novice question
-Date: Thu, 07 Apr 2005 02:07:41 +0400
-Message-ID: <m18y3vimoi.fsf@clusterfs.com>
-References: <42545769.8000804@namesys.com>
+From: sergey ivanov <seriv@parkheights.dyndns.org>
+Subject: Re: Reiser4/2.6.11 dbench hang
+Date: Wed, 06 Apr 2005 22:40:01 -0400
+Message-ID: <42549D81.5020702@parkheights.dyndns.org>
+References: <4249D57F.8020809@gmx.net>	 <1112188350.4761.671.camel@tribesman.namesys.com>	 <424B0A4F.8010809@gmx.net>	 <1112219882.4650.759.camel@tribesman.namesys.com>	 <424B299E.5020805@gmx.net> <1112290038.22814.10.camel@tribesman.namesys.com> <424DA147.2020903@gmx.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-23790-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23791-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42545769.8000804@namesys.com> (Nate Diller's message of "Wed,
- 06 Apr 2005 14:40:57 -0700")
+In-Reply-To: <424DA147.2020903@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nate Diller <ndiller@namesys.com>
-Cc: reiserfs-list@namesys.com, Vladimir Saveliev <vs@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Nate Diller <ndiller@namesys.com> writes:
+So how about this deadlock? Is there any expectation about fix for it?
+     Wbr,
+         Sergey.
 
+Christian Mayrhuber wrote:
+
+> Vladimir Saveliev schrieb:
 >
-> Node: Implemented as a file system block, the basic unit for the tree.
-> On x86, a node is 4KiB in size, however, there is no restriction on
-> it's size (is that true?), and there is no design restriction
-
-In current implementation node is bound to of the same size as page in
-the page cache on the underlying platform, but this is not design
-restriction.
-
+>>
+>> This problem is fixed, but running your test during several hours caused
+>> reiser4 crash. It just happened, so, tomorrow I will take a look at it.
+>>
+>
+> I was able to deadlock kernel 2.6.11 + reiser4-for-2.6.11-3.patch.gz
+> + elevator=cfq.
+> This time it happend during the first dbench-3.02 run with 90 clients
+> in the cleanup phase of the benchmark.
+> Maybe the reproduction of the deadlock is easier when using the cfq
+> io scheduler.
+>
+> No fs corruption reported by fsck.reiser4 after a cold reboot :-)
 >
 
-[...]
 
->
-> Key: Every item has exactly one key, which is it's non-unique
-> identifier within the tree.  When the semantic layer wants to store
-
-Every _unit_ has exactly one key. Item spans key-range covered by its
-units.
-
-> data, it asks the key assignment plugin for a key, and then invokes
-
-there is no key assignment plugin... yet. Key assignment is hard-coded.
-
-[...]
-
->
-> Directory: Directory objects map a set of strings (names) to their
-> corresponding objectID(?).  The hash plugin is specified per directory
-
-Hash plugin is specified for one particular instance of directory
-plugin: hashed-directory plugin. Other directory plugins may use
-completely different indexing techniques.
-
-Nikita.
