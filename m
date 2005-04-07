@@ -1,62 +1,20 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: testing compression in reiserfs4.1
-Date: Thu, 07 Apr 2005 17:06:44 +0400
-Message-ID: <42553064.9060604@namesys.com>
-References: <20050407090320.ABD062BC072@poczta.interia.pl>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Mask moderation policy
+Date: Thu, 07 Apr 2005 12:25:43 -0700
+Message-ID: <42558937.8000906@namesys.com>
+References: <4254E668.40300@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23800-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23801-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050407090320.ABD062BC072@poczta.interia.pl>
+In-Reply-To: <4254E668.40300@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: mangoo@interia.pl
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Nate Diller <ndiller@namesys.com>
+Cc: reiserfs-list@namesys.com, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>
 
-mangoo@interia.pl wrote:
-
->I was long looking for a Linux filesystem that would support r/w transparent compression.
->
->jffs2 is stable, but is dedicated to flash devices mainly, and hence the maximum size of this filesystem is 4 GB.
->
->ext2 + compression patches does not work with 2.6 kernels, has no journaling (it's ext2, after all), and is not considered stable (which doesn't bother me that much for my purposes).
->
->IBM's jfs supports compression, but not under Linux.
->
->
->And there is (will be) reiserfs4.1, which will at last have compression support?
->
->Is it to be released anytime soon?
->
->If not, where can I get 4.1 sources and how can I patch my kernel with the current, most up-to-date reiserfs4.1-alpha-don't-use version?
->
->Features I need is compression, hardlinks and read/write (of course) - is the current state OK to test it on a /mnt/test partition with non-critical data?
->
->
->  
->
-Hello, it looks mostly stable, but currently there is no human interface 
-to create such
-files. Also it would be fine to make it a bit smart: there is a lot of 
-incompressible files
-so flush algorithm should know when compression should be switched off.
-We are working on it now, wait for beta-release.
-
-Thanks,
-Edward.
-
->Tomek
->
->
->------------------------------------------------------------------
->Jan Pawel II 1920 - 2005
->http://link.interia.pl/f1871 
->
->
->
->  
->
-
+Nate, give them the code, and use the latest text we wrote for the
+moderation policy guidelines.
