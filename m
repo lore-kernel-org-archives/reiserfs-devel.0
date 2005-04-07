@@ -1,87 +1,48 @@
-From: Mickael Marchand <Mickael.Marchand@ujf-grenoble.fr>
-Subject: reiser4: mv changes mtime ?
-Date: Thu, 07 Apr 2005 10:36:26 +0200
-Message-ID: <4254F10A.7060103@ujf-grenoble.fr>
+From: mangoo@interia.pl
+Subject: testing compression in reiserfs4.1
+Date: 07 Apr 2005 11:03:20 +0200
+Message-ID: <20050407090320.ABD062BC072@poczta.interia.pl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23797-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <reiserfs-list-return-23798-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hi,
+I was long looking for a Linux filesystem that would support r/w transparen=
+t compression.
 
-I am giving a shot at reiser4 to make rsync snapshots backups (using
-hard links and incremental rsync).
-this works definitely great apart from 2 minor bugs :)
+jffs2 is stable, but is dedicated to flash devices mainly, and hence the ma=
+ximum size of this filesystem is 4 GB.
 
-1 : it seems that mv directory/ directory2/ changes the mtime of the
-directory. This is not the case with reiser3. Is this intentional ?
-(it basically breaks my recover-from-snapshots script which uses the
-mtime ;)
+ext2 + compression patches does not work with 2.6 kernels, has no journalin=
+g (it's ext2, after all), and is not considered stable (which doesn't bothe=
+r me that much for my purposes).
 
-2 : this was posted on lkml today but it fits better here I guess :
-
-2.6.12-rc1-mm4 config at
-http://www-fourier.ujf-grenoble.fr/~mmarcha/config-2.6.12-rc1-mm4.gz
-
-running on a bi-opteron (debian-amd64),
-I got some "flushing like mad" warning messages from reiser4 (which
-are safe apparently).
-and this soft lookup BUG caused by reiser4 I think :
-
-BUG: soft lockup detected on CPU#0!
-
-Modules linked in: ipv6 parport_pc parport eth1394 ehci_hcd uhci_hcd
-ohci1394 ieee1394 ohci_hcd usbcore snd_intel8x0 snd_ac97_codec snd_pcm
-snd_timer snd snd_page_alloc i2c_amd756 i2c_amd8111 i2c_isa w83781d
-i2c_sensor i2c_core e1000
-Pid: 25291, comm: pdflush Not tainted 2.6.12-rc1-mm4
-RIP: 0010:[<ffffffff8021f7de>] <ffffffff8021f7de>{protect_extent_nodes+382}
-RSP: 0018:ffff81007df45678  EFLAGS: 00000202
-RAX: ffff810015c7c5e0 RBX: ffff81007c609000 RCX: ffff81001074ba60
-RDX: ffff81001074b220 RSI: ffff81001074b1c0 RDI: ffff81001074b210
-RBP: 0000002000000000 R08: ffff81007df458a0 R09: ffff810044068e14
-R10: 000000000000001c R11: ffffffff802119a0 R12: 00007fe07df455e0
-R13: ffff81007c609004 R14: ffff81007df4565c R15: 00007fe000000001
-FS:  00002aaaaadfeae0(0000) GS:ffffffff806e7840(0000) knlGS:0000000000000000
-CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b
-CR2: 00002aaaaaac2000 CR3: 000000009bc83000 CR4: 00000000000006e0
-
-Call Trace:<ffffffff8021f7da>{protect_extent_nodes+378}
-<ffffffff8021c00e>{extent_size+30}
-       <ffffffff801f5df9>{txnh_get_atom+41}
-<ffffffff8021ffd2>{alloc_extent+562}
-       <ffffffff8020a0bc>{plugin_by_unsafe_id+28}
-<ffffffff80220bd1>{item_length_by_coord+17}
-       <ffffffff801f8a4f>{handle_pos_on_twig+351}
-<ffffffff801fabc6>{flush_current_atom+2022}
-       <ffffffff801f7aca>{flush_some_atom+458}
-<ffffffff801a2993>{generic_sync_sb_inodes+723}
-       <ffffffff8014cc50>{keventd_create_kthread+0}
-<ffffffff80203b85>{reiser4_sync_inodes+229}
-       <ffffffff801a2bd9>{writeback_inodes+137}
-<ffffffff8016012c>{background_writeout+124}
-       <ffffffff80160c10>{pdflush+0} <ffffffff80160d4c>{pdflush+316}
-       <ffffffff801600b0>{background_writeout+0}
-<ffffffff8014cec9>{kthread+217}
-       <ffffffff80133160>{schedule_tail+64} <ffffffff8010f59b>{child_rip+8}
-       <ffffffff8014cc50>{keventd_create_kthread+0}
-<ffffffff8014cdf0>{kthread+0}
-       <ffffffff8010f593>{child_rip+0}
-
-Please CC-me in answers, I am not subscribed here.
-
-Cheers,
-Mik
+IBM's jfs supports compression, but not under Linux.
 
 
--- 
-Mickael Marchand,
-Ingenieur de recherche CNRS
-Service Informatique, Institut Fourier - UFR Maths
-Tel : 0476635655 Fax : 0476514478
+And there is (will be) reiserfs4.1, which will at last have compression sup=
+port?
+
+Is it to be released anytime soon?
+
+If not, where can I get 4.1 sources and how can I patch my kernel with the =
+current, most up-to-date reiserfs4.1-alpha-don't-use version?
+
+Features I need is compression, hardlinks and read/write (of course) - is t=
+he current state OK to test it on a /mnt/test partition with non-critical d=
+ata?
+
+
+Tomek
+
+
+------------------------------------------------------------------
+Jan Pawel II 1920 - 2005
+http://link.interia.pl/f1871 
+
