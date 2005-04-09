@@ -1,101 +1,56 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: Mask moderation policy
-Date: Sat, 9 Apr 2005 10:29:57 +0300
-Message-ID: <20050409072957.GG1399@nysv.org>
-References: <4254E668.40300@namesys.com> <42558937.8000906@namesys.com> <4255E152.3060808@namesys.com> <4257154F.7010700@slaphack.com>
+From: Christian <evilninja@gmx.net>
+Subject: Re: corrupted files
+Date: Sat, 09 Apr 2005 15:00:59 +0200
+Message-ID: <4257D20B.3030302@gmx.net>
+References: <425704EA.7020707@abcpages.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="uh9ZiVrAOUUm9fzH"
-Return-path: <reiserfs-list-return-23823-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23824-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <4257154F.7010700@slaphack.com>
+In-Reply-To: <425704EA.7020707@abcpages.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: David Masover <ninja@slaphack.com>
-Cc: Nate Diller <ndiller@namesys.com>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+Cc: Nicolae Mihalache <mache@abcpages.com>
 
---uh9ZiVrAOUUm9fzH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On Fri, Apr 08, 2005 at 06:35:43PM -0500, David Masover wrote:
+Nicolae Mihalache wrote:
+> Hi,
+> 
+> I have experience some weird problems on a reiserfs partition. I tried
+> to copy a big archive (6.9GB) from another computer using scp or ftp and
+> it seems that the file gets somehow corrupted. Right now I manage to
+> reproduce the problem even locally, I copy the file in the same
+> directory, no error, still cmp tells they are different:
 
-[i.agree.snip]
+when does the corruption kicks in? are small plaintext files also
+corrupted? or only if you copy files of a certain amount of filesize?
+if textfiles are also affacted, maybe "diff" could show us exactly *what*
+differs.
 
-A bit of philosophizing and thinking out loud ensued:
+> It may be a hardware problem but I somehow doubt it.
 
->Or could this be done in existing security plugins?  Am I correct in
->thinking that when a file is accessed, the file's security plugin (not
->the program's) is called?
+/var/log/messages?
 
-Wouldn't it be easiest to skip the idea of a file in exe.mask
-as a fallthrough and have everything as directories?
+> reiserfsck says No corruptions found.
+> The system is SuSE 9.0, kernel 2.4.21-273-smp4G (it is a dell poweredge
 
-$ mkdir -p bash.mask/dev/input/mouse0
-$ # The directory will be visible
-$ cat >> bash.mask/dev/input/acl
-> allow group all
-> allow user all
->EOF
-$ # Then we set an acl of sorts on the mouse device
-$ cat >> bash.mask/dev/input/mouse0/acl <<EOF
->deny group all
->allow group mouse
->allow user ninja, mjt
->EOF
-$ # You have to be in the mouse group and run bash to see /dev/input/mouse0
+so, this is reiserfs3, right? did you use the current reiserfsprogs?
 
-But how should it be handled when something runs under bash?
-Should bash deny all and /usr/sbin/gpm.mask/dev/input/mouse0 allow
-the mouse group to access?
+- --
+BOFH excuse #44:
 
-I suppose exclusive masks could also be seen as somewhat redundant, as
-everything is denied by default, so masks could be handled by careful
-per-group and -user allows..
-
-Another issue with this is the amount of text parsing the above example
-has to do. How to handle corrupt lines? Missing users?
-if (!S_ISDIR(dentry->d_inode->i_mode)) is a lot lighter than the acl
-parsing..
-
-If this were implemented by extending what we have now; a file means
-absolute fallback, a directory absolute visibility and no exclusions,
-I believe the following might work.
-
-touch bash.mask/dev/input/mouse0/mouse would allow the mouse group
-to see the file. As I have zero experience in kernel code, I have none
-to even pseudo here, but just check if "mouse" is a valid group..
-
-This could be extended further with a scheme as follos:
-$ find bash.mask/dev/input/mouse/
-bash.mask/dev/input/mouse/group/mouse
-bash.mask/dev/input/mouse/user/ninja
-bash.mask/dev/input/mouse/user/mjt
-$
-
-Just two cents or something..
-
-And great work, Namesys guys!
-
---=20
-mjt
-
-
---uh9ZiVrAOUUm9fzH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
+bank holiday - system operating credits  not recharged
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iD8DBQFCV4R1IqNMpVm8OhwRAlOVAJ9VPlR/l66tHb0qIZIrGftLAMC5EACgi+HI
-5WLCLLo018Kw7nLoYIA5r+Q=
-=a4Y7
+iD8DBQFCV9ILC/PVm5+NVoYRArPRAKCs1j03hvHYZEKe7lj/EsjdRJJzKwCfXHP7
+AgI7gi5wd8ZWKKFeIV8r774=
+=NPxg
 -----END PGP SIGNATURE-----
-
---uh9ZiVrAOUUm9fzH--
