@@ -1,79 +1,101 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Protect/Backup Encrypted FS
-Date: Fri, 08 Apr 2005 23:18:45 -0500
-Message-ID: <425757A5.10808@slaphack.com>
-References: <200504051448.55893.shakim@bluebottle.com> <200504091156.28552.shakim@bluebottle.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: Mask moderation policy
+Date: Sat, 9 Apr 2005 10:29:57 +0300
+Message-ID: <20050409072957.GG1399@nysv.org>
+References: <4254E668.40300@namesys.com> <42558937.8000906@namesys.com> <4255E152.3060808@namesys.com> <4257154F.7010700@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23822-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="uh9ZiVrAOUUm9fzH"
+Return-path: <reiserfs-list-return-23823-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200504091156.28552.shakim@bluebottle.com>
+Content-Disposition: inline
+In-Reply-To: <4257154F.7010700@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Shannon <shakim@bluebottle.com>
-Cc: reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: Nate Diller <ndiller@namesys.com>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+--uh9ZiVrAOUUm9fzH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Shannon wrote:
-> I haven't received a reply to this, so I'm going to be more specific:
-> 
-> When you create an encrypted partition, where is this configuration stored?
-> 
-> On Tue, 5 Apr 2005 02:48 pm, Shannon wrote:
-> 
->>/		10GB	Reiser
->>/home	40GB	Reiser encrypted FS
+On Fri, Apr 08, 2005 at 06:35:43PM -0500, David Masover wrote:
 
-v3 or 4?  Or, how are you encrypting your FS?
+[i.agree.snip]
 
-Look at your boot scripts, and your initrd if you have one.  You almost
-certainly have to remember a passphrase and back up a key.  In any case,
-if you are looking for the file, you might want to ask SuSe.
+A bit of philosophizing and thinking out loud ensued:
 
-This only becomes a Reiser issue if you're using the reiser4 crypto
-plugin, and I haven't heard anything about that being done.  If you are
-encrypting a ReiserFS v3 filesystem, you are probably not using anything
-Reiser specific -- it's probably something like cryptoloop or dm-crypt,
-in which case you should google for those.
+>Or could this be done in existing security plugins?  Am I correct in
+>thinking that when a file is accessed, the file's security plugin (not
+>the program's) is called?
 
->>/swap	300mb
->>
->>
->>As per the harddrive configuration, if my / partition becomes corrupted or
->>if I choose to install a fresh copy of SuSe9.2 Pro over / and remount
->>/home, what do need to backup or how do I backup the files needed to
->>restore the encrypted partition /home
+Wouldn't it be easiest to skip the idea of a file in exe.mask
+as a fallthrough and have everything as directories?
 
-Do you mean "remount" or "reformat"?  If you are going to wipe out /home
-and reformat, you don't need to do anything other than back up the files
-in /home.  If you are planning to wipe out / and reinstall, but keep
-/home, the config file you're looking for is /etc/fstab.
+$ mkdir -p bash.mask/dev/input/mouse0
+$ # The directory will be visible
+$ cat >> bash.mask/dev/input/acl
+> allow group all
+> allow user all
+>EOF
+$ # Then we set an acl of sorts on the mouse device
+$ cat >> bash.mask/dev/input/mouse0/acl <<EOF
+>deny group all
+>allow group mouse
+>allow user ninja, mjt
+>EOF
+$ # You have to be in the mouse group and run bash to see /dev/input/mouse0
 
-That still doesn't tell you how to deal with the encryption, though.
-Until you can tell people what kind of encryption system you're using,
-no one will be able to help you, and the ReiserFS list will probably
-assume it's not their problem.
+But how should it be handled when something runs under bash?
+Should bash deny all and /usr/sbin/gpm.mask/dev/input/mouse0 allow
+the mouse group to access?
+
+I suppose exclusive masks could also be seen as somewhat redundant, as
+everything is denied by default, so masks could be handled by careful
+per-group and -user allows..
+
+Another issue with this is the amount of text parsing the above example
+has to do. How to handle corrupt lines? Missing users?
+if (!S_ISDIR(dentry->d_inode->i_mode)) is a lot lighter than the acl
+parsing..
+
+If this were implemented by extending what we have now; a file means
+absolute fallback, a directory absolute visibility and no exclusions,
+I believe the following might work.
+
+touch bash.mask/dev/input/mouse0/mouse would allow the mouse group
+to see the file. As I have zero experience in kernel code, I have none
+to even pseudo here, but just check if "mouse" is a valid group..
+
+This could be extended further with a scheme as follos:
+$ find bash.mask/dev/input/mouse/
+bash.mask/dev/input/mouse/group/mouse
+bash.mask/dev/input/mouse/user/ninja
+bash.mask/dev/input/mouse/user/mjt
+$
+
+Just two cents or something..
+
+And great work, Namesys guys!
+
+--=20
+mjt
+
+
+--uh9ZiVrAOUUm9fzH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Version: GnuPG v1.2.5 (GNU/Linux)
 
-iQIVAwUBQldXpXgHNmZLgCUhAQI0HhAAgAIUclmsqicbVuSDg1ayKvgUL9zBHave
-Eef+Ckoid/Y29ByG4+6J9MlJmaAnC9lF/I6MkUQooMPoxl6HZCLc5uRfMBl11rIb
-mLpOOdR1SBRicNxNaI/3osfkciDR5bT47HTFoXWyqcVCX9DdjfEauNrVP+V8pvX2
-iMmVqjG2BN9E5Kug/LecWvqHiWdIbTezp97Vych8vsLYNSdsZfqSuq/OfhI9xcPH
-c9ZPfM8yGltPvUezHAZ/G2X+5915XP2vzoXsw4BHMmGzf7tdGGQYMiGXDu4DrAvV
-KjgWFcPfBZ1smsU6wJooj6IBMrGdpQrQ91TWSKHaJcA/fXbNloF6w5U47F3fQ1YL
-U4gG36dTK3qt+55lfU8CA1MQXU9J5567zMSLnzPPasmfegz/JXcm6XZuRZM4YtwT
-g93DDs1rCPf+UZB+X6zYCXLMZD0ePkaq9wXWDMuaz65J/CXeIj9LDJ931K2XVjAR
-A+fSDsuQCQQ7N8tJOYIdmwuciKAwlTefr1Kcm0z+5MXDuv0SOSuhMkShcezJetaf
-malgqhigRt/Rf6xc83QCppohOFeh4fn2K7uRBfGsaZaTwsPiHM2gFzn8uoFCRvAv
-JMdFaJ2yVHiCFix6hICX01b2aXyNxRuo80963Da1U2Yp0ztU6fTjFPx0b34BDQLA
-QzAug1b05zA=
-=wFMK
+iD8DBQFCV4R1IqNMpVm8OhwRAlOVAJ9VPlR/l66tHb0qIZIrGftLAMC5EACgi+HI
+5WLCLLo018Kw7nLoYIA5r+Q=
+=a4Y7
 -----END PGP SIGNATURE-----
+
+--uh9ZiVrAOUUm9fzH--
