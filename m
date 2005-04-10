@@ -1,38 +1,43 @@
-From: Joachim Zobel <jzobel@heute-morgen.de>
-Subject: Yet another reiserfs<dm<md corruption
-Date: Sun, 10 Apr 2005 20:04:45 +0200
-Message-ID: <1113156285.4681.7.camel@localhost>
-Reply-To: jzobel@heute-morgen.de
+From: Nicolae Mihalache <mache@abcpages.com>
+Subject: Re: corrupted files
+Date: Sun, 10 Apr 2005 20:50:01 +0200
+Message-ID: <42597559.1070203@abcpages.com>
+References: <425704EA.7020707@abcpages.com> <4257D20B.3030302@gmx.net> <4258194B.6090708@abcpages.com> <425829F9.3020606@web.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23832-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23834-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <425829F9.3020606@web.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hi.
+Linuxhippy wrote:
+> Hi!
+> 
+>> Otherwise I inted to reformat completely that partition (should I 
+>> still use reiserfs3? somehow I don't trust it anymore).
+> 
+> 
+> I also had serveral problems with corrupted files - until I opend my 
+> laptop and cleaned/sealed the conductors of my harddrive - till now it 
+> works great!
+> 
+> ReiserFS is used on so many computers, even highest availability 
+> systems, I think your bug is either hardware or controller-driver based...
+> 
+> lg Clemens
+> 
 
-After upgrading to the latest sarge (on x86 withe ide) I found a lvm2
-logical partition with reiserf 3.6 on a software raid1 corrupted. Trying
-to reiserfsck --rebuild-tree it I got: 
+Ah, I just run now a "badblocks -s -v -c 100000 -n -t random /dev/hdc8" 
+which reads/writes big chunks of data on the partition and it returns 
+plenty of bad blocks. When run with default args (ie few KB of data at a 
+time), "badblocks" returns no error.
+So it has nothing to do with reiserfs but rather with crappy hardware.
 
--------
-The problem has occurred looks like a hardware problem (perhaps
-memory). Send us the bug report only if the second run dies at
-the same place with the same block number.
+Sorry for bothering you and thanks for the good work you do with reiserfs!
 
-build_the_tree: Nothing but leaves are expected. Block 9746 - unknown
--------
-
-Actually the block number changes when I rerun the fsck, however there
-are no syslog   entries abot drive problems. So probably the "hardware
-problem" is in fact a device mapper problem, right?
-
-Sincerely,
-Joachim
-
-
+mache
