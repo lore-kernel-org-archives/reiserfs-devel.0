@@ -1,43 +1,35 @@
-From: Nicolae Mihalache <mache@abcpages.com>
-Subject: Re: corrupted files
-Date: Sun, 10 Apr 2005 20:50:01 +0200
-Message-ID: <42597559.1070203@abcpages.com>
-References: <425704EA.7020707@abcpages.com> <4257D20B.3030302@gmx.net> <4258194B.6090708@abcpages.com> <425829F9.3020606@web.de>
+From: Linuxhippy <linuxhippy@web.de>
+Subject: Re: one idea about reiser4 compress
+Date: Sun, 10 Apr 2005 22:10:05 +0200
+Message-ID: <4259881D.6010403@web.de>
+References: <42553064.9060604@namesys.com> <200504101338.AA00075@bbb-jz5c7z9hn9y.digitalinfra.co.jp> <425940FC.8060401@web.de> <42596187.5000205@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23834-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23835-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <425829F9.3020606@web.de>
+In-Reply-To: <42596187.5000205@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Linuxhippy wrote:
-> Hi!
-> 
->> Otherwise I inted to reformat completely that partition (should I 
->> still use reiserfs3? somehow I don't trust it anymore).
-> 
-> 
-> I also had serveral problems with corrupted files - until I opend my 
-> laptop and cleaned/sealed the conductors of my harddrive - till now it 
-> works great!
-> 
-> ReiserFS is used on so many computers, even highest availability 
-> systems, I think your bug is either hardware or controller-driver based...
-> 
-> lg Clemens
-> 
+Hi again ;-)
 
-Ah, I just run now a "badblocks -s -v -c 100000 -n -t random /dev/hdc8" 
-which reads/writes big chunks of data on the partition and it returns 
-plenty of bad blocks. When run with default args (ie few KB of data at a 
-time), "badblocks" returns no error.
-So it has nothing to do with reiserfs but rather with crappy hardware.
+>>Conclusion: It would be a major hassle to implement such stuff for next
+>>to null advantages. There are so many (important) features waiting to be
+>>implemented ;-)
+>>    
+>>
+>
+>I agree there, but I won't be the one implementing it, and chances are
+>you won't either.
+>  
+>
+Wow - a friend - nice ;-)
+Well, if we both wont implement anything - we could let Jun implement 
+the install-to-compressed-fs feature, right?
 
-Sorry for bothering you and thanks for the good work you do with reiserfs!
+lg Clemens
 
-mache
