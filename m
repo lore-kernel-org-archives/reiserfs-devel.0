@@ -1,381 +1,463 @@
-From: Nate Diller <ndiller@namesys.com>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: Mask moderation policy
-Date: Sun, 10 Apr 2005 14:43:38 -0700
-Message-ID: <42599E0A.6000907@namesys.com>
-References: <4254E668.40300@namesys.com> <42558937.8000906@namesys.com>
- <4255E152.3060808@namesys.com> <4257154F.7010700@slaphack.com>
- <20050409072957.GG1399@nysv.org> <42595FE2.8040003@slaphack.com>
- <20050410202153.GH1399@nysv.org>
+Date: Sun, 10 Apr 2005 17:21:16 -0500
+Message-ID: <4259A6DC.3080206@slaphack.com>
+References: <4254E668.40300@namesys.com> <42558937.8000906@namesys.com> <4255E152.3060808@namesys.com> <4257154F.7010700@slaphack.com> <20050409072957.GG1399@nysv.org> <42595FE2.8040003@slaphack.com> <20050410202153.GH1399@nysv.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-23837-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23838-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-reply-to: <20050410202153.GH1399@nysv.org>
+In-Reply-To: <20050410202153.GH1399@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+Content-Type: text/plain; charset="iso-8859-1"
 To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
-Cc: David Masover <ninja@slaphack.com>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>
+Cc: Nate Diller <ndiller@namesys.com>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>
 
-heh, I guess moderation policy discussions are less interesting than=20
-arguing over semantic interfaces :)
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
 Markus T=F6rnqvist wrote:
-
->On Sun, Apr 10, 2005 at 12:18:26PM -0500, David Masover wrote:
->
->This email goes un-proof-read, I'm too far asleep now :)
->
-> =20
->
+> On Sun, Apr 10, 2005 at 12:18:26PM -0500, David Masover wrote:
+>=20
+> This email goes un-proof-read, I'm too far asleep now :)
+>=20
+>=20
 >>/usr/sbin/gpm.mask/dev/input/mouse0 allows it, and bash denies it.
 >>
 >>Basically, a deny takes precedence.  If something isn't explicitly
 >>allowed somewhere, it's denied.  What I'm saying is that it should be
 >>possible to explicitly allow '*', and then explicitly deny things that
 >>you don't want.
->>   =20
->>
->
->What about still skipping file parsing:
-># Every group is denied, as they and users are by default (?)
->$ mkdir -p /bin/bash.mask/dev/input/mouse0/group_deny/
->
-># Every user is allowed (Big-ass contradiction, but users apply still here)
->$ mkdir /bin/bash.mask/dev/input/mouse0/user_allow/
->
-># Only mjt is allowed (Cutting down on the contradiction ;)
->$ touch /bin/bash.mask/dev/input/mouse0/user_allow/mjt=20
->
->Then we want gpm to see the device, _as long as it's run with group mouse_:
-># Ensure this is possible at all
->$ mkdir -p /usr/sbin/gpm.mask/dev/input/mouse0/group_allow
->
-># And then constraint gpm runs as group mouse:
->$ touch /usr/sbin/gpm.mask/dev/input/mouse0/group_allow/mouse
->
->This example is a bit fishy, as it's so closely tied to the end-user;
->the mjt user will use the mouse regardless of what, because his box
->boots up, starts gpm, with the mouse group, and can access the mouse
->device via all this.
->
->What does Namesys think; Should it be strictly per-process? Is any of this
->user/group stuff here even remotely wanted?
->
-> =20
->
+>=20
+>=20
+> What about still skipping file parsing:
+> # Every group is denied, as they and users are by default (?)
+> $ mkdir -p /bin/bash.mask/dev/input/mouse0/group_deny/
+>=20
+> # Every user is allowed (Big-ass contradiction, but users apply still her=
+e)
+> $ mkdir /bin/bash.mask/dev/input/mouse0/user_allow/
+# I'd make it
+$ touch /bin/bash.mask/dev/input/mouse0/.../user_allow/all
+
+
+I'm accepting the bash.mask, though that should really be bash/.../mask,
+but suppose a program wants to allow its group (say gpm wants to allow
+mouse) regardless of what the policy is (allow-by-default or
+deny-by-default).  If an empty user_allow is allow-by-default, the
+program will inadvertently change it to deny-by-default, while what it
+wanted to do was add a redundant allow.
+
+That's the logic behind my next comment:
+
+> # Only mjt is allowed (Cutting down on the contradiction ;)
+> $ touch /bin/bash.mask/dev/input/mouse0/user_allow/mjt=20
+
+No, that shouldn't be it.  That should specify that user mjt is allowed.
+ If you want ONLY mjt to be allowed, you should have to
+$ touch /bin/bash.mask/dev/input/mouse0/.../user_deny/all
+
+If you want, replace "all" with something that's not likely to be a
+username, or isn't an alowed username.  Usernames probably aren't
+allowed to have colons in them, for example.  I think "all" is fine.
+
+> This example is a bit fishy, as it's so closely tied to the end-user;
+
+Not just because of that.  You don't seem to have the inheritance
+spelled out clearly there.  For instance, user should be more specific
+than group -- it should be possible to explicitly deny group "users",
+and then explicitly allow group "mjt".
+
+> What does Namesys think; Should it be strictly per-process? Is any of this
+> user/group stuff here even remotely wanted?
+
+More importantly, does Namesys have a better way of achieving the same
+effect with only per-process views?
+
+There's no question whether it's wanted.  I'm a user, and I want it.
+It's a good feature, and it logically makes sense.  But we've been
+hacking pseudocode for less than a day on this.  Maybe Namesys has some
+better design ideas?
+
 >>That's to maintain sanity when you don't have the entire distro cooperati=
 ng.
->>   =20
->>
->
->Or on any desktop. I think it's a lot easier always to enable everything
->by default and then deny.
->
->So just for each binary you create the mask directories (later a reiser4
->meta entries) group_allow and user_allow, then explicitly create
->group_deny and user_deny to return priority to the denys and only then
->start slamming in things like=20
->/usr/sbin/apache2.mask/etc/passwd/user_deny/www-data
->
->But I'm tired and have the flu so I may not be thinking straight.
->
->In fact, this should be a bit more like it is now..
->At the moment a file means total fallthrough, a directory represents a fil=
-e.
->
->/path/to/exe.mask/[mask_mode]/(optional_specification)/masked/path/
->
->In that scheme=20
->/masked/path/foo/bar
->/masked/path/AAAAA/BBBB
->and friends would adhere to whatever mask_mode (eg. allow_user)
->and optional_specification (ninja) are set to.
->
->/path/to/exe.mask/user_allow/ninja/masked/path/
->
->/masked/path would then not be visible to mjt, as it's denied by default
->and he could be given access to /masked/path/AAAAA/ by branching the
->mask tree off at exe.mask/user_allow.
->
->/path/to/exe.mask/user_allow/mjt/masked/path/AAAAA
->
->Thank god this is only used for a few pieces of software, most of this
->is pretty much like the basic security model we already have :)
->
-> =20
->
-And you've just answered your earlier question.  This model is useful=20
-only to the degree that it acts independent of the userID priveleges of=20
-the process, since there is already a mechanism for discriminating based=20
-on user/group.  The key to masking's usefulness is that you can't gain=20
-root to get around it.
+>=20
+> Or on any desktop. I think it's a lot easier always to enable everything
+> by default and then deny.
 
-That said, a full-fledged implementation of views would surely have to=20
-take some user-specific data into account, but it remains to be seen how=20
-the interface for this should be constructed.  A reasonable=20
-implementation might use environment variables for user-specific views,=20
-adding flexibility for the user.  Regardless, there is no reason to=20
-think that such a feature should be used for per-user security, since=20
-the user can simply execute their own copy of any program to get around=20
-such restrictions by the administrator on the 'official' binary.
+Actually, I find it's easier to deny-by-default for some things.  I
+don't run everything as root.  It'd take forever to enumerate all the
+things I'd want to deny myself as a user, vs. occasionally allowing
+something via sudo or chmod.
+
+But, it's equally as difficult to figure out every single thing a given
+binary needs to see (unless you already know), vs. finding something you
+want to keep from that particular binary, or to hide from everyone.
+
+> So just for each binary you create the mask directories (later a reiser4
+> meta entries) group_allow and user_allow, then explicitly create
+> group_deny and user_deny to return priority to the denys and only then
+> start slamming in things like=20
+> /usr/sbin/apache2.mask/etc/passwd/user_deny/www-data
+>=20
+> But I'm tired and have the flu so I may not be thinking straight.
+
+apache2.mask should allow some things, actually.  Also, maybe
+/etc/passwd contains a file called user_deny.  Best to be unambiguous.
+
+Does apache2 drop permissions later?  Is that the point of this, that
+Apache needs to see passwd until it drops permissions?
 
 >>What I mean is, there should be an option to deny-by-default or
 >>allow-by-default.  If we're doing this on the user, for instance:
->>   =20
->>
->
->I like that.
->What do you think of my idea to make allow-by-default allowable with
->an mkdir? That seems to me like an easy way to avoid the issue.
->
->$ mkdir -p /bin/bash.mask/user_allow/ # everyone sees everything through b=
-ash.
->
-> =20
->
+>=20
+>=20
+> I like that.
+> What do you think of my idea to make allow-by-default allowable with
+> an mkdir? That seems to me like an easy way to avoid the issue.
+>=20
+> $ mkdir -p /bin/bash.mask/user_allow/ # everyone sees everything through =
+bash.
+>=20
+>=20
 >>echo policy allow > /etc/passwd/.../ninja/mask
->>   =20
->>
->
->What does this line exactly do? :P
->
-> =20
->
+>=20
+>=20
+> What does this line exactly do? :P
+
+I'm thinking that this /etc/passwd/.../ninja/mask is an ACL file
+controlling a global mask for user ninja.  Basically, ninja is allowed
+by default.  This applies to any binary running under user ninja,
+because it's set in /etc/passwd, which seemed the logical place to set
+global options for unix-like users.
+
+Actually, now that I think of it, I should probably do:
+
+echo allow ninja > /.../mask
+
+This allows ninja access to anything in /, provided that a specific
+program or subdirectory/file doesn't override that.
+
 >>echo policy deny > /home/samurai/.../mask
 >>echo allow samurai >> /home/samurai/.../mask
->>   =20
->>
->
->For which process is this? Bash still? looks a bit more like generically
->ACL'ing the current security model...
->
-> =20
->
->>In the second example, ninja is denied from /home/samurai because the
->>/home/samurai mask is more specific, and they are both policies.  In
->>general, the more specific restrictions win, and all others being equal,
->>"deny" wins.
->>   =20
->>
->
->This is true, this is how it should be.
->Let's get back later in the message on text file parsing :>
->
-> =20
->
+>=20
+>=20
+> For which process is this? Bash still? looks a bit more like generically
+> ACL'ing the current security model...
+
+Yes, only it's actually hiding the existance of the directory.  It also
+allows bash to override that.  So, for example, suppose you've got a
+database server -- let's say mysql -- with databases in /var/lib/mysql.
+ In order to prevent people from screwing with mysql data, or attemting
+to back it up in an inconsistent state, we do this:
+
+##I'm using a new notation now.  Watch out for buggy pseudocode.
+##Since we're creating a file, this denies everything, and programs
+##can't accidentally change the policy by touching something inside.
+$ touch /usr/bin/mysql/.../mask/deny
+##Allow /var/lib/mysql to user mysql, since we're deny-by-default
+$ mkdir -p /usr/bin/mysql/.../mask/allow_user/mysql/var/lib/mysql
+
+I'm putting the allow_user bit in front of the path, because that way
+the path can contain any wierd names in in that we like.  For example,
+we could allow deal with paths like "/backup/mysql_mask/allow_user"...
+With that scheme, the only path we can't deal with is ".", "..", or "..."
+
+Now, every time mysql starts up, it does this:
+
+$ touch /var/lib/mysql/.../mask/deny
+
+And every time it shuts down properly, it does this:
+
+$ rm /var/lib/mysql/.../mask/deny
+
+This effectively blocks all binaries, users, and groups from accessing
+/var/lib/mysql when mysql is running, unless they are the /usr/bin/mysql
+binary, running as user mysql, or if they are /bin/bash (or spawned by
+/bin/bash), running as root.
+
 >>What I'm not sure about is how to bring back a true root shell.  In the
 >>above example, the third command would fail, because /home/samurai would
 >>be invisible to everyone (policy deny) and so no one would be able to
 >>set its mask.
->>   =20
->>
->
->Haa! Yes! And giving root immunity in this is a very nasty idea, as many
->exploits in servers work through the root user.
->
->I'm too tired to think of any workaround now :P
->
-> =20
->
+>=20
+>=20
+> Haa! Yes! And giving root immunity in this is a very nasty idea, as many
+> exploits in servers work through the root user.
+
+And many system administrators work through the root user.  You
+demonstrate that below:
+
+> I'm too tired to think of any workaround now :P
+
+I did, see below:
+
 >>Maybe a "god" flag of some sort?
 >>echo god root > /bin/bash/.../mask
->>   =20
->>
->
->The "nikita" flag, god@laputa ;)
->
-> =20
->
-The way around this problem is simple.  If the super-user has created a=20
-mask for, say, the init process, there would be no way to access the=20
-denied paths while the system is running, or to delete the mask.  So=20
-simply boot a kernel without masking support.  (We could add a boot flag=20
-I suppose, but that's a low priority to me)
-
+>=20
+>=20
+> The "nikita" flag, god@laputa ;)
+>=20
+>=20
 >>So that when root runs bash, it and any programs launched by it are able
 >>to view all files.  Sometimes that's not what you want, so you add a
 >>program which drops "god" status.  For example:
->>   =20
->>
->
->What if it were the other way around?
->
->(Above example stubbornly rewritten to my syntax and bash)
->
->This is by default as well, but let's play for a while that we allowed
->someone and did this and then started a new bash after this command.
->$ mkdir /bin/bash.mask/user_deny/home/samurai
->$ /bin/bash
->bash: could not chdir to $HOME, using / instead
->$ mkdir /bin/bash.mask/user_allow/samurai/home/samurai/
->mkdir: cannot create directory /bin/bash.mask/user_allow/samurai/home/samu=
-rai:
->No such file or directory
->
->Oh dear!
->
->We can't go home and we can't set the mask either.
->One really really really important question here is,
->WHAT THE HELL KIND OF A RIGHT DOES THE USER HAVE TO GROPE AT A SYSTEM
->BINARY'S INTERNALS IN THE FIRST PLACE?!
->
->He sees in /bin/bash.mask/ _only the files /bin/bash.mask allows_?
->
->This is too much for me, let's get back on this some other day.
->A case like this should not arise in any case.
->
-> =20
->
+>=20
+>=20
+> What if it were the other way around?
+>=20
+> (Above example stubbornly rewritten to my syntax and bash)
+>=20
+> This is by default as well, but let's play for a while that we allowed
+> someone and did this and then started a new bash after this command.
+> $ mkdir /bin/bash.mask/user_deny/home/samurai
+
+Already wrong.  My syntax would deny ALL programs, and ALL users, unless
+specifically allowed.
+
+> $ /bin/bash
+> bash: could not chdir to $HOME, using / instead
+> $ mkdir /bin/bash.mask/user_allow/samurai/home/samurai/
+> mkdir: cannot create directory /bin/bash.mask/user_allow/samurai/home/sam=
+urai:
+> No such file or directory
+>=20
+> Oh dear!
+>=20
+> We can't go home and we can't set the mask either.
+> One really really really important question here is,
+> WHAT THE HELL KIND OF A RIGHT DOES THE USER HAVE TO GROPE AT A SYSTEM
+> BINARY'S INTERNALS IN THE FIRST PLACE?!
+
+The user is setting permissions on something they own.  That should be
+on /home/samurai.mask, not /bin/bash.mask.  Samurai should be able to
+block people from /home/samurai, to keep out us ninjas.  But if us
+ninjas are too good for him -- one of us has a root account -- we should
+be able to allow ourselves back in.
+
+bash# touch /home/samurai/.../mask/user_allow/ninja
+
+> This is too much for me, let's get back on this some other day.
+> A case like this should not arise in any case.
+
+Yes it should.  Look at the mysql example above.  It's reasonable to say
+that only the mysql binary should be allowed to access /var/lib/mysql,
+but root should be able to override that.  If mysql refuses to die, a
+kill -9 will very likely not reverse the mask, and you'd have to use a
+bootdisk of some sort, just to change a permission.
+
+That's why there is a root user in the first place.
+
 >>$ ls /home/samurai
 >>bin maildir
 >>$ incarnate ls /home/samurai
 >>ls: /home/samurai: No such file or directory
 >>$ ls /home/samurai
 >>bin maildir
->>   =20
->>
->
->In this case is incarnate a userspace program, a kernel interpretation
->in execsomething() or a shell alias or what?
->
->What about having it the other way around?
->The root user can say:
->$ ls /home/samurai
->ls: /home/samurai: No such file or directory
->$ omnipotent ls /home/samurai
->bin maildir pr0n
->
->And that's it. But how do we protect omnipotent here?
->
-> =20
->
+>=20
+>=20
+> In this case is incarnate a userspace program, a kernel interpretation
+> in execsomething() or a shell alias or what?
+
+All of the above.  Basically, we're assuming that if a program 'exec's
+another program, the new program doesn't inherit any "allow"s.  So,
+under normal circumstances, if we give bash a god flag, it only applies
+to bash builtins
+
+# echo /home/samurai/*
+bin maildir
+# ls /home/samurai
+ls: /home/samurai: No such file or directory
+
+Since the vast majority of commands run from a root prompt are simple
+Unix-y things like ls, I'm saying that the god flag should pass from
+parent process to child process unless the parent process explicitly
+forbids it.
+
+To make this simpler, I'm saying that incarnate should be a program
+which launches another program (given to it in arguments), but forbids
+it from having the god flag.  It would probably also be a bash builtin.
+
+Actually, now that I think of it, it makes much more sense to make root
+entirely immune to masks, and to have distros be rearranged such that
+there is an administrative user who gets almost all the permissions that
+root does.  Alternatively, we could make a super-root user (uid -1?)
+which is allowed to do everything root does, plus bypass the masks.
+
+In any case, saying that "most unix exploits are through root" doesn't
+imply that root is a bad thing.  If they don't get you with root,
+they'll get you with the kernel.  IMHO, it's far better to prevent them
+from getting root -- have more things run as users with restrictive view
+masks on -- than to limit root and thus limit your own effectiveness.
+
+> What about having it the other way around?
+> The root user can say:
+> $ ls /home/samurai
+> ls: /home/samurai: No such file or directory
+> $ omnipotent ls /home/samurai
+> bin maildir pr0n
+>=20
+> And that's it. But how do we protect omnipotent here?
+
+Can't.  You could prevent it from being run by anyone but root, but
+that's not really much better.
+
 >>Corrupt lines return an error.  It might be a wierd error (I/O or
 >>out-of-space,  for instance), but it'd be an error.  That's also how you
->>   =20
->>
->
->Maybe 666 Corrupt line?
->It really sucks to return an error that's "close enough maybe if you
->know what I mean"
->
-> =20
->
+>=20
+>=20
+> Maybe 666 Corrupt line?
+> It really sucks to return an error that's "close enough maybe if you
+> know what I mean"
+
+True, but sometimes you have to if the interface is limited.  Suppose
+can't do something like the above, maybe because we can only return an
+error code up to 256, maybe because all the codes are spoken for, or
+maybe because we'll be torn to deaths by conservatives for using the
+number of the beast.  If we can't use a good error code, it's better to
+just have some kind of fatal error (so the program doesn't think it
+worked) and tell users to look at dmesg.
+
 >>prevent users who own a file from making it invisible to root, which is
 >>annoying even with the god flag.
->>   =20
->>
->
->So, uhh, a corrupt line hides everything from root?
->Even in your incarnate scheme I don't see how this is, sorry.
->
-> =20
->
+>=20
+>=20
+> So, uhh, a corrupt line hides everything from root?
+> Even in your incarnate scheme I don't see how this is, sorry.
+
+No, a corrupt line fails AS YOU ADD IT, because ultimately this would be
+done via meta-files.  It'd look and feel like a normal file, but as soon
+as you try to write a syntax error to the file, you get an IO error or
+something.
+
+With the incarnate scheme, users can hide their files from everyone else
+by setting file-specific but exe-generic masks.  But masks don't apply
+to a root bash prompt.  If root wants to launch a server or see what it
+looks like to not be god, they use "incarnate", but if they don't use
+that command, then the masks get completely ignored, even if they are
+somehow corrupt.
+
 >>Missing users is the same thing.  Once it gets parsed, we can turn it
 >>into a UID anyway.  We could even link every acl that lists a user to
->>   =20
->>
->
->Bad user, ret =3D -1, -1 !=3D current_uid
->And there we have it. woohoo \:D/
->
-> =20
->
+>=20
+>=20
+> Bad user, ret =3D -1, -1 !=3D current_uid
+> And there we have it. woohoo \:D/
+
+Again, not a problem with meta-files.  You get the same kind of error,
+but you don't get it when the file is accessed, but rather when its mask
+is set.
+
 >>the /etc/passwd file somehow (in metadata, automatically) so that when
 >>we remove a user, we can easily delete all acls which mention them.
->>   =20
->>
->
->That's actually not so bad an idea.
->
->But this I believe is something where a directory-based scheme is
->easier. What if we have a UserObject and a DirectoryObject that
->were .. err.. cast or something, inexchangeably?
->
->Might still lead to some weird problems for a later time, but possible
->better than compiling ACL's. Maybe. But ACL's are greppable with ease.
->I dunno.
->
-> =20
->
+>=20
+>=20
+> That's actually not so bad an idea.
+>=20
+> But this I believe is something where a directory-based scheme is
+> easier. What if we have a UserObject and a DirectoryObject that
+> were .. err.. cast or something, inexchangeably?
+>=20
+> Might still lead to some weird problems for a later time, but possible
+> better than compiling ACL's. Maybe. But ACL's are greppable with ease.
+> I dunno.
+
+I like the directory scheme.  I'm beginning to think that ACLs should
+just be a frontend to that -- in the same way that passwd could be a
+frontend to a bunch of files.
+
 >>>if (!S_ISDIR(dentry->d_inode->i_mode)) is a lot lighter than the acl
 >>>parsing..
->>>     =20
->>>
+>>
 >>Only has to be done while it's set, and it could concievably be done in
 >>userspace (perl, anyone?).  We're talking about the initial parsing,
->>   =20
->>
->
->The acl parsing? But how would the kernel remove that perl's result
->from readdir() or somesuch?
->
-> =20
->
+>=20
+>=20
+> The acl parsing? But how would the kernel remove that perl's result
+> from readdir() or somesuch?
+
+say what?
+
+## I mean, this:
+$ acl=3D"policy such and such\nmore acl voodoo"
+$ echo -e "$acl" > /some/where/.../mask_acl
+## should do the same thing as this:
+$ echo -e "$acl" | ./make_acl.pl /some/where
+
+That is, unless I'm modifying a mask, perl isn't being run by the
+kernel.  Now, what's that about readdir?
+
 >>right?  It could be optimized, but are people really going to be
 >>changing their mask acl's 100 times a second?
->>   =20
->>
->
->This is also correct.
->
->So, which is lighter? Once caching all ACL's into memory and keeping them
->there or doing more S_ISDIR lookups?
->I'd almost tend to agree with you, but I don't really like that idea :)
->
->What about memory reservation? Some people claim Reiser4 is already
->a bit too cpu-intense, what if it becomes memory-intense as well?
->
-> =20
->
+>=20
+>=20
+> This is also correct.
+>=20
+> So, which is lighter? Once caching all ACL's into memory and keeping them
+> there or doing more S_ISDIR lookups?
+> I'd almost tend to agree with you, but I don't really like that idea :)
+>=20
+> What about memory reservation? Some people claim Reiser4 is already
+> a bit too cpu-intense, what if it becomes memory-intense as well?
+
+It's not going to be memory-intensive, except when we want to change the
+masks.  That's like saying that setacl or vim or mkdir are too
+memory/cpu-intensive.  NO ONE'S GOING TO CARE if they actually
+understand it.  Of course, if they misunderstand, they will think we're
+bloated, so we'd better write good docs ;)
+
 >>Also, I'm not opposed to doing this all with files/dirs, if you can find
 >>a good, clean way to do so.  It's worth wasting a few CPU clock cycles
 >>and sparing a few end-user brain cycles.
->>   =20
->>
->
->I think you mean "we", and not just the two of us ;)
->The same goes for text file parsing and syntax ;)
->
->Hope this catches someone's interest, I'd hate for this idea-bouncing
->to be between the two of us and later buried.
->
->Nate? Zam? Hans? Anyone?
->
->Thanks!
-> =20
->
-A glimpse into my ideas for improving the granularity, then...
+>=20
+>=20
+> I think you mean "we", and not just the two of us ;)
+> The same goes for text file parsing and syntax ;)
 
-As mentioned in namesys.com/security_mask.html, the original intention=20
-for the mask's root directory was the executable itself, in its Reiser4=20
-metas directory.  There were two difficulties with this approach, which=20
-caused us to settle for the ugly [exe].something hack.  First,=20
-file/directory duality needs changes to the dentry code to exist without=20
-fatal bugs, and second, creating and deleting normal files and=20
-directories is not currently supported in Reiser4 metas (I found this=20
-out the hard way: disable a few assertions and you can create some real=20
-wierdness with touch/mkdir in metas).
+Text file syntax can be as simple as I said -- three possible commands,
+each takes one argument.  Or three variables, if you like.
 
-Fixing these two problems is on the agenda, although I cannot speculate=20
-where they fall in Hans' list of priorities.  Once duality is up and=20
-running, the plan was to have more information about a mask node in its=20
-file section, so that each component of a path in the mask can be more=20
-specific about what it allows/denies.  As in:
+Either way, it's a tiny Perl script to take my text files and make them
+into your directories.  And it probably takes very little time to do the
+S_ISDIR lookups (or maybe something that ends in EXISTS?) vs caching in
+RAM, but I wouldn't know.
 
-mkdir -p bash.mask/home/nate/
-echo 'deny */.*' > bash.mask/home
+I know reiser4 theory, not source code, though that will change soon, I
+think.  I'm thinking that I should do the offline resizer.  Right now,
+we can't even expand reiser4 filesystems.  This is a bug.  And shrinking
+them is theoretically simple enough that I'm foolish enough to take it
+on over the summer.
 
-to prevent access to ~/.bashrc et al.  Don't consider this specific=20
-functionality to be anything but a quickly composed example, since it is=20
-likely that denials will have their own tree, as in
+> Hope this catches someone's interest, I'd hate for this idea-bouncing
+> to be between the two of us and later buried.
 
-touch bash.allow/home/nate
-touch bash.deny/home/nate/private
+Archived, I hope.  But maybe we should be a little less verbose?
 
-or something.  But that's the general idea, allow finer granularity by=20
-specifying it within the mask directory's component data streams.
+As someone once said, "I wrote you a long paper because I didn't have
+time to write you a short one."
 
-NATE
+> Nate? Zam? Hans? Anyone?
+
+It's a weekend.  Have some patience.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iQIVAwUBQlmm3HgHNmZLgCUhAQJ59w/+IrdgC0Ia1es7yvRGYwuMIASYi6Feu5V8
+ax5xQdoOAlxMz+q72AjZoCHDBIeRKa/XW+4y35uUozuIazapUQk4yKFH+ZOe6zYN
+mUVRtNxoyqda6X87PC4mltJqNCp9jV7DOHEcPJetoMJ/9sWScqvkYBDgoBcJnjp2
+kkyMMgr8nxCBYLvMiF8VarQcy4MeRlIOP6vl1RU96pFOcB3/jbSsVyKEz5KD6zvM
+9Nad4qpvrTubTOEAMT4fGx7BtpmvykaN0l+RIXHT+Dei0vWX4PxjVpk5Vy0ISgI9
+VTv5esju++O+CanPBrdmWmK6W+OVMbS6bUMMg0omILntJuSofBuBuXEeG882Vs0e
+zYIOooIDRGPcE7vUmd4uQVYCn08Jvu3/M2gEHtcLD3tGMAGd2Qpy8Y6Mglju6gUB
+nuNWp+Yek2Bs43EW+yeTQgWMpO3LiBX8DVv3orPRM/XLCazM15EYMR/K4yoCD4C/
+L1mnRcLem4KXzusr3iEsmswKuzG6OQbyYDnY8hcpUOqqR8ewFOJ9Im4l3+M2XUCS
+zN92933GEbX5dhhWFY1Bg1NctlTep76fed+wrdXZZw6pXs66pN8uXyLvAmHnLo8u
+IB3bGU85Y5giJq17WhLfRJnFCw4nIC0BkomPJl+vo/8nl7JYuo5cyci13tHytqIv
+a85hluQ1yc0=3D
+=3DMDWn
+-----END PGP SIGNATURE-----
