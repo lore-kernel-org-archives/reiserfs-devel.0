@@ -1,85 +1,70 @@
-From: "Chester R. Hosey" <chosey@nauticom.net>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: Less disk space with reiser4?
-Date: Mon, 11 Apr 2005 16:43:28 -0400
-Message-ID: <425AE170.7010806@nauticom.net>
-References: <425A8A1D.9040206@siwnet.net> <20050411195253.GD6211@backtop.namesys.com> <425ADC6C.8090209@namesys.com>
+Date: Mon, 11 Apr 2005 19:57:12 -0500
+Message-ID: <425B1CE8.3090904@slaphack.com>
+References: <425A8A1D.9040206@siwnet.net> <20050411195253.GD6211@backtop.namesys.com> <425ADC6C.8090209@namesys.com> <425AE170.7010806@nauticom.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23853-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23855-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <425ADC6C.8090209@namesys.com>
+In-Reply-To: <425AE170.7010806@nauticom.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: "Chester R. Hosey" <chosey@nauticom.net>
+Cc: reiserfs-list@namesys.com
 
-Many filesystems claim degraded performance as free space decreases 
-beyond a certain threshold. However, they often allow the user to exceed 
-this point and accept the decline in performance.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-While Alex's explanation does well to explain why a certain amount of 
-free space is required in the case of a commit depending on a certain 
-amount of free space, it doesn't quite show that 45 gigs are required to 
-cover this requirement on a terabyte of space. Is this a reasonable 
-requirement?
+Chester R. Hosey wrote:
+> Many filesystems claim degraded performance as free space decreases
+> beyond a certain threshold. However, they often allow the user to exceed
+> this point and accept the decline in performance.
+> 
+> While Alex's explanation does well to explain why a certain amount of
+> free space is required in the case of a commit depending on a certain
+> amount of free space, it doesn't quite show that 45 gigs are required to
+> cover this requirement on a terabyte of space. Is this a reasonable
+> requirement?
 
-Can we get a FAQ entry on namesys.com which addresses this additional 
-overhead imposed by V4 (including whether this is a permanent thing, or 
-whether future revisions will likely reduce the overhead)?
+Not in my book.  Let me second this.
 
-Hans Reiser wrote:
- > Alex Zarochentsev wrote:
- >
- >
- >>On Mon, Apr 11, 2005 at 04:30:53PM +0200, Stefan Andersson wrote:
- >>
- >>
- >>
- >>>Hi,
- >>>
- >>>I have a disk array wich I used reiserfs(v3) on, and got 932G.
- >>>Now I started to test reiser4 on it and get less space, 886G.
- >>>
- >>>Is it suppose to be like this or is there something wrong?
- >>>
- >>>
- >>
- >>reiser4 reserves 5% of disk space.
- >>
- >>That is so because of delayed block allocation impelented in reiser4. 
-  Actual
- >>block allocation is done near the transaction commit, it means the 
-allocation
- >>has to be reliable -- we can't return ENOSPC because the write(2) 
-call when we
- >>could return an error was already completed successfully.
- >>
- >>The reserved space makes the allocation reliable because it covers 
-possible
- >>insertions (and growing of the internal reiser4 tree) of new extent items
- >>insertions on a highly fragmented fs.
- >>
- >>
- >
- > It also improves performance to ensure that at least 5% is free.
- >
- >
- >>
- >>
- >>
- >>>I'am using linux 2.6.11.4 and default settings for mkfs.reiser4 and
- >>>mkfs.reiserfs,
- >>>and reiser4 patch from 2.6.11-mm3.
- >>>
- >>>//Stetan
- >>>
- >>>
- >>>
- >>
- >>
- >>
- >
- >
+It's not all that expensive to build a terabyte array.  It's much more
+expensive to build a box with 45 gigs of RAM.  People who can afford to
+run Reiser4 on a box with 45 gigs of RAM can afford to hire you guys to
+patch it.
 
+I propose that the limit should be configurable, and modifiable online
+or offline with some sort of tunefs command.  In fact, I propose that
+the default should be 5% or the total RAM at time of creation, whichever
+is lower.
+
+What if the user upgrades RAM?  Change this value on mount, if the space
+is available, and create a mount option to override this behavior.
+
+Performance concerns should be addressed by printing a warning in dmesg,
+somewhat like "flushing like mad".  And most filesystems suffer with
+more than 75% full, so it's better to educate the users than just steal
+a quarter of their space (or even a twentieth).
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iQIVAwUBQlsc6HgHNmZLgCUhAQK0Zw/+PLX+CFKx0xPHXBZiyhjykbLcOk1YBfJz
+tZ971xf3sE18hDbA3uEbuT6PkSvA5ihcICThk7wwUh9lM0HcN7epCmQqICRDBMl1
+m5PJ/SlV4VEkbJEsevHmo1aFTY87c1WW9sk6gPWaHw10d7eGZqMMtuSXhHXOnJ3E
+9/M4FZcJsUp/18Ur5e8SJvX5ach0LsYSnKL8vslv0uVaFCdr1lITGVLlztKh7j1n
+/UUQiwuGCT1WvOrPjySEUm7Y+eeC0eXea763ll90ZjuhVGsaSCsorIVSmuAm06YO
+VJC971hlkMOQJaYp7hduyiF8dskSHyQ4A76K+BArdo/tZdciRNlA/DAE3uG5GFKY
+xNxWit5fv4wm96f/X1A1rIPhxOyWK4teP2n9G/1UK+5+uYgLTUqtG8tGZ1WNDysz
+na5HgY2MwKXJQwlvLnABCDn4sFZV2amNd/r2//tcSZp6lM2gvXmoo4Velg4YMr2G
+TnnlLNf96LOoHQFdZvaDyeXxkFO8WaHbDSA7ffhXbYLkSfNpd8eY/ocGOO8YF9Jn
+mRmjecG4iveWg9y7I7DpQ5ofXEGVTYjH2d2Z+UnjN0D7mgm7x454rMgsjrLqHwL+
+lsi116nLctIT63e3F9Eq3UQ/fI+QvfiyXXrDHec1oGBl3LFO8OuSGLsRr7GBbHfz
+kY4pgD+GIJU=
+=VhOT
+-----END PGP SIGNATURE-----
