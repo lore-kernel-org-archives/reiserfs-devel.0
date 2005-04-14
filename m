@@ -1,66 +1,134 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: BUG in submit_ordered_buffer at fs/reiserfs/journal.c:616!
-Date: Wed, 13 Apr 2005 15:11:00 -0400
-Message-ID: <425D6EC4.3010204@suse.com>
-References: <20050311224936.GK1220@austin.ibm.com>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: resizer?
+Date: Wed, 13 Apr 2005 23:25:14 -0500
+Message-ID: <425DF0AA.9020804@slaphack.com>
+References: <4250BAA0.6000708@slaphack.com> <20050404085301.GA6211@backtop.namesys.com> <4251EFB3.8070803@slaphack.com> <425D50FE.20501@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23870-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23872-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050311224936.GK1220@austin.ibm.com>
+In-Reply-To: <425D50FE.20501@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Linas Vepstas <linas@austin.ibm.com>
-Cc: reiserfs-dev@namesys.com, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Alex Zarochentsev <zam@namesys.com>, reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Linas Vepstas wrote:
+Hans Reiser wrote:
+> David Masover wrote:
 > 
-> Hi,
 > 
-> I've been experimenting with automatic bus error recovery in the
-> 2.6.11 kernel.  During one of my failed experiments, I tripped over
-> a Reiserfs bug, below.  Basically, my error recovery failed, which
-> means a SCSI disk went permanently offline, which, admitedly,
-> is pretty catastrophic, but shouldn't be a kernel panic.  It seems
-> that reiser hits a 'BUG_ON' in this case.
+>>
+>>I realize that this may not be quite the industrial-strength repacker
+>>that you wanted, but it should be immediately useful, which is a lot
+>>better than "We might do it if you pay us."
 > 
-> FWIW, in my limited experience with ext3 in the same exact situation, 
-> it seems that ext3 handles this gracefully, returning -EIO to all 
-> affected apps accessing the disk.
 > 
-> Unfortunately, I don't know how to tell you how to reproduce this :)
+> Just wait a little, and shortly after we go into the kernel we will work
+> on the repacker.
+> 
+> Hans
 
-Hi Linas -
+Disclaimer:  I've hardly read any of the Reiser4 code, and I'm not
+really an authority on this subject.  I just like to pretend that I am.
+ I would take this off-list, but I'm curious about whether I'm wrong.
 
-Finally getting a chance to look into this one a little bit more. What
-were your test cases? I've seen this bug before, and in doing a quick
-trace, it may be possible to hit this if you attempt to write to a file
-with a hole and an I/O error occurs while flushing that buffer. When
-map_block_for_writepage calls journal_end and it fails, it can still
-call reiserfs_get_block for the hole even though the journal has been
-aborted. If the buffer is !uptodate (due to the i/o error failure),
-you'll hit that BUG.
+The repacker (and the resizer) doesn't seem like a hugely complicated
+concept, unless you're trying to streamline the user experience during
+the process.  "On-line" means that I don't have to use a bootdisk and
+stop all my servers.  It doesn't mean that I would do it at any time
+other than 2 AM, when I do backups, when I generally expect almost 0
+traffic.
 
-I'll continue to track this one down, but any more info you can provide
-on your test environment would be helpful.
+Basically, I'm saying that an off-line or a slow on-line shrinker should
+have been done by now.  In fact, it should have been done before the
+meta-files, because meta-files benefit from a repacker, but not the
+other way around.
 
-Thanks.
+Since you've told me to wait, I'm going to write this, because it's
+easier for me to write documentation than to read code.  This is
+probably the fault of school, and will likely disappear this summer.
 
-- -Jeff
+Anyway, this is how I think the resizer should be done:
 
-- --
-Jeff Mahoney
-SuSE Labs
+If we are growing the FS, we should lock everything necessary, then
+change the size value for the FS and make the new blocks available.
+Unless we're actually storing something in unused nodes, this should be
+an instantaneous operation which requires very little hacking to add.  I
+seem to remember that there was even an offline resizer (growing only)
+awhile ago.
+
+If we are shrinking the FS, we first set the new size of the FS in RAM,
+so that nothing will try to write to the "chopped-off" portion until
+we're done.
+
+Next, we turn off the "write-in-the-middle" feature for large
+database-like files (where a block in the middle of a huge file may be
+written twice to avoid fragmentation), so that absolutely no new writes
+will go to the chopped-off portion.
+
+Basically, the filesystem should already think it's shrunken by now, we
+just need to make sure it doesn't freak out when it _reads_ blocks past
+the end of the FS.  We should capture warnings about this and dirty
+those nodes on the spot (nodes which are being read and which are in the
+chopped section) -- they are already in RAM, so it'll be faster that way.
+
+Next, we start walking the tree (as you described), dirtying all the
+blocks we find which are in the chopped portion and leaving the rest
+alone.  We need to be careful about locking here, but that should just
+mean "Lock the block we're dealing with, or if locks aren't that
+granularity, lock the whole file."  Locking should block, and userland
+shouldn't have to know about it except to notice that the FS seems a
+little slow right then.
+
+This isn't as dangerous as it seems.  If there is a crash, we just go
+back to the old size -- automatically, since the new size hasn't been
+written to disk anywhere yet -- with the only difference being that most
+of the files will be already moved to where we want them.
+
+Locking isn't as hard as it seems.  If this were a VFS-level operation,
+we'd have to worry about a new directory being created, a file being
+moved, or our current path being deleted out from under us, but we
+aren't working on the semantic layer, we're working on the key/object
+layer.  If I'm right, that means that all the things that we'd have to
+worry about are merely seen as new writes, and would thus go to the new
+places.
+
+Metadata blocks may need a tiny bit of special treatment, since it may
+be some small amount of data changing in-place.  All we do here is, when
+we notice any attempted write outside the new FS size, but inside the
+old FS size, we relocate before we flush it out to disk.  If this means
+there's some parent metadata block we need to move, we do it afterwards,
+as part of the same transaction.  When we finally get to a parent block
+that does not need to be moved, we close the transaction.  This isn't as
+elegant as the method for moving data blocks, but it works.  I think.
+
+The nice thing about this is that for the most part, the net impact on
+normal FS operation is about the same as that of doing a large "cp -a".
+
+Thoughts?  How close to right is this?  Do you already have another
+document on the same thing that I should be reading?
+
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.0 (GNU/Linux)
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iD8DBQFCXW7ELPWxlyuTD7IRAh4jAJ4zB4eMUxoZjhnaOkoSDZ/yDHMtDACggkXi
-y1ESZm40aGqJ0S2SfGLgBBQ=
-=yYCv
+iQIVAwUBQl3wqXgHNmZLgCUhAQIIGw//SWn2lkNPAGrFcF/r+Vr3t84l/haxnDFL
+AF9/xARb6vQ/Mu/AQEd/L8lNabLPymXdzfBUJan2mhLFH97SrlGrA3hdBDcd9xMi
+LXlvernTOFcv63jTB2cEq4awnMpTih4mZFrp1qAJ0kcWSu8oaCBUaOk3htXBfuKU
+YAkireyHU6EWV2HQlfHmJrd9G/Z0CR6JmmAfVeBKG1CkI0t4Y86GmbeMVqsLdSz1
+VEHfdTsCWgcaaod5GOjMk7BbB1a+fvf2wDk3ZsTiCkk8KP1JYPjKnXpCgG3ts8np
+hMH1CEDj2Ql+lga8s44fXc0zrez6OAMjzMc/erNc6eUA7iFedQhmQW5oPxMu7TNh
+aDF8PekMeYF1cYR1gFXG7B2P5gFx/k2KqDCxzHFNGKZLtSDBvuVlotDD7oJspYpd
+5qvVQ0Mj1iYe6bxnV11rCHOvE2f56JlrFJtmzmEI0vmsln0sE4WktxKFONddwf5H
+FuEn0L6XB+HkA9gsvkrM3J5xTd2PP1G02oF1MQFRIe3+CsomlSOwE1ZjfEi81s/p
+z3Lvz6+0AO8xS7L2et84/y6uCaTb2/z8LZUhKMKx2j+OaUSBqgrzTYjCcotYooYO
+7OM4KrSwpjmYQkCtm+iGYy8eC9sv09ng+YsE7F0MJlV1YZ17wo0eRbOVoUJpIgFF
+kyq/7WnIUwM=
+=D55S
 -----END PGP SIGNATURE-----
