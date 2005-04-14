@@ -1,81 +1,71 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Bug report
-Date: Wed, 13 Apr 2005 23:45:37 -0500
-Message-ID: <425DF571.3000004@slaphack.com>
-References: <5a59ce530504110707e0a4791@mail.gmail.com>	 <1113233427.4420.221.camel@tribesman.namesys.com>	 <5a59ce53050412065715fc6929@mail.gmail.com> <1113396590.5168.446.camel@tribesman.namesys.com>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: Less disk space with reiser4?
+Date: Thu, 14 Apr 2005 11:49:12 +0400
+Message-ID: <20050414074912.GQ6211@backtop.namesys.com>
+References: <425A8A1D.9040206@siwnet.net> <20050411195253.GD6211@backtop.namesys.com> <425ADC6C.8090209@namesys.com> <425D15C1.6050107@siwnet.net> <20050413130438.GM6211@backtop.namesys.com> <425D21A6.10001@siwnet.net> <425DF300.3020500@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23874-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23875-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1113396590.5168.446.camel@tribesman.namesys.com>
+Content-Disposition: inline
+In-Reply-To: <425DF300.3020500@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: studdugie <studdugie@gmail.com>, reiserfs-mailing-list <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: David Masover <ninja@slaphack.com>
+Cc: Stefan Andersson <stefan@siwnet.net>, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-
-
-Vladimir Saveliev wrote:
-[...]
-> reiser4 has bitmap blocks spread uniformly over whole device. Those
-> blocks are to to be read on mount.
+On Wed, Apr 13, 2005 at 11:35:12PM -0500, David Masover wrote:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
 > 
-> There is mount option "-o dont_load_bitmap" which speedups mount but may
-> make performance worse.
+> Stefan Andersson wrote:
+> > Alex Zarochentsev wrote:
+> > 
+> >> On Wed, Apr 13, 2005 at 02:51:13PM +0200, Stefan Andersson wrote:
+> >>  
+> >>
+> >>> Thanks for all the answers.
+> >>>
+> >>> Now would it be possible to change the 5% to something else?
+> >>>   
+> >>
+> >>
+> >> even if the fs would be unreliable?
+> >>  
+> >>
+> > That is what I want to test, or if someone knows the answer to that.
+> 
+> The only indication I've heard that it would make the FS unreliable is
+> if you had less space reserved than you had RAM available to stack up
+> writes which haven't been allocated.  In your case, it's a bug that you
+> haven't been able to set this on your own.
+> 
+> Note that I said unreliable, not slow.  Everyone keeps telling us that
+> you'll get slow with <25% space available, so the 5% is really just a
+> sanity check, but you're probably fine there, too.
+> 
+> My question to the Namesys guys is, have you actually tested situations
+> like this?
 
-Is that really "don't load" or "don't preload"?  In other words, does
-this just make the FS slow for awhile, then as fast as normal as these
-things get cached in RAM?  Or does this make it so that the bitmap never
-gets created in RAM, and must always be read from disk?
+no, it the 5% is our rough estimation. it would never reached.  It is like
+extends of all files address only 1 block each. 
 
-An analogy might be Software Suspend.
+> If you want to artificially create that situation, you can probably just
+> shrink the values down a bunch -- make an fs on a 1 gig drive on a
+> virtual machine (qemu + accelerator) with only a couple megs of RAM
+> available for cache/buffer, then try to fill it.  How close can you get
+> to 100% full before something blows up?
 
-A suspend can be really quick -- just swap out everything, then write
-the kernel, process, and general state info out to disk.  When this
-boots up, it's really quick to get back into the OS, but it's insanely
-slow to actually get a desktop, because of all the seeks as it
-frantically tries to load everything that's being told to reload a
-window -- and it's loading everything at once, which means a thrashing
-of seeks.
+Suppose the index part of the tree would take only 0.5%. And what?
+Any successful test will not prove that the new estimation is correct
+(reliable).
 
-A suspend can also be much longer -- write out the caches, too,
-basically dump at least half of RAM out to disk, and probably the whole
-thing.  But when you resume this, it doesn't take much longer to get
-into the OS, and you get your desktop back quicker, because everything's
-already been cached with a minimum of seeks.
+We need to re-design the estimation, make it "adaptive", for example,
+to be aware of well-allocated files.  Or we have to change
+the current disk space reservation scheme completely.
 
-(Coolness:  This isn't just theoretical anymore.  I've actually gotten
-suspend2 and reiser4 working on one machine, and reiser4 + unionfs +
-gmailfs + kqemu + nvidia's gl drivers working on another.  I think it's
-definitely stable enough to go into a 2.6 tree, even marked as
-"experimental".)
-
-If this is how reiser4 works, I think dont_load_bitmap should be the
-default, because if you're going to do a bunch of seeks anyway, why not
-do them as needed -- a millisecond here, a millisecond there -- instead
-of all at once while the user's waiting for the thing to boot?
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQl31cXgHNmZLgCUhAQK0nA//Uym9KEpYivb4OsJNXuYCQ3u9GP/K9GNa
-KriyufqAo+Pth5rwBD8cgYWQwgiqZY4P8C7RsXwzKRz8ZUjt1KJ83DEekkDNPVRC
-zhF1P7WWI/rlFLQEg6OWtU/tuCG36VuPZK77faxxbkrcNZoPY4k9hBL/aoKi8L9A
-DagItRqDerevjhfky4OjM83cIrug4hQApxVjnpopT5LY2y4Md+ygqwtgVYHWEg6l
-wwqBgtstpgrGnyId6BB9m/asI1evCuuD2NO3kzOpRuX8xgF/POnXDtVCMpUymCmb
-r6IcWLlv6Z6fAk/mJ+QqpQZIflDu1Wmr+bzJ4vGznN2lkeiZU3dAdyWWVC28tofi
-oJPrdfwydcYqfFr6jSGDXwqeQUrh5AYHGyPYgRH65fy4cBs3KxvY5A8135xtL0+t
-CGLXKQCn6zt/Hw8xbcAusrIbi+pxE6M5BY2LspJ1SjzF/xdYs+w+foaz2/Ktnkgo
-vQdQ6b0nB4RApuTx5ajJwUbuVzNDn2kTpqgSq8aZhzinIl4ILv+N1DQ+1Cnw6UON
-lMv2KmVSoLEtVQSm5n6EpE6fTfh364ECNuL75cPYnuaPOH/73zQ6cOyOCukIz0oM
-SiTfPPAxz+6MnAM9Qre32ksUFSZ0yp5o/FvW+pbNL0V1MLLur0uh3mj8+HXFVdtJ
-vTpk7eGklig=
-=T6Pu
------END PGP SIGNATURE-----
+-- 
+Alex.
