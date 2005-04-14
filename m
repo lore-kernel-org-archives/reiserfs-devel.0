@@ -1,65 +1,74 @@
-From: Jan Kara <jack@suse.cz>
-Subject: [PATCH] Fix rewriting on a full reiserfs filesystem
-Date: Thu, 14 Apr 2005 14:02:23 +0200
-Message-ID: <20050414120223.GG18727@atrey.karlin.mff.cuni.cz>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: one idea about reiser4 compress
+Date: Thu, 14 Apr 2005 15:25:05 -0700
+Message-ID: <425EEDC0.2070707@namesys.com>
+References: <42553064.9060604@namesys.com> <200504101338.AA00075@bbb-jz5c7z9hn9y.digitalinfra.co.jp> <425940FC.8060401@web.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="/9DWx/yDrRhgMJTb"
-Return-path: <reiserfs-list-return-23877-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23878-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <425940FC.8060401@web.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: akpm@osdl.org
-Cc: mason@suse.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Linuxhippy <linuxhippy@web.de>, Jun OKAJIMA <okajima@digitalinfra.co.jp>
+Cc: reiserfs-list@namesys.com
 
---/9DWx/yDrRhgMJTb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Linuxhippy wrote:
 
-  Hello,
+> Hi Jun!
+>
+>> Assume you install a distribution on a compressed partition with 
+>> reiser4.
+>> you usually do like this --
+>>
+>> | CD | Installer with decompression | -> | Re-compress with Reiser4 | 
+>> HDD |
+>>
+>> You dont think decompression -> recompression cycle is wasteful?
+>> If CD contains compressed files with reiser4 compression format,
+>> I guess it is possible to do like this --
+>>
+>> | CD with reiser4 compressed files | Installer | -> | HDD |
+>> I mean, this eliminates an overhead of re-compression and make whole 
+>> isntall process simpler and faster. Maybe you could do install like 
+>> this --
+>> # cp -a /mnt/cdrom /mnt/target_hdd
+>> And this way would be much faster than usual installer today.
+>>
+>> How about this idea?
+>>  
+>
 
-  attached patch fixes rewriting of a file on a full reiserfs
-filesystem. Previously it was impossible to write to a file even if we
-needed no empty block. The patch allows rewriting of a file and also
-extension of a file upto the end of the last allocated block. The patch
-applies fine also against 2.6.12-rc2 kernel.
+Fine, but it makes sense only if source and target files are powered by 
+the same object plugin.
+Also there is no any chances for 'cp' to implement this (who will inform 
+the file system if we
+don't need to decompress?)
 
-								Honza
+> To be honest I do not think your idea can be realized in a useful way 
+> because of:
+> a.) Every Installer uses its own compression format, most time those 
+> packages have additional fines in it like install scripts and so on.
+> b.) Reiser4.1 compression will eb definitivly optimized for speed, 
+> installer-packages are usually heavily optimized for size.
+> c.) You would need new API's to archive this. Either through syscalls 
+> or via reiser's special files.
+>
+> Conclusion: It would be a major hassle to implement such stuff for 
+> next to null advantages. There are so many (important) features 
+> waiting to be implemented ;-) 
 
--- 
-Jan Kara <jack@suse.cz>
-SuSE CR Labs
 
---/9DWx/yDrRhgMJTb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="reiserrewrite-2.6.5.diff"
+Fast backup of cryptcompress files is a queued feature.
+It should be a business of file reader/writer (not flush algorithm). 
+Also each cluster after compression is supposed
+to be ciphered (not in 4.1), this means we need to copy iv-seed of 
+source file and store it in disk stat-data of target file
+(I think to use object id as default iv-seed). This is a victim of fast 
+backup...
 
-Allow rewriting of a file and extending a file upto the end of the allocated
-block on a full filesystem.
+Edward.
 
-From: Chris Mason <mason@suse.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-
-diff -rupX /home/jack/.kerndiffexclude linux-2.6.5-SLES9_SP2/fs/reiserfs/file.c linux-2.6.5-SLES9_SP2-reiserrewrite/fs/reiserfs/file.c
---- linux-2.6.5-SLES9_SP2/fs/reiserfs/file.c	2005-04-13 13:56:08.000000000 +0200
-+++ linux-2.6.5-SLES9_SP2-reiserrewrite/fs/reiserfs/file.c	2005-04-14 12:50:33.000000000 +0200
-@@ -1303,10 +1303,11 @@ ssize_t reiserfs_file_write( struct file
- 	reiserfs_claim_blocks_to_be_allocated(inode->i_sb, num_pages << (PAGE_CACHE_SHIFT - inode->i_blkbits));
- 	reiserfs_write_unlock(inode->i_sb);
- 
--	if ( !num_pages ) { /* If we do not have enough space even for */
--	    res = -ENOSPC;  /* single page, return -ENOSPC */
--	    if ( pos > (inode->i_size & (inode->i_sb->s_blocksize-1)))
--		break; // In case we are writing past the file end, break.
-+	if ( !num_pages ) { /* If we do not have enough space even for a single page... */
-+	    if ( pos > inode->i_size+inode->i_sb->s_blocksize-(pos & (inode->i_sb->s_blocksize-1))) {
-+		res = -ENOSPC;
-+		break; // In case we are writing past the end of the last file block, break.
-+	    }
- 	    // Otherwise we are possibly overwriting the file, so
- 	    // let's set write size to be equal or less than blocksize.
- 	    // This way we get it correctly for file holes.
-
---/9DWx/yDrRhgMJTb--
