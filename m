@@ -1,10 +1,10 @@
 From: Adam Nielsen <a.nielsen@shikadi.net>
-Subject: Reiserfs fails on read only media
-Date: Sun, 17 Apr 2005 11:34:27 +1000
-Message-ID: <20050417113427.6d17e413.a.nielsen@shikadi.net>
+Subject: Segfault on nonexistent journal device
+Date: Sun, 17 Apr 2005 11:38:56 +1000
+Message-ID: <20050417113856.155b8166.a.nielsen@shikadi.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23888-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23889-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -15,20 +15,25 @@ To: reiserfs-list@namesys.com
 
 Hi all,
 
-As a quick method of backing up an old hard drive, I tried to dump the
-raw disk image onto a DVD-R, thinking I'd be able to mount the DVD as a
-normal reiserfs image.
+Further to my previous message, I've found that if you try to mount a reiserfs device and tell it to use a nonexistent log device, you get a segfault and a kernel NULL pointer dereference - in case this hasn't already been fixed in a newer release, this is what I did:
 
-This almost works, however since the disc is readonly the mount fails
-because reiserfs is unable to write to the log:
+$ mount -t reiserfs /dev/cdrom /mnt/cdrom -o ro,nolog,jdev=t
+Segmentation fault
 
-ReiserFS: hdc: warning: sh-458: journal_init_dev: cannot init journal device 'unknown-block(22,0)': -30
-ReiserFS: hdc: warning: sh-462: unable to initialize jornal device
-ReiserFS: hdc: warning: sh-2022: reiserfs_fill_super: unable to initialize journal space
+kernel: ReiserFS: hdc: warning: journal_init_dev: Cannot open 't': -2
+kernel: Unable to handle kernel NULL pointer dereference at virtual address 00000000
+kernel:  printing eip:
+kernel: c018b5b2
+kernel: *pde = 00000000
+kernel: Oops: 0000 [#1]
+...
+kernel: Call Trace:
+kernel:  [<c01b27b0>] journal_init_dev+0x140/0x1b0
+kernel:  [<c01af2ba>] allocate_bitmap_node+0x3a/0xa0
+kernel:  [<c01af3ce>] allocate_bitmap_nodes+0x1e/0x50
+...
 
-I tried using the "nolog" option but it still wants to write to the log.
-Is this the correct behaviour?  Shouldn't it completely ignore the log
-if you use the "nolog" option?
+It seems that after this I can no longer mount any reiserfs volumes - time for a restart I think.
 
 Cheers,
 Adam.
