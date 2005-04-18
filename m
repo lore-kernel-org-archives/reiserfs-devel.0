@@ -1,39 +1,42 @@
-From: Adam Nielsen <a.nielsen@shikadi.net>
-Subject: Segfault on nonexistent journal device
-Date: Sun, 17 Apr 2005 11:38:56 +1000
-Message-ID: <20050417113856.155b8166.a.nielsen@shikadi.net>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: Bad superblock
+Date: Mon, 18 Apr 2005 13:08:24 +0400
+Message-ID: <1113815304.3781.42.camel@tribesman.namesys.com>
+References: <20050416191336.14054.qmail@gawab.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23889-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23891-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20050416191336.14054.qmail@gawab.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Mahmoud Al Gammal <mahmoudfg@gawab.com>
+Cc: reiserfs-list@namesys.com
 
-Hi all,
+Hello
 
-Further to my previous message, I've found that if you try to mount a reiserfs device and tell it to use a nonexistent log device, you get a segfault and a kernel NULL pointer dereference - in case this hasn't already been fixed in a newer release, this is what I did:
+On Sat, 2005-04-16 at 23:13, Mahmoud Al Gammal wrote:
+> Hello,
+> I'm using ReiserFS 3.6.19 on a partition whose superblock has
+> been swept away due to a sudden attack of bad sectors. I'm
+> wondering if ReiserFS keeps backup copies of the superblock...If
+> yes, then where?
 
-$ mount -t reiserfs /dev/cdrom /mnt/cdrom -o ro,nolog,jdev=t
-Segmentation fault
+no, it does not
 
-kernel: ReiserFS: hdc: warning: journal_init_dev: Cannot open 't': -2
-kernel: Unable to handle kernel NULL pointer dereference at virtual address 00000000
-kernel:  printing eip:
-kernel: c018b5b2
-kernel: *pde = 00000000
-kernel: Oops: 0000 [#1]
-...
-kernel: Call Trace:
-kernel:  [<c01b27b0>] journal_init_dev+0x140/0x1b0
-kernel:  [<c01af2ba>] allocate_bitmap_node+0x3a/0xa0
-kernel:  [<c01af3ce>] allocate_bitmap_nodes+0x1e/0x50
-...
+>  Or is there some other means to retrieve the
+> data?
+> 
 
-It seems that after this I can no longer mount any reiserfs volumes - time for a restart I think.
+copy partition with bad blocks to a good one with dd_rescue
 
-Cheers,
-Adam.
+reiserfsck --build-sb /dev/good-partition (use default answers if you
+did not do anything specific with that filesystem like converting 3.5 to
+3.6, journal relocation, etc)
+reiserfsck --rebuild-tree /dev/good-partition
+
+If this helps you - you may take a look at namesys.com/support.html
+
