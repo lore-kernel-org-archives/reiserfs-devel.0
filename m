@@ -1,79 +1,75 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: Reiserfs fails on read only media
-Date: Mon, 18 Apr 2005 16:45:50 +0400
-Message-ID: <1113828349.3975.187.camel@tribesman.namesys.com>
-References: <20050417113427.6d17e413.a.nielsen@shikadi.net>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: Segfault on nonexistent journal device
+Date: Mon, 18 Apr 2005 16:56:42 +0400
+Message-ID: <4263AE8A.5070101@namesys.com>
+References: <20050417113856.155b8166.a.nielsen@shikadi.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23894-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ boundary="------------040204090402020205030004"
+Return-path: <reiserfs-list-return-23895-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050417113427.6d17e413.a.nielsen@shikadi.net>
+In-Reply-To: <20050417113856.155b8166.a.nielsen@shikadi.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: Adam Nielsen <a.nielsen@shikadi.net>
-Cc: reiserfs-list@namesys.com
+Cc: reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>
 
-Hello
+--------------040204090402020205030004
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, 2005-04-17 at 05:34, Adam Nielsen wrote:
-> Hi all,
-> 
-> As a quick method of backing up an old hard drive, I tried to dump the
-> raw disk image onto a DVD-R, thinking I'd be able to mount the DVD as a
-> normal reiserfs image.
-> 
-> This almost works, however since the disc is readonly the mount fails
-> because reiserfs is unable to write to the log:
-> 
-> ReiserFS: hdc: warning: sh-458: journal_init_dev: cannot init journal device 'unknown-block(22,0)': -30
-> ReiserFS: hdc: warning: sh-462: unable to initialize jornal device
-> ReiserFS: hdc: warning: sh-2022: reiserfs_fill_super: unable to initialize journal space
-> 
-> I tried using the "nolog" option but it still wants to write to the log.
-> Is this the correct behaviour? 
+Adam Nielsen wrote:
 
-yes, it is known "feature", which should be fixed,
+>Hi all,
+>
+>Further to my previous message, I've found that if you try to mount a reiserfs device and tell it to use a nonexistent log device, you get a segfault and a kernel NULL pointer dereference - in case this hasn't already been fixed in a newer release, this is what I did:
+>
+>$ mount -t reiserfs /dev/cdrom /mnt/cdrom -o ro,nolog,jdev=t
+>Segmentation fault
+>
+>kernel: ReiserFS: hdc: warning: journal_init_dev: Cannot open 't': -2
+>kernel: Unable to handle kernel NULL pointer dereference at virtual address 00000000
+>kernel:  printing eip:
+>kernel: c018b5b2
+>kernel: *pde = 00000000
+>kernel: Oops: 0000 [#1]
+>...
+>kernel: Call Trace:
+>kernel:  [<c01b27b0>] journal_init_dev+0x140/0x1b0
+>kernel:  [<c01af2ba>] allocate_bitmap_node+0x3a/0xa0
+>kernel:  [<c01af3ce>] allocate_bitmap_nodes+0x1e/0x50
+>...
+>
+>It seems that after this I can no longer mount any reiserfs volumes - time for a restart I think.
+>
+>Cheers,
+>Adam.
+>
+>
+>  
+>
+The fix against 2.6.11 is attached
+Edward.
 
-for now,
-you have to create on cd reiserfs with non-standard journal
+--------------040204090402020205030004
+Content-Type: text/x-patch;
+ name="journal_init_dev_fix.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="journal_init_dev_fix.patch"
 
-something like:
+diff -urN linux-2.6.11.orig/fs/reiserfs/journal.c linux-2.6.11/fs/reiserfs/journal.c
+--- linux-2.6.11.orig/fs/reiserfs/journal.c	2005-04-18 13:55:44.000000000 +0400
++++ linux-2.6.11/fs/reiserfs/journal.c	2005-04-18 14:52:25.471889996 +0400
+@@ -2323,6 +2323,7 @@
+ 	}
+ 	if( result != 0 ) {
+ 		release_journal_dev( super, journal );
++		return result;
+ 	}
+ 	reiserfs_info(super, "journal_init_dev: journal device: %s\n",
+ 		bdevname(journal->j_dev_bd, b));
 
-# make a filesystem with non-standard journal: 
-# use /dev/journal, journal size 8192
-mkreiserfs fs-image -j /dev/journal -s 8192
-
-# fill fs-image with backupdata
-# burn cd with fs-image
-
-# IMPORTANT: save journal header in file "journal-header"
-dd if=/dev/journal of=journal-header bs=4096 count=1 skip=8191
-
-# backup is done, do not lose "journal-header"
-
-...
-
-# you want to mount backup cd
-
-# make /dev/journal to look like a journal of reiserfs on backup cd
-dd if=journal-header of=/dev/journal bs=4096 count=1 seek=8191
-
-# the below should work now, note that /dev/journal is to be writeable
-mount /dev/cdrom /mnt -o ro
-
-
->  Shouldn't it completely ignore the log
-> if you use the "nolog" option?
-> 
-nolog is "noop" option currently.
-I do not remember now what this nolog was used for.
-
-
-
-> Cheers,
-> Adam.
-> 
-
+--------------040204090402020205030004--
