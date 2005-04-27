@@ -1,480 +1,82 @@
-From: "Todd Curry" <todd@curryweb.com>
-Subject: can't umount / how to fsck at boot
-Date: Wed, 27 Apr 2005 12:19:13 -0500
-Message-ID: <29715.0206090466$1114622114@news.gmane.org>
-Reply-To: <todd@curryweb.com>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: searching on groups of files in reiser4
+Date: Wed, 27 Apr 2005 16:57:31 -0500
+Message-ID: <42700ACB.1050304@slaphack.com>
+References: <20050417113856.155b8166.a.nielsen@shikadi.net> <426F934D.504@maya.com> <426FA09D.8090009@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_00CA_01C54B23.54393120"
-Return-path: <reiserfs-list-return-23930-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23931-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <426FA09D.8090009@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
-
-------=_NextPart_000_00CA_01C54B23.54393120
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-
-Gang, I'm new to ReiserFS  and admittedly clueless about filesystems.  I've
-been happily easing into Linux for about a year,  until we went RAID and LVM
-and suddenly I need to know things that: (a) I didn't before, and (b) are a
-bit more arcane than I'm used to.  I've googled and read man pages
-extensively, but I'm hitting diminishing returns for a fairly simple
-question / problem.
-
- 
-
-Situation:  unable to run reiserfsck on my reiser partition, which has what
-appears to be an error message while running debugreiserfs:  This filesystem
-is NOT clean.  No other errors, drive appears to be functioning normally.
-I'd like to ensure it is clean as a whistle, however.
-
- 
-
-I'm running a simple RAID 5 setup as follows
-
- 
-
-sda
-
-/boot == ext3
-
-Lvm.
-
- 
-
-On lvm
-
-/           == ext3
-
-/lvm      == reiserfs (3, not 4)
-
- 
-
- 
-
-So, I tried umounting the /dev/lvmname/lvmX partition and get the "device
-busy" error
-
- 
-
-I'd like to find a way to run reiserfsck at boot either while I'm watching
-or log the output.  I'm running Fedora Core 2.  Any suggestions on how best
-to do this?  
-
- 
-
-Thanks,
-
- 
-
-Todd 
-
- 
-
-Output from debugresiserfs below, for any experts who might see a problem.
-
- 
-
-[root@curryserver fcdrive]# debugreiserfs /dev/currylvm/lvm03
-
-debugreiserfs 3.6.19 (2003 www.namesys.com)
-
- 
-
- 
-
-Filesystem state: consistency is not checked after last mounting
-
- 
-
-Reiserfs super block in block 16 on 0xfd01 of format 3.6 with standard
-journal
-
-Count of blocks on the device: 115572736
-
-Number of bitmaps: 3527
-
-Blocksize: 4096
-
-Free blocks (count of blocks - used [journal, bitmaps, data, reserved]
-blocks): 58330605
-
-Root block: 23098989
-
-Filesystem is NOT clean
-
-Tree height: 5
-
-Hash function used to sort names: "r5"
-
-Objectid map size 2, max 972
-
-Journal parameters:
-
-        Device [0x0]
-
-        Magic [0x4e42afa0]
-
-        Size 8193 blocks (including 1 for journal header) (first block 18)
-
-        Max transaction length 1024 blocks
-
-        Max batch size 900 blocks
-
-        Max commit age 30
-
-Blocks reserved by journal: 0
-
-Fs state field: 0x0:
-
-sb_version: 2
-
-inode generation number: 1695433
-
-UUID: e38d4ba5-0c05-4e3c-92e5-ba714062622c
-
-LABEL:
-
-Set flags in SB:
-
-        ATTRIBUTES CLEAN
-
-
-------=_NextPart_000_00CA_01C54B23.54393120
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-<html xmlns:o=3D"urn:schemas-microsoft-com:office:office" =
-xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
-xmlns=3D"http://www.w3.org/TR/REC-html40">
-
-<head>
-<meta http-equiv=3DContent-Type content=3D"text/html; =
-charset=3Dus-ascii">
-<meta name=3DGenerator content=3D"Microsoft Word 11 (filtered medium)">
-<style>
-<!--
- /* Style Definitions */
- p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0in;
-	margin-bottom:.0001pt;
-	font-size:12.0pt;
-	font-family:"Times New Roman";}
-a:link, span.MsoHyperlink
-	{color:blue;
-	text-decoration:underline;}
-a:visited, span.MsoHyperlinkFollowed
-	{color:purple;
-	text-decoration:underline;}
-span.EmailStyle17
-	{mso-style-type:personal-compose;
-	font-family:Arial;
-	color:windowtext;}
-@page Section1
-	{size:8.5in 11.0in;
-	margin:1.0in 1.25in 1.0in 1.25in;}
-div.Section1
-	{page:Section1;}
--->
-</style>
-
-</head>
-
-<body lang=3DEN-US link=3Dblue vlink=3Dpurple>
-
-<div class=3DSection1>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Gang, I&#8217;m new to ReiserFS &nbsp;and admittedly =
-clueless
-about filesystems.&nbsp; I&#8217;ve been happily easing into Linux for =
-about a
-year, &nbsp;until we went RAID and LVM and suddenly I need to know =
-things that:
-(a) I didn&#8217;t before, and (b) are a bit more arcane than I&#8217;m =
-used
-to.&nbsp; I&#8217;ve googled and read man pages extensively, but =
-I&#8217;m hitting
-diminishing returns for a fairly simple question / =
-problem.<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'><o:p>&nbsp;</o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Situation:&nbsp; unable to run reiserfsck on my =
-reiser
-partition, which has what appears to be an error message while running
-debugreiserfs:&nbsp; This filesystem is NOT clean.&nbsp; No other =
-errors, drive
-appears to be functioning normally.&nbsp; I&#8217;d like to ensure it is =
-clean
-as a whistle, however.<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'><o:p>&nbsp;</o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>I&#8217;m running a simple RAID 5 setup as =
-follows<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'><o:p>&nbsp;</o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>sda<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>/boot =3D=3D ext3<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Lvm&#8230;<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'><o:p>&nbsp;</o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>On lvm<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp; =3D=3D
-ext3<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>/lvm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =3D=3D reiserfs =
-(3, not 4)<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'><o:p>&nbsp;</o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'><o:p>&nbsp;</o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>So, I tried umounting the /dev/lvmname/lvmX partition =
-and
-get the &#8220;device busy&#8221; error<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'><o:p>&nbsp;</o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>I&#8217;d like to find a way to run reiserfsck at =
-boot either
-while I&#8217;m watching or log the output.&nbsp; I&#8217;m running =
-Fedora Core
-2.&nbsp; Any suggestions on how best to do this?&nbsp; =
-<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'><o:p>&nbsp;</o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Thanks,<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'><o:p>&nbsp;</o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Todd <o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'><o:p>&nbsp;</o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Output from debugresiserfs below, for any experts who =
-might see
-a problem&#8230;<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'><o:p>&nbsp;</o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>[root@curryserver fcdrive]# debugreiserfs
-/dev/currylvm/lvm03<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>debugreiserfs 3.6.19 (2003 =
-www.namesys.com)<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'><o:p>&nbsp;</o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'><o:p>&nbsp;</o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Filesystem state: consistency is not checked after =
-last
-mounting<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'><o:p>&nbsp;</o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Reiserfs super block in block 16 on 0xfd01 of format =
-3.6
-with standard journal<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Count of blocks on the device: =
-115572736<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Number of bitmaps: 3527<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Blocksize: 4096<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Free blocks (count of blocks - used [journal, =
-bitmaps, data,
-reserved] blocks): 58330605<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Root block: 23098989<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Filesystem is NOT clean<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Tree height: 5<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Hash function used to sort names: =
-&quot;r5&quot;<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Objectid map size 2, max =
-972<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Journal parameters:<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Device =
-[0x0]<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Magic
-[0x4e42afa0]<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Size 8193 =
-blocks
-(including 1 for journal header) (first block =
-18)<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Max =
-transaction
-length 1024 blocks<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Max batch =
-size
-900 blocks<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Max commit =
-age 30<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Blocks reserved by journal: =
-0<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Fs state field: 0x0:<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>sb_version: 2<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>inode generation number: =
-1695433<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>UUID: =
-e38d4ba5-0c05-4e3c-92e5-ba714062622c<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>LABEL:<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>Set flags in SB:<o:p></o:p></span></font></p>
-
-<p class=3DMsoNormal><font size=3D2 face=3DArial><span =
-style=3D'font-size:10.0pt;
-font-family:Arial'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTRIBUTES =
-CLEAN<o:p></o:p></span></font></p>
-
-</div>
-
-</body>
-
-</html>
-
-------=_NextPart_000_00CA_01C54B23.54393120--
-
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Nicolas Smallwood <smallwood@maya.com>, reiser <reiserfs-list@namesys.com>
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hans Reiser wrote:
+> Nicolas Smallwood wrote:
+> 
+>> Hello,
+>>
+>> My question concerns searching through a group of files on reiser4.
+>> Assume that we are dealing with a directory full of files (say a few
+>> million or so).
+>>
+>> If I am currently viewing a given file, and wish to iterate to the
+>> next file in the directory,
+>> is there a method to do so without opening the base directory and
+>> moving from one
+>> directory entry to the next until you find it?
+>>
+>> In short, are there any constructs to perform a binary search on these
+>> directories instead of a slow
+>> O(n) search using seekdir or whatever method?
+>>
+>> Or is some type of plugin our best route?
+> 
+> 
+> We can write some sort of plugin for you, and it will be the best
+> solution.  I assume that readdir() does not do what you need because the
+> order you need to iterate in is not that of readdir()?  (Your exact
+> phrasing would seem to indicate that your needs are met by iterating
+> through the directory using readdir() ).
+
+I'm guessing it's got nothing to do with the order of readdir, simply
+that to grep through all files in the directory, readdir is the fastest
+option.
+
+I think what he's saying is that he wants a way to do
+
+grep foo *
+
+in a directory of 500 files, 1K each, only he wants it to approach the
+speed of
+
+grep foo bar
+
+where "bar" is a 500K file.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iQIVAwUBQnAKy3gHNmZLgCUhAQIWXQ//d+lBV1UrVqlrg4B3Bv5lRTiRZ0ZJFm+R
+eRVTPP+30W9wtwZpLXVYSpnfAwYEYWGD2mUiZ1Qrq9OG5E1QcULp8pFfCL7uPNlX
+64+RlajsppjJB7XSc0j+xF8qIBCZIgtk+4BTvRug6d2/bhf45iwenmEyWJwSBS78
+dMqCNtuAkfFKb6jujGjZOYRkGtSRtZB3LEqFkBQlyR4rHkFxdsNC9JbqnoxZxPqr
+p+BBUo5rtuqxUpmeMhcHI2l0NmxTNrpOvMHBelv83ZIN1PkYMMrKl3jfKVbkE/+a
+IPBXtgNTf1yWx9q/PiIRncGQHVbwIrouI5YKQZUMjQtGtpermjuy6E3XluqSg9Sn
+nqEHln5m6czZefR3vz2UdgxLFBykJYfmvbkOwzjWK7joUDnMpw8ltNkEYH6CY8wE
+uDmWbcEneP/N8BFzC9SpH/KPD1OyM0qWY+ydy4U0r/rRZ/gRtvknJUrRRn74BgrZ
+X0G8g9eJaStvTNPZUdD44d2Iu+Sv82pv2nA+kg0LR43UHMY6dKq9IfyvdfofYy+f
+541q70mUrBdncR3nXdg3+QJbgzlBfk1uCe8EWyU2M7/wSKNmsuuPHj7lNDR1OuqL
+SU0qtaKEU1cXA4BEj0IM2l55NnHwsc3t9XSM4eUDRiU3Hl5QmkBrJm3IiUGYo3O5
+89BSikQG/K4=
+=3jFe
+-----END PGP SIGNATURE-----
