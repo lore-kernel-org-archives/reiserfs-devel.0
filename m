@@ -1,54 +1,68 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: searching on groups of files in reiser4
-Date: Wed, 27 Apr 2005 07:24:29 -0700
-Message-ID: <426FA09D.8090009@namesys.com>
-References: <20050417113856.155b8166.a.nielsen@shikadi.net> <426F934D.504@maya.com>
+From: Domenico Andreoli <cavok@tiscali.it>
+Subject: how manage this? (was: Bug#304342: /sbin/mkreiserfs: created a filesystem with mkreiserfs -b 1024 ...)
+Date: Wed, 27 Apr 2005 16:48:45 +0200
+Message-ID: <20050427144845.GA1727@raptus.dandreoli.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23928-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23929-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <426F934D.504@maya.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Nicolas Smallwood <smallwood@maya.com>
-Cc: reiser <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
+Cc: Miernik <miernik@ffii.org>, 304342@bugs.debian.org
 
-Nicolas Smallwood wrote:
+hi,
 
-> Hello,
->
-> My question concerns searching through a group of files on reiser4.
-> Assume that we are dealing with a directory full of files (say a few 
-> million or so).
->
-> If I am currently viewing a given file, and wish to iterate to the 
-> next file in the directory,
-> is there a method to do so without opening the base directory and 
-> moving from one
-> directory entry to the next until you find it?
->
-> In short, are there any constructs to perform a binary search on these 
-> directories instead of a slow
-> O(n) search using seekdir or whatever method?
->
-> Or is some type of plugin our best route?
+  which advice i can give to those users finding these absurd and
+obviously buggy behaviours? thanks.
 
-We can write some sort of plugin for you, and it will be the best 
-solution.  I assume that readdir() does not do what you need because the 
-order you need to iterate in is not that of readdir()?  (Your exact 
-phrasing would seem to indicate that your needs are met by iterating 
-through the directory using readdir() ).
+cheers
+domenico
 
->
->
-> Thank You,
->
-> Nicolas Smallwood
-> Maya Design
->
->
->
+----- Forwarded message from Miernik <miernik@ffii.org> -----
 
+Date: Tue, 12 Apr 2005 16:26:33 +0200
+From: Miernik <miernik@ffii.org>
+Subject: Bug#304342: /sbin/mkreiserfs: created a filesystem with
+    mkreiserfs -b 1024 and it hangs anything trying to write to it
+
+Package: reiserfsprogs
+Version: 1:3.6.19-1
+Severity: normal
+File: /sbin/mkreiserfs
+
+I created a partition made of 2618595 sectors (~1.3 GB) /dev/hda6 and
+created a filesystem on it with
+
+mkreiserfs -b 1024 -l /var/cache/wwwoffle /dev/hda6
+
+Anything trying to write on the filesystem (tried mc and touch) hangs
+completely, shows about 60% to 65% CPU usage in top and is unkillable,
+even with -9. After 20 minutes of such state I rebooted it with
+<Alt>+<SysRq> b 
+as nothing else would stop it. 
+Then I tried "touch t1" on the filesystem, with the same result. 
+<Alt>+<SysRq> b again. 
+reboot won't work, as the partition would not unmount. 
+
+-- System Information:
+Debian Release: 3.1
+Architecture: i386 (i586)
+Kernel: Linux 2.6.11-1-386
+Locale: LANG=en_US.UTF-8, LC_CTYPE=en_US.UTF-8 (charmap=UTF-8)
+
+Versions of packages reiserfsprogs depends on:
+ii  libc6                       2.3.2.ds1-20 GNU C Library: Shared libraries an
+ii  libuuid1                    1.37-1       universally unique id library
+
+
+----- End forwarded message -----
+
+
+-----[ Domenico Andreoli, aka cavok
+ --[ http://people.debian.org/~cavok/gpgkey.asc
+   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
