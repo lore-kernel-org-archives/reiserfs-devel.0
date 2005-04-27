@@ -1,66 +1,41 @@
-From: Domenico Andreoli <cavok@tiscali.it>
-Subject: Fwd: Bug#306199: reiserfsprogs: please use SI units
-Date: Wed, 27 Apr 2005 10:51:48 +0200
-Message-ID: <20050427085148.GA11485@raptus.dandreoli.com>
+From: Nicolas Smallwood <smallwood@maya.com>
+Subject: searching on groups of files in reiser4
+Date: Wed, 27 Apr 2005 09:27:41 -0400
+Message-ID: <426F934D.504@maya.com>
+References: <20050417113856.155b8166.a.nielsen@shikadi.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-23924-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23926-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <20050417113856.155b8166.a.nielsen@shikadi.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiser <reiserfs-list@namesys.com>
 
-hi,
+Hello,
 
-  i'm forwarding this message because you staff of reiser filesystem
-might be interested in the following wish.
+My question concerns searching through a group of files on reiser4.
+Assume that we are dealing with a directory full of files (say a few 
+million or so).
 
-cheers
-domenico
+If I am currently viewing a given file, and wish to iterate to the next 
+file in the directory,
+is there a method to do so without opening the base directory and moving 
+from one
+directory entry to the next until you find it?
 
------ Forwarded message from Beno=EEt Dejean <TazForEver@dlfp.org> -----
+In short, are there any constructs to perform a binary search on these 
+directories instead of a slow
+O(n) search using seekdir or whatever method?
 
-Date: Mon, 25 Apr 2005 00:36:42 +0200
-From: Beno=EEt Dejean <TazForEver@dlfp.org>
-Subject: Bug#306199: reiserfsprogs: please use SI units
-
-the man says
-
-"The size parameter may have one of the optional modifiers K, M, G,
-which means the size parameter is given in kilo-, mega-, gigabytes respecti=
-vely."
-
-it's unclear if K, M, G mean
-a) 2^10B, 2^20B, 2^30B=20
-b) 10^3B, 10^6B, 10^9B
-
-if (a), then the manpage should use SI units KiB, MiB and GiB.
+Or is some type of plugin our best route?
 
 
-The BIPM brochure says:
+Thank You,
 
-"These SI prefixes refer strictly to powers of 10. They should not be used =
-to
-indicate powers of 2 (for example, one kilobit represents 1000 bits and not=
- 1024
-bits)"
+Nicolas Smallwood
+Maya Design
 
-http://www1.bipm.org/utils/en/pdf/si-brochure.pdf =A73.1
-
-Please consider using [KMG]iB instead of [kMG]B
-
-http://physics.nist.gov/cuu/Units/binary.html
-
-
-Thanks.
-
------ End forwarded message -----
-
-
------[ Domenico Andreoli, aka cavok
- --[ http://people.debian.org/~cavok/gpgkey.asc
-   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
