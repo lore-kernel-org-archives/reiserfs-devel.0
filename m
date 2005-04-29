@@ -1,50 +1,46 @@
-From: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
-Subject: When Reiser4 will be officially included in the kernel? ...
-Date: Fri, 29 Apr 2005 18:38:42 +0000
-Message-ID: <42727F32.60301@futuretg.com>
+From: Vincenzo Costa <vcosta@ct.astro.it>
+Subject: error code 6 on root filesystem check
+Date: Fri, 29 Apr 2005 19:40:15 +0200 (CEST)
+Message-ID: <Pine.LNX.4.53.0504291926360.21283@astrct.ct.astro.it>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23942-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23944-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com, Linus Torvalds <torvalds@osdl.org>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Hi Everyone,
+Hi,
 
-    Looking on the latest 2.6.11.4, I don't see yet Reiser4 officially 
-included between the supported FS.
+I recently installed Slackware Linux 10.1 on a Pentium 4 HT, with two
+mirrored ide ATA133 hard disks on a RAID controller (Promise Fasttrack
+20376, with driver 1.00.0.15 from the manufacturer loaded through initrd
+at boot).
+Both the root partition and a 'users' partition mounted on /home are using
+reiserfs, instead of ext3.
+When I or the init scripts try a check of one of these filesystems, using
+'reiserfsck', the following error is reported:
 
-    Reiser4 had been released almost one year ago, and ... does not 
-belong yet to the kernel?
+"count_blocks: block device too large
+Warning... fsck.reiserfs for device /dev/sda5 exited with signal 6"
 
-    Hans, do you know some date for this?
+.. I checked the kernel messages with 'dmesg' and found the following
+error message:
 
-    In the past Andrew Morton, did this job, I don't know who (if 
-someone) are working on this matter.
+ft3xx: Unsupported IOCTL CMD<4>(0x80081272)
+ft3xx: Unsupported IOCTL CMD<4>(0x80081272)
 
-    It is not fundamental, just a simple but important curiosity.
+where 'ft3xx.o' is the kernel module used to support the Promise RAID
+controller.
 
-Thanks,
-Giovanni.
+- Kernel version is Linux 2.4.29
+- reiserfsck version is 3.6.18
 
--- 
+By the way, everything worked correctly when Slackware 10.0 was installed.
+The problems started with the Slackware 10.1 upgrade.
 
-
--- 
--- 
-
-Check FT Websites ... http://www.futuretg.com  - ftp://ftp.futuretg.com
-http://www.FTLinuxCourse.com
-    http://www.FTLinuxCourse.com/Certification
-http://www.RPMParadaise.org
-http://www.YourPersonalOperatingSystem.com
-
-Mobile: +39 393 665 4239
-	Lancelot is back!
--- 
-
+Best wishes
+Vincenzo Costa
