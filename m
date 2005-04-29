@@ -1,37 +1,50 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Apple OS X Tiger adds arbitrary metadata support
-Date: Fri, 29 Apr 2005 12:26:40 -0400
-Message-ID: <87mzrhpn0f.fsf@evinrude.uhoreg.ca>
+From: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
+Subject: When Reiser4 will be officially included in the kernel? ...
+Date: Fri, 29 Apr 2005 18:38:42 +0000
+Message-ID: <42727F32.60301@futuretg.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-23941-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23942-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com, Linus Torvalds <torvalds@osdl.org>
 
-Just FYI, according to Ars Technica's review of Apple's Tiger, Apple has
-added (preliminary) support for arbitrary (well, not quite arbitrary)
-metadata.  It looks like they've decided to use the xattr interface,
-though, so their namespace is fragmented.  The reviewer also lists some
-problems and limitations of the implementation.  One problem is speed --
-if a file has many xattrs, adding more xattrs is time consuming.  The
-reviewer also notes that on filesystems that don't support "forks" or
-xattrs, Mac OS X will use "._" notation -- that is, the metadata for
-file "foo" will be stored in the file "._foo".
+Hi Everyone,
 
-The Ars review can be found here:
-  http://arstechnica.com/reviews/os/macosx-10.4.ars
-They start talking about metadata on page 6:
-  http://arstechnica.com/reviews/os/macosx-10.4.ars/6
-and it goes on until page 8.
+    Looking on the latest 2.6.11.4, I don't see yet Reiser4 officially 
+included between the supported FS.
+
+    Reiser4 had been released almost one year ago, and ... does not 
+belong yet to the kernel?
+
+    Hans, do you know some date for this?
+
+    In the past Andrew Morton, did this job, I don't know who (if 
+someone) are working on this matter.
+
+    It is not fundamental, just a simple but important curiosity.
+
+Thanks,
+Giovanni.
 
 -- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
+
+-- 
+-- 
+
+Check FT Websites ... http://www.futuretg.com  - ftp://ftp.futuretg.com
+http://www.FTLinuxCourse.com
+    http://www.FTLinuxCourse.com/Certification
+http://www.RPMParadaise.org
+http://www.YourPersonalOperatingSystem.com
+
+Mobile: +39 393 665 4239
+	Lancelot is back!
+-- 
 
