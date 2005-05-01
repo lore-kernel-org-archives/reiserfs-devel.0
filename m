@@ -1,34 +1,30 @@
-From: Adrian Bunk <bunk@stusta.de>
-Subject: [-mm patch] fs/reiserfs/stree.c: make MAX_KEY static
-Date: Sun, 1 May 2005 17:47:23 +0200
-Message-ID: <20050501154723.GV3592@stusta.de>
+From: Jake Maciejewski <maciejej@msoe.edu>
+Subject: reiser4 on PPC
+Date: Sun, 01 May 2005 12:03:13 -0500
+Message-ID: <1114966993.11906.59.camel@gentoo>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-23948-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23949-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Al Viro <viro@www.linux.org.uk>
-Cc: reiserfs-dev@namesys.com, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+To: reiserfs-list@namesys.com
 
-Since MAX_KEY no longer has any user in other files, it can be made 
-static.
+Now that reiser4 seems to be working on AMD64, I'm trying to test it on
+PPC. Unfortunately, I haven't even been able to mount a reiser4 FS.
 
-Signed-off-by: Adrian Bunk <bunk@stusta.de>
+I get the following error: "mount: No such file or directory". I've
+tried a loopback filesystem and a native partition. The same native
+patition works when formatted with reiserFS. I've tried the code as a
+module and builtin. I was using reiser4progs 1.0.4 and the latest -mm
+patch on vanilla, which while not officially supported works on AMD64
+and x86 and shouldn't cause a problem like this. fsck.reiser4 says the
+unmountable filesystem is consistent. Is there anything else I should
+try?
 
---- linux-2.6.12-rc3-mm2-full/fs/reiserfs/stree.c.old	2005-05-01 15:33:11.000000000 +0200
-+++ linux-2.6.12-rc3-mm2-full/fs/reiserfs/stree.c	2005-05-01 15:33:19.000000000 +0200
-@@ -223,7 +223,7 @@
- const struct reiserfs_key  MIN_KEY = {0, 0, {{0, 0},}};
- 
- /* Maximal possible key. It is never in the tree. */
--const struct reiserfs_key  MAX_KEY = {
-+static const struct reiserfs_key  MAX_KEY = {
- 	__constant_cpu_to_le32(0xffffffff),
- 	__constant_cpu_to_le32(0xffffffff),
- 	{{__constant_cpu_to_le32(0xffffffff),
+-- 
+Jake Maciejewski <maciejej@msoe.edu>
 
