@@ -1,55 +1,81 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Apple OS X Tiger adds arbitrary metadata support
-Date: Fri, 29 Apr 2005 13:11:52 -0500
-Message-ID: <427278E8.9080905@slaphack.com>
-References: <87mzrhpn0f.fsf@evinrude.uhoreg.ca>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23945-reiserfs=m.gmane.org@namesys.com>
+From: akpm@osdl.org
+Subject: [patch 099/174] reiserfs: make resize option auto-get new device size
+Date: Sun, 01 May 2005 01:48:07 -0700
+Message-ID: <200505010848.j418mVwi006821@shell0.pdx.osdl.net>
+Return-path: <reiserfs-list-return-23947-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <87mzrhpn0f.fsf@evinrude.uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: torvalds@osdl.org
+Cc: akpm@osdl.org, blaisorblade@yahoo.it, mtk-manpages@gmx.net, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, zam@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
 
-They've also added support for one of the main features we were talking
-about with our plugins/metadata:  instantaneous, up-to-date searches.
+From: Paolo 'Blaisorblade' Giarrusso <blaisorblade@yahoo.it>
 
-Basically, they catch any modification to the FS and pass it on to the
-search feature, which indexes only what has been changed.  Then, all
-open "search folders" are automagically updated.  Any new search is
-lightning-fast, but no matter when the search is run, it's automatically
-up-to-date.
+It's trivial for the resize option to auto-get the underlying device size,
+while it's harder for the user.  I've copied the code from jfs.
 
-This gives me a bit of deja-vu, because the way users will be treating
-their data now sounds a bit like one of the more database-like features
-of reiser's "future vision" paper.  It amounts to one of gmail's
-slogans:  Search, don't sort.  Why have a folder hierarchy at all, and
-go to the trouble of setting up and sorting such a tree, when you can
-have the OS automatically sort things into "folders" based on what you
-need at the time?
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Since of the different reiserfs option parser (which does not use the
+superior match_token used by almost every other filesystem), I've had to
+use the "resize=auto" and not "resize" option to specify this behaviour. 
+Changing the option parser to the kernel one wouldn't be bad but I've no
+time to do this cleanup in this moment.
 
-iQIVAwUBQnJ453gHNmZLgCUhAQIopQ//ToeyM5y3wGfr+2OvjJShsdCKkzAIbVHL
-f5VwYlk4b5/n6YkpyXHzYEZGE9AsuDlaVv+XgyjUYGYqH9IWsrEqCwYE2cck6RSa
-eJaRuHR8FMokNWm2sgJ7D2py21tq3eO8BBI76gIgGHpG4DgCcR5jLuiD1ayueu6V
-8ipzLBajGOQQmWCLjzRrODSv4m0w/uy/dT7uEtw4d9NhO2iYwh8hjCY4+5oIVB6k
-6T+CNBDALELR73vwGo7j86PeBILpkFXALBHdJUVQADI2RxXpCsI/BS4/mBH/ua7B
-lcOkF5w+DXdoXo6ni4DVjo+2dLhHImrN5fxwIH6jlvqeq+VkBVTA6sakpaZ7Dbiu
-emjEgBr0ZpMaa6fZvHR2/4h6F5/gO14t/2Z+e33IDSqGtZSsgRnRnjUyXFcB6i0D
-5BUX7XUeGNIf0wP+Py6nRgsGTTOusSZZCqmYJpzW1aIJ9Fi2L8Aw1LqnaQlWGwbr
-pca06RZwkMExZ+SDNEfoGiS/HENlq1cBb8XwlKLYE7PeDOKo5y3eHuIK7n2/iL5L
-UxSOODI4aqgbFs6DNyorm07Mi322N1hUC7+ojLDQPtlc+gnFVZQJUZ+qokRtdZyw
-Mm4Thfi3ic1Q3EbY3y9iHS7d24kdbRGLsonLuWYwFxlOyUEjRuv36AtbX2yzoXV4
-wttlRGl1jbw=
-=V2X2
------END PGP SIGNATURE-----
+Btw, the mount(8) man page should be updated to include this option.  Cc
+the relevant people, please (I hope I cc'ed the right people).
+
+Cc: <reiserfs-dev@namesys.com>
+Cc: <reiserfs-list@namesys.com>
+Cc: <mtk-manpages@gmx.net>
+Cc: Alex Zarochentsev <zam@namesys.com>
+Signed-off-by: Paolo 'Blaisorblade' Giarrusso <blaisorblade@yahoo.it>
+Signed-off-by: Andrew Morton <akpm@osdl.org>
+---
+
+ fs/reiserfs/super.c |   21 ++++++++++++++-------
+ 1 files changed, 14 insertions(+), 7 deletions(-)
+
+diff -puN fs/reiserfs/super.c~reiserfs-make-resize-option-auto-get-new-device-size fs/reiserfs/super.c
+--- 25/fs/reiserfs/super.c~reiserfs-make-resize-option-auto-get-new-device-size	2005-05-01 01:17:45.966868472 -0700
++++ 25-akpm/fs/reiserfs/super.c	2005-05-01 01:28:17.966789880 -0700
+@@ -889,12 +889,18 @@ static int reiserfs_parse_options (struc
+ 	    char * p;
+ 	    
+ 	    p = NULL;
+-	    /* "resize=NNN" */
+-	    *blocks = simple_strtoul (arg, &p, 0);
+-	    if (*p != '\0') {
+-		/* NNN does not look like a number */
+-		reiserfs_warning (s, "reiserfs_parse_options: bad value %s", arg);
+-		return 0;
++	    /* "resize=NNN" or "resize=auto" */
++
++	    if (!strcmp(arg, "auto")) {
++		    /* From JFS code, to auto-get the size.*/
++		    *blocks = s->s_bdev->bd_inode->i_size >> s->s_blocksize_bits;
++	    } else {
++		    *blocks = simple_strtoul (arg, &p, 0);
++		    if (*p != '\0') {
++			/* NNN does not look like a number */
++			reiserfs_warning (s, "reiserfs_parse_options: bad value %s", arg);
++			return 0;
++		    }
+ 	    }
+ 	}
+ 
+@@ -903,7 +909,8 @@ static int reiserfs_parse_options (struc
+ 		unsigned long val = simple_strtoul (arg, &p, 0);
+ 		/* commit=NNN (time in seconds) */
+ 		if ( *p != '\0' || val >= (unsigned int)-1) {
+-			reiserfs_warning (s, "reiserfs_parse_options: bad value %s", arg);			return 0;
++			reiserfs_warning (s, "reiserfs_parse_options: bad value %s", arg);
++			return 0;
+ 		}
+ 		*commit_max_age = (unsigned int)val;
+ 	}
+_
