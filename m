@@ -1,64 +1,60 @@
-From: Radovan Garabik <garabik@melkor.dnp.fmph.uniba.sk>
-Subject: quota, reiserfs v3, 2.6.11.7
-Date: Mon, 2 May 2005 10:33:34 +0200
-Message-ID: <20050502083334.GA19785@melkor.dnp.fmph.uniba.sk>
+From: Bernd Schubert <bernd.schubert@pci.uni-heidelberg.de>
+Subject: Re: quota, reiserfs v3, 2.6.11.7
+Date: Mon, 2 May 2005 12:53:57 +0200
+Message-ID: <200505021253.57878.bernd.schubert@pci.uni-heidelberg.de>
+References: <20050502083334.GA19785@melkor.dnp.fmph.uniba.sk>
+Reply-To: bernd-schubert@gmx.de
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-23950-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23951-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20050502083334.GA19785@melkor.dnp.fmph.uniba.sk>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
-Hi all,
+Hello Radovan,
 
-To add something to previous quota-related discussion:
-I have a server with 180GB reiserfs v3 filesystem on a software RAID-1,=20
-30GB of which is used, exported via nfs.
-Yesterday I turned quotas on (in order to calm down a new user eating
-approx. 1GB/day). Today in the morning the server was hung, I rebooted,
-worked for a few minutes before it hung again (with no message on the
-console). I rebooted again, turned quotas off, run reiserfsck=20
-and the server is happily running for about 3 hours now, with heavy=20
-nfs usage.
+> Is anyone using similar setup? (reiserfs+quotas+2.6.11.7+nfs)
 
-Kernel is vanilla 2.6.11.7 + grsecurity patches (could this be
-related?). Usually, the usage is rather heavy (/home nfs export to >15
-workstations).
+our main file server is running 2.6.11.7 with reiserfs +  nfs + quota.
 
-I found these mesasges in syslog:
-May  2 07:36:30 palo kernel: ReiserFS: md0: warning: PAP-5660: reiserfs_do_=
-truncate: wrong result -1 of search for [186288 279757 0xfffffffffffffff DI=
-RECT]
-May  2 07:36:30 palo kernel: ReiserFS: md0: warning: clm-2100: nesting info=
- a different FS
-May  2 07:36:42 palo last message repeated 5 times
+Linux hamilton1 2.6.11.7 #1 SMP Mon Apr 18 15:40:36 CEST 2005 i686 GNU/Linux
 
-May  2 08:59:40 palo kernel: ReiserFS: md0: warning: PAP-5660: reiserfs_do_=
-truncate: wrong result -1 of search for [221141 125166 0xfffffffffffffff DI=
-RECT]
-May  2 08:59:40 palo kernel: ReiserFS: md0: warning: clm-2100: nesting info=
- a different FS
-May  2 08:59:47 palo last message repeated 274 times
-
-these two mesasges seem to correspond to the two crashes=20
-
-Unfortunately, since this is a production server, I cannot do many
-experiments, but I might try to set up reiserfs+quotas on some test
-computers if necessary.
-
-Is anyone using similar setup? (reiserfs+quotas+2.6.11.7+nfs)
+bernd@hamilton1 bernd>uptime
+ 12:34:03 up 13 days, 16:40,  1 user,  load average: 0.06, 0.08, 0.11
 
 
---=20
- -----------------------------------------------------------
-| Radovan Garab=EDk http://kassiopeia.juls.savba.sk/~garabik/ |
-| __..--^^^--..__    garabik @ kassiopeia.juls.savba.sk     |
- -----------------------------------------------------------
-Antivirus alert: file .signature infected by signature virus.
-Hi! I'm a signature virus! Copy me into your signature file to help me spre=
-ad!
+I have to admit that we are getting approximately one unexpected crash per=
+=20
+month. However, we are uncertain if this is a hard- or software problem.
+
+To your reiserfs problems, are you by any chance using a SIL 3114 SATA=20
+controller? We had non-memory related data corruption on disks attached to=
+=20
+this controller. This problem might come from the harddisk, since we are=20
+getting CRC error messages ever since we attached those disks to an=20
+additional promise controller
+
+ata1: status=3D0x51 { DriveReady SeekComplete Error }
+ata1: error=3D0x84 { DriveStatusError BadCRC }
+ata2: status=3D0x51 { DriveReady SeekComplete Error }
+ata2: error=3D0x84 { DriveStatusError BadCRC }
+
+At least there doesn't seem to happen a hidden data corruption.
+
+
+Bernd
+
+
+=2D-=20
+Bernd Schubert
+Physikalisch Chemisches Institut / Theoretische Chemie
+Universit=E4t Heidelberg
+INF 229
+69120 Heidelberg
+e-mail: bernd.schubert@pci.uni-heidelberg.de
