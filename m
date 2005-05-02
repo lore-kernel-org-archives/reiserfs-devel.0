@@ -1,44 +1,72 @@
-From: Sander Sweers <sander.sweers@gmail.com>
-Subject: Re: grub reiser4 won't compile
-Date: Mon, 2 May 2005 17:17:00 +0200
-Message-ID: <b65fbb1305050208176e07aa74@mail.gmail.com>
-References: <200504272226.48234.c_wakefield@shaw.ca>
-	 <200504281606.42243.vitaly@namesys.com>
-	 <200504290211.42905.c_wakefield@shaw.ca>
-	 <200504291519.22561.vitaly@namesys.com> <42763E8B.9060906@namesys.com>
-Reply-To: Sander Sweers <sander.sweers@gmail.com>
+From: Jake Maciejewski <maciejej@msoe.edu>
+Subject: Re: reiser4 on PPC
+Date: Mon, 02 May 2005 10:34:14 -0500
+Message-ID: <1115048054.6385.12.camel@gentoo>
+References: <1114966993.11906.59.camel@gentoo>
+	 <20050502141026.GA6067@backtop.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-23956-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23957-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42763E8B.9060906@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <20050502141026.GA6067@backtop.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Chris Wakefield <c_wakefield@shaw.ca>
-Cc: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>
+To: Alex Zarochentsev <zam@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-On 02/05/05, Hans Reiser <reiser@namesys.com> wrote:
-> Vitaly, if he is doing something with apt, that means he is probably
-> using debian, which means they may have broken things, which means you
-> need to look into it and fix things and report to me on it.
+On Mon, 2005-05-02 at 18:10 +0400, Alex Zarochentsev wrote:
+> Hi,
+> 
+> On Sun, May 01, 2005 at 12:03:13PM -0500, Jake Maciejewski wrote:
+> > Now that reiser4 seems to be working on AMD64, I'm trying to test it on
+> > PPC. Unfortunately, I haven't even been able to mount a reiser4 FS.
+> 
+> Unfortunately we could not test reiser4 on PPC because of lack of test machine.
+> Currently no idea where it might fail.
 
-AFAIK grub does not work in 64bit. It might work compiling with
-CFLAGS=3D"-march=3Di386 -m32" LDFLAGS=3D"-m32" passed to configure/gcc but =
-i
-am not sure (you need a multilib enviroment). Or as you already said
-in a 32bit chroot.
+I have access to a friend's Mac mini, but you could use PearPC on one of
+your x86 machines. The website claims it's ~1/15th speed using
+"JITC-X86", so a fast x86 box would give you a reasonable PPC test
+environment.
 
-More info on compiling in 32bit on AMD64 can be found here
-http://lists.debian.org/debian-amd64/2004/08/msg00084.html.
+> 
+> > I get the following error: "mount: No such file or directory". I've
+> > tried a loopback filesystem and a native partition. The same native
+> > patition works when formatted with reiserFS. I've tried the code as a
+> > module and builtin. I was using reiser4progs 1.0.4 and the latest -mm
+> > patch on vanilla, which while not officially supported works on AMD64
+> > and x86 and shouldn't cause a problem like this. fsck.reiser4 says the
+> > unmountable filesystem is consistent. Is there anything else I should
+> > try?
+> 
+> can you look at your machine /var/log/messages or dmesg(8) output for reiser4
+> messages?
 
-Sander
---=20
-After a time, you may find that "having" is not so pleasing a thing,
-after all, as "wanting." It is not logical, but it is often true.
+I don't remember seeing anything unusual.
 
-Spock, "Amok Time"
-stardate 3372.7
+> 
+> If you have possibility to check the fs by an fsck.reiser4 compiled on i386,
+> please do it.  If you don't have i386 around or have no time to compile the
+> progs there, make a small file with reiser4 fs image , compress it and make it
+> downloadable.
+
+I was able to mount and use it on AMD64, but I don't recall if I fscked
+it on AMD64. After adding a file to the reiser4 FS, I transfered the
+image back to the PPC machine and it gave me the same mount error. I
+suppose I could try making an image on x86 or AMD64.
+
+> 
+> > 
+> > -- 
+> > Jake Maciejewski <maciejej@msoe.edu>
+> > 
+> 
+> Thanks in advance,
+> Alex.
+> 
+-- 
+Jake Maciejewski <maciejej@msoe.edu>
+
