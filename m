@@ -1,58 +1,53 @@
-From: Bernd Schubert <bernd.schubert@pci.uni-heidelberg.de>
-Subject: Re: quota, reiserfs v3, 2.6.11.7
-Date: Mon, 2 May 2005 14:05:51 +0200
-Message-ID: <200505021405.52857.bernd.schubert@pci.uni-heidelberg.de>
-References: <20050502083334.GA19785@melkor.dnp.fmph.uniba.sk> <200505021253.57878.bernd.schubert@pci.uni-heidelberg.de> <20050502110759.GA6381@melkor.dnp.fmph.uniba.sk>
-Reply-To: bernd-schubert@gmx.de
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: reiser4 on PPC
+Date: Mon, 2 May 2005 18:10:26 +0400
+Message-ID: <20050502141026.GA6067@backtop.namesys.com>
+References: <1114966993.11906.59.camel@gentoo>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-23953-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23954-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050502110759.GA6381@melkor.dnp.fmph.uniba.sk>
 Content-Disposition: inline
+In-Reply-To: <1114966993.11906.59.camel@gentoo>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Radovan Garabik <garabik@melkor.dnp.fmph.uniba.sk>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jake Maciejewski <maciejej@msoe.edu>
 Cc: reiserfs-list@namesys.com
 
-On Monday 02 May 2005 13:07, you wrote:
-> On Mon, May 02, 2005 at 12:53:57PM +0200, Bernd Schubert wrote:
-> > Hello Radovan,
-> >
-> > > Is anyone using similar setup? (reiserfs+quotas+2.6.11.7+nfs)
-> >
-> > our main file server is running 2.6.11.7 with reiserfs +  nfs + quota.
->
-> but probably not over RAID-1 :-)
+Hi,
 
-Sure, we have also RAID-1, only forgot to write that ;)
+On Sun, May 01, 2005 at 12:03:13PM -0500, Jake Maciejewski wrote:
+> Now that reiser4 seems to be working on AMD64, I'm trying to test it on
+> PPC. Unfortunately, I haven't even been able to mount a reiser4 FS.
 
-Though, the nfs-exports are drbd devices - also raid1, but the raid code is=
-=20
-AFAIK not completely identical.
+Unfortunately we could not test reiser4 on PPC because of lack of test machine.
+Currently no idea where it might fail.
 
->
-> > To your reiserfs problems, are you by any chance using a SIL 3114 SATA
-> > controller? We had non-memory related data corruption on disks attached
-> > to
->
+> I get the following error: "mount: No such file or directory". I've
+> tried a loopback filesystem and a native partition. The same native
+> patition works when formatted with reiserFS. I've tried the code as a
+> module and builtin. I was using reiser4progs 1.0.4 and the latest -mm
+> patch on vanilla, which while not officially supported works on AMD64
+> and x86 and shouldn't cause a problem like this. fsck.reiser4 says the
+> unmountable filesystem is consistent. Is there anything else I should
+> try?
 
-Do you have ecc memory? If you have, you could/should monitor it e.g. with=
-=20
-bluesmoke. To my experience those reiserfs problems you have are usually=20
-memory related - with the one disk-controller-related exception we recently=
-=20
-had.
+can you look at your machine /var/log/messages or dmesg(8) output for reiser4
+messages?
 
-Bernd
+If you have possibility to check the fs by an fsck.reiser4 compiled on i386,
+please do it.  If you don't have i386 around or have no time to compile the
+progs there, make a small file with reiser4 fs image , compress it and make it
+downloadable.
 
-=2D-=20
-Bernd Schubert
-Physikalisch Chemisches Institut / Theoretische Chemie
-Universit=E4t Heidelberg
-INF 229
-69120 Heidelberg
-e-mail: bernd.schubert@pci.uni-heidelberg.de
+> 
+> -- 
+> Jake Maciejewski <maciejej@msoe.edu>
+> 
+
+Thanks in advance,
+Alex.
+
