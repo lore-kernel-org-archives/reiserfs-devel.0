@@ -1,58 +1,58 @@
-From: Radovan Garabik <garabik@melkor.dnp.fmph.uniba.sk>
+From: Bernd Schubert <bernd.schubert@pci.uni-heidelberg.de>
 Subject: Re: quota, reiserfs v3, 2.6.11.7
-Date: Mon, 2 May 2005 13:07:59 +0200
-Message-ID: <20050502110759.GA6381@melkor.dnp.fmph.uniba.sk>
-References: <20050502083334.GA19785@melkor.dnp.fmph.uniba.sk> <200505021253.57878.bernd.schubert@pci.uni-heidelberg.de>
+Date: Mon, 2 May 2005 14:05:51 +0200
+Message-ID: <200505021405.52857.bernd.schubert@pci.uni-heidelberg.de>
+References: <20050502083334.GA19785@melkor.dnp.fmph.uniba.sk> <200505021253.57878.bernd.schubert@pci.uni-heidelberg.de> <20050502110759.GA6381@melkor.dnp.fmph.uniba.sk>
+Reply-To: bernd-schubert@gmx.de
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-23952-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23953-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20050502110759.GA6381@melkor.dnp.fmph.uniba.sk>
 Content-Disposition: inline
-In-Reply-To: <200505021253.57878.bernd.schubert@pci.uni-heidelberg.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
-To: bernd-schubert@gmx.de
+To: Radovan Garabik <garabik@melkor.dnp.fmph.uniba.sk>
 Cc: reiserfs-list@namesys.com
 
-On Mon, May 02, 2005 at 12:53:57PM +0200, Bernd Schubert wrote:
-> Hello Radovan,
->=20
-> > Is anyone using similar setup? (reiserfs+quotas+2.6.11.7+nfs)
->=20
-> our main file server is running 2.6.11.7 with reiserfs +  nfs + quota.
+On Monday 02 May 2005 13:07, you wrote:
+> On Mon, May 02, 2005 at 12:53:57PM +0200, Bernd Schubert wrote:
+> > Hello Radovan,
+> >
+> > > Is anyone using similar setup? (reiserfs+quotas+2.6.11.7+nfs)
+> >
+> > our main file server is running 2.6.11.7 with reiserfs +  nfs + quota.
+>
+> but probably not over RAID-1 :-)
 
-but probably not over RAID-1 :-)=20
+Sure, we have also RAID-1, only forgot to write that ;)
 
-> Linux hamilton1 2.6.11.7 #1 SMP Mon Apr 18 15:40:36 CEST 2005 i686 GNU/Li=
-nux
->=20
-> bernd@hamilton1 bernd>uptime
->  12:34:03 up 13 days, 16:40,  1 user,  load average: 0.06, 0.08, 0.11
->=20
->=20
-> I have to admit that we are getting approximately one unexpected crash pe=
-r=20
-> month. However, we are uncertain if this is a hard- or software problem.
->=20
+Though, the nfs-exports are drbd devices - also raid1, but the raid code is=
+=20
+AFAIK not completely identical.
 
-I set up the server last week... so it is too early to tell
+>
+> > To your reiserfs problems, are you by any chance using a SIL 3114 SATA
+> > controller? We had non-memory related data corruption on disks attached
+> > to
+>
 
-> To your reiserfs problems, are you by any chance using a SIL 3114 SATA=20
-> controller? We had non-memory related data corruption on disks attached t=
-o=20
+Do you have ecc memory? If you have, you could/should monitor it e.g. with=
+=20
+bluesmoke. To my experience those reiserfs problems you have are usually=20
+memory related - with the one disk-controller-related exception we recently=
+=20
+had.
 
-no, these are plain old IDE disks
+Bernd
 
-thanks for the info=20
-
---=20
- -----------------------------------------------------------
-| Radovan Garab=EDk http://kassiopeia.juls.savba.sk/~garabik/ |
-| __..--^^^--..__    garabik @ kassiopeia.juls.savba.sk     |
- -----------------------------------------------------------
-Antivirus alert: file .signature infected by signature virus.
-Hi! I'm a signature virus! Copy me into your signature file to help me spre=
-ad!
+=2D-=20
+Bernd Schubert
+Physikalisch Chemisches Institut / Theoretische Chemie
+Universit=E4t Heidelberg
+INF 229
+69120 Heidelberg
+e-mail: bernd.schubert@pci.uni-heidelberg.de
