@@ -1,12 +1,12 @@
 From: Jake Maciejewski <maciejej@msoe.edu>
 Subject: Re: reiser4 on PPC
-Date: Mon, 02 May 2005 10:34:14 -0500
-Message-ID: <1115048054.6385.12.camel@gentoo>
+Date: Mon, 02 May 2005 10:59:04 -0500
+Message-ID: <1115049544.6385.20.camel@gentoo>
 References: <1114966993.11906.59.camel@gentoo>
 	 <20050502141026.GA6067@backtop.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23957-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23958-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -26,12 +26,6 @@ On Mon, 2005-05-02 at 18:10 +0400, Alex Zarochentsev wrote:
 > 
 > Unfortunately we could not test reiser4 on PPC because of lack of test machine.
 > Currently no idea where it might fail.
-
-I have access to a friend's Mac mini, but you could use PearPC on one of
-your x86 machines. The website claims it's ~1/15th speed using
-"JITC-X86", so a fast x86 box would give you a reasonable PPC test
-environment.
-
 > 
 > > I get the following error: "mount: No such file or directory". I've
 > > tried a loopback filesystem and a native partition. The same native
@@ -45,19 +39,25 @@ environment.
 > can you look at your machine /var/log/messages or dmesg(8) output for reiser4
 > messages?
 
-I don't remember seeing anything unusual.
+Well, now that I've actually checked it, there is a warning. I get the
+same message regardless of the architecture the FS is created on.
+
+reiser4[mount(22352)]: key_warning
+(fs/reiser4/plugin/object.c:96)[nikita-717]:
+WARNING: Error for inode 720575940379279360 (-2)
+
+This is a clean, consistent filesystem we're talking about, so I guess
+it's a kernel problem. Is it worth trying a different kernel version?
+I'm trying to avoid -mm because it sometimes breaks alternative
+architectures, but I wanted the lastest version of the code. As I
+mentioned before, I used a cutsom patch that works on x86. I'm willing
+to try other versions if necessary.
 
 > 
 > If you have possibility to check the fs by an fsck.reiser4 compiled on i386,
 > please do it.  If you don't have i386 around or have no time to compile the
 > progs there, make a small file with reiser4 fs image , compress it and make it
 > downloadable.
-
-I was able to mount and use it on AMD64, but I don't recall if I fscked
-it on AMD64. After adding a file to the reiser4 FS, I transfered the
-image back to the PPC machine and it gave me the same mount error. I
-suppose I could try making an image on x86 or AMD64.
-
 > 
 > > 
 > > -- 
