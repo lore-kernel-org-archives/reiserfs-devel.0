@@ -1,42 +1,49 @@
-From: Boyd Waters <bwaters@nrao.edu>
-Subject: Re: reiser4 on PPC
-Date: Mon, 2 May 2005 13:14:26 -0600
-Message-ID: <05D5DC33-5A5F-4359-BFE3-0B9D642E2E7B@nrao.edu>
-References: <1114966993.11906.59.camel@gentoo> <20050502141026.GA6067@backtop.namesys.com>
-Mime-Version: 1.0 (Apple Message framework v728)
+From: Chris Wakefield <c_wakefield@shaw.ca>
+Subject: Re: grub reiser4 won't compile
+Date: Mon, 02 May 2005 15:20:00 -0700
+Message-ID: <200505021520.00991.c_wakefield@shaw.ca>
+References: <200504272226.48234.c_wakefield@shaw.ca>
+ <42763E8B.9060906@namesys.com> <b65fbb1305050208176e07aa74@mail.gmail.com>
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23960-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23961-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050502141026.GA6067@backtop.namesys.com>
+In-reply-to: <b65fbb1305050208176e07aa74@mail.gmail.com>
+Content-disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
-To: Alex Zarochentsev <zam@namesys.com>
-Cc: Jake Maciejewski <maciejej@msoe.edu>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Sander Sweers <sander.sweers@gmail.com>, reiserfs-list@namesys.com
 
-
-On May 2, 2005, at 8:10 AM, Alex Zarochentsev wrote:
-
-> Hi,
+On May 2, 2005 08:17 am, Sander Sweers wrote:
+> On 02/05/05, Hans Reiser <reiser@namesys.com> wrote:
+> > Vitaly, if he is doing something with apt, that means he is probably
+> > using debian, which means they may have broken things, which means you
+> > need to look into it and fix things and report to me on it.
 >
-> On Sun, May 01, 2005 at 12:03:13PM -0500, Jake Maciejewski wrote:
+> AFAIK grub does not work in 64bit. It might work compiling with
+> CFLAGS="-march=i386 -m32" LDFLAGS="-m32" passed to configure/gcc but i
+> am not sure (you need a multilib enviroment). Or as you already said
+> in a 32bit chroot.
 >
->> Now that reiser4 seems to be working on AMD64, I'm trying to test  
->> it on
->> PPC. Unfortunately, I haven't even been able to mount a reiser4 FS.
->>
+> More info on compiling in 32bit on AMD64 can be found here
+> http://lists.debian.org/debian-amd64/2004/08/msg00084.html.
 >
-> Unfortunately we could not test reiser4 on PPC because of lack of  
-> test machine.
-> Currently no idea where it might fail.
+> Sander
 
-A test machine could be a $499 Mac Mini. I would be willing to chip  
-in for one if we can identify a tester. Would anyone else be willing  
-to help me fund this?
+ls -l /var/cache/apt/archives|grep grub
+-rw-r--r--  1 root root   733102 2005-01-17 16:40 
+grub_0.95+cvs20040624-13_amd64.deb
+-rw-r--r--  1 root root   733396 2005-02-05 07:18 
+grub_0.95+cvs20040624-14_amd64.deb
+-rw-r--r--  1 root root   733610 2005-02-18 16:18 
+grub_0.95+cvs20040624-15_amd64.deb
+-rw-r--r--  1 root root   733800 2005-03-21 00:41 
+grub_0.95+cvs20040624-16_amd64.deb
 
-~ boyd
-Boyd Waters
-Socorro, New Mexico
+This is odd.   I run pure64 amd64 and these packages indicate that they are 64 
+bit?
 
+Chris W.
