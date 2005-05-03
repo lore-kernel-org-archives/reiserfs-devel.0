@@ -1,41 +1,44 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: grub reiser4 won't compile
-Date: Tue, 03 May 2005 10:50:18 -0700
-Message-ID: <4277B9DA.2000602@namesys.com>
-References: <200504272226.48234.c_wakefield@shaw.ca>	 <200504281606.42243.vitaly@namesys.com>	 <200504290211.42905.c_wakefield@shaw.ca>	 <200504291519.22561.vitaly@namesys.com> <42763E8B.9060906@namesys.com> <b65fbb1305050208176e07aa74@mail.gmail.com>
+Subject: Re: reiser4 on PPC
+Date: Tue, 03 May 2005 11:25:56 -0700
+Message-ID: <4277C234.6050206@namesys.com>
+References: <1114966993.11906.59.camel@gentoo>	<20050502141026.GA6067@backtop.namesys.com>	<05D5DC33-5A5F-4359-BFE3-0B9D642E2E7B@nrao.edu>	<20050503133134.GT1399@nysv.org> <20050503183102.66e63ad8.reiser4@blinkenlights.ch>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23968-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23969-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b65fbb1305050208176e07aa74@mail.gmail.com>
+In-Reply-To: <20050503183102.66e63ad8.reiser4@blinkenlights.ch>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Sander Sweers <sander.sweers@gmail.com>
-Cc: Chris Wakefield <c_wakefield@shaw.ca>, Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
+To: Adrian Ulrich <reiser4@blinkenlights.ch>
+Cc: reiserfs-list@namesys.com
 
-Sander Sweers wrote:
+Adrian Ulrich wrote:
 
->On 02/05/05, Hans Reiser <reiser@namesys.com> wrote:
+>Hi,
+>
 >  
 >
->>Vitaly, if he is doing something with apt, that means he is probably
->>using debian, which means they may have broken things, which means you
->>need to look into it and fix things and report to me on it.
+>>IIRC a fund drive was talked about earlier and for some reason
+>>discarded. Can't even remember who the guy behind it was, I'm afraid.
 >>    
 >>
 >
->AFAIK grub does not work in 64bit. It might work compiling with
->CFLAGS="-march=i386 -m32" LDFLAGS="-m32" passed to configure/gcc but i
->am not sure (you need a multilib enviroment). Or as you already said
->in a 32bit chroot.
+>It was me..
 >
->More info on compiling in 32bit on AMD64 can be found here
->http://lists.debian.org/debian-amd64/2004/08/msg00084.html.
+>And i'd still buy them a Mac.. No problem..
 >
->Sander
+>
+> -- Adrian
+>
+>
+>
 >  
 >
-Yes, Vitaly was right, sorry about that.
+We won't turn down hardware, but it might be a few months before we can 
+do something about the port, we have to deal with kernel entry issues first.
+
+Hans
