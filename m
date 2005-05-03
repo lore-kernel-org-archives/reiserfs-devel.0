@@ -1,44 +1,42 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Jake Maciejewski <maciejej@msoe.edu>
 Subject: Re: reiser4 on PPC
-Date: Tue, 03 May 2005 11:25:56 -0700
-Message-ID: <4277C234.6050206@namesys.com>
-References: <1114966993.11906.59.camel@gentoo>	<20050502141026.GA6067@backtop.namesys.com>	<05D5DC33-5A5F-4359-BFE3-0B9D642E2E7B@nrao.edu>	<20050503133134.GT1399@nysv.org> <20050503183102.66e63ad8.reiser4@blinkenlights.ch>
+Date: Tue, 03 May 2005 16:25:23 -0500
+Message-ID: <1115155524.6385.38.camel@gentoo>
+References: <1114966993.11906.59.camel@gentoo>
+	 <20050502141026.GA6067@backtop.namesys.com>
+	 <05D5DC33-5A5F-4359-BFE3-0B9D642E2E7B@nrao.edu>
+	 <20050503133134.GT1399@nysv.org>
+	 <20050503183102.66e63ad8.reiser4@blinkenlights.ch>
+	 <4277C234.6050206@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23969-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23970-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050503183102.66e63ad8.reiser4@blinkenlights.ch>
+In-Reply-To: <4277C234.6050206@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Adrian Ulrich <reiser4@blinkenlights.ch>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Adrian Ulrich wrote:
+So you're working on getting reiser4 into vanilla? A recent article
+linked on Slashdot said it would be in 2.6.12, but I doubt that's going
+to happen. It's nice to hear you're trying. I'm sure some people have
+been suspecting that reiser4 has known issues and Namesys is holding it
+back.
 
->Hi,
->
->  
->
->>IIRC a fund drive was talked about earlier and for some reason
->>discarded. Can't even remember who the guy behind it was, I'm afraid.
->>    
->>
->
->It was me..
->
->And i'd still buy them a Mac.. No problem..
->
->
-> -- Adrian
->
->
->
->  
->
-We won't turn down hardware, but it might be a few months before we can 
-do something about the port, we have to deal with kernel entry issues first.
+One of the reasons I reported the PPC bug was because I thought you
+would need more architectures working to get into the kernel. Evidently
+this is not the case. Are we going to see warnings saying reiser4 is
+currently only supported on x86 and AMD64?
 
-Hans
+On Tue, 2005-05-03 at 11:25 -0700, Hans Reiser wrote:
+>
+> We won't turn down hardware, but it might be a few months before we can 
+> do something about the port, we have to deal with kernel entry issues first.
+> 
+> Hans
+-- 
+Jake Maciejewski <maciejej@msoe.edu>
+
