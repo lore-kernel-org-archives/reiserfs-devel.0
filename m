@@ -1,56 +1,41 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: reiser4 on PPC
-Date: Tue, 3 May 2005 20:21:00 +0300
-Message-ID: <20050503172059.GU1399@nysv.org>
-References: <1114966993.11906.59.camel@gentoo> <20050502141026.GA6067@backtop.namesys.com> <05D5DC33-5A5F-4359-BFE3-0B9D642E2E7B@nrao.edu> <20050503133134.GT1399@nysv.org> <20050503183102.66e63ad8.reiser4@blinkenlights.ch>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: grub reiser4 won't compile
+Date: Tue, 03 May 2005 10:50:18 -0700
+Message-ID: <4277B9DA.2000602@namesys.com>
+References: <200504272226.48234.c_wakefield@shaw.ca>	 <200504281606.42243.vitaly@namesys.com>	 <200504290211.42905.c_wakefield@shaw.ca>	 <200504291519.22561.vitaly@namesys.com> <42763E8B.9060906@namesys.com> <b65fbb1305050208176e07aa74@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="LqInKle6vr1NBc7W"
-Return-path: <reiserfs-list-return-23967-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23968-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20050503183102.66e63ad8.reiser4@blinkenlights.ch>
+In-Reply-To: <b65fbb1305050208176e07aa74@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Adrian Ulrich <reiser4@blinkenlights.ch>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Sander Sweers <sander.sweers@gmail.com>
+Cc: Chris Wakefield <c_wakefield@shaw.ca>, Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
 
---LqInKle6vr1NBc7W
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sander Sweers wrote:
 
-On Tue, May 03, 2005 at 06:31:02PM +0200, Adrian Ulrich wrote:
+>On 02/05/05, Hans Reiser <reiser@namesys.com> wrote:
+>  
 >
->And i'd still buy them a Mac.. No problem..
-
-But then again, maybe we should organize this by each posting to
-the list the amount they donated, and what's left (of what one
-costs in Moscow) and have the Namesys guys handle it through
-their donation system.
-
-Just check the sums are right and post some status reports every
-now and then.
-
-Hans? Zam? Anyone?
-
---=20
-mjt
-
-
---LqInKle6vr1NBc7W
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQFCd7L7IqNMpVm8OhwRAnFjAJ4saVjyFsStJELGHx++hnBwGT5gGQCfZ759
-/cSStI9fMVV1fB3t+BVLDKM=
-=oXW1
------END PGP SIGNATURE-----
-
---LqInKle6vr1NBc7W--
+>>Vitaly, if he is doing something with apt, that means he is probably
+>>using debian, which means they may have broken things, which means you
+>>need to look into it and fix things and report to me on it.
+>>    
+>>
+>
+>AFAIK grub does not work in 64bit. It might work compiling with
+>CFLAGS="-march=i386 -m32" LDFLAGS="-m32" passed to configure/gcc but i
+>am not sure (you need a multilib enviroment). Or as you already said
+>in a 32bit chroot.
+>
+>More info on compiling in 32bit on AMD64 can be found here
+>http://lists.debian.org/debian-amd64/2004/08/msg00084.html.
+>
+>Sander
+>  
+>
+Yes, Vitaly was right, sorry about that.
