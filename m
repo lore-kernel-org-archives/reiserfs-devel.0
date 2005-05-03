@@ -1,81 +1,55 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: quota, reiserfs v3, 2.6.11.7
-Date: Tue, 3 May 2005 15:00:43 +0200
-Message-ID: <20050503130043.GD4501@atrey.karlin.mff.cuni.cz>
-References: <20050502083334.GA19785@melkor.dnp.fmph.uniba.sk>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: reiser4 on PPC
+Date: Tue, 3 May 2005 16:31:34 +0300
+Message-ID: <20050503133134.GT1399@nysv.org>
+References: <1114966993.11906.59.camel@gentoo> <20050502141026.GA6067@backtop.namesys.com> <05D5DC33-5A5F-4359-BFE3-0B9D642E2E7B@nrao.edu>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="Qxx1br4bt0+wmkIi"
-Return-path: <reiserfs-list-return-23963-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="QAdlk5ze2izLk3Ap"
+Return-path: <reiserfs-list-return-23964-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20050502083334.GA19785@melkor.dnp.fmph.uniba.sk>
+In-Reply-To: <05D5DC33-5A5F-4359-BFE3-0B9D642E2E7B@nrao.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Radovan Garabik <garabik@melkor.dnp.fmph.uniba.sk>
-Cc: reiserfs-list@namesys.com
+To: Boyd Waters <bwaters@nrao.edu>
+Cc: Alex Zarochentsev <zam@namesys.com>, Jake Maciejewski <maciejej@msoe.edu>, reiserfs-list@namesys.com
 
---Qxx1br4bt0+wmkIi
+--QAdlk5ze2izLk3Ap
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Hello,
+On Mon, May 02, 2005 at 01:14:26PM -0600, Boyd Waters wrote:
+>
+>A test machine could be a $499 Mac Mini. I would be willing to chip =20
+>in for one if we can identify a tester. Would anyone else be willing =20
+>to help me fund this?
 
-> To add something to previous quota-related discussion:
-> I have a server with 180GB reiserfs v3 filesystem on a software RAID-1, 
-> 30GB of which is used, exported via nfs.
-> Yesterday I turned quotas on (in order to calm down a new user eating
-> approx. 1GB/day). Today in the morning the server was hung, I rebooted,
-> worked for a few minutes before it hung again (with no message on the
-> console). I rebooted again, turned quotas off, run reiserfsck 
-> and the server is happily running for about 3 hours now, with heavy 
-> nfs usage.
-> 
-> Kernel is vanilla 2.6.11.7 + grsecurity patches (could this be
-> related?). Usually, the usage is rather heavy (/home nfs export to >15
-> workstations).
-  Hmm, grsecurity does not seem to modify anything that could influence
-your problem. What I suspect more is that quota code trigges some rare
-error path with a bug in it.
+IIRC a fund drive was talked about earlier and for some reason
+discarded. Can't even remember who the guy behind it was, I'm afraid.
+I'm sure the Namesys guys could contact him again and ask if he's
+willing to organize, if we pull this through again.
 
-> I found these mesasges in syslog:
-> May  2 07:36:30 palo kernel: ReiserFS: md0: warning: PAP-5660: reiserfs_do_truncate: wrong result -1 of search for [186288 279757 0xfffffffffffffff DIRECT]
-  It would be useful if you can apply the attached patch to the kernel
-so that when the above happens (which seems to be the first bug in a chain)
-more debug info was dumped - at least we will know from where
-reiserfs_do_truncate was called.
+I'm willing to chip in for sure, for the record.
 
-> May  2 07:36:30 palo kernel: ReiserFS: md0: warning: clm-2100: nesting info a different FS
-> May  2 07:36:42 palo last message repeated 5 times
-> 
-> May  2 08:59:40 palo kernel: ReiserFS: md0: warning: PAP-5660: reiserfs_do_truncate: wrong result -1 of search for [221141 125166 0xfffffffffffffff DIRECT]
-> May  2 08:59:40 palo kernel: ReiserFS: md0: warning: clm-2100: nesting info a different FS
-> May  2 08:59:47 palo last message repeated 274 times
-> 
-> these two mesasges seem to correspond to the two crashes 
-> 
-> Unfortunately, since this is a production server, I cannot do many
-> experiments, but I might try to set up reiserfs+quotas on some test
-> computers if necessary.
+--=20
+mjt
 
-						Thanks for report
-									Honza
 
---Qxx1br4bt0+wmkIi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="stree.c.diff"
+--QAdlk5ze2izLk3Ap
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
---- linux/fs/reiserfs/stree.c	2005-03-03 18:58:30.000000000 +0100
-+++ linux/fs/reiserfs/stree.c	2005-05-03 14:47:12.000000000 +0200
-@@ -1790,7 +1790,7 @@ int reiserfs_do_truncate (struct reiserf
-     if (retval == POSITION_FOUND || retval == FILE_NOT_FOUND) {
- 	reiserfs_warning (p_s_inode->i_sb, "PAP-5660: reiserfs_do_truncate: "
- 			  "wrong result %d of search for %K", retval, &s_item_key);
--
-+	dump_stack();
-         err = -EIO;
-         goto out;
-     }
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
 
---Qxx1br4bt0+wmkIi--
+iD8DBQFCd302IqNMpVm8OhwRAk1xAKC9a8d1Guh4HBSTlX5cbNZKIOn41QCglBnp
+C57TaKSbRVkBh3kcVDjNWD4=
+=3gmH
+-----END PGP SIGNATURE-----
+
+--QAdlk5ze2izLk3Ap--
