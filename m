@@ -1,55 +1,103 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: reiser4 on PPC
-Date: Tue, 3 May 2005 16:31:34 +0300
-Message-ID: <20050503133134.GT1399@nysv.org>
-References: <1114966993.11906.59.camel@gentoo> <20050502141026.GA6067@backtop.namesys.com> <05D5DC33-5A5F-4359-BFE3-0B9D642E2E7B@nrao.edu>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: quota, reiserfs v3, 2.6.11.7
+Date: Tue, 03 May 2005 18:41:22 +0400
+Message-ID: <1115131282.17190.98.camel@tribesman.namesys.com>
+References: <20050502083334.GA19785@melkor.dnp.fmph.uniba.sk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="QAdlk5ze2izLk3Ap"
-Return-path: <reiserfs-list-return-23964-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="=-X5h3vWOg9PU6SprxDa97"
+Return-path: <reiserfs-list-return-23965-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <05D5DC33-5A5F-4359-BFE3-0B9D642E2E7B@nrao.edu>
+In-Reply-To: <20050502083334.GA19785@melkor.dnp.fmph.uniba.sk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Boyd Waters <bwaters@nrao.edu>
-Cc: Alex Zarochentsev <zam@namesys.com>, Jake Maciejewski <maciejej@msoe.edu>, reiserfs-list@namesys.com
+To: Radovan Garabik <garabik@melkor.dnp.fmph.uniba.sk>
+Cc: reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
 
---QAdlk5ze2izLk3Ap
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--=-X5h3vWOg9PU6SprxDa97
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 02, 2005 at 01:14:26PM -0600, Boyd Waters wrote:
->
->A test machine could be a $499 Mac Mini. I would be willing to chip =20
->in for one if we can identify a tester. Would anyone else be willing =20
->to help me fund this?
+Hello
 
-IIRC a fund drive was talked about earlier and for some reason
-discarded. Can't even remember who the guy behind it was, I'm afraid.
-I'm sure the Namesys guys could contact him again and ask if he's
-willing to organize, if we pull this through again.
+On Mon, 2005-05-02 at 12:33, Radovan Garabik wrote:
+> Hi all,
+> 
+> To add something to previous quota-related discussion:
+> I have a server with 180GB reiserfs v3 filesystem on a software RAID-1, 
+> 30GB of which is used, exported via nfs.
+> Yesterday I turned quotas on (in order to calm down a new user eating
+> approx. 1GB/day). Today in the morning the server was hung, I rebooted,
+> worked for a few minutes before it hung again (with no message on the
+> console). I rebooted again, turned quotas off, run reiserfsck 
+> and the server is happily running for about 3 hours now, with heavy 
+> nfs usage.
+> 
+> Kernel is vanilla 2.6.11.7 + grsecurity patches (could this be
+> related?). Usually, the usage is rather heavy (/home nfs export to >15
+> workstations).
+> 
+> I found these mesasges in syslog:
+> May  2 07:36:30 palo kernel: ReiserFS: md0: warning: PAP-5660: reiserfs_do_truncate: wrong result -1 of search for [186288 279757 0xfffffffffffffff DIRECT]
+> May  2 07:36:30 palo kernel: ReiserFS: md0: warning: clm-2100: nesting info a different FS
+> May  2 07:36:42 palo last message repeated 5 times
+> 
+> May  2 08:59:40 palo kernel: ReiserFS: md0: warning: PAP-5660: reiserfs_do_truncate: wrong result -1 of search for [221141 125166 0xfffffffffffffff DIRECT]
+> May  2 08:59:40 palo kernel: ReiserFS: md0: warning: clm-2100: nesting info a different FS
+> May  2 08:59:47 palo last message repeated 274 times
+> 
+> these two mesasges seem to correspond to the two crashes 
+> 
 
-I'm willing to chip in for sure, for the record.
+The attached patch should eliminate clm-2100. However, it is very likely
+that PAP-5660 is caused by filesystem error. Would you mind to
+reiserfsck?
 
---=20
-mjt
+> Unfortunately, since this is a production server, I cannot do many
+> experiments, but I might try to set up reiserfs+quotas on some test
+> computers if necessary.
+> 
+> Is anyone using similar setup? (reiserfs+quotas+2.6.11.7+nfs)
+> 
+
+--=-X5h3vWOg9PU6SprxDa97
+Content-Disposition: attachment; filename=reiserfs-missing-journal_end.patch
+Content-Type: text/plain; name=reiserfs-missing-journal_end.patch; charset=koi8-r
+Content-Transfer-Encoding: 7bit
 
 
---QAdlk5ze2izLk3Ap
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+This patch adds missing journal_end when reiserfs_do_truncate returns error
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
 
-iD8DBQFCd302IqNMpVm8OhwRAk1xAKC9a8d1Guh4HBSTlX5cbNZKIOn41QCglBnp
-C57TaKSbRVkBh3kcVDjNWD4=
-=3gmH
------END PGP SIGNATURE-----
+ fs/reiserfs/inode.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletion(-)
 
---QAdlk5ze2izLk3Ap--
+diff -puN fs/reiserfs/inode.c~reiserfs-missing-journal_end fs/reiserfs/inode.c
+--- linux-2.6.12-rc2-mm3/fs/reiserfs/inode.c~reiserfs-missing-journal_end	2005-05-03 18:34:35.253559838 +0400
++++ linux-2.6.12-rc2-mm3-vs/fs/reiserfs/inode.c	2005-05-03 18:35:57.484423915 +0400
+@@ -46,6 +46,7 @@ void reiserfs_delete_inode (struct inode
+ 	reiserfs_update_inode_transaction(inode) ;
+ 
+ 	if (reiserfs_delete_object (&th, inode)) {
++	    journal_end(&th, inode->i_sb, jbegin_count);
+ 	    up (&inode->i_sem);
+ 	    goto out;
+ 	}
+@@ -2017,8 +2018,10 @@ int reiserfs_truncate_file(struct inode 
+ 	       either appears truncated properly or not truncated at all */
+ 	add_save_link (&th, p_s_inode, 1);
+     error = reiserfs_do_truncate (&th, p_s_inode, page, update_timestamps) ;
+-    if (error)
++    if (error) {
++	journal_end (&th, p_s_inode->i_sb, JOURNAL_PER_BALANCE_CNT * 2 + 1);
+         goto out;
++    }
+     error = journal_end (&th, p_s_inode->i_sb, JOURNAL_PER_BALANCE_CNT * 2 + 1);
+     if (error)
+         goto out;
+
+_
+
+--=-X5h3vWOg9PU6SprxDa97--
+
