@@ -1,67 +1,44 @@
-From: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
-Subject: Re: When Reiser4 will be officially included in the kernel? ...
-Date: Wed, 04 May 2005 19:16:18 +0000
-Message-ID: <42791F82.8080906@futuretg.com>
-References: <42727F32.60301@futuretg.com>	 <1115198582.4456.32.camel@tribesman.namesys.com>	 <4278C117.7020805@superbug.demon.co.uk> <1115223159.4741.58.camel@tribesman.namesys.com>
+From: Pysiak Satriani <pysiak.satriani@wp.pl>
+Subject: Re[2]: When Reiser4 will be officially included in the kernel? ...
+Date: Thu, 5 May 2005 00:38:54 +0200
+Message-ID: <1346698530.20050505003854@wp.pl>
+References: <42727F32.60301@futuretg.com>
+ <1115198582.4456.32.camel@tribesman.namesys.com>
+ <4278C117.7020805@superbug.demon.co.uk>
+ <1115223159.4741.58.camel@tribesman.namesys.com> <42791F82.8080906@futuretg.com>
+Reply-To: Pysiak Satriani <pysiak.satriani@wp.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23978-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23981-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1115223159.4741.58.camel@tribesman.namesys.com>
+In-Reply-To: <42791F82.8080906@futuretg.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: James Courtier-Dutton <James@superbug.demon.co.uk>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
+>     This is OK, however, what I am looking for is to download the Kernel
+> from kernel.org, and found Reiser4 code inside. This means officially
+> for me.
+FYI, kernel.org does have patches with r4, eg.
+http://www.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.12-rc3/2.6.12-rc3-mm2/2.6.12-rc3-mm2.bz2
 
->They were on principle against 
->ftp://ftp.ru.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.12-rc3/2.6.12-rc3-mm2/broken-out/reiser4-allow-drop_inode-implementation.patch
->ftp://ftp.ru.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.10-rc3/2.6.10-rc3-mm1/broken-out/reiser4-perthread-pages.patch
->ftp://ftp.ru.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.12-rc3/2.6.12-rc3-mm2/broken-out/reiser4-export-inode_lock.patch
->
->and few older patches.
->We are currently trying to eliminate the need in
->reiser4-export-inode_lock.patch which is the last of bad patches.
->  
->
-Hi,
+When 2.6.12 comes up, you might want to take the next 2.6.12-mm1 or
+the next 2.6.12 reiser patch from namesys.com
 
-    This is OK, however, what I am looking for is to download the Kernel 
-from kernel.org, and found Reiser4 code inside. This means officially 
-for me.
+Anyway, I belive that the really important bugfixing and stabilizng will
+happen when r4 is included and people will start using it.
 
-Thanks,
-Giovanni.
+Just look what merging FUSE did to it. Lots of rapid bugfixing
+and stabilizng is going on. It might be that -mm is not enough for r4.
 
->This one seems to be the hardest to get rid of.
->
->  
->
->>James
->>
->>    
->>
->
->  
->
+Best of luck with r4 hacking.
 
+nb. don't you think that r4 is cool abbreviation for Reiser 4 ?
 
--- 
+Regards,
+Maciej
 
-
--- 
--- 
-
-Check FT Websites ... http://www.futuretg.com  - ftp://ftp.futuretg.com
-http://www.FTLinuxCourse.com
-    http://www.FTLinuxCourse.com/Certification
-http://www.RPMParadaise.org
-http://www.YourPersonalOperatingSystem.com
-
-Mobile: +39 393 665 4239
-	Lancelot is back!
--- 
 
