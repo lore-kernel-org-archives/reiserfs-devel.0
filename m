@@ -1,41 +1,50 @@
-From: zuzu <sean.zuzu@gmail.com>
-Subject: reiser4 on sparc64 gentoo linux
-Date: Wed, 4 May 2005 23:53:38 -0400
-Message-ID: <a988e9f605050420531e1cd0a7@mail.gmail.com>
-Reply-To: zuzu <sean.zuzu@gmail.com>
+From: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
+Subject: Reiser4 support on parted ...
+Date: Thu, 05 May 2005 11:49:08 +0000
+Message-ID: <427A0834.7080201@futuretg.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-23984-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-23985-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-after reading:
-http://kerneltrap.org/node/3727
-and
-http://www.mail-archive.com/reiserfs-list@namesys.com/msg17037.html
+Hi Everyone,
 
-i'm curious what the current (05/05/05!) situation has come to with
-reiser4 and linux 2.6.x.
-i would like to install gentoo gnu/linux on a sparc64 (sun blade 100)
-with reiser4 as the primary filesystem.
+    I am looking to know if someone have time to share with me to add 
+the necessary code
+    inside 'parted' to support Reiser4.
 
-i agree with Hans w/r/t VFS...  though Free software, as a creative
-endeavor, consequently relies heavily on something like "memetic
-capitalization" or perhaps simply "marketing"...  more than people
-would like to admit to themselves.  maybe the need for Reiser4 from my
-own perspective should _seem_ obvious just from BeFS and WebObjects,
-let alone CoreData/Spotlight.  without "memetic capitalization" (or
-apple uses plain old-fashioned capital), too many wonderful ideas look
-like Plan9, Squeak/Smalltalk, Xanadu, et. al.  (i worry that even
-Freenet could have fallen into that list).  this could even explain
-much of Free software's negative reputation for "fast follower"
-status, rather than "first mover".
+    May be 1 or 2 hours per day.
 
-peace,
--z
+    The reference page is:
+       http://www.gnu.org/software/parted/#maillist
+
+    I start to work on it, last September. Of course no money is involved.
+
+    I will need also other people, to test the result.
+
+Thanks,
+Giovanni.
+
+-- 
+
+
+-- 
+-- 
+
+Check FT Websites ... http://www.futuretg.com  - ftp://ftp.futuretg.com
+http://www.FTLinuxCourse.com
+    http://www.FTLinuxCourse.com/Certification
+http://www.RPMParadaise.org
+http://www.YourPersonalOperatingSystem.com
+
+Mobile: +39 393 665 4239
+	Lancelot is back!
+-- 
+
