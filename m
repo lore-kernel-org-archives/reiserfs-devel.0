@@ -1,27 +1,47 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiser4 repackers
-Date: Thu, 05 May 2005 22:06:11 -0700
-Message-ID: <427AFB43.7090406@namesys.com>
-References: <427A0834.7080201@futuretg.com>  <427A99C0.2000105@slaphack.com> <1115335902.24839.4.camel@localhost> <427ADAA4.8000407@slaphack.com>
+From: Alex Zarochentsev <zam@namesys.com>
+Subject: Re: Reiser4 support on parted ...
+Date: Fri, 6 May 2005 10:19:25 +0400
+Message-ID: <20050506061924.GI6067@backtop.namesys.com>
+References: <427A0834.7080201@futuretg.com> <427A99C0.2000105@slaphack.com> <20050505221204.GC8179@gnu.org> <427AA6CF.6000505@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-23998-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23999-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <427ADAA4.8000407@slaphack.com>
+Content-Disposition: inline
+In-Reply-To: <427AA6CF.6000505@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: David Masover <ninja@slaphack.com>
-Cc: Jonathan Briggs <jbriggs@esoft.com>, "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>
+Cc: Andrew Clausen <clausen@gnu.org>, "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>, Hans Reiser <reiser@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-I think someone is going to pay us to write the online repacker in the
-very near future, though I can't say their name.
+On Thu, May 05, 2005 at 06:05:51PM -0500, David Masover wrote:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+> 
+> Andrew Clausen wrote:
+> > On Thu, May 05, 2005 at 05:10:08PM -0500, David Masover wrote:
+> > 
+> >>To support doing what to Reiser4?
+> >>
+> >>"parted" is a disk management project -- specifically, a way to create,
+> >>delete, and resize partitions.  Think of it as fdisk with nicer units
+> >>and built-in resizefs tools.
+> >>
+> >>This would, I think, involve creating a fully functional
+> >>resizefs.reiser4 -- something I distinctly remember Hans telling me not
+> >>to do, because my approach also created (most of) an online repacker,
+> >>which is something Hans wants to do for money.
+> > 
+> > 
+> > It would be possible to implement mkfs and fsck support only.
+> 
+> Couldn't this just be a wrapper to mkfs.reiser4 and fsck.reiser4?
 
-Giovanni, if by parted support you mean that you are going to write a
-resizer (and now that I take a moment to remember what parted does it
-seems certain you do mean that), I wish you would not.  We are so
-amazing far in debt right now....
+libreiser4 was designed to support embedding into parted easily.  The AAL lib
+provides block device abstraction layer which is needed in parted.
 
-Hans
+-- 
+Alex.
