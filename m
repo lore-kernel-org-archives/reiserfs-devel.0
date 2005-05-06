@@ -1,56 +1,36 @@
-From: Jonathan Briggs <jbriggs@esoft.com>
-Subject: Re: Reiser4 repackers
-Date: Thu, 05 May 2005 17:31:41 -0600
-Message-ID: <1115335902.24839.4.camel@localhost>
-References: <427A0834.7080201@futuretg.com>  <427A99C0.2000105@slaphack.com>
+From: Andrew Clausen <clausen@gnu.org>
+Subject: Re: Reiser4 support on parted ...
+Date: Fri, 6 May 2005 10:02:08 +1000
+Message-ID: <20050506000208.GE8179@gnu.org>
+References: <427A0834.7080201@futuretg.com> <427A99C0.2000105@slaphack.com> <20050505221204.GC8179@gnu.org> <427AA6CF.6000505@slaphack.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-WO/Gnqzmvfpz6+irtBVl"
-Return-path: <reiserfs-list-return-23993-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-23994-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <427A99C0.2000105@slaphack.com>
+Content-Disposition: inline
+In-Reply-To: <427AA6CF.6000505@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: David Masover <ninja@slaphack.com>
 Cc: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>, Hans Reiser <reiser@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>
 
---=-WO/Gnqzmvfpz6+irtBVl
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Thu, May 05, 2005 at 06:05:51PM -0500, David Masover wrote:
+> Couldn't this just be a wrapper to mkfs.reiser4 and fsck.reiser4?
 
-On Thu, 2005-05-05 at 17:10 -0500, David Masover wrote:
-> This would, I think, involve creating a fully functional
-> resizefs.reiser4 -- something I distinctly remember Hans telling me not
-> to do, because my approach also created (most of) an online repacker,
-> which is something Hans wants to do for money.
+Almost.
 
-I am not certain this plan to make money from a repacker is going to be
-a workable idea.
+As it stands, libparted can't delegate out I/O to external programs,
+because its filesystem API address in terms of disk sectors rather
+than partitions.  libparted could be improved to map sectors back
+to partitions for external communication, though.
+(I wonder if clever use of devicemapper could make this very simple?)
 
-Reiser4 starts off being very nice and fast, but I have been using it
-for a /home partition for almost a year now, and the performance has
-dropped significantly.
+Also, error handling (especially with i18n) could be somewhat painful
+with this approach.
 
-Once this happens to enough people using Reiser4, one of them is going
-to write a free repacker.
-
-Perhaps it would be a good idea to release at least an offline repacker.
---=20
-Jonathan Briggs <jbriggs@esoft.com>
-eSoft, Inc.
-
---=-WO/Gnqzmvfpz6+irtBVl
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-
-iD8DBQBCeqzdG8fHaOLTWwgRArlOAJ0Yn5o8aM00NAYVeerJ7ZUthOcuhQCgoGlU
-4FyttW/7Kme1pRHPhalf9ME=
-=ssZ6
------END PGP SIGNATURE-----
-
---=-WO/Gnqzmvfpz6+irtBVl--
+Cheers,
+Andrew
 
