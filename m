@@ -1,45 +1,65 @@
-From: Sean McGrath <sean.mcgrath@propylon.com>
-Subject: Re: file as a directory
-Date: Tue, 10 May 2005 18:39:33 +0100
-Message-ID: <4280F1D5.3060607@propylon.com>
-References: <2c59f00304112205546349e88e@mail.gmail.com>	 <41A1FFFC.70507@hist.no> <41A21EAA.2090603@dbservice.com>	 <41A23496.505@namesys.com>  <1101287762.1267.41.camel@pear.st-and.ac.uk>	 <1115717961.3711.56.camel@grape.st-and.ac.uk>	 <4280CAEF.5060202@namesys.com> <1115739129.3711.117.camel@grape.st-and.ac.uk> <4280E1A9.3010703@propylon.com> <4280EEA7.9080403@namesys.com>
-Reply-To: sean.mcgrath@propylon.com
+From: Nicholas DeClario <funsac@gmail.com>
+Subject: Re: .reiserfs_priv directory removal
+Date: Tue, 10 May 2005 13:59:08 -0400
+Message-ID: <5b85fc67050510105926f6994b@mail.gmail.com>
+References: <5b85fc6705051008555bce937@mail.gmail.com>
+	 <4280DF48.9060800@suse.com>
+Reply-To: Nicholas DeClario <funsac@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24029-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-24030-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4280EEA7.9080403@namesys.com>
+In-Reply-To: <4280DF48.9060800@suse.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: reiserfs-list@namesys.com
 
-Hans Reiser wrote:
+Removing it after rebooting in to 2.4 is definitely a posibility.=20
+However, the "elegant" solution in the scenario here is to do it
+before hand.  I was wondering if it was possible.  I guess the most
+logical route to go would be to have a run-once script that deletes
+these directories when 2.4 boots.
 
->Sean McGrath wrote:
+Thanks for you help Jeff.
+
+Regards,
+Nick
+
+On 5/10/05, Jeff Mahoney <jeffm@suse.com> wrote:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+>=20
+> The only way to remove this directory under a 2.6 kernel is to rebuild
+> the kernel without extended attributes enabled. The .reiserfs_priv
+> directory is special and hidden. The problem you're running into is
+> similar to mounting an ext3 filesystem as ext2 using a kernel from
+> before ext3 was written. It doesn't know how to use it, and so it just
+> doesn't hide the directory.
+>=20
+> The 2.6 kernels, when it's possible that the directory will be used (ie:
+> xattrs enabled, read-write), creates the directory if it doesn't exist.
+> So, as soon as you mount the filesystem on another 2.6 system, the
+> directory will be recreated unless you've disabled xattrs at compile time=
+.
+>=20
+> What's the problem with simply removing the directory once you've
+> mounted the filesystem under your 2.4 kernel?
+>=20
+> - -Jeff
+>=20
+> - --
+> Jeff Mahoney
+> SuSE Labs
+> -----BEGIN PGP SIGNATURE-----
+> Version: GnuPG v1.4.0 (GNU/Linux)
+>=20
+> iD8DBQFCgN9ILPWxlyuTD7IRAuT+AJ4vi8Q8Z+bx80A4AXoBpo5wa7zzjQCbBYb2
+> jVZbGVsMgcZmcwvZ/WVWcVY=3D
+> =3DDfF3
+> -----END PGP SIGNATURE-----
 >
->  
->
->>The thing that interests me most is the difference (if any) between
->>giving a stream of bytes an opaque name e.g. "Chapter 1 of my
->>book.sxw" versus giving a stream of bytes a query expression that can
->>also be considered an opaque name e.g.
->>"/book/chapter[1] "
->>
->>    
->>
->What is an opaque name?
->
->
->  
->
-By "opaque name" I mean a name that is purely a label. A name that 
-cannot be interpreted as a query expression.
-
-Sean
-
-
-
