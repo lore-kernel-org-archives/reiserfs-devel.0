@@ -1,80 +1,63 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: kernel BUG() hit during PCI testing
-Date: Tue, 10 May 2005 12:25:01 -0400
-Message-ID: <4280E05D.6000000@suse.com>
-References: <20050509222314.GA17876@austin.ibm.com>
+From: Sean McGrath <sean.mcgrath@propylon.com>
+Subject: Re: file as a directory
+Date: Tue, 10 May 2005 17:30:33 +0100
+Message-ID: <4280E1A9.3010703@propylon.com>
+References: <2c59f00304112205546349e88e@mail.gmail.com>	 <41A1FFFC.70507@hist.no> <41A21EAA.2090603@dbservice.com>	 <41A23496.505@namesys.com>  <1101287762.1267.41.camel@pear.st-and.ac.uk>	 <1115717961.3711.56.camel@grape.st-and.ac.uk>	 <4280CAEF.5060202@namesys.com> <1115739129.3711.117.camel@grape.st-and.ac.uk>
+Reply-To: sean.mcgrath@propylon.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24024-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24025-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050509222314.GA17876@austin.ibm.com>
+In-Reply-To: <1115739129.3711.117.camel@grape.st-and.ac.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Linas Vepstas <linas@austin.ibm.com>
-Cc: reiserfs-dev@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+Cc: Hans Reiser <reiser@namesys.com>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Peter Foldiak wrote:
 
-Linas Vepstas wrote:
-> 
-> 
-> Hi,
-> 
-> I just hit a kernel BUG() during pci testing of 2.6.11.8.  The goal of 
-> the testing was to temporarily disable a PCI slot containing a SCSI controller. 
-> I think I permanently killed the PCI slot; i/o died, and shortly after 
-> I hit the BUG().  See below.
-> 
-> The goal is, of course, to have the kernel keep on trooping even if 
-> the SCSI controller dies out from under it; returning -EIO to user apps
-> accessing the failed file system is acceptable.
-> 
-> --linas
-> 
-> io-falcons:~ # dmesg
-> 
-> 
-> -bash: /bin/dmesg: Input/output error
-> 
-> (Above is the "normal" message when a file system returns -EIO to user space;
-> I expect to see these kinds of messages if the block device under the
-> file system fails. Then, a second later I got the crash:
-> 
-> io-falcons:~ #
-> io-falcons:~ #
-> io-falcons:~ # cpu 0x0: Vector: 700 (Program Check) at [c0000001ffe73740]
->     pc: c000000000138b48: .write_ordered_chunk+0xa4/0x100
->     lr: c0000000001392f4: .write_ordered_buffers+0x348/0x364
->     sp: c0000001ffe739c0
->    msr: 9000000000029032
->   current = 0xc0000003fe6d5030
->   paca    = 0xc000000000547000
->     pid   = 942, comm = reiserfs/0
-> kernel BUG in submit_ordered_buffer at fs/reiserfs/journal.c:616!
+>On Tue, 2005-05-10 at 15:53, Hans Reiser wrote:
+>  
+>
+>>I agree with the below in that sometimes you want to see a collection of
+>>stuff as one file, and sometimes you want to see it as a tree, and that
+>>file format browsers can be integrated into file system browsers to look
+>>seamless to users.
+>>
+>>A quibble: A name is just a means to select a file; he is completely
+>>wrong to think that file browsers will eliminate filenames.
+>>    
+>>
+>
+>Yes, even if you think of the whole file system as a single "file", you
+>need a way to select the bit you need, and you will use names for that
+>(and whether you call that a filename, a file-part name or an object
+>name doesn't really matter).
+>  
+>
+The thing that interests me most is the difference (if any) between 
+giving a stream of bytes an opaque name e.g. "Chapter 1 of my book.sxw" 
+versus giving a stream of bytes a query expression that can also be 
+considered an opaque name e.g.
+"/book/chapter[1] "
 
-Hi Linas -
+This is what the Russell/Frege descriptive theory of proper names 
+applied to storage systems in a sense[1].
 
-This one is on my radar among several others of the same type. What's
-happening is that somehow buffers are getting dirtied despite not being
-uptodate. They're getting allowed to be put back into the write cycle
-which is totally invalid, so they're getting caught rather than being
-written to disk. ext3 has similar problems, but tends to handle them as
-buffer errors rather than BUGs. I'm investigating whether or not these
-errors could occur outside individual filesystems.
+I've written about this stuff before on ITWorld (warning: chatty prose 
+style ahead):
 
-- -Jeff
+    Fractals, Self Similarity, and the Whimsical Boundaries of XML Documents
+    http://www.itworld.com/nl/xml_prac/04252002/
 
-- --
-Jeff Mahoney
-SuSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.0 (GNU/Linux)
+    A study in XML culture and evolution
+    http://www.itworld.com/nl/ebiz_ent/03252003/
 
-iD8DBQFCgOBdLPWxlyuTD7IRAqyHAJ9CNKvE0R8eNZZYb6KbTQ4uKoHNHACfa/kL
-CRuuI9esIf10Xr2PGN/O77Y=
-=eEwG
------END PGP SIGNATURE-----
+[1] http://en.wikipedia.org/wiki/Proper_name
+
+Sean
+
+
