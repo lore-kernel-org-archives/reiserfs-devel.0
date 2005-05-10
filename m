@@ -1,43 +1,47 @@
 From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
 Subject: Re: file as a directory
-Date: Tue, 10 May 2005 16:32:10 +0100
-Message-ID: <1115739129.3711.117.camel@grape.st-and.ac.uk>
+Date: Tue, 10 May 2005 16:38:48 +0100
+Message-ID: <1115739527.3711.124.camel@grape.st-and.ac.uk>
 References: <2c59f00304112205546349e88e@mail.gmail.com>
 	 <41A1FFFC.70507@hist.no> <41A21EAA.2090603@dbservice.com>
-	 <41A23496.505@namesys.com>  <1101287762.1267.41.camel@pear.st-and.ac.uk>
+	 <41A23496.505@namesys.com> <1101287762.1267.41.camel@pear.st-and.ac.uk>
 	 <1115717961.3711.56.camel@grape.st-and.ac.uk>
-	 <4280CAEF.5060202@namesys.com>
+	 <200505101514.j4AFEhGO010837@turing-police.cc.vt.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24019-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24020-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4280CAEF.5060202@namesys.com>
+In-Reply-To: <200505101514.j4AFEhGO010837@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: sean.mcgrath@propylon.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Valdis.Kletnieks@vt.edu
+Cc: Hans Reiser <reiser@namesys.com>, sean.mcgrath@propylon.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-On Tue, 2005-05-10 at 15:53, Hans Reiser wrote:
-> I agree with the below in that sometimes you want to see a collection of
-> stuff as one file, and sometimes you want to see it as a tree, and that
-> file format browsers can be integrated into file system browsers to look
-> seamless to users.
+On Tue, 2005-05-10 at 16:14, Valdis.Kletnieks@vt.edu wrote:
+> On Tue, 10 May 2005 10:39:23 BST, Peter Foldiak said:
+> > Back in November 2004, I suggested on the linux-kernel and reiserfs
+> > lists that the Reiser4 architecture could allow us to abolish the
+> > unnatural naming distinction between directories/files/parts-of-file
+> > (i.e. to unify naming within-file-system and within-file naming) in an
+> > efficient way.
+> > I suggested that one way of doing that would be to extend XPath-like
+> > selection syntax above the (XML) file level.
 > 
-> A quibble: A name is just a means to select a file; he is completely
-> wrong to think that file browsers will eliminate filenames.
+> I believe the consensus was that this needs to happen at the VFS layer, not
+> the FS level.  The next step would be designing an API for this - what would
+> the VFS present to userspace, and in what way, and how would backward
+> combatability be maintained?
 
-Yes, even if you think of the whole file system as a single "file", you
-need a way to select the bit you need, and you will use names for that
-(and whether you call that a filename, a file-part name or an object
-name doesn't really matter).
+But can it be done efficiently above the file system level??
 
-It is interesting that both he and I gave the example of a book and
-chapters, which is essentially a linear sequence, and the issue was just
-the selection of a part of that sequence. It would also be interesting
-to think about how you could map an arbitrary data structure more
-complicated than a linear sequence (an "object") to disk. This brings up
-issues of serialization and object databases....
+As far as I understand, Reiser4 has this nice tree structure, which
+means that the part of file selection could be done with almost no extra
+effort, you just attach additional names to inside nodes of the tree, so
+the same tree can be used to store the whole object, and part of the
+same tree can be used to select the object part. Right?
+If you do this above the file system level, I don't think it would have
+such an efficient implementation. Or would it?  Peter
 
