@@ -1,47 +1,42 @@
-From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Subject: Re: file as a directory
-Date: Tue, 10 May 2005 16:38:48 +0100
-Message-ID: <1115739527.3711.124.camel@grape.st-and.ac.uk>
-References: <2c59f00304112205546349e88e@mail.gmail.com>
-	 <41A1FFFC.70507@hist.no> <41A21EAA.2090603@dbservice.com>
-	 <41A23496.505@namesys.com> <1101287762.1267.41.camel@pear.st-and.ac.uk>
-	 <1115717961.3711.56.camel@grape.st-and.ac.uk>
-	 <200505101514.j4AFEhGO010837@turing-police.cc.vt.edu>
+From: Nicholas DeClario <funsac@gmail.com>
+Subject: .reiserfs_priv directory removal
+Date: Tue, 10 May 2005 11:55:23 -0400
+Message-ID: <5b85fc6705051008555bce937@mail.gmail.com>
+Reply-To: Nicholas DeClario <funsac@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24020-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-24021-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200505101514.j4AFEhGO010837@turing-police.cc.vt.edu>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Valdis.Kletnieks@vt.edu
-Cc: Hans Reiser <reiser@namesys.com>, sean.mcgrath@propylon.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Tue, 2005-05-10 at 16:14, Valdis.Kletnieks@vt.edu wrote:
-> On Tue, 10 May 2005 10:39:23 BST, Peter Foldiak said:
-> > Back in November 2004, I suggested on the linux-kernel and reiserfs
-> > lists that the Reiser4 architecture could allow us to abolish the
-> > unnatural naming distinction between directories/files/parts-of-file
-> > (i.e. to unify naming within-file-system and within-file naming) in an
-> > efficient way.
-> > I suggested that one way of doing that would be to extend XPath-like
-> > selection syntax above the (XML) file level.
-> 
-> I believe the consensus was that this needs to happen at the VFS layer, not
-> the FS level.  The next step would be designing an API for this - what would
-> the VFS present to userspace, and in what way, and how would backward
-> combatability be maintained?
+This is probably an odd question.  I am running a 2.6.5 kernel using
+reiserfs version 3.6.13.  I have two reiserfs filesystems.  I need to
+mount these filesystems under a 2.4.22 kernel with reiserfs version
+3.6.2. Then another system mounts them in 2.6.5 and then they are
+brought back to the original 2.4.22.  The reiserfs filesystems were
+originally created under 2.4.22 using the 3.6.2 tools.
 
-But can it be done efficiently above the file system level??
+When mounted under the original 2.4.22 system a directory appears in
+the root of the filesystem '.reiserfs_priv'.  From doing some research
+I understand that this directory is for storing xarg and acl
+information for the partition.
 
-As far as I understand, Reiser4 has this nice tree structure, which
-means that the part of file selection could be done with almost no extra
-effort, you just attach additional names to inside nodes of the tree, so
-the same tree can be used to store the whole object, and part of the
-same tree can be used to select the object part. Right?
-If you do this above the file system level, I don't think it would have
-such an efficient implementation. Or would it?  Peter
+My problem is it appears that reiserfs 3.6.2 under kernel 2.4.22 does
+not require this hidden directory structure.  What I would like to be
+able to do is delete this entire structure while still booted in my
+2.6.5 based system so that when the filesystems are later mounted in
+2.4.22 the directory structure no longer exists.  I won't need to use
+those filesystems anymore under 2.6.5 after deleting those
+directories.  Pretty much I want to delete them and then unmount the
+partitions.  I can't seem to find a way to do this using user space
+tools.  I tried different mount options as well with no success.  Any
+suggestions would be greatly appreciated.
 
+Thanks,
+Nick
