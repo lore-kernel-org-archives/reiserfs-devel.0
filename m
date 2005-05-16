@@ -1,56 +1,44 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: ReiserFS IFSD for Windows
-Date: Fri, 13 May 2005 11:14:32 -0700
-Message-ID: <4284EE88.2020309@namesys.com>
-References: <42838B75.1000605@cs.cmu.edu>
+From: Michael James <Michael.James@csiro.au>
+Subject: Reiser4 support in Suse9.3
+Date: Mon, 16 May 2005 17:21:02 +1000
+Message-ID: <200505161721.02806.Michael.James@csiro.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24058-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24061-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42838B75.1000605@cs.cmu.edu>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Mark Piper <mwp@cs.cmu.edu>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Mark Piper wrote:
+What is the status of the reiser4 built into Suse9.3?
 
-> This summer, I will be starting a 3.5-month project to create an
-> Installable File System Driver (IFSD) to read ReiserFS under Microsoft
-> Windows, similar to ext2fsd.   (The project is a practicum to complete
-> my degree in software engineering from  Carnegie Mellon.)
+I tried reiser4 back in suse9.2
+ and could mkfs.reiser4 a partition and mount it
+ but the machine hung when I hit it with a big rsync.
 
-I would prefer that you not do it.  Namesys believes that people who use
-proprietary operating systems should pay to use reiserfs.
+Nothing seemed to be happening to update reiser4progs either.
 
-I can suggest quite a few other tasks that would make a more impressive
-practicum (copy on write links, various other new and needed plugins).
+Now SuSE9.3 comes with  reiser4progs-1.0.3-3
+ built on 20/3/5  (note little-endian date, not middle-endian)
+ seems up-to-date enough but same result.
 
->
-> I have three questions:
->
-> * Is anyone out there interested in using the tool as it is developed?
->
-> * Is anyone out there interested in mentoring the development of the
-> tool?  (This basically consists of answering specific technical
-> questions when they arise.)
->
-> * Other than compliance to the GPL, are there any other liscensing
-> factors I should be aware of?
->
-> For anyone interested, my initial plan is to port the read-only
-> ReiserFS 3 code from the GRUB bootloader, and turn it into an IFSD
-> using the same techniques as in ext2fsd -- although I'd love to hear
-> other ideas, and opinions of whether the project might be feasible
-> with ReiserFS 4.
->
->  Thanks,
->     Mark Piper
->
->
->
->
->
+Format OK, mount OK,
+ but use leads to a hang for the copying process,
+ and any process that follows it in to see what happened.
+
+I think it relates to big files (>2Gig) being present...
+I could test more if you like,
+michaelj
+
+
+-- 
+Michael James                         michael.james@csiro.au
+System Administrator                    voice:  02 6246 5040
+CSIRO Bioinformatics Facility             fax:  02 6246 5166
+
+Internet Explorer is fine for downloading Firefox,
+ but after that....
