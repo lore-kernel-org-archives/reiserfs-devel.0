@@ -1,44 +1,31 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Subject: Re: file as a directory
-Date: Tue, 17 May 2005 19:57:28 -0400 EDT
-Message-ID: <173348006180-BeMail@cr593174-a>
-References: <428A7568.6080509@slaphack.com>
+From: Fabio Rosciano <malmostoso@email.it>
+Subject: Re: [2.6.12-rc4] Oops in reiserfs_panic [please CC]
+Date: Wed, 18 May 2005 09:02:52 +0200
+Message-ID: <428AE89C.2020503@email.it>
+References: <4255.24.115.31.119.1116366396.squirrel@mail.aigc.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24070-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <428A7568.6080509@slaphack.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <4255.24.115.31.119.1116366396.squirrel@mail.aigc.net>
+Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: David Masover <ninja@slaphack.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: jdz@aigc.net
+Cc: linux-kernel@vger.kernel.org, vs@nl.linux.org, dsd@gentoo.org, gfraser@online.no, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com, vs@namesys.com
 
-David Masover wrote on Tue, 17 May 2005 17:51:20 -0500:
-> How much of a price do I pay?  And could that price be avioded by only
-> enabling those features for directories where I want them?  Could that
-> be done easily in Reiser4?
+Jesse D Zbikowski wrote:
+> This looks to be the same bug reported by two Gentoo users against
+> 2.6.12-rc4, as a regression from -rc3.  One reported data corruption.
+> You should be able to work around by compiling with
+> 
+> CONFIG_REISERFS_CHECK=n
+> 
+> http://bugs.gentoo.org/show_bug.cgi?id=91968
 
-Interesting point.  A lot of those features require that file system
-objects know which directories they are in (or whatever their parent
-objects actually are, just think of them as directories for now).
-That means extra pointers in each object back to all the parents it
-belongs to.
+Yep, it worked. Nasty bug though.
 
-Your idea leads to the idea of having both singly linked file system
-objects and doubly linked ones.  Then when deleting items, the singly
-linked subtrees don't need to have the full traversal to check for
-cycles.  I'd leave that as a later optimization, if needed.
+Thanks, for any other info just ask!
 
-> My mind isn't able to easily wrap itself around the point of having this
-> strange new kind of hard-links, but I'm willing to try it if there's no
-> performance hit for the rest of my system.
-
-The file creation and deletion time will be slower.  But hopefully not
-by much, and that's about all that's affected.  The plus side is that
-with the extra classifications (photos filed in both "Cottage" and "Aunt"
-directories) you'd be able to find your data more easily!
-
-- Alex
+-- 
+Best Regards, Jack
+Debian Sid PPC
