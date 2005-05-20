@@ -1,45 +1,46 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: Reiser4 O_DIRECT
-Date: Fri, 20 May 2005 12:42:06 +0400
-Message-ID: <1116578526.3532.463.camel@tribesman.namesys.com>
-References: <1116525192.29446.5.camel@zion>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] Fix quota transaction size
+Date: Fri, 20 May 2005 11:44:42 +0200
+Message-ID: <20050520094442.GA8520@atrey.karlin.mff.cuni.cz>
+References: <20050519094015.GC1871@atrey.karlin.mff.cuni.cz> <200505192020.00466.mason@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24090-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <1116525192.29446.5.camel@zion>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <200505192020.00466.mason@suse.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Martin Piayda <martin.piayda@udo.edu>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <mason@suse.com>
+Cc: reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org, George Ronkin <gronkin@nerdvana.com>, akpm@osdl.org
 
-Hello
+  Hello,
 
-On Thu, 2005-05-19 at 21:53, Martin Piayda wrote:
-> Hi,
-> I'm missing O_DIRECT support in the current Reiser4 implementation (up
-> to Kernel 2.6.12-rc4-mm).
-> Calling sys_open(myfile, O_RDWR | O_DIRECT, 0) fails with -22.
+> On Thursday 19 May 2005 05:40, Jan Kara wrote:
+> >   Hello,
+> >
+> >   attached patch improves the estimates on the number of credits needed
+> > for a quota operation. This is needed as currently quota overflows the
+> > maximum size of a transaction if 1KB blocksize is used. Please apply.
 > 
-> Is this support planned, did I miss something, should I get my own
-> patches? ReiserFS seems to work with O_DIRECT, but not Reiser4, so I
-> wondered why not.
+> Thanks Jan,
 > 
+> It would make more sense to only allocate for the quota if quotas are
+> in use.  When you have 10 or more concurrent procs unlinking things,
+> they end up waiting for each other because they are trying to reserve
+> so many blocks in the transaction.  So, a smaller reservation allows
+> for better concurrency when quotas are off.
+  That's a good point. Checking whether the quota is enabled on a
+transaction start is probably not a good option as quotas can be turned
+on while some transaction is in progress. But we may check whether the
+filesystem was mounted with some quota option (better set some
+superblock flag when it is so) and reserve a space in a transaction for
+quotas in that case. Mount options can be changed only on remounting
+which nicely synchronizes everything anyway. And running a filesystem
+with quota options but without quota turned on is probably a case
+which can suffer some penalty. I'll write the patch for this.
 
-reiser4 has not O_DIRECT support yet.
-It will be added when the below are done:
-1. reiser4 does not crash in our internal stress tests
-2. there are no core linux patches reiser4 depends on and lkml objects
-against
-3. reiser4 has stable performance
-
-Unfortunately, I can not estimate when those problems will be addressed
-
-> Regards,
-> Martin
-> 
-> 
-
+								Honza
+-- 
+Jan Kara <jack@suse.cz>
+SuSE CR Labs
