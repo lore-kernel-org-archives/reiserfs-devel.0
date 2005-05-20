@@ -1,27 +1,31 @@
-From: Martin Piayda <martin.piayda@udo.edu>
-Subject: Reiser4 O_DIRECT
-Date: Thu, 19 May 2005 19:53:12 +0200
-Message-ID: <1116525192.29446.5.camel@zion>
+From: Chris Mason <mason@suse.com>
+Subject: Re: [PATCH] Make reiserfs BUG on too big transaction
+Date: Thu, 19 May 2005 20:11:23 -0400
+Message-ID: <200505192011.24550.mason@suse.com>
+References: <20050519093613.GB1871@atrey.karlin.mff.cuni.cz>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24086-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24088-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20050519093613.GB1871@atrey.karlin.mff.cuni.cz>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Jan Kara <jack@suse.cz>
+Cc: reiserfs-list@namesys.com, akpm@osdl.org
 
-Hi,
-I'm missing O_DIRECT support in the current Reiser4 implementation (up
-to Kernel 2.6.12-rc4-mm).
-Calling sys_open(myfile, O_RDWR | O_DIRECT, 0) fails with -22.
+On Thursday 19 May 2005 05:36, Jan Kara wrote:
+>   Hello!
+>
+>   Attached patch makes reiserfs BUG() when somebody tries to start a
+> larger transaction than it's allowed (currently the code just silently
+> deadlocks). I think this is a better behaviour. Can you please apply the
+> patch?
 
-Is this support planned, did I miss something, should I get my own
-patches? ReiserFS seems to work with O_DIRECT, but not Reiser4, so I
-wondered why not.
+Ack, looks ok.  In theory, we could return an error instead and force the FS 
+into readonly mode, but it's better to catch the offending caller.
 
-Regards,
-Martin
-
+-chris
