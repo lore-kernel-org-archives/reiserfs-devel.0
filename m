@@ -1,32 +1,45 @@
-From: Chris Mason <mason@suse.com>
-Subject: Re: [PATCH] Fix quota transaction size
-Date: Thu, 19 May 2005 20:19:59 -0400
-Message-ID: <200505192020.00466.mason@suse.com>
-References: <20050519094015.GC1871@atrey.karlin.mff.cuni.cz>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: Reiser4 O_DIRECT
+Date: Fri, 20 May 2005 12:42:06 +0400
+Message-ID: <1116578526.3532.463.camel@tribesman.namesys.com>
+References: <1116525192.29446.5.camel@zion>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20050519094015.GC1871@atrey.karlin.mff.cuni.cz>
-Content-Disposition: inline
-Sender: linux-fsdevel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-24090-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <1116525192.29446.5.camel@zion>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jan Kara <jack@suse.cz>
-Cc: reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org, George Ronkin <gronkin@nerdvana.com>, akpm@osdl.org
+To: Martin Piayda <martin.piayda@udo.edu>
+Cc: reiserfs-list@namesys.com
 
-On Thursday 19 May 2005 05:40, Jan Kara wrote:
->   Hello,
->
->   attached patch improves the estimates on the number of credits needed
-> for a quota operation. This is needed as currently quota overflows the
-> maximum size of a transaction if 1KB blocksize is used. Please apply.
+Hello
 
-Thanks Jan,
+On Thu, 2005-05-19 at 21:53, Martin Piayda wrote:
+> Hi,
+> I'm missing O_DIRECT support in the current Reiser4 implementation (up
+> to Kernel 2.6.12-rc4-mm).
+> Calling sys_open(myfile, O_RDWR | O_DIRECT, 0) fails with -22.
+> 
+> Is this support planned, did I miss something, should I get my own
+> patches? ReiserFS seems to work with O_DIRECT, but not Reiser4, so I
+> wondered why not.
+> 
 
-It would make more sense to only allocate for the quota if quotas are in use.  
-When you have 10 or more concurrent procs unlinking things, they end up 
-waiting for each other because they are trying to reserve so many blocks in 
-the transaction.  So, a smaller reservation allows for better concurrency 
-when quotas are off.
+reiser4 has not O_DIRECT support yet.
+It will be added when the below are done:
+1. reiser4 does not crash in our internal stress tests
+2. there are no core linux patches reiser4 depends on and lkml objects
+against
+3. reiser4 has stable performance
 
--chris
+Unfortunately, I can not estimate when those problems will be addressed
+
+> Regards,
+> Martin
+> 
+> 
+
