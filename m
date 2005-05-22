@@ -1,37 +1,61 @@
-From: Martin Piayda <martin.piayda@udo.edu>
-Subject: Re: Reiser4 O_DIRECT
-Date: Sun, 22 May 2005 19:38:41 +0200
-Message-ID: <1116783521.22446.9.camel@zion>
-References: <1116525192.29446.5.camel@zion>
-	 <1116578526.3532.463.camel@tribesman.namesys.com>
-	 <1695540869.20050521234900@wp.pl> <42903838.4070500@namesys.com>
-	 <20050522171207.GB11013@nysv.org>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Re[2]: Reiser4 O_DIRECT
+Date: Sun, 22 May 2005 18:47:51 -0400
+Message-ID: <200505222247.j4MMlr85008867@turing-police.cc.vt.edu>
+References: <1116525192.29446.5.camel@zion> <1116578526.3532.463.camel@tribesman.namesys.com>
+            <1695540869.20050521234900@wp.pl>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1116802070_3542P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24108-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24111-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050522171207.GB11013@nysv.org>
+In-Reply-To: Your message of "Sat, 21 May 2005 23:49:00 +0200."
+             <1695540869.20050521234900@wp.pl> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Markus TXrnqvist <mjt@nysv.org>
+To: Pysiak Satriani <pysiak.satriani@wp.pl>
 Cc: reiserfs-list@namesys.com
 
-On So, 2005-05-22 at 20:12 +0300, Markus TXrnqvist wrote:
-> On Sun, May 22, 2005 at 12:43:52AM -0700, Hans Reiser wrote:
-> >What Vladimir failed to say was that it is our recent changes to
-> >accomodate the kernel maintainers that are unstable, we had previously
-> >reached the point where none of our internal tests could make it crash. 
-> >I hope that he did not put these unstable changes on our website for
-> >users to see them without special notes....
+--==_Exmh_1116802070_3542P
+Content-Type: text/plain; charset=us-ascii
 
-Aha? This implies to me there are code-chunks which cause these unstable
-scenarios, but should not be included in the patches that are available
-to the public. I've never had any crashes although my R4 partition is
-heavily used for reading/writing small files.
-What is the matter of including O_DIRECT in the stable branch of R4
-then? Or how do these recent changes affect the R4 patches, that are
-merged into the latest mm-sources (akpm)?
+On Sat, 21 May 2005 23:49:00 +0200, Pysiak Satriani said:
 
+> I remember Hans saying that r4 is so stable that the developers themselves
+> can not find any more bugs.
+
+Which in reality probably means "It *probably* won't eat your data".
+
+Remember that the developers have a limited number of different hardware
+configurations, and a limited number of test tools, and a limited number
+of ways they use the file system.
+
+So there's probably *plenty* of bugs still to be found - most of them the sort
+that nobody will expect, and won't be found until some user's creeping-horror
+database application that's written half in Cobol and half in Python does something
+totally stupid but legal.....
+
+I've been on both ends - beta tester for software the developers weren't
+finding any more bugs in (I filed over 300 bug reports against the product
+anyhow), and had users find fatal bugs I couldn't find (my favorite had to be a
+user who managed to crash software I wrote by entering a backspace character.
+On an IBM 3270 terminal. Which doesn't *HAVE* a transmittable backspace
+character - backspace is handled locally in the terminal....)
+
+
+--==_Exmh_1116802070_3542P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFCkQwWcC3lWbTT17ARAplnAKD07CrULxakhjueJr9miANWv7SgUACfeTT6
+fmcZqWYb7r94k59MqOVjZmk=
+=w5ge
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1116802070_3542P--
