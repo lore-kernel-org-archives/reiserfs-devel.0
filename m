@@ -1,75 +1,50 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: Reiser4 O_DIRECT
-Date: Mon, 23 May 2005 12:52:12 +0300
-Message-ID: <20050523095212.GD11013@nysv.org>
+Date: Mon, 23 May 2005 12:53:46 -0400
+Message-ID: <200505231653.j4NGrksq017538@turing-police.cc.vt.edu>
 References: <1116525192.29446.5.camel@zion> <1116578526.3532.463.camel@tribesman.namesys.com> <1695540869.20050521234900@wp.pl> <200505222247.j4MMlr85008867@turing-police.cc.vt.edu> <4291225B.5090503@slaphack.com>
+            <20050523095212.GD11013@nysv.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="U+BazGySraz5kW0T"
-Return-path: <reiserfs-list-return-24116-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_1116867226_3973P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24118-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <4291225B.5090503@slaphack.com>
+In-Reply-To: Your message of "Mon, 23 May 2005 12:52:12 +0300."
+             <20050523095212.GD11013@nysv.org> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: David Masover <ninja@slaphack.com>
-Cc: Valdis.Kletnieks@vt.edu, Pysiak Satriani <pysiak.satriani@wp.pl>, reiserfs-list@namesys.com
+To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
+Cc: David Masover <ninja@slaphack.com>, Pysiak Satriani <pysiak.satriani@wp.pl>, reiserfs-list@namesys.com
 
---U+BazGySraz5kW0T
+--==_Exmh_1116867226_3973P
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 22, 2005 at 07:22:51PM -0500, David Masover wrote:
->
->This is exactly why it should be in the kernel once the developers can't
->find any more bugs.  Marked as experimental, mainly, but in the kernel
->where real users can throw cobol/Java/sql bastardizations at it and
->break it.
+On Mon, 23 May 2005 12:52:12 +0300, Markus =?UNKNOWN?Q?T=F6rnqvist?= said:
+> On Sun, May 22, 2005 at 07:22:51PM -0500, David Masover wrote:
+> >Of course, I've worked on sufficiently few big projects that I'm still
+> >naive enough to believe that unit tests _can_ catch everything, if
+> >they're done right.  I'm sure I'll eventually be proven wrong...
+> I'm sure a testing professional will happily prove you wrong ;)
 
-Sure.
+It's *never* the testing professional that disproves "unit tests can catch everything".
 
-Don't get me wrong on this, because I've voiced my opinion about
-the new development model failing us, with stuff getting a bit
-too lively in -mm and merged into stable a bit too fast for comfort.
-
-Still, this new model would allow someone to merge Reiser4 into
-vanilla with ease, whereas on the traditional model, kicking
-an experimental fs from the dev tree might have been a difficult
-political move.
-
-Thus it must be anounced in a way that doesn't scare people away
-"oh no this is yet another broken pile from -mm, we don't want it!"
-but invite them "kickass, a file system that's stable enough to
-be merged, with EXPERIMENTAL just pro forma on it"
-
->Of course, I've worked on sufficiently few big projects that I'm still
->naive enough to believe that unit tests _can_ catch everything, if
->they're done right.  I'm sure I'll eventually be proven wrong...
-
-My take on testing is that I leave it to the real professionals and
-with cases like Reiser4, I just blindly do what I'm told and see if
-I break anything.
-
-I'm sure a testing professional will happily prove you wrong ;)
-
---=20
-mjt
+It's the guy with the creeping-horror Cobol/Python database that finds the stuff
+that unit tests can't catch.. ;)
 
 
---U+BazGySraz5kW0T
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+--==_Exmh_1116867226_3973P
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-iD8DBQFCkafMIqNMpVm8OhwRAo2bAJ4gdXeW3UfX3GkMI4cQQaITQwQhngCeNO3R
-9AhX86dNbuyCIIF8uLi4luU=
-=mC1P
+iD8DBQFCkgqacC3lWbTT17ARAiR4AKCmV5hrwvLLj/eVWS/YB80Pgk0vBwCeN3si
+5uctuHf1eCPZ6Wxddz12hi0=
+=8SBc
 -----END PGP SIGNATURE-----
 
---U+BazGySraz5kW0T--
+--==_Exmh_1116867226_3973P--
