@@ -1,57 +1,84 @@
-From: ms419@freezone.co.uk
-Subject: reiser4 formatted initrd
-Date: Tue, 24 May 2005 10:46:54 -0700 (PDT)
-Message-ID: <27009.24.86.194.63.1116956814.squirrel@rof>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: Reiser4 O_DIRECT
+Date: Tue, 24 May 2005 16:35:51 -0500
+Message-ID: <42939E37.8060107@slaphack.com>
+References: <1116525192.29446.5.camel@zion> <1116578526.3532.463.camel@tribesman.namesys.com> <1695540869.20050521234900@wp.pl> <200505222247.j4MMlr85008867@turing-police.cc.vt.edu> <4291225B.5090503@slaphack.com>            <20050523095212.GD11013@nysv.org> <200505231653.j4NGrksq017538@turing-police.cc.vt.edu> <42921886.40404@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-24128-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24129-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <42921886.40404@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Valdis.Kletnieks@vt.edu, =?UTF-8?B?TWFya3VzIO+/vQ==?= <mjt@nysv.org>, Pysiak Satriani <pysiak.satriani@wp.pl>, reiserfs-list@namesys.com
 
-I built into my kernel support for only the reiser4 filesystem, so when I
-needed an initrd for booting a raid root partition, I formated it using
-reiser4
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Unfortuantely, I got this error booting my reiser4 formated initrd -
+Hans Reiser wrote:
+> Valdis.Kletnieks@vt.edu wrote:
+> 
+> 
+>>On Mon, 23 May 2005 12:52:12 +0300, Markus =?UNKNOWN?Q?T=F6rnqvist?= said:
+>> 
+>>
+>>
+>>>On Sun, May 22, 2005 at 07:22:51PM -0500, David Masover wrote:
+>>>   
+>>>
+>>>
+>>>>Of course, I've worked on sufficiently few big projects that I'm still
+>>>>naive enough to believe that unit tests _can_ catch everything, if
+>>>>they're done right.  I'm sure I'll eventually be proven wrong...
+>>>>     
+>>>>
+>>>
+>>>I'm sure a testing professional will happily prove you wrong ;)
+>>>   
+>>>
+>>
+>>It's *never* the testing professional that disproves "unit tests can catch everything".
+>>
+>>It's the guy with the creeping-horror Cobol/Python database that finds the stuff
+>>that unit tests can't catch.. ;)
+>>
+>> 
+>>
+> 
+> My favorite for version 3 (we now test for this in v4 testing) was
+> mozilla truncating files longer rather than shorter.  Legal but was not
+> tested for....
 
+I see how that works.  I'm going to have to think a bit harder now.
 
-[...]
-RAMDISK: Compressed image found at block 0
-Kernel panic - not syncing: VFS: Unable to mount root fs on
-unknown-block(1,0)
- <0>Rebooting in 180 seconds..<3>BUG: soft lockup detected on CPU#0!
-NIP: C000692C LR: C00198A0 SP: DFFC3EC0 REGS: dffc3e10 TRAP: 0901    Not
-tainted
-MSR: 00009032 EE: 1 PR: 0 ME: 1 IR/DR: 11
-TASK = dffc1730[1] 'swapper' THREAD: dffc2000
-Last syscall: 120
-GPR00: 00000000 DFFC3EC0 DFFC1730 000657D0 00000000 DFFCE720 00000008
-GPR08: 00000009 C03A0000 DFFFD010 C0320000 82000024
-NIP [c000692c] __delay+0xc/0x14
-LR [c00198a0] panic+0x10c/0x16c
-Call trace:
- [c03a2b34] mount_block_root+0xbc/0x11c
- [c03a2da0] prepare_namespace+0x74/0x13c
- [c0003eec] init+0xec/0xf4
- [c000720c] kernel_thread+0x44/0x60
+My feeling is that you create the standard as you create the test, not
+the other way around.  If the test works, then there are by definition
+few bugs if any in the system itself -- any other bugs are actually in
+the application, not the system.
 
+Still, your true ignorance is what you don't know that you don't know.
+There's always something that you didn't think to think of.  And I'm
+thinking of putting that as a disclaimer on all my mail...
 
-I since built ext2 support into my kernel & booting the same initrd -
-formatted using ext2 - works no problem
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-Though I now boot successfully, I'm curious to debug this problem with
-reiser4 formatted initrds - I eventually want to eliminate ext2 support
-altogether
-
-Might there be a problem with my initrd image / kernel configuration? or
-are reiser4 formatted initrds fundamentally unsupported?
-
-Many thanks for all your work on the greatest filesystem!
-
-Jack
-
+iQIVAwUBQpOeN3gHNmZLgCUhAQK5lBAAmaZCXIlaSaD3aVXSyH3tdiEPS9UEOdvH
+eVtmvaM5ZO5ao1aebaodAmVSqmzEKbLCeNCaoa6ZTsFi6uHC21hOBTpqHxW0i94Y
+PN22cw3ZTtpPU2KUWB7dTHqI9uz5JUMkMnFg7moRqH/bDzk+XBeNH9xgFnkzYjuj
+g3nMvJUGggbNCX0XLsDAiQnOUe/rzvgIMP4LtcWi9UxzNKa//PfLBM/dO6ry77R7
+PD404BVxXy5OHgJc8L4D2FLB6fdOTX7rUFC7GYqGhl9pdv8HGxOrQ+AkbhFF2F0/
+hgXeX/7mMtFehZD19i8A/+uglR+qqw+1P8zsF8AoMmoRwhhDA25enH6knImSQh9q
+Ppzht93CABh0WtHM/jHkSM9Dpla9u67FMqlsFV5eRWMLXqTK/OVcm+zGM4pKPBcL
+8gXiEdpiqj/pYjMjsvIhxwyVIpEIZrpo6V0zilimHMaFuiTtZ9M8KrKMhTWx/xAp
+upLAV8e17NJ8ew+I1ChHqXhDgFOxh1uzVkY2iCVsjjVEsNJbPwsb1jMg35RhC+RW
+1L/7dUp7CPzd5xhE3oSoKDhGkTDKKQOhfX1CkWIgTGGmhc2nqQSmriK6wr0dxyHM
+R2vaRbvlKWSH5r/JNw9vEyWKIDRuoQdEy+kdEhvBF1Y61HMGUqacdOlLoM+ozVZA
+g3GPsl/jixg=
+=00kz
+-----END PGP SIGNATURE-----
