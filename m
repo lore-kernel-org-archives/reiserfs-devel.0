@@ -1,10 +1,10 @@
 From: Jan Kara <jack@suse.cz>
-Subject: [PATCH] Add checking of journal_begin() return value
-Date: Tue, 24 May 2005 13:20:57 +0200
-Message-ID: <20050524112057.GA20958@atrey.karlin.mff.cuni.cz>
+Subject: [PATCH] Improve credits estimates for quota
+Date: Tue, 24 May 2005 13:25:18 +0200
+Message-ID: <20050524112518.GB20958@atrey.karlin.mff.cuni.cz>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="lrZ03NoBR/3+SXJZ"
-Return-path: <reiserfs-list-return-24124-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="6sX45UoQRIJXqkqR"
+Return-path: <reiserfs-list-return-24125-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -12,19 +12,20 @@ Errors-To: flx@namesys.com
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: linux-fsdevel@vger.kernel.org
-Cc: reiserfs-list@namesys.com, akpm@osdl.org
+Cc: akpm@osdl.org, reiserfs-list@namesys.com
 
---lrZ03NoBR/3+SXJZ
+--6sX45UoQRIJXqkqR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
   Hello,
 
-  attached patch adds proper checking of the return values of
-journal_begin() and journal_end() to the quota code in reiserfs.
-I already sent a similar patch but it got rejected due to the dependency
-on another rejected patch ;) Now the patch is rediffed to be
-independent. Please apply.
+  attached patch is the first of the three patches improving the estimates
+on the number of credits needed to perform a quota operation. We now
+distinguish whether block needs to be allocated or just rewritten. This
+change also fixes a problem with reiserfs and 1KB blocksize where we
+exceeded the maximum transaction size.
+  This patch implements the changes in the generic quota code. Please apply.
 
 								Honza
 
@@ -32,169 +33,65 @@ independent. Please apply.
 Jan Kara <jack@suse.cz>
 SuSE CR Labs
 
---lrZ03NoBR/3+SXJZ
+--6sX45UoQRIJXqkqR
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="quota-2.6.12-rc4-2-transstart.diff"
+Content-Disposition: attachment; filename="quota-2.6.12-rc4-3-credits.diff"
 
-Check return values of journal_begin() and journal_end() in the quota code
-for reiserfs.
+Improve estimates on the number of needed credits for quota transaction.
+Now we distinguish blocks that might need to be allocated and blocks that
+only need to be rewritten. Also we distinguish deleting of a quota structure
+and creating of a new one.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 
-diff -rupX /home/jack/.kerndiffexclude linux-2.6.12-rc4-1-reiserbigtrans/fs/reiserfs/inode.c linux-2.6.12-rc4-2-transstart/fs/reiserfs/inode.c
---- linux-2.6.12-rc4-1-reiserbigtrans/fs/reiserfs/inode.c	2005-05-18 15:10:59.000000000 +0200
-+++ linux-2.6.12-rc4-2-transstart/fs/reiserfs/inode.c	2005-05-23 17:05:01.000000000 +0200
-@@ -2798,7 +2798,9 @@ int reiserfs_setattr(struct dentry *dent
- 		    struct reiserfs_transaction_handle th;
+diff -rupX /home/jack/.kerndiffexclude linux-2.6.12-rc4-2-transstart/include/linux/dqblk_v1.h linux-2.6.12-rc4-3-credits/include/linux/dqblk_v1.h
+--- linux-2.6.12-rc4-2-transstart/include/linux/dqblk_v1.h	2004-10-18 23:54:07.000000000 +0200
++++ linux-2.6.12-rc4-3-credits/include/linux/dqblk_v1.h	2005-05-24 11:13:45.000000000 +0200
+@@ -11,6 +11,12 @@
+ /* Root squash turned on */
+ #define V1_DQF_RSQUASH 1
  
- 		    /* (user+group)*(old+new) structure - we count quota info and , inode write (sb, inode) */
--		    journal_begin(&th, inode->i_sb, 4*REISERFS_QUOTA_INIT_BLOCKS+2);
-+		    error = journal_begin(&th, inode->i_sb, 4*REISERFS_QUOTA_INIT_BLOCKS+2);
-+ 		    if (error)
-+ 			goto out;
-                     error = DQUOT_TRANSFER(inode, attr) ? -EDQUOT : 0;
- 		    if (error) {
- 			journal_end(&th, inode->i_sb, 4*REISERFS_QUOTA_INIT_BLOCKS+2);
-@@ -2811,7 +2813,7 @@ int reiserfs_setattr(struct dentry *dent
- 		    if (attr->ia_valid & ATTR_GID)
- 			inode->i_gid = attr->ia_gid;
- 		    mark_inode_dirty(inode);
--		    journal_end(&th, inode->i_sb, 4*REISERFS_QUOTA_INIT_BLOCKS+2);
-+		    error = journal_end(&th, inode->i_sb, 4*REISERFS_QUOTA_INIT_BLOCKS+2);
- 		}
-         }
-         if (!error)
-diff -rupX /home/jack/.kerndiffexclude linux-2.6.12-rc4-1-reiserbigtrans/fs/reiserfs/super.c linux-2.6.12-rc4-2-transstart/fs/reiserfs/super.c
---- linux-2.6.12-rc4-1-reiserbigtrans/fs/reiserfs/super.c	2005-05-18 15:10:59.000000000 +0200
-+++ linux-2.6.12-rc4-2-transstart/fs/reiserfs/super.c	2005-05-23 17:08:32.000000000 +0200
-@@ -1839,13 +1839,18 @@ static int reiserfs_statfs (struct super
- static int reiserfs_dquot_initialize(struct inode *inode, int type)
- {
-     struct reiserfs_transaction_handle th;
--    int ret;
-+    int ret, err;
++/* Numbers of blocks needed for updates */
++#define V1_INIT_ALLOC 1
++#define V1_INIT_REWRITE 1
++#define V1_DEL_ALLOC 0
++#define V1_DEL_REWRITE 2
++
+ /* Special information about quotafile */
+ struct v1_mem_dqinfo {
+ };
+diff -rupX /home/jack/.kerndiffexclude linux-2.6.12-rc4-2-transstart/include/linux/dqblk_v2.h linux-2.6.12-rc4-3-credits/include/linux/dqblk_v2.h
+--- linux-2.6.12-rc4-2-transstart/include/linux/dqblk_v2.h	2004-10-18 23:53:46.000000000 +0200
++++ linux-2.6.12-rc4-3-credits/include/linux/dqblk_v2.h	2005-05-24 11:13:45.000000000 +0200
+@@ -10,6 +10,12 @@
+ /* id numbers of quota format */
+ #define QFMT_VFS_V0 2
  
-     /* We may create quota structure so we need to reserve enough blocks */
-     reiserfs_write_lock(inode->i_sb);
--    journal_begin(&th, inode->i_sb, 2*REISERFS_QUOTA_INIT_BLOCKS);
-+    ret = journal_begin(&th, inode->i_sb, 2*REISERFS_QUOTA_INIT_BLOCKS);
-+    if (ret)
-+	goto out;
-     ret = dquot_initialize(inode, type);
--    journal_end(&th, inode->i_sb, 2*REISERFS_QUOTA_INIT_BLOCKS);
-+    err = journal_end(&th, inode->i_sb, 2*REISERFS_QUOTA_INIT_BLOCKS);
-+    if (!ret && err)
-+	ret = err;
-+out:
-     reiserfs_write_unlock(inode->i_sb);
-     return ret;
- }
-@@ -1853,13 +1858,18 @@ static int reiserfs_dquot_initialize(str
- static int reiserfs_dquot_drop(struct inode *inode)
- {
-     struct reiserfs_transaction_handle th;
--    int ret;
-+    int ret, err;
++/* Numbers of blocks needed for updates */
++#define V2_INIT_ALLOC 4
++#define V2_INIT_REWRITE 2
++#define V2_DEL_ALLOC 0
++#define V2_DEL_REWRITE 6
++
+ /* Inmemory copy of version specific information */
+ struct v2_mem_dqinfo {
+ 	unsigned int dqi_blocks;
+diff -rupX /home/jack/.kerndiffexclude linux-2.6.12-rc4-2-transstart/include/linux/quota.h linux-2.6.12-rc4-3-credits/include/linux/quota.h
+--- linux-2.6.12-rc4-2-transstart/include/linux/quota.h	2005-03-03 18:58:41.000000000 +0100
++++ linux-2.6.12-rc4-3-credits/include/linux/quota.h	2005-05-24 11:13:45.000000000 +0200
+@@ -138,8 +138,11 @@ struct if_dqinfo {
+ #include <linux/dqblk_v2.h>
  
-     /* We may delete quota structure so we need to reserve enough blocks */
-     reiserfs_write_lock(inode->i_sb);
--    journal_begin(&th, inode->i_sb, 2*REISERFS_QUOTA_INIT_BLOCKS);
-+    ret = journal_begin(&th, inode->i_sb, 2*REISERFS_QUOTA_INIT_BLOCKS);
-+    if (ret)
-+ 	goto out;
-     ret = dquot_drop(inode);
--    journal_end(&th, inode->i_sb, 2*REISERFS_QUOTA_INIT_BLOCKS);
-+    err = journal_end(&th, inode->i_sb, 2*REISERFS_QUOTA_INIT_BLOCKS);
-+    if (!ret && err)
-+	ret = err;
-+out:
-     reiserfs_write_unlock(inode->i_sb);
-     return ret;
- }
-@@ -1867,12 +1877,17 @@ static int reiserfs_dquot_drop(struct in
- static int reiserfs_write_dquot(struct dquot *dquot)
- {
-     struct reiserfs_transaction_handle th;
--    int ret;
-+    int ret, err;
+ /* Maximal numbers of writes for quota operation (insert/delete/update)
+- * (over all formats) - info block, 4 pointer blocks, data block */
+-#define DQUOT_MAX_WRITES	6
++ * (over VFS all formats) */
++#define DQUOT_INIT_ALLOC max(V1_INIT_ALLOC, V2_INIT_ALLOC)
++#define DQUOT_INIT_REWRITE max(V1_INIT_REWRITE, V2_INIT_REWRITE)
++#define DQUOT_DEL_ALLOC max(V1_DEL_ALLOC, V2_DEL_ALLOC)
++#define DQUOT_DEL_REWRITE max(V1_DEL_REWRITE, V2_DEL_REWRITE)
  
-     reiserfs_write_lock(dquot->dq_sb);
--    journal_begin(&th, dquot->dq_sb, REISERFS_QUOTA_TRANS_BLOCKS);
-+    ret = journal_begin(&th, dquot->dq_sb, REISERFS_QUOTA_TRANS_BLOCKS);
-+    if (ret)
-+	goto out;
-     ret = dquot_commit(dquot);
--    journal_end(&th, dquot->dq_sb, REISERFS_QUOTA_TRANS_BLOCKS);
-+    err = journal_end(&th, dquot->dq_sb, REISERFS_QUOTA_TRANS_BLOCKS);
-+    if (!ret && err)
-+	ret = err;
-+out:
-     reiserfs_write_unlock(dquot->dq_sb);
-     return ret;
- }
-@@ -1880,12 +1895,17 @@ static int reiserfs_write_dquot(struct d
- static int reiserfs_acquire_dquot(struct dquot *dquot)
- {
-     struct reiserfs_transaction_handle th;
--    int ret;
-+    int ret, err;
- 
-     reiserfs_write_lock(dquot->dq_sb);
--    journal_begin(&th, dquot->dq_sb, REISERFS_QUOTA_INIT_BLOCKS);
-+    ret = journal_begin(&th, dquot->dq_sb, REISERFS_QUOTA_INIT_BLOCKS);
-+    if (ret)
-+	goto out;
-     ret = dquot_acquire(dquot);
--    journal_end(&th, dquot->dq_sb, REISERFS_QUOTA_INIT_BLOCKS);
-+    err = journal_end(&th, dquot->dq_sb, REISERFS_QUOTA_INIT_BLOCKS);
-+    if (!ret && err)
-+	ret = err;
-+out:
-     reiserfs_write_unlock(dquot->dq_sb);
-     return ret;
- }
-@@ -1893,12 +1913,17 @@ static int reiserfs_acquire_dquot(struct
- static int reiserfs_release_dquot(struct dquot *dquot)
- {
-     struct reiserfs_transaction_handle th;
--    int ret;
-+    int ret, err;
- 
-     reiserfs_write_lock(dquot->dq_sb);
--    journal_begin(&th, dquot->dq_sb, REISERFS_QUOTA_INIT_BLOCKS);
-+    ret = journal_begin(&th, dquot->dq_sb, REISERFS_QUOTA_INIT_BLOCKS);
-+    if (ret)
-+ 	goto out;
-     ret = dquot_release(dquot);
--    journal_end(&th, dquot->dq_sb, REISERFS_QUOTA_INIT_BLOCKS);
-+    err = journal_end(&th, dquot->dq_sb, REISERFS_QUOTA_INIT_BLOCKS);
-+    if (!ret && err)
-+	ret = err;
-+out:
-     reiserfs_write_unlock(dquot->dq_sb);
-     return ret;
- }
-@@ -1918,13 +1943,18 @@ static int reiserfs_mark_dquot_dirty(str
- static int reiserfs_write_info(struct super_block *sb, int type)
- {
-     struct reiserfs_transaction_handle th;
--    int ret;
-+    int ret, err;
- 
-     /* Data block + inode block */
-     reiserfs_write_lock(sb);
--    journal_begin(&th, sb, 2);
-+    ret = journal_begin(&th, sb, 2);
-+    if (ret)
-+	goto out;
-     ret = dquot_commit_info(sb, type);
--    journal_end(&th, sb, 2);
-+    err = journal_end(&th, sb, 2);
-+    if (!ret && err)
-+	ret = err;
-+out:
-     reiserfs_write_unlock(sb);
-     return ret;
- }
+ /*
+  * Data for one user/group kept in memory
 
---lrZ03NoBR/3+SXJZ--
+--6sX45UoQRIJXqkqR--
