@@ -1,54 +1,40 @@
-From: "Artem B. Bityuckiy" <dedekind@yandex.ru>
-Subject: Re: ReiserFS on large-scale flash
-Date: Wed, 25 May 2005 21:33:13 +0400
-Message-ID: <4294B6D9.6060804@yandex.ru>
-References: <42947589.2020707@hyves.nl> <4294783C.5040001@darthvader.us> <42947BCA.9080702@hyves.nl> <42949FDF.8000406@darthvader.us> <4294B43C.2070200@oktetlabs.ru>
+From: Andrew James Wade <ajwade@cpe00095b3131a0-cm0011ae8cd564.cpe.net.cable.rogers.com>
+Subject: Re: Unexpected reset corrupted Reiser4 filesystem
+Date: Wed, 25 May 2005 16:39:55 -0400
+Message-ID: <200505251639.56159.ajwade@cpe00095b3131a0-cm0011ae8cd564.cpe.net.cable.rogers.com>
+References: <200505242338.32420.ajwade@cpe00095b3131a0-cm0011ae8cd564.cpe.net.cable.rogers.com> <429403EF.4030803@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24146-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24147-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4294B43C.2070200@oktetlabs.ru>
+In-Reply-To: <429403EF.4030803@slaphack.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Artem B. Bityuckiy" <dedekind@oktetlabs.ru>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Just few refinements.
+John Dong wrote:
+> If thse were IDE drives, the IDE writeback cache is probably the bad boy -- 
+> on FreeBSD 5.x, Soft Updates is virtually broken on IDE drives because they 
+> simply haven't written all the data they promised the kernel that they had.
+I do indeed have an IDE drive (Seagate Barracuda) with a writeback cache.
+But I thought that write barriers were now working (by flushing the writeback
+cache if the drive doesn't support anything fancier). However, I couldn't find
+any updates on the write barrier work since March of last year.
+(<http://lwn.net/Articles/77074/>). So the writeback cache may indeed be the
+bad boy.
 
-Traditionally an emulation layer is created on top of flash. This layer 
-hides Flash limitations and emulates block device on top of flash. But 
-this approach is highly inefficient and is not usable in most system. We 
-need an FS which is aware of the differences. Like JFFS2, but JFFS2 
-doesn't scale (not usable starting from about 256MiB flash).
+On May 25, 2005 12:49 am, David Masover wrote:
+> That's what it all comes down to -- make backups.  The fact that you
+> have journalling/transactions/fsck/batteries/RAID is all just to make it
+> a little less catostrophic when stuff does fail.
+Yup, time for me to make backups. Thanks for the nudge. Especially as I'm
+running a bleeding-edge kernel. (I did have one eat some of my data).
 
-Artem B. Bityuckiy wrote:
-> Hello,
-> 
-> I'm designing new flash file system. And I'm thinking about the 
-> possibility to write plugins for ReiserFS to implement it (I know, it 
-> sounds crazy). I didn't thoroughly explore is it possible or not yet.
-> 
-> I'm almost certain that it is impossible to do this with the current 
-> Reiser4 and more changes are needed. Flash devices just has another 
-> model, not the same as block devices. In a nutshell, you can't write 
-> twice to the same block (out-of-place writing property) and you must 
-> erase a several consecutive blocks before re-using any block (read here: 
-> http://en.wikipedia.org/wiki/Flash_memory).
-> 
-> Currently there are no Flash file systems which are usable on large 
-> scale flashes, at least in Linux. And there is a real need in such FS.
-> 
-> So, I'd like to know, are Reisre4 developers interested in this? Will I 
-> have some assistance from them if I find some Reiser4 limitation? Is it 
-> worth starting exploring Reiser4 or better just start new FS?
-> 
-> Thanks.
-> 
+Andrew
 
--- 
-Best Regards,
-Artem B. Bityuckiy,
-St.-Petersburg, Russia.
+P.S. My internet connection's been flaky lately, so apologies for any
+bounces. I check the mailing list archives for missed messages.
