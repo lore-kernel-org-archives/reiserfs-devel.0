@@ -1,76 +1,38 @@
-From: btinsley <btinsley@gmail.com>
-Subject: Re: online fsck
-Date: Tue, 24 May 2005 22:02:20 -0500
-Message-ID: <263a8b35050524200220eff78b@mail.gmail.com>
-References: <263a8b350505231124758be936@mail.gmail.com>
-	 <42930542.1000407@namesys.com> <4293B817.5030906@accessplus.com.au>
-Reply-To: btinsley <btinsley@gmail.com>
+From: Andrew James Wade <ajwade@cpe00095b3131a0-cm0011ae8cd564.cpe.net.cable.rogers.com>
+Subject: Unexpected reset corrupted Reiser4 filesystem
+Date: Tue, 24 May 2005 23:38:32 -0400
+Message-ID: <200505242338.32420.ajwade@cpe00095b3131a0-cm0011ae8cd564.cpe.net.cable.rogers.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-24134-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24135-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4293B817.5030906@accessplus.com.au>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-What i'm looking for is a check on a reiserfs filesystem that is
-mounted read-write. Many modern filesystems, especially those on NAS
-devices, can run periodic background consistency checks on filesystems
-with almost zero impact on performance. Some devices are reportedly
-running these checks constantly, possibly correcting errors without
-user intervention... even a notification to a sysadmin would be a good
-feature.
+Hello,
 
+One of my Reiser4 filesystems was corrupted by a power glitch.
+fsck fixed the corruption, but my understanding is that an
+unexpected reset should not have corrupted the filesystem. I
+have an image of the corrupted filesystem, is it of any use to
+anyone?
 
-On 5/24/05, marco <marco@accessplus.com.au> wrote:
->=20
->=20
-> E.Gryaznova wrote:
->=20
-> > Hello.
-> > reiserfsck can check reiserfs filesystem mounted read-only.
->=20
-> Running 'fsck.reiserfs --check -y </dev/part>' will do the trick.  The
-> equivalent for ext3 and other filesystems is
-> 'fsck -n </dev/part>', the ext3 version detects that it is mounted rw,
-> and does a readonly check.
->=20
-> What I wonder is if we can get fsck.reiser[fs,4] to honour option
-> processing in a manner more consistant with
-> the other fscks, so that adding reiserfs to a list of user choosable
-> filesystems is not going to cause a nightmare
-> of an overhead of filesystem detection, command option re-mapping and
-> other related headaches.....
->=20
-> >
-> > Thanks,
-> > Lena
-> >
-> > btinsley wrote:
-> >
-> >> Is there or was there a plan to support running reiserfsck on a
-> >> mounted v3 filesystem (just a check, not a fix or rebuild)? I seem to
-> >> remember this being mentioned here at some point in time, but I was
-> >> unable to find it in the mailing list archive.
-> >>
-> >> Thanks!
-> >>
-> >>
-> >>
-> >>
-> >
-> >
-> >
-> >
-> >
->=20
-> --
->  Marco Grigull  www.accessplus.com.au  AccessPlus Internet Solutions
-> Ph +61 7 5451 1146  Fax +61 7 5451 1945 Email marco@accessplus.com.au
->=20
->
+Details:
+kernel: 2.6.12-rc4-mm2
+fsck.reiser4: 1.0.4
+I was installing oracle, when the power flickered. I was
+unable to delete oracle's directory due to what was reported
+as I/O errors. fsck revealed a corrupted filesystem (FSCK:
+Node (13142228), item (77), unit (0): Points to the block
+(12981542) which is in the tree already. The whole subtree
+is skipped.) I have an image of the partition at this point,
+and dd reported no errors while copying. The image is
+unfortunately a bit large to upload (70 GB), but I am happy
+to run diagnostic tools against it.
+
+Andrew Wade
