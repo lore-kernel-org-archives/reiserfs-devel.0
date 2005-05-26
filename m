@@ -1,10 +1,10 @@
 From: daniel.leo@free.fr
 Subject: please help me get my work back
-Date: Thu, 26 May 2005 16:52:15 +0200
-Message-ID: <1117119135.4295e29f845be@imp2-q.free.fr>
+Date: Thu, 26 May 2005 16:52:30 +0200
+Message-ID: <1117119150.4295e2ae027b9@imp2-q.free.fr>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-24158-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24159-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -581,4 +581,1107 @@ May 26 12:23:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
 May 26 12:23:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
 May 26 12:24:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
 May 26 12:24:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
-May 26 12:25:06 [kernel] ata1:
+May 26 12:25:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:25:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:26:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:26:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:27:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:27:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:28:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:28:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:29:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:29:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:30:00 [CRON] (root) CMD (test -x /usr/sbin/run-crons
+&& /usr/sbin/run-crons )
+May 26 12:30:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:30:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:31:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:31:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:32:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:32:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:33:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:33:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:34:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:34:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:35:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:35:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:36:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:36:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:37:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:37:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:38:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:38:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:39:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:39:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:40:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:40:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:41:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:41:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:42:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:42:06 [kernel] ATA: abnormal status 0x59 on port 0xE807
+May 26 12:42:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:43:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:43:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:44:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:44:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:45:00 [CRON] (root) CMD (test -x /usr/sbin/run-crons
+&& /usr/sbin/run-crons )
+May 26 12:45:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:45:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:46:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:46:06 [kernel] ATA: abnormal status 0x59 on port 0xE807
+May 26 12:46:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:47:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:47:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:48:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:48:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:49:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:49:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:50:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:50:06 [kernel] ATA: abnormal status 0x59 on port 0xE807
+May 26 12:50:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:51:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:51:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:52:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:52:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:53:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:53:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:54:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:54:06 [kernel] ATA: abnormal status 0x59 on port 0xE807
+May 26 12:54:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:55:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:55:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:56:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:56:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:57:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:57:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:58:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:58:06 [kernel] ATA: abnormal status 0x59 on port 0xE807
+May 26 12:58:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:58:36 [kernel] ATA: abnormal status 0x59 on port 0xE807
+May 26 12:59:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 12:59:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:00:00 [CRON] (root) CMD (rm -f /var/spool/cron/lastrun/cron.hourl=
+y)
+May 26 13:00:00 [CRON] (root) CMD (test -x /usr/sbin/run-crons
+&& /usr/sbin/run-crons )
+May 26 13:00:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:00:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:01:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:01:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:02:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:02:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:02:36 [kernel] ATA: abnormal status 0x59 on port 0xE807
+May 26 13:03:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:03:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:04:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:04:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:05:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:05:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:06:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:06:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:06:36 [kernel] ATA: abnormal status 0x59 on port 0xE807
+May 26 13:07:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:07:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:08:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:08:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:09:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:09:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:10:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:10:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:10:36 [kernel] ATA: abnormal status 0x59 on port 0xE807
+May 26 13:11:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:11:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:12:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:12:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:13:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:13:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:14:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:14:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:14:36 [kernel] ATA: abnormal status 0x59 on port 0xE807
+May 26 13:15:00 [CRON] (root) CMD (test -x /usr/sbin/run-crons
+&& /usr/sbin/run-crons )
+May 26 13:15:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:15:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:16:06 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:16:36 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:17:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:17:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:18:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:18:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:18:35 [kernel] ATA: abnormal status 0x59 on port 0xE807
+May 26 13:19:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:19:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:20:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:20:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:21:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:21:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:22:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:22:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:22:35 [kernel] ATA: abnormal status 0x59 on port 0xE807
+May 26 13:23:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:23:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:24:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:24:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:25:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:25:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:26:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:26:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:27:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:27:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:28:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:28:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:29:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:29:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:30:00 [CRON] (root) CMD (test -x /usr/sbin/run-crons
+&& /usr/sbin/run-crons )
+May 26 13:30:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:30:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:31:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:31:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:32:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:32:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:33:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:33:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:34:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:34:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:35:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:35:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:36:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:36:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:37:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:37:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:38:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:38:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:39:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:39:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:40:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:40:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:41:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:41:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:42:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:42:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:43:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:43:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:44:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:44:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:45:00 [CRON] (root) CMD (test -x /usr/sbin/run-crons
+&& /usr/sbin/run-crons )
+May 26 13:45:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:45:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:46:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:46:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:47:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:47:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:48:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:48:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:49:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:49:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:50:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:50:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:51:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:51:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:52:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:52:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:53:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:53:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:54:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:54:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:54:35 [kernel] ATA: abnormal status 0x59 on port 0xE807
+May 26 13:55:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:55:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:56:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:56:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:57:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:57:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:58:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:58:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:58:35 [kernel] ATA: abnormal status 0x59 on port 0xE807
+May 26 13:59:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 13:59:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:00:00 [CRON] (root) CMD (rm -f /var/spool/cron/lastrun/cron.hourl=
+y)
+May 26 14:00:00 [CRON] (root) CMD (test -x /usr/sbin/run-crons
+&& /usr/sbin/run-crons )
+May 26 14:00:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:00:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:01:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:01:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:02:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:02:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:02:35 [kernel] ATA: abnormal status 0x59 on port 0xE807
+May 26 14:03:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:03:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:04:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:04:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:05:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:05:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:06:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:06:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:07:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:07:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:08:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:08:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:09:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:09:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:10:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:10:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:11:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:11:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:12:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:12:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:13:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:13:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:14:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:14:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:15:00 [CRON] (root) CMD (test -x /usr/sbin/run-crons
+&& /usr/sbin/run-crons )
+May 26 14:15:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:15:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:16:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:16:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:17:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:17:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:18:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:18:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:19:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:19:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:20:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:20:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:21:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:21:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:22:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:22:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:23:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:23:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:24:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:24:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:25:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:25:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:26:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:26:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:27:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:27:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:28:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:28:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:29:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:29:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:30:00 [CRON] (root) CMD (test -x /usr/sbin/run-crons
+&& /usr/sbin/run-crons )
+May 26 14:30:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:30:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:31:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:31:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:32:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:32:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:33:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:33:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:34:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:34:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:35:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:35:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:36:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:36:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:37:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:37:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:38:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:38:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:39:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:39:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:40:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:40:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:41:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:41:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:42:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:42:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:43:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:43:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:44:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:44:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:45:00 [CRON] (root) CMD (test -x /usr/sbin/run-crons
+&& /usr/sbin/run-crons )
+May 26 14:45:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:45:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:46:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:46:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:47:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:47:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:48:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:48:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:49:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:49:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:50:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:50:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:51:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:51:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:52:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:52:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:53:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:53:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:54:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:54:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:55:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:55:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:56:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:56:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:57:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:57:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:58:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:58:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:59:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 14:59:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:00:00 [CRON] (root) CMD (rm -f /var/spool/cron/lastrun/cron.hourl=
+y)
+May 26 15:00:00 [CRON] (root) CMD (test -x /usr/sbin/run-crons
+&& /usr/sbin/run-crons )
+May 26 15:00:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:00:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:01:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:01:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:02:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:02:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:03:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:03:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:04:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:04:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:05:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:05:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:06:05 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:06:35 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:07:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:07:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:08:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:08:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:09:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:09:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:10:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:10:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:11:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:11:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:12:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:12:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:13:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:13:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:14:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:14:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:15:00 [CRON] (root) CMD (test -x /usr/sbin/run-crons
+&& /usr/sbin/run-crons )
+May 26 15:15:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:15:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:16:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:16:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:17:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:17:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:18:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:18:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:19:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:19:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:20:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:20:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:21:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:21:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:22:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:22:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:23:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:23:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:24:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:24:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:25:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:25:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:26:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:26:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:27:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:27:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:28:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:28:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:29:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:29:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:30:00 [CRON] (root) CMD (test -x /usr/sbin/run-crons
+&& /usr/sbin/run-crons )
+May 26 15:30:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:30:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:31:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:31:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:32:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:32:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:33:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:33:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:34:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:34:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:35:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:35:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:36:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:36:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:37:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:37:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:38:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:38:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:39:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:39:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:40:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:40:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:41:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:41:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:42:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:42:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:43:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:43:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:44:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:44:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:45:00 [CRON] (root) CMD (test -x /usr/sbin/run-crons
+&& /usr/sbin/run-crons )
+May 26 15:45:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:45:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:46:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:46:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:47:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:47:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:48:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:48:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:49:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:49:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:50:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:50:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:51:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:51:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:52:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:52:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:53:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:53:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:54:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:54:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:55:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:55:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:56:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:56:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:57:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:57:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:58:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:58:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:59:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 15:59:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:00:00 [CRON] (root) CMD (rm -f /var/spool/cron/lastrun/cron.hourl=
+y)
+May 26 16:00:00 [CRON] (root) CMD (test -x /usr/sbin/run-crons
+&& /usr/sbin/run-crons )
+May 26 16:00:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:00:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:01:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:01:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:02:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:02:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:03:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:03:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:04:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:04:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:05:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:05:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:06:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:06:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:07:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:07:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:08:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:08:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:09:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:09:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:10:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:10:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:11:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:11:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:12:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:12:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:13:04 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:13:34 [kernel] ata1: command 0xc8 timeout, stat 0x59 host_stat 0x1
+May 26 16:13:35 [init] Switching to runlevel: 6
+May 26 16:13:40 [sshd] Received signal 15; terminating.
+May 26 16:13:41 [xfs] terminating
+May 26 16:15:39 [kernel] ibm_acpi: ec object not found
+May 26 16:15:39 [kernel] serio: i8042 AUX port at 0x60,0x64 irq 12
+May 26 16:15:39 [kernel] USB Mass Storage support registered.
+May 26 16:15:39 [kernel] usbcore: registered new driver hiddev
+May 26 16:15:39 [kernel] usbcore: registered new driver usbhid
+May 26 16:15:39 [kernel] drivers/usb/input/hid-core.c: v2.0:USB HID core
+driver
+May 26 16:15:39 [kernel] NET: Registered protocol family 2
+May 26 16:15:39 [kernel] IP: routing cache hash table of 8192 buckets,
+64Kbytes
+May 26 16:15:39 [kernel] TCP: Hash tables configured (established 262144 bi=
+nd
+65536)
+May 26 16:15:39 [kernel] ip_conntrack version 2.1 (8191 buckets, 65528 max)=
+ -
+300 bytes per conntrack
+May 26 16:15:39 [kernel] ip_tables: (C) 2000-2002 Netfilter core team
+May 26 16:15:39 [kernel] ipt_recent v0.3.1: Stephen Frost
+<sfrost@snowman.net>.  http://snowman.net/projects/ipt_recent/
+May 26 16:15:39 [kernel] arp_tables: (C) 2002 David S. Miller
+May 26 16:15:39 [kernel] NET: Registered protocol family 1
+May 26 16:15:39 [kernel] NET: Registered protocol family 17
+May 26 16:15:39 [kernel] ACPI wakeup devices:
+May 26 16:15:39 [kernel] PCI0 UAR1 USB1 USB2 USB3 USB4 EHCI USBD PS2M PS2K
+AC9  MC9 ILAN SLPB
+May 26 16:15:39 [kernel] ACPI: (supports S0 S1 S3 S4 S5)
+May 26 16:15:39 [kernel] ReiserFS: hda3: found reiserfs format "3.6" with
+standard journal
+May 26 16:15:39 [kernel] ReiserFS: hda3: using ordered data mode
+May 26 16:15:39 [kernel] ReiserFS: hda3: journal params: device hda3, size
+8192, journal first block 18, max trans len 1024, max batch 900, max commit
+age 30, max trans age 30
+May 26 16:15:39 [kernel] ReiserFS: hda3: checking transaction log (hda3)
+May 26 16:15:39 [kernel] ReiserFS: hda3: Using r5 hash to sort names
+May 26 16:15:39 [kernel] VFS: Mounted root (reiserfs filesystem) readonly.
+May 26 16:15:39 [kernel] Mounted devfs on /dev
+May 26 16:15:39 [kernel] Freeing unused kernel memory: 176k freed
+May 26 16:15:39 [kernel] Adding 2048276k swap on /dev/hda2.  Priority:-1
+extents:1
+May 26 16:15:39 [kernel] ide-scsi is deprecated for cd burning! Use ide-cd =
+and
+give dev=3D/dev/hdX as device
+May 26 16:15:39 [kernel] scsi0 : SCSI host adapter emulation for IDE ATAPI
+devices
+May 26 16:15:39 [kernel]   Vendor: HL-DT-ST  Model: DVDRAM GSA-4163B  Rev:
+A100
+May 26 16:15:39 [kernel]   Type:   CD-ROM                             ANSI
+SCSI revision: 02
+May 26 16:15:39 [kernel] sr0: scsi3-mmc drive: 40x/40x writer dvd-ram cd/rw
+xa/form2 cdda tray
+May 26 16:15:39 [kernel] Attached scsi generic sg0 at scsi0, channel 0, id =
+0,
+lun 0,  type 5
+May 26 16:15:39 [kernel] Real Time Clock Driver v1.12
+May 26 16:15:39 [kernel] ACPI: PCI interrupt 0000:00:0b.0[A] -> GSI 19 (lev=
+el,
+low) -> IRQ 19
+May 26 16:15:39 [kernel] ACPI: PCI interrupt 0000:01:00.0[A] -> GSI 16 (lev=
+el,
+low) -> IRQ 16
+May 26 16:15:39 [kernel] rivafb: nVidia device/chipset 10DE0171
+May 26 16:15:39 [kernel] rivafb: nVidia Corporation NV17 [GeForce4 MX 440]
+May 26 16:15:39 [kernel] rivafb: Detected CRTC controller 0 being used
+May 26 16:15:39 [kernel] rivafb: RIVA MTRR set to ON
+May 26 16:15:39 [kernel] rivafb: could not retrieve EDID from DDC/I2C
+May 26 16:15:39 [kernel] rivafb: setting virtual Y resolution to 104857
+May 26 16:15:39 [kernel] rivafb: PCI nVidia NV17 framebuffer ver 0.9.5b (64=
+MB
+@ 0xD0000000)
+May 26 16:15:39 [kernel] via-rhine.c:v1.10-LK1.2.0-2.6 June-10-2004 Written=
+ by
+Donald Becker
+May 26 16:15:39 [kernel] ACPI: PCI interrupt 0000:00:12.0[A] -> GSI 23 (lev=
+el,
+low) -> IRQ 23
+May 26 16:15:39 [kernel] eth0: VIA Rhine II at 0xbc00, 00:0b:6a:84:bc:c7, I=
+RQ
+23.
+May 26 16:15:39 [kernel] eth0: MII PHY found at address 1, status 0x7849
+advertising 05e1 Link 0000.
+May 26 16:15:39 [kernel] VP_IDE: IDE controller at PCI slot 0000:00:0f.1
+May 26 16:15:39 [kernel] ACPI: PCI interrupt 0000:00:0f.1[A] -> GSI 20 (lev=
+el,
+low) -> IRQ 20
+May 26 16:15:39 [kernel] VP_IDE: chipset revision 6
+May 26 16:15:39 [kernel] VP_IDE: not 100% native mode: will probe irqs later
+May 26 16:15:39 [kernel] VP_IDE: User given PCI clock speed impossible
+(66000), using 33 MHz instead.
+May 26 16:15:39 [kernel] VP_IDE: Use ide0=3Data66 if you want to assume 80-=
+wire
+cable.
+May 26 16:15:39 [kernel] VP_IDE: VIA vt8237 (rev 00) IDE UDMA133 controller=
+ on
+pci0000:00:0f.1
+May 26 16:15:39 [kernel] VP_IDE: port 0x01f0 already claimed by ide0
+May 26 16:15:39 [kernel] VP_IDE: neither IDE port enabled (BIOS)
+May 26 16:15:39 [kernel] ACPI: PCI interrupt 0000:00:0f.0[B] -> GSI 20 (lev=
+el,
+low) -> IRQ 20
+May 26 16:15:39 [kernel] sata_via(0000:00:0f.0): routed to hard irq line 10
+May 26 16:15:39 [kernel] ata1: SATA max UDMA/133 cmd 0xE800 ctl 0xE402 bmdma
+0xD800 irq 20
+May 26 16:15:39 [kernel] ata2: SATA max UDMA/133 cmd 0xE000 ctl 0xDC02 bmdma
+0xD808 irq 20
+May 26 16:15:39 [kernel] ata1: dev 0 ATA, max UDMA/133, 160086528 sectors:
+May 26 16:15:39 [kernel] ata1: dev 0 configured for UDMA/133
+May 26 16:15:39 [kernel] scsi1 : sata_via
+May 26 16:15:39 [kernel] ata2: dev 0 ATA, max UDMA/133, 160084415 sectors:
+May 26 16:15:39 [kernel] ata2: dev 0 configured for UDMA/133
+May 26 16:15:39 [kernel] scsi2 : sata_via
+May 26 16:15:39 [kernel]   Vendor: ATA       Model: Maxtor 6Y080M0    Rev:
+YAR5
+May 26 16:15:39 [kernel]   Type:   Direct-Access                      ANSI
+SCSI revision: 05
+May 26 16:15:39 [kernel] SCSI device sda: 160086528 512-byte hdwr sectors
+(81964 MB)
+May 26 16:15:39 [kernel] SCSI device sda: drive cache: write back
+May 26 16:15:39 [kernel] SCSI device sda: 160086528 512-byte hdwr sectors
+(81964 MB)
+May 26 16:15:39 [kernel] SCSI device sda: drive cache: write back
+May 26 16:15:39 [kernel]  /dev/scsi/host1/bus0/target0/lun0: p1 p2 p3
+May 26 16:15:39 [kernel] Attached scsi disk sda at scsi1, channel 0, id 0, =
+lun
+0
+May 26 16:15:39 [kernel] Attached scsi generic sg1 at scsi1, channel 0, id =
+0,
+lun 0,  type 0
+May 26 16:15:39 [kernel]   Vendor: ATA       Model: Maxtor 6Y080M0    Rev:
+YAR5
+May 26 16:15:39 [kernel]   Type:   Direct-Access                      ANSI
+SCSI revision: 05
+May 26 16:15:39 [kernel] SCSI device sdb: 160084415 512-byte hdwr sectors
+(81963 MB)
+May 26 16:15:39 [kernel] SCSI device sdb: drive cache: write back
+May 26 16:15:39 [kernel] SCSI device sdb: 160084415 512-byte hdwr sectors
+(81963 MB)
+May 26 16:15:39 [kernel] SCSI device sdb: drive cache: write back
+May 26 16:15:39 [kernel]  /dev/scsi/host2/bus0/target0/lun0: p1 p2 p3
+May 26 16:15:39 [kernel] Attached scsi disk sdb at scsi2, channel 0, id 0, =
+lun
+0
+May 26 16:15:39 [kernel] Attached scsi generic sg2 at scsi2, channel 0, id =
+0,
+lun 0,  type 0
+May 26 16:15:39 [kernel] agpgart: Detected VIA KT400/KT400A/KT600 chipset
+May 26 16:15:39 [kernel] agpgart: Maximum main memory to use for agp memory:
+941M
+May 26 16:15:39 [kernel] agpgart: AGP aperture is 128M @ 0xe0000000
+May 26 16:15:39 [cron] (CRON) STARTUP (fork ok)
+May 26 16:15:39 [cron] (root~) ORPHAN (no passwd entry)
+May 26 16:15:43 [xfs] CONFIG: unknown parameter "cache-hi-mark"
+May 26 16:15:43 [xfs] CONFIG: unknown parameter "cache-low-mark"
+May 26 16:15:43 [xfs] CONFIG: unknown parameter "cache-balance"
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/Speedo
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/CID
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/util
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/local
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/Speedo
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/truetype
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/freefont
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/sharefont
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path
+element /usr/share/fonts/default/Type1 (unreadable)
+May 26 16:15:44 [xfs] ignoring font path
+element /usr/share/fonts/ttf/decoratives (unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/ttf/weste=
+rn
+(unreadable)
+May 26 16:15:44 [init] Activating demand-procedures for 'A'
+May 26 16:15:58 [kdm_greet] Can't open default user face
+May 26 16:16:03 [kde(pam_unix)] session opened for user root by (uid=3D0)
+May 26 16:16:03 [kdm] :0[9992]: PAM pam_putenv: delete non-existent entry;
+REMOTEHOST
+May 26 16:16:03 [PAM-env] Unknown PAM_ITEM: <DISPLAY>
+May 26 16:16:03 [] PAM pam_putenv: delete non-existent entry; DISPLAY
+May 26 16:16:03 [PAM-env] Unknown PAM_ITEM: <XAUTHORITY>
+May 26 16:16:03 [] PAM pam_putenv: delete non-existent entry; XAUTHORITY
+May 26 16:16:42 [gconfd (root-10101)] d=E9marrage (version 2.8.1), pid 10101
+utilisateur =AB root =BB
+May 26 16:16:42 [gconfd (root-10101)] Adresse
+=AB xml:readonly:/etc/gconf/gconf.xml.mandatory =BB r=E9solue vers une sour=
+ce de
+configuration en lecture seule =E0 la position 0
+May 26 16:16:42 [gconfd (root-10101)] Adresse =AB xml:readwrite:/root/.gcon=
+f =BB
+r=E9solue vers une source de configuration accessible en =E9criture =E0 la =
+position
+1
+May 26 16:16:42 [gconfd (root-10101)] Adresse
+=AB xml:readonly:/etc/gconf/gconf.xml.defaults =BB r=E9solue vers une sourc=
+e de
+configuration en lecture seule =E0 la position 2
+May 26 16:16:45 [kernel] cdrom: This disc doesn't have any tracks I recogni=
+ze!
+May 26 16:16:49 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:50 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:51 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:53 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:54 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:55 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:57 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:58 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:59 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:01 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:02 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:03 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:05 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:06 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:07 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:09 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:10 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:11 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:13 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:14 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:15 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:17 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:18 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:19 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:21 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:22 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:24 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:25 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:26 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:28 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:29 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:30 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:32 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:33 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:33 [init] Switching to runlevel: 6
+May 26 16:17:34 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:36 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:37 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:38 [sshd] Received signal 15; terminating.
+May 26 16:17:38 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:38 [kernel] ata1: error=3D0x40 { UncorrectableError }
+May 26 16:17:38 [kernel] SCSI error : <1 0 0 0> return code =3D 0x8000002
+May 26 16:17:38 [kernel] Current sda: sense =3D 70  3
+May 26 16:17:38 [kernel] ASC=3D11 ASCQ=3D 4
+May 26 16:17:38 [kernel] Raw sense data:0x70 0x00 0x03 0x00 0x00 0x00 0x00
+0x0a 0x00 0x00 0x00 0x00 0x11 0x04 0x00 0x00 0x00 0x00
+May 26 16:17:38 [kernel] end_request: I/O error, dev sda, sector 4104368
+May 26 16:17:38 [kernel] Buffer I/O error on device sda3, logical block 7793
+May 26 16:17:39 [xfs] terminating
+May 26 16:15:39 [kernel] ibm_acpi: ec object not found
+May 26 16:15:39 [kernel] serio: i8042 AUX port at 0x60,0x64 irq 12
+May 26 16:15:39 [kernel] USB Mass Storage support registered.
+May 26 16:15:39 [kernel] usbcore: registered new driver hiddev
+May 26 16:15:39 [kernel] usbcore: registered new driver usbhid
+May 26 16:15:39 [kernel] drivers/usb/input/hid-core.c: v2.0:USB HID core
+driver
+May 26 16:15:39 [kernel] NET: Registered protocol family 2
+May 26 16:15:39 [kernel] IP: routing cache hash table of 8192 buckets,
+64Kbytes
+May 26 16:15:39 [kernel] TCP: Hash tables configured (established 262144 bi=
+nd
+65536)
+May 26 16:15:39 [kernel] ip_conntrack version 2.1 (8191 buckets, 65528 max)=
+ -
+300 bytes per conntrack
+May 26 16:15:39 [kernel] ip_tables: (C) 2000-2002 Netfilter core team
+May 26 16:15:39 [kernel] ipt_recent v0.3.1: Stephen Frost
+<sfrost@snowman.net>.  http://snowman.net/projects/ipt_recent/
+May 26 16:15:39 [kernel] arp_tables: (C) 2002 David S. Miller
+May 26 16:15:39 [kernel] NET: Registered protocol family 1
+May 26 16:15:39 [kernel] NET: Registered protocol family 17
+May 26 16:15:39 [kernel] ACPI wakeup devices:
+May 26 16:15:39 [kernel] PCI0 UAR1 USB1 USB2 USB3 USB4 EHCI USBD PS2M PS2K
+AC9  MC9 ILAN SLPB
+May 26 16:15:39 [kernel] ACPI: (supports S0 S1 S3 S4 S5)
+May 26 16:15:39 [kernel] ReiserFS: hda3: found reiserfs format "3.6" with
+standard journal
+May 26 16:15:39 [kernel] ReiserFS: hda3: using ordered data mode
+May 26 16:15:39 [kernel] ReiserFS: hda3: journal params: device hda3, size
+8192, journal first block 18, max trans len 1024, max batch 900, max commit
+age 30, max trans age 30
+May 26 16:15:39 [kernel] ReiserFS: hda3: checking transaction log (hda3)
+May 26 16:15:39 [kernel] ReiserFS: hda3: Using r5 hash to sort names
+May 26 16:15:39 [kernel] VFS: Mounted root (reiserfs filesystem) readonly.
+May 26 16:15:39 [kernel] Mounted devfs on /dev
+May 26 16:15:39 [kernel] Freeing unused kernel memory: 176k freed
+May 26 16:15:39 [kernel] Adding 2048276k swap on /dev/hda2.  Priority:-1
+extents:1
+May 26 16:15:39 [kernel] ide-scsi is deprecated for cd burning! Use ide-cd =
+and
+give dev=3D/dev/hdX as device
+May 26 16:15:39 [kernel] scsi0 : SCSI host adapter emulation for IDE ATAPI
+devices
+May 26 16:15:39 [kernel]   Vendor: HL-DT-ST  Model: DVDRAM GSA-4163B  Rev:
+A100
+May 26 16:15:39 [kernel]   Type:   CD-ROM                             ANSI
+SCSI revision: 02
+May 26 16:15:39 [kernel] sr0: scsi3-mmc drive: 40x/40x writer dvd-ram cd/rw
+xa/form2 cdda tray
+May 26 16:15:39 [kernel] Attached scsi generic sg0 at scsi0, channel 0, id =
+0,
+lun 0,  type 5
+May 26 16:15:39 [kernel] Real Time Clock Driver v1.12
+May 26 16:15:39 [kernel] ACPI: PCI interrupt 0000:00:0b.0[A] -> GSI 19 (lev=
+el,
+low) -> IRQ 19
+May 26 16:15:39 [kernel] ACPI: PCI interrupt 0000:01:00.0[A] -> GSI 16 (lev=
+el,
+low) -> IRQ 16
+May 26 16:15:39 [kernel] rivafb: nVidia device/chipset 10DE0171
+May 26 16:15:39 [kernel] rivafb: nVidia Corporation NV17 [GeForce4 MX 440]
+May 26 16:15:39 [kernel] rivafb: Detected CRTC controller 0 being used
+May 26 16:15:39 [kernel] rivafb: RIVA MTRR set to ON
+May 26 16:15:39 [kernel] rivafb: could not retrieve EDID from DDC/I2C
+May 26 16:15:39 [kernel] rivafb: setting virtual Y resolution to 104857
+May 26 16:15:39 [kernel] rivafb: PCI nVidia NV17 framebuffer ver 0.9.5b (64=
+MB
+@ 0xD0000000)
+May 26 16:15:39 [kernel] via-rhine.c:v1.10-LK1.2.0-2.6 June-10-2004 Written=
+ by
+Donald Becker
+May 26 16:15:39 [kernel] ACPI: PCI interrupt 0000:00:12.0[A] -> GSI 23 (lev=
+el,
+low) -> IRQ 23
+May 26 16:15:39 [kernel] eth0: VIA Rhine II at 0xbc00, 00:0b:6a:84:bc:c7, I=
+RQ
+23.
+May 26 16:15:39 [kernel] eth0: MII PHY found at address 1, status 0x7849
+advertising 05e1 Link 0000.
+May 26 16:15:39 [kernel] VP_IDE: IDE controller at PCI slot 0000:00:0f.1
+May 26 16:15:39 [kernel] ACPI: PCI interrupt 0000:00:0f.1[A] -> GSI 20 (lev=
+el,
+low) -> IRQ 20
+May 26 16:15:39 [kernel] VP_IDE: chipset revision 6
+May 26 16:15:39 [kernel] VP_IDE: not 100% native mode: will probe irqs later
+May 26 16:15:39 [kernel] VP_IDE: User given PCI clock speed impossible
+(66000), using 33 MHz instead.
+May 26 16:15:39 [kernel] VP_IDE: Use ide0=3Data66 if you want to assume 80-=
+wire
+cable.
+May 26 16:15:39 [kernel] VP_IDE: VIA vt8237 (rev 00) IDE UDMA133 controller=
+ on
+pci0000:00:0f.1
+May 26 16:15:39 [kernel] VP_IDE: port 0x01f0 already claimed by ide0
+May 26 16:15:39 [kernel] VP_IDE: neither IDE port enabled (BIOS)
+May 26 16:15:39 [kernel] ACPI: PCI interrupt 0000:00:0f.0[B] -> GSI 20 (lev=
+el,
+low) -> IRQ 20
+May 26 16:15:39 [kernel] sata_via(0000:00:0f.0): routed to hard irq line 10
+May 26 16:15:39 [kernel] ata1: SATA max UDMA/133 cmd 0xE800 ctl 0xE402 bmdma
+0xD800 irq 20
+May 26 16:15:39 [kernel] ata2: SATA max UDMA/133 cmd 0xE000 ctl 0xDC02 bmdma
+0xD808 irq 20
+May 26 16:15:39 [kernel] ata1: dev 0 ATA, max UDMA/133, 160086528 sectors:
+May 26 16:15:39 [kernel] ata1: dev 0 configured for UDMA/133
+May 26 16:15:39 [kernel] scsi1 : sata_via
+May 26 16:15:39 [kernel] ata2: dev 0 ATA, max UDMA/133, 160084415 sectors:
+May 26 16:15:39 [kernel] ata2: dev 0 configured for UDMA/133
+May 26 16:15:39 [kernel] scsi2 : sata_via
+May 26 16:15:39 [kernel]   Vendor: ATA       Model: Maxtor 6Y080M0    Rev:
+YAR5
+May 26 16:15:39 [kernel]   Type:   Direct-Access                      ANSI
+SCSI revision: 05
+May 26 16:15:39 [kernel] SCSI device sda: 160086528 512-byte hdwr sectors
+(81964 MB)
+May 26 16:15:39 [kernel] SCSI device sda: drive cache: write back
+May 26 16:15:39 [kernel] SCSI device sda: 160086528 512-byte hdwr sectors
+(81964 MB)
+May 26 16:15:39 [kernel] SCSI device sda: drive cache: write back
+May 26 16:15:39 [kernel]  /dev/scsi/host1/bus0/target0/lun0: p1 p2 p3
+May 26 16:15:39 [kernel] Attached scsi disk sda at scsi1, channel 0, id 0, =
+lun
+0
+May 26 16:15:39 [kernel] Attached scsi generic sg1 at scsi1, channel 0, id =
+0,
+lun 0,  type 0
+May 26 16:15:39 [kernel]   Vendor: ATA       Model: Maxtor 6Y080M0    Rev:
+YAR5
+May 26 16:15:39 [kernel]   Type:   Direct-Access                      ANSI
+SCSI revision: 05
+May 26 16:15:39 [kernel] SCSI device sdb: 160084415 512-byte hdwr sectors
+(81963 MB)
+May 26 16:15:39 [kernel] SCSI device sdb: drive cache: write back
+May 26 16:15:39 [kernel] SCSI device sdb: 160084415 512-byte hdwr sectors
+(81963 MB)
+May 26 16:15:39 [kernel] SCSI device sdb: drive cache: write back
+May 26 16:15:39 [kernel]  /dev/scsi/host2/bus0/target0/lun0: p1 p2 p3
+May 26 16:15:39 [kernel] Attached scsi disk sdb at scsi2, channel 0, id 0, =
+lun
+0
+May 26 16:15:39 [kernel] Attached scsi generic sg2 at scsi2, channel 0, id =
+0,
+lun 0,  type 0
+May 26 16:15:39 [kernel] agpgart: Detected VIA KT400/KT400A/KT600 chipset
+May 26 16:15:39 [kernel] agpgart: Maximum main memory to use for agp memory:
+941M
+May 26 16:15:39 [kernel] agpgart: AGP aperture is 128M @ 0xe0000000
+May 26 16:15:39 [cron] (CRON) STARTUP (fork ok)
+May 26 16:15:39 [cron] (root~) ORPHAN (no passwd entry)
+May 26 16:15:43 [xfs] CONFIG: unknown parameter "cache-hi-mark"
+May 26 16:15:43 [xfs] CONFIG: unknown parameter "cache-low-mark"
+May 26 16:15:43 [xfs] CONFIG: unknown parameter "cache-balance"
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/Speedo
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/CID
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/util
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/local
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/Speedo
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/truetype
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/freefont
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/sharefont
+(unreadable)
+May 26 16:15:44 [xfs] ignoring font path
+element /usr/share/fonts/default/Type1 (unreadable)
+May 26 16:15:44 [xfs] ignoring font path
+element /usr/share/fonts/ttf/decoratives (unreadable)
+May 26 16:15:44 [xfs] ignoring font path element /usr/share/fonts/ttf/weste=
+rn
+(unreadable)
+May 26 16:15:44 [init] Activating demand-procedures for 'A'
+May 26 16:15:58 [kdm_greet] Can't open default user face
+May 26 16:16:03 [kde(pam_unix)] session opened for user root by (uid=3D0)
+May 26 16:16:03 [kdm] :0[9992]: PAM pam_putenv: delete non-existent entry;
+REMOTEHOST
+May 26 16:16:03 [PAM-env] Unknown PAM_ITEM: <DISPLAY>
+May 26 16:16:03 [] PAM pam_putenv: delete non-existent entry; DISPLAY
+May 26 16:16:03 [PAM-env] Unknown PAM_ITEM: <XAUTHORITY>
+May 26 16:16:03 [] PAM pam_putenv: delete non-existent entry; XAUTHORITY
+May 26 16:16:42 [gconfd (root-10101)] d=E9marrage (version 2.8.1), pid 10101
+utilisateur =AB root =BB
+May 26 16:16:42 [gconfd (root-10101)] Adresse
+=AB xml:readonly:/etc/gconf/gconf.xml.mandatory =BB r=E9solue vers une sour=
+ce de
+configuration en lecture seule =E0 la position 0
+May 26 16:16:42 [gconfd (root-10101)] Adresse =AB xml:readwrite:/root/.gcon=
+f =BB
+r=E9solue vers une source de configuration accessible en =E9criture =E0 la =
+position
+1
+May 26 16:16:42 [gconfd (root-10101)] Adresse
+=AB xml:readonly:/etc/gconf/gconf.xml.defaults =BB r=E9solue vers une sourc=
+e de
+configuration en lecture seule =E0 la position 2
+May 26 16:16:45 [kernel] cdrom: This disc doesn't have any tracks I recogni=
+ze!
+May 26 16:16:49 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:50 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:51 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:53 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:54 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:55 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:57 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:58 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:16:59 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:01 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:02 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:03 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:05 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:06 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:07 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:09 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:10 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:11 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:13 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:14 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:15 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:17 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:18 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:19 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:21 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:22 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:24 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:25 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:26 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:28 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:29 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:30 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:32 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:33 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:33 [init] Switching to runlevel: 6
+May 26 16:17:34 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:36 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:37 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:38 [sshd] Received signal 15; terminating.
+May 26 16:17:38 [kernel] ata1: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+May 26 16:17:38 [kernel] ata1: error=3D0x40 { UncorrectableError }
+May 26 16:17:38 [kernel] SCSI error : <1 0 0 0> return code =3D 0x8000002
+May 26 16:17:38 [kernel] Current sda: sense =3D 70  3
+May 26 16:17:38 [kernel] ASC=3D11 ASCQ=3D 4
+May 26 16:17:38 [kernel] Raw sense data:0x70 0x00 0x03 0x00 0x00 0x00 0x00
+0x0a 0x00 0x00 0x00 0x00 0x11 0x04 0x00 0x00 0x00 0x00
+May 26 16:17:38 [kernel] end_request: I/O error, dev sda, sector 4104368
+May 26 16:17:38 [kernel] Buffer I/O error on device sda3, logical block 7793
+May 26 16:17:39 [xfs] terminating
+
+
+
+
+
+
+--
+L=E9o Daniel
+Fonbine
+34260 Av=E8ne
+06 73 06 20 08
+04 67 95 68 63
