@@ -1,128 +1,149 @@
-From: Greg Burri <greg@euphorik.ch>
-Subject: Re: My reiserfs module crash...
-Date: Thu, 26 May 2005 08:58:16 +0200
-Message-ID: <42957388.5090404@euphorik.ch>
-References: <427954C9.9090004@euphorik.ch> <200505052042.33105.vitaly@namesys.com>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: Reiserfs Sloooow Boot
+Date: Thu, 26 May 2005 13:13:57 +0400
+Message-ID: <42959355.8090707@namesys.com>
+References: <20050525153002.60091.qmail@web51410.mail.yahoo.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24153-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24154-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200505052042.33105.vitaly@namesys.com>
+In-Reply-To: <20050525153002.60091.qmail@web51410.mail.yahoo.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+To: "Ricardo (Tru64 User)" <tru64user@yahoo.com>
+Cc: reiserfs-list@namesys.com
 
-Vitaly Fertman wrote:
+Ricardo (Tru64 User) wrote:
 
->On Thursday 05 May 2005 03:03, Greg Burri wrote:
+>Hi Guys,
+>First time posting here...after spending couple hours
+>in the mail archives.
+>I am running mandrake 10, 10.1 with reiserfs 3.6.11 
+>I have used reiserfs for a number of years...previous
+>with mandrake 8,9,9.2 (not sure what version of
+>reiserfs was in use then).
+>Since converting all nodes to Mandrake 10.0,(comes
+>with reiserfs 3.6.110, reboots (even clean ones) are
+>painfully sloooow!
+>
+>For an empty reiserfs filesystem, 2TB in size, it
+>takes about 7-10mins to complete:
+>May 25 11:02:20 node2 kernel: reiserfs: found format
+>"3.6" with standard journal
+>May 25 11:04:22 node2 kernel: reiserfs: checking
+>transaction log (device sd(8,17)) ...
+>May 25 11:04:22 node2 kernel: for (sd(8,17))
+>May 25 11:04:22 node2 kernel: sd(8,17):Using r5 hash
+>to sort names
+>--------------------------
+>
+>I have another empty filesystem created on a Logical
+>Volume (LV), that is 5TB. That one takes about 15-20
+>minutes to boot+mount!!
 >  
 >
->>Hi everybody !
->>I have a big trouble with my reiserfs partition :/, I wish that someone 
->>can help me. so I'll expose my problem.
->>(I'm don't know very well english so I'll to make the better I can, 
->>sorry in advance)
->>
->>So. I use reiserfs 3.6.19 under a Debian sarge Linux distribution, I use 
->>the kernel 2.6.11 (but the bug appeared with a 2.6.8 too).
->>When I try to mount my partition the reiserfs module crash like that :
->>
->>#> mount -t reiserfs /dev/sda1 /var/data/
->>ReiserFS: sda1: found reiserfs format "3.6" with standard journal
->>ReiserFS: sda1: using ordered data mode
->>ReiserFS: sda1: journal params: device sda1, size 8192, journal first 
->>block 18, max trans len 1024, max batch 900, max commit age 30, max 
->>trans age 30
->>ReiserFS: sda1: checking transaction log (sda1)
->>ReiserFS: warning: is_tree_node: node level 0 does not match to the 
->>expected one 65534
->>ReiserFS: sda1: warning: vs-5150: search_by_key: invalid format found in 
->>block 0. Fsck?
->>ReiserFS: sda1: warning: vs-13070: reiserfs_read_locked_inode: i/o 
->>failure occurred trying to find stat data of [1 2 0x0 SD]
->>ReiserFS: sda1: Using r5 hash to sort names
->>------------[ cut here ]------------
->>kernel BUG at fs/reiserfs/journal.c:2858!
->>invalid operand: 0000 [#1]
->>Modules linked in: reiserfs ipv6 evdev pcspkr parport_pc parport 8139cp 
->>i2c_viapro i2c_core pci_hotplug via_agp uhci_hcd usbcore 8139too mii 
->>agpgart sd_mod capability commoncap hpt374 scsi_mod psmouse ide_cd cdrom 
->>genrtc ext3 jbd mbcache ide_disk ide_generic via82cxxx trm290 triflex 
->>slc90e66 sis5513 siimage serverworks sc1200 rz1000 piix pdc202xx_old 
->>opti621 ns87415 hpt366 hpt34x generic cy82c693 cs5530 cs5520 cmd64x 
->>atiixp amd74xx alim15x3 aec62xx pdc202xx_new unix fbcon font bitblit 
->>vesafb cfbcopyarea cfbimgblt cfbfillrect ide_core
->>CPU:    0
->>EIP:    0060:[<e8b22ae6>]    Tainted: PF     VLI
->>EFLAGS: 00010246   (2.6.11-1-686)
->>EIP is at journal_mark_dirty+0x216/0x270 [reiserfs]
->>eax: 00000000   ebx: e480e600   ecx: 00000002   edx: c174be34
->>esi: e480e600   edi: e8a84000   ebp: e47cb730   esp: c174bdb0
->>ds: 007b   es: 007b   ss: 0068
->>Process mount (pid: 3075, threadinfo=c174a000 task=c17dd0a0)
->>Stack: e480e600 e3670db0 c174a000 c174be34 e480e600 c174be10 e8b2283e 
->>c174be34
->>       00000002 00000000 e7f18120 e480e600 c174be34 00000001 e8b11bc6 
->>c174be34
->>       e480e600 e47cb730 e8b04ee0 c174be10 c174be20 00000000 e43ea000 
->>00000000
->>Call Trace:
->> [<e8b2283e>] journal_begin+0x6e/0x100 [reiserfs]
->> [<e8b11bc6>] reiserfs_fill_super+0x576/0x770 [reiserfs]
->> [<e8b04ee0>] reiserfs_init_locked_inode+0x0/0x20 [reiserfs]
->> [<c01b6b27>] snprintf+0x27/0x30
->> [<c01584ae>] sb_set_blocksize+0x2e/0x60
->> [<c0157de0>] get_sb_bdev+0x100/0x150
->> [<c016bfe0>] alloc_vfsmnt+0x90/0xd0
->> [<e8b127b0>] get_super_block+0x30/0x34 [reiserfs]
->> [<e8b11650>] reiserfs_fill_super+0x0/0x770 [reiserfs]
->> [<c0158090>] do_kern_mount+0xa0/0x170
->> [<c016d0c7>] do_new_mount+0x77/0xc0
->> [<c016d714>] do_mount+0x174/0x1c0
->> [<c016d543>] copy_mount_options+0x63/0xc0
->> [<c016daca>] sys_mount+0x9a/0xe0
->> [<c0102f33>] syscall_call+0x7/0xb
->>Code: 83 47 2c 12 8b 42 08 e9 31 ff ff ff 8b 47 30 bd 00 b0 b2 e8 89 6c 
->>24 04 89 1c 24 89 44 24 08 e8 51 0a ff ff ba 01 00 00 00 eb bd <0f> 0b 
->>2a 0b 35 c4 b2 e8 e9 0a fe ff ff 89 54 24 0c 8b 54 24 3c
->>    
->>
+
+This is because reiserfs load all bitmap blocks at mount time.
+It seems 15 min is a minimal time we can provide for you: 5TB
+means that reiserfs needs to read more then 40 000  bitmap
+blocks.
+
+>This was not the case in previous installs, where my
+>largest filesystems were 1TB. 
+>Does reiserfs have performance limitations with
+>filesystem size?
 >
->would you pack the metadata with 
->	debugreiserfs -p /dev/sda1 | bzip2 -c > sda1-meta.bz2
->and provide them for downloading. 
+>I took on XFS for trial purpose....formating the same
+>5TB partition with XFS, and reboots are extremely
+>quick! Barely two minutes, node is up, vs. 15 minutes
+>with reiserfs.
+>  
+>
+Quick mount of 5TB means slowdown of other things.
+Reiser4 has a mount option which allows to load bitmap blocks
+dynamically if you prefer to wait for other blocks next time when
+it is needed..
+
+Edward.
+
+>Any tweaking recommendations? More info that I should
+>provide? Hardware is a mix of promise technologies
+>(ATA to SCSI) raid boxes, and EonStor (SATA to SCSI)
+>raid boxes, some using LSI logic card as HBA, and
+>others using adaptec 39160, same issue. 
+>Server hardware is Dell PowerEdge 1750, 4GB ram, Dual
+>Xeon 3.2 processors.
+>
+>I am hoping someone will lead me to some tuning to
+>reduce this delay. I can't use xfs, since on some
+>nodes i have to use kernel 2.4.26 (vanilla) that
+>doesnt support xfs, and besides, I have been a default
+>reiserfs user for a while, so I am not about to start
+>converting all 20-30TB paritions into XFS. For now, I
+>prepare 30mins for reboot whenever i have too...which
+>means they cant happen on work week, otherwise too
+>much cursing will occur.
+>
+>I am using reiserfs for all partitions, including
+>root. Delay is much noticeable on the external
+>devices, which are the largest partitions.
+>
+>_Thanks
+>
+>Richard
+>
+>
+>
+>More info that might be helpful::
+>
+>]# debugreiserfs /dev/sdb1
+>debugreiserfs 3.6.11 (2003 www.namesys.com)
+>
+>
+>Filesystem state: consistency is not checked after
+>last mounting
+>
+>Reiserfs super block in block 16 on 0x811 of format
+>3.6 with standard journal
+>Count of blocks on the device: 524287996
+>Number of bitmaps: 16000
+>Blocksize: 4096
+>Free blocks (count of blocks - used [journal, bitmaps,
+>data, reserved] blocks): 521696895
+>Root block: 457391
+>Filesystem is NOT cleanly umounted
+>Tree height: 5
+>Hash function used to sort names: "r5"
+>Objectid map size 2, max 972
+>Journal parameters:
+>        Device [0x0]
+>        Magic [0x36901ac5]
+>        Size 8193 blocks (including 1 for journal
+>header) (first block 18)
+>        Max transaction length 1024 blocks
+>        Max batch size 900 blocks
+>        Max commit age 30
+>Blocks reserved by journal: 0
+>Fs state field: 0x0:
+>sb_version: 2
+>inode generation number: 1
+>UUID: d1e512ee-d5b7-41f9-a0cc-1cc99b58f587
+>LABEL: 
+>Set flags in SB:
+>        ATTRIBUTES CLEAN
+>
+>
+>
+>		
+>__________________________________ 
+>Do you Yahoo!? 
+>Yahoo! Small Business - Try our new Resources site
+>http://smallbusiness.yahoo.com/resources/
+>
 >
 >  
 >
->>(hpt374 is the driver for my sata-card)
->>My partition was in good health but a day I don't know why I had this 
->>message when I was mounting /dev/sda1 ...
->>I already try reiserfsck but without success :'( I don't know what can I 
->>do to repair that.
->>
->>Please help me,
->>Thx
->>
->>Greg Burri
->>
->>
->>    
->>
->
->  
->
-Hi !
-I have done "debugreiserfs -p" to collect metadata .. .I take me about 
-15 hours but its ok.
-I have put the file here :
-http://www.euphorik.ch/boardel/debugreiserfs_metadata.bz2 (23Mo)
 
-I wish that someone can help me, I don't want to loose all my data :'(
-
-bye !
-Thanks by advance
-
-Greg Burri
