@@ -1,54 +1,104 @@
-From: Vitaly <vitaly@namesys.com>
-Subject: Re: [PATCH] reiser4progs compiling with GCC4.0
-Date: Fri, 27 May 2005 19:18:32 +0400
-Message-ID: <200505271918.32256.vitaly@namesys.com>
-References: <1117136170.9409.1.camel@Gargamel.ravioli> <200505271511.23873.vitaly@namesys.com> <1117206460.6191.2.camel@Gargamel.ravioli>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: online fsck
+Date: Fri, 27 May 2005 17:50:36 -0500
+Message-ID: <4297A43C.1010608@slaphack.com>
+References: <263a8b350505231124758be936@mail.gmail.com>	<42930542.1000407@namesys.com>	<4293B817.5030906@accessplus.com.au>	<263a8b35050524200220eff78b@mail.gmail.com> <20050527091725.E7CC5BF6@philou.gramoulle.local> <4296E91E.5050505@darthvader.us>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-24178-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24179-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1117206460.6191.2.camel@Gargamel.ravioli>
-Content-Disposition: inline
+In-Reply-To: <4296E91E.5050505@darthvader.us>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: disk@sourcemage.org, Flavien Bridault <f.bridault@fra.net>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Yiannis Mavroukakis <jander@darthvader.us>
+Cc: reiserfs-list@namesys.com
 
-=D0=92 =D1=81=D0=BE=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B8 =D0=BE=D1=82 =
-=D0=9F=D1=8F=D1=82=D0=BD=D0=B8=D1=86=D0=B0 27 =D0=9C=D0=B0=D0=B9 2005 19:07=
- Flavien Bridault =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=BB(a):
-> Le vendredi 27 mai 2005 =C3=A0 15:11 +0400, Vitaly a =C3=A9crit :
-> > =D0=92 =D1=81=D0=BE=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B8 =D0=BE=D1=
-=82 =D0=A7=D0=B5=D1=82=D0=B2=D0=B5=D1=80=D0=B3 26 =D0=9C=D0=B0=D0=B9 2005 2=
-3:36 Flavien Bridault =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=BB(a):
-> > > Hi people,
-> > >
-> > > I searched a bit on the mail archive and I didn't find anything about
-> > > that except about the devel gcc4.0 tree.
-> > >
-> > > With stable gcc4.0 reiser4progs fails to compile because of three
-> > > "static declarations that follows a non-static declarations". I so ma=
-de
-> > > the following patch to get it compiling, but I would like to know if =
-it
-> > > seems correct to you (and if it has not already be done ;-) ) before I
-> > > integrate it in the Source Mage grimoire.
-> >
-> > thank you for the report. your patch creates different static variables
-> > in each c file that includes the header. please try the attached patch.
-> >
-> > -- Vitaly
->
-> I did the previous one without knowing what should be the visibility of
-> these variables, so your solution is indeed much better. :-)
-> And that compiles like a charm with gcc4.0. :-)
-> I will integrate it in Source Mage spell. Can we expect that this fix
-> will be included in next reiser4progs release ?
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-sure, it will.
+Yiannis Mavroukakis wrote:
+> Philippe Gramoull=E9 wrote:
+>=20
+>> Hello,
+>>
+>> On Tue, 24 May 2005 22:02:20 -0500
+>> btinsley <btinsley@gmail.com> wrote:
+>>
+>>  | What i'm looking for is a check on a reiserfs filesystem that is
+>>  | mounted read-write. Many modern filesystems, especially those on NAS
+>>  | devices, can run periodic background consistency checks on filesystems
+>>  | with almost zero impact on performance. Some devices are reportedly
+>>  | running these checks constantly, possibly correcting errors without
+>>  | user intervention... even a notification to a sysadmin would be a good
+>>  | feature.
+>>
+>> Last time i asked Hans about the possibility to have a --rebuild-tree
+>> (for reiserfs) while the fs is online and mounted rw,
+>> he told me to send 30.000 US Dollars in, and that it could eventually
+>> be done ;)
+>>
+>> Sure lots of people would find this a killer feature, but someone will
+>> definitely have to pay get such a feature implemented.
+>>
+>> Thanks,
+>>
+>> Philippe
+>> =20
+>>
+> Then Hans should setup a paypal account for donations. I'd gladly give
+> what I can spare, and I think so would a lot of people here.
 
-> Thanks !
+I'd rather donate for a reiser4 online repacker.  By the time
+something's fsck'd, so to speak, I'd rather take it offline and possibly
+pull in backups.  But a repacker (even an offine one) and a resizer
+(even an offline one) are two things that we even have in the Linux
+ntfs-tools, and it's also something that people would have an immediate
+use for.
 
-=2D- Vitaly
+Another killer feature would be to bring back metadata, or at least a
+way to create special (plugin) files, and the ability to write certain
+kinds of userland plugins, thus giving us FS-level support for things
+like zipfiles.  Yet another killer feature would be stable crypto and
+compression, and the ability to enable it only for certain directories.
+
+And finally, there's the Windows port.  A full, stable Windows port,
+using the ReactOS libs, under a licence which requires blatant
+attribution, so that the user knows that they are using a third-party
+filesystem.  This would certainly ease the migration to Linux, because
+Reiser4 beats NTFS, and Linux doesn't really have reliable NTFS support
+(captive is slow and crash-prone).
+
+Think of the first feature and the last one together.  You shrink the
+NTFS partition, create a new Reiser4 partition, copy your Windows files
+over, nuke the NTFS partition, resize the r4 partition (backwards), and
+your Windows is on Reiser4.  Next, you install Linux to a directory in
+that r4 partition.  Now all your Windows files are accessible from Linux
+and vice versa, until you stop dual-booting, in which case you don't
+have to repartition or reinstall.
+
+These are all good features, and they are all something I would rather
+donate money towards than an online fsck.
+
+
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iQIVAwUBQpekPHgHNmZLgCUhAQK5pxAAkmVS/NzA2xDMuiNH2LCBSaUpGl/nbMzP
+gV5XZgyBJOhmEEJR1EoOe+cftygooqwY+FuQZJ2HVqI12mm2BTpG9zxTwUmcqGw9
+3wNBqHII1/VWthxTchChwvY+NppH9IKyvWOXSHvTOlce97WDsMu0wBBIxA+VbcfP
+cNop/MiDFs37fjWNqXBVpl8WO6vNg+RPHjG4j0n8ljziPDJUY/9A3vBfLgXYzUQN
+dXcw+xkPI4vN5W4HoNrnfJhwzHTyEd34sWpC6MdQO2uzxAmAlP8paruMpslozFP/
+mqr24zMcOgWlisglyn5Zoc43098QqhvX0mJSoj4Z6C++bJWUn+FdCKxbUDfe3cCK
+jtRhDJUPRA2kutT5VrcOQbuYuDrOtCbfeXHPnnfxI2DNjbj+wz5pEyMflJvskoyn
+Arfb6z/zMDeblQFE2xYCE9GjbdaVzh0237G1RlukurvyDlitrejDSGEFCsoMv3Fn
+9ljYTm5DXEkoBNS76SXmHR6/ZXSxor+Hyy6lhz0V762MWdZntmW9/7f8n4s60rcR
+Kq0Q9ujJdllNBYTBwyIDriRJbXdL9FP6qhdPf9fD7shFGKbAk2uHoO6yoJ6bLjfm
+jTUKWPeEgzRbZg8GSPnltJQnp5BZrPMNdpPcxNo/o68VprXppnKtZlTqXwbqREYr
+BJa9XhP0Tdk=3D
+=3D//7g
+-----END PGP SIGNATURE-----
