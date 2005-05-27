@@ -1,52 +1,151 @@
-From: Yiannis Mavroukakis <jander@darthvader.us>
-Subject: Re: online fsck
-Date: Fri, 27 May 2005 10:32:14 +0100
-Message-ID: <4296E91E.5050505@darthvader.us>
-References: <263a8b350505231124758be936@mail.gmail.com>	<42930542.1000407@namesys.com>	<4293B817.5030906@accessplus.com.au>	<263a8b35050524200220eff78b@mail.gmail.com> <20050527091725.E7CC5BF6@philou.gramoulle.local>
+From: Vitaly <vitaly@namesys.com>
+Subject: Re: [PATCH] reiser4progs compiling with GCC4.0
+Date: Fri, 27 May 2005 15:11:23 +0400
+Message-ID: <200505271511.23873.vitaly@namesys.com>
+References: <1117136170.9409.1.camel@Gargamel.ravioli>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-24173-reiserfs=m.gmane.org@namesys.com>
+Content-Type: Multipart/Mixed;
+  boundary="Boundary-00=_bBwlCbqFySPlgzl"
+Return-path: <reiserfs-list-return-24174-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050527091725.E7CC5BF6@philou.gramoulle.local>
+In-Reply-To: <1117136170.9409.1.camel@Gargamel.ravioli>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: reiserfs-list@namesys.com
+To: disk@sourcemage.org, Flavien Bridault <f.bridault@fra.net>, reiserfs-list@namesys.com
 
-Philippe Gramoull=E9 wrote:
+--Boundary-00=_bBwlCbqFySPlgzl
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
->Hello,
+=D0=92 =D1=81=D0=BE=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B8 =D0=BE=D1=82 =
+=D0=A7=D0=B5=D1=82=D0=B2=D0=B5=D1=80=D0=B3 26 =D0=9C=D0=B0=D0=B9 2005 23:36=
+ Flavien Bridault =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=BB(a):
+> Hi people,
 >
->On Tue, 24 May 2005 22:02:20 -0500
->btinsley <btinsley@gmail.com> wrote:
+> I searched a bit on the mail archive and I didn't find anything about
+> that except about the devel gcc4.0 tree.
 >
->  | What i'm looking for is a check on a reiserfs filesystem that is
->  | mounted read-write. Many modern filesystems, especially those on NAS
->  | devices, can run periodic background consistency checks on filesystems
->  | with almost zero impact on performance. Some devices are reportedly
->  | running these checks constantly, possibly correcting errors without
->  | user intervention... even a notification to a sysadmin would be a good
->  | feature.
->
->Last time i asked Hans about the possibility to have a --rebuild-tree (for=
- reiserfs) while the fs is online and mounted rw,
->he told me to send 30.000 US Dollars in, and that it could eventually be d=
-one ;)
->
->Sure lots of people would find this a killer feature, but someone will def=
-initely have to pay get such a feature implemented.
->
->Thanks,
->
->Philippe
-> =20
->
-Then Hans should setup a paypal account for donations. I'd gladly give=20
-what I can spare, and I think so would a lot of people here.
+> With stable gcc4.0 reiser4progs fails to compile because of three
+> "static declarations that follows a non-static declarations". I so made
+> the following patch to get it compiling, but I would like to know if it
+> seems correct to you (and if it has not already be done ;-) ) before I
+> integrate it in the Source Mage grimoire.
 
-______________________________________________________________________
-This email has been scanned by the MessageLabs Email Security System.
-For more information please visit http://www.messagelabs.com/email=20
-______________________________________________________________________
+thank you for the report. your patch creates different static variables=20
+in each c file that includes the header. please try the attached patch.
+
+=2D- Vitaly
+
+--Boundary-00=_bBwlCbqFySPlgzl
+Content-Type: text/x-diff;
+  charset="iso-8859-1";
+  name="reiser4progs-plug_decl.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="reiser4progs-plug_decl.patch"
+
+===== plugin/key/key_large/key_large.c 1.44 vs edited =====
+--- 1.44/plugin/key/key_large/key_large.c	Mon Jan 17 16:17:03 2005
++++ edited/plugin/key/key_large/key_large.c	Fri May 27 14:24:34 2005
+@@ -6,6 +6,8 @@
+ #ifdef ENABLE_LARGE_KEYS
+ #include "key_large.h"
+ 
++extern reiser4_plug_t key_large_plug;
++
+ /* Returns minimal key */
+ static reiser4_key_t *key_large_minimal(void) {
+ 	return key_common_minimal(&key_large_plug);
+@@ -382,7 +384,7 @@
+ 	.get_name	= key_large_get_name
+ };
+ 
+-static reiser4_plug_t key_large_plug = {
++reiser4_plug_t key_large_plug = {
+ 	.cl    = class_init,
+ 	.id    = {KEY_LARGE_ID, 0, KEY_PLUG_TYPE},
+ #ifndef ENABLE_MINIMAL
+===== plugin/key/key_large/key_large.h 1.14 vs edited =====
+--- 1.14/plugin/key/key_large/key_large.h	Wed Feb  2 01:04:26 2005
++++ edited/plugin/key/key_large/key_large.h	Fri May 27 13:12:59 2005
+@@ -43,8 +43,6 @@
+ 
+ typedef union key_large key_large_t;
+ 
+-extern reiser4_plug_t key_large_plug;
+-
+ typedef enum {
+ 	/* Major locality occupies higher 60 bits of the first element */
+ 	KEY_LARGE_LOCALITY_MASK		= 0xfffffffffffffff0ull,
+===== plugin/key/key_short/key_short.c 1.144 vs edited =====
+--- 1.144/plugin/key/key_short/key_short.c	Mon Jan 17 16:17:03 2005
++++ edited/plugin/key/key_short/key_short.c	Fri May 27 14:25:00 2005
+@@ -6,6 +6,8 @@
+ #ifdef ENABLE_SHORT_KEYS
+ #include "key_short.h"
+ 
++extern reiser4_plug_t key_short_plug;
++
+ /* Returns minimal key */
+ static reiser4_key_t *key_short_minimal(void) {
+ 	return key_common_minimal(&key_short_plug);
+@@ -367,7 +369,7 @@
+ 	.get_name       = key_short_get_name
+ };
+ 
+-static reiser4_plug_t key_short_plug = {
++reiser4_plug_t key_short_plug = {
+ 	.cl    = class_init,
+ 	.id    = {KEY_SHORT_ID, 0, KEY_PLUG_TYPE},
+ #ifndef ENABLE_MINIMAL
+===== plugin/key/key_short/key_short.h 1.48 vs edited =====
+--- 1.48/plugin/key/key_short/key_short.h	Wed Feb  2 01:04:26 2005
++++ edited/plugin/key/key_short/key_short.h	Fri May 27 13:13:12 2005
+@@ -42,8 +42,6 @@
+ 
+ typedef union key_short key_short_t;
+ 
+-extern reiser4_plug_t key_short_plug;
+-
+ typedef enum {
+ 	/* Major locality occupies higher 60 bits of the first element */
+ 	KEY_SHORT_LOCALITY_MASK    = 0xfffffffffffffff0ull,
+===== plugin/oid/oid40/oid40.c 1.99 vs edited =====
+--- 1.99/plugin/oid/oid40/oid40.c	Mon Jan 17 16:17:04 2005
++++ edited/plugin/oid/oid40/oid40.c	Fri May 27 14:24:11 2005
+@@ -8,6 +8,8 @@
+ #include "oid40.h"
+ #include "oid40_repair.h"
+ 
++extern reiser4_plug_t oid40_plug;
++
+ static uint32_t oid40_get_state(generic_entity_t *entity) {
+ 	aal_assert("umka-2088", entity != NULL);
+ 	return ((oid40_t *)entity)->state;
+@@ -201,7 +203,7 @@
+ 	.slink_locality = oid40_slink_locality
+ };
+ 
+-static reiser4_plug_t oid40_plug = {
++reiser4_plug_t oid40_plug = {
+ 	.cl    = class_init,
+ 	.id    = {OID_REISER40_ID, 0, OID_PLUG_TYPE},
+ 	.label = "oid40",
+===== plugin/oid/oid40/oid40.h 1.39 vs edited =====
+--- 1.39/plugin/oid/oid40/oid40.h	Mon Jan 17 16:17:04 2005
++++ edited/plugin/oid/oid40/oid40.h	Fri May 27 14:12:38 2005
+@@ -30,8 +30,6 @@
+ 
+ typedef struct oid40 oid40_t;
+ 
+-extern reiser4_plug_t oid40_plug;
+-
+ #define oid40_get_next(area)            LE64_TO_CPU(*((d64_t *)area))
+ #define oid40_set_next(area, val)       (*((d64_t *)area) = CPU_TO_LE64(val))
+ 
+
+--Boundary-00=_bBwlCbqFySPlgzl--
+
