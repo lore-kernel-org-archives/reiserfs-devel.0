@@ -1,51 +1,122 @@
-From: btinsley <btinsley@gmail.com>
-Subject: Re: online fsck
-Date: Fri, 27 May 2005 18:04:20 -0500
-Message-ID: <263a8b350505271604186263f@mail.gmail.com>
-References: <263a8b350505231124758be936@mail.gmail.com>
-	 <42930542.1000407@namesys.com> <4293B817.5030906@accessplus.com.au>
-	 <263a8b35050524200220eff78b@mail.gmail.com>
-	 <20050527091725.E7CC5BF6@philou.gramoulle.local>
-	 <4296E91E.5050505@darthvader.us> <4297A43C.1010608@slaphack.com>
-Reply-To: btinsley <btinsley@gmail.com>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Subject: File as a directory - Ordered Relations
+Date: Fri, 27 May 2005 20:46:46 -0400 EDT
+Message-ID: <6708893568-BeMail@cr593174-a>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-24180-reiserfs=m.gmane.org@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24181-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4297A43C.1010608@slaphack.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Leo Comerford <leocomerford@gmail.com>
+Cc: reiserfs-list@namesys.com
 
-> I'd rather donate for a reiser4 online repacker.  By the time
-> something's fsck'd, so to speak, I'd rather take it offline and possibly
-> pull in backups.  But a repacker (even an offine one) and a resizer
-> (even an offline one) are two things that we even have in the Linux
-> ntfs-tools, and it's also something that people would have an immediate
-> use for.
+Leo Comerford wrote on Wed, 18 May 2005 12:50:38 +0100:
+> But if you have relation-directories and the ability to find the
+> pathnames of a given file, you can do everything you can do with
+> subfiles, just as nicely, and more besides. And if subfiles are
+> completely redundant and bad news anyway, we shouldn't have them.
 
-Pulling in backups is not always practical though. It's no fun
-restoring a 900GB filesystem from tape, especially when the data has
-to be transferred over the network :-)
+I prefer subfiles (or fildirutes) as being easier to understand.  But
+maybe that's just due to lots of experience with using file hierarchies.
+I can see having a relational system, but I'd always want to also have
+a directory hierarchy namespace, so that all files can be named.
 
-I would like to see the repacker though. I have certain filesystems
-that could really use it. Would it be practical to have an option to
-enable the repacker to include some level of consistency checking?
-It's been my experience that corruptions requiring a rebuild-tree are
-pretty obvious to reiserfsck ;-)
+Having those relationship directories seems kind of clunky - since
+they're not located near the object being investigated.  Though
+that's a GUI matter of making the system file browser pop up a
+"Show Relationships..." menu item as contrasted with drilling down
+to a subfile directory listing by clicking on an item.
 
->=20
-> Another killer feature would be to bring back metadata, or at least a
-> way to create special (plugin) files, and the ability to write certain
-> kinds of userland plugins, thus giving us FS-level support for things
-> like zipfiles.  Yet another killer feature would be stable crypto and
-> compression, and the ability to enable it only for certain directories.
+> The idea is that if you want to assert a single-place predicate of a
+> file, like "file x is important", you just use give the file an
+> approprate full path"name" ('~/important' or whatever). If you want to
+> assert a multi-place predicate - a relation - like "file x is more
+> important than file y" then you use a relation-directory. That goes
+> for every kind of multi-way relation/association you might want to
+> assert between files - one to one, one to many, many to many.
 
-I would go for this one as well. Our particular application stores
-data in an industry-standard format. Being able to
-index/search/crypt/etc. this at the FS level would let me get rid of
-the cost and overhead of Oracle :-)
+Good point about sorted relationships.  Reminds me a bit about
+attributes in BeOS and using them to sort file listings.  There may
+be a duality between relation directories and a file system with
+indexed attributes, like BeOS's BFS or a true file-is-a-directory
+system.
+
+One system has a relations directory stuffed with property values of
+a similar kind (such as short text descriptions for photos).  The
+directory implies the contents type (short text description), while
+the items also link to the thing they are expressing a relationship
+about (the photos).
+
+The other system treats the object (the photo file) both as readable
+data and as a directory with attribute-ish sub-things, like a sub-file
+containing the text description of the photo.  File types are done as
+meta-data (a couple of bytes attached to the object nodes), marking
+the photo as JPEG data and the description subfile as text.  For bonus
+points, the file type can also appear as a virtual child object to make
+accessing the file type the same as accessing other data (no new APIs
+needed).  Another advantage is that doing a directory listing of an
+object gives you all its relations too (multiple parent objects listed).
+
+
+Ordered Relations?
+
+Now how to do an ordered relation?  For example, say you have the
+shooting date for each photo as a property and you want to find
+all photos shot on a given day, or range of days.  Either system
+can be used to find them.
+
+With relations, look in the relation directory that stores shooting
+dates and sort by name (assuming that the naming of the items reflects
+the date).  Say, just how do you name the relation items?  You had
+aardvark and other animal names in your examples.  Should the actual
+value be used (like the whole photo description text) as a name?
+Or is the directory magically sorted by property value somehow?
+Or is the relation directory just a concept, not actually browsable?
+
+In the file/directory/attribute system, one of the file types would
+be "shooting date" and all files with that type would be automatically
+indexed, if you had created an index for "shooting date" earlier.  The
+index merely stores the relevant value (a date) and a link (inode number?)
+to the file.  To find the actual photo with a given date you'd have to
+find the parent of the attribute-ish subfile thing the index gives you.
+
+Come to think of it, if you display the index as a directory, you
+kind of have your relation directory.  I had that as a feature in
+AGMSRAMFileSystem, using the attribute values as the name of a
+symbolic link pointing to the related item.  But it didn't occur to
+me that it was like your relation directories until now.  Here's an
+example - the last modified index for all files.  The date is in
+microseconds for better sorting, and lack of time zone printing
+functions in the BeOS kernel:
+
+Fri May 27 20:12:36 24 /RAMDisk/.Indices>ls -l last_modified
+total 1497
+lrwxrwxrwx   0 agmsmith agmsmith        2 Sep 10  2001 1000158923000000 #604f52f8 -> /RAMDisk/PineappleData/news/Servers/NLZ/music.in_fidelity
+lrwxrwxrwx   0 agmsmith agmsmith        2 Sep 10  2001 1000159028000000 #6094a790 -> /RAMDisk/PineappleData/saved/Keepsakes/PM999697.pmf
+lrwxrwxrwx   0 agmsmith agmsmith        2 Sep 10  2001 1000172295000000 #608fb640 -> /RAMDisk/PineappleData/saved/Keepsakes/PM999685.pmf
+lrwxrwxrwx   0 agmsmith agmsmith        2 Sep 18  2001 1000849618000000 #60bd8278 -> /RAMDisk/mozilla/res/samples/toolbarTest1.xul
+lrwxrwxrwx   0 agmsmith agmsmith        2 Sep 18  2001 1000849618000000 #60edc108 -> /RAMDisk/mozilla/res/samples/scrollbarTest1.xul
+lrwxrwxrwx   0 agmsmith agmsmith        2 Sep 18  2001 1000849627000000 #608eb2e0 -> /RAMDisk/mozilla/res/samples/tab.xul
+...
+
+However, that brings up the extra power of queries.  In BeOS you can build
+a query string something like "ShootingDate=May 27 2005 & Location=*Home*"
+for all photos shot on May 27th at locations that contain the word "Home".
+It's a combination of relations.  Internally the simple query processor
+just finds the files matching one of the indices (Shooting Date would be
+the better choice since it is more constrained) then checks the resulting
+set of files against the rest of the query.
+
+If it's a duality, I suspect you'd be able to do something similar with
+your relation directories.  For that matter, I was planning to add a
+feature for showing query results as a virtual directory, so that queries
+would be available to ordinary file namespace programs, like "ls".
+Unfortunately the real world intervened and I had to end my sabbatical.
+Lots of nifty topics still waiting there for someone to research and
+implement!
+
+- Alex
