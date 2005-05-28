@@ -1,45 +1,50 @@
-From: "robby cunningham" <lisapthre@compudav.com>
-Subject: peak performance
-Date: Fri, 27 May 2005 19:26:26 +1000
-Message-ID: <8E83804B.4729B8A@compudav.com>
-Reply-To: "robby cunningham" <lisapthre@compudav.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: My reiserfs module crash...
+Date: Sat, 28 May 2005 10:10:42 +0400
+Message-ID: <1117260642.7263.214.camel@tribesman.namesys.com>
+References: <1117205926.7083.189.camel@tribesman.namesys.com>
+	 <200505271917.31290.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24183-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24184-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200505271917.31290.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Burma Rivera <bart@namesys.com>
-Cc: nikita@namesys.com, reiserfs-list@namesys.com, bompane@namesys.com
+To: Vitaly <vitaly@namesys.com>
+Cc: Greg Burri <greg@euphorik.ch>, reiserfs-list@namesys.com
 
-I've been using your product for 4 months now. I've increased my length from
-2 inches
-to nearly 6 inches. Your product has saved my sex life.-Matt, FL
+Hello
 
-My girlfriend loves the results, but she doesn't know what I do. She thinks
+On Fri, 2005-05-27 at 19:17, Vitaly wrote:
+> > Hi !
+> > I have done "debugreiserfs -p" to collect metadata .. .I take me about 
+> > 15 hours but its ok.
+> > I have put the file here :
+> > http://www.euphorik.ch/boardel/debugreiserfs_metadata.bz2 (23Mo)
+> 
+> unfortunately I have failed to unpack metadata, they got corrupted 
+> somehow, but I see at least that fs is not consistent and you need 
+> to run
+> 	reiserfsck --rebuild-tree -l logfile <device>
+> to fix it.
+> 
+> there is also a problem with reiserfs module crash on mounting 
+> such a partition,
 
-it's natural-Thomas, CA
+that is on mounting the partition before reiserfsck --rebuild-tree. When
+reiserfsck will complete - it should mount properly.
 
-Pleasure your partner every time with a bigger, longer, stronger  Unit
+>  we are working on the fix.
+>  
+> > I wish that someone can help me, I don't want to loose all my data :'(
+> > 
+> > bye !
+> > Thanks by advance
+> > 
+> > Greg Burri
+> 
 
-Realistic gains quickly
-
-
-http://suo.k3Y.greatitemsalesstore.com/0/
-to be a stud press here
-
-
-
-
-Anarchists? asked Rob, trembling with excitement
-It did her good to see how the braided man's eyes sparkled when he received
-this treasure
-
-Anarchists! answered the Demon, with a faint sneer, and he shut the cover
-of the Record with a sudden snap
-
-
-not for you, then use link above
