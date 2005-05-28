@@ -1,43 +1,48 @@
 From: Valdis.Kletnieks@vt.edu
-Subject: Re: peak performance
-Date: Sat, 28 May 2005 15:37:12 -0400
-Message-ID: <200505281937.j4SJbCU2009747@turing-police.cc.vt.edu>
-References: <8E83804B.4729B8A@compudav.com>
+Subject: Re: File as a directory - Ordered Relations
+Date: Sat, 28 May 2005 15:42:35 -0400
+Message-ID: <200505281942.j4SJgbpi009886@turing-police.cc.vt.edu>
+References: <6708893568-BeMail@cr593174-a>
+            <4297FA03.6050603@slaphack.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1117309031_6734P";
+Content-Type: multipart/signed; boundary="==_Exmh_1117309355_6734P";
 	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24190-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24191-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Fri, 27 May 2005 19:26:26 +1000."
-             <8E83804B.4729B8A@compudav.com> 
+In-Reply-To: Your message of "Fri, 27 May 2005 23:56:35 CDT."
+             <4297FA03.6050603@slaphack.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Burma Rivera <bart@namesys.com>, nikita@namesys.com, reiserfs-list@namesys.com, bompane@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: "Alexander G. M. Smith" <agmsmith@rogers.com>, Leo Comerford <leocomerford@gmail.com>, reiserfs-list@namesys.com
 
---==_Exmh_1117309031_6734P
+--==_Exmh_1117309355_6734P
 Content-Type: text/plain; charset=us-ascii
 
-On Fri, 27 May 2005 19:26:26 +1000, robby cunningham said:
-> I've been using your product for 4 months now. I've increased my length from
-> 2 inches
-> to nearly 6 inches. Your product has saved my sex life.-Matt, FL
+On Fri, 27 May 2005 23:56:35 CDT, David Masover said:
 
-I'm glad Reiserfs worked for him, but somehow I don't see Hans listing this
-one on the "Reiserfs success stories" page. ;)
+> Hans, comment please?  Is this approaching v5 / v6 / Future Vision?  It
+> does seem more than a little "clunky" when applied to v4...
 
---==_Exmh_1117309031_6734P
+I'm not Hans, but I *will* ask "How much of this is *rationally* doable
+without some help from the VFS?".  At the very least, some of this stuff
+will require the FS to tell the VFS to suspend its disbelief (for starters,
+doing this without confusing the VFS's concepts of dentries/inodes/reference
+counts is going to be.... interesting... :)
+
+--==_Exmh_1117309355_6734P
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 Comment: Exmh version 2.5 07/13/2001
 
-iD8DBQFCmMhncC3lWbTT17ARAh0rAJ93c5+V4lvGCzPpBhIpRFsKloHanACeNdQw
-0QNA3+qrz4P6yUhXsa0voCU=
-=f9eu
+iD8DBQFCmMmrcC3lWbTT17ARAlHGAJ4mUCjmWfcgMRfqp7+0SHLsS0HcHwCdGm13
+zsNLcU/2OpInh/5440DfrPY=
+=UU36
 -----END PGP SIGNATURE-----
 
---==_Exmh_1117309031_6734P--
+--==_Exmh_1117309355_6734P--
