@@ -1,50 +1,110 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: Problems with accessing directory
-Date: Sun, 29 May 2005 12:31:32 -0400
-Message-ID: <200505291631.j4TGVfCQ007511@turing-police.cc.vt.edu>
-References: <002101c0e85a$6faad060$8a455351@shanasola26yqz>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Subject: Re: File as a directory - VFS Changes
+Date: Sun, 29 May 2005 13:58:48 -0400 EDT
+Message-ID: <69914919964-BeMail@cr593174-a>
+References: <200505281942.j4SJgbpi009886@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1117384292_6734P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24201-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24203-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Tue, 29 May 2001 18:14:28 +0200."
-             <002101c0e85a$6faad060$8a455351@shanasola26yqz> 
+In-Reply-To: <200505281942.j4SJgbpi009886@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Webservice <info@webservice.be>
-Cc: reiserfs-list@namesys.com, Kurt Ghekiere <Kurt@ris.be>
+To: Valdis.Kletnieks@vt.edu
+Cc: leocomerford@gmail.com, reiserfs-list@namesys.com, ninja@slaphack.com
 
---==_Exmh_1117384292_6734P
-Content-Type: text/plain; charset=us-ascii
+Valdis.Kletnieks@vt.edu wrote on Sat, 28 May 2005 15:42:35 -0400:
+> I'm not Hans, but I *will* ask "How much of this is *rationally* doable
+> without some help from the VFS?".  At the very least, some of this stuff
+> will require the FS to tell the VFS to suspend its disbelief (for starters,
+> doing this without confusing the VFS's concepts of dentries/inodes/reference
+> counts is going to be.... interesting... :)
 
-On Tue, 29 May 2001 18:14:28 +0200, Webservice said:
+Good point.  One way would be to cram it into the existing VFS (the
+operating system's interface to file systems) as directories representing
+the objects, containing a specially named file for the raw data, mixed in
+with child items and symbolic links to parent objects.  Some inodes would
+be fake ones, geneated as needed to represent the old style view of the
+file / directory / attribute thing (such as the parent symbolic links).
 
-> When accessing a particulary directory, the systems hangs with a kernel
-> panic (mapping memory).
+But what would I (Hans likely has other views) like to see in a new VFS
+to support files / directories / attributes all being the same kind of
+object?  I'll talk about the user level API view of the VFS, rather than
+the flip side for file systems or the gritty VFS internals, since it
+doesn't need to be Linux specific.
 
-This will be a lot easier to diagnose with:
+For one, it would be almost the same as the existing VFS.  But when you
+open a fildirute-thing, you can use the same file handle to read and
+write its data and to list its children.
 
-The exact version of your kernel (uname -a), the version of reiserfsck,
-and the actual panic traceback (set up a serial console to catch it, or
-even take a picture with a digital camera if all else fails).
+Thus open() and opendir() are combined into plain open().  It takes a
+conventional hierarchical path (or later some of Hans Reiser's more
+sophisticated namespaces?).  Returns a file handle.
 
-Have you run 'badblocks' on the 4 md devices, to rule out an actual bad
-spot on the disk?
+The resulting file handle can be used with read(), write(), seek(),
+readdir(), rewinddir() and the rest of the usual directory and file
+basic operations.  And of course, close() it when you're done.
 
---==_Exmh_1117384292_6734P
-Content-Type: application/pgp-signature
+Stat() would disappear.  All the miscellaneous stat data would be
+stored as sub-files, things like the date last modified, access
+permissions and so on.  There would be a standard filename and file
+type for those metadata subfiles to distinguish them from user created
+subfiles (such as file/.meta.last_modified).  That also makes it
+easier to add new kinds of metadata.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+And that's about it for the basics.
 
-iD8DBQFCme5jcC3lWbTT17ARArYqAJ9P1EaXbHQ4ig7AOn8FlnKe4SzmeQCg9LB/
-6IFVRTSCfzP6rRkoFxvSI4M=
-=dq3L
------END PGP SIGNATURE-----
+Standard utilities, like "ls" would have to be changed to use the new
+object structure - listing the contents of a thing and avoiding
+recursion down paths that lead to parent objects (just like "ls"
+currently avoids listing ".." recursively).  That may involve more
+work than the kernel changes!
 
---==_Exmh_1117384292_6734P--
+I'd add a multi-read function to replace stat().  Give it a list of
+sub-file names to read and it returns their names and contents in a
+packed list (like a dirent structure).  That way bulk reading date
+stamps, permissions and other attributish small metadata as subfiles
+won't have as much overhead as opening then individually.  Particularly
+if under the hood they are stored as fields in the file's inode rather
+than as totally separate files (this is what BeOS's BFS does for small
+attributes).  Though conceptually you treat them as separate subfiles.
+
+I'd also like to add indexing.  That could be done by creating a magic
+directory with an associated file type to index.  Then whenever a file
+with that file type is changed, the index is updated using the file's
+contents as the key, and a link to the file as the value.  The file
+type also implies the interpretation of the values for sorting
+purposes - as strings, binary numbers, etc.  Unlike BeOS, I'd expose
+the indices directly (appearing as a directory full of hard links)
+and have query languages implemented in userland libraries that make
+use the indices, rather than as part of the file system.  Now should
+indices be system wide and maintained by the VFS, or per-volume and
+maintained by the file system?  How about indices for things on network
+drives?  Things on public web sites for a web-view file system?
+
+I'd also like to add change notification.  If a file system object's
+child list changes, then a notification message gets sent to interested
+listeners.  Similarly for an object's data content change.  BeOS had
+useful notifications for live changes to a query - I'd punt this to
+the userland query library and have it build on the change notifications
+from an index directory.  The VFS and other parts of the OS would need
+to support change notification (BeOS used inter-process message queues).
+
+Can a file-as-directory system fit into Linux, or some other OS?
+I expect that it will only happen if the new system also exposes a
+backwards compatible view for old software, using the old APIs.
+After that's done, the first big user program that needs to be
+updated is the desktop file browser.  Once there's a good GUI for
+browsing file-as-directory file systems, the general public might
+become more aware of their advantages (easily drilling down inside
+files to attach a description subfile or add a bunch of MP3 tags,
+magic query directories and indexing to find things quickly, multiple
+parents to put the same file in multiple folders without the
+breakability of symbolic links or Mac aliases).  Then I can sit back
+and enjoy using the system rather than spending all this time debating
+and implementing it :-).
+
+- Alex
