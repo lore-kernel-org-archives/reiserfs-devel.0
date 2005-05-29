@@ -1,59 +1,38 @@
-From: Christian Iversen <chrivers@iversen-net.dk>
-Subject: Re: peak performance
-Date: Sun, 29 May 2005 00:59:13 +0200
-Message-ID: <200505290059.19126.chrivers@iversen-net.dk>
-References: <8E83804B.4729B8A@compudav.com> <200505281937.j4SJbCU2009747@turing-police.cc.vt.edu> <4298C9D6.8000406@darthvader.us>
+From: Domenico Andreoli <cavok@tiscali.it>
+Subject: Fwd: Bug#309512: reiserfsprogs: Typo in reiserfstune manpage
+Date: Sun, 29 May 2005 16:38:04 +0200
+Message-ID: <20050529143804.GA32515@raptus.dandreoli.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart2001478.i8CiuCfKkb";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24194-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24199-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4298C9D6.8000406@darthvader.us>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
---nextPart2001478.i8CiuCfKkb
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+cheers
+domenico
 
-On Saturday 28 May 2005 21:43, Jander wrote:
-> Valdis.Kletnieks@vt.edu wrote:
-> >On Fri, 27 May 2005 19:26:26 +1000, robby cunningham said:
-> >>I've been using your product for 4 months now. I've increased my length
-> >> from 2 inches
-> >>to nearly 6 inches. Your product has saved my sex life.-Matt, FL
-> >
-> >I'm glad Reiserfs worked for him, but somehow I don't see Hans listing
-> > this one on the "Reiserfs success stories" page. ;)
->
-> hahahaha fantastic!
-> And why not? Imagine something like..
->
-> "Reiserfs: for those of us who are filesystem challenged"
 
-"Reiserfs: Makes fsck'ing feel good again"
+----- Forwarded message from Dennis Brakhane <dennis@fsmath.zbt.uni-heidelberg.de> -----
 
-=2D-=20
-Regards,
-Christian Iversen
+Date: Tue, 17 May 2005 19:46:56 +0200
+From: Dennis Brakhane <dennis@fsmath.zbt.uni-heidelberg.de>
+Subject: Bug#309512: reiserfsprogs: Typo in reiserfstune manpage
 
---nextPart2001478.i8CiuCfKkb
-Content-Type: application/pgp-signature
+Package: reiserfsprogs
+Version: 1:3.6.19-1
+Severity: minor
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
+The manpage describes reiserfstune as a "tunning" tool.
 
-iD8DBQBCmPfHx+vwx6XMZWwRAoVfAKDc6hpoD8jwNPEpMDROUUsd9ykTIwCfe2l/
-pnybrXG/9u8mkgekyn2jKMQ=
-=+2lU
------END PGP SIGNATURE-----
+----- End forwarded message -----
 
---nextPart2001478.i8CiuCfKkb--
+
+-----[ Domenico Andreoli, aka cavok
+ --[ http://people.debian.org/~cavok/gpgkey.asc
+   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
