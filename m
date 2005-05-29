@@ -1,56 +1,50 @@
-From: "Webservice" <info@webservice.be>
-Subject: Problems with accessing directory
-Date: Tue, 29 May 2001 18:14:28 +0200
-Message-ID: <002101c0e85a$6faad060$8a455351@shanasola26yqz>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Problems with accessing directory
+Date: Sun, 29 May 2005 12:31:32 -0400
+Message-ID: <200505291631.j4TGVfCQ007511@turing-police.cc.vt.edu>
+References: <002101c0e85a$6faad060$8a455351@shanasola26yqz>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1117384292_6734P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24200-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24201-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: Your message of "Tue, 29 May 2001 18:14:28 +0200."
+             <002101c0e85a$6faad060$8a455351@shanasola26yqz> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Kurt Ghekiere <Kurt@ris.be>
+To: Webservice <info@webservice.be>
+Cc: reiserfs-list@namesys.com, Kurt Ghekiere <Kurt@ris.be>
 
-After a new build off a server we keep getting problems with it.
-The server is in software raid-1 (mirroring) with slackware 10.1 and
-reiserfs.
+--==_Exmh_1117384292_6734P
+Content-Type: text/plain; charset=us-ascii
 
-When accessing a particulary directory, the systems hangs with a kernel
-panic (mapping memory).
-Memory has been changed twice without any effect.
+On Tue, 29 May 2001 18:14:28 +0200, Webservice said:
 
-When starting up the machine we got lot (hundreds) of thes messages:
-md:reiserfsck (pid 106) used obsolete MD ioctl,  upgrade your software to
-use new
-ictls.
-Then machine boots further, and it works normally until we access a
-perticulair directory.
-The server reboots or hangs with a kernel panic (mapping virtual memory)
-Switching to init 1 and then reiserfsck --rebuild-tree reports errors which
-can be fixed, but the problems still remains.
+> When accessing a particulary directory, the systems hangs with a kernel
+> panic (mapping memory).
 
-/proc/mdstat gives no errors
-Personalities : [linear] [raid0] [raid1] [raid5]
-read_ahead 1024 sectors
-md0 : active raid1 sdb2[1] sda2[0]
-      19542976 blocks [2/2] [UU]
+This will be a lot easier to diagnose with:
 
-md1 : active raid1 sdb3[1] sda3[0]
-      19542976 blocks [2/2] [UU]
+The exact version of your kernel (uname -a), the version of reiserfsck,
+and the actual panic traceback (set up a serial console to catch it, or
+even take a picture with a digital camera if all else fails).
 
-md2 : active raid1 sdb5[1] sda5[0]
-      19542976 blocks [2/2] [UU]
+Have you run 'badblocks' on the 4 md devices, to rule out an actual bad
+spot on the disk?
 
-md3 : active raid1 sdb6[1] sda6[0]
-      17293824 blocks [2/2] [UU]
+--==_Exmh_1117384292_6734P
+Content-Type: application/pgp-signature
 
-unused devices: <none>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-any ideas?
+iD8DBQFCme5jcC3lWbTT17ARArYqAJ9P1EaXbHQ4ig7AOn8FlnKe4SzmeQCg9LB/
+6IFVRTSCfzP6rRkoFxvSI4M=
+=dq3L
+-----END PGP SIGNATURE-----
 
-
-Thx in advandce...
-
+--==_Exmh_1117384292_6734P--
