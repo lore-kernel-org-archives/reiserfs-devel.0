@@ -1,110 +1,69 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Subject: Re: File as a directory - VFS Changes
-Date: Sun, 29 May 2005 13:58:48 -0400 EDT
-Message-ID: <69914919964-BeMail@cr593174-a>
-References: <200505281942.j4SJgbpi009886@turing-police.cc.vt.edu>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Problems with accessing directory
+Date: Sun, 29 May 2005 14:05:04 -0400
+Message-ID: <200505291805.j4TI562Y010885@turing-police.cc.vt.edu>
+References: <6445A33351733A49B99193A797803D7C0C7631@sbs.RIS.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; boundary="==_Exmh_1117389903_6734P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24203-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24204-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200505281942.j4SJgbpi009886@turing-police.cc.vt.edu>
+In-Reply-To: Your message of "Sun, 29 May 2005 18:44:02 +0200."
+             <6445A33351733A49B99193A797803D7C0C7631@sbs.RIS.local> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Valdis.Kletnieks@vt.edu
-Cc: leocomerford@gmail.com, reiserfs-list@namesys.com, ninja@slaphack.com
+To: Kurt Ghekiere <Kurt@ris.be>
+Cc: Webservice <info@webservice.be>, reiserfs-list@namesys.com
 
-Valdis.Kletnieks@vt.edu wrote on Sat, 28 May 2005 15:42:35 -0400:
-> I'm not Hans, but I *will* ask "How much of this is *rationally* doable
-> without some help from the VFS?".  At the very least, some of this stuff
-> will require the FS to tell the VFS to suspend its disbelief (for starters,
-> doing this without confusing the VFS's concepts of dentries/inodes/reference
-> counts is going to be.... interesting... :)
+--==_Exmh_1117389903_6734P
+Content-Type: text/plain; charset=us-ascii
 
-Good point.  One way would be to cram it into the existing VFS (the
-operating system's interface to file systems) as directories representing
-the objects, containing a specially named file for the raw data, mixed in
-with child items and symbolic links to parent objects.  Some inodes would
-be fake ones, geneated as needed to represent the old style view of the
-file / directory / attribute thing (such as the parent symbolic links).
+On Sun, 29 May 2005 18:44:02 +0200, Kurt Ghekiere said:
 
-But what would I (Hans likely has other views) like to see in a new VFS
-to support files / directories / attributes all being the same kind of
-object?  I'll talk about the user level API view of the VFS, rather than
-the flip side for file systems or the gritty VFS internals, since it
-doesn't need to be Linux specific.
+> May 29 17:28:51 mail3 kernel: Process hax0r (pid: 3738,
+> stackpage=f121b000)
+> May 29 17:28:51 mail3 kernel: Stack: 00000000 bfffffe5 00001000 f63b6000
+> bfffe7f0 f63b6000 bffff8e4 00000000
+> May 29 17:28:51 mail3 kernel:        f78aaf22 00000a3a 00000020 f121a000
+> c0108a93 0000000b bfffe7f0 f78a99a1
+> May 29 17:28:51 mail3 kernel:        00000000 00000000 00000000 00000000
+> 00000000 00000000 00000000 00000000
+> May 29 17:28:51 mail3 kernel: Call Trace:    [<c0108a93>]
+> May 29 17:28:51 mail3 kernel:
+> May 29 17:28:51 mail3 kernel: Code: 8a 02 84 c0 75 ef e8 9c ec ff ff 89
+> c2 80 3a 00 0f 84 bb 00
 
-For one, it would be almost the same as the existing VFS.  But when you
-open a fildirute-thing, you can use the same file handle to read and
-write its data and to list its children.
+Interesting process name indeed. Hopefully you recognize it? ;)
 
-Thus open() and opendir() are combined into plain open().  It takes a
-conventional hierarchical path (or later some of Hans Reiser's more
-sophisticated namespaces?).  Returns a file handle.
+I would suggest running the call trace through ksymoops, but it's so short that
+we've quite obviously clobbered the stack to the point that ksymoops won't tell
+us anything useful.
 
-The resulting file handle can be used with read(), write(), seek(),
-readdir(), rewinddir() and the rest of the usual directory and file
-basic operations.  And of course, close() it when you're done.
+I'd investigate why you get all those insmod errors - why is the system trying
+to load pciehp and hw_random if there's no device?  Alternatively, are other
+modules getting loaded incorrectly and blocking those from starting? It's
+possible that if your kernel and modules are out of sync, that Bad Things like
+panics happen....
 
-Stat() would disappear.  All the miscellaneous stat data would be
-stored as sub-files, things like the date last modified, access
-permissions and so on.  There would be a standard filename and file
-type for those metadata subfiles to distinguish them from user created
-subfiles (such as file/.meta.last_modified).  That also makes it
-easier to add new kinds of metadata.
+You probably should look at upgrading the userspace reiserfsck and MD/LVM tools
+- your kernel seems unhappy with the old versions.
 
-And that's about it for the basics.
+Other than that, I admit to not having any clear "AHA! THAT's their problem"
+solution, sorry....
 
-Standard utilities, like "ls" would have to be changed to use the new
-object structure - listing the contents of a thing and avoiding
-recursion down paths that lead to parent objects (just like "ls"
-currently avoids listing ".." recursively).  That may involve more
-work than the kernel changes!
+--==_Exmh_1117389903_6734P
+Content-Type: application/pgp-signature
 
-I'd add a multi-read function to replace stat().  Give it a list of
-sub-file names to read and it returns their names and contents in a
-packed list (like a dirent structure).  That way bulk reading date
-stamps, permissions and other attributish small metadata as subfiles
-won't have as much overhead as opening then individually.  Particularly
-if under the hood they are stored as fields in the file's inode rather
-than as totally separate files (this is what BeOS's BFS does for small
-attributes).  Though conceptually you treat them as separate subfiles.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-I'd also like to add indexing.  That could be done by creating a magic
-directory with an associated file type to index.  Then whenever a file
-with that file type is changed, the index is updated using the file's
-contents as the key, and a link to the file as the value.  The file
-type also implies the interpretation of the values for sorting
-purposes - as strings, binary numbers, etc.  Unlike BeOS, I'd expose
-the indices directly (appearing as a directory full of hard links)
-and have query languages implemented in userland libraries that make
-use the indices, rather than as part of the file system.  Now should
-indices be system wide and maintained by the VFS, or per-volume and
-maintained by the file system?  How about indices for things on network
-drives?  Things on public web sites for a web-view file system?
+iD8DBQFCmgRPcC3lWbTT17ARAvAlAJ0ZhEl2ZdQIKYrwnc8lpTBLsbVfWQCgvUyl
+2DoyGqYWKRCrWLjOIXkUhTk=
+=lim8
+-----END PGP SIGNATURE-----
 
-I'd also like to add change notification.  If a file system object's
-child list changes, then a notification message gets sent to interested
-listeners.  Similarly for an object's data content change.  BeOS had
-useful notifications for live changes to a query - I'd punt this to
-the userland query library and have it build on the change notifications
-from an index directory.  The VFS and other parts of the OS would need
-to support change notification (BeOS used inter-process message queues).
-
-Can a file-as-directory system fit into Linux, or some other OS?
-I expect that it will only happen if the new system also exposes a
-backwards compatible view for old software, using the old APIs.
-After that's done, the first big user program that needs to be
-updated is the desktop file browser.  Once there's a good GUI for
-browsing file-as-directory file systems, the general public might
-become more aware of their advantages (easily drilling down inside
-files to attach a description subfile or add a bunch of MP3 tags,
-magic query directories and indexing to find things quickly, multiple
-parents to put the same file in multiple folders without the
-breakability of symbolic links or Mac aliases).  Then I can sit back
-and enjoy using the system rather than spending all this time debating
-and implementing it :-).
-
-- Alex
+--==_Exmh_1117389903_6734P--
