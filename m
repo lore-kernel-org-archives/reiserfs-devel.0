@@ -1,88 +1,84 @@
-From: Nikita Danilov <nikita@clusterfs.com>
-Subject: Re: File as a directory - VFS Changes
-Date: Mon, 30 May 2005 15:00:52 +0400
-Message-ID: <17050.62052.318426.711322@gargle.gargle.HOWL>
-References: <200505281942.j4SJgbpi009886@turing-police.cc.vt.edu>
-	<69914919964-BeMail@cr593174-a>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Reiserfs 1300G partition on lvm problem ...
+Date: Mon, 30 May 2005 03:37:12 -0400
+Message-ID: <200505300737.j4U7bDKj002829@turing-police.cc.vt.edu>
+References: <1117392967.29669.ezmlm@namesys.com> <429A1742.8030504@mh.be> <200505292137.j4TLbarw017197@turing-police.cc.vt.edu>
+            <429AAFDC.4050208@mh.be>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1117438632_30818P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24216-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24219-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <69914919964-BeMail@cr593174-a>
+In-Reply-To: Your message of "Mon, 30 May 2005 08:17:00 +0200."
+             <429AAFDC.4050208@mh.be> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Cc: leocomerford@gmail.com, reiserfs-list@namesys.com, ninja@slaphack.com
+To: Matthias Barremaecker <info@mh.be>
+Cc: reiserfs-list@namesys.com
 
-Alexander G. M. Smith writes:
- > Valdis.Kletnieks@vt.edu wrote on Sat, 28 May 2005 15:42:35 -0400:
- > > I'm not Hans, but I *will* ask "How much of this is *rationally* doable
- > > without some help from the VFS?".  At the very least, some of this stuff
- > > will require the FS to tell the VFS to suspend its disbelief (for starters,
- > > doing this without confusing the VFS's concepts of dentries/inodes/reference
- > > counts is going to be.... interesting... :)
- > 
- > Good point.  One way would be to cram it into the existing VFS (the
- > operating system's interface to file systems) as directories representing
- > the objects, containing a specially named file for the raw data, mixed in
- > with child items and symbolic links to parent objects.  Some inodes would
- > be fake ones, geneated as needed to represent the old style view of the
- > file / directory / attribute thing (such as the parent symbolic links).
- > 
- > But what would I (Hans likely has other views) like to see in a new VFS
- > to support files / directories / attributes all being the same kind of
- > object?  I'll talk about the user level API view of the VFS, rather than
- > the flip side for file systems or the gritty VFS internals, since it
- > doesn't need to be Linux specific.
- > 
- > For one, it would be almost the same as the existing VFS.  But when you
- > open a fildirute-thing, you can use the same file handle to read and
- > write its data and to list its children.
+--==_Exmh_1117438632_30818P
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-This is doable with the current VFS.
+On Mon, 30 May 2005 08:17:00 +0200, Matthias Barremaecker said:
 
- > 
- > Thus open() and opendir() are combined into plain open().  It takes a
- > conventional hierarchical path (or later some of Hans Reiser's more
- > sophisticated namespaces?).  Returns a file handle.
+> I did a bad block check and I have 10 bad blocks of 4096bytes on 1300Gi=
+g=20
+> and ... that is the reason reiserfs will not work anymore.
 
-opendir(3) is user level function. It calls open(2) system
-call. telldir(3) and seekdir(3) also are functions that call lseek(2)
-under the hood.
+> I guess this sux. I rather have that the data on the bad blocks is just=
+=20
+> corupted but the rest is accesseble.
 
- > 
- > The resulting file handle can be used with read(), write(), seek(),
- > readdir(), rewinddir() and the rest of the usual directory and file
- > basic operations.  And of course, close() it when you're done.
+It all depends on which 10 blocks go bad.  If it's a block that's allocat=
+ed to
+a file, you lose the 4K or whatever that's in that block.
 
-Nothing in VFS prevents files from supporting both read(2) and
-readdir(3). The problem is with link(2): VFS assumes that directories
-form _tree_, that is, every directory has well-defined parent.
+If it's a block that an inode lives in, you're probably going to have the=
 
- > 
- > Stat() would disappear.  All the miscellaneous stat data would be
- > stored as sub-files, things like the date last modified, access
- > permissions and so on.  There would be a standard filename and file
- > type for those metadata subfiles to distinguish them from user created
- > subfiles (such as file/.meta.last_modified).  That also makes it
- > easier to add new kinds of metadata.
- > 
- > And that's about it for the basics.
+entire file evaporate.
 
-Problem with that is that in "/etc/passwd/..foo-meta-thing"
-"/etc/passwd" is both regular (possibly with multiple names), and
-directory at the same time, which is problem for VFS, see above. Read
-Documentation/filesystems/directory-locking and imagine the following:
+If it's a block that contains something even more important, you're going=
+ to
+have large sections of the file system evaporate.
 
-$ touch a
-$ ln a b
-$ mv a/..uid b/..uid
+It's a tradeoff issue - how many times do you replicate metadata on the
+filesystem, against how well the file system deals with errors.  The prob=
+lem is
+that if you just say =22let's have 2 copies of everything, just in case=
+=22, it
+takes a lot more disk space to *store* 2 copies of the metadata.  Also, y=
+our
+disk performance falls through the floor - most journalled filesystems ha=
+ve
+enough trouble making sure that *one* copy of things like the free list i=
+s on
+disk and consistent with the journal.  Making 2 copies is going to probab=
+ly
+triple your disk I/O and complicate matters a *lot* for fsck (if you cras=
+h and
+the two copies aren't consistent, which one do you believe?)
 
-(and yes, rename had to lock parent directories _before_ ever calling
-into file system back-end, so reiser4 code cannot somehow magically hint
-VFS that "a" and "b" are to be treated in a special way).
+That's why almost all filesystems designers just punt and assume that the=
+ media
+actually works, and suggest if your media might not be 100% reliable, tha=
+t you
+use RAID or similar solutions....
 
-Nikita.
+
+--==_Exmh_1117438632_30818P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFCmsKocC3lWbTT17ARAkWKAJ9k3aQfB+h65gyluQVnyJM7fG1vZQCfZdnc
+vBler02IAAJLmis2zqzAkww=
+=LxuH
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1117438632_30818P--
