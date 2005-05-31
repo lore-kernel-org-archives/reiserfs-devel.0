@@ -1,43 +1,32 @@
-From: "Christian" <evilninja@gmx.net>
-Subject: Re: Reiserfs 1300G partition on lvm problem ...
-Date: Tue, 31 May 2005 19:31:38 +0200 (CEST)
-Message-ID: <57566.195.126.66.126.1117560698.squirrel@housecafe.dyndns.org>
-References: <1117392967.29669.ezmlm@namesys.com>           
-    <429A1742.8030504@mh.be>
-    <200505292137.j4TLbarw017197@turing-police.cc.vt.edu>
-    <429AAFDC.4050208@mh.be> <429C6BE8.4090906@teleformix.com>
-    <429C7153.8000008@mh.be> <429C7E46.9090507@teleformix.com>
+From: ADT <synfinatic@gmail.com>
+Subject: Reiser4/Encryption plugin stability?
+Date: Tue, 31 May 2005 11:14:24 -0700
+Message-ID: <1ca1c141050531111473c21891@mail.gmail.com>
+Reply-To: ADT <synfinatic@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-24239-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-24240-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <429C7E46.9090507@teleformix.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Dan Oglesby <doglesby@teleformix.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Tue, May 31, 2005 17:09, Dan Oglesby said:
->
-> So far, I haven't seen any bad blocks written to my output file.  I'm
-> not in front of the machine (remote location), so I can't see what's on
-> the console, where I'm actually running the command.
+Hi everyone,
 
-use screendump(1) to see what's on the console. it comes in a package
-called "console-tools" here.
+I'm looking into using reiser4 and it's encryption plugin on a number
+of new CentOS4 servers I will be building.  I've been doing various
+searches via google and the list archives, and I've seen a few emails
+from last year which indicated that the encryption plugin wasn't yet
+ready for primetime but it would be "soon".
 
-> with the power outage in a sane manner.  The last reiserfsck failed
-> after a day of running, so I'm thinking if I have a problem, it's
-> towards the end of my array.  Time will tell.
+Any chance I could get a status update? =20
 
-sorry if i missed the rest of the thread: please make sure you're using
-the latest version of reiserfsprogs.
+Thanks,
+Aaron
 
-...my 2 cents,
-Christian.
--- 
-make bzImage, not war
-
+--=20
+http://synfin.net/
