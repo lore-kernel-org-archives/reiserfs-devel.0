@@ -1,40 +1,34 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: File as a directory - VFS Changes
-Date: Tue, 31 May 2005 09:59:37 -0700
-Message-ID: <429C97F9.8000009@namesys.com>
-References: <17050.62052.318426.711322@gargle.gargle.HOWL>	 <75229416615-BeMail@cr593174-a>	 <17052.12223.708707.757538@gargle.gargle.HOWL>	 <429C7D0A.6040200@namesys.com>	 <200505311630.j4VGUeIt007432@turing-police.cc.vt.edu> <1117558515.13252.21.camel@localhost>
+Subject: Re: File as a directory - Ordered Relations
+Date: Tue, 31 May 2005 10:07:04 -0700
+Message-ID: <429C99B8.7040400@namesys.com>
+References: <6708893568-BeMail@cr593174-a> <4297FA03.6050603@slaphack.com>	 <200505281942.j4SJgbpi009886@turing-police.cc.vt.edu>	 <429ACC7E.4040101@namesys.com> <1117557975.13252.12.camel@localhost>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24236-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24237-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1117558515.13252.21.camel@localhost>
+In-Reply-To: <1117557975.13252.12.camel@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Jonathan Briggs <jbriggs@esoft.com>
-Cc: Valdis.Kletnieks@vt.edu, Nikita Danilov <nikita@clusterfs.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>, leocomerford@gmail.com, reiserfs-list@namesys.com, ninja@slaphack.com
-
-What happens when you unlink the True Name?
-
-Hans
+Cc: Valdis.Kletnieks@vt.edu, David Masover <ninja@slaphack.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>, Leo Comerford <leocomerford@gmail.com>, reiserfs-list@namesys.com
 
 Jonathan Briggs wrote:
 
 >
->You can avoid cycles by redefining the problem.
+>Why innovate in the filesystem though, when it would work just as well
+>or better in the VFS layer?
 >
->Every file or "data object" has one single True Name which is their
->inode or OID.  Each data object then has one or more "names" as
->properties.  Names are either single strings with slash separators for
->directories, or each directory element is a unique object in an object
->list.  Directories then become queries that return the set of objects
->holding that directory name.  The query results are of course cached and
->updated whenever a name property changes.
->
->Now there are no cycles, although a naive Unix "find" program could get
->stuck in a loop.
->  
->
+Why don't we just have one filesystem, think of the advantages.....
+;-)
 
+I don't try to get other people to follow my lead anymore, I just ship
+code that works.  Putting it into VFS requires getting others to follow
+my lead.  Ain't gonna happen.  Getting them to leave me alone to
+innovate in my corner of the kernel?  Might happen if I fight for it,
+but it will be a real struggle.
+
+Hans
