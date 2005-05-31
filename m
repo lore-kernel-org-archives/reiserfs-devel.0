@@ -1,58 +1,84 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: File as a directory - VFS Changes
-Date: Tue, 31 May 2005 12:30:40 -0400
-Message-ID: <200505311630.j4VGUeIt007432@turing-police.cc.vt.edu>
-References: <17050.62052.318426.711322@gargle.gargle.HOWL> <75229416615-BeMail@cr593174-a> <17052.12223.708707.757538@gargle.gargle.HOWL>
-            <429C7D0A.6040200@namesys.com>
+From: Jonathan Briggs <jbriggs@esoft.com>
+Subject: Re: File as a directory - Ordered Relations
+Date: Tue, 31 May 2005 10:46:15 -0600
+Message-ID: <1117557975.13252.12.camel@localhost>
+References: <6708893568-BeMail@cr593174-a> <4297FA03.6050603@slaphack.com>
+	 <200505281942.j4SJgbpi009886@turing-police.cc.vt.edu>
+	 <429ACC7E.4040101@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1117557039_3502P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24232-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-lAjjqoJ3KmHKBjWZrM3j"
+Return-path: <reiserfs-list-return-24234-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Tue, 31 May 2005 08:04:42 PDT."
-             <429C7D0A.6040200@namesys.com> 
+In-Reply-To: <429ACC7E.4040101@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Hans Reiser <reiser@namesys.com>
-Cc: Nikita Danilov <nikita@clusterfs.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>, leocomerford@gmail.com, reiserfs-list@namesys.com, ninja@slaphack.com
+Cc: Valdis.Kletnieks@vt.edu, David Masover <ninja@slaphack.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>, Leo Comerford <leocomerford@gmail.com>, reiserfs-list@namesys.com
 
---==_Exmh_1117557039_3502P
-Content-Type: text/plain; charset=us-ascii
+--=-lAjjqoJ3KmHKBjWZrM3j
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 31 May 2005 08:04:42 PDT, Hans Reiser said:
-
-> >Cycle may consists of more graph nodes than fits into memory. 
+On Mon, 2005-05-30 at 01:19 -0700, Hans Reiser wrote:
+> Valdis.Kletnieks@vt.edu wrote:
+>=20
+> >On Fri, 27 May 2005 23:56:35 CDT, David Masover said:
 > >
-> There are pathname length restrictions already in the kernel that should
-> prevent that, yes?
+> > =20
+> >
+> >>Hans, comment please?  Is this approaching v5 / v6 / Future Vision?  It
+> >>does seem more than a little "clunky" when applied to v4...
+> >>   =20
+> >>
+> Well, if you read our whitepaper, we consider relational algebra to be a
+> functional subset of what we will implement (which implies we think
+> relational algebra should be possible in the filesystem naming.)
+>=20
+> >
+> >I'm not Hans, but I *will* ask "How much of this is *rationally* doable
+> >without some help from the VFS?".
+> >
+> Think of VFS as a standards committee.  That means that 5-15 years after
+> we implement it, they will copy it, break it, and then demand that we
+> conform to their breakage.=20
+>=20
+> Anytimes someone says it should go into VFS, what they really mean is,
+> nobody should get ahead of them because it will increase their workload.;=
+-)
+>=20
+> VFS is a baseline.  Once you support VFS, and your performance is good,
+> you can start to innovate.  Next year we finally start to seriously
+> innovate, after 10 years of groundwork.  The storage layer was never the
+> interesting part of our plans, not to me.....
 
-The problem is that although a *single* pathname can't be longer than some
-length, you can still create a cycle.  Consider for instance a pathname restriction
-of 1024 chars.  Filenames A, B, and C are all 400 characters long.  A points at B,
-B points at C - and C points back to A.
+Why innovate in the filesystem though, when it would work just as well
+or better in the VFS layer?  Files as directories and meta-files would
+work for all filesystems.  Ext3 with extended attributes could support
+the same file structures as Reiser4.  Reiser4 would then be the most
+efficient implementation of the general case.
 
-Also, although the set of inodes *in the cycle* fits in memory, the set of
-inodes *in the entire graph* that has to be searched to verify the presence of
-a cycle may not (in general, you have to be ready to examine *all* the inodes
-unless you can do some pruning (unallocated, provably un-cycleable, and so
-on)).  THis is the sort of thing that you can afford to do in userspace during
-an fsck, but certainly can't do in the kernel on every syscall that might
-create a cycle...
+=46rom the last LKML discussion, it didn't look to me as if the kernel
+maintainers are going to accept Reiser4's stranger features into the
+mainline kernel, so if you're going to be implementing and maintaining
+them separately anyway, why not do it in the implementation of all
+namespaces, in the VFS code?
+--=20
+Jonathan Briggs <jbriggs@esoft.com>
+eSoft, Inc.
 
-
---==_Exmh_1117557039_3502P
-Content-Type: application/pgp-signature
+--=-lAjjqoJ3KmHKBjWZrM3j
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
 
-iD8DBQFCnJEvcC3lWbTT17ARAh/DAKCua5UxAjLfp7fKlWLiCfCA625PwQCfWHUj
-FOSC4vKdMyjvRgv9mK1X77g=
-=89cD
+iD8DBQBCnJTXG8fHaOLTWwgRAg6LAJ0YdjJpz1/3NRBW9B9FGi32ZnsWhwCeOib0
+io91LuNR+0K6mpIKCyhH/bs=
+=j7zG
 -----END PGP SIGNATURE-----
 
---==_Exmh_1117557039_3502P--
+--=-lAjjqoJ3KmHKBjWZrM3j--
+
