@@ -1,92 +1,68 @@
-From: Nikita Danilov <nikita@clusterfs.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: File as a directory - VFS Changes
-Date: Tue, 31 May 2005 22:23:33 +0400
-Message-ID: <17052.43941.64870.716568@gargle.gargle.HOWL>
-References: <17050.62052.318426.711322@gargle.gargle.HOWL>
-	<75229416615-BeMail@cr593174-a>
-	<17052.12223.708707.757538@gargle.gargle.HOWL>
-	<429C7D0A.6040200@namesys.com>
-	<200505311630.j4VGUeIt007432@turing-police.cc.vt.edu>
-	<1117558515.13252.21.camel@localhost>
+Date: Tue, 31 May 2005 11:27:18 -0700
+Message-ID: <429CAC86.3080308@namesys.com>
+References: <17050.62052.318426.711322@gargle.gargle.HOWL>	 <75229416615-BeMail@cr593174-a>	 <17052.12223.708707.757538@gargle.gargle.HOWL>	 <429C7D0A.6040200@namesys.com>	 <200505311630.j4VGUeIt007432@turing-police.cc.vt.edu>	 <1117558515.13252.21.camel@localhost>  <429C97F9.8000009@namesys.com> <1117559594.13252.26.camel@localhost>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24241-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24242-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1117558515.13252.21.camel@localhost>
+In-Reply-To: <1117559594.13252.26.camel@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Jonathan Briggs <jbriggs@esoft.com>
-Cc: Valdis.Kletnieks@vt.edu, Hans Reiser <reiser@namesys.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>, leocomerford@gmail.com, reiserfs-list@namesys.com, ninja@slaphack.com
+Cc: Valdis.Kletnieks@vt.edu, Nikita Danilov <nikita@clusterfs.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>, leocomerford@gmail.com, reiserfs-list@namesys.com, ninja@slaphack.com, Nate Diller <ndiller@namesys.com>
 
-Jonathan Briggs writes:
- > On Tue, 2005-05-31 at 12:30 -0400, Valdis.Kletnieks@vt.edu wrote:
- > > On Tue, 31 May 2005 08:04:42 PDT, Hans Reiser said:
- > > 
- > > > >Cycle may consists of more graph nodes than fits into memory. 
- > > > >
- > > > There are pathname length restrictions already in the kernel that should
- > > > prevent that, yes?
- > > 
- > > The problem is that although a *single* pathname can't be longer than some
- > > length, you can still create a cycle.  Consider for instance a pathname restriction
- > > of 1024 chars.  Filenames A, B, and C are all 400 characters long.  A points at B,
- > > B points at C - and C points back to A.
- > > 
- > > Also, although the set of inodes *in the cycle* fits in memory, the set of
- > > inodes *in the entire graph* that has to be searched to verify the presence of
- > > a cycle may not (in general, you have to be ready to examine *all* the inodes
- > > unless you can do some pruning (unallocated, provably un-cycleable, and so
- > > on)).  THis is the sort of thing that you can afford to do in userspace during
- > > an fsck, but certainly can't do in the kernel on every syscall that might
- > > create a cycle...
- > 
- > You can avoid cycles by redefining the problem.
- > 
- > Every file or "data object" has one single True Name which is their
- > inode or OID.  Each data object then has one or more "names" as
- > properties.  Names are either single strings with slash separators for
- > directories, or each directory element is a unique object in an object
- > list.  Directories then become queries that return the set of objects
- > holding that directory name.  The query results are of course cached and
- > updated whenever a name property changes.
- > 
- > Now there are no cycles, although a naive Unix "find" program could get
- > stuck in a loop.
+Well,. if you allow multiple true names, then you start to resemble
+something I suggested a few years ago, in which I outlined a taxonomy of
+links, and suggested that some links would count towards the reference
+count and some would not.
 
-Huh? Cycles are still here.
+Of course, that does nothing for the cycle problem......
 
-Query D0 returns D1, query D1 returns D2, ... query DN returns D0. The
-problem is not in the mechanism used to encode tree/graph structure. The
-problem is in the limitations imposed by required semantics:
+How are cycles handled for symlinks currently?
 
-   (R) every object except some selected root is Reachable. (No leaks.)
+Hans
 
-   (G) unused objects are sooner or later discarded. (Garbage
-   collection.)
+Jonathan Briggs wrote:
 
-Neither requirement is compatible with cycles in the directory
-structure:
+>Either that isn't allowed, or it immediately vanishes from all
+>directories.
+>
+>If deleting by OID isn't allowed, then every name property must be
+>removed in order to delete the file.
+>
+>Personally, I would allow deleting the OID.  It would be a convenient
+>way to be sure every instance of a file was deleted.
+>
+>On Tue, 2005-05-31 at 09:59 -0700, Hans Reiser wrote:
+>  
+>
+>>What happens when you unlink the True Name?
+>>
+>>Hans
+>>
+>>Jonathan Briggs wrote:
+>>
+>>    
+>>
+>>>You can avoid cycles by redefining the problem.
+>>>
+>>>Every file or "data object" has one single True Name which is their
+>>>inode or OID.  Each data object then has one or more "names" as
+>>>properties.  Names are either single strings with slash separators for
+>>>directories, or each directory element is a unique object in an object
+>>>list.  Directories then become queries that return the set of objects
+>>>holding that directory name.  The query results are of course cached and
+>>>updated whenever a name property changes.
+>>>
+>>>Now there are no cycles, although a naive Unix "find" program could get
+>>>stuck in a loop.
+>>> 
+>>>
+>>>      
+>>>
 
- - from (R) it follows that object can be discarded only if it empty (as
- a directory). All nodes in a cycle are not empty (because each of them
- contains at least a reference to the next one), and hence none of them
- can be ever removed;
-
- - if garbage collection is implemented through the reference counting
- (which is the only known way tractable for a file system), then cycles
- are never collected.
-
-Unless you are talking about a two-level naming scheme, where "One True
-Names" are visible to the user. In that case reachability problem
-evaporates, because manipulations with normal directory structure never
-make node unreachable---it is always accessible through its True
-Name.
-
-But the garbage collection problem is still there. You are more than
-welcome to solve it by implementing generation mark-and-sweep GC on file
-system scale. :-)
-
-Nikita.
