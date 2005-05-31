@@ -1,84 +1,85 @@
 From: Jonathan Briggs <jbriggs@esoft.com>
-Subject: Re: File as a directory - Ordered Relations
-Date: Tue, 31 May 2005 10:46:15 -0600
-Message-ID: <1117557975.13252.12.camel@localhost>
-References: <6708893568-BeMail@cr593174-a> <4297FA03.6050603@slaphack.com>
-	 <200505281942.j4SJgbpi009886@turing-police.cc.vt.edu>
-	 <429ACC7E.4040101@namesys.com>
+Subject: Re: File as a directory - VFS Changes
+Date: Tue, 31 May 2005 10:55:15 -0600
+Message-ID: <1117558515.13252.21.camel@localhost>
+References: <17050.62052.318426.711322@gargle.gargle.HOWL>
+	 <75229416615-BeMail@cr593174-a>
+	 <17052.12223.708707.757538@gargle.gargle.HOWL>
+	 <429C7D0A.6040200@namesys.com>
+	 <200505311630.j4VGUeIt007432@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-lAjjqoJ3KmHKBjWZrM3j"
-Return-path: <reiserfs-list-return-24234-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-tYtl9BSbLB1s3255oQcj"
+Return-path: <reiserfs-list-return-24235-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <429ACC7E.4040101@namesys.com>
+In-Reply-To: <200505311630.j4VGUeIt007432@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: Valdis.Kletnieks@vt.edu, David Masover <ninja@slaphack.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>, Leo Comerford <leocomerford@gmail.com>, reiserfs-list@namesys.com
+To: Valdis.Kletnieks@vt.edu
+Cc: Hans Reiser <reiser@namesys.com>, Nikita Danilov <nikita@clusterfs.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>, leocomerford@gmail.com, reiserfs-list@namesys.com, ninja@slaphack.com
 
---=-lAjjqoJ3KmHKBjWZrM3j
+--=-tYtl9BSbLB1s3255oQcj
 Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2005-05-30 at 01:19 -0700, Hans Reiser wrote:
-> Valdis.Kletnieks@vt.edu wrote:
+On Tue, 2005-05-31 at 12:30 -0400, Valdis.Kletnieks@vt.edu wrote:
+> On Tue, 31 May 2005 08:04:42 PDT, Hans Reiser said:
 >=20
-> >On Fri, 27 May 2005 23:56:35 CDT, David Masover said:
-> >
-> > =20
-> >
-> >>Hans, comment please?  Is this approaching v5 / v6 / Future Vision?  It
-> >>does seem more than a little "clunky" when applied to v4...
-> >>   =20
-> >>
-> Well, if you read our whitepaper, we consider relational algebra to be a
-> functional subset of what we will implement (which implies we think
-> relational algebra should be possible in the filesystem naming.)
+> > >Cycle may consists of more graph nodes than fits into memory.=20
+> > >
+> > There are pathname length restrictions already in the kernel that shoul=
+d
+> > prevent that, yes?
 >=20
-> >
-> >I'm not Hans, but I *will* ask "How much of this is *rationally* doable
-> >without some help from the VFS?".
-> >
-> Think of VFS as a standards committee.  That means that 5-15 years after
-> we implement it, they will copy it, break it, and then demand that we
-> conform to their breakage.=20
+> The problem is that although a *single* pathname can't be longer than som=
+e
+> length, you can still create a cycle.  Consider for instance a pathname r=
+estriction
+> of 1024 chars.  Filenames A, B, and C are all 400 characters long.  A poi=
+nts at B,
+> B points at C - and C points back to A.
 >=20
-> Anytimes someone says it should go into VFS, what they really mean is,
-> nobody should get ahead of them because it will increase their workload.;=
--)
->=20
-> VFS is a baseline.  Once you support VFS, and your performance is good,
-> you can start to innovate.  Next year we finally start to seriously
-> innovate, after 10 years of groundwork.  The storage layer was never the
-> interesting part of our plans, not to me.....
+> Also, although the set of inodes *in the cycle* fits in memory, the set o=
+f
+> inodes *in the entire graph* that has to be searched to verify the presen=
+ce of
+> a cycle may not (in general, you have to be ready to examine *all* the in=
+odes
+> unless you can do some pruning (unallocated, provably un-cycleable, and s=
+o
+> on)).  THis is the sort of thing that you can afford to do in userspace d=
+uring
+> an fsck, but certainly can't do in the kernel on every syscall that might
+> create a cycle...
 
-Why innovate in the filesystem though, when it would work just as well
-or better in the VFS layer?  Files as directories and meta-files would
-work for all filesystems.  Ext3 with extended attributes could support
-the same file structures as Reiser4.  Reiser4 would then be the most
-efficient implementation of the general case.
+You can avoid cycles by redefining the problem.
 
-=46rom the last LKML discussion, it didn't look to me as if the kernel
-maintainers are going to accept Reiser4's stranger features into the
-mainline kernel, so if you're going to be implementing and maintaining
-them separately anyway, why not do it in the implementation of all
-namespaces, in the VFS code?
+Every file or "data object" has one single True Name which is their
+inode or OID.  Each data object then has one or more "names" as
+properties.  Names are either single strings with slash separators for
+directories, or each directory element is a unique object in an object
+list.  Directories then become queries that return the set of objects
+holding that directory name.  The query results are of course cached and
+updated whenever a name property changes.
+
+Now there are no cycles, although a naive Unix "find" program could get
+stuck in a loop.
 --=20
 Jonathan Briggs <jbriggs@esoft.com>
 eSoft, Inc.
 
---=-lAjjqoJ3KmHKBjWZrM3j
+--=-tYtl9BSbLB1s3255oQcj
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 
-iD8DBQBCnJTXG8fHaOLTWwgRAg6LAJ0YdjJpz1/3NRBW9B9FGi32ZnsWhwCeOib0
-io91LuNR+0K6mpIKCyhH/bs=
-=j7zG
+iD8DBQBCnJbzG8fHaOLTWwgRAvm9AJ9vVst9ZePTdpJf7PGqVNe+Jxo69gCfevCB
+Kir/mH6obLh0Ha8snDDRCyM=
+=sq3I
 -----END PGP SIGNATURE-----
 
---=-lAjjqoJ3KmHKBjWZrM3j--
+--=-tYtl9BSbLB1s3255oQcj--
 
