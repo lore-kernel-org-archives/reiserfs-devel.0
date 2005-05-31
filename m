@@ -1,103 +1,64 @@
-From: Jonathan Briggs <jbriggs@esoft.com>
-Subject: Re: File as a directory - VFS Changes
-Date: Tue, 31 May 2005 15:08:34 -0600
-Message-ID: <1117573714.13252.69.camel@localhost>
-References: <17050.62052.318426.711322@gargle.gargle.HOWL>
-	 <75229416615-BeMail@cr593174-a>
-	 <17052.12223.708707.757538@gargle.gargle.HOWL>
-	 <429C7D0A.6040200@namesys.com>
-	 <200505311630.j4VGUeIt007432@turing-police.cc.vt.edu>
-	 <1117558515.13252.21.camel@localhost>  <429C97F9.8000009@namesys.com>
-	 <1117559594.13252.26.camel@localhost>  <429CAC86.3080308@namesys.com>
-	 <1117573285.13252.63.camel@localhost>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: Reiser4/Encryption plugin stability?
+Date: Tue, 31 May 2005 16:51:34 -0500
+Message-ID: <429CDC66.2070101@slaphack.com>
+References: <1ca1c141050531111473c21891@mail.gmail.com> <429CAD37.7030109@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-T9pgF2fK1/nafjdd4Hdo"
-Return-path: <reiserfs-list-return-24248-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24249-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1117573285.13252.63.camel@localhost>
+In-Reply-To: <429CAD37.7030109@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: Valdis.Kletnieks@vt.edu, Nikita Danilov <nikita@clusterfs.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>, leocomerford@gmail.com, reiserfs-list@namesys.com, ninja@slaphack.com, Nate Diller <ndiller@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward@namesys.com>
+Cc: ADT <synfinatic@gmail.com>, reiserfs-list@namesys.com
 
---=-T9pgF2fK1/nafjdd4Hdo
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On Tue, 2005-05-31 at 15:01 -0600, Jonathan Briggs wrote:
-> I should create an example.
->=20
-> Wherever I used True Name previously, use OID instead.  True Name was
-> simply another term for a unique object identifier.
->=20
-> Three files with OIDs of 1001, 1002, and 1003.
-> Object 1001:
-> name: /tmp/A/file1
-> name: /tmp/A/B/file1
-> name: /tmp/A/B/C/file1
->=20
-> Object 1002:
-> name: /tmp/A/file2
->=20
-> Object 1003:
-> name: /tmp/A/B/file3
->=20
-> Three query objects (directories) with OIDs of 1, 2, and 3.
-> Object 1:
-> name: /tmp/A
-> name: /tmp/A/B/C/A
-> query: name begins with /tmp/A/
-> query result cache: B->2, file1->1001, file2->1002
->=20
-> Object 2:
-> name: /tmp/A/B
-> query: name begins with /tmp/A/B/
-> query result cache: C->3, file1->1001, file3->1003
->=20
-> Object 3:
-> name: /tmp/A/B/C
-> query: name begins with /tmp/A/B/C/
-> query result cache: A->1, file1->1001
->=20
-> Now there is a A -> B -> C -> A directory loop.  But removing
-> name: /tmp/A/B/C/A from Object 1 fixes the loop.  Deleting Object 1 also
-> fixes the loop.  Deleting any of Object 1, 2 or 3 does not affect any
-> other object, because in this scheme, directory objects do not need to
-> actually exist: they are just queries that return objects with certain
-> names.
+Edward Shishkin wrote:
+> ADT wrote:
+> 
+>> Hi everyone,
+>>
+>> I'm looking into using reiser4 and it's encryption plugin on a number
+>> of new CentOS4 servers I will be building.  I've been doing various
+>> searches via google and the list archives, and I've seen a few emails
+>> from last year which indicated that the encryption plugin wasn't yet
+>> ready for primetime but it would be "soon".
+>>
+>> Any chance I could get a status update? 
+>> Thanks,
+>> Aaron
+>>
+>>  
+>>
+> 
+> Hello.
+> It will be available in reiser4.1 via pseudo interface, but only for
+> compression transform
+> for a while, wait for beta-release..
 
-I forgot to address Nikita's point about reclaiming lost cycles.  In
-this case, let me create Object 4 for /tmp
-Object 4:
-name: /tmp
-query: name begins with /tmp/
-query result cache: A->1
-
-Now, if we delete Object 4, are Objects 1,2,3 lost?  I would say not
-because they still have names.  When the shell calls chdir("/tmp") a new
-query object (directory) must be created dynamically, and Objects
-1001,1002,1003 still have their names that start with /tmp and so they
-immediately appear again.  Their names still start with /, so the top
-level query will still find them and /tmp as well.
-
-Therefore, the cycle is never detached and lost.
---=20
-Jonathan Briggs <jbriggs@esoft.com>
-eSoft, Inc.
-
---=-T9pgF2fK1/nafjdd4Hdo
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+Weird.  I would have thought compression would be harder than encryption...
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iD8DBQBCnNJSG8fHaOLTWwgRAouXAKCCwWn+g2ge6BjlMRr9KBRE2CBTsQCgjv8i
-iQ7HK1lmy3UZ/lshYM4AmjI=
-=jHvj
+iQIVAwUBQpzcZngHNmZLgCUhAQL/gg/+Ja0cIHyTRMGchPBlsMlgL7xYqu/sOi/b
+qypODPehGoHjRf9RzgBlDmNP4O5IIKW88eOeEzCycybJi7Jzr5jIAFs//4JJ8MMI
+YFp+XQ9ejQBAtolm3MkJR6wpsOaRkPXtN5XcGVuMpjiWSSxB0mQyzKTBPmL1btfI
+mnIFnguJQjNKfi2bvCtqzNoxkksHJ4hxrwuZ9KtOIMDe6oMK80k4Z2LCu0cAx8ie
+Ds7XAb6b8hxj21uasHYZPzfzCYxemr3oyJgQuSdd4faVDtKXoA2Yni6CCtB+9vOG
+VXxRBVsAzNrYO6B4NcgY0tlLKf77BBmV+fQrZquMb4wApPZI1q0bH2G+U/3hq/5J
+Chg6uoqvXPjTcf6Wxamok/5C7Lhju29jSowWsQ49IQg6erycoBaM5Y0JZ0FPJFAa
+TLTYp/LyTLEmp86dpghH3bTHG1dGF4TfbjJdVPzku/GtEHPlJ6jiKBnJY8qrUBdX
+Qz79W2EuVdnYuLpNYfniijyr8jB9KIzhBsDxTmORYx8QC+Nfaatw4uCSBd96jqd4
+Ttpi6VtDIn63nUXskEEhMUr5KNtYu49lnHkdPWmJwFYDOfkORd/vNANKoHzGB8F3
+WWzrpC1oBPhCwhH/VISNhzv03p79k8cS08ZysJnx/eqDtR0fWmGnrjawbE2rLloZ
+Q8xeOtIs7p0=
+=O/Rt
 -----END PGP SIGNATURE-----
-
---=-T9pgF2fK1/nafjdd4Hdo--
-
