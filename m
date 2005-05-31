@@ -1,34 +1,76 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: File as a directory - Ordered Relations
-Date: Tue, 31 May 2005 10:07:04 -0700
-Message-ID: <429C99B8.7040400@namesys.com>
-References: <6708893568-BeMail@cr593174-a> <4297FA03.6050603@slaphack.com>	 <200505281942.j4SJgbpi009886@turing-police.cc.vt.edu>	 <429ACC7E.4040101@namesys.com> <1117557975.13252.12.camel@localhost>
+From: Jonathan Briggs <jbriggs@esoft.com>
+Subject: Re: File as a directory - VFS Changes
+Date: Tue, 31 May 2005 11:13:13 -0600
+Message-ID: <1117559594.13252.26.camel@localhost>
+References: <17050.62052.318426.711322@gargle.gargle.HOWL>
+	 <75229416615-BeMail@cr593174-a>
+	 <17052.12223.708707.757538@gargle.gargle.HOWL>
+	 <429C7D0A.6040200@namesys.com>
+	 <200505311630.j4VGUeIt007432@turing-police.cc.vt.edu>
+	 <1117558515.13252.21.camel@localhost>  <429C97F9.8000009@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24237-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-aYH+bKdD+wFgFI+FQmMy"
+Return-path: <reiserfs-list-return-24238-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1117557975.13252.12.camel@localhost>
+In-Reply-To: <429C97F9.8000009@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jonathan Briggs <jbriggs@esoft.com>
-Cc: Valdis.Kletnieks@vt.edu, David Masover <ninja@slaphack.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>, Leo Comerford <leocomerford@gmail.com>, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Valdis.Kletnieks@vt.edu, Nikita Danilov <nikita@clusterfs.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>, leocomerford@gmail.com, reiserfs-list@namesys.com, ninja@slaphack.com
 
-Jonathan Briggs wrote:
+--=-aYH+bKdD+wFgFI+FQmMy
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
->
->Why innovate in the filesystem though, when it would work just as well
->or better in the VFS layer?
->
-Why don't we just have one filesystem, think of the advantages.....
-;-)
+Either that isn't allowed, or it immediately vanishes from all
+directories.
 
-I don't try to get other people to follow my lead anymore, I just ship
-code that works.  Putting it into VFS requires getting others to follow
-my lead.  Ain't gonna happen.  Getting them to leave me alone to
-innovate in my corner of the kernel?  Might happen if I fight for it,
-but it will be a real struggle.
+If deleting by OID isn't allowed, then every name property must be
+removed in order to delete the file.
 
-Hans
+Personally, I would allow deleting the OID.  It would be a convenient
+way to be sure every instance of a file was deleted.
+
+On Tue, 2005-05-31 at 09:59 -0700, Hans Reiser wrote:
+> What happens when you unlink the True Name?
+>=20
+> Hans
+>=20
+> Jonathan Briggs wrote:
+>=20
+> >
+> >You can avoid cycles by redefining the problem.
+> >
+> >Every file or "data object" has one single True Name which is their
+> >inode or OID.  Each data object then has one or more "names" as
+> >properties.  Names are either single strings with slash separators for
+> >directories, or each directory element is a unique object in an object
+> >list.  Directories then become queries that return the set of objects
+> >holding that directory name.  The query results are of course cached and
+> >updated whenever a name property changes.
+> >
+> >Now there are no cycles, although a naive Unix "find" program could get
+> >stuck in a loop.
+> > =20
+> >
+>=20
+--=20
+Jonathan Briggs <jbriggs@esoft.com>
+eSoft, Inc.
+
+--=-aYH+bKdD+wFgFI+FQmMy
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+
+iD8DBQBCnJspG8fHaOLTWwgRApZmAJ9tVJf7ezQyVziMwI0OEeNc/pqhwQCfRmyQ
+v9cy71oamNzr00FqeYEm4wE=
+=xbhk
+-----END PGP SIGNATURE-----
+
+--=-aYH+bKdD+wFgFI+FQmMy--
+
