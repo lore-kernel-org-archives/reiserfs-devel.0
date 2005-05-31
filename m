@@ -1,84 +1,58 @@
-From: Nikita Danilov <nikita@clusterfs.com>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: File as a directory - VFS Changes
-Date: Tue, 31 May 2005 20:00:37 +0400
-Message-ID: <17052.35365.837251.39065@gargle.gargle.HOWL>
-References: <17050.62052.318426.711322@gargle.gargle.HOWL>
-	<75229416615-BeMail@cr593174-a>
-	<17052.12223.708707.757538@gargle.gargle.HOWL>
-	<429C7D0A.6040200@namesys.com>
+Date: Tue, 31 May 2005 12:30:40 -0400
+Message-ID: <200505311630.j4VGUeIt007432@turing-police.cc.vt.edu>
+References: <17050.62052.318426.711322@gargle.gargle.HOWL> <75229416615-BeMail@cr593174-a> <17052.12223.708707.757538@gargle.gargle.HOWL>
+            <429C7D0A.6040200@namesys.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1117557039_3502P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24231-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24232-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <429C7D0A.6040200@namesys.com>
+In-Reply-To: Your message of "Tue, 31 May 2005 08:04:42 PDT."
+             <429C7D0A.6040200@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: Hans Reiser <reiser@namesys.com>
-Cc: "Alexander G. M. Smith" <agmsmith@rogers.com>, leocomerford@gmail.com, reiserfs-list@namesys.com, ninja@slaphack.com
+Cc: Nikita Danilov <nikita@clusterfs.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>, leocomerford@gmail.com, reiserfs-list@namesys.com, ninja@slaphack.com
 
-Hello Hans,
+--==_Exmh_1117557039_3502P
+Content-Type: text/plain; charset=us-ascii
 
-Hans Reiser writes:
- > Nikita Danilov wrote:
- > 
- > >Alexander G. M. Smith writes:
- > > > Nikita Danilov wrote on Mon, 30 May 2005 15:00:52 +0400:
- > > > > Nothing in VFS prevents files from supporting both read(2) and
- > > > > readdir(3). The problem is with link(2): VFS assumes that directories
- > > > > form _tree_, that is, every directory has well-defined parent.
- > > > 
- > > > At least that's one problem that's solveable.  Just define one of
- > > > the parents as the master parent directory, with a guaranteed path
- > > > up to the root, and have the others as auxiliary parents.  That
- > > > also gives you a good path name to each and every file-thing.
- > > > 
- > > > The VFS or the file system (depending on where the designers want
- > > > to split the work) will still have to handle cycles in the graph
- > > > to recompute the new master parents, when an old one gets deleted
- > > > or moved.
- > >
- > >Cycle may consists of more graph nodes than fits into memory. 
- > >
- > There are pathname length restrictions already in the kernel that should
- > prevent that, yes?
+On Tue, 31 May 2005 08:04:42 PDT, Hans Reiser said:
 
-UNIX namespaces are not _that_ retarded. :-)
+> >Cycle may consists of more graph nodes than fits into memory. 
+> >
+> There are pathname length restrictions already in the kernel that should
+> prevent that, yes?
 
-int main(int argc, char **argv)
-{
-        int i;
+The problem is that although a *single* pathname can't be longer than some
+length, you can still create a cycle.  Consider for instance a pathname restriction
+of 1024 chars.  Filenames A, B, and C are all 400 characters long.  A points at B,
+B points at C - and C points back to A.
 
-        for (i = 0; ; ++ i) {
-                mkdir("foo", 0777);
-                chdir("foo");
-                if ((i % 1000) == 0)
-                        printf("%i\n", i);
-        }
-        return 0;
-}
+Also, although the set of inodes *in the cycle* fits in memory, the set of
+inodes *in the entire graph* that has to be searched to verify the presence of
+a cycle may not (in general, you have to be ready to examine *all* the inodes
+unless you can do some pruning (unallocated, provably un-cycleable, and so
+on)).  THis is the sort of thing that you can afford to do in userspace during
+an fsck, but certainly can't do in the kernel on every syscall that might
+create a cycle...
 
-run it for a while, interrupt, and do
 
-$ find foo
-$ rm -frv foo
+--==_Exmh_1117557039_3502P
+Content-Type: application/pgp-signature
 
- > 
- > >Cycle
- > >detection is crucial for rename semantics, and if
- > >cycle-just-about-to-be-formed doesn't fit into memory it's not clear how
- > >to detect it, because tree has to be locked while checked for cycles, and
- > >one definitely doesn't want to keep such a lock over IO.
- > >
- > > > 
- > > > - Alex
- > >
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-Nikita.
+iD8DBQFCnJEvcC3lWbTT17ARAh/DAKCua5UxAjLfp7fKlWLiCfCA625PwQCfWHUj
+FOSC4vKdMyjvRgv9mK1X77g=
+=89cD
+-----END PGP SIGNATURE-----
 
- > >
- > >
- > >  
- > >
+--==_Exmh_1117557039_3502P--
