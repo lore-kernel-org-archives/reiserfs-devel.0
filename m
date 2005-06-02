@@ -1,50 +1,45 @@
-From: "Faraz Ahmed" <farazs@calsoftinc.com>
-Subject: RE: File as a directory - VFS Changes
-Date: Thu, 2 Jun 2005 07:46:52 -0700
-Message-ID: <008801c56781$eaf2ccf0$5f0010ac@screech>
+From: Matthias Barremaecker <info@mh.be>
+Subject: 13000Gig partition badblock check is the same -- do a reiserfsck
+ again ?
+Date: Thu, 02 Jun 2005 16:37:14 +0200
+Message-ID: <429F199A.5020900@mh.be>
+References: <1117392967.29669.ezmlm@namesys.com>            <429A1742.8030504@mh.be> <200505292137.j4TLbarw017197@turing-police.cc.vt.edu> <429AAFDC.4050208@mh.be> <429C6BE8.4090906@teleformix.com> <429C7153.8000008@mh.be> <429C7E46.9090507@teleformix.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24284-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-24285-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <429C7E46.9090507@teleformix.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"; format="flowed"
 To: reiserfs-list@namesys.com
 
- Hi Nikita;
+Hi,
 
+The first time, I did a bad block check, and feeded that list to the=20
+reiserfsck --rebuild-tree.
 
-     The problems of files not fitting in the query of the smart folder is a
- serious one. We had implemented this same thing for our semantic
-filesystem.
+The reiserfsck FAILED in phase 2.
 
-For ex we create a MP3 file is a JPEG folder things it wont ever get
-listed.
-This will fundamentally change the way users see your filesytem, the users
-expect to see the files in the folder they created. This it self should be a
-default search criteria.
-We almost solved this by having the "parentdirectory" as a attribute of the
-file. All the smart folders have thier query transparently modified as
-"where type=jpg Or parentdirectory=thisdirectory". This make the virtual
-folder stuff work as EXTENSION to standard file/directory relationship
-rather than work as RELPLACEMENT.
+Now I have done a bad block check again and the list is the same, so no=20
+new bad blocks have occoured.
 
-    Personal experience says that user dont digest any change to UNIX
-filesystem mode. Anything extra is OK but replacements are BAD. Think of it
-you created a C file in a virtual folder for "h" files the files wont get
-listed(althoug they will exist). THEN WHAT??? the user has to search it BAD,
-your whole fancy virtual directory USECASE itself is lost and eventually we
-endup solving nothing.
+Is it sane to do the reiserfsck --rebuild-tree again, or will it fail again?
 
+thanx.
 
+kind regardes,
 
-    Other issues include this display name stuff etc. They are bad. what if
-two files with same display name get listed in the same virtual directory.
-No point in creating a problem and then solving it. Good Work though we dont
-want to get booged down once WinFS is released.
-Regards
-Faraz.
+Matthias.
+--=20
+   Matthias Barremaecker, MH.BE - Arta nv
+   0495 30 31 72
 
+   http://mh.be/
+
+   SERVER HOUSING per 1HE =80 50 per maand
+     20Gig traffic, 100Mbit netwerk
+     Center te Antwerpen.
 
