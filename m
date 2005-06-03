@@ -1,80 +1,119 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Subject: Performance Impacts of Graph Cycles due to Multiple Parents
-Date: Thu, 02 Jun 2005 23:35:18 -0400 EDT
-Message-ID: <11655571087-BeMail@cr593174-a>
-References: <17054.55690.677507.949191@gargle.gargle.HOWL>
+From: "Faraz Ahmed" <farazs@calsoftinc.com>
+Subject: Re: File as a directory - VFS Changes
+Date: Thu, 2 Jun 2005 23:44:38 -0700
+Message-ID: <001f01c56807$b82799f0$5f0010ac@screech>
+References: <17050.62052.318426.711322@gargle.gargle.HOWL><75229416615-BeMail@cr593174-a><17052.12223.708707.757538@gargle.gargle.HOWL><429C7D0A.6040200@namesys.com><200505311630.j4VGUeIt007432@turing-police.cc.vt.edu><1117558515.13252.21.camel@localhost><429C97F9.8000009@namesys.com><1117559594.13252.26.camel@localhost><429CAC86.3080308@namesys.com><1117573285.13252.63.camel@localhost><1117573714.13252.69.camel@localhost><17052.59096.785042.935234@gargle.gargle.HOWL><1117580508.25017.21.camel@localhost><17053.36948.892227.432434@gargle.gargle.HOWL><17053.37172.885941.857716@gargle.gargle.HOWL><1117634812.26560.33.camel@titania.zlynx.org><17053.51551.825703.450388@gargle.gargle.HOWL><1117640452.12866.9.camel@localhost><17053.61465.359382.791640@gargle.gargle.HOWL><1117652606.28827.7.camel@localhost><17054.57795.295945.256623@gargle.gargle.HOWL><1117737334.9224.51.camel@localhost> <17055.
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24297-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24298-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <17054.55690.677507.949191@gargle.gargle.HOWL>
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 To: Nikita Danilov <nikita@clusterfs.com>
-Cc: reiserfs-list@namesys.com
+Cc: reiserfs-list@namesys.com, jbriggs@esoft.com
 
-Nikita Danilov wrote on Thu, 2 Jun 2005 14:03:54 +0400 in the
-"Re: File as a directory - VFS Changes" thread:
-> This is typical operation for a desktop usage, I agree. But desktop is
-> not interesting. It doesn't pose technical difficulty to implement
-> whatever indexing structure when your dataset is but a few dozen
-> thousand objects [1].
+Hi;
+                  Why is this discussion revoling around Relational
+Databases. The attributes of the files and files themselves, if were to be
+modelled for querying a Realtional Database would really s**k.  The
+attribute info is neither structured, nor is it unstructured, its
+SEMI-STRUCTURED. Exceuting  Structured Query Lang(Sql) over semistrutured
+data would result in
+-> Harder modelling (almost a waste of effort),
+-> Complex Quering (Eleganant system of no use because of the amout of joins
+that would result in Quering , if you somehow model semi-structured data in
+some structured Data Model);
+                    The best option, to start would be with best COT. I feel
+we should look at Loreal a stanford project. For hints about modelling our
+"whatever".
 
-Getting people to use something different does pose an interesting
-social engineering problem :-).  I wonder how tough it was to move from
-block records (descended from 80 byte punched cards) to streams of bytes.
-I'd expect people complained of the inefficiencies of reading things
-byte by byte, the uncertainty of where a record boundary was, and
-possibly other limitations.  Did the complexity of having to put things
-into directories, rather than just unassociated card decks, worry them?
+Regards
+Faraz :)
 
-> What _is_ interesting, is to make file system scalable. Solution
-> that fails to move directory simply because sub-tree rooted at it
-> is large is not scalable.
 
-But that scalability isn't all that important, I don't see large systems
-making use of a chaotic collection of cross links between items.  Since
-they're so large, they're usually uniform and thus simple collections of
-items, such as a series of scientific experiment observations over time.
-Well, unless someone tries to do an AI knowledge representation as linked
-files or something similarly weird.  Then it gets challenging.
+----- Original Message ----- 
+From: "Nikita Danilov" <nikita@clusterfs.com>
+To: "Jonathan Briggs" <jbriggs@esoft.com>
+Cc: "Hans Reiser" <reiser@namesys.com>; <Valdis.Kletnieks@vt.edu>;
+"Alexander G. M. Smith" <agmsmith@rogers.com>; <leocomerford@gmail.com>;
+<reiserfs-list@namesys.com>; <ninja@slaphack.com>; "Nate Diller"
+<ndiller@namesys.com>
+Sent: Thursday, June 02, 2005 4:54 PM
+Subject: Re: File as a directory - VFS Changes
 
-There is some scalability in that operations going on in one subgraph
-of the file system don't depend on things happening in the rest of it.
 
-> That is, how atomicity guarantees of rename will be preserved? Note that
-> many applications, like some mail servers crucially depend on rename
-> atomicity to implement their transaction mini-engines.
+> Jonathan Briggs writes:
+>  > On Thu, 2005-06-02 at 14:38 +0400, Nikita Danilov wrote:
+>  > > Jonathan Briggs writes:
+>  > >  > On Wed, 2005-06-01 at 21:27 +0400, Nikita Danilov wrote:
+>  > >  > [snip]
+>  > >  > > Frankly speaking, I suspect that name-as-attribute is going to
+limit
+>  > >  > > usability of file system significantly.
+>  >
+>  > Usability as in features?  Or usability as in performance?
+>
+> Usability as in ease of use.
+>
+> [...]
+>
+>  >
+>  > A index is an arrangement of information about the indexed items.  The
+>  > index contents *belong* to the items.  An index by name?  That name
+>  > belongs to the item.  An index by date?  Those dates are properties of
+>
+> In the flat world of relation databases, maybe. But almost nowhere else
+> improper name is an attribute of its signified: variable is not an
+> attribute of object it points to, URL is not an attribute of the web
+> page, block number is not an attribute of data stored in that block on
+> the disk, etc.
+>
+> [...]
+>
+>  >
+>  > In the same way that you can descend a directory tree and copy the
+names
+>  > found into each item, you can check each item and copy the names found
+>  > into a directory tree.
+>
+> Except that as was already discussed resulting directory tree is _bound_
+> to be inconsistent with "real names".
+>
+>  >
+>  > >
+>  > > Indices cannot be reduced to real names (as rename is impossible to
+>  > > implement efficiently), but real names can very well be reduced to
+>  > > indices as exemplified by each and every UNIX file system out there.
+>  > >
+>  > > So, the question is: what real names buy one, that indices do not?
+>  >
+>  > By storing the names in the items, cycles become solvable because you
+>  > can always look at the current directory's name(s) to see where you
+>  > really are.  Every name becomes absolutely connected to the top of the
+>  > namespace instead of depending on a parent pointer that may not ever
+>  > connect to the top.
+>
+> But cycles are "solvable" in current file systems too: they simply do
+> not exist there.
+>
+>  >
+>  > If speeding up rename was very important, you can replace every
+pathname
+>  > component with a indirect reference instead of using simple strings.
+>  > Changing directory levels is still difficult.
+>
+> It is not only speed that will be extremely hard to achieve in that
+> design; atomicity (in the face of possible crash during rename), and
+> concurrency control look problematic too.
+>
+>  >
+>  > -- 
+>  > Jonathan Briggs <jbriggs@esoft.com>
+>  > eSoft, Inc.
+>
+> Nikita.
+>
 
-Same as before.  Grab locks on all the children affected before doing
-any work.  If there's a deadlock, or memory shortage, just report an
-error back to the caller and don't change anything.  For the typical
-mail server use, don't they just rename one file at a time?  If they
-are moving whole large directories around, then it would be a problem.
-
-Or require that the user move all the child files individually to avoid
-dealing with deadlocks and long operations.  Simplistic you say?  As
-simple as the kludge of doing "rm -r DirectoryName" to delete a
-directory and all its contents just because a classical file system
-can't handle the locking of large things.
-
-> It happens all the time on my workstation, when I move Linux source
-> trees around.
-
-Good point.  Traversing all the children when you're moving the directory
-would be expensive, and isn't needed if the children don't cause cycles.
-A simple optimization for ordinary files (not cross linked) is to have a
-flag saying "I am a tree" for every file system object.  Then when doing
-a move or delete, the children of an object marked with that flag don't
-need to be examined.  So for ordinary files, we can go back to getting
-classical performance.  Maintaining the flag doesn't cost much if it
-isn't changing, even less if directories (which means everything in a
-directory-is-file system) keep a count the number of tree children they
-have.  But when something does acquire or lose an extra parent, all its
-parent directories have to be updated, possibly bubbling the change up
-to the root.
-
-- Alex
