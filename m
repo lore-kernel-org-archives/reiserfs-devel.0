@@ -1,28 +1,49 @@
-From: Adrian Ulrich <reiser4@blinkenlights.ch>
-Subject: Re: reiser4 panicked cowardly: assertion failed: hint->blk <
- reiser4_block_count(super)
-Date: Mon, 6 Jun 2005 12:23:14 +0200
-Message-ID: <20050606122314.06b2897f.reiser4@blinkenlights.ch>
-References: <20050605165029.386dc82e.reiser4@blinkenlights.ch>
-	<42A42604.8090605@namesys.com>
+From: "E.Gryaznova" <grev@namesys.com>
+Subject: Re: Do a bad block check on a lvm with reiserfs
+Date: Mon, 06 Jun 2005 23:14:39 +0400
+Message-ID: <42A4A09F.20207@namesys.com>
+References: <42A070FC.2080304@mh.be>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24321-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24324-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42A42604.8090605@namesys.com>
+In-Reply-To: <42A070FC.2080304@mh.be>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "E.Gryaznova" <grev@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Matthias Barremaecker <info@mh.be>
 Cc: reiserfs-list@namesys.com
 
+Hello.
 
-> what reiser4 patch do you use for this kernel?
+Would you please send me the output of
+# lvdisplay --maps
+# pvdisplay --maps
 
-That should be
- ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.11/reiser4-for-2.6.11-4.patch.gz
+Thanks,
+Lena
 
-I'll give -5 a try this evening
+Matthias Barremaecker wrote:
+
+> Hi,
+>
+> If I check my lvm partition, then I have bad blocks.
+>
+> To know what hd there's bad, I have to check the hd's seperatly.
+>
+> but what do i check and do I use the reiserfs block size (4096bytes) ?
+>
+> do I use /dev/hda or /dev/hda1 ?
+>
+> thanx.
+>
+> kind regardes,
+>
+> Matthias.
+>
+>
+>
+
 
