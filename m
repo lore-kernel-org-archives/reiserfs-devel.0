@@ -1,56 +1,54 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: extract files without mounting a partition?
-Date: Mon, 06 Jun 2005 12:34:55 +0400
-Message-ID: <1118046894.3188.51.camel@tribesman.namesys.com>
-References: <200506061130.38536.rdeepak@nmsworks.co.in>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: reiser4 panicked cowardly: assertion failed: hint->blk < reiser4_block_count(super)
+Date: Mon, 6 Jun 2005 12:55:22 +0400
+Message-ID: <200506061255.22953.vitaly@namesys.com>
+References: <20050605165029.386dc82e.reiser4@blinkenlights.ch>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24318-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24319-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200506061130.38536.rdeepak@nmsworks.co.in>
+In-Reply-To: <20050605165029.386dc82e.reiser4@blinkenlights.ch>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: R Deepak <rdeepak@nmsworks.co.in>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: Adrian Ulrich <reiser4@blinkenlights.ch>
 
-Hello
+On Sunday 05 June 2005 18:50, Adrian Ulrich wrote:
+> Hi,
+> 
+> Well, i managed to crash reiser4 ;-)
+> 
+> I created an iso-image on my reiser4 filesystem (it's my rootfs)
+> using mkisofs. mkisofs aborted because the filesystem was full.
+> After freeing up some space, i ran mkisofs again and: *bam*
+> 
+> fsck.reiser4 told me to run '--rebuild-sb' but looks like
+> it didn't help:
+>  The System still crashes while creating the ISO
+>  (Should be 4.1 GiB, but crashes at ~ 3.7 GiB..)
 
-On Mon, 2005-06-06 at 10:00, R Deepak wrote:
-> Greets!
-> 
-> Can I ask support questions here? If not, sorry.. :(
-> 
-> I have a RAID0 config with 2 80GB SATA disks. I screwed up during an install 
-> and the super block got overwritten. 
-> 
-> When I ran reiserfsck on /dev/md0, it asked me to use --rebuild-sb Which I 
-> did. It reported quite a few errors and moved lots of files to lost+found.
-> 
-> Now the problem is that I am not able to mount this partition. I've tried 
-> with different kernels, gentoo 2005.0 live CD (amd64), knoppix (32bit), and 
-> an old gentoo 2004.1 (x86) live CD. 
-> 
-> As soon as I try to mount it, I get something like the following
-> 
-> ReiserFS: md0: found reiserfs format "3.6" with standard journal 
-> <kernel panic>
+what does 'fsck.reiser4 --check' say now running on this fs?
+that no corruption found?
 
-There should be more than that. Can you please show all kernel logs
-related to the problem.
-
-> ---------
+> # fsck.reiser4 --version
+> fsck.reiser4 1.0.4
+> Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing governed
+> by  reiser4progs/COPYING. 
 > 
-> Whole system freezes.
+> # uname -a
+> Linux fuzzy 2.6.11.10 #1 SMP Sat May 21 13:17:21 CEST 2005 i686 unknown
+> unknown GNU/Linux
 > 
-> reiserfsck (latest reiserfsprogs) reports no errors with the device. I'm 
-> just not able to mount it.
-> 
-> What should I do? I atleast need to pull important files out..
-> 
-> Regards
-> Deepak
+> * I attached the Syslog output
+> * I rand 'debugfs.reiserf -P $device' and can
+>   provide the output to namesys if they need it
+>   (9.3 MiB)
 > 
 
+-- 
+Thanks,
+Vitaly Fertman
