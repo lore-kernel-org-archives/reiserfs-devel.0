@@ -1,248 +1,432 @@
-From: Adrian Ulrich <reiser4@blinkenlights.ch>
-Subject: Re: reiser4 panicked cowardly: assertion failed: hint->blk <
- reiser4_block_count(super)
-Date: Mon, 6 Jun 2005 20:39:14 +0200
-Message-ID: <20050606203914.3271673f.reiser4@blinkenlights.ch>
-References: <20050605165029.386dc82e.reiser4@blinkenlights.ch>
-	<200506061255.22953.vitaly@namesys.com>
+From: Deepak Ram <r.deepak.ram@gmail.com>
+Subject: Re: Re: extract files without mounting a partition?
+Date: Tue, 7 Jun 2005 05:37:15 +0530
+Message-ID: <7e6ceab3050606170723dba2d2@mail.gmail.com>
+References: <200506061130.38536.rdeepak@nmsworks.co.in>
+	 <1118046894.3188.51.camel@tribesman.namesys.com>
+	 <200506061422.34983.rdeepak@nmsworks.co.in>
+	 <200506061500.41547.rdeepak@nmsworks.co.in>
+Reply-To: Deepak Ram <r.deepak.ram@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24325-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; 
+	boundary="----=_Part_8914_29735592.1118102835178"
+Return-path: <reiserfs-list-return-24327-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200506061255.22953.vitaly@namesys.com>
+In-Reply-To: <200506061500.41547.rdeepak@nmsworks.co.in>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: vs@namesys.com
+Cc: reiserfs-dev@namesys.com, reiserfs-list@namesys.com
 
-I upgraded to Linux 2.6.11.11 using the -5 reiser4 patch.
+------=_Part_8914_29735592.1118102835178
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
+> > On Monday 06 June 2005 14:04, you wrote:
+> > > Hello
+> > >
+> > > On Mon, 2005-06-06 at 10:00, R Deepak wrote:
+> > > > Greets!
+> > > >
+> > > > Can I ask support questions here? If not, sorry.. :(
+> > > >
+> > > > I have a RAID0 config with 2 80GB SATA disks. I screwed up during a=
+n
+> > > > install and the super block got overwritten.
+> > > >
+> > > > When I ran reiserfsck on /dev/md0, it asked me to use --rebuild-sb
+> > > > Which I did. It reported quite a few errors and moved lots of files
+> > > > to lost+found.
+> > > >
+> > > > Now the problem is that I am not able to mount this partition. I've
+> > > > tried with different kernels, gentoo 2005.0 live CD (amd64), knoppi=
+x
+> > > > (32bit), and an old gentoo 2004.1 (x86) live CD.
+> > > >
+> > > > As soon as I try to mount it, I get something like the following
+> > > >
+> > > > ReiserFS: md0: found reiserfs format "3.6" with standard journal
+> > > > <kernel panic>
+> > >
+> > > There should be more than that. Can you please show all kernel logs
+> > > related to the problem.
+> >
+> > There is.. I'll have to write it down since everything freezes. Will se=
+nd
+> > the whole thing as soon as I get back home.
+>=20
+> You should use either serial console or netconsole to catch kernel logs
+> in case when they do not manage to not get written to log files.
+> You can read linux/Documentation/serial-console.txt and
+> linux/Documentation/networking/netconsole.txt about those things.
 
-It fixed it.. somewhat.. it's still funky:
+'ve attached the dmesg output and the output of "debugreiserfs
+/dev/md0". Should I send you something else?
 
+One  correction though.. the system didn't freeze. There was just an oops.
 
- * mkisofs doesn't crash with the new kernel, yeah!
- * after running mkisofs, grub can't read the filesystem anymore..
-   The filesystem got corrupted. (It was ok before i booted
-   into 2.6.11.11 and ran mkisofs !)
+Please help..
 
-So i bootet my rescue-system
-(Same kernel, reiser4progs 1.0.4. It's on /dev/md3)
+Regards
+Deepak
 
-Running fsck:
+------=_Part_8914_29735592.1118102835178
+Content-Type: text/plain; name="debug.txt"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="debug.txt"
 
-root@fuzzy:~# fsck.reiser4 /dev/md1
-*******************************************************************
-This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
-*******************************************************************
+Z3Q2NCByb290ICMgZGVidWdyZWlzZXJmcyAvZGV2L21kMApkZWJ1Z3JlaXNlcmZzIDMuNi4xOSAo
+MjAwMyB3d3cubmFtZXN5cy5jb20pCgoKRmlsZXN5c3RlbSBzdGF0ZTogY29uc2lzdGVudAoKUmVp
+c2VyZnMgc3VwZXIgYmxvY2sgaW4gYmxvY2sgMiBvbiAweDkwMCBvZiBmb3JtYXQgMy42IHdpdGgg
+c3RhbmRhcmQgam91cm5hbApDb3VudCBvZiBibG9ja3Mgb24gdGhlIGRldmljZTogMzkwNzQwNDgK
+TnVtYmVyIG9mIGJpdG1hcHM6IDExOTMKQmxvY2tzaXplOiA0MDk2CkZyZWUgYmxvY2tzIChjb3Vu
+dCBvZiBibG9ja3MgLSB1c2VkIFtqb3VybmFsLCBiaXRtYXBzLCBkYXRhLCByZXNlcnZlZF0gYmxv
+Y2tzKTogODA4ODg2MwpSb290IGJsb2NrOiAzMDA4NgpGaWxlc3lzdGVtIGlzIGNsZWFuClRyZWUg
+aGVpZ2h0OiA1Ckhhc2ggZnVuY3Rpb24gdXNlZCB0byBzb3J0IG5hbWVzOiAicjUiCk9iamVjdGlk
+IG1hcCBzaXplIDk3MiwgbWF4IDk3MgpKb3VybmFsIHBhcmFtZXRlcnM6CiAgICAgICAgRGV2aWNl
+IFsweDBdCiAgICAgICAgTWFnaWMgWzB4N2U4ZjBhZThdCiAgICAgICAgU2l6ZSA4MTkzIGJsb2Nr
+cyAoaW5jbHVkaW5nIDEgZm9yIGpvdXJuYWwgaGVhZGVyKSAoZmlyc3QgYmxvY2sgMTE5NikKICAg
+ICAgICBNYXggdHJhbnNhY3Rpb24gbGVuZ3RoIDEwMjQgYmxvY2tzCiAgICAgICAgTWF4IGJhdGNo
+IHNpemUgOTAwIGJsb2NrcwogICAgICAgIE1heCBjb21taXQgYWdlIDMwCkJsb2NrcyByZXNlcnZl
+ZCBieSBqb3VybmFsOiAwCkZzIHN0YXRlIGZpZWxkOiAweDA6CnNiX3ZlcnNpb246IDIKaW5vZGUg
+Z2VuZXJhdGlvbiBudW1iZXI6IDI1MjE5MjYyClVVSUQ6IDIyMzRmOTRjLWE5YmUtNDZlYy05YmI3
+LTAxOGE1M2Y0MjRiNApMQUJFTDoKU2V0IGZsYWdzIGluIFNCOgogICAgICAgIEFUVFJJQlVURVMg
+Q0xFQU4K
+------=_Part_8914_29735592.1118102835178
+Content-Type: text/plain; name="dmesg.txt"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="dmesg.txt"
 
-Fscking the /dev/md1 block device.                           
-Will check the consistency of the Reiser4 SuperBlock.                           
-Will check the consistency of the Reiser4 FileSystem.                           
-Continue?                           
-(Yes/No): Yes
-***** fsck.reiser4 started at Mon Jun  6 20:07:51 2005
-Reiser4 fs was detected on /dev/md1.                           
-Master super block (16): 
-magic:          ReIsEr4 
-blksize:        4096 
-format:         0x0 (format40) 
-uuid:           c3fc85d3-be0d-4d71-9413-376cefcdf8fd 
-label:          <none> 
- 
-Format super block (17): 
-plugin:         format40 
-description:    Disk-format for reiser4.  
-magic:          ReIsEr40FoRmAt 
-flushes:        0 
-mkfs id:        0x5bedb66f 
-blocks:         9765488 
-free blocks:    2035573 
-root block:     4270052 
-tail policy:    0x2 (smart) 
-next oid:       0x62d63 
-file count:     180460 
-tree height:    4 
-key policy:     LARGE 
- 
- 
-CHECKING STORAGE TREE                           
-FSCK: Node (411219), item (0), [29:1(SD):0:2a:0]: does not look like a valid SD plugin set extention: wrong pset member count detected (12).
-FSCK: Node (411219), item (0), [29:1(SD):0:2a:0]: does not look like a valid stat data. 
-FSCK: Node (411219), item (0), [29:1(SD):0:2a:0]: broken item found. 
-FSCK: Node (411219): the node is broken. Pointed from the node (411211), item (0), unit (0). The whole subtree is skipped. 
-        Read nodes 130082                           
-        Nodes left in the tree 130081 
-                Leaves of them 127827, Twigs of them 2199 
-        Broken of them 1 
-                Leaves of them 1, Twigs of them 0 
-        Time interval: Mon Jun  6 20:07:54 2005 - Mon Jun  6 20:09:12 2005 
-CHECKING EXTENT REGIONS.                           
-        Read twigs 2199                            
-        Time interval: Mon Jun  6 20:09:12 2005 - Mon Jun  6 20:09:15 2005 
-Warn : Fatal corruptions were found. Semantic pass is skipped.                           
-***** fsck.reiser4 finished at Mon Jun  6 20:09:15 2005
-Closing fs...done
-
-1 fatal corruptions were detected in FileSystem. Run with --build-fs option to fix them.
-
-
- .. ok, again with --build-fs
-
-root@fuzzy:~# fsck.reiser4 --build-fs /dev/md1
-*******************************************************************
-This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
-*******************************************************************
-
-Fscking the /dev/md1 block device.                         
-Will check the consistency of the Reiser4 SuperBlock.                         
-Will build the Reiser4 FileSystem.                         
-Continue?                         
-(Yes/No): Yes
-***** fsck.reiser4 started at Mon Jun  6 20:09:55 2005
-Reiser4 fs was detected on /dev/md1.                         
-Master super block (16): 
-magic:          ReIsEr4 
-blksize:        4096 
-format:         0x0 (format40) 
-uuid:           c3fc85d3-be0d-4d71-9413-376cefcdf8fd 
-label:          <none> 
- 
-Format super block (17): 
-plugin:         format40 
-description:    Disk-format for reiser4.  
-magic:          ReIsEr40FoRmAt 
-flushes:        0 
-mkfs id:        0x5bedb66f 
-blocks:         9765488 
-free blocks:    2035573 
-root block:     4270052 
-tail policy:    0x2 (smart) 
-next oid:       0x62d63 
-file count:     180460 
-tree height:    4 
-key policy:     LARGE 
- 
- 
-CHECKING STORAGE TREE                         
-FSCK: Node (411219), item (0), [29:1(SD):0:2a:0]: does not look like a valid SD plugin set extention: wrong pset member count detected (12).                 
-FSCK: Node (411219), item (0), [29:1(SD):0:2a:0]: does not look like a valid stat data. 
-FSCK: Node (411219), item (0), [29:1(SD):0:2a:0]: broken item found. Remove it. 
-FSCK: Node (411219): The left delimiting key [2a:0(NAME):0:0:0] in the parent node (411211), pos (0/4294967295) does not match the first key [29:1(SD):0:2a:0]
-in the node. Fixed. 
-        Read nodes 130082                          
-        Nodes left in the tree 130082 
-                Leaves of them 127828, Twigs of them 2199 
-        Corrected nodes 1 
-                Leaves of them 1, Twigs of them 0 
-        Time interval: Mon Jun  6 20:09:58 2005 - Mon Jun  6 20:11:29 2005 
-CHECKING EXTENT REGIONS.                         
-        Read twigs 2199                         
-        Time interval: Mon Jun  6 20:11:29 2005 - Mon Jun  6 20:11:32 2005 
-LOOKING FOR UNCONNECTED NODES                         
-        Read nodes 0                         
-        Good nodes 0 
-                Leaves of them 0, Twigs of them 0 
-        Time interval: Mon Jun  6 20:11:33 2005 - Mon Jun  6 20:11:33 2005 
-CHECKING EXTENT REGIONS.                         
-        Read twigs 0                         
-        Time interval: Mon Jun  6 20:11:33 2005 - Mon Jun  6 20:11:33 2005 
-INSERTING UNCONNECTED NODES                         
-1. Twigs: done                          
-2. Twigs by item: done                         
-3. Leaves: done                         
-4. Leaves by item: done                         
-        Twigs: read 0, inserted 0, by item 0, empty 0                         
-        Leaves: read 0, inserted 0, by item 0 
-        Time interval: Mon Jun  6 20:11:33 2005 - Mon Jun  6 20:11:33 2005 
-CHECKING SEMANTIC TREE                         
-FSCK: Failed to recognize the plugin for the directory [29:0:2a].                         
-FSCK: Trying to recover the directory [29:0:2a] with the default plugin--dir40. 
-FSCK: The file [29:0:2a] does not have a StatData item. Creating a new one. Plugin dir40.                         
-FSCK: Node (411219), item (0), [29:0:2a] (stat40): wrong size (0), Fixed to (23). 
-FSCK: Node (411219), item (0), [29:0:2a] (stat40): wrong bytes (0), Fixed to (1150). 
-        Found 180460 objects.                         
-        Time interval: Mon Jun  6 20:11:33 2005 - Mon Jun  6 20:15:22 2005 
-CLEANUPING STORAGE TREE                          
-        Removed items 0                         
-        Time interval: Mon Jun  6 20:15:22 2005 - Mon Jun  6 20:17:42 2005 
-***** fsck.reiser4 finished at Mon Jun  6 20:17:42 2005
-Closing fs...done
-
-
-
-..running again fsck.reiser4 --check : No errors..
-
-I mounted/umounted /dev/md1 3 times: No problems
-..running fsck.reiser4 again: no errors.. fine..
-
-So i booted again using /dev/md1 as my rootfs.. No errors so far.
-After logging in, i rebooted again to /dev/md3 and started
-a fsck on /dev/md1 ..
-
-Now the same thing happens again :-/
-
-# fsck.reiser4 /dev/md1
-*******************************************************************
-This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
-*******************************************************************
-
-Fscking the /dev/md1 block device.                                            
-Will check the consistency of the Reiser4 SuperBlock.                         
-Will check the consistency of the Reiser4 FileSystem.                         
-Continue?                                                                     
-(Yes/No): Yes
-***** fsck.reiser4 started at Mon Jun  6 20:33:27 2005
-Reiser4 fs was detected on /dev/md1.                                          
-Master super block (16): 
-magic:          ReIsEr4 
-blksize:        4096 
-format:         0x0 (format40) 
-uuid:           c3fc85d3-be0d-4d71-9413-376cefcdf8fd 
-label:          <none> 
- 
-Format super block (17): 
-plugin:         format40 
-description:    Disk-format for reiser4.  
-magic:          ReIsEr40FoRmAt 
-flushes:        0 
-mkfs id:        0x5bedb66f 
-blocks:         9765488 
-free blocks:    2035524 
-root block:     4270046 
-tail policy:    0x2 (smart) 
-next oid:       0x62de4 
-file count:     180460 
-tree height:    4 
-key policy:     LARGE 
- 
- 
-CHECKING STORAGE TREE                                                         
-FSCK: Node (35026), item (0), [29:1(SD):0:2a:0]: does not look like a valid SD 
-plugin set extention: wrong pset member count detected (12). 
-FSCK: Node (35026), item (0), [29:1(SD):0:2a:0]: does not look like a valid stat
-data. 
-FSCK: Node (35026), item (0), [29:1(SD):0:2a:0]: broken item found. 
-FSCK: Node (35026): the node is broken. Pointed from the node (35024), item (0),
-unit (0). The whole subtree is skipped. 
-        Read nodes 130082                                                     
-        Nodes left in the tree 130081 
-                Leaves of them 127827, Twigs of them 2199 
-        Broken of them 1 
-                Leaves of them 1, Twigs of them 0 
-        Time interval: Mon Jun  6 20:33:30 2005 - Mon Jun  6 20:34:47 2005 
-CHECKING EXTENT REGIONS.                                                      
-        Read twigs 2199                                                       
-        Time interval: Mon Jun  6 20:34:47 2005 - Mon Jun  6 20:34:50 2005 
-Warn : Fatal corruptions were found. Semantic pass is skipped.                
-***** fsck.reiser4 finished at Mon Jun  6 20:34:50 2005
-Closing fs...done
-
-1 fatal corruptions were detected in FileSystem. Run with --build-fs option to fix them.
-
-
-
-
+Qm9vdGRhdGEgb2sgKGNvbW1hbmQgbGluZSBpcyByb290PS9kZXYvaGRhMiB2Z2E9OSkKTGludXgg
+dmVyc2lvbiAyLjYuMTEtZ2VudG9vLXI5IChyb290QGxpdmVjZCkgKGdjYyB2ZXJzaW9uIDMuNC4z
+IDIwMDQxMTI1IChHZW50b28gTGludXggMy40LjMtcjEsIHNzcC0zLjQuMy0wLCBwaWUtOC43Ljcp
+KSAjMSBTdW4gSnVuIDUgMTE6MDM6MDkgSVNUIDIwMDUKQklPUy1wcm92aWRlZCBwaHlzaWNhbCBS
+QU0gbWFwOgogQklPUy1lODIwOiAwMDAwMDAwMDAwMDAwMDAwIC0gMDAwMDAwMDAwMDA5ZmMwMCAo
+dXNhYmxlKQogQklPUy1lODIwOiAwMDAwMDAwMDAwMDlmYzAwIC0gMDAwMDAwMDAwMDBhMDAwMCAo
+cmVzZXJ2ZWQpCiBCSU9TLWU4MjA6IDAwMDAwMDAwMDAwZTQwMDAgLSAwMDAwMDAwMDAwMTAwMDAw
+IChyZXNlcnZlZCkKIEJJT1MtZTgyMDogMDAwMDAwMDAwMDEwMDAwMCAtIDAwMDAwMDAwM2ZmMzAw
+MDAgKHVzYWJsZSkKIEJJT1MtZTgyMDogMDAwMDAwMDAzZmYzMDAwMCAtIDAwMDAwMDAwM2ZmNDAw
+MDAgKEFDUEkgZGF0YSkKIEJJT1MtZTgyMDogMDAwMDAwMDAzZmY0MDAwMCAtIDAwMDAwMDAwM2Zm
+ZjAwMDAgKEFDUEkgTlZTKQogQklPUy1lODIwOiAwMDAwMDAwMDNmZmYwMDAwIC0gMDAwMDAwMDA0
+MDAwMDAwMCAocmVzZXJ2ZWQpCiBCSU9TLWU4MjA6IDAwMDAwMDAwZmZmODAwMDAgLSAwMDAwMDAw
+MTAwMDAwMDAwIChyZXNlcnZlZCkKQUNQSTogUlNEUCAodjAwMiBBQ1BJQU0gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICkgQCAweDAwMDAwMDAwMDAwZmFhYzAKQUNQSTogWFNEVCAodjAw
+MSBBIE0gSSAgT0VNWFNEVCAgMHgwODAwMDQwMyBNU0ZUIDB4MDAwMDAwOTcpIEAgMHgwMDAwMDAw
+MDNmZjMwMTAwCkFDUEk6IEZBRFQgKHYwMDMgQSBNIEkgIE9FTUZBQ1AgIDB4MDgwMDA0MDMgTVNG
+VCAweDAwMDAwMDk3KSBAIDB4MDAwMDAwMDAzZmYzMDI5MApBQ1BJOiBNQURUICh2MDAxIEEgTSBJ
+ICBPRU1BUElDICAweDA4MDAwNDAzIE1TRlQgMHgwMDAwMDA5NykgQCAweDAwMDAwMDAwM2ZmMzAz
+OTAKQUNQSTogT0VNQiAodjAwMSBBIE0gSSAgT0VNQklPUyAgMHgwODAwMDQwMyBNU0ZUIDB4MDAw
+MDAwOTcpIEAgMHgwMDAwMDAwMDNmZjQwMDQwCkFDUEk6IERTRFQgKHYwMDEgIEEwMDkxIEEwMDkx
+MDA2IDB4MDAwMDAwMDYgTVNGVCAweDAxMDAwMDBkKSBAIDB4MDAwMDAwMDAwMDAwMDAwMApPbiBu
+b2RlIDAgdG90YWxwYWdlczogMjYxOTM2CiAgRE1BIHpvbmU6IDQwOTYgcGFnZXMsIExJRk8gYmF0
+Y2g6MQogIE5vcm1hbCB6b25lOiAyNTc4NDAgcGFnZXMsIExJRk8gYmF0Y2g6MTYKICBIaWdoTWVt
+IHpvbmU6IDAgcGFnZXMsIExJRk8gYmF0Y2g6MQpBQ1BJOiBMb2NhbCBBUElDIGFkZHJlc3MgMHhm
+ZWUwMDAwMApBQ1BJOiBMQVBJQyAoYWNwaV9pZFsweDAxXSBsYXBpY19pZFsweDAwXSBlbmFibGVk
+KQpQcm9jZXNzb3IgIzAgMTU6MTIgQVBJQyB2ZXJzaW9uIDE2CkFDUEk6IElPQVBJQyAoaWRbMHgw
+MV0gYWRkcmVzc1sweGZlYzAwMDAwXSBnc2lfYmFzZVswXSkKSU9BUElDWzBdOiBhcGljX2lkIDEs
+IHZlcnNpb24gMywgYWRkcmVzcyAweGZlYzAwMDAwLCBHU0kgMC0yMwpBQ1BJOiBJTlRfU1JDX09W
+UiAoYnVzIDAgYnVzX2lycSAwIGdsb2JhbF9pcnEgMiBkZmwgZGZsKQpBQ1BJOiBJUlEwIHVzZWQg
+Ynkgb3ZlcnJpZGUuCkFDUEk6IElSUTIgdXNlZCBieSBvdmVycmlkZS4KQUNQSTogSVJROSB1c2Vk
+IGJ5IG92ZXJyaWRlLgpTZXR0aW5nIEFQSUMgcm91dGluZyB0byBmbGF0ClVzaW5nIEFDUEkgKE1B
+RFQpIGZvciBTTVAgY29uZmlndXJhdGlvbiBpbmZvcm1hdGlvbgpDaGVja2luZyBhcGVydHVyZS4u
+LgpDUFUgMDogYXBlcnR1cmUgQCBlMDAwMDAwMCBzaXplIDI1NiBNQgpCdWlsdCAxIHpvbmVsaXN0
+cwpLZXJuZWwgY29tbWFuZCBsaW5lOiByb290PS9kZXYvaGRhMiB2Z2E9OSBjb25zb2xlPXR0eTAK
+SW5pdGlhbGl6aW5nIENQVSMwClBJRCBoYXNoIHRhYmxlIGVudHJpZXM6IDQwOTYgKG9yZGVyOiAx
+MiwgMTMxMDcyIGJ5dGVzKQp0aW1lLmM6IFVzaW5nIDEuMTkzMTgyIE1IeiBQSVQgdGltZXIuCnRp
+bWUuYzogRGV0ZWN0ZWQgMTgwMi4zNDcgTUh6IHByb2Nlc3Nvci4KQ29uc29sZTogY29sb3VyIFZH
+QSsgMTMyeDQ0CkRlbnRyeSBjYWNoZSBoYXNoIHRhYmxlIGVudHJpZXM6IDI2MjE0NCAob3JkZXI6
+IDksIDIwOTcxNTIgYnl0ZXMpCklub2RlLWNhY2hlIGhhc2ggdGFibGUgZW50cmllczogMTMxMDcy
+IChvcmRlcjogOCwgMTA0ODU3NiBieXRlcykKTWVtb3J5OiAxMDI0MTYway8xMDQ3NzQ0ayBhdmFp
+bGFibGUgKDMyNTNrIGtlcm5lbCBjb2RlLCAyMjg4MGsgcmVzZXJ2ZWQsIDExOTJrIGRhdGEsIDE3
+MmsgaW5pdCkKQ2FsaWJyYXRpbmcgZGVsYXkgbG9vcC4uLiAzNTM4Ljk0IEJvZ29NSVBTIChscGo9
+MTc2OTQ3MikKTW91bnQtY2FjaGUgaGFzaCB0YWJsZSBlbnRyaWVzOiAyNTYgKG9yZGVyOiAwLCA0
+MDk2IGJ5dGVzKQpDUFU6IEwxIEkgQ2FjaGU6IDY0SyAoNjQgYnl0ZXMvbGluZSksIEQgY2FjaGUg
+NjRLICg2NCBieXRlcy9saW5lKQpDUFU6IEwyIENhY2hlOiA1MTJLICg2NCBieXRlcy9saW5lKQpD
+UFU6IEFNRCBBdGhsb24odG0pIDY0IFByb2Nlc3NvciAyODAwKyBzdGVwcGluZyAwMAogdGJ4ZmFj
+ZS0wMTE4IFswMl0gYWNwaV9sb2FkX3RhYmxlcyAgICAgIDogQUNQSSBUYWJsZXMgc3VjY2Vzc2Z1
+bGx5IGFjcXVpcmVkClBhcnNpbmcgYWxsIENvbnRyb2wgTWV0aG9kczouLi4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4uClRhYmxlIFtEU0RUXShpZCBGMDA0KSAtIDUxNyBPYmplY3RzIHdpdGggNDQgRGV2
+aWNlcyAxMzkgTWV0aG9kcyAyNSBSZWdpb25zCkFDUEkgTmFtZXNwYWNlIHN1Y2Nlc3NmdWxseSBs
+b2FkZWQgYXQgcm9vdCBmZmZmZmZmZjgwNWQwM2MwCmV2eGZldm50LTAwOTQgWzAzXSBhY3BpX2Vu
+YWJsZSAgICAgICAgICAgOiBUcmFuc2l0aW9uIHRvIEFDUEkgbW9kZSBzdWNjZXNzZnVsClVzaW5n
+IGxvY2FsIEFQSUMgTk1JIHdhdGNoZG9nIHVzaW5nIHBlcmZjdHIwClVzaW5nIGxvY2FsIEFQSUMg
+dGltZXIgaW50ZXJydXB0cy4KRGV0ZWN0ZWQgMTIuNTE2IE1IeiBBUElDIHRpbWVyLgpORVQ6IFJl
+Z2lzdGVyZWQgcHJvdG9jb2wgZmFtaWx5IDE2ClBDSTogVXNpbmcgY29uZmlndXJhdGlvbiB0eXBl
+IDEKbXRycjogdjIuMCAoMjAwMjA1MTkpCkFDUEk6IFN1YnN5c3RlbSByZXZpc2lvbiAyMDA1MDIx
+MQpldmdwZWJsay0wOTc5IFswNl0gZXZfY3JlYXRlX2dwZV9ibG9jayAgIDogR1BFIDAwIHRvIDBG
+IFtfR1BFXSAyIHJlZ3Mgb24gaW50IDB4OQpldmdwZWJsay0wOTg3IFswNl0gZXZfY3JlYXRlX2dw
+ZV9ibG9jayAgIDogRm91bmQgNyBXYWtlLCBFbmFibGVkIDAgUnVudGltZSBHUEVzIGluIHRoaXMg
+YmxvY2sKQ29tcGxldGluZyBSZWdpb24vRmllbGQvQnVmZmVyL1BhY2thZ2UgaW5pdGlhbGl6YXRp
+b246Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4uCkluaXRpYWxpemVkIDI0LzI1IFJlZ2lvbnMgNDQvNDQgRmllbGRzIDM5LzM5IEJ1
+ZmZlcnMgMTMvMTQgUGFja2FnZXMgKDUyNiBub2RlcykKRXhlY3V0aW5nIGFsbCBEZXZpY2UgX1NU
+QSBhbmRfSU5JIG1ldGhvZHM6Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4KNDcgRGV2aWNlcyBmb3VuZCBjb250YWluaW5nOiA0NyBfU1RBLCAwIF9JTkkgbWV0
+aG9kcwpBQ1BJOiBJbnRlcnByZXRlciBlbmFibGVkCkFDUEk6IFVzaW5nIElPQVBJQyBmb3IgaW50
+ZXJydXB0IHJvdXRpbmcKQUNQSTogUENJIFJvb3QgQnJpZGdlIFtQQ0kwXSAoMDA6MDApClBDSTog
+UHJvYmluZyBQQ0kgaGFyZHdhcmUgKGJ1cyAwMCkKUENJOiBWaWEgSVJRIGZpeHVwCkFDUEk6IFBD
+SSBJbnRlcnJ1cHQgUm91dGluZyBUYWJsZSBbXF9TQl8uUENJMC5fUFJUXQpBQ1BJOiBQQ0kgSW50
+ZXJydXB0IExpbmsgW0xOS0FdIChJUlFzIDMgNCA1IDcgMTAgKjExIDE0IDE1KQpBQ1BJOiBQQ0kg
+SW50ZXJydXB0IExpbmsgW0xOS0JdIChJUlFzIDMgNCA1IDcgKjEwIDExIDE0IDE1KQpBQ1BJOiBQ
+Q0kgSW50ZXJydXB0IExpbmsgW0xOS0NdIChJUlFzIDMgNCAqNSA3IDEwIDExIDE0IDE1KQpBQ1BJ
+OiBQQ0kgSW50ZXJydXB0IExpbmsgW0xOS0RdIChJUlFzIDMgNCA1IDcgMTAgMTEgMTQgMTUpICow
+LCBkaXNhYmxlZC4KQUNQSTogUENJIEludGVycnVwdCBMaW5rIFtMTktFXSAoSVJRcyAzIDQgNSA3
+IDEwIDExIDE0IDE1KSAqMCwgZGlzYWJsZWQuCkFDUEk6IFBDSSBJbnRlcnJ1cHQgTGluayBbTE5L
+Rl0gKElSUXMgMyA0IDUgNyAxMCAxMSAxNCAxNSkgKjAsIGRpc2FibGVkLgpBQ1BJOiBQQ0kgSW50
+ZXJydXB0IExpbmsgW0xOS0ddIChJUlFzIDMgNCA1IDcgMTAgMTEgMTQgMTUpICowLCBkaXNhYmxl
+ZC4KQUNQSTogUENJIEludGVycnVwdCBMaW5rIFtMTktIXSAoSVJRcyAzIDQgNSA3IDEwIDExIDE0
+IDE1KSAqMCwgZGlzYWJsZWQuCkxpbnV4IFBsdWcgYW5kIFBsYXkgU3VwcG9ydCB2MC45NyAoYykg
+QWRhbSBCZWxheQpwbnA6IFBuUCBBQ1BJIGluaXQKcG5wOiBQblAgQUNQSTogZm91bmQgMTAgZGV2
+aWNlcwpTQ1NJIHN1YnN5c3RlbSBpbml0aWFsaXplZAp1c2Jjb3JlOiByZWdpc3RlcmVkIG5ldyBk
+cml2ZXIgdXNiZnMKdXNiY29yZTogcmVnaXN0ZXJlZCBuZXcgZHJpdmVyIGh1YgpQQ0k6IFVzaW5n
+IEFDUEkgZm9yIElSUSByb3V0aW5nCioqIFBDSSBpbnRlcnJ1cHRzIGFyZSBubyBsb25nZXIgcm91
+dGVkIGF1dG9tYXRpY2FsbHkuICBJZiB0aGlzCioqIGNhdXNlcyBhIGRldmljZSB0byBzdG9wIHdv
+cmtpbmcsIGl0IGlzIHByb2JhYmx5IGJlY2F1c2UgdGhlCioqIGRyaXZlciBmYWlsZWQgdG8gY2Fs
+bCBwY2lfZW5hYmxlX2RldmljZSgpLiAgQXMgYSB0ZW1wb3JhcnkKKiogd29ya2Fyb3VuZCwgdGhl
+ICJwY2k9cm91dGVpcnEiIGFyZ3VtZW50IHJlc3RvcmVzIHRoZSBvbGQKKiogYmVoYXZpb3IuICBJ
+ZiB0aGlzIGFyZ3VtZW50IG1ha2VzIHRoZSBkZXZpY2Ugd29yayBhZ2FpbiwKKiogcGxlYXNlIGVt
+YWlsIHRoZSBvdXRwdXQgb2YgImxzcGNpIiB0byBiam9ybi5oZWxnYWFzQGhwLmNvbQoqKiBzbyBJ
+IGNhbiBmaXggdGhlIGRyaXZlci4KVEMgY2xhc3NpZmllciBhY3Rpb24gKGJ1Z3MgdG8gbmV0ZGV2
+QG9zcy5zZ2kuY29tIGNjIGhhZGlAY3liZXJ1cy5jYSkKYWdwZ2FydDogRGV0ZWN0ZWQgQUdQIGJy
+aWRnZSAwCmFncGdhcnQ6IE1heGltdW0gbWFpbiBtZW1vcnkgdG8gdXNlIGZvciBhZ3AgbWVtb3J5
+OiA5NDFNCmFncGdhcnQ6IEFHUCBhcGVydHVyZSBpcyAyNTZNIEAgMHhlMDAwMDAwMApQQ0ktRE1B
+OiBEaXNhYmxpbmcgSU9NTVUuCklBMzIgZW11bGF0aW9uICRJZDogc3lzX2lhMzIuYyx2IDEuMzIg
+MjAwMi8wMy8yNCAxMzowMjoyOCBhayBFeHAgJApUb3RhbCBIdWdlVExCIG1lbW9yeSBhbGxvY2F0
+ZWQsIDAKaW5vdGlmeSBkZXZpY2UgbWlub3I9NjMKVkZTOiBEaXNrIHF1b3RhcyBkcXVvdF82LjUu
+MQpEcXVvdC1jYWNoZSBoYXNoIHRhYmxlIGVudHJpZXM6IDUxMiAob3JkZXIgMCwgNDA5NiBieXRl
+cykKSW5zdGFsbGluZyBrbmZzZCAoY29weXJpZ2h0IChDKSAxOTk2IG9raXJAbW9uYWQuc3diLmRl
+KS4KSW5pdGlhbGl6aW5nIENyeXB0b2dyYXBoaWMgQVBJClJlYWwgVGltZSBDbG9jayBEcml2ZXIg
+djEuMTIKTm9uLXZvbGF0aWxlIG1lbW9yeSBkcml2ZXIgdjEuMgpMaW51eCBhZ3BnYXJ0IGludGVy
+ZmFjZSB2MC4xMDAgKGMpIERhdmUgSm9uZXMKSGFuZ2NoZWNrOiBzdGFydGluZyBoYW5nY2hlY2sg
+dGltZXIgMC41LjAgKHRpY2sgaXMgMTgwIHNlY29uZHMsIG1hcmdpbiBpcyA2MCBzZWNvbmRzKS4K
+QUNQSTogUG93ZXIgQnV0dG9uIChGRikgW1BXUkZdCkFDUEk6IFNsZWVwIEJ1dHRvbiAoQ00pIFtT
+TFBCXQpzZXJpbzogaTgwNDIgQVVYIHBvcnQgYXQgMHg2MCwweDY0IGlycSAxMgpzZXJpbzogaTgw
+NDIgS0JEIHBvcnQgYXQgMHg2MCwweDY0IGlycSAxClNlcmlhbDogODI1MC8xNjU1MCBkcml2ZXIg
+JFJldmlzaW9uOiAxLjkwICQgOCBwb3J0cywgSVJRIHNoYXJpbmcgZGlzYWJsZWQKdHR5UzEgYXQg
+SS9PIDB4MmY4IChpcnEgPSAzKSBpcyBhIDE2NTUwQQp0dHlTMSBhdCBJL08gMHgyZjggKGlycSA9
+IDMpIGlzIGEgMTY1NTBBCm1pY2U6IFBTLzIgbW91c2UgZGV2aWNlIGNvbW1vbiBmb3IgYWxsIG1p
+Y2UKaW5wdXQ6IEFUIFRyYW5zbGF0ZWQgU2V0IDIga2V5Ym9hcmQgb24gaXNhMDA2MC9zZXJpbzAK
+aW5wdXQ6IEltUFMvMiBMb2dpdGVjaCBXaGVlbCBNb3VzZSBvbiBpc2EwMDYwL3NlcmlvMQppbnB1
+dDogUEMgU3BlYWtlcgppbyBzY2hlZHVsZXIgbm9vcCByZWdpc3RlcmVkCmlvIHNjaGVkdWxlciBh
+bnRpY2lwYXRvcnkgcmVnaXN0ZXJlZAppbyBzY2hlZHVsZXIgZGVhZGxpbmUgcmVnaXN0ZXJlZApp
+byBzY2hlZHVsZXIgY2ZxIHJlZ2lzdGVyZWQKZmxvcHB5MDogbm8gZmxvcHB5IGNvbnRyb2xsZXJz
+IGZvdW5kCmxvb3A6IGxvYWRlZCAobWF4IDggZGV2aWNlcykKbmJkOiByZWdpc3RlcmVkIGRldmlj
+ZSBhdCBtYWpvciA0MwpVbmlmb3JtIE11bHRpLVBsYXRmb3JtIEUtSURFIGRyaXZlciBSZXZpc2lv
+bjogNy4wMGFscGhhMgppZGU6IEFzc3VtaW5nIDMzTUh6IHN5c3RlbSBidXMgc3BlZWQgZm9yIFBJ
+TyBtb2Rlczsgb3ZlcnJpZGUgd2l0aCBpZGVidXM9eHgKVlBfSURFOiBJREUgY29udHJvbGxlciBh
+dCBQQ0kgc2xvdCAwMDAwOjAwOjBmLjEKQUNQSTogUENJIGludGVycnVwdCAwMDAwOjAwOjBmLjFb
+QV0gLT4gR1NJIDIwIChsZXZlbCwgbG93KSAtPiBJUlEgMTY5ClZQX0lERTogY2hpcHNldCByZXZp
+c2lvbiA2ClZQX0lERTogbm90IDEwMCUgbmF0aXZlIG1vZGU6IHdpbGwgcHJvYmUgaXJxcyBsYXRl
+cgpWUF9JREU6IFZJQSB2dDgyMzcgKHJldiAwMCkgSURFIFVETUExMzMgY29udHJvbGxlciBvbiBw
+Y2kwMDAwOjAwOjBmLjEKICAgIGlkZTA6IEJNLURNQSBhdCAweGZjMDAtMHhmYzA3LCBCSU9TIHNl
+dHRpbmdzOiBoZGE6RE1BLCBoZGI6RE1BCiAgICBpZGUxOiBCTS1ETUEgYXQgMHhmYzA4LTB4ZmMw
+ZiwgQklPUyBzZXR0aW5nczogaGRjOkRNQSwgaGRkOnBpbwpQcm9iaW5nIElERSBpbnRlcmZhY2Ug
+aWRlMC4uLgpoZGE6IFFVQU5UVU0gRklSRUJBTExsY3QxNSAyMCwgQVRBIERJU0sgZHJpdmUKaGRi
+OiBNYXh0b3IgNlkyMDBQMCwgQVRBIERJU0sgZHJpdmUKaWRlMCBhdCAweDFmMC0weDFmNywweDNm
+NiBvbiBpcnEgMTQKUHJvYmluZyBJREUgaW50ZXJmYWNlIGlkZTEuLi4KaGRjOiBBVEFQSSBEVkQt
+Uk9NIDE2WCBNYXhpbXVtLCBBVEFQSSBDRC9EVkQtUk9NIGRyaXZlCmlkZTEgYXQgMHgxNzAtMHgx
+NzcsMHgzNzYgb24gaXJxIDE1ClByb2JpbmcgSURFIGludGVyZmFjZSBpZGUyLi4uClByb2Jpbmcg
+SURFIGludGVyZmFjZSBpZGUzLi4uClByb2JpbmcgSURFIGludGVyZmFjZSBpZGU0Li4uClByb2Jp
+bmcgSURFIGludGVyZmFjZSBpZGU1Li4uCmhkYTogbWF4IHJlcXVlc3Qgc2l6ZTogMTI4S2lCCmhk
+YTogMzk4NzY0ODAgc2VjdG9ycyAoMjA0MTYgTUIpIHcvNDE4S2lCIENhY2hlLCBDSFM9Mzk1NjAv
+MTYvNjMsIFVETUEoNjYpCmhkYTogY2FjaGUgZmx1c2hlcyBub3Qgc3VwcG9ydGVkCiBoZGE6IGhk
+YTEgaGRhMgpoZGI6IG1heCByZXF1ZXN0IHNpemU6IDEwMjRLaUIKaGRiOiAzOTgyOTcwODggc2Vj
+dG9ycyAoMjAzOTI4IE1CKSB3Lzc5MzZLaUIgQ2FjaGUsIENIUz0yNDc5Mi8yNTUvNjMsIFVETUEo
+MTMzKQpoZGI6IGNhY2hlIGZsdXNoZXMgc3VwcG9ydGVkCiBoZGI6IGhkYjEgaGRiMiA8IGhkYjUg
+PiBoZGIzIGhkYjQKaGRjOiBBVEFQSSA0OFggRFZELVJPTSBkcml2ZSwgMjU2a0IgQ2FjaGUsIFVE
+TUEoNjYpClVuaWZvcm0gQ0QtUk9NIGRyaXZlciBSZXZpc2lvbjogMy4yMApsaWJhdGEgdmVyc2lv
+biAxLjEwIGxvYWRlZC4Kc2F0YV92aWEgdmVyc2lvbiAxLjEKQUNQSTogUENJIGludGVycnVwdCAw
+MDAwOjAwOjBmLjBbQl0gLT4gR1NJIDIwIChsZXZlbCwgbG93KSAtPiBJUlEgMTY5CnNhdGFfdmlh
+KDAwMDA6MDA6MGYuMCk6IHJvdXRlZCB0byBoYXJkIGlycSBsaW5lIDQKYXRhMTogU0FUQSBtYXgg
+VURNQS8xMzMgY21kIDB4RTgwMCBjdGwgMHhFNDAyIGJtZG1hIDB4RDQwMCBpcnEgMTY5CmF0YTI6
+IFNBVEEgbWF4IFVETUEvMTMzIGNtZCAweEUwMDAgY3RsIDB4RDgwMiBibWRtYSAweEQ0MDggaXJx
+IDE2OQphdGExOiBkZXYgMCBjZmcgNDk6MmYwMCA4MjozNDZiIDgzOjdkMDEgODQ6NDAwMyA4NToz
+NDY5IDg2OjNjMDEgODc6NDAwMyA4ODowMDdmCmF0YTE6IGRldiAwIEFUQSwgbWF4IFVETUEvMTMz
+LCAxNTYzMDE0ODggc2VjdG9yczogbGJhNDgKYXRhMTogZGV2IDAgY29uZmlndXJlZCBmb3IgVURN
+QS8xMzMKc2NzaTAgOiBzYXRhX3ZpYQphdGEyOiBkZXYgMCBjZmcgNDk6MmYwMCA4MjozNDZiIDgz
+OjdkMDEgODQ6NDAwMyA4NTozNDY5IDg2OjNjMDEgODc6NDAwMyA4ODowMDdmCmF0YTI6IGRldiAw
+IEFUQSwgbWF4IFVETUEvMTMzLCAxNTYzMDE0ODggc2VjdG9yczogbGJhNDgKYXRhMjogZGV2IDAg
+Y29uZmlndXJlZCBmb3IgVURNQS8xMzMKc2NzaTEgOiBzYXRhX3ZpYQogIFZlbmRvcjogQVRBICAg
+ICAgIE1vZGVsOiBTVDM4MDAxM0FTICAgICAgICBSZXY6IDMuMTgKICBUeXBlOiAgIERpcmVjdC1B
+Y2Nlc3MgICAgICAgICAgICAgICAgICAgICAgQU5TSSBTQ1NJIHJldmlzaW9uOiAwNQogIFZlbmRv
+cjogQVRBICAgICAgIE1vZGVsOiBTVDM4MDAxM0FTICAgICAgICBSZXY6IDMuMTgKICBUeXBlOiAg
+IERpcmVjdC1BY2Nlc3MgICAgICAgICAgICAgICAgICAgICAgQU5TSSBTQ1NJIHJldmlzaW9uOiAw
+NQpTQ1NJIGRldmljZSBzZGE6IDE1NjMwMTQ4OCA1MTItYnl0ZSBoZHdyIHNlY3RvcnMgKDgwMDI2
+IE1CKQpTQ1NJIGRldmljZSBzZGE6IGRyaXZlIGNhY2hlOiB3cml0ZSBiYWNrClNDU0kgZGV2aWNl
+IHNkYTogMTU2MzAxNDg4IDUxMi1ieXRlIGhkd3Igc2VjdG9ycyAoODAwMjYgTUIpClNDU0kgZGV2
+aWNlIHNkYTogZHJpdmUgY2FjaGU6IHdyaXRlIGJhY2sKIHNkYTogc2RhMQpBdHRhY2hlZCBzY3Np
+IGRpc2sgc2RhIGF0IHNjc2kwLCBjaGFubmVsIDAsIGlkIDAsIGx1biAwClNDU0kgZGV2aWNlIHNk
+YjogMTU2MzAxNDg4IDUxMi1ieXRlIGhkd3Igc2VjdG9ycyAoODAwMjYgTUIpClNDU0kgZGV2aWNl
+IHNkYjogZHJpdmUgY2FjaGU6IHdyaXRlIGJhY2sKU0NTSSBkZXZpY2Ugc2RiOiAxNTYzMDE0ODgg
+NTEyLWJ5dGUgaGR3ciBzZWN0b3JzICg4MDAyNiBNQikKU0NTSSBkZXZpY2Ugc2RiOiBkcml2ZSBj
+YWNoZTogd3JpdGUgYmFjawogc2RiOiBzZGIxCkF0dGFjaGVkIHNjc2kgZGlzayBzZGIgYXQgc2Nz
+aTEsIGNoYW5uZWwgMCwgaWQgMCwgbHVuIDAKQUNQSTogUENJIGludGVycnVwdCAwMDAwOjAwOjEw
+LjRbQ10gLT4gR1NJIDIxIChsZXZlbCwgbG93KSAtPiBJUlEgMTc3CmVoY2lfaGNkIDAwMDA6MDA6
+MTAuNDogVklBIFRlY2hub2xvZ2llcywgSW5jLiBVU0IgMi4wCmVoY2lfaGNkIDAwMDA6MDA6MTAu
+NDogaXJxIDE3NywgcGNpIG1lbSAweGZkZjAwMDAwCmVoY2lfaGNkIDAwMDA6MDA6MTAuNDogbmV3
+IFVTQiBidXMgcmVnaXN0ZXJlZCwgYXNzaWduZWQgYnVzIG51bWJlciAxCmVoY2lfaGNkIDAwMDA6
+MDA6MTAuNDogVVNCIDIuMCBpbml0aWFsaXplZCwgRUhDSSAxLjAwLCBkcml2ZXIgMTAgRGVjIDIw
+MDQKaHViIDEtMDoxLjA6IFVTQiBodWIgZm91bmQKaHViIDEtMDoxLjA6IDggcG9ydHMgZGV0ZWN0
+ZWQKb2hjaV9oY2Q6IDIwMDQgTm92IDA4IFVTQiAxLjEgJ09wZW4nIEhvc3QgQ29udHJvbGxlciAo
+T0hDSSkgRHJpdmVyIChQQ0kpClVTQiBVbml2ZXJzYWwgSG9zdCBDb250cm9sbGVyIEludGVyZmFj
+ZSBkcml2ZXIgdjIuMgpBQ1BJOiBQQ0kgaW50ZXJydXB0IDAwMDA6MDA6MTAuMFtBXSAtPiBHU0kg
+MjEgKGxldmVsLCBsb3cpIC0+IElSUSAxNzcKdWhjaV9oY2QgMDAwMDowMDoxMC4wOiBWSUEgVGVj
+aG5vbG9naWVzLCBJbmMuIFZUODJ4eHh4eCBVSENJIFVTQiAxLjEgQ29udHJvbGxlcgp1aGNpX2hj
+ZCAwMDAwOjAwOjEwLjA6IGlycSAxNzcsIGlvIGJhc2UgMHhkYzAwCnVoY2lfaGNkIDAwMDA6MDA6
+MTAuMDogbmV3IFVTQiBidXMgcmVnaXN0ZXJlZCwgYXNzaWduZWQgYnVzIG51bWJlciAyCmh1YiAy
+LTA6MS4wOiBVU0IgaHViIGZvdW5kCmh1YiAyLTA6MS4wOiAyIHBvcnRzIGRldGVjdGVkCkFDUEk6
+IFBDSSBpbnRlcnJ1cHQgMDAwMDowMDoxMC4xW0FdIC0+IEdTSSAyMSAobGV2ZWwsIGxvdykgLT4g
+SVJRIDE3Nwp1aGNpX2hjZCAwMDAwOjAwOjEwLjE6IFZJQSBUZWNobm9sb2dpZXMsIEluYy4gVlQ4
+Mnh4eHh4IFVIQ0kgVVNCIDEuMSBDb250cm9sbGVyICgjMikKdWhjaV9oY2QgMDAwMDowMDoxMC4x
+OiBpcnEgMTc3LCBpbyBiYXNlIDB4ZWMwMAp1aGNpX2hjZCAwMDAwOjAwOjEwLjE6IG5ldyBVU0Ig
+YnVzIHJlZ2lzdGVyZWQsIGFzc2lnbmVkIGJ1cyBudW1iZXIgMwpodWIgMy0wOjEuMDogVVNCIGh1
+YiBmb3VuZApodWIgMy0wOjEuMDogMiBwb3J0cyBkZXRlY3RlZApBQ1BJOiBQQ0kgaW50ZXJydXB0
+IDAwMDA6MDA6MTAuMltCXSAtPiBHU0kgMjEgKGxldmVsLCBsb3cpIC0+IElSUSAxNzcKdWhjaV9o
+Y2QgMDAwMDowMDoxMC4yOiBWSUEgVGVjaG5vbG9naWVzLCBJbmMuIFZUODJ4eHh4eCBVSENJIFVT
+QiAxLjEgQ29udHJvbGxlciAoIzMpCnVoY2lfaGNkIDAwMDA6MDA6MTAuMjogaXJxIDE3NywgaW8g
+YmFzZSAweGMwMDAKdWhjaV9oY2QgMDAwMDowMDoxMC4yOiBuZXcgVVNCIGJ1cyByZWdpc3RlcmVk
+LCBhc3NpZ25lZCBidXMgbnVtYmVyIDQKaHViIDQtMDoxLjA6IFVTQiBodWIgZm91bmQKaHViIDQt
+MDoxLjA6IDIgcG9ydHMgZGV0ZWN0ZWQKQUNQSTogUENJIGludGVycnVwdCAwMDAwOjAwOjEwLjNb
+Ql0gLT4gR1NJIDIxIChsZXZlbCwgbG93KSAtPiBJUlEgMTc3CnVoY2lfaGNkIDAwMDA6MDA6MTAu
+MzogVklBIFRlY2hub2xvZ2llcywgSW5jLiBWVDgyeHh4eHggVUhDSSBVU0IgMS4xIENvbnRyb2xs
+ZXIgKCM0KQp1aGNpX2hjZCAwMDAwOjAwOjEwLjM6IGlycSAxNzcsIGlvIGJhc2UgMHhjNDAwCnVo
+Y2lfaGNkIDAwMDA6MDA6MTAuMzogbmV3IFVTQiBidXMgcmVnaXN0ZXJlZCwgYXNzaWduZWQgYnVz
+IG51bWJlciA1Cmh1YiA1LTA6MS4wOiBVU0IgaHViIGZvdW5kCmh1YiA1LTA6MS4wOiAyIHBvcnRz
+IGRldGVjdGVkCnVzYiAyLTI6IG5ldyBmdWxsIHNwZWVkIFVTQiBkZXZpY2UgdXNpbmcgdWhjaV9o
+Y2QgYW5kIGFkZHJlc3MgMgp1c2Jjb3JlOiByZWdpc3RlcmVkIG5ldyBkcml2ZXIgdXNiaGlkCmRy
+aXZlcnMvdXNiL2lucHV0L2hpZC1jb3JlLmM6IHYyLjA6VVNCIEhJRCBjb3JlIGRyaXZlcgptZDog
+bGluZWFyIHBlcnNvbmFsaXR5IHJlZ2lzdGVyZWQgYXMgbnIgMQptZDogcmFpZDAgcGVyc29uYWxp
+dHkgcmVnaXN0ZXJlZCBhcyBuciAyCm1kOiByYWlkMSBwZXJzb25hbGl0eSByZWdpc3RlcmVkIGFz
+IG5yIDMKbWQ6IHJhaWQxMCBwZXJzb25hbGl0eSByZWdpc3RlcmVkIGFzIG5yIDkKbWQ6IHJhaWQ1
+IHBlcnNvbmFsaXR5IHJlZ2lzdGVyZWQgYXMgbnIgNApyYWlkNTogYXV0b21hdGljYWxseSB1c2lu
+ZyBiZXN0IGNoZWNrc3VtbWluZyBmdW5jdGlvbjogZ2VuZXJpY19zc2UKICAgZ2VuZXJpY19zc2U6
+ICA1NDQ0LjAwMCBNQi9zZWMKcmFpZDU6IHVzaW5nIGZ1bmN0aW9uOiBnZW5lcmljX3NzZSAoNTQ0
+NC4wMDAgTUIvc2VjKQpyYWlkNjogaW50NjR4MSAgIDE0NzIgTUIvcwpyYWlkNjogaW50NjR4MiAg
+IDIxMzIgTUIvcwpyYWlkNjogaW50NjR4NCAgIDIyNTMgTUIvcwpyYWlkNjogaW50NjR4OCAgIDE1
+NDIgTUIvcwpyYWlkNjogc3NlMngxICAgIDEwODUgTUIvcwpyYWlkNjogc3NlMngyICAgIDE5MjEg
+TUIvcwpyYWlkNjogc3NlMng0ICAgIDI1MTEgTUIvcwpyYWlkNjogdXNpbmcgYWxnb3JpdGhtIHNz
+ZTJ4NCAoMjUxMSBNQi9zKQptZDogcmFpZDYgcGVyc29uYWxpdHkgcmVnaXN0ZXJlZCBhcyBuciA4
+Cm1kOiBtdWx0aXBhdGggcGVyc29uYWxpdHkgcmVnaXN0ZXJlZCBhcyBuciA3Cm1kOiBtZCBkcml2
+ZXIgMC45MC4xIE1BWF9NRF9ERVZTPTI1NiwgTURfU0JfRElTS1M9MjcKb3Byb2ZpbGU6IHVzaW5n
+IE5NSSBpbnRlcnJ1cHQuCk5FVDogUmVnaXN0ZXJlZCBwcm90b2NvbCBmYW1pbHkgMgpJUDogcm91
+dGluZyBjYWNoZSBoYXNoIHRhYmxlIG9mIDgxOTIgYnVja2V0cywgNjRLYnl0ZXMKVENQIGVzdGFi
+bGlzaGVkIGhhc2ggdGFibGUgZW50cmllczogMjYyMTQ0IChvcmRlcjogOSwgMjA5NzE1MiBieXRl
+cykKVENQIGJpbmQgaGFzaCB0YWJsZSBlbnRyaWVzOiA2NTUzNiAob3JkZXI6IDcsIDUyNDI4OCBi
+eXRlcykKVENQOiBIYXNoIHRhYmxlcyBjb25maWd1cmVkIChlc3RhYmxpc2hlZCAyNjIxNDQgYmlu
+ZCA2NTUzNikKTkVUOiBSZWdpc3RlcmVkIHByb3RvY29sIGZhbWlseSAxCk5FVDogUmVnaXN0ZXJl
+ZCBwcm90b2NvbCBmYW1pbHkgMTcKcG93ZXJub3ctazg6IEZvdW5kIDEgQU1EIEF0aGxvbiA2NCAv
+IE9wdGVyb24gcHJvY2Vzc29ycyAodmVyc2lvbiAxLjAwLjA5ZSkKcG93ZXJub3ctazg6IEJJT1Mg
+ZXJyb3IgLSBubyBQU0IKQUNQSSB3YWtldXAgZGV2aWNlczogClBDSTAgUFMySyBQUzJNIFVBUjEg
+QUM5NyBVU0IxIFVTQjIgVVNCMyBVU0I0IEVIQ0kgUFdSQiBTTFBCIApBQ1BJOiAoc3VwcG9ydHMg
+UzAgUzEgUzMgUzQgUzUpCkJJT1MgRUREIGZhY2lsaXR5IHYwLjE2IDIwMDQtSnVuLTI1LCAyIGRl
+dmljZXMgZm91bmQKbWQ6IEF1dG9kZXRlY3RpbmcgUkFJRCBhcnJheXMuCm1kOiBhdXRvcnVuIC4u
+LgptZDogY29uc2lkZXJpbmcgc2RiMSAuLi4KbWQ6ICBhZGRpbmcgc2RiMSAuLi4KbWQ6ICBhZGRp
+bmcgc2RhMSAuLi4KbWQ6IGNyZWF0ZWQgbWQwCm1kOiBiaW5kPHNkYTE+Cm1kOiBiaW5kPHNkYjE+
+Cm1kOiBydW5uaW5nOiA8c2RiMT48c2RhMT4KbWQwOiBzZXR0aW5nIG1heF9zZWN0b3JzIHRvIDEy
+OCwgc2VnbWVudCBib3VuZGFyeSB0byAzMjc2NwpyYWlkMDogbG9va2luZyBhdCBzZGIxCnJhaWQw
+OiAgIGNvbXBhcmluZyBzZGIxKDc4MTQ4MDk2KSB3aXRoIHNkYjEoNzgxNDgwOTYpCnJhaWQwOiAg
+IEVORApyYWlkMDogICA9PT4gVU5JUVVFCnJhaWQwOiAxIHpvbmVzCnJhaWQwOiBsb29raW5nIGF0
+IHNkYTEKcmFpZDA6ICAgY29tcGFyaW5nIHNkYTEoNzgxNDgwOTYpIHdpdGggc2RiMSg3ODE0ODA5
+NikKcmFpZDA6ICAgRVFVQUwKcmFpZDA6IEZJTkFMIDEgem9uZXMKcmFpZDA6IGRvbmUuCnJhaWQw
+IDogbWRfc2l6ZSBpcyAxNTYyOTYxOTIgYmxvY2tzLgpyYWlkMCA6IGNvbmYtPmhhc2hfc3BhY2lu
+ZyBpcyAxNTYyOTYxOTIgYmxvY2tzLgpyYWlkMCA6IG5iX3pvbmUgaXMgMS4KcmFpZDAgOiBBbGxv
+Y2F0aW5nIDggYnl0ZXMgZm9yIGhhc2guCm1kOiAuLi4gYXV0b3J1biBET05FLgpSZWlzZXJGUzog
+aGRhMjogZm91bmQgcmVpc2VyZnMgZm9ybWF0ICIzLjYiIHdpdGggc3RhbmRhcmQgam91cm5hbApS
+ZWlzZXJGUzogaGRhMjogdXNpbmcgb3JkZXJlZCBkYXRhIG1vZGUKUmVpc2VyRlM6IGhkYTI6IGpv
+dXJuYWwgcGFyYW1zOiBkZXZpY2UgaGRhMiwgc2l6ZSA4MTkyLCBqb3VybmFsIGZpcnN0IGJsb2Nr
+IDE4LCBtYXggdHJhbnMgbGVuIDEwMjQsIG1heCBiYXRjaCA5MDAsIG1heCBjb21taXQgYWdlIDMw
+LCBtYXggdHJhbnMgYWdlIDMwClJlaXNlckZTOiBoZGEyOiBjaGVja2luZyB0cmFuc2FjdGlvbiBs
+b2cgKGhkYTIpClJlaXNlckZTOiBoZGEyOiBVc2luZyByNSBoYXNoIHRvIHNvcnQgbmFtZXMKVkZT
+OiBNb3VudGVkIHJvb3QgKHJlaXNlcmZzIGZpbGVzeXN0ZW0pIHJlYWRvbmx5LgpGcmVlaW5nIHVu
+dXNlZCBrZXJuZWwgbWVtb3J5OiAxNzJrIGZyZWVkCkFkZGluZyA5NzcyMTZrIHN3YXAgb24gL2Rl
+di9oZGExLiAgUHJpb3JpdHk6LTEgZXh0ZW50czoxCkFDUEk6IFBDSSBpbnRlcnJ1cHQgMDAwMDow
+MDoxMS41W0NdIC0+IEdTSSAyMiAobGV2ZWwsIGxvdykgLT4gSVJRIDE4NQpQQ0k6IFNldHRpbmcg
+bGF0ZW5jeSB0aW1lciBvZiBkZXZpY2UgMDAwMDowMDoxMS41IHRvIDY0CmNvZGVjX3JlYWQ6IGNv
+ZGVjIDAgaXMgbm90IHZhbGlkIFsweGZlMDAwMF0KY29kZWNfcmVhZDogY29kZWMgMCBpcyBub3Qg
+dmFsaWQgWzB4ZmUwMDAwXQpjb2RlY19yZWFkOiBjb2RlYyAwIGlzIG5vdCB2YWxpZCBbMHhmZTAw
+MDBdCmNvZGVjX3JlYWQ6IGNvZGVjIDAgaXMgbm90IHZhbGlkIFsweGZlMDAwMF0KY2RjX2FjbSAy
+LTI6MS4wOiB0dHlBQ00wOiBVU0IgQUNNIGRldmljZQp1c2Jjb3JlOiByZWdpc3RlcmVkIG5ldyBk
+cml2ZXIgY2RjX2FjbQpkcml2ZXJzL3VzYi9jbGFzcy9jZGMtYWNtLmM6IHYwLjIzOlVTQiBBYnN0
+cmFjdCBDb250cm9sIE1vZGVsIGRyaXZlciBmb3IgVVNCIG1vZGVtcyBhbmQgSVNETiBhZGFwdGVy
+cwpDU0xJUDogY29kZSBjb3B5cmlnaHQgMTk4OSBSZWdlbnRzIG9mIHRoZSBVbml2ZXJzaXR5IG9m
+IENhbGlmb3JuaWEKUFBQIGdlbmVyaWMgZHJpdmVyIHZlcnNpb24gMi40LjIKUFBQIEJTRCBDb21w
+cmVzc2lvbiBtb2R1bGUgcmVnaXN0ZXJlZApQUFAgRGVmbGF0ZSBDb21wcmVzc2lvbiBtb2R1bGUg
+cmVnaXN0ZXJlZApmZ2xyeDogbW9kdWxlIGxpY2Vuc2UgJ1Byb3ByaWV0YXJ5LiAoQykgMjAwMiAt
+IEFUSSBUZWNobm9sb2dpZXMsIFN0YXJuYmVyZywgR0VSTUFOWScgdGFpbnRzIGtlcm5lbC4KW2Zn
+bHJ4XSBNYXhpbXVtIG1haW4gbWVtb3J5IHRvIHVzZSBmb3IgbG9ja2VkIGRtYSBidWZmZXJzOiA5
+MTggTUJ5dGVzLgpBQ1BJOiBQQ0kgaW50ZXJydXB0IDAwMDA6MDE6MDAuMFtBXSAtPiBHU0kgMTYg
+KGxldmVsLCBsb3cpIC0+IElSUSAxOTMKW2ZnbHJ4XSBtb2R1bGUgbG9hZGVkIC0gZmdscnggOC4x
+Mi4xMCBbQXByICA0IDIwMDVdIG9uIG1pbm9yIDAKW2ZnbHJ4XSBJbnRlcm5hbCBBR1Agc3VwcG9y
+dCByZXF1ZXN0ZWQsIGJ1dCBrZXJuZWwgQUdQIHN1cHBvcnQgYWN0aXZlLgpbZmdscnhdIEhhdmUg
+dG8gdXNlIGtlcm5lbCBBR1Agc3VwcG9ydCB0byBhdm9pZCBjb25mbGljdHMuCltmZ2xyeF0gQUdQ
+IGRldGVjdGVkLCBBZ3BTdGF0ZSAgID0gMHgxZjAwMGExYSAoaGFyZHdhcmUgY2FwcyBvZiBjaGlw
+c2V0KQphZ3BnYXJ0OiBGb3VuZCBhbiBBR1AgMy41IGNvbXBsaWFudCBkZXZpY2UgYXQgMDAwMDow
+MDowMC4wLgphZ3BnYXJ0OiBQdXR0aW5nIEFHUCBWMyBkZXZpY2UgYXQgMDAwMDowMDowMC4wIGlu
+dG8gOHggbW9kZQphZ3BnYXJ0OiBQdXR0aW5nIEFHUCBWMyBkZXZpY2UgYXQgMDAwMDowMTowMC4w
+IGludG8gOHggbW9kZQpbZmdscnhdIEFHUCBlbmFibGVkLCAgQWdwQ29tbWFuZCA9IDB4MWYwMDAz
+MTIgKHNlbGVjdGVkIGNhcHMpCltmZ2xyeF0gZnJlZSAgQUdQID0gMjU2MTI2OTc2CltmZ2xyeF0g
+bWF4ICAgQUdQID0gMjU2MTI2OTc2CltmZ2xyeF0gZnJlZSAgTEZCID0gMTE2Mzg3ODQwCltmZ2xy
+eF0gbWF4ICAgTEZCID0gMTE2Mzg3ODQwCltmZ2xyeF0gZnJlZSAgSW52ID0gMApbZmdscnhdIG1h
+eCAgIEludiA9IDAKW2ZnbHJ4XSB0b3RhbCBJbnYgPSAwCltmZ2xyeF0gdG90YWwgVElNID0gMApb
+ZmdscnhdIHRvdGFsIEZCICA9IDAKW2ZnbHJ4XSB0b3RhbCBBR1AgPSA2NTUzNgpSZWlzZXJGUzog
+aGRiNTogZm91bmQgcmVpc2VyZnMgZm9ybWF0ICIzLjYiIHdpdGggc3RhbmRhcmQgam91cm5hbApS
+ZWlzZXJGUzogaGRiNTogdXNpbmcgb3JkZXJlZCBkYXRhIG1vZGUKUmVpc2VyRlM6IGhkYjU6IGpv
+dXJuYWwgcGFyYW1zOiBkZXZpY2UgaGRiNSwgc2l6ZSA4MTkyLCBqb3VybmFsIGZpcnN0IGJsb2Nr
+IDE4LCBtYXggdHJhbnMgbGVuIDEwMjQsIG1heCBiYXRjaCA5MDAsIG1heCBjb21taXQgYWdlIDMw
+LCBtYXggdHJhbnMgYWdlIDMwClJlaXNlckZTOiBoZGI1OiBjaGVja2luZyB0cmFuc2FjdGlvbiBs
+b2cgKGhkYjUpClJlaXNlckZTOiBoZGI1OiBVc2luZyByNSBoYXNoIHRvIHNvcnQgbmFtZXMKUFBQ
+OiBWSiBkZWNvbXByZXNzaW9uIGVycm9yClBQUDogVkogZGVjb21wcmVzc2lvbiBlcnJvcgpQUFA6
+IFZKIGRlY29tcHJlc3Npb24gZXJyb3IKUFBQOiBWSiBkZWNvbXByZXNzaW9uIGVycm9yClBQUDog
+VkogZGVjb21wcmVzc2lvbiBlcnJvcgpQUFA6IFZKIGRlY29tcHJlc3Npb24gZXJyb3IKdXNiIDIt
+MjogVVNCIGRpc2Nvbm5lY3QsIGFkZHJlc3MgMgp1c2IgMi0yOiBuZXcgZnVsbCBzcGVlZCBVU0Ig
+ZGV2aWNlIHVzaW5nIHVoY2lfaGNkIGFuZCBhZGRyZXNzIDMKY2RjX2FjbSAyLTI6MS4wOiB0dHlB
+Q00wOiBVU0IgQUNNIGRldmljZQpMb3Npbmcgc29tZSB0aWNrcy4uLiBjaGVja2luZyBpZiBDUFUg
+ZnJlcXVlbmN5IGNoYW5nZWQuClBQUDogVkogZGVjb21wcmVzc2lvbiBlcnJvcgpQUFA6IFZKIGRl
+Y29tcHJlc3Npb24gZXJyb3IKUFBQOiBWSiBkZWNvbXByZXNzaW9uIGVycm9yClBQUDogVkogZGVj
+b21wcmVzc2lvbiBlcnJvcgpQUFA6IFZKIGRlY29tcHJlc3Npb24gZXJyb3IKUFBQOiBWSiBkZWNv
+bXByZXNzaW9uIGVycm9yCkZBVDogYm9ndXMgbnVtYmVyIG9mIHJlc2VydmVkIHNlY3RvcnMKVkZT
+OiBDYW4ndCBmaW5kIGEgdmFsaWQgRkFUIGZpbGVzeXN0ZW0gb24gZGV2IG1kMC4KUmVpc2VyRlM6
+IG1kMDogZm91bmQgcmVpc2VyZnMgZm9ybWF0ICIzLjYiIHdpdGggc3RhbmRhcmQgam91cm5hbApV
+bmFibGUgdG8gaGFuZGxlIGtlcm5lbCBwYWdpbmcgcmVxdWVzdCBhdCBmZmZmYzIwMDAwMmVjMDA4
+IFJJUDogCls8ZmZmZmZmZmY4MDFjYmMzNT5dClBHRCAzZmYxMjA2NyBQVUQgM2ZmMTEwNjcgUE1E
+IDNmNTIxMDY3IFBURSAwCk9vcHM6IDAwMDIgWzFdIFBSRUVNUFQgCkNQVSAwIApNb2R1bGVzIGxp
+bmtlZCBpbjogZmdscnggcHBwX2RlZmxhdGUgemxpYl9kZWZsYXRlIGJzZF9jb21wIHBwcF9hc3lu
+YyBjcmNfY2NpdHQgcHBwX2dlbmVyaWMgc2xoYyB3ODM2MjdoZiBlZXByb20gaTJjX3NlbnNvciBp
+MmNfaXNhIHNuZF9pb2N0bDMyIHNuZF9wY21fb3NzIHNuZF9taXhlcl9vc3Mgc25kX3NlcV9vc3Mg
+c25kX3NlcV9taWRpX2V2ZW50IHNuZF9zZXEgY2RjX2FjbSBpMmNfdmlhcHJvIGkyY19jb3JlIHNu
+ZF92aWE4Mnh4IHNuZF9tcHU0MDFfdWFydCBzbmRfZW11MTBrMSBzbmRfcmF3bWlkaSBzbmRfc2Vx
+X2RldmljZSBzbmRfYWM5N19jb2RlYyBzbmRfcGNtIHNuZF90aW1lciBzbmRfcGFnZV9hbGxvYyBz
+bmRfdXRpbF9tZW0gc25kX2h3ZGVwIHNuZCBzaWltYWdlClBpZDogMjc0MzQsIGNvbW06IG1vdW50
+IFRhaW50ZWQ6IFAgICAgICAyLjYuMTEtZ2VudG9vLXI5ClJJUDogMDAxMDpbPGZmZmZmZmZmODAx
+Y2JjMzU+XSBbPGZmZmZmZmZmODAxY2JjMzU+XQpSU1A6IDAwMTg6ZmZmZjgxMDAyZWNkNWFjOCAg
+RUZMQUdTOiAwMDAxMDIwMgpSQVg6IGZmZmY4MTAwMGQ1ZWRkOTggUkJYOiBmZmZmYzIwMDAwMmU5
+MDAwIFJDWDogZmZmZjgxMDAyZWNkNWE3MApSRFg6IGZmZmY4MTAwMGQ1ZWRkOTggUlNJOiBmZmZm
+ODEwMDJlY2Q1YTU4IFJESTogZmZmZjgxMDAwMWRmZjZkMApSQlA6IDAwMDAwMDAwMDAwMDMwMDAg
+UjA4OiBmZmZmODEwMDJlY2Q0MDAwIFIwOTogMDAwMDAwMDAwMDAwMDAwMQpSMTA6IDAwMDAwMDAw
+ZmZmZmZmZmYgUjExOiBmZmZmZmZmZjgwMzVkMTAwIFIxMjogZmZmZjgxMDAzZDliY2MwMApSMTM6
+IGZmZmY4MTAwMTE5OTE4MDAgUjE0OiAwMDAwMDAwMDAwMDAwMzAwIFIxNTogZmZmZjgxMDAwMzU5
+YjAwMApGUzogIDAwMDAyYWFhYWFmZjM2ZDAoMDAwMCkgR1M6ZmZmZmZmZmY4MDVmNWY0MCgwMDAw
+KSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwCkNTOiAgMDAxMCBEUzogMDAwMCBFUzogMDAwMCBDUjA6
+IDAwMDAwMDAwODAwNTAwM2IKQ1IyOiBmZmZmYzIwMDAwMmVjMDA4IENSMzogMDAwMDAwMDAwODBk
+ODAwMCBDUjQ6IDAwMDAwMDAwMDAwMDA2ZTAKUHJvY2VzcyBtb3VudCAocGlkOiAyNzQzNCwgdGhy
+ZWFkaW5mbyBmZmZmODEwMDJlY2Q0MDAwLCB0YXNrIGZmZmY4MTAwMzE0MjQxMzApClN0YWNrOiAw
+MDAwMDAwMDAwMDAwMDAwIGZmZmZmZmVhMDAwMDAwMDMgZmZmZjgxMDAwMzU5YjAwMCAwMDAwMDAw
+MDAwMDAwMDAxIAogICAgICAgMDAwMDAwMDAwMDAwMDAwMCAwMDAwMDAwMDAwMDAwMDAwIDAwMDAw
+MDAwMDAwMDAwMDAgMDAwMDAwMDAwMDAwMDAwMCAKICAgICAgIDAwMDAwMDAwMDAwMDAwMDAgMDAw
+MDAwMDAwMDAwMDAwMCAKQ2FsbCBUcmFjZTpbPGZmZmZmZmZmODAyODM4YjU+XSBbPGZmZmZmZmZm
+ODAxY2I5ODA+XSBbPGZmZmZmZmZmODAyODNiZTM+XSAKICAgICAgIFs8ZmZmZmZmZmY4MDI4MmQz
+ZT5dIFs8ZmZmZmZmZmY4MDE3YmMwZT5dIFs8ZmZmZmZmZmY4MDE3YzU0MD5dIAogICAgICAgWzxm
+ZmZmZmZmZjgwMWNiOTgwPl0gWzxmZmZmZmZmZjgwMTdjNmEwPl0gWzxmZmZmZmZmZjgwMTdjOTNm
+Pl0gCiAgICAgICBbPGZmZmZmZmZmODAxOTRjOWY+XSBbPGZmZmZmZmZmODAxMjBiMWM+XSBbPGZm
+ZmZmZmZmODAxNjRlNDA+XSAKICAgICAgIFs8ZmZmZmZmZmY4MDE1OGQxMT5dIFs8ZmZmZmZmZmY4
+MDEwZWNmMT5dIFs8ZmZmZmZmZmY4MDE1OTIyZj5dIAogICAgICAgWzxmZmZmZmZmZjgwMTk1MGJj
+Pl0gWzxmZmZmZmZmZjgwMTBlM2Q2Pl0gCgpDb2RlOiA0OCA4OSA0NCAxZCAwOCA0OSA4YiA4NCAy
+NCA1MCAwMiAwMCAwMCA0OCA4YiA0MCAxMCA0OCA4MyA3YyAKUklQIFs8ZmZmZmZmZmY4MDFjYmMz
+NT5dIFJTUCA8ZmZmZjgxMDAyZWNkNWFjOD4KQ1IyOiBmZmZmYzIwMDAwMmVjMDA4CiAK
+------=_Part_8914_29735592.1118102835178--
