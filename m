@@ -1,29 +1,84 @@
-From: dzosh@nano.cz
-Subject: ReiserFS.3 root block problem
-Date: Thu, 9 Jun 2005 11:51:11 +0200 (CEST)
-Message-ID: <1546.212.80.80.10.1118310671.squirrel@webmail.nano.cz>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: My reiserfs module crash...
+Date: Thu, 9 Jun 2005 12:16:51 +0400
+Message-ID: <200506091216.52275.vitaly@namesys.com>
+References: <1117205926.7083.189.camel@tribesman.namesys.com> <200505271917.31290.vitaly@namesys.com> <42A7F740.1000104@euphorik.ch>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-24355-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24354-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <42A7F740.1000104@euphorik.ch>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
+Cc: Greg Burri <greg@euphorik.ch>
 
-Hi, im newbie w/ mailinglists, this is my 1st, so sorry for mistakes..
+On Thursday 09 June 2005 12:01, Greg Burri wrote:
+> Vitaly wrote:
+> 
+> >>Hi !
+> >>I have done "debugreiserfs -p" to collect metadata .. .I take me about 
+> >>15 hours but its ok.
+> >>I have put the file here :
+> >>http://www.euphorik.ch/boardel/debugreiserfs_metadata.bz2 (23Mo)
+> >>    
+> >>
+> >
+> >unfortunately I have failed to unpack metadata, they got corrupted 
+> >somehow, but I see at least that fs is not consistent and you need 
+> >to run
+> >	reiserfsck --rebuild-tree -l logfile <device>
+> >to fix it.
+> >
+> >there is also a problem with reiserfs module crash on mounting 
+> >such a partition, we are working on the fix.
+> > 
+> >  
+> >
+> >>I wish that someone can help me, I don't want to loose all my data :'(
+> >>
+> >>bye !
+> >>Thanks by advance
+> >>
+> >>Greg Burri
+> >>    
+> >>
+> >
+> >
+> >
+> >  
+> >
+> Re Hi !
+> I have try this command for three times but It doesn't work.
+> #>reiserfsck --rebuild-tree -l logfile /dev/sda1
+> 
+> When I try to mount my partition after the reiserfsck the same problem 
+> occure.
+> I have put the logs here with a screen dump for the third try :
 
-I got problem with my reiserfs partition version 3.x.1b. I have 4x200gb disks. I put it to LVM so i got 800gb LVM.. Then i mkreiserfs system there.. All works ok about 2years, but week ago i got badblocks problem w/ one disk. So i try to check partition, get list of badblocks via debugreiserfs and then fix it. But things goes bad and now im not able to mount this partition.
+is the screen dump the same for all 3 times?
 
-debugreiserfs shows me Root block: 0 and I think this is bad. Is there any way how to fix filesystem? Im crazy about it, because all data are there, only thing to do is to fix filesystem and mount it :-/
+> http://www.euphorik.ch/boardel/reiserfsck_rebuild_log_1.txt
+> http://www.euphorik.ch/boardel/reiserfsck_rebuild_log_2.txt
+> http://www.euphorik.ch/boardel/reiserfsck_rebuild_log_3.txt
+> http://www.euphorik.ch/boardel/reiserfsck_screendump_3.txt
 
-(linux, 2.4.20(debian), reiserfs 3.x.1b, but i try 3.6.19 also, but still the same)
+looks like a hardware problem, problably memory.
 
-Thnkx for any advice
-dzosh
+> I think, maybe I'll format my partition, I'm a bit desperate :/
+>
+> bye !
+> 
+> Greg Burri
+> 
+> 
+> 
+> 
 
-
-
-
+-- 
+Thanks,
+Vitaly Fertman
