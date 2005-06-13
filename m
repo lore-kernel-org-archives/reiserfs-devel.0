@@ -1,52 +1,71 @@
-From: evilninja <evilninja@gmx.net>
+From: Vitaly Fertman <vitaly@namesys.com>
 Subject: Re: Corrupt reiser3 fs
-Date: Sun, 12 Jun 2005 19:35:32 +0200
-Message-ID: <42AC7264.8000503@gmx.net>
+Date: Mon, 13 Jun 2005 13:46:23 +0400
+Message-ID: <200506131346.23587.vitaly@namesys.com>
 References: <42AB68F2.8030904@gear.dyndns.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24368-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24371-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <42AB68F2.8030904@gear.dyndns.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 Cc: Paul Gear <paul@gear.dyndns.org>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-Paul Gear schrieb:
+On Sunday 12 June 2005 02:42, Paul Gear wrote:
+> Hi folks,
+> 
+> After filling my reiserfs with backups, i ended up with a corrupt
+> filesystem.  I'm running Debian 3.1 (sarge), kernel 2.6.8-2-k7, and
+> reiserfsprogs 3.6.19-1.
+> 
+> I don't care about this filesystem and will just recreate it, but i
+> thought i'd offer folks the opportunity to debug before i trash it.
+> 
+> Here's my fsck output with all the noise cut out:
+> 
+> ---------8<----------------------------------------
+> 
+> enoch:/tmp # fsck.reiserfs --rebuild-tree /dev/hdc1
+> ...
+> 111392 directory entries were hashed with "r5" hash.
+>         "r5" hash is selected
+> Flushing..finished
+>         Read blocks (but not data blocks) 19333032
+>                 Leaves among those 32365
+>                         - corrected leaves 35
+>                         - leaves all contents of which could not be
+> saved and deleted 5
+>                 pointers in indirect items to wrong area 25647 (zeroed)
+>                 Objectids found 104921
+> 
+> Pass 1 (will try to insert 32360 leaves):
+> ####### Pass 1 #######
+> Looking for allocable blocks .. finished
+> 0%....20%....40%....60%...                                  left 8239,
+> 234 /sec
 > The problem has occurred looks like a hardware problem (perhaps
 > memory). Send us the bug report only if the second run dies at
 > the same place with the same block number.
+> 
+> build_the_tree: Nothing but leaves are expected. Block 10905053 - unknown
 
-so....does it? is it reproduceable on a 2nd run? also with a different
-(maybe vanilla) kernel?
+does it stop every time on the block 10905053 ?
+ 
+> 
+> There is no problem with memory (my other two hard disks and all of my
+> desktop programs are working fine), or, to my knowledge, the hard disk
+> or cable (since i can do a full dd of the hard disk to /dev/null).
+> 
+> Anyone interested in taking a look at it, or should i just write it off
+> as stray gamma rays from Saturn and trash it?  :-)
+> 
 
-before trashing the fs, you could do
-
-  debugreiserfs -p /dev/HDD | bzip2 -c > HDD-meta.bz2
-
-then some reiserfs-guru could use it for debugging.
-
-- --
-BOFH excuse #316:
-
-Elves on strike. (Why do they call EMAG Elf Magic)
-
-- --
-BOFH excuse #316:
-
-Elves on strike. (Why do they call EMAG Elf Magic)
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iD8DBQFCrHJkC/PVm5+NVoYRAms/AKC3Nhrq8iRUxjU+PQzI9IXpGVtNOgCfcZ0F
-gQBaoD9ga8lKfr1qgB24T7U=
-=V18Z
------END PGP SIGNATURE-----
+-- 
+Thanks,
+Vitaly Fertman
