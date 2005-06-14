@@ -1,44 +1,45 @@
-From: evilninja <evilninja@gmx.net>
+From: Jeff Mahoney <jeffm@suse.com>
 Subject: Re: REISERFS: panic... Trying to log block (prints.c:362)
-Date: Tue, 14 Jun 2005 20:21:35 +0200
-Message-ID: <42AF202F.7050000@gmx.net>
-References: <17210.194.72.110.12.1118754000.squirrel@luminoussheep.net>
+Date: Tue, 14 Jun 2005 15:10:38 -0400
+Message-ID: <42AF2BAE.2030706@suse.com>
+References: <61572.194.72.110.12.1118736525.squirrel@luminoussheep.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24378-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24379-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <17210.194.72.110.12.1118754000.squirrel@luminoussheep.net>
+In-Reply-To: <61572.194.72.110.12.1118736525.squirrel@luminoussheep.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: M <martin@luminoussheep.net>
+To: M <martin@luminoussheep.net>
+Cc: reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-M schrieb:
-> It dies within about 30 seconds of issuing the tar command and is
-> repeatable. So the question is why is the filesytem corrupt?
+M wrote:
+> Jun 14 07:14:36 localhost kernel: EIP:    0060:[<c01ab8b2>]    Tainted: PF
+>     VLI
 
-hm, bad memory? bad cabling? running memtest86 overnight just to be sure
-could help. and: can you reproduce the problem with an untainted kernel?
+"Tainted: PF" is going to make this nigh impossible to debug.
 
-> problem? Would turning off preemntion help?
+The "P" means you've got at least one proprietary module loaded.
+The "F" means you had to force at least one module to load.
 
-well, have you tried (to disable CONFIG_PREEMPT)?
+Either of these conditions could spell memory corruption, ultimately
+causing this problem.
+
+- -Jeff
 
 - --
-BOFH excuse #245:
-
-The Borg tried to assimilate your system. Resistance is futile.
+Jeff Mahoney
+SuSE Labs
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Version: GnuPG v1.4.0 (GNU/Linux)
 
-iD8DBQFCryAvC/PVm5+NVoYRAhC9AKDXDBLXU0BOOuJacxHPY8lgK6krCACg+Yy2
-i3Fwy0lFricZBF0o5xllTtE=
-=O0V8
+iD8DBQFCryuuLPWxlyuTD7IRAg6wAKCZMHyoPdewqv19PxhuTeVWxtkcbACgmmyB
+D/WboqhlkcdxuaL8349LOKo=
+=c6XZ
 -----END PGP SIGNATURE-----
