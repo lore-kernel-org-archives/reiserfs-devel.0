@@ -1,68 +1,66 @@
-From: fs <fs@ercist.iscas.ac.cn>
-Subject: Re: [PATCH] ReiserFS _get_block_create_0 wrong behavior when I/O
-	fails
-Date: Thu, 16 Jun 2005 13:04:59 -0400
-Message-ID: <1118941347.2886.2.camel@CoolQ>
-References: <1118865954.4231.4.camel@CoolQ>
-	 <1118850101.17622.579.camel@tribesman.namesys.com>
+From: M <martin@luminoussheep.net>
+Subject: Re: REISERFS: panic... Trying to log block (prints.c:362)
+Date: Thu, 16 Jun 2005 07:59:01 +0100
+Message-ID: <42B12335.4060206@luminoussheep.net>
+References: <61572.194.72.110.12.1118736525.squirrel@luminoussheep.net>    <1118746893.4228.65.camel@tribesman.namesys.com> <2773.10.10.30.4.1118785895.squirrel@10.10.30.2>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24388-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24389-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1118850101.17622.579.camel@tribesman.namesys.com>
+In-Reply-To: <2773.10.10.30.4.1118785895.squirrel@10.10.30.2>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: reiserfs-list@namesys.com, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Hans Reiser <reiser@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Dear Vladimir Saveliev,
-On Wed, 2005-06-15 at 11:41, Vladimir Saveliev wrote:
+M wrote:
 
-> > Patch:
-> > diff -uNp /tmp/linux-2.6.12-rc6/fs/reiserfs/inode.c /tmp/linux-2.6.12-rc6.new/fs/reiserfs/inode.c
-> > --- /tmp/linux-2.6.12-rc6/fs/reiserfs/inode.c	2005-06-06 11:22:29.000000000 -0400
-> > +++ /tmp/linux-2.6.12-rc6.new/fs/reiserfs/inode.c	2005-06-15 13:56:45.552564512 -0400
-> > @@ -254,6 +254,7 @@ static int _get_block_create_0 (struct i
-> >      char * p = NULL;
-> >      int chars;
-> >      int ret ;
-> > +    int result ;
-> >      int done = 0 ;
-> >      unsigned long offset ;
-> >  
-> > @@ -262,7 +263,8 @@ static int _get_block_create_0 (struct i
-> >  		  (loff_t)block * inode->i_sb->s_blocksize + 1, TYPE_ANY, 3);
-> >  
-> >  research:
-> > -    if (search_for_position_by_key (inode->i_sb, &key, &path) != POSITION_FOUND) {
-> > +    result = search_for_position_by_key (inode->i_sb, &key, &path) ;
-> > +    if (result != POSITION_FOUND) {
-> >  	pathrelse (&path);
-> >          if (p)
-> >              kunmap(bh_result->b_page) ;
-> > @@ -270,7 +272,8 @@ research:
-> >  	// That there is some MMAPED data associated with it that is yet to be written to disk.
-> >  	if ((args & GET_BLOCK_NO_HOLE) && !PageUptodate(bh_result->b_page) ) {
-> >  	    return -ENOENT ;
-> > -	}
-> > +	}else if (result == IO_ERROR)
-> > +		return -EIO ;
-> >          return 0 ;
-> >      }
-> >      
-> 
-> Your patch is incomplete. There is one more search_for_position_by_key
-> at the end of this function. You probably want to check its return value
-> also.
-I notice there's a comment
-	if (search_for_position_by_key (inode->i_sb, &key, &path) !=
-POSITION_FOUND)
-	    // we read something from tail, even if now we got IO_ERROR <-
-Here, can you explain more ?
-	    break;
+>>Hello
+>>
+>>On Tue, 2005-06-14 at 12:08, M wrote:
+>>    
+>>
+>>>Hi,
+>>>
+>>>I'm trying to copy a reiserfs filesystem from a pata drive to a sata
+>>>drive
+>>>(both reiserfs) and the kernel panics every time I try with an error
+>>>similar to the below:
+>>>
+>>>Jun 14 07:10:41 localhost kernel: Linux version 2.6.12-rc6 (root@myth)
+>>>(gcc version 3.3.5 (Debian 1:3.3.5-8)) #5 Mon Jun 13 20:03:38 BST 2005
+>>>
+>>>Jun 14 07:14:36 localhost kernel: REISERFS: panic (device sda2):
+>>>journal-2332: Trying to log block 471, which is a log block
+>>>      
+>>>
+>>This means that you have a filesystem corruption. Would you try to
+>>reiserfsck sda2?
+>>    
+>>
+>
+>Reiserfsck says the filesystem is very broken...
+>
+>I just tested ext2 on the drive and it also fails. So sorry this looks
+>like a driver/drive problem. It looked convincingly like the drive was
+>working OK.
+>
+>If anyones interested it's a VIA VT6420 SATA RAID Controller set to IDE
+>mode i.e. not raid.
+>  
+>
 
+Hi,
 
+FYI I've got the drive working, it seems that the connector or port on 
+the motherboard is at fault, the second connector works fine.
+The drive passes the hardware test from seagate in the first port but 
+suffers from strange and not always repoducable behaviour such as 
+partition sizes and types not being consistant with what was written, 
+file systems corrupt, unable to mount a freshly created partition...
 
+-- 
+Thanks for your help,
+M
