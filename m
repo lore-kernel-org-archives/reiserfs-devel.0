@@ -1,117 +1,42 @@
-From: fs <fs@ercist.iscas.ac.cn>
-Subject: [Fwd: Re: [PATCH] ReiserFS _get_block_create_0 wrong behavior when
-	I/O fails]
-Date: Fri, 17 Jun 2005 16:24:39 -0400
-Message-ID: <1119039879.4151.4.camel@CoolQ>
+From: mross@rs-net.org
+Subject: reiser4 corruption
+Date: Fri, 17 Jun 2005 11:26:49 -0400 (EDT)
+Message-ID: <Pine.LNX.4.60.0506171108440.6542@localhost>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-MFJckxKB2UinblcnlUzs"
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-24400-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, reiserfs-list <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>
-
-
---=-MFJckxKB2UinblcnlUzs
-Content-Type: text/plain
+Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
 Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
+I recently experimented using reiser4 on a backup system that processes 
+millions of files (most hard links to a main pool of files) every night. I 
+installed it on a spare machine by patching a vanilla 2.6.11.11 with the 
+reiser4 patches. Everything keep working for a few days, but I suddenly 
+noticed this message displayed multiple times:
 
+reiser4[ktxnmgrd:md0:ru(1754)]: commit_current_atom 
+(fs/reiser4/txnmgr.c:1147)[nikita-3176]:
+WARNING: Flushing like mad: 16384
 
---=-MFJckxKB2UinblcnlUzs
-Content-Disposition: inline
-Content-Description: Forwarded message - Re: [PATCH] ReiserFS
-	_get_block_create_0 wrong behavior when I/O fails
-Content-Type: message/rfc822
+as well as:
 
-Received: from  [159.226.5.243] by ercist.iscas.ac.cn (ArGoSoft Mail Server
-	Pro for WinNT/2000/XP, Version 1.8 (1.8.6.7)); Fri, 17 Jun 2005 18:12:55 
-Date: Fri, 17 Jun 2005 16:15:03 -0400
-From: fs <fs@ercist.iscas.ac.cn>
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: fs <fs@ercist.iscas.ac.cn>, reiserfs-list@namesys.com, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Hans Reiser <reiser@namesys.com>
-Subject: Re: [PATCH] ReiserFS _get_block_create_0 wrong behavior when I/O
-	fails
-Message-ID: <20050617201502.GA5155@CoolQ.6f.iscas.ac.cn>
-References: <1118865954.4231.4.camel@CoolQ>
-	 <1118850101.17622.579.camel@tribesman.namesys.com>
-	 <1118941347.2886.2.camel@CoolQ>
-	 <1118918486.3851.77.camel@tribesman.namesys.com>
-	 <1118918818.9357.83.camel@tribesman.namesys.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1118918818.9357.83.camel@tribesman.namesys.com>
-User-Agent: Mutt/1.4.1i
-X-ArGoMail-Authenticated: fs@ercist.iscas.ac.cn
-Content-Transfer-Encoding: 7bit
+reiser4[pdflush(28040)]: commit_current_atom 
+(fs/reiser4/txnmgr.c:1147)[nikita-3176]:
+WARNING: Flushing like mad: 16384
 
-On Thu, Jun 16, 2005 at 02:46:59PM +0400, Vladimir Saveliev wrote:
-> 
-> Yes. reiserfs may store file page in different blocks. In this do {}
-> while loop it looks for different parts of page in the tree. If
-> search_for_position_by_key fails - one part of page is not found and
-> -EIO is to be returned.
-> 
-> > > 	    break;
-you mean the patch should be like this?
+Would someone mind explaining to me what this means? Upon fscking, it 
+complained about one node containing an unrecognizable module, or 
+something similar. Unfortunately, I don't have the exact output. Also, the 
+semantic checks would have taken 2-3 full days to finish, so I didn't even 
+let fsck finish. I just moved back to reiserfs, which is a shame since 
+reiser4 was incredibly faster. (Simultaneous backups were going at a rate 
+of ~20MB/s compared to ~8MB/s on reiserfs)
 
-Signed-off-by: Qu Fuping<fs@ercist.iscas.ac.cn>
-diff -uNp linux-2.6.12-rc6.old/fs/reiserfs/inode.c linux-2.6.12-rc6.new/fs/reiserfs/inode.c > reiserfs_read.diff
+Thanks,
 
---- linux-2.6.12-rc6.old/fs/reiserfs/inode.c	2005-06-06 11:22:29.000000000 -0400
-+++ linux-2.6.12-rc6.new/fs/reiserfs/inode.c	2005-06-17 16:12:18.000000000 -0400
-@@ -254,6 +254,7 @@ static int _get_block_create_0 (struct i
-     char * p = NULL;
-     int chars;
-     int ret ;
-+    int	result ;
-     int done = 0 ;
-     unsigned long offset ;
- 
-@@ -262,7 +263,8 @@ static int _get_block_create_0 (struct i
- 		  (loff_t)block * inode->i_sb->s_blocksize + 1, TYPE_ANY, 3);
- 
- research:
--    if (search_for_position_by_key (inode->i_sb, &key, &path) != POSITION_FOUND) {
-+    result = search_for_position_by_key (inode->i_sb, &key, &path) ;
-+    if (result != POSITION_FOUND) {
- 	pathrelse (&path);
-         if (p)
-             kunmap(bh_result->b_page) ;
-@@ -270,7 +272,8 @@ research:
- 	// That there is some MMAPED data associated with it that is yet to be written to disk.
- 	if ((args & GET_BLOCK_NO_HOLE) && !PageUptodate(bh_result->b_page) ) {
- 	    return -ENOENT ;
--	}
-+	}else if(result == IO_ERROR)
-+		return -EIO;
-         return 0 ;
-     }
-     
-@@ -382,7 +385,8 @@ research:
- 
- 	// update key to look for the next piece
- 	set_cpu_key_k_offset (&key, cpu_key_k_offset (&key) + chars);
--	if (search_for_position_by_key (inode->i_sb, &key, &path) != POSITION_FOUND)
-+	result = search_for_position_by_key (inode->i_sb, &key, &path);
-+	if (result != POSITION_FOUND)
- 	    // we read something from tail, even if now we got IO_ERROR
- 	    break;
- 	bh = get_last_bh (&path);
-@@ -394,6 +398,10 @@ research:
- 
- finished:
-     pathrelse (&path);
-+
-+    if(result == IO_ERROR)
-+	    return -EIO;
-+    
-     /* this buffer has valid data, but isn't valid for io.  mapping it to
-      * block #0 tells the rest of reiserfs it just has a tail in it
-      */
-
-
---=-MFJckxKB2UinblcnlUzs--
-
-
+-Ross
