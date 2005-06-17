@@ -1,42 +1,60 @@
-From: mross@rs-net.org
-Subject: reiser4 corruption
-Date: Fri, 17 Jun 2005 11:26:49 -0400 (EDT)
-Message-ID: <Pine.LNX.4.60.0506171108440.6542@localhost>
+From: scott <scottfk@yahoo.com>
+Subject: hard hang with reiser4-for-2.6.11-5 and VMware Workstation 5.0
+Date: Fri, 17 Jun 2005 10:05:14 -0700 (PDT)
+Message-ID: <20050617170514.23193.qmail@web53908.mail.yahoo.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24400-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-24401-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-I recently experimented using reiser4 on a backup system that processes 
-millions of files (most hard links to a main pool of files) every night. I 
-installed it on a spare machine by patching a vanilla 2.6.11.11 with the 
-reiser4 patches. Everything keep working for a few days, but I suddenly 
-noticed this message displayed multiple times:
+Greetings,
 
-reiser4[ktxnmgrd:md0:ru(1754)]: commit_current_atom 
-(fs/reiser4/txnmgr.c:1147)[nikita-3176]:
-WARNING: Flushing like mad: 16384
+I have been using Reiser4 as my primary filesystem for
+some time now, and for the first time have encountered
+a problem that keeps me from doing what I want to do.
 
-as well as:
+I run VMware Workstation 5.0 with the virtual disk
+files on my Reiser4 / partition, which happens to be a
+Linux md RAID1 device.  The other day I built a new
+kernel, upgrading to the -5 release of the reiser4
+patches.  Either during boot or shortly after boot of
+any guest OS, my workstation becomes totally
+unresponsive.  Magic SysRq keys don't even work.
 
-reiser4[pdflush(28040)]: commit_current_atom 
-(fs/reiser4/txnmgr.c:1147)[nikita-3176]:
-WARNING: Flushing like mad: 16384
+To narrow down the source of the problem, I applied
+the Reiser4 patch to a vanilla 2.6.11 kernel tree.  I
+saw the exact same issue.
 
-Would someone mind explaining to me what this means? Upon fscking, it 
-complained about one node containing an unrecognizable module, or 
-something similar. Unfortunately, I don't have the exact output. Also, the 
-semantic checks would have taken 2-3 full days to finish, so I didn't even 
-let fsck finish. I just moved back to reiserfs, which is a shame since 
-reiser4 was incredibly faster. (Simultaneous backups were going at a rate 
-of ~20MB/s compared to ~8MB/s on reiserfs)
+I tried reverting to a previous version of the Reiser4
+patch, but I get VFS errors about being unable to find
+a Reiser4 filesystem on my rootdisk using any other
+Reiser4 patchset.  Did the filesystem format change?
 
-Thanks,
+I tried recompiling the -5 release with debug enabled,
+but since the machine is unresponsive, I don't see any
+output.
 
--Ross
+My question...  is this a known issue?  Or should I
+just keep pounding away at this until I can get some
+sort of debugging information?
+
+Thanks to you all for the always-interesting
+discussion threads on this list.  And thanks, Hans,
+for reiserfs and reiser4.
+
+be seeing you.
+
+scott
+
+
+		
+____________________________________________________ 
+Yahoo! Sports 
+Rekindle the Rivalries. Sign up for Fantasy Football 
+http://football.fantasysports.yahoo.com
