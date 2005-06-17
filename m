@@ -1,60 +1,65 @@
-From: scott <scottfk@yahoo.com>
-Subject: hard hang with reiser4-for-2.6.11-5 and VMware Workstation 5.0
-Date: Fri, 17 Jun 2005 10:05:14 -0700 (PDT)
-Message-ID: <20050617170514.23193.qmail@web53908.mail.yahoo.com>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: reiser4 corruption
+Date: Fri, 17 Jun 2005 21:08:16 +0400
+Message-ID: <42B30380.90606@namesys.com>
+References: <Pine.LNX.4.60.0506171108440.6542@localhost>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-24401-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24402-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <Pine.LNX.4.60.0506171108440.6542@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: mross@rs-net.org
+Cc: reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>
 
-Greetings,
+mross@rs-net.org wrote:
 
-I have been using Reiser4 as my primary filesystem for
-some time now, and for the first time have encountered
-a problem that keeps me from doing what I want to do.
+Hello
 
-I run VMware Workstation 5.0 with the virtual disk
-files on my Reiser4 / partition, which happens to be a
-Linux md RAID1 device.  The other day I built a new
-kernel, upgrading to the -5 release of the reiser4
-patches.  Either during boot or shortly after boot of
-any guest OS, my workstation becomes totally
-unresponsive.  Magic SysRq keys don't even work.
-
-To narrow down the source of the problem, I applied
-the Reiser4 patch to a vanilla 2.6.11 kernel tree.  I
-saw the exact same issue.
-
-I tried reverting to a previous version of the Reiser4
-patch, but I get VFS errors about being unable to find
-a Reiser4 filesystem on my rootdisk using any other
-Reiser4 patchset.  Did the filesystem format change?
-
-I tried recompiling the -5 release with debug enabled,
-but since the machine is unresponsive, I don't see any
-output.
-
-My question...  is this a known issue?  Or should I
-just keep pounding away at this until I can get some
-sort of debugging information?
-
-Thanks to you all for the always-interesting
-discussion threads on this list.  And thanks, Hans,
-for reiserfs and reiser4.
-
-be seeing you.
-
-scott
+> I recently experimented using reiser4 on a backup system that 
+> processes millions of files (most hard links to a main pool of files) 
+> every night. I installed it on a spare machine by patching a vanilla 
+> 2.6.11.11 with the reiser4 patches. Everything keep working for a few 
+> days, but I suddenly noticed this message displayed multiple times:
+>
+> reiser4[ktxnmgrd:md0:ru(1754)]: commit_current_atom 
+> (fs/reiser4/txnmgr.c:1147)[nikita-3176]:
+> WARNING: Flushing like mad: 16384
+>
+> as well as:
+>
+> reiser4[pdflush(28040)]: commit_current_atom 
+> (fs/reiser4/txnmgr.c:1147)[nikita-3176]:
+> WARNING: Flushing like mad: 16384
 
 
-		
-____________________________________________________ 
-Yahoo! Sports 
-Rekindle the Rivalries. Sign up for Fantasy Football 
-http://football.fantasysports.yahoo.com
+This is harmless
+
+>
+> Would someone mind explaining to me what this means? Upon fscking, it 
+> complained about one node containing an unrecognizable module, or 
+> something similar.
+
+
+What patch set did you apply? If this is the last one 
+(reiser4-for-2.6.11-5) there is some inconsistency due to format changes
+that will be fixed in the next release.
+
+Edward.
+
+> Unfortunately, I don't have the exact output. Also, the semantic 
+> checks would have taken 2-3 full days to finish, so I didn't even let 
+> fsck finish. I just moved back to reiserfs, which is a shame since 
+> reiser4 was incredibly faster. (Simultaneous backups were going at a 
+> rate of ~20MB/s compared to ~8MB/s on reiserfs)
+>
+> Thanks,
+>
+> -Ross
+>
+>
+
