@@ -1,38 +1,50 @@
-From: Vitaly Fertman <vitaly@namesys.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: hard hang with reiser4-for-2.6.11-5 and VMware Workstation 5.0
-Date: Sat, 18 Jun 2005 17:56:49 +0400
-Message-ID: <200506181756.49623.vitaly@namesys.com>
-References: <20050617170514.23193.qmail@web53908.mail.yahoo.com> <42B308C0.4050807@namesys.com> <20050618102940.GP11013@nysv.org>
+Date: Sat, 18 Jun 2005 17:36:31 +0300
+Message-ID: <20050618143630.GR11013@nysv.org>
+References: <20050617170514.23193.qmail@web53908.mail.yahoo.com> <42B308C0.4050807@namesys.com> <20050618102940.GP11013@nysv.org> <200506181756.49623.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-24414-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="PdAWLd+WEPmMbsbx"
+Return-path: <reiserfs-list-return-24415-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050618102940.GP11013@nysv.org>
 Content-Disposition: inline
+In-Reply-To: <200506181756.49623.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
-Cc: Markus =?koi8-r?q?T=F6rnqvist?= <mjt@nysv.org>, "E.Gryaznova" <grev@namesys.com>, scott <scottfk@yahoo.com>
+To: Vitaly Fertman <vitaly@namesys.com>
+Cc: reiserfs-list@namesys.com, "E.Gryaznova" <grev@namesys.com>, scott <scottfk@yahoo.com>
 
-On Saturday 18 June 2005 14:29, Markus T=F6rnqvist wrote:
-> On Fri, Jun 17, 2005 at 09:30:40PM +0400, E.Gryaznova wrote:
->=20
-> >Reiser4 format was changed in reiser4-5 patch for 2.6.11, reiser4progs=20
-> >for this format are not ready yet.
->=20
-> So, erhm, can we expect a smooth transition here?
+--PdAWLd+WEPmMbsbx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-yes, the patch is being tested.
+On Sat, Jun 18, 2005 at 05:56:49PM +0400, Vitaly Fertman wrote:
+>> So, erhm, can we expect a smooth transition here?
+>yes, the patch is being tested.
 
-> Update the tools, do something light and off we go or will we
-> need to mkfs?
->=20
-> Spatsibo!
->=20
+fsck patch?
+
+Thanks!
 
 --=20
-Thanks,
-Vitaly Fertman
+mjt
+
+
+--PdAWLd+WEPmMbsbx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQFCtDFuIqNMpVm8OhwRAhcIAKCqVR23/Oxjdu2FWQVXc0dOPqpEcgCfTG2H
+cmjfYPf8lkMviod35qoqEwM=
+=8+uu
+-----END PGP SIGNATURE-----
+
+--PdAWLd+WEPmMbsbx--
