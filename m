@@ -1,41 +1,54 @@
-From: kalium@gmx.de
-Subject: Master file/metadata table? dualistic trees?
-Date: Sat, 18 Jun 2005 03:14:37 +0200 (MEST)
-Message-ID: <32198.1119057277@www30.gmx.net>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: hard hang with reiser4-for-2.6.11-5 and VMware Workstation 5.0
+Date: Sat, 18 Jun 2005 13:29:40 +0300
+Message-ID: <20050618102940.GP11013@nysv.org>
+References: <20050617170514.23193.qmail@web53908.mail.yahoo.com> <42B308C0.4050807@namesys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24410-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Ie5iOtK4e9kgqh2F"
+Return-path: <reiserfs-list-return-24413-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <42B308C0.4050807@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+To: "E.Gryaznova" <grev@namesys.com>
+Cc: scott <scottfk@yahoo.com>, reiserfs-list@namesys.com
 
-ReiserFS/Reiser4 is supposed to be something like an efficient storage DB
-for lots of small files. Problem: perusing the files' metadata information
-(last modified time, file size etc.) takes much too much time -- most
-probably because that data is scattered all over the disk.
+--Ie5iOtK4e9kgqh2F
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The rsync tool, for example, is mostly used to keep extremely large file
-repositories in sync. But, on reiserfs, it definitely takes much to much
-time to compile only the file list. I think this is pretty much an every day
-task and it should be used as a benchmark for ReiserFS/4.
+On Fri, Jun 17, 2005 at 09:30:40PM +0400, E.Gryaznova wrote:
 
-Couldn't ReiserFS just be divided into two trees using _two_ root nodes? One
-tree could be located at the beginning of the disk, the other one at the end
-of it. The first one would contain all metadata information, the second one
-all file data. The first one would in most cases be rather small and
-therefore almost always reside in the read cache of the OS.
+>Reiser4 format was changed in reiser4-5 patch for 2.6.11, reiser4progs=20
+>for this format are not ready yet.
 
-I don't know if the separation of metadata and file data would cause a
-degredation of performance in other use cases. Has someone already tested
-this?
+So, erhm, can we expect a smooth transition here?
 
-Would be really great if I had not to wait a few minutes just to find and
-copy over a few updated files within my repository.
+Update the tools, do something light and off we go or will we
+need to mkfs?
 
--- 
-Weitersagen: GMX DSL-Flatrates mit Tempo-Garantie!
-Ab 4,99 Euro/Monat: http://www.gmx.net/de/go/dsl
+Spatsibo!
+
+--=20
+mjt
+
+
+--Ie5iOtK4e9kgqh2F
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQFCs/eUIqNMpVm8OhwRAm7sAJ9p2QnYrOEmdDi5QJG6eDk3WmB7OwCgkbPh
+jBLjFtXj1fDJ8Radhzy9YOI=
+=wGgg
+-----END PGP SIGNATURE-----
+
+--Ie5iOtK4e9kgqh2F--
