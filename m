@@ -1,27 +1,42 @@
-From: "Mark Stier" <kalium@gmx.de>
-Subject: Re: Master file/metadata table? dualistic trees?
-Date: Mon, 20 Jun 2005 18:57:50 +0200 (MEST)
-Message-ID: <18086.1119286670@www26.gmx.net>
-References: <42B6F461.2030109@yandex.ru>
+From: "E.Gryaznova" <grev@namesys.com>
+Subject: Re: reiser4 patches for 2.6.12
+Date: Mon, 20 Jun 2005 21:01:32 +0400
+Message-ID: <42B6F66C.4010304@namesys.com>
+References: <42B6F2CD.3090709@prnet.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24428-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24429-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <42B6F2CD.3090709@prnet.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "Artem B. Bityuckiy" <dedekind@yandex.ru>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Arendt <admin@prnet.org>
 Cc: reiserfs-list@namesys.com
 
-> Not sure this is relevant for you, though.
+Hello.
+reiser4 patch for 2.6.12 is not  ready yet.
+All available reiser4 patches are in 
+ftp://ftp.namesys.com/pub/reiser4-for-2.6
 
-rsync needs proper last-modified times. That's what makes it fast.
+Thanks,
+Lena.
 
-Best regards,
-Mark
+David Arendt wrote:
 
--- 
-Geschenkt: 3 Monate GMX ProMail gratis + 3 Ausgaben stern gratis
-++ Jetzt anmelden & testen ++ http://www.gmx.net/de/go/promail ++
+> Hi,
+>
+> I just wanted to know if there are currently patches for 2.6.12 
+> available and if not when they will be approximately be available as I 
+> am forced to upgrade to 2.6.12 due to an usb problem.
+>
+> Thanks in advance
+>
+> Bye,
+> David Arendt
+>
+>
+
+
