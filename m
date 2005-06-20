@@ -1,46 +1,33 @@
 From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: reiser4 corruption
-Date: Mon, 20 Jun 2005 14:35:39 +0400
-Message-ID: <1119263737.3801.80.camel@tribesman.namesys.com>
-References: <Pine.LNX.4.60.0506171108440.6542@localhost>
-	 <42B30380.90606@namesys.com>  <Pine.LNX.4.60.0506171348350.6542@localhost>
+Subject: Re: hard hang with reiser4-for-2.6.11-5 and VMware Workstation 5.0
+Date: Mon, 20 Jun 2005 15:36:53 +0400
+Message-ID: <1119267412.4394.84.camel@tribesman.namesys.com>
+References: <20050617170514.23193.qmail@web53908.mail.yahoo.com>
+	 <42B308C0.4050807@namesys.com> <20050618102940.GP11013@nysv.org>
+	 <200506181756.49623.vitaly@namesys.com>  <20050618143630.GR11013@nysv.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-MitqaJ8V7qWH1/QWlKk7"
-Return-path: <reiserfs-list-return-24420-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="=-sxhtEr3hpKIePvIfuB5J"
+Return-path: <reiserfs-list-return-24421-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.60.0506171348350.6542@localhost>
+In-Reply-To: <20050618143630.GR11013@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: mross@rs-net.org
-Cc: Edward Shishkin <edward@namesys.com>, reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>
+To: Markus =?koi8-r?Q?T=F6rnqvist?= <mjt@nysv.org>
+Cc: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com, "E.Gryaznova" <grev@namesys.com>, scott <scottfk@yahoo.com>
 
---=-MitqaJ8V7qWH1/QWlKk7
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--=-sxhtEr3hpKIePvIfuB5J
+Content-Type: text/plain; charset="koi8-r"
+Content-Transfer-Encoding: base64
 
-Hello
+SGVsbG8KCk9uIFNhdCwgMjAwNS0wNi0xOCBhdCAxODozNiwgTWFya3VzIFT2cm5xdmlzdCB3cm90
+ZToKPiBPbiBTYXQsIEp1biAxOCwgMjAwNSBhdCAwNTo1Njo0OVBNICswNDAwLCBWaXRhbHkgRmVy
+dG1hbiB3cm90ZToKPiA+PiBTbywgZXJobSwgY2FuIHdlIGV4cGVjdCBhIHNtb290aCB0cmFuc2l0
+aW9uIGhlcmU/Cj4gPnllcywgdGhlIHBhdGNoIGlzIGJlaW5nIHRlc3RlZC4KPiAKPiBmc2NrIHBh
+dGNoPwo+IAp5ZXMsIGhlcmUgaXMgaXQgYWdhaW5zdCByZWlzZXI0cHJvZ3MtMS4wLjQuCg==
 
-On Fri, 2005-06-17 at 21:50, mross@rs-net.org wrote:
-> > What patch set did you apply? If this is the last one (reiser4-for-2.6.11-5) 
-> > there is some inconsistency due to format changes
-> > that will be fixed in the next release.
-> 
-> Yes, it was reiser4-for-2.6.11-5. Would this inconsistency cause fsck to 
-> find problems that just didn't exist? Would fsck's attempt to "fix" this 
-> problem be harmful?
-> 
-
-The attached is a patch for reiser4progs-1.0.4 which should fix the
-problem. Would  you try it, please?
-
-> Thanks,
-> 
-> -Ross
-> 
-
---=-MitqaJ8V7qWH1/QWlKk7
+--=-sxhtEr3hpKIePvIfuB5J
 Content-Disposition: attachment; filename=reiser4progs.pset.patch
 Content-Type: text/plain; name=reiser4progs.pset.patch; charset=koi8-r
 Content-Transfer-Encoding: 7bit
@@ -142,5 +129,5 @@ Content-Transfer-Encoding: 7bit
  
  errno_t sdext_plug_check_struct(stat_entity_t *stat, repair_hint_t *hint) {
 
---=-MitqaJ8V7qWH1/QWlKk7--
+--=-sxhtEr3hpKIePvIfuB5J--
 
