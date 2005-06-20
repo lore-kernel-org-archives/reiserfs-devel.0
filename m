@@ -1,50 +1,146 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: hard hang with reiser4-for-2.6.11-5 and VMware Workstation 5.0
-Date: Sat, 18 Jun 2005 17:36:31 +0300
-Message-ID: <20050618143630.GR11013@nysv.org>
-References: <20050617170514.23193.qmail@web53908.mail.yahoo.com> <42B308C0.4050807@namesys.com> <20050618102940.GP11013@nysv.org> <200506181756.49623.vitaly@namesys.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: reiser4 corruption
+Date: Mon, 20 Jun 2005 14:35:39 +0400
+Message-ID: <1119263737.3801.80.camel@tribesman.namesys.com>
+References: <Pine.LNX.4.60.0506171108440.6542@localhost>
+	 <42B30380.90606@namesys.com>  <Pine.LNX.4.60.0506171348350.6542@localhost>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PdAWLd+WEPmMbsbx"
-Return-path: <reiserfs-list-return-24415-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="=-MitqaJ8V7qWH1/QWlKk7"
+Return-path: <reiserfs-list-return-24420-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200506181756.49623.vitaly@namesys.com>
+In-Reply-To: <Pine.LNX.4.60.0506171348350.6542@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: reiserfs-list@namesys.com, "E.Gryaznova" <grev@namesys.com>, scott <scottfk@yahoo.com>
+To: mross@rs-net.org
+Cc: Edward Shishkin <edward@namesys.com>, reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>
 
---PdAWLd+WEPmMbsbx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--=-MitqaJ8V7qWH1/QWlKk7
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jun 18, 2005 at 05:56:49PM +0400, Vitaly Fertman wrote:
->> So, erhm, can we expect a smooth transition here?
->yes, the patch is being tested.
+Hello
 
-fsck patch?
+On Fri, 2005-06-17 at 21:50, mross@rs-net.org wrote:
+> > What patch set did you apply? If this is the last one (reiser4-for-2.6.11-5) 
+> > there is some inconsistency due to format changes
+> > that will be fixed in the next release.
+> 
+> Yes, it was reiser4-for-2.6.11-5. Would this inconsistency cause fsck to 
+> find problems that just didn't exist? Would fsck's attempt to "fix" this 
+> problem be harmful?
+> 
 
-Thanks!
+The attached is a patch for reiser4progs-1.0.4 which should fix the
+problem. Would  you try it, please?
 
---=20
-mjt
+> Thanks,
+> 
+> -Ross
+> 
 
+--=-MitqaJ8V7qWH1/QWlKk7
+Content-Disposition: attachment; filename=reiser4progs.pset.patch
+Content-Type: text/plain; name=reiser4progs.pset.patch; charset=koi8-r
+Content-Transfer-Encoding: 7bit
 
---PdAWLd+WEPmMbsbx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+===== include/reiser4/plugin.h 1.739 vs edited =====
+--- 1.739/include/reiser4/plugin.h	2005-01-30 15:57:02 +03:00
++++ edited/include/reiser4/plugin.h	2005-06-18 16:53:14 +04:00
+@@ -285,20 +285,23 @@ enum reiser4_opset_id {
+ 	OPSET_DIRITEM		= 0x7,
+ 	OPSET_CRYPTO		= 0x8,
+ 	OPSET_DIGEST		= 0x9,
+-	OPSET_COMPRES		= 0xa,
++	OPSET_CPRESS		= 0xa,
++	OPSET_CPRESS_MODE	= 0xb,
++	OPSET_CLUSTER		= 0xc,
++	OPSET_REGULAR		= 0xd,
+ 	
+-	OPSET_STORE_LAST        = (OPSET_COMPRES + 1),
++	OPSET_STORE_LAST,
+ 	
+ 	/* These are not stored on disk in the current implementation. */
+-	OPSET_CREATE		= 0xb,
+-	OPSET_MKDIR		= 0xc,
+-	OPSET_SYMLINK		= 0xd,
+-	OPSET_MKNODE		= 0xe,
++	OPSET_CREATE		= OPSET_STORE_LAST + 1,
++	OPSET_MKDIR		= OPSET_STORE_LAST + 2,
++	OPSET_SYMLINK		= OPSET_STORE_LAST + 3,
++	OPSET_MKNODE		= OPSET_STORE_LAST + 4,
+ 	
+ #ifndef ENABLE_MINIMAL
+-	OPSET_TAIL		= 0xf,
+-	OPSET_EXTENT		= 0x10,
+-	OPSET_ACL		= 0x11,
++	OPSET_TAIL		= OPSET_STORE_LAST + 5,
++	OPSET_EXTENT		= OPSET_STORE_LAST + 6,
++	OPSET_ACL		= OPSET_STORE_LAST + 7,
+ #endif
+ 	OPSET_LAST
+ };
+===== libreiser4/pset.c 1.19 vs edited =====
+--- 1.19/libreiser4/pset.c	2004-11-24 12:09:22 +03:00
++++ edited/libreiser4/pset.c	2005-06-18 17:00:27 +04:00
+@@ -111,7 +111,7 @@ opset_member_t opset_prof[OPSET_LAST] = 
+ 		.ess = 1,
+ #endif
+ 	},
+-	[OPSET_COMPRES] = {
++	[OPSET_CPRESS] = {
+ 		.type = INVAL_TYPE,
+ #ifndef ENABLE_MINIMAL
+ 		.group = INVAL_PID,
+@@ -119,7 +119,31 @@ opset_member_t opset_prof[OPSET_LAST] = 
+ 		.ess = 1,
+ #endif
+ 	},
+-	
++	[OPSET_CPRESS_MODE] = {
++		.type = INVAL_TYPE,
++#ifndef ENABLE_MINIMAL
++		.group = INVAL_PID,
++		.prof = INVAL_PID,
++		.ess = 1,
++#endif
++	},
++	[OPSET_CLUSTER] = {
++		.type = INVAL_TYPE,
++#ifndef ENABLE_MINIMAL
++		.group = INVAL_PID,
++		.prof = INVAL_PID,
++		.ess = 1,
++#endif
++	},
++	[OPSET_REGULAR] = {
++		.type = INVAL_TYPE,
++#ifndef ENABLE_MINIMAL
++		.group = INVAL_PID,
++		.prof = INVAL_PID,
++		.ess = 1,
++#endif
++	},
++
+ 	/* Note, plugins below are not stored on-disk. */
+ 
+ 	/* The 4 plugins below needs to be splited -- for now they are used for
+===== plugin/sdext/sdext_plug/sdext_plug_repair.c 1.10 vs edited =====
+--- 1.10/plugin/sdext/sdext_plug/sdext_plug_repair.c	2004-09-22 18:21:08 +04:00
++++ edited/plugin/sdext/sdext_plug/sdext_plug_repair.c	2005-06-18 17:00:16 +04:00
+@@ -22,7 +22,10 @@ char *opset_name[OPSET_STORE_LAST] = {
+ 	[OPSET_DIRITEM] = "diritem",
+ 	[OPSET_CRYPTO] =  "crypto",
+ 	[OPSET_DIGEST] =  "digest",
+-	[OPSET_COMPRES] = "compress"
++	[OPSET_CPRESS] =  "compress",
++	[OPSET_CPRESS_MODE] = "compress mode",
++	[OPSET_CLUSTER] = "cluster",
++	[OPSET_REGULAR] =  "regular"
+ };
+ 
+ errno_t sdext_plug_check_struct(stat_entity_t *stat, repair_hint_t *hint) {
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
+--=-MitqaJ8V7qWH1/QWlKk7--
 
-iD8DBQFCtDFuIqNMpVm8OhwRAhcIAKCqVR23/Oxjdu2FWQVXc0dOPqpEcgCfTG2H
-cmjfYPf8lkMviod35qoqEwM=
-=8+uu
------END PGP SIGNATURE-----
-
---PdAWLd+WEPmMbsbx--
