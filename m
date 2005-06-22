@@ -1,136 +1,53 @@
-From: fs <fs@ercist.iscas.ac.cn>
-Subject: [PATCH] [RESEND] ReiserFS _get_block_create_0 wrong behavior when
-	I/O fails
-Date: Wed, 22 Jun 2005 16:19:38 -0400
-Message-ID: <1119471578.22827.3.camel@CoolQ>
+From: Stefan Smietanowski <stesmi@stesmi.com>
+Subject: Re: reiser4 plugins
+Date: Wed, 22 Jun 2005 11:56:41 +0200
+Message-ID: <42B935D9.7010608@stesmi.com>
+References: <20050620235458.5b437274.akpm@osdl.org> <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com> <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com> <42B8BB5E.8090008@pobox.com> <42B8E834.5030809@slaphack.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-R+wGVb5qbrocRpOsFr+h"
-Return-path: <reiserfs-list-return-24454-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24455-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <42B8E834.5030809@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list <reiserfs-list@namesys.com>
-Cc: Vladimir Saveliev <vs@namesys.com>, Hans Reiser <reiser@namesys.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: David Masover <ninja@slaphack.com>
+Cc: Jeff Garzik <jgarzik@pobox.com>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
---=-R+wGVb5qbrocRpOsFr+h
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Seems my domain is filtered , so I resend the modified version.
+Hi David
 
-Related FS:
-    ReiserFS
+> And here is the crucial point.  Reiser4 is usable and useful NOW, not
+> after it has undergone massive surgery, and Namesys is bankrupt, and
+> users have given up and moved on to XFS.  But the massive surgery should
+> happen eventually, partly to make all filesystems better (see below),
+> and partly to make the transition easier and more palatable for those
+> who don't work for Namesys.
 
-Related Files:
-    fs/reiserfs/inode.c
+Sometimes someone comes with "I have this code NOW and if we just merge
+it I'll fix it up properly". It's rejected, stating "come back when
+you've fixed it up".
 
-Bug description:
-    Make a ReiserFS partition in USB storage HDD, create a test file
-with
-enough size.
-    Write a program, do: open(O_RDONLY) - read - close. After each
-operation, pause for a while, such as 3s. Between open and read, unlug
-the
-USB wire. open returns zero-filled buffer, no error returns.
+We don't even have that here. We have "I have this code NOW and when
+it's merged I have no intention of fixing it up properly".
 
-Bug analysis:
-    do_mpage_readpage will call FS-specific get_block to get buffer
-mapped
-from disk. reiserfs_get_block doesn't return non-zero when I/O failure
-occurs.
-    reiserfs_get_block -> _get_block_create_0 ->
-search_by_position_by_key
-search_by_position_by_key returns IO_ERROR, but the original code just
-simply
-returns 0
+In my eyes I'd rather take the first one than the second, there at least
+there's the INTENTION of fixing it up.
 
-research:
-    if (search_for_position_by_key (inode->i_sb, &key, &path) !=
-POSITION_FOUND) {
-        pathrelse (&path);
-        if (p)
-            kunmap(bh_result->b_page) ;
-        // We do not return -ENOENT if there is a hole but page is
-uptodate, because it means
-        // That there is some MMAPED data associated with it that is yet
-to be written to disk.
-        if ((args & GET_BLOCK_NO_HOLE) &&
-!PageUptodate(bh_result->b_page) ) {
-            return -ENOENT ;
-        }
-        return 0 ; <- 0 retuns for IO_ERROR
-    }
+Oh and btw, I'm not pro- or against- reiserfs in any way. I haven't
+tried reiserfs4 but I hear it's good so don't take this is a statement
+of my like or dislike of it, I'm just stating something worth thinking
+about.
 
-Way around:
-    test result of search_for_position_by_key
+// Stefan
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (MingW32)
 
-Signed-off-by: Qu Fuping<fs@ercist.iscas.ac.cn>
-
-Patch:
-diff -uNp /tmp/linux-2.6.12-rc6/fs/reiserfs/inode.c
-/tmp/linux-2.6.12-rc6.new/fs/reiserfs/inode.c
-
-
-
---=-R+wGVb5qbrocRpOsFr+h
-Content-Disposition: attachment; filename=reiserfs_read.diff
-Content-Type: text/x-patch; name=reiserfs_read.diff; charset=gb2312
-Content-Transfer-Encoding: 7bit
-
---- linux-2.6.12-rc6.old/fs/reiserfs/inode.c	2005-06-06 11:22:29.000000000 -0400
-+++ linux-2.6.12-rc6.new/fs/reiserfs/inode.c	2005-06-17 16:12:18.000000000 -0400
-@@ -254,6 +254,7 @@ static int _get_block_create_0 (struct i
-     char * p = NULL;
-     int chars;
-     int ret ;
-+    int	result ;
-     int done = 0 ;
-     unsigned long offset ;
- 
-@@ -262,7 +263,8 @@ static int _get_block_create_0 (struct i
- 		  (loff_t)block * inode->i_sb->s_blocksize + 1, TYPE_ANY, 3);
- 
- research:
--    if (search_for_position_by_key (inode->i_sb, &key, &path) != POSITION_FOUND) {
-+    result = search_for_position_by_key (inode->i_sb, &key, &path) ;
-+    if (result != POSITION_FOUND) {
- 	pathrelse (&path);
-         if (p)
-             kunmap(bh_result->b_page) ;
-@@ -270,7 +272,8 @@ research:
- 	// That there is some MMAPED data associated with it that is yet to be written to disk.
- 	if ((args & GET_BLOCK_NO_HOLE) && !PageUptodate(bh_result->b_page) ) {
- 	    return -ENOENT ;
--	}
-+	}else if(result == IO_ERROR)
-+		return -EIO;
-         return 0 ;
-     }
-     
-@@ -382,7 +385,8 @@ research:
- 
- 	// update key to look for the next piece
- 	set_cpu_key_k_offset (&key, cpu_key_k_offset (&key) + chars);
--	if (search_for_position_by_key (inode->i_sb, &key, &path) != POSITION_FOUND)
-+	result = search_for_position_by_key (inode->i_sb, &key, &path);
-+	if (result != POSITION_FOUND)
- 	    // we read something from tail, even if now we got IO_ERROR
- 	    break;
- 	bh = get_last_bh (&path);
-@@ -394,6 +398,10 @@ research:
- 
- finished:
-     pathrelse (&path);
-+
-+    if(result == IO_ERROR)
-+	    return -EIO;
-+    
-     /* this buffer has valid data, but isn't valid for io.  mapping it to
-      * block #0 tells the rest of reiserfs it just has a tail in it
-      */
-
---=-R+wGVb5qbrocRpOsFr+h--
-
-
+iD8DBQFCuTXZBrn2kJu9P78RAi0JAJwIp6uyAd3AL4mgSBMAH59h7CrklQCfRW+V
+8ZlZqxHwnpqpHa8OURtUEuw=
+=OD/E
+-----END PGP SIGNATURE-----
