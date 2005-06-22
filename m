@@ -1,69 +1,43 @@
-From: Vladimir Saveliev <vs@namesys.com>
+From: "Artem B. Bityuckiy" <dedekind@yandex.ru>
 Subject: Re: reiser4 plugins
-Date: Wed, 22 Jun 2005 20:13:28 +0400
-Message-ID: <1119456807.4191.82.camel@tribesman.namesys.com>
-References: <20050620235458.5b437274.akpm@osdl.org>
-	 <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com>
-	 <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com>
-	 <42B8BB5E.8090008@pobox.com> <42B8E834.5030809@slaphack.com>
-	 <42B8F4BC.5060100@pobox.com> <42B92AA1.3010107@slaphack.com>
-	 <17081.30107.751071.983835@gargle.gargle.HOWL>
+Date: Wed, 22 Jun 2005 20:20:37 +0400
+Message-ID: <42B98FD5.6050201@yandex.ru>
+References: <20050620235458.5b437274.akpm@osdl.org> <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com> <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com> <20050621181802.11a792cc.akpm@osdl.org> <1119452212.15527.33.camel@server.cs.pocnet.net> <42B97F82.6040404@yandex.ru> <20050622155505.GZ11013@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24466-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-24467-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <17081.30107.751071.983835@gargle.gargle.HOWL>
+In-Reply-To: <20050622155505.GZ11013@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Nikita Danilov <nikita@clusterfs.com>
-Cc: David Masover <ninja@slaphack.com>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?KOI8-R?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
+Cc: Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, hch@infradead.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Hello
+Markus T=F6rnqvist wrote:
+> So merge it as it is and move the stuff to the VFS as needed or
+> deemed necessary. And enable the pseudo interface, or at least
+> set it in menuconfig and enable by default, it needs testing too.
+Reiser4 has a number of great (IMO) things like file as directory,=20
+atomic operations, different kinds of stat data, fibretions, etc, etc.=20
+Some thing is not yet ready - doesn't matter. Some of this is of general =
 
-On Wed, 2005-06-22 at 18:28, Nikita Danilov wrote:
-> David Masover writes:
-> 
-> [...]
-> 
->  > 
->  > Maintainability is like optimization.  The maintainability of a
->  > non-working program is irrelevant.  You'd be right if we already had
->  > plugins-in-the-VFS.  We don't.  The most maintainable solution for
->  > plugins-in-the-FS that actually exists is Reiser4, exactly as it is now
->  > - -- because it is the _only_ one that actually exists right now.
-> 
-> But it is not so. There _are_ plugins-in-the-VFS. VFS operates on opaque
-> objects (inodes, dentries, file system types) through interfaces:
-> {inode,address_space,dentry,sb,etc.}_operations. Every file system
-> back-end if free to implement whatever number of these interfaces. And
-> the do this already: check the sources; even ext2 does this: e.g.,
-> ext2_fast_symlink_inode_operations and ext2_symlink_inode_operations.
-> 
+interest, some is Reiser4-dedicated.
 
-imho, this is something different. Ext2 decides itself how to manage a
-symlink depending on length of string the symlink is to store.
-Reiser4 plugins are to allow a user to define himself which operations
-file is to be managed with.
+New interfaces are needed to allow users to utilize that all. My point=20
+is that the things that are of general interest must not be=20
+Reiser4-only. For example, I should have a possibility to implement=20
+files-like-dir in _another_ FS using the same interfaces that Reiser4=20
+uses. That's all I wanted to say.
 
-> This is exactly what upper level reiser4 plugins are for.
+The other question that it may be difficult to foresee everything and it =
 
-> I guess that one of Christoph Hellwig's complaints is that reiser4
-> introduces another layer of abstraction to implement something that
-> already exists.
-> 
+may make sense to move some things upper in future.
 
-I do not think that it exists already.
-You can have standart type of files and that is all.
-
-Linux filesystem is not supposed to provide anything but plain
-regular/directory/symlinks/sockets/block device/char device/fifo files.
-
-Existing file API does not allow create anything but that.
-Merging reiser4 with object plugins would make it necessary to modify
-VFS layer so that files of arbitrary types could be created.
-
-
+--=20
+Best Regards,
+Artem B. Bityuckiy,
+St.-Petersburg, Russia.
 
