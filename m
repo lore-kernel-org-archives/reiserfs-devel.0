@@ -1,62 +1,69 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+From: Vladimir Saveliev <vs@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Wed, 22 Jun 2005 18:55:05 +0300
-Message-ID: <20050622155505.GZ11013@nysv.org>
-References: <20050620235458.5b437274.akpm@osdl.org> <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com> <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com> <20050621181802.11a792cc.akpm@osdl.org> <1119452212.15527.33.camel@server.cs.pocnet.net> <42B97F82.6040404@yandex.ru>
+Date: Wed, 22 Jun 2005 20:13:28 +0400
+Message-ID: <1119456807.4191.82.camel@tribesman.namesys.com>
+References: <20050620235458.5b437274.akpm@osdl.org>
+	 <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com>
+	 <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com>
+	 <42B8BB5E.8090008@pobox.com> <42B8E834.5030809@slaphack.com>
+	 <42B8F4BC.5060100@pobox.com> <42B92AA1.3010107@slaphack.com>
+	 <17081.30107.751071.983835@gargle.gargle.HOWL>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wwU9tsYnHnYeRAKj"
-Return-path: <reiserfs-list-return-24465-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24466-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <42B97F82.6040404@yandex.ru>
+In-Reply-To: <17081.30107.751071.983835@gargle.gargle.HOWL>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "Artem B. Bityuckiy" <dedekind@yandex.ru>
-Cc: Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, hch@infradead.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Nikita Danilov <nikita@clusterfs.com>
+Cc: David Masover <ninja@slaphack.com>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
---wwU9tsYnHnYeRAKj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello
 
-On Wed, Jun 22, 2005 at 07:10:58PM +0400, Artem B. Bityuckiy wrote:
->
->More filesystems in future may want to use these semantics. There are=20
->cases when one can't use Reiser4 to implement them, but instead, need to=
-=20
->implement another file system with the same semantics.
+On Wed, 2005-06-22 at 18:28, Nikita Danilov wrote:
+> David Masover writes:
+> 
+> [...]
+> 
+>  > 
+>  > Maintainability is like optimization.  The maintainability of a
+>  > non-working program is irrelevant.  You'd be right if we already had
+>  > plugins-in-the-VFS.  We don't.  The most maintainable solution for
+>  > plugins-in-the-FS that actually exists is Reiser4, exactly as it is now
+>  > - -- because it is the _only_ one that actually exists right now.
+> 
+> But it is not so. There _are_ plugins-in-the-VFS. VFS operates on opaque
+> objects (inodes, dentries, file system types) through interfaces:
+> {inode,address_space,dentry,sb,etc.}_operations. Every file system
+> back-end if free to implement whatever number of these interfaces. And
+> the do this already: check the sources; even ext2 does this: e.g.,
+> ext2_fast_symlink_inode_operations and ext2_symlink_inode_operations.
+> 
 
-So merge it as it is and move the stuff to the VFS as needed or
-deemed necessary. And enable the pseudo interface, or at least
-set it in menuconfig and enable by default, it needs testing too.
+imho, this is something different. Ext2 decides itself how to manage a
+symlink depending on length of string the symlink is to store.
+Reiser4 plugins are to allow a user to define himself which operations
+file is to be managed with.
 
-Then someone says "we can't implement this in the fs" and someone
-else says "we can't implement this in the vfs" and someone else
-says "this is a good thing which we want but you won't let us"
-and we stagnate again...
+> This is exactly what upper level reiser4 plugins are for.
 
-Isn't this bickering getting a bit old?
-After all, it seems the code is merged in -mm, the big issues are fixed
-and all should be ready for more real-life testing and such?
+> I guess that one of Christoph Hellwig's complaints is that reiser4
+> introduces another layer of abstraction to implement something that
+> already exists.
+> 
 
---=20
-mjt
+I do not think that it exists already.
+You can have standart type of files and that is all.
+
+Linux filesystem is not supposed to provide anything but plain
+regular/directory/symlinks/sockets/block device/char device/fifo files.
+
+Existing file API does not allow create anything but that.
+Merging reiser4 with object plugins would make it necessary to modify
+VFS layer so that files of arbitrary types could be created.
 
 
---wwU9tsYnHnYeRAKj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQFCuYnZIqNMpVm8OhwRAlNhAKCzjcojE8bVWZjWJt+vbWg1XMX2CgCgzRMq
-fYY23GL0oeKp4ICxqZxTJpk=
-=4wWu
------END PGP SIGNATURE-----
-
---wwU9tsYnHnYeRAKj--
