@@ -1,46 +1,62 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: How to make Reiser4 plugins&namespace magic work?
-Date: Wed, 22 Jun 2005 19:32:19 +0400
-Message-ID: <42B98483.1000209@namesys.com>
-References: <1119450117.2429.35.camel@rik-note.loc>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: reiser4 plugins
+Date: Wed, 22 Jun 2005 18:55:05 +0300
+Message-ID: <20050622155505.GZ11013@nysv.org>
+References: <20050620235458.5b437274.akpm@osdl.org> <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com> <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com> <20050621181802.11a792cc.akpm@osdl.org> <1119452212.15527.33.camel@server.cs.pocnet.net> <42B97F82.6040404@yandex.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24464-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="wwU9tsYnHnYeRAKj"
+Return-path: <reiserfs-list-return-24465-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1119450117.2429.35.camel@rik-note.loc>
+Content-Disposition: inline
+In-Reply-To: <42B97F82.6040404@yandex.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: rik@osrc.info
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: "Artem B. Bityuckiy" <dedekind@yandex.ru>
+Cc: Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, hch@infradead.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Roman I Khimov wrote:
+--wwU9tsYnHnYeRAKj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->Hello.
+On Wed, Jun 22, 2005 at 07:10:58PM +0400, Artem B. Bityuckiy wrote:
 >
->Andrew Morton mentioned that "patches still contain all the
->reiser4-specific namespace enhancements, only it is disabled, so it is
->effectively dead code" and it seems this explains why I didn't see any
->of Reiser4 namespace magic last time I've tried to play with it.
->
->But actually I want to see it and I want to play with it - any recipe
->for how to revive this code?
->
->Thanks.
->
->  
->
-Hello.
-You might want to enable pseudo interface having
- #define ENABLE_REISER4_PSEUDO (1)
-in reiser4.h, build the kernel and read this paper:
-http://thebsh.namesys.com/v4/pseudo.html
-Note, that this paper is not updated, so use "...." instead of "metas".
-Also in order to use this interface for regular files the last ones 
-should have an executable flag.
+>More filesystems in future may want to use these semantics. There are=20
+>cases when one can't use Reiser4 to implement them, but instead, need to=
+=20
+>implement another file system with the same semantics.
 
-Thanks,
-Edward.
+So merge it as it is and move the stuff to the VFS as needed or
+deemed necessary. And enable the pseudo interface, or at least
+set it in menuconfig and enable by default, it needs testing too.
 
+Then someone says "we can't implement this in the fs" and someone
+else says "we can't implement this in the vfs" and someone else
+says "this is a good thing which we want but you won't let us"
+and we stagnate again...
+
+Isn't this bickering getting a bit old?
+After all, it seems the code is merged in -mm, the big issues are fixed
+and all should be ready for more real-life testing and such?
+
+--=20
+mjt
+
+
+--wwU9tsYnHnYeRAKj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQFCuYnZIqNMpVm8OhwRAlNhAKCzjcojE8bVWZjWJt+vbWg1XMX2CgCgzRMq
+fYY23GL0oeKp4ICxqZxTJpk=
+=4wWu
+-----END PGP SIGNATURE-----
+
+--wwU9tsYnHnYeRAKj--
