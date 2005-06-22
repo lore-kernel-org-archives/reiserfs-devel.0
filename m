@@ -1,9 +1,9 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH] reiserfs: Check if attrs are enabled for attr ioctls
-Date: Wed, 22 Jun 2005 15:50:32 -0400
-Message-ID: <20050622195032.GA23981@locomotive.unixthugs.org>
+Subject: [PATCH] reiserfs: enable attrs by default if safe
+Date: Wed, 22 Jun 2005 15:50:36 -0400
+Message-ID: <20050622195036.GA23996@locomotive.unixthugs.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24475-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24476-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -15,33 +15,23 @@ Content-Transfer-Encoding: 7bit
 To: ReiserFS List <reiserfs-list@namesys.com>
 
 
- ReiserFS currently will allow the user to set/get attrs for files regardless
- if they are enabled. The patch checks to see if they are enabled, and returns
- -NOTTY if they are not.
-
- ext[23] doesn't need this check because attrs are always enabled.
+ The following patch enables attrs by default if the reiserfs_attrs_cleared
+ bit is set in the superblock. This allows chattr-type attrs to be used
+ without any further action by the user.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
  
-diff -ruNpX dontdiff linux-2.6.12-rc6/fs/reiserfs/ioctl.c linux-2.6.12-rc6.devel/fs/reiserfs/ioctl.c
---- linux-2.6.12-rc6/fs/reiserfs/ioctl.c	2005-06-13 14:34:32.000000000 -0400
-+++ linux-2.6.12-rc6.devel/fs/reiserfs/ioctl.c	2005-06-22 17:30:40.000000000 -0400
-@@ -34,10 +34,16 @@ int reiserfs_ioctl (struct inode * inode
- 	/* following two cases are taken from fs/ext2/ioctl.c by Remy
- 	   Card (card@masi.ibp.fr) */
- 	case REISERFS_IOC_GETFLAGS:
-+		if (!reiserfs_attrs (inode->i_sb))
-+			return -ENOTTY;
-+
- 		flags = REISERFS_I(inode) -> i_attrs;
- 		i_attrs_to_sd_attrs( inode, ( __u16 * ) &flags );
- 		return put_user(flags, (int __user *) arg);
- 	case REISERFS_IOC_SETFLAGS: {
-+		if (!reiserfs_attrs (inode->i_sb))
-+			return -ENOTTY;
-+
- 		if (IS_RDONLY(inode))
- 			return -EROFS;
+diff -ruNpX dontdiff linux-2.6.12-rc6/fs/reiserfs/super.c linux-2.6.12-rc6.devel/fs/reiserfs/super.c
+--- linux-2.6.12-rc6/fs/reiserfs/super.c	2005-06-13 14:34:58.000000000 -0400
++++ linux-2.6.12-rc6.devel/fs/reiserfs/super.c	2005-06-22 17:34:55.000000000 -0400
+@@ -884,6 +884,8 @@ static void handle_attrs( struct super_b
+ 				reiserfs_warning(s, "reiserfs: cannot support attributes until flag is set in super-block" );
+ 				REISERFS_SB(s) -> s_mount_opt &= ~ ( 1 << REISERFS_ATTRS );
+ 		}
++	} else if (le32_to_cpu( rs -> s_flags ) & reiserfs_attrs_cleared) {
++		REISERFS_SB(s)->s_mount_opt |= REISERFS_ATTRS;
+ 	}
+ }
  
 -- 
 Jeff Mahoney
