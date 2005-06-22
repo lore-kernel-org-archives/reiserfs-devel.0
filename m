@@ -1,105 +1,92 @@
-From: Nikita Danilov <nikita@clusterfs.com>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: reiser4 plugins
-Date: Wed, 22 Jun 2005 20:59:27 +0400
-Message-ID: <17081.39151.25553.436292@gargle.gargle.HOWL>
-References: <20050620235458.5b437274.akpm@osdl.org>
-	<42B831B4.9020603@pobox.com>
-	<42B87318.80607@namesys.com>
-	<20050621202448.GB30182@infradead.org>
-	<42B8B9EE.7020002@namesys.com>
-	<42B8BB5E.8090008@pobox.com>
-	<42B8E834.5030809@slaphack.com>
-	<42B8F4BC.5060100@pobox.com>
-	<42B92AA1.3010107@slaphack.com>
-	<17081.30107.751071.983835@gargle.gargle.HOWL>
-	<1119456807.4191.82.camel@tribesman.namesys.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24470-reiserfs=m.gmane.org@namesys.com>
+Date: Wed, 22 Jun 2005 13:33:14 -0400
+Message-ID: <200506221733.j5MHXEoH007541@laptop11.inf.utfsm.cl>
+References: <dedekind@yandex.ru>
+Return-path: <reiserfs-list-return-24471-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1119456807.4191.82.camel@tribesman.namesys.com>
+In-Reply-To: Message from "Artem B. Bityuckiy" <dedekind@yandex.ru> 
+   of "Wed, 22 Jun 2005 20:20:37 +0400." <42B98FD5.6050201@yandex.ru> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: David Masover <ninja@slaphack.com>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: "Artem B. Bityuckiy" <dedekind@yandex.ru>
+Cc: =?KOI8-R?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, hch@infradead.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Vladimir Saveliev writes:
- > Hello
- > 
- > On Wed, 2005-06-22 at 18:28, Nikita Danilov wrote:
- > > David Masover writes:
- > > 
- > > [...]
- > > 
- > >  > 
- > >  > Maintainability is like optimization.  The maintainability of a
- > >  > non-working program is irrelevant.  You'd be right if we already had
- > >  > plugins-in-the-VFS.  We don't.  The most maintainable solution for
- > >  > plugins-in-the-FS that actually exists is Reiser4, exactly as it is now
- > >  > - -- because it is the _only_ one that actually exists right now.
- > > 
- > > But it is not so. There _are_ plugins-in-the-VFS. VFS operates on opaque
- > > objects (inodes, dentries, file system types) through interfaces:
- > > {inode,address_space,dentry,sb,etc.}_operations. Every file system
- > > back-end if free to implement whatever number of these interfaces. And
- > > the do this already: check the sources; even ext2 does this: e.g.,
- > > ext2_fast_symlink_inode_operations and ext2_symlink_inode_operations.
- > > 
- > 
- > imho, this is something different. Ext2 decides itself how to manage a
- > symlink depending on length of string the symlink is to store.
- > Reiser4 plugins are to allow a user to define himself which operations
- > file is to be managed with.
+Artem B. Bityuckiy <dedekind@yandex.ru> wrote:
+> Markus T=D0=96rnqvist wrote:
+> > So merge it as it is=20
 
-I fail to see this as an important distinction:
+Fix it first. The "merge as it stands" just gives rise to stuff that is
+/never/ fixed properly.
 
- - ext2    decides what "plugin" to use based on parameters supplied to
- the file creation system call;
+> >                      and move the stuff to the VFS as needed or
+> > deemed necessary. And enable the pseudo interface, or at least
+> > set it in menuconfig and enable by default, it needs testing too.
 
- - reiser4 decides what "plugin" to use based on parameters supplied to
- the file creation system call.
+Then test it out of the standard tree...
 
- > 
- > > This is exactly what upper level reiser4 plugins are for.
- > 
- > > I guess that one of Christoph Hellwig's complaints is that reiser4
- > > introduces another layer of abstraction to implement something that
- > > already exists.
- > > 
- > 
- > I do not think that it exists already.
- > You can have standart type of files and that is all.
- > 
- > Linux filesystem is not supposed to provide anything but plain
- > regular/directory/symlinks/sockets/block device/char device/fifo files.
+> Reiser4 has a number of great (IMO) things like file as directory,
 
-If you are talking about S_IFMT bits they are just a relic to keep user
-level happy (yes, VFS does few S_ISFOO checks here and there, but they
-all can be replaced with checks for appropriate operations being
-non-NULL). Nothing prevents file system from rolling forward whatever
-exotic objects it wants.
+Urgh.
 
- > 
- > Existing file API does not allow create anything but that.
- > Merging reiser4 with object plugins would make it necessary to modify
- > VFS layer so that files of arbitrary types could be created.
- > 
+> atomic operations,
 
-This is important, but it doesn't depend on whether file system has
-additional layer if indirection below VFS operations. If file system
-wants to support extended object types, additional parameters have to be
-somehow communicated from the user level during object creation. But:
+What is atomic that isn't in the standard filesystems? How do you guarantee
+it doesn't stop the system dead in its tracks waiting for some very long
+transaction to finish?
 
- - this is necessary even if file system has no "plugins" below VFS
- operations;
+>                    different kinds of stat data,
 
- - this doesn't necessary means changing VFS. For example, these
- parameters can be set on parent directory (this is how ACLs were
- integrated into POSIX).
+Usefulness? Sounds like kernel bloat leading to userspace bloat and
+applications/users wondering what the heck goes on when they don't grok the
+particular stat format.
 
- >
+>                                                  fibretions, etc,
 
-Nikita.
+???
+
+> etc. Some thing is not yet ready - doesn't matter. Some of this is of
+> general interest, some is Reiser4-dedicated.
+
+I don't see anything that would interest me at least, so you can safely
+scratch the "general interest" part.
+
+> New interfaces are needed to allow users to utilize that all.
+
+That is a quite strong argument /against/ it all in my book. It means bloat
+in /every/ filesystem, and they have shown to be able to do without for
+some 30 years now. I'd need /very/ strong reasons for adding something.
+
+>                                                               My point
+> is that the things that are of general interest must not be
+> Reiser4-only.
+
+Reiser4-only stuff is of very limited use, if it isn't just internal
+stuff. And that doesn't need any changes.
+
+>               For example, I should have a possibility to implement
+> files-like-dir in _another_ FS using the same interfaces that Reiser4
+> uses. That's all I wanted to say.
+
+It has been argued over and over that that particular feature /can't/ be
+implemented sanely anyway, so it has to stay out. Besides not making any
+sense. "You've got files and directories" is a bit asymetrical and so not
+quite nice; "all you have is directories" is symmetrical, estetic, and
+completely useless; "some files are directories, some aren't; files in
+file-directories are different than regular files in directory-directories"
+is just a mindless jumble.
+
+> The other question that it may be difficult to foresee everything and
+> it may make sense to move some things upper in future.
+
+Another good reason to keep it out ;-)
+--=20
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
