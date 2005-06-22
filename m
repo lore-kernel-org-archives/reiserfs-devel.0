@@ -1,71 +1,56 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Jeff Garzik <jgarzik@pobox.com>
 Subject: Re: -mm -> 2.6.13 merge status
-Date: Tue, 21 Jun 2005 18:38:07 -0700
-Message-ID: <42B8C0FF.2010800@namesys.com>
-References: <20050620235458.5b437274.akpm@osdl.org.suse.lists.linux.kernel> <p73d5qgc67h.fsf@verdi.suse.de> <42B86027.3090001@namesys.com> <20050621195642.GD14251@wotan.suse.de>
+Date: Tue, 21 Jun 2005 21:57:12 -0400
+Message-ID: <42B8C578.2090705@pobox.com>
+References: <20050620235458.5b437274.akpm@osdl.org.suse.lists.linux.kernel> <p73d5qgc67h.fsf@verdi.suse.de> <42B86027.3090001@namesys.com> <20050621195642.GD14251@wotan.suse.de> <42B8C0FF.2010800@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24436-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24437-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050621195642.GD14251@wotan.suse.de>
+In-Reply-To: <42B8C0FF.2010800@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Andi Kleen <ak@suse.de>, Alexander Lyamin aka FLX <flx@namesys.com>
-Cc: Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Andi Kleen <ak@suse.de>, Alexander Lyamin aka FLX <flx@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Andi Kleen wrote:
+Hans Reiser wrote:
+> V4 has a mailing list, and a large number of testers who read the code
+> and comment on it.   V4 has been reviewed and tested much more than V3
+> was before merging.   Given that we sent it in quite some time ago, your
+> suggestion that an additional review by unspecified additional others be
+> a requirement for merging seems untimely.  Do you see my point of view
+> on this?
+> 
+> I would however enjoy receiving coding suggestions at ANY time.  We
+> don't get as much of that as I would like.   I would in particular love
+> to have you Andi Kleen do a full review of V4 if you could be that
+> generous with your time, as I liked much of the advice you gave us on V3. 
+> 
+> Unspecified others doing a review, well, who knows, I will surely take
+> the time to consider what is said by them though..... 
+> 
+> I would prefer to not get reviews from authors of other filesystems who
+> prefer their own code, skim through our code without taking the time to
+> grok our philosophy and approach in depth, and then complain that our
+> code is different from what they chose to write, and think that our
+> changing to be like them should be mandated.  I will not name names here....
 
->On Tue, Jun 21, 2005 at 11:44:55AM -0700, Hans Reiser wrote:
->  
->
->>vs and zam, please comment on what we get from our profiler and spinlock
->>debugger that the standard tools don't supply.  I am sure you have a
->>reason, but now is the time to articulate it.
->>
->>We would like to keep the disabled code in there until we have a chance
->>to prove (or fail to prove) that cycle detection can be resolved
->>effectively, and then with a solution in hand argue its merits.
->>    
->>
->
->How about the review of your code base? Has reiser4 ever been
->fully reviewed by people outside your group? 
->
->Normally full review is a requirement for merging.
->  
->
-V4 has a mailing list, and a large number of testers who read the code
-and comment on it.   V4 has been reviewed and tested much more than V3
-was before merging.   Given that we sent it in quite some time ago, your
-suggestion that an additional review by unspecified additional others be
-a requirement for merging seems untimely.  Do you see my point of view
-on this?
 
-I would however enjoy receiving coding suggestions at ANY time.  We
-don't get as much of that as I would like.   I would in particular love
-to have you Andi Kleen do a full review of V4 if you could be that
-generous with your time, as I liked much of the advice you gave us on V3. 
+The Linux system isn't the greatest in the world, but here's reality: 
+when a merge is imminent, a lot more attention is paid.
 
-Unspecified others doing a review, well, who knows, I will surely take
-the time to consider what is said by them though..... 
+Andrew regularly uses this knowledge of human psychology to his (and 
+Linux's) benefit :)
 
-I would prefer to not get reviews from authors of other filesystems who
-prefer their own code, skim through our code without taking the time to
-grok our philosophy and approach in depth, and then complain that our
-code is different from what they chose to write, and think that our
-changing to be like them should be mandated.  I will not name names here....
+The MAJOR downside is that merge-stopping issues are sometimes ignored 
+until an upstream merge is imminent.
 
-Some of the suggestions on our mailing list are great, some reflect a
-lack of 5 years working with our code, perhaps I should feed our mailing
-list into the linux kernel mailing list so that people on the kernel
-mailing list are more aware that we exist and are active?
+If you want to get your code merged, you gotta work with the system, and 
+LISTEN to the feedback.
 
->-Andi
->
->
->  
->
+	Jeff, who doesn't have a filesystem axe to grind
+
 
