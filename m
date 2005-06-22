@@ -1,92 +1,105 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
-Subject: Re: reiser4 plugins
-Date: Wed, 22 Jun 2005 13:33:14 -0400
-Message-ID: <200506221733.j5MHXEoH007541@laptop11.inf.utfsm.cl>
-References: <dedekind@yandex.ru>
-Return-path: <reiserfs-list-return-24471-reiserfs=m.gmane.org@namesys.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] reiserfsprogs: Warn on block sizes > 4k
+Date: Wed, 22 Jun 2005 14:15:07 -0400
+Message-ID: <42B9AAAB.2030208@suse.com>
+Mime-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="------------020308090906070001090608"
+Return-path: <reiserfs-list-return-24473-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from "Artem B. Bityuckiy" <dedekind@yandex.ru> 
-   of "Wed, 22 Jun 2005 20:20:37 +0400." <42B98FD5.6050201@yandex.ru> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: "Artem B. Bityuckiy" <dedekind@yandex.ru>
-Cc: =?KOI8-R?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, hch@infradead.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-Artem B. Bityuckiy <dedekind@yandex.ru> wrote:
-> Markus T=D0=96rnqvist wrote:
-> > So merge it as it is=20
+--------------020308090906070001090608
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-Fix it first. The "merge as it stands" just gives rise to stuff that is
-/never/ fixed properly.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-> >                      and move the stuff to the VFS as needed or
-> > deemed necessary. And enable the pseudo interface, or at least
-> > set it in menuconfig and enable by default, it needs testing too.
 
-Then test it out of the standard tree...
+Hello all -
 
-> Reiser4 has a number of great (IMO) things like file as directory,
+Filesystems created with block size > page size will not work until that
+support is added to the kernel. Filesystems with block size > 4k (lowest
+page size supported in Linux) will not work on all systems. This patch
+adds a check and a warning in those conditions, informing the user of
+the caveats of using a larger block size. It can be overridden with -f.
 
-Urgh.
+Patch attached, please apply.
 
-> atomic operations,
+- -Jeff
 
-What is atomic that isn't in the standard filesystems? How do you guarantee
-it doesn't stop the system dead in its tracks waiting for some very long
-transaction to finish?
+- --
+Jeff Mahoney
+SuSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.0 (GNU/Linux)
 
->                    different kinds of stat data,
+iD8DBQFCuaqrLPWxlyuTD7IRApVpAJ41vsbPZxZrLqp96kr1AJx0DETsCQCfTUOH
+uW4BvvYQiYB4knnt6gdgn6A=
+=bSZ+
+-----END PGP SIGNATURE-----
 
-Usefulness? Sounds like kernel bloat leading to userspace bloat and
-applications/users wondering what the heck goes on when they don't grok the
-particular stat format.
+--------------020308090906070001090608
+Content-Type: text/x-patch;
+ name="reiserfs-large-block-warning.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="reiserfs-large-block-warning.diff"
 
->                                                  fibretions, etc,
+Subject: [PATCH] reiserfsprogs: Warn on block sizes > 4k
+From: Jeff Mahoney <jeffm@suse.com>
 
-???
+ Filesystems created with block size > page size will not work until that
+ support is added to the kernel. Filesystems with block size > 4k (lowest
+ page size supported in Linux) will not work on all systems. This patch
+ adds a check and a warning in those conditions, informing the user of the
+ caveats of using a larger block size. It can be overridden with -f.
 
-> etc. Some thing is not yet ready - doesn't matter. Some of this is of
-> general interest, some is Reiser4-dedicated.
+diff -ruNp reiserfsprogs-3.6.19/mkreiserfs/mkreiserfs.c reiserfsprogs-3.6.19.devel/mkreiserfs/mkreiserfs.c
+--- reiserfsprogs-3.6.19/mkreiserfs/mkreiserfs.c	2004-09-30 23:04:21.000000000 +0200
++++ reiserfsprogs-3.6.19.devel/mkreiserfs/mkreiserfs.c	2005-06-22 19:26:58.221711866 +0200
+@@ -684,6 +684,9 @@ int main (int argc, char **argv)
+     
+     if (!(mode & QUIET_MODE) && !can_we_format_it (device_name, force))
+         return 1;
++
++    if (!(mode & QUIET_MODE) && !block_size_ok (Block_size, force))
++        return 1;
+ 	
+     if (jdevice_name)
+         if (!(mode & QUIET_MODE) && !can_we_format_it (jdevice_name, force))
+diff -ruNp reiserfsprogs-3.6.19/reiserfscore/reiserfslib.c reiserfsprogs-3.6.19.devel/reiserfscore/reiserfslib.c
+--- reiserfsprogs-3.6.19/reiserfscore/reiserfslib.c	2004-10-04 22:39:35.000000000 +0200
++++ reiserfsprogs-3.6.19.devel/reiserfscore/reiserfslib.c	2005-06-22 20:07:38.015345826 +0200
+@@ -1175,6 +1175,24 @@ void make_sure_root_dir_exists (reiserfs
+     		&parent_root_dir_key, ih_flags);
+ }
+ 
++int block_size_ok (int blocksize, int force)
++{
++    int pagesize = getpagesize();
++    if (blocksize > 4096) {
++        reiserfs_warning (stderr, "Block sizes larger than 4k are not "
++                          "supported on all architectures.\n");
++        if (blocksize > pagesize)
++            reiserfs_warning (stderr, "The newly created filesystem will not "
++                              "be mountable on this system.\n");
++        else
++            reiserfs_warning (stderr, "The newly created filesystem may not "
++                              "be mountable on other systems.\n");
++        check_forcing_ask_confirmation (force);
++    }
++
++    return 1;
++}
++
+ 
+ /* we only can use a file for filesystem or journal if it is either not
+    mounted block device or regular file and we are forced to use it */
 
-I don't see anything that would interest me at least, so you can safely
-scratch the "general interest" part.
-
-> New interfaces are needed to allow users to utilize that all.
-
-That is a quite strong argument /against/ it all in my book. It means bloat
-in /every/ filesystem, and they have shown to be able to do without for
-some 30 years now. I'd need /very/ strong reasons for adding something.
-
->                                                               My point
-> is that the things that are of general interest must not be
-> Reiser4-only.
-
-Reiser4-only stuff is of very limited use, if it isn't just internal
-stuff. And that doesn't need any changes.
-
->               For example, I should have a possibility to implement
-> files-like-dir in _another_ FS using the same interfaces that Reiser4
-> uses. That's all I wanted to say.
-
-It has been argued over and over that that particular feature /can't/ be
-implemented sanely anyway, so it has to stay out. Besides not making any
-sense. "You've got files and directories" is a bit asymetrical and so not
-quite nice; "all you have is directories" is symmetrical, estetic, and
-completely useless; "some files are directories, some aren't; files in
-file-directories are different than regular files in directory-directories"
-is just a mindless jumble.
-
-> The other question that it may be difficult to foresee everything and
-> it may make sense to move some things upper in future.
-
-Another good reason to keep it out ;-)
---=20
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+--------------020308090906070001090608--
