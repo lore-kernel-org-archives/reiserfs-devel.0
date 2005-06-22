@@ -1,66 +1,105 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+From: Nikita Danilov <nikita@clusterfs.com>
 Subject: Re: reiser4 plugins
-Date: Wed, 22 Jun 2005 19:54:28 +0300
-Message-ID: <20050622165428.GA11013@nysv.org>
-References: <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com> <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com> <20050621181802.11a792cc.akpm@osdl.org> <1119452212.15527.33.camel@server.cs.pocnet.net> <42B97F82.6040404@yandex.ru> <20050622155505.GZ11013@nysv.org> <42B98FD5.6050201@yandex.ru> <f0cc385605062209464d5619a2@mail.gmail.com>
+Date: Wed, 22 Jun 2005 20:59:27 +0400
+Message-ID: <17081.39151.25553.436292@gargle.gargle.HOWL>
+References: <20050620235458.5b437274.akpm@osdl.org>
+	<42B831B4.9020603@pobox.com>
+	<42B87318.80607@namesys.com>
+	<20050621202448.GB30182@infradead.org>
+	<42B8B9EE.7020002@namesys.com>
+	<42B8BB5E.8090008@pobox.com>
+	<42B8E834.5030809@slaphack.com>
+	<42B8F4BC.5060100@pobox.com>
+	<42B92AA1.3010107@slaphack.com>
+	<17081.30107.751071.983835@gargle.gargle.HOWL>
+	<1119456807.4191.82.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bNvn4bxlrUVLu6cT"
-Return-path: <reiserfs-list-return-24469-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24470-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <f0cc385605062209464d5619a2@mail.gmail.com>
+In-Reply-To: <1119456807.4191.82.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "M." <vo.sinh@gmail.com>
-Cc: "Artem B. Bityuckiy" <dedekind@yandex.ru>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, hch@infradead.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: David Masover <ninja@slaphack.com>, Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
---bNvn4bxlrUVLu6cT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Vladimir Saveliev writes:
+ > Hello
+ > 
+ > On Wed, 2005-06-22 at 18:28, Nikita Danilov wrote:
+ > > David Masover writes:
+ > > 
+ > > [...]
+ > > 
+ > >  > 
+ > >  > Maintainability is like optimization.  The maintainability of a
+ > >  > non-working program is irrelevant.  You'd be right if we already had
+ > >  > plugins-in-the-VFS.  We don't.  The most maintainable solution for
+ > >  > plugins-in-the-FS that actually exists is Reiser4, exactly as it is now
+ > >  > - -- because it is the _only_ one that actually exists right now.
+ > > 
+ > > But it is not so. There _are_ plugins-in-the-VFS. VFS operates on opaque
+ > > objects (inodes, dentries, file system types) through interfaces:
+ > > {inode,address_space,dentry,sb,etc.}_operations. Every file system
+ > > back-end if free to implement whatever number of these interfaces. And
+ > > the do this already: check the sources; even ext2 does this: e.g.,
+ > > ext2_fast_symlink_inode_operations and ext2_symlink_inode_operations.
+ > > 
+ > 
+ > imho, this is something different. Ext2 decides itself how to manage a
+ > symlink depending on length of string the symlink is to store.
+ > Reiser4 plugins are to allow a user to define himself which operations
+ > file is to be managed with.
 
-On Wed, Jun 22, 2005 at 06:46:50PM +0200, M. wrote:
->
->Is it not simpler to ask the reiserfs guys for a detailed explanation
->of why and where this plugins' layer differs from using VFS for
->plugins and let others comment on that ?
+I fail to see this as an important distinction:
 
-I hope this is not FUD or something like that, but it seems to me
-the VFS guys are not too willing to implement Reiser4-HiFi stuff anywhere
-else, like the VFS, and don't want Reiser4 in, because it duplicates.
+ - ext2    decides what "plugin" to use based on parameters supplied to
+ the file creation system call;
 
-Think of the chicken and the egg.
+ - reiser4 decides what "plugin" to use based on parameters supplied to
+ the file creation system call.
 
-I may be wrong, though.
+ > 
+ > > This is exactly what upper level reiser4 plugins are for.
+ > 
+ > > I guess that one of Christoph Hellwig's complaints is that reiser4
+ > > introduces another layer of abstraction to implement something that
+ > > already exists.
+ > > 
+ > 
+ > I do not think that it exists already.
+ > You can have standart type of files and that is all.
+ > 
+ > Linux filesystem is not supposed to provide anything but plain
+ > regular/directory/symlinks/sockets/block device/char device/fifo files.
 
->If something cant be done using VFS this layer is needed by reiser4
->and has to be merged.
+If you are talking about S_IFMT bits they are just a relic to keep user
+level happy (yes, VFS does few S_ISFOO checks here and there, but they
+all can be replaced with checks for appropriate operations being
+non-NULL). Nothing prevents file system from rolling forward whatever
+exotic objects it wants.
 
-But it's still possible to let Reiser4 in and take them, say, a feature
-at a time to the VFS.
+ > 
+ > Existing file API does not allow create anything but that.
+ > Merging reiser4 with object plugins would make it necessary to modify
+ > VFS layer so that files of arbitrary types could be created.
+ > 
 
-Unless it's going to be a political wankfest/pissing contest about
-if things like this should even be implemented, anywhere, ever :P
+This is important, but it doesn't depend on whether file system has
+additional layer if indirection below VFS operations. If file system
+wants to support extended object types, additional parameters have to be
+somehow communicated from the user level during object creation. But:
 
---=20
-mjt
+ - this is necessary even if file system has no "plugins" below VFS
+ operations;
 
+ - this doesn't necessary means changing VFS. For example, these
+ parameters can be set on parent directory (this is how ACLs were
+ integrated into POSIX).
 
+ >
 
---bNvn4bxlrUVLu6cT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQFCuZfEIqNMpVm8OhwRAtOUAKC+ubZYVypKK/+MvMZ/2q3S8ZJz8wCdGElM
-FDNafKVlMSay7Xlo5PTaE6U=
-=DY1c
------END PGP SIGNATURE-----
-
---bNvn4bxlrUVLu6cT--
+Nikita.
