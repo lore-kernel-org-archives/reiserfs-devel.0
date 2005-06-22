@@ -1,69 +1,61 @@
-From: Andi Kleen <ak@suse.de>
-Subject: Re: -mm -> 2.6.13 merge status
-Date: Wed, 22 Jun 2005 03:57:24 +0200
-Message-ID: <20050622015724.GN14251@wotan.suse.de>
-References: <20050620235458.5b437274.akpm@osdl.org.suse.lists.linux.kernel> <p73d5qgc67h.fsf@verdi.suse.de> <42B86027.3090001@namesys.com> <20050621195642.GD14251@wotan.suse.de> <42B8C0FF.2010800@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: reiser4 plugins
+Date: Tue, 21 Jun 2005 19:47:13 -0700
+Message-ID: <42B8D131.6060502@namesys.com>
+References: <20050620235458.5b437274.akpm@osdl.org.suse.lists.linux.kernel>	<42B831B4.9020603@pobox.com.suse.lists.linux.kernel>	<42B87318.80607@namesys.com.suse.lists.linux.kernel>	<20050621202448.GB30182@infradead.org.suse.lists.linux.kernel>	<42B8B9EE.7020002@namesys.com.suse.lists.linux.kernel>	<42B8BB5E.8090008@pobox.com.suse.lists.linux.kernel> <p73fyvbb2rh.fsf@verdi.suse.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24438-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24439-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <42B8C0FF.2010800@namesys.com>
+In-Reply-To: <p73fyvbb2rh.fsf@verdi.suse.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Andi Kleen <ak@suse.de>, Alexander Lyamin aka FLX <flx@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: Andi Kleen <ak@suse.de>
+Cc: Jeff Garzik <jgarzik@pobox.com>, hch@infradead.org, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-On Tue, Jun 21, 2005 at 06:38:07PM -0700, Hans Reiser wrote:
-> V4 has a mailing list, and a large number of testers who read the code
-> and comment on it.   V4 has been reviewed and tested much more than V3
-> was before merging.   Given that we sent it in quite some time ago, your
-> suggestion that an additional review by unspecified additional others be
-> a requirement for merging seems untimely.  Do you see my point of view
-> on this?
+Andi Kleen wrote:
 
-The point of the merge review is that people who are familiar with the existing
-Linux code double check that the way your code interfacts
-with the rest of the kernel is sane, does not have obvious bugs and follows the 
-existing good practice. 
+> Christoph does a lot of reviewing 
+>
+and he is notorious for making needed linux contributors go away and not
+come back, and I won't say which famous person on this mailing list told
+me that....
 
-Once the code is in mainline it will get maintained and fixed when needed, 
-but to make this possible without undue work on the mainline hackers it is needed
-to do a full review first. 
+>and your child definitely
+>is in serious need of that to be mergeable. I'm sure Christoph is able
+>to review inpartially even when he is involved with other FS.
+>  
+>
+As impartial as a puppy on PCP....
 
-AFAIK reiserfs has not gotten such a full review yet.
+Christoph is aggressive about things he does not take the time to
+understand or ask about first.  I hate that.   I wish he would go away
+please.  He is not exactly an Ousterhout, Rob Pike, Granger, Mazieres,
+Frans Kaashoek, etc.,  in his accomplishments, so why is he reviewing
+other people's filesystems?  Reviews are great, how about finding
+persons who have created filesystem innovations (and thus are less
+likely to reject innovations without understanding them) to do them? 
 
-Also good reviewers are rare so it is not a good idea to be picky here.
+How about review by benchmark instead?
 
-> Unspecified others doing a review, well, who knows, I will surely take
-> the time to consider what is said by them though..... 
-> 
-> I would prefer to not get reviews from authors of other filesystems who
-> prefer their own code, skim through our code without taking the time to
-> grok our philosophy and approach in depth, and then complain that our
-> code is different from what they chose to write, and think that our
-> changing to be like them should be mandated.  I will not name names here....
+It works, it runs faster than the competition, users like it, we
+addressed the core kernel patch complaints, it should go in and receive
+the exposure that will result in lots of useful improvements and
+suggestions.   It seems like we are getting an unusual review process. 
 
-Someone qualified to review a new file system for inclusion will have need necessary 
-some experience in Linux file systems, and that can be hardly gotten without ever 
-having touched one.  So you will have to live with other file system authors 
-commenting on your code.
+I used a bunch of algorithms for which there was a consensus among those
+consulted that the algorithms were a bad idea, only the fact that I paid
+for the code to be written and required that it be done my way (ignoring
+the "you just use me as a typewriter" remarks as best I could)  caused
+the algorithms to get implemented at all, and the benchmarks then proved
+the algorithms were a good idea.  V3 performance sucks in major part
+because I listened to the consensus when I knew better.   I don't really
+care for consensus on my FS anymore.   If you guys want to understand
+what I am doing I am happy to talk about it extensively, but please
+don't require that I groupthink.  I frankly think that with my
+benchmarks, I should be allowed to tinker on my own. 
 
-The main philosophy that is of concern here is also the philosophy of the 
-core VFS and other kernel interfaces.
-
-> Some of the suggestions on our mailing list are great, some reflect a
-> lack of 5 years working with our code, perhaps I should feed our mailing
-> list into the linux kernel mailing list so that people on the kernel
-> mailing list are more aware that we exist and are active?
-
-Nobody doubts that you are active. Just there are doubts that your
-code follows the Linux coding standards enough to not be a undue
-mainteance burden in mainline.  A review with the following changes
-could probably fix that.
-
--Andi
-
+Hans The Mad
