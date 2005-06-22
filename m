@@ -1,90 +1,84 @@
-From: Jeff Garzik <jgarzik@pobox.com>
+From: Christoph Hellwig <hch@infradead.org>
 Subject: Re: reiser4 plugins
-Date: Wed, 22 Jun 2005 01:18:52 -0400
-Message-ID: <42B8F4BC.5060100@pobox.com>
-References: <20050620235458.5b437274.akpm@osdl.org> <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com> <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com> <42B8BB5E.8090008@pobox.com> <42B8E834.5030809@slaphack.com>
+Date: Wed, 22 Jun 2005 06:34:50 +0100
+Message-ID: <20050622053450.GA28228@infradead.org>
+References: <20050620235458.5b437274.akpm@osdl.org> <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com> <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24444-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24445-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42B8E834.5030809@slaphack.com>
+Content-Disposition: inline
+In-Reply-To: <42B8B9EE.7020002@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Masover <ninja@slaphack.com>
-Cc: Hans Reiser <reiser@namesys.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Jeff Garzik <jgarzik@pobox.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-David Masover wrote:
-> There's been sloppy code in the kernel before.  I remember one bit in
-> particular which was commented "Fuck me gently with a chainsaw."  If I
-> remember correctly, this had all of the PCI ids and the names and
-> manufacturers of the corresponding devices -- in a data structure -- in
-> C source code.  It was something like one massive array definition, or
-> maybe it was a structure.  I don't remember exactly, but...
+On Tue, Jun 21, 2005 at 06:07:58PM -0700, Hans Reiser wrote:
+> Christoph,
 > 
-> The point is, this was in the kernel for quite awhile, and it was so
-> ugly that someone would rather be fucked with a chainsaw.  If something
-> that bad can make it in the kernel and stay for awhile because it
-> worked, and no one wanted to replace it -- nowdays, that database is
-> kept in userland as some nice text format -- then I vote for putting
-> Reiser4 in the kernel now, and ironing the sloppiness ("violation") out
-> later.  It runs now.
+> Reiser4 users love the plugin concept, and all audiences which have
+> listened to a presentation on plugins have been quite positive about
+> it.  Many users think it is the best thing about reiser4.  Can you
+> articulate why you are opposed to plugins in more detail?  Perhaps you
+> are simply not as familiar with it as the audiences I have presented
+> to.  Perhaps persons on our mailing list can comment.....
 
-Existence of ugly code is not an excuse to add more.
+You're duplicating the VFS infrastructure with your pluging system.
 
-We have to maintain said ugly code for decades.  Maintainability is a 
-big deal when you deal with the timeframes we deal with.
+> In particular, what is wrong with having a plugin id associated with
+> every file, storing the pluginid on disk in permanent storage in the
+> stat data, and having that plugin id define the set of methods that
+> implement the vfs operations associated with a particular file, rather
+> than defining VFS methods only at filesystem granularity?
 
+Hans, this only shows you didn't listen to be the last few times I
+explained it to you.  There's nothing wrong with defining plug in IDs
+associated with every file, and the linux file_operations, inode_operations,
+etc.. are _not_ filesystem granularity but inode granularity (except in
+reiser4 where you throw everything together just to add your own
+de-multiplexer below).  So the only thing your plugin might need to is to
+define it's own file or inode operations (in fact it might need a few
+more things speaking from experience with kinda similar things, but it
+certainly doesn't need to duplicate what's there)
 
-> So, Reiser4 may eventually take over VFS and be the only Linux
-> filesystem, but if so, it will have to do it much more slowly.  Take the
-> good ideas -- things like plugins -- and make them at least look like
-> incremental updates to the current VFS, and make them available to all
-> filesystems.
+> What is wrong with having an encryption plugin implemented in this
+> manner?  What is wrong with being able to have some files implemented
+> using a compression plugin, and others in the same filesystem not.
 
-This is how all Linux development is done.
+There's nothing wrong with that, although such things might be better
+as a stackable filesystem.  Maybe they're not, and we'll find out once
+people are prototyping these things and playing with them. But you don't
+need your additional layer of abstraction for those anyway
 
-The code evolves over time.
+> What is wrong with having one file in the FS use a write only plugin, in
+> which the encrypion key is changed with every append in a forward but
+> not backward computable manner, and in order to read a file you must
+> either have a key that is stored on another computer or be reading what
+> was written after the moment of cracking root?
 
-You have just described the path ReiserFS needs to take, in order to get 
-this stuff into the kernel, in fact.
+Because root can read kernel memory this is completely useless :)
+But if you want it as your private patch no one forbits you to do it,
+just don't expect such security by obscurity to go into mainline.
 
+> What we have hurts no one but us.  I have never seen an audience for one
+> of my talks that thought it hurt us..... most audiences think it is
+> great.  
 
-> And here is the crucial point.  Reiser4 is usable and useful NOW, not
-> after it has undergone massive surgery, and Namesys is bankrupt, and
-> users have given up and moved on to XFS.  But the massive surgery should
-> happen eventually, partly to make all filesystems better (see below),
-> and partly to make the transition easier and more palatable for those
-> who don't work for Namesys.
+most of your audience doesn't understand the fine points of filesystem
+implementation.  they want your feature but don't care how it's implemented.
+here it's the other way around - we don't care too much about what not so
+important features we have but more about how sanely they're implemented.
 
-We care about technical merit, not some random company's financial 
-solvancy.  Reiser4 has layering violations, and doesn't work with the 
-current security layer.  Those are two biggies.
+> Let us tinker with our FS, and you tinker with yours, and so long as
+> what we do does not affect your FS, let the users choose.
 
-There is no entitlement to be merged in the upstream kernel.  If people 
-don't like how the Linux kernel is managed, they are free to maintain 
-their own fork.  If its better, people will use that instead.
-
-
-> I would imagine that it wouldn't be too long after this before an
-> uber-fs rose, something which combined enough of the strong points of
-> all the existing Linux filesystems that no one would use anything else.
->  But, Linux still needs support for FAT32, ISO9660, UDF, and all the
-> other filesystems which won't go away as easily as XFS and ext3, and it
-> would be nice if these could all share as much code as possible.
-> 
-> 
-> I don't know if storage plugins really work that way, but they should.
-
-No, they shouldn't.
-
-
-> I think.  I don't work here.
-
-Obviously.
-
-	Jeff
-
+Now we're getting personal again, right?  My filesystems according to
+MAINTAINERS are freevxfs and sysfs, but if you look at commit logs I've
+done work on pretty much any filesystem in the tree, and often doing tree-wide
+changes.  That's why I care about every new filesystem in the tree and not
+a single one.
 
