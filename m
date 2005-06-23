@@ -1,51 +1,42 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Wed, 22 Jun 2005 20:39:01 -0700
-Message-ID: <42BA2ED5.6040309@namesys.com>
-References: <20050620235458.5b437274.akpm@osdl.org> <42B8B9EE.7020002@namesys.com> <42B8BB5E.8090008@pobox.com> <200506221824.32995.zam@namesys.com> <20050622142947.GA26993@infradead.org>
+Date: Wed, 22 Jun 2005 22:14:52 -0700
+Message-ID: <42BA454C.3090500@namesys.com>
+References: <20050620235458.5b437274.akpm@osdl.org> <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com> <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com> <20050622053450.GA28228@infradead.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24480-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24481-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050622142947.GA26993@infradead.org>
+In-Reply-To: <20050622053450.GA28228@infradead.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Christoph Hellwig <hch@infradead.org>
-Cc: Alexander Zarochentsev <zam@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org
-
-Correct me if I am wrong:
-
-What exists currently in VFS are vector instances, not classes. Plugins,
-selected by pluginids, are vector classes, with each pluginid selecting
-a vector class. You propose to have the vector class layer (aka plugin
-layer) in reiser4 export the vector instance to VFS for VFS to handle
-for each object, rather than having VFS select reiser4 and reiser4
-selecting a vector class (aka plugin) which selects a method.
-
-If we agree on the above, then I will comment further.
+Cc: Jeff Garzik <jgarzik@pobox.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
 Christoph Hellwig wrote:
 
->On Wed, Jun 22, 2005 at 06:24:32PM +0400, Alexander Zarochentsev wrote:
+>
+>
 >  
 >
->>Reiser plugins are for the same.  Would you agree with reiser4 plugin design 
->>if the plugins will not dispatch VFS object methods calls by themselves but 
->>set ->foo_ops fileds instead?  I guess you don't like to have the two 
->>dispatching systems at the same level.
+>>What is wrong with having one file in the FS use a write only plugin, in
+>>which the encrypion key is changed with every append in a forward but
+>>not backward computable manner, and in order to read a file you must
+>>either have a key that is stored on another computer or be reading what
+>>was written after the moment of cracking root?
 >>    
 >>
 >
->That is exactly the point I want to make.  I haven't looked at the design
->in detail for a long time, but schemes to allow different object to have
->different operation vectors is a good idea.  We already have that to
->varying degrees in all filesystems, and making that more formal is a good
->thing.  
->
->
+>Because root can read kernel memory this is completely useless :)
 >  
 >
+You missed the point of it rather nicely.  If root can read kernel
+memory, that only gets it the appends made after the point in time of
+cracking root.
 
+
+It is not my idea, and it is not yet present in our code, let me not
+seem to take credit for it though I think it a good idea.
