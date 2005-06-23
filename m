@@ -1,52 +1,44 @@
-From: Ross Biro <ross.biro@gmail.com>
-Subject: Re: -mm -> 2.6.13 merge status
-Date: Thu, 23 Jun 2005 15:56:20 -0400
-Message-ID: <8783be66050623125612b19b32@mail.gmail.com>
-References: <20050620235458.5b437274.akpm@osdl.org.suse.lists.linux.kernel>
-	 <p73d5qgc67h.fsf@verdi.suse.de> <42B86027.3090001@namesys.com>
-	 <20050621195642.GD14251@wotan.suse.de> <42B8C0FF.2010800@namesys.com>
-	 <84144f0205062223226d560e41@mail.gmail.com>
-	 <42BA67C9.7060604@namesys.com>
-	 <1119543302.4115.141.camel@tribesman.namesys.com>
-	 <20050623162325.GA21971@dspnet.fr.eu.org>
-Reply-To: Ross Biro <ross.biro@gmail.com>
+From: Adrian Ulrich <reiser4@blinkenlights.ch>
+Subject: Re: reiser4 plugins
+Date: Thu, 23 Jun 2005 22:12:22 +0200
+Message-ID: <20050623221222.33074838.reiser4@blinkenlights.ch>
+References: <42BAC304.2060802@slaphack.com>
+	<200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-24510-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24511-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050623162325.GA21971@dspnet.fr.eu.org>
-Content-Disposition: inline
+In-Reply-To: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Olivier Galibert <galibert@pobox.com>, Vladimir Saveliev <vs@namesys.com>, Pekka Enberg <penberg@gmail.com>, Alexander Zarochentcev <zam@namesys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: ninja@slaphack.com, reiser@namesys.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-On 6/23/05, Olivier Galibert <galibert@pobox.com> wrote:
 
-> No, I think he means the traditional:
->=20
-> reiser4_fill_super()
-> {
->    if (init_a())
->      goto failed_a;
-.
-.
-.
+> >                                                 Not everyone will want
+> > to reformat at once, but as the reiser4 code matures and proves itself
+> > (even more than it already has),
+> 
+> I for one have seen mainly people with wild claims that it will make their
+> machines much faster, and coming back later asking how they can recover
+> their thrashed partitions...
 
-IMO this works very well when the initialization always completes or
-fails totally in a single routine.  When your init routine can leave
-something partially inited, then putting all of the cleanup code in a
-single function and using the enums eliminates duplicate code and
-makes things easier to read.  (it's a state machine like many device
-drivers and network stacks).
+Then please show us some Links/Message-IDs to such postings.
+I'd like to read them.
 
-Also, perhaps a compromise on the asserts at the beggining of
-functions.  If they are moved into a header file, say
-resier4_contracts.h and replaced with a single macro, you get most of
-the benefits and elminate most of the clutter.  If properly done,
-there may even be some advantages gained by auto generating the
-conttact.h file(s) from some sort of formal spec or design doc.
+From my POV:
+ I've been using Reiser4 for almost everything (Rootfs / External
+ Harddrives) for about ~8 Months without any data loss..
 
-    Ross
+ Powerloss, unpluging the Disk while writing, full filesystem,
+ heavy use : No problems with reiser4.. It *is* stable.
+
+
+
+ -- Adrian
+
+
+
