@@ -1,41 +1,52 @@
-From: Nikita Danilov <nikita@clusterfs.com>
-Subject: Re: -mm -> 2.6.13 merge status
-Date: Fri, 24 Jun 2005 01:18:03 +0400
-Message-ID: <17083.9995.105576.61184@gargle.gargle.HOWL>
-References: <20050620235458.5b437274.akpm@osdl.org.suse.lists.linux.kernel>
-	<p73d5qgc67h.fsf@verdi.suse.de>
-	<42B86027.3090001@namesys.com>
-	<20050621195642.GD14251@wotan.suse.de>
-	<42B8C0FF.2010800@namesys.com>
-	<84144f0205062223226d560e41@mail.gmail.com>
-	<42BA67C9.7060604@namesys.com>
-	<1119543302.4115.141.camel@tribesman.namesys.com>
-	<42BAEEA1.2060305@namesys.com>
+From: Avuton Olrich <avuton@gmail.com>
+Subject: Re: reiser4 plugins
+Date: Thu, 23 Jun 2005 14:29:21 -0700
+Message-ID: <3aa654a405062314296a4ca2ae@mail.gmail.com>
+References: <42BAC304.2060802@slaphack.com>
+	 <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>
+	 <20050623221222.33074838.reiser4@blinkenlights.ch>
+Reply-To: Avuton Olrich <avuton@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24513-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-24515-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42BAEEA1.2060305@namesys.com>
+In-Reply-To: <20050623221222.33074838.reiser4@blinkenlights.ch>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Pekka Enberg <penberg@gmail.com>, Alexander Zarochentcev <zam@namesys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Adrian Ulrich <reiser4@blinkenlights.ch>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, ninja@slaphack.com, reiser@namesys.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Hans Reiser writes:
+On 6/23/05, Adrian Ulrich <reiser4@blinkenlights.ch> wrote:
+> From my POV:
+>  I've been using Reiser4 for almost everything (Rootfs / External
+>  Harddrives) for about ~8 Months without any data loss..
+>=20
+>  Powerloss, unpluging the Disk while writing, full filesystem,
+>  heavy use : No problems with reiser4.. It *is* stable.
 
-[...]
+*From users who use it* I have heard nothing but love for reiser4.
+It's amazing how quickly people seem to be dismissive about what
+reiser4 has to offer when they more than likely haven't taken it for a
+spin at all. All I hear about is 'we can't let something ugly go into
+the stable kernel' then in the same day I looked into some of the
+config options...
 
- > I think the above is easier to read than the below.  Macros can obscure
- > sometimes, and one of our weaknesses is a tendency to use macros in such
- > a way that it frustrates meta-. use in emacs.   Nikita did however
- > mention that there was something that could understand macros when
- > constructing tags files, but I forgot what that was.
+CONFIG_WDC_ALI15X3:
+*snip*
+This allows for UltraDMA support for WDC drives that ignore CRC
+checking. You are a fool for enabling this option, but there have been
+requests.
+*snip*
 
-xref.el (http://xref-tech.com/xrefactory/main.html). With it one can
-type current->[TAB] and it shows fields of struct task_struct in the
-emacs completion buffer.
+How many have requested that reiser4 make it into the kernel? I'd
+imagine many more then requested this IDE feature. And it's an
+*option*. Please work something out on this.
 
-Nikita.
+avuton
+
+--=20
+  Anyone who quotes me in their sig is an idiot. -- Rusty Russell.
