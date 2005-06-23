@@ -1,150 +1,114 @@
-From: "Pekka J Enberg" <penberg@cs.helsinki.fi>
-Subject: Re: -mm -> 2.6.13 merge status
-Date: Thu, 23 Jun 2005 11:08:55 +0300
-Message-ID: <courier.42BA6E17.00005001@courier.cs.helsinki.fi>
-References: <20050620235458.5b437274.akpm@osdl.org.suse.lists.linux.kernel>
-            <p73d5qgc67h.fsf@verdi.suse.de>
-            <42B86027.3090001@namesys.com>
-            <20050621195642.GD14251@wotan.suse.de>
-            <42B8C0FF.2010800@namesys.com>
-            <84144f0205062223226d560e41@mail.gmail.com>
-            <42BA67C9.7060604@namesys.com>
+From: fs <fs@ercist.iscas.ac.cn>
+Subject: [PATCH] ReiserFS file.c several bug-fix
+Date: Thu, 23 Jun 2005 15:27:11 -0400
+Message-ID: <1119554831.3026.99.camel@CoolQ>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24489-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="=-65WTcPxQC0qgOeCsw3Yy"
+Return-path: <reiserfs-list-return-24490-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42BA67C9.7060604@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Pekka Enberg <penberg@gmail.com>, vs <vs@thebsh.namesys.com>, Andi Kleen <ak@suse.de>, Alexander Lyamin aka FLX <flx@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list <reiserfs-list@namesys.com>
+Cc: Hans Reiser <reiser@namesys.com>, Vladimir Saveliev <vs@namesys.com>, iscas-linaccident <iscas-linaccident@intellilink.co.jp>
 
-Hi Hans, 
+--=-65WTcPxQC0qgOeCsw3Yy
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2005-06-23 at 00:42 -0700, Hans Reiser wrote:
-> > These assertion codes are meaningless to the rest of us so please drop
-> > them. 
-> 
-> I think you don't appreciate the role of assertions in making code
-> easier to audit and debug.
+Related FS:
+    ReiserFS
 
-I did not say you should drop the assertions. I referred to the
-"nikita-955" part which is redundant and pointless. Using
-__FILE__:__LINE__ (or BUG_ON even) will give you enough information to
-identify where the error occured. 
+Related Files:
+    fs/reiserfs/file.c
 
-On Thu, 2005-06-23 at 00:42 -0700, Hans Reiser wrote:
-> > This belongs to include/linux, not reiser4. 
-> 
-> Too much politics are involved in modifying other peoples directories,
-> or I'd agree with you.  The first person outside the reiser4 project to
-> use it should move it into a different place.
+Bug description:
+    Make a ReiserFS partition in USB storage HDD, create a test file
+with enough size.
+    Write a program, do: open(O_SYNC/O_DSYNC) - read - close. After each
+operation, pause for a while, such as 3s. Between open and read, unlug
+the USB wire. open returns zero-filled buffer, no error returns.
 
-What politics? Please do hide generic code in your fs. How should
-someone outside reiser4 know you have type-safe hash tables and linked
-lists in there? Why should they care? It is obvious that you did not
-think <linux/list.h> and <linux/jhash.h> were sufficient so please fix
-those instead and use them. 
+Bug analysis:
+    reiserfs_file_write will claim some blocks, commit the I/O request,
+if O_SYNC and O_DSYNC is used, it will
+    if ((file->f_flags & O_SYNC) || IS_SYNC(inode))
+	res = generic_osync_inode(inode, file->f_mapping,
+                                  OSYNC_METADATA|OSYNC_DATA);
+The question is, if I/O error occurs, 	    
+        res = reiserfs_allocate_blocks_for_region fails with -EIO, so
+it will exit the loop, no I/O request, no page marked as dirty.
+If run generic_osync_inode, it returns 0(no dirty page), res will be
+overwritten from -EIO to 0, thus no error report.
 
-> >>+reiser4_internal void reiser4_handle_error(void)
-> >>+{
-> >>+   struct super_block *sb = reiser4_get_current_sb();
-> >>+
-> >>+   if ( !sb )
-> >>+           return;
-> >>+   reiser4_status_write(REISER4_STATUS_DAMAGED, 0, "Filesystem error occured");
-> >>+   switch ( get_super_private(sb)->onerror ) {
-> >>+   case 0:
-> >>+           reiser4_panic("foobar-42", "Filesystem error occured\n");
-> >>+   case 1:
-> >>+           if ( sb->s_flags & MS_RDONLY )
-> >>+                   return;
-> >>+           sb->s_flags |= MS_RDONLY;
-> >>+           break;
-> >>+   case 2:
-> >>+           machine_restart(NULL);
-> >>    
-> >>
-> >
-> > Probably not something you should do at fs level. 
-> 
-> Not sure why you say that.
+Also,  reiserfs_file_write contains a serious bug, see here
+	blocks_to_allocate = reiserfs_prepare_file_region_for_write
+		(inode, pos, num_pages, write_bytes, prepared_pages);
+Here blocks_to_allocate is defined as size_t, i.e. unsigned int, but
+reiserfs_prepare_file_region_for_write is declared as int, so sometimes
+it will return -EIO, -ENOENT, etc, take a look at this line
+	if ( blocks_to_allocate < 0 ) { <- This will never happen
+	    res = blocks_to_allocate;
+	    reiserfs_release_claimed_blocks(inode->i_sb, 
+		num_pages << (PAGE_CACHE_SHIFT - inode->i_blkbits));
+	    break;
+	}
 
-Because Reiser4 hitting an error condition and restarting the machine
-silently is silly. Just do panic() there. 
+Way around:
+1) if already_written is zero, don't do generic_osync_inode
+2) tell the result of reiserfs_prepare_file_region_for_write with IS_ERR
+   macro or cast it to size_t
 
-> This is not too defensive.  Nikita did well here.  The culture of code
-> auditors is very different from most programmers.  Like most
-> specialists, they have wisdom to offer those who listen to them.  In
-> essence, they teach that every function should have a specification of
-> every possible restriction on allowed input that can be imagined and is
-> correct as a restriction.  Code auditors love assertions like this.  I
-> look at my understanding of this before DARPA, and I wince.  DARPA
-> patiently taught me much in this area as I listened to security talks at
-> our meetings, and I thank them for it. 
+Signed-off-by: Qu Fuping<fs@ercist.iscas.ac.cn>
 
-Hans, I am aware of techniques such as design-by-contract but it is not
-the kernel coding style. That's because it makes the code harder to read
-and refactor. 
+Patch:
+diff -uNp linux-2.6.12/fs/reiserfs/file.c
+linux-2.6.12-new/fs/reiserfs/file.c
 
-> Large scale projects like reiser4 are crippled by debugging costs. 
-> Anything that reduces debugging time is worth so much.....
 
-Then start writing automated unit tests. 
 
-> >>+/* allocate fresh znode */
-> >>+reiser4_internal znode *
-> >>+zalloc(int gfp_flag /* allocation flag */ )
-> >>+{
-> >>+   znode *node;
-> >>+
-> >>+   node = kmem_cache_alloc(znode_slab, gfp_flag);
-> >>+   return node;
-> >>+}
-> >>    
-> >>
-> >
-> >Please drop this useless wrapper.
-> >  
-> >
-> Thanks.  vs, I think he is right here.... I see zalloc used in only two
-> places.....  Or is the desire to ease future porting work?
+--=-65WTcPxQC0qgOeCsw3Yy
+Content-Disposition: attachment; filename=reiserfs_write.diff
+Content-Type: text/x-patch; name=reiserfs_write.diff; charset=gb2312
+Content-Transfer-Encoding: 7bit
 
-Then add it later. It is a useless wrapper now. 
+--- linux-2.6.12/fs/reiserfs/file.c	2005-06-23 14:59:27.000000000 -0400
++++ linux-2.6.12-new/fs/reiserfs/file.c	2005-06-23 15:18:09.000000000 -0400
+@@ -225,12 +225,6 @@ static int reiserfs_allocate_blocks_for_
+     hint.preallocate = will_prealloc;
+ 
+     /* Call block allocator to allocate blocks */
+-    res = reiserfs_allocate_blocknrs(&hint, allocated_blocks, blocks_to_allocate, blocks_to_allocate);
+-    if ( res != CARRY_ON ) {
+-	if ( res == NO_DISK_SPACE ) {
+-	    /* We flush the transaction in case of no space. This way some
+-	       blocks might become free */
+-	    SB_JOURNAL(inode->i_sb)->j_must_wait = 1;
+ 	    res = restart_transaction(th, inode, &path);
+             if (res)
+                 goto error_exit;
+@@ -1306,7 +1300,7 @@ static ssize_t reiserfs_file_write( stru
+ 	   so that nobody else can access these until we are done.
+ 	   We get number of actual blocks needed as a result.*/
+ 	blocks_to_allocate = reiserfs_prepare_file_region_for_write(inode, pos, num_pages, write_bytes, prepared_pages);
+-	if ( blocks_to_allocate < 0 ) {
++	if ( IS_ERROR((const void *)blocks_to_allocate) ) {
+ 	    res = blocks_to_allocate;
+ 	    reiserfs_release_claimed_blocks(inode->i_sb, num_pages << (PAGE_CACHE_SHIFT - inode->i_blkbits));
+ 	    break;
+@@ -1363,6 +1357,10 @@ static ssize_t reiserfs_file_write( stru
+         }
+     }
+ 
++    /* If nothing is written, no need(actually, mustn't) to sync pages, just return res */
++    if( already_written == 0 )
++	    goto out;
++    
+     if ((file->f_flags & O_SYNC) || IS_SYNC(inode))
+ 	res = generic_osync_inode(inode, file->f_mapping, OSYNC_METADATA|OSYNC_DATA);
+ 
 
-> >>--- /dev/null       2003-09-23 21:59:22.000000000 +0400
-> >>+++ linux-2.6.11-vs/fs/reiser4/debug.h      2005-06-03 17:49:38.297184283 +0400
-> >>+
-> >>+/*
-> >>+ * Error code tracing facility. (Idea is borrowed from XFS code.)
-> >>    
-> >>
-> >
-> >Could this be turned into a generic facility? 
-> 
-> 
-> Probably it already is one.  Getting it used as such sounds like a lot
-> of political work though.  Maybe the first person outside the reiser4
-> project to want to use it should move the code into a different location.
+--=-65WTcPxQC0qgOeCsw3Yy--
 
-What political work? Just whoop up a patch to introduce it as a generic
-facility and let others review it. There are plenty of janitors that are
-willing to convert the existing code. Please note that you're now 
-duplicating code from XFS (even if it is just an idea you borrowed). 
-
-This stuff is fairly simple: if the technique you're using is good, it
-should probably be generic; if it isn't, you shouldn't be using it
-either. Please don't let the pissing contest between you and hch create
-more work for the rest of us. 
-
-> actually I want to see emergency flush die very very much.   As for
-> fixing vm, easier said than done, politically.
-
-As you might have noticed, I don't care for politics. Just post the patch
-to fix the vm for review. 
-
-                       Pekka 
 
