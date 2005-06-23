@@ -1,134 +1,150 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: reiser4 plugins
-Date: Thu, 23 Jun 2005 11:08:51 +0300
-Message-ID: <20050623080851.GB11013@nysv.org>
-References: <dedekind@yandex.ru> <42B98FD5.6050201@yandex.ru> <200506221733.j5MHXEoH007541@laptop11.inf.utfsm.cl>
+From: "Pekka J Enberg" <penberg@cs.helsinki.fi>
+Subject: Re: -mm -> 2.6.13 merge status
+Date: Thu, 23 Jun 2005 11:08:55 +0300
+Message-ID: <courier.42BA6E17.00005001@courier.cs.helsinki.fi>
+References: <20050620235458.5b437274.akpm@osdl.org.suse.lists.linux.kernel>
+            <p73d5qgc67h.fsf@verdi.suse.de>
+            <42B86027.3090001@namesys.com>
+            <20050621195642.GD14251@wotan.suse.de>
+            <42B8C0FF.2010800@namesys.com>
+            <84144f0205062223226d560e41@mail.gmail.com>
+            <42BA67C9.7060604@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="eP8xGX2lG1UwfyBj"
-Return-path: <reiserfs-list-return-24488-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24489-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200506221733.j5MHXEoH007541@laptop11.inf.utfsm.cl>
+In-Reply-To: <42BA67C9.7060604@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: "Artem B. Bityuckiy" <dedekind@yandex.ru>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, hch@infradead.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; format="flowed"; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Pekka Enberg <penberg@gmail.com>, vs <vs@thebsh.namesys.com>, Andi Kleen <ak@suse.de>, Alexander Lyamin aka FLX <flx@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
---eP8xGX2lG1UwfyBj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Hans, 
 
-On Wed, Jun 22, 2005 at 01:33:14PM -0400, Horst von Brand wrote:
->> > So merge it as it is=20
->Fix it first. The "merge as it stands" just gives rise to stuff that is
->/never/ fixed properly.
+On Thu, 2005-06-23 at 00:42 -0700, Hans Reiser wrote:
+> > These assertion codes are meaningless to the rest of us so please drop
+> > them. 
+> 
+> I think you don't appreciate the role of assertions in making code
+> easier to audit and debug.
 
-It's in -mm already and it was said the big grudges are fixed.
+I did not say you should drop the assertions. I referred to the
+"nikita-955" part which is redundant and pointless. Using
+__FILE__:__LINE__ (or BUG_ON even) will give you enough information to
+identify where the error occured. 
 
-What do you still want?
+On Thu, 2005-06-23 at 00:42 -0700, Hans Reiser wrote:
+> > This belongs to include/linux, not reiser4. 
+> 
+> Too much politics are involved in modifying other peoples directories,
+> or I'd agree with you.  The first person outside the reiser4 project to
+> use it should move it into a different place.
 
->> >                      and move the stuff to the VFS as needed or
->> > deemed necessary. And enable the pseudo interface, or at least
->> > set it in menuconfig and enable by default, it needs testing too.
->
->Then test it out of the standard tree...
+What politics? Please do hide generic code in your fs. How should
+someone outside reiser4 know you have type-safe hash tables and linked
+lists in there? Why should they care? It is obvious that you did not
+think <linux/list.h> and <linux/jhash.h> were sufficient so please fix
+those instead and use them. 
 
-Huh? You mean -mm? That's what people do, backport to mainline.
+> >>+reiser4_internal void reiser4_handle_error(void)
+> >>+{
+> >>+   struct super_block *sb = reiser4_get_current_sb();
+> >>+
+> >>+   if ( !sb )
+> >>+           return;
+> >>+   reiser4_status_write(REISER4_STATUS_DAMAGED, 0, "Filesystem error occured");
+> >>+   switch ( get_super_private(sb)->onerror ) {
+> >>+   case 0:
+> >>+           reiser4_panic("foobar-42", "Filesystem error occured\n");
+> >>+   case 1:
+> >>+           if ( sb->s_flags & MS_RDONLY )
+> >>+                   return;
+> >>+           sb->s_flags |= MS_RDONLY;
+> >>+           break;
+> >>+   case 2:
+> >>+           machine_restart(NULL);
+> >>    
+> >>
+> >
+> > Probably not something you should do at fs level. 
+> 
+> Not sure why you say that.
 
-Or did I miss something?
+Because Reiser4 hitting an error condition and restarting the machine
+silently is silly. Just do panic() there. 
 
->> Reiser4 has a number of great (IMO) things like file as directory,
->Urgh.
+> This is not too defensive.  Nikita did well here.  The culture of code
+> auditors is very different from most programmers.  Like most
+> specialists, they have wisdom to offer those who listen to them.  In
+> essence, they teach that every function should have a specification of
+> every possible restriction on allowed input that can be imagined and is
+> correct as a restriction.  Code auditors love assertions like this.  I
+> look at my understanding of this before DARPA, and I wince.  DARPA
+> patiently taught me much in this area as I listened to security talks at
+> our meetings, and I thank them for it. 
 
-Your opinion :)
+Hans, I am aware of techniques such as design-by-contract but it is not
+the kernel coding style. That's because it makes the code harder to read
+and refactor. 
 
->>                    different kinds of stat data,
->Usefulness? Sounds like kernel bloat leading to userspace bloat and
->applications/users wondering what the heck goes on when they don't grok the
->particular stat format.
+> Large scale projects like reiser4 are crippled by debugging costs. 
+> Anything that reduces debugging time is worth so much.....
 
-Oh no! NOOOOOOOO! New features come at a cost?!
+Then start writing automated unit tests. 
 
-Shit, I better unpack my C64.
+> >>+/* allocate fresh znode */
+> >>+reiser4_internal znode *
+> >>+zalloc(int gfp_flag /* allocation flag */ )
+> >>+{
+> >>+   znode *node;
+> >>+
+> >>+   node = kmem_cache_alloc(znode_slab, gfp_flag);
+> >>+   return node;
+> >>+}
+> >>    
+> >>
+> >
+> >Please drop this useless wrapper.
+> >  
+> >
+> Thanks.  vs, I think he is right here.... I see zalloc used in only two
+> places.....  Or is the desire to ease future porting work?
 
->> etc. Some thing is not yet ready - doesn't matter. Some of this is of
->> general interest, some is Reiser4-dedicated.
->
->I don't see anything that would interest me at least, so you can safely
->scratch the "general interest" part.
+Then add it later. It is a useless wrapper now. 
 
-These are things people will start using when available.
+> >>--- /dev/null       2003-09-23 21:59:22.000000000 +0400
+> >>+++ linux-2.6.11-vs/fs/reiser4/debug.h      2005-06-03 17:49:38.297184283 +0400
+> >>+
+> >>+/*
+> >>+ * Error code tracing facility. (Idea is borrowed from XFS code.)
+> >>    
+> >>
+> >
+> >Could this be turned into a generic facility? 
+> 
+> 
+> Probably it already is one.  Getting it used as such sounds like a lot
+> of political work though.  Maybe the first person outside the reiser4
+> project to want to use it should move the code into a different location.
 
-They're given a framework which enables them to do things other
-people can't imagine.
+What political work? Just whoop up a patch to introduce it as a generic
+facility and let others review it. There are plenty of janitors that are
+willing to convert the existing code. Please note that you're now 
+duplicating code from XFS (even if it is just an idea you borrowed). 
 
-Too bad you're convinced everything everyone does is on the level of "Urgh"
+This stuff is fairly simple: if the technique you're using is good, it
+should probably be generic; if it isn't, you shouldn't be using it
+either. Please don't let the pissing contest between you and hch create
+more work for the rest of us. 
 
->> New interfaces are needed to allow users to utilize that all.
->
->That is a quite strong argument /against/ it all in my book. It means bloat
->in /every/ filesystem, and they have shown to be able to do without for
->some 30 years now. I'd need /very/ strong reasons for adding something.
+> actually I want to see emergency flush die very very much.   As for
+> fixing vm, easier said than done, politically.
 
-But the competitor's filesystems are evolving past that 30-year-old
-paradigm, why shouldn't Linux's?
+As you might have noticed, I don't care for politics. Just post the patch
+to fix the vm for review. 
 
-And if Reiser4 is merged and its VFS-doubling things merged into the VFS,
-how much will it bloat Ext2 if Ext2 doesn't go near files-as-dirs
-or extended stat data?
+                       Pekka 
 
->It has been argued over and over that that particular feature /can't/ be
->implemented sanely anyway, so it has to stay out. Besides not making any
-
-Arguments left and right for and against this.
-
-I'd rather see someone write the code that does this, or, even better,
-you can write the code that proves this definitively wrong and someone
-else will get it to work.
-
-(Ok, I hate the "DIY" counter-argument as much as the next man, but
-this seemed almost an appropriate place to use it)
-
->sense. "You've got files and directories" is a bit asymetrical and so not
->quite nice; "all you have is directories" is symmetrical, estetic, and
->completely useless; "some files are directories, some aren't; files in
->file-directories are different than regular files in directory-directories"
->is just a mindless jumble.
-
-"You've got data objects"
-
-All we need is the extra bit that's MAY_LOOKUP so we don't need +x
-to access metadata. But apparently this is too much to ask for.
-
-Why? /Probably/ standards compliance.=20
-So why be compliant, if it's backwards compatible? SILENCE!
-No really, why not extend something without breaking? ...we don't wanna...
-
->> The other question that it may be difficult to foresee everything and
->> it may make sense to move some things upper in future.
->Another good reason to keep it out ;-)
-
-Sure, extinguish innovation. Got it.
-
---=20
-mjt
-
-
---eP8xGX2lG1UwfyBj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQFCum4TIqNMpVm8OhwRAnTsAJ9AKrILzPA3LfJPiWG/EKg53fnToQCcDfNY
-WnT0ILkU7f0kQn9hlCP5GzI=
-=Pww0
------END PGP SIGNATURE-----
-
---eP8xGX2lG1UwfyBj--
