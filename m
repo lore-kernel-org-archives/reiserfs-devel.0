@@ -1,60 +1,138 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiser4 plugins
-Date: Wed, 22 Jun 2005 22:58:22 -0700
-Message-ID: <42BA4F7E.6000402@namesys.com>
-References: <20050620235458.5b437274.akpm@osdl.org> <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com> <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com> <42B8BB5E.8090008@pobox.com> <42B8E834.5030809@slaphack.com> <42B8F4BC.5060100@pobox.com>
+Subject: Re: [PATCH] [RESEND] ReiserFS _get_block_create_0 wrong behavior
+ when	I/O fails
+Date: Wed, 22 Jun 2005 23:19:03 -0700
+Message-ID: <42BA5457.1090001@namesys.com>
+References: <1119471578.22827.3.camel@CoolQ>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24482-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24483-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42B8F4BC.5060100@pobox.com>
+In-Reply-To: <1119471578.22827.3.camel@CoolQ>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: David Masover <ninja@slaphack.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: fs <fs@ercist.iscas.ac.cn>, Edward Shishkin <edward@namesys.com>
+Cc: reiserfs-list <reiserfs-list@namesys.com>, Vladimir Saveliev <vs@namesys.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
 
-Jeff Garzik wrote:
+Thanks fs, Edward, can you or vs look at this?
 
-> We have to maintain said ugly code for decades.
+Hans
 
-No you don't, I do.
+fs wrote:
 
->> filesystem, but if so, it will have to do it much more slowly.  Take the
->> good ideas -- things like plugins -- and make them at least look like
->> incremental updates to the current VFS, and make them available to all
->> filesystems.
+>Seems my domain is filtered , so I resend the modified version.
 >
-> So, Reiser4 may eventually take over VFS and be the only Linux
+>Related FS:
+>    ReiserFS
 >
-> This is how all Linux development is done.
+>Related Files:
+>    fs/reiserfs/inode.c
 >
-> The code evolves over time.
+>Bug description:
+>    Make a ReiserFS partition in USB storage HDD, create a test file
+>with
+>enough size.
+>    Write a program, do: open(O_RDONLY) - read - close. After each
+>operation, pause for a while, such as 3s. Between open and read, unlug
+>the
+>USB wire. open returns zero-filled buffer, no error returns.
 >
-> You have just described the path ReiserFS needs to take, in order to
-> get this stuff into the kernel, in fact.
-
-You missed his point.  He is saying ext3 code should migrate towards
-becoming reiser4 plugins, and reiser4 should be merged now so that the
-migration can get started.
-
-I don't really care whether ext3 uses our plugin model.  (If it does,
-fine, please credit me for it though, and consider maybe a thank you.  I
-am happy to thank the XFS team for the idea of delayed allocation....)
-
-I am entitled to get some advantage from being the first on the block. 
-Other fs maintainers don't want me to have that entitlement, so they add
-delays to slow us down.  It is odd how Hellwig no longer describes
-himself as XFS associated.  Did SGI and him
-
-> There is no entitlement to be merged in the upstream kernel.  
-
-True, but what is interesting is that you don't think the faster
-filesystem should be merged, and the others should catch up to it later
-if they can, instead you think it should be delayed until all of its
-benefits can be transmitted to the other filesystems first so that
-everyone can be equal. 
-
+>Bug analysis:
+>    do_mpage_readpage will call FS-specific get_block to get buffer
+>mapped
+>from disk. reiserfs_get_block doesn't return non-zero when I/O failure
+>occurs.
+>    reiserfs_get_block -> _get_block_create_0 ->
+>search_by_position_by_key
+>search_by_position_by_key returns IO_ERROR, but the original code just
+>simply
+>returns 0
+>
+>research:
+>    if (search_for_position_by_key (inode->i_sb, &key, &path) !=
+>POSITION_FOUND) {
+>        pathrelse (&path);
+>        if (p)
+>            kunmap(bh_result->b_page) ;
+>        // We do not return -ENOENT if there is a hole but page is
+>uptodate, because it means
+>        // That there is some MMAPED data associated with it that is yet
+>to be written to disk.
+>        if ((args & GET_BLOCK_NO_HOLE) &&
+>!PageUptodate(bh_result->b_page) ) {
+>            return -ENOENT ;
+>        }
+>        return 0 ; <- 0 retuns for IO_ERROR
+>    }
+>
+>Way around:
+>    test result of search_for_position_by_key
+>
+>Signed-off-by: Qu Fuping<fs@ercist.iscas.ac.cn>
+>
+>Patch:
+>diff -uNp /tmp/linux-2.6.12-rc6/fs/reiserfs/inode.c
+>/tmp/linux-2.6.12-rc6.new/fs/reiserfs/inode.c
+>
+>
+>  
+>
+>------------------------------------------------------------------------
+>
+>--- linux-2.6.12-rc6.old/fs/reiserfs/inode.c	2005-06-06 11:22:29.000000000 -0400
+>+++ linux-2.6.12-rc6.new/fs/reiserfs/inode.c	2005-06-17 16:12:18.000000000 -0400
+>@@ -254,6 +254,7 @@ static int _get_block_create_0 (struct i
+>     char * p = NULL;
+>     int chars;
+>     int ret ;
+>+    int	result ;
+>     int done = 0 ;
+>     unsigned long offset ;
+> 
+>@@ -262,7 +263,8 @@ static int _get_block_create_0 (struct i
+> 		  (loff_t)block * inode->i_sb->s_blocksize + 1, TYPE_ANY, 3);
+> 
+> research:
+>-    if (search_for_position_by_key (inode->i_sb, &key, &path) != POSITION_FOUND) {
+>+    result = search_for_position_by_key (inode->i_sb, &key, &path) ;
+>+    if (result != POSITION_FOUND) {
+> 	pathrelse (&path);
+>         if (p)
+>             kunmap(bh_result->b_page) ;
+>@@ -270,7 +272,8 @@ research:
+> 	// That there is some MMAPED data associated with it that is yet to be written to disk.
+> 	if ((args & GET_BLOCK_NO_HOLE) && !PageUptodate(bh_result->b_page) ) {
+> 	    return -ENOENT ;
+>-	}
+>+	}else if(result == IO_ERROR)
+>+		return -EIO;
+>         return 0 ;
+>     }
+>     
+>@@ -382,7 +385,8 @@ research:
+> 
+> 	// update key to look for the next piece
+> 	set_cpu_key_k_offset (&key, cpu_key_k_offset (&key) + chars);
+>-	if (search_for_position_by_key (inode->i_sb, &key, &path) != POSITION_FOUND)
+>+	result = search_for_position_by_key (inode->i_sb, &key, &path);
+>+	if (result != POSITION_FOUND)
+> 	    // we read something from tail, even if now we got IO_ERROR
+> 	    break;
+> 	bh = get_last_bh (&path);
+>@@ -394,6 +398,10 @@ research:
+> 
+> finished:
+>     pathrelse (&path);
+>+
+>+    if(result == IO_ERROR)
+>+	    return -EIO;
+>+    
+>     /* this buffer has valid data, but isn't valid for io.  mapping it to
+>      * block #0 tells the rest of reiserfs it just has a tail in it
+>      */
+>  
+>
 
