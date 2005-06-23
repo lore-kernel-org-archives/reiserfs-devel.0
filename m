@@ -1,31 +1,51 @@
-From: Roland Dreier <roland@topspin.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Wed, 22 Jun 2005 15:27:26 -0700
-Message-ID: <52psueowmp.fsf@topspin.com>
-References: <200506221733.j5MHXEoH007541@laptop11.inf.utfsm.cl>
-	<42B9DD48.6060601@slaphack.com>
+Date: Wed, 22 Jun 2005 20:39:01 -0700
+Message-ID: <42BA2ED5.6040309@namesys.com>
+References: <20050620235458.5b437274.akpm@osdl.org> <42B8B9EE.7020002@namesys.com> <42B8BB5E.8090008@pobox.com> <200506221824.32995.zam@namesys.com> <20050622142947.GA26993@infradead.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24479-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24480-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42B9DD48.6060601@slaphack.com> (David Masover's message of
- "Wed, 22 Jun 2005 16:51:04 -0500")
+In-Reply-To: <20050622142947.GA26993@infradead.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, "Artem B. Bityuckiy" <dedekind@yandex.ru>, =?UTF-8?B?TWFya3VzIFTQlnJu?==?UTF-8?B?cXZpc3Q=?= <mjt@nysv.org>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, hch@infradead.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Alexander Zarochentsev <zam@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org
 
-    David> Spotlight on the Mac.  Users love it.  We can do it.  But
-    David> not without changing something in the filesystem.
+Correct me if I am wrong:
 
-    David> Actually, I think we came up with several ways to do this,
-    David> all of which required Reiser4 interfaces.
+What exists currently in VFS are vector instances, not classes. Plugins,
+selected by pluginids, are vector classes, with each pluginid selecting
+a vector class. You propose to have the vector class layer (aka plugin
+layer) in reiser4 export the vector instance to VFS for VFS to handle
+for each object, rather than having VFS select reiser4 and reiser4
+selecting a vector class (aka plugin) which selects a method.
 
-It seems the existing Beagle project is a counterexample to this.  In
-fact, to make things even more perfect, Beagle doesn't work on top of
-Reiser4.
+If we agree on the above, then I will comment further.
 
- - R.
+Christoph Hellwig wrote:
+
+>On Wed, Jun 22, 2005 at 06:24:32PM +0400, Alexander Zarochentsev wrote:
+>  
+>
+>>Reiser plugins are for the same.  Would you agree with reiser4 plugin design 
+>>if the plugins will not dispatch VFS object methods calls by themselves but 
+>>set ->foo_ops fileds instead?  I guess you don't like to have the two 
+>>dispatching systems at the same level.
+>>    
+>>
+>
+>That is exactly the point I want to make.  I haven't looked at the design
+>in detail for a long time, but schemes to allow different object to have
+>different operation vectors is a good idea.  We already have that to
+>varying degrees in all filesystems, and making that more formal is a good
+>thing.  
+>
+>
+>  
+>
+
