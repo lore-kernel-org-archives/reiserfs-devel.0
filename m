@@ -1,80 +1,76 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: [PATCH] ReiserFS file.c several bug-fix
-Date: Thu, 23 Jun 2005 13:16:51 +0400
-Message-ID: <1119518209.3816.58.camel@tribesman.namesys.com>
-References: <1119554831.3026.99.camel@CoolQ>
+From: "qufuping" <qufuping@ercist.iscas.ac.cn>
+Subject: Re: [iscas-linaccident 55] Re: [PATCH] ReiserFS file.c several bug-fix
+Date: Thu, 23 Jun 2005 19:54:03 +0800
+Message-ID: <004a01c577ea$474e65e0$de024dd2@coolq>
+References: <1119554831.3026.99.camel@CoolQ> <1119518209.3816.58.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24491-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-24492-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1119554831.3026.99.camel@CoolQ>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: fs <fs@ercist.iscas.ac.cn>
+To: fs <fs@ercist.iscas.ac.cn>, vs@namesys.com
 Cc: reiserfs-list <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>, iscas-linaccident <iscas-linaccident@intellilink.co.jp>
 
-Hello
+DQotLS0tLSBPcmlnaW5hbCBNZXNzYWdlIC0tLS0tIA0KRnJvbTogIlZsYWRpbWlyIFNhdmVsaWV2
+IiA8dnNAbmFtZXN5cy5jb20+DQpUbzogImZzIiA8ZnNAZXJjaXN0LmlzY2FzLmFjLmNuPg0KQ2M6
+ICJyZWlzZXJmcy1saXN0IiA8cmVpc2VyZnMtbGlzdEBuYW1lc3lzLmNvbT47ICJIYW5zIFJlaXNl
+ciIgPHJlaXNlckBuYW1lc3lzLmNvbT47ICJpc2Nhcy1saW5hY2NpZGVudCIgPGlzY2FzLWxpbmFj
+Y2lkZW50QGludGVsbGlsaW5rLmNvLmpwPg0KU2VudDogVGh1cnNkYXksIEp1bmUgMjMsIDIwMDUg
+NToxNiBQTQ0KU3ViamVjdDogW2lzY2FzLWxpbmFjY2lkZW50IDU1XSBSZTogW1BBVENIXSBSZWlz
+ZXJGUyBmaWxlLmMgc2V2ZXJhbCBidWctZml4DQoNCg0KPiBIZWxsbw0KPiANCj4gT24gVGh1LCAy
+MDA1LTA2LTIzIGF0IDIzOjI3LCBmcyB3cm90ZToNCj4gPiBSZWxhdGVkIEZTOg0KPiA+ICAgICBS
+ZWlzZXJGUw0KPiA+IA0KPiA+IFJlbGF0ZWQgRmlsZXM6DQo+ID4gICAgIGZzL3JlaXNlcmZzL2Zp
+bGUuYw0KPiA+IA0KPiA+IEJ1ZyBkZXNjcmlwdGlvbjoNCj4gPiAgICAgTWFrZSBhIFJlaXNlckZT
+IHBhcnRpdGlvbiBpbiBVU0Igc3RvcmFnZSBIREQsIGNyZWF0ZSBhIHRlc3QgZmlsZQ0KPiA+IHdp
+dGggZW5vdWdoIHNpemUuDQo+ID4gICAgIFdyaXRlIGEgcHJvZ3JhbSwgZG86IG9wZW4oT19TWU5D
+L09fRFNZTkMpIC0gcmVhZCAtIGNsb3NlLiBBZnRlciBlYWNoDQoNCj4gPiBvcGVyYXRpb24sIHBh
+dXNlIGZvciBhIHdoaWxlLCBzdWNoIGFzIDNzLiBCZXR3ZWVuIG9wZW4gYW5kIHJlYWQsIHVubHVn
+DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA0KPiA+
+IHRoZSBVU0Igd2lyZS4gb3BlbiByZXR1cm5zIHplcm8tZmlsbGVkIGJ1ZmZlciwgbm8gZXJyb3Ig
+cmV0dXJucy4NCj4gPiANCg0KPiBPcGVuIHJldHVybnMgbm90IGJ1ZmZlciBidWYgb3BlbmVkIGZp
+bGUgZGVzY3JpcHRvciBvciAtMS4gUGxlYXNlDQo+IGRlc2NyaWJlIHlvdXIgdGVzdCBtb3JlIGNh
+cmVmdWxseS4NCj4gDQoNClNvcnJ5IHRvIHVzZSB0aGUgd3JvbmcgdGVtcGxhdGUuIDooIA0KQnVn
+IGRlc2NyaXB0aW9uOg0KICAgICAgTWFrZSBhIFJlaXNlckZTIHBhcnRpdGlvbiBpbiBVU0Igc3Rv
+cmFnZSBIREQsIGNyZWF0ZSBhIHRlc3QgZmlsZSwgDQpmb3IgZXhhbXBsZSwgNjRLLiANCiAgICAg
+IFdyaXRlIGEgcHJvZ3JhbSwgZG86IG9wZW4oT19TWU5DIG9yIE9fRFNZTkMpIC0gd3JpdGUobm8g
+bmVlZCB0byB1c2UgbHNlZWspDQogLSBjbG9zZS4gQWZ0ZXIgZWFjaCBvcGVyYXRpb24sIHBhdXNl
+IGZvciBhIHdoaWxlLCBzdWNoIGFzIDNzLiBCZXR3ZWVuIG9wZW4NCmFuZCB3cml0ZSwgdW5wbHVn
+IHRoZSBVU0Igd2lyZS4gd3JpdGUgcmV0dXJucyBubyBlcnJvci4NCg0KPiA+IEJ1ZyBhbmFseXNp
+czoNCj4gPiAgICAgcmVpc2VyZnNfZmlsZV93cml0ZSB3aWxsIGNsYWltIHNvbWUgYmxvY2tzLCBj
+b21taXQgdGhlIEkvTyByZXF1ZXN0LA0KPiANCj4gU28sIHlvdSBzYWlkOiBvcGVuKE9fU1lOQy9P
+X0RTWU5DKSAtIHJlYWQgLSBjbG9zZS4gV2hlcmUgZG9lcyB3cml0ZSBjb21lDQo+IGZyb20/DQo+
+IA0KPiA+IGlmIE9fU1lOQyBhbmQgT19EU1lOQyBpcyB1c2VkLCBpdCB3aWxsDQo+ID4gICAgIGlm
+ICgoZmlsZS0+Zl9mbGFncyAmIE9fU1lOQykgfHwgSVNfU1lOQyhpbm9kZSkpDQo+ID4gcmVzID0g
+Z2VuZXJpY19vc3luY19pbm9kZShpbm9kZSwgZmlsZS0+Zl9tYXBwaW5nLA0KPiA+ICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBPU1lOQ19NRVRBREFUQXxPU1lOQ19EQVRBKTsNCj4g
+PiBUaGUgcXVlc3Rpb24gaXMsIGlmIEkvTyBlcnJvciBvY2N1cnMsICAgICANCj4gPiAgICAgICAg
+IHJlcyA9IHJlaXNlcmZzX2FsbG9jYXRlX2Jsb2Nrc19mb3JfcmVnaW9uIGZhaWxzIHdpdGggLUVJ
+Tywgc28NCj4gPiBpdCB3aWxsIGV4aXQgdGhlIGxvb3AsIG5vIEkvTyByZXF1ZXN0LCBubyBwYWdl
+IG1hcmtlZCBhcyBkaXJ0eS4NCj4gPiBJZiBydW4gZ2VuZXJpY19vc3luY19pbm9kZSwgaXQgcmV0
+dXJucyAwKG5vIGRpcnR5IHBhZ2UpLCByZXMgd2lsbCBiZQ0KPiA+IG92ZXJ3cml0dGVuIGZyb20g
+LUVJTyB0byAwLCB0aHVzIG5vIGVycm9yIHJlcG9ydC4NCj4gPiANCj4gPiBBbHNvLCAgcmVpc2Vy
+ZnNfZmlsZV93cml0ZSBjb250YWlucyBhIHNlcmlvdXMgYnVnLCBzZWUgaGVyZQ0KPiA+IGJsb2Nr
+c190b19hbGxvY2F0ZSA9IHJlaXNlcmZzX3ByZXBhcmVfZmlsZV9yZWdpb25fZm9yX3dyaXRlDQo+
+ID4gKGlub2RlLCBwb3MsIG51bV9wYWdlcywgd3JpdGVfYnl0ZXMsIHByZXBhcmVkX3BhZ2VzKTsN
+Cj4gPiBIZXJlIGJsb2Nrc190b19hbGxvY2F0ZSBpcyBkZWZpbmVkIGFzIHNpemVfdCwgaS5lLiB1
+bnNpZ25lZCBpbnQsIGJ1dA0KPiA+IHJlaXNlcmZzX3ByZXBhcmVfZmlsZV9yZWdpb25fZm9yX3dy
+aXRlIGlzIGRlY2xhcmVkIGFzIGludCwgc28gc29tZXRpbWVzDQo+ID4gaXQgd2lsbCByZXR1cm4g
+LUVJTywgLUVOT0VOVCwgZXRjLCB0YWtlIGEgbG9vayBhdCB0aGlzIGxpbmUNCj4gPiBpZiAoIGJs
+b2Nrc190b19hbGxvY2F0ZSA8IDAgKSB7IDwtIFRoaXMgd2lsbCBuZXZlciBoYXBwZW4NCj4gPiAg
+ICAgcmVzID0gYmxvY2tzX3RvX2FsbG9jYXRlOw0KPiA+ICAgICByZWlzZXJmc19yZWxlYXNlX2Ns
+YWltZWRfYmxvY2tzKGlub2RlLT5pX3NiLCANCj4gPiBudW1fcGFnZXMgPDwgKFBBR0VfQ0FDSEVf
+U0hJRlQgLSBpbm9kZS0+aV9ibGtiaXRzKSk7DQo+ID4gICAgIGJyZWFrOw0KPiA+IH0NCg0KPiA+
+IFdheSBhcm91bmQ6DQo+ID4gMSkgaWYgYWxyZWFkeV93cml0dGVuIGlzIHplcm8sIGRvbid0IGRv
+IGdlbmVyaWNfb3N5bmNfaW5vZGUNCj4gPiAyKSB0ZWxsIHRoZSByZXN1bHQgb2YgcmVpc2VyZnNf
+cHJlcGFyZV9maWxlX3JlZ2lvbl9mb3Jfd3JpdGUgd2l0aCBJU19FUlINCj4gPiAgICBtYWNybyBv
+ciBjYXN0IGl0IHRvIHNpemVfdA0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IFF1IEZ1cGluZzxm
+c0BlcmNpc3QuaXNjYXMuYWMuY24+DQo+ID4gDQo+ID4gUGF0Y2g6DQo+ID4gZGlmZiAtdU5wIGxp
+bnV4LTIuNi4xMi9mcy9yZWlzZXJmcy9maWxlLmMNCj4gPiBsaW51eC0yLjYuMTItbmV3L2ZzL3Jl
+aXNlcmZzL2ZpbGUuYw0KPiA+IA0KPiA+IA0KPiANCj4g
 
-On Thu, 2005-06-23 at 23:27, fs wrote:
-> Related FS:
->     ReiserFS
-> 
-> Related Files:
->     fs/reiserfs/file.c
-> 
-> Bug description:
->     Make a ReiserFS partition in USB storage HDD, create a test file
-> with enough size.
->     Write a program, do: open(O_SYNC/O_DSYNC) - read - close. After each
-> operation, pause for a while, such as 3s. Between open and read, unlug
-> the USB wire. open returns zero-filled buffer, no error returns.
-> 
-Open returns not buffer buf opened file descriptor or -1. Please
-describe your test more carefully.
 
-
-> Bug analysis:
->     reiserfs_file_write will claim some blocks, commit the I/O request,
-
-So, you said: open(O_SYNC/O_DSYNC) - read - close. Where does write come
-from?
-
-> if O_SYNC and O_DSYNC is used, it will
->     if ((file->f_flags & O_SYNC) || IS_SYNC(inode))
-> 	res = generic_osync_inode(inode, file->f_mapping,
->                                   OSYNC_METADATA|OSYNC_DATA);
-> The question is, if I/O error occurs, 	    
->         res = reiserfs_allocate_blocks_for_region fails with -EIO, so
-> it will exit the loop, no I/O request, no page marked as dirty.
-> If run generic_osync_inode, it returns 0(no dirty page), res will be
-> overwritten from -EIO to 0, thus no error report.
-> 
-> Also,  reiserfs_file_write contains a serious bug, see here
-> 	blocks_to_allocate = reiserfs_prepare_file_region_for_write
-> 		(inode, pos, num_pages, write_bytes, prepared_pages);
-> Here blocks_to_allocate is defined as size_t, i.e. unsigned int, but
-> reiserfs_prepare_file_region_for_write is declared as int, so sometimes
-> it will return -EIO, -ENOENT, etc, take a look at this line
-> 	if ( blocks_to_allocate < 0 ) { <- This will never happen
-> 	    res = blocks_to_allocate;
-> 	    reiserfs_release_claimed_blocks(inode->i_sb, 
-> 		num_pages << (PAGE_CACHE_SHIFT - inode->i_blkbits));
-> 	    break;
-> 	}
-> 
-> Way around:
-> 1) if already_written is zero, don't do generic_osync_inode
-> 2) tell the result of reiserfs_prepare_file_region_for_write with IS_ERR
->    macro or cast it to size_t
-> 
-> Signed-off-by: Qu Fuping<fs@ercist.iscas.ac.cn>
-> 
-> Patch:
-> diff -uNp linux-2.6.12/fs/reiserfs/file.c
-> linux-2.6.12-new/fs/reiserfs/file.c
-> 
-> 
 
