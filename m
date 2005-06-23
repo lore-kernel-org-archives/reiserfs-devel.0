@@ -1,42 +1,60 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Wed, 22 Jun 2005 22:14:52 -0700
-Message-ID: <42BA454C.3090500@namesys.com>
-References: <20050620235458.5b437274.akpm@osdl.org> <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com> <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com> <20050622053450.GA28228@infradead.org>
+Date: Wed, 22 Jun 2005 22:58:22 -0700
+Message-ID: <42BA4F7E.6000402@namesys.com>
+References: <20050620235458.5b437274.akpm@osdl.org> <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com> <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com> <42B8BB5E.8090008@pobox.com> <42B8E834.5030809@slaphack.com> <42B8F4BC.5060100@pobox.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24481-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24482-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050622053450.GA28228@infradead.org>
+In-Reply-To: <42B8F4BC.5060100@pobox.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jeff Garzik <jgarzik@pobox.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: Jeff Garzik <jgarzik@pobox.com>
+Cc: David Masover <ninja@slaphack.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Christoph Hellwig wrote:
+Jeff Garzik wrote:
 
+> We have to maintain said ugly code for decades.
+
+No you don't, I do.
+
+>> filesystem, but if so, it will have to do it much more slowly.  Take the
+>> good ideas -- things like plugins -- and make them at least look like
+>> incremental updates to the current VFS, and make them available to all
+>> filesystems.
 >
+> So, Reiser4 may eventually take over VFS and be the only Linux
 >
->  
+> This is how all Linux development is done.
 >
->>What is wrong with having one file in the FS use a write only plugin, in
->>which the encrypion key is changed with every append in a forward but
->>not backward computable manner, and in order to read a file you must
->>either have a key that is stored on another computer or be reading what
->>was written after the moment of cracking root?
->>    
->>
+> The code evolves over time.
 >
->Because root can read kernel memory this is completely useless :)
->  
->
-You missed the point of it rather nicely.  If root can read kernel
-memory, that only gets it the appends made after the point in time of
-cracking root.
+> You have just described the path ReiserFS needs to take, in order to
+> get this stuff into the kernel, in fact.
+
+You missed his point.  He is saying ext3 code should migrate towards
+becoming reiser4 plugins, and reiser4 should be merged now so that the
+migration can get started.
+
+I don't really care whether ext3 uses our plugin model.  (If it does,
+fine, please credit me for it though, and consider maybe a thank you.  I
+am happy to thank the XFS team for the idea of delayed allocation....)
+
+I am entitled to get some advantage from being the first on the block. 
+Other fs maintainers don't want me to have that entitlement, so they add
+delays to slow us down.  It is odd how Hellwig no longer describes
+himself as XFS associated.  Did SGI and him
+
+> There is no entitlement to be merged in the upstream kernel.  
+
+True, but what is interesting is that you don't think the faster
+filesystem should be merged, and the others should catch up to it later
+if they can, instead you think it should be delayed until all of its
+benefits can be transmitted to the other filesystems first so that
+everyone can be equal. 
 
 
-It is not my idea, and it is not yet present in our code, let me not
-seem to take credit for it though I think it a good idea.
