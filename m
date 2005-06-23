@@ -1,78 +1,58 @@
-From: Alexander Zarochentsev <zam@namesys.com>
-Subject: Re: reiser4 plugins
-Date: Thu, 23 Jun 2005 21:31:32 +0400
-Message-ID: <200506232131.33468.zam@namesys.com>
-References: <20050620235458.5b437274.akpm@osdl.org> <200506221824.32995.zam@namesys.com> <20050622142947.GA26993@infradead.org>
+From: Jeff Mahoney <jeffm@suse.de>
+Subject: Re: -mm -> 2.6.13 merge status
+Date: Thu, 23 Jun 2005 14:37:05 -0400
+Message-ID: <42BB0151.3030904@suse.de>
+References: <20050620235458.5b437274.akpm@osdl.org.suse.lists.linux.kernel>	 <p73d5qgc67h.fsf@verdi.suse.de> <42B86027.3090001@namesys.com>	 <20050621195642.GD14251@wotan.suse.de> <42B8C0FF.2010800@namesys.com> <84144f0205062223226d560e41@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-  boundary="Boundary-00=_1HvuC/bA8khzsro"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24501-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24502-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050622142947.GA26993@infradead.org>
-Content-Disposition: inline
+In-Reply-To: <84144f0205062223226d560e41@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Pekka Enberg <penberg@gmail.com>
+Cc: Hans Reiser <reiser@namesys.com>, Andi Kleen <ak@suse.de>, Alexander Lyamin aka FLX <flx@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Pekka Enberg <penberg@cs.helsinki.fi>
 
---Boundary-00=_1HvuC/bA8khzsro
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Pekka Enberg wrote:
+>>--- /dev/null	2003-09-23 21:59:22.000000000 +0400
+>>+++ linux-2.6.11-vs/fs/reiser4/pool.c	2005-06-03 17:49:38.668204642 +0400
+>>+/* initialise new pool */
+>>+reiser4_internal void
+>>+reiser4_init_pool(reiser4_pool * pool /* pool to initialise */ ,
+>>+		  size_t obj_size /* size of objects in @pool */ ,
+>>+		  int num_of_objs /* number of preallocated objects */ ,
+>>+		  char *data /* area for preallocated objects */ )
+>>+{
+>>+	reiser4_pool_header *h;
+>>+	int i;
+>>+
+>>+	assert("nikita-955", pool != NULL);
+> 
+> These assertion codes are meaningless to the rest of us so please drop
+> them.
 
-On Wednesday 22 June 2005 18:29, Christoph Hellwig wrote:
-> On Wed, Jun 22, 2005 at 06:24:32PM +0400, Alexander Zarochentsev wrote:
-> > Reiser plugins are for the same.  Would you agree with reiser4 plugin
-> > design if the plugins will not dispatch VFS object methods calls by
-> > themselves but set ->foo_ops fileds instead?  I guess you don't like to
-> > have the two dispatching systems at the same level.
->
-> That is exactly the point I want to make.  I haven't looked at the design
-> in detail for a long time, but schemes to allow different object to have
-> different operation vectors is a good idea.  
+As someone who spends time debugging reiser3 issues, I've grown
+accustomed to the named assertions. They make discussing a particular
+assertion much more natural in conversation than file:line. It also
+makes difficult to reproduce assertions more trackable over time. The
+assertion number never changes, but the line number can with even the
+most trivial of patches.
 
-By same level i meant the vfs-like portion of reiser4 object plugin (read/write/readdir ...).  The rest of plugin can't be done by VFS, it is about reiser4-specific things.  The way how vfs calls are passed to reiser4 objects can be re-written to use VFS features by 100% but i don't think it woild make the code better.  
+That said, one of my gripes with the named assertions in reiser3 (and
+reiser4 now) is that the development staff changes over time. There are
+many named assertions in reiser3 that refer to developers no longer
+employed by Hans. The quoted one is a perfect example.
 
-What is done currently is 1) reduces places when VFS enters reiser4 --  better because each VFS method implementation needs at least reiser4 context initialization/destroying; 2) uses existing reiser4 plugin scheme -- it adds no complexity because reiser4 can't live without plugins.  
-Can we leave the plugins as they are?
+Hans, would it be acceptable to you to keep only numbered assertions and
+ keep a code responsbility list internal to namesys? It would serve a
+dual purpose of keeping the idea of named assertions, but also remove a
+huge number of strings that bloat the implementation.
 
-> We already have that to 
-> varying degrees in all filesystems, and making that more formal is a good
-> thing.
+-Jeff
 
-Thanks,
-Alex.
---Boundary-00=_1HvuC/bA8khzsro
-Content-Type: text/html;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:9pt;font-family:Sans Serif">
-<p>On Wednesday 22 June 2005 18:29, Christoph Hellwig wrote:</p>
-<p>&gt; On Wed, Jun 22, 2005 at 06:24:32PM +0400, Alexander Zarochentsev wrote:</p>
-<p>&gt; &gt; Reiser plugins are for the same.  Would you agree with reiser4 plugin</p>
-<p>&gt; &gt; design if the plugins will not dispatch VFS object methods calls by</p>
-<p>&gt; &gt; themselves but set -&gt;foo_ops fileds instead?  I guess you don't like to</p>
-<p>&gt; &gt; have the two dispatching systems at the same level.</p>
-<p>&gt;</p>
-<p>&gt; That is exactly the point I want to make.  I haven't looked at the design</p>
-<p>&gt; in detail for a long time, but schemes to allow different object to have</p>
-<p>&gt; different operation vectors is a good idea.  </p>
-<p></p>
-<p>By same level i meant the vfs-like portion of reiser4 object plugin (read/write/readdir ...).  The rest of plugin can't be done by VFS, it is about reiser4-specific things.  The way how vfs calls are passed to reiser4 objects can be re-written to use VFS features by 100% but i don't think it woild make the code better.  </p>
-<p></p>
-<p>What is done currently is 1) reduces places when VFS enters reiser4 --  better because each VFS method implementation needs at least reiser4 context initialization/destroying; 2) uses existing reiser4 plugin scheme -- it adds no complexity because reiser4 can't live without plugins.  </p>
-<p>Can we leave the plugins as they are?</p>
-<p></p>
-<p>&gt; We already have that to </p>
-<p>&gt; varying degrees in all filesystems, and making that more formal is a good</p>
-<p>&gt; thing.</p>
-<p></p>
-<p>Thanks,</p>
-<p>Alex.</p>
-</body></html>
---Boundary-00=_1HvuC/bA8khzsro--
-
+-- 
+Jeff Mahoney
+SuSE Labs
