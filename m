@@ -1,134 +1,142 @@
-From: David Masover <ninja@slaphack.com>
+From: Nikita Danilov <nikita@clusterfs.com>
 Subject: Re: reiser4 plugins
-Date: Thu, 23 Jun 2005 17:04:25 -0500
-Message-ID: <42BB31E9.50805@slaphack.com>
-References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>
+Date: Fri, 24 Jun 2005 02:31:56 +0400
+Message-ID: <17083.14428.546772.353003@gargle.gargle.HOWL>
+References: <200506221733.j5MHXEoH007541@laptop11.inf.utfsm.cl>
+	<42B9DD48.6060601@slaphack.com>
+	<17081.58619.671650.812286@gargle.gargle.HOWL>
+	<42BAC668.2030604@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24519-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24520-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>
+In-Reply-To: <42BAC668.2030604@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: David Masover <ninja@slaphack.com>
+Cc: "Artem B. Bityuckiy" <dedekind@yandex.ru>, =?UTF-8?B?TWFya3VzIFTQlnJu?= =?UTF-8?B?cXZpc3Q=?= <mjt@nysv.org>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, hch@infradead.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+David Masover writes:
+ > -----BEGIN PGP SIGNED MESSAGE-----
+ > Hash: SHA1
+ > 
+ > Nikita Danilov wrote:
+ > > David Masover writes:
+ > > 
+ > > [...]
+ > > 
+ > >  > 
+ > >  > What we want is to have programs that can write small changes to one
+ > >  > file or to many files, lump all those changes into a transaction, and
+ > >  > have the transaction either succeed or fail.
+ > > 
+ > > No existing file system guarantees such behavior. Even atomicity of
+ > > single system call is not guaranteed.
+ > 
+ > No _existing_ filesystem.  But I seem to recall that this was one of the
+ > design decisions of Reiser4, and that the system call itself was pushed
+ > off to 4.1?
 
-Horst von Brand wrote:
-> David Masover <ninja@slaphack.com> wrote:
-> 
->>Hans Reiser wrote:
->>
->>>Jeff Garzik wrote:
-> 
-> 
-> [...]
-> 
-> 
->>>You missed his point.  He is saying ext3 code should migrate towards
->>>becoming reiser4 plugins, and reiser4 should be merged now so that the
->>>migration can get started.
-> 
-> 
->>Sort of.
->>
->>I think ext3 would be nice as a reiser4 plugin.
-> 
-> 
-> What for? It works just fine as it stands, AFAICS.
+First off, my comment was in response to the message
 
-So does DOS.  Do you use DOS?  I don't even use DOS to run DOS programs.
+http://marc.theaimsgroup.com/?l=linux-kernel&m=111945793205480&w=2
 
-"Ain't broke" is the battle cry of stagnation.
+claiming that reiser4 was "atomic". As it stands, currently reiser4
+cannot guarantee that single write(2) call is atomic. Think of system
+with X bytes of physical memory and 9*X bytes of swap. User does
 
-But, there are some things Reiser does better and faster than ext3, even
-if you don't count file-as-directory and other toys.  There's nothing
-ext3 does better than Reiser, unless you count the compatibility with
-random bootloaders and low-level tools.
+        buf = malloc(10 * X);
+		memset(buf, 42, 10 * X);
+        write(reiser4_fd, buf, 10 * X);
 
->>                                                Not everyone will want
->>to reformat at once, but as the reiser4 code matures and proves itself
->>(even more than it already has),
-> 
-> 
-> I for one have seen mainly people with wild claims that it will make their
-> machines much faster, and coming back later asking how they can recover
-> their thrashed partitions...
+As far as I know, current reiser4 code cannot guarantee that such write
+is always handled as a single transaction. It is _possible_ to implement
+such a guarantee, I believe, but this requires a lot of work.
 
-You know how many I've had thrashed on Reiser4?  Two.  The first one was
-with a VERY early alpha/beta, and the second one was when I dropped a
-laptop and the disk failed.
+ > 
+ > Maybe I'm just wrong about how big a transaction can be.  Maybe it was
+ > limited to a single file.  I don't think so, though.  From the
+ > whitepaper:  "Stuffing a transaction into a single file just because you
+ > need the transaction to be atomic is hardly what one would call flexible
+ > semantics."
 
-And it does make certain things faster.  For one thing, "emerge sync" on
-Gentoo is twice to four times as fast, and /usr/portage is 75% as big,
-as on ReiserFS (3).
+I don't quite understand what do you mean. Whitepaper describes how
+things work according to some grand visionary scheme. It doesn't go to
+the level of technical details, it doesn't discuss possible
+obstacles. There is a huge gap between saying "it's nice to have
+user-visible transactions" and having ones. So huge, in my opinion, that
+compared with it, difference in reiser4 and, say, ext3 as possible
+starting points is immaterial.
 
->>                                 the ext3 people may find themselves
->>wanting some of the more generic optimizations.
-> 
-> 
-> They'll filch them in due time, don't worry.
+ > 
+ > I also seem to recall that the rolling back of the transaction, should
+ > it fail, was supposed to be handled by the application.  This doesn't
+ > quite click with the whitepaper, but it could work.
 
-Duplication of effort.  With plugins, we can optimize the upper layers
-of ALL filesystems, regardless of the lower layers, in such a way that
-it is optional.  I'm sure it's far easier to write a Reiser storage
-plugin than a brand new FS.
+What if user level application err... crashed (does this happen?) or
+stuck in the infinite loop (hmm... user level programmers never do this,
+I hope)?
 
-Eventually, once competition is only based on storage format, we could
-end up with just one format.  Just one filesystem!  (except for
-fat/ntfs/iso/udf/network...)  And in the open source world, sometimes a
-single product is a good thing.
+[...]
 
->>But, I don't think that will realistically happen at all.
->>
->>Instead, what will probably happen is that once Reiser4 is in the
->>mainstream kernel, it will become more popular and noticable.  Other
->>FSes will take note.  ext3 people may decide they want
->>file-as-directory,
-> 
-> 
-> That idea is even much older than Linux itself, and no other (Unix)
-> filesystem has implemented it. Ever. Wonder why...
-> 
-> 
->>                   and vfat people may decide they want cryptocompress,
-> 
-> 
-> I'm sure they don't, because it is mostly for Windows and assorted devices
-> (pendrives, digital cameras, ...) compatibility.
+ > > 
+ > > Because to have such transactions databases pay huge price in both
+ > > resource consumption and available concurrency (isolation, commit-time
+ > > locks, etc.), and yet mechanism they use to deal with stuck transactions
+ > > (which is simply to abort it) is not very suitable for the file system.
+ > 
+ > Oh, really?  If we've got application support through sys_reiser4?  The
+ > application should be ready to deal with a transaction abort.
 
-I, for one, would like to use a pendrive and have certain files be
-encrypted transparently, only for use on Linux, but others be ready to
-transfer to a Windows box.
+Transactional systems have to deal with so-called external
+actions. E.g., in the ATM external action is to hand cash out to the
+person doing withdraw. After external action was done as part of
+transaction, that transaction can no longer be aborted (because one
+cannot reverse external action). Typical example of file system
+transactions is mail server doing something roughly following:
 
->>Eventually, with all the features ported, we end up with a situation
->>where there may be no meaningful difference between a filesystem and a
->>low-level reiser4 plugin.
-> 
-> 
-> Could very well take decades, if ever.
+        (0) begin work;
+        (1) take message from the queue;
+        (2) send message to the recipient;
+        (3) wait for confirmation;
+        (4) remove message;
+        (5) commit work;
 
-How would you do it, in a way that doesn't take decades?
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Here (2), and (3) are external actions, they cannot be aborted or
+reversed. This means that should transaction abort at the step (4)
+system would be left in the inconsistent state.
 
-iQIVAwUBQrsx6HgHNmZLgCUhAQKXYw//Z9bSh74AWr2o1n+EM0nCHUNV78xgeuey
-ZHtzUT8rCv2KQ+2fMe5EnRUaRYTKvFnnGccH4vu/OAArqKqt/RgP3NP8UZALsZbB
-MMoEHZSX/E0BFlKKiBjPgvwfnnY9ZYF0GPkU5L97dj1K0dEQMndOZoYDV07H4TnN
-/1VkytnsXuhm5nqRhPd89rDbvQtXpzHiDjVNPfT+J6M6JFw8jfYQZ0Fo1T9dVKMg
-qibVneJj+onHVBmBBqGTZ0Ane5VmG0h0a2ZwsslQPkf03DAgprliykr40NCECdli
-OdaS73qYPlYRRl1nuw84g2KOLXbTnSGmW1t4qt/tyI6t3TOEn9FqY7YzwvbWIVLP
-GMkJG1htAQefGNcEXx+15xAHJi6/0DiSoJu+P+ie+yG8pkG943936AxEgs89pTpC
-z8i/GV9Uq+S6BgA+RJuxpk6U8rQ0YHMhAiK83p+s7vdUsGIKomUmSbn7a6DC7cZt
-aGkqxYyaoV2MlHUMUebSv5F82JUgx6rPuc8SQW1wvVIVdNA7QhlYYsPa5vFFj34C
-scxN9vNGyxWGu60yKx7LSYRkB9/prJytKvpezVKRkn8pnKnl4AHodKioSPxt1iHC
-BvNsLL8Kn8FBe/HG98d1v8vwTqe0Y8KgBMRe/J73u/OzU82lh2V3YbXNaW+DLVGz
-MOaHYEzfoNg=
-=yFsv
------END PGP SIGNATURE-----
+ > 
+ > I'm still not convinced of any of that paragraph.  I don't know enough
+ > to argue the point, but it intuitively feels wrong.  After all, if the
+ > metadata is atomic, and we are allowed to make our own system calls, why
+ > can't we make the data atomic?
+
+Because meta-data are under tight kernel control. There is a difference
+between implementing transaction engine for use by a small body of
+trusted code (kernel) and a general purpose transaction manager.
+
+Nikita.
+
+ > 
+ > -----BEGIN PGP SIGNATURE-----
+ > Version: GnuPG v1.4.1 (GNU/Linux)
+ > Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+ > 
+ > iQIVAwUBQrrGOngHNmZLgCUhAQJZhw//dmJ6S2GlGT6J5YI9DTCyoTDIPUYNb8o0
+ > M1me6KDTElzzQ3yUak/eUd0sbGBAQcf0vn/iVscfq2DoAwnUWxHjht+PaOA98axR
+ > 0pnofqE291QLTQJ36epW0kKqFjavVVsrpD80llcaCFz9Rq48W40DoI5CWuX1RQqK
+ > pCnr9vYe8cAsRY+PzV9/KUaSQ+eZJ9daLsAmMwA3Gcxo4XYqILlZm90X3QQTdc8W
+ > gnKSabG3zIjEozfgG/nvtV/09mktHINGq3ud8W1XubBOXs4z+ECsLyvi7QNW83Bq
+ > b/wTDUX3PkrjDHnfcmFkFZJqRrCBD9Ko36f9NThxuaba5eV7kb6h+qx+kS5ZM6Lm
+ > bh90TjJrIpJ4aQr2qrPRAE85GSnvSlyi3E01gk/+UnkBFMoTqTvw2dPb0GhvMINM
+ > EhSUhEyeaopWXIdv3IszOOpbHJLwczixLDBtZ8OFDS26bnJGj7YlnTjdf+TZ9CGf
+ > ZXn7GaG16CiSTOt0YkKk2UGZz+AOubPAUHc6v8Wg587qXWKD3cXVQeZVqYwJG/8B
+ > G5qq51LB6jypjAoP4uSeuTs4DfANGi2H2mHjZVAyaGcwzhxf3ffGRFkfjElAj8RA
+ > RdmB6bq10nt32mL7YP8+n7xa38iCP+ks9wsoOY2KBBDlOpHu07xb/c2DS9yfTCpj
+ > FvMShQw6EBI=
+ > =S7ds
+ > -----END PGP SIGNATURE-----
