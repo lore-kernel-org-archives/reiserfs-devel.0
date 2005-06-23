@@ -1,99 +1,110 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 plugins
-Date: Thu, 23 Jun 2005 09:11:16 -0500
-Message-ID: <42BAC304.2060802@slaphack.com>
-References: <20050620235458.5b437274.akpm@osdl.org> <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com> <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com> <42B8BB5E.8090008@pobox.com> <42B8E834.5030809@slaphack.com> <42B8F4BC.5060100@pobox.com> <42BA4F7E.6000402@namesys.com>
+Date: Thu, 23 Jun 2005 09:25:44 -0500
+Message-ID: <42BAC668.2030604@slaphack.com>
+References: <200506221733.j5MHXEoH007541@laptop11.inf.utfsm.cl>	<42B9DD48.6060601@slaphack.com> <17081.58619.671650.812286@gargle.gargle.HOWL>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24495-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24496-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42BA4F7E.6000402@namesys.com>
+In-Reply-To: <17081.58619.671650.812286@gargle.gargle.HOWL>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: Nikita Danilov <nikita@clusterfs.com>
+Cc: "Artem B. Bityuckiy" <dedekind@yandex.ru>, =?UTF-8?B?TWFya3VzIFTQlnJu?= =?UTF-8?B?cXZpc3Q=?= <mjt@nysv.org>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, hch@infradead.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Hans Reiser wrote:
-> Jeff Garzik wrote:
+Nikita Danilov wrote:
+> David Masover writes:
 > 
+> [...]
 > 
->>We have to maintain said ugly code for decades.
+>  > 
+>  > What we want is to have programs that can write small changes to one
+>  > file or to many files, lump all those changes into a transaction, and
+>  > have the transaction either succeed or fail.
 > 
-> 
-> No you don't, I do.
-> 
-> 
->>>filesystem, but if so, it will have to do it much more slowly.  Take the
->>>good ideas -- things like plugins -- and make them at least look like
->>>incremental updates to the current VFS, and make them available to all
->>>filesystems.
->>
->>So, Reiser4 may eventually take over VFS and be the only Linux
->>
->>This is how all Linux development is done.
->>
->>The code evolves over time.
->>
->>You have just described the path ReiserFS needs to take, in order to
->>get this stuff into the kernel, in fact.
-> 
-> 
-> You missed his point.  He is saying ext3 code should migrate towards
-> becoming reiser4 plugins, and reiser4 should be merged now so that the
-> migration can get started.
+> No existing file system guarantees such behavior. Even atomicity of
+> single system call is not guaranteed.
 
-Sort of.
+No _existing_ filesystem.  But I seem to recall that this was one of the
+design decisions of Reiser4, and that the system call itself was pushed
+off to 4.1?
 
-I think ext3 would be nice as a reiser4 plugin.  Not everyone will want
-to reformat at once, but as the reiser4 code matures and proves itself
-(even more than it already has), the ext3 people may find themselves
-wanting some of the more generic optimizations.
+Maybe I'm just wrong about how big a transaction can be.  Maybe it was
+limited to a single file.  I don't think so, though.  From the
+whitepaper:  "Stuffing a transaction into a single file just because you
+need the transaction to be atomic is hardly what one would call flexible
+semantics."
 
-But, I don't think that will realistically happen at all.
+I also seem to recall that the rolling back of the transaction, should
+it fail, was supposed to be handled by the application.  This doesn't
+quite click with the whitepaper, but it could work.
 
-Instead, what will probably happen is that once Reiser4 is in the
-mainstream kernel, it will become more popular and noticable.  Other
-FSes will take note.  ext3 people may decide they want
-file-as-directory, and vfat people may decide they want cryptocompress,
-and so on.  In order to do this, they can work with Namesys to port
-whatever feature they need at the time to the standard VFS.
+More whitepaper goodness:
 
-Eventually, with all the features ported, we end up with a situation
-where there may be no meaningful difference between a filesystem and a
-low-level reiser4 plugin.
+"A new system call sys_reiser4() will be implemented to support
+applications that don't have to be fooled into thinking that they are
+using POSIX. Through this entry point a richer set of semantics will
+access the same files that are also accessible using POSIX calls.
+Reiser4() will not implement more than hierarchical names. A full set
+theoretic naming system as described on our future vision page will not
+be implemented before Reiser6() is implemented (Reiser5 is our
+distributed filesystem, Reiser6 is our enhanced semantics, whether we
+implement Reiser5 or Reiser6 first depends on which sponsors we find ;-)
+). Reiser4() will implement all features necessary to access ACLs as
+files/directories rather than as something neither file nor directory.
+These include opening and closing transactions, performing a sequence of
+I/Os in one system call, and accessing files without use of file
+descriptors (necessary for efficient small I/O). Reiser4 will use a
+syntax suitable for evolving into Reiser5() syntax with its set
+theoretic naming."
 
-At that point, we both win.  ext3 will effectively be reiser4 plugins,
-and reiser4 will replace VFS, but incrementally and sanely, without
-breaking old filesystems or depriving them of features.  This is indeed
-the way to evolve the code slowly over time.
+So, some sort of transaction is planned.
 
-This way also has the advantage of avoiding yet another, even more
-vicious flamefest if all the reiser4 functionality had to be ported to
-VFS all at once.  Can any of you honestly say that you would be more
-willing to accept a brand-new, relatively unproven filesystem with tons
-of changes to the VFS than without?
+But, as I said, I wasn't paying enough attention.  Maybe there is a
+technical reason why this can't be done in Linux?
+
+>  > > it doesn't stop the system dead in its tracks waiting for some very long
+>  > > transaction to finish?
+>  > 
+>  > We've also discussed this.  For one thing, if we can have transactions
+>  > in databases which don't stop the database dead in its tracks, why can't
+>  > we do it with filesystems?
+> 
+> Because to have such transactions databases pay huge price in both
+> resource consumption and available concurrency (isolation, commit-time
+> locks, etc.), and yet mechanism they use to deal with stuck transactions
+> (which is simply to abort it) is not very suitable for the file system.
+
+Oh, really?  If we've got application support through sys_reiser4?  The
+application should be ready to deal with a transaction abort.
+
+I'm still not convinced of any of that paragraph.  I don't know enough
+to argue the point, but it intuitively feels wrong.  After all, if the
+metadata is atomic, and we are allowed to make our own system calls, why
+can't we make the data atomic?
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQrrDBHgHNmZLgCUhAQJN/A/6A4SqpsunKmj6NOKxqyMxkLVdMjxSuusa
-V9XZIL6K0dDsF1FmvxsSVnl3so8u93sRCkxrBs3WQs9JqsA3f8O5VUvsdfqas/Fb
-ZO+ht5n0r1BVfm1WJHHmR9xGm+jL2TMwVlVrcrrnBQLthq+9efggn5r9BXkOUPgz
-57VMh6sjB9ioigmc2Wf6BsMlbBJpCz7EB91pcIrNzHdFOEWyuHm9mAP6ui2sppfK
-bGaDlZcU4BzNUM8beakMkFuy7JCTFQj/O7s3G42Tqpi/4Ol1Vk7F2tgPkpxB0lHm
-b/hCmCPbTHheRsDhT7gSHOzWrwA5pwKlT5nO4EWGq7DxZo2dgoYsa/2fP32uYPIX
-r3vUfygk7MR59DKMi4LLcDy2OzvrtbwTkzgOVrw82NCi5J5/pu/gIHH1aHzkXM6T
-YRd6G39+wmhN0n/MP3WAT7o3rbH4nuPiG8ZyZQyVTII9YRaOGwNLSjJKe1p9JFHY
-Y+6bqK3h7LQrX4MfTSIu8k3m0iIt806uHP3GlV+HHKx/N/4HSxt6ikikI3jURO4z
-XBr23/Uo3YNK+IuxQtPw2mKcdqqKhFq5OBmLkVFIzJyuh8KR7cfnFdl7luCTjFGL
-KjtgZ39SwtjOUWKWJslkcrNwESqplMTwAaB6GPHiJRKbilaCM9GXm/teI0ZRCl+o
-gBD0AdEBA9s=
-=NJM0
+iQIVAwUBQrrGOngHNmZLgCUhAQJZhw//dmJ6S2GlGT6J5YI9DTCyoTDIPUYNb8o0
+M1me6KDTElzzQ3yUak/eUd0sbGBAQcf0vn/iVscfq2DoAwnUWxHjht+PaOA98axR
+0pnofqE291QLTQJ36epW0kKqFjavVVsrpD80llcaCFz9Rq48W40DoI5CWuX1RQqK
+pCnr9vYe8cAsRY+PzV9/KUaSQ+eZJ9daLsAmMwA3Gcxo4XYqILlZm90X3QQTdc8W
+gnKSabG3zIjEozfgG/nvtV/09mktHINGq3ud8W1XubBOXs4z+ECsLyvi7QNW83Bq
+b/wTDUX3PkrjDHnfcmFkFZJqRrCBD9Ko36f9NThxuaba5eV7kb6h+qx+kS5ZM6Lm
+bh90TjJrIpJ4aQr2qrPRAE85GSnvSlyi3E01gk/+UnkBFMoTqTvw2dPb0GhvMINM
+EhSUhEyeaopWXIdv3IszOOpbHJLwczixLDBtZ8OFDS26bnJGj7YlnTjdf+TZ9CGf
+ZXn7GaG16CiSTOt0YkKk2UGZz+AOubPAUHc6v8Wg587qXWKD3cXVQeZVqYwJG/8B
+G5qq51LB6jypjAoP4uSeuTs4DfANGi2H2mHjZVAyaGcwzhxf3ffGRFkfjElAj8RA
+RdmB6bq10nt32mL7YP8+n7xa38iCP+ks9wsoOY2KBBDlOpHu07xb/c2DS9yfTCpj
+FvMShQw6EBI=
+=S7ds
 -----END PGP SIGNATURE-----
