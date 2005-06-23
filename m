@@ -1,55 +1,99 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiser4 plugins (the technical email in this flame fest)
-Date: Thu, 23 Jun 2005 06:17:48 -0700
-Message-ID: <42BAB67C.6030407@namesys.com>
-References: <20050620235458.5b437274.akpm@osdl.org> <42B8B9EE.7020002@namesys.com> <42B8BB5E.8090008@pobox.com> <200506221824.32995.zam@namesys.com> <20050622142947.GA26993@infradead.org>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: reiser4 plugins
+Date: Thu, 23 Jun 2005 09:11:16 -0500
+Message-ID: <42BAC304.2060802@slaphack.com>
+References: <20050620235458.5b437274.akpm@osdl.org> <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com> <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com> <42B8BB5E.8090008@pobox.com> <42B8E834.5030809@slaphack.com> <42B8F4BC.5060100@pobox.com> <42BA4F7E.6000402@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24494-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24495-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050622142947.GA26993@infradead.org>
+In-Reply-To: <42BA4F7E.6000402@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Alexander Zarochentsev <zam@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org
+To: Hans Reiser <reiser@namesys.com>
+Cc: Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Since this did not get an answer, and since it is the technical email in
-the flamefest, I thought I would resend it appropriately labeled.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Correct me if I am wrong:
-
-What exists currently in VFS are vector instances, not classes. Plugins,
-selected by pluginids, are vector classes, with each pluginid selecting
-a vector class. You propose to have the vector class layer (aka plugin
-layer) in reiser4 export the vector instance to VFS for VFS to handle
-for each object, rather than having VFS select reiser4 and reiser4
-selecting a vector class (aka plugin) which selects a method.
-
-If we agree on the above, then I will comment further.
-
-Christoph Hellwig wrote:
-
->On Wed, Jun 22, 2005 at 06:24:32PM +0400, Alexander Zarochentsev wrote:
->  
->
->>Reiser plugins are for the same.  Would you agree with reiser4 plugin design 
->>if the plugins will not dispatch VFS object methods calls by themselves but 
->>set ->foo_ops fileds instead?  I guess you don't like to have the two 
->>dispatching systems at the same level.
->>    
+Hans Reiser wrote:
+> Jeff Garzik wrote:
+> 
+> 
+>>We have to maintain said ugly code for decades.
+> 
+> 
+> No you don't, I do.
+> 
+> 
+>>>filesystem, but if so, it will have to do it much more slowly.  Take the
+>>>good ideas -- things like plugins -- and make them at least look like
+>>>incremental updates to the current VFS, and make them available to all
+>>>filesystems.
 >>
->
->That is exactly the point I want to make.  I haven't looked at the design
->in detail for a long time, but schemes to allow different object to have
->different operation vectors is a good idea.  We already have that to
->varying degrees in all filesystems, and making that more formal is a good
->thing.  
->
->
->  
->
+>>So, Reiser4 may eventually take over VFS and be the only Linux
+>>
+>>This is how all Linux development is done.
+>>
+>>The code evolves over time.
+>>
+>>You have just described the path ReiserFS needs to take, in order to
+>>get this stuff into the kernel, in fact.
+> 
+> 
+> You missed his point.  He is saying ext3 code should migrate towards
+> becoming reiser4 plugins, and reiser4 should be merged now so that the
+> migration can get started.
 
+Sort of.
 
+I think ext3 would be nice as a reiser4 plugin.  Not everyone will want
+to reformat at once, but as the reiser4 code matures and proves itself
+(even more than it already has), the ext3 people may find themselves
+wanting some of the more generic optimizations.
+
+But, I don't think that will realistically happen at all.
+
+Instead, what will probably happen is that once Reiser4 is in the
+mainstream kernel, it will become more popular and noticable.  Other
+FSes will take note.  ext3 people may decide they want
+file-as-directory, and vfat people may decide they want cryptocompress,
+and so on.  In order to do this, they can work with Namesys to port
+whatever feature they need at the time to the standard VFS.
+
+Eventually, with all the features ported, we end up with a situation
+where there may be no meaningful difference between a filesystem and a
+low-level reiser4 plugin.
+
+At that point, we both win.  ext3 will effectively be reiser4 plugins,
+and reiser4 will replace VFS, but incrementally and sanely, without
+breaking old filesystems or depriving them of features.  This is indeed
+the way to evolve the code slowly over time.
+
+This way also has the advantage of avoiding yet another, even more
+vicious flamefest if all the reiser4 functionality had to be ported to
+VFS all at once.  Can any of you honestly say that you would be more
+willing to accept a brand-new, relatively unproven filesystem with tons
+of changes to the VFS than without?
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iQIVAwUBQrrDBHgHNmZLgCUhAQJN/A/6A4SqpsunKmj6NOKxqyMxkLVdMjxSuusa
+V9XZIL6K0dDsF1FmvxsSVnl3so8u93sRCkxrBs3WQs9JqsA3f8O5VUvsdfqas/Fb
+ZO+ht5n0r1BVfm1WJHHmR9xGm+jL2TMwVlVrcrrnBQLthq+9efggn5r9BXkOUPgz
+57VMh6sjB9ioigmc2Wf6BsMlbBJpCz7EB91pcIrNzHdFOEWyuHm9mAP6ui2sppfK
+bGaDlZcU4BzNUM8beakMkFuy7JCTFQj/O7s3G42Tqpi/4Ol1Vk7F2tgPkpxB0lHm
+b/hCmCPbTHheRsDhT7gSHOzWrwA5pwKlT5nO4EWGq7DxZo2dgoYsa/2fP32uYPIX
+r3vUfygk7MR59DKMi4LLcDy2OzvrtbwTkzgOVrw82NCi5J5/pu/gIHH1aHzkXM6T
+YRd6G39+wmhN0n/MP3WAT7o3rbH4nuPiG8ZyZQyVTII9YRaOGwNLSjJKe1p9JFHY
+Y+6bqK3h7LQrX4MfTSIu8k3m0iIt806uHP3GlV+HHKx/N/4HSxt6ikikI3jURO4z
+XBr23/Uo3YNK+IuxQtPw2mKcdqqKhFq5OBmLkVFIzJyuh8KR7cfnFdl7luCTjFGL
+KjtgZ39SwtjOUWKWJslkcrNwESqplMTwAaB6GPHiJRKbilaCM9GXm/teI0ZRCl+o
+gBD0AdEBA9s=
+=NJM0
+-----END PGP SIGNATURE-----
