@@ -1,34 +1,54 @@
 From: Alan Cox <alan@lxorguk.ukuu.org.uk>
 Subject: Re: reiser4 plugins
-Date: Fri, 24 Jun 2005 00:37:23 +0100
-Message-ID: <1119569841.17066.70.camel@localhost.localdomain>
-References: <42BAC304.2060802@slaphack.com>
-	 <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>
-	 <20050623221222.33074838.reiser4@blinkenlights.ch>
-	 <200506232249.47302.michael.dreher@uni-konstanz.de>
+Date: Fri, 24 Jun 2005 00:43:46 +0100
+Message-ID: <1119570225.18655.75.camel@localhost.localdomain>
+References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>
+	 <42BB31E9.50805@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24521-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24522-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200506232249.47302.michael.dreher@uni-konstanz.de>
+In-Reply-To: <42BB31E9.50805@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Michael Dreher <michael.dreher@uni-konstanz.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Adrian Ulrich <reiser4@blinkenlights.ch>, Horst von Brand <vonbrand@inf.utfsm.cl>, ninja@slaphack.com, reiser@namesys.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Iau, 2005-06-23 at 21:49, Michael Dreher wrote:
-> My impression: reiser3 is not 100% stable, but quite stable, 
-> written by someone who asks for "review by benchmark".
+On Iau, 2005-06-23 at 23:04, David Masover wrote:
+> > What for? It works just fine as it stands, AFAICS.
+> 
+> So does DOS.  Do you use DOS?  I don't even use DOS to run DOS programs.
 
-Review by uniprocessor benchmark perhaps. However Reiser4 is new code.
-The original extfs on Linux was not very good either while ext2 was
-excellent. It seems inappropriate to technically review one fs based on
-the other. Looking at the authors maintenance record I think is
-important but every single star Linux kernel contributors first major
-contribution was generally not very good.
+False argument. So does the pen, so do hinges on doors. Do you still
+have hinges on your doors - probably.
 
-Alan
+> "Ain't broke" is the battle cry of stagnation.
+
+Its also the battle cry of everyone over the age of 20 who also has a
+real job to do 8)
+
+> But, there are some things Reiser does better and faster than ext3, even
+> if you don't count file-as-directory and other toys.  There's nothing
+> ext3 does better than Reiser, unless you count the compatibility with
+> random bootloaders and low-level tools.
+
+Certainly compared with reiser3 you've missed a few out including
+resilience to disk errors (nearly nil on reiser3), and SMP scaling.
+
+> You know how many I've had thrashed on Reiser4?  Two.  The first one was
+> with a VERY early alpha/beta, and the second one was when I dropped a
+> laptop and the disk failed.
+
+Entirely or bad blocks ? The latter should have a minimal cost on a well
+designed fs.
+
+> Duplication of effort.  With plugins, we can optimize the upper layers
+> of ALL filesystems, regardless of the lower layers, in such a way that
+
+In which case the features belong in the VFS as all those with
+experience and kernel contributions have been arguing.
+
 
