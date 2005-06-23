@@ -1,110 +1,49 @@
-From: David Masover <ninja@slaphack.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Thu, 23 Jun 2005 09:25:44 -0500
-Message-ID: <42BAC668.2030604@slaphack.com>
-References: <200506221733.j5MHXEoH007541@laptop11.inf.utfsm.cl>	<42B9DD48.6060601@slaphack.com> <17081.58619.671650.812286@gargle.gargle.HOWL>
+Date: Thu, 23 Jun 2005 08:12:29 -0700
+Message-ID: <42BAD15D.5030808@namesys.com>
+References: <200506221733.j5MHXEoH007541@laptop11.inf.utfsm.cl>	<42B9DD48.6060601@slaphack.com> <17081.58619.671650.812286@gargle.gargle.HOWL> <42BAC668.2030604@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24496-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24497-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <17081.58619.671650.812286@gargle.gargle.HOWL>
+In-Reply-To: <42BAC668.2030604@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Nikita Danilov <nikita@clusterfs.com>
-Cc: "Artem B. Bityuckiy" <dedekind@yandex.ru>, =?UTF-8?B?TWFya3VzIFTQlnJu?= =?UTF-8?B?cXZpc3Q=?= <mjt@nysv.org>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, Hans Reiser <reiser@namesys.com>, hch@infradead.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: Nikita Danilov <nikita@clusterfs.com>, "Artem B. Bityuckiy" <dedekind@yandex.ru>, =?UTF-8?B?TWFya3VzIFTQlnJucXZpc3Q=?= <mjt@nysv.org>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, hch@infradead.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+David Masover wrote:
 
-Nikita Danilov wrote:
-> David Masover writes:
-> 
-> [...]
-> 
->  > 
->  > What we want is to have programs that can write small changes to one
->  > file or to many files, lump all those changes into a transaction, and
->  > have the transaction either succeed or fail.
-> 
-> No existing file system guarantees such behavior. Even atomicity of
-> single system call is not guaranteed.
+> Nikita Danilov wrote:
+>
+> >David Masover writes:
+>
+> >[...]
+>
+> > >
+> > > What we want is to have programs that can write small changes to one
+> > > file or to many files, lump all those changes into a transaction, and
+> > > have the transaction either succeed or fail.
+>
+> >No existing file system guarantees such behavior. Even atomicity of
+> >single system call is not guaranteed.
+>
+>
+> No _existing_ filesystem.  But I seem to recall that this was one of the
+> design decisions of Reiser4, and that the system call itself was pushed
+> off to 4.1?
 
-No _existing_ filesystem.  But I seem to recall that this was one of the
-design decisions of Reiser4, and that the system call itself was pushed
-off to 4.1?
+Thats right.
 
-Maybe I'm just wrong about how big a transaction can be.  Maybe it was
-limited to a single file.  I don't think so, though.  From the
-whitepaper:  "Stuffing a transaction into a single file just because you
-need the transaction to be atomic is hardly what one would call flexible
-semantics."
+>
+> Maybe I'm just wrong about how big a transaction can be.
 
-I also seem to recall that the rolling back of the transaction, should
-it fail, was supposed to be handled by the application.  This doesn't
-quite click with the whitepaper, but it could work.
+No, you are not.
 
-More whitepaper goodness:
-
-"A new system call sys_reiser4() will be implemented to support
-applications that don't have to be fooled into thinking that they are
-using POSIX. Through this entry point a richer set of semantics will
-access the same files that are also accessible using POSIX calls.
-Reiser4() will not implement more than hierarchical names. A full set
-theoretic naming system as described on our future vision page will not
-be implemented before Reiser6() is implemented (Reiser5 is our
-distributed filesystem, Reiser6 is our enhanced semantics, whether we
-implement Reiser5 or Reiser6 first depends on which sponsors we find ;-)
-). Reiser4() will implement all features necessary to access ACLs as
-files/directories rather than as something neither file nor directory.
-These include opening and closing transactions, performing a sequence of
-I/Os in one system call, and accessing files without use of file
-descriptors (necessary for efficient small I/O). Reiser4 will use a
-syntax suitable for evolving into Reiser5() syntax with its set
-theoretic naming."
-
-So, some sort of transaction is planned.
-
-But, as I said, I wasn't paying enough attention.  Maybe there is a
-technical reason why this can't be done in Linux?
-
->  > > it doesn't stop the system dead in its tracks waiting for some very long
->  > > transaction to finish?
->  > 
->  > We've also discussed this.  For one thing, if we can have transactions
->  > in databases which don't stop the database dead in its tracks, why can't
->  > we do it with filesystems?
-> 
-> Because to have such transactions databases pay huge price in both
-> resource consumption and available concurrency (isolation, commit-time
-> locks, etc.), and yet mechanism they use to deal with stuck transactions
-> (which is simply to abort it) is not very suitable for the file system.
-
-Oh, really?  If we've got application support through sys_reiser4?  The
-application should be ready to deal with a transaction abort.
-
-I'm still not convinced of any of that paragraph.  I don't know enough
-to argue the point, but it intuitively feels wrong.  After all, if the
-metadata is atomic, and we are allowed to make our own system calls, why
-can't we make the data atomic?
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQrrGOngHNmZLgCUhAQJZhw//dmJ6S2GlGT6J5YI9DTCyoTDIPUYNb8o0
-M1me6KDTElzzQ3yUak/eUd0sbGBAQcf0vn/iVscfq2DoAwnUWxHjht+PaOA98axR
-0pnofqE291QLTQJ36epW0kKqFjavVVsrpD80llcaCFz9Rq48W40DoI5CWuX1RQqK
-pCnr9vYe8cAsRY+PzV9/KUaSQ+eZJ9daLsAmMwA3Gcxo4XYqILlZm90X3QQTdc8W
-gnKSabG3zIjEozfgG/nvtV/09mktHINGq3ud8W1XubBOXs4z+ECsLyvi7QNW83Bq
-b/wTDUX3PkrjDHnfcmFkFZJqRrCBD9Ko36f9NThxuaba5eV7kb6h+qx+kS5ZM6Lm
-bh90TjJrIpJ4aQr2qrPRAE85GSnvSlyi3E01gk/+UnkBFMoTqTvw2dPb0GhvMINM
-EhSUhEyeaopWXIdv3IszOOpbHJLwczixLDBtZ8OFDS26bnJGj7YlnTjdf+TZ9CGf
-ZXn7GaG16CiSTOt0YkKk2UGZz+AOubPAUHc6v8Wg587qXWKD3cXVQeZVqYwJG/8B
-G5qq51LB6jypjAoP4uSeuTs4DfANGi2H2mHjZVAyaGcwzhxf3ffGRFkfjElAj8RA
-RdmB6bq10nt32mL7YP8+n7xa38iCP+ks9wsoOY2KBBDlOpHu07xb/c2DS9yfTCpj
-FvMShQw6EBI=
-=S7ds
------END PGP SIGNATURE-----
+Isolation is not easy for an fs, but fusing multiple atoms from multiple
+file modifications into one "guaranteed to commit or fail all together"
+atom is easy.
