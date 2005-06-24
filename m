@@ -1,74 +1,54 @@
-From: Timothy Webster <tdwebste2@yahoo.com>
+From: Nikita Danilov <nikita@clusterfs.com>
 Subject: Re: reiser4 plugins
-Date: Fri, 24 Jun 2005 02:35:10 -0700 (PDT)
-Message-ID: <20050624093510.4330.qmail@web51301.mail.yahoo.com>
-References: <42BBB1FA.7070400@cisco.com>
-Reply-To: tdwebste2@yahoo.com
+Date: Fri, 24 Jun 2005 14:31:07 +0400
+Message-ID: <m1slz8oxlg.fsf@clusterfs.com>
+References: <200506221733.j5MHXEoH007541@laptop11.inf.utfsm.cl>
+	<42B9DD48.6060601@slaphack.com>
+	<17081.58619.671650.812286@gargle.gargle.HOWL>
+	<42BAC668.2030604@slaphack.com>
+	<17083.14428.546772.353003@gargle.gargle.HOWL>
+	<42BBAA0F.2020404@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-24542-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24544-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42BBB1FA.7070400@cisco.com>
+In-Reply-To: <42BBAA0F.2020404@namesys.com> (Hans Reiser's message of "Thu,
+ 23 Jun 2005 23:37:03 -0700")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Lincoln Dale <ltd@cisco.com>, Hans Reiser <reiser@namesys.com>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: David Masover <ninja@slaphack.com>, "Artem B. Bityuckiy" <dedekind@yandex.ru>, Markus Trnqvist <mjt@nysv.org>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, hch@infradead.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
+Hans Reiser <reiser@namesys.com> writes:
 
+> Nikita, I respectfully disagree with what you say about the state of our
+> atomicity code.   It is not so far away as you describe, and probably 6
+> man weeks work could polish it off.  You don't see the value in what I
+> define as useful, namely atomicity without isolation.  Since you don't
+> see that, it is harder for you to see that something is close to working
+> and just needs 6 weeks of someone who groks what I am asking for.
 
---- Lincoln Dale <ltd@cisco.com> wrote:
-snip
+No, I see the value of "atomicity", and think it is very useful. What I
+don't see the value of is the making of premature claims.
 
-> 
-> Nikita basically said as much in Message-ID: 
-> <17081.30107.751071.983835@gargle.gargle.HOWL>
-> earlier in this thread:
->     "But it is not so. There _are_
-> plugins-in-the-VFS. VFS operates on 
-> opaque
->      objects (inodes, dentries, file system types)
-> through interfaces:
->     
-> {inode,address_space,dentry,sb,etc.}_operations.
-> Every file system
->      back-end if free to implement whatever number
-> of these interfaces. And
->      the do this already: check the sources; even
-> ext2 does this: e.g.,
->      ext2_fast_symlink_inode_operations and
-> ext2_symlink_inode_operations.
-> 
->      This is exactly what upper level reiser4
-> plugins are for.
-> 
->      I guess that one of Christoph Hellwig's
-> complaints is that reiser4
->      introduces another layer of abstraction to
-> implement something that
->      already exists."
+_When_ reiser4 has atomic write(2), you have full right to call it
+atomic, not before.
 
+_When_ reiser4 is tested through objective benchmark-set exercising
+various workloads, you can refer to these benchmarks as the proof of
+reiser4 technical superiority, not before.
 
-What reiserfs4 brings is file based plugins. Which is
-extremely useful and powerful. I don't want to see
-this go away.
+On a more personal note, I invested large amount of my time and effort
+into developing reiser4, and I feel attached to it and to the great
+ideas embodied in it. For reiser4 to rot on the forgotten shelf in
+obscurity is the thing I want least. I want it to be included into
+mainline kernel, but for this to happen, you have to take more realistic
+stance towards err... reality.
 
-I think it is the task of the linux community to
-generalize the vfs layer and not lock out reiserfs4
-until that is done. reiserfs4 wants to keep a plugin
-id for each and every file. An additional filesystem
-layer is the traditional solution to achieve advanced
-features, but not an optimal solution in my opinion.
-Yes gnome, kde and perhaps cifs do it. But if instead
-they used file plugins a lot more could be shared.
+>
+> Hans
 
-Blush, I am not a file system expert
-
--Tim
-
-__________________________________________________
-Do You Yahoo!?
-Tired of spam?  Yahoo! Mail has the best spam protection around 
-http://mail.yahoo.com 
+Nikita.
