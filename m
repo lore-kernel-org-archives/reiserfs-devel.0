@@ -1,69 +1,115 @@
-From: Lincoln Dale <ltd@cisco.com>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 plugins
-Date: Fri, 24 Jun 2005 12:31:31 +1000
-Message-ID: <42BB7083.2070107@cisco.com>
-References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>	 <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB5E1A.70903@namesys.com>
+Date: Thu, 23 Jun 2005 22:17:06 -0500
+Message-ID: <42BB7B32.4010100@slaphack.com>
+References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>	 <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24530-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24531-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42BB5E1A.70903@namesys.com>
+In-Reply-To: <1119570225.18655.75.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Hans Reiser wrote:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
->So you fundamentally reject the prototype it in one fs and then abstract
->it to others development model?
->  
->
+Alan Cox wrote:
+> On Iau, 2005-06-23 at 23:04, David Masover wrote:
+> 
+>>>What for? It works just fine as it stands, AFAICS.
+>>
+>>So does DOS.  Do you use DOS?  I don't even use DOS to run DOS programs.
+> 
+> 
+> False argument. So does the pen, so do hinges on doors. Do you still
+> have hinges on your doors - probably.
 
-Hans,
-after many years here now, one would have thought you would have "got" 
-this part of Linux: kernel development & code that gets into the kernel 
-only does so by getting past the benevolent dictators.
-instead, it seems that every time there is ReiserFS to be merged (and we 
-can go back in history a number of years here..), it always seems to 
-come as a great shock that your code won't be merged 'as-is' without 
-peer review & comment.
+Indeed.  Because there's nothing better -- not because I "like it the
+way it is".
 
-don't feel that you're being singled out here.  you aren't.  there isn't 
-any anti-Hans-and-his-filesystem conspiracy here.
-there are plenty of examples on where this has happened in Linux 
-previously in other parts of the tree.
-EVMS is a great example of similar things - a proposal to include kernel 
-code to do various volume-mgmt functions - which was basically 
-accomplishing the same goal as that of LVM/LVM2 and MD drivers (& DM 
-framework).
-the EVMS team are a great act to follow -  see 
-http://lwn.net/Articles/14714/ - they showed high levels of professional 
-conduct and made what was essentially a 'hard' but 'correct' decision in 
-reworking EVMS to use the same DM infrastructure as LVM2.
-there are countless other examples at various times - various 
-'competing' IPv6 projects, IPSec, various "hardware" (software) RAID 
-controllers, various IP offload schemes et al.
+>>"Ain't broke" is the battle cry of stagnation.
+> 
+> 
+> Its also the battle cry of everyone over the age of 20 who also has a
+> real job to do 8)
 
-why does Reiserfs have to be any different?
+You caught me.  I'm not over 20.  But I have a real job, with a company
+that understands the difference between "ain't broke" and "works well".
 
-you know that VFS is the mechanism in Linux.  you know (i hope..) how it 
-works.  it isn't so hard to see how many of the Reiser4 "plug-ins" could 
-be tied into VFS calls.
-OR, if they cannot TODAY, propose how VFS _COULD_ be made to do this.
+>>But, there are some things Reiser does better and faster than ext3, even
+>>if you don't count file-as-directory and other toys.  There's nothing
+>>ext3 does better than Reiser, unless you count the compatibility with
+>>random bootloaders and low-level tools.
+> 
+> 
+> Certainly compared with reiser3 you've missed a few out including
+> resilience to disk errors (nearly nil on reiser3), and SMP scaling.
 
-the key here is trust.  and trust is a two-way street.
+Actually, I was talking about reiser4.  And Hans corrected me on that...
 
-the irony of this whole thread is that history is repeating itself.  see 
-http://www.ussg.iu.edu/hypermail/linux/kernel/0112.1/0519.html
-kernel developers pushed back on you 3 years ago - in 2001 - what has 
-really changed?
+Although resilience to disk errors isn't a design decision.  That's what
+SMART and new hard drives are for.  And if you're stubborn enough to
+keep the same FS around, there's dm-bbr.
 
-*an observation*
+I think Hans (or someone) decided that when hardware stops working, it's
+not the job of the FS to compensate, it's the job of lower layers, or
+better, the job of the admin to replace the disk and restore from backups.
 
-cheers,
+>>You know how many I've had thrashed on Reiser4?  Two.  The first one was
+>>with a VERY early alpha/beta, and the second one was when I dropped a
+>>laptop and the disk failed.
+> 
+> 
+> Entirely or bad blocks ? The latter should have a minimal cost on a well
+> designed fs.
 
-lincoln.
+I was able to recover from bad blocks, though of course no Reiser that I
+know of has had bad block relocation built in...  But I got all my files
+off of it, fortunately.
+
+But the disk did fail, completely, later.  Lots of loud clicking.
+
+>>Duplication of effort.  With plugins, we can optimize the upper layers
+>>of ALL filesystems, regardless of the lower layers, in such a way that
+> 
+> 
+> In which case the features belong in the VFS as all those with
+> experience and kernel contributions have been arguing.
+
+No one's arguing that.  What we're arguing is that there does seem to be
+a bit of prejudice when fuck-me-with-a-chainsaw and YOU ARE A FOOL FOR
+ENABLING THIS all got in, and with at least one of those, there doesn't
+seem to be any intention of changing it -- all of that, and even with an
+expressed intention to fix the aesthetical problems with Reiser4 later,
+we can't get the working version in now.
+
+More infuriatingly, I, at least, have a distinct feeling that once all
+the issues are fixed, an entirely different crowd of benevolent
+dictators will come around and say that we can't get in because we
+change the VFS.  At least some people on this list have said things to
+that effect.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iQIVAwUBQrt7MngHNmZLgCUhAQKdXA/+PDpOzZYTVXgF2n4qiFyrmjFeQ6h0n8i6
+c/hXx+QUU0Hw5mjq31+jf2vNpDCKQxcE/HTLdJlRfw8az+xklVOfxzEHf9yV41tv
+mVKMRJYBhzk2mEvKEDNtnw47SQPBAKo9BtJvl7gOEofiPK/f2K/cy8yMUrow1E9D
+02PNT0XX8ysoe86Dqip35+sphczkQN8gilXyUQujNe8edEdkW7PBhbJn92zBQag2
+JxA194bquxRyhW78T3tKAEN6/tTPgZYJNy202KC619zzLlK3TslwjjfOQILdRb2i
+NNkaSQBdYDK70BiFs5Ri7ZbfJHenY6mgGv7yG0vjGF6zjoXtVNsKGrYt9KBL6E1D
+392ayxOlWCvBoG9n9sAUzHzcQxmU1lP6OHcO9xWrL6ySD7Fzv4rCtM0uo7gXOzNB
+aDl5vK7q+ysEjOXZJWT0ikj5ndATCv0Ry8wnt1uL/uktOuaE0egwsouU0jgCDgx1
+8Ib8KX/B6bhCy13WkYLPTb6Yg0k+ph0BUyONEcN5cxJIcqfcEt/4Un4MYM+CjGck
+KLYrrZDclZr8p/paWdNqx1dI9NIBn+F3u78OcWY3NIGfZPh1jmSdG3LRt9DZo5bZ
+ua2UlAiAWnEDHNLQyMH2zcji31DMqIUwmQ5bX9isBcxt8LORX+IKxoLdUICoY8JS
+Ii5kNWJAjf4=
+=Xsdv
+-----END PGP SIGNATURE-----
