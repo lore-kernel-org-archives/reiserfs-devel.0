@@ -1,74 +1,36 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiser4 plugins (back to flames, oh well)
-Date: Thu, 23 Jun 2005 18:23:54 -0700
-Message-ID: <42BB60AA.1060606@namesys.com>
-References: <20050620235458.5b437274.akpm@osdl.org>	 <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com>	 <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com>	 <42B8BB5E.8090008@pobox.com> <42B8E834.5030809@slaphack.com>	 <42B8F4BC.5060100@pobox.com>  <42BA4F7E.6000402@namesys.com> <1119546015.17063.14.camel@localhost.localdomain>
+From: Jeff Garzik <jgarzik@pobox.com>
+Subject: Re: reiser4 plugins
+Date: Thu, 23 Jun 2005 21:45:32 -0400
+Message-ID: <42BB65BC.1010703@pobox.com>
+References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>	 <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB5E1A.70903@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24528-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24529-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1119546015.17063.14.camel@localhost.localdomain>
+In-Reply-To: <42BB5E1A.70903@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Jeff Garzik <jgarzik@pobox.com>, David Masover <ninja@slaphack.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Alan Cox wrote:
+Hans Reiser wrote:
+> Alan Cox wrote:
+>>>Duplication of effort.  With plugins, we can optimize the upper layers
+>>>of ALL filesystems, regardless of the lower layers, in such a way that
 
->>I am entitled to get some advantage from being the first on the block
->>    
->>
->
->You were not first on the block. Linus was, 
->
->thats why it's Linux (well
->not directly his fault about the name) and why he sets policy. I've
->never heard Linus espousing such an idea so I wonder why you think that
->way. Rather I've heard Linus tell groups of people with differing ideas
->about interfaces to go figure it out first and build the right interface
->then come back with a consensus (for example with SELinux)
->  
->
-We aren't people with differing ideas about interfaces, we are one
-filesystem team with functionality that no other filesystem has yet
-expressed a concrete desire to use, and some guy who complains about it
-after it has been the basis for coding for 4 years without expressing
-any desire to use it himself, merely expressing a desire that we not use
-it because he never paid any attention to our website or mailing list
-for the last 4 years as we developed it.  
+>>In which case the features belong in the VFS as all those with
+>>experience and kernel contributions have been arguing.
 
-Oh, and he says it is duplicative without explaining where in VFS
-plugins and pluginids are currently defined. 
+> So you fundamentally reject the prototype it in one fs and then abstract
+> it to others development model?
 
-Oh, and rather than saying "clever guys, thanks for coming up with this,
-I am going to go write a patch that makes your ideas available to other
-filesystems to do this", he says, stay out of the tree because your code
-is so crappy that it has to be used by everyone else before you can go in.
 
-There is absolutely nothing preventing him from generalizing it to other
-filesystems after we go into the tree.  If you take the existing code as
-a base, the generic part of the work required is I hope small.   The fs
-specific part is more though, as each filesystem has to implement
-methods for storing and retrieving plugins, and then a set of plugins
-(and their methods).
+For similar reasons, we don't let hardware vendors implement software 
+RAID inside the hardware driver.  It's not appropriate at that level.
 
-It is all pure turf war.  Some guy suddenly realized that VFS was not
-doing something, and got upset that someone else was writing code that
-did the job.  Since it was someone else's code, and ready to go, and he
-had nothing himself written yet, it had to be crap and kept out.
+	Jeff
 
-In fairness, it might be possible to eliminate a function indirection or
-two if the effort was made.   There is no need to do it this week as
-merging our code will not make it the least bit more difficult to change
-things later, but hey, if someone wants it, happy to discuss the right
-way to do it.
 
-This is why Linux doesn't have the contributors its market share would
-suggest it should expect.  Contributing to Linux is such a misery.
-
-If you guys would just say "plugins, interesting, can we make it more
-general so other filesystems can use it?"  I would be happy to have Zam
-do it for you.
