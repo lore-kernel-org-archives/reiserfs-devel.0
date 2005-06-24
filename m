@@ -1,52 +1,38 @@
-From: "Artem B. Bityuckiy" <dedekind@yandex.ru>
-Subject: Minor note FYI
-Date: Fri, 24 Jun 2005 15:38:01 +0400
-Message-ID: <42BBF099.4010906@yandex.ru>
-References: <1117392967.29669.ezmlm@namesys.com> <429A1742.8030504@mh.be> <200505292137.j4TLbarw017197@turing-police.cc.vt.edu>            <429AAFDC.4050208@mh.be> <200505300737.j4U7bDKj002829@turing-police.cc.vt.edu>
+From: Olivier Galibert <galibert@pobox.com>
+Subject: Re: reiser4 plugins
+Date: Fri, 24 Jun 2005 14:49:43 +0200
+Message-ID: <20050624124943.GA75817@dspnet.fr.eu.org>
+References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB7B32.4010100@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24547-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24548-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200505300737.j4U7bDKj002829@turing-police.cc.vt.edu>
+Content-Disposition: inline
+In-Reply-To: <42BB7B32.4010100@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Masover <ninja@slaphack.com>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Horst von Brand <vonbrand@inf.utfsm.cl>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Hello,
+On Thu, Jun 23, 2005 at 10:17:06PM -0500, David Masover wrote:
+> I was able to recover from bad blocks, though of course no Reiser that I
+> know of has had bad block relocation built in...  But I got all my files
+> off of it, fortunately.
 
-Look at the create_child_common() function at fs/reiser4/plugin/dir/dir.c:
+My experience shows that you've been very, very lucky.  I hope r4 is
+better in that regard.
 
-There are _7_ places with the code like this in it:
+If you want to try with r3, take a well-used partition[1] and copy it
+at block level to another partition or a file.  Then zero some random
+spans of blocks in the copy and reiserfsck --rebuild-tree it.  My
+experience is that you'll usually get the files names and directory
+tree but their contents will have been scattered all over the place.
 
-result = blah();
-if (result) {
-	warning();
-         DQUOT_FREE_INODE(object);
-         object->i_flags |= S_NOQUOTA;
-         return result;
-}
+  OG.
 
-isn't it cuter to use the classical way:
+[1] I suspect a minimum of fragmentation is in order to see the
+problem
 
-result = blah();
-if (result) {
-	warning();
-	goto error;
-}
-
-...
-
-error:
-         DQUOT_FREE_INODE(object);
-         object->i_flags |= S_NOQUOTA;
-         return result;
-
-?
-
--- 
-Best Regards,
-Artem B. Bityuckiy,
-St.-Petersburg, Russia.
