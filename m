@@ -1,46 +1,74 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Timothy Webster <tdwebste2@yahoo.com>
 Subject: Re: reiser4 plugins
-Date: Fri, 24 Jun 2005 02:03:33 -0700
-Message-ID: <42BBCC65.8060709@namesys.com>
-References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB5E1A.70903@namesys.com> <42BB7083.2070107@cisco.com> <42BBAD0F.2040802@namesys.com> <20050624071159.GQ29811@parcelfarce.linux.theplanet.co.uk>
+Date: Fri, 24 Jun 2005 02:35:10 -0700 (PDT)
+Message-ID: <20050624093510.4330.qmail@web51301.mail.yahoo.com>
+References: <42BBB1FA.7070400@cisco.com>
+Reply-To: tdwebste2@yahoo.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24541-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-24542-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050624071159.GQ29811@parcelfarce.linux.theplanet.co.uk>
+In-Reply-To: <42BBB1FA.7070400@cisco.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Al Viro <viro@parcelfarce.linux.theplanet.co.uk>, Alexander Zarochentcev <zam@namesys.com>
-Cc: Lincoln Dale <ltd@cisco.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Lincoln Dale <ltd@cisco.com>, Hans Reiser <reiser@namesys.com>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Al Viro wrote:
 
->Have I missed the posting with analysis of changes in locking scheme
->and update of proof of correctness?  If so, please give the message ID.
->
->_That_ had been the major showstopper for any merges, IIRC.
->  
->
-Ah, the prince of helpfulness has arrived.
 
-Yes, as I remember, last time with V3 you announced that there were race
-conditions that we needed to fix if V3 was to be merged, you would not
-tell us what they were when asked, Linus merged us anyway, you never did
-tell us what they were, later vs fixed some race conditions but I have
-no idea if they were the same ones you found, oh well, getting rid of
-bugs never was your objective was it?  Does V3 still have those race
-conditions you spoke of?
+--- Lincoln Dale <ltd@cisco.com> wrote:
+snip
 
-Proof of correctness, is that where we check and see if the filesystems
-all mount/unmount before checking in code changes to the stable release
-branch?  Oh dear, that was unkind of me.
+> 
+> Nikita basically said as much in Message-ID: 
+> <17081.30107.751071.983835@gargle.gargle.HOWL>
+> earlier in this thread:
+>     "But it is not so. There _are_
+> plugins-in-the-VFS. VFS operates on 
+> opaque
+>      objects (inodes, dentries, file system types)
+> through interfaces:
+>     
+> {inode,address_space,dentry,sb,etc.}_operations.
+> Every file system
+>      back-end if free to implement whatever number
+> of these interfaces. And
+>      the do this already: check the sources; even
+> ext2 does this: e.g.,
+>      ext2_fast_symlink_inode_operations and
+> ext2_symlink_inode_operations.
+> 
+>      This is exactly what upper level reiser4
+> plugins are for.
+> 
+>      I guess that one of Christoph Hellwig's
+> complaints is that reiser4
+>      introduces another layer of abstraction to
+> implement something that
+>      already exists."
 
-Ok, sure, define what you want in the way of a proof of correctness and
-an analysis.  Is this a new VFS tradition?  Is it documented anywhere? 
-Are there tools for it?  Probably I should ask Zam if we already did it
-too.....  Zam?
 
-Hans
+What reiserfs4 brings is file based plugins. Which is
+extremely useful and powerful. I don't want to see
+this go away.
+
+I think it is the task of the linux community to
+generalize the vfs layer and not lock out reiserfs4
+until that is done. reiserfs4 wants to keep a plugin
+id for each and every file. An additional filesystem
+layer is the traditional solution to achieve advanced
+features, but not an optimal solution in my opinion.
+Yes gnome, kde and perhaps cifs do it. But if instead
+they used file plugins a lot more could be shared.
+
+Blush, I am not a file system expert
+
+-Tim
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
