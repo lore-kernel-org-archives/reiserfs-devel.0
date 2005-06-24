@@ -1,154 +1,43 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
+From: Al Viro <viro@parcelfarce.linux.theplanet.co.uk>
 Subject: Re: reiser4 plugins
-Date: Thu, 23 Jun 2005 22:41:01 -0400
-Message-ID: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>
-References: <ninja@slaphack.com>
-Return-path: <reiserfs-list-return-24549-reiserfs=m.gmane.org@namesys.com>
+Date: Fri, 24 Jun 2005 15:45:23 +0100
+Message-ID: <20050624144522.GR29811@parcelfarce.linux.theplanet.co.uk>
+References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB5E1A.70903@namesys.com> <42BB7083.2070107@cisco.com> <42BBAD0F.2040802@namesys.com> <20050624071159.GQ29811@parcelfarce.linux.theplanet.co.uk> <42BBCC65.8060709@namesys.com>
+Mime-Version: 1.0
+Return-path: <reiserfs-list-return-24552-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from David Masover <ninja@slaphack.com> 
-   of "Thu, 23 Jun 2005 17:04:25 EST." <42BB31E9.50805@slaphack.com> 
+Content-Disposition: inline
+In-Reply-To: <42BBCC65.8060709@namesys.com>
+Sender: Al Viro <viro@www.linux.org.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: Alexander Zarochentcev <zam@namesys.com>, Lincoln Dale <ltd@cisco.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-David Masover <ninja@slaphack.com> wrote:
-> Horst von Brand wrote:
-> > David Masover <ninja@slaphack.com> wrote:
-> >>Hans Reiser wrote:
-> >>>Jeff Garzik wrote:
+On Fri, Jun 24, 2005 at 02:03:33AM -0700, Hans Reiser wrote:
+> Al Viro wrote:
+> 
+> >Have I missed the posting with analysis of changes in locking scheme
+> >and update of proof of correctness?  If so, please give the message ID.
+> >
+> >_That_ had been the major showstopper for any merges, IIRC.
+> >  
+> >
+> Ah, the prince of helpfulness has arrived.
+> 
+> Yes, as I remember,
 
-> > [...]
+Kindly put some efforts into remembering the thread that contains e.g.
+http://marc.theaimsgroup.com/?l=linux-kernel&m=109347094309283&w=2
 
-> >>>You missed his point.  He is saying ext3 code should migrate towards
-> >>>becoming reiser4 plugins, and reiser4 should be merged now so that the
-> >>>migration can get started.
-
-> >>Sort of.
-> >>
-> >>I think ext3 would be nice as a reiser4 plugin.
-
-> > What for? It works just fine as it stands, AFAICS.
-
-> So does DOS.
-
-I'm sorry?
-
->              Do you use DOS?
-
-Good riddance, no! Not for something like 15 years.
-
->                               I don't even use DOS to run DOS programs.
-
-Haven't seen one in quite some time, to be honest. Oops, sorry, I just
-lied. Booted it from floppy to run a program to whack the BIOS password on
-a PC some two weeks ago. Only use in a long time.
-
-> "Ain't broke" is the battle cry of stagnation.
-
-I see it as the battle cry of those that are looking for /real/ problems to
-solve.
-
-> But, there are some things Reiser does better and faster than ext3,
-
-Yes, I've heard it is supposed to be faster on huge directories, and
-doesn't run out of inodes. And it is more efficient spacewise on small
-files. But then again, space is extremely cheap today...
-
-And again, on a list around here I've seen several cries for help with
-completely hosed filesystems, all ReiserFS. No solution has ever come
-forth.
-
->                                                                     even
-> if you don't count file-as-directory and other toys.  There's nothing
-> ext3 does better than Reiser, unless you count the compatibility with
-> random bootloaders and low-level tools.
-
-For me, those are quite critical...
-
-> >>                                                Not everyone will want
-> >>to reformat at once, but as the reiser4 code matures and proves itself
-> >>(even more than it already has),
-
-> > I for one have seen mainly people with wild claims that it will make their
-> > machines much faster, and coming back later asking how they can recover
-> > their thrashed partitions...
-
-> You know how many I've had thrashed on Reiser4?  Two.  The first one was
-> with a VERY early alpha/beta, and the second one was when I dropped a
-> laptop and the disk failed.
-
-OK. Know how many I thrashed with ext2/3? I remember 3, could have been as
-many as 5. One was due to a failed disk, another one because of DMA to a
-disk causing slow corruption. Another one I believe was due to a odd kernel
-compiled with a snapshot gcc a long time back, plus power loss at the wrong
-time. And that is from using ext2/3 since they were in early beta. On
-several machines at the same time, over years. I'd have to say that there
-isn't much of a difference.
-
-> And it does make certain things faster.  For one thing, "emerge sync" on
-> Gentoo is twice to four times as fast, and /usr/portage is 75% as big,
-> as on ReiserFS (3).
-
-That can't all be due to on-disk format.
-
-> >>                                 the ext3 people may find themselves
-> >>wanting some of the more generic optimizations.
-
-> > They'll filch them in due time, don't worry.
-
-> Duplication of effort.  With plugins, we can optimize the upper layers
-> of ALL filesystems, regardless of the lower layers, in such a way that
-> it is optional.
-
-Generic optimizations how, if they need VFS support?!
-
->                  I'm sure it's far easier to write a Reiser storage
-> plugin than a brand new FS.
-
-Comparing apples and oranges tells you what?
-
-> Eventually, once competition is only based on storage format, we could
-> end up with just one format.  Just one filesystem!  (except for
-> fat/ntfs/iso/udf/network...)  And in the open source world, sometimes a
-> single product is a good thing.
-
-Sorry, I don't think this will come to pass in our lifetime, if ever. There
-are different requirements, and the way to cater to them is different
-solutions. That has always been what Linux (as opposed to the propietary
-and even some open source systems) is all about...
-
-> >>But, I don't think that will realistically happen at all.
-
-> >>Instead, what will probably happen is that once Reiser4 is in the
-> >>mainstream kernel, it will become more popular and noticable.  Other
-> >>FSes will take note.  ext3 people may decide they want
-> >>file-as-directory,
-
-> > That idea is even much older than Linux itself, and no other (Unix)
-> > filesystem has implemented it. Ever. Wonder why...
-
-> >>                   and vfat people may decide they want cryptocompress,
-
-> > I'm sure they don't, because it is mostly for Windows and assorted devices
-> > (pendrives, digital cameras, ...) compatibility.
-
-> I, for one, would like to use a pendrive and have certain files be
-> encrypted transparently, only for use on Linux, but others be ready to
-> transfer to a Windows box.
-
-And that would surely break Windows compatibility (because you have to keep
-the data on what to encrypt one the filesystem itself). Besides, having
-pgp, or gpg, or crypt, or my own whacky encryption proggie do the job in
-/userland/, and not shoving into the kernel and so down the next user's
-throat, is in the end a largeish part of what Unix is all about for me.
--- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+If that work (summary: introduction of hybrid objects invalidates the
+existing locking scheme for directories and that had lead at least to
+several user-exploitable deadlocks described in details in the same
+thread; current proof of correctness is in the tree, see
+Documentation/filesystems/Directory-Locking.txt and at the very least
+it needs to be updated) had been done - please, give the message ID
+of posting with such update.  If not - please, arrange getting it done.
