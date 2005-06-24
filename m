@@ -1,82 +1,52 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: reiser4 plugins
-Date: Fri, 24 Jun 2005 12:34:12 +0100
-Message-ID: <1119612849.17063.105.camel@localhost.localdomain>
-References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>
-	 <42BB31E9.50805@slaphack.com>
-	 <1119570225.18655.75.camel@localhost.localdomain>
-	 <42BB7B32.4010100@slaphack.com>
+From: "Artem B. Bityuckiy" <dedekind@yandex.ru>
+Subject: Minor note FYI
+Date: Fri, 24 Jun 2005 15:38:01 +0400
+Message-ID: <42BBF099.4010906@yandex.ru>
+References: <1117392967.29669.ezmlm@namesys.com> <429A1742.8030504@mh.be> <200505292137.j4TLbarw017197@turing-police.cc.vt.edu>            <429AAFDC.4050208@mh.be> <200505300737.j4U7bDKj002829@turing-police.cc.vt.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24546-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24547-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42BB7B32.4010100@slaphack.com>
+In-Reply-To: <200505300737.j4U7bDKj002829@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On Gwe, 2005-06-24 at 04:17, David Masover wrote:
-> > False argument. So does the pen, so do hinges on doors. Do you still
-> > have hinges on your doors - probably.
-> 
-> Indeed.  Because there's nothing better -- not because I "like it the
-> way it is".
+Hello,
 
-I chose hinges carefully - there are better technologies than the
-generic hinge and there have been for many many years (plus cool stuff
-like magnetic doors). You of course aren't a door geek (nor am I I'd
-point out) but a computing one...
+Look at the create_child_common() function at fs/reiser4/plugin/dir/dir.c:
 
-> Although resilience to disk errors isn't a design decision.  That's what
-> SMART and new hard drives are for.  And if you're stubborn enough to
-> keep the same FS around, there's dm-bbr.
+There are _7_ places with the code like this in it:
 
-Its very much a file system design consideration. If you get a small
-amount of corruption or lost blocks which is the usual drive failure
-case you want a high probability of getting the data back. BSD style
-bitmap/inode table file systems based on FFS concepts (UFS, ext2, ext3
-etc) are very good in that respect and your loss is usually minimal.
+result = blah();
+if (result) {
+	warning();
+         DQUOT_FREE_INODE(object);
+         object->i_flags |= S_NOQUOTA;
+         return result;
+}
 
-> I think Hans (or someone) decided that when hardware stops working, it's
-> not the job of the FS to compensate, it's the job of lower layers, or
-> better, the job of the admin to replace the disk and restore from backups.
+isn't it cuter to use the classical way:
 
-Most desktop users today don't have backups because there is no credible
-backup technology for 500Gb of data. They may have partial backups. Some
-things the fs can't deal with - if the disk goes boom then thats a lower
-level concern. Also certain bits like writing to spare blocks on a
-problem write are indeed handled drive level nowdays.
+result = blah();
+if (result) {
+	warning();
+	goto error;
+}
 
-> > Entirely or bad blocks ? The latter should have a minimal cost on a well
-> > designed fs.
-> 
-> I was able to recover from bad blocks, though of course no Reiser that I
-> know of has had bad block relocation built in...  But I got all my files
-> off of it, fortunately.
+...
 
-Thats a good sign. reiser3 was very fragile when blocks of disk went for
-a walk. If you got most of your data back thats a positive sign, not
-statistically a valid sample but a positive sign
+error:
+         DQUOT_FREE_INODE(object);
+         object->i_flags |= S_NOQUOTA;
+         return result;
 
-> the issues are fixed, an entirely different crowd of benevolent
-> dictators will come around and say that we can't get in because we
-> change the VFS.  At least some people on this list have said things to
-> that effect.
+?
 
-There are four important issues I see here
-
-1. It must work
-2. It must be clean code that follows the kernel style
-3. It must not break other stuff
-4. It needs a maintainer who won't get bored 12 months later and only
-support reiser5
-
-#3 is the VFS stuff and getting the VFS locking wrong or unclean is a
-*very* big deal because you'll cause corruption to non reiser4 users.
-
-Alan
-
+-- 
+Best Regards,
+Artem B. Bityuckiy,
+St.-Petersburg, Russia.
