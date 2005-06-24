@@ -1,97 +1,64 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Thu, 23 Jun 2005 16:57:53 -0700
-Message-ID: <42BB4C81.6070500@namesys.com>
-References: <42BAC304.2060802@slaphack.com> <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <20050623221222.33074838.reiser4@blinkenlights.ch> <200506232249.47302.michael.dreher@uni-konstanz.de>
+Date: Thu, 23 Jun 2005 18:02:59 -0700
+Message-ID: <42BB5BC3.7000902@namesys.com>
+References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24523-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24524-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200506232249.47302.michael.dreher@uni-konstanz.de>
+In-Reply-To: <42BB31E9.50805@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Michael Dreher <michael.dreher@uni-konstanz.de>, vitaly@thebsh.namesys.com
-Cc: linux-kernel@vger.kernel.org, Adrian Ulrich <reiser4@blinkenlights.ch>, Horst von Brand <vonbrand@inf.utfsm.cl>, ninja@slaphack.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-One, you were using V3 not V4.
+David Masover wrote:
 
-Two, this bug you mention is probably not an fs bug.  rm first creates a
-list of names, and then removes them. 
+>
+>
+> But, there are some things Reiser does better and faster than ext3, even
+> if you don't count file-as-directory and other toys.  There's nothing
+> ext3 does better than Reiser, unless you count the compatibility with
+> random bootloaders and low-level tools.
 
-reiser@linux:~/scratch> touch fufu
-reiser@linux:~/scratch> touch fifu
-reiser@linux:~/scratch> rm *fu fi*
-rm: cannot remove `fifu': No such file or directory
+In fairness, there are some things that I am aware of.  In Reiser4 fsync
+performance needs optimizing, truly random modifications and anything
+else that write twice logging is best for needs optimizing, workloads
+dominated by dirtying more mmap'd pages than can fit into RAM need
+optimizing.
 
-Your file either somehow got removed before rm got to it, or rm somehow
-got to it twice.  Vitaly, can you look at the error handling by rm and
-see if it can get to things twice when it hits an error or if you can
-otherwise figure this out?  If I remember right, I have hit this myself
-for non-reiserfs filesystems, and I never investigated it.
+>
+> >>                                               Not everyone will want
+> >>to reformat at once, but as the reiser4 code matures and proves itself
+> >>(even more than it already has),
+>
+>
+> >I for one have seen mainly people with wild claims that it will make
+> their
+> >machines much faster, and coming back later asking how they can recover
+> >their thrashed partitions...
+>
+>
+> You know how many I've had thrashed on Reiser4?  Two.  The first one was
+> with a VERY early alpha/beta, and the second one was when I dropped a
+> laptop and the disk failed.
+>
+> And it does make certain things faster.  For one thing, "emerge sync" on
+> Gentoo is twice to four times as fast, and /usr/portage is 75% as big,
+> as on ReiserFS (3).
 
-Michael Dreher wrote:
+Wow.  You know, Nikita complains about my benchmarks, but what I usually
+hear from users is that their performance when they use their favorite
+app is mostly similar to my benchmarks.
 
->>>>                                                Not everyone will want
->>>>to reformat at once, but as the reiser4 code matures and proves itself
->>>>(even more than it already has),
->>>>        
->>>>
->>>I for one have seen mainly people with wild claims that it will make
->>>their machines much faster, and coming back later asking how they can
->>>recover their thrashed partitions...
->>>      
->>>
->>Then please show us some Links/Message-IDs to such postings.
->>I'd like to read them.
->>    
->>
->
->Here you are....
->
->The following happened to me with reiserfs as it was shipped with
->suse 9.1:
->
->------------------------------------------------------------------
->dreher@euler03:~/mytex/konstanz/wohnung> ls
->auto          makler2.aux  makler2.log  makler2.tex  makler.aux  makler.log  
->swk.eps      unilogo.eps
->briefkpf.tex  makler2.dvi  makler2.ps   makler3.tex  makler.dvi  makler.tex  
->unikopf.tex
->dreher@euler03:~/mytex/konstanz/wohnung> rm *.aux *.log
->rm: cannot remove `makler2.log': No such file or directory
->dreher@euler03:~/mytex/konstanz/wohnung> ls
->auto  briefkpf.tex  makler2.dvi  makler2.ps  makler2.tex  makler3.tex  
->makler.dvi  makler.tex  swk.eps  unikopf.tex  unilogo.eps
->dreher@euler03:~/mytex/konstanz/wohnung> uname -a
->Linux euler03 2.6.5-7.108-smp #1 SMP Wed Aug 25 13:34:40 UTC 2004 i686 i686 
->i386 GNU/Linux
->dreher@euler03:~/mytex/konstanz/wohnung> date
->Tue Sep 21 13:15:45 CEST 2004
->----------------------------------------------------------
->
->Note the line "rm: cannot remove `makler2.log': No such file or directory"
->
->There was no data loss, but such a bug should not happen.
->I never had similar experiences with ext3.
->
->Unfortunately, I cannot reproduce this behavior. 
->
->  
->
->> Powerloss, unpluging the Disk while writing, full filesystem,
->> heavy use : No problems with reiser4.. It *is* stable.
->>    
->>
->
->My impression: reiser3 is not 100% stable, but quite stable, 
->written by someone who asks for "review by benchmark".
->
->Michael
->
->
->  
->
+I would be really happy if our compression code was working before we
+went in.  Half the space and thus twice the speed to disk.  Edward could
+use some help with it.  If only we could work on that plus fsync plus
+mmap dirtying plus random modification optimized journaling rather than
+these flamefests. 
 
+Hans
