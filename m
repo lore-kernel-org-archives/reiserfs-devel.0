@@ -1,65 +1,108 @@
-From: Pat Double <pat@patdouble.com>
-Subject: Reiser4 corruption with 2.6.12.1
-Date: Fri, 24 Jun 2005 13:46:09 -0500
-Message-ID: <200506241346.09072.pat@patdouble.com>
-Reply-To: pat@patdouble.com
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: reiser4 plugins
+Date: Fri, 24 Jun 2005 12:21:18 -0700
+Message-ID: <42BC5D2E.1070307@namesys.com>
+References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>	 <42BB31E9.50805@slaphack.com>	 <1119570225.18655.75.camel@localhost.localdomain>	 <42BB7B32.4010100@slaphack.com> <1119612849.17063.105.camel@localhost.localdomain>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24559-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24560-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <1119612849.17063.105.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-This may be an unsupported setup, but I am experiencing reproducable errors 
-with reiser4 on 2.6.12.1. I used the 2.6.12-rc5-mm2 patch set (broken.out.2) 
-against a vanilla 2.6.12.1 kernel. I did not get any patch failures but a few 
-offsets. I get errors whenever I add or remove a file in the root directory. 
-Inside other directories seems to be fine according to fsck.
+Alan Cox wrote:
 
-It is easy to reproduce:
+>Thats a good sign. reiser3 was very fragile when blocks of disk went for
+>a walk. If you got most of your data back thats a positive sign, not
+>statistically a valid sample but a positive sign
+>  
+>
+Alan, this is FUD.   Our V3 fsck was written after everything else was,
+for lack of staffing reasons (why write an fsck before you have an FS
+worth using).  As a result, there was a long period where the fsck code
+was unstable.  It is reliable now. 
 
-1. mkfs.reiser4 -y /dev/ram1
-2. mount -t reiser4 /dev/ram1 /mnt
-3. cp <some file> /mnt
-4. umount /mnt
-5. fsck.reiser4 -y /dev/ram1
+People often think that our tree makes fsck less robust.  Actually fsck
+can throw the entire internal tree away and rebuild from leaf nodes, and
+frankly that makes things pretty robust. 
 
-CHECKING STORAGE TREE
-FSCK: Node (24), item (0), [29:1(SD):0:2a:0]: does not look like a valid SD 
-plugin set extention: wrong pset member
-count detected (12).
-FSCK: Node (24), item (0), [29:1(SD):0:2a:0]: does not look like a valid stat 
-data.
-FSCK: Node (24), item (0), [29:1(SD):0:2a:0]: broken item found.
-FSCK: Node (24): the node is broken. Pointed from the node (25), item (0), 
-unit (0). The whole subtree is skipped.
-        Read nodes 2
-        Nodes left in the tree 1
-                Leaves of them 0, Twigs of them 1
-        Broken of them 1
-                Leaves of them 1, Twigs of them 0
-        Time interval: Fri Jun 24 13:44:15 2005 - Fri Jun 24 13:44:15 2005
-CHECKING EXTENT REGIONS.
-        Read twigs 1
-        Time interval: Fri Jun 24 13:44:15 2005 - Fri Jun 24 13:44:15 2005
-Warn : Fatal corruptions were found. Semantic pass is skipped.
-***** fsck.reiser4 finished at Fri Jun 24 13:44:15 2005
-Closing fs...done
+There is an area where we suffered from writing fsck last.  When there
+are two leaf nodes with the same key range AND the bitmap cannot be
+trusted to tell us which is the valid one, we don't know which is the
+most recent, and pick arbitrarily.  Also, if you store a backup of V3,
+and you don't compress it, and you wipe out the bitmap blocks and need
+to use fsck, we don't know what blocks are backup image and what blocks
+are the fs.  We advise users to never store a V3 backup on V3 without
+compressing it.  Additionally, if you create a filesystem, use it a lot,
+and then mkfs on top of it, and use the new filesystem, and then wipe
+out the bitmap blocks so that we cannot tell what was in the original fs
+and what is in the current fs, things get merged together.  Also,
+anytime you wipe out the bitmap blocks, you can get files that were
+deleted.  This turns out to be a feature for many users who delete a
+file, regret it, email us, we usually get it back just fine by ignoring
+the bitmap blocks and recovering everything we can find.
 
+In V4 we fixed all this.  In V4 we started by asking Vitaly our fsck guy
+what node format changes would make his code easier and better.  We put
+timestamps in every formatted node, and then because we don't trust
+clocks we also put an mkfsid.  Thus, we can distinguish the current and
+the previously made filesystem even if the clock is moved backwards.  We
+can distinguish backups of other filesystems that were not compressed
+from the real filesystem.  Timestamps allows fixing everything that I
+described above.
 
-Running with --build-fs will fix the problem. If I create a directory, fix it 
-with fsck --build-fs, then copy files into the directory I do not get errors.
+What is more important, to fix V3 as described above would require a
+disk format change that makes it prohibitive to roll out in a minor
+release, and in V4, to change the disk format just requires adding a
+plugin which could be done in a minor release.  Not only did we fix the
+problem in V4, we fixed the meta problem so that any future disk format
+problems are now no biggie to fix.
 
-I'm expecting to hear I should wait for the 2.6.12.1 patches or use the -mm 
-kernel, but checking nonetheless.
+>4. It needs a maintainer who won't get bored 12 months later and only
+>support reiser5
+>  
+>
+Alan, Chris and Jeff support V3.  Whenever they hit a bug that I think
+someone else should fix, or fail to get around to something fast enough
+(rare), I have vs do it.  What more do you want?
 
-Thanks.
+What Chris and Jeff do that really irks me is add FEATURES not bugfixes
+to V3.  As a result, almost all bugs for the last 2 years in V3 have
+been theirs, and mostly due to features being added.  It also annoys me
+that they don't send every patch to a second person to test before
+sending it in and getting it accepted, like everyone else at Namesys
+does.  What can I say, despite these gripes I am lucky to have them helping.
 
--- 
-Pat Double, pat@patdouble.com
-"In the beginning God created the heaven and the earth."
+Features (with some exceptions) belong in major releases, not in bugfix
+releases.
+
+Namesys follows an industry standard process of putting features in
+major releases and only bugfixes in the stable incremental releases. 
+When we, or anyone else in the industry, do this, there are always users
+who complain that their feature that they need right now has been put
+into the major release and not released to them right now in the
+incremental releases.  They usually use the phrase "you aren't
+supporting the (insert name of stable branch), you have abandoned us!"
+
+Now Alan, as I understand it, it is usually YOU who is wishing that
+Linux would follow something closer to the release methodology that I
+just described.  Maybe we have more commonality than you realize?
+
+Hans
+
+PS
+
+Of course, with V4 we will have an interesting issue in that the plugins
+make it so easy to add features that there will be a temptation to let
+things dribble out one plugin at a time, with releases being more
+releases of plugins than releases of an entire filesystem.  I haven't
+really thought through how to handle that best.  I think I want a user
+to be able to define that he wants the mission critical server version
+of reiser4, and have that be an utterly stable body of code with the
+latest plugins excluded from it.
