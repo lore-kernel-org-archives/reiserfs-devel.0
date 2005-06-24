@@ -1,108 +1,101 @@
-From: Lincoln Dale <ltd@cisco.com>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 plugins
-Date: Fri, 24 Jun 2005 17:10:50 +1000
-Message-ID: <42BBB1FA.7070400@cisco.com>
-References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>	 <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB5E1A.70903@namesys.com> <42BB7083.2070107@cisco.com> <42BBAD0F.2040802@namesys.com>
+Date: Fri, 24 Jun 2005 02:21:32 -0500
+Message-ID: <42BBB47C.9010002@slaphack.com>
+References: <200506221733.j5MHXEoH007541@laptop11.inf.utfsm.cl>	<42B9DD48.6060601@slaphack.com>	<17081.58619.671650.812286@gargle.gargle.HOWL>	<42BAC668.2030604@slaphack.com> <17083.14428.546772.353003@gargle.gargle.HOWL> <42BBAA0F.2020404@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24537-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24538-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42BBAD0F.2040802@namesys.com>
+In-Reply-To: <42BBAA0F.2020404@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: Hans Reiser <reiser@namesys.com>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Nikita Danilov <nikita@clusterfs.com>, "Artem B. Bityuckiy" <dedekind@yandex.ru>, =?UTF-8?B?TWFya3VzIFTQlnJucXZpc3Q=?= <mjt@nysv.org>, Christophe Saout <christophe@saout.de>, Andrew Morton <akpm@osdl.org>, hch@infradead.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
 Hans Reiser wrote:
+> Nikita, I respectfully disagree with what you say about the state of our
+> atomicity code.   It is not so far away as you describe, and probably 6
+> man weeks work could polish it off.  You don't see the value in what I
+> define as useful, namely atomicity without isolation.  Since you don't
+> see that, it is harder for you to see that something is close to working
+> and just needs 6 weeks of someone who groks what I am asking for.
 
->Lincoln Dale wrote:
->
->  
->
->>the irony of this whole thread is that history is repeating itself. 
->>see http://www.ussg.iu.edu/hypermail/linux/kernel/0112.1/0519.html
->>kernel developers pushed back on you 3 years ago - in 2001 - what has
->>really changed?
->>    
->>
->
->It is exactly the same, but rather than dwell on that, I'll just remind
->that I have sent out two technical emails which talk only about the
->issue of plugins and pluginids, and whether plugins are classes rather
->than just instances, and whether the classes really would benefit from
->being instantiated into VFS at the cost of keeping the same info in two
->places, and I got no answer on them.  Zam pointed out that our plugins
->do more than just VFS operations, and got no response on that or his
->other points.
->
->Regarding trust, Christophe comes out the gate using the words "useless
->abstraction layer" that happens to be a core feature of our design,
->demanding we cut it out, and not really understanding it or recognizing
->any functionality it provides, and you can't really expect me to respect
->this, can you?
->  
->
-heh.  one example i didn't mention in the myriad of EVMS, IPv6, IPSec et 
-al was iSCSI.
-Christoph was (rightly so) very strong in pushing back on things that 
-needed to be fixed/changed/addressed in linux-iscsi, a project near & 
-dear to much of the paid work i do.
+How about a poor-man's isolation -- any process other than that
+responsible for the transaction sees a consistent state, never a
+transaction-in-progress.  I'm sure there's a name for that.
 
-while i'm sure Christoph could probably be more tactful at times, his 
-views on technical matters in the kernel are respected.
-the key here is to not take it personally - but instead just understand 
-that this is the framework that you have to work in to get it into the 
-mainline kernel.
+So, until the transaction commits, all apps can still see the original
+state, except the one actually writing the transaction.  After it's
+done, all apps see the new consistent state.
 
-if you don't want to go down that path, you're free to do so.  its open 
-source, you can keep your own linux-kernel fork.
-but if you want to get your code into mainline, i don't think its so 
-much a case of l-k folks telling you how to make your code work under 
-VFS.  the onus is on you to say WHY your code and plugins could never be 
-put into VFS.
+Isolation can then be done easily in userspace, via voluntary locking.
+If the isolation needs to be global, the user can take a performance hit
+and do mandatory locking.  Either way, locking and unlocking could be
+seen as part of the transaction.
 
-if anything, you should be thankful that Al hasn't yet commented. :)
- 
+Details follow, most of them pure speculation on my part...
 
->Now, if his target is reduced to whether we can eliminate a function
->indirection, and whether we can review the code together and see if it
->is easy to extend plugins and pluginids to other filesystems by finding
->places to make it more generic and accepting of per filesystem plugins,
->especially if it is not tied to going into 2.6.13, well, that is the
->conversation I would have liked to have had.
->
->  
->
-fantastic - some common ground.
-any reason WHY there has to be an abstraction of 'pluginid' when in 
-theory VFS operations can already provide the necessary abstraction on a 
-per-object basis?
+I'm not sure how this ties into the bigger kind of transaction, as
+you've decided to let userspace handle the rollback in the large,
+multi-file transactions, but for a single file, it seems obvious (famous
+last words).  You've got the wandering stuff, meaning that the new file
+(or changes to a file) are written to a new space on disk, after which
+you update the metadata (blocklist?) -- presumably atomically.
 
-Nikita basically said as much in Message-ID: 
-<17081.30107.751071.983835@gargle.gargle.HOWL> earlier in this thread:
-    "But it is not so. There _are_ plugins-in-the-VFS. VFS operates on 
-opaque
-     objects (inodes, dentries, file system types) through interfaces:
-     {inode,address_space,dentry,sb,etc.}_operations. Every file system
-     back-end if free to implement whatever number of these interfaces. And
-     the do this already: check the sources; even ext2 does this: e.g.,
-     ext2_fast_symlink_inode_operations and ext2_symlink_inode_operations.
+So, it already seems inherent in the system, but it should be defined.
+For some transactions, it doesn't make sense to do this, especially huge
+ones (where storing changes separately may well fill up the disk) which
+make more sense to have an application handle the rollback.
 
-     This is exactly what upper level reiser4 plugins are for.
+Here's a bad example of such a situation:  We're doing a brand-new
+install, and we start by unpacking a tarball from the installation
+media.  After the tarball is unpacked, we start installing packages.
+But, if the installation fails, maybe we want to roll back to the
+initial tarball, change some installation parameters, and try again.  In
+such a situation, it makes more sense to just unpack the tarball again
+than to try to roll back each change individually.
 
-     I guess that one of Christoph Hellwig's complaints is that reiser4
-     introduces another layer of abstraction to implement something that
-     already exists."
+This is a bad example because you shouldn't have to start over from the
+beginning, and even if you did, exit codes should be enough for this
+kind of installer.
 
-i never saw any reason why there can't be specific VFS operations put 
-together for specific inodes if the policy for that inode dictates any 
-special operation (e.g. compression).
+Anyway, I'm not sure quite how this works when dealing with more than
+one file, but we already have atomic metadata operations, and here we
+have an example of a somewhat atomic file operation, so I'm sure the two
+can be stringed together... somehow...  Conceptually, it seems you'd
+just be building a COW subtree, and the actual "atomic" part consists of
+simply changing the pointer from the original tree to the modified one.
+ The cleanup of the original tree need not be atomic.
 
+We do have COW support, don't we?  It was discussed, and we should.
 
+Main point is, I've just described two kinds of transactions:  entirely
+FS-managed and userland-rolled-back.  I think they are both useful.
+Also, neither looks incredibly hard to implement.  I'm sure I'm wrong
+about that, though.
 
-cheers,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-lincoln.
+iQIVAwUBQru0fHgHNmZLgCUhAQLX9hAAjSO4WkIaqyzeTYyz3l9PW5mWvvUKhxrv
+eK3glrQvrEf2HHy8gBfdcqv5RV8BAHfYIh6V/4S9VqmMzpBcUfBfEGRCJg0vcTsj
+oVSpzV0/ASdxitMjsHqIz3q3kNRhRuhZoD/ppsVVlH4zZtefioYecyD2asEzTz6w
+vAMN08chHR/vQiSDMBPDwkJ5Ov1tyPqdpSA4vBuRreWhDpD32ChBd3epEVXjt090
+P0HxddqGR6FXCo9m4z2nTgSFHhAPkrOJE5bNS72hpk94nTfLRMI1DDTKw7J4AO10
+U2mdjaXD5AUyahwE3diMcsxrH+94orE5bmK4yvgLUquBZ+OeRFoH0u8FG7sD3coP
+2YkJewbhSrCQD69hrrR3pluwds3aoe+awj3x2WOk+6NV9xajw0czPs1P3cEw2Dwt
+Fl2+92M6545UUbysL51Dvk+DWp/PRniAL1nBoZ1q9nBlhYIiL7ccr48sXP2PxoZw
+nSQ1BDASCZalS6AFlMhI6A6U/OxIMzEZQr/cq1J9/dwRdrST2VLqiQdaCmsfgmL5
+EVxA1C0tFjOPWwAlzVHB7MisxDp491w6WrxzV3r8x9vCwJZ747+2RNF3z2ah0A56
+bVV6ZTjOK/pAsC0p+cfZS3NOTtvmP8x9QXQFll9WZvVEgFMYaOYkPlL6qwtpdNNR
+r0yOvDy1TLI=
+=FeCh
+-----END PGP SIGNATURE-----
