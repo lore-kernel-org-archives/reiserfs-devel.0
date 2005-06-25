@@ -1,49 +1,42 @@
-From: Theodore Ts'o <tytso@mit.edu>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Fri, 24 Jun 2005 19:06:44 -0400
-Message-ID: <20050624230644.GA20185@thunk.org>
-References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB7B32.4010100@slaphack.com> <1119612849.17063.105.camel@localhost.localdomain> <42BC5D2E.1070307@namesys.com>
+Date: Fri, 24 Jun 2005 17:35:16 -0700
+Message-ID: <42BCA6C4.9060800@namesys.com>
+References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB7B32.4010100@slaphack.com> <1119612849.17063.105.camel@localhost.localdomain> <42BC5D2E.1070307@namesys.com> <20050624230644.GA20185@thunk.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24565-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24566-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <42BC5D2E.1070307@namesys.com>
+In-Reply-To: <20050624230644.GA20185@thunk.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
+To: Theodore Ts'o <tytso@mit.edu>
 Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Fri, Jun 24, 2005 at 12:21:18PM -0700, Hans Reiser wrote:
-> There is an area where we suffered from writing fsck last.  When there
-> are two leaf nodes with the same key range AND the bitmap cannot be
-> trusted to tell us which is the valid one, we don't know which is the
-> most recent, and pick arbitrarily.  Also, if you store a backup of V3,
-> and you don't compress it, and you wipe out the bitmap blocks and need
-> to use fsck, we don't know what blocks are backup image and what blocks
-> are the fs.  We advise users to never store a V3 backup on V3 without
-> compressing it.
+fsck is better in V4 than it is in V3. Users should move from V3 to V4,
+as V3 is obsolete. I agree on that Ted.
 
-Unfortunately, there are plenty of reasons why you might want to store
-a filesystem image on disk besides for backup purposes:
+I also agree that Ted did a great job with fsck.ext*.
 
-	* Regression tests --- I have some 70+ small filesystem images
-		used for e2fsck's regression test suite.  (I am always
-		amazed how many filesystem fsck programs don't have
-		regression test suites.)
-	* Initial ram-disk images
-	* Image files for qemu or user-mode-linux
+V3 was where we learned. There are performance problems in V3 that I
+could only fix by writing V4. The balancing code for V3 was extremely
+difficult to modify because it understood all the internals of the item
+structures, and that is why we based V4 on plugins. V3 had a time where
+it was really useful, and the time when it was the only metadata
+journaling filesystem for Linux was its high point (thanks Chris), but
+its usefulness is leaving us very soon now with V4. In 12 months, after
+V4 has been pounded on by a few million users, few will want to make new
+installs onto V3 instead of V4.
 
-... and probably many more.  None of these are safe to store on a
-reiserfs3 filesystem if you're worried about fsck being robust after a
-disk failure.
+It would be nice if we could concentrate on speeding that transition
+instead of flaming each other.
 
-Funny thing.  When I tell system administrators who have been around
-the block more than a few times about this particular "feature" of
-reiserfs3, they usually very quickly decide that it's time to switch
-to another filesystem.....
+I would like to thank the ext* team, especially Ted, for a great
+filesystem that I used for many years while developing V3, that was
+crucial to the early success of Linux, and that is still useful to a
+great many.
 
-						- Ted
+Hans
