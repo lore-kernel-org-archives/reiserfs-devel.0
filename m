@@ -1,63 +1,51 @@
-From: Valdis.Kletnieks@vt.edu
+From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 plugins
-Date: Fri, 24 Jun 2005 22:20:50 -0400
-Message-ID: <200506250220.j5P2KoFw017143@turing-police.cc.vt.edu>
-References: <tdwebste2@yahoo.com> <20050624093510.4330.qmail@web51301.mail.yahoo.com> <200506241545.j5OFj3Iw014214@laptop11.inf.utfsm.cl> <2f9ccaae050624101329390969@mail.gmail.com> <200506242138.j5OLcPr0025054@turing-police.cc.vt.edu> <2f9ccaae0506241520ffa8aa@mail.gmail.com> <200506250037.j5P0bOWn016330@turing-police.cc.vt.edu>
-            <42BCAAFB.2000200@namesys.com>
+Date: Fri, 24 Jun 2005 21:40:08 -0500
+Message-ID: <42BCC408.8040709@slaphack.com>
+References: <tdwebste2@yahoo.com> <20050624093510.4330.qmail@web51301.mail.yahoo.com> <200506241545.j5OFj3Iw014214@laptop11.inf.utfsm.cl> <2f9ccaae050624101329390969@mail.gmail.com> <200506242138.j5OLcPr0025054@turing-police.cc.vt.edu> <2f9ccaae0506241520ffa8aa@mail.gmail.com> <200506250037.j5P0bOWn016330@turing-police.cc.vt.edu>            <42BCAAFB.2000200@namesys.com> <200506250220.j5P2KoFw017143@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1119666050_6755P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24569-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24570-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Fri, 24 Jun 2005 17:53:15 PDT."
-             <42BCAAFB.2000200@namesys.com> 
+In-Reply-To: <200506250220.j5P2KoFw017143@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: perry@kundert.ca, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Valdis.Kletnieks@vt.edu
+Cc: Hans Reiser <reiser@namesys.com>, perry@kundert.ca, ReiserFS List <reiserfs-list@namesys.com>
 
---==_Exmh_1119666050_6755P
-Content-Type: text/plain; charset=us-ascii
-
-On Fri, 24 Jun 2005 17:53:15 PDT, Hans Reiser said:
-> Valdis.Kletnieks@vt.edu wrote:
-> 
-> > Right - once the VFS hands the call off to reiser4, you're on your own
-> >
-> >as far as I'm concerned..
-> >  
-> >
-> Well, that is all I ask for, and Christophe and company disagree..... 
-> Happy to abstract it more into VFS after the merge if others want it
-> though....
-
-Unfortunately, the only *realistic* path I can see at the moment is to strip
-it down to those reiser4 features that don't require any VFS help/changes to
-do, and pursue VFS changes as a separate issue entirely.
-
-Also, just as a personal note - talking about a "reiser4 plugin that does ext3
-backend storage" doesn't help the cause.  What you *should* be trying to sell:
-
-1) a reiser4 storage backend with backend plugins that follows the VFS conventions.
-2) a vastly enhanced VFS that has VFS plugins and calls reiser4 and ext3 backends.
-
-Approaching it that way will make people think that (a) you really *do* understand
-the VFS/FS layering and (b) are willing to compromise to get things done.. ;)
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
 
---==_Exmh_1119666050_6755P
-Content-Type: application/pgp-signature
+
+Valdis.Kletnieks@vt.edu wrote:
+[...]
+> Also, just as a personal note - talking about a "reiser4 plugin that does ext3
+> backend storage" doesn't help the cause.  What you *should* be trying to sell:
+
+To be fair, I brought that up.  I don't remember if Hans endorsed it,
+but I don't think so.
+
+
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iD8DBQFCvL+CcC3lWbTT17ARAlDaAKCh5zEuuP61CsaV+Tqdx8jJtLAA0wCcDteR
-uVhTkk/ZKP9NHBPvh7yjNlQ=
-=bU1U
+iQIVAwUBQrzEB3gHNmZLgCUhAQKltBAAn4+NAPUwiIem30RtTuE+BskPY8rhPuCq
+ExA/lsbC87MffqEHne5xVMAXGiSNfgb23mab3oQiyvnYy2zOgs0rHLchyAinpw/u
+q/CoZdi8BcSUpR5jlTYf9BVExJ2IPQ3C/MDDTt/LNqOWosipuiauqlKZk9Mvr35+
+nKaA0BRhNbDG9E21ukMGR6/NauJJQwaHR0HE3rxwEyJbtJmpQHX2/YuYv5RhAQFH
+qq0U/67SmIfGBlhxk2fq6OnMR39lvs6kMt2rt6wqPQi9hi8jeAyBh7OXxfjoqpFF
+S6oI81dL+HyR1aqwyIK3rR+QBIH8iCc0wU8IaRbWws1v7SD+PUJcE9TmgWkRpxep
+5bzOYApFsqKTbcCAiTUbPzVeNW1iglNvg9+tCS6cMJ6pRuEAenmJJeRQNRvho1KQ
+7PABQPCzV0DPmX11vsOMJNfxmECKPchpglWtxjq0P6xM9XUxhrAy/S7RxvWlYe/q
+ckt046jFYzZHq29AZxUNRcruqCBk/Px7ZhI6QVEIHOx0J5SM6hBfKSmkj6WYWLKk
+o1l/vgaI5nb24zGnSueSSLn2utrZdQ8hRNGaCEbogMek90ltO4Zv0BEamcBDoDof
+2s+gk4sBQ/muUPJppJ/a317cyV8BCKLknfT1IPa8G9dePWziKbcUNwA2MzR/EzNl
+VywXtawu9uA=
+=P9Qs
 -----END PGP SIGNATURE-----
-
---==_Exmh_1119666050_6755P--
