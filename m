@@ -1,60 +1,74 @@
-From: David Masover <ninja@slaphack.com>
+From: Jesper Krogh <jesper@krogh.cc>
 Subject: Re: reiser4 plugins
-Date: Sat, 25 Jun 2005 01:47:42 -0500
-Message-ID: <42BCFE0E.6050505@slaphack.com>
-References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>	 <42BB31E9.50805@slaphack.com>	 <1119570225.18655.75.camel@localhost.localdomain>	 <42BB7B32.4010100@slaphack.com>	 <1119612849.17063.105.camel@localhost.localdomain>	 <42BCCC32.1090802@slaphack.com> <42BCCCED.3030705@pobox.com>	 <42BCDE06.8080309@namesys.com> <42BCE23E.5060505@slaphack.com>	 <42BCF68F.5030705@namesys.com> <e692861c05062423385ee973ed@mail.gmail.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24583-reiserfs=m.gmane.org@namesys.com>
+Date: Sat, 25 Jun 2005 05:26:36 +0000 (UTC)
+Message-ID: <d9ipuc$gu$1@sea.gmane.org>
+References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB7B32.4010100@slaphack.com> <1119612849.17063.105.camel@localhost.localdomain> <42BCCC32.1090802@slaphack.com>
+Return-path: <reiserfs-list-return-24584-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e692861c05062423385ee973ed@mail.gmail.com>
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Gregory Maxwell <gmaxwell@gmail.com>
-Cc: Hans Reiser <reiser@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
+Cc: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-Gregory Maxwell wrote:
-> On 6/25/05, Hans Reiser <reiser@namesys.com> wrote:
+["Followup-To:" header set to gmane.linux.kernel.]
+I gmane.linux.kernel, skrev David Masover:
+> > Most desktop users today don't have backups because there is no credible
+> > backup technology for 500Gb of data. They may have partial backups. Some
 > 
->>I wonder if Apple is a better
->>social environment for developers these days than Linux?  It would be
->>fun to work with Steve Jobs, he has such a sense of vision and a delight
->>in new things.  He hires good people too; Dominic Giampaolo is really
->>sharp.
+>  Bandwidth is getting faster.  And I just found a nice site for backups
+>  called streamload.com.  They don't seem to support rsync, and allow only
+>  100 meg downloads, but unlimited uploads.
 > 
+>  Few desktop users today really need to backup more than 50 megs of data.
+
+That gives tedious manual work.. and btw, won't save you if you from
+loosing stuff from when the backup was made until now. 
+
+> > things the fs can't deal with - if the disk goes boom then thats a lower
+> > level concern. Also certain bits like writing to spare blocks on a
+> > problem write are indeed handled drive level nowdays.
 > 
-> And trade freedom for this? In the current situation you can release
-[...]
-> The situation right now is somewhat unfortunate, but it is not
-> unsolvable. Trading away freedom is seldom a good deal.
+>  Right.  And putting them in the FS is unneccesary bloat if you've got
+>  another mechanism for dealing with it.  Anyone with 500 gigs of data can
+>  afford to do a little RAID, or at least some burned DVDs.
+> 
+>  DVDs are cheap nowdays:
+>  http://www.newegg.com/Product/Product.asp?Item=N82E16817502002
 
-The irony is killing me.
+Again lots of manual work.. I actually have a DAT-station.. but I'm not
+getting it used. People have DVD-burners, but many don't get time to do
+a backup anyway. A Copy-On-Write feature in the filesystem would save
+the average dataloss situation todag (for home users). Where they
+accidentally deletes stuff. 
 
-Namesys is, I'm told, still quite in debt.  Apple has money.  From a
-certain point of view, it is a good deal...
+>  Streamload.
 
-...but to have your cake and eat it, there's Google...
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Why, when it could be quick and transparent. And Linux is used many
+places where you cant let data out-of-the-house of where bandwidth
+"sucks". The waste-space in my diskdrives increases everyday .. and i
+fill up with a tar-ball of the system every now-and-then, but it would
+definately be better suited and more effecient (save me more times) done
+directly in the filesystem. 
 
-iQIVAwUBQrz+DngHNmZLgCUhAQKd+A//Vif3OzRDdPHuwGVfypfJQ9ptaPUxcv/W
-qR8GJfGL7FNP3cGD4PJMcCJPU0tnjDVWtSDmBRP+qhWnxPq36LcLF7fIznaGcv1K
-zkMS7yA8UQrDtKfFwHRbi3EvOhEKsrnkCKPnuZ1SRa3aNQD2sJ89R+0641PbHnpY
-2g3G7qyc2lIep59I6Eb+b4X4ZHal5BnWf3nUTFrfCt8N9pmQcWxdeTdhw0i2g+A2
-UmB0nG2wL1SOjnsT8M/pFwFdF5Wft+wXrEKD5j6FCzJ/J3TRBJ90iAgWaDb5IK8b
-80EcqNSKYKDzqHly0tM/m2NMDP1vwhsOPCPZlLOKoB1YvBbSuOLtpzWCOcpDuFox
-PuIgdBjyHVuEeY+zdPn2e2UiP5FsYcocT7VJMAwF/JJ+GVdRDci8UDqLtx1iFQ4R
-ukBgJ+9XbCMGOjzRe/GoCcxmsoHGqkcsbK0vaAhCxejQkwwEwr04ycj7BPXKAVMW
-nmmKqCw6Y+8FP7oAoZC3wsR9frF+qQbEQvlmbDQ9oKm0EzRM871V0si3imG3gyyF
-c37Jg1HvgxfYCrvqjkxKzHU3csUvZH9oZDfax1ThvH8D2a3pJuo1oJLdbGseedlh
-k8S7YxCm6hXA82RSHGV8ljo453S4j5QO42sSjlMihEfb6Ft6OsXF1P7Hqjw93uF7
-s69+sVS6Rho=
-=2aOi
------END PGP SIGNATURE-----
+>  I agree it's nice to have a more corruption-proof filesystem.
+>  Convenient.  But not absolutely necessary.
+
+Thats called raid, we have that allready. But raid won't help for and: 
+rm /etc/passwd, a Copy-On-Write filesystem (not-snapshot) would. Used on
+a mirrored raiddisk, with enough space on the disk, it would actually
+guard you from allmost anything but getting the computer stolen. 
+
+Totally unrelated to reiser4 but a feature that would be nice to have in
+"any" filesystem. 
+
+Jesper
+-- 
+./Jesper Krogh, jesper@krogh.cc
+
+
