@@ -1,55 +1,121 @@
-From: David Arendt <admin@prnet.org>
-Subject: 2.6.13 merge
-Date: Sat, 25 Jun 2005 15:08:00 +0200
-Message-ID: <42BD5730.7050308@prnet.org>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: reiser4 plugins
+Date: Sat, 25 Jun 2005 10:20:38 -0400
+Message-ID: <200506251420.j5PEKce4006891@turing-police.cc.vt.edu>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>
+            <42BCD93B.7030608@slaphack.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1119709238_3698P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24586-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24587-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: Your message of "Fri, 24 Jun 2005 23:10:35 CDT."
+             <42BCD93B.7030608@slaphack.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Hi,
+--==_Exmh_1119709238_3698P
+Content-Type: text/plain; charset=us-ascii
 
-Here my personal opinion of merging:
+On Fri, 24 Jun 2005 23:10:35 CDT, David Masover said:
 
-I would find it very usefull the have reiserfs merged into the main 
-kernel, but I think the kernel developers should be able to decide how 
-they want things in. I would propose to continue discussion with kernel 
-developers in order to determine actually how to proceed. What I would 
-for the moment find more important would be to bring out patches as soon 
-as a new kernel version is available. If people know that they find the 
-new patches immediately, they will surely give reiser4 a try. I think 
-the main problem actually is that there will be serveral weeks from the 
-release of a new kernel until the release of the patches. For example in 
-my case I need to upgrade to 2.6.12 due to usb problems with 2.6.11. So 
-what are my options actually ? Well probably I will stop using reiser4 
-and go back to reiser3. Sure, having reiser4 immediately in the kernel 
-would solve this problem, but so would patches coming out little time 
-after a new kernel version is released.
+> But Linux is better.  DOS ain't broke, but Linux is better.  So maybe
+> VFS ain't broke, but plugins would be better.  I guess we'll only know
+> if we let Reiser4 merge...
 
-Here how I would proceed:
+No, we'll only know if we merge something that does plugins at the VFS
+level in a well-designed way.
 
-1. (most important I think) release patches only little time after the 
-kernel is released
-2. look together with kernel developers to find a solution that is 
-pleasant for everyone
+> This was about a hypothetical ext3 format as a reiser4 storage plugin.
+> I'm not sure how this ties into the VFS stuff.
 
-Where I think 1. is much more important than 2. I know lots of people 
-which reason for not using reiserfs is not that it is currently not in 
-kernel, but because patches need a long time to be available after the 
-kernel release.
+Very poorly.  There's only two interpretations of "ext3 as a reiser4 plugin"
+that make *any* sense.  The first is that reiser4 is totally violating the VFS
+layer boundary, and the second is that reiser4 is trying to be an all-singing
+all-dancing wankfest.  Later on, you say:
 
-Also please don't get me wrong with this. I am not trying to say that 
-reiserfs developers don't work hard, but perhaps development priorities 
-should be changed a bit, as kernel patches being there  in time is in my 
-opinion more important than adding features or changing to be ready for 
-inclusion in kernel. I really appreciate your hard work and give you 
-much respect.
+> A lot of what people like about ext3 is its stability and fairly
+> universally accepted format.  A lot of what people like about XFS is its
+> stability and speed, mainly with large files.  A lot of what people like
+> about Reiser4 (as it is today) is its speed, with large and especially
+> with small files.
 
-Bye,
-David Arendt
+Now *think* for a moment - how does a hypothetical Reiser4 using ext3 format
+gain any speed advantage with small files, when the speed advantage is based
+on using a format other than ext3?
+
+As I said, either it's violating the VFS boundary, or it's busy wanking.
+
+The Reiser4 proponents would be well served to disavow that particular
+hypothetical example - I have yet to see *anything* that does more damage
+to the Reiser4 cause.
+
+> So, in this hypothetical situation where ext3 is a reiser4 plugin,
+> suddenly all the ext3 developers are trying to improve the speed and
+> reliability of reiser4, which benefits both ext3 and reiser4, instead of
+> just ext3.
+
+Or we can do what *should* be done, which is:
+
+a) Put the crack pipe down.
+
+b) Tell reiser4 to get its grubby little paws off the VFS if it ever intends
+to have a chance of being merged in mainline.
+
+c) Have a *separate* project to improve the speed/reliability/function of
+the VFS layer, which is the only way that your vision of having the ext3 and
+reiser developers cooperating will ever happen.
+
+Yes, the VFS could probably use an overhaul.  But that *will* happen like this:
+
+1) A patch is submitted and passes review to change the VFS.
+2) If appropriate, a patch for reiser4 (if it gets merged) is also submitted
+(possibly by the same people) to be the first user of the new API/functionality.
+
+There's a *reason* why we see patch streams that look like:
+
+Patch 1/3: Add moby_foo_init function to nautical core.
+Patch 2/3: Modify white_whale driver to use moby_foo_init
+Patch 3/3: Modify captain_ahab driver to use moby_foo_init
+
+> Aside from what someone else already said about this, why not just have
+> support for accessing, say, a .gpg file as transparently decrypted?  You
+> don't even need file-as-directory, just create a file called foo which
+> is really the decrypted version of foo.gpg.  No need to change the
+> format, just the filesystem.
+
+I don't think this is what they mean by "Linux gives you enough rope to
+shoot yourself in the foot with"...
+
+> Plus, as someone else said, it's much easier to do
+> $ vim /some/encrypted/file
+> than
+> $ gpg --decrypt /some/encrypted/file > /some/decrypted/file
+> $ vim /some/decrypted/file
+> $ gpg --encrypt /some/decrypted/file > /some/encrypted/file
+> $ shred /some/decrypted/file
+
+You've totally failed to understand that the whole *point* of PGP is that 'vim
+/some/encrypted/file' *isnt* easy to do.  A better example might be the various
+crypto-loop-ish variants or Microsoft's EFS, where the key management model is
+more tractable to this sort of automation.
+
+
+--==_Exmh_1119709238_3698P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFCvWg1cC3lWbTT17ARAqE4AJwKKsz/KeL2vNfsEJOe9piqK8eMAQCdFCPL
+rTf73AOC1LRF3Y1NUKvyJNg=
+=mHH5
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1119709238_3698P--
