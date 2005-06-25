@@ -1,20 +1,20 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 plugins
-Date: Fri, 24 Jun 2005 22:38:00 -0500
-Message-ID: <42BCD198.9070208@slaphack.com>
-References: <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl>
+Date: Fri, 24 Jun 2005 23:10:35 -0500
+Message-ID: <42BCD93B.7030608@slaphack.com>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24575-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24576-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl>
+In-Reply-To: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
@@ -22,156 +22,268 @@ Hash: SHA1
 Horst von Brand wrote:
 > David Masover <ninja@slaphack.com> wrote:
 > 
->>Alan Cox wrote:
+>>Horst von Brand wrote:
 >>
->>>On Iau, 2005-06-23 at 23:04, David Masover wrote:
+>>>David Masover <ninja@slaphack.com> wrote:
+>>>
+>>>>Hans Reiser wrote:
+>>>>
+>>>>>Jeff Garzik wrote:
 > 
 > 
-> [...]
+>>>[...]
+> 
+> 
+>>>>>You missed his point.  He is saying ext3 code should migrate towards
+>>>>>becoming reiser4 plugins, and reiser4 should be merged now so that the
+>>>>>migration can get started.
+> 
+> 
+>>>>Sort of.
+>>>>
+>>>>I think ext3 would be nice as a reiser4 plugin.
+> 
+> 
+>>>What for? It works just fine as it stands, AFAICS.
+> 
+> 
+>>So does DOS.
+> 
+> 
+> I'm sorry?
+> 
+> 
+>>             Do you use DOS?
+> 
+> 
+> Good riddance, no! Not for something like 15 years.
 
 [...]
 
->>>>"Ain't broke" is the battle cry of stagnation.
+>>"Ain't broke" is the battle cry of stagnation.
 > 
 > 
->>>Its also the battle cry of everyone over the age of 20 who also has a
->>>real job to do 8)
-> 
-> 
->>You caught me.  I'm not over 20.  But I have a real job, with a company
->>that understands the difference between "ain't broke" and "works well".
-> 
-> 
-> "Doesn't work well" /is/ the definition of "broken". Modulo how irritating
-> the "not working well" is...
+> I see it as the battle cry of those that are looking for /real/ problems to
+> solve.
 
-Well, I agree with you there, but to most people, "broken" = "Doesn't
-work at all."  Stagnation happens when people cling to the old way of
-doing something until they are actually forced to change.
+I'll refer you to my other rant about stagnation and oil.
 
-One example of this is energy.  Why do we still burn coal and oil?  Even
-lithium ion batteries still give a 200-300 mile range on one electric
-car I was looking at.  There is enough wind in Iowa alone to power half
-the country, and if we were to put up a bunch of solar panels in Nevada,
-we'd be done.  With the money we would save on not buying oil, we could
-finish the fuel-cell technologies being worked on, and eventually, the
-US would get its energy entirely from clean sources.
+And, listen to yourself.  "Good riddance, no, I don't use DOS" but
+"Ain't broke is the battle cry of those looking for real problems to solve."
 
-For that matter, we'd easily save enough money, not to mention the
-public health benefits (no more smog), to pay for the transition
-(building hydrogen pumping stations and such, buying new cars...)
+You can solve real problems in DOS, it's usable, it ain't broke, there
+are even some decent games (doom) and windowing systems (win3.1 and
+others) for it.
 
-But people don't like to change.  So we burn oil and make smog and choke
-on our own stupidity.
+But Linux is better.  DOS ain't broke, but Linux is better.  So maybe
+VFS ain't broke, but plugins would be better.  I guess we'll only know
+if we let Reiser4 merge...
 
-That debate really belongs off-list, by the way.  All flames on this
-topic, hit "reply", not "reply-to-all".
+>>But, there are some things Reiser does better and faster than ext3,
+> 
+> 
+> Yes, I've heard it is supposed to be faster on huge directories, and
+> doesn't run out of inodes. And it is more efficient spacewise on small
+> files. But then again, space is extremely cheap today...
 
->>>>But, there are some things Reiser does better and faster than ext3, even
->>>>if you don't count file-as-directory and other toys.  There's nothing
->>>>ext3 does better than Reiser, unless you count the compatibility with
->>>>random bootloaders and low-level tools.
-> 
-> 
->>>Certainly compared with reiser3 you've missed a few out including
->>>resilience to disk errors (nearly nil on reiser3), and SMP scaling.
-> 
-> 
->>Actually, I was talking about reiser4.  And Hans corrected me on that...
->>
->>Although resilience to disk errors isn't a design decision.  That's what
->>SMART and new hard drives are for.  And if you're stubborn enough to
->>keep the same FS around, there's dm-bbr.
-> 
-> 
->>I think Hans (or someone) decided that when hardware stops working, it's
->>not the job of the FS to compensate, it's the job of lower layers, or
->>better, the job of the admin to replace the disk and restore from
->>backups.
-> 
-> 
-> Handling other people's data this way is just reckless irresponsibility.
-> Sure, you can get high performance if you just forego some of your basic
-> responsibilities.
+Speed isn't.  CPU is, but not disk speed.  And packing stuff more
+efficiently, without actually compressing it, will give you some of that
+speed.
 
-Who's responsibility?
+Also, space is not so cheap that I won't take 25% more.
 
-It's the responsibility of the user to back up their files.  Sure, this
-time it was just a little dust, but maybe next time it'll be coffee
-spilled on the box.  Or maybe a power surge.  Maybe someone just gets
-mad enough and kicks the computer very hard.
+> And again, on a list around here I've seen several cries for help with
+> completely hosed filesystems, all ReiserFS. No solution has ever come
+> forth.
 
-Reiser4 has been absolutely immune to power loss for me, and quite
-stable in the face of some corruption, but as soon as I see bad blocks,
-I throw out the disk, I don't try to make the FS deal with it.  And
-that's all that's missing right now -- a way to use a disk which has
-some bad blocks -- and that's implemented by dm-bbr if you're that stubborn.
+I haven't been counting, but I've seen a number of solutions fly around
+reiserfs-list for people with reiser4 problems.
 
-Ultimately, disks are cheap.  Cheaper than data loss.
+>>                                                                    even
+>>if you don't count file-as-directory and other toys.  There's nothing
+>>ext3 does better than Reiser, unless you count the compatibility with
+>>random bootloaders and low-level tools.
+> 
+> 
+> For me, those are quite critical...
 
->>>>You know how many I've had thrashed on Reiser4?  Two.  The first one was
->>>>with a VERY early alpha/beta, and the second one was when I dropped a
->>>>laptop and the disk failed.
-> 
-> 
->>>Entirely or bad blocks ? The latter should have a minimal cost on a well
->>>designed fs.
-> 
-> 
->>I was able to recover from bad blocks, though of course no Reiser that I
->>know of has had bad block relocation built in...  But I got all my files
->>off of it, fortunately.
-> 
-> 
-> And if the bad blocks had been on files? 
+There have been patches...
 
-Then no FS would save me.
+>>>>                                               Not everyone will want
+>>>>to reformat at once, but as the reiser4 code matures and proves itself
+>>>>(even more than it already has),
+> 
+> 
+>>>I for one have seen mainly people with wild claims that it will make their
+>>>machines much faster, and coming back later asking how they can recover
+>>>their thrashed partitions...
+> 
+> 
+>>You know how many I've had thrashed on Reiser4?  Two.  The first one was
+>>with a VERY early alpha/beta, and the second one was when I dropped a
+>>laptop and the disk failed.
+> 
+> 
+> OK. Know how many I thrashed with ext2/3? I remember 3, could have been as
+> many as 5. One was due to a failed disk, another one because of DMA to a
+> disk causing slow corruption. Another one I believe was due to a odd kernel
+> compiled with a snapshot gcc a long time back, plus power loss at the wrong
+> time. And that is from using ext2/3 since they were in early beta. On
+> several machines at the same time, over years. I'd have to say that there
+> isn't much of a difference.
+> 
+> 
+>>And it does make certain things faster.  For one thing, "emerge sync" on
+>>Gentoo is twice to four times as fast, and /usr/portage is 75% as big,
+>>as on ReiserFS (3).
+> 
+> 
+> That can't all be due to on-disk format.
 
-> [...]
+It's not compression.  What do you think it is?
+
+To be fair, it's gotten a bit slower recently.  Wish that repacker was
+done.  I think it's actually gotten just a little slower than it ever
+was on v3, but v3 was awhile ago for me, and Gentoo has been growing a
+lot.  /usr/portage is probably twice as big now as it was then.
+
+If you want, I can do some unscientific benchmarks.
+
+>>>>                                the ext3 people may find themselves
+>>>>wanting some of the more generic optimizations.
 > 
 > 
->>>In which case the features belong in the VFS as all those with
->>>experience and kernel contributions have been arguing.
+>>>They'll filch them in due time, don't worry.
+> 
+> 
+>>Duplication of effort.  With plugins, we can optimize the upper layers
+>>of ALL filesystems, regardless of the lower layers, in such a way that
+>>it is optional.
+> 
+> 
+> Generic optimizations how, if they need VFS support?!
+
+This was about a hypothetical ext3 format as a reiser4 storage plugin.
+I'm not sure how this ties into the VFS stuff.
+
+>>                 I'm sure it's far easier to write a Reiser storage
+>>plugin than a brand new FS.
+> 
+> 
+> Comparing apples and oranges tells you what?
+
+That I'd rather have oranges?
+
+A lot of what people like about ext3 is its stability and fairly
+universally accepted format.  A lot of what people like about XFS is its
+stability and speed, mainly with large files.  A lot of what people like
+about Reiser4 (as it is today) is its speed, with large and especially
+with small files.
+
+Those are broad and somewhat uneducated statements, but I doubt most
+people care what FS they are using if the stability and performance is
+what they want.  In that case, why have so much duplicated effort
+between different filesystems -- even between ISO and UDF and Reiser and
+XFS -- when most of what's really different is the on-disk format and
+the optimization?
+
+So, in this hypothetical situation where ext3 is a reiser4 plugin,
+suddenly all the ext3 developers are trying to improve the speed and
+reliability of reiser4, which benefits both ext3 and reiser4, instead of
+just ext3.
+
+>>Eventually, once competition is only based on storage format, we could
+>>end up with just one format.  Just one filesystem!  (except for
+>>fat/ntfs/iso/udf/network...)  And in the open source world, sometimes a
+>>single product is a good thing.
+> 
+> 
+> Sorry, I don't think this will come to pass in our lifetime, if ever. There
+> are different requirements, and the way to cater to them is different
+> solutions. That has always been what Linux (as opposed to the propietary
+> and even some open source systems) is all about...
+
+egrep and fgrep are the same program.  A lot of the code is shared, I'm
+sure.  But you change some settings and they suddenly solve entirely
+different problems.
+
+You don't need a wholly different solution if you can adapt an existing
+one.  That's what plugins are all about -- adapting one solution to any
+number of requirements, so that people can focus on making that one
+solution better.
+
+But, you may be right about it not happening in our lifetime, as I said:
+
+>>>>But, I don't think that will realistically happen at all.
+
+People are stubborn.
 
 [...]
 
->>More infuriatingly, I, at least, have a distinct feeling that once all
->>the issues are fixed, an entirely different crowd of benevolent
->>dictators will come around and say that we can't get in because we
->>change the VFS.  At least some people on this list have said things to
->>that effect.
+>>>>                  and vfat people may decide they want cryptocompress,
 > 
 > 
-> The dictators here have changed over time, sure. Their general attitude has
-> been the same all the way through, since the list started. And you might
-> not like it that way, but I am sure Linux is of the current high quality
-> exactly because any core code that gets into the kernel (and a new
-> filesystem that wants to be central is clearly of this kind) is checked by
-> multiple people with (sometimes widely) diverging backgrounds, interests,
-> and views. Linus himself has stated more than once that his principal job
-> isn't to integrate code into the kernel, but leaving stuff out.
+>>>I'm sure they don't, because it is mostly for Windows and assorted devices
+>>>(pendrives, digital cameras, ...) compatibility.
+> 
+> 
+>>I, for one, would like to use a pendrive and have certain files be
+>>encrypted transparently, only for use on Linux, but others be ready to
+>>transfer to a Windows box.
+> 
+> 
+> And that would surely break Windows compatibility (because you have to keep
+> the data on what to encrypt one the filesystem itself). Besides, having
 
-I mean, half of the benevolent dictators at any given time don't seem to
-like reiser4 for some reason or other.  I get the feeling that if we
-satisfy that half, the way in which we do it will irritate the other
-half.  But I don't know, and I'm going to leave the more specific
-debates soon.
+Aside from what someone else already said about this, why not just have
+support for accessing, say, a .gpg file as transparently decrypted?  You
+don't even need file-as-directory, just create a file called foo which
+is really the decrypted version of foo.gpg.  No need to change the
+format, just the filesystem.
+
+> pgp, or gpg, or crypt, or my own whacky encryption proggie do the job in
+> /userland/, and not shoving into the kernel and so down the next user's
+> throat, is in the end a largeish part of what Unix is all about for me.
+
+Do you use ipv6?  I don't.  And it's not shoved down my throat, either,
+although it's in the kernel.  I simply disable it, and you would (I'm
+sure) disable the crypto stuff.
+
+Plus, as someone else said, it's much easier to do
+$ vim /some/encrypted/file
+than
+$ gpg --decrypt /some/encrypted/file > /some/decrypted/file
+$ vim /some/decrypted/file
+$ gpg --encrypt /some/decrypted/file > /some/encrypted/file
+$ shred /some/decrypted/file
+
+Not to mention, shred doesn't work on modern filesystems, so you need to
+either patch vim (and any other program you might want to use), create
+an actual ramdisk, or deactivate swap and mount a tmpfs.
+
+
+
+On doing stuff in userland:  I am all for moving tons of stuff to
+userland, but not until someone does a microkernel right, if it's even
+possible.  And even then, I'd probably still use Linux and argue for
+some stuff in the kernel, because Linux has developers.  Developers.
+Developers.  Developers.
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQrzRmHgHNmZLgCUhAQIOyw//bL4sUYQyGSwjKnKZxTznzNnchn0rpNsx
-PnxrQEvETtkqFlidToJPKDEP3H32tE5W3SeONhIprbQVOK9BagI5Ojm+AhM8pXXa
-8K0NJmedlnjMJp5yAxbB+dIwPQ8IN8cG7cdeZCi4ij76yKiDFEqZHXrpm/bvXcbB
-jzzOF86XPVfexGOUQkwDpR0gmFeY+zIp3+7TGKwG17xHYOej7KpyQctYB7e1me9t
-MKFll/2USUAglvtdHQ6on2T9slmBTRMny4OFJXKnBTo6rILBTvo6sxC3hG2lv1lN
-RYXHOd/AV/JQHzhZ1f1vRAn9VxdsUkMgvcOq3k3+ofUP86b1VqxsqGP4Mv3S8uka
-hghTqBh7ivOr5llCwUHudDIXjRzNw1UBwi6UBC+YB0QQzR3vzc3Q0rvkD1v6hoV+
-Li+sX0GhgjaIDzTE+e1rJOAlTAIxeQ9dRMDVBOR5b9HVtkxZ20SSdagDSeHz9JPH
-Lv0JmqkvYgVf703a3wt56FpTIMd7XvY6dUSR9u3k1xUGQg2jeJA0gZ3tySSogKbT
-xick+z+m1THTIyA5tXA1JRS1+GNAc4yCL4mHPcUKVWPsKfxaIDB4/+6eCll7Ctxz
-XzP6s8nv4HkPAsWe1iLvJmuUXdiradC87MJiDGCKM6mbNZ0hFGnKa8zG8nI4C/Ua
-qHz+cXVkgi8=
-=QFCz
+iQIVAwUBQrzZOngHNmZLgCUhAQLk/w//dwfRaR5mtrznECpLMtpfNTm/n0EK2gqC
+ABYClsvcyKPzFtRTYnhZmBmVvAIueJpaReRmrR3QryESoeD6zftrxpuyvgcxxFRA
+BUIZcXKtqDF7ILmwCgSN0kB3ltD859q0E9ceJz5/lQZJwIJ2JN1huDM9xsOtw4sW
+5HZEwSd6C46HArHD5fnnljppCgxV9ozVDfVzWs2GHU9r9cYZ+y9FU/kWIiuw78Ub
+fSSF7UqXd+QP0PWkkC7bAA9EtePT4Xd875WX7etgUmJRqVbf6erzPNq34b8V4r0r
+6o2QFd5j4ZjpUvAeUzlMivSwFl10Yta+I9E3MHkYIm/86pX3GmPY5W24YfkDKsdS
+Y1odr3HYHt16QIJF3MPO3724PsSax+c9vmF7ANU+2QadtyQFrU0aasKxehTPnp9M
+PjShkWpWLGCG2YyesM3lq2HzydbljBraFUfzK9LKKoTqBk0jd6kcUrP8869NPo94
+/stcyLSa/1gSAsSX+97Gs8CpQZ9JeJp7cMyDdrbR68h0xAg+UGK7tDez5j7VY9kc
+cSNo+T+W8OBiRPfz7Zg39ltHIeaPT/8THPKRmOLHWXK2duW+RmZBTDPK22Cwbv83
+0f9RgRtm1q1FYG1q4gH373V/hjmvZIXGrN+/I5mU6P43iVrLuz/7MIWAGkQyXS3M
+nOCoZV7WiHY=
+=XUC1
 -----END PGP SIGNATURE-----
