@@ -1,157 +1,206 @@
-From: David Masover <ninja@slaphack.com>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: reiser4 plugins
-Date: Sat, 25 Jun 2005 22:14:34 -0500
-Message-ID: <42BE1D9A.80006@slaphack.com>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu>            <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24603-reiserfs=m.gmane.org@namesys.com>
+Date: Sun, 26 Jun 2005 00:01:39 -0400
+Message-ID: <200506260401.j5Q41iR4024249@laptop11.inf.utfsm.cl>
+References: <ninja@slaphack.com>
+Return-path: <reiserfs-list-return-24604-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu>
+In-Reply-To: Message from David Masover <ninja@slaphack.com> 
+   of "Fri, 24 Jun 2005 23:10:35 EST." <42BCD93B.7030608@slaphack.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Valdis.Kletnieks@vt.edu
+Content-Transfer-Encoding: 7bit
+To: David Masover <ninja@slaphack.com>
 Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-Valdis.Kletnieks@vt.edu wrote:
-> On Sat, 25 Jun 2005 13:33:27 CDT, David Masover said:
-> 
->>>Now *think* for a moment - how does a hypothetical Reiser4 using ext3 format
->>>gain any speed advantage with small files, when the speed advantage is based
->>>on using a format other than ext3?
-> 
-> 
->>happen in RAM.  If you do a ton of work with a dataset that stays in
->>RAM, Reiser probably performs as well or better than a ramdisk, because
->>changes that get overwritten while still in RAM never actually touch the
->>disk.
-> 
-> 
-> At that point, since the actual buffer management is being done at the VFS
-> level (see fs/buffer.c and friends) what you're really comparing is the speed
-> of journalling metadata - at which point you need to be *very* careful to
-
-No, just metadata.
-
-> specify exactly what configuration you're talking about.  If you don't believe
-> me, investigate why mounting a filesystem with 'noatime,nodiratime' can make a
-> dramatic difference totally independent of the underlying filesystem, but the
-> actual amount of gain is dependent on format (hint - how far do the heads have
-> to move to record 3 atime updates against 3 random inodes on an ext2, an ext3,
-> and a VFAT filesystem, assuming no other disk activity), and why
-> ext3 has 3 different modes data=ordered/writeback/journal.
-
-I'm not saying format doesn't matter for _all_ optimizations, but there
-are some common ones for which it does matter.
-
->>       Reiser also doesn't fragment as quickly as ext3, and I don't
->>think that has anything to do with its format.
-> 
-> 
-> Care to explain why it's not format-dependent? 
-
-Reiser4 and XFS both do lazy allocation.  They both avoid allocating
-blocks until they run out of buffer RAM.  When they have to, they
-allocate and flush everything.
-
-This may have changed a bit -- Hans was talking about a more stack-like
-system, to avoid the system locking up for tens of seconds at a time
-while ALL ram is flushed -- but the principle is the same.
-
-That principle is that if you have a large chunk of data to allocate all
-at once, you are more likely to know how it should be arranged on disk.
- If you allocate every write(2) or every 5 seconds, how do you know if
-they are writing 2K or 2 gigs?  You might try to pack it into 1 meg of
-space, then 5 megs, and so on, but you end up with quite a fragmented file.
-
-With allocate-on-flush, if you've got more like 100 megs to allocate at
-once, you can find space for that 100 megs.  In fact, with the Reiser
-format, you can pack lots of tiny (much less than a block) files
-together to save space and speed things up.
-
-But the lack of fragmentation is not format-dependent.
-
->>The FS that gets merged ahead of time without plugins would no longer be
->>Reiser4.  Go read the whitepaper, or tell me why I'm wrong, but even
->>symlinks are implemented as plugins.
-> 
-> 
-> Which is another way of saying Reiser4 can't be merged in its present form.
-
-Actually, I'll have to go back on this a bit.  There are different kinds
-of plugins, and I'm not sure exactly which people want in the VFS.  This
-may be because nobody's said that, though.
-
-Still, while plugins may not depend on Reiser, Reiser depends on plugins.
-
->>Actually, plugins are just as easy or easier than crypto-loop or
->>dm-crypt.  And why shouldn't my crypto be easy?  Most users are insecure
->>in all kinds of ways because of that attitude -- security is HARD, so I
-> 
-> There's a vast distinction between "easy for implementors" and "easy for
-> users".  Jaari Russo's loop-aes stuff does a wonderful job of being "easy for
-> users" - just say "mount", answer the passphrase, and you're good to go.  The
-
-Not as easy as a plugin, though.  Per-file granularity is nice.
-Especially on a USB key, where you're changing the files all the time.
-Sometimes you want just a few (encrypted) SSH/GPG keys and a bunch of
-(unencrypted) mpegs, and sometimes you want just a few (unencrypted)
-HTML files and a bunch of (encrypted) top-secret blueprints in extremely
-high-res JPEG/PNG format.
-
-A loop file on a keychain is only slightly better than partitions.
+David Masover <ninja@slaphack.com> wrote:
+> Horst von Brand wrote:
+> > David Masover <ninja@slaphack.com> wrote:
+> >>Horst von Brand wrote:
+> >>>David Masover <ninja@slaphack.com> wrote:
+> >>>>Hans Reiser wrote:
+> >>>>>Jeff Garzik wrote:
 
 [...]
-> Meanwhile, PGP was designed to be used in an environment where you could do
-> this:  "Today's secret plans are AES256 encrypted.  The key is the next key in
-> your one-time-pad book, XOR'ed with your 128-bit secret key - do it in your head".
-> (And yes, you can easily memorize a 16-digit hex number and learn to do an XOR
-> with another 16-digit number, if failing to do so means you could end up dead).
-> 
-> This is inconvenient for the user, but intractable for an attacker to create a
-> scenario where they can just 'vi /each/decrypted/file' ;)
 
-Just as intractable the plugin way.  Not to mention, setting up a
-ramdisk properly and decrypting to said ramdisk is a step you might
-forget, which might put your files on the disk unencrypted.  Much more
-unforgivable than the heinous crime of making top-secret government work
-easier!
+> >>"Ain't broke" is the battle cry of stagnation.
 
->>won't do it.  If security is transparent, just enter a password and go,
->>then more people would do it.
-> 
-> 
-> "Just enter a password and go, then more people would do it".
-> 
-> Two words: "phishing e-mail".
+> > I see it as the battle cry of those that are looking for /real/
+> > problems to solve.
 
-If someone's going to learn about crypto, they are going to learn about
-how to avoid phishing scams.  Both can be easy.
+> I'll refer you to my other rant about stagnation and oil.
 
-After all, private/public keys can be made user-friendly and secure.  At
-the same time!
+Read it. Makes no sense, wind and solar power have their /own/ problems,
+environmentally speaking. Besides, as things stand today, they are *extremely*
+expnsive and hard to use, so next to useless (for now).
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+> And, listen to yourself.  "Good riddance, no, I don't use DOS" but
+> "Ain't broke is the battle cry of those looking for real problems to solve."
 
-iQIVAwUBQr4dmngHNmZLgCUhAQLJVA//WE20P/91cVuDclUT0W6bOX8bJvycOilB
-v55mUI9eoTdWink80RNo8QZ4aM1sidOrbtKglNmWdku1Fr80JW8HEPeQWRWR8PUL
-midO7ulTfRldBdM0mU+Ojl+Dj8vln6Qr+80Rveo5XDUlcWVwKHH7d87ONlFRlwIO
-NZMQXbB90huexJVoiITIGkFcDeoSdth/Em3cKjGhoEpreGkw6DuQzvS3aTOV+Fw4
-c8neGsw2Tnx05+LuwE1VKxL7aV6U/Z0JDXwMqJtvINvkxnu6mKR++hRkWKW374LY
-71idZzBu92oTNlEl02+y/EUGGU7+TMtduTo98ww4eN9r8bpB/WbMuOm+w05EKHKg
-H1OT1CX+G4sP/0GZaslPzh8z7cGI6318FN3Twk922J8t3dWcmNer4ULt6rp+c/38
-stjbammdaBTWNTYg/BjZ+oedhMa4BHVTzwU2R0HpEzI3EIj/5rjek/D1cWzuBu/C
-NQ4QfVKJPHLgjKK4DV3iLQTkNpXC2skcluJ4FC1c+VYZTx8wvIrVUmJfPJajLAVg
-en42jbCYzdldtzR/yYal3b7KCeJoi1x1PUvStgL6iWSe7MjEJoF4jV/TcmE2gLf3
-RzQUQ0UuMMisdQ2qbKAA3BrbZV239P/HUtyZdnIj8yWX4hF5Hhu7G1Ncz545VCdk
-+e0D/XVpgbc=
-=EBr/
------END PGP SIGNATURE-----
+> You can solve real problems in DOS,
+
+Sure. But not all (or even most) problems I'd like to solve with a computer
+as of today. So...
+
+>                                     it's usable, it ain't broke, there
+> are even some decent games (doom) and windowing systems (win3.1 and
+> others) for it.
+
+Sure. But that's not enough.
+
+> But Linux is better.  DOS ain't broke,
+
+For me, it is.
+
+>                                        but Linux is better.  So maybe
+> VFS ain't broke,
+
+I think it is doing fine.
+
+>                  but plugins would be better.
+
+Maybe. It's up to /you/ to convince the head kernel hackers (and me on the
+way).
+
+>                                                I guess we'll only know
+> if we let Reiser4 merge...
+
+No. Just like devfs was "the obvious right way", it /had/ to be merged
+ASAP, "wrinkles will be ironed out later". Turned out it wasn't wrinkles,
+but fundamental brokenness, and it was soon abandoned by the people who
+promised to maintain it forever. And now we have the flamewar about its
+removal...
+
+> >>But, there are some things Reiser does better and faster than ext3,
+
+> > Yes, I've heard it is supposed to be faster on huge directories, and
+> > doesn't run out of inodes. And it is more efficient spacewise on small
+> > files. But then again, space is extremely cheap today...
+
+> Speed isn't.  CPU is, but not disk speed.  And packing stuff more
+> efficiently, without actually compressing it, will give you some of that
+> speed.
+
+For my current uses, ext3 is plenty fast enough. No pressing need to change.
+
+> Also, space is not so cheap that I won't take 25% more.
+
+It is cheap enough that I can't realistically fill the disks I have with
+/usefull/ stuff. So...
+
+> > And again, on a list around here I've seen several cries for help with
+> > completely hosed filesystems, all ReiserFS. No solution has ever come
+> > forth.
+
+> I haven't been counting, but I've seen a number of solutions fly around
+> reiserfs-list for people with reiser4 problems.
+
+It was ReiserFS 3. Maybe the problems are fixed now, but as they say about
+burned children...
+[...]
+
+> A lot of what people like about ext3 is its stability and fairly
+> universally accepted format.  A lot of what people like about XFS is its
+> stability and speed, mainly with large files.  A lot of what people like
+> about Reiser4 (as it is today) is its speed, with large and especially
+> with small files.
+
+Right. And mushing it all together is way more likely to combine all /bad/
+features than to retain some of the /good/ ones.
+
+> Those are broad and somewhat uneducated statements, but I doubt most
+> people care what FS they are using if the stability and performance is
+> what they want.  In that case, why have so much duplicated effort
+> between different filesystems -- even between ISO and UDF and Reiser and
+> XFS -- when most of what's really different is the on-disk format and
+> the optimization?
+
+Because they are different on-disk and are optimized for different uses,
+perhaps? I can't use ext3 for reading my CDs, I need NTFS to access the
+Windows partition here, ...
+
+> So, in this hypothetical situation where ext3 is a reiser4 plugin,
+> suddenly all the ext3 developers are trying to improve the speed and
+> reliability of reiser4, which benefits both ext3 and reiser4, instead of
+> just ext3.
+
+I guess that it won't ever turn out to be that simple. ext3 developers will
+have to consider not screwing up XFS, etc. And I don't see any real
+difference there from where we stand today... just a bigger mess: VFS with
+ReiserFS with plugins for ext3, instead of VFS with ext3. No gain, much
+pain.
+
+[...]
+
+> > And that would surely break Windows compatibility (because you have to keep
+> > the data on what to encrypt one the filesystem itself). Besides, having
+
+> Aside from what someone else already said about this, why not just have
+> support for accessing, say, a .gpg file as transparently decrypted?
+
+That should, if anything, be a /user/ decision, not a /kernel/ one. Even
+sometimes decrypt, sometimes don't.
+
+>                                                                      You
+> don't even need file-as-directory, just create a file called foo which
+> is really the decrypted version of foo.gpg.  No need to change the
+> format, just the filesystem.
+
+No need to change the filesystem, learn to use the tools at hand.
+
+> > pgp, or gpg, or crypt, or my own whacky encryption proggie do the job in
+> > /userland/, and not shoving into the kernel and so down the next user's
+> > throat, is in the end a largeish part of what Unix is all about for me.
+
+> Do you use ipv6?
+
+Sometimes.
+
+>                   I don't.  And it's not shoved down my throat, either,
+> although it's in the kernel.  I simply disable it, and you would (I'm
+> sure) disable the crypto stuff.
+
+An Internet standard is a quite different kettle of fish than the pet
+experimental filesystem for a minority operating system...
+
+> Plus, as someone else said, it's much easier to do
+> $ vim /some/encrypted/file
+> than
+> $ gpg --decrypt /some/encrypted/file > /some/decrypted/file
+> $ vim /some/decrypted/file
+> $ gpg --encrypt /some/decrypted/file > /some/encrypted/file
+> $ shred /some/decrypted/file
+
+So what? Write your script to do it. Or use emacs, I'm sure it either has
+now or will soon have a plugin for it... much easier to develop, much more
+flexible to use, ...
+
+> Not to mention, shred doesn't work on modern filesystems, so you need to
+> either patch vim (and any other program you might want to use), create
+> an actual ramdisk, or deactivate swap and mount a tmpfs.
+
+Right. And all this complex futzing around (and making sure the unencrypted
+data doesn't remain if the power is cut in the right moment, and...)
+
+> On doing stuff in userland:  I am all for moving tons of stuff to
+> userland, but not until someone does a microkernel right, if it's even
+> possible.  And even then, I'd probably still use Linux and argue for
+> some stuff in the kernel, because Linux has developers.  Developers.
+> Developers.  Developers.
+
+Sorry, I don't buy this. Linux (the kernel) has tons of developers. But
+that doesn't mean everybody is interested in everything. Just like there
+are probably much more userland developers (for one, it is /much/ easier to
+work with...), and there not everybody is interested in everything. Putting
+stuff in the kernel that doesn't belong there (== can't be done elsewhere)
+is useless bloat.
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+
