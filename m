@@ -1,121 +1,53 @@
-From: Reuben Farrelly <reuben-lkml@reub.net>
+From: Lincoln Dale <ltd@cisco.com>
 Subject: Re: reiser4 plugins
-Date: Sun, 26 Jun 2005 18:51:04 +1200
-Message-ID: <42BE5058.4070307@reub.net>
-References: <fa.d8odcmh.1u56sbb@ifi.uio.no> <fa.cg8nk4u.jj8tqg@ifi.uio.no>
+Date: Sun, 26 Jun 2005 17:09:06 +1000
+Message-ID: <42BE5492.4030903@cisco.com>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu>            <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <42BE3A90.1090403@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24611-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24612-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <fa.cg8nk4u.jj8tqg@ifi.uio.no>
+In-Reply-To: <42BE3A90.1090403@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Alan Cox <alan@lxorguk.ukuu.org.uk>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: David Masover <ninja@slaphack.com>
+Cc: Hans Reiser <reiser@namesys.com>, Valdis.Kletnieks@vt.edu, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Hi Hans,
+David Masover wrote:
 
-On 25/06/2005 12:38 a.m., Hans Reiser wrote:
-> fsck is better in V4 than it is in V3. Users should move from V3 to V4,
-> as V3 is obsolete. I agree on that Ted.
+>Ok, I'll bite.  Hans put it best a moment ago:
+>  
+>
+[..]
 
-Perhaps before moving to V4, reiser4progs-1.04 (the most recent I think) could 
-be made to compile with gcc4/fedora core 4 system, and some of the warnings 
-cleaned up.  There are a fair lot of them - all the same warnings as below but 
-in a heap of different files.
+you seem to have some misconceived notion that this is somehow a 
+"ReiserFS versus XFS" or "ReiserFS versus ext3" case.
+l-k could do without those conspiracy theories.  lets just stick to the 
+facts.
 
-Then of course the other slightly annoying issue that it actually aborts the 
-compilation:
+>No, as a user, I just want a working plugin architecture to play with
+>(I'm not *just* a user), and a working Reiser4 'cause it's fast, and I
+>am eager to see new improvements coming out of Namesys, instead of two
+>years spent trying to keep up with the vanilla kernel *and* adapt to
+>some unspecified, possibly unneccessary, decree of a benevolent dictator.
+>  
+>
+one of the nice things about linux is the freedom open-source gives you.
+there is no reason why Hans cannot keep whatever proprietary mechanisms 
+to do whatever fancy plugins he wants and you as a user can use until 
+the cows come home.
 
-[from rpmbuild -ta reiser4progs-1.0.4.tar.gz]
-
-  gcc -DHAVE_CONFIG_H -I. -I. -I../../.. -I../../../include -D_REENTRANT
--D_FILE_OFFSET_BITS=64 -DENABLE_SYMLINKS -DENABLE_SPECIAL -DENABLE_R5_HASH
--DENABLE_FNV1_HASH -DENABLE_RUPASOV_HASH -DENABLE_TEA_HASH -DENABLE_DEG_HASH
--DENABLE_LARGE_KEYS -DENABLE_SHORT_KEYS -DENABLE_DOT_O_FIBRE
--DENABLE_EXT_1_FIBRE -DENABLE_EXT_3_FIBRE -DENABLE_LEXIC_FIBRE -O1 -g -O2 -g
--pipe -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -m32 -march=i386 -mtune=pentium4
--fasynchronous-unwind-tables -W -Wall -Wno-unused-parameter -Wredundant-decls
--MT liboid40_static_la-oid40.lo -MD -MP -MF .deps/liboid40_static_la-oid40.Tpo
--c oid40.c  -fPIC -DPIC -o .libs/liboid40_static_la-oid40.o
-oid40.c: In function 'oid40_get_state':
-oid40.c:12: warning: passing argument 6 of '__actual_assert' discards 
-qualifiers from pointer target type
-oid40.c: In function 'oid40_get_next_oid':
-oid40.c:19: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c: In function 'oid40_get_used_oid':
-oid40.c:25: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c: In function 'oid40_set_state':
-oid40.c:32: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c: In function 'oid40_set_next_oid':
-oid40.c:39: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c: In function 'oid40_set_used_oid':
-oid40.c:46: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c: In function 'oid40_open':
-oid40.c:56: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c:66: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c: In function 'oid40_close':
-oid40.c:76: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c: In function 'oid40_create':
-oid40.c:97: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c: In function 'oid40_sync':
-oid40.c:111: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c:122: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c:125: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c: In function 'oid40_allocate':
-oid40.c:133: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c: In function 'oid40_release':
-oid40.c:146: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c: In function 'oid40_free':
-oid40.c:154: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c: In function 'oid40_valid':
-oid40.c:160: warning: passing argument 6 of '__actual_assert' discards
-qualifiers from pointer target type
-oid40.c: At top level:
-oid40.c:204: error: static declaration of 'oid40_plug' follows non-static
-declaration
-oid40.h:33: error: previous declaration of 'oid40_plug' was here
-make[4]: *** [liboid40_static_la-oid40.lo] Error 1
-make[4]: Leaving directory
-`/usr/src/redhat/BUILD/reiser4progs-1.0.4/plugin/oid/oid40'
-make[3]: *** [all-recursive] Error 1
-make[3]: Leaving directory `/usr/src/redhat/BUILD/reiser4progs-1.0.4/plugin/oid'
-make[2]: *** [all-recursive] Error 1
-make[2]: Leaving directory `/usr/src/redhat/BUILD/reiser4progs-1.0.4/plugin'
-make[1]: *** [all-recursive] Error 1
-make[1]: Leaving directory `/usr/src/redhat/BUILD/reiser4progs-1.0.4'
-make: *** [all] Error 2
-error: Bad exit status from /var/tmp/rpm-tmp.23778 (%build)
+but just don't have the false expectation that just because something is 
+'kool' that its going to get into the kernel without rigorous peer 
+review & approval
 
 
-RPM build errors:
-     Bad exit status from /var/tmp/rpm-tmp.23778 (%build)
-[root@tornado tarballs]#
+cheers,
 
+lincoln.
 
-I use ReiserFS4 on two squid cache/object partitions and it has been stable 
-and performs well. But I haven't been in the ugly situation of having to 
-actually compile and run an fsck on it yet...
-
-reuben
-
-
-
+>  
+>
