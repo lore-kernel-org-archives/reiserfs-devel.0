@@ -1,54 +1,43 @@
-From: Nikita Danilov <nikita@clusterfs.com>
-Subject: Re: -mm -> 2.6.13 merge status
-Date: Sun, 26 Jun 2005 14:03:24 +0400
-Message-ID: <m1k6kh1llf.fsf@clusterfs.com>
-References: <20050620235458.5b437274.akpm@osdl.org.suse.lists.linux.kernel>
-	<p73d5qgc67h.fsf@verdi.suse.de> <42B86027.3090001@namesys.com>
-	<20050621195642.GD14251@wotan.suse.de> <42B8C0FF.2010800@namesys.com>
-	<84144f0205062223226d560e41@mail.gmail.com> <42BB0151.3030904@suse.de>
-	<20050623114318.5ae13514.akpm@osdl.org> <20050623193247.GC6814@suse.de>
-	<1119717967.9392.2.camel@localhost> <42BDAF3D.6060809@namesys.com>
-	<87slz6f0vn.fsf@evinrude.uhoreg.ca>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: reiser4 plugins
+Date: Sun, 26 Jun 2005 17:46:06 +0100
+Message-ID: <20050626164606.GA18942@infradead.org>
+References: <20050620235458.5b437274.akpm@osdl.org> <42B8B9EE.7020002@namesys.com> <42B8BB5E.8090008@pobox.com> <200506221824.32995.zam@namesys.com> <20050622142947.GA26993@infradead.org> <42BA2ED5.6040309@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24619-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24621-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <87slz6f0vn.fsf@evinrude.uhoreg.ca> (Hubert Chan's message of
- "Sat, 25 Jun 2005 19:54:52 -0400")
+Content-Disposition: inline
+In-Reply-To: <42BA2ED5.6040309@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: Jens Axboe <axboe@suse.de>, Andrew Morton <akpm@osdl.org>, Jeff Mahoney <jeffm@suse.de>, penberg@gmail.com, ak@suse.de, flx@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Alexander Zarochentsev <zam@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org
 
-Hubert Chan <hubert@uhoreg.ca> writes:
+On Wed, Jun 22, 2005 at 08:39:01PM -0700, Hans Reiser wrote:
+> Correct me if I am wrong:
+> 
+> What exists currently in VFS are vector instances, not classes. Plugins,
+> selected by pluginids, are vector classes, with each pluginid selecting
+> a vector class. You propose to have the vector class layer (aka plugin
+> layer) in reiser4 export the vector instance to VFS for VFS to handle
+> for each object, rather than having VFS select reiser4 and reiser4
+> selecting a vector class (aka plugin) which selects a method.
+> 
+> If we agree on the above, then I will comment further.
 
-> On Sat, 25 Jun 2005 12:23:41 -0700, Hans Reiser <reiser@namesys.com> said:
->
->>>> assert("trace_hash-89", is_hashed(foo) != 0);
->
->> Lots of people like corporate anonymity.  Some don't.  I don't.  I
->> like knowing who wrote what. ...
->
-> For what it's worth (I know: not much), I like the named asserts in
-> Reiser4/Reiserfs.  Although I haven't been bitten by any BUGs yet (maybe
-> I'm just lucky), whenever I see these on the mailing list, it gives the
-> impression that the users are interacting more directly with the
-> developers, and it helps us to get to know the developers better.
->
-> If people really want more standard-looking identifiers, I think Namesys
-> should keep the names and make a hybrid identifier, like
-> "nikita-123(<file>:<line>)"
+I'm a bit confused about what you're saying here.  What does the 'vector'
+in all these expressions mean?
 
-This already happens: together with <uid>-<serial>, reiser4 outputs
-__FILE__, __LINE__, __FUNCTION__, and a bunch of other stuff:
+In OO terminology our *_operation structures are interfaces.  Each particular
+instance of such a struct that is filled with function pointers is a class.
+Each instance of an inode/file/dentry/superblock/... that uses these operation
+vectors is an object.
 
-----------------------------------------------------------------------
-reiser4[xine(11262)]: txn_end (fs/reiser4/txnmgr.c:504)[nominaodiosasunt-2967]:
-code: -2 at fs/reiser4/search.c:1285
-reiser4 panicked cowardly: assertion failed: lock_stack_isclean(get_current_lock_stack())
-----------------------------------------------------------------------
-
-Nikita.
+What I propose (or rather demand ;-)) is that you don't duplicate this
+infrastructure, and add another dispath layer below these objects but instead
+re-use it for what it is done and only handle things specific to reiser4
+in your own code. 
