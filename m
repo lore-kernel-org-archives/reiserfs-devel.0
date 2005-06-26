@@ -1,48 +1,45 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+From: Christoph Hellwig <hch@infradead.org>
 Subject: Re: reiser4 plugins
-Date: Sun, 26 Jun 2005 18:23:26 +0100
-Message-ID: <1119806605.28649.18.camel@localhost.localdomain>
-References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>
-	 <42BB31E9.50805@slaphack.com>
-	 <1119570225.18655.75.camel@localhost.localdomain>
-	 <42BB7B32.4010100@slaphack.com>
-	 <1119612849.17063.105.camel@localhost.localdomain>
-	 <42BCCC32.1090802@slaphack.com>
+Date: Sun, 26 Jun 2005 18:28:16 +0100
+Message-ID: <20050626172816.GB19630@infradead.org>
+References: <42B831B4.9020603@pobox.com> <42B87318.80607@namesys.com> <20050621202448.GB30182@infradead.org> <42B8B9EE.7020002@namesys.com> <42B8BB5E.8090008@pobox.com> <42B8E834.5030809@slaphack.com> <20050622053656.GB28228@infradead.org> <42B91764.1080208@slaphack.com> <20050626165246.GB18942@infradead.org> <42BEE430.7010505@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24628-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-24629-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42BCCC32.1090802@slaphack.com>
+Content-Disposition: inline
+In-Reply-To: <42BEE430.7010505@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 To: David Masover <ninja@slaphack.com>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Jeff Garzik <jgarzik@pobox.com>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-On Sad, 2005-06-25 at 04:14, David Masover wrote:
-> Right, but even if I was a door geek, changing hinges costs more than
-> changing code.  Now, if I were building a new house and I happened to
+On Sun, Jun 26, 2005 at 12:21:52PM -0500, David Masover wrote:
+> I seem to remember the comment was more about hardcoded ID tables.
+>=20
+> And this was the generic ID code database, which is now maintained out
+> of the kernel:
+>=20
+> /usr/share/misc/pci.ids
+> 	A list of all known PCI ID's (vendors, devices, classes and sub-classes).
+>=20
+> That is what I was referring to, that used to be in the kernel.
 
-Probably not, programmers are expensive 8)
+And you once again showed that you don't understand what you're talking
+about.  Said database is a pci id to name mapping, which is completely
+irrelevant for any driver.  For things like your example there's very
+little thing you can do but hardcoding a set of pci ids in one way or
+another.
 
-> DVDs are cheap nowdays:
-> http://www.newegg.com/Product/Product.asp?Item=N82E16817502002
+> What this has to do with is whether you believe that it's better to keep
+> code out until it's perfectly clean, or to let in code that has some
 
-> Ok, you might need two of those.  Still, it's not much, unless that's
+I doesn't need to be perfect, we just need it in a reasonable state and
+have a buying that it's going to continue to evolve in the rig=FEt directio=
+n.
 
-At least four because the media decay patterns are not well understood.
-So you need raid DVD too 8)
-
-> > 1. It must work
-> > 2. It must be clean code that follows the kernel style
-> > 3. It must not break other stuff
-> > 4. It needs a maintainer who won't get bored 12 months later and only
-> > support reiser5
-
-> It's #2 and #3 that I'm worried about.  #4 is a little unfair, and I can
-> verify that #1 is satisfied.
-
-Please review the 2.5 history of reiserfs3 if you believe so
+And we're are very far from both of them in this ccase.
 
