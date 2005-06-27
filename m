@@ -1,108 +1,65 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 00:54:17 -0500
-Message-ID: <42BF9489.9080202@slaphack.com>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>            <87y88webpo.fsf@evinrude.uhoreg.ca> <200506270459.j5R4xdZp005659@turing-police.cc.vt.edu>
+Date: Mon, 27 Jun 2005 00:57:54 -0500
+Message-ID: <42BF9562.4090602@slaphack.com>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu> <42BF667C.50606@slaphack.com> <200506270423.j5R4Np9n004510@turing-police.cc.vt.edu>            <42BF8F42.7030308@slaphack.com> <200506270541.j5R5fULX007282@turing-police.cc.vt.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24662-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24663-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200506270459.j5R4xdZp005659@turing-police.cc.vt.edu>
+In-Reply-To: <200506270541.j5R5fULX007282@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Valdis.Kletnieks@vt.edu
-Cc: Hubert Chan <hubert@uhoreg.ca>, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
 Valdis.Kletnieks@vt.edu wrote:
-> On Sun, 26 Jun 2005 23:10:43 EDT, Hubert Chan said:
-> 
->>On Sun, 26 Jun 2005 20:40:29 -0400, Valdis.Kletnieks@vt.edu said:
+> On Mon, 27 Jun 2005 00:31:46 CDT, David Masover said:
 > 
 > 
->>Reiser4 plugins have to be compiled into the kernel.  (They're not
->>plugins in the sense that most people use that word.)  And any admin who
->>would compile that kind of plugin into the kernel needs to have his head
+>>*If* we decide that this must go both ways, *then* we either turn off
+>>write support inside the zipfile
 > 
 > 
-> Oh?  You saying that it *wont* be permitted for a user to say:
-> 
-> mkdir $HOME/zipped
-> chattr "files under here are ZIP files" $HOME/zipped
-> 
-> and instead you have to do that chattr by hand for *every* *single* zip file?
+> Oh, *that* will do wonders for command symmetry.  And you just shot down
+> the whole 'mv foo bar' being equivalent to 'zip bar foo' concept. ;)
 
-chown works this way.  At least for username, there's no default user
-possible per directory.  But scroll down a bit...
+In one of three possible settings for the imaginary zipfile plugin, yes.
+ But if we're talking about a kernel source tree, how many of us
+actually build zipfiles/tarballs of their kernel source trees, rather
+than unpack existing ones?
 
-> Or "files on this filesystem are encrypted by default"?
+>>                                 and do "make" with a symlink farm (cp
+>>- -as isn't hard), or (better) we can set things up so that only on access
+>>(most likely a read) of the original zipfile do we re-add all the changes.
 > 
-> I suspect that this sort of thing is going to be one of the *first* things
-> that will get created, and any admin who tries to sell this idea to the users
-> *without* that sort of functionality will be handed their head.
-
-I think it may be possible to set defaults to a certain extent, but I
-think that it's still actually a per-file setting whether the file is
-encrypted.  Obviously, the keys have to be shared somehow, so there's
-probably more grouping than just defaults...
-
-There has been some mention of inheritance, but I've forgotten how
-that's supposed to work.  If there's some sort of inheritance where
-children inherit properties of their parent directory, and also inherit
-changes to those properties, than Hans probably wants that to be the
-prefered way of doing things?
-
-I don't think there's that kind of inheritance, though.
-
-> And notice that it doesn't *have* to be quite so obvious - how about if a
-> user creates a directory $HOME/zipped/ and flags it as "anything under here
-> is a zipped file".
 > 
-> Now throw in multiple users and CPU limits.  User A enters that directory and
-> references everything, causing the buffer cache to get filled up.  While there,
-> A makes changes, so the pages are dirty - "for i in */*; do echo " " >> $i; done"
-> would do the job...  User B now does something that causes a writeback of one
-> of those buffer cache pages.
-> 
-> A) What process currently gets ticked for the CPU and I/O for the writeback?
-> 
-> B) In your model, who will get ticked for the resources?
-> 
-> C) Will the users riot? (Note that you can't win here - currently, the "price"
-> of writing back A's and B's pages are about equal.  However, if A gets dinked
-> for an expensive writeback due to B's process, A will get miffed.  If B gets
-> charge for an expensive writeback of A's, B will get miffed. If you say "screw it"
-> and bill it to a kernel thread, the bean counters will get miffed... ;)
+> Those chuckleheads who have filled up a disk by saying 'tar cvf foo.tar .' just
+> got a whole new way to fill the disk... ;)
 
-If I understand this correctly, this is somewhat like if user A creates
-a 50 meg file on a system with 100 megs free RAM, and user B runs
-"sync".  Also similar to if B were to suddenly fill up 75 megs of RAM,
-forcing A's file to be flushed -- last I checked, in Reiser4, only a
-sync or memory pressure causes writes to flush.
-
-Right?  This is tempting to comment on, but I want to make sure I grok
-it first...
+Just a new interface :P
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQr+UiHgHNmZLgCUhAQK+KBAAm6BSQuoFNeY5+cPQQaVK2BACqwJZabMH
-Ze440Hjf9Pgn6Is/xWbCKKv6Mx4Vfx5P4+E4dkZJOyFBaVym6v5wy7ovPhFZVD8f
-oW8IOUnCngnQ/Ea7fhxwr+hst2L4jEbMF0deG3zg328zYKwHoY0NA7hQZg2xLhF6
-+J5jQWNR+CWyhFCBMD/NG+XwtSd4pxzOjb42e7zlEuKoCgGiTB92qPGDcOYMw/Te
-3ez1Z+iJ6gIMUgwrzO4J6TzsgR9d9W0rJKMpm6ulto0AQtg1Joln3Vj5pxBX6ULe
-5hkV6zeNOW8Uisz6+tdUX6PC+hjfSPvJhzkPMccTm8cJGyiF+j+PI5nUj37hyAz6
-iL8kBPMrsulrGphuJzeb81yLzmgknX4+tc6WrVqMPcCpP4iIYOi0RMpWxSxQuRH9
-ooSUnN/JRuhHaz4JeJ6VOvkwwl4nw1dcChBnBiws4IlFQS+mgKTAzZHhHm/+/E6q
-nHY/uiFo1Tr95wyxrWyNcdGA/axriSIAaCXc1bEpQpzpOOcXr5d437TwEhBTIeXr
-UlXwM6CdSrA3XGy7ksHovRghdm/7MOmNxL4SagVvY98Dlc+UlWi755rpin7JRget
-9tFGtH0IESmPwSXfsBJYNIZCk4bG8X9d2W1/6e96yVtvKdn16MgX6n3Hdt3aVgzv
-Ec9kEA42Ixs=
-=qALY
+iQIVAwUBQr+VYngHNmZLgCUhAQK/bQ/+MbWZrE+sg3te+YWCajaZhsZLyM4CZrGe
+BrvUb3dLSKLLg+2CzsKXQp9u3bavJg7OEEmnzgY4dK3FaOHZSATzbwmRgi1hYtfe
+TfVWKQb4z93zzS6MXafRkgL98qEIUV4n0aFKIEzDgeXAwMYx+Gv5Q7YMky7DEBNq
+HV5ZiKxhsqCEJdsUKo80G2R12XBm9reunJM/xRt+iA7WfsevBi+/Fl7qbAIDG+sd
+t83kZHiHQROTEmyyMj4zsJ0j7gRkJsXWKng3HEMl08AkRBIZxQRx0xmzWyZEs+wW
+AaPPFvsFo04tfwplasvwZ7EcLoCgFP2rfnjx190wov6ZvEWwIbKepsyLqusEuRcR
+hY0ohrWzYmQkHDXxs4FW+/QMsDF0L7YojHJgHOI1xSeCMOEgGPmHG9Jmf9FeK97Q
+4xBXLDGXjlcDBZvDZciLzJCloH3pb+3TrzSkbIkTGnGbgtsS46bWRUAFOY1d2ynM
+C1FTebc5LPGoDetsu9/cLLuJrCJbbmpN/AWR33WUOnu9/O+H0lWNhiYyOg0x2G/z
+p6toqr95RPKO6tC5OliU7GfEpqjDhr+RQkjSUbrHqoNjZp3P07nCwGCfwMTCdsBx
+AkpQyuyfn/RfZvaFOnpUSOTKCWfZKYB2/J8ij+FH8tcPpYl5uzb6H6mHNyEPlvAa
+DOlFJixKQ7o=
+=6LFS
 -----END PGP SIGNATURE-----
