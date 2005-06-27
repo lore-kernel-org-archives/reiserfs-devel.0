@@ -1,32 +1,75 @@
-From: Gregory Maxwell <gmaxwell@gmail.com>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 01:52:21 -0400
-Message-ID: <e692861c05062622521a62e73c@mail.gmail.com>
-References: <ninja@slaphack.com> <42BF4570.9010405@slaphack.com>
-	 <200506270505.j5R55Zsx005315@laptop11.inf.utfsm.cl>
-Reply-To: Gregory Maxwell <gmaxwell@gmail.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-24660-reiserfs=m.gmane.org@namesys.com>
+Date: Mon, 27 Jun 2005 01:38:53 -0400
+Message-ID: <200506270538.j5R5cww2005785@laptop11.inf.utfsm.cl>
+References: <ninja@slaphack.com>
+Return-path: <reiserfs-list-return-24661-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200506270505.j5R55Zsx005315@laptop11.inf.utfsm.cl>
-Content-Disposition: inline
+In-Reply-To: Message from David Masover <ninja@slaphack.com> 
+   of "Sun, 26 Jun 2005 22:24:23 EST." <42BF7167.80201@slaphack.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: David Masover <ninja@slaphack.com>, Hans Reiser <reiser@namesys.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: David Masover <ninja@slaphack.com>
+Cc: Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-On 6/27/05, Horst von Brand <vonbrand@inf.utfsm.cl> wrote:
-> Wonderful! I carefully "transparently encrypt" my secret files, so
-> /everybody/ can read them! Now /that/ is progress!
+David Masover <ninja@slaphack.com> wrote:
+> Kyle Moffett wrote:
+> > On Jun 26, 2005, at 22:37:48, David Masover wrote:
 
-All of this side feature argument is completely offtopic for the
-inclusion of reiser4, but oh well.
+[...]
 
-In any case, the real use for encrypted files (vs encrypted
-partitions) would be for doing things like tying keying into the login
-process so that your files are only accessible while you are logged
-in.  This would be a very nice feature on a multiuser system.
+> That just means the zip plugin has to be more carefully written than I
+> thought.  It would have to be sandboxed and limited to prevent buffer
+> overruns and zip bombs.
+
+[...]
+
+> Remember that zip, at least, would not be in the kernel.  I think what
+> is going in the kernel is gzip and lzo, and it's being done so
+> transparently that you never actually see the compressed version.
+
+Doesn't matter if it is zip of some other compression, the problem is
+exactly the same.
+
+> > Can you illustrate for me with precise, clear, and unambiguous arguments
+
+> That will take some time.  And some thinking.
+
+See? Exactly what has been demanded by all the "unfair", "ReiserFS-racist",
+"shove-any-junk-but-do-not-accept-perfect-filesystems-into-the-kernel" etc
+people here on LKML from the very start.
+
+> > how this can avoid all possible pitfalls,
+
+> Especially if you want perfection.
+
+Perfection would be nice, but (IMHO) not required.
+
+[...]
+
+> Now, the cryptocompress as it currently stands does not involve ... and
+> does not introduce any new security holes in the way that you are
+> describing.  There might be some issues with key management (someone
+> hinted vaguely at that), but nothing insurmountable.
+
+OK, I see a week of flamefest going by until you admit it has the same
+problemas as compression (Hint: Most encryption compresses first, in order
+to give would-be cryptoanalysts less of a toehold via non-uniform
+distributions, and having less work to do), and then a whole lot of its
+/own/ problems (that somebody can peek at a cached uncompressed copy of my
+files is not so bad, if they can peek at my decrypted files I'd be rather
+less pleased... and here you have to include a malicious root (Yes, I'm
+paranoid. Doesn't mean root is not out to get me.).). Perhaps this can't be
+all solved, but the exact boundaries of what /is/ provided, and what
+/isn't/ must be made clear.
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+
