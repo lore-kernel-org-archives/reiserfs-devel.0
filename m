@@ -1,77 +1,36 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: Reiser4 + seekdir()
-Date: Mon, 27 Jun 2005 16:39:17 +0400
-Message-ID: <1119875956.4256.277.camel@tribesman.namesys.com>
-References: <42BFC6B0.7040202@yandex.ru>
-	 <1119872500.4257.260.camel@tribesman.namesys.com>
-	 <42BFEC62.1010907@yandex.ru>
+From: =?iso-8859-1?Q?J=F6rn?= Engel <joern@wohnheim.fh-wedel.de>
+Subject: Re: [PATCH] verbose BUG_ON reporting
+Date: Mon, 27 Jun 2005 14:40:00 +0200
+Message-ID: <20050627124000.GA24549@wohnheim.fh-wedel.de>
+References: <84144f0205062223226d560e41@mail.gmail.com> <42BB0151.3030904@suse.de> <20050623114318.5ae13514.akpm@osdl.org> <20050623193247.GC6814@suse.de> <1119717967.9392.2.camel@localhost> <20050627072449.GF19550@suse.de> <20050627072832.GA14251@wotan.suse.de> <Pine.LNX.4.58.0506271048310.26869@sbz-30.cs.Helsinki.FI> <20050627082046.GC14251@wotan.suse.de> <Pine.LNX.4.58.0506271525240.3200@sbz-30.cs.Helsinki.FI>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24693-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-24694-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42BFEC62.1010907@yandex.ru>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.58.0506271525240.3200@sbz-30.cs.Helsinki.FI>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "Artem B. Bityuckiy" <dedekind@yandex.ru>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Pekka J Enberg <penberg@cs.Helsinki.FI>
+Cc: Andi Kleen <ak@suse.de>, Jens Axboe <axboe@suse.de>, Andrew Morton <akpm@osdl.org>, Jeff Mahoney <jeffm@suse.de>, penberg@gmail.com, reiser@namesys.com, flx@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Hello
+On Mon, 27 June 2005 15:27:50 +0300, Pekka J Enberg wrote:
+> On Mon, 27 Jun 2005, Andi Kleen wrote:
+> > It won't work for me because it'll bloat the kernel .text
+> > considerable. There is a reason why BUG is implemented
+> > like it is. Compare it.
+>=20
+> The assertion codes bloat the kernel all the same. So how about this=20
+> instead?
 
-On Mon, 2005-06-27 at 16:09, Artem B. Bityuckiy wrote:
-> > Location within a directory in reiser4 is logical number of entry within
-> > the directory.
-> Yes, I know. It does not absolutely correctly handle the way when 
-> dirents were deleted before and after the saved position.
-> 
-> Well, Nikita kindly answered my questions in IRC (unfortunately there 
-> are few Namesys people there).
+Removes my objections.  I still wouldn't want to enable the config
+option, but maybe others do.
 
-for some reasons IRC server decided to not allow us to connect.
+J=F6rn
 
-> According to him, seekdir() doesn't have to work correctly if the 
-> previous N direntries were deleted (it only tries). Indeed, even 
-> classical FSes (where directory is a file with the plain list of 
-> direntries) may shrink directories. I thought Reiser4 pretends to work 
-> correctly even in case of deletions.
-> 
-> > fs/reiser4/plugin/dir/dir.c:seek_dir()
-> > 
-> > You may also want to read a comment before
-> > fs/reiser4/plugin/dir/dir.c:readdir_common and comment named  "STATELESS
-> > READDIR" in the fs/reiser4/plugin/dir/dir.c.
-> Yes, I read it of course. It is really confusing. What it should mention 
-> is that
-> 
-> > we can not return entry key to telldir, on seekdir we have to be able to
-> > position within a directory by off_t - therefore, we need adjust_dir_pos
-> > anyway.
-> Yes, thanks, I've realized this as well.
-> 
-> Could you please explain the real difference between 
-> SEEKABLE_HASHED_DIR_PLUGIN_ID and LAST_DIR_ID plugins. 
-
-I guess between SEEKABLE_HASHED_DIR_PLUGIN_ID and HASHED_DIR_PLUGIN_ID?
-
-> Both seems to 
-> support seeks. Both seems to call adjust_dir_pos(). Only key assignment 
-> is simpler in case of SEEKABLE_HASHED_DIR_PLUGIN_ID. This confused me 
-> very much.
-> 
-SEEKABLE_HASHED_DIR_PLUGIN_ID should actually be able to handle
-seekdir/telldir/nfs perfectly: the only part of entry key which depends
-of filename is 31 bit hash. Then it can be used to interact with
-tell/seekdir. The only problem is hash collistions.
-
-HASHED_DIR_PLUGIN_ID composes entry key in more complicated manner. It
-has lexicographic component (15 chars) + 64 bit hash or next 8 chars of
-name. It can also involve fibration plugin to group names withint a
-directory somehow: for instance *.c files first, then *.h, than *.o.
-
-The cost of solving hash collision problem is all the crap about
-positions within a directory.
- 
-> Thanks.
-
+--=20
+A surrounded army must be given a way out.
+-- Sun Tzu
