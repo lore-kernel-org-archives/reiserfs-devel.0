@@ -1,134 +1,52 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 15:55:55 +0300
-Message-ID: <20050627125555.GE11013@nysv.org>
-References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB5E1A.70903@namesys.com> <1119609680.17066.81.camel@localhost.localdomain> <20050627091808.GC11013@nysv.org> <42BFCAE7.6070708@yahoo.com.au>
+From: "Artem B. Bityuckiy" <dedekind@yandex.ru>
+Subject: Re: Reiser4 + seekdir()
+Date: Mon, 27 Jun 2005 16:57:55 +0400
+Message-ID: <42BFF7D3.3010206@yandex.ru>
+References: <42BFC6B0.7040202@yandex.ru>	 <1119872500.4257.260.camel@tribesman.namesys.com>	 <42BFEC62.1010907@yandex.ru> <1119875956.4256.277.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="TMTfqzsZeEKgETVO"
-Return-path: <reiserfs-list-return-24697-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24698-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <42BFCAE7.6070708@yahoo.com.au>
+In-Reply-To: <1119875956.4256.277.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Nick Piggin <nickpiggin@yahoo.com.au>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: reiserfs-list@namesys.com
 
---TMTfqzsZeEKgETVO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Vladimir,
 
-On Mon, Jun 27, 2005 at 07:46:15PM +1000, Nick Piggin wrote:
->
->The scheduler is being improved for better behaviour on complex
->topologies like multi core + NUMA and multi level NUMA systems.
->If Con's work had gone in first, then conversely these improvements
->would have had to wait.
+thanks for answer.
 
-Or be merged in later.
+Vladimir Saveliev wrote:
+> for some reasons IRC server decided to not allow us to connect.
+Well, switching to another server may help.
 
-The problem is, why do the interfaces have to live so much that
-examples like this come to my ears (or eyes ;) all the time?
+> I guess between SEEKABLE_HASHED_DIR_PLUGIN_ID and HASHED_DIR_PLUGIN_ID?
+yes, pardon.
 
-I hate to say this without digging out any URLs, but one friend
-of mine says he has a very hard time doing any networking code
-because it's too labile. Maybe that's being embettered for something
-else too?
+> SEEKABLE_HASHED_DIR_PLUGIN_ID should actually be able to handle
+> seekdir/telldir/nfs perfectly: the only part of entry key which depends
+> of filename is 31 bit hash. Then it can be used to interact with
+> tell/seekdir. The only problem is hash collistions.
+Ok. But anyway, actually readdir() uses the direntry sequential number 
+as the 32-bit cookie for seek(). So, I don't see how 31-bit hash helps 
+here. If you would use the hash value as the seek()/readdir() opaque 
+cookie, I could have understood this.
 
-Or the other friend who curses that the networking code is just
-crap and basically has to rewrite the code to get it working.
-Yes, I've tried to get these guys to submit their code, but they
-argue back that no one wants to see it.
+> HASHED_DIR_PLUGIN_ID composes entry key in more complicated manner. It
+> has lexicographic component (15 chars) + 64 bit hash or next 8 chars of
+> name. It can also involve fibration plugin to group names withint a
+> directory somehow: for instance *.c files first, then *.h, than *.o.
+Yes, sure. Again, the direntry sequential number is used for 
+readdir()/seek() etc. The same as in case of  SEEKABLE_HASHED_DIR_PLUGIN_ID.
 
->>There's also my all-time favorite, http://lkml.org/lkml/2005/3/14/4
->
->What's wrong with that? The slowdown is due to the workload
->becoming disk bound. The reasons are still not entirely clear,
->but I don't think it is a recent (ie. 2.6) regression (or even
->a regression at all IIRC).
+So, both are seekable. In both cases the mechanism is the same. Whh one 
+is SEEKABLE, another is not ?
 
-It's not that easy.
-
-So let's say the scheduler slowdown is a temporary situation to
-adapt it to multicore+NUMA.
-I assume that's what you mean, by having the kernels on par
-with 2.6.10 and the above paragraph.
-
-Why on earth did the slowdown ever get merged and we have to wait
-for it to be on par with some older version?
-
-Maybe the multicore+NUMA guys don't think it's a regression, hell,
-it may be better for them at the cost of the embedded (or desktop
-or whoever) guys.
-
-Still my initial reaction is "if a patch slows things down, revert
-it. If it didn't do anything, keep reverting until you have the
-original situation."
-It's also my reaction after the initial one :)
-
-Sure, 2.4 and others did also have issues, so you couldn't automatically
-assume each and every new kernel would be better than the last,
-but it seems nowadays it's also hard to predict even the trend.
-
-But to be fair, Linux is not a disaster yet and you guys are doing
-good work, despite things looking very shaky at times and
-my temper being more and more easily flared nowadays at signs
-of trouble :)
-
->I think if you are resorting to bringing up all time favourite
->blunders when trying to justify Reiser4 being included, then
->that is a sign right there that something is fundamentally wrong
->(if not with the code, then with your line of thought0
-
-Myeah, I know, this is not helping the Reiser4 cause _as_such_.
-
-What I'm saying is, Reiser4 could be merged as it looks like a
-lot of other stuff is merged too, which may not be very
-tested.
-
-Reiser4 at least is tested.
-
-We can skip the parts that appear to suck.
-
->And note my email has nothing to do with any *real* argument for
->or against R4.
-
-I think this could be further split into an argument about
-the development model :P
-
-Having a separate dev tree would keep the majority happy,
-as things are "good enough for most people" and after all
-has been evened out in the dev tree, a new stable tree can
-be launched.
-
-This particular new file system should not be too drastic a
-thing to merge into a stable kernel, without the instability-
-inducing factors, and I think in the old model, all this would
-have been fleshed out in the dev tree automagically.
-
-Please do correct me if I'm wrong :)
-
-Thanks!
-
---=20
-mjt
-
-
---TMTfqzsZeEKgETVO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQFCv/dbIqNMpVm8OhwRAlaUAJ4hscxhPYTQPVMMae6znUpjn+mZ/QCfema0
-VXRq3jMHxypG1S7LE44JiWY=
-=e4+u
------END PGP SIGNATURE-----
-
---TMTfqzsZeEKgETVO--
+-- 
+Best Regards,
+Artem B. Bityuckiy,
+St.-Petersburg, Russia.
