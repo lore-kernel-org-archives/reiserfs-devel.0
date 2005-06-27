@@ -1,41 +1,64 @@
-From: Theodore Ts'o <tytso@mit.edu>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 16:28:41 -0400
-Message-ID: <20050627202841.GA27805@thunk.org>
-References: <42BB7B32.4010100@slaphack.com> <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl> <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org> <42C0578F.7030608@namesys.com> <42C05F16.5000804@xfs.org>
+Date: Mon, 27 Jun 2005 13:47:17 -0700
+Message-ID: <42C065D5.30805@namesys.com>
+References: <42BB7B32.4010100@slaphack.com> <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl> <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org> <42C0578F.7030608@namesys.com> <42C05F16.5000804@xfs.org> <20050627202841.GA27805@thunk.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24716-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24717-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <42C05F16.5000804@xfs.org>
+In-Reply-To: <20050627202841.GA27805@thunk.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steve Lord <lord@xfs.org>
-Cc: Hans Reiser <reiser@namesys.com>, Markus T?rnqvist <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Steve Lord <lord@xfs.org>, Markus T?rnqvist <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, vitaly@thebsh.namesys.com, Chris Mason <mason@suse.com>
 
-On Mon, Jun 27, 2005 at 03:18:30PM -0500, Steve Lord wrote:
-> I presume Ted is referring to problems guaranteeing the integrity of
-> the journal at recovery time. I am coming into this without all the
-> available context, so I may be barking up the wrong tree.... In
-> particular, I am not sure how journaling whole blocks protects
-> you from this.
+Theodore Ts'o wrote:
 
-Actually, I was talking about the problem what happens when power
-fails while DMA'ing to the disk, and memory, which is more sensitive
-to voltage drops than the rest of the system, starts sending garbage
-to the bus, which the disk then faithfully writes to the inode table.
+>On Mon, Jun 27, 2005 at 03:18:30PM -0500, Steve Lord wrote:
+>  
+>
+>>I presume Ted is referring to problems guaranteeing the integrity of
+>>the journal at recovery time. I am coming into this without all the
+>>available context, so I may be barking up the wrong tree.... In
+>>particular, I am not sure how journaling whole blocks protects
+>>you from this.
+>>    
+>>
+>
+>Actually, I was talking about the problem what happens when power
+>fails while DMA'ing to the disk, and memory, which is more sensitive
+>to voltage drops than the rest of the system, starts sending garbage
+>to the bus, which the disk then faithfully writes to the inode table.
+>
+>As I recall, you were the one who told me about this problem, and how
+>it was fixed in Irix by using a powerfail interrupt to abort DMA
+>transfers, as well as giving me a program which tests for this
+>condition (basically it writes known test pattern to the disk, and
+>then you do an unclean shutdown, and you look to see if garbage is
+>written to the disk instead of one of the known test patterns).  If it
+>wasn't you, it must have been Jim Mostek --- but I could have sworn it
+>was you.....
+>
+>						- Ted
+>
+>
+>  
+>
+Maybe a more positive approach would be to say, hey, I got this program
+from the XFS guys that tests for DMA problems on power failure, maybe
+all the Linux filesystem developers should give it a try?
 
-As I recall, you were the one who told me about this problem, and how
-it was fixed in Irix by using a powerfail interrupt to abort DMA
-transfers, as well as giving me a program which tests for this
-condition (basically it writes known test pattern to the disk, and
-then you do an unclean shutdown, and you look to see if garbage is
-written to the disk instead of one of the known test patterns).  If it
-wasn't you, it must have been Jim Mostek --- but I could have sworn it
-was you.....
+Shall we try that style of interaction?
 
-						- Ted
+Ted, if this corruption hits an ext3 directory structure, and that
+corrupted directory structure commits, what happens?  With ReiserFS
+(Chris please comment here) it would have to corrupt the directory in
+the journal, return successful IO, then after that point not corrupt the
+commit block and have enough power to write the commit block.  How is
+that different for XFS or ext3?
+
+Hans
