@@ -1,125 +1,56 @@
-From: David Masover <ninja@slaphack.com>
+From: Theodore Ts'o <tytso@mit.edu>
 Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 16:19:21 -0500
-Message-ID: <42C06D59.2090200@slaphack.com>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu> <42BF667C.50606@slaphack.com> <5284F665-873C-45B7-8DDB-5F475F2CE399@mac.com> <42BF7167.80201@slaphack.com> <EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com>
+Date: Mon, 27 Jun 2005 17:26:28 -0400
+Message-ID: <20050627212628.GB27805@thunk.org>
+References: <42BB7B32.4010100@slaphack.com> <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl> <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org> <42C0578F.7030608@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24723-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24724-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com>
+Content-Disposition: inline
+In-Reply-To: <42C0578F.7030608@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Kyle Moffett <mrmacman_g4@mac.com>
-Cc: Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Markus T?rnqvist <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, Steve Lord <lord@xfs.org>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Mon, Jun 27, 2005 at 12:46:23PM -0700, Hans Reiser wrote:
+> A difference between us is
+> that I tell them that with all the major linux filesystems (I include
+> XFS and JFS in this)  it is by this time far more likely to be hardware
+> that caused corruption than the filesystem software, whereas I guess you
+> tell them something else.
 
-Kyle Moffett wrote:
-> On Jun 26, 2005, at 23:24:23, David Masover wrote:
-> 
->>> Neither do I want the kernel to unzip it, because that just  
->>> introduces the
->>> kernel to a whole series of normally application-level  vulnerabilities.
->>
->>
->> That just means the zip plugin has to be more carefully written than I
->> thought.  It would have to be sandboxed and limited to prevent buffer
->> overruns and zip bombs.
-> 
-> 
-> 
-> 
->> Remember that zip, at least, would not be in the kernel.  I think what
->> is going in the kernel is gzip and lzo, and it's being done so
->> transparently that you never actually see the compressed version.
-> 
-> 
-> 
->>> Can you illustrate for me with precise, clear, and unambiguous 
->>> arguments
->>
->>
->> That will take some time.  And some thinking.
-> 
-> 
-> Precisely.  Come back when you have a good sturdy set of arguments.  See
-> the FUSE project (Also discussed in this thread), for better ideas on  how
-> to add strange filesystem semantics.
+Oh, I agree with this, and I do tell people that.  The question though
+is how the filesystem recovers from said hardware-caused corruption
+once it does happen.  You've admitted that reiserfs3 has less than
+optimal recovery characteristics from hardware-induced corruptions if
+said filesystem contains reiserfs filesystem images; that would be an
+example of a filesystem not being as robust as it could be.  (It'll be
+interesting to see if SuSE will support reiserfsv3 in combination with
+the Xen hypervisor or other virtualization systems, which makes use of
+filesystem images.)  Another example would be DMA'ing garbage into the
+hard drive after a power failure --- how does a filesystem respond to
+this eventuality?
 
-If I didn't care about performance.  I will read up on how FUSE works,
-though, to see if there's anything in the _kernel_ code that would be
-useful.
+You probably hear more stories people who got unlucky with
+hardware-induced corruptions with ext2/3, and I probably hear more
+from users who have sworn off of reiserfs just because are sample sets
+are somewhat biased.  Such are the dangers of relying on anecdotal
+evidence.
 
-> NOTE:  Even the FUSE project,  which
-> is in _userspace_ (as opposed to the massive kernelspace mess of  reiser4),
-> is taking a lot of flak for changing UNIX semantics, so I see no reason
-> why Reiser4 should be special.
+However, logically speaking, if a filesystem is designed such that in
+certain cases, the fsck program has to brute-force search every single
+disk block looking for data structures that _look_ like they might be
+part of the filesystem data, well, that's always going to be more
+error prone than one where the filesystem metadata is in
+easily-predicted locations.  It sounds like you've added some more
+checks in reiser4, and that's definitely a good thing.  Time will tell
+whether they are sufficient or not.
 
-Right.  Kernel people hate change.  Got it.
+Regards,
 
-No, seriously, I have to respect the history involved, which is why I'm
-not pretending to know more than I do.
-
-> Ok, good.  That's one of the first issues.  A _lot_ of applications 
-> would get
-> themselves thoroughly confused at that '...' interface, not to  mention
-> a lot
-> of sysadmins :-D.
-
-Not as much as you think.  Unless a lot of applications can't handle
-opening or saving files that have '...' in the pathname?
-
-The sysadmin problem doesn't worry me so much.
-
->> Now, the cryptocompress as it currently stands does not involve ...  and
->> does not introduce any new security holes in the way that you are
->> describing.
-> 
-> 
-> Good.  I think that we can all agree that, in the event  cryptocompress is
-> included, it would be a nice feature to have in all filesystems.  
-> Therefore,
-> we should attempt to come up with a clean interface with which it  could be
-> added _inside_ the VFS.
-
-Agreed.  I don't know enough about VFS to propose one, though.  I think
-others are working on that, finally.
-
->> There might be some issues with key management (someone
->> hinted vaguely at that), but nothing insurmountable.
-> 
-> 
-> Likewise, this should be handled in a common VFS interface that all FSs
-> can use.  There already exists a key management system that would not be
-> particularly difficult to interface with, but it would take thought and
-> discussion.
-
-Not too much, I hope.
-
-Although being able to use different keys on a per-file basis would be
-nice.  I'm not sure if that would work in the existing system.  Not to
-mention that keys would also be handlable with '...', if/when it happens.
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQsBtWXgHNmZLgCUhAQI5gw/8DXFk/v3faGbAtv0vdeMmy5aZ4MSpr3pp
-+rjjb8Wx6twCZelmPQgwTBtSQec9XUEipW3ucHVeP5Y2LM8hZHfbxEpHCzDydlH0
-AppxZfHp/FBlqROSYajcc4qX062QQ7Wc/VfePmvVKcC7Plo1n1UnF30RRFLR67/r
-SOwb4/GPDnYyY0SQQt8XmuFmu1ngRB5M/kFgGOkiGLOsRiPzx4zVnYsxnOp8vH/q
-l0SxCsjev4+dL0TRnFBhx/uw7GerZJhqjjB9DZZgMIXILXt8oTHj1ubEXD0WRQxr
-iwiXruO2rO3vFbJVXzdlhFnUj98ViQR9nALa+CwT779Zus9hx8/KAxScPXEZPzVz
-jdF7y7GUvBL9vR+t5TTJjlpSqyfiyYKEw038/li/uBB1ThXtjTx4uL0QLzWkaaOh
-mfdX5RFwyinrsmscBaYgUPHwqLTjgcIWwqSfmGQ9RvYbMkHy9ZOzHTP9chJIeD5F
-cuJPluPEOMpeQduF/S7sG/Y00eQaMx0nBxtDprkwonnhy3Qw2jSSgsXqEIG+x45P
-3qjiK7/4cZSkN/Q/VkObEwD0GE2FD31yfqSkrkGRMkhOg22YWBVqrwvmcm2RyQk9
-h9S9C3HzNXGAuW9HfCmWLqg1yAQCilkTdGRpc38unBa364nRlBzii7PkA3XLol3S
-zChIED+O964=
-=shbE
------END PGP SIGNATURE-----
+						- Ted
