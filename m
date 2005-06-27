@@ -1,106 +1,57 @@
-From: David Masover <ninja@slaphack.com>
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: reiser4 plugins
-Date: Sun, 26 Jun 2005 21:49:54 -0500
-Message-ID: <42BF6952.4080004@slaphack.com>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu>            <42BF2DC4.8030901@slaphack.com> <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>
+Date: Sun, 26 Jun 2005 23:10:43 -0400
+Message-ID: <87y88webpo.fsf@evinrude.uhoreg.ca>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>
+	<42BCD93B.7030608@slaphack.com>
+	<200506251420.j5PEKce4006891@turing-police.cc.vt.edu>
+	<42BDA377.6070303@slaphack.com>
+	<200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu>
+	<42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com>
+	<e692861c05062522071fe380a5@mail.gmail.com>
+	<42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com>
+	<200506261816.j5QIGMdI010142@turing-police.cc.vt.edu>
+	<42BF08CF.2020703@slaphack.com>
+	<200506262105.j5QL5kdR018609@turing-police.cc.vt.edu>
+	<42BF2DC4.8030901@slaphack.com>
+	<200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24648-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24649-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>
+In-Reply-To: <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu> (Valdis
+ Kletnieks's message of "Sun, 26 Jun 2005 20:40:29 -0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Valdis.Kletnieks@vt.edu
 Cc: Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Sun, 26 Jun 2005 20:40:29 -0400, Valdis.Kletnieks@vt.edu said:
 
-Valdis.Kletnieks@vt.edu wrote:
 > On Sun, 26 Jun 2005 17:35:48 CDT, David Masover said:
-> 
-> 
->>>Right. So please explain what crypto/raw/foo and crypto/inflated/foo.gz give you.
->>
->>In that example (shouldn't have used the name "crypto", but oh well), it
->>should be crypto/raw/foo.gz and crypto/inflated/foo -- where foo.gz is
->>the gzip'ed file and foo is the transparently compressed/decompressed
->>file.  Basically, these are equivalent:
->>
->>$ zcat crypto/raw/foo.gz
->>$ cat crypto/inflated/foo
-> 
-> 
-> I'm *quite* aware of what your preconceived notions think it *should* be.
 
-So, by "what would ... give you", you meant what the benefits are?  I
-was just clarifying how they work, I *thought* that's what you meant...
+>> The kernel does not decide that.  You do.  And it doesn't
+>> automatically decide that every time you create a file.  You have to
+>> use some interface to trigger the plugins.
 
-> Maybe the two examples I asked for have *real-world* meanings that you should
-> be allowing for.  Like, for instance, on a mail server, where the A/V software
-> may need to unzip a file 5 or 6 times to find out if there's malicious content.
+> Oh, I'm waiting for the fun the first time somebody deploys a plugin
+> that has similar semantics to 'chmod g+s dirname/' ;)
 
-Why would it want to unzip the *same* file that many times?
+Reiser4 plugins have to be compiled into the kernel.  (They're not
+plugins in the sense that most people use that word.)  And any admin who
+would compile that kind of plugin into the kernel needs to have his head
+examined.  Not to mention that plugins must first go through Hans and/or
+Linus before they can get included into the kernel.
 
-If you're talking about nested zipfiles, we can do nested plugins just
-as easily.
+The kernel defines the set of plugins available to the user.  The user
+selects (to a certain degree) which plugins to use.
 
-> Or seeing if it's a ".zip bomb", where a small .zip will decompress to gigabytes.
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
-> Or I'm testing a new compression algorithm, to see if multiple compressions help
-> (yes, I know that it *shouldn't* help - but I've seen real-world cases where the
-> algorithm could only look at a 4K or 8K window at a time, and if you hit a *very*
-> long run of duplicate 4K segments, a second compression would compress all the
-> identical or near-identical "this is a 4K chunk" tokens...)
-
-Tune the plugin, or use zip directly.  I'm not proposing necessarily to
-embed zip in the kernel and drop it from userland, just to have a kernel
-interface so that apps/people don't have to all know about the zip
-program and how to use it.
-
-Besides, in the zip example, I made very sure that unless you point a
-program specifically at where the zip plugin unpacks stuff, you can
-easily get the zipfile.
-
-Of course, that could be turned on its head if it was more low-level
-transparent compression, the kind where you just compress everything in
-/etc because it's all tiny text files.  In that case, you would want a
-setup where you have to work to get the raw data.  But in that case,
-it's a different kind of plugin anyway -- a plugin for storing data,
-rather than just accessing it.
-
-Stop worrying about automagic stuff, though.  It won't trigger unless
-you go looking for it.  It will just be easier to find if you do.
-
->>I guess I need a new name for this approach.  That's three possible ways
->>of doing this?
-> 
-> 
-> I *said* you need to think this through in detail, didn't I? ;)
-
-I said we already did, which is true.  I don't think I'm making these
-up, I just don't remember where they were in Silent Semantic.
-
-
-(oops, I fired the last one off before I was done...)
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQr9pUXgHNmZLgCUhAQKQ8w/+OQXWdt1pEF6t/0D+x3mPYWq2lhlUbchZ
-BYywcGN6Z/yFZQrZovJABZVnB+CXlUlx8DGqQN+Lj9+8HLko/P75ErTWHfuiscpS
-wRJIN5dVeZ4f1RImEa8PjQf3c+n+B/ft9hq28yaR58C9vBQwAWOPVL0/4n4unNAV
-49odg/IKJM9sdSF+6sVwgWNfuacRcZ5/jXtkDFXIIyJzKl6r45r3HmTkbgRdxqpU
-p1aOIsXa7fciN+UK+eiw5jruzJsKHaJtBdISsMWbPdVBFjsDVZmhsdOMv2RZMPo6
-2V78OQ4g7pJHSMZsaWQ/vvD3PuHxZm9qglJcdGnL6jNk8OXkKzxXaGDn/SHjYFTu
-c8keR1KYu+U5r5RmTiihavFPpN3zefS5W5o5IyLvEZkApRCngDFitq4t2tRfDbfT
-zV1JZWz7/bqtoY0zdaZ3gFwxXxh8FMw/LCnsjKkBQ7etlvnvcW2IPssd9rTIV0+4
-9CmA2EaYIiXAwGoFzLbbPoKf0a+6tB38oHanBrRBZuTzu9mKHZvyefQa0j2+1KOp
-iiCmrK49/APXfp4IUu284r2dPUqAu33LtomxwFbNLaPDZFWgQ9qPjafJBO3L8Y/9
-HlFe46Jo5tL7YAEq/UyKpDYWxVcUiDZ40z2w/WKq+v9JjmUZMm+jonXHa9Nq0cQn
-YlE9bxtEac8=
-=5eSh
------END PGP SIGNATURE-----
