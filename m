@@ -1,79 +1,134 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 10:08:28 -0500
-Message-ID: <42C0166C.4090000@slaphack.com>
-References: <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu> <42BF667C.50606@slaphack.com> <200506270423.j5R4Np9n004510@turing-police.cc.vt.edu> <42BF8F42.7030308@slaphack.com> <200506270541.j5R5fULX007282@turing-police.cc.vt.edu> <42BF9562.4090602@slaphack.com> <200506270612.j5R6CZGX008462@turing-police.cc.vt.edu> <42BF9C4D.3080800@slaphack.com> <200506270643.j5R6hqRh009781@turing-police.cc.vt.edu> <42BFA421.70506@slaphack.com> <20050627134752.GE16867@khan.acc.umu.se>
+Date: Mon, 27 Jun 2005 10:19:01 -0500
+Message-ID: <42C018E5.8030805@slaphack.com>
+References: <42BB7B32.4010100@slaphack.com> <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl> <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24704-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24705-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050627134752.GE16867@khan.acc.umu.se>
+In-Reply-To: <20050627124255.GB6280@thunk.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: David Weinehall <tao@acc.umu.se>
-Cc: Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Markus T?rnqvist <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-David Weinehall wrote:
-> On Mon, Jun 27, 2005 at 02:00:49AM -0500, David Masover wrote:
+Theodore Ts'o wrote:
+> On Mon, Jun 27, 2005 at 12:21:38PM +0300, Markus   T?rnqvist wrote:
 > 
->>-----BEGIN PGP SIGNED MESSAGE-----
->>Hash: SHA1
+>>On Thu, Jun 23, 2005 at 11:34:50PM -0400, Horst von Brand wrote:
 >>
->>Valdis.Kletnieks@vt.edu wrote:
+>>>David Masover <ninja@slaphack.com> wrote:
 >>
->>>On Mon, 27 Jun 2005 01:27:25 CDT, David Masover said:
->>
->>[...]
->>
->>
->>>>Speaking of backup, that's another nice place for a plugin.  Imagine a
->>>>dump that didn't have to be of the entire FS, but rather an arbitrary
->>>>tree...  That might be a nice new archive format.  I know Apple already
->>>>uses something like this for their dmg packages.
+>>>>I think Hans (or someone) decided that when hardware stops working, it's
+>>>>not the job of the FS to compensate, it's the job of lower layers, or
+>>>>better, the job of the admin to replace the disk and restore from
+>>>>backups.
 >>>
->>>
->>>Hmm.. you mean like 'tar' or 'cpio' or 'pax' or 'rsync'? :) 
+>>>Handling other people's data this way is just reckless irresponsibility.
+>>>Sure, you can get high performance if you just forego some of your basic
+>>>responsibilities.
 >>
->>No, a dmg is an OS X program installer.  It appears to be a disk image
->>of sorts.  So this is the backup idea in reverse.
+>>Your honest-to-bog opinion is that the FS vendor is responsible for
+>>the admin not taking backups or the hardware vendor shipping crap?
+>>
+>>*still trying to understand how that can be*
 > 
 > 
-> Yeah, disk images are really a new invention...  It's not like creating
-> an arbitrarily large solid file and then doing mkfs on it would
-> accomplish the same thing =)
+> Most Linux users are using PC-class hardware.  And Ted's First Law of
+> PC-Class Hardware is: "Most of it is crap".  And then there's Ted's
+> Second Law, "Too many system administrators don't do backups".
 
-Scroll up a little...
+Not our problem anymore.  This is like saying that we should run all
+filesystems in synchronous mode because some users will grab stuff out
+of the computer without unmounting it -- even more a problem now that we
+have SATA, which supports hot-swapping.
 
-"Imagine a dump that didn't have to be of the entire FS, but rather an
-arbitrary tree..."
+Too many system administrators don't do backups?  Some day the building
+will burn down and they will wish they had.
 
-Such a dump might produce the same thing as mkfs would, but it would do
-it faster, maybe even copy-on-write.
+> So it's a matter of matching the filesystem to the needs of the user.
 
-The OS X example is to point out that using some chunk of an FS as an
-archive format isn't necessarily a bad idea.
+My needs are a filesystem which doesn't assume I'm an idiot who can't
+make backups.
 
+> If you have a filesystem which is blazingly fast, but which at the
+> slightest sign of trouble, trashes your data, versus one which is fast
+> but perhaps not-so-fast as the other filesystem, but which is much
+> more reliable, which would you choose?  
+
+Hypothetically?  I choose the faster one.  Failures happen only rarely,
+and when they happen, there's no telling how small or large they will
+be, therefore I keep regular backups, and as soon as I see my hardware
+starts to fail, I grab what I can off of it, merge that with the latest
+backup, and buy new hardware.
+
+> XFS has similar issues where it assumes that hardware has powerfail
+> interrupts, and that the OS can use said powerfail interrupt to stop
+> DMA's in its tracks on an power failure, so that you don't have
+> garbage written to key filesystem data structures when the memory
+> starts suffering from the dropping voltage on the power bus faster
+> than the DMA engine or the disk drives.  So XFS is a great filesystem
+> --- but you'd better be running it on a UPS, or on a system which has
+> power fail interrupts and an OS that knows what to do.
+
+XFS, Reiser3, and Reiser4 all pass the pull-the-plug test.  Maybe I just
+haven't pushed them hard enough?
+
+> Ext3, because
+> it does physical block journalling, does not suffer from this problem.
+> (Yes, Resierfs uses logical journalling as well, so it suffers from
+> the same problem.)
+
+I don't actually understand the difference here.  Are we talking about
+metadata journalling vs. data journalling?
+
+> So perhaps it's not the job of the FS vendor to be responsible for
+> crap hardware or lazy sysadmins that don't do backups.
+
+Good!  Glad we agree!
+
+> But a system
+> administrator who knows that he doesn't do backups frequently enough,
+> or is running on cheap, crap hardware, would be wise to consider
+> carefully which filesystem he/she wants to use given the systems
+> configuration and his backup habits.  
+
+Given a choice between changing filesystems or getting a Streamload
+account, I choose Streamload.  (streamload.com)
+
+Given a choice between reformatting or editing cron, I'd edit cron.
+
+> Me, I'll go for the robust filesystem, just on general principles.  As
+> a friend from the large-scale enterprise storage world once put it,
+> "Performance is Job 2.  Robustness is Job #1."  (Of course, if you
+> want to put your fragile filesystem on a multi-million dollar
+> enterprise storage system such as an IBM Shark or an EMC Symmetrix
+> box, I'm sure IBM or EMC will be happy to sell you one.  :-)
+
+Job 1 is done by either that system or by good backups.  Don't overkill
+Job 1 at the expense of Job 2.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQsAWa3gHNmZLgCUhAQJnRw//Sh0L38YZ/1fuxjo1TXQtfpMs2YpOIwSm
-brJtx53rJD8nvAnOP1rwtWc5RiIl+YDzlWIO31L+U45Ap4B9+M4f7elqOlXXyrhw
-HC/PIu3kai+MZYV05As8IaQNlU7fDPygnYVfIdFzz1NfwwiRo7TPXjjoPlkwaN8w
-SluYj9CtwTUarNc7Nqct4gmmoxZ20YuyTmpQLyYkU4UMFmGcUfokhg03WUaFPGZr
-bJL5TjW4YePyFtPcU53JcztjLD2z5pQrj1QdzK5hE2FM0UAM+0mWVEalkR19bNk3
-z/lLEkfWBHP3gib9mdC5RsT/aik8nwRdr6X80WtPEMPwqAgSN+7x37u8Jp3paqLc
-iQu54zVb7h9GJQfoi7sRCfO3GXxRKm3HDB8RnLZD39RKq3duA9M5hN+X9hMYVjd7
-KE8kH387QvhLH7TwlfCyIQ2yY6/9abw4Jw9kdoBcX1pq5HpSf1s9TreA/w+89gan
-W5NoIMo9VPR6Lhx9h6f7O07kxqVNdpjgw6w1LAGmgXKtlT/ojZ3lunXXPsjKknWN
-M11XYiG6wBRNWJKsWsbh19O9FdcjpNknCxvrSLdiQDD44BTqc7l+Kt6dhACiyigs
-BBMG3ceowL+vh52spCkakksqCIU4fb6+ndv2g43Q0d2Sk9tpCFUakzEugGfXrHYR
-0qNwqhqbe2o=
-=lP7Z
+iQIVAwUBQsAY5XgHNmZLgCUhAQJq6g/9G2GEK0R1kujoqn3tjsTIbgC23iu8byYV
+d6NHSrmmDV8035oo5iCgjSXbaTlIEyOQQqSB78fBC27eHbGctEZJIpSQfHrWlJu6
+UJvvaEyl+sR/Mzq8sButKeSUv/T8RMCBKyhdfSgm28lDM/kt9OGZcrf1P1ChUSeK
+ZnaToh4SAReRhGzq247o+qa2rW5IuIlpKeYGMZhiOB/tXGC3IDMtUOE9IBkn8KVd
+TtDN4f74PuDJ9VX8K/tZ9DDtKebOJ1wKvIQ/BwyNXt5g36vwj2UwK6GkT2ZJ3bd6
+2XLL24LpIBcVU16bk5WPkADRKe0W7S6AseUj7ggjAK0OL8z889vQ3NWJ/rmT/Wx7
+OQi58QBwL89OZGSM2qZFJ09CLEH42GXD5jjTrKt4URudYzoIa45VZxD9YYhzeu5e
+Gxxj4r2BM8bf/AHczCU/tEQwb6hfqxrq+SImWd1uIsozjeiwInHBC56x2qUDjFB/
+kiyO1LVmVzrq+6frjPAg6n/i0zuPfF24SeeHX02UOx0jlNLkq2D4Qu1wDB5XlVTK
+4xrN83Uy+dHSuDBvnf2tWTqmBju2YG6zmOl1xWKzi3/AVV6mfg1ur0gX0Q6GiZVa
+5Nqp618Cs00ZtSk759eAPQRu7Ico0vTHhA0+rTUhApLYMboGaRN5W8OtQu2utHz8
+ALX7pD3DrfE=
+=wdYo
 -----END PGP SIGNATURE-----
