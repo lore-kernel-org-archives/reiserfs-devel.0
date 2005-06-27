@@ -1,53 +1,60 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: reiser4 plugins
-Date: Sun, 26 Jun 2005 20:48:51 -0700
-Message-ID: <42BF7723.2090801@namesys.com>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu>            <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <42BF3D8F.4060503@namesys.com> <42BF4570.9010405@slaphack.com>
+Date: Mon, 27 Jun 2005 00:23:50 -0400
+Message-ID: <200506270423.j5R4Np9n004510@turing-police.cc.vt.edu>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>
+            <42BF667C.50606@slaphack.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1119846230_3633P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24651-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24652-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42BF4570.9010405@slaphack.com>
+In-Reply-To: Your message of "Sun, 26 Jun 2005 21:37:48 CDT."
+             <42BF667C.50606@slaphack.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: David Masover <ninja@slaphack.com>
-Cc: Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-David Masover wrote:
+--==_Exmh_1119846230_3633P
+Content-Type: text/plain; charset=us-ascii
 
-> Hans Reiser wrote:
->
-> >David Masover wrote:
->
->
-> >>Valdis.Kletnieks@vt.edu wrote:
-> >>
-> >>
-> >>>On Sun, 26 Jun 2005 14:58:07 CDT, David Masover said:
-> >>
-> >>
-> >>>>"Plugins" is a bad word.  This user's combination of plugins is most
-> >>>>likely identical to other users', it's just which ones are
-> enabled, and
-> >>>>which aren't?  If they are all included, I assume they play nice.
-> >>
-> >>
-> >>>Which ones are enabled. Exactly.
->
->
-> >Reiser4 plugins are not per user, but per kernel.  They are compiled
-> >in.  The model is intended to ease the development process, nothing
-> >more.  Apologies if the naming suggests more.
->
->
-> But, to avoid confusion, the inclusion of a crytocompress plugin in a
-> given kernel doesn't mean that all files accessed from that kernel are
-> encrypted and compressed.  It just means that you can pick an individual
-> file and set it to be transparently encrypted/compressed.
->
-> That is what I meant by "enabled".  Not per-user, but per-file.
->
-You are correct.
+On Sun, 26 Jun 2005 21:37:48 CDT, David Masover said:
+
+> Assume we can do on-disk caching, similar to fscache/cachefs for nfs.
+> Now, benchmark:
+> 
+> $ unzip linux-2.6.12.zip && make -C linux-2.6.12
+> 
+> versus the hypothetical
+> 
+> $ make -C linux-2.6.12.zip/.../contents
+> 
+> This is an automatic performance gain, in theory, because the second
+> command is identical to unzipping just the parts you need into
+> linux-2.6.12, then running "make".
+
+Nope, they're not identical.  The first specifically unzips it into the file
+system, leaving the zip file intact.  The second, you're having to take all
+those .o files and other stuff that the 'make' generates and put them back
+into the .zip file *on the fly* - when the 'make' is half done, the .zip should
+reflect a directory tree that has had half the make execute....
+
+(Think - after that hyptothetical 'make' completes, where is 'vmlinux'? ;)
+
+--==_Exmh_1119846230_3633P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFCv39WcC3lWbTT17ARAnKeAKDZdxXYC0EQZ1VRglKzg/4J/KSbFgCfX5v9
+azwJHdOITWjpAGEES9st47c=
+=QZyr
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1119846230_3633P--
