@@ -1,98 +1,60 @@
 From: Valdis.Kletnieks@vt.edu
 Subject: Re: reiser4 plugins
-Date: Sun, 26 Jun 2005 20:40:29 -0400
-Message-ID: <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>
+Date: Sun, 26 Jun 2005 20:59:27 -0400
+Message-ID: <200506270059.j5R0xS3s031483@turing-police.cc.vt.edu>
 References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu>
-            <42BF2DC4.8030901@slaphack.com>
+            <42BF3221.3000909@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1119832829_3659P";
+Content-Type: multipart/signed; boundary="==_Exmh_1119833967_3659P";
 	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24645-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24646-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Sun, 26 Jun 2005 17:35:48 CDT."
-             <42BF2DC4.8030901@slaphack.com> 
+In-Reply-To: Your message of "Sun, 26 Jun 2005 15:54:25 PDT."
+             <42BF3221.3000909@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: David Masover <ninja@slaphack.com>
-Cc: Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: David Masover <ninja@slaphack.com>, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
---==_Exmh_1119832829_3659P
+--==_Exmh_1119833967_3659P
 Content-Type: text/plain; charset=us-ascii
 
-On Sun, 26 Jun 2005 17:35:48 CDT, David Masover said:
-
-> > Right. So please explain what crypto/raw/foo and crypto/inflated/foo.gz give you.
+On Sun, 26 Jun 2005 15:54:25 PDT, Hans Reiser said:
+> Valdis.Kletnieks@vt.edu wrote:
 > 
-> In that example (shouldn't have used the name "crypto", but oh well), it
-> should be crypto/raw/foo.gz and crypto/inflated/foo -- where foo.gz is
-> the gzip'ed file and foo is the transparently compressed/decompressed
-> file.  Basically, these are equivalent:
-> 
-> $ zcat crypto/raw/foo.gz
-> $ cat crypto/inflated/foo
+> > (Hint - work out how long a kernel 'make' would take
+> >if you were doing it inside a .tar.bz2).
+> >  
+> >
+> After the first time, not very long, if you had enough ram....  the
+> plugin would keep the data uncompressed until it flushed it to disk.
 
-I'm *quite* aware of what your preconceived notions think it *should* be.
-
-Maybe the two examples I asked for have *real-world* meanings that you should
-be allowing for.  Like, for instance, on a mail server, where the A/V software
-may need to unzip a file 5 or 6 times to find out if there's malicious content.
-
-Or seeing if it's a ".zip bomb", where a small .zip will decompress to gigabytes.
-
-Or I'm testing a new compression algorithm, to see if multiple compressions help
-(yes, I know that it *shouldn't* help - but I've seen real-world cases where the
-algorithm could only look at a 4K or 8K window at a time, and if you hit a *very*
-long run of duplicate 4K segments, a second compression would compress all the
-identical or near-identical "this is a 4K chunk" tokens...)
-
-
-> > It's got a *LOT* to do with it if I created a *DIRECTORY*, to use *AS A DIRECTORY*,
-> > the way Unix-style systems have done for 3 decades, and suddenly my system is
-> > running like a pig because the kernel decided that it's a .zip file.
-> 
-> The kernel does not decide that.  You do.  And it doesn't automatically
-> decide that every time you create a file.  You have to use some
-> interface to trigger the plugins.
-
-Oh, I'm waiting for the fun the first time somebody deploys a plugin that
-has similar semantics to 'chmod g+s dirname/' ;)
-
-> I guess I need a new name for this approach.  That's three possible ways
-> of doing this?
-
-I *said* you need to think this through in detail, didn't I? ;)
+You're not allowed to use current existing stuff like the disk buffer cache
+to weasel your way out on this one.  "if you had enough ram" has been true
+for decades.  The trouble is that quite often you *don't* have enough ram....
  
-> I remember discussing that, actually.  It wouldn't automatically do this
-> if you didn't want it to, but it would be nice if, say, it was something
-> truly seekable like linux-2.6.12.zip, and linux-2.6.12 was a
-> user-created symlink to linux-2.6.12.zip/.../contents, and we had a nice
-> caching system...
+> Performance might even improve since less would be written to disk.
 
-I think you're highly deluded as to just how much or little performance gain
-this will get you. Model what happens with a kernel 'make' on a 256M machine
-with and without all that zipping and compressing, and assume that a constant
-48M is available for caching of the linux-2.6.12/ tree.
-
-> This is nice because then you get exactly the same performance during
-> "make" as you would with "unzip && make", only better, because files you
-> don't ever use (lots of arch, for instance) are not unpacked.
-
-Go read http://www.tux.org/lkml/#s7-7 and ponder until enlightenment arrives.
+I've worked with filesystems where performance improves due to compression
+(AIX's JFS).  It's a lot harder to provide an improvement if you're writing
+37 more bytes in between bytes 399457 and 399458.... (I suppose by aligning
+byte 399458 so it actually is on the start of a 4K block you can do that, but
+then you're losing the advantages of the compression.. ;)
 
 
---==_Exmh_1119832829_3659P
+--==_Exmh_1119833967_3659P
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 Comment: Exmh version 2.5 07/13/2001
 
-iD8DBQFCv0r9cC3lWbTT17ARAioEAKD6ujpDz4cvD+IpIhG5mr8NM8ZTcwCgxSJs
-v3GCV/KJ+iNuWP+i0YCLQYA=
-=uzbN
+iD8DBQFCv09vcC3lWbTT17ARAoKhAJ4qShq0+lR49kHjXmTm/sbMSFyYNwCfQtXm
+HEvbkLKJcz7y0bUM+LHx0RQ=
+=R6xt
 -----END PGP SIGNATURE-----
 
---==_Exmh_1119832829_3659P--
+--==_Exmh_1119833967_3659P--
