@@ -1,78 +1,66 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 01:27:25 -0500
-Message-ID: <42BF9C4D.3080800@slaphack.com>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu> <42BF667C.50606@slaphack.com> <200506270423.j5R4Np9n004510@turing-police.cc.vt.edu> <42BF8F42.7030308@slaphack.com> <200506270541.j5R5fULX007282@turing-police.cc.vt.edu>            <42BF9562.4090602@slaphack.com> <200506270612.j5R6CZGX008462@turing-police.cc.vt.edu>
+From: Mickael Marchand <marchand@kde.org>
+Subject: 2.6.12-rc5 => OOPS
+Date: Mon, 27 Jun 2005 08:26:03 +0200
+Message-ID: <42BF9BFB.8070206@kde.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24669-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24670-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200506270612.j5R6CZGX008462@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Valdis.Kletnieks@vt.edu
-Cc: Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hi,
 
-Valdis.Kletnieks@vt.edu wrote:
-> On Mon, 27 Jun 2005 00:57:54 CDT, David Masover said:
-> 
-> 
->>In one of three possible settings for the imaginary zipfile plugin, yes.
->> But if we're talking about a kernel source tree, how many of us
->>actually build zipfiles/tarballs of their kernel source trees, rather
->>than unpack existing ones?
-> 
-> 
-> I dunno.  I'll often build a tarball of "-mm plus local patches" known to
-> be working at the moment, precisely so I can just untar that as a known good
-> base for the next kernel-hackfest, rather than untar Linus's tree, apply all
-> of the -mm patch, then all my local patches again...
+seems one of my server (amd64/bi-opteron) running reiser4 on top of
+raid6 software oops-ed this week-end,
+here is the output, maybe it's usefull for you.
 
-What you really want is a copy-on-write tree, or a simpe cp.  Or are you
-that short on space that you need compression?
+the config can be downloaded from
+http://www-fourier.ujf-grenoble.fr/~mmarcha/config-2.6.12-rc5
 
-Speaking of which, I know copy-on-write files are planned.  What about
-whole trees?
+tell me if you need more infos.
 
-But, short of that, you can always do a poor man's copy-on-write with
-"cp -al" or "cp -as", assuming you remember to copy when you write...
+I will upgrade to 2.6.12 today probably.
 
-> And even if I'm not *that* ambitious, I'll at least tar up a clean -mm tree
-> to use as a base. :)
+Cheers,
+Mik
+(please CC me)
 
-I just keep a -mm patch around and the original vanilla tarball, but to
-each his own.
+general protection fault: 0000 [1] SMP
+CPU 0
+Modules linked in: w83627hf i2c_dev lp ipv6 parport_pc parport ehci_hcd
+eth1394 uhci_hcd ohci1394 ieee1394 ohci_hcd usbcore snd_intel8x0
+snd_ac97_codec snd_pcm snd_timer snd snd_page_alloc i2c_amd756
+i2c_amd8111 i2c_isa w83781d i2c_sensor i2c_core e1000
+Pid: 4773, comm: cp Not tainted 2.6.12-rc5
+RIP: 0010:[<ffffffff8021d748>] <ffffffff8021d748>{dir_readdir_init+168}
+RSP: 0018:ffff810035c19ca8  EFLAGS: 00010246
+RAX: ffff810024a68e00 RBX: ffff8100baa3fca0 RCX: ffff810035d8b1c0
+RDX: 2b65394676347178 RSI: 00000000000000d0 RDI: ffff8100baa3fb80
+RBP: ffff8100c14bcb80 R08: 0000000000000211 R09: 0000000002e976a0
+R10: 0000000000001b10 R11: 0000000000000246 R12: ffff810035d8b180
+R13: ffff8100baa3fb80 R14: ffff810035c19cf0 R15: ffff810035c19cf8
+FS:  00002aaaab00b4a0(0000) GS:ffffffff806efbc0(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000002eacd88 CR3: 000000008b4ab000 CR4: 00000000000006e0
+Process cp (pid: 4773, threadinfo ffff810035c18000, task ffff8100c167a2b0)
+Stack: ffff810097af1a30 ffff810035c19d48 ffff8100c14bcb80 ffff810035c19d88
+       ffff810035c19cf8 ffff8100baa3fca0 ffffffff8018e930 ffffffff8021d85d
+       ffff810035c19f38 ffff81007d60bbb8
+Call Trace:<ffffffff8018e930>{filldir64+0}
+<ffffffff8021d85d>{readdir_common+157}
+       <ffffffff80184e7f>{inode_get_bytes+63}
+<ffffffff801fe8a9>{reiser4_getattr+169}
+       <ffffffff8018e930>{filldir64+0}
+<ffffffff801feef3>{reiser4_readdir+115}
+       <ffffffff8018e5f7>{vfs_readdir+119}
+<ffffffff8018eaa2>{sys_getdents64+130}
+       <ffffffff8018dc43>{sys_fcntl+83} <ffffffff8010e92a>{system_call+126}
 
-> And even if I didn't do that, you *do* have to do something when the disk
-> gets backed up.  You *do* intend for sensible things to happen then, right? ;)
 
-I back up with rsync, actually.
-
-Speaking of backup, that's another nice place for a plugin.  Imagine a
-dump that didn't have to be of the entire FS, but rather an arbitrary
-tree...  That might be a nice new archive format.  I know Apple already
-uses something like this for their dmg packages.
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQr+cTXgHNmZLgCUhAQIvvxAAk70+cz4yOZaMX6TDIuUWNsPjqM890FMa
-jpNE5I2K3ZV91yJFAMdSZW1fQSQakorJyt0DV6wnxu3EbIZV8ATeIkNgJsqcDxAD
-O6dZoIQnFZND90Fh3HdJb46DRZyml4NbeEKhQRzIAnuANIAa4+6it2aERcpbDNxE
-ijOiVVpjTkUEutI2uuCJTYSXOGDa+rI0Jmth/9VnPAb5r+wqUb49wUziaSslnZs5
-Jt6UlIcXU/OymzhWe+9JM0gydP+V2nP4N14oYoiXaqINPCA9OHV7BudClkKDeCyv
-bYXyRfjmuiDNoOel6ZfURqUFR2GK/dPqI1PBV6Vc4UMsUqIKkGLAuQ5rU0csb39f
-eS+6Dp8DJ7tOvQp73x1KTMJWP0lha1VRAj8s3SwdCp0Xar8YHymfCDjHvx/iJe50
-rY5aZfWXGCzVmbKVETE8ACWeF5bgpnzwMDwU2RlaWhV/1yIZSOttuJFWMHNG4Rns
-ajUrRsV9cmmngIJBMcM6XaZD9eRsJ9gb+E9POpsFbo6OwhS0IpRlzu/AGGoEiHSW
-ZGNBoSDuLDluHP1jiXrnM7ONcFPEe2opUD7ltgSkYPKpya9C7lEfsEBzXh5Gqc5X
-Iw8P0Md7U6rjCJYGb0pwnJQa0MYMimXq3hOTVsLdoj4A1Nn0EVntHzpB/QTe4UX2
-NjMlwpPIXkU=
-=fqm7
------END PGP SIGNATURE-----
+Code: 48 89 0a 48 89 51 08 90 49 8d 44 24 10 4c 89 ef 49 89 06 e8
+RIP <ffffffff8021d748>{dir_readdir_init+168} RSP <ffff810035c19ca8>
