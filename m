@@ -1,56 +1,42 @@
-From: Nick Piggin <nickpiggin@yahoo.com.au>
+From: Alexander Zarochentsev <zam@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 19:46:15 +1000
-Message-ID: <42BFCAE7.6070708@yahoo.com.au>
-References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB5E1A.70903@namesys.com> <1119609680.17066.81.camel@localhost.localdomain> <20050627091808.GC11013@nysv.org>
+Date: Mon, 27 Jun 2005 15:28:49 +0400
+Message-ID: <200506271528.49674.zam@namesys.com>
+References: <20050620235458.5b437274.akpm@osdl.org> <200506271330.07451.zam@namesys.com> <20050627094223.GB5470@infradead.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-24687-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24688-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050627091808.GC11013@nysv.org>
+In-Reply-To: <20050627094223.GB5470@infradead.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Christoph Hellwig <hch@infradead.org>
+Cc: reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>, linux-kernel@vger.kernel.org
 
-Markus T=F6rnqvist wrote:
+On Monday 27 June 2005 13:42, Christoph Hellwig wrote:
+> On Mon, Jun 27, 2005 at 01:30:06PM +0400, Alexander Zarochentsev wrote:
+> > -- procfs  has seq_file and sysconfig interfaces below the VFS and l-k
+> > people do not complain each day about layering violation ;-)  Procfs is
+> > taken as an example because it deals with objects of different types,
+> > actually anybody may create own procfs objects more or less general way.
+>
+> seq_file actually works at the file_operations level, that's exactly
+> what I'm telling you to do.  The old sub-callbacks are on their way out.
 
- > I can't find the original post I'm thinking about but
- > http://lkml.org/lkml/2005/5/16/68 says essentially the same thing.
+not exactly.  I meant that seq_file has its own VFS-like thing struct 
+seq_operations.
 
-The scheduler is being improved for better behaviour on complex
-topologies like multi core + NUMA and multi level NUMA systems.
-If Con's work had gone in first, then conversely these improvements
-would have had to wait.
+So I may assume that having own objects and their operations is allowed.  The 
+complains are about adding unnecessary level of indirection in the trivial 
+reiser4 wrappers as reiser4_write().   
 
-> There's also my all-time favorite, http://lkml.org/lkml/2005/3/14/4
->=20
-
-What's wrong with that? The slowdown is due to the workload
-becoming disk bound. The reasons are still not entirely clear,
-but I don't think it is a recent (ie. 2.6) regression (or even
-a regression at all IIRC).
-
-> The lack of QA seems appalling here, and I'm sure Reiser has had
-> to do more of that for DARPA than most linux kernel hackers around.
->=20
-
-And what QA would you have preferred?
-
-I think if you are resorting to bringing up all time favourite
-blunders when trying to justify Reiser4 being included, then
-that is a sign right there that something is fundamentally wrong
-(if not with the code, then with your line of thought0
-
-And note my email has nothing to do with any *real* argument for
-or against R4.
-
-Thanks,
-Nick
-
-Send instant messages to your online friends http://au.messenger.yahoo.com =
-
+> > I don't belive that you want to see all reiser4-specific things as item
+> > plugins, disk format plugins in the VFS.
+>
+> If you'd read the previous discussions you'd see that no one complained
+> about disk format plugins.
 
