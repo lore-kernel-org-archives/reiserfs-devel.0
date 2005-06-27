@@ -1,105 +1,53 @@
-From: Kyle Moffett <mrmacman_g4@mac.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Sun, 26 Jun 2005 23:40:35 -0400
-Message-ID: <EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu> <42BF667C.50606@slaphack.com> <5284F665-873C-45B7-8DDB-5F475F2CE399@mac.com> <42BF7167.80201@slaphack.com>
-Mime-Version: 1.0 (Apple Message framework v730)
+Date: Sun, 26 Jun 2005 20:48:51 -0700
+Message-ID: <42BF7723.2090801@namesys.com>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu>            <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <42BF3D8F.4060503@namesys.com> <42BF4570.9010405@slaphack.com>
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S261790AbVF0Dmq@vger.kernel.org>
-In-Reply-To: <42BF7167.80201@slaphack.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-24651-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <42BF4570.9010405@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: David Masover <ninja@slaphack.com>
-Cc: Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-On Jun 26, 2005, at 23:24:23, David Masover wrote:
->> Neither do I want the kernel to unzip it, because that just   
->> introduces the
->> kernel to a whole series of normally application-level  
->> vulnerabilities.
+David Masover wrote:
+
+> Hans Reiser wrote:
 >
-> That just means the zip plugin has to be more carefully written than I
-> thought.  It would have to be sandboxed and limited to prevent buffer
-> overruns and zip bombs.
-
-
-
-> Remember that zip, at least, would not be in the kernel.  I think what
-> is going in the kernel is gzip and lzo, and it's being done so
-> transparently that you never actually see the compressed version.
-
-
->> Can you illustrate for me with precise, clear, and unambiguous  
->> arguments
+> >David Masover wrote:
 >
-> That will take some time.  And some thinking.
-
-Precisely.  Come back when you have a good sturdy set of arguments.  See
-the FUSE project (Also discussed in this thread), for better ideas on  
-how
-to add strange filesystem semantics.  NOTE:  Even the FUSE project,  
-which
-is in _userspace_ (as opposed to the massive kernelspace mess of  
-reiser4),
-is taking a lot of flak for changing UNIX semantics, so I see no reason
-why Reiser4 should be special.
-
->> how this can avoid all possible pitfalls,
 >
-> Especially if you want perfection.
-
-It doesn't need perfection, it just needs to convince a large segment of
-the developers on this list (and especially linus).
-
->> including the automatic encryption/decryption and most other non-  
->> standard
->> filesystem features (Basically the whole '...' directory), should   
->> probably
->> be left out of any patch submitted for inclusion until they can be
->> _proven_ (or at least thoroughly checked) not to have undesirable  
->> results.
+> >>Valdis.Kletnieks@vt.edu wrote:
+> >>
+> >>
+> >>>On Sun, 26 Jun 2005 14:58:07 CDT, David Masover said:
+> >>
+> >>
+> >>>>"Plugins" is a bad word.  This user's combination of plugins is most
+> >>>>likely identical to other users', it's just which ones are
+> enabled, and
+> >>>>which aren't?  If they are all included, I assume they play nice.
+> >>
+> >>
+> >>>Which ones are enabled. Exactly.
 >
-> I am doing that out of habit.  Actually, it probably ends up more as:
->   .../foo.zip/
-> instead of
->   foo.zip/.../
 >
-> But, it is left out.  At least that interface.
-
-Ok, good.  That's one of the first issues.  A _lot_ of applications  
-would get
-themselves thoroughly confused at that '...' interface, not to  
-mention a lot
-of sysadmins :-D.
-
-> Now, the cryptocompress as it currently stands does not involve ...  
-> and
-> does not introduce any new security holes in the way that you are
-> describing.
-
-Good.  I think that we can all agree that, in the event  
-cryptocompress is
-included, it would be a nice feature to have in all filesystems.   
-Therefore,
-we should attempt to come up with a clean interface with which it  
-could be
-added _inside_ the VFS.
-
-> There might be some issues with key management (someone
-> hinted vaguely at that), but nothing insurmountable.
-
-Likewise, this should be handled in a common VFS interface that all FSs
-can use.  There already exists a key management system that would not be
-particularly difficult to interface with, but it would take thought and
-discussion.
-
-Cheers,
-Kyle Moffett
-
---
-There are two ways of constructing a software design. One way is to  
-make it so simple that there are obviously no deficiencies. And the  
-other way is to make it so complicated that there are no obvious  
-deficiencies.
-  -- C.A.R. Hoare
+> >Reiser4 plugins are not per user, but per kernel.  They are compiled
+> >in.  The model is intended to ease the development process, nothing
+> >more.  Apologies if the naming suggests more.
+>
+>
+> But, to avoid confusion, the inclusion of a crytocompress plugin in a
+> given kernel doesn't mean that all files accessed from that kernel are
+> encrypted and compressed.  It just means that you can pick an individual
+> file and set it to be transparently encrypted/compressed.
+>
+> That is what I meant by "enabled".  Not per-user, but per-file.
+>
+You are correct.
