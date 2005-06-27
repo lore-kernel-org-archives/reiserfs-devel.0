@@ -1,53 +1,113 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 09:57:55 +0100
-Message-ID: <20050627085755.GA5015@infradead.org>
-References: <20050620235458.5b437274.akpm@osdl.org> <42B8B9EE.7020002@namesys.com> <42B8BB5E.8090008@pobox.com> <200506221824.32995.zam@namesys.com> <20050622142947.GA26993@infradead.org> <42BA2ED5.6040309@namesys.com> <20050626164606.GA18942@infradead.org> <42BF3D6B.7000404@namesys.com>
+From: fs <fs@ercist.iscas.ac.cn>
+Subject: [PATCH][RESEND] ReiserFS file.c several bug-fix
+Date: Mon, 27 Jun 2005 16:09:56 -0400
+Message-ID: <1119902996.2851.16.camel@CoolQ>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24680-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="=-R9DXeoJeDwc0x6F0DTBv"
+Return-path: <reiserfs-list-return-24681-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <42BF3D6B.7000404@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list <reiserfs-list@namesys.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, Hans Reiser <reiser@namesys.com>, Vladimir Saveliev <vs@namesys.com>, iscas-linaccident <iscas-linaccident@intellilink.co.jp>
+
+--=-R9DXeoJeDwc0x6F0DTBv
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Alexander Zarochentcev <zam@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org
 
-On Sun, Jun 26, 2005 at 04:42:35PM -0700, Hans Reiser wrote:
-> >I'm a bit confused about what you're saying here.  What does the 'vector'
-> >in all these expressions mean?
-> >  
-> >
-> Was your word, I thought, for the *_operation structures.
+Related FS:
+    ReiserFS
 
-We tend to use the term operation vectors, yes.  But that's a different
-terminology that doesn't mix up very well with the OO terminology.
+Related Files:
+    fs/reiserfs/file.c
 
-> So, rather than having a hierarchy, in which we first select filesystem,
-> and then select plugin, VFS should treat each plugin as though it was a
-> filesystem, if I understand you.
+Bug description:
+    Make a ReiserFS partition in USB storage HDD, create a test file
+with enough size(dd if=/dev/zero of=testfile bs=4096 count=1024).
+    Write a program, do: 
+	int fd;
+	char buf[4096];
+ 
+	fd = open("testfile", O_RDWRO | O_CREAT | O_SYNC,
+ 		(S_IRWXU | S_IRWXG | S_IRWXO) );
+	or
+	open("testfile", O_RDWRO | O_CREAT | O_DSYNC,
+ 		(S_IRWXU | S_IRWXG | S_IRWXO) );
 
-Kinda.  The VFS doesn't have knowledge about what constitutes a file
-system driver, we register filesystems only to know what routine to
-call in on a mount with a particular filesystem type - the structure that
-does describe a filesystem (struct file_system_type) thus is very small.
-Starting from there the filesystem has always been able to use different
-methods for different objects (that's something very different from the
-vnode-based VFSes in the other UNIX variants).  
+	write(fd, buf, sizeof(buf));
+	close(fd); 
 
-> Plugins and pluginids continue to exist
-> with the exact same functionality, we just eliminate a function
-> dereference for the *_operation structures. Let's see how it codes up in
-> its details.
+After each operation, pause for a while, such as 3s. Between open and
+write, unlug the USB wire. write returns no error instead of -EIO .
 
-For the file and dir plugin that's pretty much that case.  What's more
-problematic is your security plugins.  With LSM we alredy have an
-infrastructure to provide pluggable access control.  If there actually
-was an implementation of "security" (it's actually access control) for it
-besides the default unix permission one it should move to an LSM.  You
-could even make your lsm part of the reiser4 module and poke into reiser4
-directly from a technical point of view.
+Bug analysis:
+    reiserfs_file_write will claim some blocks, commit the I/O request,
+if O_SYNC and O_DSYNC is used, it will
+    if ((file->f_flags & O_SYNC) || IS_SYNC(inode))
+        res = generic_osync_inode(inode, file->f_mapping,
+                                  OSYNC_METADATA|OSYNC_DATA);
+The question is, if I/O error occurs,       
+        res = reiserfs_allocate_blocks_for_region fails with -EIO, so
+it will exit the loop, no I/O request, no page marked as dirty.
+If generic_osync_inode runs, it returns 0(no dirty page), res will be
+overwritten from -EIO to 0, thus no error report.
+
+Also,  reiserfs_file_write contains a serious bug, see here
+        blocks_to_allocate = reiserfs_prepare_file_region_for_write
+                (inode, pos, num_pages, write_bytes, prepared_pages);
+Here blocks_to_allocate is defined as size_t, i.e. unsigned int, but
+reiserfs_prepare_file_region_for_write is declared as int, so sometimes
+it will return -EIO, -ENOENT, etc, take a look at this line
+        if ( blocks_to_allocate < 0 ) { <- This will never happen
+            res = blocks_to_allocate;
+            reiserfs_release_claimed_blocks(inode->i_sb, 
+                num_pages << (PAGE_CACHE_SHIFT - inode->i_blkbits));
+            break;
+        }
+
+Way around:
+1) if already_written is zero, don't do generic_osync_inode
+2) tell the result of reiserfs_prepare_file_region_for_write with IS_ERR
+   macro or cast it to size_t
+
+Signed-off-by: Qu Fuping<fs@ercist.iscas.ac.cn>
+
+Patch:
+diff -uNp linux-2.6.12/fs/reiserfs/file.c
+linux-2.6.12-new/fs/reiserfs/file.c
+
+
+
+--=-R9DXeoJeDwc0x6F0DTBv
+Content-Disposition: attachment; filename=reiserfs_write.diff
+Content-Type: text/x-patch; name=reiserfs_write.diff; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+
+--- linux-2.6.12/fs/reiserfs/file.c	2005-06-23 14:59:27.000000000 -0400
++++ linux-2.6.12-new/fs/reiserfs/file.c	2005-06-23 15:34:49.000000000 -0400
+@@ -1306,7 +1306,7 @@ static ssize_t reiserfs_file_write( stru
+ 	   so that nobody else can access these until we are done.
+ 	   We get number of actual blocks needed as a result.*/
+ 	blocks_to_allocate = reiserfs_prepare_file_region_for_write(inode, pos, num_pages, write_bytes, prepared_pages);
+-	if ( blocks_to_allocate < 0 ) {
++	if ( IS_ERROR((const void *)blocks_to_allocate) ) {
+ 	    res = blocks_to_allocate;
+ 	    reiserfs_release_claimed_blocks(inode->i_sb, num_pages << (PAGE_CACHE_SHIFT - inode->i_blkbits));
+ 	    break;
+@@ -1363,6 +1363,10 @@ static ssize_t reiserfs_file_write( stru
+         }
+     }
+ 
++    /* If nothing is written, no need(actually, mustn't) to sync pages, just return res */
++    if( already_written == 0 )
++	    goto out;
++    
+     if ((file->f_flags & O_SYNC) || IS_SYNC(inode))
+ 	res = generic_osync_inode(inode, file->f_mapping, OSYNC_METADATA|OSYNC_DATA);
+ 
+
+--=-R9DXeoJeDwc0x6F0DTBv--
+
+
