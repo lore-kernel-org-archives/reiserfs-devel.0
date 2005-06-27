@@ -1,49 +1,64 @@
 From: Valdis.Kletnieks@vt.edu
 Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 12:40:41 -0400
-Message-ID: <200506271640.j5RGefRQ018912@turing-police.cc.vt.edu>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu> <42BF667C.50606@slaphack.com> <200506270423.j5R4Np9n004510@turing-police.cc.vt.edu> <42BF8F42.7030308@slaphack.com> <200506270541.j5R5fULX007282@turing-police.cc.vt.edu> <42BF9562.4090602@slaphack.com> <200506270612.j5R6CZGX008462@turing-police.cc.vt.edu> <42BF9C4D.3080800
+Date: Mon, 27 Jun 2005 12:53:17 -0400
+Message-ID: <200506271653.j5RGrHUL019484@turing-police.cc.vt.edu>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu> <87y88webpo.fsf@evinrude.uhoreg.ca> <200506270459.j5R4xdZp005659@turing-police.cc.vt.edu> <42BF9489.9080202@slaphack.com> <200506270624.j5R6OWFn008836@turing-police.cc.vt.edu>
+            <42BFA5C2.1010807@slaphack.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1119890441_6336P";
+Content-Type: multipart/signed; boundary="==_Exmh_1119891196_6336P";
 	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24707-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24708-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Mon, 27 Jun 2005 02:00:49 CDT."
-             <42BFA421.70506@slaphack.com> 
+In-Reply-To: Your message of "Mon, 27 Jun 2005 02:07:46 CDT."
+             <42BFA5C2.1010807@slaphack.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: David Masover <ninja@slaphack.com>
-Cc: Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Hubert Chan <hubert@uhoreg.ca>, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
---==_Exmh_1119890441_6336P
+--==_Exmh_1119891196_6336P
 Content-Type: text/plain; charset=us-ascii
 
-On Mon, 27 Jun 2005 02:00:49 CDT, David Masover said:
+On Mon, 27 Jun 2005 02:07:46 CDT, David Masover said:
+> > Exactly the same sort of thing - traditionally it's been more or less ignored
+> > in the system accounting, because A would usually average out to causing as
+> > many I/Os as B did, and they were roughly equal in cost so it was a wash.
+> 
+> Even if A is doing A/V work and B is programming?
 
-> >>Speaking of backup, that's another nice place for a plugin.  Imagine a
-> >>dump that didn't have to be of the entire FS, but rather an arbitrary
-> >>tree...  That might be a nice new archive format.  I know Apple already
-> >>uses something like this for their dmg packages.
-> > Hmm.. you mean like 'tar' or 'cpio' or 'pax' or 'rsync'? :) 
-> No, a dmg is an OS X program installer.  It appears to be a disk image
-> of sorts.  So this is the backup idea in reverse.
+I said "traditionally" - it's been a "oh well, we can't do much about it"
+problem for a *long* time (for instance, time spent in an interrupt handler
+has usually been charged off against whoever's timeslide the interrupt handler
+took a chunk out of).  It's only been tolerated so far because (a) the costs
+for both users are about equal and (b) you rarely have a heavy I/O DB and a
+number cruncher on the same box, or a user doing A/V work and a user doing
+programming - if it's not a single-use machine, there's *multiple* number
+crunchers, DBs, or programmers, and they tend to balance out.
 
-I was addressing the ability to deal with an arbitrary tree.  By that definition,
-a dmg, being a disk image and not a tree image, is *not* what you want....
+Said tendency can dissapear quite easily here....
 
---==_Exmh_1119890441_6336P
+> How do we get over quota errors, btw?  Can we get them from write()
+> calls?  If so, I don't see a Problem(TM), just an annoyance.
+
+One gotcha here is that it means that you can't do delayed allocation on
+writes - you *have* to allocate disk space at each write and then update
+the quotas. (And yes, I know that 'man 2 close' says that bad stuff can
+happen to your data even after your program exits - that doesn't mean we
+should go out of our way to make things worse.. ;)
+
+--==_Exmh_1119891196_6336P
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 Comment: Exmh version 2.5 07/13/2001
 
-iD8DBQFCwCwJcC3lWbTT17ARAgRvAJ97aLQPxXPmwyRxzjRtplO4qZRmfwCgoEeJ
-begE6L5YF0RAgkWi9u4DXoY=
-=PlVl
+iD8DBQFCwC78cC3lWbTT17ARApC0AKCBGqN04tsNIu6Wvpq1MYJyhtt7PQCcDGZG
+ka34Pp0d87Y1cWn7kDpHU64=
+=Yb7G
 -----END PGP SIGNATURE-----
 
---==_Exmh_1119890441_6336P--
+--==_Exmh_1119891196_6336P--
