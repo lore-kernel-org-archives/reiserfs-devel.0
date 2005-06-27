@@ -1,113 +1,101 @@
-From: fs <fs@ercist.iscas.ac.cn>
-Subject: [PATCH][RESEND] ReiserFS file.c several bug-fix
-Date: Mon, 27 Jun 2005 16:09:56 -0400
-Message-ID: <1119902996.2851.16.camel@CoolQ>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: reiser4 plugins
+Date: Mon, 27 Jun 2005 12:18:08 +0300
+Message-ID: <20050627091808.GC11013@nysv.org>
+References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB5E1A.70903@namesys.com> <1119609680.17066.81.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-R9DXeoJeDwc0x6F0DTBv"
-Return-path: <reiserfs-list-return-24681-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="edESjMboOAwUFn6i"
+Return-path: <reiserfs-list-return-24682-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <1119609680.17066.81.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list <reiserfs-list@namesys.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, Hans Reiser <reiser@namesys.com>, Vladimir Saveliev <vs@namesys.com>, iscas-linaccident <iscas-linaccident@intellilink.co.jp>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
---=-R9DXeoJeDwc0x6F0DTBv
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--edESjMboOAwUFn6i
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Related FS:
-    ReiserFS
+On Fri, Jun 24, 2005 at 11:41:21AM +0100, Alan Cox wrote:
+>
+>More fundamentally - prototype things *out* of the main kernel. If
+>everyone was doing their prototyping in kernel Andrew Morton would by
+>now be a team of about 25
 
-Related Files:
-    fs/reiserfs/file.c
+This is going semi off-topic but how then do you justify regression
+that's apparently confessed? :)
 
-Bug description:
-    Make a ReiserFS partition in USB storage HDD, create a test file
-with enough size(dd if=/dev/zero of=testfile bs=4096 count=1024).
-    Write a program, do: 
-	int fd;
-	char buf[4096];
- 
-	fd = open("testfile", O_RDWRO | O_CREAT | O_SYNC,
- 		(S_IRWXU | S_IRWXG | S_IRWXO) );
-	or
-	open("testfile", O_RDWRO | O_CREAT | O_DSYNC,
- 		(S_IRWXU | S_IRWXG | S_IRWXO) );
+It appears -mm is more of a prototype tree than a development tree;
+I remember Con Kolivas cursing (with SMP nice support) that the
+interface is too lively to keep supporting one patch. Unfortunately
+I can't find the original post I'm thinking about but
+http://lkml.org/lkml/2005/5/16/68 says essentially the same thing.
 
-	write(fd, buf, sizeof(buf));
-	close(fd); 
+There's also my all-time favorite, http://lkml.org/lkml/2005/3/14/4
 
-After each operation, pause for a while, such as 3s. Between open and
-write, unlug the USB wire. write returns no error instead of -EIO .
+The lack of QA seems appalling here, and I'm sure Reiser has had
+to do more of that for DARPA than most linux kernel hackers around.
 
-Bug analysis:
-    reiserfs_file_write will claim some blocks, commit the I/O request,
-if O_SYNC and O_DSYNC is used, it will
-    if ((file->f_flags & O_SYNC) || IS_SYNC(inode))
-        res = generic_osync_inode(inode, file->f_mapping,
-                                  OSYNC_METADATA|OSYNC_DATA);
-The question is, if I/O error occurs,       
-        res = reiserfs_allocate_blocks_for_region fails with -EIO, so
-it will exit the loop, no I/O request, no page marked as dirty.
-If generic_osync_inode runs, it returns 0(no dirty page), res will be
-overwritten from -EIO to 0, thus no error report.
+What I'm saying here is isn't it a bit hypocritic to ramble on that
+we need real assurances for this to work, community proof and bugfixes
+on the list mean nothing, when other core systems seem to be much
+looser in this respect?
 
-Also,  reiserfs_file_write contains a serious bug, see here
-        blocks_to_allocate = reiserfs_prepare_file_region_for_write
-                (inode, pos, num_pages, write_bytes, prepared_pages);
-Here blocks_to_allocate is defined as size_t, i.e. unsigned int, but
-reiserfs_prepare_file_region_for_write is declared as int, so sometimes
-it will return -EIO, -ENOENT, etc, take a look at this line
-        if ( blocks_to_allocate < 0 ) { <- This will never happen
-            res = blocks_to_allocate;
-            reiserfs_release_claimed_blocks(inode->i_sb, 
-                num_pages << (PAGE_CACHE_SHIFT - inode->i_blkbits));
-            break;
-        }
+Sure, "other people merge design-breakers and bugs" is NOT a justification
+for merging Reiser4, of course, but Reiser4's track record has vastly
+cleaned itself up.
 
-Way around:
-1) if already_written is zero, don't do generic_osync_inode
-2) tell the result of reiserfs_prepare_file_region_for_write with IS_ERR
-   macro or cast it to size_t
+Most bug reports come from broken hardware or unsupported patches or
+old code. Just have Namesys swear they won't introduce design changes
+until the userland utils are available, and won't do it at all after
+EXPERIMENTAL has been removed.
+They already did this with changes that require mkfs :>
 
-Signed-off-by: Qu Fuping<fs@ercist.iscas.ac.cn>
+Here's a real suggestion, for LKML et al, dropping the sarcastic mode.
 
-Patch:
-diff -uNp linux-2.6.12/fs/reiserfs/file.c
-linux-2.6.12-new/fs/reiserfs/file.c
+0. Namesys addresses the code beautification reqs mentioned here earlier.
 
+1. Merge Reiser4 sans metas into 2.6.13.
+2. Namesys can have a separate metas patch for testing.
+3. Gradually merge Reiser4 architecture into VFS and if this really
+   requires a 2.7, as (iirc) Valdis Kletnieks suggested, make it so.
+   Might do the rest of the kernel some good too.
 
+The above is a lame compromise; I'd much rather have the meta system
+in, as is dropping the stupid name, ..metas/ is better, and dropping "meta
+files can have meta data, ie. endless recursion in ..metas/
 
---=-R9DXeoJeDwc0x6F0DTBv
-Content-Disposition: attachment; filename=reiserfs_write.diff
-Content-Type: text/x-patch; name=reiserfs_write.diff; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Then it can be merged into the VFS as needed, but if there truly are issues=
+=20
+left, I realize it can't probably be fixed fast enough.
 
---- linux-2.6.12/fs/reiserfs/file.c	2005-06-23 14:59:27.000000000 -0400
-+++ linux-2.6.12-new/fs/reiserfs/file.c	2005-06-23 15:34:49.000000000 -0400
-@@ -1306,7 +1306,7 @@ static ssize_t reiserfs_file_write( stru
- 	   so that nobody else can access these until we are done.
- 	   We get number of actual blocks needed as a result.*/
- 	blocks_to_allocate = reiserfs_prepare_file_region_for_write(inode, pos, num_pages, write_bytes, prepared_pages);
--	if ( blocks_to_allocate < 0 ) {
-+	if ( IS_ERROR((const void *)blocks_to_allocate) ) {
- 	    res = blocks_to_allocate;
- 	    reiserfs_release_claimed_blocks(inode->i_sb, num_pages << (PAGE_CACHE_SHIFT - inode->i_blkbits));
- 	    break;
-@@ -1363,6 +1363,10 @@ static ssize_t reiserfs_file_write( stru
-         }
-     }
- 
-+    /* If nothing is written, no need(actually, mustn't) to sync pages, just return res */
-+    if( already_written == 0 )
-+	    goto out;
-+    
-     if ((file->f_flags & O_SYNC) || IS_SYNC(inode))
- 	res = generic_osync_inode(inode, file->f_mapping, OSYNC_METADATA|OSYNC_DATA);
- 
+Having metas on by default probably leads to a lot of bug reports,
+which get fixed, and at the same time makes VFS-merging easier,
+when metas-related bug issues are fixed in VFS.
 
---=-R9DXeoJeDwc0x6F0DTBv--
+My two grumpy cents.
+
+--=20
+mjt
 
 
+--edESjMboOAwUFn6i
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQFCv8RQIqNMpVm8OhwRAmCaAJ9qz7uok+3blFUX+SKsRAQgkn0l/wCdFk7F
+J/e803o8aZYf6Xk7kJ2TLRk=
+=qQAV
+-----END PGP SIGNATURE-----
+
+--edESjMboOAwUFn6i--
