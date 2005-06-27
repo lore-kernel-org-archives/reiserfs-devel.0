@@ -1,109 +1,109 @@
-From: David Masover <ninja@slaphack.com>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: reiser4 plugins
-Date: Sun, 26 Jun 2005 23:51:41 -0500
-Message-ID: <42BF85DD.6030202@slaphack.com>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>            <42BF667C.50606@slaphack.com> <200506270427.j5R4RYiO004629@turing-police.cc.vt.edu>
+Date: Mon, 27 Jun 2005 00:59:39 -0400
+Message-ID: <200506270459.j5R4xdZp005659@turing-police.cc.vt.edu>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>
+            <87y88webpo.fsf@evinrude.uhoreg.ca>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1119848378_3633P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24654-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24655-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200506270427.j5R4RYiO004629@turing-police.cc.vt.edu>
+In-Reply-To: Your message of "Sun, 26 Jun 2005 23:10:43 EDT."
+             <87y88webpo.fsf@evinrude.uhoreg.ca> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Valdis.Kletnieks@vt.edu
+To: Hubert Chan <hubert@uhoreg.ca>
 Cc: Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+--==_Exmh_1119848378_3633P
+Content-Type: text/plain; charset=us-ascii
 
+On Sun, 26 Jun 2005 23:10:43 EDT, Hubert Chan said:
+> On Sun, 26 Jun 2005 20:40:29 -0400, Valdis.Kletnieks@vt.edu said:
 
+> > Oh, I'm waiting for the fun the first time somebody deploys a plugin
+> > that has similar semantics to 'chmod g+s dirname/' ;)
 
-Valdis.Kletnieks@vt.edu wrote:
-> On Sun, 26 Jun 2005 21:37:48 CDT, David Masover said:
+(You *did* notice it was set-GID of a *directory* not an executable file,
+right?)
+
+> Reiser4 plugins have to be compiled into the kernel.  (They're not
+> plugins in the sense that most people use that word.)  And any admin who
+> would compile that kind of plugin into the kernel needs to have his head
+
+Oh?  You saying that it *wont* be permitted for a user to say:
+
+mkdir $HOME/zipped
+chattr "files under here are ZIP files" $HOME/zipped
+
+and instead you have to do that chattr by hand for *every* *single* zip file?
+
+Or "files on this filesystem are encrypted by default"?
+
+I suspect that this sort of thing is going to be one of the *first* things
+that will get created, and any admin who tries to sell this idea to the users
+*without* that sort of functionality will be handed their head.
+
+Or, if "that type of plugin.. needs to have their head examimed", I suggest
+that you go to your kernel source tree, find fs/ext3/ialloc.c, and this code
+in ext3_new_inode():
+
+        if (test_opt (sb, GRPID))
+                inode->i_gid = dir->i_gid;
+        else if (dir->i_mode & S_ISGID) {
+                inode->i_gid = dir->i_gid;
+                if (S_ISDIR(mode))
+                        mode |= S_ISGID;
+        } else
+                inode->i_gid = current->fsgid;
+
+and #ifdef out all but the last line, and see if anything breaks. ;)
+
+> examined.  Not to mention that plugins must first go through Hans and/or
+> Linus before they can get included into the kernel.
 > 
-> 
->>>Go read http://www.tux.org/lkml/#s7-7 and ponder until enlightenment arrives.
->>
->>So what?  I don't intend to convince anyone based on how much
->>slower/faster their kernel compiles.  It's meant to illustrate the
->>principle of the thing.
-> 
-> 
-> No, you seemed convinced that you'd have a big win based on the fact that
-> big chunks don't get unpacked - when in fact it's not as much of a win as
-> you might think.
+> The kernel defines the set of plugins available to the user.  The user
+> selects (to a certain degree) which plugins to use.
 
-Not in this case.
+The point you missed was that plugins *will* have interactions, and as
+the guys who are working on a stacker for LSM modules have found out the
+hard way, trying to deal with the composition of functions is fiendishly
+difficult.
 
-> And at least in the real world, performance *does* matter - if doing it the
-> traditional way is 3 times faster, nobody's going to be interested.
+And notice that it doesn't *have* to be quite so obvious - how about if a
+user creates a directory $HOME/zipped/ and flags it as "anything under here
+is a zipped file".
 
-Not true.  I've said it before, and I'll say it again:
+Now throw in multiple users and CPU limits.  User A enters that directory and
+references everything, causing the buffer cache to get filled up.  While there,
+A makes changes, so the pages are dirty - "for i in */*; do echo " " >> $i; done"
+would do the job...  User B now does something that causes a writeback of one
+of those buffer cache pages.
 
-http://www.apple.com/macosx/features/spotlight/
+A) What process currently gets ticked for the CPU and I/O for the writeback?
 
-Users *are* willing to trade speed for features, under the right
-circumstances.  Tiger *is* noticeably slower.  People *do* make
-webservers out of it anyway.
+B) In your model, who will get ticked for the resources?
 
-Or, for an extreme example:
+C) Will the users riot? (Note that you can't win here - currently, the "price"
+of writing back A's and B's pages are about equal.  However, if A gets dinked
+for an expensive writeback due to B's process, A will get miffed.  If B gets
+charge for an expensive writeback of A's, B will get miffed. If you say "screw it"
+and bill it to a kernel thread, the bean counters will get miffed... ;)
 
-http://www.doom3.com/
-
-Doom 3 can be made to run on much older hardware (the Voodoo3, I think),
-by disabling things like the dynamic lighting.  The old way of doing
-lighting is probably more than 3 times faster, I know it's more than
-twice as fast.  The new way looks much, much better, and many people
-upgraded their hardware -- at least a couple hundred dollars upgrade,
-sometimes an entirely new box -- in order to play this game.
-
-For that matter, the old way of doing this kind of discussion is email,
-the new way seems to be a PHP Wiki, which has got to be more of a load
-on the server, but people use it anyway.
-
-In the real world, killer features trump performance.
-
-All of this is irrelevent.  The performance isn't that bad.  It may even
-be better, even if it's not *much* better.
-
->>Besides, your point was that you could not run make inside of a kernel
->>tarball/zipfile.  Nobody ever suggested that you would actually want to.
-> 
-> 
-> "Here's a new facility.  Don't bother trying to actually use it".
-
-Not the facility.  The specific example.
-
-> Is that the message you're trying to send?
-
-I'm lacking a little imagination right now.  It's Sunday night, after all.
-
-Actually, I think it might be a big win for Debian-like package
-management systems.  That's also somewhere in the "Silent Semantic"
-archives.
-
-Here's another, somewhat better example:  modifying a zisofs CD image.
-I'm going to go reply to your other mail now; I think the details belong
-there.
+--==_Exmh_1119848378_3633P
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Comment: Exmh version 2.5 07/13/2001
 
-iQIVAwUBQr+F3XgHNmZLgCUhAQJWDA/+NmbL7kCANpEEeV+4zKx3MUmABuoRRo6Y
-hbRPDlBk9PCPM8GWQx+XwRh4XXb17FQklP7oIJHnnGtQelwDtcvbX8bSsDUTPd3s
-Gt8a11GMAJkGcPAHh2oBtlGjslJj7O/eJRlj3eeYv5LIRxq/KEfvBt0wvx2W73uN
-d8Mm65baeq7ipWDqKf0yQTcJT8M8kQQczO5gb9E5Q68fL+8rO7diQEOCm2A+Sp2G
-rlKpvcQuhQ/P7IBOnX8ABUG4UphQfMqtICIwMmkLimLfjO+ID9pnO516K7O4erMI
-Q2deFh6+KQ62Ngmokkh6GOu7VEmUD4XZubJpJknGWWBaKdCz12LsvHt2DeucKD5e
-5mWi4oVwSInlxIRboso0CmRkoJZdEmqBJWFPtjXEtGGdufqJFySIHxPXpsqwRsa4
-SuIIa2SK5vDXoc9URqKtPZtGkrGjG4VL1fxLNp9hD91hp+T5bLhsO+/8v2ZqfyRC
-UvTKb9u3mqdu//UxJhhj0LTTjNv3eNc+2UQFhAg7uSpa7FZjV+nEvD5ZwlpimQL1
-InDt+nd5wQWWQ+SfjbZNvdvE/XGfmMArT/Ik7tYv9LkSLp0ohwOVQw3fThPGY+BD
-1SW0E5FLruAMh/cRl0mwIhDQ9CZO/jrKjRbueyC7CYFMjmyBLUxbt0vUIJqsB8rJ
-P58IcgUaWFs=
-=R57s
+iD8DBQFCv4e6cC3lWbTT17ARAhPrAKDln3ZSJTXlQXujy7Xs1qg7bfApgQCgsGy4
+N9VaXwtC/xJ6ii6IAGZ26YY=
+=zvMF
 -----END PGP SIGNATURE-----
+
+--==_Exmh_1119848378_3633P--
