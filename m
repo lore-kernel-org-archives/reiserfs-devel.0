@@ -1,56 +1,57 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 17:26:28 -0400
-Message-ID: <20050627212628.GB27805@thunk.org>
-References: <42BB7B32.4010100@slaphack.com> <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl> <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org> <42C0578F.7030608@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: reiser4 merging action list
+Date: Mon, 27 Jun 2005 16:00:01 -0700
+Message-ID: <42C084F1.70607@namesys.com>
+References: <42BB7B32.4010100@slaphack.com> <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl> <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org> <42C0578F.7030608@namesys.com> <20050627212628.GB27805@thunk.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24724-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24725-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <42C0578F.7030608@namesys.com>
+In-Reply-To: <20050627212628.GB27805@thunk.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
+To: Theodore Ts'o <tytso@mit.edu>
 Cc: Markus T?rnqvist <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, Steve Lord <lord@xfs.org>
 
-On Mon, Jun 27, 2005 at 12:46:23PM -0700, Hans Reiser wrote:
-> A difference between us is
-> that I tell them that with all the major linux filesystems (I include
-> XFS and JFS in this)  it is by this time far more likely to be hardware
-> that caused corruption than the filesystem software, whereas I guess you
-> tell them something else.
 
-Oh, I agree with this, and I do tell people that.  The question though
-is how the filesystem recovers from said hardware-caused corruption
-once it does happen.  You've admitted that reiserfs3 has less than
-optimal recovery characteristics from hardware-induced corruptions if
-said filesystem contains reiserfs filesystem images; that would be an
-example of a filesystem not being as robust as it could be.  (It'll be
-interesting to see if SuSE will support reiserfsv3 in combination with
-the Xen hypervisor or other virtualization systems, which makes use of
-filesystem images.)  Another example would be DMA'ing garbage into the
-hard drive after a power failure --- how does a filesystem respond to
-this eventuality?
+Andrew asked me to put together a list of things that need to be done
+before merging:
 
-You probably hear more stories people who got unlucky with
-hardware-induced corruptions with ext2/3, and I probably hear more
-from users who have sworn off of reiserfs just because are sample sets
-are somewhat biased.  Such are the dangers of relying on anecdotal
-evidence.
+    * VFS will dispatch directly to the method of the plugin for the
+*_operations methods.  This requires duplicating to all plugin methods
+the common code currently used by all reiser4 plugins for a given
+method.  It has the desirable side effect of making the methods more
+fully self-contained, which is somethng I had wanted two years ago and
+was a little sad to not get, and the cost of duplicating some code. 
+Since not all plugin methods are *_operations, it means we have two
+structures with duplicated data, and duplicate data that must be in sync
+at all times is classical badness in programming technique (see Codd and
+normalization).                                 vs owns this task
 
-However, logically speaking, if a filesystem is designed such that in
-certain cases, the fsck program has to brute-force search every single
-disk block looking for data structures that _look_ like they might be
-part of the filesystem data, well, that's always going to be more
-error prone than one where the filesystem metadata is in
-easily-predicted locations.  It sounds like you've added some more
-checks in reiser4, and that's definitely a good thing.  Time will tell
-whether they are sufficient or not.
+    * review all sparse complaints, and revise as appropriate. 
 
-Regards,
+    * panic and code beauty: everyone agrees that having function, file,
+and line added to reiser4_panic output hurts nothing (I hope).  Everyone
+agrees that restarting the machine without an error message seems like a
+useless option to allow.   Much else was argued, not sure if anything
+was a consensus view.  Various detail improvements were suggested by
+Pecca, and I agreed with half of them.
 
-						- Ted
+
+   * metafiles should be disabled until we can present code that works
+right.  Half the list thinks we cannot solve the cycles problem ever. 
+Disable metafiles and postpone problem until working code, or the
+failure to produce it, makes it possible to do more than rant at each
+other.  This is currently already done in the -mm patches, but is
+mentioned lest someone think it forgotten.
+
+   * update the locking documentation
+
+Probably I forget something.
+
+Best,
+
+Hans
