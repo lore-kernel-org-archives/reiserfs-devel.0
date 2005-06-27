@@ -1,56 +1,89 @@
-From: "Artem B. Bityuckiy" <dedekind@yandex.ru>
-Subject: Re: Reiser4 + seekdir()
-Date: Mon, 27 Jun 2005 16:09:06 +0400
-Message-ID: <42BFEC62.1010907@yandex.ru>
-References: <42BFC6B0.7040202@yandex.ru> <1119872500.4257.260.camel@tribesman.namesys.com>
+From: Pekka J Enberg <penberg@cs.Helsinki.FI>
+Subject: [PATCH] verbose BUG_ON reporting
+Date: Mon, 27 Jun 2005 15:27:50 +0300 (EEST)
+Message-ID: <Pine.LNX.4.58.0506271525240.3200@sbz-30.cs.Helsinki.FI>
+References: <20050621195642.GD14251@wotan.suse.de> <42B8C0FF.2010800@namesys.com>
+ <84144f0205062223226d560e41@mail.gmail.com> <42BB0151.3030904@suse.de>
+ <20050623114318.5ae13514.akpm@osdl.org> <20050623193247.GC6814@suse.de>
+ <1119717967.9392.2.camel@localhost> <20050627072449.GF19550@suse.de>
+ <20050627072832.GA14251@wotan.suse.de> <Pine.LNX.4.58.0506271048310.26869@sbz-30.cs.Helsinki.FI>
+ <20050627082046.GC14251@wotan.suse.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24690-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24691-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1119872500.4257.260.camel@tribesman.namesys.com>
+In-Reply-To: <20050627082046.GC14251@wotan.suse.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Andi Kleen <ak@suse.de>
+Cc: Jens Axboe <axboe@suse.de>, Andrew Morton <akpm@osdl.org>, Jeff Mahoney <jeffm@suse.de>, penberg@gmail.com, reiser@namesys.com, flx@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, joern@wohnheim.fh-wedel.de
 
-> Location within a directory in reiser4 is logical number of entry within
-> the directory.
-Yes, I know. It does not absolutely correctly handle the way when 
-dirents were deleted before and after the saved position.
+On Mon, 27 Jun 2005, Andi Kleen wrote:
+> It won't work for me because it'll bloat the kernel .text
+> considerable. There is a reason why BUG is implemented
+> like it is. Compare it.
 
-Well, Nikita kindly answered my questions in IRC (unfortunately there 
-are few Namesys people there).
-According to him, seekdir() doesn't have to work correctly if the 
-previous N direntries were deleted (it only tries). Indeed, even 
-classical FSes (where directory is a file with the plain list of 
-direntries) may shrink directories. I thought Reiser4 pretends to work 
-correctly even in case of deletions.
+The assertion codes bloat the kernel all the same. So how about this 
+instead?
 
-> fs/reiser4/plugin/dir/dir.c:seek_dir()
-> 
-> You may also want to read a comment before
-> fs/reiser4/plugin/dir/dir.c:readdir_common and comment named  "STATELESS
-> READDIR" in the fs/reiser4/plugin/dir/dir.c.
-Yes, I read it of course. It is really confusing. What it should mention 
-is that
+This patch adds a CONFIG_DEBUG_BUG_ON_VERBOSE that makes BUG_ON report the
+evaluated expression in human readable form when the assertion fails.
 
-> we can not return entry key to telldir, on seekdir we have to be able to
-> position within a directory by off_t - therefore, we need adjust_dir_pos
-> anyway.
-Yes, thanks, I've realized this as well.
+The size of vmlinux with allyesconfig increases about 100k when the config
+option is enabled:
 
-Could you please explain the real difference between 
-SEEKABLE_HASHED_DIR_PLUGIN_ID and LAST_DIR_ID plugins. Both seems to 
-support seeks. Both seems to call adjust_dir_pos(). Only key assignment 
-is simpler in case of SEEKABLE_HASHED_DIR_PLUGIN_ID. This confused me 
-very much.
+    text    data     bss      dec filename
+19333351 6699691 1845604 27878646 vmlinux-2.6.12-git8
+19434139 6699691 1845604 27979434 vmlinux-2.6.12-git8-verbose-bug_on
 
-Thanks.
+Signed-off-by: Pekka Enberg <penberg@cs.helsinki.fi>
+---
 
--- 
-Best Regards,
-Artem B. Bityuckiy,
-St.-Petersburg, Russia.
+ include/asm-generic/bug.h |   11 ++++++++++-
+ lib/Kconfig.debug         |    7 +++++++
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+
+Index: 2.6/include/asm-generic/bug.h
+===================================================================
+--- 2.6.orig/include/asm-generic/bug.h
++++ 2.6/include/asm-generic/bug.h
+@@ -12,8 +12,17 @@
+ } while (0)
+ #endif
+ 
++#ifdef CONFIG_DEBUG_BUG_ON_VERBOSE
++#define FAIL_BUG_ON(expr_str) do { \
++	printk("BUG_ON(%s) failed.\n", expr_str); \
++	BUG(); \
++} while (0)
++#else
++#define FAIL_BUG_ON(expr_str) BUG()
++#endif
++
+ #ifndef HAVE_ARCH_BUG_ON
+-#define BUG_ON(condition) do { if (unlikely((condition)!=0)) BUG(); } while(0)
++#define BUG_ON(condition) do { if (unlikely((condition)!=0)) FAIL_BUG_ON(#condition); } while(0)
+ #endif
+ 
+ #ifndef HAVE_ARCH_WARN_ON
+Index: 2.6/lib/Kconfig.debug
+===================================================================
+--- 2.6.orig/lib/Kconfig.debug
++++ 2.6/lib/Kconfig.debug
+@@ -116,6 +116,13 @@ config DEBUG_BUGVERBOSE
+ 	  of the BUG call as well as the EIP and oops trace.  This aids
+ 	  debugging but costs about 70-100K of memory.
+ 
++config DEBUG_BUG_ON_VERBOSE
++	bool "Verbose BUG_ON() reporting"
++	depends on DEBUG_KERNEL && BUG
++	default false
++	help
++	  Say Y here to make BUG_ON() panics output the evaluated expression.
++
+ config DEBUG_INFO
+ 	bool "Compile the kernel with debug info"
+ 	depends on DEBUG_KERNEL
