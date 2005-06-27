@@ -1,100 +1,123 @@
-From: Prakash Punnoor <lists@punnoor.de>
+From: Kyle Moffett <mrmacman_g4@mac.com>
 Subject: Re: reiser4 plugins
-Date: Tue, 28 Jun 2005 01:06:54 +0200
-Message-ID: <42C0868E.4080003@punnoor.de>
-References: <42BB7B32.4010100@slaphack.com> <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl> <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org> <42C0578F.7030608@namesys.com> <42C05F16.5000804@xfs.org> <20050627202841.GA27805@thunk.org> <42C06873.7020102@xfs.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="------------enig74B8E31CDC1CD22755FBC7DA"
-Return-path: <reiserfs-list-return-24726-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <42C06873.7020102@xfs.org>
-List-Id: <reiserfs-devel.vger.kernel.org>
-To: Steve Lord <lord@xfs.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, Hans Reiser <reiser@namesys.com>, Markus T?rnqvist <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
-
---------------enig74B8E31CDC1CD22755FBC7DA
-Content-Type: text/plain; charset=ISO-8859-1
+Date: Mon, 27 Jun 2005 19:03:24 -0400
+Message-ID: <CD59AE36-FD15-4A4C-9E1D-AB2F8B52D653@mac.com>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu> <42BF667C.50606@slaphack.com> <5284F665-873C-45B7-8DDB-5F475F2CE399@mac.com> <42BF7167.80201@slaphack.com> <EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com> <42C06D59.2090200@slaphack.com>
+Mime-Version: 1.0 (Apple Message framework v730)
 Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S262093AbVF0XKm@vger.kernel.org>
+In-Reply-To: <42C06D59.2090200@slaphack.com>
+Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
+To: David Masover <ninja@slaphack.com>
+Cc: Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Steve Lord schrieb:
+On Jun 27, 2005, at 17:19:21, David Masover wrote:
+>> Precisely.  Come back when you have a good sturdy set of  
+>> arguments.  See
+>> the FUSE project (Also discussed in this thread), for better ideas  
+>> on  how
+>> to add strange filesystem semantics.
+>
+> If I didn't care about performance.  I will read up on how FUSE works,
+> though, to see if there's anything in the _kernel_ code that would be
+> useful.
 
-> I see no way short of hardware fixes of avoiding the general problem of
-> a system failing in an ugly manner like this. Unless you write everything
-> to disk twice (i.e. journal all data), you can still end up with a
-> legitimate set of metadata, and the master copy of your employee
-> database full of nasty little bits of corruption.
+A number of projects do their performance critical things in userspace,
+including real-time audio and video editing.  The kernel is *NOT* for
+performance-critical things, unless they cannot be done efficiently in
+userspace.  It is for _security_critical_ and _stability_critical_  
+things,
+and even then, some of those are pushed to userspace as well.
 
-If I as a user may add my own little experience with different fs on my
-computer, where I tend to use kernels or features that cause my machine to
-(hard) lock up:
+>> NOTE:  Even the FUSE project,  which
+>> is in _userspace_ (as opposed to the massive kernelspace mess of   
+>> reiser4),
+>> is taking a lot of flak for changing UNIX semantics, so I see no  
+>> reason
+>> why Reiser4 should be special.
+>
+> Right.  Kernel people hate change.  Got it.
+>
+> No, seriously, I have to respect the history involved, which is why  
+> I'm
+> not pretending to know more than I do.
 
-2.4.2x kernel and reiserfs (V3): This was the only one which really managed to
-smoke my partition...
+There is a good reason to hate change (at least without thorough  
+evidence
+to back it up).  Even small changes can break things in subtle ways.   
+Big
+changes can tend to wreak kernel-global (and even userspace-global)  
+havoc.
 
-2.6.x-test-y till 2.6.x stable kernel and reiserfs (V3): I did a short
-intermezzo with xfs but at that time it felt too slow to bear, so I gave
-reiserfs another chance. And here it was very robust. No lock-up did serious
-damage to the data. Only currently accessed files were partly overwritten with
-@^@^@^ and so on...
+>> Ok, good.  That's one of the first issues.  A _lot_ of applications
+>> would get themselves thoroughly confused at that '...' interface, not
+>> to  mention a lot of sysadmins :-D.
+>>
+>
+> Not as much as you think.  Unless a lot of applications can't handle
+> opening or saving files that have '...' in the pathname?
 
-After a year or so of heavy usage the formerly fast reiserfs partition became
-more and more slow till I got sick of it. So I tried JFS and forced a hard
-lock. Data was OK, but (probably error in gentoo scripts) fsck wasn't
-automatically called (or failed, I don't remember) and I had to do it by hand,
-which was a major annoyance - I thought then.
+If those files are as special as you lead me to believe, even a simple
+"tar -cjvf foo.tar.bz2 foo" would break horribly, because it would  
+tar up
+all sorts of strange special files that shouldn't be included.  Worse,
+when I untar that archive on the filesystem, it will overwrite those  
+files,
+which probably should be overwritten even less than they should be  
+stored
+in an archive.
 
-So I gave ext3 a try. Very robust, but at the same time slooow. I couldn't
-bear it after some months. So I gave xfs another try. Yes, now it felt much
-better. Still not that fast as reiserfs, IIRC, but better than the first time
-I tried. I am still having xfs on / and it works pretty well, and is rather
-robust against hard locks with about the same amount of data losing as
-reiserfs. But what annoys me very much, is that I have to run xfs_repair by
-hand and by booting from another partition. Even after a hard lock, the
-partition mounts w/o problems and everything seems OK, but it only seems like
-that. In fact after some hours/days of use, you'll notice oddities, like files
-or directories which cannot be removed and things like that. After running
-xfs_repair everything is back in order.
+> The sysadmin problem doesn't worry me so much.
 
-In between I gave an alpha (or rather several alphas) of reiser4 a try - but
-not on /, just on /usr. Well, I wouldn't say it was extraordinary fast. In
-fact it felt slower than reiserfs V3, but much more space efficient. And to my
-surprise it was very robust as well. Hard-locks were no problem. Only annoying
-then was, that unmounting regularly produced oops but later versions corrected
-that. But nevertheless it didn't survive, as like V3, with time V4 became
-slower and slower. In this case no year was needed, but just one month or
-alike. So end of test...but in fact I'll give V4 another go in the near future.
+Personally, I know several sysadmins who, never having heard of Reiser4
+but using it anyways, would get scared when all of the '...' directories
+started showing up, thinking that some cracker had gotten a module  
+loaded
+in their kernel.  If you can, please avoid overloading existing  
+semantics
+in filesystems.  You can either claim that your filesystem is POSIXy,
+(similar to ext3, xfs, etc), or you can claim that it's not  
+compatible by
+design (AFS, Coda) or you can claim that it's a completely virtualized
+interface (procfs, sysfs, CKRM fs, etc) and doesn't care about POSIX in
+any case.  Reiser4 definitely isn't the third, but neither is it  
+either of
+the first two, because it would break standard operations.
 
+> Agreed.  I don't know enough about VFS to propose one, though.  I  
+> think
+> others are working on that, finally.
 
-All in all I can say that every fs I tested was able to not smoke all of my
-data, even using an instable machine - but only ext3, reiser v3 and v4 were
-non-annoying. But xfs is majorly annoying in that respect. I hope that new
-versions will be able to keep consistency w/o having to run xfs_repair every
-time after a lock-up...
+When the VFS work gets done, this discussion can move on, otherwise, we
+are stuck at an impasse.
 
-But what I don't understand is, that sometimes even files, which were only
-opened for reading, got overwritten with @^@^@ after a lock-up. I don't
-understand the logics here, how this could happen.
+> Not too much, I hope.
+>
+> Although being able to use different keys on a per-file basis would be
+> nice.  I'm not sure if that would work in the existing system.  Not to
+> mention that keys would also be handlable with '...', if/when it  
+> happens.
 
-Thx for your time,
+I think the '...' is just a bad idea in general, because it breaks tar
+and such.  An interface like this might be simpler to design and use:
 
-Prakash
+# mkdir /attr
+# mount -t attrfs attrfs /attr
 
---------------enig74B8E31CDC1CD22755FBC7DA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+/attr/fd/$FD_NUM              == '...' directory for a filedescriptor
+/attr/fs/$DEV_NUM/$INODE_NUM  == '...' directory for an inode
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
+It would be usable from a shell with a simple "getattrpath" command
+which returns "fs/$DEV_NUM/$INODE_NUM" by stat-ing any given path.
 
-iD8DBQFCwIaOxU2n/+9+t5gRAq6nAJ93a7h9a9OXiuJe+LUSE+W5xC5AcgCgr7XH
-Xk0YijxdUurGBFZjNpL72RQ=
-=Dt62
------END PGP SIGNATURE-----
+Cheers,
+Kyle Moffett
 
---------------enig74B8E31CDC1CD22755FBC7DA--
+--
+There are two ways of constructing a software design. One way is to  
+make it so simple that there are obviously no deficiencies. And the  
+other way is to make it so complicated that there are no obvious  
+deficiencies.
+  -- C.A.R. Hoare
