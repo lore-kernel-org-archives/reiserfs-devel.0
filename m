@@ -1,40 +1,134 @@
-From: "Pekka J Enberg" <penberg@cs.helsinki.fi>
-Subject: Re: verbose BUG_ON reporting
-Date: Mon, 27 Jun 2005 15:45:12 +0300
-Message-ID: <courier.42BFF4D8.000010AF@courier.cs.helsinki.fi>
-References: <84144f0205062223226d560e41@mail.gmail.com>
-            <42BB0151.3030904@suse.de>
-            <20050623114318.5ae13514.akpm@osdl.org>
-            <20050623193247.GC6814@suse.de>
-            <1119717967.9392.2.camel@localhost>
-            <20050627072449.GF19550@suse.de>
-            <20050627072832.GA14251@wotan.suse.de>
-            <Pine.LNX.4.58.0506271048310.26869@sbz-30.cs.Helsinki.FI>
-            <20050627082046.GC14251@wotan.suse.de>
-            <Pine.LNX.4.58.0506271525240.3200@sbz-30.cs.Helsinki.FI>
-            <20050627123821.GE14251@wotan.suse.de>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: reiser4 plugins
+Date: Mon, 27 Jun 2005 15:55:55 +0300
+Message-ID: <20050627125555.GE11013@nysv.org>
+References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB5E1A.70903@namesys.com> <1119609680.17066.81.camel@localhost.localdomain> <20050627091808.GC11013@nysv.org> <42BFCAE7.6070708@yahoo.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24696-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="TMTfqzsZeEKgETVO"
+Return-path: <reiserfs-list-return-24697-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050627123821.GE14251@wotan.suse.de>
+Content-Disposition: inline
+In-Reply-To: <42BFCAE7.6070708@yahoo.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; charset="us-ascii"
-To: Andi Kleen <ak@suse.de>
-Cc: Pekka J Enberg <penberg@cs.Helsinki.FI>, Jens Axboe <axboe@suse.de>, Andrew Morton <akpm@osdl.org>, Jeff Mahoney <jeffm@suse.de>, penberg@gmail.com, reiser@namesys.com, flx@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, joern@wohnheim.fh-wedel.de
+To: Nick Piggin <nickpiggin@yahoo.com.au>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Andi Kleen writes:
-> It's still useless - it is too bloated to turn on by default
-> and then if you need it you still won't have it.  And when you
-> explicitely turn it on then you likely don't need it because
-> you control the source.
+--TMTfqzsZeEKgETVO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hmm. Would a BUG_ON_WITH_TEXT be a better solution? The home-grown assert 
-macro in reiser4 can't be a long-term solution if people really want this 
-kind of functionality. Btw, the bloat argument applies to assertion codes 
-too. 
+On Mon, Jun 27, 2005 at 07:46:15PM +1000, Nick Piggin wrote:
+>
+>The scheduler is being improved for better behaviour on complex
+>topologies like multi core + NUMA and multi level NUMA systems.
+>If Con's work had gone in first, then conversely these improvements
+>would have had to wait.
 
-                   Pekka 
+Or be merged in later.
+
+The problem is, why do the interfaces have to live so much that
+examples like this come to my ears (or eyes ;) all the time?
+
+I hate to say this without digging out any URLs, but one friend
+of mine says he has a very hard time doing any networking code
+because it's too labile. Maybe that's being embettered for something
+else too?
+
+Or the other friend who curses that the networking code is just
+crap and basically has to rewrite the code to get it working.
+Yes, I've tried to get these guys to submit their code, but they
+argue back that no one wants to see it.
+
+>>There's also my all-time favorite, http://lkml.org/lkml/2005/3/14/4
+>
+>What's wrong with that? The slowdown is due to the workload
+>becoming disk bound. The reasons are still not entirely clear,
+>but I don't think it is a recent (ie. 2.6) regression (or even
+>a regression at all IIRC).
+
+It's not that easy.
+
+So let's say the scheduler slowdown is a temporary situation to
+adapt it to multicore+NUMA.
+I assume that's what you mean, by having the kernels on par
+with 2.6.10 and the above paragraph.
+
+Why on earth did the slowdown ever get merged and we have to wait
+for it to be on par with some older version?
+
+Maybe the multicore+NUMA guys don't think it's a regression, hell,
+it may be better for them at the cost of the embedded (or desktop
+or whoever) guys.
+
+Still my initial reaction is "if a patch slows things down, revert
+it. If it didn't do anything, keep reverting until you have the
+original situation."
+It's also my reaction after the initial one :)
+
+Sure, 2.4 and others did also have issues, so you couldn't automatically
+assume each and every new kernel would be better than the last,
+but it seems nowadays it's also hard to predict even the trend.
+
+But to be fair, Linux is not a disaster yet and you guys are doing
+good work, despite things looking very shaky at times and
+my temper being more and more easily flared nowadays at signs
+of trouble :)
+
+>I think if you are resorting to bringing up all time favourite
+>blunders when trying to justify Reiser4 being included, then
+>that is a sign right there that something is fundamentally wrong
+>(if not with the code, then with your line of thought0
+
+Myeah, I know, this is not helping the Reiser4 cause _as_such_.
+
+What I'm saying is, Reiser4 could be merged as it looks like a
+lot of other stuff is merged too, which may not be very
+tested.
+
+Reiser4 at least is tested.
+
+We can skip the parts that appear to suck.
+
+>And note my email has nothing to do with any *real* argument for
+>or against R4.
+
+I think this could be further split into an argument about
+the development model :P
+
+Having a separate dev tree would keep the majority happy,
+as things are "good enough for most people" and after all
+has been evened out in the dev tree, a new stable tree can
+be launched.
+
+This particular new file system should not be too drastic a
+thing to merge into a stable kernel, without the instability-
+inducing factors, and I think in the old model, all this would
+have been fleshed out in the dev tree automagically.
+
+Please do correct me if I'm wrong :)
+
+Thanks!
+
+--=20
+mjt
+
+
+--TMTfqzsZeEKgETVO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQFCv/dbIqNMpVm8OhwRAlaUAJ4hscxhPYTQPVMMae6znUpjn+mZ/QCfema0
+VXRq3jMHxypG1S7LE44JiWY=
+=e4+u
+-----END PGP SIGNATURE-----
+
+--TMTfqzsZeEKgETVO--
