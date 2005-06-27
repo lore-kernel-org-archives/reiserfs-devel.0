@@ -1,93 +1,49 @@
-From: Theodore Ts'o <tytso@mit.edu>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 12:28:39 -0400
-Message-ID: <20050627162839.GA22799@thunk.org>
-References: <42BB7B32.4010100@slaphack.com> <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl> <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org> <42C018E5.8030805@slaphack.com>
+Date: Mon, 27 Jun 2005 12:40:41 -0400
+Message-ID: <200506271640.j5RGefRQ018912@turing-police.cc.vt.edu>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BCD93B.7030608@slaphack.com> <200506251420.j5PEKce4006891@turing-police.cc.vt.edu> <42BDA377.6070303@slaphack.com> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu> <42BF667C.50606@slaphack.com> <200506270423.j5R4Np9n004510@turing-police.cc.vt.edu> <42BF8F42.7030308@slaphack.com> <200506270541.j5R5fULX007282@turing-police.cc.vt.edu> <42BF9562.4090602@slaphack.com> <200506270612.j5R6CZGX008462@turing-police.cc.vt.edu> <42BF9C4D.3080800
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24706-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_1119890441_6336P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24707-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <42C018E5.8030805@slaphack.com>
+In-Reply-To: Your message of "Mon, 27 Jun 2005 02:00:49 CDT."
+             <42BFA421.70506@slaphack.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: David Masover <ninja@slaphack.com>
-Cc: Markus T?rnqvist <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-On Mon, Jun 27, 2005 at 10:19:01AM -0500, David Masover wrote:
-> > XFS has similar issues where it assumes that hardware has powerfail
-> > interrupts, and that the OS can use said powerfail interrupt to stop
-> > DMA's in its tracks on an power failure, so that you don't have
-> > garbage written to key filesystem data structures when the memory
-> > starts suffering from the dropping voltage on the power bus faster
-> > than the DMA engine or the disk drives.  So XFS is a great filesystem
-> > --- but you'd better be running it on a UPS, or on a system which has
-> > power fail interrupts and an OS that knows what to do.
-> 
-> XFS, Reiser3, and Reiser4 all pass the pull-the-plug test.  Maybe I just
-> haven't pushed them hard enough?
+--==_Exmh_1119890441_6336P
+Content-Type: text/plain; charset=us-ascii
 
-Try doing huge amounts of metadata updates while doing the
-pull-the-plug test.  The problem comes when the disk drive is writing
-into the inode table or other filesystem metadata at the precise
-moment when power goes down.  If the disk is quiescent, you won't see
-the issue.   
+On Mon, 27 Jun 2005 02:00:49 CDT, David Masover said:
 
-XFS is known to have this problem --- the problem was first told to me
-by an SGI engineer, and they solved this problem in hardware, by
-adding a power fail interrupt and larger capacitors to the power
-supply, and then modifying Irix to frantically run around shutting
-down all outstanding DMA transfer during the grace period provided by
-the enlarged capacitors.  Unfortunately, PC-class hardware don't have
-power fail interrupts, so....
+> >>Speaking of backup, that's another nice place for a plugin.  Imagine a
+> >>dump that didn't have to be of the entire FS, but rather an arbitrary
+> >>tree...  That might be a nice new archive format.  I know Apple already
+> >>uses something like this for their dmg packages.
+> > Hmm.. you mean like 'tar' or 'cpio' or 'pax' or 'rsync'? :) 
+> No, a dmg is an OS X program installer.  It appears to be a disk image
+> of sorts.  So this is the backup idea in reverse.
 
-I have seen this problem reported on ext2 filesystems, so I know it
-will happen on at least some, and probably most, PC-class hardware.
-Fortunately switching to ext3 solves the problem, since metadata
-updates are first written to the journal first, and the recovery
-replays the full block, which papers over the problem.  Unfortunately,
-a filesystem which uses logical journalling doesn't have a complete
-copy of the metadata block in the log (only the logical changes are
-recorded in the journal).  This is more compact, and will result in
-better numbers in artificial benchmarks that emphasize metadata
-updates (which is not the case in most real-world workloads in my
-experience).  But it the drawback is that filesystems that journal
-logical updates instead of physical blocks are vulnerable to this
-particular lossage mode.
+I was addressing the ability to deal with an arbitrary tree.  By that definition,
+a dmg, being a disk image and not a tree image, is *not* what you want....
 
-> Given a choice between changing filesystems or getting a Streamload
-> account, I choose Streamload.  (streamload.com)
+--==_Exmh_1119890441_6336P
+Content-Type: application/pgp-signature
 
-*If* you can afford the upload bandwidth to backup over the network,
-and *if* you don't mind these gems in their legal T's and C's:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-	Streamload cannot warrant and does not guarantee, and You
-	should not expect, that all of Your private communications and
-	other personal information will never be disclosed in ways not
-	otherwise described in this Privacy Policy.
+iD8DBQFCwCwJcC3lWbTT17ARAgRvAJ97aLQPxXPmwyRxzjRtplO4qZRmfwCgoEeJ
+begE6L5YF0RAgkWi9u4DXoY=
+=PlVl
+-----END PGP SIGNATURE-----
 
-	As-Is and As-Available. Neither Streamload nor any User, or
-	their respective agents, warrants that the service, Private
-	Content or Public Content, or Your access thereto, will be
-	uninterrupted or error free, and Streamload's services and
-	both Public Content and Private Content are provided on an "as
-	is, as available" basis. Streamload has the right to make
-	changes to its services without notice to You. Neither
-	Streamload nor any User warrants that Public Content or
-	Private Content will be free of viruses or similar
-	contamination or destructive features. You expressly agree to
-	assume any and all risk as to the use, quality, performance,
-	accuracy or completeness of any Private Content, Public
-	Content, or Streamload's services.
-
-And of course, while Streamload is pretty cheap for a minimal account,
-if you have say, a several hundred gigabytes of data which is lost
-when your filesystem implodes, they have you over a barrel and charge
-$$$ in order for you to recover it.  But if you think it's this works
-for you, please, go right ahead.  Just don't come whining to us
-afterwards if you get screwed.
-
-						- Ted
+--==_Exmh_1119890441_6336P--
