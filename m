@@ -1,134 +1,93 @@
-From: David Masover <ninja@slaphack.com>
+From: Theodore Ts'o <tytso@mit.edu>
 Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 10:19:01 -0500
-Message-ID: <42C018E5.8030805@slaphack.com>
-References: <42BB7B32.4010100@slaphack.com> <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl> <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org>
+Date: Mon, 27 Jun 2005 12:28:39 -0400
+Message-ID: <20050627162839.GA22799@thunk.org>
+References: <42BB7B32.4010100@slaphack.com> <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl> <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org> <42C018E5.8030805@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24705-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24706-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050627124255.GB6280@thunk.org>
+Content-Disposition: inline
+In-Reply-To: <42C018E5.8030805@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Theodore Ts'o <tytso@mit.edu>
+Content-Transfer-Encoding: 7bit
+To: David Masover <ninja@slaphack.com>
 Cc: Markus T?rnqvist <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-Theodore Ts'o wrote:
-> On Mon, Jun 27, 2005 at 12:21:38PM +0300, Markus   T?rnqvist wrote:
+On Mon, Jun 27, 2005 at 10:19:01AM -0500, David Masover wrote:
+> > XFS has similar issues where it assumes that hardware has powerfail
+> > interrupts, and that the OS can use said powerfail interrupt to stop
+> > DMA's in its tracks on an power failure, so that you don't have
+> > garbage written to key filesystem data structures when the memory
+> > starts suffering from the dropping voltage on the power bus faster
+> > than the DMA engine or the disk drives.  So XFS is a great filesystem
+> > --- but you'd better be running it on a UPS, or on a system which has
+> > power fail interrupts and an OS that knows what to do.
 > 
->>On Thu, Jun 23, 2005 at 11:34:50PM -0400, Horst von Brand wrote:
->>
->>>David Masover <ninja@slaphack.com> wrote:
->>
->>>>I think Hans (or someone) decided that when hardware stops working, it's
->>>>not the job of the FS to compensate, it's the job of lower layers, or
->>>>better, the job of the admin to replace the disk and restore from
->>>>backups.
->>>
->>>Handling other people's data this way is just reckless irresponsibility.
->>>Sure, you can get high performance if you just forego some of your basic
->>>responsibilities.
->>
->>Your honest-to-bog opinion is that the FS vendor is responsible for
->>the admin not taking backups or the hardware vendor shipping crap?
->>
->>*still trying to understand how that can be*
-> 
-> 
-> Most Linux users are using PC-class hardware.  And Ted's First Law of
-> PC-Class Hardware is: "Most of it is crap".  And then there's Ted's
-> Second Law, "Too many system administrators don't do backups".
+> XFS, Reiser3, and Reiser4 all pass the pull-the-plug test.  Maybe I just
+> haven't pushed them hard enough?
 
-Not our problem anymore.  This is like saying that we should run all
-filesystems in synchronous mode because some users will grab stuff out
-of the computer without unmounting it -- even more a problem now that we
-have SATA, which supports hot-swapping.
+Try doing huge amounts of metadata updates while doing the
+pull-the-plug test.  The problem comes when the disk drive is writing
+into the inode table or other filesystem metadata at the precise
+moment when power goes down.  If the disk is quiescent, you won't see
+the issue.   
 
-Too many system administrators don't do backups?  Some day the building
-will burn down and they will wish they had.
+XFS is known to have this problem --- the problem was first told to me
+by an SGI engineer, and they solved this problem in hardware, by
+adding a power fail interrupt and larger capacitors to the power
+supply, and then modifying Irix to frantically run around shutting
+down all outstanding DMA transfer during the grace period provided by
+the enlarged capacitors.  Unfortunately, PC-class hardware don't have
+power fail interrupts, so....
 
-> So it's a matter of matching the filesystem to the needs of the user.
+I have seen this problem reported on ext2 filesystems, so I know it
+will happen on at least some, and probably most, PC-class hardware.
+Fortunately switching to ext3 solves the problem, since metadata
+updates are first written to the journal first, and the recovery
+replays the full block, which papers over the problem.  Unfortunately,
+a filesystem which uses logical journalling doesn't have a complete
+copy of the metadata block in the log (only the logical changes are
+recorded in the journal).  This is more compact, and will result in
+better numbers in artificial benchmarks that emphasize metadata
+updates (which is not the case in most real-world workloads in my
+experience).  But it the drawback is that filesystems that journal
+logical updates instead of physical blocks are vulnerable to this
+particular lossage mode.
 
-My needs are a filesystem which doesn't assume I'm an idiot who can't
-make backups.
+> Given a choice between changing filesystems or getting a Streamload
+> account, I choose Streamload.  (streamload.com)
 
-> If you have a filesystem which is blazingly fast, but which at the
-> slightest sign of trouble, trashes your data, versus one which is fast
-> but perhaps not-so-fast as the other filesystem, but which is much
-> more reliable, which would you choose?  
+*If* you can afford the upload bandwidth to backup over the network,
+and *if* you don't mind these gems in their legal T's and C's:
 
-Hypothetically?  I choose the faster one.  Failures happen only rarely,
-and when they happen, there's no telling how small or large they will
-be, therefore I keep regular backups, and as soon as I see my hardware
-starts to fail, I grab what I can off of it, merge that with the latest
-backup, and buy new hardware.
+	Streamload cannot warrant and does not guarantee, and You
+	should not expect, that all of Your private communications and
+	other personal information will never be disclosed in ways not
+	otherwise described in this Privacy Policy.
 
-> XFS has similar issues where it assumes that hardware has powerfail
-> interrupts, and that the OS can use said powerfail interrupt to stop
-> DMA's in its tracks on an power failure, so that you don't have
-> garbage written to key filesystem data structures when the memory
-> starts suffering from the dropping voltage on the power bus faster
-> than the DMA engine or the disk drives.  So XFS is a great filesystem
-> --- but you'd better be running it on a UPS, or on a system which has
-> power fail interrupts and an OS that knows what to do.
+	As-Is and As-Available. Neither Streamload nor any User, or
+	their respective agents, warrants that the service, Private
+	Content or Public Content, or Your access thereto, will be
+	uninterrupted or error free, and Streamload's services and
+	both Public Content and Private Content are provided on an "as
+	is, as available" basis. Streamload has the right to make
+	changes to its services without notice to You. Neither
+	Streamload nor any User warrants that Public Content or
+	Private Content will be free of viruses or similar
+	contamination or destructive features. You expressly agree to
+	assume any and all risk as to the use, quality, performance,
+	accuracy or completeness of any Private Content, Public
+	Content, or Streamload's services.
 
-XFS, Reiser3, and Reiser4 all pass the pull-the-plug test.  Maybe I just
-haven't pushed them hard enough?
+And of course, while Streamload is pretty cheap for a minimal account,
+if you have say, a several hundred gigabytes of data which is lost
+when your filesystem implodes, they have you over a barrel and charge
+$$$ in order for you to recover it.  But if you think it's this works
+for you, please, go right ahead.  Just don't come whining to us
+afterwards if you get screwed.
 
-> Ext3, because
-> it does physical block journalling, does not suffer from this problem.
-> (Yes, Resierfs uses logical journalling as well, so it suffers from
-> the same problem.)
-
-I don't actually understand the difference here.  Are we talking about
-metadata journalling vs. data journalling?
-
-> So perhaps it's not the job of the FS vendor to be responsible for
-> crap hardware or lazy sysadmins that don't do backups.
-
-Good!  Glad we agree!
-
-> But a system
-> administrator who knows that he doesn't do backups frequently enough,
-> or is running on cheap, crap hardware, would be wise to consider
-> carefully which filesystem he/she wants to use given the systems
-> configuration and his backup habits.  
-
-Given a choice between changing filesystems or getting a Streamload
-account, I choose Streamload.  (streamload.com)
-
-Given a choice between reformatting or editing cron, I'd edit cron.
-
-> Me, I'll go for the robust filesystem, just on general principles.  As
-> a friend from the large-scale enterprise storage world once put it,
-> "Performance is Job 2.  Robustness is Job #1."  (Of course, if you
-> want to put your fragile filesystem on a multi-million dollar
-> enterprise storage system such as an IBM Shark or an EMC Symmetrix
-> box, I'm sure IBM or EMC will be happy to sell you one.  :-)
-
-Job 1 is done by either that system or by good backups.  Don't overkill
-Job 1 at the expense of Job 2.
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iQIVAwUBQsAY5XgHNmZLgCUhAQJq6g/9G2GEK0R1kujoqn3tjsTIbgC23iu8byYV
-d6NHSrmmDV8035oo5iCgjSXbaTlIEyOQQqSB78fBC27eHbGctEZJIpSQfHrWlJu6
-UJvvaEyl+sR/Mzq8sButKeSUv/T8RMCBKyhdfSgm28lDM/kt9OGZcrf1P1ChUSeK
-ZnaToh4SAReRhGzq247o+qa2rW5IuIlpKeYGMZhiOB/tXGC3IDMtUOE9IBkn8KVd
-TtDN4f74PuDJ9VX8K/tZ9DDtKebOJ1wKvIQ/BwyNXt5g36vwj2UwK6GkT2ZJ3bd6
-2XLL24LpIBcVU16bk5WPkADRKe0W7S6AseUj7ggjAK0OL8z889vQ3NWJ/rmT/Wx7
-OQi58QBwL89OZGSM2qZFJ09CLEH42GXD5jjTrKt4URudYzoIa45VZxD9YYhzeu5e
-Gxxj4r2BM8bf/AHczCU/tEQwb6hfqxrq+SImWd1uIsozjeiwInHBC56x2qUDjFB/
-kiyO1LVmVzrq+6frjPAg6n/i0zuPfF24SeeHX02UOx0jlNLkq2D4Qu1wDB5XlVTK
-4xrN83Uy+dHSuDBvnf2tWTqmBju2YG6zmOl1xWKzi3/AVV6mfg1ur0gX0Q6GiZVa
-5Nqp618Cs00ZtSk759eAPQRu7Ico0vTHhA0+rTUhApLYMboGaRN5W8OtQu2utHz8
-ALX7pD3DrfE=
-=wdYo
------END PGP SIGNATURE-----
+						- Ted
