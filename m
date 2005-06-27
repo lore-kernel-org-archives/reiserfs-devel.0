@@ -1,44 +1,53 @@
-From: =?iso-8859-1?Q?J=F6rn?= Engel <joern@wohnheim.fh-wedel.de>
-Subject: Re: -mm -> 2.6.13 merge status
-Date: Mon, 27 Jun 2005 10:19:23 +0200
-Message-ID: <20050627081923.GA9167@wohnheim.fh-wedel.de>
-References: <20050621195642.GD14251@wotan.suse.de> <42B8C0FF.2010800@namesys.com> <84144f0205062223226d560e41@mail.gmail.com> <42BB0151.3030904@suse.de> <20050623114318.5ae13514.akpm@osdl.org> <20050623193247.GC6814@suse.de> <1119717967.9392.2.camel@localhost> <20050627072449.GF19550@suse.de> <20050627072832.GA14251@wotan.suse.de> <Pine.LNX.4.58.0506271048310.26869@sbz-30.cs.Helsinki.FI>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: reiser4 plugins
+Date: Mon, 27 Jun 2005 09:57:55 +0100
+Message-ID: <20050627085755.GA5015@infradead.org>
+References: <20050620235458.5b437274.akpm@osdl.org> <42B8B9EE.7020002@namesys.com> <42B8BB5E.8090008@pobox.com> <200506221824.32995.zam@namesys.com> <20050622142947.GA26993@infradead.org> <42BA2ED5.6040309@namesys.com> <20050626164606.GA18942@infradead.org> <42BF3D6B.7000404@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-24679-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24680-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.58.0506271048310.26869@sbz-30.cs.Helsinki.FI>
+In-Reply-To: <42BF3D6B.7000404@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Pekka J Enberg <penberg@cs.Helsinki.FI>
-Cc: Andi Kleen <ak@suse.de>, Jens Axboe <axboe@suse.de>, Andrew Morton <akpm@osdl.org>, Jeff Mahoney <jeffm@suse.de>, penberg@gmail.com, reiser@namesys.com, flx@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Alexander Zarochentcev <zam@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org
 
-On Mon, 27 June 2005 10:49:19 +0300, Pekka J Enberg wrote:
-> =20
->  #ifndef HAVE_ARCH_BUG_ON
-> -#define BUG_ON(condition) do { if (unlikely((condition)!=3D0)) BUG(); } =
-while(0)
-> +#define BUG_ON(condition) do { \
-> +	if (unlikely((condition) !=3D 0)) { \
-> +		printk("kernel BUG '%s' at %s:%d!\n", #condition, __FILE__, __LINE__);=
- \
-> +		panic("BUG!"); \
-> +	} \
-> +} while(0)
->  #endif
+On Sun, Jun 26, 2005 at 04:42:35PM -0700, Hans Reiser wrote:
+> >I'm a bit confused about what you're saying here.  What does the 'vector'
+> >in all these expressions mean?
+> >  
+> >
+> Was your word, I thought, for the *_operation structures.
 
-o How about those architectures, where BUG() and panic() are not the
-  same thing?
-o Embedded people might prefer not to have the additional string
-  constants in the kernel.  Some config option would ease their wrath.
-  And no, not all embedded people #define BUG() to nothing.
+We tend to use the term operation vectors, yes.  But that's a different
+terminology that doesn't mix up very well with the OO terminology.
 
-J=F6rn
+> So, rather than having a hierarchy, in which we first select filesystem,
+> and then select plugin, VFS should treat each plugin as though it was a
+> filesystem, if I understand you.
 
---=20
-Happiness isn't having what you want, it's wanting what you have.
--- unknown
+Kinda.  The VFS doesn't have knowledge about what constitutes a file
+system driver, we register filesystems only to know what routine to
+call in on a mount with a particular filesystem type - the structure that
+does describe a filesystem (struct file_system_type) thus is very small.
+Starting from there the filesystem has always been able to use different
+methods for different objects (that's something very different from the
+vnode-based VFSes in the other UNIX variants).  
+
+> Plugins and pluginids continue to exist
+> with the exact same functionality, we just eliminate a function
+> dereference for the *_operation structures. Let's see how it codes up in
+> its details.
+
+For the file and dir plugin that's pretty much that case.  What's more
+problematic is your security plugins.  With LSM we alredy have an
+infrastructure to provide pluggable access control.  If there actually
+was an implementation of "security" (it's actually access control) for it
+besides the default unix permission one it should move to an LSM.  You
+could even make your lsm part of the reiser4 module and poke into reiser4
+directly from a technical point of view.
