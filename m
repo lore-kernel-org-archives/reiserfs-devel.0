@@ -1,44 +1,36 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: How to user reiser4 and crypt plugin ??
-Date: Tue, 28 Jun 2005 13:59:13 -0400
-Message-ID: <878y0updla.fsf@evinrude.uhoreg.ca>
-References: <Pine.GSO.4.58.0506281054200.2602@sysss01h> <42C16B43.7060706@namesys.com>
- <Pine.GSO.4.58.0506281133260.2602@sysss01h>
+From: "Sean" <seanlkml@sympatico.ca>
+Subject: Re: reiser4 plugins
+Date: Tue, 28 Jun 2005 14:52:12 -0400 (EDT)
+Message-ID: <4783.10.10.10.24.1119984732.squirrel@linux1>
+References: Message from Alexander Zarochentsev <zam@namesys.com>    of "Mon,
+    27 Jun 2005 13:30:06 +0400." <200506271330.07451.zam@namesys.com>
+    <200506281401.j5SE1ORW003589@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24767-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-24768-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Sender: news <news@sea.gmane.org>
+In-Reply-To: <200506281401.j5SE1ORW003589@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Alexander Zarochentsev <zam@namesys.com>, Christoph Hellwig <hch@infradead.org>, David Masover <ninja@slaphack.com>, Jeff Garzik <jgarzik@pobox.com>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-On Tue, 28 Jun 2005 11:38:30 -0400 (EDT), Keven Murphy <murphyk@gdls.com> said:
+On Tue, June 28, 2005 10:01 am, Horst von Brand said:
+>> I don't belive that you want to see all reiser4-specific things as item
+>> plugins, disk format plugins in the VFS.
+>
+> Only what makes sense. Plus many of those will probably have to go. Decide
+> on /one/ way of doing things, even if not perfect for all uses. Everything
+> else is useless bloat.
 
-> Thank you for the reply.  Do you see any issues with using reiser3 or
-> reiser4 file system on a loop-back encrypted device?
+It doesn't seem to be a problem as long as loadable plugins are GPL.  How
+is it useless bloat?  It doesn't seem much different from having loadable
+modules in the security system.  Just don't enable Reiser4 in your kernel
+if you don't want to use it.
 
-I'm using reiser4 on a loopback encrypted device without problems.
-(But then, I haven't had any hardware problems or powerlosses.)
+Sean
 
-> Some of the docs I have found say to stick with ext2 for the
-> filesystem. I was thinking reiser still would be a better choice.
-
-From what I hear, you should avoid using journaled filesystems on a
-file-based loopback that is stored on a journaled filesystem.  I believe
-that the reason for that is that a file-based loopback that is stored on
-a journaled filesystem does not guarantee certain write ordering or that
-journaled filesystems depend on.
-
-But using a journaled filesystem on a device-based loopback should be
-fine.
-
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
