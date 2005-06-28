@@ -1,49 +1,84 @@
-From: Lee Revell <rlrevell@joe-job.com>
-Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 22:34:26 -0400
-Message-ID: <1119926066.13519.6.camel@mindpipe>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>
-	 <42BCD93B.7030608@slaphack.com>
-	 <200506251420.j5PEKce4006891@turing-police.cc.vt.edu>
-	 <42BDA377.6070303@slaphack.com>
-	 <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu>
-	 <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com>
-	 <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com>
-	 <42BE5DB6.8040103@slaphack.com>
-	 <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu>
-	 <42BF08CF.2020703@slaphack.com>
-	 <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu>
-	 <42BF2DC4.8030901@slaphack.com>
-	 <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>
-	 <42BF667C.50606@slaphack.com>
-	 <5284F665-873C-45B7-8DDB-5F475F2CE399@mac.com>
-	 <42BF7167.80201@slaphack.com>
-	 <EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com>
-	 <42C06D59.2090200@slaphack.com>
-	 <CD59AE36-FD15-4A4C-9E1D-AB2F8B52D653@mac.com>
-	 <4
+From: Andi Kleen <ak@suse.de>
+Subject: Re: reiser4 merging action list
+Date: 28 Jun 2005 04:58:33 +0200
+Message-ID: <p73vf3zuqzq.fsf@verdi.suse.de>
+References: <42BB7B32.4010100@slaphack.com.suse.lists.linux.kernel>
+	<200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl.suse.lists.linux.kernel>
+	<20050627092138.GD11013@nysv.org.suse.lists.linux.kernel>
+	<20050627124255.GB6280@thunk.org.suse.lists.linux.kernel>
+	<42C0578F.7030608@namesys.com.suse.lists.linux.kernel>
+	<20050627212628.GB27805@thunk.org.suse.lists.linux.kernel>
+	<42C084F1.70607@namesys.com.suse.lists.linux.kernel>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24736-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24737-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42C08B5E.2080000@slaphack.com>
+Sender: ak@suse.de
+In-Reply-To: <42C084F1.70607@namesys.com.suse.lists.linux.kernel>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, akpm@osdl.org, hch@infradead.org
 
-On Mon, 2005-06-27 at 18:27 -0500, David Masover wrote:
-> Right on all points.  Just remember that some change is good.  Why do
-> we
-> have ALSA now?  Everything a user can do with ALSA, they can do with
-> OSS, AFAIK.
+Hans Reiser <reiser@namesys.com> writes:
+
+>    * metafiles should be disabled until we can present code that works
+> right.  Half the list thinks we cannot solve the cycles problem ever. 
+> Disable metafiles and postpone problem until working code, or the
+> failure to produce it, makes it possible to do more than rant at each
+> other.  This is currently already done in the -mm patches, but is
+> mentioned lest someone think it forgotten.
 > 
+>    * update the locking documentation
+> 
+> Probably I forget something.
 
-Wrong, you have it backwards.  The ALSA API is a superset of the OSS
-API.  Otherwise, what would the point have been?
+These are all big picture issues, but I think some low level attention to
+the individual code is still needed.
 
-Lee
+Some stuff that stood out from a very quick look:
+
+I would like for the custom spin lock debugging (spin_macros.h) and
+profiling code to be removed (prof.[ch], spinprof.[ch]). Such code shouldn't 
+be in specific subsystems. 
+
+The division functions in lib.h are useless IMHO, both callers seem
+to use divide by a power of two. And gcc supports shift in 64bit
+fine in the kernel. Can you remove that please? 
+
+statcnt.h: This is completely useless because you don't align
+the individual fields for cache lines - so you will still
+have false sharing everywhere. Also using NR_CPUS is nasty
+because it can be very big - num_possible_cpus() is better. 
+It should use the new dynamic per cpu allocator.
+
+Best you just remove it for now and use atomic_t and readd properly
+when you do real SMP tuning with measurements.
+
+debug.[ch]: A lot of these functions like "schedulable" are name space
+space polluting. 
+reiser4_kmalloc() such wrappers are deprecated. Please remove.
+xmemset et.al should be replaced with the normal functions everywhere
+
+Best would be probably to remove most of these files for submission.
+
+What is reiser4_internal? Can't you just use static like
+everybody else?
+
+status_flags.c: Please remove that CONFIG_FRAME_POINTER code.
+In general i think it would be better if you removed that 
+"private mini crashdumping".
+
+Is there any reason you can't just use wait queues like everybody
+else instead of these reimplemented condition variables in kcond.[ch]?
+
+In general it would be good if someone experienced not from the reiser team
+would read the whole source and looks for obvious problems
+(I didn't, just mentioning stuff I from a quick look at some support
+files) 
+
+-Andi
 
