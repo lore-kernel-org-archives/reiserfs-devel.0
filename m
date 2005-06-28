@@ -1,121 +1,66 @@
-From: Hubert Chan <hubert@uhoreg.ca>
+From: Prakash Punnoor <lists@punnoor.de>
 Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 23:45:00 -0400
-Message-ID: <87mzpbrvpf.fsf@evinrude.uhoreg.ca>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>
-	<200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu>
-	<42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com>
-	<e692861c05062522071fe380a5@mail.gmail.com>
-	<42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com>
-	<200506261816.j5QIGMdI010142@turing-police.cc.vt.edu>
-	<42BF08CF.2020703@slaphack.com>
-	<200506262105.j5QL5kdR018609@turing-police.cc.vt.edu>
-	<42BF2DC4.8030901@slaphack.com>
-	<200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>
-	<42BF667C.50606@slaphack.com>
-	<5284F665-873C-45B7-8DDB-5F475F2CE399@mac.com>
-	<42BF7167.80201@slaphack.com>
-	<EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com>
-	<42C06D59.2090200@slaphack.com>
-	<CD59AE36-FD15-4A4C-9E1D-AB2F8B52D653@mac.com>
-	<42C08B5E.2080000@slaphack.com> <87y88vrzkg.fsf@evinrude.uhoreg.ca>
-	<EBD8F590-0113-4509-9604-E6967C65C835@mac.com>
+Date: Tue, 28 Jun 2005 06:03:25 +0200
+Message-ID: <42C0CC0D.9040103@punnoor.de>
+References: <42BB7B32.4010100@slaphack.com> <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl> <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org> <42C0578F.7030608@namesys.com> <42C05F16.5000804@xfs.org> <20050627202841.GA27805@thunk.org> <42C06873.7020102@xfs.org> <42C0868E.4080003@punnoor.de> <20050628010728.GC24548@mail>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24742-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="------------enig2F63D5A359CD96B6E75732BB"
+Return-path: <reiserfs-list-return-24743-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <EBD8F590-0113-4509-9604-E6967C65C835@mac.com> (Kyle Moffett's
- message of "Mon, 27 Jun 2005 22:59:24 -0400")
+In-Reply-To: <20050628010728.GC24548@mail>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+To: Jim Crilly <jim@why.dont.jablowme.net>
+Cc: Steve Lord <lord@xfs.org>, Theodore Ts'o <tytso@mit.edu>, Hans Reiser <reiser@namesys.com>, Markus T?rnqvist <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+
+--------------enig2F63D5A359CD96B6E75732BB
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-To: Kyle Moffett <mrmacman_g4@mac.com>
-Cc: David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-On Mon, 27 Jun 2005 22:59:24 -0400, Kyle Moffett <mrmacman_g4@mac.com> said:
+Jim Crilly schrieb:
+> On 06/28/05 01:06:54AM +0200, Prakash Punnoor wrote:
+> 
+>>So I gave ext3 a try. Very robust, but at the same time slooow. I couldn't
+>>bear it after some months. So I gave xfs another try. Yes, now it felt much
+>>better. Still not that fast as reiserfs, IIRC, but better than the first time
+>>I tried. I am still having xfs on / and it works pretty well, and is rather
+>>robust against hard locks with about the same amount of data losing as
+>>reiserfs. But what annoys me very much, is that I have to run xfs_repair by
+>>hand and by booting from another partition. Even after a hard lock, the
+>>partition mounts w/o problems and everything seems OK, but it only seems like
+>>that. In fact after some hours/days of use, you'll notice oddities, like files
+>>or directories which cannot be removed and things like that. After running
+>>xfs_repair everything is back in order.
+> 
+> 
+> I don't know what was going on with your systems, but I've been using XFS
+> since the original 1.0 Linux release from SGI and I'd guess that I've had to run
+> xfs_repair less than 10 times and most of them were on Alpha and Sparc64
+> before issues with those arches got ironed out.
 
-> On Jun 27, 2005, at 22:21:35, Hubert Chan wrote:
->> On Mon, 27 Jun 2005 18:27:26 -0500, David Masover
->> <ninja@slaphack.com> said:
->>> Kyle Moffett wrote:
+Perhaps it is due to the fact that I use xfs on software RAID-0 and both HDs
+have 8MB cache write-back enabled? So, all in all 16MB needs to be commited
+on/before lock-up, maybe too much for xfs? (This situation was no prob for
+ext3, though. Thinking again, I never used reiser V3 or V4 on the RAID-0, so
+my comparison might not have been fair.)
 
-[...]
+Prakash
 
->>>> /attr/fd/$FD_NUM == '...' directory for a filedescriptor
->>>> /attr/fs/$DEV_NUM/$INODE_NUM == '...' directory for an inode
+--------------enig2F63D5A359CD96B6E75732BB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-[...]
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
 
-> These are not really "attributes" so much as they are "metadata", for
-> example, a "contents" subdirectory, if one existed, would be based on
-> the original file, and therefore non-unique, but would be looked up
-> based on information about the original file.
+iD8DBQFCwMwRxU2n/+9+t5gRAl9+AKCGFbGiYwT3MSRGFcBimanjGraYJQCg/LvF
+XYpxffi3E4V3oagSUeQ7VfQ=
+=hqYh
+-----END PGP SIGNATURE-----
 
-I think for most people on the reiser-fs list, the '...' directory
-represents an interface to many things including
-- automatic aggregating/tar/untar/compress
-- a different interface to stat data
-- adding extended attributes/substreams/acls/etc.
-- anything else you might imagine
-(I think this is your understanding too?  Just double-checking.)
-So some of that stuff would be separate from the file.  (Separate in the
-sense that it's not generated from the file's binary data.)
-
-Personally, I don't like it all being in one directory, but it's not
-that important.
-
->> You can still symlink.  It just takes a little more effort to figure
->> out what $DEV_NUM/$INODE_NUM to use.
-
-> Also, unlike a symlink, if the path doesn't change and the file does,
-> it will break, also, if the file is removed and another created
-> elsewhere, it will be redirected improperly.  Perhaps a new symlink
-> syntax is needed to allow attribute specification (Ick, more changes
-> :-\).
-
-I think those breakages are acceptable.  (IMHO) In other words, I think
-it would not occur very often without the user being aware of it, and
-should very rarely result in catastrophic effects.
-
-One other minor annoyance is it isn't easy to go backwards from the
-... directory to the file.  e.g. if I have a symlink that points to
-/attr/fs/2/92036, I don't know what file's attributes that refers to.
-Hopefully I'm sane enough to give the symlink a descriptive enough
-name...
-
->>> Hans, thoughts?  Seems to be namespace fragmentation, but seems
->>> usable, less breakage, and so on.  And should it be /attr or /meta?
->>  For the mount point, it doesn't matter; it's up to the user.  It's
->> the attrfs or metafs or ???fs that matters (but which will greatly
->> influence whether people user /attr or /meta).
-
-> "meta" seems the more descriptive name.  There should also probably be
-> a somewhat standardized location for this, such that programs can
-> locate it without much trouble.
-
-Agreed.  Ultimately, it's the user's decision where to put it, but
-probably 99.99999% of all people will put it in the same place.  Just
-like you could put procfs or sysfs somewhere other than /proc or /sys if
-you really wanted to, but nobody does that.
-
-> This mechanism would be usable from all FSs, and could be built into
-> the VFS.  Also, it would allow one to access the meta data of meta
-> data (if supported by the filesystem, and possibly only through the
-> file descriptor lookup, due to numbering limitations.)
-
-One other issue is that the attrfs/metafs needs to communicate with the
-other filesystem somehow.  It needs to know if the filesystem can handle
-storing of extended attributes/substreams/etc. so that it knows whether
-or not to allow those interfaces.  In my
-/attr/fs/$(getattrpath /attr/fs/$(getattrpath ~/foo)/thumbnail)/mimetype
-example, it needs to be smart enough to store that in ~/foo's
-filesystem.  etc.
-
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
+--------------enig2F63D5A359CD96B6E75732BB--
