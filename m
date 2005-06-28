@@ -1,32 +1,32 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: dmapi support for reiser4
-Date: Tue, 28 Jun 2005 15:31:00 +0400
-Message-ID: <1119958258.3495.52.camel@tribesman.namesys.com>
-References: <20050628093408.GA23882@lisa.goe.net>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: cryptocompress [was Re: reiser4 plugins]
+Date: Tue, 28 Jun 2005 15:54:09 +0200
+Message-ID: <20050628135408.GA6302@elf.ucw.cz>
+References: <42BAC304.2060802@slaphack.com> <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24755-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24756-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050628093408.GA23882@lisa.goe.net>
+Content-Disposition: inline
+In-Reply-To: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Bjoern JACKE <bjoern@j3e.de>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: David Masover <ninja@slaphack.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Hello
+Hi!
 
-On Tue, 2005-06-28 at 13:34, Bjoern JACKE wrote:
-> Hi,
+> >                    and vfat people may decide they want cryptocompress,
 > 
-> DMAPI support is a feature which is essential for usage in many 
-> important environments. Are there any plans to add dmapi support to 
-> reiser4 ?
-> 
-there is no currently
+> I'm sure they don't, because it is mostly for Windows and assorted devices
+> (pendrives, digital cameras, ...) compatibility.
 
-> Bjoern
-> 
-
+Actually cryptocompress for vfat *would* be nice; pen drives are
+small, slow, and likely to be lost/stolen. That makes them very nice
+candidates for cryptocompress ;-).
+								Pavel
+-- 
+teflon -- maybe it is a trademark, but it should not be.
