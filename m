@@ -1,68 +1,68 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: How to user reiser4 and crypt plugin ??
-Date: Tue, 28 Jun 2005 14:24:45 -0500
-Message-ID: <42C1A3FD.6020207@slaphack.com>
-References: <Pine.GSO.4.58.0506281054200.2602@sysss01h> <42C16B43.7060706@namesys.com> <Pine.GSO.4.58.0506281133260.2602@sysss01h> <878y0updla.fsf@evinrude.uhoreg.ca>
+Subject: Re: reiser4 plugins
+Date: Tue, 28 Jun 2005 14:28:02 -0500
+Message-ID: <42C1A4C2.4090704@slaphack.com>
+References: Message from Alexander Zarochentsev <zam@namesys.com>    of "Mon,    27 Jun 2005 13:30:06 +0400." <200506271330.07451.zam@namesys.com>    <200506281401.j5SE1ORW003589@laptop11.inf.utfsm.cl> <4783.10.10.10.24.1119984732.squirrel@linux1>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24770-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24771-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <878y0updla.fsf@evinrude.uhoreg.ca>
+In-Reply-To: <4783.10.10.10.24.1119984732.squirrel@linux1>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: reiserfs-list@namesys.com
+To: Sean <seanlkml@sympatico.ca>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Alexander Zarochentsev <zam@namesys.com>, Christoph Hellwig <hch@infradead.org>, Jeff Garzik <jgarzik@pobox.com>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Hubert Chan wrote:
-> On Tue, 28 Jun 2005 11:38:30 -0400 (EDT), Keven Murphy <murphyk@gdls.com> said:
+Sean wrote:
+> On Tue, June 28, 2005 10:01 am, Horst von Brand said:
+> 
+>>>I don't belive that you want to see all reiser4-specific things as item
+>>>plugins, disk format plugins in the VFS.
+>>
+>>Only what makes sense. Plus many of those will probably have to go. Decide
+>>on /one/ way of doing things, even if not perfect for all uses. Everything
+>>else is useless bloat.
 > 
 > 
->>Thank you for the reply.  Do you see any issues with using reiser3 or
->>reiser4 file system on a loop-back encrypted device?
-> 
-> 
-> I'm using reiser4 on a loopback encrypted device without problems.
-> (But then, I haven't had any hardware problems or powerlosses.)
-> 
-> 
->>Some of the docs I have found say to stick with ext2 for the
->>filesystem. I was thinking reiser still would be a better choice.
-> 
-> 
-> From what I hear, you should avoid using journaled filesystems on a
-> file-based loopback that is stored on a journaled filesystem.  I believe
-> that the reason for that is that a file-based loopback that is stored on
-> a journaled filesystem does not guarantee certain write ordering or that
-> journaled filesystems depend on.
-> 
-> But using a journaled filesystem on a device-based loopback should be
-> fine.
+> It doesn't seem to be a problem as long as loadable plugins are GPL.  How
 
-Isn't dm-crypt the new way of doing this?  Doesn't that actually prevent
-you from using a file as the backend?
+"Loadable" how?
+
+reiser4 plugins must be compiled in, either directly to the kernel, or
+part of reiser4.ko
+
+The only thing "loadable" about them is that some can be turned on or
+off for individual files.
+
+> is it useless bloat?  It doesn't seem much different from having loadable
+> modules in the security system.  Just don't enable Reiser4 in your kernel
+> if you don't want to use it.
+
+This is not getting us anywhere.  It seems to be an issue of overall
+design and neatness at this point.
 
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQsGj/HgHNmZLgCUhAQIQfQ//Wgvtu3G8sGFr7PMA4mWbZubEenh3nDln
-VRHOjN7EhgmHdGNLTqeMDODP9aFquEbqEQEJd3HGnmghJGlxc9qwzPotRBWSezBe
-8cSYO71mpjXZjFikCZ7Or0+3EKO9i1ULSM+fFikE/IFyNNi2mr0raLzcTXmGE+Q/
-umTu9hm6Df/BH15w1hZLvmmCMbA8/HvTicK1A0EUwM0OR5vYFF9TxoeZ5H759lR/
-/HKUTEFFq5UFgTzIZhnhGEwzPbSIkqwMF0AOzy3joHuxG+G/37EpNbrPJSOGi8HY
-ej20UzMDDrHzmA3P0ZRvEoKLAB+4ABM5IFur7inzk8FPCP4ZOC4Mfyzd/VvG2F9G
-Gao3F+ElFgMEFawFMJFdmgvU4vsgAdBygBC+XUfaDDEOOWdKomfGuIKQH8x0hCuE
-eK7w6NBMGhj5hv/fk+7fjIi5uJxR8LCmMktJHykD/hcHek9o4ZPiyqGEHZqi3MDe
-/QJUeU2dyJP5MHz5o54exuwOtMmawz4sYyQgxUvO65iln8VdewMZRK4uM1FOxASk
-K0Tqrja0k4eqTbueFXEJ+c3dcjLSUMsu1QuEutLvbPQd+B8B8eFYao6/gr5NxIJ5
-eK8tGxVmVCdmDBtmRuQascoudQDTCoy61xE3K/mJAYy/xuBIQ8cyrRxdac+mRD/Z
-GxQDZ+nA/gI=
-=QH/o
+iQIVAwUBQsGkwXgHNmZLgCUhAQKUlw/6AxzaT+5R7lzhy4d/W55KY7m+8QJA90Ut
+3m+E/hiSKykolERURKUoRPEK+jly8DUxLS+UpA5ZQwxzkR4YipMcoW5i3lHyJ9GB
+Hf9lBtGu0TwCF8W9Qh1Fk/7mwQcvyz6ATUYOYqvSA5Wxfr8BDFdcJUqTwMRCOxrA
+Fh5oOSBXEhqnSElfvurBkzMNurOmNnkpeZt8rM6qXqeYRRPrmIWmFGvkufoyb/q7
+N2wdwtwoubWokl8FLWHQmH0f4pJqJUNXpDQvw67zKi24zOUq8ZZ7xH7EE8vNI9s9
+ppVVsrLiAFE2/GeDRIdbQNSuClliq7XZV4AMHkorik7Qe0nIeR4hBr9hYI41l/Ie
+G3A9yP/69XsOodUWMZB/asxj3zMEhDynz26t98C2S858eRA7EJLcJ+IU1HnxHv7N
+KUcZLUyMP6DPDcm3r2FtjvwDwneQwk3zBqFE30DgAERZTgZ7RTglVuyBhETryk3m
+ZIf6bjuwnqn2/TFC7Yqwf9tzHshx91ywkfpOXwc/3IcrKKpfY74Mp4Cj/LkRemoz
+LnE6DdpjuNpMmwTwV0Vb5FKkfeO2nFkLZ96z8HphNmAAINh7gP3bpUMaODc8fLDG
+HtpzloYmBa4Yvn9JX+AwFuQStupPmScwa62Gcyv0Zm5EQ6fB1pqY1HdhpLHvXehT
+l0i+8OO74B0=
+=NI4M
 -----END PGP SIGNATURE-----
