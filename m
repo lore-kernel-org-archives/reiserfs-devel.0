@@ -1,107 +1,61 @@
-From: Kyle Moffett <mrmacman_g4@mac.com>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 plugins
-Date: Tue, 28 Jun 2005 15:59:03 -0400
-Message-ID: <C7DB345A-CD35-4A4C-89F7-5BBD3CB83DF4@mac.com>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu> <42BF667C.50606@slaphack.com> <5284F665-873C-45B7-8DDB-5F475F2CE399@mac.com> <42BF7167.80201@slaphack.com> <EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com> <42C06D59.2090200@slaphack.com> <CD59AE36-FD15-4A4C-9E1D-AB2F8B52D653@mac.com> <42C08B5E.2080000@slaphack.com> <87y88vrzkg.fsf@evinrude.uhoreg.ca> <EBD8F590-0113-4509-9604-E6967C65C835@mac.com> <87mzpbrvpf.fsf@evinrude.uhoreg.ca> <D3A4ABBF-8062-4399-B1EC-61722295944A@mac.com> <87irzzrqu7.fsf@evinrude.uhoreg.ca> <2B1C058D-C304-4E15-ACDA-C3337E67E981@mac.com> <87d5q6pdyv.fsf@evinrude.uhoreg.ca>
-Mime-Version: 1.0 (Apple Message framework v730)
+Date: Tue, 28 Jun 2005 15:15:14 -0500
+Message-ID: <42C1AFD2.3060609@slaphack.com>
+References: <42BB7B32.4010100@slaphack.com>	 <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl>	 <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org>	 <42C0578F.7030608@namesys.com> <42C05F16.5000804@xfs.org>	 <20050627202841.GA27805@thunk.org> <42C06873.7020102@xfs.org>	 <42C0868E.4080003@punnoor.de> <42C09C91.6000901@namesys.com> <e692861c050627181060527e21@mail.gmail.com>
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S261340AbVF1UGr@vger.kernel.org>
-In-Reply-To: <87d5q6pdyv.fsf@evinrude.uhoreg.ca>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-24776-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <e692861c050627181060527e21@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Gregory Maxwell <gmaxwell@gmail.com>
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
 
-On Jun 28, 2005, at 13:51:04, Hubert Chan wrote:
-> On Tue, 28 Jun 2005 02:01:12 -0400, Kyle Moffett  
-> <mrmacman_g4@mac.com> said:
->> I don't disagree with the thumbnail/icon/description, but things like
->> POSIX acls and extended attributes have _existing_ interfaces which
->> should be used.
->
-> OK.  I agree with that.  Of course, Reiser4 can always present both
-> interfaces, just like it presented two interfaces to the stat data --
-> the regular interface and the metas (now '...') interface -- before
-> file-as-dir got disabled by default.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Yeah, but let's get the normal interface working first and discuss what
-form the alternate one should take
+Gregory Maxwell wrote:
+> On 6/27/05, Hans Reiser <reiser@namesys.com> wrote:
+> 
+>>>. But nevertheless it didn't survive, as like V3, with time V4 became
+>>>slower and slower. In this case no year was needed, but just one month or
+>>>alike. So end of test...but in fact I'll give V4 another go in the near future.
+>>
+>>Interesting that it got slower with time.  It sounds like our online
+>>repacker is much needed.  It will be a priority for after the kernel merge.
+> 
+> 
+> Whered it go, I recall it being activated with:
+> echo 1 >/sys/fs/reiser4/*/repacker/start
 
->> I don't deny them the right to add other interfaces later, but such
->> should be a secondary or tertiary patch, after the rest of the stuff
->> is in.  In any case, if we were to provide an interface by which one
->> could $EDITOR the POSIX ACLs, it should be done in the VFS where all
->> filesystems can share it.
->
-> I don't know if VFS is the right place for it, but I agree that it  
-> would
-> be good to make it accessible to all filesystems.
+That proved to be unstable (on my box, the repacker never finished) and
+there was also some talk of making it only available commercially --
+that is, pay some amount based on how much storage you're using it on,
+get the repacker.
 
-That's somewhat of a contradiction in terms.  The whole point of the VFS
-is to hold all of the things that multiple filesystems want to  
-share :-D.
+I like open source better, but whatever amount was proposed is more than
+fair for me, especially considering how fast stuff is even without the
+repacker.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
->> The key difference here is that Mac OS X does all of the bundle mess
->> in userspace where it belongs. :-D (I know, I use it daily)
->
-> Yes.  It's handled by NSWorkspace which is approximately equivalent to
-> this sort of thing being handled by GnomeVFS or the KDE  
-> equivalent.  Of
-> course the problem with handling it in userspace is that behaviour  
-> isn't
-> uniform -- applications that don't use NSWorkspace (e.g. some
-> command-line utils, programs ported over from UNIX, etc.) won't  
-> have the
-> same behaviour.  Whether or not that is an actual problem seems to be
-> debatable.  (I don't use MacOS X, but I've done some programming in
-> GNUstep.)
-
-Personally, I think that the multiple views is a good thing.  I like
-being able to "cd /Applications/Games/UnrealTournament2004.app/System"
-and mess with my game files, while double-clicking it in the Finder
-just starts it so I can get on with owning my friends :-D.
-
-> Another problem is that it only works with bundle files.  e.g. I can't
-> add an icon to a regular txt file.  Tiger now supports xattrs,  
-> which you
-> could use for that functionality, but then we run into the problem  
-> again
-> of not being able to edit it with regular applications.
-
-Maybe we just need better regular applications?  I think that for the
-icon case, for the Samba/streams case, and for many others I'm probably
-forgetting, we should try to come up with a new "data-stream" VFS API,
-so that the icon data and other larger quantities can be stored in a
-filesystem without much effort.  Such a layer could even be bridged
-onto existing filesystems via a VFS-wrapper bind-mount:
-
-# mount -t reiser4 /dev/hda1 /mnt1
-
-# mount -t ext3 /dev/hda2 /mnt2
-
-# cat $(metapath /mnt1/foo)/streams/description
-Some random file
-
-# cat $(metapath /mnt2/foo)/streams/description
-cat: Unsupported operation
-
-# mount -t none -o bind,streamify /mnt2 /mnt3
-
-# cat $(metapath /mnt3/foo)/streams/description
-Another random file
-
-Such a wrapper interface might use the directory '...' to store files on
-the underlying filesystem, but I don't think that the meta interface
-itself should use those directories.
-
-Cheers,
-Kyle Moffett
-
------BEGIN GEEK CODE BLOCK-----
-Version: 3.12
-GCM/CS/IT/U d- s++: a18 C++++>$ UB/L/X/*++++(+)>$ P+++(++++)>$
-L++++(+++) E W++(+) N+++(++) o? K? w--- O? M++ V? PS+() PE+(-) Y+
-PGP+++ t+(+++) 5 X R? tv-(--) b++++(++) DI+ D+ G e->++++$ h!*()>++$  
-r  !y?(-)
-------END GEEK CODE BLOCK------
+iQIVAwUBQsGv0XgHNmZLgCUhAQKluQ/+Pjg6h5qUpO/6pG7v8ku2OhyUoR6aneTb
+FlqjaqNuxqKaT/C3iqZYLZ+YUk+MYdXKUYNthdlY9ZtaPNwnp34/AHUSLtU4Imgw
+Z4kIn3csKCkpeLRQMJ1o5nRSBwa+38Ta17ktYhn7L+ln53/ElULbPrmxjoSmA+SK
+ocjkVcUI8azJJosD1Y0tb5BSVa9PC+buPOgbkinvFVeme2ouwG+tAeAMECShface
+0FbT1+Ai//S/t5rz/oz6BzlV+K7Jl+8OopFs9MnwD8Gqh21zeGiawLQGsDwvZuEt
+wJq73Y6b573RVJUy4dHAUqBZen0gar1GPWS2RpB3RwIYgb7/Ui3Rf5t//vTrZMNo
+Ej9R3AXcU82M8YHHmwr1QJfhrt7kddXPw5TSpA66RWNJdeFxoaXxja6sFFjQbSTs
+G5BHy2P/oHO8+uhbS+NI8T1N8KsrRrhJWr0pcjhHaoDogGdUj7TZtB+fANgLHbdV
+GstRVz8QvKGOZ8FrX/mMPzsfUbRx3pq+C/FJzSgqVI/4oTc/XIOS7cb92EC+1WrO
+KhYI3vy1zeKximboJXrPlr7QXkakjoOSFNH/MVzmF3sP1pe92hey7SXrpfgrOCOa
+8gVo0u1tE98fuatl3MA8t3OGXGM5JXKpHVk/FiQt4358wAMmyDizvOeZ3GL1CA/M
+ixjK/caPrP0=
+=LFCF
+-----END PGP SIGNATURE-----
