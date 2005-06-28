@@ -1,68 +1,100 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 plugins
-Date: Tue, 28 Jun 2005 14:28:02 -0500
-Message-ID: <42C1A4C2.4090704@slaphack.com>
-References: Message from Alexander Zarochentsev <zam@namesys.com>    of "Mon,    27 Jun 2005 13:30:06 +0400." <200506271330.07451.zam@namesys.com>    <200506281401.j5SE1ORW003589@laptop11.inf.utfsm.cl> <4783.10.10.10.24.1119984732.squirrel@linux1>
+Date: Tue, 28 Jun 2005 14:32:56 -0500
+Message-ID: <42C1A5E8.2040603@slaphack.com>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>	<42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com>	<200506261816.j5QIGMdI010142@turing-police.cc.vt.edu>	<42BF08CF.2020703@slaphack.com>	<200506262105.j5QL5kdR018609@turing-police.cc.vt.edu>	<42BF2DC4.8030901@slaphack.com>	<200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>	<42BF667C.50606@slaphack.com>	<5284F665-873C-45B7-8DDB-5F475F2CE399@mac.com>	<42BF7167.80201@slaphack.com>	<EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com>	<42C06D59.2090200@slaphack.com>	<CD59AE36-FD15-4A4C-9E1D-AB2F8B52D653@mac.com>	<42C08B5E.2080000@slaphack.com> <87y88vrzkg.fsf@evinrude.uhoreg.ca>	<EBD8F590-0113-4509-9604-E6967C65C835@mac.com>	<87mzpbrvpf.fsf@evinrude.uhoreg.ca>	<D3A4ABBF-8062-4399-B1EC-61722295944A@mac.com>	<87irzzrqu7.fsf@evinrude.uhoreg.ca>	<2B1C058D-C304-4E15-ACDA-C3337E67E981@mac.com> <87d5q6pdyv.fsf@evinrude.uhoreg.ca>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24771-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24772-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4783.10.10.10.24.1119984732.squirrel@linux1>
+In-Reply-To: <87d5q6pdyv.fsf@evinrude.uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Sean <seanlkml@sympatico.ca>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Alexander Zarochentsev <zam@namesys.com>, Christoph Hellwig <hch@infradead.org>, Jeff Garzik <jgarzik@pobox.com>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: Hubert Chan <hubert@uhoreg.ca>
+Cc: Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Sean wrote:
-> On Tue, June 28, 2005 10:01 am, Horst von Brand said:
+Hubert Chan wrote:
+> On Tue, 28 Jun 2005 02:01:12 -0400, Kyle Moffett <mrmacman_g4@mac.com> said:
 > 
->>>I don't belive that you want to see all reiser4-specific things as item
->>>plugins, disk format plugins in the VFS.
+> 
+>>On Jun 28, 2005, at 01:30:08, Hubert Chan wrote:
 >>
->>Only what makes sense. Plus many of those will probably have to go. Decide
->>on /one/ way of doing things, even if not perfect for all uses. Everything
->>else is useless bloat.
+>>>On Tue, 28 Jun 2005 00:38:38 -0400, Kyle Moffett
+>>><mrmacman_g4@mac.com> said:
+>>>
+>>>>Ok.  Those things should probably be divided up.  Stuff like POSIX
+>>>>extended attributes and such that have existing interfaces should
+>>>>use those.
+>>>
+>>> One of the claimed advantages of the '...' interface is that
+>>>everything is editable as a file.  So if someone wanted to edit the
+>>>description extended attribute for foo.txt, he would just run
+>>>"[editor] foo.txt/.../description" (or "[editor]
+>>>/meta/fs/$(getattrpath foo.txt)/description"), instead of needing to
+>>>use some special purpose editor.  It works well for things like being
+>>>able to use Gimp to edit a thumbnail or icon attribute.
 > 
 > 
-> It doesn't seem to be a problem as long as loadable plugins are GPL.  How
+>>I don't disagree with the thumbnail/icon/description, but things like
+>>POSIX acls and extended attributes have _existing_ interfaces which
+>>should be used.
 
-"Loadable" how?
+Any existing interface should be supported, but Reiser4 seems to want to
+replace all existing interfaces except a direct open() and a proposed
+new system call which opens lots of small files at once, efficiently.
 
-reiser4 plugins must be compiled in, either directly to the kernel, or
-part of reiser4.ko
+The two approaches are not mutually exclusive, though.
 
-The only thing "loadable" about them is that some can be turned on or
-off for individual files.
+> OK.  I agree with that.  Of course, Reiser4 can always present both
+> interfaces, just like it presented two interfaces to the stat data --
+> the regular interface and the metas (now '...') interface -- before
+> file-as-dir got disabled by default.
 
-> is it useless bloat?  It doesn't seem much different from having loadable
-> modules in the security system.  Just don't enable Reiser4 in your kernel
-> if you don't want to use it.
+The proposal I like right now is /meta, as a separate FS, which provides
+access to what would be the '...' interface.  Check the archives.
 
-This is not getting us anywhere.  It seems to be an issue of overall
-design and neatness at this point.
+>>I don't deny them the right to add other interfaces later, but such
+>>should be a secondary or tertiary patch, after the rest of the stuff
+>>is in.  In any case, if we were to provide an interface by which one
+>>could $EDITOR the POSIX ACLs, it should be done in the VFS where all
+>>filesystems can share it.
+> 
+> 
+> I don't know if VFS is the right place for it, but I agree that it would
+> be good to make it accessible to all filesystems.
 
+You put it in /meta, which is available to all filesystems.
 
+>>I think that part of Reiser4 needs more review than it's been given at
+>>present.
+> 
+> 
+> Looking forward to the flamewar that happens when Namesys decides that
+> file-as-dir is ready to be turned on again. ;-)
+
+Namesys still hasn't commented directly on the /meta proposal, have
+they?  That would avoid the flamewar altogether.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQsGkwXgHNmZLgCUhAQKUlw/6AxzaT+5R7lzhy4d/W55KY7m+8QJA90Ut
-3m+E/hiSKykolERURKUoRPEK+jly8DUxLS+UpA5ZQwxzkR4YipMcoW5i3lHyJ9GB
-Hf9lBtGu0TwCF8W9Qh1Fk/7mwQcvyz6ATUYOYqvSA5Wxfr8BDFdcJUqTwMRCOxrA
-Fh5oOSBXEhqnSElfvurBkzMNurOmNnkpeZt8rM6qXqeYRRPrmIWmFGvkufoyb/q7
-N2wdwtwoubWokl8FLWHQmH0f4pJqJUNXpDQvw67zKi24zOUq8ZZ7xH7EE8vNI9s9
-ppVVsrLiAFE2/GeDRIdbQNSuClliq7XZV4AMHkorik7Qe0nIeR4hBr9hYI41l/Ie
-G3A9yP/69XsOodUWMZB/asxj3zMEhDynz26t98C2S858eRA7EJLcJ+IU1HnxHv7N
-KUcZLUyMP6DPDcm3r2FtjvwDwneQwk3zBqFE30DgAERZTgZ7RTglVuyBhETryk3m
-ZIf6bjuwnqn2/TFC7Yqwf9tzHshx91ywkfpOXwc/3IcrKKpfY74Mp4Cj/LkRemoz
-LnE6DdpjuNpMmwTwV0Vb5FKkfeO2nFkLZ96z8HphNmAAINh7gP3bpUMaODc8fLDG
-HtpzloYmBa4Yvn9JX+AwFuQStupPmScwa62Gcyv0Zm5EQ6fB1pqY1HdhpLHvXehT
-l0i+8OO74B0=
-=NI4M
+iQIVAwUBQsGl6HgHNmZLgCUhAQK+OQ//Zhj9DPyXRaASbTmnj2oPcWYWHzY5+M8O
+n0e7PsFPtVpb6mduDPYu91WTGYooPnicVOBBQezWUOVFYMN4SWxyVunTpDYbvTGn
+xVwSLTjb5/AZ7dIuklVfverN72nwmLURCJjGZ41iqyylHJT/nCufYZHhQIPa15Pu
+o0IzYlQahS3uxuYVJubDOms0G/K2pDuoFGuJJkk+JTPCbf9+2UEqjiUrL3FTqeG+
+5RQ6wVeinz5CFPrUWmxl0CdipGqx3quCCYlBav31uRDJm2VwwqZNTxeEHWvZN/Y9
+tXnkcVSVJkoaJtbGHUvu61g/TAs8ckxlEA9lnaG3SEhNNU5ZSm0aprZJTeRvs81e
+iFxzlOKdgZA11GNx8rnj04Ii5MJapgQhDlz5CbOCxvOm6SkZZul+3n6VHxlCJzH2
+pQD/GFcynPAbZYitOAyTWAU9K+fZ98dbCkDKJRLMbT8uiZwoc/m59m9ZniDVEKAn
+IjUMFrIllpq9F8AZefEFqRV6l9vjM2vam5OS2HC4R+v753JEVKuvTjbJkR7mB9iv
+zEGPBciVOjZAWuWmeQVartnDwx4ic2SECxv25w32wcPcrXUs9w0Z/hpIUfG7EAUl
+z4dbGlKlXWybq8JLC6ojmL+cgKFAYs+4yfZvE73H9XHlhh1HrGbMc6sd342NCFJN
+WjYRbkxGym0=
+=LZpe
 -----END PGP SIGNATURE-----
