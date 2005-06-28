@@ -1,146 +1,188 @@
-From: David Masover <ninja@slaphack.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: reiser4 plugins
-Date: Tue, 28 Jun 2005 15:22:55 -0500
-Message-ID: <42C1B19F.6010808@slaphack.com>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>	<200506251420.j5PEKce4006891@turing-police.cc.vt.edu>	<42BDA377.6070303@slaphack.com>	<200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu>	<42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com>	<e692861c05062522071fe380a5@mail.gmail.com>	<42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com>	<200506261816.j5QIGMdI010142@turing-police.cc.vt.edu>	<42BF08CF.2020703@slaphack.com>	<200506262105.j5QL5kdR018609@turing-police.cc.vt.edu>	<42BF2DC4.8030901@slaphack.com>	<200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>	<42BF667C.50606@slaphack.com>	<5284F665-873C-45B7-8DDB-5F475F2CE399@mac.com>	<42BF7167.80201@slaphack.com>	<EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com>	<42C06D59.2090200@slaphack.com>	<CD59AE36-FD15-4A4C-9E1D-AB2F8B52D653@mac.com>	<42C08B5E.2080000@slaphack.com> <87y88vrzkg.fsf@evinrude.uhoreg.ca>
+Date: Tue, 28 Jun 2005 23:39:34 +0300
+Message-ID: <20050628203934.GG11013@nysv.org>
+References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB5E1A.70903@namesys.com> <1119609680.17066.81.camel@localhost.localdomain> <20050627091808.GC11013@nysv.org> <42BFCAE7.6070708@yahoo.com.au> <20050627125555.GE11013@nysv.org> <42C09877.90800@yahoo.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24778-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="s8uQA167RD2xhjBe"
+Return-path: <reiserfs-list-return-24779-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <87y88vrzkg.fsf@evinrude.uhoreg.ca>
+Content-Disposition: inline
+In-Reply-To: <42C09877.90800@yahoo.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: Nick Piggin <nickpiggin@yahoo.com.au>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+--s8uQA167RD2xhjBe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hubert Chan wrote:
-> On Mon, 27 Jun 2005 18:27:26 -0500, David Masover <ninja@slaphack.com> said:
-> 
-> 
->>Kyle Moffett wrote:
->>
->>>I think the '...' is just a bad idea in general, because it breaks
->>>tar and such.  An interface like this might be simpler to design and
->>>use:
->>>
->>># mkdir /attr
->>># mount -t attrfs attrfs /attr
->>>
->>>/attr/fd/$FD_NUM == '...' directory for a filedescriptor
->>>/attr/fs/$DEV_NUM/$INODE_NUM == '...' directory for an inode
-> 
-> 
-> The most obvious (at least obvious for me) complaint about this is that
-> the attributes are separate from the file.  (In other words, it's a bit
-> ugly. ;-) ) So if you want to backup a file, along with all its
-> (extended) attributes (or substreams, or ... etc. ...), you need to
-> backup the file, and find the appropriate /attr/fs/$DEV_NUM/$INODE_NUM
-> and back that up.  If I want to edit an attribute, I need to find
-> $DEV_NUM and $INODE_NUM (which I have no idea how to do), rather than
-> just "edit foo/.../extended_attribute".  (Or using your "getattrpath"
-> command, it would be a two-step process -- run getattrpath, then run
-> editor -- rather than a one-step process.  Of course, this is only
-> mildly annoying.)
+On Tue, Jun 28, 2005 at 10:23:19AM +1000, Nick Piggin wrote:
 
-Especially considering you could add a tar/rsync flag to handle it for
-you.  And most likely, each meta dir would have its own serialization
-method (read: file) so that you didn't find yourself trying to back up
-huge infinitely recursive structures, or accidentally triggering a huge
-tar operation, or something...
+>The scheduler interfaces are probably among the most stable
+>in the kernel. Con was talking about internal implementation.
 
-> It also exposes a difference between attributes and regular files.
-> e.g. can I add attributes to an attribute?
+Hmm, I'm by no means a kernel developer, but looking at the
+patches, it looked like the functions were just renamed and
+maybe something else was changed.
 
-Under my scheme, yes, and it works the same way.
+I may be totally wrong here, and I apologize in advance if I am,
+but it seems to me like there would be no real need in changing
+some syntax?
 
-> (say, I have a thumbnail
-> attribute for the file ~/foo, and I want to add a mime-type attribute to
-> that thumbnail attribute.)  If you want to allow it, you have to be
-> careful not to run into a big loop generating an infinite number of
-> inodes in the attrfs.
+>I get the feeling your friend is making up some tall tales if he
+>says he rewrote the networking code to be much better than it is
+>now. But I can guarantee him that if he has it will be of great
+>interest to the network developers.
 
-I'm not sure if inodes are a problem, but this kind of stuff would be up
-to the fs, not the attrfs or metafs.
+Yeah, I just talked this over with him.
 
-> That said, I prefer that interface over xattr or openat.
+[
+ IF THIS IS BULLSHIT, LET ME KNOW AND I'LL CORRECT HIM ;)
+ POINTERS TO RELEVANT DOCUMENTATION ALSO WELCOME ;)
+]
 
-Absolutely.  But I think both should exist, so that programs currently
-using xattr will still work.  Maybe you'd have:
+His grudge was that conntrack was used everywhere, not like
+in 2.4, with a slow lookup in proc, that made it unusable
+for large nat systems.
 
-/meta/vfs/home/foo/attrs
+They wrote some reimplementation of the lookup part, which
+they didn't release.
 
-or something...
+Then they figured out how to capture the packets before
+reaching conntrack and doing some mojo on them and reinjecting
+them somewhere later or bypassing conntrack altogether.
 
-Come to think of it, that changes the proposal a bit.  You need a
-different way to access the meta-dir for files than for directories, if
-we're going to support /meta/vfs.  No biggie:
+However, his opinions were even less motivated than mine,
+it seems, as he didn't have anything except some ipfilter
+archives he read, where they cursed the Linux way of
+doing things.
 
-/meta/vfs/file/home/bob/sue.mpg/acl
-/meta/vfs/dir/home/bob/acl
+I haven't looked all too deeply into the network part, though,
+as I'm starting to get lazy and like to have a separate,
+dedicated piece of hardware do the network stuff for me...
 
->>>It would be usable from a shell with a simple "getattrpath" command
->>>which returns "fs/$DEV_NUM/$INODE_NUM" by stat-ing any given path.
-> 
-> 
->>Still pretty annoying, but maybe a good idea, especially if the shell
->>gets extended to support it.  Not sure I like using inode numbers,
->>though -- I like the idea of being able to symlink to stuff inside the
->>meta-file dir.
-> 
-> 
-> The advantage of using inodes rather than pathnames is that it is robust
-> with respect to file renaming/moving.  It also allows things like
-> adding attributes to symlinks (since the inode number for a symlink is
-> different from the inode number for the file that it points to).
+So maybe I should just retract my comments and look into
+every possible subsystem's development and see for myself,
+which I don't have time for :)
 
-I think we need both interfaces, especially because the /meta/vfs
-interface makes looping easy.
+>I'm pretty sure it isn't a scheduler slowdown, but rather the
+>system is getting disk bound. I think the reporter has
+>performance back to 2.6.10 levels - it is actually something I
+>still have to follow up on, but it is difficult because the
+>reporter isn't able to share his code, although he's otherwise
+>very helpful.
 
-> You can still symlink.  It just takes a little more effort to figure out
-> what $DEV_NUM/$INODE_NUM to use.
+It's just that for cases like these testing would be great.
 
-Doesn't have the same effect.
+I'm not really sure how to do it, though, as it would require
+a lot of hardware and time and someone who can write a decent
+test suite.
 
->>Actually, I like this.  Give me some time to let it percolate.
-> 
-> 
->>Hans, thoughts?  Seems to be namespace fragmentation, but seems
->>usable, less breakage, and so on.  And should it be /attr or /meta?
-> 
-> 
-> For the mount point, it doesn't matter; it's up to the user.
+If anyone has links to good test suites, I'm all ears :)
 
-No, it's not.  It's up to the user and the application developers.
-Sure, I could mount /proc somewhere else, but that would confuse some
-things.  Mounting /meta somewhere else would confuse even more things.
+So, any chances of something being messed up in the disk
+part of the code?
 
-> It's the
-> attrfs or metafs or ???fs that matters (but which will greatly influence
-> whether people user /attr or /meta).
+=2E..Too bad I just heard a big slowdown-in-disk-i/o curse
+was caused by dma falling off, for whatever reason (bug?)
+so that can't be used as forensics either :P
 
-True, but I think they should still hand down a decree of where it is to
-be mounted by default.
+>If slowdowns do get merged, it is generally because they either
+>haven't been reported until being merged or they make an accepted
+>tradeoff. Not that they haven't been tested.
+>
+>Let's just get this straight, no amount of QA other than releasing
+>a kernel and asking people to use it is going to find all the bugs
+>that will be encountered.
+
+Would you think a separate dev tree would help here?
+
+I've also talked long with a guy from one of our major customers
+who says he's been losing faith in Linux over the past year, as
+his boxes are going oops or panicking every once in a while.
+
+The problem is that their system is too redundantly set up for
+a single oops or panic to matter much, so I haven't convinced them
+to report bugs. They'd rather boot the boxes and curse.
+
+He just figured it odd that this started happening after the new
+dev model, but the timelines are too granular for a real correlation.
+Just a strong gut feeling, and that's the kind of FUD that makes
+people look to *BSD, and a gut feeling that may have some merit
+to it, although it could never be proven. So don't take that
+as a flame or anything, just an observation :P
+
+Sure it must be difficult developing the kernel, if it were easier,
+I'd probably be at it too, but people don't like not being well
+informed of accepted tradeoffs, as they might not accept said
+tradeoff, and tracking what caused it may be too much.
+
+A lot of people out there don't like vendor kernels either,
+with 65536 backported patches and the 65537th voids your warranty.
+
+It's also probably very difficult to do analytical QA before
+submitting code, as bugs ALWAYS run through.
+
+But my gut tells me this -mm thing may not be the optimal way,
+as people are more scared of -mm, where some things may or
+may not work, than a separate dev tree, of which kerneltrap
+or whoever can post "this is severely broken, test if you like"
+and "this seems to be going mostly strong now, test it on your
+everyday desktop"
+
+A lot of complaints seem to come from people who use=20
+patchsets with half-assed backports and experimental code,
+having a separate tree may drive these people to use
+the experimental stuff knowing what it is, instead of
+believing their patch set is as good as vanilla.
+
+>I mostly agree with you apart from your specific examples I think
+>we could do things better, and most of us have made some big blunders,
+>However there is just no way that bringing any of that up will help
+>Reiser4 being merged.
+
+Myeah, if I try to keep it a bit more on topic, I'm just saying that
+Reiser4 (sans metas) has been heavily tested, and now that the
+Namesys guys are apparently beautifying the code, we should be
+good with everything.
+
+Still, this is an instinct, but it seems like the bigger VFS
+overhauls would be easier to do in an official dev tree with
+a big note saying "THIS WILL BE BROKEN FOR A MONTH."
+
+If this was the case, so bad that people couldn't develop=20
+anything with the dev tree, it would probably be easier to=20
+maintain a rollback-vfs-changes patch than constantly keeping=20
+in sync with -mm.
+
+That method could be used for every system undergoing extensive
+work that shows up in other systems.
+
+The difference may not be big, but it may be enough.
+
+Thanks!
+
+--=20
+mjt
+
+
+--s8uQA167RD2xhjBe
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Version: GnuPG v1.2.5 (GNU/Linux)
 
-iQIVAwUBQsGxn3gHNmZLgCUhAQLWkg/+MIzXbygGoHubwLcw5SI1eeanVssukzF7
-9kl+3qYcpbC6l/4fFkezBA8YCb8yy/VCfadAJ4Vgsr7T0rvGq1fvKIER6Q4LfU22
-YCkHfU6dCnTmTjqHTFyYqZX95J6JXKUT/HCXn5AaYC5DIOYMp1gFHgj6P1wKOb/o
-KRvuOSIO0ta8fpPg6tBe6ve92sp99zqbacUplN+38+eBEIZUI7s7Dkg1lWX7ScyZ
-LVtHDEDJUuP0/Frq3xZHFKdgsVhoDtCm5Cl6EBX0OSubExPa/7ID2ANA+W01lqbm
-9KMtXAcp/K8uOVkM8YDpFvvP2Ru/gp+iKy993lpGY9bEhIZ6BVz4zpVMvloHQe3a
-GCdsvub1yP7qQa/7LpkN6Shbw8W25iXcG0QUXa6XuiaJZIsVvRThrWOPXstx9GGQ
-KDZtMGIzH5vJcXQzIKzHMrfJBIKMmu3c/Et1EmdJy1t1PkH95+gGCrYc/nfBizfk
-NMYIp8S+RdGXwIcOWcwu4WspTJEZg1w7spXuydBZHd55YCq5JJE7lLNoK8Y3ZXks
-xC7b6Eo/0FgsxUmoQ9QYl9kzrxAejBGWmmTfsQGjFhu0Ep7jVCZHRRSq8r2RwRj/
-AYY2JeFu7yRHsKy29BYipo0etR38Z5+Z0ZOn3iZZHHVz7D6u12U+69LXUEeyp46H
-mYzXXJOmIVA=
-=h/Gv
+iD8DBQFCwbWGIqNMpVm8OhwRAmeFAJ9frvYgBnaWqZA1BZw90irYwWQuNwCgz5Fe
+YCGchWeI9w4+xQ9Z4FxA3Xk=
+=WAeL
 -----END PGP SIGNATURE-----
+
+--s8uQA167RD2xhjBe--
