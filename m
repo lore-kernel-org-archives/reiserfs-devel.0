@@ -1,123 +1,127 @@
-From: Kyle Moffett <mrmacman_g4@mac.com>
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: reiser4 plugins
-Date: Tue, 28 Jun 2005 00:38:38 -0400
-Message-ID: <D3A4ABBF-8062-4399-B1EC-61722295944A@mac.com>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl> <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu> <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com> <e692861c05062522071fe380a5@mail.gmail.com> <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com> <200506261816.j5QIGMdI010142@turing-police.cc.vt.edu> <42BF08CF.2020703@slaphack.com> <200506262105.j5QL5kdR018609@turing-police.cc.vt.edu> <42BF2DC4.8030901@slaphack.com> <200506270040.j5R0eUNA030632@turing-police.cc.vt.edu> <42BF667C.50606@slaphack.com> <5284F665-873C-45B7-8DDB-5F475F2CE399@mac.com> <42BF7167.80201@slaphack.com> <EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com> <42C06D59.2090200@slaphack.com> <CD59AE36-FD15-4A4C-9E1D-AB2F8B52D653@mac.com> <42C08B5E.2080000@slaphack.com> <87y88vrzkg.fsf@evinrude.uhoreg.ca> <EBD8F590-0113-4509-9604-E6967C65C835@mac.com> <87mzpbrvpf.fsf@evinrude.uhoreg.ca>
-Mime-Version: 1.0 (Apple Message framework v730)
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S262508AbVF1Ejh@vger.kernel.org>
-In-Reply-To: <87mzpbrvpf.fsf@evinrude.uhoreg.ca>
-Sender: linux-kernel-owner@vger.kernel.org
+Date: Tue, 28 Jun 2005 01:30:08 -0400
+Message-ID: <87irzzrqu7.fsf@evinrude.uhoreg.ca>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>
+	<42BE3645.4070806@cisco.com>
+	<e692861c05062522071fe380a5@mail.gmail.com>
+	<42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com>
+	<200506261816.j5QIGMdI010142@turing-police.cc.vt.edu>
+	<42BF08CF.2020703@slaphack.com>
+	<200506262105.j5QL5kdR018609@turing-police.cc.vt.edu>
+	<42BF2DC4.8030901@slaphack.com>
+	<200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>
+	<42BF667C.50606@slaphack.com>
+	<5284F665-873C-45B7-8DDB-5F475F2CE399@mac.com>
+	<42BF7167.80201@slaphack.com>
+	<EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com>
+	<42C06D59.2090200@slaphack.com>
+	<CD59AE36-FD15-4A4C-9E1D-AB2F8B52D653@mac.com>
+	<42C08B5E.2080000@slaphack.com> <87y88vrzkg.fsf@evinrude.uhoreg.ca>
+	<EBD8F590-0113-4509-9604-E6967C65C835@mac.com>
+	<87mzpbrvpf.fsf@evinrude.uhoreg.ca>
+	<D3A4ABBF-8062-4399-B1EC-61722295944A@mac.com>
+Mime-Version: 1.0
+Return-path: <reiserfs-list-return-24745-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <D3A4ABBF-8062-4399-B1EC-61722295944A@mac.com> (Kyle Moffett's
+ message of "Tue, 28 Jun 2005 00:38:38 -0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
-To: Hubert Chan <hubert@uhoreg.ca>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kyle Moffett <mrmacman_g4@mac.com>
 Cc: David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-On Jun 27, 2005, at 23:45:00, Hubert Chan wrote:
-> On Mon, 27 Jun 2005 22:59:24 -0400, Kyle Moffett  
-> <mrmacman_g4@mac.com> said:
->> /attr/fd/$FD_NUM == '...' directory for a filedescriptor
->> /attr/fs/$DEV_NUM/$INODE_NUM == '...' directory for an inode
->
-> [...]
->
->> These are not really "attributes" so much as they are "metadata", for
->> example, a "contents" subdirectory, if one existed, would be based on
->> the original file, and therefore non-unique, but would be looked up
->> based on information about the original file.
->
-> I think for most people on the reiser-fs list, the '...' directory
-> represents an interface to many things including
-> - automatic aggregating/tar/untar/compress
-> - a different interface to stat data
-> - adding extended attributes/substreams/acls/etc.
-> - anything else you might imagine
-> (I think this is your understanding too?  Just double-checking.)
-> So some of that stuff would be separate from the file.  (Separate  
-> in the
-> sense that it's not generated from the file's binary data.)
+Agree with most of the stuff you wrote.
 
-Ok.  Those things should probably be divided up.  Stuff like POSIX
-extended attributes and such that have existing interfaces should use
-those.  Other types of data should chose other interfaces that make
-the most sense for that type of data.  I think that the /meta fs
-should probably only be used when the data is generated from the
-existing file or directory, and perhaps a few other cases.
+On Tue, 28 Jun 2005 00:38:38 -0400, Kyle Moffett <mrmacman_g4@mac.com> said:
 
-> Personally, I don't like it all being in one directory, but it's not
-> that important.
+> On Jun 27, 2005, at 23:45:00, Hubert Chan wrote:
 
-I agree with the first, but I think that the implementation and usage
-confusion will be one of the barriers preventing '...' or metafs merge.
+>> I think for most people on the reiser-fs list, the '...' directory
+>> represents an interface to many things including
+>> - automatic aggregating/tar/untar/compress
+>> - a different interface to stat data
+>> - adding extended attributes/substreams/acls/etc.
+>> - anything else you might imagine
 
->> Also, unlike a symlink, if the path doesn't change and the file does,
->> it will break, also, if the file is removed and another created
->> elsewhere, it will be redirected improperly.  Perhaps a new symlink
->> syntax is needed to allow attribute specification (Ick, more changes
->> :-\).
->
-> I think those breakages are acceptable.  (IMHO) In other words, I  
-> think
-> it would not occur very often without the user being aware of it, and
-> should very rarely result in catastrophic effects.
+> Ok.  Those things should probably be divided up.  Stuff like POSIX
+> extended attributes and such that have existing interfaces should use
+> those.
 
-Agreed.  On the other hand, perhaps filesystems that support such meta
-data should internally assign the appropriate numbering to make it work
-nicely.
+One of the claimed advantages of the '...' interface is that everything
+is editable as a file.  So if someone wanted to edit the description
+extended attribute for foo.txt, he would just run
+"[editor] foo.txt/.../description" (or
+"[editor] /meta/fs/$(getattrpath foo.txt)/description"), instead of
+needing to use some special purpose editor.  It works well for things
+like being able to use Gimp to edit a thumbnail or icon attribute.
 
-> One other minor annoyance is it isn't easy to go backwards from the
-> ... directory to the file.  e.g. if I have a symlink that points to
-> /attr/fs/2/92036, I don't know what file's attributes that refers to.
-> Hopefully I'm sane enough to give the symlink a descriptive enough
-> name...
+Of course, it shouldn't be too hard to provide both interfaces, as long
+as you get locking and caching right...
 
-I don't see this occurring often enough to be a major problem, and in
-any case inodes are not path-exclusive (think hardlinks).  If they have
-the filedescriptor open, however, they could use /proc/$PID/* to figure
-out where the file is.
+The Reiser4 file-as-dir interface is also supposed to be more flexible
+than POSIX extended attributes.  For example adding attributes to
+attributes (e.g. adding a mimetype attribute to a thumbnail attribute).
+The point of it is to present many different things (extended
+attributes, file manipulation magic like automatic compress, etc.)
+through a single interface that everyone knows how to use (i.e. regular
+files) so that people can use regular programs to edit or manipulate
+them.
 
->> "meta" seems the more descriptive name.  There should also  
->> probably be
->> a somewhat standardized location for this, such that programs can
->> locate it without much trouble.
->
-> Agreed.  Ultimately, it's the user's decision where to put it, but
-> probably 99.99999% of all people will put it in the same place.  Just
-> like you could put procfs or sysfs somewhere other than /proc or / 
-> sys if
-> you really wanted to, but nobody does that.
+The inspiration, I think, was the MacOS X/NeXTSTEP bundle format.  For
+example, MacOS X/NeXTSTEP .app file is actually a directory that behaves
+much like an executable file (double-clicking a .app file in the Finder
+launches the application, instead of opening the directory).  However,
+it is in reality a directory that contains many things that could be
+thought of as extended attributes (such as the application icon,
+information about the application, etc.).  Since the application icon is
+a real file, it can be edited by normal graphics editors (not like
+Windows programs, where you need a special icon editor).  And since it's
+inside the .app directory, it's attached to the application (not like
+Linux, where the program is in /usr/bin, and the icon is in
+/usr/share/pixmaps), so it makes package management easier (to delete an
+application, just delete the .app file -- don't need to look in
+/usr/share/pixmaps for the icon and delete it).
 
-Yeah.  I was referring more to calling it "metafs" than "attrfs",
-because it seems it would be more than just attributes.
+> Other types of data should chose other interfaces that make the most
+> sense for that type of data.  I think that the /meta fs should
+> probably only be used when the data is generated from the existing
+> file or directory, and perhaps a few other cases.
 
-> One other issue is that the attrfs/metafs needs to communicate with  
-> the
-> other filesystem somehow.  It needs to know if the filesystem can  
-> handle
-> storing of extended attributes/substreams/etc. so that it knows  
-> whether
-> or not to allow those interfaces.
+[...]
 
-Those would be tied to file descriptor (/meta/fd) or filesystem device
-ID (/meta/fs/$DEV), and would therefore be accessible from metafs in a
-similar way to how filedescriptor path info is available from procfs.
+>> One other minor annoyance is it isn't easy to go backwards from the
+>> ... directory to the file.  e.g. if I have a symlink that points to
+>> /attr/fs/2/92036, I don't know what file's attributes that refers to.
+>> Hopefully I'm sane enough to give the symlink a descriptive enough
+>> name...
 
-> In my
-> /attr/fs/$(getattrpath /attr/fs/$(getattrpath ~/foo)/thumbnail)/ 
-> mimetype
-> example, it needs to be smart enough to store that in ~/foo's
-> filesystem.  etc.
+> I don't see this occurring often enough to be a major problem,
 
-Agreed.  On another note, it's nice to see the flamewar has died out
-and several technical discussions are taking place on various  
-levels :-D.
+I don't see that this should be a major problem either, but I thought it
+was worth bringing up.
 
-Cheers,
-Kyle Moffett
+> and in any case inodes are not path-exclusive (think hardlinks).  If
+> they have the filedescriptor open, however, they could use
+> /proc/$PID/* to figure out where the file is.
 
---
-There are two ways of constructing a software design. One way is to  
-make it so simple that there are obviously no deficiencies. And the  
-other way is to make it so complicated that there are no obvious  
-deficiencies.
-  -- C.A.R. Hoare
+Although I guess if they have a file descriptor open, they probably have
+the original filename lying around somewhere...
+
+[...]
+
+> On another note, it's nice to see the flamewar has died out and
+> several technical discussions are taking place on various levels :-D.
+
+Agreed! :-D
+
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
