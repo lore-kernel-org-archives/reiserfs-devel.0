@@ -1,52 +1,78 @@
 From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: reiser4 plugins
-Date: Tue, 28 Jun 2005 09:44:59 -0400
-Message-ID: <200506281344.j5SDixiH003441@laptop11.inf.utfsm.cl>
-References: <20050627092138.GD11013@nysv.org>
-Return-path: <reiserfs-list-return-24759-reiserfs=m.gmane.org@namesys.com>
+Date: Tue, 28 Jun 2005 10:01:24 -0400
+Message-ID: <200506281401.j5SE1ORW003589@laptop11.inf.utfsm.cl>
+References: <zam@namesys.com>
+Return-path: <reiserfs-list-return-24760-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from mjt@nysv.org (Markus =?ISO-8859-1?Q?=20T=F6rnqvist?=) 
-   of "Mon, 27 Jun 2005 12:21:38 +0300." <20050627092138.GD11013@nysv.org> 
+In-Reply-To: Message from Alexander Zarochentsev <zam@namesys.com> 
+   of "Mon, 27 Jun 2005 13:30:06 +0400." <200506271330.07451.zam@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Markus =?ISO-8859-1?Q?=20T=F6rnqvist?= <mjt@nysv.org>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alexander Zarochentsev <zam@namesys.com>
+Cc: Christoph Hellwig <hch@infradead.org>, David Masover <ninja@slaphack.com>, Jeff Garzik <jgarzik@pobox.com>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Markus   T=C3=B6rnqvist <mjt@nysv.org> wrote:
-> On Thu, Jun 23, 2005 at 11:34:50PM -0400, Horst von Brand wrote:
-> >David Masover <ninja@slaphack.com> wrote:
-> >> I think Hans (or someone) decided that when hardware stops working, it=
-'s
-> >> not the job of the FS to compensate, it's the job of lower layers, or
-> >> better, the job of the admin to replace the disk and restore from
-> >> backups.
+Alexander Zarochentsev <zam@namesys.com> wrote:
+> On Sunday 26 June 2005 21:02, Christoph Hellwig wrote:
 
-> >Handling other people's data this way is just reckless irresponsibility.
-> >Sure, you can get high performance if you just forego some of your basic
-> >responsibilities.
+[...]
 
-> Your honest-to-bog opinion is that the FS vendor is responsible for
-> the admin not taking backups or the hardware vendor shipping crap?
+> > David and Hans, I've read through my backlog a lot now, and I must say
+> > it's pretty pointless - you're discussing lots of highlevel what if and
+> > don't actually care about something as boring as actual technical details.
+> >
+> > Hans has lots of very skillfull technical people like zam and vs, and maybe
+> > he should give them some freedom to sort out technical issues for a basic
+> > reiser4 merge, and one that is done we can turn back to discussion of
+> > advanced features and their implementation, hopefully with a few more
+> > arguments on both sides and a real technical discussion.
 
-No. But just relying on perfect hardware and concientious sysadmins is
-reckless. Hardware /is/ flaky, sysadmins /are/ (sometimes) lazy (and
-besides, today they are increasingly just plain Joe Sixpack users). Also,
-backing up a few hundred GiB is /not/ fun, and then keeping track of all
-the backups is messy.
+> Unfortunately, this is not only a technical discussion...  it is about linux 
+> development model too.
 
-Also, I'm not claiming that they are /solely/ responsible, but not having
-the filesystem fall apart utterly every time some bug breaths on it /is/ a
-requirement.
+Then better separate the two, keeping the technical discussion on LKML and
+taking the development model stuff elsewhere.
 
-> *still trying to understand how that can be*
+> Well, about the plugins.
 
-You haven't been around too much yet, do you?
---=20
+First step: Axe them. They are (at most) /configuration options/, that will
+have to get fixed meanings, available to all ReiserFS filesystems purely
+for compatibility reasons. Sure, do get wild on new options in your own
+experimental trees, and migrate what survives into the standard version
+(and then it'll be ReiserFS 4.1, 4.2, ..., 4.25, ...).
+
+>                          We can clean reiser4<->VFS interface up by setting 
+> per-vfs-object inode/dentry/super ops instead using of our own dispatcher.  
+
+Sounds reasonable.
+
+> So different reiser4 inodes/files will have different i_ops/f_ops.  That 
+> would be only visible-in-VFS part of reiser4 object plugins.   
+
+How would that work out from the userland (system call) perspective? How
+does that get handled from on-disk format?
+
+> Would the help to solve "reiser4 plugins" question?  It is just as other
+> FS do -- procfs has seq_file and sysconfig interfaces below the VFS and
+> l-k people do not complain each day about layering violation ;-) Procfs
+> is taken as an example because it deals with objects of different types,
+> actually anybody may create own procfs objects more or less general way.
+
+But procfs /is/ quite special, as it is supposed to be a window into the
+kernel, not real files. Some layering violation is unavoidable there.
+
+> I don't belive that you want to see all reiser4-specific things as item 
+> plugins, disk format plugins in the VFS.
+
+Only what makes sense. Plus many of those will probably have to go. Decide
+on /one/ way of doing things, even if not perfect for all uses. Everything
+else is useless bloat.
+-- 
 Dr. Horst H. von Brand                   User #22616 counter.li.org
 Departamento de Informatica                     Fono: +56 32 654431
 Universidad Tecnica Federico Santa Maria              +56 32 654239
