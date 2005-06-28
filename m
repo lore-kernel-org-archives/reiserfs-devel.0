@@ -1,73 +1,106 @@
-From: Jim Crilly <jim@why.dont.jablowme.net>
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: reiser4 plugins
-Date: Mon, 27 Jun 2005 21:07:28 -0400
-Message-ID: <20050628010728.GC24548@mail>
-References: <42BB7B32.4010100@slaphack.com> <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl> <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org> <42C0578F.7030608@namesys.com> <42C05F16.5000804@xfs.org> <20050627202841.GA27805@thunk.org> <42C06873.7020102@xfs.org> <42C0868E.4080003@punnoor.de>
+Date: Mon, 27 Jun 2005 22:21:35 -0400
+Message-ID: <87y88vrzkg.fsf@evinrude.uhoreg.ca>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>
+	<200506251420.j5PEKce4006891@turing-police.cc.vt.edu>
+	<42BDA377.6070303@slaphack.com>
+	<200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu>
+	<42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com>
+	<e692861c05062522071fe380a5@mail.gmail.com>
+	<42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com>
+	<200506261816.j5QIGMdI010142@turing-police.cc.vt.edu>
+	<42BF08CF.2020703@slaphack.com>
+	<200506262105.j5QL5kdR018609@turing-police.cc.vt.edu>
+	<42BF2DC4.8030901@slaphack.com>
+	<200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>
+	<42BF667C.50606@slaphack.com>
+	<5284F665-873C-45B7-8DDB-5F475F2CE399@mac.com>
+	<42BF7167.80201@slaphack.com>
+	<EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com>
+	<42C06D59.2090200@slaphack.com>
+	<CD59AE36-FD15-4A4C-9E1D-AB2F8B52D653@mac.com>
+	<42C08B5E.2080000@slaphack.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24734-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24735-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <42C0868E.4080003@punnoor.de>
+In-Reply-To: <42C08B5E.2080000@slaphack.com> (David Masover's message of
+ "Mon, 27 Jun 2005 18:27:26 -0500")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Prakash Punnoor <lists@punnoor.de>
-Cc: Steve Lord <lord@xfs.org>, Theodore Ts'o <tytso@mit.edu>, Hans Reiser <reiser@namesys.com>, Markus T?rnqvist <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, David Masover <ninja@slaphack.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: David Masover <ninja@slaphack.com>
+Cc: Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-On 06/28/05 01:06:54AM +0200, Prakash Punnoor wrote:
-> 
-> So I gave ext3 a try. Very robust, but at the same time slooow. I couldn't
-> bear it after some months. So I gave xfs another try. Yes, now it felt much
-> better. Still not that fast as reiserfs, IIRC, but better than the first time
-> I tried. I am still having xfs on / and it works pretty well, and is rather
-> robust against hard locks with about the same amount of data losing as
-> reiserfs. But what annoys me very much, is that I have to run xfs_repair by
-> hand and by booting from another partition. Even after a hard lock, the
-> partition mounts w/o problems and everything seems OK, but it only seems like
-> that. In fact after some hours/days of use, you'll notice oddities, like files
-> or directories which cannot be removed and things like that. After running
-> xfs_repair everything is back in order.
+On Mon, 27 Jun 2005 18:27:26 -0500, David Masover <ninja@slaphack.com> said:
 
-I don't know what was going on with your systems, but I've been using XFS
-since the original 1.0 Linux release from SGI and I'd guess that I've had to run
-xfs_repair less than 10 times and most of them were on Alpha and Sparc64
-before issues with those arches got ironed out.
+> Kyle Moffett wrote:
+>> I think the '...' is just a bad idea in general, because it breaks
+>> tar and such.  An interface like this might be simpler to design and
+>> use:
+>> 
+>> # mkdir /attr
+>> # mount -t attrfs attrfs /attr
+>> 
+>> /attr/fd/$FD_NUM == '...' directory for a filedescriptor
+>> /attr/fs/$DEV_NUM/$INODE_NUM == '...' directory for an inode
 
-Right now I have XFS on both Alpha and Sparc64 and I haven't had
-any issues on either box. Infact the Sparc64 box's XFS filesystem was
-converted from reiser3 because the some part of the filesystem got
-mysteriously corrupted in such a way that reiserfsck and the reiser3 driver
-both thought it was fine but accessing a certain file would cause a lockup.
+The most obvious (at least obvious for me) complaint about this is that
+the attributes are separate from the file.  (In other words, it's a bit
+ugly. ;-) ) So if you want to backup a file, along with all its
+(extended) attributes (or substreams, or ... etc. ...), you need to
+backup the file, and find the appropriate /attr/fs/$DEV_NUM/$INODE_NUM
+and back that up.  If I want to edit an attribute, I need to find
+$DEV_NUM and $INODE_NUM (which I have no idea how to do), rather than
+just "edit foo/.../extended_attribute".  (Or using your "getattrpath"
+command, it would be a two-step process -- run getattrpath, then run
+editor -- rather than a one-step process.  Of course, this is only
+mildly annoying.)
 
-I really hope the reiser4 userland tools are a lot better than the reiser3
-tools, that's an area that reiserfs has lagged behind hugely IMO.
+It also exposes a difference between attributes and regular files.
+e.g. can I add attributes to an attribute?  (say, I have a thumbnail
+attribute for the file ~/foo, and I want to add a mime-type attribute to
+that thumbnail attribute.)  If you want to allow it, you have to be
+careful not to run into a big loop generating an infinite number of
+inodes in the attrfs. (e.g.
+/attr/fs/$(getattrpath /attr/fs/$(getattrpath ~/foo)/thumbnail)/mimetype
+-- attrfs shouldn't generate the inode for that until
+/attr/fs/$(getattrpath~/foo)/thumbnail is accessed, and maybe not even
+then...)
 
-> 
-> In between I gave an alpha (or rather several alphas) of reiser4 a try - but
-> not on /, just on /usr. Well, I wouldn't say it was extraordinary fast. In
-> fact it felt slower than reiserfs V3, but much more space efficient. And to my
-> surprise it was very robust as well. Hard-locks were no problem. Only annoying
-> then was, that unmounting regularly produced oops but later versions corrected
-> that. But nevertheless it didn't survive, as like V3, with time V4 became
-> slower and slower. In this case no year was needed, but just one month or
-> alike. So end of test...but in fact I'll give V4 another go in the near future.
-> 
-> 
-> All in all I can say that every fs I tested was able to not smoke all of my
-> data, even using an instable machine - but only ext3, reiser v3 and v4 were
-> non-annoying. But xfs is majorly annoying in that respect. I hope that new
-> versions will be able to keep consistency w/o having to run xfs_repair every
-> time after a lock-up...
-> 
-> But what I don't understand is, that sometimes even files, which were only
-> opened for reading, got overwritten with @^@^@ after a lock-up. I don't
-> understand the logics here, how this could happen.
-> 
-> Thx for your time,
-> 
-> Prakash
+That said, I prefer that interface over xattr or openat.
 
-Jim.
+>> It would be usable from a shell with a simple "getattrpath" command
+>> which returns "fs/$DEV_NUM/$INODE_NUM" by stat-ing any given path.
+
+> Still pretty annoying, but maybe a good idea, especially if the shell
+> gets extended to support it.  Not sure I like using inode numbers,
+> though -- I like the idea of being able to symlink to stuff inside the
+> meta-file dir.
+
+The advantage of using inodes rather than pathnames is that it is robust
+with respect to file renaming/moving.  It also allows things like
+adding attributes to symlinks (since the inode number for a symlink is
+different from the inode number for the file that it points to).
+
+You can still symlink.  It just takes a little more effort to figure out
+what $DEV_NUM/$INODE_NUM to use.
+
+> Actually, I like this.  Give me some time to let it percolate.
+
+> Hans, thoughts?  Seems to be namespace fragmentation, but seems
+> usable, less breakage, and so on.  And should it be /attr or /meta?
+
+For the mount point, it doesn't matter; it's up to the user.  It's the
+attrfs or metafs or ???fs that matters (but which will greatly influence
+whether people user /attr or /meta).
+
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
