@@ -1,46 +1,67 @@
-From: Chris Wedgwood <cw@f00f.org>
-Subject: Re: XFS corruption during power-blackout
-Date: Wed, 29 Jun 2005 13:56:41 -0700
-Message-ID: <254889.27725ab660aa106eb6acc07307d71ef1fbd5b6fd366aebef9e2f611750fbcb467e46e8a4.IBX@taniwha.stupidest.org>
-References: <20050629001847.GB850@frodo> <200506290453.HAA14576@raad.intranet> <556815.441dd7d1ebc32b4a80e049e0ddca5d18e872c6e8a722b2aefa7525e9504533049d801014.ANY@taniwha.stupidest.org> <42C2E0BC.8040508@xfs.org>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: reiser4 plugins
+Date: Wed, 29 Jun 2005 16:57:56 -0400
+Message-ID: <87d5q4vq23.fsf@evinrude.uhoreg.ca>
+References: <20050629135820.GJ11013@nysv.org>
+	<200506291719.j5THJCSg011438@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24812-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-24813-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <42C2E0BC.8040508@xfs.org>
+In-Reply-To: <200506291719.j5THJCSg011438@laptop11.inf.utfsm.cl> (Horst von
+ Brand's message of "Wed, 29 Jun 2005 13:19:12 -0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steve Lord <lord@xfs.org>
-Cc: Al Boldi <a1426z@gawab.com>, 'Nathan Scott' <nathans@sgi.com>, linux-xfs@oss.sgi.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Douglas McNaught <doug@mcnaught.org>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-On Wed, Jun 29, 2005 at 12:56:12PM -0500, Steve Lord wrote:
+On Wed, 29 Jun 2005 13:19:12 -0400, Horst von Brand <vonbrand@inf.utfsm.cl>=
+ said:
 
-> There are also cool bits of technology which use the rotational
-> energy of the spinning down drive to dump the cache out to a special
-> track (or this may be an urban legend, not sure).
+> Markus T=C3=B6rnqvist <mjt@nysv.org> wrote: [...]
 
-This seems only to be true for very small writes.  I suspect on power
-loss a drive and finish writing the current sector.
+>> Note that MacOS has the monopoly on what they ship, Linux has a
+>> motherload of file managers and window systems and all.
 
-Anyhow, I've tested power loss on drives with caching enabled and they
-definatley do lose data.  Sometimes a couple of MBs worth.
+> Yep. Part of what is nice about it, too ;-)
 
-I don't know if this is true for all drives but NONE of the ones I had
-access to when testing did anything like save the cache --- pretty
-much all data that was inflight got lost.
+I guess that's why Apple doesn't want to make its X11 support too good.
+Otherwise the Mac world would get flooded with X11 programs that don't
+work the same way as the rest of the Mac programs.
 
-> I did spend a bunch of time once ensuring that when you typed sync
-> on xfs you could pull the power right after that and everything from
-> before the sync survived.
+>> What pisses me off is the fact that Gnome and friends implement their
+>> own incompatible-with-others VFS's and automounters and stuff.
 
-I think this is probably still true.  If I sync then drop power I
-don't seem to have any problems provided caching is off.
+> Then get them to agree on a common framework! They are trying hard to
+> get other parts of the GUI work well together, so this isn't far off
+> in wishfull thinking land.
 
-If caching is enabled I still lose data.  Linux does have a concept of
-write barriers but these are presently not implemented for XFS right
-now.  Once they are I assume sunc + poweroff will be reliable with
-caching enabled.
+I honestly hope you're right.  The more cooperation we have between
+GNOME and KDE and everyone else, the better.
+
+>> Surely supporting this in the kernel and extending the LSB to require
+>> this is the best step to take without infringing anyone's freedom as
+>> such.
+
+> Right. So then we have Gnome's way of doing things (Gnome isn't just
+> for Linux!), KDE's way, XFCE's way, ... (ditto). Plus the kernel
+> way. Flambee with a monthly thread on all reachable fora about "Why on
+> &%@# does the %&~#@ GUI not use the *#%&@ kernel's way?!".
+
+GNOME has HAL, their hardware abstraction layer, which uses (I assume)
+the kernel's facility to interact with the hardware.  If someone ports
+GNOME to Windows, then HAL would use the Windows way to interact with
+the hardware.  I can't see why it can't do something similar with the
+filesystem.  Because who knows, maybe Gnumeric will need to access
+substream data under Windows to open an Excel file properly.  Or
+Nautilus may have to read ... OS/2 extended attributes :-/
+
+--=20
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
