@@ -1,105 +1,68 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: [PATCH] reiserfsprogs: Warn on block sizes > 4k
-Date: Wed, 29 Jun 2005 15:40:49 -0700
-Message-ID: <42C32371.5080307@namesys.com>
-References: <42B9AAAB.2030208@suse.com>
+From: Chet Hosey <chosey@nauticom.net>
+Subject: Re: dmapi support for reiser4
+Date: Wed, 29 Jun 2005 18:41:46 -0400
+Message-ID: <42C323AA.1070802@nauticom.net>
+References: <20050628093408.GA23882@lisa.goe.net> <1119958258.3495.52.camel@tribesman.namesys.com> <20050629115713.GC3610@lisa.goe.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24816-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24817-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42B9AAAB.2030208@suse.com>
+In-Reply-To: <20050629115713.GC3610@lisa.goe.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>, vitaly@thebsh.namesys.com
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: Bjoern JACKE <bjoern@j3e.de>
+Cc: reiserfs-list@namesys.com
 
-Vitaly, please reply.  Thanks much Jeff, we needed this.
+Bjoern JACKE wrote:
 
-Hans
-
-Jeff Mahoney wrote:
-
+> Hi,
+> On 2005-06-29 at 20:15 +0400 Vladimir Saveliev sent off:
 >
-> Hello all -
+>> I would guess that it is rather operating system feature than a
+>> filesystem one. Can you please point some source of information about
+>> DMAPI?
 >
-> Filesystems created with block size > page size will not work until that
-> support is added to the kernel. Filesystems with block size > 4k (lowest
-> page size supported in Linux) will not work on all systems. This patch
-> adds a check and a warning in those conditions, informing the user of
-> the caveats of using a larger block size. It can be overridden with -f.
 >
-> Patch attached, please apply.
+> the main part is to be done by the filesystem, the OS cannot do
+> everything by itself, there a plenty of things which just the
+> filesystem can do by itself. Here are some links:
 >
-> -Jeff
+> http://www.opengroup.org/onlinepubs/9657099/
+> http://www.computer.org/conferences/mss95/lawthers/lawthers.htm
+> http://www.csu.edu.au/special/auugwww96/proceedings/alex/alex.html
 >
-> --
-> Jeff Mahoney
-> SuSE Labs
+> You can also take a look at the XFS and JFS source code parts of dmapi
+> to get
+> an impression of what is to be done for it at fs layer.
+>
+> Bjoern
 
+Is there a standard VFS interface that these filesystems present, or is
+it done via filesystem-specific extensions? If the latter, perhaps you
+should consider submitting a kernel patch that adds the required
+interface to the VFS layer, and note in your submission that XFS and JFS
+aren't compliant.
 
--------------------------
+How is DMAPI different from FAM with an extra API function for creating
+explicit holes?
 
-Subject: [PATCH] reiserfsprogs: Warn on block sizes > 4k
-From: Jeff Mahoney <jeffm@suse.com>
+You said that "reiser4 will not be a real competitor without this". A
+competitor in what market? Can you name an application that depends on
+DMAPI and is so important that without that particular application
+Reiser4 is not appropriate for storing files?
 
- Filesystems created with block size > page size will not work until that
- support is added to the kernel. Filesystems with block size > 4k (lowest
- page size supported in Linux) will not work on all systems. This patch
- adds a check and a warning in those conditions, informing the user of the
- caveats of using a larger block size. It can be overridden with -f.
+I note that the second link you provided is ten years old, nearly to the
+day. The third is nine years old.I'm not suggesting that you're
+overstating the importance of DMAPI, but why do you think that something
+so important might have been overlooked for so long? Novell just
+switched to Reiserfs as their default SUSE filesystem. If Reiserfs isn't
+a "real competitor" without DMAPI, why would they do something so unwise?
 
-diff -ruNp reiserfsprogs-3.6.19/mkreiserfs/mkreiserfs.c
-reiserfsprogs-3.6.19.devel/mkreiserfs/mkreiserfs.c
---- reiserfsprogs-3.6.19/mkreiserfs/mkreiserfs.c    2004-09-30
-23:04:21.000000000 +0200
-+++ reiserfsprogs-3.6.19.devel/mkreiserfs/mkreiserfs.c    2005-06-22
-19:26:58.221711866 +0200
-@@ -684,6 +684,9 @@ int main (int argc, char **argv)
-     
-     if (!(mode & QUIET_MODE) && !can_we_format_it (device_name, force))
-         return 1;
-+
-+    if (!(mode & QUIET_MODE) && !block_size_ok (Block_size, force))
-+        return 1;
-     
-     if (jdevice_name)
-         if (!(mode & QUIET_MODE) && !can_we_format_it (jdevice_name,
-force))
-diff -ruNp reiserfsprogs-3.6.19/reiserfscore/reiserfslib.c
-reiserfsprogs-3.6.19.devel/reiserfscore/reiserfslib.c
---- reiserfsprogs-3.6.19/reiserfscore/reiserfslib.c    2004-10-04
-22:39:35.000000000 +0200
-+++ reiserfsprogs-3.6.19.devel/reiserfscore/reiserfslib.c    2005-06-22
-20:07:38.015345826 +0200
-@@ -1175,6 +1175,24 @@ void make_sure_root_dir_exists (reiserfs
-             &parent_root_dir_key, ih_flags);
- }
- 
-+int block_size_ok (int blocksize, int force)
-+{
-+    int pagesize = getpagesize();
-+    if (blocksize > 4096) {
-+        reiserfs_warning (stderr, "Block sizes larger than 4k are not "
-+                          "supported on all architectures.\n");
-+        if (blocksize > pagesize)
-+            reiserfs_warning (stderr, "The newly created filesystem
-will not "
-+                              "be mountable on this system.\n");
-+        else
-+            reiserfs_warning (stderr, "The newly created filesystem may
-not "
-+                              "be mountable on other systems.\n");
-+        check_forcing_ask_confirmation (force);
-+    }
-+
-+    return 1;
-+}
-+
- 
- /* we only can use a file for filesystem or journal if it is either not
-    mounted block device or regular file and we are forced to use it */
+Just curious, as I'd not heard of DMAPI prior to your post, but you
+claim it's quite important.
 
+-- chet
 
