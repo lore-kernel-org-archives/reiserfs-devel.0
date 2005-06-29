@@ -1,89 +1,50 @@
-From: Matthew Frost <artusemrys@sbcglobal.net>
-Subject: Re: reiser4 plugins
-Date: Tue, 28 Jun 2005 19:07:18 -0700 (PDT)
-Message-ID: <20050629020718.8160.qmail@web81904.mail.mud.yahoo.com>
-References: <20050625164502.7c9745b5.diegocg@gmail.com>
+From: "Al Boldi" <a1426z@gawab.com>
+Subject: RE: XFS corruption during power-blackout
+Date: Wed, 29 Jun 2005 07:53:09 +0300
+Message-ID: <200506290453.HAA14576@raad.intranet>
+References: <20050629001847.GB850@frodo>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-24786-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24787-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050625164502.7c9745b5.diegocg@gmail.com>
+In-Reply-To: <20050629001847.GB850@frodo>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Diego Calleja <diegocg@gmail.com>, Hans Reiser <reiser@namesys.com>
-Cc: jgarzik@pobox.com, ninja@slaphack.com, alan@lxorguk.ukuu.org.uk, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: 'Nathan Scott' <nathans@sgi.com>
+Cc: linux-xfs@oss.sgi.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
 
---- Diego Calleja <diegocg@gmail.com> wrote:
+Hi Nathan,
+You wrote: {
+On Tue, Jun 28, 2005 at 12:08:05PM +0300, Al Boldi wrote:
+> True now, not so around 2.4.20 when XFS was rock-solid. I think they 
+> tried to improve on performance and broke something. I wish they would 
+> fix that because it forced me back to ext3, as in consistency over 
+> performance any time.
 
-> El Fri, 24 Jun 2005 21:31:02 -0700,
-> Hans Reiser <reiser@namesys.com> escribi=F3:
->=20
->=20
-> > What exactly is not ready Jeff?  As I see it, this thread is 95%
-> > posturing, and almost no technical reasons for not merging.  These
-> > "authorities"seem perfectly content with echoing the words of someone
-> > who skimmed the code and shot his mouth off without understanding it,
-> > and now these "authorities" just echo him because they like him and
-> > assume he must be right.
->=20
->=20
-> I'm not one of those "authorities" but I doubt reiser4 will be merged
-> at all with that attitude.
+Can you provide any details...
+}
 
+Specifically, in 2.4.20 I did an acid test:
+Spawn 10 cp -a on some big dir like /usr.
+Let it run for a few seconds, then pull the plug.
+Don't reset-button, reset is different then pulling the plug.
+Don't poweroff-button, poweroff is different then pulling the plug.
+On reboot diff the dirs spawned.
 
-Spot on.  Somebody hasn't read his Linus.  It seems to me that anytime I
-hear whining about how unfair the system is, how arbitrary patch
-rejection is, the flaw is either a lack of social competence, or failure
-to follow the submission guidelines.  Lately the number three reason,
-"Linus forgot," happens less and less.  And linux developers are offering
-to help Reiser development fix what's wrong!  That's above and beyond. =20
+What I found were 4 things in the dest dir:
+1. Missing Dirs,Files. That's OK.
+2. Files of size 0. That's acceptable.
+3. Corrupted Files. That's unacceptable.
+4. Corrupted Files with original fingerprint. That's ABSOLUTELY
+unacceptable.
 
-If Hans wants to take his ball and go home, let it be understood that it
-is not because of a failure in the linux process. =20
+Ext3 performed best with minimal files of size 0.
+XFS was second  with more files of size 0.
+Reiser,JFS was worst with corruptions.
 
-People that don't want flames, drop out of flame wars and do constructive
-work.  People that want to talk ideology, start flame wars and perpetuate
-them.  If you're having a code argument and you can go four posts without
-referring to actual code, you're no longer having a code argument.=20
-Non-demonstrable merit is not merit.  Benchmarks can be necessary -- but
-are never alone sufficient -- merit to merge to mainline.
-
-Hans: consider that enough linux people like your stuff enough to have
-this argument.  Performance has long since ceased to be at issue.  Linux
-is a thing in itself.  If Reiser4 is a thing in itself, and not merely a
-means to a further release point, you will care enough about it to merge
-it usably and maintainably into the kernel.  Should you obsolesce 4 as
-you have done to 3, someone else can care enough about it, and do
-something with it.  Features are added to Reiser3 because it is a thing
-in itself now that it is in the kernel.  Its users care.  Its
-maintainers, even if they still work for Namesys, care.  Listen next time
-you hear someone talk about "vendor-abandoned projects" continuing to
-function through community development.
-
-Alan has said, "Free software is always late."  Free software follows the
-itch.  If Hans wants linux to have Reiser4, Reiser development will work
-with linux development to become compliant and explain/adapt any
-additional functionality.  Linux does not abjectly need Reiser4 in-tree.=20
-Reiser4 is ultimately Hans's scratch for Hans's itch.  It will be the
-more effective and widely usable once it is stable in-tree, but the
-mainline kernel developers aren't the ones with the itch.  Protocols
-exist in social systems as a means to constructively enlist the help of
-people outside the problem.  The protocols here are well established.=20
-This is a patch meritocracy.  Failure to comply further increases the
-lateness of Reiser4 in mainline kernels.  Ego involvement is noise.
-
-My observations being what they are, may I suggest that this thread die,
-in favor of more eyes and in-depth current code analysis help in "Re:
-reiser4 merging action list"?  Higher utility function; higher S:N.=20
-Flames can always go down with the ship.
-
-Frosty
-Not a programmer, merely literate.
-
-No, I don't usually respond to trolls, but this thread, from this man,
-itches me.  It's not worthy of his brilliance, which may be his tragic
-flaw.
+When XFS was added into the vanilla-Kernel it caused corruptions like Reiser
+and JFS, which forced me back to Ext3.
 
