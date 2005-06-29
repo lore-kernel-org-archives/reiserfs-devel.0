@@ -1,38 +1,63 @@
-From: Douglas McNaught <doug@mcnaught.org>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: reiser4 plugins
-Date: Wed, 29 Jun 2005 09:50:27 -0400
-Message-ID: <m2k6kd2rx8.fsf@Douglas-McNaughts-Powerbook.local>
-References: <200506290509.j5T595I6010576@laptop11.inf.utfsm.cl>
+Date: Wed, 29 Jun 2005 16:58:20 +0300
+Message-ID: <20050629135820.GJ11013@nysv.org>
+References: <200506290509.j5T595I6010576@laptop11.inf.utfsm.cl> <m2k6kd2rx8.fsf@Douglas-McNaughts-Powerbook.local>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24796-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Gs9iBZf6UKWgztis"
+Return-path: <reiserfs-list-return-24797-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200506290509.j5T595I6010576@laptop11.inf.utfsm.cl> (Horst von Brand's message of "Wed, 29 Jun 2005 01:09:05 -0400")
+Content-Disposition: inline
+In-Reply-To: <m2k6kd2rx8.fsf@Douglas-McNaughts-Powerbook.local>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Hubert Chan <hubert@uhoreg.ca>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: Douglas McNaught <doug@mcnaught.org>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Hubert Chan <hubert@uhoreg.ca>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Horst von Brand <vonbrand@inf.utfsm.cl> writes:
+--Gs9iBZf6UKWgztis
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hubert Chan <hubert@uhoreg.ca> wrote:
+On Wed, Jun 29, 2005 at 09:50:27AM -0400, Douglas McNaught wrote:
 >
->>                                                        Of course, this
->> change does require file managers to understand default actions when
->> it's ambiguous what to do on a double-click -- but MacOS X has that too,
->> in the form of the "Open as Folder" option (or whatever it's called).
->
-> Right. For the sake of a filesystem among many on a minority operating
-> system /all/ GUI programs have to be rewritten. And all command-line
-> stuff. Just because.
+>I'll just note that the "applications bundled as directories" stuff on
+>MacOS/NextStep is done completely in userspace--as far as the kernel
+>is concerned, "Mail.app" is a regular directory.  The file manager
+>handles recognition and invocation of application bundles (and there
+>is an 'open' shell command that does the same thing).
 
-I'll just note that the "applications bundled as directories" stuff on
-MacOS/NextStep is done completely in userspace--as far as the kernel
-is concerned, "Mail.app" is a regular directory.  The file manager
-handles recognition and invocation of application bundles (and there
-is an 'open' shell command that does the same thing).
+Note that MacOS has the monopoly on what they ship, Linux has a
+motherload of file managers and window systems and all.
 
--Doug
+What pisses me off is the fact that Gnome and friends implement
+their own incompatible-with-others VFS's and automounters and
+stuff.
+
+Surely supporting this in the kernel and extending the LSB
+to require this is the best step to take without infringing
+anyone's freedom as such.
+
+*still pissed off about having to hassle an automatic mount*
+
+--=20
+mjt
+
+
+--Gs9iBZf6UKWgztis
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQFCwqj8IqNMpVm8OhwRAoS7AKCruMvI4VKypOTQ1dZF/DXtUHEBvQCgo7gd
+yT8NiZUAQ4oPHmgn/hQfexk=
+=NsYy
+-----END PGP SIGNATURE-----
+
+--Gs9iBZf6UKWgztis--
