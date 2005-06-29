@@ -1,102 +1,52 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: reiser4 plugins
-Date: Wed, 29 Jun 2005 18:36:39 +0200
-Message-ID: <20050629163639.GC13336@elf.ucw.cz>
-References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB7B32.4010100@slaphack.com> <20050624124943.GA75817@dspnet.fr.eu.org>
+Date: Wed, 29 Jun 2005 15:05:12 -0400
+Message-ID: <200506291905.j5TJ5FIs025472@turing-police.cc.vt.edu>
+References: <200506290509.j5T595I6010576@laptop11.inf.utfsm.cl> <m2k6kd2rx8.fsf@Douglas-McNaughts-Powerbook.local>
+            <20050629135820.GJ11013@nysv.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24807-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_1120071898_16560P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24808-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20050624124943.GA75817@dspnet.fr.eu.org>
+In-Reply-To: Your message of "Wed, 29 Jun 2005 16:58:20 +0300."
+             <20050629135820.GJ11013@nysv.org> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Olivier Galibert <galibert@pobox.com>, David Masover <ninja@slaphack.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Horst von Brand <vonbrand@inf.utfsm.cl>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
+Cc: Douglas McNaught <doug@mcnaught.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Hubert Chan <hubert@uhoreg.ca>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Hi!
+--==_Exmh_1120071898_16560P
+Content-Type: text/plain; charset=us-ascii
 
-> > I was able to recover from bad blocks, though of course no Reiser that I
-> > know of has had bad block relocation built in...  But I got all my files
-> > off of it, fortunately.
-> 
-> My experience shows that you've been very, very lucky.  I hope r4 is
-> better in that regard.
-> 
-> If you want to try with r3, take a well-used partition[1] and copy it
-> at block level to another partition or a file.  Then zero some random
-> spans of blocks in the copy and reiserfsck --rebuild-tree it.  My
-> experience is that you'll usually get the files names and directory
-> tree but their contents will have been scattered all over the place.
+On Wed, 29 Jun 2005 16:58:20 +0300, Markus =?UNKNOWN?Q?T=F6rnqvist?= said:
+> What pisses me off is the fact that Gnome and friends implement
+> their own incompatible-with-others VFS's and automounters and
+> stuff.
 
-Actually it would be nice to have a script to automate this, and test
-various filesystems for robustness :-). I done something similar, and
-it uncovered few bugs in ext2fsck and vfatfsck; perhaps it is time to
-try it on other filesystems, too?
-								Pavel
+The fact that things like Gnome, which are basically consumers of their own
+dogfood, have incompatible versions says very loudly that there's no consensus
+on the semantics....
 
-#!/bin/bash
-#
-# fscktest
-#
-# Usage: 
-#	 Make sure output is logged somewhere
-#        First, run fscktest -p as root
-#	 Then you can run fscktest as normal user...
-#
+> Surely supporting this in the kernel and extending the LSB
+> to require this is the best step to take without infringing
+> anyone's freedom as such.
 
-prepare() {
-	SIZE=100000
-	echo "Creating file..."
-	cat /dev/zero | head -c $[$SIZE*1024] > test
-	echo "Making filesystem..."
-	/sbin/mkfs.$FS test
-	echo "Mounting..."
-	mount test -o loop /mnt || exit "Cant mount"
-	echo "Copying files..."
-	cp -a /bin /mnt
-	cp -a /usr/bin /mnt
-	cp -a /usr/src/linux /mnt
-	echo "Syncing..."
-	sync
-	echo "Unmounting..."
-	umount /mnt
-	echo "Moving..."
-	mv test fsck.okay
-	echo "All done."
-}
+First we need to decide *if* it's to be supported, then *what* to support....
 
-FS=ext2
-if [ .$1 == .-p ]; then
-	prepare
-	exit
-	fi
-RUN=0
-while true; do
-	RUN=$[$RUN+1]
-	echo "Run #$RUN"
-	echo Preparing...
-	cat fsck.okay > fsck.damaged
-	echo Damaging...
-	dd if=/dev/urandom of=fsck.damaged count=10240 seek=7 conv=notrunc
-	cp fsck.damaged fsck.test
-	echo First check...
-	/sbin/fsck.$FS -fy fsck.damaged
-	RESULT=$?
-	if [ $RESULT != 1 -a $RESULT != 2 -a $RESULT != 0 ]; then
-		echo "Fsck failed in bad way (result = $RESULT)"
-		exit
-		fi
-	echo Second check...
-	/sbin/fsck.$FS -fy fsck.damaged
-	RESULT=$?
-	if [ $RESULT != 0 ]; then
-		echo "Fsck lied about its success (result = $RESULT)"
-		exit
-		fi
-	done
+--==_Exmh_1120071898_16560P
+Content-Type: application/pgp-signature
 
--- 
-teflon -- maybe it is a trademark, but it should not be.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFCwvDYcC3lWbTT17ARAhqcAKDYVA4BOqtoZtCRjutERb4BRbuIRACgj6lK
+wrsUkBCxbDzoH4Vo7CfLtm8=
+=wVqz
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1120071898_16560P--
