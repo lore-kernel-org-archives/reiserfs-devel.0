@@ -1,52 +1,53 @@
-From: Valdis.Kletnieks@vt.edu
+From: =?ISO-8859-1?Q?Thomas_R=F6sner?= <dtrauma.lkml@gmail.com>
 Subject: Re: reiser4 plugins
-Date: Wed, 29 Jun 2005 15:05:12 -0400
-Message-ID: <200506291905.j5TJ5FIs025472@turing-police.cc.vt.edu>
-References: <200506290509.j5T595I6010576@laptop11.inf.utfsm.cl> <m2k6kd2rx8.fsf@Douglas-McNaughts-Powerbook.local>
-            <20050629135820.GJ11013@nysv.org>
+Date: Wed, 29 Jun 2005 21:32:32 +0200
+Message-ID: <ec88f49305062912323a1ee1be@mail.gmail.com>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>
+	 <42BCD93B.7030608@slaphack.com>
+	 <200506251420.j5PEKce4006891@turing-police.cc.vt.edu>
+	 <42BDA377.6070303@slaphack.com>
+	 <200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu>
+	 <42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com>
+	 <e692861c05062522071fe380a5@mail.gmail.com>
+	 <42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com>
+Reply-To: =?ISO-8859-1?Q?Thomas_R=F6sner?= <dtrauma.lkml@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1120071898_16560P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24808-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-24809-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Wed, 29 Jun 2005 16:58:20 +0300."
-             <20050629135820.GJ11013@nysv.org> 
+In-Reply-To: <42BE5DB6.8040103@slaphack.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Markus =?UNKNOWN?Q?T=F6rnqvist?= <mjt@nysv.org>
-Cc: Douglas McNaught <doug@mcnaught.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Hubert Chan <hubert@uhoreg.ca>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: David Masover <ninja@slaphack.com>
+Cc: Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Valdis.Kletnieks@vt.edu, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
---==_Exmh_1120071898_16560P
-Content-Type: text/plain; charset=us-ascii
+Hi,
 
-On Wed, 29 Jun 2005 16:58:20 +0300, Markus =?UNKNOWN?Q?T=F6rnqvist?= said:
-> What pisses me off is the fact that Gnome and friends implement
-> their own incompatible-with-others VFS's and automounters and
-> stuff.
+I hereby throw myself into the neverending flames called "reiser4
+plugins" - may it please the gods.
 
-The fact that things like Gnome, which are basically consumers of their own
-dogfood, have incompatible versions says very loudly that there's no consensus
-on the semantics....
+David Masover (who really could use pgp mime attatchments):
+> So, the API becomes something like:
+>=20
+> cat crypto/inflated/foo         # transparently decompressed
+> cat crypto/raw/foo.gz           # raw, gzip-compressed
 
-> Surely supporting this in the kernel and extending the LSB
-> to require this is the best step to take without infringing
-> anyone's freedom as such.
+Wee, I've seen this before. Wait, its AVFS! But didn't AFVS work with
+any underlying fs? Even nfs?
 
-First we need to decide *if* it's to be supported, then *what* to support....
+cd foo.zip#/bar/
+cat foo.tgz#/bar/plonk.txt
 
---==_Exmh_1120071898_16560P
-Content-Type: application/pgp-signature
+There is no reason why there shouldn't be a gpg AVFS-plugin, too. OK,
+AVFS worked via coda's redir.o and IMHO we need smth like this in 2.6.
+But, apart from more efficient compression on disk (if that really
+ever works) you didn't show any convincing use cases.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+Or am I fundamentally wrong?
 
-iD8DBQFCwvDYcC3lWbTT17ARAhqcAKDYVA4BOqtoZtCRjutERb4BRbuIRACgj6lK
-wrsUkBCxbDzoH4Vo7CfLtm8=
-=wVqz
------END PGP SIGNATURE-----
-
---==_Exmh_1120071898_16560P--
+regards,
+  Thomas
