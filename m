@@ -1,68 +1,60 @@
-From: Chet Hosey <chosey@nauticom.net>
-Subject: Re: dmapi support for reiser4
-Date: Wed, 29 Jun 2005 18:41:46 -0400
-Message-ID: <42C323AA.1070802@nauticom.net>
-References: <20050628093408.GA23882@lisa.goe.net> <1119958258.3495.52.camel@tribesman.namesys.com> <20050629115713.GC3610@lisa.goe.net>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: reiser4 merging action list
+Date: Wed, 29 Jun 2005 15:59:27 -0700
+Message-ID: <42C327CF.70408@namesys.com>
+References: <42BB7B32.4010100@slaphack.com>	 <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl>	 <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org>	 <42C0578F.7030608@namesys.com> <20050627212628.GB27805@thunk.org>	 <42C084F1.70607@namesys.com> <20050627162303.156551b4.akpm@osdl.org>	 <42C2348F.3000908@namesys.com> <84144f02050628231814e9e6db@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24817-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24818-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050629115713.GC3610@lisa.goe.net>
+In-Reply-To: <84144f02050628231814e9e6db@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Bjoern JACKE <bjoern@j3e.de>
-Cc: reiserfs-list@namesys.com
+To: Pekka Enberg <penberg@gmail.com>
+Cc: Andrew Morton <akpm@osdl.org>, tytso@mit.edu, mjt@nysv.org, vonbrand@inf.utfsm.cl, ninja@slaphack.com, alan@lxorguk.ukuu.org.uk, jgarzik@pobox.com, hch@infradead.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, lord@xfs.org, vs <vs@thebsh.namesys.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Nikita Danilov <Nikita@namesys.com>
 
-Bjoern JACKE wrote:
+Pekka Enberg wrote:
 
-> Hi,
-> On 2005-06-29 at 20:15 +0400 Vladimir Saveliev sent off:
+>Andrew Morton wrote:
+>  
 >
->> I would guess that it is rather operating system feature than a
->> filesystem one. Can you please point some source of information about
->> DMAPI?
+>>>There's also the custom list, hash and debug code.  We should either
+>>>
+>>>a) remove them or
+>>>
+>>>b) generify them and submit as standalone works or
+>>>
+>>>c) justify them as custom-to-reiser4 and leave them as-is.
+>>>      
+>>>
+>
+>On 6/29/05, Hans Reiser <reiser@namesys.com> wrote:
+>  
+>
+>>either b) or c) is ok with me for the list code.  The debug code should
+>>be c) I think.
+>>
+>>Probably vs can offer a more detailed and accurate opinion,
+>>    
+>>
+>
+>I completely agree that the current state of the generic hashing
+>facilities is somewhat poor but I fail to see why you can't use
+><linux/list.h>.
+>  
+>
+I'll let vs and maybe nikita comment.
+
+>As for the debugging code, I would love to see that turned into
+>something generic (every subsystem has their own now) but it is
+>definitely not something that should stop you from merging.
+>
+>                                Pekka
 >
 >
-> the main part is to be done by the filesystem, the OS cannot do
-> everything by itself, there a plenty of things which just the
-> filesystem can do by itself. Here are some links:
+>  
 >
-> http://www.opengroup.org/onlinepubs/9657099/
-> http://www.computer.org/conferences/mss95/lawthers/lawthers.htm
-> http://www.csu.edu.au/special/auugwww96/proceedings/alex/alex.html
->
-> You can also take a look at the XFS and JFS source code parts of dmapi
-> to get
-> an impression of what is to be done for it at fs layer.
->
-> Bjoern
-
-Is there a standard VFS interface that these filesystems present, or is
-it done via filesystem-specific extensions? If the latter, perhaps you
-should consider submitting a kernel patch that adds the required
-interface to the VFS layer, and note in your submission that XFS and JFS
-aren't compliant.
-
-How is DMAPI different from FAM with an extra API function for creating
-explicit holes?
-
-You said that "reiser4 will not be a real competitor without this". A
-competitor in what market? Can you name an application that depends on
-DMAPI and is so important that without that particular application
-Reiser4 is not appropriate for storing files?
-
-I note that the second link you provided is ten years old, nearly to the
-day. The third is nine years old.I'm not suggesting that you're
-overstating the importance of DMAPI, but why do you think that something
-so important might have been overlooked for so long? Novell just
-switched to Reiserfs as their default SUSE filesystem. If Reiserfs isn't
-a "real competitor" without DMAPI, why would they do something so unwise?
-
-Just curious, as I'd not heard of DMAPI prior to your post, but you
-claim it's quite important.
-
--- chet
-
+If I encourage you to make a patch, is that ok of me? 
