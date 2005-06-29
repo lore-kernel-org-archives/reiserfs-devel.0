@@ -1,54 +1,89 @@
-From: Hubert Chan <hubert@uhoreg.ca>
+From: Matthew Frost <artusemrys@sbcglobal.net>
 Subject: Re: reiser4 plugins
-Date: Tue, 28 Jun 2005 21:51:08 -0400
-Message-ID: <87wtoedj77.fsf@evinrude.uhoreg.ca>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>
-	<200506252031.j5PKVb4Y004482@turing-police.cc.vt.edu>
-	<42BDC422.6020401@namesys.com> <42BE3645.4070806@cisco.com>
-	<e692861c05062522071fe380a5@mail.gmail.com>
-	<42BE563D.4000402@cisco.com> <42BE5DB6.8040103@slaphack.com>
-	<200506261816.j5QIGMdI010142@turing-police.cc.vt.edu>
-	<42BF08CF.2020703@slaphack.com>
-	<200506262105.j5QL5kdR018609@turing-police.cc.vt.edu>
-	<42BF2DC4.8030901@slaphack.com>
-	<200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>
-	<42BF667C.50606@slaphack.com>
-	<5284F665-873C-45B7-8DDB-5F475F2CE399@mac.com>
-	<42BF7167.80201@slaphack.com>
-	<EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com>
-	<42C06D59.2090200@slaphack.com>
-	<CD59AE36-FD15-4A4C-9E1D-AB2F8B52D653@mac.com>
-	<42C08B5E.2080000@slaphack.com> <87y88vrzkg.fsf@evinrude.uhoreg.ca>
-	<42C1B19F.6010808@slaphack.com>
+Date: Tue, 28 Jun 2005 19:07:18 -0700 (PDT)
+Message-ID: <20050629020718.8160.qmail@web81904.mail.mud.yahoo.com>
+References: <20050625164502.7c9745b5.diegocg@gmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24785-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-24786-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42C1B19F.6010808@slaphack.com> (David Masover's message of
- "Tue, 28 Jun 2005 15:22:55 -0500")
+In-Reply-To: <20050625164502.7c9745b5.diegocg@gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
-Cc: Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Diego Calleja <diegocg@gmail.com>, Hans Reiser <reiser@namesys.com>
+Cc: jgarzik@pobox.com, ninja@slaphack.com, alan@lxorguk.ukuu.org.uk, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-On Tue, 28 Jun 2005 15:22:55 -0500, David Masover <ninja@slaphack.com> said:
+--- Diego Calleja <diegocg@gmail.com> wrote:
 
-> Come to think of it, that changes the proposal a bit.  You need a
-> different way to access the meta-dir for files than for directories,
-> if we're going to support /meta/vfs.  No biggie:
+> El Fri, 24 Jun 2005 21:31:02 -0700,
+> Hans Reiser <reiser@namesys.com> escribi=F3:
+>=20
+>=20
+> > What exactly is not ready Jeff?  As I see it, this thread is 95%
+> > posturing, and almost no technical reasons for not merging.  These
+> > "authorities"seem perfectly content with echoing the words of someone
+> > who skimmed the code and shot his mouth off without understanding it,
+> > and now these "authorities" just echo him because they like him and
+> > assume he must be right.
+>=20
+>=20
+> I'm not one of those "authorities" but I doubt reiser4 will be merged
+> at all with that attitude.
 
-> /meta/vfs/file/home/bob/sue.mpg/acl
-> /meta/vfs/dir/home/bob/acl
 
-What if /home has an extended attribute named bob?  Then is
-/meta/vfs/dir/home/bob a file or a directory?
+Spot on.  Somebody hasn't read his Linus.  It seems to me that anytime I
+hear whining about how unfair the system is, how arbitrary patch
+rejection is, the flaw is either a lack of social competence, or failure
+to follow the submission guidelines.  Lately the number three reason,
+"Linus forgot," happens less and less.  And linux developers are offering
+to help Reiser development fix what's wrong!  That's above and beyond. =20
 
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+If Hans wants to take his ball and go home, let it be understood that it
+is not because of a failure in the linux process. =20
+
+People that don't want flames, drop out of flame wars and do constructive
+work.  People that want to talk ideology, start flame wars and perpetuate
+them.  If you're having a code argument and you can go four posts without
+referring to actual code, you're no longer having a code argument.=20
+Non-demonstrable merit is not merit.  Benchmarks can be necessary -- but
+are never alone sufficient -- merit to merge to mainline.
+
+Hans: consider that enough linux people like your stuff enough to have
+this argument.  Performance has long since ceased to be at issue.  Linux
+is a thing in itself.  If Reiser4 is a thing in itself, and not merely a
+means to a further release point, you will care enough about it to merge
+it usably and maintainably into the kernel.  Should you obsolesce 4 as
+you have done to 3, someone else can care enough about it, and do
+something with it.  Features are added to Reiser3 because it is a thing
+in itself now that it is in the kernel.  Its users care.  Its
+maintainers, even if they still work for Namesys, care.  Listen next time
+you hear someone talk about "vendor-abandoned projects" continuing to
+function through community development.
+
+Alan has said, "Free software is always late."  Free software follows the
+itch.  If Hans wants linux to have Reiser4, Reiser development will work
+with linux development to become compliant and explain/adapt any
+additional functionality.  Linux does not abjectly need Reiser4 in-tree.=20
+Reiser4 is ultimately Hans's scratch for Hans's itch.  It will be the
+more effective and widely usable once it is stable in-tree, but the
+mainline kernel developers aren't the ones with the itch.  Protocols
+exist in social systems as a means to constructively enlist the help of
+people outside the problem.  The protocols here are well established.=20
+This is a patch meritocracy.  Failure to comply further increases the
+lateness of Reiser4 in mainline kernels.  Ego involvement is noise.
+
+My observations being what they are, may I suggest that this thread die,
+in favor of more eyes and in-depth current code analysis help in "Re:
+reiser4 merging action list"?  Higher utility function; higher S:N.=20
+Flames can always go down with the ship.
+
+Frosty
+Not a programmer, merely literate.
+
+No, I don't usually respond to trolls, but this thread, from this man,
+itches me.  It's not worthy of his brilliance, which may be his tragic
+flaw.
 
