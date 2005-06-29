@@ -1,49 +1,46 @@
-From: Pekka Enberg <penberg@gmail.com>
-Subject: Re: reiser4 merging action list
-Date: Wed, 29 Jun 2005 09:18:07 +0300
-Message-ID: <84144f02050628231814e9e6db@mail.gmail.com>
-References: <42BB7B32.4010100@slaphack.com>
-	 <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl>
-	 <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org>
-	 <42C0578F.7030608@namesys.com> <20050627212628.GB27805@thunk.org>
-	 <42C084F1.70607@namesys.com> <20050627162303.156551b4.akpm@osdl.org>
-	 <42C2348F.3000908@namesys.com>
-Reply-To: Pekka Enberg <penberg@gmail.com>
+From: "Artem B. Bityuckiy" <dedekind@yandex.ru>
+Subject: Re: Reiser4 + seekdir()
+Date: Wed, 29 Jun 2005 10:51:04 +0400
+Message-ID: <42C244D8.1070408@yandex.ru>
+References: <42BFC6B0.7040202@yandex.ru>	 <1119872500.4257.260.camel@tribesman.namesys.com>	 <42BFEC62.1010907@yandex.ru>	 <1119875956.4256.277.camel@tribesman.namesys.com>	 <42BFF7D3.3010206@yandex.ru> <1119880168.4257.326.camel@tribesman.namesys.com> <42C004E0.5060405@yandex.ru> <42C0588C.7030905@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-24789-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24790-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42C2348F.3000908@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <42C0588C.7030905@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Hans Reiser <reiser@namesys.com>
-Cc: Andrew Morton <akpm@osdl.org>, tytso@mit.edu, mjt@nysv.org, vonbrand@inf.utfsm.cl, ninja@slaphack.com, alan@lxorguk.ukuu.org.uk, jgarzik@pobox.com, hch@infradead.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, lord@xfs.org, vs <vs@thebsh.namesys.com>, Pekka Enberg <penberg@cs.helsinki.fi>
+Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
 
-Andrew Morton wrote:
-> > There's also the custom list, hash and debug code.  We should either
-> >
-> > a) remove them or
-> >
-> > b) generify them and submit as standalone works or
-> >
-> > c) justify them as custom-to-reiser4 and leave them as-is.
+Hans Reiser wrote:
+> thanks Artem.  If you are generous enough to help us with those comments
+> and renames, I'll take a patch to do it.  If you are too busy though,
+> vs, can you fix it?
 
-On 6/29/05, Hans Reiser <reiser@namesys.com> wrote:
-> either b) or c) is ok with me for the list code.  The debug code should
-> be c) I think.
->=20
-> Probably vs can offer a more detailed and accurate opinion,
+Hans,
 
-I completely agree that the current state of the generic hashing
-facilities is somewhat poor but I fail to see why you can't use
-<linux/list.h>.
+I may prepare and send a patch once I've realized what is the purpose 
+and function of these two direntry plugins.
 
-As for the debugging code, I would love to see that turned into
-something generic (every subsystem has their own now) but it is
-definitely not something that should stop you from merging.
 
-                                Pekka
+SEEKABLE_HASHED_DIR_PLUGIN_ID and
+
+The HASHED_DIR_PLUGIN_ID plugin's destination is clear - it is general 
+purpose plugin which should be used in 99% cases except something 
+special is needed. The plugin implies the dentries are roughly 
+alphabetically sorted and go in the same order as stat-data. Fine
+
+SEEKABLE_HASHED_DIR_PLUGIN_ID - dunno, it it the same as the 
+HASHED_DIR_PLUGIN_ID plugin, but the key assignment algorithm is much 
+simpler. What's the purpose of this plugin? I understand that it used to 
+be mostly seekable while the first one was not seekable when the 
+adjust_dir_pos() feature did not exist. But at the moment, what for is it ?
+
+-- 
+Best Regards,
+Artem B. Bityuckiy,
+St.-Petersburg, Russia.
