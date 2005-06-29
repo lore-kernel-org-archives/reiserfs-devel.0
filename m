@@ -1,48 +1,41 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: Reiser4 + seekdir()
-Date: Wed, 29 Jun 2005 14:11:55 -0400
-Message-ID: <200506291811.j5TIBtLo023155@turing-police.cc.vt.edu>
-References: <42BFC6B0.7040202@yandex.ru> <1119872500.4257.260.camel@tribesman.namesys.com> <42BFEC62.1010907@yandex.ru> <1119875956.4256.277.camel@tribesman.namesys.com> <42BFF7D3.3010206@yandex.ru> <1119880168.4257.326.camel@tribesman.namesys.com> <42C004E0.5060405@yandex.ru> <42C0588C.7030905@namesys.com> <42C244D8.1070408@yandex.ru>
-            <1120040525.3860.40.camel@tribesman.namesys.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: torturing filesystems [was Re: reiser4 plugins]
+Date: Wed, 29 Jun 2005 18:44:29 +0200
+Message-ID: <20050629164423.GD13336@elf.ucw.cz>
+References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB7B32.4010100@slaphack.com> <1119612849.17063.105.camel@localhost.localdomain> <42BC5D2E.1070307@namesys.com> <1119806434.28644.15.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1120068714_16560P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24805-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24806-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Wed, 29 Jun 2005 14:22:05 +0400."
-             <1120040525.3860.40.camel@tribesman.namesys.com> 
+Content-Disposition: inline
+In-Reply-To: <1119806434.28644.15.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: "Artem B. Bityuckiy" <dedekind@yandex.ru>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
---==_Exmh_1120068714_16560P
-Content-Type: text/plain; charset=us-ascii
+Hi!
 
-On Wed, 29 Jun 2005 14:22:05 +0400, Vladimir Saveliev said:
- 
-> Existence of various plugins assumes that user is able to choose
-> whatever is suitable for him. Or create his own plugin if none of
-> existing ones satisfies him.
-> If user cares a lot about using telldir/seekdir he is supposed to choose
-> SEEKABLE_HASHED_DIR_PLUGIN_ID.
+> > Alan, this is FUD.   Our V3 fsck was written after everything else was,
+> > for lack of staffing reasons (why write an fsck before you have an FS
+> > worth using).  As a result, there was a long period where the fsck code
+> > was unstable.  It is reliable now. 
+> > 
+> > People often think that our tree makes fsck less robust.  Actually fsck
+> > can throw the entire internal tree away and rebuild from leaf nodes, and
+> > frankly that makes things pretty robust. 
+> 
+> I did a series of tests well after resier3 had fsck that consisted of
+> modelling the behaviour of systems under error state. I modelled random
+> bit errors, bit errors at a fixed offset (class ram failure), sector 4
+> byte slip (known IDE fail case) and sectors going away.
 
-Is that "the user", or "the person building the kernel"?
-
-
---==_Exmh_1120068714_16560P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFCwuRqcC3lWbTT17ARAkTJAJ9uTVK6Mxb5G+ZcoH4B390pIDAGzACfefj1
-q1zLdEFsQrpAZufsUvbUmuo=
-=Oq5E
------END PGP SIGNATURE-----
-
---==_Exmh_1120068714_16560P--
+Do you have that code somewhere? Best I could do was overwriting
+random parts of partition with random data, you seem to have "more
+interesting" failures...
+							Pavel
+-- 
+teflon -- maybe it is a trademark, but it should not be.
