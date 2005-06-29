@@ -1,57 +1,48 @@
-From: Steve Lord <lord@xfs.org>
-Subject: Re: XFS corruption during power-blackout
-Date: Wed, 29 Jun 2005 12:56:12 -0500
-Message-ID: <42C2E0BC.8040508@xfs.org>
-References: <20050629001847.GB850@frodo> <200506290453.HAA14576@raad.intranet> <556815.441dd7d1ebc32b4a80e049e0ddca5d18e872c6e8a722b2aefa7525e9504533049d801014.ANY@taniwha.stupidest.org>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: Reiser4 + seekdir()
+Date: Wed, 29 Jun 2005 14:11:55 -0400
+Message-ID: <200506291811.j5TIBtLo023155@turing-police.cc.vt.edu>
+References: <42BFC6B0.7040202@yandex.ru> <1119872500.4257.260.camel@tribesman.namesys.com> <42BFEC62.1010907@yandex.ru> <1119875956.4256.277.camel@tribesman.namesys.com> <42BFF7D3.3010206@yandex.ru> <1119880168.4257.326.camel@tribesman.namesys.com> <42C004E0.5060405@yandex.ru> <42C0588C.7030905@namesys.com> <42C244D8.1070408@yandex.ru>
+            <1120040525.3860.40.camel@tribesman.namesys.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1120068714_16560P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24804-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24805-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <556815.441dd7d1ebc32b4a80e049e0ddca5d18e872c6e8a722b2aefa7525e9504533049d801014.ANY@taniwha.stupidest.org>
+In-Reply-To: Your message of "Wed, 29 Jun 2005 14:22:05 +0400."
+             <1120040525.3860.40.camel@tribesman.namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Wedgwood <cw@f00f.org>
-Cc: Al Boldi <a1426z@gawab.com>, 'Nathan Scott' <nathans@sgi.com>, linux-xfs@oss.sgi.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: "Artem B. Bityuckiy" <dedekind@yandex.ru>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
 
-Chris Wedgwood wrote:
-> On Wed, Jun 29, 2005 at 07:53:09AM +0300, Al Boldi wrote:
-> 
-> 
->>What I found were 4 things in the dest dir:
->>1. Missing Dirs,Files. That's OK.
->>2. Files of size 0. That's acceptable.
->>3. Corrupted Files. That's unacceptable.
->>4. Corrupted Files with original fingerprint. That's ABSOLUTELY
->>unacceptable.
-> 
-> 
-> disk usually default to caching these days and can lose data as a
-> result, disable that
-> 
+--==_Exmh_1120068714_16560P
+Content-Type: text/plain; charset=us-ascii
 
-There are IDE drives where the vendor will tell you that you will
-drasticly shorten the life of a drive if you turn off caching.
-There are also cool bits of technology which use the rotational
-energy of the spinning down drive to dump the cache out to a
-special track (or this may be an urban legend, not sure). Problem
-is, no one but the vendors really knows what any particular
-disk is going to do when you pull the plug.
+On Wed, 29 Jun 2005 14:22:05 +0400, Vladimir Saveliev said:
+ 
+> Existence of various plugins assumes that user is able to choose
+> whatever is suitable for him. Or create his own plugin if none of
+> existing ones satisfies him.
+> If user cares a lot about using telldir/seekdir he is supposed to choose
+> SEEKABLE_HASHED_DIR_PLUGIN_ID.
 
-I did spend a bunch of time once ensuring that when you typed
-sync on xfs you could pull the power right after that and
-everything from before the sync survived. There have been a
-lot of changes both in xfs and the surrounding kernel since
-then. I do not know if anyone has attempted this effort
-again recently.
+Is that "the user", or "the person building the kernel"?
 
-If you care sufficiently about your data to want to do power fail
-testing then, even assuming the filesystem works perfectly:
 
-a) have a working, tested, regular backup policy
-b) keep the backups in a different building
-c) buy a UPS.
+--==_Exmh_1120068714_16560P
+Content-Type: application/pgp-signature
 
-Steve
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFCwuRqcC3lWbTT17ARAkTJAJ9uTVK6Mxb5G+ZcoH4B390pIDAGzACfefj1
+q1zLdEFsQrpAZufsUvbUmuo=
+=Oq5E
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1120068714_16560P--
