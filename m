@@ -1,40 +1,117 @@
 From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: How to user reiser4 and crypt plugin ??
-Date: Tue, 28 Jun 2005 21:19:44 -0400
-Message-ID: <878y0uez7z.fsf@evinrude.uhoreg.ca>
-References: <Pine.GSO.4.58.0506281054200.2602@sysss01h> <42C16B43.7060706@namesys.com>
- <Pine.GSO.4.58.0506281133260.2602@sysss01h>
- <878y0updla.fsf@evinrude.uhoreg.ca> <42C1A3FD.6020207@slaphack.com>
- <87r7emnu89.fsf@evinrude.uhoreg.ca>
- <e692861c05062813152eff996a@mail.gmail.com>
+Subject: Re: reiser4 plugins
+Date: Tue, 28 Jun 2005 21:40:41 -0400
+Message-ID: <874qbiey92.fsf@evinrude.uhoreg.ca>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>
+	<200506261816.j5QIGMdI010142@turing-police.cc.vt.edu>
+	<42BF08CF.2020703@slaphack.com>
+	<200506262105.j5QL5kdR018609@turing-police.cc.vt.edu>
+	<42BF2DC4.8030901@slaphack.com>
+	<200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>
+	<42BF667C.50606@slaphack.com>
+	<5284F665-873C-45B7-8DDB-5F475F2CE399@mac.com>
+	<42BF7167.80201@slaphack.com>
+	<EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com>
+	<42C06D59.2090200@slaphack.com>
+	<CD59AE36-FD15-4A4C-9E1D-AB2F8B52D653@mac.com>
+	<42C08B5E.2080000@slaphack.com> <87y88vrzkg.fsf@evinrude.uhoreg.ca>
+	<EBD8F590-0113-4509-9604-E6967C65C835@mac.com>
+	<87mzpbrvpf.fsf@evinrude.uhoreg.ca>
+	<D3A4ABBF-8062-4399-B1EC-61722295944A@mac.com>
+	<87irzzrqu7.fsf@evinrude.uhoreg.ca>
+	<2B1C058D-C304-4E15-ACDA-C3337E67E981@mac.com>
+	<87d5q6pdyv.fsf@evinrude.uhoreg.ca>
+	<C7DB345A-CD35-4A4C-89F7-5BBD3CB83DF4@mac
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24783-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24784-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Sender: news <news@sea.gmane.org>
+In-Reply-To: <C7DB345A-CD35-4A4C-89F7-5BBD3CB83DF4@mac.com> (Kyle Moffett's
+ message of "Tue, 28 Jun 2005 15:59:03 -0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Kyle Moffett <mrmacman_g4@mac.com>
+Cc: David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-On Tue, 28 Jun 2005 16:15:38 -0400, Gregory Maxwell <gmaxwell@gmail.com> said:
+On Tue, 28 Jun 2005 15:59:03 -0400, Kyle Moffett <mrmacman_g4@mac.com> said:
 
-> On 6/28/05, Hubert Chan <hubert@uhoreg.ca> wrote:
->> > Isn't dm-crypt the new way of doing this?  Yes and no.  dm-crypt is
->> recommended over cryptoloop.  But there is also loop-AES, which is
->> more secure (in some modes) than dm-crypt (currently).
+> On Jun 28, 2005, at 13:51:04, Hubert Chan wrote:
 
-> There is now support for both LRW-AES and ESSIV in the mainstream
-> kernel.  With ESSIV the security should be the same as loop-aes and
-> with LRW-AES potentially better.
+>>  I don't know if VFS is the right place for it, but I agree that it
+>> would be good to make it accessible to all filesystems.
 
-Thanks for the info.  I haven't look into the kernel for a little
-while -- I'm still using a slightly older version.
+> That's somewhat of a contradiction in terms.  The whole point of the
+> VFS is to hold all of the things that multiple filesystems want to
+> share :-D.
 
-> For the highest security you should also use the LUKS cryptosetup
-> because it provides hardening for passwords.
+VFS provides a common interface to the filesystem.  I don't think metafs
+needs any VFS changes.  It may be able to get by without making changes
+to the VFS, and if so, it shouldn't touch the VFS.  It should just be
+its own separate filesystem.
+
+I imagine most of it could be implemented by a FUSE filesystem.
+
+> Personally, I think that the multiple views is a good thing.  I like
+> being able to "cd /Applications/Games/UnrealTournament2004.app/System"
+> and mess with my game files, while double-clicking it in the Finder
+> just starts it so I can get on with owning my friends :-D.
+
+Of course.  With file-as-dir, you can "cd /usr/games/tetris/..." and
+mess with the game files, or you can run "/usr/games/tetris" and get on
+with ... stacking blocks.  The advantage of doing it in the kernel is
+that you don't need extra support from the applications (or GnomeVFS or
+KDE).  So typing "/usr/games/tetris" from the command prompt does the
+same thing as double-clicking it in the file manager.  Of course, this
+change does require file managers to understand default actions when
+it's ambiguous what to do on a double-click -- but MacOS X has that too,
+in the form of the "Open as Folder" option (or whatever it's called).
+
+>> Another problem is that it only works with bundle files.  e.g. I
+>> can't add an icon to a regular txt file.  Tiger now supports xattrs,
+>> which you could use for that functionality, but then we run into the
+>> problem again of not being able to edit it with regular applications.
+
+> Maybe we just need better regular applications?
+
+You mean patch them all so that they understand and can edit
+xattr/substreams/etc.?  The file-as-dir interface is meant to avoid
+having to do that.  metafs also avoids having to patch all the
+applications by exposing them as regular files.
+
+The example you give below isn't a new VFS API.  It's metafs exposing
+xattrs/substreams/etc. through the regular file interface.  (Perhaps
+we're just using different terminology.)
+
+> I think that for the icon case, for the Samba/streams case, and for
+> many others I'm probably forgetting, we should try to come up with a
+> new "data-stream" VFS API, so that the icon data and other larger
+> quantities can be stored in a filesystem without much effort.  Such a
+> layer could even be bridged onto existing filesystems via a
+> VFS-wrapper bind-mount:
+
+> # mount -t reiser4 /dev/hda1 /mnt1
+
+> # mount -t ext3 /dev/hda2 /mnt2
+
+> # cat $(metapath /mnt1/foo)/streams/description
+> Some random file
+
+> # cat $(metapath /mnt2/foo)/streams/description
+> cat: Unsupported operation
+
+> # mount -t none -o bind,streamify /mnt2 /mnt3
+
+> # cat $(metapath /mnt3/foo)/streams/description
+> Another random file
+
+> Such a wrapper interface might use the directory '...' to store files
+> on the underlying filesystem, but I don't think that the meta
+> interface itself should use those directories.
+
+Agreed.
 
 -- 
 Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
