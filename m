@@ -1,41 +1,102 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: torturing filesystems [was Re: reiser4 plugins]
-Date: Wed, 29 Jun 2005 18:44:29 +0200
-Message-ID: <20050629164423.GD13336@elf.ucw.cz>
-References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB7B32.4010100@slaphack.com> <1119612849.17063.105.camel@localhost.localdomain> <42BC5D2E.1070307@namesys.com> <1119806434.28644.15.camel@localhost.localdomain>
+Subject: Re: reiser4 plugins
+Date: Wed, 29 Jun 2005 18:36:39 +0200
+Message-ID: <20050629163639.GC13336@elf.ucw.cz>
+References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl> <42BB31E9.50805@slaphack.com> <1119570225.18655.75.camel@localhost.localdomain> <42BB7B32.4010100@slaphack.com> <20050624124943.GA75817@dspnet.fr.eu.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24806-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24807-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1119806434.28644.15.camel@localhost.localdomain>
+In-Reply-To: <20050624124943.GA75817@dspnet.fr.eu.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Olivier Galibert <galibert@pobox.com>, David Masover <ninja@slaphack.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Horst von Brand <vonbrand@inf.utfsm.cl>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
 Hi!
 
-> > Alan, this is FUD.   Our V3 fsck was written after everything else was,
-> > for lack of staffing reasons (why write an fsck before you have an FS
-> > worth using).  As a result, there was a long period where the fsck code
-> > was unstable.  It is reliable now. 
-> > 
-> > People often think that our tree makes fsck less robust.  Actually fsck
-> > can throw the entire internal tree away and rebuild from leaf nodes, and
-> > frankly that makes things pretty robust. 
+> > I was able to recover from bad blocks, though of course no Reiser that I
+> > know of has had bad block relocation built in...  But I got all my files
+> > off of it, fortunately.
 > 
-> I did a series of tests well after resier3 had fsck that consisted of
-> modelling the behaviour of systems under error state. I modelled random
-> bit errors, bit errors at a fixed offset (class ram failure), sector 4
-> byte slip (known IDE fail case) and sectors going away.
+> My experience shows that you've been very, very lucky.  I hope r4 is
+> better in that regard.
+> 
+> If you want to try with r3, take a well-used partition[1] and copy it
+> at block level to another partition or a file.  Then zero some random
+> spans of blocks in the copy and reiserfsck --rebuild-tree it.  My
+> experience is that you'll usually get the files names and directory
+> tree but their contents will have been scattered all over the place.
 
-Do you have that code somewhere? Best I could do was overwriting
-random parts of partition with random data, you seem to have "more
-interesting" failures...
-							Pavel
+Actually it would be nice to have a script to automate this, and test
+various filesystems for robustness :-). I done something similar, and
+it uncovered few bugs in ext2fsck and vfatfsck; perhaps it is time to
+try it on other filesystems, too?
+								Pavel
+
+#!/bin/bash
+#
+# fscktest
+#
+# Usage: 
+#	 Make sure output is logged somewhere
+#        First, run fscktest -p as root
+#	 Then you can run fscktest as normal user...
+#
+
+prepare() {
+	SIZE=100000
+	echo "Creating file..."
+	cat /dev/zero | head -c $[$SIZE*1024] > test
+	echo "Making filesystem..."
+	/sbin/mkfs.$FS test
+	echo "Mounting..."
+	mount test -o loop /mnt || exit "Cant mount"
+	echo "Copying files..."
+	cp -a /bin /mnt
+	cp -a /usr/bin /mnt
+	cp -a /usr/src/linux /mnt
+	echo "Syncing..."
+	sync
+	echo "Unmounting..."
+	umount /mnt
+	echo "Moving..."
+	mv test fsck.okay
+	echo "All done."
+}
+
+FS=ext2
+if [ .$1 == .-p ]; then
+	prepare
+	exit
+	fi
+RUN=0
+while true; do
+	RUN=$[$RUN+1]
+	echo "Run #$RUN"
+	echo Preparing...
+	cat fsck.okay > fsck.damaged
+	echo Damaging...
+	dd if=/dev/urandom of=fsck.damaged count=10240 seek=7 conv=notrunc
+	cp fsck.damaged fsck.test
+	echo First check...
+	/sbin/fsck.$FS -fy fsck.damaged
+	RESULT=$?
+	if [ $RESULT != 1 -a $RESULT != 2 -a $RESULT != 0 ]; then
+		echo "Fsck failed in bad way (result = $RESULT)"
+		exit
+		fi
+	echo Second check...
+	/sbin/fsck.$FS -fy fsck.damaged
+	RESULT=$?
+	if [ $RESULT != 0 ]; then
+		echo "Fsck lied about its success (result = $RESULT)"
+		exit
+		fi
+	done
+
 -- 
 teflon -- maybe it is a trademark, but it should not be.
