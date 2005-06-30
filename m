@@ -1,71 +1,54 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: reiser4 plugins
-Date: Thu, 30 Jun 2005 18:37:38 +0300
-Message-ID: <20050630153738.GU11013@nysv.org>
-References: <20050629135820.GJ11013@nysv.org> <200506291719.j5THJCSg011438@laptop11.inf.utfsm.cl> <20050630095926.GN11013@nysv.org> <17091.60930.633968.822210@gargle.gargle.HOWL> <20050630142107.GQ11013@nysv.org> <17092.3415.28856.827179@gargle.gargle.HOWL>
+Date: Thu, 30 Jun 2005 11:57:27 -0400
+Message-ID: <87psu3vnvc.fsf@evinrude.uhoreg.ca>
+References: <hubert@uhoreg.ca>
+	<200506290509.j5T595I6010576@laptop11.inf.utfsm.cl>
+	<87hdfgvqvl.fsf@evinrude.uhoreg.ca>
+	<8783be6605062914341bcff7cb@mail.gmail.com>
+	<42C3615A.9020600@namesys.com> <871x6kv4zd.fsf@evinrude.uhoreg.ca>
+	<20050630062956.GP16867@khan.acc.umu.se>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/Z3Qj54wC++taHdq"
-Return-path: <reiserfs-list-return-24841-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24842-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <17092.3415.28856.827179@gargle.gargle.HOWL>
+In-Reply-To: <20050630062956.GP16867@khan.acc.umu.se> (David Weinehall's
+ message of "Thu, 30 Jun 2005 08:29:56 +0200")
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Nikita Danilov <nikita@clusterfs.com>
-Cc: Douglas McNaught <doug@mcnaught.org>, Hubert Chan <hubert@uhoreg.ca>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
---/Z3Qj54wC++taHdq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 30 Jun 2005 08:29:56 +0200, David Weinehall <tao@acc.umu.se> said:
 
-On Thu, Jun 30, 2005 at 07:18:47PM +0400, Nikita Danilov wrote:
+> On Thu, Jun 30, 2005 at 12:33:10AM -0400, Hubert Chan wrote:
+>> It's sort of like the way web servers handle index.html, for those
+>> who think it's a stupid idea.  (Of course, some people may still
+>> think it's a stupid idea... ;-) )
 
->Sorry, I don't see your point. Again: if you think that user level
->developers are unlikely to agree to the common framework, what
->difference it makes whether this framework is defined at the kernel or
->library boundary? Applications would have to be changed to conform to
->the common API either way.
+> And guess what?  That's handled on the web server level (userland),
+> not by the file system.  So different web servers can handle it
+> differently (think index.html.sv, index.html.zh, index.php, etc).
 
-I see it as a heavier incentive to do it by a framework that's in
-the kernel.
+From the web *browser*'s point of view, it is handled by the
+"filesystem" (which is provided by the various servers).  The browser
+doesn't care how or where the data is stored.  It just requests a file,
+and gets some data back.  So the browser doesn't have to check for
+http://www.example.com/, get a failure (trying to read a directory),
+check for http://www.example.com/index.html, etc.  In this way, the web
+server controls (which I think takes the place of the filesystem in this
+case) what gets shown (index.html.sv, etc.), instead of the leaving it
+up to the browser.
 
->If you can force application developers to conform to the LSB why you
->cannot do the same with the library level interface?
+In the same way, you don't want every single user program to have to
+guess whether it should look at .data, or .contents, or whatever.
 
-If I want to access metadata with bash, do I patch bash to support
-both Gnome's and KDE's solutions? Was there one of XFCE too?
-And FooBarXyzzyWM that'll want to do it's own VFS next year?
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
-I'd also guess that the upstream guys would much rather have
-patches for their progs that conform to the kernel than some
-obscure neighbor userspace system.
-
-Sure looks like having this in the kernel makes it easiest; there's
-just one common denominator to patch for.
-
-This doesn't even invalidate the userland VFSs of the other guys,
-they're still needed for systems whose kernels don't have a
-metadata facility.
-
---=20
-mjt
-
-
---/Z3Qj54wC++taHdq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQFCxBHCIqNMpVm8OhwRApbMAKCQQN/xEG7W1/znVBUkdaOSALsP8wCdETVb
-S4Pqxjw9SMMfqVXp7mh8zMk=
-=Ti36
------END PGP SIGNATURE-----
-
---/Z3Qj54wC++taHdq--
