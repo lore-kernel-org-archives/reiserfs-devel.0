@@ -1,48 +1,48 @@
-From: ch4os <chaosworldwide@gmail.com>
-Subject: unmountable partition
-Date: Thu, 30 Jun 2005 10:02:01 -0600
-Message-ID: <64769d96050630090276093f40@mail.gmail.com>
-Reply-To: ch4os <chaosworldwide@gmail.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: Reiser4 + seekdir()
+Date: Thu, 30 Jun 2005 20:26:33 +0400
+Message-ID: <1120148793.3441.82.camel@tribesman.namesys.com>
+References: <42BFC6B0.7040202@yandex.ru>
+	 <1119872500.4257.260.camel@tribesman.namesys.com>
+	 <42BFEC62.1010907@yandex.ru>
+	 <1119875956.4256.277.camel@tribesman.namesys.com>
+	 <42BFF7D3.3010206@yandex.ru>
+	 <1119880168.4257.326.camel@tribesman.namesys.com>
+	 <42C004E0.5060405@yandex.ru> <42C0588C.7030905@namesys.com>
+	 <42C244D8.1070408@yandex.ru>
+	 <1120040525.3860.40.camel@tribesman.namesys.com>
+	 <200506291811.j5TIBtLo023155@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-24843-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24844-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <200506291811.j5TIBtLo023155@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Valdis.Kletnieks@vt.edu
+Cc: "Artem B. Bityuckiy" <dedekind@yandex.ru>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
 
-Greetings,=20
+On Wed, 2005-06-29 at 22:11, Valdis.Kletnieks@vt.edu wrote:
+> On Wed, 29 Jun 2005 14:22:05 +0400, Vladimir Saveliev said:
+>  
+> > Existence of various plugins assumes that user is able to choose
+> > whatever is suitable for him. Or create his own plugin if none of
+> > existing ones satisfies him.
+> > If user cares a lot about using telldir/seekdir he is supposed to choose
+> > SEEKABLE_HASHED_DIR_PLUGIN_ID.
+> 
+> Is that "the user", or "the person building the kernel"?
+> 
 
-Had a Mirrored Drive slightly unclipped for a few days. SLES 9 AMD64
-It blew the controller, and syncronized the bad blocks... the sda2
-partition became unmountable.
+User. 
+In theory, I think, it is supposed to be like that:
+user designes his application. He has some requirements to directories
+he stores data in. If he is reading reiserfs mailing lists he should be
+aware of reiser4 plugins and implement his application so that if
+reiser4 is available - he chooses for his directory a plugin with
+properties which match his requirements more.
+So far, I think you can choose directory plugin on mkfs time. 
 
-I have tried all of the reiserfsck options, with no luck. even the
-badblocks file.
-Always failing on 8210...=20
-
-I have dd_rhelp the partition to an external usb partition.
-and have dd the partition of a another (sdc2) for diagnostics.
-debugreiserfs -B bb.txt /dev/sdc2
-states no bad blocks in the copy of the partition
-but that is also unmountable and the reiserfsck --rebuild-tree says:
-bread: End of file, cannot read the block (17384335).
-
-I believe that the partition is unrecognized as a reiserfs.
-
-How do I recreate the header to specify the filesystem type?
-
->felix:/mnt # dd if=3D/mnt/disk.dump of=3Dtempfile bs=3D1024 count=3D1
->felix:/mnt # mount -t reiserfs -o loop tempfile /mnt/recover
->mount: wrong fs type, bad option, bad superblock on /dev/loop0,
->       or too many mounted file systems
->       (could this be the IDE device where you in fact use
->       ide-scsi so that sr0 or sda or so is needed?)
-
-I'd compiling the Coroners Toolkit now...
-
-Thanks
