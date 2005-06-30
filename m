@@ -1,48 +1,47 @@
-From: Vladimir Saveliev <vs@namesys.com>
-Subject: Re: Reiser4 + seekdir()
-Date: Thu, 30 Jun 2005 20:26:33 +0400
-Message-ID: <1120148793.3441.82.camel@tribesman.namesys.com>
-References: <42BFC6B0.7040202@yandex.ru>
-	 <1119872500.4257.260.camel@tribesman.namesys.com>
-	 <42BFEC62.1010907@yandex.ru>
-	 <1119875956.4256.277.camel@tribesman.namesys.com>
-	 <42BFF7D3.3010206@yandex.ru>
-	 <1119880168.4257.326.camel@tribesman.namesys.com>
-	 <42C004E0.5060405@yandex.ru> <42C0588C.7030905@namesys.com>
-	 <42C244D8.1070408@yandex.ru>
-	 <1120040525.3860.40.camel@tribesman.namesys.com>
-	 <200506291811.j5TIBtLo023155@turing-police.cc.vt.edu>
+From: Bryan Henderson <hbryan@us.ibm.com>
+Subject: Re: XFS corruption during power-blackout
+Date: Thu, 30 Jun 2005 12:30:20 -0400
+Message-ID: <OFC7BE2BBA.42F70A93-ON88257030.00595A48-88257030.005A99A3@us.ibm.com>
+References: <254889.27725ab660aa106eb6acc07307d71ef1fbd5b6fd366aebef9e2f611750fbcb467e46e8a4.IBX@taniwha.stupidest.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24844-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <200506291811.j5TIBtLo023155@turing-police.cc.vt.edu>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <254889.27725ab660aa106eb6acc07307d71ef1fbd5b6fd366aebef9e2f611750fbcb467e46e8a4.IBX@taniwha.stupidest.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Valdis.Kletnieks@vt.edu
-Cc: "Artem B. Bityuckiy" <dedekind@yandex.ru>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Chris Wedgwood <cw@f00f.org>
+Cc: Al Boldi <a1426z@gawab.com>, linux-fsdevel@vger.kernel.org, linux-xfs@oss.sgi.com, Steve Lord <lord@xfs.org>, 'Nathan Scott' <nathans@sgi.com>, reiserfs-list@namesys.com
 
-On Wed, 2005-06-29 at 22:11, Valdis.Kletnieks@vt.edu wrote:
-> On Wed, 29 Jun 2005 14:22:05 +0400, Vladimir Saveliev said:
->  
-> > Existence of various plugins assumes that user is able to choose
-> > whatever is suitable for him. Or create his own plugin if none of
-> > existing ones satisfies him.
-> > If user cares a lot about using telldir/seekdir he is supposed to choose
-> > SEEKABLE_HASHED_DIR_PLUGIN_ID.
-> 
-> Is that "the user", or "the person building the kernel"?
-> 
+>I don't know if this is true for all drives but NONE of the ones I had
+>access to when testing did anything like save the cache --- pretty
+>much all data that was inflight got lost.
 
-User. 
-In theory, I think, it is supposed to be like that:
-user designes his application. He has some requirements to directories
-he stores data in. If he is reading reiserfs mailing lists he should be
-aware of reiser4 plugins and implement his application so that if
-reiser4 is available - he chooses for his directory a plugin with
-properties which match his requirements more.
-So far, I think you can choose directory plugin on mkfs time. 
+For another point of reference - were these ATA (personal class) or SCSI 
+(commercial class) drives or both?
+
+Is write caching the default on typical SCSI devices?
+
+>Linux does have a concept of
+>write barriers but these are presently not implemented for XFS right
+>now.  Once they are I assume sync + poweroff will be reliable with
+>caching enabled.
+
+But be careful with the 'sync' program/system call.  As defined by POSIX, 
+it is not a synchronizing operation.  It's supposed to cause buffered 
+writes to get hardened some time soon, not right now.  So in theory, you 
+can't pull the plug after typing "sync."  In Linux, the implementation has 
+changed a few times in this respect.  In some versions, it at least 
+_tries_ to implement "everything that was buffered when sync() started is 
+hardened before sync() returns."  In others, it implements "everything 
+that was buffered when sync() started is hardened before the next sync() 
+returns," and some 'sync' programs do multiple sync()s.  And it's also 
+filesystem-type-dependent.  I don't know exactly what the present state 
+is.
+
+fsync(), on the other hand, is a true synchronizing operation.
+
+--
+Bryan Henderson                     IBM Almaden Research Center
+San Jose CA                         Filesystems
 
