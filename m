@@ -1,30 +1,57 @@
-From: Chris Wedgwood <cw@f00f.org>
-Subject: Re: SPAM: Re: XFS corruption during power-blackout
-Date: Wed, 29 Jun 2005 21:34:43 -0700
-Message-ID: <367867.1263d54e6d6102a1bac5bc8924d7aeb8243f5cbbb3568fcaabb74308aeb953fe1c2f5773.ANY@taniwha.stupidest.org>
-References: <20050629001847.GB850@frodo.suse.lists.linux.kernel> <200506290453.HAA14576@raad.intranet.suse.lists.linux.kernel> <556815.441dd7d1ebc32b4a80e049e0ddca5d18e872c6e8a722b2aefa7525e9504533049d801014.ANY@taniwha.stupidest.org.suse.lists.linux.kernel> <42C2E0BC.8040508@xfs.org.suse.lists.linux.kernel> <254889.27725ab660aa106eb6acc07307d71ef1fbd5b6fd366aebef9e2f611750fbcb467e46e8a4.IBX@taniwha.stupidest.org.suse.lists.linux.kernel> <p73irzw3gjc.fsf@verdi.suse.de>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: reiser4 plugins
+Date: Wed, 29 Jun 2005 21:48:08 -0700
+Message-ID: <42C37988.2020605@namesys.com>
+References: <hubert@uhoreg.ca>	<200506290509.j5T595I6010576@laptop11.inf.utfsm.cl>	<87hdfgvqvl.fsf@evinrude.uhoreg.ca>	<8783be6605062914341bcff7cb@mail.gmail.com>	<42C3615A.9020600@namesys.com> <871x6kv4zd.fsf@evinrude.uhoreg.ca>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <p73irzw3gjc.fsf@verdi.suse.de>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24827-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <871x6kv4zd.fsf@evinrude.uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andi Kleen <ak@suse.de>
-Cc: Al Boldi <a1426z@gawab.com>, 'Nathan Scott' <nathans@sgi.com>, linux-xfs@oss.sgi.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
+To: Hubert Chan <hubert@uhoreg.ca>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, Jun 30, 2005 at 01:11:03AM +0200, Andi Kleen wrote:
+Hubert Chan wrote:
 
-> Don't know if the code hasn't bit rotted away and it also was a bit
-> dumb. It was definitely there at some point.
+>On Wed, 29 Jun 2005 20:04:58 -0700, Hans Reiser <reiser@namesys.com> said:
+>
+>  
+>
+>>Ross Biro wrote:
+>>    
+>>
+>>>How is directories as files logically any different than putting all
+>>>data into .data files and making all files directories (yes you would
+>>>need some sort of special handling for files that were really called
+>>>.data).
+>>>      
+>>>
+>
+>  
+>
+>>Add to this that you make .data the default if the file within the
+>>directory is not specified,
+>>    
+>>
+>
+>It's sort of like the way web servers handle index.html, for those who
+>think it's a stupid idea.  (Of course, some people may still think it's
+>a stupid idea... ;-) )
+>
+>  
+>
+Good analogy.
 
-It did rot away sadly but someone (speak up!) was working on a newer
-version of this I just don't know how much time they've had to work on
-this recently.
+>>and define a stanadard set of names for metafiles, and you've got the
+>>essential idea, and any differences are details.
+>>    
+>>
+>
+>  
+>
 
-> But then a lot of ATA disks and SCSI don't support barriers.  Or at
-> least the IDE barrier tests fails on several of my machines.
-
-IDE has no barriers.  I thought the kernel was aware of this and
-flushed when in those cases?  Does that not work?
