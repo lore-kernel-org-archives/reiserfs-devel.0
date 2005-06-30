@@ -1,47 +1,61 @@
-From: Bryan Henderson <hbryan@us.ibm.com>
-Subject: Re: XFS corruption during power-blackout
-Date: Thu, 30 Jun 2005 12:30:20 -0400
-Message-ID: <OFC7BE2BBA.42F70A93-ON88257030.00595A48-88257030.005A99A3@us.ibm.com>
-References: <254889.27725ab660aa106eb6acc07307d71ef1fbd5b6fd366aebef9e2f611750fbcb467e46e8a4.IBX@taniwha.stupidest.org>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: unmountable partition
+Date: Thu, 30 Jun 2005 20:47:32 +0400
+Message-ID: <1120150050.7866.93.camel@tribesman.namesys.com>
+References: <64769d96050630090276093f40@mail.gmail.com>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <254889.27725ab660aa106eb6acc07307d71ef1fbd5b6fd366aebef9e2f611750fbcb467e46e8a4.IBX@taniwha.stupidest.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24846-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <64769d96050630090276093f40@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Chris Wedgwood <cw@f00f.org>
-Cc: Al Boldi <a1426z@gawab.com>, linux-fsdevel@vger.kernel.org, linux-xfs@oss.sgi.com, Steve Lord <lord@xfs.org>, 'Nathan Scott' <nathans@sgi.com>, reiserfs-list@namesys.com
+To: ch4os <chaosworldwide@gmail.com>
+Cc: reiserfs-list@namesys.com
 
->I don't know if this is true for all drives but NONE of the ones I had
->access to when testing did anything like save the cache --- pretty
->much all data that was inflight got lost.
+Hello
 
-For another point of reference - were these ATA (personal class) or SCSI 
-(commercial class) drives or both?
+On Thu, 2005-06-30 at 20:02, ch4os wrote:
+> Greetings, 
+> 
+> Had a Mirrored Drive slightly unclipped for a few days. SLES 9 AMD64
+> It blew the controller, and syncronized the bad blocks... the sda2
+> partition became unmountable.
+> 
+> I have tried all of the reiserfsck options, with no luck. even the
+> badblocks file.
+> Always failing on 8210... 
+> 
+> I have dd_rhelp the partition to an external usb partition.
+> and have dd the partition of a another (sdc2) for diagnostics.
 
-Is write caching the default on typical SCSI devices?
+To copy partition containing bad blocks
+you have to use dd_rescue, or dd with conv=noerror,sync.
 
->Linux does have a concept of
->write barriers but these are presently not implemented for XFS right
->now.  Once they are I assume sync + poweroff will be reliable with
->caching enabled.
+> debugreiserfs -B bb.txt /dev/sdc2
+> states no bad blocks in the copy of the partition
+> but that is also unmountable and the reiserfsck --rebuild-tree says:
+> bread: End of file, cannot read the block (17384335).
+> 
+Please provide information about /dev/sda2 and /dev/sdc2 sizes. I would
+guess that sdc2 is smaller.
 
-But be careful with the 'sync' program/system call.  As defined by POSIX, 
-it is not a synchronizing operation.  It's supposed to cause buffered 
-writes to get hardened some time soon, not right now.  So in theory, you 
-can't pull the plug after typing "sync."  In Linux, the implementation has 
-changed a few times in this respect.  In some versions, it at least 
-_tries_ to implement "everything that was buffered when sync() started is 
-hardened before sync() returns."  In others, it implements "everything 
-that was buffered when sync() started is hardened before the next sync() 
-returns," and some 'sync' programs do multiple sync()s.  And it's also 
-filesystem-type-dependent.  I don't know exactly what the present state 
-is.
-
-fsync(), on the other hand, is a true synchronizing operation.
-
---
-Bryan Henderson                     IBM Almaden Research Center
-San Jose CA                         Filesystems
+> I believe that the partition is unrecognized as a reiserfs.
+> 
+> How do I recreate the header to specify the filesystem type?
+> 
+> >felix:/mnt # dd if=/mnt/disk.dump of=tempfile bs=1024 count=1
+> >felix:/mnt # mount -t reiserfs -o loop tempfile /mnt/recover
+> >mount: wrong fs type, bad option, bad superblock on /dev/loop0,
+> >       or too many mounted file systems
+> >       (could this be the IDE device where you in fact use
+> >       ide-scsi so that sr0 or sda or so is needed?)
+> 
+> I'd compiling the Coroners Toolkit now...
+> 
+> Thanks
+> 
 
