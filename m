@@ -1,158 +1,118 @@
-From: Dancho <dancho@aiidatapro.com>
-Subject: reiser4 or qmail problem?
-Date: Thu, 30 Jun 2005 11:56:38 +0300
-Message-ID: <200506301156.39263.dancho@aiidatapro.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
+Subject: Re: reiser4 plugins
+Date: Thu, 30 Jun 2005 12:59:27 +0300
+Message-ID: <20050630095926.GN11013@nysv.org>
+References: <20050629135820.GJ11013@nysv.org> <200506291719.j5THJCSg011438@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
-  boundary="Boundary-00=_HP7wCx56e0SFcJ9"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24831-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="1ypm5kX6DjiKlr0N"
+Return-path: <reiserfs-list-return-24832-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
+In-Reply-To: <200506291719.j5THJCSg011438@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Douglas McNaught <doug@mcnaught.org>, Hubert Chan <hubert@uhoreg.ca>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
---Boundary-00=_HP7wCx56e0SFcJ9
-Content-Type: text/plain;
-  charset="windows-1251"
-Content-Transfer-Encoding: 7bit
+--1ypm5kX6DjiKlr0N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hello, 
- 
-I use  reiser4 in small mail server. After 102 days uptime the computer 
-stopped responding. In the  syslog  the following message appeared:
+On Wed, Jun 29, 2005 at 01:19:12PM -0400, Horst von Brand wrote:
+>> What pisses me off is the fact that Gnome and friends implement
+>> their own incompatible-with-others VFS's and automounters and
+>> stuff.
+>Then get them to agree on a common framework! They are trying hard to get
+>other parts of the GUI work well together, so this isn't far off in
+>wishfull thinking land.
 
-Jun 30 09:09:06 parhelia kernel: reiser4[qmail-queue(18124)]: 
-commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:
-Jun 30 09:09:06 parhelia kernel: WARNING: Flushing like mad: 16384
-Jun 30 09:09:06 parhelia kernel: reiser4[qmail-queue(18124)]: 
-commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:
-Jun 30 09:09:06 parhelia kernel: WARNING: Flushing like mad: 32768
-Jun 30 09:09:06 parhelia kernel: reiser4[qmail-queue(18124)]: 
-commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:
-Jun 30 09:09:06 parhelia kernel: WARNING: Flushing like mad: 65536
-Jun 30 09:09:06 parhelia kernel: reiser4[qmail-queue(18124)]: 
-commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:
-Jun 30 09:09:06 parhelia kernel: WARNING: Flushing like mad: 131072
-Jun 30 09:09:07 parhelia kernel: reiser4[qmail-queue(18124)]: 
-commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:
-Jun 30 09:09:07 parhelia kernel: WARNING: Flushing like mad: 262144
-Jun 30 09:09:09 parhelia kernel: reiser4[qmail-queue(18124)]: 
-commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:
-Jun 30 09:09:09 parhelia kernel: WARNING: Flushing like mad: 524288
-Jun 30 09:09:12 parhelia kernel: reiser4[qmail-queue(18124)]: 
-commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:
-Jun 30 09:09:12 parhelia kernel: WARNING: Flushing like mad: 1048576
-Jun 30 09:09:19 parhelia kernel: reiser4[qmail-queue(18124)]: 
-commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:
-Jun 30 09:09:19 parhelia kernel: WARNING: Flushing like mad: 2097152
-Jun 30 09:09:44 parhelia kernel: reiser4[qmail-queue(18124)]: 
-commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:
-Jun 30 09:09:44 parhelia kernel: WARNING: Flushing like mad: 4194304
+Looking at the situ with devfs vs udev, which should have been clear
+ages ago, I don't think this will easily happen.
+
+What would a gnome developer say if I told him to bugger off,
+for the storm front of ivman is approaching?
+
+Having the mount system in userspace makes sense, it's implemented
+and done.
+
+Having metadata in some database chunk in userland makes less
+sense. For something that handles files and directories already,
+it must be easier to patch them to look at the assorted meta
+stuff inside the data object/file-as-dir.
+
+>> Surely supporting this in the kernel and extending the LSB
+>> to require this is the best step to take without infringing
+>> anyone's freedom as such.
+>
+>Right. So then we have Gnome's way of doing things (Gnome isn't just for
+>Linux!), KDE's way, XFCE's way, ... (ditto). Plus the kernel way. Flambee
+>with a monthly thread on all reachable fora about "Why on &%@# does the
+>%&~#@ GUI not use the *#%&@ kernel's way?!".
+
+Sure it's not "Dictum, factum" but having the kernel team bless
+an extended VFS which allows for metadata in any given FS is
+a significantly bigger thing than a pissing contest between Gnome,
+KDE and XFCE.
+
+Gnome not being only for Linux, well, make the official stance that
+the userspace VFS part is deprecated and to be used only on non-conforming
+systems.
+
+I haven't really used Gnome in long times, but if I have a picture
+and Nautilus shows me a thumbnail of it, doesn't the thumbnail live
+in a metadata VFS in userspace?
+That's a lot less usable than an in-kernel solution, where
+a serialized file can be sent to a conforming system or just
+the most important, or wanted, part of the file to a non-conforming one.
+
+That's the one thing all distros and managers and all have in
+common, the kernel.
+
+>This is /not/ the way of fxing that particular problem. Shoving random
+>stuff into the kernel /can't/ force its use. At least not until Linux is
+>the only Unixy system around, and that is still some way off. And when that
+>has happened, the kernel's way must be /clearly/ better for /all/ users, or
+>it won't matter.
+
+No use in making bigger deals of other Unixes on which Gnome
+and friends may run; my opinion and is that Linux should extend=20
+things further than the tradition so far has been.
+
+Maybe being better than the competitors may include breaking some
+rules, changing the playing field, making it more flexible.
+
+And the file system, and the VFS, is one of those things that are=20
+nice to have in the kernel.
+
+On a digressing side note, I found this classic:
+http://kernel.org/pub/linux/utils/kernel/hotplug/udev_vs_devfs
+
+"If the kernel tomorrow switches to randomly assign major and minor numbers
+to different devices, it would work just fine (this is exactly
+what I am proposing to do in 2.7...)"
+
+Apparently there isn't a 2.7 and no solid-enough testing ground
+for this either..
+
+--=20
+mjt
 
 
+--1ypm5kX6DjiKlr0N
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
- 
-The system's info:
-parhelia:~# uname -a
-Linux parhelia 2.6.9-mm1 #5 Mon Jan 31 22:21:31 EET 2005 i686 GNU/Linux
- 
-parhelia:~# cat /proc/cpuinfo
-processor       : 0
-model name      : Intel(R) Celeron(R) CPU 2.00GHz
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
 
-parhelia:~# mount
-dev/hda3 on / type reiserfs (rw)
-proc on /proc type proc (rw)
-sysfs on /sys type sysfs (rw)
-devpts on /dev/pts type devpts (rw,gid=5,mode=620)
-tmpfs on /dev/shm type tmpfs (rw)
-usbfs on /proc/bus/usb type usbfs (rw)
-/dev/hda4 on /home type reiserfs (rw)
-/dev/hda1 on /var type reiser4 (rw)  !!!!!/all qmail data stored here/
-     
-Debian unstable
+iD8DBQFCw8J+IqNMpVm8OhwRAn8nAKCaAy2kNUmAeMeFRJw8dOVs4dr52ACcDQ7N
+h67/US+qTGchTwv4F0uRVvs=
+=7MXA
+-----END PGP SIGNATURE-----
 
-reiser4progs  ver.1.0.4-1
-   
-
-I could provide more info, if necessary
-
-
--- 
-
-In God we Trust (all others must submit a X.509 certificate)
-
-
-
-
---Boundary-00=_HP7wCx56e0SFcJ9
-Content-Type: text/html;
-  charset="windows-1251"
-Content-Transfer-Encoding: 7bit
-
-<html><head><meta name="qrichtext" content="1" /></head><body style="font-size:12pt;font-family:Lucida Console">
-<p>Hello, </p>
-<p> </p>
-<p>I use  reiser4 in small mail server. After 102 days uptime the computer stopped responding. In the  syslog  the following message appeared:</p>
-<p></p>
-<p>Jun 30 09:09:06 parhelia kernel: reiser4[qmail-queue(18124)]: commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:</p>
-<p>Jun 30 09:09:06 parhelia kernel: WARNING: Flushing like mad: 16384</p>
-<p>Jun 30 09:09:06 parhelia kernel: reiser4[qmail-queue(18124)]: commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:</p>
-<p>Jun 30 09:09:06 parhelia kernel: WARNING: Flushing like mad: 32768</p>
-<p>Jun 30 09:09:06 parhelia kernel: reiser4[qmail-queue(18124)]: commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:</p>
-<p>Jun 30 09:09:06 parhelia kernel: WARNING: Flushing like mad: 65536</p>
-<p>Jun 30 09:09:06 parhelia kernel: reiser4[qmail-queue(18124)]: commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:</p>
-<p>Jun 30 09:09:06 parhelia kernel: WARNING: Flushing like mad: 131072</p>
-<p>Jun 30 09:09:07 parhelia kernel: reiser4[qmail-queue(18124)]: commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:</p>
-<p>Jun 30 09:09:07 parhelia kernel: WARNING: Flushing like mad: 262144</p>
-<p>Jun 30 09:09:09 parhelia kernel: reiser4[qmail-queue(18124)]: commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:</p>
-<p>Jun 30 09:09:09 parhelia kernel: WARNING: Flushing like mad: 524288</p>
-<p>Jun 30 09:09:12 parhelia kernel: reiser4[qmail-queue(18124)]: commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:</p>
-<p>Jun 30 09:09:12 parhelia kernel: WARNING: Flushing like mad: 1048576</p>
-<p>Jun 30 09:09:19 parhelia kernel: reiser4[qmail-queue(18124)]: commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:</p>
-<p>Jun 30 09:09:19 parhelia kernel: WARNING: Flushing like mad: 2097152</p>
-<p>Jun 30 09:09:44 parhelia kernel: reiser4[qmail-queue(18124)]: commit_current_atom (fs/reiser4/txnmgr.c:1206)[nikita-3176]:</p>
-<p>Jun 30 09:09:44 parhelia kernel: WARNING: Flushing like mad: 4194304</p>
-<p></p>
-<p></p>
-<p></p>
-<p> </p>
-<p>The system's info:</p>
-<p>parhelia:~# uname -a</p>
-<p>Linux parhelia 2.6.9-mm1 #5 Mon Jan 31 22:21:31 EET 2005 i686 GNU/Linux</p>
-<p> </p>
-<p>parhelia:~# cat /proc/cpuinfo</p>
-<p>processor       : 0</p>
-<p>model name      : Intel(R) Celeron(R) CPU 2.00GHz</p>
-<p></p>
-<p>parhelia:~# mount</p>
-<p>dev/hda3 on / type reiserfs (rw)</p>
-<p>proc on /proc type proc (rw)</p>
-<p>sysfs on /sys type sysfs (rw)</p>
-<p>devpts on /dev/pts type devpts (rw,gid=5,mode=620)</p>
-<p>tmpfs on /dev/shm type tmpfs (rw)</p>
-<p>usbfs on /proc/bus/usb type usbfs (rw)</p>
-<p>/dev/hda4 on /home type reiserfs (rw)</p>
-<p>/dev/hda1 on /var type reiser4 (rw)  !!!!!/all qmail data stored here/</p>
-<p>     </p>
-<p>Debian unstable</p>
-<p></p>
-<p>reiser4progs  ver.1.0.4-1</p>
-<p>   </p>
-<p></p>
-<p><span style="color:#010101">I could provide more info, if necessary</span></p>
-<p></p>
-<p></p>
-<p>-- </p>
-<p></p>
-<p>In God we Trust (all others must submit a X.509 certificate)</p>
-<p></p>
-<p></p>
-<p></p>
-<p></p>
-</body></html>
---Boundary-00=_HP7wCx56e0SFcJ9--
+--1ypm5kX6DjiKlr0N--
