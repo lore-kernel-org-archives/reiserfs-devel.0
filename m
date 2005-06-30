@@ -1,56 +1,58 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Jesper Juhl <jesper.juhl@gmail.com>
 Subject: Re: reiser4 plugins
-Date: Thu, 30 Jun 2005 17:34:21 -0500
-Message-ID: <d120d50005063015345a4968a@mail.gmail.com>
-References: <42BB7B32.4010100@slaphack.com>
-	 <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl>
-	 <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org>
-	 <42C018E5.8030805@slaphack.com> <20050627162839.GA22799@thunk.org>
-	 <42C06BC6.7090002@slaphack.com> <20050630214950.GA14286@thunk.org>
-Reply-To: dtor_core@ameritech.net
+Date: Fri, 1 Jul 2005 01:20:01 +0200
+Message-ID: <9a874849050630162042f10062@mail.gmail.com>
+References: <200506231924.j5NJOvLA031008@laptop11.inf.utfsm.cl>
+	 <42BB31E9.50805@slaphack.com>
+	 <1119570225.18655.75.camel@localhost.localdomain>
+	 <42BB5E1A.70903@namesys.com>
+	 <1119609680.17066.81.camel@localhost.localdomain>
+	 <20050627091808.GC11013@nysv.org> <42BFCAE7.6070708@yahoo.com.au>
+	 <20050627125555.GE11013@nysv.org>
+Reply-To: Jesper Juhl <jesper.juhl@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-24864-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24865-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050630214950.GA14286@thunk.org>
+In-Reply-To: <20050627125555.GE11013@nysv.org>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Theodore Ts'o <tytso@mit.edu>, David Masover <ninja@slaphack.com>, Markus T?rnqvist <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>
+Cc: Nick Piggin <nickpiggin@yahoo.com.au>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On 6/30/05, Theodore Ts'o <tytso@mit.edu> wrote:
-> On Mon, Jun 27, 2005 at 04:12:38PM -0500, David Masover wrote:
-> > >     Streamload cannot warrant and does not guarantee, and You
-> > >     should not expect, that all of Your private communications and
-> > >     other personal information will never be disclosed in ways not
-> > >     otherwise described in this Privacy Policy.
-> >
-> > gpg.  Was in my upload script to begin with.  I keep my key written man=
-y
-> > times on a single hidden CD.  So long as the isofs can be read, at leas=
-t
-> > one of the copies should be usable.
-> >
-> > They don't have any billing information on me.  If they charge me for
-> > something, I'll cancel my account.
+On 6/27/05, Markus   T=F6rnqvist <mjt@nysv.org> wrote:
+[...]
 >=20
-> If you are using the free service, and are encrypting the data, you
-> are explicitly violating their terms of service, and they can delete
-> your data at any time, once they notice.
+> I hate to say this without digging out any URLs, but one friend
+> of mine says he has a very hard time doing any networking code
+> because it's too labile. Maybe that's being embettered for something
+> else too?
 >=20
+> Or the other friend who curses that the networking code is just
+> crap and basically has to rewrite the code to get it working.
+> Yes, I've tried to get these guys to submit their code, but they
+> argue back that no one wants to see it.
+>=20
+[...]
 
-Does not look like it:
+I'm pretty damn sure the relevant maintainers (and a bunch of people
+on LKML and the netdev lists in general) would like to see patches
+that improves their code.
+If these friends of yours are sitting on patches that make massive
+improvements to the code and they are not submitting patches then they
+are not exactely helping (and I'd suspect them to just be full of BS)
+- they should get their code merged instead of having to maintain it
+themselves out-of-tree for ever - let the rest of us bennefit as well.
+It's my experience that if you can explain the problems your patch fix
+and explain well why the fix is sane, then getting your patches merged
+doesn't have to be hard.
 
-3c. No encryption and/or steganography for the purpose of
-circumventing Streamload's rules.
-... For example, if you'd like to encrypt something for an extra sense
-of security and privacy, please feel free to do so. However, when
-these tools are used solely for the purpose of circumventing
-Streamload's rules, as determined by the sole discretion of
-Streamload, the files will be deleted.
 
 --=20
-Dmitry
+Jesper Juhl <jesper.juhl@gmail.com>
+Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
+Plain text mails only, please      http://www.expita.com/nomime.html
