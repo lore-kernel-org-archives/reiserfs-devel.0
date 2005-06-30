@@ -1,87 +1,41 @@
-From: Bryan Henderson <hbryan@us.ibm.com>
+From: =?iso-8859-1?Q?J=F6rn?= Engel <joern@wohnheim.fh-wedel.de>
 Subject: Re: XFS corruption during power-blackout
-Date: Thu, 30 Jun 2005 13:49:22 -0700
-Message-ID: <OFBC8F19C9.0A8B9C84-ON88257030.006EB89B-88257030.00725493@us.ibm.com>
-References: <054069.b93858d6b97c07747dc32be2dd8981b254d981528781006053dce7be58de88865a43b162.IBX@taniwha.stupidest.org>
+Date: Thu, 30 Jun 2005 23:07:49 +0200
+Message-ID: <20050630210749.GA16084@wohnheim.fh-wedel.de>
+References: <254889.27725ab660aa106eb6acc07307d71ef1fbd5b6fd366aebef9e2f611750fbcb467e46e8a4.IBX@taniwha.stupidest.org> <OFC7BE2BBA.42F70A93-ON88257030.00595A48-88257030.005A99A3@us.ibm.com> <054069.b93858d6b97c07747dc32be2dd8981b254d981528781006053dce7be58de88865a43b162.IBX@taniwha.stupidest.org> <20050630194437.GC8374@wohnheim.fh-wedel.de> <947885.634f7bc00f9a47e9c90ffbeec9ebb14a812e2dab7a64e2d09cedc7aa2589ffaf3593543a.IBX@taniwha.stupidest.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24860-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-24861-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <054069.b93858d6b97c07747dc32be2dd8981b254d981528781006053dce7be58de88865a43b162.IBX@taniwha.stupidest.org>
+Content-Disposition: inline
+In-Reply-To: <947885.634f7bc00f9a47e9c90ffbeec9ebb14a812e2dab7a64e2d09cedc7aa2589ffaf3593543a.IBX@taniwha.stupidest.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
 To: Chris Wedgwood <cw@f00f.org>
-Cc: Al Boldi <a1426z@gawab.com>, linux-fsdevel@vger.kernel.org, linux-xfs@oss.sgi.com, Steve Lord <lord@xfs.org>, 'Nathan Scott' <nathans@sgi.com>, reiserfs-list@namesys.com
+Cc: Bryan Henderson <hbryan@us.ibm.com>, Al Boldi <a1426z@gawab.com>, linux-fsdevel@vger.kernel.org, linux-xfs@oss.sgi.com, Steve Lord <lord@xfs.org>, 'Nathan Scott' <nathans@sgi.com>, reiserfs-list@namesys.com
 
->POSIX is broken in places
+On Thu, 30 June 2005 13:32:23 -0700, Chris Wedgwood wrote:
+> On Thu, Jun 30, 2005 at 09:44:37PM +0200, J?rn Engel wrote:
+>=20
+> > Or do you rather mean that a single sync() should block until all data
+> > currently present is hardened?
+>=20
+> Logically sync() should return only after all dirty buffers that
+> existed before sync() was called are flushed.
 
-...
+That's what I thought.  Thanks for the confirmation.
 
->If it happens differently I would call that a bug.
+> Anything more than this (i.e. waiting on newly (since sync was called
+> but before it returns) dirtied buffers) could live-lock (actually,
+> this used to happen sometimes, I don't know if that's the case).
 
-I think you're confusing goodness with correctness.  POSIX is a 
-definition; it can't be broken.  A bug is where don't meet your own 
-specification.  So if the spec doesn't say you have to be synchronous, 
-it's not a bug not to be synchronous.  Call it a design flaw if you want.
+... and would be totally useless anyway, yep.
 
->> In others, it implements "everything that was buffered when sync()
->> started is hardened before the next sync() returns,"
->
->That is what happens now.  I'm not sure any other behavior makes sense
->does it?
+J=F6rn
 
-I think you quoted the wrong part.  From context, I think you meant 
-"everything that was buffered when sync() started is hardened before 
-sync() returns."  And it's also my understanding that current Linux does 
-that.
-
-Another Linux sync() behavior is that it keeps syncing super blocks until 
-every super block is clean at the same moment.  That has given me fits.  I 
-don't know what the goal of that is -- it came in around 2.4.10.
-
->POSIX is a bit more sane about fsync():
->
->      The fsync() function can be used by an application to indicate
->      that all data for the open file description named by fildes is
->      to be transferred to the storage device associated with the file
->      described by fildes in an implementation-dependent manner. The
->      fsync() function does not return until the system has completed
->      that action or until an error is detected.
-
-Strange; that's not the way I remember it.  I remember it being much more 
-vague;  in particular, I remember a specification that did not assume that 
-a file is associated with a particular device and referred instead to 
-"stable storage," the definition of which was entirely up to the 
-implementation.  In other words, the definition I've been working from was 
-more grown-up.  I wonder what the difference is.
-
->> and some 'sync' programs do multiple sync()s.
->
->Such programs are arguably broken (grub maybe?).  If one doesn't work,
->then why should doing it <n>-times?
-
-It's because of the words before that:  "everything that was buffered when 
-sync()
-started is hardened before the next sync() returns."  The point is that 
-the second sync() is the one that waits (it actually waits for the 
-previous one to finish before it starts).  By the way, I'm not talking 
-about Linux at this point.  I'm talking about so-called POSIX systems in 
-general.
-
-But it does sound like Linux has a pretty firm philosophy of synchronous 
-sync (I see it documented in an old man page), so I guess it's OK to rely 
-on it.
-
-There are scenarios where you'd rather not have a process tied up while 
-syncing takes place.  Stepping back, I would guess the primary original 
-purpose of sync() was to allow you to make a sync daemon.  Early Unix 
-systems did not have in-kernel safety clean timers.  A user space process 
-did that.
-
---
-Bryan Henderson                     IBM Almaden Research Center
-San Jose CA                         Filesystems
-
+--=20
+The strong give up and move away, while the weak give up and stay.
+-- unknown
