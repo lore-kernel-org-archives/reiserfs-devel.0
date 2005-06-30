@@ -1,108 +1,48 @@
 From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: reiser4 plugins
-Date: Thu, 30 Jun 2005 12:59:27 +0300
-Message-ID: <20050630095926.GN11013@nysv.org>
-References: <20050629135820.GJ11013@nysv.org> <200506291719.j5THJCSg011438@laptop11.inf.utfsm.cl>
+Date: Thu, 30 Jun 2005 13:01:19 +0300
+Message-ID: <20050630100119.GO11013@nysv.org>
+References: <200506290509.j5T595I6010576@laptop11.inf.utfsm.cl> <m2k6kd2rx8.fsf@Douglas-McNaughts-Powerbook.local> <20050629135820.GJ11013@nysv.org> <20050629205636.GN16867@khan.acc.umu.se>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="1ypm5kX6DjiKlr0N"
-Return-path: <reiserfs-list-return-24832-reiserfs=m.gmane.org@namesys.com>
+	protocol="application/pgp-signature"; boundary="WjzcGWYIDcuHBXpJ"
+Return-path: <reiserfs-list-return-24833-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200506291719.j5THJCSg011438@laptop11.inf.utfsm.cl>
+In-Reply-To: <20050629205636.GN16867@khan.acc.umu.se>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Douglas McNaught <doug@mcnaught.org>, Hubert Chan <hubert@uhoreg.ca>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: Douglas McNaught <doug@mcnaught.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Hubert Chan <hubert@uhoreg.ca>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
---1ypm5kX6DjiKlr0N
+--WjzcGWYIDcuHBXpJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 29, 2005 at 01:19:12PM -0400, Horst von Brand wrote:
->> What pisses me off is the fact that Gnome and friends implement
->> their own incompatible-with-others VFS's and automounters and
->> stuff.
->Then get them to agree on a common framework! They are trying hard to get
->other parts of the GUI work well together, so this isn't far off in
->wishfull thinking land.
-
-Looking at the situ with devfs vs udev, which should have been clear
-ages ago, I don't think this will easily happen.
-
-What would a gnome developer say if I told him to bugger off,
-for the storm front of ivman is approaching?
-
-Having the mount system in userspace makes sense, it's implemented
-and done.
-
-Having metadata in some database chunk in userland makes less
-sense. For something that handles files and directories already,
-it must be easier to patch them to look at the assorted meta
-stuff inside the data object/file-as-dir.
-
->> Surely supporting this in the kernel and extending the LSB
->> to require this is the best step to take without infringing
->> anyone's freedom as such.
+On Wed, Jun 29, 2005 at 10:56:36PM +0200, David Weinehall wrote:
 >
->Right. So then we have Gnome's way of doing things (Gnome isn't just for
->Linux!), KDE's way, XFCE's way, ... (ditto). Plus the kernel way. Flambee
->with a monthly thread on all reachable fora about "Why on &%@# does the
->%&~#@ GUI not use the *#%&@ kernel's way?!".
+>FreeDesktop is doing a lot of work to make GNOME, KDE, and other
+>DE:s interoperate as much as possible.  Support their initiative
 
-Sure it's not "Dictum, factum" but having the kernel team bless
-an extended VFS which allows for metadata in any given FS is
-a significantly bigger thing than a pissing contest between Gnome,
-KDE and XFCE.
+What about WindowMaker with bash?
 
-Gnome not being only for Linux, well, make the official stance that
-the userspace VFS part is deprecated and to be used only on non-conforming
-systems.
+>instead of trying to get a monstrosity (albeit a very cool one,
+>conceptually) into the kernel.  Sure, it could be made to work,
+>but not without dropping our Unixness.  And if we do, we should
+>start by looking at Plan 9 =3D)
 
-I haven't really used Gnome in long times, but if I have a picture
-and Nautilus shows me a thumbnail of it, doesn't the thumbnail live
-in a metadata VFS in userspace?
-That's a lot less usable than an in-kernel solution, where
-a serialized file can be sent to a conforming system or just
-the most important, or wanted, part of the file to a non-conforming one.
+What's wrong with "dropping our Unixness" if it means taking
+an extra step toward Plan 9?
 
-That's the one thing all distros and managers and all have in
-common, the kernel.
-
->This is /not/ the way of fxing that particular problem. Shoving random
->stuff into the kernel /can't/ force its use. At least not until Linux is
->the only Unixy system around, and that is still some way off. And when that
->has happened, the kernel's way must be /clearly/ better for /all/ users, or
->it won't matter.
-
-No use in making bigger deals of other Unixes on which Gnome
-and friends may run; my opinion and is that Linux should extend=20
-things further than the tradition so far has been.
-
-Maybe being better than the competitors may include breaking some
-rules, changing the playing field, making it more flexible.
-
-And the file system, and the VFS, is one of those things that are=20
-nice to have in the kernel.
-
-On a digressing side note, I found this classic:
-http://kernel.org/pub/linux/utils/kernel/hotplug/udev_vs_devfs
-
-"If the kernel tomorrow switches to randomly assign major and minor numbers
-to different devices, it would work just fine (this is exactly
-what I am proposing to do in 2.7...)"
-
-Apparently there isn't a 2.7 and no solid-enough testing ground
-for this either..
+Why is this a bad idea?
 
 --=20
 mjt
 
 
---1ypm5kX6DjiKlr0N
+--WjzcGWYIDcuHBXpJ
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 Content-Disposition: inline
@@ -110,9 +50,9 @@ Content-Disposition: inline
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.5 (GNU/Linux)
 
-iD8DBQFCw8J+IqNMpVm8OhwRAn8nAKCaAy2kNUmAeMeFRJw8dOVs4dr52ACcDQ7N
-h67/US+qTGchTwv4F0uRVvs=
-=7MXA
+iD8DBQFCw8LvIqNMpVm8OhwRAqhWAJ9pGIb9ZhL4QIhylStFOppOweGdDwCgw1mX
+iG4AZ4LGdOnFAkYjnuAmUiE=
+=njxh
 -----END PGP SIGNATURE-----
 
---1ypm5kX6DjiKlr0N--
+--WjzcGWYIDcuHBXpJ--
