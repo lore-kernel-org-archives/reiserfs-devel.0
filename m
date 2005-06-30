@@ -1,56 +1,30 @@
-From: Kevin Bowen <kevin@ucsd.edu>
-Subject: Re: reiser4 plugins
-Date: Thu, 30 Jun 2005 13:08:42 -0700
-Message-ID: <1120162123.22241.53.camel@punchline.ucsd.edu>
-References: <200506301847.j5UIlp6u012775@laptop11.inf.utfsm.cl>
+From: Chris Wedgwood <cw@f00f.org>
+Subject: Re: XFS corruption during power-blackout
+Date: Thu, 30 Jun 2005 13:32:23 -0700
+Message-ID: <947885.634f7bc00f9a47e9c90ffbeec9ebb14a812e2dab7a64e2d09cedc7aa2589ffaf3593543a.IBX@taniwha.stupidest.org>
+References: <254889.27725ab660aa106eb6acc07307d71ef1fbd5b6fd366aebef9e2f611750fbcb467e46e8a4.IBX@taniwha.stupidest.org> <OFC7BE2BBA.42F70A93-ON88257030.00595A48-88257030.005A99A3@us.ibm.com> <054069.b93858d6b97c07747dc32be2dd8981b254d981528781006053dce7be58de88865a43b162.IBX@taniwha.stupidest.org> <20050630194437.GC8374@wohnheim.fh-wedel.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24857-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24858-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200506301847.j5UIlp6u012775@laptop11.inf.utfsm.cl>
+Content-Disposition: inline
+In-Reply-To: <20050630194437.GC8374@wohnheim.fh-wedel.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Hubert Chan <hubert@uhoreg.ca>, Hans Reiser <reiser@namesys.com>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: J?rn Engel <joern@wohnheim.fh-wedel.de>
+Cc: Bryan Henderson <hbryan@us.ibm.com>, Al Boldi <a1426z@gawab.com>, linux-fsdevel@vger.kernel.org, linux-xfs@oss.sgi.com, Steve Lord <lord@xfs.org>, 'Nathan Scott' <nathans@sgi.com>, reiserfs-list@namesys.com
 
+On Thu, Jun 30, 2005 at 09:44:37PM +0200, J?rn Engel wrote:
 
-> might be nice to have on exclusively one-user, isolated machines, like
-> "keep /my/ annotations/icon/application name/whatever with the file's
-> data", but that break down in multiuser (even serially, one user after the
+> Or do you rather mean that a single sync() should block until all data
+> currently present is hardened?
 
-If this is really the core of your (and the rest of the reiser-
-obstructionist crowd's) objection to the file-as-directory concept, then
-you just haven't thought it through thoroughly enough. Ignore for the
-moment the case of system-wide or network-wide shared data, and think
-about it just limited to a user's home directory, and the storage and
-organization of actual *data* (as opposed to system files). The desire
-amongst users for ubiquitous metadata is very real - the current wave of
-"desktop search" products and technologies demonstrates this - but
-search is really only the lowest-hanging fruit of this new way of
-looking at data. Application-layer solutions like Beagle, Google Desktop
-Search et al allow for querying on metadata, but actually *acting* on
-the results of those queries requires that they be exposed via first
-class primitives which can be manipulated with arbitrary tools, not via
-some proprietary userland api which only one tool ever actually
-implements. 
+Logically sync() should return only after all dirty buffers that
+existed before sync() was called are flushed.
 
-As to the case of system-wide shared files, there is already a mechanism
-to prevent users from inappropriately annotating files that don't belong
-to them: file permissions. If you're sysadmining a multiuser reiser4
-box, and your users are able to modify the metadata of files they don't
-own, then you go to sysadmin purgatory. 
-
-> other way; OpenOffice /has/ structured files, XML inside zipped files,
-Java
-> also uses zip files for its structuring needs, etc), or are ideas that
-
-And as a Java developer, I can tell you that the wide consensus is that
-this solution is half-assed and insufficient for both developers and
-users needs. In fact, I believe there is currently a JSR in progress to
-develop a more sophisticated Java packaging model.
-
--- 
-kevin@ucsd.edu
+Anything more than this (i.e. waiting on newly (since sync was called
+but before it returns) dirtied buffers) could live-lock (actually,
+this used to happen sometimes, I don't know if that's the case).
