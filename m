@@ -1,47 +1,48 @@
-From: =?iso-8859-1?Q?J=F6rn?= Engel <joern@wohnheim.fh-wedel.de>
-Subject: Re: XFS corruption during power-blackout
-Date: Thu, 30 Jun 2005 21:44:37 +0200
-Message-ID: <20050630194437.GC8374@wohnheim.fh-wedel.de>
-References: <254889.27725ab660aa106eb6acc07307d71ef1fbd5b6fd366aebef9e2f611750fbcb467e46e8a4.IBX@taniwha.stupidest.org> <OFC7BE2BBA.42F70A93-ON88257030.00595A48-88257030.005A99A3@us.ibm.com> <054069.b93858d6b97c07747dc32be2dd8981b254d981528781006053dce7be58de88865a43b162.IBX@taniwha.stupidest.org>
+From: Diego Calleja <diegocg@gmail.com>
+Subject: Re: reiser4 plugins
+Date: Thu, 30 Jun 2005 21:45:20 +0200
+Message-ID: <20050630214520.5a939e62.diegocg@gmail.com>
+References: <20050629135820.GJ11013@nysv.org>
+	<200506291719.j5THJCSg011438@laptop11.inf.utfsm.cl>
+	<20050630095926.GN11013@nysv.org>
+	<17091.60930.633968.822210@gargle.gargle.HOWL>
+	<20050630142107.GQ11013@nysv.org>
+	<17092.3415.28856.827179@gargle.gargle.HOWL>
+	<20050630153738.GU11013@nysv.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <054069.b93858d6b97c07747dc32be2dd8981b254d981528781006053dce7be58de88865a43b162.IBX@taniwha.stupidest.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-24854-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <20050630153738.GU11013@nysv.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
-To: Chris Wedgwood <cw@f00f.org>
-Cc: Bryan Henderson <hbryan@us.ibm.com>, Al Boldi <a1426z@gawab.com>, linux-fsdevel@vger.kernel.org, linux-xfs@oss.sgi.com, Steve Lord <lord@xfs.org>, 'Nathan Scott' <nathans@sgi.com>, reiserfs-list@namesys.com
+To: Markus   =?ISO-8859-15?Q?T=F6rnqvist?= <mjt@nysv.org>
+Cc: nikita@clusterfs.com, doug@mcnaught.org, hubert@uhoreg.ca, mrmacman_g4@mac.com, ninja@slaphack.com, Valdis.Kletnieks@vt.edu, ltd@cisco.com, gmaxwell@gmail.com, reiser@namesys.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-On Thu, 30 June 2005 11:46:27 -0700, Chris Wedgwood wrote:
-> On Thu, Jun 30, 2005 at 12:30:20PM -0400, Bryan Henderson wrote:
->=20
-> > In others, it implements "everything that was buffered when sync()
-> > started is hardened before the next sync() returns,"
->=20
-> That is what happens now.  I'm not sure any other behavior makes sens=
-e
-> does it?
->=20
-> If it happens differently I would call that a bug.
+El Thu, 30 Jun 2005 18:37:38 +0300,
+mjt@nysv.org (Markus   T=F6rnqvist) escribi=F3:
 
-While I agree with all the rest, this part confuses me.  Do you mean
-that sync() should altually return immediatly, but the second sync()
-block until all data present at the time of the previous sync() is
-hardened?
+> If I want to access metadata with bash, do I patch bash to support
+> both Gnome's and KDE's solutions? Was there one of XFCE too?
+> And FooBarXyzzyWM that'll want to do it's own VFS next year?
 
-Or do you rather mean that a single sync() should block until all data
-currently present is hardened?
 
-J=F6rn
+The freedesktop people is already designing a common userspace VFS,
+take a look at http://freedesktop.org/Software/dvfs . At least it looks like
+there'll be a common standard, even if the standard is crappy.
 
---=20
-It is better to die of hunger having lived without grief and fear,
-than to live with a troubled spirit amid abundance.
--- Epictetus
--
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Apparently one of the main reasons for DVFS to exist is "POSIX is not
+enought for us".=20
+
+This approach  is broken by design, having a second-class VFS separated
+from the main VFS (what libc functions see, etc) is wrong, IMO.
+
+The Mockup project (they try to bring a BeOS-like API to linux, I think) is
+something similar to DVFS but using FUSE.
+Take a look at  http://wiki.mockup.org
+(currently down, google cache at
+http://66.249.93.104/search?q=3Dcache:OnvclDCpwOwJ:wiki.mockup.org/UserSpac=
+eVFS+mockup+wiki+VFS&hl=3Des&lr=3D&client=3Dfirefox&strip=3D1 )
