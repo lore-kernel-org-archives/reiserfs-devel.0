@@ -1,81 +1,82 @@
-From: Chris Wedgwood <cw@f00f.org>
-Subject: Re: XFS corruption during power-blackout
-Date: Thu, 30 Jun 2005 11:46:27 -0700
-Message-ID: <054069.b93858d6b97c07747dc32be2dd8981b254d981528781006053dce7be58de88865a43b162.IBX@taniwha.stupidest.org>
-References: <254889.27725ab660aa106eb6acc07307d71ef1fbd5b6fd366aebef9e2f611750fbcb467e46e8a4.IBX@taniwha.stupidest.org> <OFC7BE2BBA.42F70A93-ON88257030.00595A48-88257030.005A99A3@us.ibm.com>
-Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <OFC7BE2BBA.42F70A93-ON88257030.00595A48-88257030.005A99A3@us.ibm.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
+Subject: Re: reiser4 plugins
+Date: Thu, 30 Jun 2005 14:47:51 -0400
+Message-ID: <200506301847.j5UIlp6u012775@laptop11.inf.utfsm.cl>
+References: <tao@acc.umu.se>
+Return-path: <reiserfs-list-return-24850-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: Message from David Weinehall <tao@acc.umu.se> 
+   of "Thu, 30 Jun 2005 19:10:57 +0200." <20050630171057.GT16867@khan.acc.umu.se> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bryan Henderson <hbryan@us.ibm.com>
-Cc: Al Boldi <a1426z@gawab.com>, linux-fsdevel@vger.kernel.org, linux-xfs@oss.sgi.com, Steve Lord <lord@xfs.org>, 'Nathan Scott' <nathans@sgi.com>, reiserfs-list@namesys.com
+To: Hubert Chan <hubert@uhoreg.ca>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, Jun 30, 2005 at 12:30:20PM -0400, Bryan Henderson wrote:
+David Weinehall <tao@acc.umu.se> wrote:
+> On Thu, Jun 30, 2005 at 11:57:27AM -0400, Hubert Chan wrote:
+> > On Thu, 30 Jun 2005 08:29:56 +0200, David Weinehall <tao@acc.umu.se> said:
 
-> For another point of reference - were these ATA (personal class) or
-> SCSI (commercial class) drives or both?
+[...]
 
-IDE were Maxtor some old Maxtor 60GB disks and some not-so-old 200GB
-WD drives.  Maxtor has 2MB cache.  WD 8MB.
+> > >From the web *browser*'s point of view, it is handled by the
+> > "filesystem" (which is provided by the various servers).  The browser
+> > doesn't care how or where the data is stored.  It just requests a file,
+> > and gets some data back.  So the browser doesn't have to check for
+> > http://www.example.com/, get a failure (trying to read a directory),
+> > check for http://www.example.com/index.html, etc.  In this way, the web
+> > server controls (which I think takes the place of the filesystem in this
+> > case) what gets shown (index.html.sv, etc.), instead of the leaving it
+> > up to the browser.
 
-The SCSI disks where 10K RPM SCA somethings.  I think they were Segate
-(they've since been taken or else I would check).  I have no idea what
-the cache is on those.
+> > In the same way, you don't want every single user program to have to
+> > guess whether it should look at .data, or .contents, or whatever.
+> 
+> For the analogy to be complete:
 
-> Is write caching the default on typical SCSI devices?
+> User has a file browser (say Nautilus)
+> The file browser sees the userland VFS (say a unified VFS between GNOME
+> and KDE)
+> The VFS sees the real file system
 
-I'm not sure.  It seemed to be off by default for the SCSI disks and
-on by default for IDE when I checked.  I can't rule out the
-bios/controller doing something there though.
+> This way the userland VFS can be ported to almost any platform.
 
-> But be careful with the 'sync' program/system call.  As defined by
-> POSIX, it is not a synchronizing operation.
+That is /very/ nice to have.
 
-Yes, but POSIX is broken in places.  The linux implmentation (now and
-for sometime but not always) won't return until all dirty data is
-flushed.
+> When toying around on the desktop, an abstraction of what a file
+> is works fine with me.  When doing serious work (programming,
+> tar:ing up stuff, etc) I want to be bloody sure that I see the
+> files in the same way always.  I don't want surprises such as
+> files suddenly behaving as directories or vice versa.
 
-POSIX is a bit more sane about fsync():
-
-      The fsync() function can be used by an application to indicate
-      that all data for the open file description named by fildes is
-      to be transferred to the storage device associated with the file
-      described by fildes in an implementation-dependent manner. The
-      fsync() function does not return until the system has completed
-      that action or until an error is detected.
-
-> It's supposed to cause buffered writes to get hardened some time
-> soon, not right now.  So in theory, you can't pull the plug after
-> typing "sync."
-
-Data lss internal to the disks aside you can uner Linux.  I do it all
-the time.  Various other people do and this is something some people
-do test.
-
-> In others, it implements "everything that was buffered when sync()
-> started is hardened before the next sync() returns,"
-
-That is what happens now.  I'm not sure any other behavior makes sense
-does it?
-
-If it happens differently I would call that a bug.
-
-> and some 'sync' programs do multiple sync()s.
-
-Such programs are arguably broken (grub maybe?).  If one doesn't work,
-then why should doing it <n>-times?
-
-> And it's also filesystem-type-dependent.
-
-If a filesystem doesn't flush reliably with sync, I would call that a
-bug.
-
-> fsync(), on the other hand, is a true synchronizing operation.
-
-Again that requires the fs to behave correctly so if it fails it
-should be reported as a bug.
+Let me moderate that a bit: I'd be happy to have (some) files behaving
+strangely, /if in exchange I get something very worthwhile/. I.e., Unix
+filesystem sockets, named pipes, virtual filesystems all behave in weird
+ways, but this downside is more than compensated by huge advantages (even
+being able to do things that would otherwise be impossible). But all I see
+is that file-is-directory advocates explain over and over how they are
+bending over backards to get the whole mess working exactly like true
+directories (nothing more, in the end quite a bit less). The uses I've seen
+discussed don't really need files-as-directories (you get most of the
+advantages by just tar(1)-ing up the contents, or packing them in some
+other way; OpenOffice /has/ structured files, XML inside zipped files, Java
+also uses zip files for its structuring needs, etc), or are ideas that
+might be nice to have on exclusively one-user, isolated machines, like
+"keep /my/ annotations/icon/application name/whatever with the file's
+data", but that break down in multiuser (even serially, one user after the
+other) systems or when files are shared (via network, or simply by sending
+by mail or by copying from one machine to the other). In my rather ample
+experience, that situation is rare today, rapidly dwindling in the arena
+where Linux is mostly used. So this particular case of strange semantics
+for files has no upsides I can see, only downsides. The downsides have been
+discussed to death, and AFAICS there are fundamental problems with the idea
+that can't be fixed or sanely worked around. So why bother?
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
 
