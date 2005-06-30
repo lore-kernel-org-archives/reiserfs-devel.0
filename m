@@ -1,70 +1,80 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: [PATCH] reiser BUG in 2.6.13-rc1
-Date: Thu, 30 Jun 2005 22:49:45 +0400
-Message-ID: <42C43EC9.7090700@namesys.com>
-References: <20050630101157.GI2243@suse.de> <42C42EFD.8050306@namesys.com>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: reiser4 plugins
+Date: Thu, 30 Jun 2005 15:00:43 -0400
+Message-ID: <87ll4rvfdw.fsf@evinrude.uhoreg.ca>
+References: <hubert@uhoreg.ca>
+	<200506290509.j5T595I6010576@laptop11.inf.utfsm.cl>
+	<87hdfgvqvl.fsf@evinrude.uhoreg.ca>
+	<8783be6605062914341bcff7cb@mail.gmail.com>
+	<42C3615A.9020600@namesys.com> <871x6kv4zd.fsf@evinrude.uhoreg.ca>
+	<20050630062956.GP16867@khan.acc.umu.se>
+	<87psu3vnvc.fsf@evinrude.uhoreg.ca>
+	<20050630171057.GT16867@khan.acc.umu.se>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24851-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24852-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42C42EFD.8050306@namesys.com>
+In-Reply-To: <20050630171057.GT16867@khan.acc.umu.se> (David Weinehall's
+ message of "Thu, 30 Jun 2005 19:10:57 +0200")
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Hans Reiser <reiser@namesys.com>
-Cc: Jens Axboe <axboe@suse.de>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>, Vladimir Saveliev <vs@namesys.com>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Hans Reiser wrote:
+On Thu, 30 Jun 2005 19:10:57 +0200, David Weinehall <tao@acc.umu.se> said:
 
->Jens Axboe wrote:
->
->  
->
->>Hi,
->>
->>Reiser is derefencing an uninitialized pointer, causing an oops on boot.
->>
->>Signed-off-by: Jens Axboe <axboe@suse.de>
->>
->>diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
->>--- a/fs/reiserfs/super.c
->>+++ b/fs/reiserfs/super.c
->>@@ -1053,10 +1053,9 @@ static void handle_barrier_mode(struct s
->>
->>static void handle_attrs( struct super_block *s )
->>{
->>-	struct reiserfs_super_block * rs;
->>+	struct reiserfs_super_block * rs = SB_DISK_SUPER_BLOCK (s);
->>
->>	if( reiserfs_attrs( s ) ) {
->>-		rs = SB_DISK_SUPER_BLOCK (s);
->>		if( old_format_only(s) ) {
->>			reiserfs_warning(s, "reiserfs: cannot support attributes on 3.5.x disk format" );
->>			REISERFS_SB(s) -> s_mount_opt &= ~ ( 1 << REISERFS_ATTRS );
->>
->> 
->>
->>    
->>
->Thanks Jens.
->
->Edward, how is the fedora boot bug finding going? Is this it by any chance?
->
->Hans
->  
->
+> For the analogy to be complete:
 
-FC4-test3 with root on reiserfs has been successfully booted with 
-another miniinstall CD,
-so it seems that something wrong in grub.
-Unfortunately FC was installed on the workstation which currently is 
-used for
-intensive benchmarking, so the following is still in todo-list:
-- hacking grub
-- investigating reiserfs+selinux
+> User has a file browser (say Nautilus)
+> The file browser sees the userland VFS (say a unified VFS between
+> GNOME and KDE)
+> The VFS sees the real file system
 
-Thanks,
-Edward.
+I would say that this only works if everyone is forced to use the same
+VFS.  In the web example, everyone is forced to use the same API (HTTP),
+and so everyone gets the same view.  For the real filesystem, not
+everyone is forced to use the hypothetical unified GNOME/KDE VFS.  So if
+I try to edit with gedit or kate, I get something different than if I
+try to edit with vi or emacs.
+
+As I see it:
+web browser <-> Nautilus/user apps
+web server <-> filesystem
+web server's filesystem/database/etc. <-> physical disk storage
+
+Of course, we all know that analogies are not perfect.  The layering in
+both sides isn't exactly the same.  And other people could assign
+different equivalences (e.g. web browser <-> Nautilus/user apps; web
+server <-> VFS; web server's filesystem <-> filesystem).
+
+Anyways, the analogy wasn't supposed to be about where to handle the
+magic extra functionality, whether userspace or kernel space.  The
+analogy was for people who might think that it's stupid to return
+foo/.data when the user tries to open the directory foo; it was meant to
+illustrate that that idea isn't completely braindead.
+
+> This way the userland VFS can be ported to almost any platform.
+
+I think GNOME and KDE will always need a VFS if it wants to be
+cross-platform.  But I think that if the kernel provides extra
+functionality, GNOME may be better off.  For example, glib provides its
+own threading abstraction.  But on systems that use pthreads, glib's
+threading library uses it for its implementation.  And I think it can
+even be used on systems that don't offer threading, by doing its own
+emulation of threading.
+
+> When toying around on the desktop, an abstraction of what a file is
+> works fine with me.  When doing serious work (programming, tar:ing up
+> stuff, etc) I want to be bloody sure that I see the files in the same
+> way always.  I don't want surprises such as files suddenly behaving as
+> directories or vice versa.
+
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
