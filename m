@@ -1,30 +1,89 @@
-From: Chris Wedgwood <cw@f00f.org>
-Subject: Re: XFS corruption during power-blackout
-Date: Thu, 30 Jun 2005 13:32:23 -0700
-Message-ID: <947885.634f7bc00f9a47e9c90ffbeec9ebb14a812e2dab7a64e2d09cedc7aa2589ffaf3593543a.IBX@taniwha.stupidest.org>
-References: <254889.27725ab660aa106eb6acc07307d71ef1fbd5b6fd366aebef9e2f611750fbcb467e46e8a4.IBX@taniwha.stupidest.org> <OFC7BE2BBA.42F70A93-ON88257030.00595A48-88257030.005A99A3@us.ibm.com> <054069.b93858d6b97c07747dc32be2dd8981b254d981528781006053dce7be58de88865a43b162.IBX@taniwha.stupidest.org> <20050630194437.GC8374@wohnheim.fh-wedel.de>
+From: Zan Lynx <zlynx@acm.org>
+Subject: Re: reiser4 plugins
+Date: Thu, 30 Jun 2005 14:37:49 -0600
+Message-ID: <1120163870.12258.107.camel@localhost>
+References: <200506301847.j5UIlp6u012775@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24858-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-jpBZ0eT4ro1HhmUwdp4Z"
+Return-path: <reiserfs-list-return-24859-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20050630194437.GC8374@wohnheim.fh-wedel.de>
+In-Reply-To: <200506301847.j5UIlp6u012775@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: J?rn Engel <joern@wohnheim.fh-wedel.de>
-Cc: Bryan Henderson <hbryan@us.ibm.com>, Al Boldi <a1426z@gawab.com>, linux-fsdevel@vger.kernel.org, linux-xfs@oss.sgi.com, Steve Lord <lord@xfs.org>, 'Nathan Scott' <nathans@sgi.com>, reiserfs-list@namesys.com
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Hubert Chan <hubert@uhoreg.ca>, Hans Reiser <reiser@namesys.com>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, Jun 30, 2005 at 09:44:37PM +0200, J?rn Engel wrote:
+--=-jpBZ0eT4ro1HhmUwdp4Z
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> Or do you rather mean that a single sync() should block until all data
-> currently present is hardened?
+On Thu, 2005-06-30 at 14:47 -0400, Horst von Brand wrote:
+[snip]
+> Let me moderate that a bit: I'd be happy to have (some) files behaving
+> strangely, /if in exchange I get something very worthwhile/. I.e., Unix
+> filesystem sockets, named pipes, virtual filesystems all behave in weird
+> ways, but this downside is more than compensated by huge advantages (even
+> being able to do things that would otherwise be impossible). But all I se=
+e
+> is that file-is-directory advocates explain over and over how they are
+> bending over backards to get the whole mess working exactly like true
+> directories (nothing more, in the end quite a bit less). The uses I've se=
+en
+> discussed don't really need files-as-directories (you get most of the
+> advantages by just tar(1)-ing up the contents, or packing them in some
+> other way; OpenOffice /has/ structured files, XML inside zipped files, Ja=
+va
+> also uses zip files for its structuring needs, etc), or are ideas that
+> might be nice to have on exclusively one-user, isolated machines, like
+> "keep /my/ annotations/icon/application name/whatever with the file's
+> data", but that break down in multiuser (even serially, one user after th=
+e
+> other) systems or when files are shared (via network, or simply by sendin=
+g
+> by mail or by copying from one machine to the other). In my rather ample
+> experience, that situation is rare today, rapidly dwindling in the arena
+> where Linux is mostly used. So this particular case of strange semantics
+> for files has no upsides I can see, only downsides. The downsides have be=
+en
+> discussed to death, and AFAICS there are fundamental problems with the id=
+ea
+> that can't be fixed or sanely worked around. So why bother?
 
-Logically sync() should return only after all dirty buffers that
-existed before sync() was called are flushed.
+Structured files are fine when they're small but quickly become
+disgusting as they get bigger.  Either you slowly rewrite the whole
+thing or you "fast save" by writing new sections to the end of it that
+replace existing sections.  That's how you end up with documents that
+contain "deleted" information that was supposed to be confidential.
 
-Anything more than this (i.e. waiting on newly (since sync was called
-but before it returns) dirtied buffers) could live-lock (actually,
-this used to happen sometimes, I don't know if that's the case).
+Having the filesystem track each part for you and then creating a
+structured file when needed (and without needing to remember to run a
+special tool) is a far better idea.  (reiser4 doesn't do this but its a
+possible idea)
+
+Another advantage to file-as-directory is being able to access all the
+file's meta-data through a single channel: file names and text data.
+It removes the need for chmod, chown, touch, getxattr, chacl and all the
+rest of the special tools needed to work with Unix files.  It also makes
+it far easier to add new meta-data in the future, because no new tools
+have to be written to use it.
+
+So that's two reasons to bother.
+--=20
+Zan Lynx <zlynx@acm.org>
+
+--=-jpBZ0eT4ro1HhmUwdp4Z
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+
+iD8DBQBCxFgdG8fHaOLTWwgRAu+OAKCCowDFSVSV3SnhoXN5bLJMGRAxGgCdEyFf
+iQFXIZg+qh27ZWlRrezLEKY=
+=n4I9
+-----END PGP SIGNATURE-----
+
+--=-jpBZ0eT4ro1HhmUwdp4Z--
+
