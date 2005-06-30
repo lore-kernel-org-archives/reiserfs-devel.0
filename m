@@ -1,89 +1,87 @@
-From: Zan Lynx <zlynx@acm.org>
-Subject: Re: reiser4 plugins
-Date: Thu, 30 Jun 2005 14:37:49 -0600
-Message-ID: <1120163870.12258.107.camel@localhost>
-References: <200506301847.j5UIlp6u012775@laptop11.inf.utfsm.cl>
+From: Bryan Henderson <hbryan@us.ibm.com>
+Subject: Re: XFS corruption during power-blackout
+Date: Thu, 30 Jun 2005 13:49:22 -0700
+Message-ID: <OFBC8F19C9.0A8B9C84-ON88257030.006EB89B-88257030.00725493@us.ibm.com>
+References: <054069.b93858d6b97c07747dc32be2dd8981b254d981528781006053dce7be58de88865a43b162.IBX@taniwha.stupidest.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-jpBZ0eT4ro1HhmUwdp4Z"
-Return-path: <reiserfs-list-return-24859-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24860-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200506301847.j5UIlp6u012775@laptop11.inf.utfsm.cl>
+In-Reply-To: <054069.b93858d6b97c07747dc32be2dd8981b254d981528781006053dce7be58de88865a43b162.IBX@taniwha.stupidest.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Hubert Chan <hubert@uhoreg.ca>, Hans Reiser <reiser@namesys.com>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chris Wedgwood <cw@f00f.org>
+Cc: Al Boldi <a1426z@gawab.com>, linux-fsdevel@vger.kernel.org, linux-xfs@oss.sgi.com, Steve Lord <lord@xfs.org>, 'Nathan Scott' <nathans@sgi.com>, reiserfs-list@namesys.com
 
---=-jpBZ0eT4ro1HhmUwdp4Z
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+>POSIX is broken in places
 
-On Thu, 2005-06-30 at 14:47 -0400, Horst von Brand wrote:
-[snip]
-> Let me moderate that a bit: I'd be happy to have (some) files behaving
-> strangely, /if in exchange I get something very worthwhile/. I.e., Unix
-> filesystem sockets, named pipes, virtual filesystems all behave in weird
-> ways, but this downside is more than compensated by huge advantages (even
-> being able to do things that would otherwise be impossible). But all I se=
-e
-> is that file-is-directory advocates explain over and over how they are
-> bending over backards to get the whole mess working exactly like true
-> directories (nothing more, in the end quite a bit less). The uses I've se=
-en
-> discussed don't really need files-as-directories (you get most of the
-> advantages by just tar(1)-ing up the contents, or packing them in some
-> other way; OpenOffice /has/ structured files, XML inside zipped files, Ja=
-va
-> also uses zip files for its structuring needs, etc), or are ideas that
-> might be nice to have on exclusively one-user, isolated machines, like
-> "keep /my/ annotations/icon/application name/whatever with the file's
-> data", but that break down in multiuser (even serially, one user after th=
-e
-> other) systems or when files are shared (via network, or simply by sendin=
-g
-> by mail or by copying from one machine to the other). In my rather ample
-> experience, that situation is rare today, rapidly dwindling in the arena
-> where Linux is mostly used. So this particular case of strange semantics
-> for files has no upsides I can see, only downsides. The downsides have be=
-en
-> discussed to death, and AFAICS there are fundamental problems with the id=
-ea
-> that can't be fixed or sanely worked around. So why bother?
+...
 
-Structured files are fine when they're small but quickly become
-disgusting as they get bigger.  Either you slowly rewrite the whole
-thing or you "fast save" by writing new sections to the end of it that
-replace existing sections.  That's how you end up with documents that
-contain "deleted" information that was supposed to be confidential.
+>If it happens differently I would call that a bug.
 
-Having the filesystem track each part for you and then creating a
-structured file when needed (and without needing to remember to run a
-special tool) is a far better idea.  (reiser4 doesn't do this but its a
-possible idea)
+I think you're confusing goodness with correctness.  POSIX is a 
+definition; it can't be broken.  A bug is where don't meet your own 
+specification.  So if the spec doesn't say you have to be synchronous, 
+it's not a bug not to be synchronous.  Call it a design flaw if you want.
 
-Another advantage to file-as-directory is being able to access all the
-file's meta-data through a single channel: file names and text data.
-It removes the need for chmod, chown, touch, getxattr, chacl and all the
-rest of the special tools needed to work with Unix files.  It also makes
-it far easier to add new meta-data in the future, because no new tools
-have to be written to use it.
+>> In others, it implements "everything that was buffered when sync()
+>> started is hardened before the next sync() returns,"
+>
+>That is what happens now.  I'm not sure any other behavior makes sense
+>does it?
 
-So that's two reasons to bother.
---=20
-Zan Lynx <zlynx@acm.org>
+I think you quoted the wrong part.  From context, I think you meant 
+"everything that was buffered when sync() started is hardened before 
+sync() returns."  And it's also my understanding that current Linux does 
+that.
 
---=-jpBZ0eT4ro1HhmUwdp4Z
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+Another Linux sync() behavior is that it keeps syncing super blocks until 
+every super block is clean at the same moment.  That has given me fits.  I 
+don't know what the goal of that is -- it came in around 2.4.10.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
+>POSIX is a bit more sane about fsync():
+>
+>      The fsync() function can be used by an application to indicate
+>      that all data for the open file description named by fildes is
+>      to be transferred to the storage device associated with the file
+>      described by fildes in an implementation-dependent manner. The
+>      fsync() function does not return until the system has completed
+>      that action or until an error is detected.
 
-iD8DBQBCxFgdG8fHaOLTWwgRAu+OAKCCowDFSVSV3SnhoXN5bLJMGRAxGgCdEyFf
-iQFXIZg+qh27ZWlRrezLEKY=
-=n4I9
------END PGP SIGNATURE-----
+Strange; that's not the way I remember it.  I remember it being much more 
+vague;  in particular, I remember a specification that did not assume that 
+a file is associated with a particular device and referred instead to 
+"stable storage," the definition of which was entirely up to the 
+implementation.  In other words, the definition I've been working from was 
+more grown-up.  I wonder what the difference is.
 
---=-jpBZ0eT4ro1HhmUwdp4Z--
+>> and some 'sync' programs do multiple sync()s.
+>
+>Such programs are arguably broken (grub maybe?).  If one doesn't work,
+>then why should doing it <n>-times?
+
+It's because of the words before that:  "everything that was buffered when 
+sync()
+started is hardened before the next sync() returns."  The point is that 
+the second sync() is the one that waits (it actually waits for the 
+previous one to finish before it starts).  By the way, I'm not talking 
+about Linux at this point.  I'm talking about so-called POSIX systems in 
+general.
+
+But it does sound like Linux has a pretty firm philosophy of synchronous 
+sync (I see it documented in an old man page), so I guess it's OK to rely 
+on it.
+
+There are scenarios where you'd rather not have a process tied up while 
+syncing takes place.  Stepping back, I would guess the primary original 
+purpose of sync() was to allow you to make a sync daemon.  Early Unix 
+systems did not have in-kernel safety clean timers.  A user space process 
+did that.
+
+--
+Bryan Henderson                     IBM Almaden Research Center
+San Jose CA                         Filesystems
 
