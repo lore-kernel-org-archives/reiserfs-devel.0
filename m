@@ -1,49 +1,68 @@
-From: David Weinehall <tao@acc.umu.se>
-Subject: Re: reiser4 plugins
-Date: Thu, 30 Jun 2005 08:29:56 +0200
-Message-ID: <20050630062956.GP16867@khan.acc.umu.se>
-References: <hubert@uhoreg.ca> <200506290509.j5T595I6010576@laptop11.inf.utfsm.cl> <87hdfgvqvl.fsf@evinrude.uhoreg.ca> <8783be6605062914341bcff7cb@mail.gmail.com> <42C3615A.9020600@namesys.com> <871x6kv4zd.fsf@evinrude.uhoreg.ca>
+From: Ragnar =?iso-8859-15?Q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
+Subject: Re: dmapi support for reiser4
+Date: Thu, 30 Jun 2005 09:12:49 +0200
+Message-ID: <20050630071249.GR31371@vestdata.no>
+References: <20050628093408.GA23882@lisa.goe.net> <1119958258.3495.52.camel@tribesman.namesys.com> <20050629115713.GC3610@lisa.goe.net> <42C323AA.1070802@nauticom.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24829-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-24830-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <871x6kv4zd.fsf@evinrude.uhoreg.ca>
+In-Reply-To: <42C323AA.1070802@nauticom.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Chet Hosey <chosey@nauticom.net>
+Cc: Bjoern JACKE <bjoern@j3e.de>, reiserfs-list@namesys.com
 
-On Thu, Jun 30, 2005 at 12:33:10AM -0400, Hubert Chan wrote:
-> On Wed, 29 Jun 2005 20:04:58 -0700, Hans Reiser <reiser@namesys.com> said:
-> 
-> > Ross Biro wrote:
-> >> How is directories as files logically any different than putting all
-> >> data into .data files and making all files directories (yes you would
-> >> need some sort of special handling for files that were really called
-> >> .data).
-> 
-> > Add to this that you make .data the default if the file within the
-> > directory is not specified,
-> 
-> It's sort of like the way web servers handle index.html, for those who
-> think it's a stupid idea.  (Of course, some people may still think it's
-> a stupid idea... ;-) )
+On Wed, Jun 29, 2005 at 06:41:46PM -0400, Chet Hosey wrote:
+> >> I would guess that it is rather operating system feature than a
+> >> filesystem one. Can you please point some source of information about
+> >> DMAPI?
+>=20
+> Is there a standard VFS interface that these filesystems present, or is
+> it done via filesystem-specific extensions? If the latter, perhaps you
+> should consider submitting a kernel patch that adds the required
+> interface to the VFS layer, and note in your submission that XFS and JFS
+> aren't compliant.
 
-And guess what?  That's handled on the web server level (userland),
-not by the file system.  So different web servers can handle it
-differently (think index.html.sv, index.html.zh, index.php, etc).
+The OpenXDSM project intended to extend the VFS layer with a few extra
+functions and to implement a generic XDSM/DMAPI layer on top of that.
 
-Amazing isn't it?
+The project never really got anywhere and the sourceforge webpage has
+been removed, but you can still find some pointers to the VFS
+discussions if you google for OpenXDSM.
 
-[snip]
+In short, the filesystems needed to be extended with functionality in
+two primary areas:
+- persistent storage of metadata
+- beeing able to punch holes in existing files.
+
+The first item has since been solved by extended attributes, and I
+believe there were some ideas about how to change truncate to also be
+able to punch holes. There were probably a few more things needed to be
+done, but I don't remember. Google probably knows.
+
+> You said that "reiser4 will not be a real competitor without this". A
+> competitor in what market? Can you name an application that depends on
+> DMAPI and is so important that without that particular application
+> Reiser4 is not appropriate for storing files?
+
+DMAPI is used for Hirarchial Storage Management, migrating unused files
+to slower medium such as tape. It can also be used by backupsystems.
+
+I should add though, that not everybody that does HSM are big fans of
+DMAPI. It's quite possible that it would be just as productive to add a
+_different_ API for HSM to linux as adding DMAPI.
+
+> Just curious, as I'd not heard of DMAPI prior to your post, but you
+> claim it's quite important.
+
+It is important in a relatively narrow (high end) market, not really for
+desktops and low end servers.
 
 
-Regards: David Weinehall
--- 
- /) David Weinehall <tao@acc.umu.se> /) Northern lights wander      (\
-//  Maintainer of the v2.0 kernel   //  Dance across the winter sky //
-\)  http://www.acc.umu.se/~tao/    (/   Full colour fire           (/
+--=20
+Ragnar Kj=F8rstad
