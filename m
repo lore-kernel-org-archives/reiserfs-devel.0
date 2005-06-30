@@ -1,44 +1,47 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: dmapi support for reiser4
-Date: Wed, 29 Jun 2005 20:07:15 -0700
-Message-ID: <42C361E3.7030406@namesys.com>
-References: <20050628093408.GA23882@lisa.goe.net> <1119958258.3495.52.camel@tribesman.namesys.com> <20050629115713.GC3610@lisa.goe.net>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: reiser4 plugins
+Date: Thu, 30 Jun 2005 00:33:10 -0400
+Message-ID: <871x6kv4zd.fsf@evinrude.uhoreg.ca>
+References: <hubert@uhoreg.ca>
+	<200506290509.j5T595I6010576@laptop11.inf.utfsm.cl>
+	<87hdfgvqvl.fsf@evinrude.uhoreg.ca>
+	<8783be6605062914341bcff7cb@mail.gmail.com>
+	<42C3615A.9020600@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24824-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24825-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050629115713.GC3610@lisa.goe.net>
+In-Reply-To: <42C3615A.9020600@namesys.com> (Hans Reiser's message of "Wed,
+ 29 Jun 2005 20:04:58 -0700")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Bjoern JACKE <bjoern@j3e.de>
-Cc: Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Bjoern JACKE wrote:
+On Wed, 29 Jun 2005 20:04:58 -0700, Hans Reiser <reiser@namesys.com> said:
 
-> On 2005-06-28 at 15:31 +0400 Vladimir Saveliev sent off:
->
->>> DMAPI support is a feature which is essential for usage in many
->>> important environments. Are there any plans to add dmapi support to
->>> reiser4 ?
->>>
->> there is no currently
->
->
-> would be very nice to have that, one day reiser4 has survived all the
-> troubleful discussion about kernel integration it is in right now.
-> DMAPI is really a feature which is a must-have for big setups. One of
-> the reasons is file allocation info which is retrievable which makes
-> sparse file handling efficient. Of course there are much more useful
-> posibilities DMAPI gives to get over POSIX limitation. XFS, JFS2,
-> GPFS, Veritas filesystem for Solaris, they all have DMAPI support and
-> reiser4 will not be a real competitor without this. I hope it will
-> come one day ...
->
-> Bjoern
->
->
-All it requires is money...... :-/  If you have some knowledge of
-someone who might fund it, let me know.
+> Ross Biro wrote:
+>> How is directories as files logically any different than putting all
+>> data into .data files and making all files directories (yes you would
+>> need some sort of special handling for files that were really called
+>> .data).
+
+> Add to this that you make .data the default if the file within the
+> directory is not specified,
+
+It's sort of like the way web servers handle index.html, for those who
+think it's a stupid idea.  (Of course, some people may still think it's
+a stupid idea... ;-) )
+
+> and define a stanadard set of names for metafiles, and you've got the
+> essential idea, and any differences are details.
+
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
