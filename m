@@ -1,65 +1,49 @@
-From: David Weinehall <tao@acc.umu.se>
-Subject: Re: reiser4 plugins
-Date: Thu, 30 Jun 2005 19:10:57 +0200
-Message-ID: <20050630171057.GT16867@khan.acc.umu.se>
-References: <hubert@uhoreg.ca> <200506290509.j5T595I6010576@laptop11.inf.utfsm.cl> <87hdfgvqvl.fsf@evinrude.uhoreg.ca> <8783be6605062914341bcff7cb@mail.gmail.com> <42C3615A.9020600@namesys.com> <871x6kv4zd.fsf@evinrude.uhoreg.ca> <20050630062956.GP16867@khan.acc.umu.se> <87psu3vnvc.fsf@evinrude.uhoreg.ca>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: [PATCH] reiser BUG in 2.6.13-rc1
+Date: Thu, 30 Jun 2005 10:42:21 -0700
+Message-ID: <42C42EFD.8050306@namesys.com>
+References: <20050630101157.GI2243@suse.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24847-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24848-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <87psu3vnvc.fsf@evinrude.uhoreg.ca>
+In-Reply-To: <20050630101157.GI2243@suse.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: Jens Axboe <axboe@suse.de>, Edward Shishkin <edward@namesys.com>
+Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>
 
-On Thu, Jun 30, 2005 at 11:57:27AM -0400, Hubert Chan wrote:
-> On Thu, 30 Jun 2005 08:29:56 +0200, David Weinehall <tao@acc.umu.se> said:
+Jens Axboe wrote:
+
+>Hi,
+>
+>Reiser is derefencing an uninitialized pointer, causing an oops on boot.
+>
+>Signed-off-by: Jens Axboe <axboe@suse.de>
+>
+>diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+>--- a/fs/reiserfs/super.c
+>+++ b/fs/reiserfs/super.c
+>@@ -1053,10 +1053,9 @@ static void handle_barrier_mode(struct s
 > 
-> > On Thu, Jun 30, 2005 at 12:33:10AM -0400, Hubert Chan wrote:
-> >> It's sort of like the way web servers handle index.html, for those
-> >> who think it's a stupid idea.  (Of course, some people may still
-> >> think it's a stupid idea... ;-) )
+> static void handle_attrs( struct super_block *s )
+> {
+>-	struct reiserfs_super_block * rs;
+>+	struct reiserfs_super_block * rs = SB_DISK_SUPER_BLOCK (s);
 > 
-> > And guess what?  That's handled on the web server level (userland),
-> > not by the file system.  So different web servers can handle it
-> > differently (think index.html.sv, index.html.zh, index.php, etc).
-> 
-> >From the web *browser*'s point of view, it is handled by the
-> "filesystem" (which is provided by the various servers).  The browser
-> doesn't care how or where the data is stored.  It just requests a file,
-> and gets some data back.  So the browser doesn't have to check for
-> http://www.example.com/, get a failure (trying to read a directory),
-> check for http://www.example.com/index.html, etc.  In this way, the web
-> server controls (which I think takes the place of the filesystem in this
-> case) what gets shown (index.html.sv, etc.), instead of the leaving it
-> up to the browser.
-> 
-> In the same way, you don't want every single user program to have to
-> guess whether it should look at .data, or .contents, or whatever.
+> 	if( reiserfs_attrs( s ) ) {
+>-		rs = SB_DISK_SUPER_BLOCK (s);
+> 		if( old_format_only(s) ) {
+> 			reiserfs_warning(s, "reiserfs: cannot support attributes on 3.5.x disk format" );
+> 			REISERFS_SB(s) -> s_mount_opt &= ~ ( 1 << REISERFS_ATTRS );
+>
+>  
+>
+Thanks Jens.
 
-For the analogy to be complete:
+Edward, how is the fedora boot bug finding going? Is this it by any chance?
 
-User has a file browser (say Nautilus)
-The file browser sees the userland VFS (say a unified VFS between GNOME
-and KDE)
-The VFS sees the real file system
-
-This way the userland VFS can be ported to almost any platform.
-
-When toying around on the desktop, an abstraction of what a file
-is works fine with me.  When doing serious work (programming,
-tar:ing up stuff, etc) I want to be bloody sure that I see the
-files in the same way always.  I don't want surprises such as
-files suddenly behaving as directories or vice versa.
-
-
-Regards: David
--- 
- /) David Weinehall <tao@acc.umu.se> /) Northern lights wander      (\
-//  Maintainer of the v2.0 kernel   //  Dance across the winter sky //
-\)  http://www.acc.umu.se/~tao/    (/   Full colour fire           (/
+Hans
