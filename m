@@ -1,79 +1,48 @@
-From: Dancho <dancho@aiidatapro.com>
-Subject: Re: reiser4 or qmail problem?
-Date: Fri, 1 Jul 2005 12:43:37 +0300
-Message-ID: <200507011243.37812.dancho@aiidatapro.com>
-References: <200506301156.39263.dancho@aiidatapro.com> <1120136440.3441.47.camel@tribesman.namesys.com>
+From: "Flora Dru" <dru@dicts.mak.ac.ug>
+Subject: Filesystem repair and Data Recovery
+Date: Fri, 01 Jul 2005 14:29:54 +0300
+Message-ID: <20050701112954.B2F849FF0@mail.mak.ac.ug>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-24886-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24887-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1120136440.3441.47.camel@tribesman.namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1251"
+Content-Type: text/plain; format="flowed"; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-bWFueSB0aGFua3MKaSB0cnkgd2l0aCAyLjYuMTItbW0yCgoKT24gVGh1cnNkYXkgMzAgSnVuZSAy
-MDA1IDE2OjAwLCBWbGFkaW1pciBTYXZlbGlldiB3cm90ZToKPiBIZWxsbwo+IAo+IE9uIFRodSwg
-MjAwNS0wNi0zMCBhdCAxMjo1NiwgRGFuY2hvIHdyb3RlOgo+ID4gSGVsbG8sIAo+ID4gCj4gPiBJ
-IHVzZSByZWlzZXI0IGluIHNtYWxsIG1haWwgc2VydmVyLiBBZnRlciAxMDIgZGF5cyB1cHRpbWUg
-dGhlIGNvbXB1dGVyCj4gPiBzdG9wcGVkIHJlc3BvbmRpbmcuIEluIHRoZSBzeXNsb2cgdGhlIGZv
-bGxvd2luZyBtZXNzYWdlIGFwcGVhcmVkOgo+ID4gCj4gPiBKdW4gMzAgMDk6MDk6MDYgcGFyaGVs
-aWEga2VybmVsOiByZWlzZXI0W3FtYWlsLXF1ZXVlKDE4MTI0KV06Cj4gPiBjb21taXRfY3VycmVu
-dF9hdG9tIChmcy9yZWlzZXI0L3R4bm1nci5jOjEyMDYpW25pa2l0YS0zMTc2XToKPiA+IAo+ID4g
-SnVuIDMwIDA5OjA5OjA2IHBhcmhlbGlhIGtlcm5lbDogV0FSTklORzogRmx1c2hpbmcgbGlrZSBt
-YWQ6IDE2Mzg0Cj4gPiAKPiA+IEp1biAzMCAwOTowOTowNiBwYXJoZWxpYSBrZXJuZWw6IHJlaXNl
-cjRbcW1haWwtcXVldWUoMTgxMjQpXToKPiA+IGNvbW1pdF9jdXJyZW50X2F0b20gKGZzL3JlaXNl
-cjQvdHhubWdyLmM6MTIwNilbbmlraXRhLTMxNzZdOgo+ID4gCj4gPiBKdW4gMzAgMDk6MDk6MDYg
-cGFyaGVsaWEga2VybmVsOiBXQVJOSU5HOiBGbHVzaGluZyBsaWtlIG1hZDogMzI3NjgKPiA+IAo+
-ID4gSnVuIDMwIDA5OjA5OjA2IHBhcmhlbGlhIGtlcm5lbDogcmVpc2VyNFtxbWFpbC1xdWV1ZSgx
-ODEyNCldOgo+ID4gY29tbWl0X2N1cnJlbnRfYXRvbSAoZnMvcmVpc2VyNC90eG5tZ3IuYzoxMjA2
-KVtuaWtpdGEtMzE3Nl06Cj4gPiAKPiA+IEp1biAzMCAwOTowOTowNiBwYXJoZWxpYSBrZXJuZWw6
-IFdBUk5JTkc6IEZsdXNoaW5nIGxpa2UgbWFkOiA2NTUzNgo+ID4gCj4gPiBKdW4gMzAgMDk6MDk6
-MDYgcGFyaGVsaWEga2VybmVsOiByZWlzZXI0W3FtYWlsLXF1ZXVlKDE4MTI0KV06Cj4gPiBjb21t
-aXRfY3VycmVudF9hdG9tIChmcy9yZWlzZXI0L3R4bm1nci5jOjEyMDYpW25pa2l0YS0zMTc2XToK
-PiA+IAo+ID4gSnVuIDMwIDA5OjA5OjA2IHBhcmhlbGlhIGtlcm5lbDogV0FSTklORzogRmx1c2hp
-bmcgbGlrZSBtYWQ6IDEzMTA3Mgo+ID4gCj4gPiBKdW4gMzAgMDk6MDk6MDcgcGFyaGVsaWEga2Vy
-bmVsOiByZWlzZXI0W3FtYWlsLXF1ZXVlKDE4MTI0KV06Cj4gPiBjb21taXRfY3VycmVudF9hdG9t
-IChmcy9yZWlzZXI0L3R4bm1nci5jOjEyMDYpW25pa2l0YS0zMTc2XToKPiA+IAo+ID4gSnVuIDMw
-IDA5OjA5OjA3IHBhcmhlbGlhIGtlcm5lbDogV0FSTklORzogRmx1c2hpbmcgbGlrZSBtYWQ6IDI2
-MjE0NAo+ID4gCj4gPiBKdW4gMzAgMDk6MDk6MDkgcGFyaGVsaWEga2VybmVsOiByZWlzZXI0W3Ft
-YWlsLXF1ZXVlKDE4MTI0KV06Cj4gPiBjb21taXRfY3VycmVudF9hdG9tIChmcy9yZWlzZXI0L3R4
-bm1nci5jOjEyMDYpW25pa2l0YS0zMTc2XToKPiA+IAo+ID4gSnVuIDMwIDA5OjA5OjA5IHBhcmhl
-bGlhIGtlcm5lbDogV0FSTklORzogRmx1c2hpbmcgbGlrZSBtYWQ6IDUyNDI4OAo+ID4gCj4gPiBK
-dW4gMzAgMDk6MDk6MTIgcGFyaGVsaWEga2VybmVsOiByZWlzZXI0W3FtYWlsLXF1ZXVlKDE4MTI0
-KV06Cj4gPiBjb21taXRfY3VycmVudF9hdG9tIChmcy9yZWlzZXI0L3R4bm1nci5jOjEyMDYpW25p
-a2l0YS0zMTc2XToKPiA+IAo+ID4gSnVuIDMwIDA5OjA5OjEyIHBhcmhlbGlhIGtlcm5lbDogV0FS
-TklORzogRmx1c2hpbmcgbGlrZSBtYWQ6IDEwNDg1NzYKPiA+IAo+ID4gSnVuIDMwIDA5OjA5OjE5
-IHBhcmhlbGlhIGtlcm5lbDogcmVpc2VyNFtxbWFpbC1xdWV1ZSgxODEyNCldOgo+ID4gY29tbWl0
-X2N1cnJlbnRfYXRvbSAoZnMvcmVpc2VyNC90eG5tZ3IuYzoxMjA2KVtuaWtpdGEtMzE3Nl06Cj4g
-PiAKPiA+IEp1biAzMCAwOTowOToxOSBwYXJoZWxpYSBrZXJuZWw6IFdBUk5JTkc6IEZsdXNoaW5n
-IGxpa2UgbWFkOiAyMDk3MTUyCj4gPiAKPiA+IEp1biAzMCAwOTowOTo0NCBwYXJoZWxpYSBrZXJu
-ZWw6IHJlaXNlcjRbcW1haWwtcXVldWUoMTgxMjQpXToKPiA+IGNvbW1pdF9jdXJyZW50X2F0b20g
-KGZzL3JlaXNlcjQvdHhubWdyLmM6MTIwNilbbmlraXRhLTMxNzZdOgo+ID4gCj4gPiBKdW4gMzAg
-MDk6MDk6NDQgcGFyaGVsaWEga2VybmVsOiBXQVJOSU5HOiBGbHVzaGluZyBsaWtlIG1hZDogNDE5
-NDMwNAo+ID4gCj4gCj4gVGhpcyBpcyByZWlzZXI0IHByb2JsZW0uIEJ1dCB5b3UgYXJlIHVzaW5n
-IHF1aXRlIG9sZCB2ZXJzaW9uLiBQbGVhc2UKPiB1cGRhdGUgdG8gMi42LjEyLW1tMi4gSXQgaXMg
-cG9zc2libGUgdGhhdCB0aGUgcHJvYmxlbSBpcyBmaXhlZCBhbHJlYWR5Lgo+IAo+ID4gVGhlIHN5
-c3RlbSdzIGluZm86Cj4gPiAKPiA+IHBhcmhlbGlhOn4jIHVuYW1lIC1hCj4gPiAKPiA+IExpbnV4
-IHBhcmhlbGlhIDIuNi45LW1tMSAjNSBNb24gSmFuIDMxIDIyOjIxOjMxIEVFVCAyMDA1IGk2ODYK
-PiA+IEdOVS9MaW51eAo+ID4gCj4gPiBwYXJoZWxpYTp+IyBjYXQgL3Byb2MvY3B1aW5mbwo+ID4g
-Cj4gPiBwcm9jZXNzb3IgOiAwCj4gPiAKPiA+IG1vZGVsIG5hbWUgOiBJbnRlbChSKSBDZWxlcm9u
-KFIpIENQVSAyLjAwR0h6Cj4gPiAKPiA+IHBhcmhlbGlhOn4jIG1vdW50Cj4gPiAKPiA+IGRldi9o
-ZGEzIG9uIC8gdHlwZSByZWlzZXJmcyAocncpCj4gPiAKPiA+IHByb2Mgb24gL3Byb2MgdHlwZSBw
-cm9jIChydykKPiA+IAo+ID4gc3lzZnMgb24gL3N5cyB0eXBlIHN5c2ZzIChydykKPiA+IAo+ID4g
-ZGV2cHRzIG9uIC9kZXYvcHRzIHR5cGUgZGV2cHRzIChydyxnaWQ9NSxtb2RlPTYyMCkKPiA+IAo+
-ID4gdG1wZnMgb24gL2Rldi9zaG0gdHlwZSB0bXBmcyAocncpCj4gPiAKPiA+IHVzYmZzIG9uIC9w
-cm9jL2J1cy91c2IgdHlwZSB1c2JmcyAocncpCj4gPiAKPiA+IC9kZXYvaGRhNCBvbiAvaG9tZSB0
-eXBlIHJlaXNlcmZzIChydykKPiA+IAo+ID4gL2Rldi9oZGExIG9uIC92YXIgdHlwZSByZWlzZXI0
-IChydykgISEhISEvYWxsIHFtYWlsIGRhdGEgc3RvcmVkIGhlcmUvCj4gPiAKPiA+IERlYmlhbiB1
-bnN0YWJsZQo+ID4gCj4gPiByZWlzZXI0cHJvZ3MgdmVyLjEuMC40LTEKPiA+IAo+ID4gSSBjb3Vs
-ZCBwcm92aWRlIG1vcmUgaW5mbywgaWYgbmVjZXNzYXJ5Cj4gPiAKPiA+IC0tIAo+ID4gCj4gPiBJ
-biBHb2Qgd2UgVHJ1c3QgKGFsbCBvdGhlcnMgbXVzdCBzdWJtaXQgYSBYLjUwOSBjZXJ0aWZpY2F0
-ZSkKPiA+IAo+IAo+IAoKLS0gCgpJbiBHb2Qgd2UgVHJ1c3QgKGFsbCBvdGhlcnMgbXVzdCBzdWJt
-aXQgYSBYLjUwOSBjZXJ0aWZpY2F0ZSkKCsnu8OTg7SDH8/Dt4OTm6OXiCtHo8fLl7OXtIMDk7Ojt
-6PHy8ODy7vAKSVQgRGVwYXJ0bWVudApBSUkgRGF0YSBQcm9jZXNzaW5nCkUtbWFpbDogZGFuY2hv
-QGFpaWRhdGFwcm8uY29tIApUZWw6ICszNTkgMiA5Mzc2MzUyIAoK
+Hi, 
+
+our reiserfs partition that holds our institutions mails got corrupted 
+(27GB). A colleague that was around tried to recover it but failed. So he 
+changed the filesystem to ext2 in /etc/fstab and rebooted. the partition 
+came up but with some of its folders and files corrupted, some folders have 
+become executables with strange owners and permissions that dont respond to 
+cp, chmod, chown or mv commands. 
+
+We created  an image of the corrupted files onto an ext2 partition  and 
+tried to repair it but files in lost+found had strange filenames. 
+
+We created another image file onto a remote host reiserfs partition using ( 
+ssh corrupthost dd if=/dev/sda1 conv=noerror > sda1.img) and did the 
+following: 
+
+losetup /dev/loop0 sda1.img
+reiserfsck --rebuild-sb /dev/loop0
+reiserfsck --rebuild-tree /dev/loop0 
+
+but it failes with  "No reiserfs metadata" found error  and the log file 
+contains 
+
+####### Pass 0 #######
+Could not find hash in use. Using "r5"
+####### Pass 1 #######
+####### Pass 2 ####### 
+
+
+Please advise. 
+
+Thanks
+Dru
