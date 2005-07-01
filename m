@@ -1,76 +1,75 @@
 From: David Masover <ninja@slaphack.com>
-Subject: backup (was Re: reiser4 plugins)
-Date: Fri, 01 Jul 2005 02:03:40 -0500
-Message-ID: <42C4EACC.7020604@slaphack.com>
-References: <42BB7B32.4010100@slaphack.com>	 <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl>	 <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org>	 <42C018E5.8030805@slaphack.com> <20050627162839.GA22799@thunk.org>	 <42C06BC6.7090002@slaphack.com> <20050630214950.GA14286@thunk.org> <d120d50005063015345a4968a@mail.gmail.com>
+Subject: Re: reiser4 plugins
+Date: Fri, 01 Jul 2005 02:16:58 -0500
+Message-ID: <42C4EDEA.6020602@slaphack.com>
+References: <200506301847.j5UIlp6u012775@laptop11.inf.utfsm.cl> <1120163870.12258.107.camel@localhost>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24870-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24871-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <d120d50005063015345a4968a@mail.gmail.com>
+In-Reply-To: <1120163870.12258.107.camel@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: dtor_core@ameritech.net
-Cc: Theodore Ts'o <tytso@mit.edu>, Markus T?rnqvist <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Zan Lynx <zlynx@acm.org>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Hubert Chan <hubert@uhoreg.ca>, Hans Reiser <reiser@namesys.com>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Dmitry Torokhov wrote:
-> On 6/30/05, Theodore Ts'o <tytso@mit.edu> wrote:
-> 
->>On Mon, Jun 27, 2005 at 04:12:38PM -0500, David Masover wrote:
->>
->>>>    Streamload cannot warrant and does not guarantee, and You
->>>>    should not expect, that all of Your private communications and
->>>>    other personal information will never be disclosed in ways not
->>>>    otherwise described in this Privacy Policy.
->>>
->>>gpg.  Was in my upload script to begin with.  I keep my key written many
->>>times on a single hidden CD.  So long as the isofs can be read, at least
->>>one of the copies should be usable.
->>>
->>>They don't have any billing information on me.  If they charge me for
->>>something, I'll cancel my account.
->>
->>If you are using the free service, and are encrypting the data, you
->>are explicitly violating their terms of service, and they can delete
->>your data at any time, once they notice.
->>
-> 
-> 
-> Does not look like it:
-> 
-> 3c. No encryption and/or steganography for the purpose of
-> circumventing Streamload's rules.
-> ... For example, if you'd like to encrypt something for an extra sense
-> of security and privacy, please feel free to do so. However, when
-> these tools are used solely for the purpose of circumventing
-> Streamload's rules, as determined by the sole discretion of
-> Streamload, the files will be deleted.
+Zan Lynx wrote:
+> On Thu, 2005-06-30 at 14:47 -0400, Horst von Brand wrote:
+> [snip]
+[snip-some-more]
+> Structured files are fine when they're small but quickly become
+> disgusting as they get bigger.  Either you slowly rewrite the whole
+> thing or you "fast save" by writing new sections to the end of it that
+> replace existing sections.  That's how you end up with documents that
+> contain "deleted" information that was supposed to be confidential.
 
-Trasnlation:  They really, honestly, have no way at all of knowing if my 
-GPG-encrypted 450 meg tarball violates their terms.  They have legally 
-given themselves the right to delete it just because they think it might 
-violate their terms, but it wouldn't make sense for them to delete a 
-file called "backup.tar.bz2.gpg" when there are no doubt a lot of other 
-encrypted files on their servers.  It wouldn't make sense because they 
-would either have to delete such files completely at random, or they'd 
-have to delete all of them at once.
+Doesn't OpenOffice already do something similar with zipfiles?  I 
+remember noticing huge differences in save times after adding large 
+images to a presentation versus just changing some text.  So, it's 
+obviously not repacking each image every time I save.  But, as the 
+internal text is all XML, I doubt it's leaving "deleted" sections lying 
+around.
 
-Further translation:  This was probably put here to keep the lawyers 
-happy.  They don't want to be held liable for illegal stuff on their 
-servers, for example, so they have at least spelled out, in legalese, 
-that illegal stuff (and probably a few other categories) is not allowed 
-on their servers, and that encyrpting it doesn't magically make it legal.
+> Having the filesystem track each part for you and then creating a
+> structured file when needed (and without needing to remember to run a
+> special tool) is a far better idea.  (reiser4 doesn't do this but its a
+> possible idea)
 
-This kind of stuff makes lawyers happy, even if it *practically* does 
-nothing at all.
+Been discussed to death, and chances are, Reiser4 will do this with 
+plugins.  I imagine it being implemented in a more general way, though. 
+  For example, a meta-file which, when read, produces a 
+zipfile/tarball/dump of the directory it belongs to.  Then, to send such 
+a document via email, you just navigate to the directory where it lives 
+while looking for files to attach, only from /meta/vfs as a base, then 
+attach the meta-file.  The zipfile gets built automatically.
 
-Regardless, I feel reasonably safe with a backup there.  If I ever start 
-to feel unsafe, I can always back up the most critical stuff to gmail, 
-and create a few permanent copies on DVDs.  But I feel considerably 
-safer with Streamload than with Gmail, because using Gmail for my own 
-custom backup app directly violates their terms of service.
+To simplify the process, all you *really* need is a button on all FS 
+navigation windows (Nautilus, Open/Save dialogs, etc) to switch back and 
+forth between the meta view and the normal view.  That, or a separate pane.
 
-I think we should officially kill this particular thread.
+This way, instead of patching the mail client to support all possible 
+transformations you'd want to do before sending, or patching all 
+applications to use zip (and any other transformation a user might want 
+to do), or forcing the user to run another app, you automatically get 
+*all* available transformations, in a way that could potentially look as 
+smooth as adding zip support directly to the app.
+
+> Another advantage to file-as-directory is being able to access all the
+> file's meta-data through a single channel: file names and text data.
+> It removes the need for chmod, chown, touch, getxattr, chacl and all the
+> rest of the special tools needed to work with Unix files.  It also makes
+> it far easier to add new meta-data in the future, because no new tools
+> have to be written to use it.
+
+All good points except the last one.  New tools vs new plugins?  People 
+already know how to write the tools...
+
+> So that's two reasons to bother.
+
+That, and the possible paradigm shift.  Navigating to the /meta dir for 
+a file could be the commandline equivalent of right-clicking on the file.
+
+Of course, to some people, paradigm shifts are a reason *not* to bother...
