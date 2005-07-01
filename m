@@ -1,56 +1,96 @@
-From: David Weinehall <tao@acc.umu.se>
-Subject: Re: reiser4 plugins
-Date: Fri, 1 Jul 2005 17:54:46 +0200
-Message-ID: <20050701155446.GZ16867@khan.acc.umu.se>
-References: <200506290509.j5T595I6010576@laptop11.inf.utfsm.cl> <m2k6kd2rx8.fsf@Douglas-McNaughts-Powerbook.local> <20050629135820.GJ11013@nysv.org> <20050629205636.GN16867@khan.acc.umu.se> <42C4FA1A.1050100@slaphack.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: Filesystem repair and Data Recovery
+Date: Fri, 01 Jul 2005 20:15:47 +0400
+Message-ID: <1120234546.3603.111.camel@tribesman.namesys.com>
+References: <20050701112954.B2F849FF0@mail.mak.ac.ug>
+	 <1120220361.3603.62.camel@tribesman.namesys.com>
+	 <20050701130616.2D2FCA04E@mail.mak.ac.ug>
+	 <1120226737.3603.85.camel@tribesman.namesys.com>
+	 <20050701143553.57D5BA02C@mail.mak.ac.ug>
+	 <1120230853.3603.97.camel@tribesman.namesys.com>
+	 <20050701153254.F285AA07E@mail.mak.ac.ug>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24900-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24901-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <42C4FA1A.1050100@slaphack.com>
+In-Reply-To: <20050701153254.F285AA07E@mail.mak.ac.ug>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
-Cc: Markus =?iso-8859-1?Q?T=F6rnqvist?= <mjt@nysv.org>, Douglas McNaught <doug@mcnaught.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Hubert Chan <hubert@uhoreg.ca>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: Flora Dru <dru@dicts.mak.ac.ug>
+Cc: reiserfs-list@namesys.com
 
-On Fri, Jul 01, 2005 at 03:08:58AM -0500, David Masover wrote:
-> David Weinehall wrote:
->
-> >GNOME and KDE run on operating systems that run other kernels than
-> >Linux, hence they have to implement their own userland VFS anyway.
-> >Adding this to the Linux kernel won't help them one bit, unless
-> >we can magically convince Sun to add it to Solaris, all different
-> >BSD:s to add it to their kernels, etc.  Not going to happen.
-> >An effort to get GNOME and KDE to unify their VFS:s would be
-> >far more benificial,
+Hello
+
+On Fri, 2005-07-01 at 19:32, Flora Dru wrote:
+> >> 
+> > ls -l /mnt?
 > 
-> Than what?  Creating a unified VFS which I can access from Bash, and 
-> which obsoletes both GNOME and KDE's VFSes except in their presentation?
-
-On one of the platforms that they support, yes.  But only for kernels
-newer than 2.6.yy...  So they'd still have to have their own VFS for
-2.4.xx, 2.6.xx (xx < yy), FreeBSD, OpenBSD, Solaris, etc...
-
-> >FreeDesktop is doing a lot of work to make GNOME, KDE, and other
-> >DE:s interoperate as much as possible.  Support their initiative
-> >instead of trying to get a monstrosity (albeit a very cool one,
-> >conceptually) into the kernel.  Sure, it could be made to work,
-> >but not without dropping our Unixness.
+> rwx------  109 popmail  popmail      4096 Jun 16 11:27 finance.mak.ac.ug
+> drwx------  405 popmail  popmail      8192 May 16 11:21 forest.mak.ac.ug
+> ?---rwS-wx  14132 1431505464 1245851954 1163544915 Jul 29  2002 
+> hospital.mak.ac.ug
+> drwx------  121 popmail  popmail      4096 Jun 15 10:39 iace.mak.ac.ug
+> drwxr-xr-x  426 popmail  popmail      8192 Jun 18 16:33 ics.mak.ac.ug
+> ?r-xr-Srw-  8308 544433262 1918984552 543649385 Aug 21  2021 iph.mak.ac.ug
+> drwx------  438 popmail  popmail      8192 May 17 10:23 isae.mak.ac.ug
+> drwx------   56 popmail  popmail      4096 Jun 16 10:41 law.mak.ac.ug
+> drwx------    2 root     root         4096 May 29 22:02 lost+found
+> br-srw-r--  17418 925986415 959925040  54,  54 Jan  1  2018 mak.ac.ug
+> drwx------   24 popmail  popmail      4096 Nov 25  2004 makdos.mak.ac.ug
+> drwx------  160 popmail  popmail      4096 Jun 27 14:54 masscom.mak.ac.ug
+> drwx------   69 popmail  popmail      4096 Jun 23 11:30 math.mak.ac.ug
+> drwx------  1463 popmail  popmail     28672 Jun 24 16:43 med.mak.ac.ug
+> ?r-xrw---t  12109 1499101751 811806537 1868974179 Nov 30  2032 
+> misr.mak.ac.ug
+> drwx------    6 popmail  popmail      4096 Apr 28 10:39 mubs.mak.ac.ug
+> drwx------   21 popmail  popmail      4096 Jun 24 09:50 mugs.mak.ac.ug
+> drwx------   63 popmail  popmail      4096 Oct 15  2004 muie.mak.ac.ug
+> drwx------   85 popmail  popmail      4096 May 30 11:28 muienr.mak.ac.ug
+> drwx------    7 popmail  popmail      4096 May 19  2004 muip.mak.ac.ug
+> drwxr-xr-x    3 popmail  popmail      4096 Apr  8 09:49 muklaw.ac.ug
+> drwx------  219 popmail  popmail      4096 Jun 16 14:00 mulib.mak.ac.ug
+> drwx------   15 popmail  popmail      4096 May 19  2004 muspgs.mak.ac.ug
+> drwx------   16 popmail  popmail      4096 May 19  2004 pdd.mak.ac.ug
+> drwx------   31 popmail  popmail      4096 Nov 23  2004 physics.mak.ac.ug
+> drwx------    3 popmail  popmail      4096 May 19  2004 printery.mak.ac.ug
+> drwx------   26 popmail  popmail      4096 Jun 17 14:29 projects.mak.ac.ug
+> ?--xr-Sr--  25674 1714972282 1114916184 961691984 Dec  1  2033 sci.mak.ac.ug
+> drwx------   54 popmail  popmail      4096 Feb  1 09:11 sifa.mak.ac.ug
+> drwxr-xr-x  776 popmail  popmail     16384 Jun 12 14:09 ss.mak.ac.ug
+> drwxr-xr-x    7 popmail  popmail      4096 May 30 08:35 tech.mak.ac.ug
+> drwx------  500 popmail  popmail     12288 May 30 16:16 vetmed.mak.ac.ug
+> drwx------   54 popmail  popmail      4096 May  2 15:13 zoology.mak.ac.ug 
 > 
-> (I'm talking about the metafs (/meta) idea, which isn't nearly as much a 
-> monstrocity, and doesn't kill our unixness, it enhances it.)
 
-Which would neither need VFS changes nor be dependent on Reiser4 in
-any way, so I don't see why this thread lives on.  Just get down to
-business and implement this metafs =)
+I guess /dev/sdc1 was formatted as ext2 before. That makes it mountable
+as ext2.
 
+Please umount and try
+mount /dev/sdc1 /mnt -t reiserfs
 
-Regards: David Weinehall
--- 
- /) David Weinehall <tao@acc.umu.se> /) Northern lights wander      (\
-//  Maintainer of the v2.0 kernel   //  Dance across the winter sky //
-\)  http://www.acc.umu.se/~tao/    (/   Full colour fire           (/
+if it mounts: ls -l /mnt
+
+>  
+> 
+> > Can you umount /dev/sdc1 or remount readonly?
+> umount and mount as readwrite are successful but mount readonly returns
+> mount: /dev/sdc1 already mounted or /mnt busy 
+> 
+If filesystem is mounted you can remount: mount -o remount,ro /mnt
+
+If it is umounted, and mount -o ro /dev/sdc1 /mnt fails
+try dmesg to see what did kernel say why it could not mount it.
+ 
+> >> 
+> >> thanks again  
+> >> 
+> >>  
+> >> 
+> > 
+>  
+> 
+> 
+
