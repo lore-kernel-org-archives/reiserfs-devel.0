@@ -1,53 +1,64 @@
-From: Jens Axboe <axboe@suse.de>
-Subject: Re: XFS corruption during power-blackout
-Date: Fri, 1 Jul 2005 14:56:58 +0200
-Message-ID: <20050701125657.GH2243@suse.de>
-References: <254889.27725ab660aa106eb6acc07307d71ef1fbd5b6fd366aebef9e2f611750fbcb467e46e8a4.IBX@taniwha.stupidest.org> <OFC7BE2BBA.42F70A93-ON88257030.00595A48-88257030.005A99A3@us.ibm.com> <054069.b93858d6b97c07747dc32be2dd8981b254d981528781006053dce7be58de88865a43b162.IBX@taniwha.stupidest.org> <20050630194437.GC8374@wohnheim.fh-wedel.de> <947885.634f7bc00f9a47e9c90ffbeec9ebb14a812e2dab7a64e2d09cedc7aa2589ffaf3593543a.IBX@taniwha.stupidest.org> <42C538DC.4070000@emc.com>
+From: "Flora Dru" <dru@dicts.mak.ac.ug>
+Subject: Re: Filesystem repair and Data Recovery
+Date: Fri, 01 Jul 2005 16:06:16 +0300
+Message-ID: <20050701130616.2D2FCA04E@mail.mak.ac.ug>
+References: <20050701112954.B2F849FF0@mail.mak.ac.ug>
+            <1120220361.3603.62.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24892-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24893-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <42C538DC.4070000@emc.com>
+In-Reply-To: <1120220361.3603.62.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ric Wheeler <ric@emc.com>
-Cc: Chris Wedgwood <cw@f00f.org>, J?rn Engel <joern@wohnheim.fh-wedel.de>, Bryan Henderson <hbryan@us.ibm.com>, Al Boldi <a1426z@gawab.com>, linux-fsdevel@vger.kernel.org, linux-xfs@oss.sgi.com, Steve Lord <lord@xfs.org>, 'Nathan Scott' <nathans@sgi.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; format="flowed"; charset="us-ascii"
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-On Fri, Jul 01 2005, Ric Wheeler wrote:
-> Chris Wedgwood wrote:
+
+>> 
+>> our reiserfs partition that holds our institutions mails got corrupted 
+>> (27GB).
 > 
-> >On Thu, Jun 30, 2005 at 09:44:37PM +0200, J?rn Engel wrote:
-> >
-> > 
-> >
-> >>Or do you rather mean that a single sync() should block until all data
-> >>currently present is hardened?
-> >>   
-> >>
-> >
-> >Logically sync() should return only after all dirty buffers that
-> >existed before sync() was called are flushed.
-> >
-> >Anything more than this (i.e. waiting on newly (since sync was called
-> >but before it returns) dirtied buffers) could live-lock (actually,
-> >this used to happen sometimes, I don't know if that's the case).
-> > 
-> >
-> I think that we need one more stage in sync() behavior to make sure that 
-> the data is safely on the platter.  For file systems with supported 
-> write barriers, the last IO should be wrapped with a barrier to flush 
-> the disk cache.
+> Can you please provide more details? Does it refuse to mount? Do you get
+> kernel warnings when you try to access files on it? Did it get
+> unreadable blocks? 
 > 
-> It doesn't seem that sync() does that in today's code.
+It failed to mount the first time after a on normal shutdown and  reboot 
+that is when my colleague tried to repair using rebuild-tree it failed (i 
+unfortunately dont know what the errors were). This is when he modified the 
+fstab, set fs as ext2, rebooted and it worked however some of the files and 
+folders were corrupted with changed strange permissions and owners. See 
+below: 
 
-That is true, sync() really only guarantees that the io has been issued
-and the drive signalled completion, with write back caching on it might
-not be on platter yet.
+?--xr-S-wx  25390 1701015401 574452853 1747074414 Jul  1  2025 
+admin.mak.ac.ug
+?r--rw--w-  14641 741476913 173227333 1162692948 Jun  3  1975 
+agric.mak.ac.ug
+?--xr----t  29295 543258944 1933339936 1869572193 Oct 23  2030 
+bookshop.mak.ac.ug
+br-srw-r--  17418 925986415 959925040  54,  54 Jan  1  2018 mak.ac.ug 
 
--- 
-Jens Axboe
+
+> 
+> Please run 
+> reiserfsck /dev/sda2
+> and let us know what does it say.
+> please make sure that you have the most recent reiserfsck with
+> reiserfsck -V. If it is not 3.6.19 - please upgrade:
+> ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.19.tar.gz 
+> 
+reiserfsck /dev/sdc1 failed when i tried it (thought it was bse the partion 
+is now read as ext2), unfortunately i cant umount the partition because it 
+is on a production server and i cant reboot it now. But i will owrk on that 
+in the nite and post error message. 
+
+My kernel is linux 2.4.19 and reiserfsprogs-3.6.19.tar.gz is recommended for 
+kernels 2.4.30 or later. Which one would your recommend for my kernel? 
+
+
+Thanks again
+Florence 
 
