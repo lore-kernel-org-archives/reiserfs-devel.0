@@ -1,64 +1,54 @@
-From: Alistair John Strachan <s0348365@sms.ed.ac.uk>
-Subject: Re: XFS corruption during power-blackout
-Date: Fri, 1 Jul 2005 17:35:30 +0100
-Message-ID: <200507011735.30229.s0348365@sms.ed.ac.uk>
-References: <200507011405.RAA27425@raad.intranet>
+From: "Flora Dru" <dru@dicts.mak.ac.ug>
+Subject: Re: Filesystem repair and Data Recovery
+Date: Fri, 01 Jul 2005 19:36:25 +0300
+Message-ID: <20050701163625.1C533A069@mail.mak.ac.ug>
+References: <20050701112954.B2F849FF0@mail.mak.ac.ug>
+            <1120220361.3603.62.camel@tribesman.namesys.com>
+            <20050701130616.2D2FCA04E@mail.mak.ac.ug>
+            <1120226737.3603.85.camel@tribesman.namesys.com>
+            <20050701143553.57D5BA02C@mail.mak.ac.ug>
+            <1120230853.3603.97.camel@tribesman.namesys.com>
+            <20050701153254.F285AA07E@mail.mak.ac.ug>
+            <1120234546.3603.111.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <200507011405.RAA27425@raad.intranet>
-Content-Disposition: inline
-Sender: linux-fsdevel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-24903-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <1120234546.3603.111.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Al Boldi <a1426z@gawab.com>
-Cc: 'Jens Axboe' <axboe@suse.de>, 'David Masover' <ninja@slaphack.com>, 'Chris Wedgwood' <cw@f00f.org>, 'Nathan Scott' <nathans@sgi.com>, linux-xfs@oss.sgi.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; format="flowed"; charset="us-ascii"
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-On Friday 01 Jul 2005 15:05, Al Boldi wrote:
-> Jens Axboe wrote: {
->
-> On Fri, Jul 01 2005, David Masover wrote:
-> > Chris Wedgwood wrote:
-> > >On Wed, Jun 29, 2005 at 07:53:09AM +0300, Al Boldi wrote:
-> > >>What I found were 4 things in the dest dir:
-> > >>1. Missing Dirs,Files. That's OK.
-> > >>2. Files of size 0. That's acceptable.
-> > >>3. Corrupted Files. That's unacceptable.
-> > >>4. Corrupted Files with original fingerprint. That's ABSOLUTELY
-> > >>unacceptable.
-> > >
-> > >disk usually default to caching these days and can lose data as a
-> > >result, disable that
-> >
-> > Not always possible.  Some disks lie and leave caching on anyway.
->
-> And the same (and others) disks will not honor a flush anyways.
-> Moral of that story - avoid bad hardware.
-> }
->
-> 1. Sync is not the issue. The issue is whether a journaled FS can detect
-> corrupted files and flag them after a power-blackout!
-> 2. Moral of the story is: What's ext3 doing the others aren't?
->
+> 
+> Please umount and try
+> mount /dev/sdc1 /mnt -t reiserfs 
+> 
+> if it mounts: ls -l /mnt
 
-I agree, I've used XFS for about three years on Linux now, and whilst I love 
-the performance and self-repair attributes of the filesystem, I do think it 
-leaves a lot to be desired when it comes to file corruption.
+It fails with
+mount: /dev/sdc1 already mounted or /mnt busy
 
-In my experience, using a standard XFS log/volume setup on the same physical, 
-cheap IDE HD, any files open at the time as a power down or hardware lockup 
-end up being filled either with zeros, or garbage.
+>> 
+> If it is umounted, and mount -o ro /dev/sdc1 /mnt fails
+> try dmesg to see what did kernel say why it could not mount it.
 
-However, I'd far rather lose a few files once in a blue moon than have to sit 
-through 10 minute fsck's every time the kernel crashes or I kick out the 
-plugs.
+This also fails with /dev/sdc1 already mounted or /mnt busy 
 
--- 
-Cheers,
-Alistair.
+dmesg has no error related with mount see what it returns (where else cld 
+the kernel be logging?) 
 
-personal:   alistair()devzero!co!uk
-university: s0348365()sms!ed!ac!uk
-student:    CS/CSim Undergraduate
-contact:    1F2 55 South Clerk Street,
-            Edinburgh. EH8 9PP.
+SuSE-FW-ACCEPT IN=eth0 OUT= MAC=00:02:a5:42:34:cb:00:10:dc:2b:f2:45:08:00 
+SRC=81.199.17.2 DST=81.199.17.15 LEN=48 TOS=0x00 PREC=0x00 TTL=127 ID=56613 
+DF PROTO=TCP SPT=4507 DPT=80 WINDOW=16384 RES=0x00 SYN URGP=0 OPT 
+(020405B401010402)
+SuSE-FW-ACCEPT IN=eth0 OUT= MAC=00:02:a5:42:34:cb:00:0a:41:11:c4:07:08:00 
+SRC=212.88.98.164 DST=81.199.17.15 LEN=60 TOS=0x00 PREC=0x00 TTL=60 ID=61303 
+DF PROTO=TCP SPT=53804 DPT=25 WINDOW=5840 RES=0x00 CWR ECE SYN URGP=0 OPT 
+(020405B40402080A16C4D74E0000000001030300) 
+
+ 
+
