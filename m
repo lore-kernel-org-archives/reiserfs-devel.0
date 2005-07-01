@@ -1,36 +1,71 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: backup (was Re: reiser4 plugins)
-Date: Fri, 1 Jul 2005 10:19:52 -0400
-Message-ID: <20050701141952.GA2719@thunk.org>
-References: <42BB7B32.4010100@slaphack.com> <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl> <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org> <42C018E5.8030805@slaphack.com> <20050627162839.GA22799@thunk.org> <42C06BC6.7090002@slaphack.com> <20050630214950.GA14286@thunk.org> <d120d50005063015345a4968a@mail.gmail.com> <42C4EACC.7020604@slaphack.com>
+From: "Flora Dru" <dru@dicts.mak.ac.ug>
+Subject: Re: Filesystem repair and Data Recovery
+Date: Fri, 01 Jul 2005 17:35:53 +0300
+Message-ID: <20050701143553.57D5BA02C@mail.mak.ac.ug>
+References: <20050701112954.B2F849FF0@mail.mak.ac.ug>
+            <1120220361.3603.62.camel@tribesman.namesys.com>
+            <20050701130616.2D2FCA04E@mail.mak.ac.ug>
+            <1120226737.3603.85.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-24896-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24897-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <42C4EACC.7020604@slaphack.com>
+In-Reply-To: <1120226737.3603.85.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
-Cc: dtor_core@ameritech.net, Markus T?rnqvist <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; format="flowed"; charset="us-ascii"
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Rule #3 from http://www.streamload.com/About/Legal_eng.asp?page=id73#
-is pretty clear about what applies if you have a trial account (which
-seems to be what you have since you say you'll cancel your account if
-they charge you anything):
 
-  3. Do not circumvent Freeloader download restrictions.
-  Any attempt to circumvent Freeloader trial account restrictions will
-  result in a permanent banishment from the Streamload community. This
-  includes (3a) files with an invalid or disguised file format; (3b)
-  encryption; (3c) steganography and/or (3d) creating multiple
-  freeloader accounts.
+> please do
+> cat /proc/mounts 
+> and let us know what did it say.
 
-You can interpret that whatever way you like, but if you're that
-cavalier with your data, hey, I'm not sure _I'd_ trust your judgement
-about which filesystem to trust.  :-)
+cat /proc/mounts returns 
 
-						- Ted
+rootfs / rootfs rw 0 0
+/dev/root / reiserfs rw 0 0
+proc /proc proc rw 0 0
+devpts /dev/pts devpts rw 0 0
+/dev/sda2 /boot reiserfs rw 0 0
+/dev/sda10 /home reiserfs rw 0 0
+/dev/sda9 /data reiserfs rw 0 0
+/dev/sda8 /opt reiserfs rw 0 0
+/dev/sda6 /usr reiserfs rw 0 0
+/dev/sda7 /var reiserfs rw 0 0
+/dev/sdd1 /home/popmail reiserfs rw 0 0
+shmfs /dev/shm shm rw 0 0
+/dev/sdb5 /home/popmail/tech.mak.ac.ug reiserfs rw 0 0
+/dev/sdb6 /home/popmail/agric.mak.ac.ug reiserfs rw 0 0
+/dev/sdb7 /home/popmail/educ.mak.ac.ug reiserfs rw 0 0
+/dev/sdc1 /mnt ext2 rw 0 0 
+
+The corrupted partition /dev/sdc1. 
+
+> Which partition contains reiserfs which got corrupted? Is it root
+> filesystem now?
+
+It was initially a reiserfs as i told you and he remounted it as ext2. It is 
+not a root filesystem it is a storage partition 
+
+>> > Please run 
+>> > reiserfsck /dev/sda2
+>> > and let us know what does it say.
+>> > please make sure that you have the most recent reiserfsck with
+>> > reiserfsck -V. If it is not 3.6.19 - please upgrade:
+>> > ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.19.tar.gz
+>> > 
+
+Meanwhile I've run reiserfsck /dev/loop0 (an image of the corrupted 
+filesystem that we transfered to another host) to which i get the error
+Bad root block 4294967295. (--rebuild-tree did not complete) 
+
+And reiserfsck  --rebuild-tree /dev/loop0 fails with No reiserfs metadata 
+found 
+
+thanks again 
+
+
