@@ -1,75 +1,141 @@
-From: David Masover <ninja@slaphack.com>
+From: Chet Hosey <chosey@nauticom.net>
 Subject: Re: reiser4 plugins
-Date: Fri, 01 Jul 2005 02:16:58 -0500
-Message-ID: <42C4EDEA.6020602@slaphack.com>
-References: <200506301847.j5UIlp6u012775@laptop11.inf.utfsm.cl> <1120163870.12258.107.camel@localhost>
+Date: Fri, 01 Jul 2005 03:41:00 -0400
+Message-ID: <42C4F38C.9020000@nauticom.net>
+References: <200507010328.j613SV3h004647@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24871-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24872-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1120163870.12258.107.camel@localhost>
+In-Reply-To: <200507010328.j613SV3h004647@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Zan Lynx <zlynx@acm.org>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Hubert Chan <hubert@uhoreg.ca>, Hans Reiser <reiser@namesys.com>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Kevin Bowen <kevin@ucsd.edu>, Hubert Chan <hubert@uhoreg.ca>, Hans Reiser <reiser@namesys.com>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Zan Lynx wrote:
-> On Thu, 2005-06-30 at 14:47 -0400, Horst von Brand wrote:
-> [snip]
-[snip-some-more]
-> Structured files are fine when they're small but quickly become
-> disgusting as they get bigger.  Either you slowly rewrite the whole
-> thing or you "fast save" by writing new sections to the end of it that
-> replace existing sections.  That's how you end up with documents that
-> contain "deleted" information that was supposed to be confidential.
+Horst von Brand wrote:
 
-Doesn't OpenOffice already do something similar with zipfiles?  I 
-remember noticing huge differences in save times after adding large 
-images to a presentation versus just changing some text.  So, it's 
-obviously not repacking each image every time I save.  But, as the 
-internal text is all XML, I doubt it's leaving "deleted" sections lying 
-around.
+>Kevin Bowen <kevin@ucsd.edu> wrote:
+>  
+>
+>>                                                            and think
+>>about it just limited to a user's home directory, and the storage and
+>>organization of actual *data* (as opposed to system files).
+>>    
+>>
+>
+>Who is to say what is "data" and what is "system files"? And if you are
+>limiting yourself to /user/ data, why not have the /user/ decide how they
+>want to organize it, and give them the tools?
+>  
+>
+That's exactly what the idea of exporting the metadata as files within a
+file-as-dir is intended to do: let the user decide how to manage
+metadata. They have the tools -- anything which can interact with a
+file. This includes users who never start X.
 
-> Having the filesystem track each part for you and then creating a
-> structured file when needed (and without needing to remember to run a
-> special tool) is a far better idea.  (reiser4 doesn't do this but its a
-> possible idea)
+>  
+>
+>>                                                            The desire
+>>amongst users for ubiquitous metadata is very real - the current wave of
+>>"desktop search" products and technologies demonstrates this - 
+>>    
+>>
+>
+>Just like each previous claim "this /must/ be the next cool technology!",
+>also called later the "dotcom crash"...
+>  
+>
+How does that analogy hold? An example of a technology which is actually
+in demand is similar to the tech bubble exactly how?
 
-Been discussed to death, and chances are, Reiser4 will do this with 
-plugins.  I imagine it being implemented in a more general way, though. 
-  For example, a meta-file which, when read, produces a 
-zipfile/tarball/dump of the directory it belongs to.  Then, to send such 
-a document via email, you just navigate to the directory where it lives 
-while looking for files to attach, only from /meta/vfs as a base, then 
-attach the meta-file.  The zipfile gets built automatically.
+>>                                                               but
+>>search is really only the lowest-hanging fruit of this new way of
+>>looking at data. Application-layer solutions like Beagle,
+>>    
+>>
+>
+>That works without screwing up the whole system, AFAIU.
+>
+>  
+>
+If you define "works" as "implements a proprietary layer which can't be
+used naturally by the same tools UNIX users have used for years to
+manage data".
 
-To simplify the process, all you *really* need is a button on all FS 
-navigation windows (Nautilus, Open/Save dialogs, etc) to switch back and 
-forth between the meta view and the normal view.  That, or a separate pane.
+>And who says that a normal user isn't allowed to annotate each and every
+>file with its purpose or something else? I can very well imagine a system
+>in which users (say students in a Linux class) want to do so... on a shared
+>machine. Or users having a shared MP3 or photograph or ... collection, with
+>individual notes on each. Or even developers wanting to annotate source
+>code files with their comments, but leave them read-only (or have them
+>under SCM).
+>
+>  
+>
+This same argument could be used to attack the idea of group permissions
+-- that groups of users might have conflicting goals. Implementing
+metadata in userspace via bundled files has the same drawback.
 
-This way, instead of patching the mail client to support all possible 
-transformations you'd want to do before sending, or patching all 
-applications to use zip (and any other transformation a user might want 
-to do), or forcing the user to run another app, you automatically get 
-*all* available transformations, in a way that could potentially look as 
-smooth as adding zip support directly to the app.
+>>                           If you're sysadmining a multiuser reiser4
+>>box, and your users are able to modify the metadata of files they don't
+>>own, then you go to sysadmin purgatory. 
+>>    
+>>
+>
+>Bingo! And thus goes much of the supposed advantage of this nonsense.
+>
+>  
+>
+You seem to be implying that on a Reiser4 filesystem used by multiple
+users that people other than file owners will be about to apply
+arbitrary metadata to any object. It seems to me that adding metadata to
+a file-as-dir will require the same permissions as writing to the file
+itself, giving Reiser4 *zero* disadvantage against other multiuser
+systems. What gives you the impression that adding metadata to a
+file-as-dir is any harder to secure against modification from other
+users than the files themselves are in the first place?
 
-> Another advantage to file-as-directory is being able to access all the
-> file's meta-data through a single channel: file names and text data.
-> It removes the need for chmod, chown, touch, getxattr, chacl and all the
-> rest of the special tools needed to work with Unix files.  It also makes
-> it far easier to add new meta-data in the future, because no new tools
-> have to be written to use it.
+>[I see that /opponents/ are accused here of lack of imagination, while I
+> see that the /proponents/ lack imagination... or perhaps just real-world
+> experience.]
+>
+>  
+>
+Huh? The idea of arbitrary metadata isn't just with annotating MP3
+files. One seemingly important consideration would be the flexible
+implementation of add-on mechanisms, like security data, that could be
+implemented with zero changes to the filesystem. And you get to use
+existing tools to deal with new and arbitrary interfaces instead of
+having to deal with GUI garbage just to interact with metadata.
 
-All good points except the last one.  New tools vs new plugins?  People 
-already know how to write the tools...
+>>>other way; OpenOffice /has/ structured files, XML inside zipped files,
+>>>Java also uses zip files for its structuring needs, etc), or are ideas
+>>>that
+>>>      
+>>>
+>
+>  
+>
+>>And as a Java developer, I can tell you that the wide consensus is that
+>>this solution is half-assed and insufficient for both developers and
+>>users needs. In fact, I believe there is currently a JSR in progress to
+>>develop a more sophisticated Java packaging model.
+>>    
+>>
+>
+>Presumably based on ReiserFS 4, which then has to be ported to whatever
+>platform you want to run Java on ASAP? Great for you! Wait a bit, and
+>you'll get what you want then, even across the board!
+>  
+>
+Are unable to differentiate between a statement that a given solution is
+non-ideal and a suggestion that everything be done in a way that
+requires Reiser4? Someone mentions that the current solution isn't quite
+meeting all of their needs, and you respond with rhetoric accusing them
+of wanting everything to depend on Reiser4 and bloat the kernel. How is
+this productive?
 
-> So that's two reasons to bother.
-
-That, and the possible paradigm shift.  Navigating to the /meta dir for 
-a file could be the commandline equivalent of right-clicking on the file.
-
-Of course, to some people, paradigm shifts are a reason *not* to bother...
