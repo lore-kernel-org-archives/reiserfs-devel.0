@@ -1,101 +1,117 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 plugins
-Date: Thu, 30 Jun 2005 23:28:31 -0400
-Message-ID: <200507010328.j613SV3h004647@laptop11.inf.utfsm.cl>
-References: <kevin@ucsd.edu>
-Return-path: <reiserfs-list-return-24868-reiserfs=m.gmane.org@namesys.com>
+Date: Fri, 01 Jul 2005 01:56:03 -0500
+Message-ID: <42C4E903.4070206@slaphack.com>
+References: <200507010328.j613SV3h004647@laptop11.inf.utfsm.cl>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24869-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Kevin Bowen <kevin@ucsd.edu> 
-   of "Thu, 30 Jun 2005 13:08:42 MST." <1120162123.22241.53.camel@punchline.ucsd.edu> 
+In-Reply-To: <200507010328.j613SV3h004647@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Kevin Bowen <kevin@ucsd.edu>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Hubert Chan <hubert@uhoreg.ca>, Hans Reiser <reiser@namesys.com>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Kevin Bowen <kevin@ucsd.edu>, Hubert Chan <hubert@uhoreg.ca>, Hans Reiser <reiser@namesys.com>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Kevin Bowen <kevin@ucsd.edu> wrote:
-> > might be nice to have on exclusively one-user, isolated machines, like
-> > "keep /my/ annotations/icon/application name/whatever with the file's
-> > data", but that break down in multiuser (even serially, one user after the
+Horst von Brand wrote:
+> Kevin Bowen <kevin@ucsd.edu> wrote:
 
-> If this is really the core of your (and the rest of the reiser-
-> obstructionist crowd's) objection to the file-as-directory concept, then
-> you just haven't thought it through thoroughly enough. Ignore for the
-> moment the case of system-wide or network-wide shared data,
+[...]
 
-I.e., something like 90% of the use of Linux here. OK.
+>>                                                            The desire
+>>amongst users for ubiquitous metadata is very real - the current wave of
+>>"desktop search" products and technologies demonstrates this - 
+> 
+> 
+> Just like each previous claim "this /must/ be the next cool technology!",
+> also called later the "dotcom crash"...
 
->                                                             and think
-> about it just limited to a user's home directory, and the storage and
-> organization of actual *data* (as opposed to system files).
+Have you used this technology?
 
-Who is to say what is "data" and what is "system files"? And if you are
-limiting yourself to /user/ data, why not have the /user/ decide how they
-want to organize it, and give them the tools?
+For that matter, some of these claims have been true.  The Internet, 
+despite the dotcom crash, is now a requirement -- few people would use 
+an OS with no networking support on a desktop PC.  Same goes for GUIs. 
+Both of these technologies had to have at least some amount of kernel 
+support, both were once weird and experimental, and both are now in 
+demand by users and likely to be for some time.
 
->                                                             The desire
-> amongst users for ubiquitous metadata is very real - the current wave of
-> "desktop search" products and technologies demonstrates this - 
+If we're right, and searching is the next best thing, then it would be a 
+good idea to get started now.  If we're wrong, what's the harm?
 
-Just like each previous claim "this /must/ be the next cool technology!",
-also called later the "dotcom crash"...
+(Assuming /meta, of course.  I accept that the issues with 
+file-as-directory may never be solved to the point where we can do it at 
+the kernel's FS/VFS level.)
 
->                                                                but
-> search is really only the lowest-hanging fruit of this new way of
-> looking at data. Application-layer solutions like Beagle,
+>>                                                          Google Desktop
+>>Search et al allow for querying on metadata, but actually *acting* on
+>>the results of those queries requires that they be exposed via first
+>>class primitives which can be manipulated with arbitrary tools, not via
+>>some proprietary userland api which only one tool ever actually
+>>implements. 
+> 
+> 
+> Could you please explain in plain english? The only part I get out is
+> "propietary API", and I don't see anybody advocating such here.
 
-That works without screwing up the whole system, AFAIU.
+I don't understand it much, but I think the point being made is that 
+while desktop searches may be able to search metadata (not sure how they 
+do this -- their own plugins or just full-text searching?), they cannot 
+write to said metadata.  To change metadata on a file, one currently 
+needs to use a proprietary userland api which is only implemented by one 
+tool.
 
->                                                           Google Desktop
-> Search et al allow for querying on metadata, but actually *acting* on
-> the results of those queries requires that they be exposed via first
-> class primitives which can be manipulated with arbitrary tools, not via
-> some proprietary userland api which only one tool ever actually
-> implements. 
+So, for instance, if I want to grab all mp3s with Artist "Paul 
+Oakenfold" and change the genre to "techno" (can you do that?), I can 
+use Beagle's search tool to find all mp3s by Oakenfold, but to change 
+the genre, I have to use some separate tool to manipulate id3 tags, 
+which may or may not exist in an easily scriptable form.
 
-Could you please explain in plain english? The only part I get out is
-"propietary API", and I don't see anybody advocating such here.
+I know there's a decent tool for id3 tags, but there's so many kinds of 
+metadata and so many tools out there that the user can't possibly 
+memorize them all.  This is why I use the zipfile example, despite its 
+flaws.
 
-> As to the case of system-wide shared files, there is already a mechanism
-> to prevent users from inappropriately annotating files that don't belong
-> to them: file permissions.
+Now, the "arbitrary tools" bit is about how one could do this kind of 
+thing with file-as-dir or /meta.  With file-as-dir, it might be as 
+simple as:
 
-And who says that a normal user isn't allowed to annotate each and every
-file with its purpose or something else? I can very well imagine a system
-in which users (say students in a Linux class) want to do so... on a shared
-machine. Or users having a shared MP3 or photograph or ... collection, with
-individual notes on each. Or even developers wanting to annotate source
-code files with their comments, but leave them read-only (or have them
-under SCM).
+$ for i in `magical-find-tool artist='Paul Oakenfold'`; do echo 'techno' 
+ > "$i/.../genre"; done
 
->                            If you're sysadmining a multiuser reiser4
-> box, and your users are able to modify the metadata of files they don't
-> own, then you go to sysadmin purgatory. 
+Or even
 
-Bingo! And thus goes much of the supposed advantage of this nonsense.
+$ echo 'techno' > /.../search/artist='Paul Oakenfold'/*/.../genre
 
-[I see that /opponents/ are accused here of lack of imagination, while I
- see that the /proponents/ lack imagination... or perhaps just real-world
- experience.]
+It doesn't get too much more complicated for /meta, which has a nice 
+side effect of not killing things like tar and generally not messing 
+with POSIX.
 
-> > other way; OpenOffice /has/ structured files, XML inside zipped files,
-> > Java also uses zip files for its structuring needs, etc), or are ideas
-> > that
+One could also use vim, emacs, or whatever else to edit this metadata, 
+instead of being limited to one program.  This is especially nice 
+considering you might have to look up which one program to use.
 
-> And as a Java developer, I can tell you that the wide consensus is that
-> this solution is half-assed and insufficient for both developers and
-> users needs. In fact, I believe there is currently a JSR in progress to
-> develop a more sophisticated Java packaging model.
+>>As to the case of system-wide shared files, there is already a mechanism
+>>to prevent users from inappropriately annotating files that don't belong
+>>to them: file permissions.
+> 
+> 
+> And who says that a normal user isn't allowed to annotate each and every
+> file with its purpose or something else? I can very well imagine a system
+> in which users (say students in a Linux class) want to do so... on a shared
+> machine. Or users having a shared MP3 or photograph or ... collection, with
+> individual notes on each. Or even developers wanting to annotate source
+> code files with their comments, but leave them read-only (or have them
+> under SCM).
 
-Presumably based on ReiserFS 4, which then has to be ported to whatever
-platform you want to run Java on ASAP? Great for you! Wait a bit, and
-you'll get what you want then, even across the board!
--- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+File-as-dir is actually pretty nice for this, I think.  Since the 
+annotations appear as files, if the app supports it, the users can each 
+store individual annotations, world-readable, but only user-writable.
+
+With something like Gnome-VFS, I doubt there's even a mechanism whereby 
+such annotations can be shared to begin with.
+
+But this is just a thought experiment atm, don't pick it apart too 
+brutally...
