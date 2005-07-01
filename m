@@ -1,117 +1,76 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: reiser4 plugins
-Date: Fri, 01 Jul 2005 01:56:03 -0500
-Message-ID: <42C4E903.4070206@slaphack.com>
-References: <200507010328.j613SV3h004647@laptop11.inf.utfsm.cl>
+Subject: backup (was Re: reiser4 plugins)
+Date: Fri, 01 Jul 2005 02:03:40 -0500
+Message-ID: <42C4EACC.7020604@slaphack.com>
+References: <42BB7B32.4010100@slaphack.com>	 <200506240334.j5O3YowB008100@laptop11.inf.utfsm.cl>	 <20050627092138.GD11013@nysv.org> <20050627124255.GB6280@thunk.org>	 <42C018E5.8030805@slaphack.com> <20050627162839.GA22799@thunk.org>	 <42C06BC6.7090002@slaphack.com> <20050630214950.GA14286@thunk.org> <d120d50005063015345a4968a@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24869-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24870-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200507010328.j613SV3h004647@laptop11.inf.utfsm.cl>
+In-Reply-To: <d120d50005063015345a4968a@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Kevin Bowen <kevin@ucsd.edu>, Hubert Chan <hubert@uhoreg.ca>, Hans Reiser <reiser@namesys.com>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: dtor_core@ameritech.net
+Cc: Theodore Ts'o <tytso@mit.edu>, Markus T?rnqvist <mjt@nysv.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Horst von Brand wrote:
-> Kevin Bowen <kevin@ucsd.edu> wrote:
-
-[...]
-
->>                                                            The desire
->>amongst users for ubiquitous metadata is very real - the current wave of
->>"desktop search" products and technologies demonstrates this - 
+Dmitry Torokhov wrote:
+> On 6/30/05, Theodore Ts'o <tytso@mit.edu> wrote:
+> 
+>>On Mon, Jun 27, 2005 at 04:12:38PM -0500, David Masover wrote:
+>>
+>>>>    Streamload cannot warrant and does not guarantee, and You
+>>>>    should not expect, that all of Your private communications and
+>>>>    other personal information will never be disclosed in ways not
+>>>>    otherwise described in this Privacy Policy.
+>>>
+>>>gpg.  Was in my upload script to begin with.  I keep my key written many
+>>>times on a single hidden CD.  So long as the isofs can be read, at least
+>>>one of the copies should be usable.
+>>>
+>>>They don't have any billing information on me.  If they charge me for
+>>>something, I'll cancel my account.
+>>
+>>If you are using the free service, and are encrypting the data, you
+>>are explicitly violating their terms of service, and they can delete
+>>your data at any time, once they notice.
+>>
 > 
 > 
-> Just like each previous claim "this /must/ be the next cool technology!",
-> also called later the "dotcom crash"...
-
-Have you used this technology?
-
-For that matter, some of these claims have been true.  The Internet, 
-despite the dotcom crash, is now a requirement -- few people would use 
-an OS with no networking support on a desktop PC.  Same goes for GUIs. 
-Both of these technologies had to have at least some amount of kernel 
-support, both were once weird and experimental, and both are now in 
-demand by users and likely to be for some time.
-
-If we're right, and searching is the next best thing, then it would be a 
-good idea to get started now.  If we're wrong, what's the harm?
-
-(Assuming /meta, of course.  I accept that the issues with 
-file-as-directory may never be solved to the point where we can do it at 
-the kernel's FS/VFS level.)
-
->>                                                          Google Desktop
->>Search et al allow for querying on metadata, but actually *acting* on
->>the results of those queries requires that they be exposed via first
->>class primitives which can be manipulated with arbitrary tools, not via
->>some proprietary userland api which only one tool ever actually
->>implements. 
+> Does not look like it:
 > 
-> 
-> Could you please explain in plain english? The only part I get out is
-> "propietary API", and I don't see anybody advocating such here.
+> 3c. No encryption and/or steganography for the purpose of
+> circumventing Streamload's rules.
+> ... For example, if you'd like to encrypt something for an extra sense
+> of security and privacy, please feel free to do so. However, when
+> these tools are used solely for the purpose of circumventing
+> Streamload's rules, as determined by the sole discretion of
+> Streamload, the files will be deleted.
 
-I don't understand it much, but I think the point being made is that 
-while desktop searches may be able to search metadata (not sure how they 
-do this -- their own plugins or just full-text searching?), they cannot 
-write to said metadata.  To change metadata on a file, one currently 
-needs to use a proprietary userland api which is only implemented by one 
-tool.
+Trasnlation:  They really, honestly, have no way at all of knowing if my 
+GPG-encrypted 450 meg tarball violates their terms.  They have legally 
+given themselves the right to delete it just because they think it might 
+violate their terms, but it wouldn't make sense for them to delete a 
+file called "backup.tar.bz2.gpg" when there are no doubt a lot of other 
+encrypted files on their servers.  It wouldn't make sense because they 
+would either have to delete such files completely at random, or they'd 
+have to delete all of them at once.
 
-So, for instance, if I want to grab all mp3s with Artist "Paul 
-Oakenfold" and change the genre to "techno" (can you do that?), I can 
-use Beagle's search tool to find all mp3s by Oakenfold, but to change 
-the genre, I have to use some separate tool to manipulate id3 tags, 
-which may or may not exist in an easily scriptable form.
+Further translation:  This was probably put here to keep the lawyers 
+happy.  They don't want to be held liable for illegal stuff on their 
+servers, for example, so they have at least spelled out, in legalese, 
+that illegal stuff (and probably a few other categories) is not allowed 
+on their servers, and that encyrpting it doesn't magically make it legal.
 
-I know there's a decent tool for id3 tags, but there's so many kinds of 
-metadata and so many tools out there that the user can't possibly 
-memorize them all.  This is why I use the zipfile example, despite its 
-flaws.
+This kind of stuff makes lawyers happy, even if it *practically* does 
+nothing at all.
 
-Now, the "arbitrary tools" bit is about how one could do this kind of 
-thing with file-as-dir or /meta.  With file-as-dir, it might be as 
-simple as:
+Regardless, I feel reasonably safe with a backup there.  If I ever start 
+to feel unsafe, I can always back up the most critical stuff to gmail, 
+and create a few permanent copies on DVDs.  But I feel considerably 
+safer with Streamload than with Gmail, because using Gmail for my own 
+custom backup app directly violates their terms of service.
 
-$ for i in `magical-find-tool artist='Paul Oakenfold'`; do echo 'techno' 
- > "$i/.../genre"; done
-
-Or even
-
-$ echo 'techno' > /.../search/artist='Paul Oakenfold'/*/.../genre
-
-It doesn't get too much more complicated for /meta, which has a nice 
-side effect of not killing things like tar and generally not messing 
-with POSIX.
-
-One could also use vim, emacs, or whatever else to edit this metadata, 
-instead of being limited to one program.  This is especially nice 
-considering you might have to look up which one program to use.
-
->>As to the case of system-wide shared files, there is already a mechanism
->>to prevent users from inappropriately annotating files that don't belong
->>to them: file permissions.
-> 
-> 
-> And who says that a normal user isn't allowed to annotate each and every
-> file with its purpose or something else? I can very well imagine a system
-> in which users (say students in a Linux class) want to do so... on a shared
-> machine. Or users having a shared MP3 or photograph or ... collection, with
-> individual notes on each. Or even developers wanting to annotate source
-> code files with their comments, but leave them read-only (or have them
-> under SCM).
-
-File-as-dir is actually pretty nice for this, I think.  Since the 
-annotations appear as files, if the app supports it, the users can each 
-store individual annotations, world-readable, but only user-writable.
-
-With something like Gnome-VFS, I doubt there's even a mechanism whereby 
-such annotations can be shared to begin with.
-
-But this is just a thought experiment atm, don't pick it apart too 
-brutally...
+I think we should officially kill this particular thread.
