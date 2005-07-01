@@ -1,141 +1,71 @@
-From: Chet Hosey <chosey@nauticom.net>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 plugins
-Date: Fri, 01 Jul 2005 03:41:00 -0400
-Message-ID: <42C4F38C.9020000@nauticom.net>
-References: <200507010328.j613SV3h004647@laptop11.inf.utfsm.cl>
+Date: Fri, 01 Jul 2005 02:47:55 -0500
+Message-ID: <42C4F52B.4080508@slaphack.com>
+References: <hubert@uhoreg.ca>	<200506290509.j5T595I6010576@laptop11.inf.utfsm.cl>	<87hdfgvqvl.fsf@evinrude.uhoreg.ca>	<8783be6605062914341bcff7cb@mail.gmail.com>	<42C3615A.9020600@namesys.com> <871x6kv4zd.fsf@evinrude.uhoreg.ca>	<20050630062956.GP16867@khan.acc.umu.se> <87psu3vnvc.fsf@evinrude.uhoreg.ca>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24872-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24873-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200507010328.j613SV3h004647@laptop11.inf.utfsm.cl>
+In-Reply-To: <87psu3vnvc.fsf@evinrude.uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Kevin Bowen <kevin@ucsd.edu>, Hubert Chan <hubert@uhoreg.ca>, Hans Reiser <reiser@namesys.com>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hubert Chan <hubert@uhoreg.ca>
+Cc: Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Horst von Brand wrote:
-
->Kevin Bowen <kevin@ucsd.edu> wrote:
->  
->
->>                                                            and think
->>about it just limited to a user's home directory, and the storage and
->>organization of actual *data* (as opposed to system files).
->>    
+Hubert Chan wrote:
+> On Thu, 30 Jun 2005 08:29:56 +0200, David Weinehall <tao@acc.umu.se> said:
+> 
+> 
+>>On Thu, Jun 30, 2005 at 12:33:10AM -0400, Hubert Chan wrote:
 >>
->
->Who is to say what is "data" and what is "system files"? And if you are
->limiting yourself to /user/ data, why not have the /user/ decide how they
->want to organize it, and give them the tools?
->  
->
-That's exactly what the idea of exporting the metadata as files within a
-file-as-dir is intended to do: let the user decide how to manage
-metadata. They have the tools -- anything which can interact with a
-file. This includes users who never start X.
+>>>It's sort of like the way web servers handle index.html, for those
+>>>who think it's a stupid idea.  (Of course, some people may still
+>>>think it's a stupid idea... ;-) )
+> 
+> 
+>>And guess what?  That's handled on the web server level (userland),
+>>not by the file system.  So different web servers can handle it
+>>differently (think index.html.sv, index.html.zh, index.php, etc).
+> 
+> 
+> From the web *browser*'s point of view, it is handled by the
+> "filesystem" (which is provided by the various servers).  The browser
+> doesn't care how or where the data is stored.  It just requests a file,
+> and gets some data back.  So the browser doesn't have to check for
+> http://www.example.com/, get a failure (trying to read a directory),
+> check for http://www.example.com/index.html, etc.  In this way, the web
+> server controls (which I think takes the place of the filesystem in this
+> case) what gets shown (index.html.sv, etc.), instead of the leaving it
+> up to the browser.
 
->  
->
->>                                                            The desire
->>amongst users for ubiquitous metadata is very real - the current wave of
->>"desktop search" products and technologies demonstrates this - 
->>    
->>
->
->Just like each previous claim "this /must/ be the next cool technology!",
->also called later the "dotcom crash"...
->  
->
-How does that analogy hold? An example of a technology which is actually
-in demand is similar to the tech bubble exactly how?
+Somewhat flawed analogy, though.  After the protocol definition, the 
+browser proper will take any URL that the protocol handler likes, which 
+is why file:// works.  After the domain, the http/https handler will 
+take any URL at all, except for maybe some character set issues.  So 
+assuming the server is compatible with itself, we don't have to worry 
+about whether the browser supports going to a directory and having it 
+behave as a file (index.html behavior), or going to a file and having it 
+behave as a directory (as some scripts do -- I've seen urls that look 
+like http://example.com/foo.cgi/bar.html)
 
->>                                                               but
->>search is really only the lowest-hanging fruit of this new way of
->>looking at data. Application-layer solutions like Beagle,
->>    
->>
->
->That works without screwing up the whole system, AFAIU.
->
->  
->
-If you define "works" as "implements a proprietary layer which can't be
-used naturally by the same tools UNIX users have used for years to
-manage data".
+Among protocols that behave more like filesystems, such as FTP, you 
+can't really pull the same tricks.  When an FTP client asks for a 
+directory, it's probably asking for a directory listing, and would be 
+quite surprised to find a file there -- or the user would when binary 
+data floods their terminal.
 
->And who says that a normal user isn't allowed to annotate each and every
->file with its purpose or something else? I can very well imagine a system
->in which users (say students in a Linux class) want to do so... on a shared
->machine. Or users having a shared MP3 or photograph or ... collection, with
->individual notes on each. Or even developers wanting to annotate source
->code files with their comments, but leave them read-only (or have them
->under SCM).
->
->  
->
-This same argument could be used to attack the idea of group permissions
--- that groups of users might have conflicting goals. Implementing
-metadata in userspace via bundled files has the same drawback.
+I *think* this is how FTP works, but I haven't used it in years, except 
+through a web browser.  I still get the feeling that even a web browser 
+expects an FTP file to behave as a file and an FTP directory to behave 
+as a directory.
 
->>                           If you're sysadmining a multiuser reiser4
->>box, and your users are able to modify the metadata of files they don't
->>own, then you go to sysadmin purgatory. 
->>    
->>
->
->Bingo! And thus goes much of the supposed advantage of this nonsense.
->
->  
->
-You seem to be implying that on a Reiser4 filesystem used by multiple
-users that people other than file owners will be about to apply
-arbitrary metadata to any object. It seems to me that adding metadata to
-a file-as-dir will require the same permissions as writing to the file
-itself, giving Reiser4 *zero* disadvantage against other multiuser
-systems. What gives you the impression that adding metadata to a
-file-as-dir is any harder to secure against modification from other
-users than the files themselves are in the first place?
-
->[I see that /opponents/ are accused here of lack of imagination, while I
-> see that the /proponents/ lack imagination... or perhaps just real-world
-> experience.]
->
->  
->
-Huh? The idea of arbitrary metadata isn't just with annotating MP3
-files. One seemingly important consideration would be the flexible
-implementation of add-on mechanisms, like security data, that could be
-implemented with zero changes to the filesystem. And you get to use
-existing tools to deal with new and arbitrary interfaces instead of
-having to deal with GUI garbage just to interact with metadata.
-
->>>other way; OpenOffice /has/ structured files, XML inside zipped files,
->>>Java also uses zip files for its structuring needs, etc), or are ideas
->>>that
->>>      
->>>
->
->  
->
->>And as a Java developer, I can tell you that the wide consensus is that
->>this solution is half-assed and insufficient for both developers and
->>users needs. In fact, I believe there is currently a JSR in progress to
->>develop a more sophisticated Java packaging model.
->>    
->>
->
->Presumably based on ReiserFS 4, which then has to be ported to whatever
->platform you want to run Java on ASAP? Great for you! Wait a bit, and
->you'll get what you want then, even across the board!
->  
->
-Are unable to differentiate between a statement that a given solution is
-non-ideal and a suggestion that everything be done in a way that
-requires Reiser4? Someone mentions that the current solution isn't quite
-meeting all of their needs, and you respond with rhetoric accusing them
-of wanting everything to depend on Reiser4 and bloat the kernel. How is
-this productive?
+But I'm also pretty sure that FTP would be much more receptive to 
+file-as-directory than your average sysadmin would.  For one, breaking 
+tar is unforgivable, and the only ways I can think of fixing that issue 
+are shaky at best when you consider how many apps might do things 
+oh-so-slightly different than tar.
 
