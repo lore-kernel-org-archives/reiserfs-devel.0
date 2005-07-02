@@ -1,84 +1,62 @@
-From: =?ISO-8859-1?Q?Xu=E2n_Baldauf?=
- <xuan--2005.07.02--reiserfs-list--namesys.com@baldauf.org>
-Subject: Re: How to user reiser4 and crypt plugin ??
-Date: Sat, 02 Jul 2005 14:12:11 +0200
-Message-ID: <42C6849B.1080800@baldauf.org>
-References: <Pine.GSO.4.58.0506281054200.2602@sysss01h> <42C16B43.7060706@namesys.com>
+From: Pierre =?UTF-8?B?RXRjaGVtYcOvdMOp?= <petchema@concept-micro.com>
+Subject: Re: reiser4 plugins
+Date: Sat, 2 Jul 2005 14:28:46 +0200
+Message-ID: <20050702142846.78af7891.petchema@concept-micro.com>
+References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>
+	<200506261816.j5QIGMdI010142@turing-police.cc.vt.edu>
+	<42BF08CF.2020703@slaphack.com>
+	<200506262105.j5QL5kdR018609@turing-police.cc.vt.edu>
+	<42BF2DC4.8030901@slaphack.com>
+	<200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>
+	<42BF667C.50606@slaphack.com>
+	<5284F665-873C-45B7-8DDB-5F475F2CE399@mac.com>
+	<42BF7167.80201@slaphack.com>
+	<EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com>
+	<42C06D59.2090200@slaphack.com>
+	<CD59AE36-FD15-4A4C-9E1D-AB2F8B52D653@mac.com>
+	<42C08B5E.2080000@slaphack.com>
+	<87y88vrzkg.fsf@evinrude.uhoreg.ca>
+	<EBD8F590-0113-4509-9604-E6967C65C835@mac.com>
+	<87mzpbrvpf.fsf@evinrude.uhoreg.ca>
+	<D3A4ABBF-8062-4399-B1EC-61722295944A@mac.com>
+	<87irzzrqu7.fsf@evinrude.uhoreg.ca>
+	<2B1C058D-C304-4E15-ACDA-C3337E67E981@mac.com>
+	<87d5q6pdyv.fsf@evinrude.uhoreg.ca>
+	<C7DB345A-CD35-4A4C-89F7-5BBD3CB83DF4@ma
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-24917-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24918-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42C16B43.7060706@namesys.com>
+In-Reply-To: <42C50804.4050006@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Edward Shishkin <edward@namesys.com>
-Cc: Keven Murphy <murphyk@gdls.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-Edward Shishkin wrote:
+Le Fri, 01 Jul 2005 04:08:20 -0500, David Masover <ninja@slaphack.com> a =
+=C3=A9crit :
 
-> Keven Murphy wrote:
->
->> Hello,
->>
->> I have read so much about reiser4 and the crypto plugin. What I have not
->> found is any docs on how to set up a partition using the plugin.
->> =20
->>
->
-> Hello. Crypto transform is unsupported for a while,
+Hi all,
 
-That's too bad. Because if you do not use the latest machines (e.g. only=20
-1 GHz CPU), you get, with cheap hard disks, 42 MB/s without encryption=20
-but only 12 MB/s with aes-cbc-essiv:sha256 (using dm-crypt). Thus,=20
-encryption seriously sacrifies performance. If you could limit=20
-performance-sacrificing to data which is really important (say: /home or=20
-/etc, but not /usr or /bin), performance would suffer less. Encryption=20
-should be orthogonal to the volume|partition the data is stored on. So=20
-I'm looking forward to (transparent) file level encryption becoming=20
-usable. :-)
+> Metafs also avoids having to patch tar.  It's assumed that legacy backup =
 
-> only compression (still not
-> for product using). The docs are under  construction.
->
-> Thanks,
-> Edward.
+> systems can always avoid metafs and still catch almost everything=20
+> important, and certainly everything they already do catch.  With a=20
+> hybrid or an entirely new backup system, we could catch everything,=20
+> including any new ACL-like animals that people invent.
 
-ciao,
-Xu=E2n.
+As an administrator, a way to perfectly save and restore the content of
+file systems is a requirement. Crashes do happen, so do migration to new
+disk subsystems, system cloning, etc, etc.
 
->
->
->> I have the modules installed and I have created a reiser4 filesystem.=20
->> I am
->> not sure what I need to do next.
->>
->> Thanks from a reiser newbie,
->>
->> Keven Murphy
->> murphyk@gdls.com
->>
->> Murphy's Law
->> ((U+C+I)x(10-S))/20xAx1/(1-sin(F/10))
->> U =3D Urgency    C =3D Complexity
->> I =3D Importance S =3D Skill
->> F =3D Frequency  A =3D Aggravation
->>
->>
->> This is an e-mail from General Dynamics Land Systems. It is for the=20
->> intended recipient only and may contain confidential and privileged=20
->> information.  No one else may read, print, store, copy, forward or=20
->> act in reliance on it or its attachments.  If you are not the=20
->> intended recipient, please return this message to the sender and=20
->> delete the message and any attachments from your computer. Your=20
->> cooperation is appreciated.
->>
->>
->> =20
->>
->
->
->
+If restoration can be done with the standard tools you find on any live
+rescue CD, it's even better.
 
+All what's probably needed is some readable-writable non-confusing
+(fully POSIX compliant) "view" that's guaranteed to contain all existing
+"raw" data and metadata).
+
+BR,
+Pierre.
