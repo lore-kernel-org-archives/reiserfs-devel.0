@@ -1,94 +1,66 @@
 From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: reiser4 plugins
-Date: Fri, 01 Jul 2005 22:12:26 -0400
-Message-ID: <200507020212.j622CQgb006811@laptop11.inf.utfsm.cl>
-References: <kevin@ucsd.edu>
-Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S261333AbVGDCkw@vger.kernel.org>
-In-Reply-To: Message from Kevin Bowen <kevin@ucsd.edu> 
-   of "Fri, 01 Jul 2005 13:26:31 MST." <1120249592.22241.84.camel@punchline.ucsd.edu> 
+Date: Fri, 01 Jul 2005 21:48:09 -0400
+Message-ID: <200507020148.j621m9m0006559@laptop11.inf.utfsm.cl>
+References: <ninja@slaphack.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel=40m.gmane.org-S261366AbVGDCrv@vger.kernel.org>
+In-Reply-To: Message from David Masover <ninja@slaphack.com> 
+   of "Fri, 01 Jul 2005 14:55:12 EST." <42C59FA0.1090908@slaphack.com> 
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kevin Bowen <kevin@ucsd.edu>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Hubert Chan <hubert@uhoreg.ca>, Hans Reiser <reiser@namesys.com>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: David Masover <ninja@slaphack.com>
+Cc: David Weinehall <tao@acc.umu.se>, =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, Douglas McNaught <doug@mcnaught.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Hubert Chan <hubert@uhoreg.ca>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Kevin Bowen <kevin@ucsd.edu> wrote:
+David Masover <ninja@slaphack.com> wrote:
+> David Weinehall wrote:
+> > On Fri, Jul 01, 2005 at 03:08:58AM -0500, David Masover wrote:
+> >>David Weinehall wrote:
 
-[...]
+> >>>GNOME and KDE run on operating systems that run other kernels than
+> >>>Linux, hence they have to implement their own userland VFS anyway.
+> >>>Adding this to the Linux kernel won't help them one bit, unless
+> >>>we can magically convince Sun to add it to Solaris, all different
+> >>>BSD:s to add it to their kernels, etc.  Not going to happen.
+> >>>An effort to get GNOME and KDE to unify their VFS:s would be
+> >>>far more benificial,
 
-> > So, for instance, if I want to grab all mp3s with Artist "Paul 
-> > Oakenfold" and change the genre to "techno" (can you do that?), I can 
-> > use Beagle's search tool to find all mp3s by Oakenfold, but to change 
-> > the genre, I have to use some separate tool to manipulate id3 tags, 
+> >> Than what?  Creating a unified VFS which I can access from Bash,
+> >> and which obsoletes both GNOME and KDE's VFSes except in their
+> >> presentation?
 
-> Yes, this is basically what I was getting at, although I was thinking
-> more in terms of the reiser5/6/whatever set theoretic semantics, which,
-> from my point of view at least, reiser4 is simply the first step towards
-> building the enabling infrastructure of. But the fact that reiser4
-> semantics + trivial shell scripting enables, as illustrated by David,
-> the rough equivalent of set-theoretic semantics, demonstrates how
-> reiser4 is in fact a step in this direction.
+> > On one of the platforms that they support, yes.  But only for kernels
+> > newer than 2.6.yy...  So they'd still have to have their own VFS for
+> > 2.4.xx, 2.6.xx (xx < yy), FreeBSD, OpenBSD, Solaris, etc...
 
-I don't see any "trivial shell scripting", just need for a plethora of
-magic extract-this-or-that-metadata programs. Which can very well work
-exactly the same on independent files, no need to shove junk /into/ the
-indexed files.
+> Right.  But, /proc started somewhere, didn't it?
 
-> > > moment the case of system-wide or network-wide shared data,
-> > I.e., something like 90% of the use of Linux here. OK.
+Sun.
 
-> 90% of *what* exactly? 90% of what machines deal with, or 90% of what
-> humans interact with?
+> I have the feeling that other systems will duplicate it if it's good.
 
-Both. Most use here is in computer labs, where most is shared via NFS
-(readonly), plus user data mounted read-write.
+Linux copied here.
 
-> > > users needs. In fact, I believe there is currently a JSR in 
-> > > progress to develop a more sophisticated Java packaging model.
+> Even if they don't, it would be more beneficial to me
 
-> > Presumably based on ReiserFS 4, which then has to be ported to 
-> > whatever platform you want to run Java on ASAP? Great for you! Wait a
-> > bit, and you'll get what you want then, even across the board!
+How, exactly?
 
-> No, obviously that's not what I was saying. But the need for these kinds
-> of domain-specific packaging/metadata formats, each requiring their own
-> tools to work with, would be alleviated if there were simply a more
-> powerful filesystem semantic.
+Besides, /your/ convenience isn't the only thing that matters...
 
-*Please explain HOW*!! The domain-specific formats /will/ stay (if nothing
-else, because the /domains/ have /specific/ needs), the special tools to
-work with them /will/ have to be written exactly the same (because of the
-above). All for use on /one/ non-standard filesystem. Plus exactly the same
-stuff to work on sane filesystems. The kernel is *not* a magic piece of
-software that solves the problem of world hunger if you just can figure out
-what strange extension to force onto Linus' kernel version.
+>                                                       and probably
+> most Linux users
 
->                               Clearly forcing reiser on the world is a
-> non-starter, but try extending your imagination a little bit to a future
-> in which there's a 'new POSIX' specifying a set-theoretic filesystem
-> model.
+"Most Linux users" don't use experimental filesystems at all...
 
-Sorry, I just don't see any need of shoving Oracle into the kernel. It
-leads a quite confortable life in userland.
+>                  to have metafs supported in both GNOME and KDE, even
+> if they still need an emulation layer to support other systems.
 
->        So-called 'database-filesystems' ARE coming, whether from
-> Microsoft, Apple, or us.
-
-IBM did it, long ago (AS/400 and OS/400 ring a bell?). And is now slowly
-moving away from it (and other structured filesystems), AFAICS, towards
-(guess what!) POSIX and Linux...
-
-Again, Linux is what it is today in large part because "We have to get
-$FEATURE, because if not, $COMPETITOR will win on us!" arguments have no
-traction.
-
->                          Who gets there first will determine who gets to
-> make the rules.
-
-So what? Let /them/ make the mistakes and pay for them, and learn how to do
-it /right/, even if later!
+So Gnome and KDE get larger (and thus slower) for everybody. Besides, Gnome
+and KDE will have to agree on the formats involved first, which is /exactly/
+what is supposed to be impossible unless this stuff is implemented in the
+kernel...
 -- 
 Dr. Horst H. von Brand                   User #22616 counter.li.org
 Departamento de Informatica                     Fono: +56 32 654431
