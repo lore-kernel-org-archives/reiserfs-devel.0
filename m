@@ -1,71 +1,250 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: reiser4 plugins
-Date: Sat, 02 Jul 2005 18:09:15 -0500
-Message-ID: <42C71E9B.8050808@slaphack.com>
-References: <200506240241.j5O2f1eb005609@laptop11.inf.utfsm.cl>	<42BF08CF.2020703@slaphack.com>	<200506262105.j5QL5kdR018609@turing-police.cc.vt.edu>	<42BF2DC4.8030901@slaphack.com>	<200506270040.j5R0eUNA030632@turing-police.cc.vt.edu>	<42BF667C.50606@slaphack.com>	<5284F665-873C-45B7-8DDB-5F475F2CE399@mac.com>	<42BF7167.80201@slaphack.com>	<EC02A684-815A-4DF8-B5C1-9029FE45E187@mac.com>	<42C06D59.2090200@slaphack.com>	<CD59AE36-FD15-4A4C-9E1D-AB2F8B52D653@mac.com>	<42C08B5E.2080000@slaphack.com>	<87y88vrzkg.fsf@evinrude.uhoreg.ca>	<EBD8F590-0113-4509-9604-E6967C65C835@mac.com>	<87mzpbrvpf.fsf@evinrude.uhoreg.ca>	<D3A4ABBF-8062-4399-B1EC-61722295944A@mac.com>	<87irzzrqu7.fsf@evinrude.uhoreg.ca>	<2B1C058D-C304-4E15-ACDA-C3337E67E981@mac.com>	<87d5q6pdyv.fsf@evinrude.uhoreg.ca>	<C7DB345A-CD35-4A4C-89F7-5BBD3CB83DF4@mac.com>	<874qbiey92.fsf@evinrude.uhoreg.ca>	<42C50804.4050006@slaphack.com>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: Filesystem repair and Data Recovery
+Date: Sun, 03 Jul 2005 16:59:17 +0400
+Message-ID: <1120395556.4219.13.camel@tribesman.namesys.com>
+References: <20050701112954.B2F849FF0@mail.mak.ac.ug>
+	 <1120220361.3603.62.camel@tribesman.namesys.com>
+	 <20050701130616.2D2FCA04E@mail.mak.ac.ug>
+	 <1120226737.3603.85.camel@tribesman.namesys.com>
+	 <20050701143553.57D5BA02C@mail.mak.ac.ug>
+	 <1120230853.3603.97.camel@tribesman.namesys.com>
+	 <20050701153254.F285AA07E@mail.mak.ac.ug>
+	 <1120234546.3603.111.camel@tribesman.namesys.com>
+	 <20050701163625.1C533A069@mail.mak.ac.ug>
+	 <1120239440.10316.119.camel@tribesman.namesys.com>
+	 <20050702101916.31F449FEA@mail.mak.ac.ug>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-24921-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="=-mi5y+oti0w1evgOVkUQx"
+Return-path: <reiserfs-list-return-24926-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050702142846.78af7891.petchema@concept-micro.com>
+In-Reply-To: <20050702101916.31F449FEA@mail.mak.ac.ug>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: =?UTF-8?B?UGllcnJlIEV0Y2hlbWHDr3TDqQ==?= <petchema@concept-micro.com>
+To: Flora Dru <dru@dicts.mak.ac.ug>
 Cc: reiserfs-list@namesys.com
 
-Pierre Etchemaïté wrote:
-> Le Fri, 01 Jul 2005 04:08:20 -0500, David Masover <ninja@slaphack.com> a écrit :
+--=-mi5y+oti0w1evgOVkUQx
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+
+Hello
+
+On Sat, 2005-07-02 at 14:19, Flora Dru wrote: 
+> Good morning
+> > ok, you said earlier that you can umount it.
+> > Please umount and run
+> > reiserfsck /dev/sdc1
+> > and let us know what it says. 
+> > 
+> > PS: I have to leave now. Let continue later. I am not sure when I will
+> > be at work. Maybe tomorrow, maybe on sunday. 
+> > 
+> > Can you backup /dev/sdc1 locally? I am not sure that ssh corrupthost dd
+> > if=/dev/sdc1 > sdc1.img works as it is supposed to. 
+> > 
+> reiserfsck /dev/sdc1 returns
+> Do you want to run this program?[N/Yes] (note need to type Yes):Yes
+> reiserfs_open: neither new nor old reiserfs format found on /dev/sdc1
+> reiserfsck: could not open filesystem on "/dev/sdc1" 
 > 
-> Hi all,
+
+Lets try to find whether there is anything on /dev/sdc1 which looks like
+reiserfs.
+
+Please compile the attached program 
+make myscan
+
+and run it
+./myscan /dev/sdc1
+
+This program will look for reiserfs formatted nodes reiserfsck can try
+to re-build filesystem of.
+If you see a lot of lines like:
+block 34640 is reiserfs leaf
+block 34654 is reiserfs leaf
+block 34672 is reiserfs leaf
+
+then you should make a copy of /dev/sdc1 and do:
+reiserfsck --rebuild-sb /dev/copy
+reiserfsck --rebuild-tree /dev/copy
+
+
+Please also try this program on a backup you made over ssh and let us
+know the result.
+
+> Aborted 
+> 
+> Mount returns
+> /dev/sda1 on / type reiserfs (rw)
+> proc on /proc type proc (rw)
+> devpts on /dev/pts type devpts (rw,mode=0620,gid=5)
+> /dev/sda2 on /boot type reiserfs (rw)
+> /dev/sda9 on /data type reiserfs (rw)
+> /dev/sda8 on /opt type reiserfs (rw)
+> /dev/sda6 on /usr type reiserfs (rw)
+> /dev/sda7 on /var type reiserfs (rw)
+> shmfs on /dev/shm type shm (rw)
+> /dev/sdc1 on /mnt type ext2 (rw) 
+> 
+
+If you are sure that /dev/sdc1 is reiserfs, you should have umounted it
+already.
+
+> 
+> Thanks again
+> Florence Dru 
+> 
+>  
 > 
 > 
->>Metafs also avoids having to patch tar.  It's assumed that legacy backup 
->>systems can always avoid metafs and still catch almost everything 
->>important, and certainly everything they already do catch.  With a 
->>hybrid or an entirely new backup system, we could catch everything, 
->>including any new ACL-like animals that people invent.
 > 
-> 
-> As an administrator, a way to perfectly save and restore the content of
-> file systems is a requirement. Crashes do happen, so do migration to new
-> disk subsystems, system cloning, etc, etc.
 
-I would suggest a plugin which produces a dump of the active FS.  It's 
-how XFS seems to do it, after all, only you don't need the commandline tool.
+--=-mi5y+oti0w1evgOVkUQx
+Content-Disposition: attachment; filename=myscan.c
+Content-Type: text/x-c; name=myscan.c; charset=koi8-r
+Content-Transfer-Encoding: 7bit
 
-> If restoration can be done with the standard tools you find on any live
-> rescue CD, it's even better.
+/* read file by 4 k blocks and try to recognize reiserfs blocks */
 
-Any good XFS-enabled CD will have xfsdump.  Similarly, any good 
-Reiser4-enabled CD will have whatever we feel like putting there.
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <asm/types.h>
+#include <sys/stat.h>
 
-Can ACLs currently be backed up with any other tool than some sort of dump?
+char buf[4096];
 
-> All what's probably needed is some readable-writable non-confusing
-> (fully POSIX compliant) "view" that's guaranteed to contain all existing
-> "raw" data and metadata).
+struct block_head {       
+	__u16 blk2_level;        /* Level of a block in the tree. */
+	__u16 blk2_nr_item;      /* Number of keys/items in a block. */
+	__u16 blk2_free_space;   /* Block free space in bytes. */
+	__u16 blk_reserved;
+	__u32 reserved [4];
+};
 
-The danger here is that things beyond POSIX must either be encoded into 
-the file somehow.  If we add a thumbnail property to a certain type of 
-file, and the file format itself doesn't allow for any extra data, we 
-can either choose to have a separate view entirely for backup so that 
-the "backup" view (which forces the metadata into the file anyway) is 
-separate, or we can choose to accept that existing backup tools will 
-catch existing attributes that they were programmed to expect, and all 
-new stuff can be handled by some sort of dump.
+struct key {
+	__u32 k2_dir_id;
+	__u32 k2_objectid;
+	__u32 k_offset;
+	__u32 k_uniqueness;
+};
 
-I say "some sort of dump" because a separate backup view, because it 
-makes some files unusable except for transport, is effectively a dump, 
-only shown as a tree, instead of a single file.  But as long as we're 
-doing that, we may as well provide an actual dump plugin so that one can 
-do "gzip /metas/some/where/.../dump > /mnt/some/backup/medium".  It'd be 
-more efficient than tar for that sort of thing.
+struct item_head
+{
+	struct key ih_key;
+	union {
+		__u16 ih2_free_space;
+		__u16 ih2_entry_count;
+	};
+	__u16 ih2_item_len;
+	__u16 ih2_item_location;
+	__u16 ih_format;
+};
 
-Both are useful, though -- the tree is better for rsync backups, if 
-you're either using /meta on the other end or are planning to only 
-restore to a /meta enabled system.  I think we should do both ways.
+int
+leaf_count_ih(char *buf, int blocksize) 
+{
+	struct item_head * ih;
+	int prev_location;
+	int nr;
 
+	/* look at the table of item head */
+	prev_location = blocksize;
+	ih = (struct item_head *)(buf + sizeof(struct block_head));
+	nr = 0;
+	while (1) {
+		if (ih->ih2_item_location + ih->ih2_item_len != prev_location)
+			break;
+		if (ih->ih2_item_location < sizeof(struct item_head) * (nr + 1) + sizeof(struct block_head))
+			break;
+		if (ih->ih2_item_len > (blocksize - sizeof(struct item_head) - sizeof(struct block_head)))
+			break;
+		prev_location = ih->ih2_item_location;
+	/*
+		printf("%d: key [%u %u %u %u], item len %d, location %d\n",
+			nr, ih->ih_key.k2_dir_id, ih->ih_key.k2_objectid, 
+			ih->ih_key.k_offset, ih->ih_key.k_uniqueness,
+			ih->ih2_item_location, ih->ih2_item_len);
+	*/	
+		ih ++;
+		nr ++;
+	}
+    
+	return nr;
+}
+
+static int
+leaf_free_space_estimate(char *buf, int blocksize)
+{
+	struct block_head * blkh;
+	struct item_head * ih;
+	int nr;
+    
+	blkh = (struct block_head *)buf;
+	nr = blkh->blk2_nr_item;    
+	ih = (struct item_head *)(buf + sizeof(struct block_head)) + nr - 1;
+    
+	return (nr ? ih->ih2_item_location : blocksize) - sizeof(struct block_head) - sizeof(struct item_head) * nr;
+}
+
+static int
+leaf_blkh_correct(char *buf, int blocksize)
+{
+	struct block_head * blkh;
+	unsigned int nr;
+
+	blkh = (struct block_head *)buf;
+
+	nr = blkh->blk2_nr_item;
+	if (nr > ((blocksize - sizeof(struct block_head)) / (sizeof(struct item_head) + 1)))
+		/* item number is too big or too small */
+		return 0;
+
+	return leaf_free_space_estimate(buf, blocksize) == blkh->blk2_free_space;
+}
+
+int
+is_a_leaf(char *buf, int blocksize)
+{
+	struct block_head * blkh;
+	int counted;
+    
+	blkh = (struct block_head *)buf;
+	if (blkh->blk2_level != 1)
+		return 0;
+
+	if (!leaf_blkh_correct(buf, blocksize))
+		return 0;
+
+	counted = leaf_count_ih(buf, blocksize);
+
+	return (counted == blkh->blk2_nr_item) ? 1 : 0;
+}
+
+int
+main (int argc, char **argv)
+{
+	int fd;
+	int i;
+
+	fd = open(argv[1], O_RDONLY);
+	if (fd == -1) {
+		perror("open failed");
+		return 1;
+	}
+	for (i = 0; ; i ++) {
+		if (read(fd, buf, 4096) != 4096) {
+			printf("failed to read block %d\n", i);
+			break;
+		}
+		if (is_a_leaf(buf, 4096))
+			printf("block %d is reiserfs leaf\n", i);
+	}
+	close(fd);
+	return 0;
+}
+
+--=-mi5y+oti0w1evgOVkUQx--
 
