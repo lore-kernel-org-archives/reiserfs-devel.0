@@ -1,105 +1,119 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 plugins
-Date: Mon, 04 Jul 2005 13:47:32 -0500
-Message-ID: <42C98444.5090909@slaphack.com>
-References: <200507020148.j621m9m0006559@laptop11.inf.utfsm.cl>
+Date: Mon, 04 Jul 2005 14:05:32 -0500
+Message-ID: <42C9887C.8080203@slaphack.com>
+References: <200507020212.j622CQgb006811@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24945-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24946-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200507020148.j621m9m0006559@laptop11.inf.utfsm.cl>
+In-Reply-To: <200507020212.j622CQgb006811@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: David Weinehall <tao@acc.umu.se>, =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, Douglas McNaught <doug@mcnaught.org>, Hubert Chan <hubert@uhoreg.ca>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Kevin Bowen <kevin@ucsd.edu>, Hubert Chan <hubert@uhoreg.ca>, Hans Reiser <reiser@namesys.com>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
 Horst von Brand wrote:
-> David Masover <ninja@slaphack.com> wrote:
+> Kevin Bowen <kevin@ucsd.edu> wrote:
 > 
->>David Weinehall wrote:
->>
->>>On Fri, Jul 01, 2005 at 03:08:58AM -0500, David Masover wrote:
+> [...]
+> 
+> 
+>>>So, for instance, if I want to grab all mp3s with Artist "Paul 
+>>>Oakenfold" and change the genre to "techno" (can you do that?), I can 
+>>>use Beagle's search tool to find all mp3s by Oakenfold, but to change 
+>>>the genre, I have to use some separate tool to manipulate id3 tags, 
+> 
+> 
+>>Yes, this is basically what I was getting at, although I was thinking
+>>more in terms of the reiser5/6/whatever set theoretic semantics, which,
+>>from my point of view at least, reiser4 is simply the first step towards
+>>building the enabling infrastructure of. But the fact that reiser4
+>>semantics + trivial shell scripting enables, as illustrated by David,
+>>the rough equivalent of set-theoretic semantics, demonstrates how
+>>reiser4 is in fact a step in this direction.
+> 
+> 
+> I don't see any "trivial shell scripting", just need for a plethora of
+> magic extract-this-or-that-metadata programs. Which can very well work
+> exactly the same on independent files, no need to shove junk /into/ the
+> indexed files.
+> 
+> 
+>>>>moment the case of system-wide or network-wide shared data,
 >>>
->>>>David Weinehall wrote:
+>>>I.e., something like 90% of the use of Linux here. OK.
 > 
 > 
->>>>>GNOME and KDE run on operating systems that run other kernels than
->>>>>Linux, hence they have to implement their own userland VFS anyway.
->>>>>Adding this to the Linux kernel won't help them one bit, unless
->>>>>we can magically convince Sun to add it to Solaris, all different
->>>>>BSD:s to add it to their kernels, etc.  Not going to happen.
->>>>>An effort to get GNOME and KDE to unify their VFS:s would be
->>>>>far more benificial,
+>>>>users needs. In fact, I believe there is currently a JSR in 
+>>>>progress to develop a more sophisticated Java packaging model.
 > 
 > 
->>>>Than what?  Creating a unified VFS which I can access from Bash,
->>>>and which obsoletes both GNOME and KDE's VFSes except in their
->>>>presentation?
+>>>Presumably based on ReiserFS 4, which then has to be ported to 
+>>>whatever platform you want to run Java on ASAP? Great for you! Wait a
+>>>bit, and you'll get what you want then, even across the board!
 > 
 > 
->>>On one of the platforms that they support, yes.  But only for kernels
->>>newer than 2.6.yy...  So they'd still have to have their own VFS for
->>>2.4.xx, 2.6.xx (xx < yy), FreeBSD, OpenBSD, Solaris, etc...
+>>No, obviously that's not what I was saying. But the need for these kinds
+>>of domain-specific packaging/metadata formats, each requiring their own
+>>tools to work with, would be alleviated if there were simply a more
+>>powerful filesystem semantic.
 > 
 > 
->>Right.  But, /proc started somewhere, didn't it?
-> 
-> 
-> Sun.
-> 
-> 
->>I have the feeling that other systems will duplicate it if it's good.
-> 
-> 
-> Linux copied here.
+> *Please explain HOW*!! The domain-specific formats /will/ stay (if nothing
+> else, because the /domains/ have /specific/ needs), the special tools to
+> work with them /will/ have to be written exactly the same (because of the
+> above). All for use on /one/ non-standard filesystem.
 
-So what?
+One filesystem that exists right now.
 
->>Even if they don't, it would be more beneficial to me
+/proc, as people have made clear, was originally implemented on *one* 
+"non-standard" Unix.  Others then copied it.  I see no reason why if 
+/meta is a good idea, and programs start using it, that other FSes won't 
+implement it.
+
+> Plus exactly the same
+> stuff to work on sane filesystems.
+
+"sane" -- I assume you mean "traditional".
+
+Well, yeah.  So?
+
+How big a program do you need to create a new interface to an existing 
+system?
+
+Consider:  BitTorrent has at least three interfaces that I can remember 
+at the moment.  btdownloadgui.py, btdownloadcurses.py, 
+btdownloadheadless.py.
+
+Are you saying that btdownloadgui.py was so much work if you start from 
+btdownloadcurses.py that there should be no GTK library, because it 
+takes so much work to convert existing curses apps to GTK?
+
+Remember, even if I have GTK installed, I can still get to my curses 
+apps, and they may not even know that GTK exists.  Even if I have /meta 
+enabled, I can still use my POSIX apps, and they may not even know that 
+/meta exists.
+
+>>       So-called 'database-filesystems' ARE coming, whether from
+>>Microsoft, Apple, or us.
 > 
 > 
-> How, exactly?
+> IBM did it, long ago (AS/400 and OS/400 ring a bell?). And is now slowly
+> moving away from it (and other structured filesystems), AFAICS, towards
+> (guess what!) POSIX and Linux...
 
-Go back and read.
+Linux over POSIX, I think.  Because Linux is big and open-source, not
+beacuse POSIX is so great.
 
-> Besides, /your/ convenience isn't the only thing that matters...
+> Again, Linux is what it is today in large part because "We have to get
+> $FEATURE, because if not, $COMPETITOR will win on us!" arguments have no
+> traction.
 
-Nor yours.  Just because you can't get your mind around a concept 
-doesn't mean that it's a bad concept, and that no one else can use it.
-
->>                                                      and probably
->>most Linux users
-> 
-> 
-> "Most Linux users" don't use experimental filesystems at all...
-
-Actually, they do -- ext3 was experimental once.  ReiserFS was very 
-experimental once.
-
-Please stop bashing it just because it's new/experimental.
-
->>                 to have metafs supported in both GNOME and KDE, even
->>if they still need an emulation layer to support other systems.
-> 
-> 
-> So Gnome and KDE get larger (and thus slower) for everybody.
-
-Smaller (and thus faster) on supported systems, otherwise exactly the 
-same, but maybe a little more modular, which is good.
-
-> Besides, Gnome
-> and KDE will have to agree on the formats involved first, which is /exactly/
-> what is supposed to be impossible unless this stuff is implemented in the
-> kernel...
-
-I never said that, but for one thing, whether they do or not, it's nice 
-if my shell and my editor and all the other things that I use don't have 
-to agree on anything to manipulate the formats involved.
-
-This is not just about GNOME/KDE.  It is about GNOME/KDE not developing 
-an additional layer, that you wouldn't like anyway, that cannot be 
-accessed from anything except GNOME/KDE.
+I agree with that, at least.  But Linux is also what it is today in 
+large part because "I don't need $FEATURE, so it should be kept out" 
+isn't a particularly good argument either.
 
