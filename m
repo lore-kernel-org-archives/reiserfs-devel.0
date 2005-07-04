@@ -1,58 +1,46 @@
-From: "Flora Dru" <dru@dicts.mak.ac.ug>
-Subject: Re: Filesystem repair and Data Recovery
-Date: Mon, 04 Jul 2005 13:50:28 +0300
-Message-ID: <20050704105028.A4D9DA2AA@mail.mak.ac.ug>
-References: <20050701112954.B2F849FF0@mail.mak.ac.ug>
-            <1120220361.3603.62.camel@tribesman.namesys.com>
-            <20050701130616.2D2FCA04E@mail.mak.ac.ug>
-            <1120226737.3603.85.camel@tribesman.namesys.com>
-            <20050701143553.57D5BA02C@mail.mak.ac.ug>
-            <1120230853.3603.97.camel@tribesman.namesys.com>
-            <20050701153254.F285AA07E@mail.mak.ac.ug>
-            <1120234546.3603.111.camel@tribesman.namesys.com>
-            <20050701163625.1C533A069@mail.mak.ac.ug>
-            <1120239440.10316.119.camel@tribesman.namesys.com>
-            <20050702101916.31F449FEA@mail.mak.ac.ug>
-            <1120395556.4219.13.camel@tribesman.namesys.com>
-            <20050703143512.C778CA0F5@mail.mak.ac.ug>
-            <1120471614.5803.40.camel@tribesman.namesys.com>
+From: studdugie <studdugie@gmail.com>
+Subject: Re: Linux and Plan-9ness
+Date: Mon, 4 Jul 2005 13:18:32 -0400
+Message-ID: <5a59ce5305070410182b2f2eec@mail.gmail.com>
+References: <20050630100119.GO11013@nysv.org>
+	 <200506301246.PAA29464@raad.intranet>
+Reply-To: studdugie <studdugie@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24941-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-24944-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1120471614.5803.40.camel@tribesman.namesys.com>
+In-Reply-To: <200506301246.PAA29464@raad.intranet>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; charset="us-ascii"
-To: Vladimir Saveliev <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Hi 
+If you dropped the "Unixness" you would have to rename. Maybe Linine,
+or  Linsoft, or ....
 
-~67gb? You said earlier about 27gb.
-What does 'fdisk -l /dev/sdc' say? 
+Think of all the chaos that would cause. You don't want chaos do you?
+I mean really, do u want to force all the
+\w*(?ilinux)\w*(\.(com|org|net))? sites and publications to rename
+too? Unconscionable!
 
- 
-
-The hard disk is 68gb but amount of data is 27gb 
-
-fdisk -l /dev/sdc 
-
-Disk /dev/sdc: 255 heads, 63 sectors, 8855 cylinders
-Units = cylinders of 16065 * 512 bytes 
-
-Device Boot    Start       End    Blocks   Id  System
-/dev/sdc1             1      8855  71127756   83  Linux 
-
-Am I correct that there were no lines like 'block 34640 is reiserfs
-leaf'? 
-
-
-Yes you are correct. 
-
-regards
-Florence 
-
-
+On 6/30/05, Al Boldi <a1426z@gawab.com> wrote:
+> Markus   T=F6rnqvist wrote: {
+> On Wed, Jun 29, 2005 at 10:56:36PM +0200, David Weinehall wrote:
+> >instead of trying to get a monstrosity (albeit a very cool one,
+> >conceptually) into the kernel.  Sure, it could be made to work, but not
+> >without dropping our Unixness.  And if we do, we should start by
+> >looking at Plan 9 =3D)
+>=20
+> What's wrong with "dropping our Unixness" if it means taking an extra ste=
+p
+> toward Plan 9?
+>=20
+> Why is this a bad idea?
+> }
+>=20
+> Please explain!
+>=20
+>
