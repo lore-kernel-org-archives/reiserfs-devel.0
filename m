@@ -1,62 +1,57 @@
-From: Martin Waitz <tali@admingilde.org>
-Subject: Re: reiser4 plugins
-Date: Tue, 5 Jul 2005 17:46:24 +0200
-Message-ID: <20050705154624.GC15652@admingilde.org>
-References: <hubert@uhoreg.ca> <200506290509.j5T595I6010576@laptop11.inf.utfsm.cl> <87hdfgvqvl.fsf@evinrude.uhoreg.ca> <8783be6605062914341bcff7cb@mail.gmail.com> <42C3615A.9020600@namesys.com>
+From: Sonny Rao <sonny@burdell.org>
+Subject: Re: XFS corruption during power-blackout
+Date: Tue, 5 Jul 2005 11:49:19 -0400
+Message-ID: <20050705154919.GA13262@kevlar.burdell.org>
+References: <20050701092412.GD2243@suse.de> <200507011405.RAA27425@raad.intranet>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hxkXGo8AKqTJ+9QI"
-Return-path: <reiserfs-list-return-24956-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <42C3615A.9020600@namesys.com>
+In-Reply-To: <200507011405.RAA27425@raad.intranet>
+Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: Ross Biro <ross.biro@gmail.com>, Hubert Chan <hubert@uhoreg.ca>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Al Boldi <a1426z@gawab.com>
+Cc: 'Jens Axboe' <axboe@suse.de>, 'David Masover' <ninja@slaphack.com>, 'Chris Wedgwood' <cw@f00f.org>, 'Nathan Scott' <nathans@sgi.com>, linux-xfs@oss.sgi.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
 
---hxkXGo8AKqTJ+9QI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jul 01, 2005 at 05:05:11PM +0300, Al Boldi wrote:
+> Jens Axboe wrote: {
+> On Fri, Jul 01 2005, David Masover wrote:
+> > Chris Wedgwood wrote:
+> > >On Wed, Jun 29, 2005 at 07:53:09AM +0300, Al Boldi wrote:
+> > >
+> > >
+> > >>What I found were 4 things in the dest dir:
+> > >>1. Missing Dirs,Files. That's OK.
+> > >>2. Files of size 0. That's acceptable.
+> > >>3. Corrupted Files. That's unacceptable.
+> > >>4. Corrupted Files with original fingerprint. That's ABSOLUTELY 
+> > >>unacceptable.
+> > >
+> > >
+> > >disk usually default to caching these days and can lose data as a 
+> > >result, disable that
+> > 
+> > Not always possible.  Some disks lie and leave caching on anyway.
+> 
+> And the same (and others) disks will not honor a flush anyways. 
+> Moral of that story - avoid bad hardware.
+> }
+> 
+> 1. Sync is not the issue. The issue is whether a journaled FS can detect
+> corrupted files and flag them after a power-blackout!
 
-hoi :)
+Journaling implies filesystem consistency, not data integrity, AFAIK.
 
-On Wed, Jun 29, 2005 at 08:04:58PM -0700, Hans Reiser wrote:
-> >How is directories as files logically any different than putting all
-> >data into .data files and making all files directories (yes you would
-> >need some sort of special handling for files that were really called
-> >.data).=20
-> >
-> Add to this that you make .data the default if the file within the
-> directory is not specified, and define a stanadard set of names for
-> metafiles, and you've got the essential idea, and any differences are
-> details.
+> 2. Moral of the story is: What's ext3 doing the others aren't?
 
-sure, that would work more or less, but what would it give you?
-You haven't introduced anything new that userspace couldn't do before.
-Just write a library which mangles pathnames and treats files and
-directories the same. You don't need the kernel to do that.
+Ext3 has stronger guaranties than basic filesystem consistency.
 
-Filesystems are there to store files.
-Everything else can be done in userspace.
+I.e. in ordered mode, file data is always written before metadata, so
+the worst that could happen is a growing file's new data is written
+but the metadata isn't updated before a power failure... so the new
+writes wouldn't be seen afterwards.  You should try the same test w/
+ext3 in "writeback" mode and see if it fares better or worse in terms
+of file corruption.
 
---=20
-Martin Waitz
-
---hxkXGo8AKqTJ+9QI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-
-iD8DBQFCyqtQj/Eaxd/oD7IRAutQAJ9SVdhimwM4FQtsy474jufwR0u+hwCaAjI0
-1GgC+SvUvSLvRd9FIWOJ7NM=
-=TiSP
------END PGP SIGNATURE-----
-
---hxkXGo8AKqTJ+9QI--
+Sonny
