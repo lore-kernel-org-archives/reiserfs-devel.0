@@ -1,145 +1,62 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
+From: Martin Waitz <tali@admingilde.org>
 Subject: Re: reiser4 plugins
-Date: Mon, 04 Jul 2005 16:32:43 -0400
-Message-ID: <200507042032.j64KWiY9009684@laptop11.inf.utfsm.cl>
-References: <ninja@slaphack.com>
-Return-path: <reiserfs-list-return-24948-reiserfs=m.gmane.org@namesys.com>
+Date: Tue, 5 Jul 2005 17:46:24 +0200
+Message-ID: <20050705154624.GC15652@admingilde.org>
+References: <hubert@uhoreg.ca> <200506290509.j5T595I6010576@laptop11.inf.utfsm.cl> <87hdfgvqvl.fsf@evinrude.uhoreg.ca> <8783be6605062914341bcff7cb@mail.gmail.com> <42C3615A.9020600@namesys.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="hxkXGo8AKqTJ+9QI"
+Return-path: <reiserfs-list-return-24956-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from David Masover <ninja@slaphack.com> 
-   of "Mon, 04 Jul 2005 13:47:32 EST." <42C98444.5090909@slaphack.com> 
+Content-Disposition: inline
+In-Reply-To: <42C3615A.9020600@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, David Weinehall <tao@acc.umu.se>, =?ISO-8859-1?Q?Markus_T=F6rnqvist?= <mjt@nysv.org>, Douglas McNaught <doug@mcnaught.org>, Hubert Chan <hubert@uhoreg.ca>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: Ross Biro <ross.biro@gmail.com>, Hubert Chan <hubert@uhoreg.ca>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-David Masover <ninja@slaphack.com> wrote:
-> Horst von Brand wrote:
-> > David Masover <ninja@slaphack.com> wrote:
-> >>David Weinehall wrote:
-> >>>On Fri, Jul 01, 2005 at 03:08:58AM -0500, David Masover wrote:
-> >>>>David Weinehall wrote:
+--hxkXGo8AKqTJ+9QI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[...]
+hoi :)
 
-> >>Even if they don't, it would be more beneficial to me
+On Wed, Jun 29, 2005 at 08:04:58PM -0700, Hans Reiser wrote:
+> >How is directories as files logically any different than putting all
+> >data into .data files and making all files directories (yes you would
+> >need some sort of special handling for files that were really called
+> >.data).=20
+> >
+> Add to this that you make .data the default if the file within the
+> directory is not specified, and define a stanadard set of names for
+> metafiles, and you've got the essential idea, and any differences are
+> details.
 
-> > How, exactly?
+sure, that would work more or less, but what would it give you?
+You haven't introduced anything new that userspace couldn't do before.
+Just write a library which mangles pathnames and treats files and
+directories the same. You don't need the kernel to do that.
 
-> Go back and read.
+Filesystems are there to store files.
+Everything else can be done in userspace.
 
-I have. And have seen /no/ benefit to you. Except, of course, the benefit
-accrued from some magic in Linus' kernel, by which all format differences
-go in a puff of smoke if they are implemented inside it, and furthermore
-all userland gets rebuilt to use the kernel's way overnight.
+--=20
+Martin Waitz
 
-Sorry, I'm quite sceptical on this count. Sure, for complete outsiders it
-may look that way: Something gets implemented in the kernel, soon many
-applications are using it, everything is peachy. Except that before there
-have been /long/ (even bitter) discussions on if/how to do it, what the
-kernel should do (if anything) and what the application's responsibility
-should be. Many times it has ended with Linus slamming on the table and
-saying "no way", or "we do it /this/ way". Then, /when/ this is clear, it
-gets into the kernel and applications. And you only have ever seen the last
-phase... which is smooth and fast.
+--hxkXGo8AKqTJ+9QI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
-Here, the "how should it be done, if at all" discussion has barely started.
-And AFAICS there are plenty of ways of getting 95% of the advantages
-/without/ touching the kernel, so that should be the path to follow. Nobody
-has shown any real evidence at all for this not being so.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
 
-> > Besides, /your/ convenience isn't the only thing that matters...
+iD8DBQFCyqtQj/Eaxd/oD7IRAutQAJ9SVdhimwM4FQtsy474jufwR0u+hwCaAjI0
+1GgC+SvUvSLvRd9FIWOJ7NM=
+=TiSP
+-----END PGP SIGNATURE-----
 
-> Nor yours.
-
-Sure enough.
-
->            Just because you can't get your mind around a concept
-> doesn't mean that it's a bad concept, and that no one else can use it.
-
-I /do/ get my mind around the concept, it /is/ sometimes useful. It /can/
-be done without the kernel, and so /should/ be done that way. That is all.
-
-> >>                                                      and probably
-> >>most Linux users
-
-> > "Most Linux users" don't use experimental filesystems at all...
-
-> Actually, they do -- ext3 was experimental once.
-
-Right. And ext2, and ext, and xiafs, and ... So? When they were
-experimental, only a handful of utter fools commited their data to them.
-
->                                                   ReiserFS was very
-> experimental once.
-
-See above.
-
-> Please stop bashing it just because it's new/experimental.
-
-Sorry?
-
-> >>                 to have metafs supported in both GNOME and KDE, even
-> >>if they still need an emulation layer to support other systems.
-> > So Gnome and KDE get larger (and thus slower) for everybody.
-
-> Smaller (and thus faster) on supported systems,
-
-Sorry, but just because some $DISTRO gives ReiserFS4 as an /option/ doesn't
-mean they will have everything duplicated as "For ReiserFS4" and "For other
-filesystems". My assertion stands, until there are ReiserFS4-only
-distributions.
-
->                                                 otherwise exactly the
-> same, but maybe a little more modular, which is good.
-
-Right, having to cope with different ways of representing metadata could
-induce better code organization. But to get there isn't painless either...
-
-> > Besides, Gnome
-> > and KDE will have to agree on the formats involved first, which is /exactly/
-> > what is supposed to be impossible unless this stuff is implemented in the
-> > kernel...
-
-> I never said that,
-
-You (and others) have told us time and again that each of them have their
-own incompatible ways of handling metadata, and that only if this was
-handled in the kernel they would make use of a common way of managing it...
-
->                    but for one thing, whether they do or not, it's
-> nice if my shell and my editor and all the other things that I use
-> don't have to agree on anything to manipulate the formats involved.
-
-Please, read what you just said. Everybody (kernel somewhat included) will
-have to agree on the format of the metadata.
-
-> This is not just about GNOME/KDE.  It is about GNOME/KDE not developing
-> an additional layer, that you wouldn't like anyway,
-
-How do you know what I would or would not like?
-
->                                                     that cannot be
-> accessed from anything except GNOME/KDE.
-
-So Gnome and KDE agree on some secret formats that only they can handle?
-Behind their user's backs? As open source? And happily shoot their feet by
-not giving users much wanted access to said data in decent ways?
-
-I see it more on the lines of libmetadata.so (or such), which is used by
-Gnome, KDE, and whatever else wishes to do so. Even your custom-tailored
-shell or cat(1). Or just some convention that metadata on ~/my/funky/file
-resides in ~/.metadata/.my/.funky/.file/metadata. Hey, you could (almost)
-do that today, by wrappers (perhaps even aliases, or shell functions)
-around the relevant commands! No kernel at all involved! Not even a
-miserable library!!
--- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
-
+--hxkXGo8AKqTJ+9QI--
