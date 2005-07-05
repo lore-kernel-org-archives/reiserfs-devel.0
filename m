@@ -1,57 +1,41 @@
 From: Sonny Rao <sonny@burdell.org>
 Subject: Re: XFS corruption during power-blackout
-Date: Tue, 5 Jul 2005 11:49:19 -0400
-Message-ID: <20050705154919.GA13262@kevlar.burdell.org>
-References: <20050701092412.GD2243@suse.de> <200507011405.RAA27425@raad.intranet>
+Date: Tue, 5 Jul 2005 11:53:22 -0400
+Message-ID: <20050705155322.GB13262@kevlar.burdell.org>
+References: <254889.27725ab660aa106eb6acc07307d71ef1fbd5b6fd366aebef9e2f611750fbcb467e46e8a4.IBX@taniwha.stupidest.org> <OFC7BE2BBA.42F70A93-ON88257030.00595A48-88257030.005A99A3@us.ibm.com> <054069.b93858d6b97c07747dc32be2dd8981b254d981528781006053dce7be58de88865a43b162.IBX@taniwha.stupidest.org>
 Mime-Version: 1.0
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <200507011405.RAA27425@raad.intranet>
+In-Reply-To: <054069.b93858d6b97c07747dc32be2dd8981b254d981528781006053dce7be58de88865a43b162.IBX@taniwha.stupidest.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Al Boldi <a1426z@gawab.com>
-Cc: 'Jens Axboe' <axboe@suse.de>, 'David Masover' <ninja@slaphack.com>, 'Chris Wedgwood' <cw@f00f.org>, 'Nathan Scott' <nathans@sgi.com>, linux-xfs@oss.sgi.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
+To: Chris Wedgwood <cw@f00f.org>
+Cc: Bryan Henderson <hbryan@us.ibm.com>, Al Boldi <a1426z@gawab.com>, linux-fsdevel@vger.kernel.org, linux-xfs@oss.sgi.com, Steve Lord <lord@xfs.org>, 'Nathan Scott' <nathans@sgi.com>, reiserfs-list@namesys.com
 
-On Fri, Jul 01, 2005 at 05:05:11PM +0300, Al Boldi wrote:
-> Jens Axboe wrote: {
-> On Fri, Jul 01 2005, David Masover wrote:
-> > Chris Wedgwood wrote:
-> > >On Wed, Jun 29, 2005 at 07:53:09AM +0300, Al Boldi wrote:
-> > >
-> > >
-> > >>What I found were 4 things in the dest dir:
-> > >>1. Missing Dirs,Files. That's OK.
-> > >>2. Files of size 0. That's acceptable.
-> > >>3. Corrupted Files. That's unacceptable.
-> > >>4. Corrupted Files with original fingerprint. That's ABSOLUTELY 
-> > >>unacceptable.
-> > >
-> > >
-> > >disk usually default to caching these days and can lose data as a 
-> > >result, disable that
-> > 
-> > Not always possible.  Some disks lie and leave caching on anyway.
+On Thu, Jun 30, 2005 at 11:46:27AM -0700, Chris Wedgwood wrote:
+> On Thu, Jun 30, 2005 at 12:30:20PM -0400, Bryan Henderson wrote:
 > 
-> And the same (and others) disks will not honor a flush anyways. 
-> Moral of that story - avoid bad hardware.
-> }
+> > For another point of reference - were these ATA (personal class) or
+> > SCSI (commercial class) drives or both?
 > 
-> 1. Sync is not the issue. The issue is whether a journaled FS can detect
-> corrupted files and flag them after a power-blackout!
+> IDE were Maxtor some old Maxtor 60GB disks and some not-so-old 200GB
+> WD drives.  Maxtor has 2MB cache.  WD 8MB.
+> 
+> The SCSI disks where 10K RPM SCA somethings.  I think they were Segate
+> (they've since been taken or else I would check).  I have no idea what
+> the cache is on those.
+> 
+> > Is write caching the default on typical SCSI devices?
+> 
+> I'm not sure.  It seemed to be off by default for the SCSI disks and
+> on by default for IDE when I checked.  I can't rule out the
+> bios/controller doing something there though.
 
-Journaling implies filesystem consistency, not data integrity, AFAIK.
-
-> 2. Moral of the story is: What's ext3 doing the others aren't?
-
-Ext3 has stronger guaranties than basic filesystem consistency.
-
-I.e. in ordered mode, file data is always written before metadata, so
-the worst that could happen is a growing file's new data is written
-but the metadata isn't updated before a power failure... so the new
-writes wouldn't be seen afterwards.  You should try the same test w/
-ext3 in "writeback" mode and see if it fares better or worse in terms
-of file corruption.
+On all the SCSI drives shipped w/ servers write-caching is turned off
+for this very reason.  This is true of all the IBM equipment I've
+seen, not sure about the smaller mom & pop outfits or drives sold
+through retail channels though.
 
 Sonny
