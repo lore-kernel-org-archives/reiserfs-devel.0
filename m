@@ -1,129 +1,56 @@
-From: Nate Diller <nate@namesys.com>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: reiser4 plugins
-Date: Wed, 06 Jul 2005 09:06:51 -0700
-Message-ID: <42CC019B.70503@namesys.com>
-References: <hubert@uhoreg.ca>
-	<200506290509.j5T595I6010576@laptop11.inf.utfsm.cl>
-	<87hdfgvqvl.fsf@evinrude.uhoreg.ca>
-	<8783be6605062914341bcff7cb@mail.gmail.com>
-	<878y0svj1h.fsf@evinrude.uhoreg.ca>	<42C4F97B.1080803@slaphack.com>
-	<87ll4lynky.fsf@evinrude.uhoreg.ca>	<42CB0328.3070706@namesys.com>
-	<42CB07EB.4000605@slaphack.com>	<42CB0ED7.8070501@namesys.com>
-	<42CB1128.6000000@slaphack.com>	<42CB1E12.2090005@namesys.com>
- <17099.15101.233487.623549@cse.unsw.edu.au>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24996-reiserfs=m.gmane.org@namesys.com>
+Date: Wed, 06 Jul 2005 13:30:35 -0400
+Message-ID: <200507061730.j66HUZ8R015013@laptop11.inf.utfsm.cl>
+References: <reiser@namesys.com>
+Return-path: <reiserfs-list-return-24998-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-reply-to: <17099.15101.233487.623549@cse.unsw.edu.au>
+In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
+   of "Wed, 06 Jul 2005 02:02:16 MST." <42CB9E18.8080206@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Neil Brown <neilb@cse.unsw.edu.au>
-Cc: Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Nate Diller <ndiller@namesys.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Martin Waitz <tali@admingilde.org>, Jonathan Briggs <jbriggs@esoft.com>, Ross Biro <ross.biro@gmail.com>, Hubert Chan <hubert@uhoreg.ca>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Neil Brown wrote:
+Hans Reiser <reiser@namesys.com> wrote:
 
->On Tuesday July 5, reiser@namesys.com wrote:
->  
->
->>I got it slightly wrong.
->>
->>One can have hardlinks to a directory without cycles provided that one
->>does not have hardlinks from the children of that directory to any file
->>not a child of that directory.  (Mountpoints currently implement that
->>restriction.)
->>
->>Question: can one implement that lesser restriction above with elegant
->>code?  Is the greater restriction below easier to code?  (If no to the
->>first and yes to the second is correct, then I can accept the greater
->>restriction described below.)
->>    
->>
->
-><technical-content>
->I think the "lesser restriction above" can be implemented elegantly,
->but it would require major dcache surgery.
->
->Currently all the dentries of names in a directory are linked to the
->dentry of the directory.  As you would have to let a directory have
->multiple dentries, it would be best to change that linkage so that the
->dentries of names in a directory were linked to the "inode" of that
->directory (of which there is still only one).
->Thus instead of just having a dentry tree with inodes attached at each
->point, you would have a dentry/inode tree with inodes a more integral
->part of the tree. (i.e. the path from the root down would be dentry ->
->inode -> dentry ->inode -> dentry etc).
->This would have major implications for the current code.
->
->The "greater restriction below" should be easy to code providing you
->were willing to have two sorts of directories: those which could be
->linked (ie. they sometimes look like files) and those which cannot
->(they never look like files).  Then for each dentry, you remember the
->closest parent which is a can-be-linked directory an make sure a
->hard-link will never want to change the can-be-linked directory for
->the target.
->
->If you want to be more general, and have only one sort of directory
->that just behaves differently in different situations, then it would
->be much harder.
->You have to make sure both 
-> a/ that you never hard link a file that is under a hard-linked
->    directory to somewhere outside of that hard-linked directory and
-> b/ that you never hard link a directory that contains a file which is
->    hard-linked to somewhere outside that directory.
->
->The first is probably quite manageable.  The second is essentially the
->cycle-detection problem.
->
-></technical-content>
->
-><humour>
->SUN used to advertise:
->  "The network is the computer"
->However I think we have all come to realise that the network is the
->network, and the computer is the computer.
->
->Now Hans wants to tells that
->   "The directory is the file"
->
->but I don't find it any more convincing than SUN's message...
->
-></humour>
->
-><opinion>
->If you really want to change traditional Unix semantics, I would
->suggest you get rid of hard-links.  They really are more trouble than
->they are worth, and discarding them makes this whole issue moot.
-></opinion>
->  
->
-have you read Giampaolo's BeFS design book?  he talks (ch 11) about this 
-big argument they had at Be about how their API would let programs store 
-references to files.  the macintosh people wanted to have the program 
-store an inode number, and the posix guys wanted it to store a path.  in 
-my mind, the only reason posix is right on this is because it allows 
-hard links AND symlinks as a way of giving a choice in the matter, since 
-hard links increment the reference count and softlinks don't.  it seems 
-much *more* important to be able to have this choice for file attributes 
-than for the traditional posix namespace.
+[...]
 
-as an example, if a program were to store some things it needs access to 
-in its executable's attributes, it should have the option of keeping a 
-hard reference to something, so that it can't be deleted out from 
-underneath.  this enables sane sharing of resources without ownership 
-tracking problems (see windows DLL hell for details).  the attribute 
-space should be indistinguishable from the rest of the namespace, and 
-should be able to link (soft or hard) anywhere in the FS.  anything less 
-is too much work for too little reward.
+> I think the exokernel approach by Frans is a very interesting approach. 
+> I wish I had the experience with it necessary to know if it was
+> effective.  I do NOT take the position that name resolution should be in
+> the kernel.  I DO take the position that it should be either in the
+> kernel or out of the kernel, and should constitute one cohesive and
+> coherent body of code.
 
-NATE
+Right.
 
->NeilBrown
->
->
->  
->
+>                         If someone talks Linus into trying the exokernel
+> approach,
 
+Are you nuts?! Such radical experiments do /not/ belong in the kernel on
+which millions of machines depend!
+
+Go and fork off a branch to play around with this, and if it does show real
+promise, you can then come back and try to integrate this into the official
+kernel.
+
+>           I will be happy to educate myself to where I have an opinion
+> on whether that works.  It is easy to see powerful advantages to the
+> exokernel approach: I wish I understood the security model for it, and I
+> wish I was sure that name resolution would not require too many context
+> switches as one fetches each storage component required by a name
+> resolution.
+
+Exactly the kinds of questions that have to get solid answers before any
+experimental patches can get off the ground.
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
