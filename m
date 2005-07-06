@@ -1,56 +1,54 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Wed, 06 Jul 2005 13:30:35 -0400
-Message-ID: <200507061730.j66HUZ8R015013@laptop11.inf.utfsm.cl>
-References: <reiser@namesys.com>
-Return-path: <reiserfs-list-return-24998-reiserfs=m.gmane.org@namesys.com>
+Date: Wed, 06 Jul 2005 11:07:42 -0700
+Message-ID: <42CC1DEE.7030502@namesys.com>
+References: <42CB1E12.2090005@namesys.com> <1740726161-BeMail@cr593174-a> <87hdf8zqca.fsf@evinrude.uhoreg.ca> <42CB7DE0.4050200@namesys.com> <42CBD7F6.2050203@slaphack.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24999-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
-   of "Wed, 06 Jul 2005 02:02:16 MST." <42CB9E18.8080206@namesys.com> 
+In-Reply-To: <42CBD7F6.2050203@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Martin Waitz <tali@admingilde.org>, Jonathan Briggs <jbriggs@esoft.com>, Ross Biro <ross.biro@gmail.com>, Hubert Chan <hubert@uhoreg.ca>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: David Masover <ninja@slaphack.com>
+Cc: Hubert Chan <hubert@uhoreg.ca>, "Alexander G. M. Smith" <agmsmith@rogers.com>, ross.biro@gmail.com, vonbrand@inf.utfsm.cl, mrmacman_g4@mac.com, Valdis.Kletnieks@vt.edu, ltd@cisco.com, gmaxwell@gmail.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, ndiller@namesys.com, vitaly@thebsh.namesys.com
 
-Hans Reiser <reiser@namesys.com> wrote:
+David Masover wrote:
 
-[...]
+> And, once we start talking about applications, /meta will be more
+> readily supported (as in, some apps will go through a pathname and
+> stop when they get to a file, and then there's tar).  On apps which
+> don't have direct support for /meta, you'd be navigating to the file
+> in question and then manually typing '...' into the dialog, so I don't
+> see why typing '...' at the end is better than typing '/meta' or
+> '/meta/vfs' at the beginning.
 
-> I think the exokernel approach by Frans is a very interesting approach. 
-> I wish I had the experience with it necessary to know if it was
-> effective.  I do NOT take the position that name resolution should be in
-> the kernel.  I DO take the position that it should be either in the
-> kernel or out of the kernel, and should constitute one cohesive and
-> coherent body of code.
+Performance.  If you type it at the end, and you already have done the
+lookup of the filename, then you can go from the file to one of its
+methods, instead of a complete new traversal of another tree under /meta
 
-Right.
+>
+> That said, I'm still not entirely sure how we get /meta/vfs to work
+> other than adding a '...' sort of delimiter anyway.
+>
+>>> And a question: is it feasible to store, for each inode, its parent(s),
+>>> instead of just the hard link count?
+>>>
+>>>
+>>
+>> Ooh, now that is an interesting old idea I haven't considered in 20
+>> years.... makes fsck more robust too....
+>
+>
+> Doesn't it make directory operations slower, too?
 
->                         If someone talks Linus into trying the exokernel
-> approach,
+Not sure.  It consumes space though.
 
-Are you nuts?! Such radical experiments do /not/ belong in the kernel on
-which millions of machines depend!
+>
+> And, will it require a format change?
+>
+Yes, but we have plugins now, so.....
 
-Go and fork off a branch to play around with this, and if it does show real
-promise, you can then come back and try to integrate this into the official
-kernel.
-
->           I will be happy to educate myself to where I have an opinion
-> on whether that works.  It is easy to see powerful advantages to the
-> exokernel approach: I wish I understood the security model for it, and I
-> wish I was sure that name resolution would not require too many context
-> switches as one fetches each storage component required by a name
-> resolution.
-
-Exactly the kinds of questions that have to get solid answers before any
-experimental patches can get off the ground.
--- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
