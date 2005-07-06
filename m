@@ -1,34 +1,129 @@
-From: Adrian Ulrich <reiser4@blinkenlights.ch>
+From: Nate Diller <nate@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Wed, 6 Jul 2005 16:55:29 +0200
-Message-ID: <20050706165529.1f0503d5.reiser4@blinkenlights.ch>
-References: <42CB1E12.2090005@namesys.com>
-	<1740726161-BeMail@cr593174-a>
-	<87hdf8zqca.fsf@evinrude.uhoreg.ca>
-	<42CB7DE0.4050200@namesys.com>
-	<42CBD7F6.2050203@slaphack.com>
-	<20050706154349.5d6aa92c.reiser4@blinkenlights.ch>
-	<42CBE67D.9000507@slaphack.com>
+Date: Wed, 06 Jul 2005 09:06:51 -0700
+Message-ID: <42CC019B.70503@namesys.com>
+References: <hubert@uhoreg.ca>
+	<200506290509.j5T595I6010576@laptop11.inf.utfsm.cl>
+	<87hdfgvqvl.fsf@evinrude.uhoreg.ca>
+	<8783be6605062914341bcff7cb@mail.gmail.com>
+	<878y0svj1h.fsf@evinrude.uhoreg.ca>	<42C4F97B.1080803@slaphack.com>
+	<87ll4lynky.fsf@evinrude.uhoreg.ca>	<42CB0328.3070706@namesys.com>
+	<42CB07EB.4000605@slaphack.com>	<42CB0ED7.8070501@namesys.com>
+	<42CB1128.6000000@slaphack.com>	<42CB1E12.2090005@namesys.com>
+ <17099.15101.233487.623549@cse.unsw.edu.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24995-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24996-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42CBE67D.9000507@slaphack.com>
+In-reply-to: <17099.15101.233487.623549@cse.unsw.edu.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: reiser@namesys.com, hubert@uhoreg.ca, agmsmith@rogers.com, ross.biro@gmail.com, vonbrand@inf.utfsm.cl, mrmacman_g4@mac.com, Valdis.Kletnieks@vt.edu, ltd@cisco.com, gmaxwell@gmail.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, ndiller@namesys.com, vitaly@thebsh.namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Neil Brown <neilb@cse.unsw.edu.au>
+Cc: Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Nate Diller <ndiller@namesys.com>
 
-> mount --bind /meta/vfs/some/chroot /some/chroot/meta
+Neil Brown wrote:
 
-This maybe funny if you got 1-2 chrooted applications.
-But it will be a nightmare if you got 20-30 chrooted applications.
+>On Tuesday July 5, reiser@namesys.com wrote:
+>  
+>
+>>I got it slightly wrong.
+>>
+>>One can have hardlinks to a directory without cycles provided that one
+>>does not have hardlinks from the children of that directory to any file
+>>not a child of that directory.  (Mountpoints currently implement that
+>>restriction.)
+>>
+>>Question: can one implement that lesser restriction above with elegant
+>>code?  Is the greater restriction below easier to code?  (If no to the
+>>first and yes to the second is correct, then I can accept the greater
+>>restriction described below.)
+>>    
+>>
+>
+><technical-content>
+>I think the "lesser restriction above" can be implemented elegantly,
+>but it would require major dcache surgery.
+>
+>Currently all the dentries of names in a directory are linked to the
+>dentry of the directory.  As you would have to let a directory have
+>multiple dentries, it would be best to change that linkage so that the
+>dentries of names in a directory were linked to the "inode" of that
+>directory (of which there is still only one).
+>Thus instead of just having a dentry tree with inodes attached at each
+>point, you would have a dentry/inode tree with inodes a more integral
+>part of the tree. (i.e. the path from the root down would be dentry ->
+>inode -> dentry ->inode -> dentry etc).
+>This would have major implications for the current code.
+>
+>The "greater restriction below" should be easy to code providing you
+>were willing to have two sorts of directories: those which could be
+>linked (ie. they sometimes look like files) and those which cannot
+>(they never look like files).  Then for each dentry, you remember the
+>closest parent which is a can-be-linked directory an make sure a
+>hard-link will never want to change the can-be-linked directory for
+>the target.
+>
+>If you want to be more general, and have only one sort of directory
+>that just behaves differently in different situations, then it would
+>be much harder.
+>You have to make sure both 
+> a/ that you never hard link a file that is under a hard-linked
+>    directory to somewhere outside of that hard-linked directory and
+> b/ that you never hard link a directory that contains a file which is
+>    hard-linked to somewhere outside that directory.
+>
+>The first is probably quite manageable.  The second is essentially the
+>cycle-detection problem.
+>
+></technical-content>
+>
+><humour>
+>SUN used to advertise:
+>  "The network is the computer"
+>However I think we have all come to realise that the network is the
+>network, and the computer is the computer.
+>
+>Now Hans wants to tells that
+>   "The directory is the file"
+>
+>but I don't find it any more convincing than SUN's message...
+>
+></humour>
+>
+><opinion>
+>If you really want to change traditional Unix semantics, I would
+>suggest you get rid of hard-links.  They really are more trouble than
+>they are worth, and discarding them makes this whole issue moot.
+></opinion>
+>  
+>
+have you read Giampaolo's BeFS design book?  he talks (ch 11) about this 
+big argument they had at Be about how their API would let programs store 
+references to files.  the macintosh people wanted to have the program 
+store an inode number, and the posix guys wanted it to store a path.  in 
+my mind, the only reason posix is right on this is because it allows 
+hard links AND symlinks as a way of giving a choice in the matter, since 
+hard links increment the reference count and softlinks don't.  it seems 
+much *more* important to be able to have this choice for file attributes 
+than for the traditional posix namespace.
 
+as an example, if a program were to store some things it needs access to 
+in its executable's attributes, it should have the option of keeping a 
+hard reference to something, so that it can't be deleted out from 
+underneath.  this enables sane sharing of resources without ownership 
+tracking problems (see windows DLL hell for details).  the attribute 
+space should be indistinguishable from the rest of the namespace, and 
+should be able to link (soft or hard) anywhere in the FS.  anything less 
+is too much work for too little reward.
 
+NATE
 
--- 
- We're working on it, slowly but surely...or not-so-surely in the spots
-we're not so sure... -- Larry Wall
+>NeilBrown
+>
+>
+>  
+>
+
