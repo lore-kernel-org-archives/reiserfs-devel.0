@@ -1,60 +1,71 @@
-From: Jonathan Briggs <jbriggs@esoft.com>
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: reiser4 plugins
-Date: Wed, 06 Jul 2005 15:28:40 -0600
-Message-ID: <1120685320.13341.35.camel@localhost>
-References: <42CB1E12.2090005@namesys.com> <1740726161-BeMail@cr593174-a>
-	 <87hdf8zqca.fsf@evinrude.uhoreg.ca> <42CB7DE0.4050200@namesys.com>
-	 <1120675943.13341.10.camel@localhost>  <87mzozemqp.fsf@evinrude.uhoreg.ca>
-	 <1120681998.13341.23.camel@localhost>  <42CC44D9.8000306@slaphack.com>
+Date: Wed, 06 Jul 2005 17:31:58 -0400
+Message-ID: <87ackzei41.fsf@evinrude.uhoreg.ca>
+References: <hubert@uhoreg.ca>
+	<200507062033.j66KXNqM008212@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-4xTXE/3zbbxvZmZS4A8o"
-Return-path: <reiserfs-list-return-25012-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25013-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42CC44D9.8000306@slaphack.com>
+In-Reply-To: <200507062033.j66KXNqM008212@laptop11.inf.utfsm.cl> (Horst von
+ Brand's message of "Wed, 06 Jul 2005 16:33:23 -0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: David Masover <ninja@slaphack.com>
-Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Jonathan Briggs <jbriggs@esoft.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>, ross.biro@gmail.com, mrmacman_g4@mac.com, Valdis.Kletnieks@vt.edu, ltd@cisco.com, gmaxwell@gmail.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, ndiller@namesys.com, ninja@slaphack.com, vitaly@thebsh.namesys.com
 
---=-4xTXE/3zbbxvZmZS4A8o
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Wed, 06 Jul 2005 16:33:23 -0400, Horst von Brand <vonbrand@inf.utfsm.cl> said:
 
-On Wed, 2005-07-06 at 15:53 -0500, David Masover wrote:
-> Jonathan Briggs wrote:
-[snip]
-> > /a/b/c, /a/b/d, /a/b/e, /b
-> > mv /a/b /b
-> > Now you have to change the stored grand-parent inodes for /a/b/c, /a/b/=
-d
-> > and /a/b/e so that they reference /b/b instead of /a/b.
->=20
-> no, c, d, and e all would reference /a/b's *inode*, not *pathname*.=20
-> Then /a/b would reference /a.  So with the above mv, you just change the=20
-> reference in /a/b (now /b/b) to point to /b as parent.
+> Hubert Chan <hubert@uhoreg.ca> wrote:
+>> If you can store the parents, then finding cycles (relatively)
+>> quickly is pretty easy: before you try to make A the parent of B,
+>> walk up the parent pointers starting from A.  If you ever reach B,
+>> you have a cycle.  If not, you don't have a cycle.  (Hmmm.  Do I need
+>> a proof of correctness for this?  It's just depth-first-search, which
+>> everybody learned in their first algorithms course.)
 
-I misunderstood the reference to parent(s).  It's a list of parent
-inodes, one parent per hard link, not a list of all (grand)*parents up
-to the root.
+> Correct. And you need space for potentially a huge lot of up pointers
+> for each file.
 
-But I see it now.
---=20
-Jonathan Briggs <jbriggs@esoft.com>
-eSoft, Inc.
+People (that I know of) don't normally have a huge lot of hardlinks to a
+single file.
 
---=-4xTXE/3zbbxvZmZS4A8o
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+> And then there is the (very minor) problem is that meanwhile /nothing/
+> can touch the filesystem to do any change...
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
+If the DFS is quick, it shouldn't make much difference.
 
-iD8DBQBCzE0IG8fHaOLTWwgRAnGBAJ0YRrU0vvbhRS7hnRiPvZUag1/bAgCeI2z/
-uUB8AKZNyia611Uguy4/VBs=
-=p6SP
------END PGP SIGNATURE-----
+Lock nodes as you walk up the tree, and people can change unlocked nodes
+without harming anything.  All you need to do is make sure that no up
+pointers get added to nodes that you've already looked at.
 
---=-4xTXE/3zbbxvZmZS4A8o--
+People can also still edit files without changing the tree (and hence
+not screwing up the DFS).
+
+> How do you delete such an object? You will have to delete from each
+> child down to the first object that has a pointer to it from the
+> outside, if you don't want garbage left behind. And that means walking
+> down to /each/ reachable object, then walking up from there to see if
+> all its parents are in the DAG rooted at what you are going to
+> delete. This means potentially walking through the whole filesystem
+> (if you want to delete the root, or something near). You will run out
+> of memory, and again, meanwhile no changes can be allowed.
+
+What does deleting have to do with up pointers?  If you delete a
+directory that has refcount greater than 1, you decrease the refcount,
+remove the appropriate up pointer, and remove the inode entry from its
+parent.  If you delete a directory that has refcount equal to 1, well,
+we're in the same situation we're in right now when you delete a
+directory; you need to "rm -r", which doesn't lock up the whole
+filesystem.
+
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
