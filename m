@@ -1,34 +1,56 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Jonathan Briggs <jbriggs@esoft.com>
 Subject: Re: reiser4 plugins
-Date: Wed, 06 Jul 2005 11:13:39 -0700
-Message-ID: <42CC1F53.7070301@namesys.com>
-References: <hubert@uhoreg.ca>	<200506290509.j5T595I6010576@laptop11.inf.utfsm.cl>	<87hdfgvqvl.fsf@evinrude.uhoreg.ca>	<8783be6605062914341bcff7cb@mail.gmail.com>	<878y0svj1h.fsf@evinrude.uhoreg.ca>	<42C4F97B.1080803@slaphack.com>	<87ll4lynky.fsf@evinrude.uhoreg.ca>	<42CB0328.3070706@namesys.com>	<42CB07EB.4000605@slaphack.com>	<42CB0ED7.8070501@namesys.com>	<42CB1128.6000000@slaphack.com>	<42CB1E12.2090005@namesys.com> <17099.15101.233487.623549@cse.unsw.edu.au> <42CC019B.70503@namesys.com>
+Date: Wed, 06 Jul 2005 12:52:23 -0600
+Message-ID: <1120675943.13341.10.camel@localhost>
+References: <42CB1E12.2090005@namesys.com> <1740726161-BeMail@cr593174-a>
+	 <87hdf8zqca.fsf@evinrude.uhoreg.ca>  <42CB7DE0.4050200@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25000-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-xAS1uxFf0+ZoZHNTpMdX"
+Return-path: <reiserfs-list-return-25001-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42CC019B.70503@namesys.com>
+In-Reply-To: <42CB7DE0.4050200@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Nate Diller <nate@namesys.com>
-Cc: Neil Brown <neilb@cse.unsw.edu.au>, David Masover <ninja@slaphack.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Nate Diller <ndiller@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: Hubert Chan <hubert@uhoreg.ca>, "Alexander G. M. Smith" <agmsmith@rogers.com>, ross.biro@gmail.com, vonbrand@inf.utfsm.cl, mrmacman_g4@mac.com, Valdis.Kletnieks@vt.edu, ltd@cisco.com, gmaxwell@gmail.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, ndiller@namesys.com, ninja@slaphack.com, vitaly@thebsh.namesys.com
 
-Nate Diller wrote:
+--=-xAS1uxFf0+ZoZHNTpMdX
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
->
->
-> as an example, if a program were to store some things it needs access
-> to in its executable's attributes, it should have the option of
-> keeping a hard reference to something, so that it can't be deleted out
-> from underneath.  this enables sane sharing of resources without
-> ownership tracking problems (see windows DLL hell for details).  the
-> attribute space should be indistinguishable from the rest of the
-> namespace, and should be able to link (soft or hard) anywhere in the
-> FS.  anything less is too much work for too little reward.
->
-You already have a problem with hardlinks not crossing mount points, but
-I understand your point.  If we can write code for solving the cycle
-problem cleanly, it would be best.
+On Tue, 2005-07-05 at 23:44 -0700, Hans Reiser wrote:
+> Hubert Chan wrote:
+> >And a question: is it feasible to store, for each inode, its parent(s),
+> >instead of just the hard link count?
+> > =20
+> >
+> Ooh, now that is an interesting old idea I haven't considered in 20
+> years.... makes fsck more robust too....
+
+Hey, sounds like the idea I proposed a couple months ago of storing the
+path names in each file, instead of in directories.  Only better, since
+each path component isn't text but a link instead.
+
+It still has the performance and locking problem of having to update
+every child file when moving a directory tree to a new parent.  On the
+other hand, maybe the benefit is worth the cost.
+--=20
+Jonathan Briggs <jbriggs@esoft.com>
+eSoft, Inc.
+
+--=-xAS1uxFf0+ZoZHNTpMdX
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+
+iD8DBQBCzChnG8fHaOLTWwgRApXpAJwJ2y/fZTbJ+UTqwm7DMQuSsQAinwCdGLU5
+klm5bQKQNZWXO28y/3togzQ=
+=yPew
+-----END PGP SIGNATURE-----
+
+--=-xAS1uxFf0+ZoZHNTpMdX--
+
