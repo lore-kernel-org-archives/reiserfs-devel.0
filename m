@@ -1,54 +1,34 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Wed, 06 Jul 2005 11:07:42 -0700
-Message-ID: <42CC1DEE.7030502@namesys.com>
-References: <42CB1E12.2090005@namesys.com> <1740726161-BeMail@cr593174-a> <87hdf8zqca.fsf@evinrude.uhoreg.ca> <42CB7DE0.4050200@namesys.com> <42CBD7F6.2050203@slaphack.com>
+Date: Wed, 06 Jul 2005 11:13:39 -0700
+Message-ID: <42CC1F53.7070301@namesys.com>
+References: <hubert@uhoreg.ca>	<200506290509.j5T595I6010576@laptop11.inf.utfsm.cl>	<87hdfgvqvl.fsf@evinrude.uhoreg.ca>	<8783be6605062914341bcff7cb@mail.gmail.com>	<878y0svj1h.fsf@evinrude.uhoreg.ca>	<42C4F97B.1080803@slaphack.com>	<87ll4lynky.fsf@evinrude.uhoreg.ca>	<42CB0328.3070706@namesys.com>	<42CB07EB.4000605@slaphack.com>	<42CB0ED7.8070501@namesys.com>	<42CB1128.6000000@slaphack.com>	<42CB1E12.2090005@namesys.com> <17099.15101.233487.623549@cse.unsw.edu.au> <42CC019B.70503@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24999-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25000-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42CBD7F6.2050203@slaphack.com>
+In-Reply-To: <42CC019B.70503@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: Hubert Chan <hubert@uhoreg.ca>, "Alexander G. M. Smith" <agmsmith@rogers.com>, ross.biro@gmail.com, vonbrand@inf.utfsm.cl, mrmacman_g4@mac.com, Valdis.Kletnieks@vt.edu, ltd@cisco.com, gmaxwell@gmail.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, ndiller@namesys.com, vitaly@thebsh.namesys.com
+To: Nate Diller <nate@namesys.com>
+Cc: Neil Brown <neilb@cse.unsw.edu.au>, David Masover <ninja@slaphack.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Nate Diller <ndiller@namesys.com>
 
-David Masover wrote:
-
-> And, once we start talking about applications, /meta will be more
-> readily supported (as in, some apps will go through a pathname and
-> stop when they get to a file, and then there's tar).  On apps which
-> don't have direct support for /meta, you'd be navigating to the file
-> in question and then manually typing '...' into the dialog, so I don't
-> see why typing '...' at the end is better than typing '/meta' or
-> '/meta/vfs' at the beginning.
-
-Performance.  If you type it at the end, and you already have done the
-lookup of the filename, then you can go from the file to one of its
-methods, instead of a complete new traversal of another tree under /meta
+Nate Diller wrote:
 
 >
-> That said, I'm still not entirely sure how we get /meta/vfs to work
-> other than adding a '...' sort of delimiter anyway.
 >
->>> And a question: is it feasible to store, for each inode, its parent(s),
->>> instead of just the hard link count?
->>>
->>>
->>
->> Ooh, now that is an interesting old idea I haven't considered in 20
->> years.... makes fsck more robust too....
+> as an example, if a program were to store some things it needs access
+> to in its executable's attributes, it should have the option of
+> keeping a hard reference to something, so that it can't be deleted out
+> from underneath.  this enables sane sharing of resources without
+> ownership tracking problems (see windows DLL hell for details).  the
+> attribute space should be indistinguishable from the rest of the
+> namespace, and should be able to link (soft or hard) anywhere in the
+> FS.  anything less is too much work for too little reward.
 >
->
-> Doesn't it make directory operations slower, too?
-
-Not sure.  It consumes space though.
-
->
-> And, will it require a format change?
->
-Yes, but we have plugins now, so.....
-
+You already have a problem with hardlinks not crossing mount points, but
+I understand your point.  If we can write code for solving the cycle
+problem cleanly, it would be best.
