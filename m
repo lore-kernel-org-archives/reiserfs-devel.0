@@ -1,92 +1,68 @@
 From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: reiser4 plugins
-Date: Wed, 06 Jul 2005 15:51:58 -0400
-Message-ID: <87mzozemqp.fsf@evinrude.uhoreg.ca>
-References: <42CB1E12.2090005@namesys.com> <1740726161-BeMail@cr593174-a>
-	<87hdf8zqca.fsf@evinrude.uhoreg.ca> <42CB7DE0.4050200@namesys.com>
-	<1120675943.13341.10.camel@localhost>
+Date: Wed, 06 Jul 2005 16:10:48 -0400
+Message-ID: <87irznelvb.fsf@evinrude.uhoreg.ca>
+References: <hubert@uhoreg.ca> <200507060251.j662p7OC005227@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-25003-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25004-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1120675943.13341.10.camel@localhost> (Jonathan Briggs's
- message of "Wed, 06 Jul 2005 12:52:23 -0600")
+In-Reply-To: <200507060251.j662p7OC005227@laptop11.inf.utfsm.cl> (Horst von
+ Brand's message of "Tue, 05 Jul 2005 22:51:07 -0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Briggs <jbriggs@esoft.com>
-Cc: "Alexander G. M. Smith" <agmsmith@rogers.com>, ross.biro@gmail.com, vonbrand@inf.utfsm.cl, mrmacman_g4@mac.com, Valdis.Kletnieks@vt.edu, ltd@cisco.com, gmaxwell@gmail.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, ndiller@namesys.com, ninja@slaphack.com, vitaly@thebsh.namesys.com
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Chet Hosey <chosey@nauticom.net>, Kevin Bowen <kevin@ucsd.edu>, Hans Reiser <reiser@namesys.com>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-On Wed, 06 Jul 2005 12:52:23 -0600, Jonathan Briggs <jbriggs@esoft.com> said:
+On Tue, 05 Jul 2005 22:51:07 -0400, Horst von Brand <vonbrand@inf.utfsm.cl> said:
 
-> On Tue, 2005-07-05 at 23:44 -0700, Hans Reiser wrote:
->> Hubert Chan wrote:
->>> And a question: is it feasible to store, for each
->>> inode, its parent(s), instead of just the hard link count?
+> Hubert Chan <hubert@uhoreg.ca> wrote:
+>> On Fri, 01 Jul 2005 03:41:00 -0400, Chet Hosey <chosey@nauticom.net>
+>> said:
+>> > Horst von Brand wrote:
+>> >> And who says that a normal user isn't allowed to annotate each and
+>> >> every file with its purpose or something else?
 
->> Ooh, now that is an interesting old idea I haven't considered in 20
->> years.... makes fsck more robust too....
+>> Explain how you currently allow users to annotate arbitrary files.
 
-If you can store the parents, then finding cycles (relatively) quickly
-is pretty easy: before you try to make A the parent of B, walk up the
-parent pointers starting from A.  If you ever reach B, you have a cycle.
-If not, you don't have a cycle.  (Hmmm.  Do I need a proof of
-correctness for this?  It's just depth-first-search, which everybody
-learned in their first algorithms course.)
+> By keeping annotations /outside/ the files.
 
-Running time is (at most) just the sum of all (directed) path lengths
-from A to the root.  Assuming people don't have too deep of a hierarchy,
-or too much branching with hard links (i.e. nodes with too many
-parents), which I think is a reasonable assumption, running time should
-be fairly quick.
+So if I want to share annotations, I have to look in 20 different
+places?
 
-(People may have millions of files in a single directory, which is why
-doing the DFS in the forward direction is a bad idea.  But people
-probably don't have millions of hard links to the same file, or
-hierarchies that are millions of levels deep.)
+> [...]
 
-And it only happens when a hard link is created -- probably not a very
-performance-dependent event (i.e. it's not the scheduling algorithm).  I
-would imagine that some creative caching could be done to speed up the
-situation where you try to make a whole batch of hard links.  (When you
-walk up the parent pointers starting from A, cache the inode numbers
-that you encounter.  If you then try to make A the parent of C, check if
-C is one of the inode numbers in the cache.  If yes, we have a cycle; if
-no, we don't have a cycle.)
+>> The situation is even better with file-as-dir.  If the administrator
+>> wants to allow users to edit the description metadata for the file
+>> foo, the administrator can set the appropriate permissions for
+>> foo/.../description, and keep foo read-only.
 
-Extra disk storage is just about one extra word for most nodes (that
-only have one parent -- basically, one extra word per parent), if you
-can pack the data efficiently.  (i.e. we don't want to waste a extra
-whole block per node.)
+> So now root is responsible in exquisite detail for random other users
+> being able to keep info about my files?
 
-Of course, since this requires extra storage on the part of the
-filesystem, the (kernel) VFS change would have to be something where the
-VFS asks the filesystem whether making A the parent of B will create a
-cycle; it's not something the VFS can do transparently for everybody.
-Filesystems that don't store this extra stuff just return "yes" if B is
-a directory (thus disallowing the link), and "no" if B is a file, and we
-get the same situation we have right now.
+I can grant people permissions to write random info into my own files.
+Or they can use unionfs if I don't grant them permissions.
 
-It would require a disk format change (sort of) in Reiser4, but (as Hans
-mentioned) since we have plugins, shouldn't require a reformat (as I
-understand it).  Just run a tool that builds the parent-pointer data;
-until you run that tool, the filesystem can just disallow hard links.
-After you run the tool, updating parent pointers is handled
-automatically by the filesystem.
+Remember: the above argument was citing an advantage of file-as-dir over
+packed files (storing metadata as a tar or zip file, similar to what
+OpenOffice.org does, or even something like exif or id3).  In a packed
+file, I can't allow people to edit the description attribute without
+allowing them to edit the entire file.  With file-as-dir, I get much
+finer grained permissions.
 
-> Hey, sounds like the idea I proposed a couple months ago of storing
-> the path names in each file, instead of in directories.  Only better,
-> since each path component isn't text but a link instead.
+> [...]
 
-> It still has the performance and locking problem of having to update
-> every child file when moving a directory tree to a new parent.  On the
-> other hand, maybe the benefit is worth the cost.
+>> Actually, you could use something like unionfs to allow users to keep
+>> their own annotations without affecting everyone else's.
 
-Every node should store the inode number(s) for its parent(s).  Not the
-path name.  So you don't need to do any updates, since when you move a
-tree, inode numbers don't change.
+> Again, root has to mount that stuff for each and every user?
+
+suid program that allows union mount into a directory within my own tree
+(or just into any directory that I have write permissions should be
+sufficiently secure).
 
 -- 
 Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
