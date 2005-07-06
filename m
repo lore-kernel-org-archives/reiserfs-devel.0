@@ -1,50 +1,85 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 plugins
-Date: Tue, 05 Jul 2005 22:51:07 -0400
-Message-ID: <200507060251.j662p7OC005227@laptop11.inf.utfsm.cl>
-References: <hubert@uhoreg.ca>
-Return-path: <reiserfs-list-return-24988-reiserfs=m.gmane.org@namesys.com>
+Date: Wed, 06 Jul 2005 08:09:10 -0500
+Message-ID: <42CBD7F6.2050203@slaphack.com>
+References: <42CB1E12.2090005@namesys.com> <1740726161-BeMail@cr593174-a> <87hdf8zqca.fsf@evinrude.uhoreg.ca> <42CB7DE0.4050200@namesys.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-24989-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Hubert Chan <hubert@uhoreg.ca> 
-   of "Tue, 05 Jul 2005 16:55:33 -0400." <87pstxynui.fsf@evinrude.uhoreg.ca> 
+In-Reply-To: <42CB7DE0.4050200@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: Chet Hosey <chosey@nauticom.net>, Kevin Bowen <kevin@ucsd.edu>, Hans Reiser <reiser@namesys.com>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Hubert Chan <hubert@uhoreg.ca>, "Alexander G. M. Smith" <agmsmith@rogers.com>, ross.biro@gmail.com, vonbrand@inf.utfsm.cl, mrmacman_g4@mac.com, Valdis.Kletnieks@vt.edu, ltd@cisco.com, gmaxwell@gmail.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, ndiller@namesys.com, vitaly@thebsh.namesys.com
 
-Hubert Chan <hubert@uhoreg.ca> wrote:
-> On Fri, 01 Jul 2005 03:41:00 -0400, Chet Hosey <chosey@nauticom.net> said:
-> > Horst von Brand wrote:
-> >> And who says that a normal user isn't allowed to annotate each and
-> >> every file with its purpose or something else?
+Hans Reiser wrote:
+> Hubert Chan wrote:
+> 
+> 
+>>On Tue, 05 Jul 2005 20:50:08 -0400 EDT, "Alexander G. M. Smith" <agmsmith@rogers.com> said:
+>>
+>> 
+>>
+>>
+>>>That sounds equivalent to no hard links (other than the usual parent
+>>>directory one).  If there's any directory with two links to it, then
+>>>there will be a cycle somewhere!
+>>>   
+>>>
+>>
+>>What we want is no directed cycles.  That is A is the parent of B is the
+>>parent of C is the parent of A.  We don't care about A is the parent of
+>>B is the parent of C; A is the parent of B is the parent of C.
+>>
+>>OK, here's a random idea that just popped into my head, and to which
+>>I've given little thought (read: none whatsoever), and may be the
+>>stupidest idea ever proposed on LKML, but thought I would just toss it
+>>out to see if it could stimulate someone to come up with something
+>>better (read: sane):  Conceptually, foo/.... is just a symlink to
+>>/meta/[filesystem]/[inode of foo].
+>> 
+>>
+> 
+> Except that we want the metafiles to go away when the base file goes away.
 
-> Explain how you currently allow users to annotate arbitrary files.
+Only, /meta is a filesystem that already makes stuff go away for us, so 
+all we have left is the issue of whether using /meta costs us 
+performance, or whether breaking POSIX to add a symlink (such as 
+foo/...) really gives us that much more usability.
 
-By keeping annotations /outside/ the files.
+I don't know the first thing about whether it costs us performance, 
+although it seems like it could be negligable considering the existance 
+of mount --bind.
 
-[...]
+I don't think file-as-dir gives us that much more usability, because we 
+can always create a simple program or shell script that 'cd's us into 
+metadata.  It's still easier than having a simple program that 
+manipulates the metadata directly, because this way we can do 'cd' and 
+'ls' and so on inside the metadata directory.
 
-> The situation is even better with file-as-dir.  If the administrator
-> wants to allow users to edit the description metadata for the file foo,
-> the administrator can set the appropriate permissions for
-> foo/.../description, and keep foo read-only.
+And, once we start talking about applications, /meta will be more 
+readily supported (as in, some apps will go through a pathname and stop 
+when they get to a file, and then there's tar).  On apps which don't 
+have direct support for /meta, you'd be navigating to the file in 
+question and then manually typing '...' into the dialog, so I don't see 
+why typing '...' at the end is better than typing '/meta' or '/meta/vfs' 
+at the beginning.
 
-So now root is responsible in exquisite detail for random other users being
-able to keep info about my files?
+That said, I'm still not entirely sure how we get /meta/vfs to work 
+other than adding a '...' sort of delimiter anyway.
 
-[...]
+>>And a question: is it feasible to store, for each inode, its parent(s),
+>>instead of just the hard link count?
+>> 
+>>
+> 
+> Ooh, now that is an interesting old idea I haven't considered in 20
+> years.... makes fsck more robust too....
 
-> Actually, you could use something like unionfs to allow users to keep
-> their own annotations without affecting everyone else's.
+Doesn't it make directory operations slower, too?
 
-Again, root has to mount that stuff for each and every user?
--- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+And, will it require a format change?
