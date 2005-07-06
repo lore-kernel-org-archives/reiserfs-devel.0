@@ -1,85 +1,49 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 plugins
-Date: Wed, 06 Jul 2005 08:09:10 -0500
-Message-ID: <42CBD7F6.2050203@slaphack.com>
-References: <42CB1E12.2090005@namesys.com> <1740726161-BeMail@cr593174-a> <87hdf8zqca.fsf@evinrude.uhoreg.ca> <42CB7DE0.4050200@namesys.com>
+Date: Wed, 06 Jul 2005 08:18:59 -0500
+Message-ID: <42CBDA43.6030305@slaphack.com>
+References: <200507060255.j662tndQ005308@laptop11.inf.utfsm.cl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-24989-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-24990-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42CB7DE0.4050200@namesys.com>
+In-Reply-To: <200507060255.j662tndQ005308@laptop11.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Hubert Chan <hubert@uhoreg.ca>, "Alexander G. M. Smith" <agmsmith@rogers.com>, ross.biro@gmail.com, vonbrand@inf.utfsm.cl, mrmacman_g4@mac.com, Valdis.Kletnieks@vt.edu, ltd@cisco.com, gmaxwell@gmail.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, ndiller@namesys.com, vitaly@thebsh.namesys.com
+To: Horst von Brand <vonbrand@inf.utfsm.cl>
+Cc: Hans Reiser <reiser@namesys.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Hans Reiser wrote:
-> Hubert Chan wrote:
+Horst von Brand wrote:
+> David Masover <ninja@slaphack.com> wrote:
+> 
+> [...]
 > 
 > 
->>On Tue, 05 Jul 2005 20:50:08 -0400 EDT, "Alexander G. M. Smith" <agmsmith@rogers.com> said:
->>
->> 
->>
->>
->>>That sounds equivalent to no hard links (other than the usual parent
->>>directory one).  If there's any directory with two links to it, then
->>>there will be a cycle somewhere!
->>>   
->>>
->>
->>What we want is no directed cycles.  That is A is the parent of B is the
->>parent of C is the parent of A.  We don't care about A is the parent of
->>B is the parent of C; A is the parent of B is the parent of C.
->>
->>OK, here's a random idea that just popped into my head, and to which
->>I've given little thought (read: none whatsoever), and may be the
->>stupidest idea ever proposed on LKML, but thought I would just toss it
->>out to see if it could stimulate someone to come up with something
->>better (read: sane):  Conceptually, foo/.... is just a symlink to
->>/meta/[filesystem]/[inode of foo].
->> 
->>
+>>Just don't allow user-created hardlinks inside either metafs (/meta) or
+>>the magical meta directory inside files.
 > 
-> Except that we want the metafiles to go away when the base file goes away.
-
-Only, /meta is a filesystem that already makes stuff go away for us, so 
-all we have left is the issue of whether using /meta costs us 
-performance, or whether breaking POSIX to add a symlink (such as 
-foo/...) really gives us that much more usability.
-
-I don't know the first thing about whether it costs us performance, 
-although it seems like it could be negligable considering the existance 
-of mount --bind.
-
-I don't think file-as-dir gives us that much more usability, because we 
-can always create a simple program or shell script that 'cd's us into 
-metadata.  It's still easier than having a simple program that 
-manipulates the metadata directly, because this way we can do 'cd' and 
-'ls' and so on inside the metadata directory.
-
-And, once we start talking about applications, /meta will be more 
-readily supported (as in, some apps will go through a pathname and stop 
-when they get to a file, and then there's tar).  On apps which don't 
-have direct support for /meta, you'd be navigating to the file in 
-question and then manually typing '...' into the dialog, so I don't see 
-why typing '...' at the end is better than typing '/meta' or '/meta/vfs' 
-at the beginning.
-
-That said, I'm still not entirely sure how we get /meta/vfs to work 
-other than adding a '...' sort of delimiter anyway.
-
->>And a question: is it feasible to store, for each inode, its parent(s),
->>instead of just the hard link count?
->> 
->>
 > 
-> Ooh, now that is an interesting old idea I haven't considered in 20
-> years.... makes fsck more robust too....
+> And what is it useful for, after its advantage was that it was /exactly/
+> like regular files &c, and now it is severely crippled?
 
-Doesn't it make directory operations slower, too?
+The advantage was never that meta files look exactly like regular files, 
+but that they look enough like regular files that you can use existing 
+tools on them.  Of course, there are some times when you want meta files 
+to look exactly like regular files, as in (I hate to bring it up again, 
+but...) zip files.
 
-And, will it require a format change?
+So, a zip file (/meta/vfs/some/zip/file/.../contents/) would allow 
+hardlinks between files inside the zipfile, but not outside of it.  This 
+would be like creating a separate mountpoint for the zipfile's contents, 
+and doing "mount --bind" when a hardlink to the zipfile is created.
+
+I'm not sure if we actually have to pretend it's a mountpoint, or if we 
+can just take the checking that mountpoints already do and generalize it.
+
+
+Can you think of a way in which hardlinks are useful in /meta, in a 
+*general* way, instead of within a specific directory controlled by a 
+specific plugin?
