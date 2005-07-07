@@ -1,43 +1,31 @@
-From: Joshua Wise <joshua@joshuawise.com>
-Subject: reiserfsck does not actually fix bitmap
-Date: Wed, 06 Jul 2005 23:25:38 -0400
-Message-ID: <42CCA0B2.6030701@joshuawise.com>
+From: Rudy Zijlstra <rudy@edsons.demon.nl>
+Subject: Re: reiser4 plugins
+Date: Thu, 07 Jul 2005 08:21:39 +0200
+Message-ID: <42CCC9F3.5080509@edsons.demon.nl>
+References: <889A47B16278164FB657E0FFB1CAB8C7B729A7@hq-exchange.ccbill-hq.local>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25023-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25024-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <889A47B16278164FB657E0FFB1CAB8C7B729A7@hq-exchange.ccbill-hq.local>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Doug Wicks <doug@ccbill.com>
+Cc: Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Hubert Chan <hubert@uhoreg.ca>, "Alexander G. M. Smith" <agmsmith@rogers.com>, ross.biro@gmail.com, vonbrand@inf.utfsm.cl, mrmacman_g4@mac.com, Valdis.Kletnieks@vt.edu, ltd@cisco.com, gmaxwell@gmail.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, ndiller@namesys.com, vitaly@thebsh.namesys.com
 
-Hi folks,
+Doug Wicks wrote:
 
-I just set up a new system, and all was well, but on a boot of the
-system a few days later, I was greeted with reiserfsck complaining that
-the number of free blocks was incorrect, and that it wished to run
-itself with --fix-fixable. It did so, noting that the on-disk and
-correct bitmaps differ. It said that they will be fixed later, as shown:
+>How do I get off the mail list here? 
+>
+> 
+>doug@cavecreek.com
+> 
+>  
+>
+See www.namesys.com, click on "Join Mail List" then in "Unsubscribe 
+Mailinglist" and follow instructions.
 
-Comparing bitmaps..vpf-10630: The on-disk and the correct bitmaps
-differs. Will be fixed later.
-
-The system rebooted, and it ran reiserfsck -p (or -a, I dunno which)
-once more. Again, it said that the on-disk and correct bitmaps differed,
-and that they would be fixed "later". This repeated until I booted into
-a liveCD and ran reiserfsck from there.  A -p from there shows that
-"Some corruptions on the filesystem were detected. Switching to the
---fix-fixable mode". When it entered --fix-fixable mode, it again
-mentioned taht the on-disk and correct bitmaps differed, and that it
-would fix them later, but at the end, it said "No corruptions found" and
-made no sign that it actually fixed the bitmaps. Running reiserfsck -p
-again showed no difference, so it seems to me like reiserfsck didn't fix
-the bitmap when it told me it would.
-
-Does anyone have any insights as to how to get reiserfsck to actually
-fix the problem?
-
-Thanks,
-joshua
+Very difficult, i know.
