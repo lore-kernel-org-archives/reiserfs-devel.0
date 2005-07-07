@@ -1,58 +1,60 @@
-From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
-Subject: Re: reiser4 plugins
-Date: Thu, 7 Jul 2005 11:27:49 +0300
-Message-ID: <20050707082749.GZ11013@nysv.org>
-References: <200506290509.j5T595I6010576@laptop11.inf.utfsm.cl> <m2k6kd2rx8.fsf@Douglas-McNaughts-Powerbook.local> <20050629135820.GJ11013@nysv.org> <20050629205636.GN16867@khan.acc.umu.se> <42C4FA1A.1050100@slaphack.com> <20050701155446.GZ16867@khan.acc.umu.se>
+From: Vladimir Saveliev <vs@namesys.com>
+Subject: Re: reiserfsck does not actually fix bitmap
+Date: Thu, 07 Jul 2005 15:03:19 +0400
+Message-ID: <1120734198.3871.134.camel@tribesman.namesys.com>
+References: <42CCA0B2.6030701@joshuawise.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="umhhH1MY3lvPZrwj"
-Return-path: <reiserfs-list-return-25028-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25031-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20050701155446.GZ16867@khan.acc.umu.se>
+In-Reply-To: <42CCA0B2.6030701@joshuawise.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: David Masover <ninja@slaphack.com>, Douglas McNaught <doug@mcnaught.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Hubert Chan <hubert@uhoreg.ca>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Joshua Wise <joshua@joshuawise.com>
+Cc: reiserfs-list@namesys.com
 
---umhhH1MY3lvPZrwj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello
 
-On Fri, Jul 01, 2005 at 05:54:46PM +0200, David Weinehall wrote:
->
->Which would neither need VFS changes nor be dependent on Reiser4 in
->any way, so I don't see why this thread lives on.  Just get down to
->business and implement this metafs =3D)
+On Thu, 2005-07-07 at 07:25, Joshua Wise wrote:
+> Hi folks,
+> 
+> I just set up a new system, and all was well, but on a boot of the
+> system a few days later, I was greeted with reiserfsck complaining that
+> the number of free blocks was incorrect, and that it wished to run
+> itself with --fix-fixable. It did so, noting that the on-disk and
+> correct bitmaps differ. It said that they will be fixed later, as shown:
+> 
+> Comparing bitmaps..vpf-10630: The on-disk and the correct bitmaps
+> differs. Will be fixed later.
+> 
+> The system rebooted, and it ran reiserfsck -p (or -a, I dunno which)
+> once more. Again, it said that the on-disk and correct bitmaps differed,
+> and that they would be fixed "later". This repeated until I booted into
+> a liveCD and ran reiserfsck from there.  A -p from there shows that
+> "Some corruptions on the filesystem were detected. Switching to the
+> --fix-fixable mode". When it entered --fix-fixable mode, it again
+> mentioned taht the on-disk and correct bitmaps differed, and that it
+> would fix them later, but at the end, it said "No corruptions found" and
+> made no sign that it actually fixed the bitmaps. Running reiserfsck -p
+> again showed no difference, so it seems to me like reiserfsck didn't fix
+> the bitmap when it told me it would.
+> 
+If it showed no bitmap difference anymore - then it is fixed.
 
-I've been gone for a while and suddenly drowning in mail...
+> Does anyone have any insights as to how to get reiserfsck to actually
+> fix the problem?
+> 
 
-Anyway, I don't really like the metafs thing.
-
-To access the data, you still need to refactor userspace,
-so that's not a real advantage. Doing lookups from /meta
-all the time, instead of in the file-as-dir-whatever...
-
-And the best thing to do would be to bring these "Reiser4-specific"
-enhancements to every FS.
-
---=20
-mjt
+I guess that problem is that on -p option reiserfsck gets switched to
+quiet mode which supresses some output.
+Please run
+reiserfsck /dev/hda1 to see whether /dev/hda1 has any problems.
 
 
---umhhH1MY3lvPZrwj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+> Thanks,
+> joshua
+> 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-iD8DBQFCzOeFIqNMpVm8OhwRAhZoAJ0adDv6sug/VsMk1Qn5uauM2N5jTACfQrwu
-aDpLjm1wZLJBtp4ovvYOlZY=
-=QoYa
------END PGP SIGNATURE-----
-
---umhhH1MY3lvPZrwj--
