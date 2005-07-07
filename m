@@ -1,54 +1,58 @@
-From: Hans Reiser <reiser@namesys.com>
+From: mjt@nysv.org Markus =?unknown-8bit?q?T=F6rnqvist?=
 Subject: Re: reiser4 plugins
-Date: Wed, 06 Jul 2005 23:42:50 -0700
-Message-ID: <42CCCEEA.7040302@namesys.com>
-References: <42CB1E12.2090005@namesys.com> <1740726161-BeMail@cr593174-a>	 <87hdf8zqca.fsf@evinrude.uhoreg.ca>  <42CB7DE0.4050200@namesys.com> <1120675943.13341.10.camel@localhost>
+Date: Thu, 7 Jul 2005 11:27:49 +0300
+Message-ID: <20050707082749.GZ11013@nysv.org>
+References: <200506290509.j5T595I6010576@laptop11.inf.utfsm.cl> <m2k6kd2rx8.fsf@Douglas-McNaughts-Powerbook.local> <20050629135820.GJ11013@nysv.org> <20050629205636.GN16867@khan.acc.umu.se> <42C4FA1A.1050100@slaphack.com> <20050701155446.GZ16867@khan.acc.umu.se>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25026-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="umhhH1MY3lvPZrwj"
+Return-path: <reiserfs-list-return-25028-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1120675943.13341.10.camel@localhost>
+Content-Disposition: inline
+In-Reply-To: <20050701155446.GZ16867@khan.acc.umu.se>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jonathan Briggs <jbriggs@esoft.com>
-Cc: Hubert Chan <hubert@uhoreg.ca>, "Alexander G. M. Smith" <agmsmith@rogers.com>, ross.biro@gmail.com, vonbrand@inf.utfsm.cl, mrmacman_g4@mac.com, Valdis.Kletnieks@vt.edu, ltd@cisco.com, gmaxwell@gmail.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, ndiller@namesys.com, ninja@slaphack.com, vitaly@thebsh.namesys.com
+To: David Masover <ninja@slaphack.com>, Douglas McNaught <doug@mcnaught.org>, Horst von Brand <vonbrand@inf.utfsm.cl>, Hubert Chan <hubert@uhoreg.ca>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
 
-Jonathan Briggs wrote:
+--umhhH1MY3lvPZrwj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->On Tue, 2005-07-05 at 23:44 -0700, Hans Reiser wrote:
->  
+On Fri, Jul 01, 2005 at 05:54:46PM +0200, David Weinehall wrote:
 >
->>Hubert Chan wrote:
->>    
->>
->>>And a question: is it feasible to store, for each inode, its parent(s),
->>>instead of just the hard link count?
->>> 
->>>
->>>      
->>>
->>Ooh, now that is an interesting old idea I haven't considered in 20
->>years.... makes fsck more robust too....
->>    
->>
->
->Hey, sounds like the idea I proposed a couple months ago of storing the
->path names in each file, instead of in directories.  Only better, since
->each path component isn't text but a link instead.
->
->It still has the performance and locking problem of having to update
->every child file when moving a directory tree to a new parent.  On the
->other hand, maybe the benefit is worth the cost.
->  
->
-Oh no, don't store the whole path, store just the parent list.  This
-will make fsck more robust in the event that the directory gets
-clobbered by hardware error.
+>Which would neither need VFS changes nor be dependent on Reiser4 in
+>any way, so I don't see why this thread lives on.  Just get down to
+>business and implement this metafs =3D)
 
-I don't think it affects the cost of detecting cycles though, I think it
-only makes fsck more robust.
+I've been gone for a while and suddenly drowning in mail...
 
-Hans
+Anyway, I don't really like the metafs thing.
+
+To access the data, you still need to refactor userspace,
+so that's not a real advantage. Doing lookups from /meta
+all the time, instead of in the file-as-dir-whatever...
+
+And the best thing to do would be to bring these "Reiser4-specific"
+enhancements to every FS.
+
+--=20
+mjt
+
+
+--umhhH1MY3lvPZrwj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iD8DBQFCzOeFIqNMpVm8OhwRAhZoAJ0adDv6sug/VsMk1Qn5uauM2N5jTACfQrwu
+aDpLjm1wZLJBtp4ovvYOlZY=
+=QoYa
+-----END PGP SIGNATURE-----
+
+--umhhH1MY3lvPZrwj--
