@@ -1,49 +1,54 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: reiser4 plugins
-Date: Wed, 06 Jul 2005 23:41:32 -0700
-Message-ID: <42CCCE9C.1000704@namesys.com>
-References: <200507061730.j66HUZ8R015013@laptop11.inf.utfsm.cl>
+Date: Wed, 06 Jul 2005 23:42:50 -0700
+Message-ID: <42CCCEEA.7040302@namesys.com>
+References: <42CB1E12.2090005@namesys.com> <1740726161-BeMail@cr593174-a>	 <87hdf8zqca.fsf@evinrude.uhoreg.ca>  <42CB7DE0.4050200@namesys.com> <1120675943.13341.10.camel@localhost>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25025-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25026-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200507061730.j66HUZ8R015013@laptop11.inf.utfsm.cl>
+In-Reply-To: <1120675943.13341.10.camel@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: Martin Waitz <tali@admingilde.org>, Jonathan Briggs <jbriggs@esoft.com>, Ross Biro <ross.biro@gmail.com>, Hubert Chan <hubert@uhoreg.ca>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: Jonathan Briggs <jbriggs@esoft.com>
+Cc: Hubert Chan <hubert@uhoreg.ca>, "Alexander G. M. Smith" <agmsmith@rogers.com>, ross.biro@gmail.com, vonbrand@inf.utfsm.cl, mrmacman_g4@mac.com, Valdis.Kletnieks@vt.edu, ltd@cisco.com, gmaxwell@gmail.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, ndiller@namesys.com, ninja@slaphack.com, vitaly@thebsh.namesys.com
 
-Horst von Brand wrote:
+Jonathan Briggs wrote:
 
->Hans Reiser <reiser@namesys.com> wrote:
->
->[...]
->
+>On Tue, 2005-07-05 at 23:44 -0700, Hans Reiser wrote:
 >  
 >
->>I think the exokernel approach by Frans is a very interesting approach. 
->>I wish I had the experience with it necessary to know if it was
->>effective.  I do NOT take the position that name resolution should be in
->>the kernel.  I DO take the position that it should be either in the
->>kernel or out of the kernel, and should constitute one cohesive and
->>coherent body of code.
+>>Hubert Chan wrote:
+>>    
+>>
+>>>And a question: is it feasible to store, for each inode, its parent(s),
+>>>instead of just the hard link count?
+>>> 
+>>>
+>>>      
+>>>
+>>Ooh, now that is an interesting old idea I haven't considered in 20
+>>years.... makes fsck more robust too....
 >>    
 >>
 >
->Right.
+>Hey, sounds like the idea I proposed a couple months ago of storing the
+>path names in each file, instead of in directories.  Only better, since
+>each path component isn't text but a link instead.
 >
+>It still has the performance and locking problem of having to update
+>every child file when moving a directory tree to a new parent.  On the
+>other hand, maybe the benefit is worth the cost.
 >  
 >
->>                        If someone talks Linus into trying the exokernel
->>approach,
->>    
->>
->
->Are you nuts?! Such radical experiments do /not/ belong in the kernel on
->which millions of machines depend!
->  
->
-Your response is a flame, and I will not respond to it.
+Oh no, don't store the whole path, store just the parent list.  This
+will make fsck more robust in the event that the directory gets
+clobbered by hardware error.
+
+I don't think it affects the cost of detecting cycles though, I think it
+only makes fsck more robust.
+
+Hans
