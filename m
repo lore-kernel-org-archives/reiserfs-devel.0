@@ -1,56 +1,58 @@
-From: David Masover <ninja@slaphack.com>
+From: Jim Crilly <jim@why.dont.jablowme.net>
 Subject: Re: reiser4 plugins
-Date: Wed, 06 Jul 2005 21:33:13 -0500
-Message-ID: <42CC9469.9000001@slaphack.com>
-References: <hubert@uhoreg.ca>	<200507062033.j66KXNqM008212@laptop11.inf.utfsm.cl> <87ackzei41.fsf@evinrude.uhoreg.ca>
+Date: Wed, 6 Jul 2005 22:52:46 -0400
+Message-ID: <20050707025246.GA2181@mail>
+References: <889A47B16278164FB657E0FFB1CAB8C7B729A7@hq-exchange.ccbill-hq.local>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25019-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25021-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <87ackzei41.fsf@evinrude.uhoreg.ca>
+Content-Disposition: inline
+In-Reply-To: <889A47B16278164FB657E0FFB1CAB8C7B729A7@hq-exchange.ccbill-hq.local>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Jonathan Briggs <jbriggs@esoft.com>, "Alexander G. M. Smith" <agmsmith@rogers.com>, ross.biro@gmail.com, mrmacman_g4@mac.com, Valdis.Kletnieks@vt.edu, ltd@cisco.com, gmaxwell@gmail.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, ndiller@namesys.com, vitaly@thebsh.namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Doug Wicks <doug@ccbill.com>
+Cc: Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, Hubert Chan <hubert@uhoreg.ca>, "Alexander G. M. Smith" <agmsmith@rogers.com>, ross.biro@gmail.com, vonbrand@inf.utfsm.cl, mrmacman_g4@mac.com, Valdis.Kletnieks@vt.edu, ltd@cisco.com, gmaxwell@gmail.com, jgarzik@pobox.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, zam@namesys.com, vs@thebsh.namesys.com, ndiller@namesys.com, vitaly@thebsh.namesys.com
 
-Hubert Chan wrote:
-> On Wed, 06 Jul 2005 16:33:23 -0400, Horst von Brand <vonbrand@inf.utfsm.cl> said:
-> 
-> 
->>Hubert Chan <hubert@uhoreg.ca> wrote:
->>
->>>If you can store the parents, then finding cycles (relatively)
->>>quickly is pretty easy: before you try to make A the parent of B,
->>>walk up the parent pointers starting from A.  If you ever reach B,
->>>you have a cycle.  If not, you don't have a cycle.  (Hmmm.  Do I need
->>>a proof of correctness for this?  It's just depth-first-search, which
->>>everybody learned in their first algorithms course.)
-> 
-> 
->>Correct. And you need space for potentially a huge lot of up pointers
->>for each file.
-> 
-> 
-> People (that I know of) don't normally have a huge lot of hardlinks to a
-> single file.
+On 07/06/05 03:54:09PM -0700, Doug Wicks wrote:
+> How do I get off the mail list here? 
 
-And speaking of which, the only doomsday scenario (running out of RAM) 
-that I can think of with this scheme is if we have a ton of hardlinks to 
-the same file and we try to move one of them.  But this scales linearly 
-with the number of hardlinks, I think.  Maybe not quite, but certainly 
-not exponentially.
+Read the auto-appended signature at the bottom of every message.
+> 
+>  
+> doug@cavecreek.com
+>  
+> 
 
-The only other doomsday scenario is if we have a ludicrously deep tree.
+Jim.
 
-To make this work in real usage, not DOS testing, we really need both of 
-those, and even then I'm not sure it can work.  What's the maximum 
-number of hardlinks supported to a single file?  What's the maximum tree 
-depth?  Can these be limited to prevent actual DOS attempts?
-
-Now, if we were to ever actually *create* a cycle, then yes, we might 
-end up traversing the whole tree to delete it, possibly running out of 
-RAM.  But we don't ever actually create cycles except if we were to have 
-corruption, which could as easily create cycles in any other FS.
+> -----Original Message-----
+> From: Hans Reiser [mailto:reiser@namesys.com] 
+> Sent: Wednesday, July 06, 2005 3:50 PM
+> To: David Masover
+> Cc: Hubert Chan; Alexander G. M. Smith; ross.biro@gmail.com;
+> vonbrand@inf.utfsm.cl; mrmacman_g4@mac.com; Valdis.Kletnieks@vt.edu;
+> ltd@cisco.com; gmaxwell@gmail.com; jgarzik@pobox.com; hch@infradead.org;
+> akpm@osdl.org; linux-kernel@vger.kernel.org; reiserfs-list@namesys.com;
+> zam@namesys.com; vs@thebsh.namesys.com; ndiller@namesys.com;
+> vitaly@thebsh.namesys.com
+> Subject: Re: reiser4 plugins
+> 
+> David Masover wrote:
+> 
+> > So, will the format change happen at mount time?  Will it need a
+> > special mount flag?  Will I need to use debugfs or some other offline
+> > tool?
+> 
+> 
+> First we make sure we have the right answer.  Have we solved the cycle
+> problem?  Can we run out of memory as Horst/Nikita suggest?
+> 
+> -
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
