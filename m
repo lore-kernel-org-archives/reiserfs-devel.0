@@ -1,74 +1,49 @@
-From: Jeffrey Mahoney <jeffm@suse.com>
+From: Alexander Zarochentsev <zam@namesys.com>
 Subject: Re: [PATCH] reiserfs: on-demand bitmap loading (testing only)
-Date: Fri, 08 Jul 2005 00:52:52 -0400
-Message-ID: <42CE06A4.8070101@suse.com>
-References: <42CC4B7F.2070506@suse.com>	<42CC5F1E.6060505@namesys.com>	<42CD528B.9040502@suse.com>	<5a59ce530507071059731b30cc@mail.gmail.com> <20050708003756.21bd4c80.petchema@concept-micro.com> <42CDB7AC.8030408@slaphack.com>
+Date: Fri, 8 Jul 2005 09:35:28 +0400
+Message-ID: <200507080935.28944.zam@namesys.com>
+References: <42CC4B7F.2070506@suse.com> <42CC5F1E.6060505@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-25050-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25051-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42CDB7AC.8030408@slaphack.com>
+In-Reply-To: <42CC5F1E.6060505@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: David Masover <ninja@slaphack.com>
-Cc: =?UTF-8?B?UGllcnJlIEV0Y2hlbWHDr3TDqQ==?= <petchema@concept-micro.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>, Elena Gryaznova <grev@namesys.com>
+Cc: reiserfs-list@namesys.com, Jeff Mahoney <jeffm@suse.com>
 
-David Masover wrote:
-> Pierre Etchemaïté wrote:
-> 
->> Le Thu, 7 Jul 2005 13:59:35 -0400, studdugie <studdugie@gmail.com> a
->> écrit :
->>
->>
->>> I agree w/ Jeff 100%. I'm not a kernel hacker, simply a user. As a
->>> matter of fact, I was one of those people that Jeff aluded to when he
->>> said: "There have been reports of large filesystems taking an
->>> unacceptably long time to mount."
->>
->>
->>
->> That also makes reiserfs uncomfortable with automount devices, specially
->> if they're bandwidth limited like external USB or firewire disks...
-> 
-> 
-> USB and firewire disks already take a little long to mount anyway.
-> 
-> But, it is definitely a performance enhancement, or at least a tweak.
-> I'd like to see it happen -- it takes 10-15 seconds to mount my 200 gig
-> Reiser4 partition, which is unacceptabe for a desktop machine -- at
-> least, for a *linux* desktop machine.
-> 
-> To keep Hans happy about the "default case", can we load the bitmap in
-> the background during boot/mount?  Basically, if it's loaded on demand,
-> then we pretend to demand each part of it, one by one.  Would that
-> considerably slow normal FS operation?  Could we defer it to when the
-> disk is idle?  (*disk*, not FS)
+On Thursday 07 July 2005 02:45, Hans Reiser wrote:
+> Jeff, are you sure that you need this code to exist?  Here are the
+> problems I see:
+>
+>     for the average case, it is suboptimal.  The seeks to the bitmaps
+> are far more expensive than the averaged cost of keeping them in ram.
 
-Hi David -
+It would be good to see the benchmark results which your opinion is based on.
 
-The main issue I have with this is that I don't think bitmaps should be
-treated specially. They are metadata, pure and simple. We don't treat
-the s-tree specially with respect to caching and it is used regardless
-of whether the operations performed on the filesystem are for reads or
-writes.
+I know that on-demand bitmap loading in reiser4 was under suspicion 
+several times but I don't remember any benchmark results which showed a
+slowdown regarding that.  
 
-The root block/node sees far more activity than any bitmap and it is not
-treated any differently than any other bit of metadata. It's simply
-requested when it is needed. If the vm has determined that the root
-block is frequently used, it stays in memory. Why should the bitmaps be
-any different?
+>
+>     for 16TB filesystems, they will have plenty of budget for ram
+>
+>     it complicates code if it has to worry about such things as not
+> enough clean memory for holding bitmaps, etc.
+>
+>     It is more appropriate to write this kind of code for the
+> development branch which is V4.  This kind of code is likely to have
+> hard to test and hit bugs.
+>
 
-It's possible to read the bitmaps in a "delayed" fashion, but the
-problem of completely wasted resources is still not addressed. I feel
-the correct solution is to let the buffer cache do its job and not
-assume that any particular filesystem takes priority over other resources.
+Lena, may you check how the bitmap on-demand loading patch affects, say,
+mongo results for reiserfs?
 
--Jeff
+Thanks, 
+Alex.
 
--- 
-Jeff Mahoney
-SuSE Labs
-jeffm@suse.com
