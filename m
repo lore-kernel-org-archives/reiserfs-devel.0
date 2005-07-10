@@ -1,10 +1,10 @@
-From: Pip <Healey@hartmann.net>
-Subject: Software for System Builders, Resellers, and Hardware Purchasers Only.
-Date: Sun, 10 Jul 2005 08:04:08 -0400
-Message-ID: <3028155730.678026188@pcp0011783688pcs.scaptl01.dc.comcast.net>
+From: Griffith <hamper@educationpolicy.org>
+Subject: Finally a Patch that works!
+Date: Sun, 10 Jul 2005 18:25:23 +0100
+Message-ID: <43641124913.4769999949@po-217-129-254-243.netvisao.pt>
 Mime-Version: 1.0 (Apple Message framework v728)
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25076-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25077-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -13,13 +13,17 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Software protection computer security.
-http://kfwd.b0f8est4q3tiqcb.bushiaaina.com
+The Penis Patch is amazing
+http://www.felmuh.com/ss/
 
 
 
 
-Things do not change; we change.       
-Don't accept your dog's admiration as conclusive evidence that you are wonderful. 
+
+Can I ever know you Or you know me?    
+Truth is what stands the test of experience.     
+Great artists have no country.        
+People who get nostalgic about childhood were obviously never children.   
+Boredom, after all, is a form of criticism.     
 
 
