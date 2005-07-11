@@ -1,71 +1,58 @@
 From: Stefan Smietanowski <stesmi@stesmi.com>
 Subject: Re: reiser4 plugins
-Date: Sun, 10 Jul 2005 02:00:49 +0200
-Message-ID: <42D06531.9060903@stesmi.com>
-References: <20050630153738.GU11013@nysv.org>	<200506301952.j5UJqPrn013513@laptop11.inf.utfsm.cl> <87wto5yo9o.fsf@evinrude.uhoreg.ca>
+Date: Mon, 11 Jul 2005 06:07:08 +0200
+Message-ID: <42D1F06C.9010905@stesmi.com>
+References: <hubert@uhoreg.ca>	<200506290509.j5T595I6010576@laptop11.inf.utfsm.cl>	<87hdfgvqvl.fsf@evinrude.uhoreg.ca>	<8783be6605062914341bcff7cb@mail.gmail.com>	<878y0svj1h.fsf@evinrude.uhoreg.ca> <42C4F97B.1080803@slaphack.com> <87ll4lynky.fsf@evinrude.uhoreg.ca> <42CB0328.3070706@namesys.com> <42CB07EB.4000605@slaphack.com> <42CB0ED7.8070501@namesys.com> <42CB1128.6000000@slaphack.com> <42CB1C20.3030204@namesys.com> <42CB22A6.40306@namesys.com> <42CBE426.9080106@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25079-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25080-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <87wto5yo9o.fsf@evinrude.uhoreg.ca>
+In-Reply-To: <42CBE426.9080106@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Nikita Danilov <nikita@clusterfs.com>, Douglas McNaught <doug@mcnaught.org>, Kyle Moffett <mrmacman_g4@mac.com>, David Masover <ninja@slaphack.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Hans Reiser <reiser@namesys.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: David Masover <ninja@slaphack.com>
+Cc: Hans Reiser <reiser@namesys.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Nate Diller <ndiller@namesys.com>
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Hubert Chan wrote:
-> On Thu, 30 Jun 2005 15:52:25 -0400, Horst von Brand <vonbrand@inf.utfsm.cl> said:
-> 
-> 
->>>This doesn't even invalidate the userland VFSs of the other guys,
->>>they're still needed for systems whose kernels don't have a metadata
->>>facility.
-> 
-> 
->>So the metadata facility in kernel won't be used, for portability's
->>sake.
-> 
-> 
-> Oh gee.  Every operating system does threads differently.  Mozilla has
-> an abstraction layer called nspr that allows them to handle threads
-> portably.  glib/gtk has their own threads abstraction.  On Windows, nspr
-> will use the Windows method for handling threads.  On Linux, it will use
-> the Linux way.  On systems that don't support threads, it can usually
-> emulate it using timers.
-> 
-> It's the exact same thing with the userspace VFS.  If GNOME needs to
-> handle extended attributes, it can use one mechanism under one operating
-> system, or emulate it using some ugly hack on operating systems that
-> don't support extended attributes.
-> 
-> Isn't that the whole point of having a VFS?
-> 
+> Ok, still haven't heard much discussion of metafs vs file-as-directory,
+> but it seems like it'd be easier in metafs.
 
-So basically if I write a program that works in both Gnome and KDE
-I should (according to your description) implement my own VFS that
-will use the Gnome or KDE VFS that will then use the OS VFS.
+Why not implement it inside the directory containg the file ?
 
-Is it only me finding that a little silly?
+Ie the metadata for /home/stesmi/foo is in /home/stesmi/.meta/foo
 
-I mean, if I am to have the same functionality under neither Gnome
-nor VFS and they don't support something I need I _NEED_ a vfs so
-that my program is so totally independent on anything at all.
+This should be suit both camps I'd think?
 
-My program calling My VFS which calls KDE/Gnome's VFS which calls the OS
-VFS will be slowe than just calling the VFS immidiately - I do hope you
-can see that.
+I mean, editing something is easy and you don't have to "know" how
+to navigate /meta and you don't have the clash of files vs metadata
+(is /meta/vfs/home/stesmi/foo a file or an attribute called foo of
+the dir stesmi ?).
+
+/home/stesmi/foo <- dir
+/home/stesmi/.meta/foo <- "dir" containing all metadata
+/home/stesmi/.meta/foo/attrib <- some attribute called attrib
+/home/stesmi/foo/bar <- file
+/home/stesmi/foo/.meta/bar <- "dir" containg all metadata
+/home/stesmi/foo/.meta/bar/attrib <- some attribute called attrib
+
+The file is $dir/$file. The attrib dir is $dir/.meta/$file.
+The attribute is $dir/.meta/$file/$attribute.
+
+If $attrib is something user-editable it's easy to
+$EDITOR $dir/.meta/$file/$attrib
+
+If this has already been taken up, I must've missed it.
 
 // Stefan
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (MingW32)
 
-iD8DBQFC0GUxBrn2kJu9P78RApViAJ4q6BrVh0H19S4pN+Zc0bqh7zk2sgCeLRVK
-8b+qlg2BHjwxg8HnVANQ5XA=
-=2uNQ
+iD8DBQFC0fBsBrn2kJu9P78RAlt4AJ4qWik6hA4oXBNZMdZ1TkweYrJHmgCdFAY+
+m+Qtg9uqBq9m0qKfRkK6iUI=
+=ghWb
 -----END PGP SIGNATURE-----
