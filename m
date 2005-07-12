@@ -1,40 +1,28 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH/SCRIPT] reiserfs: run scripts/Lindent on reiserfs code
-Date: Tue, 12 Jul 2005 19:24:12 -0400
-Message-ID: <20050712232412.GA9669@locomotive.unixthugs.org>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: reiser4 plugins
+Date: Tue, 12 Jul 2005 16:38:12 -0700
+Message-ID: <42D45464.2090308@namesys.com>
+References: <200507120233.j6C2XODw030361@laptop11.inf.utfsm.cl> <42D35AE4.9000400@namesys.com> <42D450BE.70404@slaphack.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="vkogqOf2sHV7VnPd"
-Return-path: <reiserfs-list-return-25112-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25113-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <42D450BE.70404@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Andrew Morton <akpm@osdl.org>, Linus Torvalds <torvalds@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: David Masover <ninja@slaphack.com>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Stefan Smietanowski <stesmi@stesmi.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Nate Diller <ndiller@namesys.com>
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+David Masover wrote:
 
+>
+> That's why we're trying to find something that people won't actually
+> touch, especially since if we design it right, this will be the last
+> delimiter introduced at the fs/vfs level.
 
-The attached script runs scripts/Lindent against fs/reiserfs.c and
-include/linux/reiserfs_*.h
+Uh, no, there needs to be about a dozen or so more.
 
-It's a quick one-liner consisting of:
-
-scripts/Lindent fs/reiserfs/*.c include/linux/reiserfs_*.h
-
--Jeff
-
--- 
-Jeff Mahoney
-SuSE Labs
-
---vkogqOf2sHV7VnPd
-Content-Type: application/x-sh
-Content-Disposition: attachment; filename="reiserfs-lindent.sh"
-Content-Transfer-Encoding: quoted-printable
-
-#!/bin/sh=0A=0Ascripts/Lindent fs/reiserfs/*.c include/linux/reiserfs_*.h=0A
---vkogqOf2sHV7VnPd--
+But not this year.
