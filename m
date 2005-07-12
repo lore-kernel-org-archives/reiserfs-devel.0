@@ -1,72 +1,81 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: Re: [PATCH/URL] reiserfs: reformat code with Lindent
-Date: Wed, 13 Jul 2005 01:46:10 +0400
-Message-ID: <200507130146.10633.adobriyan@gmail.com>
-References: <20050712194220.GA28973@locomotive.unixthugs.org>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: reiser4 plugins
+Date: Tue, 12 Jul 2005 18:13:45 -0500
+Message-ID: <42D44EA9.7030700@slaphack.com>
+References: <hubert@uhoreg.ca>	<200506290509.j5T595I6010576@laptop11.inf.utfsm.cl>	<87hdfgvqvl.fsf@evinrude.uhoreg.ca>	<8783be6605062914341bcff7cb@mail.gmail.com>	<878y0svj1h.fsf@evinrude.uhoreg.ca>	<42C4F97B.1080803@slaphack.com>	<87ll4lynky.fsf@evinrude.uhoreg.ca>	<42CB0328.3070706@namesys.com>	<42CB07EB.4000605@slaphack.com>	<42CB0ED7.8070501@namesys.com>	<42CB1128.6000000@slaphack.com>	<42CB1C20.3030204@namesys.com>	<42CB22A6.40306@namesys.com>	<42CBE426.9080106@slaphack.com>	<42D1F06C.9010905@stesmi.com>	<42D2DB99.9050307@slaphack.com> <17107.28428.30907.184223@cse.unsw.edu.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25106-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25107-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050712194220.GA28973@locomotive.unixthugs.org>
-Content-Disposition: inline
+In-Reply-To: <17107.28428.30907.184223@cse.unsw.edu.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Andrew Morton <akpm@osdl.org>, Linus Torvalds <torvalds@osdl.org>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Neil Brown <neilb@cse.unsw.edu.au>
+Cc: Stefan Smietanowski <stesmi@stesmi.com>, Hans Reiser <reiser@namesys.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Nate Diller <ndiller@namesys.com>
 
-On Tuesday 12 July 2005 23:42, Jeff Mahoney wrote:
->  The ReiserFS code is a mix of a number of different coding styles, sometimes
->  different even from line-to-line. Since the code has been relatively stable
->  for quite some time and there are few outstanding patches to be applied, it
->  is time to reformat the code to conform to the Linux style standard outlined
->  in Documentation/CodingStyle.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
->  This patch contains the result of running scripts/Lindent
+Neil Brown wrote:
+> On Monday July 11, ninja@slaphack.com wrote:
+> 
+>>Stefan Smietanowski wrote:
+>>
+>>>-----BEGIN PGP SIGNED MESSAGE-----
+>>>Hash: SHA1
+>>>
+>>>
+>>>
+>>>>Ok, still haven't heard much discussion of metafs vs file-as-directory,
+>>>>but it seems like it'd be easier in metafs.
+>>>
+>>>
+>>>Why not implement it inside the directory containg the file ?
+>>>
+>>>Ie the metadata for /home/stesmi/foo is in /home/stesmi/.meta/foo
+>>>
+>>>This should be suit both camps I'd think?
+>>
+>>You still need to figure out the parent of "foo", which isn't 
+>>necessarily easy, especially considering that even if we store a link to 
+>>the parent, it will be inside the metadata.  Then you have a 
+>>chicken-and-egg situation.
+>>
+>>Both camps seem to want to allow easy access to the metadata of a file, 
+>>whether we're given that file as an inode or as a pathname.  That's why 
+>>I suggested /meta/vfs and /meta/inode -- sometimes I want to look up a 
+>>file by name, and sometimes by inode, but either way, I should be able 
+>>to get its metadata.
+> 
+> 
+> Well, it's not really 'as an inode or as a pathname'.  It is 'as an
+> open file descriptor or as a path name' which is an important
+> difference.
+> 
+> Maybe it is worth repeating Al Viro's suggestion at this point.  I
+> don't have a reference but the idea was basically that if you open
+> "/foo" and get filedescriptor N, then
+>    /proc/self/fds/N-meta
 
-With -psl picked up.
+How am I supposed to get there with a shell script?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-	-int is_reusable (struct super_block * s, b_blocknr_t block, int bit_value)
-	+int
-	+is_reusable(struct super_block *s, b_blocknr_t block, int bit_value)
-
->  against 
->  fs/reiserfs/*.c
-
-patching file fs/reiserfs/item_ops.c
-Hunk #1 FAILED at 793.
-1 out of 1 hunk FAILED -- saving rejects to file fs/reiserfs/item_ops.c.rej
-
->  and include/linux/reiserfs_*.h. 
-
-Only fs/reiserfs/*.c part.
-
-$ diffstat -p1 01-reiserfs-lindent.diff
- fs/reiserfs/bitmap.c          | 1932 ++++++-----
- fs/reiserfs/dir.c             |  485 +-
- fs/reiserfs/do_balan.c        | 3229 +++++++++++--------
- fs/reiserfs/file.c            | 2615 ++++++++-------
- fs/reiserfs/fix_node.c        | 4136 ++++++++++++------------
- fs/reiserfs/hashes.c          |  198 -
- fs/reiserfs/ibalance.c        | 1851 +++++------
- fs/reiserfs/inode.c           | 5005 +++++++++++++++---------------
- fs/reiserfs/ioctl.c           |  203 -
- fs/reiserfs/item_ops.c        |   18
- fs/reiserfs/journal.c         | 6994 ++++++++++++++++++++++--------------------
- fs/reiserfs/lbalance.c        | 2232 ++++++-------
- fs/reiserfs/namei.c           | 2637 ++++++++-------
- fs/reiserfs/objectid.c        |  308 -
- fs/reiserfs/prints.c          | 1065 +++---
- fs/reiserfs/procfs.c          |  751 ++--
- fs/reiserfs/resize.c          |  208 -
- fs/reiserfs/stree.c           | 3488 ++++++++++----------
- fs/reiserfs/super.c           | 3751 +++++++++++-----------
- fs/reiserfs/tail_conversion.c |  467 +-
- fs/reiserfs/xattr.c           | 2148 ++++++------
- fs/reiserfs/xattr_acl.c       |  632 +--
- fs/reiserfs/xattr_security.c  |   53
- fs/reiserfs/xattr_trusted.c   |   69
- fs/reiserfs/xattr_user.c      |   88
- 25 files changed, 23412 insertions(+), 21151 deletions(-)
+iQIVAwUBQtROqXgHNmZLgCUhAQLRcg/+I9PWSmFXRwKtj7pnEeMXOCjiTo6GQE3O
+61fjH3f6aL9Ydkip4eXum3S14cioiU9bzC11GA5kRIM+W1DKcYex1dIpivrtF9Ht
+Rvozn9x2TP5tacDmSfqRJXvAB+xTRtZOu+M/rDjXdLsriDJDA0AdyDH8Yo/8WMbU
+6i1DWzLTO0vHS3kEb/8oqgBj7sQ63sS/4KVszBx6+bN0KOikXbORDu6efKjC9w21
+3DZPnBG0B03smhdCygd0j0Zmh0JEaZHfuFgNK1ZmRzipbvvUBDtdKY5MJ6f4pHnA
+GBO8ybsXp9qxNQr6DNenF/wbAT6n3dMyE/AWuql+qx3iumSwx/Prh7xDAhBZBMXp
+Oin7hOa1i583cdju4ErSBPaciRzumGluY6gbFvVA8Yva+IjPxxjPtfLwalK11cH1
+k4oQO5Par1W0TmMOpc0PQ/bEeEHHxUcn1ToeJa4NYJWIiBe+UHMb/AyI4hKjSIkt
+Kp0wrCPBjRfuBCHXXL89bWZoSeSFkN8fAyOxBV928naxxr8e+vCPUX1/H3ca7UsB
+Nxg0Vzt4V9tz4xCw4QAy810Uya8/HSm3aVhqEzjHKBoKboHrMVDJvxRQxfkqQcnC
+4jIFYPBdHgGw7OONyhfbgTPLIm1OCNPpcRkS4aidHqg0DkDU50h6zFQkhG5Xwh5Z
+x5REgxbqD+A=
+=FGm4
+-----END PGP SIGNATURE-----
