@@ -1,81 +1,110 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 plugins
-Date: Tue, 12 Jul 2005 18:13:45 -0500
-Message-ID: <42D44EA9.7030700@slaphack.com>
-References: <hubert@uhoreg.ca>	<200506290509.j5T595I6010576@laptop11.inf.utfsm.cl>	<87hdfgvqvl.fsf@evinrude.uhoreg.ca>	<8783be6605062914341bcff7cb@mail.gmail.com>	<878y0svj1h.fsf@evinrude.uhoreg.ca>	<42C4F97B.1080803@slaphack.com>	<87ll4lynky.fsf@evinrude.uhoreg.ca>	<42CB0328.3070706@namesys.com>	<42CB07EB.4000605@slaphack.com>	<42CB0ED7.8070501@namesys.com>	<42CB1128.6000000@slaphack.com>	<42CB1C20.3030204@namesys.com>	<42CB22A6.40306@namesys.com>	<42CBE426.9080106@slaphack.com>	<42D1F06C.9010905@stesmi.com>	<42D2DB99.9050307@slaphack.com> <17107.28428.30907.184223@cse.unsw.edu.au>
+Date: Tue, 12 Jul 2005 18:22:38 -0500
+Message-ID: <42D450BE.70404@slaphack.com>
+References: <200507120233.j6C2XODw030361@laptop11.inf.utfsm.cl> <42D35AE4.9000400@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25107-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25108-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <17107.28428.30907.184223@cse.unsw.edu.au>
+In-Reply-To: <42D35AE4.9000400@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Neil Brown <neilb@cse.unsw.edu.au>
-Cc: Stefan Smietanowski <stesmi@stesmi.com>, Hans Reiser <reiser@namesys.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Nate Diller <ndiller@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Stefan Smietanowski <stesmi@stesmi.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Nate Diller <ndiller@namesys.com>
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-Neil Brown wrote:
-> On Monday July 11, ninja@slaphack.com wrote:
+Hans Reiser wrote:
+> Horst von Brand wrote:
 > 
->>Stefan Smietanowski wrote:
+> 
+>>Hans Reiser <reiser@namesys.com> wrote:
+>> 
 >>
->>>-----BEGIN PGP SIGNED MESSAGE-----
->>>Hash: SHA1
->>>
->>>
->>>
->>>>Ok, still haven't heard much discussion of metafs vs file-as-directory,
->>>>but it seems like it'd be easier in metafs.
->>>
->>>
->>>Why not implement it inside the directory containg the file ?
->>>
->>>Ie the metadata for /home/stesmi/foo is in /home/stesmi/.meta/foo
->>>
->>>This should be suit both camps I'd think?
 >>
->>You still need to figure out the parent of "foo", which isn't 
->>necessarily easy, especially considering that even if we store a link to 
->>the parent, it will be inside the metadata.  Then you have a 
->>chicken-and-egg situation.
+>>>Stefan Smietanowski wrote:
+>>>   
+>>>
+>>>
+>>>>I think "..." and ".meta" both serve as a logical delimiter. However
+>>>>some programs implement their own "..." which would make it clash with
+>>>>them. Naturally if some program created a directory called .meta we're
+>>>>equally screwed.
+>>>>     
+>>>>
 >>
->>Both camps seem to want to allow easy access to the metadata of a file, 
->>whether we're given that file as an inode or as a pathname.  That's why 
->>I suggested /meta/vfs and /meta/inode -- sometimes I want to look up a 
->>file by name, and sometimes by inode, but either way, I should be able 
->>to get its metadata.
-> 
-> 
-> Well, it's not really 'as an inode or as a pathname'.  It is 'as an
-> open file descriptor or as a path name' which is an important
-> difference.
-> 
-> Maybe it is worth repeating Al Viro's suggestion at this point.  I
-> don't have a reference but the idea was basically that if you open
-> "/foo" and get filedescriptor N, then
->    /proc/self/fds/N-meta
+>> 
+>>
+>>
+>>>I chose '....' (four dots) because it clashes with less, not three dots.
+>>>   
+>>>
+>>
+>>Is this some kind of "My dots are more than yours" contest?!
+>>
+>>/None/ of them is safe. ".meta", "...", "....", ".this.has.five.dots." are
+>>all perfectly legal file (or directory) names, POSIXly. If any one of them
+>>won't do, none will.
 
-How am I supposed to get there with a shell script?
+And, conversely, if any one of them makes sense, they all do.  Well,
+with the exception that some of them have never, ever been used before,
+and that's what we should be aiming for.  No conflicts with existing
+programs, then new programs can be written to avoid conflicting with us.
+
+> There is a long history of encroaching namespaces by creating new
+> keywords in CS, and it is a survivable problem.
+
+Agreed, but not one to be taken too lightly.
+
+> Clearcase (the version control filesystem) is an excellent example. 
+> They have special meanings for @ and some other common characters, and
+> you have to learn how to escape those characters if you use them in
+> Clearcase.
+
+I like using @, though.  Without having to escape it.
+
+That's why we're trying to find something that people won't actually
+touch, especially since if we design it right, this will be the last
+delimiter introduced at the fs/vfs level.
+
+> It works, it makes users happy, in practice it is far less of a problem
+> than one might think.  I think there were two or three times I had to
+> remember how to escape things in 2 years of using it.....
+> 
+> Better to spend one's mind looking for bugs instead of this issue.....
+
+.....if bugs were seen as such a big deal.
+
+I think it's far easier to get into the kernel with something
+ludicrously buggy than something which actually changes fundamental
+behavior.  That is, you can put in an FS which actually corrupts data
+(such as the old NTFS write support), so long as it doesn't break POSIX,
+or cause other weird restrictions like "No files named 'metas'"
+
+Now, if we can decide that we don't care about being in the vanilla
+kernel, then we can just call it ".metas" or "lost+found" or whatever
+and get to work on bug fixes and other much-needed features such as a
+repacker.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iQIVAwUBQtROqXgHNmZLgCUhAQLRcg/+I9PWSmFXRwKtj7pnEeMXOCjiTo6GQE3O
-61fjH3f6aL9Ydkip4eXum3S14cioiU9bzC11GA5kRIM+W1DKcYex1dIpivrtF9Ht
-Rvozn9x2TP5tacDmSfqRJXvAB+xTRtZOu+M/rDjXdLsriDJDA0AdyDH8Yo/8WMbU
-6i1DWzLTO0vHS3kEb/8oqgBj7sQ63sS/4KVszBx6+bN0KOikXbORDu6efKjC9w21
-3DZPnBG0B03smhdCygd0j0Zmh0JEaZHfuFgNK1ZmRzipbvvUBDtdKY5MJ6f4pHnA
-GBO8ybsXp9qxNQr6DNenF/wbAT6n3dMyE/AWuql+qx3iumSwx/Prh7xDAhBZBMXp
-Oin7hOa1i583cdju4ErSBPaciRzumGluY6gbFvVA8Yva+IjPxxjPtfLwalK11cH1
-k4oQO5Par1W0TmMOpc0PQ/bEeEHHxUcn1ToeJa4NYJWIiBe+UHMb/AyI4hKjSIkt
-Kp0wrCPBjRfuBCHXXL89bWZoSeSFkN8fAyOxBV928naxxr8e+vCPUX1/H3ca7UsB
-Nxg0Vzt4V9tz4xCw4QAy810Uya8/HSm3aVhqEzjHKBoKboHrMVDJvxRQxfkqQcnC
-4jIFYPBdHgGw7OONyhfbgTPLIm1OCNPpcRkS4aidHqg0DkDU50h6zFQkhG5Xwh5Z
-x5REgxbqD+A=
-=FGm4
+iQIVAwUBQtRQvXgHNmZLgCUhAQJXWBAAlZggJQGNi2lEZh0MAqnz+rNVT1JYcY/b
+adHgvVOZZNiJw2GmVjGLIiG5cqSqML1//f0+4XOxjYED2rbfOwBJiDqcq/0IsKPp
+5JJflJV2uWkEZukJ+oA5mspfSeKof2N5egBoD1Ije079VBKXdjoN5Kprkbe4ZYZ2
++Yu+w3FpdcaGvSqVlTRHPWsS0je4z8ieh0u6ql+HNR4ze/hKwMw4nrb2sARW9NOQ
+EZ8Ot5NDhVaxz9Rj72rLVuQrUZEF8b0ihkpmzTauVV/nysEGi33SPqYTF7nYGBnM
+5mVY63uXG4zxmThMDpn+J/iofA/hS1fd1bY9tCgF1ZAPu9HrCTnVzKaTYoOq+ciD
+sY0m7HEc49JfaiyZ/SJGH02WUH3JqLQAVGQftEkqAQLyYdVRbzdBHUVUR2i8hX2M
+ofFLM6DGJgFK784PfO0sjNboQT5ay4B8js8NltdfytsOVwDzjMST7dZAWcnMgTZU
+jrMCJuMYeYh8468fy1C9pCMUPahVXvmF4O5Xazt7m9HvV4lxRJIUDZsaR0Volg2K
+OAQIO3rtT9heK/+/PaUuXX8RYwLQUlhdUmdHfdtjRiLtKRcbw/fYBOqjkgXZfOfy
+RzyBgD463sVCVAE8qMbAVnnHNGKZ25tyRTYITiTZ2kfnIeURJawj2SZVmn5ezGQG
+xRnI3+Ir5e0=
+=moA6
 -----END PGP SIGNATURE-----
