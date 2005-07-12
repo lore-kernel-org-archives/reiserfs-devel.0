@@ -1,36 +1,74 @@
 From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: reiser4 plugins
-Date: Mon, 11 Jul 2005 22:33:24 -0400
-Message-ID: <200507120233.j6C2XODw030361@laptop11.inf.utfsm.cl>
-References: <reiser@namesys.com>
-Return-path: <reiserfs-list-return-25098-reiserfs=m.gmane.org@namesys.com>
+Date: Mon, 11 Jul 2005 21:53:41 -0400
+Message-ID: <200507120153.j6C1rgUw007153@laptop11.inf.utfsm.cl>
+References: <ninja@slaphack.com>
+Return-path: <reiserfs-list-return-25099-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
-   of "Mon, 11 Jul 2005 15:58:11 MST." <42D2F983.1060105@namesys.com> 
+In-Reply-To: Message from David Masover <ninja@slaphack.com> 
+   of "Mon, 11 Jul 2005 15:50:33 EST." <42D2DB99.9050307@slaphack.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Stefan Smietanowski <stesmi@stesmi.com>, David Masover <ninja@slaphack.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Nate Diller <ndiller@namesys.com>
+To: David Masover <ninja@slaphack.com>
+Cc: Stefan Smietanowski <stesmi@stesmi.com>, Hans Reiser <reiser@namesys.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Nate Diller <ndiller@namesys.com>
 
-Hans Reiser <reiser@namesys.com> wrote:
-> Stefan Smietanowski wrote:
-> > I think "..." and ".meta" both serve as a logical delimiter. However
-> > some programs implement their own "..." which would make it clash with
-> > them. Naturally if some program created a directory called .meta we're
-> > equally screwed.
+David Masover <ninja@slaphack.com> wrote:
 
-> I chose '....' (four dots) because it clashes with less, not three dots.
+[...]
 
-Is this some kind of "My dots are more than yours" contest?!
+> Both camps seem to want to allow easy access to the metadata of a
+> file, whether we're given that file as an inode or as a pathname.
+> That's why I suggested /meta/vfs and /meta/inode -- sometimes I want
+> to look up a file by name, and sometimes by inode, but either way, I
+> should be able to get its metadata.
 
-/None/ of them is safe. ".meta", "...", "....", ".this.has.five.dots." are
-all perfectly legal file (or directory) names, POSIXly. If any one of them
-won't do, none will.
+You should /never/ give access just by inode, as that makes it very easy to
+bypass security given by directory permissions.
+
+> > I mean, editing something is easy and you don't have to "know" how
+> > to navigate /meta
+
+> But then you have to "know" how to navigate .meta, and more
+> importantly, how to find .meta
+
+And what the heck the format of the metadata is today/for this particular
+file.
+
+[...]
+
+> Either way, the major challenge to this method is not so much whether
+> it'd work, but how to choose a suitable delimiter?  The delimiter must
+> be standard if we're going to have apps develop for it, and it must
+> not be used in the name of any existing file or directory.
+
+The only characters that aren't used in filenames today are '/' and '\0'.
+
+> I had a long essay here on how '.meta' breaks every recursive
+> operation on directories (rm -rf, tar, mkisofs), but I deleted it when
+> I remembered that I played around with the alpha/beta reiser4 which
+> had a 'metas' dir that did the same thing, but was hidden from the
+> normal directory listing.  'cd metas' worked, 'ls metas' worked, but
+> 'ls' showed no directory called 'metas'.
+
+And if I try to create a file or directory called metas?
+
+> I don't *think* there are any apps that will break if you tell them to
+> open a path that doesn't exist in a directory listing.  That is,
+> typing 'vim /home/metas/acl' should always let me edit the acl on
+> /home, and vim should never complain about how /home/metas doesn't
+> show up in /home.  A program would have to be pretty retarded to fail
+> on something like that.
+
+Think a GUI that reads the directory to find out what is available and
+present them as icons for mousing around. Then there is no way to futz
+around with your metadata.
+
+Think filename completion, bash style. No, not just bash uses this.
 -- 
 Dr. Horst H. von Brand                   User #22616 counter.li.org
 Departamento de Informatica                     Fono: +56 32 654431
