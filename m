@@ -1,7 +1,7 @@
 From: Neil Brown <neilb@cse.unsw.edu.au>
 Subject: Re: reiser4 plugins
-Date: Wed, 13 Jul 2005 09:40:26 +1000
-Message-ID: <17108.21738.774180.21984@cse.unsw.edu.au>
+Date: Wed, 13 Jul 2005 10:05:17 +1000
+Message-ID: <17108.23229.448917.291560@cse.unsw.edu.au>
 References: <hubert@uhoreg.ca>
 	<200506290509.j5T595I6010576@laptop11.inf.utfsm.cl>
 	<87hdfgvqvl.fsf@evinrude.uhoreg.ca>
@@ -19,45 +19,54 @@ References: <hubert@uhoreg.ca>
 	<42D1F06C.9010905@stesmi.com>
 	<42D2DB99.9050307@slaphack.com>
 	<17107.28428.30907.184223@cse.unsw.edu.au>
-	<42D44EA9.7030700@slaphack.com>
+	<42D37535.40406@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25114-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25115-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: message from David Masover on Tuesday July 12
+In-Reply-To: message from Hans Reiser on Tuesday July 12
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: Stefan Smietanowski <stesmi@stesmi.com>, Hans Reiser <reiser@namesys.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Nate Diller <ndiller@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: David Masover <ninja@slaphack.com>, Stefan Smietanowski <stesmi@stesmi.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Nate Diller <ndiller@namesys.com>
 
-On Tuesday July 12, ninja@slaphack.com wrote:
-> > 
-> > Maybe it is worth repeating Al Viro's suggestion at this point.  I
-> > don't have a reference but the idea was basically that if you open
-> > "/foo" and get filedescriptor N, then
-> >    /proc/self/fds/N-meta
+On Tuesday July 12, reiser@namesys.com wrote:
+> Neil Brown wrote:
 > 
-> How am I supposed to get there with a shell script?
+> >
+> >
+> >Maybe it is worth repeating Al Viro's suggestion at this point.  I
+> >don't have a reference but the idea was basically that if you open
+> >"/foo" and get filedescriptor N, then
+> >   /proc/self/fds/N-meta
+> >is a directory which contains all the meta stuff for "/foo".
+> >Then it is trivial to get the 'meta' stuff given a filedescriptor and
+> >if you have a pathname, you can always get yourself a filedescriptor.
+> >  
+> >
+> This sound like it might be cute, but filedescriptors are too heavy
+> weight for stat data accesses in quantity.
+> 
+> In general, the whole file handle paradigm is too heavy for lightweight
+> files.
 
+That may well be true, but is completely orthogonal to filesystem name
+semantics. 
 
-function get_meta() 
-{
-   var=$1
-   file=$2
-   meta=$3
-   val=`cat /proc/self/fd/3-meta/$meta < $file`
-   eval var=\$val
-}
+If you find file descriptors too slow, come up with an alternate (I
+suspect you have in the reiser4 syscall, but I haven't looked at
+that yet), implement it in the VFS, and show the world benchmarks of
+real-world applications that go faster with this new interface.
 
-then
-   get_meta varname /home/foo/bar username
+I doubt that you would then have a great deal of trouble in getting
+the interface accepted (some trouble of course as you will need to
+convince a few people, but numbers speak quite loudly).
 
-will read the 'username' meta-file of 'home/foo/bar' and place it in
-varname.
-
-Is that what you wanted?
+I suspect that there might need to be a new internal interface into
+filesystems, and filesystems which don't provide that will not get the
+same speed benefit, but that is perfectly acceptable.
 
 NeilBrown
