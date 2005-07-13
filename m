@@ -1,71 +1,60 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Horst von Brand <vonbrand@inf.utfsm.cl>
 Subject: Re: reiser4 plugins
-Date: Tue, 12 Jul 2005 18:20:25 -0700
-Message-ID: <42D46C59.5010707@namesys.com>
-References: <hubert@uhoreg.ca>	<200506290509.j5T595I6010576@laptop11.inf.utfsm.cl>	<87hdfgvqvl.fsf@evinrude.uhoreg.ca>	<8783be6605062914341bcff7cb@mail.gmail.com>	<878y0svj1h.fsf@evinrude.uhoreg.ca>	<42C4F97B.1080803@slaphack.com>	<87ll4lynky.fsf@evinrude.uhoreg.ca>	<42CB0328.3070706@namesys.com>	<42CB07EB.4000605@slaphack.com>	<42CB0ED7.8070501@namesys.com>	<42CB1128.6000000@slaphack.com>	<42CB1C20.3030204@namesys.com>	<42CB22A6.40306@namesys.com>	<42CBE426.9080106@slaphack.com>	<42D1F06C.9010905@stesmi.com>	<42D2DB99.9050307@slaphack.com>	<17107.28428.30907.184223@cse.unsw.edu.au>	<42D37535.40406@namesys.com> <17108.23229.448917.291560@cse.unsw.edu.au>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25116-reiserfs=m.gmane.org@namesys.com>
+Date: Tue, 12 Jul 2005 22:09:29 -0400
+Message-ID: <200507130209.j6D29TB1004476@laptop11.inf.utfsm.cl>
+References: <ninja@slaphack.com>
+Return-path: <reiserfs-list-return-25117-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <17108.23229.448917.291560@cse.unsw.edu.au>
+In-Reply-To: Message from David Masover <ninja@slaphack.com> 
+   of "Tue, 12 Jul 2005 18:22:38 EST." <42D450BE.70404@slaphack.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Neil Brown <neilb@cse.unsw.edu.au>
-Cc: David Masover <ninja@slaphack.com>, Stefan Smietanowski <stesmi@stesmi.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Nate Diller <ndiller@namesys.com>, Vladimir Demidov <demidov@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: David Masover <ninja@slaphack.com>
+Cc: Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, Stefan Smietanowski <stesmi@stesmi.com>, Hubert Chan <hubert@uhoreg.ca>, Ross Biro <ross.biro@gmail.com>, Kyle Moffett <mrmacman_g4@mac.com>, Valdis.Kletnieks@vt.edu, Lincoln Dale <ltd@cisco.com>, Gregory Maxwell <gmaxwell@gmail.com>, Jeff Garzik <jgarzik@pobox.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Nate Diller <ndiller@namesys.com>
 
-Neil Brown wrote:
+David Masover <ninja@slaphack.com> wrote:
+> Hans Reiser wrote:
+> > Horst von Brand wrote:
+> >>Hans Reiser <reiser@namesys.com> wrote:
+> >>>Stefan Smietanowski wrote:
 
->On Tuesday July 12, reiser@namesys.com wrote:
->  
->
->>Neil Brown wrote:
->>
->>    
->>
->>>Maybe it is worth repeating Al Viro's suggestion at this point.  I
->>>don't have a reference but the idea was basically that if you open
->>>"/foo" and get filedescriptor N, then
->>>  /proc/self/fds/N-meta
->>>is a directory which contains all the meta stuff for "/foo".
->>>Then it is trivial to get the 'meta' stuff given a filedescriptor and
->>>if you have a pathname, you can always get yourself a filedescriptor.
->>> 
->>>
->>>      
->>>
->>This sound like it might be cute, but filedescriptors are too heavy
->>weight for stat data accesses in quantity.
->>
->>In general, the whole file handle paradigm is too heavy for lightweight
->>files.
->>    
->>
->
->That may well be true, but is completely orthogonal to filesystem name
->semantics. 
->
->If you find file descriptors too slow, come up with an alternate (I
->suspect you have in the reiser4 syscall, but I haven't looked at
->that yet), implement it in the VFS, and show the world benchmarks of
->real-world applications that go faster with this new interface.
->
->I doubt that you would then have a great deal of trouble in getting
->the interface accepted (some trouble of course as you will need to
->convince a few people, but numbers speak quite loudly).
->
->I suspect that there might need to be a new internal interface into
->filesystems, and filesystems which don't provide that will not get the
->same speed benefit, but that is perfectly acceptable.
->
->NeilBrown
->
->
->  
->
-We need time, and then we can demonstrate sys_reiser4, it is not ready
-for showing yet.....
+[...]
 
-Hans
+> > Better to spend one's mind looking for bugs instead of this issue.....
+> 
+> .....if bugs were seen as such a big deal.
+
+> I think it's far easier to get into the kernel with something
+> ludicrously buggy than something which actually changes fundamental
+> behavior.
+
+
+Wonder why....
+
+[Fixing bugs in the $FOO driver or the $BAR filesystem is /easy/, fixing
+ bugs in "fundamental behaviour changes" is /extremely hard/.]
+
+>            That is, you can put in an FS which actually corrupts data
+> (such as the old NTFS write support), so long as it doesn't break POSIX,
+> or cause other weird restrictions like "No files named 'metas'"
+
+Because that kind of problems are isolated. If you introduce a change that
+affects /all/ filesystems, and that change later on has unfixable bugs, or
+fundamental design issues, it is /a lot/ of work.
+
+> Now, if we can decide that we don't care about being in the vanilla
+> kernel, then we can just call it ".metas" or "lost+found" or whatever
+> and get to work on bug fixes and other much-needed features such as a
+> repacker.
+
+Great!
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
