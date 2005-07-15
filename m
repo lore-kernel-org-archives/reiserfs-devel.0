@@ -1,47 +1,50 @@
-From: Chet Hosey <chet@colo.tr0n.com>
-Subject: Re: Transparent Compression
-Date: Fri, 15 Jul 2005 11:01:28 -0400
-Message-ID: <20050715150128.GA25028@sx-hosting.com>
-References: <42D7A04E.2020806@bobich.net> <20050715145329.GA24921@sx-hosting.com>
+From: Paul Slootman <paul@debian.org>
+Subject: mkreiser4: "Fatal: The partition size is too big."
+Date: Fri, 15 Jul 2005 17:18:22 +0200
+Message-ID: <20050715151822.GA30521@wurtel.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-25136-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25137-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20050715145329.GA24921@sx-hosting.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Fri, Jul 15, 2005 at 10:53:29AM -0400, Chet AssMaster Hosey wrote:
-> On Fri, Jul 15, 2005 at 12:38:54PM +0100, Gordan Bobic wrote:
-> > Hi,
-> > 
-> > I have seen several references to transparent compression being worked 
-> > on in ReiserFS, but nothing as solid as some code that could be 
-> > downloaded and used.
-> > 
-> > Is this feature available yet? Where could I download a patch for Linux?
-> > 
-> > Many thanks.
-> > 
-> > Gordan
-> 
-> I don't believe this is in place yet.
-> 
-> This question has been asked pretty frequently in the past few weeks --
-> perhaps it might make sense to note in the FAQ on www.namesys.com that
-> compression and encryption plugins aren't written/stable yet?
-> 
-> Chet
+(Please CC: me on responses, I'm not on the list.)
 
-...and I should have known better than to post from my friend's machine
-without verifying the "real name" he set for me at account creation.
+I wanten to try out reiser4 on our new AMD64 system (with plenty of
+SATA disks connected via 3ware controllers), however it failed with the 
+following output:
 
-If you're going to make a fool of yourself, you may as well get it right
-I suppose.
+satazilla:~# mkreiser4 /dev/md11
+mkreiser4 1.0.4
+Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing governed by reiser4progs/COPYING. 
 
-Chet
+Block size 4096 will be used.
+Linux 2.6.12.2.raid0fixreiser4 is detected.
+Uuid 443fabae-72ca-4d83-901f-37b8b9d30518 will be used.
+Fatal: The partition size is too big.
+
+
+From /proc/mdstat :
+
+md11 : active raid5 sdc[0] sdm[10] sdl[9] sdk[8] sdj[7] sdi[6] sdh[5] sdg[4] sdf[3] sde[2] sdd[1]
+      3906139520 blocks level 5, 64k chunk, algorithm 2 [11/11] [UUUUUUUUUUU]
+
+OK, so it's almost 4TB...
+
+Version 1.04 is used for libaal and reiser4progs.
+
+
+I tried the patch from
+http://marc.theaimsgroup.com/?l=reiserfs&m=111763015001953&w=2
+and it worked; this is just a message to confirm that the patch is
+indeed necessary :) It deed seem to take longer to complete (and to
+flush to disk) than v3. However, that's not very relevant...
+
+
+Paul Slootman
