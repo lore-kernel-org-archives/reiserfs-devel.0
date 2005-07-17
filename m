@@ -1,47 +1,34 @@
-From: Alexander Skwar <listen@alexander.skwar.name>
-Subject: Re: Resize of a reiser4 filesystem?
-Date: Sun, 17 Jul 2005 18:10:28 +0200
-Message-ID: <42DA82F4.6080102@mid.alexander.skwar.name>
-References: <42DA6EBE.7020100@mid.alexander.skwar.name> <op.st2cqe1kth1vuj@localhost> <42DA780D.1070101@mid.alexander.skwar.name> <op.st2djmj7th1vuj@localhost>
-Reply-To: reiserfs-list@namesys.com
+From: David Masover <ninja@slaphack.com>
+Subject: Re: Testimonials page
+Date: Sun, 17 Jul 2005 12:00:47 -0500
+Message-ID: <42DA8EBF.8060105@slaphack.com>
+References: <op.st1795szth1vuj@localhost>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25152-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25153-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <op.st2djmj7th1vuj@localhost>
+In-Reply-To: <op.st1795szth1vuj@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: PFC <lists@boutiquenumerique.com>
 Cc: reiserfs-list@namesys.com
 
-PFC schrieb:
->> In 1.0.3, I also had that manpage - but I had no binary. Do you
->> have a binary?
->
-> Looks like it is there :
-[...]
-> obj /sbin/resizefs.reiser4 c8acc86f223809b70ad1d36cc37da264 1110658498
->
-> nyuu root # which resizefs.reiser4
-> /sbin/resizefs.reiser4
+PFC wrote:
 
-Interesting. How did you build the package? What USE flags?
+> Everyday  operations are blazing. And making a complete backup (450.000 
+> files, 1.5G  gzipped) of everything that is worth backing up takes about
 
-I've got:
+450 files?
 
-[ebuild     UD] sys-fs/reiser4progs-1.0.3 [1.0.4] -debug +readline +static 851 kB
+You may want to officially correct that to 450,000 before anyone puts it 
+on the testimonial page...
 
-...
 
-Okay, when I build the 1.0.3 package, I also get a /sbin/resizefs.reiser4.
-But not in the 1.0.4 package.
-
-Also not when I build it manually (ie. without Gentoo stuff).
-
-Has resizefs.reiser4 been removed from 1.0.4?
-
-Alexander Skwar
 -- 
-Used staples are good with SOY SAUCE!
+No virus found in this outgoing message.
+Checked by AVG Anti-Virus.
+Version: 7.0.323 / Virus Database: 267.9.0/50 - Release Date: 7/16/2005
+
