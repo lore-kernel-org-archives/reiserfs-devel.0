@@ -1,27 +1,35 @@
-From: PFC <lists@boutiquenumerique.com>
-Subject: Testimonials page
-Date: Sun, 17 Jul 2005 15:40:43 +0200
-Message-ID: <op.st1795szth1vuj@localhost>
+From: Alexander Skwar <listen@alexander.skwar.name>
+Subject: Resize of a reiser4 filesystem?
+Date: Sun, 17 Jul 2005 16:44:14 +0200
+Message-ID: <42DA6EBE.7020100@mid.alexander.skwar.name>
+Reply-To: reiserfs-list@namesys.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-25147-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25148-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; delsp="yes"; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
+Hello!
 
-	Just a word about the testimonials page on the namesys.com site :
+I'm looking for a way to resize my reiser4 filesystems.
+Best would be an "online" option (ie. one, that does
+not require an unmount of the fs).
 
-	The LivingXML.net link points to a domain that doesn't exist...
+In older packages, I found a man page for a resize_reiser4
+tool (not sure about the name). Even this manpage is gone
+in the sys-fs/reiser4progs-1.0.4 Gentoo package, which I've
+got currently installed.
 
-	You can use my testimonial if you like :
-	"Since I've switched my laptop to reiser4, its crummy slow IDE drive  
-feels like it's got a rocket booster attached to its ass. Everyday  
-operations are blazing. And making a complete backup (450.000 files, 1.5G  
-gzipped) of everything that is worth backing up takes about 8 minutes.  
-Mind you this includes the time tar / | gzip -1 | ssh over the network and  
-save the backup on another machine. Simply amazing."
+If there's no "online" way, an offline way would be
+appreciated as well.
+
+Thanks a lot,
+
+Alexander Skwar
+-- 
+L BREAK into program, 0:1
