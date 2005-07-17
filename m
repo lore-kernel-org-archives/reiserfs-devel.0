@@ -1,42 +1,59 @@
-From: Hubert Chan <hubert@uhoreg.ca>
+From: Jeffrey Mahoney <jeffm@suse.com>
 Subject: Re: Testimonials page
-Date: Sun, 17 Jul 2005 15:47:48 -0400
-Message-ID: <87hdetusd7.fsf@evinrude.uhoreg.ca>
-References: <op.st1795szth1vuj@localhost> <42DA8EBF.8060105@slaphack.com>
-	<op.st2jj2ryth1vuj@localhost> <42DA9F36.6030504@slaphack.com>
+Date: Sun, 17 Jul 2005 15:48:41 -0400
+Message-ID: <42DAB619.7040802@suse.com>
+References: <op.st1795szth1vuj@localhost> <42DA8EBF.8060105@slaphack.com> <op.st2jj2ryth1vuj@localhost> <42DA9F36.6030504@slaphack.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-25160-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25161-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42DA9F36.6030504@slaphack.com> (David Masover's message of
- "Sun, 17 Jul 2005 13:11:02 -0500")
+In-Reply-To: <42DA9F36.6030504@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: PFC <lists@boutiquenumerique.com>, reiserfs-list@namesys.com
 
-On Sun, 17 Jul 2005 13:11:02 -0500, David Masover <ninja@slaphack.com> said:
-
+David Masover wrote:
+> PFC wrote:
+> 
+>>
+>>>> Everyday  operations are blazing. And making a complete backup
+>>>> (450.000  files, 1.5G  gzipped) of everything that is worth backing
+>>>> up takes about
+>>>
+>>>
+>>>
+>>> 450 files?
+>>>
+>>> You may want to officially correct that to 450,000 before anyone puts
+>>> it  on the testimonial page...
+>>
+>>
+>>
+>>     Huh ? isn't this what I wrote ?
+> 
+> 
 > 450.000 = 450.0 = 450 = 4.5*10^2
 > 450,000 = 4.5*10^5
-
+> 
 > 4.5*10^5 > 4.5*10^2
-
+> 
 > Or, in other words, you meant to put a comma, but instead you put a
 > period, which is usually a decimal point.
+> 
+> 
 
-It's a localization issue.  Some locales use comma as the thousands
-separator, while some use a period.  (And vice versa for the decimal
-point.)
+David -
 
-In particular, in French, period is for the thousands separator, and
-comma is the decimal point.
+The comma as a thousands separator is locale-specific. Most of Europe
+(and elsewhere?) use the period instead.
+
+-Jeff
 
 -- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
+Jeff Mahoney
+SuSE Labs
+jeffm@suse.com
