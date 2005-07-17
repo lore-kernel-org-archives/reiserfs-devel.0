@@ -1,41 +1,43 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Testimonials page
-Date: Sun, 17 Jul 2005 13:11:02 -0500
-Message-ID: <42DA9F36.6030504@slaphack.com>
-References: <op.st1795szth1vuj@localhost> <42DA8EBF.8060105@slaphack.com> <op.st2jj2ryth1vuj@localhost>
+From: Tarmo =?ISO-8859-1?Q?T=E4nav?= <tarmo@itech.ee>
+Subject: reiserfs+acl makes processes hang?
+Date: Sun, 17 Jul 2005 22:20:31 +0300
+Message-ID: <1121628031.28770.3.camel@localhost>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25157-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25159-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <op.st2jj2ryth1vuj@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: PFC <lists@boutiquenumerique.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-PFC wrote:
-> 
->>> Everyday  operations are blazing. And making a complete backup 
->>> (450.000  files, 1.5G  gzipped) of everything that is worth backing 
->>> up takes about
->>
->>
->> 450 files?
->>
->> You may want to officially correct that to 450,000 before anyone puts 
->> it  on the testimonial page...
-> 
-> 
->     Huh ? isn't this what I wrote ?
+Hi,
 
-450.000 = 450.0 = 450 = 4.5*10^2
-450,000 = 4.5*10^5
+(I've already sent this to lkml and the bug has been confirmed
+a couple of times, but I though I should also send it to
+reiserfs-list so here goes:)
 
-4.5*10^5 > 4.5*10^2
 
-Or, in other words, you meant to put a comma, but instead you put a 
-period, which is usually a decimal point.
+I think I've found a bug in reiserfs acls. If triggered
+it means that any program trying to access the partition,
+where the bug occured, will just hang in D state, with
+no way to kill the program.
+
+Here's how to reproduce:
+1. mount a reiserfs volume (loopmount will do) with "-o acl".
+2. create a directory "dir"
+3. set some default acl: setfacl -d -m u:username:rwX dir
+4. cd dir
+5. dd if=/dev/zero of=somefile1 bs=4k count=100000
+(the idea is to run out of space)
+6. now df should show 0 free space, if not then repeat 5.
+7. echo "1" > somefile2 # this should hang infinitely
+
+Now no program will be able to access the partition.
+
+I haven't tried to reproduce it, but the same problem also happened
+when a user hit his hard quota limit on my server. Then no program
+could access his homedir.
 
