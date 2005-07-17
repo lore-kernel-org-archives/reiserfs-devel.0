@@ -1,43 +1,42 @@
-From: Tarmo =?ISO-8859-1?Q?T=E4nav?= <tarmo@itech.ee>
-Subject: reiserfs+acl makes processes hang?
-Date: Sun, 17 Jul 2005 22:20:31 +0300
-Message-ID: <1121628031.28770.3.camel@localhost>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Re: Testimonials page
+Date: Sun, 17 Jul 2005 15:47:48 -0400
+Message-ID: <87hdetusd7.fsf@evinrude.uhoreg.ca>
+References: <op.st1795szth1vuj@localhost> <42DA8EBF.8060105@slaphack.com>
+	<op.st2jj2ryth1vuj@localhost> <42DA9F36.6030504@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25159-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25160-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <42DA9F36.6030504@slaphack.com> (David Masover's message of
+ "Sun, 17 Jul 2005 13:11:02 -0500")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Hi,
+On Sun, 17 Jul 2005 13:11:02 -0500, David Masover <ninja@slaphack.com> said:
 
-(I've already sent this to lkml and the bug has been confirmed
-a couple of times, but I though I should also send it to
-reiserfs-list so here goes:)
+> 450.000 = 450.0 = 450 = 4.5*10^2
+> 450,000 = 4.5*10^5
 
+> 4.5*10^5 > 4.5*10^2
 
-I think I've found a bug in reiserfs acls. If triggered
-it means that any program trying to access the partition,
-where the bug occured, will just hang in D state, with
-no way to kill the program.
+> Or, in other words, you meant to put a comma, but instead you put a
+> period, which is usually a decimal point.
 
-Here's how to reproduce:
-1. mount a reiserfs volume (loopmount will do) with "-o acl".
-2. create a directory "dir"
-3. set some default acl: setfacl -d -m u:username:rwX dir
-4. cd dir
-5. dd if=/dev/zero of=somefile1 bs=4k count=100000
-(the idea is to run out of space)
-6. now df should show 0 free space, if not then repeat 5.
-7. echo "1" > somefile2 # this should hang infinitely
+It's a localization issue.  Some locales use comma as the thousands
+separator, while some use a period.  (And vice versa for the decimal
+point.)
 
-Now no program will be able to access the partition.
+In particular, in French, period is for the thousands separator, and
+comma is the decimal point.
 
-I haven't tried to reproduce it, but the same problem also happened
-when a user hit his hard quota limit on my server. Then no program
-could access his homedir.
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
 
