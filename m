@@ -1,77 +1,95 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH 0/5] reiserfs: moving towards better error handling
-Date: Mon, 18 Jul 2005 13:41:00 -0400
-Message-ID: <20050718174100.GA23337@locomotive.unixthugs.org>
+Subject: [PATCH 1/5] reiserfs: use more consistent printk formatting
+Date: Mon, 18 Jul 2005 13:41:44 -0400
+Message-ID: <20050718174144.GA23817@locomotive.unixthugs.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="r5Pyd7+fXNt84Ff3"
-Return-path: <reiserfs-list-return-25180-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25181-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: ReiserFS List <reiserfs-list@namesys.com>
 
---r5Pyd7+fXNt84Ff3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
+ The output format between a warning/error/panic/info/etc changes with
+ which one is used.
 
-Hey all -
+ The following patch makes the messages more internally consistent, but also
+ more consistent with other Linux filesystems.
 
-There was a thread recently addressing the lack of better error handling
-in reiserfs. The following series of patches attempts to address it.
-
-I'll post the following 5 patches. The first three are kind of cleanups, ju=
-st
-making things more consistent. The final two start to implement the actual
-error handling and haven't received much testing yet.
-
-* 01-reiserfs-consistent-msgs.diff
-  - Makes the reiserfs output messages more consistent with respect to
-    each other and other Linux filesystems. This really just consists
-    of changing the prefix that gets printed before a warning, info, panic,
-    etc.
-* 02-reiserfs-info.diff
-  - A few messages that are currently printed as warnings aren't. This patch
-    changes them to be informational notices.
-* 03-reiserfs-warning.diff
-  - This patch makes the warning messages more consistent. Hans as specified
-    every warning should have a unique ID associated with it, so the
-    patch adds a parameter for it. The function name will also be included
-    in every warning. In instances where the device name was printed, it
-    has been removed since the reiserfs warning message prefix includes it.
-* 04-reiserfs-error-1.diff
-  - This patch adds a reiserfs_error() function to handle non-journal error=
-s.
-  - FOR TESTING ONLY
-* 05-reiserfs-error-2.diff
-  - This patch changes a number of warnings to errors, such as where metada=
-ta
-    i/o errors occur.
-  - FOR TESTING ONLY
-
-  Comments welcome.
-
-  -Jeff
-
---=20
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+diff -ruNpX dontdiff linux-2.6.13-rc3/fs/reiserfs/prints.c linux-2.6.13-rc3.errors/fs/reiserfs/prints.c
+--- linux-2.6.13-rc3/fs/reiserfs/prints.c	2005-07-13 13:57:32.000000000 -0400
++++ linux-2.6.13-rc3.errors/fs/reiserfs/prints.c	2005-07-14 16:36:47.000000000 -0400
+@@ -269,10 +269,10 @@ void reiserfs_warning(struct super_block
+ {
+ 	do_reiserfs_warning(fmt);
+ 	if (sb)
+-		printk(KERN_WARNING "ReiserFS: %s: warning: %s\n",
+-		       reiserfs_bdevname(sb), error_buf);
++		printk(KERN_WARNING "REISERFS warning (device %s): %s\n",
++		       sb->s_id, error_buf);
+ 	else
+-		printk(KERN_WARNING "ReiserFS: warning: %s\n", error_buf);
++		printk(KERN_WARNING "REISERFS warning: %s\n", error_buf);
+ }
+ 
+ /* No newline.. reiserfs_info calls can be followed by printk's */
+@@ -280,10 +280,10 @@ void reiserfs_info(struct super_block *s
+ {
+ 	do_reiserfs_warning(fmt);
+ 	if (sb)
+-		printk(KERN_NOTICE "ReiserFS: %s: %s",
+-		       reiserfs_bdevname(sb), error_buf);
++		printk(KERN_NOTICE "REISERFS (device %s): %s",
++		       sb->s_id, error_buf);
+ 	else
+-		printk(KERN_NOTICE "ReiserFS: %s", error_buf);
++		printk(KERN_NOTICE "REISERFS %s:", error_buf);
+ }
+ 
+ /* No newline.. reiserfs_printk calls can be followed by printk's */
+@@ -298,10 +298,10 @@ void reiserfs_debug(struct super_block *
+ #ifdef CONFIG_REISERFS_CHECK
+ 	do_reiserfs_warning(fmt);
+ 	if (s)
+-		printk(KERN_DEBUG "ReiserFS: %s: %s\n",
+-		       reiserfs_bdevname(s), error_buf);
++		printk(KERN_DEBUG "REISERFS debug (device %s): %s\n",
++		       s->s_id, error_buf);
+ 	else
+-		printk(KERN_DEBUG "ReiserFS: %s\n", error_buf);
++		printk(KERN_DEBUG "REISERFS debug: %s\n", error_buf);
+ #endif
+ }
+ 
+@@ -366,17 +366,17 @@ void reiserfs_panic(struct super_block *
+ void reiserfs_abort(struct super_block *sb, int errno, const char *fmt, ...)
+ {
+ 	do_reiserfs_warning(fmt);
+ 
+ 	if (reiserfs_error_panic(sb)) {
+-		panic(KERN_CRIT "REISERFS: panic (device %s): %s\n",
+-		      reiserfs_bdevname(sb), error_buf);
++		panic(KERN_CRIT "REISERFS panic (device %s): %s\n", sb->s_id,
++		      error_buf);
+ 	}
+ 
+-	if (sb->s_flags & MS_RDONLY)
++	if (reiserfs_is_journal_aborted(SB_JOURNAL(sb))) 
+ 		return;
+ 
+-	printk(KERN_CRIT "REISERFS: abort (device %s): %s\n",
+-	       reiserfs_bdevname(sb), error_buf);
++	printk(KERN_CRIT "REISERFS abort (device %s): %s\n", sb->s_id,
++	       error_buf);
+ 
+ 	sb->s_flags |= MS_RDONLY;
+ 	reiserfs_journal_abort(sb, errno);
+-- 
 Jeff Mahoney
 SuSE Labs
-
---r5Pyd7+fXNt84Ff3
-Content-Type: application/pgp-signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQFC2+mrLPWxlyuTD7IRAhkyAKCJrMbzsHUwW3eTphBRMFKdYGa7HwCcC2Ag
-9Ma7wZMMgP71yjQOe/eKsLA=
-=FHRS
------END PGP SIGNATURE-----
-
---r5Pyd7+fXNt84Ff3--
