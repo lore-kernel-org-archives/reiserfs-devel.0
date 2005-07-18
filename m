@@ -1,69 +1,54 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: reiserfs+acl makes processes hang?
-Date: Mon, 18 Jul 2005 12:55:02 -0400
-Message-ID: <42DBDEE6.4060901@suse.com>
-References: <1121628031.28770.3.camel@localhost>
+Subject: [PATCH] reiserfs: fix deadlock in inode creation failure path w/ default ACL
+Date: Mon, 18 Jul 2005 13:31:04 -0400
+Message-ID: <20050718173104.GA23135@locomotive.unixthugs.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25177-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25179-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1121628031.28770.3.camel@localhost>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: =?ISO-8859-1?Q?Tarmo_T=E4nav?= <tarmo@itech.ee>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@osdl.org>, Linus Torvalds <torvalds@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+ reiserfs_new_inode() can call iput() with the xattr lock held. This will
+ cause a deadlock to occur when reiserfs_delete_xattrs() is called to
+ clean up.
 
-Tarmo T=E4nav wrote:
-> Hi,
->=20
-> (I've already sent this to lkml and the bug has been confirmed
-> a couple of times, but I though I should also send it to
-> reiserfs-list so here goes:)
->=20
->=20
-> I think I've found a bug in reiserfs acls. If triggered
-> it means that any program trying to access the partition,
-> where the bug occured, will just hang in D state, with
-> no way to kill the program.
->=20
-> Here's how to reproduce:
-> 1. mount a reiserfs volume (loopmount will do) with "-o acl".
-> 2. create a directory "dir"
-> 3. set some default acl: setfacl -d -m u:username:rwX dir
-> 4. cd dir
-> 5. dd if=3D/dev/zero of=3Dsomefile1 bs=3D4k count=3D100000
-> (the idea is to run out of space)
-> 6. now df should show 0 free space, if not then repeat 5.
-> 7. echo "1" > somefile2 # this should hang infinitely
->=20
-> Now no program will be able to access the partition.
->=20
-> I haven't tried to reproduce it, but the same problem also happened
-> when a user hit his hard quota limit on my server. Then no program
-> could access his homedir.
->=20
->=20
+ The following patch releases the lock and reacquires it after the iput. This
+ is safe because interaction with xattrs is complete, and the relock is just
+ to balance out the release in the caller.
 
-Ok, this is due to the iput in the reiserfs_new_inode failure path
-calling reiserfs_delete_xattrs with the lock already held.
+ The locking needs some reworking to be more sane, but that's more intrusive
+ and I was just looking to fix this bug.
 
-I'll post a patch soon.
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
-- -Jeff
-
-- --
+diff -ruNpX dontdiff linux-2.6.13-rc3/fs/reiserfs/inode.c linux-2.6.13-rc3.errors/fs/reiserfs/inode.c
+--- linux-2.6.13-rc3.1/fs/reiserfs/inode.c	2005-07-14 19:43:14.000000000 -0400
++++ linux-2.6.13-rc3.2/fs/reiserfs/inode.c	2005-07-18 15:21:32.000000000 -0400
+@@ -1980,7 +1978,17 @@ int reiserfs_new_inode(struct reiserfs_t
+       out_inserted_sd:
+ 	inode->i_nlink = 0;
+ 	th->t_trans_id = 0;	/* so the caller can't use this handle later */
+-	iput(inode);
++	
++	/* If we were inheriting an ACL, we need to release the lock so that
++	 * iput doesn't deadlock in reiserfs_delete_xattrs. The locking
++	 * code really needs to be reworked, but this will take care of it 
++	 * for now. -jeffm */
++	if (REISERFS_I(dir)->i_acl_default) {
++		reiserfs_write_unlock_xattrs(dir->i_sb);
++		iput(inode);
++		reiserfs_write_lock_xattrs(dir->i_sb);
++	} else
++		iput(inode);
+ 	return err;
+ }
+ 
+-- 
 Jeff Mahoney
 SuSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.0 (GNU/Linux)
-
-iD8DBQFC297mLPWxlyuTD7IRAjO6AJ4wgkdvMnHVablWE7vBL1f+nwJhSACgmG7F
-icjFXLkoAIPOVUa02yR7Ys4=3D
-=3D1Nkh
------END PGP SIGNATURE-----
