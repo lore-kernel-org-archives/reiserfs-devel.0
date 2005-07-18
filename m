@@ -1,47 +1,74 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: [PATCH 1/5] reiserfs: use more consistent printk formatting
-Date: Mon, 18 Jul 2005 12:32:40 -0700
-Message-ID: <42DC03D8.3030604@namesys.com>
-References: <20050718174144.GA23817@locomotive.unixthugs.org>
+Subject: Re: Installing Fedora Core with root on Reiserfs
+Date: Mon, 18 Jul 2005 12:32:50 -0700
+Message-ID: <42DC03E2.3070807@namesys.com>
+References: <42DAB928.9000303@namesys.com> <200507181701.26284.russell@coker.com.au> <42DB5DB3.3020809@namesys.com> <42DBD1F5.5030105@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25187-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25188-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050718174144.GA23817@locomotive.unixthugs.org>
+In-Reply-To: <42DBD1F5.5030105@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: Edward Shishkin <edward@namesys.com>
+Cc: Jeff Mahoney <jeffm@suse.com>, russell@coker.com.au, reiserfs-list@namesys.com, fedora-test-list@redhat.com
+
+Edward, please drive this to a solution.  Thanks Jeff.
+
+Hans
 
 Jeff Mahoney wrote:
 
-> The output format between a warning/error/panic/info/etc changes with
-> which one is used.
+> Edward Shishkin wrote:
 >
-> The following patch makes the messages more internally consistent, but also
-> more consistent with other Linux filesystems.
+> >Russell Coker wrote:
 >
->Signed-off-by: Jeff Mahoney <jeffm@suse.com>
->diff -ruNpX dontdiff linux-2.6.13-rc3/fs/reiserfs/prints.c linux-2.6.13-rc3.errors/fs/reiserfs/prints.c
->--- linux-2.6.13-rc3/fs/reiserfs/prints.c	2005-07-13 13:57:32.000000000 -0400
->+++ linux-2.6.13-rc3.errors/fs/reiserfs/prints.c	2005-07-14 16:36:47.000000000 -0400
->@@ -269,10 +269,10 @@ void reiserfs_warning(struct super_block
-> {
-> 	do_reiserfs_warning(fmt);
-> 	if (sb)
->-		printk(KERN_WARNING "ReiserFS: %s: warning: %s\n",
->-		       reiserfs_bdevname(sb), error_buf);
->+		printk(KERN_WARNING "REISERFS warning (device %s): %s\n",
->+		       sb->s_id, error_buf);
-> 	else
->-		printk(KERN_WARNING "ReiserFS: warning: %s\n", error_buf);
->+		printk(KERN_WARNING "REISERFS warning: %s\n", error_buf);
->  
+> >>On Monday 18 July 2005 06:01, Edward Shishkin <edward@namesys.com>
+> wrote:
+> >>
+> >>
+> >>>FC4-test3 (and perhaps FC4) installs its own version of grub which
+> seems
+> >>>to interact incorrectly with reiserfs. The problem is that reiserfs.ko
+> >>>module located on reiserfs partition can not be loaded.
+> >>>  
+> >>
+> >>Firstly there is no situation in which reiserfs.ko will be loaded from
+> >>a reiserfs partition.
+> >>
+> >>
+> >Hmmm... actually this is a default situation when installing with root
+> >on reiserfs..
 >
-why are you changing it to the harder to read all upper case?  It is
-known from various studies that all uppercase is harder for users to read.
-
+> >>If the root file system is reiserfs then reiserfs.ko will (or at least
+> >>should) be included in the initrd.
+>
+> >Right, but initrd is in /boot which is not something separate: it is
+> on the
+> >same reiserfs root partition..
+>
+>
+> The situation you're describing is one that is well tested by now.
+>
+> If the root filesystem is reiserfs, and /boot is a part of it,
+> reiserfs.ko MUST be in the initrd. Otherwise, there is a chicken/egg
+> problem and the system will not boot.
+>
+> The initrd being on a reiserfs filesystem is fine since grub doesn't use
+> any kernel services when it's executing. Grub loads the kernel and the
+> initrd itself before transferring control to the kernel and uses no
+> kernel services to do so. Grub has its own filesystem reading code which
+> gets pointed to during installation.
+>
+> So, if there is truly a problem with this, I'd look at Fedora's mkinitrd.
+>
+> -Jeff
+>
+>
+> --
+> Jeff Mahoney
+> SuSE Labs
 
