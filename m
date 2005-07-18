@@ -1,114 +1,74 @@
-From: Jason Stubbs <jstubbs@gentoo.org>
-Subject: Re: GCC 4.0.0
-Date: Mon, 18 Jul 2005 10:24:23 +0900
-Message-ID: <200507181024.25786.jstubbs@gentoo.org>
-References: <42DB0093.5000809@uai.com.br>
+From: Russell Coker <russell@coker.com.au>
+Subject: Re: Installing Fedora Core with root on Reiserfs
+Date: Mon, 18 Jul 2005 17:01:19 +1000
+Message-ID: <200507181701.26284.russell@coker.com.au>
+References: <42DAB928.9000303@namesys.com>
+Reply-To: russell@coker.com.au,
+	For testers of Fedora Core development releases <fedora-test-list@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart1281041.jFm7bKduO9";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25169-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <42DB0093.5000809@uai.com.br>
+Return-path: <fedora-test-list-bounces@redhat.com>
+In-Reply-To: <42DAB928.9000303@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com, lvella@gmail.com
+List-Unsubscribe: <http://www.redhat.com/mailman/listinfo/fedora-test-list>,
+	<mailto:fedora-test-list-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/fedora-test-list>
+List-Post: <mailto:fedora-test-list@redhat.com>
+List-Help: <mailto:fedora-test-list-request@redhat.com?subject=help>
+List-Subscribe: <http://www.redhat.com/mailman/listinfo/fedora-test-list>,
+	<mailto:fedora-test-list-request@redhat.com?subject=subscribe>
+Sender: fedora-test-list-bounces@redhat.com
+Errors-To: fedora-test-list-bounces@redhat.com
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward@namesys.com>
+Cc: reiserfs-list@namesys.com, fedora-test-list@redhat.com, jeffm@suse.com, reiser@namesys.com
 
---nextPart1281041.jFm7bKduO9
-Content-Type: multipart/mixed;
-  boundary="Boundary-01=_ITw2CG2EEt43Sxs"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+On Monday 18 July 2005 06:01, Edward Shishkin <edward@namesys.com> wrote:
+> FC4-test3 (and perhaps FC4) installs its own version of grub which seems
+> to interact incorrectly with reiserfs. The problem is that reiserfs.ko
+> module located on reiserfs partition can not be loaded.
 
---Boundary-01=_ITw2CG2EEt43Sxs
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Firstly there is no situation in which reiserfs.ko will be loaded from a 
+reiserfs partition.
 
-On Monday 18 July 2005 10:06, Lucas Clemente Vella wrote:
-> I saw that the issue that reiser4progs-1.0.4 is not being compilled
-> on Fedora 4 has already been discussed here.
-> I would like to know if any progress is being done about this,
-> because it's not only a problem with Fedora 4, but a problem with
-> GCC 4: I use GCC 4 on Slackware 10 (kernel 2.6.12.3) and I had a
-> similar problem.
+If the root file system is reiserfs then reiserfs.ko will (or at least should) 
+be included in the initrd.  The GRUB support for ReiserFS is based on the 
+file /boot/grub/reiserfs_stage1_5 which is only needed for /boot on ReiserFS.
 
-I've attached the patch that is used on Gentoo.
+Some people believe that /boot should be a separate file system to the root 
+file system regardless of all other issues.  All systems which use LVM for 
+the root file system on Fedora (the default partitioning involves LVM) will 
+have a separate /boot file system because GRUB apparently doesn't support LVM 
+(yet).
 
-=2D-=20
-Jason Stubbs
+So having a /boot with Ext2/3 is an easy solution to any ReiserFS booting 
+issues, and a solution that will be forced on the users if they use LVM.  
+When using a small /boot file system ReiserFS is not a good choice.  A quick 
+test showed that Ext3 gave 18M more usable disk space from a 100M file system 
+than ReiserFS, this will essentially force all LVM users to use Ext3 
+for /boot.
 
---Boundary-01=_ITw2CG2EEt43Sxs
-Content-Type: text/x-diff;
-  charset="iso-8859-1";
-  name="reiser4progs-1.0.4-gcc4.patch"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
-	filename="reiser4progs-1.0.4-gcc4.patch"
+> 1. (Requires some partition formatted by ext2).
+>    At the end of installation process (after invitation to reboot) boot
+> from some rescue CD, mount reiserfs root partition (say to /mnt) and move
+> all the compressed images (vmlinuz-xxx and initrd-xxx located at /mnt/boot)
+> to your ext2 partition. Then edit the file /mnt/boot/grub/grub.conf
+> pointing a new location for the images. Reboot and finish the
+> installation
+>    process.
 
-diff -ur reiser4progs-1.0.4-orig/plugin/key/key_large/key_large.h reiser4pr=
-ogs-1.0.4/plugin/key/key_large/key_large.h
-=2D-- reiser4progs-1.0.4-orig/plugin/key/key_large/key_large.h	2005-03-12 1=
-4:12:04.000000000 -0500
-+++ reiser4progs-1.0.4/plugin/key/key_large/key_large.h	2005-03-12 14:14:16=
-=2E000000000 -0500
-@@ -43,7 +43,7 @@
-=20
- typedef union key_large key_large_t;
-=20
-=2Dextern reiser4_plug_t key_large_plug;
-+static reiser4_plug_t key_large_plug;
-=20
- typedef enum {
- 	/* Major locality occupies higher 60 bits of the first element */
-diff -ur reiser4progs-1.0.4-orig/plugin/key/key_short/key_short.h reiser4pr=
-ogs-1.0.4/plugin/key/key_short/key_short.h
-=2D-- reiser4progs-1.0.4-orig/plugin/key/key_short/key_short.h	2005-03-12 1=
-4:12:04.000000000 -0500
-+++ reiser4progs-1.0.4/plugin/key/key_short/key_short.h	2005-03-12 14:14:04=
-=2E000000000 -0500
-@@ -42,7 +42,7 @@
-=20
- typedef union key_short key_short_t;
-=20
-=2Dextern reiser4_plug_t key_short_plug;
-+static reiser4_plug_t key_short_plug;
-=20
- typedef enum {
- 	/* Major locality occupies higher 60 bits of the first element */
-diff -ur reiser4progs-1.0.4-orig/plugin/oid/oid40/oid40.h reiser4progs-1.0.=
-4/plugin/oid/oid40/oid40.h
-=2D-- reiser4progs-1.0.4-orig/plugin/oid/oid40/oid40.h	2005-03-12 14:13:18.=
-000000000 -0500
-+++ reiser4progs-1.0.4/plugin/oid/oid40/oid40.h	2005-03-12 14:10:57.0000000=
-00 -0500
-@@ -30,7 +30,7 @@
-=20
- typedef struct oid40 oid40_t;
-=20
-=2Dextern reiser4_plug_t oid40_plug;
-+static reiser4_plug_t oid40_plug;
-=20
- #define oid40_get_next(area)            LE64_TO_CPU(*((d64_t *)area))
- #define oid40_set_next(area, val)       (*((d64_t *)area) =3D CPU_TO_LE64(=
-val))
+This can be done automatically through the Anaconda GUI or through kickstart.  
+Just specify that /boot is to be a separate partition of type Ext3.
 
---Boundary-01=_ITw2CG2EEt43Sxs--
+-- 
+http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
+http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
+http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
+http://www.coker.com.au/~russell/  My home page
 
---nextPart1281041.jFm7bKduO9
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-
-iD8DBQBC2wTJxvWNPsk/ZP4RAjr3AJ9lAcScEqrSTXeaF4kuDfJcMiuxyACfZCzK
-XFKwnpyX6j+Vb/iTKoDP8SA=
-=E3mz
------END PGP SIGNATURE-----
-
---nextPart1281041.jFm7bKduO9--
+-- 
+fedora-test-list mailing list
+fedora-test-list@redhat.com
+To unsubscribe: 
+http://www.redhat.com/mailman/listinfo/fedora-test-list
