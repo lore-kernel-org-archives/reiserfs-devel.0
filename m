@@ -1,16 +1,16 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH 1/5] reiserfs: use more consistent printk formatting
-Date: Mon, 18 Jul 2005 20:42:16 -0400
-Message-ID: <42DC4C68.8030603@suse.com>
-References: <20050718174144.GA23817@locomotive.unixthugs.org> <42DC03D8.3030604@namesys.com>
+Subject: Re: [PATCH 3/5] reiserfs: rework reiserfs_warning
+Date: Mon, 18 Jul 2005 20:47:42 -0400
+Message-ID: <42DC4DAE.1020704@suse.com>
+References: <20050718174230.GA23863@locomotive.unixthugs.org> <42DC03CC.5000502@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25190-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25191-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42DC03D8.3030604@namesys.com>
+In-Reply-To: <42DC03CC.5000502@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Hans Reiser <reiser@namesys.com>
@@ -20,36 +20,38 @@ Cc: ReiserFS List <reiserfs-list@namesys.com>
 Hash: SHA1
 
 Hans Reiser wrote:
+> Jeff, thanks so kindly for cleaning all this up, it must have been very
+> tedious, so extra thanks for it.
+> 
+> I will now quibble about some trivia....
+> 
+> Hans
+> 
 > Jeff Mahoney wrote:
 > 
->>The output format between a warning/error/panic/info/etc changes with
->>which one is used.
+>>ReiserFS warnings can be somewhat inconsistent.
+>>In some cases:
+>>* a unique identifier may be associated with it
+>>* the function name may be included
+>>* the device may be printed separately
 >>
->>The following patch makes the messages more internally consistent, but also
->>more consistent with other Linux filesystems.
->>
->>Signed-off-by: Jeff Mahoney <jeffm@suse.com>
->>diff -ruNpX dontdiff linux-2.6.13-rc3/fs/reiserfs/prints.c linux-2.6.13-rc3.errors/fs/reiserfs/prints.c
->>--- linux-2.6.13-rc3/fs/reiserfs/prints.c	2005-07-13 13:57:32.000000000 -0400
->>+++ linux-2.6.13-rc3.errors/fs/reiserfs/prints.c	2005-07-14 16:36:47.000000000 -0400
->>@@ -269,10 +269,10 @@ void reiserfs_warning(struct super_block
->>{
->>	do_reiserfs_warning(fmt);
->>	if (sb)
->>-		printk(KERN_WARNING "ReiserFS: %s: warning: %s\n",
->>-		       reiserfs_bdevname(sb), error_buf);
->>+		printk(KERN_WARNING "REISERFS warning (device %s): %s\n",
->>+		       sb->s_id, error_buf);
->>	else
->>-		printk(KERN_WARNING "ReiserFS: warning: %s\n", error_buf);
->>+		printk(KERN_WARNING "REISERFS warning: %s\n", error_buf);
+>>This patch aims to make warnings more consistent. reiserfs_warning() prints
+>>the device name, so printing it a second time is not required. The function
+>>name for a warning is always helpful in debugging, so it is now automatically
+>>inserted into the output. Hans has stated that every warning should have
+>>a unique identifier. Some cases lack them, others really shouldn't have them.
 >> 
 >>
-> why are you changing it to the harder to read all upper case?  It is
-> known from various studies that all uppercase is harder for users to read.
+> What cases should not have them?
 
-My argument is that it makes the subsystem more prominent in a quick
-visual search, and is easier on the eyes than the mixed case variant.
+I don't think that "routine" messages should have identifiers associated
+with them. I guess in a more exact sense, messages that are directly
+associated with user input, like mount option parsing, finding the
+superblock, an unfinished reiserfsck, or enabling CONFIG_REISERFS_CHECK.
+
+I guess a quick visual search for NO_ID in the patch would be the best
+way of expressing this. I could be convinced otherwise, and that's why I
+made two separate #defines for a missing id or deliberately no id.
 
 - -Jeff
 
@@ -59,7 +61,7 @@ SuSE Labs
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.0 (GNU/Linux)
 
-iD8DBQFC3ExoLPWxlyuTD7IRAnYUAKCUN2YK5VSK50jcQgD8y+UfKmvjEQCfYBGE
-fk+gGoOC9WlFHJ3+AlDwEdI=
-=qYIP
+iD8DBQFC3E2uLPWxlyuTD7IRAufMAJ9RB1jrQalthIExa/4h+IouWrjr7gCcC34j
+wGWoF4EI5kcfAWaL4UScBWo=
+=mX/a
 -----END PGP SIGNATURE-----
