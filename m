@@ -1,33 +1,41 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: reiser4progs do not handle the reiser4 format changes
-Date: Wed, 20 Jul 2005 13:54:14 -0500
-Message-ID: <42DE9DD6.1090104@slaphack.com>
-References: <42DE5A5E.9020404@namesys.com>
+From: Ragnar =?iso-8859-15?Q?Kj=F8rstad?= <reiserfs@ragnark.vestdata.no>
+Subject: Re: Fastest way to "find / -mtime +7".....
+Date: Wed, 20 Jul 2005 22:44:51 +0200
+Message-ID: <20050720204451.GT1508@vestdata.no>
+References: <FD5AA849-D432-4881-B70F-E71369520749@surfcity.net> <1121798933.15596.13.camel@localhost> <20050719200902.GM1508@vestdata.no> <1121810424.15596.19.camel@localhost> <20050720162644.GC6704@schatzie.adilger.int>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25215-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-25216-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42DE5A5E.9020404@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <20050720162644.GC6704@schatzie.adilger.int>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "E.Gryaznova" <grev@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Jonathan Briggs <jbriggs@esoft.com>, Ed Walker <ewalker@surfcity.net>, reiserfs-list@namesys.com
 
-E.Gryaznova wrote:
-> Notification:
-> 
-> The reiser4 format was changed in reiser4-for-2.6.11-5.patch and new 
-> reiser4 kernel code is able to handle the old format.
+On Wed, Jul 20, 2005 at 12:26:44PM -0400, Andreas Dilger wrote:
+> On Jul 19, 2005  16:00 -0600, Jonathan Briggs wrote:
+> > How about some kind of stat-data readahead logic?  If the first two or
+> > three directory entries are stat'd, queue up the rest (or next
+> > hundred/thousand) of them.  If the disk queue is given the whole pile of
+> > stat requests at once instead of one at a time, it should be able to
+> > sort them into a reasonable order.
+> >=20
+> > This might even be a VFS thing to do instead of per-FS.
+>=20
+> This is something I would be very interested in.  Having a pipeline of
+> stats generated when an app does readdir + in-order stat would help
+> reduce latency a great deal for network filesystems.
 
-Good, so I don't have to reformat _immediately_...
+What about just adding an asyncron stat to aio ?
 
-But, why isn't it for 2.6.12 yet?  We're already on at least 2.6.12.2, 
-last I checked...
 
-> The reiser4progs-1.0.4 are not able to handle the format changes. The 
-> fix for reiser4progs will be ready next week.
 
-Will there be a conversion tool?
+--=20
+Ragnar Kj=F8rstad
+Software Engineer
+Scali - http://www.scali.com
+Scaling the Linux Datacenter
