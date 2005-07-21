@@ -1,55 +1,56 @@
-From: Russell Coker <russell@coker.com.au>
-Subject: Re: Installing Fedora Core with root on Reiserfs
-Date: Thu, 21 Jul 2005 10:35:40 +1000
-Message-ID: <200507211035.47290.russell@coker.com.au>
-References: <42DAB928.9000303@namesys.com>
-	<200507191717.49280.russell@coker.com.au>
-	<42DEE6A3.3040406@namesys.com>
-Reply-To: russell@coker.com.au,
-	For testers of Fedora Core development releases <fedora-test-list@redhat.com>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: reiser4progs do not handle the reiser4 format changes
+Date: Thu, 21 Jul 2005 05:00:55 +0400
+Message-ID: <42DEF3C7.3040104@namesys.com>
+References: <42DE5A5E.9020404@namesys.com> <42DE9DD6.1090104@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <fedora-test-list-bounces@redhat.com>
-In-Reply-To: <42DEE6A3.3040406@namesys.com>
-Content-Disposition: inline
+Return-path: <reiserfs-list-return-25221-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <42DE9DD6.1090104@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <http://www.redhat.com/mailman/listinfo/fedora-test-list>,
-	<mailto:fedora-test-list-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/fedora-test-list>
-List-Post: <mailto:fedora-test-list@redhat.com>
-List-Help: <mailto:fedora-test-list-request@redhat.com?subject=help>
-List-Subscribe: <http://www.redhat.com/mailman/listinfo/fedora-test-list>,
-	<mailto:fedora-test-list-request@redhat.com?subject=subscribe>
-Sender: fedora-test-list-bounces@redhat.com
-Errors-To: fedora-test-list-bounces@redhat.com
-Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward@namesys.com>
-Cc: reiserfs-list@namesys.com, fedora-test-list@redhat.com, Jeff Mahoney <jeffm@suse.com>, reiser@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Masover <ninja@slaphack.com>
+Cc: "E.Gryaznova" <grev@namesys.com>, reiserfs-list@namesys.com
 
-On Thursday 21 July 2005 10:04, Edward Shishkin <edward@namesys.com> wrote:
-> My phrase "reiserfs.ko located on reiserfs" sounds bad, and I should
-> clarify that the reiserfs.ko is contained in the initrd with other
-> binaries/scripts, and this initrd looks fine from the standpoint of
-> kernel/reiserfs, but not from the standpoint of grub/reiserfs-emulation.
-> The logs obtained from serial console don't include anything about
-> loading initrd, and there is the following detail: a dump created by
-> debugreiserfs -d shows that the initrd (i_size: 1128235) is represented
-> by an indirect item (276 4K-blocks), while grub found that this is not
-> sector-aligned:
+David Masover wrote:
 
-Might this be related to the size of the ReiserFS file system?
+> E.Gryaznova wrote:
+>
+>> Notification:
+>>
+>> The reiser4 format was changed in reiser4-for-2.6.11-5.patch and new 
+>> reiser4 kernel code is able to handle the old format.
+>
+>
+> Good, so I don't have to reformat _immediately_...
+>
+> But, why isn't it for 2.6.12 yet?  We're already on at least 2.6.12.2, 
+> last I checked...
+>
+>> The reiser4progs-1.0.4 are not able to handle the format changes. The 
+>> fix for reiser4progs will be ready next week.
+>
+>
+> Will there be a conversion tool?
+>
+>
 
-I tested installs with the default partitioning (100M /boot) which worked OK.  
-When you had the problem were you using a larger ReiserFS file system?
+No. Reiser4progs just will support a set of new plugins which have been 
+added to the kernel.
+In particular, mkfs.reiser4 should allow user to specify the plugins 
+like other existing
+ones. This will be a way to create cryptcompress files per superblock. 
+There is another
+more flexible way (which is compatible with the previous one) to create 
+it per file/directory,
+but it uses deprecated metas interface..
+Note: since cryptcompress plugin is unstable, the new options are 
+supposed to be undocumented.
 
--- 
-http://www.coker.com.au/selinux/   My NSA Security Enhanced Linux packages
-http://www.coker.com.au/bonnie++/  Bonnie++ hard drive benchmark
-http://www.coker.com.au/postal/    Postal SMTP/POP benchmark
-http://www.coker.com.au/~russell/  My home page
-
--- 
-fedora-test-list mailing list
-fedora-test-list@redhat.com
-To unsubscribe: 
-http://www.redhat.com/mailman/listinfo/fedora-test-list
+Thanks,
+Edward.
+ 
