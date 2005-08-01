@@ -1,41 +1,42 @@
-From: "Eduardo Oliver" <arhat@doneasy.com>
-Subject: Increase Your Performance
-Date: Mon, 01 Aug 2005 08:19:26 -0500
-Message-ID: <20672.6319659085$1122899292@news.gmane.org>
-Return-path: <reiserfs-list-return-25285-reiserfs=m.gmane.org@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Debian, ACLs and 2.6.8 Linux kernel?
+Date: Mon, 01 Aug 2005 12:14:42 -0700
+Message-ID: <42EE74A2.4050904@namesys.com>
+References: <42EDE8CB.8050300@vandervlis.nl>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25286-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <42EDE8CB.8050300@vandervlis.nl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: morocco@namesys.com, princess1469@namesys.com, nikita@namesys.com, romp@namesys.com, gange@namesys.com, bompane@namesys.com, gagne@namesys.com, kaser@namesys.com, koczera@namesys.com, heacock@namesys.com, jmacd@namesys.com, gryniuk@namesys.com, reynoza@namesys.com, sales@namesys.com, hornsby@namesys.com, vitaly@namesys.com, reiserfs-list@namesys.com
+To: Paul van der Vlis <paul@vandervlis.nl>
+Cc: reiserfs-list@namesys.com
 
-Generic Cialis Soft Tabs is the new impotence treatment
-drug that everyone is talking about. 
+Paul van der Vlis wrote:
 
-It has benefits over Viagra and other ED treatment 
-solutions.
-	
-	- Can mix with alcohol with no side effects
+> Hello,
+>
+> I am wondering why Debian's 2.6.8-2 kernel does not have ACL support
+> for Reiserfs. Are there any known issues?  (Debian has ACLs for all
+> other filesystems, but not for Reiserfs.)
+>
+> I am also wondering why the default in Debian is to use "notail" as a
+> boot-option. Is it a problem to remove this boot-option later?
 
-	- Will not make you dizzy or blur your vision
+Notail has better performance in V3, for the same reason fragments hurts
+BSD FFS performance.  V4 fixes this.  I have mixed feelings as to
+whether I would advise using notail as a default for V3.  Probably yes. 
+It is reasonable of them to do so.
 
-	- Works in 15 min compared to 75 min for Viagra
-
-	- Lasts 36 hours compared to 2 hours for Viagra
-
-View it Here: http://commodious.net/cs/?bonsay
-
-
-
-
-
-
-
-
-
-To Stop: http://commodious.net/rm.php?bonsay
+>
+> With regards,
+> Paul van der Vlis
+> Groningen, Netherlands.
+>
+>
+>
 
