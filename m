@@ -1,32 +1,51 @@
-From: Mark Piper <mwp@cs.cmu.edu>
-Subject: Pre-release 2 of ReiserDriver:  A read-only ReiserFS filesystem driver
- for Windows
-Date: Wed, 03 Aug 2005 00:26:14 +0000
-Message-ID: <42F00F26.2040301@cs.cmu.edu>
-Reply-To: rfsd-reiserdriver@lists.sourceforge.net
+From: Alexander Zarochentsev <zam@namesys.com>
+Subject: Re: journal too big
+Date: Wed, 3 Aug 2005 08:23:42 +0400
+Message-ID: <200508030823.42529.zam@namesys.com>
+References: <4f52331f050802094839f9ad7@mail.gmail.com> <200508022245.00532.zam@namesys.com> <4f52331f05080212161577b5f3@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25293-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25294-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <4f52331f05080212161577b5f3@mail.gmail.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: rfsd-reiserdriver@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+To: sudo Yang <sudoyang@gmail.com>
 Cc: reiserfs-list@namesys.com
 
-For anyone interested:
+On Tuesday 02 August 2005 23:16, sudo Yang wrote:
+> This is on the 2.4.20 kernel.
 
-I have recently uploaded a second beta of a Windows file system driver 
-for ReiserFS 3.6.  This provides native read-only access to ReiserFS 
-partitions from any Windows application.
+Really? I see your reiserfs crash message contains "2.6.8-1.521smp" string.
 
-This is the last pre-release before a final release, so any testing or 
-feedback would be especially appreciated.
+Jul 23 09:52:13 csd01a-bld kernel: EIP:    0060:[<f88f8ab2>]    Not tainted
+Jul 23 09:52:13 csd01a-bld kernel: EFLAGS: 00010282   (2.6.8-1.521smp)
+Jul 23 09:52:13 csd01a-bld kernel: EIP is at reiserfs_panic+0x36/0x56 
 
-The driver can be downloaded from http://rfsd.sf.net.  Any feedback 
-should go to the ReiserDriver mailing list, at 
-rfsd-reiserdriver@lists.sourceforge.net
+The bug exists in both 2.4.x and 2.6.x branches, but the fix isn't backported 
+to 2.4.x.
 
-  -- Mark Piper
+> On 8/2/05, Alexander Zarochentsev <zam@namesys.com> wrote:
+> > Hello.
+> >
+> > On Tuesday 02 August 2005 20:48, sudo Yang wrote:
+> > > Some of our systems are getting a kernel panic.  This error is logged
+> > > to /var/log/messages:
+> > >
+> > > Jul 23 09:52:13 csd01a-bld kernel: REISERFS: panic (device sdb1):
+> > > journal-1413: journal_mark_dirty: j_len (1024) is too big
+> >
+> > [ ... ]
+> >
+> > > We'r eusing ReiserfsFS 3.x.  What does this error mean?  What can we
+> > > do about it?
+> >
+> > Would you please try the attached patch?  it is for 2.6.9 but applies
+> > cleanly to 2.6.8.
+> >
+> > > Thanks
+
