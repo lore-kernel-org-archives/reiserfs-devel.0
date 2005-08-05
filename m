@@ -1,29 +1,24 @@
-From: Joachim <gasped@mcclusky.com>
-Subject: World first Patch Technology for penis Enlargement
-Date: Fri, 5 Aug 2005 19:28:22 +0200
-Message-ID: <604325739.6445852399@cable-62-205-81-9.upc.chello.be>
+From: David Masover <ninja@slaphack.com>
+Subject: recovering from "rm -rf"
+Date: Fri, 05 Aug 2005 15:08:27 -0500
+Message-ID: <42F3C73B.9040808@slaphack.com>
+References: <42F3A08A.30102@planet.nl> <42F3A16D.6090306@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25307-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25309-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <42F3A16D.6090306@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Male sexual enhancement formula
-http://www.dertans.com/pt/?9&sharks
+I've got a Reiser4 partition which I just moved (mv) a bunch of stuff
+off of, onto another drive.  The other drive died immediately after.
 
-
-
-
-
-Good order is the foundation of all things.     
-He who despises himself nevertheless esteems himself as a self-despiser.   
-There are more pleasant things to do than beat up people.  
-Throw your heart over the fence and the rest will follow.  
-A handful of common sense is worth a bushel of learning.  
-
-
+I'm trying to repair the other drive, and to find any backups, but is
+there a reasonable chance to recover from the good drive?  Maybe force
+fsck.reiser4 to rebuild stuff... somehow?  It's sort of the equivalent
+of an "rm -rf".
