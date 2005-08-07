@@ -1,60 +1,47 @@
-From: David Masover <ninja@slaphack.com>
+From: Rudy Zijlstra <rudy@edsons.demon.nl>
 Subject: Re: recovering from "rm -rf"
-Date: Sat, 06 Aug 2005 19:06:16 -0500
-Message-ID: <42F55078.2030204@slaphack.com>
-References: <42F3A08A.30102@planet.nl> <42F3A16D.6090306@namesys.com> <42F3C73B.9040808@slaphack.com> <b14e81f0050805135739c94933@mail.gmail.com> <42F3D760.7090008@slaphack.com> <op.su10y3q7th1vuj@localhost> <42F3E7F1.1030205@slaphack.com> <42F3EF37.3090705@edsons.demon.nl> <42F3F4A4.2050505@slaphack.com> <42F468CD.9070709@namesys.com>
+Date: Sun, 07 Aug 2005 09:16:37 +0200
+Message-ID: <42F5B555.5090703@edsons.demon.nl>
+References: <42F3A08A.30102@planet.nl> <42F3A16D.6090306@namesys.com> <42F3C73B.9040808@slaphack.com> <b14e81f0050805135739c94933@mail.gmail.com> <42F3D760.7090008@slaphack.com> <op.su10y3q7th1vuj@localhost> <42F3DDA2.6070204@bdi.com> <42F3F028.2080207@slaphack.com> <255f08c2332b4fce337305e0b3f35db1@bdi.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25329-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25331-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42F468CD.9070709@namesys.com>
+In-Reply-To: <255f08c2332b4fce337305e0b3f35db1@bdi.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Rudy Zijlstra <rudy@edsons.demon.nl>, PFC <lists@boutiquenumerique.com>, michael chang <thenewme91@gmail.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Aaron D. Ball" <adb@bdi.com>
+Cc: David Masover <ninja@slaphack.com>, reiserfs-list@namesys.com, PFC <lists@boutiquenumerique.com>
 
-Hans Reiser wrote:
-> David Masover wrote:
-> 
-> 
->>
->>I'm not sure yet how much I'm willing to pay.  If the Namesys people can
->>help me out, there will certainly be a donation headed their way,
->>
-> 
-> Nah, for you it is no charge, you have done a lot for us.
+Aaron D. Ball wrote:
 
-What exactly have I done?  I haven't contributed a single line of code,
-just ranted on the mailing list for you.
+> On 05 Aug 2005, at 19:03, David Masover wrote:
+>
+> [swapping boards on disks]
+>
+>> Which ones?
+>
+>
+> I believe it was whatever Maxtor IDE disks are inside their 5000DV 
+> enclosure, and probably also Western Digital 1200JBs, but I'm not 
+> entirely sure.  It's been a few months.
+>
+>> My drive is a Western Digital, and they strongly advise against this
+>> procedure, becaues different drives (even of the same model number) may
+>> have different firmware versions, and this may make things worse.
+>
+>
+> Well, I'm not sure there's a "worse" in this case.  If you need or can 
+> afford to do the strictly right thing (pay several thousand dollars to 
+> a data recovery company), by all means do so.  But if you can't afford 
+> that, buying a new drive and swapping electronics may work and is 
+> certainly much cheaper.
+>
+>
+I've done it with Western Digital disks. They were same type and 
+manufactured on consequetive days (1 day apart).
 
-I appreciate it, but I think I will pay you anyway.  $25 for a question
-very well answered, and my mother says she'll match it -- which is still
-nowhere near what I'd have had to pay to get the other hard drive
-repaired.  Does that WorldPay link work?
-
-> Did you try
-> what Vitaly advised yet?
-
-Yes, it seems to have worked.  I seem to have all my important files,
-except one album of music and the last few episodes of anime -- and I'm
-still going through lost+found.  That's really not much of a loss.
-
-By the way, I also discovered a nice trick to avoid making a full disk
-backup.  I had a 500 gig RAID array that I was trying to rescue, and the
-biggest spare disk I had available was 80 gigs.  So, I used dm_snapshot
-to create a writable snapshot, using a loopback file on the 80 gig drive
-as the COW device.  I did the fsck on the snapshot, then wrote the
-snapshot back to the original device (dd if=snapshot of=orig_device)
-once I was sure it worked.  If it hadn't worked, I could have simply
-removed the snapshot (dmsetup remove snapshot).
-
-The COW file was a 60 gig sparse file that ended up using only 2 gigs or
-so on disk after the fsck.
-
-Be warned, though, that dm_snapshot isn't quite like LVM snapshots, and
-only LVM snapshots are documented, while only dm_snapshot will work for
-this.  I had to read the source.
-
+Rudy
