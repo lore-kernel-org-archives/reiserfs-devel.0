@@ -1,43 +1,24 @@
-From: Ingo Bormuth <ibormuth@efil.de>
+From: PFC <lists@boutiquenumerique.com>
 Subject: Re: reiser4 performance
-Date: Mon, 8 Aug 2005 15:38:56 +0200
-Message-ID: <20050808133856.GA3935@kruemel>
-References: <dd7cbn$kbg$1@sea.gmane.org> <200508081409.03814.rmeijer@internet.gr>
-Reply-To: Ingo Bormuth <ibormuth@efil.de>
+Date: Mon, 08 Aug 2005 18:44:03 +0200
+Message-ID: <op.su67fpvyth1vuj@localhost>
+References: <dd7cbn$kbg$1@sea.gmane.org> <200508081409.03814.rmeijer@internet.gr> <20050808133856.GA3935@kruemel>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-25345-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-25346-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200508081409.03814.rmeijer@internet.gr>
+In-Reply-To: <20050808133856.GA3935@kruemel>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; format="flowed"; delsp="yes"; charset="us-ascii"
+To: Ingo Bormuth <ibormuth@efil.de>, reiserfs-list@namesys.com
 Cc: ingo@bormuth.org
 
-On 2005-08-08 14:09, Raymond A. Meijer wrote:
-> > Its already as stable as any other fs on my systems and recovers
-> > better than most when my battery runs out. Any idea when it will make
-> > it into the stable 2.6 kernel?
 
-Yes, yes, yes. 
-I had a DMA problem and the laptop froze several times on high load.
-I never, ever found any fs corruption !!!
- 
-> If only it had a resizer :(
+>> If only it had a resizer :(
 
-Yes, yes, yes.
-I hear it is a matter of money. So why don't you raise a fund?
-I pretty much like the concept at fundable.org.
-
-
-
--- 
-   +--------------------------------------------------------+
-   | Ingo Bormuth,  voicebox & telefax: +49-12125-10226517  |
-   | GnuPG key 86326EC9 at http://ibormuth.efil.de/contact  |
-   +--------------------------------------------------------+
-
+	I would definitely give $25 for the repacker, which is the mandatory  
+condition to get the resizer. How many people would give $25 too ? why not  
+do a little fundraising ?
