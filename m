@@ -1,70 +1,83 @@
-From: Jake Maciejewski <maciejej@msoe.edu>
-Subject: reiser4 still not working on PPC
-Date: Mon, 08 Aug 2005 00:41:07 -0500
-Message-ID: <1123479668.17488.25.camel@gentoo>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: recovering from "rm -rf"
+Date: Sun, 07 Aug 2005 23:05:03 -0700
+Message-ID: <42F6F60F.4090101@namesys.com>
+References: <42F3A08A.30102@planet.nl> <42F3A16D.6090306@namesys.com> <42F3C73B.9040808@slaphack.com> <b14e81f0050805135739c94933@mail.gmail.com> <42F3D760.7090008@slaphack.com> <op.su10y3q7th1vuj@localhost> <42F3E7F1.1030205@slaphack.com> <42F3EF37.3090705@edsons.demon.nl> <42F3F4A4.2050505@slaphack.com> <42F468CD.9070709@namesys.com> <42F55078.2030204@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25337-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25338-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <42F55078.2030204@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: Rudy Zijlstra <rudy@edsons.demon.nl>, PFC <lists@boutiquenumerique.com>, michael chang <thenewme91@gmail.com>, reiserfs-list@namesys.com
 
-Trying to mount reiser4 on PPC still gives me "mount: No such file or
-directory". I'm using 2.6.12.2 with the 3rd Namesys patch for 2.6.12,
-and my progs are version 1.0.4-1.
+David Masover wrote:
 
-I ran mount with strace and got a whole bunch of stuff, but here's the
-interesting part, where it deviates from a successful ext2 mount
-following the same procedure (note that I used losetup to reduce the
-work done by mount):
+>Hans Reiser wrote:
+>  
+>
+>>David Masover wrote:
+>>
+>>
+>>    
+>>
+>>>I'm not sure yet how much I'm willing to pay.  If the Namesys people can
+>>>help me out, there will certainly be a donation headed their way,
+>>>
+>>>      
+>>>
+>>Nah, for you it is no charge, you have done a lot for us.
+>>    
+>>
+>
+>What exactly have I done?  I haven't contributed a single line of code,
+>just ranted on the mailing list for you.
+>  
+>
+That's worth more than you might think....
 
-mount("/dev/loop0", "/home/jake/debug/mnt_reiser4/", "reiser4", MS_POSIXACL|MS_ACTIVE|MS_NOUSER|0xec0000, 0) = 268581048
-mount("/dev/loop0", "/home/jake/debug/mnt_reiser4/", "reiser4", MS_POSIXACL|MS_ACTIVE|MS_NOUSER|0xec0000, 0) = 268581048
-mount("/dev/loop0", "/home/jake/debug/mnt_reiser4/", "reiser4", MS_POSIXACL|MS_ACTIVE|MS_NOUSER|0xec0000, 0) = -1 ENOENT (No such file or directory)
-rt_sigprocmask(SIG_UNBLOCK, ~[TRAP SEGV RTMIN RT_1], NULL, 8) = 0
-lstat64("/home/jake/debug/mnt_reiser4/", {st_mode=S_IFDIR|0755, st_size=1024, ...}) = 0
-stat64("/home/jake/debug/mnt_reiser4/", {st_mode=S_IFDIR|0755, st_size=1024, ...}) = 0
-stat64("/dev/loop0", {st_mode=S_IFBLK|0660, st_rdev=makedev(7, 0), ...}) = 0
-dup(2)                                  = 3
-fcntl64(3, F_GETFL)                     = 0x2 (flags O_RDWR)
-fstat64(3, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 0), ...}) = 0
-mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x30018000
-_llseek(3, 0, 0x7fb192a8, SEEK_CUR)     = -1 ESPIPE (Illegal seek)
-write(3, "mount: No such file or directory"..., 33) = 33
-close(3)                                = 0
-munmap(0x30018000, 4096)                = 0
-exit_group(32)                          = ?
+>I appreciate it, but I think I will pay you anyway.  $25 for a question
+>very well answered, and my mother says she'll match it -- which is still
+>nowhere near what I'd have had to pay to get the other hard drive
+>repaired.  Does that WorldPay link work?
+>  
+>
+Sure.  Thanks.
 
-I don't know much about Linux syscalls, but I thought mount() was
-supposed to return 0 or -1. So mount gets a bogus return value, tries
-again, gets the same, then tries a third time and gets ENOENT? Then it
-looks like it's trying to figure out whether the device file or mount
-point doesn't exist, but both exist so it gives me a generic "No such
-file or directory" and exits. I get some interesting kernel messages,
-however:
-
-ps_hash_table: 32 buckets
-ef_hash_table: 8192 buckets
-z_hash_table: 8192 buckets
-z_hash_table: 8192 buckets
-j_hash_table: 16384 buckets
-loading reiser4 bitmap......done (2 jiffies)
-d_cursor_hash_table: 256 buckets
-reiser4[mount(8564)]: key_warning (fs/reiser4/plugin/object.c:96)[nikita-717]:
-code: -2 at fs/reiser4/tree_walk.c:168
-WARNING: Error for inode 720575940379279360 (-2)
-for key: (910200000000000:0:0:2:a00000000000000:0)[*]
-
-Nothing seems to change if I re-run mkfs (same inode, key), or even
-create the FS from a known-good AMD64 machine. Unfortunately, if I
-enable debugging, attempting to insert the module cause modprobe to
-consume 100% CPU and go zombie. So far I've avoided building it in
-because my beige g3 is a PITA to boot.
-
--- 
-Jake Maciejewski <maciejej@msoe.edu>
+>  
+>
+>>Did you try
+>>what Vitaly advised yet?
+>>    
+>>
+>
+>Yes, it seems to have worked.  I seem to have all my important files,
+>except one album of music and the last few episodes of anime -- and I'm
+>still going through lost+found.  That's really not much of a loss.
+>
+>By the way, I also discovered a nice trick to avoid making a full disk
+>backup.  I had a 500 gig RAID array that I was trying to rescue, and the
+>biggest spare disk I had available was 80 gigs.  So, I used dm_snapshot
+>to create a writable snapshot, using a loopback file on the 80 gig drive
+>as the COW device.  I did the fsck on the snapshot, then wrote the
+>snapshot back to the original device (dd if=snapshot of=orig_device)
+>once I was sure it worked.  If it hadn't worked, I could have simply
+>removed the snapshot (dmsetup remove snapshot).
+>
+>The COW file was a 60 gig sparse file that ended up using only 2 gigs or
+>so on disk after the fsck.
+>
+>Be warned, though, that dm_snapshot isn't quite like LVM snapshots, and
+>only LVM snapshots are documented, while only dm_snapshot will work for
+>this.  I had to read the source.
+>
+>
+>
+>  
+>
 
