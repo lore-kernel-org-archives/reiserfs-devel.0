@@ -1,61 +1,57 @@
-From: Hans Reiser <reiser@namesys.com>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 performance
-Date: Mon, 08 Aug 2005 16:30:43 -0700
-Message-ID: <42F7EB23.7030301@namesys.com>
-References: <dd7cbn$kbg$1@sea.gmane.org> <42F7A01A.7090209@namesys.com> <e692861c05080816136f9d70bc@mail.gmail.com>
+Date: Mon, 08 Aug 2005 19:02:19 -0500
+Message-ID: <42F7F28B.7010602@slaphack.com>
+References: <dd7cbn$kbg$1@sea.gmane.org> <200508081409.03814.rmeijer@internet.gr> <42F7B8F4.80101@slaphack.com> <42F7D77E.5080108@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25363-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25364-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e692861c05080816136f9d70bc@mail.gmail.com>
+In-Reply-To: <42F7D77E.5080108@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Gregory Maxwell <gmaxwell@gmail.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: "Raymond A. Meijer" <rmeijer@internet.gr>, reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>
 
-Gregory Maxwell wrote:
-
->On 8/8/05, Hans Reiser <reiser@namesys.com> wrote:
->  
->
->>I should add that fsync performance has not been worked on yet, which is
->>surely why postgres performance is poor.
->>    
+Hans Reiser wrote:
+> David Masover wrote:
+> 
+> 
+>>Raymond A. Meijer wrote:
 >>
->
->Hans, I'm on the postgresql hackers list (although I don't really have
->a voice there, so I can't really speak much for reiser4 there)..
->
->One of the 'interesting' issues they face is that that postgresql
->database works with 8K pages.  From a performance and reliability
->perspective they would benefit impressively from a file system (and
->VFS) which could atomically update their 8k pages. Without such a
->feature their performance is slaughtered when operating in a mode that
->provides the highest reliability, and their reliability is slaughtered
->when operating in the highest performance configuration.
->
->I'm sure the PostgreSQL folks would be here themselves asking for help
->with this issue... if they weren't so oriented around FreeBSD. :)
->
->If ever you are looking for a killer app for Reiser4 that people who
->don't care about the visionary stuff will care about: you couldn't
->find one better than postgresql. If you could get postgresql working
->as reliably as a double logged full fsync configuration but performing
->as fast as a configuration with async writes.... you'd have a lot more
->supporters.
->
->
->  
->
-Well I would be very happy to do that.  In fact, if they use 8k writes,
-we already do that.  If they need to use mmap while being atomic, well,
-that is more complex, and if someone sponsors it we will do it.  Right
-now we don't have much resources to spare as we complete the work needed
-to go into the kernel.
+>>
+>>>On Monday 8 August 2005 13:32, Hemiplegic Menehune wrote:
+>>>
+>>>
+>>>
+>>>>Its already as stable as any other fs on my systems and recovers
+>>>>better than most when my battery runs out. Any idea when it will make
+>>>>it into the stable 2.6 kernel?
+>>>
+>>>
+>>>
+>>>If only it had a resizer :(
+>>
+>>
+>>Resizer isn't such a big deal.  I can usually find enough backup for
+>>enough of what I want, and I usually get sizes right the first time.
+>>
+>>What I want is the repacker, beacuse performance does steadily degrade
+>>on my Reiser4 systems, eventually getting worse than Reiser3, 
+> 
+> 
+> I am skeptical that it gets worse than V3, unless it is because we
+> haven't put in all the bitmap optimizations we did for V3.  I wish I
+> knew how to measure it.....
 
-Thanks for a very interesting remark....
+Me too.  It's fairly subjective on my part, so maybe not.  After all, 
+I've gone from lots-of-tiny-partitions to one-huge-root-partition at the 
+same time as I switched from v3 to v4, and I know that most of this is 
+probably /usr/portage.  With a repacker, Reiser4 would be the best FS 
+for /usr/portage -- it's over a hundred thousand shell scripts and text 
+files which get updated usually once a day or once a week with rsync -- 
+but without a repacker, it's best kept on a separate partition.
 
-Hans
