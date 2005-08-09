@@ -1,72 +1,58 @@
-From: michael chang <thenewme91@gmail.com>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 performance
-Date: Mon, 8 Aug 2005 20:16:44 -0400
-Message-ID: <b14e81f0050808171622aeb433@mail.gmail.com>
-References: <dd7cbn$kbg$1@sea.gmane.org>
-	 <200508081409.03814.rmeijer@internet.gr> <42F7B8F4.80101@slaphack.com>
-	 <42F7D77E.5080108@namesys.com> <42F7F28B.7010602@slaphack.com>
+Date: Mon, 08 Aug 2005 19:20:44 -0500
+Message-ID: <42F7F6DC.2080706@slaphack.com>
+References: <dd7cbn$kbg$1@sea.gmane.org> <42F7A01A.7090209@namesys.com> <e692861c05080816136f9d70bc@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25365-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25366-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42F7F28B.7010602@slaphack.com>
-Content-Disposition: inline
+In-Reply-To: <e692861c05080816136f9d70bc@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: Hans Reiser <reiser@namesys.com>, "Raymond A. Meijer" <rmeijer@internet.gr>, reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Gregory Maxwell <gmaxwell@gmail.com>
+Cc: Hans Reiser <reiser@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On 8/8/05, David Masover <ninja@slaphack.com> wrote:
-> Hans Reiser wrote:
-> > David Masover wrote:
-> >>Raymond A. Meijer wrote:
-> >>>On Monday 8 August 2005 13:32, Hemiplegic Menehune wrote:
-> >>>>Its already as stable as any other fs on my systems and recovers
-> >>>>better than most when my battery runs out. Any idea when it will make
-> >>>>it into the stable 2.6 kernel?
-> >>>If only it had a resizer :(
-> >>Resizer isn't such a big deal.  I can usually find enough backup for
-> >>enough of what I want, and I usually get sizes right the first time.
+Gregory Maxwell wrote:
+> On 8/8/05, Hans Reiser <reiser@namesys.com> wrote:
 
-I want a resizer (or at least a converter so I can convert to
-ResierFS, resize, and reconvert back) because I have a dual-boot WinXP
-and Linux/ReiserFS 3.6 system, which I really want to convert to
-Reiser4.  I don't mind putting XP on a FAT partition so I can squeeze
-it as much as necessary, but only if I can resize my Resier4 partition
-as necessary (I don't mind putting at the top of my HD though, atm...)
+> If ever you are looking for a killer app for Reiser4 that people who
+> don't care about the visionary stuff will care about:
 
-> >>What I want is the repacker, beacuse performance does steadily degrade
-> >>on my Reiser4 systems, eventually getting worse than Reiser3,
-> > I am skeptical that it gets worse than V3, unless it is because we
-> > haven't put in all the bitmap optimizations we did for V3.  I wish I
-> > knew how to measure it.....
->=20
-> Me too.  It's fairly subjective on my part, so maybe not.  After all,
+Define "visionary"?
 
-Is there a way to count the number of jumps in a file, and the
-distance of those jumps when reading a file?  Could the sum or product
-of these be some sort of measure of performance (provided that putting
-part of a file at the beginning and another part at the end of a disk
-don't actually improve performance in some twisted way due to using
-different heads simultaneously or something)?
+I can name a few things that work best in Reiser4, and very well in v3, 
+simply because of efficient storage of small files and lazy allocation:
 
-> I've gone from lots-of-tiny-partitions to one-huge-root-partition at the
-> same time as I switched from v3 to v4, and I know that most of this is
-> probably /usr/portage.  With a repacker, Reiser4 would be the best FS
-> for /usr/portage -- it's over a hundred thousand shell scripts and text
+webserver -- lots of small files, very few large ones, mostly reads
+mailserver -- especially IMAP+maildir, lots of small files, read/write
+and so on...
 
-It'd be the best FS for just about anyone who likes to tinker, or
-anyone with a mid-range system that has a really slow, slow hard
-drive.  My newest hard drive also happens to be my slowest... *sigh*
+Gentoo box:
+	/usr/portage is over a hundred thousand very small files, updated via 
+rsync.  Since they are updated all at once, you get a boost out of lazy 
+allocation -- you only touch the disks for reads while you're talking to 
+the server, because most of the writes probably won't hit the disk for 
+awhile.
+	/var/tmp/portage is what Portage uses for compilation.  A source 
+tarball (usually a tarball, can be anything) is unpacked from 
+/usr/portage/distfiles into /var/tmp/portage/<package>/build.  It's 
+compiled, then installed into /var/tmp/portage/<package>/install, then 
+Portage manually merges the /install directory with the main filesystem, 
+in one operation -- presumably so that it could become atomic someday. 
+After the merge, /var/tmp/portage is cleaned for the next package.
+	With enough RAM, most of the contents (source code and object files) 
+from /var/tmp/portage would never touch disk.  This becomes an 
+especially huge win if your /var/tmp/portage is a separate partition -- 
+instead of writing (unpack tarball), then reading, then writing again 
+(for install/merge), you write once.  What was a 5, 6, or 7-step process 
+is now a 1-step process.  And, if you don't have enough RAM for this 
+RAM-disk-like behavior, it falls back to the old way.
 
-> but without a repacker, it's best kept on a separate partition.
-
-So are many things, it seems.  Sadly.
-
---=20
-~Mike
- - Just my two cents
- - No man is an island, and no man is unable.
+These are all things that Reiser4 already does better than anything 
+else.  So now we're going to get Postgres to run faster.  I can't wait 
+until we have more people hacking on the plugin interface -- then we'll 
+have some *real* killer apps.
