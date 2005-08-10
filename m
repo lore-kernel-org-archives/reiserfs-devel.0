@@ -1,48 +1,83 @@
-From: Pat Double <pat@patdouble.com>
-Subject: Re: reiser4 performance
-Date: Tue, 9 Aug 2005 21:49:51 -0500
-Message-ID: <200508092149.51707.pat@patdouble.com>
-References: <dd7cbn$kbg$1@sea.gmane.org> <200508092119.13103.pat@patdouble.com> <42F96737.7050809@slaphack.com>
-Reply-To: pat@patdouble.com
+From: Tarmo =?ISO-8859-1?Q?T=E4nav?= <tarmo@itech.ee>
+Subject: BUG: reiserfs+acl+quota deadlock
+Date: Wed, 10 Aug 2005 06:05:11 +0300
+Message-ID: <1123643111.27819.23.camel@localhost>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25382-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-25383-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42F96737.7050809@slaphack.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: linux-kernel@vger.kernel.org
 Cc: reiserfs-list@namesys.com
 
-On Tuesday 09 August 2005 09:32 pm, David Masover wrote:
-> Pat Double wrote:
-> > Actually I did make it public, hit the wrong command on my mail client ;)
-> >
-> > I did not try the -mm kernel (latest patches is for -mm5 IIRC), I use
-> > software suspend 2 and it does not apply to the 2.6.12.x-mm series.
-> > Except for this problem reiser4 has worked great for me. Since I use a
-> > single partition and '/' does not get modified much I copied all my data
-> > over, rebuilt the filesystem, and then started using it. I have not
-> > discovered any problems, and the filesystem is quite fast.
->
-> That's with the mm reiser4, or the reiser4-for-2.6?
->
-> Glad to hear it works with Suspend2.  That's going to be the next thing
-> I try, once my system is back up to speed.  I'm on Gentoo, so
-> understandably it takes awhile to get back up to speed, Godlike amd64
-> speeds notwithstanding.
+Hi,
 
-I used the reiser4-for-2.6 patches. Before the 2.6.12 patches were available I 
-tried the -mm patches from reiser4-for-2.6 which applied cleanly. When 2.6.12 
-recently I tried those with the same results. I did not try the -mm kernel 
-sources because even if they worked flawlessly it would be no help to me. 
-Suspend 2 is more important to me than reiser4. Shutdown in 30 seconds, 
-startup in 30 seconds is more useful to me.
+I've already reported a similiar bug to the one I found now
+and that was fixed by:
+"[PATCH] reiserfs: fix deadlock in inode creation failure path w/
+default ACL"
 
--- 
-Pat Double, pat@patdouble.com
-"In the beginning God created the heaven and the earth."
+This bug is similiar in effect but has some differences in how
+to trigger it. The end effect will be just like with the other
+bug that the affected directory will be unaccessible to any user
+or process.
+
+So here's the way to reproduce it, as minimal as I could get it:
+
+You need reiserfs, quota and acl support in kernel.
+you also need quota tools (edquota, quotaon, quotacheck), I used
+linuxquota 3.12.
+
+# cd /mnt
+# dd if=3D/dev/zero of=3Dtest bs=3D1M count=3D50
+50+0 records in
+50+0 records out
+# mkreiserfs -f test >/dev/null
+mkreiserfs 3.6.19 (2003 www.namesys.com)
+
+test is not a block special device
+Continue (y/n):y
+# mkdir mpoint
+# mount test mpoint -o loop,acl,usrquota
+# mkdir mpoint/user1
+# useradd -d /mnt/mpoint/user1 user1     # may also use existing user
+# chown user1 mpoint/user1
+# quotacheck -v mpoint                   # initializes quota file
+# edquota user1
+---- set soft block limit to 1000, hard limit to 4000 ----
+# edquota -t
+---- set the grace periods to something small: 1minutes ---
+# quotaon mpoint
+# ## at this point "repquota -a" should show the quota for user1
+# su user1
+# cd
+# ## now we are in user1 home dir as user1
+# cat /dev/zero > file1
+loop2: warning, user block quota exceeded.
+loop2: write failed, user block limit reached.
+cat: write error: No space left on device
+--- now we wait till the grace period expires (repquota -a) ----
+# cat "" > otherfile
+loop2: write failed, user block quota exceeded too long.
+---- and it will hang forever ----
+# ## /mnt/mpoint can still be accessed, but /mnt/mpoint/user1 can't
+
+
+I tested this on an -mm patchset kernel (2.6.13-rc5-mm1), but I
+discovered the bug in my server which runs plain 2.6.12 with the
+patch from Jeff Mahoney for the first reiserfs+acl bug.
+
+The main difference between the two bugs is that the first one requires
+the existance of a default acl, this one does not, but it does require
+acl to be enabled.
+
+
+PS. please CC, I'm not subscribed to the list
+
+--=20
+Tarmo T=E4nav <tarmo@itech.ee>
+
