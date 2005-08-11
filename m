@@ -1,67 +1,46 @@
-From: gimpel <gimpel@sonnenkinder.org>
-Subject: reiser4 on 2.6.13-rc6-realtime-preempt
-Date: Thu, 11 Aug 2005 22:45:03 +0200
-Message-ID: <20050811224503.7dbd67dd@SiRiUS.home>
+From: Gregory Maxwell <gmaxwell@gmail.com>
+Subject: Re: reiser4 performance
+Date: Thu, 11 Aug 2005 17:29:29 -0400
+Message-ID: <e692861c05081114294d2a100a@mail.gmail.com>
+References: <dd7cbn$kbg$1@sea.gmane.org> <42F7A01A.7090209@namesys.com>
+	 <e692861c05080816136f9d70bc@mail.gmail.com>
+	 <42F7F6DC.2080706@slaphack.com>
+	 <e692861c050808175818078a30@mail.gmail.com>
+	 <42F807D7.9090900@slaphack.com>
+	 <e692861c05080818551a300f36@mail.gmail.com>
+	 <42FB9DD7.6080003@namesys.com> <op.svcxqzsbth1vuj@localhost>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary="Signature_Thu__11_Aug_2005_22_45_03_+0200_3gIY31qm/482AAD8";
- protocol="application/pgp-signature"; micalg=pgp-sha1
-Return-path: <reiserfs-list-return-25415-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-25416-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <op.svcxqzsbth1vuj@localhost>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: PFC <lists@boutiquenumerique.com>
+Cc: Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, ReiserFS List <reiserfs-list@namesys.com>
 
---Signature_Thu__11_Aug_2005_22_45_03_+0200_3gIY31qm/482AAD8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 8/11/05, PFC <lists@boutiquenumerique.com> wrote:
+>=20
+> > Well, but then you have to tell postgres that it can assume these thing=
+s
+> > about reiser4.....
+>=20
+> you can already set the sync mode in the config file to a llot of
+> different choices, like fdatasync, fsync, O_SYNC, etc, so a reiser4 optio=
+n
+> would be possibel I guess.
 
-Hello!
+Right, and the PostgreSQL team has already shown that they are willing
+to create platform specific options.
 
-I'm trying to compile a recent 2.6.13-rc6 with realtime-preempt-2.6.13-
-rc4-RT-V0.7.53-02 and want to add reiser4. 2.6.12-rt hardlocked very
-often here.
-I managed to fix up the DEFINE_SPINLOCK and compat_semaphore wait;
-changes by taking a look on the changes between reiser4 for 2.6.12
-and 2.6.12-rt and it first seems to compile fine but ends up with:
+Could someone familiar with the reiser4 internals provide some
+detailed information about what reiser4 currently provides in this
+regard?
 
-----8<------
-
-  CC      init/version.o
-  LD      init/built-in.o
-  LD      .tmp_vmlinux1
-fs/built-in.o(.text+0x92999): In function `reiser4_put_super':
-: undefined reference to `rcu_barrier'
-fs/built-in.o(.text+0x929a9): In function `reiser4_put_super':
-: undefined reference to `rcu_barrier'
-fs/built-in.o(.text+0x97989): In function `_done_sinfo':
-: undefined reference to `rcu_barrier'
-fs/built-in.o(.text+0x97d76): In function `_done_formatted_fake':
-: undefined reference to `rcu_barrier'
-fs/built-in.o(.text+0x97d86): In function `_done_formatted_fake':
-: undefined reference to `rcu_barrier'
-make: *** [.tmp_vmlinux1] Fehler 1
-
------>8-----
-
-Maybe some has managed to fix that or knows how to do so and is willing
-to help me. My C knowledge is still too limited...
-
-regards and thanks in advance
-tom
-
-
---Signature_Thu__11_Aug_2005_22_45_03_+0200_3gIY31qm/482AAD8
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-
-iD8DBQFC+7jV21TUzfKRUn4RAm79AJ4ukNtgKlVEGxfjMvK0Hgj5VJOB2ACgoYL4
-8HnJxNKc6lSs6QOk3n0+JUU=
-=qHfn
------END PGP SIGNATURE-----
-
---Signature_Thu__11_Aug_2005_22_45_03_+0200_3gIY31qm/482AAD8--
+The specific concerns would be about controlling the ordering and
+atomicity of 8k writes and how to tell when they are fixed to the
+media.
