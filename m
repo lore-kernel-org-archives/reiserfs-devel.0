@@ -1,33 +1,62 @@
-From: Nikita Danilov <nikita@clusterfs.com>
+From: gimpel <gimpel@sonnenkinder.org>
 Subject: Re: Distributions with out-of-the-box Reiser4 support?
-Date: Thu, 11 Aug 2005 14:07:40 +0400
-Message-ID: <17147.9068.3954.938260@gargle.gargle.HOWL>
+Date: Thu, 11 Aug 2005 13:31:49 +0200
+Message-ID: <20050811133149.6528486a@SiRiUS.home>
 References: <194f6255050810094849b3164e@mail.gmail.com>
-	<b14e81f005081010125d5a6fa4@mail.gmail.com>
-	<42FA6E54.5090200@slaphack.com>
-	<b14e81f00508101434444027d6@mail.gmail.com>
-	<42FA7BB1.1080801@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25404-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed;
+ boundary=Signature_Thu__11_Aug_2005_13_31_49_+0200_PtWvVfkvag5_V.A4;
+ protocol="application/pgp-signature"; micalg=pgp-sha1
+Return-path: <reiserfs-list-return-25405-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42FA7BB1.1080801@slaphack.com>
+In-Reply-To: <194f6255050810094849b3164e@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
+To: Clemens Eisserer <linuxhippy@gmail.com>
 Cc: reiserfs-list@namesys.com
 
-David Masover writes:
+--Signature_Thu__11_Aug_2005_13_31_49_+0200_PtWvVfkvag5_V.A4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-[...]
+On Wed, 10 Aug 2005 18:48:30 +0200
+Clemens Eisserer <linuxhippy@gmail.com> wrote:
 
- > 
- > Here's why I would want Lilo:
+> Hello!
+>=20
+> I hope this questions hasn't been asked too often (since it seems to
+> be a perfect example for this), but I'm not too long on this list and
+> for what I've seen it hasn't ... so please don't kill me ;-)
+>=20
+> Does anybody know a number of distrbibutions which support reiser4 out
+> of the box (installer, grub, reiserfs4-utils, ...)?
+> Is opensuse planned to include reiser4?
+>=20
+> For now I am using Fedora but since a long time I feel uncomfortable
+> with their use-what-we-tell-you policy, they tell me to use ext3 or
+> gnome for example and if I want to make a different choice a get
+> anything but not a perfect installation.
+>=20
+> Thank you in advance, lg Clemens
+>=20
 
-Add here "-R" option: immensely useful in situations when one has to
-boot kernels that may hang on startup.
 
-Nikita.
+SuSE 9.3 has reiser4 support! Also the online kernel-update for SuSE
+9.2 contains reiser4. reiser4progs of course too :)
+
+cheers!
+
+--Signature_Thu__11_Aug_2005_13_31_49_+0200_PtWvVfkvag5_V.A4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.6 (GNU/Linux)
+
+iD8DBQFC+zcq21TUzfKRUn4RAsMrAJ9BHFz5GMC5WRkx4k1ZCrvvhgd56gCbBDmx
+BA/t5Yu6sYtvE38gUNiut08=
+=of7a
+-----END PGP SIGNATURE-----
+
+--Signature_Thu__11_Aug_2005_13_31_49_+0200_PtWvVfkvag5_V.A4--
