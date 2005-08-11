@@ -1,63 +1,45 @@
-From: gimpel <gimpel@sonnenkinder.org>
-Subject: Re: Distributions with out-of-the-box Reiser4 support?
-Date: Thu, 11 Aug 2005 19:30:29 +0200
-Message-ID: <20050811193029.243a5e75@SiRiUS.home>
-References: <194f6255050810094849b3164e@mail.gmail.com>
-	<20050811133149.6528486a@SiRiUS.home>
-	<194f625505081107273eac7aa5@mail.gmail.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: reiser4 performance
+Date: Thu, 11 Aug 2005 11:49:59 -0700
+Message-ID: <42FB9DD7.6080003@namesys.com>
+References: <dd7cbn$kbg$1@sea.gmane.org> <42F7A01A.7090209@namesys.com>	 <e692861c05080816136f9d70bc@mail.gmail.com>	 <42F7F6DC.2080706@slaphack.com>	 <e692861c050808175818078a30@mail.gmail.com>	 <42F807D7.9090900@slaphack.com> <e692861c05080818551a300f36@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=Signature_Thu__11_Aug_2005_19_30_29_+0200_B09Rzxus15loj7KS;
- protocol="application/pgp-signature"; micalg=pgp-sha1
-Return-path: <reiserfs-list-return-25409-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25411-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <194f625505081107273eac7aa5@mail.gmail.com>
+In-Reply-To: <e692861c05080818551a300f36@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Clemens Eisserer <linuxhippy@gmail.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Gregory Maxwell <gmaxwell@gmail.com>
+Cc: David Masover <ninja@slaphack.com>, ReiserFS List <reiserfs-list@namesys.com>
 
---Signature_Thu__11_Aug_2005_19_30_29_+0200_B09Rzxus15loj7KS
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Gregory Maxwell wrote:
 
-On Thu, 11 Aug 2005 16:27:10 +0200
-Clemens Eisserer <linuxhippy@gmail.com> wrote:
-
-> wow, that seems unbelieveable great!
-> seems I should give opensuse (thanks god!) a try!
->=20
-> Thanks a lot for this tip, it means I can use a distro I am familiar
-> with and do not need to play with stuff I do not want to learn *g*
->=20
-> Thanks again, lg Clemens
->=20
-
-well i just know that from doing kernel patches for jacklab.net. using
-gentoo for myself :)
-
-AFAIK it's not possible to install SuSE on reiser4 on fresh
-installation progress as parted can't handle reiser4 well enough (yet
-- god bless the day when the kernel guys include it to vanilla, it's
-the most stable and reliafilesystem i ever used).=20
-so you might have to create partitions manually and if
-you want to copy your system to that partition, no big deal. but i also
-might be wrong with that.
-
-regards
-tom
-
---Signature_Thu__11_Aug_2005_19_30_29_+0200_B09Rzxus15loj7KS
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
-
-iD8DBQFC+4s621TUzfKRUn4RAty3AKCNflTm2qyzuPM1SY/kG9gCcOZiSgCdFBya
-R7Nd8fJuP7ej81CqHfh8PAQ=
-=DkTq
------END PGP SIGNATURE-----
-
---Signature_Thu__11_Aug_2005_19_30_29_+0200_B09Rzxus15loj7KS--
+>On 8/8/05, David Masover <ninja@slaphack.com> wrote:
+>  
+>
+>>"Reiser4 would be great if..." is getting old.  It is great, and it's
+>>getting even better pretty fast.
+>>
+>>And, by the way, if the transaction interface gets done, it's not just
+>>databases that will benefit, but also small files.  After all, what kind
+>>of transactions are used for your OpenOffice document?  
+>>    
+>>
+>...
+>
+>Well there doesn't actually need to be a transaction interface for
+>postgresql's needs.. it just needs a fairly limited set of assurances
+>from the VFS/FS that ... aren't usually provided. Beyond that, it
+>already handles its own transactions.  It looks like from Hans' reply
+>the reiser4 already provides everything needed.. which I had
+>suspected.
+>
+>
+>  
+>
+Well, but then you have to tell postgres that it can assume these things
+about reiser4.....
