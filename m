@@ -1,80 +1,65 @@
-From: gimpel <gimpel@sonnenkinder.org>
-Subject: Re: Distributions with out-of-the-box Reiser4 support?
-Date: Fri, 12 Aug 2005 09:44:50 +0200
-Message-ID: <20050812094450.401549ae@SiRiUS.home>
-References: <194f6255050810094849b3164e@mail.gmail.com>
-	<20050811133149.6528486a@SiRiUS.home>
-	<42FC0E94.5020002@namesys.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: reiser4 on 2.6.13-rc6-realtime-preempt
+Date: Fri, 12 Aug 2005 13:05:33 +0400
+Message-ID: <42FC665D.4030802@namesys.com>
+References: <20050811224503.7dbd67dd@SiRiUS.home>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=Signature_Fri__12_Aug_2005_09_44_50_+0200_WgIFyNFO4FvJQ0lZ;
- protocol="application/pgp-signature"; micalg=pgp-sha1
-Return-path: <reiserfs-list-return-25421-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25422-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42FC0E94.5020002@namesys.com>
+In-Reply-To: <20050811224503.7dbd67dd@SiRiUS.home>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: Clemens Eisserer <linuxhippy@gmail.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: gimpel <gimpel@sonnenkinder.org>
+Cc: reiserfs-list@namesys.com
 
---Signature_Fri__12_Aug_2005_09_44_50_+0200_WgIFyNFO4FvJQ0lZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello
 
-On Thu, 11 Aug 2005 19:51:00 -0700
-Hans Reiser <reiser@namesys.com> wrote:
+gimpel wrote:
+> Hello!
+> 
+> I'm trying to compile a recent 2.6.13-rc6 with realtime-preempt-2.6.13-
+> rc4-RT-V0.7.53-02 and want to add reiser4. 2.6.12-rt hardlocked very
+> often here.
 
-> gimpel wrote:
->=20
-> >On Wed, 10 Aug 2005 18:48:30 +0200
-> >Clemens Eisserer <linuxhippy@gmail.com> wrote:
-> >
-> > =20
-> >
-> >>Hello!
-> >>
-> >>I hope this questions hasn't been asked too often (since it seems to
-> >>be a perfect example for this), but I'm not too long on this list
-> >>and for what I've seen it hasn't ... so please don't kill me ;-)
-> >>
-> >>Does anybody know a number of distrbibutions which support reiser4
-> >>out of the box (installer, grub, reiserfs4-utils, ...)?
-> >>Is opensuse planned to include reiser4?
-> >>
-> >>For now I am using Fedora but since a long time I feel uncomfortable
-> >>with their use-what-we-tell-you policy, they tell me to use ext3 or
-> >>gnome for example and if I want to make a different choice a get
-> >>anything but not a perfect installation.
-> >>
-> >>Thank you in advance, lg Clemens
-> >>
-> >>   =20
-> >>
-> >
-> >
-> >SuSE 9.3 has reiser4 support! Also the online kernel-update for SuSE
-> >9.2 contains reiser4. reiser4progs of course too :)
-> >
-> >cheers!
-> > =20
-> >
-> Does installing it for root work?
->=20
-No it can't be selected in YaST, the installer/configurator. I think
-that's because parted can't handle reiser4 yet, or not correctly. So
-one has to use mkfs and copy to get reiser4 as root partition.
+Which patches did you use?
 
---Signature_Fri__12_Aug_2005_09_44_50_+0200_WgIFyNFO4FvJQ0lZ
-Content-Type: application/pgp-signature
+> I managed to fix up the DEFINE_SPINLOCK and compat_semaphore wait;
+> changes by taking a look on the changes between reiser4 for 2.6.12
+> and 2.6.12-rt and it first seems to compile fine but ends up with:
+> 
+> ----8<------
+> 
+>   CC      init/version.o
+>   LD      init/built-in.o
+>   LD      .tmp_vmlinux1
+> fs/built-in.o(.text+0x92999): In function `reiser4_put_super':
+> : undefined reference to `rcu_barrier'
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
+reiser4 depends on several core kernel patches. I think you did not apply them.
+You might want to try to apply this patch
+ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.12/reiser4-for-2.6.12-realtime-preempt-2.6.12-final-V0.7.51-29.patch.gz
+It contains all necessary patches already.
 
-iD8DBQFC/FN421TUzfKRUn4RAgluAJ0ZUk90Veb5Mb107cUsmqcUvz98twCglPOX
-8EQWySaz5MBiTb7SaCYvjIA=
-=+x0P
------END PGP SIGNATURE-----
+> fs/built-in.o(.text+0x929a9): In function `reiser4_put_super':
+> : undefined reference to `rcu_barrier'
+> fs/built-in.o(.text+0x97989): In function `_done_sinfo':
+> : undefined reference to `rcu_barrier'
+> fs/built-in.o(.text+0x97d76): In function `_done_formatted_fake':
+> : undefined reference to `rcu_barrier'
+> fs/built-in.o(.text+0x97d86): In function `_done_formatted_fake':
+> : undefined reference to `rcu_barrier'
+> make: *** [.tmp_vmlinux1] Fehler 1
+> 
+> ----->8-----
+> 
+> Maybe some has managed to fix that or knows how to do so and is willing
+> to help me. My C knowledge is still too limited...
+> 
+> regards and thanks in advance
+> tom
+> 
 
---Signature_Fri__12_Aug_2005_09_44_50_+0200_WgIFyNFO4FvJQ0lZ--
