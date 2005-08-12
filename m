@@ -1,46 +1,53 @@
-From: Gregory Maxwell <gmaxwell@gmail.com>
-Subject: Re: reiser4 performance
-Date: Thu, 11 Aug 2005 17:29:29 -0400
-Message-ID: <e692861c05081114294d2a100a@mail.gmail.com>
-References: <dd7cbn$kbg$1@sea.gmane.org> <42F7A01A.7090209@namesys.com>
-	 <e692861c05080816136f9d70bc@mail.gmail.com>
-	 <42F7F6DC.2080706@slaphack.com>
-	 <e692861c050808175818078a30@mail.gmail.com>
-	 <42F807D7.9090900@slaphack.com>
-	 <e692861c05080818551a300f36@mail.gmail.com>
-	 <42FB9DD7.6080003@namesys.com> <op.svcxqzsbth1vuj@localhost>
+From: michael chang <thenewme91@gmail.com>
+Subject: Re: reiser4 problem with pam_mktemp
+Date: Thu, 11 Aug 2005 20:42:57 -0400
+Message-ID: <b14e81f00508111742908cf55@mail.gmail.com>
+References: <42E907E4.7090003@parkheights.dyndns.org>
+	 <42ECD354.8010304@namesys.com>
+	 <42F97768.5010602@parkheights.dyndns.org>
+	 <42F9EF8E.8050403@namesys.com>
+	 <42FB3026.1050609@parkheights.dyndns.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25416-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25418-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <op.svcxqzsbth1vuj@localhost>
+In-Reply-To: <42FB3026.1050609@parkheights.dyndns.org>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: PFC <lists@boutiquenumerique.com>
-Cc: Hans Reiser <reiser@namesys.com>, David Masover <ninja@slaphack.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: sergey ivanov <seriv@parkheights.dyndns.org>
+Cc: reiserfs-list@namesys.com
 
-On 8/11/05, PFC <lists@boutiquenumerique.com> wrote:
->=20
-> > Well, but then you have to tell postgres that it can assume these thing=
-s
-> > about reiser4.....
->=20
-> you can already set the sync mode in the config file to a llot of
-> different choices, like fdatasync, fsync, O_SYNC, etc, so a reiser4 optio=
-n
-> would be possibel I guess.
+On 8/11/05, sergey ivanov <seriv@parkheights.dyndns.org> wrote:
+> I have not succeeded with integrating reiser4 & pam_mktemp.
+> From one side I recompiled kernel with reiser4 patches modified to
+> return ENOTTY for attempt to deal with attributes, as tmpfs does.
+> Pam_mktemp does not work after this. So I returned to the kernel with
+> original Namesys' patches.
 
-Right, and the PostgreSQL team has already shown that they are willing
-to create platform specific options.
+> # strace -o su.log -fF su - seriv
 
-Could someone familiar with the reiser4 internals provide some
-detailed information about what reiser4 currently provides in this
-regard?
+> 1993  mkdir("/tmp/.private", 0711)      =3D -1 EEXIST (File exists)
+> 1993  lstat64("/tmp/.private", {st_mode=3DS_IFDIR|0711, st_size=3D7, ...}=
+) =3D 0
+> 1993  open("/tmp/.private", O_RDONLY)   =3D 3
+> 1993  ioctl(3, EXT2_IOC_GETFLAGS, 0xbf9e37f8) =3D -1 EISDIR (Is a directo=
+ry)
 
-The specific concerns would be about controlling the ordering and
-atomicity of 8k writes and how to tell when they are fixed to the
-media.
+> So it looks like reiser4 tries to be good and answer to ioctl
+> getting/setting attributes "EEXIST" and "EISDIR",
+> and not return error "ENOTTY".
+
+This seems kind of confusing -- the problem with the idea that all
+files are files and directories... do we really want to be returning
+that it's a directory here?  My guess is that this is the confusing
+bit about this filesystem.  AFAIK, this is probably confusing the PAM
+code or whatever.  *shrugs*
+
+--=20
+~Mike
+ - Just my two cents
+ - No man is an island, and no man is unable.
