@@ -1,79 +1,54 @@
-From: gimpel <gimpel@sonnenkinder.org>
-Subject: Re: reiser4 on 2.6.13-rc6-realtime-preempt
-Date: Fri, 12 Aug 2005 22:40:44 +0200
-Message-ID: <20050812224044.3ae4ebe2@SiRiUS.home>
-References: <20050811224503.7dbd67dd@SiRiUS.home>
-	<42FC665D.4030802@namesys.com>
-	<42FCF097.9090205@slaphack.com>
+From: Danny <dannydaemonic@gmail.com>
+Subject: warnings
+Date: Fri, 12 Aug 2005 14:47:26 -0700
+Message-ID: <9625752b05081214473613c37@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=Signature_Fri__12_Aug_2005_22_40_44_+0200_m5oHtY6MdzvqND2s;
- protocol="application/pgp-signature"; micalg=pgp-sha1
-Return-path: <reiserfs-list-return-25436-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-25437-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42FCF097.9090205@slaphack.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: David Masover <ninja@slaphack.com>
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Reiserfs-List@Namesys.COM
 
---Signature_Fri__12_Aug_2005_22_40_44_+0200_m5oHtY6MdzvqND2s
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+I was compiling the very big open office and I ran out of disk space
+when I ran across this warnings.  I was told it looks like a problem
+with disk space reservation.  I'm using the vanilla Linux kernel
+version 2.6.9 with the reiser4 patch I downloaded on April 20, 2005.
 
-On Fri, 12 Aug 2005 13:55:19 -0500
-David Masover <ninja@slaphack.com> wrote:
+Aug 12 14:25:51 [kernel] reiser4[regmerge(31574)]: extent2tail
+(fs/reiser4/plugin/file/tail_conversion.c:648)[nikita-2282]:
 
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
->=20
-> Vladimir V. Saveliev wrote:
-> > Hello
->=20
-> > reiser4 depends on several core kernel patches. I think you did not
-> > apply them.
->=20
-> What kind of symptoms would not applying them cause?  I grab patches
-> from -mm, but only the ones with "reiser4" in the name.  They seem to
-> work with minimal tweaking on my part, and no one said anything when I
-> mentioned this before.  They do seem solid...
->=20
-I think Vladimir is talking about the patches to the new inode
-behaviour. I'm quite sure i checked the 2.6.13-rc4-mm patchlist about
-the move-fs-to-new-behaviour-* patches etc. but maybe i should re-check
-that. Currently I'm using 2.6.13-rc6-ck1 + reiser4 from 2.6.13-rc5-
-mm1 and it works very well. So did -rc5 and -rc4. just wanted to give
-new RTP patches a try.
+Aug 12 14:25:51 [kernel] WARNING: Partial conversion of 32991879: 0 of 4: -=
+28
 
-But i don't want to steal the time of any devs here. It's more
-important to get reiser4 merged to vanilla than spending time for a guy
-who plays around with -rc kernels and -mm broken-out patches without
-even the basic knowledge of C code to understand such compile errors.
- All i know that it maybe needs a 'select foo' somewhere or something.
-It misses something...
+Aug 12 14:25:53 [kernel] reiser4[perl(2032)]: extent2tail
+(fs/reiser4/plugin/file/tail_conversion.c:648)[nikita-2282]:
 
-But I'll just wait for stable 2.6.13 + RT and hopefully a reiser4
-patch to it (or even r4 in vanilla? :)). If someone had known a quick
-fix I would have been happy to continue testing around with RT etc, but
-it's not worth to steal the time of the devs here :) sorry for bugging!
+Aug 12 14:25:53 [kernel] WARNING: Partial conversion of 30405586: 0 of 2: -=
+28
 
-regards!
-tom
+Aug 12 14:25:56 [kernel] reiser4[emerge(27458)]: extent2tail
+(fs/reiser4/plugin/file/tail_conversion.c:648)[nikita-2282]:
 
+Aug 12 14:25:56 [kernel] WARNING: Partial conversion of 25731985: 0 of 1: -=
+28
 
+Aug 12 14:25:56 [kernel] reiser4[emerge(27458)]: extent2tail
+(fs/reiser4/plugin/file/tail_conversion.c:648)[nikita-2282]:
 
+                - Last output repeated 2 times -
 
---Signature_Fri__12_Aug_2005_22_40_44_+0200_m5oHtY6MdzvqND2s
-Content-Type: application/pgp-signature
+Aug 12 14:25:56 [kernel] WARNING: Partial conversion of 25731995: 0 of 4: -=
+28
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
+Aug 12 14:25:56 [kernel] reiser4[emerge(27458)]: release_unix_file
+(fs/reiser4/plugin/file/file.c:2377)[nikita-3233]:
 
-iD8DBQFC/Qlc21TUzfKRUn4RAntgAKCZq5dmYONgDGuRNxvAwZVw4edePgCeJmC7
-dyDNdAL0HZ2eEcJvlEOSAVQ=
-=Qjmc
------END PGP SIGNATURE-----
+Aug 12 14:25:56 [kernel] reiser4[emerge(27458)]: extent2tail
+(fs/reiser4/plugin/file/tail_conversion.c:648)[nikita-2282]:
 
---Signature_Fri__12_Aug_2005_22_40_44_+0200_m5oHtY6MdzvqND2s--
+                - Last output repeated twice -
