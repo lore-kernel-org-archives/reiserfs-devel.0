@@ -1,29 +1,91 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: reiser4progs 1.0.5
-Date: Fri, 12 Aug 2005 20:04:33 +0400
-Message-ID: <200508122004.33721.vitaly@namesys.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: BUG: reiserfs+acl+quota deadlock
+Date: Fri, 12 Aug 2005 20:44:14 +0400
+Message-ID: <42FCD1DE.8050500@namesys.com>
+References: <1123643111.27819.23.camel@localhost> <20050810130009.GE22112@atrey.karlin.mff.cuni.cz> <1123684298.14562.4.camel@localhost> <20050810144024.GA18584@atrey.karlin.mff.cuni.cz> <42FCB873.8070900@namesys.com> <42FCBC00.2040903@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25430-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25431-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <42FCBC00.2040903@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: reiserfs-list@namesys.com
 
-Hi all,
+Hello
 
-the reiser4progs & libaal 1.0.5 are releazed and available 
-on ftp://ftp.namesys.com/pub/reiser4progs/
+Jeff Mahoney wrote:
+> 
+> 
+> 
+> Vladimir V. Saveliev wrote:
+> 
+>>>Hello
+>>>
+>>>Jan Kara wrote:
+>>>
+>>>>>Tried the attached patch but it changed nothing, I trying to create
+>>>>>a new file as a user whose quota grace time has ran out will still
+>>>>>cause everything accessing the users homedir (the one with the quota)
+>>>>>to hang in D state.
+>>>>>
+>>>>>Also note that the bug I reported only exists when acl is also
+>>>>>enabled (does not have to be used). And although my kernel is not
+>>>>>built with debug (or reiserfs debug) support, I don't get any
+>>>>>oopses or reiserfs errors.. it just hangs.
+>>>>
+>>>It looks like the problem is that reiserfs_new_inode can be called
+>>>either having xattrs locked or not.
+>>>It does unlocking/locking xattrs on error handling path, but has no idea
+>>>about whether
+>>>xattrs are locked of not.
+>>>The attached patch seems to fix the problem.
+>>>I am not sure whether it is correct way to fix this problem, though.
+> 
+> 
+> Does this patch actually fix it? It shouldn't.
+> 
+> The logic is like this: If a default ACL is associated with the parent
+> when the inode is created, xattrs will be locked so that the ACL can be
+> inherited. Since reiserfs_new_inode is called from the VFS layer with
+> inode->i_sem downed, {set,remove}xattr is locked out. The default ACL
+> can't be removed/added/changed while reiserfs_new_inode is running.
+> Therefore, if there is a default ACL, xattrs must be locked.
+> 
 
-Against 1.0.4 the new releaze includes lots of fixes, handles 
-the extended plugin table (with crypto compression fields) 
-correctly. Crypto-compression plugins themselves are not 
-ready yet.
+xattr's locking in reiserfs_create depends on result of this function:
 
--- 
-Thanks,
-Vitaly Fertman
+int reiserfs_cache_default_acl(struct inode *inode)
+{
+	int ret = 0;
+	if (reiserfs_posixacl(inode->i_sb) && !is_reiserfs_priv_object(inode)) {
+		struct posix_acl *acl;
+		reiserfs_read_lock_xattr_i(inode);
+		reiserfs_read_lock_xattrs(inode->i_sb);
+		acl = reiserfs_get_acl(inode, ACL_TYPE_DEFAULT);
+		reiserfs_read_unlock_xattrs(inode->i_sb);
+		reiserfs_read_unlock_xattr_i(inode);
+		ret = acl ? 1 : 0;
+		posix_acl_release(acl);
+	}
+
+	return ret;
+}
+
+
+Could it be that it returned 0 in this test?
+
+Also, the line:
+ret = acl ? 1 : 0;
+is suspicious because reiserfs_get_acl sometimes returns error codes instead on NULL. Is it intentional?
+
+
+> -Jeff
+> 
+> --
+> Jeff Mahoney
+> SuSE Labs
