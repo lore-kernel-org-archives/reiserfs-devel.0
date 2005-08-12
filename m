@@ -1,150 +1,116 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: BUG: reiserfs+acl+quota deadlock
-Date: Fri, 12 Aug 2005 18:55:47 +0400
-Message-ID: <42FCB873.8070900__3010.02589189938$1123858667$gmane$org@namesys.com>
-References: <1123643111.27819.23.camel@localhost> <20050810130009.GE22112@atrey.karlin.mff.cuni.cz> <1123684298.14562.4.camel@localhost> <20050810144024.GA18584@atrey.karlin.mff.cuni.cz>
+From: sergey ivanov <seriv@parkheights.dyndns.org>
+Subject: Re: reiser4 problem with pam_mktemp
+Date: Fri, 12 Aug 2005 06:55:13 -0400
+Message-ID: <42FC8011.3060100@parkheights.dyndns.org>
+References: <42E907E4.7090003@parkheights.dyndns.org> <42ECD354.8010304@namesys.com> <42F97768.5010602@parkheights.dyndns.org> <42F9EF8E.8050403@namesys.com> <42FB2F04.7090003@parkheights.dyndns.org> <42FC702D.8070802@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------010909010609050103010403"
-Return-path: <reiserfs-list-return-25426-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-25425-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050810144024.GA18584@atrey.karlin.mff.cuni.cz>
+In-Reply-To: <42FC702D.8070802@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: =?ISO-8859-1?Q?Tarmo_T=E4nav?= <tarmo@itech.ee>
-Cc: Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, mason@suse.com, jeffm@suse.com, grev@namesys.com
+Content-Type: text/plain; charset="koi8-r"
+To: reiserfs-list@namesys.com
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, ldv@altlinux.org
 
---------------010909010609050103010403
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Hello
-
-Jan Kara wrote:
->>Tried the attached patch but it changed nothing, I trying to create
->>a new file as a user whose quota grace time has ran out will still
->>cause everything accessing the users homedir (the one with the quota)
->>to hang in D state.
->>
->>Also note that the bug I reported only exists when acl is also
->>enabled (does not have to be used). And although my kernel is not
->>built with debug (or reiserfs debug) support, I don't get any
->>oopses or reiserfs errors.. it just hangs.
-> 
-
-It looks like the problem is that reiserfs_new_inode can be called either having xattrs locked or not.
-It does unlocking/locking xattrs on error handling path, but has no idea about whether
-xattrs are locked of not.
-The attached patch seems to fix the problem.
-I am not sure whether it is correct way to fix this problem, though.
-
-Tarmo, please check if this patch works for you.
-
---------------010909010609050103010403
-Content-Type: text/plain;
- name="reiserfs-fix-xattr-deadlock.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="reiserfs-fix-xattr-deadlock.patch"
-
- fs/reiserfs/inode.c         |   13 +++++++++----
- fs/reiserfs/namei.c         |    8 ++++----
- include/linux/reiserfs_fs.h |    2 +-
- 3 files changed, 14 insertions(+), 9 deletions(-)
-
-diff -puN fs/reiserfs/inode.c~reiserfs-debug-1 fs/reiserfs/inode.c
---- linux-2.6.13-rc4-mm1/fs/reiserfs/inode.c~reiserfs-debug-1	2005-08-12 15:25:13.548577536 +0400
-+++ linux-2.6.13-rc4-mm1-vs/fs/reiserfs/inode.c	2005-08-12 18:49:08.384891765 +0400
-@@ -1776,7 +1776,7 @@ int reiserfs_new_inode(struct reiserfs_t
- 		       /* 0 for regular, EMTRY_DIR_SIZE for dirs, 
- 		          strlen (symname) for symlinks) */
- 		       loff_t i_size, struct dentry *dentry,
--		       struct inode *inode)
-+		       struct inode *inode, int locked)
- {
- 	struct super_block *sb;
- 	INITIALIZE_PATH(path_to_key);
-@@ -1966,6 +1966,7 @@ int reiserfs_new_inode(struct reiserfs_t
-  * are place holders for what the quota code actually needs.
-  */
-       out_bad_inode:
-+
- 	/* Invalidate the object, nothing was inserted yet */
- 	INODE_PKEY(inode)->k_objectid = 0;
- 
-@@ -1988,11 +1989,15 @@ int reiserfs_new_inode(struct reiserfs_t
- 	 * code really needs to be reworked, but this will take care of it
- 	 * for now. -jeffm */
- 	if (REISERFS_I(dir)->i_acl_default) {
--		reiserfs_write_unlock_xattrs(dir->i_sb);
-+		if (locked)
-+			reiserfs_write_unlock_xattrs(dir->i_sb);
- 		iput(inode);
--		reiserfs_write_lock_xattrs(dir->i_sb);
--	} else
-+		if (locked)
-+			reiserfs_write_lock_xattrs(dir->i_sb);
-+	} else {
- 		iput(inode);
-+	}
-+
- 	return err;
- }
- 
-diff -puN fs/reiserfs/namei.c~reiserfs-debug-1 fs/reiserfs/namei.c
---- linux-2.6.13-rc4-mm1/fs/reiserfs/namei.c~reiserfs-debug-1	2005-08-12 18:48:29.985413281 +0400
-+++ linux-2.6.13-rc4-mm1-vs/fs/reiserfs/namei.c	2005-08-12 18:48:30.061420166 +0400
-@@ -638,7 +638,7 @@ static int reiserfs_create(struct inode 
- 
- 	retval =
- 	    reiserfs_new_inode(&th, dir, mode, NULL, 0 /*i_size */ , dentry,
--			       inode);
-+			       inode, locked);
- 	if (retval)
- 		goto out_failed;
- 
-@@ -713,7 +713,7 @@ static int reiserfs_mknod(struct inode *
- 
- 	retval =
- 	    reiserfs_new_inode(&th, dir, mode, NULL, 0 /*i_size */ , dentry,
--			       inode);
-+			       inode, locked);
- 	if (retval) {
- 		goto out_failed;
- 	}
-@@ -798,7 +798,7 @@ static int reiserfs_mkdir(struct inode *
- 	    retval = reiserfs_new_inode(&th, dir, mode, NULL /*symlink */ ,
- 					old_format_only(dir->i_sb) ?
- 					EMPTY_DIR_SIZE_V1 : EMPTY_DIR_SIZE,
--					dentry, inode);
-+					dentry, inode, locked);
- 	if (retval) {
- 		dir->i_nlink--;
- 		goto out_failed;
-@@ -1086,7 +1086,7 @@ static int reiserfs_symlink(struct inode
- 
- 	retval =
- 	    reiserfs_new_inode(&th, parent_dir, mode, name, strlen(symname),
--			       dentry, inode);
-+			       dentry, inode, 0);
- 	reiserfs_kfree(name, item_len, parent_dir->i_sb);
- 	if (retval) {		/* reiserfs_new_inode iputs for us */
- 		goto out_failed;
-diff -puN include/linux/reiserfs_fs.h~reiserfs-debug-1 include/linux/reiserfs_fs.h
---- linux-2.6.13-rc4-mm1/include/linux/reiserfs_fs.h~reiserfs-debug-1	2005-08-12 18:48:30.041418354 +0400
-+++ linux-2.6.13-rc4-mm1-vs/include/linux/reiserfs_fs.h	2005-08-12 18:48:30.061420166 +0400
-@@ -1890,7 +1890,7 @@ struct inode *reiserfs_iget(struct super
- int reiserfs_new_inode(struct reiserfs_transaction_handle *th,
- 		       struct inode *dir, int mode,
- 		       const char *symname, loff_t i_size,
--		       struct dentry *dentry, struct inode *inode);
-+		       struct dentry *dentry, struct inode *inode, int locked);
- 
- void reiserfs_update_sd_size(struct reiserfs_transaction_handle *th,
- 			     struct inode *inode, loff_t size);
-
-_
-
---------------010909010609050103010403--
+VGhhbmsgeW91LCBpdCB3b3JrcyEKSSd2ZSBqdXN0IHJlY29tcGlsZWQga2VybmVsIGFuZCBub3cg
+LyBtb3VudGVkIG9uIHJlaXNlcjQgd2l0aCAvdG1wIGluCnRoZSBzYW1lIGZpbGVzeXN0ZW0sCmFu
+ZCBwYW1fbWt0ZW1wIHdvcmtzIHdpdGhvdXQgcHJvYmxlbXMuCi0tIAogICAgU2VyZ2V5LgoKVmxh
+ZGltaXIgVi4gU2F2ZWxpZXYg0MnbxdQ6Cgo+IEhlbGxvCj4KPiBzZXJnZXkgaXZhbm92IHdyb3Rl
+Ogo+Cj4+IEkgaGF2ZSBub3Qgc3VjY2VlZGVkIHdpdGggaW50ZWdyYXRpbmcgcmVpc2VyNCAmIHBh
+bV9ta3RlbXAuCj4KPgo+IFdvdWxkIHlvdSB0cnkgdGhlIGF0dGFjaGVkIHBhdGNoLCBwbGVhc2Uu
+Cj4KPj4+IEZyb20gb25lIHNpZGUgSSByZWNvbXBpbGVkIGtlcm5lbCB3aXRoIHJlaXNlcjQgcGF0
+Y2hlcyBtb2RpZmllZCB0bwo+Pgo+PiByZXR1cm4gRU5PVFRZIGZvciBhdHRlbXB0IHRvIGRlYWwg
+d2l0aCBhdHRyaWJ1dGVzLCBhcyB0bXBmcyBkb2VzLgo+PiBQYW1fbWt0ZW1wIGRvZXMgbm90IHdv
+cmsgYWZ0ZXIgdGhpcy4gU28gSSByZXR1cm5lZCB0byB0aGUga2VybmVsIHdpdGgKPj4gb3JpZ2lu
+YWwgTmFtZXN5cycgcGF0Y2hlcy4KPj4gVGhlbiBieSBteSBhcGVhbCBwYW1fbWt0ZW1wIHdhcyBt
+b2RpZmllZCB0byByZWNvZ25pemUgRU5PU1lTIHRoZSBzYW1lCj4+IHdheSBpdCByZWNvZ25pemVz
+IEVOT1RUWSByZXR1cm5lZCBieSB0bXBmcyBhbmQgdHJ5IHRvIGRlYWwgd2l0aG91dAo+PiBhdHRy
+aWJ1dGVzLgo+PiBCdXQgdGhpcyBhbHNvIGRvZXMgbm90IGhlbHAgcGFtX21rdGVtcCB0byB3b3Jr
+Lgo+PiBTbyBJIGRpZCB0aGUgZm9sbG93aW5nOiByZWJvb3RlZCB0byBydW5sZXZlbCAxLCBhbmQg
+dGhlbiBkaWQKPj4gIyBzdHJhY2UgLW8gc3UubG9nIC1mRiBzdSAtIHNlcml2Cj4+IE9uY2Ugd2l0
+aCAvdG1wIG9uIHRtcGZzIGFuZCBvbmNlIHdpdGggL3RtcCBvbiByZWlzZXI0Lgo+PiBBbmQgdGhl
+IGZvbGxvd2luZyBjYXRjaGVzIG15IGF0dGVudGlvbjogd2hpbGUgb24gdG1wZnMsIHRoZSBsaW5l
+cwo+PiBkZWFsaW5nIHdpdGggYXR0cmlidXRlcyBsb29rcyBsaWtlIHRoZSBmb2xsb3dpbmc6Cj4+
+IC0tLQo+PiAyMDM0IG1rZGlyKCIvdG1wLy5wcml2YXRlIiwgMDcxMSkgPSAwCj4+IDIwMzQgbHN0
+YXQ2NCgiL3RtcC8ucHJpdmF0ZSIsIHtzdF9tb2RlPVNfSUZESVJ8MDcxMSwgc3Rfc2l6ZT00MCwK
+Pj4gLi4ufSkgPSAwCj4+Cj4+IDIwMzQgIG9wZW4oIi90bXAvLnByaXZhdGUiLCBPX1JET05MWSkg
+ICA9IDMKPj4gMjAzNCAgaW9jdGwoMywgRVhUMl9JT0NfR0VURkxBR1MsIDB4YmZiN2FhYjgpID0g
+LTEgRU5PVFRZIChJbmFwcHJvcHJpYXRlCj4+IGlvY3RsIGZvciBkZXZpY2UpCj4+IDIwMzQgIGNs
+b3NlKDMpICAgICAgICAgICAgICAgICAgICAgICAgICA9IDAKPj4gMjAzNCAgbWtkaXIoIi90bXAv
+LnByaXZhdGUvc2VyaXYiLCAwMTcwMCkgPSAwCj4+IDIwMzQgIG9wZW4oIi90bXAvLnByaXZhdGUv
+c2VyaXYiLCBPX1JET05MWSkgPSAzCj4+IDIwMzQgIGlvY3RsKDMsIEVYVDJfSU9DX0dFVEZMQUdT
+LCAweGJmYjdhYTg4KSA9IC0xIEVOT1RUWSAoSW5hcHByb3ByaWF0ZQo+PiBpb2N0bCBmb3IgZGV2
+aWNlKQo+PiAyMDM0ICBjbG9zZSgzKSAgICAgICAgICAgICAgICAgICAgICAgICAgPSAwCj4+IDIw
+MzQgIGNob3duMzIoIi90bXAvLnByaXZhdGUvc2VyaXYiLCAwLCA1MDApID0gMAo+PiAyMDM0ICBj
+aG1vZCgiL3RtcC8ucHJpdmF0ZS9zZXJpdiIsIDAxNzcwKSA9IDAKPj4gLS0tCj4+IEJ1dCB3aXRo
+IC90bXAgb24gcmVpc2VyNCwgdGhleSBhcmU6Cj4+IC0tLQo+PiAxOTkzICBta2RpcigiL3RtcC8u
+cHJpdmF0ZSIsIDA3MTEpICAgICAgPSAtMSBFRVhJU1QgKEZpbGUgZXhpc3RzKQo+PiAxOTkzICBs
+c3RhdDY0KCIvdG1wLy5wcml2YXRlIiwge3N0X21vZGU9U19JRkRJUnwwNzExLCBzdF9zaXplPTcs
+Cj4+IC4uLn0pID0gMAo+PiAxOTkzICBvcGVuKCIvdG1wLy5wcml2YXRlIiwgT19SRE9OTFkpICAg
+PSAzCj4+IDE5OTMgIGlvY3RsKDMsIEVYVDJfSU9DX0dFVEZMQUdTLCAweGJmOWUzN2Y4KSA9IC0x
+IEVJU0RJUiAoSXMgYQo+PiBkaXJlY3RvcnkpCj4+IDE5OTMgIGNsb3NlKDMpICAgICAgICAgICAg
+ICAgICAgICAgICAgICA9IDAKPj4gMTk5MyAgbWtkaXIoIi90bXAvLnByaXZhdGUvc2VyaXYiLCAw
+MTcwMCkgPSAtMSBFRVhJU1QgKEZpbGUgZXhpc3RzKQo+PiAxOTkzICBvcGVuKCIvdG1wLy5wcml2
+YXRlL3Nlcml2IiwgT19SRE9OTFkpID0gMwo+PiAxOTkzICBpb2N0bCgzLCBFWFQyX0lPQ19HRVRG
+TEFHUywgMHhiZjllMzdjOCkgPSAtMSBFSVNESVIgKElzIGEKPj4gZGlyZWN0b3J5KQo+PiAxOTkz
+ICBjbG9zZSgzKSAgICAgICAgICAgICAgICAgICAgICAgICAgPSAwCj4+IDE5OTMgIGdldHVpZDMy
+KCkgICAgICAgICAgICAgICAgICAgICAgICA9IDAKPj4gMTk5MyAgd3JpdGUoMiwgIkFjY291bnQg
+bWFuYWdlbWVudDotIENhbm5vdCBtYWtlIi4uLiwgODUpID0gODUKPj4gLS0tCj4+IFNvIGl0IGxv
+b2tzIGxpa2UgcmVpc2VyNCB0cmllcyB0byBiZSBnb29kIGFuZCBhbnN3ZXIgdG8gaW9jdGwKPj4g
+Z2V0dGluZy9zZXR0aW5nIGF0dHJpYnV0ZXMgIkVFWElTVCIgYW5kICJFSVNESVIiLCBhbmQgbm90
+IHJldHVybgo+PiBlcnJvciAiRU5PVFRZIi4gVGhpcyBpcyB0aGUgcmVhc29uLCB3aHkgcGFtX21r
+dGVtcCBwYXNzZXMgdGhlIHRlc3RzCj4+IGlmIGZpbGVzeXN0ZW0gc3VwcG9ydCBhdHRyaWJ1dGVz
+IHdpdGggY29uZmlkZW5jZSB0aGF0IHJlaXNlcjQgY2FuIGRvCj4+IGF0dHJpYnV0ZXMuIEkgdGhp
+bmsgdGhpcyB3YXMgdGhlIHJpZ2h0IGRlY2lzaW9uIHRvIHJldHVybiBmYWtlCj4+IHN1Y2Nlc3Nl
+cyBhdCB0aGUgYmVnaW5uaW5nIG9mIHJlaXNlcjQgZGV2ZWxvcG1lbnQsIGJ1dCBub3cgSSB0aGlu
+awo+PiByZWlzZXI0IHNob3VsZCBiZWhhdmUgbW9yZSBzdHJpY3RseSBhbmQgcmVqZWN0cyB0aGlz
+IGF0dHJpYnV0ZQo+PiBzZXR0aW5nL2dldHRpbmcgaW9jdGwgYnkgRU5PVFRZIGNvZGVzLgo+Cj4K
+Pi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQo+Cj4gZnMvcmVpc2VyNC9wbHVnaW4vZmlsZS9maWxlLmMgfCAgICAy
+ICstCj4gZnMvcmVpc2VyNC9wbHVnaW4vb2JqZWN0LmMgICAgfCAgIDE3ICsrKysrKysrKysrKy0t
+LS0tCj4gMiBmaWxlcyBjaGFuZ2VkLCAxMyBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQo+
+Cj5kaWZmIC1wdU4gZnMvcmVpc2VyNC9wbHVnaW4vb2JqZWN0LmN+cmVpc2VyNC1wYW1fbWt0ZW1w
+LWZpeCBmcy9yZWlzZXI0L3BsdWdpbi9vYmplY3QuYwo+LS0tIGxpbnV4LTIuNi4xMy1yYzUtbW0x
+L2ZzL3JlaXNlcjQvcGx1Z2luL29iamVjdC5jfnJlaXNlcjQtcGFtX21rdGVtcC1maXgJMjAwNS0w
+OC0xMiAxMzo0MjowNS45MDQwNTg4NDIgKzA0MDAKPisrKyBsaW51eC0yLjYuMTMtcmM1LW1tMS12
+cy9mcy9yZWlzZXI0L3BsdWdpbi9vYmplY3QuYwkyMDA1LTA4LTEyIDEzOjQ2OjEyLjYyMjQwODI1
+OSArMDQwMAo+QEAgLTk2Niw2ICs5NjYsMTMgQEAgaXNkaXIodm9pZCkKPiAKPiAjZGVmaW5lIGVp
+c2RpciAoKHZvaWQgKilpc2RpcikKPiAKPitzdGF0aWMgaW50Cj4rbm90dHkodm9pZCkKPit7Cj4r
+CXJldHVybiBSRVRFUlIoLUVOT1RUWSk7Cj4rfQo+KyNkZWZpbmUgZW5vdHR5ICgodm9pZCAqKW5v
+dHR5KQo+Kwo+IHN0YXRpYyBzc2l6ZV90Cj4gcGVybSh2b2lkKQo+IHsKPkBAIC0xMjQzLDcgKzEy
+NTAsNyBAQCBmaWxlX3BsdWdpbiBmaWxlX3BsdWdpbnNbTEFTVF9GSUxFX1BMVUdJCj4gCQkucmVh
+ZCA9IGVpc2RpciwKPiAJCS53cml0ZSA9IGVpc2RpciwKPiAJCS5yZWxlYXNlID0gcmVsZWFzZV9k
+aXIsCj4tCQkuaW9jdGwgPSBlaXNkaXIsCj4rCQkuaW9jdGwgPSBlbm90dHksCj4gCQkubW1hcCA9
+IGVpc2RpciwKPiAJCS5nZXRfYmxvY2sgPSBOVUxMLAo+IAkJLmZsb3dfYnlfaW5vZGUgPSBOVUxM
+LAo+QEAgLTEyOTksNyArMTMwNiw3IEBAIGZpbGVfcGx1Z2luIGZpbGVfcGx1Z2luc1tMQVNUX0ZJ
+TEVfUExVR0kKPiAJCS5yZWFkID0gZXBlcm0sCj4gCQkud3JpdGUgPSBlcGVybSwKPiAJCS5yZWxl
+YXNlID0gTlVMTCwKPi0JCS5pb2N0bCA9IGVwZXJtLAo+KwkJLmlvY3RsID0gZW5vdHR5LAo+IAkJ
+Lm1tYXAgPSBlcGVybSwKPiAJCS5zeW5jID0gc3luY19jb21tb24sCj4gCQkuZ2V0X2Jsb2NrID0g
+TlVMTCwKPkBAIC0xMzU4LDcgKzEzNjUsNyBAQCBmaWxlX3BsdWdpbiBmaWxlX3BsdWdpbnNbTEFT
+VF9GSUxFX1BMVUdJCj4gCQkucmVhZCA9IGVwZXJtLAo+IAkJLndyaXRlID0gZXBlcm0sCj4gCQku
+cmVsZWFzZSA9IE5VTEwsCj4tCQkuaW9jdGwgPSBlcGVybSwKPisJCS5pb2N0bCA9IGVub3R0eSwK
+PiAJCS5tbWFwID0gZXBlcm0sCj4gCQkuc3luYyA9IHN5bmNfY29tbW9uLAo+IAkJLmdldF9ibG9j
+ayA9IE5VTEwsCj5AQCAtMTQxMyw3ICsxNDIwLDcgQEAgZmlsZV9wbHVnaW4gZmlsZV9wbHVnaW5z
+W0xBU1RfRklMRV9QTFVHSQo+IAkJLnJlYWQgICAgICAgICAgICAgID0gcmVhZF9wc2V1ZG8sCj4g
+CQkud3JpdGUgICAgICAgICAgICAgPSB3cml0ZV9wc2V1ZG8sCj4gCQkucmVsZWFzZSAgICAgICAg
+ICAgPSByZWxlYXNlX3BzZXVkbywKPi0JCS5pb2N0bCAgICAgICAgICAgICA9IGVwZXJtLAo+KwkJ
+LmlvY3RsICAgICAgICAgICAgID0gZW5vdHR5LAo+IAkJLm1tYXAgICAgICAgICAgICAgID0gZXBl
+cm0sCj4gCQkuc3luYyA9IHN5bmNfY29tbW9uLAo+IAkJLmdldF9ibG9jayAgICAgICAgID0gZXBl
+cm0sCj5AQCAtMTQ3MCw3ICsxNDc3LDcgQEAgZmlsZV9wbHVnaW4gZmlsZV9wbHVnaW5zW0xBU1Rf
+RklMRV9QTFVHSQo+IAkJLnJlYWQgPSByZWFkX2NyeXB0Y29tcHJlc3MsCj4gCQkud3JpdGUgPSB3
+cml0ZV9jcnlwdGNvbXByZXNzLAo+IAkJLnJlbGVhc2UgPSBOVUxMLAo+LQkJLmlvY3RsID0gTlVM
+TCwKPisJCS5pb2N0bCA9IGVub3R0eSwKPiAJCS5tbWFwID0gbW1hcF9jcnlwdGNvbXByZXNzLAo+
+IAkJLmdldF9ibG9jayA9IGdldF9ibG9ja19jcnlwdGNvbXByZXNzLAo+IAkJLnN5bmMgPSBzeW5j
+X2NvbW1vbiwKPmRpZmYgLXB1TiBmcy9yZWlzZXI0L3BsdWdpbi9maWxlL2ZpbGUuY35yZWlzZXI0
+LXBhbV9ta3RlbXAtZml4IGZzL3JlaXNlcjQvcGx1Z2luL2ZpbGUvZmlsZS5jCj4tLS0gbGludXgt
+Mi42LjEzLXJjNS1tbTEvZnMvcmVpc2VyNC9wbHVnaW4vZmlsZS9maWxlLmN+cmVpc2VyNC1wYW1f
+bWt0ZW1wLWZpeAkyMDA1LTA4LTEyIDEzOjQ1OjQ4LjI3NjIwMjgxNSArMDQwMAo+KysrIGxpbnV4
+LTIuNi4xMy1yYzUtbW0xLXZzL2ZzL3JlaXNlcjQvcGx1Z2luL2ZpbGUvZmlsZS5jCTIwMDUtMDgt
+MTIgMTM6NDU6NTguNDY5MTI2MTU5ICswNDAwCj5AQCAtMjM2MSw3ICsyMzYxLDcgQEAgaW9jdGxf
+dW5peF9maWxlKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cgo+IAkJYnJlYWs7Cj4gCj4gCWRlZmF1
+bHQ6Cj4tCQlyZXN1bHQgPSBSRVRFUlIoLUVOT1NZUyk7Cj4rCQlyZXN1bHQgPSBSRVRFUlIoLUVO
+T1RUWSk7Cj4gCQlicmVhazsKPiAJfQo+IAlyZXR1cm4gcmVzdWx0Owo+Cj5fCj4gIAo+Cgo=
