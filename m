@@ -1,53 +1,53 @@
-From: michael chang <thenewme91@gmail.com>
-Subject: Re: reiser4 problem with pam_mktemp
-Date: Thu, 11 Aug 2005 20:42:57 -0400
-Message-ID: <b14e81f00508111742908cf55@mail.gmail.com>
-References: <42E907E4.7090003@parkheights.dyndns.org>
-	 <42ECD354.8010304@namesys.com>
-	 <42F97768.5010602@parkheights.dyndns.org>
-	 <42F9EF8E.8050403@namesys.com>
-	 <42FB3026.1050609@parkheights.dyndns.org>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Distributions with out-of-the-box Reiser4 support?
+Date: Thu, 11 Aug 2005 19:51:00 -0700
+Message-ID: <42FC0E94.5020002@namesys.com>
+References: <194f6255050810094849b3164e@mail.gmail.com> <20050811133149.6528486a@SiRiUS.home>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25418-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25419-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42FB3026.1050609@parkheights.dyndns.org>
-Content-Disposition: inline
+In-Reply-To: <20050811133149.6528486a@SiRiUS.home>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: sergey ivanov <seriv@parkheights.dyndns.org>
-Cc: reiserfs-list@namesys.com
+To: gimpel <gimpel@sonnenkinder.org>
+Cc: Clemens Eisserer <linuxhippy@gmail.com>, reiserfs-list@namesys.com
 
-On 8/11/05, sergey ivanov <seriv@parkheights.dyndns.org> wrote:
-> I have not succeeded with integrating reiser4 & pam_mktemp.
-> From one side I recompiled kernel with reiser4 patches modified to
-> return ENOTTY for attempt to deal with attributes, as tmpfs does.
-> Pam_mktemp does not work after this. So I returned to the kernel with
-> original Namesys' patches.
+gimpel wrote:
 
-> # strace -o su.log -fF su - seriv
-
-> 1993  mkdir("/tmp/.private", 0711)      =3D -1 EEXIST (File exists)
-> 1993  lstat64("/tmp/.private", {st_mode=3DS_IFDIR|0711, st_size=3D7, ...}=
-) =3D 0
-> 1993  open("/tmp/.private", O_RDONLY)   =3D 3
-> 1993  ioctl(3, EXT2_IOC_GETFLAGS, 0xbf9e37f8) =3D -1 EISDIR (Is a directo=
-ry)
-
-> So it looks like reiser4 tries to be good and answer to ioctl
-> getting/setting attributes "EEXIST" and "EISDIR",
-> and not return error "ENOTTY".
-
-This seems kind of confusing -- the problem with the idea that all
-files are files and directories... do we really want to be returning
-that it's a directory here?  My guess is that this is the confusing
-bit about this filesystem.  AFAIK, this is probably confusing the PAM
-code or whatever.  *shrugs*
-
---=20
-~Mike
- - Just my two cents
- - No man is an island, and no man is unable.
+>On Wed, 10 Aug 2005 18:48:30 +0200
+>Clemens Eisserer <linuxhippy@gmail.com> wrote:
+>
+>  
+>
+>>Hello!
+>>
+>>I hope this questions hasn't been asked too often (since it seems to
+>>be a perfect example for this), but I'm not too long on this list and
+>>for what I've seen it hasn't ... so please don't kill me ;-)
+>>
+>>Does anybody know a number of distrbibutions which support reiser4 out
+>>of the box (installer, grub, reiserfs4-utils, ...)?
+>>Is opensuse planned to include reiser4?
+>>
+>>For now I am using Fedora but since a long time I feel uncomfortable
+>>with their use-what-we-tell-you policy, they tell me to use ext3 or
+>>gnome for example and if I want to make a different choice a get
+>>anything but not a perfect installation.
+>>
+>>Thank you in advance, lg Clemens
+>>
+>>    
+>>
+>
+>
+>SuSE 9.3 has reiser4 support! Also the online kernel-update for SuSE
+>9.2 contains reiser4. reiser4progs of course too :)
+>
+>cheers!
+>  
+>
+Does installing it for root work?
