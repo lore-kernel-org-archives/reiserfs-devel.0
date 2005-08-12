@@ -1,108 +1,150 @@
-From: gimpel <gimpel@sonnenkinder.org>
-Subject: Re: reiser4 on 2.6.13-rc6-realtime-preempt
-Date: Fri, 12 Aug 2005 12:09:03 +0200
-Message-ID: <20050812120903.1ff16b24@SiRiUS.home>
-References: <20050811224503.7dbd67dd@SiRiUS.home>
-	<42FC665D.4030802@namesys.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: BUG: reiserfs+acl+quota deadlock
+Date: Fri, 12 Aug 2005 18:55:47 +0400
+Message-ID: <42FCB873.8070900__3010.02589189938$1123858667$gmane$org@namesys.com>
+References: <1123643111.27819.23.camel@localhost> <20050810130009.GE22112@atrey.karlin.mff.cuni.cz> <1123684298.14562.4.camel@localhost> <20050810144024.GA18584@atrey.karlin.mff.cuni.cz>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary="Signature_Fri__12_Aug_2005_12_09_04_+0200_LOwjlClYlj54=rdg";
- protocol="application/pgp-signature"; micalg=pgp-sha1
-Return-path: <reiserfs-list-return-25424-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ boundary="------------010909010609050103010403"
+Return-path: <reiserfs-list-return-25426-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42FC665D.4030802@namesys.com>
+In-Reply-To: <20050810144024.GA18584@atrey.karlin.mff.cuni.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: =?ISO-8859-1?Q?Tarmo_T=E4nav?= <tarmo@itech.ee>
+Cc: Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, mason@suse.com, jeffm@suse.com, grev@namesys.com
 
---Signature_Fri__12_Aug_2005_12_09_04_+0200_LOwjlClYlj54=rdg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+--------------010909010609050103010403
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 12 Aug 2005 13:05:33 +0400
-"Vladimir V. Saveliev" <vs@namesys.com> wrote:
+Hello
 
-> Hello
->=20
-> gimpel wrote:
-> > Hello!
-> >=20
-> > I'm trying to compile a recent 2.6.13-rc6 with realtime-
-> > preempt-2.6.13- rc4-RT-V0.7.53-02 and want to add reiser4. 2.6.12-
-> > rt hardlocked very often here.
->=20
-> Which patches did you use?
->=20
-I used the patches from 2.6.13-rc5-mm1 and added the changes that have
-been done to reiser4-for-2.6.12-realtime-preempt-2.6.12-final-
-V0.7.51-29.patch.gz which look like that:=20
-http://gimpel.ath.cx/~tom/r4_to_rtp.patch=20
-The complete patches and changes are in this diff:
-http://gimpel.ath.cx/~tom/r4_for_realtime-preempt-2.6.13-rc4-RT-V0.7.53-02_=
-notworking.patch
-Seems like there where some new changes to realtime-preempt that break
-reiser4 again. Maybe the is to wait for stable 2.6.13 before doing
-tests with realtime-preempt as it gets updated twice a day.=20
-And i so much hope the kernel guys decide to merge reiser4.=20
+Jan Kara wrote:
+>>Tried the attached patch but it changed nothing, I trying to create
+>>a new file as a user whose quota grace time has ran out will still
+>>cause everything accessing the users homedir (the one with the quota)
+>>to hang in D state.
+>>
+>>Also note that the bug I reported only exists when acl is also
+>>enabled (does not have to be used). And although my kernel is not
+>>built with debug (or reiserfs debug) support, I don't get any
+>>oopses or reiserfs errors.. it just hangs.
+> 
 
-> > I managed to fix up the DEFINE_SPINLOCK and compat_semaphore wait;
-> > changes by taking a look on the changes between reiser4 for 2.6.12
-> > and 2.6.12-rt and it first seems to compile fine but ends up with:
-> >=20
-> > ----8<------
-> >=20
-> >   CC      init/version.o
-> >   LD      init/built-in.o
-> >   LD      .tmp_vmlinux1
-> > fs/built-in.o(.text+0x92999): In function `reiser4_put_super':
-> > : undefined reference to `rcu_barrier'
->=20
-> reiser4 depends on several core kernel patches. I think you did not
-> apply them. You might want to try to apply this patch
-> ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.12/reiser4-for-2.6.12-realt=
-ime-preempt-2.6.12-final-V0.7.51-29.patch.gz
-> It contains all necessary patches already.
+It looks like the problem is that reiserfs_new_inode can be called either having xattrs locked or not.
+It does unlocking/locking xattrs on error handling path, but has no idea about whether
+xattrs are locked of not.
+The attached patch seems to fix the problem.
+I am not sure whether it is correct way to fix this problem, though.
 
-That compiled fine with 2.6.12-RT-xx, but 2.6.12-RT didn't work very
-well here. it hardlocked and performance whise there was not much
-difference to vanilla. 2.6.11-RT + reiser4 works fine, but to be able to
-get some sound out of my second soundcard i need a recent alsa-cvs,
-which doesn't compile with kernel < 2.6.13-rcX.=20
-The above reiser4 patch is broken with 2.6.13-rc4-RT again.
+Tarmo, please check if this patch works for you.
 
->=20
-> > fs/built-in.o(.text+0x929a9): In function `reiser4_put_super':
-> > : undefined reference to `rcu_barrier'
-> > fs/built-in.o(.text+0x97989): In function `_done_sinfo':
-> > : undefined reference to `rcu_barrier'
-> > fs/built-in.o(.text+0x97d76): In function `_done_formatted_fake':
-> > : undefined reference to `rcu_barrier'
-> > fs/built-in.o(.text+0x97d86): In function `_done_formatted_fake':
-> > : undefined reference to `rcu_barrier'
-> > make: *** [.tmp_vmlinux1] Fehler 1
-> >=20
-> > ----->8-----
-> >=20
-> > Maybe some has managed to fix that or knows how to do so and is
-> > willing to help me. My C knowledge is still too limited...
-> >=20
-> > regards and thanks in advance
-> > tom
-> >=20
->=20
+--------------010909010609050103010403
+Content-Type: text/plain;
+ name="reiserfs-fix-xattr-deadlock.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="reiserfs-fix-xattr-deadlock.patch"
 
---Signature_Fri__12_Aug_2005_12_09_04_+0200_LOwjlClYlj54=rdg
-Content-Type: application/pgp-signature
+ fs/reiserfs/inode.c         |   13 +++++++++----
+ fs/reiserfs/namei.c         |    8 ++++----
+ include/linux/reiserfs_fs.h |    2 +-
+ 3 files changed, 14 insertions(+), 9 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.6 (GNU/Linux)
+diff -puN fs/reiserfs/inode.c~reiserfs-debug-1 fs/reiserfs/inode.c
+--- linux-2.6.13-rc4-mm1/fs/reiserfs/inode.c~reiserfs-debug-1	2005-08-12 15:25:13.548577536 +0400
++++ linux-2.6.13-rc4-mm1-vs/fs/reiserfs/inode.c	2005-08-12 18:49:08.384891765 +0400
+@@ -1776,7 +1776,7 @@ int reiserfs_new_inode(struct reiserfs_t
+ 		       /* 0 for regular, EMTRY_DIR_SIZE for dirs, 
+ 		          strlen (symname) for symlinks) */
+ 		       loff_t i_size, struct dentry *dentry,
+-		       struct inode *inode)
++		       struct inode *inode, int locked)
+ {
+ 	struct super_block *sb;
+ 	INITIALIZE_PATH(path_to_key);
+@@ -1966,6 +1966,7 @@ int reiserfs_new_inode(struct reiserfs_t
+  * are place holders for what the quota code actually needs.
+  */
+       out_bad_inode:
++
+ 	/* Invalidate the object, nothing was inserted yet */
+ 	INODE_PKEY(inode)->k_objectid = 0;
+ 
+@@ -1988,11 +1989,15 @@ int reiserfs_new_inode(struct reiserfs_t
+ 	 * code really needs to be reworked, but this will take care of it
+ 	 * for now. -jeffm */
+ 	if (REISERFS_I(dir)->i_acl_default) {
+-		reiserfs_write_unlock_xattrs(dir->i_sb);
++		if (locked)
++			reiserfs_write_unlock_xattrs(dir->i_sb);
+ 		iput(inode);
+-		reiserfs_write_lock_xattrs(dir->i_sb);
+-	} else
++		if (locked)
++			reiserfs_write_lock_xattrs(dir->i_sb);
++	} else {
+ 		iput(inode);
++	}
++
+ 	return err;
+ }
+ 
+diff -puN fs/reiserfs/namei.c~reiserfs-debug-1 fs/reiserfs/namei.c
+--- linux-2.6.13-rc4-mm1/fs/reiserfs/namei.c~reiserfs-debug-1	2005-08-12 18:48:29.985413281 +0400
++++ linux-2.6.13-rc4-mm1-vs/fs/reiserfs/namei.c	2005-08-12 18:48:30.061420166 +0400
+@@ -638,7 +638,7 @@ static int reiserfs_create(struct inode 
+ 
+ 	retval =
+ 	    reiserfs_new_inode(&th, dir, mode, NULL, 0 /*i_size */ , dentry,
+-			       inode);
++			       inode, locked);
+ 	if (retval)
+ 		goto out_failed;
+ 
+@@ -713,7 +713,7 @@ static int reiserfs_mknod(struct inode *
+ 
+ 	retval =
+ 	    reiserfs_new_inode(&th, dir, mode, NULL, 0 /*i_size */ , dentry,
+-			       inode);
++			       inode, locked);
+ 	if (retval) {
+ 		goto out_failed;
+ 	}
+@@ -798,7 +798,7 @@ static int reiserfs_mkdir(struct inode *
+ 	    retval = reiserfs_new_inode(&th, dir, mode, NULL /*symlink */ ,
+ 					old_format_only(dir->i_sb) ?
+ 					EMPTY_DIR_SIZE_V1 : EMPTY_DIR_SIZE,
+-					dentry, inode);
++					dentry, inode, locked);
+ 	if (retval) {
+ 		dir->i_nlink--;
+ 		goto out_failed;
+@@ -1086,7 +1086,7 @@ static int reiserfs_symlink(struct inode
+ 
+ 	retval =
+ 	    reiserfs_new_inode(&th, parent_dir, mode, name, strlen(symname),
+-			       dentry, inode);
++			       dentry, inode, 0);
+ 	reiserfs_kfree(name, item_len, parent_dir->i_sb);
+ 	if (retval) {		/* reiserfs_new_inode iputs for us */
+ 		goto out_failed;
+diff -puN include/linux/reiserfs_fs.h~reiserfs-debug-1 include/linux/reiserfs_fs.h
+--- linux-2.6.13-rc4-mm1/include/linux/reiserfs_fs.h~reiserfs-debug-1	2005-08-12 18:48:30.041418354 +0400
++++ linux-2.6.13-rc4-mm1-vs/include/linux/reiserfs_fs.h	2005-08-12 18:48:30.061420166 +0400
+@@ -1890,7 +1890,7 @@ struct inode *reiserfs_iget(struct super
+ int reiserfs_new_inode(struct reiserfs_transaction_handle *th,
+ 		       struct inode *dir, int mode,
+ 		       const char *symname, loff_t i_size,
+-		       struct dentry *dentry, struct inode *inode);
++		       struct dentry *dentry, struct inode *inode, int locked);
+ 
+ void reiserfs_update_sd_size(struct reiserfs_transaction_handle *th,
+ 			     struct inode *inode, loff_t size);
 
-iD8DBQFC/HVH21TUzfKRUn4RApdVAJ9jvAFzY/DNWfKiFOfESFaGqmhiEgCeIbuM
-34eME9M3Mvj6LVmr+P18QWw=
-=xtd+
------END PGP SIGNATURE-----
+_
 
---Signature_Fri__12_Aug_2005_12_09_04_+0200_LOwjlClYlj54=rdg--
+--------------010909010609050103010403--
