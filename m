@@ -1,48 +1,57 @@
-From: Valdis.Kletnieks@vt.edu
+From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 on 2.6.13-rc6-realtime-preempt
-Date: Fri, 12 Aug 2005 14:41:52 -0400
-Message-ID: <200508121841.j7CIfqAg024904@turing-police.cc.vt.edu>
+Date: Fri, 12 Aug 2005 13:55:19 -0500
+Message-ID: <42FCF097.9090205@slaphack.com>
 References: <20050811224503.7dbd67dd@SiRiUS.home> <42FC665D.4030802@namesys.com>
-            <20050812120903.1ff16b24@SiRiUS.home>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1123872112_3139P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25433-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25434-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Fri, 12 Aug 2005 12:09:03 +0200."
-             <20050812120903.1ff16b24@SiRiUS.home> 
+In-Reply-To: <42FC665D.4030802@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: gimpel <gimpel@sonnenkinder.org>
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: gimpel <gimpel@sonnenkinder.org>, reiserfs-list@namesys.com
 
---==_Exmh_1123872112_3139P
-Content-Type: text/plain; charset=us-ascii
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On Fri, 12 Aug 2005 12:09:03 +0200, gimpel said:
+Vladimir V. Saveliev wrote:
+> Hello
 
-> reiser4 again. Maybe the is to wait for stable 2.6.13 before doing
-> tests with realtime-preempt as it gets updated twice a day.
-> And i so much hope the kernel guys decide to merge reiser4.
+> reiser4 depends on several core kernel patches. I think you did not
+> apply them.
 
-Well, reiser4 can't possibly make it into 2.6.13, as we're at -rc6 already
-and Linus asked for a "quiet down" several -rc ago.  What happens when the
-tree opens for 2.6.14 is a different question that I can't answer....
+What kind of symptoms would not applying them cause?  I grab patches
+from -mm, but only the ones with "reiser4" in the name.  They seem to
+work with minimal tweaking on my part, and no one said anything when I
+mentioned this before.  They do seem solid...
 
+> You might want to try to apply this patch
+> ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.12/reiser4-for-2.6.12-realtime-preempt-2.6.12-final-V0.7.51-29.patch.gz
 
---==_Exmh_1123872112_3139P
-Content-Type: application/pgp-signature
+Should I get patches from there, instead of -mm, in the future?  Which
+is more likely to be current for a given *stable* kernel,
+reiser4-for-2.6 or -mm?
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-iD8DBQFC/O1wcC3lWbTT17ARAuCmAKC3SL00YtQf8+yb6vzLutoiLKHDPwCfZA82
-bsUj09+IZwHvUaaI5+g0HuU=
-=g6zI
+iQIVAwUBQvzwlngHNmZLgCUhAQI3/w//bELhjwULVxxfqIdZje3Tp49ws4AZNMSD
+Sgl6TNRv+2VhyCbj1yM7p64wf3dGG9mxBe1F28CrEHWghCJnBsWBgFtheSOkLQS6
+nxpSHHwGv/VeU3fKvKwmkMNRYb2o+Olgob2bsdBeKWyQ/9UKXYEy/TvW4rm1hhx4
+LOCJz7G0EKWNz3LdPcFBniA0beV2sTC06Z2T/JQI10RELSC6FtYwCIFC0WMcSMjG
+lDxCY5bLMqTNt5Rm7vUPjofoq7Ir0JA/vDQAqYW2DRgx1tuh49pOXjDbpxf8XhHP
+p1D/BnzUYkCCO2O5Boo+A0tSoIQ09CaAvbp4NtWgWFY/aogOSmF8WXe/fRg17dKe
+1lt+zUdF3n9dt8OKVJ3XGyekw4N2Cr1wGBTXQ7lm9DzGalvSUl2r9oTk9/E/A2LS
+gY+IusSHWezcrHVPtJxQg1uEQWJN9xlJiVNYBJmx4HpS+4H/U6tdXpJ+bQnhljoh
+ZklD6bnXdoU9wUSfxLBYl6yv8/tZV5Bv8qzMZus74lkjfcjGyk6AGVtjamzxHrhg
+j7w1Lc8B8W35qtnTv1xoPrUV1ulw2TWPkMso2QZyThNzkxcT+UKQj1mWZFiuO8hH
+Coj92FDf3NRrB/j2sXae9HxHCKFqLRqzXvUnB4O2HJL9r89YJwJvuvASbScdK0Xj
+OiE3+pf0clg=
+=PcmR
 -----END PGP SIGNATURE-----
-
---==_Exmh_1123872112_3139P--
