@@ -1,57 +1,79 @@
-From: David Masover <ninja@slaphack.com>
+From: gimpel <gimpel@sonnenkinder.org>
 Subject: Re: reiser4 on 2.6.13-rc6-realtime-preempt
-Date: Fri, 12 Aug 2005 13:55:19 -0500
-Message-ID: <42FCF097.9090205@slaphack.com>
-References: <20050811224503.7dbd67dd@SiRiUS.home> <42FC665D.4030802@namesys.com>
+Date: Fri, 12 Aug 2005 22:40:44 +0200
+Message-ID: <20050812224044.3ae4ebe2@SiRiUS.home>
+References: <20050811224503.7dbd67dd@SiRiUS.home>
+	<42FC665D.4030802@namesys.com>
+	<42FCF097.9090205@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25434-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed;
+ boundary=Signature_Fri__12_Aug_2005_22_40_44_+0200_m5oHtY6MdzvqND2s;
+ protocol="application/pgp-signature"; micalg=pgp-sha1
+Return-path: <reiserfs-list-return-25436-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42FC665D.4030802@namesys.com>
+In-Reply-To: <42FCF097.9090205@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: gimpel <gimpel@sonnenkinder.org>, reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+--Signature_Fri__12_Aug_2005_22_40_44_+0200_m5oHtY6MdzvqND2s
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Vladimir V. Saveliev wrote:
-> Hello
+On Fri, 12 Aug 2005 13:55:19 -0500
+David Masover <ninja@slaphack.com> wrote:
 
-> reiser4 depends on several core kernel patches. I think you did not
-> apply them.
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+>=20
+> Vladimir V. Saveliev wrote:
+> > Hello
+>=20
+> > reiser4 depends on several core kernel patches. I think you did not
+> > apply them.
+>=20
+> What kind of symptoms would not applying them cause?  I grab patches
+> from -mm, but only the ones with "reiser4" in the name.  They seem to
+> work with minimal tweaking on my part, and no one said anything when I
+> mentioned this before.  They do seem solid...
+>=20
+I think Vladimir is talking about the patches to the new inode
+behaviour. I'm quite sure i checked the 2.6.13-rc4-mm patchlist about
+the move-fs-to-new-behaviour-* patches etc. but maybe i should re-check
+that. Currently I'm using 2.6.13-rc6-ck1 + reiser4 from 2.6.13-rc5-
+mm1 and it works very well. So did -rc5 and -rc4. just wanted to give
+new RTP patches a try.
 
-What kind of symptoms would not applying them cause?  I grab patches
-from -mm, but only the ones with "reiser4" in the name.  They seem to
-work with minimal tweaking on my part, and no one said anything when I
-mentioned this before.  They do seem solid...
+But i don't want to steal the time of any devs here. It's more
+important to get reiser4 merged to vanilla than spending time for a guy
+who plays around with -rc kernels and -mm broken-out patches without
+even the basic knowledge of C code to understand such compile errors.
+ All i know that it maybe needs a 'select foo' somewhere or something.
+It misses something...
 
-> You might want to try to apply this patch
-> ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.12/reiser4-for-2.6.12-realtime-preempt-2.6.12-final-V0.7.51-29.patch.gz
+But I'll just wait for stable 2.6.13 + RT and hopefully a reiser4
+patch to it (or even r4 in vanilla? :)). If someone had known a quick
+fix I would have been happy to continue testing around with RT etc, but
+it's not worth to steal the time of the devs here :) sorry for bugging!
 
-Should I get patches from there, instead of -mm, in the future?  Which
-is more likely to be current for a given *stable* kernel,
-reiser4-for-2.6 or -mm?
+regards!
+tom
+
+
+
+
+--Signature_Fri__12_Aug_2005_22_40_44_+0200_m5oHtY6MdzvqND2s
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Version: GnuPG v1.2.6 (GNU/Linux)
 
-iQIVAwUBQvzwlngHNmZLgCUhAQI3/w//bELhjwULVxxfqIdZje3Tp49ws4AZNMSD
-Sgl6TNRv+2VhyCbj1yM7p64wf3dGG9mxBe1F28CrEHWghCJnBsWBgFtheSOkLQS6
-nxpSHHwGv/VeU3fKvKwmkMNRYb2o+Olgob2bsdBeKWyQ/9UKXYEy/TvW4rm1hhx4
-LOCJz7G0EKWNz3LdPcFBniA0beV2sTC06Z2T/JQI10RELSC6FtYwCIFC0WMcSMjG
-lDxCY5bLMqTNt5Rm7vUPjofoq7Ir0JA/vDQAqYW2DRgx1tuh49pOXjDbpxf8XhHP
-p1D/BnzUYkCCO2O5Boo+A0tSoIQ09CaAvbp4NtWgWFY/aogOSmF8WXe/fRg17dKe
-1lt+zUdF3n9dt8OKVJ3XGyekw4N2Cr1wGBTXQ7lm9DzGalvSUl2r9oTk9/E/A2LS
-gY+IusSHWezcrHVPtJxQg1uEQWJN9xlJiVNYBJmx4HpS+4H/U6tdXpJ+bQnhljoh
-ZklD6bnXdoU9wUSfxLBYl6yv8/tZV5Bv8qzMZus74lkjfcjGyk6AGVtjamzxHrhg
-j7w1Lc8B8W35qtnTv1xoPrUV1ulw2TWPkMso2QZyThNzkxcT+UKQj1mWZFiuO8hH
-Coj92FDf3NRrB/j2sXae9HxHCKFqLRqzXvUnB4O2HJL9r89YJwJvuvASbScdK0Xj
-OiE3+pf0clg=
-=PcmR
+iD8DBQFC/Qlc21TUzfKRUn4RAntgAKCZq5dmYONgDGuRNxvAwZVw4edePgCeJmC7
+dyDNdAL0HZ2eEcJvlEOSAVQ=
+=Qjmc
 -----END PGP SIGNATURE-----
+
+--Signature_Fri__12_Aug_2005_22_40_44_+0200_m5oHtY6MdzvqND2s--
