@@ -1,128 +1,144 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: BUG: reiserfs+acl+quota deadlock
-Date: Sat, 13 Aug 2005 13:19:14 +0200
-Message-ID: <20050813111914.GE4516@atrey.karlin.mff.cuni.cz>
-References: <1123643111.27819.23.camel@localhost> <20050810130009.GE22112@atrey.karlin.mff.cuni.cz> <1123684298.14562.4.camel@localhost>
+From: =?ISO-8859-1?Q?Konstantin_M=FCnning?= <konstantin@muenning.com>
+Subject: Re: Strange problems/bugs with reiserfs and reiserfschk
+Date: Sat, 13 Aug 2005 14:36:11 +0200
+Message-ID: <42FDE93B.30807@muenning.com>
+References: <42F684EE.7010201@muenning.com> <b14e81f0050807152830555213@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="vkogqOf2sHV7VnPd"
-Return-path: <reiserfs-list-return-25442-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25444-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1123684298.14562.4.camel@localhost>
+In-Reply-To: <b14e81f0050807152830555213@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Tarmo =?iso-8859-2?Q?T=E4nav?= <tarmo@itech.ee>
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, akpm@osdl.org, mason@suse.com, jeffm@suse.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Everyone.
 
-> Tried the attached patch but it changed nothing, I trying to create
-> a new file as a user whose quota grace time has ran out will still
-> cause everything accessing the users homedir (the one with the quota)
-> to hang in D state.
-> 
-> Also note that the bug I reported only exists when acl is also
-> enabled (does not have to be used). And although my kernel is not
-> built with debug (or reiserfs debug) support, I don't get any
-> oopses or reiserfs errors.. it just hangs.
-  OK, I've debugged the hang (I think the bug was actually introduced by
-Jeff's fix). Attached patch should fix it.
+OK, there seems definitely to be some kind of bug in reiserfsck 3.6.19.
+Or is it a feature? ;-)
 
-								Honza
+I tried once again with reiserfsck --rebuild-tree to repair the FS and
+here it is again. About the end of pass 2 (about 20h after starting)
+counting stopped at "left 32022, 500 /sec" but there was heavy acccess
+of the drive. After about an hour reiserfsck started consuming 100% CPU
+and is doning some minimal access to the drive (the drive light blinks
+every second or so, SCSI reports about 40 commands for each of these
+accesses).
 
-> On K, 2005-08-10 at 15:00 +0200, Jan Kara wrote:
-> >   Hello,
-> > 
-> > > I've already reported a similiar bug to the one I found now
-> > > and that was fixed by:
-> > > "[PATCH] reiserfs: fix deadlock in inode creation failure path w/
-> > > default ACL"
-> > > 
-> > > This bug is similiar in effect but has some differences in how
-> > > to trigger it. The end effect will be just like with the other
-> > > bug that the affected directory will be unaccessible to any user
-> > > or process.
-> > > 
-> > > So here's the way to reproduce it, as minimal as I could get it:
-> > > 
-> > > You need reiserfs, quota and acl support in kernel.
-> > > you also need quota tools (edquota, quotaon, quotacheck), I used
-> > > linuxquota 3.12.
-> > > 
-> > > # cd /mnt
-> > > # dd if=/dev/zero of=test bs=1M count=50
-> > > 50+0 records in
-> > > 50+0 records out
-> > > # mkreiserfs -f test >/dev/null
-> > > mkreiserfs 3.6.19 (2003 www.namesys.com)
-> > > 
-> > > test is not a block special device
-> > > Continue (y/n):y
-> > > # mkdir mpoint
-> > > # mount test mpoint -o loop,acl,usrquota
-> > > # mkdir mpoint/user1
-> > > # useradd -d /mnt/mpoint/user1 user1     # may also use existing user
-> > > # chown user1 mpoint/user1
-> > > # quotacheck -v mpoint                   # initializes quota file
-> > > # edquota user1
-> > > ---- set soft block limit to 1000, hard limit to 4000 ----
-> > > # edquota -t
-> > > ---- set the grace periods to something small: 1minutes ---
-> > > # quotaon mpoint
-> > > # ## at this point "repquota -a" should show the quota for user1
-> > > # su user1
-> > > # cd
-> > > # ## now we are in user1 home dir as user1
-> > > # cat /dev/zero > file1
-> > > loop2: warning, user block quota exceeded.
-> > > loop2: write failed, user block limit reached.
-> > > cat: write error: No space left on device
-> > > --- now we wait till the grace period expires (repquota -a) ----
-> > > # cat "" > otherfile
-> > > loop2: write failed, user block quota exceeded too long.
-> > > ---- and it will hang forever ----
-> > > # ## /mnt/mpoint can still be accessed, but /mnt/mpoint/user1 can't
-> > > 
-> > > 
-> > > I tested this on an -mm patchset kernel (2.6.13-rc5-mm1), but I
-> > > discovered the bug in my server which runs plain 2.6.12 with the
-> > > patch from Jeff Mahoney for the first reiserfs+acl bug.
-> > > 
-> > > The main difference between the two bugs is that the first one requires
-> > > the existance of a default acl, this one does not, but it does require
-> > > acl to be enabled.
-> >   This seems to be the same problem as bug #4771 that I've just fix. Can
-> > you try attached patch please?
-> >   Andrew, can you include the patch into -mm if ReiserFS guys won't object?
-> 
--- 
-Jan Kara <jack@suse.cz>
-SuSE CR Labs
+What could be causing this? Is the drive too large for reiserfsck? I
+wouldn't believe that 0,6TB are but it is consuming at least quite a lot
+of memory:
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="reiser-2.6.13-rc6-2-xattr_fix.diff"
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
+15185 root      39  19 76304  51m  688 R 99.9 10.3   4591:30 reiserfsck
 
-When i_acl_default is set to some error we do not hold the lock (hence we are
-not allowed to drop it and reacquire later).
+I have left it like this the last 3 days just to make sure that it's not
+my lack of patience. But now still... So any advices? How to find out
+what is causing reiserfsck to hang? Or would I have to build a debug
+version and check for myself?
 
-Signed-off-by: Jan Kara <jack@suse.cz>
+The drive itself is working, I checked several times, the server is
+working all the time as well. Here some reiserfs output it it helps
+somebody to have an idea:
 
-diff -rupX /home/jack/.kerndiffexclude linux-2.6.13-rc6-1-reiser_create_fix/fs/reiserfs/inode.c linux-2.6.13-rc6-2-reiser_xattr_fix/fs/reiserfs/inode.c
---- linux-2.6.13-rc6-1-reiser_create_fix/fs/reiserfs/inode.c	2005-08-14 17:10:21.000000000 +0200
-+++ linux-2.6.13-rc6-2-reiser_xattr_fix/fs/reiserfs/inode.c	2005-08-14 17:11:35.000000000 +0200
-@@ -1985,7 +1985,7 @@ int reiserfs_new_inode(struct reiserfs_t
- 	 * iput doesn't deadlock in reiserfs_delete_xattrs. The locking
- 	 * code really needs to be reworked, but this will take care of it
- 	 * for now. -jeffm */
--	if (REISERFS_I(dir)->i_acl_default) {
-+	if (REISERFS_I(dir)->i_acl_default && !IS_ERR(REISERFS_I(dir)->i_acl_default)) {
- 		reiserfs_write_unlock_xattrs(dir->i_sb);
- 		iput(inode);
- 		reiserfs_write_lock_xattrs(dir->i_sb);
+(***snip***)
+block 125371211: The number of items (1) is incorrect, should be (0) -
+corrected
+block 125371211: The free space (0) is incorrect, should be (4072) -
+corrected
+block 125506454: The number of items (1) is incorrect, should be (0) -
+corrected
+block 125506454: The free space (0) is incorrect, should be (4072) -
+corrected
+pass0: vpf-10160: block 129485584: item 2: No "." entry found in the
+first item
+of a directory
+pass0: vpf-10160: block 129485584: item 4: No "." entry found in the
+first item
+of a directory
+pass0: vpf-10160: block 133169584: item 14: No "." entry found in the
+first item
+ of a directory
+pass0: vpf-10160: block 133169648: item 25: No "." entry found in the
+first item
+ of a directory
+pass0: vpf-10160: block 133170064: item 10: No "." entry found in the
+first item
+ of a directory
+pass0: vpf-10160: block 134316400: item 18: No "." entry found in the
+first item
+ of a directory
+pass0: vpf-10560: block 145031172, item 7: Wrong order of items - change
+the obj
+ect_id of the key [2237738 2237741 0x1 DRCT (2)] to 2237740
+pass0: vpf-10160: block 145817616: item 1: No "." entry found in the
+first item
+of a directory
+                                                          left 0, 2623 /sec
+914346 directory entries were hashed with "r5" hash.
+        "r5" hash is selected
+Flushing..finished
+        Read blocks (but not data blocks) 94209553
+                Leaves among those 3522616
+                        - corrected leaves 319
+                        - leaves all contents of which could not be
+saved and de
+leted 15
+                pointers in indirect items to wrong area 24 (zeroed)
+                Objectids found 984719
 
---vkogqOf2sHV7VnPd--
+Pass 1 (will try to insert 3522601 leaves):
+####### Pass 1 #######
+Looking for allocable blocks .. finished
+0%....20%....40%....is_leaf_bad: block 35452246, item 25: The corrupted
+item fou
+nd (878203 878203 0x0 SD (0), len 44, location 3056 entry count 65535,
+fsck need
+ 1, format new)
+is_leaf_bad: block 35452246, item 26: The corrupted item found (878203
+878203 0x
+1 DRCT (2), len 1464, location 1592 entry count 65535, fsck need 1,
+format new)
+is_leaf_bad: WARNING: The leaf (35452246) is formatted badly. Will be
+handled on
+ the the pass2.
+60%....80%....100%                         left 0, 701 /sec
+Flushing..finished
+        3522601 leaves read
+                3489821 inserted
+                32780 not inserted
+        non-unique pointers in indirect items (zeroed) 656
+####### Pass 2 #######
+
+Pass 2:
+0%....20%....40%..rewrite_file: 2 items of file [2340286 2340312] moved
+to [2340
+286 16]
+vpf-10260: The file we are inserting the new item (432679 432760 0xf001
+IND (1),
+ len 160, location 3936 entry count 0, fsck need 1, format new) into has
+no Stat
+Data, insertion was skipped
+vpf-10260: The file we are inserting the new item (432679 432828 0x2a001
+IND (1)
+, len 132, location 3964 entry count 0, fsck need 1, format new) into
+has no Sta
+tData, insertion was skipped
+(***snip***)
+vpf-10260: The file we are inserting the new item (526132 526780 0x1 IND
+(1), len 8, location 4088 entry count 0, fsck need 1, format new) into
+has no StatData, insertion was skipped
+vpf-10260: The file we are inserting the new item (557044 557073 0x1 IND
+(1), len 4, location 4092 entry count 0, fsck need 3, format new) into
+has no StatData, insertion was skipped
+vpf-10260: The file we are inserting the new item (558483 558492 0x20001
+IND (1), len 96, location 4000 entry count 0, fsck need 1, format new)
+into has no StatData, insertion was skipped
+vpf-10260: The file we are inserting the new item (759159 759160 0x1 IND
+(1), len 3208, location 888 entry count 0, fsck need 1, format new) into
+has no StatData, insertion was skipped
+                                         left 32022, 500 /sec
+
