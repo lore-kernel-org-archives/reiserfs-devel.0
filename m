@@ -1,63 +1,57 @@
 From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: warnings
-Date: Sat, 13 Aug 2005 13:49:43 +0400
-Message-ID: <42FDC237.1080808@namesys.com>
-References: <9625752b05081214473613c37@mail.gmail.com>
+Subject: Re: reiser4 on 2.6.13-rc6-realtime-preempt
+Date: Sat, 13 Aug 2005 14:13:18 +0400
+Message-ID: <42FDC7BE.7000006@namesys.com>
+References: <20050811224503.7dbd67dd@SiRiUS.home> <42FC665D.4030802@namesys.com> <42FCF097.9090205@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25439-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25440-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <9625752b05081214473613c37@mail.gmail.com>
+In-Reply-To: <42FCF097.9090205@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Danny <dannydaemonic@gmail.com>
-Cc: Reiserfs-List@Namesys.COM
+To: David Masover <ninja@slaphack.com>
+Cc: gimpel <gimpel@sonnenkinder.org>, reiserfs-list@namesys.com
 
 Hello
 
-Danny wrote:
-> I was compiling the very big open office and I ran out of disk space
-> when I ran across this warnings.  
+David Masover wrote:
+> Vladimir V. Saveliev wrote:
+> 
+>>>Hello
+> 
+> 
+>>>reiser4 depends on several core kernel patches. I think you did not
+>>>apply them.
+> 
+> 
+> What kind of symptoms would not applying them cause?  
 
-You should ignore these warnings if you do not notice other problems.
-You may want to free some disk space, though.
+I assumed that Gimpel did not apply core patches because he had compiling error:
+fs/built-in.o(.text+0x92999): In function `reiser4_put_super': undefined reference to `rcu_barrier'.
 
-> I was told it looks like a problem
-> with disk space reservation.  I'm using the vanilla Linux kernel
-> version 2.6.9 with the reiser4 patch I downloaded on April 20, 2005.
-> 
-> Aug 12 14:25:51 [kernel] reiser4[regmerge(31574)]: extent2tail
-> (fs/reiser4/plugin/file/tail_conversion.c:648)[nikita-2282]:
-> 
-> Aug 12 14:25:51 [kernel] WARNING: Partial conversion of 32991879: 0 of 4: -28
-> 
-> Aug 12 14:25:53 [kernel] reiser4[perl(2032)]: extent2tail
-> (fs/reiser4/plugin/file/tail_conversion.c:648)[nikita-2282]:
-> 
-> Aug 12 14:25:53 [kernel] WARNING: Partial conversion of 30405586: 0 of 2: -28
-> 
-> Aug 12 14:25:56 [kernel] reiser4[emerge(27458)]: extent2tail
-> (fs/reiser4/plugin/file/tail_conversion.c:648)[nikita-2282]:
-> 
-> Aug 12 14:25:56 [kernel] WARNING: Partial conversion of 25731985: 0 of 1: -28
-> 
-> Aug 12 14:25:56 [kernel] reiser4[emerge(27458)]: extent2tail
-> (fs/reiser4/plugin/file/tail_conversion.c:648)[nikita-2282]:
-> 
->                 - Last output repeated 2 times -
-> 
-> Aug 12 14:25:56 [kernel] WARNING: Partial conversion of 25731995: 0 of 4: -28
-> 
-> Aug 12 14:25:56 [kernel] reiser4[emerge(27458)]: release_unix_file
-> (fs/reiser4/plugin/file/file.c:2377)[nikita-3233]:
-> 
-> Aug 12 14:25:56 [kernel] reiser4[emerge(27458)]: extent2tail
-> (fs/reiser4/plugin/file/tail_conversion.c:648)[nikita-2282]:
-> 
->                 - Last output repeated twice -
-> 
+However, the problem is that some changes are to be done to get reiser4 to work in new realtime/preempt kernels.
+
+> I grab patches
+> from -mm, but only the ones with "reiser4" in the name.  They seem to
+> work with minimal tweaking on my part, and no one said anything when I
+> mentioned this before.  They do seem solid...
 > 
 
+You go right way.
+
+> 
+>>>You might want to try to apply this patch
+>>>ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.12/reiser4-for-2.6.12-realtime-preempt-2.6.12-final-V0.7.51-29.patch.gz
+> 
+> 
+> Should I get patches from there, instead of -mm, in the future?  Which
+> is more likely to be current for a given *stable* kernel,
+> reiser4-for-2.6 or -mm?
+
+reiser4-for-2.6 contains code which did not get enough stability yet.
+
+> 
