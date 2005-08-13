@@ -1,57 +1,48 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: reiser4 on 2.6.13-rc6-realtime-preempt
-Date: Sat, 13 Aug 2005 14:13:18 +0400
-Message-ID: <42FDC7BE.7000006@namesys.com>
-References: <20050811224503.7dbd67dd@SiRiUS.home> <42FC665D.4030802@namesys.com> <42FCF097.9090205@slaphack.com>
+From: Jan Kara <jack@suse.cz>
+Subject: [PATCH] Fix error handling in reiserfs
+Date: Sat, 13 Aug 2005 13:15:34 +0200
+Message-ID: <20050813111534.GD4516@atrey.karlin.mff.cuni.cz>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25440-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25441-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42FCF097.9090205@slaphack.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Masover <ninja@slaphack.com>
-Cc: gimpel <gimpel@sonnenkinder.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: torvalds@osdl.org
+Cc: akpm@osdl.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Hello
+  Hi,
 
-David Masover wrote:
-> Vladimir V. Saveliev wrote:
-> 
->>>Hello
-> 
-> 
->>>reiser4 depends on several core kernel patches. I think you did not
->>>apply them.
-> 
-> 
-> What kind of symptoms would not applying them cause?  
+  the patch below fixes oops triggered when user exceeded his inode
+quota on reiserfs (reiserfs incorrectly thought the inode has been
+already allocated and tried to free it). Please apply.
 
-I assumed that Gimpel did not apply core patches because he had compiling error:
-fs/built-in.o(.text+0x92999): In function `reiser4_put_super': undefined reference to `rcu_barrier'.
+								Honza
 
-However, the problem is that some changes are to be done to get reiser4 to work in new realtime/preempt kernels.
+-- 
+Jan Kara <jack@suse.cz>
+SuSE CR Labs
 
-> I grab patches
-> from -mm, but only the ones with "reiser4" in the name.  They seem to
-> work with minimal tweaking on my part, and no one said anything when I
-> mentioned this before.  They do seem solid...
-> 
 
-You go right way.
+Initialize key object ID in inode so that we don't try to remove the inode
+when we fail on some checks even before we manage to allocate something.
 
-> 
->>>You might want to try to apply this patch
->>>ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.12/reiser4-for-2.6.12-realtime-preempt-2.6.12-final-V0.7.51-29.patch.gz
-> 
-> 
-> Should I get patches from there, instead of -mm, in the future?  Which
-> is more likely to be current for a given *stable* kernel,
-> reiser4-for-2.6 or -mm?
+Signed-off-by: Jan Kara <jack@suse.cz>
 
-reiser4-for-2.6 contains code which did not get enough stability yet.
-
-> 
+diff -rupX /home/jack/.kerndiffexclude linux-2.6.13-rc6/fs/reiserfs/namei.c linux-2.6.13-rc6-reiser_create_fix/fs/reiserfs/namei.c
+--- linux-2.6.13-rc6/fs/reiserfs/namei.c	2005-08-12 10:39:25.000000000 +0200
++++ linux-2.6.13-rc6-reiser_create_fix/fs/reiserfs/namei.c	2005-08-12 10:39:07.000000000 +0200
+@@ -593,6 +593,9 @@ static int new_inode_init(struct inode *
+ 	 */
+ 	inode->i_uid = current->fsuid;
+ 	inode->i_mode = mode;
++	/* Make inode invalid - just in case we are going to drop it before
++	 * the initialization happens */
++	INODE_PKEY(inode)->k_objectid = 0;
+ 
+ 	if (dir->i_mode & S_ISGID) {
+ 		inode->i_gid = dir->i_gid;
