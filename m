@@ -1,57 +1,57 @@
-From: Matt Stegman <matts@ksu.edu>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: Reiser4 and ACLs
-Date: Sun, 14 Aug 2005 12:44:25 -0500 (CDT)
-Message-ID: <Pine.GSO.4.44L.0508141229330.23379-100000@unix2.cc.ksu.edu>
-References: <42FF4A1C.9030406@perkel.com>
+Date: Sun, 14 Aug 2005 14:52:37 -0500
+Message-ID: <42FFA105.1070408@slaphack.com>
+References: <42FEC9F1.9040709@perkel.com>	<20050814080812.GA22983@king.bitgnome.net>	<42FF388F.3010506@perkel.com>	<b14e81f005081405316a06995c@mail.gmail.com> <17151.17921.996376.693013@gargle.gargle.HOWL> <42FF4A1C.9030406@perkel.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-25463-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25464-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <42FF4A1C.9030406@perkel.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Marc Perkel <marc@perkel.com>
 Cc: reiserfs-list@namesys.com
 
-On Sun, 14 Aug 2005, Marc Perkel wrote:
->
-> My background is in Netware. Netware did it right. It's permissions that
-> it had 15 years ago were beyond what Linux might ever acheive. Then I
-> downgraded to Windows, then I further downgraded to Linux. In fact when
-> I started using linux it took me months of denial before I realized -
-> this really is all there is. One user, one group - and that's all.
-> Further - the ability of a user to delete files that they have no
-> read/write rights to is just plain silly. In Netware if you have no
-> right to a file, you not only can't delete it - you can't even list it
-> in the directory. It's as if that file isn't even there.
+Marc Perkel wrote:
+> 
+> 
+> Nikita Danilov wrote:
+> 
+>> Not exactly. As a matter of fact, ACL and EA support was already
+>> implemented in reiser4. But it used standard xattrs API to interface to
+>> the user-land, and it was decided that reiser4 should go sys_reiser4()
+>> route instead. So, it was reaped.
+>>
+>> Nikita.
+>>  
+>>
+> 
+> OK - now I'm confused. Why not the standard?
 
-A minor nitpick: if you wish to delete a file, you need write permission
-on the directory - the permission on the file doesn't really matter
-(unless the sticky bit set is set on the directory, in which case you have
-to own the file to delete it...).
+Why aren't you using ext3?  Or Windows?  In your own words:
+> After all - it is standard. 
 
-> ACLs finally restored some of this power although the implementation in
-> Linux is crude at best. I thought there is a glimmer of hope that some
-> day Linux will catch up to where Novell was 15 years ago. It is so
-> frustrating dealing with Linux culture and VI mentality trying to get
+> And - when is this going to be included?
+
+Your guess is as good as mine.
+
+> ACLs finally restored some of this power although the implementation in 
+> Linux is crude at best.
+
+That's why the "standard" way isn't happening.  Although I wish they'd 
+left it in, and the standard xattrs interface, and created the "better" 
+interface later.
+
+> I thought there is a glimmer of hope that some 
+> day Linux will catch up to where Novell was 15 years ago. It is so 
+> frustrating dealing with Linux culture and VI mentality trying to get 
 > people to think outside the box.
 
-Marc, I agree with you.  You might be interested in the Linux Trustees
-project:
+Speak for yourself.  After all, you wanted us to do the "standard".
 
-http://trustees.sourceforge.net/
-
-Still not not the match of NetWare's flexibility, but it's a step in the
-right direction.  If it patches correctly into a -mm kernel, I think it
-should even work on top of reiser4.  Additionally, Novell has released
-Open Enterprise Server, which supposedly supports creation of NSS volumes
-on Linux (SUSE Linux Enterprise Server 9), supporting trustees!
-
--- 
-Matt Stegman
-
-
-
+Better yet, go read the whitepaper.  It's on the homepage at 
+namesys.com, and it's very human-readable.
