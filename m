@@ -1,42 +1,46 @@
-From: Peter Klotz <peter.klotz@aon.at>
-Subject: Re: reiser4progs 1.0.5 configure script and libaal 1.0.5
-Date: Sun, 14 Aug 2005 09:20:46 +0200
-Message-ID: <42FEF0CE.5090001@aon.at>
-References: <1123947554.11989.ezmlm@namesys.com> <1123948023.17483.6.camel@localhost.localdomain>
+From: Mark Nipper <nipsy@bitgnome.net>
+Subject: Re: Reiser4 and ACLs
+Date: Sun, 14 Aug 2005 03:08:12 -0500
+Message-ID: <20050814080812.GA22983@king.bitgnome.net>
+References: <42FEC9F1.9040709@perkel.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25452-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25453-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1123948023.17483.6.camel@localhost.localdomain>
+Content-Disposition: inline
+In-Reply-To: <42FEC9F1.9040709@perkel.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com, =?ISO-8859-1?Q?Vanuxem_Gr=E9gory?= <g.vanuxem@wanadoo.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Marc Perkel <marc@perkel.com>
+Cc: reiserfs-list@namesys.com
 
-Hello
+On 13 Aug 2005, Marc Perkel wrote:
+> So - how do you get Reiser 4 to work with ACLs? Can't find a mount 
+> option in any docs.
 
-> The lastest reiser4progs (1.0.5) can't find libaal
-> in configure script.
->
-> More precisely it doesn't find libaal because of version problem
->  
->
-Maybe it is a permission problem caused by SELinux. I had similar 
-troubles myself. Disabling SELinux in /etc/selinux/config helped.
+	They are not supported yet under Reiser4.  I'm sure this
+is keeping just a few people from early adoption at the moment.
+:)
 
-Take a look at /var/log/messages if there are any SELinux related 
-access-denied messages. On my system it seemed that ldconfig was not 
-able to generate symbolic links for libaal and therefore reiser4progs 
-were not able to find the required libaal version.
+-- 
+Mark Nipper                                                e-contacts:
+4475 Carter Creek Parkway                           nipsy@bitgnome.net
+Apartment 724                               http://nipsy.bitgnome.net/
+Bryan, Texas, 77802-4481           AIM/Yahoo: texasnipsy ICQ: 66971617
+(979)575-3193                                      MSN: nipsy@tamu.edu
 
-Here are two mailing list entries dealing with ldconfig/SELinux problems:
+-----BEGIN GEEK CODE BLOCK-----
+Version: 3.1
+GG/IT d- s++:+ a- C++$ UBL++++$ P--->+++ L+++$ !E---
+W++(--) N+ o K++ w(---) O++ M V(--) PS+++(+) PE(--)
+Y+ PGP t+ 5 X R tv b+++@ DI+(++) D+ G e h r++ y+(**)
+------END GEEK CODE BLOCK------
 
-http://lists.freshrpms.net/pipermail/freshrpms-list/2004-December/011960.html 
-
-https://www.redhat.com/archives/fedora-test-list/2004-December/msg00275.html 
-
-
-Best regards, Peter.
-
+---begin random quote of the moment---
+"I do not agree with what you have to say, but I'll defend to the
+death your right to say it."
+ -- Evelyn Beatrice Hall, _The Friends of Voltaire_, 1906
+----end random quote of the moment----
