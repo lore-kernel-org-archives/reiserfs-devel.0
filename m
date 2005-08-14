@@ -1,35 +1,57 @@
-From: Fionn Behrens <fionn@spamfilter.de>
-Subject: bad blocks on disk. Which files are damaged?
-Date: Sun, 14 Aug 2005 19:25:14 +0200
-Message-ID: <1124040310.14141.4.camel@laptop>
+From: Matt Stegman <matts@ksu.edu>
+Subject: Re: Reiser4 and ACLs
+Date: Sun, 14 Aug 2005 12:44:25 -0500 (CDT)
+Message-ID: <Pine.GSO.4.44L.0508141229330.23379-100000@unix2.cc.ksu.edu>
+References: <42FF4A1C.9030406@perkel.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25462-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25463-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Sender: news <news@sea.gmane.org>
+In-Reply-To: <42FF4A1C.9030406@perkel.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Marc Perkel <marc@perkel.com>
+Cc: reiserfs-list@namesys.com
 
+On Sun, 14 Aug 2005, Marc Perkel wrote:
+>
+> My background is in Netware. Netware did it right. It's permissions that
+> it had 15 years ago were beyond what Linux might ever acheive. Then I
+> downgraded to Windows, then I further downgraded to Linux. In fact when
+> I started using linux it took me months of denial before I realized -
+> this really is all there is. One user, one group - and that's all.
+> Further - the ability of a user to delete files that they have no
+> read/write rights to is just plain silly. In Netware if you have no
+> right to a file, you not only can't delete it - you can't even list it
+> in the directory. It's as if that file isn't even there.
 
-Hello all...
+A minor nitpick: if you wish to delete a file, you need write permission
+on the directory - the permission on the file doesn't really matter
+(unless the sticky bit set is set on the directory, in which case you have
+to own the file to delete it...).
 
-I have a harddisk here which developed bad blocks. It is quite large and
-only a few blocks seem to be affected. I ran several scans wirh the
-"badblocks" tool and got a map of defective blocks out of this. Now I'd
-really like to find out which files on the Reiser3.6 FS on the defective
-disk are probably damaged.
-Is there a way or maybe even a HowTo to tell this without huge effort?
-Maybe even some kind of script or tool?
+> ACLs finally restored some of this power although the implementation in
+> Linux is crude at best. I thought there is a glimmer of hope that some
+> day Linux will catch up to where Novell was 15 years ago. It is so
+> frustrating dealing with Linux culture and VI mentality trying to get
+> people to think outside the box.
 
-best regards, 
-		Fionn
+Marc, I agree with you.  You might be interested in the Linux Trustees
+project:
+
+http://trustees.sourceforge.net/
+
+Still not not the match of NetWare's flexibility, but it's a step in the
+right direction.  If it patches correctly into a -mm kernel, I think it
+should even work on top of reiser4.  Additionally, Novell has released
+Open Enterprise Server, which supposedly supports creation of NSS volumes
+on Linux (SUSE Linux Enterprise Server 9), supporting trustees!
+
 -- 
-I believe we have been called by history to lead the world.
-                                                 G.W. Bush, 2002-03-01
+Matt Stegman
 
 
 
