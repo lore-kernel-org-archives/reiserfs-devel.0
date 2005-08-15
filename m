@@ -1,75 +1,68 @@
-From: Vanuxem =?ISO-8859-1?Q?Gr=E9gory?= <g.vanuxem@wanadoo.fr>
-Subject: Re: reiser4progs 1.0.5 configure script and libaal 1.0.5
-Date: Mon, 15 Aug 2005 22:25:01 +0200
-Message-ID: <1124137501.3917.6.camel@localhost.localdomain>
-References: <1123947554.11989.ezmlm@namesys.com>
-	 <1124116832.24528.13.camel@localhost.localdomain>
-	 <1124116956.24528.15.camel@localhost.localdomain>
-	 <200508151921.08622.vitaly@namesys.com>
+From: Jonathan Briggs <jbriggs@esoft.com>
+Subject: Re: Reiser4 and ACLs
+Date: Mon, 15 Aug 2005 14:34:01 -0600
+Message-ID: <1124138041.11626.4.camel@localhost>
+References: <42FEC9F1.9040709@perkel.com>
+	 <20050814080812.GA22983@king.bitgnome.net> <42FF388F.3010506@perkel.com>
+	 <b14e81f005081405316a06995c@mail.gmail.com>
+	 <17151.17921.996376.693013@gargle.gargle.HOWL>
+	 <87k6in5dri.fsf@evinrude.uhoreg.ca>
+	 <17152.63727.435377.223362@thebsh.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25497-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-p1ReSEuaX4xzS/xIrs80"
+Return-path: <reiserfs-list-return-25498-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200508151921.08622.vitaly@namesys.com>
+In-Reply-To: <17152.63727.435377.223362@thebsh.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: Nikita Danilov <nikita@clusterfs.com>
+Cc: Hubert Chan <hubert@uhoreg.ca>, reiserfs-list@namesys.com
 
-Hi,
+--=-p1ReSEuaX4xzS/xIrs80
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Le lundi 15 ao=FBt 2005 =E0 19:21 +0400, Vitaly Fertman a =E9crit :
-> ok, as we can see in config.log the problem is:
+On Tue, 2005-08-16 at 00:19 +0400, Nikita Danilov wrote:
+> Hubert Chan writes:
+>  > On Sun, 14 Aug 2005 17:24:17 +0400, Nikita Danilov <nikita@clusterfs.c=
+om> said:
+>  >=20
+>  > > Not exactly. As a matter of fact, ACL and EA support was already
+>  > > implemented in reiser4. But it used standard xattrs API to interface
+>  > > to the user-land, and it was decided that reiser4 should go
+>  > > sys_reiser4() route instead. So, it was reaped.
+>  >=20
+>  > Does this mean that file-as-dir has also been abandoned?
 >=20
-> /usr/bin/ld: __libc_errno: TLS definition in=20
-> /usr/lib/gcc-lib/x86_64-linux-gnu/3.3.6/../../../../lib64/libc.a(errno.o)=
-=20
-> section .tbss mismatches non-TLS reference in=20
-> /usr/lib/gcc-lib/x86_64-linux-gnu/3.3.6/../../../../lib64/libc.a(check_fd=
-s.o)
->=20
-> /usr/lib/gcc-lib/x86_64-linux-gnu/3.3.6/../../../../lib64/libc.a:=20
-> ne peut lire les symboles: Mauvaise valeur
->=20
-> when we try to compile the test program.=20
-> this message points to a problem in libc, not in libaal.
->=20
->=20
-> there is a test program : /home/greg/temp/conftest.c
-> I try to compile it with the same command as from the config.log,
-> but not linking it to libaal:
-> # gcc -o conftest -O2 -march=3Dathlon-xp -mcpu=3Dathlon-xp -mmmx=20
-> -msse -msse2 -mfpmath=3Dsse -static   conftest.c
->=20
-> and get the same error message.
->=20
-> but if I remove -static, it gets compiled successfully.
-> even if I also link it to libaal -- there is a program conftest2.c, the s=
-ame as
-> the one that fails from the config.log, I run the same command as mention=
-ed=20
-> in config.log:
-> # gcc -o conftest2  -march=3Dathlon-xp -mcpu=3Dathlon-xp -mmmx=20
-> -msse -msse2 -mfpmath=3Dsse    conftest2.c -laal
-> # <- success
->=20
-> so the problem is related to installed libc, not to libaal.
->=20
+> Sorry, it seems I was too vague. It's exactly the opposite: standard
+> xattr API was abandoned in favour of accessing EAs and ACLs through
+> pseudo files. The latter method is not implemented yet, and I don't know
+> how stable sys_reiser4() API is currently. Hans is the proper person to
+> ask.
 
-This is a known bug in glibc 2.3.2.
+There is no reason not to support the standard xattr calls, whether it
+is done in-kernel or in the C library.  The pseudo files would also be
+good, but several programs already use the current xattr support.
 
-I've upgraded to the glibc version 2.3.5 and
-that works.
+Namesys may not want to add the support themselves but I hope they do
+not reject contributed code for it.
+--=20
+Jonathan Briggs <jbriggs@esoft.com>
+eSoft, Inc.
 
-Thanks,
+--=-p1ReSEuaX4xzS/xIrs80
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
 
-Cheers,
+iD8DBQBDAPw4G8fHaOLTWwgRApJeAJ4/U5u9S9z5JmpmfJ/lahw1cymRyACeMNmG
+Jys2Z0VUH/dEiIsRfTBjwsI=
+=RwEv
+-----END PGP SIGNATURE-----
 
-Greg
-
-
+--=-p1ReSEuaX4xzS/xIrs80--
 
