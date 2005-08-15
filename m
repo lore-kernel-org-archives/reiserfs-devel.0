@@ -1,28 +1,52 @@
-From: Marc Perkel <marc@perkel.com>
-Subject: Re: Reiser4 and ACLs
-Date: Mon, 15 Aug 2005 13:55:51 -0700
-Message-ID: <43010157.1030107@perkel.com>
-References: <42FEC9F1.9040709@perkel.com>	<20050814080812.GA22983@king.bitgnome.net>	<42FF388F.3010506@perkel.com>	<b14e81f005081405316a06995c@mail.gmail.com>	<17151.17921.996376.693013@gargle.gargle.HOWL>	<87k6in5dri.fsf@evinrude.uhoreg.ca>	<17152.63727.435377.223362@thebsh.namesys.com>	<1124138041.11626.4.camel@localhost> <17152.65201.525419.283987@gargle.gargle.HOWL>
+From: Matt Stegman <matts@ksu.edu>
+Subject: Re: knowing more about blocks
+Date: Mon, 15 Aug 2005 17:23:52 -0500 (CDT)
+Message-ID: <Pine.GSO.4.44L.0508151717480.23379-100000@unix2.cc.ksu.edu>
+References: <20050815163826.GA804@tranquility.scriptkitchen.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25502-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25503-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <17152.65201.525419.283987@gargle.gargle.HOWL>
+In-Reply-To: <20050815163826.GA804@tranquility.scriptkitchen.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Payal Rathod <payal-reiserfs@scriptkitchen.com>
+Cc: reiserfs-list@namesys.com
 
+This page is all about ext2, not reiserfs, but I think it works as a good
+primer for general information:
 
+http://web.mit.edu/tytso/www/linux/ext2intro.html
 
-Nikita Danilov wrote:
+This page provides more detailed information about reiserfs (that's
+version 3, not 4, just to be clear):
 
+http://homes.cerias.purdue.edu/~florian/reiser/reiserfs.php
+
+If you're not familiar with the basic ideas behind hard disks and
+partitions, and the difference between a partition and a filesystem,
+Ranish's partitioning primer does a good job of explaining that.
+
+http://www.ranish.com/part/primer.htm
+
+-- 
+Matt Stegman
+
+On Mon, 15 Aug 2005, Payal Rathod wrote:
+
+> Hi,
+> The whole filesystem idea is seemingly interesting to me. Can someone
+> point to some good documentation which explains superblock, inode block
+> and data blocks in details without going into too much of technicalities
+> (as I am a person with no technical background academically).
 >
->Well, this song has been sung many times already. :-) Hans has strong
->opinion about xattr API (which, indeed, is not a paragon of design
->beauty by a large margin).
->  
+> With warm regards,
+> -Payal
 >
-I'm new to this debate. What is his strong opinion?
+>
+
+
+
