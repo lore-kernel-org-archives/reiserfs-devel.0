@@ -1,72 +1,79 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: where is the journal kept?
-Date: Mon, 15 Aug 2005 18:26:11 +0400
-Message-ID: <4300A603.2050602@namesys.com>
-References: <20050815115310.GA28630@tranquility.scriptkitchen.com> <20050815125025.GA29390@tranquility.scriptkitchen.com> <43009184.2080201@namesys.com> <200508150812.40382.pat@patdouble.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: reiser4progs 1.0.5 configure script and libaal 1.0.5
+Date: Mon, 15 Aug 2005 18:13:51 +0400
+Message-ID: <200508151813.51639.vitaly@namesys.com>
+References: <1123947554.11989.ezmlm@namesys.com> <200508151748.47603.vitaly@namesys.com> <1124115100.24528.8.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25481-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-25482-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200508150812.40382.pat@patdouble.com>
+In-Reply-To: <1124115100.24528.8.camel@localhost.localdomain>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: pat@patdouble.com
+Content-Type: text/plain; charset="utf-8"
+To: Vanuxem =?utf-8?q?Gr=C3=A9gory?= <g.vanuxem@wanadoo.fr>
 Cc: reiserfs-list@namesys.com
 
-Hello
+On Monday 15 August 2005 18:11, Vanuxem Grégory wrote:
+> Le lundi 15 aoШt 2005 Ю 17:48 +0400, Vitaly Fertman a Иcrit :
+> > > > where have you installed libaal into? /usr/local?
+> > > > does you /etc/ld.so.conf have the path you instatlled libaal into?
+> > > > if not, add it and run /sbin/ldconfig.
+> > > > 
+> > > 
+> > > Yes but that doesn't work
+> > > 
+> > > here is the output:
+> > > 
+> > > checking for special C compiler options needed for large files... no
+> > > checking for _FILE_OFFSET_BITS value needed for large files... no
+> > > checking for _LARGE_FILES value needed for large files... no
+> > > configure: WARNING: Can't detect right _FILE_OFFSET_BITS. Will be forced
+> > > to 64bit.
+> > > checking for off_t... yes
+> > > checking size of off_t... 8
+> > > checking for aal_device_open in -laal... yes
+> > > checking aal/libaal.h usability... yes
+> > > checking aal/libaal.h presence... yes
+> > > checking for aal/libaal.h... yes
+> > > checking for libaal version = 1.0.5... no
+> > > ellipse:/home/greg/temp/reiser4progs-1.0.5#
+> > 
+> > so what do you see in config.log?
+> Sended.
 
-Pat Double wrote:
-> Stupid, question. I thought that reiser4 had no journal, 
+ok.
 
-reiser4 has no filesystem area dedicated for journal.
-Instead it allocats log(journal) records dynamically.
+> > which test program fails?
+> Don't know
+> > do you see a libaal.so in the wanted place?
+> Yes
+> > actually there is --with-libaal option for not standard 
+> > places, but you are not supposed to use it if you install 
+> > libaal by default.
+> > 
+> > is it possible to get an access to your computer to test it?
+> 
+> with root access ???
 
-it is transactional.
-> If that's the case, why this option in debug.reiser4 :
+no, it is not necessary.
+ 
+> >  
+> > > That works only in a chrooted 32bits environment
+> > > (I have a x86_64)
+> > 
+> > what distro?
+> Debian AMD64
+> > 
 > 
-> Usage: /sbin/debugfs.reiser4 [ options ] FILE
-> Print options:
->    -j, --print-journal           prints journal.
+> Cheers,
 > 
-
-yes, this prints reiser4 "wandering logs".
-
-> 
-> On Monday 15 August 2005 07:58 am, Vladimir V. Saveliev wrote:
-> 
->>Hello
->>
->>Payal Rathod wrote:
->>
->>>On Mon, Aug 15, 2005 at 04:25:37PM +0400, Vladimir V. Saveliev wrote:
->>>
->>>>Each journaling filesystem keeps its journal by its own way.
->>>>In reiserfs by default journal is kept in statically pre-allocated on
->>>>mkfs time 8192 blocks (4096 bytes each) starting from 18-th block.
->>>
->>>Is it kept in some sort of file?
->>
->>No. That area of filesystem does not belong to any files stored on that
->>filesystem. You can read it from device directly: dd if=/dev/hda1 bs=4096
->>count=8192. I am not sure that it can be of any interest, because you will
->>see just binary data.
->>
->>I mean can I see the file contents
->>
->>
->>>using normal UNIX tools? If yes how do I do it?
->>
->>You can use
->>debugreiserfs -j /dev/hda1 /dev/hda1
->>to see journal content. This will decode binary data into human readable
->>form.
->>
->>
->>>With warm regards,
->>>-Payal
-> 
+> Greg
 > 
 
+-- 
+Thanks,
+Vitaly Fertman
