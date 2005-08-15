@@ -1,51 +1,40 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Reiser4 and ACLs
-Date: Sun, 14 Aug 2005 14:55:22 -0500
-Message-ID: <42FFA1AA.1070105@slaphack.com>
-References: <42FEC9F1.9040709@perkel.com> <20050814080812.GA22983@king.bitgnome.net> <42FF388F.3010506@perkel.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: bad blocks on disk. Which files are damaged?
+Date: Mon, 15 Aug 2005 13:30:28 +0400
+Message-ID: <430060B4.7070906@namesys.com>
+References: <1124040310.14141.4.camel@laptop>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25465-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25467-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <42FF388F.3010506@perkel.com>
+In-Reply-To: <1124040310.14141.4.camel@laptop>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Marc Perkel <marc@perkel.com>
-Cc: reiser@namesys.com, reiserfs-list@namesys.com
+To: Fionn Behrens <fionn@spamfilter.de>
+Cc: reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>
 
-Marc Perkel wrote:
+Hello
+
+Fionn Behrens wrote:
+> Hello all...
 > 
+> I have a harddisk here which developed bad blocks. It is quite large and
+> only a few blocks seem to be affected. I ran several scans wirh the
+> "badblocks" tool and got a map of defective blocks out of this. Now I'd
+> really like to find out which files on the Reiser3.6 FS on the defective
+> disk are probably damaged.
+> Is there a way or maybe even a HowTo to tell this without huge effort?
+
+You might want to look at
+http://namesys.com/bad-block-handling.html
+
+I believe it is in uptodate state. Yes, Vitaly?
+
+> Maybe even some kind of script or tool?
 > 
-> Mark Nipper wrote:
-> 
->>On 13 Aug 2005, Marc Perkel wrote:
->>  
->>
->>>So - how do you get Reiser 4 to work with ACLs? Can't find a mount 
->>>option in any docs.
->>>    
->>>
->>
->>	They are not supported yet under Reiser4.  I'm sure this
->>is keeping just a few people from early adoption at the moment.
->>:)
->>
->>  
->>
+> best regards, 
+> 		Fionn
 
-> I had been reading that the very reason you want to use Reiser 4 is 
-> because that's where the ACLs were going to be. It is after all built on 
-> a database
-
-No, it's not.  It's just easy to build a database on top of, without 
-having to redesign the storage system.  As I said in my last message, go 
-read the whitepaper.
-
-> How can there be a claim that Reiser4 is ready to be merged into the 
-> Kernel without ACL support?
-
-Because things don't have to have every feature imaginable to be merged. 
-  In fact, quite the opposite -- they have to be sane and stable.
