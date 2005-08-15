@@ -1,49 +1,44 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Subject: Re: [xfs-masters] [-mm PATCH 2/32] fs: fix-up schedule_timeout() usage
-Date: Mon, 15 Aug 2005 11:40:13 -0700
-Message-ID: <20050815184013.GJ2854@us.ibm.com>
-References: <20050815180514.GC2854@us.ibm.com> <20050815180804.GE2854@us.ibm.com> <20050815181752.GA23701@lst.de>
+From: Nikita Danilov <nikita@clusterfs.com>
+Subject: Re: Reiser4 and ACLs
+Date: Tue, 16 Aug 2005 00:19:59 +0400
+Message-ID: <17152.63727.435377.223362@thebsh.namesys.com>
+References: <42FEC9F1.9040709@perkel.com>
+	<20050814080812.GA22983@king.bitgnome.net>
+	<42FF388F.3010506@perkel.com>
+	<b14e81f005081405316a06995c@mail.gmail.com>
+	<17151.17921.996376.693013@gargle.gargle.HOWL>
+	<87k6in5dri.fsf@evinrude.uhoreg.ca>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-25493-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25495-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20050815181752.GA23701@lst.de>
+In-Reply-To: <87k6in5dri.fsf@evinrude.uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@lst.de>
-Cc: xfs-masters@oss.sgi.com, sfrench@samba.org, sct@redhat.com, okir@monad.swb.de.sgi.com, trond.myklebust@fys.uio.no, reiserfs-dev@namesys.com, urban@teststation.com, nathans@sgi.com, akpm@osdl.org, samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, samba@samba.org, linux-xfs@oss.sgi.com
+To: Hubert Chan <hubert@uhoreg.ca>
+Cc: reiserfs-list@namesys.com
 
-On 15.08.2005 [20:17:52 +0200], Christoph Hellwig wrote:
-> On Mon, Aug 15, 2005 at 11:08:04AM -0700, Nishanth Aravamudan wrote:
-> > Description: Use schedule_timeout_{,un}interruptible() instead of
-> > set_current_state()/schedule_timeout() to reduce kernel size. Also use
-> > helper functions to convert between human time units and jiffies rather
-> > than constant HZ division to avoid rounding errors.
-> 
-> The XFS changes are still wrong for the same rason as last time,
-> we actually do want the daemons to do work if they're woken earlier
-> using wake_up_process.
+Hubert Chan writes:
+ > On Sun, 14 Aug 2005 17:24:17 +0400, Nikita Danilov <nikita@clusterfs.com> said:
+ > 
+ > > Not exactly. As a matter of fact, ACL and EA support was already
+ > > implemented in reiser4. But it used standard xattrs API to interface
+ > > to the user-land, and it was decided that reiser4 should go
+ > > sys_reiser4() route instead. So, it was reaped.
+ > 
+ > Does this mean that file-as-dir has also been abandoned?
 
-Hrm, I got dropped from the Cc list...? No worries, I'm subscribed in
-two places :)
+Sorry, it seems I was too vague. It's exactly the opposite: standard
+xattr API was abandoned in favour of accessing EAs and ACLs through
+pseudo files. The latter method is not implemented yet, and I don't know
+how stable sys_reiser4() API is currently. Hans is the proper person to
+ask.
 
-I think your reference to "last time" is the KJ patches which probably
-used msleep{,_interruptible}() instead of schedule_timeout(). This
-patchset, in contrast, should result in *no* functional changes (beyond
-some more precisie conversions, where appropriate).
-schedule_timeout_interruptible(some_value), for instance is nothing more than:
+ > -- 
+ > Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
 
-	set_current_state(TASK_INTERRUPTIBLE);
-	schedule_timeout(some_value);
+Nikita.
 
-Just in the form of a combine function call. No loops like msleep() &
-co.
-
-Is the patch still a problem?
-
-Thanks,
-Nish
