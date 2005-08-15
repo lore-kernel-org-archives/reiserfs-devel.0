@@ -1,66 +1,97 @@
-From: michael chang <thenewme91@gmail.com>
-Subject: Re: Reiser4 and ACLs
-Date: Mon, 15 Aug 2005 19:37:03 -0400
-Message-ID: <b14e81f00508151637be3d229@mail.gmail.com>
-References: <42FEC9F1.9040709@perkel.com>
-	 <b14e81f005081405316a06995c@mail.gmail.com>
-	 <17151.17921.996376.693013@gargle.gargle.HOWL>
-	 <87k6in5dri.fsf@evinrude.uhoreg.ca>
-	 <17152.63727.435377.223362@thebsh.namesys.com>
-	 <1124138041.11626.4.camel@localhost>
-	 <17152.65201.525419.283987@gargle.gargle.HOWL>
-	 <43010157.1030107@perkel.com> <43012440.8020804@slaphack.com>
-	 <43012598.7080207@perkel.com>
+From: "Mohammad A. Rahman" <mohammad.rahman@webalive.biz>
+Subject: reiser4 sending process to D state
+Date: Tue, 16 Aug 2005 09:45:06 +1000
+Message-ID: <43012902.1010600@webalive.biz>
+Reply-To: mohammad.rahman@webalive.biz
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25508-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25509-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43012598.7080207@perkel.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Marc Perkel <marc@perkel.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On 8/15/05, Marc Perkel <marc@perkel.com> wrote:
-> It seems to me that getting in the Kernel is the most important thing.
+Hello,
 
-This is because nothing else can happen because no one will know it
-exists.  Everything else will happen *as soon as* Reiser4 gets in.=20
-Otherwise, it's practically useless.
+I am having an issue with reiser4. I am wondering if it is a known issue 
+for reiser4 or I have missed something along the path.
 
-> Then getting it compatible with existing standards. Then you build up
+#cat /etc/redhat-release
+Red Hat Enterprise Linux ES release 3 (Taroon Update 5)
 
-But then you're basically rewriting ext2 or 3.  There's no point in that.
+Downloaded 2.6.12 vanila kernel, applied mm2 patch (2.6.12-mm2) and then 
+aapplied reiser4 patch downloaded from namesys for 2.6.12-mm2 
+(ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.12-mm2/reiser4-vfs-3.patch). 
+Kernel compiles and boots ok.
 
-> the user based (addicts) and then you add the innovative stuff.
+Compiled libaal-1.0.5 and reiser4progs-1.0.5 with ./configure, make and 
+make install.
 
-You do this first, because it's what sets you appart.  Otherwise,
-people won't convert away from EXT2/3.  Priorities first.
+Created reiser4 fs on my disk (/usr/local/sbin/mkfs.reiser4  /dev/sda5)
 
-> Otherwise people are going to use Ext3 because it has ACLs and Reiser4
-> doesn't. That's where I'm at. If it doesn't do ACLs it doesn't work. I
-> need acls.
+Mounted the partition (/dev/sda5               /test                   
+reiser4 defaults        1 2)
 
-So why fix something that isn't broken?  Just because one person who
-uses ACLs doesn't use Reiser4 right away doesn't mean he won't use it
-later.  Compare the number of people who use Ubuntu Linux (who won't
-support Reiser4 until it's vanilla) and other Vanilla kernels, to the
-number of ACL users.  The numbers matter.
+"dmesg | grep reiser" shows:  loading reiser4 bitmap......done (181 jiffies)
 
-> The way I see it - and I may well be missing something - s that the
-> current API is just a way of talking to the security layer. So why not
-> support multiple ways to talk to it?
+But when I try to write big amount of data on that partition the process 
+hangs and goes to uninterruptible sleep (D) state.
 
-There is nothing wrong with this idea.  It's just time consuming.=20
-It's not done, yet (for Reiser4).  If someone is willing to pay the
-time/sweat or the money to get it done, it will be done.  Otherwise,
-it won't.  Simple as that.
+the PS output shows:
 
---=20
-~Mike
- - Just my two cents
- - No man is an island, and no man is unable.
+root      2375  2.7  0.0  3828  692 pts/1    D    23:21   0:15 cp -i -r 
+/usr .
+
+I can easily simulate it with  bonnie++
+
+bonnie++ -u user:user -d /test -s 4096m -m hudson -n 32:100000:16:256 -b -q
+
+which also jumps into uninterruptible sleep (D) state.
+
+After having this issue, I tried using libaal-1.0.4/reiser4progs-1.0.4. 
+Tried 2.6.11 kernel, 2.6.13-rc4 - but all with no joy.
+
+For all these trials, I used vanilla kernel with appropriate mm patch 
+and the appropriate patch downloaded from namesys (on top of that).
+
+Once the process goes to state D, the log shows the following output:
+
+reiser4[pdflush(99)]: writeout (fs/reiser4/vfs_ops.c:586)[nikita-31001]:
+code: -12 at fs/reiser4/wander.c:1268
+WARNING: Flush failed: -12
+reiser4[pdflush(99)]: writeout (fs/reiser4/vfs_ops.c:586)[nikita-31001]:
+code: -12 at fs/reiser4/wander.c:1268
+WARNING: Flush failed: -12
+reiser4[pdflush(99)]: writeout (fs/reiser4/vfs_ops.c:586)[nikita-31001]:
+code: -12 at fs/reiser4/wander.c:1268
+WARNING: Flush failed: -12
+reiser4[pdflush(99)]: writeout (fs/reiser4/vfs_ops.c:586)[nikita-31001]:
+code: -12 at fs/reiser4/wander.c:1268
+WARNING: Flush failed: -12
+reiser4[pdflush(99)]: writeout (fs/reiser4/vfs_ops.c:586)[nikita-31001]:
+code: -12 at fs/reiser4/wander.c:1268
+WARNING: Flush failed: -12
+reiser4[pdflush(99)]: writeout (fs/reiser4/vfs_ops.c:586)[nikita-31001]:
+code: -12 at fs/reiser4/wander.c:1268
+WARNING: Flush failed: -12
+reiser4[pdflush(99)]: writeout (fs/reiser4/vfs_ops.c:586)[nikita-31001]:
+code: -12 at fs/reiser4/wander.c:1268
+WARNING: Flush failed: -12
+reiser4[pdflush(99)]: writeout (fs/reiser4/vfs_ops.c:586)[nikita-31001]:
+code: -12 at fs/reiser4/wander.c:1268
+WARNING: Flush failed: -12
+reiser4[pdflush(99)]: writeout (fs/reiser4/vfs_ops.c:586)[nikita-31001]:
+code: -12 at fs/reiser4/wander.c:1268
+WARNING: Flush failed: -12
+
+Thanks and will look for some feedback.
+
+MR
+
+
+P.S: If the partition is mounted as ext3, or xfs - it is working as 
+expected.
+
