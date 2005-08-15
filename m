@@ -1,40 +1,36 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
+From: Sander <sander@humilis.net>
 Subject: Re: bad blocks on disk. Which files are damaged?
-Date: Mon, 15 Aug 2005 13:30:28 +0400
-Message-ID: <430060B4.7070906@namesys.com>
-References: <1124040310.14141.4.camel@laptop>
+Date: Mon, 15 Aug 2005 12:27:28 +0200
+Message-ID: <20050815102727.GA28296@favonius>
+References: <1124040310.14141.4.camel@laptop> <430060B4.7070906@namesys.com>
+Reply-To: sander@humilis.net
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25467-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25468-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1124040310.14141.4.camel@laptop>
+Content-Disposition: inline
+In-Reply-To: <430060B4.7070906@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Fionn Behrens <fionn@spamfilter.de>
-Cc: reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: Fionn Behrens <fionn@spamfilter.de>, reiserfs-list@namesys.com, Vitaly Fertman <vitaly@namesys.com>
 
-Hello
-
-Fionn Behrens wrote:
-> Hello all...
+Vladimir V. Saveliev wrote (ao):
+> You might want to look at
+> http://namesys.com/bad-block-handling.html
 > 
-> I have a harddisk here which developed bad blocks. It is quite large and
-> only a few blocks seem to be affected. I ran several scans wirh the
-> "badblocks" tool and got a map of defective blocks out of this. Now I'd
-> really like to find out which files on the Reiser3.6 FS on the defective
-> disk are probably damaged.
-> Is there a way or maybe even a HowTo to tell this without huge effort?
+> I believe it is in uptodate state. Yes, Vitaly?
 
-You might want to look at
-http://namesys.com/bad-block-handling.html
+===
+Last modified: Sat Nov 1 19:24:19 2003  (maintained by Vitaly Fertman
+vitaly@namesys.com).
 
-I believe it is in uptodate state. Yes, Vitaly?
+This document is available at http://namesys.com/bad-block-handling.html 
+===
 
-> Maybe even some kind of script or tool?
-> 
-> best regards, 
-> 		Fionn
-
+-- 
+Humilis IT Services and Solutions
+http://www.humilis.net
