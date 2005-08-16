@@ -1,34 +1,49 @@
-From: Christian Iversen <chrivers@iversen-net.dk>
-Subject: Re: KDE integration with ReiserFS 4
-Date: Wed, 17 Aug 2005 00:51:15 +0200
-Message-ID: <200508170051.16167.chrivers@iversen-net.dk>
-References: <20050815174616.57110.qmail@web54401.mail.yahoo.com> <1j6pufsznvl41$.dlg@jwmittag.my-fqdn.de>
+From: Shawn Rutledge <shawn.t.rutledge@gmail.com>
+Subject: Re: where is the journal kept?
+Date: Tue, 16 Aug 2005 16:23:06 -0700
+Message-ID: <d9a6586e050816162322c99721@mail.gmail.com>
+References: <20050815115310.GA28630@tranquility.scriptkitchen.com>
+	 <43009184.2080201@namesys.com> <200508150812.40382.pat@patdouble.com>
+	 <4300A603.2050602@namesys.com>
+	 <d9a6586e05081509195017d679@mail.gmail.com>
+	 <4300D240.7010109@namesys.com>
+	 <d9a6586e0508151108431fabba@mail.gmail.com>
+	 <4302458E.9070604@namesys.com>
+	 <d9a6586e05081613275071c00a@mail.gmail.com>
+	 <430268F4.8020100@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25529-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25530-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1j6pufsznvl41$.dlg@jwmittag.my-fqdn.de>
+In-Reply-To: <430268F4.8020100@slaphack.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: David Masover <ninja@slaphack.com>
+Cc: reiserfs-list@namesys.com
 
-On Tuesday 16 August 2005 17:05, J=F6rg W Mittag wrote:
-> Vlad C. wrote:
-> > The K Desktop Environmet (KDE) is thinking about
-> > starting its own file version control system, and I
-> > have been urging them to consider centering it around
-> > ResierFS 4, which from what I've heard would be
-> > well-suited for this task.
->
-> [...] Are there independent implementations of Reiser4 (as in: not
-> derived from Namesys, Inc. code)?
+On 8/16/05, David Masover <ninja@slaphack.com> wrote:
+> Something Reiser4 does very well.  If you have enough RAM, it's possible
+> to avoid any reads/writes at all -- given enough RAM, it behaves as a
 
-Are there independent implementations of QT?
+Well that's cool if it's true.  But IMO for this application it ought
+to have a deadline - after the writes have been pending for 10 seconds
+or so, go ahead and commit all of them, in case I forget to unmount
+before I remove the card.
 
-=2D-=20
-Regards,
-Christian Iversen
+> ramdisk, which is why I wish I knew how to tell Gentoo to *not* mount
+> tmpfs over /dev.
+>=20
+> One other thing you might try is disabling the write-twice behavior.
+> Currently, if you've got a huge, fairly well-sorted file that you're
+> making lots of tiny writes to, such as a database, it makes sense to
+> write twice to keep the file from getting fragmented.  But,
+> fragmentation isn't nearly as much an issue on truly random-access
+> media, so you'd want the default small-file behavior to be used
+> everywhere -- first write the data to the new location, then atomically
+> update the pointer to it as you deallocate the old location.
+
+What would you change to do that?
