@@ -1,46 +1,72 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: Reiser4 and ACLs
-Date: Mon, 15 Aug 2005 19:26:40 -0600
-Message-ID: <873bpa659r.fsf@evinrude.uhoreg.ca>
-References: <42FEC9F1.9040709@perkel.com> <20050814080812.GA22983@king.bitgnome.net>
- <42FF388F.3010506@perkel.com> <b14e81f005081405316a06995c@mail.gmail.com>
- <17151.17921.996376.693013@gargle.gargle.HOWL>
- <87k6in5dri.fsf@evinrude.uhoreg.ca>
- <17152.63727.435377.223362@thebsh.namesys.com>
- <1124138041.11626.4.camel@localhost>
- <17152.65201.525419.283987@gargle.gargle.HOWL>
- <43010157.1030107@perkel.com> <43012440.8020804@slaphack.com>
- <43012598.7080207@perkel.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: reiser4 sending process to D state
+Date: Tue, 16 Aug 2005 14:38:01 +0400
+Message-ID: <4301C209.7000302@namesys.com>
+References: <43012902.1010600@webalive.biz>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-25511-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25514-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43012598.7080207@perkel.com> (Marc Perkel's message of "Mon,
- 15 Aug 2005 16:30:32 -0700")
+In-Reply-To: <43012902.1010600@webalive.biz>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: mohammad.rahman@webalive.biz
+Cc: reiserfs-list@namesys.com
 
-On Mon, 15 Aug 2005 16:30:32 -0700, Marc Perkel <marc@perkel.com> said:
+Hello
 
-> It seems to me that getting in the Kernel is the most important
-> thing. Then getting it compatible with existing standards. Then you
-> build up the user based (addicts) and then you add the innovative
-> stuff. Otherwise people are going to use Ext3 because it has ACLs and
-> Reiser4 doesn't. That's where I'm at. If it doesn't do ACLs it doesn't
-> work. I need acls.
+Mohammad A. Rahman wrote:
+> Hello,
+> 
+> I am having an issue with reiser4. I am wondering if it is a known issue 
+> for reiser4 or I have missed something along the path.
+> 
+> #cat /etc/redhat-release
+> Red Hat Enterprise Linux ES release 3 (Taroon Update 5)
+> 
+> Downloaded 2.6.12 vanila kernel, applied mm2 patch (2.6.12-mm2) and then 
+> aapplied reiser4 patch downloaded from namesys for 2.6.12-mm2 
+> (ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.12-mm2/reiser4-vfs-3.patch). 
+> Kernel compiles and boots ok.
+> 
+> Compiled libaal-1.0.5 and reiser4progs-1.0.5 with ./configure, make and 
+> make install.
+> 
+> Created reiser4 fs on my disk (/usr/local/sbin/mkfs.reiser4  /dev/sda5)
+> 
+> Mounted the partition (/dev/sda5               /test                   
+> reiser4 defaults        1 2)
+> 
+> "dmesg | grep reiser" shows:  loading reiser4 bitmap......done (181 
+> jiffies)
+> 
+> But when I try to write big amount of data on that partition the process 
+> hangs and goes to uninterruptible sleep (D) state.
+> 
+> the PS output shows:
+> 
+> root      2375  2.7  0.0  3828  692 pts/1    D    23:21   0:15 cp -i -r 
+> /usr .
+> 
+> I can easily simulate it with  bonnie++
+> 
+> bonnie++ -u user:user -d /test -s 4096m -m hudson -n 32:100000:16:256 -b -q
+> 
+I just tried that on 2.6.12-mm2 + ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.12-mm2/reiser4-vfs-3.patch.
+And I am afraid I was not able to reproduce the problem:
 
-AFAIK, ACLs are separate from xattr.  It's just that Ext3 uses xattr to
-store their ACLs.  So it should be possible to implement ACLs (following
-the same standards) via sys_reiser4.  Perhaps someone more knowledgeable
-can confirm (or deny).
+Version  1.03       ------Sequential Output------ --Sequential Input- --Random-
+                     -Per Chr- --Block-- -Rewrite- -Per Chr- --Block-- --Seeks--
+Machine        Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP  /sec %CP
+hudson           4G 17979  81 36327  21 18649  15 16293  70 40979  13  93.0  25
+                     ------Sequential Create------ --------Random Create--------
+                     -Create-- --Read--- -Delete-- -Create-- --Read--- -Delete--
+files:max:min        /sec %CP  /sec %CP  /sec %CP  /sec %CP  /sec %CP  /sec %CP
+    32:100000:16/256    42   5   307   9   203  12    41   5    72   2    22   1
+hudson,4G,17979,81,36327,21,18649,15,16293,70,40979,13,93.0,25,32:100000:16/256,42,5,307,9,203,12,41,5,72,2,22,1
 
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+can you please provide more information about your environment: amount of ram, SMP or UP, etc.
 
