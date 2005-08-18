@@ -1,76 +1,467 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: BUG: reiserfs+acl+quota deadlock
-Date: Thu, 18 Aug 2005 16:36:52 +0200
-Message-ID: <20050818143652.GH29138@atrey.karlin.mff.cuni.cz>
-References: <1123643111.27819.23.camel@localhost> <20050810130009.GE22112@atrey.karlin.mff.cuni.cz> <1123684298.14562.4.camel@localhost> <20050810144024.GA18584@atrey.karlin.mff.cuni.cz> <42FCB873.8070900@namesys.com>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: Basic interface for key management in reiser4 (DRAFT)
+Date: Thu, 18 Aug 2005 22:33:54 +0400
+Message-ID: <4304D492.5010203@namesys.com>
+References: <43034EC4.9040906@namesys.com> <43039594.3040300@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="6c2NcOVqGQ03X4Wi"
-Return-path: <reiserfs-list-return-25553-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25555-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <42FCB873.8070900@namesys.com>
+In-Reply-To: <43039594.3040300@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: Tarmo =?iso-8859-2?Q?T=E4nav?= <tarmo@itech.ee>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, mason@suse.com, jeffm@suse.com, grev@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Reiserfs List <reiserfs-list@namesys.com>
 
---6c2NcOVqGQ03X4Wi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hans Reiser wrote:
 
-  Hello,
+>How much of this is implemented at this time?
+>  
+>
 
-> Jan Kara wrote:
-> >>Tried the attached patch but it changed nothing, I trying to create
-> >>a new file as a user whose quota grace time has ran out will still
-> >>cause everything accessing the users homedir (the one with the quota)
-> >>to hang in D state.
-> >>
-> >>Also note that the bug I reported only exists when acl is also
-> >>enabled (does not have to be used). And although my kernel is not
-> >>built with debug (or reiserfs debug) support, I don't get any
-> >>oopses or reiserfs errors.. it just hangs.
-> >
-> 
-> It looks like the problem is that reiserfs_new_inode can be called either 
-> having xattrs locked or not.
-> It does unlocking/locking xattrs on error handling path, but has no idea 
-> about whether
-> xattrs are locked of not.
-> The attached patch seems to fix the problem.
-> I am not sure whether it is correct way to fix this problem, though.
-  I've already fixed this problem and Andrew accepted the patch into
--mm. I took a bit different approach but yours might be better in a long
-run (mine is just a one liner). The patch is attached if you're
-interested.
+~50%
 
-								Honza
---
-Jan Kara <jack@suse.cz>
-SuSE CR Labs
+>Your english has improved a lot.
+>
+>Edward Shishkin wrote:
+>
+>  
+>
+>> Hello everyone.
+>>
+>> Here is a description of a simple optional interface to import and
+>>propagate
+>>cipher keys. This interface will be available via 
+>>    
+>>
+>
+>a
+>
+>  
+>
+>>compile-time option
+>>ENABLE_COMMON_CRYPTO_STAT which adds some fields to 
+>>    
+>>
+>
+>some
+>
+>  
+>
+>>in-memory structures
+>>    
+>>
+>
+>: the
+>
+>  
+>
+>>reiser4
+>>superblock and 
+>>    
+>>
+>
+>the
+>
+>  
+>
+>>reiser4-specific part of
+>>    
+>>
+>
+>the
+>
+>  
+>
+>>inode.
+>> The common idea is to make possible to attach a key to any object
+>>(directory,
+>>regular file, etc..) that is supposed to work with 
+>>    
+>>
+>
+>with what?  encryption?
+>  
+>
 
---6c2NcOVqGQ03X4Wi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="reiser-2.6.13-rc6-2-xattr_fix.diff"
+I meant to attach it to the objects that are supposed to work with this key.
+Currently it is directories and cryptcompress files
 
-When i_acl_default is set to some error we do not hold the lock (hence we are
-not allowed to drop it and reacquire later).
+>  
+>
+>>(there is a special pointer
+>>in reiser4-specific part of inode when this option is on), and
+>>propagate it down
+>>(root is up) through the semantic tree via its inheriting from parent
+>>objects).
+>>In spite of its simplicity there can be various obscured issues, so
+>>all comments
+>>are welcome.
+>>
+>>NOTE: This interface is over linux crypto-api.
+>>    
+>>
+>
+>URL please
+>  
+>
 
-Signed-off-by: Jan Kara <jack@suse.cz>
+there is no URL. Only a source of testing module linux/crypto/tcrypt.c
+which shows how to use it
 
-diff -rupX /home/jack/.kerndiffexclude linux-2.6.13-rc6-1-reiser_create_fix/fs/reiserfs/inode.c linux-2.6.13-rc6-2-reiser_xattr_fix/fs/reiserfs/inode.c
---- linux-2.6.13-rc6-1-reiser_create_fix/fs/reiserfs/inode.c	2005-08-14 17:10:21.000000000 +0200
-+++ linux-2.6.13-rc6-2-reiser_xattr_fix/fs/reiserfs/inode.c	2005-08-14 17:11:35.000000000 +0200
-@@ -1985,7 +1985,7 @@ int reiserfs_new_inode(struct reiserfs_t
- 	 * iput doesn't deadlock in reiserfs_delete_xattrs. The locking
- 	 * code really needs to be reworked, but this will take care of it
- 	 * for now. -jeffm */
--	if (REISERFS_I(dir)->i_acl_default) {
-+	if (REISERFS_I(dir)->i_acl_default && !IS_ERR(REISERFS_I(dir)->i_acl_default)) {
- 		reiserfs_write_unlock_xattrs(dir->i_sb);
- 		iput(inode);
- 		reiserfs_write_lock_xattrs(dir->i_sb);
+>  
+>
+>> I should remind that encryption and compression in reiser4 are
+>>performed in
+>>flush time for a special kind of reiser4 regular files (cryptcompress
+>>files).
+>>Currently only directories and cryptcompress regular files interact with
+>>cipher keys.
+>>
+>>
+>>                       I. Object cipher keyid
+>>
+>>
+>> Each regular cryptcompress file should have a keyid (32-bit or
+>>greater word)
+>>which is created by reiser4 digest plugin and supposed to be stored in
+>>disk
+>>stat-data. The keyid exists because of 2 reasons:
+>>1. It is used for key identification: even if cipher key is not
+>>loaded, user
+>>  can check the object keyid (for example by using a pseudo-file
+>>interface) and
+>>  use it to find an appropriate cipher key (which is located in mind or
+>>  somewhere on removable area).
+>>2. It is used to not allow users load wrong keys, because writing to a
+>>file with
+>>  wrong key loaded leads to data corruption (it is harmfully
+>>    
+>>
+>
+>^harmfully^harmful
+>
+>  
+>
+>>not for the
+>>  filesystem, but for user)
+>>
+>> Keyid is created by the pair "key-passphrase", where "key" is a
+>>string which
+>>is required by cipher algorithm and participates in cipher transforms,
+>>and
+>>"passphrase" is any private string. Both key and passphrase should be
+>>specified
+>>by user). Keyid is created by the following steps:
+>>
+>>1. encrypting the passphrase by the key;
+>>2. creating a big digest of the result by stable hash function
+>>(sha256, etc..)
+>>3. having first N bits of the big digest as resulted keyid.
+>>
+>>    
+>>
+>
+>  
+>
+>>Q: Is it safe to use only 32 bit for keyid?
+>>A: Having a 32-keyid does not allow to reveal a cipher key as the big
+>>digest
+>>  was created by safe operations. If you want to avoid collisions in key
+>>  identification add a new digest plugin that will create a greater
+>>keyid.
+>>    
+>>
+>
+>This assumes the use of a non-trivial passphrase.
+>
+>  
+>
+>>                    II. Importing a cipher key
+>>
+>>
+>> First of all a cipher key should be imported to the kernel and
+>>uploaded to
+>>some object. We will use to say that key is attached to the object A
+>>meaning this
+>>initial importing and uploading to A.
+>>
+>> One of the possible ways to attach a cipher key to an object is to
+>>implement
+>>it via a ->write() method of special new keyload pseudo file
+>>(PSEUDO_KEYLOAD_ID)
+>>of this object. It means accepting and parsing a pair
+>>"key-passphrase", then
+>>allocating and filling the following structure:
+>>
+>>typedef struct crypto_stat {
+>>      __u8 *keyid;          /* keyid */
+>>        int keyid_size;     /* keyid size */
+>>      ...
+>>      __u32 *key;           /* cipher key wrapped by
+>>                               struct crypto_tfm
+>>(include/linux/crypto.h) */
+>>      ...
+>>      int keyload_count;
+>>} crypto_stat_t;
+>>    
+>>
+>
+>How is it attached?   
+>
 
---6c2NcOVqGQ03X4Wi--
+via load operation described below in IV. (I have missed a reference here)
+
+>The below suggests it is part of the inode.... if
+>so say so here.
+>
+>  
+>
+>  
+>
+>>       III. Packing/extracting crypto stat-data of the object
+>>
+>> The crypto-stat of directory inode is not saved on disk.
+>>When writing inode of (cryptcompress) regular file, keysize and keyid
+>>are saved
+>>on disk in special reiser4 CRYPTO_STAT stat-data extension.
+>>When reading inode of regular file the ->present() method of this
+>>stat-data
+>>allocates and fills the crypto-stat, but without cipher key loaded
+>>(there are
+>>only keysize and keyid). Such incomplete crypto-stat can be used only to
+>>observe crypto-specific attributes of the file (for example by
+>>->read() method
+>>of its keyload pseudo-file).
+>>
+>>
+>>                  IV. Propagating a cipher key
+>>
+>>
+>>Some definitions:
+>>
+>>To load a specified crypto-stat to the object means to keep a pointer
+>>to this
+>>structure in reiser4-specific part of inode and increment a
+>>keyload_count.
+>>
+>>To unload a crypto-stat of the object means to decrement keyload_count
+>>and free
+>>the structure if this count became zero.
+>>
+>>NOTE: All load/unload operations are protected by special per-superblock
+>>semaphore.
+>>
+>>Propagating a cipher key is going as
+>>    
+>>
+>
+>^going as^done by
+>
+>  
+>
+>>inheriting the crypto-stat from parent to
+>>child via special methods of reiser4 file plugin:
+>>
+>>1. Inheriting during open()   is implemented via ->open();
+>>2. Inheriting during create() is implemented via ->adjust_to_parent();
+>>3. Inheriting during lookup() is implemented via ->bind().
+>>    
+>>
+>
+>Tell me more about inheriting via bind and open (why both, for example).
+>  
+>
+
+The inode operation reiser4_lookup() calls plugin->bind() in the case 
+when a new object
+was looked up. But if the object is already present in the cache without 
+cipher key loaded,
+it will be convenient to have an additional way to inherit it (this is a 
+hook in plugin->open()).
+We may consider another approach when inheriting occurs at each 
+reiser4_lookup (not only
+for new objects which were not present in the cache). In this approach 
+we do not need
+to inherit a key during ->open(), but inheriting a cipher key at each 
+lookup looks too
+aggressive..
+
+>  
+>
+>> All those methods try to inherit crypto-stat from parent. If
+>>inheritance is
+>>possible, the old crypto-stat of the object is unloaded (if any) and
+>>new one
+>>is loaded. If the child is a directory, the inheritance is always
+>>possible.
+>>If the child is a cryptcomperss file inheritance is possible only if
+>>this child
+>>does not have a crypto-stat (file just created) or its keyid and other
+>>attributes (except a cipher key) coincide with the attributes of parent
+>>directory.
+>> So if you wanna
+>>    
+>>
+>
+>wanna is informal english, use want to
+>
+>  
+>
+>>open/create a file one
+>>    
+>>
+>
+>One should use either one or you consistently, lest you confuse the
+>reader.;-)
+>
+>  
+>
+>>should attach a key to any existing
+>>member of its pathname. For example, in order to create
+>>"/mnt/mydir/myfile" one
+>>may attach a key either to "/mnt", or to "/mnt/mydir". In the first
+>>case it is
+>>possible that "/mnt/mydir" is in the cache already, so it is necessary
+>>also to
+>>open it for carrying out the key. Key can be attached to existing
+>>(cryptcompress) regular file if it does not have a cipher key loaded
+>>(also it
+>>should have in its plugin_set non-trivial cipher transform plugin
+>>installed).
+>>
+>>
+>>                   V. Eliminating a cipher key
+>>
+>>
+>>Eliminating is possible only as a result of unloading a crypto-stat
+>>that is used
+>>by nobody (keyload_count became zero). Eliminating can occur when
+>>1. inheriting a crypto-stat (old crypto-stat is unloaded);
+>>2. evicting from memory unused inode (its crypto stat is unloaded by
+>>  ->destroy_inode() method of file plugin).
+>>
+>>
+>>                 VI. Opening a cryptcompress file
+>>
+>>
+>>plugin->open() tries to inherit a crypto-stat from parent, then
+>>evaluates the
+>>expression (crypto_stat loaded => cipher key loaded). If it is not
+>>true, EINVAL
+>>will be returned.
+>>
+>>
+>>                VII. An example of possible scenario (DRAFT):
+>>
+>>#pwd
+>>/mnt
+>>#mkdir mydir
+>>#echo -e "crc\0" > mydir/..../plugin/regular
+>>    
+>>
+>
+>Why the \0 ?  Can it be eliminated?  I don't need it when I use /proc.....
+>
+
+I will check if we can avoid this
+
+>Do you think "crc" is user friendly?
+>
+
+sorry, I was wrong: "crc" does not work. One should do
+#echo -e "cryptcompress\0" > mydir/..../plugin/regular
+
+>   What is a "plugin/regular"?  Why
+>not "plugin/file"?
+>
+
+first, we have the following:
+#cat mydir/..../plugin/file
+1 dir directory
+
+second, because the pseudo-file ..../plugin/file is readonly: it is 
+impossible
+to change a file plugin of existing object in reiser4, whereas we want to
+have a pseudo-file to specify file plugins of children to create.
+Vitaly also suggested to rename "regular" to "creat" that sounds like 
+creat (2)
+
+>
+>  
+>
+>>#cat mydir/..../plugin/regular
+>>1 cryptcompress Cryptcompress regular plugin
+>>    
+>>
+>
+>The above is cryptic to me.
+>
+>  
+>
+>>#cat mydir/..../plugin/compression
+>>0 lzo1 lzo1 compression transform
+>>    
+>>
+>
+>The above is cryptic to me.
+>
+
+0 lzo1 lzo1 compression transform
+
+^     ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+|   plugin label    plugin description
+plugin id
+
+
+>  Is it a list of the allowed values for
+>compression algorithm?  What is the 0?
+>
+>  
+>
+>>#cat mydir/..../plugin/digest
+>>1 sha256-32 sha256-32 digest transform
+>>#cat mydir/..../plugin/crypto
+>>0 none absence of crypto transform
+>>#echo -e "blowfish\0" > mydir/..../plugin/crypto
+>>
+>>#touch mydir/myfile
+>>Unable to create file
+>>#cat mydir/..../keyload
+>>No key loaded
+>>
+>>#echo -e "08e19c2d91bbc14f06af9ec61e68\0" > mydir/..../keyload
+>>         ^^----------------^^^^^^^^^^
+>>      keysize     key      passphrase
+>>
+>>#cat mydir/..../keyload
+>>keyid32: f56ef868
+>>loaded 8-byte key for Blowfish cipher algo
+>>
+>>#echo "Hello World" > mydir/myfile
+>>#cd /
+>>#umount /mnt
+>>#mount /dev/hdb5 /mnt
+>>#cat /mnt/mydir/myfile
+>>Unable to open file
+>>#cat /mnt/mydir/myfile/..../keyload
+>>keyid32: f56ef868
+>>No key loaded
+>>
+>>#echo -e "08e19c2d91bbc14f06af9ec61e68\0" > /mnt/mydir/..../keyload
+>>#cat /mnt/mydir/myfile
+>>Hello World
+>>    
+>>
+>
+>When you load a key, who can access the file?  Only the person who
+>loaded it, yes or?
+>
+
+Currently standard unix permissions work here.
+
+Edward.
+
