@@ -1,32 +1,26 @@
-From: michael chang <thenewme91@gmail.com>
+From: Bill Wilken <bill.wilken@comcast.net>
 Subject: Re: Apparent fsck failure ...
-Date: Thu, 18 Aug 2005 15:57:39 -0400
-Message-ID: <b14e81f00508181257ba60bc8@mail.gmail.com>
+Date: Thu, 18 Aug 2005 16:14:45 -0400
+Message-ID: <1124396085.13425.4.camel@linux.site>
 References: <1124392060.12959.5.camel@linux.site>
+	 <b14e81f00508181257ba60bc8@mail.gmail.com>
+Reply-To: Bill.Wilken@comcast.net
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25560-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25561-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1124392060.12959.5.camel@linux.site>
-Content-Disposition: inline
+In-Reply-To: <b14e81f00508181257ba60bc8@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Bill.Wilken@comcast.net
+To: michael chang <thenewme91@gmail.com>
 Cc: reiserfs-list@namesys.com
 
-On 8/18/05, Bill Wilken <bill.wilken@comcast.net> wrote:
-> because dev/hda2 is mounted with write permissions (See below) Why
-> wouldn't you mount a hard drive partition with write permissions?
+Thanks.  You jogged my memory.  Coming back to the unix world after a
+long absence.  If I remember correctly, under Altos Unix 20 years ago,
+you could simply bring up the system in single-user mode and avoid the
+need to remount the partition read/only.
 
-Because then something can write to the partition when fsck is
-working.  Solution? Remount read only.
 
-Same with ext2/3 and everything else, IIRC....
-
---=20
-~Mike
- - Just my two cents
- - No man is an island, and no man is unable.
