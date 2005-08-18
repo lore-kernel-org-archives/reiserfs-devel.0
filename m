@@ -1,34 +1,55 @@
-From: cbaegert@europeanservers.net
-Subject: Re: is quota functional in 2.6.12.3 ?
-Date: Thu, 18 Aug 2005 21:05:02 +0200
-Message-ID: <200508182105.02706.cbaegert@europeanservers.net>
-References: <200508182055.38674.cbaegert@europeanservers.net> <b14e81f00508181201c666f7c@mail.gmail.com>
+From: Bill Wilken <bill.wilken@comcast.net>
+Subject: Apparent fsck failure ...
+Date: Thu, 18 Aug 2005 15:07:40 -0400
+Message-ID: <1124392060.12959.5.camel@linux.site>
+Reply-To: Bill.Wilken@comcast.net
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25558-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25559-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b14e81f00508181201c666f7c@mail.gmail.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: michael chang <thenewme91@gmail.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Hi,
+I am running Suse 9.3, 32-bit, on an Athlon-64 CPU (my 2800-series cpu
+won't support the 64-bit product) with 1GB RAM, a 40GB hard drive
+(dev/hda2), and a DVD/RW.  Suse tells me that I must run fsck manually
+because dev/hda2 is mounted with write permissions (See below) Why
+wouldn't you mount a hard drive partition with write permissions?
 
-Le Jeudi 18 Ao=FBt 2005 21:01, michael chang a =E9crit :
-> On 8/18/05, cbaegert@europeanservers.net <cbaegert@europeanservers.net>=20
-wrote:
-> > I tried to use quota with ReiserFS and a stock kernel 2.6.12.3.
->
-> V3 or V4?
+linux:/home/wilkenw # fsck -CV
+fsck 1.36 (05-Feb-2005)
+Checking all file systems.
+[/sbin/fsck.reiserfs (1) -- /] fsck.reiserfs /dev/hda2
+reiserfsck 3.6.18 (2003 www.namesys.com)
 
-the version included in the kernel (they still didn't switch to V4, did=20
-they ?)
+*************************************************************
+** If you are using the latest reiserfsprogs and  it fails **
+** please  email bug reports to reiserfs-list@namesys.com, **
+** providing  as  much  information  as  possible --  your **
+** hardware,  kernel,  patches,  settings,  all reiserfsck **
+** messages  (including version),  the reiserfsck logfile, **
+** check  the  syslog file  for  any  related information. **
+** If you would like advice on using this program, support **
+** is available  for $25 at  www.namesys.com/support.html. **
+*************************************************************
 
-Regards
-=2D-=20
-Christophe BAEGERT              c.baegert@europeanservers.net
+Will read-only check consistency of the filesystem on /dev/hda2
+Will put log info to 'stdout'
+
+Do you want to run this program?[N/Yes] (note need to type Yes if you
+do):Yes
+###########
+reiserfsck --check started at Thu Aug 18 15:00:39 2005
+###########
+Partition /dev/hda2 is mounted with write permissions, cannot check it
+fsck.reiserfs /dev/hda2 failed (status 0x10). Run manually!
+
+
+
+
+
+
