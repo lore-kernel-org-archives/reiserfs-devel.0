@@ -1,128 +1,50 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Gregory Maxwell <gmaxwell@gmail.com>
 Subject: Re: Basic interface for key management in reiser4 (DRAFT)
-Date: Thu, 18 Aug 2005 17:30:58 -0700
-Message-ID: <43052842.6050505@namesys.com>
-References: <43034EC4.9040906@namesys.com> <43039594.3040300@namesys.com> <4304D492.5010203@namesys.com>
+Date: Fri, 19 Aug 2005 00:18:24 -0400
+Message-ID: <e692861c05081821185566955d@mail.gmail.com>
+References: <43034EC4.9040906@namesys.com> <43039594.3040300@namesys.com>
+	 <4304D492.5010203@namesys.com> <43052842.6050505@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25563-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-25565-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4304D492.5010203@namesys.com>
+In-Reply-To: <43052842.6050505@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward@namesys.com>
-Cc: Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Reiserfs List <reiserfs-list@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: Edward Shishkin <edward@namesys.com>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Reiserfs List <reiserfs-list@namesys.com>
 
-Edward Shishkin wrote:
+On 8/18/05, Hans Reiser <reiser@namesys.com> wrote:
+> but the idea is to use keys instead of standard unix permissions....
+>=20
+> I think you need to store keys in a per process place, and allow
+> specifying whether children of a process inherit the keys somehow.
 
->>
->
->>   What is a "plugin/regular"?  Why
->> not "plugin/file"?
->>
->
-> first, we have the following:
-> #cat mydir/..../plugin/file
-> 1 dir directory
->
-> second, because the pseudo-file ..../plugin/file is readonly
+Oh, slick!
 
-you can change that, but perhaps better would be to cat "crypt_compress"
-> mydir/..../children_inherit/plugin
+I did not previously catch what the advantage would be to using crypto
+in the FS rather than just a crypted block device... minus some non
+critical niceties (like being able to use a random & per file IV is
+good from a security perspective.).
 
-> : it is impossible
-> to change a file plugin of existing object in reiser4, whereas we want to
-> have a pseudo-file to specify file plugins of children to create.
-> Vitaly also suggested to rename "regular" to "creat" that sounds like
-> creat (2)
->
->>
->>  
->>
->>> #cat mydir/..../plugin/regular
->>> 1 cryptcompress Cryptcompress regular plugin
->>>   
->>
->>
->> The above is cryptic to me.
->>
->>  
->>
->>> #cat mydir/..../plugin/compression
->>> 0 lzo1 lzo1 compression transform
->>>   
->>
->>
->> The above is cryptic to me.
->>
->
-> 0 lzo1 lzo1 compression transform
->
-> ^     ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^
-> |   plugin label    plugin description
-> plugin id
+Now I see what is possible, and I'm really excited.
 
-Why not a separate file for each of these fields?
+It will be interesting to see how a system with many keys performs..
+most fast implementations of most crypto algs need a computationally
+expensive key setup which produces a fairly large working set of
+constants for encryption/decryption.
 
->
->
->>  Is it a list of the allowed values for
->> compression algorithm?  What is the 0?
->>
->>  
->>
->>> #cat mydir/..../plugin/digest
->>> 1 sha256-32 sha256-32 digest transform
->>> #cat mydir/..../plugin/crypto
->>> 0 none absence of crypto transform
->>> #echo -e "blowfish\0" > mydir/..../plugin/crypto
->>>
->>> #touch mydir/myfile
->>> Unable to create file
->>> #cat mydir/..../keyload
->>> No key loaded
->>>
->>> #echo -e "08e19c2d91bbc14f06af9ec61e68\0" > mydir/..../keyload
->>>         ^^----------------^^^^^^^^^^
->>>      keysize     key      passphrase
->>>
->>> #cat mydir/..../keyload
->>> keyid32: f56ef868
->>> loaded 8-byte key for Blowfish cipher algo
->>>
->>> #echo "Hello World" > mydir/myfile
->>> #cd /
->>> #umount /mnt
->>> #mount /dev/hdb5 /mnt
->>> #cat /mnt/mydir/myfile
->>> Unable to open file
->>> #cat /mnt/mydir/myfile/..../keyload
->>> keyid32: f56ef868
->>> No key loaded
->>>
->>> #echo -e "08e19c2d91bbc14f06af9ec61e68\0" > /mnt/mydir/..../keyload
->>> #cat /mnt/mydir/myfile
->>> Hello World
->>>   
->>
->>
->> When you load a key, who can access the file?  Only the person who
->> loaded it, yes or?
->>
->
-> Currently standard unix permissions work here.
+With a per process structure there should be a way to revoke all
+instances of a key from all the other running processes that carry
+it.. or at least all processes of a specific user. Otherwise it will
+be too easy to accidental leave keys laying around.
 
-but the idea is to use keys instead of standard unix permissions....
+This per process crypto in the FS fits very nicely with a lot of the
+other recent security advances in the Linux world.
 
-I think you need to store keys in a per process place, and allow
-specifying whether children of a process inherit the keys somehow.
-
->
-> Edward.
->
->
->
-
+Thanks for something new and exciting to talk about with my Linux
+using friends! :)
