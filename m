@@ -1,67 +1,46 @@
-From: Edward Shishkin <edward@namesys.com>
+From: Gregory Maxwell <gmaxwell@gmail.com>
 Subject: Re: Basic interface for key management in reiser4 (DRAFT)
-Date: Fri, 19 Aug 2005 15:43:33 +0400
-Message-ID: <4305C5E5.7000308@namesys.com>
-References: <43034EC4.9040906@namesys.com> <43039594.3040300@namesys.com>	 <4304D492.5010203@namesys.com> <43052842.6050505@namesys.com> <e692861c05081821185566955d@mail.gmail.com>
+Date: Fri, 19 Aug 2005 10:48:40 -0400
+Message-ID: <e692861c0508190748132ceb1d@mail.gmail.com>
+References: <43034EC4.9040906@namesys.com> <43039594.3040300@namesys.com>
+	 <4304D492.5010203@namesys.com> <43052842.6050505@namesys.com>
+	 <e692861c05081821185566955d@mail.gmail.com>
+	 <4305C5E5.7000308@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25572-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-25573-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e692861c05081821185566955d@mail.gmail.com>
+In-Reply-To: <4305C5E5.7000308@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Gregory Maxwell <gmaxwell@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward@namesys.com>
 Cc: Hans Reiser <reiser@namesys.com>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Reiserfs List <reiserfs-list@namesys.com>
 
-Gregory Maxwell wrote:
+On 8/19/05, Edward Shishkin <edward@namesys.com> wrote:
+> Actually it is critical:
+> http://marc.theaimsgroup.com/?l=3Dlinux-kernel&m=3D107719798631935&w=3D2
+> But why random? It is slowly.. I would prefer object-id-based one..
 
->On 8/18/05, Hans Reiser <reiser@namesys.com> wrote:
->  
->
->>but the idea is to use keys instead of standard unix permissions....
->>
->>I think you need to store keys in a per process place, and allow
->>specifying whether children of a process inherit the keys somehow.
->>    
->>
->
->Oh, slick!
->
->I did not previously catch what the advantage would be to using crypto
->in the FS rather than just a crypted block device... minus some non
->critical niceties (like being able to use a random & per file IV
->
+The IV doesn't need to be random, but it should be different for every
+instance of a file, different every time a file is deleted and
+recreated, not increment in any predictable way between files, and be
+impossible to control by a user. It should have a low possibility of
+reuse.
 
-Actually it is critical:
-http://marc.theaimsgroup.com/?l=linux-kernel&m=107719798631935&w=2
-But why random? It is slowly.. I would prefer object-id-based one..
+Earlier linux DM crypt had a weakness where the IV incremented with
+every block in the file system, this lead to some interesting
+watermarking attacks. It was possible to form a stream of data with
+changes that negated the XORs from the trivially incremented IV, and
+thus the first block of each sector could be used to form an
+electronic code book. This has since been corrected with a couple of
+options (one is to use the cryptographic hash of the block number).
 
-
->is
->good from a security perspective.).
->
->Now I see what is possible, and I'm really excited.
->
->It will be interesting to see how a system with many keys performs..
->most fast implementations of most crypto algs need a computationally
->expensive key setup which produces a fairly large working set of
->constants for encryption/decryption.
->
->With a per process structure there should be a way to revoke all
->instances of a key from all the other running processes that carry
->it.. or at least all processes of a specific user. Otherwise it will
->be too easy to accidental leave keys laying around.
->
->This per process crypto in the FS fits very nicely with a lot of the
->other recent security advances in the Linux world.
->
->Thanks for something new and exciting to talk about with my Linux
->using friends! :)
->
->
->  
->
-
+If the user has some way of trivially influencing differences in the
+object ID, for example sequential files have sequential object id,
+then the object ID should be passed through a hash function so that a
+user must know the full object iD in order to predict even a single
+bitflip.
