@@ -1,42 +1,128 @@
-From: Danny <dannydaemonic@gmail.com>
-Subject: Re: another warning
-Date: Thu, 18 Aug 2005 13:25:14 -0700
-Message-ID: <9625752b0508181325433fabb@mail.gmail.com>
-References: <9625752b05081802523a45dde6@mail.gmail.com>
-	 <43045D7C.6070907@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Basic interface for key management in reiser4 (DRAFT)
+Date: Thu, 18 Aug 2005 17:30:58 -0700
+Message-ID: <43052842.6050505@namesys.com>
+References: <43034EC4.9040906@namesys.com> <43039594.3040300@namesys.com> <4304D492.5010203@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25562-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25563-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43045D7C.6070907@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <4304D492.5010203@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: Reiserfs-List@namesys.com
+To: Edward Shishkin <edward@namesys.com>
+Cc: Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Reiserfs List <reiserfs-list@namesys.com>
 
-Thanks for the reply.  Hope I'm not crying wolf.  Someone was setting
-up nfsd, perhaps that caused this.
+Edward Shishkin wrote:
 
-On 8/18/05, Vladimir V. Saveliev <vs@namesys.com> wrote:
-> Hello
->=20
-> Danny wrote:
-> > A couple days ago I got another warning.  This one sounds more
-> > serious, and I'm not low on free space anymore.
-> >
-> > Aug 16 20:21:18 [kernel] reiser4[mount(16045)]: _init_read_super
-> > (fs/reiser4/init_super.c:180)[nikita-2608]:
-> > Aug 16 20:21:18 [kernel] WARNING: loop0: wrong master super block magic=
-.
-> >
-> > Bad magic number?  Does that mean something important was overwritten?
-> >
->=20
-> This looks like it tried to mount loop0 device as reiser4 and the device =
-was not formatted as reiser4.
->=20
+>>
 >
+>>   What is a "plugin/regular"?  Why
+>> not "plugin/file"?
+>>
+>
+> first, we have the following:
+> #cat mydir/..../plugin/file
+> 1 dir directory
+>
+> second, because the pseudo-file ..../plugin/file is readonly
+
+you can change that, but perhaps better would be to cat "crypt_compress"
+> mydir/..../children_inherit/plugin
+
+> : it is impossible
+> to change a file plugin of existing object in reiser4, whereas we want to
+> have a pseudo-file to specify file plugins of children to create.
+> Vitaly also suggested to rename "regular" to "creat" that sounds like
+> creat (2)
+>
+>>
+>>  
+>>
+>>> #cat mydir/..../plugin/regular
+>>> 1 cryptcompress Cryptcompress regular plugin
+>>>   
+>>
+>>
+>> The above is cryptic to me.
+>>
+>>  
+>>
+>>> #cat mydir/..../plugin/compression
+>>> 0 lzo1 lzo1 compression transform
+>>>   
+>>
+>>
+>> The above is cryptic to me.
+>>
+>
+> 0 lzo1 lzo1 compression transform
+>
+> ^     ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> |   plugin label    plugin description
+> plugin id
+
+Why not a separate file for each of these fields?
+
+>
+>
+>>  Is it a list of the allowed values for
+>> compression algorithm?  What is the 0?
+>>
+>>  
+>>
+>>> #cat mydir/..../plugin/digest
+>>> 1 sha256-32 sha256-32 digest transform
+>>> #cat mydir/..../plugin/crypto
+>>> 0 none absence of crypto transform
+>>> #echo -e "blowfish\0" > mydir/..../plugin/crypto
+>>>
+>>> #touch mydir/myfile
+>>> Unable to create file
+>>> #cat mydir/..../keyload
+>>> No key loaded
+>>>
+>>> #echo -e "08e19c2d91bbc14f06af9ec61e68\0" > mydir/..../keyload
+>>>         ^^----------------^^^^^^^^^^
+>>>      keysize     key      passphrase
+>>>
+>>> #cat mydir/..../keyload
+>>> keyid32: f56ef868
+>>> loaded 8-byte key for Blowfish cipher algo
+>>>
+>>> #echo "Hello World" > mydir/myfile
+>>> #cd /
+>>> #umount /mnt
+>>> #mount /dev/hdb5 /mnt
+>>> #cat /mnt/mydir/myfile
+>>> Unable to open file
+>>> #cat /mnt/mydir/myfile/..../keyload
+>>> keyid32: f56ef868
+>>> No key loaded
+>>>
+>>> #echo -e "08e19c2d91bbc14f06af9ec61e68\0" > /mnt/mydir/..../keyload
+>>> #cat /mnt/mydir/myfile
+>>> Hello World
+>>>   
+>>
+>>
+>> When you load a key, who can access the file?  Only the person who
+>> loaded it, yes or?
+>>
+>
+> Currently standard unix permissions work here.
+
+but the idea is to use keys instead of standard unix permissions....
+
+I think you need to store keys in a per process place, and allow
+specifying whether children of a process inherit the keys somehow.
+
+>
+> Edward.
+>
+>
+>
+
