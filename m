@@ -1,108 +1,147 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Error in reiserfsck 3.6.19
-Date: Fri, 19 Aug 2005 18:57:42 +0400
-Message-ID: <200508191857.42370.vitaly@namesys.com>
-References: <b73471a5050819011424c46437@mail.gmail.com>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: Basic interface for key management in reiser4 (DRAFT)
+Date: Fri, 19 Aug 2005 18:56:26 +0400
+Message-ID: <4305F31A.6030507@namesys.com>
+References: <43034EC4.9040906@namesys.com> <43039594.3040300@namesys.com>	 <4304D492.5010203@namesys.com> <43052842.6050505@namesys.com>	 <e692861c05081821185566955d@mail.gmail.com>	 <43056B7E.6030500@namesys.com> <e692861c05081900162985adbc@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25574-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25575-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b73471a5050819011424c46437@mail.gmail.com>
-Content-Disposition: inline
+In-Reply-To: <e692861c05081900162985adbc@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Adam McLellan <alphanos@gmail.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Gregory Maxwell <gmaxwell@gmail.com>
+Cc: Hans Reiser <reiser@namesys.com>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Reiserfs List <reiserfs-list@namesys.com>, Nate Diller <ndiller@namesys.com>
 
-On Friday 19 August 2005 12:14, Adam McLellan wrote:
-> Unless I'm doing something wrong, there is an error in reiserfsck
-> 3.6.19.  It's actually kind of a humourous error; it doesn't divide
-> correctly :-).  I've been going through a somewhat lengthly process to
-> diagnose the problem with my reiserfs filesystem, and finally got to
-> the point where I'm ready to rebuild the superblock.  Here's the
-> output:
-> 
-> 
-> ==> root@0[knoppix]# reiserfsck --rebuild-sb /dev/md0
-> ==> reiserfsck 3.6.19 (2003 www.namesys.com)
-> ==> 
-> ==> *************************************************************
-> ==> ** If you are using the latest reiserfsprogs and  it fails **
-> ==> ** please  email bug reports to reiserfs-list@namesys.com, **
-> ==> ** providing  as  much  information  as  possible --  your **
-> ==> ** hardware,  kernel,  patches,  settings,  all reiserfsck **
-> ==> ** messages  (including version),  the reiserfsck logfile, **
-> ==> ** check  the  syslog file  for  any  related information. **
-> ==> ** If you would like advice on using this program, support **
-> ==> ** is available  for $25 at  www.namesys.com/support.html. **
-> ==> *************************************************************
-> ==> 
-> ==> Will check superblock and rebuild it if needed
-> ==> Will put log info to 'stdout'
-> ==> 
-> ==> Do you want to run this program?[N/Yes] (note need to type Yes if
-> you do):Yes
-> ==> 
-> ==> reiserfs_open: the reiserfs superblock cannot be found on /dev/md0.
-> ==> 
-> ==> what the version of ReiserFS do you use[1-4]
-> ==>         (1)   3.6.x
-> ==>         (2) >=3.5.9 (introduced in the middle of 1999) (if you use
-> linux 2.2, choose
-> ==> this one)
-> ==>         (3) < 3.5.9 converted to new format (don't choose if unsure)
-> ==>         (4) < 3.5.9 (this is very old format, don't choose if unsure)
-> ==>         (X)   exit
-> ==> 1
-> ==> 
-> ==> Enter block size [4096]:
-> ==> 16384
+Gregory Maxwell wrote:
 
-blocksize cannot be larger than page size.
+>On 8/19/05, Hans Reiser <reiser@namesys.com> wrote:
+>  
+>
+>>I think it would make sense to put the keys as files in /proc:
+>>e.g.
+>>touch  /proc/1/keys/private/"0893410984328098094321"
+>>would give init (aka process with id of 1) a new key that its children
+>>would not inherit
+>>touch  /proc/1/keys/inheritable/"1893410984328098094321"
+>>would give init a new key that is children WOULD inherit.
+>>
+>>Not sure what the permissions on that keys directory would be, I guess 700.
+>>    
+>>
+>
+>Eh, that would make leaks of key information easy..  Since most
+>applications don't assume that something visable in a file name could
+>be highly confidential information. :)
+>
+>Better to have the file in proc be an abbriviated keyid (some kind of
+>smaller lossy hash of the key). To add you might echo "label:real key
+>data" > /proc/1/keys/private/keys, and a file would appear named
+>/proc/1/keys/private/label-123abcd which is a user defined label and
+>the hash.
+>
+>Under no condition should a process be able to actually read the key
+>data.. they can get the ID.. delete keys based on IDs.. etc. But they
+>can't get the data.. otherwise a process could steal keys. If I take
+>away a processes key from proc, there should be no way for it to get
+>any further access to those files.. no chance that it could have
+>hidden away a copy of that key.
+>  
+>
 
-> ==> rebuild_sb: wrong block size specified, only divisible by 1024 are
-> supported
-> ==> currently
+There is some interface in the latest mm-kernels (not sure about others).
+I can consider its using for reiser4, if we want to attach keys per process:
 
-not clear message, within 512-8192 region.
+config KEYS
+    bool "Enable access key retention support"
+    help
+      This option provides support for retaining authentication tokens and
+      access keys in the kernel.
 
-> ==> 
-> ==> root@0[knoppix]#
-> 
-> So far as I know, 1024 * 16 = 16384.  I'm currently running on a
-> Knoppix 3.9 CD, using the included reiserfsprogs package.  It uses the
-> 2.6.11 linux kernel.  My system doesn't have any stability issues that
-> should cause it to divide incorrectly :-).  Since this appears to be
-> an interface error rather than an operation error, I don't think my
-> kernel modules are relevant, but a log of sorts listing all of the
-> steps I've taken to diagnose my problems since they started can be
-> found at http://forums.gentoo.org/viewtopic-t-371570.html.  It
-> contains a lot of information about my current setup, but much of the
-> early text refers to attempts to check for hardware problems and to
-> fix a software raid problem.
-> If/when I can get past this error message, I hope I am correct in
-> assuming the the program shouldn't have any trouble actually
-> performing the superblock rebuild with a block size of 16384?  
+      It also includes provision of methods by which such keys might be
+      associated with a process so that network filesystems, encryption
+      support and the like can find them.
 
-you are right, it is not a problem for progs. however, recovery 
-with the wrong blocksize will make more harm than good. if not 
-sure about blocksize (or partition start), make a raw backup of the 
-device (dd, dd_rescue) before rebuilding. then proceed with the 
-wanted blocksize (512-8K, probably the default is the correct one)
-and rebuild the journal header if needed.
+      Furthermore, a special type of key is available that acts as keyring:
+      a searchable sequence of keys. Each process is equipped with access
+      to five standard keyrings: UID-specific, GID-specific, session,
+      process and thread.
 
-> I've 
-> been running this filesystem for two years with that block size, and
-> am not ready to give up the data on it just yet :-).
-> Thanks for any help with this problem, and also for the wonderul file
-> system :-).
-> Alphanos
-> 
-> 
+      If you are unsure as to whether this is required, answer N.
 
--- 
-Thanks,
-Vitaly Fertman
+More info in linux/Documentation/keys.txt
+
+>On 8/19/05, Hans Reiser <reiser@namesys.com> wrote:
+>  
+>
+>>I think it would make sense to put the keys as files in /proc:
+>>
+>>e.g.
+>>touch  /proc/1/keys/private/"0893410984328098094321"
+>>would give init (aka process with id of 1) a new key that its children
+>>would not inherit
+>>
+>>touch  /proc/1/keys/inheritable/"1893410984328098094321"
+>>would give init a new key that is children WOULD inherit.
+>>
+>>Not sure what the permissions on that keys directory would be, I guess 700.
+>>
+>>Hans
+>>
+>>Gregory Maxwell wrote:
+>>
+>>    
+>>
+>>>On 8/18/05, Hans Reiser <reiser@namesys.com> wrote:
+>>>
+>>>
+>>>      
+>>>
+>>>>but the idea is to use keys instead of standard unix permissions....
+>>>>
+>>>>I think you need to store keys in a per process place, and allow
+>>>>specifying whether children of a process inherit the keys somehow.
+>>>>
+>>>>
+>>>>        
+>>>>
+>>>Oh, slick!
+>>>
+>>>I did not previously catch what the advantage would be to using crypto
+>>>in the FS rather than just a crypted block device... minus some non
+>>>critical niceties (like being able to use a random & per file IV is
+>>>good from a security perspective.).
+>>>
+>>>Now I see what is possible, and I'm really excited.
+>>>
+>>>It will be interesting to see how a system with many keys performs..
+>>>most fast implementations of most crypto algs need a computationally
+>>>expensive key setup which produces a fairly large working set of
+>>>constants for encryption/decryption.
+>>>
+>>>With a per process structure there should be a way to revoke all
+>>>instances of a key from all the other running processes that carry
+>>>it.. or at least all processes of a specific user. Otherwise it will
+>>>be too easy to accidental leave keys laying around.
+>>>
+>>>This per process crypto in the FS fits very nicely with a lot of the
+>>>other recent security advances in the Linux world.
+>>>
+>>>Thanks for something new and exciting to talk about with my Linux
+>>>using friends! :)
+>>>
+>>>
+>>>
+>>>
+>>>      
+>>>
+>>    
+>>
+>
+>
+>  
+>
+
