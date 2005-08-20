@@ -1,70 +1,32 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Christian Iversen <chrivers@iversen-net.dk>
 Subject: Re: 15M files
-Date: Fri, 19 Aug 2005 15:50:09 -0700
-Message-ID: <43066221.2040807@namesys.com>
-References: <5a59ce53050819144970d07ab0@mail.gmail.com>	 <43065D7D.2000802@namesys.com> <5a59ce53050819153961a71cde@mail.gmail.com>
+Date: Sat, 20 Aug 2005 11:58:59 +0200
+Message-ID: <200508201159.00108.chrivers@iversen-net.dk>
+References: <5a59ce53050819144970d07ab0@mail.gmail.com> <43065899.3030301@slaphack.com> <5a59ce530508191544232bf73d@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25584-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25587-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <5a59ce53050819153961a71cde@mail.gmail.com>
+In-Reply-To: <5a59ce530508191544232bf73d@mail.gmail.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: studdugie <studdugie@gmail.com>
-Cc: reiserfs-mailing-list <reiserfs-list@namesys.com>, vs@namesys.com
+To: reiserfs-list@namesys.com
 
-studdugie wrote:
+On Saturday 20 August 2005 00:44, studdugie wrote:
+> MySQL is too slow for the task, even over localhost. I've benchmarked
+> it. Berkeley DB was 3x faster than MySQL for my usecase. The app is
+> written in Java so I would be forced to use JDBC to talk to MySQL. The
+> wrapping/unwrapping overhead is a killer.
 
->I can't use V4 because I can't introduce an unstable kernel on the box
->where the app is running.
->  
->
-I suggest you ask vs to send you a patch for the stable kernel on
-wednesday or so after we send our latest bundle to akpm (probably on
-monday we will send it).
+I've seen a java library that solves this exact problem - I can't remember 
+what it was called, but it's page talked about massive speedups because it 
+could somehow avoid the insane wrap-unwrap for each little object. Maybe it 
+could help.
 
->On 8/19/05, Hans Reiser <reiser@namesys.com> wrote:
->  
->
->>studdugie wrote:
->>
->>    
->>
->>>Hello. I'm looking to replace a couple Berkeley DB data stores w/
->>>regular file system directories backed by reiserfs (3.6). The reason
->>>is Berkeley DB is slow especially for data w/ little or no locality of
->>>reference. I'm posting to this list because I would like to get some
->>>opinions on if reiserfs is suitable for the job. Currently there are
->>>15,079,597 records in 1 of the database. If I moved to a directory
->>>based db it would result in 15,079,597 discreet files ranging in sizes
->>>      
->>>
->>>from 1 byte to 1kb. I was reading the FAQ on the namesys site and it
->>    
->>
->>>mentioned that the r5 hash supports 1,200,000 files w/o collision.
->>>Since 15M is 12.5x greater I'm expecting massive amounts of
->>>collisions. So the question becomes how bad should I expect it to be?
->>>Should I assume the file system can handle it or slow to a crawl?  I
->>>would really appreciate some feedback from the experts before I go
->>>ripping out the Berkeley DB code.
->>>
->>>Thanx.
->>>
->>>
->>>
->>>
->>>      
->>>
->>Use V4, it has much better hashiing.
->>
->>    
->>
->
->
->  
->
-
+-- 
+Regards,
+Christian Iversen
