@@ -1,9 +1,9 @@
 From: "Lyris ListManager" <lyris-admin@groups.ittoolbox.com>
 Subject: Re: SAP-R3-ACCT@OPENITX.COM
-Date: Sun, 21 Aug 2005 04:06:45 -0400
-Message-ID: <LYRIS0-1124611605--3752-lyris-admin@groups.ittoolbox.com>
+Date: Sun, 21 Aug 2005 04:07:00 -0400
+Message-ID: <LYRIS0-1124611620--6076-lyris-admin@groups.ittoolbox.com>
 Reply-To: "Lyris ListManager" <lyris@groups.ittoolbox.com>
-Return-path: <reiserfs-list-return-25593-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25594-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -27,7 +27,7 @@ your message was not accepted.
 ---
 
 Return-Path: <reiserfs-list@namesys.com>
-Received: from namesys.com ([62.118.144.45]) by  with SMTP (Lyris ListManager WIN32 version 7.0f); Sun, 21 Aug 2005 04:03:22 -0400
+Received: from namesys.com ([62.118.144.45]) by  with SMTP (Lyris ListManager WIN32 version 7.0f); Sun, 21 Aug 2005 04:00:20 -0400
 From: reiserfs-list@namesys.com
 To: sap-r3-acct@openitx.com
 Subject: SAP-R3-ACCT@OPENITX.COM
