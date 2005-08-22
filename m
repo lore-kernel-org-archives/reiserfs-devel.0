@@ -1,113 +1,72 @@
-From: "Charles P. Wright" <cwright@cs.sunysb.edu>
-Subject: Re: Odd llseek semantics on directories
-Date: Mon, 22 Aug 2005 13:12:43 -0400
-Message-ID: <1124730763.30283.4.camel@polarbear.fsl.cs.sunysb.edu>
-References: <1124722904.25421.11.camel@polarbear.fsl.cs.sunysb.edu>
-	 <4309FB0C.9010409@namesys.com>
+From: Cris Rhea <crhea@mayo.edu>
+Subject: Two possible bugs in V3 ReiserFS and 2.4.31 kernel??
+Date: Mon, 22 Aug 2005 15:15:35 -0500
+Message-ID: <20050822201535.GA15324@kaizen.mayo.edu>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-2m2djqcU1uLIJaAB5HlO"
-Return-path: <reiserfs-list-return-25611-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25612-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4309FB0C.9010409@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
-
---=-2m2djqcU1uLIJaAB5HlO
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Vladimir,
+Background:
 
-We actually came across this while working on Unionfs in the kernel,
-which uses lseek to inquire about directory positions and then resume
-directory reading operations (much like nfsd does).
+Dell 6600 (4 processor, 8GB memory) with RHAS3 loaded.
+Email product vendor suggests using ReiserFS V3 on mail spool directory
+for speed (many files in one directory).
 
-I've attached a user space program that demonstrates the behavior.
+Since RedHat does not support/include ReiserFS in their kernels, download
+and build the latest 2.4 kernel:
 
-The relevant strace entries are:
-open("/mnt/r4/", O_RDONLY)              = 3
-getdents(3, /* 5 entries */, 268)       = 80
-lseek(3, 0, SEEK_CUR)                   = -1 ENOENT
-lseek(3, 4294967295, SEEK_SET)          = -1 EINVAL
+	linux-2.4.31.tar.gz (ftp.kernel.org)
 
-The third line is the one of concern.
+From my reading, there are NO patches for ReiserFS...
 
-The same program run on another file system yields a trace like:
-open("/mnt", O_RDONLY)                  = 3
-getdents(3, /* 4 entries */, 268)       = 68
-lseek(3, 0, SEEK_CUR)                   = 2147483647
-lseek(3, 2147483647, SEEK_SET)          = 2147483647
+Take current kernel config (RedHat's kernel-2.4.21-i686-smp.config) and 
+use it for the base for the 2.4.31 kernel (make oldconfig). Take defaults 
+(mostly "N") for all new features.  Reiserfs is a module. 
 
-Charles
+Download, compile, and install reiserfsprogs-3.6.19.tar.gz.
 
-On Mon, 2005-08-22 at 20:19 +0400, Vladimir V. Saveliev wrote:
-> Hello
-> 
-> Charles P. Wright wrote:
-> > Hello,
-> > 
-> > I've noticed that Reiser4's behavior deviates from other file systems
-> > when seeking with directories.  After reading a directory, if you run
-> > vfs_lseek(dir, 0, SEEK_CUR), then -ENOENT is returned.   This means that
-> > you can't pass the identifier back to vfs_lseek with SEEK_SET.
-> > 
-> Would you please send your test program?
+Upon reboot, reiserfs shows up in lsmod....
 
---=-2m2djqcU1uLIJaAB5HlO
-Content-Disposition: attachment; filename=getdents-reiserbug.c
-Content-Type: text/x-csrc; name=getdents-reiserbug.c; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+mkreiserfs -b 2048 /dev/sdc1  (sdc1 is a RAID-5 hardware LUN on the Dell
+                              PERC controller. Only one partition defined 
+                              [entire disk] as type 83.)
+Command completes successfully.
 
-#include <stdio.h>
-#include <linux/types.h>
-#include <linux/unistd.h>
-#include <linux/dirent.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include <sys/errno.h>
-#include <unistd.h>
-#include <stdlib.h>
+reiserfsck /dev/sdc1 also works successfully....
 
-_syscall3(int, getdents, uint, fd, struct dirent *, dirp, uint, count);
+Mount via fstab or via: mount -t reiserfs /dev/sdc1 /var/spool/MHS1
+fails with:
 
-int main(int argc, char *argv[])
-{
-	struct dirent dirent;
-	int fd;
-	int nread;
-	struct dirent *p;
-	off_t offset;
+mount: wrong fs type, bad option, bad superblock on /dev/sdc1,
+       or too many mounted file systems
 
-	if (argc != 2) {
-		fprintf(stderr, "No dir specified\n");
-		exit(1);
-	}
+Running the mkreiserfs without the "-b 2048" works fine (correctly mounts).
 
-	if ((fd = open(argv[1], O_RDONLY)) < 0) {
-		fprintf(stderr, "Could not open directory %s\n", argv[1]);
-		exit(2);
-	}
+Second problem.... if one labels the filesystem during build
+(mkreiserfs -l "/var/spool/MHS1" /dev/sdc1), this fails to mount if you
+use the "LABEL=/var/spool/MHS1" option in /etc/fstab.  This is supposed to
+work on 3.6 per the FAQ.
 
-	while ((nread = getdents(fd, &dirent, sizeof(dirent))) > 0) {
-		p = &dirent;
-		while (nread > 0) {
-			printf("d_reclen = %d, d_name = %s, d_off = %lu\n", p->d_reclen, p->d_name, p->d_off);
-			nread -= p->d_reclen;
-			p = (struct dirent *)((char *)p + p->d_reclen);
-		}
-		offset = lseek(fd, 0, SEEK_CUR);
-		printf("Offset is %llu\n", offset);
-		if (lseek(fd, offset, SEEK_SET) < 0) {
-			perror("lseek");
-			exit(1);
-		}
-	}
-	exit(0);
-}
+I didn't find much on the 'net other than patches/problems for early 
+2.4 kernels. 
 
---=-2m2djqcU1uLIJaAB5HlO--
+I'm having a hard time believing nobody has ever tried "-b 2048" on 
+V3 ReiserFS previously.... must be something hosed in the latest
+kernel.....
 
+--- Cris
+
+
+-- 
+ Cristopher J. Rhea                     Mayo Foundation
+ Research Computing Facility             Pavilion 2-25
+ crhea@Mayo.EDU                        Rochester, MN 55905
+ (507) 284-0587                        Fax: (507) 284-5231
