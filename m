@@ -1,43 +1,45 @@
-From: Lexington Luthor <lexington.luthor@gmail.com>
-Subject: Re: 15M files
-Date: Sun, 21 Aug 2005 20:16:27 +0100
-Message-ID: <deajuf$fnu$1@sea.gmane.org>
-References: <5a59ce53050819144970d07ab0@mail.gmail.com>
+From: Michael James <Michael.James@csiro.au>
+Subject: Re: reiser4 sending process to D state
+Date: Mon, 22 Aug 2005 11:41:32 +1000
+Message-ID: <200508221141.32201.Michael.James@csiro.au>
+References: <43012902.1010600@webalive.biz> <4303D5CC.8000704@webalive.biz> <430843A8.9070301@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25596-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25601-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <5a59ce53050819144970d07ab0@mail.gmail.com>
-Sender: news <news@sea.gmane.org>
+In-Reply-To: <430843A8.9070301@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-studdugie wrote:
-> Hello. I'm looking to replace a couple Berkeley DB data stores w/
-> regular file system directories backed by reiserfs (3.6). The reason
-> is Berkeley DB is slow especially for data w/ little or no locality of
-> reference. I'm posting to this list because I would like to get some
-> opinions on if reiserfs is suitable for the job. Currently there are
-> 15,079,597 records in 1 of the database. If I moved to a directory
-> based db it would result in 15,079,597 discreet files ranging in sizes
-> from 1 byte to 1kb. I was reading the FAQ on the namesys site and it
-> mentioned that the r5 hash supports 1,200,000 files w/o collision.
-> Since 15M is 12.5x greater I'm expecting massive amounts of
-> collisions. So the question becomes how bad should I expect it to be?
-> Should I assume the file system can handle it or slow to a crawl?  I
-> would really appreciate some feedback from the experts before I go
-> ripping out the Berkeley DB code.
+On Sun, 21 Aug 2005 07:04 pm, Vladimir V. Saveliev wrote:
+
+> well, it looks like there is some problem in
+> interaction between Fusion scsi driver and reiser4. 
+> Nate <nate.diller@gmail.com> has the same problem on this hardware.
 > 
-> Thanx.
-> 
+> Would you please try reiser4 on ide harddrive to confrm this guess?
 
-Use the SkipDB library - I have a similar code in one of my programs, 
-and SkipDB is almost 3x the speed of BDB (plus you don't lose control of 
-transaction safety).
+I can't get reiser4 to work and it's on a fusion disk too.
+Trouble is, it's a blade server no IDE, no PCI.
 
-LL
+This was using stock Suse 9.3 Pro modules.
+(I'm sorry Hans, I haven't had time to try kernel.org.
+  I have a lot of faith in the Suse provided ones.)
 
+See my earlier thread, "Trouble with Suse9.3's reiser4"
+
+michaelj
+
+-- 
+Michael James                         michael.james@csiro.au
+System Administrator                    voice:  02 6246 5040
+CSIRO Bioinformatics Facility             fax:  02 6246 5166
+
+No matter how much you pay for software,
+ you always get less than you hoped.
+Unless you pay nothing, then you get more.
