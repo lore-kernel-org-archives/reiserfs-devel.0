@@ -1,45 +1,37 @@
-From: Michael James <Michael.James@csiro.au>
-Subject: Re: reiser4 sending process to D state
-Date: Mon, 22 Aug 2005 11:41:32 +1000
-Message-ID: <200508221141.32201.Michael.James@csiro.au>
-References: <43012902.1010600@webalive.biz> <4303D5CC.8000704@webalive.biz> <430843A8.9070301@namesys.com>
+From: =?ISO-8859-1?Q?Xu=E2n_Baldauf?=
+ <xuan--2005.08.22--reiserfs-list--namesys.com@baldauf.org>
+Subject: REISERFS_MAX_NAME and ENAMETOOLONG
+Date: Mon, 22 Aug 2005 11:42:44 +0200
+Message-ID: <43099E14.7060902@baldauf.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25601-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-25602-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <430843A8.9070301@namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
 To: reiserfs-list@namesys.com
 
-On Sun, 21 Aug 2005 07:04 pm, Vladimir V. Saveliev wrote:
+Hello,
 
-> well, it looks like there is some problem in
-> interaction between Fusion scsi driver and reiser4. 
-> Nate <nate.diller@gmail.com> has the same problem on this hardware.
-> 
-> Would you please try reiser4 on ide harddrive to confrm this guess?
+when downloading something from java.sun.com (e.g.=20
+http://javashoplm.sun.com/ECom/docs/Welcome.jsp?StoreId=3D22&PartDetailId=
+=3Djdk-1.5.0-doc-oth-JPR&SiteId=3DJSC&TransactionId=3Dnoreg=20
+), very long URLs are encountered. When trying to download using "wget",=20
+wget tries to open a file with those long filenames, and fails with=20
+ENAMETOOLONG (File name too long).
 
-I can't get reiser4 to work and it's on a fusion disk too.
-Trouble is, it's a blade server no IDE, no PCI.
+I think that the limit is due to the REISERFS_MAX_NAME macro=20
+(http://lxr.linux.no/source/include/linux/reiserfs_fs.h?v=3D2.6.10#L1107), =
 
-This was using stock Suse 9.3 Pro modules.
-(I'm sorry Hans, I haven't had time to try kernel.org.
-  I have a lot of faith in the Suse provided ones.)
+which currently resolves to "255" (which supposedly means 255 bytes).
 
-See my earlier thread, "Trouble with Suse9.3's reiser4"
+Is it safe to change REISERFS_MAX_NAME to something larger, or does this=20
+change the disk layout in an unexpected or incompatible way?
 
-michaelj
+Thanks,
 
--- 
-Michael James                         michael.james@csiro.au
-System Administrator                    voice:  02 6246 5040
-CSIRO Bioinformatics Facility             fax:  02 6246 5166
+Xu=E2n Baldauf.
 
-No matter how much you pay for software,
- you always get less than you hoped.
-Unless you pay nothing, then you get more.
