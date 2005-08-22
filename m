@@ -1,41 +1,31 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Can one stop reiserfsck --rebuild-tree
-Date: Mon, 22 Aug 2005 19:22:16 +0400
-Message-ID: <200508221922.16972.vitaly@namesys.com>
-References: <20050822143231.5108.qmail@web51401.mail.yahoo.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: Odd llseek semantics on directories
+Date: Mon, 22 Aug 2005 20:19:24 +0400
+Message-ID: <4309FB0C.9010409@namesys.com>
+References: <1124722904.25421.11.camel@polarbear.fsl.cs.sunysb.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25609-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25610-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050822143231.5108.qmail@web51401.mail.yahoo.com>
-Content-Disposition: inline
+In-Reply-To: <1124722904.25421.11.camel@polarbear.fsl.cs.sunysb.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: "Ricardo (Tru64 User)" <tru64user@yahoo.com>
+To: "Charles P. Wright" <cwright@cs.sunysb.edu>
+Cc: linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
 
-On Monday 22 August 2005 18:32, Ricardo (Tru64 User) wrote:
-> Hi,
-> Checking reiserfs manpages...i dont see a mention of
-> the effects of killing --rebuild-tree process once in
-> progress.
+Hello
 
-it is possible to lose data, when interrupting reiserfsck, however 
-it depends on the rebuild stage: 
-pass0, pass1 -- no problem;
-2 -- internal tree is rebalanced intensively, the worst time to kill;
-semantic and lost&found passes -- it is posible to lose data as when 
-a corruption is found, tree is rebalanced. thus than fewer corruptions 
-present, than fewer rebalancings are performed, than lower chances
-to lose data.
+Charles P. Wright wrote:
+> Hello,
+> 
+> I've noticed that Reiser4's behavior deviates from other file systems
+> when seeking with directories.  After reading a directory, if you run
+> vfs_lseek(dir, 0, SEEK_CUR), then -ENOENT is returned.   This means that
+> you can't pass the identifier back to vfs_lseek with SEEK_SET.
+> 
+Would you please send your test program?
 
-> Can this be suspended (ctrl ^Z)?
 
-yes, no problem.
- 
--- 
-Thanks,
-Vitaly Fertman
