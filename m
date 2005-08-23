@@ -1,55 +1,51 @@
-From: Jonathan Briggs <jbriggs@esoft.com>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: Howto make reiser-3.6 a bit more standby friendly?
-Date: Tue, 23 Aug 2005 08:21:50 -0600
-Message-ID: <1124806910.10775.3.camel@localhost>
-References: <194f62550508230539a1c81d9@mail.gmail.com>
+Date: Tue, 23 Aug 2005 09:25:40 -0500
+Message-ID: <430B31E4.6080807@slaphack.com>
+References: <194f62550508230539a1c81d9@mail.gmail.com>	 <430B26A1.4080003@slaphack.com> <194f6255050823065872f42089@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-9VyCAZEIpWjmpQweV+m6"
-Return-path: <reiserfs-list-return-25622-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25623-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <194f62550508230539a1c81d9@mail.gmail.com>
+In-Reply-To: <194f6255050823065872f42089@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Clemens Eisserer <linuxhippy@gmail.com>
 Cc: reiserfs-list@namesys.com
 
---=-9VyCAZEIpWjmpQweV+m6
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Clemens Eisserer wrote:
+> Hello David and thanks a lot for answering my question.
+> 
+> 
+>>Have you tried "-o noatime"?
+> 
+> Why do you think this could help? 
+> Since the machine does absolutly nothing (no services, simply nothing
+> than a open bash).
 
-On Tue, 2005-08-23 at 14:39 +0200, Clemens Eisserer wrote:
-> Hi there,
->=20
-> I am currently tinkering a idn-router which a harddrive which should
-> mostly be in stand-by.
-> However it seems the drive is rather unimpressed by a 5s timeout
-> setting specified with hdparm and goes in standby very seldom although
-> the computer is runnig 100% idle (even no isdn-services started or
-> anything else).
->=20
-> Could this be because of some journal-writeback stuff or anything like
-> that? Is there a way to tune ReiserFS for more standby-friendliness?
+I remember someone explaining this before.  It went something like this: 
+  The atime update happens whenever something is accessed.  Something 
+(/bin/atime?  not on my system) needs to be accessed in order to make 
+that update.  So, every five seconds, there _will_ be a new atime that 
+must be written, and since ReiserFS3 doesn't do lazy writes, it _will_ 
+be flushed out to disk.  (Reiser4 would just keep it in RAM until memory 
+pressure or a sync/fsync forced it out to disk.)
 
-Check out a script called laptop-mode.  It adjusts various parameters
-including /proc/sys/vm/laptop_mode.  I use Reiser 3 on my laptop and
-laptop_mode seems to work pretty well.
---=20
-Jonathan Briggs <jbriggs@esoft.com>
-eSoft, Inc.
+So, the simplest way is to do "-a noatime", unless you really need the 
+atime updates.  It'll boost your performance, too...
 
---=-9VyCAZEIpWjmpQweV+m6
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+But this is all from memory, from a long time ago.  I have no idea if 
+any of the above is still true.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
+>>Also, Reiser4 is much more standby-friendly.  If you've got the RAM, it
+>>won't touch your disk too much.
+> 
+> Yes I know - but its a bit too complicated for me to get everything
+> up&running from ground up using Reiser4 since its not in the
+> default-kernel of debian :-(
 
-iD8DBQBDCzD+G8fHaOLTWwgRAgROAJwKcNLTy7rBnVI1USJowQZNffihHwCeO+P3
-Qd8xRrq5vVqee5ScQFrvth8=
-=ZXdh
------END PGP SIGNATURE-----
-
---=-9VyCAZEIpWjmpQweV+m6--
+Nor Gentoo, but I use it there anyway.
 
