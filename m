@@ -1,76 +1,40 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: Two possible bugs in V3 ReiserFS and 2.4.31 kernel??
-Date: Tue, 23 Aug 2005 15:04:42 +0400
-Message-ID: <430B02CA.5050209@namesys.com>
-References: <20050822201535.GA15324@kaizen.mayo.edu>
+From: Jan Kara <jack@ucw.cz>
+Subject: Re: is quota functional in 2.6.12.3 ?
+Date: Tue, 23 Aug 2005 13:53:43 +0200
+Message-ID: <20050823115343.GC31783@atrey.karlin.mff.cuni.cz>
+References: <200508182055.38674.cbaegert@europeanservers.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25615-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25616-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050822201535.GA15324@kaizen.mayo.edu>
+Content-Disposition: inline
+In-Reply-To: <200508182055.38674.cbaegert@europeanservers.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Cris Rhea <crhea@mayo.edu>
+Content-Transfer-Encoding: 7bit
+To: cbaegert@europeanservers.net
 Cc: reiserfs-list@namesys.com
 
-Hello
+  Hello,
 
-Cris Rhea wrote:
-> Background:
+> I tried to use quota with ReiserFS and a stock kernel 2.6.12.3.
 > 
-> Dell 6600 (4 processor, 8GB memory) with RHAS3 loaded.
-> Email product vendor suggests using ReiserFS V3 on mail spool directory
-> for speed (many files in one directory).
+> Everything seems to work fine, except that it doesn't work : the user can use 
+> as much space he wants ! However the repquota seems OK.
 > 
-> Since RedHat does not support/include ReiserFS in their kernels, download
-> and build the latest 2.4 kernel:
-> 
-> 	linux-2.4.31.tar.gz (ftp.kernel.org)
-> 
->>From my reading, there are NO patches for ReiserFS...
-> 
-> Take current kernel config (RedHat's kernel-2.4.21-i686-smp.config) and 
-> use it for the base for the 2.4.31 kernel (make oldconfig). Take defaults 
-> (mostly "N") for all new features.  Reiserfs is a module. 
-> 
-> Download, compile, and install reiserfsprogs-3.6.19.tar.gz.
-> 
-> Upon reboot, reiserfs shows up in lsmod....
-> 
-> mkreiserfs -b 2048 /dev/sdc1  (sdc1 is a RAID-5 hardware LUN on the Dell
->                               PERC controller. Only one partition defined 
->                               [entire disk] as type 83.)
-> Command completes successfully.
-> 
-> reiserfsck /dev/sdc1 also works successfully....
-> 
-> Mount via fstab or via: mount -t reiserfs /dev/sdc1 /var/spool/MHS1
-> fails with:
-> 
-> mount: wrong fs type, bad option, bad superblock on /dev/sdc1,
->        or too many mounted file systems
-> 
-> Running the mkreiserfs without the "-b 2048" works fine (correctly mounts).
-> 
+> Any idea ?
+  You probably forgot to turn quotas on using quotaon(8) command.
 
-Yes, please use always default block size.
+> [root@gibraltar linux-2.6.12.3]# repquota /home
+> *** Report for user quotas on device /dev/sda7
+> Block grace time: 00:00; Inode grace time: 7days
+>                         Block limits                File limits
+> User            used    soft    hard  grace    used  soft  hard  grace
+> ----------------------------------------------------------------------
+> root      --  127242       0       0           4155     0     0
+> chris     +-   83201   10240   20480   none     320     0     0
 
-> Second problem.... if one labels the filesystem during build
-> (mkreiserfs -l "/var/spool/MHS1" /dev/sdc1), this fails to mount if you
-> use the "LABEL=/var/spool/MHS1" option in /etc/fstab.  This is supposed to
-> work on 3.6 per the FAQ.
-> 
 
-this works perfectly on 2.6.13-rc6-mm1. And probably on earlier 2.6 kernels.
-
-> I didn't find much on the 'net other than patches/problems for early 
-> 2.4 kernels. 
-> 
-> I'm having a hard time believing nobody has ever tried "-b 2048" on 
-> V3 ReiserFS previously.... must be something hosed in the latest
-> kernel.....
-
-This is known reiserfs problem: no block sizes other than default one
+										Honza
