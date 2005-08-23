@@ -1,39 +1,54 @@
-From: Clemens Eisserer <linuxhippy@gmail.com>
-Subject: Re: Howto make reiser-3.6 a bit more standby friendly?
-Date: Tue, 23 Aug 2005 21:10:03 +0200
-Message-ID: <194f625505082312106ecac3b6@mail.gmail.com>
-References: <194f62550508230539a1c81d9@mail.gmail.com>
-	 <430B31E4.6080807@slaphack.com>
-	 <194f625505082308514acb124f@mail.gmail.com>
-	 <200508231838.37372.chrivers@iversen-net.dk>
+From: =?ISO-8859-1?Q?Konstantin_M=FCnning?= <konstantin@muenning.com>
+Subject: Re: Strange problems/bugs with reiserfs and reiserfschk
+Date: Tue, 23 Aug 2005 23:30:38 +0200
+Message-ID: <430B957E.4020004@muenning.com>
+References: <42F684EE.7010201@muenning.com> <b14e81f0050807152830555213@mail.gmail.com> <42FDE93B.30807@muenning.com> <200508151720.09411.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25628-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25629-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200508231838.37372.chrivers@iversen-net.dk>
-Content-Disposition: inline
+In-Reply-To: <200508151720.09411.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
+Cc: Vitaly Fertman <vitaly@namesys.com>
 
-Hi Christian,
+Hi Vitaly!
 
-> Are you sure? Common "knowledge" (empiric and anecdotal evidence) says th=
-at a
-> spin-up/spin-down cycle costs significantly more "lifetime" than running =
-the
-> drive for the same amount of time. You really have to have extremely few
-> spin-ups for this to have any positive effect, IMHO.
+Thank you for the reiserfsck 3.9.20. It in fact had different results on
+ that drive. I had it run in gdb (as I did with 3.6.19 to see what/where
+the trouble may be) and the result is:
 
-Never really thought about that but the machine acts as server only
-during the day but also runs at night - at that time nothing at all is
-done with the box so I thought it would be better to send the drive to
-sleep overnight.
+(***snip***)
+vpf-10680: The file [641222 641239] has the wrong block count in the
+StatData (1528) - corrected to (1520)
+vpf-10680: The file [641222 641241] has the wrong block count in the
+StatData (47192) - corrected to (47168)
+vpf-10680: The file [641222 641242] has the wrong block count in the
+StatData (16624) - corrected to (16528)
 
-Thanks for this thought - I'll adjust the settings via a cron-daemon
-so that the drive does not have to do unesscesary spin-ups during use.
+are_file_items_correct: All bytes we look for must be first items byte
+(position 0).
 
-lg Clemens
+Program received signal SIGABRT, Aborted.
+0xffffe410 in __kernel_vsyscall ()
+(***snip***)
+
+Hmm... Ugly ;-).
+
+Vitaly Fertman wrote:
+
+> if some file item offsets are corrupted, fsck can work for too long on 
+> pass2. or it also can be a bug. I will send you a version of reiserfsprogs 
+> that has an optimization fix for former. if it fails email me and provide 
+> the metadata please:
+> 	debugreiserfs -p <device> | bzip2 -c > <device>.bz2
+
+Do you need the metadata or the full logfile or should I send you
+something more/else for that?
+
+Thanks and have a nice day,
+Konstantin
