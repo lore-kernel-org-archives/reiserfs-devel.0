@@ -1,32 +1,64 @@
-From: Pierre =?UTF-8?B?RXRjaGVtYcOvdMOp?= <petchema@concept-micro.com>
-Subject: Re: Howto make reiser-3.6 a bit more standby friendly?
-Date: Wed, 24 Aug 2005 00:16:41 +0200
-Message-ID: <20050824001641.3a11e870.petchema@concept-micro.com>
-References: <194f62550508230539a1c81d9@mail.gmail.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Basic interface for key management in reiser4 (DRAFT)
+Date: Tue, 23 Aug 2005 17:52:50 -0700
+Message-ID: <430BC4E2.8080204@namesys.com>
+References: <43034EC4.9040906@namesys.com> <43039594.3040300@namesys.com> <4304D492.5010203@namesys.com> <43052842.6050505@namesys.com> <430B4556.6000608@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25630-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25632-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <194f62550508230539a1c81d9@mail.gmail.com>
+In-Reply-To: <430B4556.6000608@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward@namesys.com>
+Cc: Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Reiserfs List <reiserfs-list@namesys.com>
 
-Le Tue, 23 Aug 2005 14:39:15 +0200, Clemens Eisserer <linuxhippy@gmail.com>=
- a =C3=A9crit :
+Edward Shishkin wrote:
 
-> Hi there,
->=20
-> I am currently tinkering a idn-router which a harddrive which should
-> mostly be in stand-by.
-> However it seems the drive is rather unimpressed by a 5s timeout
-> setting specified with hdparm and goes in standby very seldom although
-> the computer is runnig 100% idle (even no isdn-services started or
-> anything else).
+> Hans Reiser wrote:
+>
+>> Edward Shishkin wrote:
+>>
+>>  
+>>
+>>>>
+>>>> When you load a key, who can access the file?  Only the person who
+>>>> loaded it, yes or?
+>>>>
+>>>>     
+>>>
+>>> Currently standard unix permissions work here.
+>>>   
+>>
+>>
+>> but the idea is to use keys instead of standard unix permissions....
+>>
+>> I think you need to store keys in a per process place, and allow
+>> specifying whether children of a process inherit the keys somehow.
+>>  
+>>
+>
+> Unfortunately the encrypt-on-flush violates all this beauty: the flush,
+> which serves all the files, can not look for a key in the process
+> keyring (*), therefore besides the process keyrings, reiser4 should
+> create and manage its own keyring (accessible to the flush). It means
+> additional charges on searching, hashing, updating, etc..
+>
+> (*) Because:
+>    1) the flush does not have needed task_struct;
+>    2) the flush can not return an error if someone killed the key in
+> the process keyring.
+>
+> Edward.
+>
+>
+per process is not the same as "in user space and under user control"
 
-Have you tried noflushd ?
-On recent kernels, it mainly tweaks /proc/sys/vm/dirty_writeback_centisecs.=
-..
+Also the key to encrypt a given file with should be specified to the fs
+at open() or at  sys_reiser4() time, not at flush time.
+
+Please consider these thoughts, and then revise and resend your opinion
+on this.
