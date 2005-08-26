@@ -1,42 +1,78 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: File as a directory - back to predicates
-Date: Thu, 25 Aug 2005 13:44:21 -0600
-Message-ID: <87irxt94yy.fsf@evinrude.uhoreg.ca>
-References: <ff80108405082323511225c1f6@mail.gmail.com>
+From: Ming Zhang <mingz@ele.uri.edu>
+Subject: reiser fs slow on mksf and mount
+Date: Fri, 26 Aug 2005 12:45:17 -0400
+Message-ID: <1125074717.5549.44.camel@localhost.localdomain>
+Reply-To: mingz@ele.uri.edu
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-25645-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25647-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <ff80108405082323511225c1f6@mail.gmail.com> (Leo Comerford's
- message of "Wed, 24 Aug 2005 07:51:19 +0100")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Wed, 24 Aug 2005 07:51:19 +0100, Leo Comerford <leocomerford@gmail.com> said:
+Hi, folks
 
-[... lots of stuff snipped ...]
+I am not sure if this is normal or not.
 
-> At other levels, of course, the differences assert themselves. For one
-> thing, the normal Unix filesystem API doesn't have calls to, for
-> instance, check the path"names" asserted of a given file. That's
-> easily solved; just add the calls.
+I try to create&use a reiserfs on a 8 disk raid0. Then I found that mkfs
+need ~90 sec and mount need ~70 seconds. 
 
-It's not so easy.  You need to determine how to figure out the
-pathnames.  UN*X filesystems and filesystems for UN*X-like operating
-systems don't store uplinks, so there's no quick way to figure out the
-pathnames; the only way currently is to traverse the entire tree.
+Is there anything wrong on my side?
 
-P.S. most of the stuff that you're saying is already in the Future
-Vision paper.  At least the main idea of trying to query via metadata.
-But it uses a different syntax.
+Thanks!
 
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
+Ming
+
+
+
+Detailed info followed.
+---------------------------------------------------------------------
+[root@bakstor2u root]# cat /proc/mdstat
+Personalities : [linear] [raid0] [raid1] [raid5] [multipath] [raid6]
+[raid10] [faulty]
+md0 : active raid0 sda[0] sdh[7] sdg[6] sdf[5] sde[4] sdd[3] sdc[2] sdb
+[1]
+      3125690368 blocks 64k chunks
+
+unused devices: <none>
+
+[root@bakstor2u root]# time mkfs.reiserfs /dev/md0 -ff
+mkfs.reiserfs 3.6.13 (2003 www.namesys.com)
+
+<...>
+
+Guessing about desired format.. Kernel 2.6.11.12 is running.
+Format 3.6 with standard journal
+Count of blocks on the device: 781422592
+Number of blocks consumed by mkreiserfs formatting process: 32059
+Blocksize: 4096
+Hash function used to sort names: "r5"
+Journal Size 8193 blocks (first block 18)
+Journal Max transaction length 1024
+inode generation number: 0
+UUID: 98d990f3-d54f-43e3-9fde-8c9c9a6d3481
+Initializing journal - 0%....20%....40%....60%....80%....100%
+Syncing..ok
+
+Tell your friends to use a kernel based on 2.4.18 or later, and
+especially not a
+kernel based on 2.4.9, when you use reiserFS. Have fun.
+
+ReiserFS is successfully created on /dev/md0.
+
+real    1m28.783s
+user    0m0.151s
+sys     0m0.398s
+
+[root@bakstor2u root]# time mount /dev/md0  t
+
+real    1m11.448s
+user    0m0.000s
+sys     0m0.225s
+
 
