@@ -1,91 +1,119 @@
-From: Leo Comerford <leocomerford@gmail.com>
-Subject: Re: File as a directory - back to predicates
-Date: Sun, 28 Aug 2005 16:33:37 +0100
-Message-ID: <ff801084050828083330679bdd@mail.gmail.com>
-References: <ff80108405082323511225c1f6@mail.gmail.com>
-	 <87irxt94yy.fsf@evinrude.uhoreg.ca>
-Reply-To: lrc1@st-and.ac.uk
+From: Ming Zhang <mingz@ele.uri.edu>
+Subject: Re: reiser fs slow on mksf and mount
+Date: Sun, 28 Aug 2005 11:40:08 -0400
+Message-ID: <1125243608.5544.18.camel@localhost.localdomain>
+References: <1125074717.5549.44.camel@localhost.localdomain>
+	 <430F4B91.7030909@namesys.com>
+	 <1125076138.5549.65.camel@localhost.localdomain>
+	 <1125076558.5549.72.camel@localhost.localdomain>
+	 <430F5226.50701@namesys.com>
+	 <1125080213.5549.100.camel@localhost.localdomain>
+	 <4310BF35.3060603@suse.com> <1125183208.5569.3.camel@localhost.localdomain>
+	 <4310FEC1.5020600@suse.com>
+Reply-To: mingz@ele.uri.edu
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25677-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25678-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <87irxt94yy.fsf@evinrude.uhoreg.ca>
-Content-Disposition: inline
+In-Reply-To: <4310FEC1.5020600@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: reiserfs-list@namesys.com
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs <reiserfs-list@namesys.com>
 
-On 8/25/05, Hubert Chan <hubert@uhoreg.ca> wrote:
-> On Wed, 24 Aug 2005 07:51:19 +0100, Leo Comerford <leocomerford@gmail.com=
-> said:
->=20
-> [... lots of stuff snipped ...]
->=20
-> > At other levels, of course, the differences assert themselves. For one
-> > thing, the normal Unix filesystem API doesn't have calls to, for
-> > instance, check the path"names" asserted of a given file. That's
-> > easily solved; just add the calls.
->=20
-> It's not so easy.  You need to determine how to figure out the
-> pathnames.  UN*X filesystems and filesystems for UN*X-like operating
-> systems don't store uplinks,
+On Sat, 2005-08-27 at 20:01 -0400, Jeff Mahoney wrote:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+> 
+> Ming Zhang wrote:
+> > On Sat, 2005-08-27 at 15:29 -0400, Jeff Mahoney wrote:
+> >>>are this bitmap data is pinned into system thus will not be swapped out?
+> >> Yes, any buffers/pages with active reference counts are kept in memory.
+> >> Since the current reiserfs bitmap implementation keeps a reference until
+> >> filesystem umount, the bitmaps are pinned.
+> > so u always keep a reference on all bitmap pages and thus they can not
+> > be umounted. yes, by this way it can be pretty fast to do any meta-data
+> > operation. but what if current RAM can not hold these bitmap. maybe u
+> > think if i want to use tens of TB storage, i of course will have 32GB
+> > RAM. :P
+> 
+> That's been the argument Hans has been presenting so far. I tend to
+> disagree with it for several reasons:
+> * It used to be unheard of for huge filesystems to be accessible to
+> users without high priced RAID arrays. Now, with individual disk
+> capacities over 500 GB and the ease of software raid, multiple-TB
+> filesystems are quite possible on a desktop machine. These machines, as
+> desktops, have no need for 32 GB of RAM, but have a very real demand for
+> large storage.
 
-Yes, I know.
+yes, i have a 12*400GB SATA MD raid that want to store my huge number of
+pictures (i am not a good photographer, but a quick shooter.) all these
+files are named as DSCxxxxxx.jpg but not continuous since some are
+really bad so deleted. so i jump out these questions to stress the
+scalability of fs.
 
- so there's no quick way to figure out the
-> pathnames; the only way currently is to traverse the entire tree.
 
-And that's exactly the point. ("Less easily solved are the performance
-issues.") Again, if you took the expanded API and put a typical Unix
-filesystem implementation behind it, you would find that its
-performance at things like finding pathnames was abysmally slow, while
-its performance at doing the traditional Unix-filesystem things was as
-good as ever. Conversely, if you mounted some kind of registry system
-instead (or as well) you' d find that it was very fast at finding
-pathnames, but very slow at many traditional-Unix-filesystem tasks
-(for example rename()ing a directory). Again, consider the analogy of
-an abstract collection type with two or more different concrete
-implementations. The data model is not any of its implementations.
-Just because two different data systems have different performance
-characteristics doesn't mean they need to present different data
-models.
+> * We don't cache any other metadata (other than the superblock, which is
+> standard practice) specially. In a mostly-reader environment, bitmaps
+> would rank very low in importance for caching.
 
-> P.S. most of the stuff that you're saying is already in the Future
-> Vision paper.  At least the main idea of trying to query via metadata.
+could u explain a bit more on what is the purpose of these bitmaps? what
+is the relationship between these bitmap and other metadata?
 
-Future Vision is predominantly about searching from metadata to data.
-("Which files are emails about Santa?") It says almost nothing about
-going from data to metadata. ("Is this file an email?") (This is
-especially unfortunate since Future Vision is in large part about how
-to improve the effectiveness of search in the real world, and one of
-the most ubiquitous, natural and effective real-world search
-strategies is to start with an m-to-d search, then apply d-to-m
-searching on the results. An example:
 
-"I remember Santa flamed somebody out a while ago. Let's see - search
-for emails from Santa. Hm, thirty hits. [m-to-d]
+> 
+> In short, we shouldn't be demanding that users of large storage also
+> have loads of memory for what I feel is a very shaky argument in the
+> first place.
 
-Let's take a look... This one here also relates to elves and a strike
-- /that's/ what it was about, I remember now! [d-to-m]
+assumed i have 2GB or 4GB ram, which is not unbelievable for a desktop
+now. but can these RAM be used by 32BIT arch?
 
-Any other elf strike emails from Santa? No, just the one: bingo!
-[m-to-d again]".)
 
-The one thing it /does/ say about data-to-metadata searching is that
-file streams are inelegant, and should be replaced by ... pathname
-metadata, yet another way to represent "d-to-m metadata" that is
-separate from file naming. By contrast, my email argues that unifying
-all OS namespaces into the file naming system, as proposed by Hans in
-Future Vision, is such a good idea that it ought to be applied
-properly to "d-to-m metadata" too. Especially since the only non-bogus
-distinction between "m-to-d metadata" and "d-to-m metadata" is their
-performance requirements.
+> 
+> >> My dynamic bitmap patch fixes both of the problems you've posed so far.
+> >> Mount time is reduced to O(1) time, since only the superblock and root
+> >> node are read at mount time. On my system, it's something along the
+> >> lines of 0.2s. Memory consumption is reduced also, because the bitmap
+> >> block is released after the allocation/free that required it is complete.
+> > ic. this is like a delayed lazy allocation. 
+> 
+> If I understand you correctly, you're referring to allocate-on-flush,
+> which is a different idea entirely. What the dynamic bitmap patch does
+> is similar to what most other filesystems do -- treat the bitmaps as any
+> other kind of metadata is treated and read it on-demand.
 
-[snip]
---=20
-Leo Richard Comerford - http://www.st-and.ac.uk/~lrc1 - accept no namesakes=
- :)
+yes, sorry, it is not lazy allocation. it is load (into ram) on-demand
+or lazy load.
+
+
+
+> Allocate-on-flush allows the filesystem to wait until the last possible
+> moment to allocate the space on disk, which makes performance a little
+> nicer, but more importantly, allows the allocator to allocate entire
+> chunks of a file rather than a block-at-a-time.
+
+are u talking about allocating space after that file content is cached
+in RAM and before need to be flushed? this is then like a write-any file
+system that you can write to a place where it is still continuous and
+near to current disk head (though latter is hard to achieve since it is
+hidden by LVM/MD/...).
+
+
+> 
+> - -Jeff
+> 
+> - --
+> Jeff Mahoney
+> SuSE Labs
+> -----BEGIN PGP SIGNATURE-----
+> Version: GnuPG v1.4.0 (GNU/Linux)
+> 
+> iD8DBQFDEP7ALPWxlyuTD7IRAj2+AJ9f2tHTlV3Mrl7m0jDtn50p1egacwCgjbT9
+> 2HSYlvH9sIG53JGjBHgT+9s=
+> =Suud
+> -----END PGP SIGNATURE-----
+
