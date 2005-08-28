@@ -1,56 +1,91 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: Reiser4 oops with 2.6.13-rc6-mm2
-Date: Sun, 28 Aug 2005 17:21:01 +0400
-Message-ID: <4311BA3D.3030409@namesys.com>
-References: <656cfae8050827090370d11864@mail.gmail.com>	 <4310A781.9050607@gmx.net> <656cfae80508271241796ba017@mail.gmail.com>
+From: Leo Comerford <leocomerford@gmail.com>
+Subject: Re: File as a directory - back to predicates
+Date: Sun, 28 Aug 2005 16:33:37 +0100
+Message-ID: <ff801084050828083330679bdd@mail.gmail.com>
+References: <ff80108405082323511225c1f6@mail.gmail.com>
+	 <87irxt94yy.fsf@evinrude.uhoreg.ca>
+Reply-To: lrc1@st-and.ac.uk
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25676-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-25677-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <656cfae80508271241796ba017@mail.gmail.com>
+In-Reply-To: <87irxt94yy.fsf@evinrude.uhoreg.ca>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Ronald Moesbergen <ronald.moesbergen@gmail.com>
-Cc: "evilninja@gmx.net" <evilninja@gmx.net>, reiserfs-list@namesys.com, grev@namesys.com
+To: Hubert Chan <hubert@uhoreg.ca>
+Cc: reiserfs-list@namesys.com
 
-Hello
+On 8/25/05, Hubert Chan <hubert@uhoreg.ca> wrote:
+> On Wed, 24 Aug 2005 07:51:19 +0100, Leo Comerford <leocomerford@gmail.com=
+> said:
+>=20
+> [... lots of stuff snipped ...]
+>=20
+> > At other levels, of course, the differences assert themselves. For one
+> > thing, the normal Unix filesystem API doesn't have calls to, for
+> > instance, check the path"names" asserted of a given file. That's
+> > easily solved; just add the calls.
+>=20
+> It's not so easy.  You need to determine how to figure out the
+> pathnames.  UN*X filesystems and filesystems for UN*X-like operating
+> systems don't store uplinks,
 
-Ronald Moesbergen wrote:
-> Hi,
-> 
-> Thanks for responding. To clarify: I'm not running linux inside
-> vmware, I'm running vmware on linux and the vmware images are on a
-> reiser4 partition. I'm running windows inside vmware. I can certainly
-> reproduce this,
+Yes, I know.
 
-Yes, vmware + reiser4 problem is close to top of things to be fixed.
+ so there's no quick way to figure out the
+> pathnames; the only way currently is to traverse the entire tree.
 
- but haven't tried without the nvidia module. I will do
-> that right now and report back.
-> 
-> Thanks,
-> Ronald.
-> 
-> On 8/27/05, evilninja@gmx.net <evilninja@gmx.net> wrote:
->>Ronald Moesbergen schrieb:
->>>Hi,
->>>
->>>While running a vmware virtual machine from a reiser4 filesystem, my
->>>machine consistently locks up and produces the following OOPS:
->>>
->>>kernel: Oops: 0002 [#1]
->>>kernel: PREEMPT SMP
->>>kernel: last sysfs file: /class/vc/vcsa8/dev
->>>kernel: Modules linked in: vmnet vmmon nvidia
->>is this reproducible and is it reproducible when you don't run this
->>inside vmware? the tainted kernel could make it hard to find a solution
->>here...
->>
->>Christian.
->>
-> 
-> 
+And that's exactly the point. ("Less easily solved are the performance
+issues.") Again, if you took the expanded API and put a typical Unix
+filesystem implementation behind it, you would find that its
+performance at things like finding pathnames was abysmally slow, while
+its performance at doing the traditional Unix-filesystem things was as
+good as ever. Conversely, if you mounted some kind of registry system
+instead (or as well) you' d find that it was very fast at finding
+pathnames, but very slow at many traditional-Unix-filesystem tasks
+(for example rename()ing a directory). Again, consider the analogy of
+an abstract collection type with two or more different concrete
+implementations. The data model is not any of its implementations.
+Just because two different data systems have different performance
+characteristics doesn't mean they need to present different data
+models.
 
+> P.S. most of the stuff that you're saying is already in the Future
+> Vision paper.  At least the main idea of trying to query via metadata.
+
+Future Vision is predominantly about searching from metadata to data.
+("Which files are emails about Santa?") It says almost nothing about
+going from data to metadata. ("Is this file an email?") (This is
+especially unfortunate since Future Vision is in large part about how
+to improve the effectiveness of search in the real world, and one of
+the most ubiquitous, natural and effective real-world search
+strategies is to start with an m-to-d search, then apply d-to-m
+searching on the results. An example:
+
+"I remember Santa flamed somebody out a while ago. Let's see - search
+for emails from Santa. Hm, thirty hits. [m-to-d]
+
+Let's take a look... This one here also relates to elves and a strike
+- /that's/ what it was about, I remember now! [d-to-m]
+
+Any other elf strike emails from Santa? No, just the one: bingo!
+[m-to-d again]".)
+
+The one thing it /does/ say about data-to-metadata searching is that
+file streams are inelegant, and should be replaced by ... pathname
+metadata, yet another way to represent "d-to-m metadata" that is
+separate from file naming. By contrast, my email argues that unifying
+all OS namespaces into the file naming system, as proposed by Hans in
+Future Vision, is such a good idea that it ought to be applied
+properly to "d-to-m metadata" too. Especially since the only non-bogus
+distinction between "m-to-d metadata" and "d-to-m metadata" is their
+performance requirements.
+
+[snip]
+--=20
+Leo Richard Comerford - http://www.st-and.ac.uk/~lrc1 - accept no namesakes=
+ :)
