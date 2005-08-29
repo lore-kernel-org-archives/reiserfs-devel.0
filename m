@@ -1,80 +1,156 @@
 From: Ming Zhang <mingz@ele.uri.edu>
 Subject: Re: reiser fs slow on mksf and mount
-Date: Mon, 29 Aug 2005 11:37:29 -0400
-Message-ID: <1125329849.5544.75.camel@localhost.localdomain>
+Date: Mon, 29 Aug 2005 12:44:43 -0400
+Message-ID: <1125333883.5544.101.camel@localhost.localdomain>
 References: <1125074717.5549.44.camel@localhost.localdomain>
 	 <430F4B91.7030909@namesys.com>
-	 <1125076138.5549.65.camel@localhost.localdomain>
-	 <1125076558.5549.72.camel@localhost.localdomain>
-	 <430F5226.50701@namesys.com>
-	 <1125080213.5549.100.camel@localhost.localdomain>
-	 <4310BF35.3060603@suse.com> <1125183208.5569.3.camel@localhost.localdomain>
-	 <4310FEC1.5020600@suse.com>
-	 <1125243608.5544.18.camel@localhost.localdomain>
-	 <4312060D.8020904@suse.com>
-	 <1125319151.5544.16.camel@localhost.localdomain>
-	 <43131B2B.8020406@suse.com>
-	 <1125326490.5544.56.camel@localhost.localdomain>
-	 <431320E5.3030408@suse.com>
-	 <1125328828.5544.72.camel@localhost.localdomain>
-	 <43132999.5020501@suse.com>
 Reply-To: mingz@ele.uri.edu
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25702-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25703-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43132999.5020501@suse.com>
+In-Reply-To: <430F4B91.7030909@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: reiserfs <reiserfs-list@namesys.com>
 
-On Mon, 2005-08-29 at 11:28 -0400, Jeff Mahoney wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
-> 
-> Ming Zhang wrote:
-> >>>any way to store these bitmap together?
-> > The "old" reiserfs disk format did exactly that. However, the gain
-> > realized (if any, see above) at mount time is quickly lost when the
-> > filesystem can no longer be dynamically expanded/shrunk, and if the
-> > bitmaps are actually read on-demand, then it causes needless seeks to
-> > the "bitmap secion."
-> > 
-> >> but anyway the bitmap will not scattered all around the disk rite?
-> 
-> If they were grouped together, no. As I said, though, there are other
-> reasons not to do that.
-> 
-> >> so where i could find a document about this bitmap layout? also detailed
-> >> information on whole file system layout?
-> 
-> Since Reiser4 became the focus of Namesys development, Reiser3
-> information has been somewhat difficult to find on the web site. It's
-> possible to find it using archive.org, however.
-> 
-> Hans - would you consider restoring reiser3 information to the namesys
-> web site?
-
-V4 information is great as well. but the namesys.com does not have
-detailed info.
+just reproduced this on a 18GB SCSI disk. mount is still slow. so not
+related to RAID but only with bitmap. i just do modprobe aic7xxx, mkfs,
+then do mount, so the disk should be spin up.
 
 ming
 
+
+--------------------------------------
+
+[root@sc420 root]# time mkfs.reiserfs -ff /dev/sdh1
+mkfs.reiserfs 3.6.13 (2003 www.namesys.com)
+
+...
+
+Guessing about desired format.. Kernel 2.6.12.4 is running.
+Format 3.6 with standard journal
+Count of blocks on the device: 4421872
+Number of blocks consumed by mkreiserfs formatting process: 8346
+Blocksize: 4096
+Hash function used to sort names: "r5"
+Journal Size 8193 blocks (first block 18)
+Journal Max transaction length 1024
+inode generation number: 0
+UUID: b3de310a-b494-4415-a921-090d94f2f211
+Initializing journal - 0%....20%....40%....60%....80%....100%
+Syncing..ok
+
+Tell your friends to use a kernel based on 2.4.18 or later, and
+especially not a
+kernel based on 2.4.9, when you use reiserFS. Have fun.
+
+ReiserFS is successfully created on /dev/sdh1.
+
+real    0m5.018s
+user    0m0.028s
+sys     0m0.134s
+
+[root@sc420 root]# time mount /dev/sdh1 t
+
+real    1m3.608s
+user    0m0.000s
+sys     0m0.052s
+
+[root@sc420 root]# df
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/sda5             20161172   6417940  12719092  34% /
+/dev/sda3               194449     18990    165419  11% /boot
+none                    127544         0    127544   0% /dev/shm
+/dev/sdh1             17686944     32840  17654104   1% /root/t
+
+[root@sc420 root]# rpm -q reiserfs-utils
+reiserfs-utils-3.6.13-1
+
+
+On Fri, 2005-08-26 at 21:04 +0400, Vladimir V. Saveliev wrote:
+> Hello
 > 
-> - -Jeff
+> Ming Zhang wrote:
+> > Hi, folks
+> > 
+> > I am not sure if this is normal or not.
+> > 
+> > I try to create&use a reiserfs on a 8 disk raid0. Then I found that mkfs
+> > need ~90 sec and mount need ~70 seconds. 
+> > 
+> > Is there anything wrong on my side?
+> > 
 > 
-> - --
-> Jeff Mahoney
-> SuSE Labs
-> -----BEGIN PGP SIGNATURE-----
-> Version: GnuPG v1.4.0 (GNU/Linux)
+> Your device is too big.
 > 
-> iD8DBQFDEymZLPWxlyuTD7IRAv5wAJ9coGB6bChWSLyK1x7lB1LF2E4mIwCfUsEN
-> 4nZnXzED8ytA5jiTkv0LbcE=
-> =Tocq
-> -----END PGP SIGNATURE-----
+> > Thanks!
+> > 
+> > 
+> > Ming
+> > 
+> > 
+> > 
+> > Detailed info followed.
+> > ---------------------------------------------------------------------
+> > [root@bakstor2u root]# cat /proc/mdstat
+> > Personalities : [linear] [raid0] [raid1] [raid5] [multipath] [raid6]
+> > [raid10] [faulty]
+> > md0 : active raid0 sda[0] sdh[7] sdg[6] sdf[5] sde[4] sdd[3] sdc[2] sdb
+> > [1]
+> >       3125690368 blocks 64k chunks
+> > 
+> > unused devices: <none>
+> > 
+> > [root@bakstor2u root]# time mkfs.reiserfs /dev/md0 -ff
+> > mkfs.reiserfs 3.6.13 (2003 www.namesys.com)
+> > 
+> > <...>
+> > 
+> > Guessing about desired format.. Kernel 2.6.11.12 is running.
+> > Format 3.6 with standard journal
+> > Count of blocks on the device: 781422592
+> > Number of blocks consumed by mkreiserfs formatting process: 32059
+> > Blocksize: 4096
+> > Hash function used to sort names: "r5"
+> > Journal Size 8193 blocks (first block 18)
+> > Journal Max transaction length 1024
+> > inode generation number: 0
+> > UUID: 98d990f3-d54f-43e3-9fde-8c9c9a6d3481
+> > Initializing journal - 0%....20%....40%....60%....80%....100%
+> > Syncing..ok
+> > 
+> > Tell your friends to use a kernel based on 2.4.18 or later, and
+> > especially not a
+> > kernel based on 2.4.9, when you use reiserFS. Have fun.
+> > 
+> > ReiserFS is successfully created on /dev/md0.
+> > 
+> > real    1m28.783s
+> > user    0m0.151s
+> > sys     0m0.398s
+> > 
+> 
+> Hmm, mkfs.reiserfs had to write 32059 blocks. It is about 131mb. 1m28s is too much for that.
+> Could it be that some of disks used in that raid were not spinning when you started mkreiserfs?
+> 
+> > [root@bakstor2u root]# time mount /dev/md0  t
+> > 
+> > real    1m11.448s
+> > user    0m0.000s
+> > sys     0m0.225s
+> > 
+> 
+> There is a patch to cure this problem.
+> http://www.mail-archive.com/reiserfs-list@namesys.com/msg18442.html
+> Please note that it is experimental one.
+> 
+> > 
+> > 
+> > 
+> 
 
