@@ -1,85 +1,113 @@
-From: Ric Wheeler <ric@emc.com>
-Subject: Re: fs_mark benchmark - update
-Date: Mon, 29 Aug 2005 10:07:00 -0400
-Message-ID: <43131684.5040708@emc.com>
-References: <3257ddd0050825050117ead2ba@mail.gmail.com>	 <430DC64D.9010205@namesys.com> <4313006C.9040502@emc.com>	 <Pine.LNX.4.63.0508291436100.29195@alpha.polcom.net>	 <1125319246.5544.19.camel@localhost.localdomain>  <43130DC1.20105@emc.com>	 <1125322484.5544.23.camel@localhost.localdomain> <431311A1.8030906@emc.com> <1125323863.5544.34.camel@localhost.localdomain>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: reiser fs slow on mksf and mount
+Date: Mon, 29 Aug 2005 10:26:51 -0400
+Message-ID: <43131B2B.8020406@suse.com>
+References: <1125074717.5549.44.camel@localhost.localdomain>	 <430F4B91.7030909@namesys.com>	 <1125076138.5549.65.camel@localhost.localdomain>	 <1125076558.5549.72.camel@localhost.localdomain>	 <430F5226.50701@namesys.com>	 <1125080213.5549.100.camel@localhost.localdomain>	 <4310BF35.3060603@suse.com> <1125183208.5569.3.camel@localhost.localdomain>	 <4310FEC1.5020600@suse.com>	 <1125243608.5544.18.camel@localhost.localdomain>	 <4312060D.8020904@suse.com> <1125319151.5544.16.camel@localhost.localdomain>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25693-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25694-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1125323863.5544.34.camel@localhost.localdomain>
+In-Reply-To: <1125319151.5544.16.camel@localhost.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: mingz@ele.uri.edu
-Cc: Grzegorz Kulewski <kangur@polcom.net>, "Vladimir V. Saveliev" <vs@namesys.com>, Sandeep Tyagi <sandeepktyagi@gmail.com>, okuyamak@dd.iij4u.or.jp, reiserfs <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Ming Zhang <mingz@ele.uri.edu>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs <reiserfs-list@namesys.com>
 
-
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
 Ming Zhang wrote:
+> On Sun, 2005-08-28 at 14:44 -0400, Jeff Mahoney wrote:
+>>* We don't cache any other metadata (other than the superblock, which is
+>>standard practice) specially. In a mostly-reader environment, bitmaps
+>>would rank very low in importance for caching.
+> 
+>>>could u explain a bit more on what is the purpose of these bitmaps? what
+>>>is the relationship between these bitmap and other metadata?
+> The bitmaps are used to keep track of which blocks on disk are used, and
+> which are available for allocation. Every (blocksize * 8) blocks, there
+> 
+>> here blocksize is 512bytes right from followed data? this comes from
+>> sector size?
 
->On Mon, 2005-08-29 at 09:46 -0400, Ric Wheeler wrote:
->  
->
->>I use it to benchmark (mostly) synchronous file writing.
->>
->>For example, a typical run might be to completely fill a file system 
->>with 50k files using the default (write one file, fsync one file) method 
->>and then compare that run to one which uses a varying number of 
->>concurrent threads.
->>
->>Data journal mode is slightly faster for small files, but is twice as 
->>slow for large files (as expected).
->>
->>We have observed the best results in 2.6 reiserfs3 when running 4-8 
->>threads per disk, using multiple subdirectories.  In 2.4, using a single 
->>subdirectory on reiser was better than using multiple subdirectories.
->>
->>The validation of the write barrier case test is a simple one - if you 
->>write single threaded, then a properly configured file system with write 
->>barrier enabled should be some reasonable match to the speed of the 
->>disk.  For us, that is typically around 40 50k files/sec with S-ATA 
->>drives or P-ATA drives.
->>
->>It is also interesting to compare reiserfs vs ext3 when writing single 
->>threaded across the life span of a file system - reiserfs typically 
->>beats ext3 for most cases, but ext3 eventually catches up as the 
->>percentage used grows.
->>
->>    
->>
->
->this is interesting. looks like a file system aging problem. does this
->because of the fragmentation?
->  
->
+No. Block size is the declared filesystem blocksize, not the hardware
+sector size. It must be a power of 2, and 512-8192 bytes. The "standard"
+filesystem blocksize is 4k. If you've declared your block size as 512
+bytes (using mkreiserfs -b 512), that would certainly be another source
+of performance issues.
 
-I think that this is because of the depth and size of the tree.  We have 
-very large volumes (up to 300GB) - if your file systems are smaller, 
-then the degradation is not as large.
+>> so what is the on disk layout? i asked this because when i have a slow
+>> mount reiserfs on top of RAID1, I saw many small write each second. I
+>> guess they scatter over whole disk.
 
->  
->
->>I hope to rerun on reiserfs4 and the new ext3 in the next few weeks,
->>
->>    
->>
->
->looking forward to seeing.
->
->what u mean new ext3?
->  
->
-I should have said "new patches to ext3".  At OLS, there was a talk 
-describing this work - you can get the proceedings from linuxsymposium.org:
+Well two things occur on mount: Reading the bitmaps causes a read every
+128M to occur, and replaying the journal can cause up to 8192 block
+writes to occur. Replaying the journal is generally pretty quick.
+Reading the bitmaps on a large filesystem can take a while. This is the
+issue you originally asked about.
 
-http://www.linuxsymposium.org/2005/view_abstract.php?content_key=90
+> is a block reserved to keep track of which blocks in that range are
+> allocated or not. On a 4k block filesystem, that boils down to 1 4k
+> block for every 128 MB. If a block is used, the bit corresponding to it
+> is set. When the block is freed, the bit is cleared.
+> 
+> Well there are a several kinds of metadata on the filesystem: The super
+> block, the bitmaps, the journal, and the reiserfs s-tree itself. The
+> journal and bitmaps are only used when writing to the filesystem. The
+> superblock and s-tree are used for any filesystem access. The
+> relationship is that before a file data block or an s-tree node can be
+> allocated on disk, the bitmaps must be checked to see where the block
+> can be allocated.
+> 
+>> ic. so other meta-data is checked as other file systems.
 
+No. The bitmaps and journal are still part of the same filesystem. They
+are just not part of the s-tree.
 
->thanks!
->
->ming
->  
->
+>>>assumed i have 2GB or 4GB ram, which is not unbelievable for a desktop
+>>>now. but can these RAM be used by 32BIT arch?
+> The RAM can be used, sure, but not for the bitmaps. I believe the buffer
+> heads for the bitmaps need to come out of the memory < 1 GB. It would be
+> possible to put the bitmaps in high memory (like any other data), but
+> the patch to do so would likely be more involved than the dynamic bitmap
+> patch, and still waste the memory anyway.
+> 
+>> yes, i also suspect this 1GB limit. So 64bit is the way and AMD64 is
+>> cheap anyway rite?
+
+Personally, I think so.
+
+> current disk head, that is an operation that is performed by the block
+> layer. It can make the best decisions on that, since it its at the
+> lowest level of abstraction. It's entirely possible that a filesystem be
+> mounted via file-loopback on an NFS mount. In that case, the local
+> system has no information at all about where the disk head would be.
+> 
+>> yes, but then block layer will need another bitmap to track which block
+>> is used or not and also do a mapping again...
+> 
+>> the cost of layering?
+
+The ideas of "in use" and "available" are purely filesystem abstractions
+to keep track of where we already have filesystem data/metadata. The
+block layer doesn't know or care about them - it's just a collection of
+blocks that the user may do whatever they please with. Now, not to
+confuse the issue, but the example of a loopback-mounted filesystem can
+cause an allocation if the host file is sparse, but that's really a
+corner case.
+
+- -Jeff
+
+- --
+Jeff Mahoney
+SuSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.0 (GNU/Linux)
+
+iD8DBQFDExsrLPWxlyuTD7IRAvGmAJ9QU16I2oz/kkCbqwdeGcIgkey8TgCgqS8s
+lI6YzJEJ20j5LiheAqw6eoE=
+=YD9V
+-----END PGP SIGNATURE-----
