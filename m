@@ -1,26 +1,42 @@
-From: Marc Perkel <marc@perkel.com>
-Subject: Re: WinFS beta out
-Date: Tue, 30 Aug 2005 08:45:02 -0700
-Message-ID: <43147EFE.2020804@perkel.com>
-References: <e692861c0508292136543a02e1@mail.gmail.com> <1125380557.9589.3.camel@gentoo> <4313FE21.8080709@namesys.com> <019d01c5ad68$4d5fdfa0$d60310ac@homedom>
+From: michael chang <thenewme91@gmail.com>
+Subject: Re: Executability problem
+Date: Tue, 30 Aug 2005 14:21:48 -0400
+Message-ID: <b14e81f0050830112173c03579@mail.gmail.com>
+References: <20050830152859.45e0b010.Kris.VanBruwaene@vrt.be>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25729-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-25731-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <019d01c5ad68$4d5fdfa0$d60310ac@homedom>
+In-Reply-To: <20050830152859.45e0b010.Kris.VanBruwaene@vrt.be>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Kris.VanBruwaene@vrt.be
+Cc: reiserfs-list@namesys.com
 
-One think to remember when comparing different file systems is not just 
-speed but functionality. Windows has a far better permission system than 
-Linux does. ACLs bring Linux closer to Windows when it cones to fine 
-grained permissions, but when you turn ACLs on with reiser 3 it slows 
-down to 1/10 of normal speed and Reiser 4 ACLs just doesn't work. With 
-ACLs as part of the mix ReiserFS would get its butt kicked.
+On 8/30/05, Kris Van Bruwaene <Kris.VanBruwaene@vrt.be> wrote:
+> I recently discovered that scripts have become non-executable on my reise=
+rfs share, even though the -x flags are set:
+> root@A00012344:/home/kris# cat tst
+> #! /usr/bin/perl -w
+> print "Hello world\n";
+> root@A00012344:/home/kris# ./tst
+> bash: ./tst: /usr/bin/perl: bad interpreter: Toegang geweigerd #(=3DAcces=
+s denied)
 
-Welcome to the real world.
+I believe the line should read
+#!/usr/bin/perl -w
+not=20
+#! /usr/bin/perl -w
 
+[no space between "!" and first "/"]
+
+unless that's a typo between output and your file.
+
+--=20
+~Mike
+ - Just my two cents
+ - No man is an island, and no man is unable.
