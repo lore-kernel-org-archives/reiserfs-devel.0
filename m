@@ -1,50 +1,26 @@
-From: "Dr. Giovanni A. Orlando" <gorlando@futuretg.com>
-Subject: I am releasing FTLinuxCourse for free ...
-Date: Tue, 30 Aug 2005 16:33:12 +0000
-Message-ID: <43148A48.8060508@futuretg.com>
-References: <1125183549.5569.10.camel@localhost.localdomain>	 <43136DC6.5000005@namesys.com>	 <1125356363.5544.175.camel@localhost.localdomain>	 <43139B84.4050707@namesys.com> <1125407001.5554.5.camel@localhost.localdomain>
+From: Marc Perkel <marc@perkel.com>
+Subject: Re: WinFS beta out
+Date: Tue, 30 Aug 2005 08:45:02 -0700
+Message-ID: <43147EFE.2020804@perkel.com>
+References: <e692861c0508292136543a02e1@mail.gmail.com> <1125380557.9589.3.camel@gentoo> <4313FE21.8080709@namesys.com> <019d01c5ad68$4d5fdfa0$d60310ac@homedom>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25728-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25729-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1125407001.5554.5.camel@localhost.localdomain>
+In-Reply-To: <019d01c5ad68$4d5fdfa0$d60310ac@homedom>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Cc: Hans Reiser <reiser@namesys.com>, reiserfs <reiserfs-list@namesys.com>
+To: Reiserfs List <reiserfs-list@namesys.com>
 
-Hi,
-   
-       Because I belong to this mailing list, I want to announce
-    that a 7 years effort Linux training had been released for free.
+One think to remember when comparing different file systems is not just 
+speed but functionality. Windows has a far better permission system than 
+Linux does. ACLs bring Linux closer to Windows when it cones to fine 
+grained permissions, but when you turn ACLs on with reiser 3 it slows 
+down to 1/10 of normal speed and Reiser 4 ACLs just doesn't work. With 
+ACLs as part of the mix ReiserFS would get its butt kicked.
 
-    This is the accumulative version written from 1995 until 2002, in 
-six courses.
-
-    This training is for free. Evaluate adoption inside your organization.
-    2005 edition will remains copyright.
-
-    Details at: http://www.futuretg.com/
-
-Thanks,
-Giovanni A. Orlando
-
-
--- 
-
-
--- 
--- 
-
-Check FT Websites ... http://www.futuretg.com  - ftp://ftp.futuretg.com
-http://www.FTLinuxCourse.com
-    http://www.FTLinuxCourse.com/Certification
-http://www.RPMParadaise.org
-http://www.YourPersonalOperatingSystem.com
-
-Fixed:  +39 0824 314 007.
-Mobile: +39 393 665 4239
--- 
+Welcome to the real world.
 
