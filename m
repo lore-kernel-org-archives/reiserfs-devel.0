@@ -1,10 +1,10 @@
 From: Gregory Maxwell <gmaxwell@gmail.com>
-Subject: WinFS beta out
-Date: Tue, 30 Aug 2005 00:36:39 -0400
-Message-ID: <e692861c0508292136543a02e1@mail.gmail.com>
+Subject: Wikipedia article
+Date: Tue, 30 Aug 2005 01:15:57 -0400
+Message-ID: <e692861c05082922152447fbf7@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25718-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25719-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,6 +14,10 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Reiserfs List <reiserfs-list@namesys.com>
 
-http://it.slashdot.org/it/05/08/29/2241243.shtml?tid=3D109&tid=3D218
+Someone might want to update the information on reiser4 at:
 
-Looks like MSFT will be beating Linux to the nextgen FS punch after all. ;)
+http://en.wikipedia.org/wiki/Comparison_of_file_systems
+and
+http://en.wikipedia.org/wiki/Reiser4
+
+A fair bit of information is missing/out of date it seems.
