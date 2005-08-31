@@ -1,51 +1,56 @@
 From: Marc Perkel <marc@perkel.com>
-Subject: Re: WinFS beta out
-Date: Wed, 31 Aug 2005 07:32:00 -0700
-Message-ID: <4315BF60.1000406@perkel.com>
-References: <e692861c0508292136543a02e1@mail.gmail.com> <1125380557.9589.3.camel@gentoo> <4313FE21.8080709@namesys.com> <019d01c5ad68$4d5fdfa0$d60310ac@homedom> <43147EFE.2020804@perkel.com> <43150100.40304@namesys.com> <43153918.2090402@perkel.com> <4315589D.6070908@namesys.com>
+Subject: Fundind Reiser Development
+Date: Wed, 31 Aug 2005 07:36:44 -0700
+Message-ID: <4315C07C.8000309@perkel.com>
+References: <e692861c0508292136543a02e1@mail.gmail.com>	 <1125380557.9589.3.camel@gentoo> <4313FE21.8080709@namesys.com>	 <019d01c5ad68$4d5fdfa0$d60310ac@homedom> <43147EFE.2020804@perkel.com>	 <43150100.40304@namesys.com> <43153918.2090402@perkel.com>	 <4315589D.6070908@namesys.com> <b14e81f005083106447e322c22@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/alternative;
- boundary="------------000306000105040702070307"
-Return-path: <reiserfs-list-return-25752-reiserfs=m.gmane.org@namesys.com>
+ boundary="------------050200060706020902010800"
+Return-path: <reiserfs-list-return-25753-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4315589D.6070908@namesys.com>
+In-Reply-To: <b14e81f005083106447e322c22@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: Reiserfs List <reiserfs-list@namesys.com>
+To: michael chang <thenewme91@gmail.com>
+Cc: Hans Reiser <reiser@namesys.com>, Reiserfs List <reiserfs-list@namesys.com>
 
---------------000306000105040702070307
+--------------050200060706020902010800
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
 
-I see. For what it's worth If I had any money I'd give it to you.
 
-Hans Reiser wrote:
 
->Marc Perkel wrote:
->
+michael chang wrote:
+
+>On 8/31/05, Hans Reiser <reiser@namesys.com> wrote:
 >  
 >
->> 
->>
+>>Marc Perkel wrote:
 >>    
 >>
->>> 
->>>
+>>>Well - if it's so easy then what don't you just do it?
 >>>      
 >>>
->>Well - if it's so easy then what don't you just do it?
+>>I fund the things no one else will fund out of my pocket.  The rest I
+>>wait for sponsors for.  I can only do so much, so I try to do what no
+>>one else will do.
+>>
 >>    
 >>
 >
->I fund the things no one else will fund out of my pocket.  The rest I
->wait for sponsors for.  I can only do so much, so I try to do what no
->one else will do.
+>And if he won't say it, I'll at least say that I'm rather greatful for this. ^^
 >
 >  
 >
+I'm a little confused in that most open source projects have an army of 
+volunteer programmers as opposed to paid proframmers - or - they have a 
+strongly interested corporate partner. Reiser 4 has extreme potantial as 
+anyone can see and I would think that the "big boys" would want it - so 
+- why isn't it happening?
+
+Also - how much funding are we talking about?
 
 -- 
 Marc Perkel - marc@perkel.com
@@ -54,7 +59,7 @@ Spam Filter: http://www.junkemailfilter.com
     My Blog: http://marc.perkel.com
 
 
---------------000306000105040702070307
+--------------050200060706020902010800
 Content-Type: text/html; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 
@@ -65,33 +70,38 @@ Content-Transfer-Encoding: 7bit
   <title></title>
 </head>
 <body bgcolor="#ffffff" text="#000000">
-I see. For what it's worth If I had any money I'd give it to you.<br>
 <br>
-Hans Reiser wrote:<br>
-<blockquote cite="mid4315589D.6070908@namesys.com" type="cite">
-  <pre wrap="">Marc Perkel wrote:
-
+<br>
+michael chang wrote:<br>
+<blockquote cite="midb14e81f005083106447e322c22@mail.gmail.com"
+ type="cite">
+  <pre wrap="">On 8/31/05, Hans Reiser <a class="moz-txt-link-rfc2396E" href="mailto:reiser@namesys.com">&lt;reiser@namesys.com&gt;</a> wrote:
   </pre>
   <blockquote type="cite">
-    <pre wrap=""> 
-
+    <pre wrap="">Marc Perkel wrote:
     </pre>
     <blockquote type="cite">
-      <pre wrap=""> 
-
+      <pre wrap="">Well - if it's so easy then what don't you just do it?
       </pre>
     </blockquote>
-    <pre wrap="">Well - if it's so easy then what don't you just do it?
-    </pre>
-  </blockquote>
-  <pre wrap=""><!---->
-I fund the things no one else will fund out of my pocket.  The rest I
+    <pre wrap="">I fund the things no one else will fund out of my pocket.  The rest I
 wait for sponsors for.  I can only do so much, so I try to do what no
 one else will do.
 
+    </pre>
+  </blockquote>
+  <pre wrap=""><!---->
+And if he won't say it, I'll at least say that I'm rather greatful for this. ^^
+
   </pre>
 </blockquote>
+I'm a little confused in that most open source projects have an army of
+volunteer programmers as opposed to paid proframmers - or - they have a
+strongly interested corporate partner. Reiser 4 has extreme potantial
+as anyone can see and I would think that the "big boys" would want it -
+so - why isn't it happening?<br>
 <br>
+Also - how much funding are we talking about?<br>
 <pre class="moz-signature" cols="80">-- 
 Marc Perkel - <a class="moz-txt-link-abbreviated" href="mailto:marc@perkel.com">marc@perkel.com</a>
 
@@ -101,4 +111,4 @@ Spam Filter: <a class="moz-txt-link-freetext" href="http://www.junkemailfilter.c
 </body>
 </html>
 
---------------000306000105040702070307--
+--------------050200060706020902010800--
