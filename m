@@ -1,35 +1,32 @@
 From: evilninja <evilninja@gmx.net>
-Subject: Re: Wikipedia article
-Date: Wed, 31 Aug 2005 20:08:11 +0200
-Message-ID: <4315F20B.4030906@gmx.net>
-References: <e692861c05082922152447fbf7@mail.gmail.com> <4315E01B.5050007@gmx.net> <4316019F.7080602@futuretg.com>
+Subject: Re: changing label of disk
+Date: Wed, 31 Aug 2005 20:15:04 +0200
+Message-ID: <4315F3A8.4060605@gmx.net>
+References: <e692861c0508292136543a02e1@mail.gmail.com>	 <1125380557.9589.3.camel@gentoo> <4313FE21.8080709@namesys.com>	 <019d01c5ad68$4d5fdfa0$d60310ac@homedom> <43147EFE.2020804@perkel.com>	 <43150100.40304@namesys.com> <4315D455.1050100@suse.com> <f18a8d9805083110322ecca20@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25761-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25762-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4316019F.7080602@futuretg.com>
+In-Reply-To: <f18a8d9805083110322ecca20@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs List <reiserfs-list@namesys.com>
+To: Bedros Hanounik <2bedros@gmail.com>
+Cc: Reiserfs List <reiserfs-list@namesys.com>
 
-Dr. Giovanni A. Orlando schrieb:
+Bedros Hanounik schrieb:
 > 
-> This table is interesting but have really no sense the "no inclusion" of
-> a minimal comparision about performance.
+> mkfs.reiserfs -l label will overwrite the old data; is there a way to edit 
+> the old lable w/o reformating the disk, other than hexedit the disk?
 
-double negation...if i understand you correctly, you want a benchmark
-comparison of the compared filesystems? uh, you know how hard it is to
-compare these things The Right Way and i think that's beyon the scope of
-the article. the results would be edited back-and-forth, because everone
-has probably different results at hand and the "discussion" tab would be
-set on fire from the ongoing flamewars....
+reiserfstune -l LABEL
 
-Christian.
+should do the job.
 
-PS: http://nerdbynature.de/bench/prinz64/2.6.13-rc2-mm2/bonnie.html
+(and xfs_admin for XFS, jfs_tune for JFS ;)
+
 -- 
 BOFH excuse #219:
 
