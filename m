@@ -1,12 +1,12 @@
 From: Marc Perkel <marc@perkel.com>
-Subject: Fundind Reiser Development
-Date: Wed, 31 Aug 2005 07:36:44 -0700
-Message-ID: <4315C07C.8000309@perkel.com>
+Subject: Funding Reiser Development
+Date: Wed, 31 Aug 2005 07:38:07 -0700
+Message-ID: <4315C0CF.3010807@perkel.com>
 References: <e692861c0508292136543a02e1@mail.gmail.com>	 <1125380557.9589.3.camel@gentoo> <4313FE21.8080709@namesys.com>	 <019d01c5ad68$4d5fdfa0$d60310ac@homedom> <43147EFE.2020804@perkel.com>	 <43150100.40304@namesys.com> <43153918.2090402@perkel.com>	 <4315589D.6070908@namesys.com> <b14e81f005083106447e322c22@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/alternative;
- boundary="------------050200060706020902010800"
-Return-path: <reiserfs-list-return-25753-reiserfs=m.gmane.org@namesys.com>
+ boundary="------------050301030309020202060009"
+Return-path: <reiserfs-list-return-25754-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -16,7 +16,7 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 To: michael chang <thenewme91@gmail.com>
 Cc: Hans Reiser <reiser@namesys.com>, Reiserfs List <reiserfs-list@namesys.com>
 
---------------050200060706020902010800
+--------------050301030309020202060009
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -44,13 +44,7 @@ michael chang wrote:
 >
 >  
 >
-I'm a little confused in that most open source projects have an army of 
-volunteer programmers as opposed to paid proframmers - or - they have a 
-strongly interested corporate partner. Reiser 4 has extreme potantial as 
-anyone can see and I would think that the "big boys" would want it - so 
-- why isn't it happening?
-
-Also - how much funding are we talking about?
+Yeah - totally grateful.
 
 -- 
 Marc Perkel - marc@perkel.com
@@ -59,7 +53,7 @@ Spam Filter: http://www.junkemailfilter.com
     My Blog: http://marc.perkel.com
 
 
---------------050200060706020902010800
+--------------050301030309020202060009
 Content-Type: text/html; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 
@@ -95,13 +89,7 @@ And if he won't say it, I'll at least say that I'm rather greatful for this. ^^
 
   </pre>
 </blockquote>
-I'm a little confused in that most open source projects have an army of
-volunteer programmers as opposed to paid proframmers - or - they have a
-strongly interested corporate partner. Reiser 4 has extreme potantial
-as anyone can see and I would think that the "big boys" would want it -
-so - why isn't it happening?<br>
-<br>
-Also - how much funding are we talking about?<br>
+Yeah - totally grateful.<br>
 <pre class="moz-signature" cols="80">-- 
 Marc Perkel - <a class="moz-txt-link-abbreviated" href="mailto:marc@perkel.com">marc@perkel.com</a>
 
@@ -111,4 +99,4 @@ Spam Filter: <a class="moz-txt-link-freetext" href="http://www.junkemailfilter.c
 </body>
 </html>
 
---------------050200060706020902010800--
+--------------050301030309020202060009--
