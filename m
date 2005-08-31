@@ -1,63 +1,39 @@
-From: Bedros Hanounik <2bedros@gmail.com>
-Subject: changing label of disk
-Date: Wed, 31 Aug 2005 10:32:16 -0700
-Message-ID: <f18a8d9805083110322ecca20@mail.gmail.com>
+From: Adrian Ulrich <reiser4@blinkenlights.ch>
+Subject: Re: WinFS beta out
+Date: Wed, 31 Aug 2005 19:45:20 +0200
+Message-ID: <20050831194520.08acf3bb.reiser4@blinkenlights.ch>
 References: <e692861c0508292136543a02e1@mail.gmail.com>
-	 <1125380557.9589.3.camel@gentoo> <4313FE21.8080709@namesys.com>
-	 <019d01c5ad68$4d5fdfa0$d60310ac@homedom> <43147EFE.2020804@perkel.com>
-	 <43150100.40304@namesys.com> <4315D455.1050100@suse.com>
+	<1125380557.9589.3.camel@gentoo>
+	<4313FE21.8080709@namesys.com>
+	<019d01c5ad68$4d5fdfa0$d60310ac@homedom>
+	<43147EFE.2020804@perkel.com>
+	<43150100.40304@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; 
-	boundary="----=_Part_3883_12521173.1125509536047"
-Return-path: <reiserfs-list-return-25759-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25760-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4315D455.1050100@suse.com>
+In-Reply-To: <43150100.40304@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-------=_Part_3883_12521173.1125509536047
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+> If you want high performance acls,
+> sponsor me to supervise the work for reiser4, and they will be very high
+> performance.  Making them high performance in reiser4 is straightforward
+> and easy.
 
-here's a noob question. I have a usb HD using reiserfs 3.6=20
+How much would it cost?
 
-I want to change the label of the disk, so when it's automounted, the=20
-mounting point has some meaning such as "backup" instead of "usbdisk"
+ 1'000$ ? 10'000$?
 
-fstab-sync seems to use the label of the disk to create a mounting point.
+ -- Adrian
 
-mkfs.reiserfs -l label will overwrite the old data; is there a way to edit=
-=20
-the old lable w/o reformating the disk, other than hexedit the disk?
 
-Thanks,
 
--B
-
-------=_Part_3883_12521173.1125509536047
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-here's a noob question. I have a usb HD using reiserfs 3.6 <br>
-<br>
-I want to change the label of the disk, so when it's automounted, the
-mounting point has some meaning such as &quot;backup&quot; instead of &quot=
-;usbdisk&quot;<br>
-<br>
-fstab-sync seems to use the label of the disk to create a mounting point.<b=
-r>
-<br>
-mkfs.reiserfs -l label will overwrite the old data; is there a way to
-edit the old lable w/o reformating the disk, other than hexedit the
-disk?<br>
-<br>
-Thanks,<br>
-<br>
--B<br>
-
-------=_Part_3883_12521173.1125509536047--
+-- 
+"Wow, I'm Dazzled!
+These graphs are so pretty!"
+    - CEOs Everywhere 
