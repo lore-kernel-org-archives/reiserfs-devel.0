@@ -1,37 +1,35 @@
 From: evilninja <evilninja@gmx.net>
 Subject: Re: Wikipedia article
-Date: Wed, 31 Aug 2005 18:51:39 +0200
-Message-ID: <4315E01B.5050007@gmx.net>
-References: <e692861c05082922152447fbf7@mail.gmail.com>
+Date: Wed, 31 Aug 2005 19:00:27 +0200
+Message-ID: <4315E22B.6030507@gmx.net>
+References: <e692861c05082922152447fbf7@mail.gmail.com> <4315E01B.5050007@gmx.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25756-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25757-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e692861c05082922152447fbf7@mail.gmail.com>
+In-Reply-To: <4315E01B.5050007@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Reiserfs List <reiserfs-list@namesys.com>
 
-Gregory Maxwell schrieb:
-> Someone might want to update the information on reiser4 at:
-> 
-> http://en.wikipedia.org/wiki/Comparison_of_file_systems
+evilninja schrieb:
+> - Maximum filename length
+> - Maximum pathname length (currently "No limit defined" <-- is this true?)
 
-yeah, i noticed this too some time ago. so, what's the
+in the thread "REISERFS_MAX_NAME and ENAMETOOLONG" it is stated, that max.
+filename length is not a kernel limit but a libc limit of 255 chars.
+right? an in the same thread PATH_MAX is named to be the limit for "max
+pathname lenght", which is currently 4096 bytes.
 
-- Maximum filename length
-- Allowable characters in directory entries (e.g. "Any byte except NUL"?)
-- Maximum volume size (16TiB on ReiserFS v3)
-- Maximum pathname length (currently "No limit defined" <-- is this true?)
+i just wonder why almost all other fs are listed with "255 bytes" for max
+filename lenght and "No limit defined" for max. pathname lenght...
 
-for Reiser4?
-
-thanks,
+i shall update the wikipedia entry if no objections are filed...
 Christian.
 -- 
-BOFH excuse #94:
+BOFH excuse #217:
 
-Internet outage
+The MGs ran out of gas.
