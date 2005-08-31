@@ -1,102 +1,61 @@
-From: Marc Perkel <marc@perkel.com>
-Subject: Funding Reiser Development
-Date: Wed, 31 Aug 2005 07:38:07 -0700
-Message-ID: <4315C0CF.3010807@perkel.com>
-References: <e692861c0508292136543a02e1@mail.gmail.com>	 <1125380557.9589.3.camel@gentoo> <4313FE21.8080709@namesys.com>	 <019d01c5ad68$4d5fdfa0$d60310ac@homedom> <43147EFE.2020804@perkel.com>	 <43150100.40304@namesys.com> <43153918.2090402@perkel.com>	 <4315589D.6070908@namesys.com> <b14e81f005083106447e322c22@mail.gmail.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: WinFS beta out
+Date: Wed, 31 Aug 2005 12:01:25 -0400
+Message-ID: <4315D455.1050100@suse.com>
+References: <e692861c0508292136543a02e1@mail.gmail.com> <1125380557.9589.3.camel@gentoo> <4313FE21.8080709@namesys.com> <019d01c5ad68$4d5fdfa0$d60310ac@homedom> <43147EFE.2020804@perkel.com> <43150100.40304@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
- boundary="------------050301030309020202060009"
-Return-path: <reiserfs-list-return-25754-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25755-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b14e81f005083106447e322c22@mail.gmail.com>
+In-Reply-To: <43150100.40304@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: michael chang <thenewme91@gmail.com>
-Cc: Hans Reiser <reiser@namesys.com>, Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Marc Perkel <marc@perkel.com>, Reiserfs List <reiserfs-list@namesys.com>
 
---------------050301030309020202060009
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
+Hans Reiser wrote:
+> I didn't have any role in the reiser3 acls.  I would never have designed
+> them the way they got written.  If you want high performance acls,
+> sponsor me to supervise the work for reiser4, and they will be very high
+> performance.  Making them high performance in reiser4 is straightforward
+> and easy.
 
+I would have also rather designed them differently, as another item
+associated with the key. One of the strengths of the reiserfs design was
+the btree that allows nodes of various types. ACLs should have been
+implemented this way, extents could have been implemented this way.
 
-michael chang wrote:
+Unfortunately, when I tried doing that, I found that the implementation
+does not at all live up to the design. The implementation can handle the
+four core items, and those alone. The addition of a new item type causes
+the system to panic. Those issues could have been fixed, but we still
+would have been left with a filesystem that would panic if mounted on an
+older kernel -- since reiserfs also has no concept of feature versioning.
 
->On 8/31/05, Hans Reiser <reiser@namesys.com> wrote:
->  
->
->>Marc Perkel wrote:
->>    
->>
->>>Well - if it's so easy then what don't you just do it?
->>>      
->>>
->>I fund the things no one else will fund out of my pocket.  The rest I
->>wait for sponsors for.  I can only do so much, so I try to do what no
->>one else will do.
->>
->>    
->>
->
->And if he won't say it, I'll at least say that I'm rather greatful for this. ^^
->
->  
->
-Yeah - totally grateful.
+The current implementation is hardly what I had envisioned ACLs and
+xattrs being on reiserfs -- but was the only solution we could find to
+still allow the filesystem to be mounted on an earlier kernel.
 
--- 
-Marc Perkel - marc@perkel.com
+An ideal solution would have been to introduce reiserfs v3.7 with a new
+magic, and add feature versioning to the superblock, similar to the way
+ext[23] does it. I felt that would have been met with much, much more
+resistance than the implementation I ultimately presented.
 
-Spam Filter: http://www.junkemailfilter.com
-    My Blog: http://marc.perkel.com
+- -Jeff
 
+- --
+Jeff Mahoney
+SuSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.0 (GNU/Linux)
 
---------------050301030309020202060009
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-  <meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
-  <title></title>
-</head>
-<body bgcolor="#ffffff" text="#000000">
-<br>
-<br>
-michael chang wrote:<br>
-<blockquote cite="midb14e81f005083106447e322c22@mail.gmail.com"
- type="cite">
-  <pre wrap="">On 8/31/05, Hans Reiser <a class="moz-txt-link-rfc2396E" href="mailto:reiser@namesys.com">&lt;reiser@namesys.com&gt;</a> wrote:
-  </pre>
-  <blockquote type="cite">
-    <pre wrap="">Marc Perkel wrote:
-    </pre>
-    <blockquote type="cite">
-      <pre wrap="">Well - if it's so easy then what don't you just do it?
-      </pre>
-    </blockquote>
-    <pre wrap="">I fund the things no one else will fund out of my pocket.  The rest I
-wait for sponsors for.  I can only do so much, so I try to do what no
-one else will do.
-
-    </pre>
-  </blockquote>
-  <pre wrap=""><!---->
-And if he won't say it, I'll at least say that I'm rather greatful for this. ^^
-
-  </pre>
-</blockquote>
-Yeah - totally grateful.<br>
-<pre class="moz-signature" cols="80">-- 
-Marc Perkel - <a class="moz-txt-link-abbreviated" href="mailto:marc@perkel.com">marc@perkel.com</a>
-
-Spam Filter: <a class="moz-txt-link-freetext" href="http://www.junkemailfilter.com">http://www.junkemailfilter.com</a>
-    My Blog: <a class="moz-txt-link-freetext" href="http://marc.perkel.com">http://marc.perkel.com</a>
-</pre>
-</body>
-</html>
-
---------------050301030309020202060009--
+iD8DBQFDFdRVLPWxlyuTD7IRAmPpAJ9MoA9ge/yHyM4UvMdvSU25VMvYLwCcDoWt
+qxZLg1eK8TExLasF287oWJc=
+=7QFY
+-----END PGP SIGNATURE-----
