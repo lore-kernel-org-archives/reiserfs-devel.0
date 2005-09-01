@@ -1,55 +1,54 @@
-From: <Nikita@Clusterfs.COM>
-Subject: Re: Executability problem
-Date: Thu, 1 Sep 2005 15:13:52 +0800
-Message-ID: <17174.43568.268660.581234@zeta.clusterfs.com>
-References: <20050830152859.45e0b010.Kris.VanBruwaene@vrt.be>
-	<b14e81f0050830112173c03579@mail.gmail.com>
+From: Thomas Kuther <gimpel@sonnenkinder.org>
+Subject: journal size reiserfs vs reiser4
+Date: Thu, 1 Sep 2005 13:46:04 +0200
+Message-ID: <20050901134604.31ddd297@SiRiUS.home>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25775-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed;
+ boundary=Signature_Thu__1_Sep_2005_13_46_04_+0200_7F_0pwsCfi4vtlTi;
+ protocol="application/pgp-signature"; micalg=PGP-SHA1
+Return-path: <reiserfs-list-return-25776-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b14e81f0050830112173c03579@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: michael chang <thenewme91@gmail.com>
-Cc: reiserfs-list@namesys.com, Kris Van Bruwaene <Kris.VanBruwaene@vrt.be>
+To: Reiserfs List <reiserfs-list@namesys.com>
 
-michael chang writes:
- > On 8/30/05, Kris Van Bruwaene <Kris.VanBruwaene@vrt.be> wrote:
- > > I recently discovered that scripts have become non-executable on my reiserfs share, even though the -x flags are set:
- > > root@A00012344:/home/kris# cat tst
- > > #! /usr/bin/perl -w
- > > print "Hello world\n";
- > > root@A00012344:/home/kris# ./tst
- > > bash: ./tst: /usr/bin/perl: bad interpreter: Toegang geweigerd #(=Access denied)
- > 
- > I believe the line should read
- > #!/usr/bin/perl -w
- > not 
- > #! /usr/bin/perl -w
- > 
- > [no space between "!" and first "/"]
- > 
- > unless that's a typo between output and your file.
+--Signature_Thu__1_Sep_2005_13_46_04_+0200_7F_0pwsCfi4vtlTi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Actually, space between shell-bang and the path to the interpreter is
-perfectly legal in Linux.
+Hello People!
 
-Kris, what is the output of
+Just got a new harddrive and as i'm pretty pleased with reiser4 i
+thought i'll make it reiser4. But then i realized that it uses almost
+1/6 of the hd "for nothing"
 
-$ cat /proc/mounts
+mkfs.reiser4 /dev/hde1:
+/dev/hde1  reiser4    222G  7,5M  222G   1% /shared
 
-?
+mkfs.reiserfs
+/dev/hde1 reiserfs    233G   33M  233G   1% /shared
 
- > 
- > -- 
- > ~Mike
- >  - Just my two cents
- >  - No man is an island, and no man is unable.
- > 
+somehow i had in mind that reiser4 should use much less space than
+reiserfs, but it's exactly the other way round. Loosing 17GB of an
+250GB disk is hard anyway. but loosing 28GB is simply no go.
 
-Nikita.
+Now do i need to pass any special options to mkfs.reiser4 or why is
+that? i'm using reiser4progs 1.0.4
 
+Thanks in advance
+Tom
+
+--Signature_Thu__1_Sep_2005_13_46_04_+0200_7F_0pwsCfi4vtlTi
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.6 (GNU/Linux)
+
+iD8DBQFDFuoDaMf8HmTow1YRAlAtAJ4wDQi0kNEy2p72F7CZPsv738lpLQCg1X5+
+N0u5lBmS3kJr3BEh0r3yGgE=
+=D8g+
+-----END PGP SIGNATURE-----
+
+--Signature_Thu__1_Sep_2005_13_46_04_+0200_7F_0pwsCfi4vtlTi--
