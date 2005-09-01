@@ -1,37 +1,58 @@
-From: Marcel Hilzinger <marcel@hilzinger.hu>
+From: Thomas Kuther <gimpel@sonnenkinder.org>
 Subject: Re: journal size reiserfs vs reiser4
-Date: Thu, 1 Sep 2005 15:13:36 +0200
-Message-ID: <200509011513.36586.marcel@hilzinger.hu>
-References: <20050901134604.31ddd297@SiRiUS.home> <4316F9CC.2090904@namesys.com> <20050901150507.3d6f53c7@SiRiUS.home>
-Reply-To: marcel@hilzinger.hu
+Date: Thu, 1 Sep 2005 15:12:49 +0200
+Message-ID: <20050901151249.2abec739@SiRiUS.home>
+References: <20050901134604.31ddd297@SiRiUS.home>
+	<20050901144842.34629bcf@SiRiUS.home>
+	<4316F9CC.2090904@namesys.com>
+	<op.swfc8hleth1vuj@localhost>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25781-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed;
+ boundary="Signature_Thu__1_Sep_2005_15_12_49_+0200_Jx4=uaE+A+dbkjCI";
+ protocol="application/pgp-signature"; micalg=PGP-SHA1
+Return-path: <reiserfs-list-return-25783-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050901150507.3d6f53c7@SiRiUS.home>
-Content-Disposition: inline
+In-Reply-To: <op.swfc8hleth1vuj@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
 To: reiserfs-list@namesys.com
 
-Am Donnerstag, 1. September 2005 15:05 schrieb Thomas Kuther:
-> On Thu, 01 Sep 2005 16:53:32 +0400
->
-> "Vladimir V. Saveliev" <vs@namesys.com> wrote:
-> > Hello
-> >
-[...]
-> >
+--Signature_Thu__1_Sep_2005_15_12_49_+0200_Jx4=uaE+A+dbkjCI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, 01 Sep 2005 15:03:43 +0200
+PFC <lists@boutiquenumerique.com> wrote:
+
+>=20
+> >>> 250GB disk
+>=20
+> Well, 250GB is the "marketing capacity", the real formatted capacity
+> is always less (ask fdisk) also of course you have 1024 vs 1000
+>=20
+yeah see my 2. mail - 233 GB is the true (1024 based) size of the disk
+
 > > reiser4 reserves 5% of disk space for its internal needs.
->
-> Ah OK, that computes. So i'll go with reiserfs on that big one (11 GB
-> for internal stuff is too much i have to admit).
+>=20
+> 	So, do you mean this 5% is for metadata, and thus it would be
+> used anyway on any other filesystem as files are written, and thus it
+> makes absolutely no difference ?
+>=20
+>=20
+humm.. interesting point. maybe there are starting things like
+blocksize and journal size to play a role?
 
-If I remember well, you can adjust this value in the code.
+--Signature_Thu__1_Sep_2005_15_12_49_+0200_Jx4=uaE+A+dbkjCI
+Content-Type: application/pgp-signature
 
-=2D-=20
-=C3=9Cdv=C3=B6zlettel -- Mit freundlichen Gr=C3=BCssen,
-Marcel Hilzinger
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.6 (GNU/Linux)
+
+iD8DBQFDFv5WaMf8HmTow1YRAs8yAJ4rVrP4/xWG935TtqEHWdtRS3kaswCg6Nzk
+x7taRrlU0SRYJnTHCVNb2tY=
+=cmc8
+-----END PGP SIGNATURE-----
+
+--Signature_Thu__1_Sep_2005_15_12_49_+0200_Jx4=uaE+A+dbkjCI--
