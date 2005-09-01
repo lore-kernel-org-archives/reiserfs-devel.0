@@ -1,76 +1,151 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: [PATCH] fix problems related to journaling in Reiserfs
-Date: Wed, 31 Aug 2005 20:30:59 -0700
-Message-ID: <431675F3.2040108@namesys.com>
-References: <6.0.0.20.2.20050831191551.03fdbac0@129.60.53.12>	 <b14e81f005083106423c6adc4@mail.gmail.com>	 <43164523.7030301@lab.ntt.co.jp> <b14e81f005083117377ee7556a@mail.gmail.com>
+Date: Wed, 31 Aug 2005 20:35:52 -0700
+Message-ID: <43167718.5080702@namesys.com>
+References: <6.0.0.20.2.20050831191551.03fdbac0@129.60.53.12>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25769-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25770-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b14e81f005083117377ee7556a@mail.gmail.com>
+In-Reply-To: <6.0.0.20.2.20050831191551.03fdbac0@129.60.53.12>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: michael chang <thenewme91@gmail.com>
-Cc: Hifumi Hisashi <hifumi.hisashi@lab.ntt.co.jp>, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org, Chris Mason <mason@suse.com>
+To: Hifumi Hisashi <hifumi.hisashi@lab.ntt.co.jp>, Chris Mason <mason@suse.com>
+Cc: reiserfs-dev@namesys.com, reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org
 
-3.6 will always be supported for bug fixes, but will not receive new
-features if I can help it.  It is stable supported code, and should be
-kept that way.
+Thanks much Hifumi!
 
-Regarding the journaling implementation, let's see what Chris says
-before I comment.
+Chris, please comment on the patch.
 
 Hans
 
-michael chang wrote:
+Hifumi Hisashi wrote:
 
->On 8/31/05, Hifumi Hisashi <hifumi.hisashi@lab.ntt.co.jp> wrote:
->  
+>   Hello.
 >
->>michael chang wrote:
->>
->>    
->>
->>>Surely we don't want this.  Look at the papers on Namesys's websites,
->>>about the atomicaty and the banking example.  But that's just my
->>>personal opinion.  Besides, I believe it's more likely that usually
->>>the power gets lost than the SCSI or IDE cable gets disconnected,
->>>AFAIK...
->>>
->>>
->>>      
->>>
->>    A write()  syscall with the O_SYNC flag must ensure that not only
->>file data block
->>but also journal (meta-data update) are written to a disk when this
->>syscall end.
->>   But, current implementation of Reiserfs does not do that. If a system
->>crashes,
->>a filesystem recovers from the journal transaction log. But, Reiserfs
->>may not
->>recover in some cases.
->>   I checked other filesystems like ext3, jfs, xfs. Those filesystem
->>write transactions
->>to a disk everytime  write()  with the O_SYNC is performed. In those
->>filesystem,
->>I have no trouble mentioned above.
->>
->>  I should say, the Reiserfs would be "un"reliable filesystem..........
->>    
->>
+>   I noticed that the Reiserfs has some problems related to meta-data
+> journaling.
+>   I suppose that transactions regarding meta-data should be written to
+> a disk every
+> meta-data change (for example, i_size is increased) in ordered-mode
+> while synchronous
+> writing is performed. But, it seems to me the Reiserfs does not do that.
 >
->That said, AFAIK, Reiser(fs) 3.6 patches are somewhat redundant
->(although if they solve a "problem", sure, go ahead) since this
->funcationality should be present in Reiser4 in one form or another --
->I don't know if Reiser3.6 is still "supported" per se, anyways.  But
->don't bash on me -- I'm not subscribed to the reiserfs-dev nor
->linux-fsdevel lists, so don't bash me for saying something I shouldn't
->say otherwise (I don't see how removing these lists from the replies
->would help, but if that is requested, let me know).
+>   I did a following test.
+> 1, Mount the Reiserfs in ordered-mode.
+> 2, Run the test program that opens a test file with O_SYNC|O_CREAT
+> flag, and continues to
+> write 4bytes data in busy loop. Every write() is and its file size is
+> increasing.
+> 3, While above the program is running, disconnect SCSI cable.
+> 4, Hexdump a disk and see journal on a disk.
+> 5, Reboot a system and again mount the Reiserfs in ordered mode.
 >
->  
+>   I checked the size of file the test program created. I could not see
+> whole content of this file
+> because file size was shorter than it should be. The cause of this
+> problem is that
+> even though an i_size was changed, meta-data  was not logged to a
+> journal area on disk
+> under synchronous writing.
+>
+>   I did same test on Ext3, and there was no such a problem. Ext3(jbd)
+> logged every change of
+> an i_size while an O_SYNC writing was being performed.
+>
+>   Following patch fix this problem.
+>
+>  Signed-off-by :Hisashi Hifumi<hifumi.hisashi@lab.ntt.co.jp>
+>
+> diff -Nru linux-2.6.13/fs/reiserfs/file.c
+> linux-2.6.13_fix/fs/reiserfs/file.c
+> --- linux-2.6.13/fs/reiserfs/file.c    2005-08-29 08:41:01.000000000
+> +0900
+> +++ linux-2.6.13_fix/fs/reiserfs/file.c    2005-08-31
+> 16:33:33.000000000 +0900
+> @@ -819,7 +819,6 @@
+>      int i;            // loop counter
+>      int offset;        // Writing offset in page.
+>      int orig_write_bytes = write_bytes;
+> -    int sd_update = 0;
+>
+>      for (i = 0, offset = (pos & (PAGE_CACHE_SIZE - 1)); i < num_pages;
+>           i++, offset = 0) {
+> @@ -855,17 +854,17 @@
+>
+>          if (th->t_trans_id) {
+>              reiserfs_write_lock(inode->i_sb);
+> -            reiserfs_update_sd(th, inode);    // And update on-disk
+> metadata
+> +            status = journal_end(th, th->t_super,
+> th->t_blocks_allocated);
+> +                if (status)
+> +                        retval = status;
+>              reiserfs_write_unlock(inode->i_sb);
+> -        } else
+> -            inode->i_sb->s_op->dirty_inode(inode);
+> -
+> -        sd_update = 1;
+> +        }
+> +        mark_inode_dirty(inode);
+> +        th->t_trans_id = 0;
+>      }
+>      if (th->t_trans_id) {
+>          reiserfs_write_lock(inode->i_sb);
+> -        if (!sd_update)
+> -            reiserfs_update_sd(th, inode);
+> +        reiserfs_update_sd(th, inode);
+>          status = journal_end(th, th->t_super, th->t_blocks_allocated);
+>          if (status)
+>              retval = status;
+> @@ -1526,10 +1525,13 @@
+>          }
+>      }
+>
+> -    if ((file->f_flags & O_SYNC) || IS_SYNC(inode))
+> +    if ((file->f_flags & O_SYNC) || IS_SYNC(inode)) {
+>          res =
+>              generic_osync_inode(inode, file->f_mapping,
+>                      OSYNC_METADATA | OSYNC_DATA);
+> +        if (res)
+> +            already_written = 0;
+> +    }
+>
+>      up(&inode->i_sem);
+>      reiserfs_async_progress_wait(inode->i_sb);
+> diff -Nru linux-2.6.13/fs/reiserfs/inode.c
+> linux-2.6.13_fix/fs/reiserfs/inode.c
+> --- linux-2.6.13/fs/reiserfs/inode.c    2005-08-29 08:41:01.000000000
+> +0900
+> +++ linux-2.6.13_fix/fs/reiserfs/inode.c    2005-08-31
+> 16:33:33.000000000 +0900
+> @@ -1642,6 +1642,7 @@
+>  {
+>      struct reiserfs_transaction_handle th;
+>      int jbegin_count = 1;
+> +    int err = 0;
+>
+>      if (inode->i_sb->s_flags & MS_RDONLY)
+>          return -EROFS;
+> @@ -1654,11 +1655,11 @@
+>          reiserfs_write_lock(inode->i_sb);
+>          if (!journal_begin(&th, inode->i_sb, jbegin_count)) {
+>              reiserfs_update_sd(&th, inode);
+> -            journal_end_sync(&th, inode->i_sb, jbegin_count);
+> +            err = journal_end_sync(&th, inode->i_sb, jbegin_count);
+>          }
+>          reiserfs_write_unlock(inode->i_sb);
+>      }
+> -    return 0;
+> +    return err;
+>  }
+>
+>  /* stat data of new object is inserted already, this inserts the item
+>
+> Thanks,
+>
 >
 
