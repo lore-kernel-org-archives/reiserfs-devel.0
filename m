@@ -1,41 +1,50 @@
 From: michael chang <thenewme91@gmail.com>
-Subject: WinFS beta out
-Date: Thu, 1 Sep 2005 10:04:59 -0400
-Message-ID: <b14e81f00509010704adfb22a@mail.gmail.com>
-References: <e692861c0508292136543a02e1@mail.gmail.com>
-	 <43147EFE.2020804@perkel.com> <df2lhc$brk$1@sea.gmane.org>
-	 <200508310100.06889.chrivers@iversen-net.dk>
-	 <028201c5ae18$edcfe4c0$d60310ac@homedom>
-	 <b14e81f005083106453fd2605b@mail.gmail.com>
-	 <033501c5aece$8b2f8350$d60310ac@homedom>
-	 <b14e81f0050901070453f4d898@mail.gmail.com>
+Subject: Re: journal size reiserfs vs reiser4
+Date: Thu, 1 Sep 2005 10:08:14 -0400
+Message-ID: <b14e81f0050901070823982419@mail.gmail.com>
+References: <20050901134604.31ddd297@SiRiUS.home>
+	 <4316F9CC.2090904@namesys.com> <20050901150507.3d6f53c7@SiRiUS.home>
+	 <200509011513.36586.marcel@hilzinger.hu>
+	 <20050901151545.5f393cd0@SiRiUS.home>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25789-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25790-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b14e81f0050901070453f4d898@mail.gmail.com>
+In-Reply-To: <20050901151545.5f393cd0@SiRiUS.home>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs List <reiserfs-list@namesys.com>
+To: Thomas Kuther <gimpel@sonnenkinder.org>
+Cc: reiserfs-list@namesys.com
 
-On 9/1/05, LiFe <LiFers@optusnet.com.au> wrote:
-> pretty fast. Unfortunately, as indicated before, they seem to have based =
-the
-> bit storage mechanism on NTFS, so slow writes, massive fragmentation,
-> breakable jounaling.
+On 9/1/05, Thomas Kuther <gimpel@sonnenkinder.org> wrote:
+> On Thu, 1 Sep 2005 15:13:36 +0200
+> Marcel Hilzinger <marcel@hilzinger.hu> wrote:
+>=20
+> > Am Donnerstag, 1. September 2005 15:05 schrieb Thomas Kuther:
+> > > On Thu, 01 Sep 2005 16:53:32 +0400
+> > >
+> > > "Vladimir V. Saveliev" <vs@namesys.com> wrote:
+> > > > reiser4 reserves 5% of disk space for its internal needs.
+> > >
+> > > Ah OK, that computes. So i'll go with reiserfs on that big one (11
+> > > GB for internal stuff is too much i have to admit).
+> >
+> > If I remember well, you can adjust this value in the code.
+> >
+> aha! OK. now the question would be: what is a good number for reiser4
+> to work properly. how much does it need from a 233GB disk? or are the
+> 5% chosen 'cause it's the "healthy" value?
+>=20
 
-Bah, in that case, I'll probably just end up sticking with
-FAT/reiserfs dual-boots (switching to Reiser4 when resizers and/or
-repackers and/or converters are available).  A lot of low-end machines
-don't have enough hard-disk performance to handle fragmentation well.
-I think fragmentation is one of the key things that makes computers
-such a pain in the ass to use.
+I'd assume it depends on the way the FS is used; sort of like how you
+assign the max number of inodes you can have on ext2/3.  I could be
+wrong.
 
---
+--=20
 ~Mike
  - Just my two cents
  - No man is an island, and no man is unable.
