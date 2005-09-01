@@ -1,55 +1,39 @@
-From: michael chang <thenewme91@gmail.com>
-Subject: Re: Executability problem
-Date: Thu, 1 Sep 2005 10:31:10 -0400
-Message-ID: <b14e81f005090107314061f741@mail.gmail.com>
-References: <20050830152859.45e0b010.Kris.VanBruwaene@vrt.be>
-	 <17174.43568.268660.581234@zeta.clusterfs.com>
-	 <20050901133725.06b5d3c5.Kris.VanBruwaene@vrt.be>
-	 <b14e81f0050901071269f9a23c@mail.gmail.com>
-	 <20050901162300.6516ac34.Kris.VanBruwaene@vrt.be>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: journal size reiserfs vs reiser4
+Date: Thu, 01 Sep 2005 08:25:11 -0700
+Message-ID: <43171D57.3030007@namesys.com>
+References: <20050901134604.31ddd297@SiRiUS.home>	<20050901144842.34629bcf@SiRiUS.home>	<4316F9CC.2090904@namesys.com> <20050901150507.3d6f53c7@SiRiUS.home> <4316FD28.5020304@redhat.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25792-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25794-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050901162300.6516ac34.Kris.VanBruwaene@vrt.be>
-Content-Disposition: inline
+In-Reply-To: <4316FD28.5020304@redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Kris Van Bruwaene <Kris.VanBruwaene@vrt.be>, Reiserfs List <reiserfs-list@namesys.com>
+To: Peter Staubach <staubach@redhat.com>
+Cc: vs@namesys.com, reiserfs-list@namesys.com
 
-On 9/1/05, Kris Van Bruwaene <Kris.VanBruwaene@vrt.be> wrote:
-> michael chang <thenewme91@gmail.com> schreef:
->=20
-> > On 9/1/05, Kris Van Bruwaene <Kris.VanBruwaene@vrt.be> wrote:
-> > > Looks like you've hit it. How come it's noexec here and exec/defaults=
- in /etc/fstab ??
-> >
-> > How are you mounting the filesystem? E.g. from a command line, or from
-> > an init script; as root or as a user, etc.
->=20
-> It usually gets mounted at boot time, I suppose by an init script
-> (I'm using Knoppix). But I just did (as root):
-> root@A00012344:/home/kris# mount -o remount /home
-> root@A00012344:/home/kris# cat /etc/fstab | grep home
-> /dev/hda3 /home reiserfs defaults,exec,user,auto 0 0
-> root@A00012344:/home/kris# cat /etc/mtab | grep home
-> /dev/hda3 /home reiserfs rw,noexec,nosuid,nodev 0 0
->=20
-> ...and it's still noexec!?
+Peter Staubach wrote:
 
-try
-"mount -o remount,exec /home"
-or=20
-"umount /home; mount /home;"
-(or both)
-
-As for the knoppix init scripts... they're pretty restrictive.  Like
-mounting things read only, AFAIK.
-
---=20
-~Mike
- - Just my two cents
- - No man is an island, and no man is unable.
+>
+>>> reiser4 reserves 5% of disk space for its internal needs.
+>>>
+>
+> 5% of today's big disks seems a little excessive.  Does reiser4 really
+> need
+> that much space or would less also suffice without compromising
+> performance?
+>
+> Is there research available which makes up the basis for the 5% number?
+>
+>    Thanx...
+>
+>       ps
+>
+>
+Research for filesystems generally says that as you get more than 85%
+full the performance goes down, by a lot as you get close to 100%.  5%
+is probably too little rather than too much.
