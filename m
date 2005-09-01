@@ -1,37 +1,41 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: journal size reiserfs vs reiser4
-Date: Thu, 01 Sep 2005 17:37:52 +0400
-Message-ID: <43170430.2080602@namesys.com>
-References: <20050901134604.31ddd297@SiRiUS.home>	<20050901144842.34629bcf@SiRiUS.home>	<4316F9CC.2090904@namesys.com> <20050901150507.3d6f53c7@SiRiUS.home> <4316FD28.5020304@redhat.com>
+From: michael chang <thenewme91@gmail.com>
+Subject: WinFS beta out
+Date: Thu, 1 Sep 2005 10:04:59 -0400
+Message-ID: <b14e81f00509010704adfb22a@mail.gmail.com>
+References: <e692861c0508292136543a02e1@mail.gmail.com>
+	 <43147EFE.2020804@perkel.com> <df2lhc$brk$1@sea.gmane.org>
+	 <200508310100.06889.chrivers@iversen-net.dk>
+	 <028201c5ae18$edcfe4c0$d60310ac@homedom>
+	 <b14e81f005083106453fd2605b@mail.gmail.com>
+	 <033501c5aece$8b2f8350$d60310ac@homedom>
+	 <b14e81f0050901070453f4d898@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25787-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-25789-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4316FD28.5020304@redhat.com>
+In-Reply-To: <b14e81f0050901070453f4d898@mail.gmail.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Peter Staubach <staubach@redhat.com>
-Cc: reiserfs-list@namesys.com
+To: Reiserfs List <reiserfs-list@namesys.com>
 
-Hello
+On 9/1/05, LiFe <LiFers@optusnet.com.au> wrote:
+> pretty fast. Unfortunately, as indicated before, they seem to have based =
+the
+> bit storage mechanism on NTFS, so slow writes, massive fragmentation,
+> breakable jounaling.
 
-Peter Staubach wrote:
-> 
->>> reiser4 reserves 5% of disk space for its internal needs.
->>>
-> 
-> 5% of today's big disks seems a little excessive.  Does reiser4 really need
-> that much space or would less also suffice without compromising
-> performance?
-> 
-No. of course.
+Bah, in that case, I'll probably just end up sticking with
+FAT/reiserfs dual-boots (switching to Reiser4 when resizers and/or
+repackers and/or converters are available).  A lot of low-end machines
+don't have enough hard-disk performance to handle fragmentation well.
+I think fragmentation is one of the key things that makes computers
+such a pain in the ass to use.
 
-reiser4 should be more careful about calculation of reserved space.
-
-> Is there research available which makes up the basis for the 5% number?
-
-I guess there was some discussion of this problem at the beginning of reiser4.
-The solution, however, looks like nobody was able to come up with something reasonable.
+--
+~Mike
+ - Just my two cents
+ - No man is an island, and no man is unable.
