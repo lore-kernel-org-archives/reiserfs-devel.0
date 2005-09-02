@@ -1,32 +1,41 @@
-From: Lexington Luthor <lexington.luthor@gmail.com>
-Subject: Re: Incite into reiser5?
-Date: Fri, 02 Sep 2005 21:28:38 +0100
-Message-ID: <dfacls$4pd$2@sea.gmane.org>
-References: <1125596442.5207.11.camel@jove> <b14e81f0050901193220855450@mail.gmail.com> <1125685758.9150.8.camel@jove> <43189B26.2030602@slaphack.com> <873bonuurh.fsf@evinrude.uhoreg.ca> <4318AB3B.1090204@slaphack.com>
+From: Matt Stegman <matts@ksu.edu>
+Subject: Re: journal size reiserfs vs reiser4
+Date: Fri, 2 Sep 2005 16:29:14 -0500 (CDT)
+Message-ID: <Pine.GSO.4.44L.0509021620380.23379-100000@unix2.cc.ksu.edu>
+References: <4317FD1B.504@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25832-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25833-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4318AB3B.1090204@slaphack.com>
-Sender: news <news@sea.gmane.org>
+In-Reply-To: <4317FD1B.504@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-David Masover wrote:
-> It has one.  It's called Lustre.
-> 
-> What Linux needs is good, distributed filesystem that runs on the 2.6 
-> kernel, without users having to pay licensing fees.
-> 
+Just to add another voice to the cachophony, I would like to be able to
+select the amount.  At any time, not just at mkfs time.  For example,
+ext2's reserved blocks are set by default to 5%, but I can use tune2fs to
+change that to 33% or 0% or whatever makes me happy.
 
-Lustre is expensive, but the -mm kernel now has ocfs (or is it ocfs2?) 
-as well as gfs.
+The point is that sometimes I care more about performance than space usage
+(hard disks are cheap, blah blah) and sometimes I wish to use 100% of my
+disk, even knowing that it means high fragmentation.
 
-What is wrong with either of those two?
+As far as repacking goes, I believe xfs_fsr refuses to defrag files if too
+little space is free.  If it's too hard to program a repacker to operate
+efficiently with only a few megabytes free, simply program it to exit with
+error when less than 5% disk is free.
 
-LL
+-- 
+Matt Stegman
+
+On Fri, 2 Sep 2005, Hans Reiser wrote:
+
+> It could probably be a lot less than 5%, 2% is more than enough I would
+> guess, but we also need to reserve space to get good performance.
+>
+>
 
