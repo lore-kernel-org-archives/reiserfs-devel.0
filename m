@@ -1,35 +1,40 @@
-From: Pierre =?UTF-8?B?RXRjaGVtYcOvdMOp?= <petchema@concept-micro.com>
-Subject: Re: journal size reiserfs vs reiser4
-Date: Sat, 3 Sep 2005 13:34:49 +0200
-Message-ID: <20050903133449.76703fb0.petchema@concept-micro.com>
-References: <20050901134604.31ddd297@SiRiUS.home>
-	<20050901144842.34629bcf@SiRiUS.home>
-	<4316F9CC.2090904@namesys.com>
-	<20050901150507.3d6f53c7@SiRiUS.home>
-	<4316FD28.5020304@redhat.com>
-	<43171D57.3030007@namesys.com>
-	<20050903100846.GC3405@favonius>
+From: Lares Moreau <lares.moreau@gmail.com>
+Subject: Re: Incite into reiser5?
+Date: Sat, 03 Sep 2005 06:59:23 -0600
+Message-ID: <1125752363.9363.7.camel@jove>
+References: <1125596442.5207.11.camel@jove>
+	 <b14e81f0050901193220855450@mail.gmail.com> <1125685758.9150.8.camel@jove>
+	 <43189B26.2030602@slaphack.com> <873bonuurh.fsf@evinrude.uhoreg.ca>
+	 <4318AB3B.1090204@slaphack.com> <1125700948.9551.5.camel@jove>
+	 <dfbooc$qr3$1@sea.gmane.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25843-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25844-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050903100846.GC3405@favonius>
+In-Reply-To: <dfbooc$qr3$1@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Cc: reiserfs-list@namesys.com
 
-Le Sat, 3 Sep 2005 12:08:46 +0200, Sander <sander@humilis.net> a =C3=A9crit=
- :
+Thanks for the pointer LL,
 
-> Does this mean that if my reiser4 filesystem is 90% full, it can be
-> considered 85% full wrt performance because of the 5% reservation?
+My researvch is to do the the mobile client. Connection dependent client
+fs caching/hoarding algorithyms.
+On Sat, 2005-09-03 at 10:00 +0100, Lexington Luthor wrote:
+> Lares Moreau wrote:
+> > My Masters is going in a different direction.  My research has to do
+> > with continuous fs operation even with server disconnects and weak
+> > connections.   I Have looked into Coda fs however that system requires
+> > major reworking to impliment my theories.  I like the plugins.
+> > 
+> 
+> Have you used the Redhat cluster suite? From what I can gather from your 
+> post, it does everything you mentioned. Perhaps you can use it as a 
+> subject of your thesis.
+> 
+> LL
+> 
 
-0.9 * 0.95 =3D 0.855
-
-so it should be 85.5% full if you consider its real physical capacity.
-
-(slight difference, only pointing out a common mistake people do when
-percentages are involved...)
