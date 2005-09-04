@@ -1,40 +1,37 @@
-From: Lares Moreau <lares.moreau@gmail.com>
-Subject: Re: Incite into reiser5?
-Date: Sat, 03 Sep 2005 06:59:23 -0600
-Message-ID: <1125752363.9363.7.camel@jove>
-References: <1125596442.5207.11.camel@jove>
-	 <b14e81f0050901193220855450@mail.gmail.com> <1125685758.9150.8.camel@jove>
-	 <43189B26.2030602@slaphack.com> <873bonuurh.fsf@evinrude.uhoreg.ca>
-	 <4318AB3B.1090204@slaphack.com> <1125700948.9551.5.camel@jove>
-	 <dfbooc$qr3$1@sea.gmane.org>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: journal size reiserfs vs reiser4
+Date: Sat, 03 Sep 2005 17:15:02 -0700
+Message-ID: <431A3C86.5010409@namesys.com>
+References: <20050901134604.31ddd297@SiRiUS.home> <20050901144842.34629bcf@SiRiUS.home> <4316F9CC.2090904@namesys.com> <20050901150507.3d6f53c7@SiRiUS.home> <4316FD28.5020304@redhat.com> <43171D57.3030007@namesys.com> <20050903100846.GC3405@favonius>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25844-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25848-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <dfbooc$qr3$1@sea.gmane.org>
+In-Reply-To: <20050903100846.GC3405@favonius>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Cc: reiserfs-list@namesys.com
+To: sander@humilis.net
+Cc: Peter Staubach <staubach@redhat.com>, vs@namesys.com, reiserfs-list@namesys.com
 
-Thanks for the pointer LL,
+Sander wrote:
 
-My researvch is to do the the mobile client. Connection dependent client
-fs caching/hoarding algorithyms.
-On Sat, 2005-09-03 at 10:00 +0100, Lexington Luthor wrote:
-> Lares Moreau wrote:
-> > My Masters is going in a different direction.  My research has to do
-> > with continuous fs operation even with server disconnects and weak
-> > connections.   I Have looked into Coda fs however that system requires
-> > major reworking to impliment my theories.  I like the plugins.
-> > 
-> 
-> Have you used the Redhat cluster suite? From what I can gather from your 
-> post, it does everything you mentioned. Perhaps you can use it as a 
-> subject of your thesis.
-> 
-> LL
-> 
-
+>Hans Reiser wrote (ao):
+>  
+>
+>>Research for filesystems generally says that as you get more than 85%
+>>full the performance goes down, by a lot as you get close to 100%.  5%
+>>is probably too little rather than too much.
+>>    
+>>
+>
+>Does this mean that if my reiser4 filesystem is 90% full, it can be
+>considered 85% full wrt performance because of the 5% reservation?
+>
+>	Sander
+>
+>  
+>
+yes, approximately.
