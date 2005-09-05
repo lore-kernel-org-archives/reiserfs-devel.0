@@ -1,44 +1,63 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: journal size reiserfs vs reiser4
-Date: Sun, 04 Sep 2005 11:42:21 -0500
-Message-ID: <431B23ED.7070505@slaphack.com>
-References: <4317FD1B.504@namesys.com>	 <Pine.GSO.4.44L.0509021620380.23379-100000@unix2.cc.ksu.edu>	 <b14e81f005090318046ee67d7e@mail.gmail.com>	 <431A5E43.4060005@slaphack.com> <431A6E71.4060105@namesys.com> <194f6255050904022932ca34ea@mail.gmail.com>
+From: Nikita Danilov <nikita@clusterfs.com>
+Subject: Re: Incite into reiser5?
+Date: Mon, 5 Sep 2005 13:02:50 +0400
+Message-ID: <17180.2490.666358.984560@gargle.gargle.HOWL>
+References: <1125596442.5207.11.camel@jove>
+	<b14e81f0050901193220855450@mail.gmail.com>
+	<1125685758.9150.8.camel@jove>
+	<43189B26.2030602@slaphack.com>
+	<873bonuurh.fsf@evinrude.uhoreg.ca>
+	<4318AB3B.1090204@slaphack.com>
+	<dfacls$4pd$2@sea.gmane.org>
+	<4318C9E8.80804@slaphack.com>
+	<dfaihh$m2d$1@sea.gmane.org>
+	<4318EA2E.5090603@slaphack.com>
+	<dfbofh$q51$1@sea.gmane.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25859-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25860-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <194f6255050904022932ca34ea@mail.gmail.com>
+In-Reply-To: <dfbofh$q51$1@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: linuxhippy@gmail.com
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Lexington Luthor <lexington.luthor@gmail.com>
+Cc: Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
-Clemens Eisserer wrote:
-> Well, it sounds a bit like a microsoft manager explaining why XP-Home
-> has no terminal server features ;-)
-> 
-> I think an mkfs-option would be best, with a warning if the value
-> given by the user is nonsence (3-8% ok?).
+Lexington Luthor writes:
+ > David Masover wrote:
+ > > Great -- no load balancing or local caching at all, then?
+ > > 
+ > 
+ > Its actually pretty fast - almost raw disk speed for small clusters, but 
+ > not much slower for larger ones - try it out.
 
-Is there a reason we need to specify this at mkfs time?  What about a 
-mount option?
+Lustre and GFS target quite different environments. GFS is mainly for
+small-to-medium clusters with up to hundred nodes, for situations when
+one needs fail-over and things like that. Lustre is for the large
+clusters with tens thousand nodes, hundreds object stores, with very
+fa{,s}t transports both through the network (elan) and to the storage
+(FC). This requires completely different architecture of IO and
+meta-data management.
 
-It seems that if you could do this in the kernel source, you could 
-certainly do it at mount-time, per-fs.  In other words, it seems that 
-it's not something which needs to be specified in the FS format itself.
+ > 
+ > Its not as fast as reiser5 may end up, but its here and working right 
+ > now. It is load balanced, and it does local caching. Use it before you 
+ > start criticizing it.
+ > 
+ > It has plenty of its own problems (mainly relating to the DLM), but none 
+ > of the things you mentioned are a problem.
+ > 
+ > For the time being, it beats every other non-commercial distributed file 
+ > system hands down.
+ > 
+ > I look forward to reiser5, but GFS is just fine for now.
+ > 
+ > LL
+ > 
 
->>This is a bit arrogant, but I believe that a user that does not know how
->>to recompile the kernel with the #define changed is not sophisticated
->>enough to know how much he is going to hurt his performance by going
->>from 95% to 99% space used, and a user who does not want to bother with
->>recompiling is not going to study the topic enough to realize he is
->>making a mistake 80% of the time.  It is important to know when
->>designing a product when your users intuitions are going to be wrong
->>80%of the time, and while one should always be slow to reach such a
->>conclusion, I think this is such a case.
+Nikita.
 
-And yet, there are still plenty of options in the kernel, in mount 
-options and in menuconfig, which are dangerous and almost never right.
+ > 
