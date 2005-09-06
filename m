@@ -1,119 +1,43 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: we have got hash function screwed up
-Date: Tue, 06 Sep 2005 16:06:51 +0400
-Message-ID: <431D865B.8040604@namesys.com>
-References: <431C738F.4010803@freemail.hu> <b14e81f00509051031158e3f0e@mail.gmail.com> <431D5D1D.2090709@namesys.com> <431D72C5.105@freemail.hu>
+From: Tom Vier <tmv@comcast.net>
+Subject: Re: journal size reiserfs vs reiser4
+Date: Tue, 6 Sep 2005 09:59:51 -0400
+Message-ID: <20050906135951.GA12333@zero>
+References: <4317FD1B.504@namesys.com> <Pine.GSO.4.44L.0509021620380.23379-100000@unix2.cc.ksu.edu> <b14e81f005090318046ee67d7e@mail.gmail.com> <431A5E43.4060005@slaphack.com> <431A6E71.4060105@namesys.com>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------010301010007060601040305"
-Return-path: <reiserfs-list-return-25874-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25876-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <431D72C5.105@freemail.hu>
+Content-Disposition: inline
+In-Reply-To: <431A6E71.4060105@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Gabor HALASZ <halasz.g@freemail.hu>, ReiserFS Mailing List <reiserfs-list@namesys.com>
-
---------------010301010007060601040305
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
+Cc: Hans Reiser <reiser@namesys.com>
 
-Hello
+On Sat, Sep 03, 2005 at 08:48:01PM -0700, Hans Reiser wrote:
+> This is a bit arrogant, but I believe that a user that does not know how
+> to recompile the kernel with the #define changed is not sophisticated
 
-Gabor HALASZ wrote:
-> Vladimir V. Saveliev wrote:
->> Hello
->>
->> michael chang wrote:
->>
->>> On 9/5/05, Gabor HALASZ <halasz.g@freemail.hu> wrote:
->>>
->>>
->>>> root@sk8n:~# touch
->>>> /home/ftpd/pub/debian/pool/main/x/xorg-x11/.in.xserver-xorg_6.8.2.dfsg.1-6_i386.deb
->>>>
->>>> touch: cannot touch
->>>> `/home/ftpd/pub/debian/pool/main/x/xorg-x11/.in.xserver-xorg_6.8.2.dfsg.1-6_i386.deb':
->>>>
->>>> Device or resource busy
->>>
->>>> What can I do?!
->>>
->>
->> Can you send output of ls /home/ftpd/pub/debian/pool/main/x/xorg-x11/ ?
-> 
-> It's really required?! Contains only 156 .deb files, mirrored from
-> de.debian.org.
-> 
+I think it's pretty inconvenient to have to change that and rebuild the
+kernel (possibly voiding a vendor's warrenty) just to change the reserve %.
+ext2/3 has always had it tunable. As long as a reasonable % is chosen, few
+will bother to change it. What if your file server is almost full, but you
+can't get funding for more drives for a couple months? You have to rebuild
+your kernel if you just want to use another 2%?
 
-Yes. It looks like something is wrong in that directory. Would you please run the attached program:
-readdir /home/ftpd/pub/debian/pool/main/x/xorg-x11/ and send the output?
+Rebuilding a kernel is no big deal for me, but it is for others, and not
+just because of lack of ability. I'm sure there are situations where you
+can't just plop in a new kernel (company security policies, support
+contracts, etc), no matter how easy it is to build.
 
 
->> You should be able to create this file in other directory.
-> 
-> root@sk8n:~# touch
-> /home/ftpd/pub/debian/pool/main/x/xorg-x11/.in.xserver-xorg_6.8.2.dfsg.1-6_i386.deb
-> 
-> touch: cannot touch
-> `/home/ftpd/pub/debian/pool/main/x/xorg-x11/.in.xserver-xorg_6.8.2.dfsg.1-6_i386.deb':
-> Device or resource busy
-> root@sk8n:~# touch
-> /home/ftpd/pub/debian/pool/main/x/.in.xserver-xorg_6.8.2.dfsg.1-6_i386.deb
-> 
-> 
->> Or create file with other name in that directory.
-> 
-> root@sk8n:~# touch
-> /home/ftpd/pub/debian/pool/main/x/xorg-x11/.in.xserver-xorg_6.8.2.dfsg.1-6_i386.deb
-> 
-> touch: cannot touch
-> `/home/ftpd/pub/debian/pool/main/x/xorg-x11/.in.xserver-xorg_6.8.2.dfsg.1-6_i386.deb':
-> Device or resource busy
-> root@sk8n:~# touch
-> /home/ftpd/pub/debian/pool/main/x/xorg-x11/.in.xserver-xorg_6.8.2.dfsg.1-6_i386.dec
-> 
-> 
-> 
+My vote: put the reserve % in the superblock (if it isn't already) and
+give mkfs a sane default.
 
-
---------------010301010007060601040305
-Content-Type: text/x-c;
- name="readdir.c"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="readdir.c"
-
-#include <stdio.h>
-#include <dirent.h>
-
-int main(int argc, char **argv)
-{
-	DIR *dp;
-	struct dirent *ep;
-	int nr;
-
-	if (argc != 2) {
-		printf("usage: %s dirname\n", argv[0]);
-		return 0;
-	}
-	dp = opendir (argv[1]);
-	if (dp == NULL) {
-		perror("openfailed");
-		return 0;
-	}
-	nr = 0;
-	while ((ep = readdir(dp))) {
-		printf("\"%s\", len %d, off %ld\n",
-		       ep->d_name, ep->d_reclen, ep->d_off);
-		nr ++;
-	}
-	closedir(dp);
-
-	printf("%d entried are read\n", nr);
-	return 0;
-}
-
-
---------------010301010007060601040305--
+-- 
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0x15741ECE
