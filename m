@@ -1,42 +1,51 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: mount issue with kernels >2.6.11
-Date: Wed, 07 Sep 2005 09:13:03 -0500
-Message-ID: <431EF56F.4050706@slaphack.com>
-References: <431EDBF0.3080701@darthvader.us> <87y869yrmu.fsf@barad-dur.minas-morgul.org>
+From: michael chang <thenewme91@gmail.com>
+Subject: Re: journal size reiserfs vs reiser4
+Date: Wed, 7 Sep 2005 16:18:21 -0400
+Message-ID: <b14e81f005090713182a3c9b6b@mail.gmail.com>
+References: <4317FD1B.504@namesys.com>
+	 <Pine.GSO.4.44L.0509021620380.23379-100000@unix2.cc.ksu.edu>
+	 <b14e81f005090318046ee67d7e@mail.gmail.com>
+	 <431A5E43.4060005@slaphack.com> <431A6E71.4060105@namesys.com>
+	 <20050906135951.GA12333@zero>
+	 <e692861c0509061336530f30a@mail.gmail.com>
+	 <20050907140146.GA17621@zero>
+Reply-To: thenewme91@gmail.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25893-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25896-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <87y869yrmu.fsf@barad-dur.minas-morgul.org>
+In-Reply-To: <20050907140146.GA17621@zero>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Mathieu <matt@minas-morgul.org>
-Cc: Yiannis Mavroukakis <jander@darthvader.us>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Tom Vier <tmv@comcast.net>
+Cc: Gregory Maxwell <gmaxwell@gmail.com>, reiserfs-list@namesys.com
 
-Mathieu wrote:
-> Yiannis Mavroukakis <jander@darthvader.us> disait derni=E8rement que :
+On 9/7/05, Tom Vier <tmv@comcast.net> wrote:
+> On Tue, Sep 06, 2005 at 04:36:33PM -0400, Gregory Maxwell wrote:
+> > On 9/6/05, Tom Vier <tmv@comcast.net> wrote:
+> > > My vote: put the reserve % in the superblock (if it isn't already) an=
+d
+> > > give mkfs a sane default.
+> >
+> > Looking at the code it appears it would be easier to make it a mount
+> > option that defaults to 5%. Would that work okay for you?
 >=20
->=20
->>Hi,
->>
->>I'm running reiser4 on 2.6.11-mm4 at the moment. I compiled 2.6.13-mm1=20
->>(and subsequently a few more kernel version in-between)  as a=20
->>replacement, only to find out that it blows up in my face when the root=20
->>fs is due to be mounted:
->>
->>VFS: Cannot open root device "801" or unknown-block
->>Unable to mount root fs on unknown-block (8,1)
->=20
->=20
-> not a reiser4 error. your kernel does not see your harddrive.
+> I think that's better than a #define, but i'd still prefer something a
+> little more sticky than a mount option (a field in the superblock). You
+> might manually mount it and forget to specify it. I could certainly live
+> with it as a mount option, but i think putting it in the superblock is
+> the correct place, imho.
 
-So the first thing to do is, try taking a rescue disk, using its config=20
-(/proc/config.gz if you can't find it anywhere else), compiling your=20
-kernel for it, and using your kernel on someone else's disk.  A simple=20
-disk, like RIP, should work.  That way, you can check if your kernel=20
-works, if you can mount reiser4 (maybe on a ramdisk?), and you can try=20
-various modules and options to try and find your hard disk.
+So you can change it in the mount options, but it's stored in the
+superblock (e.g. the last value used or the default)?  Would that
+help?  Or do we want to go to the trouble of making a reiser4tune
+program capable of changing this value in the superblock?
 
+--=20
+~Mike
+ - Just my two cents
+ - No man is an island, and no man is unable.
