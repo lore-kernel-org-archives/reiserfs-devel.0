@@ -1,22 +1,42 @@
-From: Michele Lazzarini <michele.lazzarini@poste.it>
-Subject: reiserfsck works fine!
-Date: Wed, 07 Sep 2005 01:18:48 +0200
-Message-ID: <431E23D8.3040109@poste.it>
+From: Gregory Maxwell <gmaxwell@gmail.com>
+Subject: Re: journal size reiserfs vs reiser4
+Date: Tue, 6 Sep 2005 22:48:17 -0400
+Message-ID: <e692861c0509061948391f5cbe@mail.gmail.com>
+References: <4317FD1B.504@namesys.com>
+	 <Pine.GSO.4.44L.0509021620380.23379-100000@unix2.cc.ksu.edu>
+	 <b14e81f005090318046ee67d7e@mail.gmail.com>
+	 <431A5E43.4060005@slaphack.com> <431A6E71.4060105@namesys.com>
+	 <20050906135951.GA12333@zero>
+	 <b14e81f0050906133278ca728e@mail.gmail.com>
+	 <431E21F5.2070703@namesys.com>
+Reply-To: gmaxwell@gmail.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25888-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-25889-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <431E21F5.2070703@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: thenewme91@gmail.com, Tom Vier <tmv@comcast.net>, reiserfs-list@namesys.com
 
+On 9/6/05, Hans Reiser <reiser@namesys.com> wrote:
+> Guys, I am sorry, but I just don't think this issue is a priority
+> compared to other issues.  Sorry, too much else going on, honestly.
 
-Many thanks to all!
+I'd say so:
 
-MGBY!!!  (May God Bless You!!!)
+Per Andrew Morton.=20
 
-Michele
+reiser4 merge status:
+    Stuck.  Last time we discussed this I asked the reiser4 team to
+    develop and negotiate a bullet-point list of things to be addressed.=20
+    Once that's agreed to, implement it and then we can merge it.  None of
+    that has happened and as far as I know, all the review feedback which
+    was provided was lost.
 
+:(
