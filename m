@@ -1,51 +1,46 @@
-From: michael chang <thenewme91@gmail.com>
-Subject: Re: journal size reiserfs vs reiser4
-Date: Wed, 7 Sep 2005 16:18:21 -0400
-Message-ID: <b14e81f005090713182a3c9b6b@mail.gmail.com>
-References: <4317FD1B.504@namesys.com>
-	 <Pine.GSO.4.44L.0509021620380.23379-100000@unix2.cc.ksu.edu>
-	 <b14e81f005090318046ee67d7e@mail.gmail.com>
-	 <431A5E43.4060005@slaphack.com> <431A6E71.4060105@namesys.com>
-	 <20050906135951.GA12333@zero>
-	 <e692861c0509061336530f30a@mail.gmail.com>
-	 <20050907140146.GA17621@zero>
-Reply-To: thenewme91@gmail.com
+From: Hans Reiser <reiser@namesys.com>
+Subject: reiser4 merge status
+Date: Wed, 07 Sep 2005 16:58:08 -0700
+Message-ID: <431F7E90.2050303@namesys.com>
+References: <4317FD1B.504@namesys.com>	 <Pine.GSO.4.44L.0509021620380.23379-100000@unix2.cc.ksu.edu>	 <b14e81f005090318046ee67d7e@mail.gmail.com>	 <431A5E43.4060005@slaphack.com> <431A6E71.4060105@namesys.com>	 <20050906135951.GA12333@zero>	 <b14e81f0050906133278ca728e@mail.gmail.com>	 <431E21F5.2070703@namesys.com> <e692861c0509061948391f5cbe@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25896-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25897-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050907140146.GA17621@zero>
-Content-Disposition: inline
+In-Reply-To: <e692861c0509061948391f5cbe@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Tom Vier <tmv@comcast.net>
-Cc: Gregory Maxwell <gmaxwell@gmail.com>, reiserfs-list@namesys.com
+To: gmaxwell@gmail.com, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, Andrew Morton <akpm@osdl.org>
+Cc: thenewme91@gmail.com, Tom Vier <tmv@comcast.net>, reiserfs-list@namesys.com
 
-On 9/7/05, Tom Vier <tmv@comcast.net> wrote:
-> On Tue, Sep 06, 2005 at 04:36:33PM -0400, Gregory Maxwell wrote:
-> > On 9/6/05, Tom Vier <tmv@comcast.net> wrote:
-> > > My vote: put the reserve % in the superblock (if it isn't already) an=
-d
-> > > give mkfs a sane default.
-> >
-> > Looking at the code it appears it would be easier to make it a mount
-> > option that defaults to 5%. Would that work okay for you?
->=20
-> I think that's better than a #define, but i'd still prefer something a
-> little more sticky than a mount option (a field in the superblock). You
-> might manually mount it and forget to specify it. I could certainly live
-> with it as a mount option, but i think putting it in the superblock is
-> the correct place, imho.
+Andrew, we have been working on a big patch that resolves the VFS
+layering issues.  This patch should be ready to send in any day now, we
+are debugging it.  We may not have been sending you a lot of emails, but
+we have been working away at it.  I don't understand why you think the
+review feedback was lost.
 
-So you can change it in the mount options, but it's stored in the
-superblock (e.g. the last value used or the default)?  Would that
-help?  Or do we want to go to the trouble of making a reiser4tune
-program capable of changing this value in the superblock?
+I will have Zam review the email history, develop the bullet list for
+you, and send it.
 
---=20
-~Mike
- - Just my two cents
- - No man is an island, and no man is unable.
+Hans
+
+Gregory Maxwell wrote:
+
+>Per Andrew Morton. 
+>
+>reiser4 merge status:
+>    Stuck.  Last time we discussed this I asked the reiser4 team to
+>    develop and negotiate a bullet-point list of things to be addressed. 
+>    Once that's agreed to, implement it and then we can merge it.  None of
+>    that has happened and as far as I know, all the review feedback which
+>    was provided was lost.
+>
+>:(
+>
+>
+>  
+>
+
