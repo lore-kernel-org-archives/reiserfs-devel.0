@@ -1,51 +1,38 @@
-From: Andrew Morton <akpm@osdl.org>
-Subject: Re: reiser4 merge status
-Date: Wed, 7 Sep 2005 17:08:03 -0700
-Message-ID: <20050907170803.5cb795d6.akpm@osdl.org>
-References: <4317FD1B.504@namesys.com>
-	<Pine.GSO.4.44L.0509021620380.23379-100000@unix2.cc.ksu.edu>
-	<b14e81f005090318046ee67d7e@mail.gmail.com>
-	<431A5E43.4060005@slaphack.com>
-	<431A6E71.4060105@namesys.com>
-	<20050906135951.GA12333@zero>
-	<b14e81f0050906133278ca728e@mail.gmail.com>
-	<431E21F5.2070703@namesys.com>
-	<e692861c0509061948391f5cbe@mail.gmail.com>
-	<431F7E90.2050303@namesys.com>
+From: Ross Jekel <ross@sourcelabs.com>
+Subject: Reiser4 & Files/Directories question
+Date: Thu, 08 Sep 2005 11:43:32 -0700
+Message-ID: <43208654.7040502@sourcelabs.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25898-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25900-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <431F7E90.2050303@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: gmaxwell@gmail.com, zam@namesys.com, vs@thebsh.namesys.com, thenewme91@gmail.com, tmv@comcast.net, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Hans Reiser <reiser@namesys.com> wrote:
->
-> Andrew, we have been working on a big patch that resolves the VFS
-> layering issues.  This patch should be ready to send in any day now, we
-> are debugging it.  We may not have been sending you a lot of emails, but
-> we have been working away at it.
+Newbie question as I'm evaluating Reiser4 as a storage solution for a 
+project I'm working on.
 
-That's good news.
+It appears Reiser4 has the ability to have a file name be both the name 
+for the file data and a directory. Can I take advantage of this at the 
+application level?
 
->  I don't understand why you think the
-> review feedback was lost.
+For instance, can I use python to access the file data directly, and 
+access the directory information as well to open any attribute files I 
+might want to put in there? Or is that functionality only available 
+through non-posix calls from file system plugins and such.
 
-Because I never saw the condensed list of open issues.
+I was interested in the design of the livingxml.net solution from the 
+testimonials page, but that site is no longer available. Is there a 
+project or design document somewhere that summarizes the best way of 
+using reiser4 as a database of content with additional metadata for each 
+document?
 
-> I will have Zam review the email history, develop the bullet list for
-> you, and send it.
+Forgive me if this is answered somewhere. I've searched some mailing 
+list archives site and couldn't find the exact answer.
 
-OK, thanks, it's important.  Lots of people spent time looking over and
-discussing the code.  They don't want to have to a) go back and re-read
-everything to remember what their concerns were and b) scratch through the
-new code to find out if their concerns were addressed, and how they were
-addressed.
-
-So I'd view Zam's list as pretty important.
+Thanks,
+Ross
