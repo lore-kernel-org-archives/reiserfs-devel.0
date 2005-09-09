@@ -1,129 +1,114 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: List of things requested by lkml for reiser4 inclusion (to review)
-Date: Fri, 09 Sep 2005 14:21:30 -0700
-Message-ID: <4321FCDA.60305@namesys.com>
-References: <200509091817.39726.zam@namesys.com> <4321C806.60404@namesys.com> <20050909185740.GA11923@infradead.org>
+From: Andrew Morton <akpm@osdl.org>
+Subject: Re: List of things requested by lkml for reiser4 inclusion (to
+ review)
+Date: Fri, 9 Sep 2005 14:41:42 -0700
+Message-ID: <20050909144142.0f96802f.akpm@osdl.org>
+References: <200509091817.39726.zam@namesys.com>
+	<4321C806.60404@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1030348AbVIIVVf@vger.kernel.org>
-In-Reply-To: <20050909185740.GA11923@infradead.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1030367AbVIIVls@vger.kernel.org>
+In-Reply-To: <4321C806.60404@namesys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Andrew Morton <akpm@osdl.org>, LKML <linux-kernel@vger.kernel.org>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, Edward Shishkin <edward@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: linux-kernel@vger.kernel.org, Reiserfs-Dev@namesys.com, reiserfs-list@namesys.com
 
-Christoph Hellwig wrote:
+Hans Reiser <reiser@namesys.com> wrote:
+>
+> ...
+>
+> Do I remember right that the submission
+> deadline is a week from Monday for 2.6.14 inclusion?
 
-> 6. remove type safe lists and type safe hash queues.
->
->>   not done, it is not clear that the person asking for this represents a unified consensus of lkml.  Other persons instead asked that it just be moved out of reiser4 code into the generic kernel code, which implies they did not object to it.  There are many who like being type safe.  Akpm, what do you yourself think?
->>    
->>
->
->I think quite a few people complained ;-)
->
-I remember that you complained.
+Next week, supposedly.
 
->  It's huge CPP abuse
->
-can you define what that means? and how abuse differs from cleverness? 
-This code was not my idea, but it seemed more cleverness than abuse to
-me when I read it.
+But something like a brand new filesystem can go in pretty much any time,
+as long as it compiles.  Because it can't break anyone's current setup.
 
-> which we
->generally don't want - at least for the hash case we already had something
->similar (linux/ghash.h and got rid of it).  That beeing said a generic hash
->abstraction without too much CPP abuse might be really useful, but the list
->code should certainly go.
->
->  
->
->>8.  Remove all assertions because they clutter the code and make it hard to read
->>
->>    We think this person was not an experienced security specialist,
->>    
->>
->
->please stop attacking people personally all the time. 
->
-It is not an attack, fewer than 1% of programmers are security
-specialists, and I go on to say that until I was educated by some such
-specialists, I would have agreed with him, so I don't think you can view
-it as an attack.  I hardly expect most people to hang out with the DoD.
+Brand new filesystems which also require monkeying with the core VFS aren't
+quite that straightforward though.
 
-> You're certainly not
->what I'd call an experienced security specialist either, but fortunately that
->doesn't matter for this case at all.
->
->Removing all assertations certainly doesn't make sense, we have them all
->over the tree.  Whether your own assert macros makes sense is a different
->question, but given that you use something similar in reiser3 and lots
->of other drivers have their own things built around BUG() I won't complain
->to loudly.
->
->What should go on the other hand are useless assertation, like one that
->asserts that something is non-NULL just before dereferencing it - the
->latter gives a backtrace just as nice.
->  
->
-I'll be happy to accept point of code improvements.
+> This is supposed to be a bullet list, so I don't list here the line by
+> line minor code improvements sent to us, most of which were
+> incorporated, but let me take a moment to thanks those who donated them.
 
->
->As additional requirements please give people time to actually audit the
->codebase.
->
-9 months time given so far....
+Guys, you should know by now not to send 1021-column emails :(
 
->  I've started but it's quite a pain with all the plugin
->indirections right now.
->  
->
-Here I sympathize with you.  If anyone has ideas for how to comment it,
-etc., to make it trivial to follow the indirections, I am all ears.   It
-annoys me also.
+> 1. pseudo files or "...." files
+> 
 
->One major item I found is that you're using your own code for the
->read/write file operations,
->
-As I remember, there were things that did not code right using the
-generic code, and I told the guys to code it right.  I no longer
-remember what those things were, quite honestly, but I remember they
-affected performance.  The whole idea of vfs operations is that each
-file system gets to do them its own way, and please remember that we
-code for more than just use on Linux.
+>   disabled.  It remains a point of (extraordinary) contention as to
+> whether it can be fixed, we want to keep the code around until we can
+> devote proper resources into proving it can be (or until we fail to prove
+> it can be and remove it).  We don't want to delay the rest of the code for
+> that proof, but we still think it can be done (by several different ways of
+> which we need to select one and make it work.) Let us postpone contention
+> on this until the existence of a patch that cannot crash makes contention
+> purposeful, shall we?
 
-> which not only duplicates core code but
->also lacks features (vectored I/O, AIO, direct I/O) from the common code
->  
->
-in time....
+I'd prefer that unused code simply not be present in the tree, sorry.
 
->and is totally buggy (it has no chance on working on architectures that
->have completely separate address spaces for user/kernel like s390, please
->check how they define PAGE_OFFSET).
->
-zam, please look at that on Tuesday.
+> 
+> 
+> 2. dependency on 4k stack turned off
+> 
+>    removed as requested
 
->  Depending on your requirements you
->might not use the complete generic code, but you should at least use
->the most important fragments, ala XFS or ocfs, and improve them where
->needed.
->  
->
-Oh we do try to do that where it does what we need.  However, you should
-keep in mind that reiser4 is not made just for Linux.  Our code needs to
-be at least moderately self-contained.
+So it all runs OK with 4k stacks now?
 
->A very annoying small thing that comes to mind is the usage of
->reiser4_internal.  Please remove it, all but exported symbol are
->module-private.
->  
->
-Here I mostly agree.   Edward, can you work on a patch to fix it?  Thanks.
+> 3. remove conditional variable code, use wait queues instead.
+> 
+> not done.  There are times when reduced functionality aids debugging. 
+> kcond is (literally) textbook code.  We don't care enough to fight much for
+> it, but akpm, what is your opinion?  Will remove if akpm asks us to.
 
+kcond is only used in a couple of places.  One looks like it could use
+complete() and the other is a standard wait-for-something-to-do kernel
+thread loop, which we open-code without any fuss in lots of places
+(kjournald, loop, pdflush, etc).  So yes, I'd be inclined to remove kcond
+please.
+
+Also, it would be better to use the kthread API rather than open-coding
+kernel_thread() calls.  If you think that reiser4 needs additional ways of
+controlling kernel threads then feel free to enhance the kthread API.
+
+> 6.  remove type safe lists and type safe hash queues.
 >
->  
->
-Christoph, thanks kindly for the donation of your time to improving our
-work.
+> not done, it is not clear that the person asking for this represents a
+> unified consensus of lkml.  Other persons instead asked that it just be
+> moved out of reiser4 code into the generic kernel code, which implies they
+> did not object to it.  There are many who like being type safe.  Akpm, what
+> do you yourself think?
+
+The type-unsafety of existing list_heads gives me conniptions too.  Yes,
+it'd be nice to have a type-safe version available.
+
+That being said, I don't see why such a thing cannot be a wrapper around
+the existing list_head functions.  Yes, there will be some ghastly
+C-templates-via-CPP stuff, best avoided by not looking at the file ;)
+
+We should aim for a complete 1:1 relationship between list_heads and
+type-safe lists.  So people know what they're called, know how they work,
+etc.  We shouldn't go adding things called rx_event_list_pop_back() when
+everyone has learned the existing list API.
+
+Of course, it would have been better to do this work as a completely
+separate kernel feature rather than bundling it with a filesystem.  If this
+isn't a thing your team wants to take on now then yes, I'd be inclined to
+switch reiser4 to list_heads.
+
+
+> 
+> 7. remove fs/reiser4/lib.h:/div64_32.
+> 
+>    is being replaced by the linux one.
+> 
+> 8.  Remove all assertions because they clutter the code and make it hard to read
+> 
+> 
+> We think this person was not an experienced security specialist,
+
+We think this person didn't submit a patch to remove the 124 assertions
+from ext3 ;)   Keep the assertions.
