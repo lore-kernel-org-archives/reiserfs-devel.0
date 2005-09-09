@@ -1,27 +1,27 @@
-From: Nish Aravamudan <nish.aravamudan@gmail.com>
-Subject: Re: List of things requested by lkml for reiser4 inclusion (to review)
-Date: Fri, 9 Sep 2005 13:48:35 -0700
-Message-ID: <29495f1d050909134834da4a57@mail.gmail.com>
+From: "Randy.Dunlap" <rdunlap@xenotime.net>
+Subject: Re: List of things requested by lkml for reiser4 inclusion (to
+ review)
+Date: Fri, 9 Sep 2005 13:49:12 -0700 (PDT)
+Message-ID: <Pine.LNX.4.50.0509091347190.25603-100000@shark.he.net>
 References: <200509091817.39726.zam@namesys.com> <4321C806.60404@namesys.com>
-	 <20050909175739.GA32503@pe.Belkin> <4321F3AB.4070701@namesys.com>
-Reply-To: nish.aravamudan@gmail.com
+ <20050909175739.GA32503@pe.Belkin> <4321F3AB.4070701@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-25913-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25914-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <4321F3AB.4070701@namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Hans Reiser <reiser@namesys.com>
 Cc: Chris Shoemaker <c.shoemaker@cox.net>, Andrew Morton <akpm@osdl.org>, LKML <linux-kernel@vger.kernel.org>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On 9/9/05, Hans Reiser <reiser@namesys.com> wrote:
+On Fri, 9 Sep 2005, Hans Reiser wrote:
+
 > Chris Shoemaker wrote:
->=20
+>
 > >On Fri, Sep 09, 2005 at 10:36:06AM -0700, Hans Reiser wrote:
 > >
 > >
@@ -38,21 +38,16 @@ On 9/9/05, Hans Reiser <reiser@namesys.com> wrote:
 > >-chris
 > >
 > >
-> >
-> >
 > IIRC, Linus announced that since he was going on vacation for 7 days,
 > this release only it would be 3 weeks, so it is a week from Monday that
 > we must submit by, yes?
 
-According to his mail (http://lkml.org/lkml/2005/9/8/208):
+Please read
+  http://marc.theaimsgroup.com/?l=linux-kernel&m=112620765730112&w=2
 
-"As per the new merge policies that were discussed during LKS in Ottawa=20
-earlier during the summer, I'm going to accept new stuff for 2.6.14 only=20
-during the first two weeks after 2.6.13 was released.
+summary:  on SEPT-08, Linus wrote:
+  "you've got four more days before I don't want any big merges."
+=> until SEPT-12.
 
-That release was ten days ago, so you've got four more days before I don't=
-=20
-want any big merges."
-
-Thanks,
-Nish
+-- 
+~Randy
