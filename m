@@ -1,71 +1,105 @@
-From: Jake Maciejewski <maciejej@msoe.edu>
-Subject: Re: Reiser4 & Files/Directories question
-Date: Thu, 08 Sep 2005 14:28:39 -0500
-Message-ID: <1126207719.27894.3.camel@gentoo>
-References: <43208654.7040502@sourcelabs.com>
-	 <4320889C.7070205@slaphack.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: List of things requested by lkml for reiser4 inclusion (to review)
+Date: Fri, 09 Sep 2005 10:36:06 -0700
+Message-ID: <4321C806.60404@namesys.com>
+References: <200509091817.39726.zam@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25902-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-25907-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4320889C.7070205@slaphack.com>
+In-Reply-To: <200509091817.39726.zam@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: Ross Jekel <ross@sourcelabs.com>, reiserfs-list@namesys.com
+To: Andrew Morton <akpm@osdl.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Thu, 2005-09-08 at 13:53 -0500, David Masover wrote:
-> Ross Jekel wrote:
-> > Newbie question as I'm evaluating Reiser4 as a storage solution for a 
-> > project I'm working on.
-> > 
-> > It appears Reiser4 has the ability to have a file name be both the name 
-> > for the file data and a directory. Can I take advantage of this at the 
-> > application level?
-> 
-> I think there's a mount option to turn this behavior back on, but it's 
-> not on at the moment due to HUGE flamefests on the kernel lists.  We 
-> don't know if it's coming back anytime soon, or if it'll resemble what 
-> you're thinking when it does.
-> 
-> For now, I think there might still be a '-o metas' option, or something 
-> similar.
+We haven't been sending much email out, but we have been working away.=20
+We just finished the VFS work, and will send a patch out on Monday. =20
+akpm asked for a bullet list of things suggested on lkml as issues for
+inclusion.=20
 
-I don't know about mount options, but I've enabled metas by changing
-"#define ENABLE_REISER4_PSEUDO (0)" to "#define ENABLE_REISER4_PSEUDO
-(1)" in fs/reiser4/reiser4.h
+There are some things that I would like akpm to confirm represent the
+official opinion/consensus as opposed to just someone posting an opinion
+and perhaps not being right.  I assure you that all points made by
+commenters were considered carefully, and I thank all of them for their
+time.
 
-> > For instance, can I use python to access the file data directly, and 
-> > access the directory information as well to open any attribute files I 
-> > might want to put in there? Or is that functionality only available 
-> > through non-posix calls from file system plugins and such.
-> 
-> It will eventually be available through a non-posix call, and maybe 
-> (hopefully, you paying attention, Namesys?) in some limited way from the 
-> xattr calls.
-> 
-> > I was interested in the design of the livingxml.net solution from the 
-> > testimonials page, but that site is no longer available. Is there a 
-> > project or design document somewhere that summarizes the best way of 
-> > using reiser4 as a database of content with additional metadata for each 
-> > document?
-> 
-> AFAIK, livingxml was based on reiserfs3, and it had nothing to do with 
-> non-standard extensions to the FS, but rather with the fact that v3 (and 
-> v4) is fast with small text files, making it a good choice for web, 
-> email, XML, or anything else small and text-y.  Even more so after we 
-> get the compression plugin.
-> 
-> > Forgive me if this is answered somewhere. I've searched some mailing 
-> > list archives site and couldn't find the exact answer.
-> 
-> Maybe not, but if you search the archive for "Silent Semantic Changes in 
-> Reiser4"  (or something very similar), you'll find a very long thread on 
-> why Reiser4 doesn't (currently) support files as directories.
-> 
--- 
-Jake Maciejewski <maciejej@msoe.edu>
+If we lose every remaining point of this list, we can generate a patch
+in a few days, because the VFS work was the only substantive (in coding
+hours) task, and it is done.  Do I remember right that the submission
+deadline is a week from Monday for 2.6.14 inclusion?
+
+This is supposed to be a bullet list, so I don't list here the line by
+line minor code improvements sent to us, most of which were
+incorporated, but let me take a moment to thanks those who donated them.
+
+Hans
+
+1. pseudo files or "...." files
+
+   disabled.  It remains a point of (extraordinary) contention as to whet=
+her it can be fixed, we want to keep the code around until we can devote =
+proper resources into proving it can be (or until we fail to prove it can=
+ be and remove it).  We don't want to delay the rest of the code for that=
+ proof, but we still think it can be done (by several different ways of w=
+hich we need to select one and make it work.)  Let us postpone contention=
+ on this until the existence of a patch that cannot crash makes contentio=
+n purposeful, shall we?
+
+
+2. dependency on 4k stack turned off
+
+   removed as requested
+
+3. remove conditional variable code, use wait queues instead.
+
+   not done.  There are times when reduced functionality aids debugging. =
+ kcond is (literally) textbook code.
+   We don't care enough to fight much for it, but akpm, what is your opin=
+ion?  Will remove if akpm asks us to.
+
+4. remove reiser4_drop_inode
+
+   done.
+
+5. remove undesired abstraction layer right below reiser4 VFS hooks.
+
+   done.  This was a big job just completed. =20
+
+6. remove type safe lists and type safe hash queues.
+
+   not done, it is not clear that the person asking for this represents a=
+ unified consensus of lkml.  Other persons instead asked that it just be =
+moved out of reiser4 code into the generic kernel code, which implies the=
+y did not object to it.  There are many who like being type safe.  Akpm, =
+what do you yourself think?
+
+7. remove fs/reiser4/lib.h:/div64_32.
+
+   is being replaced by the linux one.
+
+8.  Remove all assertions because they clutter the code and make it hard =
+to read
+
+    We think this person was not an experienced security specialist, and =
+that what we do is considered by professional code auditors to be laudabl=
+e practice.  We can supply an emacs macro that makes them greyed out.  I =
+myself found the assertions to be distracting at first (though functional=
+ and especially necessary for a DARPA funded project), and then after tim=
+e got used to them, and now I understand that it was just my inexperience=
+ that caused the discomfort.  I now have a more sophisticated subconsciou=
+s that is not discomforted or distracted by them.  People debugging find =
+them very useful.  Defense branches tear their hair out at how difficult =
+it is to get the commercial software they use coded this way, and I think=
+ they are right to be frustrated.  Linux kernel folks, those DoD guys act=
+ually know quite a few things about security, maybe its ok that they taug=
+ht me something and the code reflects that?  We will conform on this if r=
+equested to by akpm, but somehow I doubt he will quite honestly.  akpm?
+
+
+
+
 
