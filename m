@@ -1,40 +1,29 @@
-From: Paul Jackson <pj@sgi.com>
-Subject: Re: List of things requested by lkml for reiser4 inclusion (to
- review)
-Date: Sat, 10 Sep 2005 00:28:51 -0700
-Message-ID: <20050910002851.5b984fde.pj@sgi.com>
-References: <200509091817.39726.zam@namesys.com>
-	<4321C806.60404@namesys.com>
-	<20050909185740.GA11923@infradead.org>
-	<4321FCDA.60305@namesys.com>
-	<5FDA2C74-F923-4695-A1B8-4355D445C073@mac.com>
+From: Em <addressee@mfworks.com>
+Subject: World first Patch Technology for penis Enlargement
+Date: Sat, 10 Sep 2005 12:01:51 +0300
+Message-ID: <96563123570.5774463450@ppp43-adsl-197.ath.forthnet.gr>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25919-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25920-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <5FDA2C74-F923-4695-A1B8-4355D445C073@mac.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Kyle Moffett <mrmacman_g4@mac.com>
-Cc: reiser@namesys.com, hch@infradead.org, akpm@osdl.org, linux-kernel@vger.kernel.org, Reiserfs-Dev@namesys.com, reiserfs-list@namesys.com, edward@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Kyle wrote:
-> Sometimes cleverness can be even worse than ordinary abuse 
+Good news men! All your problems with small penis and poor erections will become history!!!
+http://www.fetize.com/pt/?9&integrable
 
-I have a habit of commenting the code spots where it is not obvious
-what is going on.
 
-Someday I am going to learn that everytime I feel the compulsion
-to write a "Watch out !" or "Beware !" or "Must !"  code comment,
-it probably means that I am coding crap.
 
-I usually end up ripping out the code, after some bug has whacked
-my upside the head.
 
--- 
-                  I won't rest till it's the best ...
-                  Programmer, Linux Scalability
-                  Paul Jackson <pj@sgi.com> 1.925.600.0401
+
+They sicken of the calm that know the storm.    
+Education is the best provision for the journey to old age.  
+It's a dangerous business going out your front door.    
+The only interesting answers are those which destroy the questions.   
+Life's a tough proposition, and the first hundred years are the hardest. 
+
+
