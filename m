@@ -1,36 +1,69 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
-Subject: Re: List of things requested by lkml for reiser4 inclusion (to review)
-Date: Mon, 12 Sep 2005 15:40:42 -0400
-Message-ID: <200509121940.j8CJegwe019443@laptop11.inf.utfsm.cl>
-References: <reiser@namesys.com>
-Return-path: <reiserfs-list-return-25937-reiserfs=m.gmane.org@namesys.com>
+From: "Jeremy Brown [InfoSend]" <jeremy.b@infosend.com>
+Subject: --rebuild-tree Questions
+Date: Mon, 12 Sep 2005 14:40:50 -0700
+Message-ID: <A240FDBB-63BD-4475-B14F-C3B0D68BEC97@infosend.com>
+Mime-Version: 1.0 (Apple Message framework v734)
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-25938-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
-   of "Mon, 12 Sep 2005 11:08:37 MST." <4325C425.4030002@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Andrew Morton <akpm@osdl.org>, linux-kernel@vger.kernel.org, Reiserfs-Dev@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Hans Reiser <reiser@namesys.com> wrote:
-> Andrew Morton wrote:
-> >The type-unsafety of existing list_heads gives me conniptions too.  Yes,
-> >it'd be nice to have a type-safe version available.
+Hi list,
 
-[...]
+I have an external SCSI disk array (Dell PowerVault 220s) and had  
+some problems altering it's configuration.  I was attempting to add 2  
+disks to the RAID-5 array, and in the process found that 3 of the 4  
+disks I bought of identical brand and size were bad!
 
-> Vladimir spent 24 hours straight unsafing the lists in reiser4, and
-> didn't finish yet.  We need 1-2 more days to address this before we can
-> submit reiser4.  I hope this delay will not be too much of a problem.
+After much toil and tribulation, I got the RAID to work by getting 2  
+functioning disks in the SCSI disk array.  However, without even  
+attempting to resize the partition or anything, I started  
+experiencing problems with the Reiser partition.  Some files on the  
+FS are inaccessible with "Permission Denied" errors when I try to ls  
+in the directory.  The errors in the log look like this:
 
-It won't go in before 2.6.15 or so anyway, so...
+Sep 12 14:22:29 pdc kernel: ReiserFS: warning: is_tree_node: node  
+level 0 does not match to the expected one 1
+Sep 12 14:22:29 pdc kernel: ReiserFS: sdb1: warning: vs-5150:  
+search_by_key: invalid format found in block 1901161. Fsck?
+Sep 12 14:22:29 pdc kernel: ReiserFS: sdb1: warning: vs-13070:  
+reiserfs_read_locked_inode: i/o failure occurred trying to find stat  
+data of [141946 595210 0x0 SD]
+
+However, about 95% of the data remains readable.  But if we try to  
+overwrite or delete certain files on the fs, we get various errors.   
+Sometimes the kernel panics, sometimes Samba stops responding, etc...
+
+Anyways...  I ran a reiserfsck --check on the partition, and it had  
+about 33 errors that it said needed the rebuild-tree option.  But I  
+have two questions:
+
+1. What is a ballpark success rate of this command?  Does it work  
+more often than not?  Even if it put files into lost+found  
+directories, that would be fine with me.  I'm just afraid of a total  
+failure of the operation.  I do have the data backed up to LTO-2  
+tape, but I consider restoration of all files on this partition from  
+tape as hopefully a last resort.
+
+2. Most importantly: About how long can I expect the rebuild-tree  
+operation to take?  I know there's no definitive answer for this, but  
+I've searched high and low for other people's results with this  
+command and no one has mentioned how long it took (other than a post  
+on this list earlier from someone who's command apparently failed).   
+The partition is 410GB of Ultra-160 SCSI.  Again, I know an exact  
+figure isn't possible, but does anyone have a ballpark figure of what  
+I should expect?
+
+I'm sorry if I rambled or left off any important information, but TIA  
+for any help with these questions.  I'd be happy to add any  
+information requested.
+
 -- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+Thanks,
+
+Jeremy Brown
