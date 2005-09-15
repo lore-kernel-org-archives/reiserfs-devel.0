@@ -1,36 +1,44 @@
-From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Subject: Re: Interview with Hans on KernelTrap
-Date: Thu, 15 Sep 2005 09:02:48 +0100
-Message-ID: <43292AA8.1050304@st-andrews.ac.uk>
-References: <878xy0sy0d.fsf@evinrude.uhoreg.ca> <432820E8.9080201@st-andrews.ac.uk> <43288119.9000605@namesys.com>
+From: Alexander Zarochentsev <zam@namesys.com>
+Subject: Re: strange dmesg output?
+Date: Thu, 15 Sep 2005 16:52:02 +0400
+Message-ID: <200509151652.03100.zam@namesys.com>
+References: <CMEFJOIJPCAMFCEKIEOEOEMBCIAA.smallwood@maya.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25965-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25968-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43288119.9000605@namesys.com>
+In-Reply-To: <CMEFJOIJPCAMFCEKIEOEOEMBCIAA.smallwood@maya.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+Cc: Nicolas Smallwood <smallwood@maya.com>
 
-Hans Reiser wrote:
+Hello,
 
->>The user (or tools) don't even have to know which is the "real" file,
->>which are "parts of real files" and which are "concatenations of real
->>files". This is really good for namespace unification across
->>part-whole hierarchies. If you are required to use /..../ in the
->>middle, it breaks this I think. Could we get rid of requiring "...."
->>in the middle? (Would that break too much?)    Peter
->>    
->>
->In this specific instance, yes, but other pseudofiles would still need it.
->  
+On Monday 04 April 2005 19:15, Nicolas Smallwood wrote:
+> reiser4[vianoderepos(1501)]: commit_current_atom
+> (fs/reiser4/txnmgr.c:1206)[niki
+> ta-3176]:
+> WARNING: Flushing like mad: 16384
 >
-Sure, you can have only one "default" behaviour. (For instance, you 
-would also need some metafiles to specify the details of how exactly the 
-concatenation should be done, (e.g. what ordering (or structure) to use, 
-whether to put something in between the files, etc.) in addition to all 
-the other ones.)    Peter
+> Saw this in dmesg this morning...  is it anything to really worry about?
+
+no need to worry if it is only one "flushing like mad" message in the log.
+
+>
+>
+> Thank You,
+>
+> Nicolas Smallwood
+>
+> Maya Design, Inc
+> Suite 702
+> 2100 Wharton Street
+> Pittsburgh, PA 15203
+>
+> 412-488-2900 (voice)
+> 412-488-2940 (fax)
