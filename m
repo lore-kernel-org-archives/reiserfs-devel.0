@@ -1,42 +1,56 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Interview with Hans on KernelTrap
-Date: Thu, 15 Sep 2005 09:20:39 -0700
-Message-ID: <43299F57.4080008@namesys.com>
-References: <878xy0sy0d.fsf@evinrude.uhoreg.ca> <432820E8.9080201@st-andrews.ac.uk> <43288119.9000605@namesys.com> <43292AA8.1050304@st-andrews.ac.uk>
+Subject: Re: strange dmesg output?
+Date: Thu, 15 Sep 2005 09:21:40 -0700
+Message-ID: <43299F94.7050603@namesys.com>
+References: <CMEFJOIJPCAMFCEKIEOEOEMBCIAA.smallwood@maya.com> <200509151652.03100.zam@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25969-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25970-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43292AA8.1050304@st-andrews.ac.uk>
+In-Reply-To: <200509151652.03100.zam@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Cc: reiserfs-list@namesys.com
+To: Alexander Zarochentsev <zam@namesys.com>
+Cc: reiserfs-list@namesys.com, Nicolas Smallwood <smallwood@maya.com>
 
-Peter Foldiak wrote:
+Alexander Zarochentsev wrote:
 
-> Hans Reiser wrote:
+>Hello,
 >
->>> The user (or tools) don't even have to know which is the "real" file,
->>> which are "parts of real files" and which are "concatenations of real
->>> files". This is really good for namespace unification across
->>> part-whole hierarchies. If you are required to use /..../ in the
->>> middle, it breaks this I think. Could we get rid of requiring "...."
->>> in the middle? (Would that break too much?)    Peter
->>>   
+>On Monday 04 April 2005 19:15, Nicolas Smallwood wrote:
+>  
+>
+>>reiser4[vianoderepos(1501)]: commit_current_atom
+>>(fs/reiser4/txnmgr.c:1206)[niki
+>>ta-3176]:
+>>WARNING: Flushing like mad: 16384
 >>
->> In this specific instance, yes, but other pseudofiles would still
->> need it.
->>  
+>>Saw this in dmesg this morning...  is it anything to really worry about?
+>>    
 >>
-> Sure, you can have only one "default" behaviour. (For instance, you
-> would also need some metafiles to specify the details of how exactly
-> the concatenation should be done, (e.g. what ordering (or structure)
-> to use, whether to put something in between the files, etc.) in
-> addition to all the other ones.)    Peter
+>
+>no need to worry if it is only one "flushing like mad" message in the log.
+>
+>  
+>
+>>Thank You,
+>>
+>>Nicolas Smallwood
+>>
+>>Maya Design, Inc
+>>Suite 702
+>>2100 Wharton Street
+>>Pittsburgh, PA 15203
+>>
+>>412-488-2900 (voice)
+>>412-488-2940 (fax)
+>>    
+>>
 >
 >
-Yes, true.
+>  
+>
+Please explain its meaning rather than just say don't worry about it.
