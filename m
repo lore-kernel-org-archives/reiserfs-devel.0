@@ -1,79 +1,50 @@
-From: Kyle Moffett <mrmacman_g4@mac.com>
+From: lsorense@csclub.uwaterloo.ca (Lennart Sorensen)
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Fri, 16 Sep 2005 15:52:45 -0400
-Message-ID: <1C909C65-8B71-4817-AE13-519599D0B11A@mac.com>
+Date: Fri, 16 Sep 2005 16:50:45 -0400
+Message-ID: <20050916205045.GI28578@csclub.uwaterloo.ca>
 References: <432AFB44.9060707@namesys.com> <20050916174028.GA32745@infradead.org> <432B1F84.3000902@namesys.com>
-Mime-Version: 1.0 (Apple Message framework v734)
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S965315AbVIPTx1@vger.kernel.org>
+Mime-Version: 1.0
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751283AbVIPUus@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <432B1F84.3000902@namesys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Hans Reiser <reiser@namesys.com>
-Cc: Christoph Hellwig <hch@infradead.org>, LKML Kernel <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@osdl.org>, Linus Torvalds <torvalds@osdl.org>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-[CC list trimmed to relevant people, no need to spam Linus' and  
-Andrew's mailboxes, they have enough to do as it is]
-
-On Sep 16, 2005, at 15:39:48, Hans Reiser wrote:
-> Christoph Hellwig wrote:
->> additinoal comment is that the code is very messy, very different
->> from normal kernel style, full of indirections and thus hard to read.
->
+On Fri, Sep 16, 2005 at 12:39:48PM -0700, Hans Reiser wrote:
 > Most of my customers remark that Namesys code is head and shoulders
-> above the rest of the kernel code.  So yes, it is different.
+> above the rest of the kernel code.  So yes, it is different.  In
+> particular, they cite the XFS code as being so incredibly hard to read
+> that its unreadability is worth hundreds of thousands of dollars in
+> license fees for me.  That's cash received, from persons who read it
+> all, not commentary made idly.
+> 
+> May I suggest that you work on the XFS code instead?  Surely with all of
+> this energy you have, you could improve XFS a lot before it gets
+> accepted into the kernel. 
+> 
+> As for the indirections, if you figure out how to make VFS indirections
+> easy to follow, the same technique should be applicable to Reiser4, and
+> I will be happy to fix it. 
+> 
+> (Note for the record: I actually think XFS acceptance was delayed too
+> long, and I think that XFS is a great filesystem, but a rhetorical point
+> needed to be made......)
 
-And yet thousands and thousands of people, businesses, etc, say that  
-the Linux kernel code is miles above all the commercial software out  
-there. Please leave the worthless rhetoric out of a technical  
-discussion.  The issue stands that in many ways the Reiser4 code does  
-not exactly follow Documentation/CodingStyle and does not match most  
-of the rest of the kernel, making it hard to read for other kernel  
-developers.  If you were just doing this forever as an external  
-kernel patch, nobody would give a damn.  On the other hand, you're  
-trying to get it included in the upstream kernel, which means that  
-those same "other kernel developers" for whom it is hard to read may  
-be expected to maintain it until the end of time.  Given this, it  
-seems perfectly reasonable to ask that it be cleaned up.
+Well my experience with XFS for about 6 months using 2.6 kernels has
+been about as good as my experience with reiserfs 3.6 back when 2.4
+was fairly new.
 
-> In particular, they cite the XFS code as being so incredibly hard  
-> to read that its unreadability is worth hundreds of thousands of  
-> dollars in license fees for me.
+That's why I run ext3.
 
-How does XFS have _anything_ to do with Reiser4?  A technical  
-discussion is no place for political pissing contest.
+I don't need my filesystem locking up, leaking memory all over the
+place, causing processes to be killed byt the out of memory handler,
+etc.  I will stick with what works all the time.
 
-> [more useless posturing snipped]
+Performance and nifty features are fun, but only when they don't break
+your system.
 
-> As for the indirections, if you figure out how to make VFS  
-> indirections easy to follow, the same technique should be  
-> applicable to Reiser4, and I will be happy to fix it.
-
-That's not his responsibility, it's _yours_.  If you want your stuff  
-included in the the kernel, you need to make sure it is sufficiently  
-acceptable.  Besides, this is just one complaint of the many he  
-made.  This may not be particularly solvable, but there are a number  
-of other points he made that you guys need to try to resolve.
-
-> (Note for the record: I actually think XFS acceptance was delayed  
-> too long, and I think that XFS is a great filesystem, but a  
-> rhetorical point needed to be made......)
-
-See above.  Rhetoric has little or no place here.  Such comments are  
-why Reiser4 typically triggers massive flamewars when it is mentioned  
-on the LKML.
-
-Cheers,
-Kyle Moffett
-
---
-Somone asked me why I work on this free (http://www.fsf.org/ 
-philosophy/) software stuff and not get a real job. Charles Shultz  
-had the best answer:
-
-"Why do musicians compose symphonies and poets write poems? They do  
-it because life wouldn't have any meaning for them if they didn't.  
-That's why I draw cartoons. It's my life."
-   -- Charles Shultz
-
+Len Sorensen
