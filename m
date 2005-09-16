@@ -1,39 +1,33 @@
-From: Tomasz Chmielewski <mangoo@interia.pl>
+From: Lexington Luthor <lexington.luthor@gmail.com>
 Subject: Re: why does reiserfs list get so much spam?
-Date: Fri, 16 Sep 2005 12:52:57 +0200
-Message-ID: <432AA409.5070006@interia.pl>
-References: <432A9BFD.10700@mch.one.pl> <20050916104129.GA11025@kruemel>
+Date: Fri, 16 Sep 2005 12:03:02 +0100
+Message-ID: <dge8pa$j9n$1@sea.gmane.org>
+References: <432A9BFD.10700@mch.one.pl> <20050916104129.GA11025@kruemel> <432AA409.5070006@interia.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25978-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25979-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050916104129.GA11025@kruemel>
+In-Reply-To: <432AA409.5070006@interia.pl>
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Ingo Bormuth schrieb:
-> On 2005-09-16 12:18, Tomasz Chmielewski wrote:
+Tomasz Chmielewski wrote:
 > 
->>When I look at the archives, the first impression is that 90% of posts 
->>on the list are spam messages...
->>Can't you do something about that?
+> The real reason is that it allows posts from non-registered users...
+> This should really be fixed.
+> Spam in the archive looks lame :)
 > 
-> 
-> Locally I pipe all mail through spamassassin and hardly see any spam.
-> I think that should also be applicable for the archive 
-> (which really is hard to read by now).
 
-The real reason is that it allows posts from non-registered users...
-This should really be fixed.
-Spam in the archive looks lame :)
+Most lists I use allow me to post without subscribing (I use gmane 
+mail->news gateway), but this list has the most spam of them all.
 
-I just sent this mail from an email which I never registered to 
-send/receive mail from this list.
+I think some simple server-side SA filtering will be enough to catch 
+almost all spam, without requiring all posters to register.
 
-----------------------------------------------------------------------
-TOUR DE POLOGNE: oficjalny serwis >>> http://link.interia.pl/f18b5
+LL
 
