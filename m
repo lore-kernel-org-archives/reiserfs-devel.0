@@ -1,52 +1,35 @@
-From: Tomasz Chmielewski <mangoo@mch.one.pl>
-Subject: Re: Interview with Hans on KernelTrap
-Date: Fri, 16 Sep 2005 12:24:28 +0200
-Message-ID: <432A9D5C.5010505@mch.one.pl>
+From: Ingo Bormuth <ibormuth@efil.de>
+Subject: Re: why does reiserfs list get so much spam?
+Date: Fri, 16 Sep 2005 12:41:29 +0200
+Message-ID: <20050916104129.GA11025@kruemel>
+References: <432A9BFD.10700@mch.one.pl>
+Reply-To: Ingo Bormuth <ibormuth@efil.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-25976-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25977-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <432A9BFD.10700@mch.one.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
+Cc: ingo@bormuth.org
 
-> For those who missed it on Slashdot, there's an interview with Hans on
-> KernelTrap.
-> 
-> http://kerneltrap.org/node/5654?comments_per_page=1
-> 
-> The Slashdot article is here:
-> 
-> http://hardware.slashdot.org/article.pl?sid=05/09/13/1455238
+On 2005-09-16 12:18, Tomasz Chmielewski wrote:
+> When I look at the archives, the first impression is that 90% of posts 
+> on the list are spam messages...
+> Can't you do something about that?
 
-Nice interview.
+Locally I pipe all mail through spamassassin and hardly see any spam.
+I think that should also be applicable for the archive 
+(which really is hard to read by now).
 
-The compression plugin is mentioned in that article:
-
-
-Jeremy Andrews: You mention that you want to stabilize the compression 
-plugin by 2.6.14. What is important about 2.6.14?
-
-Hans Reiser: Umh, anytime I can double performance and halve space 
-usage, it is a priority for me and I want it now! ;-)
-
-
-So does it mean that Linux will finally have a stable fs with 
-journalling and compression, within a month?
-
-Or Reiser4 won't go to 2.6.14 stable kernel, and will be available only 
-as a separate patch?
-
-
-On the other hand, when I looked at the 2.6.14-rc1 changelog on 
-www.kernel.org, no plugin/compression is mentioned in reiserfs changes?
 
 
 -- 
-Tomek
-http://wpkg.org
-Automated software installation and upgrades with Samba
+Ingo Bormuth,  voicebox & telefax: +49-12125-10226517        '(~o o~)'
+GnuPG key 86326EC9 at http://ibormuth.efil.de/contact  ----ooO--(.)--Ooo----
 
