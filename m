@@ -1,81 +1,79 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: why does reiserfs list get so much spam?
-Date: Fri, 16 Sep 2005 14:54:02 -0500
-Message-ID: <432B22DA.6040107@slaphack.com>
-References: <432A9BFD.10700@mch.one.pl> <20050916104129.GA11025@kruemel> <432AA409.5070006@interia.pl> <Pine.LNX.4.63.0509161259560.21130@alpha.polcom.net> <432AAA38.9000102@mch.one.pl> <e692861c05091605406ad2908@mail.gmail.com> <op.sw64fwxad4os1z@localhost> <432B0DD0.80206@slaphack.com> <432B0FAC.4050905@mch.one.pl> <432B143B.8030808@slaphack.com> <op.sw7n4cazd4os1z@localhost>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26007-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <op.sw7n4cazd4os1z@localhost>
+From: Kyle Moffett <mrmacman_g4@mac.com>
+Subject: Re: I request inclusion of reiser4 in the mainline kernel
+Date: Fri, 16 Sep 2005 15:52:45 -0400
+Message-ID: <1C909C65-8B71-4817-AE13-519599D0B11A@mac.com>
+References: <432AFB44.9060707@namesys.com> <20050916174028.GA32745@infradead.org> <432B1F84.3000902@namesys.com>
+Mime-Version: 1.0 (Apple Message framework v734)
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S965315AbVIPTx1@vger.kernel.org>
+In-Reply-To: <432B1F84.3000902@namesys.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-2?Q?=A3ukasz_Mierzwa?= <prymitive@pcserwis.net>
-Cc: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Christoph Hellwig <hch@infradead.org>, LKML Kernel <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-=A3ukasz Mierzwa wrote:
-> Dnia Fri, 16 Sep 2005 20:51:39 +0200, David Masover <ninja@slaphack.com> =
+[CC list trimmed to relevant people, no need to spam Linus' and  
+Andrew's mailboxes, they have enough to do as it is]
 
-> napisa=B3:
->=20
->> Tomasz Chmielewski wrote:
->>
->>> David Masover schrieb:
->>>
->>> (...)
->>>
->>>>> If You will look in the headers of messages that You get from this=20
->>>>> list
->>>>> You will see that there is spamassassin running on thebsh.namesys.com,
->>>>> it's just that it is not configured good enough.
->>>>
->>>>
->>>>
->>>>
->>>> Can spamassassin be configured "good" enough?
->>>>
->>>> I use dspam:
->>>>
->>>> http://www.nuclearelephant.com/projects/dspam/
->>>>
->>>> There are some articles about why dspam has a fundamentally better
->>>> design than spamassassin, and why in general statistical filters beat
->>>> manual-rule-based ones like spamassassin.
->>>
->>>
->>>
->>> Yeah spamassassin can work extremely well.
->>>
->>> I guess these articles are based on the quality of spamassassin which
->>> checks spam from this list? :)
->>>
->>> And it's not really true that spamassassin is a manual-rule-based filter
->>> only.
->>
->>
->> Right, but the statistical/learning component of spamassassin is just
->> that -- a component, to be combined with razor/pyzor, manual rules, and
->> anything else they can think of.  I think dspam does a much better job
->> at being a statistical filter, and that's all it does -- and that's all
->> it needs to.  Some people have reported 99.997% accuracy from dspam,
->> beating humans.
->>
->> Anyway, the articles are about the principle of the thing.  A
->> statistical filter will beat a manual one every time, because it's
->> faster and better at coming up with rules, and you don't need to update
->> your definitions to start filtering the new spam -- just train on two or
->> three mails, and you're done.
->>
->=20
-> SpamAssassin uses bayes so You don't need any definitions for SA to=20
-> detect new spam, it learns itself if message have enough points.
-> All You have to do is learn SA with sa-learn after instaling.
+On Sep 16, 2005, at 15:39:48, Hans Reiser wrote:
+> Christoph Hellwig wrote:
+>> additinoal comment is that the code is very messy, very different
+>> from normal kernel style, full of indirections and thus hard to read.
+>
+> Most of my customers remark that Namesys code is head and shoulders
+> above the rest of the kernel code.  So yes, it is different.
 
-Getting way offtopic, but I'll bite anyway.
+And yet thousands and thousands of people, businesses, etc, say that  
+the Linux kernel code is miles above all the commercial software out  
+there. Please leave the worthless rhetoric out of a technical  
+discussion.  The issue stands that in many ways the Reiser4 code does  
+not exactly follow Documentation/CodingStyle and does not match most  
+of the rest of the kernel, making it hard to read for other kernel  
+developers.  If you were just doing this forever as an external  
+kernel patch, nobody would give a damn.  On the other hand, you're  
+trying to get it included in the upstream kernel, which means that  
+those same "other kernel developers" for whom it is hard to read may  
+be expected to maintain it until the end of time.  Given this, it  
+seems perfectly reasonable to ask that it be cleaned up.
 
-All I have to do is 'dspam --error', and not nearly as often as I had to=20
-do with Spamassassin.  And it trains itself on new emails, just like=20
-Spamassassin.  It's just much more accurate.
+> In particular, they cite the XFS code as being so incredibly hard  
+> to read that its unreadability is worth hundreds of thousands of  
+> dollars in license fees for me.
+
+How does XFS have _anything_ to do with Reiser4?  A technical  
+discussion is no place for political pissing contest.
+
+> [more useless posturing snipped]
+
+> As for the indirections, if you figure out how to make VFS  
+> indirections easy to follow, the same technique should be  
+> applicable to Reiser4, and I will be happy to fix it.
+
+That's not his responsibility, it's _yours_.  If you want your stuff  
+included in the the kernel, you need to make sure it is sufficiently  
+acceptable.  Besides, this is just one complaint of the many he  
+made.  This may not be particularly solvable, but there are a number  
+of other points he made that you guys need to try to resolve.
+
+> (Note for the record: I actually think XFS acceptance was delayed  
+> too long, and I think that XFS is a great filesystem, but a  
+> rhetorical point needed to be made......)
+
+See above.  Rhetoric has little or no place here.  Such comments are  
+why Reiser4 typically triggers massive flamewars when it is mentioned  
+on the LKML.
+
+Cheers,
+Kyle Moffett
+
+--
+Somone asked me why I work on this free (http://www.fsf.org/ 
+philosophy/) software stuff and not get a real job. Charles Shultz  
+had the best answer:
+
+"Why do musicians compose symphonies and poets write poems? They do  
+it because life wouldn't have any meaning for them if they didn't.  
+That's why I draw cartoons. It's my life."
+   -- Charles Shultz
+
