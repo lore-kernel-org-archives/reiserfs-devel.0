@@ -1,87 +1,62 @@
-From: Grzegorz Kulewski <kangur@polcom.net>
+From: Bruce Israel <israel@tux.org>
 Subject: Re: why does reiserfs list get so much spam?
-Date: Fri, 16 Sep 2005 16:00:19 +0200 (CEST)
-Message-ID: <Pine.LNX.4.63.0509161552090.21130@alpha.polcom.net>
-References: <432A9BFD.10700@mch.one.pl> <20050916104129.GA11025@kruemel>
- <432AA409.5070006@interia.pl> <Pine.LNX.4.63.0509161259560.21130@alpha.polcom.net>
- <432AAA38.9000102@mch.one.pl>
+Date: Fri, 16 Sep 2005 10:12:02 -0400
+Message-ID: <20050916141202.GA1742@home.exsolent.com>
+References: <432A9BFD.10700@mch.one.pl> <20050916104129.GA11025@kruemel> <432AA409.5070006@interia.pl> <Pine.LNX.4.63.0509161259560.21130@alpha.polcom.net> <432AAA38.9000102@mch.one.pl> <e692861c05091605406ad2908@mail.gmail.com> <op.sw64fwxad4os1z@localhost>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-25988-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-25989-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <432AAA38.9000102@mch.one.pl>
+Content-Disposition: inline
+In-Reply-To: <op.sw64fwxad4os1z@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tomasz Chmielewski <mangoo@mch.one.pl>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Fri, 16 Sep 2005, Tomasz Chmielewski wrote:
+Here's my suggestion.  I don't know if Hans et al has the time for
+it, but the simple solution would be to set the list up as moderated
+and subscriber-only posting.  So when a list subscriber posts, it
+goes through immediately.  If a non-subscriber posts (e.g. someone
+from a different account, a cross-posted message thru LKML, a spam
+message) then it doesn't go to the list but instead goes to the
+moderator.  The moderator can skip it if it's spam or forward to the
+list if it's not.  Further, the moderator can add the sender to a
+whitelist so that further messages from the same person aren't
+delayed. 
 
-> Grzegorz Kulewski schrieb:
->>  On Fri, 16 Sep 2005, Tomasz Chmielewski wrote:
->> 
->> >  Ingo Bormuth schrieb:
->> > 
->> > >   On 2005-09-16 12:18, Tomasz Chmielewski wrote:
->> > > 
->> > > >  When I look at the archives, the first impression is that 90% of 
->> > >  posts on > the list are spam messages...
->> > > >  Can't you do something about that?
->> > > 
->> > > 
->> > >   Locally I pipe all mail through spamassassin and hardly see any spam.
->> > >   I think that should also be applicable for the archive (which really 
->> > >   is
->> > >   hard to read by now).
->> > 
->> > 
->> >  The real reason is that it allows posts from non-registered users...
->> >  This should really be fixed.
->> >  Spam in the archive looks lame :)
->> > 
->> >  I just sent this mail from an email which I never registered to 
->> >  send/receive mail from this list.
->>
->>
->>  Don't do that. *Many* people subscribed to LKML are posting here and often
->>  Namesys people CC this list in their posts. This way replies to such posts
->>  will be lost. It will cause major pain in following such threads.
->>
->>  Instead there are really good techniques to fight spam while not causing
->>  harm to legitimate users. For example checking if sending host is allowed
->>  to post mails from specified domain, different bayes filters (including
->>  adaptive ones), graylisting and so on. I will bet that only first of these
->>  ideas will kill 50% of spam here (including this from *polcom.net that I
->>  reported to Hans several months ago - of course this spam does not come
->>  from our servers but is using fake domain - easy to filter out).
->
-> yeah, but it is to be used by the end-user.
+This has the cost of a slight delay with the first message from any
+person to the list, while eliminating the spam and minimizing the
+amount of maintenance and monitoring the moderator has to do.
 
-No - it should be filtered at the moment of delivery to mail list software 
-before going to subscribed users or to archive. It is done in this way on 
-LKML and on all other lists. It is done on this list too but something is 
-probably misconfigured or not configured good enough.
+Bruce
 
 
-> the archive will be still filled with spam.
-
-No. Why? Spam should be dead before it is going anywhere from the list 
-(including all potential archives).
-
-
-> not everyone who wants to know about reiser subscribes to the list; most of 
-> the people would just use the archives.
-
-... or are posting or CCing this list without being subscribed
-
-Exactly, so we should not limit posting to only subscribed users. I know 
-that some stupid lists are doing so (for example acpi list IIRC) but this 
-is pain for me (I am not subscribed) when I want to report yet another 
-problem with acpi on my system or when I am replying to thread that is 
-CCd to acpi list.
-
-
-Grzegorz Kulewski
+On Fri, Sep 16, 2005 at 02:46:34PM +0200, ?ukasz Mierzwa wrote:
+> Dnia Fri, 16 Sep 2005 14:40:22 +0200, Gregory Maxwell <gmaxwell@gmail.com> 
+> napisa?:
+> 
+> >On 9/16/05, Tomasz Chmielewski <mangoo@mch.one.pl> wrote:
+> >>yeah, but it is to be used by the end-user.
+> >>
+> >>the archive will be still filled with spam.
+> >>
+> >>not everyone who wants to know about reiser subscribes to the list; most
+> >>of the people would just use the archives.
+> >
+> >I actually subbed to the list because I was frustrated by spam in the 
+> >archive.
+> >Whomever runs the archive should at least just pipe it through spam
+> >assassin. If some legitimate messages are lost from the web archive it
+> >could not be worse than what we have now, an archive made nearly
+> >useless from excessive spam.
+> >
+> 
+> If You will look in the headers of messages that You get from this list You 
+> will see that there is spamassassin running on thebsh.namesys.com, it's 
+> just that it is not configured good enough.
+> 
+> ?ukasz Mierzwa
+> 
