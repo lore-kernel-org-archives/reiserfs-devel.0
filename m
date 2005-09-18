@@ -1,30 +1,39 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+From: Nikita Danilov <nikita@clusterfs.com>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Mon, 19 Sep 2005 11:51:21 +0100
-Message-ID: <1127127081.22124.12.camel@localhost.localdomain>
-References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl>
-	 <432E5024.20709@namesys.com>
+Date: Sun, 18 Sep 2005 14:02:55 +0400
+Message-ID: <17197.15183.235861.655720@gargle.gargle.HOWL>
+References: <432AFB44.9060707@namesys.com>
+	<200509171416.21047.vda@ilport.com.ua>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26073-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <432E5024.20709@namesys.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932081AbVISLjn@vger.kernel.org>
+In-Reply-To: <200509171416.21047.vda@ilport.com.ua>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Denis Vlasenko <vda@ilport.com.ua>
+Cc: LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Sul, 2005-09-18 at 22:44 -0700, Hans Reiser wrote:
-> We are supposed to write a filesystem so that overheating CPUs do not
-> make it crash?
+Denis Vlasenko writes:
+ > On Friday 16 September 2005 20:05, Hans Reiser wrote:
+ > > All objections have now been addressed so far as I can discern.
+ > 
+ > Random observation:
+ > 
+ > You can declare functions even if you never use them.
+ > Thus here you can avoid using #if/#endif:
+ > 
+ > #if defined(REISER4_DEBUG) || defined(REISER4_DEBUG_MODIFY) || defined(REISER4_DEBUG_OUTPUT)
+ > int znode_is_loaded(const znode * node /* znode to query */ );
+ > #endif
 
-The reverse - and before you lose data.
+It's other way around: declaration is guarded by the preprocessor
+conditional so that nobody accidentally use znode_is_loaded() outside of
+the debugging mode.
 
-> I think Alan Cox is the only poster who has no intention of using
-> Reiser4 but said at one point that he thinks it should go in.
+ > 
+ > --
+ > vda
+ > 
 
-If its clean enough then yes, like any other fs. Until then no.
-
+Nikita.
