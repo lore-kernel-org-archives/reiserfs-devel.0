@@ -1,44 +1,96 @@
-From: Marc Perkel <marc@perkel.com>
+From: Kyle Moffett <mrmacman_g4@mac.com>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Sun, 18 Sep 2005 13:33:52 -0700
-Message-ID: <432DCF30.7070804@perkel.com>
-References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl>
-Mime-Version: 1.0
+Date: Sun, 18 Sep 2005 16:52:01 -0400
+Message-ID: <D039E613-2D78-4034-A1E9-8D21DCE796E3@mac.com>
+References: <432AFB44.9060707@namesys.com> <200509171415.50454.vda@ilport.com.ua> <200509180934.50789.chriswhite@gentoo.org> <200509181321.23211.vda@ilport.com.ua> <20050918102658.GB22210@infradead.org> <b14e81f0050918102254146224@mail.gmail.com>
+Mime-Version: 1.0 (Apple Message framework v734)
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26043-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932196AbVIRUxM@vger.kernel.org>
+In-Reply-To: <b14e81f0050918102254146224@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, Hans Reiser <reiser@namesys.com>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
+To: thenewme91@gmail.com
+Cc: Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, Hans Reiser <reiser@namesys.com>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-For what it's worth sometimes people get emotional and frustrated and 
-sometimes people can be difficult at thimes to work with. But - for what 
-it's worth - I think people should ignore some of that as human nature 
-and look at the big picture.
+On Sep 18, 2005, at 13:22:27, michael chang wrote:
+> On 9/18/05, Christoph Hellwig <hch@infradead.org> wrote:
+>
+>> On Sun, Sep 18, 2005 at 01:21:23PM +0300, Denis Vlasenko wrote:
+>>
+>>> This is it. I do not say "accept reiser4 NOW", I am saying "give  
+>>> Hans good code review".
+>>
+>> that and there's much more exciting filesystems like ocfs2 around  
+>> that
+>
+> This is exciting to... whom?
 
-And the big picture is ....
+To the people that review the code.  We're all volunteers here; if  
+your filesystem is so ugly and hard to read that the code reviewers  
+don't feel like finding time to slog through the mess, then it  
+probably means that you need to clean the code, document it better,  
+make it simpler to understand, fix the coding-style, etc.
 
-Hans has make a huge contribution with Reiser 3 and eventually Reiser 4 
-is going to be something that will greatly enhance the kernel and 
-advance Linux the way Reiser 3 has done. Wasn't Resiser 3 the first 
-journalling file system for Linux that actually worked?
+> The only thing that appears remotely interesting about it is that  
+> it's made by Oracle and apparently is supposed to be geared toward  
+> parallel server whatsits.  This might be helpful to corporations,  
+> but seems senseless toward many consumers.  (I'm assuming there's  
+> still at least one consumer left who still uses Linux.)
 
-So - I say - if it doesn't break anything else - why not throw it into 
-the mail kernel? It will get there eventually and if it's there sooner 
-them more people will be out there trying to break it and it will 
-develop faster. I don't know personally how stable it is - but from what 
-I understand it is winning the speed tests and that will shave some time 
-off of everything the rest of us do. And even if it is somewhat broken - 
-in a few months it will all be fixed.
+Like I said above, we're all volunteers.  Personally, I find OCFS2  
+_much_ more interesting than reiser4, because it has a lot of cool  
+networked lock-managing algorithms that (given my current limited  
+understanding), work black magic.  Given this, I'm a lot more likely  
+to spend time reading the OCFS2 code because its interesting than I  
+am reading reiser4 code, even though somebody eventually probably  
+needs to do said review.  Hans' personal attacks on the people who  
+have criticized his code make such tasks even less personally  
+gratifying (IE: less interesting).  I think some people are likely  
+hoping right now that if they put off the reiser4 code review long  
+enough, maybe the authors will take a hint and have it a bit cleaner  
+by the time they finally do get around to the review.
 
-And Hans is apparently ready to take abuse if it's broken.
+> Give Hans a chance; and please try to understand, even if he's hard  
+> to work with.  Discriminate him because he's not a developer you  
+> can talk with, and I believe that's like discriminating a guy in a  
+> wheelchair because he can't run with you when you jog in the morning.
 
-So I say - lets do it already.
+When you start getting into obscure discrimination analogies, the  
+discussion has become _way_ nontechnical.  If this goes this goes any  
+further, somebody's probably going to compare a kernel developer to a  
+Nazi or Hitler, invoking Godwin's law and effectively killing the  
+thread.  Please get this back onto a technical bent or drop it.
 
-My 2 centz ....
+> Not everyone has the same "common sense" that you do.  Explain,  
+> fully, with reasoning, and reproducable back-up statistics on  
+> common hardware, what code is wrong, and what must be written  
+> instead.  We'd like to be efficient, and it's not being efficient  
+> to play a guessing
+> game with us.  If you don't have the time to review, then please  
+> hold  off on replying until you have a through review of at least  
+> part of the code.
+
+Christoph has noted a number of things in previous emails.  I just  
+looked through the latest released code and several of them are still  
+valid.  I would look through the latest code to see what is still  
+missing, but I can't get it on account of it being in bitkeeper,  
+which I don't have installed and don't intend to install.
+
+> I'm willing to go compare...  [massive nontechnical rhetoric snipped]
+
+Unless you have technical arguments to contribute (and you indicate  
+that you do not), please to not spam the LKML with useless rhetoric- 
+filled emails that most of us will delete because we have too many  
+other things to do to bother reading or responding to.
+
+Cheers,
+Kyle Moffett
+
+-----BEGIN GEEK CODE BLOCK-----
+Version: 3.12
+GCM/CS/IT/U d- s++: a18 C++++>$ UB/L/X/*++++(+)>$ P+++(++++)>$ L++++(+ 
+++) E W++(+) N+++(++) o? K? w--- O? M++ V? PS+() PE+(-) Y+ PGP+++ t+(+ 
+++) 5 X R? tv-(--) b++++(++) DI+ D+ G e->++++$ h!*()>++$ r  !y?(-)
+------END GEEK CODE BLOCK------
 
