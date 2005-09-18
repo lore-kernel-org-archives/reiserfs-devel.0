@@ -1,53 +1,53 @@
-From: David Masover <ninja@slaphack.com>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Sun, 18 Sep 2005 13:25:37 -0500
-Message-ID: <432DB121.9030908@slaphack.com>
-References: <432AFB44.9060707@namesys.com> <20050918102658.GB22210@infradead.org> <200509181406.25922.chrivers@iversen-net.dk> <200509181532.57908.vda@ilport.com.ua>
+Date: Sun, 18 Sep 2005 15:16:49 -0400
+Message-ID: <200509181916.j8IJGowJ007769@turing-police.cc.vt.edu>
+References: <432AFB44.9060707@namesys.com> <200509171415.50454.vda@ilport.com.ua> <200509180934.50789.chriswhite@gentoo.org> <200509181321.23211.vda@ilport.com.ua> <20050918102658.GB22210@infradead.org>
+            <b14e81f0050918102254146224@mail.gmail.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1127071009_9673P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932160AbVIRSZg@vger.kernel.org>
-In-Reply-To: <200509181532.57908.vda@ilport.com.ua>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751321AbVIRTRz@vger.kernel.org>
+In-Reply-To: Your message of "Sun, 18 Sep 2005 13:22:27 EDT."
+             <b14e81f0050918102254146224@mail.gmail.com> 
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Denis Vlasenko <vda@ilport.com.ua>
-Cc: Christian Iversen <chrivers@iversen-net.dk>, Christoph Hellwig <hch@infradead.org>, chriswhite@gentoo.org, Hans Reiser <reiser@namesys.com>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: thenewme91@gmail.com
+Cc: Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, Hans Reiser <reiser@namesys.com>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Denis Vlasenko wrote:
+--==_Exmh_1127071009_9673P
+Content-Type: text/plain; charset=us-ascii
 
-> If you want reiser4 included into mainline, do something. Like download
-> a patch and try to use it.
+On Sun, 18 Sep 2005 13:22:27 EDT, michael chang said:
 
-Alright...
+> Give Hans a chance; and please try to understand, even if he's hard to
+> work with.  Discriminate him because he's not a developer you can talk
+> with, and I believe that's like discriminating a guy in a wheelchair
+> because he can't run with you when you jog in the morning.
 
-> Last time I tried, it didn't work. Kernel locked up. Namesys was quick
-> with fix for the lockup, but then "ls ." failed to work. I sent all
-> the data (kernel version, fs image, etc) to Namesys but after several
-> email iterations it died out with no resolution.
+There's nothing wrong with discriminating against the guy in the wheelchair
+under some circumstances - for instance, when your track team needs a new
+high jumper.
 
-When was "last time"?
+Similarly, when the goal is to build a set of developers that can actually
+get work accomplished, poor interpersonal communication skills can be a
+major problem.
 
-> I will try again sometime. Maybe it got better.
+If the problem is that Hans and the rest of the kernel developers don't get
+along, perhaps the most expedient thing would be for Hans to step out of the
+way and have somebody else from Namesys (or elsewhere even) act as the interface.
 
-I have three boxes running Reiser4 for everything except /boot, and no 
-problems yet, except an occasional missing feature, like a 
-repacker/resizer.  One's a Pentium 3, the other two are amd64s.
+--==_Exmh_1127071009_9673P
+Content-Type: application/pgp-signature
 
-I've had a total of one crash each on the amd64s, and one of those was 
-while playing a game, and could easily have been the nvidia drivers.  I 
-can't reproduce the other one, and the box has been fine since -- and 
-both amd64s are overclocked by 600 mhz, so I have a sneaking suspicion 
-that it might have been hardware.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-No crashes yet on the Pentium 3, which isn't overclocked at all.
+iD8DBQFDLb0hcC3lWbTT17ARAh78AKCUBibrT7caXvhfNVC1teNqbcugnwCgkgWX
+uJb21oCrWCsYfP9lo6/zlWA=
+=onP7
+-----END PGP SIGNATURE-----
 
-No lost data yet either, in fact, I recovered from an essential 'rm -rf' 
-of a Reiser4 partition, so I could even say Reiser4 (or rather, 
-fsck.reiser4) has *found* data for me.
-
-
-
-For a long time, it's been painfully obvious that the reasons Reiser4 
-isn't in the kernel all have to do with things like coding style and 
-politics.  At this point, if I tried to do anything more than be an 
-active user, I'd be so far out of my depth I'd need a life jacket.
+--==_Exmh_1127071009_9673P--
