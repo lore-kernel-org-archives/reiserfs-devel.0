@@ -1,103 +1,47 @@
-From: michael chang <thenewme91@gmail.com>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Sun, 18 Sep 2005 13:22:27 -0400
-Message-ID: <b14e81f0050918102254146224@mail.gmail.com>
-References: <432AFB44.9060707@namesys.com>
-	 <200509171415.50454.vda@ilport.com.ua>
-	 <200509180934.50789.chriswhite@gentoo.org>
-	 <200509181321.23211.vda@ilport.com.ua>
-	 <20050918102658.GB22210@infradead.org>
-Reply-To: thenewme91@gmail.com
+Date: Sun, 18 Sep 2005 13:10:15 -0500
+Message-ID: <432DAD87.2090500@slaphack.com>
+References: <432AFB44.9060707@namesys.com> <432B1F84.3000902@namesys.com> <20050917092247.GA13992@infradead.org> <200509171356.14497.vda@ilport.com.ua> <20050918102357.GA22210@infradead.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932128AbVIRRWb@vger.kernel.org>
-In-Reply-To: <20050918102658.GB22210@infradead.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26036-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <20050918102357.GA22210@infradead.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, Hans Reiser <reiser@namesys.com>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Denis Vlasenko <vda@ilport.com.ua>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, Linus Torvalds <torvalds@osdl.org>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On 9/18/05, Christoph Hellwig <hch@infradead.org> wrote:
-> On Sun, Sep 18, 2005 at 01:21:23PM +0300, Denis Vlasenko wrote:
-> > This is it. I do not say "accept reiser4 NOW", I am saying "give Hans
-> > good code review".
+Christoph Hellwig wrote:
+> On Sat, Sep 17, 2005 at 01:56:14PM +0300, Denis Vlasenko wrote:
 > 
-> After he did his basic homework.  Note that reviewing hans code is probably
-> at the very end of everyones todo list because every critizm of his code
-> starts a huge flamewar where hans tries to attack everyone not on his
-> party line personally.
+>>At least reiser4 is smaller. IIRC xfs is older than reiser4 and had more time
+>>to optimize code size, but:
+>>
+>>reiser4        2557872 bytes
+>>xfs            3306782 bytes
 > 
-> I've said I'm gonna do a proper review after he has done the basic homework,
-> which he seems to have half-done now at least.  Right now he hasn't finished
+> 
+> and romfs is smaller than ext2, damn.  Should we remove all filesystems but
+> romfs now?
+> 
+> 
+> and yeah, if you didn't get the hint compare the feature sets.
 
-Explain to us all what is this "basic homework" of which you speak.
+XFS does have a nice feature set, sure.  So does Reiser4.
 
-> that and there's much more exciting filesystems like ocfs2 around that
+XFS can "freeze" the filesystem, take a live snapshot, and do some 
+other, similar tricks.  Reiser4 can show file metadata as files 
+themselves, compress on-the-fly (last I checked, the compression code is 
+in there, just not being used), and pack small files incredibly well.
 
-This is exciting to... whom?  The only thing that appears remotely
-interesting about it is that it's made by Oracle and apparently is
-supposed to be geared toward parallel server whatsits.  This might be
-helpful to corporations, but seems senseless toward many consumers. 
-(I'm assuming there's still at least one consumer left who still uses
-Linux.)
+XFS has xattrs.  Reiser has metas, and will eventually provide an xattr 
+interface to them.
 
-> are much easier to read and actually have developers that you can have
-> a reasonable conversation with.  (and that unlike hans actually try to
-
-Is that Hans' fault, or the fault of your lot?  Why can't we all just get along?
-
-Give Hans a chance; and please try to understand, even if he's hard to
-work with.  Discriminate him because he's not a developer you can talk
-with, and I believe that's like discriminating a guy in a wheelchair
-because he can't run with you when you jog in the morning.
-
-> improve core code where it makes sense for them)
-
-Not everyone has the same "common sense" that you do.  Explain, fully,
-with reasoning, and reproducable back-up statistics on common
-hardware, what code is wrong, and what must be written instead.  We'd
-like to be efficient, and it's not being efficient to play a guessing
-game with us.  If you don't have the time to review, then please hold
-off on replying until you have a through review of at least part of
-the code.
-
-Unless you object fully to one particular, fixable thing that isn't
-the core of Reiser4, it'd be nice for you to wait on replying --
-vagueness is not helpful to development in any way.  Are we supposed
-to be the million monkeys randomly typing on a million typewriters
-waiting for someone to give you code that you like, one in a million
-years?
-
-Also, let's say that Reiser4 doesn't get into the kernel, as maybe XFS
-or ext2 or ext3 had never gotten into the kernel.  How would their
-development be now as opposed to how we see it, when they have gotten
-into the kernel?  I don't see anything wrong with the idea of letting
-what seems a mostly mature FS into the kernel; that is how most bugs
-are found in the first place.  Of course, there is nothing wrong with
-putting huge warnings on the FS; I'd recommend them, considering that
-some people are having funky problems with the patch.
-
-I'm willing to go compare Reiser4 to ext2/3 as like H.264 to Mpeg-2. 
-Indeed, H.264 crashes some computers, similar to Reiser4 might crash
-some machines, but this is merely because Reiser4 explores new
-concepts, meaning it may require hardyier hardware than ext2/3, as
-H.264 requries hardier hardware than Mpeg-2.  I believe that the
-concept is the same. (And all the same, media companies are embracing
-H.264 - why can't you guys embrace this new idea also?) Change is
-hard.  Besides, if Reiser4 is truely that flawed, we will see in a few
-releases, and then afterwards if it's proven to everyone that Reiser4
-is completely unrepairable and hopeless, it can then be ditched and
-thrown into the trash.
-
-My apologies for my rudeness, but I am rather fond of the developments
-in Reiser4, and would love to see it in the kernel.  I am fond of
-Linux too, and the work that you guys do, and it would dissapoint me
-sorrily if Reiser4 never makes it into the Linux kernel.  Feel free to
-say I'm a tad biased; I will say now that I probably have much less
-merit in the field than you guys do.
-
--- 
-~Mike
- - Just my two cents
- - No man is an island, and no man is unable.
+You may not value Reiser's feature set, but that doesn't make it less 
+complex.  Romfs is actually simpler than ext2, and its whole "feature" 
+seems to be having a tiny implementation.
