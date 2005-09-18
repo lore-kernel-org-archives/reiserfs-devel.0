@@ -1,50 +1,60 @@
-From: "Artem B. Bityutskiy" <dedekind@yandex.ru>
+From: Denis Vlasenko <vda@ilport.com.ua>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Sun, 18 Sep 2005 13:18:42 +0400
-Message-ID: <432D30F2.1060206@yandex.ru>
-References: <432AFB44.9060707@namesys.com>	 <200509171356.14497.vda@ilport.com.ua>	 <200509171415.50454.vda@ilport.com.ua>	 <200509180934.50789.chriswhite@gentoo.org> <194f625505091801231f54980@mail.gmail.com> <432D2B26.1070909@mch.one.pl> <432D2B96.3080703@yandex.ru> <432D2DE9.4070209@mch.one.pl>
+Date: Sun, 18 Sep 2005 13:21:23 +0300
+Message-ID: <200509181321.23211.vda@ilport.com.ua>
+References: <432AFB44.9060707@namesys.com> <200509171415.50454.vda@ilport.com.ua> <200509180934.50789.chriswhite@gentoo.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26028-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26029-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <432D2DE9.4070209@mch.one.pl>
+In-Reply-To: <200509180934.50789.chriswhite@gentoo.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Tomasz Chmielewski <mangoo@mch.one.pl>
-Cc: linuxhippy@gmail.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: chriswhite@gentoo.org
+Cc: Christoph Hellwig <hch@infradead.org>, Hans Reiser <reiser@namesys.com>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Tomasz Chmielewski wrote:
-> and, as any other filesystem, can be used with disks or even kept in 
-> RAM, it's just an image, right? but what fun is it to have fifty 4 GB 
-> "partitions"? :)
+On Sunday 18 September 2005 03:34, Chris White wrote:
+> CC-List trimmed
 > 
-JFFS2 is for flashes, flashes are not block devices, they have another 
-usage model. You formally may use JFFS2 on disks, yes, but only because 
-of an inefficient translation layer (mtdblock).
+> On Saturday 17 September 2005 20:15, Denis Vlasenko wrote:
+> > > At least reiser4 is smaller. IIRC xfs is older than reiser4 and had more
+> > > time to optimize code size, but:
+> > >
+> > > reiser4        2557872 bytes
+> > > xfs            3306782 bytes
+> >
+> > And modules sizes:
+> >
+> > reiser4.ko        442012 bytes
+> > xfs.ko            494337 bytes
+> 
+> All this is fine and dandy, but saying "My code is better than yours!!" still 
+> doesn't solve the issue this thread hopes to achieve, that being "I'd like to 
+> get reiser4 into the kernel".  There seems to be a lot of (historical?) 
+> tension present here, but all that seems to be doing is making things worse.  
+> PLEASE keep this thing a tad on par.  Keeping this up is hurting everyone 
+> more than helping.  I wish I could say something as simple as "let's just be 
+> friends", but that's saying a lot.  I can say this though: this is open 
+> source, and that means that our source is open, and we should be too.
 
-And the fun to have fifty 4GB partitions will be:
-1. Enormous RAM consumption (I guess JFFS2 will eat _at least_ 512MB of 
-RAM).
-2. Utter slowness.
-3. You will grow old while you'll mount your partitions :-)
-4. You will loose your data on each unclean reboot (power crash).
-5. I bet the real limit is 2GB :-)
+I am trying to say that I think that Hans is being treated a bit unfairly.
+His fs is new and has fairly complex on-disk structure and complex journalling
+machinery, yet his source and object code is smaller than xfs which already
+is accepted. This is no easy feat I guess.
 
-Note, 4 is owing to the mentioned translation layer, JFFS2 itself is 
-very unclean reboot - tolerant.
+Maybe xfs shouldn't be accepted too, this may be an answer.
 
-Funny? :-)
+Let's look at the code. Hans' code is not _that_ awful. Yet people
+(not all of them, but some) do not point to specific things which they
+want to be fixed/improved. I see blanket arguments like "your code is hard
+to read". Well. Maybe spend a minute on what exactly is hard to read,
+or do we require Hans to be able to read minds from the distance?
 
-So, formally you're right, no doubts. That is just for information :-)
-
-Anyway, this is off-topic. Hmm, somebody excluded LKML from CC earlier 
-(that's no good). I won't include it here, but the next non-off-topic 
-writer ought to do it.
-
--- 
-Best Regards,
-Artem B. Bityuckiy,
-St.-Petersburg, Russia.
+This is it. I do not say "accept reiser4 NOW", I am saying "give Hans
+good code review".
+--
+vda
