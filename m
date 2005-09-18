@@ -1,45 +1,22 @@
-From: Dan Oglesby <doglesby@teleformix.com>
-Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Sun, 18 Sep 2005 16:43:22 -0500
-Message-ID: <432DDF7A.3050704@teleformix.com>
-References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl> <432DCE2A.5070705@slaphack.com>
+From: ivan vadovic <pivo@pobox.sk>
+Subject: reiser4()
+Date: Sun, 18 Sep 2005 23:46:55 +0200
+Message-ID: <20050918214655.GA10559@larva.oko>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26046-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26047-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <432DCE2A.5070705@slaphack.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Masover <ninja@slaphack.com>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, Hans Reiser <reiser@namesys.com>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-David Masover wrote:
+Hi,
 
-> Horst von Brand wrote:
->
->> There are lots of reports of ReiserFS 3
->> filesystems completely destroyed by minor hardware flakiness.
->
->
-> Honestly, this is one of the things I like about Linux.  If I have 
-> memory errors, Windows will just keep running, occasionally something 
-> will crash, you restart it, never suspecting just how corrupt things 
-> are getting under the hood.  On Linux, I generally get kernel panics 
-> pretty quickly, so I run memtest86 and replace the RAM.
->
-> If my hardware is flaky, I consider it my job to replace it, not the 
-> job of all my software to magically compensate for it.  If I lose 
-> data, oh well, I have backups.  If I didn't, I was asking for trouble 
-> anyway.
+Is the reiser4() system call already implemented? Is there any sample code to
+see its usage? I'd really like to try it and perhaps help with debugging.
 
-I'm of the same opinion.  If I have hardware that has a problem, and 
-causes downtime, it gets replaced or repaired.  I don't switch to a 
-different piece of software to compensate for broken hardware.
-
-With that said, I have seen ReiserFS expose hardware that had problems.  
-Hardware was repaired, and ReiserFS rides again.
-
---Dan
+Ivan
