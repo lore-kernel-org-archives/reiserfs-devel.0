@@ -1,69 +1,83 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Sun, 18 Sep 2005 22:38:44 +0100
-Message-ID: <1127079524.8932.21.camel@localhost.localdomain>
-References: <432AFB44.9060707@namesys.com>
-	 <200509171415.50454.vda@ilport.com.ua>
-	 <200509180934.50789.chriswhite@gentoo.org>
-	 <200509181321.23211.vda@ilport.com.ua>
-	 <20050918102658.GB22210@infradead.org>
-	 <b14e81f0050918102254146224@mail.gmail.com>
+From: Laurent Riffard <laurent.riffard@free.fr>
+Subject: Re: ent:sdXnn going to D state with latest reiser4 patch
+Date: Sun, 18 Sep 2005 23:31:19 +0200
+Message-ID: <432DDCA7.5060009@free.fr>
+References: <20050918202904.GA3025@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26044-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="------------enig0BC646586770CBB0DC50E372"
+Return-path: <reiserfs-list-return-26045-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b14e81f0050918102254146224@mail.gmail.com>
+In-Reply-To: <20050918202904.GA3025@localhost.localdomain>
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: thenewme91@gmail.com
-Cc: Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, Hans Reiser <reiser@namesys.com>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Sul, 2005-09-18 at 13:22 -0400, michael chang wrote:
-> This is exciting to... whom?  The only thing that appears remotely
-> interesting about it is that it's made by Oracle and apparently is
-> supposed to be geared toward parallel server whatsits.
+--------------enig0BC646586770CBB0DC50E372
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Which no current included fs supports. And parallel file systems btw get
-exciting for everyone once you have virtualisation.
+Le 18.09.2005 22:29, Damien Wyart a =E9crit :
+> Hello,
+>=20
+> Doing some tests with latest reiser4 patches from 2.6.14-mm1, I noticed=
 
-> Is that Hans' fault, or the fault of your lot?  Why can't we all just get along?
+> that the load of the machine never goes under 2. It comes from two
+> processes related to reiser4 and going to D state immediately after the=
 
-Insufficient drugs ;) ?
+> filesystems are mounted. As there are two reiser4 partitions, I get two=
 
-> work with.  Discriminate him because he's not a developer you can talk
-> with, and I believe that's like discriminating a guy in a wheelchair
-> because he can't run with you when you jog in the morning.
+> such processes, and the load is always higher than 2. These processes
+> appear as ent:sdb7 and ent:sdb11 (correspnding fs are on sdb7 and sdb11=
+)
+> and same with square brackets sometimes.
+>=20
+> I can reproduce this with 2.6.14-rc1-git4 and 2.6.13.2, with the latest=
 
-Hans can learn to work with people, most folks in wheelchairs cannot
-take lessons and walk. Many of them have tried months of physiotherapy.
-to learn to walk again. I think your comparison is insulting to a lot of
-the disabled.
+> patch. I do not have this problem with previous reiser4 patch
+> (2.6.13-mm3 + latest reiser4-only.1.patch from ftp.namesys.com.
+>=20
+> I guess people doing simple tests of this patch will see this behaviour=
+,
+> and I am surprised nobody seems to have posted about this on the list.
+>=20
 
-> Also, let's say that Reiser4 doesn't get into the kernel, as maybe XFS
-> or ext2 or ext3 had never gotten into the kernel.  How would their
+Hello Damien,=20
 
-Linus refused ext3 initially. It went in because it had a userbase,
-vendors shipping it and reliable clean code. Saying "no" a lot is really
-rather important to keeping the kernel maintainable. I regularly meet
-cases we should have said "no" a lot louder 8)
+I didn't notice an extra load here (Linux version 2.6.14-rc1-mm2 (laurent=
+@antares.localdomain) (gcc version 4.0.1 (4.0.1-5mdk for Mandriva Linux r=
+elease 2006.0)) #130 Sat Sep 17 10:26:06 CEST 2005). But, I can confirm t=
+hat "ent:hda8" is always in D state.
 
-> I'm willing to go compare Reiser4 to ext2/3 as like H.264 to Mpeg-2. 
-> Indeed, H.264 crashes some computers, similar to Reiser4 might crash
-> some machines, but this is merely because Reiser4 explores new
+[notice the *mm2* ? I'm using http://www.zip.com.au/~akpm/linux/patches/s=
+tuff/2.6.14-rc1-mm1.5.gz which is kinda rc1-mm1 without big input/sysfs c=
+hanges]
 
-It doesn't matter if reiser4 causes crashes. It matters that people can
-fix them, that they are actively fixed and the code is maintainable. It
-will have bugs, all complex code has bugs. Hans team have demonstrated
-the ability to fix some of those bugs fast, but we also all remember
-what happened with reiser3 later on despite early fast fixing.
+Furthermore reiser4 prevents the box from suspending to disk. Found in lo=
+g while suspending :
+Restarting tasks...<6> Strange, ent:hda8. not stopped
 
-One big reason we jump up and down so much about the coding style is
-that its the one thing that ensures someone else can maintain and fix
-code that the author has abandoned, doesn't have time to fix or that
-needs access to specific hardware the authors may not have.
+~~
+laurent
 
-Alan
+
+--------------enig0BC646586770CBB0DC50E372
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+
+iD8DBQFDLdyyUqUFrirTu6IRAkEFAKCXV3hvh9H7qQZKSGUMwBVwGmEtQACgwS5m
+d/YqEQKn9jBv/aFY0ebeIus=
+=hLR4
+-----END PGP SIGNATURE-----
+
+--------------enig0BC646586770CBB0DC50E372--
 
