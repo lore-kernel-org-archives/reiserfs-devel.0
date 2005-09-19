@@ -1,69 +1,44 @@
-From: Nikita Danilov <nikita@clusterfs.com>
+From: Jens Axboe <axboe@suse.de>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Mon, 19 Sep 2005 14:39:08 +0400
-Message-ID: <17198.38220.257000.445906@gargle.gargle.HOWL>
-References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl>
-	<432E5024.20709@namesys.com>
+Date: Mon, 19 Sep 2005 14:45:18 +0200
+Message-ID: <20050919124516.GM10845@suse.de>
+References: <432AFB44.9060707@namesys.com> <200509171415.50454.vda@ilport.com.ua> <200509180934.50789.chriswhite@gentoo.org> <200509181321.23211.vda@ilport.com.ua> <20050918102658.GB22210@infradead.org> <b14e81f0050918102254146224@mail.gmail.com> <1127079524.8932.21.camel@localhost.localdomain> <432E4786.7010001@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932097AbVISLjo@vger.kernel.org>
-In-Reply-To: <432E5024.20709@namesys.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-26077-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <432E4786.7010001@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Hans Reiser <reiser@namesys.com>
-Cc: thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Hans Reiser writes:
+On Sun, Sep 18 2005, Hans Reiser wrote:
+> Linux kernel code is getting better, and Andrew Morton's code is
+> especially good, but for the most part it's unnecessarily hard to read. 
+> Look at the elevator code for instance.  Ugh.
 
-[...]
+That's pretty bold, coming from someone who cannot even figure out how
+to follow the style guidelines of the kernel.
 
- > Well maybe he should just go away then and save his and our time. 
- > Reiser4 works just fine without Christoph.  Users are happy with it. 
- > None of them have asked for his help.  I don't consider Christoph to be
- > qualified to work on our filesystem.  I would not hire him if he applied
- > --- he is not capable of innovative work.
+The elevator core api is so trivial, I don't believe you find this hard
+to read. The individual io schedulers tend to have comments in functions
+that aren't immediately obvious. So I'm curious, what do part makes you
+go 'ugh'?
 
-Hans, it seems you misunderstand what is going on.
+So please explain or refrain from making stupid unwarranted comments
+about other peoples code.
 
-Necessary prerequisite for reiser4 inclusion is a review by file system
-people. Christoph is doing this _work_. You know what it is to review
-somebody else code? It's a hard work. He is doing it for free.
+> That is why I just say "make it easy to read and I don't care how you do
+> that so long as it works."
 
-If he goes away---reiser4 wouldn't somehow magically be immediately
-included into kernel. It'll wait for review---for the next person to
-come and to do this work. And that person will most likely point to the
-very same things that hch does now only after a delay. Maybe with
-slightly more polished style (hair style included) though. :-)
+Then why do you insist on commenting your code differently than everyone
+else ('everyone' means the kernel here, since that is your target)?
 
-So, please be a little more patient.
+-- 
+Jens Axboe
 
- > 
- > Reiser4 is far from perfect, but it is ready for more users.
-
-This is not what is being discussed, stop red-herring, please.
-
-[...]
-
- > >
- > Yes, which is why people who have not written a serious filesystem
- > should not instruct those who have written the measurably fastest one.
-
-Somebody has to review reiser4 code. If you can persuade somebody else
-to do the review, do this.
-
-[...]
-
- > 
- > V4, as it is today, is as much superior to V3 as OS/2 was to DOS.  Any
-
-One way in which half-OS was superior to DOS was how spectacularly the
-former project failed after a lot of hype. :-)
-
- > distro or user who would stay with V3 for new installs once we have
- > passed mass testing is nuts.  We need the mass testing.
- > 
- > Hans
- > 
-
-Nikita.
