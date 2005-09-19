@@ -1,53 +1,76 @@
-From: Stephen Pollei <stephen.pollei@gmail.com>
+From: Bill Davidsen <davidsen@tmr.com>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Mon, 19 Sep 2005 12:36:15 -0700
-Message-ID: <feed8cdd05091912362ac13f3e@mail.gmail.com>
-References: <432AFB44.9060707@namesys.com>
-	 <200509171416.21047.vda@ilport.com.ua>
-	 <17197.15183.235861.655720@gargle.gargle.HOWL>
-Reply-To: stephen.pollei@gmail.com
+Date: Mon, 19 Sep 2005 16:00:31 -0400
+Message-ID: <432F18DF.6020903@tmr.com>
+References: <432AFB44.9060707@namesys.com> <200509171415.50454.vda@ilport.com.ua> <200509180934.50789.chriswhite@gentoo.org> <200509181321.23211.vda@ilport.com.ua>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932553AbVISTgS@vger.kernel.org>
-In-Reply-To: <17197.15183.235861.655720@gargle.gargle.HOWL>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26092-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <200509181321.23211.vda@ilport.com.ua>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Nikita Danilov <nikita@clusterfs.com>, Alexander Zarochentcev <zam@namesys.com>
-Cc: Denis Vlasenko <vda@ilport.com.ua>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Denis Vlasenko <vda@ilport.com.ua>
+Cc: Christoph Hellwig <hch@infradead.org>, Hans Reiser <reiser@namesys.com>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On 9/18/05, Nikita Danilov <nikita@clusterfs.com> wrote:
-> Denis Vlasenko writes:
->  > On Friday 16 September 2005 20:05, Hans Reiser wrote:
->  > You can declare functions even if you never use them.
->  > Thus here you can avoid using #if/#endif:
-> It's other way around: declaration is guarded by the preprocessor
-> conditional so that nobody accidentally use znode_is_loaded() outside of
-> the debugging mode.
-Except it doesn't disallow someone from using znode_is_loaded, if you
-wanted to do that you would have done this....
-#if defined(REISER4_DEBUG) || defined(WHATEVER_ELSE)
-int znode_is_loaded(const znode * node /* znode to query */ );
-#else
-#define znode_is_loaded(I_dont_care_you_are_going_to_) \
-   } )die(]0now[>anyway<}}}}}}*bye*}
-#endif
-That way instead of silently(or -Wmissing-prototypes gving a warning)
-quessing at a prototype and *maybe* geting a link time error, you get
-a nice compile-time bomb-out.
+Denis Vlasenko wrote:
+> On Sunday 18 September 2005 03:34, Chris White wrote:
+> 
+>>CC-List trimmed
+>>
+>>On Saturday 17 September 2005 20:15, Denis Vlasenko wrote:
+>>
+>>>>At least reiser4 is smaller. IIRC xfs is older than reiser4 and had more
+>>>>time to optimize code size, but:
+>>>>
+>>>>reiser4        2557872 bytes
+>>>>xfs            3306782 bytes
+>>>
+>>>And modules sizes:
+>>>
+>>>reiser4.ko        442012 bytes
+>>>xfs.ko            494337 bytes
+>>
+>>All this is fine and dandy, but saying "My code is better than yours!!" still 
+>>doesn't solve the issue this thread hopes to achieve, that being "I'd like to 
+>>get reiser4 into the kernel".  There seems to be a lot of (historical?) 
+>>tension present here, but all that seems to be doing is making things worse.  
+>>PLEASE keep this thing a tad on par.  Keeping this up is hurting everyone 
+>>more than helping.  I wish I could say something as simple as "let's just be 
+>>friends", but that's saying a lot.  I can say this though: this is open 
+>>source, and that means that our source is open, and we should be too.
+> 
+> 
+> I am trying to say that I think that Hans is being treated a bit unfairly.
+> His fs is new and has fairly complex on-disk structure and complex journalling
+> machinery, yet his source and object code is smaller than xfs which already
+> is accepted. This is no easy feat I guess.
+> 
+> Maybe xfs shouldn't be accepted too, this may be an answer.
 
-So unless you have -Wmissing-prototypes and -Werror set then your
-#if/#endif does very little indeed, especially with the size of kernel
-it's easy to ignore yet another warning even if the missing-prototype
-warning was set.
-And if you would have gotten a link error then that is what you were
-really depending on to save your bacon.
+That argument is specious, and raises the chance that someone will 
+suggest that we learn from our mistakes.
+> 
+> Let's look at the code. Hans' code is not _that_ awful. Yet people
+> (not all of them, but some) do not point to specific things which they
+> want to be fixed/improved. I see blanket arguments like "your code is hard
+> to read". Well. Maybe spend a minute on what exactly is hard to read,
+> or do we require Hans to be able to read minds from the distance?
 
-P.S. I'd make the define one line if gmail didn't word wrap too much.
+Was this code first written in some language which compiles into C, like 
+the original C++ compiler? It just "feels funny," which clearly is not 
+an objective or quantitative thing, just an impression. Your comment 
+"not _that_ awful" is a perfect example of "damned by faint praise." 
+However, unless someone is willing to make the argument that the code is 
+too weird to maintain, style isn't an issue, is it?
+
+Christoph has made some clear technical points, those should be 
+addressed, whether you like the code style or not.
 
 -- 
-http://dmoz.org/profiles/pollei.html
-http://sourceforge.net/users/stephen_pollei/
-http://www.orkut.com/Profile.aspx?uid=2455954990164098214
-http://stephen_pollei.home.comcast.net/
+    -bill davidsen (davidsen@tmr.com)
+"The secret to procrastination is to put things off until the
+  last possible moment - but no longer"  -me
