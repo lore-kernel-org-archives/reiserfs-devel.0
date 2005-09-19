@@ -1,61 +1,52 @@
-From: Valdis.Kletnieks@vt.edu
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Mon, 19 Sep 2005 01:56:54 -0400
-Message-ID: <200509190556.j8J5utH0024042@turing-police.cc.vt.edu>
-References: <432AFB44.9060707@namesys.com> <200509181321.23211.vda@ilport.com.ua> <20050918102658.GB22210@infradead.org> <200509181406.25922.chrivers@iversen-net.dk>
-            <432E499B.7000003@namesys.com>
+Date: Sun, 18 Sep 2005 23:53:33 -0700
+Message-ID: <432E606D.9020009@namesys.com>
+References: <432AFB44.9060707@namesys.com> <200509181321.23211.vda@ilport.com.ua> <20050918102658.GB22210@infradead.org> <200509181406.25922.chrivers@iversen-net.dk>            <432E499B.7000003@namesys.com> <200509190556.j8J5utH0024042@turing-police.cc.vt.edu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1127109414_2682P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26063-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26064-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Sun, 18 Sep 2005 22:16:11 PDT."
-             <432E499B.7000003@namesys.com> 
+In-Reply-To: <200509190556.j8J5utH0024042@turing-police.cc.vt.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Valdis.Kletnieks@vt.edu
 Cc: Christoph Hellwig <hch@infradead.org>, Christian Iversen <chrivers@iversen-net.dk>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
---==_Exmh_1127109414_2682P
-Content-Type: text/plain; charset=us-ascii
+Valdis.Kletnieks@vt.edu wrote:
 
-On Sun, 18 Sep 2005 22:16:11 PDT, Hans Reiser said:
+>
+>
+> Hans, unfortunately the most obvious reading of the above is
+> "Reiser4 is so damned fast because it doesn't bother doing
+> sanity-checking".
 
-> Hellwig, people who write slow file systems should not lecture their
-> measurably superiors on how to code.  Oh, and I should mention that
-> other people besides me have measured reiser4, and concluded it is twice
-> the speed of the other Linux filesystems, so don't go claiming it is
-> just my benchmarks.   What you are doing is keeping me from doing a real
-> code review myself by keeping my guys so busy that they don't have time
-> to review the fixmes I inserted and would insert more of if I thought
-> they had time for them.
+Hmm, you seem to have forgotten the Hellwig complaints about too many
+assertions..... ;-)
 
-Hans, unfortunately the most obvious reading of the above is "Reiser4 is so
-damned fast because it doesn't bother doing sanity-checking".  If there's still
-more "fixmes" to be inserted that *you* know of, and there are so many that
-there's no time to fix them, why is this being submitted for inclusion?
+Algorithms make a difference Valdis, they make a big difference.
+> If there's still more "fixmes" to be inserted that *you* know of,
+> and there are so many that there's no time to fix them, why is this
+> being submitted for inclusion?
 
-On Sun, 18 Sep 2005 22:09:08 PDT, Hans Reiser said:
-> Of course, the reiser4 code is not as stable as it was before the
-> changes Christoph asked for.
+The fixmes are not bugs, those got fixed, they are "this code would be
+cleaner if written another way", or, most commonly, "where is the
+comment that ought to be here?"
 
-This sort of claim requires proof - can you point at *specific* things that
-were less stable after you fixed the code, including explaining why they're
-less stable?
+> On Sun, 18 Sep 2005 22:09:08 PDT, Hans Reiser said:
+>
+>> Of course, the reiser4 code is not as stable as it was before the
+>> changes Christoph asked for.
+>
+>
+> This sort of claim requires proof - can you point at *specific*
+> things that were less stable after you fixed the code, including
+> explaining why they're less stable?
 
---==_Exmh_1127109414_2682P
-Content-Type: application/pgp-signature
+The 4k stacks got a bug report or two.   Generally speaking, I don't
+trust any large number of lines of code of changes to be bug free, and
+the VFS stuff was a large number of lines.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFDLlMmcC3lWbTT17ARAoI+AKCmzQSVJpcH0t+/LF7ihegfixcmJACePBRc
-4x5F5HgNI/8rOcCnYmn9E7g=
-=wtgW
------END PGP SIGNATURE-----
-
---==_Exmh_1127109414_2682P--
