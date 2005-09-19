@@ -1,61 +1,32 @@
-From: "Marc Perkel" <marc@perkel.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Mon, 19 Sep 2005 06:45:25 +0200
-Message-ID: <000101c5bcd4$f37818f0$0300a8c0@intra.lexbox.org>
-References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl> <432DCE2A.5070705@slaphack.com> <432DDF7A.3050704@teleformix.com> <op.sxbtg9lzth1vuj@localhost>
+Date: Sun, 18 Sep 2005 22:01:41 -0700
+Message-ID: <432E4635.4090309@namesys.com>
+References: <432AFB44.9060707@namesys.com> <432B1F84.3000902@namesys.com> <1C909C65-8B71-4817-AE13-519599D0B11A@mac.com> <200509171351.57152.vda@ilport.com.ua>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26054-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <op.sxbtg9lzth1vuj@localhost>
-Sender: <linux-kernel-owner@vger.kernel.org>
-Content-Class: urn:content-classes:message
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932247AbVISFBm@vger.kernel.org>
+In-Reply-To: <200509171351.57152.vda@ilport.com.ua>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; charset="us-ascii"
-To: unlisted-recipients, , no To-header on input, IMB Recipient 1 <mspop3connector.david.sanchez@lexbox.fr>
-Cc: LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Denis Vlasenko <vda@ilport.com.ua>
+Cc: Kyle Moffett <mrmacman_g4@mac.com>, Christoph Hellwig <hch@infradead.org>, LKML Kernel <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-
-
-PFC wrote:
+Denis Vlasenko wrote:
 
 >
->
->> I'm of the same opinion.  If I have hardware that has a problem, and  
->> causes downtime, it gets replaced or repaired.  I don't switch to a  
->> different piece of software to compensate for broken hardware.
+>>And yet thousands and thousands of people, businesses, etc, say that  
+>>the Linux kernel code is miles above all the commercial software out  
+>>there. 
 >>
->> With that said, I have seen ReiserFS expose hardware that had 
->> problems.   Hardware was repaired, and ReiserFS rides again.
->
->
->
+Not the commercial software I have worked with.  IBM code, government
+procured code, both are much more readable code than Linux Kernel
+standards.  I am sure there is no shortage of bad IBM code and bad
+government code, but my personal experiences were that it was much
+better commented.   Your statement sounds like something you want to
+believe.
 
-Agreed - if the hardware has problem and anything is readable I'm happy. 
-When I was sysadmin at EFF we got a bunch of IBM Deathstar drives - and 
-for those who experiences this - every one of them fails. But they 
-usually fail slowly. What amazed me was I would stat to see seek errors 
-- sector not found and I would copy off everything I could onto a new 
-drive before I lost anything. And - I thought it was amazing that I 
-usually managed to get all the important stuff. So - I give reiser 
-credit for being somewhat resiliant.
-
-here's the way I see it. This isn't like Hans Reiser is some unknown guy 
-who has some wild idea that we all don't know. ReiserFS is a majoy 
-player in the Linux world and many people like it the best. Several 
-distros use Reiser as their default install. So to me this gives him 
-more than average standing and the way I see it - there has to be a good 
-reason to NOT merge it rather than a reason TO merge it.
-
-So - is Reiser4 going to break anything? If not - what is the reason to 
-not do it?
-
--- 
-Marc Perkel - marc@perkel.com
-
-Spam Filter: http://www.junkemailfilter.com
-    My Blog: http://marc.perkel.com
-
+That all said, the kernel code is getting better.....  if the rest of
+the kernel was as well commented as akpm's code I would not be
+complaining at all.
