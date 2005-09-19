@@ -1,43 +1,46 @@
-From: Andreas Dilger <adilger@clusterfs.com>
-Subject: Re: struct dirent *ent->d_type weirdness
-Date: Mon, 19 Sep 2005 11:14:17 -0600
-Message-ID: <20050919171416.GF12946@schatzie.adilger.int>
-References: <200509191558.27362.kris@koehntopp.de> <432ECC4C.30707@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Namesys web page, possible update?
+Date: Mon, 19 Sep 2005 11:27:42 -0700
+Message-ID: <432F031E.7010804@namesys.com>
+References: <432E515A.3040108@teleformix.com> <1127140345.12571.10.camel@gentoo>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26086-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26087-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <432ECC4C.30707@namesys.com>
+In-Reply-To: <1127140345.12571.10.camel@gentoo>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: Kristian =?iso-8859-1?Q?K=F6hntopp?= <kris@koehntopp.de>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Jake Maciejewski <maciejej@msoe.edu>, Alexander Lyamin aka FLX <flx@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Sep 19, 2005  18:33 +0400, Vladimir V. Saveliev wrote:
-> Kristian K=F6hntopp wrote:
-> > My goal is to walk a spool directory recursively and deal with=20
-> > all files inside directories that I encounter. For that, I check=20
-> > struct dirent *ent->d_type and get unexpected results.
-> >=20
-> Yes, unfortunately, reiserfs does not support entry types.
+Jake Maciejewski wrote:
+
+>Also, if there's a default for Gentoo, it's ext3. The installation is
+>still completely manual, but the instructions use "mke2fs -j" in the
+>example.
 >
-> > 	 /* disable actual test and print ent->d_type */
-> > 	 /* ent->d_type=3D=3DDT_DIR && ent->d_name[1]=3D=3D0 && ent->d_name[0]=
->0=20
-> > && ent->d_name[0]!=3D'.'*/
-
-You need to stat() the entry to find the type if d_type is DT_UNKNOWN.
-I would continue to use d_type as an optimization, however, as this
-reduces the number of syscalls needed when it is supported, and for
-network filesystems a stat() may be an expensive operation.
-
-Cheers, Andreas
---
-Andreas Dilger
-Principal Software Engineer
-Cluster File Systems, Inc.
-
+>On Mon, 2005-09-19 at 00:49 -0500, Dan Oglesby wrote:
+>  
+>
+>>The following line of text appears on the main page at 
+>>http://www.namesys.com:
+>>
+>>"V3 of reiserfs is used as the default filesystem for SuSE, Lindows, 
+>>FTOSX, Libranet, Gentoo, Xandros and Yoper."
+>>
+>>I believe Slackware has defaulted to V3 for some time now.  EXT3 and 2 
+>>are still options as well, but the default selection for filesystem type 
+>>is ReiserFS when you go through the setup process.
+>>
+>>Just hoping to give you guys another (very mature) distro to add to the 
+>>list.
+>>
+>>--Dan
+>>
+>>
+>>    
+>>
+Last I heard from the developers, they used reiserfs.  Maybe it
+changed....  maybe I was confused....  thanks for telling us.
