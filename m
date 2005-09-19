@@ -1,44 +1,68 @@
-From: Jens Axboe <axboe@suse.de>
-Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Mon, 19 Sep 2005 14:45:18 +0200
-Message-ID: <20050919124516.GM10845@suse.de>
-References: <432AFB44.9060707@namesys.com> <200509171415.50454.vda@ilport.com.ua> <200509180934.50789.chriswhite@gentoo.org> <200509181321.23211.vda@ilport.com.ua> <20050918102658.GB22210@infradead.org> <b14e81f0050918102254146224@mail.gmail.com> <1127079524.8932.21.camel@localhost.localdomain> <432E4786.7010001@namesys.com>
+From: Kristian =?iso-8859-1?q?K=F6hntopp?= <kris@koehntopp.de>
+Subject: struct dirent *ent->d_type weirdness
+Date: Mon, 19 Sep 2005 15:58:26 +0200
+Message-ID: <200509191558.27362.kris@koehntopp.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-26077-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26078-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <432E4786.7010001@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-On Sun, Sep 18 2005, Hans Reiser wrote:
-> Linux kernel code is getting better, and Andrew Morton's code is
-> especially good, but for the most part it's unnecessarily hard to read. 
-> Look at the elevator code for instance.  Ugh.
 
-That's pretty bold, coming from someone who cannot even figure out how
-to follow the style guidelines of the kernel.
+I have a machine running under 2.6.13-SMP, using reiserfs 3.6. On=20
+this machine, directories are flagged strangely and thus code=20
+which operates properly under ext3 fails with reiserfs.
 
-The elevator core api is so trivial, I don't believe you find this hard
-to read. The individual io schedulers tend to have comments in functions
-that aren't immediately obvious. So I'm curious, what do part makes you
-go 'ugh'?
+Why is this, and what am I doing wrong?
 
-So please explain or refrain from making stupid unwarranted comments
-about other peoples code.
+My goal is to walk a spool directory recursively and deal with=20
+all files inside directories that I encounter. For that, I check=20
+struct dirent *ent->d_type and get unexpected results.
 
-> That is why I just say "make it easy to read and I don't care how you do
-> that so long as it works."
 
-Then why do you insist on commenting your code differently than everyone
-else ('everyone' means the kernel here, since that is your target)?
+mx15:/tmp # uname -a
+Linux mx15 2.6.13web #4 SMP Fri Sep 16 16:03:39 CEST 2005 i686=20
+unknown
 
--- 
-Jens Axboe
+mx15:/tmp # cat rtest.cpp
+#include <stdio.h>
+#include <dirent.h>
 
+int main(int argc, char** argv)
+{
+struct dirent *ent =3D NULL;
+DIR *dd =3D NULL;
+
+dd =3D opendir(argv[1]);
+if (dd !=3D NULL) {
+         while ((ent =3D readdir(dd)) !=3D NULL) {
+	 /* disable actual test and print ent->d_type */
+	 /* ent->d_type=3D=3DDT_DIR && ent->d_name[1]=3D=3D0 && ent->d_name[0]>0=20
+&& ent->d_name[0]!=3D'.'*/
+		if (1) {
+			printf("%s (%d) \n", ent->d_name, ent->d_type);
+		}
+         }
+         closedir(dd);
+}
+}
+mx15:/tmp # ./rtest /netsite/var/spool/wmail.reiser
+=2E (0)
+=2E. (0)
+head (0)
+dbclub02 (0)
+mx15:/tmp # df -Th /netsite/var/spool/wmail.reiser
+Dateisystem   Typ    Gr=F6=DFe Benut  Verf Ben% Eingeh=E4ngt auf
+/reiserfile
+           reiserfs    2.0G   33M  2.0G=20
+2% /netsite/var/spool/wmail.reiser
+
+
+
+Kristian
