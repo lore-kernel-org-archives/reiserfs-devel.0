@@ -1,33 +1,37 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Mon, 19 Sep 2005 15:01:08 -0700
-Message-ID: <432F3524.101@namesys.com>
-References: <432AFB44.9060707@namesys.com>	<200509171416.21047.vda@ilport.com.ua>	<17197.15183.235861.655720@gargle.gargle.HOWL>	<feed8cdd05091912362ac13f3e@mail.gmail.com> <17199.10558.939696.765980@gargle.gargle.HOWL>
+From: michael chang <thenewme91@gmail.com>
+Subject: Re: reiser4 mount options
+Date: Sun, 18 Sep 2005 20:53:53 -0400
+Message-ID: <b14e81f00509181753788df95@mail.gmail.com>
+References: <dgkvq7$5lo$1@sea.gmane.org>
+Reply-To: thenewme91@gmail.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26099-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26100-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <17199.10558.939696.765980@gargle.gargle.HOWL>
+In-Reply-To: <dgkvq7$5lo$1@sea.gmane.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Nikita Danilov <nikita@clusterfs.com>
-Cc: stephen.pollei@gmail.com, Alexander Zarochentcev <zam@namesys.com>, Denis Vlasenko <vda@ilport.com.ua>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Ritesh Raj Sarraf <riteshsarraf@users.sourceforge.net>
+Cc: reiserfs-list@namesys.com
 
-Nikita Danilov wrote:
+On 9/18/05, Ritesh Raj Sarraf <riteshsarraf@users.sourceforge.net> wrote:
+> When can we have the reiser4 version of filesystem resize utility ?
 
->
->It's enough to monitor your own code, rather than the whole kernel.
->  
->
-To this I would add, the kernel should not have warnings when it
-compiles.  Now THAT is a style requirement I would rigorously enforce if
-I could.  I deeply regret that long ago there was a Linux scsi driver
-author who left a warning in, and then after that they started
-multiplying throughout the kernel.  It makes users much more confident
-when they patch the kernel if there are no warnings that leave them
-wondering if the new patch created the warning or if it was there before.
+Namesys/Hans Reiser seem to be waiting for Mainline Kernel inclusion,
+since OSes like Ubuntu won't support Reiser4 until it's in the
+mainline kernel (among other reasons).
 
-Hans
+However, becuase of the frequent requests, it seems the
+resizer/repacker are high on the list... although they keep saying
+it'll come after mainline kernel inclusion.
+
+It's somewhere in the archives, although reading through those is painful.
+
+--=20
+~Mike
+ - Just my two cents
+ - No man is an island, and no man is unable.
