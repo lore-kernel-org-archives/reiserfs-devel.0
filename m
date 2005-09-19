@@ -1,18 +1,21 @@
-From: Marc Perkel <marc@perkel.com>
+From: "Marc Perkel" <marc@perkel.com>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Sun, 18 Sep 2005 21:37:39 -0700
-Message-ID: <432E4093.4060609@perkel.com>
+Date: Mon, 19 Sep 2005 06:45:25 +0200
+Message-ID: <000101c5bcd4$f37818f0$0300a8c0@intra.lexbox.org>
 References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl> <432DCE2A.5070705@slaphack.com> <432DDF7A.3050704@teleformix.com> <op.sxbtg9lzth1vuj@localhost>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26053-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26054-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <op.sxbtg9lzth1vuj@localhost>
+Sender: <linux-kernel-owner@vger.kernel.org>
+Content-Class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; format="flowed"; charset="us-ascii"
+To: unlisted-recipients, , no To-header on input, IMB Recipient 1 <mspop3connector.david.sanchez@lexbox.fr>
 Cc: LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
 
