@@ -1,39 +1,35 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Namesys web page, possible update?
-Date: Mon, 19 Sep 2005 00:01:07 -0700
-Message-ID: <432E6233.7070101@namesys.com>
-References: <432E515A.3040108@teleformix.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: I request inclusion of reiser4 in the mainline kernel
+Date: Mon, 19 Sep 2005 13:18:58 +0400
+Message-ID: <432E8282.6060905@namesys.com>
+References: <432AFB44.9060707@namesys.com> <20050918110658.GA22744@infradead.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26066-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <432E515A.3040108@teleformix.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932398AbVISJTJ@vger.kernel.org>
+In-Reply-To: <20050918110658.GA22744@infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Alexander Lyamin aka FLX <flx@namesys.com>
-Cc: Dan Oglesby <doglesby@teleformix.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: ReiserFS List <reiserfs-list@namesys.com>, LKML <linux-kernel@vger.kernel.org>
 
-Dan Oglesby wrote:
+Hello
 
-> The following line of text appears on the main page at
-> http://www.namesys.com:
->
-> "V3 of reiserfs is used as the default filesystem for SuSE, Lindows,
-> FTOSX, Libranet, Gentoo, Xandros and Yoper."
->
-> I believe Slackware has defaulted to V3 for some time now.  EXT3 and 2
-> are still options as well, but the default selection for filesystem
-> type is ReiserFS when you go through the setup process.
->
-> Just hoping to give you guys another (very mature) distro to add to
-> the list.
->
-> --Dan
->
->
->
->
-thanks, flx, please fix it.....
+Christoph Hellwig wrote:
+> I threw in your new codedrop into a compilation and the byte-order
+> mess is _still_ now sorted out.  
+
+Did compiling notice this mess?
+We used to compile with C=1. Should we compile somehow else before sending code out?
+
+> Please kill the d* as struct type
+> crap and just use __le types directly.
+> 
+ok
+
+> Also lots of "memset with byte count of 0" warnings from sparse.
+> 
+
+Running make C=1 fs/reiser4/ with sparse from http://www.codemonkey.org.uk/projects/git-snapshots/sparse/sparse-2005-09-19.tar.gz
+does not produce any warnings.
+Would you please prompt how to make sparse to complain?
