@@ -1,29 +1,29 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: reiser4()
-Date: Mon, 19 Sep 2005 18:55:55 +0400
-Message-ID: <432ED17B.7090807@namesys.com>
-References: <20050918214655.GA10559@larva.oko>
+From: Kristian Koehntopp <kris@koehntopp.de>
+Subject: Re: struct dirent *ent->d_type weirdness
+Date: Mon, 19 Sep 2005 18:25:40 +0200
+Message-ID: <200509191825.41756.kris@koehntopp.de>
+References: <200509191558.27362.kris@koehntopp.de> <432ECC4C.30707@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26083-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26084-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050918214655.GA10559@larva.oko>
+In-Reply-To: <432ECC4C.30707@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ivan vadovic <pivo@pobox.sk>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>
 
-Hello
+On Monday 19 September 2005 16:33, Vladimir V. Saveliev wrote:
+> Yes, unfortunately, reiserfs does not support entry types.
+> Probably it should, but there is nothing wrong to not support it:
 
-ivan vadovic wrote:
-> Hi,
-> 
-> Is the reiser4() system call already implemented? Is there any sample code to
-> see its usage? I'd really like to try it and perhaps help with debugging.
-> 
+Thank you. I'll have the code in question changed to Posix conformance.
 
-Unfortunately, I have to say that it is very likely that it is not close yet to alpha testing.
-I would like to be disproved by syscall developers, though.
+Kristian
+
+-- 
+Kristian =?iso-8859-15?q?K=F6hntopp?= <kris@xn--khntopp-90a.de>
