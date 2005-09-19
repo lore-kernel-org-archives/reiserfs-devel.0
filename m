@@ -1,38 +1,33 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Mon, 19 Sep 2005 14:55:20 -0700
-Message-ID: <432F33C8.90908@namesys.com>
-References: <432AFB44.9060707@namesys.com> <200509171415.50454.vda@ilport.com.ua> <200509180934.50789.chriswhite@gentoo.org> <200509181321.23211.vda@ilport.com.ua> <432F18DF.6020903@tmr.com>
+Date: Mon, 19 Sep 2005 15:01:08 -0700
+Message-ID: <432F3524.101@namesys.com>
+References: <432AFB44.9060707@namesys.com>	<200509171416.21047.vda@ilport.com.ua>	<17197.15183.235861.655720@gargle.gargle.HOWL>	<feed8cdd05091912362ac13f3e@mail.gmail.com> <17199.10558.939696.765980@gargle.gargle.HOWL>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26098-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26099-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <432F18DF.6020903@tmr.com>
+In-Reply-To: <17199.10558.939696.765980@gargle.gargle.HOWL>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Bill Davidsen <davidsen@tmr.com>
-Cc: Denis Vlasenko <vda@ilport.com.ua>, Christoph Hellwig <hch@infradead.org>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Nikita Danilov <nikita@clusterfs.com>
+Cc: stephen.pollei@gmail.com, Alexander Zarochentcev <zam@namesys.com>, Denis Vlasenko <vda@ilport.com.ua>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Bill Davidsen wrote:
+Nikita Danilov wrote:
 
-> Denis Vlasenko wrote:
 >
->>
->> Maybe xfs shouldn't be accepted too, this may be an answer.
+>It's enough to monitor your own code, rather than the whole kernel.
+>  
 >
->
-> That argument is specious, and raises the chance that someone will
-> suggest that we learn from our mistakes.
+To this I would add, the kernel should not have warnings when it
+compiles.  Now THAT is a style requirement I would rigorously enforce if
+I could.  I deeply regret that long ago there was a Linux scsi driver
+author who left a warning in, and then after that they started
+multiplying throughout the kernel.  It makes users much more confident
+when they patch the kernel if there are no warnings that leave them
+wondering if the new patch created the warning or if it was there before.
 
-It wasn't a mistake to accept xfs, xfs is a great piece of technology. 
-I haven't monitored their progress, but I am sure that they are
-diligently fixing bugs as they are reported.  Guys, making a filesystem
-stable is hard, and once every known test passes without crashing, there
-is no substitute for masses of users finding bugs not hit by the tests,
-and getting them fixed.  My point is merely that Hellwig could go and
-find flaws in the filesystem he worked on, XFS, if he chose to.  I think
-he should.
-
+Hans
