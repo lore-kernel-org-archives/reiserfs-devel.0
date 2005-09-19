@@ -1,51 +1,29 @@
 From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: reiser4 mount options
-Date: Mon, 19 Sep 2005 18:52:04 +0400
-Message-ID: <432ED094.7090301@namesys.com>
-References: <dgkvq7$5lo$1@sea.gmane.org>
+Subject: Re: reiser4()
+Date: Mon, 19 Sep 2005 18:55:55 +0400
+Message-ID: <432ED17B.7090807@namesys.com>
+References: <20050918214655.GA10559@larva.oko>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26082-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26083-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <dgkvq7$5lo$1@sea.gmane.org>
+In-Reply-To: <20050918214655.GA10559@larva.oko>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Ritesh Raj Sarraf <riteshsarraf@users.sourceforge.net>
+To: ivan vadovic <pivo@pobox.sk>
 Cc: reiserfs-list@namesys.com
 
 Hello
 
-Ritesh Raj Sarraf wrote:
-> Hello People,
+ivan vadovic wrote:
+> Hi,
 > 
-> Despite the fact said that reiser4 is not stable so isn't included in
-> mainline kernel, I trusted Hans Reiser's statement that they've not been
-> able to crash the fs in the labs.
-> 
-
-Well, there are known ways to crash reiser4 and we are working to fix that. However, my desktop is reiser4 but /boot for more than year already.
-
-> I just migrated my laptop from plain partitions with ext3 to Reiser4 on LVM.
-> Till now, I'm pretty happy with the performance.
-> 2.2 gigs of files in ext3 show 1.9 gigs in Reiser4. Thanks to all your work.
-> Disk access is almost doubled. I haven't measured it, I just feel it.
-
-Remember that it is yet experimental. Backup important things regularly. You have to do that even you used the most reliable fs in the world, though.
-
-> 
-> Thanks to all of you.
-> 
-> Some questions,
-> What mount options should one use for laptops ? (Right now I'm using
-> "defaults")
-
-There are no one which are designed for laptops. Most of them were created to measure impact of various things on performance and default are set based on some
-experemnts with those mount options. On short, there is not need to vary mount options unless you wish to do some experements.
-
-> When can we have the reiser4 version of filesystem resize utility ?
+> Is the reiser4() system call already implemented? Is there any sample code to
+> see its usage? I'd really like to try it and perhaps help with debugging.
 > 
 
-There is no reiser4 resizer yet.
+Unfortunately, I have to say that it is very likely that it is not close yet to alpha testing.
+I would like to be disproved by syscall developers, though.
