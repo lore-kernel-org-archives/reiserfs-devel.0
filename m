@@ -1,60 +1,52 @@
-From: Nick Piggin <nickpiggin@yahoo.com.au>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Tue, 20 Sep 2005 14:16:30 +1000
-Message-ID: <432F8D1E.7060300@yahoo.com.au>
-References: <432AFB44.9060707@namesys.com>	 <200509171415.50454.vda@ilport.com.ua>	 <200509180934.50789.chriswhite@gentoo.org>	 <200509181321.23211.vda@ilport.com.ua>	 <20050918102658.GB22210@infradead.org>	 <b14e81f0050918102254146224@mail.gmail.com> <1127079524.8932.21.camel@localhost.localdomain> <432E4786.7010001@namesys.com>
+Date: Mon, 19 Sep 2005 23:28:10 -0700
+Message-ID: <432FABFA.9010406@namesys.com>
+References: <432AFB44.9060707@namesys.com>	 <200509171415.50454.vda@ilport.com.ua>	 <200509180934.50789.chriswhite@gentoo.org>	 <200509181321.23211.vda@ilport.com.ua>	 <20050918102658.GB22210@infradead.org>	 <b14e81f0050918102254146224@mail.gmail.com> <1127079524.8932.21.camel@localhost.localdomain> <432E4786.7010001@namesys.com> <432F8D1E.7060300@yahoo.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26109-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26110-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <432E4786.7010001@namesys.com>
+In-Reply-To: <432F8D1E.7060300@yahoo.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Nick Piggin <nickpiggin@yahoo.com.au>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, Nate Diller <ndiller@namesys.com>
 
-Hans Reiser wrote:
+Nick Piggin wrote:
 
->So why is the code in the kernel so hard to read then?
+> Hans Reiser wrote:
 >
->Linux kernel code is getting better, and Andrew Morton's code is
->especially good, but for the most part it's unnecessarily hard to read. 
->Look at the elevator code for instance.  Ugh.
+>> So why is the code in the kernel so hard to read then?
+>>
+>> Linux kernel code is getting better, and Andrew Morton's code is
+>> especially good, but for the most part it's unnecessarily hard to
+>> read. Look at the elevator code for instance.  Ugh.
+>>
+>>
 >
+> What's wrong with the elevator code?
 >
+The name for one.  There is no elevator algorithm anywhere in it.  There
+is a least block number first algorithm that was called an elevator, but
+it does not have the properties described by Ousterhout and sundry CS
+textbooks describing elevator algorithms.  The textbook algorithms are
+better than least block number first, and it is interesting how nobody
+fixed the mislabeling of the algorithm once Linux had gotten to the
+point that it was striving for more than making gcc be able to run on it. 
 
-What's wrong with the elevator code?
+cfq is good code though for many usage patterns. 
 
-The elevator code was one of the first things I got involved with
-as a complete kernel newbie, and I was able to follow the current
-code well enough to make a new IO scheduler, and extend the
-elevator API sufficiently to provide the fairly unique
-capabilities I needed.
+I would say more, but I need to talk a customer into ok'ing releasing
+some code first, so I can only say what I knew before doing the work for
+that customer at this time.
 
-If it is the elevator *API* you are worried about, that is fairly
-trivial and well documented by Jens and myself in
-Documentation/block/biodoc.txt, along with an overview of some key
-ideas useful for iosched implementors.
+If you would like many more details of coding/commenting inelegance, ask
+Nate Diller after the customer oks his talking about it, which will
+happen more easily if we say nothing that we did not know before the
+work for them until we first get their ok.....
 
-as-iosched.c itself is IMO reasonably well commented (at least
-the non-trivial, non-boilerplate functions). That is not to say it
-is trivial to understand because it is a fairly complex state
-machine and heuristics, but at less than 2000 lines of very well
-contained code it is not an impossible task to understand it.
-
-If that is too much for you, noop-iosched.c implements a fully
-working io scheduler in exactly 94 lines, including whitespace and
-comments.
-
-What are your specific concerns? I would be interested in helping
-to fix any valid ones you have.
-
-Thanks,
-Nick
-
-
-Send instant messages to your online friends http://au.messenger.yahoo.com 
-
+Hans
