@@ -1,62 +1,51 @@
-From: Roman I Khimov <rik@osrc.info>
-Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Wed, 21 Sep 2005 01:33:30 +0400
-Message-ID: <200509210133.41710.rik@osrc.info>
-References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl> <200509202328.28501.rik@osrc.info> <20050920213728.GA1945@elf.ucw.cz>
+From: Gregory Maxwell <gmaxwell@gmail.com>
+Subject: Re: Compression Plugin
+Date: Tue, 20 Sep 2005 17:53:01 -0400
+Message-ID: <e692861c05092014534d9bf66c@mail.gmail.com>
+References: <433017C1.4050408@gmail.com>
+Reply-To: gmaxwell@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart2411153.IW7pLJgcNy";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26166-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26167-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050920213728.GA1945@elf.ucw.cz>
-List-Id: <reiserfs-devel.vger.kernel.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>
-
---nextPart2411153.IW7pLJgcNy
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <433017C1.4050408@gmail.com>
 Content-Disposition: inline
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Clay Barnes <clay.barnes@gmail.com>
+Cc: reiserfs-list@namesys.com
 
-Hello.
-
-=D0=A1=D1=80=D0=B5=D0=B4=D0=B0 21 =D1=81=D0=B5=D0=BD=D1=82=D1=8F=D0=B1=D1=
-=80=D1=8F 2005 01:37 | Pavel Machek:
-> > Second check...
-> > e2fsck 1.34 (25-Jul-2003)
+On 9/20/05, Clay Barnes <clay.barnes@gmail.com> wrote:
+> Forgive me if this has been answered recently, but I haven't gotten my
+> last two dozen e-mails for today yet.
 >=20
-> I have 1.38 here, so yours is too old.
+> Regarding the compression plugin, what sort of compression can one
+> expect from it?=20
+[snip]
 
-I'll compile something new tomorrow and try to retest it.
-=C2=A0
-> OTOH if reiser4 survives that for 80 cycles... that's pretty good.
+Just a general, no reiser4 specifc answer since because the
+compression isn't done yet I don't know the details on reiser4's
+performance....
 
-Actually 125 before I've got completely tired of HDD noise. :)
+It is generally the case the disk based compression performs somewhat
+worse than normal file based compressors. This is because every block
+of data must be compressed alone in order to preserve the random
+access semantics of the file system.
 
-=2D-=20
-                            Roman
- ,---------------------------. ,--------------------------.
-/     http://www.3os.ru/      V    http://www.osrc.info/   \         .o.
-\    mailto: rik@3os.ru       ^   mailto: rik@osrc.info    /         ..o
- `---------------------------' `--------------------------'          ooo
-gpg --recv-keys 0xE5E055C3 --keyserver hkp://subkeys.pgp.net
+This also means that there is less to be gained by using alternative
+compression systems (such as bzip2 or better LZMA) because most only
+pick up their impressive performance as a result of having a much
+larger context and at a greatly increased cost in memory usage.
 
---nextPart2411153.IW7pLJgcNy
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQBDMIA1XJ70z+XgVcMRAv0TAJ4xNG+PQkdT6HETkkZgjVOcy6cb5gCg4gB7
-YwdmzC3lWZpaOHecTt+455w=
-=nH5d
------END PGP SIGNATURE-----
-
---nextPart2411153.IW7pLJgcNy--
+For disk based compression Lz77 is pretty good and is so widely used
+that people feel comfortable implimenting it in kernel space. Another
+interesting player is LZO because decompression requires very little
+memory and is VERY VERY fast (I think someting like 8x faster than
+gzip in my testing). This means that decompression  is effectively
+free. However compression is perhaps 10% worse than LZ77 ... on most
+hardware the disk is so slow that the decrease in compression
+outweighs the improvement in decompression performance. But on systems
+with a fast disk array, LZO may be a welcome tradeoff.
