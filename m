@@ -1,64 +1,62 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
-Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Tue, 20 Sep 2005 14:36:45 -0400
-Message-ID: <200509201836.j8KIajK0001419@laptop11.inf.utfsm.cl>
-References: <reiser@namesys.com>
-Return-path: <reiserfs-list-return-26147-reiserfs=m.gmane.org@namesys.com>
+From: Laurent Riffard <laurent.riffard@free.fr>
+Subject: reiser4 ; regressions in 2.6.14-rc1-mm1
+Date: Tue, 20 Sep 2005 20:58:32 +0200
+Message-ID: <dgpm57$i5s$1@sea.gmane.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26148-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
-   of "Tue, 20 Sep 2005 10:43:29 MST." <43304A41.7080206@namesys.com> 
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Nikita Danilov <nikita@clusterfs.com>, stephen.pollei@gmail.com, Denis Vlasenko <vda@ilport.com.ua>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Hans Reiser <reiser@namesys.com> wrote:
-> Horst von Brand wrote:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-[...]
 
-> >It is supposed to go into the kernel, which is not exactly warning-free.
+Hello,
 
-> While I have no passionate feelings about Nikita's ifdef, I must note
-> that Reiser4 will always be warning free within 3 days of my finding out
-> that somebody left a warning in.;-)
+In kernel 2.6.14-rc1-mm1, Reiser4 present 2 regressions with regard to 2.6.13-mm1 :
 
-> I hate messy code.;-)
+A) Suspend-to-disk does not work because the process "[ent:hda8]" can't be stopped. 
 
-Me too. And I hate warnings. But what I hate most is code that has been
-messed up to get an idiotic compiler to shut up. And it has been several
-times that I've seen modifications to shut up the compiler, after which
-modifications introduced bugs. The compiler then kept quiet due to the
-"warning fix", when it would have screamed otherwise. Or where the compiler
-was right in complaining, and the fix just did shut it up and did not fix
-the real problem. Examples include gratuitous casts, "just initialize to
-anything" so it doesn't warn about possible use without initialization.
+$ mount | grep hda8
+/dev/hda8 on /home/laurent/kernel type reiser4 (rw,nosuid,nodev)
 
-> The rest of the kernel should be fixed to be warning free.
+Extract of the log  :
+Restarting tasks...<6> Strange, ent:hda8. not stopped
 
-Unrealistic. Would be nice, but there are more pressing needs. And,as I
-said above, just brute-forcing it warning-free without really understanding
-what the warning is all about is /much/ worse than keeping an useless
-warning.
+I have already mentioned this in another mail to this list, it was done with a modified 2.6.14-rc1-mm1 kernel from Andrew Morton (without the input subsystem changes) plus vm-swap_prefetch-8.patch. I can now confirm the regression on a plain 2.6.14-rc1-mm1 without any additional patch.
 
-> >Besides, you don't know what idiotic new warnings the gcc people might
-> >dream up the next round, so just relying on no warnings is extremely
-> >unwise.
+B) Can't mount a loop file on reiser4 :
 
-> I find the above unconvincing.
+[root@antares ~]# mount /mnt/diske
+[root@antares ~]# mount | grep diske
+/dev/hdb8 on /mnt/diske type reiser4 (rw,noexec,nosuid,nodev)
+[root@antares ~]# cd /mnt/diske/laurent/download/Mandriva-Linux-2006-0.5/
+[root@antares Mandriva-Linux-2006-0.5]# mount -t iso9660 -oloop,ro Mandriva-Linux-Free-2006-0.5-CD1.i586.iso /mnt/disk
+mount: wrong fs type, bad option, bad superblock on /dev/loop0,
+       missing codepage or other error
+       In some cases useful info is found in syslog - try
+       dmesg | tail  or so
 
-That means you haven't used very many gcc versions. I've been around since
-1.72 (or even earlier), and each single new gcc version (even minor
-revisions) would complain about things the earlier ones thought were
-A-OK. Even worse, to get correct code out of some versions you have to
-write stuff that later versions find objectionable.
--- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+If I copy this file to a reiser filesystem, I can mount it without any problem.
+
+Feel free to ask for more details. 
+~~
+laurent
+
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+
+iD8DBQFDMFvXUqUFrirTu6IRAn2yAKCIyNEC4o2rAsdDhEbCosr0nYBuxQCgtegr
+kkxLaVKu5LgZTNvqFVzi/eM=
+=DgH+
+-----END PGP SIGNATURE-----
+
