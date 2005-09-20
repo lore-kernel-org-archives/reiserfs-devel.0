@@ -1,53 +1,45 @@
-From: Nikita Danilov <nikita@clusterfs.com>
+From: Jens Axboe <axboe@suse.de>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Tue, 20 Sep 2005 13:30:46 +0400
-Message-ID: <17199.54982.637650.772991@gargle.gargle.HOWL>
-References: <nikita@clusterfs.com>
-	<17197.15183.235861.655720@gargle.gargle.HOWL>
-	<200509192316.j8JNFxY8030819@inti.inf.utfsm.cl>
-	<feed8cdd0509192057e1aa9e3@mail.gmail.com>
+Date: Tue, 20 Sep 2005 13:42:54 +0200
+Message-ID: <20050920114253.GL10845@suse.de>
+References: <200509180934.50789.chriswhite@gentoo.org> <200509181321.23211.vda@ilport.com.ua> <20050918102658.GB22210@infradead.org> <b14e81f0050918102254146224@mail.gmail.com> <1127079524.8932.21.camel@localhost.localdomain> <432E4786.7010001@namesys.com> <432F8D1E.7060300@yahoo.com.au> <432FABFA.9010406@namesys.com> <1127200590.9436.15.camel@npiggin-nld.site> <432FC150.9020807@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26117-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26119-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <feed8cdd0509192057e1aa9e3@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <432FC150.9020807@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: stephen.pollei@gmail.com
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Denis Vlasenko <vda@ilport.com.ua>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Nick Piggin <nickpiggin@yahoo.com.au>, Alan Cox <alan@lxorguk.ukuu.org.uk>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, lkml <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, Nate Diller <ndiller@namesys.com>
 
-Stephen Pollei writes:
- > On 9/19/05, Horst von Brand <vonbrand@inf.utfsm.cl> wrote:
- > > Nikita Danilov <nikita@clusterfs.com> wrote:
- > > > It's other way around: declaration is guarded by the preprocessor
- > > > conditional so that nobody accidentally use znode_is_loaded() outside of
- > > > the debugging mode.
- > > 
- > > Since when has a missing declaration prevented anyone calling a function in
- > > C?!
+On Tue, Sep 20 2005, Hans Reiser wrote:
+> >>The name for one.  There is no elevator algorithm anywhere in it.  There
+> >>is a least block number first algorithm that was called an elevator, but
+> >>    
+> >>
+> >
+> >Well the terminology changed to "io scheduler" now, however the
+> >residual "elevator" name found in places doesn't cause anyone
+> >any problems and there isn't much reason to change it other than
+> >the desire to break things.
+> >  
+> >
+> Did you really say that?    I mean, come on, can't you at least manage a
+> "well, it ought to get changed but I am busy with something more
+> exciting to me".
 
-It issues a warning, which is enough, given that reiser4 code was
-warning-free most of the time.
+Seeing as you are the one that is apparently bothered by the misnomer,
+it follows that you would be the one submitting a patch for this. Not
+that it would be accepted though, I don't see much point in renaming
+functions and breaking drivers just because of a slightly bad name. The
+io schedulers are all called foo-iosched.c, it's only the simple core
+api that uses the 'elevator' description.
 
- > Never AFAIK... K&R, ANSI,ISO C89,  c99, whatever version that I know of...
- > You'd need -Werror and -Wmissing-prototype to make that worth it.
- > Otherwise the standard says they namesys requested "please make a good
+-- 
+Jens Axboe
 
-No, evil namesys is not responsible for this, Sir. :-)
-
- > quess as to what the args are...".
- > K&R didn't even have the kind of prototypes we know and love today...
- > So they shouldn't do this half-ass #if/#endif stuff.. either rip it
- > out, or be a man and make the compile fail when someone calls
- > znode_is_loaded , if thats what you really want. It's really over
- > silly anyway, as it will fail at link time if they had matching
- > preprocessor stuff around the function definition.
-
-Failing (with a warning) at compilation is faster. And people are known
-to went as far as to select major compiler version based on the
-compilation speed.
-
-Nikita.
