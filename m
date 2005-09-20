@@ -1,30 +1,39 @@
-From: Nikita Danilov <nikita@clusterfs.com>
-Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Tue, 20 Sep 2005 17:55:43 +0400
-Message-ID: <17200.5343.908617.558388@gargle.gargle.HOWL>
-References: <200509180934.50789.chriswhite@gentoo.org>
-	<432FC150.9020807@namesys.com>
-	<20050920114253.GL10845@suse.de>
-	<200509201530.01808.l.allegrucci@gmail.com>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: Will I need to re-format my partition for using the compression
+ plugin?
+Date: Tue, 20 Sep 2005 17:58:44 +0400
+Message-ID: <43301594.3040406@namesys.com>
+References: <194f625505092006316ad200b5@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S965016AbVITNzn@vger.kernel.org>
-In-Reply-To: <200509201530.01808.l.allegrucci@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-26124-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <194f625505092006316ad200b5@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Lorenzo Allegrucci <l.allegrucci@gmail.com>
-Cc: Hans Reiser <reiser@namesys.com>, Nick Piggin <nickpiggin@yahoo.com.au>, Alan Cox <alan@lxorguk.ukuu.org.uk>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, lkml <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, Nate Diller <ndiller@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: linuxhippy@gmail.com
+Cc: reiserfs-list@namesys.com
 
-Lorenzo Allegrucci <l.allegrucci@gmail.com> writes:
+Clemens Eisserer wrote:
 
-[...]
-
+>Hello again,
 >
-> Why not just rename the kernel option "elevator" to "iosched" ?
+>I am currently re-installing my linux system and I would like to use
+>reiser4 since I think its really powerful and great (and is well
+>written too ;) ).
+>
+>However, will it be possible to convert a non-compressed reiser4
+>partition to a compressed one withought the need of deleting data or
+>reformat anything?
+>
+>Thanks, lg Clemens
+>  
+>
 
-At least update Documentation/kernel-parameters.txt to be consistent,
-but I think kernel boot options are considered to be a part of the "user
-space API" and, as such, cannot be changed that easily.
+No need in such reformat actually. It may require special config options
+to build the kernel, and maybe special mount option to mount your partition.
 
-Nikita.
+Edward.
