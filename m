@@ -1,45 +1,62 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
+From: Jonathan Briggs <jbriggs@esoft.com>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Tue, 20 Sep 2005 14:17:38 -0400
-Message-ID: <200509201817.j8KIHcMK001086@laptop11.inf.utfsm.cl>
-References: <ninja@slaphack.com>
-Return-path: <reiserfs-list-return-26143-reiserfs=m.gmane.org@namesys.com>
+Date: Tue, 20 Sep 2005 12:18:46 -0600
+Message-ID: <1127240326.10407.22.camel@localhost>
+References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl>
+	 <432E5024.20709@namesys.com> <20050920075133.GB4074@elf.ucw.cz>
+	 <43301FA0.7030906@slaphack.com>  <20050920175727.GA17820@thunk.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-N1FZ3+XBlmhdHUM2RXRo"
+Return-path: <reiserfs-list-return-26144-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from David Masover <ninja@slaphack.com> 
-   of "Tue, 20 Sep 2005 09:41:36 EST." <43301FA0.7030906@slaphack.com> 
+In-Reply-To: <20050920175727.GA17820@thunk.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
-Cc: Pavel Machek <pavel@suse.cz>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: David Masover <ninja@slaphack.com>, Pavel Machek <pavel@suse.cz>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-David Masover <ninja@slaphack.com> wrote:
-> Pavel Machek wrote:
-> >>V3 is obsoleted by V4 in every way.  V3 is old code that should be
-> >>marked as deprecated as soon as V4 has passed mass testing.   V4 is far
-> >>superior in its coding style also.  Having V3 in and V4 out is at this
-> >> point just stupid.
+--=-N1FZ3+XBlmhdHUM2RXRo
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> > Really? Last time I checked, even V3's fsck was not too great. [In
-> > fact I never could make it run stable enough to even _test_ it
-> > properly].
-> > Do you have working fsck for V4?
+On Tue, 2005-09-20 at 13:57 -0400, Theodore Ts'o wrote:
+> On Tue, Sep 20, 2005 at 09:41:36AM -0500, David Masover wrote:
+> > And personally, if it was my FS, I'd stop working on fsck after it was=20
+> > able to "check".  That's what it's for.  To fix an FS, you wipe it and=20
+> > restore from backups.
+>=20
+> If that's Reiser4's philosophy, just make sure you tell all of your
+> prospective users about ahead of time.  Is it really an explicit goal
+> that performance is so important beyond all other considerations that
+> it's OK if the filesystem is extremely fragile and that if anything
+> goes wrong, you have to wipe things and recover from backups?!?
+[snip]
 
-> Already saved me once.  But then, I should have had backups.
+I think that you missed the bit "if it was my FS" that David wrote.  As
+far as I know, Hans Reiser defines the Reiser philosophy.
 
-And if you haven't? Backing up 200+ GiB is no peanuts...
+I use Reiser3 and Reiser4 on all my systems and fsck has always worked
+even if it has been much slower than I would like.  The only problems
+I've experienced have been on the same level as when an ext2/3
+filesystem fsck dumps several directories of unlabeled files into lost
++found.
+--=20
+Jonathan Briggs <jbriggs@esoft.com>
+eSoft, Inc.
 
-> And personally, if it was my FS, I'd stop working on fsck after it was
-> able to "check".  That's what it's for.  To fix an FS, you wipe it and
-> restore from backups.
+--=-N1FZ3+XBlmhdHUM2RXRo
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
-Remind me /never/ to go near a filesystem you are in any way involved with.
--- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
+
+iD8DBQBDMFKGG8fHaOLTWwgRAhO9AKClOQyvab3pnu0JB5grlh8W5cB0nQCfR6sO
+ItVgqfqMe9CuB6u0ykvY2Uc=
+=AbYA
+-----END PGP SIGNATURE-----
+
+--=-N1FZ3+XBlmhdHUM2RXRo--
+
