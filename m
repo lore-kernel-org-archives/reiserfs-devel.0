@@ -1,62 +1,49 @@
-From: Jonathan Briggs <jbriggs@esoft.com>
+From: Jens Axboe <axboe@suse.de>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Tue, 20 Sep 2005 12:18:46 -0600
-Message-ID: <1127240326.10407.22.camel@localhost>
-References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl>
-	 <432E5024.20709@namesys.com> <20050920075133.GB4074@elf.ucw.cz>
-	 <43301FA0.7030906@slaphack.com>  <20050920175727.GA17820@thunk.org>
+Date: Tue, 20 Sep 2005 20:18:07 +0200
+Message-ID: <20050920181805.GR10845@suse.de>
+References: <20050918102658.GB22210@infradead.org> <b14e81f0050918102254146224@mail.gmail.com> <1127079524.8932.21.camel@localhost.localdomain> <432E4786.7010001@namesys.com> <432F8D1E.7060300@yahoo.com.au> <432FABFA.9010406@namesys.com> <1127200590.9436.15.camel@npiggin-nld.site> <432FC150.9020807@namesys.com> <20050920114253.GL10845@suse.de> <43304531.4080201@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-N1FZ3+XBlmhdHUM2RXRo"
-Return-path: <reiserfs-list-return-26144-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26142-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050920175727.GA17820@thunk.org>
+Content-Disposition: inline
+In-Reply-To: <43304531.4080201@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: David Masover <ninja@slaphack.com>, Pavel Machek <pavel@suse.cz>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Nick Piggin <nickpiggin@yahoo.com.au>, Alan Cox <alan@lxorguk.ukuu.org.uk>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, lkml <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, Nate Diller <ndiller@namesys.com>
 
---=-N1FZ3+XBlmhdHUM2RXRo
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Tue, Sep 20 2005, Hans Reiser wrote:
+> Jens Axboe wrote:
+> 
+> >
+> >Seeing as you are the one that is apparently bothered by the misnomer,
+> >it follows that you would be the one submitting a patch for this. Not
+> >that it would be accepted though, I don't see much point in renaming
+> >functions and breaking drivers just because of a slightly bad name. The
+> >io schedulers are all called foo-iosched.c, it's only the simple core
+> >api that uses the 'elevator' description.
+> >
+> >  
+> >
+> He asked for an example of messy code, I gave one.  Nate can give
+> details on other messiness in that code.
 
-On Tue, 2005-09-20 at 13:57 -0400, Theodore Ts'o wrote:
-> On Tue, Sep 20, 2005 at 09:41:36AM -0500, David Masover wrote:
-> > And personally, if it was my FS, I'd stop working on fsck after it was=20
-> > able to "check".  That's what it's for.  To fix an FS, you wipe it and=20
-> > restore from backups.
->=20
-> If that's Reiser4's philosophy, just make sure you tell all of your
-> prospective users about ahead of time.  Is it really an explicit goal
-> that performance is so important beyond all other considerations that
-> it's OK if the filesystem is extremely fragile and that if anything
-> goes wrong, you have to wipe things and recover from backups?!?
-[snip]
+You never gave any details on why the code is "messy" or made you go
+"ugh", so no you gave no such examples. Which is a pretty odd position
+to put yourself in to be honest, anyone can make silly unsubstantiated
+claims.
 
-I think that you missed the bit "if it was my FS" that David wrote.  As
-far as I know, Hans Reiser defines the Reiser philosophy.
+> Reiser4 has flaws also....
 
-I use Reiser3 and Reiser4 on all my systems and fsck has always worked
-even if it has been much slower than I would like.  The only problems
-I've experienced have been on the same level as when an ext2/3
-filesystem fsck dumps several directories of unlabeled files into lost
-+found.
---=20
-Jonathan Briggs <jbriggs@esoft.com>
-eSoft, Inc.
+All code has flaws, nothing is perfect. It's not the point. Forgive me
+for being a little offended that you call my code messy for no obvious
+reason.
 
---=-N1FZ3+XBlmhdHUM2RXRo
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-
-iD8DBQBDMFKGG8fHaOLTWwgRAhO9AKClOQyvab3pnu0JB5grlh8W5cB0nQCfR6sO
-ItVgqfqMe9CuB6u0ykvY2Uc=
-=AbYA
------END PGP SIGNATURE-----
-
---=-N1FZ3+XBlmhdHUM2RXRo--
+-- 
+Jens Axboe
 
