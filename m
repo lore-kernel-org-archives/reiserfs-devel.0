@@ -1,36 +1,45 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Compression Plugin
-Date: Tue, 20 Sep 2005 16:25:29 -0500
-Message-ID: <43307E49.8060404@slaphack.com>
-References: <433017C1.4050408@gmail.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: I request inclusion of reiser4 in the mainline kernel
+Date: Tue, 20 Sep 2005 17:33:40 -0400
+Message-ID: <200509202133.j8KLXfHL028916@turing-police.cc.vt.edu>
+References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl> <432E5024.20709@namesys.com> <20050920075133.GB4074@elf.ucw.cz> <200509202328.28501.rik@osrc.info> <200509202015.j8KKFfjd025051@turing-police.cc.vt.edu>
+            <20050920211713.GB6179@thunk.org>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1127252020_3303P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26162-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <433017C1.4050408@gmail.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750728AbVITVeW@vger.kernel.org>
+In-Reply-To: Your message of "Tue, 20 Sep 2005 17:17:13 EDT."
+             <20050920211713.GB6179@thunk.org> 
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Clay Barnes <clay.barnes@gmail.com>
-Cc: reiserfs-list@namesys.com
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Roman I Khimov <rik@osrc.info>, reiserfs-list@namesys.com, Pavel Machek <pavel@suse.cz>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>
 
-Clay Barnes wrote:
+--==_Exmh_1127252020_3303P
+Content-Type: text/plain; charset=us-ascii
 
-> Also:  Is the algorithm set in stone?  If so what is it?  If not, what
-> is it now/expected to be?
+On Tue, 20 Sep 2005 17:17:13 EDT, "Theodore Ts'o" said:
+>
+> An exit code of 1 means that filesystem errors were corrected
+> (successfully).  
 
-Probably lzo, which is already used for other things like network
-connections (ssh, openvpn, and so on).  The nice thing about lzo is that
-it's fast, faster than gzip or bzip2, and gets decent compression -- not
-great, but decent.  I don't usually get gzip or bzip2 to compress at
-disk speed, but then, I usually crank the compression way up, so YMMV.
-The point of using a fast algorithm is that you not only save space, but
-when you apply it to things like text files, it can actually make things
-go faster.
+Right.  The problem is that this was a *second* check, after the first one
+terminated with exit code 0, 1, or 2.  Thus, it *should* have exited with 0.
 
-But I imagine it will be settable per-file.  Files can be both encrypted
-and compressed, and I think (I hope) it could be with a choice of
-crypto/compression algorithms.
+The *first* check lied - if there were unfixed errors, it should have exited
+with exit 4.
 
+--==_Exmh_1127252020_3303P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFDMIA0cC3lWbTT17ARArEyAJ4rpZq27lmv2Mzt0XZMLW+8h1WuWgCfWdh6
+KPWPUmAyVj9mqeWw7AUWSzY=
+=wvjK
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1127252020_3303P--
