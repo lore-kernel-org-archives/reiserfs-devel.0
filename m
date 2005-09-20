@@ -1,104 +1,73 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Tue, 20 Sep 2005 01:00:01 -0700
-Message-ID: <432FC181.8000304@namesys.com>
-References: <200509192303.j8JN3ieA030649@inti.inf.utfsm.cl>
+From: Nick Piggin <nickpiggin@yahoo.com.au>
+Subject: elevators (was Re: I request inclusion of reiser4 in the mainline
+	kernel)
+Date: Tue, 20 Sep 2005 18:31:02 +1000
+Message-ID: <1127205062.9436.38.camel@npiggin-nld.site>
+References: <432AFB44.9060707@namesys.com>
+	 <200509171415.50454.vda@ilport.com.ua>
+	 <200509180934.50789.chriswhite@gentoo.org>
+	 <200509181321.23211.vda@ilport.com.ua>
+	 <20050918102658.GB22210@infradead.org>
+	 <b14e81f0050918102254146224@mail.gmail.com>
+	 <1127079524.8932.21.camel@localhost.localdomain>
+	 <432E4786.7010001@namesys.com> <432F8D1E.7060300@yahoo.com.au>
+	 <432FABFA.9010406@namesys.com> <1127200590.9436.15.camel@npiggin-nld.site>
+	 <432FC150.9020807@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26115-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26116-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200509192303.j8JN3ieA030649@inti.inf.utfsm.cl>
+In-Reply-To: <432FC150.9020807@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Horst von Brand <vonbrand@inf.utfsm.cl>
-Cc: thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, Nate Diller <ndiller@namesys.com>
 
-Horst von Brand wrote:
+CC list trimmed.
 
-> Care to give names?
+On Tue, 2005-09-20 at 00:59 -0700, Hans Reiser wrote:
+> Nick Piggin wrote:
+> 
+> >On Mon, 2005-09-19 at 23:28 -0700, Hans Reiser wrote:
+> >  
+> >
 
-Not publicly, no.  If akpm or Linus asks, I will happily encourage
-either of them to try to win him back.
+> >Well the terminology changed to "io scheduler" now, however the
+> >residual "elevator" name found in places doesn't cause anyone
+> >any problems and there isn't much reason to change it other than
+> >the desire to break things.
+> >  
+> >
+> Did you really say that?    I mean, come on, can't you at least manage a
+> "well, it ought to get changed but I am busy with something more
+> exciting to me".
+> 
 
->  
->
->>                                             who decided to work on BSD
->>because they had too much dignity to develop a filesystem for  Linux.
->>    
->>
->
->Their loss, I presume...
->
-everyone's loss, it is a negative sum game.
+In a perfect world maybe it should be changed, however I don't
+know what out of tree drivers rely on the interface and I really
+don't care to find out. Simple as that.
 
-> and you clearly think the same way, because if it
->weren't you wouldn't be around here trying to push ReiserFS into Linux, and
->would be bothering one of the BSDs instead.
->  
->
-I committed to Linux way back when it was obscure compared to BSD..... 
-and I like the way the GPL allows me to make some small amount of money
-selling licenses in addition to the GPL, and the way MS can't reuse my
-code for free without attribution.
+> Ask Nate about this after he gets an ok from the customer to disclose
+> his work.  It is not so simple as you claim.
+> 
 
->
->  
->
->>V3 is obsoleted by V4 in every way.  V3 is old code that should be
->>marked as deprecated as soon as V4 has passed mass testing.   V4 is far
->>superior in its coding style also.  Having V3 in and V4 out is at this
->>point just stupid. 
->>    
->>
->
->V3 /is/ being used by many people. Just decreeing it has to be pulled out
->"because V4 is better" is just irresponsible. And that is exactly the
->attitude I don't like.
->  
->
-I didn't say V3 should be pulled out, I said marked as deprecated.   And
-left alone so that it gets only bug fixes and not new features.
+Nate, I would be very interested to hear about your work if
+and when you are able to disclose it.
 
->  
->
->>This whole thing reminds me of an IBMer who told me that he thought that
->>IBM lost to MS because they called OS/2 by a name other than DOS.  The
->>sad thing is he was probably right. 
->>    
->>
->
->The IBMer was dead wrong, OS/2 was strangled by lack of applications.
->  
->
-Uh, no, it ran all the DOS applications better than DOS did.  Seriously,
-it did.  I remember DOS applications that were easier to make work under
-OS/2 due to 640k something or another.  I pray the memory of exactly
-what does not return to me.;-)
+[snip devfs]
 
->  
->
->>V4, as it is today, is as much superior to V3 as OS/2 was to DOS.  Any
->>distro or user who would stay with V3 for new installs once we have
->>passed mass testing is nuts.  We need the mass testing.
->>    
->>
->
->And people who have existing setups don't count?
->
-Of course they count.  I don't expect any users to convert from V3 to V4
-on an existing OS installation until we have a robustly working
-convertfs, and even then most of them won't.  Please note the phrase
-"new installs", it was very intentional.
+Yeah I was just trying to introduce some humour to the thread!
+Or maybe deflate one flamewar by starting another :)
 
-> Cautious people who won't
->touch a new filesystem with a ten foot pole until it has got mass testing
->in a mainstream distribution for a couple of years are irrelevant?
->  
->
-I fully expect that there will be people using V3 long past the time
-when better filesystems are available and working and stable, the world
-has a lot of lag time to it.;-)
+Nick
+
+-- 
+SUSE Labs, Novell Inc.
+
+
+
+Send instant messages to your online friends http://au.messenger.yahoo.com 
 
