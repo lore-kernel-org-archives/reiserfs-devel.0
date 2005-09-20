@@ -1,100 +1,89 @@
-From: Pavel Machek <pavel@suse.cz>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Tue, 20 Sep 2005 09:51:33 +0200
-Message-ID: <20050920075133.GB4074@elf.ucw.cz>
-References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl> <432E5024.20709@namesys.com>
+Date: Tue, 20 Sep 2005 00:59:12 -0700
+Message-ID: <432FC150.9020807@namesys.com>
+References: <432AFB44.9060707@namesys.com>	 <200509171415.50454.vda@ilport.com.ua>	 <200509180934.50789.chriswhite@gentoo.org>	 <200509181321.23211.vda@ilport.com.ua>	 <20050918102658.GB22210@infradead.org>	 <b14e81f0050918102254146224@mail.gmail.com>	 <1127079524.8932.21.camel@localhost.localdomain>	 <432E4786.7010001@namesys.com> <432F8D1E.7060300@yahoo.com.au>	 <432FABFA.9010406@namesys.com> <1127200590.9436.15.camel@npiggin-nld.site>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-26113-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <432E5024.20709@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S964917AbVITH71@vger.kernel.org>
+In-Reply-To: <1127200590.9436.15.camel@npiggin-nld.site>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Nick Piggin <nickpiggin@yahoo.com.au>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, lkml <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, Nate Diller <ndiller@namesys.com>
 
-Hi!
+Nick Piggin wrote:
 
-> V3 is obsoleted by V4 in every way.  V3 is old code that should be
-> marked as deprecated as soon as V4 has passed mass testing.   V4 is far
-> superior in its coding style also.  Having V3 in and V4 out is at this
-> point just stupid. 
+>On Mon, 2005-09-19 at 23:28 -0700, Hans Reiser wrote:
+>  
+>
+>>Nick Piggin wrote:
+>>    
+>>
+>
+>  
+>
+>>>What's wrong with the elevator code?
+>>>
+>>>      
+>>>
+>>The name for one.  There is no elevator algorithm anywhere in it.  There
+>>is a least block number first algorithm that was called an elevator, but
+>>    
+>>
+>
+>Well the terminology changed to "io scheduler" now, however the
+>residual "elevator" name found in places doesn't cause anyone
+>any problems and there isn't much reason to change it other than
+>the desire to break things.
+>  
+>
+Did you really say that?    I mean, come on, can't you at least manage a
+"well, it ought to get changed but I am busy with something more
+exciting to me".
 
-Really? Last time I checked, even V3's fsck was not too great. [In
-fact I never could make it run stable enough to even _test_ it
-properly].
+>  
+>
+>>it does not have the properties described by Ousterhout and sundry CS
+>>textbooks describing elevator algorithms.  The textbook algorithms are
+>>better than least block number first, and it is interesting how nobody
+>>fixed the mislabeling of the algorithm once Linux had gotten to the
+>>point that it was striving for more than making gcc be able to run on it. 
+>>
+>>    
+>>
+>
+>There is no least block number first io scheduler now. And the
+>deadline scheduler is basically an elevator algorithm with
+>deadlines.
+>  
+>
+Ask Nate about this after he gets an ok from the customer to disclose
+his work.  It is not so simple as you claim.
 
-Do you have working fsck for V4? Until then, you should not claim that
-users should switch. Journalling does not help you, if you have
-unexpected kernel problem or hardware trouble, fsck _is_ mandatory.
+>  
+>
+>>cfq is good code though for many usage patterns. 
+>>
+>>    
+>>
+>
+>But that is not a true elevator algorithm either... so what are
+>you trying to say?
+>  
+>
+I am trying to be balanced.  2.6 was a dramatic improvement over 2.4,
+and cfq seems to work well.
 
-Can V4 survive few hours of test below?
-								Pavel
+>But if you really need to , I instead suggest badmouthing devfs.
+>That is sure to get you on the good side of the VFS guys! :)
+>  
+>
+Devfs was a good idea in its essence.  http://kerneltrap.org/node/5665
+suggests pretty clearly that the hostility of the VFS guys caused no one
+to want to invest enough into devfs to make it viable compared to udev.
 
-#!/bin/bash
-#
-# fscktest
-#
-# Usage: 
-#	 Make sure output is logged somewhere
-#        First, run fscktest -p as root
-#	 Then you can run fscktest as normal user...
-#
-
-prepare() {
-	SIZE=100000
-	echo "Creating file..."
-	cat /dev/zero | head -c $[$SIZE*1024] > test
-	echo "Making filesystem..."
-	mkfs.$FS test
-	echo "Mounting..."
-	mount test -o loop /mnt || exit "Cant mount"
-	echo "Copying files..."
-	cp -a /bin /mnt
-	cp -a /usr/bin /mnt
-	cp -a /usr/src/linux /mnt
-	echo "Syncing..."
-	sync
-	echo "Unmounting..."
-	umount /mnt
-	echo "Moving..."
-	mv test fsck.okay
-	echo "All done."
-}
-
-FS=ext2
-if [ .$1 == .-p ]; then
-	prepare
-	exit
-	fi
-RUN=0
-while true; do
-	RUN=$[$RUN+1]
-	echo "Run #$RUN"
-	echo Preparing...
-	cat fsck.okay > fsck.damaged
-	echo Damaging...
-	dd if=/dev/urandom of=fsck.damaged count=10240 seek=7 conv=notrunc
-	cp fsck.damaged fsck.test
-	echo First check...
-	fsck.$FS -fy fsck.damaged
-	RESULT=$?
-	if [ $RESULT != 1 -a $RESULT != 2 -a $RESULT != 0 ]; then
-		echo "Fsck failed in bad way (result = $RESULT)"
-		exit
-		fi
-	echo Second check...
-	fsck.$FS -fy fsck.damaged
-	RESULT=$?
-	if [ $RESULT != 0 ]; then
-		echo "Fsck lied about its success (result = $RESULT)"
-		exit
-		fi
-	done
-
--- 
-if you have sharp zaurus hardware you don't need... you know my address
+They were inappropriately nasty to Mr. Gooch, who was kind enough to
+contribute an idea that Linux needed.  They could have been helpful and
+assisting, and instead they were the opposite.  As they are with everyone.
