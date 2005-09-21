@@ -1,44 +1,40 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Wed, 21 Sep 2005 10:34:56 -0700
-Message-ID: <433199C0.3070806@namesys.com>
-References: <200509201536.j8KFa6wn011651@laptop11.inf.utfsm.cl>	<43304A41.7080206@namesys.com>	<feed8cdd050920150866e7925d@mail.gmail.com>	<4330A783.9090405@namesys.com> <17201.14899.683012.997417@gargle.gargle.HOWL>
+Date: Wed, 21 Sep 2005 10:36:43 -0700
+Message-ID: <43319A2B.3050707@namesys.com>
+References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl>	 <432E5024.20709@namesys.com> <20050920075133.GB4074@elf.ucw.cz>	 <20050921000425.GF6179@thunk.org> <4330A8F2.7010903@emc.com>	 <4330ACE2.8000909@namesys.com> <4330B388.8010307@emc.com>	 <4330CDF1.4050902@namesys.com> <e692861c05092021552d39cecc@mail.gmail.com> <43314242.1050802@emc.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26208-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26209-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <17201.14899.683012.997417@gargle.gargle.HOWL>
+In-Reply-To: <43314242.1050802@emc.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Nikita Danilov <nikita@clusterfs.com>
-Cc: stephen.pollei@gmail.com, Horst von Brand <vonbrand@inf.utfsm.cl>, Denis Vlasenko <vda@ilport.com.ua>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Ric Wheeler <ric@emc.com>
+Cc: gmaxwell@gmail.com, vitaly@thebsh.namesys.com, Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@suse.cz>, Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Nikita Danilov wrote:
+Ric Wheeler wrote:
 
->Hans Reiser writes:
-> > Stephen Pollei wrote:
-> > 
-> > >
-> > >
-> > >Also note my opinion, doesn't really count if you grep the kernel
-> > >sources for pollei, you won't find anything.
-> > >
-> > >  
-> > >
-> > Your opinion counts, but lets see what Nikita says before I say
-> > anything.  Nikita is more expert than I in regards to compiler tricks.
+> Gregory Maxwell wrote:
 >
->That sort of guards was useful early in reiser4 debugging, when a lot of
->checks and assertions was  added (specifically, because reiser4 has many
->levels of debugging), but I am not sure source code clutter is justified
->now.
->
->Nikita.
->
->
->  
->
-So what do you suggest we change it to, Nikita?
+>> On 9/20/05, Hans Reiser <reiser@namesys.com> wrote:
+>>  
+>>
+>>
+>> Another goal of the group should be to formulate a requested set of
+>> changes or extensions to the makers of drives and other storage
+>> systems.  For example, it might be advantageous to be able to disable
+>> bad block relocation and allow the filesystem to perform the action.
+>> The reason for this is because relocates slaughter streaming read
+>> performance, but the filesystem could still contiguously allocate
+>> around them...
+>>
+>>  
+>>
+The words were attributed to me, but were not mine.
+
+Sometimes mua's do that to one.
+
