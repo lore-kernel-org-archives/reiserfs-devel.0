@@ -1,68 +1,57 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiser4 ; regressions in 2.6.14-rc1-mm1
-Date: Tue, 20 Sep 2005 19:10:15 -0700
-Message-ID: <4330C107.5070804@namesys.com>
-References: <dgpm57$i5s$1@sea.gmane.org>
+Subject: Re: I request inclusion of reiser4 in the mainline kernel
+Date: Tue, 20 Sep 2005 20:05:21 -0700
+Message-ID: <4330CDF1.4050902@namesys.com>
+References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl> <432E5024.20709@namesys.com> <20050920075133.GB4074@elf.ucw.cz> <20050921000425.GF6179@thunk.org> <4330A8F2.7010903@emc.com> <4330ACE2.8000909@namesys.com> <4330B388.8010307@emc.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26187-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26188-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <dgpm57$i5s$1@sea.gmane.org>
+In-Reply-To: <4330B388.8010307@emc.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Laurent Riffard <laurent.riffard@free.fr>
-Cc: reiserfs-list@namesys.com
+To: Ric Wheeler <ric@emc.com>
+Cc: vitaly@thebsh.namesys.com, Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@suse.cz>, Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Laurent Riffard wrote:
+Ric Wheeler wrote:
 
+> Hans Reiser wrote:
 >
-> Hello,
->
-> In kernel 2.6.14-rc1-mm1, Reiser4 present 2 regressions with regard to
-> 2.6.13-mm1 :
->
-> A) Suspend-to-disk does not work because the process "[ent:hda8]"
-> can't be stopped.
->
-> $ mount | grep hda8
-> /dev/hda8 on /home/laurent/kernel type reiser4 (rw,nosuid,nodev)
->
-> Extract of the log  :
-> Restarting tasks...<6> Strange, ent:hda8. not stopped
->
-> I have already mentioned this in another mail to this list, it was
-> done with a modified 2.6.14-rc1-mm1 kernel from Andrew Morton (without
-> the input subsystem changes) plus vm-swap_prefetch-8.patch. I can now
-> confirm the regression on a plain 2.6.14-rc1-mm1 without any
-> additional patch.
->
-> B) Can't mount a loop file on reiser4 :
->
-> [root@antares ~]# mount /mnt/diske
-> [root@antares ~]# mount | grep diske
-> /dev/hdb8 on /mnt/diske type reiser4 (rw,noexec,nosuid,nodev)
-> [root@antares ~]# cd /mnt/diske/laurent/download/Mandriva-Linux-2006-0.5/
-> [root@antares Mandriva-Linux-2006-0.5]# mount -t iso9660 -oloop,ro
-> Mandriva-Linux-Free-2006-0.5-CD1.i586.iso /mnt/disk
-> mount: wrong fs type, bad option, bad superblock on /dev/loop0,
->        missing codepage or other error
->        In some cases useful info is found in syslog - try
->        dmesg | tail  or so
->
-> If I copy this file to a reiser filesystem, I can mount it without any
-> problem.
->
-> Feel free to ask for more details.
-> ~~
-> laurent
+>> Ric Wheeler wrote:
+>>
+>>
+>>> As an earlier thread on lkml showed this summer, we still have a long
+>>> way to go to getting consistent error semantics in face of media
+>>> failures between the various file systems.  I am not sure that we even
+>>> have consensus on what that default behavior should be between
+>>> developers, so image how difficult life is for application writers who
+>>> want to try to ride through or write automated "HA" recovery scripts
+>>> for systems with large numbers of occasionally flaky IO devices ;-)
+>>
+>>
+>>
+>> If you'd like to form a committee to standardize these things, I will
+>> ask Vitaly to work with you on that committee, and to have ReiserFS3+4
+>> conform to the standards that result.
+>>
+>> Hans
 >
 >
-Thanks laurent.  This latest reiser4 looks to be a bit of a turkey,
-sorry for that.  It is slower also....
-
-We will fix and......
+> I am not a big fan of formal committees, but would be happy to take
+> part in any effort to standardize, code and test the result...
+>
+> ric
+>
+>
+>
+The committee could simply exchange a set of emails, and agree on
+things.  I doubt it needs to get all complicated.  I suggest you contact
+all the folks you want to be consistent with each other, send us an
+email asking us to all try to work together, and then ask for proposals
+on what we should all conform to.  Distill the proposals, and then
+suggest a common solution.  With luck, we will all just say yes.:)
 
 Hans
