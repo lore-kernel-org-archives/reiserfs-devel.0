@@ -1,53 +1,68 @@
-From: Jake Maciejewski <maciejej@msoe.edu>
-Subject: Re: Reiser4 on CentOS 4.1
-Date: Tue, 20 Sep 2005 22:48:15 -0500
-Message-ID: <1127274495.10856.10.camel@gentoo>
-References: <4330D3E2.4020908@sourcelabs.com>
+From: Gregory Maxwell <gmaxwell@gmail.com>
+Subject: Re: I request inclusion of reiser4 in the mainline kernel
+Date: Wed, 21 Sep 2005 00:55:32 -0400
+Message-ID: <e692861c05092021552d39cecc@mail.gmail.com>
+References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl>
+	 <432E5024.20709@namesys.com> <20050920075133.GB4074@elf.ucw.cz>
+	 <20050921000425.GF6179@thunk.org> <4330A8F2.7010903@emc.com>
+	 <4330ACE2.8000909@namesys.com> <4330B388.8010307@emc.com>
+	 <4330CDF1.4050902@namesys.com>
+Reply-To: gmaxwell@gmail.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26192-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26193-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4330D3E2.4020908@sourcelabs.com>
+In-Reply-To: <4330CDF1.4050902@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Steve Jacobson <steve@sourcelabs.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: Ric Wheeler <ric@emc.com>, vitaly@thebsh.namesys.com, Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@suse.cz>, Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-reiser4 is a completely different filesystem. reiserfsprogs will not
-work. Use reiser4progs from ftp://ftp.namesys.com/pub/reiser4progs/.
-You'll need to install libaal first.
+On 9/20/05, Hans Reiser <reiser@namesys.com> wrote:
+> > I am not a big fan of formal committees, but would be happy to take
+> > part in any effort to standardize, code and test the result...
+> The committee could simply exchange a set of emails, and agree on
+> things.  I doubt it needs to get all complicated.  I suggest you contact
+> all the folks you want to be consistent with each other, send us an
+> email asking us to all try to work together, and then ask for proposals
+> on what we should all conform to.  Distill the proposals, and then
+> suggest a common solution.  With luck, we will all just say yes.:)
 
-You shouldn't be using insmod. Use modprobe instead. A clean rebuild of
-your kernel might fix the symbol error.
+Another goal of the group should be to formulate a requested set of
+changes or extensions to the makers of drives and other storage
+systems.  For example, it might be advantageous to be able to disable
+bad block relocation and allow the filesystem to perform the action.=20
+The reason for this is because relocates slaughter streaming read
+performance, but the filesystem could still contiguously allocate
+around them...
 
-On Tue, 2005-09-20 at 20:30 -0700, Steve Jacobson wrote:
-> All,
-> 
-> I've compiled a new version of the 2.6.9-11.EL kernel for reiser 4 
-> support.  I applied the reiser4 patch, and rebuilt the kernel with it as 
-> a module.  I've installed the resultant kernel, and everything seems 
-> fine with it, in general.  I downloaded and compiled the reiser tools - 
-> reiserfsprogs-3.6.19 as I couldn't find a reiser4 specific set.  I can 
-> create a reiser file system running mkreiserfs with no problem.  When I 
-> go to mount it, with 'mount -t reiser4 /dev/sda4 /data' I get 'mount: fs 
-> type reiser4 not supported by kernel'.  Same with type reiserfs.  lsmod 
-> doesn't show it installed, so I try to insmod the module: 'insmod 
-> reiser4.ko'  I get :
-> 
-> insmod: error inserting 'reiser4.ko': -1 Unknown symbol in module
-> 
-> 
-> I'm running (and building on) CentOS 4.1, new install with not much on it.
-> 
-> any thoughts or direction?
-> 
-> Thanks!
-> 
-> -steve j
-> 
--- 
-Jake Maciejewski <maciejej@msoe.edu>
+Perhaps a more implementable alternative is just a method to find out
+which sectors have been relocated so the data can be moved off of them
+and they be avoided. (and potentially they be 'derelocated' to
+preserve the relocation space)
 
+Ditto for other layers.. if a filesystem has some internal integrity
+function and a raid sweep has found that the parity doesn't agree, it
+would be nice if the FS could check all possible decodings and see if
+there is one that is more sane than all the others... This is even
+more useful when you have raid-6 and there is a lot more potential
+decoding.
+
+Also things like bubbling up to userspace.. If there is an
+unrecoverable read error in a file found during operation or an
+automated scan, it should show up in syslog with some working complete
+path to the file (as canonical as the fs can provide), and hopefully
+an offset to the error. Then my package manager could see if this is a
+file replaceable out of a package or if it's user data... If it's user
+data, my backup scripts can check the access time on the file and
+silently restore it from backup if the file hasn't changed. ... only
+leaving me an email "Dear operator, I saved your butt yet again
+--love, mr computer"
+
+And finally operator policy.. I'd like corrupted user files to become
+permission denied until I run some command to make the accessible,
+don't let me hang my apps trying to access them..
