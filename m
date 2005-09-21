@@ -1,41 +1,55 @@
-From: Alexandre Oliva <aoliva@redhat.com>
-Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Wed, 21 Sep 2005 05:15:30 -0300
-Message-ID: <or1x3i3kgt.fsf@livre.oliva.athome.lsd.ic.unicamp.br>
-References: <nikita@clusterfs.com>
-	<17197.15183.235861.655720@gargle.gargle.HOWL>
-	<200509192316.j8JNFxY8030819@inti.inf.utfsm.cl>
-	<feed8cdd0509192057e1aa9e3@mail.gmail.com>
-	<or4q8fvd6r.fsf@livre.oliva.athome.lsd.ic.unicamp.br>
-	<feed8cdd050920155714510453@mail.gmail.com>
+From: PFC <lists@boutiquenumerique.com>
+Subject: Re: Compression Plugin
+Date: Wed, 21 Sep 2005 10:33:30 +0200
+Message-ID: <op.sxf114l4th1vuj@localhost>
+References: <433017C1.4050408@gmail.com> <43307E49.8060404@slaphack.com> <e692861c05092015364a887a44@mail.gmail.com> <b14e81f00509201851518accd4@mail.gmail.com> <433102D0.7010706@mch.one.pl>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-26195-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-26196-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <feed8cdd050920155714510453@mail.gmail.com> (Stephen Pollei's
- message of "Tue, 20 Sep 2005 15:57:31 -0700")
+In-Reply-To: <433102D0.7010706@mch.one.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: stephen.pollei@gmail.com
-Cc: Horst von Brand <vonbrand@inf.utfsm.cl>, Nikita Danilov <nikita@clusterfs.com>, Denis Vlasenko <vda@ilport.com.ua>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; format="flowed"; delsp="yes"; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-On Sep 20, 2005, Stephen Pollei <stephen.pollei@gmail.com> wrote:
 
-> it takes gcc -Wall test_proto.c --std=c99 -pedantic-errors to cause it
-> not to create the a.out .
-> So gcc should have caused an error as I didn't set --std=gnu99 .. bad compiler.
-> So I don't know howto get gcc to follow the standards in this area,
-> that sounds like a good thing to require.
+>>> An interesting idea:  select the algo and a range of compression
+>>> levels per file,
 
-gnu99 is the default.  Also, the standard doesn't talk about errors or
-warnings, it only requires diagnostics for ill-formed code.  Deciding
-what kind of diagnostic to issue is a compiler implementation
-decision.
+	A simple check on wether it's an already compressed file (using file  
+extension and magic number) should be quite easy to do and cheap.
 
--- 
-Alexandre Oliva         http://www.lsd.ic.unicamp.br/~oliva/
-Red Hat Compiler Engineer   aoliva@{redhat.com, gcc.gnu.org}
-Free Software Evangelist  oliva@{lsd.ic.unicamp.br, gnu.org}
+	Now, intrigued by this lzo thingie, I ran a little benchmark on my emails  
+; I have a huge mail spool and my mail client is always slow to launch...
+	Seems that on this laptop LZO can compress about 40 MB/s and decompress  
+about 200 (!) MB/s. On the mail spool, compression ratio was about 1/2 ;  
+gzip was better, although 5-6 times slower. So considering the disk  
+throughput is only 15 MB/s, this could make it twice as fast with CPU to  
+spare. Yowza !
+
+>>> but select the actual compression level at flush time
+>>> based on some estimate of how loaded the system is.. :)
+>>> Probably not worth it even though the amount of compression and the
+>>> speed differ greatly from -1 to -9... I hope no one wastes their time
+>>> on it until the more important things are done.. but perhaps a nice
+>>> touch.
+>>   Kinda makes it sound like in addition to the "repacker" that repacks
+>> blocks in order and squeezes them, (which should allow for filesystem
+>> size reduction), there'll be a compression repacker too that allows
+>> you to repack files to a higher or lower compression level (anyone
+>> remember the Compression Agent that came with DoubleSpace and the like
+>> in Windows 9x?).
+>
+> AFAIR e2compr patch to ext2 (which enables compression on a ex2  
+> filesystem) could use many packing methods, including gzip and bzip2  
+> (!), with a range from 1 to 9...
+>
+> I certainly could imagine cases where compression level is more  
+> important than speed.
+>
+>
+
+
