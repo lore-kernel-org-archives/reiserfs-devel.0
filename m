@@ -1,60 +1,40 @@
-From: Vitaly Fertman <vitaly@namesys.com>
+From: Nikita Danilov <nikita@clusterfs.com>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Wed, 21 Sep 2005 14:16:09 +0400
-Message-ID: <200509211416.10794.vitaly@namesys.com>
-References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl> <4330B388.8010307@emc.com> <4330CDF1.4050902@namesys.com>
+Date: Wed, 21 Sep 2005 14:47:15 +0400
+Message-ID: <17201.14899.683012.997417@gargle.gargle.HOWL>
+References: <200509201536.j8KFa6wn011651@laptop11.inf.utfsm.cl>
+	<43304A41.7080206@namesys.com>
+	<feed8cdd050920150866e7925d@mail.gmail.com>
+	<4330A783.9090405@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750744AbVIUKRJ@vger.kernel.org>
-In-Reply-To: <4330CDF1.4050902@namesys.com>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-26202-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <4330A783.9090405@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Hans Reiser <reiser@namesys.com>
-Cc: Ric Wheeler <ric@emc.com>, vitaly@thebsh.namesys.com, Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@suse.cz>, Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: stephen.pollei@gmail.com, Horst von Brand <vonbrand@inf.utfsm.cl>, Denis Vlasenko <vda@ilport.com.ua>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Wednesday 21 September 2005 07:05, Hans Reiser wrote:
-> Ric Wheeler wrote:
-> 
-> > Hans Reiser wrote:
-> >
-> >> Ric Wheeler wrote:
-> >>
-> >>
-> >>> As an earlier thread on lkml showed this summer, we still have a long
-> >>> way to go to getting consistent error semantics in face of media
-> >>> failures between the various file systems.  I am not sure that we even
-> >>> have consensus on what that default behavior should be between
-> >>> developers, so image how difficult life is for application writers who
-> >>> want to try to ride through or write automated "HA" recovery scripts
-> >>> for systems with large numbers of occasionally flaky IO devices ;-)
-> >>
-> >>
-> >>
-> >> If you'd like to form a committee to standardize these things, I will
-> >> ask Vitaly to work with you on that committee, and to have ReiserFS3+4
-> >> conform to the standards that result.
-> >>
-> >> Hans
-> >
-> >
-> > I am not a big fan of formal committees, but would be happy to take
-> > part in any effort to standardize, code and test the result...
+Hans Reiser writes:
+ > Stephen Pollei wrote:
+ > 
+ > >
+ > >
+ > >Also note my opinion, doesn't really count if you grep the kernel
+ > >sources for pollei, you won't find anything.
+ > >
+ > >  
+ > >
+ > Your opinion counts, but lets see what Nikita says before I say
+ > anything.  Nikita is more expert than I in regards to compiler tricks.
 
-I would be happy to take part in it too.
+That sort of guards was useful early in reiser4 debugging, when a lot of
+checks and assertions was  added (specifically, because reiser4 has many
+levels of debugging), but I am not sure source code clutter is justified
+now.
 
-> > ric
-> >
-> >
-> >
-> The committee could simply exchange a set of emails, and agree on
-> things.  I doubt it needs to get all complicated.  I suggest you contact
-> all the folks you want to be consistent with each other, send us an
-> email asking us to all try to work together, and then ask for proposals
-> on what we should all conform to.  Distill the proposals, and then
-> suggest a common solution.  With luck, we will all just say yes.:)
- 
--- 
-Thanks,
-Vitaly Fertman
+Nikita.
