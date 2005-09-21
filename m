@@ -1,41 +1,68 @@
-From: michael chang <thenewme91@gmail.com>
-Subject: Re: Compression Plugin
-Date: Tue, 20 Sep 2005 21:51:28 -0400
-Message-ID: <b14e81f00509201851518accd4@mail.gmail.com>
-References: <433017C1.4050408@gmail.com> <43307E49.8060404@slaphack.com>
-	 <e692861c05092015364a887a44@mail.gmail.com>
-Reply-To: thenewme91@gmail.com
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: reiser4 ; regressions in 2.6.14-rc1-mm1
+Date: Tue, 20 Sep 2005 19:10:15 -0700
+Message-ID: <4330C107.5070804@namesys.com>
+References: <dgpm57$i5s$1@sea.gmane.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26186-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26187-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e692861c05092015364a887a44@mail.gmail.com>
-Content-Disposition: inline
+In-Reply-To: <dgpm57$i5s$1@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: gmaxwell@gmail.com
-Cc: David Masover <ninja@slaphack.com>, Clay Barnes <clay.barnes@gmail.com>, reiserfs-list@namesys.com
+To: Laurent Riffard <laurent.riffard@free.fr>
+Cc: reiserfs-list@namesys.com
 
-On 9/20/05, Gregory Maxwell <gmaxwell@gmail.com> wrote:
-> An interesting idea:  select the algo and a range of compression
-> levels per file, but select the actual compression level at flush time
-> based on some estimate of how loaded the system is.. :)
-> Probably not worth it even though the amount of compression and the
-> speed differ greatly from -1 to -9... I hope no one wastes their time
-> on it until the more important things are done.. but perhaps a nice
-> touch.
+Laurent Riffard wrote:
 
-Kinda makes it sound like in addition to the "repacker" that repacks
-blocks in order and squeezes them, (which should allow for filesystem
-size reduction), there'll be a compression repacker too that allows
-you to repack files to a higher or lower compression level (anyone
-remember the Compression Agent that came with DoubleSpace and the like
-in Windows 9x?).
+>
+> Hello,
+>
+> In kernel 2.6.14-rc1-mm1, Reiser4 present 2 regressions with regard to
+> 2.6.13-mm1 :
+>
+> A) Suspend-to-disk does not work because the process "[ent:hda8]"
+> can't be stopped.
+>
+> $ mount | grep hda8
+> /dev/hda8 on /home/laurent/kernel type reiser4 (rw,nosuid,nodev)
+>
+> Extract of the log  :
+> Restarting tasks...<6> Strange, ent:hda8. not stopped
+>
+> I have already mentioned this in another mail to this list, it was
+> done with a modified 2.6.14-rc1-mm1 kernel from Andrew Morton (without
+> the input subsystem changes) plus vm-swap_prefetch-8.patch. I can now
+> confirm the regression on a plain 2.6.14-rc1-mm1 without any
+> additional patch.
+>
+> B) Can't mount a loop file on reiser4 :
+>
+> [root@antares ~]# mount /mnt/diske
+> [root@antares ~]# mount | grep diske
+> /dev/hdb8 on /mnt/diske type reiser4 (rw,noexec,nosuid,nodev)
+> [root@antares ~]# cd /mnt/diske/laurent/download/Mandriva-Linux-2006-0.5/
+> [root@antares Mandriva-Linux-2006-0.5]# mount -t iso9660 -oloop,ro
+> Mandriva-Linux-Free-2006-0.5-CD1.i586.iso /mnt/disk
+> mount: wrong fs type, bad option, bad superblock on /dev/loop0,
+>        missing codepage or other error
+>        In some cases useful info is found in syslog - try
+>        dmesg | tail  or so
+>
+> If I copy this file to a reiser filesystem, I can mount it without any
+> problem.
+>
+> Feel free to ask for more details.
+> ~~
+> laurent
+>
+>
+Thanks laurent.  This latest reiser4 looks to be a bit of a turkey,
+sorry for that.  It is slower also....
 
---=20
-~Mike
- - Just my two cents
- - No man is an island, and no man is unable.
+We will fix and......
+
+Hans
