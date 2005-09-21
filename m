@@ -1,68 +1,48 @@
-From: Gregory Maxwell <gmaxwell@gmail.com>
-Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Wed, 21 Sep 2005 00:55:32 -0400
-Message-ID: <e692861c05092021552d39cecc@mail.gmail.com>
-References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl>
-	 <432E5024.20709@namesys.com> <20050920075133.GB4074@elf.ucw.cz>
-	 <20050921000425.GF6179@thunk.org> <4330A8F2.7010903@emc.com>
-	 <4330ACE2.8000909@namesys.com> <4330B388.8010307@emc.com>
-	 <4330CDF1.4050902@namesys.com>
-Reply-To: gmaxwell@gmail.com
+From: Tomasz Chmielewski <mangoo@mch.one.pl>
+Subject: Re: Compression Plugin
+Date: Wed, 21 Sep 2005 08:50:56 +0200
+Message-ID: <433102D0.7010706@mch.one.pl>
+References: <433017C1.4050408@gmail.com> <43307E49.8060404@slaphack.com>	 <e692861c05092015364a887a44@mail.gmail.com> <b14e81f00509201851518accd4@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26193-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26194-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4330CDF1.4050902@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <b14e81f00509201851518accd4@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Ric Wheeler <ric@emc.com>, vitaly@thebsh.namesys.com, Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@suse.cz>, Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: thenewme91@gmail.com
+Cc: gmaxwell@gmail.com, David Masover <ninja@slaphack.com>, Clay Barnes <clay.barnes@gmail.com>, reiserfs-list@namesys.com
 
-On 9/20/05, Hans Reiser <reiser@namesys.com> wrote:
-> > I am not a big fan of formal committees, but would be happy to take
-> > part in any effort to standardize, code and test the result...
-> The committee could simply exchange a set of emails, and agree on
-> things.  I doubt it needs to get all complicated.  I suggest you contact
-> all the folks you want to be consistent with each other, send us an
-> email asking us to all try to work together, and then ask for proposals
-> on what we should all conform to.  Distill the proposals, and then
-> suggest a common solution.  With luck, we will all just say yes.:)
+michael chang schrieb:
+> On 9/20/05, Gregory Maxwell <gmaxwell@gmail.com> wrote:
+> 
+>>An interesting idea:  select the algo and a range of compression
+>>levels per file, but select the actual compression level at flush time
+>>based on some estimate of how loaded the system is.. :)
+>>Probably not worth it even though the amount of compression and the
+>>speed differ greatly from -1 to -9... I hope no one wastes their time
+>>on it until the more important things are done.. but perhaps a nice
+>>touch.
+> 
+> 
+> Kinda makes it sound like in addition to the "repacker" that repacks
+> blocks in order and squeezes them, (which should allow for filesystem
+> size reduction), there'll be a compression repacker too that allows
+> you to repack files to a higher or lower compression level (anyone
+> remember the Compression Agent that came with DoubleSpace and the like
+> in Windows 9x?).
 
-Another goal of the group should be to formulate a requested set of
-changes or extensions to the makers of drives and other storage
-systems.  For example, it might be advantageous to be able to disable
-bad block relocation and allow the filesystem to perform the action.=20
-The reason for this is because relocates slaughter streaming read
-performance, but the filesystem could still contiguously allocate
-around them...
+AFAIR e2compr patch to ext2 (which enables compression on a ex2 
+filesystem) could use many packing methods, including gzip and bzip2 
+(!), with a range from 1 to 9...
 
-Perhaps a more implementable alternative is just a method to find out
-which sectors have been relocated so the data can be moved off of them
-and they be avoided. (and potentially they be 'derelocated' to
-preserve the relocation space)
+I certainly could imagine cases where compression level is more 
+important than speed.
 
-Ditto for other layers.. if a filesystem has some internal integrity
-function and a raid sweep has found that the parity doesn't agree, it
-would be nice if the FS could check all possible decodings and see if
-there is one that is more sane than all the others... This is even
-more useful when you have raid-6 and there is a lot more potential
-decoding.
 
-Also things like bubbling up to userspace.. If there is an
-unrecoverable read error in a file found during operation or an
-automated scan, it should show up in syslog with some working complete
-path to the file (as canonical as the fs can provide), and hopefully
-an offset to the error. Then my package manager could see if this is a
-file replaceable out of a package or if it's user data... If it's user
-data, my backup scripts can check the access time on the file and
-silently restore it from backup if the file hasn't changed. ... only
-leaving me an email "Dear operator, I saved your butt yet again
---love, mr computer"
-
-And finally operator policy.. I'd like corrupted user files to become
-permission denied until I run some command to make the accessible,
-don't let me hang my apps trying to access them..
+-- 
+Tomek
+http://wpkg.org
