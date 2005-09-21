@@ -1,52 +1,53 @@
-From: James Lamanna <jlamanna@gmail.com>
+From: Theodore Ts'o <tytso@mit.edu>
 Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Tue, 20 Sep 2005 16:51:00 -0700
-Message-ID: <aa4c40ff0509201651723bc624@mail.gmail.com>
-References: <aa4c40ff05092015405a23f33a@mail.gmail.com>
-	 <Pine.LNX.4.58.0509201644300.14402@shell3.speakeasy.net>
-Reply-To: James Lamanna <jlamanna@gmail.com>
+Date: Tue, 20 Sep 2005 20:04:25 -0400
+Message-ID: <20050921000425.GF6179@thunk.org>
+References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl> <432E5024.20709@namesys.com> <20050920075133.GB4074@elf.ucw.cz>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750718AbVITXvE@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.58.0509201644300.14402@shell3.speakeasy.net>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750737AbVIUAEy@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <20050920075133.GB4074@elf.ucw.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Vadim Lobanov <vlobanov@speakeasy.net>
-Cc: stephen.pollei@gmail.com, vonbrand@inf.utfsm.cl, nikita@clusterfs.com, vda@ilport.com.ua, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Pavel Machek <pavel@suse.cz>
+Cc: Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On 9/20/05, Vadim Lobanov <vlobanov@speakeasy.net> wrote:
-> On Tue, 20 Sep 2005, James Lamanna wrote:
->
-> > On 9/20/05, Stephen Pollei <stephen.pollei@gmai.com> wrote:
-> > >On 9/20/05, Hans Reiser <reiser@namesys.com> wrote:
-> > > > Horst von Brand wrote:
-> > > > >Nikita Danilov <nikita@clusterfs.com> wrote:
+On Tue, Sep 20, 2005 at 09:51:33AM +0200, Pavel Machek wrote:
+> Do you have working fsck for V4? Until then, you should not claim that
+> users should switch. Journalling does not help you, if you have
+> unexpected kernel problem or hardware trouble, fsck _is_ mandatory.
+> 
+> Can V4 survive few hours of test below?
 
-> > What about #warning / #error in this case?
-> >
-> > #if defined(DEBUG_THIS) || defined(DEBUG_THAT)
-> >     int znode_is_loaded(const struct znode *z);
-> > #else
-> >     #error znode_is_loaded is unavailable when not debugging
-> > #endif
-> >
-> > That would certainly break the compile.
->
-> Except that breaks the compile unconditionally, not just when someone
-> tries to use the function when they shouldn't. I don't think a flat
-> error will work here, but instead something along the lines of a
-> __attribute__((error)) on the function is needed.
+The script could be improved by select random locations to damage the
+filesystem, instead of hard-coding the seek=7 value.  Seek=7 is good
+for testing ext2/ext3 filesystems, but it may not be ideal for other
+filesystems.
 
-Oh duh. It would wouldn't it :)
-Too much on my mind today.
+Another interesting refinement would be to analyze the resulting
+filesystem after it has been repaired to determine how much data could
+be salvaged by the fsck program.   
 
->
-> > -- James Lamanna
-> > -
->
-> -VadimL
->
+There is a very interesting paper that I coincidentally just came
+across today that talks about making filesystems robust against
+various different forms of failures of modern disk systems.  It is
+going to be presented at the upcoming 2005 SOSP conference.
 
--- James Lamanna
+	http://www.cs.wisc.edu/adsl/Publications/iron-sosp05.pdf
+
+It's definitely worth a read.  A few comments about it; first of all,
+I know nothing about this modified "iron ext3" (ixt3) discussed in the
+paper aside from what's the paper itself.  It would be interesting to
+see what they have done with it.  Secondly, I _think_ sct has already
+fixed the problems discussed in the paper with respect to inadequate
+write squelching after an I/O failure writing to the ext3 journal, but
+we need to chat with the paper's authors to confirm that, and if there
+still is a problem, obviously we need to fix it.  Third of all, I'll
+note that the paper does takes an approving note of the fact that
+Reiserfs (v3) always panic's when it detects a write fault, so for
+those folks in the Reiser team who might have a persecution complex,
+relax, the whole world isn't out to get you.  :-)
+
+						- Ted
