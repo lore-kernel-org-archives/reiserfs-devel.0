@@ -1,45 +1,44 @@
-From: Ric Wheeler <ric@emc.com>
-Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Tue, 20 Sep 2005 21:15:20 -0400
-Message-ID: <4330B428.90405@emc.com>
-References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl>	 <432E5024.20709@namesys.com> <20050920075133.GB4074@elf.ucw.cz>	 <20050921000425.GF6179@thunk.org> <e692861c05092018017ceef484@mail.gmail.com>
+From: Gregory Maxwell <gmaxwell@gmail.com>
+Subject: Iron files
+Date: Tue, 20 Sep 2005 21:16:02 -0400
+Message-ID: <e692861c0509201816ff88eaa@mail.gmail.com>
+Reply-To: gmaxwell@gmail.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26184-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26185-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e692861c05092018017ceef484@mail.gmail.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: gmaxwell@gmail.com
-Cc: Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@suse.cz>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Reiserfs List <reiserfs-list@namesys.com>
 
-Gregory Maxwell wrote:
-> On 9/20/05, Theodore Ts'o <tytso@mit.edu> wrote:
-> 
->>There is a very interesting paper that I coincidentally just came
->>across today that talks about making filesystems robust against
->>various different forms of failures of modern disk systems.  It is
->>going to be presented at the upcoming 2005 SOSP conference.
->>
->>        http://www.cs.wisc.edu/adsl/Publications/iron-sosp05.pdf
-> 
-> 
-> Very interesting indeed, although it almost seems silly to tackle the
-> difficult problem of making filesystems highly robust against oddball
-> failure modes while our RAID subsystem falls horribly on it's face in
-> the fairly common (and conceptually easy to handle) failure mode of a
-> raid-5 where two disks have single unreadable blocks on differing
-> parts of the disk. (the current raid system hits one bad block, fails
-> the whole disk, then you attempt a rebuild and while reading hits the
-> other bad block and downs the array).
+So the post about file system failure modes made me think of something
+interesting...
 
-I don't have any problem with fixing RAID code, but I would not describe 
-the errors in this paper as oddball.  Believe me, we see a lot of disk 
-issues and these are real examples of failures that happen to real file 
-systems ;-)
+We'd discussed in the past that it would be interesting to store
+cryptographic hashes of files as metadata for facilitating
+applications which require hashes as well as data integrity.  Of
+course, the challenge is making it perform well.. tree hashes make it
+possible but still messy.
 
-Ric
+Another though on the subject, when we're using the compression plugin
+it's quite likely that many blocks will be shrunk quite a bit on
+write. We could at that time add a strong checksum (or cryptographic
+hash)...  It could just be stored as though it were part of the
+compressed data, the cost partly saved by the gains of compression.=20
+It would probably be useful to include the file identity and position
+offset into the hash for each sub part of the file, so that if an
+upper level data structure were corrupted in the FS that you'd never
+end up with a part of another file silently sitting in the middle of
+another file.
 
+This would enable a policy where files could never be silently
+corrupted.  Protection could be controlled on a file by file basis
+just like compression and optionally operate in mode where check data
+is only written but not tested (no substantial performance loss on
+read, but a risk of returning corrupted data to the application).
+
+Just another thought for the never ending list...
