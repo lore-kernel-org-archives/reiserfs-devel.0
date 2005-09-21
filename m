@@ -1,44 +1,41 @@
-From: Gregory Maxwell <gmaxwell@gmail.com>
-Subject: Iron files
-Date: Tue, 20 Sep 2005 21:16:02 -0400
-Message-ID: <e692861c0509201816ff88eaa@mail.gmail.com>
-Reply-To: gmaxwell@gmail.com
+From: michael chang <thenewme91@gmail.com>
+Subject: Re: Compression Plugin
+Date: Tue, 20 Sep 2005 21:51:28 -0400
+Message-ID: <b14e81f00509201851518accd4@mail.gmail.com>
+References: <433017C1.4050408@gmail.com> <43307E49.8060404@slaphack.com>
+	 <e692861c05092015364a887a44@mail.gmail.com>
+Reply-To: thenewme91@gmail.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26185-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26186-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <e692861c05092015364a887a44@mail.gmail.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs List <reiserfs-list@namesys.com>
+To: gmaxwell@gmail.com
+Cc: David Masover <ninja@slaphack.com>, Clay Barnes <clay.barnes@gmail.com>, reiserfs-list@namesys.com
 
-So the post about file system failure modes made me think of something
-interesting...
+On 9/20/05, Gregory Maxwell <gmaxwell@gmail.com> wrote:
+> An interesting idea:  select the algo and a range of compression
+> levels per file, but select the actual compression level at flush time
+> based on some estimate of how loaded the system is.. :)
+> Probably not worth it even though the amount of compression and the
+> speed differ greatly from -1 to -9... I hope no one wastes their time
+> on it until the more important things are done.. but perhaps a nice
+> touch.
 
-We'd discussed in the past that it would be interesting to store
-cryptographic hashes of files as metadata for facilitating
-applications which require hashes as well as data integrity.  Of
-course, the challenge is making it perform well.. tree hashes make it
-possible but still messy.
+Kinda makes it sound like in addition to the "repacker" that repacks
+blocks in order and squeezes them, (which should allow for filesystem
+size reduction), there'll be a compression repacker too that allows
+you to repack files to a higher or lower compression level (anyone
+remember the Compression Agent that came with DoubleSpace and the like
+in Windows 9x?).
 
-Another though on the subject, when we're using the compression plugin
-it's quite likely that many blocks will be shrunk quite a bit on
-write. We could at that time add a strong checksum (or cryptographic
-hash)...  It could just be stored as though it were part of the
-compressed data, the cost partly saved by the gains of compression.=20
-It would probably be useful to include the file identity and position
-offset into the hash for each sub part of the file, so that if an
-upper level data structure were corrupted in the FS that you'd never
-end up with a part of another file silently sitting in the middle of
-another file.
-
-This would enable a policy where files could never be silently
-corrupted.  Protection could be controlled on a file by file basis
-just like compression and optionally operate in mode where check data
-is only written but not tested (no substantial performance loss on
-read, but a risk of returning corrupted data to the application).
-
-Just another thought for the never ending list...
+--=20
+~Mike
+ - Just my two cents
+ - No man is an island, and no man is unable.
