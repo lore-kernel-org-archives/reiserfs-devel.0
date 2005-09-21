@@ -1,46 +1,49 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: latest patches degrade reiser4 performance substantially
-Date: Wed, 21 Sep 2005 12:17:00 -0700
-Message-ID: <4331B1AC.6060000@namesys.com>
-References: <4331A9BD.5030006@namesys.com> <20050921115256.6a11ab8d.akpm@osdl.org>
+Subject: Re: I request inclusion of reiser4 in the mainline kernel
+Date: Wed, 21 Sep 2005 14:16:50 -0700
+Message-ID: <4331CDC2.1080300@namesys.com>
+References: <200509201542.j8KFgh2q011730@laptop11.inf.utfsm.cl>	<43304AF2.8080404@namesys.com> <17200.21620.684685.966054@gargle.gargle.HOWL>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26216-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26220-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050921115256.6a11ab8d.akpm@osdl.org>
+In-Reply-To: <17200.21620.684685.966054@gargle.gargle.HOWL>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Andrew Morton <akpm@osdl.org>, vs <vs@thebsh.namesys.com>
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Nikita Danilov <nikita@clusterfs.com>
+Cc: Nick Piggin <nickpiggin@yahoo.com.au>, Alan Cox <alan@lxorguk.ukuu.org.uk>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, Nate Diller <ndiller@namesys.com>
 
-Andrew Morton wrote:
+Nikita Danilov wrote:
 
->Hans Reiser <reiser@namesys.com> wrote:
+>Hans Reiser writes:
+> > Horst von Brand wrote:
+> > 
+> > >
+> > >
+> > >Funny that the "texbook algorithms" aren't used in real life. Wonder why...
+> > >  
+> > >
+> > Try BSD.  If the BSD book can be believed, they use"texbook algorithms".
+>
+>The "textbook" one-way elevator (as indeed exemplified by FreeBSD's
+>src/sys/kern/subr_disk.c:bioq_disksort()) has well-known weaknesses. For
+>example,
+>
+>    dd if=/dev/zero of=FILE
+>
+>can easily monopolize device queue and starve accesses to the blocks
+>with low block numbers.
+>
+> > 
+> > ;-)
+>
+>Nikita.
+>
+>
 >  
 >
->>At the this time we have no idea which patch is responsible, probably in
->>a day or two we'll have a patch to fix it.
->>
->>    
->>
->
->OK.  I assume this performance change is demonstrable in just
->2.6.14-rc2+reiser4?  Beware that there are other changes in the -mm lineup
->which might cause regressions.  Notably
->
->	mm-try-to-allocate-higher-order-pages-in-rmqueue_bulk.patch
->
->and
->
->	per-task-predictive-write-throttling-1.patch
->	per-task-predictive-write-throttling-1-tweaks.patch
->
->
->
->  
->
- I'll have vs check to make sure it is reiser4 changes causing the
-drop.  Thanks much for the suggestion we check that.
+Yes, and one can compensate for them  fairly cleanly.  I can't say more
+without the customer releasing the code first.
