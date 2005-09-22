@@ -1,46 +1,42 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Wed, 21 Sep 2005 15:08:25 -0700
-Message-ID: <4331D9D9.4060501@namesys.com>
-References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl> <432E5024.20709@namesys.com> <20050920075133.GB4074@elf.ucw.cz> <43301FA0.7030906@slaphack.com> <20050920175727.GA17820@thunk.org>
+From: Markus Hiereth <markus.hiereth@ngi.de>
+Subject: Identify Superblock
+Date: Thu, 22 Sep 2005 01:11:03 +0000
+Message-ID: <20050922011103.GA6789@lune>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26223-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26224-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20050920175727.GA17820@thunk.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: David Masover <ninja@slaphack.com>, Pavel Machek <pavel@suse.cz>, Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Theodore Ts'o wrote:
+Hello,
 
->On Tue, Sep 20, 2005 at 09:41:36AM -0500, David Masover wrote:
->  
->
->>And personally, if it was my FS, I'd stop working on fsck after it was 
->>able to "check".  That's what it's for.  To fix an FS, you wipe it and 
->>restore from backups.
->>    
->>
->
->If that's Reiser4's philosophy, just make sure you tell all of your
->prospective users about ahead of time.  Is it really an explicit goal
->that performance is so important beyond all other considerations that
->it's OK if the filesystem is extremely fragile and that if anything
->goes wrong, you have to wipe things and recover from backups?!?
->
->I just want to make sure that's the official word and reflects the
->official philosophy of the reiser4 designers before I start telling
->users that this is a good reason to avoid reiser4 like the plague.
->  
->
-Ted, please acknowledge that you read my email replying to David.   I
-know you'd really like to get going with the FUD, but.....
+as YaST and fdisk showed different output for the partions of my
+hard-disk, I got confused and lost the correct start point for my
+partition /dev/hda5.
 
-David is a Reiser4 user, not a developer, and while he is usually very
-savvy and over modest, we all make mistakes in what we say, and this was
-his turn.
+Recreation of superblocks by reiserfsck --rebuild-sb creates a
+superblock, but afterwards, --rebuild-tree terminates with a message
+that no metadata can be found. 
+
+Now I am trying to find out which of the blocks is the superblock. I
+made first attempts with
+a) copying using the command dd and then
+b) use of grep ReIsEr2Fs as search string on blocks of 4096 bytes.
+
+Techical background information
+ reiserfs: 3.6.9
+ Kernel: 2.4.21
+ Hard disk: Maxtor 9084006
+ 
+Is this a possible approach?
+
+Thanks for Your help
+Markus Hiereth
+
+Braunschweig, Germany
