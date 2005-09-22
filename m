@@ -1,104 +1,80 @@
-From: Fred Schaettgen <namesys.Sch@ttgen.net>
+From: Gregory Maxwell <gmaxwell@gmail.com>
 Subject: Re: Will I need to re-format my partition for using the compression plugin?
-Date: Thu, 22 Sep 2005 23:38:19 +0200
-Message-ID: <200509222338.20049.namesys.Sch@ttgen.net>
-References: <194f625505092006316ad200b5@mail.gmail.com> <200509221951.38302.namesys.Sch@ttgen.net> <43330E14.9050209@namesys.com>
+Date: Thu, 22 Sep 2005 18:13:23 -0400
+Message-ID: <e692861c050922151366608976@mail.gmail.com>
+References: <194f625505092006316ad200b5@mail.gmail.com>
+	 <2f4958ff05092208244a0496fc@mail.gmail.com>
+	 <4332DE9F.8010808@namesys.com>
+	 <200509221951.38302.namesys.Sch@ttgen.net>
+	 <43330E14.9050209@namesys.com> <4333100F.6080307@slaphack.com>
+	 <200509222049.j8MKn1CH012169@turing-police.cc.vt.edu>
+Reply-To: Gregory Maxwell <gmaxwell@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26249-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26250-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43330E14.9050209@namesys.com>
+In-Reply-To: <200509222049.j8MKn1CH012169@turing-police.cc.vt.edu>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: "Valdis.Kletnieks@vt.edu" <Valdis.Kletnieks@vt.edu>
+Cc: David Masover <ninja@slaphack.com>, Edward Shishkin <edward@namesys.com>, Fred Schaettgen <namesys.Sch@ttgen.net>, reiserfs-list@namesys.com
 
-On Thursday, 22. September 2005 22:03, Edward Shishkin wrote:
-> Fred Schaettgen wrote:
-> >I don't quite understand how the file plugin concept scales once we get
-> > more of them. For instance if I want to have an additional attribute
-> > attached to my files, which contains a checksum that is kept up to date
-> > whenever the file is changed. I'd have to use a special file plugin for
-> > those files then, is this correct?
->
-> Yes. It is impossible to implement all features in one file plugin.
-> Checksuming means a low performance: 
+On 9/22/05, Valdis.Kletnieks@vt.edu <Valdis.Kletnieks@vt.edu> wrote:
+> 1) RSA is useless for this - you really need a symmetric block cipher of =
+some
+> sort.  Almost all block ciphers are best used with maximum-entropy input =
+- if
+> the attacker can lop out a large part of the keyspace, a brute force atta=
+ck
+> becomes a lot easier.  This is somewhat related to the concept of "Hammin=
+g
+> Distance". If the attacker tries a brute force attack, and the first 8 by=
+tes of
+> the output look like valid HTML, or English text, or anything else
+> recognizable, he's almost certainly found found the correct key.  On the =
+other
+> hand, well-compressed data has very high entropy - as a result, it become=
+s
+> harder to tell if a correct key has been found.  If it's English text, bu=
+t
+> 3 of the first 8 bytes have the high bit set, it's probably not a correct=
+ key.
+> If it's compressed, 3 flipped bits in the first 8 bytes will probably sti=
+ll
+> represent a valid compressed stream - just of something else wildly diffe=
+rent.
 
-It was just meant as an example for another possible feature of a file plugin, 
-so let's forget about if it's slow or not for the moment or if it even makes 
-no sense at all.
-Replace it by any other file plugin you can imagine. Like a virus-scanning 
-file plugin, a change log plugin, a versioned-file plugin, whatever.
+It would normally seem silly to use RSA for disk encryption... but
+there might be applications, although you'd still never use RSA
+directly on user controlled data.  For example, RSA could be used on a
+multi user server to append mail to a mail file so that once written
+the data is only accessible once the user logs on.  The reiser4 crypto
+system will use the kernel keyring api, so it would be quite
+reasonable to tie encryption to user accounts. 'write only' files and
+'read only' files would be a simple logical extension, and would
+require asymetric cryptography.
 
-The question was more about combining new features for single files in 
-general. At some point I might want to have a file which is both compressed 
-and which supports feature X at the same time.
+Although for most compression algorithms not all inputs are valid
+outputs, so this may not work for you... It would be ideal (for disk
+encryption) if it were not possible to tell if you have the right key
+without decrypting an entire sector. This requires careful selection
+in compression and chaining mode.  Alternatively, it may be possible
+to develop a good large block cipher which while being much slower
+than a single block of a small-block cipher, is faster for a disk
+block.  For example, mercy is about 4x faster than AES on my system
+but is still 16x slower for the smallest unit of decryption than AES.
+Unfortunately mercy has security problems.
 
-But I can't do that (at least I think so). I can either patch the 
-cryptcompress plugin, which is certainly not the right way(tm).
-Or I can make up another file plugin, but then it can't be compressed at the 
-same time. If we have as few as five different file plugins, such a 
-limitation might hurt already.
+> 2) Even though most modern block ciphers are designed to be fast, it's st=
+ill
+> faster to apply a reasonably quick compression scheme to whomp 16K of dat=
+a
+> down to 5-6K and encrypt/decrypt 5-6k than it is to encrypt/decrypt 16K.
 
-There seems to be no way to create sort of a pipeline of plugins, it uses 
-either one file plugin or another one.
-
-...
-> To write this new file plugin you will want to use already existing
-> cipher and compression
-> transform plugins (dont mix it with cryptcompress file plugin which also
-> calls those plugins)
-> to compress and encrypt your checksumed file.
-...
-> >Apparently the encryption and the compression is realized with one single
-> > file plugin, so it seems that there is indeed no way to have both
-> > features implemented as separate plugins.
->
-> Why do you need separate ones? Having only a cryptcompress file plugin
-> you will be able
-> to create files which are either only encrypted or only compressed, just
-> set the transform
-> plugins properly.
-
-I haven't heard about transform plugins at all so far. Are they meant to be 
-used by the cryptcompress plugin only or is this a broader concept that can 
-they be used by regular files too?
-
-Sounds like it's a cryptcompress special, but "transform plugin" sounds like 
-what I'm missing. It would be very heplful if I could attach any number of 
-transform plugins to any single file.
-Like that: VFS -> virus scanner -> change monitor -> versioning -> compression 
--> encryption -> checksum -> DISK
-
-Let's hope that no one takes the the virus scanner part literally, it has the 
-potential of feeding the reiser-eating trolls.
-It's not about being able to create endless transformation pipelines and 
-hundreds of plugins, but just the mere possibility to create an short 
-arbitrary pipeline whenever it makes sense.
-
-> > Or is there another reason why you packed
-> >both things into one plugin?
->
-> Because sometimes it is useful to compress data before encryption since
-> compression
-> destroys vulnerable regular structure of some special files (like *.html)
->
-> >If most new file features have to be implemented
-> >as part of one single plugin,
->
-> Then this plugin will look like a monster ;)
-> Not necessarily. On the oher hand, creating a separate file plugin for
-> each feature
-> imho is not a good idea.
-
-Right, it isn't, because it's not possible to combine them. 
-But if I do want to combine them, then what?
-
-Hm, on second thought... forget about it for the moment. I shouldn't waste 
-your time while reiser4 is trying so hard to find it's way into the mainline 
-kernel. Let's hope that this fight will be over soon.
-
-Fred
+Depends on the compression mode and the cipher. A good AES
+implementation is around the same speed as an aggressive gzip. In
+general this is correct.
