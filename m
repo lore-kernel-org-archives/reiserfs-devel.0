@@ -1,27 +1,31 @@
 From: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
-Subject: Re: struct dirent *ent->d_type weirdness
-Date: Thu, 22 Sep 2005 17:03:31 +0200
-Message-ID: <2f4958ff05092208036aa37c24@mail.gmail.com>
-References: <200509191558.27362.kris@koehntopp.de> <432ECC4C.30707@namesys.com>
+Subject: Re: Will I need to re-format my partition for using the compression plugin?
+Date: Thu, 22 Sep 2005 17:24:33 +0200
+Message-ID: <2f4958ff05092208244a0496fc@mail.gmail.com>
+References: <194f625505092006316ad200b5@mail.gmail.com>
+	 <43302F71.3040001@namesys.com> <433034E0.9080904@namesys.com>
+	 <194f625505092012196e09b5ac@mail.gmail.com>
+	 <43306541.6010904@mch.one.pl> <4330667F.20000@namesys.com>
 Reply-To: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-26234-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26236-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <432ECC4C.30707@namesys.com>
+In-Reply-To: <4330667F.20000@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: =?UTF-8?Q?Kristian_K=C3=B6hntopp?= <kris@koehntopp.de>, reiserfs-list@namesys.com
+To: Edward Shishkin <edward@namesys.com>
+Cc: Tomasz Chmielewski <mangoo@mch.one.pl>, linuxhippy@gmail.com, reiserfs-list@namesys.com
 
-T24gOS8xOS8wNSwgVmxhZGltaXIgVi4gU2F2ZWxpZXYgPHZzQG5hbWVzeXMuY29tPiB3cm90ZToK
-PiBIZWxsbwo+Cj4gWWVzLCB1bmZvcnR1bmF0ZWx5LCByZWlzZXJmcyBkb2VzIG5vdCBzdXBwb3J0
-IGVudHJ5IHR5cGVzLgo+IFByb2JhYmx5IGl0IHNob3VsZCwgYnV0IHRoZXJlIGlzIG5vdGhpbmcg
-d3JvbmcgdG8gbm90IHN1cHBvcnQgaXQ6CkkgZ3Vlc3MgaXQgc2hvdWxkbid0IGJlIGhhcmQsIGFu
-ZCB0aGlzIHdvdWxkIG1ha2Ugc29tZSBjb2RlIG5pY2VyLiBJCmhhdmUgcnVuIGludG8gdGhpcyBw
-cm9ibGVtIHF1aXRlIGZldyB0aW1lcywgYW5kIEkgd2lzaCByZWlzZXJmczQgaGFzCnRoaXMgaW1w
-bGVtZW50ZWQuCgotLQpHSgo=
+SSB0aGluayB0aGVyZSBzaG91bGQgYmUgZmlsZSBhdHRyaWJ1dGUgdGhhdCBzYXlzIHdoZXRoZXIg
+aXQgaXMKY29tcHJlc3NlZC93aGF0ZXZlci8gb3Igbm90LiBUaGlzIHdheSwgaXQgd291bGQgYmUg
+cG9zc2libGUgdG8KY29tcHJlc3MgYWxyZWFkeSBleGlzdGluZyBmaWxlcy4gQXQgbGVhc3QsIGlm
+IGZpbGVzeXN0ZW0gaXMgc28KZmxleGlibGUgYXMgZXZlcnlvbmUgc2F5LCBpdCB3b3VsZCBiZSBw
+b3NzaWJsZS4KCk9uIDkvMjAvMDUsIEVkd2FyZCBTaGlzaGtpbiA8ZWR3YXJkQG5hbWVzeXMuY29t
+PiB3cm90ZToKCj4gR3V5cywgaXQgaXMgbm90IGF2YWlsYWJsZS4gSXQgc3RpbGwgcmVxdWlyZXMg
+YSB3b3JrIGFuZCB0aGUgY3JlYXRpb24KPiBpbnRlcmZhY2UKPiBpcyBvbiBhIGRpc2N1c3Npb24g
+bGV2ZWwuCgoKLS0KR0oK
