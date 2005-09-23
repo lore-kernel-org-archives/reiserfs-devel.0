@@ -1,37 +1,33 @@
-From: David Greaves <david@dgreaves.com>
-Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Fri, 23 Sep 2005 07:21:25 +0100
-Message-ID: <43339EE5.9030202@dgreaves.com>
-References: <200509182004.j8IK4JNx012764@inti.inf.utfsm.cl>	 <432E5024.20709@namesys.com> <20050920075133.GB4074@elf.ucw.cz>	 <20050921000425.GF6179@thunk.org> <e692861c05092018017ceef484@mail.gmail.com>
+From: "Raymond A. Meijer" <rmeijer@internet.gr>
+Subject: Re: Reiser4 hang -- bad sectors on disk
+Date: Fri, 23 Sep 2005 09:42:03 +0300
+Message-ID: <200509230942.03727.rmeijer@internet.gr>
+References: <200509221245.39730.rmeijer@internet.gr> <861194762.20050922121940@wp.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26252-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26253-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e692861c05092018017ceef484@mail.gmail.com>
+In-Reply-To: <861194762.20050922121940@wp.pl>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: gmaxwell@gmail.com
-Cc: Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@suse.cz>, Hans Reiser <reiser@namesys.com>, Horst von Brand <vonbrand@inf.utfsm.cl>, thenewme91@gmail.com, Christoph Hellwig <hch@infradead.org>, Denis Vlasenko <vda@ilport.com.ua>, chriswhite@gentoo.org, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Gregory Maxwell wrote:
+On Thursday 22 September 2005 13:19, Pysiak Satriani wrote:
 
->Very interesting indeed, although it almost seems silly to tackle the
->difficult problem of making filesystems highly robust against oddball
->failure modes while our RAID subsystem falls horribly on it's face in
->the fairly common (and conceptually easy to handle) failure mode of a
->raid-5 where two disks have single unreadable blocks on differing
->parts of the disk. (the current raid system hits one bad block, fails
->the whole disk, then you attempt a rebuild and while reading hits the
->other bad block and downs the array).
->  
->
-who's not keeping up with the linux-raid list then ;)
+> I might be wrong here, but bad blocks are a condition that the kernel
+> should handle without barfing oops traces, so there indeed may be
+> not enough sanity checks somewhere.
 
-David
-PS I'm sure assistance would be appreciated in testing and reviewing
-this few day old feature - or indeed the newer 'add a new disk to the
-array' feature.
+Perhaps...
 
+I can do some more testing, but there are more and more bad sectors...
+For now I'll disable DMA and maybe I can salvage my files.
+
+
+Thanks,
+
+Ray
