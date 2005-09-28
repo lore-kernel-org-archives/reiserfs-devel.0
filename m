@@ -1,95 +1,100 @@
-From: Fionn Behrens <fionn@spamfilter.de>
+From: Vitaly Fertman <vitaly@namesys.com>
 Subject: Re: Full of surprises - A reiser4 story from userland
-Date: Wed, 28 Sep 2005 17:56:10 +0200
-Message-ID: <1127922970.12894.134.camel@laptop>
-References: <1127914812.12894.96.camel@laptop>
-	 <200509281825.49873.vitaly@namesys.com>
-	 <5d8b7b905092807514da5958e@mail.gmail.com>
+Date: Wed, 28 Sep 2005 20:40:27 +0400
+Message-ID: <200509282040.27371.vitaly@namesys.com>
+References: <1127914812.12894.96.camel@laptop> <200509281825.49873.vitaly@namesys.com> <1127921286.12894.106.camel@laptop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-XzbSmcsvDzfTATtOW4d8"
-Return-path: <reiserfs-list-return-26305-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26306-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <5d8b7b905092807514da5958e@mail.gmail.com>
-Sender: news <news@sea.gmane.org>
+In-Reply-To: <1127921286.12894.106.camel@laptop>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
+Cc: Fionn Behrens <fionn@spamfilter.de>
 
---=-XzbSmcsvDzfTATtOW4d8
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Wednesday 28 September 2005 19:28, Fionn Behrens wrote:
+> On Mi, 2005-09-28 at 18:25 +0400, Vitaly Fertman wrote:
+> 
+> > > 2.6.11 refused to boot the
+> > > root partition, claiming that there were an inconsistency in the FS.
+> > 
+> > the disk format got new parameters and old kernels cannot understand it right.
+> 
+> Ah, I see. So maybe it would be a good idea if the new fs version would
+> put up a big fat warning to syslog when it detects a partition written
+> by a previous version, telling the user that he is about to break
+> compatibility to his older version (and that the must upgrade userland
+> tools, too!)
+> 
+> > > Sep 28 08:44:20 rtfm kernel: WARNING: wrong pset member (11) for 42
+> > > Sep 28 08:44:20 rtfm kernel: WARNING: unused space in inode 42
+> 
+> > which fsck version?
+> 
+> 1.0.4
+> 
+> > > the man page said that this would be read-only. 
+> > 
+> > it says:
+> > " --check
+> > the default action checks the consistency and reports, but does not 
+> > repair any corruption that it finds. This option may be used on a 
+> > read-only file system mount.
+> > "
+> > it does not mean 100% read-only check. 
+> 
+> Okay, you sound a bit like a lawyer, but: you right me wrong.
+> 
+> > > There was my fourth surprise: This fsck thing had LIED to me; it was not
+> > > read-only. 
+> > 
+> > why do you think --build-fs is read-only? 
+> 
+> Had not gone --build-fs yet. This was still about --check.
+> 
+> > > It may have checked the fs read-only but it must have 
+> > > treacherously flipped some "error" bit somewhere on disk
+> 
+> > > Warning, mounting filesystem with fatal errors, forcing read-only mount
+> > > (followed by the error from above)
+> > 
+> > do you see anything relevant in the syslog?
+> 
+> That line was in the syslog.
 
-On Mi, 2005-09-28 at 17:51 +0300, Islam Amer wrote:
+ok, the flag that fs contains errors is indeed cleared only with --check with
+all reiser4progs untill 1.0.5, the later is able to do it with any options. Thus
+another --check run would clear the flag.
 
-[FQ deleted]
+However 'the error from above' that is 'WARNING: wrong pset member 
+(11) for 42' is possible with the old kernel only.
 
-> I don't like to turn LKML into another battleground,
+remember that reiser4progs-1.0.4 supports both formats, in other words
+having the format updated to the new one, you are able to use new kernel
+only. If you want to move back to 2.6.10, you have to build-fs with 1.0.3
+version or reiser4progs.
 
-You mean because of fullquote-flames? ;-)
-Seriously, I did not post this to lkml (although I was tempted).
+> > > So much for --check being just a check. I grabbed a book and lost about
+> > > two more precious working hours running the --build-fs thing.
+> 
+> > you need to clarify what reiser4progs version you are running.
+> > 1.0.5 fixes the fs to the letest format, which is needed for 2.6.13.
+> > 1.0.3 to the 2.6.10's one. 
+> 
+> 1.0.4 . As I am now back on 2.6.11, I guess I should not upgrade to
+> 1.0.5 or would that not do harm anyway?
 
-> but from one user to another I have to answer this.
->=20
-> *You know reiser4 is development code , this is why it isn't included
-> in vanilla ( yet ) in the first place.
->=20
-> *reiser4 is included in mm and the separate patches from the
-> broken-out package should be applied in the order listed in the
-> included series file ( usually using quilt ).
+1.0.5 is 1.0.4 + bugfixes.
 
-Sorry, I never used mm so far. Didn't know that. My fault.
+> thanks for answering!
+> 
+> kind regards,
+> 		Fionn
 
-> *reiser4 is sometimes victimized due to bugs in the -mm releases. For
-> example I am having problems with a 100% cpu usage of a process called
-> " ent:hda7! " cured only by a reboot. The problem has eased a little
-> when I replaced the " per-task-predictive-write-throttling". However I
-> think the problem still exists.
-
-Sounds very much like what I experienced. As I don't have any other mm
-patch installed the code obviously could not be victimized that way.
-It is just broken.
-
-> *reiser4 is in a state of flux due to the code changes being made in
-> preparation for the review leading to ( hopefully ) its inclusion in
-> the kernel.
-
-I'd just wish I had found a sentence like this and a warning on
-namesys.com when I began looking for a patch. Everything would have been
-so much easier.
-
-> I hope I cleared some of the problems you complained of , and I hope I
-> didn't step on someones toes or make someone upset.
-
-Of course not. Actually I might have to apologize:
-
-Because of my good experiences with ReiserFS in the past I had high
-expectations. As you correctly and rightfully stated, reiser4 is
-development code and that probably means I should not rely on anything.
-
-I just snapped in disappointment and if anyone else thinks I overreacted
-then I apologize to you all for any offense taken.
-Next time, I will be more careful.
-
-best regards,
-		Fionn
---=20
- Taking away civil rights to protect a free democracy is like taking off
- the tires of a car to protect it from flats.=20
-
---=-XzbSmcsvDzfTATtOW4d8
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-
-iD8DBQBDOr0ajkvYSI4bFywRAqHpAJ4yFqwGQxUHOiZEtWe6lnjANKKbLgCfRLtg
-Jt5YG90ZGgKAbEkpA8AETCY=
-=yXfY
------END PGP SIGNATURE-----
-
---=-XzbSmcsvDzfTATtOW4d8--
-
-
+-- 
+Vitaly
