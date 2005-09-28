@@ -1,56 +1,45 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: iosched (was Re: Full of surprises - A reiser4 story from userland)
-Date: Wed, 28 Sep 2005 15:52:09 -0400
-Message-ID: <200509281952.j8SJq9Uo007371@turing-police.cc.vt.edu>
-References: <1127914812.12894.96.camel@laptop> <200509281825.49873.vitaly@namesys.com> <1127921286.12894.106.camel@laptop> <433ABD7B.1010903@slaphack.com> <1127932340.12894.149.camel@laptop>
-            <5d8b7b90509281213c95e30c@mail.gmail.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: Full of surprises - A reiser4 story from userland
+Date: Thu, 29 Sep 2005 00:05:56 +0400
+Message-ID: <200509290005.56659.vitaly@namesys.com>
+References: <1127914812.12894.96.camel@laptop> <200509282040.27371.vitaly@namesys.com> <1127930269.12894.143.camel@laptop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1127937129_3988P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26317-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26318-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Wed, 28 Sep 2005 22:13:52 +0300."
-             <5d8b7b90509281213c95e30c@mail.gmail.com> 
+In-Reply-To: <1127930269.12894.143.camel@laptop>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Islam Amer <pharon@gmail.com>
-Cc: Fionn Behrens <fionn@spamfilter.de>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+Cc: Fionn Behrens <fionn@spamfilter.de>
 
---==_Exmh_1127937129_3988P
-Content-Type: text/plain; charset=us-ascii
+On Wednesday 28 September 2005 21:57, Fionn Behrens wrote:
+> On Mi, 2005-09-28 at 20:40 +0400, Vitaly Fertman wrote:
+> 
+> > remember that reiser4progs-1.0.4 supports both formats, in other words
+> > having the format updated to the new one, you are able to use new
+> > kernelonly. If you want to move back to 2.6.10, you have to build-fs
+> > with 1.0.3 version or reiser4progs.
+> 
+> Do I get this right? I had reiser4progs 1.0.4 and it should already know
+> the new format? If what you say is right then fsck should have not
+> complained about an error in the first place AND I still should not be
+> able to boot with the old kernel any more after --build-fs. 
+> But it found an error. And I ran --build-fs with it. And now I am using
+> the old kernel again and it does NOT complain about errors any more.
+> (except for that flag we discussed already). 
+> 
+> Pardon me, I am confused.
 
-On Wed, 28 Sep 2005 22:13:52 +0300, Islam Amer said:
+hm, before writing that I had checked 1.0.4 progs and thought there
+was another older fsck you could run that time, but I have just double 
+checked it and have found that 1.0.4 version I looked into was changed 
+a bit. You are right, 1.0.4 works with the old format. and if you run it 
+again with --check, you get rid of the ERROR flag in the super block.
 
-> BTW, Previously I had amazing performance with anticipatory
-> IO-scheduler ( even more so with genetic anticipatory ) any comments
-> on this io-scheduler business, as it stirred up some commotion before.
-> Is the performance boost an illusion or is it not.
-
-The performance boost for any of the provided iosched schemes can be
-positive, negative, imaginary, or complex(*), depending on the actual workload of
-the system, and what reference patterns it generates.
-
-There's 4 in-tree schedulers precisely because each of them has a clear-cut
-advantage for some statistic (be it throughput, or latency, or CPU overhead, or
-whatever) for some identified workload type.
-
-(*) I suspect that (benchmarks being benchmarks) the chance that the boost
-be totally real, with no imaginary component, is very slim.  And everybody
-knows that most benchmark results are complex to interpret.. :)
-
---==_Exmh_1127937129_3988P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFDOvRpcC3lWbTT17ARAvzWAJ0UTBUIsfNQ0zCh/Er5lUmmHRpZpgCg75J4
-ln9CKQAGtqGYonxPvLl/+b8=
-=VeXj
------END PGP SIGNATURE-----
-
---==_Exmh_1127937129_3988P--
+-- 
+Vitaly
