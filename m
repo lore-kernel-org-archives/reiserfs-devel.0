@@ -1,51 +1,34 @@
-From: Fionn Behrens <fionn@spamfilter.de>
+From: Islam Amer <pharon@gmail.com>
 Subject: Re: Full of surprises - A reiser4 story from userland
-Date: Wed, 28 Sep 2005 20:32:21 +0200
-Message-ID: <1127932340.12894.149.camel@laptop>
+Date: Wed, 28 Sep 2005 22:13:52 +0300
+Message-ID: <5d8b7b90509281213c95e30c@mail.gmail.com>
 References: <1127914812.12894.96.camel@laptop>
-	 <200509281825.49873.vitaly@namesys.com> <1127921286.12894.106.camel@laptop>
-	  <433ABD7B.1010903@slaphack.com>
+	 <200509281825.49873.vitaly@namesys.com>
+	 <1127921286.12894.106.camel@laptop> <433ABD7B.1010903@slaphack.com>
+	 <1127932340.12894.149.camel@laptop>
+Reply-To: Islam Amer <pharon@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-9z8ns2wGzi0uGnNOh0xR"
-Return-path: <reiserfs-list-return-26313-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26315-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <433ABD7B.1010903@slaphack.com>
-Sender: news <news@sea.gmane.org>
+In-Reply-To: <1127932340.12894.149.camel@laptop>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Fionn Behrens <fionn@spamfilter.de>
+Cc: reiserfs-list@namesys.com
 
---=-9z8ns2wGzi0uGnNOh0xR
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Sorry about the full quotes, I just hit reply all in gmail and type in
+my email. I thought this was how the mailing list knows which thread
+to attatch my email to. Pardon my ignorance.
 
-On Mi, 2005-09-28 at 10:57 -0500, David Masover wrote:
+Yes reiser4 was very solid but now it became a little shaky.
 
-> I got 2.6.13 to work without much trouble, but I wasn't using
-> the full MM patch, just the reiser4-specific parts.
-
-I did exactly the same and was less lucky.=20
-
-br,
-	Fionn
---=20
-80% of the Republicans I meet are just Democrats who
-don't know what's going on.                  *** Robert Kennedy Jr.
-
---=-9z8ns2wGzi0uGnNOh0xR
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-
-iD8DBQBDOuG0jkvYSI4bFywRAnHOAJ9icljrCorydsscvZN9OBBJcGEJhwCfSo92
-3rZ1K2feEgmqFANksPv3D/4=
-=0o9p
------END PGP SIGNATURE-----
-
---=-9z8ns2wGzi0uGnNOh0xR--
-
-
+little off topic:
+BTW, Previously I had amazing performance with anticipatory
+IO-scheduler ( even more so with genetic anticipatory ) any comments
+on this io-scheduler business, as it stirred up some commotion before.
+Is the performance boost an illusion or is it not.
