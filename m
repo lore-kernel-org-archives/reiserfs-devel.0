@@ -1,80 +1,38 @@
-From: =?iso-8859-2?B?o3VrYXN6IE1pZXJ6d2E=?= <prymitive@pcserwis.net>
-Subject: Re: reiser4 for 2.6.13 is available on our website
-Date: Thu, 29 Sep 2005 20:24:50 +0200
-Message-ID: <op.sxvmrokbd4os1z@localhost>
-References: <433C23A2.9020403@namesys.com>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: iosched (was Re: Full of surprises - A reiser4 story from userland)
+Date: Thu, 29 Sep 2005 13:47:40 -0500
+Message-ID: <433C36CC.7050003@slaphack.com>
+References: <1127914812.12894.96.camel@laptop>	 <1127921286.12894.106.camel@laptop> <433ABD7B.1010903@slaphack.com>	 <1127932340.12894.149.camel@laptop>	 <5d8b7b90509281213c95e30c@mail.gmail.com>	 <200509281952.j8SJq9Uo007371@turing-police.cc.vt.edu>	 <433AFDF6.3070404@namesys.com>	 <5d8b7b9050928133842241311@mail.gmail.com>	 <433B3B8B.5090007@slaphack.com>	 <b14e81f0050928182211a75f1f@mail.gmail.com> <5d8b7b905092902343f3c2ce8@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26339-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26340-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <433C23A2.9020403@namesys.com>
+In-Reply-To: <5d8b7b905092902343f3c2ce8@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; delsp="yes"; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Islam Amer <pharon@gmail.com>
+Cc: michael chang <thenewme91@gmail.com>, Valdis.Kletnieks@vt.edu, Fionn Behrens <fionn@spamfilter.de>, reiserfs-list@namesys.com
 
-Dnia Thu, 29 Sep 2005 19:25:54 +0200, Hans Reiser <reiser@namesys.com> =20
-napisa=B3:
+Islam Amer wrote:
+>>IIRC, don't vanilla and -mm have some somewhat substancial internal
+>>differences that could require manual changes?  I could be wrong
+>>though, I've never even looked at the diffs/patches for vanilla vs
+>>-mm.
+>>
+> 
+> That's what I am pointing to. The patches might apply cleanly or have
+> a few FAILED hunks that can be fixed easily by hand. But what do I
+> know about the changes made to the vfs layer etc..
+> I could break something without knowing it.
 
-> Reiser4 performance dropped in the -mm series due to the write
-> throttling patch and also dropped due to a fixed bug (removing type safe
-> lists added a bug).  We don't yet know if we got quite all the
-> performance back, we are still testing.  Conservative users should wait
-> a week or two to see if bug reports with reiser4 remain, or if indeed we
-> did get all the bugs out  of the recent cleanup patch.
->
-> Hans
+Maybe I did, but I've had a relatively sane experience with it so far...
 
-   CC      fs/proc/kmsg.o
-   CC      fs/proc/proc_tty.o
-   CC      fs/proc/proc_misc.o
-   CC      fs/proc/kcore.o
-   LD      fs/proc/proc.o
-   LD      fs/proc/built-in.o
-   CC      fs/ramfs/inode.o
-   LD      fs/ramfs/ramfs.o
-   LD      fs/ramfs/built-in.o
-   CC      fs/reiser4/debug.o
-In file included from fs/reiser4/lock.h:15,
-                  from fs/reiser4/context.h:14,
-                  from fs/reiser4/debug.c:25:
-fs/reiser4/txnmgr.h: In function 'spin_atom_init':
-fs/reiser4/txnmgr.h:512: error: duplicate case value
-fs/reiser4/txnmgr.h:512: error: previously used here
-fs/reiser4/txnmgr.h: In function 'spin_txnh_init':
-fs/reiser4/txnmgr.h:513: error: duplicate case value
-fs/reiser4/txnmgr.h:513: error: previously used here
-fs/reiser4/txnmgr.h: In function 'spin_txnmgr_init':
-fs/reiser4/txnmgr.h:514: error: duplicate case value
-fs/reiser4/txnmgr.h:514: error: previously used here
-In file included from fs/reiser4/context.h:14,
-                  from fs/reiser4/debug.c:25:
-fs/reiser4/lock.h: In function 'spin_stack_init':
-fs/reiser4/lock.h:198: error: duplicate case value
-fs/reiser4/lock.h:198: error: previously used here
-In file included from fs/reiser4/znode.h:16,
-                  from fs/reiser4/tree.h:15,
-                  from fs/reiser4/super.h:9,
-                  from fs/reiser4/debug.c:26:
-fs/reiser4/jnode.h: In function 'spin_jnode_init':
-fs/reiser4/jnode.h:344: error: duplicate case value
-fs/reiser4/jnode.h:344: error: previously used here
-fs/reiser4/jnode.h: In function 'spin_jload_init':
-fs/reiser4/jnode.h:348: error: duplicate case value
-fs/reiser4/jnode.h:348: error: previously used here
-In file included from fs/reiser4/super.h:9,
-                  from fs/reiser4/debug.c:26:
-fs/reiser4/tree.h: In function 'spin_epoch_init':
-fs/reiser4/tree.h:169: error: duplicate case value
-fs/reiser4/tree.h:169: error: previously used here
-In file included from fs/reiser4/debug.c:26:
-fs/reiser4/super.h: In function 'spin_super_init':
-fs/reiser4/super.h:379: error: duplicate case value
-fs/reiser4/super.h:379: error: previously used here
-make[2]: *** [fs/reiser4/debug.o] B=B3=B1d 1
-make[1]: *** [fs/reiser4] B=B3=B1d 2
-make: *** [fs] B=B3=B1d 2
+Yet, Namesys has put out a 2.6.13 patch, so I'll be switching to that 
+next time I have a reason to compile.
 
-amd64 gentoo box running gcc 4.0.1, 2.6.13 + reiser4-for-2.6.13-1.patch.gz
+I'm running two amd64 boxes and one Pentium 2 on Reiser4, and will soon 
+be putting it on a Powerbook.
+
