@@ -1,50 +1,59 @@
-From: michael chang <thenewme91@gmail.com>
-Subject: Re: iosched (was Re: Full of surprises - A reiser4 story from userland)
-Date: Wed, 28 Sep 2005 21:22:09 -0400
-Message-ID: <b14e81f0050928182211a75f1f@mail.gmail.com>
-References: <1127914812.12894.96.camel@laptop>
-	 <200509281825.49873.vitaly@namesys.com>
-	 <1127921286.12894.106.camel@laptop> <433ABD7B.1010903@slaphack.com>
-	 <1127932340.12894.149.camel@laptop>
-	 <5d8b7b90509281213c95e30c@mail.gmail.com>
-	 <200509281952.j8SJq9Uo007371@turing-police.cc.vt.edu>
-	 <433AFDF6.3070404@namesys.com>
-	 <5d8b7b9050928133842241311@mail.gmail.com>
-	 <433B3B8B.5090007@slaphack.com>
-Reply-To: michael chang <thenewme91@gmail.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: reiser4 crashes
+Date: Thu, 29 Sep 2005 11:17:40 +0400
+Message-ID: <433B9514.1030406@namesys.com>
+References: <002a01c5c42f$589e6610$0300a8c0@JUICE1>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26328-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26331-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <433B3B8B.5090007@slaphack.com>
-Content-Disposition: inline
+In-Reply-To: <002a01c5c42f$589e6610$0300a8c0@JUICE1>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: Islam Amer <pharon@gmail.com>, Valdis.Kletnieks@vt.edu, Fionn Behrens <fionn@spamfilter.de>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-9"
+To: =?ISO-8859-2?Q?Artur_Mak=F3wka?= <juice@ursynow.2a.pl>
+Cc: reiserfs-list@namesys.com
 
-On 9/28/05, David Masover <ninja@slaphack.com> wrote:
-> Islam Amer wrote:
->
-> > Problem is lots of experimental patches in -mm series hurt throughput
-> > and performance and reiser4 users have to suffer. Otherwise we have to
-> > go through the slightly non-trivial procedure of patching the vanilla
-> > kernel.
->
-> Non-trivial?  How's this:
+Hello
 
-I'm not sure, but I do believe he was referring to official vanilla
-patch submission... although I could be wrong.
+Artur Mak=F3wka wrote:
+> Hello, my server crashed few times latetly, and the only strange thing i
+> found in logs, are reiser4 entries just before every crash:
+>=20
+> #1 crash:
+>=20
+> kern.log:Sep 27 21:09:06 werewolf kernel:
+> reiser4[pure-ftpd-mysql(18871)]: parse_node40
+> (fs/reiser4/plugin/node/node40.c:746)[nikita-494]:
+> kern.log:Sep 27 21:09:06 werewolf kernel:
+> reiser4[pure-ftpd-mysql(18871)]: extent2tail
+..
+> Sep 28 13:59:06 werewolf kernel: reiser4[pure-ftpd-mysql(30231)]:
+> parse_node40 (fs/reiser4/plugin/node/node40.c:746)[nikita-494]:
+> Sep 28 13:59:06 werewolf kernel: WARNING: Wrong level found in node: 1
+> !=3D 227
+> Sep 28 13:59:06 werewolf kernel: reiser4[pure-ftpd-mysql(30231)]:
+> extent2tail (fs/reiser4/plugin/file/tail_conversion.c:666)[nikita-2282]:
+> Sep 28 13:59:06 werewolf kernel: WARNING: Partial conversion of 4773593:
+> 0 of 1: -5
+> Sep 28 13:59:06 werewolf kernel: reiser4[pure-ftpd-mysql(30231)]:
+> release_unix_file (fs/reiser4/plugin/file/file.c:2297)[nikita-3233]:
+> Sep 28 13:59:06 werewolf kernel: WARNING: Failed to convert in
+> release_unix_file (4773593)
+>=20
+>=20
+> this is quite traffic-heavy server (free hosting with lots of accounts)
+>=20
+> im using reiser4 , kernel 2.6.12.3 with 2.6.12 latest reiser4 patches,
+> reiser4progs 1.0.5, and its Debian.
+>=20
+> those entries i pasted logged like few minutes (or even less) before
+> every crash, and they happen other than these 'crashing' situations..
+>=20
+> can you help me?
+>=20
+I guess that your reiser4 filesystem is corrupted. You should fsck.reiser4 =
+it.
 
-IIRC, don't vanilla and -mm have some somewhat substancial internal
-differences that could require manual changes?  I could be wrong
-though, I've never even looked at the diffs/patches for vanilla vs
--mm.
-
---
-~Mike
- - Just my two cents
- - No man is an island, and no man is unable.
