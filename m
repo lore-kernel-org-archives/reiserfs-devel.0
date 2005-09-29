@@ -1,56 +1,66 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: vs, can you port to 2.6.13 and put the port on our website as
- part of analyzing the latest patches added to the -mm series and their impact
- on reiser4 performance
-Date: Thu, 29 Sep 2005 19:05:27 +0400
-Message-ID: <433C02B7.5070309@namesys.com>
-References: <1127914812.12894.96.camel@laptop>	 <200509281825.49873.vitaly@namesys.com>	 <1127921286.12894.106.camel@laptop> <433ABD7B.1010903@slaphack.com>	 <1127932340.12894.149.camel@laptop>	 <5d8b7b90509281213c95e30c@mail.gmail.com>	 <200509281952.j8SJq9Uo007371@turing-police.cc.vt.edu>	 <433AFDF6.3070404@namesys.com> <5d8b7b9050928133842241311@mail.gmail.com> <433B019C.7000302@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: reiser4 for 2.6.13 is available on our website
+Date: Thu, 29 Sep 2005 10:25:54 -0700
+Message-ID: <433C23A2.9020403@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26337-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ boundary="------------020108040606060707010201"
+Return-path: <reiserfs-list-return-26338-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <433B019C.7000302@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS List <reiserfs-list@namesys.com>, LKML <linux-kernel@vger.kernel.org>
+
+--------------020108040606060707010201
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+
+Reiser4 performance dropped in the -mm series due to the write
+throttling patch and also dropped due to a fixed bug (removing type safe
+lists added a bug).  We don't yet know if we got quite all the
+performance back, we are still testing.  Conservative users should wait
+a week or two to see if bug reports with reiser4 remain, or if indeed we
+did get all the bugs out  of the recent cleanup patch. 
+
+Hans
+
+--------------020108040606060707010201
+Content-Type: message/rfc822;
+ name="vs's dayly report for september, 2005 (thebsh refuses ssh access)"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="vs's dayly report for september, 2005 (thebsh refuses ssh access)"
+
+Return-Path: <vs@namesys.com>
+Delivered-To: reiser@namesys.com
+Received: (qmail 30334 invoked from network); 29 Sep 2005 15:11:26 -0000
+Received: from ppp85-140-85-6.pppoe.mtu-net.ru (HELO ?192.168.1.10?) (85.140.85.6)
+  by thebsh.namesys.com with SMTP; 29 Sep 2005 15:11:26 -0000
+Message-ID: <433C0413.6080002@namesys.com>
+Date: Thu, 29 Sep 2005 19:11:15 +0400
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Organization: Namesys
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.8) Gecko/20050511
+X-Accept-Language: en-us, en
+MIME-Version: 1.0
 To: Hans Reiser <reiser@namesys.com>
-Cc: Islam Amer <pharon@gmail.com>, Valdis.Kletnieks@vt.edu, Fionn Behrens <fionn@spamfilter.de>, reiserfs-list@namesys.com
+Subject: vs's dayly report for september, 2005 (thebsh refuses ssh access)
+X-Enigmail-Version: 0.91.0.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-Hello
+BEG 2005.09.29:10.21 Thu
+END 2005.09.29:14.11 Thu TOTAL=3:50
+BEG 2005.09.29:14.40 Thu
+        CHATS: preparing reiser4 patches for 2.6.13
+                making sure that per-task-predictive-write-throttling-1.patch is
+responsible
+                for reiser4 performance drop in 2.6.14-rcX-mmY
+                at least it is responsible for substantial part of it
+END 2005.09.29:19.09 Thu TOTAL=4:29
 
-Hans Reiser wrote:
-> ;-)
-> 
-> Thanks,
-> 
-> Hans
-> 
-> Islam Amer wrote:
-> 
->>On 9/28/05, Hans Reiser <reiser@namesys.com> wrote:
->> 
->>
->>>Check out the latest cfq in the latest kernel, it is much better than
->>>the others for most applications.  Anticipatory used to be the best, but
->>>cfq-3 is better now.
->>>
->>>   
->>>
->>Yes I always had my eyes on the applicable parts of -ck patchset
->>becasue they showed good promise ( upto my limited understading ). I
->>just needed an educated opinion. Thanks.
->>
->>And  I had to drop using the genetic-as because it oopsed with
->>reiserfs in some kernels.
->>
->>Problem is lots of experimental patches in -mm series hurt throughput
->>and performance and reiser4 users have to suffer. Otherwise we have to
->>go through the slightly non-trivial procedure of patching the vanilla
->>kernel.
->>
 
-reiser4 for 2.6.13 can be obtained at
-ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.13/
 
+--------------020108040606060707010201--
