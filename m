@@ -1,61 +1,54 @@
-From: Clemens Eisserer <linuxhippy@gmail.com>
-Subject: Re: Different size of partion between reiser4 and reiserFS 3.6
-Date: Fri, 30 Sep 2005 13:06:57 +0200
-Message-ID: <194f62550509300406p7d1ec4afi@mail.gmail.com>
-References: <200509301233.20008.xxlucas@seznam.cz>
-Reply-To: Clemens Eisserer <linuxhippy@gmail.com>
+From: =?iso-8859-2?B?o3VrYXN6IE1pZXJ6d2E=?= <prymitive@pcserwis.net>
+Subject: Re: reiser4 for 2.6.13 is available on our website
+Date: Fri, 30 Sep 2005 14:01:16 +0200
+Message-ID: <op.sxwzoenad4os1z@localhost>
+References: <433C23A2.9020403@namesys.com> <op.sxvmrokbd4os1z@localhost> <1128031794.10856.155.camel@gentoo> <200509301231.02169.zam@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26357-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26358-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200509301233.20008.xxlucas@seznam.cz>
-Content-Disposition: inline
+In-Reply-To: <200509301231.02169.zam@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; format="flowed"; delsp="yes"; charset="iso-8859-1"
+To: Alexander Zarochentsev <zam@namesys.com>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-This is because reiser uses 5% of disk space for internal use - which
-is no problem since reiser saves that 5% easily since it stores files
-much more efficient.
+Dnia Fri, 30 Sep 2005 10:31:01 +0200, Alexander Zarochentsev =20
+<zam@namesys.com> napisa=B3:
 
-lg Clemens
+> On Friday 30 September 2005 02:09, Jake Maciejewski wrote:
+>> I get the same with 2.6.13.2 and gcc 3.4.4 on amd64
+>>
+> can you try this patch?
+> -----------------------------------
+> --- a/fs/reiser4/spin_macros.h
+> +++ b/fs/reiser4/spin_macros.h
+> @@ -82,8 +82,6 @@ typedef struct reiser4_rw_data {
+>  static inline void spin_ ## NAME ## _init(TYPE *x)				\
+>  {										\
+>  	__ODCA("nikita-2987", x !=3D NULL);					\
+> -	cassert(sizeof(x->FIELD) !=3D 0);						\
+> -	memset(& x->FIELD, 0, sizeof x->FIELD);					\
+>  	spin_lock_init(& x->FIELD.lock);					\
+>  }										\
+>  										\
+> @@ -236,7 +234,6 @@ typedef struct { int foo; } NAME ## _spi
+>  static inline void rw_ ## NAME ## _init(TYPE *x)				\
+>  {										\
+>  	__ODCA("nikita-2988", x !=3D NULL);					\
+> -	memset(& x->FIELD, 0, sizeof x->FIELD);					\
+>  	rwlock_init(& x->FIELD.lock);						\
+>  }										\
+>  										\
+> -----------------------------------
 
-2005/9/30, luc <xxlucas@seznam.cz>:
-> Hi,
->
->         i want to try use reiser4 and i discover this :
->
-> I have 80Gb Western Digital HDD. When i created one partition (full
-> disk)
->
-> mkfs.reiserfs -f /dev/sda1
->
-> then obtain this
->
-> reiserfs 3.6
-> [root@Merlin luc]# df -k
-> Filesystem           1K-blocks      Used Available Use% Mounted on
-> /dev/sda1             78145768     32840  78112928   1% /mnt/te
->
-> when i did
->
-> mkfs.reiser4 -f /dev/sda1
->
-> reiser4
-> [root@Merlin luc]# df -k
-> Filesystem           1K-blocks      Used Available Use% Mounted on
-> /dev/sda1             74256016      2544  74253472   1% /mnt/te
->
->
->
-> I use patch from ftp.namesys.com for kernel 2.6.12 and
-> libreiser4progs-1.0_4-1.0.4-1mdk , reiser4progs-1.0.4-1mdk. Is here
-> anyone who is able to explain me why the size of partion sda1 is
-> different ???
-> --
-> luc
-> Linux 2.6.12-12mdk-i686-up-4GB Intel(R) Pentium(R) M processor 2.00GHz
->
+It helped (cut and paste didn't worked for me as the resulting patch =20
+didn't applied but I just deleted those 3 lines by hand). Kernel did =20
+compile and now I'm writing this running 2.6.13 with reiser4 as /. I hope  =
+
+I won't see any oopses during shutdown as I sow with 2.6.13-mm{1,2} based  =
+
+kernels (archck).
+
