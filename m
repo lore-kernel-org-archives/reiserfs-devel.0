@@ -1,69 +1,37 @@
-From: michael chang <thenewme91@gmail.com>
-Subject: Re: Trouble with reiserfs.
-Date: Sat, 1 Oct 2005 14:10:55 -0400
-Message-ID: <b14e81f00510011110x1153eeaah550eab25233e7910@mail.gmail.com>
-References: <f28212bb0509301357i58986a3em52525c99d8cfb53d@mail.gmail.com>
-	 <b14e81f00509301433j64e1e88cgf7cc395cab99869@mail.gmail.com>
-	 <f28212bb0510010108j3b2f6aa3y2174bdb7756e6fac@mail.gmail.com>
-Reply-To: michael chang <thenewme91@gmail.com>
+From: =?iso-8859-1?Q?Artur_Mak=F3wka?= <juice@ursynow.2a.pl>
+Subject: Re: latest 2.6.13 reiser4 patch
+Date: Sat, 1 Oct 2005 20:40:18 +0200
+Message-ID: <002501c5c6b7$92e5dda0$0300a8c0@JUICE1>
+References: <000901c5c542$31765840$0300a8c0@JUICE1> <e692861c0509301320p13dfe1faq9f020589ee4ef06c@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26369-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26370-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <f28212bb0510010108j3b2f6aa3y2174bdb7756e6fac@mail.gmail.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jonson Player <jonsonplayer@gmail.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; format="flowed"; charset="us-ascii"; reply-type="original"
+To: reiserfs-list@namesys.com
 
-Where is the image located?
+>> Will it work also with 2.6.13.2 kernel  ? or is it only for 2.6.13 ( or
+>> 2.6.13.1 )
+>>
+>> i couldnt find any information about this on page, and i want to be 
+>> sure...
+>
+>I used it fine with 2.6.13.2... but my wireless card isn't supported
+>there. (it's been included in 2.6.14x, so it was never patches against
+>2.6.13.. I tried backporting my wireless driver but there were a lot
+>of changes in both directions).  The patch also applies cleanly
+>against 2.6.14-rc1/2 but 2.6.14-rc1/2 panic on initrd uncompress for
+>me, and I can't troubleshoot it because the backtrace scrolls my
+>screen and I can't do a serial console on my laptop. :(
+>
+>In any case I tested reiser4 out some on 13.2, and the only bug I hit
+>was a panic on unmount.
 
-Also, reiserfs 3 or resier4?
+but is there some official statment about using 2.6.x reiser4 patches with 
+2.6.x.x kernels? i mean, does patch called reiser 4 2.6.13 patch is also 
+intended to work with 2.6.13.2 for example or only with 2.6.13 ?
 
-On 10/1/05, Jonson Player <jonsonplayer@gmail.com> wrote:
-> Hello Mike,
-> is a file image (e.g. hard1.img) and is exactly equal size like broken ha=
-rd
-> drive aprox. 20GB, and also is same FS (reiserfs).
->
-> Thank you.
->
->
-> On 10/1/05, michael chang <thenewme91@gmail.com> wrote:
-> > On 9/30/05, Jonson Player <jonsonplayer@gmail.com> wrote:
-> > >  i just made an img copy with dd_rescue from a broken software raid
-> system
-> > > (mirror style). I obtained an img from one of hard drive and i wanted=
- to
-> > > check this img with reiserfs tool, but he told me the following messa=
-ge:
-> >
-> > >  0%Not enough allocable blocks, checking bitmap...there are 0 allocab=
-le
-> > > blocks, btw
-> > >
-> > >  out of disk space
-> > >  Aborted
-> >
-> > Are you checking from a read-write medium (HD) or are you checking an
-> > image on e.g. a read-only medium such as a CD/DVD?  Also, is the image
-> > bigger than the original partition, or exactly the same size, or
-> > smaller (and same for FS size compared to image size).
-> >
-> > --
-> > ~Mike
-> > - Just my two cents
-> > - No man is an island, and no man is unable.
-> >
->
->
-
-
---
-~Mike
- - Just my two cents
- - No man is an island, and no man is unable.
