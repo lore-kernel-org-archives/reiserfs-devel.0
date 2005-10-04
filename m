@@ -1,315 +1,105 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Unable to rebuild bitmap.
-Date: Tue, 4 Oct 2005 23:40:03 +0400
-Message-ID: <200510042340.04319.vitaly@namesys.com>
-References: <4342C98D.2000901@ruckusnetwork.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: I request inclusion of reiser4 in the mainline kernel
+Date: Tue, 04 Oct 2005 14:10:51 -0700
+Message-ID: <4342EFDB.4040101@namesys.com>
+References: <432AFB44.9060707@namesys.com> <20050916174028.GA32745@infradead.org> <43380DD8.8010200@namesys.com> <20051004190048.GA30832@infradead.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26398-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26400-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4342C98D.2000901@ruckusnetwork.com>
-Content-Disposition: inline
+In-Reply-To: <20051004190048.GA30832@infradead.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Lance Reed <lreed@ruckusnetwork.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-list@namesys.com>
 
-On Tuesday 04 October 2005 22:27, Lance Reed wrote:
-> I seem to be stuck in a catch 22 and can not seem to rebuild a bitmap.
-> reiserfsck --check says the bitmap is bad.
-> reiserfsck --rebuild-sb says it is ok.
-> 
-> I do seem some errors but can not seem to repair them..
-> "Fs state field: 0x1:
->          some corruptions exist."
-> 
-> If I mount the filesystem and try to write to it, I get a kernel oops.
-> 
-> The Filesystem has recently been increased to just under 10 TB.
-> 
-> Anybody have any ideas?
+Christoph Hellwig wrote:
 
-this is a known problem revealed recently. the reiserfs has the 16 
-bits bitmap couter, so the maximum fs size is (0xffff * BlockSize * 
-8 * BlockSize) = 8T for 4k blocksize.
+>On Mon, Sep 26, 2005 at 07:03:52PM +0400, Vladimir V. Saveliev wrote:
+>  
+>
+>>> - you still do your plugin mess in ->readpage.  honsetly could you
+>>>   please explain why mpage_readpage{,s} don't work for you?
+>>>      
+>>>
+>>The reason is performance. Reiser4 uses a search through the filesystem tree to
+>>access metadata of a file.
+>>If reiser4 implemented its read/write via generic functions it would have to
+>>repeat the search for every page being read/written.
+>>It is especially disappointing because reiser4 uses extents with which it is
+>>able in most cases to find all file pointers to data blocks with only one search
+>>through the tree.
+>>Another reason is multithread load.
+>>Tree search includes complex part of providing correct concurrent read/write
+>>access to the tree including deadlock avoidance algorithm. On multithread
+>>filesystem load minimizing of a number of tree searches should have improved
+>>filesystem throughput.
+>>
+>>These are on todo list yet.
+>>    
+>>
+>
+>Let's start with the read side.  You are using the generic sendfile now
+>which is the same as the generic read routine as far as the filesystem
+>is concerned.
+>
+I am not sure that is the right thing for us to be doing actually.  We
+need to abstract things our own way to create a proper abstraction
+underneath sys_reiser4() and the general naming system that we are
+headed towards.  That means we need the "flow" abstraction as the basis
+of our code.  The flow abstraction is based on the idea that we should
+be able to connect to and read or write any stream of bytes, in user or
+kernel space.  A flow is a stream of bytes.  That is useful for
+constructing sys_reiser4() and other semantic enhancements that we
+plan.  If you would like to generalize the vfs interface such that it
+reads and writes to and from flows, and user space buffers are just a
+special case used by read() and write(), and it is not done page at a
+time, that could be good for vfs.
 
-> TIA.
-> 
-> Lance
-> 
-> 2 2.6.4-52-smp #1 SMP Wed Apr 7 02:11:20 UTC 2004 i686 i686 i386 GNU/Linux
-> SuSE Linux 9.1 (i586)
-> VERSION = 9.1
-> reiserfs-3.6.13-24
+>  What more do you need for read performance than a proper
+>mpage_readpage(s) that can use the extent-enabled
+>
+what does extent enabled mean?  Do you mean that it passes more than one
+page to the fs?  Or do you mean that readahead windows are set by the fs
+because readahead is affected by file layout?  Or both?
 
-please update the progs to the latest (3.6.19) version.
+> get_blocks callback?
+>I'll post a patch for that ASAP, it benefits the other filesystems aswell.
+>
+>I know the write path is more complex, and doing your on ->writepage(s)
+>is fine because that may need to do a lot of FS-specific things.  I'd
+>really like to see you use generic_file_write or at least the major
+>routines it's built from.  What's missing for you to do that?
+>
+Well, to start with, reiser4_write is plugin specific.  Writing to a
+file might require modifying a file that it inherits its contents from,
+for instance.
 
-> lvm2-2.00.09-12
-> 
-> 
-> livestore2:~ # reiserfsck --check  /dev/VG01/lvol0
-> ......
-> Replaying journal..
-> Reiserfs journal '/dev/VG01/lvol0' in blocks [18..8211]: 0 transactions 
-> replayed
-> reiserfs_open_ondisk_bitmap: wrong either bitmaps number,
-> count of blocks or blocksize, run with --rebuild-sb to fix it
-> reiserfsck: Could not open bitmap
-> livestore2:~ # reiserfsck --rebuild-sb   /dev/VG01/lvol0
-> ....
-> Will check superblock and rebuild it if needed
-> Will put log info to 'stdout'
-> 
-> Do you want to run this program?[N/Yes] (note need to type Yes if you 
-> do):Yes
-> Reiserfs super block in block 16 on 0xfd00 of format 3.6 with standard 
-> journal
-> Count of blocks on the device: 2594701312
-> Number of bitmaps: 13648
-> Blocksize: 4096
-> Free blocks (count of blocks - used [journal, bitmaps, data, reserved] 
-> blocks): 919312864
-> Root block: 23854440
-> Filesystem is clean
-> Tree height: 5
-> Hash function used to sort names: "r5"
-> Objectid map size 2, max 972
-> Journal parameters:
->         Device [0x0]
->         Magic [0x7c282a2f]
->         Size 8193 blocks (including 1 for journal header) (first block 18)
->         Max transaction length 1024 blocks
->         Max batch size 900 blocks
->         Max commit age 30
-> Blocks reserved by journal: 0
-> Fs state field: 0x1:
->          some corruptions exist.
-> sb_version: 2
-> inode generation number: 51677
-> UUID: dfc4b601-40b9-44e4-b246-3cb4c96ac152
-> LABEL:
-> Set flags in SB:
->         ATTRIBUTES CLEAN
-> 
-> Super block seems to be correct
-> 
-> If I mount and try try to write to the filesystem.
-> 
-> Oct  3 20:25:30 livestore2 kernel: Unable to handle kernel NULL pointer 
-> dereference at virtual address 00000c20
-> Oct  3 20:25:30 livestore2 kernel:  printing eip:
-> Oct  3 20:25:30 livestore2 kernel: f90a52aa
-> Oct  3 20:25:30 livestore2 kernel: *pde = 00000000
-> Oct  3 20:25:30 livestore2 kernel: Oops: 0000 [#1]
-> Oct  3 20:25:30 livestore2 kernel: SMP
-> Oct  3 20:25:30 livestore2 kernel: CPU:    1
-> Oct  3 20:25:30 livestore2 kernel: EIP:    
-> 0060:[__crc_device_suspend+2410267/2709224]    Not tainted
-> Oct  3 20:25:30 livestore2 kernel: EIP:    0060:[<f90a52aa>]    Not tainted
-> Oct  3 20:25:30 livestore2 kernel: EFLAGS: 00010246   (2.6.4-52-smp)
-> Oct  3 20:25:30 livestore2 kernel: EIP is at 
-> scan_bitmap_block+0x1da/0x480 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel: eax: ffffffff   ebx: 00000c20   ecx: 
-> 000000f8   edx: 00000000
-> Oct  3 20:25:30 livestore2 kernel: esi: f9376310   edi: 00000c20   ebp: 
-> 00000000   esp: efadd930
-> Oct  3 20:25:30 livestore2 kernel: ds: 007b   es: 007b   ss: 0068
-> Oct  3 20:25:30 livestore2 kernel: Process rsync (pid: 4193, 
-> threadinfo=efadc000 task=f5f880b0)
-> Oct  3 20:25:30 livestore2 kernel: Stack: 0b000001 00000000 cdc2b380 
-> c0143a56 00006100 00000000 00000000 f9383118
-> Oct  3 20:25:30 livestore2 kernel:        00000000 f5c65800 efadd9e4 
-> 0000da62 efaddf30 f90c14fa 00000080 0000da62
-> Oct  3 20:25:30 livestore2 kernel:        00008000 f5c65800 00000001 
-> f90a6105 00008000 00000001 00000001 00000000
-> Oct  3 20:25:30 livestore2 kernel: Call Trace:
-> Oct  3 20:25:30 livestore2 kernel:  [find_get_page+22/64] 
-> find_get_page+0x16/0x40
-> Oct  3 20:25:30 livestore2 kernel:  [<c0143a56>] find_get_page+0x16/0x40
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2525547/2709224] 
-> internal_insert_childs+0x1fa/0x210 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90c14fa>] 
-> internal_insert_childs+0x1fa/0x210 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2413942/2709224] 
-> reiserfs_allocate_blocknrs+0x3e5/0xc89 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90a6105>] 
-> reiserfs_allocate_blocknrs+0x3e5/0xc89 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2481484/2709224] get_far_parent+0x15b/0x350 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90b68db>] 
-> get_far_parent+0x15b/0x350 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2485508/2709224] get_empty_nodes+0xf3/0x1a0 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90b7893>] 
-> get_empty_nodes+0xf3/0x1a0 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2487055/2709224] fix_nodes+0x55e/0x1f30 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90b7e9e>] fix_nodes+0x55e/0x1f30 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2487640/2709224] fix_nodes+0x7a7/0x1f30 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90b80e7>] fix_nodes+0x7a7/0x1f30 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2539052/2709224] reiserfs_insert_item+0x18b/0x2f0 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90c49bb>] 
-> reiserfs_insert_item+0x18b/0x2f0 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2452812/2709224] reiserfs_new_inode+0x46b/0x9d0 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90af8db>] 
-> reiserfs_new_inode+0x46b/0x9d0 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2586603/2709224] open_xa_dir+0x26a/0x2a0 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90d037a>] open_xa_dir+0x26a/0x2a0 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [d_instantiate+84/96] 
-> d_instantiate+0x54/0x60
-> Oct  3 20:25:30 livestore2 kernel:  [<c017bcc4>] d_instantiate+0x54/0x60
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2440906/2709224] reiserfs_lookup+0x1e9/0x1f0 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90aca59>] 
-> reiserfs_lookup+0x1e9/0x1f0 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2436877/2709224] reiserfs_mkdir+0x1bc/0x350 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90aba9c>] 
-> reiserfs_mkdir+0x1bc/0x350 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [permission+98/128] 
-> permission+0x62/0x80
-> Oct  3 20:25:30 livestore2 kernel:  [<c0172852>] permission+0x62/0x80
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2436433/2709224] reiserfs_mkdir+0x0/0x350 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90ab8e0>] 
-> reiserfs_mkdir+0x0/0x350 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [vfs_mkdir+188/272] 
-> vfs_mkdir+0xbc/0x110
-> Oct  3 20:25:30 livestore2 kernel:  [<c0172bcc>] vfs_mkdir+0xbc/0x110
-> Oct  3 20:25:30 livestore2 kernel:  [sys_mkdir+166/240] sys_mkdir+0xa6/0xf0
-> Oct  3 20:25:30 livestore2 kernel:  [<c0175736>] sys_mkdir+0xa6/0xf0
-> Oct  3 20:25:30 livestore2 kernel:  [sys_write+56/96] sys_write+0x38/0x60
-> Oct  3 20:25:30 livestore2 kernel:  [<c0164b78>] sys_write+0x38/0x60
-> Oct  3 20:25:30 livestore2 kernel:  [sysenter_past_esp+82/121] 
-> sysenter_past_esp+0x52/0x79
-> Oct  3 20:25:30 livestore2 kernel:  [<c01091c9>] 
-> sysenter_past_esp+0x52/0x79
-> Oct  3 20:25:30 livestore2 kernel:
-> Oct  3 20:25:30 livestore2 kernel: Code: f3 af 74 09 33 47 fc 83 ef 04 
-> 0f bc d0 29 df c1 e7 03 01 fa
-> Oct  3 20:25:30 livestore2 kernel:  <1>Unable to handle kernel NULL 
-> pointer dereference at virtual address 00000c20
-> Oct  3 20:25:30 livestore2 kernel:  printing eip:
-> Oct  3 20:25:30 livestore2 kernel: f90a52aa
-> Oct  3 20:25:30 livestore2 kernel: *pde = 00000000
-> Oct  3 20:25:30 livestore2 kernel: Oops: 0000 [#2]
-> Oct  3 20:25:30 livestore2 kernel: SMP
-> Oct  3 20:25:30 livestore2 kernel: CPU:    1
-> Oct  3 20:25:30 livestore2 kernel: EIP:    
-> 0060:[__crc_device_suspend+2410267/2709224]    Not tainted
-> Oct  3 20:25:30 livestore2 kernel: EIP:    0060:[<f90a52aa>]    Not tainted
-> Oct  3 20:25:30 livestore2 kernel: EFLAGS: 00010246   (2.6.4-52-smp)
-> Oct  3 20:25:30 livestore2 kernel: EIP is at 
-> scan_bitmap_block+0x1da/0x480 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel: eax: ffffffff   ebx: 00000c20   ecx: 
-> 000000f8   edx: 00000000
-> Oct  3 20:25:30 livestore2 kernel: esi: f9376310   edi: 00000c20   ebp: 
-> 00000000   esp: ef9d990c
-> Oct  3 20:25:30 livestore2 kernel: ds: 007b   es: 007b   ss: 0068
-> Oct  3 20:25:30 livestore2 kernel: Process rsync (pid: 4199, 
-> threadinfo=ef9d8000 task=f658e620)
-> Oct  3 20:25:30 livestore2 kernel: Stack: 00000000 00000000 00000000 
-> 00000000 00006100 00000000 00000000 00000000
-> Oct  3 20:25:30 livestore2 kernel:        00000000 f5c65800 ef9d99c0 
-> 0000da62 ef9d9ef8 00000000 00000000 0000da62
-> Oct  3 20:25:30 livestore2 kernel:        00008000 f5c65800 00000001 
-> f90a6105 00008000 00000001 00000001 00000000
-> Oct  3 20:25:30 livestore2 kernel: Call Trace:
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2413942/2709224] 
-> reiserfs_allocate_blocknrs+0x3e5/0xc89 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90a6105>] 
-> reiserfs_allocate_blocknrs+0x3e5/0xc89 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2481484/2709224] get_far_parent+0x15b/0x350 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90b68db>] 
-> get_far_parent+0x15b/0x350 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2485508/2709224] get_empty_nodes+0xf3/0x1a0 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90b7893>] 
-> get_empty_nodes+0xf3/0x1a0 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2487055/2709224] fix_nodes+0x55e/0x1f30 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90b7e9e>] fix_nodes+0x55e/0x1f30 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2539052/2709224] reiserfs_insert_item+0x18b/0x2f0 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90c49bb>] 
-> reiserfs_insert_item+0x18b/0x2f0 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2452812/2709224] reiserfs_new_inode+0x46b/0x9d0 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90af8db>] 
-> reiserfs_new_inode+0x46b/0x9d0 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2430588/2709224] search_by_entry_key+0x1b/0x2d0 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90aa20b>] 
-> search_by_entry_key+0x1b/0x2d0 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  
-> [__crc_device_suspend+2438620/2709224] reiserfs_create+0xeb/0x210 
-> [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [<f90ac16b>] 
-> reiserfs_create+0xeb/0x210 [reiserfs]
-> Oct  3 20:25:30 livestore2 kernel:  [permission+98/128] 
-> permission+0x62/0x80
-> Oct  3 20:25:30 livestore2 kernel:  [<c0172852>] permission+0x62/0x80
-> Oct  3 20:25:30 livestore2 kernel:  [vfs_create+197/288] 
-> vfs_create+0xc5/0x120
-> Oct  3 20:25:30 livestore2 kernel:  [<c0172e45>] vfs_create+0xc5/0x120
-> Oct  3 20:25:30 livestore2 kernel:  [open_namei+764/976] 
-> open_namei+0x2fc/0x3d0
-> Oct  3 20:25:30 livestore2 kernel:  [<c0174f4c>] open_namei+0x2fc/0x3d0
-> Oct  3 20:25:30 livestore2 kernel:  [filp_open+40/80] filp_open+0x28/0x50
-> Oct  3 20:25:30 livestore2 kernel:  [<c0162468>] filp_open+0x28/0x50
-> Oct  3 20:25:30 livestore2 kernel:  [sys_open+77/144] sys_open+0x4d/0x90
-> Oct  3 20:25:30 livestore2 kernel:  [<c01624dd>] sys_open+0x4d/0x90
-> Oct  3 20:25:30 livestore2 kernel:  [sysenter_past_esp+82/121] 
-> sysenter_past_esp+0x52/0x79
-> Oct  3 20:25:30 livestore2 kernel:  [<c01091c9>] 
-> sysenter_past_esp+0x52/0x79
-> Oct  3 20:25:30 livestore2 kernel:
-> Oct  3 20:25:30 livestore2 kernel: Code: f3 af 74 09 33 47 fc 83 ef 04 
-> 0f bc d0 29 df c1 e7 03 01 fa
-> Oct  3 20:27:36 livestore2 sm-notify[3328]: Unable to notify 
-> 192.168.103.4, giving up
-> Oct  3 20:27:36 livestore2 sm-notify[3328]: Unable to notify 
-> 192.168.103.3, giving up
-> 
-> livestore2:~ #
-> livestore2:~ # tail -f /var/log/messages
-> Oct  3 20:25:30 livestore2 kernel:  [filp_open+40/80] filp_open+0x28/0x50
-> Oct  3 20:25:30 livestore2 kernel:  [<c0162468>] filp_open+0x28/0x50
-> Oct  3 20:25:30 livestore2 kernel:  [sys_open+77/144] sys_open+0x4d/0x90
-> Oct  3 20:25:30 livestore2 kernel:  [<c01624dd>] sys_open+0x4d/0x90
-> Oct  3 20:25:30 livestore2 kernel:  [sysenter_past_esp+82/121] 
-> sysenter_past_esp+0x52/0x79
-> Oct  3 20:25:30 livestore2 kernel:  [<c01091c9>] 
-> sysenter_past_esp+0x52/0x79
-> Oct  3 20:25:30 livestore2 kernel:
-> Oct  3 20:25:30 livestore2 kernel: Code: f3 af 74 09 33 47 fc 83 ef 04 
-> 0f bc d0 29 df c1 e7 03 01 fa
+I think though that there is another consideration, which is that
+reiser4 is not licensed just for Linux.  We need to create a coherent
+body of code that can be ported to operating systems that don't have vfs
+layers specially modified for us.  The easiest way to do that is to
+write our own code for the key things like read and write.
 
--- 
-Vitaly
+VFS is supposed to allow filesystems to have their own read and write
+implementations.  That is its defined interface.  You should allow us to
+use it.  Other filesystems that are less ambitious might well want to
+use generic code, but reiser4 is not a yellow package with black lettering.
+
+>  Note
+>that you read/write path will need a major rewrite anyway due to the
+>flaws I pointed out, and I think it would benefit both you (less
+>maintaince overhead, feature and bug parity) and the other
+>filesystem/vfs/vm hackers (less duplicate functionality to worry about,
+>improvement you make shared by every filesystem) if you tried to
+>converge to use common code.
+>
+>
+>
+>
+>  
+>
+
