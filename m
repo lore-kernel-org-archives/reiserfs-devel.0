@@ -1,59 +1,35 @@
-From: Hifumi Hisashi <hifumi.hisashi@lab.ntt.co.jp>
-Subject: Re: [PATCH] fix problems related to journaling in Reiserfs
-Date: Tue, 04 Oct 2005 17:47:08 +0900
-Message-ID: <6.0.0.20.2.20051004170540.03fa4eb0@129.60.53.12>
-References: <6.0.0.20.2.20050831191551.03fdbac0@129.60.53.12>
- <43167718.5080702@namesys.com>
- <20050901220321.454985a3@watt.suse.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: 2.6.13 + reiser4 = scheduling while atomic
+Date: Tue, 04 Oct 2005 13:30:54 +0400
+Message-ID: <43424BCE.5030808@namesys.com>
+References: <623652d50510021049l66c481d4v@mail.gmail.com>	 <43403560.2060807@mid.email-server.info>	 <5d8b7b90510021502x67f006e4xc0465c948a8abea8@mail.gmail.com> <623652d50510030235h3fcaab10x@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20050901220321.454985a3@watt.suse.com>
-References: <6.0.0.20.2.20050831191551.03fdbac0@129.60.53.12>
- <43167718.5080702@namesys.com>
- <20050901220321.454985a3@watt.suse.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-26391-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <623652d50510030235h3fcaab10x@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>, Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-dev@namesys.com, reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Chris Bainbridge <chris.bainbridge@gmail.com>
+Cc: reiserfs-list@namesys.com
 
-Hello Chris.
+Hello
 
-I noticed that fsync() also has a BUG related to meta-data journaling in 
-Reiserfs.
-When write() extends a file(i_size is increased), fsync() must write a
-meta-data change to a journaling area on a disk.
-But, it seems to me that the Reiserfs does not do this.
+Chris Bainbridge wrote:
+> On 02/10/05, Islam Amer <pharon@gmail.com> wrote:
+>>On 10/2/05, Alexander Skwar <listen@alexander.skwar.name> wrote:
+>>>Chris Bainbridge schrieb:
+>>>>Hi,
+>>>>
+>>>>Today I updated from vanilla 2.6.12.5 + reiser4 to vanilla 2.6.13 +
+>>>>reiser4-for-2.6.13-1.patch + spin_macros patch from this list.
+> 
+> The errors went away with CONFIG_PREEMPT_NONE. CONFIG_PREEMPT seems to
+> be the problem.
+> 
 
-I suppose following patch would fix this bug.
-
-Thanks.
-
-Signed-off-by :Hifumi Hisashi <hifumi.hisashi@lab.ntt.co.jp>
-
-diff -Nru linux-2.6.14-rc3/fs/reiserfs/file.c 
-linux-2.6.14-rc3_fix/fs/reiserfs/file.c
---- linux-2.6.14-rc3/fs/reiserfs/file.c	2005-10-03 14:13:57.000000000 +0900
-+++ linux-2.6.14-rc3_fix/fs/reiserfs/file.c	2005-10-03 15:27:42.000000000 +0900
-@@ -1320,7 +1320,6 @@
-  				reiserfs_write_unlock(inode->i_sb);
-  				return err;
-  			}
--			reiserfs_update_inode_transaction(inode);
-  			mark_inode_dirty(inode);
-  			err = journal_end(&th, inode->i_sb, 1);
-  			if (err) {
-diff -Nru linux-2.6.14-rc3/fs/reiserfs/super.c 
-linux-2.6.14-rc3_fix/fs/reiserfs/super.c
---- linux-2.6.14-rc3/fs/reiserfs/super.c	2005-10-03 14:13:57.000000000 +0900
-+++ linux-2.6.14-rc3_fix/fs/reiserfs/super.c	2005-10-03 15:27:42.000000000 +0900
-@@ -563,6 +563,7 @@
-  		reiserfs_write_unlock(inode->i_sb);
-  		return;
-  	}
-+	reiserfs_update_inode_transaction(inode);
-  	reiserfs_update_sd(&th, inode);
-  	journal_end(&th, inode->i_sb, 1);
-  	reiserfs_write_unlock(inode->i_sb); 
+What do you do to get this problem?
 
