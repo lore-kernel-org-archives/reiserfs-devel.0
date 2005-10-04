@@ -1,105 +1,57 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: I request inclusion of reiser4 in the mainline kernel
-Date: Tue, 04 Oct 2005 14:10:51 -0700
-Message-ID: <4342EFDB.4040101@namesys.com>
-References: <432AFB44.9060707@namesys.com> <20050916174028.GA32745@infradead.org> <43380DD8.8010200@namesys.com> <20051004190048.GA30832@infradead.org>
+From: Dan Pritts <danno@internet2.edu>
+Subject: reiserfsprogs spec file bug report
+Date: Tue, 4 Oct 2005 17:15:58 -0400
+Message-ID: <20051004211558.GB5368@internet2.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26400-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26401-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20051004190048.GA30832@infradead.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Christoph Hellwig wrote:
+Hi,
 
->On Mon, Sep 26, 2005 at 07:03:52PM +0400, Vladimir V. Saveliev wrote:
->  
->
->>> - you still do your plugin mess in ->readpage.  honsetly could you
->>>   please explain why mpage_readpage{,s} don't work for you?
->>>      
->>>
->>The reason is performance. Reiser4 uses a search through the filesystem tree to
->>access metadata of a file.
->>If reiser4 implemented its read/write via generic functions it would have to
->>repeat the search for every page being read/written.
->>It is especially disappointing because reiser4 uses extents with which it is
->>able in most cases to find all file pointers to data blocks with only one search
->>through the tree.
->>Another reason is multithread load.
->>Tree search includes complex part of providing correct concurrent read/write
->>access to the tree including deadlock avoidance algorithm. On multithread
->>filesystem load minimizing of a number of tree searches should have improved
->>filesystem throughput.
->>
->>These are on todo list yet.
->>    
->>
->
->Let's start with the read side.  You are using the generic sendfile now
->which is the same as the generic read routine as far as the filesystem
->is concerned.
->
-I am not sure that is the right thing for us to be doing actually.  We
-need to abstract things our own way to create a proper abstraction
-underneath sys_reiser4() and the general naming system that we are
-headed towards.  That means we need the "flow" abstraction as the basis
-of our code.  The flow abstraction is based on the idea that we should
-be able to connect to and read or write any stream of bytes, in user or
-kernel space.  A flow is a stream of bytes.  That is useful for
-constructing sys_reiser4() and other semantic enhancements that we
-plan.  If you would like to generalize the vfs interface such that it
-reads and writes to and from flows, and user space buffers are just a
-special case used by read() and write(), and it is not done page at a
-time, that could be good for vfs.
+I just downloaded & built reiserfsprogs-3.6.19 on Red Hat EL 4.
 
->  What more do you need for read performance than a proper
->mpage_readpage(s) that can use the extent-enabled
->
-what does extent enabled mean?  Do you mean that it passes more than one
-page to the fs?  Or do you mean that readahead windows are set by the fs
-because readahead is affected by file layout?  Or both?
+This has a newer version of RPM than you've designed your SPEC
+file for, and suffers from problems described in these two URLs:
 
-> get_blocks callback?
->I'll post a patch for that ASAP, it benefits the other filesystems aswell.
->
->I know the write path is more complex, and doing your on ->writepage(s)
->is fine because that may need to do a lot of FS-specific things.  I'd
->really like to see you use generic_file_write or at least the major
->routines it's built from.  What's missing for you to do that?
->
-Well, to start with, reiser4_write is plugin specific.  Writing to a
-file might require modifying a file that it inherits its contents from,
-for instance.
+  1) http://www.rpm.org/hintskinks/debuginfo/
+  2) http://www.rpm.org/hintskinks/unpackaged-files/
 
-I think though that there is another consideration, which is that
-reiser4 is not licensed just for Linux.  We need to create a coherent
-body of code that can be ported to operating systems that don't have vfs
-layers specially modified for us.  The easiest way to do that is to
-write our own code for the key things like read and write.
+1) Before anything happens, I get:
+error: Package already exists: %package debuginfo
 
-VFS is supposed to allow filesystems to have their own read and write
-implementations.  That is its defined interface.  You should allow us to
-use it.  Other filesystems that are less ambitious might well want to
-use generic code, but reiser4 is not a yellow package with black lettering.
+This is easily addressed by changing "%install" in a comment to "% install"
 
->  Note
->that you read/write path will need a major rewrite anyway due to the
->flaws I pointed out, and I think it would benefit both you (less
->maintaince overhead, feature and bug parity) and the other
->filesystem/vfs/vm hackers (less duplicate functionality to worry about,
->improvement you make shared by every filesystem) if you tried to
->converge to use common code.
->
->
->
->
->  
->
+2) At the end of the build process, i get:
 
+   RPM build errors:
+    Installed (but unpackaged) file(s) found:
+   /rpm-filelist
+
+It looks like you're using this rpm-filelist file as a temporary file
+to show what should go into the RPM.  Not clear why you store that
+information in a temp file instead of the spec file but i'm sure you
+have your reasons.
+
+The rpm.org site suggests removing any such non-packaged files at the
+end of the %install phase, which would probably not work given what this
+file is for.  Perhaps moving this a file to /tmp is a better way to go
+but there may be reasons not to do this, either.
+
+
+i downloaded the equivalent SRPM from fedora core 4 and it "just built"
+using their spec file so i didn't put much more effort into fixing the
+problem myself, but i thought you'd be interested to know about this.  
+
+thanks, 
+danno
+--
+dan pritts - systems administrator - internet2
+734/352-4953 office        734/834-7224 mobile
