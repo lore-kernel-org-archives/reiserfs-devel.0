@@ -1,420 +1,62 @@
-From: Lance Reed <lreed@ruckusnetwork.com>
-Subject: Re: Unable to rebuild bitmap.
-Date: Tue, 04 Oct 2005 17:46:28 -0400
-Message-ID: <4342F834.3080205@ruckusnetwork.com>
-References: <4342C98D.2000901@ruckusnetwork.com> <200510042340.04319.vitaly@namesys.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: reiserfsprogs spec file bug report
+Date: Wed, 5 Oct 2005 12:43:45 +0400
+Message-ID: <200510051243.45427.vitaly@namesys.com>
+References: <20051004211558.GB5368@internet2.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26402-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26405-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200510042340.04319.vitaly@namesys.com>
+In-Reply-To: <20051004211558.GB5368@internet2.edu>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+Cc: Dan Pritts <danno@internet2.edu>
 
-Thanks for the info!
+On Wednesday 05 October 2005 01:15, Dan Pritts wrote:
+> Hi,
 
-I have tried this.  I made the new 3.6.19 code.
-Ran a --rebuild-sb, seemed better.  When I try to run a --check,
-it still says that it can not read the bitmap.
-So, is this problem with the reiserfs code in the kernel I am booting?
-I thought that we could get up to 16 TB. 
+Hello!
+ 
+> I just downloaded & built reiserfsprogs-3.6.19 on Red Hat EL 4.
+> 
+> This has a newer version of RPM than you've designed your SPEC
+> file for, and suffers from problems described in these two URLs:
+> 
+>   1) http://www.rpm.org/hintskinks/debuginfo/
+>   2) http://www.rpm.org/hintskinks/unpackaged-files/
+> 
+> 1) Before anything happens, I get:
+> error: Package already exists: %package debuginfo
+> 
+> This is easily addressed by changing "%install" in a comment to "% install"
+> 
+> 2) At the end of the build process, i get:
+> 
+>    RPM build errors:
+>     Installed (but unpackaged) file(s) found:
+>    /rpm-filelist
+> 
+> It looks like you're using this rpm-filelist file as a temporary file
+> to show what should go into the RPM.  Not clear why you store that
+> information in a temp file instead of the spec file but i'm sure you
+> have your reasons.
+> 
+> The rpm.org site suggests removing any such non-packaged files at the
+> end of the %install phase, which would probably not work given what this
+> file is for.  Perhaps moving this a file to /tmp is a better way to go
+> but there may be reasons not to do this, either.
+> 
+> 
+> i downloaded the equivalent SRPM from fedora core 4 and it "just built"
+> using their spec file so i didn't put much more effort into fixing the
+> problem myself, but i thought you'd be interested to know about this.  
 
-Is there a way to force a rebuild of the superblock.
-maybe delete it with dd at offset 64 ?
-something like this maybe ?
-
-dd if=/dev/zero of=/dev/VG01/lvol0 bs=1024 seek=64 count=1
-(http://lists.suse.com/archive/suse-linux-e/2003-Dec/1731.html)
-
-Then rebuild the bitmap?
-This might be a bit crazy....?
-
-Anybody got any ideas?
-
-Thank you so much for the assistance!
-
-Lance
-
-# reiserfsck -V
-reiserfsck 3.6.19 (2003 www.namesys.com)
-
-livestore2:~ # reiserfsck --rebuild-sb  /dev/VG01/lvol0
-Do you want to run this program?[N/Yes] (note need to type Yes if you 
-do):Yes
-Reiserfs super block in block 16 on 0xfd00 of format 3.6 with standard 
-journal
-Count of blocks on the device: 2594963456
-Number of bitmaps: 13656
-Blocksize: 4096
-Free blocks (count of blocks - used [journal, bitmaps, data, reserved] 
-blocks): 919312864
-Root block: 23854440
-Filesystem is clean
-Tree height: 5
-Hash function used to sort names: "r5"
-Objectid map size 2, max 972
-Journal parameters:
-        Device [0x0]
-        Magic [0x7c282a2f]
-        Size 8193 blocks (including 1 for journal header) (first block 18)
-        Max transaction length 1024 blocks
-        Max batch size 900 blocks
-        Max commit age 30
-Blocks reserved by journal: 0
-Fs state field: 0x0:
-sb_version: 2
-inode generation number: 51677
-UUID: dfc4b601-40b9-44e4-b246-3cb4c96ac152
-LABEL:
-Set flags in SB:
-        ATTRIBUTES CLEAN
-
-Super block seems to be correct
-
-livestore2:~ # reiserfsck --check  /dev/VG01/lvol0
-Do you want to run this program?[N/Yes] (note need to type Yes if you 
-do):Yes
-###########
-reiserfsck --check started at Tue Oct  4 21:36:46 2005
-###########
-Replaying journal..
-Reiserfs journal '/dev/VG01/lvol0' in blocks [18..8211]: 0 transactions 
-replayed
-reiserfs_open_ondisk_bitmap: wrong either bitmaps number,
-count of blocks or blocksize, run with --rebuild-sb to fix it
-reiserfsck: Could not open bitmap
-
-
-livestore2:~ # reiserfsck --fix-fixable   /dev/VG01/lvol0
-Do you want to run this program?[N/Yes] (note need to type Yes if you 
-do):Yes
-###########
-reiserfsck --fix-fixable started at Tue Oct  4 21:38:34 2005
-###########
-Replaying journal..
-Reiserfs journal '/dev/VG01/lvol0' in blocks [18..8211]: 0 transactions 
-replayed
-reiserfs_open_ondisk_bitmap: wrong either bitmaps number,
-count of blocks or blocksize, run with --rebuild-sb to fix it
-reiserfsck: Could not open bitmap
-
-
-Vitaly Fertman wrote:
-
->On Tuesday 04 October 2005 22:27, Lance Reed wrote:
->  
->
->>I seem to be stuck in a catch 22 and can not seem to rebuild a bitmap.
->>reiserfsck --check says the bitmap is bad.
->>reiserfsck --rebuild-sb says it is ok.
->>
->>I do seem some errors but can not seem to repair them..
->>"Fs state field: 0x1:
->>         some corruptions exist."
->>
->>If I mount the filesystem and try to write to it, I get a kernel oops.
->>
->>The Filesystem has recently been increased to just under 10 TB.
->>
->>Anybody have any ideas?
->>    
->>
->
->this is a known problem revealed recently. the reiserfs has the 16 
->bits bitmap couter, so the maximum fs size is (0xffff * BlockSize * 
->8 * BlockSize) = 8T for 4k blocksize.
->
->  
->
->>TIA.
->>
->>Lance
->>
->>2 2.6.4-52-smp #1 SMP Wed Apr 7 02:11:20 UTC 2004 i686 i686 i386 GNU/Linux
->>SuSE Linux 9.1 (i586)
->>VERSION = 9.1
->>reiserfs-3.6.13-24
->>    
->>
->
->please update the progs to the latest (3.6.19) version.
->
->  
->
->>lvm2-2.00.09-12
->>
->>
->>livestore2:~ # reiserfsck --check  /dev/VG01/lvol0
->>......
->>Replaying journal..
->>Reiserfs journal '/dev/VG01/lvol0' in blocks [18..8211]: 0 transactions 
->>replayed
->>reiserfs_open_ondisk_bitmap: wrong either bitmaps number,
->>count of blocks or blocksize, run with --rebuild-sb to fix it
->>reiserfsck: Could not open bitmap
->>livestore2:~ # reiserfsck --rebuild-sb   /dev/VG01/lvol0
->>....
->>Will check superblock and rebuild it if needed
->>Will put log info to 'stdout'
->>
->>Do you want to run this program?[N/Yes] (note need to type Yes if you 
->>do):Yes
->>Reiserfs super block in block 16 on 0xfd00 of format 3.6 with standard 
->>journal
->>Count of blocks on the device: 2594701312
->>Number of bitmaps: 13648
->>Blocksize: 4096
->>Free blocks (count of blocks - used [journal, bitmaps, data, reserved] 
->>blocks): 919312864
->>Root block: 23854440
->>Filesystem is clean
->>Tree height: 5
->>Hash function used to sort names: "r5"
->>Objectid map size 2, max 972
->>Journal parameters:
->>        Device [0x0]
->>        Magic [0x7c282a2f]
->>        Size 8193 blocks (including 1 for journal header) (first block 18)
->>        Max transaction length 1024 blocks
->>        Max batch size 900 blocks
->>        Max commit age 30
->>Blocks reserved by journal: 0
->>Fs state field: 0x1:
->>         some corruptions exist.
->>sb_version: 2
->>inode generation number: 51677
->>UUID: dfc4b601-40b9-44e4-b246-3cb4c96ac152
->>LABEL:
->>Set flags in SB:
->>        ATTRIBUTES CLEAN
->>
->>Super block seems to be correct
->>
->>If I mount and try try to write to the filesystem.
->>
->>Oct  3 20:25:30 livestore2 kernel: Unable to handle kernel NULL pointer 
->>dereference at virtual address 00000c20
->>Oct  3 20:25:30 livestore2 kernel:  printing eip:
->>Oct  3 20:25:30 livestore2 kernel: f90a52aa
->>Oct  3 20:25:30 livestore2 kernel: *pde = 00000000
->>Oct  3 20:25:30 livestore2 kernel: Oops: 0000 [#1]
->>Oct  3 20:25:30 livestore2 kernel: SMP
->>Oct  3 20:25:30 livestore2 kernel: CPU:    1
->>Oct  3 20:25:30 livestore2 kernel: EIP:    
->>0060:[__crc_device_suspend+2410267/2709224]    Not tainted
->>Oct  3 20:25:30 livestore2 kernel: EIP:    0060:[<f90a52aa>]    Not tainted
->>Oct  3 20:25:30 livestore2 kernel: EFLAGS: 00010246   (2.6.4-52-smp)
->>Oct  3 20:25:30 livestore2 kernel: EIP is at 
->>scan_bitmap_block+0x1da/0x480 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel: eax: ffffffff   ebx: 00000c20   ecx: 
->>000000f8   edx: 00000000
->>Oct  3 20:25:30 livestore2 kernel: esi: f9376310   edi: 00000c20   ebp: 
->>00000000   esp: efadd930
->>Oct  3 20:25:30 livestore2 kernel: ds: 007b   es: 007b   ss: 0068
->>Oct  3 20:25:30 livestore2 kernel: Process rsync (pid: 4193, 
->>threadinfo=efadc000 task=f5f880b0)
->>Oct  3 20:25:30 livestore2 kernel: Stack: 0b000001 00000000 cdc2b380 
->>c0143a56 00006100 00000000 00000000 f9383118
->>Oct  3 20:25:30 livestore2 kernel:        00000000 f5c65800 efadd9e4 
->>0000da62 efaddf30 f90c14fa 00000080 0000da62
->>Oct  3 20:25:30 livestore2 kernel:        00008000 f5c65800 00000001 
->>f90a6105 00008000 00000001 00000001 00000000
->>Oct  3 20:25:30 livestore2 kernel: Call Trace:
->>Oct  3 20:25:30 livestore2 kernel:  [find_get_page+22/64] 
->>find_get_page+0x16/0x40
->>Oct  3 20:25:30 livestore2 kernel:  [<c0143a56>] find_get_page+0x16/0x40
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2525547/2709224] 
->>internal_insert_childs+0x1fa/0x210 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90c14fa>] 
->>internal_insert_childs+0x1fa/0x210 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2413942/2709224] 
->>reiserfs_allocate_blocknrs+0x3e5/0xc89 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90a6105>] 
->>reiserfs_allocate_blocknrs+0x3e5/0xc89 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2481484/2709224] get_far_parent+0x15b/0x350 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90b68db>] 
->>get_far_parent+0x15b/0x350 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2485508/2709224] get_empty_nodes+0xf3/0x1a0 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90b7893>] 
->>get_empty_nodes+0xf3/0x1a0 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2487055/2709224] fix_nodes+0x55e/0x1f30 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90b7e9e>] fix_nodes+0x55e/0x1f30 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2487640/2709224] fix_nodes+0x7a7/0x1f30 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90b80e7>] fix_nodes+0x7a7/0x1f30 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2539052/2709224] reiserfs_insert_item+0x18b/0x2f0 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90c49bb>] 
->>reiserfs_insert_item+0x18b/0x2f0 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2452812/2709224] reiserfs_new_inode+0x46b/0x9d0 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90af8db>] 
->>reiserfs_new_inode+0x46b/0x9d0 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2586603/2709224] open_xa_dir+0x26a/0x2a0 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90d037a>] open_xa_dir+0x26a/0x2a0 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [d_instantiate+84/96] 
->>d_instantiate+0x54/0x60
->>Oct  3 20:25:30 livestore2 kernel:  [<c017bcc4>] d_instantiate+0x54/0x60
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2440906/2709224] reiserfs_lookup+0x1e9/0x1f0 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90aca59>] 
->>reiserfs_lookup+0x1e9/0x1f0 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2436877/2709224] reiserfs_mkdir+0x1bc/0x350 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90aba9c>] 
->>reiserfs_mkdir+0x1bc/0x350 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [permission+98/128] 
->>permission+0x62/0x80
->>Oct  3 20:25:30 livestore2 kernel:  [<c0172852>] permission+0x62/0x80
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2436433/2709224] reiserfs_mkdir+0x0/0x350 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90ab8e0>] 
->>reiserfs_mkdir+0x0/0x350 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [vfs_mkdir+188/272] 
->>vfs_mkdir+0xbc/0x110
->>Oct  3 20:25:30 livestore2 kernel:  [<c0172bcc>] vfs_mkdir+0xbc/0x110
->>Oct  3 20:25:30 livestore2 kernel:  [sys_mkdir+166/240] sys_mkdir+0xa6/0xf0
->>Oct  3 20:25:30 livestore2 kernel:  [<c0175736>] sys_mkdir+0xa6/0xf0
->>Oct  3 20:25:30 livestore2 kernel:  [sys_write+56/96] sys_write+0x38/0x60
->>Oct  3 20:25:30 livestore2 kernel:  [<c0164b78>] sys_write+0x38/0x60
->>Oct  3 20:25:30 livestore2 kernel:  [sysenter_past_esp+82/121] 
->>sysenter_past_esp+0x52/0x79
->>Oct  3 20:25:30 livestore2 kernel:  [<c01091c9>] 
->>sysenter_past_esp+0x52/0x79
->>Oct  3 20:25:30 livestore2 kernel:
->>Oct  3 20:25:30 livestore2 kernel: Code: f3 af 74 09 33 47 fc 83 ef 04 
->>0f bc d0 29 df c1 e7 03 01 fa
->>Oct  3 20:25:30 livestore2 kernel:  <1>Unable to handle kernel NULL 
->>pointer dereference at virtual address 00000c20
->>Oct  3 20:25:30 livestore2 kernel:  printing eip:
->>Oct  3 20:25:30 livestore2 kernel: f90a52aa
->>Oct  3 20:25:30 livestore2 kernel: *pde = 00000000
->>Oct  3 20:25:30 livestore2 kernel: Oops: 0000 [#2]
->>Oct  3 20:25:30 livestore2 kernel: SMP
->>Oct  3 20:25:30 livestore2 kernel: CPU:    1
->>Oct  3 20:25:30 livestore2 kernel: EIP:    
->>0060:[__crc_device_suspend+2410267/2709224]    Not tainted
->>Oct  3 20:25:30 livestore2 kernel: EIP:    0060:[<f90a52aa>]    Not tainted
->>Oct  3 20:25:30 livestore2 kernel: EFLAGS: 00010246   (2.6.4-52-smp)
->>Oct  3 20:25:30 livestore2 kernel: EIP is at 
->>scan_bitmap_block+0x1da/0x480 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel: eax: ffffffff   ebx: 00000c20   ecx: 
->>000000f8   edx: 00000000
->>Oct  3 20:25:30 livestore2 kernel: esi: f9376310   edi: 00000c20   ebp: 
->>00000000   esp: ef9d990c
->>Oct  3 20:25:30 livestore2 kernel: ds: 007b   es: 007b   ss: 0068
->>Oct  3 20:25:30 livestore2 kernel: Process rsync (pid: 4199, 
->>threadinfo=ef9d8000 task=f658e620)
->>Oct  3 20:25:30 livestore2 kernel: Stack: 00000000 00000000 00000000 
->>00000000 00006100 00000000 00000000 00000000
->>Oct  3 20:25:30 livestore2 kernel:        00000000 f5c65800 ef9d99c0 
->>0000da62 ef9d9ef8 00000000 00000000 0000da62
->>Oct  3 20:25:30 livestore2 kernel:        00008000 f5c65800 00000001 
->>f90a6105 00008000 00000001 00000001 00000000
->>Oct  3 20:25:30 livestore2 kernel: Call Trace:
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2413942/2709224] 
->>reiserfs_allocate_blocknrs+0x3e5/0xc89 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90a6105>] 
->>reiserfs_allocate_blocknrs+0x3e5/0xc89 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2481484/2709224] get_far_parent+0x15b/0x350 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90b68db>] 
->>get_far_parent+0x15b/0x350 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2485508/2709224] get_empty_nodes+0xf3/0x1a0 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90b7893>] 
->>get_empty_nodes+0xf3/0x1a0 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2487055/2709224] fix_nodes+0x55e/0x1f30 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90b7e9e>] fix_nodes+0x55e/0x1f30 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2539052/2709224] reiserfs_insert_item+0x18b/0x2f0 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90c49bb>] 
->>reiserfs_insert_item+0x18b/0x2f0 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2452812/2709224] reiserfs_new_inode+0x46b/0x9d0 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90af8db>] 
->>reiserfs_new_inode+0x46b/0x9d0 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2430588/2709224] search_by_entry_key+0x1b/0x2d0 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90aa20b>] 
->>search_by_entry_key+0x1b/0x2d0 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  
->>[__crc_device_suspend+2438620/2709224] reiserfs_create+0xeb/0x210 
->>[reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [<f90ac16b>] 
->>reiserfs_create+0xeb/0x210 [reiserfs]
->>Oct  3 20:25:30 livestore2 kernel:  [permission+98/128] 
->>permission+0x62/0x80
->>Oct  3 20:25:30 livestore2 kernel:  [<c0172852>] permission+0x62/0x80
->>Oct  3 20:25:30 livestore2 kernel:  [vfs_create+197/288] 
->>vfs_create+0xc5/0x120
->>Oct  3 20:25:30 livestore2 kernel:  [<c0172e45>] vfs_create+0xc5/0x120
->>Oct  3 20:25:30 livestore2 kernel:  [open_namei+764/976] 
->>open_namei+0x2fc/0x3d0
->>Oct  3 20:25:30 livestore2 kernel:  [<c0174f4c>] open_namei+0x2fc/0x3d0
->>Oct  3 20:25:30 livestore2 kernel:  [filp_open+40/80] filp_open+0x28/0x50
->>Oct  3 20:25:30 livestore2 kernel:  [<c0162468>] filp_open+0x28/0x50
->>Oct  3 20:25:30 livestore2 kernel:  [sys_open+77/144] sys_open+0x4d/0x90
->>Oct  3 20:25:30 livestore2 kernel:  [<c01624dd>] sys_open+0x4d/0x90
->>Oct  3 20:25:30 livestore2 kernel:  [sysenter_past_esp+82/121] 
->>sysenter_past_esp+0x52/0x79
->>Oct  3 20:25:30 livestore2 kernel:  [<c01091c9>] 
->>sysenter_past_esp+0x52/0x79
->>Oct  3 20:25:30 livestore2 kernel:
->>Oct  3 20:25:30 livestore2 kernel: Code: f3 af 74 09 33 47 fc 83 ef 04 
->>0f bc d0 29 df c1 e7 03 01 fa
->>Oct  3 20:27:36 livestore2 sm-notify[3328]: Unable to notify 
->>192.168.103.4, giving up
->>Oct  3 20:27:36 livestore2 sm-notify[3328]: Unable to notify 
->>192.168.103.3, giving up
->>
->>livestore2:~ #
->>livestore2:~ # tail -f /var/log/messages
->>Oct  3 20:25:30 livestore2 kernel:  [filp_open+40/80] filp_open+0x28/0x50
->>Oct  3 20:25:30 livestore2 kernel:  [<c0162468>] filp_open+0x28/0x50
->>Oct  3 20:25:30 livestore2 kernel:  [sys_open+77/144] sys_open+0x4d/0x90
->>Oct  3 20:25:30 livestore2 kernel:  [<c01624dd>] sys_open+0x4d/0x90
->>Oct  3 20:25:30 livestore2 kernel:  [sysenter_past_esp+82/121] 
->>sysenter_past_esp+0x52/0x79
->>Oct  3 20:25:30 livestore2 kernel:  [<c01091c9>] 
->>sysenter_past_esp+0x52/0x79
->>Oct  3 20:25:30 livestore2 kernel:
->>Oct  3 20:25:30 livestore2 kernel: Code: f3 af 74 09 33 47 fc 83 ef 04 
->>0f bc d0 29 df c1 e7 03 01 fa
->>    
->>
->
->  
->
-
+yes, thank you, I will check it.
 
 -- 
-
-
+Vitaly
