@@ -1,20 +1,40 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Lance Reed <lreed@ruckusnetwork.com>
 Subject: Re: Unable to rebuild bitmap.
-Date: Thu, 06 Oct 2005 02:49:32 -0700
-Message-ID: <4344F32C.5040705@namesys.com>
+Date: Thu, 06 Oct 2005 12:25:55 -0400
+Message-ID: <43455013.5000808@ruckusnetwork.com>
 References: <4342C98D.2000901@ruckusnetwork.com> <200510051333.45061.vitaly@namesys.com> <4343ECF8.7070000@ruckusnetwork.com> <200510061216.25207.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26413-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26417-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <200510061216.25207.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Vitaly Fertman <vitaly@namesys.com>
-Cc: reiserfs-list@namesys.com, Lance Reed <lreed@ruckusnetwork.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Cc: reiserfs-list@namesys.com
+
+Well, the host this one is on is using kernel 2.6.4-52-smp which is a 
+stock Suse 9.1 Pro kernel.
+
+However, since this is under LVM and on an external storage array, I 
+could build a new
+host off of Suse Pro 9.3 which uses a stock 2.6.11.4-21.7-bigsmp kernel, 
+and is advertised to be
+able to mount reiserfs4 file systems.
+
+Not sure which one would be simpler.....
+If you have a patch that works with the older 2.6.4-52-smp kernel, that 
+would
+be the fastest for me.
+
+Thanks for all your help and taking the time!
+
+Lance
+
+
+
 
 Vitaly Fertman wrote:
 
@@ -27,16 +47,9 @@ Vitaly Fertman wrote:
 >
 >reiser4 is absolutely different fs written from the scratch,
 >it is in the mm kernel only yet.
->  
 >
-You did not answer the question.;-)
-
 >regarding the reiserfs, there is a patch that solves the problem,
->not accepted though,
->
-any reason to not send it in? 
-
-> if you tell me the kernel number you would 
+>not accepted though, if you tell me the kernel number you would 
 >like to work with I can send it to you.
 >
 >  
@@ -187,4 +200,8 @@ any reason to not send it in?
 >
 >  
 >
+
+
+-- 
+
 
