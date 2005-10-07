@@ -1,53 +1,63 @@
-From: evilninja <evilninja@gmx.net>
-Subject: benchmarks galore...
-Date: Sat, 08 Oct 2005 01:39:14 +0200
-Message-ID: <43470722.4040408@gmx.net>
+From: Steve Jacobson <steve@sourcelabs.com>
+Subject: Building Reiser4 - Symbol problem
+Date: Fri, 07 Oct 2005 16:48:26 -0700
+Message-ID: <4347094A.3090801@sourcelabs.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <ext3-users-bounces@redhat.com>
+Content-Type: multipart/mixed;
+ boundary="------------030801090004070600060905"
+Return-path: <reiserfs-list-return-26425-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/ext3-users>,
-	<mailto:ext3-users-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/ext3-users>
-List-Post: <mailto:ext3-users@redhat.com>
-List-Help: <mailto:ext3-users-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/ext3-users>,
-	<mailto:ext3-users-request@redhat.com?subject=subscribe>
-Sender: ext3-users-bounces@redhat.com
-Errors-To: ext3-users-bounces@redhat.com
-Content-Type: text/plain; charset="us-ascii"
-To: Ext3-users@redhat.com
-Cc: ReiserFS List <reiserfs-list@namesys.com>, "linux-xfs@oss.sgi.com" <linux-xfs@oss.sgi.com>, JFS Discussion <jfs-discussion@lists.sourceforge.net>, linux-crypto@nl.linux.org
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: RIPEMD160
+--------------030801090004070600060905
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-[cc'ing 4 mailing lists, please reply to *one* list only!]
+I'm having a problem loading Reiser4 on my centOS4 box.  The following
+message shows up in the system logs when I run "modprobe reiser4":
+reiser4: Unknown symbol find_get_pages_tag
 
-hi,
+My build, etc... process is:
 
-every now and then i'm running some benchmarks on filesystems i really
-use...here are the results:
+1) Start with clean install of centOS 4.1 x86_64 version
+2) Install kernel sources from centOS distro
+3) Patch sources:
+   a) in /usr/src/linux-2.6.9-11.EL
+   b) run: patch -p0 < reiser4-for-2.6.9-4
+NOTE - is this my complete problem right here?   Are the differences
+between 2.6.9-11 and 2.6.9-4 significant enough to account for this?
+4) make menuconfig - enabling reiser4 as a module
+5) make
+6) make binrpm-pkg
+7) Install the resultant RPM
+8) run mkinitrd /boot/initrd-2.6.9-11.ELcustom.img 2.6.9011.ELcustom
+9) Update grub.conf:
+   title CentOS-4 x86_64 Resier (2.6.9-11.ELcustom)
+        root (hd0,0)
+        kernel /vmlinuz-2.6.9-11.ELcustom ro root=LABEL=/1
+        initrd /initrd-2.6.9-11.ELcustom.img
+10) reboot, and select the custom kernel
+11) Run mkfs.reiser4
+12) run modprobe reiser4, or just try to mount the new file system
 
-http://nerdbynature.de/bench/prinz64/2.6.14-rc2-mm2/bonnie.html
-http://nerdbynature.de/bench/prinz64/2.6.14-rc2-mm2/
 
-may it be of some help....
+Any thoughts?  Has anyone had any success using Resier4 on centOS 4.1? 
+If so, did you follow this process, or another?
 
-thanks,
-Christian.
+thanks!
 
-PS: reiser4 not included because of the recent compile error, i'll
-    probably add this one.
-- --
-BOFH excuse #197:
+-Steve J
 
-I'm sorry a pentium won't do, you need an SGI to connect with us.
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+-- 
+Steve Jacobson
+Support Manager
+SourceLabs, Inc.
+steve@sourcelabs.com
+(206) 322-0099 x110
 
-iD8DBQFDRwciC/PVm5+NVoYRAy8FAJ4/OAdv9skHmsC5Q0fjy0+qi7HuIgCfSMQs
-1EcbBrnIh21MxajBvMtVw4g=
-=aFUJ
------END PGP SIGNATURE-----
+
+--------------030801090004070600060905--
