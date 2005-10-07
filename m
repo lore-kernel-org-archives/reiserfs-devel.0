@@ -1,41 +1,53 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: reiser3 and O_DIRECT read
-Date: Fri, 07 Oct 2005 17:29:46 +0400
-Message-ID: <4346784A.1050208@namesys.com>
-References: <Pine.LNX.4.61.0510071208030.1805@dacun.noviforum.si>
+From: evilninja <evilninja@gmx.net>
+Subject: benchmarks galore...
+Date: Sat, 08 Oct 2005 01:39:14 +0200
+Message-ID: <43470722.4040408@gmx.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26421-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.61.0510071208030.1805@dacun.noviforum.si>
+Return-path: <ext3-users-bounces@redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/ext3-users>,
+	<mailto:ext3-users-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/ext3-users>
+List-Post: <mailto:ext3-users@redhat.com>
+List-Help: <mailto:ext3-users-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/ext3-users>,
+	<mailto:ext3-users-request@redhat.com?subject=subscribe>
+Sender: ext3-users-bounces@redhat.com
+Errors-To: ext3-users-bounces@redhat.com
 Content-Type: text/plain; charset="us-ascii"
-To: Gorazd Golob <gorazdg@noviforum.si>
-Cc: reiserfs-list@namesys.com
+To: Ext3-users@redhat.com
+Cc: ReiserFS List <reiserfs-list@namesys.com>, "linux-xfs@oss.sgi.com" <linux-xfs@oss.sgi.com>, JFS Discussion <jfs-discussion@lists.sourceforge.net>, linux-crypto@nl.linux.org
 
-Hello
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: RIPEMD160
 
-Gorazd Golob wrote:
-> re!
-> 
-> Are we looking on wrong suspect - snip from code looks like this:
-> 
-> fd = open(f, O_RDONLY | O_DIRECT, 0);
-> 
-> and is not working for reiserfs3 filesystem?
-> 
+[cc'ing 4 mailing lists, please reply to *one* list only!]
 
-reiserfs is supposed to support O_DIRECT. Please provide more details about the
-problem.
+hi,
 
-> Or in other words is reiserfs3 supporting reading with O_DIRECT flag?
-> Writing works well with 0_DIRECT on reiserfs3.
-> 
-> Gorazd
-> 
-> 
-> 
+every now and then i'm running some benchmarks on filesystems i really
+use...here are the results:
 
+http://nerdbynature.de/bench/prinz64/2.6.14-rc2-mm2/bonnie.html
+http://nerdbynature.de/bench/prinz64/2.6.14-rc2-mm2/
+
+may it be of some help....
+
+thanks,
+Christian.
+
+PS: reiser4 not included because of the recent compile error, i'll
+    probably add this one.
+- --
+BOFH excuse #197:
+
+I'm sorry a pentium won't do, you need an SGI to connect with us.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+
+iD8DBQFDRwciC/PVm5+NVoYRAy8FAJ4/OAdv9skHmsC5Q0fjy0+qi7HuIgCfSMQs
+1EcbBrnIh21MxajBvMtVw4g=
+=aFUJ
+-----END PGP SIGNATURE-----
