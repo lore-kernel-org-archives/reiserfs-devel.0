@@ -1,38 +1,34 @@
-From: Markus Schoder <a3vr6dsg-lkml@yahoo.de>
-Subject: Soft lockup on amd64 with 2.6.14-rc2-mm2
-Date: Sat, 8 Oct 2005 18:20:10 +0200
-Message-ID: <200510081820.10982.a3vr6dsg-lkml@yahoo.de>
+From: "Lois Swain" <goodson.daniellalasz@gmail.com>
+Subject: Unique Logos / customer recognition (ID0782518)
+Date: Sun, 9 Oct 2005 14:49:28 +0000
+Message-ID: <356.782045173709$1128883915@news.gmane.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26431-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26434-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hi,
+tzx
 
-I'am seeing the same problem with 2.6.14-rc2-mm2 reported here
-http://marc.theaimsgroup.com/?l=linux-kernel&m=112846227916654
+Our art team creates a custom logo for you, based on your needs.  Years of experience have taught us how to create a logo that makes a statement that is unique to you.
 
-Also on an amd64 machine (single-core however). Also when running
-apt-get update. I do not see any filesystem corruption after reboot
-however.
+In a professional manner we learn about your image and how you would like the world to perceive you and your company.  With this information we then create a logo that is not only unique but reflects the purpose of you and your company.
 
-I would be quite happy to test patches or help in any other way
-possible.
+For value and a logo that reflects your image, take a few minutes and visit Try Logos!
 
---
-Markus
+http://caucasus.info.trylogos.org
 
-	
+Sincerely,
+Logo Design Team
+ 
 
-	
-		
-___________________________________________________________ 
-Gesendet von Yahoo! Mail - Jetzt mit 1GB Speicher kostenlos - Hier anmelden: http://mail.yahoo.de
+
+
+
+ command canton canaveral
 
