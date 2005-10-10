@@ -1,43 +1,42 @@
-From: Matt Stegman <matts@ksu.edu>
+From: michael chang <thenewme91@gmail.com>
 Subject: Re: Reiser4 file recovery
-Date: Mon, 10 Oct 2005 11:11:04 -0500 (CDT)
-Message-ID: <Pine.GSO.4.44L.0510101106550.21679-100000@unix2.cc.ksu.edu>
-References: <200510101723.53412.chrivers@iversen-net.dk>
+Date: Mon, 10 Oct 2005 12:30:43 -0400
+Message-ID: <b14e81f00510100930t5c6129e0ld5c4970674ef19d8@mail.gmail.com>
+References: <434A633C.6030507@darthvader.us>
+	 <b14e81f00510100806p7a337ebemec0d193dee57df52@mail.gmail.com>
+	 <200510101714.35937.chrivers@iversen-net.dk>
+	 <434A8664.2060208@darthvader.us> <20051010154410.GA10745@favonius>
+	 <b14e81f00510100848w185b405fm1298cfbc09b05f7f@mail.gmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-26456-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26457-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200510101723.53412.chrivers@iversen-net.dk>
+In-Reply-To: <b14e81f00510100848w185b405fm1298cfbc09b05f7f@mail.gmail.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-On Mon, 10 Oct 2005, Christian Iversen wrote:
-> Since you lost all the metadata, recovery of the filesystem structure is
-> impossible. What you can still do, however, is attempt automated recovery
-> using file "magic"-signatures. One very good program that does exactly this,
-> is Jonas Jensen's Magic Rescue:
+On 10/10/05, Sander <sander@humilis.net> wrote:
+> Yiannis Mavroukakis wrote (ao):
+> > Thanks for the suggestions guys...however I should have clarified that
+> > I no longer have the dead disk (long story...)
 >
-> http://jbj.rapanden.dk/magicrescue/
+> FWIW, I'm interested in the story if you don't mind :-)
+
+Ditto.
+
+> > so I am kind of stuck with what I have...Am I stuffed ?
 >
-> This has many "recipes" for finding files. The included ones can search for
-> png, jpeg, zip and several others. I know there's a recipe for MP3s as well.
->
-> Let us know how it works out.
+> You just lost one-third of your data, right?
 
-Just hope and pray your files aren't fragmented at all.  If they are, then
-you NEED the metadata to know which fragments belong to which files (and
-with Reiser's tail packing, file tails are located in tree nodes [I think]
-which would be even harder to reconstruct).
+Depends if all the MP3s were on that 1/3rd of the data that was lost.
+If so, then yes, you are really badly stuffed.
 
-In short, never throw away data if you want to have a chance of recovery.
-If you can get that first disk back, do so before trying anything.
-
--- 
-Matt Stegman
-
-
-
+--
+~Mike
+ - Just my two cents
+ - No man is an island, and no man is unable.
