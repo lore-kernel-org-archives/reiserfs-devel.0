@@ -1,33 +1,43 @@
-From: Sander <sander@humilis.net>
+From: Matt Stegman <matts@ksu.edu>
 Subject: Re: Reiser4 file recovery
-Date: Mon, 10 Oct 2005 17:44:10 +0200
-Message-ID: <20051010154410.GA10745@favonius>
-References: <434A633C.6030507@darthvader.us> <b14e81f00510100806p7a337ebemec0d193dee57df52@mail.gmail.com> <200510101714.35937.chrivers@iversen-net.dk> <434A8664.2060208@darthvader.us>
-Reply-To: sander@humilis.net
+Date: Mon, 10 Oct 2005 11:11:04 -0500 (CDT)
+Message-ID: <Pine.GSO.4.44L.0510101106550.21679-100000@unix2.cc.ksu.edu>
+References: <200510101723.53412.chrivers@iversen-net.dk>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-26455-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26456-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <434A8664.2060208@darthvader.us>
+In-Reply-To: <200510101723.53412.chrivers@iversen-net.dk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yiannis Mavroukakis <jander@darthvader.us>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Yiannis Mavroukakis wrote (ao):
-> Thanks for the suggestions guys...however I should have clarified that
-> I no longer have the dead disk (long story...)
+On Mon, 10 Oct 2005, Christian Iversen wrote:
+> Since you lost all the metadata, recovery of the filesystem structure is
+> impossible. What you can still do, however, is attempt automated recovery
+> using file "magic"-signatures. One very good program that does exactly this,
+> is Jonas Jensen's Magic Rescue:
+>
+> http://jbj.rapanden.dk/magicrescue/
+>
+> This has many "recipes" for finding files. The included ones can search for
+> png, jpeg, zip and several others. I know there's a recipe for MP3s as well.
+>
+> Let us know how it works out.
 
-FWIW, I'm interested in the story if you don't mind :-)
+Just hope and pray your files aren't fragmented at all.  If they are, then
+you NEED the metadata to know which fragments belong to which files (and
+with Reiser's tail packing, file tails are located in tree nodes [I think]
+which would be even harder to reconstruct).
 
-> so I am kind of stuck with what I have...Am I stuffed ?
-
-You just lost one-third of your data, right?
+In short, never throw away data if you want to have a chance of recovery.
+If you can get that first disk back, do so before trying anything.
 
 -- 
-Humilis IT Services and Solutions
-http://www.humilis.net
+Matt Stegman
+
+
+
