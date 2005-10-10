@@ -1,50 +1,86 @@
-From: Gregory Maxwell <gmaxwell@gmail.com>
-Subject: Re: Reiser4 file recovery
-Date: Mon, 10 Oct 2005 11:27:56 -0400
-Message-ID: <e692861c0510100827s72d3d119g9b8e881c120d86a5@mail.gmail.com>
-References: <434A633C.6030507@darthvader.us>
-	 <b14e81f00510100806p7a337ebemec0d193dee57df52@mail.gmail.com>
-	 <200510101714.35937.chrivers@iversen-net.dk>
-Reply-To: Gregory Maxwell <gmaxwell@gmail.com>
+From: Gorazd Golob <gorazdg@noviforum.si>
+Subject: Re: reiser3 and O_DIRECT read
+Date: Mon, 10 Oct 2005 17:40:01 +0200 (CEST)
+Message-ID: <Pine.LNX.4.61.0510101734440.3955@dacun.noviforum.si>
+References: <Pine.LNX.4.61.0510071208030.1805@dacun.noviforum.si>
+ <4346784A.1050208@namesys.com> <Pine.LNX.4.61.0510101223390.3955@dacun.noviforum.si>
+ <434A5D19.2030006@namesys.com> <Pine.LNX.4.61.0510101428500.3955@dacun.noviforum.si>
+ <434A67EB.5070600@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26452-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26453-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200510101714.35937.chrivers@iversen-net.dk>
-Content-Disposition: inline
+In-Reply-To: <434A67EB.5070600@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Christian Iversen <chrivers@iversen-net.dk>
+Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
+Content-Transfer-Encoding: 7bit
+To: "Vladimir V. Saveliev" <vs@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-On 10/10/05, Christian Iversen <chrivers@iversen-net.dk> wrote:
 
-> > I suggest you run Spinrite (grc.com, ~$50 IIRC) on the bad disk from a
-> > floppy or CD-ROM in DOS (the program makes images for you in Windows,
-> > if you have a working partition, or you can get images from the site
-> > IIRC once you've bought a copy) and see how much is recovered
-> > (assuming it's just bad sectors or something).  Re-add it to the LVM,
-> > recover to a seperate media, and then convert the whole thing to a
-> > RAID (maybe via tar?).  I know it's not a free solution, but data
-> > recovery is nearly impossible w/o paying in one way, shape, or form.
-> > It's easier to have backups.
+It doesn't work right - your example :(
+
+Our programmers said that ssize_t type should be used instead of size_t 
+for rd variable..
+
+in code is:
+
+size_t rd;
+
+
+tnx, gorazd
+
+
+On Mon, 10 Oct 2005, Vladimir V. Saveliev wrote:
+
+> Hello
 >
-> As usually, Gibson "Research" is skimpy on details, so I'm not entirely s=
-ure
-> if spinrite is anything more than a disk imager. If not, just use the fre=
-e
-> (gratis && libre) dd_rescue program instead. It will save you $50.
-
-A decade ago spinright would put the disk into a low level mode where
-it could read the ADC output and complete raw sectors... then it
-performed something like PRML to recover the data. It was a miracle
-worker. Back then, between that and a huge box of spare drives to swap
-parts from I was able to recover almost all any dead drive that
-crossed my desk.
-
-No clue what spinrite does today, as I doubt that sort of low level
-access is still possible, and even if it is, drives have become smart
-enough to do a lot of that on their own.
+> Gorazd Golob wrote:
+>>
+>>
+>> On Mon, 10 Oct 2005, Vladimir V. Saveliev wrote:
+>>
+>>>
+>>> Does it work on ext2?
+>> Yes it work on ext2, ext3, xfs ..
+>>
+>>> Are you sure that file offset is properly aligned?
+>> Yes ..
+>>
+> Would you please try whether the attached program works for you?
+>
+>>
+>>>
+>>>> Without O_DIRECT works fine as said in previous mails. Write with
+>>>> O_DIRECT works fine. Kernel version is:
+>>>> Linux xxxx 2.6.12.6 #6 SMP Thu Sep 15 12:29:53 CEST 2005 x86_64 Intel(R)
+>>>> Xeon(TM) CPU 3.00GHz GenuineIntel GNU/Linux
+>>>>
+>>>> please let me know if you need more info.
+>>>>
+>>>> tnx, Gorazd
+>>>>
+>>>>
+>>>>
+>>>>
+>>>>
+>>>>
+>>>>>> Or in other words is reiserfs3 supporting reading with O_DIRECT flag?
+>>>>>> Writing works well with 0_DIRECT on reiserfs3.
+>>>>>>
+>>>>>> Gorazd
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>
+>>>>>
+>>>>
+>>>>
+>>>
+>>>
+>>
+>>
+>
+>
