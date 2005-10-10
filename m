@@ -1,34 +1,46 @@
-From: "Lois Swain" <goodson.daniellalasz@gmail.com>
-Subject: Unique Logos / customer recognition (ID0782518)
-Date: Sun, 9 Oct 2005 14:49:28 +0000
-Message-ID: <356.782045173709$1128883915@news.gmane.org>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: benchmarks galore...
+Date: Sun, 09 Oct 2005 18:36:42 -0700
+Message-ID: <4349C5AA.4020401@namesys.com>
+References: <43470722.4040408@gmx.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26434-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26437-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <43470722.4040408@gmx.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: evilninja <evilninja@gmx.net>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-tzx
+evilninja wrote:
 
-Our art team creates a custom logo for you, based on your needs.  Years of experience have taught us how to create a logo that makes a statement that is unique to you.
+> [cc'ing 4 mailing lists, please reply to *one* list only!]
+>
+> hi,
+>
+> every now and then i'm running some benchmarks on filesystems i really
+> use...here are the results:
+>
+> http://nerdbynature.de/bench/prinz64/2.6.14-rc2-mm2/bonnie.html
+> http://nerdbynature.de/bench/prinz64/2.6.14-rc2-mm2/
+>
+> may it be of some help....
+>
+> thanks,
+> Christian.
+>
+> PS: reiser4 not included because of the recent compile error, i'll
+>     probably add this one.
+> --
+> BOFH excuse #197:
+>
+> I'm sorry a pentium won't do, you need an SGI to connect with us.
 
-In a professional manner we learn about your image and how you would like the world to perceive you and your company.  With this information we then create a logo that is not only unique but reflects the purpose of you and your company.
+Well, that is probably good for us, because performance went down and we
+are still fixing it.;-)
 
-For value and a logo that reflects your image, take a few minutes and visit Try Logos!
-
-http://caucasus.info.trylogos.org
-
-Sincerely,
-Logo Design Team
- 
-
-
-
-
- command canton canaveral
-
+Hans
