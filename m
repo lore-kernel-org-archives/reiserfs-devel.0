@@ -1,57 +1,147 @@
-From: Yiannis Mavroukakis <jander@darthvader.us>
-Subject: Re: Reiser4 file recovery
-Date: Mon, 10 Oct 2005 23:56:02 +0100
-Message-ID: <434AF182.9000302@darthvader.us>
-References: <434A633C.6030507@darthvader.us>	 <b14e81f00510100806p7a337ebemec0d193dee57df52@mail.gmail.com>	 <200510101714.35937.chrivers@iversen-net.dk>	 <434A8664.2060208@darthvader.us> <20051010154410.GA10745@favonius>	 <b14e81f00510100848w185b405fm1298cfbc09b05f7f@mail.gmail.com> <b14e81f00510100930t5c6129e0ld5c4970674ef19d8@mail.gmail.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: reiser3 and O_DIRECT read
+Date: Tue, 11 Oct 2005 10:10:33 +0400
+Message-ID: <434B5759.1090604@namesys.com>
+References: <Pine.LNX.4.61.0510071208030.1805@dacun.noviforum.si> <4346784A.1050208@namesys.com> <Pine.LNX.4.61.0510101223390.3955@dacun.noviforum.si> <434A5D19.2030006@namesys.com> <Pine.LNX.4.61.0510101428500.3955@dacun.noviforum.si> <434A67EB.5070600@namesys.com> <Pine.LNX.4.61.0510101734440.3955@dacun.noviforum.si>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26463-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ boundary="------------020600070204010203080205"
+Return-path: <reiserfs-list-return-26467-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b14e81f00510100930t5c6129e0ld5c4970674ef19d8@mail.gmail.com>
+In-Reply-To: <Pine.LNX.4.61.0510101734440.3955@dacun.noviforum.si>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: Gorazd Golob <gorazdg@noviforum.si>
+Cc: reiserfs-list@namesys.com
 
-michael chang wrote:
+--------------020600070204010203080205
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
->On 10/10/05, Sander <sander@humilis.net> wrote:
->  
->
->>Yiannis Mavroukakis wrote (ao):
->>    
+Hello
+
+Gorazd Golob wrote:
+> 
+> It doesn't work right - your example :(
+> 
+> Our programmers said that ssize_t type should be used instead of size_t
+> for rd variable..
+> 
+
+ok, yes, I agree. But it should not change anything.
+Please try new version. It works fine here. How does it behave on your side?
+
+> in code is:
+> 
+> size_t rd;
+> 
+> 
+> tnx, gorazd
+> 
+> 
+> On Mon, 10 Oct 2005, Vladimir V. Saveliev wrote:
+> 
+>> Hello
 >>
->>>Thanks for the suggestions guys...however I should have clarified that
->>>I no longer have the dead disk (long story...)
->>>      
+>> Gorazd Golob wrote:
 >>>
->>FWIW, I'm interested in the story if you don't mind :-)
->>    
->>
->
->Ditto.
->
->  
->
->>>so I am kind of stuck with what I have...Am I stuffed ?
->>>      
 >>>
->>You just lost one-third of your data, right?
->>    
+>>> On Mon, 10 Oct 2005, Vladimir V. Saveliev wrote:
+>>>
+>>>>
+>>>> Does it work on ext2?
+>>> Yes it work on ext2, ext3, xfs ..
+>>>
+>>>> Are you sure that file offset is properly aligned?
+>>> Yes ..
+>>>
+>> Would you please try whether the attached program works for you?
 >>
->
->Depends if all the MP3s were on that 1/3rd of the data that was lost.
->If so, then yes, you are really badly stuffed.
->
->n island, and no man is unable.
->  
->
-I am hoping they are on the other two..we'll see tomorrow..
-as for the how..it involves me cleaning the server in the balcony, spray
-dusting a drive *over*
-the balcony and jumping out of my skin when a friend tapped me on the
-shoulder (thought I was alone in the flat)..
-Drive vs Gravity 0 - 1
+>>>
+>>>>
+>>>>> Without O_DIRECT works fine as said in previous mails. Write with
+>>>>> O_DIRECT works fine. Kernel version is:
+>>>>> Linux xxxx 2.6.12.6 #6 SMP Thu Sep 15 12:29:53 CEST 2005 x86_64
+>>>>> Intel(R)
+>>>>> Xeon(TM) CPU 3.00GHz GenuineIntel GNU/Linux
+>>>>>
+>>>>> please let me know if you need more info.
+>>>>>
+>>>>> tnx, Gorazd
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>>> Or in other words is reiserfs3 supporting reading with O_DIRECT
+>>>>>>> flag?
+>>>>>>> Writing works well with 0_DIRECT on reiserfs3.
+>>>>>>>
+>>>>>>> Gorazd
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>
+>>>>>>
+>>>>>
+>>>>>
+>>>>
+>>>>
+>>>
+>>>
+>>
+>>
+> 
+> 
 
+
+--------------020600070204010203080205
+Content-Type: text/x-c;
+ name="test-direct-io.c"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="test-direct-io.c"
+
+#define _XOPEN_SOURCE 600
+#include <stdio.h>
+#include <unistd.h>
+#include <malloc.h>
+#include <stdlib.h>
+#include <fcntl.h>
+
+#define O_DIRECT   040000
+
+int main(int argc, char **argv)
+{
+	int fd;
+	ssize_t rd;
+	char *buf;
+
+	if (argc != 2) {
+		printf("%s filename\n", argv[0]);
+		return 0;
+	}
+	fd = open(argv[1], O_RDONLY | O_DIRECT);
+	if (fd == -1) {
+		perror("open failed");
+		return 0;
+	}
+	if (posix_memalign((void **)&buf, 4096, 4096)) {
+		perror("malloc failed");
+                return 0;
+	}
+	rd = read(fd, buf, 4096);
+	if (rd != 4096) {
+                perror("read failed");
+                return 0;
+	}
+	printf("read ok\n");
+	free(buf);
+	close(fd);
+	return 0;
+}
+
+--------------020600070204010203080205--
