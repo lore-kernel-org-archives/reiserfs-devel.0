@@ -1,103 +1,63 @@
-From: Gregory Maxwell <gmaxwell@gmail.com>
-Subject: Transactions faster than locking
-Date: Tue, 11 Oct 2005 14:17:45 -0400
-Message-ID: <e692861c0510111117v23b13b5ewb491d852ea7ab619@mail.gmail.com>
+From: jp.guillemin@free.fr
+Subject: Re: 2.6.13.2 + reiser4 system hangs and poor performance
+Date: Wed, 12 Oct 2005 11:08:55 +0200
+Message-ID: <1129108135.434cd2a7f2e08@imp5-g19.free.fr>
+References: <623652d50510110922j319d5325i@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26492-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-26500-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <623652d50510110922j319d5325i@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
-
-Saw this on the Postgres list, and I thought this might be interesting
-for some of the users here. Interesting in general to think about
-expanding transaction orientation in software, with Reiser4 providing
-efficient transactions down to the block update level.
-
----------- Forwarded message ----------
-From: Dann Corbit <DCorbit@connx.com>
-Date: Oct 11, 2005 2:09 PM
-Subject: Re: [HACKERS] Spinlocks and CPU Architectures
-To: Simon Riggs <simon@2ndquadrant.com>, Peter Eisentraut <peter_e@gmx.net>
-Cc: pgsql-hackers@postgresql.org, Tom Lane <tgl@sss.pgh.pa.us>,
-robennals@users.sourceforge.net
+To: Chris Bainbridge <chris.bainbridge@gmail.com>
+Cc: reiserfs-list@namesys.com
 
 
+Hi,
 
-As an aside, here is a package that has recently been BSD re-licensed:
-http://sourceforge.net/projects/libltx/
+I can confirm this problem :
 
-It is a lightweight memory transaction package.  It comes with a paper
-entitled "Cache Sensitive Software Transactional Memory" by Robert
-Ennals.
+Process or System hang during depmod -> need hard shutdown to get out.
 
-In the paper, Robert Ennals suggests this form of concurrent programming
-as a replacement for lock based programming.  A quote:
-"We have now reached the point where transactions are outperforming
-locks -- and people are starting to get interested."
+Tested on 2.6.13, 2.6.13.2 , 2.6.13.3.
 
-There are a number of interesting claims in the paper.  Since the
-license is now compatible, it may have some interest for integration
-into the PostgreSQL core where appropriate.
+No problem with 2.6.13mm3.
 
-It would certainly be worthwhile to read the paper and fool around with
-the supplied test driver to compare the approaches.
+How to reproduce it : Install the latest Nvidia driver.
 
-If nobody on the PostgreSQL team has time for the experimentations, it
-might be a good project for a PhD candidate at some university.
+No logs.
 
-> -----Original Message-----
-> From: pgsql-hackers-owner@postgresql.org [mailto:pgsql-hackers-
-> owner@postgresql.org] On Behalf Of Simon Riggs
-> Sent: Tuesday, October 11, 2005 10:56 AM
-> To: Peter Eisentraut
-> Cc: pgsql-hackers@postgresql.org; Tom Lane
-> Subject: Re: [HACKERS] Spinlocks and CPU Architectures
+Best regards
+
+JP
+
+
+Selon Chris Bainbridge <chris.bainbridge@gmail.com>:
+
+> Hi,
 >
-> On Tue, 2005-10-11 at 18:45 +0200, Peter Eisentraut wrote:
-> > Tom Lane wrote:
-> > > This seems pretty unworkable from a packaging standpoint.  Even if
-> > > you teach autoconf how to tell which model it's running on,
-there's
-> > > no guarantee that the resulting executables will be used on that
-same
-> > > machine.
-> >
-> > A number of packages in the video area (and perhaps others) do
-compile
-> > "sub-architecture" specific variants.  This could be done for
-> > PostgreSQL, but you'd probably need to show some pretty convincing
-> > performance numbers before people start the packaging effort.
+> Since updating to 2.6.13.2 last week I've had a couple of system hangs
+> which required a poweroff. I can now reproduce a bad performance +
+> can't reboot situation. I'm using gentoo with a reiser4 root
+> partition. I've only tested this on my own system, so if another
+> 2.6.13.2 + reiser4 gentoo user could try this that would be useful.
 >
-> I completely agree, just note that we already have some cases where
-> convincing performance numbers exist.
+> Under 2.6.12.5, do 'time emerge =sun-jdk-1.5.0.05'. Total time is 2
+> minutes 10 seconds.
+> Under 2.6.13.2, do 'time emerge =sun-jdk-1.5.0.05'. Total time is 6
+> minutes 51 seconds. Will appear to hang at the "gzipping man page:
+> unpack200.1" but eventually finishes. After this, attempting to
+> shutdown will result in a system hang.
 >
-> Tom is suggesting having different behaviour for x86 and x86_64. The
-x86
-> will still run on x86_64 architecture would it not? So we'll have two
-> binaries for each OS, yes?
+> Like I said, this happens every time I emerge that package. Probably
+> it causes some pattern of disk I/O that triggers a bug in reiser4.
+> During the hang time, the pdflush process is taking up most of the
+> cpu, and there is almost no disk i/o. I tested with a non-preempt
+> kernel, and get the same. With 2.6.12.5, everything is okay.
 >
-> In general, where we do find a clear difference, we should at very
-least
-> identify/record which variant the binary is most suitable for. At best
-> we could produce different executables, but I understand the packaging
-> effort required to do that.
->
-> Best Regards, Simon Riggs
->
->
->
->
-> ---------------------------(end of
-broadcast)---------------------------
-> TIP 4: Have you searched our list archives?
->
->                http://archives.postgresql.org
 
----------------------------(end of broadcast)---------------------------
-TIP 2: Don't 'kill -9' the postmaster
+
