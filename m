@@ -1,39 +1,51 @@
-From: =?iso-8859-2?q?V=E1clav_H=F9la?= <ax@natur.cuni.cz>
-Subject: Re: Reiser4 problems on gentoo & 2.6.14-rc1-mm1
-Date: Wed, 12 Oct 2005 17:35:45 +0200
-Message-ID: <200510121735.45874.ax@natur.cuni.cz>
-References: <200510121243.55956.ax@natur.cuni.cz> <434CF0B9.7030406@namesys.com>
-Reply-To: ax@natur.cuni.cz
+From: Wiktor Wandachowicz <wiktorw@people.pl>
+Subject: Could reiserfsprogs display volume labels when doing fsck upon boot?
+Date: Fri, 14 Oct 2005 11:40:39 +0200
+Message-ID: <434F7D17.1030203@people.pl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26511-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26518-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <434CF0B9.7030406@namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hi.
+Recently I've changed a filesystem on one of my patitions from ext3 to 
+reiserfs 3.6.
 
-Dne st=F8eda 12 =F8=EDjna 2005 13:17 Vladimir V. Saveliev napsal(a):
-> Hello
->
-> I believe it is fixed in 2.6.14-rc2-mm2. Please use it.
->
-> PS: if it still does not work - try to set REISER4_USE_EFLUSH macro (it is
-> in file fs/reiser4/reiser4.h) to 1.
-> If that does not help - please report.
+All of my partitions have labels (hint: "mke2fs -L") so at boot I can easily see
+which partitions are fsck-ed. So while reformatting my last partition /dev/hda8
+as reiserfs 3.6, I've labeled it too (hint: "mkreiserfs -l").
 
-After patching (thanks Sander) I managed to compile 2.6.14-rc2-mm2, looks=20
-working. (after one-and-half hour of compiling no errors in syslog)
+Alas, upon boot reiserfsck never displays a volume label set this way, only:
 
-Ax
-=2D-=20
-V=E1clav H=F9la,
-spr=E1vce po=B9tovn=EDho serveru
-P=F8=EDrodov=ECdeck=E1 fakulta
-Univerzita Karlova v Praze
+Reiserfs super block in block 16 on 0x307 of format 3.6 with standard journal
+
+While ext2/ext3 fsck displays a neat message for every partition it checks, like:
+
+BOOT: clean, 62/297256 files, 60311/594405 blocks
+
+
+So, I wanted to ask you: is adding such a functionality to reiserfsck a good idea?
+I've tried to add it myself and it turned out to be four lines in one source file
+(well, two lines actually doing the job, because one line is a comment and another
+one contains a curly bracket). I have a small patch against reiserfsprogs-3.6.19
+(applicable to the 3.6.18 and 3.6.17) ready to be sent.
+
+Now my reiserfsck tests if volume label exists, and in such case displays it like:
+
+SPARE: Reiserfs super block in block 16 on 0x307 of format 3.6 with standard journal
+
+
+And yes, I know it's cosmetic :-)
+
+But for me it's nice to have. This way my system behaves in a more consistent way.
+Maintainers I asked from my distribution suggested to ask my question at the source.
+What is your opinion then, reiserfs people?
+
+Friendly,
+Wiktor Wandachowicz
+
