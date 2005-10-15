@@ -1,64 +1,54 @@
-From: Yiannis Mavroukakis <jander@darthvader.us>
-Subject: Re: Could reiserfsprogs display volume labels when doing fsck upon
- boot?
-Date: Sat, 15 Oct 2005 13:19:20 +0100
-Message-ID: <4350F3C8.3070600@darthvader.us>
-References: <434F7D17.1030203@people.pl> <200510141607.21066.vitaly@namesys.com> <200510141507.29640.rmeijer@internet.gr> <200510141620.28514.vitaly@namesys.com>
+From: ch4os <chaosworldwide@gmail.com>
+Subject: undelete a file
+Date: Sat, 15 Oct 2005 07:55:35 -0700
+Message-ID: <64769d960510150755y542a620cj411d8a529538317b@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26533-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_11508_30041680.1129388135073"
+Return-path: <reiserfs-list-return-26534-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200510141620.28514.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Vitaly Fertman wrote:
+------=_Part_11508_30041680.1129388135073
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
->On Friday 14 October 2005 16:07, Raymond A. Meijer wrote:
->  
->
->>On Friday 14 October 2005 15:07, Vitaly Fertman wrote:
->>
->>[...]
->>
->>    
->>
->>>ok, I will add it.
->>>      
->>>
->>Vitaly, is it possible to add labels to Reiser4 filesystems AFTER mkfs, 
->>or only during mkfs?
->>    
->>
->
->only on mkfs time for now.
->
->  
->
-For reiser4, would this do it?
-in function *reiser4_master_open(aal_device_t *device) in
-libreiser4/master.c
+I just made a bad mistake...
 
-  /* Reiser4 master super block is not found on the device. */
-        if (aal_strncmp(SUPER(master)->ms_magic, REISER4_MASTER_MAGIC,
-                        sizeof(REISER4_MASTER_MAGIC)) != 0)
-        {
-                aal_fatal("Wrong magic found in the master "
-                          "super block.");
-                goto error_free_master;
-        }
-        /* Print volume label */
-        aal_mess(reiser4_master_get_label(master));
+I just RM the files from /var/lib/ldap
+thinking I was coping them.... still a little hung over....
 
-        return master;
+df:
+Filesystem 1K-blocks Used Available Use% Mounted on
+/dev/sda2 69535216 28047868 41487348 41% /
+tmpfs 1031020 4 1031016 1% /dev/shm
 
- error_free_master:
-        aal_free(master);
-        return NULL;
+Anyway to undelete them? or recover them... I had just backuped them up and
+was going to move them to a new backup location on an external drive...
 
+Thanks!!
 
-Stab in the dark :P
+------=_Part_11508_30041680.1129388135073
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+I just made a bad mistake... <br><br>I just RM the files from /var/lib/ldap=
+<br>thinking I was coping them.... still a little hung over.... <br><br>df:=
+<br>Filesystem&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =
+1K-blocks&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Used Available Use% Mounted on<br>
+/dev/sda2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp; 69535216&nbsp; 28047868&nbsp; 41487348&nbsp; 41% /<br>tmpfs&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp; 1031020&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =
+4&nbsp;&nbsp; 1031016&nbsp;&nbsp; 1% /dev/shm<br><br>Anyway to undelete the=
+m? or recover them... I had just backuped them up and was going to move the=
+m to a new backup location on an external drive...=20
+<br><br>Thanks!!<br><br><br>
+
+------=_Part_11508_30041680.1129388135073--
