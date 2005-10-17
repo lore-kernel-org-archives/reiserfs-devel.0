@@ -1,53 +1,74 @@
-From: evilninja <evilninja@gmx.net>
-Subject: Re: Reiserfsck can't fix FS
-Date: Mon, 17 Oct 2005 01:37:29 +0200
-Message-ID: <4352E439.8030402@gmx.net>
-References: <1129303303.3370.4.camel@desktop>	 <200510142008.42253.vitaly@namesys.com> <1129484435.16949.1.camel@desktop>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: Could reiserfsprogs display volume labels when doing fsck upon boot?
+Date: Mon, 17 Oct 2005 14:03:51 +0400
+Message-ID: <200510171403.51384.vitaly@namesys.com>
+References: <434F7D17.1030203@people.pl> <200510141620.28514.vitaly@namesys.com> <4350F3C8.3070600@darthvader.us>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26544-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26547-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1129484435.16949.1.camel@desktop>
+In-Reply-To: <4350F3C8.3070600@darthvader.us>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
-Cc: Thomas Raschbacher <lordvan@lordvan.com>
+Cc: Yiannis Mavroukakis <jander@darthvader.us>
 
-Thomas Raschbacher schrieb:
+On Saturday 15 October 2005 16:19, Yiannis Mavroukakis wrote:
+> Vitaly Fertman wrote:
 > 
-> as you see it produced no errors at all so the HDD can be read fine. any
-> idea what could cause the problem?
+> >On Friday 14 October 2005 16:07, Raymond A. Meijer wrote:
+> >  
+> >
+> >>On Friday 14 October 2005 15:07, Vitaly Fertman wrote:
+> >>
+> >>[...]
+> >>
+> >>    
+> >>
+> >>>ok, I will add it.
+> >>>      
+> >>>
+> >>Vitaly, is it possible to add labels to Reiser4 filesystems AFTER mkfs, 
+> >>or only during mkfs?
+> >>    
+> >>
+> >
+> >only on mkfs time for now.
+> >
+> >  
+> >
+> For reiser4, would this do it?
+> in function *reiser4_master_open(aal_device_t *device) in
+> libreiser4/master.c
+> 
+>   /* Reiser4 master super block is not found on the device. */
+>         if (aal_strncmp(SUPER(master)->ms_magic, REISER4_MASTER_MAGIC,
+>                         sizeof(REISER4_MASTER_MAGIC)) != 0)
+>         {
+>                 aal_fatal("Wrong magic found in the master "
+>                           "super block.");
+>                 goto error_free_master;
+>         }
+>         /* Print volume label */
+>         aal_mess(reiser4_master_get_label(master));
+> 
+>         return master;
+> 
+>  error_free_master:
+>         aal_free(master);
+>         return NULL;
+> 
+> 
+> Stab in the dark :P
 
-looking once more on your logfiles:
+I would put it into fsck after fs gets opened to not force 
+all callers to get this message. 
+however, 'fsck.reiser4 -a' does not perform any check yet 
+and does not even open fs.
 
- > Pass 1 (will try to insert 16439 leaves):
- > Looking for allocable blocks .. finished
- > 0%....20%....40%....60%....80%.                             left 1982,
- > 176 /sec
- > The problem has occurred looks like a hardware problem (perhaps
- > memory). Send us the bug report only if the second run dies at
- > the same place with the same block number.
- >
- > build_the_tree: Nothing but leaves are expected. Block 10059767 -
- > unknown
-
-the block number is indeed the same on every (?) reiserfsck-run. so maybe 
-you can put your disk into another machine and/or free your usb-disk from 
-usb and use it via (S)ATA? (if possible, to rule out hw-problems).
-
-and:
-
- > I had to run reiserfsck on my usb hdd because there were some problems.
-
-your reiserfs seems to be heavily damaged. can you tell us more about 
-these "problems"?
-
-thanks,
-Christian.
 -- 
-BOFH excuse #76:
-
-Unoptimized hard drive
+Vitaly
