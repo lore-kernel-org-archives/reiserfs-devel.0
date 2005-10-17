@@ -1,61 +1,38 @@
-From: michael chang <thenewme91@gmail.com>
-Subject: Re: Reiserfsck can't fix FS
-Date: Mon, 17 Oct 2005 15:34:49 -0400
-Message-ID: <b14e81f00510171234l4addda48kf73e962b384be6e6@mail.gmail.com>
-References: <1129303303.3370.4.camel@desktop>
-	 <200510142008.42253.vitaly@namesys.com>
-	 <1129484435.16949.1.camel@desktop>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: reiser4 and laptop_mode
+Date: Mon, 17 Oct 2005 18:04:01 -0500
+Message-ID: <43542DE1.7050700@slaphack.com>
+References: <19812996093.20051017162429@usu.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26553-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26554-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1129484435.16949.1.camel@desktop>
-Content-Disposition: inline
+In-Reply-To: <19812996093.20051017162429@usu.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Thomas Raschbacher <lordvan@lordvan.com>
-Cc: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
+To: Sinitsyn Valentine <Valentine.Sinitsyn@usu.ru>
+Cc: reiserfs-list@namesys.com
 
-On 10/16/05, Thomas Raschbacher <lordvan@lordvan.com> wrote:
-> Hi
->
-> just a quick addition:
->
-> I ran this:
->
-> desktop lordvan # dd if=3D/dev/discs/disc2/part6  of=3D/dev/null bs=3D8k
-> 1192384+0 records in
-> 1192384+0 records out
-> 1209296+0 records in
-> 1209296+0 records out
-> 1275725+0 records in
-> 1275725+0 records out
-> 1326505+0 records in
-> 1326505+0 records out
-> 1790232+0 records in
-> 1790232+0 records out
-> 2255571+0 records in
-> 2255571+0 records out
-> 2447343+0 records in
-> 2447343+0 records out
-> 6220163+1 records in
-> 6220163+1 records out
->
-> as you see it produced no errors at all so the HDD can be read fine. any
-> idea what could cause the problem?
+Sinitsyn Valentine wrote:
+> Hi all,
+> 
+> I'm considering installing Reiser4 on my laptop, but I also want to
+> use laptop_mode (http://www.xs4all.nl/~bsamwel/laptop_mode/index.html)
+> to save battery power. So I'm wondering wether these two products are
+> compatible with each other? I know that Reiser3 and ext3 did require
+> special patches (now included in mainstream kernels) which schedule
+> commits in a way which allows hard drive to spin down. I've looked
+> through Google and this mailing list but didn't find any references to
+> similar patches for Reiser4. Are they needed but nobody wrote them yet
+> or is Reiser4 spindown-friendly just out of the box?
 
-IIRC, if there were no errors, dd wouldn't have repeatedly told you
-what records in/out it'd completed, unless you manually tell it to do
-so.
+Reiser4 is spindown-friendly in one way -- until you run out of RAM, it
+won't commit.  In fact, if you have enough RAM, you won't ever touch the
+disk -- deleting a file before it's committed means it never touches disk.
 
-If you didn't touch it and it's saying this, then dd is skipping over
-some dysfunctional blocks.  Otherwise, then yes, dd can read it fine
-(although that doesn't say anything about the data's integrity).
-
---
-~Mike
- - Just my two cents
- - No man is an island, and no man is unable.
+It is not as spindown-friendly as laptop_mode, which notices when the
+drive has to spin up anyway (maybe through a read) and flushes all
+writes.  Don't know if they are compatible.
