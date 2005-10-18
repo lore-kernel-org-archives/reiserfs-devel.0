@@ -1,59 +1,42 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Gregory Maxwell <gmaxwell@gmail.com>
 Subject: Re: reiser4 and laptop_mode
-Date: Mon, 17 Oct 2005 19:28:31 -0700
-Message-ID: <43545DCF.1070301@namesys.com>
+Date: Mon, 17 Oct 2005 22:34:13 -0400
+Message-ID: <e692861c0510171934m56e2a41dw8a780eb6ddb02f6e@mail.gmail.com>
 References: <19812996093.20051017162429@usu.ru> <43542DE1.7050700@slaphack.com>
+	 <43545DCF.1070301@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26555-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26556-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43542DE1.7050700@slaphack.com>
+In-Reply-To: <43545DCF.1070301@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: Sinitsyn Valentine <Valentine.Sinitsyn@usu.ru>, reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: David Masover <ninja@slaphack.com>, Sinitsyn Valentine <Valentine.Sinitsyn@usu.ru>, reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>
 
-David Masover wrote:
+On 10/17/05, Hans Reiser <reiser@namesys.com> wrote:
+> > In fact, if you have enough RAM, you won't ever touch the
+> >disk -- deleting a file before it's committed means it never touches dis=
+k.
+> >
+> >It is not as spindown-friendly as laptop_mode, which notices when the
+> >drive has to spin up anyway (maybe through a read) and flushes all
+> >writes.  Don't know if they are compatible.
+> >
+> >
+> We should work to integrate well with it.  Zam, can you look at that?
+> Thanks.
 
->Sinitsyn Valentine wrote:
->  
->
->>Hi all,
->>
->>I'm considering installing Reiser4 on my laptop, but I also want to
->>use laptop_mode (http://www.xs4all.nl/~bsamwel/laptop_mode/index.html)
->>to save battery power. So I'm wondering wether these two products are
->>compatible with each other? I know that Reiser3 and ext3 did require
->>special patches (now included in mainstream kernels) which schedule
->>commits in a way which allows hard drive to spin down. I've looked
->>through Google and this mailing list but didn't find any references to
->>similar patches for Reiser4. Are they needed but nobody wrote them yet
->>or is Reiser4 spindown-friendly just out of the box?
->>    
->>
->
->Reiser4 is spindown-friendly in one way -- until you run out of RAM, it
->won't commit. 
->
-This is not true (it would need to be fixed if it was).  You can adjust
-how frequent commits are if you don't like our kernel compilation
-optimized defaults.
+Actually, laptop mode flushes when there is a write and sync all
+pending transactions just before spindown. (delaying the write as long
+as possible to hopefully get as much in one pass as possible).
 
-> In fact, if you have enough RAM, you won't ever touch the
->disk -- deleting a file before it's committed means it never touches disk.
->
->It is not as spindown-friendly as laptop_mode, which notices when the
->drive has to spin up anyway (maybe through a read) and flushes all
->writes.  Don't know if they are compatible.
->  
->
-We should work to integrate well with it.  Zam, can you look at that? 
-Thanks.
-
->
->  
->
-
+In the future when enough API is exposed to make a nice interface for
+multi-syscall transactions with partial sync (i.e. only forced syncs
+of blocks related to transactions which demand physical fixation), it
+would be nice if the commit logic were smart enough to grab other
+nearby small transactions and batch them into the same commit.
