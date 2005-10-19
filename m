@@ -1,27 +1,42 @@
 From: evilninja <evilninja@gmx.net>
-Subject: Re: Reiserfsck can't fix FS
-Date: Wed, 19 Oct 2005 22:17:06 +0200
-Message-ID: <4356A9C2.4010109@gmx.net>
-References: <1129303303.3370.4.camel@desktop>     <200510142008.42253.vitaly@namesys.com>     <1129484435.16949.1.camel@desktop>    <b14e81f00510171234l4addda48kf73e962b384be6e6@mail.gmail.com> <53246.213.249.155.242.1129721262.squirrel@213.249.155.242>
+Subject: Re: reiserfs in cryptoloop file is corrupt: all data lost?
+Date: Wed, 19 Oct 2005 22:25:50 +0200
+Message-ID: <4356ABCE.1010009@gmx.net>
+References: <43569E08.8000405@t-online.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26574-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26575-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <53246.213.249.155.242.1129721262.squirrel@213.249.155.242>
+In-Reply-To: <43569E08.8000405@t-online.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
-Cc: lordvan@lordvan.com
+Cc: Detlef Grittner <detlef.grittner@t-online.de>
 
-Thomas Raschbacher schrieb:
-> how would I best copy the filesystem? DD ?
+Detlef Grittner schrieb:
+> An appropriate fstab entry, so a user is allowed to mount the device 
+> looks like this:
+> /home/userX/data         /home/userX/crypto  reiserfs   
+> user,noauto,loop=/dev/loop0,encryption=twofish256,phash=sha512,itercountk=100 
 
-dd, if that does not work then try dd_rescue:
+so, you're using a file-backed cryptoloop setup? these setups are often 
+reported to deadlock. but this only as a side-note...
 
-http://www.garloff.de/kurt/linux/ddrescue/
+> I have done a reiserfsck --check, which told me I should run reiserfsck 
+> --rebuild-sb and then a reiserfsck --rebuild-tree. The last one 
+> obviously failed and just told me that there is no reiserfs meta data.
+
+you ran reiserfsck on what? on the losetup'ed /dev/loop0 i hope ;-)
+please provide the output of the reiserfsck run. please make sure that 
+you're running a current version of reiserfsprogs / current kernel.
+
+> I want to know, if it is worth a try, otherwise I won't spend time and 
+> money on it.
+
+well, it's only $25 at http://www.namesys.com/support.html ;-)
 
 Christian.
 -- 
