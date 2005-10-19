@@ -1,82 +1,75 @@
-From: "Thomas Raschbacher" <lordvan@lordvan.com>
-Subject: Re: Reiserfsck can't fix FS
-Date: Wed, 19 Oct 2005 12:27:42 +0100 (BST)
-Message-ID: <53246.213.249.155.242.1129721262.squirrel@213.249.155.242>
-References: <1129303303.3370.4.camel@desktop> 
-    <200510142008.42253.vitaly@namesys.com> 
-    <1129484435.16949.1.camel@desktop>
-    <b14e81f00510171234l4addda48kf73e962b384be6e6@mail.gmail.com>
-Reply-To: lordvan@lordvan.com
+From: Valentine Sinitsyn <Valentine.Sinitsyn@usu.ru>
+Subject: Re[2]: reiser4 and laptop_mode
+Date: Wed, 19 Oct 2005 18:22:20 +0600
+Message-ID: <768831735.20051019182220@usu.ru>
+References: <19812996093.20051017162429@usu.ru> <43545DCF.1070301@namesys.com>
+ <e692861c0510171934m56e2a41dw8a780eb6ddb02f6e@mail.gmail.com>
+ <200510191233.48315.zam@namesys.com>
+Reply-To: Valentine Sinitsyn <Valentine.Sinitsyn@usu.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-26567-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26568-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b14e81f00510171234l4addda48kf73e962b384be6e6@mail.gmail.com>
+In-Reply-To: <200510191233.48315.zam@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: michael chang <thenewme91@gmail.com>
-Cc: Vitaly Fertman <vitaly@namesys.com>, reiserfs-list@namesys.com
+To: Alexander Zarochentsev <zam@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Actually I did send it SIGUSR1 signals to get the progress so it really
-seems to work fine.
-I intend to get another HDD (internal) and see if i can copy the FS and
-then fix it there.
-how would I best copy the filesystem? DD ?
-(The PRoblems I had before with this disc are USB-storage related where
-the disc does stop working if one reads/writes too much data at once on
-USB2)
+Hi all,
 
--- 
------BEGIN GEEK CODE BLOCK-----
-GCS/CC/E/M/MU/S d- s: a--- C++++(++) UL++++ P+ L++++ E W+++ N+++ o-- K w-- O
-M-- V- PS+ PE-- Y++ PGP+++ t+++ 5+ X- R tv b++++ DI- D+ G++ e-->+++++ h-- !r
-z-
-------END GEEK CODE BLOCK------
+Wednesday, October 19, 2005, 2:33:47 PM, you wrote:
 
-On Mon, October 17, 2005 20:34, michael chang said:
-> On 10/16/05, Thomas Raschbacher <lordvan@lordvan.com> wrote:
->> Hi
+AZ> On Tuesday 18 October 2005 06:34, Gregory Maxwell wrote:
+>> On 10/17/05, Hans Reiser <reiser@namesys.com> wrote:
+>> > > In fact, if you have enough RAM, you won't ever touch the
+>> > >disk -- deleting a file before it's committed means it never touches
+>> > > disk.
+>> > >
+>> > >It is not as spindown-friendly as laptop_mode, which notices when the
+>> > >drive has to spin up anyway (maybe through a read) and flushes all
+>> > >writes.  Don't know if they are compatible.
+>> >
+>> > We should work to integrate well with it.  Zam, can you look at that?
+>> > Thanks.
 >>
->> just a quick addition:
->>
->> I ran this:
->>
->> desktop lordvan # dd if=/dev/discs/disc2/part6  of=/dev/null bs=8k
->> 1192384+0 records in
->> 1192384+0 records out
->> 1209296+0 records in
->> 1209296+0 records out
->> 1275725+0 records in
->> 1275725+0 records out
->> 1326505+0 records in
->> 1326505+0 records out
->> 1790232+0 records in
->> 1790232+0 records out
->> 2255571+0 records in
->> 2255571+0 records out
->> 2447343+0 records in
->> 2447343+0 records out
->> 6220163+1 records in
->> 6220163+1 records out
->>
->> as you see it produced no errors at all so the HDD can be read fine. any
->> idea what could cause the problem?
->
-> IIRC, if there were no errors, dd wouldn't have repeatedly told you
-> what records in/out it'd completed, unless you manually tell it to do
-> so.
->
-> If you didn't touch it and it's saying this, then dd is skipping over
-> some dysfunctional blocks.  Otherwise, then yes, dd can read it fine
-> (although that doesn't say anything about the data's integrity).
->
-> --
-> ~Mike
->  - Just my two cents
->  - No man is an island, and no man is unable.
->
+>> Actually, laptop mode flushes when there is a write and sync all
+>> pending transactions just before spindown. (delaying the write as long
+>> as possible to hopefully get as much in one pass as possible).
 
+AZ> Does the kernel really know when the disk spins down? 
+I don't think so. As far as I understand from linux-2.6.10 sources and
+docs, laptop_mode works in a following way: it gently "removes"
+all pdflush() calls in memory-management code and creates a timer with
+pdflush(sys_sync(),0) as callback function. Then, every operation which can cause
+spin-up (maybe even reading, but I don't know for sure) advance this
+timer for laptop_mode*HZ amount of seconds thus guaranteeing that no
+writing of dirty-pages will occur during this period and hard disk
+will have time to spin-down. So, to conclude, kernel does not know
+when disk spins down but it know the functions which may cause him to
+spin-up.
+
+>> In the future when enough API is exposed to make a nice interface for
+>> multi-syscall transactions with partial sync (i.e. only forced syncs
+>> of blocks related to transactions which demand physical fixation), it
+>> would be nice if the commit logic were smart enough to grab other
+>> nearby small transactions and batch them into the same commit.
+
+AZ> If there is a fs-specific 'prepare-to-disk-spindown' hook we can scan the atom
+AZ> list and commit all atoms which may cause the disk to be woken up too early.
+Don't know anything about hooks. As I've said earlier, the only
+filesystem which deals with laptop_mode explicitly is XFS and the
+reason (in my opinion) is because it has it's own syncing daemon
+separate from mm-code and the rest.
+
+I'm not quite familiar with kernel internals but I suspect that if
+Reiser4 use standard kernel facilities to commit atoms (and these
+writeback functions are aware of laptop_mode), it should be compatible
+in sense I've asked for.
+
+Best regards,
+Valentine
 
