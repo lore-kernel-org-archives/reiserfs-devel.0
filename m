@@ -1,164 +1,58 @@
-From: Anthony Martinez <pi@pihost.us>
-Subject: BUG report: mm/slab.c:2839! ; also ReiserFS NULL deref in reiserfs_free_jh
- - simultaneously.
-Date: Wed, 19 Oct 2005 11:37:21 -0600
-Message-ID: <43568451.5020301@pihost.us>
+From: Detlef Grittner <detlef.grittner@t-online.de>
+Subject: reiserfs in cryptoloop file is corrupt: all data lost?
+Date: Wed, 19 Oct 2005 21:27:04 +0200
+Message-ID: <43569E08.8000405@t-online.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751187AbVJSRhm@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-26572-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-I captured this log message with a serial console this time. I still can't
-reproduce it though, which is annoying.
+I used a cryptoloop device with an reiserfs and made a copy/backup of 
+the file containing the data.
+I'm not completely sure, but I think it was mounted, when I copied it. 
+Maybe this was a mistake.
+Now I need the data from the backup and I can't mount the reiserfs using 
+the cryptoloop device.
+dmesg tells me the following:
 
-After rebooting from this one, /bin/mkdir and /bin/zsh were hosed.  Udev doesn't
-like starting up without the ability to make directories.
+ReiserFS: loop0: found reiserfs format "3.6" with standard journal
+ReiserFS: loop0: using ordered data mode
+reiserfs: using flush barriers
+ReiserFS: loop0: journal params: device loop0, size 8192, journal first 
+block 18, max trans len 1024, max batch 900, max commit age 30, max 
+trans age 30
+ReiserFS: loop0: checking transaction log (loop0)
+ReiserFS: warning: is_tree_node: node level 123 does not match to the 
+expected one 3
+ReiserFS: loop0: warning: vs-5150: search_by_key: invalid format found 
+in block 2195471. Fsck?
+ReiserFS: loop0: warning: vs-13070: reiserfs_read_locked_inode: i/o 
+failure occurred trying to find stat data of [1 2 0x0 SD]
+ReiserFS: loop0: Using r5 hash to sort names
+ReiserFS: loop0: warning: xattrs/ACLs enabled and couldn't find/create 
+.reiserfs_priv. Failing mount.
 
-This looks like one problem causing the other - but, I don't know enough to
-tell. Any assistance would be appreciated :)
+An appropriate fstab entry, so a user is allowed to mount the device 
+looks like this:
+/home/userX/data         /home/userX/crypto  reiserfs   
+user,noauto,loop=/dev/loop0,encryption=twofish256,phash=sha512,itercountk=100 
+0 0
 
-If you need any more information about this, I'm on both lkml and reiserfs-list,
-or you can email me.
+I have done a reiserfsck --check, which told me I should run reiserfsck 
+--rebuild-sb and then a reiserfsck --rebuild-tree. The last one 
+obviously failed and just told me that there is no reiserfs meta data.
 
-Thanks,
-Anthony Martinez
+Is there any hope to recover the data or is the filesystem already 
+completely corrupted?
+I want to know, if it is worth a try, otherwise I won't spend time and 
+money on it.
 
-BUG:
-------------[ cut here ]------------
-kernel BUG at mm/slab.c:2839!
-invalid operand: 0000 [#1]
-PREEMPT
-Modules linked in: rfcomm l2cap bluetooth ipt_state ip_conntrack iptable_filter
-ip_tables tun nsc_ircc lp thermal fan button processor ac battery
-hostap_crypt_wep mousedev evdev irtty_sir sir_dev irda crc_ccitt parport_pc
-parport pcspkr hostap_pci hostap snd_intel8x0m snd_intel8x0 snd_ac97_codec
-snd_pcm_oss snd_mixer_oss snd_pcm snd_timer snd soundcore snd_page_alloc
-i2c_i801 hw_random uhci_hcd usbcore e100 mii ohci1394 yenta_socket
-rsrc_nonstatic befs nls_iso8859_1 nls_cp437 sr_mod sbp2 scsi_mod ieee1394
-psmouse nvram thinkpad cpufreq_userspace speedstep_ich freq_table speedstep_lib
-CPU:    0
-EIP:    0060:[<c0138b82>]    Not tainted VLI
-EFLAGS: 00010002   (2.6.13.4-coffee)
-EIP is at cache_reap+0xba/0x182
-eax: dff6f89c   ebx: dff6f880   ecx: 00000005   edx: 00000003
-esi: c6873fc0   edi: 00000002   ebp: dff29f70   esp: dff29f60
-ds: 007b   es: 007b   ss: 0068
-Process events/0 (pid: 3, threadinfo=dff28000 task=dff52020)
-Stack: dff6f8f0 c043e9c4 00000297 c043e9c0 dff29fc0 c01256d7 00000000 c0138ac8
-       00000000 00000001 00000000 dff52148 00010000 00000000 00000000 dff52020
-       c0114b3f 00100100 00200200 ffffffff ffffffff dff28000 dff1ff60 dff6b680
-Call Trace:
- [<c0103bd1>] show_stack+0x78/0x83
- [<c0103d26>] show_registers+0x130/0x1a2
- [<c0103ee4>] die+0xcc/0x14e
- [<c0103fd4>] do_trap+0x6e/0x8a
- [<c010421f>] do_invalid_op+0x84/0x8e
- [<c010384b>] error_code+0x4f/0x54
- [<c01256d7>] worker_thread+0x178/0x20b
- [<c0128d18>] kthread+0x6d/0x9b
- [<c01012f5>] kernel_thread_helper+0x5/0xb
-Code: 00 00 00 00 e9 81 00 00 00 6b 4b 3c 05 8b 53 40 01 ca 4a 89 d0 31 d2 f7 f1
-89 c7 8b 73 1c 8d 43 1c 39 c6 74 65 83 7e 10 00 74 08 <0f> 0b 17 0b d7 1d 31 c0
-8b 16 8b 46 04 89 42 04 89 10 c7 06 00
- <6>note: events/0[3] exited with preempt_count 1
-Unable to handle kernel NULL pointer dereference at virtual address 00000001
- printing eip:
-c019bde6
-*pde = 00000000
-Oops: 0002 [#2]
-PREEMPT
-Modules linked in: rfcomm l2cap bluetooth ipt_state ip_conntrack iptable_filter
-ip_tables tun nsc_ircc lp thermal fan button processor ac battery
-hostap_crypt_wep mousedev evdev irtty_sir sir_dev irda crc_ccitt parport_pc
-parport pcspkr hostap_pci hostap snd_intel8x0m snd_intel8x0 snd_ac97_codec
-snd_pcm_oss snd_mixer_oss snd_pcm snd_timer snd soundcore snd_page_alloc
-i2c_i801 hw_random uhci_hcd usbcore e100 mii ohci1394 yenta_socket
-rsrc_nonstatic befs nls_iso8859_1 nls_cp437 sr_mod sbp2 scsi_mod ieee1394
-psmouse nvram thinkpad cpufreq_userspace speedstep_ich freq_table speedstep_lib
-CPU:    0
-EIP:    0060:[<c019bde6>]    Not tainted VLI
-EFLAGS: 00010282   (2.6.13.4-coffee)
-EIP is at reiserfs_free_jh+0x29/0x59
-eax: dcd559c4   ebx: dcd559bc   ecx: c10c9c00   edx: 00000001
-esi: c6873f60   edi: e08510d4   ebp: c2139d6c   esp: c2139d64
-ds: 007b   es: 007b   ss: 0068
-Process pdflush (pid: 16521, threadinfo=c2138000 task=c6417a20)
-Stack: c6873f60 00000000 c2139e10 c019c0b7 c6873f60 c483fadc c2139d9c c01312bd
-       dff60b88 c2139d9c c0131308 c10f0ee0 c10f0ee0 00000050 c2139dbc 00000046
-       00000000 00001000 c2139de8 c014c673 d4dc514c d4dc514c dd54ea1c dd54ea4c
-Call Trace:
- [<c0103bd1>] show_stack+0x78/0x83
- [<c0103d26>] show_registers+0x130/0x1a2
- [<c0103ee4>] die+0xcc/0x14e
- [<c01134df>] do_page_fault+0x447/0x5ca
- [<c010384b>] error_code+0x4f/0x54
- [<c019c0b7>] write_ordered_buffers+0x105/0x1fc
- [<c019c390>] flush_commit_list+0xeb/0x38f
- [<c01a015b>] do_journal_end+0x7c1/0x7e9
- [<c019f278>] journal_end_sync+0x5e/0x65
- [<c0190bc1>] reiserfs_sync_fs+0x32/0x58
- [<c0190bf4>] reiserfs_write_super+0xd/0x11
- [<c014fb1a>] sync_supers+0x79/0xf2
- [<c0136431>] wb_kupdate+0x24/0xda
- [<c0136c6e>] __pdflush+0x102/0x1cb
- [<c0136d56>] pdflush+0x1f/0x21
- [<c0128d18>] kthread+0x6d/0x9b
- [<c01012f5>] kernel_thread_helper+0x5/0xb
-Code: c9 c3 55 89 e5 56 53 8b 75 08 8b 5e 24 85 db 74 43 c7 46 24 00 00 00 00 c7
-43 04 00 00 00 00 8d 43 08 8b 4b 08 8b 50 04 89 51 04 <89> 0a 89 43 08 89 40 04
-53 e8 00 ca f9 ff a1 a4 0d 44 c0 5b 85
- Badness in do_exit at kernel/exit.c:787
- [<c0103bf2>] dump_stack+0x16/0x1a
- [<c0119d1f>] do_exit+0x3c/0x3ba
- [<c0103f66>] do_trap+0x0/0x8a
- [<c01134df>] do_page_fault+0x447/0x5ca
- [<c010384b>] error_code+0x4f/0x54
- [<c019c0b7>] write_ordered_buffers+0x105/0x1fc
- [<c019c390>] flush_commit_list+0xeb/0x38f
- [<c01a015b>] do_journal_end+0x7c1/0x7e9
- [<c019f278>] journal_end_sync+0x5e/0x65
- [<c0190bc1>] reiserfs_sync_fs+0x32/0x58
- [<c0190bf4>] reiserfs_write_super+0xd/0x11
- [<c014fb1a>] sync_supers+0x79/0xf2
- [<c0136431>] wb_kupdate+0x24/0xda
- [<c0136c6e>] __pdflush+0x102/0x1cb
- [<c0136d56>] pdflush+0x1f/0x21
- [<c0128d18>] kthread+0x6d/0x9b
- [<c01012f5>] kernel_thread_helper+0x5/0xb
-note: pdflush[16521] exited with preempt_count 1
+Regards,
 
-
-ver_linux:Linux coffeehost 2.6.13.4-coffee #1 Sat Oct 15 19:22:20 MDT 2005 i686
-GNU/Linux
-
-Gnu C                  4.0.2
-Gnu make               3.80
-binutils               2.16.91
-util-linux             2.12p
-mount                  2.12p
-module-init-tools      3.2-pre9
-e2fsprogs              1.38
-reiserfsprogs          3.6.19
-reiser4progs           line
-pcmcia-cs              3.2.8
-PPP                    2.4.3
-nfs-utils              1.0.7
-Linux C Library        2.3.5
-Dynamic linker (ldd)   2.3.5
-Procps                 3.2.5
-Net-tools              1.60
-Console-tools          0.2.3
-Sh-utils               5.2.1
-udev                   070
-Modules Loaded         rfcomm l2cap bluetooth ipt_state ip_conntrack
-iptable_filter ip_tables tun nsc_ircc lp thermal fan button processor ac battery
-hostap_crypt_wep mousedev evdev irtty_sir sir_dev irda crc_ccitt parport_pc
-parport pcspkr hostap_pci hostap snd_intel8x0m snd_intel8x0 snd_ac97_codec
-snd_pcm_oss snd_mixer_oss snd_pcm snd_timer snd soundcore snd_page_alloc
-i2c_i801 hw_random uhci_hcd usbcore e100 mii ohci1394 yenta_socket
-rsrc_nonstatic befs nls_iso8859_1 nls_cp437 sr_mod sbp2 scsi_mod ieee1394
-psmouse nvram thinkpad cpufreq_userspace speedstep_ich freq_table speedstep_lib
-
+Detlef Grittner
