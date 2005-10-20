@@ -1,45 +1,33 @@
-From: evilninja <evilninja@gmx.net>
-Subject: Re: reiserfs in cryptoloop file is corrupt: all data lost?
-Date: Wed, 19 Oct 2005 22:25:50 +0200
-Message-ID: <4356ABCE.1010009@gmx.net>
-References: <43569E08.8000405@t-online.de>
+From: =?iso-8859-2?Q?Artur_Mak=F3wka?= <juice@ursynow.2a.pl>
+Subject: how to apply lates reiser4 broken-out patch ?
+Date: Thu, 20 Oct 2005 04:30:13 +0200
+Message-ID: <001101c5d51e$333391c0$0300a8c0@JUICE1>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26575-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26576-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43569E08.8000405@t-online.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; format="flowed"; charset="us-ascii"; reply-type="original"
 To: reiserfs-list@namesys.com
-Cc: Detlef Grittner <detlef.grittner@t-online.de>
 
-Detlef Grittner schrieb:
-> An appropriate fstab entry, so a user is allowed to mount the device 
-> looks like this:
-> /home/userX/data         /home/userX/crypto  reiserfs   
-> user,noauto,loop=/dev/loop0,encryption=twofish256,phash=sha512,itercountk=100 
+hi, how can i apply all patches that are inside broken-out package (for 
+reiser4 2.6.13) ? also, what does it mean in practice this "broken-out" ? 
+( i know its not reiser questoin, the second one, but i maybe someone will 
+answer anyways)
 
-so, you're using a file-backed cryptoloop setup? these setups are often 
-reported to deadlock. but this only as a side-note...
+sorry for such basic questions, but there is no description on reiser 
+website how to deal with many patches, in what order should i patch them , 
+or why  there is no 1 release with all patched already applied )
 
-> I have done a reiserfsck --check, which told me I should run reiserfsck 
-> --rebuild-sb and then a reiserfsck --rebuild-tree. The last one 
-> obviously failed and just told me that there is no reiserfs meta data.
+thanks in advance 
 
-you ran reiserfsck on what? on the losetup'ed /dev/loop0 i hope ;-)
-please provide the output of the reiserfsck run. please make sure that 
-you're running a current version of reiserfsprogs / current kernel.
 
-> I want to know, if it is worth a try, otherwise I won't spend time and 
-> money on it.
 
-well, it's only $25 at http://www.namesys.com/support.html ;-)
-
-Christian.
 -- 
-BOFH excuse #34:
+No virus found in this outgoing message.
+Checked by AVG Anti-Virus.
+Version: 7.0.344 / Virus Database: 267.12.4/142 - Release Date: 2005-10-18
 
-(l)user error
