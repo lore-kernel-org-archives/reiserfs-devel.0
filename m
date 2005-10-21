@@ -1,109 +1,34 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: error compiling reiser4 for kernel 2.6.13.1
-Date: Fri, 21 Oct 2005 01:48:42 -0700
-Message-ID: <4358AB6A.5080700@namesys.com>
-References: <200510202106.22388.fred@lab.matcom.uh.cu> <200510202153.35766.fred@lab.matcom.uh.cu> <4358A2D6.4090604@namesys.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: how to apply lates reiser4 broken-out patch ?
+Date: Fri, 21 Oct 2005 13:04:37 +0400
+Message-ID: <4358AF25.9040902@namesys.com>
+References: <001101c5d51e$333391c0$0300a8c0@JUICE1>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26596-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26597-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4358A2D6.4090604@namesys.com>
+In-Reply-To: <001101c5d51e$333391c0$0300a8c0@JUICE1>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: Yoanis Gil Delgado <fred@lab.matcom.uh.cu>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: =?ISO-8859-2?Q?Artur_Mak=F3wka?= <juice@ursynow.2a.pl>
+Cc: reiserfs-list@namesys.com
 
-Vladimir V. Saveliev wrote:
+Hello
 
->Hello
->
->Yoanis Gil Delgado wrote:
->  
->
->>On Thursday 20 October 2005 09:06 pm, Yoanis Gil Delgado wrote:
->>    
->>
->>>Hi i just downloaded the 2.6.13.1 kernel source and the reiser4 patch for
->>>this kernel (reiser4-for-2.6.13-1.patch). When compiling i get the
->>>following error:
->>>
->>> LD      fs/reiser4/built-in.o
->>> CC [M]  fs/reiser4/debug.o
->>>In file included from fs/reiser4/lock.h:15,
->>>                from fs/reiser4/context.h:14,
->>>                from fs/reiser4/debug.c:25:
->>>fs/reiser4/txnmgr.h: In function `spin_atom_init':
->>>fs/reiser4/txnmgr.h:512: error: duplicate case value
->>>fs/reiser4/txnmgr.h:512: error: previously used here
->>>fs/reiser4/txnmgr.h: In function `spin_txnh_init':
->>>fs/reiser4/txnmgr.h:513: error: duplicate case value
->>>fs/reiser4/txnmgr.h:513: error: previously used here
->>>fs/reiser4/txnmgr.h: In function `spin_txnmgr_init':
->>>fs/reiser4/txnmgr.h:514: error: duplicate case value
->>>fs/reiser4/txnmgr.h:514: error: previously used here
->>>In file included from fs/reiser4/context.h:14,
->>>                from fs/reiser4/debug.c:25:
->>>fs/reiser4/lock.h: In function `spin_stack_init':
->>>fs/reiser4/lock.h:198: error: duplicate case value
->>>fs/reiser4/lock.h:198: error: previously used here
->>>In file included from fs/reiser4/znode.h:16,
->>>                from fs/reiser4/tree.h:15,
->>>                from fs/reiser4/super.h:9,
->>>                from fs/reiser4/debug.c:26:
->>>fs/reiser4/jnode.h: In function `spin_jnode_init':
->>>fs/reiser4/jnode.h:344: error: duplicate case value
->>>fs/reiser4/jnode.h:344: error: previously used here
->>>fs/reiser4/jnode.h: In function `spin_jload_init':
->>>fs/reiser4/jnode.h:348: error: duplicate case value
->>>fs/reiser4/jnode.h:348: error: previously used here
->>>In file included from fs/reiser4/super.h:9,
->>>                from fs/reiser4/debug.c:26:
->>>fs/reiser4/tree.h: In function `spin_epoch_init':
->>>fs/reiser4/tree.h:169: error: duplicate case value
->>>fs/reiser4/tree.h:169: error: previously used here
->>>In file included from fs/reiser4/debug.c:26:
->>>fs/reiser4/super.h: In function `spin_super_init':
->>>fs/reiser4/super.h:379: error: duplicate case value
->>>fs/reiser4/super.h:379: error: previously used here
->>>make[2]: *** [fs/reiser4/debug.o] Error 1
->>>make[1]: *** [fs/reiser4] Error 2
->>>make: *** [fs] Error 2
->>>
->>>Here is the output from the gcc version:
->>>sena:/usr/src/linux# gcc -v
->>>Reading specs from /usr/lib/gcc-lib/i486-linux-gnu/3.3.6/specs
->>>Configured with: ../src/configure -v
->>>--enable-languages=c,c++,java,f77,pascal,objc,ada,treelang --prefix=/usr
->>>--mandir=/usr/share/man --infodir=/usr/share/info
->>>--with-gxx-include-dir=/usr/include/c++/3.3 --enable-shared
->>>--enable-__cxa_atexit --with-system-zlib --enable-nls
->>>--without-included-gettext --enable-clocale=gnu --enable-debug
->>>--enable-java-gc=boehm --enable-java-awt=xlib --enable-objc-gc
->>>i486-linux-gnu Thread model: posix
->>>gcc version 3.3.6 (Debian 1:3.3.6-7)
->>>
->>>One more thing, i patched the 2.6.13 kernel (not the 2.6.13.1) and i got no
->>>compilation error. Thanks and best wishes...................yoanis
->>>      
->>>
->>Well after "googling" a little and found not ansrwers y disbable de debug 
->>support and it works. so the problem it's partially solved. now i want to 
->>know why the debug support generated such errors?
->>
->>    
->>
->
->Please try more recent version of reiser4 for 2.6.13:
->ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.13/reiser4-for-2.6.13-4.patch.gz
->
->
->
->
->  
->
-Please put broken patches where users cannot find them on our website.
+Artur Mak=F3wka wrote:
+> hi, how can i apply all patches that are inside broken-out package (for
+> reiser4 2.6.13) ? also, what does it mean in practice this "broken-out"
+> ? ( i know its not reiser questoin, the second one, but i maybe someone
+> will answer anyways)
+>=20
+> sorry for such basic questions, but there is no description on reiser
+> website how to deal with many patches, in what order should i patch them
+> , or why  there is no 1 release with all patched already applied )
+>=20
 
-Hans
+That is fixed now. Please try:
+ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.13/reiser4-for-2.6.13-4.patch=
+.gz
