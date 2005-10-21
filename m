@@ -1,34 +1,25 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: how to apply lates reiser4 broken-out patch ?
-Date: Fri, 21 Oct 2005 13:04:37 +0400
-Message-ID: <4358AF25.9040902@namesys.com>
-References: <001101c5d51e$333391c0$0300a8c0@JUICE1>
+From: PFC <lists@boutiquenumerique.com>
+Subject: Re: Reiser4 + laptop -> ouch
+Date: Fri, 21 Oct 2005 11:59:44 +0200
+Message-ID: <op.syzp1ulfth1vuj@localhost>
+References: <43537D56.3020208@eastwind.ru> <op.sysz7pxnth1vuj@localhost> <200510182209.19370.zam@namesys.com> <op.syxzvsesth1vuj@localhost> <b14e81f00510201300k74c3d428rfac2dbb2969e3e3d@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26597-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-26598-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <001101c5d51e$333391c0$0300a8c0@JUICE1>
+In-Reply-To: <b14e81f00510201300k74c3d428rfac2dbb2969e3e3d@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: =?ISO-8859-2?Q?Artur_Mak=F3wka?= <juice@ursynow.2a.pl>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; format="flowed"; delsp="yes"; charset="us-ascii"
+To: michael chang <thenewme91@gmail.com>
+Cc: Alexander Zarochentsev <zam@namesys.com>, reiserfs-list@namesys.com
 
-Hello
 
-Artur Mak=F3wka wrote:
-> hi, how can i apply all patches that are inside broken-out package (for
-> reiser4 2.6.13) ? also, what does it mean in practice this "broken-out"
-> ? ( i know its not reiser questoin, the second one, but i maybe someone
-> will answer anyways)
->=20
-> sorry for such basic questions, but there is no description on reiser
-> website how to deal with many patches, in what order should i patch them
-> , or why  there is no 1 release with all patched already applied )
->=20
 
-That is fixed now. Please try:
-ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.13/reiser4-for-2.6.13-4.patch=
-.gz
+> Try a 2.6.12 or 2.6.13 kernel, without swsusp2 patches included (since
+> they don't work anyways, you shouldn't run a kernel with them in case
+> they do funky things).  Maybe a recent -mm kernel?
+
+	OK, will try this ! thanks.
