@@ -1,54 +1,49 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: status of reiser4
-Date: Tue, 25 Oct 2005 15:23:03 -0700
-Message-ID: <435EB047.1040001@namesys.com>
-References: <435E75AC.8090500@namesys.com> <200510251658.48802.rjoffe@yahoo.com>
+From: Peter van Hardenberg <pvh@uvic.ca>
+Subject: Our introduction to Reiser-list
+Date: Tue, 25 Oct 2005 15:58:13 -0700
+Message-ID: <200510251558.13860.pvh@uvic.ca>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26640-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26642-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200510251658.48802.rjoffe@yahoo.com>
+Content-disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Ron Joffe <rjoffe@yahoo.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: ycoady@cs.uvic.ca, "Nordman, Ryan" <spacerobots@gmail.com>, huaning@uvic.ca
 
-Ron Joffe wrote:
+Hello all,
 
->On Tuesday 25 October 2005 14:13, Hans Reiser wrote:
->  
->
->>If yes, what steps did you take to do it?
->>    
->>
->
->Not quite there yet, but would like to test it out.
->
->Hans, could you give a status of Reiser4. I have seen allot of different 
->issues on the maillist, but not a "status" of where the overall project 
->stands.
->
->Thanks,
->
->Ron
->
->  
->
-vs is working on a major update that he will release any day now.  It
-contains many bug fixes.  It should deturkey our latest reiser4 release,
-sorry about that guys.
+I'm a student at the University of Victoria. Between myself and a few fellow 
+students we have embarked on a quest to do some experiments with the Reiser4 
+metadata system to show it off and provide some real world use cases.
 
-Nate did a mongo benchmark on an older reiser4, -mm1 or some such, and
-the surprising thing we discovered was that reiser4 is now more cpu
-efficient than ext3 for mongo.  I guess all those memory copy avoiding
-balancing algorithms that made the  code so hairy and added so much to
-the coding time are now paying off.;-)  We should do some detailed
-profiling, and careful benchmark comparisons over time, and see if
-memory copies are now the big remaining hogs and reiser4 is being more
-space efficient in RAM thus going faster, or if ext3 is just doing
-something wasteful.
+We'll be spending lots of time on this project between now and the end of the 
+year. If list members have ideas for interesting experiments, please, join in 
+and suggest them.
 
-We should do fresh benchmarks on the latest reiser4 also.
+So far, we have a few nifty ideas:
+
+1) tie the 'extract' utility to a shell script to copy existing metadata down 
+into the filesystem
+
+2) create a (very slow) shell which operates on the filesystem by xpath query. 
+doing it right would be difficult, but faking it should be easy.
+
+We are all inexperienced with kernel hacking and will probably ask some stupid 
+questions as we go forward. Our individual interests vary and we may find 
+that we have bitten off more than we can chew, but I expect it will be an 
+interesting ride, if nothing else. 
+
+Our first contribution will be a practical guide to installing Reiser4 (with 
+metadata enabled) under Ubuntu 5.10. 
+
+All the best,
+-pvh
+
+-- 
+Peter van Hardenberg (pvh@pvh.ca)
+Victoria, BC, Canada
