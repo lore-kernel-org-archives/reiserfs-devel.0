@@ -1,46 +1,45 @@
-From: =?ISO-8859-1?Q?Konstantin_M=FCnning?= <konstantin@muenning.com>
+From: Ingo Bormuth <ibormuth@efil.de>
 Subject: Re: My Dad suggests a redundant copies plugin
-Date: Tue, 25 Oct 2005 12:25:04 +0200
-Message-ID: <435E0800.2080403@muenning.com>
-References: <435DC714.6000505@namesys.com> <20051025072537.GB8402@favonius> <435DFAA5.9050206@namesys.com> <20051025093958.GB9299@favonius>
+Date: Tue, 25 Oct 2005 12:35:43 +0200
+Message-ID: <20051025103543.GA11986@kruemel>
+References: <435DC714.6000505@namesys.com> <20051025072537.GB8402@favonius> <435DFAA5.9050206@namesys.com>
+Reply-To: Ingo Bormuth <ibormuth@efil.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26627-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26628-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20051025093958.GB9299@favonius>
+Content-Disposition: inline
+In-Reply-To: <435DFAA5.9050206@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: sander@humilis.net
-Cc: ReiserFS List <reiserfs-list@namesys.com>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
+Cc: ingo@bormuth.org
 
-Sander wrote:
-> Hans Reiser wrote (ao):
+On 2005-10-25 02:28, Hans Reiser wrote:
+>
+> >And what is the advantage? You are not protected against a lot of disk
+> >failures (only against bad blocks, right?).
+>
+> It is only for very important files for computers which have only one
+> hard drive.  Some of the work is with changing fsck.....
 > 
->>It is only for very important files for computers which have only one
->>hard drive. Some of the work is with changing fsck.....
-> 
-> 
-> Well, if the files are important, then you should have backups anyway,
-> whatever raid or similar you have. I still don't see an advantage in
-> having two versions of a file on one disk.
 
-Here is one: something bad happens with your FS so you need to fsck,
-rebuild-tree (or what the corresponding thing for reiser4 is) or
-something like this. Having important files duplicated improves the
-chance that at least one copy is still intact afterwards as depending on
-the grade of corruption rebuilt fs may show the same files but contents
-may differ. (verifying which copy is OK is not in the scope of this writing)
+I agree, real backups are the major weappon against classical data loss due 
+to hardware failure. 
+Other quite anoying and common causes for data loss are accidentally deleted, 
+overwritten or modified files. A _simple_ versioning plugin would be very
+nice to have (I'd definitly use it in /etc).
 
-Yes, having backups is better but that wouldn't help if it's your
-laptop, the backups are 2000 miles away in your office and you have only
-some Linux Boot CD?! ;-)
+Anyway, oun could then easily add the proposed redundancy feature (implemented
+as the files version number zero).
 
-I know, that doesn't happen often but I've had similar situations. As
-I've allways managed to help me somehow missing this feature wouldn't
-make me cry but I would probably use it. Just my two cents.
 
-> But then again, that should not hinder anyone :-)
+
+
+-- 
+Ingo Bormuth, voicebox & telefax: +49-12125-10226517          '(~o-o~)'
+public key 86326EC9, http://ibormuth.efil.de/contact     ---ooO--(.)--Ooo---
 
