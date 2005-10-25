@@ -1,76 +1,48 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiser4 documentation & specifically current status of repacker,
- compression, and semantics
-Date: Mon, 24 Oct 2005 14:11:17 -0700
-Message-ID: <435D4DF5.4090602@namesys.com>
-References: <200510231850.45209.jgilmore@glycou.com> <200510241225.45686.jgilmore@glycou.com> <435D3110.8060204@namesys.com> <200510241345.17620.jgilmore@glycou.com>
+From: Ritesh Raj Sarraf <riteshsarraf@users.sourceforge.net>
+Subject: Re: Reiser4 + laptop -> ouch
+Date: Tue, 25 Oct 2005 09:00:40 +0530
+Message-ID: <djk8t9$f5r$1@sea.gmane.org>
+References: <43537D56.3020208@eastwind.ru> <op.sysz7pxnth1vuj@localhost> <200510182209.19370.zam@namesys.com> <op.syxzvsesth1vuj@localhost> <b14e81f00510201300k74c3d428rfac2dbb2969e3e3d@mail.gmail.com> <1e1a7e1b0510210438s57beb1b8ra6d359610704d72a@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26617-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7Bit
+Return-path: <reiserfs-list-return-26619-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200510241345.17620.jgilmore@glycou.com>
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: John Gilmore <jgilmore@glycou.com>
-Cc: reiserfs-list@namesys.com, Edward Shishkin <edward@namesys.com>
+To: reiserfs-list@namesys.com
 
-John Gilmore wrote:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
->On Monday 24 October 2005 19:08, Edward Shishkin wrote:
->  
->
->>John Gilmore wrote:
->>    
->>
->>>How are plugin/file
->>>relationships handled without it?
->>>      
->>>
->>For the first time there will be an option in mkfs to assign a file
->>plugin for regular files per superblock.
->>Then (if everything will be okay) we will granulate the relationship.
->>
->>Edward.
->>    
->>
->
->So the first beta of compression will only have the option to control it at 
->mkfs time?
->
-It should be explained that on the first flush to disk of a new file the
-default compress plugin will test to see if the first 64k is
-compressable, and if it is not then it converts the file to a regular
-file plugin.
+James Rayner on Friday 21 Oct 2005 17:08 wrote:
 
-Edward, confirm that you coded it that way, as I think I expressed
-things more precisely this time.;-)
+> Suspend2 has been improved substantially, and works for most people,
+> if they put a few minutes of their time into setting it up properly.
+> It has been cleaned up substantially and wont do 'funky things' like
+> you suggest.
 
-I believe most users will find most of their files get the right
-treatment using this heuristic.
+It does 'funky things'.
+On my laptop with reiser4 + LVM it was too many attempts to configure
+swsusp2 after which I gave up. swsusp just works fine.
+The last time I tried swsusp2,I lost data from my /home partition.
 
-> And then later on, compression control and status information will 
->be available on a per-file (or per-directory) basis via a user-space tool 
->operating on mounted filesystems? Which tool will also be extendable to 
->control and give status information (where applicable) on other types of 
->plugins?
->
->Is there a page that I could go to - some sort of "Major feature changes" page 
->- to see what the current status of the filesystem is?
->
-If you pay for the tech writer.:-/  We have less funding than most users
-imagine we have.
+rrs
+- -- 
+Ritesh Raj Sarraf
+RESEARCHUT -- http://www.researchut.com
+Gnupg Key ID: 04F130BC
+"Stealing logic from one person is plagiarism, stealing from many is
+research."
+"Necessity is the mother of invention."
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
 
-> To answer such 
->questions as "Is compression ready for beta?" and "what the heck happened to 
->file-as-directory?" and "I saw mention of a test of the reiser4 repacker, and 
->also mention of compile problems with repacker.c, which definitely doesn't 
->exist in MY version of resier4 - what gives?" (though I've concluded that 
->that last one must be somebodies copy of alpha software...)
->
->
->  
->
+iD8DBQFDXabn4Rhi6gTxMLwRAjPGAJ9Evv8ITSoiKFoVkLAJIFWep0RDOgCgsj2f
+5hElw4JzH/4y8WU2rFNjfx4=
+=18on
+-----END PGP SIGNATURE-----
 
