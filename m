@@ -1,88 +1,188 @@
-From: =?ISO-8859-15?Q?Konstantin_M=FCnning?= <konstantin@muenning.com>
-Subject: late delete improving undeleting files on reiser4
-Date: Tue, 25 Oct 2005 13:42:42 +0200
-Message-ID: <435E1A32.7060001@muenning.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: reiser4, 2.6.14-rc5-mm1, 4k stacks Lots of badness on umount
+Date: Tue, 25 Oct 2005 16:42:04 +0400
+Message-ID: <435E281C.4080102@namesys.com>
+References: <3aa654a40510250211v53f0a715r8769a3d6f51c21d4@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26629-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed;
+ boundary="------------040000020406040903080409"
+Return-path: <reiserfs-list-return-26630-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <3aa654a40510250211v53f0a715r8769a3d6f51c21d4@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: Avuton Olrich <avuton@gmail.com>
+Cc: reiserfs-list@namesys.com
 
-Hi!
+--------------040000020406040903080409
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-The discussion abot loosing important files made me think about a
-fetaure I met and liked on DR-DOS (later Novell DOS but I'm not sure if
-they kept this feature) which may be nice in Reiser4 and would probably
-need an additional plugin.
+Hello
 
-I'll call it "late delete" as I can't remember how they called it on
-DR-DOS. As I'm not aware of all current features of Reiser4 (not using
-it yet) please excuse me if this is already implemented or planned
-somewhere.
+This does not look like reiser4 related problem. Please try with the attached patch.
 
-So when deleting files, instead of directly removing the entries off the
-directories and freeing the used blocks, they could be only "marked" for
-deletion so undeleting would be easy. That's trivial so far. But the
-nice (and tricky) feature would be this to be transparent in means that
-when disk space gets used up such marked files would be actually deleted
-and the user wouldn't notice a thing (except eventually some overhead
-(badly implemented on DR-DOS) but to that later).
+Avuton Olrich wrote:
+> When unmounting my reiser4 partition today on my 2.6.14-rc5-mm1 kernel
+> I got the following:
+> 
+> Any ideas? Any way I can help track down this issue? I'm fscking now,
+> I will report results if desired.
+> 
+> Badness in __writeback_single_inode at fs/fs-writeback.c:251
+>  [<c017f433>] __writeback_single_inode+0xb3/0x1c0
+>  [<c03ce328>] wait_for_completion+0x78/0xf0
+>  [<c0118890>] default_wake_function+0x0/0x10
+>  [<c017fbb5>] write_inode_now+0x65/0xe0
+>  [<c012cfe8>] rcu_barrier+0x58/0x80
+>  [<c01760cb>] generic_forget_inode+0x7b/0x180
+>  [<c0176243>] iput+0x53/0x70
+>  [<c01d6da6>] done_formatted_fake+0x56/0x70
+>  [<c01d958f>] reiser4_put_super+0x3f/0xd0
+>  [<c01751f6>] invalidate_inodes+0x56/0x80
+>  [<c0160afa>] generic_shutdown_super+0x14a/0x180
+>  [<c0161695>] kill_block_super+0x25/0x40
+>  [<c01608a0>] deactivate_super+0x50/0x80
+>  [<c01784d5>] sys_umount+0x35/0x80
+>  [<c016432f>] sys_stat64+0xf/0x30
+>  [<c03cfec8>] do_page_fault+0x1a8/0x5c5
+>  [<c0178537>] sys_oldumount+0x17/0x20
+>  [<c01030db>] sysenter_past_esp+0x54/0x75
+> Badness in __sync_single_inode at fs/fs-writeback.c:232
+>  [<c017f315>] __sync_single_inode+0x205/0x270
+>  [<c017f44d>] __writeback_single_inode+0xcd/0x1c0
+>  [<c03ce328>] wait_for_completion+0x78/0xf0
+>  [<c0118890>] default_wake_function+0x0/0x10
+>  [<c017fbb5>] write_inode_now+0x65/0xe0
+>  [<c012cfe8>] rcu_barrier+0x58/0x80
+>  [<c01760cb>] generic_forget_inode+0x7b/0x180
+>  [<c0176243>] iput+0x53/0x70
+>  [<c01d6da6>] done_formatted_fake+0x56/0x70
+>  [<c01d958f>] reiser4_put_super+0x3f/0xd0
+>  [<c01751f6>] invalidate_inodes+0x56/0x80
+>  [<c0160afa>] generic_shutdown_super+0x14a/0x180
+>  [<c0161695>] kill_block_super+0x25/0x40
+>  [<c01608a0>] deactivate_super+0x50/0x80
+>  [<c01784d5>] sys_umount+0x35/0x80
+>  [<c016432f>] sys_stat64+0xf/0x30
+>  [<c03cfec8>] do_page_fault+0x1a8/0x5c5
+>  [<c0178537>] sys_oldumount+0x17/0x20
+>  [<c01030db>] sysenter_past_esp+0x54/0x75
+> Badness in __writeback_single_inode at fs/fs-writeback.c:251
+>  [<c017f433>] __writeback_single_inode+0xb3/0x1c0
+>  [<c03ce328>] wait_for_completion+0x78/0xf0
+>  [<c0118890>] default_wake_function+0x0/0x10
+>  [<c017fbb5>] write_inode_now+0x65/0xe0
+>  [<c01760cb>] generic_forget_inode+0x7b/0x180
+>  [<c0176243>] iput+0x53/0x70
+>  [<c01d6d95>] done_formatted_fake+0x45/0x70
+>  [<c01d958f>] reiser4_put_super+0x3f/0xd0
+>  [<c01751f6>] invalidate_inodes+0x56/0x80
+>  [<c0160afa>] generic_shutdown_super+0x14a/0x180
+>  [<c0161695>] kill_block_super+0x25/0x40
+>  [<c01608a0>] deactivate_super+0x50/0x80
+>  [<c01784d5>] sys_umount+0x35/0x80
+>  [<c016432f>] sys_stat64+0xf/0x30
+>  [<c03cfec8>] do_page_fault+0x1a8/0x5c5
+>  [<c0178537>] sys_oldumount+0x17/0x20
+>  [<c01030db>] sysenter_past_esp+0x54/0x75
+> Badness in __sync_single_inode at fs/fs-writeback.c:232
+>  [<c017f315>] __sync_single_inode+0x205/0x270
+>  [<c017f44d>] __writeback_single_inode+0xcd/0x1c0
+>  [<c03ce328>] wait_for_completion+0x78/0xf0
+>  [<c0118890>] default_wake_function+0x0/0x10
+>  [<c017fbb5>] write_inode_now+0x65/0xe0
+>  [<c01760cb>] generic_forget_inode+0x7b/0x180
+>  [<c0176243>] iput+0x53/0x70
+>  [<c01d6d95>] done_formatted_fake+0x45/0x70
+>  [<c01d958f>] reiser4_put_super+0x3f/0xd0
+>  [<c01751f6>] invalidate_inodes+0x56/0x80
+>  [<c0160afa>] generic_shutdown_super+0x14a/0x180
+>  [<c0161695>] kill_block_super+0x25/0x40
+>  [<c01608a0>] deactivate_super+0x50/0x80
+>  [<c01784d5>] sys_umount+0x35/0x80
+>  [<c016432f>] sys_stat64+0xf/0x30
+>  [<c03cfec8>] do_page_fault+0x1a8/0x5c5
+>  [<c0178537>] sys_oldumount+0x17/0x20
+>  [<c01030db>] sysenter_past_esp+0x54/0x75
+> Badness in __writeback_single_inode at fs/fs-writeback.c:251
+>  [<c017f433>] __writeback_single_inode+0xb3/0x1c0
+>  [<c03ce328>] wait_for_completion+0x78/0xf0
+>  [<c0118890>] default_wake_function+0x0/0x10
+>  [<c017fbb5>] write_inode_now+0x65/0xe0
+>  [<c01760cb>] generic_forget_inode+0x7b/0x180
+>  [<c0176243>] iput+0x53/0x70
+>  [<c01d6d7d>] done_formatted_fake+0x2d/0x70
+>  [<c01d958f>] reiser4_put_super+0x3f/0xd0
+>  [<c01751f6>] invalidate_inodes+0x56/0x80
+>  [<c0160afa>] generic_shutdown_super+0x14a/0x180
+>  [<c0161695>] kill_block_super+0x25/0x40
+>  [<c01608a0>] deactivate_super+0x50/0x80
+>  [<c01784d5>] sys_umount+0x35/0x80
+>  [<c016432f>] sys_stat64+0xf/0x30
+>  [<c03cfec8>] do_page_fault+0x1a8/0x5c5
+>  [<c0178537>] sys_oldumount+0x17/0x20
+>  [<c01030db>] sysenter_past_esp+0x54/0x75
+> Badness in __sync_single_inode at fs/fs-writeback.c:232
+>  [<c017f315>] __sync_single_inode+0x205/0x270
+>  [<c017f44d>] __writeback_single_inode+0xcd/0x1c0
+>  [<c03ce328>] wait_for_completion+0x78/0xf0
+>  [<c0118890>] default_wake_function+0x0/0x10
+>  [<c017fbb5>] write_inode_now+0x65/0xe0
+>  [<c01760cb>] generic_forget_inode+0x7b/0x180
+>  [<c0176243>] iput+0x53/0x70
+>  [<c01d6d7d>] done_formatted_fake+0x2d/0x70
+>  [<c01d958f>] reiser4_put_super+0x3f/0xd0
+>  [<c01751f6>] invalidate_inodes+0x56/0x80
+>  [<c0160afa>] generic_shutdown_super+0x14a/0x180
+>  [<c0161695>] kill_block_super+0x25/0x40
+>  [<c01608a0>] deactivate_super+0x50/0x80
+>  [<c01784d5>] sys_umount+0x35/0x80
+>  [<c016432f>] sys_stat64+0xf/0x30
+>  [<c03cfec8>] do_page_fault+0x1a8/0x5c5
+>  [<c0178537>] sys_oldumount+0x17/0x20
+>  [<c01030db>] sysenter_past_esp+0x54/0x75
+> 
+> --
+>   Anyone who quotes me in their sig is an idiot. -- Rusty Russell.
+> 
+> 
 
-As simple as it may sound here it needs much more thinking how to do it
-good. Here some things that come to my mind about it:
 
-Disadvantages:
-- overhead when disk space has to be reclaimed (late delete)
-- increasing fragmentation as "mark-deleted" file space increases
-effective disk usage %
-- security issues when having bad defaults and/or is poorly configurable
-- may need special undelete tool
+--------------040000020406040903080409
+Content-Type: text/plain;
+ name="writeback_single_inode-warn-fix.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="writeback_single_inode-warn-fix.patch"
 
-Advantages:
-- undeletes files fast, reliable and easy on mounted fs
-- "mark-delete" is fast (see first disadvantage, so it's maybe only
-using the needed time later)
-- it is transparent up to the point of configuration and actual undelete
-- improving media life on medias with limited write cycles (Flash Cards,
-...) as data writes would cycle through all of the free space of the media
 
-Improvements:
-- having an attribute defining which file is to be "mark-deleted" and
-which regularly deleted
-- having a directory attribute for this feature in addition of
-per-file-attribute as a default for new files
-- defining a reclaim-strategy as "delete biggest/smallest files first",
-"delete oldest mark-deleted file first" etc.
-- having a "keep age" attribute to automatically delete "mark-deleted"
-files after some time
-- having a "deleted copies" attribute to define/limit how many copies of
-the same deleted file has to be kept
-- defining a max. fillup percentage for startig to reclaim space. By
-this the overhead of reclaiming may be moved to a moment of low disk
-usage (except when there is no space left) and the first disadvantage
-would be mostly gone.
-- tool to manually "purge/clean" some "mark-deleted" files (specific
-ones or in a directory/tree)
+generic_forget_inode sets I_WILL_FREE bit in inode->i_state.
+__writeback_single_inode checks that bit in inode->i_flags.
+This patch changes __writeback_single_inode to check inode->i_state.
 
-Other improvements in connection with other plugins:
-- compressing "mark-deleted" files
-- having a "wipe file" attribute for security which wipes the data
-portion of the deleted file (with zeroes, random, ...) before freeing
-the blocks (evtl. in combination with the "keep age" attribute above)
 
-As for the implementation the "mark-deleted" files/directories may be
-moved to a (hidden) .deleted directory on the fs-root. Dependant on
-implementation this may eventually loose the original location of the
-file and could disclose otherwise protected files but would reduce the
-overhead of the "delete oldest mark-deleted file first" strategy. Of
-course having this directory as a kind of metadata listing of the files
-and keeping them where they are would do the same but needs more coding.
+ fs/fs-writeback.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-So far my thoughts. Comments welcome.
---=20
-Konstantin M=FCnning
+diff -puN fs/fs-writeback.c~writeback_single_inode-warn-fix fs/fs-writeback.c
+--- linux-2.6.14-rc5-mm1/fs/fs-writeback.c~writeback_single_inode-warn-fix	2005-10-25 15:52:13.857616000 +0400
++++ linux-2.6.14-rc5-mm1-root/fs/fs-writeback.c	2005-10-25 15:52:37.051065500 +0400
+@@ -248,9 +248,9 @@ __writeback_single_inode(struct inode *i
+ 	wait_queue_head_t *wqh;
+ 
+ 	if (!atomic_read(&inode->i_count))
+-		WARN_ON(!(inode->i_flags & I_WILL_FREE));
++		WARN_ON(!(inode->i_state & I_WILL_FREE));
+ 	else
+-		WARN_ON(inode->i_flags & I_WILL_FREE);
++		WARN_ON(inode->i_state & I_WILL_FREE);
+ 
+ 	if ((wbc->sync_mode != WB_SYNC_ALL) && (inode->i_state & I_LOCK)) {
+ 		list_move(&inode->i_list, &inode->i_sb->s_dirty);
+
+_
+
+--------------040000020406040903080409--
