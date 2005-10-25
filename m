@@ -1,56 +1,66 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiser4 documentation & specifically current status of repacker,
- compression, and semantics
-Date: Tue, 25 Oct 2005 15:12:59 -0700
-Message-ID: <435EADEB.9090402@namesys.com>
-References: <200510231850.45209.jgilmore@glycou.com> <200510241225.45686.jgilmore@glycou.com> <435D3110.8060204@namesys.com> <200510241345.17620.jgilmore@glycou.com> <435D4DF5.4090602@namesys.com> <435E8237.5050304@namesys.com>
+Subject: Re: has anyone installed SuSE 10.0 on reiser4?
+Date: Tue, 25 Oct 2005 15:24:01 -0700
+Message-ID: <435EB081.2020405@namesys.com>
+References: <435E75AC.8090500@namesys.com> <200510251658.48802.rjoffe@yahoo.com> <435EA8A9.4090807@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26639-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26641-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <435E8237.5050304@namesys.com>
+In-Reply-To: <435EA8A9.4090807@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward@namesys.com>
-Cc: John Gilmore <jgilmore@glycou.com>, reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: Ron Joffe <rjoffe@yahoo.com>, reiserfs-list@namesys.com
 
-Edward Shishkin wrote:
+David Masover wrote:
 
-> Hans Reiser wrote:
+> Ron Joffe wrote:
 >
->> John Gilmore wrote:
+>> On Tuesday 25 October 2005 14:13, Hans Reiser wrote:
 >>
->>> So the first beta of compression will only have the option to
->>> control it at mkfs time?
->>>
->>>   
+>>> If yes, what steps did you take to do it?
 >>
->> It should be explained that on the first flush to disk of a new file the
->> default compress plugin will test to see if the first 64k is
->> compressable, and if it is not then it converts the file to a regular
->> file plugin.
 >>
->>  
 >>
+>> Not quite there yet, but would like to test it out.
+>>
+>> Hans, could you give a status of Reiser4. I have seen allot of
+>> different issues on the maillist, but not a "status" of where the
+>> overall project stands.
 >
-> a little correction:
-> this is a compression transform plugin that is converted at flush
-> time, not file plugin
 >
-Please define in more detail please.  Particularly, define whether large
-files that cannot be compressed get stored using extents and everything
-else that regular files use.
-
-Also, I thought we convert at first flush time, not at every flush
-time.  Did you write it to check at every flush?  Not entirely sure we
-want to do that for large multimedia files that are compressed by
-hardware, it could add a bunch of CPU, and I would think it would be
-more complex code, because now you have to convert extents, etc.  I
-would be concerned that if you always have to check for compression with
-every little write to a file, the cost of that check will be substantial
-for many purposes.
-
-Hans
+> Status:  Released, for awhile now.
+>
+> Not for mission-critical apps, as it hasn't been hammered by millions
+> of users for a couple of years the way Reiser3 and ext3 have.
+>
+> Missing a few features, some due to time constraints, some due to
+> attempts to get into the mainstream kernel.  Probably all of them will
+> get in eventually, it will just take some time.
+>
+> No idea on kernel inclusion progress.  I've been out of the loop on
+> that for some time, due to a fried network card in my mailserver and a
+> general lack of interest.
+>
+> On-disk format is stable, or if it's not, it's backwards-compatible,
+> because I haven't formatted for months.
+>
+> Main performance issues are fsync and the lack of a repacker.
+>
+> Hans (and others), correct me if I'm wrong about any of that.
+>
+>
+>
+>
+> For my purposes, it's stable enough for me to use for all of my FSes,
+> except NTFS for Windows and HFS+ for OS X.  The biggest problem I've
+> ever had since release was related to both hardware and my own
+> stupidity, and the undelete feature got me back on my feet pretty
+> quickly.  I think the net loss was my copy of Star Wars.
+>
+>
+David is accurate.
