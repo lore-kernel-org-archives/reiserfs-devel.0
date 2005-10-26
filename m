@@ -1,53 +1,75 @@
-From: "Charles P. Wright" <cwright@cs.sunysb.edu>
-Subject: Re: My Dad suggests a redundant copies plugin
-Date: Wed, 26 Oct 2005 11:49:00 -0400
-Message-ID: <1130341740.13999.5.camel@polarbear.fsl.cs.sunysb.edu>
-References: <435DC714.6000505@namesys.com>  <20051025072537.GB8402@favonius>
+From: Peter van Hardenberg <pvh@uvic.ca>
+Subject: Re: Our introduction to Reiser-list
+Date: Wed, 26 Oct 2005 09:10:12 -0700
+Message-ID: <200510260910.12136.pvh@uvic.ca>
+References: <200510251558.13860.pvh@uvic.ca>
+ <87k6g1yp5a.fsf@evinrude.uhoreg.ca> <435F7A2A.5020506@st-andrews.ac.uk>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26656-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26657-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20051025072537.GB8402@favonius>
+In-reply-to: <435F7A2A.5020506@st-andrews.ac.uk>
+Content-disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: sander@humilis.net
-Cc: Hans Reiser <reiser@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Tue, 2005-10-25 at 09:25 +0200, Sander wrote:
-> Hans Reiser wrote (ao):
-> > This would not be (at least in theory) useful for RAID devices, but for
-> > a user with a single disk drive, it might be useful to have a plugin
-> > that creates two (or N) copies, and tries to allocate the two copies at
-> > opposite ends of the disk. Anyone out there still looking for a plugin
-> > to write?
-> 
-> That will kill performance badly. First of all the two read/writes
-> needed, and second because you have to seek from one end to the disk to
-> the other every time you read/write something.
-> 
-> And what is the advantage? You are not protected against a lot of disk
-> failures (only against bad blocks, right?).
-> 
-> There is a lot more advantage in buying two disks and do raid over them.
-> This is (much) cheaper, gives better performance and gives more
-> protection.
-> 
-> Anyway, no need for a plugin. You can just divide your disk in two
-> partitions and configure them as a raid1.
-There is an interesting paper from UWISC in SOSP (the one going on right
-now) about file system reliability.  They actually claim that there are
-quite a few situations in which disks break not as a whole unit.  The
-enhanced Ext3 to have clearly defined failure semantics, and be a bit
-more tolerant of disk failures.   If anyone wants to tackle this sort of
-plugin, their paper is a must read.
+On October 26, 2005 05:44 am, you wrote:
+> Also take a look at the part of a (record-breakingly long?) thread "file
+> as a directory" on this list (also copied to lkml) near and after:
+>
+> http://www.ussg.iu.edu/hypermail/linux/kernel/0411.3/0044.html
+>
+> There, I suggested that file selection should be unified with
+> part-of-file selection using XPath-like syntax.
+>
+> To do what you are suggesting efficiently would be really nice. To do it
+> inefficiently (with a shell script) may still be interesting, possibly
+> even useful. But as XPath was originally inteded for selection inside
+> XML files, it would also be nice if (at least for your XML files) you
+> could select inside your files using a unified syntax!
+>  Peter
 
-Another interesting, but separate, thing in that paper is that they
-checksum each journal transaction and write the checksum at the end.
-Because they can tell if the journal transaction is valid through the
-checksum, they can avoid all synchronous journal writes.
+The objections raised about this on the LKML are quite valid. I could see 
+there being value in this kind of access, and an "XML" plugin or a 
+"dictionary file" plugin could be useful, given sufficient time to mature and 
+address issues of stability and security. 
 
-Charles
+Personally, I LIKE the bytestream. I think it is a sensible enough 
+building-block for abstraction. I imagine the filesystem as a tree with named 
+branches that has streams hanging off it like Christmas ornaments.
 
+Ontologically, this is a nice simplification. Every node has the potential to 
+be a file, no node has the requirement of being a file. The names are managed 
+independently from the streams. Further, keeping the contents of streams 
+opaque in the general case makes sense to me. Streams are already both simple 
+and flexible, and a mechanism already exists for putting assigning a unique 
+namespace to data.
+
+In fact, instead of creating XML files with a plugin, I would personally try 
+splitting them into many small files and write a userspace DOM-library that 
+maps calls like "node.getChildren" to calls like "readdir(NODE)". So: instead 
+of XMLfile/entry/@attribute parsing an XML file, there would actually be 
+files in there.
+
+Although I freely acknowledge my inexperience, I believe the real problems are 
+related to graph traversal algorithms. Linus has commented on the obvious 
+hardlink issues. I imagine there are more gremlins lurking in the shadows on 
+this one. Garbage collectors have largely given up on reference counting, a 
+luxury afforded by blazingly fast access to small amounts of storage. I am 
+not particularly up on the research though.
+
+Also: I still have not been able to USE files as directories. Yes, I can reach 
+file/..../, but that is only one special case. I can crash things like it was 
+going out of style by playing with these file-directories. Does nobody have 
+any experience with this? What kind of work is it going to take me to get 
+this going?
+
+-pvh
+
+-- 
+Peter van Hardenberg (pvh@pvh.ca)
+Victoria, BC, Canada
