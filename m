@@ -1,51 +1,111 @@
-From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Subject: Re: Our introduction to Reiser-list
-Date: Wed, 26 Oct 2005 13:44:26 +0100
-Message-ID: <435F7A2A.5020506@st-andrews.ac.uk>
-References: <200510251558.13860.pvh@uvic.ca> <435EBB09.5030200@namesys.com>	<200510251704.56000.pvh@uvic.ca> <87k6g1yp5a.fsf@evinrude.uhoreg.ca>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: Reiser4 documentation & specifically current status of repacker,
+ compression, and semantics
+Date: Wed, 26 Oct 2005 17:51:33 +0400
+Message-ID: <435F89E5.4000303@namesys.com>
+References: <200510231850.45209.jgilmore@glycou.com> <200510241225.45686.jgilmore@glycou.com> <435D3110.8060204@namesys.com> <200510241345.17620.jgilmore@glycou.com> <435D4DF5.4090602@namesys.com> <435E8237.5050304@namesys.com> <435EADEB.9090402@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26653-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26654-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <87k6g1yp5a.fsf@evinrude.uhoreg.ca>
+In-Reply-To: <435EADEB.9090402@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Peter van Hardenberg <pvh@uvic.ca>
-Cc: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: John Gilmore <jgilmore@glycou.com>, reiserfs-list@namesys.com
 
-Hubert Chan wrote:
+Hans Reiser wrote:
 
->On Tue, 25 Oct 2005 17:04:55 -0700, Peter van Hardenberg <pvh@uvic.ca> said:
+>Edward Shishkin wrote:
+>
 >  
 >
->>I envision creating a simple shell in a scripting language which will
->>operate on an XML representation of the filesystem which maps, in the
->>simple case, directories and files such that simple xpath queries
->>appear identical to normal filesystem queries.
+>>Hans Reiser wrote:
+>>
 >>    
 >>
+>>>John Gilmore wrote:
+>>>
+>>>      
+>>>
+>>>>So the first beta of compression will only have the option to
+>>>>control it at mkfs time?
+>>>>
+>>>>  
+>>>>        
+>>>>
+>>>It should be explained that on the first flush to disk of a new file the
+>>>default compress plugin will test to see if the first 64k is
+>>>compressable, and if it is not then it converts the file to a regular
+>>>file plugin.
+>>>
+>>> 
+>>>
+>>>      
+>>>
+>>a little correction:
+>>this is a compression transform plugin that is converted at flush
+>>time, not file plugin
+>>
+>>    
+>>
+>Please define in more detail please.
 >
->Although it's not exactly the same, you may be interested in a research
->proposal that I wrote for a course last year on embedding XML databases
->into the filesystem namespace.  At least some of the references may be
->useful.
+
+http://www.namesys.com/cryptcompress_design.html
+"Handling incompressible data"
+and
+http://www.namesys.com/cryptcompress-related_plugins.html
+"Compression mode plugin"
+
+>  Particularly, define whether large
+>files that cannot be compressed get stored using extents and everything
+>else that regular files use.
 >
->http://www.cs.uwaterloo.ca/~hy3chan/cs741project.ps
+>  
 >
-Also take a look at the part of a (record-breakingly long?) thread "file 
-as a directory" on this list (also copied to lkml) near and after:
 
-http://www.ussg.iu.edu/hypermail/linux/kernel/0411.3/0044.html
+Currently files powered by cryptcompress file plugin have its data 
+stored only in the
+items of CTAIL_ID
 
-There, I suggested that file selection should be unified with 
-part-of-file selection using XPath-like syntax.
+>Also, I thought we convert at first flush time, not at every flush
+>time.  Did you write it to check at every flush? 
+>
 
-To do what you are suggesting efficiently would be really nice. To do it 
-inefficiently (with a shell script) may still be interesting, possibly 
-even useful. But as XPath was originally inteded for selection inside 
-XML files, it would also be nice if (at least for your XML files) you 
-could select inside your files using a unified syntax!
- Peter
+no, just turning off and no anymore check, but it can be easily changed
+
+> Not entirely sure we
+>want to do that for large multimedia files that are compressed by
+>hardware, it could add a bunch of CPU, and I would think it would be
+>more complex code, because now you have to convert extents, etc.
+>
+
+Yes, such converting seems to be a complicated workaround. We will need
+something like "clustered extents"
+
+
+>  I
+>would be concerned that if you always have to check for compression with
+>every little write to a file, the cost of that check will be substantial
+>for many purposes.
+>
+>  
+>
+
+Since compression is going per cluster, we can consider a set of nominated
+clusters as a pattern to check if we need to turn compression off[on] 
+for the
+whole file. Say, if the clusters of indexes #(N*k), k=0, 1, 2, ...  are
+incompressible[compressible], then turn compression off[on].
+The smaller N - the more substantial cost of check in the case when 
+compression is off.
+
+>Hans
+>
+>
+>  
+>
