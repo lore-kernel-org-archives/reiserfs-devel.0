@@ -1,87 +1,55 @@
-From: Lares Moreau <lares.moreau@gmail.com>
+From: Nate Diller <nate.diller@gmail.com>
 Subject: Re: Our introduction to Reiser-list
-Date: Wed, 26 Oct 2005 15:00:32 -0600
-Message-ID: <1130360432.14844.7.camel@localhost>
+Date: Wed, 26 Oct 2005 14:04:52 -0700
+Message-ID: <5c49b0ed0510261404i7a8db8e1hafe18d1bdd54130@mail.gmail.com>
 References: <200510251558.13860.pvh@uvic.ca>
+	 <87k6g1yp5a.fsf@evinrude.uhoreg.ca>
+	 <435F7A2A.5020506@st-andrews.ac.uk> <200510260910.12136.pvh@uvic.ca>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-dIq3QpSjcva47QoHJu8M"
-Return-path: <reiserfs-list-return-26668-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26669-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200510251558.13860.pvh@uvic.ca>
+In-Reply-To: <200510260910.12136.pvh@uvic.ca>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Peter van Hardenberg <pvh@uvic.ca>
 Cc: reiserfs-list@namesys.com
 
---=-dIq3QpSjcva47QoHJu8M
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On 10/26/05, Peter van Hardenberg <pvh@uvic.ca> wrote:
+> On October 26, 2005 05:44 am, you wrote:
+....
+> Also: I still have not been able to USE files as directories. Yes, I can
+> reach
+> file/..../, but that is only one special case. I can crash things like it
+> was
+> going out of style by playing with these file-directories. Does nobody ha=
+ve
+>
+> any experience with this? What kind of work is it going to take me to get
+> this going?
+>
+I do have some experience with this, with code about 9 months old now.
+ There are two basic problems.  One is that the code has suffered
+bitrot over the past year, so it will have bugs compared to when I
+played with it.  The other problem is that it causes serious confusion
+to the Linux VFS, the dentry cache in particular, which has become
+increasingly complex in its efforts to stop sucking so bad.  It may be
+useable as a toy by fixing a few of the recent bugs I mentioned, but
+it will not be compatable with Linux until someone such as myself
+spends about a year working on it.  And even then, I bet it would not
+be merged for another year at least.
 
-I am too an amateur FS geek.
-A link you might like to look at.
-http://www.geocities.com/ravikiran_uvs/
-It contains a Simple file system. That has helped me, and may be of
-interest to you.
+The other way to do cool metadata stuff in Reiser4 is sys_reiser4(),
+which was in a serious state of not being useable last I tried it.=20
+However, it's more likely work at some point, perhaps you can look
+into helping finish it off, although I expect it will involve lots of
+core reiser4 hacking.
 
+My verdict: file-as-dir is dead, and will not return to the world of
+the living in its current form
 
-On Tue, 2005-10-25 at 15:58 -0700, Peter van Hardenberg wrote:
-> Hello all,
->=20
-> I'm a student at the University of Victoria. Between myself and a few fel=
-low=20
-> students we have embarked on a quest to do some experiments with the Reis=
-er4=20
-> metadata system to show it off and provide some real world use cases.
->=20
-> We'll be spending lots of time on this project between now and the end of=
- the=20
-> year. If list members have ideas for interesting experiments, please, joi=
-n in=20
-> and suggest them.
->=20
-> So far, we have a few nifty ideas:
->=20
-> 1) tie the 'extract' utility to a shell script to copy existing metadata =
-down=20
-> into the filesystem
->=20
-> 2) create a (very slow) shell which operates on the filesystem by xpath q=
-uery.=20
-> doing it right would be difficult, but faking it should be easy.
->=20
-> We are all inexperienced with kernel hacking and will probably ask some s=
-tupid=20
-> questions as we go forward. Our individual interests vary and we may find=
-=20
-> that we have bitten off more than we can chew, but I expect it will be an=
-=20
-> interesting ride, if nothing else.=20
->=20
-> Our first contribution will be a practical guide to installing Reiser4 (w=
-ith=20
-> metadata enabled) under Ubuntu 5.10.=20
->=20
-> All the best,
-> -pvh
->=20
---=20
-Lares Moreau <lares.moreau@gmail.com>  | LRU: 400755 http://counter.li.org
-Gentoo x86 Arch Tester                 |               ::0 Alberta, Canada
-Public Key: 0D46BB6E @ subkeys.pgp.net |           Encrypted Mail Prefered
-Key fingerprint =3D 0CA3 E40D F897 7709 3628  C5D4 7D94 483E 0D46 BB6E
-
---=-dIq3QpSjcva47QoHJu8M
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-
-iD8DBQBDX+5vfZRIPg1Gu24RArNZAJ0UEFwy04i8BL35yBYVr+52snpewgCeMspS
-0y/ovvaGNUAw88x0H+sP/ew=
-=cTZt
------END PGP SIGNATURE-----
-
---=-dIq3QpSjcva47QoHJu8M--
-
+NATE
