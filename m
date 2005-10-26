@@ -1,39 +1,37 @@
 From: Gregory Maxwell <gmaxwell@gmail.com>
-Subject: My Dad suggests a redundant copies plugin
-Date: Wed, 26 Oct 2005 12:19:52 -0400
-Message-ID: <e692861c0510260919y66ebc19fj570973d211ad2c55@mail.gmail.com>
-References: <435DC714.6000505@namesys.com>
-	 <e692861c0510260911h33c9e2f0x549223c60ddadaef@mail.gmail.com>
+Subject: Re: My Dad suggests a redundant copies plugin
+Date: Wed, 26 Oct 2005 12:24:30 -0400
+Message-ID: <e692861c0510260924h23b4fdacsc1782f67fae94981@mail.gmail.com>
+References: <435DC714.6000505@namesys.com> <20051025072537.GB8402@favonius>
+	 <435DFAA5.9050206@namesys.com> <20051025103543.GA11986@kruemel>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26658-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26660-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e692861c0510260911h33c9e2f0x549223c60ddadaef@mail.gmail.com>
+In-Reply-To: <20051025103543.GA11986@kruemel>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Ingo Bormuth <ibormuth@efil.de>
+Cc: reiserfs-list@namesys.com, ingo@bormuth.org
 
-On 10/25/05, Hans Reiser <reiser@namesys.com> wrote:
-> This would not be (at least in theory) useful for RAID devices, but for
-> a user with a single disk drive, it might be useful to have a plugin
-> that creates two (or N) copies, and tries to allocate the two copies at
-> opposite ends of the disk.  Anyone out there still looking for a plugin
-> to write?
+On 10/25/05, Ingo Bormuth <ibormuth@efil.de> wrote:
+> I agree, real backups are the major weappon against classical data loss d=
+ue
+> to hardware failure.
+> Other quite anoying and common causes for data loss are accidentally dele=
+ted,
+> overwritten or modified files. A _simple_ versioning plugin would be very
+> nice to have (I'd definitly use it in /etc).
 
-It would be more important to have redundancy for important filesystem
-datastructures first, because if you lose your filesystem it becomes
-very difficult to read your data.
-
-With modern high density drives bad blocks have become more common
-than disk failures, redundancy makes a lot of sense but the cost of
-duplicating every file is simply too great for many applications. The
-ability to control the level of redundancy and protection from the
-filesystem is becoming increasingly important.
-
-Hans, have you read the Iron filesystems paper
-(http://www.cs.wisc.edu/wind/Publications/iron-sosp05.ps) that was
-previously cited on this list?  You should at least skim it.
+It would be a sin to implement versioning in resier4 without taking
+advantage of how transactions work since done right they can provide
+this with almost zero overhead... plus it can be difficult to make
+sure that you've got a consistent copy of the file because of how many
+applications update files (is a version a write() call? no that won't
+work.. so do we only version files that get unlinked and replaced?).=20
+Between these two things a simple implementation wouldn't be so
+simple.
