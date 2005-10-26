@@ -1,50 +1,55 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Our introduction to Reiser-list
-Date: Wed, 26 Oct 2005 10:12:37 -0700
-Message-ID: <435FB905.2020805@namesys.com>
-References: <200510251558.13860.pvh@uvic.ca> <87k6g1yp5a.fsf@evinrude.uhoreg.ca> <435F7A2A.5020506@st-andrews.ac.uk> <200510260910.12136.pvh@uvic.ca> <435FB231.5070507@nauticom.net>
+From: Ffwrswjzq <ffwrswjzq@msn.com>
+Subject: Reiserfs-list,Your dog can be the best learner you've ever had.
+Date: Wed, 26 Oct 2005 14:52:41 +0000
+Message-ID: <05514AD8836852L7@msn.com>
+References: <497JD93J6HH9G4B1@namesys.com>
+Reply-To: Shalandagookin <shalandagookin@hotcoolmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26663-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-26664-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <435FB231.5070507@nauticom.net>
+In-Reply-To: <497JD93J6HH9G4B1@namesys.com>
+Sender: K6j32 <k6j32@dth.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Chester R. Hosey" <chosey@nauticom.net>, Nate Diller <ndiller@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: Reiserfs-list <reiserfs-list@namesys.com>
 
-Nate, please comment on your notion of having list all functionality,
-and how allowing cycles could be ok under such a scenario.
+Hi Reiserfs-list, 
 
-Hans
+You can solve any problem your dog may be making without paying thousands of dollars to a dog trainer or giving your dog away (really that's not the right thing to do)
+This ebook will show you what your dog can do if you teach it right.
+Here are just some points that we will focus on:
 
-Chester R. Hosey wrote:
+One thing you must do so that your dog willunderstand why you're correcting him. 
 
->Peter van Hardenberg wrote:
->  
->
->>Although I freely acknowledge my inexperience, I believe the real problems are 
->>related to graph traversal algorithms. Linus has commented on the obvious 
->>hardlink issues. I imagine there are more gremlins lurking in the shadows on 
->>this one. Garbage collectors have largely given up on reference counting, a 
->>luxury afforded by blazingly fast access to small amounts of storage. I am 
->>not particularly up on the research though.
->>    
->>
->
->Just a suggestion from the uninformed peanut gallery...
->
->Hans already plans on having a repacker, which will run incrementally in
->the background. Might it make sense to do incremental GC, possibly even
->in combination with the repacker's traversal of the disk?
->
->Chet
->
->
->
->  
->
+Learn how every top dog trainer in the country actually relates to their dog... their most guarded secrets are revealed! 
+
+5 secrets you must know tohousebreak your dog in a hurry! 
+
+How to praise your dog so that your praise has meaning! 
+
+Aggression and how to diffuse a potentially dangerous situation. 
+
+How to teach your dog to never bolt out the front door again... 
+without permission of course. 
+
+Handling tips for dealing with the dominant dog. 
+
+Seven key insider points you must know before you hire a dog trainer. 
+
+Discover hidden bogus marketing gimmicks and false "guarantee" tricks that can cost you thousands if you hire a less-than-professional dog trainer... and you'd never know it! 
+
+3 things you must add to your dog training 'bag of tricks'... unless you want to take twelve times longer to fix your dog's problems. 
+
+Stop your dog from jumping up on you... forever! 
+
+The terrible truth about training the pit bull(it's not what you think!) 
+
+http://[RANDOM]1mplpp7e6cpgn11g6j1g6j1j.topplebi.com/?[RANDOM]
+
+No M00Re
+http://<RANDOM>l695rrrgqwrip330qlli8ll3.topplebi.com/<RANDOM>?[RANDOM]
 
