@@ -1,54 +1,51 @@
-From: Valentine Sinitsyn <Valentine.Sinitsyn@usu.ru>
-Subject: Re[2]: Slackware Reiser4 Installer
-Date: Wed, 26 Oct 2005 12:04:25 +0600
-Message-ID: <1611199179.20051026120425@usu.ru>
-References: <601220139.20051026100622@usu.ru> <435F1A60.6070204@namesys.com>
-Reply-To: Valentine Sinitsyn <Valentine.Sinitsyn@usu.ru>
+From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+Subject: Re: Our introduction to Reiser-list
+Date: Wed, 26 Oct 2005 13:44:26 +0100
+Message-ID: <435F7A2A.5020506@st-andrews.ac.uk>
+References: <200510251558.13860.pvh@uvic.ca> <435EBB09.5030200@namesys.com>	<200510251704.56000.pvh@uvic.ca> <87k6g1yp5a.fsf@evinrude.uhoreg.ca>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26651-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26653-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <435F1A60.6070204@namesys.com>
+In-Reply-To: <87k6g1yp5a.fsf@evinrude.uhoreg.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Peter van Hardenberg <pvh@uvic.ca>
 Cc: reiserfs-list@namesys.com
 
-Hello,
+Hubert Chan wrote:
 
-Wednesday, October 26, 2005, 11:55:44 AM, you wrote:
-
-HR> Valentine Sinitsyn wrote:
-
->>Hi all,
+>On Tue, 25 Oct 2005 17:04:55 -0700, Peter van Hardenberg <pvh@uvic.ca> said:
+>  
+>
+>>I envision creating a simple shell in a scripting language which will
+>>operate on an XML representation of the filesystem which maps, in the
+>>simple case, directories and files such that simple xpath queries
+>>appear identical to normal filesystem queries.
+>>    
 >>
->>I've prepared a modified installer disk for Slackware Linux 10.2 which
->>allows to install this distro on Reiser4 partitions almost the same
->>way you do with other FSes (ext2/3, reiserfs etc), i.e. with no kernel
->>recompilation by yourself etc. It is now under internal testing (i.e.
->>installed on my friends computers) but I think it will be completely
->>ready to the next week. I saw this thread in mailing list:
->>
->>PH>Our first contribution will be a practical guide to installing Reiser4 (with
->>PH>metadata enabled) under Ubuntu 5.10.
->>
->>HR>Oh, that sounds great, it will go onto our website under the install
->>HR>button if you are kind enough to allow that.
->>
->>and just thought it can be also worth to be presented "under install
->>button". It's 20Mb ISO image. What do you think?
->>
->>P.S. I will be on business trip from this evening till the end of Saturday
->>so please don't treat the lack of answers from me as the lack of
->>interest. ;-)
+>
+>Although it's not exactly the same, you may be interested in a research
+>proposal that I wrote for a course last year on embedding XML databases
+>into the filesystem namespace.  At least some of the references may be
+>useful.
+>
+>http://www.cs.uwaterloo.ca/~hy3chan/cs741project.ps
+>
+Also take a look at the part of a (record-breakingly long?) thread "file 
+as a directory" on this list (also copied to lkml) near and after:
 
-HR> Sure, sounds good.  We can link to you.
-Okay, thanks a lot. I'll give a link here just after ISO will be ready
-for distribution.
+http://www.ussg.iu.edu/hypermail/linux/kernel/0411.3/0044.html
 
-Best regards,
-Valentine Sinitsyn
+There, I suggested that file selection should be unified with 
+part-of-file selection using XPath-like syntax.
 
+To do what you are suggesting efficiently would be really nice. To do it 
+inefficiently (with a shell script) may still be interesting, possibly 
+even useful. But as XPath was originally inteded for selection inside 
+XML files, it would also be nice if (at least for your XML files) you 
+could select inside your files using a unified syntax!
+ Peter
