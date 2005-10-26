@@ -1,37 +1,33 @@
-From: Gregory Maxwell <gmaxwell@gmail.com>
-Subject: Re: My Dad suggests a redundant copies plugin
-Date: Wed, 26 Oct 2005 12:24:30 -0400
-Message-ID: <e692861c0510260924h23b4fdacsc1782f67fae94981@mail.gmail.com>
-References: <435DC714.6000505@namesys.com> <20051025072537.GB8402@favonius>
-	 <435DFAA5.9050206@namesys.com> <20051025103543.GA11986@kruemel>
+From: "Chester R. Hosey" <chosey@nauticom.net>
+Subject: Re: Our introduction to Reiser-list
+Date: Wed, 26 Oct 2005 12:43:29 -0400
+Message-ID: <435FB231.5070507@nauticom.net>
+References: <200510251558.13860.pvh@uvic.ca> <87k6g1yp5a.fsf@evinrude.uhoreg.ca> <435F7A2A.5020506@st-andrews.ac.uk> <200510260910.12136.pvh@uvic.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26660-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26661-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20051025103543.GA11986@kruemel>
-Content-Disposition: inline
+In-Reply-To: <200510260910.12136.pvh@uvic.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Ingo Bormuth <ibormuth@efil.de>
-Cc: reiserfs-list@namesys.com, ingo@bormuth.org
+To: reiserfs-list@namesys.com
 
-On 10/25/05, Ingo Bormuth <ibormuth@efil.de> wrote:
-> I agree, real backups are the major weappon against classical data loss d=
-ue
-> to hardware failure.
-> Other quite anoying and common causes for data loss are accidentally dele=
-ted,
-> overwritten or modified files. A _simple_ versioning plugin would be very
-> nice to have (I'd definitly use it in /etc).
+Peter van Hardenberg wrote:
+> Although I freely acknowledge my inexperience, I believe the real problems are 
+> related to graph traversal algorithms. Linus has commented on the obvious 
+> hardlink issues. I imagine there are more gremlins lurking in the shadows on 
+> this one. Garbage collectors have largely given up on reference counting, a 
+> luxury afforded by blazingly fast access to small amounts of storage. I am 
+> not particularly up on the research though.
 
-It would be a sin to implement versioning in resier4 without taking
-advantage of how transactions work since done right they can provide
-this with almost zero overhead... plus it can be difficult to make
-sure that you've got a consistent copy of the file because of how many
-applications update files (is a version a write() call? no that won't
-work.. so do we only version files that get unlinked and replaced?).=20
-Between these two things a simple implementation wouldn't be so
-simple.
+Just a suggestion from the uninformed peanut gallery...
+
+Hans already plans on having a repacker, which will run incrementally in
+the background. Might it make sense to do incremental GC, possibly even
+in combination with the repacker's traversal of the disk?
+
+Chet
+
