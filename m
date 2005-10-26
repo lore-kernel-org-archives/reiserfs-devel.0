@@ -1,41 +1,43 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: Our introduction to Reiser-list
-Date: Tue, 25 Oct 2005 22:42:57 -0400
-Message-ID: <87k6g1yp5a.fsf@evinrude.uhoreg.ca>
-References: <200510251558.13860.pvh@uvic.ca> <435EBB09.5030200@namesys.com>
-	<200510251704.56000.pvh@uvic.ca>
+From: Valentine Sinitsyn <Valentine.Sinitsyn@usu.ru>
+Subject: Slackware Reiser4 Installer
+Date: Wed, 26 Oct 2005 10:06:22 +0600
+Message-ID: <601220139.20051026100622@usu.ru>
+Reply-To: Valentine Sinitsyn <Valentine.Sinitsyn@usu.ru>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-26647-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26649-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200510251704.56000.pvh@uvic.ca> (Peter van Hardenberg's message
-	of "Tue, 25 Oct 2005 17:04:55 -0700")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Tue, 25 Oct 2005 17:04:55 -0700, Peter van Hardenberg <pvh@uvic.ca> said:
+Hi all,
 
-[...]
+I've prepared a modified installer disk for Slackware Linux 10.2 which
+allows to install this distro on Reiser4 partitions almost the same
+way you do with other FSes (ext2/3, reiserfs etc), i.e. with no kernel
+recompilation by yourself etc. It is now under internal testing (i.e.
+installed on my friends computers) but I think it will be completely
+ready to the next week. I saw this thread in mailing list:
 
-> I envision creating a simple shell in a scripting language which will
-> operate on an XML representation of the filesystem which maps, in the
-> simple case, directories and files such that simple xpath queries
-> appear identical to normal filesystem queries.
+PH>Our first contribution will be a practical guide to installing Reiser4 (with
+PH>metadata enabled) under Ubuntu 5.10.
 
-Although it's not exactly the same, you may be interested in a research
-proposal that I wrote for a course last year on embedding XML databases
-into the filesystem namespace.  At least some of the references may be
-useful.
+HR>Oh, that sounds great, it will go onto our website under the install
+HR>button if you are kind enough to allow that.
 
-http://www.cs.uwaterloo.ca/~hy3chan/cs741project.ps
+and just thought it can be also worth to be presented "under install
+button". It's 20Mb ISO image. What do you think?
 
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+P.S. I will be on business trip from this evening till the end of Saturday
+so please don't treat the lack of answers from me as the lack of
+interest. ;-)
+
+Best regards,
+Valentine Sinitsyn
+
+
 
