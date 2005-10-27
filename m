@@ -1,42 +1,54 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: Our introduction to Reiser-list
-Date: Thu, 27 Oct 2005 06:17:17 -0500
-Message-ID: <4360B73D.5090502@slaphack.com>
-References: <200510251558.13860.pvh@uvic.ca> <5c49b0ed0510261540l370acbfepfe4b6649c91cee61@mail.gmail.com> <200510261702.06844.jgilmore@glycou.com> <200510262349.02012.pvh@uvic.ca>
+Subject: Re: Fwd: My Dad suggests a redundant copies plugin
+Date: Thu, 27 Oct 2005 06:24:03 -0500
+Message-ID: <4360B8D3.30607@slaphack.com>
+References: <435DC714.6000505@namesys.com> <20051025072537.GB8402@favonius> <e692861c0510260917r36c2195fp367689753f61b307@mail.gmail.com> <e692861c0510260920w2b1f03ecu41c9d6a09fa2a2c4@mail.gmail.com> <20051027071052.GA17692@favonius>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26683-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26684-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200510262349.02012.pvh@uvic.ca>
+In-Reply-To: <20051027071052.GA17692@favonius>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Peter van Hardenberg <pvh@uvic.ca>
-Cc: reiserfs-list@namesys.com
+To: sander@humilis.net
+Cc: Gregory Maxwell <gmaxwell@gmail.com>, reiserfs-list@namesys.com
 
-Peter van Hardenberg wrote:
-> On October 26, 2005 10:02 am, John Gilmore wrote:
+Sander wrote:
+> Gregory Maxwell wrote (ao):
 > 
->>Actually, when I had first read about file-as-directory, I had assumed that
->>the content was either dynamically generated from the on-disk metadata
->>(like uid, gid, etc) or stored as a "sideband" type stream in the file
->>itself, like some of the MAC OS file systems (and others) do, or generated
->>via a plugin connecting to user-space, for ID3 tags on mp3 files and other
->>information which can easily be obtained from the file itself.
-> 
-> 
-> And I thought the whole idea was to unify the namespace and make things like 
-> ID3 tags obsolete...
+>>On 10/25/05, Sander <sander@humilis.net> wrote:
 
-The two are not mutually exclusive.  You unify the namespace, and use
-that to access things like ID3 tags.  Of course, eventually ID3 tags
-become obsolete, and the information is instead stored outside of the
-file itself, as a separate stream (treated as a file).  You'd have a
-standard way of serializing any given file and all its metadata, so that
-"something like id3" doesn't have to be re-invented for every file type
-that has metadata, and so that similar metadata can be accessed through
-a standard mechanism -- searching for a particular artist should return
-songs (using id3 tags) and music videos (using the mpeg equivalent) and
-maybe even song lyrics (using separate metadata).
+
+>>Cheaper how? Two disks are cheaper than one?
+> 
+> 
+> If you opt for a copy of everything, yes. Because of a 500GB drive only
+> half of it is effectively usable. Two 250GB disks raid1 are much cheaper
+> than one 500GB disk.
+
+But not cheaper than one 300 gig disk.  Remember, out of 500 gigs, how
+much of that is essential?
+
+If you're doing some sort of media, like video editing, probably a lot,
+so you get the two 250 gig disks.  But if you're an author, say, your
+life's work probably fits on a single floppy (if you actually use text
+files) or at least fifty times over on a CD (if you use some bloaty
+office suite).  A programmer?  My entire kernel directory is less than
+300 megs, and I haven't run "make clean" recently.
+
+Metadata shouldn't take more than 5% of the disk.
+
+So, if your disk starts going bad and you need to recover, and you lose
+a program, so what?  You can still recover the files.  For that matter,
+how many people here would be devastated if they lost a .o file?
+Probably very few people here have a .o file without a matching .c file,
+so if your .o goes, you run "gcc" and you're fine.
+
+Much cheaper, easier than a full backup, easier than RAID, and still
+keeps you from losing everything....
+
+Except, you still are your own worst enemy.  I don't think I've ever
+lost data to hardware, it was always my own stupidity.
