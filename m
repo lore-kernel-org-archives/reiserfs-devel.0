@@ -1,57 +1,102 @@
-From: Lexington Luthor <Lexington.Luthor@gmail.com>
-Subject: Re: COW files
-Date: Sat, 29 Oct 2005 16:22:27 +0100
-Message-ID: <dk043k$jbo$1@sea.gmane.org>
-References: <e692861c0510290101u55e5a3a5t898ad72768f8bd1a@mail.gmail.com> <43636C13.5040307@slaphack.com> <djvum7$6d7$1@sea.gmane.org> <43638790.9000500@slaphack.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Reiser4 SCSI Bug?
+Date: Sat, 29 Oct 2005 09:06:18 -0700
+Message-ID: <43639DFA.1020107@namesys.com>
+References: <2066.130.215.239.65.1130521750.squirrel@webmail.WPI.EDU> <37550.130.215.239.65.1130545649.squirrel@webmail.WPI.EDU>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26709-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26710-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43638790.9000500@slaphack.com>
-Sender: news <news@sea.gmane.org>
+In-Reply-To: <37550.130.215.239.65.1130545649.squirrel@webmail.WPI.EDU>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: chanin@WPI.EDU
+Cc: Steve Olivieri <steve86@WPI.EDU>, reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>
 
-David Masover wrote:
-> Ok, are you talking about making all the files COW, or the directory
-> structure itself somehow COW?
-> 
-> Because if someone patched "cp" to do COW files, I'm sure it would also
-> work for "cp -a", which would be about as fast as "cp -al".
-> 
-> I'm not sure how it'd work to make entire directories COW -- that is,
-> "cp -a" is as fast as "ln" of a single file.
-> 
-> 
-> And before anyone from LKML gets any funny ideas, there's no reason why
-> COW should be Reiser4 specific.  We've been due a "copy" system call for
-> at least a decade.  Why not just add that, with the realization that
-> POSIX would be brain-dead not to add support for it later, then make it
-> COW for FS-es that support it, and a simple copy for FS-es that don't.
-> 
-> With any luck, not a line of any non-COW FS need be changed to support
-> the copy system call, unless they want to add COW support as well.
-> 
-> And if you think it's bad copying a couple of gigs around on a local
-> hard disk, wishing it could copy-on-write, try an NFS mount over a
-> (very) long-distance VPN.  Why should cp send a couple of gigs across a
-> network and back, when the machine running the "cp" command never needs
-> to see it?
-> 
+Thanks Isaac!
 
-I would not mind this being reiser4 specific, I don't use the archaic 
-filesystems much, they are far too slow compared to reiser4.
+Does IDE have a different maximum?  Is there a non-hack way to discover
+the maximum of the device driver underneath?
 
-As for the exact semantics of COW, whether it applies to file or to 
-entire directories, I don't really care as long as it is fast. At the 
-moment, the userspace library makes things very fast, but very 
-inconvenient since I need to spawn a new shell in the hard-linked tree, 
-and while screen + zsh and its history sharing makes that bearable, its 
-still a PITA.
+Hans
 
-LL
+Isaac Chanin wrote:
+
+>Steve Olivieri wrote:
+>  
+>
+>>Greetings!
+>>
+>>I have a Maxtor Atlas II 15k, 147GB SCSI hard disk and an LSI Logic
+>>LSI21320 Ultra320 SCSI Host Bus Adapter for PCI-X (though it's running in
+>>a PCI slot).  I have partitioned it and installed a temporary Gentoo
+>>system with the reiserfs filesytem.  My boot partition uses ext2.  These
+>>partitions seem perfectly stable.  I have booted this temporary system
+>>multiple times and I have attempted to use it to install a permanent
+>>system with the reiser4 filesystem.
+>>
+>>After making the fileystems on each partition and mounting them, I was
+>>able to download two tarballs (the stage and portage snapshot).  While
+>>extracting the first, the terminal seems to hang.
+>>
+>>I switched to another terminal to see what was wrong.  Everything works
+>>great until I try to do anything at all on a reiser4 partition.  Then,
+>>this terminal also hangs.  Repeat until I'm out of terminals.
+>>
+>>I've been able to repeat this problem a number of times.  The only
+>>messages in my log file claimed that a flush failed (with code -12, if I
+>>remember correctly).  I do not have access to the logs at this time but I
+>>will try to get them soon.
+>>
+>>I am running a 2.6.13-ck8 kernel patched with the 2.6.13 reiser4 patchset.
+>> Patitions were made using the 1.0.5 reiser4progs/libaal.  In the past, I
+>>have also replicated this problem using a 2.6.12-gentoo kernel with the
+>>2.6.12 patchset and 1.0.5 reiser4progs/libaal.
+>>
+>>Is there something that I can do to fix this problem?  Is it a known bug?
+>>
+>>Also, I am not on the mailing list and I would appreciate it if I could be
+>>cc'd with any information about this problem.
+>>
+>>Thanks,
+>>Steve
+>>
+>>
+>>
+>>
+>>    
+>>
+>
+>Hey Steve,
+>
+>The problem appears to be in the fs/reiser4/wander.c file.  In short,
+>nr_blocks passed to bio_alloc ends up being too big; in my testing 1024,
+>whereas the maximum the called functions will properly deal with is 256.
+>
+>The attached patch adds a hacky fix for this problem, but perhaps someone
+>who knows the code better should go through and take a look why max_blocks
+>and nr in write_jnodes_to_disk_extent in wander.c do not always have a
+>shared minimum of no greater than 256.
+>
+>Hope this helps,
+>Isaac
+>  
+>
+>------------------------------------------------------------------------
+>
+>--- /mnt/gentoo/usr/src/linux/fs/reiser4/wander.c	2005-10-28 19:27:02.301541280 -0400
+>+++ linux/fs/reiser4/wander.c	2005-10-28 19:29:37.000000000 -0400
+>@@ -1241,7 +1241,7 @@
+> 
+> 	while (nr > 0) {
+> 		struct bio *bio;
+>-		int nr_blocks = min(nr, max_blocks);
+>+		int nr_blocks = min(min(nr, max_blocks), 256);
+> 		int i;
+> 		int nr_used;
+> 
+>
 
