@@ -1,44 +1,31 @@
-From: Ioan Ionita <opslynx@gmail.com>
-Subject: Re: [2.6 patch] fs/reiser4/: possible cleanups
-Date: Fri, 28 Oct 2005 23:58:40 -0400
-Message-ID: <df47b87a0510282058t37e8393o60e7f592ea5b19e5@mail.gmail.com>
-References: <20051028223547.GF4180@stusta.de>
+From: Gregory Maxwell <gmaxwell@gmail.com>
+Subject: COW files
+Date: Sat, 29 Oct 2005 04:01:43 -0400
+Message-ID: <e692861c0510290101u55e5a3a5t898ad72768f8bd1a@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; 
-	boundary="----=_Part_10701_31185677.1130558320972"
-Return-path: <reiserfs-list-return-26700-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26702-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20051028223547.GF4180@stusta.de>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Adrian Bunk <bunk@stusta.de>
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-------=_Part_10701_31185677.1130558320972
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Any thought to making a file plugin that creates copy on write files?
+The operation would be something like a hardlink which is invisible to
+the user and broken as soon as either file is modified.
 
-When I read the Subject (*[2.6 patch] fs/reiser4/: possible cleanups)* for =
-a
-second, I thought that this patch was against Linus' tree. I concluded that
-reiser4 must have been recently merged in mainline, since there's a patch
-for it. But no, it's a -mm patch. Gah! Shouldn't the Subject be more like [
-2.6-mm patch] as to not mislead us dreamers?
+Files could be COWed by a flag on the cp command (or really, perhaps
+that should be the default behavior) or with a utility (perhaps run as
+a periodic script to locate duplicates and COW them. This would
+greatly speed up the process of copying files.
 
-------=_Part_10701_31185677.1130558320972
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-When I read the Subject (<span style=3D"FONT-SIZE: larger"><strong>[2.6 pat=
-ch] fs/<span class=3D"st0" id=3D"st" name=3D"st">reiser4</span>/: possible =
-cleanups)</strong> for a second, I thought that this patch was against Linu=
-s' tree. I concluded that reiser4 must have been recently merged in mainlin=
-e, since there's a patch for it. But no, it's a -mm patch. Gah! Shouldn't t=
-he Subject be more like [
-2.6-mm patch] as to not mislead us dreamers?</span>
-
-------=_Part_10701_31185677.1130558320972--
+The behavior on break could be to duplicate the whole cowed file on
+the first right, or allow a COWed file to have alternate choices for
+blocks. Files would remain cowed until decowed, which would likely be
+bad for performance (due to fragmentation of alternate versions
+causing gaps in sequential scans), so the repacker could be taught to
+decow files that have too many alternate blocks.
