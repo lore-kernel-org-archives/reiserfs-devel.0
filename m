@@ -1,28 +1,40 @@
-From: PFC <lists@boutiquenumerique.com>
-Subject: Re: [2.6 patch] fs/reiser4/: possible cleanups
-Date: Sat, 29 Oct 2005 11:58:01 +0200
-Message-ID: <op.szejazspth1vuj@localhost>
-References: <20051028223547.GF4180@stusta.de> <df47b87a0510282058t37e8393o60e7f592ea5b19e5@mail.gmail.com> <20051029092250.GG4180@stusta.de>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: COW files
+Date: Sat, 29 Oct 2005 12:33:23 +0000
+Message-ID: <43636C13.5040307@slaphack.com>
+References: <e692861c0510290101u55e5a3a5t898ad72768f8bd1a@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-26704-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26705-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20051029092250.GG4180@stusta.de>
+In-Reply-To: <e692861c0510290101u55e5a3a5t898ad72768f8bd1a@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; delsp="yes"; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Gregory Maxwell <gmaxwell@gmail.com>
+Cc: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
+Gregory Maxwell wrote:
 
-	Remember my message where I said reiser4 was preventing my laptop from  
-shutting down itself ?
+> Files could be COWed by a flag on the cp command (or really, perhaps
+> that should be the default behavior) or with a utility (perhaps run as
+> a periodic script to locate duplicates and COW them. This would
+> greatly speed up the process of copying files.
 
-	Well it turned out that, in fact, it was a stupid shfs-mount process  
-which would refuse to die. Adding a "killall ssh" in the local.stop script  
-is a bit violent, but perfectly functional way, to bring it back to  
-reason. Everything now works.
+Should be on the cp command, but you have to change the cp source for
+that, and everything implementing "copy", including desktop managers.
+There's currently no "copy" system call.  So it's more than just a plugin.
 
-	But still, I had to fsck --rebuild-tree just because my battery ran out...
+> The behavior on break could be to duplicate the whole cowed file on
+> the first right, or allow a COWed file to have alternate choices for
+> blocks. Files would remain cowed until decowed, which would likely be
+> bad for performance (due to fragmentation of alternate versions
+> causing gaps in sequential scans), so the repacker could be taught to
+> decow files that have too many alternate blocks.
 
+Not sure about this last one.  The repacker should increase the amount
+of free space, not decrease it.  Especially, imagine a very large COWed
+file, maybe a quarter the size of the FS, with 15 or so copies.  Yes,
+it'll be fragmented, but the alternative is an FS full several times over.
