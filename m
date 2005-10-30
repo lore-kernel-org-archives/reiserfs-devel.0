@@ -1,66 +1,40 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiser4 SCSI Bug?
-Date: Sat, 29 Oct 2005 23:42:18 -0700
-Message-ID: <43646B4A.7060301@namesys.com>
-References: <2066.130.215.239.65.1130521750.squirrel@webmail.WPI.EDU> <37550.130.215.239.65.1130545649.squirrel@webmail.WPI.EDU> <43639DFA.1020107@namesys.com> <43640228.7080807@wpi.edu> <4364033C.5010200@namesys.com> <436406DF.8070104@wpi.edu> <43643C7E.4080703@namesys.com> <43641554.8040500@wpi.edu>
+From: "Toomas Laasik" <t008@ut.ee>
+Subject: History plugin in ReiserFS?
+Date: Sun, 30 Oct 2005 20:50:05 +0200 (EET)
+Message-ID: <52152.80.235.110.72.1130698205.squirrel@mailhost.ut.ee>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26725-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-26728-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43641554.8040500@wpi.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Isaac Chanin <chanin@WPI.EDU>
-Cc: Steve Olivieri <steve86@WPI.EDU>, reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>
+To: reiserfs-list@namesys.com
 
-Isaac Chanin wrote:
+Hello,
 
-> Hans Reiser wrote:
->
->> Isaac Chanin wrote:
->>
->>
->>> Hans Reiser wrote:
->>>
->>>
->>>> It should be not 256, but BIO_MAX_PAGES, yes?   Defining limits in two
->>>> places is bad, yes?
->>>>
->>>>
->>>
->>> Yeah, I think the code is running into two different limits here.
->>> Reiser4 wants it to be nr, but limits it to BIO_MAX_PAGES.  However,
->>> apparently, the BIO_MAX_PAGES limit does not take into consideration
->>> the underlying 256 limit imposed by bio_alloc.
->>>
->>> I'm not quite sure if having the two different limits is a bad thing
->>> in this case, unless BIO_MAX_PAGES can be made to (or is supposed to,
->>> and there's a bug) take into account the 256 limit.
->>>
->>> I suppose the other solution is to not use bio_alloc et al due to the
->>> 256 limit, and find another method that allows values as large as
->>> BIO_MAX_PAGES, under the current implementation, will grow to.
->>>
->>>
->>
->> but you said:
->>
->> "In any case, BIO_MAX_PAGES is defined to be 256"
->>
->> Now I am confused.
->>
->> We should use the same macro defining our limit as the underlying
->> layer uses.  What macro is that called?
->>
->>
->
-> Right, it would be far better to do min(BIO_MAX_PAGES, ...); rather
-> than using 256 directly.  It's defined in include/linux/bio.h which is
-> already included in wander.c.
->
->
-ok, well, vs, please fix this and put the fix into our next release to
-andrew if you can.
+I was wondering if reiserfs has some sort of history plugin. I want a
+filesystem that manages files similar to CVS or SVN so that I can say for
+example that "I want asdasd.txt file exactly as it was on 15.10.2005
+14:20:05" and I can get it. Of cource keeping that kind of "changelog"
+takes much room on disk, but I assume one could set a percentage of disk
+space for history and/or max days to keep history from.
+
+It is one of my university projects to make this kind of filesystem or
+modify some existing filesystem eg ReiserFS.
+
+Any sugestions how to implement or where to start? Is something like that
+made already? Do you think that extending ReiserFS would be a good option?
+I searched Google trying to find some material about writing ReiserFS
+plugins, but found very little useful. Maybe it's easier to start from
+scratch? The goal is not to make production safe filesystem, but just
+accomplish my task. Of cource if it is possible I would like that what I
+do is useful not only to me but for others who might want something
+similar too.
+
+Thanks in advance,
+
+Toomas
+
