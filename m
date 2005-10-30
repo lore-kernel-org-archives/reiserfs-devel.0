@@ -1,66 +1,67 @@
-From: Michael James <Michael.James@csiro.au>
-Subject: Re: Reiser4 SCSI Bug?
-Date: Mon, 31 Oct 2005 09:36:03 +1100
-Message-ID: <200510310936.04490.Michael.James@csiro.au>
-References: <2066.130.215.239.65.1130521750.squirrel@webmail.WPI.EDU>
+From: michael chang <thenewme91@gmail.com>
+Subject: reiser3.6 files inaccessable from rescue CD post reiserfsck --rebuild-tree
+Date: Sun, 30 Oct 2005 18:55:56 -0500
+Message-ID: <b14e81f00510301555j24f63c43x6a1bbda08bd4e5d1@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26733-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26734-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <2066.130.215.239.65.1130521750.squirrel@webmail.WPI.EDU>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Steve Olivieri <steve86@wpi.edu>
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-On Sat, 29 Oct 2005 03:49 am, Steve Olivieri wrote:
-> Greetings!
-> 
-> I have a Maxtor Atlas II 15k, 147GB SCSI hard disk
-> and an LSI Logic LSI21320 Ultra320 SCSI Host Bus Adapter
-> for PCI-X (though it's running in a PCI slot).
-> I have partitioned it and installed a temporary Gentoo 
-> system with the reiserfs filesytem.
-> My boot partition uses ext2.
-> These partitions seem perfectly stable.
-> I have booted this temporary system multiple times
-> and I have attempted to use it to install a permanent 
-> system with the reiser4 filesystem.
-> 
-> After making the fileystems on each partition and mounting them, I was
-> able to download two tarballs (the stage and portage snapshot).  While
-> extracting the first, the terminal seems to hang.
-> 
-> I switched to another terminal to see what was wrong.
-> Everything works great until I try to do anything at all
-> on a reiser4 partition.  Then, this terminal also hangs.
-> Repeat until I'm out of terminals. 
+I know this seems kinda funky, and this is the first time this has
+ever happened to me using a reiser filesystem.  (I've found that after
+decent testing, the filesystems, like reiserfs3 work quite well.)
 
-There seems to be a complete incompatibility
- between reiser4 and LSI fusion drivers.
+Anyways, I'd booted off of a Ubuntu 5.04 live CD and gotten gparted,
+and tried to use that to resize my reiserfs v3.6 partition (
+/dev/hda5, containing /boot inside (didn't put it as a seperate
+partition, to my own woe) and a ClusterKNOPPIX cloop image and all the
+files in the system).  Anyways, I tried to shrink the partition (which
+I'd done many with great sucess, albeit this was my first time using
+gparted to do it), but for some reason it ran reiserfsck -y
+--fix-fixable and wouldn't resize the partiton.  So I went and
+switched to parted, which while resizing told me that there was an
+error with one of the inodes.
 
-I tried to get a reiser4 data partition on Dell Blade servers
- (PE1655MC) with the same results you had.
-(Search the archives for "Suse9.3")
-Lots of people reporting, "It works fine."
- and my reiser4 wouldn't accept data.
-The suggestion then was, "Try a different disk controller."
-But the blades don't even have the possibility,
- so I went back to reiserfs 3.6.
+So I figured I'd check the partition.  I went and ran reiserfsck
+--check /dev/hda5 and it went and told me I needed a rebuild tree.  So
+I ran reiserfsck --rebuild-tree /dev/hda5, told it yes, and let it
+run.
 
-I haven't heard any news to suggest it's worth trying again yet.
+When I went back to mount the paritition, I could do an ls of the
+root, and see filenames.  But if I went in to one of the directories
+(e.g. /etc, /boot, or whatever) and list, I would get a list of the
+files, but -l would tell me the permission was denied to read the list
+of files, while running as root, from a rescue CD.  [At this point,
+the entire disk was unbootable, because GRUB would give an Error 16
+and sqawk because it couldn't read /boot/grub/menu.lst from the
+partition.]  I tried chmoding the files as root, just about
+everything, and it would always fail.
 
-michaelj
+If I boot my Ubuntu install cd and run the "rescue" system, and try
+and select my reiserfs partition, it will fail, saying that it doesn't
+have the permisisons to execute /bin/bash.
 
--- 
-Michael James                         michael.james@csiro.au
-System Administrator                    voice:  02 6246 5040
-CSIRO Bioinformatics Facility             fax:  02 6246 5166
+So, I'm sitting here with my pc next to me, with a reiserfs partition
+that seems to have all the data intact on it, but gives a permision
+denied error when I'm running any tool as root, even to just get a
+directory listing and read the files.
 
-No matter how much you pay for software,
- you always get less than you hoped.
-Unless you pay nothing, then you get more.
+Unfortunately, I didn't think to capture reiserfsck's output while it
+was doing its work, so I don't have a copy of that, unfortunately.
+
+I don't have $20, or otherwise I would send it, but I would appreciate
+any help that could be given, if possible.  I understand you're all
+busy and resource-strapped, although I'm rather perplexed about my
+situation.  Thanks.
+
+--
+~Mike
+ - Just my two cents
+ - No man is an island, and no man is unable.
