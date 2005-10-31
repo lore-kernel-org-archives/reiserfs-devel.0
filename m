@@ -1,123 +1,81 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiser4 SCSI Bug?
-Date: Mon, 31 Oct 2005 00:23:43 -0800
-Message-ID: <4365D48F.4000706@namesys.com>
-References: <2066.130.215.239.65.1130521750.squirrel@webmail.WPI.EDU> <43640228.7080807@wpi.edu> <200510310924.26782.zam@namesys.com> <200510311042.33297.zam@namesys.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: reiser3.6 files inaccessable from rescue CD post reiserfsck --rebuild-tree
+Date: Mon, 31 Oct 2005 11:34:42 +0300
+Message-ID: <4365D722.8010409@namesys.com>
+References: <b14e81f00510301555j24f63c43x6a1bbda08bd4e5d1@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26743-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26744-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200510311042.33297.zam@namesys.com>
+In-Reply-To: <b14e81f00510301555j24f63c43x6a1bbda08bd4e5d1@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Alexander Zarochentsev <zam@namesys.com>
-Cc: Isaac Chanin <chanin@wpi.edu>, Steve Olivieri <steve86@wpi.edu>, reiserfs-list@namesys.com, vs <vs@thebsh.namesys.com>
+To: michael chang <thenewme91@gmail.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Alexander Zarochentsev wrote:
+Hello
 
->On Monday 31 October 2005 09:24, Alexander Zarochentsev wrote:
->  
->
->>Hi,
->>
->>On Sunday 30 October 2005 02:13, Isaac Chanin wrote:
->>    
->>
->>>Hi Hans,
->>>
->>>I don't think it's a device driver problem.  My fix derived simply from
->>>noticing that the function where the problem originates is bvec_alloc_bs
->>>in fs/bio.c.
->>>
->>>To trace, the problem goes something like:
->>>(fs/reiser4/wander.c) write_jnodes_to_disk_extent -> (fs/bio.c)
->>>bio_alloc -> bio_alloc_bioset -> bvec_alloc_bs
->>>
->>>In any case, BIO_MAX_PAGES is defined to be 256 in include/linux/bio.h,
->>>thus bvec_alloc_bs returns null, likewise bio_alloc_bioset does the
->>>same, as does bio_alloc.  And thus the error in wander.c.
->>>
->>>Looking at the problem from the other direction, the max_blocks check
->>>that was already in wander.c looks like:
->>>
->>>max_blocks = bdev_get_queue(super->s_bdev)->max_sectors >>
->>>(super->s_blocksize_bits - 9);
->>>
->>>I'd look into the construction of the super block around
->>>s_blocksize_bits, or however max_sectors is derived, to see if there're
->>>any problems there (I suppose a device driver very well could be giving
->>>a bad value that gets used somewhere in that code), but I really don't
->>>know the reiser4 code well enough to do so.  In any case, as a temporary
->>>(or perhaps permanent, as it seems that the limit is hardcoded in the
->>>kernel anyways) solution it would probably be better to put the min(256,
->>>...) check around where max_blocks is set rather than around nr_blocks
->>>inside the while loop.
->>>      
->>>
->>fs/mpage.c  uses bio.h:bio_get_nr_vecs() as below:
->>...
->>alloc_new:
->>	if (bio == NULL) {
->>		bio = mpage_alloc(bdev, blocks[0] << (blkbits - 9),
->>			  	min_t(int, nr_pages, bio_get_nr_vecs(bdev)),
->>				GFP_KERNEL);
->>		if (bio == NULL)
->>			goto confused;
->>	}
->>...
->>
->>would you please check whether the following patch helps as your one does:
->>
->>-----------------------------------------
->>diff --git a/wander.c b/wander.c
->>index 4038000..b606063 100644
->>--- a/wander.c
->>+++ b/wander.c
->>@@ -731,9 +731,7 @@ static int write_jnodes_to_disk_extent(
->> 	assert("zam-570", nr > 0);
->>
->> 	block = *block_p;
->>-	max_blocks =
->>-		bdev_get_queue(super->s_bdev)->max_sectors >>
->>-		(super-> s_blocksize_bits - 9);
->>+	max_blocks = bio_get_nr_vecs(super->s_bdev);
->>
->> 	while (nr > 0) {
->> 		struct bio *bio;
->>======================
->>    
->>
->
->I understood, mpage_writepages() has no such a problem because it 
->submits not more than PAGEVEC_SIZE pages by one BIO.  It does not need to 
->limit bio size by BIO_MAX_PAGES but reiser4 does.
->
->Thanks a lot, Isaac.
->
->I agree with Hans that we should use a constant from the public bio interface 
->rather than a number.
->
->-------------------------------------------
->--- a/wander.c
->+++ b/wander.c
->@@ -731,9 +731,7 @@ static int write_jnodes_to_disk_extent(
->        assert("zam-570", nr > 0);
->
->        block = *block_p;
->-       max_blocks =
->-               bdev_get_queue(super->s_bdev)->max_sectors >>
->-               (super-> s_blocksize_bits - 9);
->+       max_blocks = min(bio_get_nr_vecs(super->s_bdev), BIO_MAX_PAGES);
->
->        while (nr > 0) {
->                struct bio *bio;
->
->=======================
->
->  
->
-Please put a thank you to Isaac in the source, and put some solution of
-your choice in the patch collection for us to send to akpm.
+michael chang wrote:
+> I know this seems kinda funky, and this is the first time this has
+> ever happened to me using a reiser filesystem.  (I've found that after
+> decent testing, the filesystems, like reiserfs3 work quite well.)
+> 
+> Anyways, I'd booted off of a Ubuntu 5.04 live CD and gotten gparted,
+> and tried to use that to resize my reiserfs v3.6 partition (
+> /dev/hda5, containing /boot inside (didn't put it as a seperate
+> partition, to my own woe) and a ClusterKNOPPIX cloop image and all the
+> files in the system).  Anyways, I tried to shrink the partition (which
+> I'd done many with great sucess, albeit this was my first time using
+> gparted to do it), but for some reason it ran reiserfsck -y
+> --fix-fixable and wouldn't resize the partiton.  So I went and
+> switched to parted, which while resizing told me that there was an
+> error with one of the inodes.
+> 
+> So I figured I'd check the partition.  I went and ran reiserfsck
+> --check /dev/hda5 and it went and told me I needed a rebuild tree.  So
+> I ran reiserfsck --rebuild-tree /dev/hda5, told it yes, and let it
+> run.
+> 
+> When I went back to mount the paritition, I could do an ls of the
+> root, and see filenames.  But if I went in to one of the directories
+> (e.g. /etc, /boot, or whatever) and list, I would get a list of the
+> files, but -l would tell me the permission was denied to read the list
+> of files, while running as root, from a rescue CD.  [At this point,
+> the entire disk was unbootable, because GRUB would give an Error 16
+> and sqawk because it couldn't read /boot/grub/menu.lst from the
+> partition.]  I tried chmoding the files as root, just about
+> everything, and it would always fail.
+> 
+> If I boot my Ubuntu install cd and run the "rescue" system, and try
+> and select my reiserfs partition, it will fail, saying that it doesn't
+> have the permisisons to execute /bin/bash.
+> 
+
+Please boot off install cd so that it does not mount problem reiserfs partition
+(/dev/hda5) as root filesystem.
+Mount /dev/hda5 to /mnt and run ls /mnt/bin/ -l
+What do you get?
+
+> So, I'm sitting here with my pc next to me, with a reiserfs partition
+> that seems to have all the data intact on it, but gives a permision
+> denied error when I'm running any tool as root, even to just get a
+> directory listing and read the files.
+> 
+> Unfortunately, I didn't think to capture reiserfsck's output while it
+> was doing its work, so I don't have a copy of that, unfortunately.
+> 
+> I don't have $20, or otherwise I would send it, but I would appreciate
+> any help that could be given, if possible.  I understand you're all
+> busy and resource-strapped, although I'm rather perplexed about my
+> situation.  Thanks.
+> 
+> --
+> ~Mike
+>  - Just my two cents
+>  - No man is an island, and no man is unable.
+> 
+> 
+
