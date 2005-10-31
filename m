@@ -1,67 +1,75 @@
-From: michael chang <thenewme91@gmail.com>
-Subject: reiser3.6 files inaccessable from rescue CD post reiserfsck --rebuild-tree
-Date: Sun, 30 Oct 2005 18:55:56 -0500
-Message-ID: <b14e81f00510301555j24f63c43x6a1bbda08bd4e5d1@mail.gmail.com>
+From: Jake Maciejewski <maciejej@msoe.edu>
+Subject: Re: zlib support...
+Date: Sun, 30 Oct 2005 20:00:21 -0600
+Message-ID: <1130724022.10015.84.camel@gentoo>
+References: <1ddd44e40510301421k127e316eo4f46b4277fc80858@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26734-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26736-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <1ddd44e40510301421k127e316eo4f46b4277fc80858@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: ninja@slaphack.com
+Cc: reiserfs-list@namesys.com
 
-I know this seems kinda funky, and this is the first time this has
-ever happened to me using a reiser filesystem.  (I've found that after
-decent testing, the filesystems, like reiserfs3 work quite well.)
+On Sun, 2005-10-30 at 16:21 -0600, David Masover wrote:
+> Compiling a 2.6.12.5 kernel on my Powerbook, I discovered something
+> odd.  Reiser4 (vanilla patch) was insisting on being a module.
+> 
+> Alright, why does it still depend on CONFIG_ZLIB_INFLATE and
+> CONFIG_ZLIB_DEFLATE, even when the cryptocompress plugin isn't being
+> used at all, and is in fact nonfunctional?
+> 
+> Anyway, I can live with a little RAM bloat, but for some reason, I
+> couldn't find the options to enable any zlib in the kernel.  I could
+> enable INFLATE support by forcing something I know uses it to be
+> compiled in -- compressed isofs support.  But I couldn't find
+> something sane to force DEFLATE on.  DEFLATE defaults to being a
+> module, and INFLATE seems to follow whatever I set isofs support to be
+> -- if I want INFLATE compiled in, to compile Reiser4 in, I have to
+> compile isofs in.
+> 
+> Still workable, but very, very stupid, especially considering zlib is
+> never actually used, only compiled against and depended on.
+> 
+> Ok, first actual bug:
+> I could try to compile Reiser4 in at this point, but the final link
+> fails, because it does need deflate support, even though it doesn't
+> depend on CONFIG_ZLIB_DEFLATE.
+> Solution:  Either remove cryptocompress until it works, or depend on
+> CONFIG_ZLIB_DEFLATE.
+> 
+> Now, second actual bug, not actually your fault:
+> Neither DEFLATE nor INFLATE can be configured manually, yet you depend
+> on one (or both) of them, without actually setting them.  Thus, if
+> CONFIG_ZLIB_DEFLATE is compiled as a module, Reiser4 must be a module,
+> and there's no way to change that from inside menuconfig.  Editing
+> the .config file manually doesn't work.
+> Solution:  Make it possible to select INFLATE and DEFLATE support
+> manually, just like CRC32 and other library functions, or have Reiser4
+> enable them when it needs them, instead of insisting on being a
+> module.
+> 
+> The real surprise is, this problem only started happening on my PPC
+> system.  I'm not sure if it's a config script glitch, an
+> architecture-specific problem, or something else entirely.  But then,
+> my PPC is the only 2.6.12 system I currently run that tries to compile
+> in Reiser4 support -- the desktop loads it from a ramdisk, because it
+> needs the ramdisk anyway, and the other amd64 box is running 2.6.13.
+> Maybe configure is supposed to work this way, but the dependencies are
+> wrong.
 
-Anyways, I'd booted off of a Ubuntu 5.04 live CD and gotten gparted,
-and tried to use that to resize my reiserfs v3.6 partition (
-/dev/hda5, containing /boot inside (didn't put it as a seperate
-partition, to my own woe) and a ClusterKNOPPIX cloop image and all the
-files in the system).  Anyways, I tried to shrink the partition (which
-I'd done many with great sucess, albeit this was my first time using
-gparted to do it), but for some reason it ran reiserfsck -y
---fix-fixable and wouldn't resize the partiton.  So I went and
-switched to parted, which while resizing told me that there was an
-error with one of the inodes.
+Have you actually gotten reiser4 to work on PPC? I can't even mount
+reiser4 filesystems on PCC. I've tried reporting it twice, but as far as
+I know no effort has been made to fix the problem.
 
-So I figured I'd check the partition.  I went and ran reiserfsck
---check /dev/hda5 and it went and told me I needed a rebuild tree.  So
-I ran reiserfsck --rebuild-tree /dev/hda5, told it yes, and let it
-run.
+> I realize this is all probably old news, but I'm sending it anyway,
+> because maybe it's not.  I'm sending it from a gmail address because I
+> don't have networking on said Powerbook yet.
+-- 
+Jake Maciejewski <maciejej@msoe.edu>
 
-When I went back to mount the paritition, I could do an ls of the
-root, and see filenames.  But if I went in to one of the directories
-(e.g. /etc, /boot, or whatever) and list, I would get a list of the
-files, but -l would tell me the permission was denied to read the list
-of files, while running as root, from a rescue CD.  [At this point,
-the entire disk was unbootable, because GRUB would give an Error 16
-and sqawk because it couldn't read /boot/grub/menu.lst from the
-partition.]  I tried chmoding the files as root, just about
-everything, and it would always fail.
-
-If I boot my Ubuntu install cd and run the "rescue" system, and try
-and select my reiserfs partition, it will fail, saying that it doesn't
-have the permisisons to execute /bin/bash.
-
-So, I'm sitting here with my pc next to me, with a reiserfs partition
-that seems to have all the data intact on it, but gives a permision
-denied error when I'm running any tool as root, even to just get a
-directory listing and read the files.
-
-Unfortunately, I didn't think to capture reiserfsck's output while it
-was doing its work, so I don't have a copy of that, unfortunately.
-
-I don't have $20, or otherwise I would send it, but I would appreciate
-any help that could be given, if possible.  I understand you're all
-busy and resource-strapped, although I'm rather perplexed about my
-situation.  Thanks.
-
---
-~Mike
- - Just my two cents
- - No man is an island, and no man is unable.
