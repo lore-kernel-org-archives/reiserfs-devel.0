@@ -1,81 +1,72 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: reiser3.6 files inaccessable from rescue CD post reiserfsck --rebuild-tree
-Date: Mon, 31 Oct 2005 11:34:42 +0300
-Message-ID: <4365D722.8010409@namesys.com>
-References: <b14e81f00510301555j24f63c43x6a1bbda08bd4e5d1@mail.gmail.com>
+From: "Steve Olivieri" <steve86@WPI.EDU>
+Subject: Re: Reiser4 SCSI Bug?
+Date: Mon, 31 Oct 2005 13:31:34 -0500 (EST)
+Message-ID: <55643.130.215.239.65.1130783494.squirrel@webmail.WPI.EDU>
+References: <2066.130.215.239.65.1130521750.squirrel@webmail.WPI.EDU>   
+    <37550.130.215.239.65.1130545649.squirrel@webmail.WPI.EDU>   
+    <43639DFA.1020107@namesys.com> <43640228.7080807@wpi.edu>   
+    <4364033C.5010200@namesys.com> <436406DF.8070104@wpi.edu>   
+    <43643C7E.4080703@namesys.com> <43641554.8040500@wpi.edu>   
+    <43646B4A.7060301@namesys.com>
+    <1993.130.215.169.201.1130725109.squirrel@webmail.WPI.EDU>
+    <43659421.1050608@wpi.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26744-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-26745-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b14e81f00510301555j24f63c43x6a1bbda08bd4e5d1@mail.gmail.com>
+In-Reply-To: <43659421.1050608@wpi.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: michael chang <thenewme91@gmail.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: Isaac Chanin <chanin@WPI.EDU>
+Cc: Steve Olivieri <steve86@WPI.EDU>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>
 
-Hello
+> Steve Olivieri wrote:
+>> Hey guys,
+>>
+>> I had a system running on reiser4 with Isaac's patch yesterday and all
+>> we
+>> going well.  Of course, then I deleted /var/db and portage went crazy
+>> and
+>> I decided to build the system again.
+>>
+>> I attempted to do so today, using the same kernel as yesterday, but now
+>> I'm getting the same error as before.  To be a bit more specific,
+>>
+>> reiser4[pdflush(218)]: writeout
+>> (fs/reiser4/vfs_ops.c:197)[nikita-31001):
+>> code: -12 at fs/reiser4/wander.c:1250
+>> WARNING: Flush failed: -12
+>>
+>> I used to get a number of these errors (in fact, they continued until I
+>> would reboot with SysRq keys) but now I only seem to get one before
+>> everything hangs and I'm forced to reboot.
+>>
+>> Hope to see a good fix soon,
+>>
+>>  Steve
+>>
+>>
+>
+>
+> Hey Steve,
+>
+> Not sure why that error would crop up again.  In any case, the attached
+> patch uses the macro, moves the min check out of the loop, and fixes all
+> of the occurances - so, it may be worth giving a try.
+>
+> Isaac
+>
 
-michael chang wrote:
-> I know this seems kinda funky, and this is the first time this has
-> ever happened to me using a reiser filesystem.  (I've found that after
-> decent testing, the filesystems, like reiserfs3 work quite well.)
-> 
-> Anyways, I'd booted off of a Ubuntu 5.04 live CD and gotten gparted,
-> and tried to use that to resize my reiserfs v3.6 partition (
-> /dev/hda5, containing /boot inside (didn't put it as a seperate
-> partition, to my own woe) and a ClusterKNOPPIX cloop image and all the
-> files in the system).  Anyways, I tried to shrink the partition (which
-> I'd done many with great sucess, albeit this was my first time using
-> gparted to do it), but for some reason it ran reiserfsck -y
-> --fix-fixable and wouldn't resize the partiton.  So I went and
-> switched to parted, which while resizing told me that there was an
-> error with one of the inodes.
-> 
-> So I figured I'd check the partition.  I went and ran reiserfsck
-> --check /dev/hda5 and it went and told me I needed a rebuild tree.  So
-> I ran reiserfsck --rebuild-tree /dev/hda5, told it yes, and let it
-> run.
-> 
-> When I went back to mount the paritition, I could do an ls of the
-> root, and see filenames.  But if I went in to one of the directories
-> (e.g. /etc, /boot, or whatever) and list, I would get a list of the
-> files, but -l would tell me the permission was denied to read the list
-> of files, while running as root, from a rescue CD.  [At this point,
-> the entire disk was unbootable, because GRUB would give an Error 16
-> and sqawk because it couldn't read /boot/grub/menu.lst from the
-> partition.]  I tried chmoding the files as root, just about
-> everything, and it would always fail.
-> 
-> If I boot my Ubuntu install cd and run the "rescue" system, and try
-> and select my reiserfs partition, it will fail, saying that it doesn't
-> have the permisisons to execute /bin/bash.
-> 
+Hallo!
 
-Please boot off install cd so that it does not mount problem reiserfs partition
-(/dev/hda5) as root filesystem.
-Mount /dev/hda5 to /mnt and run ls /mnt/bin/ -l
-What do you get?
+Isaac, that patch works much better.  My system seems to be as stable as
+ever with reiser4.  I'll test the new patch that was sent to me later today
+and get back to you guys with some results.
 
-> So, I'm sitting here with my pc next to me, with a reiserfs partition
-> that seems to have all the data intact on it, but gives a permision
-> denied error when I'm running any tool as root, even to just get a
-> directory listing and read the files.
-> 
-> Unfortunately, I didn't think to capture reiserfsck's output while it
-> was doing its work, so I don't have a copy of that, unfortunately.
-> 
-> I don't have $20, or otherwise I would send it, but I would appreciate
-> any help that could be given, if possible.  I understand you're all
-> busy and resource-strapped, although I'm rather perplexed about my
-> situation.  Thanks.
-> 
-> --
-> ~Mike
->  - Just my two cents
->  - No man is an island, and no man is unable.
-> 
-> 
+Thanks again for the fix.
+Steve
+
 
