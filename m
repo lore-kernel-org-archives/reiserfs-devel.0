@@ -1,82 +1,78 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: zlib support...
-Date: Tue, 01 Nov 2005 19:47:07 +0300
-Message-ID: <43679C0B.1040302@namesys.com>
-References: <1ddd44e40510301421k127e316eo4f46b4277fc80858@mail.gmail.com>
+From: Fionn Behrens <fionn@spamfilter.de>
+Subject: Re: reiser4 in 2.6.14 - lockups with mmapped files
+Date: Tue, 01 Nov 2005 18:41:08 +0100
+Message-ID: <1130866868.12859.36.camel@laptop>
+References: <1130860221.12859.23.camel@laptop>  <436796F6.10603@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26758-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-a3unj2PowScvLtTJGWCm"
+Return-path: <reiserfs-list-return-26759-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1ddd44e40510301421k127e316eo4f46b4277fc80858@mail.gmail.com>
+In-Reply-To: <436796F6.10603@namesys.com>
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ninja@slaphack.com
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-David Masover wrote:
+--=-a3unj2PowScvLtTJGWCm
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> Compiling a 2.6.12.5 <http://2.6.12.5> kernel on my Powerbook, I 
-> discovered something odd.
+On Di, 2005-11-01 at 19:25 +0300, Vladimir V. Saveliev wrote:
+
+> Fionn Behrens wrote:
+> > Unfortunately I once more hit the wall and was forced to go back to
+> > 2.6.11 (including another --build-fs run to regain compatibility with
+> > the old but working reiser4 drivers). I wish there was a mount option t=
+o
+> > exclude the new extensions so I can test new kernels without losing hal=
+f
+> > a day for fscking when things get whacky.
+
+> Did fsck.reiser4 say you that you have to --build-fs?
+
+Yes, after I went back to 2.6.11 I tried "--fix" first but it said
+indeed that I have to "--build-fs" and so I did.
+
+> > But now it looks like any time any mmapped file is synced to a reiser4
+> > partition, the process who tries to do that will freeze forever. In
+>=20
+> Can you please check what fs/reiser4/reiser4.h:REISER4_USE_EFLUSH is set =
+to?
+> If it is 0, please try your test having it set to 1.
+
+It is set to 0. I changed it to 1. What is the supposed result of this
+change?
+I am somewhat reluctant to try it and risk yet another two hours of
+fschecking. Maybe tomorrow night. If it doesnt work again, I'll get you
+some screenshots of the fscheck, too.
+
+> If the above does not help  - would you please set up either sereial cons=
+ole or
+> netconsole and catch sysrq-T output with its help?
+
+Would another "screenshot" do the trick as well?=20
+
+br,
+	Fionn
+--=20
+I believe we have been called by history to lead the world.
+                                                 G.W. Bush, 2002-03-01
 
 
-hmm.. this is an old bug.
-I put the fix for 2.6.12 here:
-ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.12/zlib_fix_dependence.patch
+--=-a3unj2PowScvLtTJGWCm
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
-Thanks,
-Edward.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
 
->   Reiser4 (vanilla patch) was insisting on being a module.
->
-> Alright, why does it still depend on CONFIG_ZLIB_INFLATE and 
-> CONFIG_ZLIB_DEFLATE, even when the cryptocompress plugin isn't being 
-> used at all, and is in fact nonfunctional?
->
-> Anyway, I can live with a little RAM bloat, but for some reason, I 
-> couldn't find the options to enable any zlib in the kernel.  I could 
-> enable INFLATE support by forcing something I know uses it to be 
-> compiled in -- compressed isofs support.  But I couldn't find 
-> something sane to force DEFLATE on.  DEFLATE defaults to being a 
-> module, and INFLATE seems to follow whatever I set isofs support to be 
-> -- if I want INFLATE compiled in, to compile Reiser4 in, I have to 
-> compile isofs in.
->
-> Still workable, but very, very stupid, especially considering zlib is 
-> never actually used, only compiled against and depended on.
->
-> Ok, first actual bug:
-> I could try to compile Reiser4 in at this point, but the final link 
-> fails, because it does need deflate support, even though it doesn't 
-> depend on CONFIG_ZLIB_DEFLATE.
-> Solution:  Either remove cryptocompress until it works, or depend on 
-> CONFIG_ZLIB_DEFLATE.
->
-> Now, second actual bug, not actually your fault:
-> Neither DEFLATE nor INFLATE can be configured manually, yet you depend 
-> on one (or both) of them, without actually setting them.  Thus, if 
-> CONFIG_ZLIB_DEFLATE is compiled as a module, Reiser4 must be a module, 
-> and there's no way to change that from inside menuconfig.  Editing the 
-> .config file manually doesn't work.
-> Solution:  Make it possible to select INFLATE and DEFLATE support 
-> manually, just like CRC32 and other library functions, or have Reiser4 
-> enable them when it needs them, instead of insisting on being a module.
->
-> The real surprise is, this problem only started happening on my PPC 
-> system.  I'm not sure if it's a config script glitch, an 
-> architecture-specific problem, or something else entirely.  But then, 
-> my PPC is the only 2.6.12 system I currently run that tries to compile 
-> in Reiser4 support -- the desktop loads it from a ramdisk, because it 
-> needs the ramdisk anyway, and the other amd64 box is running 2.6.13.  
-> Maybe configure is supposed to work this way, but the dependencies are 
-> wrong.
->
->
->
-> I realize this is all probably old news, but I'm sending it anyway, 
-> because maybe it's not.  I'm sending it from a gmail address because I 
-> don't have networking on said Powerbook yet.
+iD8DBQBDZ6i0jkvYSI4bFywRAhE7AKCM3VsBEwscDQ9c0UD1XXjhuUTPwgCcCV35
+tm3yK2s1vNFM9nJHlTD771c=
+=hFAI
+-----END PGP SIGNATURE-----
+
+--=-a3unj2PowScvLtTJGWCm--
 
 
