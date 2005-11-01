@@ -1,38 +1,39 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: reiser3.6 files inaccessable from rescue CD post reiserfsck --rebuild-tree
-Date: Tue, 01 Nov 2005 15:28:52 +0300
-Message-ID: <43675F84.3040902@namesys.com>
-References: <b14e81f00510301555j24f63c43x6a1bbda08bd4e5d1@mail.gmail.com>	 <4365D722.8010409@namesys.com> <b14e81f00510311341q522dae68i9dc06fea1e71dc4@mail.gmail.com> <43675BBA.1050202@namesys.com>
+From: Valentine Sinitsyn <Valentine.Sinitsyn@usu.ru>
+Subject: Re[3]: Slackware Reiser4 Installer
+Date: Tue, 1 Nov 2005 19:09:30 +0500
+Message-ID: <1038259028.20051101190930@usu.ru>
+References: <601220139.20051026100622@usu.ru> <435F1A60.6070204@namesys.com>
+ <1611199179.20051026120425@usu.ru>
+Reply-To: Valentine Sinitsyn <Valentine.Sinitsyn@usu.ru>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26753-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26754-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43675BBA.1050202@namesys.com>
+In-Reply-To: <1611199179.20051026120425@usu.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: michael chang <thenewme91@gmail.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
+Cc: Hans Reiser <reiser@namesys.com>
 
-Hello
+Hi all,
 
-Vladimir V. Saveliev wrote:
->>
->>Unfortuantely, I didn't think to thorughly read your e-mail (misread
->>the first line) before preceeding to run reiserfsck from a different,
->>newer live CD (that I had a friend burn), which ran just fine.  While
->>some files have "dissapeared" into lost+found (which means they need
->>to be recatagorized or something, including everything in /boot), the
->>remainder of the files (maybe 94% of them or so) are now readable.  I
->>have no idea whether or not this is considered "progress".  Probably
->>now have to go sort them by magic or something, with filenames like
->>"25740_124378" on them. 
-> 
-> It might also be useful for you if knew that this file was initially created in
+>>>I've prepared a modified installer disk for Slackware Linux 10.2 which
+>>>allows to install this distro on Reiser4 partitions almost the same
+>>>way you do with other FSes (ext2/3, reiserfs etc), i.e. with no kernel
+>>>recompilation by yourself etc. It is now under internal testing (i.e.
+>>>installed on my friends computers) but I think it will be completely
+>>>ready to the next week. I saw this thread in mailing list:
 
-I meant:
-It might be useful if you knew that this file was initially created in a
-directory whose id is 25740. You can try to find that directory with find /mnt
--inum 25740
+HR>> Sure, sounds good.  We can link to you.
+VS> Okay, thanks a lot. I'll give a link here just after ISO will be ready
+VS> for distribution.
+You can link to http://ftp.linuxcenter.ru/projects/slackware-reiser4/
+An introduction to this project can be found in README.TXT in the same
+directory. Thank you again.
+
+Best regards,
+Valentine Sinitsyn
+
