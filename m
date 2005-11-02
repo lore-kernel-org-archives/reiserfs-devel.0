@@ -1,37 +1,54 @@
-From: Sander <sander@humilis.net>
-Subject: Re: reiser4 in 2.6.14 - lockups with mmapped files
-Date: Tue, 1 Nov 2005 20:37:07 +0100
-Message-ID: <20051101193706.GA16268@favonius>
-References: <1130860221.12859.23.camel@laptop> <436796F6.10603@namesys.com> <1130866868.12859.36.camel@laptop>
-Reply-To: sander@humilis.net
+From: michael chang <thenewme91@gmail.com>
+Subject: Re: reiser3.6 files inaccessable from rescue CD post reiserfsck --rebuild-tree
+Date: Tue, 1 Nov 2005 19:03:13 -0500
+Message-ID: <b14e81f00511011603i69720c80q4f2c290bb4c90420@mail.gmail.com>
+References: <b14e81f00510301555j24f63c43x6a1bbda08bd4e5d1@mail.gmail.com>
+	 <4365D722.8010409@namesys.com>
+	 <b14e81f00510311341q522dae68i9dc06fea1e71dc4@mail.gmail.com>
+	 <43675BBA.1050202@namesys.com> <43675F84.3040902@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-26760-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26762-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <43675F84.3040902@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <1130866868.12859.36.camel@laptop>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Fionn Behrens <fionn@spamfilter.de>
-Cc: reiserfs-list@namesys.com
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Fionn Behrens wrote (ao):
-> On Di, 2005-11-01 at 19:25 +0300, Vladimir V. Saveliev wrote:
-> > Can you please check what fs/reiser4/reiser4.h:REISER4_USE_EFLUSH is
-> > set to? If it is 0, please try your test having it set to 1.
-> 
-> It is set to 0. I changed it to 1. What is the supposed result of this
-> change?
-> I am somewhat reluctant to try it and risk yet another two hours of
-> fschecking. Maybe tomorrow night. If it doesnt work again, I'll get
-> you some screenshots of the fscheck, too.
+On 11/1/05, Vladimir V. Saveliev <vs@namesys.com> wrote:
+> Hello
+>
+> Vladimir V. Saveliev wrote:
+> >>
+> >>Unfortuantely, I didn't think to thorughly read your e-mail (misread
+> >>the first line) before preceeding to run reiserfsck from a different,
+> >>newer live CD (that I had a friend burn), which ran just fine.  While
+> >>some files have "dissapeared" into lost+found (which means they need
+> >>to be recatagorized or something, including everything in /boot), the
+> >>remainder of the files (maybe 94% of them or so) are now readable.  I
+> >>have no idea whether or not this is considered "progress".  Probably
+> >>now have to go sort them by magic or something, with filenames like
+> >>"25740_124378" on them.
+> >
+> > It might also be useful for you if knew that this file was initially cr=
+eated in
+>
+> I meant:
+> It might be useful if you knew that this file was initially created in a
+> directory whose id is 25740. You can try to find that directory with find=
+ /mnt
+> -inum 25740
+>
 
-Maybe you can create a small partition with a minimal OS on which you
-boot new these test kernels?
+I understood the original message, and the clarification was very
+helpful.  Thank you very much.
 
--- 
-Humilis IT Services and Solutions
-http://www.humilis.net
+--
+~Mike
+ - Just my two cents
+ - No man is an island, and no man is unable.
