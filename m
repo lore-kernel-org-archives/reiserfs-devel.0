@@ -1,52 +1,46 @@
-From: Fionn Behrens <fionn@spamfilter.de>
-Subject: SOLVED: reiser4 in 2.6.14 - lockups with mmapped files
-Date: Fri, 04 Nov 2005 22:12:34 +0100
-Message-ID: <1131138753.14425.2.camel@laptop>
-References: <1130860221.12859.23.camel@laptop>
+From: Peter van Hardenberg <pvh@uvic.ca>
+Subject: Plugin authoring.
+Date: Sat, 05 Nov 2005 00:17:20 -0800
+Message-ID: <200511050017.20410.pvh@uvic.ca>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-zudrjKa58Bsv2Rk+VsF5"
-Return-path: <reiserfs-list-return-26782-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26785-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1130860221.12859.23.camel@laptop>
-Sender: news <news@sea.gmane.org>
+Content-disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: "Reiser, Hans" <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
 
---=-zudrjKa58Bsv2Rk+VsF5
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hans,
 
-On Di, 2005-11-01 at 16:50 +0100, Fionn Behrens wrote:
-> Hi all,
->=20
-> it looks like any time any mmapped file is synced to a reiser4
-> partition, the process who tries to do that will freeze forever.
+We would like to spend some time and arrange a plugin that would allow all 
+files to be usable as directories for arbitrary data.
 
-The archck patch maintainer released an update which no longer exhibits
-the problem. After several hours of run time and some stress tests I
-didnt experience a problem so far.
+Our reading suggests that this could probably be done with an object plugin 
+that combines the functionality of Files and Directories. 
 
-thanks for your advice and best regards,
-					Fionn
---=20
- Taking away civil rights to protect a free democracy is like taking off
- the tires of a car to protect it from flats.=20
+As for the problem of hard links, we will simply disallow them. Although they 
+have their uses, file-directories have their own interesting applications 
+which I believe deserve exploration regardless of the outstanding problem.
 
---=-zudrjKa58Bsv2Rk+VsF5
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+Now that we have found our course, we would appreciate some advice on getting 
+started writing a plugin. I have read commentary that there is no "plugin 
+author's document" and that the source code will reveal all to those willing 
+to read it. Well, we are willing to read and hack, but need a few stars to 
+navigate by.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
+What code should we read in particular? Are there relatively simple examples 
+we may follow? Is there API documentation for the storage layer? If weekend 
+warriors are to be able to hack on Reiser, perhaps they can learn from our 
+experience. According to my limited research, there are no third-party 
+plugins yet that we can learn from.
 
-iD8DBQBDa87AjkvYSI4bFywRAmJgAJ90IudhVXQT/+z1Pf+aUAdCZ/9TOQCeMW2h
-HDq3VGzIyRsTnl7CW9M1fao=
-=Pq0E
------END PGP SIGNATURE-----
+Peter
 
---=-zudrjKa58Bsv2Rk+VsF5--
-
-
+-- 
+Peter van Hardenberg (pvh@pvh.ca)
+Victoria, BC, Canada
