@@ -1,46 +1,40 @@
-From: Peter van Hardenberg <pvh@uvic.ca>
-Subject: Plugin authoring.
-Date: Sat, 05 Nov 2005 00:17:20 -0800
-Message-ID: <200511050017.20410.pvh@uvic.ca>
+From: Joachim Zobel <jzobel@heute-morgen.de>
+Subject: Re: undelete
+Date: Sun, 06 Nov 2005 13:51:07 +0100
+Message-ID: <1131281467.4478.6.camel@test.asus>
+References: <871119507.20051103221858@pobox.com>
+Reply-To: jzobel@heute-morgen.de
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26785-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26789-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-disposition: inline
+In-Reply-To: <871119507.20051103221858@pobox.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Reiser, Hans" <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: Chris Drake <christopher@pobox.com>
 
-Hans,
+Am Donnerstag, den 03.11.2005, 22:18 +1100 schrieb Chris Drake:
+> The most important feature of Microsofts new server file-system
+> announcement is the ability to easily "undelete":-
+> http://www.microsoft.com/windowsserver2003/evaluation/overview/technologies/storage.mspx
+> 
+> Could this be incorporated into reiserfs ?  (including the recovery of
+> overwritten files etc of course)
 
-We would like to spend some time and arrange a plugin that would allow all 
-files to be usable as directories for arbitrary data.
+Are you referring to the "Volume Shadow Copy Service"? This is not a FS
+feature, it is AFAIK implemented below in the "block device layer" (this
+has quite shure a different name on windows). You can do the same thing
+on Linux with LVM (it was however not usable with LVM2 on my system at
+the beginning of the year).
 
-Our reading suggests that this could probably be done with an object plugin 
-that combines the functionality of Files and Directories. 
+A real file system undo would however be really good to have.
 
-As for the problem of hard links, we will simply disallow them. Although they 
-have their uses, file-directories have their own interesting applications 
-which I believe deserve exploration regardless of the outstanding problem.
+Sincerely,
+Joachim
 
-Now that we have found our course, we would appreciate some advice on getting 
-started writing a plugin. I have read commentary that there is no "plugin 
-author's document" and that the source code will reveal all to those willing 
-to read it. Well, we are willing to read and hack, but need a few stars to 
-navigate by.
 
-What code should we read in particular? Are there relatively simple examples 
-we may follow? Is there API documentation for the storage layer? If weekend 
-warriors are to be able to hack on Reiser, perhaps they can learn from our 
-experience. According to my limited research, there are no third-party 
-plugins yet that we can learn from.
 
-Peter
-
--- 
-Peter van Hardenberg (pvh@pvh.ca)
-Victoria, BC, Canada
