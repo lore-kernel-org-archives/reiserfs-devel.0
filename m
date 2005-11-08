@@ -1,20 +1,20 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Edward Shishkin <edward@namesys.com>
 Subject: Re: Plugin authoring.
-Date: Tue, 08 Nov 2005 09:42:36 -0800
-Message-ID: <4370E38C.9090605@namesys.com>
+Date: Tue, 08 Nov 2005 20:51:59 +0300
+Message-ID: <4370E5BF.2000806@namesys.com>
 References: <200511050017.20410.pvh@uvic.ca> <436EFABA.6070408@namesys.com> <200511080300.24424.pvh@uvic.ca>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26811-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26812-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <200511080300.24424.pvh@uvic.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Peter van Hardenberg <pvh@uvic.ca>
-Cc: reiserfs-list@namesys.com, vs <vs@thebsh.namesys.com>
+Cc: reiserfs-list@namesys.com
 
 Peter van Hardenberg wrote:
 
@@ -51,11 +51,7 @@ From there, we tracked down the reiser4_inode extensions and the clever use of
 >Of course, inode.h was similarly enlightening, but worrying to me is the fact 
 >that plugins like crypt and pseudo contain fields in all reiser4_inodes. This 
 >means that a plugin's code is not encapsulated strictly within the plugin 
->itself.
->
-An interesting point.  Edward, please comment.
-
-> I will probably do some grepping hunts tomorrow to see how many files 
+>itself. I will probably do some grepping hunts tomorrow to see how many files 
 >a plugin like pseudo actually has to worm its way into.
 >
 >None of us are experienced with plain old VFS (except our supervisor, Yvonne, 
@@ -67,12 +63,26 @@ An interesting point.  Edward, please comment.
 >
 >It would help if within Reiser4 code more roadmaps were given -- we found a 
 >backtrace in a comment somewhere which was most illuminating. Personally, I 
->was rather puzzled within file.c about what tails, hints and extents are. I 
->  
+>was rather puzzled within file.c about what tails, hints and extents are. 
 >
-tails and extents are on the website.  do hints need a comment in the .h
-?....
 
+Hint is an object from the core code. This is a "weak" pointer to a 
+position in the tree
+and contains so-called "seal" which is incremented every time when 
+someone modifies
+the node.
+Once you will need to unlock a node in accordance with deadlock 
+prevention policy
+for some operation, then acquire the locked position again, so you can 
+just look at the seal
+and implement per-node lookup within this node (instead of expensive 
+tree traversing)
+if this seal is unbroken.
+
+Tails and extents are items powered by item plugins of FORMATTING_ID
+and EXTENT_POINTER_ID.
+
+>I 
 >was working from paper printouts without Google handy but certain knowledge 
 >definitely seems expected, and I have not found a reliable method for 
 >differentiating Reiser-specific terminology from the more generic.
@@ -88,11 +98,16 @@ From a legibility point of view it would be nice if all the method signatures
 >lookup on the pluginid in the inode. I am still looking for some kind of 
 >structure in the plugin.c code itself which mediates the translation from a 
 >pluginid to an actual table of methods, and how the plugin itself announces 
->those associations.
+>those associations. Is there a table? 
 >
-vs, please comment
 
-> Is there a table? A naming convention? Something 
+The table is at the end of the source file for each real plugin (for 
+example plugin/hash.c)
+Currently all the plugins are static, so you can obtain a pointer to any 
+plugin by its id via
+appropriate macro.
+
+>A naming convention? Something 
 >promising was in there, but it is now three in the morning and my memory is 
 >fading slightly.
 >
