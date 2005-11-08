@@ -1,139 +1,229 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Plugin authoring.
-Date: Tue, 08 Nov 2005 10:01:54 -0800
-Message-ID: <4370E812.20706@namesys.com>
-References: <200511050017.20410.pvh@uvic.ca> <436EFABA.6070408@namesys.com> <200511080300.24424.pvh@uvic.ca> <4370E5BF.2000806@namesys.com>
+From: Joshua Wise <joshua@joshuawise.com>
+Subject: Re: reiserfsck does not actually fix bitmap
+Date: Tue, 8 Nov 2005 17:47:12 -0500 (EST)
+Message-ID: <Pine.LNX.4.63.0511081729300.28446@dashnine>
+References: <42CCA0B2.6030701@joshuawise.com> <1120734198.3871.134.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26813-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26817-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4370E5BF.2000806@namesys.com>
+In-Reply-To: <1120734198.3871.134.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward@namesys.com>
-Cc: Peter van Hardenberg <pvh@uvic.ca>, reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
+Content-Transfer-Encoding: 7bit
+To: Vladimir Saveliev <vs@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Edward Shishkin wrote:
+Hello --
 
-> Peter van Hardenberg wrote:
->
->> I'm keeping this on-list in the hope that a record of it may be of
->> value to other future "weekend-warriors" on how we approached this
->> problem.
->>
->> On November 6, 2005 10:56 pm, Hans Reiser wrote:
->>  
->>
->>> Peter van Hardenberg wrote:
->>> Just start reading the regular unix file and directory plugins, and
->>> compose a long email with questions about how they work.
->>>
->>>   
->>
->>
->> Well, here we go!
->>
->> Today we spent a few hours poring over dir.c and file.c as Hans
->> recommended and branched out as we went.
->> Some things were unexpected, header files contained some complete
->> inlined methods, and the almost no documentation (it is all in the .c
->> files.)
->>
->> Lots and lots of layers of indirection taking place. The dir.c and
->> file.c are almost all irrelevant to our current pursuit which is
->> understanding how to actually write a plugin, and therefore how the
->> plugins system actually works. Eventually Nathan found the clues that
->> led us to success in file_ops.c -- there actual VFS calls get
->> converted to reiser calls!
->>
->> From there, we tracked down the reiser4_inode extensions and the
->> clever use of reiser4_inode_data() to essentially cast back and forth
->> between the structs.
->>
->> Of course, inode.h was similarly enlightening, but worrying to me is
->> the fact that plugins like crypt and pseudo contain fields in all
->> reiser4_inodes. This means that a plugin's code is not encapsulated
->> strictly within the plugin itself. I will probably do some grepping
->> hunts tomorrow to see how many files a plugin like pseudo actually
->> has to worm its way into.
->>
->> None of us are experienced with plain old VFS (except our supervisor,
->> Yvonne, who has kept us on course so far). It was our hope that we
->> needn't learn VFS in complete detail, but it seems now that before we
->> can really understand the Reiser code well enough to write plugins we
->> will need to read some less complex examples of Linux filesystems.
->> "du -sh fs/*" suggests that BFS and Coda should be simple enough to
->> absorb the principles of in a single sitting.
->>
->> It would help if within Reiser4 code more roadmaps were given -- we
->> found a backtrace in a comment somewhere which was most illuminating.
->> Personally, I was rather puzzled within file.c about what tails,
->> hints and extents are.
->
->
-> Hint is an object from the core code. This is a "weak" pointer to a
-> position in the tree
-> and contains so-called "seal" which is incremented every time when
-> someone modifies
-> the node.
-> Once you will need to unlock a node in accordance with deadlock
-> prevention policy
-> for some operation, then acquire the locked position again, so you can
-> just look at the seal
-> and implement per-node lookup within this node (instead of expensive
-> tree traversing)
-> if this seal is unbroken.
->
-> Tails and extents are items powered by item plugins of FORMATTING_ID
-> and EXTENT_POINTER_ID.
+I just created a new reiserfs partition using this same system (albeit two
+new hard drives, sitting on a different controller. The drives are in a RAID
+mirror.)
 
+I got the same behavior once again, in which the system determines on boot
+that there is an invalid count of free blocks, switches to --fix-fixable,
+complains about differing bitmaps, reboots, and then repeats the same thing.
 
-A hint is a suggestion about where a key resolved to last time.  A seal
-indicates whether a node has been modified since a hint was last
-recorded.  You check the seal, and if the seal is still valid, you can
-use the hint without traversing the tree again.
+I'll retype the outputs from various commands below my sig. (/dev/md0 is not mounted)
 
-Edward, please inspect the code, and insert the above comment by me if
-the code needs it.
+The summary is:
+ 	* I do a reiserfsck (defaulting to --check), which complains that I
+need to fix it.
+ 	* I fix it.
+ 	* I fix it again.
+ 	* I autocheck it, it autofixes itself.
+ 	* Repeat a few more times.
+ 	* I autocheck it, it says everything's fine.
+ 	* Repeat a few more times.
+ 	* I autocheck it, it autofixes itself.
 
->
->> I was working from paper printouts without Google handy but certain
->> knowledge definitely seems expected, and I have not found a reliable
->> method for differentiating Reiser-specific terminology from the more
->> generic.
->>
->> From a legibility point of view it would be nice if all the method
->> signatures were found in headers instead of only public methods in
->> file.h and private ones throughout the file itself. To preserve the
->> "public" "private" distinction, perhaps a second header file would be
->> appropriate? I am only thinking out loud here.
->> All in all, project progress is good. We have figured out (roughly)
->> how calls from VFS are translated into Reiser4 calls and then into
->> plugin calls via a lookup on the pluginid in the inode. I am still
->> looking for some kind of structure in the plugin.c code itself which
->> mediates the translation from a pluginid to an actual table of
->> methods, and how the plugin itself announces those associations. Is
->> there a table?
->
->
-> The table is at the end of the source file for each real plugin (for
-> example plugin/hash.c)
-> Currently all the plugins are static, so you can obtain a pointer to
-> any plugin by its id via
-> appropriate macro.
->
->> A naming convention? Something promising was in there, but it is now
->> three in the morning and my memory is fading slightly.
->>
->> More tomorrow (today in most time zones),
->> -pvh
->>
->>  
->>
->
->
->
+I sent a similar email to support@namesys.com until I remembered that I has
+posted this a while ago here as well.
 
+I'm not quite sure what's going on here. I'm hoping that I'm just missing
+somethingn in the command line arguments that would cause this kind of
+indeterminate behavior, but I have a feeling that that's not the case.
+
+When I --check, it gives me varying corruption counts when I run it
+repeatedly. I've seen 1 corruption, then 2, then 2 again, and still 2 now,
+but well, it varies :)
+
+Retyped + cut + pasted logs follow below my sig.
+
+joshua
+
+root@bluefire:~ # reiserfsck /dev/md0
+<...>
+Replaying journal..
+Reiserfs journal '/dev/md0' in blocks [18..8211]: 0 transactions replayed
+Checking internal tree..finished
+Comparing bitmaps..vpf-10640: The on-disk and the correct bitmaps differs.
+Checking Semantic tree:
+finished
+1 found corruptions can be fixed when running with --fix-fixable
+<...>
+root@bluefire:~ # reiserfsck --fix-fixable /dev/md0
+<...>
+Replaying journal..
+Reiserfs journal '/dev/md0' in blocks [18..8211]: 0 transactions replayed
+Checking internal tree..finished
+Comparing bitmaps..vpf-10630: The on-disk and the correct bitmaps differs.
+Will be fixed later.
+Checking Semantic tree:
+finished
+No corruptions found
+There are on the filesystem
+ 	Leaves 33181
+ 	Internal nodes 221
+ 	Directories 10646
+ 	Other files 122375
+ 	Data block pointers 2072215 (17 of them are zero)
+ 	Safe links 0
+<...>
+root@bluefire:~ # reiserfsck -a /dev/md0
+Reiserfs super block in block 16 on 0x900 of format 3.6 with standard
+journal
+Blocks (total/free): 24414752/22300193 by 4096 bytes
+Filesystem is clean
+Replaying journal..
+Reiserfs journal '/dev/md0' in blocks [18..8211]: 0 transactions replayed
+Wrong amount of used blocks. Switching to the --fix-fixable mode.
+<...>
+Replaying journal..
+Reiserfs journal '/dev/md0' in blocks [18..8211]: 0 transactions replayed
+Checking internal tree..finished
+Comparing bitmaps..vpf-10630: The on-disk and the correct bitmaps differs.
+Will be fixed later.
+Checking Semantic tree:
+finished
+No corruptions found
+There are on the filesystem
+ 	Leaves 33181
+ 	Internal nodes 221
+ 	Directories 10646
+ 	Other files 122375
+ 	Data block pointers 2072215 (17 of them are zero)
+ 	Safe links 0
+<...>
+root@bluefire:~ # reiserfsck -a /dev/md0
+Reiserfs super block in block 16 on 0x900 of format 3.6 with standard
+journal
+Blocks (total/free): 24414752/22300193 by 4096 bytes
+Filesystem is clean
+Replaying journal..
+Reiserfs journal '/dev/md0' in blocks [18..8211]: 0 transactions replayed
+Wrong amount of used blocks. Switching to the --fix-fixable mode.
+<...>
+Replaying journal..
+Reiserfs journal '/dev/md0' in blocks [18..8211]: 0 transactions replayed
+Checking internal tree..finished
+Comparing bitmaps..vpf-10630: The on-disk and the correct bitmaps differs.
+Will be fixed later.
+Checking Semantic tree:
+finished
+No corruptions found
+There are on the filesystem
+ 	Leaves 33181
+ 	Internal nodes 221
+ 	Directories 10646
+ 	Other files 122375
+ 	Data block pointers 2072215 (17 of them are zero)
+ 	Safe links 0
+<...>
+root@bluefire:~ # reiserfsck -a /dev/md0
+Reiserfs super block in block 16 on 0x900 of format 3.6 with standard
+journal
+Blocks (total/free): 24414752/22300193 by 4096 bytes
+Filesystem is clean
+Replaying journal..
+Reiserfs journal '/dev/md0' in blocks [18..8211]: 0 transactions replayed
+Checking internal tree..finished
+root@bluefire:~ # reiserfsck -a /dev/md0
+Reiserfs super block in block 16 on 0x900 of format 3.6 with standard
+journal
+Blocks (total/free): 24414752/22300193 by 4096 bytes
+Filesystem is clean
+Replaying journal..
+Reiserfs journal '/dev/md0' in blocks [18..8211]: 0 transactions replayed
+Checking internal tree..finished
+root@bluefire:~ # reiserfsck -a /dev/md0
+Reiserfs super block in block 16 on 0x900 of format 3.6 with standard
+journal
+Blocks (total/free): 24414752/22300193 by 4096 bytes
+Filesystem is clean
+Replaying journal..
+Reiserfs journal '/dev/md0' in blocks [18..8211]: 0 transactions replayed
+Checking internal tree..finished
+root@bluefire:~ # reiserfsck -a /dev/md0
+Reiserfs super block in block 16 on 0x900 of format 3.6 with standard
+journal
+Blocks (total/free): 24414752/22300193 by 4096 bytes
+Filesystem is clean
+Replaying journal..
+Reiserfs journal '/dev/md0' in blocks [18..8211]: 0 transactions replayed
+Wrong amount of used blocks. Switching to the --fix-fixable mode.
+<...>
+Replaying journal..
+Reiserfs journal '/dev/md0' in blocks [18..8211]: 0 transactions replayed
+Checking internal tree..finished
+Comparing bitmaps..vpf-10630: The on-disk and the correct bitmaps differs.
+Will be fixed later.
+Checking Semantic tree:
+finished
+No corruptions found
+There are on the filesystem
+ 	Leaves 33181
+ 	Internal nodes 221
+ 	Directories 10646
+ 	Other files 122375
+ 	Data block pointers 2072215 (17 of them are zero)
+ 	Safe links 0
+<...>
+
+On Thu, 7 Jul 2005, Vladimir Saveliev wrote:
+
+> Hello
+>
+> On Thu, 2005-07-07 at 07:25, Joshua Wise wrote:
+>> Hi folks,
+>>
+>> I just set up a new system, and all was well, but on a boot of the
+>> system a few days later, I was greeted with reiserfsck complaining that
+>> the number of free blocks was incorrect, and that it wished to run
+>> itself with --fix-fixable. It did so, noting that the on-disk and
+>> correct bitmaps differ. It said that they will be fixed later, as shown:
+>>
+>> Comparing bitmaps..vpf-10630: The on-disk and the correct bitmaps
+>> differs. Will be fixed later.
+>>
+>> The system rebooted, and it ran reiserfsck -p (or -a, I dunno which)
+>> once more. Again, it said that the on-disk and correct bitmaps differed,
+>> and that they would be fixed "later". This repeated until I booted into
+>> a liveCD and ran reiserfsck from there.  A -p from there shows that
+>> "Some corruptions on the filesystem were detected. Switching to the
+>> --fix-fixable mode". When it entered --fix-fixable mode, it again
+>> mentioned taht the on-disk and correct bitmaps differed, and that it
+>> would fix them later, but at the end, it said "No corruptions found" and
+>> made no sign that it actually fixed the bitmaps. Running reiserfsck -p
+>> again showed no difference, so it seems to me like reiserfsck didn't fix
+>> the bitmap when it told me it would.
+>>
+> If it showed no bitmap difference anymore - then it is fixed.
+>
+>> Does anyone have any insights as to how to get reiserfsck to actually
+>> fix the problem?
+>>
+>
+> I guess that problem is that on -p option reiserfsck gets switched to
+> quiet mode which supresses some output.
+> Please run
+> reiserfsck /dev/hda1 to see whether /dev/hda1 has any problems.
+>
+>
+>> Thanks,
+>> joshua
+>>
+>
+>
