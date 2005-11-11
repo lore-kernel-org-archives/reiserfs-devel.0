@@ -1,10 +1,10 @@
 From: John Gilmore <jgilmore@glycou.com>
-Subject: Crash with 2.6.14-mm1 (and slow...)
-Date: Fri, 11 Nov 2005 12:54:44 +0000
-Message-ID: <200511111254.44704.jgilmore@glycou.com>
+Subject: Slowdown is gone & apt-get works with updated reiser4. So nevermind...
+Date: Fri, 11 Nov 2005 13:59:39 +0000
+Message-ID: <200511111359.39715.jgilmore@glycou.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26866-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26867-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,35 +14,57 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-It seems that when my HD approached 90% full, access (write) time went up 
-dramatically, with some programs seeming to stop entirely. I especially 
-notice it when starting vim. The problem hasn't gone away after I got the use 
-percentage back down around 85%. It's getting really annoying.
+I grabbed the reiser4 patch for 2.6.14-rc5 and compiled it. Thanks to 
 
-And then I got this while trying to "apt-get install cvs"
+Vladimir V. Saveliev's comments about
 
-This is actually the second time it's locked while doing this, but the 
-previous time I was in X and didn't see the bug message. I captured this with 
-a digital camera and typed it back in, so there may be minor errors, though I 
-doubt it.
+EXPORT_SYMBOL(clear_page_dirty_for_io);
 
-I haven't tried "apt-get install" on anything else yet.
+in mm/page-writeback.c, I was able to get it working as a module, and it seems 
+to have taken care of it.
 
-Debian GNU/Linux testing/unstable herb tty2
+I would have waited for the official 2.6.14-mm1 reiser patch before upgrading 
+to 2.6.14, but CD burning didn't work with 2.6.12.
 
-herb login: root
-Password: BUG: soft lockup detected on CPU#0!
 
-Pid: 3492, comm:              apt-get
-EIP: 0060:[<f8a6129c>] CPU: 0
-EIP is at writepages_unix_file+0x11c/0x280 [reiser4]
-EFLAGS: 00000202     not tainted  (2.6.14-mm1)
-EAX: f6188b60 EBX: ffffffff ECX: 0000003f EDX: ffffffff
-ESI: 000003fd EDI: 00000000 EBP: f646c9ec DS: 007b ES: 007b
-CR0: 8005003b CR2: bf9c3000 CR3: 35d79000 CR4: 000006d0
-[<c013cfeb>] __filemap_fdatawrite_range+0x6b/0x80\
-[<c013d030>] filemap_fdatawrite+0x30/0x40
-[<c015114f>] msync_interval+0x6f/0xe0
-[<c015132f>] sys_msync+0x16f/0x182
-[<c01030d5>] syscall_call+0x7/0xb
-_
+<rant>
+There is, btw, one main reason that I've decided that whatever trouble it may 
+cause, and whatever growing pangs I may experience along the way, root 
+reiser4 is worth it. Does anybody remember GoBack? It was a versioning system 
+for windows 95/98 that was incredibly flexible and useful. Tracked all 
+changes to the whole disk. Old versions of a file? no problem. grab an old 
+version of a directory for referance temporarily? easy. Got a virus? revert 
+the whole HD, and then grab the newer copies of your documents and saved 
+games as needed.
+
+Microsoft includes an almost useless version of the same ability with their 
+"system restore" facility on XP, but I've never seen or heard of anybody 
+using it. And rightfully so, it majorly stinks. It doesn't track all files, 
+it's interface is opaque, the fact that it even exists is hidden seven layers 
+deep, you can't control which files are restored, you can't list previous 
+versions of a file, you can't copy an old version of a subdirectory and it's 
+contents out without wiping the new version. You can bet that in 10 years or 
+so, Microsoft will come out with a version of system restore that doesn't 
+suck though. Integrated into the file manager, right click access, and 
+everything else too.
+
+Goback is the only thing that I missed when I switched over to linux, and 
+reiser4 is the only thing I've found that even hints at a similar ability. 
+Even if it takes another 10 years to reach the same point of usability that 
+GoBack had, it'll be well worth it.
+
+And when that day comes, I won't even have to reformat (you didn't have to 
+reformat to install GoBack, either.) It's been 10 years or so since my last 
+format (Hrmm... a little over eight, actually) and I figured that as long as 
+my HD was trashed (another reason to love reiser4 - any fs that has a 
+standard tool that commonly trashes file systems beyond any hope of 
+recovery... darn fsck.ext3) I might as well prepare for the future, and get 
+better performance while I'm at it.
+
+Note though, that features are definitely the first thing for me, performance 
+is nice but not something that I'll notice too much, and I'd definitely be 
+willing to sacrifice some to get enhanced semantics or versioning. Compiles 
+take forever no matter what you do, and as long as the little things (like 
+starting vim) don't take longer than a second or two, that's good enough.
+
+</rant>
