@@ -1,35 +1,64 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Slowdown is gone & apt-get works with updated reiser4. So nevermind...
-Date: Fri, 11 Nov 2005 13:22:23 -0800
-Message-ID: <43750B8F.9030202@namesys.com>
+From: Jonathan Briggs <jbriggs@esoft.com>
+Subject: Re: Slowdown is gone & apt-get works with updated reiser4. So
+	nevermind...
+Date: Fri, 11 Nov 2005 15:06:07 -0700
+Message-ID: <1131746768.9841.6.camel@localhost>
 References: <200511111359.39715.jgilmore@glycou.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26868-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-7v1L48/GJlri/sMkAbji"
+Return-path: <reiserfs-list-return-26869-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <200511111359.39715.jgilmore@glycou.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: John Gilmore <jgilmore@glycou.com>
-Cc: reiserfs-list@namesys.com
+Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-John Gilmore wrote:
+--=-7v1L48/GJlri/sMkAbji
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
->
->Note though, that features are definitely the first thing for me, performance 
->is nice but not something that I'll notice too much, and I'd definitely be 
->willing to sacrifice some to get enhanced semantics or versioning. Compiles 
->take forever no matter what you do, and as long as the little things (like 
->starting vim) don't take longer than a second or two, that's good enough.
->
-></rant>
->
->
->  
->
-Thanks for an informative email.  I encourage people to write patches
-for adding  versioning into reiser4 before we find the funding for it
-(could be years, sigh).
+On Fri, 2005-11-11 at 13:59 +0000, John Gilmore wrote:
+[snip]
+> <rant>
+> There is, btw, one main reason that I've decided that whatever trouble it=
+ may=20
+> cause, and whatever growing pangs I may experience along the way, root=20
+> reiser4 is worth it. Does anybody remember GoBack? It was a versioning sy=
+stem=20
+> for windows 95/98 that was incredibly flexible and useful.
+[snip]
+
+I have a "goback" utility for my Linux machines.  It's a 300 GB USB2
+drive and rdiff-backup. :)
+
+You could do a similar thing to GoBack with any recent Linux kernel and
+inotify, actually.
+
+Create a series of snapshot directories that contain copies of every
+file.  Use inotify to watch all changes.  Every 15 minutes update the
+snapshots with the changed files.
+
+Or you might be able to hook it into rdiff-backup or something like it,
+to update only the changed files every 15 minutes, without needing to do
+full disk scans to find the changes.
+--=20
+Jonathan Briggs <jbriggs@esoft.com>
+eSoft, Inc.
+
+--=-7v1L48/GJlri/sMkAbji
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
+
+iD8DBQBDdRXPG8fHaOLTWwgRAl+7AJoD6fH6GrUNnYFw8LnbIyh/bibXiQCeKuMX
+rjsOROjMbMIqzbIUeurXUjU=
+=0otY
+-----END PGP SIGNATURE-----
+
+--=-7v1L48/GJlri/sMkAbji--
+
