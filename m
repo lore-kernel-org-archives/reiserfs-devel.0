@@ -1,79 +1,109 @@
-From: Lares Moreau <lares.moreau@gmail.com>
-Subject: Re: More from the Weekday Warriors
-Date: Fri, 11 Nov 2005 10:23:03 -0700
-Message-ID: <1131729783.6861.22.camel@localhost>
-References: <200511092347.32743.pvh@uvic.ca>
+From: jp <jp.guillemin@free.fr>
+Subject: Vanilla 2.6.14.2 with reiser4-for-2.6.14-1.patch
+Date: Fri, 11 Nov 2005 20:47:15 +0100
+Message-ID: <4374F543.1060102@free.fr>
+References: <1131353326.4553.4.camel@localhost.localdomain>	 <436F7ED5.1060106@namesys.com> <1131385665.4553.13.camel@localhost.localdomain> <4374C7EE.20001@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-08Kd7Nrkum4ug286fgHq"
-Return-path: <reiserfs-list-return-26863-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26865-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200511092347.32743.pvh@uvic.ca>
+In-Reply-To: <4374C7EE.20001@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Peter van Hardenberg <pvh@uvic.ca>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: Yusuf Iskenderoglu <enygma@dreadnought.hadiko.de>, ReiserFS Mailing List <reiserfs-list@namesys.com>, Reiserfs-dev <reiserfs-dev@namesys.com>
 
---=-08Kd7Nrkum4ug286fgHq
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Wed, 2005-11-09 at 23:47 -0800, Peter van Hardenberg wrote:
-> Question for the Day:
-> ---------------------------
-> What files need modification to add a new plugin which does not require i=
-node=20
-> extensions?
->=20
-> How can I set the plugins governing a file from userspace? Can it be done=
- from=20
-> within fourdot? My experiments were unsuccessful.
->=20
-> What would a "hello world" plugin look like? It would be valuable to have=
- one=20
-> lying around for future developers. We have discussed creating one, but I=
-=20
-> feel as though "plugging" and "unplugging" plugins requires a huge amount=
- of=20
-> work right now and that would reduce its utility. Perhaps it would make s=
-ense=20
-> if it were distributed as a patch with a plugin developer's guide.
+I've compiled the Vanilla 2.6.14.2 with reiser4-for-2.6.14-1.patch, 
+built static.
 
-A 'hello world' plugin would be useful indeed to new devs/weekend
-warriors,  As for 'plugging' and 'unplugging', we must remember that
-reiser4 is coldplug, not hotplug. A hello_world.patch would be great. As
-for the PITA factor, I don't feel it is a significant issue, as if you
-are hacking the code, you expect things to break and take some time.
+My first tests are very positive :
 
-I have found in my travels a simple hello_world fs[1] written by Ravi
-Kiran[2].  If there could be a page with examples, like [3] for reiser4,
-it would be a great benifit to reiser4 as well as the entire fs-dev
-community.
+I Launched the following "disk operations" at the same time, while Gxine 
+was playing a MPG :
+- a 400MB ISO building
+- complete kernel source recursive directory copy
+- Openoffice startup
+- Firefox startup
 
-As an aside, Geocities.. ICK, we (as a whole) need to get this person a
-real web provider IMO.
+There was no hangup in the video, and all disk operations finished 
+without problems.
 
-[1] http://www.geocities.com/ravikiran_uvs/articles/rkfs.html
-[2] uvsravikiran@gmail.com
-[3] http://www.geocities.com/ravikiran_uvs/
---=20
-Lares Moreau <lares.moreau@gmail.com>  | LRU: 400755 http://counter.li.org
-Gentoo x86 Arch Tester                 |               ::0 Alberta, Canada
-Public Key: 0D46BB6E @ subkeys.pgp.net |           Encrypted Mail Prefered
-Key fingerprint =3D 0CA3 E40D F897 7709 3628  C5D4 7D94 483E 0D46 BB6E
+I'm going to keep using this kernel, and report any problem.
 
---=-08Kd7Nrkum4ug286fgHq
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+Regards
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
+JP
 
-iD8DBQBDdNN3fZRIPg1Gu24RAvBtAJ9xhmooyHFYn253bn5ny43msmvWywCdEPRC
-QXIGK75QrBnQUBQM+SE6/+g=
-=EXAG
------END PGP SIGNATURE-----
 
---=-08Kd7Nrkum4ug286fgHq--
+
+Vladimir V. Saveliev wrote:
+
+>Hello
+>
+>Yusuf Iskenderoglu wrote:
+>  
+>
+>>Okay, thanks for the information. I will continue waiting.
+>>
+>>    
+>>
+>
+>Well, here is the first attempt to relelase reiser4 for 2.6.14. Please try to
+>use it.
+>ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.14/reiser4-for-2.6.14-1.patch.gz
+>
+>
+>Consider it as an experimental thing. Note, it will probably not compile as a
+>module. Adding a line to mm/page-writeback.c the following line
+>
+>EXPORT_SYMBOL(clear_page_dirty_for_io);
+>
+>after clear_page_dirty_for_io()'s definition should fix that, though.
+>
+>
+>
+>  
+>
+>>On Mon, 2005-11-07 at 19:20 +0300, Vladimir V. Saveliev wrote:
+>>    
+>>
+>>>Hello
+>>>
+>>>Yusuf Iskenderoglu wrote:
+>>>      
+>>>
+>>>>Hello,
+>>>>
+>>>>I am not having a support issue, just a wish.
+>>>>It always takes many weeks until you put a patch for the reiser4
+>>>>filesystem for the most actual Linux version into your ftp server.
+>>>>In this case, 2.6.14 is already released for one week now, and there is
+>>>>still no patch available.
+>>>>
+>>>>I am not interested in patching the kernel with stuff from other/older
+>>>>patches.
+>>>>I just wish you be up-to-date
+>>>>
+>>>>Creating a patch for the actual kernel version simply cannot take you
+>>>>more than 1 Minute.
+>>>>
+>>>>        
+>>>>
+>>>Sorry for delay with that. Code got big changes recently, we would like to test
+>>>it a bit.
+>>>      
+>>>
+>>    
+>>
+>
+>
+>
+>  
+>
+
 
