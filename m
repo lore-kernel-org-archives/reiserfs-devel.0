@@ -1,53 +1,43 @@
-From: Peter van Hardenberg <pvh@uvic.ca>
-Subject: Versioning Plugin
-Date: Fri, 11 Nov 2005 16:56:04 -0800
-Message-ID: <200511111656.04891.pvh@uvic.ca>
-References: <200511111359.39715.jgilmore@glycou.com>
+From: rvalles <rvalles@es.gnu.org>
+Subject: Re: reiser4 in 2.6.14 - lockups with mmapped files
+Date: Sat, 12 Nov 2005 02:58:40 +0100
+Message-ID: <16343.0844237611$1131761368@news.gmane.org>
+References: <1130860221.12859.23.camel@laptop> <436796F6.10603@namesys.com> <1131028204.13284.29.camel@laptop> <436A706E.2010001@free.fr> <436B8A10.3000400@namesys.com> <436BB8AF.9020103@free.fr>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26871-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
+Return-path: <reiserfs-list-return-26872-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-reply-to: <200511111359.39715.jgilmore@glycou.com>
-Content-disposition: inline
+Content-Disposition: inline
+In-Reply-To: <436BB8AF.9020103@free.fr>
+Sender: <tux@148.Red-217-126-33.pooles.rima-tde.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-On November 11, 2005 05:59 am, John Gilmore wrote:
-> Does anybody remember GoBack? It was a versioning
-> system for windows 95/98 that was incredibly flexible and useful. Tracked
-> all changes to the whole disk. Old versions of a file? no problem. grab an
-> old version of a directory for referance temporarily? easy. Got a virus?
-> revert the whole HD, and then grab the newer copies of your documents and
-> saved games as needed.
+--Dxnq1zWXvFF0Q93v
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-My thoughts on this:
+Still having the same problem, with 2.6.14.2 patched with 2.6.14-1
+reiser4 patch.
 
-The versioning would be an audit plugin. When the file is modified, tag the 
-current version, copy it into a sub-directory (oh, I don't know, say 
-file/.revisions/<number/date>), and disable write access to it. You might not 
-even need extended filesystem attributes for this, but they would be handy 
-for tagging particular versions.
+It's easy to trigger it while editing a file with vim, and it does take
+a hell of a long wait (while it hits the disk for a minute or so,
+sometimes) for it to unlock.
 
-Copy-on-write would make this action extremely cheap, only adding a couple of 
-extra writes to make it work.
+--Dxnq1zWXvFF0Q93v
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
-Given working resource directories, COW, and the ability to set plugins, this 
-might be a relatively easy hack to implement. Given an efficient xpath shell, 
-you could even create a view of your drive on a particular day. 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
 
-If you had a file that was changing often, perhaps you could set an attribute 
-on that file which told it only to clone the file every once in a while. 
+iD8DBQFDdUxQrD81VR3MDtoRAohEAJ9nVJKuTZ7tPrho2pS7pkNMGJe2rwCff0FE
+AnA/StJT9GvXpqsuIHEWHl4=
+=BHUU
+-----END PGP SIGNATURE-----
 
-Come to think of it, a userspace daemon could run in the background and 
-replace the need for a plugin, which is probably the better solution. Then 
-you just need COW and files which can contain resources.
-
--pvh
-
--- 
-Peter van Hardenberg (pvh@pvh.ca)
-Victoria, BC, Canada
+--Dxnq1zWXvFF0Q93v--
