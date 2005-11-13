@@ -1,53 +1,20 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Technical plugin details
-Date: Sat, 12 Nov 2005 19:04:58 -0800
-Message-ID: <4376AD5A.70706@namesys.com>
-References: <200511111830.44199.pvh@uvic.ca> <4376517A.4040402@namesys.com> <200511121834.24706.pvh@uvic.ca>
+Subject: Re: Versioning Plugin
+Date: Sat, 12 Nov 2005 19:28:40 -0800
+Message-ID: <4376B2E8.5070809@namesys.com>
+References: <200511111359.39715.jgilmore@glycou.com>	 <200511111656.04891.pvh@uvic.ca>	 <1131804415.8550.14.camel@localhost.localdomain>	 <437662CC.9010307@slaphack.com> <1131833125.8550.27.camel@localhost.localdomain> <4376AB51.5080607@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26905-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26908-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200511121834.24706.pvh@uvic.ca>
+In-Reply-To: <4376AB51.5080607@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Peter van Hardenberg <pvh@uvic.ca>
-Cc: Edward Shishkin <edward@namesys.com>, reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: mingz@ele.uri.edu, Peter van Hardenberg <pvh@uvic.ca>, reiserfs-list@namesys.com
 
-Peter van Hardenberg wrote:
-
->On November 12, 2005 12:32 pm, you wrote:
->  
->
->>Peter van Hardenberg wrote:
->>    
->>
->>>Hans,
->>>
->>>I am having trouble modifying a file to use our new plugin. I've tried
->>>writing various values into "foo/.^4/plugin/file" but it won't stick.
->>>      
->>>
->>This is a business of plugin->h.pops->change() method.
->>And for regular file plugin this method (change_file) does nothing.
->>
->>    
->>
->
->Thanks. That was exactly what we were trying to find. We did find it 
->eventually, after experimenting with some other plugin types to determine 
->what the problem was.
->
->Of course, we are still trying to figure out how to actually create a file 
->with a different file plugin. I guess I will have to read the reiser4("...") 
->function as I can see no way to specify these things from a standard bash 
->shell.
->
->-pvh
->
->  
->
-If you want to document the learning process for plugins, we will be
-happy to put it on the website.....
+Insertion optimized files are an ok plugin with me, just create an
+insert operation in sys_reiser4 and an insertion optimized plugin.
