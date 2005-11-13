@@ -1,66 +1,36 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: Technical plugin details
-Date: Sun, 13 Nov 2005 19:42:19 +0300
-Message-ID: <43776CEB.1050706@namesys.com>
-References: <200511111830.44199.pvh@uvic.ca> <4376517A.4040402@namesys.com> <200511121834.24706.pvh@uvic.ca>
+From: Clifford Beshers <clifford.beshers@linspire.com>
+Subject: Re: need opinions from sysadmins on where reiser4progs should install
+Date: Sun, 13 Nov 2005 09:42:47 -0800
+Message-ID: <43777B17.7010801@linspire.com>
+References: <4376E891.6070506@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26924-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26925-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200511121834.24706.pvh@uvic.ca>
+In-Reply-To: <4376E891.6070506@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Peter van Hardenberg <pvh@uvic.ca>, Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Peter van Hardenberg wrote:
+http://www.pathname.com/fhs/pub/fhs-2.3.html#SBINSYSTEMBINARIES
 
->On November 12, 2005 12:32 pm, you wrote:
->  
+Hans Reiser wrote:
+
+>currently it installs mkfs.reiser4 and such in /usr/local/sbin
 >
->>Peter van Hardenberg wrote:
->>    
->>
->>>Hans,
->>>
->>>I am having trouble modifying a file to use our new plugin. I've tried
->>>writing various values into "foo/.^4/plugin/file" but it won't stick.
->>>      
->>>
->>This is a business of plugin->h.pops->change() method.
->>And for regular file plugin this method (change_file) does nothing.
->>
->>    
->>
+>This is not found by default paths for most roots, and seems unlikely to
+>be where I would want it to go if I was sysadmin....  I would never
+>install mkfs.anything unless I wanted it in /sbin.....  but then I am
+>not a professional....
 >
->Thanks. That was exactly what we were trying to find. We did find it 
->eventually, after experimenting with some other plugin types to determine 
->what the problem was.
+>What do the sysadmins on the list think?
 >
->Of course, we are still trying to figure out how to actually create a file 
->with a different file plugin.
+>Hans
 >
-
-You can write to "..../plugin/regular" of parent directory: this is a
-place where reiser4_create (*) looks for a file plugin of target child,
-just add a new plugin id of REISER4_REGULAR_PLUGIN_TYPE for your files.
-However, this interface is not finally approved and can be changed.
-Hans, is it okay, or..?
-
-(*) in the latest versions of reiser4 this is a plugin->inode_ops->create()
-(create_common)
-
-Edward.
-
-> I guess I will have to read the reiser4("...") 
->function as I can see no way to specify these things from a standard bash 
->shell.
->
->-pvh
 >
 >  
 >
-
