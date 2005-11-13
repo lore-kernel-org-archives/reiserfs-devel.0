@@ -1,24 +1,48 @@
-From: Chris Bainbridge <chris.bainbridge@gmail.com>
-Subject: encryption plugin for reiser4
-Date: Sun, 13 Nov 2005 15:44:57 +0000
-Message-ID: <623652d50511130744q6f0675f1m@mail.gmail.com>
+From: Gorazd Golob <gorazdg@noviforum.si>
+Subject: Re: need opinions from sysadmins on where reiser4progs should install
+Date: Sun, 13 Nov 2005 16:37:03 +0100 (CET)
+Message-ID: <Pine.LNX.4.61.0511131634070.8075@dacun.noviforum.si>
+References: <4376E891.6070506@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26922-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26923-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <4376E891.6070506@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Hi,
 
-I was wondering if the reiser4 encryption plugin is available for
-download? I can't find it anywhere, but saw a message on the lkml
-archvies from Hans saying that it would be released late in 2004.
+re!
 
-Regards,
-Chris
+I guess that according to LSB it's the only way - to install it into 
+/usr/local/sbin - because it's additional installed software and does not 
+come with default distribution.
+If reiser4progs is package included in distribution then it should be 
+installed /sbin or /usr/sbin.
+
+that's my opinion - lsb is covering that topic as I know.
+
+gorazd
+
+
+
+On Sat, 12 Nov 2005, Hans Reiser wrote:
+
+> currently it installs mkfs.reiser4 and such in /usr/local/sbin
+>
+> This is not found by default paths for most roots, and seems unlikely to
+> be where I would want it to go if I was sysadmin....  I would never
+> install mkfs.anything unless I wanted it in /sbin.....  but then I am
+> not a professional....
+>
+> What do the sysadmins on the list think?
+>
+> Hans
+>
+>
+>
