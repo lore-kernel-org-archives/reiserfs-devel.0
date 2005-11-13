@@ -1,36 +1,46 @@
-From: Clifford Beshers <clifford.beshers@linspire.com>
-Subject: Re: need opinions from sysadmins on where reiser4progs should install
-Date: Sun, 13 Nov 2005 09:42:47 -0800
-Message-ID: <43777B17.7010801@linspire.com>
-References: <4376E891.6070506@namesys.com>
+From: michael chang <thenewme91@gmail.com>
+Subject: Re: encryption plugin for reiser4
+Date: Sun, 13 Nov 2005 14:37:25 -0500
+Message-ID: <b14e81f00511131137s71fb954dh24e7f20dd052bbf8@mail.gmail.com>
+References: <623652d50511130744q6f0675f1m@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26925-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26926-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4376E891.6070506@namesys.com>
+In-Reply-To: <623652d50511130744q6f0675f1m@mail.gmail.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Chris Bainbridge <chris.bainbridge@gmail.com>
+Cc: reiserfs-list@namesys.com
 
-http://www.pathname.com/fhs/pub/fhs-2.3.html#SBINSYSTEMBINARIES
+This is still under development, and incomplete.  When/if it is done,
+it will be first hardcoded into the kernel patch, and probably enabled
+in a kernel config option or similar.  Currently a great majority of
+features have been tossed or disabled in a vie for kernel inclusion,
+such as file-as-dir, repacker, and various plugins. If you can fix all
+the things that are "wrong" with Reiser4 so that it will go into the
+kernel yesterday, then maybe we'll see it fully released by the end of
+the year.  ;)
 
-Hans Reiser wrote:
+At least, that's my understanding of it.
 
->currently it installs mkfs.reiser4 and such in /usr/local/sbin
+On 11/13/05, Chris Bainbridge <chris.bainbridge@gmail.com> wrote:
+> Hi,
 >
->This is not found by default paths for most roots, and seems unlikely to
->be where I would want it to go if I was sysadmin....  I would never
->install mkfs.anything unless I wanted it in /sbin.....  but then I am
->not a professional....
+> I was wondering if the reiser4 encryption plugin is available for
+> download? I can't find it anywhere, but saw a message on the lkml
+> archvies from Hans saying that it would be released late in 2004.
 >
->What do the sysadmins on the list think?
+> Regards,
+> Chris
 >
->Hans
->
->
->  
->
+
+
+--
+~Mike
+ - Just my two cents
+ - No man is an island, and no man is unable.
