@@ -1,32 +1,41 @@
-From: Tom Vier <tmv@comcast.net>
+From: Hubert Chan <hubert@uhoreg.ca>
 Subject: Re: need opinions from sysadmins on where reiser4progs should install
-Date: Mon, 14 Nov 2005 15:50:31 -0500
-Message-ID: <20051114205031.GA5917@zero>
+Date: Mon, 14 Nov 2005 17:26:30 -0500
+Message-ID: <87acg6ooh5.fsf@evinrude.uhoreg.ca>
 References: <4376E891.6070506@namesys.com>
-Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-26936-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26937-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <4376E891.6070506@namesys.com>
+In-Reply-To: <4376E891.6070506@namesys.com> (Hans Reiser's message of "Sat, 12
+	Nov 2005 23:17:37 -0800")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Sat, Nov 12, 2005 at 11:17:37PM -0800, Hans Reiser wrote:
+On Sat, 12 Nov 2005 23:17:37 -0800, Hans Reiser <reiser@namesys.com> said:
+
+> currently it installs mkfs.reiser4 and such in /usr/local/sbin This is
+> not found by default paths for most roots, and seems unlikely to be
+> where I would want it to go if I was sysadmin....  I would never
+> install mkfs.anything unless I wanted it in /sbin.....  but then I am
+> not a professional....
+
 > What do the sysadmins on the list think?
 
-Doesn't matter to me, fwiw. If i were to build it manually, i'd run
-./configure --prefix=/usr/local. A distribution would use --prefix=/ in its
-build scripts. /usr/local might be a safer default, so that if someone's
-installing it from source it would clobber their distro's version by
-default.
+I am not a sysadmin, but I would think that anyone who's smart enough to
+compile from source is also smart enough to add /usr/lecal/sbin to their
+path, or override the defaults.
+
+Also, the Filesystem Hierarchy Standard (FHS) wants locally-build
+software to go into /usr/local.
 
 -- 
-Tom Vier <tmv@comcast.net>
-DSA Key ID 0x15741ECE
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
