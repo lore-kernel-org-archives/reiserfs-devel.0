@@ -1,77 +1,47 @@
-From: jp <jp.guillemin@free.fr>
-Subject: Re: More Slowdown
-Date: Mon, 14 Nov 2005 20:53:42 +0100
-Message-ID: <4378EB46.1050509@free.fr>
-References: <200511111359.39715.jgilmore@glycou.com>	 <b14e81f00511111907l3c159ff7rd2e0de5f9e6a0aa7@mail.gmail.com>	 <43758E00.4000601@namesys.com>  <200511120906.39109.jgilmore@glycou.com> <1131997263.10816.56.camel@teratron.lan.etheus.net>
+From: =?ISO-8859-1?Q?Artur_Mak=F3wka?= <juice@ursynow.2a.pl>
+Subject: Re: Slowdown is gone & apt-get works with updated reiser4. So nevermind...
+Date: Mon, 14 Nov 2005 21:22:55 +0100
+Message-ID: <4378F21F.4050608@ursynow.2a.pl>
+References: <200511111359.39715.jgilmore@glycou.com> <20051113141213.07be2e71@SiRiUS.home> <43774823.2090201@ursynow.2a.pl> <200511141148.18466.pat@patdouble.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26933-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26934-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1131997263.10816.56.camel@teratron.lan.etheus.net>
+In-Reply-To: <200511141148.18466.pat@patdouble.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Craig Shelley <craig@microtron.org.uk>
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: pat@patdouble.com
 Cc: reiserfs-list@namesys.com
 
-Hi,
-
-For me reiser4 is working perfectly on Vanilla 2.6.14.2, all the testers 
-who I sent the new kernel to are reporting excellent performance and 
-reliability.
-
-Could you explain a bit further the way I could reproduce this ?
-
-Thanks
-
-JP
-
-Craig Shelley wrote:
-
->On Sat, 2005-11-12 at 09:06 +0000, John Gilmore wrote:
->  
->
->>Oh, BTW. "The slowdown" as I called it is still there. I guess I spoke to 
->>soon. The specific symptom is that the effected process locks for a time, 
->>usually just a second or two, but sometimes a minute or two and and at least 
->>once for many many minutes. I think that the crash (soft lockup) that I 
->>reported earlier is related as well. And it sounds like the comment that 
->>rvalles had about lockups with mmaped files, except that it doesn't lock up 
->>permanently. Just for a second or three usually.
+Pat Double wrote:
+> On Sunday 13 November 2005 08:05, Artur Mak=F3wka wrote:
+>> Thomas Kuther wrote:
 >>
->>    
+>> i was using anticipatory I/O as default in debian. i just did echo cfq >
+>>   /sys/block/hda/queue/scheduler. Hope its enough to change it.
 >>
->
->Hi,
->
->I am sorry to say that I am having the same slowdown issue with Reiser4
->and kernel 2.6.14.2. It seems that my problem is not related to the I/O
->scheduler algorithm as I have tried both cfq and anticipatory.
->
->The I/O activity seems to come in long bursts lasting up to 15 seconds,
->and is unpredictable. The system almost grinds to a halt while the burst
->of I/O is taking place, which can be quite annoying while typing.
->There are no warnings in dmesg/syslog and the filesystem is clean.
->
->Sometimes the burst of I/O activity occurs in a different form, with
->short bursts every second, lasting about 10 seconds. Approx 30% duty
->cycle. When a burst occurs in this form, it tends not to lock processes
->as much.
->
->The general sound of the drive when a burst is in progress is that of
->heavy head movement, as if the drive is repeatedly seeking between two
->or three locations.
->
->Also, a thing which I noticed a while back, and may not be related in
->any way to Reiser4.. When I re-size the columns in Evolution Mail, I get
->continuous hard disk activity during the re-size. This hard disk
->activity stops either when I release the mouse or hold it still with the
->button down. Just wondering if anyone else gets the same thing.
->
->Regards,
->  
->
+>> no noticed effects yet, i will give report, if anything changes.
+>=20
+> I tried changing the scheduler like this and it worked the first time wit=
+h low=20
+> load and my X session was not started. I tried it again and it locked up =
+the=20
+> filesystem I had to reboot and rebuild the filesystem. I was changing fro=
+m=20
+> cfq to anticipatory. Be careful!
+>=20
 
+its ok, i changed from anticipatory to cfq also with append option in=20
+lilo (elevator=3D).
+
+but i'm afraid it didn't help. I got another crash today. as always -=20
+completely nothing in syslog or anywhere.
+
+i can't turn on reiser4 debugging - it will lower performance too much.
+
+i'm not sure what to do now. Is there any tool that will convert reiser4=20
+to another fs ? (a stable one i mean...)
 
