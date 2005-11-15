@@ -1,51 +1,37 @@
-From: =?ISO-8859-1?Q?Artur_Mak=F3wka?= <juice@ursynow.2a.pl>
+From: Andreas Rosander <andreasrosander@gmail.com>
 Subject: Re: More Slowdown
-Date: Tue, 15 Nov 2005 23:55:10 +0100
-Message-ID: <437A674E.2060407@ursynow.2a.pl>
+Date: Wed, 16 Nov 2005 00:09:41 +0100
+Message-ID: <8e021e1b0511151509k3e77cdd9qaec7698a2fa00e48@mail.gmail.com>
 References: <1132093347.6347.7.camel@bauerbob.hirsch.lan>
+	 <437A674E.2060407@ursynow.2a.pl>
+Reply-To: rzn@rzn.se
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26950-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-26951-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1132093347.6347.7.camel@bauerbob.hirsch.lan>
+In-Reply-To: <437A674E.2060407@ursynow.2a.pl>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Thorsten Hirsch <t.hirsch@web.de>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Thorsten Hirsch wrote:
- > Hi,
- >
- > I've seen the mails in the mail archive concerning a slow-down problem
- > with reiser4. Seems like I've got the same problem. My kernel is
- > 2.6.14-mm2 (gentoo) and my default disk scheduler is anticipatory, but
- > I've also tried cqf and I'd say that it depends on the application for
- > which scheduler might be a bis faster. But they're both very slow and my
- > load is very high.
- >
- > I've found out, that resizing the columns in evolution is also for me a
- > good proof of this problem as it really creates a lot of hard disk
- > activity. So I've done the same strace call as Craig Shelley:
- >
-[cut]
- >
-
-My slowdown problems are on my web server, so its concerning different 
-things than Evolution. but this slowdown was very easy to notice when 
-writing something with vim.
-
-Anyways, i remembered that i was using stable kernel without this 
-happening some time ago. So i tested 2.6.14.x , 2.6.13.x mm and 2.6.13.x 
-, and i still had system crashes. so i downgraded to 2.6.12.6 and the 
-system is stable for more than 24 hours (first time in this month or 
-even longer!)
-
-probably some processes were doing fsync often (or something similar) 
-and the effect was raising LA and lock-up at the end.
-
-anyways, 2.6.12.6 (but other than .6 probably too) is, i think, bug 
-free. maybe this will help.
-
+PiBNeSBzbG93ZG93biBwcm9ibGVtcyBhcmUgb24gbXkgd2ViIHNlcnZlciwgc28gaXRzIGNvbmNl
+cm5pbmcgZGlmZmVyZW50Cj4gdGhpbmdzIHRoYW4gRXZvbHV0aW9uLiBidXQgdGhpcyBzbG93ZG93
+biB3YXMgdmVyeSBlYXN5IHRvIG5vdGljZSB3aGVuCj4gd3JpdGluZyBzb21ldGhpbmcgd2l0aCB2
+aW0uCj4KPiBBbnl3YXlzLCBpIHJlbWVtYmVyZWQgdGhhdCBpIHdhcyB1c2luZyBzdGFibGUga2Vy
+bmVsIHdpdGhvdXQgdGhpcwo+IGhhcHBlbmluZyBzb21lIHRpbWUgYWdvLiBTbyBpIHRlc3RlZCAy
+LjYuMTQueCAsIDIuNi4xMy54IG1tIGFuZCAyLjYuMTMueAo+ICwgYW5kIGkgc3RpbGwgaGFkIHN5
+c3RlbSBjcmFzaGVzLiBzbyBpIGRvd25ncmFkZWQgdG8gMi42LjEyLjYgYW5kIHRoZQo+IHN5c3Rl
+bSBpcyBzdGFibGUgZm9yIG1vcmUgdGhhbiAyNCBob3VycyAoZmlyc3QgdGltZSBpbiB0aGlzIG1v
+bnRoIG9yCj4gZXZlbiBsb25nZXIhKQo+Cj4gcHJvYmFibHkgc29tZSBwcm9jZXNzZXMgd2VyZSBk
+b2luZyBmc3luYyBvZnRlbiAob3Igc29tZXRoaW5nIHNpbWlsYXIpCj4gYW5kIHRoZSBlZmZlY3Qg
+d2FzIHJhaXNpbmcgTEEgYW5kIGxvY2stdXAgYXQgdGhlIGVuZC4KPgo+IGFueXdheXMsIDIuNi4x
+Mi42IChidXQgb3RoZXIgdGhhbiAuNiBwcm9iYWJseSB0b28pIGlzLCBpIHRoaW5rLCBidWcKPiBm
+cmVlLiBtYXliZSB0aGlzIHdpbGwgaGVscC4KPgo+CgpXZWxsIGkgZG8gcmVjb24gdGhhdCBJIHRv
+IGhhdmUgc2xvdyBkb3ducyB3aXRoIHZpbSBvciByYXRoZXIgZ3ZpbSBhbmQKSSBoYXZlIG5vdGlj
+ZWQgaXQgd2hlbiBpbSB1c2UgZ2VkaXQgdG9vLgp3aWxsIHRyeSB0byBkb3duZ3JhZGUgdG9vIDIu
+Ni4xMiBhbmQgc2VlIGlmIG15IGJveCB3aWxsIHJpZCBvZiB0aGUgc2xvd2Rvd25zCgovL0FuZHJl
+YXMK
