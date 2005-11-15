@@ -1,37 +1,37 @@
-From: Andreas Rosander <andreasrosander@gmail.com>
+From: Avuton Olrich <avuton@gmail.com>
 Subject: Re: More Slowdown
-Date: Wed, 16 Nov 2005 00:09:41 +0100
-Message-ID: <8e021e1b0511151509k3e77cdd9qaec7698a2fa00e48@mail.gmail.com>
+Date: Tue, 15 Nov 2005 15:13:47 -0800
+Message-ID: <3aa654a40511151513y2285b55aj2d749551a67492a2@mail.gmail.com>
 References: <1132093347.6347.7.camel@bauerbob.hirsch.lan>
 	 <437A674E.2060407@ursynow.2a.pl>
-Reply-To: rzn@rzn.se
+	 <8e021e1b0511151509k3e77cdd9qaec7698a2fa00e48@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-26951-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26952-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <437A674E.2060407@ursynow.2a.pl>
+In-Reply-To: <8e021e1b0511151509k3e77cdd9qaec7698a2fa00e48@mail.gmail.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: rzn@rzn.se
+Cc: reiserfs-list@namesys.com
 
-PiBNeSBzbG93ZG93biBwcm9ibGVtcyBhcmUgb24gbXkgd2ViIHNlcnZlciwgc28gaXRzIGNvbmNl
-cm5pbmcgZGlmZmVyZW50Cj4gdGhpbmdzIHRoYW4gRXZvbHV0aW9uLiBidXQgdGhpcyBzbG93ZG93
-biB3YXMgdmVyeSBlYXN5IHRvIG5vdGljZSB3aGVuCj4gd3JpdGluZyBzb21ldGhpbmcgd2l0aCB2
-aW0uCj4KPiBBbnl3YXlzLCBpIHJlbWVtYmVyZWQgdGhhdCBpIHdhcyB1c2luZyBzdGFibGUga2Vy
-bmVsIHdpdGhvdXQgdGhpcwo+IGhhcHBlbmluZyBzb21lIHRpbWUgYWdvLiBTbyBpIHRlc3RlZCAy
-LjYuMTQueCAsIDIuNi4xMy54IG1tIGFuZCAyLjYuMTMueAo+ICwgYW5kIGkgc3RpbGwgaGFkIHN5
-c3RlbSBjcmFzaGVzLiBzbyBpIGRvd25ncmFkZWQgdG8gMi42LjEyLjYgYW5kIHRoZQo+IHN5c3Rl
-bSBpcyBzdGFibGUgZm9yIG1vcmUgdGhhbiAyNCBob3VycyAoZmlyc3QgdGltZSBpbiB0aGlzIG1v
-bnRoIG9yCj4gZXZlbiBsb25nZXIhKQo+Cj4gcHJvYmFibHkgc29tZSBwcm9jZXNzZXMgd2VyZSBk
-b2luZyBmc3luYyBvZnRlbiAob3Igc29tZXRoaW5nIHNpbWlsYXIpCj4gYW5kIHRoZSBlZmZlY3Qg
-d2FzIHJhaXNpbmcgTEEgYW5kIGxvY2stdXAgYXQgdGhlIGVuZC4KPgo+IGFueXdheXMsIDIuNi4x
-Mi42IChidXQgb3RoZXIgdGhhbiAuNiBwcm9iYWJseSB0b28pIGlzLCBpIHRoaW5rLCBidWcKPiBm
-cmVlLiBtYXliZSB0aGlzIHdpbGwgaGVscC4KPgo+CgpXZWxsIGkgZG8gcmVjb24gdGhhdCBJIHRv
-IGhhdmUgc2xvdyBkb3ducyB3aXRoIHZpbSBvciByYXRoZXIgZ3ZpbSBhbmQKSSBoYXZlIG5vdGlj
-ZWQgaXQgd2hlbiBpbSB1c2UgZ2VkaXQgdG9vLgp3aWxsIHRyeSB0byBkb3duZ3JhZGUgdG9vIDIu
-Ni4xMiBhbmQgc2VlIGlmIG15IGJveCB3aWxsIHJpZCBvZiB0aGUgc2xvd2Rvd25zCgovL0FuZHJl
-YXMK
+On 11/15/05, Andreas Rosander <andreasrosander@gmail.com> wrote:
+> Well i do recon that I to have slow downs with vim or rather gvim and
+> I have noticed it when im use gedit too.
+> will try to downgrade too 2.6.12 and see if my box will rid of the slowdo=
+wns
+
+It's funny that you mention vim. vim seems to be what _really_ makes
+my reiser4 do the 'slowdown'. I call it harddrive thrashing cause
+that's what my wife calls it when she hears it from 5 yards away :)
+Right before saving or saving/exiting it really does this thrashing,
+Thank god you said this because I didn't think this 'slowdown' was the
+same thing I was experiencing.
+
+avuton
+--
+  Anyone who quotes me in their sig is an idiot. -- Rusty Russell.
