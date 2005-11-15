@@ -1,31 +1,91 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: reiser4 in 2.6.14 - lockups with mmapped files
-Date: Tue, 15 Nov 2005 11:12:19 +0300
-Message-ID: <43799863.2030102@namesys.com>
-References: <1130860221.12859.23.camel@laptop> <436796F6.10603@namesys.com> <1131028204.13284.29.camel@laptop> <436A706E.2010001@free.fr> <436B8A10.3000400@namesys.com> <436BB8AF.9020103@free.fr> <20051112015840.GA28777@148.Red-217-126-33.pooles.rima-tde.net.>
+From: Craig Shelley <craig@microtron.org.uk>
+Subject: Re: More Slowdown
+Date: Tue, 15 Nov 2005 14:27:09 +0000
+Message-ID: <1132064829.8002.9.camel@teratron.lan.etheus.net>
+References: <200511111359.39715.jgilmore@glycou.com>
+	 <200511120906.39109.jgilmore@glycou.com>
+	 <1131997263.10816.56.camel@teratron.lan.etheus.net>
+	 <200511142147.07787.chrivers@iversen-net.dk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26942-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-JC1pyGE/BAhZVSkrWCaC"
+Return-path: <reiserfs-list-return-26943-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20051112015840.GA28777@148.Red-217-126-33.pooles.rima-tde.net.>
+In-Reply-To: <200511142147.07787.chrivers@iversen-net.dk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: rvalles <rvalles@es.gnu.org>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello
+--=-JC1pyGE/BAhZVSkrWCaC
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-rvalles wrote:
-> Still having the same problem, with 2.6.14.2 patched with 2.6.14-1
-> reiser4 patch.
-> 
-> It's easy to trigger it while editing a file with vim, and it does take
-> a hell of a long wait (while it hits the disk for a minute or so,
-> sometimes) for it to unlock.
+On Mon, 2005-11-14 at 21:47 +0100, Christian Iversen wrote:
+> That's _serisouly_ odd. I've seen something like this happen before, when=
+ X=20
+> programs generated some (non-harmful) X warnings. These were then written=
+=20
+> into a log file, typically .xsession-errors or similar. Any chance that's=
+=20
+> what you are seeing?
+>=20
 
-I notice this behaviour some times. But it does not appear to happen very often.
-If you know the way to reproduce it on demand - would  you please share your
-knowledge?
+This explains the problem with Evolution, it looks a bit trigger happy
+with the fsync call while resizing columns.
+craig@teratron.lan.etheus.net:~$ strace -p 8002 2>&1 | grep fsync
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+fsync(37)                               =3D 0
+
+while true; do lsof  -p 8002 2>&1 | grep 37w ; done
+evolution 8002 craig   37w   REG        3,4     417
+1901436 /mnt/storage/craig-home/.evolution/mail/views/.#custom_view-mbox:_h=
+ome_craig_.evolution_mail_local#Lists_Reiser4.xmlwhile=20
+
+The file listed above seems to get moved, but is only a few hundred
+bytes.
+
+ls -lh /mnt/storage/craig-home/.evolution/mail/views/custom_view-mbox
+\:_home_craig_.evolution_mail_local#Lists_Reiser4.xml
+-rw-------  1 craig craig 417 2005-11-15
+14:19 /mnt/storage/craig-home/.evolution/mail/views/custom_view-mbox:_home_=
+craig_.evolution_mail_local#Lists_Reiser4.xml
+
+Why does calling fsync on this one small file cause so much hard disk
+activity?
+
+
+--=20
+Craig Shelley
+EMail: craig@microtron.org.uk
+Jabber: shell@jabber.earth.li
+
+--=-JC1pyGE/BAhZVSkrWCaC
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+
+iD8DBQBDefA95OI9vmOoVqERAmw/AJ4m9flKnu5rlnku/N8WjJwtD0qwWwCg9Enc
+U6CoxyoIvKCpXKfxqwxwNtU=
+=Eb57
+-----END PGP SIGNATURE-----
+
+--=-JC1pyGE/BAhZVSkrWCaC--
+
