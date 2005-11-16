@@ -1,62 +1,46 @@
-From: Craig Shelley <craig@microtron.org.uk>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: More Slowdown
-Date: Tue, 15 Nov 2005 23:44:29 +0000
-Message-ID: <1132098269.7652.6.camel@teratron.lan.etheus.net>
-References: <1132093347.6347.7.camel@bauerbob.hirsch.lan>
-	 <437A674E.2060407@ursynow.2a.pl>
-	 <8e021e1b0511151509k3e77cdd9qaec7698a2fa00e48@mail.gmail.com>
-	 <3aa654a40511151513y2285b55aj2d749551a67492a2@mail.gmail.com>
+Date: Tue, 15 Nov 2005 18:45:15 -0600
+Message-ID: <437A811B.5000509@slaphack.com>
+References: <1132093347.6347.7.camel@bauerbob.hirsch.lan>	 <437A674E.2060407@ursynow.2a.pl>	 <8e021e1b0511151509k3e77cdd9qaec7698a2fa00e48@mail.gmail.com>	 <3aa654a40511151513y2285b55aj2d749551a67492a2@mail.gmail.com> <1132098269.7652.6.camel@teratron.lan.etheus.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-qvqMZeyp56Ol5RQaBPPl"
-Return-path: <reiserfs-list-return-26954-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26955-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3aa654a40511151513y2285b55aj2d749551a67492a2@mail.gmail.com>
+In-Reply-To: <1132098269.7652.6.camel@teratron.lan.etheus.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Craig Shelley <craig@microtron.org.uk>
+Cc: reiserfs-list@namesys.com
 
---=-qvqMZeyp56Ol5RQaBPPl
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Craig Shelley wrote:
+> On Tue, 2005-11-15 at 15:13 -0800, Avuton Olrich wrote:
+> 
+>>It's funny that you mention vim. vim seems to be what _really_ makes
+>>my reiser4 do the 'slowdown'. I call it harddrive thrashing cause
+>>that's what my wife calls it when she hears it from 5 yards away :)
+>>Right before saving or saving/exiting it really does this thrashing,
+>>Thank god you said this because I didn't think this 'slowdown' was the
+>>same thing I was experiencing.
+> 
+> 
+> This looks to be a similar thing with fsync(). It took approx 10 sec to
+> save a file containing the string "Hello World" 
+> The results indicate that the time was spent in the fsync() call.
 
-On Tue, 2005-11-15 at 15:13 -0800, Avuton Olrich wrote:
-> It's funny that you mention vim. vim seems to be what _really_ makes
-> my reiser4 do the 'slowdown'. I call it harddrive thrashing cause
-> that's what my wife calls it when she hears it from 5 yards away :)
-> Right before saving or saving/exiting it really does this thrashing,
-> Thank god you said this because I didn't think this 'slowdown' was the
-> same thing I was experiencing.
+I got sick of waiting for it and nuked the fsync call.  All my kernels
+have a custom patch such that sys_fsync just returns true, no matter what.
 
-This looks to be a similar thing with fsync(). It took approx 10 sec to
-save a file containing the string "Hello World"=20
-The results indicate that the time was spent in the fsync() call.
+Why?
 
-craig@teratron.lan.etheus.net:~$ ps aux | grep vim
-craig     9111  0.0  0.5 17268 5936 pts/0    S+   23:35   0:00 vim
-temp/testfile
+Because vim shouldn't fsync, and neither should Evolution.  It's been so
+abused that I prefer to just manually run "sync" when I want something
+flushed.
 
-craig@teratron.lan.etheus.net:~$ strace -T -p 9111 2>&1 | grep fsync
-fsync(4)                                =3D 0 <9.726565>
-
-
---=20
-Craig Shelley
-EMail: craig@microtron.org.uk
-Jabber: shell@jabber.earth.li
-
---=-qvqMZeyp56Ol5RQaBPPl
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-
-iD8DBQBDenLd5OI9vmOoVqERAogKAJ4wZw0L8aRkz+efuKjrUbJksXTasQCg6s8e
-CNnJKcPWxECr+3SEmSICR4M=
-=BWub
------END PGP SIGNATURE-----
-
---=-qvqMZeyp56Ol5RQaBPPl--
+Even if fysnc was fast (only flushing the file that needed to flush),
+that kind of abuse -- resizing a column -- kind of kills any advantage
+of lazy writes.
 
