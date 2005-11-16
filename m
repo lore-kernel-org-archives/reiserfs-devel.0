@@ -1,130 +1,64 @@
-From: Craig Shelley <craig@microtron.org.uk>
+From: Nikita Danilov <nikita@clusterfs.com>
 Subject: Re: More Slowdown
-Date: Wed, 16 Nov 2005 09:33:04 +0000
-Message-ID: <1132133584.7652.21.camel@teratron.lan.etheus.net>
-References: <200511111359.39715.jgilmore@glycou.com>
-	 <200511120906.39109.jgilmore@glycou.com>
-	 <1131997263.10816.56.camel@teratron.lan.etheus.net>
-	 <200511142147.07787.chrivers@iversen-net.dk>
-	 <1132064829.8002.9.camel@teratron.lan.etheus.net>
-	 <437A2310.7080508@free.fr>
-	 <1132080143.8002.22.camel@teratron.lan.etheus.net>
-	 <437AF653.9040001@namesys.com>
+Date: Wed, 16 Nov 2005 15:18:23 +0300
+Message-ID: <17275.9103.623119.792961@gargle.gargle.HOWL>
+References: <1132093347.6347.7.camel@bauerbob.hirsch.lan>
+	<1132098269.7652.6.camel@teratron.lan.etheus.net>
+	<437A811B.5000509@slaphack.com>
+	<200511160240.45212.biscani@pd.astro.it>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-TVQZsmFLdI8C1noG7GLn"
-Return-path: <reiserfs-list-return-26958-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26960-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <437AF653.9040001@namesys.com>
+In-Reply-To: <200511160240.45212.biscani@pd.astro.it>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Francesco Biscani <biscani@pd.astro.it>
+Cc: David Masover <ninja@slaphack.com>, Craig Shelley <craig@microtron.org.uk>, Reiserfs mail-list <Reiserfs-List@Namesys.COM>
 
---=-TVQZsmFLdI8C1noG7GLn
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Francesco Biscani writes:
+ > On Wednesday 16 November 2005 01:45, David Masover wrote:
+ > > I got sick of waiting for it and nuked the fsync call.  All my kernels
+ > > have a custom patch such that sys_fsync just returns true, no matter what.
+ > 
+ > Mhh.. would it be something like this?
+ > 
+ > --- buffer.c.old        2005-11-16 02:36:46.129829994 +0100
+ > +++ buffer.c    2005-11-16 02:37:11.125079752 +0100
+ > @@ -376,7 +376,7 @@
+ > 
+ >  asmlinkage long sys_fsync(unsigned int fd)
+ >  {
+ > -       return do_fsync(fd, 0);
+ > +       return 1;
+ >  }
+ > 
+ > What are the implications of doing something like this? Is "sync" going to 
 
-On Wed, 2005-11-16 at 01:05 -0800, Hans Reiser wrote:
-> Craig Shelley wrote:
->=20
-> >On Tue, 2005-11-15 at 19:04 +0100, Laurent Riffard wrote:
-> > =20
-> >
-> >>Please, could you do it again with the -T option for strace? It will
-> >>show the time spent in system  calls.
-> >>
-> >>   =20
-> >>
-> >craig@teratron.lan.etheus.net:~$ strace -T -p 8002 2>&1 | grep fsync
-> >fsync(26)                               =3D 0 <0.566159>
-> >fsync(26)                               =3D 0 <0.159852>
-> >fsync(26)                               =3D 0 <0.179659>
-> >fsync(26)                               =3D 0 <0.153406>
-> >fsync(26)                               =3D 0 <0.136685>
-> >fsync(26)                               =3D 0 <0.171057>
-> >fsync(26)                               =3D 0 <0.165733>
-> >fsync(26)                               =3D 0 <0.178846>
-> >fsync(26)                               =3D 0 <0.186595>
-> >fsync(26)                               =3D 0 <0.184368>
-> >fsync(26)                               =3D 0 <0.177273>
-> >fsync(26)                               =3D 0 <0.178634>
-> >fsync(26)                               =3D 0 <0.181036>
-> >fsync(26)                               =3D 0 <0.178750>
-> >fsync(26)                               =3D 0 <0.324480>
-> >fsync(26)                               =3D 0 <0.177226>
-> >fsync(26)                               =3D 0 <0.184625>
-> >fsync(26)                               =3D 0 <0.186224>
-> >fsync(26)                               =3D 0 <0.177282>
-> >fsync(26)                               =3D 0 <0.177146>
-> >fsync(26)                               =3D 0 <0.176000>
-> >fsync(26)                               =3D 0 <0.192434>
-> >fsync(26)                               =3D 0 <0.177482>
-> >fsync(26)                               =3D 0 <0.183357>
-> >fsync(26)                               =3D 0 <0.176528>
-> >fsync(26)                               =3D 0 <0.184334>
-> >fsync(26)                               =3D 0 <0.176622>
-> >fsync(26)                               =3D 0 <0.177977>
-> >fsync(26)                               =3D 0 <0.178636>
-> >fsync(26)                               =3D 0 <0.259863>
-> >fsync(26)                               =3D 0 <0.172789>
-> >fsync(26)                               =3D 0 <0.171739>
-> >fsync(26)                               =3D 0 <0.179641>
-> >fsync(26)                               =3D 0 <0.178157>
-> >fsync(26)                               =3D 0 <0.180272>
-> >fsync(26)                               =3D 0 <0.170426>
-> >fsync(26)                               =3D 0 <0.187630>
-> >fsync(26)                               =3D 0 <0.171589>
-> >fsync(26)                               =3D 0 <0.178135>
-> >
-> >
-> >I seem to be finding that the performance of the system degrades with
-> >time and file system usage.
-> >Openoffice really starts to run slow after a while. Just as an
-> >experiment, I did=20
-> >ls -R /usr
-> >The directory listing appeared very quickly with hardly any hard disk
-> >access. Then shortly later when switching back to Openoffice, the
-> >process froze for about 3 minutes with continuous hard disk access.
-> >
-> >One thing which may be relevant is that my kernel is patched with
-> >Suspend2 and FBsplash, although I can't remember having any problems
-> >like this before.
-> >
-> >Many Thanks,
-> >
-> > =20
-> >
-> could you define what the numbers mean (what units, what is measured)?
+One implication is following:
 
-I believe the value inside < > is the time spent in the system call in
-seconds. In the above list, evolution seemed to be calling fsync() as
-fast as it could. Although the fd remains at 26 in this case, it closes
-and re-opens the file between calls to fsync().
-I seem to notice that the length of time spent in the fsync() calls
-depends to some degree on how much hard disk activity there has been
-since the last call. The strange thing is this seems to apply to reading
-also, so performing an ls -R /, and stopping it after a few seconds.
-Shortly later, some process will block for tens of seconds when it next
-calls fsync().
+ 1 application like fetchmail downloads a mail message from the server
 
---=20
-Craig Shelley
-EMail: craig@microtron.org.uk
-Jabber: shell@jabber.earth.li
+ 2 saves message in the mailbox
 
---=-TVQZsmFLdI8C1noG7GLn
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+ 3 fsyncs the mailbox (which is a no-op in our case)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
+ 4 sends notification to the server, which deletes message
 
-iD8DBQBDevzQ5OI9vmOoVqERAqXrAKDB1q8LFyV0mKiMgEmxxwMN4CnppQCg6lsR
-97p7LMIXnJVtkr5ywtSl4KA=
-=kBO0
------END PGP SIGNATURE-----
+ 5 crash occurs (transaction made on the step 2 is not yet committed to
+ the disk)
 
---=-TVQZsmFLdI8C1noG7GLn--
+ 6 after reboot mailbox is restored to the state it had before step 2
 
+ 7 message is lost.
+
+ > stop working or isn't it using this function?
+ > 
+ > Thanks,
+ > 
+ >   Francesco
+
+Nikita.
