@@ -1,36 +1,34 @@
-From: Sander <sander@humilis.net>
-Subject: Re: reiserfsck --rebuild-tree failure
-Date: Wed, 16 Nov 2005 18:37:55 +0100
-Message-ID: <20051116173755.GA7915@favonius>
-References: <437B6C0F.8040604@zabuchy.net>
-Reply-To: sander@humilis.net
+From: Peter van Hardenberg <pvh@uvic.ca>
+Subject: Regular Plugin
+Date: Wed, 16 Nov 2005 10:04:51 -0800
+Message-ID: <200511161004.51277.pvh@uvic.ca>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-26964-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-26965-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <437B6C0F.8040604@zabuchy.net>
+Content-disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: iv <iv@zabuchy.net>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-iv wrote (ao):
-> obvious, there are badblocks: badblocks.log.
-> i still can read from damaged partition. when i run `strings /dev/hdc3`
-> i get plently of text.
-> the question is if there is a way to mount the partition.
+The notion of the regular plugin seems odd to me. It is a seperate plugin type 
+with distinct plugins that only serve to refer to "file" plugins (which are 
+found in plugin/object.c, not in plugin/file/*.c).
 
-dd_rescue the whole partition to another disk and reiserfsck the
-resulting image.
+So when I create a new "file" plugin, I cannot use it unless I also create a 
+"regular" plugin which serves no purpose except to allow me to create those 
+"file"s by storing their ID.
 
-After that, mount the image and see what is left.
+A few words explaining why the "regular" plugin field couldn't have somehow 
+storeda "file" plugin would be educational. Also, regular is a rather unclear 
+name. Something like "defaultfileplugin" might be easier to deduce, or even 
+"defaultchild".
 
-Hope this helps, kind regards, Sander
+-pvh
 
 -- 
-Humilis IT Services and Solutions
-http://www.humilis.net
+Peter van Hardenberg (pvh@pvh.ca)
+Victoria, BC, Canada
