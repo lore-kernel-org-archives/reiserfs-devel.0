@@ -1,75 +1,90 @@
-From: John Gilmore <jgilmore@glycou.com>
+From: michael chang <thenewme91@gmail.com>
 Subject: Re: More Slowdown
-Date: Wed, 16 Nov 2005 13:28:33 +0000
-Message-ID: <200511161328.33330.jgilmore@glycou.com>
-References: <1132093347.6347.7.camel@bauerbob.hirsch.lan> <200511160240.45212.biscani@pd.astro.it> <17275.9103.623119.792961@gargle.gargle.HOWL>
+Date: Wed, 16 Nov 2005 22:08:38 -0500
+Message-ID: <b14e81f00511161908k30ed471esbc12b284842b8078@mail.gmail.com>
+References: <200511111359.39715.jgilmore@glycou.com>
+	 <200511120906.39109.jgilmore@glycou.com>
+	 <1131997263.10816.56.camel@teratron.lan.etheus.net>
+	 <200511142147.07787.chrivers@iversen-net.dk>
+	 <1132064829.8002.9.camel@teratron.lan.etheus.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26967-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26968-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <17275.9103.623119.792961@gargle.gargle.HOWL>
+In-Reply-To: <1132064829.8002.9.camel@teratron.lan.etheus.net>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Craig Shelley <craig@microtron.org.uk>
+Cc: reiserfs-list@namesys.com
 
-That "return 1;" should be "return 0;"
+On 11/15/05, Craig Shelley <craig@microtron.org.uk> wrote:
+> On Mon, 2005-11-14 at 21:47 +0100, Christian Iversen wrote:
+> > That's _serisouly_ odd. I've seen something like this happen before, wh=
+en X
+> > programs generated some (non-harmful) X warnings. These were then writt=
+en
+> > into a log file, typically .xsession-errors or similar. Any chance that=
+'s
+> > what you are seeing?
+> >
+>
+> This explains the problem with Evolution, it looks a bit trigger happy
+> with the fsync call while resizing columns.
 
-a return value of 1 indicates failure.
+> Why does calling fsync on this one small file cause so much hard disk
+> activity?
 
-Also, maybe this should be applied also to the 
+If memory serves me right, it has been said time and time again (in
+docs and on the list) that fsync performance on Reiser4 is horrendous
+because it is (at the moment) unoptimized until ... other issues are
+resolved and the optimizations can be implemented.
 
-asmlinkage long sys_fdatasync(unsigned int fd)
+You should also realized the _reason_ why a majority of disk calls
+take so little time - it's because Reiser4 puts them in memory, before
+flushing to disk when memory is full.  That would explain any
+jerkiness -- it's because Reiser4 is writing everything from the last
+real write to the actual disk to now (the current real right) in one
+go, and making everything wait.  (Now why this can't be done in
+parallel is beyond me - or is it already done in parallel?)
 
-function as well? There isn't much to choose from between these two 
-functions...
+This also means that if your hard disk can't handle writing the
+contents of say 80% of your memory's size to disk or it takes 5
+seconds for it to do so would explain the problem with the concepts
+shown here.  Example: 1GB memory, hard disk can write at a max of 10
+MB/s.  If it used 75% of the memory for a Reiser4 cache, [768 MB] it
+would take maybe 77 or more seconds to flush. [Yes, a full minute.] =20
+For comparative purposes, I hear of consumer systems with 2 or 4 GB of
+ram, and I know of brand new PC hard disks which have a throughput of
+less than 5 MB/s (my hard disk maxees out at 20 MB/s on my PC.)  Do
+you know the throughputs of your drives, and the size of the memory in
+your machines?
 
-On Wednesday 16 November 2005 12:18, Nikita Danilov wrote:
-> Francesco Biscani writes:
->  > On Wednesday 16 November 2005 01:45, David Masover wrote:
->  > > I got sick of waiting for it and nuked the fsync call.  All my kernels
->  > > have a custom patch such that sys_fsync just returns true, no matter
->  > > what.
->  >
->  > Mhh.. would it be something like this?
->  >
->  > --- buffer.c.old        2005-11-16 02:36:46.129829994 +0100
->  > +++ buffer.c    2005-11-16 02:37:11.125079752 +0100
->  > @@ -376,7 +376,7 @@
->  >
->  >  asmlinkage long sys_fsync(unsigned int fd)
->  >  {
->  > -       return do_fsync(fd, 0);
->  > +       return 1;
->  >  }
->  >
->  > What are the implications of doing something like this? Is "sync" going
->  > to
->
-> One implication is following:
->
->  1 application like fetchmail downloads a mail message from the server
->
->  2 saves message in the mailbox
->
->  3 fsyncs the mailbox (which is a no-op in our case)
->
->  4 sends notification to the server, which deletes message
->
->  5 crash occurs (transaction made on the step 2 is not yet committed to
->  the disk)
->
->  6 after reboot mailbox is restored to the state it had before step 2
->
->  7 message is lost.
->
->  > stop working or isn't it using this function?
->  >
->  > Thanks,
->  >
->  >   Francesco
->
-> Nikita.
+When fsyncing, Reiser4, to my understanding, isn't allowed to put
+stuff in it's memory cache - it must put it to disk right away.  And
+maybe that's also why (partially) Reiser4 performance isn't as optimal
+as it will eventually be.  [So, short answer: while there are
+shortcomings, and this stuff shouldn't happen, part of this Reiser4FS
+behaviour is, to my understanding, intentionally placed.]
+
+Note, this is a my speculation based on what I've read on this mailing
+list and on the namesys website, and could be inaccurate.  If any
+professionals who are working with the Reiser4 code (e.g. Hans Reiser
+and the like) correct me on what I say - their statements take
+precedence.
+
+Also, I've noticed in some newer computer's BIOSes (I know some recent
+DELL desktop machines have this) sometimes you can find a setting to
+change the noisiness/performance trade off of the hard disk.  Maybe
+something similar is involved with your PC?  It should be said that
+I've witnessed that in quieter mode settings, the disk seems to
+operate slower - that could mean that a flush could be less noisy, but
+might take longer.
+
+--
+~Mike
+ - Just my two cents
+ - No man is an island, and no man is unable.
