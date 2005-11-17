@@ -1,82 +1,107 @@
-From: Thorsten Hirsch <t.hirsch@web.de>
-Subject: Re: More Slowdown or reiser4 update for 2.6.14-mm2
-Date: Thu, 17 Nov 2005 21:23:36 +0100
-Message-ID: <1132259016.6364.7.camel@bauerbob.hirsch.lan>
-References: <200511171447.41362.mail@earthworm.de>
-	 <437CBC63.3050202@namesys.com>
-	 <1132254834.6350.19.camel@bauerbob.hirsch.lan>
-	 <1132256030.6340.5.camel@bauerbob.hirsch.lan>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: More Slowdown
+Date: Thu, 17 Nov 2005 13:08:27 -0800
+Message-ID: <437CF14B.4000808@namesys.com>
+References: <200511111359.39715.jgilmore@glycou.com> <200511120906.39109.jgilmore@glycou.com> <1131997263.10816.56.camel@teratron.lan.etheus.net> <200511142147.07787.chrivers@iversen-net.dk> <1132064829.8002.9.camel@teratron.lan.etheus.net> <b14e81f00511161908k30ed471esbc12b284842b8078@mail.gmail.com> <op.s0dozkscth1vuj@localhost>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26990-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26991-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1132256030.6340.5.camel@bauerbob.hirsch.lan>
-Sender: t.hirsch@web.de
+In-Reply-To: <op.s0dozkscth1vuj@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: PFC <lists@boutiquenumerique.com>
+Cc: michael chang <thenewme91@gmail.com>, Craig Shelley <craig@microtron.org.uk>, reiserfs-list@namesys.com
 
-Seems like there's a bug in your patch
+PFC wrote:
 
-> ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.14-mm2/reiser4-for-2.6.14-mm2-1.patch.gz
+>
+>     Just a few words about this "slowdown" thing.
+>
+>     I use linux-2.6.11-cko1-swsusp2 with reiser4 included. I won't
+> upgrade to  a new version until Hans says the current one is at least
+> as stable as it  was before starting the merge...
+>
+>     I get the "slowdown" once in a while, usually for 2-5 seconds,
+> it's not  that annoying.
+>
+>     However :
+>
+>     If I understand well, when memory is needed (memory pressure),
+> reiser4  triggers a flush and writes dirty pages to the disk in large
+> quantities.
+>     This has many advantages like not writing at all the temporary
+> files  which already have been deleted, deferred allocation, etc, it's
+> really  cool.
+>
+>     However when "memory pressure" (ie. need to free some RAM) occurs,
+> it is  usually that I am doing something interactively, like opening a
+> document  or starting some software. Or it might mean that the
+> database server just  received a big query which needs some sorting
+> space in RAM for instance.
+>     Thus, "memory pressure" almost always means "I need memory NOW
+> and  someone is waiting in front of their screen for it"...
+>     And it is at this very moment that reiser4 has to flush (to free
+> memory).
+>     Thus the "flush storm", by nature, always happens when you don't
+> want it  to happen. It almost never happens when you are away from the
+> computer  taking a leak, for instance.
+>
+>     This is analogous to the problem caused to postgres by
+> checkpointing...  the postgres guys implemented a background writer to
+> solve this.
+>     I wonder if reiser4 could do the same, ie. trickle down dirty
+> pages to  free up memory before it is actually needed, to improve
+> reactivity. There  is a balance to be found, of course, between
+> flushing as late as possible  (to benefit from all the nifty reiser4
+> features) and flushing earlier (to  avoid triggering the "flush storm").
+>     Maybe this could be set via a few controls...
+>         - tell reiser4 to try to keep X amount of RAM immediately
+> available  without flush
+>         - when the CPU is idle, and/or when the disk is idle, start
+> flushing,  but stop doing it as soon as some CPU is needed, or a key
+> is hit...
+>         - just do frequent, small partial flushes which will keep good
+> locality  of reference while being small
+>         - do it at a lower priority so that the keyboard does not
+> stop  responding !!!
 
-------------[ cut here ]------------
-kernel BUG at fs/reiser4/block_alloc.c:149!
-invalid operand: 0000 [#1]
-last sysfs file: /class/vc/vcsa7/dev
-Modules linked in: snd_opl3_synth snd_seq_instr snd_seq_midi_emul
-snd_ainstr_fm snd_pcm_oss snd_mixer_oss snd_seq_oss snd_seq_midi_event
-snd_seq snd_cmipci snd_pcm snd_page_alloc snd_opl3_lib snd_timer
-snd_hwdep snd_mpu401_uart snd_rawmidi snd_seq_device snd soundcore ntfs
-tuner tvaudio bttv video_buf firmware_class i2c_algo_bit v4l2_common
-btcx_risc tveeprom i2c_core videodev ehci_hcd uhci_hcd usbcore via_rhine
-lp parport_pc parport loop aes_i586 nvidia rtc
-CPU:    0
-EIP:    0060:[<c01a11bb>]    Tainted: P      VLI
-EFLAGS: 00210297   (2.6.14-mm2)
-EIP is at sub_from_ctx_grabbed+0x3b/0x50
-eax: 00000000   ebx: 00000000   ecx: 00000001   edx: 00000000
-esi: da564cc0   edi: c158d800   ebp: c5b6f2e0   esp: c3013ca4
-ds: 007b   es: 007b   ss: 0068
-Process java (pid: 7631, threadinfo=c3012000 task=c495ba90)
-Stack: 00000001 00000000 c01a21ef da564cc0 00000001 00000000 d36cf960
-d36cf960
-       d3dd43e0 c01a428d d3dd43e0 00000001 00000000 d36cf960 d36cf960
-c5b6f38c
-       c01a42ec d36cf960 d3dd43e0 c5b6f38c 00000003 00000001 c01d2f16
-c5b6f38c
-Call Trace:
- [<c01a21ef>] grabbed2flush_reserved_nolock+0x3f/0x80
- [<c01a428d>] do_jnode_make_dirty+0x11d/0x150
- [<c01a42ec>] jnode_make_dirty_locked+0x2c/0x40
- [<c01d2f16>] save_static_sd+0x86/0x90
- [<c01a431e>] znode_make_dirty+0x1e/0x80
- [<c01bddb2>] update_sd_at+0xd2/0x220
- [<c01bdcc8>] locate_inode_sd+0xe8/0x100
- [<c01bdf7b>] update_sd+0x7b/0xa0
- [<c0195ac5>] preempt_point+0x5/0x20
- [<c01bce38>] write_sd_by_inode_common+0xc8/0xd0
- [<c019fa1e>] init_context+0xe/0x80
- [<c01c0438>] sync_unix_file+0x58/0x80
- [<c01c185c>] write_file+0x9c/0xd0
- [<c0195ac5>] preempt_point+0x5/0x20
- [<c01a28cd>] txn_begin+0x1d/0x30
- [<c01c1ba0>] write_unix_file+0x310/0x5f0
- [<c02ccd4c>] copy_from_user+0x4c/0x90
- [<c01c1890>] write_unix_file+0x0/0x5f0
- [<c015995d>] do_readv_writev+0x18d/0x310
- [<c044d4f3>] schedule+0x313/0x650
- [<c0159b98>] vfs_writev+0x58/0x60
- [<c0159c9b>] sys_writev+0x4b/0xb0
- [<c0103149>] syscall_call+0x7/0xb
-Code: 24 14 8b 4c 24 10 8b 56 64 8b 46 60 39 da 76 15 29 c8 19 da 89 46
-60 89 56 64 8b 1c 24 8b 74 24 04 83 c4 08 c3 72 04 39 c8 73 e5 <0f> 0b
-95 00 32 8d 46 c0 eb db 8d 74 26 00 8d bc 27 00 00 00 00
--------------------------------------------------
+I agree that smoothness needs working on.  After we merge.
 
-Regards,
-Thorsten
-
+>
+>     Huh, well, that's it... what do you think ?
+>
+>
+>
+>> When fsyncing, Reiser4, to my understanding, isn't allowed to put
+>> stuff in it's memory cache - it must put it to disk right away.  And
+>
+>
+>     This is the whole point of fsync, yes.
+>     Now, it's pretty stupid for evlolution to issue a fsync() on every
+> pixel  move or whatever.
+>     fsync() is for databases or things which must survive a hard
+> system  crash...
+>     evolution could as well have used fflush() and everything would
+> have been  alright. Dumb.
+>
+>> For comparative purposes, I hear of consumer systems with 2 or 4 GB of
+>> ram, and I know of brand new PC hard disks which have a throughput of
+>> less than 5 MB/s (my hard disk maxees out at 20 MB/s on my PC.)  Do
+>> you know the throughputs of your drives, and the size of the memory in
+>> your machines?
+>
+>
+>     Hum. A crap laptop harddrive will do 15 MBytes/s and a recent
+> normal  desktop drive (7200rpm ATA or SATA) will do 50 MBytes/s or
+> more...
+>     If you get a lot less (like, 5 MB/s), you have a problem (DMA
+> disabled,  etc)
+>
+>
+>
+>
+PFC is right.
