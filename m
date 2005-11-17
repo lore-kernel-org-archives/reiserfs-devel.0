@@ -1,107 +1,110 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: More Slowdown
-Date: Thu, 17 Nov 2005 13:08:27 -0800
-Message-ID: <437CF14B.4000808@namesys.com>
-References: <200511111359.39715.jgilmore@glycou.com> <200511120906.39109.jgilmore@glycou.com> <1131997263.10816.56.camel@teratron.lan.etheus.net> <200511142147.07787.chrivers@iversen-net.dk> <1132064829.8002.9.camel@teratron.lan.etheus.net> <b14e81f00511161908k30ed471esbc12b284842b8078@mail.gmail.com> <op.s0dozkscth1vuj@localhost>
+Date: Thu, 17 Nov 2005 13:12:54 -0800
+Message-ID: <437CF256.2010406@namesys.com>
+References: <200511111359.39715.jgilmore@glycou.com> <437C715A.206@ursynow.2a.pl> <437C7A59.7040008@namesys.com> <200511171035.00148.jgilmore@glycou.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26991-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26992-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <op.s0dozkscth1vuj@localhost>
+In-Reply-To: <200511171035.00148.jgilmore@glycou.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: PFC <lists@boutiquenumerique.com>
-Cc: michael chang <thenewme91@gmail.com>, Craig Shelley <craig@microtron.org.uk>, reiserfs-list@namesys.com
+To: John Gilmore <jgilmore@glycou.com>
+Cc: reiserfs-list@namesys.com
 
-PFC wrote:
+6% fragmentation is enormous.  You very much need the repacker we have
+not yet written.....
 
->
->     Just a few words about this "slowdown" thing.
->
->     I use linux-2.6.11-cko1-swsusp2 with reiser4 included. I won't
-> upgrade to  a new version until Hans says the current one is at least
-> as stable as it  was before starting the merge...
->
->     I get the "slowdown" once in a while, usually for 2-5 seconds,
-> it's not  that annoying.
->
->     However :
->
->     If I understand well, when memory is needed (memory pressure),
-> reiser4  triggers a flush and writes dirty pages to the disk in large
-> quantities.
->     This has many advantages like not writing at all the temporary
-> files  which already have been deleted, deferred allocation, etc, it's
-> really  cool.
->
->     However when "memory pressure" (ie. need to free some RAM) occurs,
-> it is  usually that I am doing something interactively, like opening a
-> document  or starting some software. Or it might mean that the
-> database server just  received a big query which needs some sorting
-> space in RAM for instance.
->     Thus, "memory pressure" almost always means "I need memory NOW
-> and  someone is waiting in front of their screen for it"...
->     And it is at this very moment that reiser4 has to flush (to free
-> memory).
->     Thus the "flush storm", by nature, always happens when you don't
-> want it  to happen. It almost never happens when you are away from the
-> computer  taking a leak, for instance.
->
->     This is analogous to the problem caused to postgres by
-> checkpointing...  the postgres guys implemented a background writer to
-> solve this.
->     I wonder if reiser4 could do the same, ie. trickle down dirty
-> pages to  free up memory before it is actually needed, to improve
-> reactivity. There  is a balance to be found, of course, between
-> flushing as late as possible  (to benefit from all the nifty reiser4
-> features) and flushing earlier (to  avoid triggering the "flush storm").
->     Maybe this could be set via a few controls...
->         - tell reiser4 to try to keep X amount of RAM immediately
-> available  without flush
->         - when the CPU is idle, and/or when the disk is idle, start
-> flushing,  but stop doing it as soon as some CPU is needed, or a key
-> is hit...
->         - just do frequent, small partial flushes which will keep good
-> locality  of reference while being small
->         - do it at a lower priority so that the keyboard does not
-> stop  responding !!!
+remember that one seek and rotate takes ~12 ms, and during that time you
+could transfer 50MB*.012 bytes.....
 
-I agree that smoothness needs working on.  After we merge.
+Hans
 
+John Gilmore wrote:
+
+>On Thursday 17 November 2005 12:40, Vladimir V. Saveliev wrote:
+>  
 >
->     Huh, well, that's it... what do you think ?
+>>Please try whether the attached patch improves anything. It simplifies
+>>fsync by avoid commiting of transactions which do not modify file being
+>>fsync-ed.
+>>
+>>The patch applied to 2.6.14-mm2 with warnings, but that can be ignored.
+>>    
+>>
 >
+>I haven't tried this patch yet, but I did try the earlier 'disable fsync 
+>completely' patch. In fact, I'm using it right now.
 >
+>It doesn't help. Therefore, your patch probably won't help either.
 >
->> When fsyncing, Reiser4, to my understanding, isn't allowed to put
->> stuff in it's memory cache - it must put it to disk right away.  And
+>OK, disabling fsync does help a *little* bit. But I think that the issue (for 
+>me, anyway) isn't sync per se, it's just flat-out access time. Deleteing lots 
+>of small files is EXTREMELY slow, but even reading files is slower than it 
+>should be. It took no less that 10 minutes to delete an old kernel source 
+>tree, for instance. 
 >
+>It's related to fragmentation, I think. I didn't really notice any speed 
+>problems until my hard drive got to about 95% (or so) full. But they haven't 
+>gone away, even though usage is now down around 54%.
 >
->     This is the whole point of fsync, yes.
->     Now, it's pretty stupid for evlolution to issue a fsync() on every
-> pixel  move or whatever.
->     fsync() is for databases or things which must survive a hard
-> system  crash...
->     evolution could as well have used fflush() and everything would
-> have been  alright. Dumb.
->
->> For comparative purposes, I hear of consumer systems with 2 or 4 GB of
->> ram, and I know of brand new PC hard disks which have a throughput of
->> less than 5 MB/s (my hard disk maxees out at 20 MB/s on my PC.)  Do
->> you know the throughputs of your drives, and the size of the memory in
->> your machines?
->
->
->     Hum. A crap laptop harddrive will do 15 MBytes/s and a recent
-> normal  desktop drive (7200rpm ATA or SATA) will do 50 MBytes/s or
-> more...
->     If you get a lot less (like, 5 MB/s), you have a problem (DMA
-> disabled,  etc)
->
->
+>Hrm... I should be able to check that...
 >
 >
-PFC is right.
+>About an hour later...
+>
+>So maybe I was wrong. 6.5% data fragmentation doesn't seem that high. But 
+>19.8% tree fragmentation does seem a bit high. 
+>
+>How should this data be interpreted?
+>
+>
+>#measurefs.reiser4 -T /dev/mapper/e-h -f
+>measurefs.reiser4 1.0.5
+>Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing governed by 
+>reiser4progs/COPYING.
+>
+>Tree fragmentation ... done
+>0.197747
+>
+>#measurefs.reiser4 -S -D /dev/mapper/e-h -f
+>measurefs.reiser4 1.0.5
+>Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing governed by 
+>reiser4progs/COPYING.
+>
+>Data fragmentation ... done
+>0.065593
+>Tree statistics ... done
+>Packing statistics:
+>  Formatted nodes:    3721.29b (90.85%)
+>  Branch nodes:       1734.57b (42.35%)
+>  Twig nodes:         2886.97b (70.48%)
+>  Leaf nodes:         3814.82b (93.14%)
+>
+>Node statistics:
+>  Total nodes:        8543553
+>  Formatted nodes:     146354
+>  Unformatted nodes:  8397199
+>  Branch nodes:           292
+>  Twig nodes:           10542
+>  Leaf nodes:         8532719
+>
+>Item statistics:
+>  Total items:         637352
+>  Nodeptr items:       146353
+>  Statdata items:     191218
+>  Direntry items:       17512
+>  Tail items:          245018
+>  Extent items:         36869
+>
+>
+>#
+>
+>
+>  
+>
+
