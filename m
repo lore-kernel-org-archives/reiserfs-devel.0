@@ -1,62 +1,46 @@
-From: "Hesse, Christian" <mail@earthworm.de>
-Subject: Re: More Slowdown
-Date: Thu, 17 Nov 2005 14:47:35 +0100
-Message-ID: <200511171447.41362.mail@earthworm.de>
+From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe@gramoulle.com>
+Subject: Re: need opinions from sysadmins on where reiser4progs should
+ install
+Date: Thu, 17 Nov 2005 17:06:43 +0100
+Message-ID: <20051117160643.75B2412D0@philou.gramoulle.local>
+References: <4376E891.6070506@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart2731560.YMtujemJC9";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-26980-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26983-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <4376E891.6070506@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>
 
---nextPart2731560.YMtujemJC9
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
-Vladimir V. Saveliev wrote:
-> Please try whether the attached patch improves anything. It simplifies
-> fsync by avoid commiting of transactions which do not modify file being
-> fsync-ed.=20
->
-> The patch applied to 2.6.14-mm2 with warnings, but that can be ignored.
+Hello Hans,
 
-Hi everybody,
+On Sat, 12 Nov 2005 23:17:37 -0800
+Hans Reiser <reiser@namesys.com> wrote:
 
-I'm suffering the same problem, sync and fsync are horribly slow. I've writ=
-ten=20
-a small test program:
+  | What do the sysadmins on the list think?
+  | 
+  | Hans
 
-http://www.earthworm.de/tmp/reiser4-fsync.c
+Personally, for Reiserfs V3, i always compiled reiserfsprogs statically and installed
+the tools in /sbin.
 
-with 2.6.13:
-sync()                                  =3D 0 <0.000198>
-fsync(3)                                =3D 0 <0.003353>
+Mainly because, we used to have /usr on a separate partition on all server installs.
 
-with 2.6.14 (with and without patch):
-sync()                                  =3D 0 <2.092873>
-fsync(3)                                =3D 0 <0.132579>
-=2D-=20
-Christian
+So should a crash occur and /usr becomes corrupted, well, at least / is mounted and i could
+reiserfsck partitions right away, handy when the server is several thousand kilometers away :)
 
---nextPart2731560.YMtujemJC9
-Content-Type: application/pgp-signature
+I expect to do the same for reiser4progs, so i wish that reiser4progs utilities would install
+in /, and as such /sbin seems the best choice _to me_
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.9.19 (GNU/Linux)
+Thanks
 
-iD8DBQBDfIn9lZfG2c8gdSURArXDAKDdMZyi96ZVVSr4vhCcts5bWQ1gvQCg640d
-EUeotkZ+iryX0s/QbBjT/Xk=
-=QUBp
------END PGP SIGNATURE-----
+Philippe
 
---nextPart2731560.YMtujemJC9--
+PS: I hope that Santa will bring me a brand new kernel.org kernel with reiser4 in :)
+    Good luck with that, and congratulations to you and the whole team for such a nice
+    filesystem
