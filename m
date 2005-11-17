@@ -1,48 +1,46 @@
-From: prj@po.cwru.edu (Paul Jarc)
-Subject: Re: need opinions from sysadmins on where reiser4progs should install
-Date: Thu, 17 Nov 2005 01:01:22 -0500
-Message-ID: <m37jb7olrr.fsf@multivac.cwru.edu>
-References: <4376E891.6070506@namesys.com> <43777B17.7010801@linspire.com>
-	<437C0D7C.6090502@namesys.com>
+From: Ingo Bormuth <ibormuth@efil.de>
+Subject: Re: More Slowdown
+Date: Thu, 17 Nov 2005 09:56:44 +0100
+Message-ID: <20051117085644.GA23183@kruemel>
+References: <200511111359.39715.jgilmore@glycou.com> <200511120906.39109.jgilmore@glycou.com> <1131997263.10816.56.camel@teratron.lan.etheus.net> <200511142147.07787.chrivers@iversen-net.dk> <1132064829.8002.9.camel@teratron.lan.etheus.net> <b14e81f00511161908k30ed471esbc12b284842b8078@mail.gmail.com>
+Reply-To: Ingo Bormuth <ibormuth@efil.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-26971-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26972-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <437C0D7C.6090502@namesys.com> (Hans Reiser's message of "Wed, 16
-	Nov 2005 20:56:28 -0800")
+Content-Disposition: inline
+In-Reply-To: <b14e81f00511161908k30ed471esbc12b284842b8078@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Clifford Beshers <clifford.beshers@linspire.com>, ReiserFS List <reiserfs-list@namesys.com>
-
-Hans Reiser <reiser@namesys.com> wrote:
-> Clifford Beshers wrote:
->> http://www.pathname.com/fhs/pub/fhs-2.3.html#SBINSYSTEMBINARIES
->
-> well, this says /sbin as I read it.  Thanks for the URL Clifford!
-
-The FHS doesn't specify what the default installation prefix for a
-source tarball should be.  That section says that distributions should
-install certain things in /sbin or /usr/sbin, and that admins who
-install similar things independently of the distribution should use
-/usr/local/sbin.  Obviously that doesn't work in some cases, but that
-is what the FHS says: distributions and admins should choose those
-respective locations, regardless of the package's default.
-
-Since distributions' installations are typically automated and so can
-easily specify a non-default prefix, source tarballs generally default
-to /usr/local for the admins.  As a result, admins will expect the
-default to be /usr/local, and they know how to use --prefix=/ if
-that's what they want.  The principles of least surprise and least
-damage suggest that the default for reiser4progs should be /usr/local,
-just like every other package, *even if that means the default will
-rarely be used*.
-
-For myself, I only care that an explicit --prefix is used for every
-installed file, since I install to a different directory anyway.
+To: reiserfs-list@namesys.com
+Cc: ingo@bormuth.org
 
 
-paul
+If you are frequently hit by fsync (as some of the previosly posters told us) 
+an option might be to say something as
+
+  tmgr.atom_max_age=30     (or tmgr.atom_max_size=?)
+
+in fstab (or remount the drive in vulnerable situations).
+
+Of course that sacrifices large parts of reiser4's mean performance, but that
+might be better than a largely unusable machine. One day reiser4 will be
+fully optimized.
+
+
+
+
+On 2005-11-16 22:08, michael chang wrote:
+> That would explain any
+> jerkiness -- it's because Reiser4 is writing everything from the last
+> real write to the actual disk to now (the current real right) in one
+> go, and making everything wait. 
+
+
+-- 
+Ingo Bormuth, voicebox & telefax: +49-12125-10226517          '(~o-o~)'
+public key 86326EC9, http://ibormuth.efil.de/contact     ---ooO--(.)--Ooo---
+
