@@ -1,10 +1,10 @@
 From: Leo Comerford <lrc1@st-andrews.ac.uk>
-Subject: Re: File as a directory - file-as-dir vs. link-dirs (again) - 1/3
-Date: Fri, 18 Nov 2005 03:22:29 +0000
-Message-ID: <ff8010840511171922n7b22194bodf91c0173f3e453f@mail.gmail.com>
+Subject: Re: File as a directory - file-as-dir vs. link-dirs (again) - 2/3
+Date: Fri, 18 Nov 2005 03:29:37 +0000
+Message-ID: <ff8010840511171929y2f8cbd1bpd1b703003f10bc56@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-26995-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-26996-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -16,363 +16,178 @@ Content-Type: text/plain; charset="us-ascii"
 To: "Alexander G. M. Smith" <agmsmith@rogers.com>
 Cc: reiserfs-list@namesys.com
 
-Once again, I have to apologise for a stupidly long and stupidly late
-reply. I've tried to make this thing a little more digestible by
-chopping it into three chunks. In order to keep any replies together,
-I suggest that people reply to the third part unless the reply is very
-specific to one of the other parts. This first part is (I hope)
-relatively fun.
+(This long essay has been posted in three parts. In order to keep any
+replies together, I suggest that people reply to the third part unless
+the reply is very specific to one of the others. This is part two, in
+which I criticise file-as-directory some more - far from exciting, but
+apparently still necessary. Things should pick up in part three.)
 
-First of all: I'll refer to 'relation-directories' as
-'link-directories' from now on; the new term should be more
-enlightening and less misleading. (Sorry if the change causes any
-temporary confusion.) Again, each link-directory expresses one
-instance of a relation; in RDB terms that's one tuple of a relation or
-one row of a table, while in OO theory terms it's one link of a
-relation. (In fact that's not completely and invariably true, because
-of the "weakly-typed" nature of link-dirs.) The directory which (by
-definition) has as its children every link-directory of a given type
-is *not* a link-directory. (It is an ordinary predicate-directory.) In
-RDB terms it is the table, and its children are its rows. In OO terms
-it is the relation (which makes it a class) and its children are the
-links of that relation (the objects which are instances of the
-relation).
+But now let's try to express the father's/son's-photo relationships
+between the /(whatever)/portrait photos using subfile metadata instead
+of link-directories. /(whatever)/portrait/Mike is (the photo of) the
+father of (the man pictured in) /(whaterver)/portrait/Bob - how to
+express that using "files as directories"? We could decide that
+/(whatever)/portrait/Bob should have the additional path"name"
+/(whatever)/portrait/Mike/son-photo . But that would mangle the
+filesystem semantics: /(whatever)/portrait/Mike/son-photo isNotA
+/(whatever)/portrait/Mike . We need to distinguish the links from
+files to their "metadata files" from ordinary directory-to-directory
+and directory-to-file links. As the man said, don't try to make things
+simpler than possible. So let's call our new pathname
+/(whatever)/portrait/Mike;son-photo instead, where ';' is a "name"
+segment delimiter in the same way that '/' or (in my examples) ':' is.
+(Having a reserved segment-name like ..metas is an alternative
+implementation of the same idea.) Now this seems to work fairly well,
+but there are problems. Here are some of them.
 
-Second, in the coming examples, assume that the present working
-"directory" can be set to any "name", those of ordinary atomic files
-as well as those of link- and predicate-directories. This isn't
-essential to anything that follows, but it does make things more tidy.
-The ability to list the path"names" of a given file makes it useful to
-have the pwd point to an atomic file: a command, say
+Problem one: We can assume that the partial pathname after the ';' ,
+from the "file-as-directory" to the "metadata file", describes the
+type of relationship between the two files. So, for example,
+';son-picture' describes one type of relationship, while others could
+be ';friend-picture', ';thumbnail' or ';social-sec-no'. So are all
+files in the same namespace as regards these relationship-names or
+not? In other words, if I see /(whatever)/foo;aardvark and
+/(something)/bar;aardvark , can I always safely assume that
+/(something)/bar;aardvark is to /(something)/bar as
+/(whatever)/foo;aardvark is to /(whatever)/foo ? If so, then there
+will be substantial risk of namespace collisions. So in practise, the
+"subfile" part of file"name"s will probably have to be fairly
+long-winded to minimise the risk: not ';foo' but
+';something/not/altogether/unlike/a/third-party/java/package/name/foo'
+. If not, if there is some context in which I should interpret what
+';aardvark' means, so that it can mean one thing for one
+"file-as-directory" and something else for another, what is that
+context and how can I know about it? Might it have something to do
+with the "file-as-directory"'s file type? (As defined how?) With one
+or more of the path"names" that the "file-as-directory" might have? By
+contrast, the type of a link-directory is defined by the
+predicate-directory it is a child of (by a non-opaque link). So the
+namespace of link-directory types is the same namespace of path"names"
+that all predicate-directories are in. Path"names" aren't necessarily
+very concise either, but at least we're not creating a second
+namespace, and equivalent path"name"s ought to be a lot shorter on
+average when you have pathname-listing and advanced searching on
+pathnames; for example, a user binary can have the two path"name"s
+/usr and /bin rather than one long path"name" /usr/bin.
 
-$ ls -P
+Problem two: consider that you discover Mike's photo-of-son by looking
+into its "subfiles" and seeing /(whatever)/portrait/Mike;son-photo ,
+while you discover Bob's is-son-photo-of (in effect, its
+photo-of-father) by looking through its path"names" and also seeing
+/(whatever)/portrait/Mike;son-photo . To find all the relationships
+which a given file is involved in, you must check both its "subfiles"
+and its path"names". And whether a given relationship will be found
+among one or the other is arbitrary. Had we chosen to use
+;father-photo rather than ;son-photo links, then Bob's metadata would
+have been a "subfile" while Mike's would have been a path"name".
 
-, can list (some of) the parents of the current file, whether or not
-it is a directory. The change also creates consistency with
-link-directories, which are non-(predicate-)directory files that can
-be the target of the pwd.
+But, one could argue, this is only a problem in the special cases
+where both "directions" of a two-part relationship are worth
+expressing. It just so happens that the reverse of the is-son-of
+relation is a useful relation to consider. It just happens to be the
+case that every man is a father to all his sons; or rather, the
+reverse of 'x is the son of y' - 'y has the son x' - happens to be
+important enough to have another form, 'y is the father of x'. So in
+these special cases, we can create a link in both directions: for
+example, we can create both /(whatever)/portrait/Mike;son-photo and
+/(whatever)/portrait/Bob;father-photo . Then the user can find all of
+a file's useful file-is-dir metadata by inspecting its subfiles, and
+so happily ignore its subfile pathnames.
 
-On 5/28/05, Alexander G. M. Smith <agmsmith@rogers.com> wrote:
-> Leo Comerford wrote on Wed, 18 May 2005 12:50:38 +0100:
-> > But if you have relation-directories and the ability to find the
-> > pathnames of a given file, you can do everything you can do with
-> > subfiles, just as nicely, and more besides. And if subfiles are
-> > completely redundant and bad news anyway, we shouldn't have them.
->
-> I prefer subfiles (or fildirutes) as being easier to understand.  But
-> maybe that's just due to lots of experience with using file hierarchies.
-> I can see having a relational system, but I'd always want to also have
-> a directory hierarchy namespace, so that all files can be named.
->
-> Having those relationship directories seems kind of clunky - since
-> they're not located near the object being investigated.  Though
-> that's a GUI matter of making/(something)/friend the system file browser =
-pop up a
-> "Show Relationships..." menu item as contrasted with drilling down
-> to a subfile directory listing by clicking on an item.
+But creating both /(whatever)/portrait/Mike;son-photo and
+/(whatever)/portrait/Bob;father-photo means having a cycle in the
+representation of some simple non-cyclic data. Also, the fact that
+Mike was the parent of Bob through a ;son-photo in the base filesystem
+tree conveyed that we should see Mike as the parent (in the graph
+sense) of Bob in terms of the ;son-photo relationship too. (Thus the
+filesystem gave us a tree-based representation of the father-son data
+for free using base filesystem operators; we cd ed "up" from Bob to
+Mike,"down" from Mike to Bob and "down" again from Bob to Dean or
+Joe.) But if Mike and Bob are both parents of each other, then the
+subfile metadata doesn't indicate a "direction" we should think of as
+rootward any more than a link-directory does. Like a link-directory,
+we either have to provide extra metadata to indicate "which way is up"
+or rely on users having context information. The two links also
+duplicate data: how would the subfile metadata for both "directions"
+be kept in sync? The only robust way to do it would be to set up a
+persistent query to dynamically generate the links in one "direction"
+from the links in the other; significant overkill.
 
-I'll start with an example here. Imagine a directory,
+And what about the relations we don't duplicate? Saying that one
+"direction" in a given two-part relation will never be important to
+anyone is begging to be proven wrong; it amounts to speaking the fatal
+words "no-one will ever want to ...". As an example, consider the
+relationship between an image file and another image file that is a
+thumbnail for it. This is probably as good a candidate as any for
+subfile metadata: just create /(whatever)/portrait/Mike;thumbnail or
+whatever. But then suppose someone comes across the thumbnail image,
+under some different "name", and decides they want to put it onto
+their website. Is there a larger version of the image, they wonder,
+that can be displayed if the user clicks on it? Well, obviously the
+fact that there is a larger image that it is a thumbnail of is now
+rather important. So at best we look rather silly when the user finds
+what they want via a "boring" link. Alternatively, the user doesn't,
+or can't (see problem four), check through the "boring" links and so
+doesn't find her file at all.
 
-/(whatever)/portrait
+(There is also the fact that it might make more sense to express the
+interesting directions as path"names" and leave "subfiles" for the
+boring reverse directions, since all of a file's ordinary,
+non-relational path"names" are considered to be interesting.)
 
-, in which there are portrait photos of a number of men, one photo per
-man. Each photo is identified under /(whatever)/portrait by the guy's
-first name, so you have
+So an alternative argument is to say that having to check both
+subfiles and path"names" to find all a file's relations is exactly
+what we want: relationships in which that file is the child show up as
+path"name"s, while relationships in which it is the parent show up as
+subfile metadata. This is a better approach, but it has problems
+discussed in part three. It also sharpens problem four.
 
-/(whatever)/portrait/Mike
-/(whatever)/portrait/Bob
+Problem three: the interaction of relations of different types can
+easily create cycles even when both relations describe simple acyclic
+data. If I give /(whatever)/portrait/Mike the pathname
+/(whatever)/portrait/Bob;employs , asserting that Bob employs Mike,
+then I have created a cycle. Once again subfile metadata creates a
+cycle in the base filesystem representation where none exists in the
+data being expressed. (By contrast, link-directories often keep cycles
+out of the base filesystem representation of data that contain
+cycles.)
 
-and so on. Now suppose we use link-directories to express father/son
-relationships between the guys in the photos. So, for example, if Mike
-is Bob's father, we could have
+Problem four: without the ability to list pathnames of a file, our
+problems with pathnames worsen. How to tell that
+/(whatever)/portrait/Mike;son-photo is /(whatever)/portrait/Bob ? We
+could search through the possibly many entries in /(whatever)/portrait
+looking for the file that is /(whatever)/portrait/Mike;son-photo; this
+boils down to searching by hand for the /(whatever)/portrait/*
+pathnames of /(whatever)/portrait/Mike;son-photo . Or we could have
+/(whatever)/portrait/Mike;son-photo/Bob instead of
+/(whatever)/portrait/Mike;son-photo , but this is duplicated data
+which will break silently if someone renames /(whatever)/portrait/Bob
+. To prevent this, we could decide that the file that is
+/(whatever)/portrait/Mike;son-photo/Bob should not have a
+/(whatever)/portrait/Bob pathname at all. But this will, for example,
+mean that /(whatever)/portrait , intended to be a list of all
+portraits, will in fact contain only /(whatever)/portrait/Mike . This
+solution "ghettoizes" subfiles: any information I might want to know
+about Mike's son-photo (as that) must be stuck into the son-photo
+pathname, and no other pathname to the file that is Mike's son-photo
+can safely duplicate any of the information packed into the son-photo
+pathname. The only other way out is to use dynamically-generated
+path"name"s, but this is significant overkill, and in any case any
+code that (for example) generates /(whatever)/portrait/* paths from
+/(whatever)/portrait/Mike;son-photo/* paths itself needs some way to
+keep aware of all /(whatever)/portrait/Mike;son-photo/* paths. So the
+only reasonable approach is to implement pathname-listing as well as
+file-as-directory.
 
-/(something)/father-son/
-/(something)/father-son/aardvark:
-/(something)/father-son/aardvark:father (which is the file also known
-as '/(whatever)/portrait/Mike')
-/(something)/father-son/aardvark:son (the file also known as
-'/(whatever)/portrait/Bob')
+(Problem five: the overloading of file-as-dir to express single-place
+predicates, relations and compound files makes the meaning of a piece
+of subfile metadata ambiguous without context. A bit more on this
+sometime.)
 
-Using these link directories, we can easily express the information in
-this (father's-side) family tree:
-
-                                          --------   Mike  --------
-                                          |                       |
-                                          v                       v
-                                 ------- Bob ------              Ted
-                                 |        |       |               |
-                                 v        v       v               v
-                                Joe      Dean    Ed              Todd
-
-, where Mike ----> Bob means "Mike is the picture of the father of the
-guy pictured in Bob".
-
-But this is where the clunkiness comes in. The family-tree
-representation above is an obvious and natural way to conceive of and
-manipulate the father/son relationships. We want there to be a
-father-son link straight from Mike to Bob; what's more, we want to be
-able to list the children (in the graph sense!) of Mike and see Bob
-and Ted, and to move leafward from Mike to Bob or rootward from Bob to
-Mike. But when we look at how we expressed the information using
-link-directories, we see this instead:
-
-        --------------- /(something)/father-son/ --------
-        |                                               |
-        v                                               v
-    aardvark -----------------                     -- zebra ---
-    |                        |                     |          |
-    |:son                    |:father       :father|          |:son
-    |                        |                     |          |
-    v                        v                     v          v
-(/(whatever)/portrait/Bob) (/(whatever)/portrait/Mike)
-(/(whatever)/portrait/Ted)
-
-... and so on for the other relationships. All the information in our
-family tree is present and correct, but the way we chose to express it
-has almost completely vanished. There is no link to follow from Mike
-to Bob; instead we have to
-
-1) find the /(something)/father-son/(animal name):father path"name"s
-of /(whatever)/portrait/Mike
-2) for each of the /(something)/father-son/(animal name) directories:
-    2.1) find the /(whatever)/portrait/* path"name" of (animal name):son
-    2.2) iff it's /(whatever)/portrait/Bob:
-        2.2.1) success: cd /(something)/father-son/(animal name):son and st=
-op
-3) failure: announce failure and stop
-
-That's easy to do; it's just a handful of ls es and optionally some cd
-s. But it's going to get boring fast. More importantly, what we really
-want to do is to be able to examine and move around the family tree in
-just the same way that we ls and cd around the directory tree (or
-rDAG, and in fact with link-directories it won't even always be
-acyclic). But the edges in our family tree have become nodes in their
-own right, in the form of the link-directories. In fact, there's
-nothing to indicate that the family tree is a tree at all.
-
-Oh well. At least we can save ourselves some physiotherapy by writing
-a shell program that will allow us to move from father to son in a
-single command. So, when the pwd is /(whatever)/portrait/Mike and we
-give our command the argument 'Bob', it will use the procedure above
-(plus some error-checking if we're being thorough) to change the pwd
-to /(whatever)/portrait/Bob . So now we can do
-
-$ cd /(whatever)/portrait/Mike
-$ pwd
-/(whatever)/portrait/Mike
-$ cg Bob
-$ pwd
-/(whatever)/portrait/Bob
-
-cg stands for 'change guy', of course. :) That improves things
-somewhat. It won't be hard to add a command to list a man's sons:
-
-$ lsg
-Joe Dean Ed
-
-What about his father?
-
-$ gd
-Mike
-
-But we could take this further: since every man is a member of a tree
-of father-son relationships, we could use an equivalent to filesystem
-pathnames to express its position in the tree. So, if we use ls -P to
-list the absolute pathnames of a file, we can also have lsg -P:
-
-$ ls -P
-/(whatever)/portrait/Bob
-/(something)/father-son/aardvark:son
-[etc. etc.]
-$ lsg -P
-^Mike-Bob
-
-where the ^ indicates that Mike is a root, since we haven't entered a
-father for him, and that Bob is his son. Then, finally, how about
-these?
-
-$ cg ..
-$ lsg -P
-^Mike
-$ cg ^Mike-Ted-Todd
-$ lng /(whatever)/portrait/Andy; lsg -P .-Andy
-^Mike-Ted-Todd-Andy
-$ cg ^ ; lsg -P
-^Mike
-
-Using cg, lsg and so on, the link-directory nodes appear as edges
-between father and son, and the predicate-directories (such as
-/(whatever)/portrait and /(something)/father-son ) disappear entirely.
-So the tree is back. After we expressed the family tree in terms of
-the filesystem "tree", we then built operators for the family tree out
-of the operators for the filesystem "tree". That allows us to examine
-and manipulate the family tree, as a tree, just as if it were
-hardwired into the filesystem API. Looking at the family tree using
-the low-level filesystem operators is like examining a JPEG file using
-a hex debugger; of course what you see is not going to look anything
-like the picture. The specialised operators provide the equivalent of
-a JPEG viewer. And they're pleasingly "first-order" - just as much
-"real" filesystem operators as ls, cd and so on. Not only are they
-accessed through the same interface(s), but they move the same pwd
-around, allowing us to freely intermix cg s and cd s, lsg s and ls es.
-
-(Of course, this approach (build the data structures out of existing
-types, then build the operators out of existing operators) is also
-basically how you create a new type in a high-level programming
-language. So it's not a very new or difficult insight, though
-apparently it passed these people by
-
-http://www.birdstep.com/database/collaterals/Publication%20-%20Network%20an=
-d%20Relational%20Data%20Modeling%20(2004_01_01).pdf
-
-and even eluded our industry leader
-
-http://www.microsoft.com/windows2000/techinfo/howitworks/activedirectory/ds=
-vsrd.asp
-
-.)
-
-We can of course take things further. For one thing, inventing and
-remembering cute names for the operators on one type of link-directory
-isn't hard, but it doesn't scale when we add operators for many other
-types. So we can do with generic operators. For example, consider a
-set of generic operators for inspecting and editing data as a tree, or
-more precisely as a rooted digraph which may or may not be acyclic or
-a tree. ch is the generic equivalent to cd or cg , and there are
-equivalent equivalents (ahem) for ls/lsg, pwd/pwg and so on. So
-
-$ ch -t /(something)/father-son ..
-
-is equivalent to
-
-$ cg ..
-
-; the the -t argument tells ch to use the tree-browsing conventions
-associated with the /(something)/father-son link-directories.
-(Obviously ch could do this by invoking cg.) But naturally ch as used
-above is too clunky to type regularly, so we could use
-
-$ deftree /(something)/father-son
-
-which sets the default value of -t for the generic tree operators,
-after which we can simply type
-
-$ ch ..
-
-instead.
-
-(It should go without saying that programs wouldn't have to use the
-new operators by hauling text through standard IO. Part of every set
-of rooted-digraph operators would be a library providing function
-access to the filesystem "tree" presented by those operators - these
-calls would of course be standard across different sets of
-rooted-digraph operators, and probably identical to the corresponding
-syscalls for the base fileysystem. The only library most programs
-would have to load or compile would be that provided by the generic
-rooted-digraph operators, which would multiplex between the different
-operator-sets' calls in a manner similar to deftree or ch -t .)
-
-The generic operators are quite a nice bit of abstraction. For
-example, you could build a GUI tree/rooted-digraph browser as a skin
-over ch and friends. Then, just as ch and friends provide a uniform
-command-line interface to the tree representations of different file
-relationships, the browser will automatically provide a visualisation
-and graphical interface for them all - a semantically-aware GUI
-relationship-browser rather than yet another single-purpose, ad-hoc
-tool for slogging through the base filesystem tree. For example, you
-could set it to /(something)/father-son mode and see the family tree,
-complete with direct links between father and son, and nothing else.
-Or you could show the family tree decorated with additional
-information from the base filesystem tree, or vice versa.
-
-(Continuing the JPEG-format analogy, today's filesystem browers do of
-course display JPEGs and suchlike, but while they only provide
-semantically-aware viewing of individual files (showing a JPEG file as
-a JPEG thumbnail, a text file as the start of the text, etc.) our
-relationship-browser provides the same for the relationships /between/
-files. (Which is actually not so different, since link-directories
-both describe relationships between files and in so doing constitute
-compound files themselves.)
-
-Now this is all fine, but we still need to create the equivalent of
-cg, lsg and so on for each of the relations we define before the
-filesystem can provide a high-level interface to them. Quite a bore if
-we just want to lash up something quickly. Well, one legitimate
-solution is simply not to bother creating the operators; nowhere is it
-written that every relation must have a high-level interface. Perhaps
-we will write operators for it later if it becomes worthwhile. But not
-writing the operators leaves us clunking around in the low-level
-representation of our relation; we need a truly lazy solution.
-
-Well, every /(something)/father-son link-directory always has two
-children, one named :father and the other :son. In the higher-level
-tree interface we want to build, every link-directory represents a
-parent-child relationship (in the graph sense), with the :father file
-as the parent. Now, relations like that are going to be two a penny.
-Instead of writing a different set of high-level tree operators for
-/(something)/father-son and every relation like it, we can write an
-universal implementation which can provide the operators for all of
-them. (Don't confuse this with ch and so on, which provide a generic
-/interface/ to the tree operators, so users don't have to remember
-that the cd-equivalent for /(something)/father-son is called cg.) So
-instead of writing code for cg etc. we can just give the universal
-implementation the information it needs to cover=20
-/(something)/father-son . The most important information the universal
-implementation will need is what the two role-names are and which one
-we want to present as the parent in the default semantic-level tree
-interface. For nice name segments in the pathnames we should also
-provide the name of some directory of which every one of the node
-files is a child, such as /(whatever)/portrait for father-son. An
-obvious way to provide this information would be to put the
-information in a simple text file connected by a link-directory to
-/(something)/father-son/ .
-
-So now creating the new parent-child relation, complete with swishy
-semantic-level integration to everything, is down to roughly a handful
-of cd s and ln s and an echo . Of course, we can do better than that.
-
-$ trel /(something)/father-son :father :son -d /(whatever)/portrait -o
-cg lsg pwg lng [etc.]
-$
-
-Called thus, trel creates /(something)/father-son/ (if necessary) and
-links to it the text file with the information for the universal
-implementation of the high-level operators. The role-names are :father
-and :son ; :father is made the parent role as it came first. The -d
-option specifies /(whatever)/portrait as the name-segment directory.
-The -o option takes a list of custom names for the operators; if it is
-omitted, the operators can still be accessed using deftree and ch -t ,
-and of course custom names can be added later. -d can be omitted. The
-role-names can be omitted too, in which case trel uses the role-names
-:parent and :child . The first argument specifying the
-relation-directory can be replaced by -q foo, in which case the
-relation-directory /(stuff)/quickrel/foo is created if necessary. And
-finally,
-
-$ trel -q foo . ../bar
-$
-
-not only creates /(stuff)/quickrel/foo/ if necessary, but also gives
-the pwd the path /(stuff)/quickrel/foo/aardvark:parent and makes
-../bar :child . It is equivalent to
-
-$ qtr foo ../bar
-$
-
-You can naturally link to an existing directory from
-/(stuff)/quickrel/ if you want. Of course, if we know that
-/(something)/father-son has already been set up, we can also simply
-say
-
-$ cd /(whatever)/portrait/Mike
-$ deftree /(something)/father-son
-$ lk ../Bob
-$
-
-where lk is the generic ln/lng/etc. operator.
-
-But enough. The point is made: a few well-chosen utilities make
-link-directories convenient and unclunky, especially for simple tasks.
+So file-as-dir is a flawed way of expressing parent-child relations.
+Unfortunately, when it comes to relations, expressing two-way
+parent-child links and providing a tree view of them is what
+file-as-dir does /best/.
 
 --
 Leo Richard Comerford - http://www.st-and.ac.uk/~lrc1 - accept no namesakes=
