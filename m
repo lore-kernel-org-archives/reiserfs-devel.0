@@ -1,36 +1,40 @@
-From: Gregory Maxwell <gmaxwell@gmail.com>
-Subject: ZFS - Reiser team reactions?
-Date: Fri, 18 Nov 2005 01:55:41 -0500
-Message-ID: <e692861c0511172255t3f555051s622f9c0ef578f164@mail.gmail.com>
+From: Peter van Hardenberg <pvh@uvic.ca>
+Subject: Re: Erratum
+Date: Thu, 17 Nov 2005 23:36:56 -0800
+Message-ID: <200511172336.56719.pvh@uvic.ca>
+References: <ff8010840511172013h1634ffb7jd7a2f9bd3d949a2e@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-27001-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27002-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-reply-to: <ff8010840511172013h1634ffb7jd7a2f9bd3d949a2e@mail.gmail.com>
+Content-disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Looks like ZFS is no longer vaporware.
-http://www.opensolaris.org/os/community/zfs/docs/
+On November 17, 2005 08:13 pm, Leo Comerford wrote:
+>
+> - this is what comes of writing things in a hurry....
+>
 
-Any commentary from the Reiserfs team?
+Leo,
 
-A (supposedly) production ready FS that provides the transactions
-(using a similar/same tree ripple technique as reiser4), compression,
-and snapshotting, that we expected with reiser4 in the not two distant
-future... as well as checksumming, and raid integration (which uses
-checksumming to aid reconstruction) that we've barely just talked
-about here.
+As you may have noticed, I am working in this area right now. I'd like to read 
+what you have written, but it's too long and jargon-laden for me to invest 
+the time. 
 
-People have already started asking about Linux integration, if it were
-not for that fact that CDDL is incompatible with the GPL, I'd expect
-it to make its way into linux before Reiser4 as well.
+Could you sum up everything you said into about a hundred words such that an 
+educated layman could understand? I believe Einstein is quoted as saying 
+"forgive the length of this letter, I did not have time to make it short" so 
+please don't take this as a complaint about your idea, just about its 
+presentation.
 
-A positive point is that this might be a good chance to point out that
-Reiser4 has some of ZFS's features already and is the right framework
-for building the rest (and much more)... and get some more interest in
-getting it merged and completed.
+-pvh
+
+-- 
+Peter van Hardenberg (pvh@pvh.ca)
+Victoria, BC, Canada
