@@ -1,564 +1,371 @@
-From: Adrian Bunk <bunk@stusta.de>
-Subject: [2.6 patch] fs/reiser4/: possible cleanups
-Date: Fri, 18 Nov 2005 04:33:10 +0100
-Message-ID: <20051118033310.GQ11494@stusta.de>
+From: Leo Comerford <lrc1@st-andrews.ac.uk>
+Subject: Re: File as a directory - file-as-dir vs. link-dirs (again) - 3/3
+Date: Fri, 18 Nov 2005 03:42:50 +0000
+Message-ID: <ff8010840511171942x2ae2ebd0m954209103da18740@mail.gmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-26997-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-26998-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Sender: leocomerford@gmail.com
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
-Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+To: "Alexander G. M. Smith" <agmsmith@rogers.com>
+Cc: reiserfs-list@namesys.com
 
-This patch contains the following possible cleanups:
-- make needlessly global code static
-- #if unused code away
+(This is the third and final choke-sized chunk. In order to keep any
+replies together, I suggest that people reply to this part unless the
+reply is very specific to one of the others.)
 
+File-as-dir is a flawed way of expressing parent-child relations.
+Unfortunately, when it comes to relations, expressing two-way
+parent-child links and providing a tree view of them is what
+file-as-dir does /best/.
 
-Signed-off-by: Adrian Bunk <bunk@stusta.de>
+Even simple two-way relationships that don't have an obvious
+parent-child nature cause additional problems. Say we decided to
+create metadata to record which of the men are friends. So if Dean
+gets along with his brother Ed we could create
 
----
+/(something)/friend/aardvark:
+/(something)/friend/aardvark:1 (which is the file also known as
+'/(whatever)/portrait/Ed')
+/(something)/friend/aardvark:2 (which is the file also known as
+'/(whatever)/portrait/Dean')
 
- fs/reiser4/estimate.c                  |    2 +-
- fs/reiser4/flush_queue.c               |    2 ++
- fs/reiser4/fsdata.c                    |    9 ++++++---
- fs/reiser4/fsdata.h                    |    3 ---
- fs/reiser4/init_super.c                |    4 +++-
- fs/reiser4/inode.c                     |    7 ++-----
- fs/reiser4/jnode.c                     |    2 ++
- fs/reiser4/key.c                       |    2 ++
- fs/reiser4/key.h                       |    1 -
- fs/reiser4/lock.c                      |    3 +++
- fs/reiser4/oid.c                       |    2 ++
- fs/reiser4/plugin/file/cryptcompress.c |    4 ++++
- fs/reiser4/plugin/file/file.h          |    3 ---
- fs/reiser4/plugin/plugin.c             |   12 ++++++------
- fs/reiser4/plugin/plugin.h             |    2 --
- fs/reiser4/readahead.c                 |    3 +++
- fs/reiser4/readahead.h                 |    1 -
- fs/reiser4/super.c                     |    2 ++
- fs/reiser4/super.h                     |    4 ----
- fs/reiser4/tree.c                      |    2 +-
- fs/reiser4/tree.h                      |    2 --
- fs/reiser4/tree_walk.c                 |    4 ++++
- fs/reiser4/tree_walk.h                 |    2 --
- fs/reiser4/znode.h                     |    4 ----
- 24 files changed, 43 insertions(+), 39 deletions(-)
+using link-directories. In fact, if we have anonymous last name
+segments, we can just create
 
-This patch contains the following possible cleanups:
-- make needlessly global code static
-- #if unused code away
+/(something)/friend/aardvark: , which links anonymously to both the Ed
+and Dean photos.
 
+But try to express this using subfiles: which of the two brothers will
+we arbitrarily choose to make the subfile of the other?
 
-Signed-off-by: Adrian Bunk <bunk@stusta.de>
+In general, because the subfile relationship is always parent-child,
+to express a symmetric relationship in it we have to make up spurious
+extra data, declaring one participant in the relationship to be the
+'parent' when no such distinction exists. Ed and Dean are unlikely to
+care about this, but try deciding whether Sales worksClosely with
+Marketing or Marketing worksClosely with Sales on your firm's
+computerised org chart. (Apparently things like LDAPisation projects
+have provoked wars over less.) And in the link-directory example using
+anonymous links, even the dumbest program that knows nothing about
+either /(something)/friends or friendship can tell that
+/(something)/friends/aardvark: is symmetric. In the link-directory
+example that doesn't use anonymous links, it doesn't know that - and
+subfile metadata will actively give it the false parent/child
+information. And of course even if we already know that a specific
+relationship is symmetric, or if it's not important that we find out,
+problems two and four from part two bite hard. For example, reliably
+finding all of Ed's friends' photos requires looking for both all his
+photo's ;friends children and all its ;friends parents every time. We
+have similar problems for relationships that aren't symmetric, but for
+which we don't want to have to declare one role to be the parent of
+the other. Which party in a is-husband-of/is-wife-of relation should
+be indicated as the parent?
 
----
+Then there are (>2)-way relations. Here's a good example of a
+three-way relation, lifted from the
+Rumbaugh-Blaha-Premerlani-Eddy-Lorensen OO book. Say that we have
+files representing programmers, software projects and programming
+languages. Now say that, for example, Bob is using Algol 68 on the
+Foomatic and both SNOBOL and PL/1 on Project Omega, while Dean is
+coding in PL/1 on the Computron and in PILOT on Project Omega, and
+Todd is formally specifying the Foomatic in Z. We would represent this
+information using link-directories by creating
 
- fs/reiser4/flush_queue.c               |    2 ++
- fs/reiser4/fsdata.c                    |    9 ++++++---
- fs/reiser4/fsdata.h                    |    3 ---
- fs/reiser4/init_super.c                |    4 +++-
- fs/reiser4/inode.c                     |    2 ++
- fs/reiser4/jnode.c                     |    2 ++
- fs/reiser4/key.c                       |    2 ++
- fs/reiser4/key.h                       |    1 -
- fs/reiser4/lock.c                      |    3 +++
- fs/reiser4/oid.c                       |    2 ++
- fs/reiser4/plugin/file/cryptcompress.c |    4 ++++
- fs/reiser4/plugin/file/file.h          |    3 ---
- fs/reiser4/plugin/plugin.c             |   12 ++++++------
- fs/reiser4/plugin/plugin.h             |    2 --
- fs/reiser4/readahead.c                 |    3 +++
- fs/reiser4/readahead.h                 |    1 -
- fs/reiser4/super.c                     |    2 ++
- fs/reiser4/super.h                     |    4 ----
- fs/reiser4/tree.c                      |    2 +-
- fs/reiser4/tree.h                      |    2 --
- fs/reiser4/tree_walk.c                 |    4 ++++
- fs/reiser4/tree_walk.h                 |    2 --
- fs/reiser4/znode.c                     |    2 ++
- fs/reiser4/znode.h                     |    4 ----
- 24 files changed, 44 insertions(+), 33 deletions(-)
+/(thingy)/impl-lang/aardvark:coder --> /(whatever)/portrait/Bob
+/(thingy)/impl-lang/aardvark:lang   --> /bin/algol68
+/(thingy)/impl-lang/aardvark:proj    --> /(whatever)/projects/foomatic
+/(thingy)/impl-lang/zebra:coder --> /(whatever)/portrait/Dean
+/(thingy)/impl-lang/zebra:lang   --> /bin/pilot
+/(thingy)/impl-lang/zebra:proj    --> /(whatever)/projects/foomatic
 
---- linux-2.6.14-rc5-mm1/fs/reiser4/flush_queue.c.old	2005-10-28 22:51:31.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/flush_queue.c	2005-10-28 22:57:29.000000000 +0200
-@@ -644,6 +644,7 @@
- 	INIT_LIST_HEAD(&atom->flush_queues);
- }
- 
-+#ifdef REISER4_USE_EFLUSH
- /* get a flush queue for an atom pointed by given jnode (spin-locked) ; returns
-  * both atom and jnode locked and found and took exclusive access for flush
-  * queue object.  */
-@@ -707,6 +708,7 @@
- 
- 	return 0;
- }
-+#endif  /*  REISER4_USE_EFLUSH  */
- 
- #if REISER4_DEBUG
- 
---- linux-2.6.14-rc5-mm1/fs/reiser4/fsdata.h.old	2005-10-28 22:52:19.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/fsdata.h	2005-10-28 22:54:19.000000000 +0200
-@@ -135,8 +135,6 @@
- extern void done_file_fsdata(void);
- extern reiser4_file_fsdata *reiser4_get_file_fsdata(struct file *);
- extern void reiser4_free_file_fsdata(struct file *);
--extern reiser4_file_fsdata *create_fsdata(struct file *);
--extern void free_fsdata(reiser4_file_fsdata *);
- 
- 
- /*
-@@ -182,7 +180,6 @@
- extern int init_super_d_info(struct super_block *);
- extern void done_super_d_info(struct super_block *);
- 
--extern int file_is_stateless(struct file *);
- extern loff_t get_dir_fpos(struct file *);
- extern int try_to_attach_fsdata(struct file *, struct inode *);
- extern void detach_fsdata(struct file *);
---- linux-2.6.14-rc5-mm1/fs/reiser4/fsdata.c.old	2005-10-28 22:52:34.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/fsdata.c	2005-10-28 22:54:41.000000000 +0200
-@@ -18,6 +18,9 @@
- /* spinlock protecting manipulations with dir_cursor's hash table and lists */
- static spinlock_t d_lock = SPIN_LOCK_UNLOCKED;
- 
-+static reiser4_file_fsdata *create_fsdata(struct file *file);
-+static int file_is_stateless(struct file *file);
-+static void free_fsdata(reiser4_file_fsdata *fsdata);
- static void kill_cursor(dir_cursor *);
- 
- /**
-@@ -480,7 +483,7 @@
-  * one file system operation. This means that there may be "detached state"
-  * for underlying inode.
-  */
--int file_is_stateless(struct file *file)
-+static int file_is_stateless(struct file *file)
- {
- 	return reiser4_get_dentry_fsdata(file->f_dentry)->stateless;
- }
-@@ -686,7 +689,7 @@
-  *
-  * Allocates and initializes reiser4_file_fsdata structure.
-  */
--reiser4_file_fsdata *create_fsdata(struct file *file)
-+static reiser4_file_fsdata *create_fsdata(struct file *file)
- {
- 	reiser4_file_fsdata *fsdata;
- 
-@@ -706,7 +709,7 @@
-  *
-  * Dual to create_fsdata(). Free reiser4_file_fsdata.
-  */
--void free_fsdata(reiser4_file_fsdata *fsdata)
-+static void free_fsdata(reiser4_file_fsdata *fsdata)
- {
- 	BUG_ON(fsdata == NULL);
- 	kmem_cache_free(file_fsdata_cache, fsdata);
---- linux-2.6.14-rc5-mm1/fs/reiser4/super.h.old	2005-10-28 22:54:56.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/super.h	2005-10-28 23:08:58.000000000 +0200
-@@ -428,7 +428,6 @@
- extern __u64 reiser4_free_blocks(const struct super_block *super);
- extern void reiser4_set_free_blocks(const struct super_block *super, __u64 nr);
- extern __u32 reiser4_mkfs_id(const struct super_block *super);
--extern void reiser4_set_mkfs_id(const struct super_block *super, __u32 id);
- 
- extern __u64 reiser4_free_committed_blocks(const struct super_block *super);
- 
-@@ -455,7 +454,6 @@
- 				       const reiser4_block_nr * blk);
- extern int reiser4_fill_super(struct super_block *s, void *data, int silent);
- extern int reiser4_done_super(struct super_block *s);
--extern reiser4_plugin * get_default_plugin(pset_member memb);
- 
- /* step of fill super */
- extern int init_fs_info(struct super_block *);
-@@ -463,7 +461,6 @@
- extern int init_super_data(struct super_block *, char *opt_string);
- extern int init_read_super(struct super_block *, int silent);
- extern int init_root_inode(struct super_block *);
--extern void done_root_inode(struct super_block *);
- 
- 
- /* Maximal possible object id. */
-@@ -477,7 +474,6 @@
- void oid_count_allocated(void);
- void oid_count_released(void);
- long oids_used(const struct super_block *);
--long oids_free(const struct super_block *);
- 
- #if REISER4_DEBUG
- void print_fs_info(const char *prefix, const struct super_block *);
---- linux-2.6.14-rc5-mm1/fs/reiser4/init_super.c.old	2005-10-28 22:55:10.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/init_super.c	2005-10-28 22:55:48.000000000 +0200
-@@ -665,7 +665,7 @@
- };
- 
- /* access to default plugin table */
--reiser4_plugin *get_default_plugin(pset_member memb)
-+static reiser4_plugin *get_default_plugin(pset_member memb)
- {
- 	return plugin_by_id(default_plugins[memb].type,
- 			    default_plugins[memb].id);
-@@ -732,6 +732,7 @@
-  *
-  * Puts inode of root directory.
-  */
-+#if 0
- void done_root_inode(struct super_block *super)
- {
- 	/* remove unused children of the parent dentry */
-@@ -742,6 +743,7 @@
- 	/* discard all inodes of filesystem */
- 	invalidate_inodes(super);
- }
-+#endif  /*  0  */
- 
- /*
-  * Local variables:
---- linux-2.6.14-rc5-mm1/fs/reiser4/jnode.c.old	2005-10-28 22:58:21.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/jnode.c	2005-10-28 22:58:38.000000000 +0200
-@@ -1927,6 +1927,7 @@
- 
- #endif				/* REISER4_DEBUG */
- 
-+#ifdef REISER4_COPY_ON_CAPTURE
- /* this is only used to created jnode during capture copy */
- jnode *jclone(jnode * node)
- {
-@@ -1942,6 +1943,7 @@
- 	JF_SET(clone, JNODE_CC);
- 	return clone;
- }
-+#endif  /*  REISER4_COPY_ON_CAPTURE  */
- 
- /* Make Linus happy.
-    Local variables:
---- linux-2.6.14-rc5-mm1/fs/reiser4/key.h.old	2005-10-28 22:59:04.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/key.h	2005-10-28 22:59:13.000000000 +0200
-@@ -364,7 +364,6 @@
- /* size of a buffer suitable to hold human readable key representation */
- #define KEY_BUF_LEN (80)
- 
--extern int sprintf_key(char *buffer, const reiser4_key * key);
- #if REISER4_DEBUG
- extern void print_key(const char *prefix, const reiser4_key * key);
- #else
---- linux-2.6.14-rc5-mm1/fs/reiser4/key.c.old	2005-10-28 22:59:20.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/key.c	2005-10-28 22:59:34.000000000 +0200
-@@ -126,6 +126,7 @@
- 
- #endif
- 
-+#if 0
- /* like print_key() but outputs key representation into @buffer. */
- int sprintf_key(char *buffer /* buffer to print key into */ ,
- 		const reiser4_key * key /* key to print */ )
-@@ -146,6 +147,7 @@
- 			       (unsigned long long)get_key_objectid(key),
- 			       (unsigned long long)get_key_offset(key));
- }
-+#endif  /*  0  */
- 
- /* Make Linus happy.
-    Local variables:
---- linux-2.6.14-rc5-mm1/fs/reiser4/znode.h.old	2005-10-28 22:59:56.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/znode.h	2005-10-28 23:13:08.000000000 +0200
-@@ -238,12 +238,8 @@
- 
- #if REISER4_DEBUG
- extern void print_znode(const char *prefix, const znode * node);
--extern void print_znodes(const char *prefix, reiser4_tree * tree);
--extern void print_lock_stack(const char *prefix, lock_stack * owner);
- #else
- #define print_znode( p, n ) noop
--#define print_znodes( p, t ) noop
--#define print_lock_stack( p, o ) noop
- #endif
- 
- /* Make it look like various znode functions exist instead of treating znodes as
---- linux-2.6.14-rc5-mm1/fs/reiser4/lock.c.old	2005-10-28 23:00:10.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/lock.c	2005-10-28 23:00:26.000000000 +0200
-@@ -1259,6 +1259,8 @@
- }
- 
- #if REISER4_DEBUG
-+
-+#if 0
- /* Debugging help */
- void print_lock_stack(const char *prefix, lock_stack * owner)
- {
-@@ -1288,6 +1290,7 @@
- 
- 	spin_unlock_stack(owner);
- }
-+#endif  /*  0  */
- 
- /*
-  * debugging functions
---- linux-2.6.14-rc5-mm1/fs/reiser4/oid.c.old	2005-10-28 23:01:19.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/oid.c	2005-10-28 23:01:36.000000000 +0200
-@@ -100,6 +100,7 @@
- 		return (long)-1;
- }
- 
-+#if 0
- /*
-  * return number of "free" oids. This is used by statfs(2) to report "free"
-  * inodes.
-@@ -119,6 +120,7 @@
- 	else
- 		return (long)-1;
- }
-+#endif  /*  0  */
- 
- /*
-  * Count oid as allocated in atom. This is done after call to oid_allocate()
---- linux-2.6.14-rc5-mm1/fs/reiser4/plugin/file/file.h.old	2005-10-28 23:01:52.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/plugin/file/file.h	2005-10-28 23:02:36.000000000 +0200
-@@ -174,9 +174,6 @@
- extern int readpage_cryptcompress(struct file *, struct page *);
- extern int writepages_cryptcompress(struct address_space *,
- 				     struct writeback_control *);
--extern void readpages_cryptcompress(struct file *, struct address_space *,
--				    struct list_head *pages);
--extern sector_t bmap_cryptcompress(struct address_space *, sector_t lblock);
- 
- 
- /* file plugin operations */
---- linux-2.6.14-rc5-mm1/fs/reiser4/plugin/file/cryptcompress.c.old	2005-10-28 23:02:05.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/plugin/file/cryptcompress.c	2005-10-28 23:02:51.000000000 +0200
-@@ -1010,6 +1010,7 @@
- 	return result;
- }
- 
-+#if 0
- /* plugin->readpages() */
- void
- readpages_cryptcompress(struct file *file, struct address_space *mapping,
-@@ -1033,6 +1034,7 @@
- 
- 	return;
- }
-+#endif  /*  0  */
- 
- /* how much pages will be captured */
- static int cluster_nrpages_to_capture(reiser4_cluster_t * clust)
-@@ -3357,6 +3359,7 @@
- /* plugin->u.file.release */
- /* plugin->u.file.get_block */
- 
-+#if 0
- /* implentation of vfs' bmap method of struct address_space_operations for
-    cryptcompress plugin
- */
-@@ -3418,6 +3421,7 @@
- 		return result;
- 	}
- }
-+#endif  /*  0  */
- 
- /* this is implementation of delete method of file plugin for cryptcompress
-  */
---- linux-2.6.14-rc5-mm1/fs/reiser4/plugin/plugin.h.old	2005-10-28 23:05:17.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/plugin/plugin.h	2005-10-28 23:05:23.000000000 +0200
-@@ -677,8 +677,6 @@
- /* stores plugin reference in reiser4-specific part of inode */
- extern int set_object_plugin(struct inode *inode, reiser4_plugin_id id);
- extern int setup_plugins(struct super_block *super, reiser4_plugin ** area);
--extern reiser4_plugin *lookup_plugin(const char *type_label,
--				     const char *plug_label);
- extern int init_plugins(void);
- 
- /* builtin plugins */
---- linux-2.6.14-rc5-mm1/fs/reiser4/plugin/plugin.c.old	2005-10-28 23:05:32.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/plugin/plugin.c	2005-10-28 23:19:52.000000000 +0200
-@@ -186,14 +186,8 @@
- /* initialise plugin sub-system. Just call this once on reiser4 startup. */
- int init_plugins(void);
- int setup_plugins(struct super_block *super, reiser4_plugin ** area);
--reiser4_plugin *lookup_plugin(const char *type_label, const char *plug_label);
- int locate_plugin(struct inode *inode, plugin_locator * loc);
- 
--/* internal functions. */
--
--static reiser4_plugin_type find_type(const char *label);
--static reiser4_plugin *find_plugin(reiser4_plugin_type_data * ptype,
--				   const char *label);
- 
- /**
-  * init_plugins - initialize plugins
-@@ -257,6 +251,7 @@
- 	return id < plugins[type_id].builtin_num;
- }
- 
-+#if 0
- /* lookup plugin by scanning tables */
- reiser4_plugin *lookup_plugin(const char *type_label /* plugin type label */ ,
- 			      const char *plug_label /* plugin label */ )
-@@ -274,6 +269,7 @@
- 		result = NULL;
- 	return result;
- }
-+#endif  /*  0  */
- 
- /* return plugin by its @type_id and @id.
- 
-@@ -329,6 +325,8 @@
- 	return &plugins[type_id].plugins_list;
- }
- 
-+#if 0
-+
- /* find plugin type by label */
- static reiser4_plugin_type find_type(const char *label	/* plugin type
- 							 * label */ )
-@@ -370,6 +368,8 @@
- 	return NULL;
- }
- 
-+#endif  /*  0  */
-+
- int grab_plugin(struct inode *self, struct inode *ancestor, pset_member memb)
- {
- 	reiser4_plugin *plug;
---- linux-2.6.14-rc5-mm1/fs/reiser4/readahead.h.old	2005-10-28 23:07:37.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/readahead.h	2005-10-28 23:07:45.000000000 +0200
-@@ -32,7 +32,6 @@
- 	loff_t slow_start;	/* enlarging r/a size algorithm. */
- };
- 
--extern int reiser4_file_readahead(struct file *, loff_t, size_t);
- extern void reiser4_readdir_readahead_init(struct inode *dir, tap_t * tap);
- 
- /* __READAHEAD_H__ */
---- linux-2.6.14-rc5-mm1/fs/reiser4/readahead.c.old	2005-10-28 23:07:53.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/readahead.c	2005-10-28 23:20:32.000000000 +0200
-@@ -112,6 +112,8 @@
- 	done_lh(&next_lh);
- }
- 
-+#if 0
-+
- static inline loff_t get_max_readahead(struct reiser4_file_ra_state *ra)
- {
- 	/* NOTE: ra->max_window_size is initialized in
-@@ -360,6 +362,7 @@
-       out:
- 	return 0;
- }
-+#endif  /*  0  */
- 
- void reiser4_readdir_readahead_init(struct inode *dir, tap_t * tap)
- {
---- linux-2.6.14-rc5-mm1/fs/reiser4/super.c.old	2005-10-28 23:09:05.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/super.c	2005-10-28 23:09:20.000000000 +0200
-@@ -120,6 +120,7 @@
- 	return get_super_private(super)->mkfs_id;
- }
- 
-+#if 0
- /* set mkfs unique identifier */
- void reiser4_set_mkfs_id(const struct super_block *super, __u32 id)
- {
-@@ -127,6 +128,7 @@
- 	assert("vpf-224", is_reiser4_super(super));
- 	get_super_private(super)->mkfs_id = id;
- }
-+#endif  /*  0  */
- 
- /* amount of free blocks in file system */
- __u64 reiser4_free_committed_blocks(const struct super_block *super)
---- linux-2.6.14-rc5-mm1/fs/reiser4/tree.h.old	2005-10-28 23:09:35.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/tree.h	2005-10-28 23:09:44.000000000 +0200
-@@ -168,8 +168,6 @@
- #define spin_ordering_pred_epoch(tree) (1)
- SPIN_LOCK_FUNCTIONS(epoch, reiser4_tree, epoch_lock);
- 
--extern void init_tree_0(reiser4_tree *);
--
- extern int init_tree(reiser4_tree * tree,
- 		     const reiser4_block_nr * root_block, tree_level height,
- 		     node_plugin * default_plugin);
---- linux-2.6.14-rc5-mm1/fs/reiser4/tree.c.old	2005-10-28 23:09:52.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/tree.c	2005-10-28 23:10:01.000000000 +0200
-@@ -1814,7 +1814,7 @@
- }
- 
- /* first step of reiser4 tree initialization */
--void init_tree_0(reiser4_tree * tree)
-+static void init_tree_0(reiser4_tree * tree)
- {
- 	assert("zam-683", tree != NULL);
- 	rw_tree_init(tree);
---- linux-2.6.14-rc5-mm1/fs/reiser4/tree_walk.h.old	2005-10-28 23:11:08.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/tree_walk.h	2005-10-28 23:11:19.000000000 +0200
-@@ -105,8 +105,6 @@
- 	 * node or extent processing functions. */
- 	int (*before) (void *);
- };
--extern int tree_walk(const reiser4_key *, int, struct tree_walk_actor *,
--		     void *);
- 
- #if REISER4_DEBUG
- int check_sibling_list(znode * node);
---- linux-2.6.14-rc5-mm1/fs/reiser4/tree_walk.c.old	2005-10-28 23:11:38.000000000 +0200
-+++ linux-2.6.14-rc5-mm1/fs/reiser4/tree_walk.c	2005-10-28 23:12:13.000000000 +0200
-@@ -910,6 +910,8 @@
- 	assert("nikita-3281", check_sibling_list(before));
- }
- 
-+#if 0
-+
- struct tw_handle {
- 	/* A key for tree walking (re)start, updated after each successful tree
- 	 * node processing */
-@@ -1237,6 +1239,8 @@
- 	return ret;
- }
- 
-+#endif  /*  0  */
-+
- /*
-    Local variables:
-    c-indentation-style: "K&R"
---- linux-2.6.15-rc1-mm1-full/fs/reiser4/estimate.c.old	2005-11-18 00:32:58.000000000 +0100
-+++ linux-2.6.15-rc1-mm1-full/fs/reiser4/estimate.c	2005-11-18 00:33:17.000000000 +0100
-@@ -70,7 +70,7 @@
- }
- 
- /* returnes max number of nodes can be occupied by disk cluster */
--reiser4_block_nr estimate_cluster(struct inode * inode, int unprepped)
-+static reiser4_block_nr estimate_cluster(struct inode * inode, int unprepped)
- {
- 	int per_cluster;
- 	per_cluster = (unprepped ? 1 : cluster_nrpages(inode));
---- linux-2.6.15-rc1-mm1-full/fs/reiser4/inode.c.old	2005-11-18 00:21:42.000000000 +0100
-+++ linux-2.6.15-rc1-mm1-full/fs/reiser4/inode.c	2005-11-18 00:34:36.000000000 +0100
-@@ -109,17 +109,14 @@
- 		return 255;
- }
- 
-+#if REISER4_USE_COLLISION_LIMIT
- /* Maximal number of hash collisions for this directory. */
- int max_hash_collisions(const struct inode *dir /* inode queried */ )
- {
- 	assert("nikita-1711", dir != NULL);
--#if REISER4_USE_COLLISION_LIMIT
- 	return reiser4_inode_data(dir)->plugin.max_collisions;
--#else
--	(void)dir;
--	return ~0;
--#endif
- }
-+#endif  /*  REISER4_USE_COLLISION_LIMIT  */
- 
- /* Install file, inode, and address_space operation on @inode, depending on
-    its mode. */
+and so on: one link-directory for each triple of programmer, project
+and language. If we want to express the same information using subfile
+metadata we are going to have to create something like
 
+/(whatever)/portrait/Bob;impl-lang/1/proj   --> /bin/algol68
+/(whatever)/portrait/Bob;impl-lang/1/lang   --> /(whatever)/projects/foomat=
+ic
+/(whatever)/portrait/Dean;impl-lang/1/proj  --> /bin/pilot
+/(whatever)/portrait/Dean;impl-lang/1/lang  --> /(whatever)/projects/foomat=
+ic
+
+and so on. Problem two is worse in this case. Not only do we have to
+look through the path"name"s of /(whatever)/projects/foomatic in order
+to find out what programmers are working on it, but in order to find
+out what languages Bob is using on the Foomatic we have to find the
+/(whatever)/portrait/Bob;impl-lang/* directories among the path"name"s
+of /(whatever)/projects/foomatic and then examine those directories'
+./language names. And to find out what projects Bob is working on, we
+have to list all the /(whatever)/projects/* files which are linked
+from /(whatever)/portrait/Bob;impl-lang/*/project . All this is
+basically the same as working with link-directories using
+base-filesystem commands; indeed /(whatever)/portrait/Bob;impl-lang/1
+is basically /(thingy)/impl-lang/aardvark: shoved under an arbitrary
+choice of one of the three files it relates.
+
+We created tools so that we could handle parent-child relations
+expressed as link-directories without clunkiness; naturally we can do
+similar things for relations of other kinds. One generally useful tool
+would be something like rels below:
+
+$ cd /(whatever)/portrait/Dean
+$ rels
+/(something)/father-son (:son) :father
+/(thingy)/impl-lang (:coder) :lang :proj
+/(thingy)/impl-lang (:coder) :lang :proj
+/(something)/friend
+$
+
+rels lists the link-directories of which /(whatever)/portrait/Dean is
+a descendant. The animal names at the end of each link-directory's
+"name" have been omitted, because they don't convey any information
+beyond distinguishing between different link-directories in the
+relation-directory. (The last "name"-segment of a link-directory isn't
+always thus; in my other email to you shortly I discuss how programs
+can sensibly identify the ones that are.) Some other compression is
+obviously possible too. It would be possible to create a program (or
+an ls option) that worked like ls -P (as described above) except that
+instead of printing pathnames through link-directories it would
+substitute the corresponding rels entry. And those who really,
+absolutely demand to deal with relations via subfile metadata could
+create a set of tree operators to simulate it by presenting the
+non-relational pathnames of the base filesystem tree as well as
+pathnames like this:
+
+/(whatever)/portrait/Dean;(something)/father-son[son]:father
+/(whatever)/portrait/Dean;(thingy)/impl-lang/zebra[coder]:lang
+/(whatever)/portrait/Dean;(thingy)/impl-lang/zebra[coder]:proj
+/(whatever)/portrait/Dean;(thingy)/impl-lang/giraffe[coder]:lang
+/(whatever)/portrait/Dean;(thingy)/impl-lang/giraffe[coder]:proj
+/(whatever)/portrait/Dean;(something)/friend
+
+. (If (something)/father-son and so on seem rather bulky in this
+context, remember problem one from part two; real-world
+subfile-metadata names will probably be just as long.)
+
+Other possible things include:
+
+$ cd /(whatever)/portrait/Bob
+$ go /(something)/father-son/manticore:son
+$ pwd
+/(whatever)/portrait/Dean
+$ langs-used
+pl1 pilot
+$ go /(something)/friend
+$ pwd
+/(whatever)/portrait/Ed
+$ go /(something)/father-son/:father
+$ pwd
+/(whatever)/portrait/Bob
+$
+
+.
+
+Using subfile metadata automatically creates a rooted-digraph
+representation of the (meta)data: if Mike is the father of Bob, you
+express that by using a subfile link to make Bob's photo an actual
+subfile of Mike's in the base filesystem "tree". So you can go "down"
+the subfile link from Mike to Bob and (maybe) "up" again to Bob. We
+saw earlier how we can instead present tree presentations of arbitrary
+link-directory metadata. This alternative approach, providing
+
+$ pwg
+^Mike-Ted-Todd
+$ lsg
+Andy
+
+instead of
+
+$ pwd
+/(whatever)/portrait/Mike;son-photo;son-photo
+$ ls
+son-photo employs random-stuff irrelevant whats_this ~ [etc. etc.]
+
+, is more powerful and more pleasant even if all you want is a single
+rooted-digraph presentation of the (meta)data you are using. But of
+course we don't always want to look at everything as a rooted digraph.
+Some data we don't want to present as a rooted digraph at all. Imagine
+we have a large body of heavily interconnected /(something)/friend
+links , making for a big and definitely rootless graph. We could just
+present this as a rooted digraph by arbitrarily choosing one person's
+photo to be the root, but we really don't want to have to do this,
+just as we don't want to have to choose one person's photo to be the
+parent in an individual photo-of-friend/photo-of-friend relationship.
+So we need operators to explore and manipulate rootless graphs too.
+Something like
+
+$ pwd
+/(whatever)/portrait/Ed/(whatever)/portrait/Ed
+$ defrel /(something)/friend
+# some metadata off /(something)/friend/ is specifying a name-segment
+# directory, as with /(something)/father-son/ above, so we do:
+$ go Dean
+$ rel
+Ed
+$
+
+would provide the basic "ls" and "cd", and obviously we can do much
+more. And one important application of a set of generic rootless-graph
+operators is that it gives us a graph presentation of both all
+symmetric two-way links (like /(whatever)/friend ) and all asymmetric
+two-way links for which we don't have metadata to indicate which role
+to think of as the parent.
+
+And naturally data doesn't have to be relational to demand a
+non-rooted-digraph representation. Say I attach metadata to the
+/(whatever)/photos files specifying for each photo the co-ordinates of
+the pictured man's house. Operators which present a geometric rather
+than a graph view can then be employed:
+
+$ pwd # current location
+/(whatever)/portrait/Bob
+$ pwg # current location
+^Mike-Bob
+$ loc # current location
+39=B0 45.38' N 105=B0 00.55' W  1610
+$ range 5 # everything within 5 kilometres
+/(whatever)/portrait/Ed /(whatever)/portrait/Jeff
+$ cg Dean # move from father to son
+$ up 500; north 20 # move up 500 m and north 20km
+$ loc
+41=B0 04.203' N 81=B0 31.442' W 782
+$pwd
+/(stuff)/coords/earth/039_56.163N105_00.55W2110/aardvark
+
+. :)
+
+One of the nice things about using rooted digraphs to represent data
+is that so many things can be thought of as special cases of them, and
+so represented as them. For example, we can sensibly represent a stack
+as a tree, with the tail as the root. But of course all trees that
+represent stacks in this way have additional constraints: for example,
+there is at most one child per parent. So while we can use all the
+generic "tree" operators on our stack-as-a-tree, we can also provide
+other operators that won't (reliably) work on other tree
+representations, including an operator to move to the head and
+operators to push and pop. So where possible, we should create
+non-rooted-graph presentations of the filesystem by extending the
+rooted-graph presentation; we could implement a completely new set of
+operators to present stacks and the like, but why do so? Only when the
+new presentation can't reasonably be seen as an extension of the
+rooted-graph presentation should we make a whole new set of operators;
+this is the case with the rootless-graph and geometric presentations
+discussed above.
+
+There is also a lot of information that can reasonably be presented as
+a rooted digraph but which we may want to present in other ways too.
+One example is the base filesystem "tree" metadata itself. In many
+ways it's best to think of the filesystem as consisting of files, with
+attributes (their (full, opaque) pathnames) attached, floating around
+inside their volumes in a completely unstructured fashion. Directories
+are basically searches-by-attribute which return an unordered set of
+the matching files, with the additional wrinkle that files which have
+a more specialised version of the attribute appear in subdirectories.
+(For example, all the files with opaque pathname '/usr/[aardvark]' are
+children of /usr/, while all the files with the opaque pathname
+'/usr/bin/[zebra]' are children of /usr/bin/, despite the fact that
+having the pathname '/usr/bin/[zebra]' means that '/usr' is also
+asserted of them.) So we need an operator which works like ls/lsg/etc.
+except that instead of listing the children of a file it lists all
+(and only) its opaque descendants. Beyond that though, you don't
+actually much need extra shell operators to support the "bunch of
+files searchable by attribute" way of looking at the filesystem; most
+of what you need is at the levels above (the visual presentation of
+directories/search results in the GUI) and below (using mount() to
+expose persistent queries as directories). So it's actually an
+untypical, bad example. :)
+
+Speaking of GUIs, the improved filesystem GUI mentioned earlier which
+works as a skin over the generic rooted-digraph operators (ch et al.)
+can obviously provide a skin over other sets of generic operators too.
+For example, it can provide a special GUI representation for stacks,
+queues and deques as a thin skin over a set of generic
+stack/queue/dequeue operators (itself an extension of the set of
+generic rooted-digraph operators, as discussed above). Similarly it
+could provide a GUI for unrooted graphs expressed through the generic
+graph operators, a 2D or 3D-plot representation of data presented
+through the geometric operators, and so on. So it could present a GUI
+to the /(something)/friend data that decorates each node with
+/(something/father-son and /(stuff)/coords/earth information, or
+indeed use a specialised position-on-earth GUI to display the
+/(stuff)/coords/earth data of the /(whatever)/portrait files with the
+/(something)/friend information represented as great-circle lines
+charted between the locations of each pair of friends. The important
+point here is how thin a layer this GUI is, knowing nothing about the
+syntax or semantics of the data it is representing beyond what it gets
+from the operators it supports. This gives it extreme flexibility:
+flicking between the two GUI presentations described above, or
+replacing the /(something)/friend lines on the globe display with
+/(something)/father-son ones, is a matter of one or two commands
+rather than recoding GUI components. The power this could afford is
+considerable.
+
+And finally, there is the information that we want to be able to view
+both as a rooted digraph and as ... a different rooted digraph (or as
+more than two different ones). For example, the subfile-metadata
+representation of the of the picture-of-father/picture-of-son metadata
+discussed above presents it as a descendant chart showing (photos of)
+(some of) the descendants of (most obviously) Mike. But parent/child
+relationships can just as easily be thought of as creating a pedigree,
+giving information about people's ancestors. In other words, it's just
+as correct to think of (for example) Joe as being at the root of a
+pedigree. Now it happens that the partial pedigrees expressed by our
+photo-of-father/photo-of-son relationship metadata are all degenerate
+trees, but that's only because everyone has only one father. Bring
+mothers and daughters into the picture as well and the answer to
+"which way is root?" becomes entirely relative, no pun intended. So we
+might want to be able to view parent/child (in the biology sense)
+relationships both as descendant charts and as pedigrees. This is easy
+to do using the link-directories approach: just tell the "tree-view"
+operators to regard :son rather than :father as being the rootward
+role, or vice versa. (Note that we can do something similar with
+rootless graphs: specify a root node using a command like
+
+$ setroot /(whatever)/friend/Ed
+
+and then you can use the rooted-digraph operators on the graph.) But
+the subfile-metadata approach only provides us with one presentation
+or the other unless we duplicate or rejig the data, or use a custom
+persistent query.
+
+In sum: "file-as-a-directory" gives us nothing, in terms of power,
+unambiguousness, or convenience, that we can't get from
+link-directories plus a small set of convenience utilities. The
+reverse is emphatically not the case. Furthermore, link-directories
+plus some more convenience utilities give us powerful things that are
+pretty much beyond the ken of "file-as-a-directory" altogether.
+
+But why not build the new tools to work on top of subfile metadata
+rather than link-directories? Firstly, because subfile metadata is not
+a sound foundation to build them on. Due to things like problem five
+in part two and the problems with symmetric links above, subfile
+metadata is ambiguous and sometimes downright misleading, so the
+amount you can safely infer from it without extra context information
+is limited. Secondly, once we have implemented the tools - once we
+can, for example, present the ;son-photo subfile metadata as a
+pedigree using the rooted-digraph operators and use those operators to
+navigate and tweak the pedigree just as easily as if it were expressed
+in the base filesystem tree - the advantages of using subfile metadata
+are gone. The ;son-photo links give us a rough-and-ready tree
+representation of the descendant chart for free, but we can get a
+better, cleaner tree representation of the descendant chart using the
+same class of operators we use to navigate the pedigree. So why put up
+with the pain that the file-as-dir kludge will cause us when it no
+longer satisfies any of our needs? Providing both file-as-dir and
+link-directories is a bad idea too, for roughly the same reasons.
+
+> - Alex
+>
+
+Leo.
+
+--
+Leo Richard Comerford - http://www.st-and.ac.uk/~lrc1 - accept no namesakes=
+ :)
