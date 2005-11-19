@@ -1,129 +1,58 @@
 From: michael chang <thenewme91@gmail.com>
-Subject: Re: More Slowdown
-Date: Sat, 19 Nov 2005 04:44:13 +0000
-Message-ID: <b14e81f00511182044r5a699cebn1ec91546faf905b@mail.gmail.com>
-References: <200511111359.39715.jgilmore@glycou.com>
-	 <200511120906.39109.jgilmore@glycou.com>
-	 <1131997263.10816.56.camel@teratron.lan.etheus.net>
-	 <200511142147.07787.chrivers@iversen-net.dk>
-	 <1132064829.8002.9.camel@teratron.lan.etheus.net>
-	 <b14e81f00511161908k30ed471esbc12b284842b8078@mail.gmail.com>
-	 <op.s0dozkscth1vuj@localhost> <437CF14B.4000808@namesys.com>
+Subject: Re: Fragmentation / repacker / append-performance
+Date: Sat, 19 Nov 2005 04:50:52 +0000
+Message-ID: <b14e81f00511182050m3a613303u39a3a683040d4319@mail.gmail.com>
+References: <437E02A9.2050107@isg.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-27023-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27024-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <437CF14B.4000808@namesys.com>
+In-Reply-To: <437E02A9.2050107@isg.de>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: PFC <lists@boutiquenumerique.com>, Craig Shelley <craig@microtron.org.uk>, reiserfs-list@namesys.com
+To: Lutz Vieweg <lkv@isg.de>
+Cc: reiserfs-list@namesys.com
 
-On 11/17/05, Hans Reiser <reiser@namesys.com> wrote:
-> PFC wrote:
+On 11/18/05, Lutz Vieweg <lkv@isg.de> wrote:
+> Hans Reiser wrote:
 >
-> >
-> >     Just a few words about this "slowdown" thing.
-> >
-> >     I use linux-2.6.11-cko1-swsusp2 with reiser4 included. I won't
-> > upgrade to  a new version until Hans says the current one is at least
-> > as stable as it  was before starting the merge...
-> >
-> >     I get the "slowdown" once in a while, usually for 2-5 seconds,
-> > it's not  that annoying.
-> >
-> >     However :
-> >
-> >     If I understand well, when memory is needed (memory pressure),
-> > reiser4  triggers a flush and writes dirty pages to the disk in large
-> > quantities.
-> >     This has many advantages like not writing at all the temporary
-> > files  which already have been deleted, deferred allocation, etc, it's
-> > really  cool.
-> >
-> >     However when "memory pressure" (ie. need to free some RAM) occurs,
-> > it is  usually that I am doing something interactively, like opening a
-> > document  or starting some software. Or it might mean that the
-> > database server just  received a big query which needs some sorting
-> > space in RAM for instance.
-> >     Thus, "memory pressure" almost always means "I need memory NOW
-> > and  someone is waiting in front of their screen for it"...
-> >     And it is at this very moment that reiser4 has to flush (to free
-> > memory).
-> >     Thus the "flush storm", by nature, always happens when you don't
-> > want it  to happen. It almost never happens when you are away from the
-> > computer  taking a leak, for instance.
-> >
-> >     This is analogous to the problem caused to postgres by
-> > checkpointing...  the postgres guys implemented a background writer to
-> > solve this.
-> >     I wonder if reiser4 could do the same, ie. trickle down dirty
-> > pages to  free up memory before it is actually needed, to improve
-> > reactivity. There  is a balance to be found, of course, between
-> > flushing as late as possible  (to benefit from all the nifty reiser4
-> > features) and flushing earlier (to  avoid triggering the "flush storm")=
-.
-> >     Maybe this could be set via a few controls...
-> >         - tell reiser4 to try to keep X amount of RAM immediately
-> > available  without flush
-> >         - when the CPU is idle, and/or when the disk is idle, start
-> > flushing,  but stop doing it as soon as some CPU is needed, or a key
-> > is hit...
-> >         - just do frequent, small partial flushes which will keep good
-> > locality  of reference while being small
-> >         - do it at a lower priority so that the keyboard does not
-> > stop  responding !!!
+>  > 6% fragmentation is enormous.  You very much need the
+>  > repacker we have not yet written.....
 >
-> I agree that smoothness needs working on.  After we merge.
->
-> >
-> >     Huh, well, that's it... what do you think ?
-> >
-> >
-> >
-> >> When fsyncing, Reiser4, to my understanding, isn't allowed to put
-> >> stuff in it's memory cache - it must put it to disk right away.  And
-> >
-> >
-> >     This is the whole point of fsync, yes.
-> >     Now, it's pretty stupid for evlolution to issue a fsync() on every
-> > pixel  move or whatever.
-> >     fsync() is for databases or things which must survive a hard
-> > system  crash...
-> >     evolution could as well have used fflush() and everything would
-> > have been  alright. Dumb.
-> >
-> >> For comparative purposes, I hear of consumer systems with 2 or 4 GB of
-> >> ram, and I know of brand new PC hard disks which have a throughput of
-> >> less than 5 MB/s (my hard disk maxees out at 20 MB/s on my PC.)  Do
-> >> you know the throughputs of your drives, and the size of the memory in
-> >> your machines?
-> >
-> >
-> >     Hum. A crap laptop harddrive will do 15 MBytes/s and a recent
-> > normal  desktop drive (7200rpm ATA or SATA) will do 50 MBytes/s or
-> > more...
-> >     If you get a lot less (like, 5 MB/s), you have a problem (DMA
-> > disabled,  etc)
-> >
-> >
-> >
-> >
-> PFC is right.
->
+> There has been talk about such a feature for a long time -
+> did anybody already write a concept on how to do this?
+> Has an effort been estimated? Is somebody already assigned
+> to that task?
 
-*shrugs* 15-30 MB/s on a recent low-end desktop from Dell (not that
-old, maybe 6-12 months) that I own with DMA enabled; the other
-machines are because people I know are using older PCs and can't
-afford to upgrade them at the moment.  (Ironically, sometimes, those
-PCs /feel/ faster, for some reason...)  Of course, a 7200rpm ATA/SATA
-drive would be the best; but I just try and make do, as do people I
-know.  But that's life; there will always be those on the bottom of
-the heap. :)
+I believe there used to be an implementation, although right now a lot
+of things have sort of dissapeared and been put on hold for Kernel
+Merge. [In any case, the repacker has been gone for a while - there
+was mention of it on the Reiser4 Wikipedia page for a while but that
+was severely outdated, apparently.]
+
+Hans has it on the top of his list; I believe they're just trying to
+get priorities straight (kernel acceptance first).
+
+> It's not too difficult for us to implement de-fragmentation
+> mechanisms on the application level, but if the file
+> system can do it - even better...
+
+Definately.
+
+[...]
+
+> PS: I'm still glad we sponsored the 64bit-port years
+>      ago, as we're still using reiser3 on a lot of
+>      systems that can really use it - and of course
+>      newly bought systems are 64bit architectures... :-)
+
+I feel sorry for all the unaware consumers being suckered out there
+into buying two-year-old 32-bit machines.  I guess they do have to
+sell them to somebody, though.
 
 --
 ~Mike
