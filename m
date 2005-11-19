@@ -1,60 +1,70 @@
-From: "Alexander G. M. Smith" <agmsmith@rogers.com>
-Subject: Re: File as a directory - file-as-dir vs. link-dirs (again) - 3/3
-Date: Sat, 19 Nov 2005 14:58:56 -0500 EST
-Message-ID: <11589152124-BeMail@AlexDualP3>
+From: John Gilmore <jgilmore@glycou.com>
+Subject: / is no longer Reiser4 :(
+Date: Sat, 19 Nov 2005 15:15:48 +0000
+Message-ID: <200511191515.48570.jgilmore@glycou.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27028-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27029-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Leo Comerford <lrc1@st-andrews.ac.uk>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Leo Comerford wrote on Fri, 18 Nov 2005 03:42:50 +0000:
-> [^.*$]
+Following Han's comment about the deliterious effects of 6% fragmentation, I 
+attempted a manual defrag of my hard disk.
 
-Just a few points I thought of while reading through your text:
+While restoring the .tar file, I had nothing better to do than watch it. And a 
+good thing too! It got a recurring oops. about every other minute or so, it 
+would stop with a long kernel message than mostly scrolled off of the 
+screen... I thought those where supposed to show up in a log files somewhere 
+if possible, but I can't find it. And it should have been possible, as the 
+computer continued to run just fine.
 
-Genealogy is an extremely structured arrangement of data, most people won't be
-doing something that complex - think of photo filing instead.  Also cycles
-exist everywhere, even in genealogy.  So cycles should be supported by default.
+These oopses caused some sort of data corruption - root wouldn't boot properly 
+afterwards. So I reformated as ext3 and untarred my root again. That worked 
+fine, so I know it wasn't corruption of the tar file.
 
-You had a separate directory storing relationship links.  How about making that
-a subdirectory of the person?  If I wanted to do genealogy-as-a-file-system, I'd
-have a "children" subdirectory under the person; it would contain hard links to
-all the person's children.  If you want to find a person's mother or father,
-examine the list of their parent directories (a cyclic file system has more
-parents than just "..") to find the ones called "children".  The person's
-parents are the holders of those "children" directories.
+I took a photograph, and I'll try to type in some of it. Just looking at the 
+names of the procudures, it looks like memory pressure made reiser4 flush, 
+and then some of the lower level functions tried to allocate memory and 
+failed. But since I don't have the top of the oops message, I can't tell.
 
-I wouldn't worry about naming conflicts (such as "children" being a magic name)
-since most people only define a few dozen relationships, at least in BeOS.  E-mail
-was the most complex, followed by MP3 audio and photo tagging and not too much
-else.  So just stick a prefix on the Children directory to mark it as special,
-or mark it with a special file type (a subclass of directory in Apple's new
-typing scheme).  BeOS used a short prefix, like "MAIL:" so you'd have
-"MAIL:subject" and "MAIL:from" as e-mail attribute names (though that's actually
-bad, since news articles have subjects too).
+Wait - I could've stopped the scrolling with ^S, scrolled back with ^pageup, 
+and photoed the whole thing! Aaaargghh....
 
-Admittedly one difficulty is in representing tuples.  And double ended links.
-Like the Friendship relation.  BeOS handled that by tagging things with group
-names, and then indexing the tags.  So e-mail contacts all had a "META:group"
-attribute containing a comma separated list of group names.  The BeOS indexed
-attribute query engine could then quickly turn up all contacts belonging to a
-particular group.  Though finding a list of all groups wasn't as elegant.
-Which reminds me that attribute-like things should include arrays, with global
-indexing support to find things inside an array (also useful for arrays of
-keywords in word processing documents).
+Well, I'm not redoing it right now, I need to be getting to bed.
 
-So to sum up, it seems that you're way more power hungry than I.  I just want
-something to make finding photos easier, not a whole database equivalent system
-(I'd use a database for that).  Early versions of BeOS did use a database as
-the file system, which turned out to be more trouble than it was worth.  A file
-system can and perhaps should be something lighter.  But not as lightweight as
-plain Unix file systems - I want better searching and linking.
+I may try it again later - but then maybe I'll update to 2.6.14-mm2 with patch 
+from namesys first...
 
-- Alex
+Here's the (tail end of the) oops message, sans addresses and offsets because 
+I'm feeling lazy and I'm in a hurry:
+
+mempool_alloc+0x3a/0xe0
+__split_bio+0x128/0x190
+in_drive_list
+dm_request
+generic_make_request
+submit_bio
+do_IRQ
+reiser4_clear_page_dirty
+write_jnodes_to_disk_extent
+write_jnode_list
+write_fq
+flush_current_atom
+flush_some_atom
+writeout
+reiser4_sync_inodes
+writeback_inodes
+background_writeout
+pdflush
+__pdflush
+pdflush
+background_writeout
+kthread
+kthread
+kernel_thread_helper
