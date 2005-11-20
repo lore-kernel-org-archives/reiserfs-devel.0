@@ -1,56 +1,49 @@
-From: Leo Comerford <lrc1@st-andrews.ac.uk>
-Subject: Re: File as a directory - file-as-dir vs. link-dirs (again) - 3/3
-Date: Sun, 20 Nov 2005 07:03:03 +0000
-Message-ID: <ff8010840511192303o7c581368o119b68d78b2fe722@mail.gmail.com>
-References: <ff8010840511171942x2ae2ebd0m954209103da18740@mail.gmail.com>
-	 <878xvlqqhv.fsf@evinrude.uhoreg.ca>
+From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe@gramoulle.com>
+Subject: Re: need opinions from sysadmins on where reiser4progs should
+ install
+Date: Sun, 20 Nov 2005 12:55:29 +0100
+Message-ID: <20051120115529.633B1177A@philou.gramoulle.local>
+References: <20051120040723.GA1392@148.Red-217-126-33.pooles.rima-tde.net.>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-27031-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27034-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Sender: leocomerford@gmail.com
-In-Reply-To: <878xvlqqhv.fsf@evinrude.uhoreg.ca>
-Content-Disposition: inline
+In-Reply-To: <20051120040723.GA1392@148.Red-217-126-33.pooles.rima-tde.net.>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: reiserfs-list@namesys.com
-
-On 11/19/05, Hubert Chan <hubert@uhoreg.ca> wrote:
-> P.S. your relational model can easily be expressed using file-as-dir
-> (well, actually, just standard directories):
->
-> /(something)/father-son/aardvark/father is a symlink to
->   '/(whatever)/portrait/Mike')
-> /(something)/father-son/aardvark/son is a symlink to
->   '/(whatever)/portrait/Bob')
->
-
-Yes absolutely. Yes, my relational model *does* uses standard
-directories, with three differences.
-
-1) foofs's internal implementation of link-directories and "other"
-directories might be different. Or it might not. Entirely unimportant
-at this level.
-
-2) gc might treat some link-directories differently to
-predicate-directories. (If Bob and Mike have been deleted, I don't
-want /(something)/father-son/aardvark/ lying around.)
-
-3)
-
-> --
-> Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-> PGP/GnuPG key: 1024D/124B61FA
-> Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-> Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
->
->
+To: reiserfs-list@namesys.com
 
 
---
-Leo Richard Comerford - http://www.st-and.ac.uk/~lrc1 - accept no namesakes=
- :)
+Hello,
+
+On Sun, 20 Nov 2005 05:07:23 +0100
+rvalles <rvalles@es.gnu.org> wrote:
+
+  | When I run make install on something and haven't specified a prefix on
+  | configure, I expect /usr/local to be used. If I wanted /, I'd have
+  | specified that on configure time. If it installed in / by default, it
+  | would, often, hit the "sacred package-system managed area" of the VFS
+  | tree annoying people like me to a very great extend, so please don't.
+
+While i totally agree with you for standard packages, well i based my choice
+on actual experience of the last past six years of use with reiserfs V3.
+
+I can't remember how many times i heard Namesys team say " Install the latest
+& greatest reiserfsck", how many times distro thought they knew reiserfsprogs
+internals better than Namesys and customized it to the point where it would
+eventually break.
+
+Of course, i can live with a manual install of reiser(fs|4)progs, so i don't
+really mind, but talking of support, it can make quite a difference to Namesys
+in terms of support, and annoyance with bug reports that could have been easily
+avoided.
+
+Final decision will still be Namesys call, but hopefully this whole thread gave
+them some valuable input to make the best decision.
+
+Thanks,
+
+Philippe
