@@ -1,70 +1,53 @@
-From: John Gilmore <jgilmore@glycou.com>
-Subject: / is no longer Reiser4 :(
-Date: Sat, 19 Nov 2005 15:15:48 +0000
-Message-ID: <200511191515.48570.jgilmore@glycou.com>
+From: rvalles <rvalles@es.gnu.org>
+Subject: Re: need opinions from sysadmins on where reiser4progs should install
+Date: Sun, 20 Nov 2005 05:07:23 +0100
+Message-ID: <18027.1762343638$1132459729@news.gmane.org>
+References: <4376E891.6070506@namesys.com> <20051117160643.75B2412D0@philou.gramoulle.local>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27029-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
+Return-path: <reiserfs-list-return-27030-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
+In-Reply-To: <20051117160643.75B2412D0@philou.gramoulle.local>
+Sender: <tux@148.Red-217-126-33.pooles.rima-tde.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Following Han's comment about the deliterious effects of 6% fragmentation, I 
-attempted a manual defrag of my hard disk.
+--Q68bSM7Ycu6FN28Q
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-While restoring the .tar file, I had nothing better to do than watch it. And a 
-good thing too! It got a recurring oops. about every other minute or so, it 
-would stop with a long kernel message than mostly scrolled off of the 
-screen... I thought those where supposed to show up in a log files somewhere 
-if possible, but I can't find it. And it should have been possible, as the 
-computer continued to run just fine.
+On Thu, Nov 17, 2005 at 05:06:43PM +0100, Philippe Gramoull=C3=A9 wrote:
+> So should a crash occur and /usr becomes corrupted, well, at least / is m=
+ounted and i could
+> reiserfsck partitions right away, handy when the server is several thousa=
+nd kilometers away :)
+>=20
+> I expect to do the same for reiser4progs, so i wish that reiser4progs uti=
+lities would install
+> in /, and as such /sbin seems the best choice _to me_
 
-These oopses caused some sort of data corruption - root wouldn't boot properly 
-afterwards. So I reformated as ext3 and untarred my root again. That worked 
-fine, so I know it wasn't corruption of the tar file.
+When I run make install on something and haven't specified a prefix on
+configure, I expect /usr/local to be used. If I wanted /, I'd have
+specified that on configure time. If it installed in / by default, it
+would, often, hit the "sacred package-system managed area" of the VFS
+tree annoying people like me to a very great extend, so please don't.
 
-I took a photograph, and I'll try to type in some of it. Just looking at the 
-names of the procudures, it looks like memory pressure made reiser4 flush, 
-and then some of the lower level functions tried to allocate memory and 
-failed. But since I don't have the top of the oops message, I can't tell.
+--Q68bSM7Ycu6FN28Q
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
-Wait - I could've stopped the scrolling with ^S, scrolled back with ^pageup, 
-and photoed the whole thing! Aaaargghh....
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
 
-Well, I'm not redoing it right now, I need to be getting to bed.
+iD8DBQFDf/Z6rD81VR3MDtoRAv8rAJ9CJOBp9Xj0U2yQkDPfCsVSJkPTMgCdFHeG
+hGyFp4dkNIwPZz8Y9pDlVxU=
+=ySD3
+-----END PGP SIGNATURE-----
 
-I may try it again later - but then maybe I'll update to 2.6.14-mm2 with patch 
-from namesys first...
-
-Here's the (tail end of the) oops message, sans addresses and offsets because 
-I'm feeling lazy and I'm in a hurry:
-
-mempool_alloc+0x3a/0xe0
-__split_bio+0x128/0x190
-in_drive_list
-dm_request
-generic_make_request
-submit_bio
-do_IRQ
-reiser4_clear_page_dirty
-write_jnodes_to_disk_extent
-write_jnode_list
-write_fq
-flush_current_atom
-flush_some_atom
-writeout
-reiser4_sync_inodes
-writeback_inodes
-background_writeout
-pdflush
-__pdflush
-pdflush
-background_writeout
-kthread
-kthread
-kernel_thread_helper
+--Q68bSM7Ycu6FN28Q--
