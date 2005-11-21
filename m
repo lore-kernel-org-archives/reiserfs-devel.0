@@ -1,120 +1,99 @@
-From: Alexander Zarochentsev <zam@namesys.com>
-Subject: Re: / is no longer Reiser4 :(
-Date: Mon, 21 Nov 2005 22:56:36 +0300
-Message-ID: <200511212256.36359.zam@namesys.com>
-References: <200511191515.48570.jgilmore@glycou.com> <200511212215.47467.zam@namesys.com> <1132601006.16002.9.camel@gentoo>
+From: "Hesse, Christian" <mail@earthworm.de>
+Subject: Re: More Slowdown or reiser4 update for 2.6.14-mm2
+Date: Mon, 21 Nov 2005 21:50:39 +0100
+Message-ID: <200511212150.46418.mail@earthworm.de>
+References: <200511171447.41362.mail@earthworm.de> <43820CAD.3090605@namesys.com> <200511211944.17942.mail@earthworm.de>
 Mime-Version: 1.0
+Content-Type: multipart/signed;
+  boundary="nextPart2662372.dTYFvWdidJ";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27055-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27056-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1132601006.16002.9.camel@gentoo>
-Content-Disposition: inline
+In-Reply-To: <200511211944.17942.mail@earthworm.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jake Maciejewski <maciejej@msoe.edu>
-Cc: Hans Reiser <reiser@namesys.com>, John Gilmore <jgilmore@glycou.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: "E.Gryaznova" <grev@namesys.com>, "Vladimir V. Saveliev" <vs@namesys.com>
 
-On Monday 21 November 2005 22:23, Jake Maciejewski wrote:
-> On Mon, 2005-11-21 at 22:15 +0300, Alexander Zarochentsev wrote:
-> > Hi
-> >
-> > On Monday 21 November 2005 20:57, Hans Reiser wrote:
-> > > zam, please look into this.
-> > >
-> > >
-> > > Hans
-> > >
-> > > John Gilmore wrote:
-> > > >Following Han's comment about the deliterious effects of 6%
-> > > > fragmentation, I attempted a manual defrag of my hard disk.
-> > > >
-> > > >While restoring the .tar file, I had nothing better to do than watch
-> > > > it. And a good thing too! It got a recurring oops. about every other
-> > > > minute or so, it would stop with a long kernel message than mostly
-> > > > scrolled off of the screen... I thought those where supposed to show
-> > > > up in a log files somewhere if possible, but I can't find it. And it
-> > > > should have been possible, as the computer continued to run just
-> > > > fine.
-> > > >
-> > > >These oopses caused some sort of data corruption - root wouldn't boot
-> >
-> > one bug responsible for fs corruption was fixed recently.
-> > the fix is in 2.6.14-mm2 already.
+--nextPart2662372.dTYFvWdidJ
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+On Monday 21 November 2005 19:44, Hesse, Christian wrote:
+> On Monday 21 November 2005 19:06, E.Gryaznova wrote:
+> > Unfortunately we are not able to reproduce this slowdown. Would you
+> > please provide more info?:
+> > Is this 2.6.14-mm2 bad sync/fsync performance reproducible on fresh
+> > created reiser4 too?
 >
-> Can we get a fix for vanilla? I haven't had problems yet, but I don't
-> want to run mm unless absolutely necessary, and lately I've lost
-> confidence in the "apply mm patches to vanilla and hope it works"
-> approach.
-
-reiser4-for-2.6.14-1.patch.gz contains the fix as well,
-
-the initial fix was:
-
---- a/as_ops.c
-+++ b/as_ops.c
-@@ -229,7 +229,7 @@ int reiser4_invalidatepage(struct page *
-        node = jprivate(page);
-        spin_lock_jnode(node);
-        if (!JF_ISSET(node, JNODE_DIRTY) && !JF_ISSET(node, 
-JNODE_FLUSH_QUEUED) &&
--           !JF_ISSET(node, JNODE_WRITEBACK)) {
-+           !JF_ISSET(node, JNODE_WRITEBACK) && !JF_ISSET(node, JNODE_OVRWR)) 
-{
-                /* there is not need to capture */
-                jref(node);
-                JF_SET(node, JNODE_HEARD_BANSHEE);
-
-our git repo shows that the bug was added at 16 of August.
-
+> Yes, it is. However, I created the fs with reiser4progs v1.0.4, does that
+> matter in any way? fsck.reiser4 v1.0.5 reports the fs to be consistent.
 >
-> > > > properly afterwards. So I reformated as ext3 and untarred my root
-> > > > again. That worked fine, so I know it wasn't corruption of the tar
-> > > > file.
-> > > >
-> > > >I took a photograph, and I'll try to type in some of it. Just looking
-> > > > at the names of the procudures, it looks like memory pressure made
-> > > > reiser4 flush, and then some of the lower level functions tried to
-> > > > allocate memory and failed. But since I don't have the top of the
-> > > > oops message, I can't tell.
-> > > >
-> > > >Wait - I could've stopped the scrolling with ^S, scrolled back with
-> > > > ^pageup, and photoed the whole thing! Aaaargghh....
-> > > >
-> > > >Well, I'm not redoing it right now, I need to be getting to bed.
-> > > >
-> > > >I may try it again later - but then maybe I'll update to 2.6.14-mm2
-> > > > with patch from namesys first...
-> > > >
-> > > >Here's the (tail end of the) oops message, sans addresses and offsets
-> > > > because I'm feeling lazy and I'm in a hurry:
-> > > >
-> > > >mempool_alloc+0x3a/0xe0
-> > > >__split_bio+0x128/0x190
-> > > >in_drive_list
-> > > >dm_request
-> > > >generic_make_request
-> > > >submit_bio
-> > > >do_IRQ
-> > > >reiser4_clear_page_dirty
-> > > >write_jnodes_to_disk_extent
-> > > >write_jnode_list
-> > > >write_fq
-> > > >flush_current_atom
-> > > >flush_some_atom
-> > > >writeout
-> > > >reiser4_sync_inodes
-> > > >writeback_inodes
-> > > >background_writeout
-> > > >pdflush
-> > > >__pdflush
-> > > >pdflush
-> > > >background_writeout
-> > > >kthread
-> > > >kthread
-> > > >kernel_thread_helper
+> > Are these values stable reproducible? If you run this test several time
+> > -- do you have the same results?
+>
+> Yes, it's reproducible. I think the values have a tolerance of maybe 10%,
+> but not more. I've never ever seen a sync that used less than 1.5 seconds
+> on my running system with 2.6.14.
+>
+> > Would you please send df -T output and 2.6.14-mm2 config file?
+>
+> Attached.
+>
+> > Did you try this test on ext2? If no -- would you please try it on ext2
+> > for the same kernels and send us the results?
+>
+> Will do.
 
--- 
-Alex.
+$ for I in `seq 1 5`; do strace -T -e sync,fsync /tmp/reiser4fsync; sleep 1=
+;=20
+done
+sync()                                  =3D 0 <0.960870>
+fsync(3)                                =3D 0 <0.165802>
+sync()                                  =3D 0 <0.387177>
+fsync(3)                                =3D 0 <0.143638>
+sync()                                  =3D 0 <0.412164>
+fsync(3)                                =3D 0 <0.154767>
+sync()                                  =3D 0 <0.395851>
+fsync(3)                                =3D 0 <0.176921>
+sync()                                  =3D 0 <0.392347>
+fsync(3)                                =3D 0 <0.143705>
+$ cd /boot # boot is my only non-reiser4-partition
+$for I in `seq 1 5`; do strace -T -e sync,fsync /tmp/reiser4fsync; sleep 1;=
+=20
+done
+sync()                                  =3D 0 <0.400663>
+fsync(3)                                =3D 0 <0.000288>
+sync()                                  =3D 0 <0.306554>
+fsync(3)                                =3D 0 <0.000303>
+sync()                                  =3D 0 <0.428365>
+fsync(3)                                =3D 0 <0.000298>
+sync()                                  =3D 0 <0.386107>
+fsync(3)                                =3D 0 <0.000304>
+sync()                                  =3D 0 <0.405386>
+fsync(3)                                =3D 0 <0.000303>
+
+Time for sync() is still the same (as there are mounted reiser4 partitions)=
+,=20
+fsync() on /boot/ (my only ext2 partition) is as expected.
+=2D-=20
+Christian
+
+--nextPart2662372.dTYFvWdidJ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.9.19 (GNU/Linux)
+
+iD8DBQBDgjMmlZfG2c8gdSURAiBIAKCLdAWN2eZvjGhCaBGgXXFlgOmybgCgr6Hp
+S9ZlwqpGznYixhLWYmtXOUE=
+=RJQt
+-----END PGP SIGNATURE-----
+
+--nextPart2662372.dTYFvWdidJ--
