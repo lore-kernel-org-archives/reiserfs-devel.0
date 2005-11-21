@@ -1,91 +1,91 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: need opinions from sysadmins on where reiser4progs should install
-Date: Mon, 21 Nov 2005 16:32:17 +0300
-Message-ID: <200511211632.17965.vitaly@namesys.com>
-References: <20051120040723.GA1392@148.Red-217-126-33.pooles.rima-tde.net.> <20051120115529.633B1177A@philou.gramoulle.local> <4381728D.7030300@namesys.com>
+From: "E.Gryaznova" <grev@namesys.com>
+Subject: Re: More Slowdown or reiser4 update for 2.6.14-mm2
+Date: Mon, 21 Nov 2005 21:06:37 +0300
+Message-ID: <43820CAD.3090605@namesys.com>
+References: <200511171447.41362.mail@earthworm.de> <437CBC63.3050202@namesys.com> <200511172040.39955.mail@earthworm.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-27046-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27047-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4381728D.7030300@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <200511172040.39955.mail@earthworm.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Philippe =?iso-8859-1?q?Gramoull=E9?= <philippe@gramoulle.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Hesse, Christian" <mail@earthworm.de>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
 
-On Monday 21 November 2005 10:09, Hans Reiser wrote:
-> Philippe Gramoull=E9 wrote:
->=20
-> >Hello,
-> >
-> >On Sun, 20 Nov 2005 05:07:23 +0100
-> >rvalles <rvalles@es.gnu.org> wrote:
-> >
-> >  | When I run make install on something and haven't specified a prefix =
-on
-> >  | configure, I expect /usr/local to be used. If I wanted /, I'd have
-> >  | specified that on configure time. If it installed in / by default, it
-> >  | would, often, hit the "sacred package-system managed area" of the VFS
-> >  | tree annoying people like me to a very great extend, so please don't.
-> >
-> >While i totally agree with you for standard packages, well i based my ch=
-oice
-> >on actual experience of the last past six years of use with reiserfs V3.
-> >
-> >I can't remember how many times i heard Namesys team say " Install the l=
-atest
-> >& greatest reiserfsck", how many times distro thought they knew reiserfs=
-progs
-> >internals better than Namesys and customized it to the point where it wo=
-uld
-> >eventually break.
-> >
-> >Of course, i can live with a manual install of reiser(fs|4)progs, so i d=
-on't
-> >really mind, but talking of support, it can make quite a difference to N=
-amesys
-> >in terms of support, and annoyance with bug reports that could have been=
- easily
-> >avoided.
-> > =20
-> >
-> Ok, I propose the following: search the standard locations for where it
-> is currently, tell the user, ask the user if they want to rename those
+Hello.
 
-the proper service is already done in package managers. if one needs it,=20
-he can use one of them.=20
+Hesse, Christian wrote:
 
-> versions to *.old if the install of the new one succeeds, and then
-
-this breaks the installed software consistency and may screw the package=20
-manager up...
-
-> prompt for the install location with /sbin as the suggested default.  I
-> think that unlike other user installed programs, fsck does not belong in
-> /usr/local.  I think Philippe's point that old versions are dangerous is
-> quite valid.
-
-install to the system default through a system package manager;
-
-install to the local default from source to not break the system installed
-software consistency;
-
-provide a way to install where a user wants if he knows what he does and=20
-if he remembers what and how has been installed on a particular system;
-
-> >Final decision will still be Namesys call, but hopefully this whole thre=
-ad gave
-> >them some valuable input to make the best decision.
-> >
-> >Thanks,
-> >
-> >Philippe
-> >
+>On Thursday 17 November 2005 18:22, Vladimir V. Saveliev wrote:
+>  
 >
+>>Hello
+>>
+>>Hesse, Christian wrote:
+>>    
+>>
+>>>Vladimir V. Saveliev wrote:
+>>>      
+>>>
+>>>>Please try whether the attached patch improves anything. It simplifies
+>>>>fsync by avoid commiting of transactions which do not modify file being
+>>>>fsync-ed.
+>>>>
+>>>>The patch applied to 2.6.14-mm2 with warnings, but that can be ignored.
+>>>>        
+>>>>
+>>>Hi everybody,
+>>>
+>>>I'm suffering the same problem, sync and fsync are horribly slow. I've
+>>>written a small test program:
+>>>
+>>>http://www.earthworm.de/tmp/reiser4-fsync.c
+>>>
+>>>with 2.6.13:
+>>>sync()                                  = 0 <0.000198>
+>>>fsync(3)                                = 0 <0.003353>
+>>>
+>>>with 2.6.14 (with and without patch):
+>>>sync()                                  = 0 <2.092873>
+>>>fsync(3)                                = 0 <0.132579>
+>>>      
+>>>
+>>I tried your test on a box with reiser4 root fs:
+>>2.6.13:
+>>strace -T -e sync,fsync ./eworm xx
+>>fsync(3)                                = 0 <0.158808>
+>>
+>>2.6.14-mm2 +
+>>ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.14-mm2/reiser4-for-2.6.14-mm2
+>>-1.patch.gz
+>>
+>>strace -T -e sync,fsync ./eworm xx
+>>fsync(3)                                = 0 <0.005373>
+>>
+>>Would you please try whether 2.6.14-mm2 with fresh reiser4 update fsyncs
+>>better?
+>>    
+>>
+>
+>No change, still bad performance: up to 2 seconds in sync(), up to 0.2 seconds 
+>in fsync().
+>  
+>
+Unfortunately we are not able to reproduce this slowdown. Would you 
+please provide more info?:
+Is this 2.6.14-mm2 bad sync/fsync performance reproducible on fresh 
+created reiser4 too?
+Are these values stable reproducible? If you run this test several time 
+-- do you have the same results?
+Would you please send df -T output and 2.6.14-mm2 config file?
+Did you try this test on ext2? If no -- would you please try it on ext2 
+for the same kernels and send us the results?
 
---=20
-Vitaly
+Thanks,
+Lena
+ 
+
