@@ -1,97 +1,42 @@
-From: Jake Maciejewski <maciejej@msoe.edu>
-Subject: Re: / is no longer Reiser4 :(
-Date: Mon, 21 Nov 2005 13:23:26 -0600
-Message-ID: <1132601006.16002.9.camel@gentoo>
-References: <200511191515.48570.jgilmore@glycou.com>
-	 <43820A99.2090704@namesys.com>  <200511212215.47467.zam@namesys.com>
+From: Avuton Olrich <avuton@gmail.com>
+Subject: Re: More Slowdown or reiser4 update for 2.6.14-mm2
+Date: Mon, 21 Nov 2005 11:41:59 -0800
+Message-ID: <3aa654a40511211141m2bbab1am5b9655136ae14c60@mail.gmail.com>
+References: <200511171447.41362.mail@earthworm.de>
+	 <437CBC63.3050202@namesys.com> <200511172040.39955.mail@earthworm.de>
+	 <43820CAD.3090605@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27052-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-27053-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200511212215.47467.zam@namesys.com>
+In-Reply-To: <43820CAD.3090605@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Alexander Zarochentsev <zam@namesys.com>
-Cc: Hans Reiser <reiser@namesys.com>, John Gilmore <jgilmore@glycou.com>, reiserfs-list@namesys.com
+To: "E.Gryaznova" <grev@namesys.com>
+Cc: "Hesse, Christian" <mail@earthworm.de>, "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
 
-On Mon, 2005-11-21 at 22:15 +0300, Alexander Zarochentsev wrote:
-> Hi
-> 
-> On Monday 21 November 2005 20:57, Hans Reiser wrote:
-> > zam, please look into this.
-> 
-> >
-> > Hans
-> >
-> > John Gilmore wrote:
-> > >Following Han's comment about the deliterious effects of 6% fragmentation,
-> > > I attempted a manual defrag of my hard disk.
-> > >
-> > >While restoring the .tar file, I had nothing better to do than watch it.
-> > > And a good thing too! It got a recurring oops. about every other minute
-> > > or so, it would stop with a long kernel message than mostly scrolled off
-> > > of the screen... I thought those where supposed to show up in a log files
-> > > somewhere if possible, but I can't find it. And it should have been
-> > > possible, as the computer continued to run just fine.
-> > >
-> > >These oopses caused some sort of data corruption - root wouldn't boot
-> 
-> one bug responsible for fs corruption was fixed recently.
-> the fix is in 2.6.14-mm2 already.
+On 11/21/05, E.Gryaznova <grev@namesys.com> wrote:
+> Unfortunately we are not able to reproduce this slowdown. Would you
+> please provide more info?:
+> Is this 2.6.14-mm2 bad sync/fsync performance reproducible on fresh
+> created reiser4 too?
+> Are these values stable reproducible? If you run this test several time
+> -- do you have the same results?
+> Would you please send df -T output and 2.6.14-mm2 config file?
+> Did you try this test on ext2? If no -- would you please try it on ext2
+> for the same kernels and send us the results?
 
-Can we get a fix for vanilla? I haven't had problems yet, but I don't
-want to run mm unless absolutely necessary, and lately I've lost
-confidence in the "apply mm patches to vanilla and hope it works"
-approach.
+Have you tried opening vim and typing a page long letter? You will
+notice how everything begins to stutter, and you may even hear the
+hard drive working. I know I'm not imagining things here because my
+wife has been mentioning it too me all the time now :).
 
-> > > properly afterwards. So I reformated as ext3 and untarred my root again.
-> > > That worked fine, so I know it wasn't corruption of the tar file.
-> > >
-> > >I took a photograph, and I'll try to type in some of it. Just looking at
-> > > the names of the procudures, it looks like memory pressure made reiser4
-> > > flush, and then some of the lower level functions tried to allocate
-> > > memory and failed. But since I don't have the top of the oops message, I
-> > > can't tell.
-> > >
-> > >Wait - I could've stopped the scrolling with ^S, scrolled back with
-> > > ^pageup, and photoed the whole thing! Aaaargghh....
-> > >
-> > >Well, I'm not redoing it right now, I need to be getting to bed.
-> > >
-> > >I may try it again later - but then maybe I'll update to 2.6.14-mm2 with
-> > > patch from namesys first...
-> > >
-> > >Here's the (tail end of the) oops message, sans addresses and offsets
-> > > because I'm feeling lazy and I'm in a hurry:
-> > >
-> > >mempool_alloc+0x3a/0xe0
-> > >__split_bio+0x128/0x190
-> > >in_drive_list
-> > >dm_request
-> > >generic_make_request
-> > >submit_bio
-> > >do_IRQ
-> > >reiser4_clear_page_dirty
-> > >write_jnodes_to_disk_extent
-> > >write_jnode_list
-> > >write_fq
-> > >flush_current_atom
-> > >flush_some_atom
-> > >writeout
-> > >reiser4_sync_inodes
-> > >writeback_inodes
-> > >background_writeout
-> > >pdflush
-> > >__pdflush
-> > >pdflush
-> > >background_writeout
-> > >kthread
-> > >kthread
-> > >kernel_thread_helper
-> 
--- 
-Jake Maciejewski <maciejej@msoe.edu>
+avuton
 
+
+--
+  Anyone who quotes me in their sig is an idiot. -- Rusty Russell.
