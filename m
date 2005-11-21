@@ -1,109 +1,71 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: File as a directory - file-as-dir vs. link-dirs (again) - 3/3
-Date: Mon, 21 Nov 2005 01:40:30 -0500
-Message-ID: <873blqtsf5.fsf@evinrude.uhoreg.ca>
-References: <ff8010840511171942x2ae2ebd0m954209103da18740@mail.gmail.com>
-	<878xvlqqhv.fsf@evinrude.uhoreg.ca>
-	<ff8010840511192303o7c581368o119b68d78b2fe722@mail.gmail.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: need opinions from sysadmins on where reiser4progs should install
+Date: Sun, 20 Nov 2005 23:09:01 -0800
+Message-ID: <4381728D.7030300@namesys.com>
+References: <20051120040723.GA1392@148.Red-217-126-33.pooles.rima-tde.net.> <20051120115529.633B1177A@philou.gramoulle.local>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-27042-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-27043-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <ff8010840511192303o7c581368o119b68d78b2fe722@mail.gmail.com>
-	(Leo Comerford's message of "Sun, 20 Nov 2005 07:03:03 +0000")
+In-Reply-To: <20051120115529.633B1177A@philou.gramoulle.local>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: =?ISO-8859-1?Q?Philippe_Gramoull=E9?= <philippe@gramoulle.com>
+Cc: reiserfs-list@namesys.com, vitaly@thebsh.namesys.com
 
-On Sun, 20 Nov 2005 07:03:03 +0000, Leo Comerford <lrc1@st-andrews.ac.uk> said:
+Philippe Gramoull=E9 wrote:
 
-> On 11/19/05, Hubert Chan <hubert@uhoreg.ca> wrote:
->> P.S. your relational model can easily be expressed using file-as-dir
->> (well, actually, just standard directories):
->> 
->> /(something)/father-son/aardvark/father is a symlink to
->> '/(whatever)/portrait/Mike')
->> /(something)/father-son/aardvark/son is a symlink to
->> '/(whatever)/portrait/Bob')
+>Hello,
+>
+>On Sun, 20 Nov 2005 05:07:23 +0100
+>rvalles <rvalles@es.gnu.org> wrote:
+>
+>  | When I run make install on something and haven't specified a prefix on
+>  | configure, I expect /usr/local to be used. If I wanted /, I'd have
+>  | specified that on configure time. If it installed in / by default, it
+>  | would, often, hit the "sacred package-system managed area" of the VFS
+>  | tree annoying people like me to a very great extend, so please don't.
+>
+>While i totally agree with you for standard packages, well i based my choi=
+ce
+>on actual experience of the last past six years of use with reiserfs V3.
+>
+>I can't remember how many times i heard Namesys team say " Install the lat=
+est
+>& greatest reiserfsck", how many times distro thought they knew reiserfspr=
+ogs
+>internals better than Namesys and customized it to the point where it would
+>eventually break.
+>
+>Of course, i can live with a manual install of reiser(fs|4)progs, so i don=
+'t
+>really mind, but talking of support, it can make quite a difference to Nam=
+esys
+>in terms of support, and annoyance with bug reports that could have been e=
+asily
+>avoided.
+> =20
+>
+Ok, I propose the following: search the standard locations for where it
+is currently, tell the user, ask the user if they want to rename those
+versions to *.old if the install of the new one succeeds, and then
+prompt for the install location with /sbin as the suggested default.  I
+think that unlike other user installed programs, fsck does not belong in
+/usr/local.  I think Philippe's point that old versions are dangerous is
+quite valid.
 
-> Yes absolutely. Yes, my relational model *does* uses standard
-> directories, with three differences.
-
-> 1) foofs's internal implementation of link-directories and "other"
-> directories might be different. Or it might not. Entirely unimportant
-> at this level.
-
-Yes.  I think that we should distinguish between how the data is stored,
-and how it is exported to the filesystem.  I think that anyone who tries
-to take a relational table, and try to translate it directly into a
-filesystem implementation is nuts.  They are very different data models,
-and should not be confused.  (Filesystem is probably more like an
-object-oriented database, or, if I remember correctly -- it's been a
-while since my database course, a network model database, and not like a
-relational model.)
-
-However, I think that it is perfectly reasonable (or at least not
-completely insane) to export a relational table through a filesystem
-interface, and have filesystem operations reflect on the underlying
-table.
-
-> 2) gc might treat some link-directories differently to
-> predicate-directories. (If Bob and Mike have been deleted, I don't
-> want /(something)/father-son/aardvark/ lying around.)
-
-Yes, I think that would require some entirely different magic.
-(e.g. your relational model to know about primary keys and such.)
-
-> 3) Say we just used standard directories to indicate relations. Then
-> if a user comes across these "names" ...
-
-[...]
-
-> But what if she comes across
-
-> /(something)/mumble
-> /(something)/mumble/thingy/alpha
-> /(something)/mumble/thingy/bravo
-
-> ? Is alpha a '/(something)/mumble/thingy', or is it in the 'alpha'
-> role of a '/(something)/mumble' relationship with another file? (Or it
-> could be in the 'thingy/alpha' role of a '/(something)' relationship.)
-
-A few points
-- things should not be named "mumble" or "thingy" -- things should be
-  named descriptively (obviously -- of course, people don't always
-  follow these obvious rules)
-- the user should be in charge of how he/she organizes the data, and so
-  he/she should pick the names that he/she wants to use.  It shouldn't
-  be mandated.  And anyone else who uses the data should have a
-  reasonable expectation to have any confusing things documented.  At
-  least database schemas are usually documented for those people who
-  need to use them.
-- you can still have some sort of marker to indicate what role each part
-  of the name takes (e.g. the "...." delimiter to indicate
-  pseudofiles).  Or you can use a special naming convention (e.g. tuples
-  have a special prefix).  But I think that trying to introduce a new
-  delimiter that does basically the same thing as '/' is going to cause
-  a lot of problems.  (See Rob Pike's paper, "The Hideous Name", if you
-  haven't read it already, for more on this.  It's cited in Hans'
-  "Future Vision" paper.)
-
-
-As a completely different side issue, I think that using random names
-such as "aardvark" or "zebra" to refer to tuples is a bad idea (and I
-know this isn't part of your proposal).  If you use things that are real
-words, people will get confused, since they will try to associate
-meaning to something that doesn't have meaning.  (e.g. "why is my
-relationship called "dodo", while Bob's is called "tiger"?)  I think
-that it's best to just assign random meaningless strings, so that people
-will know that they are meaningless.
-
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+>Final decision will still be Namesys call, but hopefully this whole thread=
+ gave
+>them some valuable input to make the best decision.
+>
+>Thanks,
+>
+>Philippe
+>
+>
+> =20
+>
 
