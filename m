@@ -1,55 +1,60 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: need opinions from sysadmins on where reiser4progs should install
-Date: Tue, 22 Nov 2005 15:14:45 -0500
-Message-ID: <873blov3re.fsf@evinrude.uhoreg.ca>
-References: <20051120040723.GA1392@148.Red-217-126-33.pooles.rima-tde.net.>
-	<20051120115529.633B1177A@philou.gramoulle.local>
-	<4381728D.7030300@namesys.com> <200511211632.17965.vitaly@namesys.com>
-	<43820CC4.2010205@namesys.com>
-	<b14e81f00511211604r60bfbfna3f04818430d8e05@mail.gmail.com>
-	<43837298.6050500@slaphack.com>
+From: Dewey Sasser <dewey@sasser.com>
+Subject: Re: Help tracking down files on a bad block:  understanding the output
+ of debugreiserfs
+Date: Tue, 22 Nov 2005 15:22:13 -0500
+Message-ID: <43837DF5.30407@sasser.com>
+References: <43835EFD.40906@sasser.com> <43836AE9.5020403@muenning.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-27085-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-27086-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43837298.6050500@slaphack.com> (David Masover's message of "Tue,
-	22 Nov 2005 13:33:44 -0600")
+In-Reply-To: <43836AE9.5020403@muenning.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?Konstantin_M=FCnning?= <konstantin@muenning.com>
+Cc: reiserfs-list@namesys.com
 
-On Tue, 22 Nov 2005 13:33:44 -0600, David Masover <ninja@slaphack.com> said:
+Konstantin M=FCnning wrote:
+> Hi!
+>
+> Unfortunately I can't help you with the debugreiserfs output but maybe
+> with another approach for finding the correct blocknum of the bad
+> sector(s). Why don't you try
+>
+> badblocks -b 4096 /dev/hda5
+>  =20
+Interesting.  When reading the badblocks man page I originally=20
+interpreted something it said to mean that it wouldn't run against a=20
+mounted partition.  I see now that that is not the case.  It will only=20
+refuse to run doing tests which write the partition, which is as it=20
+should be.
 
-> michael chang wrote:
+The partition affected is the root partition of a machine 700 miles from=20
+my chair and there is no one near the box that had any kind of Linux=20
+knowledge.  I am therefore trying to do this as much "on-line" as=20
+possible.  I will run "badblocks" at some point but I'll still need a=20
+way of mapping the bad block or sector to the affected files.  (Yes, I=20
+do have backups :)
+> dd of=3D/dev/null if=3D/dev/hda5 bs=3D4k count=3D1 skip=3Dxxx
+>
+> with xxx the block number(s) of your calculation or output from
+> badblocks. Just to check if the block you've found is really unreadable.
+>  =20
+That is indeed one of my additional questions -- does the fact that=20
+debugreiserfs prints data mean the block (sector, really) is readable? =20
+Or does it mean my math is incorrect.  "badblocks" should help me answer=20
+that question.
+> How to identify the inode number corresponding to that block I can't
+> tell but finding the file etc. to the inode may be done with
+>
+> find /mount-point-of-fs -inum xxx
+>  =20
+Yep.  That part I can handle.  It's that middle link I'm missing :)
 
->> or to actually put package building scripts for package-handling
->> distros in the source package (or use something like checkinstall,
->> provided it doesn't conflict too bad).  [You can also did what Debian
->> did with it's 'kernel-package' system; it provides a package
->> specially designed for converting a custom kernel into a package,
+Thanks for your response,
 
-> I think that's overkill, unless Debian really has no way to "provide"
-> or "inject" a particular package.
-
-Debian has a package called "equivs" that allows you to create dummy
-packages.
-
-But it is generally better to just include a debian/ directory in the
-sources, and let the Debian package management just handle everything
-for you (e.g. upgrading to a new version when Debian includes a newer
-version).
-
-Debian generally frowns upon including a debian/ directory in the
-upstream sources without any good reason.  But I think that in this
-case, there is a good reason.  Just make sure to work with the Debian
-maintainer of reiser4progs (Ed Boraas) if you want to do that.
-
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
+--
+Dewey
