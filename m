@@ -1,98 +1,183 @@
-From: michael chang <thenewme91@gmail.com>
-Subject: Re: need opinions from sysadmins on where reiser4progs should install
-Date: Mon, 21 Nov 2005 19:04:16 -0500
-Message-ID: <b14e81f00511211604r60bfbfna3f04818430d8e05@mail.gmail.com>
-References: <20051120040723.GA1392@148.Red-217-126-33.pooles.rima-tde.net.>
-	 <20051120115529.633B1177A@philou.gramoulle.local>
-	 <4381728D.7030300@namesys.com> <200511211632.17965.vitaly@namesys.com>
-	 <43820CC4.2010205@namesys.com>
+From: Ryan Nordman <spacerobots@gmail.com>
+Subject: Reiser4 Install Guide for Ubuntu 5.10
+Date: Mon, 21 Nov 2005 16:52:35 -0800
+Message-ID: <27c2ef000511211652o3421b4fct762dd9b12fabafd3@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-27061-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_14964_28926233.1132620755877"
+Return-path: <reiserfs-list-return-27062-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43820CC4.2010205@namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Vitaly Fertman <vitaly@namesys.com>, =?ISO-8859-1?Q?Philippe_Gramoull=E9?= <philippe@gramoulle.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: Peter van Hardenberg <pvh@pvh.ca>, Nathan Iverson <niverson@uvic.ca>, huaning <huaning@uvic.ca>, ycoady <ycoady@cs.uvic.ca>
 
-T24gMTEvMjEvMDUsIEhhbnMgUmVpc2VyIDxyZWlzZXJAbmFtZXN5cy5jb20+IHdyb3RlOgo+IFZp
-dGFseSBGZXJ0bWFuIHdyb3RlOgo+Cj4gPk9uIE1vbmRheSAyMSBOb3ZlbWJlciAyMDA1IDEwOjA5
-LCBIYW5zIFJlaXNlciB3cm90ZToKPiA+Cj4gPgo+ID4+UGhpbGlwcGUgR3JhbW91bGzpIHdyb3Rl
-Ogo+ID4+Cj4gPj4KPiA+Pgo+ID4+PkhlbGxvLAo+ID4+Pgo+ID4+Pk9uIFN1biwgMjAgTm92IDIw
-MDUgMDU6MDc6MjMgKzAxMDAKPiA+Pj5ydmFsbGVzIDxydmFsbGVzQGVzLmdudS5vcmc+IHdyb3Rl
-Ogo+ID4+Pgo+ID4+PiB8IFdoZW4gSSBydW4gbWFrZSBpbnN0YWxsIG9uIHNvbWV0aGluZyBhbmQg
-aGF2ZW4ndCBzcGVjaWZpZWQgYSBwcmVmaXggb24KPiA+Pj4gfCBjb25maWd1cmUsIEkgZXhwZWN0
-IC91c3IvbG9jYWwgdG8gYmUgdXNlZC4gSWYgSSB3YW50ZWQgLywgSSdkIGhhdmUKPiA+Pj4gfCBz
-cGVjaWZpZWQgdGhhdCBvbiBjb25maWd1cmUgdGltZS4gSWYgaXQgaW5zdGFsbGVkIGluIC8gYnkg
-ZGVmYXVsdCwgaXQKPiA+Pj4gfCB3b3VsZCwgb2Z0ZW4sIGhpdCB0aGUgInNhY3JlZCBwYWNrYWdl
-LXN5c3RlbSBtYW5hZ2VkIGFyZWEiIG9mIHRoZSBWRlMKPiA+Pj4gfCB0cmVlIGFubm95aW5nIHBl
-b3BsZSBsaWtlIG1lIHRvIGEgdmVyeSBncmVhdCBleHRlbmQsIHNvIHBsZWFzZSBkb24ndC4KPiA+
-Pj4KPiA+Pj5XaGlsZSBpIHRvdGFsbHkgYWdyZWUgd2l0aCB5b3UgZm9yIHN0YW5kYXJkIHBhY2th
-Z2VzLCB3ZWxsIGkgYmFzZWQgbXkgY2hvaWNlCj4gPj4+b24gYWN0dWFsIGV4cGVyaWVuY2Ugb2Yg
-dGhlIGxhc3QgcGFzdCBzaXggeWVhcnMgb2YgdXNlIHdpdGggcmVpc2VyZnMgVjMuCj4gPj4+Cj4g
-Pj4+SSBjYW4ndCByZW1lbWJlciBob3cgbWFueSB0aW1lcyBpIGhlYXJkIE5hbWVzeXMgdGVhbSBz
-YXkgIiBJbnN0YWxsIHRoZSBsYXRlc3QKPiA+Pj4mIGdyZWF0ZXN0IHJlaXNlcmZzY2siLCBob3cg
-bWFueSB0aW1lcyBkaXN0cm8gdGhvdWdodCB0aGV5IGtuZXcgcmVpc2VyZnNwcm9ncwo+ID4+Pmlu
-dGVybmFscyBiZXR0ZXIgdGhhbiBOYW1lc3lzIGFuZCBjdXN0b21pemVkIGl0IHRvIHRoZSBwb2lu
-dCB3aGVyZSBpdCB3b3VsZAo+ID4+PmV2ZW50dWFsbHkgYnJlYWsuCj4gPj4+Cj4gPj4+T2YgY291
-cnNlLCBpIGNhbiBsaXZlIHdpdGggYSBtYW51YWwgaW5zdGFsbCBvZiByZWlzZXIoZnN8NClwcm9n
-cywgc28gaSBkb24ndAo+ID4+PnJlYWxseSBtaW5kLCBidXQgdGFsa2luZyBvZiBzdXBwb3J0LCBp
-dCBjYW4gbWFrZSBxdWl0ZSBhIGRpZmZlcmVuY2UgdG8gTmFtZXN5cwo+ID4+PmluIHRlcm1zIG9m
-IHN1cHBvcnQsIGFuZCBhbm5veWFuY2Ugd2l0aCBidWcgcmVwb3J0cyB0aGF0IGNvdWxkIGhhdmUg
-YmVlbiBlYXNpbHkKPiA+Pj5hdm9pZGVkLgo+ID4+Pgo+ID4+Pgo+ID4+Pgo+ID4+Pgo+ID4+T2ss
-IEkgcHJvcG9zZSB0aGUgZm9sbG93aW5nOiBzZWFyY2ggdGhlIHN0YW5kYXJkIGxvY2F0aW9ucyBm
-b3Igd2hlcmUgaXQKPiA+PmlzIGN1cnJlbnRseSwgdGVsbCB0aGUgdXNlciwgYXNrIHRoZSB1c2Vy
-IGlmIHRoZXkgd2FudCB0byByZW5hbWUgdGhvc2UKPiA+Pgo+ID4+Cj4gPgo+ID50aGUgcHJvcGVy
-IHNlcnZpY2UgaXMgYWxyZWFkeSBkb25lIGluIHBhY2thZ2UgbWFuYWdlcnMuIGlmIG9uZSBuZWVk
-cyBpdCwKPiA+aGUgY2FuIHVzZSBvbmUgb2YgdGhlbS4KPiA+Cj4gPgo+ID4KPiA+PnZlcnNpb25z
-IHRvICoub2xkIGlmIHRoZSBpbnN0YWxsIG9mIHRoZSBuZXcgb25lIHN1Y2NlZWRzLCBhbmQgdGhl
-bgo+ID4+Cj4gPj4KPiA+Cj4gPnRoaXMgYnJlYWtzIHRoZSBpbnN0YWxsZWQgc29mdHdhcmUgY29u
-c2lzdGVuY3kgYW5kIG1heSBzY3JldyB0aGUgcGFja2FnZQo+ID5tYW5hZ2VyIHVwLi4uCj4gPgo+
-ID4KPiBTaWdoLCBnb29kIHBvaW50LCBvaywgd2VsbCB0aGVuIGF0IGxlYXN0IHdhcm4gdGhlIHVz
-ZXIgYWJvdXQgdGhlbS4KPgo+ID4KPiA+Cj4gPj5wcm9tcHQgZm9yIHRoZSBpbnN0YWxsIGxvY2F0
-aW9uIHdpdGggL3NiaW4gYXMgdGhlIHN1Z2dlc3RlZCBkZWZhdWx0LiAgSQo+ID4+dGhpbmsgdGhh
-dCB1bmxpa2Ugb3RoZXIgdXNlciBpbnN0YWxsZWQgcHJvZ3JhbXMsIGZzY2sgZG9lcyBub3QgYmVs
-b25nIGluCj4gPj4vdXNyL2xvY2FsLiAgSSB0aGluayBQaGlsaXBwZSdzIHBvaW50IHRoYXQgb2xk
-IHZlcnNpb25zIGFyZSBkYW5nZXJvdXMgaXMKPiA+PnF1aXRlIHZhbGlkLgo+ID4+Cj4gPj4KPiA+
-Cj4gPmluc3RhbGwgdG8gdGhlIHN5c3RlbSBkZWZhdWx0IHRocm91Z2ggYSBzeXN0ZW0gcGFja2Fn
-ZSBtYW5hZ2VyOwo+ID4KPiA+aW5zdGFsbCB0byB0aGUgbG9jYWwgZGVmYXVsdCBmcm9tIHNvdXJj
-ZSB0byBub3QgYnJlYWsgdGhlIHN5c3RlbSBpbnN0YWxsZWQKPiA+c29mdHdhcmUgY29uc2lzdGVu
-Y3k7Cj4gPgo+ID4KPiBTbyB0aGUgcmVhc29uIGZvciBub3QgaW5zdGFsbGluZyB0byAvc2JpbiBp
-cyB0byBhdm9pZCBtZXNzaW5nIHVwIHRoZQo+IHBhY2thZ2UgbWFuYWdlcj8gIEkgcmVncmV0IHRv
-IHNheSBpdCBtYWtlcyBzZW5zZS4gIElmIHRoYXQgaXMgdGhlCj4gcmVhc29uLCB0aGVuIHdhcm4g
-dGhlIHVzZXIgcGxlYXNlIGFib3V0IG9sZCB2ZXJzaW9ucyBsZWZ0IGludGFjdCwgYW5kCj4gc3Vn
-Z2VzdCB0aGV5IGJlIHJlbW92ZWQsIGFuZCBwcm9tcHQgdGhlIHVzZXIgZm9yIHRoZSBwYXRoIHRv
-IGluc3RhbGwgdG8KPiBhbmQgcmVtaW5kIHRoZW0gdG8gdXBkYXRlIHRoZWlyICRQQVRILgo+CgpU
-aGUgcHJvYmxlbSBpcyB0aGF0IHNvbWUgcGFja2FnZSBtYW5hZ2VycyBtaWdodCBtYWtlIHJlaXNl
-cjRwcm9ncyBhCiJiYXNlIiBwYWNrYWdlLCB3aGljaCByZW1vdmluZyB3aWxsIGVtaXQgYSBsb3Vk
-IHdhcm5pbmcgdGhhdCBpdCBtaWdodApicmVhayB5b3VyIHN5c3RlbS4gIFRoYXQgc2FpZCwgYW55
-b25lIGluc3RhbGxpbmcgYSBjdXN0b20gcmVpc2VyNHByb2dzCm1heSBvciBtYXkgbm90IGJlIHN1
-cHBvc2VkIHRvIGhhdmUgdGhlIGtub3dsZWRnZSB0byB3b3JrIGFyb3VuZCBpdC4KCkl0J2QgYmUg
-bGlrZSB0aGUgaW5zdGFsbGluZyBqYXZhIG1lc3MgYWxsIG92ZXIgYWdhaW4gW3RpbWVzIHR3b10g
-LS0KZXhjZXB0IGZvciBvbmUgZGlmZmVyZW5jZS4uLiBKYXZhIGlzbid0IGVzc2VudGlhbC4gIFJl
-aXNlcjRwcm9ncyBjb3VsZApiZS4KCkl0IG1pZ2h0IGJlIGVhc2llciB0byBtYWtlIGEgcHNldWRv
-LXBhY2thZ2UgcmVwcmVzZW50aW5nIHRoZSBwcm9ncmFtCihlLmcuIHRoZSB3YXkgU3VuJ3MgSlJF
-IGlzICJjb252ZXJ0ZWQgdG8gYSBwYWNrYWdlIiBpbiBEZWJpYW4gU2FyZ2UsCmFzIHdlbGwgYXMg
-dGhlIHdheSBvbGRlciB2ZXJzaW9ucyB1c2VkIGFuIGVtcHR5IHBhY2thZ2UgZmlsZSB0bwpzYXRp
-c2Z5IGRlcGVuZHMgaW4gRGViaWFuIFdvb2R5OyByZWlzZXJmcyB3b3VsZCBoYXZlIGEgZmFrZSBw
-YWNrYWdlIGluCnRoZSBwYWNrYWdlIG1hbmFnZXIgd2hlbiBpbnN0YWxsZWQgZnJvbSBzb3VyY2Up
-IG9yIHRvIGFjdHVhbGx5IHB1dApwYWNrYWdlIGJ1aWxkaW5nIHNjcmlwdHMgZm9yIHBhY2thZ2Ut
-aGFuZGxpbmcgZGlzdHJvcyBpbiB0aGUgc291cmNlCnBhY2thZ2UgKG9yIHVzZSBzb21ldGhpbmcg
-bGlrZSBjaGVja2luc3RhbGwsIHByb3ZpZGVkIGl0IGRvZXNuJ3QKY29uZmxpY3QgdG9vIGJhZCku
-ICBbWW91IGNhbiBhbHNvIGRpZCB3aGF0IERlYmlhbiBkaWQgd2l0aCBpdCdzCidrZXJuZWwtcGFj
-a2FnZScgc3lzdGVtOyBpdCBwcm92aWRlcyBhIHBhY2thZ2Ugc3BlY2lhbGx5IGRlc2lnbmVkIGZv
-cgpjb252ZXJ0aW5nIGEgY3VzdG9tIGtlcm5lbCBpbnRvIGEgcGFja2FnZSwgc28gc2ltaWxhcmx5
-LCBhCnBhY2thZ2luZy10b29sIHNwZWNpZmljIHRvIHRoYXQgZGlzdHJvIGNvdWxkIGJlIHB1dCBp
-biB0aGUgZGlzdHJvLiAKVGhpcyBsZXRzIHVzZXJzIHVzZSBhbnkga2VybmVsIHNvdXJjZSB3aXRo
-b3V0IGhhdmluZyB0byB1c2UgYQpkZWJpYW5pemVkIHNvdXJjZSBhbmQgc3RpbGwgaGF2ZSBhIGtl
-cm5lbCBwYWNrYWdlIHRvIGluc3RhbGwgYXQgdGhlCmVuZDsgc28geW91IGNhbiB1c2UgdGhlIGxh
-dGVzdCBhbmQgZ3JlYXRlc3QgUmVpc2VyNFByb2dzIGFuZCB0aGUKRGViaWFuIHBhY2thZ2UgbWFu
-YWdlciB3aXRob3V0IGhhdmluZyB0byB3YWl0IGZvciBhIGRlYmlhbml6ZWQKcGFja2FnZS4gIFNh
-bWUgb3Igc2ltaWxhciBhcHBsaWVzIGZvciBvdGhlciBwYWNrYWdpbmcgZGlzdHJvcy5dCgoqc2ln
-aCogSG93IGNvbXBsaWNhdGVkLi4uCgotLQp+TWlrZQogLSBKdXN0IG15IHR3byBjZW50cwogLSBO
-byBtYW4gaXMgYW4gaXNsYW5kLCBhbmQgbm8gbWFuIGlzIHVuYWJsZS4K
+------=_Part_14964_28926233.1132620755877
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+Hi Hans,
+
+Allow me to introduce myself, I'm one of Peter (aka pvh)'s colleagues here
+at the University of Victoria. A while back we mentioned we'd write a
+practical install guide for Reiser4 with Ubuntu 5.10. Well, here it is. Let
+us know if you want us to make any changes to the format or add/remove any
+steps.
+
+All version references in this document are up to date for Ubuntu
+5.10(Breezy Badger).
+
+Prerequisites: Add the universe repository to your sources
+
+1. Install all the software needed to compile the kernel
+# apt-get build-dep linux-source-2.6.12
+# apt-get install linux-source-2.6.12 checkinstall libncurses-dev
+
+2. Use the following commands to download the latest Reiser4 kernel patch,
+the Reiser4 utility programs, and required libraries.
+# wget
+ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.12/reiser4-for-2.6.12-3.patch=
+.gz
+# wget ftp://ftp.namesys.com/pub/reiser4progs/reiser4progs-1.0.5.tar.gz
+# wget ftp://ftp.namesys.com/pub/reiser4progs/libaal-1.0.5.tar.gz
+
+3. Install libaal
+# tar zxf libaal-1.0.5.tar.gz
+# cd libaal-1.0.5
+# ./configure; make
+# checkinstall
+At the prompt: "Should I create a default set of package docs? [y]:" type
+"y" and press enter.
+You will then be prompted to input a description of the package. Enter
+something like "locally built libaal" then press enter three times.
+# cd ..
+
+4. Install reiser4progs
+# tar zxf reiser4progs-1.0.5.tar.gz
+# cd reiser4progs-1.0.5
+# ./configure; make
+# checkinstall
+At the prompt: "Should I create a default set of package docs? [y]:" type
+"y" and press enter.
+At the prompt: "Do you want me to list them? [n]:" type "n" and press enter=
+.
+At the prompt: "Should I exclude them from the package? (Saying yes is a
+good idea) [y]:" type "y" and press enter.
+You will then be prompted to input a description of the package. Type
+something like "locally built libaal" then press enter three times.
+
+5. Unzip and add the reiser4 code to the linux source
+# cd /usr/src
+# tar xvf linux-source-2.6.12.tar.bz2
+# cd linux-source-2.6.12/
+# gunzip -c ~/reiser4-for-2.6.12-3.patch.gz | patch -p1
+
+6. Compile the kernel
+# make menuconfig
+Select "File systems --->" from the menu and press enter.
+Select "Reiser4 (EXPERIMENTAL) (NEW)" and type "M".
+Press the esc key twice.
+Select "yes" at the prompt.
+# make
+... much time passes ...
+
+7. Build a Debian install package for the kernel
+# make-kpkg --rootcmd fakeroot --append-to-version --initrd --
+
+8. Reboot with the new kernel, create a Reiser partition and mount it and
+you're good to go!
+
+------=_Part_14964_28926233.1132620755877
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+Hi Hans,<br>
+<br>
+Allow me to introduce myself, I'm one of Peter (aka pvh)'s colleagues here =
+at the
+University of Victoria.&nbsp; A while back we mentioned we'd write a
+practical install guide for Reiser4 with Ubuntu 5.10.&nbsp; Well, here
+it is.&nbsp; Let us know if you want us to make any changes to
+the format or add/remove any steps.<br>
+<br>
+All version references in this document are up to date for Ubuntu 5.10 (Bre=
+ezy Badger).<br>
+<br>
+Prerequisites: Add the universe repository to your sources<br>
+<br>
+1. Install all the software needed to compile the kernel<br>
+# apt-get build-dep linux-source-2.6.12<br>
+# apt-get install linux-source-2.6.12 checkinstall libncurses-dev<br>
+<br>
+2. Use the following commands to download the latest Reiser4 kernel patch, =
+the Reiser4 utility programs, and required libraries.<br>
+# wget <a href=3D"ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.12/reiser4-=
+for-2.6.12-3.patch.gz" target=3D"_blank" onclick=3D"return top.js.OpenExtLi=
+nk(window,event,this)">ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.12/rei=
+ser4-for-2.6.12-3.patch.gz
+</a><br>
+# wget <a href=3D"ftp://ftp.namesys.com/pub/reiser4progs/reiser4progs-1.0.5=
+.tar.gz" target=3D"_blank" onclick=3D"return top.js.OpenExtLink(window,even=
+t,this)">ftp://ftp.namesys.com/pub/reiser4progs/reiser4progs-1.0.5.tar.gz</=
+a>
+<br>
+# wget <a href=3D"ftp://ftp.namesys.com/pub/reiser4progs/libaal-1.0.5.tar.g=
+z" target=3D"_blank" onclick=3D"return top.js.OpenExtLink(window,event,this=
+)">ftp://ftp.namesys.com/pub/reiser4progs/libaal-1.0.5.tar.gz</a><br>
+<br>
+3. Install libaal<br>
+# tar zxf libaal-1.0.5.tar.gz<br>
+# cd libaal-1.0.5<br>
+# ./configure; make<br>
+# checkinstall<br>
+At the prompt: &quot;Should I create a default set of package docs? [y]:&qu=
+ot; type &quot;y&quot; and press enter.<br>
+You will then be prompted to input a description of the package.&nbsp;
+Enter something like &quot;locally built libaal&quot; then press enter thre=
+e
+times.<br>
+# cd ..<br>
+<br>
+4. Install reiser4progs<br>
+# tar zxf reiser4progs-1.0.5.tar.gz<br>
+# cd reiser4progs-1.0.5<br>
+# ./configure; make<br>
+# checkinstall<br>
+At the prompt: &quot;Should I create a default set of package docs? [y]:&qu=
+ot; type &quot;y&quot; and press enter.<br>
+At the prompt: &quot;Do you want me to list them? [n]:&quot; type &quot;n&q=
+uot; and press enter.<br>
+At the prompt: &quot;Should I exclude them from the package? (Saying yes is=
+ a good idea) [y]:&quot; type &quot;y&quot; and press enter.<br>
+You will then be prompted to input a description of the package.&nbsp;
+Type something like &quot;locally built libaal&quot; then press enter three=
+ times.<br>
+<br>
+5. Unzip and add the reiser4 code to the linux source<br>
+# cd /usr/src<br>
+# tar xvf linux-source-2.6.12.tar.bz2<br>
+# cd linux-source-2.6.12/<br>
+# gunzip -c ~/reiser4-for-2.6.12-3.patch.gz | patch -p1 <br>
+<br>
+6. Compile the kernel<br>
+# make menuconfig<br>
+Select &quot;File systems ---&gt;&quot; from the menu and press enter.<br>
+Select &quot;Reiser4 (EXPERIMENTAL) (NEW)&quot; and type &quot;M&quot;.<br>
+Press the esc key twice.<br>
+Select &quot;yes&quot; at the prompt.<br>
+# make<br>
+... much time passes ...<br>
+<br>
+7. Build a Debian install package for the kernel<br>
+# make-kpkg --rootcmd fakeroot --append-to-version --initrd --<br>
+<br>
+8. Reboot with the new kernel, create a Reiser partition and mount it and y=
+ou're good to go!<br>
+<br>
+
+
+------=_Part_14964_28926233.1132620755877--
