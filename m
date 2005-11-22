@@ -1,51 +1,75 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: More Slowdown
-Date: Tue, 22 Nov 2005 13:15:59 -0600
-Message-ID: <43836E6F.2030701@slaphack.com>
-References: <200511171447.41362.mail@earthworm.de> <200511221144.34541.marcel@hilzinger.hu> <43832B3B.8070802@slaphack.com> <200511221601.47095.marcel@hilzinger.hu>
+From: Avuton Olrich <avuton@gmail.com>
+Subject: Re: More Slowdown or reiser4 update for 2.6.14-mm2
+Date: Tue, 22 Nov 2005 11:27:58 -0800
+Message-ID: <3aa654a40511221127x68d059c5hfdfd4254aec0e1b5@mail.gmail.com>
+References: <200511171447.41362.mail@earthworm.de>
+	 <437CBC63.3050202@namesys.com> <200511172040.39955.mail@earthworm.de>
+	 <43820CAD.3090605@namesys.com> <20051121210136.GA25708@favonius>
+	 <4383677F.8060106@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27081-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-27082-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200511221601.47095.marcel@hilzinger.hu>
+In-Reply-To: <4383677F.8060106@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Marcel Hilzinger <marcel@hilzinger.hu>
-Cc: reiserfs-list@namesys.com
+To: "E.Gryaznova" <grev@namesys.com>
+Cc: sander@humilis.net, "Hesse, Christian" <mail@earthworm.de>, "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
 
-Marcel Hilzinger wrote:
-> Am Dienstag, 22. November 2005 15:29 schrieb David Masover:
-> 
->>Marcel Hilzinger wrote:
-> 
-> [...]
-> 
->>>It's not about Debian or Suse. It's about kernel 2.6.13 or 2.6.14. At
->>>least it seems, that the problem does not appear on older kernels
->>>(right?)
->>
->>Wrong.
->>
->>You are talking about the fsync issue, right?  As far as I know, while
->>there has been progress lately, fsync has always been slow on Reiser4,
->>because until recently, it was basically a call to sync, and reiser4
+On 11/22/05, E.Gryaznova <grev@namesys.com> wrote:
+> Sander wrote:
+>
+> >E.Gryaznova wrote (ao):
+> Something like
+> for i in cfq noop anticipatory deadline
+> do
+>   echo $i > /sys/block/hda/queue/scheduler && cat
+> /sys/block/hda/queue/scheduler && echo "foo" >/root/test && time vim +"s/
+> foo/bar/" +"wq" /root/test
+> done
 
+Done, I had to output to vim's output to /dev/null due to it clearing the t=
+erm.
 
-> Thanks a lot. I understand now. But is there any bug to hunt within reiser4 
-> then?
+for i in cfq noop anticipatory deadline
+do
+echo $i  > /sys/block/hda/queue/scheduler
+cat /sys/block/hda/queue/scheduler
+echo "foo" > /root/test; time vim +"s/foo/bar/" +"wq" /root/test>/dev/null
+done
 
-You could call it that.
+Results:
+noop anticipatory deadline [cfq]
+Vim: Warning: Output is not to a terminal
 
-Last I checked, Reiser4's fsync just called 'sync'.  The way it should
-work is to only flush the file being fsynced, not the whole FS.
+real=090m2.464s
+user=090m0.046s
+sys=090m0.022s
+[noop] anticipatory deadline cfq
+Vim: Warning: Output is not to a terminal
 
-If this were fixed, Reiser4 fsync performance should approach that of,
-say, XFS, which also has lazy writes.  But, I haven't been keeping up
-with this discussion, so maybe someone did fix that, and it's still slow.
+real=090m2.188s
+user=090m0.045s
+sys=090m0.018s
+noop [anticipatory] deadline cfq
+Vim: Warning: Output is not to a terminal
 
-But, even if fsync is as fast as it can possibly be, Evolution should
-also be fixed.
+real=090m2.213s
+user=090m0.044s
+sys=090m0.021s
+noop anticipatory [deadline] cfq
+Vim: Warning: Output is not to a terminal
 
+real=090m2.422s
+user=090m0.046s
+sys=090m0.018s
+
+Linux rocket 2.6.15-rc1-mm2 #6 SMP PREEMPT Tue Nov 22 11:02:59 PST
+2005 x86_64 AMD Athlon(tm) 64 X2 Dual Core Processor 4200+
+AuthenticAMD GNU/Linux
+--
+  Anyone who quotes me in their sig is an idiot. -- Rusty Russell.
