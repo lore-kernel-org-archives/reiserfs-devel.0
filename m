@@ -1,40 +1,40 @@
 From: Sander <sander@humilis.net>
 Subject: Re: Collect data?
-Date: Wed, 23 Nov 2005 13:08:45 +0100
-Message-ID: <20051123120845.GA26252@favonius>
-References: <200511171447.41362.mail@earthworm.de> <4383677F.8060106@namesys.com> <20051123070924.GA6951@favonius> <200511231126.43754.mail@earthworm.de> <20051123104847.GA22178@favonius> <438450EA.5050409@namesys.com>
+Date: Wed, 23 Nov 2005 13:17:51 +0100
+Message-ID: <20051123121751.GC26252@favonius>
+References: <200511171447.41362.mail@earthworm.de> <20051123104847.GA22178@favonius> <438450EA.5050409@namesys.com> <200511231253.37328.mail@earthworm.de>
 Reply-To: sander@humilis.net
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-27106-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27107-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <438450EA.5050409@namesys.com>
+In-Reply-To: <200511231253.37328.mail@earthworm.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: sander@humilis.net, "Hesse, Christian" <mail@earthworm.de>, reiserfs-list@namesys.com, "E.Gryaznova" <grev@namesys.com>
+To: "Hesse, Christian" <mail@earthworm.de>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, sander@humilis.net, reiserfs-list@namesys.com, "E.Gryaznova" <grev@namesys.com>
 
-Vladimir V. Saveliev wrote (ao):
-> Sander wrote:
-> > Reiser-dev team, do you need other info beside what is listed there?
+Hesse, Christian wrote (ao):
+> For Sander's list:
 > 
-> It could be useful if there were a description of a test which was used to
-> measure slowdown, result of that test on both "good" and "bad" kernels.
-> Information about good kernel is also needed.
+> http://www.earthworm.de/tmp/reiser4-fsync.c
+> strace -T -e sync,fsync reiser4-fsync
 
-I've added a test and my 'good' system. Unfortunately it is not possible
-for me to go back to older kernels as the current kernels are stable
-while the older kernels where not.
+I've added this one, but it segfaults at my system:
 
-http://humilis.net/reiser4slowdown
+$ gcc -o reiser4-fsync reiser4-fsync.c 
+$ strace -T -e sync,fsync ./reiser4-fsync
+Segmentation fault
 
-Please let me know what you think and if more info is needed.
+Any idea?
 
-I'll add reports as they pass by on the list.
+> Good kernels is everything 2.6.13* and before.
+
+Added, thanks!
 
 -- 
 Humilis IT Services and Solutions
