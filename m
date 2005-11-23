@@ -1,34 +1,156 @@
-From: Ingo Bormuth <ibormuth@efil.de>
-Subject: Re: Collect data?
-Date: Wed, 23 Nov 2005 19:42:35 +0100
-Message-ID: <20051123184235.GA23055@kruemel>
-References: <200511171447.41362.mail@earthworm.de> <200511231253.37328.mail@earthworm.de> <20051123121751.GC26252@favonius> <200511231321.18455.mail@earthworm.de> <20051123122809.GA31528@favonius> <43846A0C.6010808@namesys.com> <20051123151016.GA7768@favonius> <4384888E.2040407@namesys.com> <20051123153140.GA1736@favonius> <43848FB1.4050001@namesys.com>
-Reply-To: Ingo Bormuth <ibormuth@efil.de>
+From: Craig Shelley <craig@microtron.org.uk>
+Subject: Re: More Slowdown - testscript [noatime,nodiratime]
+Date: Wed, 23 Nov 2005 20:23:29 +0000
+Message-ID: <1132777409.7458.8.camel@teratron.lan.etheus.net>
+References: <200511171447.41362.mail@earthworm.de>
+	 <437CBC63.3050202@namesys.com> <200511172040.39955.mail@earthworm.de>
+	 <43820CAD.3090605@namesys.com> <20051121210136.GA25708@favonius>
+	 <4383677F.8060106@namesys.com>
+	 <3aa654a40511221127x68d059c5hfdfd4254aec0e1b5@mail.gmail.com>
+	 <1132709496.7650.24.camel@teratron.lan.etheus.net>
+	 <1132710424.7328.7.camel@teratron.lan.etheus.net>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-27118-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-mTV+5963a2NJ+OoaeFzy"
+Return-path: <reiserfs-list-return-27119-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <43848FB1.4050001@namesys.com>
+In-Reply-To: <1132710424.7328.7.camel@teratron.lan.etheus.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
-Cc: ingo@bormuth.org
 
-On 2005-11-23 18:50, Vladimir V. Saveliev wrote:
-> It would be great to hear that mounting noatime or unapplying that patch fixes
-> all problmes, including the one with evolution's field resizing and vim's ":wq".
+--=-mTV+5963a2NJ+OoaeFzy
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-I posted before that I don't see the problem. 
-Well, all reiser4 partitions are mounted -o noatime,nodiratime ;)
+With the noatime and nodiratime options, the problem of accessing files
+causing a massive sync time has gone. See the results below.
 
-Remounting with -o atime,diratime immediately makes the system creap 
-as if it was an old snail.
+Although this option has made the system useable, I don't think it has
+fully solved the problem. I think fsync() and sync() performance is
+still poor, I will do a bit more testing and get back.
 
--- 
-Ingo Bormuth, voicebox & telefax: +49-12125-10226517          '(~o-o~)'
-public key 86326EC9, http://ibormuth.efil.de/contact     ---ooO--(.)--Ooo---
+Regards,
+
+--=20
+Craig Shelley
+EMail: craig@microtron.org.uk
+Jabber: shell@jabber.earth.li
+
+
+Results:
+
+craig@teratron.lan.etheus.net:~$ ./testscript.sh
+
+sync a1
+
+real    0m0.870s
+user    0m0.000s
+sys     0m0.000s
+
+
+sync a2
+
+real    0m0.083s
+user    0m0.004s
+sys     0m0.000s
+
+
+sync a3
+
+real    0m0.075s
+user    0m0.000s
+sys     0m0.004s
+
+
+sync a4
+
+real    0m0.083s
+user    0m0.000s
+sys     0m0.000s
+
+
+Performing recursive ls
+
+real    0m0.314s
+user    0m0.076s
+sys     0m0.228s
+
+
+sync b1
+
+real    0m0.077s
+user    0m0.000s
+sys     0m0.000s
+
+
+sync b2
+
+real    0m0.083s
+user    0m0.000s
+sys     0m0.000s
+
+
+sync b3
+
+real    0m0.075s
+user    0m0.000s
+sys     0m0.004s
+
+
+sync b4
+
+real    0m0.083s
+user    0m0.000s
+sys     0m0.000s
+
+
+Performing recursive ls
+
+real    0m0.744s
+user    0m0.236s
+sys     0m0.504s
+
+
+sync c1
+
+real    0m0.078s
+user    0m0.000s
+sys     0m0.000s
+
+
+sync c2
+
+real    0m0.083s
+user    0m0.000s
+sys     0m0.000s
+
+
+sync c3
+
+real    0m0.074s
+user    0m0.000s
+sys     0m0.004s
+
+
+sync c4
+
+real    0m0.083s
+user    0m0.000s
+sys     0m0.000s
+
+--=-mTV+5963a2NJ+OoaeFzy
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+
+iD8DBQBDhM/B5OI9vmOoVqERAor1AKDRJy1VzhoDfOsx98zOLH+dFr3hMQCguUUX
+GIZ1o9Pko+XoElbsKWQPaXw=
+=Hjrt
+-----END PGP SIGNATURE-----
+
+--=-mTV+5963a2NJ+OoaeFzy--
 
