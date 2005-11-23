@@ -1,134 +1,61 @@
-From: Sander <sander@humilis.net>
-Subject: Re: Collect data?
-Date: Wed, 23 Nov 2005 11:15:36 +0100
-Message-ID: <20051123101536.GA26086@favonius>
-References: <200511171447.41362.mail@earthworm.de> <437CBC63.3050202@namesys.com> <200511172040.39955.mail@earthworm.de> <43820CAD.3090605@namesys.com> <20051121210136.GA25708@favonius> <4383677F.8060106@namesys.com> <20051123070924.GA6951@favonius> <43843F36.5050907@namesys.com>
-Reply-To: sander@humilis.net
+From: "Hesse, Christian" <mail@earthworm.de>
+Subject: Re: Collect data?  (was: Re: More Slowdown or reiser4 update for 2.6.14-mm2)
+Date: Wed, 23 Nov 2005 11:26:37 +0100
+Message-ID: <200511231126.43754.mail@earthworm.de>
+References: <200511171447.41362.mail@earthworm.de> <4383677F.8060106@namesys.com> <20051123070924.GA6951@favonius>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-27099-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed;
+  boundary="nextPart11809290.Csg35jnMQM";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27100-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <43843F36.5050907@namesys.com>
+In-Reply-To: <20051123070924.GA6951@favonius>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "E.Gryaznova" <grev@namesys.com>
-Cc: sander@humilis.net, Vladimir Saveliev <vs@namesys.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com, sander@humilis.net
+Cc: "E.Gryaznova" <grev@namesys.com>, "Vladimir V. Saveliev" <vs@namesys.com>
 
-E.Gryaznova wrote (ao):
-> Sander wrote:
-> >E.Gryaznova wrote (ao):
-> >>Would you please  repeat the vim/reiser4 test for each iosched and
-> >>send us the time values?
-> >
-> >As others already reacted with data regarding this test I assume you
-> >don't need my data anymore.
+--nextPart11809290.Csg35jnMQM
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+On Wednesday 23 November 2005 08:09, Sander wrote:
+> My 'good' system:
+> kernel:		2.6.15-rc1-mm2
+> OS:		Debian Sid
+> disks:		4x sata on Promise
+> raid/lvm/etc:	lmv stripe
 >
-> not right. We _need_ your data for "bad" system.
+> My 'bad' system:
+> kernel:		2.6.15-rc1-mm1
+> OS:		Debian Sid
+> disks:		ata on nForce2
+> raid/lvm/etc:	none, single disk
 
-Oke, more than happy to comply :-)
+My 'bad' system:
+kernel:		everything from 2.6.14-rc3* to 2.6.15-rc1*
+Compiler:		GCC 3.4.4-r1 (including Gentoo patches)
+OS:			Gentoo ~x86
+disk:			ATA on Intel ICH4-M (Centrino Notebook)
+raid/lvm/etc:	none, single disk
+=2D-=20
+Christian
 
-Please let me know if you need me to do additional tests.
+--nextPart11809290.Csg35jnMQM
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.9.19 (GNU/Linux)
 
-> >My 'bad' system:
-> >kernel:		2.6.15-rc1-mm1
-> >OS:		Debian Sid
-> >disks:		ata on nForce2
-> >raid/lvm/etc:	none, single disk
+iD8DBQBDhEPjlZfG2c8gdSURAqLMAKCCuX4zarWHBlbUbPvK8i8N2bh6SQCeOKEG
+Bxt7lOjqwvBlN3u8KFipYNw=
+=uH1a
+-----END PGP SIGNATURE-----
 
-for i in `seq 4`; do for i in cfq noop anticipatory deadline; do echo $i > /sys/block/hda/queue/scheduler; cat /sys/block/hda/queue/scheduler; echo "foo" > test && time vim +"s/foo/bar/" +"wq" test &> /dev/null ; done; done
-
-noop anticipatory deadline [cfq]
-
-real    0m7.792s
-user    0m0.000s
-sys     0m0.000s
-[noop] anticipatory deadline cfq
-
-real    0m4.038s
-user    0m0.000s
-sys     0m0.010s
-noop [anticipatory] deadline cfq
-
-real    0m5.466s
-user    0m0.000s
-sys     0m0.000s
-noop anticipatory [deadline] cfq
-
-real    0m5.832s
-user    0m0.000s
-sys     0m0.000s
-
-===
-noop anticipatory deadline [cfq]
-
-real    0m6.782s
-user    0m0.000s
-sys     0m0.000s
-[noop] anticipatory deadline cfq
-
-real    0m8.415s
-user    0m0.010s
-sys     0m0.010s
-noop [anticipatory] deadline cfq
-
-real    0m6.757s
-user    0m0.000s
-sys     0m0.030s
-noop anticipatory [deadline] cfq
-
-real    0m8.538s
-user    0m0.000s
-sys     0m0.030s
-
-===
-noop anticipatory deadline [cfq]
-
-real    0m10.118s
-user    0m0.000s
-sys     0m0.010s
-[noop] anticipatory deadline cfq
-
-real    0m8.429s
-user    0m0.000s
-sys     0m0.020s
-noop [anticipatory] deadline cfq 
-
-real    0m10.497s
-user    0m0.000s
-sys     0m0.000s
-noop anticipatory [deadline] cfq 
-
-real    0m10.434s
-user    0m0.000s
-sys     0m0.010s
-
-===
-noop anticipatory deadline [cfq] 
-
-real    0m9.196s
-user    0m0.000s
-sys     0m0.030s
-[noop] anticipatory deadline cfq 
-
-real    0m9.298s
-user    0m0.000s
-sys     0m0.010s
-noop [anticipatory] deadline cfq 
-
-real    0m11.268s
-user    0m0.000s
-sys     0m0.040s
-noop anticipatory [deadline] cfq 
-
-real    0m8.034s
-user    0m0.000s
-sys     0m0.040s
-
--- 
-Humilis IT Services and Solutions
-http://www.humilis.net
+--nextPart11809290.Csg35jnMQM--
