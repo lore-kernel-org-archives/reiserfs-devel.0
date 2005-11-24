@@ -1,59 +1,42 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: [PATCH] reiserfs: handle cnode allocation failure gracefully
-Date: Wed, 23 Nov 2005 20:59:18 -0800
-Message-ID: <438548A6.1090602@namesys.com>
-References: <20051124001606.GA3970@locomotive.unixthugs.org>
+From: Sander <sander@humilis.net>
+Subject: Re: More Slowdown - testscript [noatime,nodiratime]
+Date: Thu, 24 Nov 2005 08:49:09 +0100
+Message-ID: <20051124074909.GB8307@favonius>
+References: <437CBC63.3050202@namesys.com> <200511172040.39955.mail@earthworm.de> <43820CAD.3090605@namesys.com> <20051121210136.GA25708@favonius> <4383677F.8060106@namesys.com> <3aa654a40511221127x68d059c5hfdfd4254aec0e1b5@mail.gmail.com> <1132709496.7650.24.camel@teratron.lan.etheus.net> <1132710424.7328.7.camel@teratron.lan.etheus.net> <1132777409.7458.8.camel@teratron.lan.etheus.net> <43854668.8010000@namesys.com>
+Reply-To: sander@humilis.net
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27125-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27128-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20051124001606.GA3970@locomotive.unixthugs.org>
+Content-Disposition: inline
+In-Reply-To: <43854668.8010000@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Jeff Mahoney wrote:
+Hans Reiser wrote (ao):
+> Craig Shelley wrote:
+> >With the noatime and nodiratime options, the problem of accessing files
+> >causing a massive sync time has gone. See the results below.
+> >
+> >Although this option has made the system useable, I don't think it has
+> >fully solved the problem. I think fsync() and sync() performance is
+> >still poor, I will do a bit more testing and get back.
+>
+> Sounds like we need to specifically optimize fsync.  Well, we have
+> known that for a while, but now it is more true.
 
-> If an external device is used for a journal, by default it will use the
-> entire device. The reiserfs journal code allocates structures per journal
-> block when it mounts the file system. If the journal device is too large, and
-> memory cannot be allocated for the structures, it will continue and ultimately
-> panic when it can't pull one off the free list.
->
-> This patch handles the allocation failure gracefully and prints an error
-> message at mount time.
->
-> Changes: Updated error message to be more descriptive to the user.
->
->Signed-off-by: Jeff Mahoney <jeffm@suse.com>
->
->diff -ruNpX dontdiff linux-2.6.13.orig/fs/reiserfs/journal.c linux-2.6.13.fixed/fs/reiserfs/journal.c
->--- linux-2.6.13.orig/fs/reiserfs/journal.c	2005-09-16 11:42:58.000000000 -0400
->+++ linux-2.6.13.fixed/fs/reiserfs/journal.c	2005-11-23 19:14:17.000000000 -0500
->@@ -2757,6 +2757,13 @@ int journal_init(struct super_block *p_s
-> 	journal->j_cnode_used = 0;
-> 	journal->j_must_wait = 0;
-> 
->+	if (journal->j_cnode_free == 0) {
->+        	reiserfs_warning(p_s_sb, "journal-2004: Journal cnode memory "
->+		                 "allocation failed. Journal is too large "
->+				 "for available memory.");
->+        	goto free_and_return;
->+	}
->+
-> 	init_journal_hash(p_s_sb);
-> 	jl = journal->j_current_jl;
-> 	jl->j_list_bitmap = get_list_bitmap(p_s_sb, jl);
->
->  
->
-This is better than handling it ungracefully but..... can there be a
-memory shortage for some other reason and then this prints the wrong
-diagnostic? Forgive me, it is hard to know the answer looking at the
-patch by itself.....
+Please don't forget that the behavior without 'noatime' is new. I never
+had my disk mounted 'noatime', and until recently did not experience the
+huge slowdown. I assume the other people who reported this agree.
 
-Hans
+So whether or not fsync needs to be optimized, something changed in
+Reiser4 or -mm that causes the huge slowdown.
+
+-- 
+Humilis IT Services and Solutions
+http://www.humilis.net
