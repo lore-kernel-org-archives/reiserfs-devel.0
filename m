@@ -1,62 +1,46 @@
-From: Milan =?ISO-8859-1?B?SG9seuRwZmVs?= <listen@mjh.name>
-Subject: Re: reiser3 in cryptoloop
-Date: Fri, 25 Nov 2005 20:23:24 +0100
-Message-ID: <20051125202324.065845df.listen@mjh.name>
-References: <fe11eda90511240754k2ae211e8j9d1be51c43465171@mail.gmail.com>
+From: Lares Moreau <lares.moreau@gmail.com>
+Subject: Re: Where's the link to the Reiser 4 source code?
+Date: Sun, 27 Nov 2005 07:52:28 -0700
+Message-ID: <1133103148.6882.2.camel@localhost>
+References: <4388307A.9050301@gemtech.info>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27151-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-rWwtgYQkH0ur6Vx0uhCt"
+Return-path: <reiserfs-list-return-27153-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Sender: news <news@sea.gmane.org>
+In-Reply-To: <4388307A.9050301@gemtech.info>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+--=-rWwtgYQkH0ur6Vx0uhCt
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 24 Nov 2005 12:54:06 -0300
-Martin Sarsale <martin@malditainternet.com> wrote:
+RElated...
 
-> Dear all:
-> 
-> [...]
-> 
-> The output for reiserfsck is the following:
-> camem64:/home/martin# losetup -e
-> twofish /dev/loop2 /opt/backup.img.crypto Password:
-> camem64:/home/martin# reiserfsck --fix-fixable /dev/loop2
-> [...]
+Is there any particular reason there is not an anonCVS/SVN repository?
+to make Code access easier, and not limited to the (pseudo)Official
+packages?
+--=20
+Lares Moreau <lares.moreau@gmail.com>  | LRU: 400755 http://counter.li.org
+lares/irc.freenode.net                 |
+Gentoo x86 Arch Tester                 |               ::0 Alberta, Canada
+Public Key: 0D46BB6E @ subkeys.pgp.net |          Encrypted Mail Preferred
+Key fingerprint =3D 0CA3 E40D F897 7709 3628  C5D4 7D94 483E 0D46 BB6E
 
-IIRC, the help text of the cryptoloop kernel feature says that you are
-not supposed to use it with journaling file systems like ext3 and
-ReiserFS, because this can lead to problems.  You shall use dm-crypt
-[1] instead.  Maybe this is the cause? 
-
-I don't know whether Reiser4 is to be seen as a journaling fs here. 
-
-Regards,
-Milan
-
-[1]: you can setup encrypted volumes using
-<URL:http://clemens.endorphin.org/LUKS/>, given that your kernel has
-support for them ofc.  I used only the old version
-<URL:http://www.saout.de/misc/dm-crypt/> so far, but it worked fine.
-(ReiserFS v3 on encrypted volumes, which are automatically mounted and
-umounted on log-in. 
-
-- -- 
-1024D/65837966 2004-01-24 Milan Holzaepfel (jagdfalke/jag) <mail(A)mjh(D)name>
-4C8A 5FAF 5D32 6125 89D1  0CE5 DB0C AF4F 6583 7966      <URL:http://mjh.name/>
+--=-rWwtgYQkH0ur6Vx0uhCt
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 
-iD8DBQFDh2Ss2wyvT2WDeWYRAjxgAKDRTbwUgOGJYSeg3lM1CXpYWY8H+ACcDHTU
-VwUibFsgeZzT5aHqlnAsqKM=
-=TO29
+iD8DBQBDicgsfZRIPg1Gu24RAlodAKCSycAolJ/gIfgt02dlJ7N2EF5v9wCggrA1
+eC+E0uUbQpl5249qPZsBDN8=
+=Ou9D
 -----END PGP SIGNATURE-----
+
+--=-rWwtgYQkH0ur6Vx0uhCt--
 
