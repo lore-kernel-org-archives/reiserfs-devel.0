@@ -1,74 +1,44 @@
-From: Hans Reiser <reiser@namesys.com>
+From: "Alexander G. M. Smith" <agmsmith@rogers.com>
 Subject: Re: Two usage examples for attribute directories.
-Date: Sat, 03 Dec 2005 23:04:41 -0800
-Message-ID: <43929509.10906@namesys.com>
-References: <200511201317.12598.pvh@uvic.ca> <200511230057.22520.pvh@uvic.ca> <4390E5F6.704@st-andrews.ac.uk> <200512021649.54939.pvh@uvic.ca> <43917967.4080008@st-andrews.ac.uk>
+Date: Sun, 04 Dec 2005 10:04:53 -0500 EST
+Message-ID: <38878152157-BeMail@AlexDualP3>
+References: <43917967.4080008@st-andrews.ac.uk>
 Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27181-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27182-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <43917967.4080008@st-andrews.ac.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Cc: Peter van Hardenberg <pvh@uvic.ca>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Peter Foldiak wrote:
+Peter Foldiak wrote on Sat, 03 Dec 2005 10:54:31 +0000:
+> But why do we need a new type of file? What can you do with it that you 
+> absolutely couldn't without?
 
-> Peter van Hardenberg wrote:
->
->>> PvH,
->>>
->>> I am really worried about introducing this new concept of "attribute
->>> directory" and new syntax. Maybe I am just missing the point (in which
->>> case please explain), but is there anything you can do with this that
->>> there is no way you could do without it.
->>> Hans' favourite topic (quite rightly) is namespace unification, which
->>> involves keeping the syntax as simple as possible, having only one type
->>> of expression for one kind of logical structure. If you could possibly
->>> do this without the "..@", do it without it.
->>>
->>> So why not just do (to take your example):
->>>
->>> $ echo "Matmos" >> track01.mp3/artist
->>>
->>>
->>>   Peter F
->>>     
->>
->>
->> This is not new syntax, it is a new type of File (well, tecnically,
->> it would be implemented as a new pseudoplugin.)
->>   
->
-> But why do we need a new type of file? What can you do with it that
-> you absolutely couldn't without?
-> What is wrong with my simplification of your example?
-> (track01.mp3/artist)
->
->> From a user's point of view, these files are equivalent to an XML
->> attribute, whereas normal files are child elements.
->
-> I never quite understood the need for XML attributes either. You could
-> easily survive without them, right?
->
->>  The semantic difference is, I contend, significant.
->>   
->
-> Could you explain this difference.
->
->> From an implementation point of view, this would allow us to provide
->> guidance to, or eventually even full FS-level support for indexed
->> attributes.
->>   
->
-> Sorry for my ignorance, what is an "indexed attribute" and what's good
-> about it.
-> Are you sure the simple "/" is not a more elegant and simple way to do
-> all this.    Peter
->
->
-I agree with Peter's questions.
+That's how I would do it, keep the namespace simpler.  The new file/directory
+for attributes would only perhaps be useful for backwards compatibility with
+operating systems that can't handle an item that's simultaneously both a
+file and a directory.
+
+As for mixing in the XML view, how about having it in a totally separate
+directory tree?  Maybe a separate mount point.  Or since it's virtual,
+have file/XML as the root of the XML tree that represents file and all its
+contents and its nested children's contents.  Child files would also have a
+child/XML tree just showing their contents and sub-children's representation,
+which does duplicate part of the parent file/XML tree, but since it's virtual,
+that's free.
+
+>> From an implementation point of view, this would allow us to provide guidance 
+>> to, or eventually even full FS-level support for indexed attributes.
+
+For indexing, I'd add a file type byte or two to every file and use that to
+help decide (along with file name) what things should be indexed or not.
+BeOS decided based on the attribute name, and required that attributes with
+that name all have the same datatype (otherwise adding to the index wouldn't
+work too well - keys all have to be the same type for sorting reasons).
+
+- Alex
