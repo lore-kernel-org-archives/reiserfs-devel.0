@@ -1,44 +1,74 @@
-From: Charles Johnston <charles@infoplatter.com>
-Subject: Booting problem from root reiser4 after new kernel
-Date: Sat, 03 Dec 2005 10:26:04 -0700
-Message-ID: <1133630764.2915.8.camel@mercury>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Two usage examples for attribute directories.
+Date: Sat, 03 Dec 2005 23:04:41 -0800
+Message-ID: <43929509.10906@namesys.com>
+References: <200511201317.12598.pvh@uvic.ca> <200511230057.22520.pvh@uvic.ca> <4390E5F6.704@st-andrews.ac.uk> <200512021649.54939.pvh@uvic.ca> <43917967.4080008@st-andrews.ac.uk>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27179-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27181-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <43917967.4080008@st-andrews.ac.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+Cc: Peter van Hardenberg <pvh@uvic.ca>, reiserfs-list@namesys.com
 
-I've been keeping quite up-to-date with new kernels, so I compiled
-2.6.15-rc4 plus the reiser4 patches from 2.6.15-rc3-mm1 plus the
-reiser4-fix-fsync.patch.
+Peter Foldiak wrote:
 
-I'm using grub 0.97 with the 20050808 reiser4 patch.
-
-Put the new kernel in /boot, modified /boot/grub/menu.lst for it,
-rebooted, and got the following error, after "Uncompressing Linux":
-
-ran out of input data
-
-system halted
-
-
-So, after trying different things to no avail, I just made another copy
-of the kernel file, and it booted fine from that.  I'm thinking it's
-something to do with the way the original file is layed out on disk, and
-grub w/ reiser4 is having trouble with it.
-
-What's the best way to read off the meta-data for just that one file?
-I've wanted to contribute something to Reiser4 development for a while
-now.  Perhaps I can figure out what's causing this boot problem and fix
-it.
-
-
-Thanks.
-
-Charles Johnston
-
+> Peter van Hardenberg wrote:
+>
+>>> PvH,
+>>>
+>>> I am really worried about introducing this new concept of "attribute
+>>> directory" and new syntax. Maybe I am just missing the point (in which
+>>> case please explain), but is there anything you can do with this that
+>>> there is no way you could do without it.
+>>> Hans' favourite topic (quite rightly) is namespace unification, which
+>>> involves keeping the syntax as simple as possible, having only one type
+>>> of expression for one kind of logical structure. If you could possibly
+>>> do this without the "..@", do it without it.
+>>>
+>>> So why not just do (to take your example):
+>>>
+>>> $ echo "Matmos" >> track01.mp3/artist
+>>>
+>>>
+>>>   Peter F
+>>>     
+>>
+>>
+>> This is not new syntax, it is a new type of File (well, tecnically,
+>> it would be implemented as a new pseudoplugin.)
+>>   
+>
+> But why do we need a new type of file? What can you do with it that
+> you absolutely couldn't without?
+> What is wrong with my simplification of your example?
+> (track01.mp3/artist)
+>
+>> From a user's point of view, these files are equivalent to an XML
+>> attribute, whereas normal files are child elements.
+>
+> I never quite understood the need for XML attributes either. You could
+> easily survive without them, right?
+>
+>>  The semantic difference is, I contend, significant.
+>>   
+>
+> Could you explain this difference.
+>
+>> From an implementation point of view, this would allow us to provide
+>> guidance to, or eventually even full FS-level support for indexed
+>> attributes.
+>>   
+>
+> Sorry for my ignorance, what is an "indexed attribute" and what's good
+> about it.
+> Are you sure the simple "/" is not a more elegant and simple way to do
+> all this.    Peter
+>
+>
+I agree with Peter's questions.
