@@ -1,61 +1,158 @@
 From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: Booting problem from root reiser4 after new kernel
-Date: Mon, 5 Dec 2005 14:21:10 +0300
-Message-ID: <200512051421.11088.vitaly@namesys.com>
-References: <1133630764.2915.8.camel@mercury>
+Subject: Re: ReiserFS Recovery
+Date: Mon, 5 Dec 2005 14:57:24 +0300
+Message-ID: <200512051457.24520.vitaly@namesys.com>
+References: <43936D44.3090902@detux.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27193-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27194-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1133630764.2915.8.camel@mercury>
+In-Reply-To: <43936D44.3090902@detux.de>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Charles Johnston <charles@infoplatter.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: Marcus Fleige <marcus@detux.de>
 
-On Saturday 03 December 2005 20:26, Charles Johnston wrote:
-> I've been keeping quite up-to-date with new kernels, so I compiled
-> 2.6.15-rc4 plus the reiser4 patches from 2.6.15-rc3-mm1 plus the
-> reiser4-fix-fsync.patch.
+On Monday 05 December 2005 01:27, Marcus Fleige wrote:
+> Hi list,
 > 
-> I'm using grub 0.97 with the 20050808 reiser4 patch.
+> i got a problem i need to get solved really badly. Maybe you can help?
+> It is extremly important to me to get that data back.
 > 
-> Put the new kernel in /boot, modified /boot/grub/menu.lst for it,
-> rebooted, and got the following error, after "Uncompressing Linux":
+> For the situation:
 > 
-> ran out of input data
+> I got a linux server here with a data disk and a backup disk, both
+> encrypted using loop-aes (mount options loop=/dev/loopX,
+> encryption=aes-256) with the data disk based on reiserfs, the backup
+> disk with the most important data on ext3. Everything was fine up to
+> last sunday, when after a reboot _both_ disks rendered unmountable.
 > 
-> system halted
+> A first diagnosis showed a defective partition table. Dumping the first
+> MBs of the Disk, it seemed like the beginning of my disk had been
+> overwritten, killing my partition table and my reiserfs headers with
+> superblocks etc. Before anything else, i made a total backup of the
+> encrypted disk to another machine.
 > 
+> Mounting the drive died with the following:
 > 
-> So, after trying different things to no avail, I just made another copy
-> of the kernel file, and it booted fine from that.  I'm thinking it's
-> something to do with the way the original file is layed out on disk, and
-> grub w/ reiser4 is having trouble with it.
-
-do you still fail to boot with that kernel? would you run:
-	debugfs.reiser4 -P <device> | bzip2 -c > <device>.bz2
-on <device> which the kernel file sits in and provide it to 
-me for downloading. Then I will be able to debug the problem.
+> homer ~ # mount /exports
+> mount: 	wrong fs type, bad option, bad superblock on /dev/loop0
+> 	missing codepage or other error
+> 	In some cases useful info is found in syslog - try
+>         dmesg | tail  or so
+> 
+> dmesg says:
+> 
+> VFS: Can't find reiserfs filesystem on dev loop0
+> 
+> After that, i tried to fsck the partition:
+> 
+> 	homer ~ # losetup -e aes-256 /dev/loop0 /dev/hdb5
+> 	Password:
+> 	homer ~ # reiserfsck /dev/loop0
+> 	reiserfsck 3.6.19 (2003 www.namesys.com)
+> 	
+> 	Will read-only check consistency of the filesystem on /dev/loop0
+> 	Will put log info to 'stdout'
+> 	
+> 	Do you want to run this program?[N/Yes] (note need to type Yes 	
+> 	if you do):Yes
+> 
+> 	reiserfs_open: the reiserfs superblock cannot be found on 		
+> 	/dev/loop0. Failed to open the filesystem.
+> 
+> 	If the partition table has not been changed, and the partition
+> 	is valid  and  it really  contains  a reiserfs  partition,  then
+> 	the superblock  is corrupted and you need to run this utility
+> 	with --rebuild-sb.
+> 
+> Do'h!
+> 
+> 	homer ~ # reiserfsck --rebuild-sb /dev/loop0
+> 	reiserfsck 3.6.19 (2003 www.namesys.com)
+> 
+> 	Will check superblock and rebuild it if needed
+> 	Will put log info to 'stdout'
+> 
+> 	Do you want to run this program?[N/Yes] (note need to type Yes
+> 	if you do):Yes
+> 
+> 	reiserfs_open: the reiserfs superblock cannot be found on
+> 	/dev/loop0.
+> 
+> 	what the version of ReiserFS do you use[1-4]
+>         	(1)   3.6.x
+> 		(2) >=3.5.9 (introduced in the middle of 1999) (if you
+> 		use linux 2.2, choose this one)
+> 		(3) < 3.5.9 converted to new format (don't choose if
+> 		unsure)
+> 	        (4) < 3.5.9 (this is very old format, don't choose if
+> 		unsure)
+> 	        (X)   exit
+> 	1
+> 
+> 	Enter block size [4096]:
+> 	
+> 	
+> 	No journal device was specified. (If journal is not available,
+> 	re-run with --no-journal-available option specified).
+> 
+> 	Is journal default? (y/n)[y]:
+> 
+> 	Did you use resizer(y/n)[n]:
+> 
+> 	rebuild-sb: no uuid found, a new uuid was generated 		
+> 	(cd9f7433-6d06-4bc8-8816-22269692eb9c)
+> 
+> 	rebuild-sb: You either have a corrupted journal or have just
+> 	changed the start of the partition with some partition table
+> 	editor. If you are sure that the start of the partition is ok,
+> 	rebuild the journal header.
+> 	Do you want to rebuild the journal header? (y/n)[n]:
  
-> What's the best way to read off the meta-data for just that one file?
-> I've wanted to contribute something to Reiser4 development for a while
-> now.  
+you need to rebuild the journal header to proceed.
+the answer defaults to 'n' to avoid that block overwriting by mistake. 
 
-grub debugging is needed here, if libreiser4 reads the file correctly.
+> homer ~ # mkreiserfs /dev/loop0
+> homer ~ # reiserfsck --rebuild-tree --scan-whole-partition /dev/loop0
 
-probably reiser4progs/demos/busy, the 'cp' command, can reveal the 
-problem too.
+have you made a backup before mkfs?
 
-> Perhaps I can figure out what's causing this boot problem and fix
-> it. 
+The whole partition is wiped out or you decript it wrongly or the 
+partition table is still not correct. We may try to help with the 
+3rd case, although we cannot garantee the result. If you need our 
+assistance please visit www.namesys.com/support.html.
 
-it would be probably better to check first that the problem is not 
-fixed yet.
+> Again, without any result.
+> 
+> Lately, i joined #reiser4 on IRC, finding 'vs' (Vladimir Saveliev?)
+> willing to help (thanks again!). We ran the 'scan-reiserfs'-utility,
+> trying to find reiser leaf nodes on the loop device. The scan found 4
+> nodes, but to make sure not to miss anything, i decided to restore the
+> backup to the original data disk.
+> 
+> After restore, i ran decrypted the whole disk with
+> homer ~ # losetup -e aes-256 /dev/loop0 /dev/hdb
+> 
+> and tried to find any reiserfs related info with scan-reiserfs again.
+> Result:
+> 
+> homer ~ # ./scan-reiserfs /dev/loop0 1 151324236
+> main: 485
+> read failed
+> errno: Success
+> 
+> Has anyone an idea how to recover the data on that disk?
+> 
+> Thanks in advance,
+> 
+> Marcus
+> 
+> 
 
 -- 
 Vitaly
