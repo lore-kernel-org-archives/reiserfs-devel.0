@@ -1,145 +1,161 @@
-From: Marcus Fleige <marcus@detux.de>
-Subject: ReiserFS Recovery
-Date: Sun, 04 Dec 2005 23:27:16 +0100
-Message-ID: <43936D44.3090902@detux.de>
+From: Peter van Hardenberg <pvh@uvic.ca>
+Subject: Re: Two usage examples for attribute directories.
+Date: Sun, 04 Dec 2005 20:27:16 -0800
+Message-ID: <200512042027.16525.pvh@uvic.ca>
+References: <200511201317.12598.pvh@uvic.ca> <200512021649.54939.pvh@uvic.ca>
+ <43917967.4080008@st-andrews.ac.uk>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27184-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27187-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-reply-to: <43917967.4080008@st-andrews.ac.uk>
+Content-disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hi list,
+Hi Peter F, Hans, and all,
 
-i got a problem i need to get solved really badly. Maybe you can help?
-It is extremly important to me to get that data back.
+we had a great group meeting today and I think managed to come up with some 
+reasonable explanations. I will break the threading a bit to answer the 
+questions coherently, but I believe this answers all questions asked, so if 
+I've missed any, please let me know.
 
-For the situation:
+Let me begin by assuming that attributes are not in any way different from 
+normal files and show how that leads to some limitations. I will imagine a 
+more detailed use case.
 
-I got a linux server here with a data disk and a backup disk, both
-encrypted using loop-aes (mount options loop=/dev/loopX,
-encryption=aes-256) with the data disk based on reiserfs, the backup
-disk with the most important data on ext3. Everything was fine up to
-last sunday, when after a reboot _both_ disks rendered unmountable.
+Bundled apps. I would love to be able to distribute applications as 
+single-file bundles with all their resources in them, like this:
 
-A first diagnosis showed a defective partition table. Dumping the first
-MBs of the Disk, it seemed like the beginning of my disk had been
-overwritten, killing my partition table and my reiserfs headers with
-superblocks etc. Before anything else, i made a total backup of the
-encrypted disk to another machine.
+----------------------
 
-Mounting the drive died with the following:
+$ # look at the resource files contained in app/
+$ ls app/
+bin
+lib
+src
+var
+Makefile
+icon.png
+install.sh
 
-homer ~ # mount /exports
-mount: 	wrong fs type, bad option, bad superblock on /dev/loop0
-	missing codepage or other error
-	In some cases useful info is found in syslog - try
-        dmesg | tail  or so
+$ # run app
+$ ./app
+This version of app is not built for your platform.
+Please run "cd app/; ./configure; make;" to update the build for your 
+platform.
 
-dmesg says:
+$ # okay, we'll recompile app for our system
+$ cd app/; ./configure; make;
+Compiling app...
+Done.
 
-VFS: Can't find reiserfs filesystem on dev loop0
+$ # let's see if it works
+$ ./app
+Starting app...
 
-After that, i tried to fsck the partition:
+$ # yep, looks good! let's install it.
+$ sudo app/install.sh --prefix=/usr/local
+Installing app into /usr/local...
 
-	homer ~ # losetup -e aes-256 /dev/loop0 /dev/hdb5
-	Password:
-	homer ~ # reiserfsck /dev/loop0
-	reiserfsck 3.6.19 (2003 www.namesys.com)
-	
-	Will read-only check consistency of the filesystem on /dev/loop0
-	Will put log info to 'stdout'
-	
-	Do you want to run this program?[N/Yes] (note need to type Yes 	
-	if you do):Yes
+# Note that app is now installed so the ./ is no longer needed.
+$ app 
+Starting app...
 
-	reiserfs_open: the reiserfs superblock cannot be found on 		
-	/dev/loop0. Failed to open the filesystem.
+$ # done.
 
-	If the partition table has not been changed, and the partition
-	is valid  and  it really  contains  a reiserfs  partition,  then
-	the superblock  is corrupted and you need to run this utility
-	with --rebuild-sb.
+----------------------
 
-Do'h!
+That demonstrated using file-directories to contain resources. Any file-dir 
+application would add itself to its own path on startup. This would be 
+supremely useful for projects like Klik, and implements (I would say) ideally 
+the things that OS X is currently emulating with their "prog.app" 
+directories. 
 
-	homer ~ # reiserfsck --rebuild-sb /dev/loop0
-	reiserfsck 3.6.19 (2003 www.namesys.com)
+Still, say we'd like to be able to also specify some attributes for app, let's 
+say "author", "version", "name", "description", "contact", "category" -- 
+things that would be useful for creating a menu entry.
 
-	Will check superblock and rebuild it if needed
-	Will put log info to 'stdout'
+Now the directory begins to get ugly...
 
-	Do you want to run this program?[N/Yes] (note need to type Yes
-	if you do):Yes
+$ ls app/
+author
+bin
+category
+contact
+description
+lib
+name
+src
+var
+version
+Makefile
+icon.png
+install.sh
 
-	reiserfs_open: the reiserfs superblock cannot be found on
-	/dev/loop0.
+But which are attributes? If only our namespace provided us a way to seperate 
+one group of files from another... Aha! Why not a directory?
 
-	what the version of ReiserFS do you use[1-4]
-        	(1)   3.6.x
-		(2) >=3.5.9 (introduced in the middle of 1999) (if you
-		use linux 2.2, choose this one)
-		(3) < 3.5.9 converted to new format (don't choose if
-		unsure)
-	        (4) < 3.5.9 (this is very old format, don't choose if
-		unsure)
-	        (X)   exit
-	1
+$ ls app/@/
+author
+category
+contact
+description
+name
+version
+$ ls app/
+bin
+lib
+src
+var
+Makefile
+icon.png
+install.sh
 
-	Enter block size [4096]:
-	
-	
-	No journal device was specified. (If journal is not available,
-	re-run with --no-journal-available option specified).
+Ahh, much better. It also ensures we can preserve Hans' goal of not enforcing 
+unnatural structure.  What if I want to find all the files Hans is in any way 
+associated with, whether it is as "author", "contact", "inspiration", 
+whatever.
 
-	Is journal default? (y/n)[y]:
+I don't want to look into EVERY file on the disk if I don't have to. Instead, 
+I can just 
 
-	Did you use resizer(y/n)[n]:
+$ grep "Hans Reiser" */@/* 
 
-	rebuild-sb: no uuid found, a new uuid was generated 		
-	(cd9f7433-6d06-4bc8-8816-22269692eb9c)
+without having to grep through gig upon gig of other data. Of course, if 
+that's what I want to do, the option is still there...
 
-	rebuild-sb: You either have a corrupted journal or have just
-	changed the start of the partition with some partition table
-	editor. If you are sure that the start of the partition is ok,
-	rebuild the journal header.
-	Do you want to rebuild the journal header? (y/n)[n]:
+SO! Why privilege the @ directory with its own plugin? Why not just use it as 
+a convention?
 
+Efficiency. Files governed by the @ plug-in could have size restrictions, and 
+should be packed tightly with their parents. They might have special format 
+to fit more into a single disk read. They could be indexed by the operating 
+system to make searching for particular values fast.
 
-So, what now?
+Control. They might have strict data types or controlled grammars. The @ 
+directory might not actually be displayed in a standard "ls" of the directory 
+(like "...." isn't). 
 
-I read this: http://marc.theaimsgroup.com/?l=reiserfs&m=104861318421306&w=2
+Compatibility. The @ directory plugin should definitely have compatibility 
+with xattr syntax so that existing software would be able to use Reiser 
+attributes "out of the box" without any source changes. That would be a big 
+win for driving adoption.
 
-and tried:
+Thus, I conclude that while file-directories are valuable and closely related 
+to attribute directories, but the two serve different roles and have 
+different design goals, so should be served by different plugins.
 
-homer ~ # mkreiserfs /dev/loop0
-homer ~ # reiserfsck --rebuild-tree --scan-whole-partition /dev/loop0
+On December 3, 2005 02:54 am, Peter Foldiak wrote:
+> Are you sure the simple "/" is not a more elegant and simple way to do
+> all this.    Peter
 
-Again, without any result.
+No, I'm not sure, but I'm hoping we'll find one by talking about it.
 
-Lately, i joined #reiser4 on IRC, finding 'vs' (Vladimir Saveliev?)
-willing to help (thanks again!). We ran the 'scan-reiserfs'-utility,
-trying to find reiser leaf nodes on the loop device. The scan found 4
-nodes, but to make sure not to miss anything, i decided to restore the
-backup to the original data disk.
-
-After restore, i ran decrypted the whole disk with
-homer ~ # losetup -e aes-256 /dev/loop0 /dev/hdb
-
-and tried to find any reiserfs related info with scan-reiserfs again.
-Result:
-
-homer ~ # ./scan-reiserfs /dev/loop0 1 151324236
-main: 485
-read failed
-errno: Success
-
-Has anyone an idea how to recover the data on that disk?
-
-Thanks in advance,
-
-Marcus
+-- 
+Peter van Hardenberg (pvh@pvh.ca)
+Victoria, BC, Canada
