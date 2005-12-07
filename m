@@ -1,47 +1,51 @@
-From: Ivan Pulleyn <ivan@infoblox.com>
-Subject: Re: some details about winfs
-Date: Mon, 5 Dec 2005 17:55:36 -0800
-Message-ID: <755b32b20512051755p456d4c83m3c7b8da9614f77fe@mail.gmail.com>
-References: <f18a8d980512042244l163ac426v99f45caaddc45b73@mail.gmail.com>
-	 <200512050017.01783.pvh@uvic.ca>
+From: =?ISO-8859-1?Q?Artur_Mak=F3wka?= <juice@ursynow.2a.pl>
+Subject: reiser4: fd -1 problem ?
+Date: Wed, 07 Dec 2005 01:04:13 +0100
+Message-ID: <439626FD.7020500@ursynow.2a.pl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-27203-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27209-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Sender: ivan.pulleyn@gmail.com
-In-Reply-To: <200512050017.01783.pvh@uvic.ca>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Peter van Hardenberg <pvh@uvic.ca>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-The only think I found useful about watching this video was that it
-inspired me to fix my mplayer to support .wmv files.
+Hello, i've been investigating this problem for few weeks, and it seems 
+reiser4 can be reason for this.
 
-Ivan...
+My apache process is from no clear reason suddenly peaking to 95% CPU 
+usage and it stays that way until i kill it and start again.
 
-On 12/5/05, Peter van Hardenberg <pvh@uvic.ca> wrote:
-> Is there a transcript anywhere?
-> -pvh
->
-> On December 4, 2005 10:44 pm, Bedros Hanounik wrote:
-> > an interview with MS transactional  file system guy (winfs)
-> >
-> > here
-> >
-> > http://channel9.msdn.com/Showpost.aspx?postid=3D142120
-> >
-> > it's in wmv format; you need mplayer with win32codecs library. It's 140=
-MB
-> > file; and very informative, but made me think less of winFS.
-> >
-> > -B
->
-> --
-> Peter van Hardenberg (pvh@pvh.ca)
-> Victoria, BC, Canada
->
+It happens 6-7 times a day, i have hosting services on my server. I 
+thought it was apache fault, but it strings shows this:
+
+[pid 31610] munmap(0xb6f29000, 729088)  = 0
+[pid 31610] mmap2(NULL, 729088, PROT_READ|PROT_WRITE, 
+MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb6f29000
+[pid 31610] munmap(0xb6f29000, 729088)  = 0
+[pid 31610] mmap2(NULL, 729088, PROT_READ|PROT_WRITE, 
+MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb6f29000
+
+
+in endless loop, when this strange 'lock' happens.
+
+is it a problem of fd -1 ? of course that could be also apache bug, that 
+it can't handle wrong fd number, but why there is wrong fd number?
+
+i ran reiser4.fsck and it didnt help.
+
+i use kernel 2.6.12.6 with latest 2.6.12 reiser4 patch, as it seemed the 
+most stable from recent releases.
+
+What could be the problem here, and how can i repair it ? should i keep 
+running fsck.reiser4 until it finds it ?
+
+it doesnt happen very often, but like i said 6-7 times a day, but it 
+varies, sometimes it more often sometimes almost 0.
+
+thanks in advance for response. (this is probably not Apache issue, i 
+already asked for this many many times)
+
