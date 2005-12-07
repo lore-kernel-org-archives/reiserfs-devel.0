@@ -1,71 +1,100 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: reiser4: fd -1 problem ?
-Date: Wed, 07 Dec 2005 13:57:11 +0300
-Message-ID: <4396C007.3050408@namesys.com>
-References: <439626FD.7020500@ursynow.2a.pl>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] reiserfs: close open transactions on error path
+Date: Wed, 7 Dec 2005 13:45:54 -0500
+Message-ID: <20051207184554.GA20610@locomotive.unixthugs.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-27212-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27215-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <439626FD.7020500@ursynow.2a.pl>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: =?ISO-8859-1?Q?Artur_Mak=F3wka?= <juice@ursynow.2a.pl>
-Cc: reiserfs-list@namesys.com, Alexander Lyamin aka FLX <flx@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-Hello
+ The following patch fixes a bug where if the journal is aborted, it can
+ leave a transaction open. The result will be a BUG when another code path
+ attempts to start a transaction and will get a "nesting into different fs"
+ error, since current->journal_info will be left non-NULL.
 
-Artur Mak=F3wka wrote:
-> Hello, i've been investigating this problem for few weeks, and it seems
-> reiser4 can be reason for this.
->=20
-> My apache process is from no clear reason suddenly peaking to 95% CPU
-> usage and it stays that way until i kill it and start again.
->=20
-> It happens 6-7 times a day, i have hosting services on my server. I
-> thought it was apache fault, but it strings shows this:
->=20
-> [pid 31610] munmap(0xb6f29000, 729088)  =3D 0
-> [pid 31610] mmap2(NULL, 729088, PROT_READ|PROT_WRITE,
-> MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) =3D 0xb6f29000
-> [pid 31610] munmap(0xb6f29000, 729088)  =3D 0
-> [pid 31610] mmap2(NULL, 729088, PROT_READ|PROT_WRITE,
-> MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) =3D 0xb6f29000
->=20
->=20
-> in endless loop, when this strange 'lock' happens.
->=20
-> is it a problem of fd -1 ?=20
+ Original fix against SUSE kernel by Chris Mason <mason@suse.com>
 
--1 is fine because MAP_ANONYMOUS is set.
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
-> of course that could be also apache bug, that
-> it can't handle wrong fd number, but why there is wrong fd number?
->=20
-
-they are using MAP_ANONYMOUS, fd is ignored in that case.
-
-> i ran reiser4.fsck and it didnt help.
->=20
-
-what did reiser4.fsck report? No corruptions found?
-
-> i use kernel 2.6.12.6 with latest 2.6.12 reiser4 patch, as it seemed the
-> most stable from recent releases.
->=20
-> What could be the problem here, and how can i repair it ? should i keep
-> running fsck.reiser4 until it finds it ?
->=20
-> it doesnt happen very often, but like i said 6-7 times a day, but it
-> varies, sometimes it more often sometimes almost 0.
->=20
-> thanks in advance for response. (this is probably not Apache issue, i
-> already asked for this many many times)
->=20
-
-so far it does not look as reiser4 problem either.
-
-Flex, can we have apache server running on reiser4 for test purposes?
+diff -ruNpX dontdiff linux-2.6.14.orig/fs/reiserfs/inode.c linux-2.6.14.fixed/fs/reiserfs/inode.c
+--- linux-2.6.14.orig/fs/reiserfs/inode.c	2005-10-27 20:02:08.000000000 -0400
++++ linux-2.6.14.fixed/fs/reiserfs/inode.c	2005-12-05 17:10:37.000000000 -0500
+@@ -32,6 +32,7 @@ void reiserfs_delete_inode(struct inode 
+ 	    JOURNAL_PER_BALANCE_CNT * 2 +
+ 	    2 * REISERFS_QUOTA_INIT_BLOCKS(inode->i_sb);
+ 	struct reiserfs_transaction_handle th;
++	int err;
+ 
+ 	truncate_inode_pages(&inode->i_data, 0);
+ 
+@@ -49,15 +50,13 @@ void reiserfs_delete_inode(struct inode 
+ 		}
+ 		reiserfs_update_inode_transaction(inode);
+ 
+-		if (reiserfs_delete_object(&th, inode)) {
+-			up(&inode->i_sem);
+-			goto out;
+-		}
++		err = reiserfs_delete_object(&th, inode);
+ 
+ 		/* Do quota update inside a transaction for journaled quotas. We must do that
+ 		 * after delete_object so that quota updates go into the same transaction as
+ 		 * stat data deletion */
+-		DQUOT_FREE_INODE(inode);
++		if (!err) 
++			DQUOT_FREE_INODE(inode);
+ 
+ 		if (journal_end(&th, inode->i_sb, jbegin_count)) {
+ 			up(&inode->i_sem);
+@@ -66,6 +65,12 @@ void reiserfs_delete_inode(struct inode 
+ 
+ 		up(&inode->i_sem);
+ 
++		/* check return value from reiserfs_delete_object after
++		 * ending the transaction
++		 */
++		if (err)
++		    goto out;
++
+ 		/* all items of file are deleted, so we can remove "save" link */
+ 		remove_save_link(inode, 0 /* not truncate */ );	/* we can't do anything
+ 								 * about an error here */
+@@ -2099,6 +2104,7 @@ int reiserfs_truncate_file(struct inode 
+ 	struct page *page = NULL;
+ 	int error;
+ 	struct buffer_head *bh = NULL;
++	int err2;
+ 
+ 	reiserfs_write_lock(p_s_inode->i_sb);
+ 
+@@ -2137,13 +2143,17 @@ int reiserfs_truncate_file(struct inode 
+ 		   either appears truncated properly or not truncated at all */
+ 		add_save_link(&th, p_s_inode, 1);
+ 	error = reiserfs_do_truncate(&th, p_s_inode, page, update_timestamps);
+-	if (error)
+-		goto out;
+ 	error =
+ 	    journal_end(&th, p_s_inode->i_sb, JOURNAL_PER_BALANCE_CNT * 2 + 1);
+ 	if (error)
+ 		goto out;
+-
++	
++	/* check reiserfs_do_truncate after ending the transaction */
++	if (err2) {
++		error = err2;
++  		goto out;
++	}
++	
+ 	if (update_timestamps) {
+ 		error = remove_save_link(p_s_inode, 1 /* truncate */ );
+ 		if (error)
+-- 
+Jeff Mahoney
+SuSE Labs
