@@ -1,47 +1,40 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Re: Two usage examples for attribute directories.
-Date: Fri, 09 Dec 2005 22:11:16 -0500
-Message-ID: <87y82tbq97.fsf@evinrude.uhoreg.ca>
-References: <200511201317.12598.pvh@uvic.ca> <200512021649.54939.pvh@uvic.ca>
-	<43917967.4080008@st-andrews.ac.uk> <200512042027.16525.pvh@uvic.ca>
-	<43983F5E.3080704@st-andrews.ac.uk>
-	<87hd9jqq4d.fsf@evinrude.uhoreg.ca>
-	<5c49b0ed0512091711y8b13c46lcbe627e28c708f95@mail.gmail.com>
+From: iwan@durgerlan.nl
+Subject: reiser4 error?
+Date: Sat, 10 Dec 2005 10:16:33 +0100 (CET)
+Message-ID: <20051210091633.4B4CCE2C08C@durgerlan.nl>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-27248-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27250-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <5c49b0ed0512091711y8b13c46lcbe627e28c708f95@mail.gmail.com>
-	(Nate Diller's message of "Fri, 9 Dec 2005 17:11:55 -0800")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-On Fri, 9 Dec 2005 17:11:55 -0800, Nate Diller <nate.diller@gmail.com> said:
 
-> This problem is already solved.
+Hello,
 
-[...]
+I was on #reiser4 on irc.oftc.net yesterday to ask about an error I got and
+someone sugested that I send an email to this list... here is the
+information:
 
-> so...
+I'm using reiser4 as off today and I've got this error in dmegs:
 
-> $ls -aa /home/nate
-> .
-> ..
-> ..icon.png
-> .bash_rc
-> icon.png
+<4>reiser4[cp(5184)]: update_stale_dk (fs/reiser4/search.c:1363)[nikita-38210]:
+WARNING: stale dk
 
-Dotfiles are horrible, IMHO, but that's just me.  I would prefer
-foo/@/icon.png over foo/..icon.png.  But yes, that does solve the
-collision problem.
+does anyone know what that could mean?
 
+I'm using Linux backup.unetix.nl 2.6.14.1-ARC12 #2 SMP Fri Dec 9 16:47:25 CET 2005 i686 unknown unknown GNU/Linux
+with the corresponding reiser4 packages from ftp.namesys.com
+the reiser4 partition is on an Areca ARC1260 RAID card:
+/dev/sdb  6.1T  174G  5.9T   3% /backup
+
+any help is appriciated.
 -- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
-
+   ,-,_|\   - UnetIX Linux Solutions
+  /      \  - http://www.unetix.nl/
+  \_,--\_/  - http://www.vexira.nl/
+        v   - Iwan Boskamp
