@@ -1,7 +1,7 @@
-From: Bedros Hanounik <2bedros@gmail.com>
+From: michael chang <thenewme91@gmail.com>
 Subject: Re: Reiserfsck can't fix FS
-Date: Mon, 12 Dec 2005 10:22:39 -0800
-Message-ID: <f18a8d980512121022j614f431dv62adbbc3caf5a6eb@mail.gmail.com>
+Date: Mon, 12 Dec 2005 17:15:36 -0500
+Message-ID: <b14e81f00512121415j3c415d45q5cdbeadd149d2eab@mail.gmail.com>
 References: <1129303303.3370.4.camel@desktop>
 	 <200510142008.42253.vitaly@namesys.com>
 	 <1129484435.16949.1.camel@desktop>
@@ -9,174 +9,97 @@ References: <1129303303.3370.4.camel@desktop>
 	 <53246.213.249.155.242.1129721262.squirrel@213.249.155.242>
 	 <b14e81f00510201255x3ee436afveb8222f43f69f8a@mail.gmail.com>
 	 <10442.195.137.105.19.1134285670.squirrel@195.137.105.19>
+	 <f18a8d980512121022j614f431dv62adbbc3caf5a6eb@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; 
-	boundary="----=_Part_26262_26140916.1134411759101"
-Return-path: <reiserfs-list-return-27273-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-27275-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <10442.195.137.105.19.1134285670.squirrel@195.137.105.19>
+In-Reply-To: <f18a8d980512121022j614f431dv62adbbc3caf5a6eb@mail.gmail.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: lordvan@lordvan.com
-Cc: michael chang <thenewme91@gmail.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Bedros Hanounik <2bedros@gmail.com>
+Cc: lordvan@lordvan.com, reiserfs-list@namesys.com
 
-------=_Part_26262_26140916.1134411759101
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-I had the exact same problem on a 300GB hard drive over USB with ReiserFS
-
-by running resiserfsck, the tools suggested running it again with
---rebuild-tree option and it was a mistake.
-
-reiserfsck --rebuild-tree screwed things  up big time; but I had a backup
-copy of my stuff, so I reformatted the HD.
-
-I would probably never use the option --rebuild-tree, only --fix-fixable.
-
-I'm not sure if the partition actually was corrupted. I was able to access
-it, but on start when mounting the partition it gave me error messages;
-something like "file system not clean"
-
-On 12/10/05, Thomas Raschbacher <lordvan@lordvan.com> wrote:
->
-> Hi,
->
-> Finally got my new HDD (300 GB UDMA133 :D no usb anymore ..)
-> i backed up my data and ran reiserfsck on one of the other partitions
-> which were supposedly damaged.
-> it didn't work out (stopped at same point always)
->
-> then i made a backup copy of my backup copy and ran reiserfsck on that an=
-d
-> it worked just fine.
->
-> -> it seems that my filesystems never had errors in the first place but
-> running reiserfsck on my USB hdd caused the problems in the first place.
-> fortunately i could recover all my digital camera photos (which i will
-> definitely back up on DVD from now on!
-> some mp3's lost the filenames but who really cares about that anyway.
->
-> i suggest adding to the reiserfsck docs that running it on usb-hdds might
-> cause problems due to usb hdd driver bugs or whatever .. or at least a
-> note that if it fails on usb-hdd copy it to a non usb hdd and try again.
->
-> Regards,
->   Thomas R
-> P.S.: I never enforced bandwidth allocation. but i still dont' know what
-> the problem is with this stupid USB2 storage stuffs .. it worked fine wit=
-h
-> some old kernel (either early 2.6 or still 2.4 ..) any ideas what can
-> cause this kind of problems with usb hdds? or should i post to some kerne=
-l
-> mailing list/newsgroup?
->
->
-> --
-> -----BEGIN GEEK CODE BLOCK-----
-> GCS/CC/E/M/MU/S d- s: a--- C++++(++) UL++++ P+ L++++ E W+++ N+++ o-- K w-=
--
-> O
-> M-- V- PS+ PE-- Y++ PGP+++ t+++ 5+ X- R tv b++++ DI- D+ G++ e-->+++++ h--
-> !r
-> z-
-> ------END GEEK CODE BLOCK------
->
-> On Thu, October 20, 2005 19:55, michael chang said:
-> > On 10/19/05, Thomas Raschbacher <lordvan@lordvan.com> wrote:
-> >> Actually I did send it SIGUSR1 signals to get the progress so it reall=
-y
-> >> seems to work fine.
-> >> I intend to get another HDD (internal) and see if i can copy the FS an=
-d
-> >> then fix it there.
-> >> how would I best copy the filesystem? DD ?
-> >> (The PRoblems I had before with this disc are USB-storage related wher=
-e
-> >> the disc does stop working if one reads/writes too much data at once o=
-n
-> >> USB2)
-> >
-> > The USB2 data loss thing sounds like a bandwidth-allocation problem;
-> > since it's not always advisible to enforce it by default (well, I
-> > don't know about that, but I don't enforce it in any of my hand-built
-> > kernels).  What you are doing next sounds reasonable, please inform us
-> > how well it goes.
-> >
-> > --
-> > ~Mike
-> >  - Just my two cents
-> >  - No man is an island, and no man is unable.
-> >
->
->
->
-
-------=_Part_26262_26140916.1134411759101
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-I had the exact same problem on a 300GB hard drive over USB with ReiserFS<b=
-r><br>by running resiserfsck, the tools suggested running it again with --r=
-ebuild-tree option and it was a mistake. <br><br>reiserfsck --rebuild-tree =
-screwed things&nbsp; up big time; but I had a backup copy of my stuff, so I=
- reformatted the HD.
-<br><br>I would probably never use the option --rebuild-tree, only --fix-fi=
-xable. <br><br>I'm
-not sure if the partition actually was corrupted. I was able to access
-it, but on start when mounting the partition it gave me error messages;
-something like &quot;file system not clean&quot;
-<br><br><div><span class=3D"gmail_quote">On 12/10/05, <b class=3D"gmail_sen=
-dername">Thomas Raschbacher</b> &lt;<a href=3D"mailto:lordvan@lordvan.com">=
-lordvan@lordvan.com</a>&gt; wrote:</span><blockquote class=3D"gmail_quote" =
-style=3D"border-left: 1px solid rgb(204, 204, 204); margin: 0pt 0pt 0pt 0.8=
-ex; padding-left: 1ex;">
-Hi,<br><br>Finally got my new HDD (300 GB UDMA133 :D no usb anymore ..)<br>=
-i backed up my data and ran reiserfsck on one of the other partitions<br>wh=
-ich were supposedly damaged.<br>it didn't work out (stopped at same point a=
-lways)
-<br><br>then i made a backup copy of my backup copy and ran reiserfsck on t=
-hat and<br>it worked just fine.<br><br>-&gt; it seems that my filesystems n=
-ever had errors in the first place but<br>running reiserfsck on my USB hdd =
-caused the problems in the first place.
-<br>fortunately i could recover all my digital camera photos (which i will<=
-br>definitely back up on DVD from now on!<br>some mp3's lost the filenames =
-but who really cares about that anyway.<br><br>i suggest adding to the reis=
-erfsck docs that running it on usb-hdds might
-<br>cause problems due to usb hdd driver bugs or whatever .. or at least a<=
-br>note that if it fails on usb-hdd copy it to a non usb hdd and try again.=
-<br><br>Regards,<br>&nbsp;&nbsp;Thomas R<br>P.S.: I never enforced bandwidt=
-h allocation. but i still dont' know what
-<br>the problem is with this stupid USB2 storage stuffs .. it worked fine w=
-ith<br>some old kernel (either early 2.6 or still 2.4 ..) any ideas what ca=
-n<br>cause this kind of problems with usb hdds? or should i post to some ke=
-rnel
-<br>mailing list/newsgroup?<br><br><br>--<br>-----BEGIN GEEK CODE BLOCK----=
--<br>GCS/CC/E/M/MU/S d- s: a--- C++++(++) UL++++ P+ L++++ E W+++ N+++ o-- K=
- w-- O<br>M-- V- PS+ PE-- Y++ PGP+++ t+++ 5+ X- R tv b++++ DI- D+ G++ e--&g=
-t;+++++ h-- !r
-<br>z-<br>------END GEEK CODE BLOCK------<br><br>On Thu, October 20, 2005 1=
-9:55, michael chang said:<br>&gt; On 10/19/05, Thomas Raschbacher &lt;<a hr=
-ef=3D"mailto:lordvan@lordvan.com">lordvan@lordvan.com</a>&gt; wrote:<br>&gt=
-;&gt; Actually I did send it SIGUSR1 signals to get the progress so it real=
-ly
-<br>&gt;&gt; seems to work fine.<br>&gt;&gt; I intend to get another HDD (i=
-nternal) and see if i can copy the FS and<br>&gt;&gt; then fix it there.<br=
->&gt;&gt; how would I best copy the filesystem? DD ?<br>&gt;&gt; (The PRobl=
-ems I had before with this disc are USB-storage related where
-<br>&gt;&gt; the disc does stop working if one reads/writes too much data a=
-t once on<br>&gt;&gt; USB2)<br>&gt;<br>&gt; The USB2 data loss thing sounds=
- like a bandwidth-allocation problem;<br>&gt; since it's not always advisib=
-le to enforce it by default (well, I
-<br>&gt; don't know about that, but I don't enforce it in any of my hand-bu=
-ilt<br>&gt; kernels).&nbsp;&nbsp;What you are doing next sounds reasonable,=
- please inform us<br>&gt; how well it goes.<br>&gt;<br>&gt; --<br>&gt; ~Mik=
-e<br>&gt;&nbsp;&nbsp;- Just my two cents
-<br>&gt;&nbsp;&nbsp;- No man is an island, and no man is unable.<br>&gt;<br=
-><br><br></blockquote></div><br>
-
-------=_Part_26262_26140916.1134411759101--
+T24gMTIvMTIvMDUsIEJlZHJvcyBIYW5vdW5payA8MmJlZHJvc0BnbWFpbC5jb20+IHdyb3RlOgo+
+IEkgaGFkIHRoZSBleGFjdCBzYW1lIHByb2JsZW0gb24gYSAzMDBHQiBoYXJkIGRyaXZlIG92ZXIg
+VVNCIHdpdGggUmVpc2VyRlMKClVTQiBpc24ndCB0aGUgc2FtZSBhcyBvdGhlciBoYXJkIGRyaXZl
+IGludGVyZmFjZXMuLi4gbWF5YmUgdGhlcmUncwpzb21ldGhpbmcgbm90IGFjdGluZyBuaWNlLiAg
+SUlSQywgVVNCIHRvb2sgbG9uZ2VyIHRoYW4gQVRBL0lERSBhbmQKU0NTSSB0byBnZXQgcmVhc29u
+YWJsZSBidXMgc3BlZWRzLCBhbmQgbm93YWRheXMgdmVuZGVycyBhcmUgc3RpbGwKcHJldHR5IGNo
+ZWFwIHdoZW4gaXQgY29tZXMgdG8gVVNCIHBlcmZvcm1hbmNlIChtYXliZSBlbm91Z2ggcG93ZXIg
+dG8KdXNlIGEgbW91c2UgYW5kIGtleWJvYXJkLCBidXQgcmFyZWx5IGVub3VnaCBmb3IgYW55IHNl
+cmlvdXMgd29yayBvbgphbnl0aGluZyBsYXJnZXIgdGhhbiBhIDUxMiBVU0Igc3RpY2spCgo+IGJ5
+IHJ1bm5pbmcgcmVzaXNlcmZzY2ssIHRoZSB0b29scyBzdWdnZXN0ZWQgcnVubmluZyBpdCBhZ2Fp
+biB3aXRoCj4gLS1yZWJ1aWxkLXRyZWUgb3B0aW9uIGFuZCBpdCB3YXMgYSBtaXN0YWtlLgo+Cj4g
+cmVpc2VyZnNjayAtLXJlYnVpbGQtdHJlZSBzY3Jld2VkIHRoaW5ncyAgdXAgYmlnIHRpbWU7IGJ1
+dCBJIGhhZCBhIGJhY2t1cAo+IGNvcHkgb2YgbXkgc3R1ZmYsIHNvIEkgcmVmb3JtYXR0ZWQgdGhl
+IEhELgoKSUlSQywgLS1yZWJ1aWxkLXRyZWUgaXMga25vd24gdG8gYnJpbmcgYmFjayB0aGluZ3Mg
+ZnJvbSB0aGUgZGVhZC4gCldoZW4geW91IHJlZm9ybWF0dGVkIHRoZSBIRCwgZGlkIHlvdSB6ZXJv
+IGl0IG91dCBmaXJzdD8gIElmIG5vdCwgdGhlbgphbnkgZnV0dXJlIHJlYnVpbGQtdHJlZSBtaWdo
+dCBzY3JldyB0aGluZ3MgdXAgYWdhaW4uICBKdXN0IHNvbWV0aGluZwp0byBjb25zaWRlci4KCj4g
+SSB3b3VsZCBwcm9iYWJseSBuZXZlciB1c2UgdGhlIG9wdGlvbiAtLXJlYnVpbGQtdHJlZSwgb25s
+eSAtLWZpeC1maXhhYmxlLgoKWWVhaCwgcHJvYmFibHkgYSBnb29kIGlkZWEuLi4gYWx0aG91Z2gg
+aWYgeW91ciByZWlzZXJmcyBpcyBpbiBhIHN0YXRlCndoZXJlIGl0J3MgdGVsbGluZyB5b3UgdG8g
+LS1yZWJ1aWxkLXRyZWUsIGl0J3MgdGltZSB0byBkdW1wIGl0IHRvCmFub3RoZXIgZGlzayBvciB0
+byBDRC1SV3Mgb3IgRFZEIG9yIHNvbWV0aGluZyBhbmQgcmVmb3JtYXQsIHplcm8gb3V0LAphbmQg
+cmVzdG9yZS4KCj4gSSdtIG5vdCBzdXJlIGlmIHRoZSBwYXJ0aXRpb24gYWN0dWFsbHkgd2FzIGNv
+cnJ1cHRlZC4gSSB3YXMgYWJsZSB0byBhY2Nlc3MKPiBpdCwgYnV0IG9uIHN0YXJ0IHdoZW4gbW91
+bnRpbmcgdGhlIHBhcnRpdGlvbiBpdCBnYXZlIG1lIGVycm9yIG1lc3NhZ2VzOwo+IHNvbWV0aGlu
+ZyBsaWtlICJmaWxlIHN5c3RlbSBub3QgY2xlYW4iCgpJSVJDIHRoaXMgaXMgYW4gaW50ZXJuYWwg
+dGhpbmcgLSBpdCBkb2Vzbid0IG1lYW4gdGhlcmUgYXJlIGVycm9ycyBvbgppdCBwZXIgc2UsIGl0
+IGp1c3QgbWVhbnMgdGhhdCB5b3UgZGlkbid0IHNodXQgZG93biBwcm9wZXJseSBhdCBsZWFzdApv
+bmNlIGFuZCB0aGUgbWFjaGluZSBkaWRuJ3QgbWFyayB0aGUgZmlsZXlzdGVtIGFzIGNsZWFuIC0g
+dGhlcmUgbWF5IG9yCm1heSBub3QgYmUgYW4gaW5jb21wbGV0ZSB3cml0ZSA9PiBlcnJvciBvbiB5
+b3VyIGRpc2suICBTbyBsb25nIGFzIHlvdQpkb24ndCBnZXQgYW55IG1ham9yIGVycm9ycywgeW91
+IHNob3VsZCBiZSBva2F5LgoKPgo+IE9uIDEyLzEwLzA1LCBUaG9tYXMgUmFzY2hiYWNoZXIgPGxv
+cmR2YW5AbG9yZHZhbi5jb20+IHdyb3RlOgo+ID4gSGksCj4gPgo+ID4gRmluYWxseSBnb3QgbXkg
+bmV3IEhERCAoMzAwIEdCIFVETUExMzMgOkQgbm8gdXNiIGFueW1vcmUgLi4pCj4gPiBpIGJhY2tl
+ZCB1cCBteSBkYXRhIGFuZCByYW4gcmVpc2VyZnNjayBvbiBvbmUgb2YgdGhlIG90aGVyIHBhcnRp
+dGlvbnMKPiA+IHdoaWNoIHdlcmUgc3VwcG9zZWRseSBkYW1hZ2VkLgo+ID4gaXQgZGlkbid0IHdv
+cmsgb3V0IChzdG9wcGVkIGF0IHNhbWUgcG9pbnQgYWx3YXlzKQo+ID4KPiA+IHRoZW4gaSBtYWRl
+IGEgYmFja3VwIGNvcHkgb2YgbXkgYmFja3VwIGNvcHkgYW5kIHJhbiByZWlzZXJmc2NrIG9uIHRo
+YXQgYW5kCj4gPiBpdCB3b3JrZWQganVzdCBmaW5lLgo+ID4KPiA+IC0+IGl0IHNlZW1zIHRoYXQg
+bXkgZmlsZXN5c3RlbXMgbmV2ZXIgaGFkIGVycm9ycyBpbiB0aGUgZmlyc3QgcGxhY2UgYnV0Cj4g
+PiBydW5uaW5nIHJlaXNlcmZzY2sgb24gbXkgVVNCIGhkZCBjYXVzZWQgdGhlIHByb2JsZW1zIGlu
+IHRoZSBmaXJzdCBwbGFjZS4KPiA+IGZvcnR1bmF0ZWx5IGkgY291bGQgcmVjb3ZlciBhbGwgbXkg
+ZGlnaXRhbCBjYW1lcmEgcGhvdG9zICh3aGljaCBpIHdpbGwKPiA+IGRlZmluaXRlbHkgYmFjayB1
+cCBvbiBEVkQgZnJvbSBub3cgb24hCj4gPiBzb21lIG1wMydzIGxvc3QgdGhlIGZpbGVuYW1lcyBi
+dXQgd2hvIHJlYWxseSBjYXJlcyBhYm91dCB0aGF0IGFueXdheS4KPiA+Cj4gPiBpIHN1Z2dlc3Qg
+YWRkaW5nIHRvIHRoZSByZWlzZXJmc2NrIGRvY3MgdGhhdCBydW5uaW5nIGl0IG9uIHVzYi1oZGRz
+IG1pZ2h0Cj4gPiBjYXVzZSBwcm9ibGVtcyBkdWUgdG8gdXNiIGhkZCBkcml2ZXIgYnVncyBvciB3
+aGF0ZXZlciAuLiBvciBhdCBsZWFzdCBhCj4gPiBub3RlIHRoYXQgaWYgaXQgZmFpbHMgb24gdXNi
+LWhkZCBjb3B5IGl0IHRvIGEgbm9uIHVzYiBoZGQgYW5kIHRyeSBhZ2Fpbi4KPiA+Cj4gPiBSZWdh
+cmRzLAo+ID4gICBUaG9tYXMgUgo+ID4gUC5TLjogSSBuZXZlciBlbmZvcmNlZCBiYW5kd2lkdGgg
+YWxsb2NhdGlvbi4gYnV0IGkgc3RpbGwgZG9udCcga25vdyB3aGF0Cj4gPiB0aGUgcHJvYmxlbSBp
+cyB3aXRoIHRoaXMgc3R1cGlkIFVTQjIgc3RvcmFnZSBzdHVmZnMgLi4gaXQgd29ya2VkIGZpbmUg
+d2l0aAo+ID4gc29tZSBvbGQga2VybmVsIChlaXRoZXIgZWFybHkgMi42IG9yIHN0aWxsIDIuNCAu
+LikgYW55IGlkZWFzIHdoYXQgY2FuCj4gPiBjYXVzZSB0aGlzIGtpbmQgb2YgcHJvYmxlbXMgd2l0
+aCB1c2IgaGRkcz8gb3Igc2hvdWxkIGkgcG9zdCB0byBzb21lIGtlcm5lbAo+ID4gbWFpbGluZyBs
+aXN0L25ld3Nncm91cD8KPiA+Cj4gPgo+ID4gLS0KPiA+IC0tLS0tQkVHSU4gR0VFSyBDT0RFIEJM
+T0NLLS0tLS0KPiA+IEdDUy9DQy9FL00vTVUvUyBkLSBzOiBhLS0tIEMrKysrKCsrKSBVTCsrKysg
+UCsgTCsrKysgRSBXKysrIE4rKysgby0tIEsgdy0tCj4gTwo+ID4gTS0tIFYtIFBTKyBQRS0tIFkr
+KyBQR1ArKysgdCsrKyA1KyBYLSBSIHR2IGIrKysrIERJLSBEKyBHKysgZS0tPisrKysrIGgtLQo+
+ICFyCj4gPiB6LQo+ID4gLS0tLS0tRU5EIEdFRUsgQ09ERSBCTE9DSy0tLS0tLQo+ID4KPiA+IE9u
+IFRodSwgT2N0b2JlciAyMCwgMjAwNSAxOTo1NSwgbWljaGFlbCBjaGFuZyBzYWlkOgo+ID4gPiBP
+biAxMC8xOS8wNSwgVGhvbWFzIFJhc2NoYmFjaGVyIDxsb3JkdmFuQGxvcmR2YW4uY29tPiB3cm90
+ZToKPiA+ID4+IEFjdHVhbGx5IEkgZGlkIHNlbmQgaXQgU0lHVVNSMSBzaWduYWxzIHRvIGdldCB0
+aGUgcHJvZ3Jlc3Mgc28gaXQgcmVhbGx5Cj4gPiA+PiBzZWVtcyB0byB3b3JrIGZpbmUuCj4gPiA+
+PiBJIGludGVuZCB0byBnZXQgYW5vdGhlciBIREQgKGludGVybmFsKSBhbmQgc2VlIGlmIGkgY2Fu
+IGNvcHkgdGhlIEZTIGFuZAo+ID4gPj4gdGhlbiBmaXggaXQgdGhlcmUuCj4gPiA+PiBob3cgd291
+bGQgSSBiZXN0IGNvcHkgdGhlIGZpbGVzeXN0ZW0/IEREID8KPiA+ID4+IChUaGUgUFJvYmxlbXMg
+SSBoYWQgYmVmb3JlIHdpdGggdGhpcyBkaXNjIGFyZSBVU0Itc3RvcmFnZSByZWxhdGVkIHdoZXJl
+Cj4gPiA+PiB0aGUgZGlzYyBkb2VzIHN0b3Agd29ya2luZyBpZiBvbmUgcmVhZHMvd3JpdGVzIHRv
+byBtdWNoIGRhdGEgYXQgb25jZSBvbgo+ID4gPj4gVVNCMikKPiA+ID4KPiA+ID4gVGhlIFVTQjIg
+ZGF0YSBsb3NzIHRoaW5nIHNvdW5kcyBsaWtlIGEgYmFuZHdpZHRoLWFsbG9jYXRpb24gcHJvYmxl
+bTsKPiA+ID4gc2luY2UgaXQncyBub3QgYWx3YXlzIGFkdmlzaWJsZSB0byBlbmZvcmNlIGl0IGJ5
+IGRlZmF1bHQgKHdlbGwsIEkKPiA+ID4gZG9uJ3Qga25vdyBhYm91dCB0aGF0LCBidXQgSSBkb24n
+dCBlbmZvcmNlIGl0IGluIGFueSBvZiBteSBoYW5kLWJ1aWx0Cj4gPiA+IGtlcm5lbHMpLiAgV2hh
+dCB5b3UgYXJlIGRvaW5nIG5leHQgc291bmRzIHJlYXNvbmFibGUsIHBsZWFzZSBpbmZvcm0gdXMK
+PiA+ID4gaG93IHdlbGwgaXQgZ29lcy4KPiA+ID4KPiA+ID4gLS0KPiA+ID4gfk1pa2UKPiA+ID4g
+IC0gSnVzdCBteSB0d28gY2VudHMKPiA+ID4gIC0gTm8gbWFuIGlzIGFuIGlzbGFuZCwgYW5kIG5v
+IG1hbiBpcyB1bmFibGUuCj4gPiA+Cj4gPgo+ID4KPiA+Cj4KPgoKCi0tCn5NaWtlCiAtIEp1c3Qg
+dGhlIGNyYXp5IGNvcHkgY2F0Lgo=
