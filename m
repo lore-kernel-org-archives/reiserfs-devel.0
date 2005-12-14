@@ -1,115 +1,101 @@
-From: Alexander Zarochentsev <zam@namesys.com>
-Subject: Re: Plugin structure documentation request
-Date: Wed, 14 Dec 2005 14:06:36 +0300
-Message-ID: <200512141406.36624.zam@namesys.com>
-References: <200512140033.53036.pvh@uvic.ca> <439FE15A.4070507@namesys.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] reiserfs: close open transactions on error path
+Date: Wed, 14 Dec 2005 14:38:05 -0500
+Message-ID: <20051214193805.GA5600@locomotive.unixthugs.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27294-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27299-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <439FE15A.4070507@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Peter van Hardenberg <pvh@uvic.ca>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@osdl.org>, Linus Torvalds <torvalds@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-On Wednesday 14 December 2005 12:09, Hans Reiser wrote:
-> Peter van Hardenberg wrote:
-> >It would be quite excellent if we could have even a one sentence
-> > description of all the plugin structures. This structure includes many
-> > operations not found in conventional VFS, and many of the calls are not
-> > described in any documentation I have found.
-> >
-> >I must confess I am feeling some frustration at the complete lack of
-> >documentation of the project. I have very few complaints about the quality
-> > of the code, but despite having spent four months working through file
-> > after file I still regularly stumble across areas we have not had an
-> > excuse to delve into and have no idea how they work in a general sense or
-> > what they do. This kind of documentation does not take particularly long
-> > to generate but would save new users of the code many, MANY long hours
-> > spent poring over code and tracking function calls through the enormous
-> > structure.
-> >
-> >I know you have heard it from the kernel mailing list before, but now you
-> > are hearing it from someone uninvolved in that process. A trivial script
-> > reports 93866 lines of code in the reiser4 directory. That's a lot of
-> > code to navigate without a map.
-> >
-> >Having got that off my chest, here is one example of a plugin struct that
-> >could use documentation. There are several other examples -- notably the
-> >pseudo.c structure which is relatively uncomplicated and the directory
-> > plugin which is about as complicated as this example "file" plugin.
-> >
-> >        [PSEUDO_FILE_PLUGIN_ID] = {
-> >                .h = {
-> >                        .type_id = REISER4_FILE_PLUGIN_TYPE,
-> >                        .id = PSEUDO_FILE_PLUGIN_ID,
-> >                        .pops = &file_plugin_ops,
-> >                        .label = "pseudo",
-> >                        .desc = "pseudo file",
-> >                        .linkage = TYPE_SAFE_LIST_LINK_ZERO
-> >                },
-> >                .open =              open_pseudo,
-> >                .truncate          = eperm,
-> >                .write_sd_by_inode = eperm,
-> >                .readpage          = eperm,
-> >                .capturepage       = NULL,
-> >                .capture           = NULL,
-> >                .read              = read_pseudo,
-> >                .write             = write_pseudo,
-> >                .release           = release_pseudo,
-> >                .ioctl             = eperm,
-> >                .mmap              = eperm,
-> >                .sync = sync_common,
-> >                .get_block         = eperm,
-> >                .flow_by_inode     = NULL,
-> >                .key_by_inode      = NULL,
-> >                .set_plug_in_inode = set_plug_in_inode_common,
-> >                .adjust_to_parent  = NULL,
-> >                .create            = NULL,
-> >                .delete            = eperm,
-> >                .add_link          = NULL,
-> >                .rem_link          = NULL,
-> >                .owns_item         = NULL,
-> >                .can_add_link      = cannot,
-> >                .can_rem_link      = cannot,
-> >                .setattr           = inode_setattr,
-> >                .getattr           = getattr_common,
-> >                .seek              = seek_pseudo,
-> >                .detach            = detach_common,
-> >                .bind              = bind_common,
-> >                .safelink = NULL,
-> >                .estimate = {
-> >                        .create = NULL,
-> >                        .update = NULL,
-> >                        .unlink = NULL
-> >                },
-> >                .wire = {
-> >                         .write = wire_write_pseudo,
-> >                         .read  = wire_read_pseudo,
-> >                         .get   = wire_get_pseudo,
-> >                         .size  = wire_size_pseudo,
-> >                         .done  = wire_done_pseudo
-> >                 },
-> >                .init_inode_data = NULL,
-> >                .pre_delete = NULL,
-> >                .cut_tree_worker = cut_tree_worker_common,
-> >                .destroy_inode = NULL,
-> >        },
-> >
-> >Thanks,
-> >-pvh
->
-> Zam, vs is releasing a patch today, so can you document this for us?
-> Thanks.
->
-> Hans
+ The following patch fixes a bug where if the journal is aborted, it can
+ leave a transaction open. The result will be a BUG when another code path
+ attempts to start a transaction and will get a "nesting into different fs"
+ error, since current->journal_info will be left non-NULL.
 
-fs/reiser4/plugin/plugin.h:file_plugin structure has comments.
+ Original fix against SUSE kernel by Chris Mason <mason@suse.com>
 
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+
+diff -ruNpX dontdiff linux-2.6.14.orig/fs/reiserfs/inode.c linux-2.6.14.fixed/fs/reiserfs/inode.c
+--- linux-2.6.14.orig/fs/reiserfs/inode.c	2005-10-27 20:02:08.000000000 -0400
++++ linux-2.6.14.fixed/fs/reiserfs/inode.c	2005-12-05 17:10:37.000000000 -0500
+@@ -32,6 +32,7 @@ void reiserfs_delete_inode(struct inode 
+ 	    JOURNAL_PER_BALANCE_CNT * 2 +
+ 	    2 * REISERFS_QUOTA_INIT_BLOCKS(inode->i_sb);
+ 	struct reiserfs_transaction_handle th;
++	int err;
+ 
+ 	truncate_inode_pages(&inode->i_data, 0);
+ 
+@@ -49,15 +50,13 @@ void reiserfs_delete_inode(struct inode 
+ 		}
+ 		reiserfs_update_inode_transaction(inode);
+ 
+-		if (reiserfs_delete_object(&th, inode)) {
+-			up(&inode->i_sem);
+-			goto out;
+-		}
++		err = reiserfs_delete_object(&th, inode);
+ 
+ 		/* Do quota update inside a transaction for journaled quotas. We must do that
+ 		 * after delete_object so that quota updates go into the same transaction as
+ 		 * stat data deletion */
+-		DQUOT_FREE_INODE(inode);
++		if (!err) 
++			DQUOT_FREE_INODE(inode);
+ 
+ 		if (journal_end(&th, inode->i_sb, jbegin_count)) {
+ 			up(&inode->i_sem);
+@@ -66,6 +65,12 @@ void reiserfs_delete_inode(struct inode 
+ 
+ 		up(&inode->i_sem);
+ 
++		/* check return value from reiserfs_delete_object after
++		 * ending the transaction
++		 */
++		if (err)
++		    goto out;
++
+ 		/* all items of file are deleted, so we can remove "save" link */
+ 		remove_save_link(inode, 0 /* not truncate */ );	/* we can't do anything
+ 								 * about an error here */
+@@ -2099,6 +2104,7 @@ int reiserfs_truncate_file(struct inode 
+ 	struct page *page = NULL;
+ 	int error;
+ 	struct buffer_head *bh = NULL;
++	int err2;
+ 
+ 	reiserfs_write_lock(p_s_inode->i_sb);
+ 
+@@ -2137,13 +2143,17 @@ int reiserfs_truncate_file(struct inode 
+ 		   either appears truncated properly or not truncated at all */
+ 		add_save_link(&th, p_s_inode, 1);
+-	error = reiserfs_do_truncate(&th, p_s_inode, page, update_timestamps);
++	err2 = reiserfs_do_truncate(&th, p_s_inode, page, update_timestamps);
+-	if (error)
+-		goto out;
+ 	error =
+ 	    journal_end(&th, p_s_inode->i_sb, JOURNAL_PER_BALANCE_CNT * 2 + 1);
+ 	if (error)
+ 		goto out;
+ 
++	/* check reiserfs_do_truncate after ending the transaction */
++	if (err2) {
++		error = err2;
++  		goto out;
++	}
++	
+ 	if (update_timestamps) {
+ 		error = remove_save_link(p_s_inode, 1 /* truncate */ );
+ 		if (error)
 -- 
-Alex.
+Jeff Mahoney
+SuSE Labs
