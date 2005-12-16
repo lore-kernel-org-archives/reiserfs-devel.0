@@ -1,39 +1,27 @@
-From: =?ISO-8859-1?Q?Artur_Mak=F3wka?= <juice@ursynow.2a.pl>
-Subject: Re: Problem with Reiser4
-Date: Fri, 16 Dec 2005 00:46:09 +0100
-Message-ID: <43A20041.2070309@ursynow.2a.pl>
-References: <20051216004042.7014fa68.tobi.kunze@gmail.com>
+From: Teddy Figueroa <hauling@bjorkdahl.com>
+Subject: Software for System Builders, Resellers, and Hardware Purchasers Only.
+Date: Fri, 16 Dec 2005 04:46:32 +0300 (MSK)
+Message-ID: <11621588813.130494126620@cncln.online.ln.cn>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27317-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27318-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20051216004042.7014fa68.tobi.kunze@gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Tobi Kunze <tobi.kunze@gmail.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Tobi Kunze wrote:
-> Hi,
-> 
-> i have a strange problem with my system and i think it might be caused by reiser4. If i write a file with vim, even if it is just a word, my harddisk starts to write like mad for a few seconds and vim is not responding. The problem does not exist with nano or emacs. One might now guess it is a vim problem, but it behaves totally normal if i write the file on a fat32 partition on the same disk. Vim just quits and i even cannot hear my harddisk write. Another reason why i think it is a reiser problem is that dpkg got really slow with the last few kernels. It takes very long to extract and install the deb packages.
-> 
-> At the moment i am using Debian and 2.6.14.1 vanilla with reiser4 patch. The problem also exists on 2.6.14-mm2.
-> 
-> With kind regards
-> 
-> Tobias Kunze
-> 
-> 
+Three steps to the software you need at the prices you want 
+http://zldq.biz3y5h4giz1tbbogtb6ytbt.carolynla.com/?kgccfzz
 
-try to remount your reiser4 partition with noatime,nodiratime options, 
-it should help.
 
-(it will still be a little slower that what it used to be, but much 
-better anyways)
-
+ORTHODOX, n. An ox wearing the popular religious joke.    
+Wit is educated insolence.         
+Solvency is entirely a matter of temperament and not of income.  
+Chance fights ever on the side of the prudent.    
+I would have made a good Pope.      
+Water is the only drink for a wise man.    
 
 
