@@ -1,54 +1,35 @@
-From: Ryan Nordman <spacerobots@gmail.com>
-Subject: Reiser4 Plugin Developer Wiki
-Date: Sun, 18 Dec 2005 23:26:27 -0800
-Message-ID: <27c2ef000512182326j686d7e1fic28fbeb511c769b7@mail.gmail.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: Specify tmgr.atom_max_age per directory ?
+Date: Mon, 19 Dec 2005 10:55:28 +0300
+Message-ID: <43A66770.8080306@namesys.com>
+References: <20051216140522.GA9781@kruemel>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; 
-	boundary="----=_Part_12232_11422085.1134977187860"
-Return-path: <reiserfs-list-return-27432-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27433-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20051216140522.GA9781@kruemel>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Ingo Bormuth <ibormuth@efil.de>
+Cc: reiserfs-list@namesys.com, ingo@bormuth.org
 
-------=_Part_12232_11422085.1134977187860
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Hello
 
-The Weekend Warriors would like to announce the launch of the Reiser4
-Programmer's Wiki at http://pvh.ca/trac/wiki/reiser4. We have included much
-of the information we uncovered in the last four months, and we hope this
-will continue to grow as more plugin developers join the effort to
-understand, document and extend Reiser4. Your comments and contributions ar=
-e
-of course, most welcome.
+Ingo Bormuth wrote:
+> Is it (or will it once) be possible to specify tmgr.atom_max_age on a per
+> directory basis. To do something link:
+> 
+>   /      : tmgr.atom_max_age=300
+>   /data  : tmgr.atom_max_age=30
+>   /var   : tmgr.atom_max_age=900
+>   /tmp   : tmgr.atom_max_age=INFINITE
+> 
+Currently you can only specify transaction manager parameters (atom_max_age for
+instance) on per filesystem basic.
+There are no plans to allow that on per directory basic.
 
-Sadly, we must also note that it is unlikely we will be submitting a patch
-for user-defined attributes any time soon. Our time has run out and we will
-no longer be able to spend as much time working on the project.  We want to
-thank all of you who helped us in our efforts.
 
--Ryan Nordman
-Victoria, BC, Canada
 
-------=_Part_12232_11422085.1134977187860
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-The Weekend Warriors would like to announce the launch of the Reiser4 Progr=
-ammer's Wiki at <a href=3D"http://pvh.ca/trac/wiki/reiser4">http://pvh.ca/t=
-rac/wiki/reiser4</a>. We have included much of the information we uncovered=
- in the last four months, and we hope this will continue to grow as more pl=
-ugin developers join the effort to understand, document and extend Reiser4.=
- Your comments and contributions are of course, most welcome.
-<br><br>Sadly, we must also note that it is unlikely we will be submitting =
-a patch for user-defined attributes any time soon. Our time has run out and=
- we will no longer be able to spend as much time working on the project.&nb=
-sp; We want to thank all of you who helped us in our efforts.
-<br><br>-Ryan Nordman<br>Victoria, BC, Canada<br>
-
-------=_Part_12232_11422085.1134977187860--
