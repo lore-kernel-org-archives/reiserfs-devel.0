@@ -1,32 +1,58 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: Reiserfsck can't fix FS - part 2
-Date: Tue, 20 Dec 2005 11:14:44 +0300
-Message-ID: <43A7BD74.8020305@namesys.com>
-References: <1129303303.3370.4.camel@desktop>              <1129484435.16949.1.camel@desktop>              <b14e81f00510171234l4addda48kf73e962b384be6e6@mail.gmail.com>              <53246.213.249.155.242.1129721262.squirrel@213.249.155.242>              <b14e81f00510201255x3ee436afveb8222f43f69f8a@mail.gmail.com>              <10442.195.137.105.19.1134285670.squirrel@195.137.105.19>              <f18a8d980512121022j614f431dv62adbbc3caf5a6eb@mail.gmail.com>              <b14e81f00512121415j3c415d45q5cdbeadd149d2eab@mail.gmail.com>             <f18a8d980512121454q5170cc19i31c9aa3d653226fe@mail.gmail.com>          <46071.213.249.155.231.1134648585.squirrel@213.249.155.231>          <43A170D7.1070705@namesys.com>       <10772.195.137.105.19.1134678241.squirrel@195.137.105.19>       <43A27033.1060109@namesys.com>    <10157.195.137.105.19.1134746087.squirrel@195.137.105.19>    <43A67E61.40207
- 02@namesys.com> <10376.195.137.105.19.1135063487.squirrel@195.137.105.19>
+From: Jan Kara <jack@suse.cz>
+Subject: another BUG with journaled quotas (fwd)
+Date: Tue, 20 Dec 2005 11:49:13 +0100
+Message-ID: <20051220104913.GB9270@atrey.karlin.mff.cuni.cz>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27452-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27453-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <10376.195.137.105.19.1135063487.squirrel@195.137.105.19>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: lordvan@lordvan.com
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Hello
+  Hello,
 
-Thomas Raschbacher wrote:
-> i just tried the -o nouser_xattr again .. and it seems like i only get
-> this error when i have -o rw... it works with -o ro .. any idea why
-> readwrite would cause this?
-> 
+  recently I got the following backtrace from one user:
 
-yes, because with -o ro - reiserfs does not handle safe links.
+BUG at fs/reiserfs/journal.c: 3097!
+invalied operand: 0000 [#1]
+EIP is at journal_begin
+Process nfsd...
 
-And this "safe link handling" is what you have crashing.
-Am I correct that you do not have possibility to recompile the kernel without
-xattr support?
+Call trace:
+reiserfs_write_dquot
+_reiserfs_free_block
+dquot_free_space
+reiserfs_free_prealloc_block
+__discard_prealloc
+reiserfs_discard_all_prealloc
+do_journal_end
+reiserfs_dirty_inode
+__mark_inode_dirty
+journal_end
+reiserfs_submit_file_region_for_write
+reiserfs_file_write
+<snip uninteresting part>
+
+  What happened there is that we were in do_journal_end() and we wanted
+to discard some preallocation. We proceeded up to freeing the block but
+then reiserfs_write_dquot() wanted to start a transaction for quota
+operation and we got BUG() as the transaction handle that is passed to
+functions for discarding preallocation has already refcount == 0.
+  If I understood the preallocation code properly, the preallocation
+happens only "inside one transaction" - i.e., we allocate more space at
+the beginning of the transaction and when we are dropping the last
+reference to the handle we discard all the space left. Am I right?
+  If so, the problem in the Ooops is mostly cosmetic as all the blocks
+needed for quota operation are already attached to the transaction from
+the allocation phase. So just raising the refcount of the handle for the
+time of discarding the preallocation to make the checks happy should be
+enough. But I'm not sure this is the Right Fix... Does somebody have any
+better ideas/solutions to the problem?
+
+							Bye
+								Honza
