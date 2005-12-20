@@ -1,161 +1,140 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: kernel BUG at fs/reiser4/block_alloc.c:149!
-Date: Tue, 20 Dec 2005 10:19:28 +0300
-Message-ID: <43A7B080.3070603@namesys.com>
-References: <20051219203323.64d48641@tormented-soul>
+From: "Thomas Raschbacher" <lordvan@lordvan.com>
+Subject: Re: Reiserfsck can't fix FS - part 2
+Date: Tue, 20 Dec 2005 07:24:47 -0000 (GMT)
+Message-ID: <10376.195.137.105.19.1135063487.squirrel@195.137.105.19>
+References: <1129303303.3370.4.camel@desktop>          
+    <200510142008.42253.vitaly@namesys.com>          
+    <1129484435.16949.1.camel@desktop>          
+    <b14e81f00510171234l4addda48kf73e962b384be6e6@mail.gmail.com>          
+    <53246.213.249.155.242.1129721262.squirrel@213.249.155.242>          
+    <b14e81f00510201255x3ee436afveb8222f43f69f8a@mail.gmail.com>          
+    <10442.195.137.105.19.1134285670.squirrel@195.137.105.19>          
+    <f18a8d980512121022j614f431dv62adbbc3caf5a6eb@mail.gmail.com>          
+    <b14e81f00512121415j3c415d45q5cdbeadd149d2eab@mail.gmail.com>         
+    <f18a8d980512121454q5170cc19i31c9aa3d653226fe@mail.gmail.com>      
+    <46071.213.249.155.231.1134648585.squirrel@213.249.155.231>      
+    <43A170D7.1070705@namesys.com>   
+    <10772.195.137.105.19.1134678241.squirrel@195.137.105.19>   
+    <43A27033.1060109@namesys.com>
+    <10157.195.137.105.19.1134746087.squirrel@195.137.105.19>
+    <43A67E61.4020702@namesys.com>
+Reply-To: lordvan@lordvan.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27450-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-27451-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20051219203323.64d48641@tormented-soul>
+In-Reply-To: <43A67E61.4020702@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Heiko Przybyl <lil_tux@web.de>
+To: "Vladimir V. Saveliev" <vs@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Hello
+i just tried the -o nouser_xattr again .. and it seems like i only get
+this error when i have -o rw... it works with -o ro .. any idea why
+readwrite would cause this?
 
-Heiko Przybyl wrote:
-> I)
-> 
->  i tapped into the following kernel trace, which locks down the directory it
->  came up in and with the next flush it locks the whole the partition :-(
-> 
->  d_cursor_hash_table: 256 buckets
->  ef_hash_table: 8192 buckets
->  z_hash_table: 8192 buckets
->  z_hash_table: 8192 buckets
->  j_hash_table: 16384 buckets
->  loading reiser4 bitmap......done (4780 jiffies)
->  VFS: Mounted root (reiser4 filesystem) readonly.
->  .
->  .
->  .
->  ------------[ cut here ]------------
->  kernel BUG at fs/reiser4/block_alloc.c:149!
->  invalid operand: 0000 [#1]
->  Modules linked in: ipt_state ip_conntrack iptable_filter ip_tables usbhid
->  uhci_hcd 8139too mii evdev usbcore
->  CPU:    0
->  EIP:    0060:[<c01b897f>]    Not tainted VLI
->  EFLAGS: 00010297   (2.6.14) 
->  EIP is at sub_from_ctx_grabbed+0xaf/0xc0
->  eax: 00000000   ebx: 00000000   ecx: 00000001   edx: 00000000
->  esi: f74eee00   edi: 00000001   ebp: 00000000   esp: f6eebca8
->  ds: 007b   es: 007b   ss: 0068
->  Process linux1 (pid: 5245, threadinfo=f6eea000 task=f71280b0)
->  Stack: 00000000 00000000 f6e5eae0 f6eebe3c 00000000 f6e5eae0 c16dcc60 00000001 
->         f6e5eae0 c1b98800 f74eee00 c01bb607 f74eee00 00000001 00000000 c039c554 
->         f6e5eae0 f6e5eae0 f6e5eb25 f6e5eae0 c01974dc f6eea000 f6e5eae0 f6eea000 
->  Call Trace:
->   [<c01bb607>] grabbed2flush_reserved_nolock+0x67/0x1c0
->   [<c01974dc>] znode_invariant_f+0x3dc/0x410
->   [<c01c6e77>] do_jnode_make_dirty+0x187/0x460
->   [<c020d17b>] is_plugin_id_valid+0x1b/0xa0
->   [<c01c71c2>] jnode_make_dirty_locked+0x72/0x2c0
->   [<c0250693>] save_static_sd+0xd3/0x210
->   [<c01c757e>] znode_make_dirty+0x16e/0x650
->   [<c0216a77>] update_sd_at+0x1f7/0x6e0
->   [<c0216fe9>] update_sd+0x89/0x140
->   [<c0213e2d>] write_sd_by_inode_common+0xdd/0x150
->   [<c01bd424>] txn_begin+0x24/0x90
->   [<c021e829>] sync_unix_file+0x59/0x1e0
->   [<c0221851>] write_unix_file+0x471/0x6d0
->   [<c01283a0>] autoremove_wake_function+0x0/0x60
->   [<c0150fd5>] vfs_write+0xb5/0x190
->   [<c015117b>] sys_write+0x4b/0x80
->   [<c0102c0b>] sysenter_past_esp+0x54/0x75
->  Code: 8b 02 8b 80 9c 00 00 00 89 44 24 0c 8b 02 c7 44 24 04 94 41 3b c0 c7 04
->  24 3c b0 39 c0 05 a4 01 00 00 89 44 24 08 e8 21 01 fd ff <0f> 0b 95 00 26 f7 38
->  c0 eb 84 8d b4 26 00 00 00 00 8b 4c 24 04 
-> Dec 19 19:49:22 tormented-soul kernel: d_cursor_hash_table: 256 buckets
-> Dec 19 19:49:22 tormented-soul kernel: ef_hash_table: 8192 buckets
-> Dec 19 19:49:22 tormented-soul kernel: z_hash_table: 8192 buckets
-> Dec 19 19:49:22 tormented-soul kernel: z_hash_table: 8192 buckets
-> Dec 19 19:49:22 tormented-soul kernel: j_hash_table: 16384 buckets
-> Dec 19 19:49:22 tormented-soul kernel: loading reiser4 bitmap......done (4780
-> jiffies) Dec 19 19:49:22 tormented-soul kernel: VFS: Mounted root (reiser4
-> filesystem) readonly.
-> Dec 19 19:49:22 tormented-soul kernel: d_cursor_hash_table: 256 buckets
-> Dec 19 19:49:22 tormented-soul kernel: ef_hash_table: 8192 buckets
-> Dec 19 19:49:22 tormented-soul kernel: z_hash_table: 8192 buckets
-> Dec 19 19:49:22 tormented-soul kernel: z_hash_table: 8192 buckets
-> Dec 19 19:49:22 tormented-soul kernel: j_hash_table: 16384 buckets
-> Dec 19 19:49:22 tormented-soul kernel: loading reiser4 bitmap......done (4780
-> jiffies) Dec 19 19:49:22 tormented-soul kernel: VFS: Mounted root (reiser4
-> filesystem) readonly.
-> 
-> 
-> this happens everytime i try to start 3 user-mode-linux instances with an
-> disk-image of approx 500mb each
-> 
-> the system('s) i get this on, are running gentoo linux with gcc4 +
-> glibc-2.3.6-nptl
->   
-> 
-> kernel:
->   linux-2.6.14
->     patched with:
->       *reiser4-for-2.6.14-1.patch :-)
->       *reiser4-fix-fsync.patch
->       *force-starget-scsi_level-in-usb-storage-scsigluec.patch
->       *skas-2.6.14-v8.2.patch
->       *suspend2-2.2-rc13-for-2.6.14
-> 
->   update: the problem even occurs with only reiser4-for-2.6.14-1.patch applied,
->           so the other patches should be safe
->     
->   linux-2.6.15-rc5-mm3, too - same error
->     that version was additionally patched with:
->       *reiser4-fix-fsync.patch
->   
+regards
+-- 
+-----BEGIN GEEK CODE BLOCK-----
+GCS/CC/E/M/MU/S d- s: a--- C++++(++) UL++++ P+ L++++ E W+++ N+++ o-- K w-- O
+M-- V- PS+ PE-- Y++ PGP+++ t+++ 5+ X- R tv b++++ DI- D+ G++ e-->+++++ h-- !r
+z-
+------END GEEK CODE BLOCK------
 
-Please try
-ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.15-rc5-mm3/reiser4-for-2.6.15-rc5-mm3-1.patch.gz
+On Mon, December 19, 2005 9:33, Vladimir V. Saveliev said:
+> Hello
+>
+> Thomas Raschbacher wrote:
+>> done.
+>> error looks pretty much the same to me:
+>>
+>
+> It looks like we did not achieve the goal. Which was to avoid calling
+> reiserfs_delete_xattrs. Would you try to recompile with reiserfs's xattrs
+> not
+> configured in?
+>
+>
+>> ReiserFS: loop2: found reiserfs format "3.6" with standard journal
+>> ReiserFS: loop2: using ordered data mode
+>> ReiserFS: loop2: journal params: device loop2, size 8192, journal first
+>> block 18, max trans len 1024, max batch 900, max commit age 30, max
+>> trans
+>> age 30
+>> ReiserFS: loop2: checking transaction log (loop2)
+>> ReiserFS: loop2: Using r5 hash to sort names
+>> ReiserFS: loop2: Removing [119485 119486 0x0 SD]..<1>Unable to handle
+>> kernel NULL pointer dereference at virtual address 00000000
+>>  printing eip:
+>> 00000000
+>> *pde = 00000000
+>> Oops: 0000 [#3]
+>> PREEMPT
+>> Modules linked in: smbfs isofs zlib_inflate loop nvidia eeprom asb100
+>> i2c_sensor i2c_viapro lp snd_seq_midi snd_emu10k1_synth snd_emux_synth
+>> snd_seq_virmidi snd_seq_midi_emul snd_pcm_oss snd_mixer_oss
+>> snd_seq_dummy
+>> snd_seq_oss snd_seq_midi_event snd_seq ohci_hcd parport_pc parport
+>> pcspkr
+>> via_ircc irda crc_ccitt ehci_hcd emu10k1_gp gameport snd_emu10k1
+>> snd_rawmidi snd_seq_device snd_ac97_codec snd_pcm snd_timer
+>> snd_page_alloc
+>> snd_util_mem snd_hwdep snd zr36060 adv7175 eth1394 saa7110 zr36067
+>> i2c_algo_bit videocodec b44 ohci1394 ieee1394 via_agp evdev dvb_ttpci
+>> l64781 saa7146_vv video_buf saa7146 v4l1_compat v4l2_common videodev
+>> ves1820 tda8083 stv0297 sp8870 firmware_class ves1x93 ttpci_eeprom
+>> stv0299
+>> i2c_core dvb_core usb_storage usblp uhci_hcd 8139too sg sr_mod
+>> CPU:    0
+>> EIP:    0060:[<00000000>]    Tainted: P      VLI
+>> EFLAGS: 00010286   (2.6.12-gentoo-r6)
+>> EIP is at stext+0x3feffdd8/0x8
+>> eax: c0403bc0   ebx: fffffff4   ecx: dd719190   edx: 00000001
+>> esi: d9dd56b8   edi: e7c9a4b4   ebp: 00000000   esp: eadacbd4
+>> ds: 007b   es: 007b   ss: 0068
+>> Process mount (pid: 13599, threadinfo=eadac000 task=d31fb0e0)
+>> Stack: c0172057 d9dd56b8 e7c9a4b4 00000000 ffffffff c03b4071 dc38d979
+>> ceb3c400
+>>        c01720af eadacc10 dd719164 00000000 c017212b eadacc10 dd719164
+>> dc38d979
+>>        00000006 c03b406b efe27080 dd719164 00000000 c03b4072 c01d7026
+>> c03b406b
+>> Call Trace:
+>>  [<c0172057>] __lookup_hash+0xa7/0xe0
+>>  [<c01720af>] lookup_hash+0x1f/0x30
+>>  [<c017212b>] lookup_one_len+0x6b/0x80
+>>  [<c01d7026>] __get_xa_root+0x66/0xf0
+>>  [<c01d722b>] open_xa_dir+0x17b/0x1b0
+>>  [<c039b8b2>] preempt_schedule+0x42/0x60
+>>  [<c011970a>] release_console_sem+0xea/0x100
+>>  [<c01d835d>] reiserfs_delete_xattrs+0x8d/0x240
+>>  [<c01b1c60>] reiserfs_delete_inode+0x0/0x130
+>>  [<c01b1cc9>] reiserfs_delete_inode+0x69/0x130
+>>  [<c0222917>] vsprintf+0x27/0x30
+>>  [<c01c351d>] prepare_error_buf+0xed/0x1c0
+>>  [<c01b1c60>] reiserfs_delete_inode+0x0/0x130
+>>  [<c017f885>] generic_delete_inode+0xc5/0x1b0
+>>  [<c017fb3c>] iput+0x3c/0x90
+>>  [<c01bf45f>] finish_unfinished+0x28f/0x4a0
+>>  [<c01c1e6a>] reiserfs_fill_super+0x6fa/0x7a0
+>>  [<c01b4960>] reiserfs_init_locked_inode+0x0/0x20
+>>  [<c01695fe>] sb_set_blocksize+0x2e/0x60
+>>  [<c0168eb8>] get_sb_bdev+0xf8/0x170
+>>  [<c01c298f>] get_super_block+0x2f/0x33
+>>  [<c01c1770>] reiserfs_fill_super+0x0/0x7a0
+>>  [<c01691ae>] do_kern_mount+0xae/0x190
+>>  [<c0182ba3>] do_new_mount+0x83/0xe0
+>>  [<c01833be>] do_mount+0x1ee/0x200
+>>  [<c0183170>] copy_mount_options+0x60/0xc0
+>>  [<c039c9ee>] lock_kernel+0x2e/0x50
+>>  [<c01837cf>] sys_mount+0x9f/0xe0
+>>  [<c01033db>] sysenter_past_esp+0x54/0x75
+>> Code:  Bad EIP value.
+>>
+>
+>
 
-
-> 
-> could this be a gcc4-bug? are there any known issues? haven't found any on the
-> net, yet - and it did definitely work with gcc4.0 and gcc4.1 and i never had
-> any problems with gcc4.
-> 
-> but i'll give gcc3 a shot if i can find a source-tarball lying around...
-> 
-> 
-> II)
-> 
-> there's also a warning i get each time the system is running:
-> 
-> "<4>reiser4[ktxnmgrd:hda4:r(651)]: disable_write_barrier
-> (fs/reiser4/wander.c:233)[zam-1055]: WARNING: disabling write barrier"
-> 
-> is this behaviour normal? should i be concerned about this WARNING?
-> 
-
-just ignore that.
-
-> 
-> III)
-> 
-> are there any mount/compile options, which could produce better performance with
-> larger files (i.e. 2gb and more)?
-> 
-
-What does your load do with large files?
-
-> 
-> 
-> 
-> 
-> btw. reiser4 rocks a lot more than xfs/ext3 - good work :-)
-> 
-> 
-> thx for any help,
-> 
->     Heiko
-> 
-> 
 
