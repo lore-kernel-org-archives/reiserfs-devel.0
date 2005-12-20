@@ -1,60 +1,40 @@
-From: Heiko Przybyl <lil_tux@web.de>
-Subject: Re: kernel BUG at fs/reiser4/block_alloc.c:149!
-Date: Tue, 20 Dec 2005 14:22:36 +0100
-Message-ID: <20051220142236.50e7844f@tormented-soul>
-References: <20051219203323.64d48641@tormented-soul>
-	<43A7B080.3070603@namesys.com>
+From: Laurent CARON <lcaron@apartia.fr>
+Subject: ReiserFS 3.6 - Unable to access some files
+Date: Tue, 20 Dec 2005 16:09:40 +0100
+Message-ID: <43A81EB4.8080907@apartia.fr>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27457-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27459-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43A7B080.3070603@namesys.com>
-Sender: lil_tux@web.de
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hello.
+Hi,
 
-what i realized yesterday, after several recompilings:
+I'm currently using a big (1.2Tb) Reiser3.6 filesystem under debian SID 
+(Kernel 2.6.13).
 
-i've tested it with gcc3.3 and 2.6.14 - same problem with reiser-patch +
-reiser-fix-fsync-patch. without the reiser-fix-fsync-patch, it seems to work
-again, with both, gcc3.3 and gcc4.1. but this is still very strange to me,
-as it worked some time ago with the same patches :/
+Problem: I'm trying to delete a file, but unfortunately.... it won't me 
+delete it.
 
-the architecture is i368. i've forgotten to mention that in my first post
-- sorry for that.
+server:/var/tmp# rm -Rf network.old
+rm: cannot remove `network.old/Makefile': Permission denied
 
+cd ./network.old
+server:/var/tmp/network.old# ls -al
+ls: Makefile: Permission denied
+total 0
+drwxrwxrwt+ 2 root Domain Users  72 2005-07-13 10:17 ./
+drwxrwxrwt  4 root root         104 2005-12-02 13:42 ../
 
-> 
-> Please try
-> ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.15-rc5-mm3/reiser4-for-2.6.15-rc5-mm3-1.patch.gz
-
-fine, i will give it a try. what are the main changes in that patch?
-
-
-> > are there any mount/compile options, which could produce better performance
-> > with larger files (i.e. 2gb and more)?
-> > 
-> 
-> What does your load do with large files?
-
-normal cpu-load is not very high, the only thing i can see, is the wait-io on a
-very high level (sometimes >90% for several seconds). the throughput is
-therefore quite low - less than 1mbyte/sec.
-
-the 2gb file i was talking about is a virtual machine's disk.
-
-the host is running ide-disks with 40-50mbyte/s transfer rates. creating such a
-large image on reiser4 is really fast, but working with them is not.
+server:/var/tmp/network.old# stat *
+stat: cannot stat `Makefile': Permission denied
 
 
+Is this a filesystem corruption, a bug in reiserfs....?
 
-thx anyway.
-
-
-	Heiko
+Thanks
