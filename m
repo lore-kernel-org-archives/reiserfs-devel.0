@@ -1,39 +1,118 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: Reiserfsck can't fix FS - part 2
-Date: Thu, 22 Dec 2005 17:38:12 +0300
-Message-ID: <43AABA54.1040404@namesys.com>
-References: <1129303303.3370.4.camel@desktop>                 <53246.213.249.155.242.1129721262.squirrel@213.249.155.242>                 <b14e81f00510201255x3ee436afveb8222f43f69f8a@mail.gmail.com>                 <10442.195.137.105.19.1134285670.squirrel@195.137.105.19>                 <f18a8d980512121022j614f431dv62adbbc3caf5a6eb@mail.gmail.com>                 <b14e81f00512121415j3c415d45q5cdbeadd149d2eab@mail.gmail.com>                <f18a8d980512121454q5170cc19i31c9aa3d653226fe@mail.gmail.com>             <46071.213.249.155.231.1134648585.squirrel@213.249.155.231>             <43A170D7.1070705@namesys.com>          <10772.195.137.105.19.1134678241.squirrel@195.137.105.19>          <43A27033.1060109@namesys.com>       <10157.195.137.105.19.1134746087.squirrel@195.137.105.19>       <43A67E61.4020702@namesys.com>    <10376.195.137.105.19.1135063487.squirrel@195.137.105.19>    <43A7BD
- 74.8020305@namesys.com> <10925.195.137.105.19.1135259740.squirrel@195.137.105.19>
+From: Linux Tard <linuxtard@yahoo.com>
+Subject: Re: Trying to mount ReiserFS file system read only results in change
+Date: Thu, 22 Dec 2005 12:43:21 -0800 (PST)
+Message-ID: <20051222204321.639.qmail@web34606.mail.mud.yahoo.com>
+References: <43A7F3A0.6010004@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27483-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-27485-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <10925.195.137.105.19.1135259740.squirrel@195.137.105.19>
+In-Reply-To: <43A7F3A0.6010004@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: lordvan@lordvan.com
-Cc: reiserfs-list@namesys.com
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: reiserfs-list@namesys.com, Chris Mason <mason@suse.com>, Jeff Mahoney <jeffm@suse.com>
 
-Hello
+Hi Vladimar,
 
-Thomas Raschbacher wrote:
-> hmm.. "safe links" ?? u as in 'ln' ?
+Thank you again.  
+
+--- "Vladimir V. Saveliev" <vs@namesys.com> wrote:
+> I do not think that this is  a good way.
 > 
 
-no. "safe links" are internal reiserfs things which indicate that there is
-something which has to be done with filesystem on mount. In your case crash
-happens handling those safe links.  Stack trace also shows that xattr code is
-involved.
+Why is this?  Is there something else other than
+preventing journal increment this would do?  Again, we
+use this kernel only in certain situations.
 
-> i can recompile my kernel anytime .. 
+> I would propose the following patch.
+>  
+>  fs/reiserfs/journal.c |    1 +
+>  1 files changed, 1 insertion(+)
+> 
+> diff -puN
+>
+fs/reiserfs/journal.c~reiserfs-dont-update-journla-header-mounting-readonly
+> fs/reiserfs/journal.c
+> ---
+>
+linux-2.6.15-rc5-mm3/fs/reiserfs/journal.c~reiserfs-dont-update-journla-header-mounting-readonly
+> 2005-12-20 13:09:28.000000000 +0300
+> +++ linux-2.6.15-rc5-mm3-vs/fs/reiserfs/journal.c
+> 2005-12-20 13:10:51.000000000 +0300
+> @@ -2458,6 +2458,7 @@ static int journal_read(struct
+> super_blo
+>  			      replay_count, get_seconds() - start);
+>  	}
+>  	if (!bdev_read_only(p_s_sb->s_bdev) &&
+> +	    !(p_s_sb->s_flags & MS_RDONLY) &&
+>  	    _update_journal_header_block(p_s_sb,
+> journal->j_start,
+>  					 journal->j_last_flush_trans_id)) {
+>  		/* replay failed, caller must call
+> free_journal_ram and abort
 
-Please recompile the kernel without xattr. If mount will work - then we have
-figured out that something is wrong with xattrs removal.
+We not able to test this patch.  We're using 2.4.32
+kernel.  Output of patch;
 
-> i'll just feel a lot better if i get
-> a chance to back up my > 8GB digital photographs first .. :D
+[root@dumb linux-2.4.32]# patch -p1 <
+reiserfs_dont_update_journla_header_mounting_readonly.patch
+ --dry-run
+patching file fs/reiserfs/journal.c
+Hunk #1 FAILED at 2458.
+1 out of 1 hunk FAILED -- saving rejects to file
+fs/reiserfs/journal.c.rej
+[root@dumb linux-2.4.32]#
 
-You said that you mounted it read-only. Were you able to read the data?
+And the REJ file;
+
+[root@dumb reiserfs]# more journal.c.rej 
+***************
+*** 2458,2463 ****
+                              replay_count,
+get_seconds() - start);
+        }
+        if (!bdev_read_only(p_s_sb->s_bdev) &&
+            _update_journal_header_block(p_s_sb,
+journal->j_start,
+                                        
+journal->j_last_flush_trans_id)) {
+                /* replay failed, caller must call
+free_journal_ram and abort
+--- 2458,2464 ----
+                              replay_count,
+get_seconds() - start);
+        }
+        if (!bdev_read_only(p_s_sb->s_bdev) &&
++           !(p_s_sb->s_flags & MS_RDONLY) &&
+            _update_journal_header_block(p_s_sb,
+journal->j_start,
+                                        
+journal->j_last_flush_trans_id)) {
+                /* replay failed, caller must call
+free_journal_ram and abort
+[root@dumb reiserfs]#
+
+
+
+
+
+I'm guessing you made patch for 2.6 kernel?  Or
+failure for some other reason?  
+We have to use 2.4 series kernel now.  Would you be
+able to write this patch for 2.4 kernel if it was for
+2.6?
+
+kind regards,
+-lt
+
+
+
+	
+		
+__________________________________ 
+Yahoo! for Good - Make a difference this year. 
+http://brand.yahoo.com/cybergivingweek2005/
