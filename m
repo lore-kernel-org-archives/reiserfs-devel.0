@@ -1,118 +1,69 @@
-From: Linux Tard <linuxtard@yahoo.com>
-Subject: Re: Trying to mount ReiserFS file system read only results in change
-Date: Thu, 22 Dec 2005 12:43:21 -0800 (PST)
-Message-ID: <20051222204321.639.qmail@web34606.mail.mud.yahoo.com>
-References: <43A7F3A0.6010004@namesys.com>
+From: michael chang <thenewme91@gmail.com>
+Subject: Re: reiser4: writing plugins
+Date: Thu, 22 Dec 2005 19:24:39 -0500
+Message-ID: <b14e81f00512221624q67927794ya1e813fcecedf3dd@mail.gmail.com>
+References: <1134763128.18089.10.camel@localhost.localdomain>
+	 <200512171032.34752.pvh@uvic.ca>
+	 <27c2ef000512182132y4a82637cv64805fcb1a21ceda@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-27485-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-27486-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43A7F3A0.6010004@namesys.com>
+In-Reply-To: <27c2ef000512182132y4a82637cv64805fcb1a21ceda@mail.gmail.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: reiserfs-list@namesys.com, Chris Mason <mason@suse.com>, Jeff Mahoney <jeffm@suse.com>
+To: Ryan Nordman <spacerobots@gmail.com>
+Cc: reiserfs-list@namesys.com, danny.milo@gmx.net
 
-Hi Vladimar,
-
-Thank you again.  
-
---- "Vladimir V. Saveliev" <vs@namesys.com> wrote:
-> I do not think that this is  a good way.
-> 
-
-Why is this?  Is there something else other than
-preventing journal increment this would do?  Again, we
-use this kernel only in certain situations.
-
-> I would propose the following patch.
->  
->  fs/reiserfs/journal.c |    1 +
->  1 files changed, 1 insertion(+)
-> 
-> diff -puN
->
-fs/reiserfs/journal.c~reiserfs-dont-update-journla-header-mounting-readonly
-> fs/reiserfs/journal.c
-> ---
->
-linux-2.6.15-rc5-mm3/fs/reiserfs/journal.c~reiserfs-dont-update-journla-header-mounting-readonly
-> 2005-12-20 13:09:28.000000000 +0300
-> +++ linux-2.6.15-rc5-mm3-vs/fs/reiserfs/journal.c
-> 2005-12-20 13:10:51.000000000 +0300
-> @@ -2458,6 +2458,7 @@ static int journal_read(struct
-> super_blo
->  			      replay_count, get_seconds() - start);
->  	}
->  	if (!bdev_read_only(p_s_sb->s_bdev) &&
-> +	    !(p_s_sb->s_flags & MS_RDONLY) &&
->  	    _update_journal_header_block(p_s_sb,
-> journal->j_start,
->  					 journal->j_last_flush_trans_id)) {
->  		/* replay failed, caller must call
-> free_journal_ram and abort
-
-We not able to test this patch.  We're using 2.4.32
-kernel.  Output of patch;
-
-[root@dumb linux-2.4.32]# patch -p1 <
-reiserfs_dont_update_journla_header_mounting_readonly.patch
- --dry-run
-patching file fs/reiserfs/journal.c
-Hunk #1 FAILED at 2458.
-1 out of 1 hunk FAILED -- saving rejects to file
-fs/reiserfs/journal.c.rej
-[root@dumb linux-2.4.32]#
-
-And the REJ file;
-
-[root@dumb reiserfs]# more journal.c.rej 
-***************
-*** 2458,2463 ****
-                              replay_count,
-get_seconds() - start);
-        }
-        if (!bdev_read_only(p_s_sb->s_bdev) &&
-            _update_journal_header_block(p_s_sb,
-journal->j_start,
-                                        
-journal->j_last_flush_trans_id)) {
-                /* replay failed, caller must call
-free_journal_ram and abort
---- 2458,2464 ----
-                              replay_count,
-get_seconds() - start);
-        }
-        if (!bdev_read_only(p_s_sb->s_bdev) &&
-+           !(p_s_sb->s_flags & MS_RDONLY) &&
-            _update_journal_header_block(p_s_sb,
-journal->j_start,
-                                        
-journal->j_last_flush_trans_id)) {
-                /* replay failed, caller must call
-free_journal_ram and abort
-[root@dumb reiserfs]#
-
-
-
-
-
-I'm guessing you made patch for 2.6 kernel?  Or
-failure for some other reason?  
-We have to use 2.4 series kernel now.  Would you be
-able to write this patch for 2.4 kernel if it was for
-2.6?
-
-kind regards,
--lt
-
-
-
-	
-		
-__________________________________ 
-Yahoo! for Good - Make a difference this year. 
-http://brand.yahoo.com/cybergivingweek2005/
+T24gMTIvMTkvMDUsIFJ5YW4gTm9yZG1hbiA8c3BhY2Vyb2JvdHNAZ21haWwuY29tPiB3cm90ZToK
+PiBJIGRvbid0IGtub3cgaG93IHVzZWZ1bCBpdCdkIGJlLCBJIHRoaW5rIGl0J2QgYmUgZ3JlYXQg
+Zm9yIGdldHRpbmcgeW91Cj4gZmFtaWxpYXIgd2l0aCB0aGUgY29kZSBiYXNlLiAgSXQnZCBhZGQg
+YSBiaXQgb2Ygb3ZlcmhlYWQgdGhhdCdzIG5vdCByZWFsbHkKPiB0aGF0IG5lY2Vzc2FyeSwgZG9u
+J3QgeW91IHRoaW5rPyAgVW5sZXNzIHNvbWVib2R5IHJlYWxseSBuZWVkcyB0byBrbm93IGRpc2sK
+PiB1c2FnZSAqcmVhbGx5KiBvZnRlbi4gIFdoYXQncyB0aGUgY2FzZSBmb3IgZG9pbmcgdGhpcyBp
+biBrZXJuZWwgc3BhY2UKPiBpbnN0ZWFkIG9mIGp1c3QgdXNpbmcgdGhlIGR1IHV0aWxpdHk/CgpX
+ZWxsLCBteSBmaXJzdCBpbnN0aW5jdGl2ZSB0aG91Z2h0IGlzIHRoYXQgaXQgbWlnaHQgaGVscCB0
+aHdhcnQgb3IKcG9zdHBvbmUgYW55IHBvdGVudGlhbCBwZXJzb25zIHRoaW5raW5nIG9mIHN3aXRj
+aGluZyB0bwpPcGVuU29sYXJpcytaRlMgYmVjYXVzZSBvZiB0aGUgc28tY2FsbGVkICdwb29sZWQg
+c3RvcmFnZScgdGhpbmtpbmcuIAooWkZTIGhhcyB0aGUgYWJpbGl0eSB0byBoYXZlIG11bHRpcGxl
+IGZpbGVzeXN0ZW1zLCBldmVuIG5lc3RlZCB3aXRoaW4KZWFjaCBvdGhlciwgYWxsIHNoYXJpbmcg
+c3BhY2UgZnJvbSB0aGUgc2FtZSBwYXJ0aXRpb24ocyksIGFuZCB1c2VzCidkZicgYXMgb3Bwb3Nl
+ZCB0byBkdSB0byBmaW5kIGRpc2sgc3BhY2UsIGFwcGFyZW50bHkgZGYgaXMgJ2NoZWFwZXInCmlu
+IHRlcm1zIG9mIHRpbWUgdXNlZC4gIEFwcGFyZW50bHksIHdpdGggWkZTLCB5b3UgY2FuIGRvIGEg
+J2RmJyBhbmQKc3VkZGVubHkga25vdyBob3cgbXVjaCBzcGFjZSBpcyB1c2VkIGFuZCBmcmVlIGlu
+IGFueSBvbmUgZm9sZGVyCnByb3ZpZGVkIGl0J3MgYSBzZXBlcmF0ZSBmaWxlc3lzdGVtIG9mIGl0
+J3Mgb3duLiAgQSBiaXQgb2YgYW4gLi4uCnVudXN1YWwgYWJzdHJhY3Rpb24gdG8gZG8gdGhpbmdz
+LCBidXQuLi4pCgpJZiBkb25lICpjb3JyZWN0bHkqIGluIHRoZSBrZXJuZWwsIEkgaW1hZ2luZSBp
+dCBzaG91bGQgYmUgZmFzdGVyIC0gZHUKZG9lcyB3aGF0IHdvdWxkIGJlIHRoZSBlcXVpdmlsYW50
+IG9mIGxpc3RpbmcgYWxsIHRoZSBmaWxlcyBpbiB0aGUKZGlyZWN0b3J5IGFuZCBzdW1taW5nIGFs
+bCB0aGUgZmlsZSBzaXplcyBpdCBnZXRzIChkdSAtcykgLS0gYW5kIGl0IGlzCmFmZmVjdGVkIGJ5
+IHRoZSB1c2VyJ3MgcGVybWlzc2lvbnMgKGlmIEkgaGF2ZSBhIGRpcmVjdG9yeSBpbiB0aGUKZGly
+ZWN0b3J5IGknbSBkdS1pbmcgdGhhdCBJIGNhbid0IHJlYWQsIGR1IHdpbGwgZmFpbCB0byBhY2Nv
+dW50IGZvcgp0aGUgZmlsZXMgd2l0aGluIHRoYXQgZGlyZWN0b3J5KS4KCkxhc3QgdGhpbmcgd291
+bGQgYmUgKGhvcGVmdWxseSkgYW4gYWJpbGl0eSB0byB0dXJuIHRoaXMgdGhpbmcgb24gYW5kCm9m
+ZiwgYW5kIG1heWJlIHRvIGRpc3BsYXkgdGhlIHNpemUgb2YgYSBmb2xkZXIncyBjb250ZW50cyBy
+YXRoZXIgdGhhbgp0aGUgc2l6ZSBvZiB0aGUgZGlyZWN0b3J5J3MgbWV0YWRhdGEgaW4gdmFyaW91
+cyB1dGlsaXRpZXMgKGlmIEkgJ2xzCi1kJyBhIGRpcmVjdG9yeSwgSSB1c3VhbGx5IGdldCBzb21l
+dGhpbmcgbGlrZSAyMDQ4QiBvciA0MDk2QiBkZXBlbmRpbmcKb24gdGhlIG51bWJlciBvZiBmaWxl
+cyBpbiB0aGVyZSwgYWx0aG91Z2ggSUlSQyBzb21lIGJpZyBmb2xkZXJzICdncm93Jwp0byAxNiBL
+QiwgY29udGFpbmluZyB3aG8ga25vd3Mgd2hhdCBpbnNpZGUpLgoKPiA+IE9uIERlY2VtYmVyIDE2
+LCAyMDA1IDExOjU4IGFtLCBkYW5ueW0gd3JvdGU6Cj4gPiA+IEhpLAo+ID4gPgo+ID4gPiBTbyBJ
+IHdhbnQgdG8gc3RhcnQgd3JpdGluZyBhIHNtYWxsIHBsdWdpbiB0byBnZXQgYSBmZWVsIGZvciB0
+aGUKPiA+ID4gYXJjaGl0ZWN0dXJlLi4uCj4gPiA+IEFzIGZvciB3aGF0IEkgdGhvdWdodCB3b3Vs
+ZCBiZSBhIG5pY2UgaW50cm8gdGhpbmcgZm9yIG1lIHRvIHdyaXRlIGlzOgo+ID4gPgo+ID4gPiBB
+ZGRzIGEgcHNldWRvIGZpbGUgInRyZWUtY29udGVudHMtc2l6ZSIgZm9yIGRpcmVjdG9yaWVzLgo+
+ID4gPiBQc2V1ZG8gZmlsZSBjb250YWlucyB0aGUgImR1IiBzdGFydGluZyBmcm9tIHRoaXMgZGly
+ZWN0b3J5Lgo+ID4gPgo+ID4gPiBXaGF0IGl0IHNob3VsZCBkbyBpcyBjYWNoZSBzb21lIGtpbmQg
+b2YgImR1Ii1saWtlIHZhbHVlIHBlciBkaXJlY3RvcnkuCj4gPiA+IFdoZW4geW91IGNoYW5nZSBh
+IGZpbGUgc2l6ZSAob3IgZGVsZXRlIGEgZmlsZSwgYWRkIGEgZmlsZSwgLi4uKSBpbiB0aGUKPiA+
+ID4gZGlyIG9yIG9uZSBvZiBpdCdzIHN1YmRpcnMsIGl0IHNoYWxsIHNldCBhIGRpcnR5IGZsYWcg
+b24gdGhlIHZhbHVlLgo+ID4gPiBXaGVuIHRoZSBwc2V1ZG8gZmlsZSBpcyBhY2Nlc3NlZCwgaXQg
+c2hhbGwgY2FsY3VsYXRlIGl0IGFuZXcsIGFsc28KPiA+ID4gdXBkYXRpbmcgdGhlIHN1YmRpcnMn
+IHBzZXVkbyBmaWxlcyBpZiBzbyBuZWVkZWQsIGFuZCBzdG9yZSBpdCBhY3R1YWxseQo+ID4gPiBv
+biBkaXNrLi4uCj4gPiA+IChjb3VsZCBhbHNvIGJlIHVwZGF0ZWQgcGVyaW9kaWNhbGx5IHdpdGhv
+dXQgYW55b25lIHJlcXVlc3RpbmcgaXQsIGJ1dAo+ID4gPiB0aGF0J3MganVzdCBhIGRldGFpbCkK
+Ci0tCn5NaWtlCiAtIEp1c3QgdGhlIGNyYXp5IGNvcHkgY2F0Lgo=
