@@ -1,84 +1,146 @@
-From: Jake Maciejewski <maciejej@msoe.edu>
-Subject: Re: reiser4: writing plugins
-Date: Thu, 22 Dec 2005 19:37:24 -0600
-Message-ID: <1135301844.18109.12.camel@gentoo>
-References: <1134763128.18089.10.camel@localhost.localdomain>
-	 <200512171032.34752.pvh@uvic.ca>
-	 <27c2ef000512182132y4a82637cv64805fcb1a21ceda@mail.gmail.com>
-	 <b14e81f00512221624q67927794ya1e813fcecedf3dd@mail.gmail.com>
+From: Leo Comerford <lrc1@st-andrews.ac.uk>
+Subject: Re: File as a directory - file-as-dir vs. link-dirs (again) - 3/3
+Date: Fri, 23 Dec 2005 05:39:35 +0000
+Message-ID: <ff8010840512222139j224aa260i845e4ca70636bdb5@mail.gmail.com>
+References: <ff8010840511171942x2ae2ebd0m954209103da18740@mail.gmail.com>
+	 <878xvlqqhv.fsf@evinrude.uhoreg.ca>
+	 <ff8010840511192303o7c581368o119b68d78b2fe722@mail.gmail.com>
+	 <873blqtsf5.fsf@evinrude.uhoreg.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27487-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-27491-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b14e81f00512221624q67927794ya1e813fcecedf3dd@mail.gmail.com>
+Sender: leocomerford@gmail.com
+In-Reply-To: <873blqtsf5.fsf@evinrude.uhoreg.ca>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: michael chang <thenewme91@gmail.com>
-Cc: Ryan Nordman <spacerobots@gmail.com>, reiserfs-list@namesys.com, danny.milo@gmx.net
+Content-Type: text/plain; charset="iso-8859-1"
+To: Hubert Chan <hubert@uhoreg.ca>
+Cc: reiserfs-list@namesys.com
 
-On Thu, 2005-12-22 at 19:24 -0500, michael chang wrote:
-> On 12/19/05, Ryan Nordman <spacerobots@gmail.com> wrote:
-> > I don't know how useful it'd be, I think it'd be great for getting you
-> > familiar with the code base.  It'd add a bit of overhead that's not really
-> > that necessary, don't you think?  Unless somebody really needs to know disk
-> > usage *really* often.  What's the case for doing this in kernel space
-> > instead of just using the du utility?
-> 
-> Well, my first instinctive thought is that it might help thwart or
-> postpone any potential persons thinking of switching to
-> OpenSolaris+ZFS because of the so-called 'pooled storage' thinking. 
-> (ZFS has the ability to have multiple filesystems, even nested within
-> each other, all sharing space from the same partition(s), and uses
-> 'df' as opposed to du to find disk space, apparently df is 'cheaper'
-> in terms of time used.  Apparently, with ZFS, you can do a 'df' and
-> suddenly know how much space is used and free in any one folder
-> provided it's a seperate filesystem of it's own.  A bit of an ...
-> unusual abstraction to do things, but...)
+On 11/21/05, Hubert Chan <hubert@uhoreg.ca> wrote:
 
-Being able to use "df" or "zfs list" instead of "du" is a side effect.
-The real reason for the "unusual abstraction" is to have finer grained
-control over quotas, reservations, snapshots, checksums, compression,
-NFS sharing, etc.
+[snip]
 
-> If done *correctly* in the kernel, I imagine it should be faster - du
-> does what would be the equivilant of listing all the files in the
-> directory and summing all the file sizes it gets (du -s) -- and it is
-> affected by the user's permissions (if I have a directory in the
-> directory i'm du-ing that I can't read, du will fail to account for
-> the files within that directory).
-> 
-> Last thing would be (hopefully) an ability to turn this thing on and
-> off, and maybe to display the size of a folder's contents rather than
-> the size of the directory's metadata in various utilities (if I 'ls
-> -d' a directory, I usually get something like 2048B or 4096B depending
-> on the number of files in there, although IIRC some big folders 'grow'
-> to 16 KB, containing who knows what inside).
-> 
-> > > On December 16, 2005 11:58 am, dannym wrote:
-> > > > Hi,
-> > > >
-> > > > So I want to start writing a small plugin to get a feel for the
-> > > > architecture...
-> > > > As for what I thought would be a nice intro thing for me to write is:
-> > > >
-> > > > Adds a pseudo file "tree-contents-size" for directories.
-> > > > Pseudo file contains the "du" starting from this directory.
-> > > >
-> > > > What it should do is cache some kind of "du"-like value per directory.
-> > > > When you change a file size (or delete a file, add a file, ...) in the
-> > > > dir or one of it's subdirs, it shall set a dirty flag on the value.
-> > > > When the pseudo file is accessed, it shall calculate it anew, also
-> > > > updating the subdirs' pseudo files if so needed, and store it actually
-> > > > on disk...
-> > > > (could also be updated periodically without anyone requesting it, but
-> > > > that's just a detail)
-> 
-> --
-> ~Mike
->  - Just the crazy copy cat.
--- 
-Jake Maciejewski <maciejej@msoe.edu>
+> A few points
+> - things should not be named "mumble" or "thingy" -- things should be
+>  named descriptively (obviously -- of course, people don't always
+>  follow these obvious rules)
 
+Well, sure. But even with the best efforts to choose clear and
+descriptive "names", the meaning of every "name" will not always be
+clear to every person, never mind to programs. For 'mumble' read
+'[mumble]'.
+
+> - the user should be in charge of how he/she organizes the data, and so
+>  he/she should pick the names that he/she wants to use.  It shouldn't
+>  be mandated.  And anyone else who uses the data should have a
+>  reasonable expectation to have any confusing things documented.  At
+>  least database schemas are usually documented for those people who
+>  need to use them.
+
+Documentation is good and important, but for all sorts of good and bad
+reasons few filesystems will ever have good, up-to-date documentation
+handy for every path"name". And, as Future Vision says, no-one has the
+time or the inclination to study up on the format of every database
+they might want to use. People like to learn by exploration, even when
+they do also read the docs. And a shell utility can't use
+human-readable documentation any more than it can apply human Unix
+lore or common sense to interpreting the filesystem. To such a
+program, every segment name is akin to 'mumble'; without some
+additional information, it can't tell that /usr/bin is not an instance
+of the relation /usr .
+
+Which brings us back to semantics. I've compared the filesystem
+interface to an ADT. But if that were all it is, if there were no
+conventions about how to interpret a path"name", then it /would/ be
+necessary to get out the manual and read up on the meaning of every
+new path"name" you come across, because you would almost never be able
+to infer anything about its meaning from looking at it. But the
+filesystem isn't (just) a persistent-storage data structure or ADT;
+it's a language through which both people and programs communicate.
+I've described the semantics of that language before - '/usr/bin' is a
+predicate which is asserted of all and only the opaque descendants of
+/usr/bin, '/usr' is a predicate which is asserted of all and only the
+opaque descendants of /usr, '/usr/passwd' is a predicate which is
+asserted of /usr/passwd, etc. etc. ad nauseam. So if I come across
+/foo/bar which links to a non-directory file then I know that the
+predicate '/foo/bar' is asserted of that file (and that file only).
+Even if 'foo' and/or 'bar' is mysterious to me, I already know a good
+deal about the intended meaning of this bit of the filesystem, and I
+can use what I know to help me deduce the meanings of mysterious
+"name"-segments. (To plag^H^H^H^Hparaphrase one David Moser, imagine
+walking into an office and seeing a Post-It note stuck on the side of
+something. Even if the note contains many nonslarkish English
+flutzpahs, you can glork much more of its pluggandisp than if it were
+scr=EDofa i dteanga =E9igin eile.) Having this language also means that
+even programs which never know the meaning of any "name"-segment can
+extract useful information from pathnames in virtue of their form. For
+example, listing the common attributes of two files is a matter of
+listing the intersection of their pathnames.
+
+But if we start using directories to assert relations as well as
+predicates without distingushing those directories which assert
+instances of a relation, then we make every sentence in the language
+ambiguous. Now any given full path"name" /might/ assert a predicate,
+or it might assert an instance of a relation instead. (Or in fact an
+instance of any one of several relations, since '/foo:bar/baz',
+'/foo/bar:baz', and '/foo:bar:baz' all ambiguate to '/foo/bar/baz' .)
+Such an ambiguous language is much less useful. Before, for example,
+it took a simple shell command to find the predicates asserted of a
+file. When the ambiguity is introduced, that simple operation becomes
+an exercise in manual-reading and guesswork.
+
+Speaking of databases, if you ask someone like C.J. Date what the most
+important feature of the relational database is, he won't talk about
+view-construction or even ACID properties. He certainly won't say
+anything about performance. The answer he will give you is
+"well-defined semantics". While a subgraph of a network database is
+basically just a bit of persistent-storage data-structure whose
+meaning can only be discerned by reading the documentation, a table in
+an RDB can (must) always be understood as expressing the present
+instances of some relation.
+
+> - you can still have some sort of marker to indicate what role each part
+>  of the name takes (e.g. the "...." delimiter to indicate
+>  pseudofiles).  Or you can use a special naming convention (e.g. tuples
+>  have a special prefix).  But I think that trying to introduce a new
+>  delimiter that does basically the same thing as '/' is going to cause
+>  a lot of problems.  (See Rob Pike's paper, "The Hideous Name", if you
+>  haven't read it already, for more on this.  It's cited in Hans'
+>  "Future Vision" paper.)
+
+':' does basically the same thing as '/' in the same sense that OR
+does basically the same thing as AND. Writing '/' when you mean ':' is
+like always writing OR when you mean AND (so P & (Q | R) becomes P &
+(Q & R) ). Introducing ambiguity is not a great way to save a
+primitive. Now you /can/ eliminate OR without ambiguity, by expressing
+it in terms of AND and NOT  (so P & (Q | R) becomes P & ~(~Q & ~R) ).
+(Or indeed by expressing all three in terms of NAND.) But this
+approach won't work with ':' and '/', because it's 100% impossible to
+express (multi-place) relations in terms of single-place predicates.
+That leaves three basic options: introduce syntax for link-directories
+(or some other primitive that indicates relations), never express
+anything that requires relations, or embrace ambiguity.
+
+Going for option 1 then creates the problem of how to hide the
+relation information from (or indeed reveal it to) existing code that
+doesn't know anything about new syntax for relations. This is
+basically exactly the same problem as indicating the start of subfile
+metadata to such code, so all the same fixes involving special
+"name"-segments or segment prefixes etc. are available. I'll just add
+that that whatever kludges have to be applied in the
+POSIX-compatiblity interface, they shouldn't blight the
+next-generation interface too; a delimiter like ':' is clearly nicer
+than special magic "name"-segments when backwards compatibility is not
+an issue.
+
+[snip]
+
+Leo.
+--
+Leo Richard Comerford - http://www.st-and.ac.uk/~lrc1 - accept no namesakes=
+ :)
