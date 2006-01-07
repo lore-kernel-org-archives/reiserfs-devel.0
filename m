@@ -1,81 +1,60 @@
-From: Andrea Gelmini <dislessico@gmail.com>
-Subject: Re: Linux Gazette benchmark Reiser 4
-Date: Sat, 7 Jan 2006 13:41:50 +0100
-Message-ID: <13dbb67f0601070441q559b156ep@mail.gmail.com>
-References: <e50d039c0601061010k51b103e4qb799090d52e7b744@mail.gmail.com>
+From: Eriberto <eriberto@eriberto.pro.br>
+Subject: Re: Space lost?
+Date: Sat, 07 Jan 2006 11:23:59 -0200
+Message-ID: <43BFC0EF.9080901@eriberto.pro.br>
+References: <43BF4857.8070901@eriberto.pro.br> <3405.66.131.16.74.1136610974.squirrel@x2a.org> <43BF92DB.5010409@slaphack.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; 
-	boundary="----=_Part_5066_26258683.1136637710524"
-Return-path: <reiserfs-list-return-27616-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27617-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e50d039c0601061010k51b103e4qb799090d52e7b744@mail.gmail.com>
+In-Reply-To: <43BF92DB.5010409@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-------=_Part_5066_26258683.1136637710524
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Hello David. Thanks for your reply!
 
-2006/1/6, Robert Hulme <rob@robhulme.com>:
+David Masover escreveu:
+
+> In other words, those 604 KB are things like the magic number, so
 >
-> http://linuxgazette.net/122/TWDT.html#piszcz
+>utilities like "file" can guess what FS it is, or what type of file if
+>it's an image, and mostly things like the journal and the amount of
+>space it takes to represent one empty folder.
+>  
 >
-> It seems to come off fairly badly in most of the tests.
+Ok. I am intrigued with a fact: the ext3 uses 14 MB (14.935 KB) when 
+formatting the same partition. Is this a magic number too? It is very 
+large! As the Reiser4, ext3 uses 5% of space to administration by super 
+user. However this 5% are inserted in the patition use (the 14 MB as 604 
+KB are out of patition). For that I know, the journal is in the 
+partition too. When I format a partition, immediately after the df 
+command shows a amount used. This is the journal. Or not?
+
+>And btw, if you put exactly 100KB on your disk, split into 1KB files,
+>you're probably going to notice your disk usage going up by more than
+>exactly 100KB.  How much it goes up by is going to be roughly equivalent
+>to how much space it takes to store the name of each 1KB file.
+>
+>Here's another interesting experiment:  Take a directory tree of lots of
+>small files.  Gentoo's /usr/portage is a good example.  Copy it to ext3,
+>XFS, reiserfs, and Reiser4, then run "du -s" on each copy.  I can almost
+>guarentee that Reiser4's is going to be significantly smaller, enough to
+>show up on even "du -sh".  Smaller by tens of megabytes, at least.
+>  
+>
+I heard to say that Reiser adapt the size of the block to the size of 
+each file. Is true this?
+
+>So you really shouldn't complain about your lost 604 KB.
+>
+>  
+>
+I need to understand how this works to be able to explain to my pupils.
+
+Thanks in advance!
 
 
-I really did not understand  this kind of benchmark. I don't care which
-filesystem is faster creating 10.000 files (something I never have to do). =
-I
-care about which filesystem fits better with my everyday use of my data.
-Days ago I wrote a few script trying to simulate a tipical desktop session,
-*my* tipical desktop session. With different filesystem I've got difference
-of minutes. That's a benchmark that mean something to me.
-Why I'm trying/looking at reiser4?
-Because:
-a) seeks are the real problem of hd (they kill performance);
-b) journal in a fixed position creates a lot of seeks;
-c) I love ext2, but my laptop crash a lot of time in a day (tests, battery
-and so on).
-
-Testing reiser4 is giving to me a good feeling with wondering logs. You
-know... less seek, less HD stress... so more responsiveness.
-Well, it's too early to express an opinion about R4 (I'm using it since las=
-t
-week), but the only way to test a FS is to use it for a long time.
-
-Sorry for my bad english,
-gelma
-
-------=_Part_5066_26258683.1136637710524
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-<br><br><div><span class=3D"gmail_quote">2006/1/6, Robert Hulme &lt;<a href=
-=3D"mailto:rob@robhulme.com">rob@robhulme.com</a>&gt;:</span><blockquote cl=
-ass=3D"gmail_quote" style=3D"border-left: 1px solid rgb(204, 204, 204); mar=
-gin: 0pt 0pt 0pt 0.8ex; padding-left: 1ex;">
-<a href=3D"http://linuxgazette.net/122/TWDT.html#piszcz">http://linuxgazett=
-e.net/122/TWDT.html#piszcz</a><br><br>It seems to come off fairly badly in =
-most of the tests.</blockquote><div><br>I really did not understand&nbsp; t=
-his kind of benchmark. I don't care which filesystem is faster creating=20
-10.000 files (something I never have to do). I care about which filesystem =
-fits better with my everyday use of my data.<br>Days ago I wrote a few scri=
-pt trying to simulate a tipical desktop session, *my* tipical desktop sessi=
-on. With different filesystem I've got difference of minutes. That's a benc=
-hmark that mean something to me.
-<br>Why I'm trying/looking at reiser4?<br>Because:<br>a) seeks are the real=
- problem of hd (they kill performance);<br>b) journal in a fixed position c=
-reates a lot of seeks;<br>c) I love ext2, but my laptop crash a lot of time=
- in a day (tests, battery and so on).
-<br><br>Testing reiser4 is giving to me a good feeling with wondering logs.=
- You know... less seek, less HD stress... so more responsiveness.<br>Well, =
-it's too early to express an opinion about R4 (I'm using it since last week=
-), but the only way to test a FS is to use it for a long time.
-<br><br>Sorry for my bad english,<br>gelma<br></div><br></div>
-
-------=_Part_5066_26258683.1136637710524--
