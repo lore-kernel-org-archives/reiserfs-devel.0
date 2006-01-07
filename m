@@ -1,64 +1,81 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Space lost?
-Date: Sat, 07 Jan 2006 04:07:23 -0600
-Message-ID: <43BF92DB.5010409@slaphack.com>
-References: <43BF4857.8070901@eriberto.pro.br> <3405.66.131.16.74.1136610974.squirrel@x2a.org>
+From: Andrea Gelmini <dislessico@gmail.com>
+Subject: Re: Linux Gazette benchmark Reiser 4
+Date: Sat, 7 Jan 2006 13:41:50 +0100
+Message-ID: <13dbb67f0601070441q559b156ep@mail.gmail.com>
+References: <e50d039c0601061010k51b103e4qb799090d52e7b744@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27615-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_5066_26258683.1136637710524"
+Return-path: <reiserfs-list-return-27616-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3405.66.131.16.74.1136610974.squirrel@x2a.org>
+In-Reply-To: <e50d039c0601061010k51b103e4qb799090d52e7b744@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jonathan Bastien-Filiatrault <joe@x2a.org>
-Cc: Eriberto <eriberto@eriberto.pro.br>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Jonathan Bastien-Filiatrault wrote:
-> Eriberto said:
-> 
->>Hello!
->>
->>I have a partition with 19.535.040 KB (fdisk -l). However after a
->>ReiserFS formatting df -k command shows 19.534.436 KB (total space). The
->>difference is 604 KB. Why the amount of  space decreased after formatting?
->>
->>Thanks!
->>
->>
->>
-> 
-> Any filesystem has sturctural overhead. For example, by default, ReiserFS
-> has a 32MB journal and other data structures. These data structures are
-> the ones that "take away" space from you. These data structures are
-> mandatory to any filesystem, ReiserFS is known for having very little
-> overhead compared to other file systems.
+------=_Part_5066_26258683.1136637710524
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-In other words, those 604 KB are things like the magic number, so
-utilities like "file" can guess what FS it is, or what type of file if
-it's an image, and mostly things like the journal and the amount of
-space it takes to represent one empty folder.
+2006/1/6, Robert Hulme <rob@robhulme.com>:
+>
+> http://linuxgazette.net/122/TWDT.html#piszcz
+>
+> It seems to come off fairly badly in most of the tests.
 
-And btw, if you put exactly 100KB on your disk, split into 1KB files,
-you're probably going to notice your disk usage going up by more than
-exactly 100KB.  How much it goes up by is going to be roughly equivalent
-to how much space it takes to store the name of each 1KB file.
 
-Here's another interesting experiment:  Take a directory tree of lots of
-small files.  Gentoo's /usr/portage is a good example.  Copy it to ext3,
-XFS, reiserfs, and Reiser4, then run "du -s" on each copy.  I can almost
-guarentee that Reiser4's is going to be significantly smaller, enough to
-show up on even "du -sh".  Smaller by tens of megabytes, at least.
+I really did not understand  this kind of benchmark. I don't care which
+filesystem is faster creating 10.000 files (something I never have to do). =
+I
+care about which filesystem fits better with my everyday use of my data.
+Days ago I wrote a few script trying to simulate a tipical desktop session,
+*my* tipical desktop session. With different filesystem I've got difference
+of minutes. That's a benchmark that mean something to me.
+Why I'm trying/looking at reiser4?
+Because:
+a) seeks are the real problem of hd (they kill performance);
+b) journal in a fixed position creates a lot of seeks;
+c) I love ext2, but my laptop crash a lot of time in a day (tests, battery
+and so on).
 
-ReiserFS is definitely bigger than Reiser4, but if you have tail packing
-turned on, it may still be significantly smaller than XFS or ext3.
+Testing reiser4 is giving to me a good feeling with wondering logs. You
+know... less seek, less HD stress... so more responsiveness.
+Well, it's too early to express an opinion about R4 (I'm using it since las=
+t
+week), but the only way to test a FS is to use it for a long time.
 
-In fact, Reiser4 reserves an aggressive 5% of the disk, so out of your
-19,535,040 KB, you'd have 976,752 KB reserved -- that's almost a full
-gigabyte out of a 20 gig drive.  And yet, if you used that drive for
-small text files, you'd probably find that you saved almost that much
-space anyway, if not more, by using Reiser4 instead of ext3.
+Sorry for my bad english,
+gelma
 
-So you really shouldn't complain about your lost 604 KB.
+------=_Part_5066_26258683.1136637710524
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+<br><br><div><span class=3D"gmail_quote">2006/1/6, Robert Hulme &lt;<a href=
+=3D"mailto:rob@robhulme.com">rob@robhulme.com</a>&gt;:</span><blockquote cl=
+ass=3D"gmail_quote" style=3D"border-left: 1px solid rgb(204, 204, 204); mar=
+gin: 0pt 0pt 0pt 0.8ex; padding-left: 1ex;">
+<a href=3D"http://linuxgazette.net/122/TWDT.html#piszcz">http://linuxgazett=
+e.net/122/TWDT.html#piszcz</a><br><br>It seems to come off fairly badly in =
+most of the tests.</blockquote><div><br>I really did not understand&nbsp; t=
+his kind of benchmark. I don't care which filesystem is faster creating=20
+10.000 files (something I never have to do). I care about which filesystem =
+fits better with my everyday use of my data.<br>Days ago I wrote a few scri=
+pt trying to simulate a tipical desktop session, *my* tipical desktop sessi=
+on. With different filesystem I've got difference of minutes. That's a benc=
+hmark that mean something to me.
+<br>Why I'm trying/looking at reiser4?<br>Because:<br>a) seeks are the real=
+ problem of hd (they kill performance);<br>b) journal in a fixed position c=
+reates a lot of seeks;<br>c) I love ext2, but my laptop crash a lot of time=
+ in a day (tests, battery and so on).
+<br><br>Testing reiser4 is giving to me a good feeling with wondering logs.=
+ You know... less seek, less HD stress... so more responsiveness.<br>Well, =
+it's too early to express an opinion about R4 (I'm using it since last week=
+), but the only way to test a FS is to use it for a long time.
+<br><br>Sorry for my bad english,<br>gelma<br></div><br></div>
+
+------=_Part_5066_26258683.1136637710524--
