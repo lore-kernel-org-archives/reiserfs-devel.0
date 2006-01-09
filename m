@@ -1,74 +1,29 @@
-From: "Giovanni A. Orlando" <gorlando@futuretg.com>
-Subject: Re: What's the state of Reiser4 inclusion in the mainline kernel
- ...
-Date: Mon, 09 Jan 2006 20:13:55 +0000
-Message-ID: <43C2C403.8040800@futuretg.com>
-References: <432AFB44.9060707@namesys.com>	 <20050916174028.GA32745@infradead.org>  <43C232D0.2010303@futuretg.com> <1136798121.2936.21.camel@laptopd505.fenrus.org> <43C24E1B.8020205@futuretg.com> <43C250CA.3010709@futuretg.com> <43C2AA3E.9000403@namesys.com>
+From: Gregory Maxwell <gmaxwell@gmail.com>
+Subject: Re: What's the state of Reiser4 inclusion in the mainline kernel ...
+Date: Mon, 9 Jan 2006 13:43:08 -0500
+Message-ID: <e692861c0601091043r5c0cc0e6jf8f5812f9814663d@mail.gmail.com>
+References: <432AFB44.9060707@namesys.com>
+	 <20050916174028.GA32745@infradead.org> <43C232D0.2010303@futuretg.com>
+	 <1136798121.2936.21.camel@laptopd505.fenrus.org>
+	 <43C24E1B.8020205@futuretg.com> <43C250CA.3010709@futuretg.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27642-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-27644-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43C2AA3E.9000403@namesys.com>
+In-Reply-To: <43C250CA.3010709@futuretg.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: "Giovanni A. Orlando" <gorlando@futuretg.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>
 
-Hans Reiser wrote:
-
->Giovanni A. Orlando wrote:
+On 1/9/06, Giovanni A. Orlando <gorlando@futuretg.com> wrote:
+> Hans,
 >
->  
->
->>Hans,
->>
->>   Can you tell me please the status of Reiser4 in the Kernel?
->>
->>Thanks,
->>Giovanni
->>
->>    
->>
->>>Thanks,
->>>Giovanni
->>>
->>>
->>>
->>>
->>>      
->>>
->>    
->>
->Limbo as far as I know.
->
->  
->
-No problem at all. We will support and do all the necessary works like 
-included!
+>     Can you tell me please the status of Reiser4 in the Kernel?
 
-Thanks,
-Giovanni.
-
-
--- 
-
-
--- 
--- 
-
-Check FT Websites ... http://www.futuretg.com  - ftp://ftp.futuretg.com
-http://www.FTLinuxCourse.com
-    http://www.FTLinuxCourse.com/Certification
-http://www.RPMParadaise.org
-http://www.GiovanniOrlando.com
-
-
-Fixed Europe:  +39 0824 314 007.
-Global Mobile: +39 393 665 4239  (does not work if I am in Caracas).
-Global Venezuelan Mobile: +58 412 55 41 338.
-
-
--- 
-
+Here is the thread you were supposted to read... (I think):
+http://marc.theaimsgroup.com/?l=3Dlinux-kernel&m=3D113650213621940&w=3D2
