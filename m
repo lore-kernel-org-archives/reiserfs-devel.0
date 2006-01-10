@@ -1,44 +1,96 @@
-From: Hubert Chan <hubert@uhoreg.ca>
-Subject: Compiling 2.6.15 with Reiser4 patch for 2.6.14
-Date: Mon, 09 Jan 2006 22:39:57 -0700
-Message-ID: <87y81ok5ea.fsf@evinrude.uhoreg.ca>
+From: Jonathan Sailor <jsailor@jesnetplus.com>
+Subject: BSD-style groups on ReiserFS
+Date: Tue, 10 Jan 2006 01:22:19 -0500 (EST)
+Message-ID: <Pine.LNX.4.64.0601100113480.8337@gentoo.grakker.jesnetplus.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-27649-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="=_gentoo.grakker.jesnetplus.com-7765-1136874140-0001-2"
+Return-path: <reiserfs-list-return-27650-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-The patch for 2.6.14 applies more or less cleanly (other than a few
-already-applied chunks) to vanilla 2.6.15.  But when I compile, I get
-errors:
+--=_gentoo.grakker.jesnetplus.com-7765-1136874140-0001-2
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-  CC      fs/reiser4/jnode.o
-fs/reiser4/jnode.c: In function 'jnode_by_page':
-fs/reiser4/jnode.c:288: error: 'struct page' has no member named 'private'
-fs/reiser4/jnode.c:289: warning: control reaches end of non-void function
-fs/reiser4/jnode.c: In function 'do_jget':
-fs/reiser4/jnode.c:603: error: 'struct page' has no member named 'private'
-fs/reiser4/jnode.c: In function 'jnode_of_page':
-fs/reiser4/jnode.c:644: error: 'struct page' has no member named 'private'
-fs/reiser4/jnode.c: In function 'jnode_attach_page':
-fs/reiser4/jnode.c:678: error: 'struct page' has no member named 'private'
-fs/reiser4/jnode.c: In function 'page_clear_jnode':
-fs/reiser4/jnode.c:695: error: 'struct page' has no member named 'private'
-fs/reiser4/jnode.c: In function 'page_detach_jnode':
-fs/reiser4/jnode.c:713: error: 'struct page' has no member named 'private'
-make[4]: *** [fs/reiser4/jnode.o] Error 1
+Hi,
 
-P.S. Have people who have tried the 2.6.14 patch found it to be fairly
-reliable?
+In order to enable bsd-style group semantics (new files/directories get 
+their parents' gid always, not just when the parent is setgid), I wrote 
+a small patch to ReiserFS. It's attached.
 
--- 
-Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
-PGP/GnuPG key: 1024D/124B61FA
-Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+The patch should add a new mount option, "bdgroups" (aka "grpid", 
+opposites "sysvgroups" and "nogrpid") and modify the inode creation code 
+to do the right thing if the flag is set. I modeled my patch of the 
+behavior of ext2/3's bdsgroups support. The only difference should be 
+that while my patch always sets the setgid bit on subdirectories of a 
+setgid directory, ext2/3 only do so when in sysvgroups mode.
 
+This is my first kernel/ReiserFS code, so comments are welcome.
+
+Thanks,
+Jonathan Sailor
+--=_gentoo.grakker.jesnetplus.com-7765-1136874140-0001-2
+Content-Type: text/plain; charset=us-ascii; name="reiserfs_bsdgroups.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <Pine.LNX.4.64.0601100122190.8337@gentoo.grakker.jesnetplus.com>
+Content-Description: reiserfs_bsdgroups.patch
+Content-Disposition: attachment; filename=reiserfs_bsdgroups.patch
+
+ZGlmZiAtck51IGxpbnV4LTIuNi4xNC1nZW50b28tcjIvZnMvcmVpc2VyZnMv
+bmFtZWkuYyBsaW51eC0yLjYuMTQtZ2VudG9vLXIyLm1vZC9mcy9yZWlzZXJm
+cy9uYW1laS5jDQotLS0gbGludXgtMi42LjE0LWdlbnRvby1yMi9mcy9yZWlz
+ZXJmcy9uYW1laS5jCTIwMDUtMTItMDggMjE6Mzc6NDQuMDAwMDAwMDAwIC0w
+NTAwDQorKysgbGludXgtMi42LjE0LWdlbnRvby1yMi5tb2QvZnMvcmVpc2Vy
+ZnMvbmFtZWkuYwkyMDA1LTEyLTA4IDIxOjM1OjA5LjAwMDAwMDAwMCAtMDUw
+MA0KQEAgLTYwMSw2ICs2MDEsOCBAQA0KIAkJaW5vZGUtPmlfZ2lkID0gZGly
+LT5pX2dpZDsNCiAJCWlmIChTX0lTRElSKG1vZGUpKQ0KIAkJCWlub2RlLT5p
+X21vZGUgfD0gU19JU0dJRDsNCisJfSBlbHNlIGlmIChyZWlzZXJmc19ncnBp
+ZChkaXItPmlfc2IpKSB7DQorCQlpbm9kZS0+aV9naWQgPSBkaXItPmlfZ2lk
+Ow0KIAl9IGVsc2Ugew0KIAkJaW5vZGUtPmlfZ2lkID0gY3VycmVudC0+ZnNn
+aWQ7DQogCX0NCmRpZmYgLXJOdSBsaW51eC0yLjYuMTQtZ2VudG9vLXIyL2Zz
+L3JlaXNlcmZzL3N1cGVyLmMgbGludXgtMi42LjE0LWdlbnRvby1yMi5tb2Qv
+ZnMvcmVpc2VyZnMvc3VwZXIuYw0KLS0tIGxpbnV4LTIuNi4xNC1nZW50b28t
+cjIvZnMvcmVpc2VyZnMvc3VwZXIuYwkyMDA1LTEyLTA4IDIxOjM3OjQ0LjAw
+MDAwMDAwMCAtMDUwMA0KKysrIGxpbnV4LTIuNi4xNC1nZW50b28tcjIubW9k
+L2ZzL3JlaXNlcmZzL3N1cGVyLmMJMjAwNS0xMi0wOCAyMTozNTowOS4wMDAw
+MDAwMDAgLTA1MDANCkBAIC04OTUsNiArODk1LDEwIEBADQogCQl7ImFjbCIs
+LnNldG1hc2sgPSAxIDw8IFJFSVNFUkZTX1VOU1VQUE9SVEVEX09QVH0sDQog
+CQl7Im5vYWNsIiwuY2xybWFzayA9IDEgPDwgUkVJU0VSRlNfVU5TVVBQT1JU
+RURfT1BUfSwNCiAjZW5kaWYNCisJCXsiYnNkZ3JvdXBzIiwuc2V0bWFzayA9
+IDEgPDwgUkVJU0VSRlNfR1JQSUR9LA0KKwkJeyJncnBpZCIsLnNldG1hc2sg
+PSAxIDw8IFJFSVNFUkZTX0dSUElEfSwNCisJCXsic3lzdmdyb3VwcyIsLmNs
+cm1hc2sgPSAxIDw8IFJFSVNFUkZTX0dSUElEfSwNCisJCXsibm9ncnBpZCIs
+LmNscm1hc2sgPSAxIDw8IFJFSVNFUkZTX0dSUElEfSwNCiAJCXsibm9sb2ci
+LH0sCS8qIFRoaXMgaXMgdW5zdXBwb3J0ZWQgKi8NCiAJCXsicmVwbGF5b25s
+eSIsLnNldG1hc2sgPSAxIDw8IFJFUExBWU9OTFl9LA0KIAkJeyJibG9jay1h
+bGxvY2F0b3IiLC5hcmdfcmVxdWlyZWQgPSAnYScsLnZhbHVlcyA9IGJhbGxv
+Y30sDQpAQCAtMTE4NSw2ICsxMTg5LDcgQEANCiAJc2FmZV9tYXNrIHw9IDEg
+PDwgUkVJU0VSRlNfRVJST1JfQ09OVElOVUU7DQogCXNhZmVfbWFzayB8PSAx
+IDw8IFJFSVNFUkZTX0VSUk9SX1BBTklDOw0KIAlzYWZlX21hc2sgfD0gMSA8
+PCBSRUlTRVJGU19RVU9UQTsNCisJc2FmZV9tYXNrIHw9IDEgPDwgUkVJU0VS
+RlNfR1JQSUQ7DQogDQogCS8qIFVwZGF0ZSB0aGUgYml0bWFzaywgdGFraW5n
+IGNhcmUgdG8ga2VlcA0KIAkgKiB0aGUgYml0cyB3ZSdyZSBub3QgYWxsb3dl
+ZCB0byBjaGFuZ2UgaGVyZSAqLw0KZGlmZiAtck51IGxpbnV4LTIuNi4xNC1n
+ZW50b28tcjIvaW5jbHVkZS9saW51eC9yZWlzZXJmc19mc19zYi5oIGxpbnV4
+LTIuNi4xNC1nZW50b28tcjIubW9kL2luY2x1ZGUvbGludXgvcmVpc2VyZnNf
+ZnNfc2IuaA0KLS0tIGxpbnV4LTIuNi4xNC1nZW50b28tcjIvaW5jbHVkZS9s
+aW51eC9yZWlzZXJmc19mc19zYi5oCTIwMDUtMTItMDggMjE6Mzc6NDQuMDAw
+MDAwMDAwIC0wNTAwDQorKysgbGludXgtMi42LjE0LWdlbnRvby1yMi5tb2Qv
+aW5jbHVkZS9saW51eC9yZWlzZXJmc19mc19zYi5oCTIwMDUtMTItMDggMjE6
+MzU6MTQuMDAwMDAwMDAwIC0wNTAwDQpAQCAtNDcwLDggKzQ3MCwxMSBAQA0K
+IAlSRUlTRVJGU19URVNUMywNCiAJUkVJU0VSRlNfVEVTVDQsDQogCVJFSVNF
+UkZTX1VOU1VQUE9SVEVEX09QVCwNCisNCisJUkVJU0VSRlNfR1JQSUQsDQog
+fTsNCiANCisjZGVmaW5lIHJlaXNlcmZzX2dycGlkKHMpIChSRUlTRVJGU19T
+QihzKS0+c19tb3VudF9vcHQgJiAoMSA8PCBSRUlTRVJGU19HUlBJRCkpDQog
+I2RlZmluZSByZWlzZXJmc19yNV9oYXNoKHMpIChSRUlTRVJGU19TQihzKS0+
+c19tb3VudF9vcHQgJiAoMSA8PCBGT1JDRV9SNV9IQVNIKSkNCiAjZGVmaW5l
+IHJlaXNlcmZzX3J1cGFzb3ZfaGFzaChzKSAoUkVJU0VSRlNfU0IocyktPnNf
+bW91bnRfb3B0ICYgKDEgPDwgRk9SQ0VfUlVQQVNPVl9IQVNIKSkNCiAjZGVm
+aW5lIHJlaXNlcmZzX3RlYV9oYXNoKHMpIChSRUlTRVJGU19TQihzKS0+c19t
+b3VudF9vcHQgJiAoMSA8PCBGT1JDRV9URUFfSEFTSCkpDQo=
+
+--=_gentoo.grakker.jesnetplus.com-7765-1136874140-0001-2--
