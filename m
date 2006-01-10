@@ -1,96 +1,114 @@
-From: Jonathan Sailor <jsailor@jesnetplus.com>
-Subject: BSD-style groups on ReiserFS
-Date: Tue, 10 Jan 2006 01:22:19 -0500 (EST)
-Message-ID: <Pine.LNX.4.64.0601100113480.8337@gentoo.grakker.jesnetplus.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Linux Gazette benchmark Reiser 4
+Date: Mon, 09 Jan 2006 23:57:36 -0800
+Message-ID: <43C368F0.7020202@namesys.com>
+References: <e50d039c0601061010k51b103e4qb799090d52e7b744@mail.gmail.com> <op.s2y0t2t2cigqcu@apollo13> <43BECFF3.10204@namesys.com> <43C18D32.8020106@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=_gentoo.grakker.jesnetplus.com-7765-1136874140-0001-2"
-Return-path: <reiserfs-list-return-27650-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27651-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <43C18D32.8020106@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward@namesys.com>
+Cc: PFC <lists@peufeu.com>, jpiszcz@lucidpixels.com, reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>
 
---=_gentoo.grakker.jesnetplus.com-7765-1136874140-0001-2
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+Did we really do the sophisticated statistical analysis below?  I
+assumed we had just taken a look at how much our numbers tended to vary,
+and based on experience assumed anything less than 2% was not above
+noise.;-) 
 
-Hi,
+The other rule of thumb I have is that really short times can be
+amazingly unreliable indicators even when reproduceable.  I am not
+entirely sure of why, but I know it to be true.;-)  People suggest such
+things as timer inaccuracy, but perhaps there is more inaccuracy than
+that could explain.  Perhaps it is scheduler timing related?  I don't
+know why it is, I just know it is so.
 
-In order to enable bsd-style group semantics (new files/directories get 
-their parents' gid always, not just when the parent is setgid), I wrote 
-a small patch to ReiserFS. It's attached.
+I do like the way Zam did the red/green/black numbers by the way, I
+think I forgot to compliment him on it (it was Zam who did it?).
 
-The patch should add a new mount option, "bdgroups" (aka "grpid", 
-opposites "sysvgroups" and "nogrpid") and modify the inode creation code 
-to do the right thing if the flag is set. I modeled my patch of the 
-behavior of ext2/3's bdsgroups support. The only difference should be 
-that while my patch always sets the setgid bit on subdirectories of a 
-setgid directory, ext2/3 only do so when in sysvgroups mode.
+We need to reproduce Justin's benchmark, fixing the mistakes he made in
+its design, and then see how we do at it.  We need to know such things
+as, how did he generate filenames, etc.  When people get back....
 
-This is my first kernel/ReiserFS code, so comments are welcome.
+Hans
 
-Thanks,
-Jonathan Sailor
---=_gentoo.grakker.jesnetplus.com-7765-1136874140-0001-2
-Content-Type: text/plain; charset=us-ascii; name="reiserfs_bsdgroups.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <Pine.LNX.4.64.0601100122190.8337@gentoo.grakker.jesnetplus.com>
-Content-Description: reiserfs_bsdgroups.patch
-Content-Disposition: attachment; filename=reiserfs_bsdgroups.patch
+Edward Shishkin wrote:
 
-ZGlmZiAtck51IGxpbnV4LTIuNi4xNC1nZW50b28tcjIvZnMvcmVpc2VyZnMv
-bmFtZWkuYyBsaW51eC0yLjYuMTQtZ2VudG9vLXIyLm1vZC9mcy9yZWlzZXJm
-cy9uYW1laS5jDQotLS0gbGludXgtMi42LjE0LWdlbnRvby1yMi9mcy9yZWlz
-ZXJmcy9uYW1laS5jCTIwMDUtMTItMDggMjE6Mzc6NDQuMDAwMDAwMDAwIC0w
-NTAwDQorKysgbGludXgtMi42LjE0LWdlbnRvby1yMi5tb2QvZnMvcmVpc2Vy
-ZnMvbmFtZWkuYwkyMDA1LTEyLTA4IDIxOjM1OjA5LjAwMDAwMDAwMCAtMDUw
-MA0KQEAgLTYwMSw2ICs2MDEsOCBAQA0KIAkJaW5vZGUtPmlfZ2lkID0gZGly
-LT5pX2dpZDsNCiAJCWlmIChTX0lTRElSKG1vZGUpKQ0KIAkJCWlub2RlLT5p
-X21vZGUgfD0gU19JU0dJRDsNCisJfSBlbHNlIGlmIChyZWlzZXJmc19ncnBp
-ZChkaXItPmlfc2IpKSB7DQorCQlpbm9kZS0+aV9naWQgPSBkaXItPmlfZ2lk
-Ow0KIAl9IGVsc2Ugew0KIAkJaW5vZGUtPmlfZ2lkID0gY3VycmVudC0+ZnNn
-aWQ7DQogCX0NCmRpZmYgLXJOdSBsaW51eC0yLjYuMTQtZ2VudG9vLXIyL2Zz
-L3JlaXNlcmZzL3N1cGVyLmMgbGludXgtMi42LjE0LWdlbnRvby1yMi5tb2Qv
-ZnMvcmVpc2VyZnMvc3VwZXIuYw0KLS0tIGxpbnV4LTIuNi4xNC1nZW50b28t
-cjIvZnMvcmVpc2VyZnMvc3VwZXIuYwkyMDA1LTEyLTA4IDIxOjM3OjQ0LjAw
-MDAwMDAwMCAtMDUwMA0KKysrIGxpbnV4LTIuNi4xNC1nZW50b28tcjIubW9k
-L2ZzL3JlaXNlcmZzL3N1cGVyLmMJMjAwNS0xMi0wOCAyMTozNTowOS4wMDAw
-MDAwMDAgLTA1MDANCkBAIC04OTUsNiArODk1LDEwIEBADQogCQl7ImFjbCIs
-LnNldG1hc2sgPSAxIDw8IFJFSVNFUkZTX1VOU1VQUE9SVEVEX09QVH0sDQog
-CQl7Im5vYWNsIiwuY2xybWFzayA9IDEgPDwgUkVJU0VSRlNfVU5TVVBQT1JU
-RURfT1BUfSwNCiAjZW5kaWYNCisJCXsiYnNkZ3JvdXBzIiwuc2V0bWFzayA9
-IDEgPDwgUkVJU0VSRlNfR1JQSUR9LA0KKwkJeyJncnBpZCIsLnNldG1hc2sg
-PSAxIDw8IFJFSVNFUkZTX0dSUElEfSwNCisJCXsic3lzdmdyb3VwcyIsLmNs
-cm1hc2sgPSAxIDw8IFJFSVNFUkZTX0dSUElEfSwNCisJCXsibm9ncnBpZCIs
-LmNscm1hc2sgPSAxIDw8IFJFSVNFUkZTX0dSUElEfSwNCiAJCXsibm9sb2ci
-LH0sCS8qIFRoaXMgaXMgdW5zdXBwb3J0ZWQgKi8NCiAJCXsicmVwbGF5b25s
-eSIsLnNldG1hc2sgPSAxIDw8IFJFUExBWU9OTFl9LA0KIAkJeyJibG9jay1h
-bGxvY2F0b3IiLC5hcmdfcmVxdWlyZWQgPSAnYScsLnZhbHVlcyA9IGJhbGxv
-Y30sDQpAQCAtMTE4NSw2ICsxMTg5LDcgQEANCiAJc2FmZV9tYXNrIHw9IDEg
-PDwgUkVJU0VSRlNfRVJST1JfQ09OVElOVUU7DQogCXNhZmVfbWFzayB8PSAx
-IDw8IFJFSVNFUkZTX0VSUk9SX1BBTklDOw0KIAlzYWZlX21hc2sgfD0gMSA8
-PCBSRUlTRVJGU19RVU9UQTsNCisJc2FmZV9tYXNrIHw9IDEgPDwgUkVJU0VS
-RlNfR1JQSUQ7DQogDQogCS8qIFVwZGF0ZSB0aGUgYml0bWFzaywgdGFraW5n
-IGNhcmUgdG8ga2VlcA0KIAkgKiB0aGUgYml0cyB3ZSdyZSBub3QgYWxsb3dl
-ZCB0byBjaGFuZ2UgaGVyZSAqLw0KZGlmZiAtck51IGxpbnV4LTIuNi4xNC1n
-ZW50b28tcjIvaW5jbHVkZS9saW51eC9yZWlzZXJmc19mc19zYi5oIGxpbnV4
-LTIuNi4xNC1nZW50b28tcjIubW9kL2luY2x1ZGUvbGludXgvcmVpc2VyZnNf
-ZnNfc2IuaA0KLS0tIGxpbnV4LTIuNi4xNC1nZW50b28tcjIvaW5jbHVkZS9s
-aW51eC9yZWlzZXJmc19mc19zYi5oCTIwMDUtMTItMDggMjE6Mzc6NDQuMDAw
-MDAwMDAwIC0wNTAwDQorKysgbGludXgtMi42LjE0LWdlbnRvby1yMi5tb2Qv
-aW5jbHVkZS9saW51eC9yZWlzZXJmc19mc19zYi5oCTIwMDUtMTItMDggMjE6
-MzU6MTQuMDAwMDAwMDAwIC0wNTAwDQpAQCAtNDcwLDggKzQ3MCwxMSBAQA0K
-IAlSRUlTRVJGU19URVNUMywNCiAJUkVJU0VSRlNfVEVTVDQsDQogCVJFSVNF
-UkZTX1VOU1VQUE9SVEVEX09QVCwNCisNCisJUkVJU0VSRlNfR1JQSUQsDQog
-fTsNCiANCisjZGVmaW5lIHJlaXNlcmZzX2dycGlkKHMpIChSRUlTRVJGU19T
-QihzKS0+c19tb3VudF9vcHQgJiAoMSA8PCBSRUlTRVJGU19HUlBJRCkpDQog
-I2RlZmluZSByZWlzZXJmc19yNV9oYXNoKHMpIChSRUlTRVJGU19TQihzKS0+
-c19tb3VudF9vcHQgJiAoMSA8PCBGT1JDRV9SNV9IQVNIKSkNCiAjZGVmaW5l
-IHJlaXNlcmZzX3J1cGFzb3ZfaGFzaChzKSAoUkVJU0VSRlNfU0IocyktPnNf
-bW91bnRfb3B0ICYgKDEgPDwgRk9SQ0VfUlVQQVNPVl9IQVNIKSkNCiAjZGVm
-aW5lIHJlaXNlcmZzX3RlYV9oYXNoKHMpIChSRUlTRVJGU19TQihzKS0+c19t
-b3VudF9vcHQgJiAoMSA8PCBGT1JDRV9URUFfSEFTSCkpDQo=
+> Hans Reiser wrote:
+>
+>> PFC wrote:
+>>
+>>  
+>>
+>>>    Hehe. Wow. Sure, a benchmark that runs in 0.03 seconds for the
+>>> fastest  one and 0.07 seconds for the slowest one looks pretty
+>>> reliable to me. How  much time does it take to spawn the "touch"
+>>> process 10k times ? Hm... I'd  guess most of the benchmark time ?
+>>>   
+>>
+>>
+>>  
+>>
+>
+> Let's consider this important aspect of benchmarking more carefully.
+> So there is an interesting question: how much should be a difference
+> in order to approve that some fs really wins at this statistics? Is
+> there any guarantee you won't get, say, 0.05 and 0.02 after next run?
+> Sorry, but I didn't find any answer in Justin's notes, NOTE5 (Tests
+> Performed) says that questionable tests were re-run, but it seems we
+> need something kinda research here instead of re-run.
+>
+> Below are some comments for how this problem is resolved (1*) in mongo
+> benchmark. Look for example at this table:
+> http://www.namesys.com/benchmarks.html#mongo.2.6.11
+> Fractions like 0.982 (D/A), 1.017 (C/A) are in black color, it means
+> that we _can not_ do any assumptions about winner because
+> |1 - X/A| < 0.02. What the magic M = 0.02 is?
+> Let's run the same phase for the same settings (file system, file set,
+> etc..) 10 times. We will obtain for the same statistics X a set of
+> different (because of errors) values x1, x2, ..., x10. Suppose that
+> X has a normal distribution (any objections?). It means that we can
+> calculate its trusted interval for a single measurement (2*) as
+> [X - d(P), X + d(P)], where d(P) = D*U(P), D is dispersion and U(P)
+> should be found from the standard table by any nominated value of
+> trusted probability P (3*).
+> Now we have the following simple criterion (*4):
+>
+> |A - X| >= 2d(P), i.e. |1 - X/A| >= 2D*U(P)/A
+>
+> |           |<-d->|    |<-d->|
+> ------<-----|----->----<-----|----->------
+>            A                X
+>
+> The magic M = 0.02 for mongo benchmark was calculated as 2D*U(P)/A
+> for the trusted probability P=0.85 (5*).
+> Now it is clear from the formula above why statistics shouldn't be
+> too small: because the criterion becomes false. I am sure (and it
+> is easy to check) 2d(P=0.85) is much more then |0.07 - 0.03| as it
+> is in the case of find 10000 files. By the way, some settings, which
+> provide a small values (~5 sec) of the mongo STATS statistics also
+> make this criterion false.
+>
+>
+> (1*) Maybe this is not a perfect way, but it is better then nothing
+> (2*) For N measurements the expression for boundaries becomes a bit
+>     complicated.
+> (3*) For P=0.85 (as we can found in any scientific book) U(P)=1.44
+> (4*) One more assumption here about identical distributions of A and X
+> (5*) Actually D = max(D_create, D_copy, D_read, D_delete, D_dd), where
+>     D_each_phase was estimated once by 10 measurements with some fixed
+>     settings by the standard way:
+>     D^2 = ((x - x1)^2 + ... + (x - x10)^2)/(10 - 1), where
+>     x = (x1 + ... + x10)/10 is an average value.
+>
+> Edward.
+>
+>
+>
+>
 
---=_gentoo.grakker.jesnetplus.com-7765-1136874140-0001-2--
