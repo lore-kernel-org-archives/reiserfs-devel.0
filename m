@@ -1,29 +1,44 @@
-From: Gregory Maxwell <gmaxwell@gmail.com>
-Subject: Re: What's the state of Reiser4 inclusion in the mainline kernel ...
-Date: Mon, 9 Jan 2006 13:43:08 -0500
-Message-ID: <e692861c0601091043r5c0cc0e6jf8f5812f9814663d@mail.gmail.com>
-References: <432AFB44.9060707@namesys.com>
-	 <20050916174028.GA32745@infradead.org> <43C232D0.2010303@futuretg.com>
-	 <1136798121.2936.21.camel@laptopd505.fenrus.org>
-	 <43C24E1B.8020205@futuretg.com> <43C250CA.3010709@futuretg.com>
+From: Hubert Chan <hubert@uhoreg.ca>
+Subject: Compiling 2.6.15 with Reiser4 patch for 2.6.14
+Date: Mon, 09 Jan 2006 22:39:57 -0700
+Message-ID: <87y81ok5ea.fsf@evinrude.uhoreg.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-27644-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27649-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43C250CA.3010709@futuretg.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Giovanni A. Orlando" <gorlando@futuretg.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>, Hans Reiser <reiser@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-On 1/9/06, Giovanni A. Orlando <gorlando@futuretg.com> wrote:
-> Hans,
->
->     Can you tell me please the status of Reiser4 in the Kernel?
+The patch for 2.6.14 applies more or less cleanly (other than a few
+already-applied chunks) to vanilla 2.6.15.  But when I compile, I get
+errors:
 
-Here is the thread you were supposted to read... (I think):
-http://marc.theaimsgroup.com/?l=3Dlinux-kernel&m=3D113650213621940&w=3D2
+  CC      fs/reiser4/jnode.o
+fs/reiser4/jnode.c: In function 'jnode_by_page':
+fs/reiser4/jnode.c:288: error: 'struct page' has no member named 'private'
+fs/reiser4/jnode.c:289: warning: control reaches end of non-void function
+fs/reiser4/jnode.c: In function 'do_jget':
+fs/reiser4/jnode.c:603: error: 'struct page' has no member named 'private'
+fs/reiser4/jnode.c: In function 'jnode_of_page':
+fs/reiser4/jnode.c:644: error: 'struct page' has no member named 'private'
+fs/reiser4/jnode.c: In function 'jnode_attach_page':
+fs/reiser4/jnode.c:678: error: 'struct page' has no member named 'private'
+fs/reiser4/jnode.c: In function 'page_clear_jnode':
+fs/reiser4/jnode.c:695: error: 'struct page' has no member named 'private'
+fs/reiser4/jnode.c: In function 'page_detach_jnode':
+fs/reiser4/jnode.c:713: error: 'struct page' has no member named 'private'
+make[4]: *** [fs/reiser4/jnode.o] Error 1
+
+P.S. Have people who have tried the 2.6.14 patch found it to be fairly
+reliable?
+
+-- 
+Hubert Chan <hubert@uhoreg.ca> - http://www.uhoreg.ca/
+PGP/GnuPG key: 1024D/124B61FA
+Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
+Key available at wwwkeys.pgp.net.   Encrypted e-mail preferred.
+
