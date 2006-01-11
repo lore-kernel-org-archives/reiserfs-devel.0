@@ -1,64 +1,44 @@
-From: Eric P <eric.maillist@gmail.com>
-Subject: Re: Reiser disc hosed?
-Date: Tue, 10 Jan 2006 21:45:07 -0600
-Message-ID: <43C47F43.20002@gmail.com>
-References: <43BF3983.8010004@gmail.com>
+From: "E.Gryaznova" <grev@namesys.com>
+Subject: Re: reiser4 warning?
+Date: Wed, 11 Jan 2006 11:08:18 +0300
+Message-ID: <43C4BCF2.1070000@namesys.com>
+References: <20060110211802.GA16793@apartia.fr>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27656-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27657-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43BF3983.8010004@gmail.com>
+In-Reply-To: <20060110211802.GA16793@apartia.fr>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Louis-David Mitterrand <vindex+lists-reiserfs-list@apartia.org>
+Cc: reiserfs-list@namesys.com
 
-Eric P wrote:
-> So I'm doing an 'mplayer -dumpfile', and before I know it I've
-> completely filled the last 10GB of my hard drive (total 80GB).  It
-> wasn't were the OS resided; just a HD used for a file holding space.
-> 
-> Anyway, after reaching 100%, the folder I was working in became
-> non-working.  When I would do 'ls' from its parent folder, it said
-> something like 'Couldn't lstat /folder permission denied'; even as root.
-> 
-> (sorry if my details are sketchy.  Unfortunately, I tried tackling
-> this problem while I had a fever.  Bad idea.).
-> 
-> 
-> It's a reiser4 FS, so I umounted and ran:
-> # fsck.reiser4 /dev/hdb1
-> ...
-> Warn : Fatal corruptions were found. Semantic pass is skipped.
-> ***** fsck.reiser4 finished at Thu Jan  5 18:35:18 2006
-> Closing fs...done
-> 
-> 1 fatal corruptions were detected in FileSystem. Run with --build-fs
-> option to fix them.
-> 
-> 
-> So, as suggested, I ran:
-> # fsck.reiser4 --build-fs /dev/hdb1   (which ran for ~30 min)
-> ...
-> Warn : Reiser4 storage tree does not exist. Filter pass skipped.
-> ...
-> Fatal: No reiser4 metadata were found. Semantic pass is skipped.
-> ***** fsck.reiser4 finished at Thu Jan  5 19:16:50 2006
-> Closing fs...done
-> 
-> NO REISER4 METADATA WERE FOUND. FS RECOVERY IS NOT POSSIBLE.
-> 
-> 
-> So this is (ahem) bad, huh?  Am I screwed?  Or is there any way to
-> recover some of the files?
-> 
-> Thanks for reading!
-> Eric P.
-> 
+Hello.
 
-Should I post this somewhere else?  Maybe on the devel ML?
+
+Louis-David Mitterrand wrote:
+
+>Hello,
+>
+>When rebooting a server I catched this in the logs:
+>
+>	Jan 10 18:13:55 zenon kernel: <4>reiser4[apache-perl(6359)]: disable_write_barrier (fs/reiser4/wander.c:233)[zam-1055]:
+>	Jan 10 18:13:55 zenon kernel: WARNING: disabling write barrier
+>
+>Is it bad?
+>  
+>
+No. You may ignore this warning.
 
 Thanks,
-Eric P
+Lena.
+
+>(using 2.6.14 patch)
+>
+>
+>  
+>
+
