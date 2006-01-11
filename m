@@ -1,54 +1,36 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiser4 warning?
-Date: Wed, 11 Jan 2006 00:16:45 -0800
-Message-ID: <43C4BEED.9040503@namesys.com>
-References: <20060110211802.GA16793@apartia.fr> <43C4BCF2.1070000@namesys.com>
+From: Sander van Beek <raze@xs4all.nl>
+Subject: Troubles after --rebuild-tree
+Date: Wed, 11 Jan 2006 09:51:55 +0100
+Message-ID: <6.2.1.2.0.20060111094538.0357b028@pop.xs4all.nl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27658-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27659-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43C4BCF2.1070000@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "E.Gryaznova" <grev@namesys.com>
-Cc: Louis-David Mitterrand <vindex+lists-reiserfs-list@apartia.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-E.Gryaznova wrote:
+Hello everyone,
 
-> Hello.
->
->
-> Louis-David Mitterrand wrote:
->
->> Hello,
->>
->> When rebooting a server I catched this in the logs:
->>
->>     Jan 10 18:13:55 zenon kernel: <4>reiser4[apache-perl(6359)]:
->> disable_write_barrier (fs/reiser4/wander.c:233)[zam-1055]:
->>     Jan 10 18:13:55 zenon kernel: WARNING: disabling write barrier
->>
->> Is it bad?
->>  
->>
-> No. You may ignore this warning.
->
-> Thanks,
-> Lena.
->
->> (using 2.6.14 patch)
->>
->>
->>  
->>
->
->
->
-Always explain things like this to users, don't just tell them to ignore
-it, tell them why they can ignore it.  Zam, please send in the patch to
-change it to a notice instead of warning.
+I'm new on this list so first I would like to say hi :)
 
-Hans
+I have a problem:
+We have a reiserfs partion in use on one of the servers. Because some files 
+that were deleted had to be recoverd, the command reiserfsck --rebuild-tree 
+-S -l /root/recovery.log was run. No backup of the partion was made before 
+running this command. Yes, we know, don't even start..
+The first time, in the first 1 or 2 minutes it was interrupted. After that, 
+it was rerun and finished.
+We remounted the filesystem and that is where troubles began. Some files 
+seem to be missing. Others appear damaged.
+We do have the logfile and the lost+found directory full or files.
+Is there any chance to repair the damage done with these two, or at least 
+get some data back? How can this be done? Or should we leave it up to the 
+expert? Any help or suggestions would be appreciated.
+
+Regards,
+Sander
+
