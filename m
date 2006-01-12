@@ -1,60 +1,37 @@
 From: Yoanis Gil Delgado <fred@lab.matcom.uh.cu>
 Subject: Re: Authoring a versioning plugin
-Date: Thu, 12 Jan 2006 15:08:35 -0500
-Message-ID: <200601121508.36380.fred@lab.matcom.uh.cu>
-References: <200601111759.14638.fred@lab.matcom.uh.cu> <f18a8d980601121033x12e0b148g65ecc78f306b4446@mail.gmail.com> <200601121502.32227.fred@lab.matcom.uh.cu>
+Date: Thu, 12 Jan 2006 15:06:34 -0500
+Message-ID: <200601121506.34947.fred@lab.matcom.uh.cu>
+References: <200601111759.14638.fred@lab.matcom.uh.cu> <200601121014.37940.pvh@uvic.ca> <200601121439.09483.fred@lab.matcom.uh.cu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27683-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-27684-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200601121502.32227.fred@lab.matcom.uh.cu>
+In-Reply-To: <200601121439.09483.fred@lab.matcom.uh.cu>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 To: Yoanis Gil Delgado <fred@lab.matcom.uh.cu>, reiserfs-List@namesys.com
 
-On Thursday 12 January 2006 03:02 pm, you wrote:
-
- Please remember the plugin it's in an earlier design phase, and the answers
-
-> can change, but right now this is what I think:
-> > I think versioning plugin is a great idea and I bet there're many people
-> > like me waiting for such a plugin. However, I have few questions;
+On Thursday 12 January 2006 02:39 pm, you wrote:
+> On Thursday 12 January 2006 01:14 pm, you wrote:
+> > > I'm planning to use a delta techniques for versioning storage (delta
+> > > compression). The versioning will be at the write level. The versions
+> > > will be saved in a special directory under the filesystem. I think the
+> > > hard part is the one related to detecting the changes (a COW it's a
+> > > possible solution, but i think it's to expensive). I'm thinking a
+> > > possible solution will be detecting the bytes changing in each write
+> > > and archiving then as the difference. =A0This introduce some problems
+> > > like : 1-) What happens if the file shrinks?
+> > > 2-) What happens if the file grows ?
+> > >
+> > > I will send another email with a solution to this problems.
 > >
-> > what happens when I delete a file? should I loose all history of the file
-> > with such action?
+> > This will not be easy, I look forward to seeing your solution.
 >
- I think the history should  go away too, since history will be stored as
-deltas.
->
-> > if there's an undelete plugin, what kind of hooks needed so undelete
-> > recovers the full state of the file with history.
->
- Undelete plugin is for future work. right now I'm thinking  that if there
- is mechanism to track down the versioning info of a file no matter the
- directory it's located,  then this should not be a problem.
-
-> > another concern is backup; if I backup the file or the entire directory
-> > (or drive), is it transparent to the backup app, or something extra
-> > needed to be done to backup the history of the file?
->
- don't know right now. will come with more answers on next days.
->
-> > if you store all the history in  a sub direcotry let's say .rev and make
-> > it generic (and hence visible) to everyone, the above problems will go
-> > away.
-> >
-> > for example filename.ext deltas could be stored in  .rev/filename-
-> > rev-date-time.delta with base rev in .rev/filename-rev-date-time.ext
->
- But what happens if i type:
- $ mv filename.ext ../
- then the entire file revision tree must be copied. that's why i mention the
- idea of mechanism to track down the versioning info of a file.
->
-> > correct me if I'm missing something, because I don't know the plugin
-> > mechanism of reiser4.
-Thanks a lot for the questions.
+Well this is one of the interesting part of the projects. I will not start
+ from scratch, since there is previous work on this area (the delta file
+ system for example, although it's a little old).
