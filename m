@@ -1,49 +1,60 @@
 From: Yoanis Gil Delgado <fred@lab.matcom.uh.cu>
 Subject: Re: Authoring a versioning plugin
-Date: Thu, 12 Jan 2006 15:05:38 -0500
-Message-ID: <200601121505.38907.fred@lab.matcom.uh.cu>
-References: <200601111759.14638.fred@lab.matcom.uh.cu> <43C5FAE0.5090602@namesys.com> <200601121434.54881.fred@lab.matcom.uh.cu>
+Date: Thu, 12 Jan 2006 15:08:35 -0500
+Message-ID: <200601121508.36380.fred@lab.matcom.uh.cu>
+References: <200601111759.14638.fred@lab.matcom.uh.cu> <f18a8d980601121033x12e0b148g65ecc78f306b4446@mail.gmail.com> <200601121502.32227.fred@lab.matcom.uh.cu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-27682-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27683-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200601121434.54881.fred@lab.matcom.uh.cu>
+In-Reply-To: <200601121502.32227.fred@lab.matcom.uh.cu>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 To: Yoanis Gil Delgado <fred@lab.matcom.uh.cu>, reiserfs-List@namesys.com
 
-On Thursday 12 January 2006 02:34 pm, you wrote:
-> On Thursday 12 January 2006 01:44 am, you wrote:
-> > Hans Reiser wrote:
-> > > =A0
-> > >
-> > > =A0I am skeptical that having it occur with every
-> > >write is desirable actually.
-> > > =A0
+On Thursday 12 January 2006 03:02 pm, you wrote:
+
+ Please remember the plugin it's in an earlier design phase, and the answers
+
+> can change, but right now this is what I think:
+> > I think versioning plugin is a great idea and I bet there're many people
+> > like me waiting for such a plugin. However, I have few questions;
 > >
-> > Consider the case where you type cat file1 >> file2. =A0This will produ=
-ce
-> > a version of file2 for every 4k that is in file1, because (well I didn't
-> > look at the bash source, but I would guess) it appends in 4k incremental
-> > writes rather than one big write. =A0Versioning on file close makes more
-> > sense, but I suggest manual control using the ..../checkin pseudofile,
-> > and then we can reasonably make it the default plugin for the whole FS
-> > (write it so that it calls the other plugins so that when we change the
-> > other plugins we don't need to change your code to do it). =A0People who
-> > don't want versioning will simply never touch the checkin pseudofile.
-> > Make sure that for that case there is just an if statement condition
-> > check as overhead, and there will be no reason to not make versioning
-> > the default plugin that happens to do nothing unless you use the checkin
-> > pseudofile at least once during the life of the file.
-> >
-> > hmm, maybe ..../snap is better than ..../checkin ? =A0Well, let's decide
-> > that once the code is written....;-)
-> >
-> > Do you agree with my points here?
+> > what happens when I delete a file? should I loose all history of the file
+> > with such action?
 >
- Yes I agree with your points. Still, i will like that some files have auto
- versioning.
+ I think the history should  go away too, since history will be stored as
+deltas.
+>
+> > if there's an undelete plugin, what kind of hooks needed so undelete
+> > recovers the full state of the file with history.
+>
+ Undelete plugin is for future work. right now I'm thinking  that if there
+ is mechanism to track down the versioning info of a file no matter the
+ directory it's located,  then this should not be a problem.
+
+> > another concern is backup; if I backup the file or the entire directory
+> > (or drive), is it transparent to the backup app, or something extra
+> > needed to be done to backup the history of the file?
+>
+ don't know right now. will come with more answers on next days.
+>
+> > if you store all the history in  a sub direcotry let's say .rev and make
+> > it generic (and hence visible) to everyone, the above problems will go
+> > away.
+> >
+> > for example filename.ext deltas could be stored in  .rev/filename-
+> > rev-date-time.delta with base rev in .rev/filename-rev-date-time.ext
+>
+ But what happens if i type:
+ $ mv filename.ext ../
+ then the entire file revision tree must be copied. that's why i mention the
+ idea of mechanism to track down the versioning info of a file.
+>
+> > correct me if I'm missing something, because I don't know the plugin
+> > mechanism of reiser4.
+Thanks a lot for the questions.
