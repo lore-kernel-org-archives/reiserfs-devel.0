@@ -1,135 +1,137 @@
-From: Peter van Hardenberg <pvh@uvic.ca>
+From: Bedros Hanounik <2bedros@gmail.com>
 Subject: Re: Authoring a versioning plugin
-Date: Thu, 12 Jan 2006 10:14:37 -0800
-Message-ID: <200601121014.37940.pvh@uvic.ca>
+Date: Thu, 12 Jan 2006 10:33:39 -0800
+Message-ID: <f18a8d980601121033x12e0b148g65ecc78f306b4446@mail.gmail.com>
 References: <200601111759.14638.fred@lab.matcom.uh.cu>
+	 <43C5D694.9050402@namesys.com> <43C5FAE0.5090602@namesys.com>
+	 <1137083591.14934.5.camel@localhost>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27680-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_67318_26582329.1137090819782"
+Return-path: <reiserfs-list-return-27681-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-reply-to: <200601111759.14638.fred@lab.matcom.uh.cu>
-Content-disposition: inline
+In-Reply-To: <1137083591.14934.5.camel@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Yoanis Gil Delgado <fred@lab.matcom.uh.cu>
+To: Jonathan Briggs <jbriggs@esoft.com>
+Cc: Hans Reiser <reiser@namesys.com>, Yoanis Gil Delgado <fred@lab.matcom.uh.cu>, reiserfs-List@namesys.com
 
-Hi Yoanis, good to see you're still pursuing this.
+------=_Part_67318_26582329.1137090819782
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-On January 11, 2006 02:59 pm, Yoanis Gil Delgado wrote:
-> This are the intentions:
-> To write a versioning plugin that will allows the file system user to
-> easily revert the files under versioning to a some previous state.  The
-> plugin will allow to revert the file state, based on revisions number and
-> date modifications(and not sure about this one). There will be a special
-> pseudo file named "previous" that will return the previous version of the
-> file. The final result should allow to the the following actions:
+I think versioning plugin is a great idea and I bet there're many people
+like me waiting for such a plugin. However, I have few questions;
+
+what happens when I delete a file? should I loose all history of the file
+with such action?
+
+if there's an undelete plugin, what kind of hooks needed so undelete
+recovers the full state of the file with history.
+
+another concern is backup; if I backup the file or the entire directory (or
+drive), is it transparent to the backup app, or something extra needed to b=
+e
+done to backup the history of the file?
+
+if you store all the history in  a sub direcotry let's say .rev and make it
+generic (and hence visible) to everyone, the above problems will go away.
+
+for example filename.ext deltas could be stored in  .rev/filename-
+rev-date-time.delta with base rev in .rev/filename-rev-date-time.ext
+
+
+correct me if I'm missing something, because I don't know the plugin
+mechanism of reiser4.
+
+-B
+
+On 1/12/06, Jonathan Briggs <jbriggs@esoft.com> wrote:
 >
-> $ echo 1 > myfile.txt  (let's say we make this command at Wed Jan 11
-> 16:53:55) $ echo 2 > myfile.txt  (let's say we make this command at Wed Jan
-> 11 16:54:57) $ echo 3 >> myfile.txt (let's say we make this command at Wed
-> Jan 11 16:55:59)
+> On Wed, 2006-01-11 at 22:44 -0800, Hans Reiser wrote:
+> > Hans Reiser wrote:
+> > >  I am skeptical that having it occur with every
+> > >write is desirable actually.
+> > >
+> > >
+> > Consider the case where you type cat file1 >> file2.  This will produce
+> > a version of file2 for every 4k that is in file1, because (well I didn'=
+t
+> > look at the bash source, but I would guess) it appends in 4k incrementa=
+l
+> > writes rather than one big write.  Versioning on file close makes more
+> > sense
+> [snip]
 >
-> Suppose you want the latest version, then you type:
-> $ cat myfile/.../previous
->  Some other content
-> Or you want the n-th version, then you type:
-> $ cat myfile/.../1
->  Some content
-> $ cat myfile/.../2
->  Some other content
-> $ cat myfile/.../3
-
-This is going to clutter the ... directory rather a lot. Instead of adding 
-more files into "...." (which, by the way, is completely obscure) I would 
-suggest you create a new pseudo directory.
-
-Perhaps:
-$ cat myfile/.^4/history/previous
-$ cat myfile/.^4/history/version/1
-still not quite right, but at least it contains a bit more information about 
-what the "1" refers to.
-
->  Some other content
->  Some more content
-> $
-> Or the version nearest to some date, then you type:
-> $ cat myfile.txt/.../Wed\ Jan\ 11\ 16:50
->  Some other content
-
-There are already userspace tools which can determine the file creation date. 
-Just use those, instead of dealing with date parsing in kernel-space. Date 
-parsing is a way, WAY more subtle problem than you want to deal with. To see 
-a group that has spent some time on it, check out the Date::Parser for Perl.
-
-Using "grep" or "find", or "ls" or whatever other tool will accomplish this in 
-a much more thorough and Unix-consistent way and also save you a pile of 
-coding time. Believe me, you're going to need it.
-
+> Not that my opinion means anything. :-) But I agree with Hans that file
+> close is the place to create the new version.  The plugin should track
+> the writes (and mmap flushes) between file open and close, then on file
+> close it can process everything into a reverse binary diff to save
+> permanently.
+> --
+> Jonathan Briggs <jbriggs@esoft.com>
+> eSoft, Inc.
 >
-> Also , there will be an special attribute named under_versioning(or
-> something like that), that will tell if the file is under versioning. This
-> plugin will not track directories version, although it's a future plan(I
-> think this should be mixed with some undelete plugin).
+>
+> -----BEGIN PGP SIGNATURE-----
+> Version: GnuPG v1.4.2 (GNU/Linux)
+>
+> iD8DBQBDxoTGG8fHaOLTWwgRAkE0AJ9qn75iDGZTgO+KpOEcVVqOuT8mgwCcDYyy
+> BHWE+E4oBHkabjZZHNIoAqM=3D
+> =3DVtbo
+> -----END PGP SIGNATURE-----
+>
+>
 >
 
-I imagine that attribute should be
-$ echo "1" > myfile.txt/..../plugins/versioning
-or
-$ echo "everywrite" > myfile.txt/..../plugins/versioning
+------=_Part_67318_26582329.1137090819782
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Unfortunately, my experience is that you cannot use "echo" to change the data 
-in the plugins/* pseudoplugins, even when it should be legal to do so. I just 
-had a little ruby script that looked roughly like this:
+I think versioning plugin is a great idea and I bet there're many people li=
+ke me waiting for such a plugin. However, I have few questions;<br><br>what=
+ happens when I delete a file? should I loose all history of the file with =
+such action?=20
+<br><br>if there's an undelete plugin, what kind of hooks needed so undelet=
+e recovers the full state of the file with history.<br><br>another concern =
+is backup; if I backup the file or the entire directory (or drive), is it t=
+ransparent to the backup app, or something extra needed to be done to backu=
+p the history of the file?
+<br><br>if you store all the history in&nbsp; a sub direcotry let's say .re=
+v and make it generic (and hence visible) to everyone, the above problems w=
+ill go away. <br><br>for example filename.ext deltas could be stored in&nbs=
+p; .rev/filename-
+rev-date-time.delta with base rev in .rev/filename-rev-date-time.ext<br><br=
+><br>correct me if I'm missing something, because I don't know the plugin m=
+echanism of reiser4.<br><br>-B<br><br><div><span class=3D"gmail_quote">On 1=
+/12/06,=20
+<b class=3D"gmail_sendername">Jonathan Briggs</b> &lt;<a href=3D"mailto:jbr=
+iggs@esoft.com">jbriggs@esoft.com</a>&gt; wrote:</span><blockquote class=3D=
+"gmail_quote" style=3D"border-left: 1px solid rgb(204, 204, 204); margin: 0=
+pt 0pt 0pt 0.8ex; padding-left: 1ex;">
+On Wed, 2006-01-11 at 22:44 -0800, Hans Reiser wrote:<br>&gt; Hans Reiser w=
+rote:<br>&gt; &gt;&nbsp;&nbsp;I am skeptical that having it occur with ever=
+y<br>&gt; &gt;write is desirable actually.<br>&gt; &gt;<br>&gt; &gt;<br>&gt=
+; Consider the case where you type cat file1 &gt;&gt; file2.&nbsp;&nbsp;Thi=
+s will produce
+<br>&gt; a version of file2 for every 4k that is in file1, because (well I =
+didn't<br>&gt; look at the bash source, but I would guess) it appends in 4k=
+ incremental<br>&gt; writes rather than one big write.&nbsp;&nbsp;Versionin=
+g on file close makes more
+<br>&gt; sense<br>[snip]<br><br>Not that my opinion means anything. :-) But=
+ I agree with Hans that file<br>close is the place to create the new versio=
+n.&nbsp;&nbsp;The plugin should track<br>the writes (and mmap flushes) betw=
+een file open and close, then on file
+<br>close it can process everything into a reverse binary diff to save<br>p=
+ermanently.<br>--<br>Jonathan Briggs &lt;<a href=3D"mailto:jbriggs@esoft.co=
+m">jbriggs@esoft.com</a>&gt;<br>eSoft, Inc.<br><br><br>-----BEGIN PGP SIGNA=
+TURE-----
+<br>Version: GnuPG v1.4.2 (GNU/Linux)<br><br>iD8DBQBDxoTGG8fHaOLTWwgRAkE0AJ=
+9qn75iDGZTgO+KpOEcVVqOuT8mgwCcDYyy<br>BHWE+E4oBHkabjZZHNIoAqM=3D<br>=3DVtbo=
+<br>-----END PGP SIGNATURE-----<br><br><br></blockquote></div><br>
 
-f = open pseudofile;
-f.write('newplugin');
-f.close;
-
-Never had the time to figure out why that was necessary, but there it is. 
-(There is a comment on the plugin-wiki gotchas section.)
-
-> I'm planning to use a delta techniques for versioning storage (delta
-> compression). The versioning will be at the write level. The versions will
-> be saved in a special directory under the filesystem. I think the hard part
-> is the one related to detecting the changes (a COW it's a possible
-> solution, but i think it's to expensive). I'm thinking a possible solution
-> will be detecting the bytes changing in each write and archiving then as
-> the difference.  This introduce some problems like :
-> 1-) What happens if the file shrinks?
-> 2-) What happens if the file grows ?
->
-> I will send another email with a solution to this problems.
-
-This will not be easy, I look forward to seeing your solution.
-
->
-> I've also plans to extent the documentantion of plugins creation in reiser4
-> with the experiences of this project. I'll be working in this plugin for
-> more than 4 months. If you're interested you're welcome to the the
-> team(just me right now :D )
-
-Well, I have my own fish to fry, but I hope you will document your experiences 
-on the Reiser4 programmer's wiki, currently housed at:
-http://pvh.ca/trac/wiki/reiser4
-
-There is lots of important information there for new Reiser4 plugin 
-developers, and it will continue to grow as time goes by.
-
-> Well....... I think this is all (for now  :D ). Please let me know what you
-> think.
-
-I would second Hans' suggestion about a "..../version/snapshot" file which 
-would essentially act like a "cvs commit" on that file. I'd suggest that 
-there be two similar versioning plugins, one which automatically versions 
-after each write, and one which only does it when explicitly asked to. See 
-the fibration plugin type for an example of this.
-
--p
-
--- 
-Peter van Hardenberg (pvh@pvh.ca)
-Victoria, BC, Canada
+------=_Part_67318_26582329.1137090819782--
