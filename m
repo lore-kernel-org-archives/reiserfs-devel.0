@@ -1,52 +1,43 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Jonathan Sailor <jsailor@jesnetplus.com>
 Subject: Re: Authoring a versioning plugin
-Date: Fri, 13 Jan 2006 13:48:58 -0800
-Message-ID: <43C8204A.1050909@namesys.com>
-References: <200601111759.14638.fred@lab.matcom.uh.cu> <200601121014.37940.pvh@uvic.ca> <43C80EC3.7050003@namesys.com> <43C818D2.4080805@ac24.ee>
+Date: Fri, 13 Jan 2006 18:00:26 -0500 (EST)
+Message-ID: <Pine.LNX.4.64.0601131758210.8337@gentoo.grakker.jesnetplus.com>
+References: <200601111759.14638.fred@lab.matcom.uh.cu> <200601121014.37940.pvh@uvic.ca>
+ <43C80EC3.7050003@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27702-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27703-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43C818D2.4080805@ac24.ee>
+In-Reply-To: <43C80EC3.7050003@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Toomas Laasik <toomas@ac24.ee>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Peter van Hardenberg <pvh@uvic.ca>, reiserfs-list@namesys.com, Yoanis Gil Delgado <fred@lab.matcom.uh.cu>
 
-Toomas Laasik wrote:
+On Fri, 13 Jan 2006, Hans Reiser wrote:
+>> I imagine that attribute should be
+>> $ echo "1" > myfile.txt/..../plugins/versioning
+>> or
+>> $ echo "everywrite" > myfile.txt/..../plugins/versioning
+>>
+>> Unfortunately, my experience is that you cannot use "echo" to change the data
+>> in the plugins/* pseudoplugins, even when it should be legal to do so. I just
+>> had a little ruby script that looked roughly like this:
+>>
+>> f = open pseudofile;
+>> f.write('newplugin');
+>> f.close;
+>>
+>> Never had the time to figure out why that was necessary, but there it is.
+>> (There is a comment on the plugin-wiki gotchas section.)
+>>
+>>
+> If someone figures out why we can't do it but /proc can, or even fixes
+> it, it would be good.
 
-> Hello,
-> Here are some links that I have found while searching such file
-> systems that can keep versions or log of changes:
-> http://logfs.sourceforge.net/ - small logging filesystem project
-> started by a student, but not very stable yet
-> http://wayback.sourceforge.net/ - written in Perl, based on quite old
-> version on FUSE API
-> http://sourceforge.net/projects/cvsfs - uses CVS as file system, based
-> on FUSE API
-> http://www.opensolaris.org/os/community/zfs/ - very powerful file
-> system that supports snapshots of files
-> Microsoft has made something too on their server platform, but I
-> couldn't find a link for that.
->
-> It seems to me that many have started with it, but haven't finished.
-> Creating a versioning FS that is comercially stable and fast takes a
-> lot of effort and is quite complex. Go discover what and how others
-> have done it and how to do it best in ReiserFS.
->
-> I would be very interested in stable file system that supports
-> automatic versioning. Maybe ReiserFS becomes the first one that I can
-> actually use. I don't want a userspace FS, but a good FS where I can
-> safely keep my FreeBSD installation.
->
-> Toomas
+It wouldn't be something so simple as echo's trailing newline, would it?
 
-Clearcase is out there and finished and it works.  Several thousand
-dollars a seat though....
-
-;-)
-
-Hans
+-Jonathan
