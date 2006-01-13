@@ -1,39 +1,84 @@
-From: David Masover <ninja@slaphack.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Authoring a versioning plugin
-Date: Fri, 13 Jan 2006 10:43:57 -0600
-Message-ID: <43C7D8CD.4040800@slaphack.com>
-References: <200601111759.14638.fred@lab.matcom.uh.cu>	 <43C5D694.9050402@namesys.com> <43C5FAE0.5090602@namesys.com>	 <1137083591.14934.5.camel@localhost>	 <f18a8d980601121033x12e0b148g65ecc78f306b4446@mail.gmail.com>	 <43C6CEB4.8000209@slaphack.com> <f18a8d980601121443j30d3ada7r987c0babb5db3c3a@mail.gmail.com>
+Date: Fri, 13 Jan 2006 12:34:11 -0800
+Message-ID: <43C80EC3.7050003@namesys.com>
+References: <200601111759.14638.fred@lab.matcom.uh.cu> <200601121014.37940.pvh@uvic.ca>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27698-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27699-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <f18a8d980601121443j30d3ada7r987c0babb5db3c3a@mail.gmail.com>
+In-Reply-To: <200601121014.37940.pvh@uvic.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Bedros Hanounik <2bedros@gmail.com>
-Cc: Jonathan Briggs <jbriggs@esoft.com>, Hans Reiser <reiser@namesys.com>, Yoanis Gil Delgado <fred@lab.matcom.uh.cu>, reiserfs-List@namesys.com
+To: Peter van Hardenberg <pvh@uvic.ca>
+Cc: reiserfs-list@namesys.com, Yoanis Gil Delgado <fred@lab.matcom.uh.cu>
 
-Bedros Hanounik wrote:
-> David,
-> 
-> I appreciate your criticism, but we're not in a flame war. I never
-> claimed to be an FS expert. Take it easy; you don't have to beat my
-> suggestion to death. There's no perfect solution, and all feedbacks, no
-> matter how idiotic or simple may seem, help making a better final solution.
+Peter van Hardenberg wrote:
 
-I didn't mean this to be a personal attack, or a flame.  I was trying to
-be thorough, not confrontational.
+>Hi Yoanis, good to see you're still pursuing this.
+>
+>On January 11, 2006 02:59 pm, Yoanis Gil Delgado wrote:
+>  
+>
+>>This are the intentions:
+>>To write a versioning plugin that will allows the file system user to
+>>easily revert the files under versioning to a some previous state.  The
+>>plugin will allow to revert the file state, based on revisions number and
+>>date modifications(and not sure about this one). There will be a special
+>>pseudo file named "previous" that will return the previous version of the
+>>file. The final result should allow to the the following actions:
+>>
+>>$ echo 1 > myfile.txt  (let's say we make this command at Wed Jan 11
+>>16:53:55) $ echo 2 > myfile.txt  (let's say we make this command at Wed Jan
+>>11 16:54:57) $ echo 3 >> myfile.txt (let's say we make this command at Wed
+>>Jan 11 16:55:59)
+>>
+>>Suppose you want the latest version, then you type:
+>>$ cat myfile/.../previous
+>> Some other content
+>>Or you want the n-th version, then you type:
+>>$ cat myfile/.../1
+>> Some content
+>>$ cat myfile/.../2
+>> Some other content
+>>$ cat myfile/.../3
+>>    
+>>
+>
+>This is going to clutter the ... directory rather a lot. Instead of adding 
+>more files into "...." (which, by the way, is completely obscure) I would 
+>suggest you create a new pseudo directory.
+>
+>Perhaps:
+>$ cat myfile/.^4/history/previous
+>$ cat myfile/.^4/history/version/1
+>still not quite right, but at least it contains a bit more information about 
+>what the "1" refers to.
+>  
+>
+Ok, lets use myfile/..../versions/1 etc.
 
-You did actually have a good idea -- the '.rev' -- but I just wanted to
-make sure that if it was done, it would be done right.  Notice also that
-my last paragraph on that topic was how I think it should be done right
--- which isn't that different than your idea.
-
-> Again, I'm
-> not the FS expert here.
-
-Nor am I.  Just a fan, really.
+>
+>I imagine that attribute should be
+>$ echo "1" > myfile.txt/..../plugins/versioning
+>or
+>$ echo "everywrite" > myfile.txt/..../plugins/versioning
+>
+>Unfortunately, my experience is that you cannot use "echo" to change the data 
+>in the plugins/* pseudoplugins, even when it should be legal to do so. I just 
+>had a little ruby script that looked roughly like this:
+>
+>f = open pseudofile;
+>f.write('newplugin');
+>f.close;
+>
+>Never had the time to figure out why that was necessary, but there it is. 
+>(There is a comment on the plugin-wiki gotchas section.)
+>  
+>
+If someone figures out why we can't do it but /proc can, or even fixes
+it, it would be good.
 
