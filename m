@@ -1,59 +1,45 @@
-From: Peter van Hardenberg <pvh@uvic.ca>
+From: Pierre =?UTF-8?B?RXRjaGVtYcOvdMOp?= <petchema@concept-micro.com>
 Subject: Re: Authoring a versioning plugin
-Date: Sat, 14 Jan 2006 01:07:49 -0800
-Message-ID: <200601140107.49814.pvh@uvic.ca>
+Date: Sat, 14 Jan 2006 12:56:21 +0100
+Message-ID: <20060114125621.0766f137.petchema@concept-micro.com>
 References: <200601111759.14638.fred@lab.matcom.uh.cu>
- <43C80EC3.7050003@namesys.com>
- <Pine.LNX.4.64.0601131758210.8337@gentoo.grakker.jesnetplus.com>
+	<200601121014.37940.pvh@uvic.ca>
+	<43C80EC3.7050003@namesys.com>
+	<43C818D2.4080805@ac24.ee>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27710-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-27712-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-reply-to: <Pine.LNX.4.64.0601131758210.8337@gentoo.grakker.jesnetplus.com>
-Content-disposition: inline
+In-Reply-To: <43C818D2.4080805@ac24.ee>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jonathan Sailor <jsailor@jesnetplus.com>
-Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, Yoanis Gil Delgado <fred@lab.matcom.uh.cu>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-On January 13, 2006 03:00 pm, you wrote:
-> On Fri, 13 Jan 2006, Hans Reiser wrote:
-> >
-> > If someone figures out why we can't do it but /proc can, or even fixes
-> > it, it would be good.
->
-> It wouldn't be something so simple as echo's trailing newline, would it?
->
-> -Jonathan
+Le Fri, 13 Jan 2006 23:17:06 +0200, Toomas Laasik <toomas@ac24.ee> a =C3=A9=
+crit :
 
-Good thought, but no:
+> Hello,
+> Here are some links that I have found while searching such file systems=20
+> that can keep versions or log of changes:
 
-pvh@cortana:/home/norbs/reiser/emptydir/..../plugin$ cat fibration
-1 dot-o fibrate .o files separately
-norbs@cortana:/home/norbs/reiser/emptydir/..../plugin$ echo "ext-1" -n > 
-fibration
-norbs@cortana:/home/norbs/reiser/emptydir/..../plugin$ cat fibration
-1 dot-o fibrate .o files separately
-norbs@cortana:/home/norbs/reiser/emptydir/..../plugin$ irb
-irb(main):004:0> f = open('fibration', 'w')
-=> #<File:fibration>
-irb(main):005:0> f.write('ext-1')
-=> 5
-irb(main):006:0> f.close
-=> nil
-irb(main):007:0> exit
-norbs@cortana:/home/norbs/reiser/emptydir/..../plugin$ cat fibration
-2 ext-1 fibrate file by single character extension
-norbs@cortana:/home/norbs/reiser/emptydir/..../plugin$   
+While not currently implemented as a filesystem, Subversion repositories
+look-and-feel is very much like a filesystem.
 
-I'd look more closely at how proc does it and how we do it, but I'm too tired 
-for source digging tonight.
+I mention it, because instead of maintaining revisions of each file
+separately (RCS, then CVS, etc.), it maintains revisions (simple
+integer counter) of the repository as a whole.
+It nicely solve the problem of deleted (or simply moved around) files.
 
--pvh
+Tagging versions, creating branches, is handled orthogonally, by copying
+whole trees in other directories (of course internally everything is
+just "hardlinked").
 
--- 
-Peter van Hardenberg (pvh@pvh.ca)
-Victoria, BC, Canada
+What I mean is, that different approach could give ideas on how to
+implement versionning at filesystem level, or maybe improve a filesystem
+as a better backend (or frontend ?) to Subversion...
+
+Hope it helps,
+Pierre.
