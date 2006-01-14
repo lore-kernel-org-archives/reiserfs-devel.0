@@ -1,45 +1,55 @@
-From: Pierre =?UTF-8?B?RXRjaGVtYcOvdMOp?= <petchema@concept-micro.com>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: Authoring a versioning plugin
-Date: Sat, 14 Jan 2006 12:56:21 +0100
-Message-ID: <20060114125621.0766f137.petchema@concept-micro.com>
-References: <200601111759.14638.fred@lab.matcom.uh.cu>
-	<200601121014.37940.pvh@uvic.ca>
-	<43C80EC3.7050003@namesys.com>
-	<43C818D2.4080805@ac24.ee>
+Date: Sat, 14 Jan 2006 11:28:51 -0600
+Message-ID: <43C934D3.7040406@slaphack.com>
+References: <200601111759.14638.fred@lab.matcom.uh.cu> <43C80EC3.7050003@namesys.com> <Pine.LNX.4.64.0601131758210.8337@gentoo.grakker.jesnetplus.com> <200601140107.49814.pvh@uvic.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-27712-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27713-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43C818D2.4080805@ac24.ee>
+In-Reply-To: <200601140107.49814.pvh@uvic.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Peter van Hardenberg <pvh@uvic.ca>
+Cc: Jonathan Sailor <jsailor@jesnetplus.com>, Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, Yoanis Gil Delgado <fred@lab.matcom.uh.cu>
 
-Le Fri, 13 Jan 2006 23:17:06 +0200, Toomas Laasik <toomas@ac24.ee> a =C3=A9=
-crit :
+Peter van Hardenberg wrote:
+> On January 13, 2006 03:00 pm, you wrote:
+> 
+>>On Fri, 13 Jan 2006, Hans Reiser wrote:
+>>
+>>>If someone figures out why we can't do it but /proc can, or even fixes
+>>>it, it would be good.
+>>
+>>It wouldn't be something so simple as echo's trailing newline, would it?
+>>
+>>-Jonathan
+> 
+> 
+> Good thought, but no:
+[...]
+> norbs@cortana:/home/norbs/reiser/emptydir/..../plugin$ echo "ext-1" -n > 
+> fibration
+[...]
+> norbs@cortana:/home/norbs/reiser/emptydir/..../plugin$ irb
+> irb(main):004:0> f = open('fibration', 'w')
+> => #<File:fibration>
+> irb(main):005:0> f.write('ext-1')
+> => 5
+> irb(main):006:0> f.close
+> => nil
+> irb(main):007:0> exit
+[...]
+> I'd look more closely at how proc does it and how we do it, but I'm too tired 
+> for source digging tonight.
 
-> Hello,
-> Here are some links that I have found while searching such file systems=20
-> that can keep versions or log of changes:
+I think the difference is that Reiser expects a null-terminated string,
+whereas Proc doesn't need the null, and can chop off newlines when needed.
 
-While not currently implemented as a filesystem, Subversion repositories
-look-and-feel is very much like a filesystem.
+So, I think this would also work:
 
-I mention it, because instead of maintaining revisions of each file
-separately (RCS, then CVS, etc.), it maintains revisions (simple
-integer counter) of the repository as a whole.
-It nicely solve the problem of deleted (or simply moved around) files.
+echo -en 'ext-1\0' > fibration
 
-Tagging versions, creating branches, is handled orthogonally, by copying
-whole trees in other directories (of course internally everything is
-just "hardlinked").
-
-What I mean is, that different approach could give ideas on how to
-implement versionning at filesystem level, or maybe improve a filesystem
-as a better backend (or frontend ?) to Subversion...
-
-Hope it helps,
-Pierre.
