@@ -1,12 +1,12 @@
 From: Chris Mason <mason@suse.com>
-Subject: [patch 1/6] reiserfs v3 patches
-Date: Sun, 15 Jan 2006 19:50:03 -0500
-Message-ID: <20060116005310.656215000@watt.suse.com>
+Subject: [patch 3/6] reiserfs v3 patches
+Date: Sun, 15 Jan 2006 19:50:05 -0500
+Message-ID: <20060116005312.760818000@watt.suse.com>
 References: <20060116005002.398989000@watt.suse.com>
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs_invalidatepage-race-fix
+Content-Disposition: inline; filename=reiserfs-logging-perf-3
 From: Chris Mason <mason@suse.com>
-Subject: [patch 1/6] fix reiserfs_invalidatepage race against data=ordered
+Subject: [patch 3/6] reiserfs hang and performance fix for data=journal mode
 Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -14,76 +14,72 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: akpm@osdl.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
 
-After a transaction has closed but before it has finished commit, there
-is a window where data=ordered mode requires invalidatepage to pin pages
-instead of freeing them.  This patch fixes a race between the
-invalidatepage checks and data=ordered writeback, and it also adds a
-check to the reiserfs write_ordered_buffers routines to write any
-anonymous buffers that were dirtied after its first writeback loop.
+In data=journal mode, reiserfs writepage needs to make sure not to
+trigger transactions while being run under PF_MEMALLOC.  This patch
+makes sure to redirty the page instead of forcing a transaction start
+in this case.
 
-That bug works like this:
+Also, calling filemap_fdata* in order to trigger io on the block device
+can cause lock inversions on the page lock.  Instead, do simple
+batching from flush_commit_list.
 
-proc1: transaction closes and a new one starts
-proc1: write_ordered_buffers starts processing data=ordered list
-proc1: buffer A is cleaned and written
-proc2: buffer A is dirtied by another process
-proc2: File is truncated to zero, page A goes through invalidatepage
-proc2: reiserfs_invalidatepage sees dirty buffer A with reiserfs
-       journal head, pins it
-proc1: write_ordered_buffers frees the journal head on buffer A
-
-At this point, buffer A stays dirty forever
-
-diff -r 21be96fa294a fs/reiserfs/inode.c
---- a/fs/reiserfs/inode.c	Fri Jan 13 13:48:03 2006 -0500
-+++ b/fs/reiserfs/inode.c	Fri Jan 13 13:50:37 2006 -0500
-@@ -2743,6 +2743,7 @@ static int invalidatepage_can_drop(struc
- 	int ret = 1;
- 	struct reiserfs_journal *j = SB_JOURNAL(inode->i_sb);
+diff -r c10585019f18 fs/reiserfs/inode.c
+--- a/fs/reiserfs/inode.c	Fri Jan 13 13:51:10 2006 -0500
++++ b/fs/reiserfs/inode.c	Fri Jan 13 13:55:09 2006 -0500
+@@ -2363,6 +2363,13 @@ static int reiserfs_write_full_page(stru
+ 	int bh_per_page = PAGE_CACHE_SIZE / s->s_blocksize;
+ 	th.t_trans_id = 0;
  
-+	lock_buffer(bh);
- 	spin_lock(&j->j_dirty_buffers_lock);
- 	if (!buffer_mapped(bh)) {
- 		goto free_jh;
-@@ -2758,7 +2759,7 @@ static int invalidatepage_can_drop(struc
- 		if (buffer_journaled(bh) || buffer_journal_dirty(bh)) {
- 			ret = 0;
- 		}
--	} else if (buffer_dirty(bh) || buffer_locked(bh)) {
-+	} else  if (buffer_dirty(bh)) {
- 		struct reiserfs_journal_list *jl;
- 		struct reiserfs_jh *jh = bh->b_private;
++	/* no logging allowed when nonblocking or from PF_MEMALLOC */
++	if (checked && (current->flags & PF_MEMALLOC)) {
++		redirty_page_for_writepage(wbc, page);
++		unlock_page(page);
++		return 0;
++	}
++
+ 	/* The page dirty bit is cleared before writepage is called, which
+ 	 * means we have to tell create_empty_buffers to make dirty buffers
+ 	 * The page really should be up to date at this point, so tossing
+diff -r c10585019f18 fs/reiserfs/journal.c
+--- a/fs/reiserfs/journal.c	Fri Jan 13 13:51:10 2006 -0500
++++ b/fs/reiserfs/journal.c	Fri Jan 13 13:55:09 2006 -0500
+@@ -990,6 +990,7 @@ static int flush_commit_list(struct supe
+ 	struct reiserfs_journal *journal = SB_JOURNAL(s);
+ 	int barrier = 0;
+ 	int retval = 0;
++	int write_len;
  
-@@ -2784,6 +2785,7 @@ static int invalidatepage_can_drop(struc
- 		reiserfs_free_jh(bh);
- 	}
- 	spin_unlock(&j->j_dirty_buffers_lock);
-+	unlock_buffer(bh);
- 	return ret;
- }
+ 	reiserfs_check_lock_depth(s, "flush_commit_list");
  
-diff -r 21be96fa294a fs/reiserfs/journal.c
---- a/fs/reiserfs/journal.c	Fri Jan 13 13:48:03 2006 -0500
-+++ b/fs/reiserfs/journal.c	Fri Jan 13 13:50:37 2006 -0500
-@@ -878,6 +878,19 @@ static int write_ordered_buffers(spinloc
- 		}
- 		if (!buffer_uptodate(bh)) {
- 			ret = -EIO;
+@@ -1039,16 +1040,24 @@ static int flush_commit_list(struct supe
+ 	BUG_ON(!list_empty(&jl->j_bh_list));
+ 	/*
+ 	 * for the description block and all the log blocks, submit any buffers
+-	 * that haven't already reached the disk
++	 * that haven't already reached the disk.  Try to write at least 256
++	 * log blocks. later on, we will only wait on blocks that correspond
++	 * to this transaction, but while we're unplugging we might as well
++	 * get a chunk of data on there.
+ 	 */
+ 	atomic_inc(&journal->j_async_throttle);
+-	for (i = 0; i < (jl->j_len + 1); i++) {
++	write_len = jl->j_len + 1;
++	if (write_len < 256)
++		write_len = 256;
++	for (i = 0 ; i < write_len ; i++) {
+ 		bn = SB_ONDISK_JOURNAL_1st_BLOCK(s) + (jl->j_start + i) %
+ 		    SB_ONDISK_JOURNAL_SIZE(s);
+ 		tbh = journal_find_get_block(s, bn);
+-		if (buffer_dirty(tbh))	/* redundant, ll_rw_block() checks */
+-			ll_rw_block(SWRITE, 1, &tbh);
+-		put_bh(tbh);
++		if (tbh) {
++			if (buffer_dirty(tbh))
++			    ll_rw_block(WRITE, 1, &tbh) ;
++			put_bh(tbh) ; 
 +		}
-+		/* ugly interaction with invalidatepage here.
-+		 * reiserfs_invalidate_page will pin any buffer that has a valid
-+		 * journal head from an older transaction.  If someone else sets
-+		 * our buffer dirty after we write it in the first loop, and
-+		 * then someone truncates the page away, nobody will ever write
-+		 * the buffer. We're safe if we write the page one last time
-+		 * after freeing the journal header.
-+		 */
-+		if (buffer_dirty(bh) && unlikely(bh->b_page->mapping == NULL)) {
-+			spin_unlock(lock);
-+			ll_rw_block(WRITE, 1, &bh);
-+			spin_lock(lock);
- 		}
- 		put_bh(bh);
- 		cond_resched_lock(lock);
+ 	}
+ 	atomic_dec(&journal->j_async_throttle);
+ 
 
 --
