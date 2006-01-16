@@ -1,12 +1,12 @@
 From: Chris Mason <mason@suse.com>
-Subject: [patch 3/6] reiserfs v3 patches
-Date: Sun, 15 Jan 2006 19:50:05 -0500
-Message-ID: <20060116005312.760818000@watt.suse.com>
+Subject: [patch 2/6] reiserfs v3 patches
+Date: Sun, 15 Jan 2006 19:50:04 -0500
+Message-ID: <20060116005312.206779000@watt.suse.com>
 References: <20060116005002.398989000@watt.suse.com>
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-logging-perf-3
+Content-Disposition: inline; filename=b_private-init
 From: Chris Mason <mason@suse.com>
-Subject: [patch 3/6] reiserfs hang and performance fix for data=journal mode
+Subject: [patch 2/6] Zero b_private when allocating buffer heads
 Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -14,72 +14,21 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: akpm@osdl.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
 
-In data=journal mode, reiserfs writepage needs to make sure not to
-trigger transactions while being run under PF_MEMALLOC.  This patch
-makes sure to redirty the page instead of forcing a transaction start
-in this case.
+The b_private field in buffer heads needs to be zero filled
+when the buffers are allocated.  Thanks to Nathan Scott for
+finding this.  It was causing problems on systems with both XFS and
+reiserfs.
 
-Also, calling filemap_fdata* in order to trigger io on the block device
-can cause lock inversions on the page lock.  Instead, do simple
-batching from flush_commit_list.
-
-diff -r c10585019f18 fs/reiserfs/inode.c
---- a/fs/reiserfs/inode.c	Fri Jan 13 13:51:10 2006 -0500
-+++ b/fs/reiserfs/inode.c	Fri Jan 13 13:55:09 2006 -0500
-@@ -2363,6 +2363,13 @@ static int reiserfs_write_full_page(stru
- 	int bh_per_page = PAGE_CACHE_SIZE / s->s_blocksize;
- 	th.t_trans_id = 0;
+diff -r 5ef1fa0a021a fs/buffer.c
+--- a/fs/buffer.c	Fri Jan 13 13:50:39 2006 -0500
++++ b/fs/buffer.c	Fri Jan 13 13:51:09 2006 -0500
+@@ -1022,6 +1022,7 @@ try_again:
  
-+	/* no logging allowed when nonblocking or from PF_MEMALLOC */
-+	if (checked && (current->flags & PF_MEMALLOC)) {
-+		redirty_page_for_writepage(wbc, page);
-+		unlock_page(page);
-+		return 0;
-+	}
-+
- 	/* The page dirty bit is cleared before writepage is called, which
- 	 * means we have to tell create_empty_buffers to make dirty buffers
- 	 * The page really should be up to date at this point, so tossing
-diff -r c10585019f18 fs/reiserfs/journal.c
---- a/fs/reiserfs/journal.c	Fri Jan 13 13:51:10 2006 -0500
-+++ b/fs/reiserfs/journal.c	Fri Jan 13 13:55:09 2006 -0500
-@@ -990,6 +990,7 @@ static int flush_commit_list(struct supe
- 	struct reiserfs_journal *journal = SB_JOURNAL(s);
- 	int barrier = 0;
- 	int retval = 0;
-+	int write_len;
+ 		bh->b_state = 0;
+ 		atomic_set(&bh->b_count, 0);
++		bh->b_private = NULL;
+ 		bh->b_size = size;
  
- 	reiserfs_check_lock_depth(s, "flush_commit_list");
- 
-@@ -1039,16 +1040,24 @@ static int flush_commit_list(struct supe
- 	BUG_ON(!list_empty(&jl->j_bh_list));
- 	/*
- 	 * for the description block and all the log blocks, submit any buffers
--	 * that haven't already reached the disk
-+	 * that haven't already reached the disk.  Try to write at least 256
-+	 * log blocks. later on, we will only wait on blocks that correspond
-+	 * to this transaction, but while we're unplugging we might as well
-+	 * get a chunk of data on there.
- 	 */
- 	atomic_inc(&journal->j_async_throttle);
--	for (i = 0; i < (jl->j_len + 1); i++) {
-+	write_len = jl->j_len + 1;
-+	if (write_len < 256)
-+		write_len = 256;
-+	for (i = 0 ; i < write_len ; i++) {
- 		bn = SB_ONDISK_JOURNAL_1st_BLOCK(s) + (jl->j_start + i) %
- 		    SB_ONDISK_JOURNAL_SIZE(s);
- 		tbh = journal_find_get_block(s, bn);
--		if (buffer_dirty(tbh))	/* redundant, ll_rw_block() checks */
--			ll_rw_block(SWRITE, 1, &tbh);
--		put_bh(tbh);
-+		if (tbh) {
-+			if (buffer_dirty(tbh))
-+			    ll_rw_block(WRITE, 1, &tbh) ;
-+			put_bh(tbh) ; 
-+		}
- 	}
- 	atomic_dec(&journal->j_async_throttle);
- 
+ 		/* Link the buffer to its page */
 
 --
