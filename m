@@ -1,49 +1,72 @@
-From: Chris Mason <mason@suse.com>
-Subject: [patch 6/6] reiserfs v3 patches
-Date: Sun, 15 Jan 2006 19:50:08 -0500
-Message-ID: <20060116005314.959522000@watt.suse.com>
-References: <20060116005002.398989000@watt.suse.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-old-format-size.diff
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [patch 6/6] reiserfs: check for files > 2GB on 3.5.x disks
-Sender: linux-fsdevel-owner@vger.kernel.org
-List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Data being corrupted on reiserfs 3.6
+Date: Mon, 16 Jan 2006 01:45:35 -0800
+Message-ID: <43CB6B3F.6000706@namesys.com>
+References: <43C97E17.7030604@xterminate.me.uk> <20060115204143.GC24752@atrey.karlin.mff.cuni.cz> <43CAC054.5020104@xterminate.me.uk>
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: akpm@osdl.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
+Return-path: <reiserfs-list-return-27742-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <43CAC054.5020104@xterminate.me.uk>
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Michael Barnwell <xterminate@xterminate.me.uk>
+Cc: Jan Kara <jack@ucw.cz>, reiserfs-list@namesys.com
 
-When a filesystem has been converted from 3.5.x to 3.6.x, we need
-an extra check during file write to make sure we are not trying
-to make a 3.5.x file > 2GB.
+Normally we tell people that data corruption bugs must be bad hardware
+for V3, and this was good advice empirically in the past, however, my
+vague memory is that there have been more than usual reports of problems
+with V3 recently.  Can you try to reproduce on different hardware, or
+look through our mailing list traffic for similar problems recently? If
+you can reproduce it on different memory and CPU or find someone else
+posting with a similar experience, then I'll ask the guys to try to
+reproduce it also.  Bad hardware can fail for reiserfs and not fail for
+ext3 because we make the CPU 1-2C hotter and things like fans blocked
+from turning by cables really can matter  for us and not ext3 (a real
+user experience was just described).  In any event, even if it was bad
+hardware, please let me know.
 
-diff -r ee81eb208598 fs/reiserfs/file.c
---- a/fs/reiserfs/file.c	Fri Jan 13 14:01:37 2006 -0500
-+++ b/fs/reiserfs/file.c	Fri Jan 13 14:08:12 2006 -0500
-@@ -1285,6 +1285,23 @@ static ssize_t reiserfs_file_write(struc
- 	struct reiserfs_transaction_handle th;
- 	th.t_trans_id = 0;
- 
-+	/* If a filesystem is converted from 3.5 to 3.6, we'll have v3.5 items
-+	* lying around (most of the disk, in fact). Despite the filesystem
-+	* now being a v3.6 format, the old items still can't support large
-+	* file sizes. Catch this case here, as the rest of the VFS layer is
-+	* oblivious to the different limitations between old and new items.
-+	* reiserfs_setattr catches this for truncates. This chunk is lifted
-+	* from generic_write_checks. */
-+	if (get_inode_item_key_version (inode) == KEY_FORMAT_3_5 && 
-+	    *ppos + count > MAX_NON_LFS) {
-+		if (*ppos >= MAX_NON_LFS) {
-+			send_sig(SIGXFSZ, current, 0);
-+			return -EFBIG;
-+		}
-+		if (count > MAX_NON_LFS - (unsigned long)*ppos)
-+			count = MAX_NON_LFS - (unsigned long)*ppos;
-+	}
-+
- 	if (file->f_flags & O_DIRECT) {	// Direct IO needs treatment
- 		ssize_t result, after_file_end = 0;
- 		if ((*ppos + count >= inode->i_size)
+Hans
 
---
+Michael Barnwell wrote:
+
+> Hi,
+>
+> Jan Kara wrote:
+>
+> <snip>
+>
+>>   Hmm, that is really strange. Do the files have the same size? Do you
+>> get an error also if you just create file full of zeros? If so, how do
+>> the differences look like (e.g. any signs of flipped bits or so?).
+>>
+>
+> michael@biggs:/tmp$ dd bs=1024 count=1000k if=/dev/zero of=./1GB.tst
+> 1024000+0 records in
+> 1024000+0 records out
+> 1048576000 bytes transferred in 61.578769 seconds (17028207 bytes/sec)
+> michael@biggs:/tmp$ ls -l 1GB.tst
+> -rw-r--r--  1 michael michael 1048576000 2006-01-15 20:51 1GB.tst
+> michael@biggs:/tmp$ md5sum 1GB.tst
+> e5c834fbdaa6bfd8eac5eb9404eefdd4  1GB.tst
+> michael@biggs:/tmp$ ls -l /home/michael/1GB.tst
+> -rw-r--r--  1 michael michael 1048576000 2006-01-15 20:54
+> /home/michael/1GB.tst
+> michael@biggs:/tmp$ md5sum /home/michael/1GB.tst
+> 92c51557041ebd6424b4467a878c9f44  /home/michael/1GB.tst
+>
+> I looked at the file in /home/michael/1GB.tst with xdd for about 5
+> minutes but couldn't see anything but zeros - I'm not sure how to
+> search through a binary file for non-zero bytes.
+>
+> So yes, error if the file is all zeros and they have the same size.
+>
+> Thanks,
+>
+> Michael Barnwell.
+>
+>
+
