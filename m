@@ -1,12 +1,12 @@
 From: Chris Mason <mason@suse.com>
-Subject: [patch 4/6] reiserfs v3 patches
-Date: Sun, 15 Jan 2006 19:50:06 -0500
-Message-ID: <20060116005313.370188000@watt.suse.com>
+Subject: [patch 5/6] reiserfs v3 patches
+Date: Sun, 15 Jan 2006 19:50:07 -0500
+Message-ID: <20060116005314.011562000@watt.suse.com>
 References: <20060116005002.398989000@watt.suse.com>
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-ordered-io-failure
+Content-Disposition: inline; filename=reiserfs-should-end-alloc
 From: Chris Mason <mason@suse.com>
-Subject: [patch 4/6] reiserfs write_ordered_buffers should not oops on dirty non-uptodate bh
+Subject: [patch 5/6] reiserfs fix journal accounting in journal_transaction_should_end
 Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -14,41 +14,22 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: akpm@osdl.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
 
-write_ordered_buffers should handle dirty non-uptodate buffers without
-a BUG()
+reiserfs: journal_transaction_should_end should increase the count of blocks
+allocated so the transaction subsystem can keep new writers from creating
+a transaction that is too large.
 
-diff -r 18fa5554d7e2 fs/reiserfs/journal.c
---- a/fs/reiserfs/journal.c	Fri Jan 13 13:55:10 2006 -0500
-+++ b/fs/reiserfs/journal.c	Fri Jan 13 14:00:49 2006 -0500
-@@ -848,6 +848,14 @@ static int write_ordered_buffers(spinloc
- 			spin_lock(lock);
- 			goto loop_next;
- 		}
-+		/* in theory, dirty non-uptodate buffers should never get here,
-+		 * but the upper layer io error paths still have a few quirks.  
-+		 * Handle them here as gracefully as we can
-+		 */
-+		if (!buffer_uptodate(bh) && buffer_dirty(bh)) {
-+			clear_buffer_dirty(bh);
-+			ret = -EIO;
-+		}
- 		if (buffer_dirty(bh)) {
- 			list_del_init(&jh->list);
- 			list_add(&jh->list, &tmp);
-@@ -1032,9 +1040,12 @@ static int flush_commit_list(struct supe
+diff -r 890bf922a629 fs/reiserfs/journal.c
+--- a/fs/reiserfs/journal.c	Fri Jan 13 14:00:50 2006 -0500
++++ b/fs/reiserfs/journal.c	Fri Jan 13 14:01:36 2006 -0500
+@@ -2854,6 +2854,9 @@ int journal_transaction_should_end(struc
+ 	    journal->j_cnode_free < (journal->j_trans_max * 3)) {
+ 		return 1;
  	}
++	/* protected by the BKL here */
++	journal->j_len_alloc += new_alloc;
++	th->t_blocks_allocated += new_alloc ;
+ 	return 0;
+ }
  
- 	if (!list_empty(&jl->j_bh_list)) {
-+		int ret;
- 		unlock_kernel();
--		write_ordered_buffers(&journal->j_dirty_buffers_lock,
--				      journal, jl, &jl->j_bh_list);
-+		ret = write_ordered_buffers(&journal->j_dirty_buffers_lock,
-+					    journal, jl, &jl->j_bh_list);
-+		if (ret < 0 && retval == 0)
-+			retval = ret;
- 		lock_kernel();
- 	}
- 	BUG_ON(!list_empty(&jl->j_bh_list));
 
 --
