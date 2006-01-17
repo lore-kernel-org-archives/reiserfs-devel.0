@@ -1,42 +1,33 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: vs-4080
-Date: Tue, 17 Jan 2006 14:32:21 -0700
-Message-ID: <1137533541.6375.76.camel@tribesman.namesys.com>
-References: <200601111109.09437.rmeijer@internet.gr>
+From: Andrea Gelmini <dislessico@gmail.com>
+Subject: Re: Bug (?) with 2.6.15-mm4
+Date: Tue, 17 Jan 2006 14:51:51 +0100
+Message-ID: <20060117135151.GD5105@gelma.net>
+References: <20060116182241.GA5121@gelma.net> <43CBF44C.60106@feise.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27758-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27759-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200601111109.09437.rmeijer@internet.gr>
+Content-Disposition: inline
+In-Reply-To: <43CBF44C.60106@feise.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Raymond A. Meijer" <rmeijer@internet.gr>
+Content-Transfer-Encoding: 7bit
+To: Joe Feise <jfeise@feise.com>
 Cc: reiserfs-list@namesys.com
 
-Hello
+On Mon, Jan 16, 2006 at 11:30:20AM -0800, Joe Feise wrote:
+> I also see freezes, since 2.6.15-mm2. I did not attribute that to reiser4,
+> though, since there is more in the -mm patches.
+I emailed to reiser list not for the freeze, but because it seems wrong to
+me that filesystem starts without complain when there's corruption/unclean
+situation.[1]
 
-On Wed, 2006-01-11 at 11:09 +0200, Raymond A. Meijer wrote:
-> Hello,
-> 
-> This morning I found the following warning on my Debian server holding a 253
-> GB Debian archive mirror:
-> 
-> ReiserFS: dm-8: warning: vs-4080: reiserfs_free_block: free_block (dm-8:46707368)[dev:blocknr]: bit already cleared
-> 
-> If fixed it with --fix-fixable, but what was it and what does it mean?
-> 
 
-This indicated a corruption in disk space allocation bitmap: used block
-was marked as free.
-Am I correct that you got only one such message?
-Do you run reiserfsck regularly on that filesystem?
+ciao,
+gelma
 
-> 
-> Thanks,
-> 
-> Ray
-> 
-
+---------
+[1] no filesystem flame wars, please. I don't pay and don't develop
+reiser, so I've go no expectations.
