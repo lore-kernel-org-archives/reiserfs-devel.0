@@ -1,14 +1,14 @@
 From: "Vladimir V. Saveliev" <vs@namesys.com>
 Subject: Re: A question: May Reiser4 be equivalent to Reiser3 with some
 	flag/plugin ...
-Date: Wed, 18 Jan 2006 13:17:11 -0700
-Message-ID: <1137615431.6375.148.camel@tribesman.namesys.com>
+Date: Wed, 18 Jan 2006 11:21:10 -0700
+Message-ID: <1137608470.6375.137.camel@tribesman.namesys.com>
 References: <e50d039c0601061010k51b103e4qb799090d52e7b744@mail.gmail.com>
 	 <13dbb67f0601070441q559b156ep@mail.gmail.com> <43C2A9D8.80103@namesys.com>
 	 <200601092001.17684.marcel@hilzinger.hu>  <43CDFC25.90401@futuretg.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27777-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27779-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -16,7 +16,8 @@ Errors-To: flx@namesys.com
 In-Reply-To: <43CDFC25.90401@futuretg.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: "Giovanni A. Orlando" <gorlando@futuretg.com>
+Cc: reiserfs-list@namesys.com
 
 Hello
 
