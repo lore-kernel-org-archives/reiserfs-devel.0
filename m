@@ -1,290 +1,120 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH 3/4] reiserfs: move bitmap loading to bitmap.c
-Date: Tue, 17 Jan 2006 08:54:17 -0500
-Message-ID: <20060117135417.GA8363@locomotive.unixthugs.org>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: Read errors from r/o-mounted reiser4
+Date: Tue, 17 Jan 2006 17:08:20 -0700
+Message-ID: <1137542900.6375.85.camel@tribesman.namesys.com>
+References: <43B221E3.3020201@feise.com>
+	 <1135823501.6469.63.camel@tribesman.namesys.com>
+	 <43B8EC8E.3020500@feise.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-27764-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; boundary="=-4yFsnWqeOAOFNUv5mVPa"
+Return-path: <reiserfs-list-return-27765-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <43B8EC8E.3020500@feise.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+To: jfeise@feise.com
+Cc: reiserfs-list@namesys.com
+
+--=-4yFsnWqeOAOFNUv5mVPa
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-To: ReiserFS List <reiserfs-list@namesys.com>
+
+Hello
+
+Sorry for delayed answer. we had long holidays here.
+Please try whether attached patch fixes the problem.
+
+On Mon, 2006-01-02 at 01:04 -0800, Joe Feise wrote:
+> Vladimir V. Saveliev wrote on 12/28/05 18:31:
+> 
+> > Hello
+> > 
+> > On Tue, 2005-12-27 at 21:25 -0800, Joe Feise wrote:
+> >> Hi,
+> >>
+> >> in one of my systems, I have /usr on a Reiser4 partition.
+> >> When I have that partition mounted read-only, I get errors whenever
+> >> I try to compile anything. Other programs that read from that partition also
+> >> seem to fail, but I don't get such nice output like the stuff from gcc.
+> >> I am currently using Slackware 10.2 with kernel 2.6.15-rc5-mm3, but I have
+> >> experienced the same problem with earlier kernels as well.
+> >> The output from a make menuconfig in the kernel source dir:
+> > 
+> > Thanks for the report. We will take a look
+> > 
+> >> $: make menuconfig
+> >>
+> >>   HOSTCC  scripts/kconfig/conf.o
+> >> In file included from /usr/include/bits/types.h:31,
+> >>
+> >>                  from /usr/include/ctype.h:28,
+> >>                  from scripts/kconfig/conf.c:6:
+> >> /usr/lib/gcc-lib/i486-slackware-linux/3.3.6/include/stddef.h:420: error: syntax
+> >> error before '}' token
+> 
+> 
+> I thought about this a bit more, and decided to take a look at the stddef.h file.
+> As it turns out, the file has only 419 lines, so line 420 is past the end of the
+> file.
+> That indicates to me that there is possibly a buffer that doesn't get cleared if
+> the fs is mounted r/o (an optimization gone wrong, maybe?)
+> 
+> -Joe
+> 
+
+--=-4yFsnWqeOAOFNUv5mVPa
+Content-Disposition: attachment; filename=reiser4-add-missing-zero-padding.patch
+Content-Type: text/x-patch; name=reiser4-add-missing-zero-padding.patch; charset=utf-8
+Content-Transfer-Encoding: 7bit
 
 
- This patch moves the bitmap loading code from super.c to bitmap.c
+This patch adds missing page padding with 0s. It fixes error in readpage operation for files whose data
+are stored in metadata blocks.
 
- The code is also restructured somewhat. The only difference between new
- format bitmaps and old format bitmaps is where they are. That's a two liner
- before loading the block to use the correct one. There's no need for
- an entirely separate code path.
 
- The load path is generally the same, with the pattern being to throw out a
- bunch of requests and then wait for them, then cache the metadata from
- the contents.
+ fs/reiser4/plugin/item/tail.c |   10 +++++++---
+ 1 files changed, 7 insertions(+), 3 deletions(-)
 
- Again, like the previous patches, the purpose is to set up for later ones.
-
- fs/reiserfs/bitmap.c        |   83 ++++++++++++++++++++++++++++++++
- fs/reiserfs/resize.c        |    1 
- fs/reiserfs/super.c         |  114 --------------------------------------------
- include/linux/reiserfs_fs.h |    3 +
- 4 files changed, 88 insertions(+), 113 deletions(-)
-
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-
-diff -ruNpX ../dontdiff linux-2.6.15.orig.staging1/fs/reiserfs/bitmap.c linux-2.6.15.orig.staging2/fs/reiserfs/bitmap.c
---- linux-2.6.15.orig.staging1/fs/reiserfs/bitmap.c	2006-01-16 16:53:31.512950088 -0500
-+++ linux-2.6.15.orig.staging2/fs/reiserfs/bitmap.c	2006-01-16 16:53:31.516949480 -0500
-@@ -10,6 +10,7 @@
- #include <linux/buffer_head.h>
- #include <linux/kernel.h>
- #include <linux/pagemap.h>
-+#include <linux/vmalloc.h>
- #include <linux/reiserfs_fs_sb.h>
- #include <linux/reiserfs_fs_i.h>
- #include <linux/quotaops.h>
-@@ -1286,3 +1287,85 @@ int reiserfs_can_fit_pages(struct super_
+diff -puN fs/reiser4/plugin/item/tail.c~reiser4-add-missing-zero-padding fs/reiser4/plugin/item/tail.c
+--- linux-2.6.15-mm4/fs/reiser4/plugin/item/tail.c~reiser4-add-missing-zero-padding	2006-01-17 13:51:05.000000000 +0300
++++ linux-2.6.15-mm4-root/fs/reiser4/plugin/item/tail.c	2006-01-17 13:55:34.000000000 +0300
+@@ -336,9 +336,9 @@ static int do_readpage_tail(uf_coord_t *
+ 	int result;
+ 	coord_t coord;
+ 	lock_handle lh;
+-
+ 	int count, mapped;
+ 	struct inode *inode;
++	char *pagedata;
  
- 	return space > 0 ? space : 0;
- }
-+
-+void reiserfs_cache_bitmap_metadata(struct super_block *sb,
-+                                    struct buffer_head *bh,
-+                                    struct reiserfs_bitmap_info *info)
-+{
-+	unsigned long *cur = (unsigned long *)bh->b_data;
-+	int i;
-+
-+	for (i = sb->s_blocksize / sizeof (*cur); i > 0; i--, cur++) {
-+		/* 0 and ~0 are special, we can optimize for them */
-+		if (*cur == 0) {
-+			info->first_zero_hint = i << 3;
-+			info->free_count += sizeof (*cur) << 3;
-+		} else if (*cur != ~0L) {       /* A mix, investigate */
-+			int b;
-+			for (b = sizeof (*cur) << 3; b >= 0; b--) {
-+				if (!reiserfs_test_le_bit(b, cur)) {
-+					info->first_zero_hint = (i << 3) + b;
-+					info->free_count++;
-+				}
-+			}
-+		}
+ 	/* saving passed coord in order to do not move it by tap. */
+ 	init_lh(&lh);
+@@ -353,8 +353,6 @@ static int do_readpage_tail(uf_coord_t *
+ 
+ 	/* lookup until page is filled up. */
+ 	for (mapped = 0; mapped < PAGE_CACHE_SIZE; mapped += count) {
+-		char *pagedata;
+-
+ 		/* number of bytes to be copied to page. */
+ 		count = item_length_by_coord(&coord) - coord.unit_pos;
+ 
+@@ -413,6 +411,12 @@ static int do_readpage_tail(uf_coord_t *
+ 		}
+ 	}
+ 
++	if (mapped != PAGE_CACHE_SIZE) {
++		pagedata = kmap_atomic(page, KM_USER0);
++		memset(pagedata + mapped, 0, PAGE_CACHE_SIZE - mapped);
++		flush_dcache_page(new_page);
++		kunmap_atomic(pagedata, KM_USER0);
 +	}
-+
-+	/* The first bit must ALWAYS be 1 */
-+	BUG_ON(info->first_zero_hint == 0);
-+}
-+
-+struct buffer_head *reiserfs_read_bitmap_block(struct super_block *sb,
-+                                               unsigned int bitmap)
-+{
-+	unsigned int block = (sb->s_blocksize << 3) * bitmap;
-+	struct buffer_head *bh;
-+
-+	/* Way old format filesystems had the bitmaps packed up front.
-+	 * I doubt there are any of these left, but just in case... */
-+	if (test_bit(REISERFS_OLD_FORMAT, &(REISERFS_SB(sb)->s_properties)))
-+		block = REISERFS_SB(sb)->s_sbh->b_blocknr + 1 + bitmap;
-+
-+	bh = sb_getblk(sb, block);
-+	if (!buffer_uptodate(bh))
-+		ll_rw_block(READ, 1, &bh);
-+
-+	return bh;
-+}
-+
-+int reiserfs_init_bitmap_cache(struct super_block *sb)
-+{
-+	struct reiserfs_bitmap_info *bitmap;
-+	int i;
-+
-+	bitmap = vmalloc(sizeof (*bitmap) * SB_BMAP_NR(sb));
-+	if (bitmap == NULL)
-+		return 1;
-+
-+	memset(bitmap, 0, sizeof (*bitmap) * SB_BMAP_NR(sb));
-+
-+	for (i = 0; i < SB_BMAP_NR(sb); i++)
-+		bitmap[i].bh = reiserfs_read_bitmap_block(sb, i);
-+
-+	/* make sure we have them all */
-+	for (i = 0; i < SB_BMAP_NR(sb); i++) {
-+		wait_on_buffer(bitmap[i].bh);
-+		if (!buffer_uptodate(bitmap[i].bh)) {
-+			reiserfs_warning(sb, "sh-2029: reiserfs read_bitmaps: "
-+					 "bitmap block (#%lu) reading failed",
-+					 bitmap[i].bh->b_blocknr);
-+			for (i = 0; i < SB_BMAP_NR(sb); i++)
-+				brelse(bitmap[i].bh);
-+			vfree(bitmap);
-+			return 1;
-+		}
-+	}
-+
-+	/* Cache the info on the bitmaps before we get rolling */
-+	for (i = 0; i < SB_BMAP_NR(sb); i++)
-+		reiserfs_cache_bitmap_metadata(sb, bitmap[i].bh, &bitmap[i]);
-+
-+	SB_AP_BITMAP(sb) = bitmap;
-+
-+	return 0;
-+}
-diff -ruNpX ../dontdiff linux-2.6.15.orig.staging1/fs/reiserfs/resize.c linux-2.6.15.orig.staging2/fs/reiserfs/resize.c
---- linux-2.6.15.orig.staging1/fs/reiserfs/resize.c	2006-01-16 16:53:31.513949936 -0500
-+++ linux-2.6.15.orig.staging2/fs/reiserfs/resize.c	2006-01-16 16:53:31.520948872 -0500
-@@ -132,6 +132,7 @@ int reiserfs_resize(struct super_block *
- 			get_bh(bh);
- 			memset(bh->b_data, 0, sb_blocksize(sb));
- 			reiserfs_test_and_set_le_bit(0, bh->b_data);
-+			reiserfs_cache_bitmap_metadata(s, bh, bitmap + i);
- 
- 			set_buffer_uptodate(bh);
- 			mark_buffer_dirty(bh);
-diff -ruNpX ../dontdiff linux-2.6.15.orig.staging1/fs/reiserfs/super.c linux-2.6.15.orig.staging2/fs/reiserfs/super.c
---- linux-2.6.15.orig.staging1/fs/reiserfs/super.c	2006-01-16 16:53:29.452263360 -0500
-+++ linux-2.6.15.orig.staging2/fs/reiserfs/super.c	2006-01-16 16:53:31.518949176 -0500
-@@ -1264,118 +1264,6 @@ static int reiserfs_remount(struct super
- 	return 0;
- }
- 
--/* load_bitmap_info_data - Sets up the reiserfs_bitmap_info structure from disk.
-- * @sb - superblock for this filesystem
-- * @bi - the bitmap info to be loaded. Requires that bi->bh is valid.
-- *
-- * This routine counts how many free bits there are, finding the first zero
-- * as a side effect. Could also be implemented as a loop of test_bit() calls, or
-- * a loop of find_first_zero_bit() calls. This implementation is similar to
-- * find_first_zero_bit(), but doesn't return after it finds the first bit.
-- * Should only be called on fs mount, but should be fairly efficient anyways.
-- *
-- * bi->first_zero_hint is considered unset if it == 0, since the bitmap itself
-- * will * invariably occupt block 0 represented in the bitmap. The only
-- * exception to this is when free_count also == 0, since there will be no
-- * free blocks at all.
-- */
--
--static void load_bitmap_info_data(struct super_block *sb,
--				  struct reiserfs_bitmap_info *bi)
--{
--	unsigned long *cur = (unsigned long *)bi->bh->b_data;
--
--	while ((char *)cur < (bi->bh->b_data + sb->s_blocksize)) {
--
--		/* No need to scan if all 0's or all 1's.
--		 * Since we're only counting 0's, we can simply ignore all 1's */
--		if (*cur == 0) {
--			if (bi->first_zero_hint == 0) {
--				bi->first_zero_hint =
--				    ((char *)cur - bi->bh->b_data) << 3;
--			}
--			bi->free_count += sizeof(unsigned long) * 8;
--		} else if (*cur != ~0L) {
--			int b;
--			for (b = 0; b < sizeof(unsigned long) * 8; b++) {
--				if (!reiserfs_test_le_bit(b, cur)) {
--					bi->free_count++;
--					if (bi->first_zero_hint == 0)
--						bi->first_zero_hint =
--						    (((char *)cur -
--						      bi->bh->b_data) << 3) + b;
--				}
--			}
--		}
--		cur++;
--	}
--
--#ifdef CONFIG_REISERFS_CHECK
--// This outputs a lot of unneded info on big FSes
--//    reiserfs_warning ("bitmap loaded from block %d: %d free blocks",
--//                    bi->bh->b_blocknr, bi->free_count);
--#endif
--}
--
--static int read_bitmaps(struct super_block *s)
--{
--	int i, bmap_nr;
--
--	SB_AP_BITMAP(s) =
--	    vmalloc(sizeof(struct reiserfs_bitmap_info) * SB_BMAP_NR(s));
--	if (SB_AP_BITMAP(s) == 0)
--		return 1;
--	memset(SB_AP_BITMAP(s), 0,
--	       sizeof(struct reiserfs_bitmap_info) * SB_BMAP_NR(s));
--	for (i = 0, bmap_nr =
--	     REISERFS_DISK_OFFSET_IN_BYTES / s->s_blocksize + 1;
--	     i < SB_BMAP_NR(s); i++, bmap_nr = s->s_blocksize * 8 * i) {
--		SB_AP_BITMAP(s)[i].bh = sb_getblk(s, bmap_nr);
--		if (!buffer_uptodate(SB_AP_BITMAP(s)[i].bh))
--			ll_rw_block(READ, 1, &SB_AP_BITMAP(s)[i].bh);
--	}
--	for (i = 0; i < SB_BMAP_NR(s); i++) {
--		wait_on_buffer(SB_AP_BITMAP(s)[i].bh);
--		if (!buffer_uptodate(SB_AP_BITMAP(s)[i].bh)) {
--			reiserfs_warning(s, "sh-2029: reiserfs read_bitmaps: "
--					 "bitmap block (#%lu) reading failed",
--					 SB_AP_BITMAP(s)[i].bh->b_blocknr);
--			for (i = 0; i < SB_BMAP_NR(s); i++)
--				brelse(SB_AP_BITMAP(s)[i].bh);
--			vfree(SB_AP_BITMAP(s));
--			SB_AP_BITMAP(s) = NULL;
--			return 1;
--		}
--		load_bitmap_info_data(s, SB_AP_BITMAP(s) + i);
--	}
--	return 0;
--}
--
--static int read_old_bitmaps(struct super_block *s)
--{
--	int i;
--	struct reiserfs_super_block *rs = SB_DISK_SUPER_BLOCK(s);
--	int bmp1 = (REISERFS_OLD_DISK_OFFSET_IN_BYTES / s->s_blocksize) + 1;	/* first of bitmap blocks */
--
--	/* read true bitmap */
--	SB_AP_BITMAP(s) =
--	    vmalloc(sizeof(struct reiserfs_buffer_info *) * sb_bmap_nr(rs));
--	if (SB_AP_BITMAP(s) == 0)
--		return 1;
--
--	memset(SB_AP_BITMAP(s), 0,
--	       sizeof(struct reiserfs_buffer_info *) * sb_bmap_nr(rs));
--
--	for (i = 0; i < sb_bmap_nr(rs); i++) {
--		SB_AP_BITMAP(s)[i].bh = sb_bread(s, bmp1 + i);
--		if (!SB_AP_BITMAP(s)[i].bh)
--			return 1;
--		load_bitmap_info_data(s, SB_AP_BITMAP(s) + i);
--	}
--
--	return 0;
--}
--
- static int read_super_block(struct super_block *s, int offset)
- {
- 	struct buffer_head *bh;
-@@ -1757,7 +1645,7 @@ static int reiserfs_fill_super(struct su
- 	sbi->s_mount_state = SB_REISERFS_STATE(s);
- 	sbi->s_mount_state = REISERFS_VALID_FS;
- 
--	if (old_format ? read_old_bitmaps(s) : read_bitmaps(s)) {
-+	if (reiserfs_init_bitmap_cache(s)) {
- 		SWARN(silent, s,
- 		      "jmacd-8: reiserfs_fill_super: unable to read bitmap");
- 		goto error;
-diff -ruNpX ../dontdiff linux-2.6.15.orig.staging1/include/linux/reiserfs_fs.h linux-2.6.15.orig.staging2/include/linux/reiserfs_fs.h
---- linux-2.6.15.orig.staging1/include/linux/reiserfs_fs.h	2006-01-02 22:21:10.000000000 -0500
-+++ linux-2.6.15.orig.staging2/include/linux/reiserfs_fs.h	2006-01-16 16:53:31.520948872 -0500
-@@ -2092,6 +2092,9 @@ void reiserfs_init_alloc_options(struct 
-  */
- __le32 reiserfs_choose_packing(struct inode *dir);
- 
-+int reiserfs_init_bitmap_cache(struct super_block *sb);
-+void reiserfs_cache_bitmap_metadata(struct super_block *sb, struct buffer_head *bh, struct reiserfs_bitmap_info *info);
-+struct buffer_head *reiserfs_read_bitmap_block(struct super_block *sb, unsigned int bitmap);
- int is_reusable(struct super_block *s, b_blocknr_t block, int bit_value);
- void reiserfs_free_block(struct reiserfs_transaction_handle *th, struct inode *,
- 			 b_blocknr_t, int for_unformatted);
+ 	/* making page up to date and releasing it. */
+ 	SetPageUptodate(page);
+ 	unlock_page(page);
+
+_
+
+--=-4yFsnWqeOAOFNUv5mVPa--
+
