@@ -1,114 +1,60 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiserfs tails and disk space
-Date: Wed, 18 Jan 2006 21:34:49 +0300
-Message-ID: <200601182134.49888.vitaly@namesys.com>
-References: <20060117181548.GB11010@untroubled.org> <43CD3E45.6080304@namesys.com>
+From: Jake Maciejewski <maciejej@msoe.edu>
+Subject: BUG umounting to shut down
+Date: Wed, 18 Jan 2006 20:17:16 -0600
+Message-ID: <1137637037.10929.86.camel@gentoo>
 Mime-Version: 1.0
-Content-Type: Multipart/Mixed;
-  boundary="Boundary-00=_JpozD1gHRiJ8MHw"
-Return-path: <reiserfs-list-return-27788-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27795-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43CD3E45.6080304@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Bruce Guenter <lists-reiserfs-list@bruce-guenter.dyndns.org>
-Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
---Boundary-00=_JpozD1gHRiJ8MHw
-Content-Type: text/plain;
-  charset="koi8-r"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+I was shutting down my amd64 system with reiser4-for-2.6.14-1.patch.gz
+on 2.6.14.2 when I got the output below. I haven't had the problem
+before and probably couldn't reproduce it easily. I can provide more
+details if requested, but I left out the contents of all the registers
+because I was transcribing from digital photos.
 
-On Tuesday 17 January 2006 21:58, Hans Reiser wrote:
-> The result is not expected, Vitaly please look into it.
-> 
-> Hans
-> 
-> Bruce Guenter wrote:
-> 
-> >Hi.
-> >
-> >I've been running a few tests with reiserfs and tails, and have been
-> >unable to create a setup where the use (or lack) of tails results in a
-> >significant difference in the amount of disk space used.
+Kernel BUG at fs/reiser4/fsdata.c:149
+invalid operand: 0000 [1] PREEMPT
+...
+Pid: 2691, comm: umount Tainted: P	2.6.14.2-1 #1
+...
+Call Trace:<ffffffff801d58c9>{done_fs_info+9} <ffffffff801ce6fd>{reiser4_put_super+221}
+	<ffffffff8017aae2>{generic_shutdown_super+162} <ffffffff8017bc2d>{kill_block_super+45}
+	<ffffffff8017aa0f>{deactivate_super+111} <ffffffff801937e8>{sys_umount+664}
+	<ffffffff801665fd>{do_munmap+669} <ffffffff8010e339>{error_exit+0}
+	<ffffffff8010da46>{system_call+126}
 
-thank you for the report, the attached patch should fix 
-the broken mount options. please try it.
+Code: 0f 0b 68 d7 b9 34 80 c2 95 00 66 66 66 90 48 8b bb d0 03 00
+RIP <ffffffff801ceea2>{done_super_d_info+18} RSP <ffff810002957e38>
+ Badness in do_exit at kernel/exit.c:799
 
-> >Here's what I've done:
-> >
-> >1. Create a fresh 1GB filesystem (in a file on loopback), using reiserfs
-> >with no options.
-> >
-> >2. Mount the filesystem with either no options, "notail", "tails=off",
-> >"tails=on", or "tails=small".
-> >
-> >3. Unpack a sources tarball onto the filesystem, consisting of two fully
-> >compiled versions of the linux kernel.  The tarball contains 47996 files
-> >and 3321 directories totalling about 660MB of space.
-> >
-> >4. Measure the free disk space using df.
-> >
-> >5. Use dd to fill up the free disk space and count how many 1kB blocks
-> >it could write.
-> >
-> >In all of the tests, the result was within 12kB of each other.  In fact,
-> >the tests with "notail" or "tails=off" options had more usable disk
-> >space than when using tails.
-> >
-> >Results:
-> >
-> >Options    1K-blocks    Used Available
-> >default      1023964  645988  377976
-> >notail       1023964  645988  377976
-> >tails=off    1023964  645996  377968
-> >tails=on     1023964  646000  377964
-> >tails=small  1023964  645996  377968
-> >
-> >default      377600+0 records out
-> >notail       377600+0 records out
-> >tails=off    377592+0 records out
-> >tails=on     377588+0 records out
-> >tails=small  377592+0 records out
-> >
-> >I've put the log files and scripts up for review at
-> >	http://untroubled.org/reiserfsdf/
-> >I'm using Gentoo Linux, kernel 2.6.14-gentoo-r5
-> >
-> >Am I missing something, is this an expected result, or is something
-> >broken?
-> >
-> >Thanks.
-> >  
-> >
-> 
-> 
-> 
+Call Trace:<ffffffff8013223c>{do_exit+76} <ffffffff802645a5>{do_unblank_screen+21}
+	<ffffffff8010f131>{die+81} <ffffffff8010f3f1>{do_invalid_op+145}
+	<ffffffff801ceea2>{done_super_d_info+18} <ffffffff8032c3e0>{thread_return+0}
+	<ffffffff8010e339>{error_exit+0} <ffffffff801a9760>{proc_destroy_inode+0}
+	<ffffffff801ceea2>{done_super_d_info+18} <ffffffff801d58c9>{done_fs_info+9}
+	<ffffffff801ce6fd>{reiser4_put_super+221} <ffffffff8017aae2>{generic_shutdown_super+162}
+	<ffffffff8017bc2d>{kill_block_super+45} <ffffffff8017aa0f>{deactivate_super+111}
+	<ffffffff801937e8>{sys_umount+664} <ffffffff801665fd>{do_munmap+669}
+	<ffffffff8010e339>{error_exit+0} <ffffffff8010da46>{system_call+126}
+
+<4>reiser4[umount(26912)]: release_unix_file (fs/reiser4/plugin/file/file.c:2733)[vs-44]:
+WARNING: out of memory?
+<4>reiser4[umount(26912)]: release_unix_file (fs/reiser4/plugin/file/file.c:2733)[vs-44]:
+WARNING: out of memory?
+<4>reiser4[umount(26912)]: release_unix_file (fs/reiser4/plugin/file/file.c:2733)[vs-44]:
+WARNING: out of memory?
+<4>reiser4[umount(26912)]: release_unix_file (fs/reiser4/plugin/file/file.c:2733)[vs-44]:
+WARNING: out of memory?
+/etc/init.d/halt.sh: line 86: 26912 Segmentation fault	umount -f -r "${x}" >&/dev/null
+
 
 -- 
-Vitaly
+Jake Maciejewski <maciejej@msoe.edu>
 
---Boundary-00=_JpozD1gHRiJ8MHw
-Content-Type: text/x-diff;
-  charset="koi8-r";
-  name="linux-2.6.14-reiserfs-mount-options-fix.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="linux-2.6.14-reiserfs-mount-options-fix.patch"
-
---- linux-2.6.15-rc5-mm3-clean/fs/reiserfs/super.c	2005-12-21 23:57:54.000000000 +0300
-+++ linux-2.6.15-rc5-mm3/fs/reiserfs/super.c	2006-01-18 21:28:25.206460792 +0300
-@@ -1131,7 +1131,7 @@
- 			REISERFS_SB(s)->s_mount_opt &= ~(1 << REISERFS_ATTRS);
- 		}
- 	} else if (le32_to_cpu(rs->s_flags) & reiserfs_attrs_cleared) {
--		REISERFS_SB(s)->s_mount_opt |= REISERFS_ATTRS;
-+		REISERFS_SB(s)->s_mount_opt |= (1 << REISERFS_ATTRS);
- 	}
- }
- 
-
---Boundary-00=_JpozD1gHRiJ8MHw--
