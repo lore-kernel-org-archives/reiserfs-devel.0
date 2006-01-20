@@ -1,37 +1,26 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: Small magic files
-Date: Fri, 20 Jan 2006 18:45:05 -0700
-Message-ID: <1137807905.6573.175.camel@tribesman.namesys.com>
-References: <dprvuk$l4l$1@sea.gmane.org>
+From: Jake Maciejewski <maciejej@msoe.edu>
+Subject: stale dk warning
+Date: Fri, 20 Jan 2006 14:28:39 -0600
+Message-ID: <1137788919.22212.7.camel@gentoo>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27812-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27815-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <dprvuk$l4l$1@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: JEMF <jemf@gabcmt.eb.mil.br>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello
+In addition to the disable write barrier warning reported by Louis-David
+Mitterrand on January 10th, with 2.6.15-1 I'm getting:
+        
+        <4>reiser4[dd(25448)]: update_stale_dk (fs/reiser4/search.c:1363)[nikita-38210]:
+        WARNING: stale dk
+        
+The process varies. I've also seen the stale dk warning triggered by rsync and rm.
 
-On Sun, 2006-01-08 at 19:24 -0200, JEMF wrote:
-> Hello,
-> 
-> How the ReiserFS store the small files? Why the small files uses little
-> space on ReiserFS? 
-
-This is because reiserfs can store data of more than one file in one
-block.
-
-> The B Tree uses blocks with various sizes?
-> 
-No, reiserfs tree is built of nodes of the same size.
-
-> Thanks!
-> 
-> 
+-- 
+Jake Maciejewski <maciejej@msoe.edu>
 
