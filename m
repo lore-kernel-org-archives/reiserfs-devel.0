@@ -1,36 +1,51 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiserfs tails and disk space
-Date: Fri, 20 Jan 2006 01:00:57 +0300
-Message-ID: <200601200100.58038.vitaly@namesys.com>
-References: <20060117181548.GB11010@untroubled.org> <200601182134.49888.vitaly@namesys.com> <20060119195349.GC11010@untroubled.org>
+From: "Raymond A. Meijer" <rmeijer@internet.gr>
+Subject: Re: vs-4080
+Date: Fri, 20 Jan 2006 13:02:24 +0200
+Message-ID: <200601201302.24802.rmeijer@internet.gr>
+References: <200601111109.09437.rmeijer@internet.gr> <200601171711.38508.rmeijer@internet.gr> <1137632976.6573.7.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27804-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27809-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060119195349.GC11010@untroubled.org>
+In-Reply-To: <1137632976.6573.7.camel@tribesman.namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
-Cc: Bruce Guenter <lists-reiserfs-list@bruce-guenter.dyndns.org>
 
-On Thursday 19 January 2006 22:53, Bruce Guenter wrote:
-> On Wed, Jan 18, 2006 at 09:34:49PM +0300, Vitaly Fertman wrote:
-> > thank you for the report, the attached patch should fix 
-> > the broken mount options. please try it.
-> 
-> It does indeed fix the problem.  What other mount options would have
-> been affected by this problem?  
+On Thu 19 Jan 2006 3:09, Vladimir V. Saveliev wrote:
 
-it does not seem to brake anything else.
+> > > > ReiserFS: dm-8: warning: vs-4080: reiserfs_free_block: free_block
+> > > > (dm-8:46707368)[dev:blocknr]: bit already cleared
 
-> In what version of the kernel was this 
-> problem introduced?
+> It would be interesting to check the filesystem after a week of regular
+> load to see whether new such corruptions appeared.
 
-2.6.13.
+No problems so far:
 
--- 
-Vitaly
+reiserfsck --fix-fixable started at Fri Jan 20 12:08:21 2006
+###########
+Replaying journal..
+Reiserfs journal '/dev/debian/mirror' in blocks [18..8211]: 0 transactions replayed
+Checking internal tree..finished
+Comparing bitmaps..finished
+Checking Semantic tree:
+finished
+No corruptions found
+There are on the filesystem:
+        Leaves 118509
+        Internal nodes 806
+        Directories 36322
+        Other files 570374
+        Data block pointers 67438522 (0 of them are zero)
+        Safe links 0
+###########
+reiserfsck finished at Fri Jan 20 12:30:05 2006
+
+
+Thanks,
+
+Ray
