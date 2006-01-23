@@ -1,53 +1,33 @@
-From: Michael Barnwell <xterminate@xterminate.me.uk>
-Subject: Re: Data being corrupted on reiserfs 3.6
-Date: Sun, 22 Jan 2006 12:12:46 +0000
-Message-ID: <43D376BE.7010800@xterminate.me.uk>
-References: <43C97E17.7030604@xterminate.me.uk> <20060115204143.GC24752@atrey.karlin.mff.cuni.cz> <43CAC054.5020104@xterminate.me.uk> <20060116104137.GA18267@atrey.karlin.mff.cuni.cz>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: stale dk warning
+Date: Mon, 23 Jan 2006 11:29:40 +0300
+Message-ID: <1138004980.6165.11.camel@tribesman.namesys.com>
+References: <1137788919.22212.7.camel@gentoo>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27825-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27834-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060116104137.GA18267@atrey.karlin.mff.cuni.cz>
+In-Reply-To: <1137788919.22212.7.camel@gentoo>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jan Kara <jack@ucw.cz>
+Content-Type: text/plain; charset="us-ascii"
+To: Jake Maciejewski <maciejej@msoe.edu>
 Cc: reiserfs-list@namesys.com
 
-Hi,
+Hello
 
-Jan Kara wrote:
-<snip>
->>
->   You can use 'od -t x1 <file>' - it should squeeze repeating characters
-> so you should see the non-zero ones easily...
->   As Hans said usually such problems are hardware problems (memory,
-> overheating processor, flaky disk controler etc.).
->   BTW: I generated the same file as you and md5sum of the one on
-> reiserfs is same as mine. So the file is stored correctly and something
-> wrong really happens during the copy from /tmp to /home/michael. I
-> looked at the differences and they don't seem to be random. It's always
-> a chunk of 3-16 bytes that gets corrupted. Then numbers written there
-> also do not seem to be random (lots of characters with code 16, 54,
-> 128,...). I'll investigate more later...
->   So this could be some memory corruption - for checking out this it
-> would be useful if you could try to reproduce the problem with 2.6.15
-> kernel. The problem might well be fixed there.
+On Fri, 2006-01-20 at 14:28 -0600, Jake Maciejewski wrote:
+> In addition to the disable write barrier warning reported by Louis-David
+> Mitterrand on January 10th, with 2.6.15-1 I'm getting:
+>         
+>         <4>reiser4[dd(25448)]: update_stale_dk (fs/reiser4/search.c:1363)[nikita-38210]:
+>         WARNING: stale dk
+>         
+> The process varies. I've also seen the stale dk warning triggered by rsync and rm.
+> 
 
-I finally upgraded to 2.6.15-1 and I'm still seeing the same problem 
-there - It's possibly its a memory issue or flaky disk controller, it's 
-a Silicon Image 3114 PCI card that I've not used before these hard 
-disks, it's more likely then memory which has been going fine for a 
-couple of years without any problems but I will run memtest86 when I get 
-the chance.
+This is harmless. I think we should remove this warning as well as the
+one about write barrier.
 
-Oh and I don't know if I mentioned this before but the corruption only 
-ever occurs on writing not reading.
-
-Can anyone suggest a test to tell if it is the disk controller?
-
-Regards,
-
-Michael.
