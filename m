@@ -1,66 +1,96 @@
-From: Roman I Khimov <rik@osrc.info>
+From: Boyd Waters <bwaters@nrao.edu>
 Subject: Re: Reiser4 corruption (fsck.reiser4 broken?)
-Date: Wed, 25 Jan 2006 00:28:10 +0300
-Message-ID: <200601250028.13857.rik@osrc.info>
-References: <200601242257.43836.rik@osrc.info> <1138135840.29441.124.camel@gentoo>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart8625170.FDQ91slxJg";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27855-reiserfs=m.gmane.org@namesys.com>
+Date: Tue, 24 Jan 2006 14:42:33 -0700
+Message-ID: <65BAB153-B0AD-45CA-82E0-C03F0E19BFAC@nrao.edu>
+References: <200601242257.43836.rik@osrc.info> <1138135840.29441.124.camel@gentoo> <200601250028.13857.rik@osrc.info>
+Mime-Version: 1.0 (Apple Message framework v746.2)
+Content-Type: multipart/signed; micalg=sha1; boundary=Apple-Mail-1-917964504; protocol="application/pkcs7-signature"
+Return-path: <reiserfs-list-return-27856-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1138135840.29441.124.camel@gentoo>
+In-Reply-To: <200601250028.13857.rik@osrc.info>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
-Cc: Jake Maciejewski <maciejej@msoe.edu>
+To: Roman I Khimov <rik@osrc.info>
+Cc: reiserfs-list@namesys.com
 
---nextPart8625170.FDQ91slxJg
+--Apple-Mail-1-917964504
+Content-Transfer-Encoding: 7bit
 Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+	charset=US-ASCII;
+	delsp=yes;
+	format=flowed
 
-24 =D1=8F=D0=BD=D0=B2=D0=B0=D1=80=D1=8F 2006 23:50 | Jake Maciejewski:
-> Someone correct me if I'm wrong, but kernels since 2.6.11-5 have the new
-> plugin set which isn't supported by reiser4progs 1.0.4, so fscking with
-> 1.0.4 was probably a big mistake.
 
-I'm looking at Reiser4progs Changelog, this line:
+On Jan 24, 2006, at 2:28 PM, Roman I Khimov wrote:
 
-	Handle new (crc related) fields in plugin set correctly.
+> . Cool... When will I finally learn to be careful? ;-)
+>
+> Sorry for the noise...
 
-from 2005-06-28 (post 1.0.4 changes) looks interesting. Seems that I'm not=
-=20
-so good at following reiserfs-list, because I knew about changes, but=20
-somehow forgot to upgrade to 1.0.5 (and I can even remember why - at the=20
-time it was released I wasn't using Reiser4, only looking at it from safe=20
-Reiser3 /home, that was converted to Reiser4 in November). Cool... When=20
-will I finally learn to be careful? ;-)
 
-Sorry for the noise...
+Well, it wasn't noise for me --- I was just about to hurt myself on a  
+use case identical to the one that you describe. (I lost all of my  
+data from our "living room" mac mini, but now it's being backed up to  
+a Reiser filesystem on a linux host via rsync.)
 
-=2D-=20
-                            Roman
- ,---------------------------. ,--------------------------.
-/     http://www.3os.ru/      V    http://www.osrc.info/   \         .o.
-\    mailto: rik@3os.ru       ^   mailto: rik@osrc.info    /         ..o
- `---------------------------' `--------------------------'          ooo
-gpg --recv-keys 0xE5E055C3 --keyserver hkp://subkeys.pgp.net
+Thanks very much for sharing your (painful) experience!
 
---nextPart8625170.FDQ91slxJg
-Content-Type: application/pgp-signature
+~ boyd
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
+Boyd Waters
+Socorro, New Mexico
 
-iD8DBQBD1pvtXJ70z+XgVcMRAkrlAKDCl0OZXVltHs7A+x+UB7iQpvbw/QCbBOTc
-aFLrBUSIhRuGd2jg2OukX6c=
-=AOAv
------END PGP SIGNATURE-----
 
---nextPart8625170.FDQ91slxJg--
+--Apple-Mail-1-917964504
+Content-Transfer-Encoding: base64
+Content-Type: application/pkcs7-signature;
+	name=smime.p7s
+Content-Disposition: attachment;
+	filename=smime.p7s
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIGFDCCAs0w
+ggI2oAMCAQICAw/xvTANBgkqhkiG9w0BAQQFADBiMQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhh
+d3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVt
+YWlsIElzc3VpbmcgQ0EwHhcNMDUxMTI5MjI1NjIwWhcNMDYxMTI5MjI1NjIwWjBCMR8wHQYDVQQD
+ExZUaGF3dGUgRnJlZW1haWwgTWVtYmVyMR8wHQYJKoZIhvcNAQkBFhBid2F0ZXJzQG5yYW8uZWR1
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqLzyMs7hT0kZ4/7b8/DuVwJqBN3Vqbzb
+5A7EiBHEbkzIg74ybHh+yLJkO0pXduDSUg/siFpOv9S639A//akORNiLoKGCxCObpppms2wNg1OV
+SRA8bwWJkkkZTHo9+JLkoxpKxcvT/kZlGY8WAXkwyVcvY2DHlIUBUjNFhY73RZIr4jeKzztrAQWX
+T/7wQVxagKESj+IYb625xQN+k0yCx+HoIi741vXZ09woEnpHXKG2zXE6NWprPVEw6FzaN8QFzp4F
+uZY1MsDoBg6QvkLpPDlVt4Hms69i8PGP2nlO/+9TzLd2qMZwgD2tF8i5t/lP0VZfcWiG0fluBcid
+02D5eQIDAQABoy0wKzAbBgNVHREEFDASgRBid2F0ZXJzQG5yYW8uZWR1MAwGA1UdEwEB/wQCMAAw
+DQYJKoZIhvcNAQEEBQADgYEAJvBHtNrGWESYoZIYgKMvQOCNwYj8YpeK81CzZZ8E3jreQLXg/4sr
+q3qfBFTv4WPh0pqy3t92uMpNCq58Yqp5G6t7fVhNpS5YA9VPXAZHBkjaH29qcXimBBgkmx4XP6c/
+62lzXT80fHo0bizNEyqpKeN/nn7hL2jLC2r06phkjFgwggM/MIICqKADAgECAgENMA0GCSqGSIb3
+DQEBBQUAMIHRMQswCQYDVQQGEwJaQTEVMBMGA1UECBMMV2VzdGVybiBDYXBlMRIwEAYDVQQHEwlD
+YXBlIFRvd24xGjAYBgNVBAoTEVRoYXd0ZSBDb25zdWx0aW5nMSgwJgYDVQQLEx9DZXJ0aWZpY2F0
+aW9uIFNlcnZpY2VzIERpdmlzaW9uMSQwIgYDVQQDExtUaGF3dGUgUGVyc29uYWwgRnJlZW1haWwg
+Q0ExKzApBgkqhkiG9w0BCQEWHHBlcnNvbmFsLWZyZWVtYWlsQHRoYXd0ZS5jb20wHhcNMDMwNzE3
+MDAwMDAwWhcNMTMwNzE2MjM1OTU5WjBiMQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENv
+bnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElz
+c3VpbmcgQ0EwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMSmPFVzVftOucqZWh5owHUEcJ3f
+6f+jHuy9zfVb8hp2vX8MOmHyv1HOAdTlUAow1wJjWiyJFXCO3cnwK4Vaqj9xVsuvPAsH5/EfkTYk
+KhPPK9Xzgnc9A74r/rsYPge/QIACZNenprufZdHFKlSFD0gEf6e20TxhBEAeZBlyYLf7AgMBAAGj
+gZQwgZEwEgYDVR0TAQH/BAgwBgEB/wIBADBDBgNVHR8EPDA6MDigNqA0hjJodHRwOi8vY3JsLnRo
+YXd0ZS5jb20vVGhhd3RlUGVyc29uYWxGcmVlbWFpbENBLmNybDALBgNVHQ8EBAMCAQYwKQYDVR0R
+BCIwIKQeMBwxGjAYBgNVBAMTEVByaXZhdGVMYWJlbDItMTM4MA0GCSqGSIb3DQEBBQUAA4GBAEiM
+0VCD6gsuzA2jZqxnD3+vrL7CF6FDlpSdf0whuPg2H6otnzYvwPQcUCCTcDz9reFhYsPZOhl+hLGZ
+GwDFGguCdJ4lUJRix9sncVcljd2pnDmOjCBPZV+V2vf3h9bGCE6u9uo05RAaWzVNd+NWIXiC3CEZ
+Nd4ksdMdRv9dX2VPMYIC5zCCAuMCAQEwaTBiMQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3Rl
+IENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWls
+IElzc3VpbmcgQ0ECAw/xvTAJBgUrDgMCGgUAoIIBUzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
+MBwGCSqGSIb3DQEJBTEPFw0wNjAxMjQyMTQyMzRaMCMGCSqGSIb3DQEJBDEWBBStgQjsceoN3eKx
+qn3Y7jd41hfeVDB4BgkrBgEEAYI3EAQxazBpMGIxCzAJBgNVBAYTAlpBMSUwIwYDVQQKExxUaGF3
+dGUgQ29uc3VsdGluZyAoUHR5KSBMdGQuMSwwKgYDVQQDEyNUaGF3dGUgUGVyc29uYWwgRnJlZW1h
+aWwgSXNzdWluZyBDQQIDD/G9MHoGCyqGSIb3DQEJEAILMWugaTBiMQswCQYDVQQGEwJaQTElMCMG
+A1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNv
+bmFsIEZyZWVtYWlsIElzc3VpbmcgQ0ECAw/xvTANBgkqhkiG9w0BAQEFAASCAQAU3J6KwrWzNg+o
+uO7Ps/0XpZwfei1/AhT7OtoRz41OfIC2uVY2RgWFrf6usjL8Fn4cMrdQ2S9MbdJ1qVy6ZBfgs+qh
+HQazQw1neM59u0f46aMPDHnaXqr8q53pYQD1pLJ8YXA8+pCqTY/EdSo7nb4XpQ5zuYgGFdoqGhUx
+m8+tUNewuiwbkRQX/E9m3awUtyK8mYZ4gEksEx0mPvzZkfBzkuyeckjBo2U2o7C+1UfXrDvfh1L+
+HB8b5Lbx342zwGeucvpxF+5B7S25tlxB8iTfaMKyiphia/INsdHGA4KBdZDHOmi3Sk4KOYWUy2M3
+34287ZY6oBRSrzeNnnxJ1aXKAAAAAAAA
+
+--Apple-Mail-1-917964504--
