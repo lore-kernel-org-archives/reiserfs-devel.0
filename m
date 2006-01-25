@@ -1,107 +1,64 @@
-From: "E.Gryaznova" <grev@namesys.com>
-Subject: Re: stale dk warning
-Date: Wed, 25 Jan 2006 15:17:12 +0300
-Message-ID: <43D76C48.7060801@namesys.com>
-References: <1137788919.22212.7.camel@gentoo> <1138004980.6165.11.camel@tribesman.namesys.com> <43D49AFC.3000807@namesys.com> <43D49B4C.5080406@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: random minor benchmark: Re: Copy 20 tarfiles: ext2 vs (reiser4, unixfile)
+ vs (reiser4,cryptcompress)
+Date: Wed, 25 Jan 2006 10:59:11 -0800
+Message-ID: <43D7CA7F.4010502@namesys.com>
+References: <43D7C6BE.1010804@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27859-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <43D49B4C.5080406@namesys.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932116AbWAYS7I@vger.kernel.org>
+In-Reply-To: <43D7C6BE.1010804@namesys.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>, "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: Alexander Zarochentcev <zam@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward@namesys.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-Hello,
+Notice how CPU speed (and number of cpus) completely determines
+compression performance.
 
-shouldnt we also remove the warning [nikita-33281] ?
+cryptcompress refers to the reiser4 compression plugin, (unix file)
+refers to the reiser4 non-compressing plugin.
 
-Jan 25 14:48:29 bones kernel: <4>reiser4[ent:hda8!(5047)]: 
-capture_anonymous_jno
-des (fs/reiser4/plugin/file/file.c:1348)[nikita-33281]:
-Jan 25 14:48:29 bones kernel: WARNING: anonymous jnode in writeback: 
-(69954 2216
-63)
-Jan 25 14:48:29 bones kernel:
-Jan 25 14:48:29 bones kernel: <4>reiser4[ent:hda8!(5047)]: 
-capture_anonymous_jno
-des (fs/reiser4/plugin/file/file.c:1348)[nikita-33281]:
-Jan 25 14:48:29 bones kernel: WARNING: anonymous jnode in writeback: 
-(69954 2216
-64)
+Edward Shishkin wrote:
 
-Thanks,
-Lena
-
-
-Hans Reiser wrote:
-
->Hans Reiser wrote:
+> Here are the tests that vs asked for:
+> Creation (dd) of 20 tarfiles (the original 200M file is in ramfs)
+> Kernel: 2.6.15-mm4 + current git snapshot of reiser4
 >
->  
+> ------------------------------------------
 >
->>Vladimir V. Saveliev wrote:
->>
->> 
->>
->>    
->>
->>>Hello
->>>
->>>On Fri, 2006-01-20 at 14:28 -0600, Jake Maciejewski wrote:
->>>
->>>
->>>   
->>>
->>>      
->>>
->>>>In addition to the disable write barrier warning reported by Louis-David
->>>>Mitterrand on January 10th, with 2.6.15-1 I'm getting:
->>>>      
->>>>      <4>reiser4[dd(25448)]: update_stale_dk (fs/reiser4/search.c:1363)[nikita-38210]:
->>>>      WARNING: stale dk
->>>>      
->>>>The process varies. I've also seen the stale dk warning triggered by rsync and rm.
->>>>
->>>>  
->>>>
->>>>     
->>>>
->>>>        
->>>>
->>>This is harmless. I think we should remove this warning as well as the
->>>one about write barrier.
->>>
->>>
->>>
->>>
->>>
->>>   
->>>
->>>      
->>>
->>Zam said he would change it
->>
->>    
->>
->by "it" I refer to the write barrier warning, sorry for my imprecision....
+> Laputa workstation
+> Uni Intel Pentium 4 (2.26 GHz) 512M RAM
 >
->  
+> ext2:
+> real 2m, 15s
+> sys 0m, 14s
 >
->>to a notice.  Zam, what happened to the patch?
->>
->>
->> 
->>
->>    
->>
+> reiser4(unix file)
+> real 2m, 7s
+> sys  0m, 23s
+>
+> reiser4(cryptcompress, lzo1, 64K)
+> real 2m, 13s
+> sys 0m, 11s
+> ------------------------------------------
+>
+> Belka workstation
+> Dual Intel Xeon (2.4GHz) 1G RAM
+>
+> ext2:
+> real 2m, 16s
+> sys 0m, 10s
+>
+> reiser4(unix file)
+> real 2m, 14s
+> sys  0m, 17s
+>
+> reiser4(cryptcompress, lzo1, 64K)
+> real 1m, 35s
+> sys 0m, 14s
 >
 >
 >
->  
 >
-
