@@ -1,64 +1,104 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: random minor benchmark: Re: Copy 20 tarfiles: ext2 vs (reiser4, unixfile)
- vs (reiser4,cryptcompress)
-Date: Wed, 25 Jan 2006 10:59:11 -0800
-Message-ID: <43D7CA7F.4010502@namesys.com>
-References: <43D7C6BE.1010804@namesys.com>
+From: Antonio <tritemio@gmail.com>
+Subject: reiserfs corruption
+Date: Thu, 26 Jan 2006 11:49:27 +0100
+Message-ID: <5486cca80601260249n6bb98418v@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932116AbWAYS7I@vger.kernel.org>
-In-Reply-To: <43D7C6BE.1010804@namesys.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-27869-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward@namesys.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Reiserfs mail-list <Reiserfs-List@namesys.com>
+To: reiserfs-list@namesys.com
 
-Notice how CPU speed (and number of cpus) completely determines
-compression performance.
+Hi to the list,
 
-cryptcompress refers to the reiser4 compression plugin, (unix file)
-refers to the reiser4 non-compressing plugin.
+I'm using reiserfs v3 in my root partition of my debian testing system
+for 3 years without a single problem. It's a quite common 32bit pc.
 
-Edward Shishkin wrote:
+Since a week (approximately when I began to use 2.6.15.1, don't know
+if it matters though) I beginned to see strange errors like this:
 
-> Here are the tests that vs asked for:
-> Creation (dd) of 20 tarfiles (the original 200M file is in ramfs)
-> Kernel: 2.6.15-mm4 + current git snapshot of reiser4
->
-> ------------------------------------------
->
-> Laputa workstation
-> Uni Intel Pentium 4 (2.26 GHz) 512M RAM
->
-> ext2:
-> real 2m, 15s
-> sys 0m, 14s
->
-> reiser4(unix file)
-> real 2m, 7s
-> sys  0m, 23s
->
-> reiser4(cryptcompress, lzo1, 64K)
-> real 2m, 13s
-> sys 0m, 11s
-> ------------------------------------------
->
-> Belka workstation
-> Dual Intel Xeon (2.4GHz) 1G RAM
->
-> ext2:
-> real 2m, 16s
-> sys 0m, 10s
->
-> reiser4(unix file)
-> real 2m, 14s
-> sys  0m, 17s
->
-> reiser4(cryptcompress, lzo1, 64K)
-> real 1m, 35s
-> sys 0m, 14s
->
->
->
->
+  kernel: attempt to access beyond end of device
+  kernel: hda9: rw=3D0, want=3D42762504, limit=3D14201397
+  kernel: attempt to access beyond end of device
+  kernel: hda9: rw=3D0, want=3D42762504, limit=3D14201397
+  kernel: attempt to access beyond end of device
+  kernel: hda9: rw=3D0, want=3D42762504, limit=3D14201397
+
+and this:
+
+  ReiserFS: warning: is_tree_node: node level 24111 does not match to
+the expected one 1
+  ReiserFS: hda9: warning: vs-5150: search_by_key: invalid format
+found in block 1960. Fsck?
+  ReiserFS: hda9: warning: vs-13070: reiserfs_read_locked_inode: i/o
+failure occurred trying to find stat data of [172 59564 0x0 SD]
+
+The first time I ran "reisefsck --rebuidl-tree" and corrected all the
+errors. After few day I had again those errors, so I thinked that my
+HD was at the end of his life. However I have another debian system on
+the same disk that works without problems. I rebuilt the tree 3 times
+this week but after some usage I get again those errors (and often the
+system become instable).
+
+I've ran smartctl (my IDE disk supports smart) but it didn't find any
+error even doing the short and the long tests.
+
+Then I thinked about badblocks, I've read the faq on the namesys site
+so I ran "badbloks -b 4096 /dev/hda9" but no badblocks where found
+(there was no output at all).
+
+I've cheked all the other partitions and they have no error. The
+partition which gived errors is the only reiserfs on this disk. So,
+maybe my disk is damaged, but how can I be sure it isn't a software
+problem if neither smartctl and badblocks can find any error? Is there
+some other check I can do?
+
+If it can help here is debugreiserfs output on the damaged partition:
+
+--------------------------------------------
+# debugreiserfs /dev/hda9
+debugreiserfs 3.6.19 (2003 www.namesys.com)
+
+
+Filesystem state: consistent
+
+Reiserfs super block in block 16 on 0x309 of format 3.6 with standard journ=
+al
+Count of blocks on the device: 1775168
+Number of bitmaps: 55
+Blocksize: 4096
+Free blocks (count of blocks - used [journal, bitmaps, data, reserved]
+blocks): 384382
+Root block: 8690
+Filesystem is clean
+Tree height: 5
+Hash function used to sort names: "r5"
+Objectid map size 158, max 972
+Journal parameters:
+        Device [0x0]
+        Magic [0x1e79a00]
+        Size 8193 blocks (including 1 for journal header) (first block 18)
+        Max transaction length 1024 blocks
+        Max batch size 900 blocks
+        Max commit age 30
+Blocks reserved by journal: 0
+Fs state field: 0x0:
+sb_version: 2
+inode generation number: 5725378
+UUID: be002094-1df2-415b-8f12-f0f199c6390c
+LABEL:
+Set flags in SB:
+        ATTRIBUTES CLEAN
+--------------------------------------------
+
+Any hit is welcome, tell me if you need further informations.
+
+
+Best Regards,
+
+  ~ Antonio
