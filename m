@@ -1,74 +1,131 @@
-From: Jens Axboe <axboe@suse.de>
-Subject: Re: random minor benchmark: Re: Copy 20 tarfiles: ext2 vs (reiser4, unixfile) vs (reiser4,cryptcompress)
-Date: Thu, 26 Jan 2006 19:56:13 +0100
-Message-ID: <20060126185612.GM4311@suse.de>
-References: <43D7C6BE.1010804@namesys.com> <43D7CA7F.4010502@namesys.com> <20060126153343.GH4311@suse.de> <43D91225.3030605@namesys.com>
+From: Maciej Soltysiak <solt2@dns.toxicfilms.tv>
+Subject: 2.6.15 reiserfs bugs that cause the system to hang and increase load sistematically
+Date: Thu, 26 Jan 2006 21:10:57 +0100
+Message-ID: <1771840712.20060126211057@dns.toxicfilms.tv>
+Reply-To: Maciej Soltysiak <solt2@dns.toxicfilms.tv>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-27880-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <43D91225.3030605@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751424AbWAZUKq@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Edward Shishkin <edward@namesys.com>
-Cc: Hans Reiser <reiser@namesys.com>, LKML <linux-kernel@vger.kernel.org>, Reiserfs mail-list <Reiserfs-List@namesys.com>
+To: linux-kernel@vger.kernel.org
+Cc: reiserfs-list@namesys.com
 
-On Thu, Jan 26 2006, Edward Shishkin wrote:
-> Jens Axboe wrote:
-> 
-> >On Wed, Jan 25 2006, Hans Reiser wrote:
-> > 
-> >
-> >>Notice how CPU speed (and number of cpus) completely determines
-> >>compression performance.
-> >>
-> >>cryptcompress refers to the reiser4 compression plugin, (unix file)
-> >>refers to the reiser4 non-compressing plugin.
-> >>
-> >>Edward Shishkin wrote:
-> >>
-> >>   
-> >>
-> >>>Here are the tests that vs asked for:
-> >>>Creation (dd) of 20 tarfiles (the original 200M file is in ramfs)
-> >>>Kernel: 2.6.15-mm4 + current git snapshot of reiser4
-> >>>
-> >>>------------------------------------------
-> >>>
-> >>>Laputa workstation
-> >>>Uni Intel Pentium 4 (2.26 GHz) 512M RAM
-> >>>
-> >>>ext2:
-> >>>real 2m, 15s
-> >>>sys 0m, 14s
-> >>>
-> >>>reiser4(unix file)
-> >>>real 2m, 7s
-> >>>sys  0m, 23s
-> >>>
-> >>>reiser4(cryptcompress, lzo1, 64K)
-> >>>real 2m, 13s
-> >>>sys 0m, 11s
-> >>>     
-> >>>
-> >
-> >Just curious - does your crypt plugin reside in user space?
-> >
-> > 
-> >
-> 
-> Nop.
-> This is just wrappers for linux crypto api, zlib, etc..
-> so user time is zero and not interesting.
+Hello!
 
-Then why is the sys time lower than the "plain" writes on ext2 and
-reiser4? Surely compressing isn't for free, yet the sys time is lower on
-the compression write than the others.
+I just hit a problem with reiserfs. While working this popped on the console:
+ReiserFS: sdb2: warning: vs-13060: reiserfs_update_sd: stat data of object [2497 4756 0x0 SD] (nlink == 2) not found (pos 1)
+ReiserFS: sdb2: warning: zam-7002:reiserfs_add_entry: "reiserfs_find_entry" has returned unexpected value (3)
+REISERFS: panic (device sdb2): vs-7050: new entry is found, new inode == 0
 
--- 
-Jens Axboe
+And then suddenly some services (webmail, courier-imap) stopped working properly,
+as if they hung upon read/write on /dev/sdb2 (which is /home that contains mail)
 
+I noticed that load was increasing continuously, 5,7,9,12,...,60.
+
+I tried remounting in read only to do a reiserfsck but
+mount -o remount,ro /dev/sdb2 only hung and it was not possible to stop it.
+
+Unfortunatelly I discovered it being remotely logged on, and I can't log in
+now to further investigate. But I managed to look at syslog and copy the
+oops call trace that was just after the 3 messages I wrote above.
+
+This is vanilla 2.6.15, /dev/sdb2 is a reiserfs on a 0+1 RAID ran by aacraid.
+No 3rd party modules.
+Currently I can not supply any more information due to the server not
+letting me in, ie. hanging just after displaying Last login info.
+
+Just letting you guys know. I hope the fs is intact :-)
+
+Best regards,
+Maciej Soltysiak
+
+------------[ cut here ]------------
+kernel BUG at fs/reiserfs/prints.c:362!
+invalid operand: 0000 [#1]
+SMP 
+CPU:    1
+EIP:    0060:[reiserfs_panic+86/128]    Not tainted VLI
+EIP:    0060:[<c01befc6>]    Not tainted VLI
+EFLAGS: 00010296   (2.6.15) 
+EIP is at reiserfs_panic+0x56/0x80
+eax: 00000055   ebx: c039753f   ecx: 00000000   edx: 00000000
+esi: f1073000   edi: f1073198   ebp: 0000003b   esp: c6bf5c28
+ds: 007b   es: 007b   ss: 0068
+Process imapd (pid: 25961, threadinfo=c6bf5000 task=dbfab030)
+Stack: c039debc f1073198 c04a18c0 c6bf5c50 00000000 d5af89c4 00000000 c01adaa4 
+       f1073000 c039c90c eb526f20 0000002e d5af89c4 00000000 00000002 00000001 
+       0049b6a3 00008000 00000000 c01c5623 dbe44000 00001000 e346f824 e346f824 
+Call Trace:
+ [reiserfs_rename+2500/2880] reiserfs_rename+0x9c4/0xb40
+ [<c01adaa4>] reiserfs_rename+0x9c4/0xb40
+ [is_tree_node+115/128] is_tree_node+0x73/0x80
+ [<c01c5623>] is_tree_node+0x73/0x80
+ [search_by_key+551/3808] search_by_key+0x227/0xee0
+ [<c01c5907>] search_by_key+0x227/0xee0
+ [dput+250/576] dput+0xfa/0x240
+ [<c017dfba>] dput+0xfa/0x240
+ [mntput_no_expire+29/128] mntput_no_expire+0x1d/0x80
+ [<c018344d>] mntput_no_expire+0x1d/0x80
+ [_spin_unlock+11/16] _spin_unlock+0xb/0x10
+ [<c038057b>] _spin_unlock+0xb/0x10
+ [vfs_rename_other+187/256] vfs_rename_other+0xbb/0x100
+ [<c0176ddb>] vfs_rename_other+0xbb/0x100
+ [vfs_rename+1099/1152] vfs_rename+0x44b/0x480
+ [<c017726b>] vfs_rename+0x44b/0x480
+ [sys_rename+461/528] sys_rename+0x1cd/0x210
+ [<c017746d>] sys_rename+0x1cd/0x210
+ [_spin_lock+11/16] _spin_lock+0xb/0x10
+ [<c038055b>] _spin_lock+0xb/0x10
+ [sys_write+75/128] sys_write+0x4b/0x80
+ [<c01643bb>] sys_write+0x4b/0x80
+ [sysenter_past_esp+84/117] sysenter_past_esp+0x54/0x75
+ [<c01030eb>] sysenter_past_esp+0x54/0x75
+Code: e8 00 fd ff ff 89 d8 ba c0 18 4a c0 85 f6 8d be 98 01 00 00 0f 45 c7 89 54 24 08 89 44 24 04 c7 04 24 bc de 39 c0 e8 7a 02 f6 ff <0f> 0b 6a 01 e7 78 39 c0 85 f6 b8 c0 18 4a c0 0f 45 df 89 44 24 
+ Badness in do_exit at kernel/exit.c:796
+ [do_exit+862/880] do_exit+0x35e/0x370
+ [<c0121d1e>] do_exit+0x35e/0x370
+ [die+388/400] die+0x184/0x190
+ [<c0104434>] die+0x184/0x190
+ [do_invalid_op+0/208] do_invalid_op+0x0/0xd0
+ [<c01047d0>] do_invalid_op+0x0/0xd0
+ [do_invalid_op+184/208] do_invalid_op+0xb8/0xd0
+ [<c0104888>] do_invalid_op+0xb8/0xd0
+ [reiserfs_panic+86/128] reiserfs_panic+0x56/0x80
+ [<c01befc6>] reiserfs_panic+0x56/0x80
+ [call_console_drivers+344/384] call_console_drivers+0x158/0x180
+ [<c011f0d8>] call_console_drivers+0x158/0x180
+ [release_console_sem+124/192] release_console_sem+0x7c/0xc0
+ [<c011f67c>] release_console_sem+0x7c/0xc0
+ [vprintk+632/768] vprintk+0x278/0x300
+ [<c011f4d8>] vprintk+0x278/0x300
+ [error_code+79/84] error_code+0x4f/0x54
+ [<c0103c47>] error_code+0x4f/0x54
+ [reiserfs_panic+86/128] reiserfs_panic+0x56/0x80
+ [<c01befc6>] reiserfs_panic+0x56/0x80
+ [reiserfs_rename+2500/2880] reiserfs_rename+0x9c4/0xb40
+ [<c01adaa4>] reiserfs_rename+0x9c4/0xb40
+ [is_tree_node+115/128] is_tree_node+0x73/0x80
+ [<c01c5623>] is_tree_node+0x73/0x80
+ [search_by_key+551/3808] search_by_key+0x227/0xee0
+ [<c01c5907>] search_by_key+0x227/0xee0
+ [dput+250/576] dput+0xfa/0x240
+ [<c017dfba>] dput+0xfa/0x240
+ [mntput_no_expire+29/128] mntput_no_expire+0x1d/0x80
+ [<c018344d>] mntput_no_expire+0x1d/0x80
+ [_spin_unlock+11/16] _spin_unlock+0xb/0x10
+ [<c038057b>] _spin_unlock+0xb/0x10
+ [vfs_rename_other+187/256] vfs_rename_other+0xbb/0x100
+ [<c0176ddb>] vfs_rename_other+0xbb/0x100
+ [vfs_rename+1099/1152] vfs_rename+0x44b/0x480
+ [<c017726b>] vfs_rename+0x44b/0x480
+ [sys_rename+461/528] sys_rename+0x1cd/0x210
+ [<c017746d>] sys_rename+0x1cd/0x210
+ [_spin_lock+11/16] _spin_lock+0xb/0x10
+ [<c038055b>] _spin_lock+0xb/0x10
+ [sys_write+75/128] sys_write+0x4b/0x80
+ [<c01643bb>] sys_write+0x4b/0x80
+ [sysenter_past_esp+84/117] sysenter_past_esp+0x54/0x75
+ [<c01030eb>] sysenter_past_esp+0x54/0x75
+ReiserFS: sda6: warning: clm-2100: nesting info a different FS
