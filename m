@@ -1,70 +1,50 @@
-From: Antonio <tritemio@gmail.com>
-Subject: Re: reiserfs corruption
-Date: Thu, 26 Jan 2006 15:58:41 +0100
-Message-ID: <5486cca80601260658o33bdc9f3n@mail.gmail.com>
-References: <5486cca80601260249n6bb98418v@mail.gmail.com>
-	 <1138282968.6313.113.camel@tribesman.namesys.com>
+From: Jens Axboe <axboe@suse.de>
+Subject: Re: random minor benchmark: Re: Copy 20 tarfiles: ext2 vs (reiser4, unixfile) vs (reiser4,cryptcompress)
+Date: Thu, 26 Jan 2006 16:33:43 +0100
+Message-ID: <20060126153343.GH4311@suse.de>
+References: <43D7C6BE.1010804@namesys.com> <43D7CA7F.4010502@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-27874-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <1138282968.6313.113.camel@tribesman.namesys.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932351AbWAZPbe@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <43D7CA7F.4010502@namesys.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Edward Shishkin <edward@namesys.com>, LKML <linux-kernel@vger.kernel.org>, Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-Hi,
+On Wed, Jan 25 2006, Hans Reiser wrote:
+> Notice how CPU speed (and number of cpus) completely determines
+> compression performance.
+> 
+> cryptcompress refers to the reiser4 compression plugin, (unix file)
+> refers to the reiser4 non-compressing plugin.
+> 
+> Edward Shishkin wrote:
+> 
+> > Here are the tests that vs asked for:
+> > Creation (dd) of 20 tarfiles (the original 200M file is in ramfs)
+> > Kernel: 2.6.15-mm4 + current git snapshot of reiser4
+> >
+> > ------------------------------------------
+> >
+> > Laputa workstation
+> > Uni Intel Pentium 4 (2.26 GHz) 512M RAM
+> >
+> > ext2:
+> > real 2m, 15s
+> > sys 0m, 14s
+> >
+> > reiser4(unix file)
+> > real 2m, 7s
+> > sys  0m, 23s
+> >
+> > reiser4(cryptcompress, lzo1, 64K)
+> > real 2m, 13s
+> > sys 0m, 11s
 
-2006/1/26, Vladimir V. Saveliev <vs@namesys.com>:
-[cut]
-> > The first time I ran "reisefsck --rebuidl-tree" and corrected all the
-> > errors. After few day I had again those errors, so I thinked that my
-> > HD was at the end of his life. However I have another debian system on
-> > the same disk that works without problems.
->
-> is it on reiserfs?
-> would you, please, show output of
-> fdisk -l /dev/hda
+Just curious - does your crypt plugin reside in user space?
 
-No, the only reiserfs partition is hda9 which is the root partition of
-one of the two debian systems I have on this machine.
-
-As you requested:
-# fdisk -l /dev/hda
-
-Disk /dev/hda: 60.0 GB, 60022480896 bytes
-255 heads, 63 sectors/track, 7297 cylinders
-Units =3D cylinders of 16065 * 512 =3D 8225280 bytes
-
-   Device Boot      Start         End      Blocks   Id  System
-/dev/hda1               1         382     3068383+   7  HPFS/NTFS
-/dev/hda2   *         383         393       88357+  83  Linux
-/dev/hda3             394        1122     5855692+  83  Linux
-/dev/hda4            1123        7297    49600687+   5  Extended
-/dev/hda5            1123        1851     5855661   83  Linux
-/dev/hda6            1852        1915      514048+  82  Linux swap / Solari=
-s
-/dev/hda7            1916        5562    29294496   83  Linux
-/dev/hda8            5563        6413     6835626   83  Linux
-/dev/hda9   *        6414        7297     7100698+  83  Linux
-
-> Would you, please, downgrade to 2.6.14 (or whatever kernel you used
-> before 2.6.15.1) and see whether the problem comes up.
-
-Yes. I'm yet running the standard debian etch kernel 2.6.12. No
-problem so far (~ 1 hour), but it's too early too say if this resolved
-the problem. Even with the 2.6.15.1 kernel the system worked for days
-before having problems.
-
-I'll update you the situation as far as I get an error or otherwise tomorro=
-w.
-
-Thanks for the reply.
-
-Best Regards,
-
-  ~ Antonio
+-- 
+Jens Axboe
