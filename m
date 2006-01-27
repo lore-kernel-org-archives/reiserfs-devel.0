@@ -1,47 +1,38 @@
-From: Sujit Choudhury <S.Choudhury@westminster.ac.uk>
-Subject: Re: dump in reiserfs
-Date: Fri, 27 Jan 2006 14:18:17 +0000
-Message-ID: <43DA2BA9.8040100@Westminster.ac.uk>
-References: <43D9FB3E.9030309@Westminster.ac.uk> <1138363595.6238.49.camel@tribesman.namesys.com>
+From: "Raymond A. Meijer" <rmeijer@internet.gr>
+Subject: Re: vs-4080
+Date: Fri, 27 Jan 2006 16:32:30 +0200
+Message-ID: <200601271632.31266.rmeijer@internet.gr>
+References: <200601111109.09437.rmeijer@internet.gr> <43D5B075.1030307@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27900-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27901-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1138363595.6238.49.camel@tribesman.namesys.com>
+In-Reply-To: <43D5B075.1030307@suse.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Thanks Vladimir.  Is there anything that we can use so that we dump the 
-filesystem and use pipe to restore it from the input?
-By dump (I mean a replacement dump command).
+On Tue 24 Jan 2006 6:43, Jeffrey Mahoney wrote:
 
-Many thanks again.
+Hi Jeff,
 
-sujit
+> > ReiserFS: dm-8: warning: vs-4080: reiserfs_free_block: free_block
+> > (dm-8:46707368)[dev:blocknr]: bit already cleared
 
-Vladimir V. Saveliev wrote:
-> Hello
-> 
-> On Fri, 2006-01-27 at 10:51 +0000, Sujit Choudhury wrote:
-> 
->>We are running a SLES 8 box which has reiserfs filesystem  Can we use 
->>dump and restore in a normal way for a 360GB of data?
->>
-> 
-> 
-> no, dump and restore are for ext2,
-> reiserfs does not have dump. You should use filesystem independent
-> backup program.
-> 
-> 
->>Regards
->>
->>Sujit Choudhury
->>
-> 
-> 
+> What kernel version are you using for this node? I've been developing
+> the on-demand bitmap patches and have been getting one of these under
+> heavy sustained load. I've assumed that it was a result of my patches,
+> but I'm curious what kernel you're running.
+>
+> Are you running a -mm kernel, stock, or vendor? Which version?
+
+I'm running 2.6.15-cks1 on this machine.
+
+
+Thanks,
+
+Ray
