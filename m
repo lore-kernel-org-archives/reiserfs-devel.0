@@ -1,52 +1,47 @@
-From: Antonio <tritemio@gmail.com>
-Subject: Re: reiserfs corruption
-Date: Fri, 27 Jan 2006 15:17:15 +0100
-Message-ID: <5486cca80601270617i5080243cg@mail.gmail.com>
-References: <5486cca80601260249n6bb98418v@mail.gmail.com>
-	 <1138282968.6313.113.camel@tribesman.namesys.com>
-	 <5486cca80601260658o33bdc9f3n@mail.gmail.com>
+From: Sujit Choudhury <S.Choudhury@westminster.ac.uk>
+Subject: Re: dump in reiserfs
+Date: Fri, 27 Jan 2006 14:18:17 +0000
+Message-ID: <43DA2BA9.8040100@Westminster.ac.uk>
+References: <43D9FB3E.9030309@Westminster.ac.uk> <1138363595.6238.49.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-27899-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27900-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <5486cca80601260658o33bdc9f3n@mail.gmail.com>
-Content-Disposition: inline
+In-Reply-To: <1138363595.6238.49.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-2006/1/26, Antonio <tritemio@gmail.com>:
-> Hi,
->
-> 2006/1/26, Vladimir V. Saveliev <vs@namesys.com>:
-[cut]
-> > Would you, please, downgrade to 2.6.14 (or whatever kernel you used
-> > before 2.6.15.1) and see whether the problem comes up.
->
-> Yes. I'm yet running the standard debian etch kernel 2.6.12. No
-> problem so far (~ 1 hour), but it's too early too say if this resolved
-> the problem. Even with the 2.6.15.1 kernel the system worked for days
-> before having problems.
->
-> I'll update you the situation as far as I get an error or otherwise tomor=
-row.
+Thanks Vladimir.  Is there anything that we can use so that we dump the 
+filesystem and use pipe to restore it from the input?
+By dump (I mean a replacement dump command).
 
-So far no error with the older kernel. I strongly suspect my issues
-are related to the 2.6.15.1 (vanilla) kernel. My HD seems really
-(fingers crossed) sane. Even uder eavy load I've haven't no error in
-other non reiaserfs partitions.
+Many thanks again.
 
-I saw this (probably) analoge thread on LKML:
+sujit
 
-  http://lkml.org/lkml/2006/1/27/115
-
-Do you think have I to report my problems on LKML too?
-
-Is there anything I can do to help testing?
-
-Best Regards,
-
-  ~ Antonio
+Vladimir V. Saveliev wrote:
+> Hello
+> 
+> On Fri, 2006-01-27 at 10:51 +0000, Sujit Choudhury wrote:
+> 
+>>We are running a SLES 8 box which has reiserfs filesystem  Can we use 
+>>dump and restore in a normal way for a 360GB of data?
+>>
+> 
+> 
+> no, dump and restore are for ext2,
+> reiserfs does not have dump. You should use filesystem independent
+> backup program.
+> 
+> 
+>>Regards
+>>
+>>Sujit Choudhury
+>>
+> 
+> 
