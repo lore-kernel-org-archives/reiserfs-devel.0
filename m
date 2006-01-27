@@ -1,52 +1,53 @@
-From: Maciej Soltysiak <solt2@dns.toxicfilms.tv>
-Subject: Re: 2.6.15 reiserfs bugs that cause the system to hang and increase load sistematically
-Date: Fri, 27 Jan 2006 21:21:47 +0100
-Message-ID: <166928002.20060127212147@dns.toxicfilms.tv>
-Reply-To: Maciej Soltysiak <solt2@dns.toxicfilms.tv>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: dump in reiserfs
+Date: Fri, 27 Jan 2006 12:49:43 -0800
+Message-ID: <43DA8767.5010907@namesys.com>
+References: <43D9FB3E.9030309@Westminster.ac.uk> <1138363595.6238.49.camel@tribesman.namesys.com> <43DA2BA9.8040100@Westminster.ac.uk>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27906-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27907-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <43DA2BA9.8040100@Westminster.ac.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Sujit Choudhury <S.Choudhury@westminster.ac.uk>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
 
-Hello Vladimir,
+Sujit Choudhury wrote:
 
-Friday, January 27, 2006, 2:26:48 PM, you wrote:
-
-> On Thu, 2006-01-26 at 21:10 +0100, Maciej Soltysiak wrote:
->> Hello!
->> 
->> I just hit a problem with reiserfs. While working this popped on the console:
->> ReiserFS: sdb2: warning: vs-13060: reiserfs_update_sd: stat data of object [2497 4756 0x0 SD] (nlink == 2) not found (pos 1)
->> ReiserFS: sdb2: warning: zam-7002:reiserfs_add_entry: "reiserfs_find_entry" has returned unexpected value (3)
->> REISERFS: panic (device sdb2): vs-7050: new entry is found, new inode == 0
->> 
-
-> rename encountered "hidden" name when it should not be there.
-> the attached patch should make reiserfs to not panic but return -EIO.
-Ok, I'll apply that patch and be on the lookout for this warning.
-
-> It would be interesting to know how did you manage to create hidden
-> names.
-Well on this partition hidden names could have been created either by:
-a) bash, and mc with files like .bash_history, etc.. (all standard stuff)
-b) courier-imap which creates directories for IMAP folders, like:
-   .My Folder
-   .Sent
-   .Trash
-
-For now, I have no clues about it.
-
-> you should reiserfsck /dev/sdb2
-Sure thing.
-
-Thanks a lot.
-Maciej
-
-
+> Thanks Vladimir.  Is there anything that we can use so that we dump
+> the filesystem and use pipe to restore it from the input?
+> By dump (I mean a replacement dump command).
+>
+> Many thanks again.
+>
+> sujit
+>
+> Vladimir V. Saveliev wrote:
+>
+>> Hello
+>>
+>> On Fri, 2006-01-27 at 10:51 +0000, Sujit Choudhury wrote:
+>>
+>>> We are running a SLES 8 box which has reiserfs filesystem  Can we
+>>> use dump and restore in a normal way for a 360GB of data?
+>>>
+>>
+>>
+>> no, dump and restore are for ext2,
+>> reiserfs does not have dump. You should use filesystem independent
+>> backup program.
+>>
+>>
+>>> Regards
+>>>
+>>> Sujit Choudhury
+>>>
+>>
+>>
+>
+>
+gnu tar, works much better than unix tar as a dump replacement.
