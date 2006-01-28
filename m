@@ -1,53 +1,65 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: dump in reiserfs
-Date: Fri, 27 Jan 2006 12:49:43 -0800
-Message-ID: <43DA8767.5010907@namesys.com>
-References: <43D9FB3E.9030309@Westminster.ac.uk> <1138363595.6238.49.camel@tribesman.namesys.com> <43DA2BA9.8040100@Westminster.ac.uk>
+From: Alexander Zarochentsev <zam@namesys.com>
+Subject: Re: random minor benchmark: Re: Copy 20 tarfiles: ext2 vs (reiser4, unixfile) vs (reiser4,cryptcompress)
+Date: Sat, 28 Jan 2006 19:53:14 +0300
+Message-ID: <200601281953.14990.zam@namesys.com>
+References: <43D7C6BE.1010804@namesys.com> <43D91225.3030605@namesys.com> <20060126185612.GM4311@suse.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27907-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <43DA2BA9.8040100@Westminster.ac.uk>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1422767AbWA1Qyb@vger.kernel.org>
+In-Reply-To: <20060126185612.GM4311@suse.de>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Sujit Choudhury <S.Choudhury@westminster.ac.uk>
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: Jens Axboe <axboe@suse.de>, Edward Shishkin <edward@namesys.com>, Hans Reiser <reiser@namesys.com>, LKML <linux-kernel@vger.kernel.org>
 
-Sujit Choudhury wrote:
+Hello,
 
-> Thanks Vladimir.  Is there anything that we can use so that we dump
-> the filesystem and use pipe to restore it from the input?
-> By dump (I mean a replacement dump command).
+On Thursday 26 January 2006 21:56, Jens Axboe wrote:
+> On Thu, Jan 26 2006, Edward Shishkin wrote:
+> > Jens Axboe wrote:
+> > >On Wed, Jan 25 2006, Hans Reiser wrote:
+> > >>Notice how CPU speed (and number of cpus) completely determines
+> > >>compression performance.
+> > >>
+> > >>cryptcompress refers to the reiser4 compression plugin, (unix file)
+> > >>refers to the reiser4 non-compressing plugin.
+> > >>
+> > >>Edward Shishkin wrote:
+> > >>>Here are the tests that vs asked for:
+> > >>>Creation (dd) of 20 tarfiles (the original 200M file is in ramfs)
+> > >>>Kernel: 2.6.15-mm4 + current git snapshot of reiser4
+> > >>>
+> > >>>------------------------------------------
+> > >>>
+> > >>>Laputa workstation
+> > >>>Uni Intel Pentium 4 (2.26 GHz) 512M RAM
+> > >>>
+> > >>>ext2:
+> > >>>real 2m, 15s
+> > >>>sys 0m, 14s
+> > >>>
+> > >>>reiser4(unix file)
+> > >>>real 2m, 7s
+> > >>>sys  0m, 23s
+> > >>>
+> > >>>reiser4(cryptcompress, lzo1, 64K)
+> > >>>real 2m, 13s
+> > >>>sys 0m, 11s
+> > >
+> > >Just curious - does your crypt plugin reside in user space?
+> >
+> > Nop.
+> > This is just wrappers for linux crypto api, zlib, etc..
+> > so user time is zero and not interesting.
 >
-> Many thanks again.
->
-> sujit
->
-> Vladimir V. Saveliev wrote:
->
->> Hello
->>
->> On Fri, 2006-01-27 at 10:51 +0000, Sujit Choudhury wrote:
->>
->>> We are running a SLES 8 box which has reiserfs filesystem  Can we
->>> use dump and restore in a normal way for a 360GB of data?
->>>
->>
->>
->> no, dump and restore are for ext2,
->> reiserfs does not have dump. You should use filesystem independent
->> backup program.
->>
->>
->>> Regards
->>>
->>> Sujit Choudhury
->>>
->>
->>
->
->
-gnu tar, works much better than unix tar as a dump replacement.
+> Then why is the sys time lower than the "plain" writes on ext2 and
+> reiser4? Surely compressing isn't for free, yet the sys time is lower on
+> the compression write than the others.
+
+I guess the compression was done by the background writeout daemon.  CPU 
+utilization numbers would say more than sys time.
+
+-- 
+Alex.
