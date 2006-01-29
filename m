@@ -1,65 +1,39 @@
-From: Alexander Zarochentsev <zam@namesys.com>
-Subject: Re: random minor benchmark: Re: Copy 20 tarfiles: ext2 vs (reiser4, unixfile) vs (reiser4,cryptcompress)
-Date: Sat, 28 Jan 2006 19:53:14 +0300
-Message-ID: <200601281953.14990.zam@namesys.com>
-References: <43D7C6BE.1010804@namesys.com> <43D91225.3030605@namesys.com> <20060126185612.GM4311@suse.de>
+From: Ps <Ps_Mail@freenet.de>
+Subject: 2.6.15.1+reiser4 Kernel Panic
+Date: Sun, 29 Jan 2006 11:44:07 +0100
+Message-ID: <1138531447.7245.18.camel@ps.network.ps>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1422767AbWA1Qyb@vger.kernel.org>
-In-Reply-To: <20060126185612.GM4311@suse.de>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-27919-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
-Cc: Jens Axboe <axboe@suse.de>, Edward Shishkin <edward@namesys.com>, Hans Reiser <reiser@namesys.com>, LKML <linux-kernel@vger.kernel.org>
 
-Hello,
+Hi,
 
-On Thursday 26 January 2006 21:56, Jens Axboe wrote:
-> On Thu, Jan 26 2006, Edward Shishkin wrote:
-> > Jens Axboe wrote:
-> > >On Wed, Jan 25 2006, Hans Reiser wrote:
-> > >>Notice how CPU speed (and number of cpus) completely determines
-> > >>compression performance.
-> > >>
-> > >>cryptcompress refers to the reiser4 compression plugin, (unix file)
-> > >>refers to the reiser4 non-compressing plugin.
-> > >>
-> > >>Edward Shishkin wrote:
-> > >>>Here are the tests that vs asked for:
-> > >>>Creation (dd) of 20 tarfiles (the original 200M file is in ramfs)
-> > >>>Kernel: 2.6.15-mm4 + current git snapshot of reiser4
-> > >>>
-> > >>>------------------------------------------
-> > >>>
-> > >>>Laputa workstation
-> > >>>Uni Intel Pentium 4 (2.26 GHz) 512M RAM
-> > >>>
-> > >>>ext2:
-> > >>>real 2m, 15s
-> > >>>sys 0m, 14s
-> > >>>
-> > >>>reiser4(unix file)
-> > >>>real 2m, 7s
-> > >>>sys  0m, 23s
-> > >>>
-> > >>>reiser4(cryptcompress, lzo1, 64K)
-> > >>>real 2m, 13s
-> > >>>sys 0m, 11s
-> > >
-> > >Just curious - does your crypt plugin reside in user space?
-> >
-> > Nop.
-> > This is just wrappers for linux crypto api, zlib, etc..
-> > so user time is zero and not interesting.
->
-> Then why is the sys time lower than the "plain" writes on ext2 and
-> reiser4? Surely compressing isn't for free, yet the sys time is lower on
-> the compression write than the others.
+i've got a kernel panic with kernel 2.6.15.1 + reiser4 patch from
+ftp.namesys.com, when writing data to a usb harddisk.
 
-I guess the compression was done by the background writeout daemon.  CPU 
-utilization numbers would say more than sys time.
+kernel output:
+loop4: loop_end_io_transfer err=-95 bi_rw=0x5
+reiser4 panicked cowardly: reiser4[pdflush(6748)]: commit_current_atom
+(fs/reiser4/txnmgr.c:1130)[zam-597]
+write log failed (-5)
 
--- 
-Alex.
+reiser4 panicked cowardly: reiser4[pdflush(6748)]: commit_current_atom
+(fs/reiser4/txnmgr.c:1130)[zam-597]
+write log failed (-5)
+
+and the machine is *frozen*
+
+the harddisk is encrypted via loop-aes v3.1c (loop4). i think it's a
+reiser4 or kernel 2.6.15 bug, because loop-aes with kernel <2.6.15 is
+running quite perfekt. fsck.reiser4 1.0.5 says the filesystem is clear.
+
+Best Regards,
+Patrick
+
