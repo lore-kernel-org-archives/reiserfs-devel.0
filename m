@@ -1,67 +1,101 @@
-From: "Bryant, Phillip -AES" <Phillip.Bryant@itt.com>
-Subject: multiple rebuild-tree aborts
-Date: Mon, 30 Jan 2006 10:57:06 -0500
-Message-ID: <3FB53C8FED80D440841DCFE8CB0514CF043277@AES-MAILCLST.aes.de.ittind.com>
+From: Vitaly Fertman <vitaly@namesys.com>
+Subject: Re: multiple rebuild-tree aborts
+Date: Mon, 30 Jan 2006 19:49:43 +0300
+Message-ID: <200601301949.43296.vitaly@namesys.com>
+References: <3FB53C8FED80D440841DCFE8CB0514CF043277@AES-MAILCLST.aes.de.ittind.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-27936-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27937-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-content-class: urn:content-classes:message
+In-Reply-To: <3FB53C8FED80D440841DCFE8CB0514CF043277@AES-MAILCLST.aes.de.ittind.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
+Cc: "Bryant, Phillip -AES" <Phillip.Bryant@itt.com>
 
-UmVkSGF0IEVTIFdvcmtzdGF0aW9uLCAyLjYuOS0xMXNtcA0KRGVsbCBQcmVjaXNpb24gNTMw
-IHdvcmtzdGF0aW9uDQpEZWxsIFBvd2VydmF1bHQgUkFJRCB3aXRoIDUwMEdiIFJBSUQgcGFy
-dGl0aW9uDQpyZWlzZXJmcyAzLjYuMTkNCiANClRoZSB2aXJ0dWFsIFJBSUQgZGlzayB3YXMg
-aW5hZHZlcnRhbnRseSBicm9rZW4gd2hlbiB0aGUgRGVsbCBwb3dlcnZhdWx0IHdhcyBzcGxp
-dCBpbnRvIHR3byBzZXBlcmF0ZSBjb250cm9sZXJzLiBXaGVuIHRoZSBzZXJ2ZXIgd2FzIGJy
-b3VnaHQgYmFjayB1cCB0aGUgb3JpZ2luYWwgdmlydHVhbCBkaXNrIGhhZCB0byBiZSByZWNy
-ZWF0ZWQgb24gdGhlIFJBSUQgY29udHJvbGVyLiANCiANCkkgd2FzIHN1cnByaXNlZCB0aGF0
-IHRoZSBwcm9ibGVtIGRpZCBub3Qgd2lwZSBvdXQgYWxsIG9mIHRoZSBkYXRhIG9uIHRoZSBw
-YXJ0aXRpb24gYnV0IHJlaXNlcmZzY2sgLS1yZWJ1aWxkLXRyZWUgaGFkIGJlZW4gdW5hYmxl
-IHRvIHJlcGlhciB0aGUgcGFydGl0aW9uIHNvIGl0IGNhbiBiZSBtb3VudGVkLiBJdCBob2xk
-cyB0aGUgYmFja3VwcyBmb3IgYWxsIHNlcnZlcnMgYW5kIHBjJ3MgaW4gbXkgb2ZmaWNlLiAN
-CiANClRoaXMgbGFzdCBydW4gZGlkIG5vdCBhYm9ydCB3aXRoIGJhZCByb290IGJsb2NrIGFz
-IGFsbCBwcmV2aW91cyBydW5zIGhhZCAoNCkuIA0KIA0KbGFzdCBydW4gZW5kZWQgd2l0aDoN
-CiANClBhc3MgM2EgKGxvb2tpbmcgZm9yIGxvc3QgZGlyL2ZpbGVzKToNCkxvb2tpbmcgZm9y
-IGxvc3QgZGlyZWN0b3JpZXM6DQovMTk1NjI3Nl8xOTU2Mjg2LzMwNGMyODAxOGMxYTY0NTQx
-MGMyOTA1YTBjMzU1ODcxc2VtYW50aWNfcmVidWlsZC5jIDU2MyBnZXRfbmV4dF9kaXJlY3Rv
-cnlfaXRlbQ0KZ2V0X25leHRfZGlyZWN0b3J5X2l0ZW06IGl0ZW0gWzYxMzEyNzIyIDYxMzEy
-NzIzIDB4MmExIERSQ1QgKDIpXTogaGlkZGVuIGVudHJ5IDAgJycNCkFib3J0ZWQNCg0KSSBi
-ZWxpZXZlIGFsbCBwcmV2aW91cyBhYm9ydHMgaGFwcGVuZWQgaW4gcGhhc2UgMCBidXQgSSBk
-b24ndCByZWFsbHkga25vdyBpZiB0aGlzIGlzIGEgZ29vZCBzaWduIG9yIG5vdC4gDQogDQpJ
-J3ZlIHJ1biBkZWJ1Z3JlaXNlcmZzIGFuZCBnb3R0ZW4gdGhpczoNCiANCkZpbGVzeXN0ZW0g
-c3RhdGU6IGNvbnNpc3RlbmN5IGlzIG5vdCBjaGVja2VkIGFmdGVyIGxhc3QgbW91bnRpbmcN
-ClJlaXNlcmZzIHN1cGVyIGJsb2NrIGluIGJsb2NrIDE2IG9uIDB4NTAwMSBvZiBmb3JtYXQg
-My42IHdpdGggc3RhbmRhcmQgam91cm5hbA0KQ291bnQgb2YgYmxvY2tzIG9uIHRoZSBkZXZp
-Y2U6IDE0MzM3MjA4MA0KTnVtYmVyIG9mIGJpdG1hcHM6IDQzNzYNCkJsb2Nrc2l6ZTogNDA5
-Ng0KRnJlZSBibG9ja3MgKGNvdW50IG9mIGJsb2NrcyAtIHVzZWQgW2pvdXJuYWwsIGJpdG1h
-cHMsIGRhdGEsIHJlc2VydmVkXSBibG9ja3MpOiAxNDMzNzIwODANClJvb3QgYmxvY2s6IDAN
-CkZpbGVzeXN0ZW0gaXMgTk9UIGNsZWFuDQpUcmVlIGhlaWdodDogNjU1MzUNCkhhc2ggZnVu
-Y3Rpb24gdXNlZCB0byBzb3J0IG5hbWVzOiAicjUiDQpPYmplY3RpZCBtYXAgc2l6ZSA5NzIs
-IG1heCA5NzINCkpvdXJuYWwgcGFyYW1ldGVyczoNCiAgICAgICAgRGV2aWNlIFsweDBdDQog
-ICAgICAgIE1hZ2ljIFsweDVlNGM4NjQxXQ0KICAgICAgICBTaXplIDgxOTMgYmxvY2tzIChp
-bmNsdWRpbmcgMSBmb3Igam91cm5hbCBoZWFkZXIpIChmaXJzdCBibG9jayAxOCkNCiAgICAg
-ICAgTWF4IHRyYW5zYWN0aW9uIGxlbmd0aCAxMDI0IGJsb2Nrcw0KICAgICAgICBNYXggYmF0
-Y2ggc2l6ZSA5MDAgYmxvY2tzDQogICAgICAgIE1heCBjb21taXQgYWdlIDMwDQpCbG9ja3Mg
-cmVzZXJ2ZWQgYnkgam91cm5hbDogMA0KRnMgc3RhdGUgZmllbGQ6IDB4ZmEwMjoNCiAgICAg
-ICAgRkFUQUwgY29ycnVwdGlvbnMgZXhpc3QuDQpzYl92ZXJzaW9uOiAyDQppbm9kZSBnZW5l
-cmF0aW9uIG51bWJlcjogMjMzNjgyODENClVVSUQ6IGZiZjA5NDMxLWM0NmMtNDA3NS1iYjc5
-LTc0OGQ3YjI2ZjBhMA0KTEFCRUw6DQpTZXQgZmxhZ3MgaW4gU0I6DQogICAgICAgIEFUVFJJ
-QlVURVMgQ0xFQU4NCg0KKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqDQpU
-aGlzIGUtbWFpbCBhbmQgYW55IGZpbGVzIHRyYW5zbWl0dGVkIHdpdGggaXQgYXJlIHByb3By
-aWV0YXJ5IGFuZCBpbnRlbmRlZCBzb2xlbHkgZm9yIHRoZSB1c2Ugb2YgdGhlIGluZGl2aWR1
-YWwgb3IgZW50aXR5IHRvIHdob20gdGhleSBhcmUgYWRkcmVzc2VkLiBJZiB5b3UgaGF2ZSBy
-ZWNlaXZlZCB0aGlzIGUtbWFpbCBpbiBlcnJvciBwbGVhc2Ugbm90aWZ5IHRoZSBzZW5kZXIu
-IFBsZWFzZSBub3RlIHRoYXQgYW55IHZpZXdzIG9yIG9waW5pb25zIHByZXNlbnRlZCBpbiB0
-aGlzIGUtbWFpbCBhcmUgc29sZWx5IHRob3NlIG9mIHRoZSBhdXRob3IgYW5kIGRvIG5vdCBu
-ZWNlc3NhcmlseSByZXByZXNlbnQgdGhvc2Ugb2YgSVRUIEluZHVzdHJpZXMsIEluYy4gVGhl
-IHJlY2lwaWVudCBzaG91bGQgY2hlY2sgdGhpcyBlLW1haWwgYW5kIGFueSBhdHRhY2htZW50
-cyBmb3IgdGhlIHByZXNlbmNlIG9mIHZpcnVzZXMuIElUVCBJbmR1c3RyaWVzIGFjY2VwdHMg
-bm8gbGlhYmlsaXR5IGZvciBhbnkgZGFtYWdlIGNhdXNlZCBieSBhbnkgdmlydXMgdHJhbnNt
-aXR0ZWQgYnkgdGhpcyBlLW1haWwuDQoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioNCg0K
+On Monday 30 January 2006 18:57, Bryant, Phillip -AES wrote:
+> RedHat ES Workstation, 2.6.9-11smp
+> Dell Precision 530 workstation
+> Dell Powervault RAID with 500Gb RAID partition
+> reiserfs 3.6.19
+>  
+> The virtual RAID disk was inadvertantly broken when the Dell powervault was 
+> split into two seperate controlers. When the server was brought back up the 
+> original virtual disk had to be recreated on the RAID controler.    
+>  
+> I was surprised that the problem did not wipe out all of the data on the 
+> partition but reiserfsck --rebuild-tree had been unable to repiar the 
+> partition so it can be mounted. It holds the backups for all servers and 
+> pc's in my office.    
+>  
+> This last run did not abort with bad root block as all previous runs had (4). 
+
+would you describe the message appeared 4 times more precisely?
+  
+> last run ended with:
+>  
+> Pass 3a (looking for lost dir/files):
+> Looking for lost directories:
+> /1956276_1956286/304c28018c1a645410c2905a0c355871semantic_rebuild.c 563 
+> get_next_directory_item 
+> get_next_directory_item: item [61312722 61312723 0x2a1 DRCT (2)]: hidden entry 0 ''
+> Aborted
+> 
+> I believe all previous aborts happened in phase 0 but I don't really know if 
+> this is a good sign or not.  
+
+would you extract the reiserfs metadata with 
+	debugreiserfs -p <device> | bzip2 -c > <device>.bz2
+and provide the result file for downloading to allow us to debug 
+the fsck locally?
+
+have fsck ended with the last message 1 or more times?
+
+> I've run debugreiserfs and gotten this:
+>  
+> Filesystem state: consistency is not checked after last mounting
+> Reiserfs super block in block 16 on 0x5001 of format 3.6 with standard journal
+> Count of blocks on the device: 143372080
+> Number of bitmaps: 4376
+> Blocksize: 4096
+> Free blocks (count of blocks - used [journal, bitmaps, data, reserved] blocks): 143372080
+> Root block: 0
+> Filesystem is NOT clean
+> Tree height: 65535
+> Hash function used to sort names: "r5"
+> Objectid map size 972, max 972
+> Journal parameters:
+>         Device [0x0]
+>         Magic [0x5e4c8641]
+>         Size 8193 blocks (including 1 for journal header) (first block 18)
+>         Max transaction length 1024 blocks
+>         Max batch size 900 blocks
+>         Max commit age 30
+> Blocks reserved by journal: 0
+> Fs state field: 0xfa02:
+>         FATAL corruptions exist.
+> sb_version: 2
+> inode generation number: 23368281
+> UUID: fbf09431-c46c-4075-bb79-748d7b26f0a0
+> LABEL:
+> Set flags in SB:
+>         ATTRIBUTES CLEAN
+> 
+> ************************************
+> This e-mail and any files transmitted with it are proprietary and intended 
+> solely for the use of the individual or entity to whom they are addressed. 
+> If you have received this e-mail in error please notify the sender. Please 
+> note that any views or opinions presented in this e-mail are solely those 
+> of the author and do not necessarily represent those of ITT Industries, Inc.
+> The recipient should check this e-mail and any attachments for the presence 
+> of viruses. ITT Industries accepts no liability for any damage caused by any
+> virus transmitted by this e-mail.       
+> ************************************
+> 
+
+-- 
+Vitaly
