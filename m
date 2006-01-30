@@ -1,38 +1,29 @@
-From: Ivan Pulleyn <ivan.pulleyn@gmail.com>
-Subject: Re: programming methodology terminology
-Date: Sun, 29 Jan 2006 23:58:28 -0800
-Message-ID: <755b32b20601292358r46841346g3d8b0b0b3fcb83ba@mail.gmail.com>
-References: <43DDBD1D.6030900@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Reiser4 slowdown gone
+Date: Mon, 30 Jan 2006 15:46:30 -0800
+Message-ID: <43DEA556.20701@namesys.com>
+References: <20060129144533.128af741.akpm@osdl.org> <20060130072529.GA1677@favonius> <43DDCD4D.4030808@feise.com> <20060130095451.GB1677@favonius>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-27938-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27939-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43DDBD1D.6030900@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <20060130095451.GB1677@favonius>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
+To: sander@humilis.net
+Cc: Joe Feise <jfeise@feise.com>, Andrew Morton <akpm@osdl.org>, reiserfs-list@namesys.com, vs <vs@thebsh.namesys.com>
 
-It seems like a form of layering violation to me. Conflation of
-meaning for a #define is definitely undue obfuscation, if not out
-right bad coding.
+Sander wrote:
 
-Ivan...
-
-On 1/29/06, Hans Reiser <reiser@namesys.com> wrote:
-> suppose there are two distinct layers of abstraction, one on top of the
-> other.  Suppose someone uses the error condition names of the top layer
-> in coding the bottom layer when the return values it is used for in the
-> bottom layer have not the same purpose as those of the top layer, and
-> when it would be an error for the return value to actually get
-> propagated all the way out of the top layer.  What is this bad
-> programming practice called, there is a name for it isn't there?  When
-> you use a return value #define for two different meanings, is there a
-> name for that?  It is generally accepted to be bad style, yes?
 >
-> Hans
->
+>>>>
+>>>> reiser4 fixes and cleanups
+>>>>        
+>>>>
+I think the fix was in this, which we sent in Dec. 31st.  I don't know
+when it got merged though.
+
+vs, was the slowdown fix in the patch above?
