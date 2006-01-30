@@ -1,50 +1,29 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: 2.6.15.1+reiser4 Kernel Panic
-Date: Mon, 30 Jan 2006 11:29:18 +0300
-Message-ID: <1138609758.6309.52.camel@tribesman.namesys.com>
-References: <1138531447.7245.18.camel@ps.network.ps>
+From: Bandan Das <bandan@naturesoft.net>
+Subject: Want to contribute
+Date: Mon, 30 Jan 2006 14:34:04 +0530
+Message-ID: <1138611843.2999.14.camel@embd-olivier.naturesoft.net>
+Reply-To: bandan@naturesoft.net
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27931-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27932-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1138531447.7245.18.camel@ps.network.ps>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Ps <Ps_Mail@freenet.de>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello
-
-On Sun, 2006-01-29 at 11:44 +0100, Ps wrote:
-> Hi,
-> 
-> i've got a kernel panic with kernel 2.6.15.1 + reiser4 patch from
-> ftp.namesys.com, when writing data to a usb harddisk.
-> 
-> kernel output:
-> loop4: loop_end_io_transfer err=-95 bi_rw=0x5
-> reiser4 panicked cowardly: reiser4[pdflush(6748)]: commit_current_atom
-> (fs/reiser4/txnmgr.c:1130)[zam-597]
-> write log failed (-5)
-> 
-> reiser4 panicked cowardly: reiser4[pdflush(6748)]: commit_current_atom
-> (fs/reiser4/txnmgr.c:1130)[zam-597]
-> write log failed (-5)
-> 
-> and the machine is *frozen*
-> 
-> the harddisk is encrypted via loop-aes v3.1c (loop4). i think it's a
-> reiser4 or kernel 2.6.15 bug, because loop-aes with kernel <2.6.15 is
-> running quite perfekt. fsck.reiser4 1.0.5 says the filesystem is clear.
-> 
-
-can you reproduce the problem?
-
-> Best Regards,
-> Patrick
-> 
-> 
+Hi!
+I am Bandan and new to the list. I have been a fan of ReiserFS for
+around a year now and would like to contribute to it in the form of
+fixing some minor bug. As Nikita suggested to me on the IRC channel,
+adding comments is also a good idea but I would more like to contribute
+in the form of code :) I am a good C programmer and have hands on
+experience in Linux kernel programming. Can anyone suggest something?
+Thanks
+Bandan
+-- 
+Bandan Das <bandan@naturesoft.net>
+NatureSoft
 
