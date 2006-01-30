@@ -1,38 +1,67 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: bogus i_mode
-Date: Mon, 30 Jan 2006 16:11:11 +0300
-Message-ID: <1138626671.6309.90.camel@tribesman.namesys.com>
-References: <43DDFB50.9050208@freemail.hu>
+From: "Bryant, Phillip -AES" <Phillip.Bryant@itt.com>
+Subject: multiple rebuild-tree aborts
+Date: Mon, 30 Jan 2006 10:57:06 -0500
+Message-ID: <3FB53C8FED80D440841DCFE8CB0514CF043277@AES-MAILCLST.aes.de.ittind.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27935-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-27936-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <43DDFB50.9050208@freemail.hu>
+content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Gabor HALASZ <halasz.g@freemail.hu>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello
-
-On Mon, 2006-01-30 at 12:41 +0100, Gabor HALASZ wrote:
-> Hi!
-> 
-> Hi! I got the next message:
-> 
-> Jan 30 12:16:11 sk8n kernel: init_special_inode: bogus i_mode (0)
-> Jan 30 12:16:11 sk8n kernel: ReiserFS: dm-46: warning: vs-13075: 
-> reiserfs_read_locked_inode: dead inode read from disk [1184 1920 0x0 
-> SD]. This is likely to be race with knfsd. Ignore
-> 
-> But I haven't knfsd, I'm using a userspace nfs server, but currently no 
-> clients connected and no exports on dm-46 (this is my /var volume). 
-> Kernel 2.6.15, Amd Opteron, Debian Amd64 Sid. What can I do?! Fsck? Ignore?
-
-does the below command produce any output
-find /var -ls > /dev/null
-?
-
+UmVkSGF0IEVTIFdvcmtzdGF0aW9uLCAyLjYuOS0xMXNtcA0KRGVsbCBQcmVjaXNpb24gNTMw
+IHdvcmtzdGF0aW9uDQpEZWxsIFBvd2VydmF1bHQgUkFJRCB3aXRoIDUwMEdiIFJBSUQgcGFy
+dGl0aW9uDQpyZWlzZXJmcyAzLjYuMTkNCiANClRoZSB2aXJ0dWFsIFJBSUQgZGlzayB3YXMg
+aW5hZHZlcnRhbnRseSBicm9rZW4gd2hlbiB0aGUgRGVsbCBwb3dlcnZhdWx0IHdhcyBzcGxp
+dCBpbnRvIHR3byBzZXBlcmF0ZSBjb250cm9sZXJzLiBXaGVuIHRoZSBzZXJ2ZXIgd2FzIGJy
+b3VnaHQgYmFjayB1cCB0aGUgb3JpZ2luYWwgdmlydHVhbCBkaXNrIGhhZCB0byBiZSByZWNy
+ZWF0ZWQgb24gdGhlIFJBSUQgY29udHJvbGVyLiANCiANCkkgd2FzIHN1cnByaXNlZCB0aGF0
+IHRoZSBwcm9ibGVtIGRpZCBub3Qgd2lwZSBvdXQgYWxsIG9mIHRoZSBkYXRhIG9uIHRoZSBw
+YXJ0aXRpb24gYnV0IHJlaXNlcmZzY2sgLS1yZWJ1aWxkLXRyZWUgaGFkIGJlZW4gdW5hYmxl
+IHRvIHJlcGlhciB0aGUgcGFydGl0aW9uIHNvIGl0IGNhbiBiZSBtb3VudGVkLiBJdCBob2xk
+cyB0aGUgYmFja3VwcyBmb3IgYWxsIHNlcnZlcnMgYW5kIHBjJ3MgaW4gbXkgb2ZmaWNlLiAN
+CiANClRoaXMgbGFzdCBydW4gZGlkIG5vdCBhYm9ydCB3aXRoIGJhZCByb290IGJsb2NrIGFz
+IGFsbCBwcmV2aW91cyBydW5zIGhhZCAoNCkuIA0KIA0KbGFzdCBydW4gZW5kZWQgd2l0aDoN
+CiANClBhc3MgM2EgKGxvb2tpbmcgZm9yIGxvc3QgZGlyL2ZpbGVzKToNCkxvb2tpbmcgZm9y
+IGxvc3QgZGlyZWN0b3JpZXM6DQovMTk1NjI3Nl8xOTU2Mjg2LzMwNGMyODAxOGMxYTY0NTQx
+MGMyOTA1YTBjMzU1ODcxc2VtYW50aWNfcmVidWlsZC5jIDU2MyBnZXRfbmV4dF9kaXJlY3Rv
+cnlfaXRlbQ0KZ2V0X25leHRfZGlyZWN0b3J5X2l0ZW06IGl0ZW0gWzYxMzEyNzIyIDYxMzEy
+NzIzIDB4MmExIERSQ1QgKDIpXTogaGlkZGVuIGVudHJ5IDAgJycNCkFib3J0ZWQNCg0KSSBi
+ZWxpZXZlIGFsbCBwcmV2aW91cyBhYm9ydHMgaGFwcGVuZWQgaW4gcGhhc2UgMCBidXQgSSBk
+b24ndCByZWFsbHkga25vdyBpZiB0aGlzIGlzIGEgZ29vZCBzaWduIG9yIG5vdC4gDQogDQpJ
+J3ZlIHJ1biBkZWJ1Z3JlaXNlcmZzIGFuZCBnb3R0ZW4gdGhpczoNCiANCkZpbGVzeXN0ZW0g
+c3RhdGU6IGNvbnNpc3RlbmN5IGlzIG5vdCBjaGVja2VkIGFmdGVyIGxhc3QgbW91bnRpbmcN
+ClJlaXNlcmZzIHN1cGVyIGJsb2NrIGluIGJsb2NrIDE2IG9uIDB4NTAwMSBvZiBmb3JtYXQg
+My42IHdpdGggc3RhbmRhcmQgam91cm5hbA0KQ291bnQgb2YgYmxvY2tzIG9uIHRoZSBkZXZp
+Y2U6IDE0MzM3MjA4MA0KTnVtYmVyIG9mIGJpdG1hcHM6IDQzNzYNCkJsb2Nrc2l6ZTogNDA5
+Ng0KRnJlZSBibG9ja3MgKGNvdW50IG9mIGJsb2NrcyAtIHVzZWQgW2pvdXJuYWwsIGJpdG1h
+cHMsIGRhdGEsIHJlc2VydmVkXSBibG9ja3MpOiAxNDMzNzIwODANClJvb3QgYmxvY2s6IDAN
+CkZpbGVzeXN0ZW0gaXMgTk9UIGNsZWFuDQpUcmVlIGhlaWdodDogNjU1MzUNCkhhc2ggZnVu
+Y3Rpb24gdXNlZCB0byBzb3J0IG5hbWVzOiAicjUiDQpPYmplY3RpZCBtYXAgc2l6ZSA5NzIs
+IG1heCA5NzINCkpvdXJuYWwgcGFyYW1ldGVyczoNCiAgICAgICAgRGV2aWNlIFsweDBdDQog
+ICAgICAgIE1hZ2ljIFsweDVlNGM4NjQxXQ0KICAgICAgICBTaXplIDgxOTMgYmxvY2tzIChp
+bmNsdWRpbmcgMSBmb3Igam91cm5hbCBoZWFkZXIpIChmaXJzdCBibG9jayAxOCkNCiAgICAg
+ICAgTWF4IHRyYW5zYWN0aW9uIGxlbmd0aCAxMDI0IGJsb2Nrcw0KICAgICAgICBNYXggYmF0
+Y2ggc2l6ZSA5MDAgYmxvY2tzDQogICAgICAgIE1heCBjb21taXQgYWdlIDMwDQpCbG9ja3Mg
+cmVzZXJ2ZWQgYnkgam91cm5hbDogMA0KRnMgc3RhdGUgZmllbGQ6IDB4ZmEwMjoNCiAgICAg
+ICAgRkFUQUwgY29ycnVwdGlvbnMgZXhpc3QuDQpzYl92ZXJzaW9uOiAyDQppbm9kZSBnZW5l
+cmF0aW9uIG51bWJlcjogMjMzNjgyODENClVVSUQ6IGZiZjA5NDMxLWM0NmMtNDA3NS1iYjc5
+LTc0OGQ3YjI2ZjBhMA0KTEFCRUw6DQpTZXQgZmxhZ3MgaW4gU0I6DQogICAgICAgIEFUVFJJ
+QlVURVMgQ0xFQU4NCg0KKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqDQpU
+aGlzIGUtbWFpbCBhbmQgYW55IGZpbGVzIHRyYW5zbWl0dGVkIHdpdGggaXQgYXJlIHByb3By
+aWV0YXJ5IGFuZCBpbnRlbmRlZCBzb2xlbHkgZm9yIHRoZSB1c2Ugb2YgdGhlIGluZGl2aWR1
+YWwgb3IgZW50aXR5IHRvIHdob20gdGhleSBhcmUgYWRkcmVzc2VkLiBJZiB5b3UgaGF2ZSBy
+ZWNlaXZlZCB0aGlzIGUtbWFpbCBpbiBlcnJvciBwbGVhc2Ugbm90aWZ5IHRoZSBzZW5kZXIu
+IFBsZWFzZSBub3RlIHRoYXQgYW55IHZpZXdzIG9yIG9waW5pb25zIHByZXNlbnRlZCBpbiB0
+aGlzIGUtbWFpbCBhcmUgc29sZWx5IHRob3NlIG9mIHRoZSBhdXRob3IgYW5kIGRvIG5vdCBu
+ZWNlc3NhcmlseSByZXByZXNlbnQgdGhvc2Ugb2YgSVRUIEluZHVzdHJpZXMsIEluYy4gVGhl
+IHJlY2lwaWVudCBzaG91bGQgY2hlY2sgdGhpcyBlLW1haWwgYW5kIGFueSBhdHRhY2htZW50
+cyBmb3IgdGhlIHByZXNlbmNlIG9mIHZpcnVzZXMuIElUVCBJbmR1c3RyaWVzIGFjY2VwdHMg
+bm8gbGlhYmlsaXR5IGZvciBhbnkgZGFtYWdlIGNhdXNlZCBieSBhbnkgdmlydXMgdHJhbnNt
+aXR0ZWQgYnkgdGhpcyBlLW1haWwuDQoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioNCg0K
