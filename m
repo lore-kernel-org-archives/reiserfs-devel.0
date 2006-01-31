@@ -1,40 +1,41 @@
-From: Ps <Ps_Mail@freenet.de>
-Subject: Re: Re: Wtr.: Re: 2.6.15.1+reiser4 Kernel Panic
-Date: Tue, 31 Jan 2006 21:10:31 +0000
-Message-ID: <1138741832.19996.1.camel@ps.network.ps>
+From: Chet Hosey <chosey@nauticom.net>
+Subject: Re: Wtr.: Re: 2.6.15.1+reiser4 Kernel Panic
+Date: Tue, 31 Jan 2006 09:39:36 -0500
+Message-ID: <43DF76A8.3050309@nauticom.net>
 References: <E1F3vw4-0007bn-7V@www5.emo.freenet-rz.de>
-	 <20060131162753.GB5539@favonius>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27961-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27962-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060131162753.GB5539@favonius>
+In-Reply-To: <E1F3vw4-0007bn-7V@www5.emo.freenet-rz.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: abc1237@freenet.de
+Cc: reiserfs-list@namesys.com
 
-have a look at http://lkml.org/lkml/2006/1/21/79
+abc1237@freenet.de wrote:
 
-three people have damaged harddrives???
+> 	
+>
+>Hi,
+>I don't think that this is an error of the Disc, because I have a brand new Harddisk (2 day's old).
+>
+>greets
+>  
+>
 
-greets
-Patrick
+I've had new drives fail immediately. It's almost certainly not
+cost-effective to fully test each drive before it leaves the factory, so
+sometimes bad ones do make it through. I had a series of WD drives a few
+years ago all fail within miserably within a few days to a week, for
+instance.
 
-Am Dienstag, den 31.01.2006, 17:27 +0100 schrieb Sander:
-> abc1237@freenet.de wrote (ao):
-> > I don't think that this is an error of the Disc, because I have a
-> > brand new Harddisk (2 day's old).
-> 
-> I once had four new disks, all DOA, each of them in a different way.
-> 
-> And last month nine, out of which two fail to pass 'badblocks'.
-> 
-> New disks are always a suspect as they don't have a proven track record
-> yet (pun intended ;-).
-> 
-> 	Kind regards, Sander
-> 
+If you're seeing I/O errors on a brand new drive, it's worth the effort
+to try to have it exchanged with a different unit at the place where you
+bought it.
+
+Chet
 
