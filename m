@@ -1,36 +1,18 @@
-From: Sander <sander@humilis.net>
-Subject: Re: Re: Wtr.: Re: 2.6.15.1+reiser4 Kernel Panic
-Date: Tue, 31 Jan 2006 17:27:53 +0100
-Message-ID: <20060131162753.GB5539@favonius>
-References: <E1F3vw4-0007bn-7V@www5.emo.freenet-rz.de>
-Reply-To: sander@humilis.net
+From: "Ariel Shields" <able976@gmail.com>
+Subject: One tab that will bring you to the top of performance
+Date: Tue, 31 Jan 2006 17:44:24 -0100
+Message-ID: <15875.7906094708$1138725973@news.gmane.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-27958-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-27959-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <E1F3vw4-0007bn-7V@www5.emo.freenet-rz.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: abc1237@freenet.de
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-abc1237@freenet.de wrote (ao):
-> I don't think that this is an error of the Disc, because I have a
-> brand new Harddisk (2 day's old).
+No matter your age and actual performance, you can always do better. And the great news is that now you don?t have to wait ? the soft tab gets into bloodstream, including your buddy, in just 15-20 minutes. Down the little thing and start pleasing her in the foreplay, because minutes later you will win her very personal First Prize. Now you can be up for the entire night, reaching heavens of pleasure for both of you. You can now become the king of the bed (or wherever you use it) ? Fast, safe and easy!
+http://fhjabcgldik.perbox.info/?emdikxwqowyfhjzvtabcgl
 
-I once had four new disks, all DOA, each of them in a different way.
-
-And last month nine, out of which two fail to pass 'badblocks'.
-
-New disks are always a suspect as they don't have a proven track record
-yet (pun intended ;-).
-
-	Kind regards, Sander
-
--- 
-Humilis IT Services and Solutions
-http://www.humilis.net
