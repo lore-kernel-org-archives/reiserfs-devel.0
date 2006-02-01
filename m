@@ -1,41 +1,35 @@
-From: Chet Hosey <chosey@nauticom.net>
-Subject: Re: Wtr.: Re: 2.6.15.1+reiser4 Kernel Panic
-Date: Tue, 31 Jan 2006 09:39:36 -0500
-Message-ID: <43DF76A8.3050309@nauticom.net>
-References: <E1F3vw4-0007bn-7V@www5.emo.freenet-rz.de>
+From: malcolm <malcolm@malcolm-agnew.de>
+Subject: reiaserfs --rebuild-tree
+Date: Wed, 1 Feb 2006 10:00:18 +0100
+Message-ID: <200602011000.21636.malcolm@malcolm-agnew.de>
+References: <E1F47g7-0005Y2-O3@dime94.dizinc.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-27962-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-27966-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <E1F3vw4-0007bn-7V@www5.emo.freenet-rz.de>
+In-Reply-To: <E1F47g7-0005Y2-O3@dime94.dizinc.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: abc1237@freenet.de
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-abc1237@freenet.de wrote:
+What's gone horribly wrong here?
 
-> 	
->
->Hi,
->I don't think that this is an error of the Disc, because I have a brand new Harddisk (2 day's old).
->
->greets
->  
->
 
-I've had new drives fail immediately. It's almost certainly not
-cost-effective to fully test each drive before it leaves the factory, so
-sometimes bad ones do make it through. I had a series of WD drives a few
-years ago all fail within miserably within a few days to a week, for
-instance.
+% fsck.reiserfs --rebuild-tree /dev/hdf5
+...
+pass0: block 327693, item 41: The file [81025 81082] has the wrong mode 
+(?rwxrw-r--), corrected to (-rwxrw-r--)
+pass0: block 327693, item 43: The file [81025 81083] has the wrong mode 
+(?rwxrw-r--), corrected to (-rwxrw-r--)
+pass0: block 327693, item 45: The file [81025 81084] has the wrong mode 
+(?rwxrw-r--), corrected to (-rwxrw-r--)
+...
 
-If you're seeing I/O errors on a brand new drive, it's worth the effort
-to try to have it exchanged with a different unit at the place where you
-bought it.
+It's happened twice now within 2 days. The reiserfs partition was created out 
+of the box by SuSE 10.0. The other 2 harddiscs seem to be o.k.
 
-Chet
-
+Malcolm Agnew
