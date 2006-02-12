@@ -1,140 +1,116 @@
 From: Sergey Vlasov <vsu@altlinux.ru>
 Subject: Re: 2.6.15 Bug? New security model?
-Date: Sun, 12 Feb 2006 21:44:19 +0300
-Message-ID: <20060212184419.GA8544@procyon.home>
-References: <200602080212.27896.bernd-schubert@gmx.de> <20060208221124.GN30803@sorel.sous-sol.org> <20060212005541.107f7011.vsu@altlinux.ru> <200602120050.31345.bernd-schubert@gmx.de>
+Date: Sun, 12 Feb 2006 22:21:15 +0300
+Message-ID: <20060212192115.GB8544@procyon.home>
+References: <200602080212.27896.bernd-schubert@gmx.de> <200602081314.59639.bernd-schubert@gmx.de> <20060208205033.GB22771@shell0.pdx.osdl.net> <200602082246.15613.bernd-schubert@gmx.de> <20060208221124.GN30803@sorel.sous-sol.org> <20060212005541.107f7011.vsu@altlinux.ru> <20060212175740.GB8805@locomotive.unixthugs.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750851AbWBLSog@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="WhfpMioaduB5tiZL"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751426AbWBLTV2@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <200602120050.31345.bernd-schubert@gmx.de>
+In-Reply-To: <20060212175740.GB8805@locomotive.unixthugs.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Bernd Schubert <bernd-schubert@gmx.de>
-Cc: Chris Wright <chrisw@sous-sol.org>, John M Flinchbaugh <john@hjsoft.com>, reiserfs-list@namesys.com, Sam Vilain <sam@vilain.net>, linux-kernel@vger.kernel.org
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: Bernd Schubert <bernd-schubert@gmx.de>, Chris Wright <chrisw@sous-sol.org>, John M Flinchbaugh <john@hjsoft.com>, reiserfs-list@namesys.com, Sam Vilain <sam@vilain.net>, linux-kernel@vger.kernel.org
 
 
---gBBFr7Ir9EOA20Yy
+--WhfpMioaduB5tiZL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Feb 12, 2006 at 12:50:30AM +0100, Bernd Schubert wrote:
-> Privet!
->=20
-> > > > Yes, 2.6.13 now makes the same trouble. No difference with 2.6.15.3.
-> > > > I played with mount -o noattrs, this makes no difference with 2.6.1=
-3,
-> > > > but has some effects to 2.6.15.3. Creating files in /var/run is
-> > > > possible again, lsattr gives "lsattr: Inappropriate ioctl for device
-> > > > While reading flags on /var/run", but deleting files in /var/run is
-> > > > still impossible (still rather bad for the init-scripts).
-> >
-> > Is the filesystem in question old - could it be created initially in the
-> > reiserfs v3.5 format (used with 2.2.x kernels) and later converted to
-> > v3.6 (by mounting with the "conv" option)?
->=20
-> Well, I'm rather sure I created this filesystem in May 2001 after the Win=
-2000=20
-> partion manager selectively deleted all my ext2 partitions (I'm still ver=
-y=20
-> angry about MS). However, that time I already knew that v3.5 should not b=
-e=20
-> used with NFS and I always used NFS a lot(my first mail to the reiser lis=
-t=20
-> was in early 2001 about a reiser v3.5 + nfs problem). I also used=20
-> Slackware-8.0-pre that time and also just checked it, the mkreiserfs from=
-=20
-> slackware-8.0 has v3.6 as default. So really, its very unlikely that my=
-=20
-> current root partition ever had v3.5 on it.
+On Sun, Feb 12, 2006 at 12:57:40PM -0500, Jeff Mahoney wrote:
+> diff -ruNpX dontdiff linux-2.6.15/fs/reiserfs/inode.c linux-2.6.15-reiserfs/fs/reiserfs/inode.c
+> --- linux-2.6.15/fs/reiserfs/inode.c	2006-02-06 19:54:10.000000000 -0500
+> +++ linux-2.6.15-reiserfs/fs/reiserfs/inode.c	2006-02-12 12:43:00.000000000 -0500
+> @@ -1195,6 +1195,7 @@ static void init_inode(struct inode *ino
+>  		/* nopack is initially zero for v1 objects. For v2 objects,
+>  		   nopack is initialised from sd_attrs */
+>  		REISERFS_I(inode)->i_flags &= ~i_nopack_mask;
+> +		REISERFS_I(inode)->i_attrs = 0;
 
-Still there is a chance (who knows what has been in 8.0-pre at that
-time... and changelog says that reiserfsprogs was updated on May 14
-2001).
+This part of the patch works fine for my test case - no more bogus
+attributes, even when mounting with the "attrs" option.
 
-> > > Yes, that's what I thought.  There's still some backward logic in the=
-re.
-> > > noattrs vs. attrs triggers whether the code path that's patched in
-> > > 2.6.15.3 is taken.  I'll dig a bit more, but hopefully the reiserfs f=
-olks
-> > > can fix this for us.
-> >
-> > Here is a simple test case which reproduces the problem with a
-> > filesystem converted from v3.5:
-> >
-> > # dd if=3D/dev/zero of=3Dtmp.img bs=3D1M count=3D100
-> > # mkreiserfs --format 3.5 -f tmp.img
+>  	} else {
+>  		// new stat data found, but object may have old items
+>  		// (directories and symlinks)
+> diff -ruNpX dontdiff linux-2.6.15/fs/reiserfs/super.c linux-2.6.15-reiserfs/fs/reiserfs/super.c
+> --- linux-2.6.15/fs/reiserfs/super.c	2006-02-06 19:54:27.000000000 -0500
+> +++ linux-2.6.15-reiserfs/fs/reiserfs/super.c	2006-02-12 12:48:41.000000000 -0500
+> @@ -1121,7 +1121,9 @@ static void handle_attrs(struct super_bl
+>  					 "reiserfs: cannot support attributes until flag is set in super-block");
+>  			REISERFS_SB(s)->s_mount_opt &= ~(1 << REISERFS_ATTRS);
+>  		}
+> -	} else if (le32_to_cpu(rs->s_flags) & reiserfs_attrs_cleared) {
+> +	} else if (le32_to_cpu(rs->s_flags) & reiserfs_attrs_cleared &&
+> +	           get_inode_item_key_version(s->s_root->d_inode) == KEY_FORMAT_3_6) {
+> +		/* Enable attrs by default on v3.6-native file systems */
+>  		REISERFS_SB(s)->s_mount_opt |= (1 << REISERFS_ATTRS);
+>  	}
+>  }
 
-Add here:
+This part, however, does not work - apparently the condition is never
+true, even on a freshly created 3.6-format filesystem:
 
-# mount -t reiserfs -o loop tmp.img /mnt/disk
-# tar -xz -f something.tar.gz -C /mnt/disk
-# umount /mnt/disk
+# mkreiserfs --format 3.6 -f tmp2.img
+# mount -t reiserfs -o loop tmp2.img /mnt/disk/
+# lsattr -d /mnt/disk/
+lsattr: Inappropriate ioctl for device While reading flags on /mnt/disk/
 
-Otherwise the test seems to be unreliable.
 
-> > # mount -t reiserfs -o loop,conv tmp.img /mnt/disk/
-> > # umount /mnt/disk/
-> > # reiserfsck --clean-attributes tmp.img
-> > # mount -t reiserfs -o loop tmp.img /mnt/disk/
-> >
-> > At this point, I get obviously wrong attributes on /mnt/disk:
-> >
-> > # lsattr -d /mnt/disk/
-> > -----a--c---- /mnt/disk/
+Apparently directories always have old key format, even on new
+filesystems:
 
-Sometimes the root directory seems to have correct attrs, but some
-files should still get garbage.
+	if (old_format_only(sb) || S_ISDIR(mode) || S_ISLNK(mode))
+		set_inode_item_key_version(inode, KEY_FORMAT_3_5);
+	else
+		set_inode_item_key_version(inode, KEY_FORMAT_3_6);
 
-> I already reverted the patch in 2.6.15.2 for some NFSv4 tests with 2.6.15=
-, but=20
-> of course, this is not the final solution. Neither for me, nor for the ot=
-her=20
-> thousands of reiserfs filesystems out there, that suddenly break beginnin=
-g=20
-> with 2.6.15.2.
+However, checking the stat data format works:
 
-Of course - therefore Jeff Mahoney already prepared the patch to
-remove the problematic feature (automatic enabling of the "attrs"
-mount option) completely:
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index b33d67b..a2ea7ed 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -1195,6 +1195,7 @@ static void init_inode(struct inode *ino
+ 		/* nopack is initially zero for v1 objects. For v2 objects,
+ 		   nopack is initialised from sd_attrs */
+ 		REISERFS_I(inode)->i_flags &= ~i_nopack_mask;
++		REISERFS_I(inode)->i_attrs = 0;
+ 	} else {
+ 		// new stat data found, but object may have old items
+ 		// (directories and symlinks)
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index ef5e541..acafe32 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -1124,7 +1124,9 @@ static void handle_attrs(struct super_bl
+ 					 "reiserfs: cannot support attributes until flag is set in super-block");
+ 			REISERFS_SB(s)->s_mount_opt &= ~(1 << REISERFS_ATTRS);
+ 		}
+-	} else if (le32_to_cpu(rs->s_flags) & reiserfs_attrs_cleared) {
++	} else if ((le32_to_cpu(rs->s_flags) & reiserfs_attrs_cleared) &&
++		(get_inode_sd_version(s->s_root->d_inode) == STAT_DATA_V2)) {
++		/* Enable attrs by default on v3.6-native file systems */
+ 		REISERFS_SB(s)->s_mount_opt |= (1 << REISERFS_ATTRS);
+ 	}
+ }
 
-http://lkml.org/lkml/2006/2/12/76
+But this patch has another problem - it forces the "attrs" option on
+for such filesystems, leaving no way to turn it off - the "noattrs"
+option is ignored.  This does not look good.
 
-(Backing out only the latest patch is wrong, because then the "tails"
-option will remain broken.)
-
-However, the real bug is somewhere else.
-
-> > I have noticed that fs/reiserfs/inode.c:init_inode() does not initialize
-> > REISERFS_I(inode)->i_attrs and inode->i_flags (as done by
-> > sd_attrs_to_i_attrs()) in the branch for v1 stat data; maybe this causes
-> > the problem?
->=20
-> Please forgive me my missing knowledge about the internals of reiserfs,=
-=20
-> reiserfs doesn't have an inode for each file and directory as ext2, right?
-> Is there some way to detect if the inode was created on reiser3.5?
-
-You may try to do something like "chgrp 70000" on it - the v1 stat
-data format has 16-bit uid/gid fields and therefore does not support
-uid/gid greater than 65535.  If "chgrp 70000" fails with "Invalid
-argument", but works with a value lower than 65535, most likely the
-file in question still has old stat data format.  (If both operations
-fail, this may be due to broken attrs on the file which prohibit the
-operation).
-
---gBBFr7Ir9EOA20Yy
+--WhfpMioaduB5tiZL
 Content-Type: application/pgp-signature
 Content-Disposition: inline
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.2 (GNU/Linux)
 
-iD8DBQFD74IDW82GfkQfsqIRAlypAJ9p0f2y6p9dqN//uZaNM+P1hWmxfgCeMo2K
-TKb9agIZ9nm9KUpQQb+PgMw=
-=M7OX
+iD8DBQFD74qrW82GfkQfsqIRAp0GAJ0eZzPd1Wu0AvZ9KepWkMHcT3RtUACfRHXD
+WJLT1w8F2wMIoJ8CjA0k7Gw=
+=SZhq
 -----END PGP SIGNATURE-----
 
---gBBFr7Ir9EOA20Yy--
+--WhfpMioaduB5tiZL--
