@@ -1,71 +1,60 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: kernel-2.6.16-rc2-git8 - reiserfs - write problem !!!
-Date: Sun, 12 Feb 2006 12:52:56 -0500
-Message-ID: <20060212175256.GA8805@locomotive.unixthugs.org>
-References: <200602120156.AA112460246@usfltd.com>
+Subject: Re: 2.6.15 Bug? New security model?
+Date: Sun, 12 Feb 2006 12:57:40 -0500
+Message-ID: <20060212175740.GB8805@locomotive.unixthugs.org>
+References: <200602080212.27896.bernd-schubert@gmx.de> <200602081314.59639.bernd-schubert@gmx.de> <20060208205033.GB22771@shell0.pdx.osdl.net> <200602082246.15613.bernd-schubert@gmx.de> <20060208221124.GN30803@sorel.sous-sol.org> <20060212005541.107f7011.vsu@altlinux.ru>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="oLBj+sq0vYjzfsbl"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750755AbWBLRw7@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="/unnNtmY43mpUSKx"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750773AbWBLR5o@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <200602120156.AA112460246@usfltd.com>
+In-Reply-To: <20060212005541.107f7011.vsu@altlinux.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: art <art@usfltd.com>
-Cc: linux-kernel@vger.kernel.org, ReiserFS List <reiserfs-list@namesys.com>
+To: Sergey Vlasov <vsu@altlinux.ru>
+Cc: Bernd Schubert <bernd-schubert@gmx.de>, Chris Wright <chrisw@sous-sol.org>, John M Flinchbaugh <john@hjsoft.com>, reiserfs-list@namesys.com, Sam Vilain <sam@vilain.net>, linux-kernel@vger.kernel.org
 
 
---oLBj+sq0vYjzfsbl
-Content-Type: multipart/mixed; boundary="yrj/dFKFPuw6o+aM"
+--/unnNtmY43mpUSKx
+Content-Type: multipart/mixed; boundary="ALfTUftag+2gvp1h"
 Content-Disposition: inline
 
 
---yrj/dFKFPuw6o+aM
+--ALfTUftag+2gvp1h
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Feb 12, 2006 at 01:56:52AM -0600, art wrote:
-> FROM:   	   =09
-> Jeffrey Mahoney <jeffm@suse.com> | Save Address
-> DATE: 	  	Sat, 11 Feb 2006 16:58:20 -0500
-> TO: 	  	<art@usfltd.com> =20
-> SUBJECT: 	  	Re: kernel-2.6.16-rc2-git8 - reiserfs 3.6 - write problem !!!
->   =09
->   	art wrote:
-> > kernel-2.6.16-rc2-git8 - reiserfs - write problem !!!
-> >
-> > it started ~from kernel-2.6.16-rc2
-> > 2.6.16-rc1-git6 works ok
+On Sun, Feb 12, 2006 at 12:55:41AM +0300, Sergey Vlasov wrote:
+> I have noticed that fs/reiserfs/inode.c:init_inode() does not initialize
+> REISERFS_I(inode)->i_attrs and inode->i_flags (as done by
+> sd_attrs_to_i_attrs()) in the branch for v1 stat data; maybe this causes
+> the problem?
 
-art -
+Yes. This would absolutely cause a problem. Thanks for the triage.
 
-One more followup question. Was the file system you're using converted from=
- a
-v3.5 file system, or has it always been v3.6?
+The failure to set i_attrs =3D 0 for the sd v1 path means that *any* new ob=
+jects
+that inherit from a v3.5-created object (-o conv means new objects will be
+sd v2, old ones aren't 'updated'), will end up with bogus attributes.
 
-Sergey Vlasov on the reiserfs list noticed that v3.5 objects never had
-REISERFS_I(inode)->i_attrs set, which means that even on a converted v3.6
-file system, objects created underneath a v3.5-created directory would
-inherit random attrs bits.
+This is essentially code-introduced corruption. The patch to fix it in futu=
+re
+versions is easy enough, but you'll need to run reiserfsck --clean-attribut=
+es
+<device> on any affected file systems.
 
-I have a patch that adds an additional check to see if the file system has
-always been v3.6 - just by checking the version of the stat data on the root
-directory.
-
-If you haven't already run reiserfsck --clean attributes, can you give the
-patch a try? Don't mount with -oattrs, since we already know the attributes
-are corrupt. I just want to test and see if the file system you've got is
-converted from a v3.5 file system and if it fixes the problem.
-
-Thanks.
+Bernd - If you haven't already run reiserfsck --clean-attributes on the fs,
+can you please test the attached patch? It adds a check to make sure the
+file system has always been v3.6 before enabling the attributes by default.
 
 -Jeff
+
 --=20
 Jeff Mahoney
 SuSE Labs
 
---yrj/dFKFPuw6o+aM
+--ALfTUftag+2gvp1h
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename="reiserfs-attrs-test-fix.diff"
 
@@ -95,18 +84,18 @@ diff -ruNpX dontdiff linux-2.6.15/fs/reiserfs/super.c linux-2.6.15-reiserfs/fs/r
  	}
  }
 
---yrj/dFKFPuw6o+aM--
+--ALfTUftag+2gvp1h--
 
---oLBj+sq0vYjzfsbl
+--/unnNtmY43mpUSKx
 Content-Type: application/pgp-signature
 Content-Disposition: inline
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 
-iD8DBQFD73X3LPWxlyuTD7IRAiwvAJ9eAsfD50RDvaJLFop2bajxWMjWzgCdFoGQ
-m8xbwtkMwVJbbgndMm+ih3I=
-=eCK8
+iD8DBQFD73cSLPWxlyuTD7IRAv2+AJ466axQE1UNomE/U7EUwUiM5OrfwQCfTGGm
+MuXvLzm0hXXqnRHORtL64xk=
+=4DMZ
 -----END PGP SIGNATURE-----
 
---oLBj+sq0vYjzfsbl--
+--/unnNtmY43mpUSKx--
