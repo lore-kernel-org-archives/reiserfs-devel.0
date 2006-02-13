@@ -1,39 +1,62 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Sergey Vlasov <vsu@altlinux.ru>
 Subject: Re: 2.6.15 Bug? New security model?
-Date: Mon, 13 Feb 2006 08:39:07 -0800
-Message-ID: <43F0B62B.9080002@namesys.com>
-References: <200602080212.27896.bernd-schubert@gmx.de>	<200602081314.59639.bernd-schubert@gmx.de>	<20060208205033.GB22771@shell0.pdx.osdl.net>	<200602082246.15613.bernd-schubert@gmx.de>	<20060208221124.GN30803@sorel.sous-sol.org> <20060212005541.107f7011.vsu@altlinux.ru> <43F01D70.70600@namesys.com> <43F0A4BA.20401@suse.com>
+Date: Mon, 13 Feb 2006 20:52:55 +0300
+Message-ID: <20060213175255.GA8639@procyon.home>
+References: <200602080212.27896.bernd-schubert@gmx.de> <20060212175740.GB8805@locomotive.unixthugs.org> <20060212192115.GB8544@procyon.home> <200602130003.15698.bernd-schubert@gmx.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932153AbWBMQj0@vger.kernel.org>
-In-Reply-To: <43F0A4BA.20401@suse.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932136AbWBMRxP@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <200602130003.15698.bernd-schubert@gmx.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Sergey Vlasov <vsu@altlinux.ru>, Bernd Schubert <bernd-schubert@gmx.de>, Chris Wright <chrisw@sous-sol.org>, John M Flinchbaugh <john@hjsoft.com>, reiserfs-list@namesys.com, Sam Vilain <sam@vilain.net>, linux-kernel@vger.kernel.org
+To: Bernd Schubert <bernd-schubert@gmx.de>
+Cc: Jeff Mahoney <jeffm@suse.com>, Chris Wright <chrisw@sous-sol.org>, John M Flinchbaugh <john@hjsoft.com>, reiserfs-list@namesys.com, Sam Vilain <sam@vilain.net>, linux-kernel@vger.kernel.org
 
-Ah, thanks for the patches Jeff, apologies for misreading it.
 
-Hans
+--xHFwDpU9dbj6ez1V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Jeff Mahoney wrote:
+On Mon, Feb 13, 2006 at 12:03:15AM +0100, Bernd Schubert wrote:
+> > diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+> > index ef5e541..acafe32 100644
+> > --- a/fs/reiserfs/super.c
+> > +++ b/fs/reiserfs/super.c
+> > @@ -1124,7 +1124,9 @@ static void handle_attrs(struct super_bl
+> >  					 "reiserfs: cannot support attributes until flag is set in
+> > super-block"); REISERFS_SB(s)->s_mount_opt &=3D ~(1 << REISERFS_ATTRS);
+> >  		}
+> > -	} else if (le32_to_cpu(rs->s_flags) & reiserfs_attrs_cleared) {
+> > +	} else if ((le32_to_cpu(rs->s_flags) & reiserfs_attrs_cleared) &&
+> > +		(get_inode_sd_version(s->s_root->d_inode) =3D=3D STAT_DATA_V2)) {
+> > +		/* Enable attrs by default on v3.6-native file systems */
+> >  		REISERFS_SB(s)->s_mount_opt |=3D (1 << REISERFS_ATTRS);
+> >  	}
+> >  }
+>=20
+> I'm afraid that still doesn't solve the problem for me, I added two print=
+k to=20
+> be sure whats going on - get_inode_sd_version(s->s_root->d_inode) returns=
+=20
+> STAT_DATA_V2 for all of my partitions.
 
-> Hans Reiser wrote:
->
-> >This is an xattr bug, and I'll let jeff answer it.
->
->
-> Hans -
->
-> This bug is about inode attributes (the chattr type), not extended
-> attributes (the setfacl/setfattr type). Regardless, it's the root cause
-> of the random attributes we were seeing when the REISERFS_ATTRS
-> enable-by-default problem was corrected. Thanks to some other people on
-> the list, I was able to post some patches to address it yesterday evening.
->
-> -Jeff
->
-> --
-> Jeff Mahoney
-> SUSE Labs
+Too bad.  Looks like autoenabling of the "attrs" options won't fly,
+and the only safe solution is to revert those patches and require
+explicit "attrs" option.
+
+--xHFwDpU9dbj6ez1V
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
+
+iD8DBQFD8Md3W82GfkQfsqIRAg6LAKCFrYygHMVe7DA6bZof+IMMH9x4QACaAzUr
++F8wzAczvACbr7J93AXySQU=
+=kk1X
+-----END PGP SIGNATURE-----
+
+--xHFwDpU9dbj6ez1V--
