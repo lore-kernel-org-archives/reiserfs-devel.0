@@ -1,42 +1,39 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: 2.6.15 Bug? New security model?
-Date: Mon, 13 Feb 2006 10:24:42 -0500
-Message-ID: <43F0A4BA.20401@suse.com>
-References: <200602080212.27896.bernd-schubert@gmx.de>	<200602081314.59639.bernd-schubert@gmx.de>	<20060208205033.GB22771@shell0.pdx.osdl.net>	<200602082246.15613.bernd-schubert@gmx.de>	<20060208221124.GN30803@sorel.sous-sol.org> <20060212005541.107f7011.vsu@altlinux.ru> <43F01D70.70600@namesys.com>
+Subject: [PATCH] reiserfs: fix potential (unlikely) oops in reiserfs_get_acl
+Date: Mon, 13 Feb 2006 11:12:36 -0500
+Message-ID: <20060213161234.GA8931@locomotive.unixthugs.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932135AbWBMPVd@vger.kernel.org>
-In-Reply-To: <43F01D70.70600@namesys.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750809AbWBMQMi@vger.kernel.org>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Sergey Vlasov <vsu@altlinux.ru>, Bernd Schubert <bernd-schubert@gmx.de>, Chris Wright <chrisw@sous-sol.org>, John M Flinchbaugh <john@hjsoft.com>, reiserfs-list@namesys.com, Sam Vilain <sam@vilain.net>, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@osdl.org>, Linus Torvalds <torvalds@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+ This patch fixes a potential oops if there is an error reported by
+ posix_acl_from_disk(). This is mostly theoretical due to the use of 
+ magics and checksums in xattrs, but is still possible.
 
-Hans Reiser wrote:
-> This is an xattr bug, and I'll let jeff answer it.
+ fs/reiserfs/xattr_acl.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletion(-)
 
-Hans -
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
-This bug is about inode attributes (the chattr type), not extended
-attributes (the setfacl/setfattr type). Regardless, it's the root cause
-of the random attributes we were seeing when the REISERFS_ATTRS
-enable-by-default problem was corrected. Thanks to some other people on
-the list, I was able to post some patches to address it yesterday evening.
-
-- -Jeff
-
-- --
+diff -ruNpX ../dontdiff linux-2.6.15-staging1/fs/reiserfs/xattr_acl.c linux-2.6.15-staging2/fs/reiserfs/xattr_acl.c
+--- linux-2.6.15-staging1/fs/reiserfs/xattr_acl.c	2006-02-10 16:27:18.000000000 -0500
++++ linux-2.6.15-staging2/fs/reiserfs/xattr_acl.c	2006-02-10 16:40:56.000000000 -0500
+@@ -228,7 +228,8 @@ struct posix_acl *reiserfs_get_acl(struc
+ 		acl = ERR_PTR(retval);
+ 	} else {
+ 		acl = posix_acl_from_disk(value, retval);
+-		*p_acl = posix_acl_dup(acl);
++		if (!IS_ERR(acl))
++			*p_acl = posix_acl_dup(acl);
+ 	}
+ 
+ 	kfree(value);
+-- 
 Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iD8DBQFD8KS5LPWxlyuTD7IRApKRAJ0SdbS+/KzO8Kn7RMfVQ2KfwNSg/gCfXIdE
-KlxigEBlCZixvy7PObKebE0=
-=3wk5
------END PGP SIGNATURE-----
+SuSE Labs
