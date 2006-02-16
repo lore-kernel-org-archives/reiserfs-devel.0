@@ -1,85 +1,65 @@
-From: Alexander Lyamin <flx@msu.ru>
-Subject: Re: Fwd: New reiser4 install
-Date: Thu, 16 Feb 2006 12:58:22 +0300
-Message-ID: <20060216095822.GA14385@alias.nmd.msu.ru>
-References: <20060215180900.GA7431@cm.nu> <bea6b3260602160143t4b9252f6ra34b53c341483b97@mail.gmail.com>
-Reply-To: flx@msu.ru
+From: Marcus Furlong <furlongm@hotmail.com>
+Subject: Re: metas
+Date: Thu, 16 Feb 2006 12:08:36 +0000
+Message-ID: <dt1puo$651$1@sea.gmane.org>
+References: <43E68E3F.8000806@namesys.com> <5c7c368b0602090958w58103871pe7cc83735c20f063@mail.gmail.com> <43EB8361.9000801@namesys.com> <43ECAC8B.8090204@namesys.com>
+Reply-To: furlongm@hotmail.com
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28078-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7Bit
+Return-path: <reiserfs-list-return-28079-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <bea6b3260602160143t4b9252f6ra34b53c341483b97@mail.gmail.com>
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfslist@gmail.com
-Cc: flx@namesys.com, edward@namesys.com, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hi Shane,
-
-I'm sorry we had  a list malfunction today and your message got chewed a bit,
-but its got recovered and reposted here.
-
-While on it, i'll try and share my own expirience with reiser4 usage.
+Apologies if this gets posted twice, I saw there was a list malfunction so
+posting it again as my previous message never showed up.
 
 
-First i suggest heading for  2.6.12 kernel, at moment it looks like most
-stable, and i use it as filesystem on 4 boxes with couple of them being
-pretty busy ones. all of them are SMP's.
+Hi Edward,
+
+I've just tested the newer patch against 2.6.15.4, and have found a bug when
+using `cat bmap` in a directory.
+
+$ cd testdir/....
+$ cat bmap
 
 
-Thu, Feb 16, 2006 at 12:43:45PM +0300, ReiserFS Users Mailing List wrote:
-> ---------- Forwarded message ----------
-> From: Shane <shane-reiserfs@cm.nu>
-> Date: Feb 15, 2006 9:09 PM
-> Subject: New reiser4 install
-> To: reiserfs-list@namesys.com
-> 
-> Hello folks,
-> 
-> I am moving a database to a new FS and am looking as
-> reiser4 for the filesystem.  However, I am a bit unsure of
-> the plugins to use on filesystem creation.  If these are
-> documented, I appologise for asking here.
+kernel BUG at fs/reiser4/plugin/object.c:58!
+invalid operand: 0000 [#1]
+PREEMPT
+Modules linked in: reiser4 ipw2200 ieee80211 ieee80211_crypt
+CPU:    0
+EIP:    0060:[<f8f84300>]    Not tainted VLI
+EFLAGS: 00010246   (2.6.15.4)
+EIP is at _bugop+0x0/0x10 [reiser4]
+eax: edd2dd1c   ebx: edd2dc7c   ecx: 0000000c   edx: f905b8d8
+esi: 00000000   edi: ea9db5c0   ebp: 00010000   esp: f792feec
+ds: 007b   es: 007b   ss: 0068
+Process cat (pid: 3130, threadinfo=f792f000 task=f51f7030)
+Stack: f8fff833 edd2dd1c 00000000 38892067 eaa79c00 f8fff75f edd2a13c
+00000001
+       ea9db5c0 00000001 c0188eb8 ea9db5c0 00000001 ea44c200 00000000
+c0155ade
+       f7f92ac0 00000000 00000000 eaa79c00 e8a4fb40 00000000 00010000
+f8f9a16f
+Call Trace:
+ [<f8fff833>] bmap_show+0x43/0xc0 [reiser4]
+ [<f8fff75f>] bmap_start+0x1f/0x80 [reiser4]
+ [<c0188eb8>] seq_read+0xe8/0x2f0
+ [<c0155ade>] __handle_mm_fault+0x14e/0x290
+ [<f8f9a16f>] read_pseudo+0xbf/0xd0 [reiser4]
+ [<c016536c>] vfs_read+0x19c/0x1b0
+ [<c01656b1>] sys_read+0x51/0x80
+ [<c010316b>] sysenter_past_esp+0x54/0x75
+Code: 71 b7 01 f9 89 5c 24 20 be e5 00 00 00 8d 90 a4 01 00 00 89 4c 24 1c
+89 74 24 18 e9 6f ff ff ff 90 90 90 90 90 90 90 90 90 90 90 <0f> 0b 3a 00
+99 b7 01 f9 31 c0 c3 90 8d 74 26 00 31 c0 c3 8d b6
 
-go for vanilla flavor. that would do fine.
+--
+Marcus Furlong
 
-> 
-> The FS will hold approximately 9 millian small files of on
-> average 4k in size growing by around 500k files per month.
-> Reads on the FS are random and there are usually around 10
-> processes accessing the fs at any given time.  I am
-> currently using ext3 but with so many files, space usage is
-> starting to become an issue as each file is rounded to the
-> block size of the FS so I'd like to get tail packing going.
-yeah, thats exactly the case where r4 does good.
-and in my expirience its more stable then 3.6 in SMP environment,
-altough you should expect that  it'd spend some more cpu
-cycles on that packing.
-
-> I noticed the default plugin profile in debugfs.reiser4
-> sets tail to plain.  Does this pack tails or should I be
-> using ctail40 or the smart tails support?  Also, I noticed
-> a transparent compression plugin is available in the kernel
-> tree, is that something which is automatically enabled or
-> do I need to do something at FS creation or mount time.
-
-I CC'ed this message to Edward Shukshin (cryptoplugin author) cause
-he's the preson you want to talk about compression stuff and if its
-ready for prime time.
-
-> 
-> Finally, we use chattr to set the noatime flag on our
-> files, is that supported in reiser4?  Come to think of it,
-> chattr has a compress flag as well.
-
-noatime would be good idea for any FS out there if you dont need
-this feature and want to have some edge for what its costs.
-
-
--- 
-"the liberation loophole will make it clear.."
-lex lyamin
