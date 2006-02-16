@@ -1,62 +1,85 @@
-From: Sergey Vlasov <vsu@altlinux.ru>
-Subject: Re: 2.6.15 Bug? New security model?
-Date: Mon, 13 Feb 2006 20:52:55 +0300
-Message-ID: <20060213175255.GA8639@procyon.home>
-References: <200602080212.27896.bernd-schubert@gmx.de> <20060212175740.GB8805@locomotive.unixthugs.org> <20060212192115.GB8544@procyon.home> <200602130003.15698.bernd-schubert@gmx.de>
+From: Alexander Lyamin <flx@msu.ru>
+Subject: Re: Fwd: New reiser4 install
+Date: Thu, 16 Feb 2006 12:58:22 +0300
+Message-ID: <20060216095822.GA14385@alias.nmd.msu.ru>
+References: <20060215180900.GA7431@cm.nu> <bea6b3260602160143t4b9252f6ra34b53c341483b97@mail.gmail.com>
+Reply-To: flx@msu.ru
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932136AbWBMRxP@vger.kernel.org>
+Return-path: <reiserfs-list-return-28078-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <200602130003.15698.bernd-schubert@gmx.de>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <bea6b3260602160143t4b9252f6ra34b53c341483b97@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Bernd Schubert <bernd-schubert@gmx.de>
-Cc: Jeff Mahoney <jeffm@suse.com>, Chris Wright <chrisw@sous-sol.org>, John M Flinchbaugh <john@hjsoft.com>, reiserfs-list@namesys.com, Sam Vilain <sam@vilain.net>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfslist@gmail.com
+Cc: flx@namesys.com, edward@namesys.com, reiserfs-list@namesys.com
+
+Hi Shane,
+
+I'm sorry we had  a list malfunction today and your message got chewed a bit,
+but its got recovered and reposted here.
+
+While on it, i'll try and share my own expirience with reiser4 usage.
 
 
---xHFwDpU9dbj6ez1V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+First i suggest heading for  2.6.12 kernel, at moment it looks like most
+stable, and i use it as filesystem on 4 boxes with couple of them being
+pretty busy ones. all of them are SMP's.
 
-On Mon, Feb 13, 2006 at 12:03:15AM +0100, Bernd Schubert wrote:
-> > diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-> > index ef5e541..acafe32 100644
-> > --- a/fs/reiserfs/super.c
-> > +++ b/fs/reiserfs/super.c
-> > @@ -1124,7 +1124,9 @@ static void handle_attrs(struct super_bl
-> >  					 "reiserfs: cannot support attributes until flag is set in
-> > super-block"); REISERFS_SB(s)->s_mount_opt &=3D ~(1 << REISERFS_ATTRS);
-> >  		}
-> > -	} else if (le32_to_cpu(rs->s_flags) & reiserfs_attrs_cleared) {
-> > +	} else if ((le32_to_cpu(rs->s_flags) & reiserfs_attrs_cleared) &&
-> > +		(get_inode_sd_version(s->s_root->d_inode) =3D=3D STAT_DATA_V2)) {
-> > +		/* Enable attrs by default on v3.6-native file systems */
-> >  		REISERFS_SB(s)->s_mount_opt |=3D (1 << REISERFS_ATTRS);
-> >  	}
-> >  }
->=20
-> I'm afraid that still doesn't solve the problem for me, I added two print=
-k to=20
-> be sure whats going on - get_inode_sd_version(s->s_root->d_inode) returns=
-=20
-> STAT_DATA_V2 for all of my partitions.
 
-Too bad.  Looks like autoenabling of the "attrs" options won't fly,
-and the only safe solution is to revert those patches and require
-explicit "attrs" option.
+Thu, Feb 16, 2006 at 12:43:45PM +0300, ReiserFS Users Mailing List wrote:
+> ---------- Forwarded message ----------
+> From: Shane <shane-reiserfs@cm.nu>
+> Date: Feb 15, 2006 9:09 PM
+> Subject: New reiser4 install
+> To: reiserfs-list@namesys.com
+> 
+> Hello folks,
+> 
+> I am moving a database to a new FS and am looking as
+> reiser4 for the filesystem.  However, I am a bit unsure of
+> the plugins to use on filesystem creation.  If these are
+> documented, I appologise for asking here.
 
---xHFwDpU9dbj6ez1V
-Content-Type: application/pgp-signature
-Content-Disposition: inline
+go for vanilla flavor. that would do fine.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
+> 
+> The FS will hold approximately 9 millian small files of on
+> average 4k in size growing by around 500k files per month.
+> Reads on the FS are random and there are usually around 10
+> processes accessing the fs at any given time.  I am
+> currently using ext3 but with so many files, space usage is
+> starting to become an issue as each file is rounded to the
+> block size of the FS so I'd like to get tail packing going.
+yeah, thats exactly the case where r4 does good.
+and in my expirience its more stable then 3.6 in SMP environment,
+altough you should expect that  it'd spend some more cpu
+cycles on that packing.
 
-iD8DBQFD8Md3W82GfkQfsqIRAg6LAKCFrYygHMVe7DA6bZof+IMMH9x4QACaAzUr
-+F8wzAczvACbr7J93AXySQU=
-=kk1X
------END PGP SIGNATURE-----
+> I noticed the default plugin profile in debugfs.reiser4
+> sets tail to plain.  Does this pack tails or should I be
+> using ctail40 or the smart tails support?  Also, I noticed
+> a transparent compression plugin is available in the kernel
+> tree, is that something which is automatically enabled or
+> do I need to do something at FS creation or mount time.
 
---xHFwDpU9dbj6ez1V--
+I CC'ed this message to Edward Shukshin (cryptoplugin author) cause
+he's the preson you want to talk about compression stuff and if its
+ready for prime time.
+
+> 
+> Finally, we use chattr to set the noatime flag on our
+> files, is that supported in reiser4?  Come to think of it,
+> chattr has a compress flag as well.
+
+noatime would be good idea for any FS out there if you dont need
+this feature and want to have some edge for what its costs.
+
+
+-- 
+"the liberation loophole will make it clear.."
+lex lyamin
