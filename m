@@ -1,49 +1,44 @@
-From: Peter Klotz <peter.klotz@aon.at>
-Subject: reiser4: Request for minor change in max_name_len_cde()
-Date: Thu, 16 Feb 2006 17:48:19 +0100
-Message-ID: <43F4ACD3.4090706@aon.at>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: List is back?
+Date: Thu, 16 Feb 2006 16:38:57 -0500
+Message-ID: <43F4F0F1.3060607@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28080-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28081-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS List <reiserfs-list@namesys.com>
+Cc: Hans Reiser <reiser@namesys.com>
 
-The function max_name_len_cde() in reiser4/plugin/item/cde40.c in my 
-opinion limits the file name length too strict.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-One finds:
 
-   return
-       tree_by_inode(dir)->nplug->max_item_size() -
-       sizeof(directory_entry_format) - sizeof(cde_item_format) -
-       sizeof(cde_unit_header) - 2;
+Ok, so I saw a few messages show up today -- what happened to all the
+ones in the meantime?
 
-I think the -2 can be safely changed to -1 since the only extra byte 
-that has to be taken into account is the terminating zero of the file 
-name in case a longname key is encountered.
+I sent a good 15 or so messages including patches, and they seem to have
+ disappeared into the ether. Should I resend or are they stuck in a
+queue somewhere?
 
-The maximum file name length in the original case is 3976 bytes if the 
-filesystem uses 4096 byte blocks. In this case the node header of the 
-node containing the cde40 item reports 1 byte of free space.
+Hans, some of these messages had you CC'd specifically. Since you're
+usually pretty quick about responding, should I assume those were lost
+as well?
 
-4096   block size
- -28   sizeof(node40_header)
- -38   sizeof(item_header40)
-  -2   sizeof(cde_item_format)
- -26   sizeof(cde_unit_header)
- -24   sizeof(directory_entry_format)
-  -1   terminating zero of file name
-  -1   ?
------
-3976
+- -Jeff
 
-I changed the -2 to -1 and recompiled the kernel. Then I was able to 
-create a file with a 3977 byte name. In this case the node header 
-reports 0 bytes of free space.
+- --
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
 
-Best regards, Peter.
+iD8DBQFD9PDxLPWxlyuTD7IRAoQMAKCC9bUuwx2dcGxUB5CqPbtJFgYIIwCfetjf
+Re0QA+yRSxrQzM/oS0eya6Q=
+=/bWP
+-----END PGP SIGNATURE-----
