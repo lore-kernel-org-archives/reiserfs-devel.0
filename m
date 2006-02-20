@@ -1,37 +1,72 @@
-From: Ingo Bormuth <ibormuth@efil.de>
-Subject: BUG: fs/reiser4/block_alloc.c:194 ctx->grabbed_blocks
-Date: Sat, 18 Feb 2006 21:23:25 +0100
-Message-ID: <20060218202325.GA16417@kruemel>
-Reply-To: Ingo Bormuth <ibormuth@efil.de>
+From: Sonny Rao <sonny@burdell.org>
+Subject: Re: kernel oops: trying to mount a corrupted xfs partition (2.6.16-rc3)
+Date: Mon, 20 Feb 2006 02:09:16 -0500
+Message-ID: <20060220070916.GA8101@kevlar.burdell.org>
+References: <20060216183629.GA5672@skyscraper.unix9.prv> <20060217063157.B9349752@wobbly.melbourne.sgi.com> <Pine.LNX.4.61.0602171753590.27452@yvahk01.tjqt.qr> <20060220082946.A9478997@wobbly.melbourne.sgi.com> <20060219215209.GB7974@redhat.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28089-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28090-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
+In-Reply-To: <20060219215209.GB7974@redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Reiserfs-List@namesys.com
-Cc: ingo@bormuth.org
+To: Dave Jones <davej@redhat.com>, Nathan Scott <nathans@sgi.com>, Jan Engelhardt <jengelh@linux01.gwdg.de>, bjd <bjdouma@xs4all.nl>, linux-kernel@vger.kernel.org, linux-xfs@oss.sgi.com
+Cc: reiserfs-list@namesys.com
+
+On Sun, Feb 19, 2006 at 04:52:09PM -0500, Dave Jones wrote:
+<snip> 
+> Just for kicks, I just hacked this up..
+> 
+> #!/bin/bash
+> wget http://www.digitaldwarf.be/products/mangle.c
+> gcc mangle.c -o mangle
+> 
+> dd if=/dev/zero of=data.img count=70000
+> 
+> while [ 1 ];
+> do
+>         mkfs.xfs -f data.img >/dev/null
+> 		./mangle data.img $RANDOM
+>         sudo mount -t xfs data.img mntpt -o loop
+>         sudo ls -R mntpt
+>         sudo umount mntpt
+> done
+
+Cool script, you might want to multiply $RANDOM by some factor (I used
+8) to catch some more stuff, I know JFS, for example, doesn't put
+anything in the first 32k, so the first time I ran it on JFS it did
+nothing ;-) 
 
 
-On system shutdown I got a kernel dump from 
-fs/reiser4/block_alloc.c:149 ctx->grabbed_block.
+Reiserfs folks, 
 
-Please find a VERY BAD screenshot at: http://public.efil.de/r4-snap.png
-(This was taken with an old mobile phone, don't blame me for that ...)
+I also found an infinte loop in Reiserfs on 2.6.15, if the Reiser
+folks are interested, I've gziped the fs and put it here:
 
-I run reiser4 for years and that particular 2.6.15.4 kernel for weeks
-without ever having seen any problem or any file corruption !!! 
-Following the reboot the machine runs just as nice as before. 
-Nothing found in logs.
+http://burdell.org/~sonny/data.img.breaks.reiserfs.gz
 
-Cheers
+The fs is only 52k when zipped, so its not too bad to download.
+
+This is under stock 2.6.15, sorry I can't post dmesg output because I
+end up having to reboot when it happens and don't have time to debug
+right now.  It looks like it's in the journal replay code where it
+keeps trying to grab some block with a ridiculously large offset. 
 
 
--- 
-Ingo Bormuth, voicebox & telefax: +49-12125-10226517       '(~o-o~)'
-public key 86326EC9, http://ibormuth.efil.de/contact   --ooO--(.)--Ooo--
+> 
+> xfs wins the award for 'noisiest fs in the face of corruption' :-)
+> After a few dozen backtraces from xfs_corruption_error,
+> this fell out...
+> 
+> divide error: 0000 [1] SMP
+<snip trace>
+ 
+> (The kernel is based on 2.6.16rc4)
 
+I see a similar breakage (divide error) on x86 using 2.6.15
+
+Sonny
