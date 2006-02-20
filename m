@@ -1,9 +1,9 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH 04/11] reiserfs: make per-inode xattr locking more fine grained
-Date: Mon, 20 Feb 2006 15:14:58 -0500
-Message-ID: <20060220201458.GA23253@locomotive.unixthugs.org>
+Subject: [PATCH 00/11] reiserfs: xattr rework
+Date: Mon, 20 Feb 2006 15:14:57 -0500
+Message-ID: <20060220201457.GA23204@locomotive.unixthugs.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28097-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28099-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -16,236 +16,94 @@ To: ReiserFS List <reiserfs-list@namesys.com>
 Cc: "E. Gryaznova" <grev@namesys.com>
 
 
- The per-inode locking can be made more fine-grained to surround just the
- interaction with the filesystem itself. This really only applies to protecting
- reads during a write, since concurrent writes are barred with inode->i_mutex
- at the vfs level.
+Hello all -
 
- fs/reiserfs/xattr.c            |   32 ++++++++++++++++++--------------
- fs/reiserfs/xattr_acl.c        |    7 +------
- include/linux/reiserfs_xattr.h |   21 ---------------------
- 3 files changed, 19 insertions(+), 41 deletions(-)
+Following this message is a series of 11 patches that rework the reiserfs
+xattr code. The current implementation open codes a number of functions that
+are well tested and stable elsewhere, but will slight modifications. It also
+does a number of things suboptimally, such as operations that affect all of
+the xattrs associated with an inode, as well as not handling journalling as
+well as can be.
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+I've run them through a weekend of stress testing successfully, but I'd like
+some additional testing before considering them safe.
 
-diff -ruNpX ../dontdiff linux-2.6.15-staging1/fs/reiserfs/xattr_acl.c linux-2.6.15-staging2/fs/reiserfs/xattr_acl.c
---- linux-2.6.15-staging1/fs/reiserfs/xattr_acl.c	2006-02-13 14:21:05.000000000 -0500
-+++ linux-2.6.15-staging2/fs/reiserfs/xattr_acl.c	2006-02-13 14:21:05.000000000 -0500
-@@ -418,9 +418,7 @@ int reiserfs_cache_default_acl(struct in
- 	int ret = 0;
- 	if (reiserfs_posixacl(inode->i_sb) && !is_reiserfs_priv_object(inode)) {
- 		struct posix_acl *acl;
--		reiserfs_read_lock_xattr_i(inode);
- 		acl = reiserfs_get_acl(inode, ACL_TYPE_DEFAULT);
--		reiserfs_read_unlock_xattr_i(inode);
- 		ret = acl ? 1 : 0;
- 		posix_acl_release(acl);
- 	}
-@@ -451,11 +449,8 @@ int reiserfs_acl_chmod(struct inode *ino
- 	if (!clone)
- 		return -ENOMEM;
- 	error = posix_acl_chmod_masq(clone, inode->i_mode);
--	if (!error) {
--		reiserfs_write_lock_xattr_i(inode);
-+	if (!error)
- 		error = reiserfs_set_acl(inode, ACL_TYPE_ACCESS, clone);
--		reiserfs_write_unlock_xattr_i(inode);
--	}
- 	posix_acl_release(clone);
- 	return error;
- }
-diff -ruNpX ../dontdiff linux-2.6.15-staging1/fs/reiserfs/xattr.c linux-2.6.15-staging2/fs/reiserfs/xattr.c
---- linux-2.6.15-staging1/fs/reiserfs/xattr.c	2006-02-13 14:21:05.000000000 -0500
-+++ linux-2.6.15-staging2/fs/reiserfs/xattr.c	2006-02-13 14:21:05.000000000 -0500
-@@ -390,6 +390,7 @@ reiserfs_xattr_set(struct inode *inode, 
- 	if (get_inode_sd_version(inode) == STAT_DATA_V1)
- 		return -EOPNOTSUPP;
- 
-+	down_write(&REISERFS_I(inode)->xattr_sem);
- 	if (!buffer) {
- 		struct reiserfs_xattr_handler *xah =
- 					find_xattr_handler_prefix(name);
-@@ -399,7 +400,9 @@ reiserfs_xattr_set(struct inode *inode, 
- 			if (err)
- 				goto out;
- 		}
--		return reiserfs_xattr_del(inode, name);
-+		err = reiserfs_xattr_del(inode, name);
-+		up_write(&REISERFS_I(inode)->xattr_sem);
-+		return err;
- 	}
- 
-       open_file:
-@@ -482,6 +485,7 @@ reiserfs_xattr_set(struct inode *inode, 
- 	fput(fp);
- 
-       out:
-+	up_write(&REISERFS_I(inode)->xattr_sem);
- 	return err;
- }
- 
-@@ -508,6 +512,8 @@ reiserfs_xattr_get(const struct inode *i
- 	if (get_inode_sd_version(inode) == STAT_DATA_V1)
- 		return -EOPNOTSUPP;
- 
-+	down_read(&REISERFS_I(inode)->xattr_sem);
-+
- 	fp = open_xattr_file(inode, name, XATTR_REPLACE);
- 	if (IS_ERR(fp)) {
- 		up_read(&REISERFS_I(inode)->xattr_sem);
-@@ -561,6 +567,7 @@ reiserfs_xattr_get(const struct inode *i
- 	}
- 
-       out_dput:
-+	up_read(&REISERFS_I(inode)->xattr_sem);
- 	fput(fp);
- 
-       out:
-@@ -659,13 +666,15 @@ int reiserfs_delete_xattrs(struct inode 
- 	    !reiserfs_xattrs(inode->i_sb)) {
- 		return 0;
- 	}
-+	down_write(&REISERFS_I(inode)->xattr_sem);
- 	dir = open_xa_dir(inode, XATTR_REPLACE);
- 	if (IS_ERR(dir)) {
- 		err = PTR_ERR(dir);
- 		goto out;
- 	} else if (!dir->d_inode) {
- 		dput(dir);
--		return 0;
-+		err = 0;
-+		goto out;
- 	}
- 
- 	fp = dentry_open(dir, NULL, O_RDWR);
-@@ -699,6 +708,7 @@ int reiserfs_delete_xattrs(struct inode 
- 	fput(fp);
- 
-       out:
-+	up_write(&REISERFS_I(inode)->xattr_sem);
- 	if (!err)
- 		REISERFS_I(inode)->i_flags =
- 		    REISERFS_I(inode)->i_flags & ~i_has_xattr_dir;
-@@ -750,6 +760,7 @@ int reiserfs_chown_xattrs(struct inode *
- 	    !reiserfs_xattrs(inode->i_sb)) {
- 		return 0;
- 	}
-+	down_write(&REISERFS_I(inode)->xattr_sem);
- 	dir = open_xa_dir(inode, XATTR_REPLACE);
- 	if (IS_ERR(dir)) {
- 		if (PTR_ERR(dir) != -ENODATA)
-@@ -788,6 +799,7 @@ int reiserfs_chown_xattrs(struct inode *
- 
-       out:
- 	attrs->ia_valid = ia_valid;
-+	up_write(&REISERFS_I(inode)->xattr_sem);
- 	return err;
- }
- 
-@@ -807,9 +819,7 @@ reiserfs_getxattr(struct dentry * dentry
- 	    get_inode_sd_version(dentry->d_inode) == STAT_DATA_V1)
- 		return -EOPNOTSUPP;
- 
--	reiserfs_read_lock_xattr_i(dentry->d_inode);
- 	err = xah->get(dentry->d_inode, name, buffer, size);
--	reiserfs_read_unlock_xattr_i(dentry->d_inode);
- 	return err;
- }
- 
-@@ -829,9 +839,7 @@ reiserfs_setxattr(struct dentry *dentry,
- 	    get_inode_sd_version(dentry->d_inode) == STAT_DATA_V1)
- 		return -EOPNOTSUPP;
- 
--	reiserfs_write_lock_xattr_i(dentry->d_inode);
- 	err = xah->set(dentry->d_inode, name, value, size, flags);
--	reiserfs_write_unlock_xattr_i(dentry->d_inode);
- 	return err;
- }
- 
-@@ -849,7 +857,7 @@ int reiserfs_removexattr(struct dentry *
- 	    get_inode_sd_version(dentry->d_inode) == STAT_DATA_V1)
- 		return -EOPNOTSUPP;
- 
--	reiserfs_write_lock_xattr_i(dentry->d_inode);
-+	down_write(&REISERFS_I(dentry->d_inode)->xattr_sem);
- 	/* Deletion pre-operation */
- 	if (xah->del) {
- 		err = xah->del(dentry->d_inode, name);
-@@ -863,7 +871,7 @@ int reiserfs_removexattr(struct dentry *
- 	mark_inode_dirty(dentry->d_inode);
- 
-       out:
--	reiserfs_write_unlock_xattr_i(dentry->d_inode);
-+	up_write(&REISERFS_I(dentry->d_inode)->xattr_sem);
- 	return err;
- }
- 
-@@ -926,7 +934,7 @@ ssize_t reiserfs_listxattr(struct dentry
- 	    get_inode_sd_version(dentry->d_inode) == STAT_DATA_V1)
- 		return -EOPNOTSUPP;
- 
--	reiserfs_read_lock_xattr_i(dentry->d_inode);
-+	down_read(&REISERFS_I(dentry->d_inode)->xattr_sem);
- 	dir = open_xa_dir(dentry->d_inode, XATTR_REPLACE);
- 	if (IS_ERR(dir)) {
- 		err = PTR_ERR(dir);
-@@ -962,7 +970,7 @@ ssize_t reiserfs_listxattr(struct dentry
- 	fput(fp);
- 
-       out:
--	reiserfs_read_unlock_xattr_i(dentry->d_inode);
-+	up_read(&REISERFS_I(dentry->d_inode)->xattr_sem);
- 	return err;
- }
- 
-@@ -1164,12 +1172,8 @@ static int reiserfs_check_acl(struct ino
- 	struct posix_acl *acl;
- 	int error = -EAGAIN; /* do regular unix permission checks by default */
- 
--	reiserfs_read_lock_xattr_i(inode);
--
- 	acl = reiserfs_get_acl(inode, ACL_TYPE_ACCESS);
- 
--	reiserfs_read_unlock_xattr_i(inode);
--
- 	if (acl) {
- 		if (!IS_ERR(acl)) {
- 			error = posix_acl_permission(inode, acl, mask);
-diff -ruNpX ../dontdiff linux-2.6.15-staging1/include/linux/reiserfs_xattr.h linux-2.6.15-staging2/include/linux/reiserfs_xattr.h
---- linux-2.6.15-staging1/include/linux/reiserfs_xattr.h	2006-02-13 14:21:05.000000000 -0500
-+++ linux-2.6.15-staging2/include/linux/reiserfs_xattr.h	2006-02-13 14:21:05.000000000 -0500
-@@ -57,23 +57,6 @@ extern struct reiserfs_xattr_handler sec
- int reiserfs_xattr_register_handlers(void) __init;
- void reiserfs_xattr_unregister_handlers(void);
- 
--static inline void reiserfs_write_lock_xattr_i(struct inode *inode)
--{
--	down_write(&REISERFS_I(inode)->xattr_sem);
--}
--static inline void reiserfs_write_unlock_xattr_i(struct inode *inode)
--{
--	up_write(&REISERFS_I(inode)->xattr_sem);
--}
--static inline void reiserfs_read_lock_xattr_i(struct inode *inode)
--{
--	down_read(&REISERFS_I(inode)->xattr_sem);
--}
--
--static inline void reiserfs_read_unlock_xattr_i(struct inode *inode)
--{
--	up_read(&REISERFS_I(inode)->xattr_sem);
--}
- 
- static inline void reiserfs_mark_inode_private(struct inode *inode)
- {
-@@ -88,10 +71,6 @@ static inline void reiserfs_mark_inode_p
- #define reiserfs_setxattr NULL
- #define reiserfs_listxattr NULL
- #define reiserfs_removexattr NULL
--#define reiserfs_write_lock_xattrs(sb)
--#define reiserfs_write_unlock_xattrs(sb)
--#define reiserfs_read_lock_xattrs(sb)
--#define reiserfs_read_unlock_xattrs(sb)
- 
- #define reiserfs_permission NULL
- 
+Here's the run down:
+
+* 01 - Make internal xattr operations use vfs ops
+  This eliminates the open coding of the read/write loops in favor of using
+  vfs_read and vfs_write. Performance-wise, it's very little difference
+  from the open coding, and implementation-wise, it's more tested. Yes, this
+  violates the no-file-io-in-the-kernel rules, but this rule has been violated
+  since the day the original patches were accepted.
+
+* 02 - Simplify xattr internal file lookups/opens
+  This patch uses vfs-level operations where possible, using the i_mutex
+  to protect directories rather than a special xattr lock.
+
+* 03 - Eliminate per-super xattr lock
+  Since we use i_mutex, we can eliminate the xattr lock, removing the locking
+  constraints from namei.c
+
+* 04 - Make per-inode xattr locking more fine grained
+  The better locking allows us to tighten the critical sections that must
+  be protected against concurrent access. Writers protect against concurrency
+  using the owning inode's i_mutex, but readers still need protection against
+  writers. This patch pushes the xattr_sem down to surround just the operation
+  on the xattr itself.
+
+* 05 - Make i_has_xattr_dir flag more sane
+  With the simplification of open/lookups, there is now only one place for
+  the flag to be set and one for it to be cleared.
+
+* 06 - Use generic xattr handlers
+  This patch moves the reiserfs xattr handlers to the generic VFS supplied
+  struct xattr_handler. It uses the generic handlers where possible, but
+  due to the generic handlers splitting the prefix from the name, that's not
+  always possible since ReiserFS requires that the prefix be preserved.
+
+* 07 - Use O_NOATIME for internal files
+  This patch adds O_NOATIME for internal files, since it is never exported and
+  it saves us adding another transaction for the dirty inode. It also means
+  that on read operations, we don't start a transaction with an xattr sem
+  held when the inode is dirtied.
+
+* 08 - Add per-file data=ordered mode and use it for xattrs
+  Despite being metadata, extended attributes are written with the same
+  data logging policy as the rest of the file system. This patch adds a 
+  per-file data=ordered mode and uses it when the file system is using
+  data=writeback.
+
+* 09 - Journaled xattrs
+  This is the big patch. This eliminates the deadlocks that can still occur
+  with xattrs on ReiserFS. The basic rule is that before doing a write
+  operation on the xattr, a transaction must be started. In order to do this,
+  reiserfs_xattr_set is split into two functions; One wraps the other in a
+  transaction for the ->setxattr calls, and the other is used directly by
+  internal functions like those which implement ACLs. This also alters the
+  return value from reiserfs_cache_default_acl to contain the number of blocks
+  required to handle the additional blocks required by inheriting the default
+  ACL.
+  
+* 10 - Use generic readdir for operations across all xattrs
+  One of the most wasteful operations with the existing code is operations
+  that traverse all the extended attributes for a given inode. Since they are
+  stored as regular files, it makes sense to use ->readdir to enumerate them.
+  However, since the operations may modify the file system, the cached path
+  must be dropped before the filldir routine is called. This means that
+  the path must be re-read for each iteration. This patch leverages the
+  generic readdir function to simply fill and return an array of dentries
+  that can be operated on after the path has already been freed. ReiserFS's
+  hashed directories really come in handy here, since the directory offset
+  doesn't change when entries are deleted. Therefore, the old code which was
+  quite involved and full of duplication is reduced to a single for_each_xattr
+  routine that calls out to individual delete or chown functions as needed.
+
+* 11 - Associate xattr's packing locality w/ owning inode's
+  Since there isn't any linkage between an inode and its xattr directory, it's
+  possible for the xattrs to be placed quite far away from the inode on disk.
+  This patch leverages the dentry's fsdata pointer to allow reiserfs_new_inode
+  to use the owning inode's dir id in determining where to place the new
+  objects.
+
+  -Jeff
