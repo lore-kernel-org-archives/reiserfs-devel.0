@@ -1,93 +1,34 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: kernel oops: trying to mount a corrupted xfs partition (2.6.16-rc3)
-Date: Sun, 19 Feb 2006 23:21:13 -0800
-Message-ID: <43F96DE9.7070209@namesys.com>
-References: <20060216183629.GA5672@skyscraper.unix9.prv> <20060217063157.B9349752@wobbly.melbourne.sgi.com> <Pine.LNX.4.61.0602171753590.27452@yvahk01.tjqt.qr> <20060220082946.A9478997@wobbly.melbourne.sgi.com> <20060219215209.GB7974@redhat.com> <20060220070916.GA8101@kevlar.burdell.org>
+From: "Clemens Eisserer" <linuxhippy@gmail.com>
+Subject: Re: random minor benchmark: Re: Copy 20 tarfiles: ext2 vs (reiser4, unixfile) vs (reiser4,cryptcompress)
+Date: Mon, 20 Feb 2006 14:11:15 +0100
+Message-ID: <194f62550602200511n77ba6560t@mail.gmail.com>
+References: <43D7C6BE.1010804@namesys.com> <43D7CA7F.4010502@namesys.com>
+	 <1138297573.6406.9.camel@localhost.localdomain>
+	 <43D917C7.6090004@namesys.com>
+	 <1140203578.24529.35.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28091-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28092-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060220070916.GA8101@kevlar.burdell.org>
+In-Reply-To: <1140203578.24529.35.camel@localhost.localdomain>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Sonny Rao <sonny@burdell.org>, Chris Mason <mason@suse.com>
-Cc: Dave Jones <davej@redhat.com>, Nathan Scott <nathans@sgi.com>, Jan Engelhardt <jengelh@linux01.gwdg.de>, bjd <bjdouma@xs4all.nl>, linux-kernel@vger.kernel.org, linux-xfs@oss.sgi.com, reiserfs-list@namesys.com, Vitaly Fertman <vetalf@inbox.ru>
+To: reiserfs-list@namesys.com
 
-Thanks kindly Sonny, Chris is this bug known/fixed?
+Hi again,
 
-Hans
+Wow does that mean cryptocompress is almost ready for primetime (next
+months or so)?!
+I've been waiting for something like this for ages, it would be so
+great if that could turn into reality soon.
 
-Sonny Rao wrote:
+I am quite enthusiastic how it will perform on the Dual-Athlon64 + 4x
+Software-Raid-5 (PATA) I plan to buy.
 
->On Sun, Feb 19, 2006 at 04:52:09PM -0500, Dave Jones wrote:
-><snip> 
->  
->
->>Just for kicks, I just hacked this up..
->>
->>#!/bin/bash
->>wget http://www.digitaldwarf.be/products/mangle.c
->>gcc mangle.c -o mangle
->>
->>dd if=/dev/zero of=data.img count=70000
->>
->>while [ 1 ];
->>do
->>        mkfs.xfs -f data.img >/dev/null
->>		./mangle data.img $RANDOM
->>        sudo mount -t xfs data.img mntpt -o loop
->>        sudo ls -R mntpt
->>        sudo umount mntpt
->>done
->>    
->>
->
->Cool script, you might want to multiply $RANDOM by some factor (I used
->8) to catch some more stuff, I know JFS, for example, doesn't put
->anything in the first 32k, so the first time I ran it on JFS it did
->nothing ;-) 
->
->
->Reiserfs folks, 
->
->I also found an infinte loop in Reiserfs on 2.6.15, if the Reiser
->folks are interested, I've gziped the fs and put it here:
->
->http://burdell.org/~sonny/data.img.breaks.reiserfs.gz
->
->The fs is only 52k when zipped, so its not too bad to download.
->
->This is under stock 2.6.15, sorry I can't post dmesg output because I
->end up having to reboot when it happens and don't have time to debug
->right now.  It looks like it's in the journal replay code where it
->keeps trying to grab some block with a ridiculously large offset. 
->
->
->  
->
->>xfs wins the award for 'noisiest fs in the face of corruption' :-)
->>After a few dozen backtraces from xfs_corruption_error,
->>this fell out...
->>
->>divide error: 0000 [1] SMP
->>    
->>
-><snip trace>
-> 
->  
->
->>(The kernel is based on 2.6.16rc4)
->>    
->>
->
->I see a similar breakage (divide error) on x86 using 2.6.15
->
->Sonny
->
->
->  
->
+Thank you many, many times!!
 
+lg Clemens
