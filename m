@@ -1,9 +1,9 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH 11/11] reiserfs: associate xattr's packing locality w/ owning inode's
+Subject: [PATCH 08/11] reiserfs: add per-file data=ordered mode and use it for xattrs
 Date: Mon, 20 Feb 2006 15:14:58 -0500
-Message-ID: <20060220201458.GA23332@locomotive.unixthugs.org>
+Message-ID: <20060220201458.GA23299@locomotive.unixthugs.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28103-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28104-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -16,58 +16,84 @@ To: ReiserFS List <reiserfs-list@namesys.com>
 Cc: "E. Gryaznova" <grev@namesys.com>
 
 
- Currently, the .reiserfs_priv tree is "just another directory" on the
- filesystem, and the placement rules are unspecialized.
+ This patch allows a per-file data=ordered mode similar to the per-file
+ data=journal mode implemented now. This functionality isn't yet exported,
+ but the main use of this code is to allow xattrs to be ordered even if the
+ the file system is mounted with data=writeback.
 
- This patch associates the dirid of the inode's xattr dir and the xattr files
- with the dirid of the owning inode. Since most xattrs will likely be
- tails anyway, this should give a decent performance boost.
-
- fs/reiserfs/inode.c |    6 ++++++
- fs/reiserfs/xattr.c |    7 +++++++
- 2 files changed, 13 insertions(+)
+ fs/reiserfs/file.c            |    2 +-
+ fs/reiserfs/inode.c           |    2 +-
+ fs/reiserfs/xattr.c           |    4 ++++
+ include/linux/reiserfs_fs.h   |    8 ++++++++
+ include/linux/reiserfs_fs_i.h |    1 +
+ 5 files changed, 15 insertions(+), 2 deletions(-)
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
+diff -ruNpX ../dontdiff linux-2.6.15-staging1/fs/reiserfs/file.c linux-2.6.15-staging2/fs/reiserfs/file.c
+--- linux-2.6.15-staging1/fs/reiserfs/file.c	2006-02-13 11:07:04.000000000 -0500
++++ linux-2.6.15-staging2/fs/reiserfs/file.c	2006-02-13 14:21:12.000000000 -0500
+@@ -784,7 +784,7 @@ int reiserfs_commit_page(struct inode *i
+ 				/* do data=ordered on any page past the end
+ 				 * of file and any buffer marked BH_New.
+ 				 */
+-				if (reiserfs_data_ordered(inode->i_sb) &&
++				if (reiserfs_file_data_ordered(inode) &&
+ 				    (new || page->index >= i_size_index)) {
+ 					reiserfs_add_ordered_list(inode, bh);
+ 				}
 diff -ruNpX ../dontdiff linux-2.6.15-staging1/fs/reiserfs/inode.c linux-2.6.15-staging2/fs/reiserfs/inode.c
---- linux-2.6.15-staging1/fs/reiserfs/inode.c	2006-02-13 14:21:15.000000000 -0500
-+++ linux-2.6.15-staging2/fs/reiserfs/inode.c	2006-02-13 14:21:17.000000000 -0500
-@@ -1806,6 +1806,12 @@ int reiserfs_new_inode(struct reiserfs_t
- 
- 	/* item head of new item */
- 	ih.ih_key.k_dir_id = reiserfs_choose_packing(dir);
-+
-+	/* Pack xattrs with their owning files */
-+	if (is_reiserfs_priv_object(dir) && dentry->d_fsdata != NULL &&
-+	    le32_to_cpu(INODE_PKEY(dentry->d_fsdata)->k_dir_id) != 1)
-+		ih.ih_key.k_dir_id = INODE_PKEY(dentry->d_fsdata)->k_dir_id;
-+
- 	ih.ih_key.k_objectid = cpu_to_le32(reiserfs_get_unused_objectid(th));
- 	if (!ih.ih_key.k_objectid) {
- 		err = -ENOMEM;
+--- linux-2.6.15-staging1/fs/reiserfs/inode.c	2006-02-13 14:21:05.000000000 -0500
++++ linux-2.6.15-staging2/fs/reiserfs/inode.c	2006-02-13 14:21:12.000000000 -0500
+@@ -750,7 +750,7 @@ int reiserfs_get_block(struct inode *ino
+ 			}
+ 			set_buffer_new(bh_result);
+ 			if (buffer_dirty(bh_result)
+-			    && reiserfs_data_ordered(inode->i_sb))
++			    && reiserfs_file_data_ordered(inode))
+ 				reiserfs_add_ordered_list(inode, bh_result);
+ 			put_block_num(item, pos_in_item, allocated_block_nr);
+ 			unfm_ptr = allocated_block_nr;
 diff -ruNpX ../dontdiff linux-2.6.15-staging1/fs/reiserfs/xattr.c linux-2.6.15-staging2/fs/reiserfs/xattr.c
---- linux-2.6.15-staging1/fs/reiserfs/xattr.c	2006-02-13 14:21:17.000000000 -0500
-+++ linux-2.6.15-staging2/fs/reiserfs/xattr.c	2006-02-13 14:21:17.000000000 -0500
-@@ -164,7 +164,10 @@ static struct dentry *open_xa_dir(struct
- 			goto out_err;
- 		}
+--- linux-2.6.15-staging1/fs/reiserfs/xattr.c	2006-02-13 14:21:12.000000000 -0500
++++ linux-2.6.15-staging2/fs/reiserfs/xattr.c	2006-02-13 14:21:12.000000000 -0500
+@@ -464,6 +464,10 @@ reiserfs_xattr_set(struct inode *inode, 
+ 	gfp_mask = mapping_gfp_mask(xinode->i_mapping);
+ 	mapping_set_gfp_mask(xinode->i_mapping, gfp_mask & ~__GFP_FS);
  
-+		xadir->d_fsdata = inode;
- 		err = vfs_mkdir(xaroot->d_inode, xadir, 0700);
-+		xadir->d_fsdata = NULL;
++	/* If we're in writeback mode, we still need to order xattr writes */
++	if (reiserfs_data_writeback(xinode->i_sb))
++		REISERFS_I(xinode)->i_flags |= i_data_ordered;
 +
- 		if (err) {
- 			dput(xadir);
- 			mutex_unlock(&xaroot->d_inode->i_mutex);
-@@ -215,7 +218,11 @@ static struct file *open_xattr_file(stru
- 		if (flags & XATTR_REPLACE)
- 			goto out_err;
+ 	set_fs(KERNEL_DS);
+ 	err = fp->f_op->write(fp, (char *)&rxh, sizeof (rxh), &pos);
+ 	set_fs(old_fs);
+diff -ruNpX ../dontdiff linux-2.6.15-staging1/include/linux/reiserfs_fs.h linux-2.6.15-staging2/include/linux/reiserfs_fs.h
+--- linux-2.6.15-staging1/include/linux/reiserfs_fs.h	2006-02-13 14:21:05.000000000 -0500
++++ linux-2.6.15-staging2/include/linux/reiserfs_fs.h	2006-02-13 14:21:12.000000000 -0500
+@@ -1694,6 +1694,14 @@ static inline int reiserfs_file_data_log
+ 	return 0;
+ }
  
-+		/* By being in this code at all, we already have a reference
-+		 * to inode. */
-+		xafile->d_fsdata = inode;
- 		err = vfs_create(xadir->d_inode, xafile, 0700|S_IFREG, NULL);
-+		xafile->d_fsdata = NULL;
- 		if (err)
- 			goto out_err;
- 	}
++static inline int reiserfs_file_data_ordered(struct inode *inode)
++{
++	if (reiserfs_data_ordered(inode->i_sb) ||
++	    (REISERFS_I(inode)->i_flags & i_data_ordered))
++		return 1;
++	return 0;
++}
++
+ static inline int reiserfs_transaction_running(struct super_block *s)
+ {
+ 	struct reiserfs_transaction_handle *th = current->journal_info;
+diff -ruNpX ../dontdiff linux-2.6.15-staging1/include/linux/reiserfs_fs_i.h linux-2.6.15-staging2/include/linux/reiserfs_fs_i.h
+--- linux-2.6.15-staging1/include/linux/reiserfs_fs_i.h	2006-01-02 22:21:10.000000000 -0500
++++ linux-2.6.15-staging2/include/linux/reiserfs_fs_i.h	2006-02-13 14:21:12.000000000 -0500
+@@ -25,6 +25,7 @@ typedef enum {
+ 	i_link_saved_truncate_mask = 0x0020,
+ 	i_has_xattr_dir = 0x0040,
+ 	i_data_log = 0x0080,
++	i_data_ordered = 0x0100,
+ } reiserfs_inode_flags;
+ 
+ struct reiserfs_inode_info {
