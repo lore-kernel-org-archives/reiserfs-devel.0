@@ -1,9 +1,9 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH 06/11] reiserfs: use generic xattr handlers
-Date: Mon, 20 Feb 2006 15:14:58 -0500
-Message-ID: <20060220201458.GA23277@locomotive.unixthugs.org>
+Subject: [PATCH 02/11] reiserfs: simplify xattr internal file lookups/opens
+Date: Mon, 20 Feb 2006 15:14:57 -0500
+Message-ID: <20060220201457.GA23228@locomotive.unixthugs.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28106-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28107-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -16,1073 +16,406 @@ To: ReiserFS List <reiserfs-list@namesys.com>
 Cc: "E. Gryaznova" <grev@namesys.com>
 
 
- Christoph Hellwig had asked me quite some time ago to port the reiserfs
- xattrs to the generic xattr interface.
+ The xattr file open/lookup code is needlessly complex. We can use vfs-level
+ operations to perform the same work, and also simplify the locking
+ constraints. The locking advantages will be exploited in future patches.
 
- This patch replaces the reiserfs-specific xattr handling code with the
- generic struct xattr_handler.
-
- However, since reiserfs doesn't split the prefix and name when accessing
- xattrs, it can't leverage generic_{set,get,list,remove}xattr without
- needlessly reconstructing the name on the back end.
-
- fs/reiserfs/super.c            |    7 
- fs/reiserfs/xattr.c            |  419 ++++++++++++++---------------------------
- fs/reiserfs/xattr_acl.c        |   72 ++-----
- fs/reiserfs/xattr_security.c   |   26 --
- fs/reiserfs/xattr_trusted.c    |   45 +---
- fs/reiserfs/xattr_user.c       |   30 --
- include/linux/reiserfs_acl.h   |   16 -
- include/linux/reiserfs_fs_sb.h |    3 
- include/linux/reiserfs_xattr.h |   30 --
- 9 files changed, 202 insertions(+), 446 deletions(-)
+ fs/reiserfs/xattr.c |  269 ++++++++++++++++++----------------------------------
+ 1 files changed, 98 insertions(+), 171 deletions(-)
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
-diff -ruNpX ../dontdiff linux-2.6.15-staging1/fs/reiserfs/super.c linux-2.6.15-staging2/fs/reiserfs/super.c
---- linux-2.6.15-staging1/fs/reiserfs/super.c	2006-02-13 14:21:05.000000000 -0500
-+++ linux-2.6.15-staging2/fs/reiserfs/super.c	2006-02-13 14:21:09.000000000 -0500
-@@ -2261,9 +2261,6 @@ static int __init init_reiserfs_fs(void)
- 		return ret;
- 	}
- 
--	if ((ret = reiserfs_xattr_register_handlers()))
--		goto failed_reiserfs_xattr_register_handlers;
--
- 	reiserfs_proc_info_global_init();
- 	reiserfs_proc_register_global("version",
- 				      reiserfs_global_version_in_proc);
-@@ -2274,9 +2271,6 @@ static int __init init_reiserfs_fs(void)
- 		return 0;
- 	}
- 
--	reiserfs_xattr_unregister_handlers();
--
--      failed_reiserfs_xattr_register_handlers:
- 	reiserfs_proc_unregister_global("version");
- 	reiserfs_proc_info_global_done();
- 	destroy_inodecache();
-@@ -2286,7 +2280,6 @@ static int __init init_reiserfs_fs(void)
- 
- static void __exit exit_reiserfs_fs(void)
- {
--	reiserfs_xattr_unregister_handlers();
- 	reiserfs_proc_unregister_global("version");
- 	reiserfs_proc_info_global_done();
- 	unregister_filesystem(&reiserfs_fs_type);
-diff -ruNpX ../dontdiff linux-2.6.15-staging1/fs/reiserfs/xattr_acl.c linux-2.6.15-staging2/fs/reiserfs/xattr_acl.c
---- linux-2.6.15-staging1/fs/reiserfs/xattr_acl.c	2006-02-13 14:21:07.000000000 -0500
-+++ linux-2.6.15-staging2/fs/reiserfs/xattr_acl.c	2006-02-13 14:21:09.000000000 -0500
-@@ -271,7 +271,7 @@ reiserfs_set_acl(struct inode *inode, in
- 	char *name;
- 	void *value = NULL;
- 	struct posix_acl **p_acl;
--	size_t size;
-+	size_t size = 0;
- 	int error;
- 	struct reiserfs_inode_info *reiserfs_i = REISERFS_I(inode);
- 
-@@ -289,6 +289,9 @@ reiserfs_set_acl(struct inode *inode, in
- 				return error;
- 			else {
- 				inode->i_mode = mode;
-+				/* We don't dirty the inode, since
-+				 * reiserfs_xattr_set_handle will do it
-+				 * for us. */
- 				if (error == 0)
- 					acl = NULL;
- 			}
-@@ -308,19 +311,10 @@ reiserfs_set_acl(struct inode *inode, in
- 		value = posix_acl_to_disk(acl, &size);
- 		if (IS_ERR(value))
- 			return (int)PTR_ERR(value);
--		error = reiserfs_xattr_set(inode, name, value, size, 0);
--	} else {
--		error = reiserfs_xattr_del(inode, name);
--		if (error == -ENODATA) {
--			/* This may seem odd here, but it means that the ACL was set
--			 * with a value representable with mode bits. If there was
--			 * an ACL before, reiserfs_xattr_del already dirtied the inode.
--			 */
--			mark_inode_dirty(inode);
--			error = 0;
--		}
- 	}
- 
-+	error = reiserfs_xattr_set(inode, name, value, size, 0);
-+
- 	kfree(value);
- 
- 	if (!error)
-@@ -473,33 +467,22 @@ posix_acl_access_set(struct inode *inode
- 	return xattr_set_acl(inode, ACL_TYPE_ACCESS, value, size);
- }
- 
--static int posix_acl_access_del(struct inode *inode, const char *name)
--{
--	struct reiserfs_inode_info *reiserfs_i = REISERFS_I(inode);
--	if (strlen(name) != sizeof(POSIX_ACL_XATTR_ACCESS) - 1)
--		return -EINVAL;
--	iset_acl(inode, &reiserfs_i->i_acl_access, ERR_PTR(-ENODATA));
--	return 0;
--}
--
--static int
--posix_acl_access_list(struct inode *inode, const char *name, int namelen,
--		      char *out)
-+static size_t posix_acl_access_list(struct inode *inode, char *list,
-+                                    size_t list_size, const char *name,
-+                                    size_t name_len)
- {
--	int len = namelen;
-+	const size_t size = sizeof(POSIX_ACL_XATTR_ACCESS);
- 	if (!reiserfs_posixacl(inode->i_sb))
- 		return 0;
--	if (out)
--		memcpy(out, name, len);
--
--	return len;
-+	if (list && size <= list_size)
-+	 	memcpy(list, POSIX_ACL_XATTR_ACCESS, size);
-+	return size;
- }
- 
--struct reiserfs_xattr_handler posix_acl_access_handler = {
-+struct xattr_handler reiserfs_posix_acl_access_handler = {
- 	.prefix = POSIX_ACL_XATTR_ACCESS,
- 	.get = posix_acl_access_get,
- 	.set = posix_acl_access_set,
--	.del = posix_acl_access_del,
- 	.list = posix_acl_access_list,
- };
- 
-@@ -521,32 +504,21 @@ posix_acl_default_set(struct inode *inod
- 	return xattr_set_acl(inode, ACL_TYPE_DEFAULT, value, size);
- }
- 
--static int posix_acl_default_del(struct inode *inode, const char *name)
-+static size_t posix_acl_default_list(struct inode *inode, char *list,
-+                                     size_t list_size, const char *name,
-+                                     size_t name_len)
- {
--	struct reiserfs_inode_info *reiserfs_i = REISERFS_I(inode);
--	if (strlen(name) != sizeof(POSIX_ACL_XATTR_DEFAULT) - 1)
--		return -EINVAL;
--	iset_acl(inode, &reiserfs_i->i_acl_default, ERR_PTR(-ENODATA));
--	return 0;
--}
--
--static int
--posix_acl_default_list(struct inode *inode, const char *name, int namelen,
--		       char *out)
--{
--	int len = namelen;
-+	const size_t size = sizeof(POSIX_ACL_XATTR_DEFAULT);
- 	if (!reiserfs_posixacl(inode->i_sb))
- 		return 0;
--	if (out)
--		memcpy(out, name, len);
--
--	return len;
-+	if (list && size <= list_size)
-+	 	memcpy(list, POSIX_ACL_XATTR_DEFAULT, size);
-+	return size;
- }
- 
--struct reiserfs_xattr_handler posix_acl_default_handler = {
-+struct xattr_handler reiserfs_posix_acl_default_handler = {
- 	.prefix = POSIX_ACL_XATTR_DEFAULT,
- 	.get = posix_acl_default_get,
- 	.set = posix_acl_default_set,
--	.del = posix_acl_default_del,
- 	.list = posix_acl_default_list,
- };
 diff -ruNpX ../dontdiff linux-2.6.15-staging1/fs/reiserfs/xattr.c linux-2.6.15-staging2/fs/reiserfs/xattr.c
---- linux-2.6.15-staging1/fs/reiserfs/xattr.c	2006-02-13 14:21:09.000000000 -0500
-+++ linux-2.6.15-staging2/fs/reiserfs/xattr.c	2006-02-13 14:21:09.000000000 -0500
-@@ -55,13 +55,54 @@
+--- linux-2.6.15-staging1/fs/reiserfs/xattr.c	2006-02-13 14:21:02.000000000 -0500
++++ linux-2.6.15-staging2/fs/reiserfs/xattr.c	2006-02-13 14:21:02.000000000 -0500
+@@ -46,217 +46,143 @@
+ #include <linux/stat.h>
+ #include <asm/semaphore.h>
+ 
+-#define FL_READONLY 128
+-#define FL_DIR_SEM_HELD 256
  #define PRIVROOT_NAME ".reiserfs_priv"
  #define XAROOT_NAME   "xattrs"
  
--static struct reiserfs_xattr_handler *find_xattr_handler_prefix(const char
--								*prefix);
-+struct xattr_handler *reiserfs_xattr_handlers[] = {
-+	&reiserfs_xattr_user_handler,
-+	&reiserfs_xattr_trusted_handler,
-+#ifdef CONFIG_REISERFS_FS_SECURITY
-+	&reiserfs_xattr_security_handler,
-+#endif
-+#ifdef CONFIG_REISERFS_FS_POSIX_ACL
-+	&reiserfs_posix_acl_access_handler,
-+	&reiserfs_posix_acl_default_handler,
-+#endif
-+	NULL
-+};
-+
-+/*
-+ * In order to implement different sets of xattr operations for each xattr
-+ * prefix with the generic xattr API, a filesystem should create a
-+ * null-terminated array of struct xattr_handler (one for each prefix) and
-+ * hang a pointer to it off of the s_xattr field of the superblock.
-+ *
-+ * The generic_fooxattr() functions will use this list to dispatch xattr
-+ * operations to the correct xattr_handler.
-+ */
-+#define for_each_xattr_handler(handlers, handler)		\
-+		for ((handler) = *(handlers)++;			\
-+			(handler) != NULL;			\
-+			(handler) = *(handlers)++)
-+
-+/* This is the implementation for the xattr plugin infrastructure */
-+static inline struct xattr_handler *find_xattr_handler_prefix(struct xattr_handler **handlers,
-+                                                       const char *name)
-+{
-+	struct xattr_handler *xah;
-+
-+	if (!handlers)
-+		return NULL;
-+
-+	for_each_xattr_handler(handlers, xah) {
-+		if (strncmp(xah->prefix, name, strlen(xah->prefix)) == 0)
-+			break;
-+	}
-+
-+	return xah;
-+}
+ static struct reiserfs_xattr_handler *find_xattr_handler_prefix(const char
+ 								*prefix);
  
- /* Opens the directory corresponding to the inode's extended attribute store.
-  * If flags allow, the tree to the directory may be created. If creation is
-  * prohibited, -ENODATA is returned. */
--static struct dentry *open_xa_dir(const struct inode *inode, int flags)
-+static struct dentry *open_xa_dir(struct inode *inode, int flags)
+-static struct dentry *create_xa_root(struct super_block *sb)
++/* Opens the directory corresponding to the inode's extended attribute store.
++ * If flags allow, the tree to the directory may be created. If creation is
++ * prohibited, -ENODATA is returned. */
++static struct dentry *open_xa_dir(const struct inode *inode, int flags)
  {
- 	struct dentry *xaroot, *xadir;
- 	char namebuf[17];		/* 8 for oid, 8 for gen, 1 for NUL */
-@@ -147,7 +188,7 @@ static struct dentry *open_xa_dir(const 
+-	struct dentry *privroot = dget(REISERFS_SB(sb)->priv_root);
+-	struct dentry *xaroot;
++	struct dentry *xaroot, *xadir;
++	char namebuf[17];		/* 8 for oid, 8 for gen, 1 for NUL */
++	struct dentry *privroot = dget(REISERFS_SB(inode->i_sb)->priv_root);
++	int create_ok = (!flags || flags & XATTR_CREATE);
++	int err = 0;
+ 
+-	/* This needs to be created at mount-time */
++	/* We don't create the privroot */
+ 	if (!privroot)
+-		return ERR_PTR(-EOPNOTSUPP);
++		return ERR_PTR(-ENODATA);
+ 
+-	xaroot = lookup_one_len(XAROOT_NAME, privroot, strlen(XAROOT_NAME));
+-	if (IS_ERR(xaroot)) {
+-		goto out;
+-	} else if (!xaroot->d_inode) {
+-		int err;
+-		mutex_lock(&privroot->d_inode->i_mutex);
+-		err =
+-		    privroot->d_inode->i_op->mkdir(privroot->d_inode, xaroot,
+-						   0700);
+-		mutex_unlock(&privroot->d_inode->i_mutex);
++	xaroot = dget(REISERFS_SB(inode->i_sb)->xattr_root);
+ 
+-		if (err) {
+-			dput(xaroot);
+-			dput(privroot);
+-			return ERR_PTR(err);
++	if (!xaroot) {
++		mutex_lock(&privroot->d_inode->i_mutex);
++		xaroot = lookup_one_len(XAROOT_NAME, privroot,
++		                        strlen(XAROOT_NAME));
++		if (IS_ERR(xaroot)) {
++			mutex_unlock(&privroot->d_inode->i_mutex);
++			err = PTR_ERR(xaroot);
++			goto out_err;
+ 		}
+-		REISERFS_SB(sb)->xattr_root = dget(xaroot);
+-	}
+-
+-      out:
+-	dput(privroot);
+-	return xaroot;
+-}
+-
+-/* This will return a dentry, or error, refering to the xa root directory.
+- * If the xa root doesn't exist yet, the dentry will be returned without
+- * an associated inode. This dentry can be used with ->mkdir to create
+- * the xa directory. */
+-static struct dentry *__get_xa_root(struct super_block *s)
+-{
+-	struct dentry *privroot = dget(REISERFS_SB(s)->priv_root);
+-	struct dentry *xaroot = NULL;
++		if (!xaroot->d_inode) {
++			if (!create_ok) {
++				mutex_unlock(&privroot->d_inode->i_mutex);
++				err = -ENODATA;
++				goto out_err;
++			}
+ 
+-	if (IS_ERR(privroot) || !privroot)
+-		return privroot;
++			err = vfs_mkdir(privroot->d_inode, xaroot, 0700);
++			if (err) {
++				mutex_unlock(&privroot->d_inode->i_mutex);
++				goto out_err;
++			}
++		}
+ 
+-	xaroot = lookup_one_len(XAROOT_NAME, privroot, strlen(XAROOT_NAME));
+-	if (IS_ERR(xaroot)) {
+-		goto out;
+-	} else if (!xaroot->d_inode) {
+-		dput(xaroot);
+-		xaroot = NULL;
+-		goto out;
++		REISERFS_SB(inode->i_sb)->xattr_root = dget(xaroot);
++		mutex_unlock(&privroot->d_inode->i_mutex);
+ 	}
+ 
+-	REISERFS_SB(s)->xattr_root = dget(xaroot);
+-
+-      out:
+-	dput(privroot);
+-	return xaroot;
+-}
+-
+-/* Returns the dentry (or NULL) referring to the root of the extended
+- * attribute directory tree. If it has already been retrieved, it is used.
+- * Otherwise, we attempt to retrieve it from disk. It may also return
+- * a pointer-encoded error.
+- */
+-static inline struct dentry *get_xa_root(struct super_block *s)
+-{
+-	struct dentry *dentry = dget(REISERFS_SB(s)->xattr_root);
++	snprintf (namebuf, sizeof (namebuf), "%X.%X",
++	          le32_to_cpu(INODE_PKEY(inode)->k_objectid),
++		  inode->i_generation);
+ 
+-	if (!dentry)
+-		dentry = __get_xa_root(s);
++	mutex_lock(&xaroot->d_inode->i_mutex);
+ 
+-	return dentry;
+-}
+-
+-/* Opens the directory corresponding to the inode's extended attribute store.
+- * If flags allow, the tree to the directory may be created. If creation is
+- * prohibited, -ENODATA is returned. */
+-static struct dentry *open_xa_dir(const struct inode *inode, int flags)
+-{
+-	struct dentry *xaroot, *xadir;
+-	char namebuf[17];
+-
+-	xaroot = get_xa_root(inode->i_sb);
+-	if (IS_ERR(xaroot)) {
+-		return xaroot;
+-	} else if (!xaroot) {
+-		if (flags == 0 || flags & XATTR_CREATE) {
+-			xaroot = create_xa_root(inode->i_sb);
+-			if (IS_ERR(xaroot))
+-				return xaroot;
+-		}
+-		if (!xaroot)
+-			return ERR_PTR(-ENODATA);
+-	}
+-
+-	/* ok, we have xaroot open */
+-
+-	snprintf(namebuf, sizeof(namebuf), "%X.%X",
+-		 le32_to_cpu(INODE_PKEY(inode)->k_objectid),
+-		 inode->i_generation);
+ 	xadir = lookup_one_len(namebuf, xaroot, strlen(namebuf));
+ 	if (IS_ERR(xadir)) {
+-		dput(xaroot);
+-		return xadir;
++		mutex_unlock(&xaroot->d_inode->i_mutex);
++		err = PTR_ERR(xadir);
++		goto out_err;
+ 	}
+ 
+ 	if (!xadir->d_inode) {
+-		int err;
+-		if (flags == 0 || flags & XATTR_CREATE) {
+-			/* Although there is nothing else trying to create this directory,
+-			 * another directory with the same hash may be created, so we need
+-			 * to protect against that */
+-			err =
+-			    xaroot->d_inode->i_op->mkdir(xaroot->d_inode, xadir,
+-							 0700);
+-			if (err) {
+-				dput(xaroot);
+-				dput(xadir);
+-				return ERR_PTR(err);
+-			}
++		if (!create_ok) {
++			dput(xadir);
++			mutex_unlock(&xaroot->d_inode->i_mutex);
++			err = -ENODATA;
++			goto out_err;
+ 		}
+-		if (!xadir->d_inode) {
+-			dput(xaroot);
++
++		err = vfs_mkdir(xaroot->d_inode, xadir, 0700);
++		if (err) {
+ 			dput(xadir);
+-			return ERR_PTR(-ENODATA);
++			mutex_unlock(&xaroot->d_inode->i_mutex);
++			goto out_err;
+ 		}
+ 	}
++	mutex_unlock(&xaroot->d_inode->i_mutex);
+ 
++      out:
+ 	dput(xaroot);
++	dput(privroot);
+ 	return xadir;
++
++      out_err:
++	xadir = ERR_PTR(err);
++	goto out;
+ }
+ 
+ /* Returns a dentry corresponding to a specific extended attribute file
   * for the inode. If flags allow, the file is created. Otherwise, a
   * valid or negative dentry, or an error is returned. */
- /* We don't down xadir->i_mutex because inode->xattr_sem covers it */
--static struct file *open_xattr_file(const struct inode *inode,
-+static struct file *open_xattr_file(struct inode *inode,
-                                     const char *name, int flags)
+-static struct dentry *get_xa_file_dentry(const struct inode *inode,
+-					 const char *name, int flags)
++static struct file *open_xattr_file(const struct inode *inode,
++                                    const char *name, int flags)
  {
  	struct dentry *xadir, *xafile;
-@@ -392,41 +433,29 @@ reiserfs_xattr_set(struct inode *inode, 
- 		return -EOPNOTSUPP;
+ 	int err = 0;
  
- 	down_write(&REISERFS_I(inode)->xattr_sem);
--	if (!buffer) {
--		struct reiserfs_xattr_handler *xah =
--					find_xattr_handler_prefix(name);
--		/* Deletion pre-operation */
--		if (xah->del) {
--			err = xah->del(inode, name);
--			if (err)
--				goto out;
--		}
--		err = reiserfs_xattr_del(inode, name);
--		up_write(&REISERFS_I(inode)->xattr_sem);
--		return err;
+ 	xadir = open_xa_dir(inode, flags);
+-	if (IS_ERR(xadir)) {
+-		return ERR_PTR(PTR_ERR(xadir));
+-	} else if (xadir && !xadir->d_inode) {
+-		dput(xadir);
+-		return ERR_PTR(-ENODATA);
 -	}
--
--      open_file:
- 	fp = open_xattr_file(inode, name, flags);
++	if (IS_ERR(xadir))
++		return (struct file *)xadir;
+ 
+-	xafile = lookup_one_len(name, xadir, strlen(name));
+-	if (IS_ERR(xafile)) {
+-		dput(xadir);
+-		return ERR_PTR(PTR_ERR(xafile));
+-	}
++	BUG_ON(!xadir->d_inode);
+ 
+-	if (xafile->d_inode) {	/* file exists */
+-		if (flags & XATTR_CREATE) {
+-			err = -EEXIST;
+-			dput(xafile);
+-			goto out;
+-		}
+-	} else if (flags & XATTR_REPLACE || flags & FL_READONLY) {
+-		goto out;
+-	} else {
+-		/* inode->i_mutex is down, so nothing else can try to create
+-		 * the same xattr */
+-		err = xadir->d_inode->i_op->create(xadir->d_inode, xafile,
+-						   0700 | S_IFREG, NULL);
++	mutex_lock(&xadir->d_inode->i_mutex);
+ 
+-		if (err) {
+-			dput(xafile);
+-			goto out;
+-		}
++	xafile = lookup_one_len (name, xadir, strlen(name));
++	if (IS_ERR(xafile)) {
++		err = PTR_ERR(xafile);
++		goto out_err;
+ 	}
+ 
+-      out:
+-	dput(xadir);
+-	if (err)
+-		xafile = ERR_PTR(err);
+-	return xafile;
+-}
++	err = -EEXIST;
++	if (xafile->d_inode && flags & XATTR_CREATE)
++		goto out_err;
+ 
+-/* Opens a file pointer to the attribute associated with inode */
+-static struct file *open_xa_file(const struct inode *inode, const char *name,
+-				 int flags)
+-{
+-	struct dentry *xafile;
+-	struct file *fp;
++	if (!xafile->d_inode) {
++		err = -ENODATA;
++		if (flags & XATTR_REPLACE)
++			goto out_err;
+ 
+-	xafile = get_xa_file_dentry(inode, name, flags);
+-	if (IS_ERR(xafile))
+-		return ERR_PTR(PTR_ERR(xafile));
+-	else if (!xafile->d_inode) {
+-		dput(xafile);
+-		return ERR_PTR(-ENODATA);
++		err = vfs_create(xadir->d_inode, xafile, 0700|S_IFREG, NULL);
++		if (err)
++			goto out_err;
+ 	}
+ 
+-	fp = dentry_open(xafile, NULL, O_RDWR);
+-	/* dentry_open dputs the dentry if it fails */
++	dput(xadir);
++	mutex_unlock(&xadir->d_inode->i_mutex);
++
++	return dentry_open(xafile, NULL, O_RDWR);
+ 
+-	return fp;
++      out_err:
++     	mutex_unlock(&xadir->d_inode->i_mutex);
++     	dput(xafile);
++	dput(xadir);
++	return ERR_PTR(err);
+ }
+ 
+ /*
+@@ -478,7 +404,7 @@ reiserfs_xattr_set(struct inode *inode, 
+ 	}
+ 
+       open_file:
+-	fp = open_xa_file(inode, name, flags);
++	fp = open_xattr_file(inode, name, flags);
  	if (IS_ERR(fp)) {
  		err = PTR_ERR(fp);
  		goto out;
+@@ -583,7 +509,7 @@ reiserfs_xattr_get(const struct inode *i
+ 	if (get_inode_sd_version(inode) == STAT_DATA_V1)
+ 		return -EOPNOTSUPP;
+ 
+-	fp = open_xa_file(inode, name, FL_READONLY);
++	fp = open_xattr_file(inode, name, XATTR_REPLACE);
+ 	if (IS_ERR(fp)) {
+ 		err = PTR_ERR(fp);
+ 		goto out;
+@@ -631,6 +557,7 @@ reiserfs_xattr_get(const struct inode *i
+ 				 "Invalid hash for xattr (%s) associated "
+ 				 "with %k", name, INODE_PKEY(inode));
+ 		err = -EIO;
++		goto out_dput;
  	}
  
--	xinode = fp->f_dentry->d_inode;
--
--	/* we need to copy it off.. */
--	if (xinode->i_nlink > 1) {
--		fput(fp);
--		err = reiserfs_xattr_del(inode, name);
--		if (err < 0)
--			goto out;
--		/* We just killed the old one, we're not replacing anymore */
--		if (flags & XATTR_REPLACE)
--			flags &= ~XATTR_REPLACE;
--		goto open_file;
-+	/* Clearing it out - delete it. */
-+	if (!buffer) {
-+		struct inode *dir = fp->f_dentry->d_parent->d_inode;
-+		struct dentry *dentry = dget (fp->f_dentry);
-+		fput (fp);
-+		err = vfs_unlink(dir, dentry);
-+		up_write(&REISERFS_I(inode)->xattr_sem);
-+		dput(dentry);
-+		if (!err) {
-+			inode->i_ctime = CURRENT_TIME_SEC;
-+			mark_inode_dirty(inode);
-+		}
-+		return err;
+       out_dput:
+@@ -673,9 +600,7 @@ __reiserfs_xattr_del(struct dentry *xadi
+ 		return -EIO;
  	}
  
-+	xinode = fp->f_dentry->d_inode;
-+
- 	rxh.h_hash = le32_to_cpu (xattr_hash(buffer, buffer_size));
- 
- 	/* We've got a transaction open - we don't want to be dropping down
-@@ -471,6 +500,13 @@ reiserfs_xattr_set(struct inode *inode, 
- 
- 	err = 0;
- 
-+      out_filp:
-+	mapping_set_gfp_mask(xinode->i_mapping, gfp_mask);
-+	fput(fp);
-+
-+      out:
-+	up_write(&REISERFS_I(inode)->xattr_sem);
-+
- 	/* We can't mark the inode dirty if it's not hashed. This is the case
- 	 * when we're inheriting the default ACL. If we dirty it, the inode
- 	 * gets marked dirty, but won't (ever) make it onto the dirty list until
-@@ -480,12 +516,6 @@ reiserfs_xattr_set(struct inode *inode, 
- 		mark_inode_dirty(inode);
- 	}
- 
--      out_filp:
--	mapping_set_gfp_mask(xinode->i_mapping, gfp_mask);
--	fput(fp);
--
--      out:
--	up_write(&REISERFS_I(inode)->xattr_sem);
- 	return err;
- }
- 
-@@ -493,7 +523,7 @@ reiserfs_xattr_set(struct inode *inode, 
-  * inode->i_mutex: down
-  */
- int
--reiserfs_xattr_get(const struct inode *inode, const char *name, void *buffer,
-+reiserfs_xattr_get(struct inode *inode, const char *name, void *buffer,
- 		   size_t buffer_size)
- {
- 	ssize_t err = 0;
-@@ -573,11 +603,16 @@ reiserfs_xattr_get(const struct inode *i
- 	return err;
- }
- 
-+/* The following are side effects of other operations that aren't explicitly
-+ * modifying extended attributes. This includes operations such as permissions
-+ * or ownership changes, object deletions, etc. */
-+
- static int
--__reiserfs_xattr_del(struct dentry *xadir, const char *name, int namelen)
-+reiserfs_delete_xattrs_filler(void *buf, const char *name, int namelen,
-+			      loff_t offset, ino_t ino, unsigned int d_type)
- {
-+	struct dentry *xadir = (struct dentry *)buf;
- 	struct dentry *dentry;
--	struct inode *dir = xadir->d_inode;
- 	int err = 0;
- 
- 	dentry = lookup_one_len(name, xadir, namelen);
-@@ -593,19 +628,6 @@ __reiserfs_xattr_del(struct dentry *xadi
- 	if (S_ISDIR(dentry->d_inode->i_mode))
- 		goto out_file;
- 
--	if (!is_reiserfs_priv_object(dentry->d_inode)) {
--		reiserfs_warning(dir->i_sb, "OID %08x [%.*s/%.*s] doesn't have "
--				 "priv flag set [parent is %sset].",
--				 le32_to_cpu(INODE_PKEY(dentry->d_inode)->
--					     k_objectid), xadir->d_name.len,
--				 xadir->d_name.name, namelen, name,
--				 is_reiserfs_priv_object(xadir->
--							 d_inode) ? "" :
--				 "not ");
--		dput(dentry);
--		return -EIO;
--	}
--
- 	err = vfs_unlink(xadir->d_inode, dentry);
+-	err = dir->i_op->unlink(dir, dentry);
+-	if (!err)
+-		d_delete(dentry);
++	err = vfs_unlink(xadir->d_inode, dentry);
  
        out_file:
-@@ -615,43 +637,6 @@ __reiserfs_xattr_del(struct dentry *xadi
- 	return err;
- }
- 
--int reiserfs_xattr_del(struct inode *inode, const char *name)
--{
--	struct dentry *dir;
--	int err;
--
--	dir = open_xa_dir(inode, XATTR_REPLACE);
--	if (IS_ERR(dir)) {
--		err = PTR_ERR(dir);
--		goto out;
--	}
--
--	err = __reiserfs_xattr_del(dir, name, strlen(name));
--	dput(dir);
--
--	if (!err) {
--		inode->i_ctime = CURRENT_TIME_SEC;
--		mark_inode_dirty(inode);
--	}
--
--      out:
--	return err;
--}
--
--/* The following are side effects of other operations that aren't explicitly
-- * modifying extended attributes. This includes operations such as permissions
-- * or ownership changes, object deletions, etc. */
--
--static int
--reiserfs_delete_xattrs_filler(void *buf, const char *name, int namelen,
--			      loff_t offset, ino_t ino, unsigned int d_type)
--{
--	struct dentry *xadir = (struct dentry *)buf;
--
--	return __reiserfs_xattr_del(xadir, name, namelen);
--
--}
--
- /* This is called w/ inode->i_mutex downed */
- int reiserfs_delete_xattrs(struct inode *inode)
- {
-@@ -811,15 +796,15 @@ ssize_t
- reiserfs_getxattr(struct dentry * dentry, const char *name, void *buffer,
- 		  size_t size)
- {
--	struct reiserfs_xattr_handler *xah = find_xattr_handler_prefix(name);
--	int err;
-+	struct inode *inode = dentry->d_inode;
-+	struct xattr_handler *handler;
- 
--	if (!xah || !reiserfs_xattrs(dentry->d_sb) ||
--	    get_inode_sd_version(dentry->d_inode) == STAT_DATA_V1)
-+	handler = find_xattr_handler_prefix(inode->i_sb->s_xattr, name);
-+
-+	if (!handler || get_inode_sd_version(inode) == STAT_DATA_V1)
- 		return -EOPNOTSUPP;
- 
--	err = xah->get(dentry->d_inode, name, buffer, size);
--	return err;
-+	return handler->get(inode, name, buffer, size);
- }
- 
- /*
-@@ -831,15 +816,15 @@ int
- reiserfs_setxattr(struct dentry *dentry, const char *name, const void *value,
- 		  size_t size, int flags)
- {
--	struct reiserfs_xattr_handler *xah = find_xattr_handler_prefix(name);
--	int err;
-+	struct inode *inode = dentry->d_inode;
-+	struct xattr_handler *handler;
- 
--	if (!xah || !reiserfs_xattrs(dentry->d_sb) ||
--	    get_inode_sd_version(dentry->d_inode) == STAT_DATA_V1)
-+	handler = find_xattr_handler_prefix(inode->i_sb->s_xattr, name);
-+
-+	if (!handler || get_inode_sd_version(inode) == STAT_DATA_V1)
- 		return -EOPNOTSUPP;
- 
--	err = xah->set(dentry->d_inode, name, value, size, flags);
--	return err;
-+	return handler->set(inode, name, value, size, flags);
- }
- 
- /*
-@@ -849,82 +834,67 @@ reiserfs_setxattr(struct dentry *dentry,
-  */
- int reiserfs_removexattr(struct dentry *dentry, const char *name)
- {
--	int err;
--	struct reiserfs_xattr_handler *xah = find_xattr_handler_prefix(name);
--
--	if (!xah || !reiserfs_xattrs(dentry->d_sb) ||
--	    get_inode_sd_version(dentry->d_inode) == STAT_DATA_V1)
--		return -EOPNOTSUPP;
-+	struct inode *inode = dentry->d_inode;
-+	struct xattr_handler *handler;
- 
--	down_write(&REISERFS_I(dentry->d_inode)->xattr_sem);
--	/* Deletion pre-operation */
--	if (xah->del) {
--		err = xah->del(dentry->d_inode, name);
--		if (err)
--			goto out;
--	}
-+	handler = find_xattr_handler_prefix(inode->i_sb->s_xattr, name);
- 
--	err = reiserfs_xattr_del(dentry->d_inode, name);
--
--	dentry->d_inode->i_ctime = CURRENT_TIME_SEC;
--	mark_inode_dirty(dentry->d_inode);
-+	if (!handler || get_inode_sd_version(inode) == STAT_DATA_V1)
-+		return -EOPNOTSUPP;
- 
--      out:
--	up_write(&REISERFS_I(dentry->d_inode)->xattr_sem);
--	return err;
-+	return handler->set(inode, name, NULL, 0, XATTR_REPLACE);
- }
- 
--/* This is what filldir will use:
-- * r_pos will always contain the amount of space required for the entire
-- * list. If r_pos becomes larger than r_size, we need more space and we
-- * return an error indicating this. If r_pos is less than r_size, then we've
-- * filled the buffer successfully and we return success */
--struct reiserfs_listxattr_buf {
--	int r_pos;
--	int r_size;
--	char *r_buf;
--	struct inode *r_inode;
-+struct listxattr_buf {
-+	size_t size;
-+	size_t pos;
-+	char *buf;
-+	struct inode *inode;
- };
- 
--static int
--reiserfs_listxattr_filler(void *buf, const char *name, int namelen,
--			  loff_t offset, ino_t ino, unsigned int d_type)
-+static int listxattr_filler(void *buf, const char *name, int namelen,
-+                            loff_t offset, ino_t ino, unsigned int d_type)
- {
--	struct reiserfs_listxattr_buf *b = (struct reiserfs_listxattr_buf *)buf;
--	int len = 0;
--	if (name[0] != '.'
--	    || (namelen != 1 && (name[1] != '.' || namelen != 2))) {
--		struct reiserfs_xattr_handler *xah =
--		    find_xattr_handler_prefix(name);
--		if (!xah)
--			return 0;	/* Unsupported xattr name, skip it */
--
--		/* We call ->list() twice because the operation isn't required to just
--		 * return the name back - we want to make sure we have enough space */
--		len += xah->list(b->r_inode, name, namelen, NULL);
--
--		if (len) {
--			if (b->r_pos + len + 1 <= b->r_size) {
--				char *p = b->r_buf + b->r_pos;
--				p += xah->list(b->r_inode, name, namelen, p);
--				*p++ = '\0';
--			}
--			b->r_pos += len + 1;
-+	struct listxattr_buf *b = (struct listxattr_buf *)buf;
-+	size_t size;
-+	if (name[0] != '.' ||
-+	    (namelen != 1 && (name[1] != '.' || namelen != 2))) {
-+		struct xattr_handler *handler;
-+		handler = find_xattr_handler_prefix(b->inode->i_sb->s_xattr,
-+		                                    name);
-+		if (!handler)	/* Unsupported xattr name */
-+			return 0;
-+		if (b->buf) {
-+			size = handler->list(b->inode, b->buf + b->pos,
-+			                 b->size, name, namelen);
-+			if (size > b->size)
-+				return -ERANGE;
-+		} else {
-+			size = handler->list(b->inode, NULL, 0, name, namelen);
- 		}
--	}
- 
-+		b->pos += size;
-+	}
- 	return 0;
- }
- 
- /*
-  * Inode operation listxattr()
-+ *
-+ * We totally ignore the generic listxattr here because it would be stupid
-+ * not to. Since the xattrs are organized in a directory, we can just
-+ * readdir to find them.
-  */
- ssize_t reiserfs_listxattr(struct dentry * dentry, char *buffer, size_t size)
- {
- 	struct file *fp;
+ 	dput(dentry);
+@@ -689,7 +614,7 @@ int reiserfs_xattr_del(struct inode *ino
  	struct dentry *dir;
- 	int err = 0;
--	struct reiserfs_listxattr_buf buf;
-+	struct listxattr_buf buf = {
-+		.inode = dentry->d_inode,
-+		.buf = buffer,
-+		.size = buffer ? size : 0,
-+	};
+ 	int err;
  
- 	if (!dentry->d_inode)
- 		return -EINVAL;
-@@ -938,30 +908,22 @@ ssize_t reiserfs_listxattr(struct dentry
+-	dir = open_xa_dir(inode, FL_READONLY);
++	dir = open_xa_dir(inode, XATTR_REPLACE);
  	if (IS_ERR(dir)) {
  		err = PTR_ERR(dir);
- 		if (err == -ENODATA)
--			err = 0;	/* Not an error if there aren't any xattrs */
-+			err = 0;  /* Not an error if there aren't any xattrs */
  		goto out;
- 	}
- 
--	fp = dentry_open(dir, NULL, O_RDWR);
-+	fp = dentry_open(dir, NULL, O_RDWR|O_NOATIME|O_DIRECTORY);
- 	if (IS_ERR(fp)) {
- 		err = PTR_ERR(fp);
- 		/* dentry_open dputs the dentry if it fails */
- 		goto out;
- 	}
- 
--	buf.r_buf = buffer;
--	buf.r_size = buffer ? size : 0;
--	buf.r_pos = 0;
--	buf.r_inode = dentry->d_inode;
--
--	err = xattr_readdir(fp, reiserfs_listxattr_filler, &buf);
-+	err = xattr_readdir(fp, listxattr_filler, &buf);
- 	if (err)
- 		goto out_dir;
- 
--	if (buf.r_pos > buf.r_size && buffer != NULL)
--		err = -ERANGE;
--	else
--		err = buf.r_pos;
-+	err = buf.pos;
- 
-       out_dir:
- 	fput(fp);
-@@ -971,95 +933,6 @@ ssize_t reiserfs_listxattr(struct dentry
- 	return err;
- }
- 
--/* This is the implementation for the xattr plugin infrastructure */
--static struct list_head xattr_handlers = LIST_HEAD_INIT(xattr_handlers);
--static DEFINE_RWLOCK(handler_lock);
--
--static struct reiserfs_xattr_handler *find_xattr_handler_prefix(const char
--								*prefix)
--{
--	struct reiserfs_xattr_handler *xah = NULL;
--	struct list_head *p;
--
--	read_lock(&handler_lock);
--	list_for_each(p, &xattr_handlers) {
--		xah = list_entry(p, struct reiserfs_xattr_handler, handlers);
--		if (strncmp(xah->prefix, prefix, strlen(xah->prefix)) == 0)
--			break;
--		xah = NULL;
--	}
--
--	read_unlock(&handler_lock);
--	return xah;
--}
--
--static void __unregister_handlers(void)
--{
--	struct reiserfs_xattr_handler *xah;
--	struct list_head *p, *tmp;
--
--	list_for_each_safe(p, tmp, &xattr_handlers) {
--		xah = list_entry(p, struct reiserfs_xattr_handler, handlers);
--		if (xah->exit)
--			xah->exit();
--
--		list_del_init(p);
--	}
--	INIT_LIST_HEAD(&xattr_handlers);
--}
--
--int __init reiserfs_xattr_register_handlers(void)
--{
--	int err = 0;
--	struct reiserfs_xattr_handler *xah;
--	struct list_head *p;
--
--	write_lock(&handler_lock);
--
--	/* If we're already initialized, nothing to do */
--	if (!list_empty(&xattr_handlers)) {
--		write_unlock(&handler_lock);
--		return 0;
--	}
--
--	/* Add the handlers */
--	list_add_tail(&user_handler.handlers, &xattr_handlers);
--	list_add_tail(&trusted_handler.handlers, &xattr_handlers);
--#ifdef CONFIG_REISERFS_FS_SECURITY
--	list_add_tail(&security_handler.handlers, &xattr_handlers);
--#endif
--#ifdef CONFIG_REISERFS_FS_POSIX_ACL
--	list_add_tail(&posix_acl_access_handler.handlers, &xattr_handlers);
--	list_add_tail(&posix_acl_default_handler.handlers, &xattr_handlers);
--#endif
--
--	/* Run initializers, if available */
--	list_for_each(p, &xattr_handlers) {
--		xah = list_entry(p, struct reiserfs_xattr_handler, handlers);
--		if (xah->init) {
--			err = xah->init();
--			if (err) {
--				list_del_init(p);
--				break;
--			}
--		}
--	}
--
--	/* Clean up other handlers, if any failed */
--	if (err)
--		__unregister_handlers();
--
--	write_unlock(&handler_lock);
--	return err;
--}
--
--void reiserfs_xattr_unregister_handlers(void)
--{
--	write_lock(&handler_lock);
--	__unregister_handlers();
--	write_unlock(&handler_lock);
--}
--
- /* This will catch lookups from the fs root to .reiserfs_priv */
- static int
- xattr_lookup_poison(struct dentry *dentry, struct qstr *q1, struct qstr *name)
-@@ -1088,23 +961,20 @@ int reiserfs_xattr_init(struct super_blo
- 
- 	/* We need generation numbers to ensure that the oid mapping is correct
- 	 * v3.5 filesystems don't have them. */
--	if (!old_format_only(s)) {
--		set_bit(REISERFS_XATTRS, &(REISERFS_SB(s)->s_mount_opt));
--	} else if (reiserfs_xattrs_optional(s)) {
--		/* Old format filesystem, but optional xattrs have been enabled
--		 * at mount time. Error out. */
--		reiserfs_warning(s, "xattrs/ACLs not supported on pre v3.6 "
--				 "format filesystem. Failing mount.");
--		err = -EOPNOTSUPP;
--		goto error;
--	} else {
--		/* Old format filesystem, but no optional xattrs have been enabled. This
--		 * means we silently disable xattrs on the filesystem. */
--		clear_bit(REISERFS_XATTRS, &(REISERFS_SB(s)->s_mount_opt));
-+	if (old_format_only(s)) {
-+		if (reiserfs_xattrs_optional(s)) {
-+			/* Old format filesystem, but optional xattrs have
-+			 * been enabled. Error out. */
-+			reiserfs_warning(s, "xattrs/ACLs not supported "
-+			                 "on pre-v3.6 format filesystems. "
-+			                 "Failing mount.");
-+			err = -EOPNOTSUPP;
-+		}
-+		return err;
- 	}
- 
- 	/* If we don't have the privroot located yet - go find it */
--	if (reiserfs_xattrs(s) && !REISERFS_SB(s)->priv_root) {
-+	if (!REISERFS_SB(s)->priv_root) {
- 		struct dentry *dentry;
- 		dentry = lookup_one_len(PRIVROOT_NAME, s->s_root,
- 					strlen(PRIVROOT_NAME));
-@@ -1144,14 +1014,17 @@ int reiserfs_xattr_init(struct super_blo
- 			reiserfs_warning(s, "xattrs/ACLs enabled and couldn't "
- 					 "find/create .reiserfs_priv. Failing mount.");
- 			err = -EOPNOTSUPP;
-+			goto error;
- 		}
- 	}
- 
-+	if (!err)
-+		s->s_xattr = reiserfs_xattr_handlers;
-+
-       error:
- 	/* This is only nonzero if there was an error initializing the xattr
- 	 * directory or if there is a condition where we don't support them. */
- 	if (err) {
--		clear_bit(REISERFS_XATTRS, &(REISERFS_SB(s)->s_mount_opt));
- 		clear_bit(REISERFS_XATTRS_USER, &(REISERFS_SB(s)->s_mount_opt));
- 		clear_bit(REISERFS_POSIXACL, &(REISERFS_SB(s)->s_mount_opt));
- 	}
-diff -ruNpX ../dontdiff linux-2.6.15-staging1/fs/reiserfs/xattr_security.c linux-2.6.15-staging2/fs/reiserfs/xattr_security.c
---- linux-2.6.15-staging1/fs/reiserfs/xattr_security.c	2006-01-02 22:21:10.000000000 -0500
-+++ linux-2.6.15-staging2/fs/reiserfs/xattr_security.c	2006-02-13 14:21:09.000000000 -0500
-@@ -33,35 +33,25 @@ security_set(struct inode *inode, const 
- 	return reiserfs_xattr_set(inode, name, buffer, size, flags);
- }
- 
--static int security_del(struct inode *inode, const char *name)
-+static size_t security_list(struct inode *inode, char *list, size_t list_len,
-+			    const char *name, size_t namelen)
- {
--	if (strlen(name) < sizeof(XATTR_SECURITY_PREFIX))
--		return -EINVAL;
--
--	if (is_reiserfs_priv_object(inode))
--		return -EPERM;
--
--	return 0;
--}
--
--static int
--security_list(struct inode *inode, const char *name, int namelen, char *out)
--{
--	int len = namelen;
-+	const size_t len = namelen + 1;
- 
- 	if (is_reiserfs_priv_object(inode))
+@@ -735,7 +660,7 @@ int reiserfs_delete_xattrs(struct inode 
  		return 0;
+ 	}
+ 	reiserfs_read_lock_xattrs(inode->i_sb);
+-	dir = open_xa_dir(inode, FL_READONLY);
++	dir = open_xa_dir(inode, XATTR_REPLACE);
+ 	reiserfs_read_unlock_xattrs(inode->i_sb);
+ 	if (IS_ERR(dir)) {
+ 		err = PTR_ERR(dir);
+@@ -761,9 +686,11 @@ int reiserfs_delete_xattrs(struct inode 
  
--	if (out)
--		memcpy(out, name, len);
-+	if (list && len <= list_len) {
-+		memcpy(list, name, namelen);
-+		list[namelen] = '\0';
-+	}
- 
- 	return len;
- }
- 
--struct reiserfs_xattr_handler security_handler = {
-+struct xattr_handler reiserfs_xattr_security_handler = {
- 	.prefix = XATTR_SECURITY_PREFIX,
- 	.get = security_get,
- 	.set = security_set,
--	.del = security_del,
- 	.list = security_list,
- };
-diff -ruNpX ../dontdiff linux-2.6.15-staging1/fs/reiserfs/xattr_trusted.c linux-2.6.15-staging2/fs/reiserfs/xattr_trusted.c
---- linux-2.6.15-staging1/fs/reiserfs/xattr_trusted.c	2006-02-13 11:06:42.000000000 -0500
-+++ linux-2.6.15-staging2/fs/reiserfs/xattr_trusted.c	2006-02-13 14:21:09.000000000 -0500
-@@ -15,10 +15,7 @@ trusted_get(struct inode *inode, const c
- 	if (strlen(name) < sizeof(XATTR_TRUSTED_PREFIX))
- 		return -EINVAL;
- 
--	if (!reiserfs_xattrs(inode->i_sb))
--		return -EOPNOTSUPP;
--
--	if (!(capable(CAP_SYS_ADMIN) || is_reiserfs_priv_object(inode)))
-+	if (!capable(CAP_SYS_ADMIN) || is_reiserfs_priv_object(inode))
- 		return -EPERM;
- 
- 	return reiserfs_xattr_get(inode, name, buffer, size);
-@@ -31,50 +28,30 @@ trusted_set(struct inode *inode, const c
- 	if (strlen(name) < sizeof(XATTR_TRUSTED_PREFIX))
- 		return -EINVAL;
- 
--	if (!reiserfs_xattrs(inode->i_sb))
--		return -EOPNOTSUPP;
--
--	if (!(capable(CAP_SYS_ADMIN) || is_reiserfs_priv_object(inode)))
-+	if (!capable(CAP_SYS_ADMIN) || is_reiserfs_priv_object(inode))
- 		return -EPERM;
- 
- 	return reiserfs_xattr_set(inode, name, buffer, size, flags);
- }
- 
--static int trusted_del(struct inode *inode, const char *name)
-+static size_t trusted_list(struct inode *inode, char *list, size_t list_size,
-+                           const char *name, size_t name_len)
- {
--	if (strlen(name) < sizeof(XATTR_TRUSTED_PREFIX))
--		return -EINVAL;
-+	const size_t len = name_len + 1;
- 
--	if (!reiserfs_xattrs(inode->i_sb))
--		return -EOPNOTSUPP;
--
--	if (!(capable(CAP_SYS_ADMIN) || is_reiserfs_priv_object(inode)))
--		return -EPERM;
--
--	return 0;
--}
--
--static int
--trusted_list(struct inode *inode, const char *name, int namelen, char *out)
--{
--	int len = namelen;
--
--	if (!reiserfs_xattrs(inode->i_sb))
-+	if (!capable(CAP_SYS_ADMIN) || is_reiserfs_priv_object(inode))
+ 	/* Leftovers besides . and .. -- that's not good. */
+ 	if (dir->d_inode->i_nlink <= 2) {
+-		root = get_xa_root(inode->i_sb);
++		root = dget(REISERFS_SB(inode->i_sb)->xattr_root);
+ 		reiserfs_write_lock_xattrs(inode->i_sb);
++		mutex_lock(&root->d_inode->i_mutex);
+ 		err = vfs_rmdir(root->d_inode, dir);
++		mutex_unlock(&root->d_inode->i_mutex);
+ 		reiserfs_write_unlock_xattrs(inode->i_sb);
+ 		dput(root);
+ 	} else {
+@@ -828,7 +755,7 @@ int reiserfs_chown_xattrs(struct inode *
  		return 0;
+ 	}
+ 	reiserfs_read_lock_xattrs(inode->i_sb);
+-	dir = open_xa_dir(inode, FL_READONLY);
++	dir = open_xa_dir(inode, XATTR_REPLACE);
+ 	reiserfs_read_unlock_xattrs(inode->i_sb);
+ 	if (IS_ERR(dir)) {
+ 		if (PTR_ERR(dir) != -ENODATA)
+@@ -1025,7 +952,7 @@ ssize_t reiserfs_listxattr(struct dentry
  
--	if (!(capable(CAP_SYS_ADMIN) || is_reiserfs_priv_object(inode)))
--		return 0;
--
--	if (out)
--		memcpy(out, name, len);
--
-+	if (list && len <= list_size) {
-+		memcpy(list, name, name_len);
-+		list[name_len] = '\0';
-+	}
- 	return len;
- }
- 
--struct reiserfs_xattr_handler trusted_handler = {
-+struct xattr_handler reiserfs_xattr_trusted_handler = {
- 	.prefix = XATTR_TRUSTED_PREFIX,
- 	.get = trusted_get,
- 	.set = trusted_set,
--	.del = trusted_del,
- 	.list = trusted_list,
- };
-diff -ruNpX ../dontdiff linux-2.6.15-staging1/fs/reiserfs/xattr_user.c linux-2.6.15-staging2/fs/reiserfs/xattr_user.c
---- linux-2.6.15-staging1/fs/reiserfs/xattr_user.c	2006-02-13 11:06:42.000000000 -0500
-+++ linux-2.6.15-staging2/fs/reiserfs/xattr_user.c	2006-02-13 14:21:09.000000000 -0500
-@@ -6,10 +6,6 @@
- #include <linux/reiserfs_xattr.h>
- #include <asm/uaccess.h>
- 
--#ifdef CONFIG_REISERFS_FS_POSIX_ACL
--# include <linux/reiserfs_acl.h>
--#endif
--
- #define XATTR_USER_PREFIX "user."
- 
- static int
-@@ -36,33 +32,23 @@ user_set(struct inode *inode, const char
- 	return reiserfs_xattr_set(inode, name, buffer, size, flags);
- }
- 
--static int user_del(struct inode *inode, const char *name)
-+static size_t user_list(struct inode *inode, char *list, size_t list_size,
-+                        const char *name, size_t name_len)
- {
--	if (strlen(name) < sizeof(XATTR_USER_PREFIX))
--		return -EINVAL;
-+	const size_t len = name_len + 1;
- 
- 	if (!reiserfs_xattrs_user(inode->i_sb))
--		return -EOPNOTSUPP;
--	return 0;
--}
--
--static int
--user_list(struct inode *inode, const char *name, int namelen, char *out)
--{
--	int len = namelen;
--	if (!reiserfs_xattrs_user(inode->i_sb))
- 		return 0;
--
--	if (out)
--		memcpy(out, name, len);
--
-+	if (list && len <= list_size) {
-+		memcpy(list, name, name_len);
-+		list[name_len] = '\0';
-+	}
- 	return len;
- }
- 
--struct reiserfs_xattr_handler user_handler = {
-+struct xattr_handler reiserfs_xattr_user_handler = {
- 	.prefix = XATTR_USER_PREFIX,
- 	.get = user_get,
- 	.set = user_set,
--	.del = user_del,
- 	.list = user_list,
- };
-diff -ruNpX ../dontdiff linux-2.6.15-staging1/include/linux/reiserfs_acl.h linux-2.6.15-staging2/include/linux/reiserfs_acl.h
---- linux-2.6.15-staging1/include/linux/reiserfs_acl.h	2006-02-13 11:06:57.000000000 -0500
-+++ linux-2.6.15-staging2/include/linux/reiserfs_acl.h	2006-02-13 14:21:09.000000000 -0500
-@@ -52,10 +52,8 @@ int reiserfs_acl_chmod(struct inode *ino
- int reiserfs_inherit_default_acl(struct inode *dir, struct dentry *dentry,
- 				 struct inode *inode);
- int reiserfs_cache_default_acl(struct inode *dir);
--extern int reiserfs_xattr_posix_acl_init(void) __init;
--extern int reiserfs_xattr_posix_acl_exit(void);
--extern struct reiserfs_xattr_handler posix_acl_default_handler;
--extern struct reiserfs_xattr_handler posix_acl_access_handler;
-+extern struct xattr_handler reiserfs_posix_acl_default_handler;
-+extern struct xattr_handler reiserfs_posix_acl_access_handler;
- #else
- 
- #define reiserfs_cache_default_acl(inode) 0
-@@ -65,16 +63,6 @@ static inline struct posix_acl *reiserfs
- 	return NULL;
- }
- 
--static inline int reiserfs_xattr_posix_acl_init(void)
--{
--	return 0;
--}
--
--static inline int reiserfs_xattr_posix_acl_exit(void)
--{
--	return 0;
--}
--
- static inline int reiserfs_acl_chmod(struct inode *inode)
- {
- 	return 0;
-diff -ruNpX ../dontdiff linux-2.6.15-staging1/include/linux/reiserfs_fs_sb.h linux-2.6.15-staging2/include/linux/reiserfs_fs_sb.h
---- linux-2.6.15-staging1/include/linux/reiserfs_fs_sb.h	2006-02-13 14:21:05.000000000 -0500
-+++ linux-2.6.15-staging2/include/linux/reiserfs_fs_sb.h	2006-02-13 14:21:09.000000000 -0500
-@@ -450,7 +450,6 @@ enum reiserfs_mount_options {
- 	REISERFS_NO_UNHASHED_RELOCATION,
- 	REISERFS_HASHED_RELOCATION,
- 	REISERFS_ATTRS,
--	REISERFS_XATTRS,
- 	REISERFS_XATTRS_USER,
- 	REISERFS_POSIXACL,
- 	REISERFS_BARRIER_NONE,
-@@ -488,7 +487,7 @@ enum reiserfs_mount_options {
- #define reiserfs_data_log(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_DATA_LOG))
- #define reiserfs_data_ordered(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_DATA_ORDERED))
- #define reiserfs_data_writeback(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_DATA_WRITEBACK))
--#define reiserfs_xattrs(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_XATTRS))
-+#define reiserfs_xattrs(s) ((s)->s_xattr != NULL)
- #define reiserfs_xattrs_user(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_XATTRS_USER))
- #define reiserfs_posixacl(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_POSIXACL))
- #define reiserfs_xattrs_optional(s) (reiserfs_xattrs_user(s) || reiserfs_posixacl(s))
-diff -ruNpX ../dontdiff linux-2.6.15-staging1/include/linux/reiserfs_xattr.h linux-2.6.15-staging2/include/linux/reiserfs_xattr.h
---- linux-2.6.15-staging1/include/linux/reiserfs_xattr.h	2006-02-13 14:21:07.000000000 -0500
-+++ linux-2.6.15-staging2/include/linux/reiserfs_xattr.h	2006-02-13 14:21:09.000000000 -0500
-@@ -16,20 +16,6 @@ struct reiserfs_xattr_header {
- 
- #ifdef __KERNEL__
- 
--struct reiserfs_xattr_handler {
--	char *prefix;
--	int (*init) (void);
--	void (*exit) (void);
--	int (*get) (struct inode * inode, const char *name, void *buffer,
--		    size_t size);
--	int (*set) (struct inode * inode, const char *name, const void *buffer,
--		    size_t size, int flags);
--	int (*del) (struct inode * inode, const char *name);
--	int (*list) (struct inode * inode, const char *name, int namelen,
--		     char *out);
--	struct list_head handlers;
--};
--
- #ifdef CONFIG_REISERFS_FS_XATTR
- #define is_reiserfs_priv_object(inode) IS_PRIVATE(inode)
- #define has_xattr_dir(inode) (REISERFS_I(inode)->i_flags & i_has_xattr_dir)
-@@ -44,20 +30,15 @@ int reiserfs_chown_xattrs(struct inode *
- int reiserfs_xattr_init(struct super_block *sb, int mount_flags);
- int reiserfs_permission(struct inode *inode, int mask, struct nameidata *nd);
- 
--int reiserfs_xattr_del(struct inode *, const char *);
--int reiserfs_xattr_get(const struct inode *, const char *, void *, size_t);
-+int reiserfs_xattr_get(struct inode *, const char *, void *, size_t);
- int reiserfs_xattr_set(struct inode *, const char *, const void *, size_t, int);
- 
--extern struct reiserfs_xattr_handler user_handler;
--extern struct reiserfs_xattr_handler trusted_handler;
-+extern struct xattr_handler reiserfs_xattr_user_handler;
-+extern struct xattr_handler reiserfs_xattr_trusted_handler;
- #ifdef CONFIG_REISERFS_FS_SECURITY
--extern struct reiserfs_xattr_handler security_handler;
-+extern struct xattr_handler reiserfs_xattr_security_handler;
- #endif
- 
--int reiserfs_xattr_register_handlers(void) __init;
--void reiserfs_xattr_unregister_handlers(void);
--
--
- static inline void reiserfs_mark_inode_private(struct inode *inode)
- {
- 	inode->i_flags |= S_PRIVATE;
-@@ -74,9 +55,6 @@ static inline void reiserfs_mark_inode_p
- 
- #define reiserfs_permission NULL
- 
--#define reiserfs_xattr_register_handlers() 0
--#define reiserfs_xattr_unregister_handlers()
--
- static inline int reiserfs_delete_xattrs(struct inode *inode)
- {
- 	return 0;
+ 	reiserfs_read_lock_xattr_i(dentry->d_inode);
+ 	reiserfs_read_lock_xattrs(dentry->d_sb);
+-	dir = open_xa_dir(dentry->d_inode, FL_READONLY);
++	dir = open_xa_dir(dentry->d_inode, XATTR_REPLACE);
+ 	reiserfs_read_unlock_xattrs(dentry->d_sb);
+ 	if (IS_ERR(dir)) {
+ 		err = PTR_ERR(dir);
