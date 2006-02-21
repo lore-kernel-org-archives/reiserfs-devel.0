@@ -1,48 +1,34 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: reiser4 bug in 2.6.16-rc2-mm1
-Date: Tue, 21 Feb 2006 17:57:27 +0300
-Message-ID: <1140533847.12162.28.camel@tribesman.namesys.com>
-References: <20060210142215.GA1714@deprez-aerts.dyndns.org>
-	 <200602162317.32054.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
-	 <fdc23ba20602170843u333d1328kbd658812692a3ea3@mail.gmail.com>
+From: Jure =?UTF-8?Q?Pe=C4=8Dar?= <pegasus@nerv.eu.org>
+Subject: external journal questions
+Date: Tue, 21 Feb 2006 16:04:11 +0100
+Message-ID: <20060221160411.65704253.pegasus@nerv.eu.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28108-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-28109-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <fdc23ba20602170843u333d1328kbd658812692a3ea3@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: John Cohorn <elotemuygrande@gmail.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="macroman"
+To: reiserfs-list@namesys.com
 
-Hello
-
-On Fri, 2006-02-17 at 10:43 -0600, John Cohorn wrote:
-> Is there a known issue with 2.6.16-xxx-mm1? I too am having severe and
-> very random, but reproducible problems which will completely lock up
-> my machine minutes after mounting an R4 partition if not seconds. I
-> did try disabling 4K stacks in my .config. Also, this is an Athlon 64
-> X2 I'm running with so maybe there are SMP issues? 
-
-no, it does not look so.
-
-> One of my friends said that Reiser4 became unstable for him also when
-> he upgraded to a dual core Athlon64...but until I test for myself
-> that's just a wild theory that it's an SMP bug. This machine is
-> otherwise stable in Memtest, in Windows playing the latest games, and
-> on Linux compiling huge amounts of software.
-> 
-> If there are not known issues with the latest kernels then I will
-> happily try to send detailed configurations and logs of what's
-> happening this evening. I have two shiny new 250GB SATA drives on my
-> machine and I can test freely with one of them until I need the space.
-> I'd love to help squash any bugs that I can :)
-> 
-
-If you described the exact sequence of commands which makes reiser4 to
-crash - that would help a lot.
-
-
+CkhpIGFsbCwKCk5vdyB0aGF0IHNvbGlkIHN0YXRlIGRpc2tzIGFyZSBnZXR0aW5nIGFmZm9yZGFi
+bGUgKEdpZ2FieXRlIGlSYW0sIGZvcgpleGFtcGxlKSwgaXQgbWFrZXMgc2Vuc2UgdG8gdXNlIHRo
+ZW0gYXMgZXh0ZXJuYWwgam91cm5hbCB3aXRoIGZ1bGwgZGF0YQpqb3VybmFsaW5nLCBzbyB0aGV5
+IGNhY2hlIGFsbCB0aGUgc21hbGwgd3JpdGVzIGFuZCBkdW1wIHRoZW0gdG8gZGlza3MKaW4gb25l
+IHNpbmdsZSBzZXF1ZW50aWFsIHdyaXRlIG9uIGV2ZXJ5IGpvdXJuYWwgZmx1c2guCgpJIGtub3cg
+aG93IHRvIGNvbmZpZ3VyZSB0aGF0IHVuZGVyIGV4dDMuIFNpbXBseSBzZXQgdXAgZXh0ZXJuYWwg
+am91cm5hbAphbmQgbW91bnQgZmlsZXN5c3RlbSB3aXRoIGRhdGE9am91cm5hbCBhbmQgY29tbWl0
+PTYwMCBvciBzb21lIHN1Y2gKdmFsdWUuIEJ1dCBJJ20gbm90IHNvIHN1cmUgYWJvdXQgcmVpc2Vy
+ZnMuCgpJIGtub3cgaXQgbm93IGtub3dzIGhvdyB0byBkbyBmdWxsIGRhdGEgam91cm5hbGluZywg
+YnV0IEkgY2FuJ3QgZmluZAp0aGUgZG9jcyBhbnl3aGVyZSB0aGF0IHdvdWxkIG1lbnRpb24gY29t
+bWl0IG1vdW50IG9wdGlvbi4gRG9lcyBpdCB3b3JrCmF0IGFsbCBhbmQgZG9lcyBpdCB3b3JrIGlu
+IHRoZSBzYW1lIHdheSBhcyBmb3IgZXh0Mz8KCkFsc28sIEkndmUgc2VlbiBwYXRjaGVzIGJ5IEpl
+ZmYgTWFob25leSBmcm9tIG5vdmVtYmVyIGxhc3QgeWVhciB0aGF0Cm9wdGltaXplIHNvbWUgZXh0
+ZXJuYWwgam91cm5hbCBkZWZhdWx0cy4gSSdtIHRoaW5raW5nIGFib3V0IGEgN1RiIG9yIHNvCkNv
+cmFpZCBBb0UgZGV2aWNlIHdpdGggNGdiIGlSYW0gYXMgZXh0ZXJuYWwgam91cm5hbCAuLi4gZG9l
+cyBhbnlvbmUgcnVuCnNvbWV0aGluZyBsaWtlIHRoaXMgaW4gcHJvZHVjdGlvbj8gSG93IHdlbGwg
+ZG9lcyBpdCB3b3JrPwoKSmVmZiwgYXJlIHlvdXIgcGF0aGNlcyBhbHJlYWR5IGluIHRoZSBMaW51
+cyB0cmVlIG9yIGRvIEkgaGF2ZSB0byB1c2UKc29tZSAtbW0gb3IgU3VzZSBrZXJuZWw/CgoKLS0g
+CgpKdXJlIFBlxI1hcgpodHRwOi8vanVyZS5wZWNhci5vcmcKCg==
