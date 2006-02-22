@@ -1,283 +1,170 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: external journal questions
-Date: Tue, 21 Feb 2006 12:07:26 -0500
-Message-ID: <43FB48CE.9070701@suse.com>
-References: <20060221160411.65704253.pegasus@nerv.eu.org>
+From: "John Cohorn" <elotemuygrande@gmail.com>
+Subject: Re: reiser4 bug in 2.6.16-rc2-mm1
+Date: Tue, 21 Feb 2006 19:58:48 -0600
+Message-ID: <fdc23ba20602211758n6e853298i7b406a3e3a6d55d8@mail.gmail.com>
+References: <20060210142215.GA1714@deprez-aerts.dyndns.org>
+	 <200602162317.32054.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+	 <fdc23ba20602170843u333d1328kbd658812692a3ea3@mail.gmail.com>
+	 <1140533847.12162.28.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------090904000809000402090900"
-Return-path: <reiserfs-list-return-28110-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/mixed; 
+	boundary="----=_Part_203_28272137.1140573528008"
+Return-path: <reiserfs-list-return-28111-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060221160411.65704253.pegasus@nerv.eu.org>
+In-Reply-To: <1140533847.12162.28.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: =?UTF-8?B?SnVyZSBQZcSNYXI=?= <pegasus@nerv.eu.org>
-Cc: reiserfs-list@namesys.com
+To: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
 
---------------090904000809000402090900
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+------=_Part_203_28272137.1140573528008
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_204_5509671.1140573528008"
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+------=_Part_204_5509671.1140573528008
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Jure Pečar wrote:
-> Hi all,
-> 
-> Now that solid state disks are getting affordable (Gigabyte iRam, for
-> example), it makes sense to use them as external journal with full data
-> journaling, so they cache all the small writes and dump them to disks
-> in one single sequential write on every journal flush.
-> 
-> I know how to configure that under ext3. Simply set up external journal
-> and mount filesystem with data=journal and commit=600 or some such
-> value. But I'm not so sure about reiserfs.
-> 
-> I know it now knows how to do full data journaling, but I can't find
-> the docs anywhere that would mention commit mount option. Does it work
-> at all and does it work in the same way as for ext3?
-> 
-> Also, I've seen patches by Jeff Mahoney from november last year that
-> optimize some external journal defaults. I'm thinking about a 7Tb or so
-> Coraid AoE device with 4gb iRam as external journal ... does anyone run
-> something like this in production? How well does it work?
-> 
-> Jeff, are your pathces already in the Linus tree or do I have to use
-> some -mm or Suse kernel?
+First off, thank you for taking the time to respond.
 
-Hi Jure -
+Basically any heavy activity on the partition seems to trigger it. Here's a
+short transcript:
 
-The kernel patches have been part of mainline since Nov 30, 2005. Any
-kernel newer than 2.6.15-rc4 will contain them.
+dually ~ # cat /proc/version
+Linux version 2.6.16-rc2-mm1 (root@localhost) (gcc version 3.3.6 (Gentoo
+3.3.6, ssp-3.3.6-1.0, pie-8.7.8)) #7 SMP PREEMPT Thu Feb 16 21:19:53 Local
+time zone must be set--
+dually ~ # mkfs.reiser4 --version
+mkfs.reiser4 1.0.5
+Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing governed by
+reiser4progs/COPYING.
+dually ~ # mkfs.reiser4 /dev/sdb1 --yes
+dually ~ # mount /dev/sdb1 /data1
+dually ~ # klogd -d -f ~/kernel.log
+dually ~ # cd /data1
+dually data1 # cp -ra /usr/src/linux-2.6.16-rc2-mm1/ .
+dually data1 # tar cf linux.bz2 linux-2.6.16-rc2-mm1/
 
-You may also want to patch your reiserfsprogs with the patch I posted
-along with the kernel patch. This just adjusts reiserfsprogs to use some
-sane defaults. I've attached it for convenience.
+...after about half a minute of activity I receive the message which I've
+attached as a small JPEG
+"reiser4 panicked cowardly: reiser4[tar(4078)] commit_current_atom
+(fs/reiser4/txnmgr.c:1130) [zam-597]:". I can't see whether it was line 113=
+0
+or  1138.  I'll take a quick look myself, but I'm completely unfamiliar wit=
+h
+reiser4 sources and the kernel sources in general.
 
-- -Jeff
+After this my system is completely locked up. When I mount the partition
+after restarting it no longer contains any files. I have few or no problems
+when creating, mounting, and working on reiser4 partitions when booted from
+the System recovery liveCD so it must be something in the latest sources or
+in my kernel configuration(which is 100% stable for everything else under
+reiser3, but I haven't bothered to perfect yet).
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
+Apologies about the JPEG, I could not figure out how to get the kernel
+output logged into a file(maybe it freezes before the file can flush to
+disk, i dunno). If you know of a way, I welcome instruction.
 
-iD8DBQFD+0jOLPWxlyuTD7IRAgEEAJ9I+YbYoZEWTy8sRDOubKsY/mLZPQCfZWfF
-4qBU1QZo5WyxzzrSgkGksP8=
-=NQSQ
------END PGP SIGNATURE-----
+On 2/21/06, Vladimir V. Saveliev <vs@namesys.com> wrote:
+>
+> Hello
+>
+> On Fri, 2006-02-17 at 10:43 -0600, John Cohorn wrote:
+> > Is there a known issue with 2.6.16-xxx-mm1? I too am having severe and
+> > very random, but reproducible problems which will completely lock up
+> > my machine minutes after mounting an R4 partition if not seconds. I
+> > did try disabling 4K stacks in my .config. Also, this is an Athlon 64
+> > X2 I'm running with so maybe there are SMP issues?
+>
+> no, it does not look so.
+>
+> > One of my friends said that Reiser4 became unstable for him also when
+> > he upgraded to a dual core Athlon64...but until I test for myself
+> > that's just a wild theory that it's an SMP bug. This machine is
+> > otherwise stable in Memtest, in Windows playing the latest games, and
+> > on Linux compiling huge amounts of software.
+> >
+> > If there are not known issues with the latest kernels then I will
+> > happily try to send detailed configurations and logs of what's
+> > happening this evening. I have two shiny new 250GB SATA drives on my
+> > machine and I can test freely with one of them until I need the space.
+> > I'd love to help squash any bugs that I can :)
+> >
+>
+> If you described the exact sequence of commands which makes reiser4 to
+> crash - that would help a lot.
+>
+>
+>
 
---------------090904000809000402090900
-Content-Type: application/x-crossover-eml;
- name="[PATCH] reiserfsprogs: changes for better external journal defaults.eml"
-Content-Transfer-Encoding: base64
-Content-Disposition: inline;
- filename="[PATCH] reiserfsprogs: changes for better external journal defaults.eml"
+------=_Part_204_5509671.1140573528008
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-UmV0dXJuLVBhdGg6IDxyZWlzZXJmcy1saXN0LXJldHVybi0yNzEyMi1qZWZmbT1zdXNlLmNv
-bUBuYW1lc3lzLmNvbT4KUmVjZWl2ZWQ6IGZyb20gbG9jb21vdGl2ZSAoW3VuaXggc29ja2V0
-XSkKCWJ5IGxvY29tb3RpdmUgKEN5cnVzIHYyLjIuMykgd2l0aCBMTVRQOyBXZWQsIDIzIE5v
-diAyMDA1IDE5OjE5OjU4IC0wNTAwClgtU2lldmU6IENNVSBTaWV2ZSAyLjIKUmVjZWl2ZWQ6
-IGZyb20gbG9jYWxob3N0IChsb2NhbGhvc3QgWzEyNy4wLjAuMV0pCglieSBsb2NvbW90aXZl
-LnVuaXh0aHVncy5vcmcgKFBvc3RmaXgpIHdpdGggU01UUCBpZCBBODk2QzgzRDkwCglmb3Ig
-PGplZmZtQGxvY29tb3RpdmUudW5peHRodWdzLm9yZz47IFdlZCwgMjMgTm92IDIwMDUgMTk6
-MTk6NTggLTA1MDAgKEVTVCkKUmVjZWl2ZWQ6IGZyb20gbG9jYWxob3N0IChsb2NhbGhvc3Qg
-WzEyNy4wLjAuMV0pCglieSBsb2NvbW90aXZlLnVuaXh0aHVncy5vcmcgKFBvc3RmaXgpIHdp
-dGggRVNNVFAgaWQgMTgxOUE4M0Q4QQoJZm9yIDxqZWZmbUB1bml4dGh1Z3Mub3JnPjsgV2Vk
-LCAyMyBOb3YgMjAwNSAxOToxOTo1MiAtMDUwMCAoRVNUKQpSZWNlaXZlZDogZnJvbSBpbWFw
-LnN1c2UuZGUgWzE5NS4xMzUuMjIxLjEyXQoJYnkgbG9jYWxob3N0IHdpdGggSU1BUCAoZmV0
-Y2htYWlsLTYuMi41KQoJZm9yIGplZmZtQHVuaXh0aHVncy5vcmcgKHNpbmdsZS1kcm9wKTsg
-V2VkLCAyMyBOb3YgMjAwNSAxOToxOTo1MiAtMDUwMCAoRVNUKQpSZWNlaXZlZDogZnJvbSBp
-bWFwLnN1c2UuZGUgKFt1bml4IHNvY2tldF0pCglieSBpbWFwLWRocyAoQ3lydXMgdjIuMS4x
-Nikgd2l0aCBMTVRQOyBUaHUsIDI0IE5vdiAyMDA1IDAxOjE3OjIzICswMTAwClgtU2lldmU6
-IENNVSBTaWV2ZSAyLjIKUmVjZWl2ZWQ6IGZyb20gUmVsYXkxLnN1c2UuZGUgKHJlbGF5MS5z
-dXNlLmRlIFsxNDkuNDQuMTYwLjg3XSkKCSh1c2luZyBUTFN2MSB3aXRoIGNpcGhlciBFREgt
-UlNBLURFUy1DQkMzLVNIQSAoMTY4LzE2OCBiaXRzKSkKCShDbGllbnQgQ04gInJlbGF5LnN1
-c2UuZGUiLCBJc3N1ZXIgIlN1U0UgTGludXggQUcgaW50ZXJuYWwgSU1BUC1TZXJ2ZXIgQ0Ei
-ICh2ZXJpZmllZCBPSykpCglieSBpbWFwLnN1c2UuZGUgKFBvc3RmaXgpIHdpdGggRVNNVFAg
-aWQgQUI2ODIzOEI4ODUKCWZvciA8amVmZm1AaW1hcC1kaHMuc3VzZS5kZT47IFRodSwgMjQg
-Tm92IDIwMDUgMDE6MTc6MjMgKzAxMDAgKENFVCkKUmVjZWl2ZWQ6IGJ5IFJlbGF5MS5zdXNl
-LmRlIChQb3N0Zml4KQoJaWQgOUMzMzIzNUJBNTsgVGh1LCAyNCBOb3YgMjAwNSAwMToxNzoy
-MyArMDEwMCAoQ0VUKQpSZWNlaXZlZDogZnJvbSBSZWxheTEuc3VzZS5kZSAobG9jYWxob3N0
-IFsxMjcuMC4wLjFdKQoJYnkgUmVsYXkxLnN1c2UuZGUgKFBvc3RmaXgpIHdpdGggRVNNVFAg
-aWQgOEZGMEQzNUJBNAoJZm9yIDxqZWZmbUBzdXNlLmNvbT47IFRodSwgMjQgTm92IDIwMDUg
-MDE6MTc6MjMgKzAxMDAgKENFVCkKUmVjZWl2ZWQ6IGZyb20gUmVsYXkxLnN1c2UuZGUgKFsx
-MjcuMC4wLjFdKQogYnkgUmVsYXkxLnN1c2UuZGUgKFJlbGF5MSBbMTI3LjAuMC4xXSkgKGFt
-YXZpc2QtbmV3LCBwb3J0IDEwMDI2KSB3aXRoIEVTTVRQCiBpZCAxNTA4Ni0xNCBmb3IgPGpl
-ZmZtQHN1c2UuY29tPjsgVGh1LCAyNCBOb3YgMjAwNSAwMToxNzoyMyArMDEwMCAoQ0VUKQpS
-ZWNlaXZlZDogZnJvbSBteDEuc3VzZS5kZSAobnMuc3VzZS5kZSBbMTk1LjEzNS4yMjAuMl0p
-CgkodXNpbmcgVExTdjEgd2l0aCBjaXBoZXIgREhFLVJTQS1BRVMyNTYtU0hBICgyNTYvMjU2
-IGJpdHMpKQoJKE5vIGNsaWVudCBjZXJ0aWZpY2F0ZSByZXF1ZXN0ZWQpCglieSBSZWxheTEu
-c3VzZS5kZSAoUG9zdGZpeCkgd2l0aCBFU01UUCBpZCAzRURCRDM0RjRFCglmb3IgPGplZmZt
-QHN1c2UuY29tPjsgVGh1LCAyNCBOb3YgMjAwNSAwMToxNzoyMyArMDEwMCAoQ0VUKQpSZWNl
-aXZlZDogZnJvbSB0aGVic2gubmFtZXN5cy5jb20gKHRoZWJzaC5uYW1lc3lzLmNvbSBbMjEy
-LjE2LjcuNjVdKQoJYnkgbXgxLnN1c2UuZGUgKFBvc3RmaXgpIHdpdGggU01UUCBpZCBERjhC
-OUUwQkIKCWZvciA8amVmZm1Ac3VzZS5jb20+OyBUaHUsIDI0IE5vdiAyMDA1IDAxOjE3OjIy
-ICswMTAwIChDRVQpClJlY2VpdmVkOiAocW1haWwgNDkwMCBpbnZva2VkIGJ5IHVpZCA1MDEp
-OyAyNCBOb3YgMjAwNSAwMDoxNjo1NiAtMDAwMApNYWlsaW5nLUxpc3Q6IGNvbnRhY3QgcmVp
-c2VyZnMtbGlzdC1oZWxwQG5hbWVzeXMuY29tOyBydW4gYnkgZXptbG0KUHJlY2VkZW5jZTog
-YnVsawpsaXN0LWhlbHA6IDxtYWlsdG86cmVpc2VyZnMtbGlzdC1oZWxwQG5hbWVzeXMuY29t
-PgpsaXN0LXVuc3Vic2NyaWJlOiA8bWFpbHRvOnJlaXNlcmZzLWxpc3QtdW5zdWJzY3JpYmVA
-bmFtZXN5cy5jb20+Cmxpc3QtcG9zdDogPG1haWx0bzpyZWlzZXJmcy1saXN0QG5hbWVzeXMu
-Y29tPgpFcnJvcnMtVG86IGZseEBuYW1lc3lzLmNvbQpYLU1haWxpbmctTGlzdDogcmVpc2Vy
-ZnMtbGlzdEBuYW1lc3lzLmNvbQpEZWxpdmVyZWQtVG86IG1haWxpbmcgbGlzdCByZWlzZXJm
-cy1saXN0QG5hbWVzeXMuY29tClJlY2VpdmVkOiAocW1haWwgNDgzOCBpbnZva2VkIGJ5IHVp
-ZCA4NSk7IDI0IE5vdiAyMDA1IDAwOjE2OjUyIC0wMDAwClJlY2VpdmVkOiBmcm9tIGplZmZt
-QGxvY29tb3RpdmUudW5peHRodWdzLm9yZyBieSB0aGVic2gubmFtZXN5cy5jb20gYnkgdWlk
-IDgyIHdpdGggcW1haWwtc2Nhbm5lci0xLjE1IAogKHNwYW1hc3Nhc3NpbjogMi40My1jdnMu
-ICBDbGVhcjpTQTowKDAuMC8yLjAgdGVzdHM9bm9uZSBhdXRvbGVhcm49bm8gdmVyc2lvbj0y
-LjYwKTouIAogUHJvY2Vzc2VkIGluIDEuMzA1NDYyIHNlY3MpOyAyNCBOb3YgMjAwNSAwMDox
-Njo1MiAtMDAwMApSZWNlaXZlZDogZnJvbSBsb2NvbW90aXZlLmNzaC5yaXQuZWR1IChIRUxP
-IGxvY29tb3RpdmUudW5peHRodWdzLm9yZykgKHBvc3RmaXhAMTI5LjIxLjYwLjE0OSkKICBi
-eSB0aGVic2gubmFtZXN5cy5jb20gd2l0aCBTTVRQOyAyNCBOb3YgMjAwNSAwMDoxNjo1MCAt
-MDAwMApSZWNlaXZlZDogYnkgbG9jb21vdGl2ZS51bml4dGh1Z3Mub3JnIChQb3N0Zml4LCBm
-cm9tIHVzZXJpZCA1MDApCglpZCA4OTk4MjgzRDkwOyBXZWQsIDIzIE5vdiAyMDA1IDE5OjE2
-OjQ5IC0wNTAwIChFU1QpCkRhdGU6IFdlZCwgMjMgTm92IDIwMDUgMTk6MTY6NDkgLTA1MDAK
-RnJvbTogSmVmZiBNYWhvbmV5IDxqZWZmbUBzdXNlLmNvbT4KVG86IFJlaXNlckZTIExpc3Qg
-PHJlaXNlcmZzLWxpc3RAbmFtZXN5cy5jb20+ClN1YmplY3Q6IFtQQVRDSF0gcmVpc2VyZnNw
-cm9nczogY2hhbmdlcyBmb3IgYmV0dGVyIGV4dGVybmFsIGpvdXJuYWwgZGVmYXVsdHMKTWVz
-c2FnZS1JRDogPDIwMDUxMTI0MDAxNjQ5LkdBNDMxMEBsb2NvbW90aXZlLnVuaXh0aHVncy5v
-cmc+Ck1pbWUtVmVyc2lvbjogMS4wCkNvbnRlbnQtVHlwZTogdGV4dC9wbGFpbjsgY2hhcnNl
-dD11cy1hc2NpaQpDb250ZW50LURpc3Bvc2l0aW9uOiBpbmxpbmUKWC1PcGVyYXRpbmctU3lz
-dGVtOiBMaW51eCAyLjYuNS03LjIwMS1zbXAgKGk2ODYpClgtR1BHLUZpbmdlcnByaW50OiBB
-MTZGIEE5NDYgNkMyNCA4MUNDIDk5QkIgIDg1QUYgMkNGNSBCMTk3IDJCOTMgMEZCMgpYLUdQ
-Ry1LZXk6IGh0dHA6Ly93d3cuY3NoLnJpdC5lZHUvfmplZmZtL2plZmZtLmdwZwpVc2VyLUFn
-ZW50OiBNdXR0LzEuNS42aQpYLVNwYW0tRENDOiA6IApYLVZpcnVzLVNjYW5uZWQ6IGJ5IGFt
-YXZpc2QtbmV3IGF0IFJlbGF5MS5zdXNlLmRlClgtU3BhbS1TdGF0dXM6IE5vLCBoaXRzPTAu
-MSB0YWdnZWRfYWJvdmU9LTIwLjAgcmVxdWlyZWQ9NS4wIHRlc3RzPUJBWUVTXzUwLAogRk9S
-R0VEX1JDVkRfSEVMTwpYLVNwYW0tTGV2ZWw6IApYLURTUEFNLVJlc3VsdDogV2hpdGVsaXN0
-ZWQKWC1EU1BBTS1Qcm9jZXNzZWQ6IFdlZCBOb3YgMjMgMTk6MTk6NTggMjAwNQpYLURTUEFN
-LUNvbmZpZGVuY2U6IDAuOTk5NwpYLURTUEFNLVByb2JhYmlsaXR5OiAwLjAwMDAKWC1EU1BB
-TS1TaWduYXR1cmU6IDEsNDM4NTA3MmU2MDc3MTEwOTUxMTAyMwpYLURTUEFNLUZhY3RvcnM6
-IDI3LAoJRnJvbSpKZWZmIE1haG9uZXkgPGplZmZtQHN1c2UuY29tPiwgMC4wMDAxMCwKCWZz
-K2NoYXIsIDAuMDAwMTAsCgljYW4rZW5kLCAwLjAwMDEwLAoJcmVpc2VyZnMram91cm5hbCwg
-MC4wMDAxMCwKCXJlaXNlcmZzK2pvdXJuYWwsIDAuMDAwMTAsCglUbypSZWlzZXJGUytMaXN0
-LCAwLjAwMDEwLAoJZGV2aWNlK3Vuc2lnbmVkLCAwLjAwMDEwLAoJRnJvbSpNYWhvbmV5K2pl
-ZmZtLCAwLjAwMDEwLAoJYmgraW50LCAwLjAwMDEwLAoJaW50K3JlaXNlcmZzLCAwLjAwMDEw
-LAoJaW50K3JlaXNlcmZzLCAwLjAwMDEwLAoJdXNlZCtzcGFjZSwgMC4wMDAxMCwKCXBhcnRp
-dGlvbitpdCwgMC4wMDAxMCwKCXRoaXMrYmVoYXZpb3IsIDAuMDAwMTAsCglta3JlaXNlcmZz
-LCAwLjAwMDEwLAoJbWtyZWlzZXJmcywgMC4wMDAxMCwKCVgtR1BHLUtleSpodHRwLCAwLjAw
-MDEwLAoJam91cm5hbCtwYXJhbXMsIDAuMDAwMTAsCglzdHJ1Y3Qrc3RhdCwgMC4wMDAxMCwK
-CWZzK3ZvaWQsIDAuMDAwMTAsCglYLU9wZXJhdGluZy1TeXN0ZW0qTGludXgrc21wLCAwLjAw
-MDEwLAoJZnMraW50LCAwLjAwMDEwLAoJaW50K2ZvcmNlLCAwLjAwMDEwLAoJaW50K2ZvcmNl
-LCAwLjAwMDEwLAoJd2h5K2FuZCwgMC4wMDAxMCwKCWJoK2Jsb2NrbnIsIDAuMDAwMTAsCgli
-aCtibG9ja25yLCAwLjAwMDEwCgogQ3VycmVudGx5LCB3aGVuIHByZXNlbnRlZCB3aXRoIGFu
-IGV4dGVybmFsIGpvdXJuYWwgZGV2aWNlLCByZWlzZXJmc3Byb2dzIHdpbGwKIHVzZSB0aGUg
-ZW50aXJlIGRldmljZS4gVGhpcyBpcyBmaW5lIHdoZW4gdGhlIGV4dGVybmFsIGRldmljZSBp
-cywgc2F5LCBhCiAxMjggTUIgTlZSQU0gImRpc2siLCBidXQgd2hlbiBpdCBpcyBhbm90aGVy
-IGV4dGVybmFsIHBhcnRpdGlvbiBpdCBjYW4KIGNhdXNlIHByb2JsZW1zIG9uIDMyLWJpdCBt
-YWNoaW5lcyBhbmQgNjQtYml0IG1hY2hpbmVzIHdpdGggbGltaXRlZCBtZW1vcnkKIGNhcGFj
-aXR5LgoKIFRoaXMgcGF0Y2ggZG9lcyBhIGZldyB0aGluZ3MsIGFsbCByZWxhdGVkOgogKiBJ
-dCBjaGFuZ2VzIHRoZSBkZWZhdWx0IGV4dGVybmFsIGpvdXJuYWwgc2l6ZSB0byBiZSBqb3Vy
-bmFsX2RlZmF1bHRfc2l6ZSwKICAganVzdCBsaWtlIHRoZSBpbnRlcm5hbCBzaXplLgogKiBJ
-ZiBhbiBleHRlcm5hbCBqb3VybmFsIGRldmljZSBpcyBsYXJnZXIgdGhhbiB0aGUgdXNlZCBz
-cGFjZSwgaXQgd2FybnMKICAgdGhlIHVzZXIgdGhhdCB0aGV5IGFyZSB3YXN0aW5nIHNwYWNl
-LgogKiBDaGFuZ2VzIHRoZSB3YXJuaW5nIHJlOiBqb3VybmFsIHNpemVzID4gZGVmYXVsdCBz
-aXplIHRvIGJlIG1vcmUgZGVzY3JpcHRpdmUuCiAqIENoZWNrcyB0byBzZWUgaWYgdGhlIGpv
-dXJuYWwgc2l6ZSBpcyBsYXJnZXIgdGhhbiB0aGUgbWF4IHNpemUuIElmIGl0IGlzCiAgIGFu
-IGVycm9yIGlzIGlzc3VlZCB3aXRoIGEgZGVzY3JpcHRpb24gd2h5IGFuZCBpbnN0cnVjdGlv
-bnMgdG8gdXNlIC1mIGlmCiAgIHRoZSBhY3Rpb24gaXMgdHJ1bHkgZGVzaXJlZC4KICogQWRk
-cyBhICJmb3JjZSIgbW9kZSB0byByZWlzZXJmc19jcmVhdGVfam91cm5hbCgpCgogVGhpcyBt
-YXkgYWxsIHNvdW5kIHRoZW9yZXRpY2FsLCBidXQgaXQgYWN0dWFsbHkgY2F1c2VzIG1hY2hp
-bmVzIHRvIGNyYXNoLiBXZQogcmVjZW5seSBzYXcgYSBidWcgcmVwb3J0IHdoZXJlIHRoZSB1
-c2VyIGNob3NlIGFuIGV4dGVybmFsIGpvdXJuYWwgZGV2aWNlCiBvZiB+IDggR0IuIFdoZW4g
-am91cm5hbF9pbml0KCkgdHJpZWQgdG8gYWxsb2NhdGUgY25vZGVzLCBpdCBmYWlsZWQgc2ls
-ZW50bHkKIGFuZCB0aGVuIHBhbmlja2VkIHRoZSBub2RlIHdoZW4gaXQgbmVlZGVkIHRvIGFj
-dHVhbGx5IHVzZSBhIGNub2RlLiBBIHBhdGNoCiB0byBhZGRyZXNzIHRoYXQgaXNzdWUgZm9s
-bG93cy4KClNpZ25lZC1vZmYtYnk6IEplZmYgTWFob25leSA8amVmZm1Ac3VzZS5jb20+Cgpk
-aWZmIC1ydU5weCAnKn4nIHJlaXNlcmZzcHJvZ3MtMy42LjE5L2luY2x1ZGUvcmVpc2VyZnNf
-bGliLmggcmVpc2VyZnNwcm9ncy0zLjYuMTktamVmZm0vaW5jbHVkZS9yZWlzZXJmc19saWIu
-aAotLS0gcmVpc2VyZnNwcm9ncy0zLjYuMTkvaW5jbHVkZS9yZWlzZXJmc19saWIuaAkyMDA0
-LTEwLTAxIDEyOjE5OjM0LjAwMDAwMDAwMCAtMDQwMAorKysgcmVpc2VyZnNwcm9ncy0zLjYu
-MTktamVmZm0vaW5jbHVkZS9yZWlzZXJmc19saWIuaAkyMDA1LTExLTIzIDE4OjMxOjMzLjAw
-MDAwMDAwMCAtMDUwMApAQCAtMzQ2LDcgKzM0Niw3IEBAIGludCByZWlzZXJmc19vcGVuX2pv
-dXJuYWwgKHJlaXNlcmZzX2ZpbHMKIGludCByZWlzZXJmc19qb3VybmFsX3BhcmFtc19jaGVj
-ayhyZWlzZXJmc19maWxzeXNfdCAqZnMpOwogaW50IHJlaXNlcmZzX2NyZWF0ZV9qb3VybmFs
-IChyZWlzZXJmc19maWxzeXNfdCAqIGZzLCBjaGFyICogal9maWxlbmFtZSwKIAkJCSAgICAg
-dW5zaWduZWQgbG9uZyBvZmZzZXQsIHVuc2lnbmVkIGxvbmcgbGVuLCAKLQkJCSAgICAgaW50
-IHRyYW5zYWN0aW9uX21heF9zaXplKTsKKwkJCSAgICAgaW50IHRyYW5zYWN0aW9uX21heF9z
-aXplLCBpbnQgZm9yY2UpOwogaW50IHJlaXNlcmZzX2pvdXJuYWxfb3BlbmVkIChyZWlzZXJm
-c19maWxzeXNfdCAqKTsKIHZvaWQgcmVpc2VyZnNfZmx1c2hfam91cm5hbCAocmVpc2VyZnNf
-Zmlsc3lzX3QgKiBmcyk7CiB2b2lkIHJlaXNlcmZzX2ZyZWVfam91cm5hbCAocmVpc2VyZnNf
-Zmlsc3lzX3QgKiBmcyk7CmRpZmYgLXJ1TnB4ICcqficgcmVpc2VyZnNwcm9ncy0zLjYuMTkv
-bWtyZWlzZXJmcy9ta3JlaXNlcmZzLmMgcmVpc2VyZnNwcm9ncy0zLjYuMTktamVmZm0vbWty
-ZWlzZXJmcy9ta3JlaXNlcmZzLmMKLS0tIHJlaXNlcmZzcHJvZ3MtMy42LjE5L21rcmVpc2Vy
-ZnMvbWtyZWlzZXJmcy5jCTIwMDQtMDktMzAgMTc6MDQ6MjEuMDAwMDAwMDAwIC0wNDAwCisr
-KyByZWlzZXJmc3Byb2dzLTMuNi4xOS1qZWZmbS9ta3JlaXNlcmZzL21rcmVpc2VyZnMuYwky
-MDA1LTExLTIzIDE3OjU1OjA4LjAwMDAwMDAwMCAtMDUwMApAQCAtNjk3LDcgKzY5Nyw3IEBA
-IGludCBtYWluIChpbnQgYXJnYywgY2hhciAqKmFyZ3YpCiAgICAgfQogCQkKICAgICBpZiAo
-IXJlaXNlcmZzX2NyZWF0ZV9qb3VybmFsIChmcywgamRldmljZV9uYW1lLCBPZmZzZXQsIEpv
-dXJuYWxfc2l6ZSwgCi0JTWF4X3RyYW5zX3NpemUpKSAKKwlNYXhfdHJhbnNfc2l6ZSwgZm9y
-Y2UpKSAKICAgICB7CiAgICAgICAgIHJldHVybiAxOwogICAgIH0KZGlmZiAtcnVOcHggJyp+
-JyByZWlzZXJmc3Byb2dzLTMuNi4xOS9yZWlzZXJmc2NvcmUvam91cm5hbC5jIHJlaXNlcmZz
-cHJvZ3MtMy42LjE5LWplZmZtL3JlaXNlcmZzY29yZS9qb3VybmFsLmMKLS0tIHJlaXNlcmZz
-cHJvZ3MtMy42LjE5L3JlaXNlcmZzY29yZS9qb3VybmFsLmMJMjAwNC0xMC0xMyAwOTowNTox
-NS4wMDAwMDAwMDAgLTA0MDAKKysrIHJlaXNlcmZzcHJvZ3MtMy42LjE5LWplZmZtL3JlaXNl
-cmZzY29yZS9qb3VybmFsLmMJMjAwNS0xMS0yMyAxODo1MzoyNS4wMDAwMDAwMDAgLTA1MDAK
-QEAgLTU0NSw3ICs1NDUsOCBAQCBpbnQgcmVpc2VyZnNfY3JlYXRlX2pvdXJuYWwoCiAgICAg
-Y2hhciAqIGpfZGV2aWNlLAkJLyogam91cm5hbCBkZXZpY2UgbmFtZSAqLwogICAgIHVuc2ln
-bmVkIGxvbmcgb2Zmc2V0LAkvKiBqb3VybmFsIG9mZnNldCBvbiB0aGUgal9kZXZpY2UgKi8K
-ICAgICB1bnNpZ25lZCBsb25nIGxlbiwJCS8qIGluY2x1ZGluZyBqb3VybmFsIGhlYWRlciAq
-LwotICAgIGludCB0cmFuc2FjdGlvbl9tYXhfc2l6ZSkKKyAgICBpbnQgdHJhbnNhY3Rpb25f
-bWF4X3NpemUsCisgICAgaW50IGZvcmNlKQogewogICAgIHN0cnVjdCBzdGF0IHN0OwogICAg
-IHN0cnVjdCBidWZmZXJfaGVhZCAqIGJoOwpAQCAtNTk2LDIxICs1OTcsNDYgQEAgaW50IHJl
-aXNlcmZzX2NyZWF0ZV9qb3VybmFsKAogCQkgICAgIiVsdSwgYmxvY2tzIG9uIGRldmljZSAl
-bHVcbiIsIG9mZnNldCwgYmxvY2tzKTsKIAkJcmV0dXJuIDA7CiAJICAgIH0KLQkgICAgbGVu
-ID0gYmxvY2tzIC0gb2Zmc2V0OworCSAgICAvKiBYWFggamRtOiBUaGlzIGNhbiBlbmQgdXAg
-YmVpbmcgaHVnZSBhbmQgY291bGQgcmVzdWx0CisJICAgICAqIGluIGFuIHVubW91bnRhYmxl
-IGZpbGUgc3lzdGVtOgorCSAgICAgKiBsZW4gPSBibG9ja3MgLSBvZmZzZXQ7ICovCisJICAg
-IGxlbiA9IGpvdXJuYWxfZGVmYXVsdF9zaXplKGZzLT5mc19zdXBlcl9iaC0+Yl9ibG9ja25y
-LCAKKwkgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZnMtPmZzX2Jsb2Nrc2l6ZSkg
-KyAxOworCiAJfQogCi0JaWYgKGxlbiA+IGpvdXJuYWxfZGVmYXVsdF9zaXplIChmcy0+ZnNf
-c3VwZXJfYmgtPmJfYmxvY2tuciwgCisJaWYgKCFmb3JjZSAmJiBsZW4gPiBqb3VybmFsX2Rl
-ZmF1bHRfc2l6ZSAoZnMtPmZzX3N1cGVyX2JoLT5iX2Jsb2NrbnIsIAogCSAgICBmcy0+ZnNf
-YmxvY2tzaXplKSArIDEpIAogCXsKKwkgICAgdW5zaWduZWQgbG9uZyBqb3VybmFsX21heCA9
-IGpvdXJuYWxfbWF4X3NpemUgKGZzLT5mc19zdXBlcl9iaC0+Yl9ibG9ja25yLCBmcy0+ZnNf
-YmxvY2tzaXplKTsKIAkgICAgZmZsdXNoKHN0ZGVycik7CiAJICAgIAotCSAgICByZWlzZXJm
-c193YXJuaW5nIChzdGRvdXQsICJOT1RFOiBqb3VybmFsIG5ldyBzaXplICVsdSBpcyBncmVh
-dGVyICIKLQkJInRoYW4gZGVmYXVsdCBzaXplICVsdTpcbnRoaXMgbWF5IHNsb3cgZG93biBp
-bml0aWFsaXppbmcgYW5kICIKLQkJIm1vdW50aW5nIG9mIHRoZSBqb3VybmFsLiBIb3BlIGl0
-IGlzIG9rLlxuXG4iLCBsZW4sIAotCQlqb3VybmFsX2RlZmF1bHRfc2l6ZShmcy0+ZnNfc3Vw
-ZXJfYmgtPmJfYmxvY2tuciwgCi0JCWZzLT5mc19ibG9ja3NpemUpICsgMSk7CisJICAgIHJl
-aXNlcmZzX3dhcm5pbmcgKHN0ZG91dCwgIlxuKioqIFlvdSd2ZSBzcGVjaWZpZWQgYSBqb3Vy
-bmFsICIKKwkgICAgICAgICAgICAgICAgICAgICAgInNpemUgbGFyZ2VyIHRoYW4gdGhlIGRl
-ZmF1bHQgc2l6ZSBvZiAiCisJICAgICAgICAgICAgICAgICAgICAgICIlbHVcbioqKiBibG9j
-a3MuIFRoaXMgbWF5IHNsb3cgZG93biAiCisJICAgICAgICAgICAgICAgICAgICAgICJqb3Vy
-bmFsIGluaXRpYWxpemF0aW9uIGFuZCBtb3VudGluZyAiCisJICAgICAgICAgICAgICAgICAg
-ICAgICJvZlxuKioqIHRoZSBmaWxlIHN5c3RlbS4lcyIsCisJICAgICAgICAgICAgICAgICAg
-ICAgIGpvdXJuYWxfZGVmYXVsdF9zaXplKGZzLT5mc19zdXBlcl9iaC0+Yl9ibG9ja25yLCBm
-cy0+ZnNfYmxvY2tzaXplKSArIDEsCisJICAgICAgICAgICAgICAgICAgICAgIGxlbiA+IGpv
-dXJuYWxfbWF4ID8gIiAiIDogIlxuIik7CisJICAgIGlmIChsZW4gPiBqb3VybmFsX21heCkK
-KwkJcmVpc2VyZnNfd2FybmluZyAoc3Rkb3V0LCAiT24gMzItYml0IHN5c3RlbXMsIGFuZCBv
-biAiCisJCSAgICAgICAgICAgICAgICAgICI2NC1iaXQgc3lzdGVtcyB3aXRoXG4qKiogbGlt
-aXRlZCAiCisJCSAgICAgICAgICAgICAgICAgICJtZW1vcnksIHRoaXMgbWF5IGFsc28gY2F1
-c2UgdGhlIGZpbGUgIgorCQkgICAgICAgICAgICAgICAgICAic3lzdGVtIHRvIGJlIHVubW91
-bnRhYmxlLlxuKioqIFBsZWFzZSAiCisJCSAgICAgICAgICAgICAgICAgICJjb25zaWRlciB1
-c2luZyBhIGpvdXJuYWwgc2l6ZSAiCisJCSAgICAgICAgICAgICAgICAgICI8PSAlbHUgYmxv
-Y2tzLlxuXG5GaWxlIHN5c3RlbSBjcmVhdGlvbiAiCisJCQkJICAiZmFpbGVkLiBZb3UgbWF5
-IG92ZXJyaWRlIHRoaXMgYmVoYXZpb3IgIgorCQkJCSAgIndpdGggdGhlIC1mIG9wdGlvbi5c
-biIsIGpvdXJuYWxfbWF4KTsKKwkJICAgIHJldHVybiAwOwogCX0KIAorCWlmIChsZW4gPCBi
-bG9ja3MpCisJCXJlaXNlcmZzX3dhcm5pbmcgKHN0ZG91dCwgIlxuXG4qKiogWW91ciBqb3Vy
-bmFsIGRldmljZSBpcyAlbHUgIgorCQkgICAgICAgICAgICAgICAgICAiYmxvY2tzLCBidXQg
-eW91ciBqb3VybmFsIGlzIG9ubHkgJWx1ICIKKwkJCQkgICJibG9ja3MuXG4qKiogWW91IG1h
-eSB3YW50IHRvIGNvbnNpZGVyICIKKwkJCQkgICJyZXNpemluZyB0aGUgam91cm5hbCBkZXZp
-Y2UgdG8gYXZvaWQgIgorCQkJCSAgIndhc3Rpbmcgc3BhY2UuXG5cbiIsIGJsb2NrcywgbGVu
-KTsKKwogCWlmIChibG9ja3MgPCBvZmZzZXQgKyBsZW4pIHsKIAkgICAgcmVpc2VyZnNfd2Fy
-bmluZyAoc3RkZXJyLCAicmVpc2VyZnNfY3JlYXRlX2pvdXJuYWw6IG5vIGVub3VnaCAiCiAJ
-CSJibG9ja3Mgb24gZGV2aWNlICVsdSwgbmVlZGVkICVsdVxuIiwgYmxvY2tzLCBvZmZzZXQg
-KyBsZW4pOwpkaWZmIC1ydU5weCAnKn4nIHJlaXNlcmZzcHJvZ3MtMy42LjE5L3R1bmUvdHVu
-ZS5jIHJlaXNlcmZzcHJvZ3MtMy42LjE5LWplZmZtL3R1bmUvdHVuZS5jCi0tLSByZWlzZXJm
-c3Byb2dzLTMuNi4xOS90dW5lL3R1bmUuYwkyMDA0LTA4LTE5IDA3OjIzOjU3LjAwMDAwMDAw
-MCAtMDQwMAorKysgcmVpc2VyZnNwcm9ncy0zLjYuMTktamVmZm0vdHVuZS90dW5lLmMJMjAw
-NS0xMS0yMyAxODozMzowOS4wMDAwMDAwMDAgLTA1MDAKQEAgLTcxMCw3ICs3MTAsNyBAQCBp
-bnQgbWFpbiAoaW50IGFyZ2MsIGNoYXIgKiphcmd2KQogICAgIHJlaXNlcmZzX2Nsb3NlX2pv
-dXJuYWwgKGZzKTsKIAogICAgIGlmICghcmVpc2VyZnNfY3JlYXRlX2pvdXJuYWwgKGZzLCBq
-X25ld19kZXZpY2VfbmFtZSwgT2Zmc2V0LAotCQkJCSAgSm91cm5hbF9zaXplLCBNYXhfdHJh
-bnNfc2l6ZSkpIHsKKwkJCQkgIEpvdXJuYWxfc2l6ZSwgTWF4X3RyYW5zX3NpemUsIEZvcmNl
-KSkgewogCW1lc3NhZ2UgKCJDb3VsZCBub3QgY3JlYXRlIG5ldyBqb3VybmFsIik7CiAJcmVp
-c2VyZnNfY2xvc2UgKGZzKTsKICAgICAgICAgcmV0dXJuIDE7Ci0tIApKZWZmIE1haG9uZXkK
-U3VTRSBMYWJzCgoK
---------------090904000809000402090900--
+First off, thank you for taking the time to respond. <br><br>Basically any =
+heavy activity on the partition seems to trigger it. Here's a short transcr=
+ipt:<br><br>dually ~ # cat /proc/version<br>Linux version 2.6.16-rc2-mm1
+ (root@localhost) (gcc version 3.3.6 (Gentoo 3.3.6, ssp-3.3.6-1.0, pie-8.7.=
+8)) #7 SMP PREEMPT Thu Feb 16 21:19:53 Local time zone must be set--<br>dua=
+lly ~ #=20
+mkfs.reiser4 --version<br>mkfs.reiser4 1.0.5<br>Copyright (C) 2001, 2002, 2=
+003, 2004 by Hans Reiser, licensing governed by <br>reiser4progs/COPYING. <=
+br>dually ~ # mkfs.reiser4 /dev/sdb1 --yes<br>dually ~ # mount /dev/sdb1 /d=
+ata1
+<br>dually ~ # klogd -d -f ~/kernel.log<br>dually ~ # cd /data1<br>dually d=
+ata1 # cp -ra /usr/src/linux-2.6.16-rc2-mm1/ .<br>dually data1 # tar cf lin=
+ux.bz2 linux-2.6.16-rc2-mm1/<br><br>...after about half a minute of activit=
+y I receive the message which I've attached as a small JPEG=20
+<br>&quot;reiser4 panicked cowardly: reiser4[tar(4078)] commit_current_atom=
+ (fs/reiser4/txnmgr.c:1130) [zam-597]:&quot;. I can't see whether it was li=
+ne 1130 or&nbsp; 1138.&nbsp; I'll take a quick look myself, but I'm complet=
+ely unfamiliar with reiser4 sources and the kernel sources in general.
+<br><br>After this my system is completely locked up. When I mount the part=
+ition after restarting it no longer contains any files. I have few or no pr=
+oblems when creating, mounting, and working on reiser4 partitions when boot=
+ed from the System recovery liveCD so it must be something in the latest so=
+urces or in my kernel configuration(which is 100% stable for everything els=
+e under reiser3, but I haven't bothered to perfect yet).
+<br><br>Apologies about the JPEG, I could not figure out how to get the ker=
+nel output logged into a file(maybe it freezes before the file can flush to=
+ disk, i dunno). If you know of a way, I welcome instruction.<br><br><div>
+<span class=3D"gmail_quote">
+On 2/21/06, <b class=3D"gmail_sendername">Vladimir V. Saveliev</b> &lt;<a h=
+ref=3D"mailto:vs@namesys.com" target=3D"_blank" onclick=3D"return top.js.Op=
+enExtLink(window,event,this)">vs@namesys.com</a>&gt; wrote:</span><blockquo=
+te class=3D"gmail_quote" style=3D"border-left: 1px solid rgb(204, 204, 204)=
+; margin: 0pt 0pt 0pt 0.8ex; padding-left: 1ex;">
+
+
+Hello<br><br>On Fri, 2006-02-17 at 10:43 -0600, John Cohorn wrote:<br>&gt; =
+Is there a known issue with 2.6.16-xxx-mm1? I too am having severe and<br>&=
+gt; very random, but reproducible problems which will completely lock up
+<br>&gt; my machine minutes after mounting an R4 partition if not seconds. =
+I<br>&gt; did try disabling 4K stacks in my .config. Also, this is an Athlo=
+n 64<br>&gt; X2 I'm running with so maybe there are SMP issues?<br><br>
+
+
+no, it does not look so.<br><br>&gt; One of my friends said that Reiser4 be=
+came unstable for him also when<br>&gt; he upgraded to a dual core Athlon64=
+...but until I test for myself<br>&gt; that's just a wild theory that it's =
+an SMP bug. This machine is
+<br>&gt; otherwise stable in Memtest, in Windows playing the latest games, =
+and<br>&gt; on Linux compiling huge amounts of software.<br>&gt;<br>&gt; If=
+ there are not known issues with the latest kernels then I will<br>&gt; hap=
+pily try to send detailed configurations and logs of what's
+<br>&gt; happening this evening. I have two shiny new 250GB SATA drives on =
+my<br>&gt; machine and I can test freely with one of them until I need the =
+space.<br>&gt; I'd love to help squash any bugs that I can :)<br>&gt;<br>
+
+
+<br>If you described the exact sequence of commands which makes reiser4 to<=
+br>crash - that would help a lot.<br><br><br></blockquote></div><br>
+
+
+
+------=_Part_204_5509671.1140573528008--
+
+------=_Part_203_28272137.1140573528008--
