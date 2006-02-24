@@ -1,172 +1,92 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: external journal questions
-Date: Thu, 23 Feb 2006 04:21:46 -0600
-Message-ID: <43FD8CBA.7060307@slaphack.com>
-References: <20060221160411.65704253.pegasus@nerv.eu.org>
+From: "Alec Burney" <madbull@gmail.com>
+Subject: possible reiser4 bug
+Date: Thu, 23 Feb 2006 19:35:48 -1000
+Message-ID: <2bbb1c940602232135jff393fbm2175052026237ce9@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-ripemd160;
- protocol="application/pgp-signature";
- boundary="------------enigCA4AC02FE5D07DCE12D138F8"
-Return-path: <reiserfs-list-return-28115-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28116-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060221160411.65704253.pegasus@nerv.eu.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: =?UTF-8?B?SnVyZSBQZcSNYXI=?= <pegasus@nerv.eu.org>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
---------------enigCA4AC02FE5D07DCE12D138F8
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+i have been experiencing hard locks (preceded by intense 5< load
+averages, disk i/o timeouts, and processes gone astray) that seem to
+be related to a possible bug in reiser4.
+here is the information that i think is important:
 
-Jure Pe=C4=8Dar wrote:
-> Hi all,
->=20
-> Now that solid state disks are getting affordable (Gigabyte iRam, for
-> example), it makes sense to use them as external journal with full data=
+ a sample dmesg from right before a hardlock:
+------------[ cut here ]------------
+kernel BUG at fs/reiser4/plugin/file/tail_conversion.c:29!
+invalid opcode: 0000 [#1]
+SMP
+last sysfs file: /class/vc/vcsa7/dev
+Modules linked in: snd_rtctimer
+CPU:    0
+EIP:    0060:[<c019c3bb>]    Not tainted VLI
+EFLAGS: 00210282   (2.6.16-rc3-mm1 #1)
+EIP is at get_exclusive_access+0x1b/0x44
+eax: eec1b1ac   ebx: ecda70d8   ecx: ecda7140   edx: 00000000
+esi: addee000   edi: eec1b160   ebp: 00000000   esp: dfd89f38
+ds: 007b   es: 007b   ss: 0068
+Process soffice.bin (pid: 11208, threadinfo=3Ddfd89000 task=3De1193a70)
+Stack: <0>00000001 c019b956 c013f613 eecbfb74 e8daa560 00000001
+00005600 00000000
+       ecda70d8 ecda7140 addee000 ea8ea7c0 00005600 d06d2740 00005600 ea8ea=
+7c0
+       c03b0e10 00000000 c014bbf3 dfd89fa4 addee000 ea8ea7c0 fffffff7 bfb4a=
+870
+Call Trace:
+ <c019b956> write_unix_file+0x2a4/0x44b   <c013f613> vma_link+0xa2/0xbc
+ <c014bbf3> vfs_write+0xab/0x14c   <c014bd32> sys_write+0x3c/0x62
+ <c01025bf> sysenter_past_esp+0x54/0x75
+Code: 8d 43 10 e8 5c 54 1a 00 e9 f8 fc ff ff 90 90 90 53 89 c3 b8 00
+f0 ff ff 21 e0 8b 00 8b 80 c8 04 00 00 8b 40 48 83 78 0c 00 74 08 <0f>
+0b 1d 00 e0 58 36 c0 e8 28 61 1a 00 ba 01 00 ff ff 89 d8 f0
 
-> journaling, so they cache all the small writes and dump them to disks
-> in one single sequential write on every journal flush.
+my uname -a:
+Linux helix 2.6.16-rc3-mm1 #1 SMP Sun Feb 19 21:46:21 HST 2006 i686
+AMD Athlon(tm) MP 2600+ AuthenticAMD GNU/Linux
 
-Where can I find the paper on why this makes sense?  Because offhand, it
-doesn't, unless you're hoping that the majority of transactions can be
-flushed on boot, rather than unrolled.
+my fsck.reiser4 -V
+fsck.reiser4 1.0.5
+Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing
+governed by reiser4progs/COPYING.
 
-> I know how to configure that under ext3. Simply set up external journal=
-
-> and mount filesystem with data=3Djournal and commit=3D600 or some such
-> value. But I'm not so sure about reiserfs.
-
-v3, I don't know, it's probably closer to the way ext3 works.  Closer,
-not exactly, because ext3's on-disk format is ext2 + a journal file, so
-it's going to be the easiest to move to another device.
-
-I'm going to assume you aren't talking about v4, since this sounds like
-a mission-critical production-style environment.  As I understand it, v4
-has a completely different way of doing journaling.
-
-
-
-I'm replying to you, not because I actually have an answer for you, but
-because your case seems interesting, and I'm curious how Reiser4 handles =
-it.
-
-Currently, my v4 is built like this:  I have 2 gigs of RAM and about a
-350 gig Reiser4 partition.  I have a custom patch that replaces the
-sys_fsync system call with a stub, because fsync performance is worse in
-Reiser4 than in anything else, and because fsync gets horrendously
-abused by so many programs I use.  Flushing on my system is a privilege,
-not a right, and abusing the fsync call means I've revoked that privilege=
-=2E
-
-So, basically, application says "Oh my GOD and all that is holy, this
-piece of data MUST be written to disk now!"  The OS ignores it, and puts
-it in the write buffer with everything else.  At this point, nothing
-will touch the disk until I need RAM (even for more disk cache), or I
-run a "sync" call myself (not an fsync call), or I unmount the FS (shut
-the box down).
-
-This makes performance much better, but it sucks for me when my
-not-entirely-stable box (overclocked, has proprietary nVidia graphic
-drivers) decides to crash.  Now, I have to say, Reiser4 has proven quite
-durable, and I haven't actually had significant corruption.  I have,
-however, lost the small amounts of data that never made it to disk.
-
-Now, fsync is basically a kind of transaction, and in the future,
-Reiser4 will be doing all kinds of transactions.  Could be an email
-server, for instance.  The mail server wants to complete the transaction
-of adding a new mail to someone's inbox, or at least to some local
-spool, before it tells the other server that it successfully received
-the message.  Now, obviously, we don't want every message immediately
-forced onto the disk, because that would kill performance.  But if we
-don't do that, if we let those transactions stay in RAM, then when the
-mailserver loses power, it WILL lose messages.
-
-Lose, as in permanently.  Now, imagine it's something even more
-important, like a bank computer.  You can't just "roll back" someone's
-mortgage payment, can you?
-
-So, in order for performance not to suck, and to keep fragmentation
-down, we want a bunch of transactions to be flushed to disk at once.
-But in order to not lose data, we want every important transaction to
-immediately be guaranteed not to be lost.
-
-So, you buy some battery-backed RAM or some such, and flush your
-transactions there first, and be sure they are successfully written to
-the "journal" device before you OK the purchase or accept the email or
-whatever, and then, when that device starts to fill up, you flush it out
-to the real hard disk.
-
-Problem is, I see nowhere for this to fit in the current model of
-Reiser4.  As I understand it, there is no concept of a separate
-"journal" device, or of writing a file twice, because the vast majority
-of writes are simply written out to disk in the new location, and then
-the "commit" is updating the metadata to point to the new location and
-free the old.
-
-But, at least some code must already be there, right?  Because I know at
-least in theory, some writes happen twice -- things like updates to a
-database file.  Tiny changes to huge files would be written once to a
-new location, and then back to the old, so the file stays in the same
-place on disk, and doesn't get fragmented.
-
-Could that logic be adapted to write first to some journal device, and
-then to the original location on disk?  And to use the same
-memory-pressure strategy that currently drives the decision to flush
-from RAM to disk?  (That is, be lazy about moving stuff from the journal
-device to the real medium...)
-
-Could it be done flexibly?  For instance, have a number of "journal
-devices", from your RAM all the way to your real disk, and be able to
-specify which ones are faster (be lazy about moving from a faster device
-to a slower one) and which ones are stable (at what point can we be sure
-the data won't be lost to a power failure)?  Because obviously, there
-will be degrees of persistent storage, just as there are degrees of
-volatile storage, from swap to RAM to cache to register.
-
-I would argue that, while an attempt could be made to do this
-transparently, it shouldn't.  For instance, Laptop Mode is a set of
-patches to try to not use the hard drive at all, but whenever you have
-to spin it up, flush everything you can.  It's sort of lazy writes to
-save battery.
-
-I would argue that the filesystem can and should know about lazy writes,
-even if you still need Laptop Mode to tell it to flush on reads.  And
-the filesystem can and should know about fast, nonvolatile storage.
-
-But, why that's a good idea, I'm not sure of right now, because it's
-bedtime.  Ask me tomorrow, or write your own rant.
+my fsck.reiser4 -p from a drive known to be causing trouble
+Default profiles:
+format:     "format40" (id:0x0 type:0x8)
+journal:    "journal40" (id:0x0 type:0xf)
+oid:        "oid40" (id:0x0 type:0x9)
+alloc:      "alloc40" (id:0x0 type:0xe)
+key:        "key_large" (id:0x1 type:0x10)
+node:       "node40" (id:0x0 type:0x2)
+statdata:   "stat40" (id:0x0 type:0x1)
+nodeptr:    "nodeptr40" (id:0x3 type:0x1)
+direntry:   "cde40" (id:0x2 type:0x1)
+tail:       "plain40" (id:0x6 type:0x1)
+extent:     "extent40" (id:0x5 type:0x1)
+acl:        "absent (id:0x4 type:0x1)"
+permission: "absent (id:0x0 type:0x6)"
+regular:    "reg40" (id:0x0 type:0x0)
+directory:  "dir40" (id:0x1 type:0x0)
+symlink:    "sym40" (id:0x2 type:0x0)
+special:    "spl40" (id:0x3 type:0x0)
+hash:       "r5_hash" (id:0x1 type:0x3)
+fibration:  "ext_1_fibre" (id:0x2 type:0x4)
+formatting: "smart" (id:0x2 type:0x5)
 
 
+the partition in question is 232903996 kilobytes large (that's 223
+gigabytes), and does not fail badblocks or fsck.reiser4 testing. my
+system holds up to memtest86, and does not crash if the drive is not
+mounted and used.
 
-Well, end of rant.  Someone else gets to have fun coding this, because I
-have to do some Real Work.  As in School.
 
-
---------------enigCA4AC02FE5D07DCE12D138F8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2.1 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
-
-iQIVAwUBQ/2MungHNmZLgCUhAQOlwxAAmaMurx305YWzxJcfLbZj3qfX+3pktmme
-f57tvhbIkUidKJBaG8NqVPGcFo69wev4L048W1ks7FsqgDpZKwasnpA/XIbLdYL2
-+jnuwpcBl3fqaVKZJ4C1psnoC5SfxS8zEFKGltW/kndYXrNdFiEWA71meyO/u8XR
-kjikARHDHO+jinWIfPecso79Jxgud9OjPzb/PSXuEdyeexQLHztR1MnGu5U5itgj
-OrXtaJfQ8nc5PO6yRvQOPPUdf8Ffal1xZ/Y9Bci2WdrxuqXLSNieWZq29ohpmqP8
-sbEOe7w+KFCKMag6SqJGbg0MCbIOvhtwVlmsTE8OBL5fIWWZgQGEzticWcimsoux
-699YEiIXz3w9Chw+I2NXA/S+sYBlKA6YlaY7c/EvW458D5Jircmkdg7Xj44TSCoI
-sxKFJK5JZNJpxXPwNCpiQNbT4SxQ/+wpl1nQOf25Rgd8MS7bnCgmNIuL0JQXJ/lB
-i4GUFR28tt5S6zsX27frESOsLzXvkOtryjuSvevkt58byiEtLVwoq9v3p4J0IvHo
-AHEDY0IqP9j+L0SiHLbz9gbDoMa7/UxsgqfynWzGJPJO9yKpjtuoRdPt+3kz8xpH
-5LRn9TyxuAWW47zrSzW1KWBWTNs+0qOb4q15QA3BZaqicSJOEnpNhoBc/nQyJ6Lw
-k/dY6sMqD90=
-=qaXO
------END PGP SIGNATURE-----
-
---------------enigCA4AC02FE5D07DCE12D138F8--
+my question: can this be fixed, has it been fixed, or can i convert
+this drive online to reiserfs.
+sorry for such a long message, but this is very important to me. thank you!
