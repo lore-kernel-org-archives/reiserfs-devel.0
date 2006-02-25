@@ -1,51 +1,80 @@
-From: Maciej Soltysiak <solt2@dns.toxicfilms.tv>
-Subject: Re[2]: creating live virtual files by concatenation
-Date: Sat, 25 Feb 2006 20:33:52 +0100
-Message-ID: <1391154345.20060225203352@dns.toxicfilms.tv>
-References: <1271316508.20060225153749@dns.toxicfilms.tv>
- <9a8748490602250735l6161a96dte2805b772a89a436@mail.gmail.com>
- <612760535.20060225181521@dns.toxicfilms.tv>
- <Pine.LNX.4.63.0602251339320.13659@cuia.boston.redhat.com>
- <9a8748490602251052p3e56334ei755c9ce2100e03c@mail.gmail.com>
-Reply-To: Maciej Soltysiak <solt2@dns.toxicfilms.tv>
+From: "James (Alec) Burney" <madbull@gmail.com>
+Subject: Re: possible reiser4 bug
+Date: Sat, 25 Feb 2006 01:17:05 -1000
+Message-ID: <44003CB1.5050309@gmail.com>
+References: <2bbb1c940602232135jff393fbm2175052026237ce9@mail.gmail.com> <200602260009.36905.zam@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28131-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28132-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <9a8748490602251052p3e56334ei755c9ce2100e03c@mail.gmail.com>
+In-Reply-To: <200602260009.36905.zam@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jesper Juhl <jesper.juhl@gmail.com>
-Cc: Rik van Riel <riel@redhat.com>, Jan Engelhardt <jengelh@linux01.gwdg.de>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Alexander Zarochentsev <zam@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Hello Jesper
+thanks for the patch, Alex, but yesterday i converted all of my
+harddisks to reiserFS in an act of frustration. Sorry that i can't help
+you test your patch.
 
-Saturday, February 25, 2006, 7:52:06 PM, you wrote:
-
-> On 2/25/06, Rik van Riel <riel@redhat.com> wrote:
->> On Sat, 25 Feb 2006, Maciej Soltysiak wrote:
->>
->> > Code files, DNS zones, configuration files, HTML code. We are still
->> > dealing with lots of text files today.
->>
->> You say it like it's a bad thing, but in truth I suspect
->> people often deal with text files because they're EASY
->> to manipulate through scripts, etc.
-Well, I did not mean to sound like that. My emphasis should have been
-on that it sometimes is tiresome. I have no problems with plain text
-files, I still am a human being, not an binary/XML parser or whatever :-D
-
-> I can imagine quite a mess if I open a file that is really a view of
-> several files and then start manipulating text in it across "actual
-> file" boundaries  that could blow up easily.
-Well, I meant that file to be read-only. Just a quick concatentated view
-for reading.
+Alexander Zarochentsev wrote:
+> hello,
+> 
+> On Friday 24 February 2006 08:35, Alec Burney wrote:
+> 
+> [...]
+> 
+> 
+> would you please try the attached patch.
+> 
+> 
+> 
+> ------------------------------------------------------------------------
+> 
+>  fs/reiser4/plugin/file/file.c |    9 +++++----
+>  1 files changed, 5 insertions(+), 4 deletions(-)
+> 
+> Index: linux-2.6.16-rc3-mm1/fs/reiser4/plugin/file/file.c
+> ===================================================================
+> --- linux-2.6.16-rc3-mm1.orig/fs/reiser4/plugin/file/file.c
+> +++ linux-2.6.16-rc3-mm1/fs/reiser4/plugin/file/file.c
+> @@ -2454,6 +2454,7 @@ ssize_t write_unix_file(struct file *fil
+>  
+>  	if (inode_get_flag(inode, REISER4_PART_CONV)) {
+>  		/* we can not currently write to a file which is partially converted */
+> +		txn_restart(ctx);
+>  		get_exclusive_access(uf_info);
+>  		result = finish_conversion(inode);
+>  		drop_exclusive_access(uf_info);
+> @@ -2481,6 +2482,7 @@ ssize_t write_unix_file(struct file *fil
+>  
+>  		   3) convert file to extents to not enter here on each write
+>  		   to mmaped file */
+> +		txn_restart(ctx);
+>  		get_exclusive_access(uf_info);
+>  		result = check_pages_unix_file(file, inode);
+>  		drop_exclusive_access(uf_info);
+> @@ -2535,14 +2537,13 @@ ssize_t write_unix_file(struct file *fil
+>  	while (left > 0) {
+>  		int excl = 0;
+>  
+> -		/* getting exclusive or not exclusive access requires no
+> -		   transaction open */
+> -		txn_restart_current();
+> -
+>  		/* faultin user page */
+>  		fault_in_pages_readable(buf,
+>  					left > PAGE_CACHE_SIZE ? PAGE_CACHE_SIZE : left);
+>  
+> +		/* getting exclusive or not exclusive access requires no
+> +		   transaction open */
+> +		txn_restart(ctx);
+>  		if (inode->i_size == 0) {
+>  			get_exclusive_access(uf_info);
+>  			excl = 1;
 
 -- 
-Best regards,
-Maciej
-
-
+cell: 808.332.5131
