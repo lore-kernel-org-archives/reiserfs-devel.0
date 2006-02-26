@@ -1,46 +1,34 @@
-From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Subject: Re: creating live virtual files by concatenation
-Date: Sat, 25 Feb 2006 23:23:36 +0000
-Message-ID: <4400E6F8.1080907@st-andrews.ac.uk>
-References: <1271316508.20060225153749@dns.toxicfilms.tv> <9a8748490602250735l6161a96dte2805b772a89a436@mail.gmail.com> <612760535.20060225181521@dns.toxicfilms.tv> <Pine.LNX.4.63.0602251339320.13659@cuia.boston.redhat.com> <9a8748490602251052p3e56334ei755c9ce2100e03c@mail.gmail.com> <1391154345.20060225203352@dns.toxicfilms.tv> <4400DA93.9080901@st-andrews.ac.uk> <Pine.LNX.4.63.0602251736340.13659@cuia.boston.redhat.com>
+From: Francesco Biscani <biscani@pd.astro.it>
+Subject: Re: possible reiser4 bug
+Date: Sun, 26 Feb 2006 03:33:28 +0100
+Message-ID: <200602260333.28555.biscani@pd.astro.it>
+References: <2bbb1c940602232135jff393fbm2175052026237ce9@mail.gmail.com> <200602260009.36905.zam@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28136-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28137-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.63.0602251736340.13659@cuia.boston.redhat.com>
+In-Reply-To: <200602260009.36905.zam@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Rik van Riel <riel@redhat.com>
-Cc: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>, Maciej Soltysiak <solt2@dns.toxicfilms.tv>, Jesper Juhl <jesper.juhl@gmail.com>, Jan Engelhardt <jengelh@linux01.gwdg.de>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
+Cc: Alexander Zarochentsev <zam@namesys.com>, Alec Burney <madbull@gmail.com>
 
-Rik van Riel wrote:
+On Saturday 25 February 2006 22:09, Alexander Zarochentsev wrote:
+> would you please try the attached patch.
 
->On Sat, 25 Feb 2006, Peter Foldiak wrote:
->
->>sub-file" corresponding to a key-range. Writing a chapter should change the
->>book that the chapter is part of. That is what would make it really valuable.
->>Of course it would have all sorts of implications (e.g. for metadata for each
->>part) that need to be thought about, but it could be done properly, I think.
->>    
->>
->
->What happens if you read the first 10kB of a file,
->and one of the "chapters" behind your read cursor
->grows?
->
->Do you read part of the same data again when you
->continue reading?
->
->Does the read cursor automatically advance?
->  
->
-You should probably continue where you left off .
+I'm having a similar problem on 2.6.16-rc4 + reiser4 from -mm1. I will be=20
+testing the attached patch.
 
->Your idea changes the way userspace expects files
->to behave...
->  
->
-Yes, I know.
+Regards,
+
+  Francesco
+
+=2D-=20
+Dr. Francesco Biscani
+Dipartimento di Astronomia
+Universit=E0 di Padova
+biscani@pd.astro.it
