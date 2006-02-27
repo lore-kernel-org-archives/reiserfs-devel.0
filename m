@@ -1,73 +1,60 @@
-From: jp <jp.guillemin@free.fr>
-Subject: Re: Reiser4 default in Underground Dekstop distribution
-Date: Sun, 26 Feb 2006 20:21:36 +0100
-Message-ID: <4401FFC0.20900@free.fr>
-References: <200602251203.09958.Peter.Foldiak@st-andrews.ac.uk> <4401E68E.8060205@namesys.com> <200602261834.14571.Peter.Foldiak@st-andrews.ac.uk>
+From: Yoanis Gil Delgado <fred@uh.cu>
+Subject: Re: creating live virtual files by concatenation
+Date: Mon, 27 Feb 2006 14:52:38 -0500
+Message-ID: <44035886.4070306@uh.cu>
+References: <1271316508.20060225153749@dns.toxicfilms.tv> <Pine.LNX.4.61.0602251629560.13355@yvahk01.tjqt.qr>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28141-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28142-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200602261834.14571.Peter.Foldiak@st-andrews.ac.uk>
+In-Reply-To: <Pine.LNX.4.61.0602251629560.13355@yvahk01.tjqt.qr>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Cc: Marcel Hilzinger <marcel@hilzinger.hu>, reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>
+To: Jan Engelhardt <jengelh@linux01.gwdg.de>
+Cc: Maciej Soltysiak <solt2@dns.toxicfilms.tv>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
+Jan Engelhardt wrote:
 
-Peter Foldiak wrote:
-> Marcel (Hilzinger),
->
-> Did you write this Linux Magazine article? Could you give some details on what 
-> the problem was?
->
-> Peter
->
-> On Sunday 26 February 2006 17:34, Hans Reiser wrote:
->   
->> There are so little details that it is hard to know what the problem
->> they had was.  It does sound though like we need to smooth out the
->> commits.  We have deferred that for a while.  I know how we should do
->> it, we just need to do it.  Sigh, there are so many things like
->> that.....  Probably fsync should be optimized first....
+>>Now let us say I am creating sort of a virtual text file (code.js)
+>>that is a live-concatenation of these files:
+>># concatenate tooltip.js banner.js foo.js code.js
 >>
->> Hans
+>>Note I am not talking about the cat(1) utility. I am thinking of
+>>code.js be always a live concatenated version of these three, so when
+>>I modify one file, the live-version is also modified.
 >>
->> Peter Foldiak wrote:
->>     
->>> The preview of the April (!?!) 2006 issue of Linux Magazine has an article
->>> http://www.linux-magazine.com/issue/65/Super_Underground_Desktop.pdf
->>> saying that Reiser4 is the root filesystem for the distribution
->>> "Underground Desktop"
->>> http://www.ludos.org/
->>> but says "it failed to live up to the expectations we had for Reiser4",
->>> blaming Reiser4 for some performance problems. Not much detail is given.
->>>       
-Zenwalk Linux provides Reiser4 as one of it's fs available for any 
-partition since 05/2005 (Zenwalk actually supports ext2, ext3, Reiser3, 
-Reiser4 and XFS). Reiser4 is in my experience the faster journalized 
-fs,  XFS comes second.
->>> It also says that "Grub does not support Reiser4", so LILO is used. (Is
->>> that true?)
->>>       
-I would rather say that Grub1 (stable) is not really supported anymore, 
-and Grub2 is not finished yet. Grub1 doesn't support Reiser4 until 
-patched with the patch available on Namesys repository . Lately I tried 
-Grub + reiser4 patch with Vanilla 2.6.15.2 : it's not stable.
-Lilo is usually better than Grub in most situations, it's always 
-actively supported, and supports Reiser4 out of the box.
->>> Do you know of any other distributions that comes with Reiser4 by default
->>> root file system?
->>>       
-Yes, Zenwalk : a simple, yet modern OS ;)
->>> Peter
->>>       
-Jean-Philippe
-Zenwalk.org
+>>What puprose I might have? Network-related. Say, I have an HTML file
+>>that includes these three files in its code.
+>>
+>>    
+>>
+>Try FUSE.
+>  
 >
->
->   
+Yes that's the best solution. Email me if you have a question about how 
+to accomplish this. Here at
+our school we have created a fuse filesystem that "glues" files in a 
+single one.
 
+>  
+>
+>>If I had a live-concatenated file, I could reference it in the HTML file
+>>so that the browser does not have to download three files but just one.
+>>
+>>This would surely reduce network overhead of downloading the same amount
+>>of data but within just one connection, reduce resource usage on the client
+>>and possibly (depending on implementation) reduce the cost of accessing
+>>three individual files on the server.
+>>
+>>    
+>>
+>Have you ever heard of persistent connections with HTTP/1.1?
+>
+>
+>Jan Engelhardt
+>  
+>
 
