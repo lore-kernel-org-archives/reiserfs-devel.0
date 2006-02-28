@@ -1,43 +1,53 @@
-From: Rik van Riel <riel@redhat.com>
-Subject: Re: creating live virtual files by concatenation
-Date: Sat, 25 Feb 2006 17:38:15 -0500 (EST)
-Message-ID: <Pine.LNX.4.63.0602251736340.13659@cuia.boston.redhat.com>
+From: Peter van Hardenberg <pvh@uvic.ca>
+Subject: Re: Plugin Patch (was Re: creating live virtual files by concatenation)
+Date: Tue, 28 Feb 2006 15:07:56 -0800
+Message-ID: <200602281507.59582.pvh@uvic.ca>
 References: <1271316508.20060225153749@dns.toxicfilms.tv>
- <9a8748490602250735l6161a96dte2805b772a89a436@mail.gmail.com>
- <612760535.20060225181521@dns.toxicfilms.tv> <Pine.LNX.4.63.0602251339320.13659@cuia.boston.redhat.com>
- <9a8748490602251052p3e56334ei755c9ce2100e03c@mail.gmail.com>
- <1391154345.20060225203352@dns.toxicfilms.tv> <4400DA93.9080901@st-andrews.ac.uk>
+ <200602281425.01243.pvh@uvic.ca> <200602281903.12697.fred@uh.cu>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28135-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary=nextPart3617275.m8bNQGT6UM;
+ protocol="application/pgp-signature"; micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28173-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4400DA93.9080901@st-andrews.ac.uk>
+In-reply-to: <200602281903.12697.fred@uh.cu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Cc: Maciej Soltysiak <solt2@dns.toxicfilms.tv>, Jesper Juhl <jesper.juhl@gmail.com>, Jan Engelhardt <jengelh@linux01.gwdg.de>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>
+To: Yoanis Gil Delgado <fred@uh.cu>
+Cc: reiserfs-list@namesys.com
 
-On Sat, 25 Feb 2006, Peter Foldiak wrote:
+--nextPart3617275.m8bNQGT6UM
+Content-Type: text/plain;
+  charset="iso-8859-6"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-> "sub-file" corresponding to a key-range. Writing a chapter should change the
-> book that the chapter is part of. That is what would make it really valuable.
-> Of course it would have all sorts of implications (e.g. for metadata for each
-> part) that need to be thought about, but it could be done properly, I think.
+On Tuesday 28 February 2006 16:03, you wrote:
+> On Tuesday 28 February 2006 17:24, you wrote:
+>
+> No i don't have SVN or CVS. Also i think it will be  a nice feature of the
+> wiki if it explains how to setup a development enviroment.
 
-What happens if you read the first 10kB of a file,
-and one of the "chapters" behind your read cursor
-grows?
+It does, thanks to Ryan Nordman's efforts.
+(Further additions, corrections, and alternate configurations are welcome.)
 
-Do you read part of the same data again when you
-continue reading?
+=2Dp
 
-Does the read cursor automatically advance?
+=2D-=20
+Peter van Hardenberg (pvh@pvh.ca)
+Victoria, BC, Canada
 
-Your idea changes the way userspace expects files
-to behave...
+--nextPart3617275.m8bNQGT6UM
+Content-Type: application/pgp-signature
 
--- 
-All Rights Reversed
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2.1 (GNU/Linux)
+
+iD8DBQBEBNfPdnKLARTlqzgRAnM+AJ9Kyh4K7M0ijfLE7fTh85ez1lpfHACff+qo
+PmV6YuLe2KnS7Nl5Y9C13/A=
+=rFYQ
+-----END PGP SIGNATURE-----
+
+--nextPart3617275.m8bNQGT6UM--
