@@ -1,39 +1,39 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: reiserfs 3 on top of software raid 1
-Date: Tue, 28 Feb 2006 14:00:21 +0300
-Message-ID: <1141124421.6207.139.camel@tribesman.namesys.com>
-References: <20060228001451.bc74a3d1.petchema@concept-micro.com>
+From: Francesco Biscani <biscani@pd.astro.it>
+Subject: Re: possible reiser4 bug
+Date: Tue, 28 Feb 2006 14:46:46 +0100
+Message-ID: <200602281446.48460.biscani@pd.astro.it>
+References: <2bbb1c940602232135jff393fbm2175052026237ce9@mail.gmail.com> <200602260333.28555.biscani@pd.astro.it> <200602261033.18676.zam@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-28150-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28151-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060228001451.bc74a3d1.petchema@concept-micro.com>
+In-Reply-To: <200602261033.18676.zam@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Pierre =?ISO-8859-1?Q?Etchema=EFt=E9?= <petchema@concept-micro.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
+Cc: Alexander Zarochentsev <zam@namesys.com>
 
-Hello
+On Sunday 26 February 2006 08:33, Alexander Zarochentsev wrote:
+> please use better version of the patch (attached).
 
-On Tue, 2006-02-28 at 00:14 +0100, Pierre Etchemaïté wrote:
-> 	Hi all,
-> 
-> I have a question that didn't occur to me until a power failure (eh)...
-> 
-> When a journalized file system like reiserfs 3 runs on top on a
-> software raid volume, does the volume give enough (and correct)
-> feedback so that the file system can still guarantee that its metadata
-> will be in a consistant state after a power failure/crash/you name it ?
-> 
-> If all disks go back online ? If some don't (but below redundancy
-> amount, of course) ?
-> 
-> In short, beside disks resynching, is a fsck also necessary ?
-> 
+Hello,
 
-It should not be. I believe that journal replaying on mount is enough.
-Does your experience contradict that?
+  after some days of testing the problem seems gone. The kernel survived ma=
+ny=20
+CPU and I/O intensive tasks (some compilations of gcc and firefox) without =
+an=20
+hiccup, whereas without the patch it hanged quite soon.
 
+Thanks and regards,
+
+  Francesco
+
+=2D-=20
+Dr. Francesco Biscani
+Dipartimento di Astronomia
+Universit=E0 di Padova
+biscani@pd.astro.it
