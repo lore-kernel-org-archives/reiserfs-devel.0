@@ -1,52 +1,65 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Peter van Hardenberg <pvh@uvic.ca>
 Subject: Re: Plugin Patch (was Re: creating live virtual files by concatenation)
-Date: Tue, 28 Feb 2006 14:20:47 -0800
-Message-ID: <4404CCBF.7050804@namesys.com>
-References: <1271316508.20060225153749@dns.toxicfilms.tv> <200602281141.41877.pvh@uvic.ca> <du2gmr$32q$1@sea.gmane.org> <200602281819.49975.fred@uh.cu>
+Date: Tue, 28 Feb 2006 14:24:55 -0800
+Message-ID: <200602281425.01243.pvh@uvic.ca>
+References: <1271316508.20060225153749@dns.toxicfilms.tv>
+ <200602281548.19748.fred@uh.cu> <4404ACD5.80403@namesys.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary=nextPart1236403.bvdH9E3Cq2;
+ protocol="application/pgp-signature"; micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28171-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28172-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200602281819.49975.fred@uh.cu>
+In-reply-to: <4404ACD5.80403@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Yoanis Gil Delgado <fred@uh.cu>
-Cc: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Yoanis Gil Delgado <fred@uh.cu>, reiserfs-list@namesys.com, Peter van Hardenberg <pvh@pvh.ca>, Alexander Lyamin aka FLX <flx@namesys.com>
 
-Yoanis Gil Delgado wrote:
+--nextPart1236403.bvdH9E3Cq2
+Content-Type: text/plain;
+  charset="iso-8859-6"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
->On Tuesday 28 February 2006 16:53, Marcus Furlong wrote:
->  
->
->>>On Tuesday 28 February 2006 12:07, Yoanis Gil Delgado wrote:
->>>      
->>>
->>>>On Tuesday 28 February 2006 01:24, Peter van Hardenberg wrote:
->>>>We most take the advance.I suggest to all people interested in this to
->>>>spent a full weekend creating such a plugin. There is a possibility of
->>>>failure but..... we will gather enough question for the people at
->>>>namesys and they can share some ligth. Then we spent another weekend and
->>>>so on...
->>>>        
->>>>
->>>Yoanis, this is a great idea! We can collaborate via IRC and the wiki and
->>>share our discoveries. I will join this project. Who else will?
->>>      
->>>
->>Count me in too. I think it's a great idea. Any chance of having someone
->>from namesys on hand to participate as well in case we hit any brick walls?
->>    
->>
->Yes that would be excellent. But we must think in the worst scenerio. We must 
->start walking so when we hit the wall people at namesys said:
->	"This kids really need help"
->
->P.D: Reiser please don't let us hit the wall!!!! :)
->
->
->  
->
-We won't.  But we will be asleep at frequent intervals.  ;-)
+On Tuesday 28 February 2006 12:04, Hans Reiser wrote:
+> Maybe we can put a button on our webpage labeled reiser4 wiki maintained
+> by pvh.  There is no chat equivalent of mailto: is there?  Maybe we
+> should also have a button labeled chatrooms which contains a page
+> describing where to find our chatrooms, etc.
+
+An excellent idea. I know there is already a Reiser IRC channel on OFTC.  T=
+he=20
+URL irc://irc.oftc.net/reiser4 is understood by some programs. I have added=
+=20
+the link to my wiki front page.=20
+
+If involvement grows, I will probably improve the Reiser4 wiki's hosting=20
+situation, at which point I will redirect the URL automatically and post th=
+e=20
+new URL here.
+
+Tell me, do you have an public access SVN or CVS repository I could link th=
+e=20
+wiki to for source references?
+
+=2Dpvh
+
+=2D-=20
+Peter van Hardenberg (pvh@pvh.ca)
+Victoria, BC, Canada
+
+--nextPart1236403.bvdH9E3Cq2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2.1 (GNU/Linux)
+
+iD8DBQBEBM29dnKLARTlqzgRAih9AJ9CcxWLYMq8Z04WMj5mqyhImLF5SQCfQ1x6
+S21kuztsf0/73+PxPvRyarc=
+=FCM3
+-----END PGP SIGNATURE-----
+
+--nextPart1236403.bvdH9E3Cq2--
