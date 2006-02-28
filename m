@@ -1,62 +1,32 @@
-From: Alexander Zarochentsev <zam@namesys.com>
-Subject: Re: Reiser4 unlink performance
-Date: Wed, 1 Mar 2006 00:22:29 +0300
-Message-ID: <200603010022.29721.zam@namesys.com>
-References: <EE7B7176-15E7-43E9-937B-B084879E62A9@hilander.com> <200602282306.35488.zam@namesys.com> <4404B5C5.3090702@namesys.com>
+From: Marcus Furlong <furlongm@hotmail.com>
+Subject: Re: Plugin Patch (was Re: creating live virtual files by concatenation)
+Date: Tue, 28 Feb 2006 21:53:47 +0000
+Message-ID: <du2gmr$32q$1@sea.gmane.org>
+References: <1271316508.20060225153749@dns.toxicfilms.tv> <200602272224.19908.pvh@uvic.ca> <200602281508.00718.fred@uh.cu> <200602281141.41877.pvh@uvic.ca>
+Reply-To: furlongm@hotmail.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28167-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7Bit
+Return-path: <reiserfs-list-return-28168-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4404B5C5.3090702@namesys.com>
-Content-Disposition: inline
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com, "Alec H. Peterson" <ahp@hilander.com>
+To: reiserfs-list@namesys.com
 
-On Tuesday 28 February 2006 23:42, Hans Reiser wrote:
-> Alexander Zarochentsev wrote:
-> >On Tuesday 28 February 2006 22:56, Hans Reiser wrote:
-> >>Alexander Zarochentsev wrote:
-> >>>On Tuesday 28 February 2006 22:11, Hans Reiser wrote:
-> >>>>Alec H. Peterson wrote:
-> >>>>>Hi Alexander,
-> >>>>>
-> >>>>>On Feb 26, 2006, at 13:42, Alexander Zarochentsev wrote:
-> >>>>>>Which kernel version and reiser4 patches were used?
-> >>>>>
-> >>>>>2.6.15.4r4 kernel,
-> >>>>>reiser4-for-2.6.15-1.patch
-> >>>>>
-> >>>>>>Is the system SMP?
-> >>>>>
-> >>>>>Yes.
-> >>>>>
-> >>>>>>No, "Flushing like mad" usually indicates a bug.
-> >>>>
-> >>>>Please describe it in more detail.
-> >>>
-> >>>The flush algorithm designed to make progress in any iteration.
-> >>>"flushing like mad" messages usually indicates that the flush
-> >>> can't make progress.
-> >>
-> >>Yet more detail please.
-> >
-> >the algorithm does not work as designed, it is a design bug or an
-> >implementation bug ;)
->
-> I seem to remember vs saying this message could be ignored safely at
-> times in the past, which is why I am asking you for more details.
 
-We have improved handling of truncate/flush races, especially if 
-formatted nodes are deleted.  Now I think that any truncate/flush race 
-can be resolved w/o having those too many useless iterations of 
-jnode_flush.
+> On Tuesday 28 February 2006 12:07, Yoanis Gil Delgado wrote:
+>> On Tuesday 28 February 2006 01:24, Peter van Hardenberg wrote:
+>> We most take the advance.I suggest to all people interested in this to
+>> spent a full weekend creating such a plugin. There is a possibility of
+>> failure but..... we will gather enough question for the people at namesys
+>> and they can share some ligth. Then we spent another weekend and so on...
+> 
+> Yoanis, this is a great idea! We can collaborate via IRC and the wiki and
+> share our discoveries. I will join this project. Who else will?
 
-> Hans
+Count me in too. I think it's a great idea. Any chance of having someone
+from namesys on hand to participate as well in case we hit any brick walls?
 
--- 
-Alex.
