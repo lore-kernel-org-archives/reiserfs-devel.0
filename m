@@ -1,31 +1,52 @@
-From: Yoanis Gil Delgado <fred@uh.cu>
-Subject: Re: Plugin Patch (was Re: creating live virtual files by concatenation)
-Date: Tue, 28 Feb 2006 15:48:19 -0500
-Message-ID: <200602281548.19748.fred@uh.cu>
-References: <1271316508.20060225153749@dns.toxicfilms.tv> <200602281508.00718.fred@uh.cu> <200602281141.41877.pvh@uvic.ca>
+From: Alexander Zarochentsev <zam@namesys.com>
+Subject: Re: Reiser4 unlink performance
+Date: Tue, 28 Feb 2006 22:48:04 +0300
+Message-ID: <200602282248.04647.zam@namesys.com>
+References: <EE7B7176-15E7-43E9-937B-B084879E62A9@hilander.com> <15967723-4F4C-47DF-A621-CEE29E4C6244@hilander.com> <4404A04F.5010902@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28160-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28161-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200602281141.41877.pvh@uvic.ca>
+In-Reply-To: <4404A04F.5010902@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
+Cc: Hans Reiser <reiser@namesys.com>, "Alec H. Peterson" <ahp@hilander.com>
 
-On Tuesday 28 February 2006 14:41, Peter van Hardenberg wrote:
-> On Tuesday 28 February 2006 12:07, Yoanis Gil Delgado wrote:
-> > On Tuesday 28 February 2006 01:24, Peter van Hardenberg wrote:
-> > We most take the advance.I suggest to all people interested in this to
-> > spent a full weekend creating such a plugin. There is a possibility of
-> > failure but..... we will gather enough question for the people at namesys
-> > and they can share some ligth. Then we spent another weekend and so on...
+On Tuesday 28 February 2006 22:11, Hans Reiser wrote:
+> Alec H. Peterson wrote:
+> > Hi Alexander,
+> >
+> > On Feb 26, 2006, at 13:42, Alexander Zarochentsev wrote:
+> >> Which kernel version and reiser4 patches were used?
+> >
+> > 2.6.15.4r4 kernel,
+> > reiser4-for-2.6.15-1.patch
+> >
+> >> Is the system SMP?
+> >
+> > Yes.
+> >
+> >> No, "Flushing like mad" usually indicates a bug.
 >
-> Yoanis, this is a great idea! We can collaborate via IRC and the wiki and
-> share our discoveries. I will join this project. Who else will?
-Yes IRC is a good way of communication this will bring to life reiser4 IRC 
-channel :). Hope we can get enough hackers. As soon as we have then we must 
-start to organize the "party".
+> Please describe it in more detail.
+>
+
+The flush algorithm designed to make progress in any iteration.  
+"flushing like mad" messages usually indicates that the flush can't 
+make progress.
+
+> > Good to know.
+> >
+> > Thanks!
+> >
+> > Alec
+>
+> !DSPAM:4404a06b108681480917376!
+
+-- 
+Alex.
