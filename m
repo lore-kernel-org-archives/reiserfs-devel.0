@@ -1,53 +1,52 @@
-From: Peter van Hardenberg <pvh@uvic.ca>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Plugin Patch (was Re: creating live virtual files by concatenation)
-Date: Tue, 28 Feb 2006 15:07:56 -0800
-Message-ID: <200602281507.59582.pvh@uvic.ca>
-References: <1271316508.20060225153749@dns.toxicfilms.tv>
- <200602281425.01243.pvh@uvic.ca> <200602281903.12697.fred@uh.cu>
+Date: Tue, 28 Feb 2006 15:36:40 -0800
+Message-ID: <4404DE88.5090208@namesys.com>
+References: <1271316508.20060225153749@dns.toxicfilms.tv> <200602281548.19748.fred@uh.cu> <4404ACD5.80403@namesys.com> <200602281425.01243.pvh@uvic.ca>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary=nextPart3617275.m8bNQGT6UM;
- protocol="application/pgp-signature"; micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28173-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28174-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-reply-to: <200602281903.12697.fred@uh.cu>
+In-Reply-To: <200602281425.01243.pvh@uvic.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Yoanis Gil Delgado <fred@uh.cu>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Peter van Hardenberg <pvh@uvic.ca>
+Cc: Yoanis Gil Delgado <fred@uh.cu>, reiserfs-list@namesys.com, Peter van Hardenberg <pvh@pvh.ca>, Alexander Lyamin aka FLX <flx@namesys.com>
 
---nextPart3617275.m8bNQGT6UM
-Content-Type: text/plain;
-  charset="iso-8859-6"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Peter van Hardenberg wrote:
 
-On Tuesday 28 February 2006 16:03, you wrote:
-> On Tuesday 28 February 2006 17:24, you wrote:
+>On Tuesday 28 February 2006 12:04, Hans Reiser wrote:
+>  
 >
-> No i don't have SVN or CVS. Also i think it will be  a nice feature of the
-> wiki if it explains how to setup a development enviroment.
+>>Maybe we can put a button on our webpage labeled reiser4 wiki maintained
+>>by pvh.  There is no chat equivalent of mailto: is there?  Maybe we
+>>should also have a button labeled chatrooms which contains a page
+>>describing where to find our chatrooms, etc.
+>>    
+>>
+>
+>An excellent idea. I know there is already a Reiser IRC channel on OFTC.  The 
+>URL irc://irc.oftc.net/reiser4 is understood by some programs. I have added 
+>the link to my wiki front page. 
+>  
+>
+Ok, that works for me, flx, please add it to our web page.
 
-It does, thanks to Ryan Nordman's efforts.
-(Further additions, corrections, and alternate configurations are welcome.)
+>If involvement grows, I will probably improve the Reiser4 wiki's hosting 
+>situation, at which point I will redirect the URL automatically and post the 
+>new URL here.
+>
+>Tell me, do you have an public access SVN or CVS repository I could link the 
+>wiki to for source references?
+>  
+>
+we use git these days, sigh.
 
-=2Dp
+>-pvh
+>
+>  
+>
 
-=2D-=20
-Peter van Hardenberg (pvh@pvh.ca)
-Victoria, BC, Canada
-
---nextPart3617275.m8bNQGT6UM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2.1 (GNU/Linux)
-
-iD8DBQBEBNfPdnKLARTlqzgRAnM+AJ9Kyh4K7M0ijfLE7fTh85ez1lpfHACff+qo
-PmV6YuLe2KnS7Nl5Y9C13/A=
-=rFYQ
------END PGP SIGNATURE-----
-
---nextPart3617275.m8bNQGT6UM--
