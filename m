@@ -1,57 +1,131 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 00/11] reiserfs: xattr rework
-Date: Wed, 1 Mar 2006 13:34:06 +0100
-Message-ID: <20060301123406.GA20367@atrey.karlin.mff.cuni.cz>
-References: <20060220201457.GA23204@locomotive.unixthugs.org>
+From: Alexander Zarochentsev <zam@namesys.com>
+Subject: Re: Reiser4 unlink performance
+Date: Wed, 1 Mar 2006 18:27:54 +0300
+Message-ID: <200603011827.55282.zam@namesys.com>
+References: <EE7B7176-15E7-43E9-937B-B084879E62A9@hilander.com> <4404A04F.5010902@namesys.com> <5630744B-8F94-4B23-A228-999F04BD3E58@hilander.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28176-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28177-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <5630744B-8F94-4B23-A228-999F04BD3E58@hilander.com>
 Content-Disposition: inline
-In-Reply-To: <20060220201457.GA23204@locomotive.unixthugs.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>, "E. Gryaznova" <grev@namesys.com>
+To: reiserfs-list@namesys.com
+Cc: "Alec H. Peterson" <ahp@hilander.com>, Hans Reiser <reiser@namesys.com>
 
-  Hello,
+On Tuesday 28 February 2006 22:19, Alec H. Peterson wrote:
+> Hi Hans,
+>
+> On Feb 28, 2006, at 12:11, Hans Reiser wrote:
+> > Please describe it in more detail.
+>
+> Well, the error I'm getting is this:
+>
+> Feb 21 13:10:22 ecbuild-10 kernel: WARNING: Flushing like mad: 16384
+>
+> The C program I'm running to do the test is this:
 
-> Following this message is a series of 11 patches that rework the reiserfs
-> xattr code. The current implementation open codes a number of functions that
-> are well tested and stable elsewhere, but will slight modifications. It also
-> does a number of things suboptimally, such as operations that affect all of
-> the xattrs associated with an inode, as well as not handling journalling as
-> well as can be.
-> 
-> I've run them through a weekend of stress testing successfully, but I'd like
-> some additional testing before considering them safe.
-> 
-> Here's the run down:
-> 
-> * 01 - Make internal xattr operations use vfs ops
->   This eliminates the open coding of the read/write loops in favor of using
->   vfs_read and vfs_write. Performance-wise, it's very little difference
->   from the open coding, and implementation-wise, it's more tested. Yes, this
->   violates the no-file-io-in-the-kernel rules, but this rule has been violated
->   since the day the original patches were accepted.
-  I'm not completely sure but from briefly looking at the patches I
-think there might be the following problem: you first start a transaction
-and then call a VFS write operation. That will lock a page it wants to
-write. But if bdflush works on the xattr file and sends some dirty data
-to disk, it will first take page lock and then start the transaction.
-This introduces essentially a lock inversion (as starting a transaction
-behaves like taking a lock) and hence deadlocks... I've been solving
-these for the quota code some time ago (quota also has similar needs as
-your xattr code) - I really had some deadlock reports for heavily loaded
-machines. There the only reasonable solution was an extra write
-functions bypassing the page cache. Maybe in your case you can solve the
-problems differently as you don't need the working solution for all the
-filesystems but just for Reiserfs. 
+All files created by the program below have zero lentgh, correct?
+Is it the same program as which triggered 'flushing like mad' ?
+ 
+>
+> main(int argc, char **argv)
+> {
+>    char buf[1024];
+>    char dir[1024];
+>    int i,j,k;
+>    int ret;
+>    int fd;
+>    int *sequence;
+>    struct timeval start, unlinktime, end;
+>
+>    if(argc != 2)
+>    {
+>      fprintf(stderr, "Usage: %s <base directory>\n", argv[0]);
+>      exit(1);
+>    }
+>
+>    strncpy(dir, argv[1], 1024);
+>
+>    if(chdir(dir))
+>    {
+>      perror("chdir");
+>      exit(1);
+>    }
+>
+>    for(i = 0; i < 256; i++)
+>    {
+>      snprintf(buf, 1024, "%d", i);
+>      ret = mkdir(buf, S_IRWXU);
+>      if(ret && (errno != EEXIST))
+>      {
+>        perror("mkdir");
+>        exit(1);
+>      }
+>    }
+>
+>
+>    {
+>      sequence = sequence20000;
+>      gettimeofday(&start, NULL);
+>      fprintf(stderr, "Starting %d run %d.%d.\n",
+>              256 * 20000, start.tv_sec, start.tv_usec);
+>
+>      for(i = 0; i < 256; i++)
+>      {
+>        for(j = 0; j < 20000; j++)
+>        {
+>          snprintf(buf, 1024, "%d/%d", i, j);
+>          fd = open(buf, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+>          if(fd == -1)
+>          {
+>            perror("open");
+>            exit(1);
+>          }
+>          close(fd);
+>        }
+>        fprintf(stderr, "Done %d\n", i);
+>      }
+>
+>      gettimeofday(&unlinktime, NULL);
+>      fprintf(stderr, "Starting %d unlink %d.%d, elapsed time was
+> %d.\n", 256 * 20000, unlinktime.tv_sec, unlinktime.tv_usec,
+> unlinktime.tv_sec - start.tv_sec);
+>
+>      for(i = 0; i < 20000; i++)
+>      {
+>        for(j = 0; j < 256; j++)
+>        {
+>          snprintf(buf, 1024, "%d/%d", j, sequence[i]);
+>          unlink(buf);
+>          if(fd == -1)
+>          {
+>            perror("unlink");
+>            exit(1);
+>          }
+>        }
+>        fprintf(stderr, "Done %d\n", i);
+>      }
+>
+>      gettimeofday(&end, NULL);
+>      fprintf(stderr, "Done with %d unlink %d.%d, elapsed time was %d.
+> \n",
+>              20000 * 256, end.tv_sec, end.tv_usec,
+>              end.tv_sec - unlinktime.tv_sec);
+>    }
+>
+>    exit(0);
+> }
+>
+> sequence20000 is an array which contains a sequence from 1 to 20000
+> randomly ordered.
+>
+> Alec
+>
 
-									Honza
 -- 
-Jan Kara <jack@suse.cz>
-SuSE CR Labs
+Alex.
