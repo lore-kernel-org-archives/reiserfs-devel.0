@@ -1,34 +1,39 @@
-From: "Alec H. Peterson" <ahp@hilander.com>
-Subject: Re: Reiser4 unlink performance
-Date: Wed, 1 Mar 2006 08:34:48 -0700
-Message-ID: <812C5316-42AD-4195-9AF4-F29529950E85@hilander.com>
-References: <EE7B7176-15E7-43E9-937B-B084879E62A9@hilander.com> <4404A04F.5010902@namesys.com> <5630744B-8F94-4B23-A228-999F04BD3E58@hilander.com> <200603011827.55282.zam@namesys.com>
-Mime-Version: 1.0 (Apple Message framework v746.2)
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28178-reiserfs=m.gmane.org@namesys.com>
+From: Marcel Hilzinger <marcel@hilzinger.hu>
+Subject: Re: Reiser4 default in Underground Dekstop distribution
+Date: Wed, 1 Mar 2006 23:25:54 +0100
+Message-ID: <200603012325.54461.marcel@hilzinger.hu>
+References: <200602251203.09958.Peter.Foldiak@st-andrews.ac.uk> <4401E68E.8060205@namesys.com> <200602261834.14571.Peter.Foldiak@st-andrews.ac.uk>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28179-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200603011827.55282.zam@namesys.com>
+In-Reply-To: <200602261834.14571.Peter.Foldiak@st-andrews.ac.uk>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
-To: Alexander Zarochentsev <zam@namesys.com>
-Cc: reiserfs-list@namesys.com, Hans Reiser <reiser@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-Hi Hans,
-
-On Mar 1, 2006, at 8:27, Alexander Zarochentsev wrote:
-
+Am Sonntag, 26. Februar 2006 19:34 schrieb Peter Foldiak:
+> Marcel (Hilzinger),
 >
-> All files created by the program below have zero lentgh, correct?
-> Is it the same program as which triggered 'flushing like mad' ?
+> Did you write this Linux Magazine article? Could you give some details on
+> what the problem was?
+Yes, I wrote the article. The version I tested suffered much from the fsync=
+=20
+problem. There were timeouts approx every 10 seconds, where the system didn=
+'t=20
+respond for a very short time (_very_ disturbing when watching videos). I=20
+then asked the creator of Underground Linux if he also had this problems an=
+d=20
+I pointet him to this list. He denied then, but it seems that other users d=
+id=20
+report problems with underground 022 as well. I didn't even know, that=20
+Underground went back to ReiserFS.
 
-Correct.
 
-I would be happy to modify it and re-run it however you like.  You  
-are correct though that that isn't a real use case for us (0 length  
-files).
-
-Alec
-
+=2D-=20
+=DCdv=F6zlettel -- Mit freundlichen Gr=FCssen,
+Marcel Hilzinger
