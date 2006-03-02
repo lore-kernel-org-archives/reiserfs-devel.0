@@ -1,50 +1,81 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiser4 default in Underground Dekstop distribution
-Date: Thu, 02 Mar 2006 09:33:10 -0800
-Message-ID: <44072C56.1020504@namesys.com>
-References: <200602251203.09958.Peter.Foldiak@st-andrews.ac.uk>	 <200603012325.54461.marcel@hilzinger.hu>	 <44062587.9020005@namesys.com>	 <200603020019.54410.marcel@hilzinger.hu> <5d8b7b90603011636w3b557369r64617ad6386437ed@mail.gmail.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] reiserfs: fix unaligned bitmap usage
+Date: Thu, 2 Mar 2006 13:25:26 -0500
+Message-ID: <20060302182525.GA9558@locomotive.unixthugs.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28184-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28186-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <5d8b7b90603011636w3b557369r64617ad6386437ed@mail.gmail.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Islam Amer <pharon@gmail.com>
-Cc: reiserfs-list@namesys.com, "E. Gryaznova" <grev@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@osdl.org>, Linus Torvalds <torvalds@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Islam Amer wrote:
+ The bitmaps associated with generation numbers for directory entries
+ are declared as an array of ints. On some platforms, this causes alignment
+ exceptions.
 
->Hi my livecd phaeronix http://www.phaeronix.net supports reiser4 and
->resier3 and are the default choices.
->
->It has a patched 2.6.11 kernel, back in the days when IO/CPU
->performance was really good.
->
->It's out of date and I am preparing a new one, also with reiser4
->support. But IO performance nowadays is not so good.
->
-Are you referring specifically to reiser4 IO performance?  Can you give
-me reproduceable specifics so that we can fix it? 
+ The following patch uses the standard bitmap declaration macros to
+ declare the bitmaps, fixing the problem.
 
-Thanks,
+ Originally from Takashi Iwai.
 
-Hans
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Acked-by: Jeff Mahoney <jeffm@suse.com>
 
-> I am using
->2.6.15-archck4.
->
->Maybe things will be better in 2.6.16 .. I also had problems with grub
->starting with 2.6.15 , so I switched to lilo. But I had problems with
->that too, ( which I described on this mailing list a few days ago ).
->So now I am using a 50Mb ext2 boot partition.
->
->I hope reiser4 "rises" back to expectations again. Thank you :P
->
->
->  
->
-
+--- linux-2.6.15/fs/reiserfs/namei.c	2006-02-14 18:57:32.000000000 +0100
++++ linux-2.6.15/fs/reiserfs/namei.c	2006-02-14 18:58:24.000000000 +0100
+@@ -247,7 +247,7 @@ static int linear_search_in_dir_item(str
+ 		/* mark, that this generation number is used */
+ 		if (de->de_gen_number_bit_string)
+ 			set_bit(GET_GENERATION_NUMBER(deh_offset(deh)),
+-				(unsigned long *)de->de_gen_number_bit_string);
++				de->de_gen_number_bit_string);
+ 
+ 		// calculate pointer to name and namelen
+ 		de->de_entry_num = i;
+@@ -431,7 +431,7 @@ static int reiserfs_add_entry(struct rei
+ 	struct reiserfs_de_head *deh;
+ 	INITIALIZE_PATH(path);
+ 	struct reiserfs_dir_entry de;
+-	int bit_string[MAX_GENERATION_NUMBER / (sizeof(int) * 8) + 1];
++	DECLARE_BITMAP(bit_string, MAX_GENERATION_NUMBER + 1);
+ 	int gen_number;
+ 	char small_buf[32 + DEH_SIZE];	/* 48 bytes now and we avoid kmalloc
+ 					   if we create file with short name */
+@@ -486,7 +486,7 @@ static int reiserfs_add_entry(struct rei
+ 
+ 	/* find the proper place for the new entry */
+ 	memset(bit_string, 0, sizeof(bit_string));
+-	de.de_gen_number_bit_string = (char *)bit_string;
++	de.de_gen_number_bit_string = bit_string;
+ 	retval = reiserfs_find_entry(dir, name, namelen, &path, &de);
+ 	if (retval != NAME_NOT_FOUND) {
+ 		if (buffer != small_buf)
+@@ -508,7 +508,7 @@ static int reiserfs_add_entry(struct rei
+ 	}
+ 
+ 	gen_number =
+-	    find_first_zero_bit((unsigned long *)bit_string,
++	    find_first_zero_bit(bit_string,
+ 				MAX_GENERATION_NUMBER + 1);
+ 	if (gen_number > MAX_GENERATION_NUMBER) {
+ 		/* there is no free generation number */
+--- linux-2.6.15/include/linux/reiserfs_fs.h	2006-02-14 18:57:10.000000000 +0100
++++ linux-2.6.15/include/linux/reiserfs_fs.h	2006-02-14 18:57:22.000000000 +0100
+@@ -1052,7 +1052,7 @@ struct reiserfs_dir_entry {
+ 	int de_entrylen;
+ 	int de_namelen;
+ 	char *de_name;
+-	char *de_gen_number_bit_string;
++	unsigned long *de_gen_number_bit_string;
+ 
+ 	__u32 de_dir_id;
+ 	__u32 de_objectid;
+-- 
+Jeff Mahoney
+SuSE Labs
