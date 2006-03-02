@@ -1,42 +1,58 @@
-From: =?ISO-8859-1?Q?Marc-Andr=E9_Laverdi=E8re?=
- <ma_laver@ciise.concordia.ca>
-Subject: Coding Standards
-Date: Thu, 02 Mar 2006 17:45:59 -0500
-Message-ID: <440775A7.9070009@ciise.concordia.ca>
+From: Andrew Morton <akpm@osdl.org>
+Subject: Re: [Fwd: Re: [PATCH] reiserfs: use
+ balance_dirty_pages_ratelimited_nr in reiserfs_file_write]
+Date: Thu, 2 Mar 2006 15:08:59 -0800
+Message-ID: <20060302150859.51ffb93f.akpm@osdl.org>
+References: <4407386D.4070008@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-28189-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28190-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <4407386D.4070008@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: linux-kernel@vger.kernel.org, Reiserfs-List@namesys.com, green@linuxhacker.ru
 
-Hello,
+Hans Reiser <reiser@namesys.com> wrote:
+>
+> I suspect that when someone did the search and replace when creating
+> balance_dirty_pages_ratelimited_nr they failed to read the code and
+> realize this code path was already effectively ratelimited.  The result
+> is they made it excessively infrequent (every 1MB if ratelimit is 8) in
+> its calling balance_dirty_pages.
 
-I was reading an article long ago where Mr Reiser was saying that he was=20
-using military grade coding standards. And that it is also the reason=20
-why Reiser4 is not integrated by default in the Linux kernel.
+??  There's been no change to balance_dirty_pages_ratelimited().  I merely
+widened the interface a bit: introduced the new
+balance_dirty_pages_ratelimited_nr() and did
 
-My experience at looking at GNU code is that it is sloppy and I want to=20
-start a high-assurance project with the best of the best of coding=20
-practices... something making me feel that the GNU coding guidelines are=20
-not the best of options.
+static inline void
+balance_dirty_pages_ratelimited(struct address_space *mapping)
+{
+	balance_dirty_pages_ratelimited_nr(mapping, 1);
+}
 
-Your input would be very appreciated!
+That being said, if reiserfs has `number of pages' in hand then yes, it
+makes sense to migrate over to balance_dirty_pages_ratelimited_nr().
 
---=20
-Marc-Andr=E9 LAVERDI=C8RE, B. Eng., M. A. Sc. (in progress)
-Research Assistant - Computer Security Laboratory
-CIISE, Universit=E9 Concordia University, Montr=E9al, Qu=E9bec, Canada
-www.ciise.concordia.ca
+> If anyone has ever seen this as an actual problem on a real system, I
+> would be curious to hear of it.
 
-/"\
-\ /    ASCII Ribbon Campaign
-  X      against HTML e-mail
-/ \
+No, I wouldn't expect it to make much difference.
 
-"Perseverance must finish its work so that you may be mature and=20
-complete, not lacking anything." -James 1:4
+All that gunk is there just to avoid calling the expensive
+get_writeback_state() once per set_page_dirty().
+
+Inaccuracy here will introduce the possibility that we'll transiently dirty
+more memory than dirty_ratio permits, but it'll only be a little bit (eight
+times the amount of memory which is dirtied per balance_dirty_pages_ratelimited()
+call).
+
+That's a small amount of memory.  But if you have 1000 filesystems mounted
+and they all do the same thing at the same time, things could get a bit
+sticky.  Your patch will (greatly) reduce the possibility of even that
+scenario.
+
