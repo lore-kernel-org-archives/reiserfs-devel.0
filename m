@@ -1,73 +1,72 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 00/11] reiserfs: xattr rework
-Date: Mon, 6 Mar 2006 12:59:26 +0100
-Message-ID: <20060306115926.GL1175@atrey.karlin.mff.cuni.cz>
-References: <20060220201457.GA23204@locomotive.unixthugs.org> <20060301123406.GA20367@atrey.karlin.mff.cuni.cz> <44076975.70609@suse.com> <20060303002917.GD4261@atrey.karlin.mff.cuni.cz> <4407944F.5030206@suse.com> <20060303100407.GF2855@atrey.karlin.mff.cuni.cz> <4408C080.4070600@suse.com>
+From: Sergey Ivanov <seriv@parkheights.dyndns.org>
+Subject: strange reiser4 messages in /var/log/messages
+Date: Mon, 06 Mar 2006 18:06:37 -0500
+Message-ID: <440CC07D.3050802@parkheights.dyndns.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28218-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28219-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <4408C080.4070600@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>, "E. Gryaznova" <grev@namesys.com>
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
-> 
-> Jan Kara wrote:
-> >> The data journaling mode can be set as a flag associated with the inode.
-> >>  Currently, i_data_log is set in REISERFS_I(inode)->i_flags. I add
-> >> i_data_ordered in one of my later patches. They can be tested easily
-> >> with reiserfs_file_data_{log,ordered}. There's no reason that one
-> >> couldn't be moved up and made a prerequisite for the first patch.
-> >   Fine. So we can just set proper journaling flags in reiserfs_quota_on
-> > and then honor them in the internal writing functions.
-> 
-> Ok, how do the attached patches look to you? The internal I/O changes
-> need to be applied after the journaled xattr patch or we get an Oops
-> trying to start a transaction without calling reiserfs_write_lock()
-> first. I've modified the first patch in the xattr series to abstract out
-> the fp->f_op->{read,write} calls to an xattr_{read,write} pair of
-> functions. This makes it easier to move to the internal i/o code later.
-> I've included it for clarity, but that is the only change.
-  The patch looks fine. Just two minor comments:
-
-<snip>
-> diff -ruNpX ../dontdiff linux-2.6.15-staging1/fs/reiserfs/super.c linux-2.6.15-staging2/fs/reiserfs/super.c
-> --- linux-2.6.15-staging1/fs/reiserfs/super.c	2006-03-03 17:09:01.000000000 -0500
-> +++ linux-2.6.15-staging2/fs/reiserfs/super.c	2006-03-03 17:09:04.000000000 -0500
-> @@ -1949,6 +1949,109 @@ static int reiserfs_statfs(struct super_
->  	return 0;
->  }
->  
-> +#if defined(CONFIG_QUOTA) || defined(CONFIG_REISERFS_FS_XATTR)
-> +/* Read data from quotafile - avoid pagecache and such because we cannot afford
-> + * acquiring the locks... As quota files are never truncated and quota code
-> + * itself serializes the operations (and noone else should touch the files)
-> + * we don't have to be afraid of races */
- Update here the comment to reflect that we use this function also for
-xattrs now - I suppose those files cannot be truncated either and that
-xattr code serializes the operations there.
-
-> +ssize_t reiserfs_internal_read(struct inode *inode, char *data, size_t len,
-> +                               loff_t off)
-  <snip>
-
-> +/* Write to quotafile (we know the transaction is already started and has
-> + * enough credits) */
-  Here again update the comment...
-
-> +ssize_t reiserfs_internal_write(struct inode *inode, const char *data,
-> +                                size_t len, loff_t off)
-
-									Honza
-
+Hi,
+I have vanilla 2.6.15.4 kernel with reiser4-for-2.6.15-1.patch applied.
+The machine is SMP with SCSI 17G drive formatted as reiser4.
+The reiser4 works for /var/spool, with rate about 100 files/sec creating
+and deleting sometimes after, average filesize about 10k, with total
+spool size about 5G.
+Under load the following messages from reiser4 occur in the log:
+--
+Mar  5 13:21:02 test-10 kernel: <4>reiser4[sendmail(3485)]:
+disable_write_barrier (fs/reiser4/wander.c:233)[zam-1055]:
+Mar  5 13:21:02 test-10 kernel: WARNING: disabling write barrier
+--
+and then recurring lines:
+--
+Mar  6 14:26:27 test-10 kernel: <4>reiser4[ecelerity(7189)]:
+commit_current_atom (fs/reiser4/txnmgr.c:1092)[nikita-3176]:
+Mar  6 14:26:27 test-10 kernel: WARNING: Flushing like mad: 16384
+--
+Mar  6 16:33:57 test-10 kernel: <4>reiser4[sendmail(14667)]:
+commit_current_atom (fs/reiser4/txnmgr.c:1092)[nikita-3176]:
+Mar  6 16:33:57 test-10 kernel: WARNING: Flushing like mad: 16384
+--
+Mar  6 16:34:03 test-10 kernel: <4>reiser4[sendmail(14667)]:
+commit_current_atom (fs/reiser4/txnmgr.c:1092)[nikita-3176]:
+Mar  6 16:34:03 test-10 kernel: WARNING: Flushing like mad: 32768
+--
+Mar  6 17:13:39 test-10 kernel: <4>reiser4[sendmail(32517)]:
+commit_current_atom (fs/reiser4/txnmgr.c:1092)[nikita-3176]:
+Mar  6 17:13:39 test-10 kernel: WARNING: Flushing like mad: 16384
+--
+Mar  6 17:23:18 test-10 kernel: <4>reiser4[sendmail(5564)]:
+commit_current_atom (fs/reiser4/txnmgr.c:1092)[nikita-3176]:
+Mar  6 17:23:18 test-10 kernel: WARNING: Flushing like mad: 16384
+--
+Mar  6 17:27:34 test-10 kernel: <4>reiser4[sendmail(7008)]:
+commit_current_atom (fs/reiser4/txnmgr.c:1092)[nikita-3176]:
+Mar  6 17:27:34 test-10 kernel: WARNING: Flushing like mad: 16384
+--
+Mar  6 17:30:48 test-10 kernel: <4>reiser4[sendmail(12149)]:
+commit_current_atom (fs/reiser4/txnmgr.c:1092)[nikita-3176]:
+Mar  6 17:30:48 test-10 kernel: WARNING: Flushing like mad: 16384
+--
+Mar  6 17:46:16 test-10 kernel: <4>reiser4[ecelerity(30614)]:
+commit_current_atom (fs/reiser4/txnmgr.c:1092)[nikita-3176]:
+Mar  6 17:46:16 test-10 kernel: WARNING: Flushing like mad: 16384
+--
+Mar  6 17:47:52 test-10 kernel: <4>reiser4[sendmail(17150)]:
+commit_current_atom (fs/reiser4/txnmgr.c:1092)[nikita-3176]:
+Mar  6 17:47:52 test-10 kernel: WARNING: Flushing like mad: 16384
+...
+Please, advice, what do these messages mean, does this situation result
+in data loss or damage, and are there some new patches to fix it?
 -- 
-Jan Kara <jack@suse.cz>
-SuSE CR Labs
+    With best regards,
+       Sergey Ivanov.
+
+
