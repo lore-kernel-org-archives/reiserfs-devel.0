@@ -1,91 +1,45 @@
-From: Jonathan Briggs <jbriggs@esoft.com>
-Subject: SCSI caching and Reiser4
-Date: Tue, 07 Mar 2006 10:37:14 -0700
-Message-ID: <1141753034.28859.13.camel@localhost>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: BitKeeper
+Date: Tue, 07 Mar 2006 10:31:49 -0800
+Message-ID: <440DD195.8090301@namesys.com>
+References: <33df1800603070823j658d4a11n9055258a39a7592e@mail.gmail.com> <200603071251.06739.fred@uh.cu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-khJTYhkqNk5lVteULOcb"
-Return-path: <reiserfs-list-return-28227-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28228-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200603071251.06739.fred@uh.cu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Reiserfs mail-list <Reiserfs-List@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Yoanis Gil Delgado <fred@uh.cu>, Alexander Lyamin aka FLX <flx@namesys.com>
+Cc: reiserfs-list@namesys.com
 
---=-khJTYhkqNk5lVteULOcb
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+flx, please fix bitkeeper related web pages.
 
-I thought I'd ask the list, since I've been wondering about it for a few
-versions now, and I haven't been able to figure it out from the code
-(although I haven't looked *that* hard).
+Hans
 
-My SCSI disks report that they have write back cache w/ FUA, which
-should mean that write barriers work.  Am I right?
+Yoanis Gil Delgado wrote:
 
-But Reiser4 complains that it is disabling write barriers.
-
-/dev/md2 is a RAID-0 of the two SCSI devices.  I suspect that the MD
-driver isn't supporting FUA properly but I haven't been able to figure
-that out for sure.
-
-Does anyone know for sure about MD block devices and write barriers?
-
-Here are some of the interesting bits from dmesg:
-Linux version 2.6.16-rc5-mm2 (jbriggs@oberon.rnd.esoft.com) (gcc version 4.=
-0.2 20051125 (Red Hat 4.0.2-8)) #1 PREEMPT Fri Mar 3 14:06:12 MST 2006
-...
-SCSI device sda: 35843686 512-byte hdwr sectors (18352 MB)
-sda: Write Protect is off
-sda: Mode Sense: ab 00 10 08
-SCSI device sda: drive cache: write back w/ FUA
-SCSI device sda: 35843686 512-byte hdwr sectors (18352 MB)
-sda: Write Protect is off
-sda: Mode Sense: ab 00 10 08
-SCSI device sda: drive cache: write back w/ FUA
- sda: sda1 sda2 sda3 sda4
-sd 0:0:0:0: Attached scsi disk sda
-SCSI device sdb: 35843686 512-byte hdwr sectors (18352 MB)
-sdb: Write Protect is off
-sdb: Mode Sense: ab 00 10 08
-SCSI device sdb: drive cache: write back w/ FUA
-SCSI device sdb: 35843686 512-byte hdwr sectors (18352 MB)
-sdb: Write Protect is off
-sdb: Mode Sense: ab 00 10 08
-SCSI device sdb: drive cache: write back w/ FUA
- sdb: sdb1 sdb2 sdb3 sdb4
-sd 0:0:1:0: Attached scsi disk sdb
-...
-md: Autodetecting RAID arrays.
-md: autorun ...
-md: considering sdb4 ...
-md:  adding sdb4 ...
-md: sdb3 has different UUID to sdb4
-md: sdb1 has different UUID to sdb4
-md:  adding sda4 ...
-md: sda3 has different UUID to sdb4
-md: sda1 has different UUID to sdb4
-md: created md2
-...
-<5>reiser4[ktxnmgrd:md2:ru(1368)]: disable_write_barrier (fs/reiser4/wander=
-.c:234)[zam-1055]:
-NOTICE: md2 does not support write barriers, using synchronous write instea=
-d.
---=20
-Jonathan Briggs <jbriggs@esoft.com>
-eSoft, Inc.
-
---=-khJTYhkqNk5lVteULOcb
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2.1 (GNU/Linux)
-
-iD8DBQBEDcTKG8fHaOLTWwgRAuRSAJ9dCIxsE54PpxGK1CgA1Q/IZvYm/gCfQPdk
-saDTeBqzQ7fbBD5LNqN+GHk=
-=Z5Fn
------END PGP SIGNATURE-----
-
---=-khJTYhkqNk5lVteULOcb--
+>On Tuesday 07 March 2006 11:23, Amit Vijairania wrote:
+>  
+>
+>>Hi!
+>>
+>>I want to contribute to Reiser4, and would like to dowload latest
+>>development source.   Namesys.com gives  directions for using BitKeeper
+>>repositories.  Is this the only way to download latest code?
+>>
+>>Thank you.
+>>
+>>Amit
+>>    
+>>
+>if you want to contribute to reiser4, maybe you would like to participate in 
+>the plugin fest. 
+>
+>
+>  
+>
 
