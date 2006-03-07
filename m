@@ -1,60 +1,91 @@
-From: Sergey Ivanov <seriv@parkheights.dyndns.org>
-Subject: Poor performance (was Re: strange reiser4 messages in /var/log/messages)
-Date: Tue, 07 Mar 2006 12:14:04 -0500
-Message-ID: <440DBF5C.3010808@parkheights.dyndns.org>
-References: <440CC07D.3050802@parkheights.dyndns.org>
+From: Jonathan Briggs <jbriggs@esoft.com>
+Subject: SCSI caching and Reiser4
+Date: Tue, 07 Mar 2006 10:37:14 -0700
+Message-ID: <1141753034.28859.13.camel@localhost>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28226-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-khJTYhkqNk5lVteULOcb"
+Return-path: <reiserfs-list-return-28227-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <440CC07D.3050802@parkheights.dyndns.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-This is the result of testing SMTP server on the same machine with the
-/var/spool partition formatted once as reiser4, and once as ext3.
-The server was accepting messages from smtp-source generating messages
-of with 20k byte length in 40 parallel sessions on another host, and
-sending it to another machine running smtp-sink for /dev/nulling all
-these traffic. The only difference was the filesystem, once reiser4 and
-once ext3.
-The difference was very clear, while on ext3 sendmail manage to deliver
-103.74 msg/sec, on reiser4 it gives only 36.25 messages/sec. 1 message
-delivery involves reading and deleting 2 files in /var/spool. On ext3 it
-receives 159.49 msg/sec, while on reiser4 - only 40.31 msg/sec.
-Receiving a message involves creating 2 files, one for the message and
-one small file for smtp information about it.
-I hope this poor reiser4 performance is due to this conditions,
-reflected in /var/log/messages, and will be fixed.
--- 
- With best regards,
-       Sergey Ivanov.
+--=-khJTYhkqNk5lVteULOcb
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Sergey Ivanov wrote:
-> Hi,
-> I have vanilla 2.6.15.4 kernel with reiser4-for-2.6.15-1.patch applied.
-> The machine is SMP with SCSI 17G drive formatted as reiser4.
-> The reiser4 works for /var/spool, with rate about 100 files/sec creating
-> and deleting sometimes after, average filesize about 10k, with total
-> spool size about 5G.
-> Under load the following messages from reiser4 occur in the log:
-> --
-> Mar  5 13:21:02 test-10 kernel: <4>reiser4[sendmail(3485)]:
-> disable_write_barrier (fs/reiser4/wander.c:233)[zam-1055]:
-> Mar  5 13:21:02 test-10 kernel: WARNING: disabling write barrier
-> --
-> and then recurring lines:
-> --
-> [skip]
-> Mar  6 17:47:52 test-10 kernel: <4>reiser4[sendmail(17150)]:
-> commit_current_atom (fs/reiser4/txnmgr.c:1092)[nikita-3176]:
-> Mar  6 17:47:52 test-10 kernel: WARNING: Flushing like mad: 16384
-> ...
-> Please, advice, what do these messages mean, does this situation result
-> in data loss or damage, and are there some new patches to fix it?
->   
+I thought I'd ask the list, since I've been wondering about it for a few
+versions now, and I haven't been able to figure it out from the code
+(although I haven't looked *that* hard).
+
+My SCSI disks report that they have write back cache w/ FUA, which
+should mean that write barriers work.  Am I right?
+
+But Reiser4 complains that it is disabling write barriers.
+
+/dev/md2 is a RAID-0 of the two SCSI devices.  I suspect that the MD
+driver isn't supporting FUA properly but I haven't been able to figure
+that out for sure.
+
+Does anyone know for sure about MD block devices and write barriers?
+
+Here are some of the interesting bits from dmesg:
+Linux version 2.6.16-rc5-mm2 (jbriggs@oberon.rnd.esoft.com) (gcc version 4.=
+0.2 20051125 (Red Hat 4.0.2-8)) #1 PREEMPT Fri Mar 3 14:06:12 MST 2006
+...
+SCSI device sda: 35843686 512-byte hdwr sectors (18352 MB)
+sda: Write Protect is off
+sda: Mode Sense: ab 00 10 08
+SCSI device sda: drive cache: write back w/ FUA
+SCSI device sda: 35843686 512-byte hdwr sectors (18352 MB)
+sda: Write Protect is off
+sda: Mode Sense: ab 00 10 08
+SCSI device sda: drive cache: write back w/ FUA
+ sda: sda1 sda2 sda3 sda4
+sd 0:0:0:0: Attached scsi disk sda
+SCSI device sdb: 35843686 512-byte hdwr sectors (18352 MB)
+sdb: Write Protect is off
+sdb: Mode Sense: ab 00 10 08
+SCSI device sdb: drive cache: write back w/ FUA
+SCSI device sdb: 35843686 512-byte hdwr sectors (18352 MB)
+sdb: Write Protect is off
+sdb: Mode Sense: ab 00 10 08
+SCSI device sdb: drive cache: write back w/ FUA
+ sdb: sdb1 sdb2 sdb3 sdb4
+sd 0:0:1:0: Attached scsi disk sdb
+...
+md: Autodetecting RAID arrays.
+md: autorun ...
+md: considering sdb4 ...
+md:  adding sdb4 ...
+md: sdb3 has different UUID to sdb4
+md: sdb1 has different UUID to sdb4
+md:  adding sda4 ...
+md: sda3 has different UUID to sdb4
+md: sda1 has different UUID to sdb4
+md: created md2
+...
+<5>reiser4[ktxnmgrd:md2:ru(1368)]: disable_write_barrier (fs/reiser4/wander=
+.c:234)[zam-1055]:
+NOTICE: md2 does not support write barriers, using synchronous write instea=
+d.
+--=20
+Jonathan Briggs <jbriggs@esoft.com>
+eSoft, Inc.
+
+--=-khJTYhkqNk5lVteULOcb
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2.1 (GNU/Linux)
+
+iD8DBQBEDcTKG8fHaOLTWwgRAuRSAJ9dCIxsE54PpxGK1CgA1Q/IZvYm/gCfQPdk
+saDTeBqzQ7fbBD5LNqN+GHk=
+=Z5Fn
+-----END PGP SIGNATURE-----
+
+--=-khJTYhkqNk5lVteULOcb--
 
