@@ -1,58 +1,104 @@
-From: Sergey Ivanov <seriv@parkheights.dyndns.org>
-Subject: Re: Poor performance (was Re: strange reiser4 messages in /var/log/messages)
-Date: Wed, 08 Mar 2006 12:35:20 -0500
-Message-ID: <440F15D8.70302@parkheights.dyndns.org>
-References: <440CC07D.3050802@parkheights.dyndns.org>	 <440DBF5C.3010808@parkheights.dyndns.org> <5f0e26840603080213x413f0bc1i3be7b3a546be70d2@mail.gmail.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 00/11] reiserfs: xattr rework
+Date: Wed, 8 Mar 2006 19:20:14 +0100
+Message-ID: <20060308182014.GC14184@atrey.karlin.mff.cuni.cz>
+References: <20060220201457.GA23204@locomotive.unixthugs.org> <20060301123406.GA20367@atrey.karlin.mff.cuni.cz> <44076975.70609@suse.com> <20060303002917.GD4261@atrey.karlin.mff.cuni.cz> <4407944F.5030206@suse.com> <20060303100407.GF2855@atrey.karlin.mff.cuni.cz> <4408C080.4070600@suse.com> <20060306115926.GL1175@atrey.karlin.mff.cuni.cz> <440DFD7A.9040000@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28233-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28234-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <5f0e26840603080213x413f0bc1i3be7b3a546be70d2@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <440DFD7A.9040000@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jindrich Makovicka <makovick@kmlinux.fjfi.cvut.cz>, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>, "E. Gryaznova" <grev@namesys.com>
 
-Jindrich, thank you very much!
-I have just finished new test with reiser4 /var/spool mounted with
-noatime and nodiratime options.
-And, having 34 reiser4 whoes in /var/log/messages during 3 hours, I've
-got delivery rate 120 messages/sec, that is clearly better than ext3
-with noatime. And reception rate was also pretty good - 147 messages/sec.
-I'll redo the tests with nodiratime set for ext3, - I did not know about
-such option.
-But the "flushing like mad" cases remain problem, - I  can see they
-result in lost connections with smtp-source mailgenerator. And if it may
-result in data corruption, it's totally unexeptable. Hope it's not.
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+> 
+> Jan Kara wrote:
+> >> -----BEGIN PGP SIGNED MESSAGE-----
+> >> Hash: SHA1
+> >>
+> >> Jan Kara wrote:
+> >>>> The data journaling mode can be set as a flag associated with the inode.
+> >>>>  Currently, i_data_log is set in REISERFS_I(inode)->i_flags. I add
+> >>>> i_data_ordered in one of my later patches. They can be tested easily
+> >>>> with reiserfs_file_data_{log,ordered}. There's no reason that one
+> >>>> couldn't be moved up and made a prerequisite for the first patch.
+> >>>   Fine. So we can just set proper journaling flags in reiserfs_quota_on
+> >>> and then honor them in the internal writing functions.
+> >> Ok, how do the attached patches look to you? The internal I/O changes
+> >> need to be applied after the journaled xattr patch or we get an Oops
+> >> trying to start a transaction without calling reiserfs_write_lock()
+> >> first. I've modified the first patch in the xattr series to abstract out
+> >> the fp->f_op->{read,write} calls to an xattr_{read,write} pair of
+> >> functions. This makes it easier to move to the internal i/o code later.
+> >> I've included it for clarity, but that is the only change.
+> >   The patch looks fine. Just two minor comments:
+> > 
+> > <snip>
+> >> diff -ruNpX ../dontdiff linux-2.6.15-staging1/fs/reiserfs/super.c linux-2.6.15-staging2/fs/reiserfs/super.c
+> >> --- linux-2.6.15-staging1/fs/reiserfs/super.c	2006-03-03 17:09:01.000000000 -0500
+> >> +++ linux-2.6.15-staging2/fs/reiserfs/super.c	2006-03-03 17:09:04.000000000 -0500
+> >> @@ -1949,6 +1949,109 @@ static int reiserfs_statfs(struct super_
+> >>  	return 0;
+> >>  }
+> >>  
+> >> +#if defined(CONFIG_QUOTA) || defined(CONFIG_REISERFS_FS_XATTR)
+> >> +/* Read data from quotafile - avoid pagecache and such because we cannot afford
+> >> + * acquiring the locks... As quota files are never truncated and quota code
+> >> + * itself serializes the operations (and noone else should touch the files)
+> >> + * we don't have to be afraid of races */
+> >  Update here the comment to reflect that we use this function also for
+> > xattrs now - I suppose those files cannot be truncated either and that
+> > xattr code serializes the operations there.
+> > 
+> >> +ssize_t reiserfs_internal_read(struct inode *inode, char *data, size_t len,
+> >> +                               loff_t off)
+> >   <snip>
+> > 
+> >> +/* Write to quotafile (we know the transaction is already started and has
+> >> + * enough credits) */
+> >   Here again update the comment...
+> > 
+> >> +ssize_t reiserfs_internal_write(struct inode *inode, const char *data,
+> >> +                                size_t len, loff_t off)
+> > 
+> > 									Honza
+> > 
+> 
+> I've updated the patches with the comment changes, though I did run into
+> a much bigger snag.
+> 
+> The internal i/o patches don't support tails, and that's a silver bullet
+> against this working for xattrs. Most xattrs, such as ACLs, are likley
+> to be only a few tens of bytes long and allocating an entire block is
+> extremely wasteful.
+  Umm, that is really nasty. Ext3 solves this by sharing a block among
+several inodes but that's far to much work to fix this bug...
+
+> I've managed to alter internal read to handle tails by allocating an
+> anonymous page and using it with the temporary buffer head to get the
+> tail data from reiserfs_get_block back. But the rest of the tail packing
+> code very much needs the page cache. Is there going to be any way this
+> can be managed without reintroducing deadlocks?
+  I've been trying to find some other way when solving problems for
+quotas but find none. If you want xattr changes to be journaled with
+other data changes, you have to first start a transaction and then issue
+a write that will consequently need PageLock. So do you really need
+a trasaction started before a write starts? For journaled quota this was
+must but for xattrs it might not be necessary. Then we would still need
+to sort out the problems with xattr lock but that might be easier to
+deal with.
+
+							Bye
+								Honza
+
 -- 
-    Sergey.
-
-Jindrich Makovicka wrote:
-> On 3/7/06, Sergey Ivanov <seriv@parkheights.dyndns.org> wrote:
->   
->> This is the result of testing SMTP server on the same machine with the
->> /var/spool partition formatted once as reiser4, and once as ext3.
->> The server was accepting messages from smtp-source generating messages
->> of with 20k byte length in 40 parallel sessions on another host, and
->> sending it to another machine running smtp-sink for /dev/nulling all
->> these traffic. The only difference was the filesystem, once reiser4 and
->> once ext3.
->> The difference was very clear, while on ext3 sendmail manage to deliver
->> 103.74 msg/sec, on reiser4 it gives only 36.25 messages/sec. 1 message
->> delivery involves reading and deleting 2 files in /var/spool. On ext3 it
->> receives 159.49 msg/sec, while on reiser4 - only 40.31 msg/sec.
->> Receiving a message involves creating 2 files, one for the message and
->> one small file for smtp information about it.
->> I hope this poor reiser4 performance is due to this conditions,
->> reflected in /var/log/messages, and will be fixed.
->>     
->
-> Did you try mounting Reiser4 with noatime & nodiratime? Another
-> possibility is that the slowdown is due to poor fsync() performance.
->
-> --
-> Jindrich Makovicka
->   
-
+Jan Kara <jack@suse.cz>
+SuSE CR Labs
