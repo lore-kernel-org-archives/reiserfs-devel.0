@@ -1,29 +1,41 @@
-From: "Avuton Olrich" <avuton@gmail.com>
-Subject: State of the Reiser4 FS
-Date: Tue, 14 Mar 2006 02:41:17 -0800
-Message-ID: <3aa654a40603140241s5d8a7430j6bf29a5ef7dd1bf5@mail.gmail.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: State of the Reiser4 FS
+Date: Tue, 14 Mar 2006 14:45:18 +0300
+Message-ID: <1142336718.7415.55.camel@tribesman.namesys.com>
+References: <3aa654a40603140241s5d8a7430j6bf29a5ef7dd1bf5@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-28247-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28248-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <3aa654a40603140241s5d8a7430j6bf29a5ef7dd1bf5@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: Avuton Olrich <avuton@gmail.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-SGVsbG8sCgpJIGp1c3Qgc2F3IGEgdGhyZWFkIG9uIHRoZSBMS01MIGEgbWludXRlIGFnbyBhc2tp
-bmcgYWJvdXQgdGhlIHN0YXRlIG9mCmdldHRpbmcgdGhlIHBhdGNoIGludG8gdmFuaWxsYSBsaW51
-eC4gSSByZWFkIEFuZHJldyBNb3J0b24ncyBwb3N0CmFib3V0IGEgbW9udGggYWdvIHN0YXRpbmcg
-dGhhdCBpdCBjb3VsZCBoYXBwZW4gc29vbiwgYnV0IHdhcyB1bmxpa2VseQpkdWUgdG8gdGhlcmUg
-bm90IGFjdHVhbGx5IGJlaW5nIGEgbmVlZCBmb3IgaXQgdG8gZ28gaW50byBtYWlubGluZSAobm8K
-bWFqb3IgZGlzdHJvIGRlZmF1bHQsIGV0Yy4uLikuIEkgd2FzIHdvbmRlcmluZywgbXlzZWxmLCBl
-YXJsaWVyIGluIHRoZQpkYXkgd2hhdCB0aGUgc3RhdGUgb2YgdGhlIHBhdGNoIHdhcywgaWYgYW55
-dGhpbmcgZnVydGhlciBoYXMgYmVlbiBzYWlkCmFib3V0IGdldHRpbmcgaXQgaW50byBtYWlubGlu
-ZS4gV2FzIGFsc28gd29uZGVyaW5nIGlmIHRoZXJlIHdhcyBhIGxvdApvZiB3b3JrIGdvaW5nIGlu
-dG8gaXQgcmlnaHQgbm93LCBvciBhcmUgcGVvcGxlIHRpZWQgdXAgZG9pbmcgb3RoZXIKdGhpbmdz
-PwoKSWYgYW55b25lIGhhcyB0aW1lIGZvciBhbiBhbnN3ZXIgaXQnZCBiZSBhcHByZWNpYXRlZCBi
-eSBldmVyeW9uZSBJJ20gc3VyZSwKCkdyYXRlZnVsbHksCgphdnV0b24KLS0KIEFueW9uZSB3aG8g
-cXVvdGVzIG1lIGluIHRoZWlyIHNpZyBpcyBhbiBpZGlvdC4gLS0gUnVzdHkgUnVzc2VsbC4K
+Hello
+
+On Tue, 2006-03-14 at 02:41 -0800, Avuton Olrich wrote:
+> Hello,
+> 
+> I just saw a thread on the LKML a minute ago asking about the state of
+> getting the patch into vanilla linux. I read Andrew Morton's post
+> about a month ago stating that it could happen soon, but was unlikely
+> due to there not actually being a need for it to go into mainline (no
+> major distro default, etc...). I was wondering, myself, earlier in the
+> day what the state of the patch was, if anything further has been said
+> about getting it into mainline. Was also wondering if there was a lot
+> of work going into it right now, or are people tied up doing other
+> things?
+> 
+> If anyone has time for an answer it'd be appreciated by everyone I'm sure,
+> 
+
+AFAIK, the most recent reason why reiser4 does not get included is that
+reiser4 developers have to change reiser4 to use generic code to
+implement read/write.
+AFAICS, reiser4 developers do not work on that.
+
