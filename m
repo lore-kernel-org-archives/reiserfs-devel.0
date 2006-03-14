@@ -1,52 +1,41 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiserfsck --rebuild-tree aborted
-Date: Tue, 14 Mar 2006 22:27:27 +0300
-Message-ID: <200603142227.28096.vitaly@namesys.com>
-References: <33411075.1142359382625.JavaMail.ngmail@webmail13> <8706922.1142360996567.JavaMail.ngmail@webmail13>
-Reply-To: vitaly@namesys.com
+From: Alain Knaff <alain@knaff.lu>
+Subject: Re: fatal "not directory found" error at pass 3a of reiserfsck
+Date: Tue, 14 Mar 2006 20:35:59 +0100
+Message-ID: <44171B1F.5070809@knaff.lu>
+References: <4416E66D.4020500@knaff.lu> <200603142220.39344.vitaly@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28254-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28255-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <8706922.1142360996567.JavaMail.ngmail@webmail13>
-Content-Disposition: inline
+In-Reply-To: <200603142220.39344.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: j_kanev@arcor.de
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: vitaly@namesys.com
+Cc: reiserfs-list@namesys.com
 
-On Tuesday 14 March 2006 21:29, j_kanev@arcor.de wrote:
+Vitaly Fertman wrote:
+> Hi Alain,
 > 
-> (sorry for multiple posts)
+> the fixed reiserfsprogs version is attched, it contains 
+> some bugfixes, please run it and report about the result.
 > 
-> After a crash my reiserfs partition behaved strangely (space usage 100%, 
-> root wasn't allowed to see some files or write into some directories, 
-> and some error messages when accessing files).  
-> fsck.reiserfs found errors which it said must be corrected with --rebuild-tree. 
-> fsck.reiserfs --rebuild-tree aborted with the message "low on disk space". 
-> Why is this? And: 
+> Thank you.
 
-which pass does fsck abort on? 
+Actually, the problem happened with reiserfs-3.6.18-5 (as shipped by 
+SuSE 9.3. and 10.0.).
 
-there were made several improvements in reiserfsprogs regarding 
-running out of disk space, you can try it if you want. the code 
-is not released yet, so probably you will prefere to enlarge your 
-partition and fs to allow fsck to complete.
+Later, I downloaded 3.6.19 from namesys, and that one already 
+successfully restored the disk (but due to size and slowness of our 
+hardware this took several hours and terminated just now a quarter of an 
+hour ago).
 
-> What should I do now? 
-> 
-> Lots of regards, Jacob.
-> 
-> P.S.:
-> I don't really have a larger partition.
-> 
-> P.P.S.: 
-> The reiserfs-partition was used last with a 2.6.15-1 kernel, 
-> and fsckreiserfs (see above) was run with a 2.6.14 kernel from Kanotix. 
-> The reiserfsprogs version was 3.6.19-1. Output of debugreiserfs was the following:   
+Now, we'll first do a backup (yeah, we learned that lesson!), and after 
+that I'll re-run your 3.6.20 and report back (will probably take until 
+next morning, though)
 
--- 
-Vitaly
+Thanks,
+
+Alain
