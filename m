@@ -1,37 +1,58 @@
-From: Yoanis Gil Delgado <fred@uh.cu>
-Subject: Re: Permission denied while accessing pseudos
-Date: Wed, 15 Mar 2006 15:36:58 -0500
-Message-ID: <200603151536.58783.fred@uh.cu>
-References: <200603151453.10697.fred@uh.cu> <44186532.2070305@namesys.com>
+From: Christian Trefzer <ctrefzer@gmx.de>
+Subject: Re: kernel BUG at /usr/src/sources/linux-2.6.16-rc5/fs/reiser4/plugin/file/tail_conversion.c:29
+Date: Wed, 15 Mar 2006 20:40:18 +0100
+Message-ID: <20060315194013.GA13074@zeus.uziel.local>
+References: <20060315075034.GC17577@zeus.uziel.local> <200603151111.49826.zam@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28275-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
+Return-path: <reiserfs-list-return-28276-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44186532.2070305@namesys.com>
 Content-Disposition: inline
+In-Reply-To: <200603151111.49826.zam@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Alexander Zarochentsev <zam@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-On Wednesday 15 March 2006 14:04, you wrote:
-> Yoanis Gil Delgado wrote:
-> >Hi there. I've been playing around with pseudos and whenever i try to
-> > access a pseudo dir or file i get a Permission denied error. For example:
-> >	$ ls hello.txt/..../rwx
-> >	Permission denied
-> >I also tried
-> >	$ ls hello.txt/..plugins/rwx
-> >	 Permission denied
-> >I also tried to list a missing plugin and i get the same error. For
-> > example $ ls hello.txt/..../pepito
-> >	Permission denied
-> >
-> >Thanks.........
->
-> Hello.
-> What patch do you use to enable pseudo?
-I use, reiser4-2.6.15-enable-metas.diff available at the namesys ftp.
+--fUYQa+Pmc3FrFX/N
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+
+Hi zam,
+
+after the first build of OOo has finished (as "gift" for my laptop) the
+machine is working on it's own copy, after a reboot with the exact same
+setup yielding my BUG problems plus your patch applied. I'll keep an eye
+on my syslog. Sorry for taking so long!
+
+Regards,
+Chris
+
+
+--fUYQa+Pmc3FrFX/N
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2.2 (GNU/Linux)
+
+iQIVAwUBRBhtnV2m8MprmeOlAQJD7Q/+OcRNtdbSwMnjM1czbUH+UNKN+PDtFt+U
+4lSJhk3/GGsYj2QATxLr+XQQjJqbAJX2qr0qZvQAMYIUbPQS6S1AzssevkVSZCQA
+//E1QAUjYHjV2XXnY4svtliCYpD/oq54ggLgI4ckkGxpaeNuVTratolWUL+S/uwm
+9BvuSLeGYuMZlEakFwTDYQGM2Br9mwIwyqQyq7gIxZLEqVQxhsWzgTWFbDWbOn2g
++jKxz2AfVjoTcjjJ/tdBWd9PvPsXs2BKM3PvUqGG/vDjpQiLX+3sWNmzwH1bsXWv
+mYki/w+zbHCAC0GOVZqZno3v02coVO9eAAzPLRDUzngrDFcQoe/SIUnDY4YII07O
+rOs7c6/0g+elYgAJBTeCmKrAR2W39JfRotrPHLO1l1eV/P570j2IF/ekS+17N/AU
+lPRpjPJul7/TJBMF2uvWWxH+nHj1lWJR9c1OW08RkbbaBtBCoL7xYrmWLd3rfdWr
+MvifNuPBsiyki+vbOfrzi3hhhUZsFE8HIobn7lPsqCkh4M9wZf82H8rVpErHCBc6
+cPWRC+7UF+yYJdkhIZhLP6f3zyaaUaOAEkpu1CikdF2qVhUHaK4mcdJ0ZYjWltcM
+Y2qnAgnuZoh6KcBSMsI7BUv7JH4MHkTLdSsfSv7yGIhH/EjR8X+FbRAs4Seldnwg
+FLRuuQl5b0M=
+=wzAG
+-----END PGP SIGNATURE-----
+
+--fUYQa+Pmc3FrFX/N--
 
