@@ -1,40 +1,38 @@
-From: Andreas =?iso-8859-1?Q?Sch=E4fer?= <gentryx@gmx.de>
+From: "Avuton Olrich" <avuton@gmail.com>
 Subject: Re: State of the Reiser4 FS
-Date: Wed, 15 Mar 2006 09:57:45 +0100
-Message-ID: <20060315085745.GA21609@wintermute>
-References: <3aa654a40603140241s5d8a7430j6bf29a5ef7dd1bf5@mail.gmail.com> <1142336718.7415.55.camel@tribesman.namesys.com> <194f62550603140732j6ef10757j@mail.gmail.com> <4417BEC4.6060506@namesys.com>
+Date: Wed, 15 Mar 2006 04:59:14 -0800
+Message-ID: <3aa654a40603150459q25507248v54f4ffef5e41042d@mail.gmail.com>
+References: <3aa654a40603140241s5d8a7430j6bf29a5ef7dd1bf5@mail.gmail.com>
+	 <4417D43A.2070603@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28266-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-28267-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <4417D43A.2070603@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <4417BEC4.6060506@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Hans Reiser <reiser@namesys.com>
-Cc: reiserfs-list@namesys.com
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-On 23:14 Tue 14 Mar     , Hans Reiser wrote:
-> I generally believe that the per 4k
-> approach used throughout the linux kernel is not as CPU efficient as
-> sending larger groups of pages through the layers all at once.  In other
-> words, there is a reason we have bios, and we need to learn the lesson
-> from them that they teach us, and abstract it into a general design
-> approach.
-
-This is a bit OT, but still: I think you're absolutely right there. This 4k 
-approach causes funny thing even in completely different areas. 
-
-I've recently been playing around with openMosix (transparent process 
-migration between Linux hosts over the network) and there the write 
-preformance is totally spoiled (>50% performance loss) just because 
-copy_from_user is only called for 4k block when writing (and these 
-requests then suffer from the high network latency). 
-
-If larger blocks would be used, this performance flaw wouldn't exist at 
-all... Just my 2 cents
-
--Andreas
+T24gMy8xNS8wNiwgSGFucyBSZWlzZXIgPHJlaXNlckBuYW1lc3lzLmNvbT4gd3JvdGU6Cj4gQXZ1
+dG9uIE9scmljaCB3cm90ZToKPiA+SSBqdXN0IHNhdyBhIHRocmVhZCBvbiB0aGUgTEtNTCBhIG1p
+bnV0ZSBhZ28gYXNraW5nIGFib3V0IHRoZSBzdGF0ZSBvZgo+ID5nZXR0aW5nIHRoZSBwYXRjaCBp
+bnRvIHZhbmlsbGEgbGludXguIEkgcmVhZCBBbmRyZXcgTW9ydG9uJ3MgcG9zdAo+ID5hYm91dCBh
+IG1vbnRoIGFnbyBzdGF0aW5nIHRoYXQgaXQgY291bGQgaGFwcGVuIHNvb24sIGJ1dCB3YXMgdW5s
+aWtlbHkKPiA+ZHVlIHRvIHRoZXJlIG5vdCBhY3R1YWxseSBiZWluZyBhIG5lZWQgZm9yIGl0IHRv
+IGdvIGludG8gbWFpbmxpbmUgKG5vCj4gPm1ham9yIGRpc3RybyBkZWZhdWx0LCBldGMuLi4pLgo+
+ID4KPiBDYW4geW91IHN1cHBseSBhIHJlZmVyZW5jZSB0byB0aGlzIHBvc3Q/ICBUaGUgb25seSBk
+aXN0cm8gd2hpY2ggaXMgbm90Cj4gaW5mbHVlbmNlZCBieSBwZXJmb3JtYW5jZSBudW1iZXJzIHdo
+ZW4gc2VsZWN0aW5nIGEgZmlsZXN5c3RlbSBpcyBSZWRIYXQsCj4gYW5kIG1vc3Qgb2YgdGhlIHJl
+c3QgYXJlIGp1c3Qgd2FpdGluZyB0byBiZSBzdXJlIHRoYXQgcG9saXRpY3Mgd2lsbCBub3QKPiBr
+aWxsIHJlaXNlcjQgaW5jbHVzaW9uLiAgSSBhbSBzdXJlIEkgY2FuIGNvbWUgdXAgd2l0aCBhICJ3
+ZSB3aWxsIHN1cHBvcnQKPiBpdCBpZiB5b3UgbGV0IGl0IGluIiBwZXRpdGlvbiBvZiBkaXN0cm9z
+IGlmIHN1Y2ggYSBzaWxsaW5lc3MgaXMgbmVlZGVkLgoKSSB3YXMgcmVmZXJpbmcgdG8gdGhpcyBw
+b3N0OgpodHRwOi8vbWFyYy50aGVhaW1zZ3JvdXAuY29tLz9sPWxpbnV4LWtlcm5lbCZtPTExMzc3
+NTg3ODcyMjEwMCZ3PTIKClRoYW5rcyBmb3IgYWxsIHRoZSBhbnN3ZXJzCi0tCmF2dXRvbgotLQog
+QW55b25lIHdobyBxdW90ZXMgbWUgaW4gdGhlaXIgc2lnIGlzIGFuIGlkaW90LiAtLSBSdXN0eSBS
+dXNzZWxsLgo=
