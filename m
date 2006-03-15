@@ -1,38 +1,33 @@
-From: "Avuton Olrich" <avuton@gmail.com>
-Subject: Re: State of the Reiser4 FS
-Date: Wed, 15 Mar 2006 04:59:14 -0800
-Message-ID: <3aa654a40603150459q25507248v54f4ffef5e41042d@mail.gmail.com>
-References: <3aa654a40603140241s5d8a7430j6bf29a5ef7dd1bf5@mail.gmail.com>
-	 <4417D43A.2070603@namesys.com>
+From: Alain Knaff <alain@knaff.lu>
+Subject: Re: fatal "not directory found" error at pass 3a of reiserfsck
+Date: Wed, 15 Mar 2006 15:11:05 +0100
+Message-ID: <44182079.5030702@knaff.lu>
+References: <4416E66D.4020500@knaff.lu> <200603142220.39344.vitaly@namesys.com> <44171B1F.5070809@knaff.lu> <200603142239.01686.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-28267-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28268-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4417D43A.2070603@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <200603142239.01686.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: vitaly@namesys.com
+Cc: reiserfs-list@namesys.com
 
-T24gMy8xNS8wNiwgSGFucyBSZWlzZXIgPHJlaXNlckBuYW1lc3lzLmNvbT4gd3JvdGU6Cj4gQXZ1
-dG9uIE9scmljaCB3cm90ZToKPiA+SSBqdXN0IHNhdyBhIHRocmVhZCBvbiB0aGUgTEtNTCBhIG1p
-bnV0ZSBhZ28gYXNraW5nIGFib3V0IHRoZSBzdGF0ZSBvZgo+ID5nZXR0aW5nIHRoZSBwYXRjaCBp
-bnRvIHZhbmlsbGEgbGludXguIEkgcmVhZCBBbmRyZXcgTW9ydG9uJ3MgcG9zdAo+ID5hYm91dCBh
-IG1vbnRoIGFnbyBzdGF0aW5nIHRoYXQgaXQgY291bGQgaGFwcGVuIHNvb24sIGJ1dCB3YXMgdW5s
-aWtlbHkKPiA+ZHVlIHRvIHRoZXJlIG5vdCBhY3R1YWxseSBiZWluZyBhIG5lZWQgZm9yIGl0IHRv
-IGdvIGludG8gbWFpbmxpbmUgKG5vCj4gPm1ham9yIGRpc3RybyBkZWZhdWx0LCBldGMuLi4pLgo+
-ID4KPiBDYW4geW91IHN1cHBseSBhIHJlZmVyZW5jZSB0byB0aGlzIHBvc3Q/ICBUaGUgb25seSBk
-aXN0cm8gd2hpY2ggaXMgbm90Cj4gaW5mbHVlbmNlZCBieSBwZXJmb3JtYW5jZSBudW1iZXJzIHdo
-ZW4gc2VsZWN0aW5nIGEgZmlsZXN5c3RlbSBpcyBSZWRIYXQsCj4gYW5kIG1vc3Qgb2YgdGhlIHJl
-c3QgYXJlIGp1c3Qgd2FpdGluZyB0byBiZSBzdXJlIHRoYXQgcG9saXRpY3Mgd2lsbCBub3QKPiBr
-aWxsIHJlaXNlcjQgaW5jbHVzaW9uLiAgSSBhbSBzdXJlIEkgY2FuIGNvbWUgdXAgd2l0aCBhICJ3
-ZSB3aWxsIHN1cHBvcnQKPiBpdCBpZiB5b3UgbGV0IGl0IGluIiBwZXRpdGlvbiBvZiBkaXN0cm9z
-IGlmIHN1Y2ggYSBzaWxsaW5lc3MgaXMgbmVlZGVkLgoKSSB3YXMgcmVmZXJpbmcgdG8gdGhpcyBw
-b3N0OgpodHRwOi8vbWFyYy50aGVhaW1zZ3JvdXAuY29tLz9sPWxpbnV4LWtlcm5lbCZtPTExMzc3
-NTg3ODcyMjEwMCZ3PTIKClRoYW5rcyBmb3IgYWxsIHRoZSBhbnN3ZXJzCi0tCmF2dXRvbgotLQog
-QW55b25lIHdobyBxdW90ZXMgbWUgaW4gdGhlaXIgc2lnIGlzIGFuIGlkaW90LiAtLSBSdXN0eSBS
-dXNzZWxsLgo=
+Vitaly Fertman wrote:
+> if rebuilding the tree has been finished, you do not need to rebuild 
+> it again, you can merely double check the fs consistency with --check
+> (default) option.
+> 
+
+Even though 3.6.19 apparently "succeeded" with its rebuild-tree, 3.6.20 with 
+--check still found errors, so we had to run this with rebuild-tree as well.
+
+But that run finished all right, and succeeded in retrieving one additional 
+file, which 3.6.19 hadn't.
+
+Many thanks,
+
+Alain
