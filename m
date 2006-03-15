@@ -1,58 +1,81 @@
-From: Christian Trefzer <ctrefzer@gmx.de>
-Subject: Re: kernel BUG at /usr/src/sources/linux-2.6.16-rc5/fs/reiser4/plugin/file/tail_conversion.c:29
-Date: Wed, 15 Mar 2006 20:40:18 +0100
-Message-ID: <20060315194013.GA13074@zeus.uziel.local>
-References: <20060315075034.GC17577@zeus.uziel.local> <200603151111.49826.zam@namesys.com>
+From: Jonathan Briggs <jbriggs@esoft.com>
+Subject: Re: State of the Reiser4 FS
+Date: Wed, 15 Mar 2006 12:45:41 -0700
+Message-ID: <1142451941.16641.32.camel@localhost>
+References: <3aa654a40603140241s5d8a7430j6bf29a5ef7dd1bf5@mail.gmail.com>
+	 <1142336718.7415.55.camel@tribesman.namesys.com>
+	 <194f62550603140732j6ef10757j@mail.gmail.com>
+	 <4417BEC4.6060506@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
-Return-path: <reiserfs-list-return-28276-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-9US4Wx5udORpwZYv2RRl"
+Return-path: <reiserfs-list-return-28277-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200603151111.49826.zam@namesys.com>
+In-Reply-To: <4417BEC4.6060506@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Alexander Zarochentsev <zam@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
 Cc: reiserfs-list@namesys.com
 
---fUYQa+Pmc3FrFX/N
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+--=-9US4Wx5udORpwZYv2RRl
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Hi zam,
+On Tue, 2006-03-14 at 23:14 -0800, Hans Reiser wrote:
+[snip]
+> They claim that if we don't use the ext3 code
+> in our fs then they will be forced to shoulder an extra burden to
+> maintain our code.  We are not allowed to specify that they should not
+> maintain our code at all.  I need to read more Kafka I think, it is hard
+> for me to understand it all.
 
-after the first build of OOo has finished (as "gift" for my laptop) the
-machine is working on it's own copy, after a reboot with the exact same
-setup yielding my BUG problems plus your patch applied. I'll keep an eye
-on my syslog. Sorry for taking so long!
+Err, this actually does make a lot of sense Hans.
 
-Regards,
-Chris
+The mainline Linux Kernel code is maintained by everyone that can
+convince Linus or a sub-maintainer to accept their patch.  In order to
+produce an acceptable patch to core kernel code that provides
+file-system services, a patch author must also change the file systems
+that use it.  He or she cannot just leave the change laying around for
+everyone else to fix.  (At least, not usually.)
 
+The only code that doesn't have to be maintained by main-line patch
+contributors is out of tree, which is where Reiser4 is now.  Code that
+no one is interested in maintaining or can't be maintained gets kicked
+out of tree.
 
---fUYQa+Pmc3FrFX/N
-Content-Type: application/pgp-signature
-Content-Disposition: inline
+Some of your reasons to get it into main-line kernel include: more trust
+by end users that your code is stable, avoiding your team having to do
+their own fixes for cross-kernel changes, and a wider user base through
+ease of use (not having to apply extra kernel patches).
+
+Right?
+
+User trust comes through passing the code reviews, and users knowing
+that if the Reiser4 team vaporizes, the code can still be maintained and
+the file-system won't disappear.
+
+Avoiding extra work for cross-kernel patches means that other people
+have to be able to make changes to your code.
+
+That all means that accepting Reiser4 code into main-line does mean they
+have to maintain it.
+
+--=20
+Jonathan Briggs <jbriggs@esoft.com>
+eSoft, Inc.
+
+--=-9US4Wx5udORpwZYv2RRl
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.2.2 (GNU/Linux)
 
-iQIVAwUBRBhtnV2m8MprmeOlAQJD7Q/+OcRNtdbSwMnjM1czbUH+UNKN+PDtFt+U
-4lSJhk3/GGsYj2QATxLr+XQQjJqbAJX2qr0qZvQAMYIUbPQS6S1AzssevkVSZCQA
-//E1QAUjYHjV2XXnY4svtliCYpD/oq54ggLgI4ckkGxpaeNuVTratolWUL+S/uwm
-9BvuSLeGYuMZlEakFwTDYQGM2Br9mwIwyqQyq7gIxZLEqVQxhsWzgTWFbDWbOn2g
-+jKxz2AfVjoTcjjJ/tdBWd9PvPsXs2BKM3PvUqGG/vDjpQiLX+3sWNmzwH1bsXWv
-mYki/w+zbHCAC0GOVZqZno3v02coVO9eAAzPLRDUzngrDFcQoe/SIUnDY4YII07O
-rOs7c6/0g+elYgAJBTeCmKrAR2W39JfRotrPHLO1l1eV/P570j2IF/ekS+17N/AU
-lPRpjPJul7/TJBMF2uvWWxH+nHj1lWJR9c1OW08RkbbaBtBCoL7xYrmWLd3rfdWr
-MvifNuPBsiyki+vbOfrzi3hhhUZsFE8HIobn7lPsqCkh4M9wZf82H8rVpErHCBc6
-cPWRC+7UF+yYJdkhIZhLP6f3zyaaUaOAEkpu1CikdF2qVhUHaK4mcdJ0ZYjWltcM
-Y2qnAgnuZoh6KcBSMsI7BUv7JH4MHkTLdSsfSv7yGIhH/EjR8X+FbRAs4Seldnwg
-FLRuuQl5b0M=
-=wzAG
+iD8DBQBEGG7lG8fHaOLTWwgRAl6YAJ46Rh2+FhLKWMnj5/t0YVeFi4ldgACggFsv
+bQWoae6AQkutn3sFF87+gxQ=
+=zGqk
 -----END PGP SIGNATURE-----
 
---fUYQa+Pmc3FrFX/N--
+--=-9US4Wx5udORpwZYv2RRl--
 
