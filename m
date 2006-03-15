@@ -1,90 +1,73 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: State of the Reiser4 FS
-Date: Tue, 14 Mar 2006 23:14:12 -0800
-Message-ID: <4417BEC4.6060506@namesys.com>
-References: <3aa654a40603140241s5d8a7430j6bf29a5ef7dd1bf5@mail.gmail.com>	 <1142336718.7415.55.camel@tribesman.namesys.com> <194f62550603140732j6ef10757j@mail.gmail.com>
+Subject: Re: Encryption/Compression and meta data (like file names)
+Date: Tue, 14 Mar 2006 23:22:12 -0800
+Message-ID: <4417C0A4.5020000@namesys.com>
+References: <200603131341.11327.jgilmore@glycou.com> <441662E7.3010003@namesys.com> <4416CB93.2090502@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28258-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28259-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <194f62550603140732j6ef10757j@mail.gmail.com>
+In-Reply-To: <4416CB93.2090502@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Clemens Eisserer <linuxhippy@gmail.com>
-Cc: reiserfs-list@namesys.com
+To: Edward Shishkin <edward@namesys.com>
+Cc: John Gilmore <jgilmore@glycou.com>, reiserfs-list@namesys.com
 
-Clemens Eisserer wrote:
+Edward Shishkin wrote:
 
->>AFAIK, the most recent reason why reiser4 does not get included is that
->>reiser4 developers have to change reiser4 to use generic code to
->>implement read/write.
->>AFAICS, reiser4 developers do not work on that.
->>    
+> Hans Reiser wrote:
+>
+>> Instead of answering your questions as asked, let me explain what it
+>> does.
 >>
->Has this really become a reason to not include reiser4 into mainline?
->  
+>> It encrypts the file data.  It makes some effort at avoiding
+>> watermarking attacks by use of an initialization vector, but this effort
+>> is not robust in that file size is not encryptable without an
+>> unacceptable cost in space utilization (to encrypt file size you must
+>> store each of the files with a random amount of padding proportional to
+>> the size of the largest file stored),
+>>
 >
-Yes, this is the official reason.
+> Why?
+> As I understand, to encrypt file size means to encrypt a 64-bit field
+> in the appropriate
+> stat-data extension, also we need to make sure that nobody can observe
+> this attribute
+> (except key owner) when inode is in memory.
 
->I also don't see a reason for that - at least it would bind reiser4
->more close to linux making ports to other OS harder.
->  
->
-You are entirely correct.  It is an interesting social phenomenom that
-we must do this, yes?  Using the ext3 (err, generic) code makes it much
-harder to license and port reiser4.
+If you have root, you can inspect the items on the raw device, and from
+them construct the compressed size.  The problem is not encrypting the
+attribute, it is preventing persons with access to the raw device from
+constructing the size.
 
->Furthermore if it would decrease performance its simply no way to go.
->  
 >
-What we are currently doing is rewriting the reiser4 read and write code
-to not operate 4k at a time.  The design specification was that it was
-supposed to do as much as possible once per write, and as little as
-possible every 4k.  Unfortunately, when I reviewed our code the design
-specification had not been adhered to.  After the reiser4 code adheres
-to the reiser4 design specification, it will be possible to argue that
-the reiser4 design specification is technically superior, and the
-generic code should change.   I generally believe that the per 4k
-approach used throughout the linux kernel is not as CPU efficient as
-sending larger groups of pages through the layers all at once.  In other
-words, there is a reason we have bios, and we need to learn the lesson
-from them that they teach us, and abstract it into a general design
-approach.
+>> and for that reason we do not
+>> encrypt file size. 
+>
+>
+> We don't encrypt file size (and other attributes) because nobody tried
+> to implement it
+> (not because of unresolved problems).
+>
+>> Edward, do you do some minor (and not crypto-secure)
+>> amount of padding?  (I think he does.)
+>>  
+>>
+>
+> We use get_random_bytes() to fill up each stream to be proportional to
+> the cipher block
+> size before encryption.  This is safe.
 
-We must make reiser4 adhere to the reiser4 design specification before
-we can deal with their demand that we change the generic code so that it
-does what reiser4 does.  I have no desire to touch their code, but they
-require it.  Generally speaking, they don't really like any feature
-existing in reiser4 that is not in their code, and ask that we add it to
-their code before reiser4 is allowed to have it.  They call the ext3
-code the "generic" code.  They claim that if we don't use the ext3 code
-in our fs then they will be forced to shoulder an extra burden to
-maintain our code.  We are not allowed to specify that they should not
-maintain our code at all.  I need to read more Kafka I think, it is hard
-for me to understand it all.
+but it does not prevent determining whether the linux kernel tree is
+present in a directory.  the cipher block is something like 64 bytes, so
+you still have enough size info to guess that the kernel source code is
+in a directory.  You will often be able to guess things like whether two
+users are probably sharing the same file based on file size.
 
->(btw. I think this could be a way to generate some revenue - I think
->there is demand for a modern fs which is supported by both, windows
->and linux).
->  
->
-There are so many ways to generate revenue by spending revenue I don't
-have in my pocket right now.....  forgive me, yes, someday we should do
-that and will do that.
+So, we offer one tool.   This tool does not meet all needs, just some
+needs.  I wish I was using it on my home directory, we need to get this
+stuff shipped.;-)
 
->lg Clemens
->
->
->  
->
-If any of you users want to see a reiser4, you have to strenuously
-clamor for it to go into mainline, or you simply will not get it. 
-Namesys cannot survive indefinitely with it not going into the kernel. 
-This is a political issue, and viewing it as otherwise is simply naive. 
-It is sad, I chose Linux over BSD to develop for because BSD used to be
-like this.
-
-Hans
