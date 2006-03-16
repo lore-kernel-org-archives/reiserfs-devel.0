@@ -1,102 +1,69 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: Encryption/Compression and meta data (like file names)
-Date: Thu, 16 Mar 2006 15:21:54 +0300
-Message-ID: <44195862.2030000@namesys.com>
-References: <200603131341.11327.jgilmore@glycou.com> <441662E7.3010003@namesys.com> <4416CB93.2090502@namesys.com> <4417C0A4.5020000@namesys.com>
+From: Christian Trefzer <ctrefzer@gmx.de>
+Subject: Re: kernel BUG at /usr/src/sources/linux-2.6.16-rc5/fs/reiser4/plugin/file/tail_conversion.c:29
+Date: Thu, 16 Mar 2006 18:19:28 +0100
+Message-ID: <20060316171928.GA22618@zeus.uziel.local>
+References: <20060315075034.GC17577@zeus.uziel.local> <200603151111.49826.zam@namesys.com> <20060315194013.GA13074@zeus.uziel.local> <200603161028.38749.zam@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28290-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="k1lZvvs/B4yU6o8G"
+Return-path: <reiserfs-list-return-28291-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4417C0A4.5020000@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <200603161028.38749.zam@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: John Gilmore <jgilmore@glycou.com>, reiserfs-list@namesys.com
+To: Alexander Zarochentsev <zam@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Hans Reiser wrote:
+--k1lZvvs/B4yU6o8G
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->Edward Shishkin wrote:
->
->  
->
->>Hans Reiser wrote:
->>
->>    
->>
->>>Instead of answering your questions as asked, let me explain what it
->>>does.
->>>
->>>It encrypts the file data.  It makes some effort at avoiding
->>>watermarking attacks by use of an initialization vector, but this effort
->>>is not robust in that file size is not encryptable without an
->>>unacceptable cost in space utilization (to encrypt file size you must
->>>store each of the files with a random amount of padding proportional to
->>>the size of the largest file stored),
->>>
->>>      
->>>
->>Why?
->>As I understand, to encrypt file size means to encrypt a 64-bit field
->>in the appropriate
->>stat-data extension, also we need to make sure that nobody can observe
->>this attribute
->>(except key owner) when inode is in memory.
->>    
->>
->
->If you have root, you can inspect the items on the raw device, and from
->them construct the compressed size.  The problem is not encrypting the
->attribute, it is preventing persons with access to the raw device from
->constructing the size.
->
->  
->
->>>and for that reason we do not
->>>encrypt file size. 
->>>      
->>>
->>We don't encrypt file size (and other attributes) because nobody tried
->>to implement it
->>(not because of unresolved problems).
->>
->>    
->>
->>>Edward, do you do some minor (and not crypto-secure)
->>>amount of padding?  (I think he does.)
->>> 
->>>
->>>      
->>>
->>We use get_random_bytes() to fill up each stream to be proportional to
->>the cipher block
->>size before encryption.  This is safe.
->>    
->>
->
->but it does not prevent determining whether the linux kernel tree is
->present in a directory.
->
+Hi zam,
 
-I mean this is not a security hole like say filling it up by zeroes.
+On Thu, Mar 16, 2006 at 10:28:37AM +0300, Alexander Zarochentsev wrote:
+>=20
+> I guess it was in release_unix_file where get_exclusive_access is called=
+=20
+> outside reiser4_context.
+>=20
+> can you please replace the old patch by the attached one?
 
->  the cipher block is something like 64 bytes, so
->you still have enough size info to guess that the kernel source code is
->in a directory.  You will often be able to guess things like whether two
->users are probably sharing the same file based on file size.
->  
->
+Sure I can, but so far I did not have any further trouble after applying
+your first patch. It seems to me that exchanging the two patches won't
+bring the BUG back, so I will report in a few days with something along
+the lines of "thank you very much". You will, on the other hand,
+definitely hear from me if the thing BUGs on me again ; )
 
-Oh, social engineering works here?
-I think it will be enough for a file system to prevent trivial 
-assumtions about file's content
-(by encrypting file names)
+Thanks for your time!
 
->So, we offer one tool.   This tool does not meet all needs, just some
->needs.  I wish I was using it on my home directory, we need to get this
->stuff shipped.;-)
->  
->
+Chris
+
+
+--k1lZvvs/B4yU6o8G
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2.2 (GNU/Linux)
+
+iQIVAwUBRBmeH12m8MprmeOlAQJKyg//eAGGunAZ2cp77mY08AFjCg5hyfPNrOIc
+M+bSyPC3wowVr6v1CDKLRr2zJWGbAYx2zjZntUC0jGrUIHYn0pqP5KYNjkJ21LPI
+silc1y0QnVIIOeQpVxXMU1iaaPaqRxaArFZ84D3Ggv9mfQNSBU2TRIH+S1fHBBx8
+ZntOwnU5YoVjb24RF3WP8NvEWoLaF58ECbUlfvh971PLvaNub9HjII7i4zJNGt8g
+IqpRYF+FFrHIcZcmOpIWy2cqBtuLzdJ1DXwFs3cRB8tQ9KsfuNl5joScbA8sodOF
+MPQi+4QERhvIfHNjHBeKITyjTRZCG19TtRdVCWTW6VNXfNogxKZ/ND4he48vKyK/
+Mw462ySSj1Zi3Wb+kf+r6ot7B2cN/LXYFHWP6HZ2D3tihQu0T0hVivUhu11akaHa
+61u2BMLfep2zItENbAvQBfl4gx6cD1Kw48NEZslnAQ8R+uVfSOmDwAGVcMg6mi4x
+ek2bjKqHnEWkqhx+SIPi7tjlQ7CgdAxWSID3XoL+0Tx0l3Kb+qx0CgbmJveVZHQB
+XnWht2COPrFqxzNPmMzWyYxFhQXBj4NhT1mYrG1wTwAQ0+8ocRSHQRnuwLCjrd5A
+oXKNenD4OsRdX3ZqlroXfHuwglqp+zQtO+yUMGSk+amaq6+VmLQHIelKsjsPuIyu
+m8dXmafMq3o=
+=PW23
+-----END PGP SIGNATURE-----
+
+--k1lZvvs/B4yU6o8G--
 
