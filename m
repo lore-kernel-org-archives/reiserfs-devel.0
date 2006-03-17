@@ -1,60 +1,51 @@
-From: Christian Trefzer <ctrefzer@gmx.de>
-Subject: Re: kernel BUG at /usr/src/sources/linux-2.6.16-rc5/fs/reiser4/plugin/file/tail_conversion.c:29
-Date: Fri, 17 Mar 2006 10:31:27 +0100
-Message-ID: <20060317093127.GB11648@hermes.uziel.local>
-References: <20060315075034.GC17577@zeus.uziel.local> <200603161028.38749.zam@namesys.com> <20060316171928.GA22618@zeus.uziel.local> <200603162035.01567.zam@namesys.com>
+From: Brian Uhrain <buhrain@rosettastone.com>
+Subject: New Reiser4 patch
+Date: Fri, 17 Mar 2006 10:25:35 +0000
+Message-ID: <441A8E9F.4030602@rosettastone.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="KFztAG8eRSV9hGtP"
-Return-path: <reiserfs-list-return-28293-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28294-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200603162035.01567.zam@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Alexander Zarochentsev <zam@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
---KFztAG8eRSV9hGtP
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Thu, Mar 16, 2006 at 08:35:01PM +0300, Alexander Zarochentsev wrote:
-> I looked one more time at my second patch and realized now that is it
-> not needed, it solves problem which can't happen.  I was thinking too
-> much trying to invent a situation where the first patch fails :)
+I just noticed that a Reiser4 patch for kernel 2.6.14.6 was posted on 
+ftp.namesys.com yesterday, and I was wondering what changes (if any) 
+there are to Reiser4 itself between that patch and the 2.6.15 patch that 
+was released two months ago?  Does it fix the issue with the periodic 
+(temporary) system freezes during I think background flushes that was 
+discussed previously on the list?  And out of curiosity, is there a 
+specific technical reason why the patch is for 2.6.14.6 instead of one 
+of the 2.6.15 source trees?
 
-Well, so I'll leave the first one applied instead, presuming that this
-is the one you will merge into "mainstream" reiser4 code?
+Sorry for the barrage of questions as my first post to this list.. :D  I 
+use Reiser4 as the root filesystem on all four of my systems (two 
+Athlon64 laptops and a dual-core Athlon64 desktop, both using x86-64 
+kernels, and a dual processor Alpha).  And I must say, keep up the good 
+work!  Except for the pausing issue with the (older) 2.6.14 and 2.6.15 
+patches--which I've not even noticed on my dual-core system--and the 
+mmap issue (only a problem with VMware, which will hard lock a system), 
+the filesystem has worked superbly for me.  I've been using it for 
+probably a year or more now as my root FS and have not had any data loss 
+or corruptions.  I've even been using it on my Alpha system since I got 
+it about a month ago (a CS20 with dual 833MHz EV67 processors) without 
+any problems--all of the system software from glibc through Xorg have 
+been built at least twice on it without troubles.
+
+Thanks,
+Brian
 
 
-Thanks,=20
-Chris
-
---KFztAG8eRSV9hGtP
-Content-Type: application/pgp-signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2.2 (GNU/Linux)
-
-iQIVAwUBRBqB7V2m8MprmeOlAQJavA//arJizw8tDCjavzlKsMhEXWt3rQ/rnY6E
-TwzwB1wBvYn/dU3OEZtXk+EsHgivmvzpmh5P1Lqkokh88PpmavPIH5zEeehCYOrF
-uGGmcA516da3stQpVkKKTIRpGp8wOeyMorXGDOsbbrhyLZDBtrAtkC+4VMwtPCH8
-b23PM/GzGoxJ8KT3Op5YItd1V3wu9Fgd+bmiTEHrLpdVoiB6o/McwhS70XrbpDaJ
-YrTOdW/D3GmZjwnUkJNs2AkrMot9+AXYdx/UZa3jjDPiGKXDyNwwZ6VvpFf/LhC2
-XzDNrPNzMa6H2wT9ZaynvXV+hQvv8AoDz/HUjSleJovf3uV7eY+xFG50S6L5xYPK
-ZAaIjnamYCS2VjLQ8TVA+6f9VebJMXqaoly2nhrWKrYAonfmGD9/n675X64bMaFv
-4jzYGCjdawYVghMCmXnigxL+dHSywkoDTx9koeyc5zjaPYMsuqzOhpcHUAJ7OOIT
-tJnGIIWZQUT7/OTRRbVpwMAbRqKmXXSvr7d1hrulpDL759NNx/+0Nimicq9wb0nk
-lLyVoAuqBubWrONcXl0Y7P17QipRFaNViW/moIYUAj/G/S/63n/xELeBN/zK0M0L
-KcuGMnM5CLdFdNlXjCTogNiddvKhNan1LoJRR3YWipK1ZIhy3osBcshVbu3ViC13
-UVSzFXeVzFk=
-=CRvY
------END PGP SIGNATURE-----
-
---KFztAG8eRSV9hGtP--
-
+P.S.  If you want any more information on the VMware issue, I can see if 
+it still does it on one of my home systems, and try to grab kernel 
+messages via serial console.  I only encountered it when I first set up 
+my dual-core system at work because I made everything Reiser4, while on 
+my laptops my home directory is in a separate Reiser3 partition.  My 
+workaround was to put the VMware virtual disks on their own Reiserfs 
+partition.
