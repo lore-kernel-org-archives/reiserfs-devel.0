@@ -1,60 +1,75 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: rebuild-tree does not complete: filesystem full
-Date: Tue, 21 Mar 2006 11:04:34 +0300
-Message-ID: <200603211104.34995.vitaly@namesys.com>
-References: <441F305A.20809@telkomsa.net>
-Reply-To: vitaly@namesys.com
+From: "Cleyton Ferreira" <cleyton@gmail.com>
+Subject: filesystem causes high wait I/O
+Date: Tue, 21 Mar 2006 11:58:35 -0300
+Message-ID: <ad80cfc70603210658u6e6e68b1la959439da622c75a@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28302-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_4496_32657251.1142953115239"
+Return-path: <reiserfs-list-return-28303-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <441F305A.20809@telkomsa.net>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
-Cc: alftheo potgieter <alftheo@telkomsa.net>
 
-Hello
+------=_Part_4496_32657251.1142953115239
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-On Tuesday 21 March 2006 01:44, alftheo potgieter wrote:
-> Hi
-> I'm using the latest reiserfsck (3.6.19),,
-> My filesystem got corrupted by an unexpected power loss. Initially, I 
-> could mount the filesystem read-only with minor problems. As I had 
-> nowhere to back it up, I ran reiserfsck --rebuild-tree, which could not 
-> complete, as the filesystem was full.
+Hi,
 
-it is possible to get such a corruption that fsck will need to 
-insert some extra metadata to successfully repair the fs. this 
-process may run out of disk space. I have an improved version 
-of reiserfsck, which detects these corruptions and avoid these 
-metadata insertion. however your fs already has these metadata 
-inserted and there is probably no space to proceed.
+I'm using reiserfs 3.6.18-3 and we got a different problem.
+A little briefing about the server:
+- SuSE Linux 9.3 (x86-64)
+- kernel 2.6.11.4-21.7-smp
+- Intel (2 processors)
 
-I will send you that improved reiserfsck, if it runs out of disk
-space too, you need to enlarge you partition, enlarge fs, and run
-reiserfsck again.
+After months without incident, this server running on hardware Intel show u=
+s
+a big load caused by wait for I/O on the reiserfs.
 
-If you will need to enlarge the partition, before doing it, 
-please zero the space that will be added into the partition 
-to avoid mixing your reiserfs metadata with another reiserfs 
-metadata.
+There was no different read or write access, no diferent network load
+neither diferent process on system.
 
-> Now it is flagged as unmountable "to prevent further corruption". Is 
-> there any way to restore the filesytem to the previous mountable but 
-> corrupted state (which would be infinitely more useful)? I imagine 
-> either finding the root node again or somehow growing the filesystem (as 
-> I have since found enough space to grow it)
-> 
-> Any help would be useful.
-> 
-> alf
-> 
-> 
+The reiserfsck output is Ok. No corruptions found.
 
--- 
-Vitaly
+There is only one solution we see: Backup, make a new fs, Restore.
+
+Has anybody seen problem like that?
+
+regards,
+
+ Cleyton
+
+------=_Part_4496_32657251.1142953115239
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+<div>Hi,</div>
+<div><br>I'm using reiserfs 3.6.18-3 and we got a different problem.</div>
+<div>A little briefing about the server:</div>
+<div>- SuSE Linux 9.3 (x86-64)<br>- kernel 2.6.11.4-21.7-smp </div>
+<div>- Intel (2 processors)</div>
+<div>&nbsp;</div>
+<div>After months without incident, this server running on hardware Intel s=
+how us a big&nbsp;load caused&nbsp;by&nbsp;wait for I/O&nbsp;on the reiserf=
+s.</div>
+<div>&nbsp;</div>
+<div>There was no different read or write access, no diferent network load =
+neither diferent process on system.</div>
+<div>&nbsp;</div>
+<div>The reiserfsck output is Ok. No corruptions found.</div>
+<div>&nbsp;</div>
+<div>There is only one solution we see: Backup, make a new fs, Restore.</di=
+v>
+<div>&nbsp;</div>
+<div>Has anybody seen problem like that?</div>
+<div>&nbsp;</div>
+<div>regards,</div>
+<div>&nbsp;</div>
+<div>&nbsp;Cleyton</div>
+
+------=_Part_4496_32657251.1142953115239--
