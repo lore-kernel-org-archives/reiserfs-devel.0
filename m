@@ -1,244 +1,69 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: 2.6.16-rc6-mm2: slow writes on reiser4.
-Date: Wed, 22 Mar 2006 11:04:08 -0800
-Message-ID: <44219FA8.2050606@namesys.com>
-References: <44206D3C.7050504@free.fr> <4420FFA2.1090908@namesys.com> <44219CC2.3060405@free.fr>
+From: "Avuton Olrich" <avuton@gmail.com>
+Subject: Reiser4 crash?
+Date: Wed, 22 Mar 2006 13:08:37 -0800
+Message-ID: <3aa654a40603221308w1d2271edw13e999d1631db39@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-28317-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-28318-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44219CC2.3060405@free.fr>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Laurent Riffard <laurent.riffard@free.fr>
-Cc: reiserfs-list@namesys.com, vs <vs@thebsh.namesys.com>, Alexander Zarochentcev <zam@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
-Instead of using sync, could you increase the size of the files you
-write so that they are 10x ram size?
-
-I have a suspicion we are slow at sync....  I am not sure why, but I
-have seen other data where sync was slow for us, and maybe we need to
-optimize that code path.
-
-Hans
-
-Laurent Riffard wrote:
-
->Le 22.03.2006 08:41, Hans Reiser a =E9crit :
-> =20
->
->>Laurent Riffard wrote:
->>
->>
->>   =20
->>
->>>Hello,
->>>
->>>Writing big files is very slow on reiser4 now.=20
->>>
->>>"dd if=3D/dev/zero of=3Dtoto bs=3D1k count=3D102400; sync"
->>>
->>>     =20
->>>
->>try bs=3D4M, and tell me what happens.  also try an empty fs, and an fs
->>that is equally full to reiserfs.  Note that reiserfs in your test is
->>68% full vs. 90% full for V4.  It may be that we need to port some of
->>the block allocation optimizations from V3 to V4 (Jeff's work) to help
->>with 90% full filesystems.  Thanks for doing this.  Real users always
->>teach me a lot when they test things differently from how I did.
->>
->>Hans
->>   =20
->>
->
->Hello Hans,
->
->Yesterday, I realized that my tests were not fair. So I did some
->further tests trying to have the same situation for 3 different FS
->(reiserfs/ext2/reiser4) and I sent the result to the list, but this
->mail never reached the list. I have resent it.
->
->As per your request, I tried to replay my dd test on my 90% full
->reiser4 FS, using a 4M block size. Here are the results:
->
->---------------------
-> =20
->
->>Desktop$ cd ~/kernel
->>
->>kernel$ rm toto
->>rm: d=E9truire fichier r=E9gulier `toto'? o
->>
->>kernel$ df .
->>Sys. de fich.         Tail. Occ. Disp. %Occ. Mont=E9 sur
->>/dev/hda8             925M  748M  177M  81% /home/laurent/kernel
->>
->>kernel$ grep /dev/hda8 /rpoc/mounts
->>grep: /rpoc/mounts: Aucun fichier ou r=E9pertoire de ce type
->>
->>kernel$ grep /dev/hda8 /proc/mounts
->>/dev/hda8 /home/laurent/kernel reiser4 rw,nosuid,nodev,atom_max_size=3D0x=
-7e0c,atom_max_age=3D0x249f0,atom_min_size=3D0x100,atom_max_flushers=3D0x1,c=
-bk_cache_slots=3D0x10 0 0
->>
->>kernel$  sync; time dd if=3D/dev/zero of=3Dtoto bs=3D4M count=3D25; time =
-sync
->>25+0 enregistrements lus.
->>25+0 enregistrements =E9crits.
->>0.00user 2.89system 0:17.18elapsed 16%CPU (0avgtext+0avgdata 0maxresident=
-)k
->>0inputs+0outputs (0major+252minor)pagefaults 0swaps
->>0.00user 0.00system 2:19.91elapsed 0%CPU (0avgtext+0avgdata 0maxresident)k
->>0inputs+0outputs (0major+191minor)pagefaults 0swaps
->>
->>kernel$ sync; time dd if=3D/dev/zero of=3Dtoto bs=3D4M count=3D25; time s=
-ync
->>25+0 enregistrements lus.
->>25+0 enregistrements =E9crits.
->>0.00user 2.96system 1:16.42elapsed 3%CPU (0avgtext+0avgdata 0maxresident)k
->>0inputs+0outputs (0major+252minor)pagefaults 0swaps
->>0.00user 0.00system 0:08.70elapsed 0%CPU (0avgtext+0avgdata 0maxresident)k
->>0inputs+0outputs (0major+190minor)pagefaults 0swaps
->>   =20
->>
->---------------------
->
->I tried to run an "iostat 10" simultaneously with dd+sync. I
->attached the output. Hope this helps.
->~~
->laurent
-> =20
->
->------------------------------------------------------------------------
->
->Le script a d=E9but=E9 sur mer 22 mar 2006 19:12:56 CET
->Desktop$ cd ~/kernel
->kernel$=20
->kernel$  sleep 15 && echo SYNC && sync && echo DD && time dd if=3D/dev/zer=
-o of=3Dtoto bs=3D4M count=3D25 && echo SYNC && time sync && echo END &
->[1] 4657
->kernel$  iostat -t 10 /dev/hda8
->Linux 2.6.16-rc6-mm2 (antares.localdomain) 	22.03.2006
->
->Heure: 19:13:32
->avg-cpu:  %user   %nice %system %iowait   %idle
->           5,01    0,02   11,07    4,45   79,46
->
->Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
->hda8              5,34         0,27       217,58       1297    1026592
->
->Heure: 19:13:42
->avg-cpu:  %user   %nice %system %iowait   %idle
->           0,10    0,00    0,20    0,20   99,50
->
->Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
->hda8              0,00         0,00         0,00          0          0
->
->SYNC
->DD
->Heure: 19:13:52
->avg-cpu:  %user   %nice %system %iowait   %idle
->           1,50    0,00   79,32    8,29   10,89
->
->Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
->hda8             20,38         3,20      1202,00         32      12032
->
->Heure: 19:14:02
->avg-cpu:  %user   %nice %system %iowait   %idle
->           2,30    0,00   81,08   16,62    0,00
->
->Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
->hda8             33,53         0,00      1398,20          0      13968
->
->Heure: 19:14:12
->avg-cpu:  %user   %nice %system %iowait   %idle
->           1,90    0,00   88,51    9,59    0,00
->
->Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
->hda8             25,27         0,00       893,51          0       8944
->
->Heure: 19:14:22
->avg-cpu:  %user   %nice %system %iowait   %idle
->           3,19    0,00   85,63   11,18    0,00
->
->Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
->hda8             27,35         0,00      1288,62          0      12912
->
->Heure: 19:14:32
->avg-cpu:  %user   %nice %system %iowait   %idle
->           0,80    0,00   90,01    9,19    0,00
->
->Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
->hda8             25,17         0,00       800,00          0       8008
->
->Heure: 19:14:42
->avg-cpu:  %user   %nice %system %iowait   %idle
->           0,30    0,00   74,93   24,78    0,00
->
->Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
->hda8             54,35         0,00      3138,46          0      31416
->
->Heure: 19:14:52
->avg-cpu:  %user   %nice %system %iowait   %idle
->           0,20    0,00   81,62   18,18    0,00
->
->Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
->hda8             50,75         0,00      1324,28          0      13256
->
->Heure: 19:15:02
->avg-cpu:  %user   %nice %system %iowait   %idle
->           0,60    0,00   71,60   27,80    0,00
->
->Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
->hda8             76,30         0,00      2363,20          0      23632
->
->Heure: 19:15:12
->avg-cpu:  %user   %nice %system %iowait   %idle
->           1,10    0,00   29,77   68,93    0,20
->
->Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
->hda8            123,78         0,00      3275,12          0      32784
->
->25+0 enregistrements lus.
->25+0 enregistrements =E9crits.
->0.00user 2.94system 1:29.83elapsed 3%CPU (0avgtext+0avgdata 0maxresident)k
->0inputs+0outputs (0major+252minor)pagefaults 0swaps
->SYNC
->Heure: 19:15:22
->avg-cpu:  %user   %nice %system %iowait   %idle
->           2,90    0,00   76,60   19,10    1,40
->
->Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
->hda8             55,10         0,80      1435,20          8      14352
->
->0.00user 0.00system 0:17.41elapsed 0%CPU (0avgtext+0avgdata 0maxresident)k
->0inputs+0outputs (0major+190minor)pagefaults 0swaps
->END
->Heure: 19:15:32
->avg-cpu:  %user   %nice %system %iowait   %idle
->           0,10    0,00   31,73   42,14   26,03
->
->Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
->hda8             94,19         0,00      3402,60          0      33992
->
->Heure: 19:15:42
->avg-cpu:  %user   %nice %system %iowait   %idle
->           0,10    0,00    0,00    0,10   99,80
->
->Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
->hda8              0,00         0,00         0,00          0          0
->
->
->^C
->[1]+  Done                    sleep 15 && echo SYNC && sync && echo DD && =
-time dd if=3D/dev/zero of=3Dtoto bs=3D4M count=3D25 && echo SYNC && time sy=
-nc && echo END
->kernel$ exit
->
->Script compl=E9t=E9 sur mer 22 mar 2006 19:15:46 CET
-> =20
->
-
+VGhpcyBpcyB0YWMnZCBvdXRwdXQsIEknbSBub3Qgc3VyZSBpdCdzIGEgcmVpc2VyNCBidWcsIGJ1
+dCBpdCBlY2Fzb3VuZAp3YXMgd3JpdGluZyB0byBteSBUQiBwYXJ0aXRpb24uIElmIGl0J3MgYWxy
+ZWFkeSBiZWVuIGZpeGVkLCBwbGVhc2UKcG9pbnQgbWUgdG8gdGhlIHBhdGNoIDopIFRoYW5rcy4K
+Ck1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgQ29kZTogIEJhZCBFSVAgdmFsdWUuCk1hciAy
+MiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgWzxjMDEwMmIxYj5dIHN5c2VudGVyX3Bhc3RfZXNwKzB4
+NTQvMHg3NQpNYXIgMjIgMTI6NDc6NDkgc2hhcGVzaGlmdGVyIFs8YzAxNDYzYmI+XSBzeXNfd3Jp
+dGUrMHgzYy8weDYzCk1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgWzxjMDE0NjI3YT5dIHZm
+c193cml0ZSsweGE3LzB4MTQ5Ck1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgWzxjMDFiNDkw
+Mz5dIHdyaXRlX3VuaXhfZmlsZSsweDAvMHg0MjUKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hpZnRl
+ciBbPGMwMWI0YmJkPl0gd3JpdGVfdW5peF9maWxlKzB4MmJhLzB4NDI1Ck1hciAyMiAxMjo0Nzo0
+OSBzaGFwZXNoaWZ0ZXIgWzxjMDFiNDhiYj5dIHdyaXRlX2ZpbGUrMHgzZi8weDg3Ck1hciAyMiAx
+Mjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgWzxjMDFiMmM4Yz5dIGFwcGVuZF9ob2xlKzB4MjkvMHg1MgpN
+YXIgMjIgMTI6NDc6NDkgc2hhcGVzaGlmdGVyIFs8YzAxYjQ3Mzc+XSB3cml0ZV9mbG93KzB4NGMv
+MHg1NgpNYXIgMjIgMTI6NDc6NDkgc2hhcGVzaGlmdGVyIFs8YzAxYjQ2M2Q+XSBhcHBlbmRfYW5k
+X29yX292ZXJ3cml0ZSsweDIwMS8weDJhZgpNYXIgMjIgMTI6NDc6NDkgc2hhcGVzaGlmdGVyIFs8
+YzAxYzdhYTA+XSB3cml0ZV9leHRlbnQrMHgwLzB4MjQKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hp
+ZnRlciBbPGMwMWIyNTdmPl0gaG93X3RvX3dyaXRlKzB4MTAzLzB4MTBkCk1hciAyMiAxMjo0Nzo0
+OSBzaGFwZXNoaWZ0ZXIgQ2FsbCBUcmFjZToKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hpZnRlciBj
+YjJkMzdhMCBjMDFiNDczNyBkMzQwM2U3YyAwMDAwMDAwMAowYzg0NTQwNCAwMDAwMDAwMCAzNTM2
+MzIzMCAwMTM3MzgzOApNYXIgMjIgMTI6NDc6NDkgc2hhcGVzaGlmdGVyIGNiMmQzN2YwIDAwMDAw
+MDAyIDAwMDAwMDAyIGQ3NmU2MzAwCmQ3YjI1YjM0IGQ3YjI1YjhjIGQzNDAzZTdjIDAwMDAwMDAw
+Ck1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgU3RhY2s6IGMwMWIyNTdmIDAwMDAwMDAwIGMw
+MWM3YWEwCjAwMWU2ZmY2IDAwMDAwMDAyIGMwMWI0NjNkIGQ3YjI1YjhjIGNiMmQzN2EwCk1hciAy
+MiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgUHJvY2VzcyBlY2Fzb3VuZCAocGlkOiAzMDk4MCwKdGhy
+ZWFkaW5mbz1kMzQwMzAwMCB0YXNrPWQ5YzRhYTUwKQpNYXIgMjIgMTI6NDc6NDkgc2hhcGVzaGlm
+dGVyIGRzOiAwMDdiICAgZXM6IDAwN2IgICBzczogMDA2OApNYXIgMjIgMTI6NDc6NDkgc2hhcGVz
+aGlmdGVyIGVzaTogYzAzOWFiNDAgICBlZGk6IGRmOGIxMDAwICAgZWJwOgowMDAwMDAwMSAgIGVz
+cDogZDM0MDNlMmMKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hpZnRlciBlYXg6IGNiMmQzN2IwICAg
+ZWJ4OiAwMDAwMDFlYyAgIGVjeDoKMDAwMDAwMDEgICBlZHg6IGRmOGIxMDAwCk1hciAyMiAxMjo0
+Nzo0OSBzaGFwZXNoaWZ0ZXIgRUlQIGlzIGF0IF9zdGV4dCsweDNmZWZmZGUwLzB4MmYKTWFyIDIy
+IDEyOjQ3OjQ5IHNoYXBlc2hpZnRlciBFRkxBR1M6IDAwMDEwMjgyICAgKDIuNi4xNS40LXJlaXNl
+cjQpCk1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgRUlQOiAgICAwMDYwOls8MDAwMDAwMDA+
+XSAgICBOb3QgdGFpbnRlZCBWTEkKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hpZnRlciBDUFU6ICAg
+IDAKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hpZnRlciBNb2R1bGVzIGxpbmtlZCBpbjogaXB0X01B
+U1FVRVJBREUgaXB0X0xPRwppcHRfVE9TIGlwdF9UQ1BNU1MgaXB0X3RvcyBpcHRhYmxlX21hbmds
+ZSBpcF9uYXRfZnRwIGlwdF90Y3Btc3MKaXB0YWJsZV9uYXQgaXBfbmF0IGlwdGFibGVfZmlsdGVy
+IGlwdF9tdWx0aXBvcnQgaXB0X3N0YXRlIGlwdF9saW1pdAppcHRfY29ubnRyYWNrIGlwX2Nvbm50
+cmFja19mdHAgaXBfY29ubnRyYWNrIGlwX3RhYmxlcyBzbmRfc2VxXwptaWRpIHNuZF9lbXUxMGsx
+X3N5bnRoIHNuZF9lbXV4X3N5bnRoIHNuZF9zZXFfdmlybWlkaQpzbmRfc2VxX21pZGlfZXZlbnQg
+c25kX3NlcV9taWRpX2VtdWwgc25kX3NlcSBzbmRfZW11MTBrMSBzbmRfcmF3bWlkaQpzbmRfYWM5
+N19jb2RlYyBzbmRfYWM5N19idXMgc25kX3BjbSBzbmRfc2VxX2RldmljZSBzbmRfdGltZXIKc25k
+X3BhZ2VfYWxsb2Mgc25kX3V0aWxfbWVtIHNuZF9od2RlcCBzbmQKTWFyIDIyIDEyOjQ3OjQ5IHNo
+YXBlc2hpZnRlciBQUkVFTVBUCk1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgT29wczogMDAw
+MCBbIzFdCk1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgKnBkZSA9IDAwMDAwMDAwCk1hciAy
+MiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgMDAwMDAwMDAKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hp
+ZnRlciBwcmludGluZyBlaXA6Ck1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgVW5hYmxlIHRv
+IGhhbmRsZSBrZXJuZWwgTlVMTCBwb2ludGVyCmRlcmVmZXJlbmNlIGF0IHZpcnR1YWwgYWRkcmVz
+cyAwMDAwMDAwMApNYXIgMjIgMTI6NDc6NDkgc2hhcGVzaGlmdGVyIFdBUk5JTkc6IFdyb25nIGxl
+dmVsIGZvdW5kIGluIG5vZGU6IDIgIT0gMTYKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hpZnRlciA8
+ND5yZWlzZXI0W2VjYXNvdW5kKDMwOTc5KV06IHBhcnNlX25vZGU0MAooL3Vzci9zcmMvbGludXgt
+Mi42L2ZzL3JlaXNlcjQvcGx1Z2luL25vZGUvbm9kZTQwLmM6NjczKVtuaWtpdGEtNDk0XToKCgot
+LQphdnV0b24KLS0KIEFueW9uZSB3aG8gcXVvdGVzIG1lIGluIHRoZWlyIHNpZyBpcyBhbiBpZGlv
+dC4gLS0gUnVzdHkgUnVzc2VsbC4K
