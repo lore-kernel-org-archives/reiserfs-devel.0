@@ -1,66 +1,61 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: 2.6.16-rc6-mm2: reiser4 BUG when unmounting fs
-Date: Wed, 22 Mar 2006 10:43:26 +0300
-Message-ID: <1143013406.6245.46.camel@tribesman.namesys.com>
-References: <20060318044056.350a2931.akpm@osdl.org>
-	 <442061C0.4020702@free.fr>  <44206428.1080005@free.fr>
+From: sergey ivanov <seriv@parkheights.dyndns.org>
+Subject: Re: reiser4 problems
+Date: Wed, 22 Mar 2006 08:21:59 -0500
+Message-ID: <44214F77.5090103@parkheights.dyndns.org>
+References: <442040FF.4040800@parkheights.dyndns.org> <200603221033.43606.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-bqzNI1rISivNjNdoJGf+"
-Return-path: <reiserfs-list-return-28312-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28313-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44206428.1080005@free.fr>
+In-Reply-To: <200603221033.43606.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Laurent Riffard <laurent.riffard@free.fr>
-Cc: Andrew Morton <akpm@osdl.org>, Kernel development list <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: vitaly@namesys.com, reiserfs-list@namesys.com
 
---=-bqzNI1rISivNjNdoJGf+
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Vitaly Fertman wrote:
+> Hello,
+>
+> On Tuesday 21 March 2006 21:07, Sergey Ivanov wrote:
+>   
+>> Hi,
+>>
+>>     
+> wrong bytes is not a big problem, reiser4 indeed counted them wrongly some 
+> time ago, although it seems to be fixed already. the only serious problem 
+> here is at the beginning of the 'CHECKING STORAGE TREE' pass -- there must 
+> not be a key [0:0(NAME):0:0:0].
+>  
+>   
+>> After second fsck, I have unmounted and mounted it read only to save
+>> data on ext3 partition and to wait answers and suggestions before using
+>> reiser4 once more.
+>>     
+>
+> which reiser4progs version do you use?
+>   
+1.0.5
+> it is already difficult to say why this strange key appeared -- you have
+> already run several build-fs runs -- although it may be related to remount 
+> (I remember we used to have some problems before) or to fsck --build-fs.
+>   
+But I was not able to use filesystem after first fsck --build-fs. Even
+ls <mountpoint> was failing with io error message.
+> unmount you fs please and run 'fsck --check' on the unmounted fs -- check 
+> that all is right there now.
+>   
+FS is consistent
+> which kernel version do you use?
+>   
+It's 2.4.16, ALTLinux vserver's kernel (see
+http://www.sisyphus.ru/srpm/kernel-image-vs26-smp) with applied patch
+based on namesys' for 2.6.14, you can see it's spec, changelog and
+download it from http://www.sisyphus.ru/srpm/kernel-feat-fs-reiser4.
 
-Hello
-
-On Tue, 2006-03-21 at 21:38 +0100, Laurent Riffard wrote:
-> Le 21.03.2006 21:27, Laurent Riffard a écrit :
-> > Le 18.03.2006 13:40, Andrew Morton a écrit :
-> > 
-> >>ftp://ftp.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.16-rc6/2.6.16-rc6-mm2/
-> > 
-> >  
-> > Hello, 
-> > 
-> > This BUG is 100% reproducible. Simply boot to runlevel 1 and then 
-> > unmount a reiser4 fs:
-> 
-
-The attached patch fixes the problem.
-
---=-bqzNI1rISivNjNdoJGf+
-Content-Disposition: attachment; filename=reiser4-cleanup_init_fake_inode.patch
-Content-Type: text/x-patch; name=reiser4-cleanup_init_fake_inode.patch; charset=utf-8
-Content-Transfer-Encoding: 7bit
-
- fs/reiser4/page_cache.c |    4 ----
- 1 files changed, 4 deletions(-)
-
-diff -puN fs/reiser4/page_cache.c~reiser4-fix-bd_inode fs/reiser4/page_cache.c
---- linux-2.6.16-rc6-mm2/fs/reiser4/page_cache.c~reiser4-fix-bd_inode	2006-03-21 06:42:42.000000000 +0300
-+++ linux-2.6.16-rc6-mm2-vs/fs/reiser4/page_cache.c	2006-03-21 07:21:54.000000000 +0300
-@@ -198,10 +198,6 @@ init_fake_inode(struct super_block *supe
- {
- 	assert("nikita-2168", fake->i_state & I_NEW);
- 	fake->i_mapping->a_ops = &formatted_fake_as_ops;
--	fake->i_blkbits = super->s_blocksize_bits;
--	fake->i_size = ~0ull;
--	fake->i_rdev = super->s_bdev->bd_dev;
--	fake->i_bdev = super->s_bdev;
- 	*pfake = fake;
- 	/* NOTE-NIKITA something else? */
- 	unlock_new_inode(fake);
-
-_
-
---=-bqzNI1rISivNjNdoJGf+--
-
+As I can see now, all data were intact, everything restored O.K after
+these 2 fsck --build-fs.
+-- 
+    With best regards,
+       Sergey Ivanov
