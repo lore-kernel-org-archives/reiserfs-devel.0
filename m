@@ -1,69 +1,154 @@
-From: "Avuton Olrich" <avuton@gmail.com>
-Subject: Reiser4 crash?
-Date: Wed, 22 Mar 2006 13:08:37 -0800
-Message-ID: <3aa654a40603221308w1d2271edw13e999d1631db39@mail.gmail.com>
+From: Jake Maciejewski <maciejej@msoe.edu>
+Subject: Re: reiser4 problems
+Date: Wed, 22 Mar 2006 16:36:42 -0600
+Message-ID: <1143067002.9624.45.camel@gentoo>
+References: <442040FF.4040800@parkheights.dyndns.org>
+	 <200603221033.43606.vitaly@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-28318-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28319-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <200603221033.43606.vitaly@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: vitaly@namesys.com
+Cc: reiserfs-list@namesys.com, Sergey Ivanov <seriv@parkheights.dyndns.org>
 
-VGhpcyBpcyB0YWMnZCBvdXRwdXQsIEknbSBub3Qgc3VyZSBpdCdzIGEgcmVpc2VyNCBidWcsIGJ1
-dCBpdCBlY2Fzb3VuZAp3YXMgd3JpdGluZyB0byBteSBUQiBwYXJ0aXRpb24uIElmIGl0J3MgYWxy
-ZWFkeSBiZWVuIGZpeGVkLCBwbGVhc2UKcG9pbnQgbWUgdG8gdGhlIHBhdGNoIDopIFRoYW5rcy4K
-Ck1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgQ29kZTogIEJhZCBFSVAgdmFsdWUuCk1hciAy
-MiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgWzxjMDEwMmIxYj5dIHN5c2VudGVyX3Bhc3RfZXNwKzB4
-NTQvMHg3NQpNYXIgMjIgMTI6NDc6NDkgc2hhcGVzaGlmdGVyIFs8YzAxNDYzYmI+XSBzeXNfd3Jp
-dGUrMHgzYy8weDYzCk1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgWzxjMDE0NjI3YT5dIHZm
-c193cml0ZSsweGE3LzB4MTQ5Ck1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgWzxjMDFiNDkw
-Mz5dIHdyaXRlX3VuaXhfZmlsZSsweDAvMHg0MjUKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hpZnRl
-ciBbPGMwMWI0YmJkPl0gd3JpdGVfdW5peF9maWxlKzB4MmJhLzB4NDI1Ck1hciAyMiAxMjo0Nzo0
-OSBzaGFwZXNoaWZ0ZXIgWzxjMDFiNDhiYj5dIHdyaXRlX2ZpbGUrMHgzZi8weDg3Ck1hciAyMiAx
-Mjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgWzxjMDFiMmM4Yz5dIGFwcGVuZF9ob2xlKzB4MjkvMHg1MgpN
-YXIgMjIgMTI6NDc6NDkgc2hhcGVzaGlmdGVyIFs8YzAxYjQ3Mzc+XSB3cml0ZV9mbG93KzB4NGMv
-MHg1NgpNYXIgMjIgMTI6NDc6NDkgc2hhcGVzaGlmdGVyIFs8YzAxYjQ2M2Q+XSBhcHBlbmRfYW5k
-X29yX292ZXJ3cml0ZSsweDIwMS8weDJhZgpNYXIgMjIgMTI6NDc6NDkgc2hhcGVzaGlmdGVyIFs8
-YzAxYzdhYTA+XSB3cml0ZV9leHRlbnQrMHgwLzB4MjQKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hp
-ZnRlciBbPGMwMWIyNTdmPl0gaG93X3RvX3dyaXRlKzB4MTAzLzB4MTBkCk1hciAyMiAxMjo0Nzo0
-OSBzaGFwZXNoaWZ0ZXIgQ2FsbCBUcmFjZToKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hpZnRlciBj
-YjJkMzdhMCBjMDFiNDczNyBkMzQwM2U3YyAwMDAwMDAwMAowYzg0NTQwNCAwMDAwMDAwMCAzNTM2
-MzIzMCAwMTM3MzgzOApNYXIgMjIgMTI6NDc6NDkgc2hhcGVzaGlmdGVyIGNiMmQzN2YwIDAwMDAw
-MDAyIDAwMDAwMDAyIGQ3NmU2MzAwCmQ3YjI1YjM0IGQ3YjI1YjhjIGQzNDAzZTdjIDAwMDAwMDAw
-Ck1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgU3RhY2s6IGMwMWIyNTdmIDAwMDAwMDAwIGMw
-MWM3YWEwCjAwMWU2ZmY2IDAwMDAwMDAyIGMwMWI0NjNkIGQ3YjI1YjhjIGNiMmQzN2EwCk1hciAy
-MiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgUHJvY2VzcyBlY2Fzb3VuZCAocGlkOiAzMDk4MCwKdGhy
-ZWFkaW5mbz1kMzQwMzAwMCB0YXNrPWQ5YzRhYTUwKQpNYXIgMjIgMTI6NDc6NDkgc2hhcGVzaGlm
-dGVyIGRzOiAwMDdiICAgZXM6IDAwN2IgICBzczogMDA2OApNYXIgMjIgMTI6NDc6NDkgc2hhcGVz
-aGlmdGVyIGVzaTogYzAzOWFiNDAgICBlZGk6IGRmOGIxMDAwICAgZWJwOgowMDAwMDAwMSAgIGVz
-cDogZDM0MDNlMmMKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hpZnRlciBlYXg6IGNiMmQzN2IwICAg
-ZWJ4OiAwMDAwMDFlYyAgIGVjeDoKMDAwMDAwMDEgICBlZHg6IGRmOGIxMDAwCk1hciAyMiAxMjo0
-Nzo0OSBzaGFwZXNoaWZ0ZXIgRUlQIGlzIGF0IF9zdGV4dCsweDNmZWZmZGUwLzB4MmYKTWFyIDIy
-IDEyOjQ3OjQ5IHNoYXBlc2hpZnRlciBFRkxBR1M6IDAwMDEwMjgyICAgKDIuNi4xNS40LXJlaXNl
-cjQpCk1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgRUlQOiAgICAwMDYwOls8MDAwMDAwMDA+
-XSAgICBOb3QgdGFpbnRlZCBWTEkKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hpZnRlciBDUFU6ICAg
-IDAKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hpZnRlciBNb2R1bGVzIGxpbmtlZCBpbjogaXB0X01B
-U1FVRVJBREUgaXB0X0xPRwppcHRfVE9TIGlwdF9UQ1BNU1MgaXB0X3RvcyBpcHRhYmxlX21hbmds
-ZSBpcF9uYXRfZnRwIGlwdF90Y3Btc3MKaXB0YWJsZV9uYXQgaXBfbmF0IGlwdGFibGVfZmlsdGVy
-IGlwdF9tdWx0aXBvcnQgaXB0X3N0YXRlIGlwdF9saW1pdAppcHRfY29ubnRyYWNrIGlwX2Nvbm50
-cmFja19mdHAgaXBfY29ubnRyYWNrIGlwX3RhYmxlcyBzbmRfc2VxXwptaWRpIHNuZF9lbXUxMGsx
-X3N5bnRoIHNuZF9lbXV4X3N5bnRoIHNuZF9zZXFfdmlybWlkaQpzbmRfc2VxX21pZGlfZXZlbnQg
-c25kX3NlcV9taWRpX2VtdWwgc25kX3NlcSBzbmRfZW11MTBrMSBzbmRfcmF3bWlkaQpzbmRfYWM5
-N19jb2RlYyBzbmRfYWM5N19idXMgc25kX3BjbSBzbmRfc2VxX2RldmljZSBzbmRfdGltZXIKc25k
-X3BhZ2VfYWxsb2Mgc25kX3V0aWxfbWVtIHNuZF9od2RlcCBzbmQKTWFyIDIyIDEyOjQ3OjQ5IHNo
-YXBlc2hpZnRlciBQUkVFTVBUCk1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgT29wczogMDAw
-MCBbIzFdCk1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgKnBkZSA9IDAwMDAwMDAwCk1hciAy
-MiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgMDAwMDAwMDAKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hp
-ZnRlciBwcmludGluZyBlaXA6Ck1hciAyMiAxMjo0Nzo0OSBzaGFwZXNoaWZ0ZXIgVW5hYmxlIHRv
-IGhhbmRsZSBrZXJuZWwgTlVMTCBwb2ludGVyCmRlcmVmZXJlbmNlIGF0IHZpcnR1YWwgYWRkcmVz
-cyAwMDAwMDAwMApNYXIgMjIgMTI6NDc6NDkgc2hhcGVzaGlmdGVyIFdBUk5JTkc6IFdyb25nIGxl
-dmVsIGZvdW5kIGluIG5vZGU6IDIgIT0gMTYKTWFyIDIyIDEyOjQ3OjQ5IHNoYXBlc2hpZnRlciA8
-ND5yZWlzZXI0W2VjYXNvdW5kKDMwOTc5KV06IHBhcnNlX25vZGU0MAooL3Vzci9zcmMvbGludXgt
-Mi42L2ZzL3JlaXNlcjQvcGx1Z2luL25vZGUvbm9kZTQwLmM6NjczKVtuaWtpdGEtNDk0XToKCgot
-LQphdnV0b24KLS0KIEFueW9uZSB3aG8gcXVvdGVzIG1lIGluIHRoZWlyIHNpZyBpcyBhbiBpZGlv
-dC4gLS0gUnVzdHkgUnVzc2VsbC4K
+On Wed, 2006-03-22 at 10:33 +0300, Vitaly Fertman wrote:
+> Hello,
+> 
+> On Tuesday 21 March 2006 21:07, Sergey Ivanov wrote:
+> > Hi,
+> > I am sorry to report problems I had this night at my e-mail server.
+> > Grepped reiser4 messages from /var/log/messages are at
+> > http://parkheights.dyndns.org/r4log.bz2
+> > I have 2 processor system (athlon) with raid5 software array with 5x62.1
+> > GB, giving me 248.4GB for use. I have created lvm2 volumes for imap
+> > folders there, and also have /usr, /var, /home and other resides on the
+> > same raid5, everything formatted reiser4.
+> > Yesterday the server stops working, but answer pings. I've rebooted it
+> > with magic SysRQ key combinations after forced unmounting and syncing
+> > all partitions. But in the night the problems reappear on some of
+> > virtual volumes. In the morning I did remount -o ro and fsck.reiser4,
+> > all but one volume was O.K, but one required rebuild-fs. Excuse me, I
+> > have not saved the first fsck.reiser4 output. After rebuilding fs and
+> > then rebooting the system, I've got immediately problems, the filesystem
+> > was not accessible, all attempts to get ls of it finished with i/o error
+> > messagees. (I have errors in /etc/fstab, the reiser4 volumes has lines 
+> > ending with 1 1, not 1 2 as it should be. I'm not sure it attributed to
+> > the these  problems).
+> > The second fsck.reiser4 once more founded some problems, it's the log:
+> > ---
+> > [root@parkheights ~]# fsck.reiser4 -y --build-fs /dev/evms/imap-seriv
+> > *******************************************************************
+> > This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+> > *******************************************************************
+> > 
+> > Fscking the /dev/evms/imap-seriv block device.
+> > Will check the consistency of the Reiser4 SuperBlock.
+> > Will build the Reiser4 FileSystem.
+> > ***** fsck.reiser4 started at Tue Mar 21 08:34:40 2006
+> > Reiser4 fs was detected on /dev/evms/imap-seriv.
+> > 
+> > CHECKING STORAGE TREE
+> > FSCK: Node (740803): The left delimiting key [29:1(SD):0:2a:0] in the
+> > parent node (740782), pos (0/4294967295) does not match the first key
+> > [0:0(NAME):0:0:
+> > 0] in the node. Fixed.
+> > FSCK: The tree height 4 found in the format is wrong. Fixed to 5.
+> >         Read nodes 440830
+> >         Nodes left in the tree 440830
+> >                 Leaves of them 435415, Twigs of them 5323
+> >         Time interval: Tue Mar 21 08:34:41 2006 - Tue Mar 21 08:44:54 2006
+> > CHECKING EXTENT REGIONS.
+> >         Read twigs 5323
+> >         Time interval: Tue Mar 21 08:44:54 2006 - Tue Mar 21 08:46:14 2006
+> > LOOKING FOR UNCONNECTED NODES
+> >         Read nodes 0
+> >         Good nodes 0
+> >                 Leaves of them 0, Twigs of them 0
+> >         Time interval: Tue Mar 21 08:46:14 2006 - Tue Mar 21 08:46:14 2006
+> > CHECKING EXTENT REGIONS.
+> >         Read twigs 0
+> >         Time interval: Tue Mar 21 08:46:14 2006 - Tue Mar 21 08:46:14 2006
+> > INSERTING UNCONNECTED NODES
+> > 1. Twigs: done
+> > 2. Twigs by item: done
+> > 3. Leaves: done
+> > 4. Leaves by item: done
+> >         Twigs: read 0, inserted 0, by item 0, empty 0
+> >         Leaves: read 0, inserted 0, by item 0
+> >         Time interval: Tue Mar 21 08:46:14 2006 - Tue Mar 21 08:46:14 2006
+> > CHECKING SEMANTIC TREE
+> > FSCK: Node (762207), item (5), [6f6e9:6e657700000000:6f6eb] (stat40):
+> > wrong size (20), Fixed to (21).
+> > FSCK: Node (762207), item (5), [6f6e9:6e657700000000:6f6eb] (stat40):
+> > wrong bytes (2473), Fixed to (2605).
+> > FSCK: Node (773635), item (5), [6f62a:6e657700000000:6f62c] (stat40):
+> > wrong size (6), Fixed to (7).
+> > FSCK: Node (773635), item (5), [6f62a:6e657700000000:6f62c] (stat40):
+> > wrong bytes (628), Fixed to (760).
+> > FSCK: Node (773635), item (6), [6f62a:746d7000000000:6f62b] (stat40):
+> > wrong size (4), Fixed to (3).
+> > FSCK: Node (773635), item (6), [6f62a:746d7000000000:6f62b] (stat40):
+> > wrong bytes (312), Fixed to (206).
+> >         Found 395956 objects.
+> >         Time interval: Tue Mar 21 08:46:14 2006 - Tue Mar 21 09:28:41 2006
+> > CLEANUPING STORAGE TREE
+> > ...
+> > --- (once more, excuse me, I have copied it from xterm while it was
+> > 'cleanuping storage tree', so it's not the full log).
+> 
+> wrong bytes is not a big problem, reiser4 indeed counted them wrongly some 
+> time ago, although it seems to be fixed already. 
+
+I recently encountered a wrong bytes issue on 2.6.15.1 with the 2.6.15-1
+patch. After a lot of compiling (emerge -eD world in Gentoo), I ended up
+with a directory that I couldn't delete.
+
+fsck.reiser4 --check log:
+
+FSCK: Node (21121314), item (10), [10467f6:6c6f63616c6500:10467f7] (stat40):
+wrong size (3), Should be (2).
+FSCK: Node (21121314), item (10), [10467f6:6c6f63616c6500:10467f7] (stat40):
+wrong bytes (182), Should be (100).
+
+fsck.reiser4 --fix log:
+
+FSCK: Node (19374202), item (0): 1 mergable units were found in the extent40
+unit. Merged.
+FSCK: Node (21121314), item (10), [10467f6:6c6f63616c6500:10467f7] (stat40):
+wrong size (3), Fixed to (2).
+FSCK: Node (21121314), item (10), [10467f6:6c6f63616c6500:10467f7] (stat40):
+wrong bytes (182), Fixed to (100).
+
+After fixing, --check came up clean. It's good to know the bug is
+relatively harmless and has been fixed, but is there any way to take
+advantage of improvements and bugfixes made in the last two months
+without running 2.6.14 or the -mm patchset?
+
+> the only serious problem 
+> here is at the beginning of the 'CHECKING STORAGE TREE' pass -- there must 
+> not be a key [0:0(NAME):0:0:0].
+>  
+> > After second fsck, I have unmounted and mounted it read only to save
+> > data on ext3 partition and to wait answers and suggestions before using
+> > reiser4 once more.
+> 
+> which reiser4progs version do you use?
+> 
+> it is already difficult to say why this strange key appeared -- you have
+> already run several build-fs runs -- although it may be related to remount 
+> (I remember we used to have some problems before) or to fsck --build-fs.
+> 
+> unmount you fs please and run 'fsck --check' on the unmounted fs -- check 
+> that all is right there now.
+> 
+> which kernel version do you use?
+> 
+-- 
+Jake Maciejewski <maciejej@msoe.edu>
+
