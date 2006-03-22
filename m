@@ -1,126 +1,171 @@
-From: Vitaly Fertman <vitaly@namesys.com>
-Subject: Re: reiser4 problems
-Date: Wed, 22 Mar 2006 10:33:43 +0300
-Message-ID: <200603221033.43606.vitaly@namesys.com>
-References: <442040FF.4040800@parkheights.dyndns.org>
-Reply-To: vitaly@namesys.com
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: 2.6.16-rc6-mm2: slow writes on reiser4.
+Date: Tue, 21 Mar 2006 23:41:22 -0800
+Message-ID: <4420FFA2.1090908@namesys.com>
+References: <44206D3C.7050504@free.fr>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28310-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28311-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <442040FF.4040800@parkheights.dyndns.org>
-Content-Disposition: inline
+In-Reply-To: <44206D3C.7050504@free.fr>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Sergey Ivanov <seriv@parkheights.dyndns.org>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Laurent Riffard <laurent.riffard@free.fr>
+Cc: reiserfs-list@namesys.com, vs <vs@thebsh.namesys.com>, Alexander Zarochentcev <zam@namesys.com>
 
-Hello,
+Laurent Riffard wrote:
 
-On Tuesday 21 March 2006 21:07, Sergey Ivanov wrote:
-> Hi,
-> I am sorry to report problems I had this night at my e-mail server.
-> Grepped reiser4 messages from /var/log/messages are at
-> http://parkheights.dyndns.org/r4log.bz2
-> I have 2 processor system (athlon) with raid5 software array with 5x62.1
-> GB, giving me 248.4GB for use. I have created lvm2 volumes for imap
-> folders there, and also have /usr, /var, /home and other resides on the
-> same raid5, everything formatted reiser4.
-> Yesterday the server stops working, but answer pings. I've rebooted it
-> with magic SysRQ key combinations after forced unmounting and syncing
-> all partitions. But in the night the problems reappear on some of
-> virtual volumes. In the morning I did remount -o ro and fsck.reiser4,
-> all but one volume was O.K, but one required rebuild-fs. Excuse me, I
-> have not saved the first fsck.reiser4 output. After rebuilding fs and
-> then rebooting the system, I've got immediately problems, the filesystem
-> was not accessible, all attempts to get ls of it finished with i/o error
-> messagees. (I have errors in /etc/fstab, the reiser4 volumes has lines 
-> ending with 1 1, not 1 2 as it should be. I'm not sure it attributed to
-> the these  problems).
-> The second fsck.reiser4 once more founded some problems, it's the log:
-> ---
-> [root@parkheights ~]# fsck.reiser4 -y --build-fs /dev/evms/imap-seriv
-> *******************************************************************
-> This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
-> *******************************************************************
-> 
-> Fscking the /dev/evms/imap-seriv block device.
-> Will check the consistency of the Reiser4 SuperBlock.
-> Will build the Reiser4 FileSystem.
-> ***** fsck.reiser4 started at Tue Mar 21 08:34:40 2006
-> Reiser4 fs was detected on /dev/evms/imap-seriv.
-> 
-> CHECKING STORAGE TREE
-> FSCK: Node (740803): The left delimiting key [29:1(SD):0:2a:0] in the
-> parent node (740782), pos (0/4294967295) does not match the first key
-> [0:0(NAME):0:0:
-> 0] in the node. Fixed.
-> FSCK: The tree height 4 found in the format is wrong. Fixed to 5.
->         Read nodes 440830
->         Nodes left in the tree 440830
->                 Leaves of them 435415, Twigs of them 5323
->         Time interval: Tue Mar 21 08:34:41 2006 - Tue Mar 21 08:44:54 2006
-> CHECKING EXTENT REGIONS.
->         Read twigs 5323
->         Time interval: Tue Mar 21 08:44:54 2006 - Tue Mar 21 08:46:14 2006
-> LOOKING FOR UNCONNECTED NODES
->         Read nodes 0
->         Good nodes 0
->                 Leaves of them 0, Twigs of them 0
->         Time interval: Tue Mar 21 08:46:14 2006 - Tue Mar 21 08:46:14 2006
-> CHECKING EXTENT REGIONS.
->         Read twigs 0
->         Time interval: Tue Mar 21 08:46:14 2006 - Tue Mar 21 08:46:14 2006
-> INSERTING UNCONNECTED NODES
-> 1. Twigs: done
-> 2. Twigs by item: done
-> 3. Leaves: done
-> 4. Leaves by item: done
->         Twigs: read 0, inserted 0, by item 0, empty 0
->         Leaves: read 0, inserted 0, by item 0
->         Time interval: Tue Mar 21 08:46:14 2006 - Tue Mar 21 08:46:14 2006
-> CHECKING SEMANTIC TREE
-> FSCK: Node (762207), item (5), [6f6e9:6e657700000000:6f6eb] (stat40):
-> wrong size (20), Fixed to (21).
-> FSCK: Node (762207), item (5), [6f6e9:6e657700000000:6f6eb] (stat40):
-> wrong bytes (2473), Fixed to (2605).
-> FSCK: Node (773635), item (5), [6f62a:6e657700000000:6f62c] (stat40):
-> wrong size (6), Fixed to (7).
-> FSCK: Node (773635), item (5), [6f62a:6e657700000000:6f62c] (stat40):
-> wrong bytes (628), Fixed to (760).
-> FSCK: Node (773635), item (6), [6f62a:746d7000000000:6f62b] (stat40):
-> wrong size (4), Fixed to (3).
-> FSCK: Node (773635), item (6), [6f62a:746d7000000000:6f62b] (stat40):
-> wrong bytes (312), Fixed to (206).
->         Found 395956 objects.
->         Time interval: Tue Mar 21 08:46:14 2006 - Tue Mar 21 09:28:41 2006
-> CLEANUPING STORAGE TREE
-> ...
-> --- (once more, excuse me, I have copied it from xterm while it was
-> 'cleanuping storage tree', so it's not the full log).
+>Hello,
+>
+>Writing big files is very slow on reiser4 now.=20
+>
+>"dd if=3D/dev/zero of=3Dtoto bs=3D1k count=3D102400; sync"
+>
+try bs=3D4M, and tell me what happens.  also try an empty fs, and an fs
+that is equally full to reiserfs.  Note that reiserfs in your test is
+68% full vs. 90% full for V4.  It may be that we need to port some of
+the block allocation optimizations from V3 to V4 (Jeff's work) to help
+with 90% full filesystems.  Thanks for doing this.  Real users always
+teach me a lot when they test things differently from how I did.
 
-wrong bytes is not a big problem, reiser4 indeed counted them wrongly some 
-time ago, although it seems to be fixed already. the only serious problem 
-here is at the beginning of the 'CHECKING STORAGE TREE' pass -- there must 
-not be a key [0:0(NAME):0:0:0].
- 
-> After second fsck, I have unmounted and mounted it read only to save
-> data on ext3 partition and to wait answers and suggestions before using
-> reiser4 once more.
+Hans
 
-which reiser4progs version do you use?
+> takes more than 2 minutes on=20
+>reiser4 fs, but only 15 seconds on reiserfs fs.
+>
+>Actually, writing on reiser4 is not uniformly slow, it seems to be blocked=
+ for=20
+>ages from time to time. I monitored the number of dirty pages from /proc/m=
+eminfo=20
+>an I hit sysrq-T when the system was stalling: =20
+>
+>dd            D 000017DE     0 21930  21929                     (NOTLB)
+>       d7169c74 e0c98b05 00000246 000017de 00000000 f396aa00 003d1249 d0b6=
+8140
+>       d0b68030 f396aa00 003d1249 6d519e00 00000002 c0396434 d8bf8e30 d8bf=
+8e38
+>       00000246 d7169ca0 c0270f08 d0b68030 00000001 d0b68030 c0113b25 d8bf=
+8e38
+>Call Trace:
+> [<c0270f08>] __down+0x81/0xdc
+> [<c026f3ba>] __down_failed+0xa/0x10
+> [<e0c91a62>] .text.lock.lock+0x15/0x1b [reiser4]
+> [<e0c90faf>] longterm_lock_znode+0x5b4/0x7b0 [reiser4]
+> [<e0cba16a>] cbk_level_lookup+0x8a/0x954 [reiser4]
+> [<e0cbb186>] traverse_tree+0x752/0xa0d [reiser4]
+> [<e0cbbbc2>] coord_by_handle+0x781/0x789 [reiser4]
+> [<e0cbbdb5>] object_lookup+0x1eb/0x230 [reiser4]
+> [<e0cdb201>] find_file_item+0x18d/0x1b7 [reiser4]
+> [<e0cdd873>] write_flow+0x208/0x6e1 [reiser4]
+> [<e0cde208>] write_unix_file+0x3d9/0x5b0 [reiser4]
+> [<c0147d36>] vfs_write+0x8a/0x133
+> [<c0148569>] sys_write+0x3b/0x60
+> [<c01029bb>] sysenter_past_esp+0x54/0x75
+>
+>Below are the detailed test I ran. Feel free to ask for more information.
+>
+>Reiser4 FS
+>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+>Desktop$ cd ~/kernel
+>
+>kernel$ df .
+>Sys. de fich.         Tail. Occ. Disp. %Occ. Mont=E9 sur
+>/dev/hda8             925M  825M  101M  90% /home/laurent/kernel
+>
+>kernel$ grep hda8 /proc/mounts
+>/dev/hda8 /home/laurent/kernel reiser4 rw,nosuid,nodev,atom_max_size=3D0x7=
+e0c,atom_max_age=3D0x249f0,atom_min_size=3D0x100,atom_max_flushers=3D0x1,cb=
+k_cache_slots=3D0x10 0 0
+>
+>kernel$ sync; time dd if=3D/dev/zero of=3Dtoto bs=3D1k count=3D102400; tim=
+e sync=20
+>102400+0 enregistrements lus.
+>102400+0 enregistrements =E9crits.
+>0.06user 13.95system 1:42.09elapsed 13%CPU (0avgtext+0avgdata 0maxresident=
+)k
+>0inputs+0outputs (0major+250minor)pagefaults 0swaps
+>0.00user 0.00system 1:22.90elapsed 0%CPU (0avgtext+0avgdata 0maxresident)k
+>0inputs+0outputs (0major+191minor)pagefaults 0swaps
+>
+>kernel$ sync; time dd if=3D/dev/zero of=3Dtoto bs=3D1k count=3D102400; tim=
+e sync=20
+>102400+0 enregistrements lus.
+>102400+0 enregistrements =E9crits.
+>0.08user 14.01system 1:45.57elapsed 13%CPU (0avgtext+0avgdata 0maxresident=
+)k
+>0inputs+0outputs (0major+249minor)pagefaults 0swaps
+>0.00user 0.00system 0:09.78elapsed 0%CPU (0avgtext+0avgdata 0maxresident)k
+>0inputs+0outputs (0major+191minor)pagefaults 0swaps
+>
+>kernel$ sync; time dd if=3D/dev/zero of=3Dtoto bs=3D1k count=3D102400; tim=
+e sync=20
+>102400+0 enregistrements lus.
+>102400+0 enregistrements =E9crits.
+>0.06user 14.13system 2:18.27elapsed 10%CPU (0avgtext+0avgdata 0maxresident=
+)k
+>0inputs+0outputs (0major+251minor)pagefaults 0swaps
+>0.00user 0.00system 0:08.48elapsed 0%CPU (0avgtext+0avgdata 0maxresident)k
+>0inputs+0outputs (0major+190minor)pagefaults 0swaps
+>
+>kernel$ sync; time dd if=3D/dev/zero of=3Dtoto bs=3D1k count=3D102400; tim=
+e sync=20
+>102400+0 enregistrements lus.
+>102400+0 enregistrements =E9crits.
+>0.06user 14.27system 1:56.34elapsed 12%CPU (0avgtext+0avgdata 0maxresident=
+)k
+>0inputs+0outputs (0major+251minor)pagefaults 0swaps
+>0.00user 0.00system 0:10.46elapsed 0%CPU (0avgtext+0avgdata 0maxresident)k
+>0inputs+0outputs (0major+190minor)pagefaults 0swaps
+>
+>
+>Reiserfs FS
+>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>kernel$ cd
+>
+>~$ df .
+>Sys. de fich.         Tail. Occ. Disp. %Occ. Mont=E9 sur
+>/dev/mapper/vglinux1-lvhome
+>                      7,0G  4,8G  2,3G  68% /home
+>[/dev/mapper/vglinux1-lvhome resides on /dev/hda4]
+>
+>~$ grep lvhome /proc/mounts
+>/dev/vglinux1/lvhome /home reiserfs rw 0 0
+>
+>~$ sync; time dd if=3D/dev/zero of=3Dtoto bs=3D1k count=3D102400; time syn=
+c=20
+>102400+0 enregistrements lus.
+>102400+0 enregistrements =E9crits.
+>0.04user 1.75system 0:02.05elapsed 87%CPU (0avgtext+0avgdata 0maxresident)k
+>0inputs+0outputs (0major+249minor)pagefaults 0swaps
+>0.00user 0.10system 0:12.93elapsed 0%CPU (0avgtext+0avgdata 0maxresident)k
+>0inputs+0outputs (0major+191minor)pagefaults 0swaps
+>
+>~$ sync; time dd if=3D/dev/zero of=3Dtoto bs=3D1k count=3D102400; time syn=
+c=20
+>102400+0 enregistrements lus.
+>102400+0 enregistrements =E9crits.
+>0.04user 1.83system 0:01.98elapsed 94%CPU (0avgtext+0avgdata 0maxresident)k
+>0inputs+0outputs (0major+250minor)pagefaults 0swaps
+>0.00user 0.16system 0:14.45elapsed 1%CPU (0avgtext+0avgdata 0maxresident)k
+>0inputs+0outputs (0major+191minor)pagefaults 0swaps
+>
+>~$ sync; time dd if=3D/dev/zero of=3Dtoto bs=3D1k count=3D102400; time syn=
+c=20
+>102400+0 enregistrements lus.
+>102400+0 enregistrements =E9crits.
+>0.04user 1.79system 0:01.95elapsed 93%CPU (0avgtext+0avgdata 0maxresident)k
+>0inputs+0outputs (0major+250minor)pagefaults 0swaps
+>0.00user 0.10system 0:13.47elapsed 0%CPU (0avgtext+0avgdata 0maxresident)k
+>0inputs+0outputs (0major+190minor)pagefaults 0swaps
+>
+>~~
+>laurent
+>
+>
+> =20
+>
 
-it is already difficult to say why this strange key appeared -- you have
-already run several build-fs runs -- although it may be related to remount 
-(I remember we used to have some problems before) or to fsck --build-fs.
-
-unmount you fs please and run 'fsck --check' on the unmounted fs -- check 
-that all is right there now.
-
-which kernel version do you use?
-
--- 
-Vitaly
