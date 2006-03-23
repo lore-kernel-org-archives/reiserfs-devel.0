@@ -1,40 +1,48 @@
-From: Sander <sander@humilis.net>
-Subject: Re: Reiser4 stability
-Date: Thu, 23 Mar 2006 17:06:18 +0100
-Message-ID: <20060323160616.GA28447@favonius>
-References: <e50d039c0603230643j178ce23dj3b938dea6cd6686c@mail.gmail.com> <1143128490.21108.38.camel@dacun.noviforum.si>
-Reply-To: sander@humilis.net
+From: Alexander Gran <alex@zodiac.dnsalias.org>
+Subject: Re: 2.6.16-rc6-mm2: reiser4 BUG when unmounting fs
+Date: Thu, 23 Mar 2006 18:32:14 +0100
+Message-ID: <200603231832.21706@zodiac.zodiac.dnsalias.org>
+References: <20060318044056.350a2931.akpm@osdl.org> <44206428.1080005@free.fr> <1143013406.6245.46.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28325-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1143128490.21108.38.camel@dacun.noviforum.si>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed;
+  boundary="nextPart5040566.CfzM4MkytI";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
-To: Gorazd Golob <gorazd.golob@noviforum.si>
-Cc: Robert Hulme <rob@robhulme.com>, reiserfs-list@namesys.com
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751349AbWCWRcd@vger.kernel.org>
+In-Reply-To: <1143013406.6245.46.camel@tribesman.namesys.com>
+Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <reiserfs-devel.vger.kernel.org>
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: Laurent Riffard <laurent.riffard@free.fr>, Andrew Morton <akpm@osdl.org>, Kernel development list <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
 
-Gorazd Golob wrote (ao):
-> On Thu, 2006-03-23 at 14:43 +0000, Robert Hulme wrote:
-> > Can anyone give me a feel for how reliable you consider the Reiser 4
-> > file system to be?
-> 
-> I'm using it on my workstation for more than a year - for now without
-> a problem.
-> I guess for desktop system is stable enough.. 
+--nextPart5040566.CfzM4MkytI
+Content-Type: text/plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-I use it on my desktop and a few servers, some since early 2005. Never
-caused me serious trouble (save for the major performance regression
-late 2005 - early 2006).
+Am Mittwoch, 22. M=E4rz 2006 08:43 schrieb Vladimir V. Saveliev:
+> The attached patch fixes the problem.
 
-Reiserfs (v3) also never let me down.
+confirmed, works in 2.6.16-mm1.
 
-	Sander
+regards
+Alex
 
--- 
-Humilis IT Services and Solutions
-http://www.humilis.net
+=2D-=20
+Encrypted Mails welcome.
+PGP-Key at http://zodiac.dnsalias.org/misc/pgpkey.asc | Key-ID: 0x6D7DD291
+
+--nextPart5040566.CfzM4MkytI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2.2 (GNU/Linux)
+
+iD8DBQBEItul/aHb+2190pERAsVnAJ495P2/pmSqdqsemDJSDOMvJ9optQCfdQze
+2j8Strj/UpKrbU/r3nbNqeo=
+=PGPy
+-----END PGP SIGNATURE-----
+
+--nextPart5040566.CfzM4MkytI--
