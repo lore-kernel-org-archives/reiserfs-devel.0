@@ -1,38 +1,56 @@
-From: "Tom Reinhart" <rhino_tom@hotmail.com>
-Subject: Re: Repacker and compression plugin
-Date: Fri, 24 Mar 2006 14:27:52 -0800
-Message-ID: <BAY23-F11F5DCA23F3B7D6A5BD05F94DF0@phx.gbl>
+From: Ps <Ps_Mail@freenet.de>
+Subject: Re: 2.6.15.1+reiser4 Kernel Panic
+Date: Sat, 25 Mar 2006 00:49:20 +0100
+Message-ID: <1143244161.17514.0.camel@ps-laptop.network.ps>
+References: <1138531447.7245.18.camel@ps.network.ps>
+	 <200603241704.34561.zam@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28339-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28340-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200603241704.34561.zam@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format=flowed; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Alexander Zarochentsev <zam@namesys.com>
+Cc: reiserfs-list@namesys.com
 
->Are there any estimates of when the repacker and compression plugins
->will be available / stable?
+Hi,
 
-I'd like to add a "me too".
+this seems to work...
 
-I've been watching the work of Hans and co. with great interest for several 
-years.  The performance and design of Reiser4 is very impressive.  But for 
-me, improved performance is not enough compensation for the pain of 
-switching to a "non-standard" filesystem.
-
-Compression and encryption, on the other hand, are a killer feature.  No 
-matter how many hard drives I buy, I never have have enough space, and there 
-are no existing encryption solutions for Linux that are well integrated into 
-the OS.  Even Windows XP has better filesystem security, as much as it pains 
-me to say.
-
-When the cryptocompress feature is ready, I will no doubt be taking a long 
-weekend off and converting all of my Linux machines to reiser4.
-
-_________________________________________________________________
-Express yourself instantly with MSN Messenger! Download today - it's FREE! 
-http://messenger.msn.click-url.com/go/onm00200471ave/direct/01/
+Am Freitag, den 24.03.2006, 17:04 +0300 schrieb Alexander Zarochentsev:
+> Hello,
+> 
+> On Sunday 29 January 2006 13:44, Ps wrote:
+> > Hi,
+> >
+> > i've got a kernel panic with kernel 2.6.15.1 + reiser4 patch from
+> > ftp.namesys.com, when writing data to a usb harddisk.
+> 
+> please try to mount reiser4 volume with "no_write_barrier" option.
+> 
+> >
+> > kernel output:
+> > loop4: loop_end_io_transfer err=-95 bi_rw=0x5
+> > reiser4 panicked cowardly: reiser4[pdflush(6748)]:
+> > commit_current_atom (fs/reiser4/txnmgr.c:1130)[zam-597]
+> > write log failed (-5)
+> >
+> > reiser4 panicked cowardly: reiser4[pdflush(6748)]:
+> > commit_current_atom (fs/reiser4/txnmgr.c:1130)[zam-597]
+> > write log failed (-5)
+> >
+> > and the machine is *frozen*
+> >
+> > the harddisk is encrypted via loop-aes v3.1c (loop4). i think it's a
+> > reiser4 or kernel 2.6.15 bug, because loop-aes with kernel <2.6.15 is
+> > running quite perfekt. fsck.reiser4 1.0.5 says the filesystem is
+> > clear.
+> >
+> > Best Regards,
+> > Patrick
+> 
 
