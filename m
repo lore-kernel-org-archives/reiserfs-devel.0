@@ -1,48 +1,47 @@
-From: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Subject: Re: funding - The Rational Street Performer Protocol
-Date: Sun, 26 Mar 2006 12:17:50 +0100
-Message-ID: <4426785E.8060600@st-andrews.ac.uk>
-References: <4425D58C.3080100@st-andrews.ac.uk> <80294dc60603260151v509c7220rd8700615ee5f7356@mail.gmail.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: rebuild-tree aborted
+Date: Sun, 26 Mar 2006 17:02:21 +0400
+Message-ID: <1143378141.23834.46.camel@tribesman.namesys.com>
+References: <4425AEC3.5010100@rpi.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28348-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28349-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <80294dc60603260151v509c7220rd8700615ee5f7356@mail.gmail.com>
+In-Reply-To: <4425AEC3.5010100@rpi.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Lex Lyamin <flx@namesys.com>
-Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Scott Dugas <dugass@rpi.edu>
+Cc: reiserfs-list@namesys.com
 
-Lex Lyamin wrote:
->
->     http://www.logarithmic.net/pfh/rspp
->
->
-> idea is good, now if only we could come up with implementation, which 
-> looks like it will only work with with some liquid nitorgen cooling, 
-> nonetheless ( impossible ).
-Here is a Python implementation for a (piecewise-linear monotonic) 
-pledge function
-http://www.logarithmic.net/pfh-files/rspp/rspp.py
-(calculation of the maximal sum).
-Here is another:
-http://thecircle.org.au/compute_contribution.py
+Hello
 
-But the main issue is explaining the idea, advertising and getting the 
-pledges, not the calculation.
-A web page would help but just putting up a web page is not enough, it 
-needs a lot of work trying to convince parties who may benefit that it 
-makes sense for them (e.g. Linux distributors).
+On Sat, 2006-03-25 at 15:57 -0500, Scott Dugas wrote:
+> I have tried reiserfsck --rebuild-tree 11 times. Each time the pass 0 
+> finishes successfully, but has been improving (more or less) each time. 
+> Pass 1 fails. it fails on one of three different blocks each time 
+> (2785605, 9671269, or 48169048), but with different amounts left to 
+> scan. It returns the error:
+> 
+> The problem has occurred looks like a hardware problem (perhaps
+> memory). Send us the bug report only if the second run dies at
+> the same place with the same block number.
+> 
+> build_the_tree: Nothing but leaves are expected. Block 9671269 - unknown
+> 
+> 
+> I'm using reiserfsck 3.6.19 with gentoo kernel sources 2.6.14-r5. This 
+> is on an external drive (/dev/sda1).
+> 
+> is there any way to fix this?
+> 
+I would propose you to try
+1. to attach the drive to anotrher box and do --rebuild-tree
+2. to copy (dd_rescue) /dev/sda1 to another hard drive and do
+--rebuild-tree on the copy
 
-(A much simpler implementation (and idea) is PledgeBank 
-http://www.pledgebank.com/
-with much less flexibility. The advantage is that the site already exists.)
-
-
-
-
-
+> --Scott
+> 
 
