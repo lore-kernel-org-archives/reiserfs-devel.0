@@ -1,67 +1,70 @@
-From: "Lex Lyamin" <flx@namesys.com>
-Subject: Re: funding - The Rational Street Performer Protocol
-Date: Sun, 26 Mar 2006 13:51:06 +0400
-Message-ID: <80294dc60603260151v509c7220rd8700615ee5f7356@mail.gmail.com>
-References: <4425D58C.3080100@st-andrews.ac.uk>
+From: Craig Shelley <craig@microtron.org.uk>
+Subject: Re: lost partition table
+Date: Sun, 26 Mar 2006 12:07:32 +0100
+Message-ID: <1143371252.9216.20.camel@teratron.lan.etheus.net>
+References: <1142439481.27675.ezmlm@namesys.com>
+	 <20060324135549.GB13979@raven.londonmet.ac.uk>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; 
-	boundary="----=_Part_3971_12012708.1143366666261"
-Return-path: <reiserfs-list-return-28345-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-Vz6zf6otSrjfvz/p0sg9"
+Return-path: <reiserfs-list-return-28346-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Sender: melanor9@gmail.com
-In-Reply-To: <4425D58C.3080100@st-andrews.ac.uk>
+In-Reply-To: <20060324135549.GB13979@raven.londonmet.ac.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
-Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-------=_Part_3971_12012708.1143366666261
-Content-Type: text/plain; charset=ISO-8859-1
+--=-Vz6zf6otSrjfvz/p0sg9
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
-In a Soviet Russia....
-
-On 3/26/06, Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk> wrote:
->
-> Hans,
-> Here is an interesting idea. Could it be a possible model for funding
-> software development?
->
-> http://www.logarithmic.net/pfh/rspp
->
-> What do you think?
->   Peter
+On Fri, 2006-03-24 at 13:55 +0000, ild0012@raven.londonmet.ac.uk wrote:
+> Hello folks.
+>=20
+> i am using slackware linux(2.6.14 with reiser4 patch) on x86_64 and was t=
+rying to install free_bsd on a separate partition.
+> well, during that instalation , accedentualy i have pressed a wrong key ,=
+ so my partition table is owerriten by something else , but i realized this=
+ streight away and stopped the instalation process .
 
 
+I once did this by running fsck.reiser4 on the whole disk, instead of on
+the first partition.
 
-idea is good, now if only we could come up with implementation, which looks
-like it will only work with with some liquid nitorgen cooling, nonetheless =
-(
-impossible ).
+luckily, I wrote down what was in /proc/partitions, and reconstructed
+the partition table with help from hexedit to check the exact alignment
+of the partitions.
 
-------=_Part_3971_12012708.1143366666261
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+As for the first partition on the disk, I had let fsck.reiser4 run to
+completion, fixing thousands of errors, with the various rebuild options
+turned on. Obviously this had caused a lot of damage to the file system,
+with it being off-set from the beginning of the disk. Amazingly
+re-running fsck.reiser4 on the actual partition seemed to do the trick,
+leaving only a few libraries corrupt.
 
-In a Soviet Russia....&nbsp;&nbsp; <br><br><div><span class=3D"gmail_quote"=
->On 3/26/06, <b class=3D"gmail_sendername">Peter Foldiak</b> &lt;<a href=3D=
-"mailto:Peter.Foldiak@st-andrews.ac.uk">Peter.Foldiak@st-andrews.ac.uk</a>&=
-gt; wrote:</span>
-<blockquote class=3D"gmail_quote" style=3D"border-left: 1px solid rgb(204, =
-204, 204); margin: 0pt 0pt 0pt 0.8ex; padding-left: 1ex;">Hans,<br>Here is =
-an interesting idea. Could it be a possible model for funding<br>software d=
-evelopment?
-<br><br><a href=3D"http://www.logarithmic.net/pfh/rspp">http://www.logarith=
-mic.net/pfh/rspp</a><br><br>What do you think?<br>&nbsp;&nbsp;Peter</blockq=
-uote><div><br>
-<br>
-idea is good, now if only we could come up with implementation, which
-looks like it will only work with with some liquid nitorgen cooling,
-nonetheless ( impossible ).<br>
-</div></div>
+Quick tip: I found that about 0x11044 bytes in from the beginning of a
+Reiser4 partition, you find the string "ReIsEr40FoRmAt". I am sure other
+file systems have similar magic strings which can be searched for using
+hexedit, enabling the partition table to be fixed.
 
-------=_Part_3971_12012708.1143366666261--
+
+--=20
+Craig Shelley
+EMail: craig@microtron.org.uk
+Jabber: shell@jabber.earth.li
+
+--=-Vz6zf6otSrjfvz/p0sg9
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+
+iD8DBQBEJnX05OI9vmOoVqERAr7iAJ9ZwTT2W688d/dSX3hg5ag/Uxj6aACg+Qv0
+4ngpOxF4V62lyYkc7r18uFs=
+=4D8e
+-----END PGP SIGNATURE-----
+
+--=-Vz6zf6otSrjfvz/p0sg9--
+
