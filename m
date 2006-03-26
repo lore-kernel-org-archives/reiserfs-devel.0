@@ -1,70 +1,29 @@
-From: Craig Shelley <craig@microtron.org.uk>
-Subject: Re: lost partition table
-Date: Sun, 26 Mar 2006 12:07:32 +0100
-Message-ID: <1143371252.9216.20.camel@teratron.lan.etheus.net>
-References: <1142439481.27675.ezmlm@namesys.com>
-	 <20060324135549.GB13979@raven.londonmet.ac.uk>
+From: jp <jp.guillemin@free.fr>
+Subject: 2.6.16 patch
+Date: Sun, 26 Mar 2006 13:27:42 +0200
+Message-ID: <44267AAE.60201@free.fr>
+References: <3aa654a40603140241s5d8a7430j6bf29a5ef7dd1bf5@mail.gmail.com>	 <4417D43A.2070603@namesys.com> <3aa654a40603150459q25507248v54f4ffef5e41042d@mail.gmail.com> <44185E04.5030307@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-Vz6zf6otSrjfvz/p0sg9"
-Return-path: <reiserfs-list-return-28346-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28347-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060324135549.GB13979@raven.londonmet.ac.uk>
+In-Reply-To: <44185E04.5030307@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
---=-Vz6zf6otSrjfvz/p0sg9
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Fri, 2006-03-24 at 13:55 +0000, ild0012@raven.londonmet.ac.uk wrote:
-> Hello folks.
->=20
-> i am using slackware linux(2.6.14 with reiser4 patch) on x86_64 and was t=
-rying to install free_bsd on a separate partition.
-> well, during that instalation , accedentualy i have pressed a wrong key ,=
- so my partition table is owerriten by something else , but i realized this=
- streight away and stopped the instalation process .
+I would like to know when I can expect the reiser4 patch to be available 
+for vanilla 2.6.16 ?
 
+Thanks
 
-I once did this by running fsck.reiser4 on the whole disk, instead of on
-the first partition.
+Best regards
 
-luckily, I wrote down what was in /proc/partitions, and reconstructed
-the partition table with help from hexedit to check the exact alignment
-of the partitions.
-
-As for the first partition on the disk, I had let fsck.reiser4 run to
-completion, fixing thousands of errors, with the various rebuild options
-turned on. Obviously this had caused a lot of damage to the file system,
-with it being off-set from the beginning of the disk. Amazingly
-re-running fsck.reiser4 on the actual partition seemed to do the trick,
-leaving only a few libraries corrupt.
-
-Quick tip: I found that about 0x11044 bytes in from the beginning of a
-Reiser4 partition, you find the string "ReIsEr40FoRmAt". I am sure other
-file systems have similar magic strings which can be searched for using
-hexedit, enabling the partition table to be fixed.
-
-
---=20
-Craig Shelley
-EMail: craig@microtron.org.uk
-Jabber: shell@jabber.earth.li
-
---=-Vz6zf6otSrjfvz/p0sg9
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-
-iD8DBQBEJnX05OI9vmOoVqERAr7iAJ9ZwTT2W688d/dSX3hg5ag/Uxj6aACg+Qv0
-4ngpOxF4V62lyYkc7r18uFs=
-=4D8e
------END PGP SIGNATURE-----
-
---=-Vz6zf6otSrjfvz/p0sg9--
+Jean-Philippe Guillemin
+Zenwalk.org
 
