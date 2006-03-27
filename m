@@ -1,46 +1,37 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Repacker and compression plugin
-Date: Mon, 27 Mar 2006 10:54:31 -0800
-Message-ID: <442834E7.8070104@namesys.com>
-References: <BAY23-F11F5DCA23F3B7D6A5BD05F94DF0@phx.gbl>	 <194f62550603260931s21d2022fk@mail.gmail.com> <e50d039c0603261632m2021453bg33ba2e8fb98090d6@mail.gmail.com>
+From: Marcus Furlong <furlongm@hotmail.com>
+Subject: Re: 2.6.16 patch
+Date: Mon, 27 Mar 2006 21:10:01 +0100
+Message-ID: <e09dad$f0p$1@sea.gmane.org>
+References: <4417D43A.2070603@namesys.com> <3aa654a40603150459q25507248v54f4ffef5e41042d@mail.gmail.com> <44185E04.5030307@namesys.com> <44267AAE.60201@free.fr>
+Reply-To: furlongm@hotmail.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-28358-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7Bit
+Return-path: <reiserfs-list-return-28359-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e50d039c0603261632m2021453bg33ba2e8fb98090d6@mail.gmail.com>
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-To: Robert Hulme <rob@robhulme.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Robert Hulme wrote:
+Hi,
 
->Any of the Reiser devs have an answer to my questions? :-)
->
->--
->------------------------------------------------------
->"011 8 99988 199 9119 725...3"
->"But those enemies of mine who did not want me to be king over
->them=97bring them here and kill them in front of me." - Jesus (Luke
->19:27)
->"Religion is an insult to human dignity. With or without it you would
->have good people doing good things and evil people doing evil things.
->But for good people to do evil things, that takes religion" - Steven
->Weinberg
->
->http://www.robhulme.com/
->http://robhu.livejournal.com/
->
->
-> =20
->
-Stability is reasonable, but we are sending in a batch of stuff soon
-(maybe this week) that will improve CPU performance and maybe tomorrow
-vs will tell us if there are stability improvements in there also, I
-forget.  We fixed some cases where if you use up all memory it would
-hang, that I remember.
+jp wrote:
 
-Hans
+> I would like to know when I can expect the reiser4 patch to be available
+> for vanilla 2.6.16 ?
+
+There is a unofficial clean-up of the 2.6.15 patch here:
+
+https://www.cs.tcd.ie/~furlongm/reiser4/2.6.16/
+
+along with a clean-up the enable-metas patch.
+
+It applies to vanilla 2.6.16, but it doesn't contain any of the fixes in -mm
+(e.g. don't build as a module without applying the export symbol patches in
+-mm). It's working ok for me.
+
+Marcus.
+
