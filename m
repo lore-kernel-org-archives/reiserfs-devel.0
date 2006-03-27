@@ -1,35 +1,42 @@
-From: "Robert Hulme" <rob@robhulme.com>
-Subject: Re: Repacker and compression plugin
-Date: Mon, 27 Mar 2006 01:32:55 +0100
-Message-ID: <e50d039c0603261632m2021453bg33ba2e8fb98090d6@mail.gmail.com>
-References: <BAY23-F11F5DCA23F3B7D6A5BD05F94DF0@phx.gbl>
-	 <194f62550603260931s21d2022fk@mail.gmail.com>
+From: jp <jp.guillemin@free.fr>
+Subject: Re: 2.6.16 patch
+Date: Mon, 27 Mar 2006 19:27:35 +0200
+Message-ID: <44282087.3010108@free.fr>
+References: <3aa654a40603140241s5d8a7430j6bf29a5ef7dd1bf5@mail.gmail.com>	 <4417D43A.2070603@namesys.com> <3aa654a40603150459q25507248v54f4ffef5e41042d@mail.gmail.com> <44185E04.5030307@namesys.com> <44267AAE.60201@free.fr>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-28353-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28354-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Sender: robert.hulme@gmail.com
-In-Reply-To: <194f62550603260931s21d2022fk@mail.gmail.com>
-Content-Disposition: inline
+In-Reply-To: <44267AAE.60201@free.fr>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Any of the Reiser devs have an answer to my questions? :-)
+Hi,
 
---
-------------------------------------------------------
-"011 8 99988 199 9119 725...3"
-"But those enemies of mine who did not want me to be king over
-them=97bring them here and kill them in front of me." - Jesus (Luke
-19:27)
-"Religion is an insult to human dignity. With or without it you would
-have good people doing good things and evil people doing evil things.
-But for good people to do evil things, that takes religion" - Steven
-Weinberg
+I would really like to get an answer to my question below ;)
 
-http://www.robhulme.com/
-http://robhu.livejournal.com/
+Did I forget to write "please" ?
+
+Best regards
+JP
+
+
+jp wrote:
+> Hi,
+>
+> I would like to know when I can expect the reiser4 patch to be 
+> available for vanilla 2.6.16 ?
+>
+> Thanks
+>
+> Best regards
+>
+> Jean-Philippe Guillemin
+> Zenwalk.org
+>
+
+
