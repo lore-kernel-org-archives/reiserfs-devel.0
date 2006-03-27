@@ -1,42 +1,35 @@
-From: "Clemens Eisserer" <linuxhippy@gmail.com>
+From: "Robert Hulme" <rob@robhulme.com>
 Subject: Re: Repacker and compression plugin
-Date: Sun, 26 Mar 2006 19:31:18 +0200
-Message-ID: <194f62550603260931s21d2022fk@mail.gmail.com>
+Date: Mon, 27 Mar 2006 01:32:55 +0100
+Message-ID: <e50d039c0603261632m2021453bg33ba2e8fb98090d6@mail.gmail.com>
 References: <BAY23-F11F5DCA23F3B7D6A5BD05F94DF0@phx.gbl>
+	 <194f62550603260931s21d2022fk@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-28352-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28353-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <BAY23-F11F5DCA23F3B7D6A5BD05F94DF0@phx.gbl>
+Sender: robert.hulme@gmail.com
+In-Reply-To: <194f62550603260931s21d2022fk@mail.gmail.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 To: reiserfs-list@namesys.com
 
-> I've been watching the work of Hans and co. with great interest for sever=
-al
-> years.  The performance and design of Reiser4 is very impressive.  But fo=
-r
-> me, improved performance is not enough compensation for the pain of
-> switching to a "non-standard" filesystem.
+Any of the Reiser devs have an answer to my questions? :-)
 
-I would like to add me too, but please believe me I don't want to be unpoli=
-te.
-I think reiser4 is imho the best Filesystem available, with its
-extensibility und its superior performance. Thanks a lot for doing
-this, good fses need the world ;)
+--
+------------------------------------------------------
+"011 8 99988 199 9119 725...3"
+"But those enemies of mine who did not want me to be king over
+them=97bring them here and kill them in front of me." - Jesus (Luke
+19:27)
+"Religion is an insult to human dignity. With or without it you would
+have good people doing good things and evil people doing evil things.
+But for good people to do evil things, that takes religion" - Steven
+Weinberg
 
-I thought about switching last October but the the kernel-integration
-work started, bugs appeard and performance went down.
-What I've heard from performance is still lower than last October,
-compression pluggin should appear "soon", now a half year later its
-still not available and resizer and repacker are far away :-/
-I think I have to wait another year...
-
-However thanks many many times, reiser4 is great and I hope community
-and industry will find its value.
-
-Best wishes, lg Clemens
+http://www.robhulme.com/
+http://robhu.livejournal.com/
