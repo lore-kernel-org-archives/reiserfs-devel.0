@@ -1,42 +1,36 @@
-From: jp <jp.guillemin@free.fr>
-Subject: Re: 2.6.16 patch
-Date: Mon, 27 Mar 2006 19:27:35 +0200
-Message-ID: <44282087.3010108@free.fr>
-References: <3aa654a40603140241s5d8a7430j6bf29a5ef7dd1bf5@mail.gmail.com>	 <4417D43A.2070603@namesys.com> <3aa654a40603150459q25507248v54f4ffef5e41042d@mail.gmail.com> <44185E04.5030307@namesys.com> <44267AAE.60201@free.fr>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: funding - The Rational Street Performer Protocol
+Date: Mon, 27 Mar 2006 10:36:03 -0800
+Message-ID: <44283093.4020201@namesys.com>
+References: <4425D58C.3080100@st-andrews.ac.uk>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28354-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28355-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44267AAE.60201@free.fr>
+In-Reply-To: <4425D58C.3080100@st-andrews.ac.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Peter Foldiak <Peter.Foldiak@st-andrews.ac.uk>
+Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-Hi,
+Peter Foldiak wrote:
 
-I would really like to get an answer to my question below ;)
-
-Did I forget to write "please" ?
-
-Best regards
-JP
-
-
-jp wrote:
-> Hi,
+> Hans,
+> Here is an interesting idea. Could it be a possible model for funding
+> software development?
 >
-> I would like to know when I can expect the reiser4 patch to be 
-> available for vanilla 2.6.16 ?
+> http://www.logarithmic.net/pfh/rspp
 >
-> Thanks
+> What do you think?
+>  Peter
 >
-> Best regards
 >
-> Jean-Philippe Guillemin
-> Zenwalk.org
 >
+Yes, but it requires time to pursue these things, and sadly, a lot of
+them don't pan out.  Probably I should try it on our donations page,
+but.....
 
-
+Hans
