@@ -1,116 +1,48 @@
-From: alftheo potgieter <alftheo@telkomsa.net>
-Subject: Re: rebuild-tree does not complete: filesystem full
-Date: Tue, 28 Mar 2006 23:10:18 +0200
-Message-ID: <4429A63A.7090700@telkomsa.net>
-References: <441F305A.20809@telkomsa.net>	 <200603211104.34995.vitaly@namesys.com>  <44251FC7.3020409@telkomsa.net> <1143384005.23834.68.camel@tribesman.namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Reiser4 crash 2.6.16-mm1
+Date: Tue, 28 Mar 2006 13:04:38 -0800
+Message-ID: <4429A4E6.5000202@namesys.com>
+References: <20060327214132.4074.qmail@pv105234.reshsg.uci.edu>            <C68877DC-ED4F-4827-B6ED-2F5CFEFC8037@smartgames.ca>            <20060327223214.5291.qmail@pv105234.reshsg.uci.edu>            <200603280439.k2S4dAql011014@turing-police.cc.vt.edu>            <F01E6B3F-3EBE-4982-9978-C79554F01FDA@smartgames.ca>            <4429577C.7020105@ics.uci.edu>            <1143573487.2380.1.camel@localhost> <20060328205021.3873.qmail@pv105234.reshsg.uci.edu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28390-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28391-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1143384005.23834.68.camel@tribesman.namesys.com>
+In-Reply-To: <20060328205021.3873.qmail@pv105234.reshsg.uci.edu>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: vitaly@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Joe Feise <jfeise@feise.com>, vs <vs@thebsh.namesys.com>
+Cc: Jonathan Briggs <jbriggs@esoft.com>, reiserfs-list@namesys.com
 
-This worked ( I actually bought a larger disk). It also asked if 
-something changed with the partition, I said yes.
+Joe Feise wrote:
 
-
-Vladimir V. Saveliev wrote:
-
->Hello
+> Jonathan Briggs writes:
 >
->If the partition you have problems with is not the last partition on the
->disk, you can expand the partition with fdisk. Of course, to do that you
->will have to delete partition which follows the partition to be
->expanded. 
->(Please note that to have new partition table to make an effect you may
->have to reboot after fdisk if there were mounted partitions of that hard
->drive.)
->
->Then you have to run
->reiserfsck --rebuild-sb
->
->It will ask you whether you ran resizer, and you have to answer No.
->Then --rebuild-sb will change filesystem's block counting to spread over
->whole device.
->Then you have to run --rebuild-tree. 
->
->
->On Sat, 2006-03-25 at 12:47 +0200, Alftheo Potgieter wrote:
->  
->
->>How do I resize the filesystem while it is corrupted?
+>> On Tue, 2006-03-28 at 07:34 -0800, Joachim Feise wrote:
+>> [...]
 >>
->>Vitaly Fertman wrote:
+>>> This is a production machine that I can't take offline for too long.
+>>> But yes, I have compiled the kernel on another reiser4 partition
+>>> over night,
+>>> without problems.
+>>> If this was a memory problem, it would indeed manifest itself in
+>>> other areas
+>>> with more or less random errors. The fact that it does not indicates
+>>> to me that
+>>> this is a fs problem. So, at this point I am ruling out a memory issue.
 >>
->>    
 >>
->>>Hello
->>>
->>>On Tuesday 21 March 2006 01:44, alftheo potgieter wrote:
->>> 
->>>
->>>      
->>>
->>>>Hi
->>>>I'm using the latest reiserfsck (3.6.19),,
->>>>My filesystem got corrupted by an unexpected power loss. Initially, I 
->>>>could mount the filesystem read-only with minor problems. As I had 
->>>>nowhere to back it up, I ran reiserfsck --rebuild-tree, which could not 
->>>>complete, as the filesystem was full.
->>>>   
->>>>
->>>>        
->>>>
->>>it is possible to get such a corruption that fsck will need to 
->>>insert some extra metadata to successfully repair the fs. this 
->>>process may run out of disk space. I have an improved version 
->>>of reiserfsck, which detects these corruptions and avoid these 
->>>metadata insertion. however your fs already has these metadata 
->>>inserted and there is probably no space to proceed.
->>>
->>>I will send you that improved reiserfsck, if it runs out of disk
->>>space too, you need to enlarge you partition, enlarge fs, and run
->>>reiserfsck again.
->>>
->>>If you will need to enlarge the partition, before doing it, 
->>>please zero the space that will be added into the partition 
->>>to avoid mixing your reiserfs metadata with another reiserfs 
->>>metadata.
->>>
->>> 
->>>
->>>      
->>>
->>>>Now it is flagged as unmountable "to prevent further corruption". Is 
->>>>there any way to restore the filesytem to the previous mountable but 
->>>>corrupted state (which would be infinitely more useful)? I imagine 
->>>>either finding the root node again or somehow growing the filesystem (as 
->>>>I have since found enough space to grow it)
->>>>
->>>>Any help would be useful.
->>>>
->>>>alf
->>>>
->>>>
->>>>   
->>>>
->>>>        
->>>>
->>> 
->>>
->>>      
->>>
->>    
->>
+>> And if it's a production machine, it is using ECC RAM, I would hope.  If
 >
 >
+> Indeed, it does. Dell gets that right on server machines, at least...
+> I have now recreated the fs on that partition, and played the data
+> back from backup, and it works fine. I have made a copy of the old
+> partition with dd, to be able to run some more tests when I have time.
+> -Joe
 >
->  
 >
-
+Well, if it is ECC RAM, then we should probably assume it is a bug. 
+Sigh.  Vs, can you look at it?
