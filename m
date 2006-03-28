@@ -1,43 +1,76 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Repacker and compression plugin
-Date: Mon, 27 Mar 2006 23:25:47 -0800
-Message-ID: <4428E4FB.6020201@namesys.com>
-References: <BAY23-F11F5DCA23F3B7D6A5BD05F94DF0@phx.gbl>	 <194f62550603260931s21d2022fk@mail.gmail.com> <e50d039c0603261632m2021453bg33ba2e8fb98090d6@mail.gmail.com>
+From: Vitold Kapshitzer <vitold@vitou.com>
+Subject: Re: reiserfsck --rebuild-tree all-in-one problem.
+Date: Tue, 28 Mar 2006 13:48:06 +0200
+Message-ID: <1143546486-3dd48ed32be0d4559e2fd9e4f239038e@vitou.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28371-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28372-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e50d039c0603261632m2021453bg33ba2e8fb98090d6@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Robert Hulme <rob@robhulme.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-> Are there any estimates of when the repacker and compression plugins
-> will be available / stable?
+Hello,
 
-This depends on how long we remain distracted by Hellwig and company more than by how long they take to complete.
+I'm trying to do a rebuild-tree for days now, it seams that I've got the same probleme above. The server didn't hang when the error accured. I've turned on the monitor on the morning and have seen that the disk got full (was about 120Go free, 650Go total), the root disk is also reiserfs but is ok, reiserfsck(3.6.19) told me that I need to run reiserfsck with the rebuild-tree option but it never ended. Only my LVM logical disk is now unmountable.
 
-As soon as we go into the kernel, zam and vs focus on the compression plugin stabilization followed by working on the repacker.  Neither of those tasks will take anywhere near as long as dealing with Hellwig's code changes  (none of which benefit reiser4 much).  Edward is working on the compression plugin, but it is a task that could much benefit from the senior guys helping him out with code audits and the like.
+I am using gentoo, and I've already tried to recompile reiserfsprogs,  but unfortunatly, same result.
 
-> Can anyone give me a feel for how reliable you consider the Reiser 4
-> file system to be?
+Thanks
 
-The users are more reliable sources than I am.  They have more computers running Reiser4 than I do.
+Vitold
 
-It was stable, the VFS changes destabilized it, it is back to being stable again, the next release that I hope goes out this week will help that some more by a smidgen.
-
-There is however one thing that could reduce stability in that patch, which is that we have changed the write code to greatly reduce CPU usage by not doing things 4k at a time.
-
-
-Robert Hulme wrote:
-
->Any of the Reiser devs have an answer to my questions? :-)
+on Sunday 02 February 2003 21:33, Brian Chu wrote:
+> Hello.
 >
->--
->  
+>     Last friday when I went to upgrade my server, I noticed that there had
+> been a lot of kernel messages on my server that were saying that one
+> partition was spewing this:
 >
+> Jan  5 13:48:14 simmy kernel: hde: dma_intr: status=0x51 { DriveReady
+> SeekComplete Error }
+> Jan  5 13:48:14 simmy kernel: hde: dma_intr: error=0x40 {
+> UncorrectableError }, LBAsect=91887, high=0, low=91887, sector=91824
+> Jan  5 13:48:14 simmy kernel: end_request: I/O error, dev 21:01 (hde),
+> sector 91824
+> Jan  5 13:48:14 simmy kernel: vs-13070: reiserfs_read_inode2: i/o failure
+> occurred trying to find stat data of [7495 7710 0x0 SD]
+>
+>     I gave up that night, because running dd once took 7 hours and
+> reiserfsck twice took 2 hours each, so the whole day was wasted.  I had
+> read on the first time I ran --rebuild-tree that a "dd_rescue" was
+> suggested, so I downloaded it, installed it, and ran it again (since I had
+> used just plain dd the first time). I'm not sure if that made a difference
+> or not.
 
+Right, dd seems to produce an output with just skipped bad blocks not writing 
+anything into the output.
+
+>     Today I started again, assuming that with dd_rescue, I would have a
+> greater chance of getting the filesystem recovered, but --check told me I
+> had to run --rebuild-tree, and this time I just did --logfile /dev/null,
+> because screen dumps during the run would make it impossible to see what's
+> going on. But again, it stopped again at the same place- Pass 2. Since the
+> logfiles spit so much STUFF out, I have none at the moment (I can remake
+> them if needed).
+>
+> Screen dump:
+>
+> Pass 2:
+> 0%....20%....40%..                                              left 36, 0
+> /sec
+>
+>     And it stops there. top indicates reiserfsck is using all of the cpu
+> cycles, even after it seemingly freezes.
+
+Looks like you built the reiserfsck on another mashine. Could you rebuild it 
+on the same mashine you run it. It is possible to suppress the logfile with 
+-n option, but I think the logfile was so big due to this endless loop.
+
+-- 
+
+Thanks,
+Vitaly Fertman
