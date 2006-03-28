@@ -1,54 +1,44 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: 2.6.16-rc6-mm2: slow writes on reiser4.
-Date: Tue, 28 Mar 2006 12:34:48 -0800
-Message-ID: <44299DE8.8080103@namesys.com>
-References: <44206D3C.7050504@free.fr> <4420FFA2.1090908@namesys.com> <44219CC2.3060405@free.fr> <44219FA8.2050606@namesys.com> <44299A35.50800@free.fr>
+From: Joe Feise <jfeise@feise.com>
+Subject: Re: Reiser4 crash 2.6.16-mm1
+Date: Tue, 28 Mar 2006 12:50:21 -0800
+Message-ID: <20060328205021.3873.qmail@pv105234.reshsg.uci.edu>
+References: <20060327214132.4074.qmail@pv105234.reshsg.uci.edu>
+            <C68877DC-ED4F-4827-B6ED-2F5CFEFC8037@smartgames.ca>
+            <20060327223214.5291.qmail@pv105234.reshsg.uci.edu>
+            <200603280439.k2S4dAql011014@turing-police.cc.vt.edu>
+            <F01E6B3F-3EBE-4982-9978-C79554F01FDA@smartgames.ca>
+            <4429577C.7020105@ics.uci.edu>
+            <1143573487.2380.1.camel@localhost>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28386-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28387-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44299A35.50800@free.fr>
+In-Reply-To: <1143573487.2380.1.camel@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Laurent Riffard <laurent.riffard@free.fr>
-Cc: reiserfs-list@namesys.com, vs <vs@thebsh.namesys.com>, Alexander Zarochentcev <zam@namesys.com>, "E. Gryaznova" <grev@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jonathan Briggs <jbriggs@esoft.com>
+Cc: reiserfs-list@namesys.com
 
-Laurent Riffard wrote:
+Jonathan Briggs writes: 
 
->
->
->See ? 3'30" versus 16".
->
->I packed the metadata of my original FS to a file, you can grab it
->from http://laurent.riffard.free.fr/kernel.reiser4.bz2 (6.7M).
->  
->
-Wow.  We need to do the repacker.  We might also need to examine whether
-there are optimizations in V3 block allocation we should apply to V4,
-but mostly we need the repacker.  Ok, well, right after we go into the
-kernel it will be done.
+> On Tue, 2006-03-28 at 07:34 -0800, Joachim Feise wrote:
+> [...]
+>> This is a production machine that I can't take offline for too long.
+>> But yes, I have compiled the kernel on another reiser4 partition over night,
+>> without problems.
+>> If this was a memory problem, it would indeed manifest itself in other areas
+>> with more or less random errors. The fact that it does not indicates to me that
+>> this is a fs problem. So, at this point I am ruling out a memory issue.
+> 
+> And if it's a production machine, it is using ECC RAM, I would hope.  If
 
-Thanks much Laurent, you did a great job of analyzing this for us.
+Indeed, it does. Dell gets that right on server machines, at least... 
 
->Note I was unable to unpack it :
->  
->
->># bunzip2 -c /tmp/kernel.reiser4.bz2 | debugfs.reiser4 -U /dev/vglinux1/test 
->>debugfs.reiser4 1.0.5
->>Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing governed by reiser4progs/COPYING. 
->>
->>Info : The metadata were packed with the reiser4progs 1.0.5.                                                                                                        
->>Error: Can't unpack filesystem.                     
->>    
->>
->
->~~
->laurent
->
->
->  
->
+I have now recreated the fs on that partition, and played the data back from 
+backup, and it works fine. I have made a copy of the old partition with dd, 
+to be able to run some more tests when I have time. 
 
+ -Joe
