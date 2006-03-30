@@ -1,33 +1,44 @@
-From: Yoanis Gil Delgado <fred@uh.cu>
-Subject: Questions about pseudo plugins
-Date: Thu, 30 Mar 2006 15:01:04 -0500
-Message-ID: <442C3900.1060808@uh.cu>
+From: Michael Weissenbacher <webmaster@dermichi.com>
+Subject: Re: IO randomly blocked for >1 minute while disk writes still in
+ 2.6.16.1 + 2.6.16-reiser4-1
+Date: Thu, 30 Mar 2006 21:33:52 +0200
+Message-ID: <442C32A0.8030200@dermichi.com>
+References: <20060330023909.GA7547@rvalles.homedns.org.> <442BD204.4030402@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28413-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28414-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <442BD204.4030402@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
+Cc: Edward Shishkin <edward@namesys.com>
 
-Hi there:
-I've been working on the versioning plugin.
-I will like to know how can i add a pseudo file to a pseudo directory, 
-dynamically. I mean whenever i detect a new version i want to create a 
-pseudo file under /file.txt/versioning/version/s pseudo directory.
-Another question is about how can I iterate over directories pseudo files.
-For example how i can iterate over the files under 
-/file.txt/versioning/version/s (remember the files under this directory 
-are pseudo files which are generated dynamically).
-I know there is a way to add static pseudo files and directories, by 
-adding them to pseudo_plugins array. Perhaps using the linkage field 
-from pseudo_plugin. I've some more questions but i will come later with 
-them.
-By the way I found this in the patch for kernel 2.6.15:
-    The function init_pseudo receives a _/const char* name  /_which is 
-never used.
-That's all for now. Thanks a lot .............. yoanis
+Hi,
+>> of the movie. Now, just to know the format, I played it again, and as it
+>> began, it blocked again... not even knoppix is downloading on the
+>> background.
+I just wanted to note that i observed that same bahavior. I tried
+various things, like changing the kernel from preemption to no
+preemtion, trying the various IO-Schedulers and trying 2.6.15, 2.6.16
+and 2.6.16-mm1. In the end i found out that there was a MAJOR
+performance gain by adding the noatime mount option. Before i added that
+I had to wait up to 20 minutes sometimes and now it doesn't stall more
+than a few seconds, but it still does. Seems like reiser4 has very big
+performance problems with the writing of atimes.
+
+Another problem i had was specific to the reiser4-for-2.6.16-1.patch.gz
+patch. I got a kernel crash two times now, but wasn't yet able to log
+the error message anywhere because it would not let me write to the
+reiser4 partition after the error. It never corrupted any data though,
+fsck.reiser4 always reported a consistent fs. I'll try to trigger that
+problem again and make another post.
+-- 
+/============================================================\
+|       Michael Weissenbacher <webmaster@dermichi.com>       |
+|                  http://www.dermichi.com/                  |
+\============================================================/
 
