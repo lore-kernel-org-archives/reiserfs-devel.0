@@ -1,56 +1,49 @@
-From: rvalles <rvalles@es.gnu.org>
-Subject: Re: IO randomly blocked for >1 minute while disk writes still in 2.6.16.1 + 2.6.16-reiser4-1
-Date: Thu, 30 Mar 2006 16:14:55 +0200
-Message-ID: <33783.43987647$1143728152@news.gmane.org>
-References: <20060330023909.GA7547@rvalles.homedns.org.> <442BD204.4030402@namesys.com>
+From: Sergey Ivanov <seriv@parkheights.dyndns.org>
+Subject: Re: IO randomly blocked for >1 minute while disk writes still in
+ 2.6.16.1 + 2.6.16-reiser4-1
+Date: Thu, 30 Mar 2006 11:37:54 -0500
+Message-ID: <442C0962.3010803@parkheights.dyndns.org>
+References: <20060330023909.GA7547@rvalles.homedns.org.> <442BD204.4030402@namesys.com> <442BFBC3.70604@parkheights.dyndns.org> <442C04A6.10702@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-28410-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28411-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <442BD204.4030402@namesys.com>
-Sender: <tux@eww.ath.cx.>
+In-Reply-To: <442C04A6.10702@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="macroman"
+Content-Type: text/plain; charset="us-ascii"
 To: Edward Shishkin <edward@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-T24gVGh1LCBNYXIgMzAsIDIwMDYgYXQgMDQ6NDE6NDBQTSArMDQwMCwgRWR3YXJkIFNoaXNoa2lu
-IHdyb3RlOgo+IHJ2YWxsZXMgd3JvdGU6Cj4gCj4gPkEgZmV3IG1vbnRocyBhZ28gSSBwb3N0ZWQg
-YWJvdXQgYSBwcm9ibGVtIEkgd2FzIGhhdmluZyB3aXRoIGtlcm5lbHMKPiA+bmV3ZXIgdGhhbiAy
-LjYuMTIueCwgd2hlcmUsIGFwcGFyZW50bHkgcmFuZG9tbHksIHNvbWV0aW1lcyB2aW0gb3Igb3Ro
-ZXIKPiA+cHJvZ3JhbXMgd291bGQgYmUgYmxvY2tlZCBmb3IgbW9yZSB0aGFuIGEgbWludXRlLCBh
-bmQgZHVyaW5nIHRoZSBlbnRpcmUKPiA+YmxvY2thZ2UsIHRoZSBkaXNrIHdvdWxkIGFwcGVhciB0
-byBiZSB3cml0aW5nIGRhdGEuCj4gPgo+ID5TaW5jZSBJIHNhdyB0YWxrIG9uIHRoZSBtYXR0ZXIs
-IEkgdGhvdWdodCBpdCB3b3VsZCBiZSB0aGUgbW1hcC9mc3luYwo+ID5wZXJmb3JtYW5jZSBwcm9i
-bGVtIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQsIGFuZCBhZnRlciBzbyBtdWNoIHRpbWUgaXQKPiA+
-d291bGQgYmUgZml4ZWQgYWxyZWFkeSwgYnV0IGFwcGFyZW50bHkgaXQgaXNuJ3QgeWV0LCB3aGlj
-aCBJIGRpc2NvdmVyZWQKPiA+YWZ0ZXIgYnVpbGRpbmcgYSAyLjYuMTYuMSB3aXRoIHRoZSAyLjYu
-MTYtcmVpc2VyNC0xIHBhdGNoIGF2YWlsYWJsZSBvbgo+ID50aGUgbmFtZXN5cyBmdHAgc2VydmVy
-Lgo+ID4KPiA+U29vbiBhZnRlciBib290aW5nIG15IGRlc2t0b3Agc3lzdGVtIGFuZCBzdGFydGlu
-ZyBYLCB4ZmNlLCBldGMuIEkKPiA+c3RhcnRlZCB0byB3Z2V0IHRoZSBsYXRlc3Qga25vcHBpeCBJ
-U08gYW5kIHRoZW4gc3RhcnRlZCB0byBwbGF5IGEgbW92aWUKPiA+d2l0aCBtcGxheWVyLiBUaGUg
-bW92aWUgaXMgYW4gYXZpIGZmbXBlZyArIG1wMyBhdCBhYm91dCAxbWJpdC9zIG92ZXJhbGwuCj4g
-PlRoZSBkZXNjcmliZWQgYmxvY2tpbmdzIGhhcHBlbmVkIGFnYWluIGFuZCBhZ2FpbiBkdXJpbmcg
-dGhlIHJlcHJvZHVjdGlvbgo+ID5vZiB0aGUgbW92aWUuIE5vdywganVzdCB0byBrbm93IHRoZSBm
-b3JtYXQsIEkgcGxheWVkIGl0IGFnYWluLCBhbmQgYXMgaXQKPiA+YmVnYW4sIGl0IGJsb2NrZWQg
-YWdhaW4uLi4gbm90IGV2ZW4ga25vcHBpeCBpcyBkb3dubG9hZGluZyBvbiB0aGUKPiA+YmFja2dy
-b3VuZC4KPiA+Cj4gPkkgZ290IGtub3BwaXggc28gdGhhdCBJIGNvdWxkIGJvb3QgaXQsIGdldCBs
-YXN0IHJlaXNlcjR0b29scyBhbmQgcnVuIGEKPiA+ZnNjayAtLWZpeCBvbiBteSByZWlzZXI0IHBh
-cnRpdGlvbi4gU2luY2Ugbm93IEkndmUgYWxyZWFkeSBkb25lIHRoYXQsIEkKPiA+ZG9uJ3QgdGhp
-bmsgaXQgaGVscGVkIG11Y2guCj4gPgo+ID5JIGF0dGFjaCBteSBrZXJuZWwgY29uZmlnIGZpbGUu
-IEknbGwgYmUgdmVyeSBoYXBweSB0byBwcm92aWRlIGFueSBvdGhlcgo+ID5kZWJ1ZyBpbmZvcm1h
-dGlvbiBpZiBpdCdzIG5lZWRlZCwgb3IgdG8gdGVzdCBwYXRjaGVzIGFuZCBzZWUgaWYgdGhleSBm
-aXgKPiA+dGhlIHByb2JsZW0uIEZvciBub3csIEknbGwgZmFsbCBiYWNrIHRvIDIuNi4xMi42LCB3
-aGljaCBpcyB0aGUgbGF0ZXN0Cj4gPmtlcm5lbCBJIGNhbiB1c2Ugd2hpY2ggZG9lc24ndCBoYXZl
-IHRoZSBwcm9ibGVtLgo+ID4KPiA+U2luY2VyZWxseSwKPiA+Um9jIFZhbGzDqHMgPHJ2YWxsZXNA
-ZXMuZ251Lm9yZz4KPiA+IAo+ID4KPiAKPiBIZWxsby4KPiBXb3VsZCB5b3UgcGxlYXNlIHRyeSB0
-aGUgYXR0YWNoZWQgcGF0Y2ggYWdhaW5zdCAKPiAyLjYuMTYuMStyZWlzZXI0LWZvci0yLjYuMTYt
-MQo+IAo+IEVkd2FyZC4KCk9rLCBidWlsZGluZy4gV2lsbCByZXBvcnQgaW4gMjRoIG9yIHdoZW4g
-dGhlIHByb2JsZW0gb2NjdXJzLCB3aGljaGV2ZW4KaGFwcGVucyBmaXJzdC4KClRoYW5rcy4KCi0t
-IAotIERvIHlvdSBzdHVkeSB0aGVvcmllcz8gLSBPaCB5ZXMhIFRoZW9yaWVzIGFyZSBmdW4uIC0g
-SG93IGRvIHlvdSB1c2UgdGhlbT8gLSBXaGVuIEkgbXVzdCBhY3QsIHRoZW9yaWVzIGFyZSB0b28g
-c2xvdy4gVG8gYWN0LCBJIG11c3Qga25vdy4K
+Edward Shishkin wrote:
+> Sergey Ivanov wrote:
+> 
+>> Edward Shishkin wrote:
+>>  
+>>
+>>>
+>>> Hello.
+>>> Would you please try the attached patch against
+>>> 2.6.16.1+reiser4-for-2.6.16-1
+>>>
+>>> Edward.
+>>>   
+>>
+>> Edward, can you, please, put patch somewhere in ftp.namesys.com,
+> 
+> ftp://ftp.namesys.com/pub/tmp/reiser4_gfp_kernel_to_nofs.patch.gz
+> 
+>> - it's
+>> stripped out by mailing list server. I'm planning to make new kernel
+>> today.
+>>  
+>>
+> 
+> the same problem?
+> 
+No, just want to get latest patches included.
+Thank you!
+-- 
+	Sergey.
