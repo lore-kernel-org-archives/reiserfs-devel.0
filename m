@@ -1,11 +1,11 @@
 From: "Vladimir V. Saveliev" <vs@namesys.com>
 Subject: Re: fsck.reiser4 segfaults
-Date: Fri, 31 Mar 2006 20:17:10 +0400
-Message-ID: <1143821830.6320.80.camel@tribesman.namesys.com>
+Date: Fri, 31 Mar 2006 20:32:56 +0400
+Message-ID: <1143822776.6320.84.camel@tribesman.namesys.com>
 References: <932539950603310621m67305c9eg42492492b84767fc@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28428-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28429-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -30,8 +30,6 @@ On Fri, 2006-03-31 at 16:21 +0200, Sarath Menon wrote:
 > 
 > I've tried booting into knoppix and compiling reiser4progs and running an fsck.
 > 
-what is reiser4progs's version?
-
 > This is what I get -:
 > Master super block (16):
 > magic:          ReIsEr4
@@ -61,6 +59,9 @@ what is reiser4progs's version?
 > The whole subtree is skipped.
 > Segmentation fault
 > 
+
+can you please run dmesg after that and send its output?
+
 > debugfs.reiser4 also segfaults, and a mount also fails, it complians
 > of a duplicate key. (I can't post the exact message because the second
 > livecd doesn't have X or any mail client :(
