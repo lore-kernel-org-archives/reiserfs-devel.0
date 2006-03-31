@@ -1,43 +1,67 @@
-From: Laurent Riffard <laurent.riffard@free.fr>
-Subject: [PATCH 1/2] Reiser4: Fix double insertion of loglevel in printk calls
-Date: Fri, 31 Mar 2006 15:57:34 +0200
-Message-ID: <20060331135804.151077125@antares.localdomain>
-References: <20060331135733.311177477@antares.localdomain>
-Return-path: <reiserfs-list-return-28426-reiserfs=m.gmane.org@namesys.com>
+From: "Sarath Menon" <sarathmenon@gmail.com>
+Subject: fsck.reiser4 segfaults
+Date: Fri, 31 Mar 2006 16:21:10 +0200
+Message-ID: <932539950603310621m67305c9eg42492492b84767fc@mail.gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28427-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline; filename=reiser4_fix_loglevel_usage_in_DCALL.patch
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
-Cc: Laurent Riffard <laurent.riffard@free.fr>
 
-DCALL used to insert loglevel twice in the string sent to printk.
+Hello,
 
-Signed-off-by: Laurent Riffard <laurent.riffard@free.fr>
+I've been using reiser4 for more than a year without any problems. The
+filesystem performance has been commendable to say the least.
+Yesterday, I had to powercycle my pc (due to a dma hang with my cd
+drive - happens occasionaly) and after the reboot, grub would not
+load. I use a single root partition (/boot inclusive) and the patched
+grub sources.
 
- fs/reiser4/debug.h |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+I've tried booting into knoppix and compiling reiser4progs and running an f=
+sck.
 
-Index: linux-2.6-mm/fs/reiser4/debug.h
-===================================================================
---- linux-2.6-mm.orig/fs/reiser4/debug.h
-+++ linux-2.6-mm/fs/reiser4/debug.h
-@@ -16,8 +16,8 @@
- ({									\
- /*	reiser4_print_prefix(lev, reperr, label,*/			\
- /*	__FUNCTION__, __FILE__, __LINE__);*/				\
--	fun(lev "%sreiser4[%.16s(%i)]: %s (%s:%i)[%s]:\n" format "\n" ,	\
--	    lev, current->comm, current->pid, __FUNCTION__,		\
-+	fun(lev "reiser4[%.16s(%i)]: %s (%s:%i)[%s]:\n" format "\n" ,	\
-+	    current->comm, current->pid, __FUNCTION__,			\
- 	    __FILE__, __LINE__, label, ## __VA_ARGS__);			\
- })
- 
+This is what I get -:
+Master super block (16):
+magic:          ReIsEr4
+blksize:        4096
+format:         0x0 (format40)
+label:          <none>
+
+Format super block (17):
+plugin:         format40
+description:    Disk-format for reiser4.
+magic:          ReIsEr40FoRmAt
+flushes:        0
+mkfs id:        0x3a4f3c7b
+blocks:         2443880
+free blocks:    428490
+root block:     743745
+tail policy:    0x2 (smart)
+next oid:       0xf63a06
+file count:     469920
+tree height:    5
+key policy:     LARGE
+
+
+CHECKING STORAGE TREE
+FSCK: Node (743744), item (0), unit (0): Points to the block (743745)
+which is in the tree already.
+The whole subtree is skipped.
+Segmentation fault
+
+debugfs.reiser4 also segfaults, and a mount also fails, it complians
+of a duplicate key. (I can't post the exact message because the second
+livecd doesn't have X or any mail client :(
+
+
+Cheers,
+Sarath
 
 --
-
+I presume, when you pronounce iptables, you say that you are peeing tables
