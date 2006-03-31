@@ -1,47 +1,59 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Questions about pseudo plugins
-Date: Thu, 30 Mar 2006 13:16:15 -0800
-Message-ID: <442C4A9F.5050909@namesys.com>
-References: <442C3900.1060808@uh.cu>
+From: rvalles <rvalles@es.gnu.org>
+Subject: Re: IO randomly blocked for >1 minute while disk writes still in 2.6.16.1 + 2.6.16-reiser4-1
+Date: Fri, 31 Mar 2006 03:33:39 +0200
+Message-ID: <17211.8872091689$1143768851@news.gmane.org>
+References: <20060330023909.GA7547@rvalles.homedns.org.> <442C1B0B.4060207@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28418-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-28420-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <442C3900.1060808@uh.cu>
+Content-Disposition: inline
+In-Reply-To: <442C1B0B.4060207@namesys.com>
+Sender: <tux@eww.ath.cx.>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Yoanis Gil Delgado <fred@uh.cu>
-Cc: reiserfs-list@namesys.com, vs <vs@thebsh.namesys.com>, Alexander Zarochentcev <zam@namesys.com>
+Content-Type: text/plain; charset="macroman"
+To: reiserfs-list@namesys.com
 
-Yoanis Gil Delgado wrote:
-
-> Hi there:
-> I've been working on the versioning plugin.
-> I will like to know how can i add a pseudo file to a pseudo directory,
-> dynamically. I mean whenever i detect a new version i want to create a
-> pseudo file under /file.txt/versioning/version/s pseudo directory.
-> Another question is about how can I iterate over directories pseudo
-> files.
-> For example how i can iterate over the files under
-> /file.txt/versioning/version/s (remember the files under this
-> directory are pseudo files which are generated dynamically).
-> I know there is a way to add static pseudo files and directories, by
-> adding them to pseudo_plugins array. Perhaps using the linkage field
-> from pseudo_plugin. I've some more questions but i will come later
-> with them.
-> By the way I found this in the patch for kernel 2.6.15:
->    The function init_pseudo receives a _/const char* name  /_which is
-> never used.
-> That's all for now. Thanks a lot .............. yoanis
->
->
->
-Thanks Yoanis.  Vs, would you answer these questions, or have zam answer
-them if your plate is full for the day?
-
-Thanks,
-
-Hans
+T24gVGh1LCBNYXIgMzAsIDIwMDYgYXQgMDk6NTM6MTVBTSAtMDgwMCwgSGFucyBSZWlzZXIgd3Jv
+dGU6Cj4gcnZhbGxlcyB3cm90ZToKPiAKPiA+QSBmZXcgbW9udGhzIGFnbyBJIHBvc3RlZCBhYm91
+dCBhIHByb2JsZW0gSSB3YXMgaGF2aW5nIHdpdGgga2VybmVscwo+ID5uZXdlciB0aGFuIDIuNi4x
+Mi54LCB3aGVyZSwgYXBwYXJlbnRseSByYW5kb21seSwgc29tZXRpbWVzIHZpbSBvciBvdGhlcgo+
+ID5wcm9ncmFtcyB3b3VsZCBiZSBibG9ja2VkIGZvciBtb3JlIHRoYW4gYSBtaW51dGUsIGFuZCBk
+dXJpbmcgdGhlIGVudGlyZQo+ID5ibG9ja2FnZSwgdGhlIGRpc2sgd291bGQgYXBwZWFyIHRvIGJl
+IHdyaXRpbmcgZGF0YS4KPiA+Cj4gPlNpbmNlIEkgc2F3IHRhbGsgb24gdGhlIG1hdHRlciwgSSB0
+aG91Z2h0IGl0IHdvdWxkIGJlIHRoZSBtbWFwL2ZzeW5jCj4gPnBlcmZvcm1hbmNlIHByb2JsZW0g
+b3Igc29tZXRoaW5nIGxpa2UgdGhhdCwgYW5kIGFmdGVyIHNvIG11Y2ggdGltZSBpdAo+ID53b3Vs
+ZCBiZSBmaXhlZCBhbHJlYWR5LCBidXQgYXBwYXJlbnRseSBpdCBpc24ndCB5ZXQsIHdoaWNoIEkg
+ZGlzY292ZXJlZAo+ID5hZnRlciBidWlsZGluZyBhIDIuNi4xNi4xIHdpdGggdGhlIDIuNi4xNi1y
+ZWlzZXI0LTEgcGF0Y2ggYXZhaWxhYmxlIG9uCj4gPnRoZSBuYW1lc3lzIGZ0cCBzZXJ2ZXIuCj4g
+Pgo+ID5Tb29uIGFmdGVyIGJvb3RpbmcgbXkgZGVza3RvcCBzeXN0ZW0gYW5kIHN0YXJ0aW5nIFgs
+IHhmY2UsIGV0Yy4gSQo+ID5zdGFydGVkIHRvIHdnZXQgdGhlIGxhdGVzdCBrbm9wcGl4IElTTyBh
+bmQgdGhlbiBzdGFydGVkIHRvIHBsYXkgYSBtb3ZpZQo+ID53aXRoIG1wbGF5ZXIuIFRoZSBtb3Zp
+ZSBpcyBhbiBhdmkgZmZtcGVnICsgbXAzIGF0IGFib3V0IDFtYml0L3Mgb3ZlcmFsbC4KPiA+VGhl
+IGRlc2NyaWJlZCBibG9ja2luZ3MgaGFwcGVuZWQgYWdhaW4gYW5kIGFnYWluIGR1cmluZyB0aGUg
+cmVwcm9kdWN0aW9uCj4gPm9mIHRoZSBtb3ZpZS4gTm93LCBqdXN0IHRvIGtub3cgdGhlIGZvcm1h
+dCwgSSBwbGF5ZWQgaXQgYWdhaW4sIGFuZCBhcyBpdAo+ID5iZWdhbiwgaXQgYmxvY2tlZCBhZ2Fp
+bi4uLiBub3QgZXZlbiBrbm9wcGl4IGlzIGRvd25sb2FkaW5nIG9uIHRoZQo+ID5iYWNrZ3JvdW5k
+Lgo+ID4KPiA+SSBnb3Qga25vcHBpeCBzbyB0aGF0IEkgY291bGQgYm9vdCBpdCwgZ2V0IGxhc3Qg
+cmVpc2VyNHRvb2xzIGFuZCBydW4gYQo+ID5mc2NrIC0tZml4IG9uIG15IHJlaXNlcjQgcGFydGl0
+aW9uLiBTaW5jZSBub3cgSSd2ZSBhbHJlYWR5IGRvbmUgdGhhdCwgSQo+ID5kb24ndCB0aGluayBp
+dCBoZWxwZWQgbXVjaC4KPiA+Cj4gPkkgYXR0YWNoIG15IGtlcm5lbCBjb25maWcgZmlsZS4gSSds
+bCBiZSB2ZXJ5IGhhcHB5IHRvIHByb3ZpZGUgYW55IG90aGVyCj4gPmRlYnVnIGluZm9ybWF0aW9u
+IGlmIGl0J3MgbmVlZGVkLCBvciB0byB0ZXN0IHBhdGNoZXMgYW5kIHNlZSBpZiB0aGV5IGZpeAo+
+ID50aGUgcHJvYmxlbS4gRm9yIG5vdywgSSdsbCBmYWxsIGJhY2sgdG8gMi42LjEyLjYsIHdoaWNo
+IGlzIHRoZSBsYXRlc3QKPiA+a2VybmVsIEkgY2FuIHVzZSB3aGljaCBkb2Vzbid0IGhhdmUgdGhl
+IHByb2JsZW0uCj4gPgo+ID5TaW5jZXJlbGx5LAo+ID5Sb2MgVmFsbMOocyA8cnZhbGxlc0Blcy5n
+bnUub3JnPgo+ID4gIAo+ID4KPiBUaGVyZSBpcyBhbm90aGVyIHBvc3NpYmxlIGV4cGxhbmF0aW9u
+IGZvciB5b3VyIHByb2JsZW0uICBUaGF0IG90aGVyCj4gZXhwbGFuYXRpb24gd2lsbCBiZSBtdWNo
+IG1vcmUgd29yayBmb3IgdXMgdG8gZml4LCBzbyBwbGVhc2UgdGVsbCB1cyBpZgo+IHRoZSBwYXRj
+aCB5b3Ugd2VyZSBzZW50IGZpeGVzIGl0LCBhbmQgaWYgbm90IHRoZW4gd2UgaGF2ZSB0byBkbyB0
+aGUgaGFyZAo+IGZpeC4KPiAKPiBIYW5zCj4gCgpJIHNldCB0aGUga2VybmVsIHRvIGJ1aWxkIGFu
+ZCB3ZW50IHRvIHNsZWVwLiBXb2tlIHVwIG5vdywgYW5kIEknbQpyZWJvb3RpbmcgdG8gc2VlIGhv
+dyB0aGUgcGF0Y2ggZG9lcyBmYXJlLiBJJ2xsIHJlcG9ydCBiYWNrIGF0IHRoZSBmaXJzdApvY2N1
+cnJlbmNlIG9mIHRoZSBwcm9ibGVtIG9yIGFmdGVyIDI0aCwgd2hpY2hldmVyIGhhcHBlbnMgZmly
+c3QuCgpUaGFua3MgZm9yIHlvdXIgd29yay4KLS0gCi0gRG8geW91IHN0dWR5IHRoZW9yaWVzPyAt
+IE9oIHllcyEgVGhlb3JpZXMgYXJlIGZ1bi4gLSBIb3cgZG8geW91IHVzZSB0aGVtPyAtIFdoZW4g
+SSBtdXN0IGFjdCwgdGhlb3JpZXMgYXJlIHRvbyBzbG93LiBUbyBhY3QsIEkgbXVzdCBrbm93Lgo=
