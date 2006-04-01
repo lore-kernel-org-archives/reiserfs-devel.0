@@ -1,69 +1,81 @@
-From: Jake Maciejewski <maciejej@msoe.edu>
-Subject: Re: fsck.reiser4 segfaults
-Date: Sat, 01 Apr 2006 03:02:47 -0600
-Message-ID: <1143882167.10923.19.camel@gentoo>
-References: <932539950603310621m67305c9eg42492492b84767fc@mail.gmail.com>
-	 <1143822776.6320.84.camel@tribesman.namesys.com>
-	 <932539950603311021x201d9e13mfdf9e95923e1f744@mail.gmail.com>
-	 <442D8F45.7090403@dermichi.com> <442E178D.40300@gmail.com>
-	 <932539950604010013w44d30453r898a0a1ed3ee3b8d@mail.gmail.com>
+From: Oliver Maruhn <oliver@maruhn.com>
+Subject: bug report: reiserfsck --rebuild-tree fails repeatedly with mark_block_used
+Date: Sat, 01 Apr 2006 17:10:44 +0200
+Message-ID: <442E97F4.7030906@maruhn.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28435-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28436-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <932539950604010013w44d30453r898a0a1ed3ee3b8d@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Sarath Menon <sarathmenon@gmail.com>
-Cc: jfeise@gmail.com, Michael Weissenbacher <webmaster@dermichi.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Sat, 2006-04-01 at 08:13 +0000, Sarath Menon wrote:
-> Me too, ;) I also found http://www.lxnaydesign.net/, useful if you
-> need a browser to be around too.
-> 
-> Here's the dmesg output when i try to mount it.
-> 
-> reiser4[mount(11756)]: renew_sibling_link
-> (fs/reiser4/tree_walk.c:441)[nikita-3532]:
-> WARNING: Sibling nodes on the different levels: 4 != 4
-> 
-> reiser4[mount(11756)]: key_warning (fs/reiser4/plugin/object.c:97)[nikita-717]:
-> WARNING: Error for inode 42 (-5)
-> 
-> The kernel version seems to be a bit old at 2.6.10-lxnay3. Should I
-> try with a newer kernel, with debug args maybe?
+Hi,
 
-lxnay may have backported a more recent patch, but there was a plugin
-set change (see http://www.mail-archive.com/reiserfs-list@namesys.com/
-msg18602.html) in 2.6.11-5 such that older kernels would be unable to
-mount filesystems that had been mounted with newer kernels.
+"reiserfsck --rebuild-tree" always aborts with the appended error log.
+The system is a Debian stable with a self compiled kernel 2.6.12.  I
+tried reiserfsck 3.6.19 from the debian stable and testing.  Also I
+compiled version 3.6.12 and got the same result.
 
-> Thanks,
-> Sarath
-> 
-> On 4/1/06, Joachim Feise <jfeise@gmail.com> wrote:
-> > Michael Weissenbacher wrote on 03/31/06 12:21:
-> >
-> > > Hi,
-> > >> reiserfsprogs and libaal are both 1.0.5. I'll give you the dmesg
-> > >> output tommorow - I need to get a livecd with reiser4 patches - its
-> > >> more difficult than I initially thought ;)
-> > > I'm using RIPLinux, which has reiser4 support.
-> > > http://www.tux.org/pub/people/kent-robotti/looplinux/rip/
-> >
-> >
-> > Thanks for that info. I was looking for a boot disk with reiser4 for some time.
-> >
-> > -Joe
-> >
-> 
-> 
-> --
-> --------------------------
-> I presume, when you pronounce iptables, you say that you are peeing tables
--- 
-Jake Maciejewski <maciejej@msoe.edu>
+There are no syslog messages.  The HDs have no hardware defects.  The
+reiser fs lives on a linux software RAID 1 (/dev/mdX).  There are no RAM
+errors (I did run a some tests) and the block number is always the same.
 
+What other information do you need?
+
+Cheers,
+
+   Oliver
+
+
+
+###########
+reiserfsck --rebuild-tree started at Fri Mar 31 09:55:25 2006
+###########
+
+Pass 0:
+####### Pass 0 #######
+Loading on-disk bitmap .. ok, 155078527 blocks marked used
+Skipping 13122 blocks (super block, journal, bitmaps) 155065405 blocks
+will be read
+0%....20%.block 73450006: The number of items (1) is incorrect, should
+be (0) - corrected
+block 73450006: The free space (1) is incorrect, should be (4072) -
+corrected
+block 73457475: The number of items (1) is incorrect, should be (0) -
+corrected
+block 73457475: The free space (2) is incorrect, should be (4072) -
+corrected
+block 73460971: The number of items (1) is incorrect, should be (0) -
+corrected
+block 73460971: The free space (36) is incorrect, should be (4072) -
+corrected
+block 81413338: The number of items (1) is incorrect, should be (0) -
+corrected
+block 81413338: The free space (2) is incorrect, should be (4072) -
+corrected
+                                                       left 0, 12965
+/seccccc
+493054 directory entries were hashed with "r5" hash.
+        "r5" hash is selected
+Flushing..finished
+        Read blocks (but not data blocks) 155065405
+                Leaves among those 293795
+                        - leaves all contents of which could not be
+saved and deleted 18
+                Objectids found 493059
+
+Pass 1 (will try to insert 293777 leaves):
+####### Pass 1 #######
+Looking for allocable blocks .. finished
+0%....20%....                                             left 179117,
+250 /sec
+The problem has occurred looks like a hardware problem (perhaps
+memory). Send us the bug report only if the second run dies at
+the same place with the same block number.
+
+mark_block_used: (54589262) used already
+Aborted
