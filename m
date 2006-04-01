@@ -1,81 +1,59 @@
-From: Oliver Maruhn <oliver@maruhn.com>
-Subject: bug report: reiserfsck --rebuild-tree fails repeatedly with mark_block_used
-Date: Sat, 01 Apr 2006 17:10:44 +0200
-Message-ID: <442E97F4.7030906@maruhn.com>
+From: Pierre =?UTF-8?B?RXRjaGVtYcOvdMOp?= <petchema@concept-micro.com>
+Subject: Re: 2.6.16-rc6-mm2: slow writes on reiser4.
+Date: Sun, 2 Apr 2006 01:15:45 +0200
+Message-ID: <20060402011545.e0213e6e.petchema@concept-micro.com>
+References: <44206D3C.7050504@free.fr>
+	<4420FFA2.1090908@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28436-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28437-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <4420FFA2.1090908@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
-Hi,
+Le Tue, 21 Mar 2006 23:41:22 -0800, Hans Reiser <reiser@namesys.com> a =C3=
+=A9crit :
 
-"reiserfsck --rebuild-tree" always aborts with the appended error log.
-The system is a Debian stable with a self compiled kernel 2.6.12.  I
-tried reiserfsck 3.6.19 from the debian stable and testing.  Also I
-compiled version 3.6.12 and got the same result.
+>  It may be that we need to port some of
+> the block allocation optimizations from V3 to V4 (Jeff's work) to help
+> with 90% full filesystems.
 
-There are no syslog messages.  The HDs have no hardware defects.  The
-reiser fs lives on a linux software RAID 1 (/dev/mdX).  There are no RAM
-errors (I did run a some tests) and the block number is always the same.
+Talking of that, I've read about a localized performance problem of
+reiserfs 3 in backuppc's mailing list (that is otherwise similar in
+performance with xfs for that task). I wonder if it was ever reported
+to you, as suggested in this mailing list...
 
-What other information do you need?
+http://sourceforge.net/mailarchive/message.php?msg_id=3D8646808
 
-Cheers,
+My understanding is that backuppc is hitting reiserfs3 hard links worse
+case.
 
-   Oliver
+Backuppc creates a huge pool of all versions of all files from all
+backups, compressed, organized using MD5 hashing (handling collisions
+of course), and hardlinked from their different backup views. [Some
+metadata is stored separately, so that several files with same content
+but different metadata can still be shared on disk. But I digress]
+At night, a sweeping process takes place to remove too old backups
+(according to user policy), and maybe check if some more background
+sharing/compression can be done.
 
+If I remember well, v3 puts directory entries and their corresponding
+inodes next to each other on disk. When hardlinks are created, new
+directory entries are created, pointing to the same inode. If the first
+directory entry is removed, the inode could be no longer stored near
+any of the entries pointing to it.
 
+Since backuppc is routinely removing directory entries in FIFO order,
+it's almost guaranteed to happen every time. Hence a very bad inodes
+distribution on disk after some time...
 
-###########
-reiserfsck --rebuild-tree started at Fri Mar 31 09:55:25 2006
-###########
+I don't know what xfs does exactly (blocks of preallocated inodes ?) but
+it does better in this case.
 
-Pass 0:
-####### Pass 0 #######
-Loading on-disk bitmap .. ok, 155078527 blocks marked used
-Skipping 13122 blocks (super block, journal, bitmaps) 155065405 blocks
-will be read
-0%....20%.block 73450006: The number of items (1) is incorrect, should
-be (0) - corrected
-block 73450006: The free space (1) is incorrect, should be (4072) -
-corrected
-block 73457475: The number of items (1) is incorrect, should be (0) -
-corrected
-block 73457475: The free space (2) is incorrect, should be (4072) -
-corrected
-block 73460971: The number of items (1) is incorrect, should be (0) -
-corrected
-block 73460971: The free space (36) is incorrect, should be (4072) -
-corrected
-block 81413338: The number of items (1) is incorrect, should be (0) -
-corrected
-block 81413338: The free space (2) is incorrect, should be (4072) -
-corrected
-                                                       left 0, 12965
-/seccccc
-493054 directory entries were hashed with "r5" hash.
-        "r5" hash is selected
-Flushing..finished
-        Read blocks (but not data blocks) 155065405
-                Leaves among those 293795
-                        - leaves all contents of which could not be
-saved and deleted 18
-                Objectids found 493059
-
-Pass 1 (will try to insert 293777 leaves):
-####### Pass 1 #######
-Looking for allocable blocks .. finished
-0%....20%....                                             left 179117,
-250 /sec
-The problem has occurred looks like a hardware problem (perhaps
-memory). Send us the bug report only if the second run dies at
-the same place with the same block number.
-
-mark_block_used: (54589262) used already
-Aborted
+Hope it helps,
+Pierre.
