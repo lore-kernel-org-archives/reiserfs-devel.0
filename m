@@ -1,131 +1,285 @@
-From: "Sarath Menon" <sarathmenon@gmail.com>
-Subject: Re: fsck.reiser4 segfaults
-Date: Wed, 5 Apr 2006 05:30:53 +0530
-Message-ID: <932539950604041700p409e00eam3f916764c1b15494@mail.gmail.com>
-References: <932539950603310621m67305c9eg42492492b84767fc@mail.gmail.com>
-	 <1143822776.6320.84.camel@tribesman.namesys.com>
-	 <932539950603311021x201d9e13mfdf9e95923e1f744@mail.gmail.com>
-	 <1144059702.6316.62.camel@tribesman.namesys.com>
-	 <932539950604041657t42d33902s34dc8abcf056aa49@mail.gmail.com>
+From: Zan Lynx <zlynx@acm.org>
+Subject: Re: 2.6.17-rc1-mm1, nfsd/reiser4 BUG
+Date: Tue, 04 Apr 2006 20:27:16 -0600
+Message-ID: <1144204036.26812.72.camel@localhost>
+References: <20060404014504.564bf45a.akpm@osdl.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-28442-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-J7X/cuQXOp3onmdryQe3"
+Return-path: <reiserfs-list-return-28443-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <932539950604041657t42d33902s34dc8abcf056aa49@mail.gmail.com>
-Content-Disposition: inline
+In-Reply-To: <20060404014504.564bf45a.akpm@osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
+To: Andrew Morton <akpm@osdl.org>
+Cc: linux-kernel@vger.kernel.org, nfs@lists.sourceforge.net, reiserfs-list@namesys.com
 
-CC-ing to the list.
+--=-J7X/cuQXOp3onmdryQe3
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On 4/5/06, Sarath Menon <sarathmenon@gmail.com> wrote:
-> Hi Vlad,
->
-> Sorry I missed your email, I wasn't really checking my mails. The dump
-> is available from http://sarath.dyndns.org/r4/reiser4-metadata.bz2.
->
-> Please let me know if you need more information.
->
-> On 4/3/06, Vladimir V. Saveliev <vs@namesys.com> wrote:
-> > Hello
-> >
-> > On Fri, 2006-03-31 at 20:21 +0200, Sarath Menon wrote:
-> > > reiserfsprogs and libaal are both 1.0.5. I'll give you the dmesg
-> > > output tommorow - I need to get a livecd with reiser4 patches - its
-> > > more difficult than I initially thought ;)
-> > >
-> > > Here's the gdb bt output - that's the max that I can provide today.
-> > >
-> > > Program received signal SIGSEGV, Segmentation fault.
-> > > 0x40052dd1 in repair_filter_update_traverse () from /tmp/reiser4/lib
-> > > (gdb) bt
-> > > #0  0x40052dd1 in repair_filter_update_traverse () from /tmp/reiser4
-> > > #1  0x40015959 in reiser4_tree_trav_node () from /tmp/reiser4/lib/li
-> > > #2  0x40015938 in reiser4_tree_trav_node () from /tmp/reiser4/lib/li
-> > > #3  0x40052356 in repair_filter_traverse () from /tmp/reiser4/lib/li
-> > > #4  0x40051c8c in repair_filter () from /tmp/reiser4/lib/librepair-1
-> > > #5  0x400575ea in repair_check () from /tmp/reiser4/lib/librepair-1.
-> > > #6  0x0804a1cb in main ()
-> > > #7  0x4102eda6 in __libc_start_main () from /lib/libc.so.6
-> > >
-> > > I'll post the dmesg output tommorow.
-> > >
-> >
-> > I would like to debug this problem. Can you please do
-> > debugfs.reiser4 /dev/thatdevice -P | bzip2 -c > reiser4-metadata.bz2
-> > and put resulting file somewhere for downloading. That should make
-> > debugging easier.
-> >
-> > > Thanks,
-> > > Sarath
-> > >
-> > > On 3/31/06, Vladimir V. Saveliev <vs@namesys.com> wrote:
-> > > > Hello
-> > > >
-> > > > On Fri, 2006-03-31 at 16:21 +0200, Sarath Menon wrote:
-> > > > > Hello,
-> > > > >
-> > > > > I've been using reiser4 for more than a year without any problems=
-. The
-> > > > > filesystem performance has been commendable to say the least.
-> > > > > Yesterday, I had to powercycle my pc (due to a dma hang with my c=
-d
-> > > > > drive - happens occasionaly) and after the reboot, grub would not
-> > > > > load. I use a single root partition (/boot inclusive) and the pat=
-ched
-> > > > > grub sources.
-> > > > >
-> > > > > I've tried booting into knoppix and compiling reiser4progs and ru=
-nning an
-> > > > fsck.
-> > > > >
-> > > > > This is what I get -:
-> > > > > Master super block (16):
-> > > > > magic:          ReIsEr4
-> > > > > blksize:        4096
-> > > > > format:         0x0 (format40)
-> > > > > label:          <none>
-> > > > >
-> > > > > Format super block (17):
-> > > > > plugin:         format40
-> > > > > description:    Disk-format for reiser4.
-> > > > > magic:          ReIsEr40FoRmAt
-> > > > > flushes:        0
-> > > > > mkfs id:        0x3a4f3c7b
-> > > > > blocks:         2443880
-> > > > > free blocks:    428490
-> > > > > root block:     743745
-> > > > > tail policy:    0x2 (smart)
-> > > > > next oid:       0xf63a06
-> > > > > file count:     469920
-> > > > > tree height:    5
-> > > > > key policy:     LARGE
-> > > > >
-> > > > >
-> > > > > CHECKING STORAGE TREE
-> > > > > FSCK: Node (743744), item (0), unit (0): Points to the block (743=
-745)
-> > > > > which is in the tree already.
-> > > > > The whole subtree is skipped.
-> > > > > Segmentation fault
-> > > > >
-> > > >
-> > > > can you please run dmesg after that and send its output?
-> > > >
-> > > > > debugfs.reiser4 also segfaults, and a mount also fails, it compli=
-ans
-> > > > > of a duplicate key. (I can't post the exact message because the s=
-econd
-> > > > > livecd doesn't have X or any mail client :(
-> > > > >
-> > > > >
-> > > > > Cheers,
-> > > > > Sarath
-> > > > >
-> > > > > --
-> > > > > I presume, when you pronounce iptables, you say that you are peei=
-ng tables.
+On Tue, 2006-04-04 at 01:45 -0700, Andrew Morton wrote:
+> ftp://ftp.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.17-rc1/=
+2.6.17-rc1-mm1/
+
+While running the following command on a Reiser4 partition mounted on a
+MD RAID-0 device on top of two SCSI disks:
+
+find -type f -print0 | xargs -0 cat > /dev/null
+
+I was running this on the local machine, not on the NFS mounts.  In
+fact, the NFS mounts should have had none, or very little, activity.
+
+I started getting the following error messages.  I had been running
+2.6.16-rc5-mm3 and hadn't noticed anything like that, so when I get some
+time I may try to isolate it, if I can reproduce it.
+
+But, in case anyone else knows the problem, here it is
+
+BUG: unable to handle kernel NULL pointer dereference at virtual address 00=
+000000
+ printing eip:
+e0a9a3d2
+*pde =3D 00000000
+Oops: 0002 [#1]
+PREEMPT
+last sysfs file: /devices/pci0000:00/0000:00:00.0/class
+Modules linked in: it87 hwmon_vid hwmon i2c_isa parport_pc lp parport nfsd =
+exportfs lockd autofs4 sunrpc iptable_filter ip_tables x_tables binfmt_misc=
+ dm_mod ohci_hcd eepro100 uhci_hcd ehci_hcd sis_agp agpgart i2c_sis630 i2c_=
+core snd_intel8x0 snd_ac97_codec snd_ac97_bus snd_pcm_oss snd_mixer_oss snd=
+_pcm snd_timer snd soundcore snd_page_alloc e100 via_rhine sis900 mii crc32=
+ ide_cd cdrom usbcore
+CPU:    0
+EIP:    0060:[<e0a9a3d2>]    Not tainted VLI
+EFLAGS: 00010246   (2.6.17-rc1-mm1 #1)
+EIP is at nfsd_cache_lookup+0x169/0x2e3 [nfsd]
+eax: 00000000   ebx: dd05a120   ecx: ddc3da38   edx: 00000000
+esi: c815319e   edi: 00000000   ebp: 00000007   esp: ddfe1f40
+ds: 007b   es: 007b   ss: 0068
+Process nfsd (pid: 2170, threadinfo=3Dddfe1000 task=3Dc148a070)
+Stack: <0>de05d000 ddc3d9e0 00000011 00000003 e0ac9d00 de05d000 e0aa80bc e0=
+aa7fa0
+       e0aa80bc e0a93049 c51b9014 de05d064 e0aa80bc e0aa7fa0 de05d000 e0ab2=
+7d2
+       0000003d dd7eaba0 e0aa7fa0 de05d040 c51b9014 000186a3 00000007 c51b9=
+008
+Call Trace:
+ <e0a93049> nfsd_dispatch+0x39/0x16f [nfsd]   <e0ab27d2> svc_process+0x38c/=
+0x5c6 [sunrpc]
+ <e0a93509> nfsd+0x19a/0x315 [nfsd]   <e0a9336f> nfsd+0x0/0x315 [nfsd]
+ <c0101005> kernel_thread_helper+0x5/0xb
+Code: 28 8b 54 24 0c 89 53 30 8b 53 24 a1 e8 ba 3b c0 89 43 34 89 d0 c1 e8 =
+18 31 d0 8b 54 24 04 83 e0 3f 8d 0c 82 8b 03 8b 53 04 85 c0 <89> 02 74 03 8=
+9 50 04 8b 01 85 c0 89 03 74 03 89 58 04 89 19 80
+EIP: [<e0a9a3d2>] nfsd_cache_lookup+0x169/0x2e3 [nfsd] SS:ESP 0068:ddfe1f40
+ <6>note: nfsd[2170] exited with preempt_count 1
+BUG: unable to handle kernel NULL pointer dereference at virtual address 00=
+000000
+ printing eip:
+e0a9a3d2
+*pde =3D 00000000
+Oops: 0002 [#2]
+PREEMPT
+last sysfs file: /devices/pci0000:00/0000:00:00.0/class
+Modules linked in: it87 hwmon_vid hwmon i2c_isa parport_pc lp parport nfsd =
+exportfs lockd autofs4 sunrpc iptable_filter ip_tables x_tables binfmt_misc=
+ dm_mod ohci_hcd eepro100 uhci_hcd ehci_hcd sis_agp agpgart i2c_sis630 i2c_=
+core snd_intel8x0 snd_ac97_codec snd_ac97_bus snd_pcm_oss snd_mixer_oss snd=
+_pcm snd_timer snd soundcore snd_page_alloc e100 via_rhine sis900 mii crc32=
+ ide_cd cdrom usbcore
+CPU:    0
+EIP:    0060:[<e0a9a3d2>]    Not tainted VLI
+EFLAGS: 00010246   (2.6.17-rc1-mm1 #1)
+EIP is at nfsd_cache_lookup+0x169/0x2e3 [nfsd]
+eax: 00000000   ebx: dd05a160   ecx: ddc3da38   edx: 00000000
+esi: c815319e   edi: 00000000   ebp: 00000007   esp: dff43f40
+ds: 007b   es: 007b   ss: 0068
+Process nfsd (pid: 2167, threadinfo=3Ddff43000 task=3Ddf599550)
+Stack: <0>de7f5000 ddc3d9e0 00000011 00000003 e0ac9d00 de7f5000 e0aa80bc e0=
+aa7fa0
+       e0aa80bc e0a93049 d7196014 de7f5064 e0aa80bc e0aa7fa0 de7f5000 e0ab2=
+7d2
+       0000003d dd7eaba0 e0aa7fa0 de7f5040 d7196014 000186a3 00000007 d7196=
+008
+Call Trace:
+ <e0a93049> nfsd_dispatch+0x39/0x16f [nfsd]   <e0ab27d2> svc_process+0x38c/=
+0x5c6 [sunrpc]
+ <e0a93509> nfsd+0x19a/0x315 [nfsd]   <e0a9336f> nfsd+0x0/0x315 [nfsd]
+ <c0101005> kernel_thread_helper+0x5/0xb
+Code: 28 8b 54 24 0c 89 53 30 8b 53 24 a1 e8 ba 3b c0 89 43 34 89 d0 c1 e8 =
+18 31 d0 8b 54 24 04 83 e0 3f 8d 0c 82 8b 03 8b 53 04 85 c0 <89> 02 74 03 8=
+9 50 04 8b 01 85 c0 89 03 74 03 89 58 04 89 19 80
+EIP: [<e0a9a3d2>] nfsd_cache_lookup+0x169/0x2e3 [nfsd] SS:ESP 0068:dff43f40
+ <6>note: nfsd[2167] exited with preempt_count 1
+BUG: unable to handle kernel NULL pointer dereference at virtual address 00=
+000000
+ printing eip:
+e0a9a3d2
+*pde =3D 00000000
+Oops: 0002 [#3]
+PREEMPT
+last sysfs file: /devices/pci0000:00/0000:00:00.0/class
+Modules linked in: it87 hwmon_vid hwmon i2c_isa parport_pc lp parport nfsd =
+exportfs lockd autofs4 sunrpc iptable_filter ip_tables x_tables binfmt_misc=
+ dm_mod ohci_hcd eepro100 uhci_hcd ehci_hcd sis_agp agpgart i2c_sis630 i2c_=
+core snd_intel8x0 snd_ac97_codec snd_ac97_bus snd_pcm_oss snd_mixer_oss snd=
+_pcm snd_timer snd soundcore snd_page_alloc e100 via_rhine sis900 mii crc32=
+ ide_cd cdrom usbcore
+CPU:    0
+EIP:    0060:[<e0a9a3d2>]    Not tainted VLI
+EFLAGS: 00010246   (2.6.17-rc1-mm1 #1)
+EIP is at nfsd_cache_lookup+0x169/0x2e3 [nfsd]
+eax: 00000000   ebx: dd05a1a0   ecx: ddc3da38   edx: 00000000
+esi: c815319e   edi: 00000000   ebp: 00000007   esp: de555f40
+ds: 007b   es: 007b   ss: 0068
+Process nfsd (pid: 2171, threadinfo=3Dde555000 task=3Ddfe23030)
+Stack: <0>dd7cda00 ddc3d9e0 00000011 00000003 e0ac9d00 dd7cda00 e0aa80bc e0=
+aa7fa0
+       e0aa80bc e0a93049 c54bb014 dd7cda64 e0aa80bc e0aa7fa0 dd7cda00 e0ab2=
+7d2
+       0000003d dd7eaba0 e0aa7fa0 dd7cda40 c54bb014 000186a3 00000007 c54bb=
+008
+Call Trace:
+ <e0a93049> nfsd_dispatch+0x39/0x16f [nfsd]   <e0ab27d2> svc_process+0x38c/=
+0x5c6 [sunrpc]
+ <e0a93509> nfsd+0x19a/0x315 [nfsd]   <e0a9336f> nfsd+0x0/0x315 [nfsd]
+ <c0101005> kernel_thread_helper+0x5/0xb
+Code: 28 8b 54 24 0c 89 53 30 8b 53 24 a1 e8 ba 3b c0 89 43 34 89 d0 c1 e8 =
+18 31 d0 8b 54 24 04 83 e0 3f 8d 0c 82 8b 03 8b 53 04 85 c0 <89> 02 74 03 8=
+9 50 04 8b 01 85 c0 89 03 74 03 89 58 04 89 19 80
+EIP: [<e0a9a3d2>] nfsd_cache_lookup+0x169/0x2e3 [nfsd] SS:ESP 0068:de555f40
+ <6>note: nfsd[2171] exited with preempt_count 1
+BUG: unable to handle kernel NULL pointer dereference at virtual address 00=
+000000
+ printing eip:
+e0a9a3d2
+*pde =3D 00000000
+Oops: 0002 [#4]
+PREEMPT
+last sysfs file: /devices/pci0000:00/0000:00:00.0/class
+Modules linked in: it87 hwmon_vid hwmon i2c_isa parport_pc lp parport nfsd =
+exportfs lockd autofs4 sunrpc iptable_filter ip_tables x_tables binfmt_misc=
+ dm_mod ohci_hcd eepro100 uhci_hcd ehci_hcd sis_agp agpgart i2c_sis630 i2c_=
+core snd_intel8x0 snd_ac97_codec snd_ac97_bus snd_pcm_oss snd_mixer_oss snd=
+_pcm snd_timer snd soundcore snd_page_alloc e100 via_rhine sis900 mii crc32=
+ ide_cd cdrom usbcore
+CPU:    0
+EIP:    0060:[<e0a9a3d2>]    Not tainted VLI
+EFLAGS: 00010246   (2.6.17-rc1-mm1 #1)
+EIP is at nfsd_cache_lookup+0x169/0x2e3 [nfsd]
+eax: 00000000   ebx: dd05a1e0   ecx: ddc3da38   edx: 00000000
+esi: c815319e   edi: 00000000   ebp: 00000007   esp: ddfccf40
+ds: 007b   es: 007b   ss: 0068
+Process nfsd (pid: 2166, threadinfo=3Dddfcc000 task=3Ddf488a90)
+Stack: <0>ddfebe00 ddc3d9e0 00000011 00000003 e0ac9d00 ddfebe00 e0aa80bc e0=
+aa7fa0
+       e0aa80bc e0a93049 c5629014 ddfebe64 e0aa80bc e0aa7fa0 ddfebe00 e0ab2=
+7d2
+       0000003d dd7eaba0 e0aa7fa0 ddfebe40 c5629014 000186a3 00000007 c5629=
+008
+Call Trace:
+ <e0a93049> nfsd_dispatch+0x39/0x16f [nfsd]   <e0ab27d2> svc_process+0x38c/=
+0x5c6 [sunrpc]
+ <e0a93509> nfsd+0x19a/0x315 [nfsd]   <e0a9336f> nfsd+0x0/0x315 [nfsd]
+ <c0101005> kernel_thread_helper+0x5/0xb
+Code: 28 8b 54 24 0c 89 53 30 8b 53 24 a1 e8 ba 3b c0 89 43 34 89 d0 c1 e8 =
+18 31 d0 8b 54 24 04 83 e0 3f 8d 0c 82 8b 03 8b 53 04 85 c0 <89> 02 74 03 8=
+9 50 04 8b 01 85 c0 89 03 74 03 89 58 04 89 19 80
+EIP: [<e0a9a3d2>] nfsd_cache_lookup+0x169/0x2e3 [nfsd] SS:ESP 0068:ddfccf40
+ <6>note: nfsd[2166] exited with preempt_count 1
+BUG: unable to handle kernel NULL pointer dereference at virtual address 00=
+000000
+ printing eip:
+e0a9a3d2
+*pde =3D 00000000
+Oops: 0002 [#5]
+PREEMPT
+last sysfs file: /devices/pci0000:00/0000:00:00.0/class
+Modules linked in: it87 hwmon_vid hwmon i2c_isa parport_pc lp parport nfsd =
+exportfs lockd autofs4 sunrpc iptable_filter ip_tables x_tables binfmt_misc=
+ dm_mod ohci_hcd eepro100 uhci_hcd ehci_hcd sis_agp agpgart i2c_sis630 i2c_=
+core snd_intel8x0 snd_ac97_codec snd_ac97_bus snd_pcm_oss snd_mixer_oss snd=
+_pcm snd_timer snd soundcore snd_page_alloc e100 via_rhine sis900 mii crc32=
+ ide_cd cdrom usbcore
+CPU:    0
+EIP:    0060:[<e0a9a3d2>]    Not tainted VLI
+EFLAGS: 00010246   (2.6.17-rc1-mm1 #1)
+EIP is at nfsd_cache_lookup+0x169/0x2e3 [nfsd]
+eax: 00000000   ebx: dd05a220   ecx: ddc3da38   edx: 00000000
+esi: c815319e   edi: 00000000   ebp: 00000007   esp: de477f40
+ds: 007b   es: 007b   ss: 0068
+Process nfsd (pid: 2169, threadinfo=3Dde477000 task=3Ddebdba70)
+Stack: <0>de05d600 ddc3d9e0 00000011 00000003 e0ac9d00 de05d600 e0aa80bc e0=
+aa7fa0
+       e0aa80bc e0a93049 db0ed014 de05d664 e0aa80bc e0aa7fa0 de05d600 e0ab2=
+7d2
+       0000003d dd7eaba0 e0aa7fa0 de05d640 db0ed014 000186a3 00000007 db0ed=
+008
+Call Trace:
+ <e0a93049> nfsd_dispatch+0x39/0x16f [nfsd]   <e0ab27d2> svc_process+0x38c/=
+0x5c6 [sunrpc]
+ <e0a93509> nfsd+0x19a/0x315 [nfsd]   <e0a9336f> nfsd+0x0/0x315 [nfsd]
+ <c0101005> kernel_thread_helper+0x5/0xb
+Code: 28 8b 54 24 0c 89 53 30 8b 53 24 a1 e8 ba 3b c0 89 43 34 89 d0 c1 e8 =
+18 31 d0 8b 54 24 04 83 e0 3f 8d 0c 82 8b 03 8b 53 04 85 c0 <89> 02 74 03 8=
+9 50 04 8b 01 85 c0 89 03 74 03 89 58 04 89 19 80
+EIP: [<e0a9a3d2>] nfsd_cache_lookup+0x169/0x2e3 [nfsd] SS:ESP 0068:de477f40
+ <6>note: nfsd[2169] exited with preempt_count 1
+BUG: unable to handle kernel NULL pointer dereference at virtual address 00=
+000000
+ printing eip:
+e0a9a3d2
+*pde =3D 00000000
+Oops: 0002 [#6]
+PREEMPT
+last sysfs file: /devices/pci0000:00/0000:00:00.0/class
+Modules linked in: it87 hwmon_vid hwmon i2c_isa parport_pc lp parport nfsd =
+exportfs lockd autofs4 sunrpc iptable_filter ip_tables x_tables binfmt_misc=
+ dm_mod ohci_hcd eepro100 uhci_hcd ehci_hcd sis_agp agpgart i2c_sis630 i2c_=
+core snd_intel8x0 snd_ac97_codec snd_ac97_bus snd_pcm_oss snd_mixer_oss snd=
+_pcm snd_timer snd soundcore snd_page_alloc e100 via_rhine sis900 mii crc32=
+ ide_cd cdrom usbcore
+CPU:    0
+EIP:    0060:[<e0a9a3d2>]    Not tainted VLI
+EFLAGS: 00010246   (2.6.17-rc1-mm1 #1)
+EIP is at nfsd_cache_lookup+0x169/0x2e3 [nfsd]
+eax: 00000000   ebx: dd05a260   ecx: ddc3da38   edx: 00000000
+esi: c815319e   edi: 00000000   ebp: 00000007   esp: ddf70f40
+ds: 007b   es: 007b   ss: 0068
+Process nfsd (pid: 2165, threadinfo=3Dddf70000 task=3Ddfe1aa90)
+Stack: <0>ddfeb200 ddc3d9e0 00000011 00000003 e0ac9d00 ddfeb200 e0aa80bc e0=
+aa7fa0
+       e0aa80bc e0a93049 db575014 ddfeb264 e0aa80bc e0aa7fa0 ddfeb200 e0ab2=
+7d2
+       0000003d dd7eaba0 e0aa7fa0 ddfeb240 db575014 000186a3 00000007 db575=
+008
+Call Trace:
+ <e0a93049> nfsd_dispatch+0x39/0x16f [nfsd]   <e0ab27d2> svc_process+0x38c/=
+0x5c6 [sunrpc]
+ <e0a93509> nfsd+0x19a/0x315 [nfsd]   <e0a9336f> nfsd+0x0/0x315 [nfsd]
+ <c0101005> kernel_thread_helper+0x5/0xb
+Code: 28 8b 54 24 0c 89 53 30 8b 53 24 a1 e8 ba 3b c0 89 43 34 89 d0 c1 e8 =
+18 31 d0 8b 54 24 04 83 e0 3f 8d 0c 82 8b 03 8b 53 04 85 c0 <89> 02 74 03 8=
+9 50 04 8b 01 85 c0 89 03 74 03 89 58 04 89 19 80
+EIP: [<e0a9a3d2>] nfsd_cache_lookup+0x169/0x2e3 [nfsd] SS:ESP 0068:ddf70f40
+ <6>note: nfsd[2165] exited with preempt_count 1
+
+--=20
+Zan Lynx <zlynx@acm.org>
+
+--=-J7X/cuQXOp3onmdryQe3
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2.2 (GNU/Linux)
+
+iD8DBQBEMysEG8fHaOLTWwgRAsYtAJ9xXZ8L2T5DiOhifw+AMzsOaXyFfwCfeC0s
+QhZXqsK4OpoI/Uar2o03hzU=
+=/s/d
+-----END PGP SIGNATURE-----
+
+--=-J7X/cuQXOp3onmdryQe3--
+
