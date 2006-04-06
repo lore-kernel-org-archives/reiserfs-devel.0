@@ -1,74 +1,55 @@
-From: "Dongxu Ma" <dongxu.ma@gmail.com>
-Subject: script binding for reiserfs?
-Date: Thu, 6 Apr 2006 16:23:52 +0800
-Message-ID: <9bc0d5d20604060123v18c5518cmb072472ec56d8fe0@mail.gmail.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: -- =?iso-8859-1?B?d2FybmluZygidnMtNDQiLCAib3V0?= of =?iso-8859-1?B?bWVtb3J5PyIpOw==?= --[ addendum ]--
+Date: Thu, 06 Apr 2006 12:42:16 -0400
+Message-ID: <200604061642.k36GgGaI008734@turing-police.cc.vt.edu>
+References: <20060406070742.12163.qmail@mail.httpdnet.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; 
-	boundary="----=_Part_22227_12026026.1144311832346"
-Return-path: <reiserfs-list-return-28454-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_1144341736_3265P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28457-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: Your message of "Thu, 06 Apr 2006 09:07:42 +0200."
+             <20060406070742.12163.qmail@mail.httpdnet.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+To: Roy Lanek <lanek@novenine.com>
+Cc: reiserfs-list@namesys.com
 
-------=_Part_22227_12026026.1144311832346
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+--==_Exmh_1144341736_3265P
+Content-Type: text/plain; charset=us-ascii
 
-Hi all,
+On Thu, 06 Apr 2006 09:07:42 +0200, Roy Lanek said:
 
-As reiserfs more and more popular, is there any binding package for use in
-script languages? I did a search on Google and nothing found.
-Curently I am thinking about writing a binding for Perl, which can offer:
-1) script-level operation against reiserfs
-2) DBI && DBD for reiserfs binding to treat the fs as a database. My aim is
-constructing a mid-and-small wiki directly on reiserfs without employing an=
-y
-real database
+> the freezing, for once. The system is otherwise DECENTLY
+> usable really, provided one does not start to use the
+> GIMP, Open Office or similar. 
 
-However, after some seeking on source. I got several issues:
-1) is there any so-called official userspace api exported?
-On gentoo there is a package named progsreiserfs introducing an api set
-under /usr/include/reiserfs, but I am not very sure if it is stable and the
-project is still alive.
+You have much lower standards of usability than many of us.
 
-2) regarding reiser3, where could I start to port? since exporting somethin=
-g
-in kernelspace is quite risky.
+"Client 2: I don't know we need to worry too much about strengthening that.
+After all, these are not meant to be luxury flats.
 
-Any advice and hint?
+Client 1: Absolutely. If we make sure the tenants are of light build and
+relatively sedentary and if the weather's on our side, I think we have a winner
+here."
+			-- Monty Python, the Architect sketch.
 
---
-Cheers, Dongxu
-__END__
-dongxu.wordpress.com
-search.cpan.org/~dongxu
 
-------=_Part_22227_12026026.1144311832346
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
-Hi all,<br><br>As reiserfs more and more popular, is there any binding pack=
-age for use in script languages? I did a search on Google and nothing found=
-.<br>Curently I am thinking about writing a binding for Perl, which can off=
-er:
-<br>1) script-level operation against reiserfs<br>2) DBI &amp;&amp; DBD for=
- reiserfs binding to treat the fs as a database. My aim is constructing a m=
-id-and-small wiki directly on reiserfs without employing any real database
-<br><br>However, after some seeking on source. I got several issues:<br>1) =
-is there any so-called official userspace api exported? <br>On gentoo there=
- is a package named progsreiserfs introducing an api set under /usr/include=
-/reiserfs, but I am not very sure if it is stable and the project is still =
-alive.
-<br><br>2) regarding reiser3, where could I start to port? since exporting =
-something in kernelspace is quite risky. <br><br>Any advice and hint?<br cl=
-ear=3D"all"><br>-- <br>Cheers, Dongxu<br>__END__<br><a href=3D"http://dongx=
-u.wordpress.com">
-dongxu.wordpress.com</a><br><a href=3D"http://search.cpan.org/~dongxu">sear=
-ch.cpan.org/~dongxu</a>
 
-------=_Part_22227_12026026.1144311832346--
+--==_Exmh_1144341736_3265P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.3 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFENUTocC3lWbTT17ARAiG3AJ0UK40lCjXngx9+cevQRkt5gTMTpgCgnymS
+VWcCbMd8QMJK3RQH/4VPKu0=
+=LjmR
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1144341736_3265P--
