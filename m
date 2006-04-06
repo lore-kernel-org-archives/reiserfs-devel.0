@@ -1,78 +1,43 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: -- warning("vs-44", "out of memory?");
-Date: Thu, 06 Apr 2006 11:12:26 +0400
-Message-ID: <1144307546.6301.35.camel@tribesman.namesys.com>
-References: <20060406064132.11477.qmail@mail.httpdnet.com>
+From: Brian Uhrain <buhrain@rosettastone.com>
+Subject: Re: can anybody check that the attached patch eliminates reiser4
+ compilation warnings on 64bit platforms?
+Date: Thu, 06 Apr 2006 08:51:26 +0100
+Message-ID: <4434C87E.1040308@rosettastone.com>
+References: <200604061120.37578.zam@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28452-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28453-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060406064132.11477.qmail@mail.httpdnet.com>
+In-Reply-To: <200604061120.37578.zam@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Roy Lanek <lanek@novenine.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Alexander Zarochentsev <zam@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Hello
+Hello,
 
-On Thu, 2006-04-06 at 06:41 +0000, Roy Lanek wrote:
-> There might be something to debug around: 
-> 
->    warning("vs-44", "out of memory?"); 
-> 
->    line 2674 of /.../linux/fs/reiser4/plugin/file/file.c 
-> 
-> In fact, I just have seen a long, unterminated series of
-> reiser4-out-of-memory warnings in my logs when my box
-> has started to freeze ... till it has frozen completely
-> several minutes later. 
-> 
-> Unfortunately I have lost all the logs (see below) ... I
-> am sad for the #---- cut out --- thing that I have seen
-> and can't reproduce; I had to reboot and did not want to
-> write down by hand the few items that were visible trough
-> the few overlapped xterms (+ elvis). 
-> 
-> Don't worry, it will happen again enough soon: if you say
-> that it makes sense, I will manage to not be caught by
-> surprise again, will try to save the logs immediately,
-> when the system starts to freeze. 
-> 
+Alexander Zarochentsev wrote:
+> would you please help to check the attached patch (for 2.6.17-rc1-mm1) 
+> because our Alpha does not want to boot now.
 
-Yes, please so because it is very likely that "vs-44" was preceded by
-another log record which showed the real crash reason.
+I'm not sure what the last kernel version you had booting was (or what 
+the error is now the your Alpha system does not want to boot), but I 
+recently discovered a problem with kernels booting on my Alpha that was 
+introduced in one of the 2.6.16-rc's.  Yesterday I was able to track 
+down and squash the bug, and submitted my patch (two versions, one for 
+2.6.16.1 and the other for 2.6.17-rc1) to the LKML.  After fixing the 
+issue with CPU initialization, which looks like it would affect any 
+Alpha system as it was a case of things changing/being added in all of 
+the other architectures but not for the Alpha architecture, the system 
+has been running fine with a 2.6.16.1 kernel and reiser4 root 
+filesystem. :)  You can find my email with the patch at 
+http://lkml.org/lkml/mbox/2006/4/5/69
 
-> OK, here a bit more context: 
-> 
-> ** kernel (... uname): 
-> 
->    2.6.16.1-grsec #3 Wed Apr 5 22:46:36 WIT 006 i586 pentium
->    i386 GNU/Linux 
-> 
->    compiled without debug support for reiser4 
-> 
->    vanilla patches reiser4-for-2.6.16-1
->    + grsecurity-2.1.9-2.6.16.1-200604041154 
-> 
-> ** runit-1.4.1 + socklog-2.1.0 
-> 
-> ** Slackware current, i.e., gcc 3.4.6 
-> 
-> ** a P166/32 Mb + non SCSI HDs. (It works, I swear, and
-> well too!) 
-> 
-> 
-> Cheers, 
-> 
-> /Roy Lanek (West Sumatra) 
-> 
->  --
-> ########################       tak ada gading yang tak retak
-> ##### . slackware ######   there are no ivory that is not cracked
-> ##### +-----linux ######     [nothing is perfect in this world]
-> ########################
-> 
+  - Brian
 
+
+BTW, your patch to silence the printf-style format string argument 
+warnings looks fine to me. :)
