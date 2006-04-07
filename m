@@ -1,55 +1,39 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: -- =?iso-8859-1?B?d2FybmluZygidnMtNDQiLCAib3V0?= of =?iso-8859-1?B?bWVtb3J5PyIpOw==?= --[ addendum ]--
-Date: Thu, 06 Apr 2006 12:42:16 -0400
-Message-ID: <200604061642.k36GgGaI008734@turing-police.cc.vt.edu>
-References: <20060406070742.12163.qmail@mail.httpdnet.com>
+From: "Sidney Almeida" <sidneylab@googlemail.com>
+Subject: fsck
+Date: Fri, 7 Apr 2006 21:00:19 +0100
+Message-ID: <96610a2a0604071300h24426350m98fd60bfbf53e8ff@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1144341736_3265P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28457-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_10944_16062099.1144440019920"
+Return-path: <reiserfs-list-return-28458-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Thu, 06 Apr 2006 09:07:42 +0200."
-             <20060406070742.12163.qmail@mail.httpdnet.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Roy Lanek <lanek@novenine.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com, list@namesys.com
 
---==_Exmh_1144341736_3265P
-Content-Type: text/plain; charset=us-ascii
+------=_Part_10944_16062099.1144440019920
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-On Thu, 06 Apr 2006 09:07:42 +0200, Roy Lanek said:
+Hi there,
 
-> the freezing, for once. The system is otherwise DECENTLY
-> usable really, provided one does not start to use the
-> GIMP, Open Office or similar. 
+Can please, tell me the commands to repair the fsck?
 
-You have much lower standards of usability than many of us.
+Then to display the graphic screen:
 
-"Client 2: I don't know we need to worry too much about strengthening that.
-After all, these are not meant to be luxury flats.
+Regards,
 
-Client 1: Absolutely. If we make sure the tenants are of light build and
-relatively sedentary and if the weather's on our side, I think we have a winner
-here."
-			-- Monty Python, the Architect sketch.
+Sidney
 
+------=_Part_10944_16062099.1144440019920
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
+Hi there,<br><br>Can please, tell me the commands to repair the fsck?<br><b=
+r>Then to display the graphic screen:<br><br>Regards,<br><br>Sidney<br>
 
-
---==_Exmh_1144341736_3265P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.3 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFENUTocC3lWbTT17ARAiG3AJ0UK40lCjXngx9+cevQRkt5gTMTpgCgnymS
-VWcCbMd8QMJK3RQH/4VPKu0=
-=LjmR
------END PGP SIGNATURE-----
-
---==_Exmh_1144341736_3265P--
+------=_Part_10944_16062099.1144440019920--
