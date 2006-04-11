@@ -1,40 +1,75 @@
-From: Michael Weissenbacher <webmaster@dermichi.com>
-Subject: Re: reiser4 bug
-Date: Tue, 11 Apr 2006 10:27:31 +0200
-Message-ID: <443B6873.8070506@dermichi.com>
-References: <20060410222805.d2a7074aeb6533c31cef74e88f6c8b5a.9598966e31.wbe@email.secureserver.net> <200604110954.29243.zam@namesys.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: reiserfs max file test
+Date: Tue, 11 Apr 2006 12:43:50 +0400
+Message-ID: <1144745030.6188.20.camel@tribesman.namesys.com>
+References: <bfe179c00604101134k4663c745qf39cb1d576db702d@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28474-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28475-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200604110954.29243.zam@namesys.com>
-Sender: mbox-dermichi@firestarter.dermichi.com
+In-Reply-To: <bfe179c00604101134k4663c745qf39cb1d576db702d@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
-Cc: Alexander Zarochentsev <zam@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Dan Sheffner <dsheffner@gmail.com>
+Cc: reiserfs-list@namesys.com
 
-Hi,
-> it is known problem. Fixed in 2.6.17-rc1-mm2 
-> (reiser4-have-get_exclusive_access-restart-transaction.patch).
-as i've been burned by this bug, too i would suggest making a new patch 
-for 2.6.16 including
-reiser4-have-get_exclusive_access-restart-transaction.patch
-or at least put a warning there that the version is unstable. i'm sure 
-most people go straight for the vanilla kernel patch and don't bother 
-with mm-kernels. this puts reiser4 in a bad light imo.
+Hello
 
-kind regards,
-Michael
--- 
-/============================================================\
-|       Michael Weissenbacher <webmaster@dermichi.com>       |
-|                  http://www.dermichi.com/                  |
-|       Email users are divided into two classes;            |
-|       1) Those who have effective spam-blocking            |
-|       2) Those who wish they did                           |
-\============================================================/
+On Mon, 2006-04-10 at 13:34 -0500, Dan Sheffner wrote:
+> Hello All,
+> 
+>  
+> I'm trying to find out the number of files that reiserfs can support
+> in a single folder.  I know that you web site says about 1.2 million
+> files without collision, but I have written a small program to create
+> files in order and so far I have been able to create about 10 million
+> files in one directory.  Can you explain collision more? 
+
+Everything depends on names of files you create. Reiserfs calculates a
+key for each directory entry based on a file name. Currently a directory
+can not have more than 128 names which identical keys. Probably in your
+test names are such that the problem did not come up yet on that amount
+of files.
+
+> Here is the program I used below to test my theory.  I echo out hello
+> 10 times to each file to give some size. My linux distro is GENTOO
+> 2006.0 version and I'm running kernel 2.16.15
+>  
+>  
+> #!/bin/bash 
+> 
+> LIMIT=10000000 # Upper limit of 10 million files 
+> echo 
+> echo "creating $LIMIT files for test" 
+> a=0 
+> 
+> while [ $a -le "$LIMIT" ] 
+> do 
+> echo $a 
+> a=$(($a+1)) 
+> touch /home/thesheff17/installServer/file/file$a.txt 
+> echo "HELLO" >> /home/thesheff17/installServer/file/file$a.txt 
+> echo "HELLO" >> /home/thesheff17/installServer/file/file$a.txt 
+> echo "HELLO" >> /home/thesheff17/installServer/file/file$a.txt 
+> echo "HELLO" >> /home/thesheff17/installServer/file/file$a.txt 
+> echo "HELLO" >> /home/thesheff17/installServer/file/file$a.txt 
+> echo "HELLO" >> /home/thesheff17/installServer/file/file$a.txt 
+> echo "HELLO" >> /home/thesheff17/installServer/file/file$a.txt 
+> echo "HELLO" >> /home/thesheff17/installServer/file/file$a.txt 
+> echo "HELLO" >> /home/thesheff17/installServer/file/file$a.txt 
+> echo "HELLO" >> /home/thesheff17/installServer/file/file$a.txt 
+> echo "HELLO" >> /home/thesheff17/installServer/file/file$a.txt 
+> done
+>  
+>  
+> Below is the find command that tells me how many files are in the
+> directory.  
+>  
+> production / # find /home/thesheff17/installServer
+> /file/ \! -type d | wc -l
+> 10000001
+> production / #
 
