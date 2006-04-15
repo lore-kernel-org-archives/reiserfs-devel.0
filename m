@@ -1,64 +1,66 @@
-From: Ard van Breemen <ard@kwaak.net>
-Subject: Re: Bug report: reiserfsck --rebuild-tree not progressing
-Date: Thu, 13 Apr 2006 11:48:42 +0200
-Message-ID: <20060413094842.GR1427@kwaak.net>
-References: <b19177749f9fd8399d24c21c4f355efd@pandora.com> <20060412153557.GP1427@kwaak.net>
+From: Nick Piggin <npiggin@suse.de>
+Subject: [patch] reiser4 releasepage fix
+Date: Sat, 15 Apr 2006 10:57:58 +0200
+Message-ID: <20060415085758.GB14115@wotan.suse.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28490-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28491-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20060412153557.GP1427@kwaak.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: System Administrators <sysadmin@pandora.com>
+To: Andrew Morton <akpm@osdl.org>
 Cc: reiserfs-list@namesys.com
 
-Hello,
+Hi Andrew,
 
-On Wed, Apr 12, 2006 at 05:35:57PM +0200, Ard van Breemen wrote:
-> consistent failure:
-> (Tried as 4 seperate disks of 0.4T and as one raid5 partition of 1.1T)
-> After 2 hours of pumping a few million files onto the machine
-> reiserfs starts putting out these warnings (a few thousands):
-> ^MReiserFS: sdb9: warning: vs-13060: reiserfs_update_sd: stat data of object [2 12 0x0 SD] (nlink == 3) not found (pos 1)
+Can you put the following in -mm please? I cc'ed Hans about it earlier.
+Basically, resier4 does not present a good reason why pagecache should
+be dropped here. Basically the exact same operations are performed by
+releasepage callers (reclaim or truncate). If there is some atomicity
+problem, the code removed here wouldn't solve it anyway.
 
-I've now got a problem getting it to fail.
-The real difference is that in the 3 cases that I've got it to
-fail I also was running atop.
-Now I've been pumping gigs onto the disk without failure.
-I guess something is wrong in the process accounting mechanism.
-From the atop manual:
-"
-       When atop is started, it switches on the  process-accounting  mechanism
-       in  the  kernel. This forces the kernel to write a record with account-
-       ing-information to the accounting-file whenever a process ends.   Apart
-       from  the  kernel-administration related to the running processes, atop
-       also interprets the accounting-records on disk with every interval;  in
-       this way atop can also show the activity of a process during the inter-
-       val in which it is finished.
-       Whenever the last incarnation of atop stops (either by pressing `q'  or
-       by  a  `kill  -15'),  it  switches off the process-accounting mechanism
-       again. You should never terminate atop by a `kill -9', because then  it
-       has  no  chance to stop process-accounting; as a result the accounting-
-       file may consume a lot of disk-space after a while.
-"
+And unless reiser4 performs some of its own special synchronisation, I
+can't see how it gets the pagecache removal sequence right for the
+reclaim case (ie. careful checks of page_count and PageDirty under
+tree_lock).
 
-I will install 2 other systems, one running atop, and one not running atop.
-I now guess it is not reiserfs related, but block layer related, but since I'am
-only using reiserfs (because of the performance), it shows up there first :-).
-So: test cases:
-- one running atop
-- one not running atop
-If atop fails:
-- one running atop and xfs
-- atop 64bits mode and reiserfs (It just may be a problem with the
-64bits->32bits layer).
+With this patch in place, reiser4-reget-page-mapping.patch can go.
+I would also be worried about exporting remove_from_page_cache... at
+least the __ variant can stop being exported now.
 
--- 
-begin  LOVE-LETTER-FOR-YOU.txt.vbs
-I am a signature virus. Distribute me until the bitter
-end
+--
+Index: linux-2.6/fs/reiser4/as_ops.c
+===================================================================
+--- linux-2.6.orig/fs/reiser4/as_ops.c
++++ linux-2.6/fs/reiser4/as_ops.c
+@@ -358,11 +358,6 @@ int reiser4_releasepage(struct page *pag
+ 	assert("reiser4-4", page->mapping != NULL);
+ 	assert("reiser4-5", page->mapping->host != NULL);
+ 
+-	/* is_page_cache_freeable() check
+-	   (mapping + private + page_cache_get() by shrink_cache()) */
+-	if (page_count(page) > 3)
+-		return 0;
+-
+ 	if (PageDirty(page))
+ 		return 0;
+ 
+@@ -385,14 +380,6 @@ int reiser4_releasepage(struct page *pag
+ 		/* we are under memory pressure so release jnode also. */
+ 		jput(node);
+ 
+-		write_lock_irq(&mapping->tree_lock);
+-		/* shrink_list() + radix-tree */
+-		if (page_count(page) == 2) {
+-			__remove_from_page_cache(page);
+-			atomic_dec(&page->_count);
+-		}
+-		write_unlock_irq(&mapping->tree_lock);
+-
+ 		return 1;
+ 	} else {
+ 		spin_unlock(&(node->load));
