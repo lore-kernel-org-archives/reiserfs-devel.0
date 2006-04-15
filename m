@@ -1,120 +1,66 @@
-From: Graham Leggett <minfrin@sharp.fm>
-Subject: Undeletable files...
-Date: Sat, 15 Apr 2006 21:14:31 +0200
-Message-ID: <44414617.8030001@sharp.fm>
+From: Alexander Zarochentsev <zam@namesys.com>
+Subject: Re: Undeletable files...
+Date: Sat, 15 Apr 2006 23:58:07 +0400
+Message-ID: <200604152358.07338.zam@namesys.com>
+References: <44414617.8030001@sharp.fm>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg=sha1; boundary="------------ms000003060602010602080002"
-Return-path: <reiserfs-list-return-28495-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28496-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <44414617.8030001@sharp.fm>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
+Cc: Graham Leggett <minfrin@sharp.fm>
 
---------------ms000003060602010602080002
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+hello
 
-Hi all,
+On Saturday 15 April 2006 23:14, Graham Leggett wrote:
+> Hi all,
+>
+> I am using a reiserfs partition mounted using Redhat Enterprise's
+> 2.6.9-22.0.1.EL (rebuilt), and I have files that refuse to delete:
 
-I am using a reiserfs partition mounted using Redhat Enterprise's 
-2.6.9-22.0.1.EL (rebuilt), and I have files that refuse to delete:
+Are there any reiserfs error messages in the system logs?
 
-[root@gatekeeper proc]# ls -al p*
--rw-r--r--  1 root root 0 Apr 15 20:50 partitions
--rw-r--r--  1 root root 0 Apr 15 20:50 pci
-[root@gatekeeper proc]# rm -f p*
-rm: cannot remove `partitions': Operation not permitted
-rm: cannot remove `pci': Operation not permitted
-[root@gatekeeper proc]# pwd
-/var/lib/diskless/i386/fedora-core-2/root/proc
+> [root@gatekeeper proc]# ls -al p*
+> -rw-r--r--  1 root root 0 Apr 15 20:50 partitions
+> -rw-r--r--  1 root root 0 Apr 15 20:50 pci
+> [root@gatekeeper proc]# rm -f p*
+> rm: cannot remove `partitions': Operation not permitted
+> rm: cannot remove `pci': Operation not permitted
 
-(The files were somehow copied from a /proc tree, they are otherwise 
-normal files).
+It looks as another procfs mount point, 
+can you please do "stat -f partitions" to check that?
 
-For some reason they are not deletable. The partition is mounted like this:
+> [root@gatekeeper proc]# pwd
+> /var/lib/diskless/i386/fedora-core-2/root/proc
+>
+> (The files were somehow copied from a /proc tree, they are otherwise
+> normal files).
+>
+> For some reason they are not deletable. The partition is mounted like
+> this:
+>
+> /dev/sda4 on /var type reiserfs (rw)
+>
+> I tried to find a way of running reiserfsck against the partition,
+> but for some reason this is impossible on a read/write filesystem.
+> The machine is not geographically nearby, so unmounting it is not
+> possible at the moment.
+>
+> Can anyone recommend a way to rescue this filesystem, or am I going
+> to have to make the drive of shame?
+>
+> The reiserfs-utils package I am using is reiserfs-utils-3.6.4-5.
+>
+> Regards,
+> Graham
+> --
 
-/dev/sda4 on /var type reiserfs (rw)
-
-I tried to find a way of running reiserfsck against the partition, but 
-for some reason this is impossible on a read/write filesystem. The 
-machine is not geographically nearby, so unmounting it is not possible 
-at the moment.
-
-Can anyone recommend a way to rescue this filesystem, or am I going to 
-have to make the drive of shame?
-
-The reiserfs-utils package I am using is reiserfs-utils-3.6.4-5.
-
-Regards,
-Graham
---
-
---------------ms000003060602010602080002
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-WkExJTAjBgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1Ro
-YXd0ZSBQZXJzb25hbCBGcmVlbWFpbCBJc3N1aW5nIENBMIGfMA0GCSqGSIb3DQEBAQUAA4GN
-ADCBiQKBgQDEpjxVc1X7TrnKmVoeaMB1BHCd3+n/ox7svc31W/Iadr1/DDph8r9RzgHU5VAK
-MNcCY1osiRVwjt3J8CuFWqo/cVbLrzwLB+fxH5E2JCoTzyvV84J3PQO+K/67GD4Hv0CAAmTX
-p6a7n2XRxSpUhQ9IBH+nttE8YQRAHmQZcmC3+wIDAQABo4GUMIGRMBIGA1UdEwEB/wQIMAYB
-Af8CAQAwQwYDVR0fBDwwOjA4oDagNIYyaHR0cDovL2NybC50aGF3dGUuY29tL1RoYXd0ZVBl
-cnNvbmFsRnJlZW1haWxDQS5jcmwwCwYDVR0PBAQDAgEGMCkGA1UdEQQiMCCkHjAcMRowGAYD
-VQQDExFQcml2YXRlTGFiZWwyLTEzODANBgkqhkiG9w0BAQUFAAOBgQBIjNFQg+oLLswNo2as
-Zw9/r6y+whehQ5aUnX9MIbj4Nh+qLZ82L8D0HFAgk3A8/a3hYWLD2ToZfoSxmRsAxRoLgnSe
-JVCUYsfbJ3FXJY3dqZw5jowgT2Vfldr394fWxghOrvbqNOUQGls1TXfjViF4gtwhGTXeJLHT
-HUb/XV9lTzGCAzswggM3AgEBMGkwYjELMAkGA1UEBhMCWkExJTAjBgNVBAoTHFRoYXd0ZSBD
-b25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFp
-bCBJc3N1aW5nIENBAgMPhM8wCQYFKw4DAhoFAKCCAacwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMDYwNDE1MTkxNDMxWjAjBgkqhkiG9w0BCQQxFgQUSNaM
-NgIDoRrr9r3MEttCPv/Fq1swUgYJKoZIhvcNAQkPMUUwQzAKBggqhkiG9w0DBzAOBggqhkiG
-9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgweAYJKwYB
-BAGCNxAEMWswaTBiMQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcg
-KFB0eSkgTHRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3Vpbmcg
-Q0ECAw+EzzB6BgsqhkiG9w0BCRACCzFroGkwYjELMAkGA1UEBhMCWkExJTAjBgNVBAoTHFRo
-YXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJzb25hbCBG
-cmVlbWFpbCBJc3N1aW5nIENBAgMPhM8wDQYJKoZIhvcNAQEBBQAEggEARrMcqr49qdYO4kk+
-yBWJKapP4dt74L7bP6wwY+Z9YvvfG2NYU6FSEQJW3YE7unnDIizzIQ2C298mz8/fiSHBk6nK
-ix/LDVi2BiNZEnlLwya/zHhZXIOQR66PyFRUo8KTHL5oIYwmOoJ7+Ri83nViEdTu5z/wERvB
-5owHz8jOZqMlKFFy9PA55FFUf4GzBYqcbbA+etG7aRV9XCl2e2EHUSHWtTdy1Dx6O35kC07C
-o/ovQ2Y7FbHGnno7/u4/Xkso8fUYJRDtHoMwbD0a6FKY/XoLCFdPXHuKN9sBr3VpScAukbp1
-WWTrwI9Wug+QtLF4nZ2IXQQRdckhqxmhoaVJkwAAAAAAAA==
---------------ms000003060602010602080002--
+-- 
+Alex.
