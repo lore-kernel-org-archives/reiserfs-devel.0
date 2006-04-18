@@ -1,50 +1,74 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: Undeletable files...
-Date: Tue, 18 Apr 2006 09:53:06 -0400
-Message-ID: <4444EF42.7030507@suse.com>
-References: <44414617.8030001@sharp.fm> <200604152358.07338.zam@namesys.com> <444353D7.5000302@namesys.com> <4442B2D9.6090307@suse.com> <44445AED.6080905@namesys.com> <4443B38D.1010103@suse.com> <44450FCE.4060608@namesys.com> <444471F5.90707@suse.com> <44452C44.9040000@namesys.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: Yet another 2.6.16/reiser4 crash
+Date: Tue, 18 Apr 2006 19:16:58 +0400
+Message-ID: <1145373418.6291.36.camel@tribesman.namesys.com>
+References: <3aa654a40604160035p6c81daf6vf5606c937c97cb0f@mail.gmail.com>
+	 <1145364467.6291.31.camel@tribesman.namesys.com>
+	 <3aa654a40604180639s363f6da9ob2f7440bc0c1691f@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28507-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28508-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44452C44.9040000@namesys.com>
+In-Reply-To: <3aa654a40604180639s363f6da9ob2f7440bc0c1691f@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Alexander Zarochentsev <zam@namesys.com>, reiserfs-list@namesys.com, Graham Leggett <minfrin@sharp.fm>
+To: Avuton Olrich <avuton@gmail.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hello
 
-Hans Reiser wrote:
-> Was this a 3.5/3.6 conversion bug?  I thought we figured it out
-> once....  I just can't remember the figuring....
+On Tue, 2006-04-18 at 06:39 -0700, Avuton Olrich wrote:
+> On 4/18/06, Vladimir V. Saveliev <vs@namesys.com> wrote:
+> > Hello
+> >
+> > On Sun, 2006-04-16 at 00:35 -0700, Avuton Olrich wrote:
+> > > Kernel: 2.6.16.3 with reiser4-for-2.6.16-2
+> > > Compiler: GCC-4.1.0
+> > >
+> > > Notes: This caused the computer to not allow login, refuse to route
+> > > network stuff, though I could see kernel messages still coming through
+> > > (such as network traffic trying to get through).
+> > >
+> > > Any questions please ask. Thanks
+> > >
+> >
+> > can you find a way to reproduce this bug reliably?
+> 
+> Sorry, I can't. This is actually a semi-production machine, which had
+> been up from April 11th 5:35-April 15 22:58:32,  it has since been
+> reverted back to 2.6.15.7-reiser4. Although I should have mentioned
+> the only thing that is out of the ordinary about ecasound, which is
+> referenced in the oops, is that is runs at SCHED_FIFO:50. That process
+> runs 24 hours then is replaced by a new process (same program,
+> different output filename) that runs another 24 hours, etc...
+> 
+> The write barrier got disabled on Apr 16 at 00:36:
+> Apr 16 00:36:53 shapeshifter <4>reiser4[rsync(9828)]:
+> disable_write_barrier
+> (/usr/src/linux-stable/fs/reiser4/wander.c:233)[zam-1055]:
+> Apr 16 00:36:53 shapeshifter WARNING: disabling write barrier
+> 
+> If you come up with something for me to test I will during the weekend.
+> 
 
-Oh ok, I see where you're going with it. There was the bug where the
-inode attribute bit in the super would claim that inode attribute were
-valid and then cause problems when they were enabled by default. That
-patch wasn't in mainline until 2.6.12.
+we hope to release quite substantial changes soon. Unfortunately, it is
+not yet well debugged.
 
-The kernel in the bug report is 2.6.9 w/ RH patches. I haven't read the
-source, but I doubt they would have backported that bug.
+> While I'm writing and looking through my logs (2.6.15.7-reiser4):
+> Apr 17 12:51:41 shapeshifter <4>reiser4[ent:md0!(1048)]:
+> capture_anonymous_jnodes
+> (/usr/src/linux-stable/fs/reiser4/plugin/file/file.c:1348)[nikita-33281]:
+> Apr 17 12:51:41 shapeshifter WARNING: anonymous jnode in writeback:
+> (13332253 134231)
+> --
 
-At any rate, Graham, can you post your dmesg and the output of "grep
-kernel: /var/log/messages"? If you're seeing unexplained permissions
-errors, I'd like to see the logs as the most likely source is corruption.
+this is safe.
 
-- -Jeff
+> avuton
+> --
+>  Anyone who quotes me in their sig is an idiot. -- Rusty Russell.
+> 
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://enigmail.mozdev.org
-
-iD8DBQFERO9CLPWxlyuTD7IRAk+4AJ99lehSoURYKL9+DeBcLlaWA3rHAgCfdyo/
-DRHDvbfPE7b32m/i8pveoRo=
-=/RXV
------END PGP SIGNATURE-----
