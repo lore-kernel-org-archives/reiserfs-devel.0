@@ -1,74 +1,54 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: Yet another 2.6.16/reiser4 crash
-Date: Tue, 18 Apr 2006 19:16:58 +0400
-Message-ID: <1145373418.6291.36.camel@tribesman.namesys.com>
-References: <3aa654a40604160035p6c81daf6vf5606c937c97cb0f@mail.gmail.com>
-	 <1145364467.6291.31.camel@tribesman.namesys.com>
-	 <3aa654a40604180639s363f6da9ob2f7440bc0c1691f@mail.gmail.com>
+From: "majek" <majekreiser@forest.one.pl>
+Subject: reiserfsck --rebuild-tree failure
+Date: Wed, 19 Apr 2006 17:24:45 +0200 (CEST)
+Message-ID: <51513.89.171.64.46.1145460285.squirrel@forest.one.pl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28508-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-28509-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3aa654a40604180639s363f6da9ob2f7440bc0c1691f@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Avuton Olrich <avuton@gmail.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-Hello
+Hi
 
-On Tue, 2006-04-18 at 06:39 -0700, Avuton Olrich wrote:
-> On 4/18/06, Vladimir V. Saveliev <vs@namesys.com> wrote:
-> > Hello
-> >
-> > On Sun, 2006-04-16 at 00:35 -0700, Avuton Olrich wrote:
-> > > Kernel: 2.6.16.3 with reiser4-for-2.6.16-2
-> > > Compiler: GCC-4.1.0
-> > >
-> > > Notes: This caused the computer to not allow login, refuse to route
-> > > network stuff, though I could see kernel messages still coming through
-> > > (such as network traffic trying to get through).
-> > >
-> > > Any questions please ask. Thanks
-> > >
-> >
-> > can you find a way to reproduce this bug reliably?
-> 
-> Sorry, I can't. This is actually a semi-production machine, which had
-> been up from April 11th 5:35-April 15 22:58:32,  it has since been
-> reverted back to 2.6.15.7-reiser4. Although I should have mentioned
-> the only thing that is out of the ordinary about ecasound, which is
-> referenced in the oops, is that is runs at SCHED_FIFO:50. That process
-> runs 24 hours then is replaced by a new process (same program,
-> different output filename) that runs another 24 hours, etc...
-> 
-> The write barrier got disabled on Apr 16 at 00:36:
-> Apr 16 00:36:53 shapeshifter <4>reiser4[rsync(9828)]:
-> disable_write_barrier
-> (/usr/src/linux-stable/fs/reiser4/wander.c:233)[zam-1055]:
-> Apr 16 00:36:53 shapeshifter WARNING: disabling write barrier
-> 
-> If you come up with something for me to test I will during the weekend.
-> 
+I have problem while rebuilding reiserfs (standing on lvm).
+Lvm contains 3*400GB drives, ata. The device was 95% full - about 1.1TB.
 
-we hope to release quite substantial changes soon. Unfortunately, it is
-not yet well debugged.
+[root@xxxx:/dev/devil-linux]# reiserfsck -y --rebuild-tree data
+reiserfsck 3.6.19 (2003 www.namesys.com)
+Pass 0:
+Loading on-disk bitmap .. ok, 285948016 blocks marked used
+Skipping 17152 blocks (super block, journal, bitmaps) 285930864 blocks
+will be read
+0%...             left 0, 14102 /seccc
+"r5" hash is selected
+Flushing..finished
+Read blocks (but not data blocks) 285930864
+Leaves among those 369793
+Objectids found 1204513
 
-> While I'm writing and looking through my logs (2.6.15.7-reiser4):
-> Apr 17 12:51:41 shapeshifter <4>reiser4[ent:md0!(1048)]:
-> capture_anonymous_jnodes
-> (/usr/src/linux-stable/fs/reiser4/plugin/file/file.c:1348)[nikita-33281]:
-> Apr 17 12:51:41 shapeshifter WARNING: anonymous jnode in writeback:
-> (13332253 134231)
-> --
+Pass 1 (will try to insert 369793 leaves):
+Looking for allocable blocks .. finished
+0%....20%....40%....60%...pass1.c 424 pass1_correct_leaf  left 100292, 494
+/sec
+pass1_correct_leaf: block 195393764, item 0, pointer 42: The wrong pointer
+(3960248820) in the file [1833688 1833834]. Must be fixed on pass0.
+zsh: abort      reiserfsck -y --rebuild-tree -l /root/logggg data
 
-this is safe.
 
-> avuton
-> --
->  Anyone who quotes me in their sig is an idiot. -- Rusty Russell.
-> 
+This lvm was created and worked on devil-linux 1.2.5 with kernel 2.4.30.
+And unsuccessful rebuild was done on debian-stable with custom 2.6.17-rc1.
+
+The biggest problem is that now, after unsuccessful rebuild, we can't
+mount this device. Are there any tools that can access this device?
+(reiserfsdump exists?)
+
+majek.
+
+
+
 
