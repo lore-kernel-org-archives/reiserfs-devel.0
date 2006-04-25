@@ -1,65 +1,80 @@
-From: Andrew Morton <akpm@osdl.org>
-Subject: Re: [PATCH] Fix reiserfs deadlock
-Date: Fri, 21 Apr 2006 15:19:22 -0700
-Message-ID: <20060421151922.7a4f9986.akpm@osdl.org>
-References: <20060421170030.GB8151@atrey.karlin.mff.cuni.cz>
+From: John McMonagle <johnm@advocap.org>
+Subject: --rebuild-tree fails
+Date: Tue, 25 Apr 2006 12:48:33 -0500
+Message-ID: <444E60F1.5030602@advocap.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28521-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28522-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060421170030.GB8151@atrey.karlin.mff.cuni.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jan Kara <jack@suse.cz>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Jan Kara <jack@suse.cz> wrote:
->
-> reiserfs_cache_default_acl() should return whether we successfully found the
-> acl or not. We have to return correct value even if reiserfs_get_acl() returns
-> error code and not just 0. Otherwise callers such as reiserfs_mkdir() can
-> unnecessarily lock the xattrs and later functions such as reiserfs_new_inode()
-> fail to notice that we have already taken the lock and try to take it again
-> with obvious consequences.
-> 
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> 
-> diff -rupX /home/jack/.kerndiffexclude linux-2.6.5-SLES9_SP3_BRANCH/fs/reiserfs/xattr_acl.c linux-2.6.5-SLES9_SP3_BRANCH-1-reiser_xattr_fix/fs/reiserfs/xattr_acl.c
-> --- linux-2.6.5-SLES9_SP3_BRANCH/fs/reiserfs/xattr_acl.c	2006-01-21 03:02:06.000000000 +0100
-> +++ linux-2.6.5-SLES9_SP3_BRANCH-1-reiser_xattr_fix/fs/reiserfs/xattr_acl.c	2006-01-21 09:09:04.000000000 +0100
-> @@ -410,8 +410,10 @@ reiserfs_cache_default_acl (struct inode
->          acl = reiserfs_get_acl (inode, ACL_TYPE_DEFAULT);
->          reiserfs_read_unlock_xattrs (inode->i_sb);
->          reiserfs_read_unlock_xattr_i (inode);
-> -        ret = acl ? 1 : 0;
-> +	if (!acl || IS_ERR(acl))
-> +		return 0;
->          posix_acl_release (acl);
-> +	ret = 1;
->      }
->  
->      return ret;
+This on debian sarge.
+Partitiion in lvm2 on raid1.
+kernel is 2.6.12.5
 
-Your email client did something ghastly to this patch.  Please fix it.
+Ran "reiserfsck -q --rebuild-tree --logfile fix.log /dev/vg1/backups " 3
+times
+twice with sarge version and once with  reiserfsck 3.6.19
+................................................................
+Will rebuild the filesystem (/dev/vg1/backups) tree
+Will put log info to 'fix3.log'
 
-I typed it in again.  While I was there I structured it a bit more nicely.
+Do you want to run this program?[N/Yes] (note need to type Yes if you
+do):Yes
+Replaying journal..
+Reiserfs journal '/dev/vg1/backups' in blocks [18..8211]: 0 transactions
+replayed
+###########
+reiserfsck --rebuild-tree started at Tue Apr 25 10:50:10 2006
+###########
 
---- 25/fs/reiserfs/xattr_acl.c~fix-reiserfs-deadlock	Fri Apr 21 15:15:10 2006
-+++ 25-akpm/fs/reiserfs/xattr_acl.c	Fri Apr 21 15:17:40 2006
-@@ -408,8 +408,9 @@ int reiserfs_cache_default_acl(struct in
- 		acl = reiserfs_get_acl(inode, ACL_TYPE_DEFAULT);
- 		reiserfs_read_unlock_xattrs(inode->i_sb);
- 		reiserfs_read_unlock_xattr_i(inode);
--		ret = acl ? 1 : 0;
--		posix_acl_release(acl);
-+		ret = (acl && !IS_ERR(acl));
-+		if (ret)
-+			posix_acl_release(acl);
- 	}
- 
- 	return ret;
-_
+Pass 0:
+Loading on-disk bitmap .. ok, 22700428 blocks marked used
+Skipping 9610 blocks (super block, journal, bitmaps) 22690818 blocks
+will be read
+0%....20%....40%....60%....80%....100%
+        "r5" hash is selected
+Flushing..finished
+        Read blocks (but not data blocks) 22690818
+                Leaves among those 691256
+                Objectids found 4283061
+
+Pass 1 (will try to insert 691256 leaves):
+Looking for allocable blocks .. finished
+0%....20%....40%....60%....80%....
+The problem has occurred looks like a hardware problem (perhaps
+memory). Send us the bug report only if the second run dies at
+the same place with the same block number.
+
+build_the_tree: Nothing but leaves are expected. Block 44499660 - unknown
+
+Aborted
+.................................................................
+Always died at the same Block.
+
+Log from last run has:
+
+####### Pass 0 #######
+20205564 directory entries were hashed with "r5" hash.
+####### Pass 1 #######
+
+This  is for our backuppc  backup files.
+It would be OK if I lose some files as long as the data structures are
+OK when done.
+Otherwise I'll blow it all away and start over.
+
+Thanks
+
+John
+
+-- 
+John McMonagle
+IT Manager
+Advocap Inc.
+
 
