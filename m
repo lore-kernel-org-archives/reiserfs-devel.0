@@ -1,51 +1,35 @@
-From: Ming Zhang <mingz@ele.uri.edu>
+From: "Gregory Maxwell" <gmaxwell@gmail.com>
 Subject: Re: reiserfs performance on ssd
-Date: Thu, 27 Apr 2006 09:58:54 -0400
-Message-ID: <1146146334.5436.58.camel@localhost.localdomain>
+Date: Thu, 27 Apr 2006 10:28:21 -0400
+Message-ID: <e692861c0604270728p2aa4a4e0i70d1ad43a3da2fcf@mail.gmail.com>
 References: <20060427151655.8b771812.pegasus@nerv.eu.org>
-	 <1146145299.5436.52.camel@localhost.localdomain>
-	 <20060427134837.GB8202@favonius>
-Reply-To: mingz@ele.uri.edu
+	 <20060427134702.GA8202@favonius>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28529-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28530-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060427134837.GB8202@favonius>
+In-Reply-To: <20060427134702.GA8202@favonius>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: sander@humilis.net
-Cc: Jure Pe?ar <pegasus@nerv.eu.org>, reiserfs-list@namesys.com
+Cc: Jure Pe??ar <pegasus@nerv.eu.org>, reiserfs-list@namesys.com
 
-o, yes. thx.
+On 4/27/06, Sander <sander@humilis.net> wrote:
+> > I have a simple solid state disk to play with here.
+> > See http://nerv.eu.org/iram/
+>
+> Interesting review, thanks.
+>
+> To get better reliability you could raid1 them.
+> I guess this is a 'must' anyway when used in servers (just like with
+> harddisks).
+>
+> Have to try this product myself..
 
-
-http://www.anandtech.com/storage/showdoc.aspx?i=2480&p=10
-
-see this review, when copy a large iso file, the speed is still around
-~100MB/s. and this review also use a ASUS A8N motherboard.
-
-so none of these tests can 100% reflect the real performance. we need a
-nice SATA controller and MB here.
-
-Ming
-
-
-On Thu, 2006-04-27 at 15:48 +0200, Sander wrote:
-> Ming Zhang wrote (ao):
-> > read u review. one thing i am not quite understand is the
-> > 
-> > "Numbers speak from themselves. It's interesting to note that all
-> > filesystems top the write speed at ~106MB/s and read speed at
-> > ~125MB/s.  It seem we're hitting 32bit PCI throughput limit here ."
-> > 
-> > since u said the iram use pci slot for power purpose. then where is
-> > this pci slot limit coming from?
-> 
-> The sata controller is on pci. Btw, pci is not a slot per se.
-> 
-> 	Kind regards, Sander
-> 
-
+Because they have no ECC most failures will just be completely silent
+data corruption.
+A sadly useless device.
