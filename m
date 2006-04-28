@@ -1,51 +1,49 @@
-From: PFC <lists@peufeu.com>
+From: Andreas Dilger <adilger@clusterfs.com>
 Subject: Re: reiserfs performance on ssd
-Date: Fri, 28 Apr 2006 09:07:21 +0200
-Message-ID: <op.s8ph2jz5cigqcu@apollo13>
-References: <20060427151655.8b771812.pegasus@nerv.eu.org> <20060427134702.GA8202@favonius> <e692861c0604270728p2aa4a4e0i70d1ad43a3da2fcf@mail.gmail.com> <BAYC1-PASMTP050C1EF12709BADAABFDBEBFBD0@CEZ.ICE> <e692861c0604271025t8b60d9cn9aa47d68de55df5a@mail.gmail.com>
+Date: Fri, 28 Apr 2006 02:20:02 -0600
+Message-ID: <20060428082002.GG6075@schatzie.adilger.int>
+References: <20060427151655.8b771812.pegasus@nerv.eu.org> <20060427134702.GA8202@favonius> <e692861c0604270728p2aa4a4e0i70d1ad43a3da2fcf@mail.gmail.com> <BAYC1-PASMTP050C1EF12709BADAABFDBEBFBD0@CEZ.ICE> <e692861c0604271025t8b60d9cn9aa47d68de55df5a@mail.gmail.com> <op.s8ph2jz5cigqcu@apollo13>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-28539-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28540-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e692861c0604271025t8b60d9cn9aa47d68de55df5a@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <op.s8ph2jz5cigqcu@apollo13>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; delsp="yes"; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: PFC <lists@peufeu.com>
+Cc: reiserfs-list@namesys.com
 
+On Apr 28, 2006  09:07 +0200, PFC wrote:
+> 	While I like the idea, the iram implementation is horrible for 
+> 	various  reasons :
+> 
+> 	- no ECC
 
-	While I like the idea, the iram implementation is horrible for various  
-reasons :
+I don't know why people are so keen on ECC RAM.  Why not just put an extra
+socket on the board and run the RAM in "RAIM" (RAID for Memory) mode?
+The incremental cost of ECC vs. regular RAM is FAR more than the cost
+of just getting the extra stick of RAM.  Also, with RAIM you could even
+hot-swap a failing DIMM, while with ECC you have to take an outage to
+get back to redundancy.
 
-	- no ECC
-	- It uses SATA hence only a very little part of the RAM speed is used,  
-and large latencies are introduced.
-	- I wouldn't trust it for critical data.
+> 	- It uses SATA hence only a very little part of the RAM speed is 
+> 	used,  and large latencies are introduced.
 
-	Then, it would be faster to just add the RAM on the motherboard and  
-create a ramdisk...
+Ah, but if you can connect the RAM to multiple machines, you could at
+least have the hope of hot failover for the storage to another server.
+That isn't something you can do with a bus-attached device.
 
-	Also : THE PCI BUS MUST DIE !
+Even the chance of any recovery is far better with such a setup (i.e.
+plug into another system after motherboard dies), since you can at
+least get access from another machine.
 
-	It's no wonder reiserfs is slower on this thing ; reiserfs is optimized  
-for hard disks which have high seek latencies.
-	For RAM storage, things like hash tables are a lot better than trees,  
-because you don't care about sequential scanning and locality of  
-reference... (as long as the items are a bit larger than a cache line,  
-which is obviously the case here).
-	A filesystem that pauses and thinks for 0.5 ms of CPU time to avoid a 5  
-ms HDD seek time is a good thing, but for SSD storage you want a FS that  
-doesn't think at all.
-	Using ReiserFS on this is like hitting a nail with a screwdriver.
+Cheers, Andreas
+--
+Andreas Dilger
+Principal Software Engineer
+Cluster File Systems, Inc.
 
-	Try tmpfs, I'm curious about the results.
-
-	Crazy idea :
-	- Ask the motherboard manufacturer to stick a battery on the mobo so that  
-the contents of RAM survive reboot
-	- Tweak the BIOS so that RAM isn't cleared at boot
-	- Teach the Kernel to be cautious while booting and not overwrite the  
-previous RAMDISK
-	- You have persistent ramdisk. Stick your reiserfs journal on it, enjoy.
