@@ -1,114 +1,51 @@
-From: Daniel Kasak <dkasak@nusconsulting.com.au>
-Subject: reiser4 problem deleting files / directories
-Date: Fri, 28 Apr 2006 12:16:20 +1000
-Message-ID: <44517AF4.9010405@nusconsulting.com.au>
+From: PFC <lists@peufeu.com>
+Subject: Re: reiserfs performance on ssd
+Date: Fri, 28 Apr 2006 09:07:21 +0200
+Message-ID: <op.s8ph2jz5cigqcu@apollo13>
+References: <20060427151655.8b771812.pegasus@nerv.eu.org> <20060427134702.GA8202@favonius> <e692861c0604270728p2aa4a4e0i70d1ad43a3da2fcf@mail.gmail.com> <BAYC1-PASMTP050C1EF12709BADAABFDBEBFBD0@CEZ.ICE> <e692861c0604271025t8b60d9cn9aa47d68de55df5a@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28538-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-28539-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <e692861c0604271025t8b60d9cn9aa47d68de55df5a@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; format="flowed"; delsp="yes"; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hi all.
 
-I just ran out of space while compiling, and went to delete everything 
-in /var/tmp/portage. I get the error:
+	While I like the idea, the iram implementation is horrible for various  
+reasons :
 
-rm: reading directory 
-`/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2/cut-n-paste-code': 
-Input/output error
-rm: cannot remove directory 
-`/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2': Directory not 
-empty
+	- no ECC
+	- It uses SATA hence only a very little part of the RAM speed is used,  
+and large latencies are introduced.
+	- I wouldn't trust it for critical data.
 
-This is with:
-rm -rf /var/tmp/portage/*
+	Then, it would be faster to just add the RAM on the motherboard and  
+create a ramdisk...
 
-Also, I've got the following in my kernel messages:
+	Also : THE PCI BUS MUST DIE !
 
-reiser4[emerge(11397)]: extent2tail 
-(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-WARNING: Partial conversion of 6903045: 0 of 2: -28
-reiser4[emerge(11397)]: release_unix_file 
-(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-WARNING: Failed to convert in release_unix_file (6903045)
-reiser4[emerge(11397)]: extent2tail 
-(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-WARNING: Partial conversion of 6903078: 0 of 4: -28
-reiser4[emerge(11397)]: release_unix_file 
-(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-WARNING: Failed to convert in release_unix_file (6903078)
-reiser4[emerge(11397)]: extent2tail 
-(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-WARNING: Partial conversion of 6903089: 0 of 3: -28
-reiser4[emerge(11397)]: release_unix_file 
-(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-WARNING: Failed to convert in release_unix_file (6903089)
-reiser4[emerge(11397)]: extent2tail 
-(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-WARNING: Partial conversion of 6903079: 0 of 3: -28
-reiser4[emerge(11397)]: release_unix_file 
-(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-WARNING: Failed to convert in release_unix_file (6903079)
-reiser4[emerge(11397)]: extent2tail 
-(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-WARNING: Partial conversion of 6903062: 0 of 4: -28
-reiser4[emerge(11397)]: release_unix_file 
-(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-WARNING: Failed to convert in release_unix_file (6903062)
-reiser4[emerge(11397)]: extent2tail 
-(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-WARNING: Partial conversion of 6903093: 0 of 3: -28
-reiser4[emerge(11397)]: release_unix_file 
-(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-WARNING: Failed to convert in release_unix_file (6903093)
-reiser4[emerge(11397)]: extent2tail 
-(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-WARNING: Partial conversion of 6903095: 0 of 4: -28
-reiser4[emerge(11397)]: release_unix_file 
-(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-WARNING: Failed to convert in release_unix_file (6903095)
-reiser4[emerge(11397)]: extent2tail 
-(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-WARNING: Partial conversion of 6909813: 0 of 3: -28
-reiser4[emerge(11397)]: release_unix_file 
-(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-WARNING: Failed to convert in release_unix_file (6909813)
-reiser4[emerge(11397)]: extent2tail 
-(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-WARNING: Partial conversion of 6909812: 0 of 4: -28
-reiser4[emerge(11397)]: release_unix_file 
-(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-WARNING: Failed to convert in release_unix_file (6909812)
+	It's no wonder reiserfs is slower on this thing ; reiserfs is optimized  
+for hard disks which have high seek latencies.
+	For RAM storage, things like hash tables are a lot better than trees,  
+because you don't care about sequential scanning and locality of  
+reference... (as long as the items are a bit larger than a cache line,  
+which is obviously the case here).
+	A filesystem that pauses and thinks for 0.5 ms of CPU time to avoid a 5  
+ms HDD seek time is a good thing, but for SSD storage you want a FS that  
+doesn't think at all.
+	Using ReiserFS on this is like hitting a nail with a screwdriver.
 
-These warning seem to be produced at the point where I ran out of space 
-( I see the 'emerge' process mentioned ).
+	Try tmpfs, I'm curious about the results.
 
-After rebooting, I no longer get these kernel messages, however I am 
-still unable to delete the nautilus folder. I still get:
-
-rm: reading directory 
-`/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2/cut-n-paste-code': 
-Input/output error
-rm: cannot remove directory 
-`/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2': Directory not 
-empty
-
-I'd very much prefer it if I didn't have to run fsck.reiser4 on this 
-partition, as it's the root partition on my laptop, and I've had *bad* 
-experiences with data loss after using fsck.resier4 before. Is this my 
-only option?
-
--- 
-Daniel Kasak
-IT Developer
-NUS Consulting Group
-Level 5, 77 Pacific Highway
-North Sydney, NSW, Australia 2060
-T: (+61) 2 9922-7676 / F: (+61) 2 9922 7989
-email: dkasak@nusconsulting.com.au
-website: http://www.nusconsulting.com.au
+	Crazy idea :
+	- Ask the motherboard manufacturer to stick a battery on the mobo so that  
+the contents of RAM survive reboot
+	- Tweak the BIOS so that RAM isn't cleared at boot
+	- Teach the Kernel to be cautious while booting and not overwrite the  
+previous RAMDISK
+	- You have persistent ramdisk. Stick your reiserfs journal on it, enjoy.
