@@ -1,49 +1,118 @@
-From: Andreas Dilger <adilger@clusterfs.com>
-Subject: Re: reiserfs performance on ssd
-Date: Fri, 28 Apr 2006 02:20:02 -0600
-Message-ID: <20060428082002.GG6075@schatzie.adilger.int>
-References: <20060427151655.8b771812.pegasus@nerv.eu.org> <20060427134702.GA8202@favonius> <e692861c0604270728p2aa4a4e0i70d1ad43a3da2fcf@mail.gmail.com> <BAYC1-PASMTP050C1EF12709BADAABFDBEBFBD0@CEZ.ICE> <e692861c0604271025t8b60d9cn9aa47d68de55df5a@mail.gmail.com> <op.s8ph2jz5cigqcu@apollo13>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: reiser4 problem deleting files / directories
+Date: Fri, 28 Apr 2006 12:24:58 +0400
+Message-ID: <1146212698.6288.21.camel@tribesman.namesys.com>
+References: <44517AF4.9010405@nusconsulting.com.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28540-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28541-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <op.s8ph2jz5cigqcu@apollo13>
+In-Reply-To: <44517AF4.9010405@nusconsulting.com.au>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: PFC <lists@peufeu.com>
+To: Daniel Kasak <dkasak@nusconsulting.com.au>
 Cc: reiserfs-list@namesys.com
 
-On Apr 28, 2006  09:07 +0200, PFC wrote:
-> 	While I like the idea, the iram implementation is horrible for 
-> 	various  reasons :
+Hello
+
+On Fri, 2006-04-28 at 12:16 +1000, Daniel Kasak wrote:
+> Hi all.
 > 
-> 	- no ECC
+> I just ran out of space while compiling, and went to delete everything 
+> in /var/tmp/portage. I get the error:
+> 
+> rm: reading directory 
+> `/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2/cut-n-paste-code': 
+> Input/output error
+> rm: cannot remove directory 
+> `/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2': Directory not 
+> empty
+> 
+> This is with:
+> rm -rf /var/tmp/portage/*
+> 
+> Also, I've got the following in my kernel messages:
+> 
+> reiser4[emerge(11397)]: extent2tail 
+> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+> WARNING: Partial conversion of 6903045: 0 of 2: -28
+> reiser4[emerge(11397)]: release_unix_file 
+> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+> WARNING: Failed to convert in release_unix_file (6903045)
+> reiser4[emerge(11397)]: extent2tail 
+> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+> WARNING: Partial conversion of 6903078: 0 of 4: -28
+> reiser4[emerge(11397)]: release_unix_file 
+> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+> WARNING: Failed to convert in release_unix_file (6903078)
+> reiser4[emerge(11397)]: extent2tail 
+> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+> WARNING: Partial conversion of 6903089: 0 of 3: -28
+> reiser4[emerge(11397)]: release_unix_file 
+> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+> WARNING: Failed to convert in release_unix_file (6903089)
+> reiser4[emerge(11397)]: extent2tail 
+> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+> WARNING: Partial conversion of 6903079: 0 of 3: -28
+> reiser4[emerge(11397)]: release_unix_file 
+> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+> WARNING: Failed to convert in release_unix_file (6903079)
+> reiser4[emerge(11397)]: extent2tail 
+> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+> WARNING: Partial conversion of 6903062: 0 of 4: -28
+> reiser4[emerge(11397)]: release_unix_file 
+> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+> WARNING: Failed to convert in release_unix_file (6903062)
+> reiser4[emerge(11397)]: extent2tail 
+> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+> WARNING: Partial conversion of 6903093: 0 of 3: -28
+> reiser4[emerge(11397)]: release_unix_file 
+> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+> WARNING: Failed to convert in release_unix_file (6903093)
+> reiser4[emerge(11397)]: extent2tail 
+> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+> WARNING: Partial conversion of 6903095: 0 of 4: -28
+> reiser4[emerge(11397)]: release_unix_file 
+> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+> WARNING: Failed to convert in release_unix_file (6903095)
+> reiser4[emerge(11397)]: extent2tail 
+> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+> WARNING: Partial conversion of 6909813: 0 of 3: -28
+> reiser4[emerge(11397)]: release_unix_file 
+> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+> WARNING: Failed to convert in release_unix_file (6909813)
+> reiser4[emerge(11397)]: extent2tail 
+> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+> WARNING: Partial conversion of 6909812: 0 of 4: -28
+> reiser4[emerge(11397)]: release_unix_file 
+> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+> WARNING: Failed to convert in release_unix_file (6909812)
+> 
+> These warning seem to be produced at the point where I ran out of space 
+> ( I see the 'emerge' process mentioned ).
+> 
+> After rebooting, I no longer get these kernel messages, however I am 
+> still unable to delete the nautilus folder. I still get:
+> 
+> rm: reading directory 
+> `/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2/cut-n-paste-code': 
+> Input/output error
+> rm: cannot remove directory 
+> `/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2': Directory not 
+> empty
+> 
+> I'd very much prefer it if I didn't have to run fsck.reiser4 on this 
+> partition, as it's the root partition on my laptop, and I've had *bad* 
+> experiences with data loss after using fsck.resier4 before. Is this my 
+> only option?
+> 
 
-I don't know why people are so keen on ECC RAM.  Why not just put an extra
-socket on the board and run the RAM in "RAIM" (RAID for Memory) mode?
-The incremental cost of ECC vs. regular RAM is FAR more than the cost
-of just getting the extra stick of RAM.  Also, with RAIM you could even
-hot-swap a failing DIMM, while with ECC you have to take an outage to
-get back to redundancy.
-
-> 	- It uses SATA hence only a very little part of the RAM speed is 
-> 	used,  and large latencies are introduced.
-
-Ah, but if you can connect the RAM to multiple machines, you could at
-least have the hope of hot failover for the storage to another server.
-That isn't something you can do with a bus-attached device.
-
-Even the chance of any recovery is far better with such a setup (i.e.
-plug into another system after motherboard dies), since you can at
-least get access from another machine.
-
-Cheers, Andreas
---
-Andreas Dilger
-Principal Software Engineer
-Cluster File Systems, Inc.
+Are you able to delete other files/directories?
+If yes, you can probably rename nautilus directory somewhere and forget
+about it.
+But, as long as something started to go wrong - you should find
+possibility to fsck the partition at some time.
 
