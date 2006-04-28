@@ -1,46 +1,54 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: reiser4 problem deleting files / directories
-Date: Fri, 28 Apr 2006 19:23:56 +0400
-Message-ID: <1146237836.6288.32.camel@tribesman.namesys.com>
-References: <44517AF4.9010405@nusconsulting.com.au>
-	 <44523319.4000503@dermichi.com>
+From: "Perry Kundert" <perry.kundert@gmail.com>
+Subject: Re: reiserfs performance on ssd
+Date: Fri, 28 Apr 2006 11:37:40 -0600
+Message-ID: <2f9ccaae0604281037n7d0cf95dx19859da492d5359e@mail.gmail.com>
+References: <20060427151655.8b771812.pegasus@nerv.eu.org>
+	 <20060427134702.GA8202@favonius>
+	 <e692861c0604270728p2aa4a4e0i70d1ad43a3da2fcf@mail.gmail.com>
+	 <BAYC1-PASMTP050C1EF12709BADAABFDBEBFBD0@CEZ.ICE>
+	 <e692861c0604271025t8b60d9cn9aa47d68de55df5a@mail.gmail.com>
+	 <op.s8ph2jz5cigqcu@apollo13>
+	 <20060428082002.GG6075@schatzie.adilger.int>
+Reply-To: perry@kundert.ca
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28545-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28546-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44523319.4000503@dermichi.com>
+In-Reply-To: <20060428082002.GG6075@schatzie.adilger.int>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Michael Weissenbacher <webmaster@dermichi.com>
-Cc: reiserfs-list@namesys.com, Daniel Kasak <dkasak@nusconsulting.com.au>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: PFC <lists@peufeu.com>, reiserfs-list@namesys.com
 
-Hello
+On 4/28/06, Andreas Dilger <adilger@clusterfs.com> wrote:
+> On Apr 28, 2006  09:07 +0200, PFC wrote:
+> >       While I like the idea, the iram implementation is horrible for
+> >       various  reasons :
+> >
+> >       - no ECC
+>
+> I don't know why people are so keen on ECC RAM.  Why not just put an extr=
+a
+> socket on the board and run the RAM in "RAIM" (RAID for Memory) mode?
+> The incremental cost of ECC vs. regular RAM is FAR more than the cost
+> of just getting the extra stick of RAM.  Also, with RAIM you could even
+> hot-swap a failing DIMM, while with ECC you have to take an outage to
+> get back to redundancy.
+>
+    RAID on disks only detects errors when the underlying device
+reports them.  Things like corruption "on the wire" (eg. bad cables)
+are NOT detected.
 
-On Fri, 2006-04-28 at 17:22 +0200, Michael Weissenbacher wrote:
-> Hi,
-> > I just ran out of space while compiling, and went to delete everything 
-> > in /var/tmp/portage. I get the error:
-> > 
-> > rm: reading directory 
-> > `/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2/cut-n-paste-code': 
-> > Input/output error
-> > rm: cannot remove directory 
-> > `/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2': Directory not 
-> > empty
-> just to confirm, i had the same error. i thought it would be unrelated 
-> to the partition filling up but reading your post i do believe otherwise 
-> now. in my case i restored my fs from a recent backup.
-> 
-> could it really be that a released filesystem (reiser4) cannot handle a 
-> partition that's filled up to the max without damaging filesystem 
-> structures? can somebody from the reiser4 crew comment on this?
-> 
-
-some time ago we did such tests and evreything was fine.
-We will do more similar tests however.
- 
+    Similarly, no matter how many redundant sticks of RAM you have,
+you MUST HAVE some hardware, somewhere, doing some computation on all
+the bits flowing by -- even something as simple as a "best 2 of 3"
+comparison -- to enable you to detect bad bits, and lock out and/or
+refresh the bad DIMM.
 
 
+
+--
+    -pjk
