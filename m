@@ -1,118 +1,52 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: reiser4 problem deleting files / directories
-Date: Fri, 28 Apr 2006 12:24:58 +0400
-Message-ID: <1146212698.6288.21.camel@tribesman.namesys.com>
-References: <44517AF4.9010405@nusconsulting.com.au>
+From: Jure =?UTF-8?Q?Pe=C4=8Dar?= <pegasus@nerv.eu.org>
+Subject: Re: reiserfs performance on ssd
+Date: Fri, 28 Apr 2006 14:37:47 +0200
+Message-ID: <20060428143747.69ebb271.pegasus@nerv.eu.org>
+References: <20060427151655.8b771812.pegasus@nerv.eu.org>
+	<20060427134702.GA8202@favonius>
+	<e692861c0604270728p2aa4a4e0i70d1ad43a3da2fcf@mail.gmail.com>
+	<BAYC1-PASMTP050C1EF12709BADAABFDBEBFBD0@CEZ.ICE>
+	<e692861c0604271025t8b60d9cn9aa47d68de55df5a@mail.gmail.com>
+	<op.s8ph2jz5cigqcu@apollo13>
+	<20060428082002.GG6075@schatzie.adilger.int>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28541-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-28543-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44517AF4.9010405@nusconsulting.com.au>
+In-Reply-To: <20060428082002.GG6075@schatzie.adilger.int>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Daniel Kasak <dkasak@nusconsulting.com.au>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="macroman"
+To: reiserfs-list@namesys.com
 
-Hello
-
-On Fri, 2006-04-28 at 12:16 +1000, Daniel Kasak wrote:
-> Hi all.
-> 
-> I just ran out of space while compiling, and went to delete everything 
-> in /var/tmp/portage. I get the error:
-> 
-> rm: reading directory 
-> `/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2/cut-n-paste-code': 
-> Input/output error
-> rm: cannot remove directory 
-> `/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2': Directory not 
-> empty
-> 
-> This is with:
-> rm -rf /var/tmp/portage/*
-> 
-> Also, I've got the following in my kernel messages:
-> 
-> reiser4[emerge(11397)]: extent2tail 
-> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-> WARNING: Partial conversion of 6903045: 0 of 2: -28
-> reiser4[emerge(11397)]: release_unix_file 
-> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-> WARNING: Failed to convert in release_unix_file (6903045)
-> reiser4[emerge(11397)]: extent2tail 
-> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-> WARNING: Partial conversion of 6903078: 0 of 4: -28
-> reiser4[emerge(11397)]: release_unix_file 
-> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-> WARNING: Failed to convert in release_unix_file (6903078)
-> reiser4[emerge(11397)]: extent2tail 
-> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-> WARNING: Partial conversion of 6903089: 0 of 3: -28
-> reiser4[emerge(11397)]: release_unix_file 
-> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-> WARNING: Failed to convert in release_unix_file (6903089)
-> reiser4[emerge(11397)]: extent2tail 
-> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-> WARNING: Partial conversion of 6903079: 0 of 3: -28
-> reiser4[emerge(11397)]: release_unix_file 
-> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-> WARNING: Failed to convert in release_unix_file (6903079)
-> reiser4[emerge(11397)]: extent2tail 
-> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-> WARNING: Partial conversion of 6903062: 0 of 4: -28
-> reiser4[emerge(11397)]: release_unix_file 
-> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-> WARNING: Failed to convert in release_unix_file (6903062)
-> reiser4[emerge(11397)]: extent2tail 
-> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-> WARNING: Partial conversion of 6903093: 0 of 3: -28
-> reiser4[emerge(11397)]: release_unix_file 
-> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-> WARNING: Failed to convert in release_unix_file (6903093)
-> reiser4[emerge(11397)]: extent2tail 
-> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-> WARNING: Partial conversion of 6903095: 0 of 4: -28
-> reiser4[emerge(11397)]: release_unix_file 
-> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-> WARNING: Failed to convert in release_unix_file (6903095)
-> reiser4[emerge(11397)]: extent2tail 
-> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-> WARNING: Partial conversion of 6909813: 0 of 3: -28
-> reiser4[emerge(11397)]: release_unix_file 
-> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-> WARNING: Failed to convert in release_unix_file (6909813)
-> reiser4[emerge(11397)]: extent2tail 
-> (fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
-> WARNING: Partial conversion of 6909812: 0 of 4: -28
-> reiser4[emerge(11397)]: release_unix_file 
-> (fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
-> WARNING: Failed to convert in release_unix_file (6909812)
-> 
-> These warning seem to be produced at the point where I ran out of space 
-> ( I see the 'emerge' process mentioned ).
-> 
-> After rebooting, I no longer get these kernel messages, however I am 
-> still unable to delete the nautilus folder. I still get:
-> 
-> rm: reading directory 
-> `/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2/cut-n-paste-code': 
-> Input/output error
-> rm: cannot remove directory 
-> `/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2': Directory not 
-> empty
-> 
-> I'd very much prefer it if I didn't have to run fsck.reiser4 on this 
-> partition, as it's the root partition on my laptop, and I've had *bad* 
-> experiences with data loss after using fsck.resier4 before. Is this my 
-> only option?
-> 
-
-Are you able to delete other files/directories?
-If yes, you can probably rename nautilus directory somewhere and forget
-about it.
-But, as long as something started to go wrong - you should find
-possibility to fsck the partition at some time.
-
+T24gRnJpLCAyOCBBcHIgMjAwNiAwMjoyMDowMiAtMDYwMApBbmRyZWFzIERpbGdlciA8YWRpbGdl
+ckBjbHVzdGVyZnMuY29tPiB3cm90ZToKCj4gSSBkb24ndCBrbm93IHdoeSBwZW9wbGUgYXJlIHNv
+IGtlZW4gb24gRUNDIFJBTS4gIFdoeSBub3QganVzdCBwdXQgYW4KPiBleHRyYSBzb2NrZXQgb24g
+dGhlIGJvYXJkIGFuZCBydW4gdGhlIFJBTSBpbiAiUkFJTSIgKFJBSUQgZm9yIE1lbW9yeSkKPiBt
+b2RlPyBUaGUgaW5jcmVtZW50YWwgY29zdCBvZiBFQ0MgdnMuIHJlZ3VsYXIgUkFNIGlzIEZBUiBt
+b3JlIHRoYW4KPiB0aGUgY29zdCBvZiBqdXN0IGdldHRpbmcgdGhlIGV4dHJhIHN0aWNrIG9mIFJB
+TS4gIEFsc28sIHdpdGggUkFJTSB5b3UKPiBjb3VsZCBldmVuIGhvdC1zd2FwIGEgZmFpbGluZyBE
+SU1NLCB3aGlsZSB3aXRoIEVDQyB5b3UgaGF2ZSB0byB0YWtlCj4gYW4gb3V0YWdlIHRvIGdldCBi
+YWNrIHRvIHJlZHVuZGFuY3kuCgpJZiBJIHJlbWVtYmVyIGNvcnJlY3RseSwgb2xkIEFscGhhcyB1
+c2VkIHRoaXMgbWV0aG9kIC0gNSBzbG90cyBwZXIgbWVtb3J5IGJhbmsuCgo+IEFoLCBidXQgaWYg
+eW91IGNhbiBjb25uZWN0IHRoZSBSQU0gdG8gbXVsdGlwbGUgbWFjaGluZXMsIHlvdSBjb3VsZCBh
+dAo+IGxlYXN0IGhhdmUgdGhlIGhvcGUgb2YgaG90IGZhaWxvdmVyIGZvciB0aGUgc3RvcmFnZSB0
+byBhbm90aGVyIHNlcnZlci4KPiBUaGF0IGlzbid0IHNvbWV0aGluZyB5b3UgY2FuIGRvIHdpdGgg
+YSBidXMtYXR0YWNoZWQgZGV2aWNlLgoKU0FUQSBkb2Vzbid0IGFsbG93IHlvdSB0byBjb25uZWN0
+IGEgZGV2aWNlIHRvIG11bHRpcGxlIG1hY2hpbmVzIChhdCBsZWFzdCBub3QgeWV0LCB3aG8ga25v
+d3Mgd2hhdCBTQVMgd2lsbCBicmluZyBpbiB0aGUgZnV0dXJlKS4gSWYgeW91IHdhbnQgdG8gaGF2
+ZSBTU0Qgd2l0aCBhYmlsaXR5IHRvIGhhbmcgbXVsdGlwbGUgbWFjaGluZXMgb24gaXQsIHlvdSBo
+YXZlIHRvIGxvb2sgZm9yIGZpYnJlIGNoYW5uZWwgbW9kZWxzIHdoaWNoIGFyZSB3YWF5IHRvIGV4
+cGVuc2l2ZS4KIAo+IEV2ZW4gdGhlIGNoYW5jZSBvZiBhbnkgcmVjb3ZlcnkgaXMgZmFyIGJldHRl
+ciB3aXRoIHN1Y2ggYSBzZXR1cCAoaS5lLgo+IHBsdWcgaW50byBhbm90aGVyIHN5c3RlbSBhZnRl
+ciBtb3RoZXJib2FyZCBkaWVzKSwgc2luY2UgeW91IGNhbiBhdAo+IGxlYXN0IGdldCBhY2Nlc3Mg
+ZnJvbSBhbm90aGVyIG1hY2hpbmUuCgpBbm90aGVyIGV4YW1wbGUgb2YgInJhbSB3aXRoIGJhdHRl
+cnkiIGFyZSB1bWVtIGNhcmRzLCB3aGljaCBhcmUgdmVyeSBkaWZmaWN1bHQgdG8gb2J0YWluLiBC
+dXQgdGhleSBkbyB3b3JrIGF0IHBjaSBidXMgc3BlZWRzLiBMaW51eCBzdXBwb3J0ZCA1NDE1IGFu
+ZCA1NDI1IG1vZGVscy4gSSBtYW5hZ2VkIHRvIGdldCBhIDU0MjAgbW9kZWwsIHdoaWNoIGxvb2tz
+IGxpa2UgaXQgd2FzIG1hZGUgc3BlY2lmZmljYWx5IGZvciBTdW4gYW5kIGRvZXNuJ3Qgd29yayB3
+aXRoIHRoZSBleGlzdGluZyBkcml2ZXIuIEknbSBoYWNraW5nIGl0IGluIG15IHNwYXJlIHRpbWUg
+YW5kIEkgaG9wZSBJIGNhbiBnZXQgaXQgd29ya2luZy4uLgoKLS0gCgpKdXJlIFBlxI1hcgpodHRw
+Oi8vanVyZS5wZWNhci5vcmcKCg==
