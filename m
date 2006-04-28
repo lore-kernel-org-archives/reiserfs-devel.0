@@ -1,50 +1,114 @@
-From: "Gregory Maxwell" <gmaxwell@gmail.com>
-Subject: Re: reiserfs performance on ssd
-Date: Thu, 27 Apr 2006 13:25:49 -0400
-Message-ID: <e692861c0604271025t8b60d9cn9aa47d68de55df5a@mail.gmail.com>
-References: <20060427151655.8b771812.pegasus@nerv.eu.org>
-	 <20060427134702.GA8202@favonius>
-	 <e692861c0604270728p2aa4a4e0i70d1ad43a3da2fcf@mail.gmail.com>
-	 <BAYC1-PASMTP050C1EF12709BADAABFDBEBFBD0@CEZ.ICE>
+From: Daniel Kasak <dkasak@nusconsulting.com.au>
+Subject: reiser4 problem deleting files / directories
+Date: Fri, 28 Apr 2006 12:16:20 +1000
+Message-ID: <44517AF4.9010405@nusconsulting.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-28536-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28538-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <BAYC1-PASMTP050C1EF12709BADAABFDBEBFBD0@CEZ.ICE>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Toby Thain <toby@smartgames.ca>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On 4/27/06, Toby Thain <toby@smartgames.ca> wrote:
-> Sure ECC would be nice, but how does this differ from disk? Silent
-> failures are certainly possible.
->
-> The fact that error detection and propagation doesn't really happen
-> in modern disk subsystems is why systems like Sun's ZFS are coming
-> into being.
+Hi all.
 
-Um. Because *every* cosmic ray hit (of which you can expect one to two
-every week or so with 2+ gigs of ram) will result in data corruption.
+I just ran out of space while compiling, and went to delete everything 
+in /var/tmp/portage. I get the error:
 
-It's claimed that disks don't do a great job propagating hard errors,
-which is true to an extent. But they *do* manage to handle soft
-errors. Without the coding gain provided by block ECC your modern high
-density would be nearly useless.
+rm: reading directory 
+`/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2/cut-n-paste-code': 
+Input/output error
+rm: cannot remove directory 
+`/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2': Directory not 
+empty
 
-ZFS wouldn't make iram seriously useable... because AFAIK, raidz will
-not work on a single device... so even if can detect a bad block, it
-can't correct it.
+This is with:
+rm -rf /var/tmp/portage/*
 
-The problem goes further than that because the cost of computing block
-checksums in software will greatly reduce the performance of the fast
-ram device..
+Also, I've got the following in my kernel messages:
 
-Not that better integrity features are bad.. The iron filesystem paper
-has a lot of great suggestions that go beyond what ZFS provides, and
-it would be wonderful to see them in reiser4 someday.  But things need
-to progress one step at a time.
+reiser4[emerge(11397)]: extent2tail 
+(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+WARNING: Partial conversion of 6903045: 0 of 2: -28
+reiser4[emerge(11397)]: release_unix_file 
+(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+WARNING: Failed to convert in release_unix_file (6903045)
+reiser4[emerge(11397)]: extent2tail 
+(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+WARNING: Partial conversion of 6903078: 0 of 4: -28
+reiser4[emerge(11397)]: release_unix_file 
+(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+WARNING: Failed to convert in release_unix_file (6903078)
+reiser4[emerge(11397)]: extent2tail 
+(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+WARNING: Partial conversion of 6903089: 0 of 3: -28
+reiser4[emerge(11397)]: release_unix_file 
+(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+WARNING: Failed to convert in release_unix_file (6903089)
+reiser4[emerge(11397)]: extent2tail 
+(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+WARNING: Partial conversion of 6903079: 0 of 3: -28
+reiser4[emerge(11397)]: release_unix_file 
+(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+WARNING: Failed to convert in release_unix_file (6903079)
+reiser4[emerge(11397)]: extent2tail 
+(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+WARNING: Partial conversion of 6903062: 0 of 4: -28
+reiser4[emerge(11397)]: release_unix_file 
+(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+WARNING: Failed to convert in release_unix_file (6903062)
+reiser4[emerge(11397)]: extent2tail 
+(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+WARNING: Partial conversion of 6903093: 0 of 3: -28
+reiser4[emerge(11397)]: release_unix_file 
+(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+WARNING: Failed to convert in release_unix_file (6903093)
+reiser4[emerge(11397)]: extent2tail 
+(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+WARNING: Partial conversion of 6903095: 0 of 4: -28
+reiser4[emerge(11397)]: release_unix_file 
+(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+WARNING: Failed to convert in release_unix_file (6903095)
+reiser4[emerge(11397)]: extent2tail 
+(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+WARNING: Partial conversion of 6909813: 0 of 3: -28
+reiser4[emerge(11397)]: release_unix_file 
+(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+WARNING: Failed to convert in release_unix_file (6909813)
+reiser4[emerge(11397)]: extent2tail 
+(fs/reiser4/plugin/file/tail_conversion.c:733)[nikita-2282]:
+WARNING: Partial conversion of 6909812: 0 of 4: -28
+reiser4[emerge(11397)]: release_unix_file 
+(fs/reiser4/plugin/file/file.c:2637)[nikita-3233]:
+WARNING: Failed to convert in release_unix_file (6909812)
+
+These warning seem to be produced at the point where I ran out of space 
+( I see the 'emerge' process mentioned ).
+
+After rebooting, I no longer get these kernel messages, however I am 
+still unable to delete the nautilus folder. I still get:
+
+rm: reading directory 
+`/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2/cut-n-paste-code': 
+Input/output error
+rm: cannot remove directory 
+`/var/tmp/portage/nautilus-2.12.2//work/nautilus-2.12.2': Directory not 
+empty
+
+I'd very much prefer it if I didn't have to run fsck.reiser4 on this 
+partition, as it's the root partition on my laptop, and I've had *bad* 
+experiences with data loss after using fsck.resier4 before. Is this my 
+only option?
+
+-- 
+Daniel Kasak
+IT Developer
+NUS Consulting Group
+Level 5, 77 Pacific Highway
+North Sydney, NSW, Australia 2060
+T: (+61) 2 9922-7676 / F: (+61) 2 9922 7989
+email: dkasak@nusconsulting.com.au
+website: http://www.nusconsulting.com.au
