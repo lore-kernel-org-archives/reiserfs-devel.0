@@ -1,94 +1,59 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: quicker mount
-Date: Mon, 01 May 2006 23:47:41 -0400
-Message-ID: <4456D65D.1050607@suse.com>
-References: <20060427143635.GA5949@gelma.net> <4450D85E.50109@suse.com> <4450DBDB.5060209@dermichi.com> <4450E63C.5080306@suse.com> <445671EA.5050305@suse.com>
+From: rvalles <rvalles@es.gnu.org>
+Subject: Re: IO randomly blocked for >1 minute while disk writes still in 2.6.16.1 + 2.6.16-reiser4-1
+Date: Tue, 2 May 2006 19:58:26 +0200
+Message-ID: <23237.9981935539$1146592759@news.gmane.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28552-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28553-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <445671EA.5050305@suse.com>
+Content-Disposition: inline
+Sender: <tux@eww.ath.cx.>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
-Cc: Michael Weissenbacher <webmaster@dermichi.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Mon, May 01, 2006 at 10:54:34AM -0700, Hans Reiser wrote:
+> >Using 2.6.16.11 with reiser4 for 2.6.16-2, things are still very bad.
+> We are trying to get a large patch out the door.    If it does not fix
+> it, please remind me of this, and we will write some (nontrivial) code
+> that I suspect is needed.  Does this freezing happen about every 600
+> seconds?
+>=20
+Not that I'm aware of; the conditions at which "it" (1) happens do feel
+random, but more likely when doing many things in paral=C2=B7lel, and is ea=
+sily
+triggered by just changing something then scrolling up and down or writing
+a file with the VIM editor, as I originally reported; I strongly believe
+it's fsync related. VIM makes a "work copy" of the file being edited,
+and then accesses it with mmap and probably fsyncs changes often, so
+that the least minimum is lost in the event of a power failure or, say, a
+system crash.=20
 
-Jeff Mahoney wrote:
-> Jeff Mahoney wrote:
->>> Michael Weissenbacher wrote:
->>>>> Hi,
->>>>>> It takes so long to mount since ReiserFS reads all the bitmaps before
->>>>>> mounting. The larger the file system, the longer it takes.
->>>>> I wonder why it has to read all of them. Are they stored in RAM after
->>>>> reading? Otherwise I cannot see why it should be done at all.
->>> Yes, they're kept in RAM. You can see the debate on this in the list
->>> archives, but I asked the same questions.
->>>
->>> There is no reason for the bitmaps to be retained in memory, as they're
->>> more rarely used than other metadata which simply relys on the kernel to
->>> cache intelligently.
->>>
->>> The patches are written, they just need some debugging. Unfortunately,
->>> they're kind of on the back burner right now due to other work constraints.
-> 
-> To elaborate, there are places where the bitmap allocation code isn't
-> allowed to sleep. The existing code doesn't sleep, since all the bitmaps
-> are cached in memory. Allowing the bitmap blocks to be dropped from the
-> cache means that sometimes the blocks will need to be re-read, causing a
-> schedule to occur while the data is read from disk.
-> 
-> It is the schedule itself that causes the problem, not the bitmap block
-> getting re-read from disk. By backing out the patch that actually loads
-> the bitmaps dynamically and adding an msleep(30) in the path where the
-> bitmap blocks are used, I can reproduce the same failure as if the
-> blocks were loaded dynamically. In both cases it can take anywhere from
-> a few hours to a few days to trigger on a heavily loaded machine. My
-> test case has been a rather unrealistic 50-process copy-delete loop from
-> /usr/include to a test file system sized to create bitmap contention on
-> a 4 CPU machine with the RAM limited to 128 MB.
-> 
-> At any rate, even with the relative infrequency of the failures, it's
-> still a regression and I wouldn't consider submitting to mainline
-> (again) until they've been fixed.
+I don't use that computer (athlon@600MHz, 768mb) as my desktop anymore (my
+brother does) so it's back with 2.6.12.6 so that it doesn't give him proble=
+ms.
+My current desktop (athlon-xp 1600+ @1400MHz, 512mb) was donated by a friend
+and has a small HD I had on a drawer. It uses XFS; will move it to reiser4 =
+the
+moment I confirm this problem fixed on the other one and buy a bigger disk.
 
-I'm embarrassed to say that after staring at the code all afternoon, my
-analysis was completely wrong. I enabled CONFIG_REISERFS_CHECK to try to
-catch where it was failing earlier, and the code panicked immediately
-when trying to write to the file system. The error was the same as I was
-seeing in tests, just caught earlier.
+The interesting part is that I rely on NFS to access my old home, gentoo's
+portage tree and some other stuff in there, mounted in sync mode, and "it" =
+(1)
+seems to trigger like _each_ time I, for example, download a file with wget
+into there, slowing the download down to no more than 20KB/s (I can get
+400KB/s or so from internet). Supposedly the "sync" mount option is a KEY
+there, because it supposedly causes each write not to report done until it's
+actually done, which means continous fsyncings in the nfs server side.
 
-It turns out that the third patch in the series was flawed and didn't
-treat the v3.[56] bitmap 0 specially. Every other bitmap block on the
-file system is (blocksize * 8 * bitmap number), except bitmap 0 which is
-the block after the superblock. I was mistakenly loading block 0 as the
-bitmap block, which is obviously wrong.
+(1) "it": HD led stays on, gkrellm reports continous writing to disk at
+about half megabyte/sec, I/O is slowed down dramatically (opening a
+Maildir with Mutt takes ages), the condition lasts anywhere from a few
+seconds to a whole minute.
 
-This explains why I couldn't seem to find any problems related to
-scheduling as well as why the panics always involved block 8211. I'll be
-running some overnight stress tests as well as performing a full audit
-of the code which was essentially moved around to ensure more of these
-stupid bugs didn't sneak in.
-
-I'll post the updated patches tomorrow, but they still have the caveat
-that the error handling infrastructure just isn't there yet. I guess
-I'll resurrect those next. :)
-
-- -Jeff
-
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
-
-iD8DBQFEVtZdLPWxlyuTD7IRAhxrAJwIma2pJQ3WkplSftEws8SvlJEfHQCfVh57
-ntK3GxhfHRRdeFQwKjTyK04=
-=DPQv
------END PGP SIGNATURE-----
+--=20
+- Do you study theories? - Oh yes! Theories are fun. - How do you use them?=
+ - When I must act, theories are too slow. To act, I must know.
