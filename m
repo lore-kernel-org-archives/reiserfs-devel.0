@@ -1,62 +1,77 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: resizefs.reiser4 ?
-Date: Thu, 04 May 2006 12:01:45 +0400
-Message-ID: <1146729705.6514.8.camel@tribesman.namesys.com>
-References: <20060502212820.GA5615@raven.londonmet.ac.uk>
+From: Devel <devel@integra-sc.it>
+Subject: reiserfs crash
+Date: Thu, 4 May 2006 19:06:03 +0200
+Message-ID: <20060504190603.0274354b@atena>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28555-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28556-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060502212820.GA5615@raven.londonmet.ac.uk>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ild0012@londonmet.ac.uk
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello
 
-On Tue, 2006-05-02 at 22:28 +0100, ild0012@londonmet.ac.uk wrote:
-> >hello reiserfs team!
-> 
-> i have installed the latest reiser4progs-1.0.5
-> 
-> i couldn't find resizefs.reiser4 anywhere apart of the manpage
-> 
-> does this util exist at all or not ?
-> 
+Hi All,
+i'm testing reiser4 on a linux box kernel 2.6.16. This linux box write a lot of images on the partiion with reiser4 and after delete them.
+After a while all goes wrong and dmesg give me this oops:
 
-it does not exist.
 
-> is it too far from beeing published ?
-> 
+<4>reiser4[image_eraser.pl(2374)]: cbk_level_lookup (fs/reiser4/search.c:971)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+<4>reiser4[image_eraser.pl(2374)]: key_warning
+(fs/reiser4/plugin/file_plugin_common.c:514)[nikita-717]: WARNING:
+Error for inode 47326534 (-5) Unable to handle kernel NULL pointer
+dereference at virtual address 00000000 printing eip:
+00000000
+*pde = 00000000
+Oops: 0000 [#1]
+Modules linked in: bttv video_buf firmware_class compat_ioctl32
+i2c_algo_bit v4l2_common btcx_risc ir_common tveeprom i2c_core videodev
+video CPU:    0 EIP:    0060:[<00000000>]    Not tainted VLI
+EFLAGS: 00010282   (2.6.16.5 #1)
+EIP is at rest_init+0x3feffde0/0x1e
+eax: 00000000   ebx: d80c3d84   ecx: da670afc   edx: c03ee8e0
+esi: 00000000   edi: 00000000   ebp: c01b74f1   esp: d80c3b58
+ds: 007b   es: 007b   ss: 0068
+Process image_eraser.pl (pid: 2374, threadinfo=d80c2000 task=df863a30)
+Stack: <0>c01b74b5 d80c3d84 00000000 00000000 da670afc d80c3e38
+d80c3bbc d80c3bbc c01b746c d80c3c18 c01b750e d80c3d84 00000000 00000000
+da670afc d80c3e38 d80c3bbc c01b77a4 d80c3d84 da670afc d80c3e38 d80c3bbc
+00000002 00000000 Call Trace:
+ [<c01b74b5>] kill_units+0x49/0x53
+ [<c01b746c>] kill_units+0x0/0x53
+ [<c01b750e>] kill_head+0x1d/0x24
+ [<c01b77a4>] prepare_for_compact+0x1e2/0x406
+ [<c01a3c00>] reiser4_get_neighbor+0x75/0x261
+ [<c01903ea>] jload_gfp+0x112/0x124
+ [<c01b79eb>] kill_node40+0x23/0x9a
+ [<c0192582>] lock_carry_node_tail+0x16/0x18
+ [<c0193d76>] carry_cut+0x3f/0x53
+ [<c0191f7c>] carry_on_level+0x30/0xaa
+ [<c0191e5c>] carry+0x79/0x169
+ [<c01960a7>] kill_node_content+0x125/0x13e
+ [<c0196591>] cut_tree_worker_common+0x196/0x2e8
+ [<c01963fb>] cut_tree_worker_common+0x0/0x2e8
+ [<c0196791>] cut_tree_object+0xae/0x149
+ [<c01b6aba>] create_item_node40+0x1fc/0x258
+ [<c0199c4e>] znode_make_dirty+0x40/0x50
+ [<c01abad2>] cut_file_items+0xdb/0x174
+ [<c01abba4>] shorten_file+0x29/0x1d7
+ [<c01ab996>] update_file_size+0x0/0x61
+ [<c01abe0b>] truncate_file_body+0x63/0x6f
+ [<c01ae1ac>] delete_object_unix_file+0x33/0xa6
+ [<c01a23ae>] reiser4_delete_inode+0x83/0x9d
+ [<c01a232b>] reiser4_delete_inode+0x0/0x9d
+ [<c0155796>] generic_delete_inode+0x56/0xb4
+ [<c015597c>] iput+0x63/0x66
+ [<c014e22e>] do_unlinkat+0xb4/0xf9
+ [<c014e2ae>] sys_unlink+0xb/0xe
+ [<c0102977>] sysenter_past_esp+0x54/0x75
+Code:  Bad EIP value.
 
-nobody currently works on it.
-
-> i realy need it to icrease my LVM2 volumes .
-> 
-> 
-> also i had few hangs using patch for 2.14.6 ,
-> now i installed 2.6.16.12 and the patch for 2.6.16 applied to it.
-> 
-
-do hangs appear on 2.6.16? If yes, can you please provide more
-information about how to reproduce them?
-
-> is 2.6.16.12 &patch bettr for the moment ?
-> 
-
-reiser4 patch for 2.6.16 is
-ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.16/reiser4-for-2.6.16-2.patch.gz
-
-> ps:
-> also i want to let you know that TestDisk from cgsecurity.org (partition table recovery utility now supports reiser4 - recovered a couple of my partitions )
-> 
-> thank you for your work.
-> bye.
-> 
-> Ilya d85
-> 
-
+If i reboot the machine this error repeat again!
+i have to do fsck to resolve this error?
+thanks
