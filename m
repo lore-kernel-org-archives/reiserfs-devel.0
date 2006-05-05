@@ -1,68 +1,59 @@
-From: Ingo Bormuth <ibormuth@efil.de>
-Subject: kernel BUG at fs/inode.c:253!
-Date: Fri, 5 May 2006 18:59:17 +0200
-Message-ID: <20060505165916.GA10759@kruemel>
-Reply-To: Ingo Bormuth <ibormuth@efil.de>
+From: Joe Feise <jfeise@feise.com>
+Subject: Re: BUG on reiser4_delete_inode
+Date: Fri, 05 May 2006 11:32:45 -0700
+Message-ID: <20060505183245.5243.qmail@pv105234.reshsg.uci.edu>
+References: <445A623F.6090409@free.fr>
+            <1146836304.6254.26.camel@tribesman.namesys.com>
+            <445B836F.2000702@free.fr>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28570-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28571-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <445B836F.2000702@free.fr>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
 To: reiserfs-list@namesys.com
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>
 
+The patch doesn't seem to have made it to the list. I have run into the s=
+ame=20
+problem...=20
 
-Hi,
+ -Joe=20
 
-while compiling xorg, the parititon ran out of space.
+Laurent Riffard writes:=20
 
-I got  a segmentation fault and quite strange behaviour afterwards:
-Whenever I typed 'sync' or 'unmount ...' the terminal froze for ever.
-Ctrl-C, kill, shutdown, Ctrl-Alt-Del all did not work.
-I played this game until all virtual terminals were locked.
-I had to cold reset the computer. The filesystem seems to be consistent.
-
-dmesg:
-
-[17482033.208000] ------------[ cut here ]------------
-[17482033.208000] kernel BUG at fs/inode.c:253!
-[17482033.208000] invalid opcode: 0000 [#1]
-[17482033.208000] CPU:    0
-[17482033.208000] EIP:    0060:[<c016786d>]    Not tainted VLI
-[17482033.208000] EFLAGS: 00010202   (2.6.16.9-reiser4-r2 #1)
-[17482033.208000] EIP is at clear_inode+0x1d/0xe0
-[17482033.208000] eax: 00000000   ebx: c93f38ac   ecx: 00000000   edx: 00000004
-[17482033.208000] esi: cf5142a0   edi: c93f38ac   ebp: c15f1f58   esp: c15f1f00
-[17482033.208000] ds: 007b   es: 007b   ss: 0068
-[17482033.208000] Process rm (pid: 28093, threadinfo=c15f0000 task=ce7baab0)
-[17482033.208000] Stack: <0>c15f1f58 c93f38ac cf5142a0 c019cb8f 66000000 00000000 00000000 00000000
-[17482033.208000]        c4cbf380 cb81a4cc c93f391c c0168701 c019cb50 c93f38ac c0168524 c93f38ac
-[17482033.208000]        c4889000 c0168723 00000000 c015f6c6 c15f1f58 c4cbf380 cbc8d514 cfff40a0
-[17482033.208000] Call Trace:
-[17482033.208000]  [<c019cb8f>] reiser4_delete_inode+0x3f/0xd0
-[17482033.208000]  [<c0168701>] iput+0x31/0x70
-[17482033.208000]  [<c019cb50>] reiser4_delete_inode+0x0/0xd0
-[17482033.208000]  [<c0168524>] generic_delete_inode+0x54/0xb0
-[17482033.208000]  [<c0168723>] iput+0x53/0x70
-[17482033.208000]  [<c015f6c6>] do_unlinkat+0xc6/0x120
-[17482033.208000]  [<c0161a11>] sys_getdents64+0xc1/0xe0
-[17482033.208000]  [<c0102e99>] syscall_call+0x7/0xb
-[17482033.208000] Code: ff 0d 48 a5 4d c0 5b c3 8d b6 00 00 00 00 56 53 83 ec 04 89 c3 e8 44 9a 24 00 89 d8 e8 dd ac fe ff 8b 93 c4 00 00 00 85 d2 74 08 <0f> 0b fd 00 23
-62 3d c0 8b 83 08 01 00 00 a8 10 75 08 0f 0b ff
-[17482033.208000]  <4><4>reiser4[rm(28093)]: release_unix_file (fs/reiser4/plugin/file/file.c:2670)[vs-44]:
-[17482033.212000] WARNING: out of memory?
-[17482033.212000] <4>reiser4[rm(28093)]: release_unix_file (fs/reiser4/plugin/file/file.c:2670)[vs-44]:
-[17482033.212000] WARNING: out of memory?
-[17482033.212000] <4>reiser4[rm(28093)]: release_unix_file (fs/reiser4/plugin/file/file.c:2670)[vs-44]:
-[17482033.212000] WARNING: out of memory?
-[17482033.212000] <4>reiser4[rm(28093)]: release_unix_file (fs/reiser4/plugin/file/file.c:2670)[vs-44]:
-[17482033.212000] WARNING: out of memory?
-
--- 
-Ingo Bormuth, voicebox & telefax: +49-12125-10226517       '(~o-o~)'
-public key 86326EC9, http://ibormuth.efil.de/contact   --ooO--(.)--Ooo--
-
+>=20
+> Le 05.05.2006 15:38, Vladimir V. Saveliev a =C3=A9crit :
+>> Hello=20
+>>=20
+>> On Thu, 2006-05-04 at 22:21 +0200, Laurent Riffard wrote:
+>>> Hello,=20
+>>>
+>>> I have a small Reiser4 FS (1 GB) which became really unstable since=20
+>>> 2.6.17-rc2-mm1. I managed to get a fully reproductible scenario:=20
+>>>
+>>> sh-3.00# mount /dev/vglinux1/lvkernel2 /mnt/disk=20
+>>>
+>>> ~$ mv /mnt/disk/linux-2.6-stable/arch/i386/kernel/acpi/boot.c /home/l=
+aurent/tmp/
+>>> Erreur de segmentation=20
+>>>
+>>> ------------[ cut here ]------------
+>>> kernel BUG at fs/inode.c:251!
+>>=20
+>> Thanks for the report. The problem is introduced by
+>> ftp://ftp.ru.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.1=
+7-rc2/2.6.17-rc2-mm1/broken-out/radix-tree-direct-data.patch=20
+>>=20
+>> The attached patch should fix the problem, though.
+> =20
+> Ok, this bug seems to be fixed.=20
+>=20
+> Thanks for your quick answer.
+> --=20
+> laurent=20
+>=20
