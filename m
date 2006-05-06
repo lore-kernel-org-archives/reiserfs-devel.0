@@ -1,98 +1,44 @@
-From: Laurent Riffard <laurent.riffard@free.fr>
-Subject: Re: Reiser4 2.6.16.2 / 2.6.17-rc3-mm1 WARNING: out of memory?
-Date: Sat, 06 May 2006 11:51:07 +0200
-Message-ID: <445C718B.1010808@free.fr>
-References: <BAY23-F207CBCCD39A97DB66CAE06A7AA0@phx.gbl> <2c259a8f0605060242l62207c1dif918a380482e5441@mail.gmail.com>
+From: "Joseph Landers" <josephlanders@hotmail.com>
+Subject: Reiser4 2.6.16.2 / 2.6.17-rc3-mm1 WARNING: out of memory?
+Date: Sat, 06 May 2006 16:14:26 +0100
+Message-ID: <BAY23-F20FBA411B5A04A1F6588E0A7AA0@phx.gbl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="------------enigB691590049CE0C7DC6A71970"
-Return-path: <reiserfs-list-return-28577-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28578-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <2c259a8f0605060242l62207c1dif918a380482e5441@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Yien Zheng <esprout@gmail.com>
-Cc: reiserfs-list@namesys.com, Joseph Landers <josephlanders@hotmail.com>
-
---------------enigB691590049CE0C7DC6A71970
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; format=flowed; charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
+To: reiserfs-list@namesys.com
+Cc: laurent.riffard@free.fr, esprout@gmail.com
 
-Le 06.05.2006 11:42, Yien Zheng a =E9crit :
-> I am getting a similar error with gentoo's 2.6.17-rc3-mm1 kernel.  I
-> had to go back to 2.6.17-rc1-mm2 to get reiser4 to work again.
-> 2.6.17-rc2-mm1 had the same issue.
->=20
-> I looked into it, and it appears there were no reiser4 patches between
-> 2.6.17-rc1.mm2 through 2.6.17-rc3-mm1, so if that's really the case,
-> some other patches must have affected reiser4 inadvertantly.
->=20
-> On 5/6/06, Joseph Landers <josephlanders@hotmail.com> wrote:
->> Hi there,
->>
->> I have tried to compile the 2.6.17-rc3-mm1 patchset with kernel
->> 2.6.16.14 by
->> patching in the order specified in patch-series and adding the missing=
+Thanks for the patch, I still get the same (first post) error message, as=20
+before, only when  booting into the reiser4 partition, although now the=20
+system stays up a bit longer before dying, I am able to execute commands an=
+d=20
+run programs for a few minutes before the system halting/becoming=20
+unresponsive
 
->> writeback 1of2 patch that was missing from the ftp. It compiles and I =
-can
->> mount the partition but I get this error if I boot from the partition
->>
->> [4294689.998000] kernel BUG at fs/inode.c:253!
->> [4294689.998000] invalid opcode: 0000 [#1]
->> [4294689.998000] Modules linked in: cpufreq_stats 8139cp 8139too
->> snd_atiixp_modem snd_atiixp snd_ac97_codec snd_ac97_bus psmouse
->> [4294689.998000] CPU:    0
->> [4294689.998000] EIP:    0060:[<c0182df0>]    Tainted: GF     VLI
->> [4294689.998000] EFLAGS: 00010202   (2.6.16.14 #1)
->> [4294689.998000] EIP is at clear_inode+0x20/0xd0
->> [4294689.998000] eax: 00000001   ebx: e56b90ec   ecx: 00000000   edx:
->> e56b90ec
->> [4294689.998000] esi: e64fc5c0   edi: e6ad96e4   ebp: e56b90ec   esp:
->> e6091f08
->> [4294689.998000] ds: 007b   es: 007b   ss: 0068
->> [4294689.998000] Process Xorg (pid: 1151, threadinfo=3De6090000
->> task=3De635ea70)
->> [4294689.998000] Stack: <0>e56b90ec e56b90ec e64fc5c0 c01ebbab e56b90e=
-c
->> 00000003 e56b92ec c01818d6
->> [4294689.998000]        e6ad96e4 00000200 00000000 00000000 c01ebb30
->> e56b90ec c018333b e56b90ec
->> [4294689.998000]        c0182691 e56b9110 00000000 e61a0000 c0179cdc
->> e56b90ec e6ad96e4 e6ad9380
->> [4294689.998000] Call Trace:
->> [4294689.998000]  [<c01ebbab>] reiser4_delete_inode+0x7b/0xf0
->> [4294689.998000]  [<c01818d6>] d_delete+0x86/0xa0
->> [4294689.998000]  [<c01ebb30>] reiser4_delete_inode+0x0/0xf0
->> [4294689.998000]  [<c018333b>] generic_delete_inode+0x5b/0xd0
->> [4294689.998000]  [<c0182691>] iput+0x41/0x80
->> [4294689.998000]  [<c0179cdc>] do_unlinkat+0x10c/0x140
->> [4294689.998000]  [<c0102e3f>] sysenter_past_esp+0x54/0x75
-[snip]
+booting on ext3 and mounting the reiser4 wseems to be fine, it's just=20
+peculiar, or maybe I am not using the reiser4 partition enough to make the =
 
-I guess we were hit by the same bug. You should try to apply=20
-reiser4-radix-tree-direct-data-fix.patch:=20
-http://marc.theaimsgroup.com/?l=3Dreiserfs&m=3D114689474814596 .
-~~
-laurent
+memory problem significant?
 
+I have tried 2.6.16 to check if any bugs were introduced since then and tha=
+t=20
+has the same problem, so I will just have to wait for a patch to fix this=20
+now
 
+I think the problem is in /fs/inode.c which is the kernel inode file, not=20
+reiser4s inode file, maybe reiser4 is sending the wrong delete inode comman=
+d=20
+to it?
 
---------------enigB691590049CE0C7DC6A71970
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+It only seems to segfault once which is peculiar too?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2.2 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+_________________________________________________________________
+FREE pop-up blocking with the new MSN Toolbar =96 get it now!=20
+http://toolbar.msn.click-url.com/go/onm00200415ave/direct/01/
 
-iD8DBQFEXHGTUqUFrirTu6IRAseyAKCht0obJQE8Nso18dmxPbdrADrm6ACeLtIA
-nH+SK5T3/YvASq+FhUxPV8g=
-=21i5
------END PGP SIGNATURE-----
-
---------------enigB691590049CE0C7DC6A71970--
