@@ -1,42 +1,52 @@
-From: PFC <lists@peufeu.com>
-Subject: Re: bad bread
-Date: Tue, 09 May 2006 00:18:32 +0200
-Message-ID: <op.s886w6tlcigqcu@apollo13>
-References: <20060505062801.402beb50.boricua@despiertapr.com> <20060507005618.GA21557@rvalles.homedns.org> <op.s8595uohcigqcu@apollo13> <200605081947.k48JldJd029006@turing-police.cc.vt.edu>
+From: Joe Feise <jfeise@feise.com>
+Subject: Re: reiser4 bug [was Re: 2.6.17-rc3-mm1]
+Date: Mon, 08 May 2006 16:21:59 -0700
+Message-ID: <20060508232159.13550.qmail@pv105234.reshsg.uci.edu>
+References: <20060503210055.GB31048@beardog.cca.cpqcorp.net>
+            <445F64E2.3000902@dgreaves.com>
+            <Pine.LNX.4.61.0605082214581.20743@yvahk01.tjqt.qr>
+            <200605082246.50332@zodiac.zodiac.dnsalias.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-28593-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <200605081947.k48JldJd029006@turing-police.cc.vt.edu>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <200605082246.50332@zodiac.zodiac.dnsalias.org>
+Sender: linux-scsi-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; delsp="yes"; charset="us-ascii"
-To: Valdis.Kletnieks@vt.edu
-Cc: rvalles <rvalles@es.gnu.org>, reiserfs-list@namesys.com, boricua@despiertapr.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Alexander Gran <alex@zodiac.dnsalias.org>
+Cc: Andrew Morton <akpm@osdl.org>, "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
 
+Try the patch from here: 
+http://marc.theaimsgroup.com/?l=reiserfs&m=114709188305181&w=2
+That helped me get past the bootup phase (currently 8 hours uptime). 
 
-> Remember to take backups *anyhow*.  That way, if the RAID controller  
-> dumps cow manure on all the sectors, you won't be saying "Oh, SH*T".
+ -Joe 
 
-	Linux software RAID doesn't need a controller ;)
-	But yes, backups should be done anyways.
+Alexander Gran writes: 
 
-	IMHO, RAID is good, harddisks are less reliable than the linux kernel,  
-the linux RAID layer, and reiserfs.
-
-> Also, note that there exist buggy RAID controllers, where if you are  
-> doing
-> mirroring to 2 disks, and they develop bad blocks at different locations,
-> you can trash the mirror by resynchronizing (basically, you swap out one  
-> of
-> the bad disks, re-sync, it progresses as far as the bad block on the  
-> source
-> for the mirror, and dies).
-
-	Linux RAID has a special option for that : you can trigger a check, which  
-will re-read the entire disks and, if a read error occurs, re-write the  
-failing sector with good data from the other drives in the RAID. The drive  
-with the bad sector will then remap it to another sector.
-
+> Hi all, 
+> 
+> 2.6.17-rc3-mm1 doesn't get up running  here, it bugs around while init runs:
+> I cannot login afterwards, and syslog did not get the bug too. So here are 
+> some poor screenshots from my Treo650 (digicam is broken, sorry..;)
+> EIP is in clear_inode.
+> Trace:
+> reiser4_delete_inode+0x6c/0xd0
+> d_delete+0xf0/0x10f
+> reiser4_delete_inode+0x0/0xd0
+> generic_delete_inode+0x6b/0xfb
+> input+0x5c/0x68
+> do_unlikat+0xd7/0x12c
+> sysenter_past_esp+0x54/0x75
+> __hidp_send_ctrl_message+0xb4/0xfa
+> details:
+> http://zodiac.dnsalias.org/images/1.jpg
+> http://zodiac.dnsalias.org/images/2.jpg
+> http://zodiac.dnsalias.org/images/3.jpg
+> http://zodiac.dnsalias.org/images/4.jpg
+> Kernel config:
+> http://zodiac.dnsalias.org/images/config
+> System is my T40p, as usual. running an up2date debian unstable. 
+> 
+> regards
+> Alex
