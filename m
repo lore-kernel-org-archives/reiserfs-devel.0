@@ -1,55 +1,44 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: bad bread
-Date: Mon, 08 May 2006 15:47:39 -0400
-Message-ID: <200605081947.k48JldJd029006@turing-police.cc.vt.edu>
-References: <20060505062801.402beb50.boricua@despiertapr.com> <20060507005618.GA21557@rvalles.homedns.org>
-            <op.s8595uohcigqcu@apollo13>
+From: "Nate Diller" <nate.diller@gmail.com>
+Subject: Re: Comparing LFS and reiserfs4
+Date: Mon, 8 May 2006 13:08:15 -0700
+Message-ID: <5c49b0ed0605081308q493b54bcsec148ed96528a7d@mail.gmail.com>
+References: <200605071456.12974.kris@koehntopp.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1147117659_2623P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28589-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28590-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Sun, 07 May 2006 10:35:44 +0200."
-             <op.s8595uohcigqcu@apollo13>
+In-Reply-To: <200605071456.12974.kris@koehntopp.de>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: PFC <lists@peufeu.com>
-Cc: rvalles <rvalles@es.gnu.org>, reiserfs-list@namesys.com, boricua@despiertapr.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Kristian Koehntopp <kris@koehntopp.de>
+Cc: reiserfs-list@namesys.com
 
---==_Exmh_1147117659_2623P
-Content-Type: text/plain; charset=us-ascii
+On 5/7/06, Kristian Koehntopp <kris@koehntopp.de> wrote:
+>
+> I am looking for a paper that contrasts the write strategies and organisa=
+tion
+> of reiser4 vs. the old Sprite and BSD Log Based File System (LFS).
+>
+> Does such a thing exist?
 
-On Sun, 07 May 2006 10:35:44 +0200, PFC said:
-> 
-> > In the event of physical HD failure, the procedure goes like this:
-> 
-> 	Get mail saying a HDD is dead. Replace harddisk, resynchronize RAID.
-> 	Use Linux software RAID. Harddrives are cheaper that the time you'll lose  
-> trying to recover your data.
+no, but it should, it would be very interesting.  there are a couple
+out-of-tree LFS implementions for linux floating around, too, that
+could be compared in a set of benchmarks.
 
-Remember to take backups *anyhow*.  That way, if the RAID controller dumps
-cow manure on all the sectors, you won't be saying "Oh, SH*T".
+Reiser4's write strategy could be said to be a combination of LFS and
+WAFL, since the original LFS used inodes and indirect blocks, where
+WAFL and Reiser4 use tree structures.  Reiser4 also does some in-place
+"overwrite" updates, where the data is written to journal blocks for
+atomicity, but is then copied over the old data to optimize read
+performance.  So although Reiser4 always flushes data to a continuous
+stream like LFS, it sometimes does extra work also.
 
-Also, note that there exist buggy RAID controllers, where if you are doing
-mirroring to 2 disks, and they develop bad blocks at different locations,
-you can trash the mirror by resynchronizing (basically, you swap out one of
-the bad disks, re-sync, it progresses as far as the bad block on the source
-for the mirror, and dies).
+The comments at the top of the Reiser4 source files are probably the
+most detailed and up-to-date descriptions of the flush strategy.  it's
+not much, i admit, but it's better than most other linux code...
 
-
---==_Exmh_1147117659_2623P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.3 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFEX6BbcC3lWbTT17ARAvhsAKCCHBHyc20BWDhZoutY79jvcOMtkwCfVVcs
-waIJ5EQx4hAHbKvj/fgmmFY=
-=Y4Tw
------END PGP SIGNATURE-----
-
---==_Exmh_1147117659_2623P--
+NATE
