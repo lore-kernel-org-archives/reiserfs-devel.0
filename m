@@ -1,90 +1,55 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: [BUG] Reiserfs panic while running fsstress due to multiple
-	truncate "safe links" for a file.
-Date: Mon, 08 May 2006 18:14:21 +0400
-Message-ID: <1147097661.7221.62.camel@tribesman.namesys.com>
-References: <445F2C95.4000604@in.ibm.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: bad bread
+Date: Mon, 08 May 2006 15:47:39 -0400
+Message-ID: <200605081947.k48JldJd029006@turing-police.cc.vt.edu>
+References: <20060505062801.402beb50.boricua@despiertapr.com> <20060507005618.GA21557@rvalles.homedns.org>
+            <op.s8595uohcigqcu@apollo13>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1147117659_2623P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28588-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28589-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <445F2C95.4000604@in.ibm.com>
+In-Reply-To: Your message of "Sun, 07 May 2006 10:35:44 +0200."
+             <op.s8595uohcigqcu@apollo13>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Suzuki <suzuki@in.ibm.com>
-Cc: reiserfs-list@namesys.com
+To: PFC <lists@peufeu.com>
+Cc: rvalles <rvalles@es.gnu.org>, reiserfs-list@namesys.com, boricua@despiertapr.com
 
-Hello
+--==_Exmh_1147117659_2623P
+Content-Type: text/plain; charset=us-ascii
 
-On Mon, 2006-05-08 at 17:03 +0530, Suzuki wrote:
-> Resending, since there were no responses to the earlier post.
+On Sun, 07 May 2006 10:35:44 +0200, PFC said:
 > 
-> Hi,
+> > In the event of physical HD failure, the procedure goes like this:
 > 
-> 
-> I was working on a reiserfs panic with 2.6.17-rc3, while running fs
-> stress tests.
-> 
-> The panic message looked like :
-> 
-> " REISERFS: panic (device Null superblock): reiserfs[4248]: assertion
-> !(truncate && (REISERFS_I(inode)->i_flags & i_link_saved_truncate_mask)
-> ) failed at fs/reiserfs/super.c:328:add_save_link: saved link already re
-> exists for truncated inode 13b5a "
-> 
-> ------ Summary of the problem -----------
-> 
-> Reiserfs uses "safe links" ( directory entries with some special key
-> value) to keep track of "truncated" or "unlinked" files to ensure
-> integrity across crashes.
-> 
-> Whenever there is a truncate/unlink on a file, Reiserfs creates a safe
-> link for the same and deletes the same once the operation is complete.
-> If the machine crashes before committing the operation, whenever the fs
-> is mounted next time, the fs will look for the saved links ( easy to
-> find out, since they have special key) and commit the operation that was
-> unfinished.
-> 
-> 
-> The problem here occurs as follows:
-> 
->   Whenever there is an extending DIO write operation, the fs would
-> create a safe link so as to ensure the file size consistent, if there is
-> crash in between the DIO. This will be deleted once the write operation
-> finishes.
-> 
->   If the DIO write happens to go through a "HOLE" region in the file, it
-> will fall into normal "buffered write", which is done  through the
-> address space operations prepare_write() & commit_write(). Now, the
-> prepare_write() might allocate blocks for the file (if needed). So if
-> there is some error at a later point (say ENOSPC) in prepare_write(), we
-> need to discard the allocated blocks. This is done by calling
-> "vmtruncate()" on the file. This call leads to reiserfs specific
-> truncate, which would try to add a save link for the file.
-> 
-> This addition causes a reiserfs_panic, since there is already a "save
-> link" stored for the file.
-> 
-> 
-> I have a simple testcase to reproduce the problem, which does the same 
-> as described above. I will attach it if required.
-> 
-> Any thoughts on how to fix this ?
-> 
+> 	Get mail saying a HDD is dead. Replace harddisk, resynchronize RAID.
+> 	Use Linux software RAID. Harddrives are cheaper that the time you'll lose  
+> trying to recover your data.
 
-Thanks for the report. We will discuss how that should be fixed when may
-holidays are over here.
+Remember to take backups *anyhow*.  That way, if the RAID controller dumps
+cow manure on all the sectors, you won't be saying "Oh, SH*T".
 
-> thanks,
-> 
-> Suzuki K P
-> Linux Technology Centre,
-> IBM Software Labs.
-> 
-> 
-> 
-> 
+Also, note that there exist buggy RAID controllers, where if you are doing
+mirroring to 2 disks, and they develop bad blocks at different locations,
+you can trash the mirror by resynchronizing (basically, you swap out one of
+the bad disks, re-sync, it progresses as far as the bad block on the source
+for the mirror, and dies).
 
+
+--==_Exmh_1147117659_2623P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.3 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFEX6BbcC3lWbTT17ARAvhsAKCCHBHyc20BWDhZoutY79jvcOMtkwCfVVcs
+waIJ5EQx4hAHbKvj/fgmmFY=
+=Y4Tw
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1147117659_2623P--
