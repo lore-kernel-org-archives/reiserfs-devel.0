@@ -1,79 +1,120 @@
-From: Alexander Gran <alex@zodiac.dnsalias.org>
-Subject: Re: reiser4 bug [was Re: 2.6.17-rc3-mm1]
-Date: Tue, 9 May 2006 02:13:03 +0200
-Message-ID: <200605090213.06693@zodiac.zodiac.dnsalias.org>
-References: <20060503210055.GB31048@beardog.cca.cpqcorp.net> <200605082246.50332@zodiac.zodiac.dnsalias.org> <20060508232159.13550.qmail@pv105234.reshsg.uci.edu>
+From: Devel <devel@integra-sc.it>
+Subject: Re: reiserfs crash
+Date: Tue, 9 May 2006 11:16:29 +0200
+Message-ID: <20060509111629.522fdd8f@atena>
+References: <20060504190603.0274354b@atena>
+	<1146811406.6254.14.camel@tribesman.namesys.com>
+	<20060505163449.69e05ee0@atena>
+	<1146901438.6338.23.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart1648581.UYTTP183aE";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <20060508232159.13550.qmail@pv105234.reshsg.uci.edu>
-Sender: linux-scsi-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-28596-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <1146901438.6338.23.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Joe Feise <jfeise@feise.com>
-Cc: Andrew Morton <akpm@osdl.org>, "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
---nextPart1648581.UYTTP183aE
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Il Sat, 06 May 2006 11:43:58 +0400
+"Vladimir V. Saveliev" <vs@namesys.com> scrisse:
 
-Nope, did not work...
-regards
-Alex
+> Hello
+> 
+> On Fri, 2006-05-05 at 16:34 +0200, Devel wrote:
+> > Il Fri, 05 May 2006 10:43:26 +0400
+> > "Vladimir V. Saveliev" <vs@namesys.com> scrisse:
+> > 
+> > > Hello
+> > > 
+> > > On Thu, 2006-05-04 at 19:06 +0200, Devel wrote:
+> > > > Hi All,
+> > > > i'm testing reiser4 on a linux box kernel 2.6.16. This linux box write a lot of images on the partiion with reiser4 and after delete them.
+> > > > After a while all goes wrong and dmesg give me this oops:
+> > > > 
+> > > > 
+> > > > <4>reiser4[image_eraser.pl(2374)]: cbk_level_lookup (fs/reiser4/search.c:971)[vs-3533]:
+> > > > WARNING: Keys are inconsistent. Fsck?
+> > > > <4>reiser4[image_eraser.pl(2374)]: key_warning
+> > > > (fs/reiser4/plugin/file_plugin_common.c:514)[nikita-717]: WARNING:
+> > > > Error for inode 47326534 (-5) Unable to handle kernel NULL pointer
+> 
+> 5 is error code indicating i/o error: disk block could not be read or
+> written from/to a device.
+> That is why I guessed that the harddrive is not reliable.
+> 
 
-Am Dienstag, 9. Mai 2006 01:21 schrieb Joe Feise:
-> Try the patch from here:
-> http://marc.theaimsgroup.com/?l=3Dreiserfs&m=3D114709188305181&w=3D2
-> That helped me get past the bootup phase (currently 8 hours uptime).
->
->  -Joe
->
-> Alexander Gran writes:
-> > Hi all,
-> >
-> > 2.6.17-rc3-mm1 doesn't get up running  here, it bugs around while init
-> > runs: I cannot login afterwards, and syslog did not get the bug too. So
-> > here are some poor screenshots from my Treo650 (digicam is broken,
-> > sorry..;) EIP is in clear_inode.
-> > Trace:
-> > reiser4_delete_inode+0x6c/0xd0
-> > d_delete+0xf0/0x10f
-> > reiser4_delete_inode+0x0/0xd0
-> > generic_delete_inode+0x6b/0xfb
-> > input+0x5c/0x68
-> > do_unlikat+0xd7/0x12c
-> > sysenter_past_esp+0x54/0x75
-> > __hidp_send_ctrl_message+0xb4/0xfa
-> > details:
-> > http://zodiac.dnsalias.org/images/1.jpg
-> > http://zodiac.dnsalias.org/images/2.jpg
-> > http://zodiac.dnsalias.org/images/3.jpg
-> > http://zodiac.dnsalias.org/images/4.jpg
-> > Kernel config:
-> > http://zodiac.dnsalias.org/images/config
-> > System is my T40p, as usual. running an up2date debian unstable.
-> >
-> > regards
-> > Alex
+I make an fsck on the partition and now the disk seem work fine. 
+May be the disk was inconsistent? 
 
-=2D-=20
-Encrypted Mails welcome.
-PGP-Key at http://zodiac.dnsalias.org/misc/pgpkey.asc | Key-ID: 0x6D7DD291
 
---nextPart1648581.UYTTP183aE
-Content-Type: application/pgp-signature
+> > > > dereference at virtual address 00000000 printing eip:
+> > > > 00000000
+> > > > *pde = 00000000
+> > > > Oops: 0000 [#1]
+> > > > Modules linked in: bttv video_buf firmware_class compat_ioctl32
+> > > > i2c_algo_bit v4l2_common btcx_risc ir_common tveeprom i2c_core videodev
+> > > > video CPU:    0 EIP:    0060:[<00000000>]    Not tainted VLI
+> > > > EFLAGS: 00010282   (2.6.16.5 #1)
+> > > > EIP is at rest_init+0x3feffde0/0x1e
+> > > > eax: 00000000   ebx: d80c3d84   ecx: da670afc   edx: c03ee8e0
+> > > > esi: 00000000   edi: 00000000   ebp: c01b74f1   esp: d80c3b58
+> > > > ds: 007b   es: 007b   ss: 0068
+> > > > Process image_eraser.pl (pid: 2374, threadinfo=d80c2000 task=df863a30)
+> > > > Stack: <0>c01b74b5 d80c3d84 00000000 00000000 da670afc d80c3e38
+> > > > d80c3bbc d80c3bbc c01b746c d80c3c18 c01b750e d80c3d84 00000000 00000000
+> > > > da670afc d80c3e38 d80c3bbc c01b77a4 d80c3d84 da670afc d80c3e38 d80c3bbc
+> > > > 00000002 00000000 Call Trace:
+> > > >  [<c01b74b5>] kill_units+0x49/0x53
+> > > >  [<c01b746c>] kill_units+0x0/0x53
+> > > >  [<c01b750e>] kill_head+0x1d/0x24
+> > > >  [<c01b77a4>] prepare_for_compact+0x1e2/0x406
+> > > >  [<c01a3c00>] reiser4_get_neighbor+0x75/0x261
+> > > >  [<c01903ea>] jload_gfp+0x112/0x124
+> > > >  [<c01b79eb>] kill_node40+0x23/0x9a
+> > > >  [<c0192582>] lock_carry_node_tail+0x16/0x18
+> > > >  [<c0193d76>] carry_cut+0x3f/0x53
+> > > >  [<c0191f7c>] carry_on_level+0x30/0xaa
+> > > >  [<c0191e5c>] carry+0x79/0x169
+> > > >  [<c01960a7>] kill_node_content+0x125/0x13e
+> > > >  [<c0196591>] cut_tree_worker_common+0x196/0x2e8
+> > > >  [<c01963fb>] cut_tree_worker_common+0x0/0x2e8
+> > > >  [<c0196791>] cut_tree_object+0xae/0x149
+> > > >  [<c01b6aba>] create_item_node40+0x1fc/0x258
+> > > >  [<c0199c4e>] znode_make_dirty+0x40/0x50
+> > > >  [<c01abad2>] cut_file_items+0xdb/0x174
+> > > >  [<c01abba4>] shorten_file+0x29/0x1d7
+> > > >  [<c01ab996>] update_file_size+0x0/0x61
+> > > >  [<c01abe0b>] truncate_file_body+0x63/0x6f
+> > > >  [<c01ae1ac>] delete_object_unix_file+0x33/0xa6
+> > > >  [<c01a23ae>] reiser4_delete_inode+0x83/0x9d
+> > > >  [<c01a232b>] reiser4_delete_inode+0x0/0x9d
+> > > >  [<c0155796>] generic_delete_inode+0x56/0xb4
+> > > >  [<c015597c>] iput+0x63/0x66
+> > > >  [<c014e22e>] do_unlinkat+0xb4/0xf9
+> > > >  [<c014e2ae>] sys_unlink+0xb/0xe
+> > > >  [<c0102977>] sysenter_past_esp+0x54/0x75
+> > > > Code:  Bad EIP value.
+> > > > 
+> > > > If i reboot the machine this error repeat again!
+> > > > i have to do fsck to resolve this error?
+> > > > thanks
+> > > > 
+> > > 
+> > > It looks like your harddrive is not very reliable. Would you please try
+> > > to experiment with another box/harddrive?
+> > > 
+> > > 
+> > 
+> > The harddrive is a maxtor so i tested it with the powermax maxtor harddrive tools with success. More i run the smart control long test with success (smartctl -t long /dev/hda) . Why you say "It looks like your harddrive is not very reliable" ?
+> > 
+> 
+> ok. But nevertheless I would like you to try to reproduce the problem on
+> another hardware to be sure that it is a software bug.
+> 
+> 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.3 (GNU/Linux)
-
-iD8DBQBEX96S/aHb+2190pERAkqYAKCEGVy+bFPMln4XzGkkRFAe9oY4SwCfcqP1
-A/aUMVJiBJK9ap/DEehvL3I=
-=ivb2
------END PGP SIGNATURE-----
-
---nextPart1648581.UYTTP183aE--
+I will make onother one linux box to reproduce errors!!
+Thanks a lot and good work!
