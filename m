@@ -1,145 +1,136 @@
 From: Alexander Zarochentsev <zam@namesys.com>
-Subject: Re: Reproducible reiser4 bug with 2.6.16.2 patch on tail_conversion.c:80
-Date: Thu, 11 May 2006 11:24:53 +0400
-Message-ID: <200605111124.53927.zam@namesys.com>
-References: <4461C6D4.9050705@ee.oulu.fi>
+Subject: Re: Kernel BUG at fs/reiser4/plugin/file/tail_conversion.c:80
+Date: Thu, 11 May 2006 16:23:57 +0400
+Message-ID: <200605111623.57751.zam@namesys.com>
+References: <b5d90b2a0605061419o66bbefa7r8f90d728afe2e4bf@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: Multipart/Mixed;
-  boundary="Boundary-00=_FbuYEKWWhFAJ/IU"
-Return-path: <reiserfs-list-return-28602-reiserfs=m.gmane.org@namesys.com>
+  boundary="Boundary-00=_dzyYEizmcqLwx21"
+Return-path: <reiserfs-list-return-28603-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4461C6D4.9050705@ee.oulu.fi>
+In-Reply-To: <b5d90b2a0605061419o66bbefa7r8f90d728afe2e4bf@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-list@namesys.com
-Cc: Timo Kokkonen <kaapeli@ee.oulu.fi>
+Cc: Alexey Polyakov <alexey.polyakov@gmail.com>
 
---Boundary-00=_FbuYEKWWhFAJ/IU
+--Boundary-00=_dzyYEizmcqLwx21
 Content-Type: text/plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-Hello
+Hello.
 
-please check whether the attached patch helps.
+please apply the attached patch.
 
-On Wednesday 10 May 2006 14:56, Timo Kokkonen wrote:
-> Hello,
+On Sunday 07 May 2006 01:19, Alexey Polyakov wrote:
+> Hi!
+> I have two servers running reiser4 as root and data partitions.
+> Both are using 2.6.15.x kernels with reiser4-for-2.6.15-1.patch.
+> One is i386 UP with md over SATA, another is x86_64 SMP with i2o over
+> hardware raid.
+> I tried upgrading kernels on both servers to 2.6.16-cks9 (thats
+> basically 2.6.16.12 with some non-io related patches applied).
+> Both give me the same kind of error a few minutes after boot (during
+> intensive io):
 >
-> I was able to produce this bug on two different computers running the
-> same kernel version and same patches and same task. Each time I run
-> dispatch-conf (I'm running on gentoo) to update the config files on
-> /etc, it gives the following output:
+> May  4 14:12:12 titanic kernel: ----------- [cut here ] ---------
+> [please bite here ] ---------
+> May  4 14:12:21 titanic kernel: Kernel BUG at
+> fs/reiser4/plugin/file/tail_conversion.c:80
+> May  4 14:12:21 titanic kernel: invalid opcode: 0000 [1] SMP
+> May  4 14:12:21 titanic kernel: CPU 3
+> May  4 14:12:21 titanic kernel: Modules linked in:
+> May  4 14:12:21 titanic kernel: Pid: 2723, comm: ci Not tainted
+> 2.6.16-cks9 #1 May  4 14:12:21 titanic kernel: RIP:
+> 0010:[<ffffffff80210f73>]
+> <ffffffff80210f73>{get_nonexclusive_access+35}
+> May  4 14:12:22 titanic kernel: RSP: 0018:ffff8100f0d6dc88  EFLAGS:
+> 00010286 May  4 14:12:32 titanic kernel: RAX: ffff8101d106bd40 RBX:
+> ffff8101c7c740f8 RCX: 00002b4bc74f2000
+> May  4 14:12:49 titanic kernel: RDX: 0000000000000000 RSI:
+> 0000000000000000 RDI: ffff8101c7c740f8
+> May  4 14:12:49 titanic kernel: RBP: 0000000000000000 R08:
+> ffff810037e05680 R09: 0000000000000000
+> May  4 14:12:56 titanic kernel: R10: 0000000000000000 R11:
+> 0000000000000000 R12: ffff8101c4ca2080
+> May  4 14:13:03 titanic kernel: R13: ffff8100f0d6dde8 R14:
+> ffff8101c7c74198 R15: ffff8101debd4200
+> May  4 14:13:03 titanic kernel: FS:  00002b4bc73f1b00(0000)
+> GS:ffff8101045370c0(0000) knlGS:0000000000000000
+> May  4 14:13:03 titanic kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
+> 000000008005003b
+> May  4 14:13:03 titanic kernel: CR2: 00000000005caff0 CR3:
+> 00000000f25b1000 CR4: 00000000000006e0
+> May  4 14:13:14 titanic kernel: Process ci (pid: 2723, threadinfo
+> ffff8100f0d6c000, task ffff81000c0ad080)
+> May  4 14:13:17 titanic kernel: Stack: ffff8101c7c740f8
+> ffffffff8022704b ffff8101e07dd928 ffff8101d106bd40
+> May  4 14:13:17 titanic kernel:        ffff8101fee3a8f0
+> 000000008038fd89 0000000100000000 ffff8101ffcbe020
+> May  4 14:13:17 titanic kernel:        000000000023230d
+> ffff8101ddabc6d0 May  4 14:13:17 titanic kernel: Call Trace:
+> <ffffffff8022704b>{write_extent+1595}
+> <ffffffff802294b1>{item_length_by_coord+17}
+> May  4 14:13:17 titanic kernel:
+> <ffffffff802244a9>{nr_units_extent+9}
+> <ffffffff80225df8>{init_coord_extension_extent+120}
+> May  4 14:13:17 titanic kernel:
+> <ffffffff8020deb6>{find_file_item+182}
+> <ffffffff801f25eb>{reiser4_grab+155}
+> May  4 14:13:20 titanic kernel:
+> <ffffffff80226a10>{write_extent+0} <ffffffff8020f8e5>{write_flow+709}
+> May  4 14:13:20 titanic kernel:
+> <ffffffff8010b7f1>{error_exit+0} <ffffffff8038d4a2>{__down_read+18}
+> May  4 14:13:20 titanic kernel:
+> <ffffffff8021030b>{write_unix_file+923}
+> <ffffffff80178dac>{vfs_write+236}
+> May  4 14:13:20 titanic kernel:
+> <ffffffff80178f53>{sys_write+83} <ffffffff8010aaf6>{system_call+126}
+> May  4 14:13:20 titanic kernel:
+> May  4 14:13:20 titanic kernel: Code: 0f 0b 68 b0 c8 3b 80 c2 50 00
+> 66 66 90 e8 3b b6 17 00 48 89
+> May  4 14:13:21 titanic kernel: RIP
+> <ffffffff80210f73>{get_nonexclusive_access+35} RSP <ffff8100f0d6dc88>
+> May  4 14:13:21 titanic kernel:  <4><4>reiser4[ci(2723)]:
+> release_unix_file (fs/reiser4/plugin/file/file.c:2670)[vs-44]:
+> May  4 14:13:21 titanic kernel: WARNING: out of memory?
+> May  4 14:13:21 titanic kernel: <4>reiser4[ci(2723)]:
+> release_unix_file (fs/reiser4/plugin/file/file.c:2670)[vs-44]:
+> May  4 14:13:21 titanic kernel: WARNING: out of memory?
+> May  4 14:13:21 titanic kernel: <4>reiser4[ci(2723)]:
+> release_unix_file (fs/reiser4/plugin/file/file.c:2670)[vs-44]:
+> May  4 14:13:21 titanic kernel: WARNING: out of memory?
+> May  4 14:13:21 titanic kernel: <4>reiser4[ci(2723)]:
+> release_unix_file (fs/reiser4/plugin/file/file.c:2670)[vs-44]:
+> May  4 14:13:22 titanic kernel: WARNING: out of memory?
+> May  4 14:13:23 titanic kernel: <4>reiser4[ci(2723)]:
+> release_unix_file (fs/reiser4/plugin/file/file.c:2670)[vs-44]:
+> May  4 14:13:25 titanic kernel: WARNING: out of memory?
+> May  4 14:13:25 titanic kernel: <4>reiser4[ci(2723)]:
+> release_unix_file (fs/reiser4/plugin/file/file.c:2670)[vs-44]:
+> May  4 14:13:25 titanic kernel: WARNING: out of memory?
+> May  4 14:13:25 titanic kernel: ----------- [cut here ] ---------
+> [please bite here ] ---------
 >
-> RCS file: /etc/config-archive/usr/lib/X11/xkb/xkbcomp,v
-> 1.1 locked
-> ci: RCS file /etc/config-archive/usr/lib/X11/xkb/xkbcomp,v is in use
-> /etc/config-archive/usr/lib/X11/xkb/xkbcomp,v  -->
-> /etc/config-archive/usr/lib/X11/xkb/xkbcomp
-> revision 1.1.1.1
-> writable /etc/config-archive/usr/lib/X11/xkb/xkbcomp exists; remove
-> it? [ny](n):
+> After that happens, processes get stuck in D state, and only hard
+> reboot helps. Is there any patches that might help with this issue?
+> Should I provide any additional information to help with this bug?
 >
+> Thanks.
 >
-> And right after that I can see this message in kernel log:
+> --
+> Alexey Polyakov
 >
-> May 10 11:26:32 kaatokone2 [4296234.613000] ------------[ cut here
-> ]------------
-> May 10 11:26:32 kaatokone2 [4296234.613000] kernel BUG at
-> fs/reiser4/plugin/file/tail_conversion.c:80!
-> May 10 11:26:32 kaatokone2 [4296234.613000] invalid opcode: 0000 [#1]
-> May 10 11:26:32 kaatokone2 [4296234.613000] PREEMPT
-> May 10 11:26:32 kaatokone2 [4296234.613000] Modules linked in:
-> w83627hf w83781d hwmon_vid eeprom i2c_isa
-> May 10 11:26:32 kaatokone2 [4296234.613000] CPU:    0
-> May 10 11:26:32 kaatokone2 [4296234.613000] EIP:    0060:[<b019ec1f>]
->   Not tainted VLI
-> May 10 11:26:32 kaatokone2 [4296234.613000] EFLAGS: 00210286
-> (2.6.16-gentoo-r7 #1)
-> May 10 11:26:32 kaatokone2 [4296234.613000] EIP is at
-> get_nonexclusive_access+0x23/0x36
-> May 10 11:26:32 kaatokone2 [4296234.613000] eax: ef7644c4   ebx:
-> 00000000   ecx: a7e8b000   edx: e5d0c414
-> May 10 11:26:32 kaatokone2 [4296234.613000] esi: e5d0c414   edi:
-> e5d0c46c   ebp: e5d59e9c   esp: e5d59dc4
-> May 10 11:26:32 kaatokone2 [4296234.613000] ds: 007b   es: 007b   ss:
-> 0068 May 10 11:26:32 kaatokone2 [4296234.613000] Process rcs (pid:
-> 8422, threadinfo=e5d58000 task=e5cf2ab0)
-> May 10 11:26:32 kaatokone2 [4296234.613000] Stack: <0>b01b18e9
-> e5d0c414 00000000 00000000 34000000 e5d58000 b16ba260 00000000
-> May 10 11:26:32 kaatokone2 [4296234.613000]        e5eb8780 b01b1ccd
-> e5d0c46c e5d59e9c eed8e8c0 eed8e8d0 eed8e8d0 00000002
-> May 10 11:26:32 kaatokone2 [4296234.613000]        00000001 e5d59e9c
-> 00001000 00000001 efeea800 efded414 00391f78 00000000
-> May 10 11:26:32 kaatokone2 [4296234.613000] Call Trace:
-> May 10 11:26:32 kaatokone2 [4296234.613000]  [<b01b18e9>]
-> extent_balance_dirty_pages+0x13a/0x145
-> May 10 11:26:32 kaatokone2 [4296234.613000]  [<b01b1ccd>]
-> extent_write_flow+0x3d9/0x4e7
-> May 10 11:26:32 kaatokone2 [4296234.613000]  [<b01b1f0a>]
-> write_extent+0x0/0x36
-> May 10 11:26:32 kaatokone2 [4296234.613000]  [<b019dc17>]
-> append_and_or_overwrite+0x24f/0x2fd
-> May 10 11:26:32 kaatokone2 [4296234.613000]  [<b019dd0c>]
-> write_flow+0x47/0x50
-> May 10 11:26:32 kaatokone2 [4296234.613000]  [<b019de92>]
-> write_file+0x5c/0x7a
-> May 10 11:26:32 kaatokone2 [4296234.613000]  [<b019e177>]
-> write_unix_file+0x2c7/0x444
-> May 10 11:26:32 kaatokone2 [4296234.613000]  [<b014bd9e>]
-> vfs_write+0x87/0x11b
-> May 10 11:26:32 kaatokone2 [4296234.613000]  [<b014bed0>]
-> sys_write+0x3b/0x63
-> May 10 11:26:32 kaatokone2 [4296234.613000]  [<b0102a93>]
-> sysenter_past_esp+0x54/0x75
-> May 10 11:26:32 kaatokone2 [4296234.613000] Code: 0f 85 b5 0d 00 00
-> c3 c3 83 7c 24 08 00 8b 54 24 04 75 20 b8 00 e0 ff ff 21 e0 8b 00 8b
-> 80 b4 04 00 00 8b 40 40 83 78 08 00 74 08 <0f> 0b 50 00 ba cf 43 b0
-> 89 d0 ff 00 0f 88 92 0d 00 00 c3 8b 54
-> May 10 11:26:32 kaatokone2 [4296234.613000] 
-> <4><4>reiser4[rcs(8422)]: release_unix_file
-> (fs/reiser4/plugin/file/file.c:2670)[vs-44]: May 10 11:26:32
-> kaatokone2 [4296234.614000] WARNING: out of memory? May 10 11:26:32
-> kaatokone2 [4296234.614000] <4>reiser4[rcs(8422)]: release_unix_file
-> (fs/reiser4/plugin/file/file.c:2670)[vs-44]: May 10 11:26:32
-> kaatokone2 [4296234.614000] WARNING: out of memory? May 10 11:26:32
-> kaatokone2 [4296234.614000] <4>reiser4[rcs(8422)]: release_unix_file
-> (fs/reiser4/plugin/file/file.c:2670)[vs-44]: May 10 11:26:32
-> kaatokone2 [4296234.614000] WARNING: out of memory? May 10 11:26:32
-> kaatokone2 [4296234.614000] <4>reiser4[rcs(8422)]: release_unix_file
-> (fs/reiser4/plugin/file/file.c:2670)[vs-44]: May 10 11:26:32
-> kaatokone2 [4296234.614000] WARNING: out of memory? May 10 11:26:32
-> kaatokone2 [4296234.614000] <4>reiser4[rcs(8422)]: release_unix_file
-> (fs/reiser4/plugin/file/file.c:2670)[vs-44]: May 10 11:26:32
-> kaatokone2 [4296234.614000] WARNING: out of memory?
->
->
-> After a reboot and running dispatch-conf again I get the exact same
-> error message again. I got this same bug on the another computer
-> aswell, during exact same conditions (running dispatch-conf, it even
-> complained about the same filename). Running reiser4.fsck didn't
-> reveal any problems at all on that computer. Booting with 2.6.15.1
-> (with gentoo-sources-2.6.15-r1 patches) and reiser4-2.6.15.1 didn't
-> crash and dispatch-conf finished updating the files normally.
->
-> So, now I have this computer that I can make to crash every time by
-> running dispatch-conf. I can keep the computer intact and run further
-> diagnostics on it, if necessary. If there is any other info you need
-> to know, let me know what you want and I try to provide the info you
-> need to get this solved.
->
->
-> Timo Kokkonen
->
-> !DSPAM:4461c711169651806120903!
+> !DSPAM:445d132a126701804284693!
 
 -- 
 Alex.
 
---Boundary-00=_FbuYEKWWhFAJ/IU
+--Boundary-00=_dzyYEizmcqLwx21
 Content-Type: text/x-diff;
   charset="iso-8859-1";
   name="reiser4-remove-atom_may_exists-from-get_nea.diff"
@@ -309,4 +300,4 @@ Index: linux-2.6.17-rc3-mm1/fs/reiser4/plugin/file/tail_conversion.c
  }
  
 
---Boundary-00=_FbuYEKWWhFAJ/IU--
+--Boundary-00=_dzyYEizmcqLwx21--
