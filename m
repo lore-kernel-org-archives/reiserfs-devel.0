@@ -1,120 +1,131 @@
-From: Timo Kokkonen <kaapeli@ee.oulu.fi>
-Subject: Reproducible reiser4 bug with 2.6.16.2 patch on tail_conversion.c:80
-Date: Wed, 10 May 2006 13:56:20 +0300
-Message-ID: <4461C6D4.9050705@ee.oulu.fi>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: reiserfs crash
+Date: Thu, 11 May 2006 10:21:55 +0400
+Message-ID: <1147328515.6390.20.camel@tribesman.namesys.com>
+References: <20060504190603.0274354b@atena>
+	 <1146811406.6254.14.camel@tribesman.namesys.com>
+	 <20060505163449.69e05ee0@atena>
+	 <1146901438.6338.23.camel@tribesman.namesys.com>
+	 <20060509111629.522fdd8f@atena>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Return-path: <reiserfs-list-return-28600-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28601-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20060509111629.522fdd8f@atena>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Devel <devel@integra-sc.it>
+Cc: reiserfs-list@namesys.com
 
-Hello,
+Hello
 
-I was able to produce this bug on two different computers running the
-same kernel version and same patches and same task. Each time I run
-dispatch-conf (I'm running on gentoo) to update the config files on
-/etc, it gives the following output:
+On Tue, 2006-05-09 at 11:16 +0200, Devel wrote:
+> Il Sat, 06 May 2006 11:43:58 +0400
+> "Vladimir V. Saveliev" <vs@namesys.com> scrisse:
+> 
+> > Hello
+> > 
+> > On Fri, 2006-05-05 at 16:34 +0200, Devel wrote:
+> > > Il Fri, 05 May 2006 10:43:26 +0400
+> > > "Vladimir V. Saveliev" <vs@namesys.com> scrisse:
+> > > 
+> > > > Hello
+> > > > 
+> > > > On Thu, 2006-05-04 at 19:06 +0200, Devel wrote:
+> > > > > Hi All,
+> > > > > i'm testing reiser4 on a linux box kernel 2.6.16. This linux box write a lot of images on the partiion with reiser4 and after delete them.
+> > > > > After a while all goes wrong and dmesg give me this oops:
+> > > > > 
+> > > > > 
+> > > > > <4>reiser4[image_eraser.pl(2374)]: cbk_level_lookup (fs/reiser4/search.c:971)[vs-3533]:
+> > > > > WARNING: Keys are inconsistent. Fsck?
+> > > > > <4>reiser4[image_eraser.pl(2374)]: key_warning
+> > > > > (fs/reiser4/plugin/file_plugin_common.c:514)[nikita-717]: WARNING:
+> > > > > Error for inode 47326534 (-5) Unable to handle kernel NULL pointer
+> > 
+> > 5 is error code indicating i/o error: disk block could not be read or
+> > written from/to a device.
+> > That is why I guessed that the harddrive is not reliable.
+> > 
+> 
+> I make an fsck on the partition and now the disk seem work fine. 
+> May be the disk was inconsistent? 
+> 
 
-RCS file: /etc/config-archive/usr/lib/X11/xkb/xkbcomp,v
-1.1 locked
-ci: RCS file /etc/config-archive/usr/lib/X11/xkb/xkbcomp,v is in use
-/etc/config-archive/usr/lib/X11/xkb/xkbcomp,v  -->
-/etc/config-archive/usr/lib/X11/xkb/xkbcomp
-revision 1.1.1.1
-writable /etc/config-archive/usr/lib/X11/xkb/xkbcomp exists; remove it?
-[ny](n):
+It would be interesting to see whether the problem will come up again
+under the same load.
 
+> 
+> > > > > dereference at virtual address 00000000 printing eip:
+> > > > > 00000000
+> > > > > *pde = 00000000
+> > > > > Oops: 0000 [#1]
+> > > > > Modules linked in: bttv video_buf firmware_class compat_ioctl32
+> > > > > i2c_algo_bit v4l2_common btcx_risc ir_common tveeprom i2c_core videodev
+> > > > > video CPU:    0 EIP:    0060:[<00000000>]    Not tainted VLI
+> > > > > EFLAGS: 00010282   (2.6.16.5 #1)
+> > > > > EIP is at rest_init+0x3feffde0/0x1e
+> > > > > eax: 00000000   ebx: d80c3d84   ecx: da670afc   edx: c03ee8e0
+> > > > > esi: 00000000   edi: 00000000   ebp: c01b74f1   esp: d80c3b58
+> > > > > ds: 007b   es: 007b   ss: 0068
+> > > > > Process image_eraser.pl (pid: 2374, threadinfo=d80c2000 task=df863a30)
+> > > > > Stack: <0>c01b74b5 d80c3d84 00000000 00000000 da670afc d80c3e38
+> > > > > d80c3bbc d80c3bbc c01b746c d80c3c18 c01b750e d80c3d84 00000000 00000000
+> > > > > da670afc d80c3e38 d80c3bbc c01b77a4 d80c3d84 da670afc d80c3e38 d80c3bbc
+> > > > > 00000002 00000000 Call Trace:
+> > > > >  [<c01b74b5>] kill_units+0x49/0x53
+> > > > >  [<c01b746c>] kill_units+0x0/0x53
+> > > > >  [<c01b750e>] kill_head+0x1d/0x24
+> > > > >  [<c01b77a4>] prepare_for_compact+0x1e2/0x406
+> > > > >  [<c01a3c00>] reiser4_get_neighbor+0x75/0x261
+> > > > >  [<c01903ea>] jload_gfp+0x112/0x124
+> > > > >  [<c01b79eb>] kill_node40+0x23/0x9a
+> > > > >  [<c0192582>] lock_carry_node_tail+0x16/0x18
+> > > > >  [<c0193d76>] carry_cut+0x3f/0x53
+> > > > >  [<c0191f7c>] carry_on_level+0x30/0xaa
+> > > > >  [<c0191e5c>] carry+0x79/0x169
+> > > > >  [<c01960a7>] kill_node_content+0x125/0x13e
+> > > > >  [<c0196591>] cut_tree_worker_common+0x196/0x2e8
+> > > > >  [<c01963fb>] cut_tree_worker_common+0x0/0x2e8
+> > > > >  [<c0196791>] cut_tree_object+0xae/0x149
+> > > > >  [<c01b6aba>] create_item_node40+0x1fc/0x258
+> > > > >  [<c0199c4e>] znode_make_dirty+0x40/0x50
+> > > > >  [<c01abad2>] cut_file_items+0xdb/0x174
+> > > > >  [<c01abba4>] shorten_file+0x29/0x1d7
+> > > > >  [<c01ab996>] update_file_size+0x0/0x61
+> > > > >  [<c01abe0b>] truncate_file_body+0x63/0x6f
+> > > > >  [<c01ae1ac>] delete_object_unix_file+0x33/0xa6
+> > > > >  [<c01a23ae>] reiser4_delete_inode+0x83/0x9d
+> > > > >  [<c01a232b>] reiser4_delete_inode+0x0/0x9d
+> > > > >  [<c0155796>] generic_delete_inode+0x56/0xb4
+> > > > >  [<c015597c>] iput+0x63/0x66
+> > > > >  [<c014e22e>] do_unlinkat+0xb4/0xf9
+> > > > >  [<c014e2ae>] sys_unlink+0xb/0xe
+> > > > >  [<c0102977>] sysenter_past_esp+0x54/0x75
+> > > > > Code:  Bad EIP value.
+> > > > > 
+> > > > > If i reboot the machine this error repeat again!
+> > > > > i have to do fsck to resolve this error?
+> > > > > thanks
+> > > > > 
+> > > > 
+> > > > It looks like your harddrive is not very reliable. Would you please try
+> > > > to experiment with another box/harddrive?
+> > > > 
+> > > > 
+> > > 
+> > > The harddrive is a maxtor so i tested it with the powermax maxtor harddrive tools with success. More i run the smart control long test with success (smartctl -t long /dev/hda) . Why you say "It looks like your harddrive is not very reliable" ?
+> > > 
+> > 
+> > ok. But nevertheless I would like you to try to reproduce the problem on
+> > another hardware to be sure that it is a software bug.
+> > 
+> > 
+> 
+> I will make onother one linux box to reproduce errors!!
 
-And right after that I can see this message in kernel log:
+great, thanks
 
-May 10 11:26:32 kaatokone2 [4296234.613000] ------------[ cut here 
-]------------
-May 10 11:26:32 kaatokone2 [4296234.613000] kernel BUG at 
-fs/reiser4/plugin/file/tail_conversion.c:80!
-May 10 11:26:32 kaatokone2 [4296234.613000] invalid opcode: 0000 [#1]
-May 10 11:26:32 kaatokone2 [4296234.613000] PREEMPT
-May 10 11:26:32 kaatokone2 [4296234.613000] Modules linked in: w83627hf 
-w83781d hwmon_vid eeprom i2c_isa
-May 10 11:26:32 kaatokone2 [4296234.613000] CPU:    0
-May 10 11:26:32 kaatokone2 [4296234.613000] EIP:    0060:[<b019ec1f>] 
-  Not tainted VLI
-May 10 11:26:32 kaatokone2 [4296234.613000] EFLAGS: 00210286 
-(2.6.16-gentoo-r7 #1)
-May 10 11:26:32 kaatokone2 [4296234.613000] EIP is at 
-get_nonexclusive_access+0x23/0x36
-May 10 11:26:32 kaatokone2 [4296234.613000] eax: ef7644c4   ebx: 
-00000000   ecx: a7e8b000   edx: e5d0c414
-May 10 11:26:32 kaatokone2 [4296234.613000] esi: e5d0c414   edi: 
-e5d0c46c   ebp: e5d59e9c   esp: e5d59dc4
-May 10 11:26:32 kaatokone2 [4296234.613000] ds: 007b   es: 007b   ss: 0068
-May 10 11:26:32 kaatokone2 [4296234.613000] Process rcs (pid: 8422, 
-threadinfo=e5d58000 task=e5cf2ab0)
-May 10 11:26:32 kaatokone2 [4296234.613000] Stack: <0>b01b18e9 e5d0c414 
-00000000 00000000 34000000 e5d58000 b16ba260 00000000
-May 10 11:26:32 kaatokone2 [4296234.613000]        e5eb8780 b01b1ccd 
-e5d0c46c e5d59e9c eed8e8c0 eed8e8d0 eed8e8d0 00000002
-May 10 11:26:32 kaatokone2 [4296234.613000]        00000001 e5d59e9c 
-00001000 00000001 efeea800 efded414 00391f78 00000000
-May 10 11:26:32 kaatokone2 [4296234.613000] Call Trace:
-May 10 11:26:32 kaatokone2 [4296234.613000]  [<b01b18e9>] 
-extent_balance_dirty_pages+0x13a/0x145
-May 10 11:26:32 kaatokone2 [4296234.613000]  [<b01b1ccd>] 
-extent_write_flow+0x3d9/0x4e7
-May 10 11:26:32 kaatokone2 [4296234.613000]  [<b01b1f0a>] 
-write_extent+0x0/0x36
-May 10 11:26:32 kaatokone2 [4296234.613000]  [<b019dc17>] 
-append_and_or_overwrite+0x24f/0x2fd
-May 10 11:26:32 kaatokone2 [4296234.613000]  [<b019dd0c>] 
-write_flow+0x47/0x50
-May 10 11:26:32 kaatokone2 [4296234.613000]  [<b019de92>] 
-write_file+0x5c/0x7a
-May 10 11:26:32 kaatokone2 [4296234.613000]  [<b019e177>] 
-write_unix_file+0x2c7/0x444
-May 10 11:26:32 kaatokone2 [4296234.613000]  [<b014bd9e>] 
-vfs_write+0x87/0x11b
-May 10 11:26:32 kaatokone2 [4296234.613000]  [<b014bed0>] 
-sys_write+0x3b/0x63
-May 10 11:26:32 kaatokone2 [4296234.613000]  [<b0102a93>] 
-sysenter_past_esp+0x54/0x75
-May 10 11:26:32 kaatokone2 [4296234.613000] Code: 0f 85 b5 0d 00 00 c3 
-c3 83 7c 24 08 00 8b 54 24 04 75 20 b8 00 e0 ff ff 21 e0 8b 00 8b 80 b4 
-04 00 00 8b 40 40 83 78 08 00 74 08 <0f> 0b 50 00 ba cf 43 b0 89 d0 ff 
-00 0f 88 92 0d 00 00 c3 8b 54
-May 10 11:26:32 kaatokone2 [4296234.613000]  <4><4>reiser4[rcs(8422)]: 
-release_unix_file (fs/reiser4/plugin/file/file.c:2670)[vs-44]:
-May 10 11:26:32 kaatokone2 [4296234.614000] WARNING: out of memory?
-May 10 11:26:32 kaatokone2 [4296234.614000] <4>reiser4[rcs(8422)]: 
-release_unix_file (fs/reiser4/plugin/file/file.c:2670)[vs-44]:
-May 10 11:26:32 kaatokone2 [4296234.614000] WARNING: out of memory?
-May 10 11:26:32 kaatokone2 [4296234.614000] <4>reiser4[rcs(8422)]: 
-release_unix_file (fs/reiser4/plugin/file/file.c:2670)[vs-44]:
-May 10 11:26:32 kaatokone2 [4296234.614000] WARNING: out of memory?
-May 10 11:26:32 kaatokone2 [4296234.614000] <4>reiser4[rcs(8422)]: 
-release_unix_file (fs/reiser4/plugin/file/file.c:2670)[vs-44]:
-May 10 11:26:32 kaatokone2 [4296234.614000] WARNING: out of memory?
-May 10 11:26:32 kaatokone2 [4296234.614000] <4>reiser4[rcs(8422)]: 
-release_unix_file (fs/reiser4/plugin/file/file.c:2670)[vs-44]:
-May 10 11:26:32 kaatokone2 [4296234.614000] WARNING: out of memory?
-
-
-After a reboot and running dispatch-conf again I get the exact same 
-error message again. I got this same bug on the another computer aswell, 
-during exact same conditions (running dispatch-conf, it even complained 
-about the same filename). Running reiser4.fsck didn't reveal any 
-problems at all on that computer. Booting with 2.6.15.1 (with 
-gentoo-sources-2.6.15-r1 patches) and reiser4-2.6.15.1 didn't crash and 
-dispatch-conf finished updating the files normally.
-
-So, now I have this computer that I can make to crash every time by 
-running dispatch-conf. I can keep the computer intact and run further 
-diagnostics on it, if necessary. If there is any other info you need to 
-know, let me know what you want and I try to provide the info you need 
-to get this solved.
-
-
-Timo Kokkonen
