@@ -1,73 +1,133 @@
-From: Suzuki <suzuki@in.ibm.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
 Subject: Re: [BUG] Reiserfs: reiserfs_panic while running fs stress tests
-Date: Fri, 12 May 2006 12:15:34 +0530
-Message-ID: <44642F0E.4050500@in.ibm.com>
-References: <445ADA05.5000801@in.ibm.com> <20060511105006.e4811957.rdunlap@xenotime.net>
+Date: Fri, 12 May 2006 11:33:43 +0400
+Message-ID: <1147419223.8001.5.camel@tribesman.namesys.com>
+References: <445ADA05.5000801@in.ibm.com>
+	 <20060511105006.e4811957.rdunlap@xenotime.net>
+	 <44642F0E.4050500@in.ibm.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751008AbWELGpb@vger.kernel.org>
-In-Reply-To: <20060511105006.e4811957.rdunlap@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="=-kj5jbvq6/uO2FTm10odP"
+Return-path: <reiserfs-list-return-28608-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <44642F0E.4050500@in.ibm.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Randy.Dunlap" <rdunlap@xenotime.net>
-Cc: reiserfs-dev@namesys.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, akpm@osdl.org, suparna@in.ibm.com, amitarora@in.ibm.com
+To: Suzuki <suzuki@in.ibm.com>
+Cc: "Randy.Dunlap" <rdunlap@xenotime.net>, reiserfs-dev@namesys.com, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, akpm@osdl.org, suparna@in.ibm.com, amitarora@in.ibm.com
 
-Randy.Dunlap wrote:
-> On Fri, 05 May 2006 10:22:21 +0530 Suzuki wrote:
+--=-kj5jbvq6/uO2FTm10odP
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+
+Hello
+
+On Fri, 2006-05-12 at 12:15 +0530, Suzuki wrote:
+> Randy.Dunlap wrote:
+> > On Fri, 05 May 2006 10:22:21 +0530 Suzuki wrote:
+> > 
+> > 
+> >>Hi,
+> >>
+> >>
+> >>I was working on a reiserfs panic with 2.6.17-rc3, while running fs
+> >>stress tests.
+> > 
+> > 
+> > Hi,
+> > What test(s) do you use?
 > 
+> The problem was initially hit while running the following tests 
+> simultaneously..
+> IOZone, bonnie++, dbench, fs_inod, fs_maim, fsstress, fsx_linux, 
+> postmark, tiobench.
 > 
->>Hi,
->>
->>
->>I was working on a reiserfs panic with 2.6.17-rc3, while running fs
->>stress tests.
+> As I had mentioned in my post, I have a simple testcase to trigger the 
+> panic which can hit the code path explained below.
 > 
+> The root cause of the problem is (as mentioned in the earlier post):
 > 
-> Hi,
-> What test(s) do you use?
-
-The problem was initially hit while running the following tests 
-simultaneously..
-IOZone, bonnie++, dbench, fs_inod, fs_maim, fsstress, fsx_linux, 
-postmark, tiobench.
-
-As I had mentioned in my post, I have a simple testcase to trigger the 
-panic which can hit the code path explained below.
-
-The root cause of the problem is (as mentioned in the earlier post):
-
-  Whenever there is an extending DIO write operation, the fs would
-create a safe link so as to ensure the file size consistent, if there is
-crash in between the DIO. This will be deleted once the write operation
-finishes.
-
-  If the DIO write happens to go through a "HOLE" region in the file, it
-will fall into normal "buffered write", which is done  through the
-address space operations prepare_write() & commit_write(). Now, the
-prepare_write() might allocate blocks for the file (if needed). So if
-there is some error at a later point (say ENOSPC) in prepare_write(), we
-need to discard the allocated blocks. This is done by calling
-"vmtruncate()" on the file. This call leads to reiserfs specific
-truncate, which would try to add a save link for the file.
-
-This addition causes a reiserfs_panic, since there is already a "save
-link" stored for the file.
-
-
-Thanks
-
-Suzuki
+>   Whenever there is an extending DIO write operation, the fs would
+> create a safe link so as to ensure the file size consistent, if there is
+> crash in between the DIO. This will be deleted once the write operation
+> finishes.
 > 
-> 
->>The panic message looked like :
->>
->>" REISERFS: panic (device Null superblock): reiserfs[4248]: assertion
->>!(truncate && (REISERFS_I(inode)->i_flags & i_link_saved_truncate_mask)
->>) failed at fs/reiserfs/super.c:328:add_save_link: saved link already re
->>exists for truncated inode 13b5a "
-> 
-> 
-> Thanks,
-> ---
-> ~Randy
+
+I am not sure why safe link is needed for write. Maybe one who added
+that still remembers why that was done and can explain, please?
+
+Suzuki, would you please try the attached patch?
+
+
+
+--=-kj5jbvq6/uO2FTm10odP
+Content-Disposition: attachment; filename=reiserfs-dont-use-safelink-on-write.patch
+Content-Type: text/x-patch; name=reiserfs-dont-use-safelink-on-write.patch; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+
+diff -puN fs/reiserfs/file.c~reiserfs-dont-use-safelink-on-write fs/reiserfs/file.c
+--- linux-2.6.17-rc3/fs/reiserfs/file.c~reiserfs-dont-use-safelink-on-write	2006-05-12 11:28:16.000000000 +0400
++++ linux-2.6.17-rc3-vs/fs/reiserfs/file.c	2006-05-12 11:29:16.000000000 +0400
+@@ -1305,54 +1305,7 @@ static ssize_t reiserfs_file_write(struc
+ 	}
+ 
+ 	if (file->f_flags & O_DIRECT) {	// Direct IO needs treatment
+-		ssize_t result, after_file_end = 0;
+-		if ((*ppos + count >= inode->i_size)
+-		    || (file->f_flags & O_APPEND)) {
+-			/* If we are appending a file, we need to put this savelink in here.
+-			   If we will crash while doing direct io, finish_unfinished will
+-			   cut the garbage from the file end. */
+-			reiserfs_write_lock(inode->i_sb);
+-			err =
+-			    journal_begin(&th, inode->i_sb,
+-					  JOURNAL_PER_BALANCE_CNT);
+-			if (err) {
+-				reiserfs_write_unlock(inode->i_sb);
+-				return err;
+-			}
+-			reiserfs_update_inode_transaction(inode);
+-			add_save_link(&th, inode, 1 /* Truncate */ );
+-			after_file_end = 1;
+-			err =
+-			    journal_end(&th, inode->i_sb,
+-					JOURNAL_PER_BALANCE_CNT);
+-			reiserfs_write_unlock(inode->i_sb);
+-			if (err)
+-				return err;
+-		}
+-		result = generic_file_write(file, buf, count, ppos);
+-
+-		if (after_file_end) {	/* Now update i_size and remove the savelink */
+-			struct reiserfs_transaction_handle th;
+-			reiserfs_write_lock(inode->i_sb);
+-			err = journal_begin(&th, inode->i_sb, 1);
+-			if (err) {
+-				reiserfs_write_unlock(inode->i_sb);
+-				return err;
+-			}
+-			reiserfs_update_inode_transaction(inode);
+-			mark_inode_dirty(inode);
+-			err = journal_end(&th, inode->i_sb, 1);
+-			if (err) {
+-				reiserfs_write_unlock(inode->i_sb);
+-				return err;
+-			}
+-			err = remove_save_link(inode, 1 /* truncate */ );
+-			reiserfs_write_unlock(inode->i_sb);
+-			if (err)
+-				return err;
+-		}
+-
+-		return result;
++	  	return generic_file_write(file, buf, count, ppos);
+ 	}
+ 
+ 	if (unlikely((ssize_t) count < 0))
+
+_
+
+--=-kj5jbvq6/uO2FTm10odP--
+
