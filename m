@@ -1,34 +1,21 @@
-From: Timo Kokkonen <kaapeli@ee.oulu.fi>
-Subject: Re: Reproducible reiser4 bug with 2.6.16.2 patch on
- tail_conversion.c:80
-Date: Fri, 12 May 2006 18:55:34 +0300
-Message-ID: <4464AFF6.9040703@ee.oulu.fi>
-References: <4461C6D4.9050705@ee.oulu.fi> <200605111124.53927.zam@namesys.com>
+From: Laurent Riffard <laurent.riffard@free.fr>
+Subject: [reiser4] reiser4 panicked cowardly: zam-397
+Date: Sat, 13 May 2006 22:03:16 +0200
+Message-ID: <44663B84.6070401@free.fr>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Return-path: <reiserfs-list-return-28609-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28612-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-reply-to: <200605111124.53927.zam@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
 Hello,
 
-Alexander Zarochentsev wrote:
-> Hello
-> 
-> please check whether the attached patch helps.
-> 
-
-It did help indeed, thanks. I haven't had any further trouble with it 
-yet, looks good to me.
-
-Thanks for the quick patch.
-
-
-
-Timo Kokkonen
+I've been hit by a couple of reiser4 panic due to zam-397 assertion. 
+It's more or less reproducible. How can I help debug this ? 
+~~
+laurent
