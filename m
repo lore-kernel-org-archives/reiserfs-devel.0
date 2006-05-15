@@ -1,77 +1,116 @@
-From: Joe Feise <jfeise@feise.com>
-Subject: [BUG] reiser4 crash 2.6.17-rc3-mm1
-Date: Mon, 15 May 2006 10:36:41 -0700
-Message-ID: <4468BC29.4000502@feise.com>
-Reply-To: jfeise@feise.com
+From: "Alexey Polyakov" <alexey.polyakov@gmail.com>
+Subject: Re: Kernel BUG at fs/reiser4/plugin/file/tail_conversion.c:80
+Date: Mon, 15 May 2006 23:27:13 +0400
+Message-ID: <b5d90b2a0605151227n77a48810rce8fb2b3638b4bd5@mail.gmail.com>
+References: <b5d90b2a0605061419o66bbefa7r8f90d728afe2e4bf@mail.gmail.com>
+	 <200605111623.57751.zam@namesys.com>
+	 <b5d90b2a0605111319v1a3e1a98hba99d48aa0d3942b@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28621-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28622-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <b5d90b2a0605111319v1a3e1a98hba99d48aa0d3942b@mail.gmail.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Alexander Zarochentsev <zam@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-2.6.17-rc3-mm1 plus the latest reiser4-radix-tree-direct-data-fix.patch patch.
+Hi!
 
--Joe
+Did it reach the list?
+I'm a bit worried cause I'm stuck at 2.6.15 and I really want to
+upgrade to .16. :)
 
-=============
-dmesg output:
-=============
-BUG: unable to handle kernel NULL pointer dereference at virtual address
-0000003c
- printing eip:
-c01c8dca
-*pde = 00000000
-Oops: 0000 [#1]
-PREEMPT
-last sysfs file: /class/net/ppp0/type
-Modules linked in: ppp_async crc_ccitt pl2303 usbserial softdog cisco_ipsec
-snd_pcm_oss snd_mixer_oss snd_cs46xx gameport snd_rawmidi snd_seq_device
-snd_ac97_codec snd_ac97_bus snd_pcm snd_timer snd soundcore snd_page_alloc
-zoran i2c_algo_bit videodev saa7111 i2c_core pegasus arc4 ppp_mppe
-ppp_deflate ppp_generic slhc usblp
-CPU:    0
-EIP:    0060:[<c01c8dca>]    Tainted: P      VLI
-EFLAGS: 00010202   (2.6.17-rc3-mm1 #5)
-EIP is at fuse_not_fused_lock_owners+0x79/0x1e7
-eax: fffffffc   ebx: d4824590   ecx: 00000008   edx: d48245a4
-esi: fffffffc   edi: d9d97680   ebp: f782a000   esp: f782bb50
-ds: 007b   es: 007b   ss: 0068
-Process patch (pid: 10605, threadinfo=f782a000 task=e85e2570)
-Stack: <0>ca9a2df0 c55bc880 ca9a2d80 c55bc8c4 00000000 d9d97680 ca9a2d80
-f782a000
-       c01c8b0b c01c047a f782bba0 00000008 c55bc8c4 00000000 ca9a2d80 c55bc8c4
-       00000000 c01c8c97 f782bba0 00000002 00000000 fffffe09 c55bc884 f782a000
-Call Trace:
- <c01c8b0b> try_capture_block+0x179/0x27b   <c01c047a>
-free_space_shortage+0x2b/0x52
- <c01c8c97> try_capture+0x72/0xe1   <c01c28f5> longterm_lock_znode+0x21a/0x2ab
- <c01d1234> cbk_cache_scan_slots+0x123/0x2d6   <c01d1414>
-cbk_cache_search+0x2d/0x4e
- <c01d0278> coord_by_handle+0x8/0x19   <c01d0245> object_lookup+0xab/0xd6
- <c01bf970> done_carry_level+0x5b/0x6e   <c01c4bf6> cut_tree_object+0x77/0x1b9
- <c01c63e5> reiser4_grab+0xaf/0xf2   <c01c647f> reiser4_grab_space+0x57/0x7f
- <c01c64f4> reiser4_grab_reserved+0x4d/0x15d   <c01c24f8>
-longterm_unlock_znode+0xb6/0x187
- <c01df340> reserve_cut_iteration+0x59/0x69   <c01df4ab>
-cut_file_items+0xd8/0x177
- <c01df599> shorten_file+0x4a/0x20a   <c01df350> update_file_size+0x0/0x83
- <c01df879> truncate_file_body+0x8c/0x90   <c01bc487> preempt_point+0x5/0x1d
- <c01e232f> delete_object_unix_file+0x4a/0xe2   <c01c4f14>
-_init_context+0x54/0x78
- <c01d3c1d> reiser4_delete_inode+0x6b/0xca   <c016b5f4> d_delete+0xe0/0xe6
- <c01d3bb2> reiser4_delete_inode+0x0/0xca   <c016d056>
-generic_delete_inode+0xaa/0x150
- <c016d2bc> iput+0x53/0x65   <c0163b29> do_unlinkat+0xb9/0xfa
- <c0164781> sys_renameat+0x61/0x73   <c01647ba> sys_rename+0x27/0x2b
- <c0448d2f> syscall_call+0x7/0xb   <c044007b> svc_recv+0x3bc/0x504
-Code: 44 24 08 8b 50 70 8d 5a ec 8b 43 14 0f 18 00 90 3b 14 24 0f 84 19 01
-00 00 89 f5 8b 43 04 e8 f8 c1 ff ff 3b 44 24 04 89 c6 74 0c <8b> 40 40 3b 78
-08 0f 85 33 01 00 00 8b 53 14 8d 42 ec 89 c3 8b
-EIP: [<c01c8dca>] fuse_not_fused_lock_owners+0x79/0x1e7 SS:ESP 0068:f782bb50
- <6>note: patch[10605] exited with preempt_count 2
+Thanks.
 
+On 5/12/06, Alexey Polyakov <alexey.polyakov@gmail.com> wrote:
+> Hi,
+>
+> after running for a couple hours, kernel reports a different bug. Then
+> again processes get stuck in D state, and only hard reset helps.
+>
+> Here's this new error message:
+>
+> May 11 07:19:22 titanic kernel: <4>reiser4[httpd(11176)]:
+> plugin_by_unsafe_id (fs/reiser4/plugin/plugin.c:296)[nikita-2913]:
+> May 11 07:19:22 titanic kernel: WARNING: Invalid plugin id: [2:235]
+> May 11 07:19:22 titanic kernel: Unable to handle kernel NULL pointer
+> dereference at 0000000000000004 RIP:
+> May 11 07:19:22 titanic kernel: <ffffffff80229461>{obtain_item_plugin+17}
+> May 11 07:19:22 titanic kernel: PGD 37d86067 PUD e1ba8067 PMD 0
+> May 11 07:19:22 titanic kernel: Oops: 0000 [1] SMP
+> May 11 07:19:22 titanic kernel: CPU 3
+> May 11 07:19:22 titanic kernel: Modules linked in:
+> May 11 07:19:22 titanic kernel: Pid: 11176, comm: httpd Not tainted
+> 2.6.16-cks9 #2
+> May 11 07:19:22 titanic kernel: RIP: 0010:[<ffffffff80229461>]
+> <ffffffff80229461>{obtain_item_plugin+17}
+> May 11 07:19:22 titanic kernel: RSP: 0018:ffff8100edd39b48  EFLAGS: 00010=
+292
+> May 11 07:19:22 titanic kernel: RAX: 0000000000000000 RBX:
+> ffff81016df732d0 RCX: ffffffff80406c68
+> May 11 07:19:22 titanic kernel: RDX: 0000000000000000 RSI:
+> 0000000000000292 RDI: ffffffff80406c60
+> May 11 07:19:22 titanic kernel: RBP: ffff81016df732d0 R08:
+> 0000000000000003 R09: 0000000000000001
+> May 11 07:19:22 titanic kernel: R10: 0000000000000000 R11:
+> ffffffff80118cd0 R12: ffff81013e91f000
+> May 11 07:19:22 titanic kernel: R13: ffffffff80419000 R14:
+> ffff81013e91f4f0 R15: 0000000000000000
+> May 11 07:19:22 titanic kernel: FS:  00002ab7a85cc8e0(0000)
+> GS:ffff8101045370c0(0000) knlGS:0000000000000000
+> May 11 07:19:22 titanic kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
+> 000000008005003b
+> May 11 07:19:22 titanic kernel: CR2: 0000000000000004 CR3:
+> 00000000d9e67000 CR4: 00000000000006e0
+> May 11 07:19:22 titanic kernel: Process httpd (pid: 11176, threadinfo
+> ffff8100edd38000, task ffff810037d3f100)
+> May 11 07:19:23 titanic kernel: Stack: ffff81016df732d0
+> ffffffff801f14d1 ffff81016df732d0 ffffffff801f17ad
+> May 11 07:19:23 titanic kernel:        0000000000000001
+> ffffffff801ed372 ffff8100edd39b70 ffffffff00000001
+> May 11 07:19:23 titanic kernel:        0000000000000000 0000000000000000
+> May 11 07:19:23 titanic kernel: Call Trace:
+> <ffffffff801f14d1>{coord_num_units+17}
+> <ffffffff801f17ad>{coord_init_after_item_end+13}
+> May 11 07:19:23 titanic kernel:
+> <ffffffff801ed372>{carry_insert_flow+1106}
+> <ffffffff801eb9ab>{carry+267}
+> May 11 07:19:23 titanic kernel:
+> <ffffffff801eac05>{post_carry+85} <ffffffff801ef267>{insert_flow+263}
+> May 11 07:19:23 titanic kernel:
+> <ffffffff80221de5>{write_tail+245} <ffffffff801e8e35>{jload_gfp+437}
+> May 11 07:19:23 titanic kernel:
+> <ffffffff80211bbe>{extent2tail+942}
+> <ffffffff8020fd40>{release_unix_file+192}
+> May 11 07:19:23 titanic kernel:        <ffffffff80179d02>{__fput+194}
+> <ffffffff80162a01>{remove_vma+65}
+> May 11 07:19:23 titanic kernel:
+> <ffffffff8016417e>{do_munmap+670} <ffffffff801649e2>{sys_munmap+82}
+> May 11 07:19:23 titanic kernel:        <ffffffff8010aaf6>{system_call+126=
+}
+> May 11 07:19:23 titanic kernel:
+> May 11 07:19:23 titanic kernel: Code: 0f be 40 04 88 43 0c 5b c3 66 66
+> 90 66 66 90 53 0f b6 47 0c
+> May 11 07:19:23 titanic kernel: RIP
+> <ffffffff80229461>{obtain_item_plugin+17} RSP <ffff8100edd39b48>
+> May 11 07:19:23 titanic kernel: CR2: 0000000000000004
+>
+>
+> On 5/11/06, Alexander Zarochentsev <zam@namesys.com> wrote:
+> > Hello.
+> >
+> > please apply the attached patch.
+>
+>
+> --
+> Alexey Polyakov
+>
+
+
+--=20
+Alexey Polyakov
