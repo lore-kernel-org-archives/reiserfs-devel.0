@@ -1,21 +1,23 @@
-From: Laurent Riffard <laurent.riffard@free.fr>
-Subject: [reiser4] reiser4 panicked cowardly: zam-397
-Date: Sat, 13 May 2006 22:03:16 +0200
-Message-ID: <44663B84.6070401@free.fr>
+From: "Lars Grobe" <grobe@gmx.net>
+Subject: =?ISO-8859-1?Q?Re:_alman_biras=FD_oettinger_t=FCrkiyede?=
+Date: Mon, 15 May 2006 13:50:49 +0200 (MEST)
+Message-ID: <6949.1147693849@www024.gmx.net>
+References: <99adf2faabc6f8682602c8390ea0459a@gmail.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28612-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28613-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hello,
+Ok, this is the first time of my life that I was really pleased by what I
+read in a spam mail. As a German living in Istanbul, I will translate: The
+cheapest beer available in Germany will be sold in Turkey now, too :-)
 
-I've been hit by a couple of reiser4 panic due to zam-397 assertion. 
-It's more or less reproducible. How can I help debug this ? 
-~~
-laurent
+Still, the spam filter has still some leakage... And please don't kick me
+off the list now because of my reply, I still have tears in my eyes. CU
+Lars.
