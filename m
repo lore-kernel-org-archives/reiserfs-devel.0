@@ -1,68 +1,81 @@
-From: Christian Trefzer <ctrefzer@gmx.de>
-Subject: Re: Recent patch frenzy, conflicts and Oopses
-Date: Tue, 16 May 2006 16:02:04 +0200
-Message-ID: <20060516140204.GC18524@hermes.uziel.local>
-References: <20060515130450.GB8977@zeus.uziel.local> <200605161432.21209.zam@namesys.com>
+From: "Sinang, Danny" <D.Sinang@spi-bpo.com>
+Subject: Maximum number of subdirectories
+Date: Tue, 16 May 2006 23:25:17 +0800
+Message-ID: <5502B4E900B1A04AAA35CB57979B8C9A19D2F7@spi-mail2003.spitech.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vEao7xgI/oilGqZ+"
-Return-path: <reiserfs-list-return-28631-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----_=_NextPart_001_01C678FD.139AA752"
+Return-path: <reiserfs-list-return-28632-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200605161432.21209.zam@namesys.com>
+Content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Alexander Zarochentsev <zam@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
---vEao7xgI/oilGqZ+
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+------_=_NextPart_001_01C678FD.139AA752
+Content-Type: text/plain;
+	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 16, 2006 at 02:32:20PM +0400, Alexander Zarochentsev wrote:
->=20
-> The patch disables the BUG() but reiser4 can deadlock.  However the=20
-> deadlock requires 3 processes to use the same EA/NEA semaphore. =20
->=20
-> better patches are there:=20
->=20
-> ftp.kernel.org:/pub/linux/kernel/people/akpm/patches/2.6/2.6.17-rc4/2.6.1=
-7-rc4-mm1/broken-out/
-> reiser4-have-get_exclusive_access-restart-transaction.patch
-> reiser4-add-missing-txn_restart-before-get_nonexclusive_access-calls.patch
->=20
+Hello,
+=20
+Am a newbie to ReisferFS / Reiser4.=20
+=20
+I've been searching the archives and Google for a definite answer as to
+what the maximum number of subdirectories under a directory is. A Dec,
+2003 article ( http://everything2.com/index.pl?node_id=3D510028 ) says
+it's 64,536. Is this still true ?
+=20
+If not, then what is the current limit for both ReiserFS and Reiser4 ?
+=20
+Regards,
+Danny
+=20
+=20
 
-Thanks a bunch for clarification! It seems I am not the only one on this
-list who got confused by bug reports and different approaches to fix
-those.
+------_=_NextPart_001_01C678FD.139AA752
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-Kind regards,
-Chris
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; =
+charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1528" name=3DGENERATOR></HEAD>
+<BODY>
+<DIV><SPAN class=3D474042115-16052006><FONT face=3DArial=20
+size=3D2>Hello,</FONT></SPAN></DIV>
+<DIV><SPAN class=3D474042115-16052006><FONT face=3DArial=20
+size=3D2></FONT></SPAN>&nbsp;</DIV>
+<DIV><SPAN class=3D474042115-16052006><FONT face=3DArial size=3D2>Am a =
+newbie to=20
+ReisferFS / Reiser4. </FONT></SPAN></DIV>
+<DIV><SPAN class=3D474042115-16052006><FONT face=3DArial=20
+size=3D2></FONT></SPAN>&nbsp;</DIV>
+<DIV><SPAN class=3D474042115-16052006><FONT face=3DArial size=3D2>I've =
+been searching=20
+the archives and Google for a definite answer as to what the maximum =
+number of=20
+subdirectories under a directory is. A Dec, 2003 article&nbsp;( <A=20
+href=3D"http://everything2.com/index.pl?node_id=3D510028">http://everythi=
+ng2.com/index.pl?node_id=3D510028</A>&nbsp;)=20
+says it's 64,536.&nbsp;Is this still true&nbsp;?</FONT></SPAN></DIV>
+<DIV><SPAN class=3D474042115-16052006><FONT face=3DArial=20
+size=3D2></FONT></SPAN>&nbsp;</DIV>
+<DIV><SPAN class=3D474042115-16052006><FONT face=3DArial size=3D2>If =
+not, then what is=20
+the current limit for both ReiserFS and Reiser4 ?</FONT></SPAN></DIV>
+<DIV><SPAN class=3D474042115-16052006></SPAN>&nbsp;</DIV>
+<DIV><SPAN class=3D474042115-16052006><FONT face=3DArial=20
+size=3D2>Regards,</FONT></SPAN></DIV>
+<DIV><SPAN class=3D474042115-16052006><FONT face=3DArial=20
+size=3D2>Danny</FONT></SPAN></DIV>
+<DIV><SPAN class=3D474042115-16052006><FONT face=3DArial=20
+size=3D2></FONT></SPAN>&nbsp;</DIV>
+<DIV><SPAN class=3D474042115-16052006></SPAN><SPAN=20
+class=3D474042115-16052006>&nbsp;</SPAN></DIV></BODY></HTML>
 
---vEao7xgI/oilGqZ+
-Content-Type: application/pgp-signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2.2 (GNU/Linux)
-
-iQIVAwUBRGnbW12m8MprmeOlAQIYMBAAhJar3pUCuOEsa0On4x0/QX6jGQUL0Kt7
-WZWmLfKYulvHntrWY9k/2L5hD+RUvxDCi2eChlJhxYi3TYF5aZHwGkgIqHCAr2gh
-gBZOKcbFTl0xj3pH0WUH/TA6eFVQMhid4bOFvTi+BTzL/kCpih6doywCreEKR45N
-DpNjJLMhnvFCOdITlV92K3VVbL80nHh/I9mDak7KHidFuMKAWohoMp93+/cWi85d
-qiokmng6m4jxb65pOtbVJW08VPxCNk7stoD7sSBrygfUxmA1SB3BvvC8DtdzdpjY
-oB108JDBI4C89De+ybVIZiUYNvYvkJs3jwIFtv9nL1yykVFMzFcaRO/eWk8TA7QX
-AldxOa1TljevN6jeCg6oZZTSCnkX1ltIqeL8o6xjWtwkWIlxlY+DhN9yvwGDpzZO
-Fxdrei29DsB6ZCp3T+8x2iapLzkvdtK2K/P+zOuLib1rAW8nfhsHkOMm2n/4UBmu
-wM7meGf5Yq6NW6/BB9pkXIbmwf0ElpJ7x7slQY+fILh5Gi5/6hza4mJY1XRZ2Ixp
-WaFgIAYO3FUMXyaHU+J5yjkvRL64DShQEVNdYpuMjOCaTvRzc1iqSI8cs8ELwbZi
-xhOmaduPtXrUAKb3StzoAZ/DxXwrADolIrpXiBR0UiSJcU+scxzbhnumGcIGe2Xh
-KZZwNDgcQRo=
-=LIaT
------END PGP SIGNATURE-----
-
---vEao7xgI/oilGqZ+--
-
+------_=_NextPart_001_01C678FD.139AA752--
