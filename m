@@ -1,41 +1,38 @@
-From: Tom Vier <tmv@comcast.net>
-Subject: 2.6.16 + reiser4 -2 patch = gcc error
-Date: Wed, 17 May 2006 15:08:05 -0400
-Message-ID: <20060517190805.GB32223@zero>
-Reply-To: Tom Vier <tmv@comcast.net>
+From: Michael Weissenbacher <webmaster@dermichi.com>
+Subject: Re: Reiser4 release date and status
+Date: Thu, 18 May 2006 07:52:21 +0200
+Message-ID: <446C0B95.7020102@dermichi.com>
+References: <5502B4E900B1A04AAA35CB57979B8C9A27820F@spi-mail2003.spitech.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28644-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28645-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <5502B4E900B1A04AAA35CB57979B8C9A27820F@spi-mail2003.spitech.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Sinang, Danny" <D.Sinang@spi-bpo.com>
+Cc: reiserfs-list@namesys.com
 
-I'm using 2.6.16 and the patch from
-ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.16/reiser4-for-2.6.16-2.patch.gz
+Hello,
+ > I noticed the "REISER4 RELEASED!" statement in
+ > http://www.namesys.com/download.html and wonder when it did get released
+ > and what its status now.
+it is released but from my experience the latest changes that were 
+necessary to prepare for inclusion into the vanilla kernel have 
+destabilized the code somewhat.
 
-  CC [M]  fs/reiser4/plugin/file_ops_readdir.o
-fs/reiser4/plugin/file_ops_readdir.c: In function lseek_common_dir':
-fs/reiser4/plugin/file_ops_readdir.c:485: warning: implicit declaration of
-function 
-utex_lock'
-fs/reiser4/plugin/file_ops_readdir.c:485: error: structure has no member
-named 	_mutex'
-fs/reiser4/plugin/file_ops_readdir.c:507: warning: implicit declaration of
-function 
-utex_unlock'
-fs/reiser4/plugin/file_ops_readdir.c:507: error: structure has no member
-named 	_mutex'
-make[2]: *** [fs/reiser4/plugin/file_ops_readdir.o] Error 1
-make[1]: *** [fs/reiser4] Error 2
-make: *** [fs] Error 2
+ > The web page seems to have last been updated August 5, 2004 and the
+ > warning still says "but until a program has seen a few million real
+ > users you should not use it for a mission critical server."
+ > Does this warning still hold ?
+i'd say this warning still holds for mission-critical servers. it's ok 
+for desktop use and for testing and development purposes. i may add that 
+the warning is true for about any software that is released, for example 
+you need not be the first one to adapt apache 2.2 on a mission-critical 
+server either.
 
-Sorry if this has been posted already. I searched, but didn't find it.
-
--- 
-Tom Vier <tmv@comcast.net>
-DSA Key ID 0x15741ECE
+kind regards,
+michael
