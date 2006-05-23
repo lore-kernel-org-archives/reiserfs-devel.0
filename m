@@ -1,52 +1,27 @@
-From: Jindrich Makovicka <makovick@gmail.com>
-Subject: Re: kernel BUG at fs/reiser4/plugin/file/tail_conversion.c:80?
-Date: Sun, 21 May 2006 14:04:11 +0200
-Message-ID: <20060521140411.7de0722f@holly.localdomain>
-References: <44704349.70602@yahoo.de>
+From: Tom Vier <tmv@comcast.net>
+Subject: Re: quicker mount
+Date: Tue, 23 May 2006 10:43:19 -0400
+Message-ID: <20060523144319.GA25889@zero>
+References: <20060427143635.GA5949@gelma.net> <4450D85E.50109@suse.com> <4450DBDB.5060209@dermichi.com> <4450E63C.5080306@suse.com> <445671EA.5050305@suse.com> <4456D65D.1050607@suse.com>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28657-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28664-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44704349.70602@yahoo.de>
+Content-Disposition: inline
+In-Reply-To: <4456D65D.1050607@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Maximilian Mehnert <widolo87@yahoo.de>
+Content-Transfer-Encoding: 7bit
+To: Jeff Mahoney <jeffm@suse.com>
 Cc: reiserfs-list@namesys.com
 
-On Sun, 21 May 2006 12:39:05 +0200
-Maximilian Mehnert <widolo87@yahoo.de> wrote:
+What about reiserfs4? I just tried a 250gig raid1 and it r4 takes even
+longer than 3. Is it also preloading all bitmaps? No other fs that i've
+tried takes so long to mount.
 
-> Kernel-Patch: reiser4-for-2.6.16-2.patch.gz
-> 
-> kernel BUG at fs/reiser4/plugin/file/tail_conversion.c:80!
-> invalid opcode: 0000 [#1]
-> [...]
-> 
-> 
-> 
-> I thought that maybe someone with greater insight than I might be
-> interested in the attached kernel dump.
-> I don't know how to reproduce this - the only thing I can say is,
-> that I had several reiser4 partitions under heavy load. (Now I
-> changed to reiserfs... Too many problems with reiser4 during the last
-> days.. :-( )
-
-This was a really frequent matter during the last two weeks. Please
-look for the patches that were posted.
-
-> I noticed another thing: using reiser4 for some days on my laptop
-> rendered kopete (instant messaging application) nearly unresponsive.
-> Looking at the output of strace it seems that the frequent use of
-> fsync()  (in sqlite) causes heavy i/o with reiser4. This problem does
-> not occur with ext3 or reiserfs...
-
-This is a known issue. fsync() and sync() generate a lot of seeking,
-and are painfully slow. I have the same problems with postgresql's
-vacuum and db4 open/close here.
-
-Regards,
 -- 
-Jindrich Makovicka
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0x15741ECE
