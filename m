@@ -1,37 +1,46 @@
-From: "Michal Piotrowski" <michal.k.k.piotrowski@gmail.com>
-Subject: Re: [PATCH] updated reiser4 - reduced cpu usage for writes by writing more than 4k at a time (has implications for generic write code and eventually for the IO layer)
-Date: Tue, 23 May 2006 22:33:20 +0200
-Message-ID: <6bffcb0e0605231333n612da806j9bd910cba65e3692@mail.gmail.com>
-References: <44736D3E.8090808@namesys.com>
-	 <b5d90b2a0605231326g5319fea8wb9efef34ee5f7ec6@mail.gmail.com>
+From: "Gregory Maxwell" <gmaxwell@gmail.com>
+Subject: Re: reiser4: first impression (vs xfs and jfs)
+Date: Tue, 23 May 2006 15:08:07 -0400
+Message-ID: <e692861c0605231208r2c9314e6sa8eed8204d1f08bf@mail.gmail.com>
+References: <20060523155102.GB25889@zero>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932152AbWEWUdW@vger.kernel.org>
-In-Reply-To: <b5d90b2a0605231326g5319fea8wb9efef34ee5f7ec6@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28668-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <20060523155102.GB25889@zero>
 Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Alexey Polyakov <alexey.polyakov@gmail.com>
-Cc: Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <Linux-Kernel@vger.kernel.org>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>, Nate Diller <ndiller@namesys.com>
+To: Tom Vier <tmv@comcast.net>
+Cc: reiserfs-list@namesys.com
 
-Hi Hans,
-
-On 23/05/06, Alexey Polyakov <alexey.polyakov@gmail.com> wrote:
-> Hi!
+On 5/23/06, Tom Vier <tmv@comcast.net> wrote:
+[snip]
+> What i'm doing is rsyncing from a slower drive (on 1394) to the raid1 dev=
+.
+> When using r4 (xfs behaves similarly), after several seconds, reading fro=
+m
+> the source and writing to the destination stops for 3 or 4 seconds, then
+> brief burst of writes to the r4 fs (the dest), a 1 second pause, and then
+> reading and periodic writes resume, until it happens again.
 >
-> I'm actively using Reiser4 on a production servers (and I know a lot
-> of people that do that too).
-> Could you please release the patch against the vanilla tree?
-> I don't think there's a lot of people that will test -mm version,
-> especially on production servers - -mm is a little bit too unstable.
+> It seems that both r4 and xfs allow a large number of pages to be dirtied=
+,
+> before queuing them for writeback, and this has a negative effect on
+> throughput. In my test (rsync'ing ~50gigs of flacs), r4 and xfs are almos=
+t
+> 10 minutes slower than jfs.
+[snip]
 
-Any chance to get this patch against 2.6.17-rc4-mm3?
+Have you tested a pure write load? It may be that rsync's combined
+reading writing is triggering a corner case for FSes with delayed
+allocation. It may not be issuing it's checksumming reads far enough
+ahead of time and end up disk latency bound.
 
-Regards,
-Michal
-
--- 
-Michal K. K. Piotrowski
-LTG - Linux Testers Group
-(http://www.stardust.webpages.pl/ltg/wiki/)
+It's interesting that you saw the same issues with XFS... I use XFS on
+my audio workstation computer because  it (combined with a low latency
+patched kernel) had by far the lowest worst case latencies of all the
+FSes I tested at the time.
