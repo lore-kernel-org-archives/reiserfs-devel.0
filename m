@@ -1,57 +1,46 @@
-From: "Alexey Polyakov" <alexey.polyakov@gmail.com>
-Subject: Re: reiser4: first impression (vs xfs and jfs)
-Date: Tue, 23 May 2006 23:13:05 +0400
-Message-ID: <b5d90b2a0605231213q3857eb6apb0c8525ad3728070@mail.gmail.com>
-References: <20060523155102.GB25889@zero>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: [PATCH] updated reiser4 - reduced cpu usage for writes by
+	writing more than 4k at a time (has implications for generic write code and
+	eventually for the IO layer)
+Date: Wed, 24 May 2006 18:39:46 +0400
+Message-ID: <1148481586.6395.25.camel@tribesman.namesys.com>
+References: <44736D3E.8090808@namesys.com>
+	 <b5d90b2a0605231326g5319fea8wb9efef34ee5f7ec6@mail.gmail.com>
+	 <6bffcb0e0605231333n612da806j9bd910cba65e3692@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28672-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28673-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060523155102.GB25889@zero>
-Content-Disposition: inline
+In-Reply-To: <6bffcb0e0605231333n612da806j9bd910cba65e3692@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Tom Vier <tmv@comcast.net>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Michal Piotrowski <michal.k.k.piotrowski@gmail.com>
+Cc: Alexey Polyakov <alexey.polyakov@gmail.com>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, Linux Kernel Mailing List <Linux-Kernel@vger.kernel.org>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>, Nate Diller <ndiller@namesys.com>
 
-Hi Tom,
+Hello
 
-what kind of raid do you use? Is it software md, or a hw raid solution?
-Also, what's the size of your r4 partition?
+On Tue, 2006-05-23 at 22:33 +0200, Michal Piotrowski wrote:
+> Hi Hans,
+> 
+> On 23/05/06, Alexey Polyakov <alexey.polyakov@gmail.com> wrote:
+> > Hi!
+> >
+> > I'm actively using Reiser4 on a production servers (and I know a lot
+> > of people that do that too).
+> > Could you please release the patch against the vanilla tree?
+> > I don't think there's a lot of people that will test -mm version,
+> > especially on production servers - -mm is a little bit too unstable.
+> 
+> Any chance to get this patch against 2.6.17-rc4-mm3?
+> 
 
-On 5/23/06, Tom Vier <tmv@comcast.net> wrote:
-> I finally decided to try a few different fs'es on my 250gig raid1. (I use
-> reiserfs3 most of the time.) Here's some things i noticed, between r4, xfs,
-> and jfs.
->
-> Both r4 and xfs suffer from io pauses. This is on a dual 2.6ghz opteron,
-> btw. I don't see high cpu usage, but clock throttling could be screwing up
-> top's % calcs (tho i think all usage is measured by time, so it shouldn't).
->
-> What i'm doing is rsyncing from a slower drive (on 1394) to the raid1 dev.
-> When using r4 (xfs behaves similarly), after several seconds, reading from
-> the source and writing to the destination stops for 3 or 4 seconds, then
-> brief burst of writes to the r4 fs (the dest), a 1 second pause, and then
-> reading and periodic writes resume, until it happens again.
->
-> It seems that both r4 and xfs allow a large number of pages to be dirtied,
-> before queuing them for writeback, and this has a negative effect on
-> throughput. In my test (rsync'ing ~50gigs of flacs), r4 and xfs are almost
-> 10 minutes slower than jfs.
->
-> One thing that surprised me was, once r4 does write out, it is very fast.
-> Fast enough that i wasn't sure it was actually writing whole files! However,
-> i did a umount; mount and ran cksum, and sure enough, the files were good.
-> 8)
->
-> --
-> Tom Vier <tmv@comcast.net>
-> DSA Key ID 0x15741ECE
->
+yes, reiser4 updates for latest stock and mm kernels will be out in one
+or two days
 
+> Regards,
+> Michal
+> 
 
--- 
-Alexey Polyakov
