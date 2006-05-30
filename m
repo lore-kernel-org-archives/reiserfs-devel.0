@@ -1,86 +1,66 @@
-From: Arend Freije <afreije@inn.nl>
-Subject: Re: RAID-1 and Reiser4 issue: umount hangs
-Date: Tue, 30 May 2006 21:20:26 +0200
-Message-ID: <447C9AFA.90400@inn.nl>
-References: <447B56C1.80608@inn.nl> <200605301553.34815.zam@namesys.com>
+From: Marcus Furlong <furlongm@hotmail.com>
+Subject: Re: reiser4 for 2.6.16 (version 3)
+Date: Tue, 30 May 2006 16:59:16 +0100
+Message-ID: <e5hq4f$ou8$1@sea.gmane.org>
+References: <200605301554.35901.zam@namesys.com> <web-8763177@inc.ru>
+Reply-To: furlongm@hotmail.com
 Mime-Version: 1.0
-Content-Type: multipart/alternative;
- boundary="------------080900030602070004040805"
-Return-path: <reiserfs-list-return-28694-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-28695-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200605301553.34815.zam@namesys.com>
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Alexander Zarochentsev <zam@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="utf-8"
+To: reiserfs-list@namesys.com
 
---------------080900030602070004040805
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
+mail@viliar.net.ru wrote:
 
-Alexander Zarochentsev wrote:
-> Hello,
->
-> On Tuesday 30 May 2006 00:17, Arend Freije wrote:
->   
->> Hi,
->>
->> I'm using Reiser4 for my filesystems on disk (/dev/sda) , and it
->> works just fine. Recently I bought a second disk (/dev/sdb) for
->> RAID-1 mirroring. With mdadm I created a degraded raid-1 array  on
->> /dev/md/0, devices missing,/dev/sdb1. After that I created a Reiser4
->> filesystem on /dev/md/0 and mounted it at /mnt. Then I copied the
->> data from /dev/sda1 to /mnt.
->>     
->
-> would it work better with "no_write_barrier" mount option?
->   
-It would indeed. What's the purpose of this option?
+> #cd /usr/src/linux-std
+> #make clean
+> #gzip -dc ../reiser4-for-2.6.16-3.patch.gz | patch -p1
+> --silent
+> #make all
+> #make modules_install
+> ---cut---
+> if [ -r System.map -a -x /sbin/depmod ]; then /sbin/depmod
+> -ae -F System.map  2.6.16.18; fi
+> WARNING:
+> /lib/modules/2.6.16.18/kernel/fs/reiser4/reiser4.ko needs
+> unknown symbol balance_dirty_pages
+> WARNING:
+> /lib/modules/2.6.16.18/kernel/fs/reiser4/reiser4.ko needs
+> unknown symbol page_cache_readahead
+> make: *** [_modinst_post] Ошибка 1
+> 
+> # uname -a
+> Linux losthold.vs 2.6.16.18 #12 PREEMPT Mon May 29 21:43:25
+> MSD 2006 i686 AMD Athlon(tm)  unknown GNU/Linux
+> # gcc -v
+> Using built-in specs.
+> Target: i586-mandriva-linux-gnu
+> Configured with: ../configure --prefix=/usr
+> --libexecdir=/usr/lib --with-slibdir=/lib
+> --mandir=/usr/share/man --infodir=/usr/share/info
+> --enable-shared --enable-threads=posix --disable-checking
+> --enable-languages=c,c++,ada,f95,objc,java
+> --host=i586-mandriva-linux-gnu --with-system-zlib
+> --enable-long-long --enable-__cxa_atexit
+> --enable-clocale=gnu --disable-libunwind-exceptions
+> --enable-java-awt=gtk
+> --with-java-home=/usr/lib/jvm/java-1.4.2-gcj-1.4.2.0/jre
+> --enable-gtk-cairo --disable-libjava-multilib
+> Thread model: posix
+> gcc version 4.0.1 (4.0.1-5mdk for Mandriva Linux release
+> 2006.0)O
+> 
+> reiser4-for-2.6.16-2.patch.gz -- compile and install
+> without this problem.
 
-Kind Regards,
+Try
+ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.13/broken-out.4/reiser4-export-page_cache_readahead.patch
 
-Arend
+Alternatively, this goes away if you don't build it as a module IIRC.
 
---------------080900030602070004040805
-Content-Type: text/html; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-  <meta content="text/html;charset=ISO-8859-15"
- http-equiv="Content-Type">
-</head>
-<body bgcolor="#ffffff" text="#000000">
-Alexander Zarochentsev wrote:
-<blockquote cite="mid200605301553.34815.zam@namesys.com" type="cite">
-  <pre wrap="">Hello,
-
-On Tuesday 30 May 2006 00:17, Arend Freije wrote:
-  </pre>
-  <blockquote type="cite">
-    <pre wrap="">Hi,
-
-I'm using Reiser4 for my filesystems on disk (/dev/sda) , and it
-works just fine. Recently I bought a second disk (/dev/sdb) for
-RAID-1 mirroring. With mdadm I created a degraded raid-1 array  on
-/dev/md/0, devices missing,/dev/sdb1. After that I created a Reiser4
-filesystem on /dev/md/0 and mounted it at /mnt. Then I copied the
-data from /dev/sda1 to /mnt.
-    </pre>
-  </blockquote>
-  <pre wrap=""><!---->
-would it work better with "no_write_barrier" mount option?
-  </pre>
-</blockquote>
-It would indeed. What's the purpose of this option?<br>
-<br>
-Kind Regards,<br>
-<br>
-Arend<br>
-</body>
-</html>
-
---------------080900030602070004040805--
