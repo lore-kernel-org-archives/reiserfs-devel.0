@@ -1,40 +1,53 @@
-From: Alexander Zarochentsev <zam@namesys.com>
+From: <mail@viliar.net.ru>
 Subject: Re: reiser4 for 2.6.16 (version 3)
-Date: Tue, 30 May 2006 15:54:35 +0400
-Message-ID: <200605301554.35901.zam@namesys.com>
-References: <1148923857.6482.12.camel@tribesman.namesys.com>
+Date: Tue, 30 May 2006 17:49:09 +0400
+Message-ID: <web-8763177@inc.ru>
+References: <200605301554.35901.zam@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28690-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: base64
+Return-path: <reiserfs-list-return-28691-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1148923857.6482.12.camel@tribesman.namesys.com>
-Content-Disposition: inline
+In-Reply-To: <200605301554.35901.zam@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-dev <reiserfs-dev@namesys.com>
+Content-Type: text/plain; charset="koi8-r"
+To: Alexander Zarochentsev <zam@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-On Monday 29 May 2006 21:30, Vladimir V. Saveliev wrote:
-> Hello
->
-> ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.16/reiser4-for-2.6.16-3
->.patch.gz contains the most recent reiser4 code which is considered
-> stable inside Namesys. This code is supposed to be in mm kernel next
-> to 2.6.17-rc4-mm3.
->
-> Please try it. Any feedback is welcome.
-
-
-it works on the Cuba server. 
-
-uptime is 
-  3:54pm  up   5:25,  2 users,  load average: 0,00, 0,00, 0,00
-
->
->
-
--- 
-Alex.
+I2NkIC91c3Ivc3JjL2xpbnV4LXN0ZAojbWFrZSBjbGVhbgojZ3ppcCAtZGMgLi4vcmVpc2VyNC1m
+b3ItMi42LjE2LTMucGF0Y2guZ3ogfCBwYXRjaCAtcDEKLS1zaWxlbnQKI21ha2UgYWxsCiNtYWtl
+IG1vZHVsZXNfaW5zdGFsbCAKLS0tY3V0LS0tCmlmIFsgLXIgU3lzdGVtLm1hcCAtYSAteCAvc2Jp
+bi9kZXBtb2QgXTsgdGhlbiAvc2Jpbi9kZXBtb2QKLWFlIC1GIFN5c3RlbS5tYXAgIDIuNi4xNi4x
+ODsgZmkKV0FSTklORzoKL2xpYi9tb2R1bGVzLzIuNi4xNi4xOC9rZXJuZWwvZnMvcmVpc2VyNC9y
+ZWlzZXI0LmtvIG5lZWRzCnVua25vd24gc3ltYm9sIGJhbGFuY2VfZGlydHlfcGFnZXMKV0FSTklO
+RzoKL2xpYi9tb2R1bGVzLzIuNi4xNi4xOC9rZXJuZWwvZnMvcmVpc2VyNC9yZWlzZXI0LmtvIG5l
+ZWRzCnVua25vd24gc3ltYm9sIHBhZ2VfY2FjaGVfcmVhZGFoZWFkCm1ha2U6ICoqKiBbX21vZGlu
+c3RfcG9zdF0g79vJwsvBIDEKCiMgdW5hbWUgLWEKTGludXggbG9zdGhvbGQudnMgMi42LjE2LjE4
+ICMxMiBQUkVFTVBUIE1vbiBNYXkgMjkgMjE6NDM6MjUKTVNEIDIwMDYgaTY4NiBBTUQgQXRobG9u
+KHRtKSAgdW5rbm93biBHTlUvTGludXgKIyBnY2MgLXYKVXNpbmcgYnVpbHQtaW4gc3BlY3MuClRh
+cmdldDogaTU4Ni1tYW5kcml2YS1saW51eC1nbnUKQ29uZmlndXJlZCB3aXRoOiAuLi9jb25maWd1
+cmUgLS1wcmVmaXg9L3VzcgotLWxpYmV4ZWNkaXI9L3Vzci9saWIgLS13aXRoLXNsaWJkaXI9L2xp
+YgotLW1hbmRpcj0vdXNyL3NoYXJlL21hbiAtLWluZm9kaXI9L3Vzci9zaGFyZS9pbmZvCi0tZW5h
+YmxlLXNoYXJlZCAtLWVuYWJsZS10aHJlYWRzPXBvc2l4IC0tZGlzYWJsZS1jaGVja2luZwotLWVu
+YWJsZS1sYW5ndWFnZXM9YyxjKyssYWRhLGY5NSxvYmpjLGphdmEKLS1ob3N0PWk1ODYtbWFuZHJp
+dmEtbGludXgtZ251IC0td2l0aC1zeXN0ZW0temxpYgotLWVuYWJsZS1sb25nLWxvbmcgLS1lbmFi
+bGUtX19jeGFfYXRleGl0Ci0tZW5hYmxlLWNsb2NhbGU9Z251IC0tZGlzYWJsZS1saWJ1bndpbmQt
+ZXhjZXB0aW9ucwotLWVuYWJsZS1qYXZhLWF3dD1ndGsKLS13aXRoLWphdmEtaG9tZT0vdXNyL2xp
+Yi9qdm0vamF2YS0xLjQuMi1nY2otMS40LjIuMC9qcmUKLS1lbmFibGUtZ3RrLWNhaXJvIC0tZGlz
+YWJsZS1saWJqYXZhLW11bHRpbGliClRocmVhZCBtb2RlbDogcG9zaXgKZ2NjIHZlcnNpb24gNC4w
+LjEgKDQuMC4xLTVtZGsgZm9yIE1hbmRyaXZhIExpbnV4IHJlbGVhc2UKMjAwNi4wKQoKcmVpc2Vy
+NC1mb3ItMi42LjE2LTIucGF0Y2guZ3ogLS0gY29tcGlsZSBhbmQgaW5zdGFsbAp3aXRob3V0IHRo
+aXMgcHJvYmxlbS4KCgoKCk9uIFR1ZSwgMzAgTWF5IDIwMDYgMTU6NTQ6MzUgKzA0MDAKIEFsZXhh
+bmRlciBaYXJvY2hlbnRzZXYgPHphbUBuYW1lc3lzLmNvbT4gd3JvdGU6Cj4gT24gTW9uZGF5IDI5
+IE1heSAyMDA2IDIxOjMwLCBWbGFkaW1pciBWLiBTYXZlbGlldiB3cm90ZToKPiA+IEhlbGxvCj4g
+Pgo+ID4KPgpmdHA6Ly9mdHAubmFtZXN5cy5jb20vcHViL3JlaXNlcjQtZm9yLTIuNi8yLjYuMTYv
+cmVpc2VyNC1mb3ItMi42LjE2LTMKPiA+LnBhdGNoLmd6IGNvbnRhaW5zIHRoZSBtb3N0IHJlY2Vu
+dCByZWlzZXI0IGNvZGUgd2hpY2ggaXMKPiBjb25zaWRlcmVkCj4gPiBzdGFibGUgaW5zaWRlIE5h
+bWVzeXMuIFRoaXMgY29kZSBpcyBzdXBwb3NlZCB0byBiZSBpbgo+IG1tIGtlcm5lbCBuZXh0Cj4g
+PiB0byAyLjYuMTctcmM0LW1tMy4KPiA+Cj4gPiBQbGVhc2UgdHJ5IGl0LiBBbnkgZmVlZGJhY2sg
+aXMgd2VsY29tZS4KPiAKPiAKPiBpdCB3b3JrcyBvbiB0aGUgQ3ViYSBzZXJ2ZXIuIAo+IAo+IHVw
+dGltZSBpcyAKPiAgIDM6NTRwbSAgdXAgICA1OjI1LCAgMiB1c2VycywgIGxvYWQgYXZlcmFnZTog
+MCwwMCwgMCwwMCwKPiAwLDAwCj4gCj4gPgo+ID4KPiAKPiAtLSAKPiBBbGV4LgoKCkEuCgotLS0t
+LS0tLS0tLS0tLQoKIkhpYyBKYWNldCBFZ28iCg==
