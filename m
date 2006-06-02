@@ -1,62 +1,72 @@
-From: "Bill Rees" <wsrees@gmail.com>
-Subject: Bad Hardware / Software Disk Detection for Production Systems
-Date: Fri, 2 Jun 2006 08:21:12 -0400
-Message-ID: <8bdd70ae0606020521o177b840eya5580b511f3526a3@mail.gmail.com>
+From: Mark Nipper <nipsy@bitgnome.net>
+Subject: Re: Bad Hardware / Software Disk Detection for Production Systems
+Date: Fri, 2 Jun 2006 07:40:45 -0500
+Message-ID: <20060602124045.GC16113@king.bitgnome.net>
+References: <8bdd70ae0606020521o177b840eya5580b511f3526a3@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; 
-	boundary="----=_Part_1234_4501996.1149250872690"
-Return-path: <reiserfs-list-return-28715-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28716-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <8bdd70ae0606020521o177b840eya5580b511f3526a3@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
-
-------=_Part_1234_4501996.1149250872690
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: Bill Rees <wsrees@gmail.com>
+Cc: reiserfs-list@namesys.com
 
-Hi,
+On 02 Jun 2006, Bill Rees wrote:
+>    This is a general question but I thought I'd post it to the list to see if
+>    anyone has any suggestions.
 
-This is a general question but I thought I'd post it to the list to see if
-anyone has any suggestions.
+        You cannot expect any sort of data integrity if you are
+using JBOD mode on a RAID controller.  The very nature of JBOD
+means that any time a single drive fails, you lose every
+partition across that entire JBOD volume.
 
-We have some production systems running SUSE 9.3 and reiserfs that are very
-IO intensive using 3ware controllers in JBOD mode for the high throughput.
-On occasion we will have a disk problem that bringst the system to a virtual
-standstill. Ususally the problems cause an eventual system lockup that can't
-even be resolved with a software reboot. One has to hit the reset switch to
-get the system back and then take the offending disk offline. Usually there
-are tons of errors from the kernel indicating drive problems. 90% of the
-time the failure is due to a hardware issue with the drive running out of
-spare sectors but sometime it is a filesystem corruption issue. I am looking
-for a way to prevent the system lockup.
+        If your file systems are even coming back after such a
+catastrophe, you have been extremely fortunate to date.  I still
+cannot imagine that you aren't losing data though since there is
+no mirroring going on whatsoever which means blocks are
+inherently being lost during such failures.
 
-Is there a way to accomplish this without RAID 5? We have the smartmon utils
-installed on all of our systems and most times even setting a drive to be
-fsck'ed on reboot does nothing when a system boots. Ideally, I'd just like
-to recognize when a disk might be having issues, stop using it, and then
-notify someone to manually check into it.
+        If you are just looking for read performance, you should
+seriously consider at least a RAID 1 volume.  If you can
+sacrifice some overall performance, you will get the best space
+optimization by going with a RAID 5.  Anything more exotic than
+that, you should start at:
+---
+http://en.wikipedia.org/wiki/Redundant_array_of_independent_disks
 
-Is there a quick and dirty check to determine if a reiserfs disk is hosed on
-boot? Setting a flag in fstab doesn't seem to do the trick. I'd be willing
-to write a custom mount script to accomplish this as well.
+and go with whichever level of RAID makes the most sense for your
+application.
 
-Any input would be appreciated.
+        The bottom line is, you are going to lose data in a JBOD
+array (unless you also happen to be doing some sort of software
+RAID on top of that).  There is really no gain through some sort
+of software trick to try to avoid the data loss.  SMART enabled
+hard drives may occasionally warn you of an imminent failure, but
+then again, they may not.  Drives will just occasionally fail
+entirely without any warning, hence the whole purpose of RAID
+levels above 0.
 
-thanks,
-Bill Rees
+-- 
+Mark Nipper                                                e-contacts:
+832 Tanglewood Drive                                nipsy@bitgnome.net
+Bryan, Texas 77802-4013                     http://nipsy.bitgnome.net/
+(979)575-3193                      AIM/Yahoo: texasnipsy ICQ: 66971617
 
-------=_Part_1234_4501996.1149250872690
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+-----BEGIN GEEK CODE BLOCK-----
+Version: 3.1
+GG/IT d- s++:+ a- C++$ UBL++++$ P--->+++ L+++$ !E---
+W++(--) N+ o K++ w(---) O++ M V(--) PS+++(+) PE(--)
+Y+ PGP t+ 5 X R tv b+++@ DI+(++) D+ G e h r++ y+(**)
+------END GEEK CODE BLOCK------
 
-Hi,<br><br>This is a general question but I thought I'd post it to the list to see if anyone has any suggestions.<br><br>We have some production systems running SUSE 9.3 and reiserfs that are very IO intensive using 3ware controllers in JBOD mode for the high throughput. On occasion we will have a disk problem that bringst the system to a virtual standstill. Ususally the problems cause an eventual system lockup that can't even be resolved with a software reboot. One has to hit the reset switch to get the system back and then take the offending disk offline. Usually there are tons of errors from the kernel indicating drive problems. 90% of the time the failure is due to a hardware issue with the drive running out of spare sectors but sometime it is a filesystem corruption issue. I am looking for a way to prevent the system lockup.
-<br><br>Is there a way to accomplish this without RAID 5? We have the smartmon utils installed on all of our systems and most times even setting a drive to be fsck'ed on reboot does nothing when a system boots. Ideally, I'd just like to recognize when a disk might be having issues, stop using it, and then notify someone to manually check into it.
-<br><br>Is there a quick and dirty check to determine if a reiserfs disk is hosed on boot? Setting a flag in fstab doesn't seem to do the trick. I'd be willing to write a custom mount script to accomplish this as well.<br>
-<br>Any input would be appreciated.<br><br>thanks,<br>Bill Rees<br>
-
-------=_Part_1234_4501996.1149250872690--
+---begin random quote of the moment---
+Anyone who is capable of getting themselves made President
+should on no account be allowed to do the job.
+ -- Douglas Adams, _The Hitchhiker's Guide to the Galaxy_
+----end random quote of the moment----
