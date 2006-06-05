@@ -1,35 +1,69 @@
-From: Juergen Starek <quiterigorouslyfilteredusenetaccount@gmx.de>
-Subject: Re: ReiserFS slow, need help diagnosing
-Date: Tue, 06 Jun 2006 00:05:24 +0200
-Message-ID: <e629qu$e5$1@sea.gmane.org>
-References: <e61aht$7kf$1@sea.gmane.org> <1149516737.6402.120.camel@tribesman.namesys.com> <e61f4n$p6b$1@sea.gmane.org> <1149520582.6402.134.camel@tribesman.namesys.com> <Pine.LNX.4.63.0606051732110.25988@alpha.polcom.net> <1149522884.6402.144.camel@tribesman.namesys.com> <Pine.LNX.4.63.0606051805300.25988@alpha.polcom.net> <44845A51.9030504@namesys.com>
+From: =?UTF-8?B?RnJpZWRlciBCw7xyemVsZQ==?= <linux-stuff@arcor.de>
+Subject: Re: reiser4 for 2.6.16 (version 3)
+Date: Tue, 06 Jun 2006 01:15:25 +0200
+Message-ID: <4484BB0D.60507@arcor.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-28738-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-28739-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hans Reiser schrieb:
+Vladimir V. Saveliev wrote:
+> Hello
+>
+> ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.16/reiser4-for-2.6.16-3.patch.gz 
+> contains the most recent reiser4 code which is considered stable 
+> inside Namesys.
+> This code is supposed to be in mm kernel next to 2.6.17-rc4-mm3.
+>
+> Please try it. Any feedback is welcome.
+>
+>
+>   
+Hi,
 
->>> So, I guess that reiser4 will be better than reiserfs, but
->>> still worse than ext[23]. Would you verify this guess it please?
->>
-> I wouild not assume this.  There is a huge difference with respect to
-> this usage pattern between reiser4 and reiser3, it should dramatically
-> improve.  I don't know if we will be better or worse than ext3, it could
-> be either, best to measure it.
+so far reiser4-for-2.6.16-[3|4].patch.gz runs great here, but I've 
+recongised that when building a java-project with netbeans I got this 
+output in the netbeans message-window:
 
-Well, thanks to all of you for helping me with this. Once I get my hands
-on a test system (and have enough free time), I'll try to test various
-file systems with this scenario.
 
-Regards,
+init:
+�����������
+���������
+������������������������������������������������
+--snip--
 
-  J=FCrgen
+
+instead of what I was used to see before with 
+reiser4-for-2.6.16-2.patch.gz:
+
+init:
+deps-jar:
+compile:
+To run this application from the command line without Ant, try:
+--snip--
+
+
+This seems very weird to me. I can't imagine that this could be issued 
+by the filesystem so I just build "clean" kernels with the "working and 
+non-working" patch. But problem still persist.
+
+system info:
+(default-linux/x86/2005.1, gcc-4.1.0, glibc-2.3.6-r4, 2.6.16 i686)
+=================================================================
+System uname: 2.6.16 i686 AMD Athlon(tm) XP 2100+
+Gentoo Base System version 1.6.14
+
+Sun JDK 1.5.0.05 [sun-jdk-1.5]
+netbeans-5.0
+
+
+thx
+
+Frieder
 
