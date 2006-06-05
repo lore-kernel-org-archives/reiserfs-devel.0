@@ -1,69 +1,52 @@
-From: Edward Shishkin <edward@namesys.com>
+From: Ben Martin <monkeyiq@users.sourceforge.net>
 Subject: Re: Selecting unixfile plugin
-Date: Mon, 05 Jun 2006 13:21:21 +0400
-Message-ID: <4483F791.7020608@namesys.com>
-References: <1149491181.3926.59.camel@sam>
+Date: Mon, 05 Jun 2006 19:35:55 +1000
+Message-ID: <1149500156.3926.63.camel@sam>
+References: <1149491181.3926.59.camel@sam>  <4483F791.7020608@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28725-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-qheMJXbmMRpsDeo7ZiYg"
+Return-path: <reiserfs-list-return-28726-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1149491181.3926.59.camel@sam>
+In-Reply-To: <4483F791.7020608@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ben Martin <monkeyiq@users.sourceforge.net>
+To: Edward Shishkin <edward@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Ben Martin wrote:
+--=-qheMJXbmMRpsDeo7ZiYg
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
->Hi,
->  
->
+[snip]
+>=20
+> Yes, it is. Although this stuff should be qualified as experimental.
+> If you have spare disk space and another box with serial connection,
+> then we will send you the setup..
+>=20
+> Edward.
 
-Hello
+Cool. I'm looking forward to playing around with it. Hopefully I can
+tailor the instructions to work with Xen or a filesystem mounted on
+loopback (what I have at current) so the "spare machine" is somewhat
+protected from the worst case.
 
->  After much digging around as to how to use the reiser4 compression
->plugin I have found this message.
->http://marc.theaimsgroup.com/?l=reiserfs&m=113190018626958&w=2
->
->I'm using 2.6.15 + resier4 + metas patches.
->
->I'm trying to set the default plugin to cryptcompress for a directory in
->a r4 filesystem.
->
->It seems that the plugins/regular is thought to be a directory when I 
->echo "cryptcompress\0" >|plugins/regular
->
->Trying various combinations of things inside regular/ like echoing into
->label etc don't seem to have an effect when read back again.
->
->It seems from the below link and grepping the 2.6.15 reiser4 patch that
->echoing "cryptcompress" >| mydir/..../plugins/regular/label
->should make new files in mydir use the cryptcompress plugin by defualt.
->http://www.namesys.com/cryptcompress-related_plugins.html
->
->The info like http://www.namesys.com/cryptcompress_design.html seems to
->be targetted toward developers rather than users. Are there any
->references or logs of command line interactions to enable and tweak
->compression/crypto aimed at end user consumption?
->
->  
->
+I could generate the setup of scratch machine and serial connection if
+this is required though.
 
-Yes, it is. Although this stuff should be qualified as experimental.
-If you have spare disk space and another box with serial connection,
-then we will send you the setup..
 
-Edward.
+--=-qheMJXbmMRpsDeo7ZiYg
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
->Also from what I've seem a 
->sed s/metas/..../g 
->might be in order for
->http://www.namesys.com/v4/pseudo.html
->
->
->  
->
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.3 (GNU/Linux)
+
+iD8DBQBEg/r7sIKOrI+5WvMRAq6/AJ98VwE20/lBxf7Y7i2dGqSgBchSEgCeMF9J
+dVlCOMKjQjUtprR7S3uaEXI=
+=XkkZ
+-----END PGP SIGNATURE-----
+
+--=-qheMJXbmMRpsDeo7ZiYg--
 
