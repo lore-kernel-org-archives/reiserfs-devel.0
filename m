@@ -1,39 +1,44 @@
-From: PFC <lists@peufeu.com>
-Subject: Re: reiser4: first impression (vs xfs and jfs)
-Date: Tue, 06 Jun 2006 19:47:56 +0200
-Message-ID: <op.taqjp6bvcigqcu@apollo13>
-References: <20060523155102.GB25889@zero> <20060606134459.GA18513@zero> <1149604706.6389.40.camel@tribesman.namesys.com> <20060606153035.GF10672@HAL_5000D>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: Compression Plugin
+Date: Tue, 06 Jun 2006 12:19:41 -0700
+Message-ID: <4485D54D.30606@namesys.com>
+References: <433017C1.4050408@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-28746-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28747-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060606153035.GF10672@HAL_5000D>
+In-Reply-To: <433017C1.4050408@gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; delsp="yes"; charset="us-ascii"
-To: Clay Barnes <clay.barnes@gmail.com>, "Vladimir V. Saveliev" <vs@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Clay Barnes <clay.barnes@gmail.com>
 Cc: reiserfs-list@namesys.com
 
+Clay Barnes wrote:
 
-> This may have been mentioned before, but perhaps there could be a
-> "trickle-out" option along the lines of "if the hard drive is idle (and
-> optionally only if it's spun up), slowly write out the changes to the
-> disk structure."  This could also be paired with keeping as much of the
-> data in memory as necessary to mantain the speed boost that r4 gets from
-> temporal locality of reference, possibly just giving it to the system
-> cache.
+>Forgive me if this has been answered recently, but I haven't gotten my
+>last two dozen e-mails for today yet.
+>
+>Regarding the compression plugin, what sort of compression can one
+>expect from it?  I know that compression of files like bz2 will vary (in
+>that they'll be essentially uncompressed) from source/text files
+>(excellent compression).  A rough estimate from someone's experience
+>using on mixed files it would help.
+>
+>Also:  Is the algorithm set in stone?  If so what is it?  If not, what
+>is it now/expected to be?
+>  
+>
+It is lzo1.  There are multiple compression algorithms to choose from,
+one of them is gzip (more cpu but better compression).  lzo1 gets > 50%
+on text and executables and nothing on mp3s and video.
 
-	Hm actually, this looks a lot like read-ahead algorithms, but instead  
-it's "write-ahead" :
+>Thanks,
+>Clay Barnes
+>
+>
+>  
+>
 
-	For instance :
-	- Sequential writes on large files should stream through the cache.
-	- Random writes or small file writes should be kept as long as possible  
-in dirty pages so they can be coalesced into larger writes with a better  
-disk layout on flush, or not written at all if it was temp files from a  
-make, for instance.
-
-	Do the file copying programs open their output files with O_SEQUENTIAL ?  
-If so, there is information to exploit...
