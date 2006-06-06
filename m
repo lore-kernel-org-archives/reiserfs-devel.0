@@ -1,43 +1,47 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Compression Plugin
-Date: Tue, 06 Jun 2006 12:19:41 -0700
-Message-ID: <4485D54D.30606@namesys.com>
-References: <433017C1.4050408@gmail.com>
+Subject: Re: v4 questions, crc's
+Date: Tue, 06 Jun 2006 12:24:30 -0700
+Message-ID: <4485D66E.3090903@namesys.com>
+References: <20040722215409.GA12240@zero>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28747-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28748-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <433017C1.4050408@gmail.com>
+In-Reply-To: <20040722215409.GA12240@zero>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Clay Barnes <clay.barnes@gmail.com>
+To: Tom Vier <tmv@comcast.net>
 Cc: reiserfs-list@namesys.com
 
-Clay Barnes wrote:
+Tom Vier wrote:
 
->Forgive me if this has been answered recently, but I haven't gotten my
->last two dozen e-mails for today yet.
+>(resending)
 >
->Regarding the compression plugin, what sort of compression can one
->expect from it?  I know that compression of files like bz2 will vary (in
->that they'll be essentially uncompressed) from source/text files
->(excellent compression).  A rough estimate from someone's experience
->using on mixed files it would help.
+>are wandering logs like rcu? unless i'm reading it wrong, it sounds like you 
+>create a copy of the node, but with the updated pointer. you go up the tree, 
+>creating updated parents, and the whole new path is finally committed when 
+>the highest node's pointer is updated, right? how big are nodes in v4? 512 
+>bytes? when updating a tree path, it causes a lot of single sector writes to 
+>different areas (far apart?) but the only dependence is that all the new 
+>updated versions of the nodes must be written before the top node is, right? 
+>does v4 use extents? if not, how are the data blocks finally pointed to?
 >
->Also:  Is the algorithm set in stone?  If so what is it?  If not, what
->is it now/expected to be?
+>sun has (or is writing) a new fs i read about recently that has data crc's 
+>with error correction (i guess that's what the new "self healing" buzzword 
+>means - i've heard ibm using it in commercials). i've thought about writing a 
+>v4 plugin. i'm not sure how fine grained to make it. one crc for the whole 
+>file isn't feasable. are blocks variably sized in reiserfs? perhaps each 
+>extent or whatever could be crc'ed, with the crc's stored as metadata (using 
+>whatever method v4 provides for saving variable length metadata).
 >  
 >
-It is lzo1.  There are multiple compression algorithms to choose from,
-one of them is gzip (more cpu but better compression).  lzo1 gets > 50%
-on text and executables and nothing on mp3s and video.
+Putting a crc in every node would be easy to code and useful to users.
 
->Thanks,
->Clay Barnes
->
+>also, what should i do if a crc is bad? just write to syslog? refuse to 
+>return the data since it might be bad (return an error from read())?
 >
 >  
 >
