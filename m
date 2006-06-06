@@ -1,47 +1,87 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: v4 questions, crc's
-Date: Tue, 06 Jun 2006 12:24:30 -0700
-Message-ID: <4485D66E.3090903@namesys.com>
-References: <20040722215409.GA12240@zero>
+Subject: Re: reiser4: first impression (vs xfs and jfs)
+Date: Tue, 06 Jun 2006 12:25:15 -0700
+Message-ID: <4485D69B.1090608@namesys.com>
+References: <20060523155102.GB25889@zero> <20060606134459.GA18513@zero>	<1149604706.6389.40.camel@tribesman.namesys.com> <20060606153035.GF10672@HAL_5000D>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28748-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28749-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20040722215409.GA12240@zero>
+In-Reply-To: <20060606153035.GF10672@HAL_5000D>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Tom Vier <tmv@comcast.net>
-Cc: reiserfs-list@namesys.com
+To: Clay Barnes <clay.barnes@gmail.com>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
 
-Tom Vier wrote:
+Clay Barnes wrote:
 
->(resending)
->
->are wandering logs like rcu? unless i'm reading it wrong, it sounds like you 
->create a copy of the node, but with the updated pointer. you go up the tree, 
->creating updated parents, and the whole new path is finally committed when 
->the highest node's pointer is updated, right? how big are nodes in v4? 512 
->bytes? when updating a tree path, it causes a lot of single sector writes to 
->different areas (far apart?) but the only dependence is that all the new 
->updated versions of the nodes must be written before the top node is, right? 
->does v4 use extents? if not, how are the data blocks finally pointed to?
->
->sun has (or is writing) a new fs i read about recently that has data crc's 
->with error correction (i guess that's what the new "self healing" buzzword 
->means - i've heard ibm using it in commercials). i've thought about writing a 
->v4 plugin. i'm not sure how fine grained to make it. one crc for the whole 
->file isn't feasable. are blocks variably sized in reiserfs? perhaps each 
->extent or whatever could be crc'ed, with the crc's stored as metadata (using 
->whatever method v4 provides for saving variable length metadata).
+>On 18:38 Tue 06 Jun     , Vladimir V. Saveliev wrote:
 >  
 >
-Putting a crc in every node would be easy to code and useful to users.
+>>Hello
+>>
+>>On Tue, 2006-06-06 at 09:44 -0400, Tom Vier wrote:
+>>    
+>>
+>>>On Tue, May 23, 2006 at 11:51:02AM -0400, Tom Vier wrote:
+>>>      
+>>>
+>>>>It seems that both r4 and xfs allow a large number of pages to be dirtied,
+>>>>before queuing them for writeback, and this has a negative effect on
+>>>>throughput. In my test (rsync'ing ~50gigs of flacs), r4 and xfs are almost
+>>>>10 minutes slower than jfs.
+>>>>        
+>>>>
+>>>Just to follow up on this (i've been too busy lately), that's how delayed
+>>>allocation works. It waits til the vm forces writeouts.
+>>>
+>>>In my case of copying large files from a slower drive, the delayed allocation
+>>>of r4 and xfs is stalling reads from the source, since neither will write
+>>>until the vw forces it.
+>>>
+>>>Is there a way in r4 to force sync a mount every so often, ala flushd? 
+>>>      
+>>>
+>>reiser4 has an option for that.
+>>mount -o tmgr.atom_max_age=N
+>>N is decimal number of seconds. Changes older than N will be forced to
+>>commit.
+>>    
+>>
+>This may have been mentioned before, but perhaps there could be a
+>"trickle-out" option along the lines of "if the hard drive is idle (and
+>optionally only if it's spun up), slowly write out the changes to the
+>disk structure." 
+>
+Yes, I will take a patch to do the above as it would be good, but I am
+not convinced it explains the problem described.  I don't really
+understand how writes to a fast drive can slow reads from a slow drive. 
+I am missing something.
 
->also, what should i do if a crc is bad? just write to syslog? refuse to 
->return the data since it might be bad (return an error from read())?
+Maybe I should ask the following: is the slow drive using reiser4?  If
+reiser4, was the slow drive image created by copying from a reiser4
+image or an ext3 image?   (Standard benchmarking mistake: creating an
+image for a test from a filesystem not the one that is being tested. 
+readdir order matters.)
+
+> This could also be paired with keeping as much of the
+>data in memory as necessary to mantain the speed boost that r4 gets from
+>temporal locality of reference, possibly just giving it to the system
+>cache.
+>  
+>
+>>>ext3
+>>>has the commit option. Does r4 have a hard coded sync timer already? If not,
+>>>i think it's an important feature that should be added (and made a mount
+>>>option). Otherwise, a lot of data can be lost. Does the kernel do a system
+>>>wide sync every 30sec, like it used to?
+>>>
+>>>      
+>>>
+>
 >
 >  
 >
