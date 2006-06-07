@@ -1,92 +1,54 @@
-From: Hans Reiser <reiser@namesys.com>
+From: PFC <lists@peufeu.com>
 Subject: Re: reiser4: first impression (vs xfs and jfs)
-Date: Tue, 06 Jun 2006 17:42:24 -0700
-Message-ID: <448620F0.9070505@namesys.com>
-References: <20060523155102.GB25889@zero> <20060606134459.GA18513@zero>	<1149604706.6389.40.camel@tribesman.namesys.com>	<20060606153035.GF10672@HAL_5000D> <4485D69B.1090608@namesys.com> <20060607001323.GG10672@HAL_5000D>
+Date: Wed, 07 Jun 2006 19:21:31 +0200
+Message-ID: <op.tasc55h6cigqcu@apollo13>
+References: <20060523155102.GB25889@zero> <20060606134459.GA18513@zero> <1149604706.6389.40.camel@tribesman.namesys.com> <20060606153035.GF10672@HAL_5000D> <op.taqjp6bvcigqcu@apollo13> <4485D6E0.8090406@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28754-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-28757-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060607001323.GG10672@HAL_5000D>
+In-Reply-To: <4485D6E0.8090406@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Clay Barnes <clay.barnes@gmail.com>
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; format="flowed"; delsp="yes"; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Clay Barnes wrote:
 
->On 12:25 Tue 06 Jun     , Hans Reiser wrote:
->  
->
->>Clay Barnes wrote:
+>>     Do the file copying programs open their output files with
+>> O_SEQUENTIAL ?  If so, there is information to exploit...
 >>
->>    
 >>
->>>On 18:38 Tue 06 Jun     , Vladimir V. Saveliev wrote:
->>> 
->>>
->>>      
->>>
->>>>Hello
->>>>
->>>>On Tue, 2006-06-06 at 09:44 -0400, Tom Vier wrote:
->>>>   
->>>>
->>>>        
->>>>
->>>>>On Tue, May 23, 2006 at 11:51:02AM -0400, Tom Vier wrote:
->>>>>     
->>>>>
->>>>>          
->>>>>
->>>>>>It seems that both r4 and xfs allow a large number of pages to be dirtied,
->>>>>>before queuing them for writeback, and this has a negative effect on
->>>>>>throughput. In my test (rsync'ing ~50gigs of flacs), r4 and xfs are almost
->>>>>>10 minutes slower than jfs.
->>>>>>       
->>>>>>
->>>>>>            
->>>>>>
->>>>>Just to follow up on this (i've been too busy lately), that's how delayed
->>>>>allocation works. It waits til the vm forces writeouts.
->>>>>
->>>>>In my case of copying large files from a slower drive, the delayed allocation
->>>>>of r4 and xfs is stalling reads from the source, since neither will write
->>>>>until the vw forces it.
->>>>>
->>>>>Is there a way in r4 to force sync a mount every so often, ala flushd? 
->>>>>     
->>>>>
->>>>>          
->>>>>
->>>>reiser4 has an option for that.
->>>>mount -o tmgr.atom_max_age=N
->>>>N is decimal number of seconds. Changes older than N will be forced to
->>>>commit.
->>>>   
->>>>
->>>>        
->>>>
->>>This may have been mentioned before, but perhaps there could be a
->>>"trickle-out" option along the lines of "if the hard drive is idle (and
->>>optionally only if it's spun up), slowly write out the changes to the
->>>disk structure." 
->>>
->>>      
->>>
->>Yes, I will take a patch to do the above as it would be good, but I am
->>    
->>
->I wish I had the skills to do so.  Perhaps after a few more C classes
->and my next degree. :-/
->  
->
-When we get our wiki going, we should create a desired features page,
-and maybe you can add this to that.
+> You can change them to do so....
 
-Someday we will surely code this, but when I cannot today say.
+	I rather meant : if a program opens a file for write with O_SEQUENTIAL  
+(which should be done when copying files), will reiser4 exploit the  
+information by flushing sooner, and in a more "streaming" fashion ? Or  
+will it use the default algorithm, flushing under memory pressure ?
+
+	The current behaviour of reiser4, flushing dirty pages late in case they  
+are modified again before being written, is excellent for many use cases  
+(random writes, small file writes, temporary files, copying files inside a  
+single spindle etc) ; but it isn't optimal for writing large amounts of  
+data in sequential fashion, like copying large files between disks, for  
+instance. Adapting this would be quite tricky I guess...
+
+	Consider the two following scenarios :
+
+	- A database is doing an UPDATE query on a table. It will issue a lot of  
+reads and writes, probably in random order. In this case, if the working  
+set fits in RAM, it pays big time to flush as late as possible, ideally  
+when the query is finished, because some pages may be written to multiple  
+times. Also, delayed allocation will reduce fragmentation of the files.
+	It's the same thing for doing a Make, unzipping an archive, copying many  
+small files, etc.
+
+	- A process acquires audio or video in realtime and streams it to disk,  
+or copies files from one disk to another. In this case it is better to  
+stream the data directly to disk, especially if the files are large.
+
+	Guessing is a pain in the ass. How can the application inform the  
+filesystem of its intentions ?
 
 
