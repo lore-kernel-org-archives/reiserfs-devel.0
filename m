@@ -1,61 +1,120 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiser4: first impression (vs xfs and jfs)
-Date: Fri, 09 Jun 2006 01:05:39 -0700
-Message-ID: <44892BD3.5090604@namesys.com>
-References: <20060523155102.GB25889@zero> <20060606134459.GA18513@zero> <1149604706.6389.40.camel@tribesman.namesys.com> <20060606153035.GF10672@HAL_5000D> <4485D69B.1090608@namesys.com> <20060608140653.GA5851@zero>
+From: Alexander Zarochentsev <zam@namesys.com>
+Subject: Re: zam, can you look at this?
+Date: Fri, 9 Jun 2006 21:23:42 +0400
+Message-ID: <200606092123.42868.zam@namesys.com>
+References: <1148923857.6482.12.camel@tribesman.namesys.com> <200606062126.07024.biscani@pd.astro.it> <4485D8BB.9010907@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28772-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28773-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060608140653.GA5851@zero>
+In-Reply-To: <4485D8BB.9010907@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Tom Vier <tmv@comcast.net>
+To: Francesco Biscani <biscani@pd.astro.it>
 Cc: reiserfs-list@namesys.com
 
-Make both XFS or both reiser4, and speed will likely increase.  Please
-try and report the result if you could.
+Hi,
 
+On Tuesday 06 June 2006 23:34, Hans Reiser wrote:
+> Francesco Biscani wrote:
+> >Hello list,
+> >
+> >I'm re-sending this, since apparently it went un-noticed in another
+> > thread.
 
-Tom Vier wrote:
+can you send me output of "objdump -d fs/reiser4/txnmgr.o"?
 
->On Tue, Jun 06, 2006 at 12:25:15PM -0700, Hans Reiser wrote:
->  
+> >----------------------------------------
+> >
+> >Hi,
+> >
+> >I'm using reiser4-2.6.16-4 version and after a while I got this bug:
+> >
+> >reiser4[kio_http(28952)]: delete_object_unix_file
+> >(fs/reiser4/plugin/file/file.c:2615)[]:
+> >WARNING: failed to truncate file (50954396) on removal: -2
+> >reiser4[kio_http(28951)]: cbk_level_lookup
+> > (fs/reiser4/search.c:961)[vs-3533]: WARNING: Keys are inconsistent.
+> > Fsck?
+> >Unable to handle kernel NULL pointer dereference at virtual address
+> > 00000008 printing eip:
+> >c0194824
+> >*pde = 00000000
+> >Oops: 0000 [#1]
+> >Modules linked in: ehci_hcd uhci_hcd isofs iptable_nat ip_nat
+> > iptable_mangle xt_state ip_conntrack xt_tcpudp iptable_filter
+> > ip_tables x_tables radeon drm usb_storage snd_usb_audio snd_usb_lib
+> > snd_hwdep usbhid fuse loop 8250 serial_core ircomm_tty ircomm
+> > irtty_sir sir_dev irda
+> >CPU:    0
+> >EIP:    0060:[<c0194824>]    Not tainted VLI
+> >EFLAGS: 00010287   (2.6.16-morph4 #2)
+> >EIP is at try_capture+0x109/0x552
+> >eax: 00000000   ebx: cd40f1c0   ecx: dbab9e80   edx: c8fdb324
+> >esi: c3d00b80   edi: c8fdb310   ebp: c0c34cc0   esp: c1c1d9d8
+> >ds: 007b   es: 007b   ss: 0068
+> >Process kio_http (pid: 28957, threadinfo=c1c1c000 task=cfda6a70)
+> >Stack: <0>cd40f1c4 c1c1da1c 00000008 dbab9ef0 00000000 c1c1c000
+> > c0c34c80 c0c34c84
+> >       00000000 c3d00b80 dbab9e80 c018f3c5 dbab9e80 00000002
+> > 00000000 00000002 c1c1dbfc 01118bf4 00000000 00000000 00000000
+> > dbab9ee0 c0c34cc0 dbab9e80 Call Trace:
+> > [<c018f3c5>] longterm_lock_znode+0x26c/0x34e
+> > [<c01a043f>] lock_neighbor+0x65/0xab
+> > [<c01a0abc>] reiser4_get_neighbor+0xad/0x4a1
+> > [<c01bdcc7>] lookup_tail+0x0/0xbe
+> > [<c019067c>] kill_node_content+0x137/0x960
+> > [<c01a270a>] formatted_readahead+0x54/0x29a
+> > [<c018f51d>] longterm_unlock_znode+0x76/0x171
+> > [<c018eea1>] move_lh_internal+0x5b/0xe3
+> > [<c0191518>] cut_tree_worker_common+0x41/0x469
+> > [<c01914d7>] cut_tree_worker_common+0x0/0x469
+> > [<c018f8ab>] cut_tree_object+0x117/0x1f6
+> > [<c0193107>] reiser4_grab_space+0x3d/0x7c
+> > [<c01a01ff>] reiser4_decode_fh+0x66/0xf7
+> > [<c01a986c>] cut_file_items+0xe4/0x208
+> > [<c01a9d11>] truncate_file_body+0xbc/0x450
+> > [<c01aa88a>] update_file_size+0x0/0x84
+> > [<c01bc828>] store_black_box+0x90/0x98
+> > [<c01a43a6>] safe_link_add+0x76/0xbb
+> > [<c0194f85>] txn_end+0x256/0x4d8
+> > [<c0192fe5>] grabbed2free+0x27/0x37
+> > [<c0193687>] all_grabbed2free+0x35/0x39
+> > [<c0189626>] preempt_point+0x5/0x1b
+> > [<c019521c>] txn_restart+0x15/0x22
+> > [<c0193fc8>] txn_begin+0x1e/0x30
+> > [<c01aa7f4>] delete_object_unix_file+0x46/0xdc
+> > [<c0193fc8>] txn_begin+0x1e/0x30
+> > [<c0191b00>] _init_context+0x6b/0x8e
+> > [<c019f0c9>] reiser4_delete_inode+0x6c/0xbe
+> > [<c019f05d>] reiser4_delete_inode+0x0/0xbe
+> > [<c016dbd7>] generic_delete_inode+0x5c/0xca
+> > [<c016d70f>] iput+0x41/0x7d
+> > [<c0165e9f>] do_unlinkat+0xe4/0x141
+> > [<c011ac9d>] __do_softirq+0x42/0x8e
+> > [<c0102c7b>] sysenter_past_esp+0x54/0x75
+> >Code: 14 8d 7a ec 8b 47 14 0f 18 00 90 3b 54 24 0c 0f 84 40 ff ff ff
+> > 8b 47 04 89 04 24 e8 27 d1 ff ff 89 c3 39 44 24 18 74 d6 8b 40 3c
+> > <3b> 70 08 74 ce 8b 47 04 89 04 24 e8 30 a5 ff ff 8b 53 3c 8b 5a
+> >
+> >Various versions of reiser4 in the past have had this problem,
+> > always triggered by kio_http (a component of the konqueror web
+> > browser). At a certain point the bug disappeared, but now it is
+> > back.
+> >
+> >After the bug happened it was impossible to sync or write anything
+> > to the disk. Rebooted and fscked, no corruptions found.
+> >
+> >Hope that helps!
+> >
+> >  Francesco
 >
->>Maybe I should ask the following: is the slow drive using reiser4?  If
->>    
->>
->
->No, it was ext2.
->
->  
->
->>reiser4, was the slow drive image created by copying from a reiser4
->>image or an ext3 image?   (Standard benchmarking mistake: creating an
->>image for a test from a filesystem not the one that is being tested. 
->>readdir order matters.)
->>    
->>
->
->Would that really make much difference?
->
->I think the problem here is a general problem with delayed allocation,
->regardless of which fs impliments it. The fs'es need to stream out writes.
->If it's possible (i don't know if fs'es are allowed this info from the vfs),
->i think after a short timeout of a file no longer being open for writing, it
->should be written. Maybe have a longer delay for smaller files, so they pack
->better. Past a certain size threshold, once a file is closed (or only opened
->read-only) i think it should be flushes without much delay. Especially if
->the blk dev is idle (but knowing that at the fs level may well be impossible
->w/o modding the vfs api). I think linux (and other os'es) are in need of
->more intelligent io scheduling (higher level than just sector elevators).
->
->One problem with my suggestion is that apps don't always close or reopen
->read-only after they write a file.
->
->  
->
+> !DSPAM:4485d8c452331585320072!
+
+-- 
+Alex.
 
