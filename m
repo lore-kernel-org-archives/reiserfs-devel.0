@@ -1,60 +1,113 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [Patch] Remove unneeded check for xadir in fs/reiserfs/xattr.c
-Date: Wed, 14 Jun 2006 10:39:23 -0400
-Message-ID: <44901F9B.1060105@suse.com>
-References: <1150235641.6537.2.camel@alice>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: [PATCH] updated reiser4 - reduced cpu usage for writes by  writing
+  more than 4k at a time (has implications for generic write code  and eventually
+  for the IO layer)
+Date: Wed, 14 Jun 2006 12:37:39 -0700
+Message-ID: <44906583.6070007@namesys.com>
+References: <44736D3E.8090808@namesys.com> <20060524175312.GA3579@zero> <44749E24.40203@namesys.com> <20060608110044.GA5207@suse.de> <1149766000.6336.29.camel@tribesman.namesys.com> <20060608113517.GC5207@suse.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28778-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <1150235641.6537.2.camel@alice>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751113AbWFNThj@vger.kernel.org>
+In-Reply-To: <20060608113517.GC5207@suse.de>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Eric Sesterhenn <snakebyte@gmx.de>
-Cc: reiserfs-list@namesys.com
+To: Jens Axboe <axboe@suse.de>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, Tom Vier <tmv@comcast.net>, Linux-Kernel@Vger.Kernel.ORG, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Jens Axboe wrote:
 
-Eric Sesterhenn wrote:
-> hi,
-> 
-> coverity complained that xadir is checked for !=NULL
-> and then passed to lookup_one_len() where it might get dereferenced.
-> This patch removes the check since open_xa_dir() returns an ERR_PTR() or
-> a valid dentry pointer. Coverity id #1194
-> 
-> Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
-> 
-> --- linux-2.6.17-rc5/fs/reiserfs/xattr.c.orig	2006-06-13 23:50:10.000000000 +0200
-> +++ linux-2.6.17-rc5/fs/reiserfs/xattr.c	2006-06-13 23:50:45.000000000 +0200
-> @@ -200,7 +200,7 @@ static struct dentry *get_xa_file_dentry
->  	xadir = open_xa_dir(inode, flags);
->  	if (IS_ERR(xadir)) {
->  		return ERR_PTR(PTR_ERR(xadir));
-> -	} else if (xadir && !xadir->d_inode) {
-> +	} else if (!xadir->d_inode) {
->  		dput(xadir);
->  		return ERR_PTR(-ENODATA);
->  	}
-> 
-> 
+>On Thu, Jun 08 2006, Vladimir V. Saveliev wrote:
+>  
+>
+>>Hello
+>>
+>>On Thu, 2006-06-08 at 13:00 +0200, Jens Axboe wrote:
+>>    
+>>
+>>>On Wed, May 24 2006, Hans Reiser wrote:
+>>>      
+>>>
+>>>>Tom Vier wrote:
+>>>>
+>>>>        
+>>>>
+>>>>>On Tue, May 23, 2006 at 01:14:54PM -0700, Hans Reiser wrote:
+>>>>> 
+>>>>>
+>>>>>          
+>>>>>
+>>>>>>underlying FS can be improved.  Performance results show that the new
+>>>>>>code consumes  40% less CPU when doing "dd bs=1MB ....." (your hardware,
+>>>>>>and whether the data is in cache, may vary this result).  Note that this
+>>>>>>has only a small effect on elapsed time for most hardware.
+>>>>>>   
+>>>>>>
+>>>>>>            
+>>>>>>
+>>>>>Write requests in linux are restricted to one page?
+>>>>>
+>>>>> 
+>>>>>
+>>>>>          
+>>>>>
+>>>>It may go to the kernel as a 64MB write, but VFS sends it to the FS as
+>>>>64MB/4k separate 4k writes.
+>>>>        
+>>>>
+>>>Nonsense, 
+>>>      
+>>>
+>>Hans refers to generic_file_write which does
+>>prepare_write
+>>copy_from_user
+>>commit_write
+>>for each page.
+>>    
+>>
+>
+>Provide your own f_op->write() ?
+>  
+>
+In Unix VFS is an abstraction layer with a philosophical commitment to
+allow filesystems to do their own thing, but Linux is quite different,
+and what you suggest got vetoed with emphasis.   In all fairness, the
+patch vs is sending is one I can live with that allows me to not worry
+about aio code and direct io code, neither of which interest me at this
+time.  So I suppose there is some benefit to all this hassle.
 
-Looks ok to me.
+>  
+>
+>>>there are ways to get > PAGE_CACHE_SIZE writes in one chunk.
+>>>Other file systems have been doing it for years.
+>>>
+>>>      
+>>>
+>>Would you, please, say more about it.
+>>    
+>>
+>
+>Use writepages?
+>
+>  
+>
+writepages is flush time code, this is sys_write() code.  sys_write
+first sticks things into the cache,, then memory pressure or pages
+reaching maximum time allowed in memory or fsync pushes them out to
+disk, at which time writepages might get used.
 
-- -Jeff
+This issue is about cached writes losing performance when done 4k at a
+time.  It is very similar to why bios are better than submitting io 4k
+at a time, but it is at a different stage.
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
+Christoph Hellwig wrote:
 
-iD8DBQFEkB+bLPWxlyuTD7IRAnacAKCO/x/4GvVwktuyaOqbGPGEQujNaQCgkTlV
-RDm+IISOQgNzGRJ/ynvEHQU=
-=dDQr
------END PGP SIGNATURE-----
+>That's not really the vfs but the generic pagecache routines.  For some
+>filesystems (e.g. XFS) only reservations for delayed allocations are
+>performed in this path so it doesn't really matter.  For not so advanced
+>filesystems batching these calls would definitly be very helpful.  Patches
+>to get there are very welcome.
+>  
+>
+>
+Glad we all agree.  vs is sending a pseudocoded proposal.
