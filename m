@@ -1,108 +1,41 @@
-From: Johan Isacsson <johan@oddjob.se>
-Subject: reiserfschk --rebuild-tree was aborted, said disk was full
-Date: Thu, 15 Jun 2006 09:15:51 +0200
-Message-ID: <44910927.5030500@oddjob.se>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: reiserfschk --rebuild-tree was aborted, said disk was full
+Date: Thu, 15 Jun 2006 12:24:28 +0400
+Message-ID: <1150359868.6313.23.camel@tribesman.namesys.com>
+References: <44910927.5030500@oddjob.se>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg=sha1; boundary="------------ms060507090903000404020601"
-Return-path: <reiserfs-list-return-28785-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28786-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <44910927.5030500@oddjob.se>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Johan Isacsson <johan@oddjob.se>
+Cc: reiserfs-list@namesys.com
 
---------------ms060507090903000404020601
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Hello
 
-reiserfschk --rebuild-tree was aborted when it nearly had finished pass 
-1 and now i can't mount the partition.
-I no longer have the exact error message.
+On Thu, 2006-06-15 at 09:15 +0200, Johan Isacsson wrote:
+> reiserfschk --rebuild-tree was aborted when it nearly had finished pass 
+> 1 and now i can't mount the partition.
+> I no longer have the exact error message.
+> 
+> Just before the filesystem got bad we had removed lots of data because 
+> the disk got full. Df then reported that there was lots of space left on 
+> that partition.
+> After that we had to power cycle the server because it got hung up and 
+> after the reboot df reborted 100% usage and that some files couldn't be 
+> read.
+> I den did a reiserfschk --check which said there wer fatal errors and 
+> that i needed to do a rebuild-tree, which i did.
+> And after a long while it was aborted at about 90% of pass 1.
+> 
+> I have the version 3.6.19-2 of reiserfs-progs (FC 4).
+> Of course i read about taking a backup after i had done the 
+> --rebuild-tree :(
+> 
+Please, let us see complete reiserfsck --rebuild-tree output.
 
-Just before the filesystem got bad we had removed lots of data because 
-the disk got full. Df then reported that there was lots of space left on 
-that partition.
-After that we had to power cycle the server because it got hung up and 
-after the reboot df reborted 100% usage and that some files couldn't be 
-read.
-I den did a reiserfschk --check which said there wer fatal errors and 
-that i needed to do a rebuild-tree, which i did.
-And after a long while it was aborted at about 90% of pass 1.
-
-I have the version 3.6.19-2 of reiserfs-progs (FC 4).
-Of course i read about taking a backup after i had done the 
---rebuild-tree :(
-
-Help?
-
-Regards,
-Johan Isacsson
-
---------------ms060507090903000404020601
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIII+zCC
-AtgwggJBoAMCAQICECuTqWd6YS7byc2fppiZGEgwDQYJKoZIhvcNAQEEBQAwYjELMAkGA1UE
-BhMCWkExJTAjBgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMT
-I1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFpbCBJc3N1aW5nIENBMB4XDTA2MDUxNjA3MjE0N1oX
-DTA3MDUxNjA3MjE0N1owQTEfMB0GA1UEAxMWVGhhd3RlIEZyZWVtYWlsIE1lbWJlcjEeMBwG
-CSqGSIb3DQEJARYPam9oYW5Ab2Rkam9iLnNlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
-CgKCAQEA0B5wAdnQs8gadeIgd9aHrVV5G7+Hhd/5nZ00X6F5sEpUcKvqB1+CHczaJW/sIk+Y
-LcO3GkQmXYYZuG7MjXf/4UHW/oIzD39kIBc54+oqhE/Qnt9hjqfLiyjtHlzYzv4gVLH3SAGK
-CX/aX6yw1YHGMmU4WaNcLxtJqmgdVuyKetwN+vFzlTm91BDEIzxAzgk81vX4P/zNmqYLslEB
-UZV+wNmr3vLmvlpmnLZqBuAhVwFUsZYH5Xdjue4Bnc0fVqwyccB+FxSfstVD+sx2iVzWyJNk
-Cr6o83KAstq8opMGfRaOuSOBnSBf5CvBNXQGGT5rJCt9ery+/dVYvOwLLhs6ewIDAQABoyww
-KjAaBgNVHREEEzARgQ9qb2hhbkBvZGRqb2Iuc2UwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0B
-AQQFAAOBgQCw/9k3wrtWftYJZ/D+Jqp7SKkhocwGa2yUsO33GsW9jPZc+P2Xk+qZ4dluQFYZ
-bSGnmcyHkc054Q9ODG/mW3FmX5E8NAcdQKP5yDVGeJI7KTCK4KfmJqbZgdCOCYT0srCW5rgC
-hVsvqRS+sdGYD7oDSoQpVTjEwKXAUdCz/ot90jCCAtgwggJBoAMCAQICECuTqWd6YS7byc2f
-ppiZGEgwDQYJKoZIhvcNAQEEBQAwYjELMAkGA1UEBhMCWkExJTAjBgNVBAoTHFRoYXd0ZSBD
-b25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFp
-bCBJc3N1aW5nIENBMB4XDTA2MDUxNjA3MjE0N1oXDTA3MDUxNjA3MjE0N1owQTEfMB0GA1UE
-AxMWVGhhd3RlIEZyZWVtYWlsIE1lbWJlcjEeMBwGCSqGSIb3DQEJARYPam9oYW5Ab2Rkam9i
-LnNlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0B5wAdnQs8gadeIgd9aHrVV5
-G7+Hhd/5nZ00X6F5sEpUcKvqB1+CHczaJW/sIk+YLcO3GkQmXYYZuG7MjXf/4UHW/oIzD39k
-IBc54+oqhE/Qnt9hjqfLiyjtHlzYzv4gVLH3SAGKCX/aX6yw1YHGMmU4WaNcLxtJqmgdVuyK
-etwN+vFzlTm91BDEIzxAzgk81vX4P/zNmqYLslEBUZV+wNmr3vLmvlpmnLZqBuAhVwFUsZYH
-5Xdjue4Bnc0fVqwyccB+FxSfstVD+sx2iVzWyJNkCr6o83KAstq8opMGfRaOuSOBnSBf5CvB
-NXQGGT5rJCt9ery+/dVYvOwLLhs6ewIDAQABoywwKjAaBgNVHREEEzARgQ9qb2hhbkBvZGRq
-b2Iuc2UwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQQFAAOBgQCw/9k3wrtWftYJZ/D+Jqp7
-SKkhocwGa2yUsO33GsW9jPZc+P2Xk+qZ4dluQFYZbSGnmcyHkc054Q9ODG/mW3FmX5E8NAcd
-QKP5yDVGeJI7KTCK4KfmJqbZgdCOCYT0srCW5rgChVsvqRS+sdGYD7oDSoQpVTjEwKXAUdCz
-/ot90jCCAz8wggKooAMCAQICAQ0wDQYJKoZIhvcNAQEFBQAwgdExCzAJBgNVBAYTAlpBMRUw
-EwYDVQQIEwxXZXN0ZXJuIENhcGUxEjAQBgNVBAcTCUNhcGUgVG93bjEaMBgGA1UEChMRVGhh
-d3RlIENvbnN1bHRpbmcxKDAmBgNVBAsTH0NlcnRpZmljYXRpb24gU2VydmljZXMgRGl2aXNp
-b24xJDAiBgNVBAMTG1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFpbCBDQTErMCkGCSqGSIb3DQEJ
-ARYccGVyc29uYWwtZnJlZW1haWxAdGhhd3RlLmNvbTAeFw0wMzA3MTcwMDAwMDBaFw0xMzA3
-MTYyMzU5NTlaMGIxCzAJBgNVBAYTAlpBMSUwIwYDVQQKExxUaGF3dGUgQ29uc3VsdGluZyAo
-UHR5KSBMdGQuMSwwKgYDVQQDEyNUaGF3dGUgUGVyc29uYWwgRnJlZW1haWwgSXNzdWluZyBD
-QTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAxKY8VXNV+065yplaHmjAdQRwnd/p/6Me
-7L3N9VvyGna9fww6YfK/Uc4B1OVQCjDXAmNaLIkVcI7dyfArhVqqP3FWy688Cwfn8R+RNiQq
-E88r1fOCdz0Dviv+uxg+B79AgAJk16emu59l0cUqVIUPSAR/p7bRPGEEQB5kGXJgt/sCAwEA
-AaOBlDCBkTASBgNVHRMBAf8ECDAGAQH/AgEAMEMGA1UdHwQ8MDowOKA2oDSGMmh0dHA6Ly9j
-cmwudGhhd3RlLmNvbS9UaGF3dGVQZXJzb25hbEZyZWVtYWlsQ0EuY3JsMAsGA1UdDwQEAwIB
-BjApBgNVHREEIjAgpB4wHDEaMBgGA1UEAxMRUHJpdmF0ZUxhYmVsMi0xMzgwDQYJKoZIhvcN
-AQEFBQADgYEASIzRUIPqCy7MDaNmrGcPf6+svsIXoUOWlJ1/TCG4+DYfqi2fNi/A9BxQIJNw
-PP2t4WFiw9k6GX6EsZkbAMUaC4J0niVQlGLH2ydxVyWN3amcOY6MIE9lX5Xa9/eH1sYITq72
-6jTlEBpbNU1341YheILcIRk13iSx0x1G/11fZU8xggNkMIIDYAIBATB2MGIxCzAJBgNVBAYT
-AlpBMSUwIwYDVQQKExxUaGF3dGUgQ29uc3VsdGluZyAoUHR5KSBMdGQuMSwwKgYDVQQDEyNU
-aGF3dGUgUGVyc29uYWwgRnJlZW1haWwgSXNzdWluZyBDQQIQK5OpZ3phLtvJzZ+mmJkYSDAJ
-BgUrDgMCGgUAoIIBwzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-Fw0wNjA2MTUwNzE1NTFaMCMGCSqGSIb3DQEJBDEWBBQHzOX1nOREa8Xb5JeOOjwose5cjjBS
-BgkqhkiG9w0BCQ8xRTBDMAoGCCqGSIb3DQMHMA4GCCqGSIb3DQMCAgIAgDANBggqhkiG9w0D
-AgIBQDAHBgUrDgMCBzANBggqhkiG9w0DAgIBKDCBhQYJKwYBBAGCNxAEMXgwdjBiMQswCQYD
-VQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UE
-AxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3VpbmcgQ0ECECuTqWd6YS7byc2fppiZ
-GEgwgYcGCyqGSIb3DQEJEAILMXigdjBiMQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3Rl
-IENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVt
-YWlsIElzc3VpbmcgQ0ECECuTqWd6YS7byc2fppiZGEgwDQYJKoZIhvcNAQEBBQAEggEAdWHJ
-x0lfUG1xi/G5J7Zh/LHQx/5DE8G+rAIAmZjigu3xThy8JjjcmVzVDLpAb+KKZiJElpSO4O2L
-X/EOkme+ICQL4q9jr/aKYMcNSR4pE60mNtnnoajB29eRIO3KbrrdwsebPBaLKkHHrgOX8Qp3
-Q8YmdABumDxBEUnxyl1O2wv01MDWSZJqsA/MTKyZRO/KsugMB1WHxOZObGeAzTUgJn6jrwUV
-ojSHxGTpnqe0LZA9ztBn/8e+aCGFAhtEvE4nVflhz1d5ApnmsRqLV5vStP87Tu57cZSJt4JL
-650Welg3VH2Rd88KNm6UjnMLZX6LukK8Kmc07o63Xi1JaPOwiAAAAAAAAA==
---------------ms060507090903000404020601--
