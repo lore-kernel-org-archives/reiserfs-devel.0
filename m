@@ -1,113 +1,288 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: [PATCH] updated reiser4 - reduced cpu usage for writes by  writing
-  more than 4k at a time (has implications for generic write code  and eventually
-  for the IO layer)
-Date: Wed, 14 Jun 2006 12:37:39 -0700
-Message-ID: <44906583.6070007@namesys.com>
-References: <44736D3E.8090808@namesys.com> <20060524175312.GA3579@zero> <44749E24.40203@namesys.com> <20060608110044.GA5207@suse.de> <1149766000.6336.29.camel@tribesman.namesys.com> <20060608113517.GC5207@suse.de>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH 02/04] reiserfs: clean up bitmap block buffer head references
+Date: Wed, 14 Jun 2006 21:42:02 -0400
+Message-ID: <20060615014202.GA8204@locomotive.unixthugs.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751113AbWFNThj@vger.kernel.org>
-In-Reply-To: <20060608113517.GC5207@suse.de>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932401AbWFOBmR@vger.kernel.org>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jens Axboe <axboe@suse.de>
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, Tom Vier <tmv@comcast.net>, Linux-Kernel@Vger.Kernel.ORG, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>, Reiserfs mail-list <Reiserfs-List@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Andrew Morton <akpm@osdl.org>, Linus Torvalds <torvalds@osdl.org>, ReiserFS Mailing list <reiserfs-list@namesys.com>
 
-Jens Axboe wrote:
 
->On Thu, Jun 08 2006, Vladimir V. Saveliev wrote:
->  
->
->>Hello
->>
->>On Thu, 2006-06-08 at 13:00 +0200, Jens Axboe wrote:
->>    
->>
->>>On Wed, May 24 2006, Hans Reiser wrote:
->>>      
->>>
->>>>Tom Vier wrote:
->>>>
->>>>        
->>>>
->>>>>On Tue, May 23, 2006 at 01:14:54PM -0700, Hans Reiser wrote:
->>>>> 
->>>>>
->>>>>          
->>>>>
->>>>>>underlying FS can be improved.  Performance results show that the new
->>>>>>code consumes  40% less CPU when doing "dd bs=1MB ....." (your hardware,
->>>>>>and whether the data is in cache, may vary this result).  Note that this
->>>>>>has only a small effect on elapsed time for most hardware.
->>>>>>   
->>>>>>
->>>>>>            
->>>>>>
->>>>>Write requests in linux are restricted to one page?
->>>>>
->>>>> 
->>>>>
->>>>>          
->>>>>
->>>>It may go to the kernel as a 64MB write, but VFS sends it to the FS as
->>>>64MB/4k separate 4k writes.
->>>>        
->>>>
->>>Nonsense, 
->>>      
->>>
->>Hans refers to generic_file_write which does
->>prepare_write
->>copy_from_user
->>commit_write
->>for each page.
->>    
->>
->
->Provide your own f_op->write() ?
->  
->
-In Unix VFS is an abstraction layer with a philosophical commitment to
-allow filesystems to do their own thing, but Linux is quite different,
-and what you suggest got vetoed with emphasis.   In all fairness, the
-patch vs is sending is one I can live with that allows me to not worry
-about aio code and direct io code, neither of which interest me at this
-time.  So I suppose there is some benefit to all this hassle.
+ Similar to the SB_JOURNAL cleanup that was accepted a while ago, this patch
+ uses a temporary variable for buffer head references from the bitmap info
+ array.
 
->  
->
->>>there are ways to get > PAGE_CACHE_SIZE writes in one chunk.
->>>Other file systems have been doing it for years.
->>>
->>>      
->>>
->>Would you, please, say more about it.
->>    
->>
->
->Use writepages?
->
->  
->
-writepages is flush time code, this is sys_write() code.  sys_write
-first sticks things into the cache,, then memory pressure or pages
-reaching maximum time allowed in memory or fsync pushes them out to
-disk, at which time writepages might get used.
+ This makes the code much more readable in some areas.
 
-This issue is about cached writes losing performance when done 4k at a
-time.  It is very similar to why bios are better than submitting io 4k
-at a time, but it is at a different stage.
+ It also uses proper reference counting, doing a get_bh() after using the
+ pointer from the array and brelse()'ing it later. This may seem silly,
+ but a later patch will replace the simple temporary variables with an
+ actual read, so the reference freeing will be used then.
 
-Christoph Hellwig wrote:
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
->That's not really the vfs but the generic pagecache routines.  For some
->filesystems (e.g. XFS) only reservations for delayed allocations are
->performed in this path so it doesn't really matter.  For not so advanced
->filesystems batching these calls would definitly be very helpful.  Patches
->to get there are very welcome.
->  
->
->
-Glad we all agree.  vs is sending a pseudocoded proposal.
+--
+ fs/reiserfs/bitmap.c |   60 +++++++++++++++++++++++++++++--------------------
+ fs/reiserfs/resize.c |   62 +++++++++++++++++++++++++++++----------------------
+ 2 files changed, 72 insertions(+), 50 deletions(-)
+
+diff -ruNpX ../dontdiff linux-2.6.17-rc3.orig-staging1/fs/reiserfs/bitmap.c linux-2.6.17-rc3.orig-staging2/fs/reiserfs/bitmap.c
+--- linux-2.6.17-rc3.orig-staging1/fs/reiserfs/bitmap.c	2006-05-01 19:46:08.000000000 -0400
++++ linux-2.6.17-rc3.orig-staging2/fs/reiserfs/bitmap.c	2006-05-01 19:46:08.000000000 -0400
+@@ -60,6 +60,7 @@ static inline void get_bit_address(struc
+ int is_reusable(struct super_block *s, b_blocknr_t block, int bit_value)
+ {
+ 	int bmap, offset;
++	struct buffer_head *bh;
+ 
+ 	if (block == 0 || block >= SB_BLOCK_COUNT(s)) {
+ 		reiserfs_warning(s,
+@@ -97,20 +98,21 @@ int is_reusable(struct super_block *s, b
+ 		return 0;
+ 	}
+ 
+-	if ((bit_value == 0 &&
+-	     reiserfs_test_le_bit(offset, SB_AP_BITMAP(s)[bmap].bh->b_data)) ||
+-	    (bit_value == 1 &&
+-	     reiserfs_test_le_bit(offset, SB_AP_BITMAP(s)[bmap].bh->b_data) == 0)) {
++	bh = SB_AP_BITMAP(s)[bmap].bh;
++	get_bh(bh);
++
++	if ((bit_value == 0 && reiserfs_test_le_bit(offset, bh->b_data)) ||
++	    (bit_value == 1 && reiserfs_test_le_bit(offset, bh->b_data) == 0)) {
+ 		reiserfs_warning(s,
+ 				 "vs-4040: is_reusable: corresponding bit of block %lu does not "
+ 				 "match required value (bmap==%d, offset==%d) test_bit==%d",
+-				 block, bmap, offset, reiserfs_test_le_bit(offset,
+-								   SB_AP_BITMAP
+-								   (s)[bmap].bh->
+-								   b_data));
++				 block, bmap, offset,
++				 reiserfs_test_le_bit(offset, bh->b_data));
+ 
++		brelse(bh);
+ 		return 0;
+ 	}
++	brelse(bh);
+ 
+ 	if (bit_value == 0 && block == SB_ROOT_BLOCK(s)) {
+ 		reiserfs_warning(s,
+@@ -152,6 +154,7 @@ static int scan_bitmap_block(struct reis
+ {
+ 	struct super_block *s = th->t_super;
+ 	struct reiserfs_bitmap_info *bi = &SB_AP_BITMAP(s)[bmap_n];
++	struct buffer_head *bh;
+ 	int end, next;
+ 	int org = *beg;
+ 
+@@ -170,22 +173,28 @@ static int scan_bitmap_block(struct reis
+ 				 bmap_n);
+ 		return 0;
+ 	}
+-	if (buffer_locked(bi->bh)) {
++	bh = bi->bh;
++	get_bh(bh);
++
++	if (buffer_locked(bh)) {
+ 		PROC_INFO_INC(s, scan_bitmap.wait);
+-		__wait_on_buffer(bi->bh);
++		__wait_on_buffer(bh);
+ 	}
+ 
+ 	while (1) {
+ 	      cont:
+-		if (bi->free_count < min)
++		if (bi->free_count < min) {
++			brelse(bh);
+ 			return 0;	// No free blocks in this bitmap
++		}
+ 
+ 		/* search for a first zero bit -- beggining of a window */
+ 		*beg = reiserfs_find_next_zero_le_bit
+-		    ((unsigned long *)(bi->bh->b_data), boundary, *beg);
++		    ((unsigned long *)(bh->b_data), boundary, *beg);
+ 
+ 		if (*beg + min > boundary) {	/* search for a zero bit fails or the rest of bitmap block
+ 						 * cannot contain a zero window of minimum size */
++			brelse(bh);
+ 			return 0;
+ 		}
+ 
+@@ -194,7 +203,7 @@ static int scan_bitmap_block(struct reis
+ 		/* first zero bit found; we check next bits */
+ 		for (end = *beg + 1;; end++) {
+ 			if (end >= *beg + max || end >= boundary
+-			    || reiserfs_test_le_bit(end, bi->bh->b_data)) {
++			    || reiserfs_test_le_bit(end, bh->b_data)) {
+ 				next = end;
+ 				break;
+ 			}
+@@ -208,12 +217,12 @@ static int scan_bitmap_block(struct reis
+ 		 * (end) points to one bit after the window end */
+ 		if (end - *beg >= min) {	/* it seems we have found window of proper size */
+ 			int i;
+-			reiserfs_prepare_for_journal(s, bi->bh, 1);
++			reiserfs_prepare_for_journal(s, bh, 1);
+ 			/* try to set all blocks used checking are they still free */
+ 			for (i = *beg; i < end; i++) {
+ 				/* It seems that we should not check in journal again. */
+ 				if (reiserfs_test_and_set_le_bit
+-				    (i, bi->bh->b_data)) {
++				    (i, bh->b_data)) {
+ 					/* bit was set by another process
+ 					 * while we slept in prepare_for_journal() */
+ 					PROC_INFO_INC(s, scan_bitmap.stolen);
+@@ -225,17 +234,16 @@ static int scan_bitmap_block(struct reis
+ 					/* otherwise we clear all bit were set ... */
+ 					while (--i >= *beg)
+ 						reiserfs_test_and_clear_le_bit
+-						    (i, bi->bh->b_data);
+-					reiserfs_restore_prepared_buffer(s,
+-									 bi->
+-									 bh);
++						    (i, bh->b_data);
++					reiserfs_restore_prepared_buffer(s, bh);
+ 					*beg = org;
+ 					/* ... and search again in current block from beginning */
+ 					goto cont;
+ 				}
+ 			}
+ 			bi->free_count -= (end - *beg);
+-			journal_mark_dirty(th, s, bi->bh);
++			journal_mark_dirty(th, s, bh);
++			brelse(bh);
+ 
+ 			/* free block count calculation */
+ 			reiserfs_prepare_for_journal(s, SB_BUFFER_WITH_SB(s),
+@@ -384,7 +392,7 @@ static void _reiserfs_free_block(struct 
+ {
+ 	struct super_block *s = th->t_super;
+ 	struct reiserfs_super_block *rs;
+-	struct buffer_head *sbh;
++	struct buffer_head *sbh, *bmbh;
+ 	struct reiserfs_bitmap_info *apbi;
+ 	int nr, offset;
+ 
+@@ -405,16 +413,20 @@ static void _reiserfs_free_block(struct 
+ 		return;
+ 	}
+ 
+-	reiserfs_prepare_for_journal(s, apbi[nr].bh, 1);
++	bmbh = apbi[nr].bh;
++	get_bh(bmbh);
++
++	reiserfs_prepare_for_journal(s, bmbh, 1);
+ 
+ 	/* clear bit for the given block in bit map */
+-	if (!reiserfs_test_and_clear_le_bit(offset, apbi[nr].bh->b_data)) {
++	if (!reiserfs_test_and_clear_le_bit(offset, bmbh->b_data)) {
+ 		reiserfs_warning(s, "vs-4080: reiserfs_free_block: "
+ 				 "free_block (%s:%lu)[dev:blocknr]: bit already cleared",
+ 				 reiserfs_bdevname(s), block);
+ 	}
+ 	apbi[nr].free_count++;
+-	journal_mark_dirty(th, s, apbi[nr].bh);
++	journal_mark_dirty(th, s, bmbh);
++	brelse(bmbh);
+ 
+ 	reiserfs_prepare_for_journal(s, sbh, 1);
+ 	/* update super block */
+diff -ruNpX ../dontdiff linux-2.6.17-rc3.orig-staging1/fs/reiserfs/resize.c linux-2.6.17-rc3.orig-staging2/fs/reiserfs/resize.c
+--- linux-2.6.17-rc3.orig-staging1/fs/reiserfs/resize.c	2006-01-02 22:21:10.000000000 -0500
++++ linux-2.6.17-rc3.orig-staging2/fs/reiserfs/resize.c	2006-05-01 19:46:08.000000000 -0400
+@@ -22,6 +22,7 @@ int reiserfs_resize(struct super_block *
+ 	int err = 0;
+ 	struct reiserfs_super_block *sb;
+ 	struct reiserfs_bitmap_info *bitmap;
++	struct reiserfs_bitmap_info *info;
+ 	struct reiserfs_bitmap_info *old_bitmap = SB_AP_BITMAP(s);
+ 	struct buffer_head *bh;
+ 	struct reiserfs_transaction_handle th;
+@@ -127,16 +128,19 @@ int reiserfs_resize(struct super_block *
+ 		 * transaction begins, and the new bitmaps don't matter if the
+ 		 * transaction fails. */
+ 		for (i = bmap_nr; i < bmap_nr_new; i++) {
+-			bitmap[i].bh = sb_getblk(s, i * s->s_blocksize * 8);
+-			memset(bitmap[i].bh->b_data, 0, sb_blocksize(sb));
+-			reiserfs_test_and_set_le_bit(0, bitmap[i].bh->b_data);
+-
+-			set_buffer_uptodate(bitmap[i].bh);
+-			mark_buffer_dirty(bitmap[i].bh);
+-			sync_dirty_buffer(bitmap[i].bh);
++			bh = sb_getblk(s, i * s->s_blocksize * 8);
++			get_bh(bh);
++			memset(bh->b_data, 0, sb_blocksize(sb));
++			reiserfs_test_and_set_le_bit(0, bh->b_data);
++
++			set_buffer_uptodate(bh);
++			mark_buffer_dirty(bh);
++			sync_dirty_buffer(bh);
+ 			// update bitmap_info stuff
+ 			bitmap[i].first_zero_hint = 1;
+ 			bitmap[i].free_count = sb_blocksize(sb) * 8 - 1;
++			bitmap[i].bh = bh;
++			brelse(bh);
+ 		}
+ 		/* free old bitmap blocks array */
+ 		SB_AP_BITMAP(s) = bitmap;
+@@ -150,30 +154,36 @@ int reiserfs_resize(struct super_block *
+ 	if (err)
+ 		return err;
+ 
+-	/* correct last bitmap blocks in old and new disk layout */
+-	reiserfs_prepare_for_journal(s, SB_AP_BITMAP(s)[bmap_nr - 1].bh, 1);
+-	for (i = block_r; i < s->s_blocksize * 8; i++)
+-		reiserfs_test_and_clear_le_bit(i,
+-					       SB_AP_BITMAP(s)[bmap_nr -
+-							       1].bh->b_data);
+-	SB_AP_BITMAP(s)[bmap_nr - 1].free_count += s->s_blocksize * 8 - block_r;
+-	if (!SB_AP_BITMAP(s)[bmap_nr - 1].first_zero_hint)
+-		SB_AP_BITMAP(s)[bmap_nr - 1].first_zero_hint = block_r;
++	/* Extend old last bitmap block - new blocks have been made available */
++	info = SB_AP_BITMAP(s) + bmap_nr - 1;
++	bh = info->bh;
++	get_bh(bh);
+ 
+-	journal_mark_dirty(&th, s, SB_AP_BITMAP(s)[bmap_nr - 1].bh);
++	reiserfs_prepare_for_journal(s, bh, 1);
++	for (i = block_r; i < s->s_blocksize * 8; i++)
++		reiserfs_test_and_clear_le_bit(i, bh->b_data);
++	info->free_count += s->s_blocksize * 8 - block_r;
++	if (!info->first_zero_hint)
++		info->first_zero_hint = block_r;
++
++	journal_mark_dirty(&th, s, bh);
++	brelse(bh);
++
++	/* Correct new last bitmap block - It may not be full */
++	info = SB_AP_BITMAP(s) + bmap_nr_new - 1;
++	bh = info->bh;
++	get_bh(bh);
+ 
+-	reiserfs_prepare_for_journal(s, SB_AP_BITMAP(s)[bmap_nr_new - 1].bh, 1);
++	reiserfs_prepare_for_journal(s, bh, 1);
+ 	for (i = block_r_new; i < s->s_blocksize * 8; i++)
+-		reiserfs_test_and_set_le_bit(i,
+-					     SB_AP_BITMAP(s)[bmap_nr_new -
+-							     1].bh->b_data);
+-	journal_mark_dirty(&th, s, SB_AP_BITMAP(s)[bmap_nr_new - 1].bh);
++		reiserfs_test_and_set_le_bit(i, bh->b_data);
++	journal_mark_dirty(&th, s, bh);
++	brelse(bh);
+ 
+-	SB_AP_BITMAP(s)[bmap_nr_new - 1].free_count -=
+-	    s->s_blocksize * 8 - block_r_new;
++	info->free_count -= s->s_blocksize * 8 - block_r_new;
+ 	/* Extreme case where last bitmap is the only valid block in itself. */
+-	if (!SB_AP_BITMAP(s)[bmap_nr_new - 1].free_count)
+-		SB_AP_BITMAP(s)[bmap_nr_new - 1].first_zero_hint = 0;
++	if (!info->free_count)
++		info->first_zero_hint = 0;
+ 	/* update super */
+ 	reiserfs_prepare_for_journal(s, SB_BUFFER_WITH_SB(s), 1);
+ 	free_blocks = SB_FREE_BLOCKS(s);
