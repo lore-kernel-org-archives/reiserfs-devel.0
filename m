@@ -1,70 +1,95 @@
-From: Jeffrey Mahoney <jeffm@suse.com>
-Subject: [PATCH 00/05] reiserfs: enhanced error reporting
-Date: Fri, 16 Jun 2006 00:16:50 -0400
-Message-ID: <449230B2.3030406@suse.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH 01/05] reiserfs: use more consistent printk formatting
+Date: Fri, 16 Jun 2006 00:19:00 -0400
+Message-ID: <20060616041900.GA5370@locomotive.unixthugs.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28789-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28790-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS Mailing List <reiserfs-list@namesys.com>
-
-One of the long-term shortcomings of reiserfs has been the lack of 
-extended error handling. There are many conditions where the file system 
-is obviously corrupted, yet writing is still allowed. This only serves 
-to potentially introduce even more corruption. There are other cases
-where reiserfs_panic() is called directly when there is really no need
-to take down the system.
-
-The following patches lay some of the groundwork to enhance the error 
-handling capabilities of reiserfs:
-
-* reiserfs-01-consistent-messages:
-   Currently, the output format for infos/warnings/errors/panics varies
-   depending on which one is used. This patch makes them more consistent
-   internally and with other Linux file systems. The third patch in the
-   series builds on this to make more consistent warnings/errors/etc.
-
-* reiserfs-02-reiserfs_info.diff:
-   In several places, reiserfs_warning() is used to inform the user of
-   something that would be better qualified as a notice. This patch adds
-   a reiserfs_info() routine for use in such cases.
-
-* reiserfs-03-reiserfs-warning.diff:
-   Hans has stated on multiple occasions that he wants unique identifiers
-   associated with all warnings. These identifiers aren't always used.
-   In some cases, function names are included. In other cases, not.
-   Sometimes the device is included explicitly, in others, not. This
-   patch adds identifiers where they're missing (or "" in the rare case
-   where the message is routine enough to not warrant one), removes
-   function names and device names when they're provided, since patch 1
-   added them to every warning.
-
-* reiserfs-04-add-reiserfs_error.diff:
-   This adds a reiserfs_error() function akin to ext3_error() that takes
-   the file system to a read only state when an error occurs where the
-   file system is corrupted. In such cases, more damage would be done by
-   allowing writes to continue.
-
-* reiserfs-05-use-reiserfs_error.diff:
-   This patch modifies some error paths to use reiserfs_error() instead
-   of reiserfs_warning() or reiserfs_panic(). This is to be viewed as
-   the first in a series of patches. I just chose the ones that seemed
-   obvious as a first step.
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ReiserFS List <reiserfs-list@namesys.com>
 
 
-I'm not putting these up for inclusion until I'm satisfied they're 
-stable, but I'd like some feedback. I know there's been a lot of 
-interest in enhancing the error handling capabilities, so hopefully
-these will be welcome. :)
+ The output format between a warning/error/panic/info/etc changes with
+ which one is used.
 
+ The following patch makes the messages more internally consistent, but also
+ more consistent with other Linux filesystems.
 
--Jeff
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
 --
-Jeff Mahoney
-SUSE Labs
+ fs/reiserfs/prints.c |   28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
+
+diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/prints.c linux-2.6.17-rc6-staging2/fs/reiserfs/prints.c
+--- linux-2.6.17-rc6-staging1/fs/reiserfs/prints.c	2006-06-15 20:58:48.000000000 -0400
++++ linux-2.6.17-rc6-staging2/fs/reiserfs/prints.c	2006-06-15 20:59:41.000000000 -0400
+@@ -269,10 +269,10 @@ void reiserfs_warning(struct super_block
+ {
+ 	do_reiserfs_warning(fmt);
+ 	if (sb)
+-		printk(KERN_WARNING "ReiserFS: %s: warning: %s\n",
+-		       reiserfs_bdevname(sb), error_buf);
++		printk(KERN_WARNING "REISERFS warning (device %s): %s\n",
++		       sb->s_id, error_buf);
+ 	else
+-		printk(KERN_WARNING "ReiserFS: warning: %s\n", error_buf);
++		printk(KERN_WARNING "REISERFS warning: %s\n", error_buf);
+ }
+ 
+ /* No newline.. reiserfs_info calls can be followed by printk's */
+@@ -280,10 +280,10 @@ void reiserfs_info(struct super_block *s
+ {
+ 	do_reiserfs_warning(fmt);
+ 	if (sb)
+-		printk(KERN_NOTICE "ReiserFS: %s: %s",
+-		       reiserfs_bdevname(sb), error_buf);
++		printk(KERN_NOTICE "REISERFS (device %s): %s",
++		       sb->s_id, error_buf);
+ 	else
+-		printk(KERN_NOTICE "ReiserFS: %s", error_buf);
++		printk(KERN_NOTICE "REISERFS %s:", error_buf);
+ }
+ 
+ /* No newline.. reiserfs_printk calls can be followed by printk's */
+@@ -298,10 +298,10 @@ void reiserfs_debug(struct super_block *
+ #ifdef CONFIG_REISERFS_CHECK
+ 	do_reiserfs_warning(fmt);
+ 	if (s)
+-		printk(KERN_DEBUG "ReiserFS: %s: %s\n",
+-		       reiserfs_bdevname(s), error_buf);
++		printk(KERN_DEBUG "REISERFS debug (device %s): %s\n",
++		       s->s_id, error_buf);
+ 	else
+-		printk(KERN_DEBUG "ReiserFS: %s\n", error_buf);
++		printk(KERN_DEBUG "REISERFS debug: %s\n", error_buf);
+ #endif
+ }
+ 
+@@ -371,15 +371,15 @@ void reiserfs_abort(struct super_block *
+ 	do_reiserfs_warning(fmt);
+ 
+ 	if (reiserfs_error_panic(sb)) {
+-		panic(KERN_CRIT "REISERFS: panic (device %s): %s\n",
+-		      reiserfs_bdevname(sb), error_buf);
++		panic(KERN_CRIT "REISERFS panic (device %s): %s\n", sb->s_id,
++		      error_buf);
+ 	}
+ 
+-	if (sb->s_flags & MS_RDONLY)
++	if (reiserfs_is_journal_aborted(SB_JOURNAL(sb))) 
+ 		return;
+ 
+-	printk(KERN_CRIT "REISERFS: abort (device %s): %s\n",
+-	       reiserfs_bdevname(sb), error_buf);
++	printk(KERN_CRIT "REISERFS abort (device %s): %s\n", sb->s_id,
++	       error_buf);
+ 
+ 	sb->s_flags |= MS_RDONLY;
+ 	reiserfs_journal_abort(sb, errno);
