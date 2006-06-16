@@ -1,2387 +1,671 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH 03/05] reiserfs: rework reiserfs_warning
-Date: Fri, 16 Jun 2006 00:19:00 -0400
-Message-ID: <20060616041900.GA5395@locomotive.unixthugs.org>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: [PATCH 05/05] reiserfs: use reiserfs_error()
+Date: Thu, 15 Jun 2006 22:01:44 -0700
+Message-ID: <44923B38.4030802@namesys.com>
+References: <20060616041901.GA5420@locomotive.unixthugs.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28794-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28795-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <20060616041901.GA5420@locomotive.unixthugs.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: ReiserFS List <reiserfs-list@namesys.com>
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
+Jeff Mahoney wrote:
 
- ReiserFS warnings can be somewhat inconsistent.
- In some cases:
- * a unique identifier may be associated with it
- * the function name may be included
- * the device may be printed separately
+> This patch makes many paths that are currently using warnings to handle
+> the error.
+>
+>Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+>
+>--
+> fs/reiserfs/bitmap.c          |   52 +++++++++++++++----------------
+> fs/reiserfs/file.c            |   12 +++----
+> fs/reiserfs/inode.c           |   43 ++++++++++++-------------
+> fs/reiserfs/lbalance.c        |   20 ++++++------
+> fs/reiserfs/namei.c           |   24 +++++++-------
+> fs/reiserfs/objectid.c        |    4 +-
+> fs/reiserfs/stree.c           |   70 +++++++++++++++++++++---------------------
+> fs/reiserfs/super.c           |   15 ++++-----
+> fs/reiserfs/tail_conversion.c |    6 +--
+> fs/reiserfs/xattr.c           |   19 +++++------
+> 10 files changed, 130 insertions(+), 135 deletions(-)
+>
+>diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/bitmap.c linux-2.6.17-rc6-staging2/fs/reiserfs/bitmap.c
+>--- linux-2.6.17-rc6-staging1/fs/reiserfs/bitmap.c	2006-06-15 20:59:45.000000000 -0400
+>+++ linux-2.6.17-rc6-staging2/fs/reiserfs/bitmap.c	2006-06-15 20:59:46.000000000 -0400
+>@@ -63,27 +63,27 @@ int is_reusable(struct super_block *s, b
+> 	int i, j;
+> 
+> 	if (block == 0 || block >= SB_BLOCK_COUNT(s)) {
+>-		reiserfs_warning(s, "vs-4010",
+>-		                 "block number is out of range %lu (%u)",
+>-				 block, SB_BLOCK_COUNT(s));
+>+		reiserfs_error(s, "vs-4010",
+>+		               "block number is out of range %lu (%u)",
+>+		               block, SB_BLOCK_COUNT(s));
+> 		return 0;
+> 	}
+> 
+> 	/* it can't be one of the bitmap blocks */
+> 	for (i = 0; i < SB_BMAP_NR(s); i++)
+> 		if (block == SB_AP_BITMAP(s)[i].bh->b_blocknr) {
+>-			reiserfs_warning(s, "vs-4020", "bitmap block "
+>-			                 "%lu(%u) can't be freed or reused",
+>-					 block, SB_BMAP_NR(s));
+>+			reiserfs_error(s, "vs-4020", "bitmap block "
+>+			               "%lu(%u) can't be freed or reused",
+>+			               block, SB_BMAP_NR(s));
+> 			return 0;
+> 		}
+> 
+> 	get_bit_address(s, block, &i, &j);
+> 
+> 	if (i >= SB_BMAP_NR(s)) {
+>-		reiserfs_warning(s, "vs-4030", "there is no so many "
+>  
+>
+Jeff, as a native english speaker, can you review the english and
+informativeness of these?
 
- This patch aims to make warnings more consistent. reiserfs_warning() prints
- the device name, so printing it a second time is not required. The function
- name for a warning is always helpful in debugging, so it is now automatically
- inserted into the output. Hans has stated that every warning should have
- a unique identifier. Some cases lack them, others really shouldn't have them.
- reiserfs_warning() now expects an id associated with each message. In the
- rare case where one isn't needed, "" will suffice.
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+>-		                 "bitmap blocks: block=%lu, bitmap_nr=%d",
+>-				 block, i);
+>+		reiserfs_error(s, "vs-4030", "there is no so many "
+>+		               "bitmap blocks: block=%lu, bitmap_nr=%d",
+>+		               block, i);
+> 		return 0;
+> 	}
+> 
+>@@ -91,10 +91,10 @@ int is_reusable(struct super_block *s, b
+> 	     reiserfs_test_le_bit(j, SB_AP_BITMAP(s)[i].bh->b_data)) ||
+> 	    (bit_value == 1 &&
+> 	     reiserfs_test_le_bit(j, SB_AP_BITMAP(s)[i].bh->b_data) == 0)) {
+>-		reiserfs_warning(s, "vs-4040", "corresponding bit of "
+>-		                 "block %lu does not match required value "
+>-				 "(i==%d, j==%d) test_bit==%d",
+>-				 block, i, j, reiserfs_test_le_bit(j,
+>+		reiserfs_error(s, "vs-4040", "corresponding bit of "
+>+		               "block %lu does not match required value "
+>+		               "(i==%d, j==%d) test_bit==%d",
+>+		               block, i, j, reiserfs_test_le_bit(j,
+> 								   SB_AP_BITMAP
+> 								   (s)[i].bh->
+> 								   b_data));
+>@@ -103,8 +103,8 @@ int is_reusable(struct super_block *s, b
+> 	}
+> 
+> 	if (bit_value == 0 && block == SB_ROOT_BLOCK(s)) {
+>-		reiserfs_warning(s, "vs-4050", "this is root block (%u), "
+>-				 "it must be busy", SB_ROOT_BLOCK(s));
+>+		reiserfs_error(s, "vs-4050", "this is root block (%u), "
+>+		               "it must be busy", SB_ROOT_BLOCK(s));
+> 		return 0;
+> 	}
+> 
+>@@ -155,8 +155,8 @@ static int scan_bitmap_block(struct reis
+> /* - I mean `a window of zero bits' as in description of this function - Zam. */
+> 
+> 	if (!bi) {
+>-		reiserfs_warning(s, "jdm-4055", "NULL bitmap info pointer "
+>-		                 "for bitmap %d", bmap_n);
+>+		reiserfs_error(s, "jdm-4055", "NULL bitmap info pointer "
+>+		               "for bitmap %d", bmap_n);
+> 		return 0;
+> 	}
+> 	if (buffer_locked(bi->bh)) {
+>@@ -388,8 +388,8 @@ static void _reiserfs_free_block(struct 
+> 	get_bit_address(s, block, &nr, &offset);
+> 
+> 	if (nr >= sb_bmap_nr(rs)) {
+>- 		reiserfs_warning(s, "vs-4075",
+>-				 "block %lu is out of range", block);
+>+		reiserfs_error(s, "vs-4075",
+>+		               "block %lu is out of range", block);
+> 		return;
+> 	}
+> 
+>@@ -397,8 +397,8 @@ static void _reiserfs_free_block(struct 
+> 
+> 	/* clear bit for the given block in bit map */
+> 	if (!reiserfs_test_and_clear_le_bit(offset, apbi[nr].bh->b_data)) {
+>-		reiserfs_warning(s, "vs-4080",
+>-		                 "block %lu: bit already cleared", block);
+>+		reiserfs_error(s, "vs-4080",
+>+		               "block %lu: bit already cleared", block);
+> 	}
+> 	apbi[nr].free_count++;
+> 	journal_mark_dirty(th, s, apbi[nr].bh);
+>@@ -449,8 +449,8 @@ static void __discard_prealloc(struct re
+> 	BUG_ON(!th->t_trans_id);
+> #ifdef CONFIG_REISERFS_CHECK
+> 	if (ei->i_prealloc_count < 0)
+>-		reiserfs_warning(th->t_super, "zam-4001",
+>-		                 "inode has negative prealloc blocks count.");
+>+		reiserfs_error(th->t_super, "zam-4001",
+>+		               "inode has negative prealloc blocks count.");
+> #endif
+> 	while (ei->i_prealloc_count > 0) {
+> 		reiserfs_free_prealloc_block(th, inode, ei->i_prealloc_block);
+>@@ -486,9 +486,9 @@ void reiserfs_discard_all_prealloc(struc
+> 				i_prealloc_list);
+> #ifdef CONFIG_REISERFS_CHECK
+> 		if (!ei->i_prealloc_count) {
+>-			reiserfs_warning(th->t_super, "zam-4001",
+>-			                 "inode is in prealloc list but has "
+>-					 "no preallocated blocks.");
+>+			reiserfs_error(th->t_super, "zam-4001",
+>+			               "inode is in prealloc list but has "
+>+			               "no preallocated blocks.");
+> 		}
+> #endif
+> 		__discard_prealloc(th, ei);
+>diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/file.c linux-2.6.17-rc6-staging2/fs/reiserfs/file.c
+>--- linux-2.6.17-rc6-staging1/fs/reiserfs/file.c	2006-06-15 20:59:45.000000000 -0400
+>+++ linux-2.6.17-rc6-staging2/fs/reiserfs/file.c	2006-06-15 20:59:46.000000000 -0400
+>@@ -380,7 +380,7 @@ static int reiserfs_allocate_blocks_for_
+> 					if (res != ITEM_NOT_FOUND) {
+> 						/* item should not exist, otherwise we have error */
+> 						if (res != -ENOSPC) {
+>-							reiserfs_warning(inode->
+>+							reiserfs_error(inode->
+> 									 i_sb,
+> 									 "green-9008",
+> 									 "search_by_key (%K) returned %d",
+>@@ -582,11 +582,11 @@ static int reiserfs_allocate_blocks_for_
+> 				/* Well, if we have found such item already, or some error
+> 				   occured, we need to warn user and return error */
+> 				if (res != -ENOSPC) {
+>-					reiserfs_warning(inode->i_sb,
+>-							 "green-9009",
+>-							 "search_by_key (%K) "
+>-							 "returned %d", &key,
+>-							 res);
+>+					reiserfs_error(inode->i_sb,
+>+					               "green-9009",
+>+					               "search_by_key (%K) "
+>+					               "returned %d", &key,
+>+					               res);
+> 				}
+> 				res = -EIO;
+> 				goto error_exit_free_blocks;
+>diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/inode.c linux-2.6.17-rc6-staging2/fs/reiserfs/inode.c
+>--- linux-2.6.17-rc6-staging1/fs/reiserfs/inode.c	2006-06-15 20:59:45.000000000 -0400
+>+++ linux-2.6.17-rc6-staging2/fs/reiserfs/inode.c	2006-06-15 20:59:46.000000000 -0400
+>@@ -847,11 +847,11 @@ int reiserfs_get_block(struct inode *ino
+> 							  tail_offset);
+> 				if (retval) {
+> 					if (retval != -ENOSPC)
+>-						reiserfs_warning(inode->i_sb,
+>-								 "clm-6004",
+>-								 "convert tail failed inode %lu, error %d",
+>-								 inode->i_ino,
+>-								 retval);
+>+						reiserfs_error(inode->i_sb,
+>+						               "clm-6004",
+>+						               "convert tail failed inode %lu, error %d",
+>+						               inode->i_ino,
+>+						               retval);
+> 					if (allocated_block_nr) {
+> 						/* the bitmap, the super, and the stat data == 3 */
+> 						if (!th)
+>@@ -1341,10 +1341,9 @@ void reiserfs_update_sd_size(struct reis
+> 		/* look for the object's stat data */
+> 		retval = search_item(inode->i_sb, &key, &path);
+> 		if (retval == IO_ERROR) {
+>-			reiserfs_warning(inode->i_sb, "vs-13050",
+>-					 "i/o failure occurred trying to "
+>-					 "update %K stat data",
+>-					 &key);
+>+			reiserfs_error(inode->i_sb, "vs-13050",
+>+			               "i/o failure occurred trying to "
+>+			               "update %K stat data", &key);
+> 			return;
+> 		}
+> 		if (retval == ITEM_NOT_FOUND) {
+>@@ -1433,9 +1432,9 @@ void reiserfs_read_locked_inode(struct i
+> 	/* look for the object's stat data */
+> 	retval = search_item(inode->i_sb, &key, &path_to_sd);
+> 	if (retval == IO_ERROR) {
+>-		reiserfs_warning(inode->i_sb, "vs-13070",
+>-				 "i/o failure occurred trying to find "
+>-				 "stat data of %K", &key);
+>+		reiserfs_error(inode->i_sb, "vs-13070",
+>+		               "i/o failure occurred trying to find "
+>+		               "stat data of %K", &key);
+> 		reiserfs_make_bad_inode(inode);
+> 		return;
+> 	}
+>@@ -1704,8 +1703,8 @@ static int reiserfs_new_directory(struct
+> 	/* look for place in the tree for new item */
+> 	retval = search_item(sb, &key, path);
+> 	if (retval == IO_ERROR) {
+>-		reiserfs_warning(sb, "vs-13080",
+>-				 "i/o failure occurred creating new directory");
+>+		reiserfs_error(sb, "vs-13080",
+>+		               "i/o failure occurred creating new directory");
+> 		return -EIO;
+> 	}
+> 	if (retval == ITEM_FOUND) {
+>@@ -1744,8 +1743,8 @@ static int reiserfs_new_symlink(struct r
+> 	/* look for place in the tree for new item */
+> 	retval = search_item(sb, &key, path);
+> 	if (retval == IO_ERROR) {
+>-		reiserfs_warning(sb, "vs-13080",
+>-				 "i/o failure occurred creating new symlink");
+>+		reiserfs_error(sb, "vs-13080",
+>+		               "i/o failure occurred creating new symlink");
+> 		return -EIO;
+> 	}
+> 	if (retval == ITEM_FOUND) {
+>@@ -2063,10 +2062,8 @@ static int grab_tail_page(struct inode *
+> 		 ** I've screwed up the code to find the buffer, or the code to
+> 		 ** call prepare_write
+> 		 */
+>-		reiserfs_warning(p_s_inode->i_sb, "clm-6000",
+>-		                 "error reading block %lu on dev %s",
+>-				 bh->b_blocknr,
+>-				 reiserfs_bdevname(p_s_inode->i_sb));
+>+		reiserfs_error(p_s_inode->i_sb, "clm-6000",
+>+		               "error reading block %lu", bh->b_blocknr);
+> 		error = -EIO;
+> 		goto unlock;
+> 	}
+>@@ -2108,9 +2105,9 @@ int reiserfs_truncate_file(struct inode 
+> 			// and get_block_create_0 could not find a block to read in,
+> 			// which is ok.
+> 			if (error != -ENOENT)
+>-				reiserfs_warning(p_s_inode->i_sb, "clm-6001",
+>-				                 "grab_tail_page failed %d",
+>-						 error);
+>+				reiserfs_error(p_s_inode->i_sb, "clm-6001",
+>+				               "grab_tail_page failed %d",
+>+				               error);
+> 			page = NULL;
+> 			bh = NULL;
+> 		}
+>diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/lbalance.c linux-2.6.17-rc6-staging2/fs/reiserfs/lbalance.c
+>--- linux-2.6.17-rc6-staging1/fs/reiserfs/lbalance.c	2006-06-15 20:59:45.000000000 -0400
+>+++ linux-2.6.17-rc6-staging2/fs/reiserfs/lbalance.c	2006-06-15 20:59:46.000000000 -0400
+>@@ -1288,17 +1288,17 @@ void leaf_paste_entries(struct buffer_he
+> 			prev = (i != 0) ? deh_location(&(deh[i - 1])) : 0;
+> 
+> 			if (prev && prev <= deh_location(&(deh[i])))
+>-				reiserfs_warning(NULL, "vs-10240",
+>-				                 "directory item (%h) "
+>-						 "corrupted (prev %a, "
+>-						 "cur(%d) %a)",
+>-						 ih, deh + i - 1, i, deh + i);
+>+				reiserfs_error(NULL, "vs-10240",
+>+				               "directory item (%h) "
+>+				               "corrupted (prev %a, "
+>+				               "cur(%d) %a)",
+>+				               ih, deh + i - 1, i, deh + i);
+> 			if (next && next >= deh_location(&(deh[i])))
+>-				reiserfs_warning(NULL, "vs-10250",
+>-				                 "directory item (%h) "
+>-						 "corrupted (cur(%d) %a, "
+>-						 "next %a)",
+>-						 ih, i, deh + i, deh + i + 1);
+>+				reiserfs_error(NULL, "vs-10250",
+>+				               "directory item (%h) "
+>+				               "corrupted (cur(%d) %a, "
+>+				               "next %a)",
+>+				               ih, i, deh + i, deh + i + 1);
+> 		}
+> 	}
+> #endif
+>diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/namei.c linux-2.6.17-rc6-staging2/fs/reiserfs/namei.c
+>--- linux-2.6.17-rc6-staging1/fs/reiserfs/namei.c	2006-06-15 20:59:45.000000000 -0400
+>+++ linux-2.6.17-rc6-staging2/fs/reiserfs/namei.c	2006-06-15 20:59:46.000000000 -0400
+>@@ -125,8 +125,8 @@ int search_by_entry_key(struct super_blo
+> 	switch (retval) {
+> 	case ITEM_NOT_FOUND:
+> 		if (!PATH_LAST_POSITION(path)) {
+>-			reiserfs_warning(sb, "vs-7000", "search_by_key "
+>-			                 "returned item position == 0");
+>+			reiserfs_error(sb, "vs-7000", "search_by_key "
+>+			               "returned item position == 0");
+> 			pathrelse(path);
+> 			return IO_ERROR;
+> 		}
+>@@ -140,7 +140,7 @@ int search_by_entry_key(struct super_blo
+> 
+> 	default:
+> 		pathrelse(path);
+>-		reiserfs_warning(sb, "vs-7002", "no path to here");
+>+		reiserfs_error(sb, "vs-7002", "no path to here");
+> 		return IO_ERROR;
+> 	}
+> 
+>@@ -304,7 +304,7 @@ static int reiserfs_find_entry(struct in
+> 		    search_by_entry_key(dir->i_sb, &key_to_search,
+> 					path_to_entry, de);
+> 		if (retval == IO_ERROR) {
+>-			reiserfs_warning(dir->i_sb, "zam-7001", "io error");
+>+			reiserfs_error(dir->i_sb, "zam-7001", "io error");
+> 			return IO_ERROR;
+> 		}
+> 
+>@@ -496,9 +496,9 @@ static int reiserfs_add_entry(struct rei
+> 		}
+> 
+> 		if (retval != NAME_FOUND) {
+>-			reiserfs_warning(dir->i_sb, "zam-7002",
+>-			                 "reiserfs_find_entry() returned "
+>-					 "unexpected value (%d)", retval);
+>+			reiserfs_error(dir->i_sb, "zam-7002",
+>+			               "reiserfs_find_entry() returned "
+>+			               "unexpected value (%d)", retval);
+> 		}
+> 
+> 		return -EEXIST;
+>@@ -908,9 +908,9 @@ static int reiserfs_rmdir(struct inode *
+> 		goto end_rmdir;
+> 
+> 	if (inode->i_nlink != 2 && inode->i_nlink != 1)
+>-		reiserfs_warning(inode->i_sb, "reiserfs-7040",
+>-		                 "empty directory has nlink != 2 (%d)",
+>-				 inode->i_nlink);
+>+		reiserfs_error(inode->i_sb, "reiserfs-7040",
+>+		               "empty directory has nlink != 2 (%d)",
+>+		               inode->i_nlink);
+> 
+> 	inode->i_nlink = 0;
+> 	inode->i_ctime = dir->i_ctime = dir->i_mtime = CURRENT_TIME_SEC;
+>@@ -1502,8 +1502,8 @@ static int reiserfs_rename(struct inode 
+> 	if (reiserfs_cut_from_item
+> 	    (&th, &old_entry_path, &(old_de.de_entry_key), old_dir, NULL,
+> 	     0) < 0)
+>-		reiserfs_warning(old_dir->i_sb, "vs-7060",
+>-		                 "couldn't not cut old name. Fsck later?");
+>+		reiserfs_error(old_dir->i_sb, "vs-7060",
+>+		               "couldn't not cut old name. Fsck later?");
+> 
+> 	old_dir->i_size -= DEH_SIZE + old_de.de_entrylen;
+> 
+>diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/objectid.c linux-2.6.17-rc6-staging2/fs/reiserfs/objectid.c
+>--- linux-2.6.17-rc6-staging1/fs/reiserfs/objectid.c	2006-06-15 20:59:45.000000000 -0400
+>+++ linux-2.6.17-rc6-staging2/fs/reiserfs/objectid.c	2006-06-15 20:59:46.000000000 -0400
+>@@ -162,8 +162,8 @@ void reiserfs_release_objectid(struct re
+> 		i += 2;
+> 	}
+> 
+>-	reiserfs_warning(s, "vs-15011", "tried to free free object id (%lu)",
+>-			 (long unsigned)objectid_to_release);
+>+	reiserfs_error(s, "vs-15011", "tried to free free object id (%lu)",
+>+	               (long unsigned)objectid_to_release);
+> }
+> 
+> int reiserfs_convert_objectid_map_v1(struct super_block *s)
+>diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/stree.c linux-2.6.17-rc6-staging2/fs/reiserfs/stree.c
+>--- linux-2.6.17-rc6-staging1/fs/reiserfs/stree.c	2006-06-15 20:59:45.000000000 -0400
+>+++ linux-2.6.17-rc6-staging2/fs/reiserfs/stree.c	2006-06-15 20:59:46.000000000 -0400
+>@@ -446,24 +446,24 @@ static int is_leaf(char *buf, int blocks
+> 
+> 	blkh = (struct block_head *)buf;
+> 	if (blkh_level(blkh) != DISK_LEAF_NODE_LEVEL) {
+>-		reiserfs_warning(NULL, "reiserfs-5080",
+>-		                 "this should be caught earlier");
+>+		reiserfs_error(NULL, "reiserfs-5080",
+>+		               "this should be caught earlier");
+> 		return 0;
+> 	}
+> 
+> 	nr = blkh_nr_item(blkh);
+> 	if (nr < 1 || nr > ((blocksize - BLKH_SIZE) / (IH_SIZE + MIN_ITEM_LEN))) {
+> 		/* item number is too big or too small */
+>-		reiserfs_warning(NULL, "reiserfs-5081",
+>-		                 "nr_item seems wrong: %z", bh);
+>+		reiserfs_error(NULL, "reiserfs-5081",
+>+		               "nr_item seems wrong: %z", bh);
+> 		return 0;
+> 	}
+> 	ih = (struct item_head *)(buf + BLKH_SIZE) + nr - 1;
+> 	used_space = BLKH_SIZE + IH_SIZE * nr + (blocksize - ih_location(ih));
+> 	if (used_space != blocksize - blkh_free_space(blkh)) {
+> 		/* free space does not match to calculated amount of use space */
+>-		reiserfs_warning(NULL, "reiserfs-5082",
+>-		                 "free space seems wrong: %z", bh);
+>+		reiserfs_error(NULL, "reiserfs-5082",
+>+		               "free space seems wrong: %z", bh);
+> 		return 0;
+> 	}
+> 	// FIXME: it is_leaf will hit performance too much - we may have
+>@@ -474,28 +474,28 @@ static int is_leaf(char *buf, int blocks
+> 	prev_location = blocksize;
+> 	for (i = 0; i < nr; i++, ih++) {
+> 		if (le_ih_k_type(ih) == TYPE_ANY) {
+>-			reiserfs_warning(NULL, "reiserfs-5083",
+>-					 "wrong item type for item %h",
+>+			reiserfs_error(NULL, "reiserfs-5083",
+>+			               "wrong item type for item %h",
+> 					 ih);
+> 			return 0;
+> 		}
+> 		if (ih_location(ih) >= blocksize
+> 		    || ih_location(ih) < IH_SIZE * nr) {
+>-			reiserfs_warning(NULL, "reiserfs-5084",
+>-					 "item location seems wrong: %h",
+>+			reiserfs_error(NULL, "reiserfs-5084",
+>+			               "item location seems wrong: %h",
+> 					 ih);
+> 			return 0;
+> 		}
+> 		if (ih_item_len(ih) < 1
+> 		    || ih_item_len(ih) > MAX_ITEM_LEN(blocksize)) {
+>-			reiserfs_warning(NULL, "reiserfs-5085",
+>-					 "item length seems wrong: %h",
+>+			reiserfs_error(NULL, "reiserfs-5085",
+>+			               "item length seems wrong: %h",
+> 					 ih);
+> 			return 0;
+> 		}
+> 		if (prev_location - ih_location(ih) != ih_item_len(ih)) {
+>-			reiserfs_warning(NULL, "reiserfs-5086",
+>-					 "item location seems wrong "
+>+			reiserfs_error(NULL, "reiserfs-5086",
+>+			               "item location seems wrong "
+> 					 "(second one): %h", ih);
+> 			return 0;
+> 		}
+>@@ -517,23 +517,23 @@ static int is_internal(char *buf, int bl
+> 	nr = blkh_level(blkh);
+> 	if (nr <= DISK_LEAF_NODE_LEVEL || nr > MAX_HEIGHT) {
+> 		/* this level is not possible for internal nodes */
+>-		reiserfs_warning(NULL, "reiserfs-5087",
+>-				 "this should be caught earlier");
+>+		reiserfs_error(NULL, "reiserfs-5087",
+>+		               "this should be caught earlier");
+> 		return 0;
+> 	}
+> 
+> 	nr = blkh_nr_item(blkh);
+> 	if (nr > (blocksize - BLKH_SIZE - DC_SIZE) / (KEY_SIZE + DC_SIZE)) {
+> 		/* for internal which is not root we might check min number of keys */
+>-		reiserfs_warning(NULL, "reiserfs-5088",
+>-				 "number of key seems wrong: %z", bh);
+>+		reiserfs_error(NULL, "reiserfs-5088",
+>+		               "number of key seems wrong: %z", bh);
+> 		return 0;
+> 	}
+> 
+> 	used_space = BLKH_SIZE + KEY_SIZE * nr + DC_SIZE * (nr + 1);
+> 	if (used_space != blocksize - blkh_free_space(blkh)) {
+>-		reiserfs_warning(NULL, "reiserfs-5089",
+>-				 "free space seems wrong: %z", bh);
+>+		reiserfs_error(NULL, "reiserfs-5089",
+>+		               "free space seems wrong: %z", bh);
+> 		return 0;
+> 	}
+> 	// one may imagine much more checks
+>@@ -545,8 +545,8 @@ static int is_internal(char *buf, int bl
+> static int is_tree_node(struct buffer_head *bh, int level)
+> {
+> 	if (B_LEVEL(bh) != level) {
+>-		reiserfs_warning(NULL, "reiserfs-5090", "node level %d does "
+>-		                 "not match to the expected one %d",
+>+		reiserfs_error(NULL, "reiserfs-5090", "node level %d does "
+>+		               "not match to the expected one %d",
+> 				 B_LEVEL(bh), level);
+> 		return 0;
+> 	}
+>@@ -723,9 +723,9 @@ int search_by_key(struct super_block *p_
+> 		// make sure, that the node contents look like a node of
+> 		// certain level
+> 		if (!is_tree_node(p_s_bh, expected_level)) {
+>-			reiserfs_warning(p_s_sb, "vs-5150",
+>-					 "invalid format found in block %ld. "
+>-					 "Fsck?", p_s_bh->b_blocknr);
+>+			reiserfs_error(p_s_sb, "vs-5150",
+>+			               "invalid format found in block %ld. "
+>+			               "Fsck?", p_s_bh->b_blocknr);
+> 			pathrelse(p_s_search_path);
+> 			return IO_ERROR;
+> 		}
+>@@ -1338,9 +1338,9 @@ void reiserfs_delete_solid_item(struct r
+> 	while (1) {
+> 		retval = search_item(th->t_super, &cpu_key, &path);
+> 		if (retval == IO_ERROR) {
+>-			reiserfs_warning(th->t_super, "vs-5350",
+>-					 "i/o failure occurred trying "
+>-					 "to delete %K", &cpu_key);
+>+			reiserfs_error(th->t_super, "vs-5350",
+>+			               "i/o failure occurred trying "
+>+			               "to delete %K", &cpu_key);
+> 			break;
+> 		}
+> 		if (retval != ITEM_FOUND) {
+>@@ -1747,7 +1747,7 @@ static void truncate_directory(struct re
+> {
+> 	BUG_ON(!th->t_trans_id);
+> 	if (inode->i_nlink)
+>-		reiserfs_warning(inode->i_sb, "vs-5655", "link count != 0");
+>+		reiserfs_error(inode->i_sb, "vs-5655", "link count != 0");
+> 
+> 	set_le_key_k_offset(KEY_FORMAT_3_5, INODE_PKEY(inode), DOT_OFFSET);
+> 	set_le_key_k_type(KEY_FORMAT_3_5, INODE_PKEY(inode), TYPE_DIRENTRY);
+>@@ -1800,16 +1800,16 @@ int reiserfs_do_truncate(struct reiserfs
+> 	    search_for_position_by_key(p_s_inode->i_sb, &s_item_key,
+> 				       &s_search_path);
+> 	if (retval == IO_ERROR) {
+>-		reiserfs_warning(p_s_inode->i_sb, "vs-5657",
+>-				 "i/o failure occurred trying to truncate %K",
+>-				 &s_item_key);
+>+		reiserfs_error(p_s_inode->i_sb, "vs-5657",
+>+		               "i/o failure occurred trying to truncate %K",
+>+		               &s_item_key);
+> 		err = -EIO;
+> 		goto out;
+> 	}
+> 	if (retval == POSITION_FOUND || retval == FILE_NOT_FOUND) {
+>-		reiserfs_warning(p_s_inode->i_sb, "PAP-5660",
+>-				 "wrong result %d of search for %K", retval,
+>-				 &s_item_key);
+>+		reiserfs_error(p_s_inode->i_sb, "PAP-5660",
+>+		               "wrong result %d of search for %K", retval,
+>+		               &s_item_key);
+> 
+> 		err = -EIO;
+> 		goto out;
+>diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/super.c linux-2.6.17-rc6-staging2/fs/reiserfs/super.c
+>--- linux-2.6.17-rc6-staging1/fs/reiserfs/super.c	2006-06-15 20:59:45.000000000 -0400
+>+++ linux-2.6.17-rc6-staging2/fs/reiserfs/super.c	2006-06-15 20:59:46.000000000 -0400
+>@@ -192,9 +192,8 @@ static int finish_unfinished(struct supe
+> 	while (!retval) {
+> 		retval = search_item(s, &max_cpu_key, &path);
+> 		if (retval != ITEM_NOT_FOUND) {
+>-			reiserfs_warning(s, "vs-2140",
+>-			                 "search_by_key returned %d",
+>-					 retval);
+>+			reiserfs_error(s, "vs-2140",
+>+			               "search_by_key returned %d", retval);
+> 			break;
+> 		}
+> 
+>@@ -364,9 +363,9 @@ void add_save_link(struct reiserfs_trans
+> 	retval = search_item(inode->i_sb, &key, &path);
+> 	if (retval != ITEM_NOT_FOUND) {
+> 		if (retval != -ENOSPC)
+>-			reiserfs_warning(inode->i_sb, "vs-2100",
+>-					 "search_by_key (%K) returned %d", &key,
+>-					 retval);
+>+			reiserfs_error(inode->i_sb, "vs-2100",
+>+			               "search_by_key (%K) returned %d", &key,
+>+			               retval);
+> 		pathrelse(&path);
+> 		return;
+> 	}
+>@@ -379,8 +378,8 @@ void add_save_link(struct reiserfs_trans
+> 	    reiserfs_insert_item(th, &path, &key, &ih, NULL, (char *)&link);
+> 	if (retval) {
+> 		if (retval != -ENOSPC)
+>-			reiserfs_warning(inode->i_sb, "vs-2120",
+>-			                 "insert_item returned %d", retval);
+>+			reiserfs_error(inode->i_sb, "vs-2120",
+>+			               "insert_item returned %d", retval);
+> 	} else {
+> 		if (truncate)
+> 			REISERFS_I(inode)->i_flags |=
+>diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/tail_conversion.c linux-2.6.17-rc6-staging2/fs/reiserfs/tail_conversion.c
+>--- linux-2.6.17-rc6-staging1/fs/reiserfs/tail_conversion.c	2006-06-15 20:59:45.000000000 -0400
+>+++ linux-2.6.17-rc6-staging2/fs/reiserfs/tail_conversion.c	2006-06-15 20:59:46.000000000 -0400
+>@@ -49,9 +49,9 @@ int direct2indirect(struct reiserfs_tran
+> 
+> 	// FIXME: we could avoid this 
+> 	if (search_for_position_by_key(sb, &end_key, path) == POSITION_FOUND) {
+>-		reiserfs_warning(sb, "PAP-14030",
+>-				 "pasted or inserted byte exists in "
+>-				 "the tree %K. Use fsck to repair.", &end_key);
+>+		reiserfs_error(sb, "PAP-14030",
+>+		               "pasted or inserted byte exists in "
+>+		               "the tree %K. Use fsck to repair.", &end_key);
+> 		pathrelse(path);
+> 		return -EIO;
+> 	}
+>diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/xattr.c linux-2.6.17-rc6-staging2/fs/reiserfs/xattr.c
+>--- linux-2.6.17-rc6-staging1/fs/reiserfs/xattr.c	2006-06-15 20:59:45.000000000 -0400
+>+++ linux-2.6.17-rc6-staging2/fs/reiserfs/xattr.c	2006-06-15 20:59:46.000000000 -0400
+>@@ -322,8 +322,8 @@ static int __xattr_readdir(struct file *
+> 		ih = de.de_ih;
+> 
+> 		if (!is_direntry_le_ih(ih)) {
+>-			reiserfs_warning(inode->i_sb, "jdm-20000",
+>-			                 "not direntry %h", ih);
+>+			reiserfs_error(inode->i_sb, "jdm-20000",
+>+			               "not direntry %h", ih);
+> 			break;
+> 		}
+> 		copy_item_head(&tmp_ih, ih);
+>@@ -723,15 +723,14 @@ __reiserfs_xattr_del(struct dentry *xadi
+> 		goto out_file;
+> 
+> 	if (!is_reiserfs_priv_object(dentry->d_inode)) {
+>-		reiserfs_warning(dir->i_sb, "jdm-20003",
+>-		                 "OID %08x [%.*s/%.*s] doesn't have "
+>-				 "priv flag set [parent is %sset].",
+>-				 le32_to_cpu(INODE_PKEY(dentry->d_inode)->
+>+		reiserfs_error(dir->i_sb, "jdm-20003",
+>+		               "OID %08x [%.*s/%.*s] doesn't have "
+>+		               "priv flag set [parent is %sset].",
+>+		               le32_to_cpu(INODE_PKEY(dentry->d_inode)->
+> 					     k_objectid), xadir->d_name.len,
+>-				 xadir->d_name.name, namelen, name,
+>-				 is_reiserfs_priv_object(xadir->
+>-							 d_inode) ? "" :
+>-				 "not ");
+>+		               xadir->d_name.name, namelen, name,
+>+		               is_reiserfs_priv_object(xadir-> d_inode) ? "" :
+>+		               "not ");
+> 		dput(dentry);
+> 		return -EIO;
+> 	}
+>
+>
+>  
+>
 
---
- fs/reiserfs/bitmap.c          |   55 ++++-----
- fs/reiserfs/do_balan.c        |   39 +++---
- fs/reiserfs/file.c            |   11 -
- fs/reiserfs/fix_node.c        |   14 +-
- fs/reiserfs/inode.c           |   63 ++++------
- fs/reiserfs/item_ops.c        |   60 +++++----
- fs/reiserfs/journal.c         |  168 ++++++++++++++-------------
- fs/reiserfs/lbalance.c        |   12 +
- fs/reiserfs/namei.c           |   45 +++----
- fs/reiserfs/objectid.c        |    5 
- fs/reiserfs/prints.c          |   11 +
- fs/reiserfs/procfs.c          |    5 
- fs/reiserfs/stree.c           |  107 ++++++++---------
- fs/reiserfs/super.c           |  253 ++++++++++++++++++++++--------------------
- fs/reiserfs/tail_conversion.c |    6 
- fs/reiserfs/xattr.c           |   21 ++-
- 16 files changed, 448 insertions(+), 427 deletions(-)
-
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/bitmap.c linux-2.6.17-rc6-staging2/fs/reiserfs/bitmap.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/bitmap.c	2006-06-15 20:59:43.000000000 -0400
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/bitmap.c	2006-06-15 20:59:43.000000000 -0400
-@@ -63,8 +63,8 @@ int is_reusable(struct super_block *s, b
- 	int i, j;
- 
- 	if (block == 0 || block >= SB_BLOCK_COUNT(s)) {
--		reiserfs_warning(s,
--				 "vs-4010: is_reusable: block number is out of range %lu (%u)",
-+		reiserfs_warning(s, "vs-4010",
-+		                 "block number is out of range %lu (%u)",
- 				 block, SB_BLOCK_COUNT(s));
- 		return 0;
- 	}
-@@ -72,8 +72,8 @@ int is_reusable(struct super_block *s, b
- 	/* it can't be one of the bitmap blocks */
- 	for (i = 0; i < SB_BMAP_NR(s); i++)
- 		if (block == SB_AP_BITMAP(s)[i].bh->b_blocknr) {
--			reiserfs_warning(s, "vs: 4020: is_reusable: "
--					 "bitmap block %lu(%u) can't be freed or reused",
-+			reiserfs_warning(s, "vs-4020", "bitmap block "
-+			                 "%lu(%u) can't be freed or reused",
- 					 block, SB_BMAP_NR(s));
- 			return 0;
- 		}
-@@ -81,9 +81,9 @@ int is_reusable(struct super_block *s, b
- 	get_bit_address(s, block, &i, &j);
- 
- 	if (i >= SB_BMAP_NR(s)) {
--		reiserfs_warning(s,
--				 "vs-4030: is_reusable: there is no so many bitmap blocks: "
--				 "block=%lu, bitmap_nr=%d", block, i);
-+		reiserfs_warning(s, "vs-4030", "there is no so many "
-+		                 "bitmap blocks: block=%lu, bitmap_nr=%d",
-+				 block, i);
- 		return 0;
- 	}
- 
-@@ -91,9 +91,9 @@ int is_reusable(struct super_block *s, b
- 	     reiserfs_test_le_bit(j, SB_AP_BITMAP(s)[i].bh->b_data)) ||
- 	    (bit_value == 1 &&
- 	     reiserfs_test_le_bit(j, SB_AP_BITMAP(s)[i].bh->b_data) == 0)) {
--		reiserfs_warning(s,
--				 "vs-4040: is_reusable: corresponding bit of block %lu does not "
--				 "match required value (i==%d, j==%d) test_bit==%d",
-+		reiserfs_warning(s, "vs-4040", "corresponding bit of "
-+		                 "block %lu does not match required value "
-+				 "(i==%d, j==%d) test_bit==%d",
- 				 block, i, j, reiserfs_test_le_bit(j,
- 								   SB_AP_BITMAP
- 								   (s)[i].bh->
-@@ -103,8 +103,7 @@ int is_reusable(struct super_block *s, b
- 	}
- 
- 	if (bit_value == 0 && block == SB_ROOT_BLOCK(s)) {
--		reiserfs_warning(s,
--				 "vs-4050: is_reusable: this is root block (%u), "
-+		reiserfs_warning(s, "vs-4050", "this is root block (%u), "
- 				 "it must be busy", SB_ROOT_BLOCK(s));
- 		return 0;
- 	}
-@@ -156,8 +155,8 @@ static int scan_bitmap_block(struct reis
- /* - I mean `a window of zero bits' as in description of this function - Zam. */
- 
- 	if (!bi) {
--		reiserfs_warning(s, "NULL bitmap info pointer for bitmap %d",
--				 bmap_n);
-+		reiserfs_warning(s, "jdm-4055", "NULL bitmap info pointer "
-+		                 "for bitmap %d", bmap_n);
- 		return 0;
- 	}
- 	if (buffer_locked(bi->bh)) {
-@@ -389,9 +388,8 @@ static void _reiserfs_free_block(struct 
- 	get_bit_address(s, block, &nr, &offset);
- 
- 	if (nr >= sb_bmap_nr(rs)) {
--		reiserfs_warning(s, "vs-4075: reiserfs_free_block: "
--				 "block %lu is out of range on %s",
--				 block, reiserfs_bdevname(s));
-+ 		reiserfs_warning(s, "vs-4075",
-+				 "block %lu is out of range", block);
- 		return;
- 	}
- 
-@@ -399,9 +397,8 @@ static void _reiserfs_free_block(struct 
- 
- 	/* clear bit for the given block in bit map */
- 	if (!reiserfs_test_and_clear_le_bit(offset, apbi[nr].bh->b_data)) {
--		reiserfs_warning(s, "vs-4080: reiserfs_free_block: "
--				 "free_block (%s:%lu)[dev:blocknr]: bit already cleared",
--				 reiserfs_bdevname(s), block);
-+		reiserfs_warning(s, "vs-4080",
-+		                 "block %lu: bit already cleared", block);
- 	}
- 	apbi[nr].free_count++;
- 	journal_mark_dirty(th, s, apbi[nr].bh);
-@@ -452,9 +449,8 @@ static void __discard_prealloc(struct re
- 	BUG_ON(!th->t_trans_id);
- #ifdef CONFIG_REISERFS_CHECK
- 	if (ei->i_prealloc_count < 0)
--		reiserfs_warning(th->t_super,
--				 "zam-4001:%s: inode has negative prealloc blocks count.",
--				 __FUNCTION__);
-+		reiserfs_warning(th->t_super, "zam-4001",
-+		                 "inode has negative prealloc blocks count.");
- #endif
- 	while (ei->i_prealloc_count > 0) {
- 		reiserfs_free_prealloc_block(th, inode, ei->i_prealloc_block);
-@@ -490,9 +486,9 @@ void reiserfs_discard_all_prealloc(struc
- 				i_prealloc_list);
- #ifdef CONFIG_REISERFS_CHECK
- 		if (!ei->i_prealloc_count) {
--			reiserfs_warning(th->t_super,
--					 "zam-4001:%s: inode is in prealloc list but has no preallocated blocks.",
--					 __FUNCTION__);
-+			reiserfs_warning(th->t_super, "zam-4001",
-+			                 "inode is in prealloc list but has "
-+					 "no preallocated blocks.");
- 		}
- #endif
- 		__discard_prealloc(th, ei);
-@@ -606,8 +602,8 @@ int reiserfs_parse_alloc_options(struct 
- 			continue;
- 		}
- 
--		reiserfs_warning(s, "zam-4001: %s : unknown option - %s",
--				 __FUNCTION__, this_char);
-+		reiserfs_warning(s, "zam-4001", "unknown option - %s",
-+				 this_char);
- 		return 1;
- 	}
- 
-@@ -1055,7 +1051,8 @@ static inline int blocknrs_and_prealloc_
- 		 * the entire allocation is filled
- 		 */
- 		if (unlikely(bigalloc && nr_allocated)) {
--			reiserfs_warning(s, "bigalloc is %d, nr_allocated %d\n",
-+			reiserfs_warning(s, MISSING_I?,
-+			                 "bigalloc is %d, nr_allocated %d\n",
- 					 bigalloc, nr_allocated);
- 			/* reset things to a sane value */
- 			bigalloc = amount_needed - nr_allocated;
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/do_balan.c linux-2.6.17-rc6-staging2/fs/reiserfs/do_balan.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/do_balan.c	2006-01-02 22:21:10.000000000 -0500
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/do_balan.c	2006-06-15 20:59:43.000000000 -0400
-@@ -1755,15 +1755,15 @@ static void store_thrown(struct tree_bal
- 	int i;
- 
- 	if (buffer_dirty(bh))
--		reiserfs_warning(tb->tb_sb,
--				 "store_thrown deals with dirty buffer");
-+		reiserfs_warning(tb->tb_sb, "reiserfs-12320",
-+		                 "called with dirty buffer");
- 	for (i = 0; i < sizeof(tb->thrown) / sizeof(tb->thrown[0]); i++)
- 		if (!tb->thrown[i]) {
- 			tb->thrown[i] = bh;
- 			get_bh(bh);	/* free_thrown puts this */
- 			return;
- 		}
--	reiserfs_warning(tb->tb_sb, "store_thrown: too many thrown buffers");
-+	reiserfs_warning(tb->tb_sb, "reiserfs-12321", "too many thrown buffers");
- }
- 
- static void free_thrown(struct tree_balance *tb)
-@@ -1774,8 +1774,8 @@ static void free_thrown(struct tree_bala
- 		if (tb->thrown[i]) {
- 			blocknr = tb->thrown[i]->b_blocknr;
- 			if (buffer_dirty(tb->thrown[i]))
--				reiserfs_warning(tb->tb_sb,
--						 "free_thrown deals with dirty buffer %d",
-+				reiserfs_warning(tb->tb_sb, "reiserfs-12322",
-+				                 "called with dirty buffer %d",
- 						 blocknr);
- 			brelse(tb->thrown[i]);	/* incremented in store_thrown */
- 			reiserfs_free_block(tb->transaction_handle, NULL,
-@@ -1880,13 +1880,12 @@ static void check_internal_node(struct s
- 	}
- }
- 
--static int locked_or_not_in_tree(struct buffer_head *bh, char *which)
-+static int locked_or_not_in_tree(struct tree_balance *tb,
-+                                 struct buffer_head *bh, char *which)
- {
- 	if ((!buffer_journal_prepared(bh) && buffer_locked(bh)) ||
- 	    !B_IS_IN_TREE(bh)) {
--		reiserfs_warning(NULL,
--				 "vs-12339: locked_or_not_in_tree: %s (%b)",
--				 which, bh);
-+		reiserfs_warning(tb->sb, "vs-12339", "%s (%b)", which, bh);
- 		return 1;
- 	}
- 	return 0;
-@@ -1905,18 +1904,19 @@ static int check_before_balancing(struct
- 	/* double check that buffers that we will modify are unlocked. (fix_nodes should already have
- 	   prepped all of these for us). */
- 	if (tb->lnum[0]) {
--		retval |= locked_or_not_in_tree(tb->L[0], "L[0]");
--		retval |= locked_or_not_in_tree(tb->FL[0], "FL[0]");
--		retval |= locked_or_not_in_tree(tb->CFL[0], "CFL[0]");
-+		retval |= locked_or_not_in_tree(tb, tb->L[0], "L[0]");
-+		retval |= locked_or_not_in_tree(tb, tb->FL[0], "FL[0]");
-+		retval |= locked_or_not_in_tree(tb, tb->CFL[0], "CFL[0]");
- 		check_leaf(tb->L[0]);
- 	}
- 	if (tb->rnum[0]) {
--		retval |= locked_or_not_in_tree(tb->R[0], "R[0]");
--		retval |= locked_or_not_in_tree(tb->FR[0], "FR[0]");
--		retval |= locked_or_not_in_tree(tb->CFR[0], "CFR[0]");
-+		retval |= locked_or_not_in_tree(tb, tb->R[0], "R[0]");
-+		retval |= locked_or_not_in_tree(tb, tb->FR[0], "FR[0]");
-+		retval |= locked_or_not_in_tree(tb, tb->CFR[0], "CFR[0]");
- 		check_leaf(tb->R[0]);
- 	}
--	retval |= locked_or_not_in_tree(PATH_PLAST_BUFFER(tb->tb_path), "S[0]");
-+	retval |= locked_or_not_in_tree(tb, PATH_PLAST_BUFFER(tb->tb_path),
-+	                                "S[0]");
- 	check_leaf(PATH_PLAST_BUFFER(tb->tb_path));
- 
- 	return retval;
-@@ -1955,7 +1955,7 @@ static void check_after_balance_leaf(str
- 					       PATH_H_POSITION(tb->tb_path,
- 							       1))));
- 		print_cur_tb("12223");
--		reiserfs_warning(tb->tb_sb,
-+		reiserfs_warning(tb->tb_sb, "reiserfs-12363",
- 				 "B_FREE_SPACE (PATH_H_PBUFFER(tb->tb_path,0)) = %d; "
- 				 "MAX_CHILD_SIZE (%d) - dc_size( %y, %d ) [%d] = %d",
- 				 left,
-@@ -2107,9 +2107,8 @@ void do_balance(struct tree_balance *tb,
- 	}
- 	/* if we have no real work to do  */
- 	if (!tb->insert_size[0]) {
--		reiserfs_warning(tb->tb_sb,
--				 "PAP-12350: do_balance: insert_size == 0, mode == %c",
--				 flag);
-+		reiserfs_warning(tb->tb_sb, "PAP-12350",
-+		                 "insert_size == 0, mode == %c", flag);
- 		unfix_nodes(tb);
- 		return;
- 	}
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/file.c linux-2.6.17-rc6-staging2/fs/reiserfs/file.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/file.c	2006-06-15 20:58:48.000000000 -0400
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/file.c	2006-06-15 20:59:43.000000000 -0400
-@@ -73,7 +73,7 @@ static int reiserfs_file_release(struct 
- 			 * and let the admin know what is going on.
- 			 */
- 			igrab(inode);
--			reiserfs_warning(inode->i_sb,
-+			reiserfs_warning(inode->i_sb, "clm-9001",
- 					 "pinning inode %lu because the "
- 					 "preallocation can't be freed");
- 			goto out;
-@@ -382,7 +382,8 @@ static int reiserfs_allocate_blocks_for_
- 						if (res != -ENOSPC) {
- 							reiserfs_warning(inode->
- 									 i_sb,
--									 "green-9008: search_by_key (%K) returned %d",
-+									 "green-9008",
-+									 "search_by_key (%K) returned %d",
- 									 &key,
- 									 res);
- 						}
-@@ -582,7 +583,8 @@ static int reiserfs_allocate_blocks_for_
- 				   occured, we need to warn user and return error */
- 				if (res != -ENOSPC) {
- 					reiserfs_warning(inode->i_sb,
--							 "green-9009: search_by_key (%K) "
-+							 "green-9009",
-+							 "search_by_key (%K) "
- 							 "returned %d", &key,
- 							 res);
- 				}
-@@ -994,8 +996,7 @@ static int reiserfs_prepare_file_region_
- 	int item_pos = -1;	/* Position in indirect item */
- 
- 	if (num_pages < 1) {
--		reiserfs_warning(inode->i_sb,
--				 "green-9001: reiserfs_prepare_file_region_for_write "
-+		reiserfs_warning(inode->i_sb, "green-9001",
- 				 "called with zero number of pages to process");
- 		return -EFAULT;
- 	}
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/fix_node.c linux-2.6.17-rc6-staging2/fs/reiserfs/fix_node.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/fix_node.c	2006-06-15 20:58:48.000000000 -0400
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/fix_node.c	2006-06-15 20:59:43.000000000 -0400
-@@ -497,8 +497,8 @@ static int get_num_ver(int mode, struct 
- 		snum012[needed_nodes - 1 + 3] = units;
- 
- 		if (needed_nodes > 2)
--			reiserfs_warning(tb->tb_sb, "vs-8111: get_num_ver: "
--					 "split_item_position is out of boundary");
-+			reiserfs_warning(tb->tb_sb, "vs-8111",
-+					 "split_item_position is out of range");
- 		snum012[needed_nodes - 1]++;
- 		split_item_positions[needed_nodes - 1] = i;
- 		needed_nodes++;
-@@ -534,8 +534,8 @@ static int get_num_ver(int mode, struct 
- 
- 		if (vn->vn_vi[split_item_num].vi_index != TYPE_DIRENTRY &&
- 		    vn->vn_vi[split_item_num].vi_index != TYPE_INDIRECT)
--			reiserfs_warning(tb->tb_sb, "vs-8115: get_num_ver: not "
--					 "directory or indirect item");
-+			reiserfs_warning(tb->tb_sb, "vs-8115",
-+			                 "not directory or indirect item");
- 	}
- 
- 	/* now we know S2bytes, calculate S1bytes */
-@@ -2267,9 +2267,9 @@ static int wait_tb_buffers_until_unlocke
- #ifdef CONFIG_REISERFS_CHECK
- 			repeat_counter++;
- 			if ((repeat_counter % 10000) == 0) {
--				reiserfs_warning(p_s_tb->tb_sb,
--						 "wait_tb_buffers_until_released(): too many "
--						 "iterations waiting for buffer to unlock "
-+				reiserfs_warning(p_s_tb->tb_sb, "reiserfs-8200",
-+						 "too many iterations waiting "
-+						 "for buffer to unlock "
- 						 "(%b)", locked);
- 
- 				/* Don't loop forever.  Try to recover from possible error. */
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/inode.c linux-2.6.17-rc6-staging2/fs/reiserfs/inode.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/inode.c	2006-06-15 20:58:48.000000000 -0400
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/inode.c	2006-06-15 20:59:43.000000000 -0400
-@@ -848,7 +848,8 @@ int reiserfs_get_block(struct inode *ino
- 				if (retval) {
- 					if (retval != -ENOSPC)
- 						reiserfs_warning(inode->i_sb,
--								 "clm-6004: convert tail failed inode %lu, error %d",
-+								 "clm-6004",
-+								 "convert tail failed inode %lu, error %d",
- 								 inode->i_ino,
- 								 retval);
- 					if (allocated_block_nr) {
-@@ -1015,8 +1016,7 @@ int reiserfs_get_block(struct inode *ino
- 			goto failure;
- 		}
- 		if (retval == POSITION_FOUND) {
--			reiserfs_warning(inode->i_sb,
--					 "vs-825: reiserfs_get_block: "
-+			reiserfs_warning(inode->i_sb, "vs-825",
- 					 "%K should not be found", &key);
- 			retval = -EEXIST;
- 			if (allocated_block_nr)
-@@ -1341,9 +1341,9 @@ void reiserfs_update_sd_size(struct reis
- 		/* look for the object's stat data */
- 		retval = search_item(inode->i_sb, &key, &path);
- 		if (retval == IO_ERROR) {
--			reiserfs_warning(inode->i_sb,
--					 "vs-13050: reiserfs_update_sd: "
--					 "i/o failure occurred trying to update %K stat data",
-+			reiserfs_warning(inode->i_sb, "vs-13050",
-+					 "i/o failure occurred trying to "
-+					 "update %K stat data",
- 					 &key);
- 			return;
- 		}
-@@ -1354,9 +1354,9 @@ void reiserfs_update_sd_size(struct reis
- 				/*reiserfs_warning (inode->i_sb, "vs-13050: reiserfs_update_sd: i_nlink == 0, stat data not found"); */
- 				return;
- 			}
--			reiserfs_warning(inode->i_sb,
--					 "vs-13060: reiserfs_update_sd: "
--					 "stat data of object %k (nlink == %d) not found (pos %d)",
-+			reiserfs_warning(inode->i_sb, "vs-13060",
-+					 "stat data of object %k (nlink == %d) "
-+					 "not found (pos %d)",
- 					 INODE_PKEY(inode), inode->i_nlink,
- 					 pos);
- 			reiserfs_check_path(&path);
-@@ -1433,10 +1433,9 @@ void reiserfs_read_locked_inode(struct i
- 	/* look for the object's stat data */
- 	retval = search_item(inode->i_sb, &key, &path_to_sd);
- 	if (retval == IO_ERROR) {
--		reiserfs_warning(inode->i_sb,
--				 "vs-13070: reiserfs_read_locked_inode: "
--				 "i/o failure occurred trying to find stat data of %K",
--				 &key);
-+		reiserfs_warning(inode->i_sb, "vs-13070",
-+				 "i/o failure occurred trying to find "
-+				 "stat data of %K", &key);
- 		reiserfs_make_bad_inode(inode);
- 		return;
- 	}
-@@ -1466,8 +1465,7 @@ void reiserfs_read_locked_inode(struct i
- 	   during mount (fs/reiserfs/super.c:finish_unfinished()). */
- 	if ((inode->i_nlink == 0) &&
- 	    !REISERFS_SB(inode->i_sb)->s_is_unlinked_ok) {
--		reiserfs_warning(inode->i_sb,
--				 "vs-13075: reiserfs_read_locked_inode: "
-+		reiserfs_warning(inode->i_sb, "vs-13075",
- 				 "dead inode read from disk %K. "
- 				 "This is likely to be race with knfsd. Ignore",
- 				 &key);
-@@ -1577,9 +1575,9 @@ struct dentry *reiserfs_decode_fh(struct
- 	 */
- 	if (fhtype > len) {
- 		if (fhtype != 6 || len != 5)
--			reiserfs_warning(sb,
--					 "nfsd/reiserfs, fhtype=%d, len=%d - odd",
--					 fhtype, len);
-+			reiserfs_warning(sb, "reiserfs-13077",
-+			                 "nfsd/reiserfs, fhtype=%d, "
-+					 "len=%d - odd", fhtype, len);
- 		fhtype = 5;
- 	}
- 
-@@ -1706,13 +1704,13 @@ static int reiserfs_new_directory(struct
- 	/* look for place in the tree for new item */
- 	retval = search_item(sb, &key, path);
- 	if (retval == IO_ERROR) {
--		reiserfs_warning(sb, "vs-13080: reiserfs_new_directory: "
-+		reiserfs_warning(sb, "vs-13080",
- 				 "i/o failure occurred creating new directory");
- 		return -EIO;
- 	}
- 	if (retval == ITEM_FOUND) {
- 		pathrelse(path);
--		reiserfs_warning(sb, "vs-13070: reiserfs_new_directory: "
-+		reiserfs_warning(sb, "vs-13070",
- 				 "object with this key exists (%k)",
- 				 &(ih->ih_key));
- 		return -EEXIST;
-@@ -1746,13 +1744,13 @@ static int reiserfs_new_symlink(struct r
- 	/* look for place in the tree for new item */
- 	retval = search_item(sb, &key, path);
- 	if (retval == IO_ERROR) {
--		reiserfs_warning(sb, "vs-13080: reiserfs_new_symlinik: "
-+		reiserfs_warning(sb, "vs-13080",
- 				 "i/o failure occurred creating new symlink");
- 		return -EIO;
- 	}
- 	if (retval == ITEM_FOUND) {
- 		pathrelse(path);
--		reiserfs_warning(sb, "vs-13080: reiserfs_new_symlink: "
-+		reiserfs_warning(sb, "vs-13080",
- 				 "object with this key exists (%k)",
- 				 &(ih->ih_key));
- 		return -EEXIST;
-@@ -1949,7 +1947,8 @@ int reiserfs_new_inode(struct reiserfs_t
- 			goto out_inserted_sd;
- 		}
- 	} else if (inode->i_sb->s_flags & MS_POSIXACL) {
--		reiserfs_warning(inode->i_sb, "ACLs aren't enabled in the fs, "
-+		reiserfs_warning(inode->i_sb, "jdm-13090",
-+		                 "ACLs aren't enabled in the fs, "
- 				 "but vfs thinks they are!");
- 	} else if (is_reiserfs_priv_object(dir)) {
- 		reiserfs_mark_inode_private(inode);
-@@ -2064,8 +2063,8 @@ static int grab_tail_page(struct inode *
- 		 ** I've screwed up the code to find the buffer, or the code to
- 		 ** call prepare_write
- 		 */
--		reiserfs_warning(p_s_inode->i_sb,
--				 "clm-6000: error reading block %lu on dev %s",
-+		reiserfs_warning(p_s_inode->i_sb, "clm-6000",
-+		                 "error reading block %lu on dev %s",
- 				 bh->b_blocknr,
- 				 reiserfs_bdevname(p_s_inode->i_sb));
- 		error = -EIO;
-@@ -2109,8 +2108,8 @@ int reiserfs_truncate_file(struct inode 
- 			// and get_block_create_0 could not find a block to read in,
- 			// which is ok.
- 			if (error != -ENOENT)
--				reiserfs_warning(p_s_inode->i_sb,
--						 "clm-6001: grab_tail_page failed %d",
-+				reiserfs_warning(p_s_inode->i_sb, "clm-6001",
-+				                 "grab_tail_page failed %d",
- 						 error);
- 			page = NULL;
- 			bh = NULL;
-@@ -2233,9 +2232,8 @@ static int map_block_for_writepage(struc
- 	/* we've found an unformatted node */
- 	if (indirect_item_found(retval, ih)) {
- 		if (bytes_copied > 0) {
--			reiserfs_warning(inode->i_sb,
--					 "clm-6002: bytes_copied %d",
--					 bytes_copied);
-+			reiserfs_warning(inode->i_sb, "clm-6002",
-+			                 "bytes_copied %d", bytes_copied);
- 		}
- 		if (!get_block_num(item, pos_in_item)) {
- 			/* crap, we are writing to a hole */
-@@ -2292,9 +2290,8 @@ static int map_block_for_writepage(struc
- 			goto research;
- 		}
- 	} else {
--		reiserfs_warning(inode->i_sb,
--				 "clm-6003: bad item inode %lu, device %s",
--				 inode->i_ino, reiserfs_bdevname(inode->i_sb));
-+		reiserfs_warning(inode->i_sb, "clm-6003",
-+		                 "bad item inode %lu", inode->i_ino);
- 		retval = -EIO;
- 		goto out;
- 	}
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/item_ops.c linux-2.6.17-rc6-staging2/fs/reiserfs/item_ops.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/item_ops.c	2006-06-15 20:58:48.000000000 -0400
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/item_ops.c	2006-06-15 20:59:43.000000000 -0400
-@@ -99,7 +99,8 @@ static int sd_unit_num(struct virtual_it
- 
- static void sd_print_vi(struct virtual_item *vi)
- {
--	reiserfs_warning(NULL, "STATDATA, index %d, type 0x%x, %h",
-+	reiserfs_warning(NULL, "reiserfs-16100",
-+	                 "STATDATA, index %d, type 0x%x, %h",
- 			 vi->vi_index, vi->vi_type, vi->vi_ih);
- }
- 
-@@ -192,7 +193,8 @@ static int direct_unit_num(struct virtua
- 
- static void direct_print_vi(struct virtual_item *vi)
- {
--	reiserfs_warning(NULL, "DIRECT, index %d, type 0x%x, %h",
-+	reiserfs_warning(NULL, "reiserfs-16101",
-+	                 "DIRECT, index %d, type 0x%x, %h",
- 			 vi->vi_index, vi->vi_type, vi->vi_ih);
- }
- 
-@@ -280,7 +282,7 @@ static void indirect_print_item(struct i
- 	unp = (__le32 *) item;
- 
- 	if (ih_item_len(ih) % UNFM_P_SIZE)
--		reiserfs_warning(NULL, "indirect_print_item: invalid item len");
-+		reiserfs_warning(NULL, "reiserfs-16102", "invalid item len");
- 
- 	printk("%d pointers\n[ ", (int)I_UNFM_NUM(ih));
- 	for (j = 0; j < I_UNFM_NUM(ih); j++) {
-@@ -336,7 +338,8 @@ static int indirect_unit_num(struct virt
- 
- static void indirect_print_vi(struct virtual_item *vi)
- {
--	reiserfs_warning(NULL, "INDIRECT, index %d, type 0x%x, %h",
-+	reiserfs_warning(NULL, "reiserfs-16103",
-+	                 "INDIRECT, index %d, type 0x%x, %h",
- 			 vi->vi_index, vi->vi_type, vi->vi_ih);
- }
- 
-@@ -361,7 +364,7 @@ static struct item_operations indirect_o
- 
- static int direntry_bytes_number(struct item_head *ih, int block_size)
- {
--	reiserfs_warning(NULL, "vs-16090: direntry_bytes_number: "
-+	reiserfs_warning(NULL, "vs-16090",
- 			 "bytes number is asked for direntry");
- 	return 0;
- }
-@@ -618,7 +621,8 @@ static void direntry_print_vi(struct vir
- 	int i;
- 	struct direntry_uarea *dir_u = vi->vi_uarea;
- 
--	reiserfs_warning(NULL, "DIRENTRY, index %d, type 0x%x, %h, flags 0x%x",
-+	reiserfs_warning(NULL, "reiserfs-16104",
-+	                 "DIRENTRY, index %d, type 0x%x, %h, flags 0x%x",
- 			 vi->vi_index, vi->vi_type, vi->vi_ih, dir_u->flags);
- 	printk("%d entries: ", dir_u->entry_count);
- 	for (i = 0; i < dir_u->entry_count; i++)
-@@ -646,43 +650,43 @@ static struct item_operations direntry_o
- //
- static int errcatch_bytes_number(struct item_head *ih, int block_size)
- {
--	reiserfs_warning(NULL,
--			 "green-16001: Invalid item type observed, run fsck ASAP");
-+	reiserfs_warning(NULL, "green-16001",
-+	                 "Invalid item type observed, run fsck ASAP");
- 	return 0;
- }
- 
- static void errcatch_decrement_key(struct cpu_key *key)
- {
--	reiserfs_warning(NULL,
--			 "green-16002: Invalid item type observed, run fsck ASAP");
-+	reiserfs_warning(NULL, "green-16002",
-+	                 "Invalid item type observed, run fsck ASAP");
- }
- 
- static int errcatch_is_left_mergeable(struct reiserfs_key *key,
- 				      unsigned long bsize)
- {
--	reiserfs_warning(NULL,
--			 "green-16003: Invalid item type observed, run fsck ASAP");
-+	reiserfs_warning(NULL, "green-16003",
-+	                 "Invalid item type observed, run fsck ASAP");
- 	return 0;
- }
- 
- static void errcatch_print_item(struct item_head *ih, char *item)
- {
--	reiserfs_warning(NULL,
--			 "green-16004: Invalid item type observed, run fsck ASAP");
-+	reiserfs_warning(NULL, "green-16004",
-+	                 "Invalid item type observed, run fsck ASAP");
- }
- 
- static void errcatch_check_item(struct item_head *ih, char *item)
- {
--	reiserfs_warning(NULL,
--			 "green-16005: Invalid item type observed, run fsck ASAP");
-+	reiserfs_warning(NULL, "green-16005",
-+	                 "Invalid item type observed, run fsck ASAP");
- }
- 
- static int errcatch_create_vi(struct virtual_node *vn,
- 			      struct virtual_item *vi,
- 			      int is_affected, int insert_size)
- {
--	reiserfs_warning(NULL,
--			 "green-16006: Invalid item type observed, run fsck ASAP");
-+	reiserfs_warning(NULL, "green-16006",
-+	                 "Invalid item type observed, run fsck ASAP");
- 	return 0;		// We might return -1 here as well, but it won't help as create_virtual_node() from where
- 	// this operation is called from is of return type void.
- }
-@@ -690,36 +694,36 @@ static int errcatch_create_vi(struct vir
- static int errcatch_check_left(struct virtual_item *vi, int free,
- 			       int start_skip, int end_skip)
- {
--	reiserfs_warning(NULL,
--			 "green-16007: Invalid item type observed, run fsck ASAP");
-+	reiserfs_warning(NULL, "green-16007",
-+	                 "Invalid item type observed, run fsck ASAP");
- 	return -1;
- }
- 
- static int errcatch_check_right(struct virtual_item *vi, int free)
- {
--	reiserfs_warning(NULL,
--			 "green-16008: Invalid item type observed, run fsck ASAP");
-+	reiserfs_warning(NULL, "green-16008",
-+	                 "Invalid item type observed, run fsck ASAP");
- 	return -1;
- }
- 
- static int errcatch_part_size(struct virtual_item *vi, int first, int count)
- {
--	reiserfs_warning(NULL,
--			 "green-16009: Invalid item type observed, run fsck ASAP");
-+	reiserfs_warning(NULL, "green-16009",
-+	                 "Invalid item type observed, run fsck ASAP");
- 	return 0;
- }
- 
- static int errcatch_unit_num(struct virtual_item *vi)
- {
--	reiserfs_warning(NULL,
--			 "green-16010: Invalid item type observed, run fsck ASAP");
-+	reiserfs_warning(NULL, "green-16010",
-+	                 "Invalid item type observed, run fsck ASAP");
- 	return 0;
- }
- 
- static void errcatch_print_vi(struct virtual_item *vi)
- {
--	reiserfs_warning(NULL,
--			 "green-16011: Invalid item type observed, run fsck ASAP");
-+	reiserfs_warning(NULL, "green-16011",
-+	                 "Invalid item type observed, run fsck ASAP");
- }
- 
- static struct item_operations errcatch_ops = {
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/journal.c linux-2.6.17-rc6-staging2/fs/reiserfs/journal.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/journal.c	2006-06-15 20:58:48.000000000 -0400
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/journal.c	2006-06-15 20:59:43.000000000 -0400
-@@ -301,8 +301,8 @@ int reiserfs_allocate_list_bitmaps(struc
- 		jb->journal_list = NULL;
- 		jb->bitmaps = vmalloc(mem);
- 		if (!jb->bitmaps) {
--			reiserfs_warning(p_s_sb,
--					 "clm-2000, unable to allocate bitmaps for journal lists");
-+			reiserfs_warning(p_s_sb, "clm-2000", "unable to "
-+			                 "allocate bitmaps for journal lists");
- 			failed = 1;
- 			break;
- 		}
-@@ -620,8 +620,8 @@ static void reiserfs_end_buffer_io_sync(
- 	char b[BDEVNAME_SIZE];
- 
- 	if (buffer_journaled(bh)) {
--		reiserfs_warning(NULL,
--				 "clm-2084: pinned buffer %lu:%s sent to disk",
-+		reiserfs_warning(NULL, "clm-2084",
-+		                 "pinned buffer %lu:%s sent to disk",
- 				 bh->b_blocknr, bdevname(bh->b_bdev, b));
- 	}
- 	if (uptodate)
-@@ -1100,7 +1100,8 @@ static int flush_commit_list(struct supe
- 			sync_dirty_buffer(tbh);
- 		if (unlikely(!buffer_uptodate(tbh))) {
- #ifdef CONFIG_REISERFS_CHECK
--			reiserfs_warning(s, "journal-601, buffer write failed");
-+			reiserfs_warning(s, "journal-601",
-+			                 "buffer write failed");
- #endif
- 			retval = -EIO;
- 		}
-@@ -1132,14 +1133,14 @@ static int flush_commit_list(struct supe
- 	 * up propogating the write error out to the filesystem. */
- 	if (unlikely(!buffer_uptodate(jl->j_commit_bh))) {
- #ifdef CONFIG_REISERFS_CHECK
--		reiserfs_warning(s, "journal-615: buffer write failed");
-+		reiserfs_warning(s, "journal-615", "buffer write failed");
- #endif
- 		retval = -EIO;
- 	}
- 	bforget(jl->j_commit_bh);
- 	if (journal->j_last_commit_id != 0 &&
- 	    (jl->j_trans_id - journal->j_last_commit_id) != 1) {
--		reiserfs_warning(s, "clm-2200: last commit %lu, current %lu",
-+		reiserfs_warning(s, "clm-2200", "last commit %lu, current %lu",
- 				 journal->j_last_commit_id, jl->j_trans_id);
- 	}
- 	journal->j_last_commit_id = jl->j_trans_id;
-@@ -1213,7 +1214,7 @@ static void remove_all_from_journal_list
- 	while (cn) {
- 		if (cn->blocknr != 0) {
- 			if (debug) {
--				reiserfs_warning(p_s_sb,
-+				reiserfs_warning(p_s_sb, "reiserfs-2201",,
- 						 "block %u, bh is %d, state %ld",
- 						 cn->blocknr, cn->bh ? 1 : 0,
- 						 cn->state);
-@@ -1251,8 +1252,8 @@ static int _update_journal_header_block(
- 			wait_on_buffer((journal->j_header_bh));
- 			if (unlikely(!buffer_uptodate(journal->j_header_bh))) {
- #ifdef CONFIG_REISERFS_CHECK
--				reiserfs_warning(p_s_sb,
--						 "journal-699: buffer write failed");
-+				reiserfs_warning(p_s_sb, "journal-699",
-+				                "buffer write failed");
- #endif
- 				return -EIO;
- 			}
-@@ -1282,8 +1283,8 @@ static int _update_journal_header_block(
- 			sync_dirty_buffer(journal->j_header_bh);
- 		}
- 		if (!buffer_uptodate(journal->j_header_bh)) {
--			reiserfs_warning(p_s_sb,
--					 "journal-837: IO error during journal replay");
-+			reiserfs_warning(p_s_sb, "journal-837",
-+			                 "IO error during journal replay");
- 			return -EIO;
- 		}
- 	}
-@@ -1364,8 +1365,7 @@ static int flush_journal_list(struct sup
- 	BUG_ON(j_len_saved <= 0);
- 
- 	if (atomic_read(&journal->j_wcount) != 0) {
--		reiserfs_warning(s,
--				 "clm-2048: flush_journal_list called with wcount %d",
-+		reiserfs_warning(s, "clm-2048", "called with wcount %d",
- 				 atomic_read(&journal->j_wcount));
- 	}
- 	BUG_ON(jl->j_trans_id == 0);
-@@ -1473,8 +1473,8 @@ static int flush_journal_list(struct sup
- 		 ** is not marked JDirty_wait
- 		 */
- 		if ((!was_jwait) && !buffer_locked(saved_bh)) {
--			reiserfs_warning(s,
--					 "journal-813: BAD! buffer %llu %cdirty %cjwait, "
-+			reiserfs_warning(s, "journal-813",
-+			                 "BAD! buffer %llu %cdirty %cjwait, "
- 					 "not in a newer tranasction",
- 					 (unsigned long long)saved_bh->
- 					 b_blocknr, was_dirty ? ' ' : '!',
-@@ -1492,8 +1492,8 @@ static int flush_journal_list(struct sup
- 				unlock_buffer(saved_bh);
- 			count++;
- 		} else {
--			reiserfs_warning(s,
--					 "clm-2082: Unable to flush buffer %llu in %s",
-+			reiserfs_warning(s, "clm-2082",
-+			                 "Unable to flush buffer %llu in %s",
- 					 (unsigned long long)saved_bh->
- 					 b_blocknr, __FUNCTION__);
- 		}
-@@ -1504,8 +1504,8 @@ static int flush_journal_list(struct sup
- 			/* we incremented this to keep others from taking the buffer head away */
- 			put_bh(saved_bh);
- 			if (atomic_read(&(saved_bh->b_count)) < 0) {
--				reiserfs_warning(s,
--						 "journal-945: saved_bh->b_count < 0");
-+				reiserfs_warning(s, "journal-945",
-+				                 "saved_bh->b_count < 0");
- 			}
- 		}
- 	}
-@@ -1524,8 +1524,8 @@ static int flush_journal_list(struct sup
- 				}
- 				if (unlikely(!buffer_uptodate(cn->bh))) {
- #ifdef CONFIG_REISERFS_CHECK
--					reiserfs_warning(s,
--							 "journal-949: buffer write failed\n");
-+					reiserfs_warning(s, "journal-949",
-+					                 "buffer write failed\n");
- #endif
- 					err = -EIO;
- 				}
-@@ -1585,7 +1585,7 @@ static int flush_journal_list(struct sup
- 
- 	if (journal->j_last_flush_id != 0 &&
- 	    (jl->j_trans_id - journal->j_last_flush_id) != 1) {
--		reiserfs_warning(s, "clm-2201: last flush %lu, current %lu",
-+		reiserfs_warning(s, "clm-2201", "last flush %lu, current %lu",
- 				 journal->j_last_flush_id, jl->j_trans_id);
- 	}
- 	journal->j_last_flush_id = jl->j_trans_id;
-@@ -1995,8 +1995,9 @@ static int journal_transaction_is_valid(
- 			return -1;
- 		}
- 		if (get_desc_trans_len(desc) > SB_JOURNAL(p_s_sb)->j_trans_max) {
--			reiserfs_warning(p_s_sb,
--					 "journal-2018: Bad transaction length %d encountered, ignoring transaction",
-+			reiserfs_warning(p_s_sb, "journal-2018",
-+			                 "Bad transaction length %d "
-+					 "encountered, ignoring transaction",
- 					 get_desc_trans_len(desc));
- 			return -1;
- 		}
-@@ -2132,8 +2133,8 @@ static int journal_read_transaction(stru
- 		brelse(d_bh);
- 		kfree(log_blocks);
- 		kfree(real_blocks);
--		reiserfs_warning(p_s_sb,
--				 "journal-1169: kmalloc failed, unable to mount FS");
-+		reiserfs_warning(p_s_sb, "journal-1169",
-+		                 "kmalloc failed, unable to mount FS");
- 		return -1;
- 	}
- 	/* get all the buffer heads */
-@@ -2155,15 +2156,18 @@ static int journal_read_transaction(stru
- 						  j_realblock[i - trans_half]));
- 		}
- 		if (real_blocks[i]->b_blocknr > SB_BLOCK_COUNT(p_s_sb)) {
--			reiserfs_warning(p_s_sb,
--					 "journal-1207: REPLAY FAILURE fsck required! Block to replay is outside of filesystem");
-+			reiserfs_warning(p_s_sb, "journal-1207",
-+			                 "REPLAY FAILURE fsck required! "
-+					 "Block to replay is outside of "
-+					 "filesystem");
- 			goto abort_replay;
- 		}
- 		/* make sure we don't try to replay onto log or reserved area */
- 		if (is_block_in_log_or_reserved_area
- 		    (p_s_sb, real_blocks[i]->b_blocknr)) {
--			reiserfs_warning(p_s_sb,
--					 "journal-1204: REPLAY FAILURE fsck required! Trying to replay onto a log block");
-+			reiserfs_warning(p_s_sb, "journal-1204",
-+			                 "REPLAY FAILURE fsck required! "
-+					 "Trying to replay onto a log block");
- 		      abort_replay:
- 			brelse_array(log_blocks, i);
- 			brelse_array(real_blocks, i);
-@@ -2179,8 +2183,9 @@ static int journal_read_transaction(stru
- 	for (i = 0; i < get_desc_trans_len(desc); i++) {
- 		wait_on_buffer(log_blocks[i]);
- 		if (!buffer_uptodate(log_blocks[i])) {
--			reiserfs_warning(p_s_sb,
--					 "journal-1212: REPLAY FAILURE fsck required! buffer write failed");
-+			reiserfs_warning(p_s_sb, "journal-1212",
-+			                 "REPLAY FAILURE fsck required! "
-+					 "buffer write failed");
- 			brelse_array(log_blocks + i,
- 				     get_desc_trans_len(desc) - i);
- 			brelse_array(real_blocks, get_desc_trans_len(desc));
-@@ -2203,8 +2208,9 @@ static int journal_read_transaction(stru
- 	for (i = 0; i < get_desc_trans_len(desc); i++) {
- 		wait_on_buffer(real_blocks[i]);
- 		if (!buffer_uptodate(real_blocks[i])) {
--			reiserfs_warning(p_s_sb,
--					 "journal-1226: REPLAY FAILURE, fsck required! buffer write failed");
-+			reiserfs_warning(p_s_sb, "journal-1226",
-+			                 "REPLAY FAILURE, fsck required! "
-+					 "buffer write failed");
- 			brelse_array(real_blocks + i,
- 				     get_desc_trans_len(desc) - i);
- 			brelse(c_bh);
-@@ -2354,8 +2360,8 @@ static int journal_read(struct super_blo
- 	}
- 
- 	if (continue_replay && bdev_read_only(p_s_sb->s_bdev)) {
--		reiserfs_warning(p_s_sb,
--				 "clm-2076: device is readonly, unable to replay log");
-+		reiserfs_warning(p_s_sb, "clm-2076",
-+		                 "device is readonly, unable to replay log");
- 		return -1;
- 	}
- 
-@@ -2518,9 +2524,8 @@ static int release_journal_dev(struct su
- 	}
- 
- 	if (result != 0) {
--		reiserfs_warning(super,
--				 "sh-457: release_journal_dev: Cannot release journal device: %i",
--				 result);
-+		reiserfs_warning(super, "sh-457",
-+		                 "Cannot release journal device: %i", result);
- 	}
- 	return result;
- }
-@@ -2550,7 +2555,7 @@ static int journal_init_dev(struct super
- 		if (IS_ERR(journal->j_dev_bd)) {
- 			result = PTR_ERR(journal->j_dev_bd);
- 			journal->j_dev_bd = NULL;
--			reiserfs_warning(super, "sh-458: journal_init_dev: "
-+			reiserfs_warning(super, "sh-458",
- 					 "cannot init journal device '%s': %i",
- 					 __bdevname(jdev, b), result);
- 			return result;
-@@ -2563,7 +2568,7 @@ static int journal_init_dev(struct super
- 	if (!IS_ERR(journal->j_dev_file)) {
- 		struct inode *jdev_inode = journal->j_dev_file->f_mapping->host;
- 		if (!S_ISBLK(jdev_inode->i_mode)) {
--			reiserfs_warning(super, "journal_init_dev: '%s' is "
-+			reiserfs_warning(super, "reiserfs-459", "'%s' is "
- 					 "not a block device", jdev_name);
- 			result = -ENOTBLK;
- 			release_journal_dev(super, journal);
-@@ -2578,8 +2583,7 @@ static int journal_init_dev(struct super
- 	} else {
- 		result = PTR_ERR(journal->j_dev_file);
- 		journal->j_dev_file = NULL;
--		reiserfs_warning(super,
--				 "journal_init_dev: Cannot open '%s': %i",
-+		reiserfs_warning(super, "reiserfs-460", "Cannot open '%s': %i",
- 				 jdev_name, result);
- 	}
- 	return result;
-@@ -2601,8 +2605,8 @@ int journal_init(struct super_block *p_s
- 
- 	journal = SB_JOURNAL(p_s_sb) = vmalloc(sizeof(struct reiserfs_journal));
- 	if (!journal) {
--		reiserfs_warning(p_s_sb,
--				 "journal-1256: unable to get memory for journal structure");
-+		reiserfs_warning(p_s_sb, "journal-1256",
-+		                 "unable to get memory for journal structure");
- 		return 1;
- 	}
- 	memset(journal, 0, sizeof(struct reiserfs_journal));
-@@ -2631,9 +2635,9 @@ int journal_init(struct super_block *p_s
- 	if (!SB_ONDISK_JOURNAL_DEVICE(p_s_sb) &&
- 	    (SB_JOURNAL_1st_RESERVED_BLOCK(p_s_sb) +
- 	     SB_ONDISK_JOURNAL_SIZE(p_s_sb) > p_s_sb->s_blocksize * 8)) {
--		reiserfs_warning(p_s_sb,
--				 "journal-1393: journal does not fit for area "
--				 "addressed by first of bitmap blocks. It starts at "
-+		reiserfs_warning(p_s_sb, "journal-1393",
-+		                 "journal does not fit for area addressed "
-+				 "by first of bitmap blocks. It starts at "
- 				 "%u and its size is %u. Block size %ld",
- 				 SB_JOURNAL_1st_RESERVED_BLOCK(p_s_sb),
- 				 SB_ONDISK_JOURNAL_SIZE(p_s_sb),
-@@ -2642,8 +2646,8 @@ int journal_init(struct super_block *p_s
- 	}
- 
- 	if (journal_init_dev(p_s_sb, journal, j_dev_name) != 0) {
--		reiserfs_warning(p_s_sb,
--				 "sh-462: unable to initialize jornal device");
-+		reiserfs_warning(p_s_sb, "sh-462",
-+		                 "unable to initialize jornal device");
- 		goto free_and_return;
- 	}
- 
-@@ -2654,8 +2658,8 @@ int journal_init(struct super_block *p_s
- 			     SB_ONDISK_JOURNAL_1st_BLOCK(p_s_sb) +
- 			     SB_ONDISK_JOURNAL_SIZE(p_s_sb));
- 	if (!bhjh) {
--		reiserfs_warning(p_s_sb,
--				 "sh-459: unable to read journal header");
-+		reiserfs_warning(p_s_sb, "sh-459",
-+		                 "unable to read journal header");
- 		goto free_and_return;
- 	}
- 	jh = (struct reiserfs_journal_header *)(bhjh->b_data);
-@@ -2664,10 +2668,10 @@ int journal_init(struct super_block *p_s
- 	if (is_reiserfs_jr(rs)
- 	    && (le32_to_cpu(jh->jh_journal.jp_journal_magic) !=
- 		sb_jp_journal_magic(rs))) {
--		reiserfs_warning(p_s_sb,
--				 "sh-460: journal header magic %x "
--				 "(device %s) does not match to magic found in super "
--				 "block %x", jh->jh_journal.jp_journal_magic,
-+		reiserfs_warning(p_s_sb, "sh-460",
-+		                 "journal header magic %x (device %s) does "
-+				 "not match to magic found in super block %x",
-+				 jh->jh_journal.jp_journal_magic,
- 				 bdevname(journal->j_dev_bd, b),
- 				 sb_jp_journal_magic(rs));
- 		brelse(bhjh);
-@@ -2700,8 +2704,9 @@ int journal_init(struct super_block *p_s
- 			    JOURNAL_TRANS_MIN_DEFAULT / ratio;
- 
- 		if (journal->j_trans_max != initial)
--			reiserfs_warning(p_s_sb,
--					 "sh-461: journal_init: wrong transaction max size (%u). Changed to %u",
-+			reiserfs_warning(p_s_sb, "sh-461",
-+			                 "wrong transaction max size (%u). "
-+					 "Changed to %u",
- 					 initial, journal->j_trans_max);
- 
- 		journal->j_max_batch = journal->j_trans_max *
-@@ -2775,7 +2780,7 @@ int journal_init(struct super_block *p_s
- 	journal->j_must_wait = 0;
- 
- 	if (journal->j_cnode_free == 0) {
--        	reiserfs_warning(p_s_sb, "journal-2004: Journal cnode memory "
-+        	reiserfs_warning(p_s_sb, "journal-2004", "Journal cnode memory "
- 		                 "allocation failed (%ld bytes). Journal is "
- 		                 "too large for available memory. Usually "
- 		                 "this is due to a journal that is too large.",
-@@ -2787,12 +2792,13 @@ int journal_init(struct super_block *p_s
- 	jl = journal->j_current_jl;
- 	jl->j_list_bitmap = get_list_bitmap(p_s_sb, jl);
- 	if (!jl->j_list_bitmap) {
--		reiserfs_warning(p_s_sb,
--				 "journal-2005, get_list_bitmap failed for journal list 0");
-+		reiserfs_warning(p_s_sb, "journal-2005",
-+		                 "get_list_bitmap failed for journal list 0");
- 		goto free_and_return;
- 	}
- 	if (journal_read(p_s_sb) < 0) {
--		reiserfs_warning(p_s_sb, "Replay Failure, unable to mount");
-+		reiserfs_warning(p_s_sb, "reiserfs-2006",
-+		                 "Replay Failure, unable to mount");
- 		goto free_and_return;
- 	}
- 
-@@ -3124,16 +3130,17 @@ int journal_begin(struct reiserfs_transa
- 			cur_th->t_refcount++;
- 			memcpy(th, cur_th, sizeof(*th));
- 			if (th->t_refcount <= 1)
--				reiserfs_warning(p_s_sb,
--						 "BAD: refcount <= 1, but journal_info != 0");
-+				reiserfs_warning(p_s_sb, "reiserfs-2005",
-+						 "BAD: refcount <= 1, but "
-+						 "journal_info != 0");
- 			return 0;
- 		} else {
- 			/* we've ended up with a handle from a different filesystem.
- 			 ** save it and restore on journal_end.  This should never
- 			 ** really happen...
- 			 */
--			reiserfs_warning(p_s_sb,
--					 "clm-2100: nesting info a different FS");
-+			reiserfs_warning(p_s_sb, "clm-2100",
-+			                 "nesting info a different FS");
- 			th->t_handle_save = current->journal_info;
- 			current->journal_info = th;
- 		}
-@@ -3195,7 +3202,8 @@ int journal_mark_dirty(struct reiserfs_t
- 	 ** could get to disk too early.  NOT GOOD.
- 	 */
- 	if (!prepared || buffer_dirty(bh)) {
--		reiserfs_warning(p_s_sb, "journal-1777: buffer %llu bad state "
-+		reiserfs_warning(p_s_sb, "journal-1777",
-+		                 "buffer %llu bad state "
- 				 "%cPREPARED %cLOCKED %cDIRTY %cJDIRTY_WAIT",
- 				 (unsigned long long)bh->b_blocknr,
- 				 prepared ? ' ' : '!',
-@@ -3205,8 +3213,8 @@ int journal_mark_dirty(struct reiserfs_t
- 	}
- 
- 	if (atomic_read(&(journal->j_wcount)) <= 0) {
--		reiserfs_warning(p_s_sb,
--				 "journal-1409: journal_mark_dirty returning because j_wcount was %d",
-+		reiserfs_warning(p_s_sb, "journal-1409",
-+		                 "returning because j_wcount was %d",
- 				 atomic_read(&(journal->j_wcount)));
- 		return 1;
- 	}
-@@ -3271,8 +3279,8 @@ int journal_end(struct reiserfs_transact
- 		struct super_block *p_s_sb, unsigned long nblocks)
- {
- 	if (!current->journal_info && th->t_refcount > 1)
--		reiserfs_warning(p_s_sb, "REISER-NESTING: th NULL, refcount %d",
--				 th->t_refcount);
-+		reiserfs_warning(p_s_sb, "REISER-NESTING",
-+		                 "th NULL, refcount %d", th->t_refcount);
- 
- 	if (!th->t_trans_id) {
- 		WARN_ON(1);
-@@ -3343,8 +3351,8 @@ static int remove_from_transaction(struc
- 		clear_buffer_journal_test(bh);
- 		put_bh(bh);
- 		if (atomic_read(&(bh->b_count)) < 0) {
--			reiserfs_warning(p_s_sb,
--					 "journal-1752: remove from trans, b_count < 0");
-+			reiserfs_warning(p_s_sb, "journal-1752",
-+			                 "b_count < 0");
- 		}
- 		ret = 1;
- 	}
-@@ -3677,7 +3685,8 @@ int journal_mark_freed(struct reiserfs_t
- 						if (atomic_read
- 						    (&(cn->bh->b_count)) < 0) {
- 							reiserfs_warning(p_s_sb,
--									 "journal-2138: cn->bh->b_count < 0");
-+									 "journal-2138",
-+									 "cn->bh->b_count < 0");
- 						}
- 					}
- 					if (cn->jlist) {	/* since we are clearing the bh, we MUST dec nonzerolen */
-@@ -3695,8 +3704,8 @@ int journal_mark_freed(struct reiserfs_t
- 	if (bh) {
- 		put_bh(bh);	/* get_hash grabs the buffer */
- 		if (atomic_read(&(bh->b_count)) < 0) {
--			reiserfs_warning(p_s_sb,
--					 "journal-2165: bh->b_count < 0");
-+			reiserfs_warning(p_s_sb, "journal-2165",
-+			                 "bh->b_count < 0");
- 		}
- 	}
- 	return 0;
-@@ -4085,8 +4094,9 @@ static int do_journal_end(struct reiserf
- 			clear_buffer_journaled(cn->bh);
- 		} else {
- 			/* JDirty cleared sometime during transaction.  don't log this one */
--			reiserfs_warning(p_s_sb,
--					 "journal-2048: do_journal_end: BAD, buffer in journal hash, but not JDirty!");
-+			reiserfs_warning(p_s_sb, "journal-2048",
-+			                 "BAD, buffer in journal hash, "
-+					 "but not JDirty!");
- 			brelse(cn->bh);
- 		}
- 		next = cn->next;
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/lbalance.c linux-2.6.17-rc6-staging2/fs/reiserfs/lbalance.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/lbalance.c	2006-01-02 22:21:10.000000000 -0500
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/lbalance.c	2006-06-15 20:59:43.000000000 -0400
-@@ -1288,12 +1288,16 @@ void leaf_paste_entries(struct buffer_he
- 			prev = (i != 0) ? deh_location(&(deh[i - 1])) : 0;
- 
- 			if (prev && prev <= deh_location(&(deh[i])))
--				reiserfs_warning(NULL,
--						 "vs-10240: leaf_paste_entries: directory item (%h) corrupted (prev %a, cur(%d) %a)",
-+				reiserfs_warning(NULL, "vs-10240",
-+				                 "directory item (%h) "
-+						 "corrupted (prev %a, "
-+						 "cur(%d) %a)",
- 						 ih, deh + i - 1, i, deh + i);
- 			if (next && next >= deh_location(&(deh[i])))
--				reiserfs_warning(NULL,
--						 "vs-10250: leaf_paste_entries: directory item (%h) corrupted (cur(%d) %a, next %a)",
-+				reiserfs_warning(NULL, "vs-10250",
-+				                 "directory item (%h) "
-+						 "corrupted (cur(%d) %a, "
-+						 "next %a)",
- 						 ih, i, deh + i, deh + i + 1);
- 		}
- 	}
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/namei.c linux-2.6.17-rc6-staging2/fs/reiserfs/namei.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/namei.c	2006-04-21 15:18:51.000000000 -0400
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/namei.c	2006-06-15 20:59:43.000000000 -0400
-@@ -125,8 +125,8 @@ int search_by_entry_key(struct super_blo
- 	switch (retval) {
- 	case ITEM_NOT_FOUND:
- 		if (!PATH_LAST_POSITION(path)) {
--			reiserfs_warning(sb,
--					 "vs-7000: search_by_entry_key: search_by_key returned item position == 0");
-+			reiserfs_warning(sb, "vs-7000", "search_by_key "
-+			                 "returned item position == 0");
- 			pathrelse(path);
- 			return IO_ERROR;
- 		}
-@@ -140,8 +140,7 @@ int search_by_entry_key(struct super_blo
- 
- 	default:
- 		pathrelse(path);
--		reiserfs_warning(sb,
--				 "vs-7002: search_by_entry_key: no path to here");
-+		reiserfs_warning(sb, "vs-7002", "no path to here");
- 		return IO_ERROR;
- 	}
- 
-@@ -305,8 +304,7 @@ static int reiserfs_find_entry(struct in
- 		    search_by_entry_key(dir->i_sb, &key_to_search,
- 					path_to_entry, de);
- 		if (retval == IO_ERROR) {
--			reiserfs_warning(dir->i_sb, "zam-7001: io error in %s",
--					 __FUNCTION__);
-+			reiserfs_warning(dir->i_sb, "zam-7001", "io error");
- 			return IO_ERROR;
- 		}
- 
-@@ -498,10 +496,9 @@ static int reiserfs_add_entry(struct rei
- 		}
- 
- 		if (retval != NAME_FOUND) {
--			reiserfs_warning(dir->i_sb,
--					 "zam-7002:%s: \"reiserfs_find_entry\" "
--					 "has returned unexpected value (%d)",
--					 __FUNCTION__, retval);
-+			reiserfs_warning(dir->i_sb, "zam-7002",
-+			                 "reiserfs_find_entry() returned "
-+					 "unexpected value (%d)", retval);
- 		}
- 
- 		return -EEXIST;
-@@ -512,8 +509,9 @@ static int reiserfs_add_entry(struct rei
- 				MAX_GENERATION_NUMBER + 1);
- 	if (gen_number > MAX_GENERATION_NUMBER) {
- 		/* there is no free generation number */
--		reiserfs_warning(dir->i_sb,
--				 "reiserfs_add_entry: Congratulations! we have got hash function screwed up");
-+		reiserfs_warning(dir->i_sb, "reiserfs-7010",
-+		                 "Congratulations! we have got hash function "
-+				 "screwed up");
- 		if (buffer != small_buf)
- 			kfree(buffer);
- 		pathrelse(&path);
-@@ -529,10 +527,9 @@ static int reiserfs_add_entry(struct rei
- 	if (gen_number != 0) {	/* we need to re-search for the insertion point */
- 		if (search_by_entry_key(dir->i_sb, &entry_key, &path, &de) !=
- 		    NAME_NOT_FOUND) {
--			reiserfs_warning(dir->i_sb,
--					 "vs-7032: reiserfs_add_entry: "
--					 "entry with this key (%K) already exists",
--					 &entry_key);
-+			reiserfs_warning(dir->i_sb, "vs-7032",
-+					 "entry with this key (%K) already "
-+					 "exists", &entry_key);
- 
- 			if (buffer != small_buf)
- 				kfree(buffer);
-@@ -911,8 +908,9 @@ static int reiserfs_rmdir(struct inode *
- 		goto end_rmdir;
- 
- 	if (inode->i_nlink != 2 && inode->i_nlink != 1)
--		reiserfs_warning(inode->i_sb, "%s: empty directory has nlink "
--				 "!= 2 (%d)", __FUNCTION__, inode->i_nlink);
-+		reiserfs_warning(inode->i_sb, "reiserfs-7040",
-+		                 "empty directory has nlink != 2 (%d)",
-+				 inode->i_nlink);
- 
- 	inode->i_nlink = 0;
- 	inode->i_ctime = dir->i_ctime = dir->i_mtime = CURRENT_TIME_SEC;
-@@ -988,10 +986,9 @@ static int reiserfs_unlink(struct inode 
- 	}
- 
- 	if (!inode->i_nlink) {
--		reiserfs_warning(inode->i_sb, "%s: deleting nonexistent file "
--				 "(%s:%lu), %d", __FUNCTION__,
--				 reiserfs_bdevname(inode->i_sb), inode->i_ino,
--				 inode->i_nlink);
-+		reiserfs_warning(inode->i_sb, "reiserfs-7042",
-+		                 "deleting nonexistent file (%lu), %d",
-+				 inode->i_ino, inode->i_nlink);
- 		inode->i_nlink = 1;
- 	}
- 
-@@ -1505,8 +1502,8 @@ static int reiserfs_rename(struct inode 
- 	if (reiserfs_cut_from_item
- 	    (&th, &old_entry_path, &(old_de.de_entry_key), old_dir, NULL,
- 	     0) < 0)
--		reiserfs_warning(old_dir->i_sb,
--				 "vs-7060: reiserfs_rename: couldn't not cut old name. Fsck later?");
-+		reiserfs_warning(old_dir->i_sb, "vs-7060",
-+		                 "couldn't not cut old name. Fsck later?");
- 
- 	old_dir->i_size -= DEH_SIZE + old_de.de_entrylen;
- 
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/objectid.c linux-2.6.17-rc6-staging2/fs/reiserfs/objectid.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/objectid.c	2006-01-02 22:21:10.000000000 -0500
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/objectid.c	2006-06-15 20:59:43.000000000 -0400
-@@ -62,7 +62,7 @@ __u32 reiserfs_get_unused_objectid(struc
- 	/* comment needed -Hans */
- 	unused_objectid = le32_to_cpu(map[1]);
- 	if (unused_objectid == U32_MAX) {
--		reiserfs_warning(s, "%s: no more object ids", __FUNCTION__);
-+		reiserfs_warning(s, "reiserfs-15100", "no more object ids");
- 		reiserfs_restore_prepared_buffer(s, SB_BUFFER_WITH_SB(s));
- 		return 0;
- 	}
-@@ -162,8 +162,7 @@ void reiserfs_release_objectid(struct re
- 		i += 2;
- 	}
- 
--	reiserfs_warning(s,
--			 "vs-15011: reiserfs_release_objectid: tried to free free object id (%lu)",
-+	reiserfs_warning(s, "vs-15011", "tried to free free object id (%lu)",
- 			 (long unsigned)objectid_to_release);
- }
- 
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/prints.c linux-2.6.17-rc6-staging2/fs/reiserfs/prints.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/prints.c	2006-06-15 20:59:42.000000000 -0400
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/prints.c	2006-06-15 20:59:43.000000000 -0400
-@@ -265,14 +265,17 @@ static void prepare_error_buf(const char
-     va_end( args );\
- }
- 
--void reiserfs_warning(struct super_block *sb, const char *fmt, ...)
-+void __reiserfs_warning(struct super_block *sb, const char *id,
-+                               const char *function, const char *fmt, ...)
- {
- 	do_reiserfs_warning(fmt);
- 	if (sb)
--		printk(KERN_WARNING "REISERFS warning (device %s): %s\n",
--		       sb->s_id, error_buf);
-+		printk(KERN_WARNING "REISERFS warning (device %s): %s%s%s: %s\n",
-+		       sb->s_id, id ? id : "", id ? " " : "",
-+		       function, error_buf);
- 	else
--		printk(KERN_WARNING "REISERFS warning: %s\n", error_buf);
-+		printk(KERN_WARNING "REISERFS warning: %s%s%s: %s\n",
-+		       id ? id : "", id ? " " : "", function, error_buf);
- }
- 
- /* No newline.. reiserfs_info calls can be followed by printk's */
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/procfs.c linux-2.6.17-rc6-staging2/fs/reiserfs/procfs.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/procfs.c	2006-06-15 20:58:48.000000000 -0400
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/procfs.c	2006-06-15 20:59:43.000000000 -0400
-@@ -508,7 +508,7 @@ int reiserfs_proc_info_init(struct super
- 		add_file(sb, "journal", show_journal);
- 		return 0;
- 	}
--	reiserfs_warning(sb, "reiserfs: cannot create /proc/%s/%s",
-+	reiserfs_warning(sb, "cannot create /proc/%s/%s",
- 			 proc_info_root_name, reiserfs_bdevname(sb));
- 	return 1;
- }
-@@ -555,8 +555,7 @@ int reiserfs_proc_info_global_init(void)
- 		if (proc_info_root) {
- 			proc_info_root->owner = THIS_MODULE;
- 		} else {
--			reiserfs_warning(NULL,
--					 "reiserfs: cannot create /proc/%s",
-+			reiserfs_warning(NULL, "cannot create /proc/%s",
- 					 proc_info_root_name);
- 			return 1;
- 		}
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/stree.c linux-2.6.17-rc6-staging2/fs/reiserfs/stree.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/stree.c	2006-06-15 20:58:48.000000000 -0400
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/stree.c	2006-06-15 20:59:43.000000000 -0400
-@@ -446,23 +446,24 @@ static int is_leaf(char *buf, int blocks
- 
- 	blkh = (struct block_head *)buf;
- 	if (blkh_level(blkh) != DISK_LEAF_NODE_LEVEL) {
--		reiserfs_warning(NULL,
--				 "is_leaf: this should be caught earlier");
-+		reiserfs_warning(NULL, "reiserfs-5080",
-+		                 "this should be caught earlier");
- 		return 0;
- 	}
- 
- 	nr = blkh_nr_item(blkh);
- 	if (nr < 1 || nr > ((blocksize - BLKH_SIZE) / (IH_SIZE + MIN_ITEM_LEN))) {
- 		/* item number is too big or too small */
--		reiserfs_warning(NULL, "is_leaf: nr_item seems wrong: %z", bh);
-+		reiserfs_warning(NULL, "reiserfs-5081",
-+		                 "nr_item seems wrong: %z", bh);
- 		return 0;
- 	}
- 	ih = (struct item_head *)(buf + BLKH_SIZE) + nr - 1;
- 	used_space = BLKH_SIZE + IH_SIZE * nr + (blocksize - ih_location(ih));
- 	if (used_space != blocksize - blkh_free_space(blkh)) {
- 		/* free space does not match to calculated amount of use space */
--		reiserfs_warning(NULL, "is_leaf: free space seems wrong: %z",
--				 bh);
-+		reiserfs_warning(NULL, "reiserfs-5082",
-+		                 "free space seems wrong: %z", bh);
- 		return 0;
- 	}
- 	// FIXME: it is_leaf will hit performance too much - we may have
-@@ -473,29 +474,29 @@ static int is_leaf(char *buf, int blocks
- 	prev_location = blocksize;
- 	for (i = 0; i < nr; i++, ih++) {
- 		if (le_ih_k_type(ih) == TYPE_ANY) {
--			reiserfs_warning(NULL,
--					 "is_leaf: wrong item type for item %h",
-+			reiserfs_warning(NULL, "reiserfs-5083",
-+					 "wrong item type for item %h",
- 					 ih);
- 			return 0;
- 		}
- 		if (ih_location(ih) >= blocksize
- 		    || ih_location(ih) < IH_SIZE * nr) {
--			reiserfs_warning(NULL,
--					 "is_leaf: item location seems wrong: %h",
-+			reiserfs_warning(NULL, "reiserfs-5084",
-+					 "item location seems wrong: %h",
- 					 ih);
- 			return 0;
- 		}
- 		if (ih_item_len(ih) < 1
- 		    || ih_item_len(ih) > MAX_ITEM_LEN(blocksize)) {
--			reiserfs_warning(NULL,
--					 "is_leaf: item length seems wrong: %h",
-+			reiserfs_warning(NULL, "reiserfs-5085",
-+					 "item length seems wrong: %h",
- 					 ih);
- 			return 0;
- 		}
- 		if (prev_location - ih_location(ih) != ih_item_len(ih)) {
--			reiserfs_warning(NULL,
--					 "is_leaf: item location seems wrong (second one): %h",
--					 ih);
-+			reiserfs_warning(NULL, "reiserfs-5086",
-+					 "item location seems wrong "
-+					 "(second one): %h", ih);
- 			return 0;
- 		}
- 		prev_location = ih_location(ih);
-@@ -516,24 +517,23 @@ static int is_internal(char *buf, int bl
- 	nr = blkh_level(blkh);
- 	if (nr <= DISK_LEAF_NODE_LEVEL || nr > MAX_HEIGHT) {
- 		/* this level is not possible for internal nodes */
--		reiserfs_warning(NULL,
--				 "is_internal: this should be caught earlier");
-+		reiserfs_warning(NULL, "reiserfs-5087",
-+				 "this should be caught earlier");
- 		return 0;
- 	}
- 
- 	nr = blkh_nr_item(blkh);
- 	if (nr > (blocksize - BLKH_SIZE - DC_SIZE) / (KEY_SIZE + DC_SIZE)) {
- 		/* for internal which is not root we might check min number of keys */
--		reiserfs_warning(NULL,
--				 "is_internal: number of key seems wrong: %z",
--				 bh);
-+		reiserfs_warning(NULL, "reiserfs-5088",
-+				 "number of key seems wrong: %z", bh);
- 		return 0;
- 	}
- 
- 	used_space = BLKH_SIZE + KEY_SIZE * nr + DC_SIZE * (nr + 1);
- 	if (used_space != blocksize - blkh_free_space(blkh)) {
--		reiserfs_warning(NULL,
--				 "is_internal: free space seems wrong: %z", bh);
-+		reiserfs_warning(NULL, "reiserfs-5089",
-+				 "free space seems wrong: %z", bh);
- 		return 0;
- 	}
- 	// one may imagine much more checks
-@@ -545,8 +545,8 @@ static int is_internal(char *buf, int bl
- static int is_tree_node(struct buffer_head *bh, int level)
- {
- 	if (B_LEVEL(bh) != level) {
--		reiserfs_warning(NULL,
--				 "is_tree_node: node level %d does not match to the expected one %d",
-+		reiserfs_warning(NULL, "reiserfs-5090", "node level %d does "
-+		                 "not match to the expected one %d",
- 				 B_LEVEL(bh), level);
- 		return 0;
- 	}
-@@ -647,9 +647,9 @@ int search_by_key(struct super_block *p_
- 
- #ifdef CONFIG_REISERFS_CHECK
- 		if (!(++n_repeat_counter % 50000))
--			reiserfs_warning(p_s_sb, "PAP-5100: search_by_key: %s:"
--					 "there were %d iterations of while loop "
--					 "looking for key %K",
-+			reiserfs_warning(p_s_sb, "PAP-5100",
-+			                 "%s: there were %d iterations of "
-+					 "while loop looking for key %K",
- 					 current->comm, n_repeat_counter,
- 					 p_s_key);
- #endif
-@@ -723,9 +723,9 @@ int search_by_key(struct super_block *p_
- 		// make sure, that the node contents look like a node of
- 		// certain level
- 		if (!is_tree_node(p_s_bh, expected_level)) {
--			reiserfs_warning(p_s_sb, "vs-5150: search_by_key: "
--					 "invalid format found in block %ld. Fsck?",
--					 p_s_bh->b_blocknr);
-+			reiserfs_warning(p_s_sb, "vs-5150",
-+					 "invalid format found in block %ld. "
-+					 "Fsck?", p_s_bh->b_blocknr);
- 			pathrelse(p_s_search_path);
- 			return IO_ERROR;
- 		}
-@@ -1228,8 +1228,7 @@ int reiserfs_delete_item(struct reiserfs
- 		if (n_ret_value == IO_ERROR)
- 			break;
- 		if (n_ret_value == FILE_NOT_FOUND) {
--			reiserfs_warning(p_s_sb,
--					 "vs-5340: reiserfs_delete_item: "
-+			reiserfs_warning(p_s_sb, "vs-5340",
- 					 "no items of the file %K found",
- 					 p_s_item_key);
- 			break;
-@@ -1339,10 +1338,9 @@ void reiserfs_delete_solid_item(struct r
- 	while (1) {
- 		retval = search_item(th->t_super, &cpu_key, &path);
- 		if (retval == IO_ERROR) {
--			reiserfs_warning(th->t_super,
--					 "vs-5350: reiserfs_delete_solid_item: "
--					 "i/o failure occurred trying to delete %K",
--					 &cpu_key);
-+			reiserfs_warning(th->t_super, "vs-5350",
-+					 "i/o failure occurred trying "
-+					 "to delete %K", &cpu_key);
- 			break;
- 		}
- 		if (retval != ITEM_FOUND) {
-@@ -1356,9 +1354,8 @@ void reiserfs_delete_solid_item(struct r
- 			     GET_GENERATION_NUMBER(le_key_k_offset
- 						   (le_key_version(key),
- 						    key)) == 1))
--				reiserfs_warning(th->t_super,
--						 "vs-5355: reiserfs_delete_solid_item: %k not found",
--						 key);
-+				reiserfs_warning(th->t_super, "vs-5355",
-+				                 "%k not found", key);
- 			break;
- 		}
- 		if (!tb_init) {
-@@ -1390,8 +1387,7 @@ void reiserfs_delete_solid_item(struct r
- 			break;
- 		}
- 		// IO_ERROR, NO_DISK_SPACE, etc
--		reiserfs_warning(th->t_super,
--				 "vs-5360: reiserfs_delete_solid_item: "
-+		reiserfs_warning(th->t_super, "vs-5360",
- 				 "could not delete %K due to fix_nodes failure",
- 				 &cpu_key);
- 		unfix_nodes(&tb);
-@@ -1540,8 +1536,9 @@ static void indirect_to_direct_roll_back
- 		set_cpu_key_k_offset(&tail_key,
- 				     cpu_key_k_offset(&tail_key) - removed);
- 	}
--	reiserfs_warning(inode->i_sb,
--			 "indirect_to_direct_roll_back: indirect_to_direct conversion has been rolled back due to lack of disk space");
-+	reiserfs_warning(inode->i_sb, "reiserfs-5091", "indirect_to_direct "
-+	                 "conversion has been rolled back due to "
-+			 "lack of disk space");
- 	//mark_file_without_tail (inode);
- 	mark_inode_dirty(inode);
- }
-@@ -1646,8 +1643,7 @@ int reiserfs_cut_from_item(struct reiser
- 		if (n_ret_value == POSITION_FOUND)
- 			continue;
- 
--		reiserfs_warning(p_s_sb,
--				 "PAP-5610: reiserfs_cut_from_item: item %K not found",
-+		reiserfs_warning(p_s_sb, "PAP-5610", "item %K not found",
- 				 p_s_item_key);
- 		unfix_nodes(&s_cut_balance);
- 		return (n_ret_value == IO_ERROR) ? -EIO : -ENOENT;
-@@ -1661,7 +1657,8 @@ int reiserfs_cut_from_item(struct reiser
- 			indirect_to_direct_roll_back(th, p_s_inode, p_s_path);
- 		}
- 		if (n_ret_value == NO_DISK_SPACE)
--			reiserfs_warning(p_s_sb, "NO_DISK_SPACE");
-+			reiserfs_warning(p_s_sb, "reiserfs-5092",
-+			                 "NO_DISK_SPACE");
- 		unfix_nodes(&s_cut_balance);
- 		return -EIO;
- 	}
-@@ -1750,8 +1747,7 @@ static void truncate_directory(struct re
- {
- 	BUG_ON(!th->t_trans_id);
- 	if (inode->i_nlink)
--		reiserfs_warning(inode->i_sb,
--				 "vs-5655: truncate_directory: link count != 0");
-+		reiserfs_warning(inode->i_sb, "vs-5655", "link count != 0");
- 
- 	set_le_key_k_offset(KEY_FORMAT_3_5, INODE_PKEY(inode), DOT_OFFSET);
- 	set_le_key_k_type(KEY_FORMAT_3_5, INODE_PKEY(inode), TYPE_DIRENTRY);
-@@ -1804,16 +1800,14 @@ int reiserfs_do_truncate(struct reiserfs
- 	    search_for_position_by_key(p_s_inode->i_sb, &s_item_key,
- 				       &s_search_path);
- 	if (retval == IO_ERROR) {
--		reiserfs_warning(p_s_inode->i_sb,
--				 "vs-5657: reiserfs_do_truncate: "
-+		reiserfs_warning(p_s_inode->i_sb, "vs-5657",
- 				 "i/o failure occurred trying to truncate %K",
- 				 &s_item_key);
- 		err = -EIO;
- 		goto out;
- 	}
- 	if (retval == POSITION_FOUND || retval == FILE_NOT_FOUND) {
--		reiserfs_warning(p_s_inode->i_sb,
--				 "PAP-5660: reiserfs_do_truncate: "
-+		reiserfs_warning(p_s_inode->i_sb, "PAP-5660",
- 				 "wrong result %d of search for %K", retval,
- 				 &s_item_key);
- 
-@@ -1857,8 +1851,8 @@ int reiserfs_do_truncate(struct reiserfs
- 		    reiserfs_cut_from_item(th, &s_search_path, &s_item_key,
- 					   p_s_inode, page, n_new_file_size);
- 		if (n_deleted < 0) {
--			reiserfs_warning(p_s_inode->i_sb,
--					 "vs-5665: reiserfs_do_truncate: reiserfs_cut_from_item failed");
-+			reiserfs_warning(p_s_inode->i_sb, "vs-5665",
-+			                 "reiserfs_cut_from_item failed");
- 			reiserfs_check_path(&s_search_path);
- 			return 0;
- 		}
-@@ -2007,8 +2001,8 @@ int reiserfs_paste_into_item(struct reis
- 			goto error_out;
- 		}
- 		if (retval == POSITION_FOUND) {
--			reiserfs_warning(inode->i_sb,
--					 "PAP-5710: reiserfs_paste_into_item: entry or pasted byte (%K) exists",
-+			reiserfs_warning(inode->i_sb, "PAP-5710",
-+			                 "entry or pasted byte (%K) exists",
- 					 p_s_key);
- 			retval = -EEXIST;
- 			goto error_out;
-@@ -2094,8 +2088,7 @@ int reiserfs_insert_item(struct reiserfs
- 			goto error_out;
- 		}
- 		if (retval == ITEM_FOUND) {
--			reiserfs_warning(th->t_super,
--					 "PAP-5760: reiserfs_insert_item: "
-+			reiserfs_warning(th->t_super, "PAP-5760",
- 					 "key %K already exists in the tree",
- 					 key);
- 			retval = -EEXIST;
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/super.c linux-2.6.17-rc6-staging2/fs/reiserfs/super.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/super.c	2006-06-15 20:59:43.000000000 -0400
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/super.c	2006-06-15 20:59:43.000000000 -0400
-@@ -180,9 +180,9 @@ static int finish_unfinished(struct supe
- 		if (REISERFS_SB(s)->s_qf_names[i]) {
- 			int ret = reiserfs_quota_on_mount(s, i);
- 			if (ret < 0)
--				reiserfs_warning(s,
--						 "reiserfs: cannot turn on journalled quota: error %d",
--						 ret);
-+				reiserfs_warning(s, "reiserfs-2500",
-+				                 "cannot turn on journalled "
-+						 "quota: error %d", ret);
- 		}
- 	}
- #endif
-@@ -192,8 +192,8 @@ static int finish_unfinished(struct supe
- 	while (!retval) {
- 		retval = search_item(s, &max_cpu_key, &path);
- 		if (retval != ITEM_NOT_FOUND) {
--			reiserfs_warning(s,
--					 "vs-2140: finish_unfinished: search_by_key returned %d",
-+			reiserfs_warning(s, "vs-2140",
-+			                 "search_by_key returned %d",
- 					 retval);
- 			break;
- 		}
-@@ -201,8 +201,8 @@ static int finish_unfinished(struct supe
- 		bh = get_last_bh(&path);
- 		item_pos = get_item_pos(&path);
- 		if (item_pos != B_NR_ITEMS(bh)) {
--			reiserfs_warning(s,
--					 "vs-2060: finish_unfinished: wrong position found");
-+			reiserfs_warning(s, "vs-2060",
-+			                 "wrong position found");
- 			break;
- 		}
- 		item_pos--;
-@@ -232,8 +232,7 @@ static int finish_unfinished(struct supe
- 		if (!inode) {
- 			/* the unlink almost completed, it just did not manage to remove
- 			   "save" link and release objectid */
--			reiserfs_warning(s,
--					 "vs-2180: finish_unfinished: iget failed for %K",
-+			reiserfs_warning(s, "vs-2180", "iget failed for %K",
- 					 &obj_key);
- 			retval = remove_save_link_only(s, &save_link_key, 1);
- 			continue;
-@@ -241,8 +240,8 @@ static int finish_unfinished(struct supe
- 
- 		if (!truncate && inode->i_nlink) {
- 			/* file is not unlinked */
--			reiserfs_warning(s,
--					 "vs-2185: finish_unfinished: file %K is not unlinked",
-+			reiserfs_warning(s, "vs-2185",
-+			                 "file %K is not unlinked",
- 					 &obj_key);
- 			retval = remove_save_link_only(s, &save_link_key, 0);
- 			continue;
-@@ -254,8 +253,9 @@ static int finish_unfinished(struct supe
- 			   The only imaginable way is to execute unfinished truncate request
- 			   then boot into old kernel, remove the file and create dir with
- 			   the same key. */
--			reiserfs_warning(s,
--					 "green-2101: impossible truncate on a directory %k. Please report",
-+			reiserfs_warning(s, "green-2101",
-+			                 "impossible truncate on a "
-+					 "directory %k. Please report",
- 					 INODE_PKEY(inode));
- 			retval = remove_save_link_only(s, &save_link_key, 0);
- 			truncate = 0;
-@@ -347,8 +347,9 @@ void add_save_link(struct reiserfs_trans
- 	} else {
- 		/* truncate */
- 		if (S_ISDIR(inode->i_mode))
--			reiserfs_warning(inode->i_sb,
--					 "green-2102: Adding a truncate savelink for a directory %k! Please report",
-+			reiserfs_warning(inode->i_sb, "green-2102",
-+			                 "Adding a truncate savelink for "
-+					 "a directory %k! Please report",
- 					 INODE_PKEY(inode));
- 		set_cpu_key_k_offset(&key, 1);
- 		set_cpu_key_k_type(&key, TYPE_INDIRECT);
-@@ -363,7 +364,7 @@ void add_save_link(struct reiserfs_trans
- 	retval = search_item(inode->i_sb, &key, &path);
- 	if (retval != ITEM_NOT_FOUND) {
- 		if (retval != -ENOSPC)
--			reiserfs_warning(inode->i_sb, "vs-2100: add_save_link:"
-+			reiserfs_warning(inode->i_sb, "vs-2100",
- 					 "search_by_key (%K) returned %d", &key,
- 					 retval);
- 		pathrelse(&path);
-@@ -378,9 +379,8 @@ void add_save_link(struct reiserfs_trans
- 	    reiserfs_insert_item(th, &path, &key, &ih, NULL, (char *)&link);
- 	if (retval) {
- 		if (retval != -ENOSPC)
--			reiserfs_warning(inode->i_sb,
--					 "vs-2120: add_save_link: insert_item returned %d",
--					 retval);
-+			reiserfs_warning(inode->i_sb, "vs-2120",
-+			                 "insert_item returned %d", retval);
- 	} else {
- 		if (truncate)
- 			REISERFS_I(inode)->i_flags |=
-@@ -473,8 +473,7 @@ static void reiserfs_put_super(struct su
- 	print_statistics(s);
- 
- 	if (REISERFS_SB(s)->reserved_blocks != 0) {
--		reiserfs_warning(s,
--				 "green-2005: reiserfs_put_super: reserved blocks left %d",
-+		reiserfs_warning(s, "green-2005", "reserved blocks left %d",
- 				 REISERFS_SB(s)->reserved_blocks);
- 	}
- 
-@@ -532,8 +531,8 @@ static int init_inodecache(void)
- static void destroy_inodecache(void)
- {
- 	if (kmem_cache_destroy(reiserfs_inode_cachep))
--		reiserfs_warning(NULL,
--				 "reiserfs_inode_cache: not all structures were freed");
-+		reiserfs_warning(NULL, "reiserfs-2501",
-+		                 "not all structures were freed");
- }
- 
- /* we don't mark inodes dirty, we just log them */
-@@ -543,8 +542,8 @@ static void reiserfs_dirty_inode(struct 
- 
- 	int err = 0;
- 	if (inode->i_sb->s_flags & MS_RDONLY) {
--		reiserfs_warning(inode->i_sb,
--				 "clm-6006: writing inode %lu on readonly FS",
-+		reiserfs_warning(inode->i_sb, "clm-6006",
-+		                 "writing inode %lu on readonly FS",
- 				 inode->i_ino);
- 		return;
- 	}
-@@ -777,13 +776,15 @@ static int reiserfs_getopt(struct super_
- 			if (bit_flags) {
- 				if (opt->clrmask ==
- 				    (1 << REISERFS_UNSUPPORTED_OPT))
--					reiserfs_warning(s, "%s not supported.",
-+					reiserfs_warning(s, "super-6500",
-+					                 "%s not supported.\n",
- 							 p);
- 				else
- 					*bit_flags &= ~opt->clrmask;
- 				if (opt->setmask ==
- 				    (1 << REISERFS_UNSUPPORTED_OPT))
--					reiserfs_warning(s, "%s not supported.",
-+					reiserfs_warning(s, "super-6501",
-+					                 "%s not supported.\n",
- 							 p);
- 				else
- 					*bit_flags |= opt->setmask;
-@@ -792,7 +793,8 @@ static int reiserfs_getopt(struct super_
- 		}
- 	}
- 	if (!opt->option_name) {
--		reiserfs_warning(s, "unknown mount option \"%s\"", p);
-+		reiserfs_warning(s, "super-6502",
-+		                 "unknown mount option \"%s\"", p);
- 		return -1;
- 	}
- 
-@@ -800,8 +802,9 @@ static int reiserfs_getopt(struct super_
- 	switch (*p) {
- 	case '=':
- 		if (!opt->arg_required) {
--			reiserfs_warning(s,
--					 "the option \"%s\" does not require an argument",
-+			reiserfs_warning(s, "super-6503",
-+			                 "the option \"%s\" does not "
-+			                 "require an argument\n",
- 					 opt->option_name);
- 			return -1;
- 		}
-@@ -809,14 +812,15 @@ static int reiserfs_getopt(struct super_
- 
- 	case 0:
- 		if (opt->arg_required) {
--			reiserfs_warning(s,
--					 "the option \"%s\" requires an argument",
--					 opt->option_name);
-+			reiserfs_warning(s, "super-6504",
-+			                 "the option \"%s\" requires an "
-+			                 "argument\n", opt->option_name);
- 			return -1;
- 		}
- 		break;
- 	default:
--		reiserfs_warning(s, "head of option \"%s\" is only correct",
-+		reiserfs_warning(s, "super-6505",
-+		                 "head of option \"%s\" is only correct\n",
- 				 opt->option_name);
- 		return -1;
- 	}
-@@ -828,7 +832,8 @@ static int reiserfs_getopt(struct super_
- 	    && !(opt->arg_required & (1 << REISERFS_OPT_ALLOWEMPTY))
- 	    && !strlen(p)) {
- 		/* this catches "option=," if not allowed */
--		reiserfs_warning(s, "empty argument for \"%s\"",
-+		reiserfs_warning(s, "super-6506",
-+		                 "empty argument for \"%s\"\n",
- 				 opt->option_name);
- 		return -1;
- 	}
-@@ -850,7 +855,8 @@ static int reiserfs_getopt(struct super_
- 		}
- 	}
- 
--	reiserfs_warning(s, "bad value \"%s\" for option \"%s\"", p,
-+	reiserfs_warning(s, "super-6506",
-+	                 "bad value \"%s\" for option \"%s\"\n", p,
- 			 opt->option_name);
- 	return -1;
- }
-@@ -938,9 +944,9 @@ static int reiserfs_parse_options(struct
- 				*blocks = simple_strtoul(arg, &p, 0);
- 				if (*p != '\0') {
- 					/* NNN does not look like a number */
--					reiserfs_warning(s,
--							 "reiserfs_parse_options: bad value %s",
--							 arg);
-+					reiserfs_warning(s, "super-6507",
-+					                 "bad value %s for "
-+					                 "-oresize\n", arg);
- 					return 0;
- 				}
- 			}
-@@ -951,8 +957,8 @@ static int reiserfs_parse_options(struct
- 			unsigned long val = simple_strtoul(arg, &p, 0);
- 			/* commit=NNN (time in seconds) */
- 			if (*p != '\0' || val >= (unsigned int)-1) {
--				reiserfs_warning(s,
--						 "reiserfs_parse_options: bad value %s",
-+				reiserfs_warning(s, "super-6508",
-+				                 "bad value %s for -ocommit\n",
- 						 arg);
- 				return 0;
- 			}
-@@ -964,8 +970,9 @@ static int reiserfs_parse_options(struct
- 			int val = simple_strtoul(arg, &p, 0);
- 
- 			if (*p != '\0') {
--				reiserfs_warning(s,
--						 "reiserfs_parse_options: non-numeric value %s for nolargeio option",
-+				reiserfs_warning(s, "super-6509",
-+				                 "non-numeric value %s for "
-+						 "-onolargeio",
- 						 arg);
- 				return 0;
- 			}
-@@ -978,9 +985,10 @@ static int reiserfs_parse_options(struct
- 		if (c == 'j') {
- 			if (arg && *arg && jdev_name) {
- 				if (*jdev_name) {	//Hm, already assigned?
--					reiserfs_warning(s,
--							 "reiserfs_parse_options: journal device was already  specified to be %s",
--							 *jdev_name);
-+					reiserfs_warning(s, "super-6510",
-+					                 "journal device was "
-+					                 "already specified to "
-+						         "be %s", *jdev_name);
- 					return 0;
- 				}
- 				*jdev_name = arg;
-@@ -991,29 +999,34 @@ static int reiserfs_parse_options(struct
- 			int qtype = c == 'u' ? USRQUOTA : GRPQUOTA;
- 
- 			if (sb_any_quota_enabled(s)) {
--				reiserfs_warning(s,
--						 "reiserfs_parse_options: cannot change journalled quota options when quota turned on.");
-+				reiserfs_warning(s, "super-6511",
-+				              "cannot change journalled "
-+				              "quota options when quota "
-+					      "turned on.");
- 				return 0;
- 			}
- 			if (*arg) {	/* Some filename specified? */
- 				if (REISERFS_SB(s)->s_qf_names[qtype]
- 				    && strcmp(REISERFS_SB(s)->s_qf_names[qtype],
- 					      arg)) {
--					reiserfs_warning(s,
--							 "reiserfs_parse_options: %s quota file already specified.",
-+					reiserfs_warning(s, "super-6512",
-+							 "%s quota file already specified.",
- 							 QTYPE2NAME(qtype));
- 					return 0;
- 				}
- 				if (strchr(arg, '/')) {
--					reiserfs_warning(s,
--							 "reiserfs_parse_options: quotafile must be on filesystem root.");
-+					reiserfs_warning(s, "super-6513",
-+							 "quotafile must be "
-+							 "on filesystem root.");
- 					return 0;
- 				}
- 				REISERFS_SB(s)->s_qf_names[qtype] =
- 				    kmalloc(strlen(arg) + 1, GFP_KERNEL);
- 				if (!REISERFS_SB(s)->s_qf_names[qtype]) {
--					reiserfs_warning(s,
--							 "reiserfs_parse_options: not enough memory for storing quotafile name.");
-+					reiserfs_warning(s, "reiserfs-2502",
-+							 "not enough memory "
-+							 "for storing "
-+							 "quotafile name.");
- 					return 0;
- 				}
- 				strcpy(REISERFS_SB(s)->s_qf_names[qtype], arg);
-@@ -1029,15 +1042,16 @@ static int reiserfs_parse_options(struct
- 			else if (!strcmp(arg, "vfsv0"))
- 				REISERFS_SB(s)->s_jquota_fmt = QFMT_VFS_V0;
- 			else {
--				reiserfs_warning(s,
--						 "reiserfs_parse_options: unknown quota format specified.");
-+				reiserfs_warning(s, "super-6514",
-+				                 "unknown quota format "
-+						 "specified.");
- 				return 0;
- 			}
- 		}
- #else
- 		if (c == 'u' || c == 'g' || c == 'f') {
--			reiserfs_warning(s,
--					 "reiserfs_parse_options: journalled quota options not supported.");
-+			reiserfs_warning(s, "reiserfs-2503", "journalled "
-+			                 "quota options not supported.");
- 			return 0;
- 		}
- #endif
-@@ -1047,15 +1061,15 @@ static int reiserfs_parse_options(struct
- 	if (!REISERFS_SB(s)->s_jquota_fmt
- 	    && (REISERFS_SB(s)->s_qf_names[USRQUOTA]
- 		|| REISERFS_SB(s)->s_qf_names[GRPQUOTA])) {
--		reiserfs_warning(s,
--				 "reiserfs_parse_options: journalled quota format not specified.");
-+		reiserfs_warning(s, "super-6515",
-+		                 "journalled quota format not specified.");
- 		return 0;
- 	}
- 	/* This checking is not precise wrt the quota type but for our purposes it is sufficient */
- 	if (!(*mount_options & (1 << REISERFS_QUOTA))
- 	    && sb_any_quota_enabled(s)) {
--		reiserfs_warning(s,
--				 "reiserfs_parse_options: quota options must be present when quota is turned on.");
-+		reiserfs_warning(s, "super-6516", "quota options must "
-+		                 "be present when quota is turned on.");
- 		return 0;
- 	}
- #endif
-@@ -1115,14 +1129,15 @@ static void handle_attrs(struct super_bl
- 
- 	if (reiserfs_attrs(s)) {
- 		if (old_format_only(s)) {
--			reiserfs_warning(s,
--					 "reiserfs: cannot support attributes on 3.5.x disk format");
-+			reiserfs_warning(s, "super-6517", "cannot support "
-+			                 "attributes on 3.5.x disk format");
- 			REISERFS_SB(s)->s_mount_opt &= ~(1 << REISERFS_ATTRS);
- 			return;
- 		}
- 		if (!(le32_to_cpu(rs->s_flags) & reiserfs_attrs_cleared)) {
--			reiserfs_warning(s,
--					 "reiserfs: cannot support attributes until flag is set in super-block");
-+			reiserfs_warning(s, "super-6518", "cannot support "
-+			                 "attributes until flag is set in "
-+					 "super-block");
- 			REISERFS_SB(s)->s_mount_opt &= ~(1 << REISERFS_ATTRS);
- 		}
- 	}
-@@ -1330,7 +1345,7 @@ static int read_bitmaps(struct super_blo
- 	for (i = 0; i < SB_BMAP_NR(s); i++) {
- 		wait_on_buffer(SB_AP_BITMAP(s)[i].bh);
- 		if (!buffer_uptodate(SB_AP_BITMAP(s)[i].bh)) {
--			reiserfs_warning(s, "sh-2029: reiserfs read_bitmaps: "
-+			reiserfs_warning(s, "sh-2029",
- 					 "bitmap block (#%lu) reading failed",
- 					 SB_AP_BITMAP(s)[i].bh->b_blocknr);
- 			for (i = 0; i < SB_BMAP_NR(s); i++)
-@@ -1377,7 +1392,7 @@ static int read_super_block(struct super
- 
- 	bh = sb_bread(s, offset / s->s_blocksize);
- 	if (!bh) {
--		reiserfs_warning(s, "sh-2006: read_super_block: "
-+		reiserfs_warning(s, "sh-2006",
- 				 "bread failed (dev %s, block %lu, size %lu)",
- 				 reiserfs_bdevname(s), offset / s->s_blocksize,
- 				 s->s_blocksize);
-@@ -1398,8 +1413,8 @@ static int read_super_block(struct super
- 
- 	bh = sb_bread(s, offset / s->s_blocksize);
- 	if (!bh) {
--		reiserfs_warning(s, "sh-2007: read_super_block: "
--				 "bread failed (dev %s, block %lu, size %lu)\n",
-+		reiserfs_warning(s, "sh-2007",
-+				 "bread failed (dev %s, block %lu, size %lu)",
- 				 reiserfs_bdevname(s), offset / s->s_blocksize,
- 				 s->s_blocksize);
- 		return 1;
-@@ -1407,8 +1422,8 @@ static int read_super_block(struct super
- 
- 	rs = (struct reiserfs_super_block *)bh->b_data;
- 	if (sb_blocksize(rs) != s->s_blocksize) {
--		reiserfs_warning(s, "sh-2011: read_super_block: "
--				 "can't find a reiserfs filesystem on (dev %s, block %Lu, size %lu)\n",
-+		reiserfs_warning(s, "sh-2011", "can't find a reiserfs "
-+		                 "filesystem on (dev %s, block %Lu, size %lu)",
- 				 reiserfs_bdevname(s),
- 				 (unsigned long long)bh->b_blocknr,
- 				 s->s_blocksize);
-@@ -1418,9 +1433,10 @@ static int read_super_block(struct super
- 
- 	if (rs->s_v1.s_root_block == cpu_to_le32(-1)) {
- 		brelse(bh);
--		reiserfs_warning(s,
--				 "Unfinished reiserfsck --rebuild-tree run detected. Please run\n"
--				 "reiserfsck --rebuild-tree and wait for a completion. If that fails\n"
-+		reiserfs_warning(s, "super-6519", "Unfinished reiserfsck "
-+		                 "--rebuild-tree run detected. Please run\n"
-+				 "reiserfsck --rebuild-tree and wait for a "
-+				 "completion. If that fails\n"
- 				 "get newer reiserfsprogs package");
- 		return 1;
- 	}
-@@ -1438,10 +1454,9 @@ static int read_super_block(struct super
- 			reiserfs_info(s, "found reiserfs format \"3.5\""
- 			              " with non-standard journal\n");
- 		else {
--			reiserfs_warning(s,
--					 "sh-2012: read_super_block: found unknown "
--					 "format \"%u\" of reiserfs with non-standard magic",
--					 sb_version(rs));
-+			reiserfs_warning(s, "sh-2012", "found unknown "
-+					 "format \"%u\" of reiserfs with "
-+					 "non-standard magic", sb_version(rs));
- 			return 1;
- 		}
- 	} else
-@@ -1472,8 +1487,7 @@ static int reread_meta_blocks(struct sup
- 	ll_rw_block(READ, 1, &(SB_BUFFER_WITH_SB(s)));
- 	wait_on_buffer(SB_BUFFER_WITH_SB(s));
- 	if (!buffer_uptodate(SB_BUFFER_WITH_SB(s))) {
--		reiserfs_warning(s,
--				 "reread_meta_blocks, error reading the super");
-+		reiserfs_warning(s, "reiserfs-2504", "error reading the super");
- 		return 1;
- 	}
- 
-@@ -1481,8 +1495,8 @@ static int reread_meta_blocks(struct sup
- 		ll_rw_block(READ, 1, &(SB_AP_BITMAP(s)[i].bh));
- 		wait_on_buffer(SB_AP_BITMAP(s)[i].bh);
- 		if (!buffer_uptodate(SB_AP_BITMAP(s)[i].bh)) {
--			reiserfs_warning(s,
--					 "reread_meta_blocks, error reading bitmap block number %d at %llu",
-+			reiserfs_warning(s, "reiserfs-2505", "error reading "
-+			                 "bitmap block number %d at %llu",
- 					 i,
- 					 (unsigned long long)SB_AP_BITMAP(s)[i].
- 					 bh->b_blocknr);
-@@ -1550,10 +1564,10 @@ static __u32 find_hash_out(struct super_
- 			&& (yurahash ==
- 			    GET_HASH_VALUE(deh_offset
- 					   (&(de.de_deh[de.de_entry_num])))))) {
--			reiserfs_warning(s,
--					 "Unable to automatically detect hash function. "
--					 "Please mount with -o hash={tea,rupasov,r5}",
--					 reiserfs_bdevname(s));
-+			reiserfs_warning(s, "reiserfs-2506", "Unable to "
-+			                 "automatically detect hash function. "
-+					 "Please mount with -o "
-+					 "hash={tea,rupasov,r5}");
- 			hash = UNSET_HASH;
- 			break;
- 		}
-@@ -1567,7 +1581,8 @@ static __u32 find_hash_out(struct super_
- 			 (deh_offset(&(de.de_deh[de.de_entry_num]))) == r5hash)
- 			hash = R5_HASH;
- 		else {
--			reiserfs_warning(s, "Unrecognised hash function");
-+			reiserfs_warning(s, "reiserfs-2506",
-+			                 "Unrecognised hash function");
- 			hash = UNSET_HASH;
- 		}
- 	} while (0);
-@@ -1595,17 +1610,20 @@ static int what_hash(struct super_block 
- 		 ** mount options 
- 		 */
- 		if (reiserfs_rupasov_hash(s) && code != YURA_HASH) {
--			reiserfs_warning(s, "Error, %s hash detected, "
-+			reiserfs_warning(s, "reiserfs-2507",
-+			                 "Error, %s hash detected, "
- 					 "unable to force rupasov hash",
- 					 reiserfs_hashname(code));
- 			code = UNSET_HASH;
- 		} else if (reiserfs_tea_hash(s) && code != TEA_HASH) {
--			reiserfs_warning(s, "Error, %s hash detected, "
-+			reiserfs_warning(s, "reiserfs-2508",
-+			                 "Error, %s hash detected, "
- 					 "unable to force tea hash",
- 					 reiserfs_hashname(code));
- 			code = UNSET_HASH;
- 		} else if (reiserfs_r5_hash(s) && code != R5_HASH) {
--			reiserfs_warning(s, "Error, %s hash detected, "
-+			reiserfs_warning(s, "reiserfs-2509",
-+			                 "Error, %s hash detected, "
- 					 "unable to force r5 hash",
- 					 reiserfs_hashname(code));
- 			code = UNSET_HASH;
-@@ -1664,9 +1682,9 @@ static int function2code(hashf_t func)
- 	return 0;
- }
- 
--#define SWARN(silent, s, ...)			\
-+#define SWARN(silent, s, id, ...)			\
- 	if (!(silent))				\
--		reiserfs_warning (s, __VA_ARGS__)
-+		reiserfs_warning (s, id, __VA_ARGS__)
- 
- static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
- {
-@@ -1712,8 +1730,7 @@ static int reiserfs_fill_super(struct su
- 	}
- 
- 	if (blocks) {
--		SWARN(silent, s, "jmacd-7: reiserfs_fill_super: resize option "
--		      "for remount only");
-+		SWARN(silent, s, "jmacd-7", "resize option for remount only");
- 		goto error;
- 	}
- 
-@@ -1722,8 +1739,7 @@ static int reiserfs_fill_super(struct su
- 		old_format = 1;
- 	/* try new format (64-th 1k block), which can contain reiserfs super block */
- 	else if (read_super_block(s, REISERFS_DISK_OFFSET_IN_BYTES)) {
--		SWARN(silent, s,
--		      "sh-2021: reiserfs_fill_super: can not find reiserfs on %s",
-+		SWARN(silent, s, "sh-2021", "can not find reiserfs on %s",
- 		      reiserfs_bdevname(s));
- 		goto error;
- 	}
-@@ -1735,13 +1751,12 @@ static int reiserfs_fill_super(struct su
- 	if (s->s_bdev && s->s_bdev->bd_inode
- 	    && i_size_read(s->s_bdev->bd_inode) <
- 	    sb_block_count(rs) * sb_blocksize(rs)) {
--		SWARN(silent, s,
--		      "Filesystem on %s cannot be mounted because it is bigger than the device",
--		      reiserfs_bdevname(s));
--		SWARN(silent, s,
--		      "You may need to run fsck or increase size of your LVM partition");
--		SWARN(silent, s,
--		      "Or may be you forgot to reboot after fdisk when it told you to");
-+		SWARN(silent, s, "", "Filesystem cannot be "
-+		      "mounted because it is bigger than the device");
-+		SWARN(silent, s, "", "You may need to run fsck "
-+		      "or increase size of your LVM partition");
-+		SWARN(silent, s, "", "Or may be you forgot to "
-+		      "reboot after fdisk when it told you to");
- 		goto error;
- 	}
- 
-@@ -1749,13 +1764,12 @@ static int reiserfs_fill_super(struct su
- 	sbi->s_mount_state = REISERFS_VALID_FS;
- 
- 	if (old_format ? read_old_bitmaps(s) : read_bitmaps(s)) {
--		SWARN(silent, s,
--		      "jmacd-8: reiserfs_fill_super: unable to read bitmap");
-+		SWARN(silent, s, "jmacd-8", "unable to read bitmap");
- 		goto error;
- 	}
- #ifdef CONFIG_REISERFS_CHECK
--	SWARN(silent, s, "CONFIG_REISERFS_CHECK is set ON");
--	SWARN(silent, s, "- it is slow mode for debugging.");
-+	SWARN(silent, s, "", "CONFIG_REISERFS_CHECK is set ON");
-+	SWARN(silent, s, "", "- it is slow mode for debugging.");
- #endif
- 
- 	/* make data=ordered the default */
-@@ -1776,8 +1790,8 @@ static int reiserfs_fill_super(struct su
- 	}
- 	// set_device_ro(s->s_dev, 1) ;
- 	if (journal_init(s, jdev_name, old_format, commit_max_age)) {
--		SWARN(silent, s,
--		      "sh-2022: reiserfs_fill_super: unable to initialize journal space");
-+		SWARN(silent, s, "sh-2022",
-+		      "unable to initialize journal space");
- 		goto error;
- 	} else {
- 		jinit_done = 1;	/* once this is set, journal_release must be called
-@@ -1785,8 +1799,8 @@ static int reiserfs_fill_super(struct su
- 				 */
- 	}
- 	if (reread_meta_blocks(s)) {
--		SWARN(silent, s,
--		      "jmacd-9: reiserfs_fill_super: unable to reread meta blocks after journal init");
-+		SWARN(silent, s, "jmacd-9",
-+		      "unable to reread meta blocks after journal init");
- 		goto error;
- 	}
- 
-@@ -1794,8 +1808,8 @@ static int reiserfs_fill_super(struct su
- 		goto error;
- 
- 	if (bdev_read_only(s->s_bdev) && !(s->s_flags & MS_RDONLY)) {
--		SWARN(silent, s,
--		      "clm-7000: Detected readonly device, marking FS readonly");
-+		SWARN(silent, s, "clm-7000",
-+		      "Detected readonly device, marking FS readonly");
- 		s->s_flags |= MS_RDONLY;
- 	}
- 	args.objectid = REISERFS_ROOT_OBJECTID;
-@@ -1804,8 +1818,7 @@ static int reiserfs_fill_super(struct su
- 	    iget5_locked(s, REISERFS_ROOT_OBJECTID, reiserfs_find_actor,
- 			 reiserfs_init_locked_inode, (void *)(&args));
- 	if (!root_inode) {
--		SWARN(silent, s,
--		      "jmacd-10: reiserfs_fill_super: get root inode failed");
-+		SWARN(silent, s, "jmacd-10", "get root inode failed");
- 		goto error;
- 	}
- 
-@@ -2123,8 +2136,8 @@ static int reiserfs_quota_on(struct supe
- 	}
- 	/* We must not pack tails for quota files on reiserfs for quota IO to work */
- 	if (!REISERFS_I(nd.dentry->d_inode)->i_flags & i_nopack_mask) {
--		reiserfs_warning(sb,
--				 "reiserfs: Quota file must have tail packing disabled.");
-+		reiserfs_warning(sb, "super-6520",
-+		                 "Quota file must have tail packing disabled.");
- 		path_release(&nd);
- 		return -EINVAL;
- 	}
-@@ -2136,8 +2149,8 @@ static int reiserfs_quota_on(struct supe
- 	}
- 	/* Quotafile not of fs root? */
- 	if (nd.dentry->d_parent->d_inode != sb->s_root->d_inode)
--		reiserfs_warning(sb,
--				 "reiserfs: Quota file not on filesystem root. "
-+		reiserfs_warning(sb, "super-6521",
-+		                 "Quota file not on filesystem root. "
- 				 "Journalled quota will not work.");
- 	path_release(&nd);
- 	return vfs_quota_on(sb, type, format_id, path);
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/tail_conversion.c linux-2.6.17-rc6-staging2/fs/reiserfs/tail_conversion.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/tail_conversion.c	2006-04-21 15:18:51.000000000 -0400
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/tail_conversion.c	2006-06-15 20:59:43.000000000 -0400
-@@ -49,9 +49,9 @@ int direct2indirect(struct reiserfs_tran
- 
- 	// FIXME: we could avoid this 
- 	if (search_for_position_by_key(sb, &end_key, path) == POSITION_FOUND) {
--		reiserfs_warning(sb, "PAP-14030: direct2indirect: "
--				 "pasted or inserted byte exists in the tree %K. "
--				 "Use fsck to repair.", &end_key);
-+		reiserfs_warning(sb, "PAP-14030",
-+				 "pasted or inserted byte exists in "
-+				 "the tree %K. Use fsck to repair.", &end_key);
- 		pathrelse(path);
- 		return -EIO;
- 	}
-diff -ruNpX ../dontdiff linux-2.6.17-rc6-staging1/fs/reiserfs/xattr.c linux-2.6.17-rc6-staging2/fs/reiserfs/xattr.c
---- linux-2.6.17-rc6-staging1/fs/reiserfs/xattr.c	2006-06-15 20:59:43.000000000 -0400
-+++ linux-2.6.17-rc6-staging2/fs/reiserfs/xattr.c	2006-06-15 20:59:43.000000000 -0400
-@@ -322,7 +322,8 @@ static int __xattr_readdir(struct file *
- 		ih = de.de_ih;
- 
- 		if (!is_direntry_le_ih(ih)) {
--			reiserfs_warning(inode->i_sb, "not direntry %h", ih);
-+			reiserfs_warning(inode->i_sb, "jdm-20000",
-+			                 "not direntry %h", ih);
- 			break;
- 		}
- 		copy_item_head(&tmp_ih, ih);
-@@ -668,7 +669,7 @@ reiserfs_xattr_get(const struct inode *i
- 			if (rxh->h_magic != cpu_to_le32(REISERFS_XATTR_MAGIC)) {
- 				unlock_page(page);
- 				reiserfs_put_page(page);
--				reiserfs_warning(inode->i_sb,
-+				reiserfs_warning(inode->i_sb, "jdm-20001",
- 						 "Invalid magic for xattr (%s) "
- 						 "associated with %k", name,
- 						 INODE_PKEY(inode));
-@@ -688,7 +689,7 @@ reiserfs_xattr_get(const struct inode *i
- 
- 	if (xattr_hash(buffer, isize - sizeof(struct reiserfs_xattr_header)) !=
- 	    hash) {
--		reiserfs_warning(inode->i_sb,
-+		reiserfs_warning(inode->i_sb, "jdm-20002",
- 				 "Invalid hash for xattr (%s) associated "
- 				 "with %k", name, INODE_PKEY(inode));
- 		err = -EIO;
-@@ -722,7 +723,8 @@ __reiserfs_xattr_del(struct dentry *xadi
- 		goto out_file;
- 
- 	if (!is_reiserfs_priv_object(dentry->d_inode)) {
--		reiserfs_warning(dir->i_sb, "OID %08x [%.*s/%.*s] doesn't have "
-+		reiserfs_warning(dir->i_sb, "jdm-20003",
-+		                 "OID %08x [%.*s/%.*s] doesn't have "
- 				 "priv flag set [parent is %sset].",
- 				 le32_to_cpu(INODE_PKEY(dentry->d_inode)->
- 					     k_objectid), xadir->d_name.len,
-@@ -828,7 +830,7 @@ int reiserfs_delete_xattrs(struct inode 
- 		reiserfs_write_unlock_xattrs(inode->i_sb);
- 		dput(root);
- 	} else {
--		reiserfs_warning(inode->i_sb,
-+		reiserfs_warning(inode->i_sb, "jdm-20004",
- 				 "Couldn't remove all entries in directory");
- 	}
- 	unlock_kernel();
-@@ -1248,7 +1250,8 @@ int reiserfs_xattr_init(struct super_blo
- 	} else if (reiserfs_xattrs_optional(s)) {
- 		/* Old format filesystem, but optional xattrs have been enabled
- 		 * at mount time. Error out. */
--		reiserfs_warning(s, "xattrs/ACLs not supported on pre v3.6 "
-+		reiserfs_warning(s, "jdm-20005",
-+		                 "xattrs/ACLs not supported on pre v3.6 "
- 				 "format filesystem. Failing mount.");
- 		err = -EOPNOTSUPP;
- 		goto error;
-@@ -1294,8 +1297,10 @@ int reiserfs_xattr_init(struct super_blo
- 			/* If we're read-only it just means that the dir hasn't been
- 			 * created. Not an error -- just no xattrs on the fs. We'll
- 			 * check again if we go read-write */
--			reiserfs_warning(s, "xattrs/ACLs enabled and couldn't "
--					 "find/create .reiserfs_priv. Failing mount.");
-+			reiserfs_warning(s, "jdm-20006",
-+			                 "xattrs/ACLs enabled and couldn't "
-+					 "find/create .reiserfs_priv. "
-+					 "Failing mount.");
- 			err = -EOPNOTSUPP;
- 		}
- 	}
