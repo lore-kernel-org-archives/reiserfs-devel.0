@@ -1,71 +1,58 @@
-From: "Masthan, Dudekula (STSD)" <dudekula.masthan@hp.com>
-Subject: BUG: reiserfsck --check fails exit status=6
-Date: Mon, 19 Jun 2006 14:50:19 +0530
-Message-ID: <4EEB5A4713E61F49A759A504BECCBC0A027682F1@bgeexc01.asiapacific.cpqcorp.net>
+From: Lars Wolff <support@sipex.de>
+Subject: Try to fix a  broken ReiserFS / Data Recovering?
+Date: Mon, 19 Jun 2006 11:28:20 +0200
+Message-ID: <44966E34.7040801@sipex.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-28814-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28815-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-dev@namesys.com
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: reiserfs-list@namesys.com
 
+Hi there,
 
+i am very new to this list, i just signed up today, because i got some=20
+problems with a broken ReiserFS since yesterday.
 
-Hi,
+_The problem_
+Yesterday my Router/Server (Suse Linux 8.1, 40GB IDE HDD with ReiserFS)=20
+hang up. After a reboot it only starts to "load stage2 of Grub", which=20
+fails and ends up in the grub minimal bash.
 
-I am using SUSE 10 beta version. I ran reiserfsck command with the
-following options
+_What i do to resolve the problem_
+I downloaded the Suse Live-CD 9.1 and did a clean boot from it. I Try to=20
+mount the volume, what end up with "Falscher Dateisystemtyp, ung=FCltige=20
+Optionen, der =BBSuperblock=AB von /dev/hdb2 ist besch=E4digt oder es sind
+zu viele Dateisysteme eingeh=E4ngt" (=3Dcorrupt superblock)
 
+Then I tried reiserFs Check wich ends up in: Bad root block 0.=20
+(--rebuild-tree did not complete).
 
-           reiserfsck --check -q -y -n /dev/sdb1  2>&1
-          =20
-O/p of the command look like this.
+Ok, i followed the instructions in the following "bad block info text"=20
+and did a reiserFs -B badblocksfile --rebuild-tree. Wich aborts and said=20
+"badblock in ....".
 
-             reiserfsck 3.6.19 (2003 www.namesys.com)
-                      =20
-                * If you are using the latest reiserfsprogs and  it
-fails **
-                * please  email bug reports to
-reiserfs-list@namesys.com, **
-                * providing  as  much  information  as  possible --
-your **
-                * hardware,  kernel,  patches,  settings,  all
-reiserfsck **
-                * messages  (including version),  the reiserfsck
-logfile, **
-                * check  the  syslog file  for  any  related
-information. **
-                * If you would like advice on using this program,
-support **
-                * is available  for $25 at
-www.namesys.com/support.html. **
-=20
-*************************************************************
-                Will read-only check consistency of the filesystem on
-/dev/sdb1
-                Will put log info to 'stdout'
-                reiserfsck --check started at Mon May 29 13:16:40 2006
-                Relaying journal..
-                Reiserfs journal '/dev/sdb1' in blocks [18..8211]: 0
-transactions replayed
-                checking internal tree..finished
-                Comparing bitmaps..Checking Semantic tree:
-                finished
-                26 found corruptions can be fixed when running with
---fix-fixable
-                reiserfsck finished at Mon May 29 13:16:44 2006
-                    =20
-                       reiserfsck exit status =3D 6
+Right now i am doing a complete Backup image with dd_rescue, after this=20
+i would like to run /sbin/badblocks, as explained in the Faq=20
+(http://www.namesys.com/bad-block-handling.html) and run then reiserfs=20
+-B again.
 
+_My Questions_
+- Am i right in doing these actions to try to resolve the problem of my=20
+harddisk, and HOPEFULLY to recover the Data?
 
-Can any one Explain this ..Why it happened ?
+- Is there anything i should try/do else?
 
-Your help is appreciated
-Regards,
-Masthan=20
+- Do you now somebody/any company, wich do a real data-recovering von=20
+ReiserFS Disk? Its only 40GB but there are some data on it wich are very=20
+important. (don't ask after the backups, they broke last week on the=20
+extern hdd! :(( )
+
+Hopefully you guys can help me,
+thanks a lot!!!! :)
+
+Lars
