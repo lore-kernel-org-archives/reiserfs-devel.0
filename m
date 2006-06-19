@@ -1,88 +1,46 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: BUG: reiserfsck --check fails exit status=6
-Date: Mon, 19 Jun 2006 16:43:03 +0400
-Message-ID: <1150720984.6383.100.camel@tribesman.namesys.com>
-References: <4EEB5A4713E61F49A759A504BECCBC0A027682F1@bgeexc01.asiapacific.cpqcorp.net>
+From: Lars Wolff <support@sipex.de>
+Subject: Re: Try to fix a  broken ReiserFS / Data Recovering?
+Date: Mon, 19 Jun 2006 15:00:47 +0200
+Message-ID: <44969FFF.5010601@sipex.de>
+References: <44966E34.7040801@sipex.de> <1150720072.6383.88.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28818-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28819-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4EEB5A4713E61F49A759A504BECCBC0A027682F1@bgeexc01.asiapacific.cpqcorp.net>
+In-Reply-To: <1150720072.6383.88.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "Masthan, Dudekula (STSD)" <dudekula.masthan@hp.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Hello
+Hi Vladimir!
 
-On Mon, 2006-06-19 at 14:50 +0530, Masthan, Dudekula (STSD) wrote:
-> 
-> Hi,
-> 
-> I am using SUSE 10 beta version. I ran reiserfsck command with the
-> following options
-> 
-> 
->            reiserfsck --check -q -y -n /dev/sdb1  2>&1
->            
-> O/p of the command look like this.
-> 
->              reiserfsck 3.6.19 (2003 www.namesys.com)
->                        
->                 * If you are using the latest reiserfsprogs and  it
-> fails **
->                 * please  email bug reports to
-> reiserfs-list@namesys.com, **
->                 * providing  as  much  information  as  possible --
-> your **
->                 * hardware,  kernel,  patches,  settings,  all
-> reiserfsck **
->                 * messages  (including version),  the reiserfsck
-> logfile, **
->                 * check  the  syslog file  for  any  related
-> information. **
->                 * If you would like advice on using this program,
-> support **
->                 * is available  for $25 at
-> www.namesys.com/support.html. **
->  
-> *************************************************************
->                 Will read-only check consistency of the filesystem on
-> /dev/sdb1
->                 Will put log info to 'stdout'
->                 reiserfsck --check started at Mon May 29 13:16:40 2006
->                 Relaying journal..
->                 Reiserfs journal '/dev/sdb1' in blocks [18..8211]: 0
-> transactions replayed
->                 checking internal tree..finished
->                 Comparing bitmaps..Checking Semantic tree:
->                 finished
->                 26 found corruptions can be fixed when running with
-> --fix-fixable
->                 reiserfsck finished at Mon May 29 13:16:44 2006
->                      
->                        reiserfsck exit status = 6
-> 
-> 
-> Can any one Explain this ..
+Thanks for your Reply!!!
 
-reiserfsck has 3 major modes.
-By default (or with --check) it checks filesystem and either says that
-everything is ok, or reiserfsck has to be run with --fix-fixable (when
-filesystem can be fixed without tree rebuiling) or with --rebuild-tree
-when corruptions can be recovered only via complete tree rebuild.
+>> _My Questions_
+>> - Am i right in doing these actions to try to resolve the problem of my 
+>> harddisk, and HOPEFULLY to recover the Data?
+>>
+> after dd_rescue completes - please run reiserfsck (3.6.19, without any
+> options but filename) on backup image and let us know what it says.
 
-> Why it happened ?
-> 
+i did i as explained here:
+http://martian.org/marty/2003/09/05/reiserfs-filesystem-recovery
 
-Can you re-run reiserfsck --check without -n and with -l logfile and let
-us see what you get in logfile?
+- dd_rescue finished
+- i set up a loop device with the image
+- then i start reiserfsck --check, it breaks up with rebuild-tree not 
+finished
+- then i start reiserfsck with --rebuild-tree
+- and now its at pass 3 (and in pass 2 i saw the most importatn 
+directory's and files i need)
 
-> Your help is appreciated
-> Regards,
-> Masthan 
-> 
+i am still wating and have always a look on the screen ;)
+
+further infos in a few minutes
+
+thanks & take care!
+Lars
 
