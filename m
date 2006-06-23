@@ -1,101 +1,112 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: [PATCH] reiserfs:fix journaling issue regarding fsync()
-Date: Fri, 23 Jun 2006 14:15:37 +0400
-Message-ID: <1151057737.6355.28.camel@tribesman.namesys.com>
-References: <6.0.0.20.2.20060620153929.040f0750@172.19.0.2>
+From: =?iso-8859-2?B?o3VrYXN6IE1pZXJ6d2E=?= <prymitive@pcserwis.net>
+Subject: Re: [BUG] nikita-1481, nikita-717 and nikita-373 here and there
+Date: Fri, 23 Jun 2006 12:11:28 +0200
+Message-ID: <op.tblfxehpd4os1z@localhost>
+References: <449B2D1D.9000507@iki.fi>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-iVjx/2+sTkDRc0kEjsmG"
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <6.0.0.20.2.20060620153929.040f0750@172.19.0.2>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28845-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <449B2D1D.9000507@iki.fi>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hisashi Hifumi <hifumi.hisashi@oss.ntt.co.jp>
-Cc: reiser@namesys.com, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; format="flowed"; delsp="yes"; charset="iso-8859-1"
+To: Jussi Judin <jjudin+reiser@iki.fi>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
+Dnia Fri, 23 Jun 2006 01:51:57 +0200, Jussi Judin <jjudin+reiser@iki.fi> =20
+napisa=B3:
 
---=-iVjx/2+sTkDRc0kEjsmG
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+> I was using some Debian patched 2.6.16 kernel and reiser4-2.6.16-1 patch =
+=20
+> for that and suddenly got the error messages attached. The java program  =
 
-Hello
+> in those error messages is doing a huge amount of writes all the time =20
+> and probably in many threads at the same time.
+>
 
-Sorry, but afaics reiserfs' fsync works as it is supposed to.
-I experiment with the attached program. After reboot I make sure that
-file has "new file size".
+I'm using 2.6.16 + reiser4-2.6.16-4 patch and I just got those errors =20
+while running emerge --sync on gentoo:
 
-On Tue, 2006-06-20 at 17:43 +0900, Hisashi Hifumi wrote:
-> Hi,
-> 
->   When write() extends a file(i_size is increased) and fsync() is
-> called, change of inode must be written to journaling area
-> through fsync().
-> But,currently the i_trans_id is not correctly updated when i_size
-> is increased. So fsync() does not kick the journal writer.
-> 
-> Following patch fix this bug.
-> 
->   Signed-off-by :Hisashi Hifumi <hifumi.hisashi@oss.ntt.co.jp>
-> 
-> diff -Nru linux-2.6.17/fs/reiserfs/super.c linux-2.6.17_fix/fs/reiserfs/super.c
-> --- linux-2.6.17/fs/reiserfs/super.c	2006-06-18 10:49:35.000000000 +0900
-> +++ linux-2.6.17_fix/fs/reiserfs/super.c	2006-06-20 14:38:28.000000000 +0900
-> @@ -558,6 +558,7 @@
->   		reiserfs_write_unlock(inode->i_sb);
->   		return;
->   	}
-> +	reiserfs_update_inode_transaction(inode);
->   	reiserfs_update_sd(&th, inode);
->   	journal_end(&th, inode->i_sb, 1);
->   	reiserfs_write_unlock(inode->i_sb);
-> 
-> 
-> Thanks, 
-> 
-> 
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9583)]: cbk_level_lookup (fs/reiser4/search.c:961)[vs-3533]:
+WARNING: Keys are inconsistent. Fsck?
+reiser4[rsync(9588)]: traverse_tree (fs/reiser4/search.c:690)[nikita-1481]:
+WARNING: Too many iterations: 128
+reiser4[rsync(9588)]: traverse_tree (fs/reiser4/search.c:690)[nikita-1481]:
+WARNING: Too many iterations: 256
+reiser4[rsync(9588)]: traverse_tree (fs/reiser4/search.c:690)[nikita-1481]:
+WARNING: Too many iterations: 512
+reiser4[rsync(9588)]: traverse_tree (fs/reiser4/search.c:690)[nikita-1481]:
+WARNING: Too many iterations: 1024
+reiser4[rsync(9588)]: traverse_tree (fs/reiser4/search.c:690)[nikita-1481]:
+WARNING: Too many iterations: 2048
+reiser4[rsync(9588)]: traverse_tree (fs/reiser4/search.c:690)[nikita-1481]:
+WARNING: Too many iterations: 4096
+reiser4[rsync(9588)]: traverse_tree (fs/reiser4/search.c:690)[nikita-1481]:
+WARNING: Too many iterations: 8192
+reiser4[rsync(9588)]: traverse_tree (fs/reiser4/search.c:690)[nikita-1481]:
+WARNING: Too many iterations: 16384
+reiser4[rsync(9588)]: traverse_tree (fs/reiser4/search.c:690)[nikita-1481]:
+WARNING: Too many iterations: 32768
+reiser4[rsync(9588)]: traverse_tree (fs/reiser4/search.c:690)[nikita-1481]:
+WARNING: Too many iterations: 65536
+reiser4[rsync(9588)]: traverse_tree (fs/reiser4/search.c:690)[nikita-1481]:
+WARNING: Too many iterations: 131072
+reiser4[rsync(9588)]: traverse_tree (fs/reiser4/search.c:690)[nikita-1481]:
+WARNING: Too many iterations: 262144
+reiser4[rsync(9588)]: traverse_tree (fs/reiser4/search.c:723)[nikita-373]:
+WARNING: reiser-2018: Too many iterations. Tree corrupted, or (less =20
+likely) starvation occurring.: level: 5, lock_level: 1, stop_level: 1 =20
+lock_mode: write, bias: exact
 
---=-iVjx/2+sTkDRc0kEjsmG
-Content-Disposition: attachment; filename=stest.c
-Content-Type: text/x-csrc; name=stest.c; charset=utf-8
-Content-Transfer-Encoding: 7bit
-
-#include <stdio.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-
-int main(int argc, char **argv)
-{
-	int fd;
-	struct stat st;
-
-	fd = open(argv[1], O_WRONLY | O_APPEND);
-	if (fd == -1) {
-		perror("open failed");
-		return 0;
-	}
-	if (fstat(fd, &st)) {
-		perror("stat failed");
-		return 0;
-	}
-	printf("old file size %d\n", st.st_size);
-	if (write(fd, "hello", 5) != 5) {
-		perror("write failed");
-		return 0;
-	}
-
-        if (fstat(fd, &st)) {
-                perror("stat failed");
-                return 0;
-        }
-        printf("new file size %d\n", st.st_size);
-	if (fsync(fd)) {
-		perror("fsync failed");
-		return 0;
-	}
-
-	printf("rebooting"); fflush(stdout);
-	system("reboot -f -n");
-	return 0;
-}
-
---=-iVjx/2+sTkDRc0kEjsmG--
-
+After running fsck.reiser4 --fix the only corruption found was error in =20
+amount of free space
