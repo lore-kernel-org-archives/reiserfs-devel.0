@@ -1,38 +1,37 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
+From: "Nate Diller" <nate.diller@gmail.com>
 Subject: Re: ReiserFS v3 choking when free space falls below 10%?
-Date: Fri, 30 Jun 2006 00:22:03 +0400
-Message-ID: <1151612523.6335.95.camel@tribesman.namesys.com>
+Date: Thu, 29 Jun 2006 13:36:12 -0700
+Message-ID: <5c49b0ed0606291336g3c8cd12m713a97c554f2b9d9@mail.gmail.com>
 References: <1151602916.32453.40.camel@ipso.snappymail.ca>
 	 <1151608355.6335.79.camel@tribesman.namesys.com>
 	 <1151612146.11510.4.camel@ipso.snappymail.ca>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28861-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28862-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 In-Reply-To: <1151612146.11510.4.camel@ipso.snappymail.ca>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Mike Benoit <ipso@snappymail.ca>
-Cc: reiserfs-list@namesys.com
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
 
-Hello
-
-On Thu, 2006-06-29 at 13:15 -0700, Mike Benoit wrote:
+On 6/29/06, Mike Benoit <ipso@snappymail.ca> wrote:
 > On Thu, 2006-06-29 at 23:12 +0400, Vladimir V. Saveliev wrote:
 > > Hello
-> > 
+> >
 > > On Thu, 2006-06-29 at 10:41 -0700, Mike Benoit wrote:
 > > > So I finally got around to profiling mythbackend when the load starts to
 > > > spike. To my surprise it appears that once I have less then 10% (30GB)
 > > > free on the drive reiserfs can't up, even just writing at 1mb/sec is too
-> > > much for it. 
-> > > 
+> > > much for it.
+> > >
 > > > Is there something that can be done to fix this, 30gb seems like a lot
-> > > of wasted space. 
-> > > 
+> > > of wasted space.
+> > >
 > > > #opreport
 > > > CPU: CPU with timer interrupt, speed 0 MHz (estimated)
 > > > Profiling through timer interrupt
@@ -53,37 +52,36 @@ On Thu, 2006-06-29 at 13:15 -0700, Mike Benoit wrote:
 > > >        23  0.0233 libperl.so
 > > >        22  0.0223 libz.so.1.2.3
 > > > <snip>
-> > > 
+> > >
 > > > #opreport -l /usr/src/linux/vmlinux
 > > > CPU: CPU with timer interrupt, speed 0 MHz (estimated)
 > > > Profiling through timer interrupt
 > > > samples  %        symbol name
 > > > 9607     52.8351  default_idle
 > > > 7694     42.3142  find_next_zero_bit
-> > 
+> >
 > > It looks like the problem is high fragmentation of free space.
 > > find_next_zero_bit is a function which is used to scan bitmaps in order
 > > to find blocks for allocation.
-> > 
-> 
+> >
+>
 > This seems strange, because to me this type of workload would lend
 > itself to being less fragmented then most workloads. All the box does is
 > records TV programs, so over the course of 30-60min periods I would
-> guess 95+% of the writes are sequential. 
-> 
+> guess 95+% of the writes are sequential.
 
-do you ever remove files?
+do you frequently record more than one program at once?
 
 > Why would the fragmentation be so bad? Is there a way to tell what the
 > fragmentation rate is?
-> 
 
-can you please run debugreiserfs -m /dev/hda1 > bitmap and send me that
-file?
-bitmap should contain dump of free and used blocks. If most of bitmap
-blocks contain a lot of interleaving free/used sections - free space is
-highly fragmented and allocating new free blocks can be CPU expensive.
+reiserfs does not use delayed allocation, and AFAIK cannot do
+reservations either.  this means that if you are recording two things
+at once, they will get interleaved on disk in very small increments.
+then when you delete one file, the free space is fragmented too.
 
-> Thanks.
-> 
+best bet would be to use reiser4, which has delayed allocation, and
+set /proc/sys/vm/dirty_background_ratio to 40, and dirty_ratio to 45
+or 50.
 
+NATE
