@@ -1,40 +1,41 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH 03/04] reiserfs: reorganize bitmap loading functions
-Date: Mon, 26 Jun 2006 10:52:21 -0400
-Message-ID: <449FF4A5.2030006@suse.com>
-References: <20060615014203.GA8216@locomotive.unixthugs.org> <449FCEF7.5060202@in.ibm.com>
+From: hanasaki <hanasaki@hanaden.com>
+Subject: Unfixable corruptions with Reiser 3.6
+Date: Thu, 29 Jun 2006 10:52:48 -0500
+Message-ID: <44A3F750.3060602@hanaden.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750745AbWFZOwh@vger.kernel.org>
-In-Reply-To: <449FCEF7.5060202@in.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-28850-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Suzuki <suzuki@in.ibm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@osdl.org>, Linus Torvalds <torvalds@osdl.org>, ReiserFS Mailing list <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Recently had to do a reboot and had not errors, just replayed
+transactions at reboot.  Just to be safe, I rebooted into Knoppix 5.0x
+and did a reiserfsck which reported there were errors that needed to be
+fixed with --rebuild-tree  The failed output of this is below.  This has
+happened quite often and I have done a full reinstall several times.
+This is much more of an issue than ever was experienced with ext3 or
+even ext2.
 
-Suzuki wrote:
-> Hi,
-> 
-> We hit a BUG while running fsstress tests on 2.6.17-mm1. It looks like
-> the BUG was introduced with this code change.
+///////////
 
-Thanks for the report, but it's known and fixed. Please apply the
-patches in the mm1 hotfixes directory.
+216224 directory entries were hashed with "r5" hash.
+        "r5" hash is selected
+Flushing..finished
+        Read blocks (but not data blocks) 1049994
+                Leaves among those 44826
+                        - corrected leaves 1
+                        - leaves all contents of which could not be
+saved and deleted 3
+                Objectids found 215800
 
-- -Jeff
+uname -a  <= a custom kernel from kernel.org download and build
+Linux deskstation 2.6.17.1hanaden #1 SMP PREEMPT Wed Jun 28 18:34:21 CDT
+2006 i686 GNU/Linux
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
-
-iD8DBQFEn/SlLPWxlyuTD7IRAvwCAKCKnUI4BYWcp5ivNxWuhlljnRJU/gCcD+Nm
-TFFzgbHrnx6mrIHA0faJulE=
-=O7SM
------END PGP SIGNATURE-----
+Has been occurring with lower kernel numbers and those that come with
+both Debian and Ubuntu
