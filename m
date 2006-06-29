@@ -1,71 +1,96 @@
-From: hanasaki <hanasaki@hanaden.com>
-Subject: Re: How do deal with : rebuild-tree gives "leaves all contents of
- which could not be,saved and deleted"?
-Date: Thu, 29 Jun 2006 15:15:20 -0500
-Message-ID: <44A434D8.3050205@hanaden.com>
-References: <44A42F4D.4000804@hanaden.com> <1151610628.6335.85.camel@tribesman.namesys.com> <44A431D7.5010402@namesys.com>
+From: Mike Benoit <ipso@snappymail.ca>
+Subject: Re: ReiserFS v3 choking when free space falls below 10%?
+Date: Thu, 29 Jun 2006 13:15:46 -0700
+Message-ID: <1151612146.11510.4.camel@ipso.snappymail.ca>
+References: <1151602916.32453.40.camel@ipso.snappymail.ca>
+	 <1151608355.6335.79.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28859-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-gqB97/HSMUbJRg28ueY2"
+Return-path: <reiserfs-list-return-28860-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44A431D7.5010402@namesys.com>
+In-Reply-To: <1151608355.6335.79.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: reiserfs-list@namesys.com
 
+--=-gqB97/HSMUbJRg28ueY2
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, 2006-06-29 at 23:12 +0400, Vladimir V. Saveliev wrote:
+> Hello
+>=20
+> On Thu, 2006-06-29 at 10:41 -0700, Mike Benoit wrote:
+> > So I finally got around to profiling mythbackend when the load starts t=
+o
+> > spike. To my surprise it appears that once I have less then 10% (30GB)
+> > free on the drive reiserfs can't up, even just writing at 1mb/sec is to=
+o
+> > much for it.=20
+> >=20
+> > Is there something that can be done to fix this, 30gb seems like a lot
+> > of wasted space.=20
+> >=20
+> > #opreport
+> > CPU: CPU with timer interrupt, speed 0 MHz (estimated)
+> > Profiling through timer interrupt
+> >           TIMER:0|
+> >   samples|      %|
+> > ------------------
+> >     77863 78.7856 reiserfs
+> >     18183 18.3984 vmlinux
+> >       695  0.7032 mysqld
+> >       452  0.4574 libc-2.4.so
+> >       360  0.3643 libmythtv-0.19.so.0.19.0
+> >       324  0.3278 ivtv
+> >       323  0.3268 nvidia
+> >       242  0.2449 libqt-mt.so.3.3.6
+> >       110  0.1113 libpthread-2.4.so
+> >        53  0.0536 libstdc++.so.6.0.8
+> >        35  0.0354 ld-2.4.so
+> >        23  0.0233 libperl.so
+> >        22  0.0223 libz.so.1.2.3
+> > <snip>
+> >=20
+> > #opreport -l /usr/src/linux/vmlinux
+> > CPU: CPU with timer interrupt, speed 0 MHz (estimated)
+> > Profiling through timer interrupt
+> > samples  %        symbol name
+> > 9607     52.8351  default_idle
+> > 7694     42.3142  find_next_zero_bit
+>=20
+> It looks like the problem is high fragmentation of free space.
+> find_next_zero_bit is a function which is used to scan bitmaps in order
+> to find blocks for allocation.
+>=20
 
-Hans Reiser wrote:
-> Vladimir V. Saveliev wrote:
-> 
->> Hello
->>
->> On Thu, 2006-06-29 at 14:51 -0500, hanasaki wrote:
->>  
->>
->>> Recently had to do a reboot and had not errors, just replayed
->>> transactions at reboot.  Just to be safe, I rebooted into Knoppix 5.0x
->>> and did a reiserfsck which reported there were errors that needed to be
->>> fixed with --rebuild-tree  The failed output of this is below.  This has
->>> happened quite often and I have done a full reinstall several times.
->>> This is much more of an issue than ever was experienced with ext3 or
->>> even ext2.
->>>
->>> ///////////
->>>
->>> 216224 directory entries were hashed with "r5" hash.
->>>        "r5" hash is selected
->>> Flushing..finished
->>>        Read blocks (but not data blocks) 1049994
->>>                Leaves among those 44826
->>>                        - corrected leaves 1
->>>                        - leaves all contents of which could not be
->>> saved and deleted 3
->>>    
->>>
->> This is only information. reiserfsck was not able to recover content of
->> a node.
->>
->>>                Objectids found 215800
->>>
->>> uname -a  <= a custom kernel from kernel.org download and build
->>> Linux deskstation 2.6.17.1hanaden #1 SMP PREEMPT Wed Jun 28 18:34:21 CDT
->>> 2006 i686 GNU/Linux
->>>
->>> Has been occurring with lower kernel numbers and those that come with
->>> both Debian and Ubuntu
->>>
->>>   
->>
-> Fix the message to be more clear then.
+This seems strange, because to me this type of workload would lend
+itself to being less fragmented then most workloads. All the box does is
+records TV programs, so over the course of 30-60min periods I would
+guess 95+% of the writes are sequential.=20
 
-Running rebuild-tree gives the same error even if run three times in a
-row.  Is this OK?  Is it just information or is there something on the
-disk potentially corrupt in the data (not the file system integrity)
-based on this msg?
+Why would the fragmentation be so bad? Is there a way to tell what the
+fragmentation rate is?
 
-What do you mean "fix the message"?
+Thanks.
+
+--=20
+Mike Benoit <ipso@snappymail.ca>
+
+--=-gqB97/HSMUbJRg28ueY2
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
+
+iD8DBQBEpDTxMhKjsejwBhgRAjq3AJ9NVTZKEmp55tkJwB/Hxk6Q0uNfQACfcrgT
+AdZyRiVmJQogbDFNa+zwfLg=
+=0RyJ
+-----END PGP SIGNATURE-----
+
+--=-gqB97/HSMUbJRg28ueY2--
 
