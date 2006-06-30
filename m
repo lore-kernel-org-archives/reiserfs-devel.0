@@ -1,60 +1,56 @@
-From: Hisashi Hifumi <hifumi.hisashi@oss.ntt.co.jp>
-Subject: Re: [PATCH] reiserfs:fix journaling issue regarding fsync()
-Date: Fri, 30 Jun 2006 10:36:02 +0900
-Message-ID: <6.0.0.20.2.20060630094908.0411c9d0@172.19.0.2>
-References: <6.0.0.20.2.20060620153929.040f0750@172.19.0.2>
- <200606292047.14973.mason@suse.com>
+From: "Masthan, Dudekula (STSD)" <dudekula.masthan@hp.com>
+Subject: BUG IN REISERFS SLES 10 :
+Date: Fri, 30 Jun 2006 11:08:58 +0530
+Message-ID: <4EEB5A4713E61F49A759A504BECCBC0A0288E1AA@bgeexc01.asiapacific.cpqcorp.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <200606292047.14973.mason@suse.com>
-References: <6.0.0.20.2.20060620153929.040f0750@172.19.0.2>
- <200606292047.14973.mason@suse.com>
+Content-class: urn:content-classes:message
 Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Chris Mason <mason@suse.com>, reiserfs-list@namesys.com
-Cc: reiser@namesys.com, reiserfs-dev@namesys.com, linux-fsdevel@vger.kernel.org
-
-Hi,
-
-At 09:47 06/06/30, Chris Mason wrote:
- >Thanks for the patch.  One problem is this will bump the transaction marker
- >for atime updates too.  I'd rather see the change done inside
- >reiserfs_file_write.
-
-I did not realize that an atime updates is also influenced.
-
- >
- >reiserfs_file_write already updates the transaction when blocks are allocated,
- >but you're right that to be 100% correct we should cover the case when i_size
- >increases but new blocks are not added.  Was this the case you were trying to
- >fix?
-
-Yes, that's right.
-
-So, I remade my patch as follows.
-I tested this patch and confirmed that the kernel with this patch work well.
+Content-Type: text/plain; charset="us-ascii"
+Cc: reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org
 
 
-Signed-off-by :Hisashi Hifumi <hifumi.hisashi@oss.ntt.co.jp>
+Hi Folks,
+
+I am using SLES 10 latest beta bits. Generally I will use sg_reset
+command to reset my scsi device/bus. In sles 10 the machine is not
+coming up ( or in otherwords the machine is hanging)  after issuing the
+sg_reset command.
+I tried the following command
+
+# sg_reset -b /dev/sg3
+
+and also i tried with scsi ioctls, still I am facing the same problem
+I tried with the following standalone program
+
+#include<stdio.h>
+   :
+   :
+int main(int argc, char * argv[]) {
+   int fd;
+   int rc;
+   int arg=2;
+   if ((fd=open("/dev/sg3", O_RDWR)) < 0) {
+      printf( "device open fails");
+      return -1;
+   }
+   if ((rc=ioctl(fd,SG_SCSI_RESET,&arg)) < 0 ){
+     printf( " ioctl failed "); 
+     close (fd);
+     return -1;
+   }
+  
+  printf ( " reset success ");
+  close (fd);
+  return 0;
+ }
 
 
-diff -Nru linux-2.6.17/fs/reiserfs/file.c linux-2.6.17_fix/fs/reiserfs/file.c
---- linux-2.6.17/fs/reiserfs/file.c	2006-06-18 10:49:35.000000000 +0900
-+++ linux-2.6.17_fix/fs/reiserfs/file.c	2006-06-30 10:09:35.000000000 +0900
-@@ -860,8 +860,10 @@
-  			// this sets the proper flags for O_SYNC to trigger a commit
-  			mark_inode_dirty(inode);
-  			reiserfs_write_unlock(inode->i_sb);
--		} else
-+		} else {
-+			reiserfs_update_inode_transaction(inode);
-  			mark_inode_dirty(inode);
-+		}
+After running above program also I am facing same problem. 
 
-  		sd_update = 1;
-  	}
 
-Thanks.
+Is it bug in SLES 10 or is it bug in qlogic driver ?
 
+Thanks in advance
