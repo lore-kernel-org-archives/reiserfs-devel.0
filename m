@@ -1,34 +1,38 @@
-From: Erik Mouw <erik@harddisk-recovery.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
 Subject: Re: BUG IN REISERFS
-Date: Fri, 30 Jun 2006 14:29:06 +0200
-Message-ID: <20060630122906.GE11568@harddisk-recovery.com>
-References: <1151658708.6499.16.camel@tribesman.namesys.com> <4EEB5A4713E61F49A759A504BECCBC0A028D1CCB@bgeexc01.asiapacific.cpqcorp.net>
+Date: Fri, 30 Jun 2006 17:36:25 +0400
+Message-ID: <1151674585.6499.56.camel@tribesman.namesys.com>
+References: <4EEB5A4713E61F49A759A504BECCBC0A028D1CCB@bgeexc01.asiapacific.cpqcorp.net>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28876-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 In-Reply-To: <4EEB5A4713E61F49A759A504BECCBC0A028D1CCB@bgeexc01.asiapacific.cpqcorp.net>
-Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: "Masthan, Dudekula (STSD)" <dudekula.masthan@hp.com>
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com, linux-fsdevel@vger.kernel.org
+Cc: reiserfs-list@namesys.com
 
-Please choose your subject carefully. Claiming that you found a bug in
-reiserfs while you only met a boundary condition isn't very polite.
+hello
 
-On Fri, Jun 30, 2006 at 05:51:14PM +0530, Masthan, Dudekula (STSD) wrote:
+On Fri, 2006-06-30 at 17:51 +0530, Masthan, Dudekula (STSD) wrote:
+>  
+> Hi Folks,
+> 
 > Mkreiserfs command is failing by showing " There are no enoguh blocks on
 > this device" , What is the minimum size of a disk to create reiserfs
 > file system
+> 
 
-That mainly depends on the journal size. The default journal size is 32
-MB which means that an actual useful disk size is about 100 MB. See
-mkreiserfs(8), -s option.
+Please let us see whole mkreiserfs output and the command line itself.
 
+In case of standard journal minimal reiserfs size is 8212 blocks.
 
-Erik
+> Regards,
+> Masthan
+> 
+> 
 
--- 
-+-- Erik Mouw -- www.harddisk-recovery.com -- +31 70 370 12 90 --
-| Lab address: Delftechpark 26, 2628 XH, Delft, The Netherlands
