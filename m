@@ -1,38 +1,35 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: BUG IN REISERFS
-Date: Fri, 30 Jun 2006 17:36:25 +0400
-Message-ID: <1151674585.6499.56.camel@tribesman.namesys.com>
-References: <4EEB5A4713E61F49A759A504BECCBC0A028D1CCB@bgeexc01.asiapacific.cpqcorp.net>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: ReiserFS v3 choking when free space falls below 10%?
+Date: Fri, 30 Jun 2006 09:33:53 -0700
+Message-ID: <44A55271.7050501@namesys.com>
+References: <1151602916.32453.40.camel@ipso.snappymail.ca>	 <1151608355.6335.79.camel@tribesman.namesys.com> <1151612146.11510.4.camel@ipso.snappymail.ca>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28876-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28877-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4EEB5A4713E61F49A759A504BECCBC0A028D1CCB@bgeexc01.asiapacific.cpqcorp.net>
+In-Reply-To: <1151612146.11510.4.camel@ipso.snappymail.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Masthan, Dudekula (STSD)" <dudekula.masthan@hp.com>
-Cc: reiserfs-list@namesys.com
+To: Mike Benoit <ipso@snappymail.ca>, Jeff Mahoney <jeffm@suse.com>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
 
-hello
+Mike Benoit wrote:
 
-On Fri, 2006-06-30 at 17:51 +0530, Masthan, Dudekula (STSD) wrote:
+>
+>This seems strange, because to me this type of workload would lend
+>itself to being less fragmented then most workloads. All the box does is
+>records TV programs, so over the course of 30-60min periods I would
+>guess 95+% of the writes are sequential. 
+>
+>Why would the fragmentation be so bad? Is there a way to tell what the
+>fragmentation rate is?
+>
+>Thanks.
+>
 >  
-> Hi Folks,
-> 
-> Mkreiserfs command is failing by showing " There are no enoguh blocks on
-> this device" , What is the minimum size of a disk to create reiserfs
-> file system
-> 
-
-Please let us see whole mkreiserfs output and the command line itself.
-
-In case of standard journal minimal reiserfs size is 8212 blocks.
-
-> Regards,
-> Masthan
-> 
-> 
-
+>
+I wonder how the bitmap optimizations that Jeff added handle this usage
+pattern.  Jeff?
