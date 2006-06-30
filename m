@@ -1,36 +1,36 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: debugreiserfs -p contains sensitive information?
-Date: Fri, 30 Jun 2006 14:04:05 +0400
-Message-ID: <1151661845.6499.39.camel@tribesman.namesys.com>
-References: <44A4430C.1090106@hanaden.com>
+From: Alexander Zarochentsev <zam@namesys.com>
+Subject: Re: Reiser4 on top of software raid 1 - synchronous write "problem"?
+Date: Fri, 30 Jun 2006 14:37:04 +0400
+Message-ID: <200606301437.04644.zam@namesys.com>
+References: <N1-SucH3Ugv3E@Safe-mail.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28871-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28872-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44A4430C.1090106@hanaden.com>
+In-Reply-To: <N1-SucH3Ugv3E@Safe-mail.net>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: hanasaki <hanasaki@hanaden.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
+Cc: Diego Pinheiro <diegopp@safe-mail.net>
 
-Hello
+On Friday 30 June 2006 01:44, Diego Pinheiro wrote:
+> Hi all,
+>
+> I got a ZAM-1055 "disable_write_barrier", "using synchronous write"
+> notice when trying to use a reiser4 on top of a software raid 1
+> (dmraid).
+ 
+> I know it's just a notice, but should I experiment any performance
+> loss because of the synchronous writes?
 
-On Thu, 2006-06-29 at 16:15 -0500, hanasaki wrote:
-> debugreiserfs -p contains sensitive information?
-> 
-> could someone from the Reiser development / design team confirm if the
-> above command outputs any sensitive information?  for example: part or
-> all of a file on the filesystem?  Just what is in the output?  Looking
-> for more details than are in the man page.
-> 
+I don't think so.  A number of optimizations (copy on capture, for 
+example) should be done in reiser4 to see any effect of working write 
+barrier support.
 
-debugreiserfs -p extracts metadata from a filesystem. Most of data are
-binary. Contents of files are not extracted. The only information which
-is extracted and can be considered sensitive is filenames.
-
-Having those metadata allows (usually) to reproduce reiserfsck bugs
-without having whole filesystem.
+Best,
+Alex.
 
