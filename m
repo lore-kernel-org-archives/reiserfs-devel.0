@@ -1,31 +1,49 @@
-From: =?iso-8859-2?B?o3VrYXN6IE1pZXJ6d2E=?= <prymitive@pcserwis.net>
-Subject: Re: reiser4 oops
-Date: Mon, 03 Jul 2006 13:51:59 +0200
-Message-ID: <op.tb328xkxd4os1z@localhost>
-References: <op.tb00v9njd4os1z@localhost> <1151900677.10172.22.camel@gentoo> <1151921448.6335.42.camel@tribesman.namesys.com>
+From: Christopher Michael Neill <chris.neill@biz360.com>
+Subject: any way to fix this?
+Date: Mon, 3 Jul 2006 11:57:54 -0700
+Message-ID: <20060703185754.GA8875@biz360.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-28901-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28902-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1151921448.6335.42.camel@tribesman.namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; delsp="yes"; charset="iso-8859-1"
-To: "Vladimir V. Saveliev" <vs@namesys.com>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
+Cc: ops@biz360.com
 
-Dnia Mon, 03 Jul 2006 12:10:48 +0200, Vladimir V. Saveliev =20
-<vs@namesys.com> napisa=B3:
+[root@mars18 ~]# reiserfsck --check /dev/sdb1
+reiserfsck 3.6.19 (2003 www.namesys.com)
 
+*************************************************************
+** If you are using the latest reiserfsprogs and  it fails **
+** please  email bug reports to reiserfs-list@namesys.com, **
+** providing  as  much  information  as  possible --  your **
+** hardware,  kernel,  patches,  settings,  all reiserfsck **
+** messages  (including version),  the reiserfsck logfile, **
+** check  the  syslog file  for  any  related information. **
+** If you would like advice on using this program, support **
+** is available  for $25 at  www.namesys.com/support.html. **
+*************************************************************
 
-> would you please check whether this patch helps?
-> ftp://ftp.ru.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.17/2=
-.6.17-mm5/broken-out/reiser4-run-truncate_inode_pages-in-reiser4_delete_ino=
-de.patch
+Will read-only check consistency of the filesystem on /dev/sdb1
+Will put log info to 'stdout'
 
-I have deleted some old files, unmerged xine from my system and compiled =20
-it again and this time there was no problem, but I'm rebuilding my whole =20
-system so I will aplly this patch and see if I get another one oops.
+Do you want to run this program?[N/Yes] (note need to type Yes if you
+do):Yes
+###########
+reiserfsck --check started at Mon Jul  3 11:56:36 2006
+###########
+Replaying journal..
+Reiserfs journal '/dev/sdb1' in blocks [18..8211]: 0 transactions
+replayed
+Zero bit found in on-disk bitmap after the last valid bit.
+Checking internal tree..
 
-thanks
+Bad root block 0. (--rebuild-tree did not complete)
+
+Aborted
+
