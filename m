@@ -1,39 +1,30 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: vanilla 2.6.17
-Date: Wed, 05 Jul 2006 16:17:30 +0400
-Message-ID: <1152101850.6337.38.camel@tribesman.namesys.com>
-References: <44ABAB10.3000103@free.fr>
+From: Tom Vier <tmv@comcast.net>
+Subject: Re: ReiserFS v3 choking when free space falls below 10%?
+Date: Wed, 5 Jul 2006 10:42:41 -0400
+Message-ID: <20060705144241.GA26588@zero>
+References: <1151602916.32453.40.camel@ipso.snappymail.ca> <1151608355.6335.79.camel@tribesman.namesys.com> <1151612146.11510.4.camel@ipso.snappymail.ca> <44A55271.7050501@namesys.com> <44A55591.6060500@suse.com> <1152059846.30139.11.camel@ipso.snappymail.ca> <44AB25EE.8030702@namesys.com>
+Reply-To: Tom Vier <tmv@comcast.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28911-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28913-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44ABAB10.3000103@free.fr>
+Content-Disposition: inline
+In-Reply-To: <44AB25EE.8030702@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: jp <jp.guillemin@free.fr>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
-Hello
+On Tue, Jul 04, 2006 at 07:37:34PM -0700, Hans Reiser wrote:
+> Mike, thanks so much for going to this much effort.  It is rather likely
+> this is a problem affecting many users.
 
-On Wed, 2006-07-05 at 14:05 +0200, jp wrote:
-> Hi,
-> 
-> I didn't see any follow up for my previous mail, so here's the question 
-> again :
-> 
-> What is the status of the reiser4 patch against vanilla 2.6.17.x ?
-> 
+Last weekend, i accidentally filled my /. I noticed when i heard the drives
+(it's a 2 drive raid 0) thrashing. I didn't watch the cpu load, which may've
+been high, but it seemed to be io bound.
 
-That patch will be made right after I will have fixed reiser4 bug I am
-working on now.
-
-> Thanks
-> 
-> JP
-> Zenwalk.org
-> 
-> 
-
+-- 
+Tom Vier <tmv@comcast.net>
+DSA Key ID 0x15741ECE
