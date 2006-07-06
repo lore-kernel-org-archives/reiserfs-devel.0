@@ -1,58 +1,31 @@
-From: Jonathan Briggs <jbriggs@esoft.com>
-Subject: Re: ReiserFS v3 choking when free space falls below 10%?
-Date: Thu, 06 Jul 2006 10:01:47 -0600
-Message-ID: <1152201707.9445.1.camel@localhost>
-References: <1151602916.32453.40.camel@ipso.snappymail.ca>
-	 <1151608355.6335.79.camel@tribesman.namesys.com>
-	 <1151612146.11510.4.camel@ipso.snappymail.ca>
-	 <44A55271.7050501@namesys.com> <44A55591.6060500@suse.com>
-	 <1152059846.30139.11.camel@ipso.snappymail.ca>
-	 <44AB25EE.8030702@namesys.com>
-	 <20060706125856.fdac1d16.pegasus@nerv.eu.org>
-	 <1152200638.30139.45.camel@ipso.snappymail.ca>
+From: Joe Feise <jfeise@feise.com>
+Subject: Re: Reiser4 cowardly panic 2.6.17-mm5
+Date: Thu, 06 Jul 2006 10:18:09 -0700
+Message-ID: <20060706171809.4602.qmail@pv105234.reshsg.uci.edu>
+References: <44A6FA33.1000305@feise.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-JDDfQmEjvGdwUZ56jTCi"
-Return-path: <reiserfs-list-return-28917-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28918-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1152200638.30139.45.camel@ipso.snappymail.ca>
+In-Reply-To: <44A6FA33.1000305@feise.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Mike Benoit <ipso@snappymail.ca>
-Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
---=-JDDfQmEjvGdwUZ56jTCi
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+This seems to be fixed with 2.6.17-mm6. 
 
-On Thu, 2006-07-06 at 08:43 -0700, Mike Benoit wrote:
-[snip]
-> My desktop machine (v2.6.16, same as my MythTV box) is running with 9%
-> free space right now and it is not experiencing any slow down. I think
-> the problem is caused by the usage pattern of MythTV and how it
-> simultaneously streams one or more large files to the HD in relatively
-> small chunks over a long period of time.
+ -Joe 
 
-Hasn't someone patched MythTV to pre-allocate (zero-write) the video
-files to the expected sizes?
+Joe Feise writes: 
 
-I was sure I'd read about that somewhere...
---=20
-Jonathan Briggs <jbriggs@esoft.com>
-eSoft, Inc.
-
---=-JDDfQmEjvGdwUZ56jTCi
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.4 (GNU/Linux)
-
-iD8DBQBErTPqG8fHaOLTWwgRAsu1AJ0Xf53ALBp9Ni25G1gDgPRwJYUXPgCggKxr
-X84k9Cmz80k8qNF+uy7T14Y=
-=5qCS
------END PGP SIGNATURE-----
-
---=-JDDfQmEjvGdwUZ56jTCi--
-
+> I consistently get cowardly panic errors during bootup with 2.6.17-mm5 (I also
+> had that with -mm3, and had hoped -mm5 would have fixed it.)
+> It corrupts the partition this is happening on (/var)
+> I don't have dmesg or syslog output, though, since this happens during bootup,
+> and /var gets corrupted... 
+> 
+> -Joe 
+> 
