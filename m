@@ -1,239 +1,128 @@
-From: Jake Maciejewski <maciejej@msoe.edu>
-Subject: Re: reiser4 oops
-Date: Fri, 07 Jul 2006 01:18:32 -0600
-Message-ID: <1152256712.9797.17.camel@gentoo>
-References: <op.tb00v9njd4os1z@localhost> <1151900677.10172.22.camel@gentoo>
-	 <1151921448.6335.42.camel@tribesman.namesys.com>
-	 <1151969007.10172.23.camel@gentoo>
+From: Sarath Menon <sarathmenon@gmail.com>
+Subject: Re: fsck.reiser4 segfaults
+Date: Fri, 7 Jul 2006 12:16:18 +0530
+Message-ID: <200607071216.18989.sarathmenon@gmail.com>
+References: <932539950603310621m67305c9eg42492492b84767fc@mail.gmail.com> <932539950603311021x201d9e13mfdf9e95923e1f744@mail.gmail.com> <1144059702.6316.62.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-28928-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28929-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1151969007.10172.23.camel@gentoo>
+In-Reply-To: <1144059702.6316.62.camel@tribesman.namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: =?iso-8859-2?Q?=A3ukasz?= Mierzwa <prymitive@pcserwis.net>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-It doesn't look like this issue has been fixed:
+Hi Vlad,
 
-http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060702/reise=
-r4_kio_http.txt.gz
+This was posted a long time before. I was wondering whether the recent patches 
+might have fixed this. Can you please comment? 
 
-Again fsck showed a clean filesystem. Should I try -mm?
+Thanks,
+Sarath
 
-This is somewhat difficult to reproduce because the critical factor
-seems to be using all available memory, however in doing so the system
-quickly becomes unresponsive.
+On Monday 03 April 2006 15:51, Vladimir V. Saveliev wrote:
+> Hello
+>
+> On Fri, 2006-03-31 at 20:21 +0200, Sarath Menon wrote:
+> > reiserfsprogs and libaal are both 1.0.5. I'll give you the dmesg
+> > output tommorow - I need to get a livecd with reiser4 patches - its
+> > more difficult than I initially thought ;)
+> >
+> > Here's the gdb bt output - that's the max that I can provide today.
+> >
+> > Program received signal SIGSEGV, Segmentation fault.
+> > 0x40052dd1 in repair_filter_update_traverse () from /tmp/reiser4/lib
+> > (gdb) bt
+> > #0  0x40052dd1 in repair_filter_update_traverse () from /tmp/reiser4
+> > #1  0x40015959 in reiser4_tree_trav_node () from /tmp/reiser4/lib/li
+> > #2  0x40015938 in reiser4_tree_trav_node () from /tmp/reiser4/lib/li
+> > #3  0x40052356 in repair_filter_traverse () from /tmp/reiser4/lib/li
+> > #4  0x40051c8c in repair_filter () from /tmp/reiser4/lib/librepair-1
+> > #5  0x400575ea in repair_check () from /tmp/reiser4/lib/librepair-1.
+> > #6  0x0804a1cb in main ()
+> > #7  0x4102eda6 in __libc_start_main () from /lib/libc.so.6
+> >
+> > I'll post the dmesg output tommorow.
+>
+> I would like to debug this problem. Can you please do
+> debugfs.reiser4 /dev/thatdevice -P | bzip2 -c > reiser4-metadata.bz2
+> and put resulting file somewhere for downloading. That should make
+> debugging easier.
+>
+> > Thanks,
+> > Sarath
+> >
+> > On 3/31/06, Vladimir V. Saveliev <vs@namesys.com> wrote:
+> > > Hello
+> > >
+> > > On Fri, 2006-03-31 at 16:21 +0200, Sarath Menon wrote:
+> > > > Hello,
+> > > >
+> > > > I've been using reiser4 for more than a year without any problems.
+> > > > The filesystem performance has been commendable to say the least.
+> > > > Yesterday, I had to powercycle my pc (due to a dma hang with my cd
+> > > > drive - happens occasionaly) and after the reboot, grub would not
+> > > > load. I use a single root partition (/boot inclusive) and the patched
+> > > > grub sources.
+> > > >
+> > > > I've tried booting into knoppix and compiling reiser4progs and
+> > > > running an
+> > >
+> > > fsck.
+> > >
+> > > > This is what I get -:
+> > > > Master super block (16):
+> > > > magic:          ReIsEr4
+> > > > blksize:        4096
+> > > > format:         0x0 (format40)
+> > > > label:          <none>
+> > > >
+> > > > Format super block (17):
+> > > > plugin:         format40
+> > > > description:    Disk-format for reiser4.
+> > > > magic:          ReIsEr40FoRmAt
+> > > > flushes:        0
+> > > > mkfs id:        0x3a4f3c7b
+> > > > blocks:         2443880
+> > > > free blocks:    428490
+> > > > root block:     743745
+> > > > tail policy:    0x2 (smart)
+> > > > next oid:       0xf63a06
+> > > > file count:     469920
+> > > > tree height:    5
+> > > > key policy:     LARGE
+> > > >
+> > > >
+> > > > CHECKING STORAGE TREE
+> > > > FSCK: Node (743744), item (0), unit (0): Points to the block (743745)
+> > > > which is in the tree already.
+> > > > The whole subtree is skipped.
+> > > > Segmentation fault
+> > >
+> > > can you please run dmesg after that and send its output?
+> > >
+> > > > debugfs.reiser4 also segfaults, and a mount also fails, it complians
+> > > > of a duplicate key. (I can't post the exact message because the
+> > > > second livecd doesn't have X or any mail client :(
+> > > >
+> > > >
+> > > > Cheers,
+> > > > Sarath
+> > > >
+> > > > --
+> > > > I presume, when you pronounce iptables, you say that you are peeing
+> > > > tables
+> >
+> > --
+> > --------------------------
+> > I presume, when you pronounce iptables, you say that you are peeing
+> > tables
 
-On Mon, 2006-07-03 at 17:23 -0600, Jake Maciejewski wrote:
-> Thanks for the patch. I don't think I'll be able to test it before
-> Wednesday, though.
->=20
-> On Mon, 2006-07-03 at 14:10 +0400, Vladimir V. Saveliev wrote:
-> > Hello
-> >=20
-> > On Sun, 2006-07-02 at 22:24 -0600, Jake Maciejewski wrote:
-> > > I'm seeing this on 2.6.16.20 with the -4 patch, amd64 with preempt. T=
-he
-> > > OOM killer was called even though I have 1GB RAM and 4GB swap. My log=
-s
-> > > are available at:
-> > >=20
-> > > http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060702=
-/oom.txt.gz
-> > >=20
-> > > Both affected filesystems (rsync was using one filesystem, cc1 the
-> > > other) came up clean with fsck.
-> > >=20
-> > > On Sat, 2006-07-01 at 22:08 +0200, =A3ukasz Mierzwa wrote:
-> > > > I'm running x86 gentoo system with / on reiser4, I'm using
-> > > > suspend-sources-2.6.16-r8 kernel with 2.6.16-4 patch. Today I run e=
-merge
-> > > > --sync, after that I started to compile new xine-lib while browsing=
- net,
-> > > > when xine-lib was finishing I got this errors:
-> > > >=20
-> > > > kernel BUG at fs/inode.c:253!
-> >=20
-> > would you please check whether this patch helps?
-> > ftp://ftp.ru.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.17=
-/2.6.17-mm5/broken-out/reiser4-run-truncate_inode_pages-in-reiser4_delete_i=
-node.patch
-> >=20
-> >=20
-> > > > invalid opcode: 0000 [#1]
-> > > > PREEMPT
-> > > > Modules linked in: ndiswrapper fglrx acer_acpi nsc_ircc irda crc_cc=
-itt
-> > > > snd_atiixp snd_ac97_codec snd_ac97_bus yenta_socket rsrc_nonstatic
-> > > > pcmcia_core tifm_7xx1 tifm_core
-> > > > CPU:    0
-> > > > EIP:    0060:[<c017bc56>]    Tainted: P      VLI
-> > > > EFLAGS: 00010206   (2.6.16-suspend2-r8 #2)
-> > > > EIP is at clear_inode+0x16/0xb0
-> > > > eax: 00000003   ebx: d5245d20   ecx: 00000000   edx: d5245df8
-> > > > esi: df2099c0   edi: c2a3a000   ebp: c2a3a000   esp: c2a3be94
-> > > > ds: 007b   es: 007b   ss: 0068
-> > > > Process emerge (pid: 9123, threadinfo=3Dc2a3a000 task=3Dc2a0ba70)
-> > > > Stack: <0>df2099c0 d5245d20 df2099c0 c01db519 c017a385 00000000 000=
-00400
-> > > > d5245e28
-> > > >          d5245d20 c2a3a000 d415c114 d5245d20 c01db4e0 c017bd59 d524=
-5d20
-> > > > dfe9b000
-> > > >                 c017b81c d415c114 c017a431 00000000 dfe9b000 df5330=
-00
-> > > > c2a3bf50 c0172d74
-> > > >                 Call Trace:
-> > > >                  [<c01db519>] reiser4_delete_inode+0x39/0xc0
-> > > >                   [<c017a385>] dput+0x25/0x170
-> > > >                    [<c01db4e0>] reiser4_delete_inode+0x0/0xc0
-> > > >                     [<c017bd59>] generic_delete_inode+0x69/0x100
-> > > >                      [<c017b81c>] iput+0x5c/0x70
-> > > >                       [<c017a431>] dput+0xd1/0x170
-> > > >                        [<c0172d74>] sys_renameat+0x1c4/0x1f0
-> > > >                         [<c0172dc7>] sys_rename+0x27/0x30
-> > > >                          [<c0102ef3>] sysenter_past_esp+0x54/0x75
-> > > >                          Code: 80 98 00 00 00 8b 40 38 eb c4 8d 74 =
-26 00 8d
-> > > > bc 27 00 00 00 00 56 53 89 c3 83 ec 04 e8 14 b0 fe ff 8b 83 c4 00 0=
-0 00 85
-> > > > c0 74 08 <0f> 0b fd 00 ab d4 37 c0 8b 83 20 01 00 00 a8 10 75 08 0f=
- 0b ff
-> > > >                           <4>reiser4[emerge(9123)]: release_unix_fi=
-le
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >                           reiser4[emerge(9123)]: release_unix_file
-> > > > (fs/reiser4/plugin/file/file.c:2294)[vs-44]:
-> > > >                           WARNING: out of memory?
-> > > >=20
-> > > > I rebooted, remounted / read only and run fsck --fix, I had to run =
-fsck
-> > > > --build-fs becouse of fatal corruptions, I got whole lot of errors
-> > > > referring to /usr/portage dir but fs is now ok.
-> >=20
---=20
-Jake Maciejewski <maciejej@msoe.edu>
-
+-- 
+I don't even butter my bread.  I consider that cooking.
+		-- Katherine Cebrian
