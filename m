@@ -1,55 +1,53 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: any way to disable fsync?
-Date: Tue, 11 Jul 2006 17:57:30 -0400
-Message-ID: <200607112157.k6BLvUqk028924@turing-police.cc.vt.edu>
-References: <op.tcjl3meld4os1z@localhost>
+From: Hans Reiser <reiser@namesys.com>
+Subject: short term task list for Reiser4
+Date: Tue, 11 Jul 2006 15:04:20 -0700
+Message-ID: <44B42064.4070802@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1152655050_5755P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28954-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Tue, 11 Jul 2006 23:03:12 +0200."
-             <op.tcjl3meld4os1z@localhost>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932170AbWGKWEU@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: =?iso-8859-2?B?o3VrYXN6IE1pZXJ6d2E=?= <prymitive@pcserwis.net>
-Cc: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Reiserfs mail-list <Reiserfs-List@namesys.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---==_Exmh_1152655050_5755P
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: quoted-printable
+Please feel free to comment on this list and the order of its tasks:
 
-On Tue, 11 Jul 2006 23:03:12 +0200, =3D?iso-8859-2?B?o3VrYXN6IE1pZXJ6d2E=
-=3D?=3D said:
-> I got problem with apps that are calling fsync, it makes my hard drive =
-=20
-> flush like mad and it slows down things quite a lot.
+0) fix all bugs as they arise
 
-Several have posted how to bypass it.  I'll pose the opposite side:
+1) get batch_write into the -mm kernel --- small task
 
-Usually, applications call fsync() because they're pretty sure that if
-the disk and in-memory copies aren't lined up, a crash at that point coul=
-d
-result in data loss and/or corruption.
+2) get read optimization code into the -mm kernel (coded and probably
+debugged but not fully tested and not sent in yet) --- small task
 
-So sqlite calls fsync() - probably because if it *doesn't*, and your
-system crashes/reboots, you *will* lose that sqlite database.
+3) get EVERYTHING into wiki (migration has started already, thanks flx).
 
-Your data, your decision.
+4) review complaints of pauses while using reiser4 --- size of task
+unknown, and it is also unknown how much we may have fixed it while
+writing recent patches.
 
---==_Exmh_1152655050_5755P
-Content-Type: application/pgp-signature
+5) review crypt-compress code --- full code review --- substantive task
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+6) optimize fsync --- substantive task which requires using fixed area
+for write twice logging, and using write twice logging for fsync'd
+data.  It might require creating mount options to choose whether to
+optimize for serialized sequential fsyncs vs. lazy fsyncs.
 
-iD8DBQFEtB7KcC3lWbTT17ARAgoTAKCs8kyvSlwmGVkRt+YxcJcNAxEPTACeK9w9
-++OPqIioKraCrMupr1dd3rQ=
-=YDPf
------END PGP SIGNATURE-----
+7) review all of our installation instructions --- I am already doing
+that, but volunteers who will help out our wiki would be sorely
+appreciated.  Installing reiser4 as the root for each distro needs
+step-by-step instructions.
 
---==_Exmh_1152655050_5755P--
+8) review our kernel documentation --- I should do that but when will I
+have time?
+
+Unfortunately, our code stability is going to decrease for a bit due to
+all these changes to the read and write code --- no way to cure that but
+passage of time.   On the other hand, our CPU usage went way down. 
+Reiser4's only performance weakness now is fsync.  
+
+Once the crypt-compress code is ready, we will release Reiser4.1-beta
+(with plugins, releasing a beta means telling users that if they mount
+-o reiser4.1-beta then cryptcompress will be their default plugin, and
+if they don't, then they are using Reiser4.0 still).  Doubling our
+performance and halving our disk usage is going to be fun.
