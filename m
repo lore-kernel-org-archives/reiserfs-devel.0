@@ -1,51 +1,43 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: short term task list for Reiser4
-Date: Tue, 11 Jul 2006 16:11:21 -0700
-Message-ID: <44B43019.9010402@namesys.com>
-References: <44B42064.4070802@namesys.com> <20060711222903.GG9220@HAL_5000D.tc.ph.cox.net>
-Mime-Version: 1.0
+From: Toby Thain <toby@smartgames.ca>
+Subject: Re: any way to disable fsync?
+Date: Tue, 11 Jul 2006 19:41:10 -0400
+Message-ID: <BAYC1-PASMTP0152E46B1E5184F223039DBF680@CEZ.ICE>
+References: <op.tcjl3meld4os1z@localhost> <200607112157.k6BLvUqk028924@turing-police.cc.vt.edu>
+Mime-Version: 1.0 (Apple Message framework v750)
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751345AbWGKXLW@vger.kernel.org>
-In-Reply-To: <20060711222903.GG9220@HAL_5000D.tc.ph.cox.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-28958-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <200607112157.k6BLvUqk028924@turing-police.cc.vt.edu>
+Message-Id: <5BAA6698-9B1B-41F0-ACBA-14454A793619@smartgames.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Clay Barnes <clay.barnes@gmail.com>
-Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>, LKML <linux-kernel@vger.kernel.org>, Alexander Lyamin aka FLX <flx@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
+To: Valdis.Kletnieks@vt.edu
+Cc: =?UTF-8?Q?=C5=81ukasz_Mierzwa?= <prymitive@pcserwis.net>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-Clay Barnes wrote:
 
->On 15:04 Tue 11 Jul     , Hans Reiser wrote:
->  
->
->>
->>6) optimize fsync --- substantive task which requires using fixed area
->>for write twice logging, and using write twice logging for fsync'd
->>data.  It might require creating mount options to choose whether to
->>optimize for serialized sequential fsyncs vs. lazy fsyncs.
->>    
->>
->With the serialized sequential fsync, is that essentially what I was
->talking about earlier with slowly streaming dirty writes to disk when
->the HDD is idle?  If that's the case, I don't see the advantage in having
->lazy fsyncs
->
-if you are optimizing throughput rather than latency, then you let
-things get to disk whenever they get there, and you let the app hang
-while it waits. A mailer processing many requests in parallel might find
-30 seconds of latency to be just fine but a database might find 3
-seconds of latency to be too much. (I make up these examples, mailer
-programmers please correct me.)
+On 11-Jul-06, at 5:57 PM, Valdis.Kletnieks@vt.edu wrote:
 
-> except in situations where you want to keep the HDD spun down
->as much as possible.
+> On Tue, 11 Jul 2006 23:03:12 +0200, =?iso-8859-2?B? 
+> o3VrYXN6IE1pZXJ6d2E=?= said:
+>> I got problem with apps that are calling fsync, it makes my hard  
+>> drive
+>> flush like mad and it slows down things quite a lot.
 >
-No, that is not when you do it.
+> Several have posted how to bypass it.  I'll pose the opposite side:
+>
+> Usually, applications call fsync() because they're pretty sure that if
+> the disk and in-memory copies aren't lined up, a crash at that  
+> point could
+> result in data loss and/or corruption.
+>
+> So sqlite calls fsync() - probably because if it *doesn't*, and your
+> system crashes/reboots, you *will* lose that sqlite database.
 
->I've been meaning to hose my laptop (assuming I fix one problem with my
->desktop), so I am willing to help write Gentoo install docs (or possibly
->Arch Linux).  I can also test exsiting instructions.
->  
+Absolutely; it's required for commit semantics. :-)
+
 >
-That would be way cool.
-<http://wiki.namesys.com/Reiser4-GettingStarted#preview>
+> Your data, your decision.
+
