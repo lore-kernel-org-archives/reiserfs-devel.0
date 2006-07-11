@@ -1,39 +1,47 @@
-From: =?iso-8859-2?B?o3VrYXN6IE1pZXJ6d2E=?= <prymitive@pcserwis.net>
-Subject: any way to disable fsync?
-Date: Tue, 11 Jul 2006 23:03:12 +0200
-Message-ID: <op.tcjl3meld4os1z@localhost>
+From: Jonathan Briggs <jbriggs@esoft.com>
+Subject: Re: any way to disable fsync?
+Date: Tue, 11 Jul 2006 15:14:56 -0600
+Message-ID: <1152652496.3732.7.camel@localhost>
+References: <op.tcjl3meld4os1z@localhost>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-28951-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-wO1Zqf77glTtls7VmJVv"
+Return-path: <reiserfs-list-return-28952-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <op.tcjl3meld4os1z@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; delsp="yes"; charset="iso-8859-1"
-To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+To: =?UTF-8?Q?=C5=81ukasz?= Mierzwa <prymitive@pcserwis.net>
+Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-Hi
+--=-wO1Zqf77glTtls7VmJVv
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-I got problem with apps that are calling fsync, it makes my hard drive =20
-flush like mad and it slows down things quite a lot.
-Example:
-I'm using amarok and amrok uses sqlite for storing data, sqlite calls =20
-fsync after every write so on song change amarok writes to sqlite some =20
-statistic data about what I listen and sqllite calls fsync, now I got =20
-amarok trying to load next song and sqlite fsyncing and the problem is =20
-that fsyncing under reiser4 is expensive, it takes a lot of time even if =20
-I'm only running amarok and nothing else ( I got 4200RPM drive in my =20
-notebook so it;s not a speed daemon).  I patched sqlite in amarok to fake  =
+On Tue, 2006-07-11 at 23:03 +0200, =C5=81ukasz Mierzwa wrote:
+[snip]
+> So my question is: is there any way to disable fsync for reiser4? (beside=
+ =20
+> patching it to fake fsync instead of doing them).
 
-all fsync and it fixed it but there are other apps that try to secure my =20
-data by syncing (I'm now running azareus and only fsyncs called every =20
-minute can explain writing to disk at full speed almost non stop while I'm =
-=20
-downloading only 64KB/s ).
-So my question is: is there any way to disable fsync for reiser4? (beside  =
+http://ftp.die.net/pub/qmail-tools/libnosync.c
 
-patching it to fake fsync instead of doing them).
-Thanks for great fs.
+--=20
+Jonathan Briggs <jbriggs@esoft.com>
+eSoft, Inc.
 
-=A3ukasz Mierzwa
+--=-wO1Zqf77glTtls7VmJVv
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.4 (GNU/Linux)
+
+iD8DBQBEtBTQG8fHaOLTWwgRAtCHAJ0aZAg0nTQ1U1ctfxFZEOFXV73n8wCfeSQO
+3sSH27Nhck1P0otYUouYE0s=
+=j/H7
+-----END PGP SIGNATURE-----
+
+--=-wO1Zqf77glTtls7VmJVv--
+
