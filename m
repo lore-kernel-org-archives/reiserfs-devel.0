@@ -1,63 +1,84 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: data corruption with 2.4.25 and datalogging patches
-Date: Wed, 12 Jul 2006 01:24:11 -0700
-Message-ID: <44B4B1AB.5060001@namesys.com>
-References: <200607120816.11292.fjcabello@visual-tools.com>
+From: Brian Uhrain <buhrain@rosettastone.com>
+Subject: Re: 2.6.16+reiser4+openvz patches = error.
+Date: Wed, 12 Jul 2006 14:38:08 +0100
+Message-ID: <44B4FB40.807@rosettastone.com>
+References: <web-9729233@inc.ru>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28972-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28973-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200607120816.11292.fjcabello@visual-tools.com>
+In-Reply-To: <web-9729233@inc.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Francisco Javier Cabello <fjcabello@visual-tools.com>
-Cc: reiserfs-list@namesys.com, Chris Mason <mason@suse.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: mail@viliar.net.ru
+Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
 
-Francisco Javier Cabello wrote:
+Hi,
 
->Hello,
->My company develops video recorder system. Basically we work with linux boxes 
->running kernel 2.4.25. The system captures analogue video,  and after 
->processing and compressing, digital video is stored to hard disk. We are 
->recording continuously (24x7). 
->
->We have realized that more or less a 10% of our systems are suffering data 
->corruption in the reiserfs partition. Sometimes it's possible to fix it 
->running 'reiserfsck --rebuild-tree' but not always.
->More information:
->-Kernel 2.4.25 + v4l2 patches
->-Reiserfsprogs 3.6.19
->-Datalogging patches. 
->(http://mirror.mcs.anl.gov/suse-people/mason/patches/data-logging/2.4.25/)
->
->I have checked datalogging patches from Reiserfs website and they seem equal 
->to suse ones.
->
->I don't have any idea of what it's happening. The disk bandwidth is not so 
->high (300-500kb/sec). The disk is always full at 90% (we have a process 
->deleting old video).
->
->I have been thinking about removing Dataloggin patches but I would like to 
->have serious reason. It's not easy to check that the problem is solved 
->because we are not able to reproduce the error in our headquarter. 
->
->Regards,
->
->Paco
->
->
+I've played around with OpenVZ on my workstation at work, and the 
+compilation problem is because the OpenVZ patch adds an extra argument 
+to generic_permission to accomodate the more complex permission handling 
+it has to do (e.g. no process, regardless of the UID, from a virtual 
+server instance is allowed access to files outside of it's root 
+directory, virtual servers themselves can be given disk quotas, etc; I 
+don't remember exactly what the extra field was for as it was several 
+months ago that I poked at the code to get it to compile).  However, 
+though I was able to get reiser4 to compile with the OpenVZ patches, the 
+fixing I did only allowed it to compile.  Not knowing the full scope of 
+the reiser4 code nor the OpenVZ changes and how they should interact, 
+OpenVZ and reiser4 don't play nicely together with the compilation fixes 
+I made--if the virtual server directories were on a reiser4 filesystem 
+then starting a virtual server would cause the system to hang fairly 
+quickly.  My over-simplified solution to that problem was to put the 
+OpenVZ directories in a separate partition that utilizes one of the 
+in-kernel-tree filesystems that are supported by the OpenVZ patches 
+(like reiser3 and xfs).  If anyone is interested in my compile fixes, 
+let me know and I can post them tomorrow when I'm in the office.
+
+  - Brian
+
+
+mail@viliar.net.ru wrote:
+> Hello All!
+> 
+> 
+> I'm trying to compile 2.6.16 kernel with this openvz patch:
+> (http://download.openvz.org/kernel/devel/026test015.1/patches/patch-026test015-combined.gz) 
+> (changes: http://openvz.org/news/updates/devel-kernel-026test015.1)
+> 
+> and with reiser4-for-2.6.16-4.patch.gz.
+> 
+> Patching is finished without errors, but in process of compilation (reiser4 - module) I get those
+> errors:
 >  
->
-Unless Chris has an idea what might be going on off the top of his head,
-this sounds like a paid support problem, and I must say it sounds like
-it could be a lot of work to reproduce it.  If solving it still
-interests you, we charge $150/hr.
-
-I have made no efforts to test and verify the datalogging patches
-myself, and most users do meta-data journaling, so I cannot say much
-without assigning to someone the task of reviewing them and your problem.
-
-Reiser4 might be a desirable answer for you.
+>  CC [M]  fs/reiser4/plugin/object.o
+> fs/reiser4/plugin/object.c:96: warning: initialization from incompatible pointer type
+> fs/reiser4/plugin/object.c:208: warning: initialization from incompatible pointer type
+> fs/reiser4/plugin/object.c:254: warning: initialization from incompatible pointer type
+> fs/reiser4/plugin/object.c:300: warning: initialization from incompatible pointer type
+> fs/reiser4/plugin/object.c:392: warning: initialization from incompatible pointer type
+> fs/reiser4/plugin/object.c:452: warning: initialization from incompatible pointer type
+>   CC [M]  fs/reiser4/plugin/cluster.o
+>   CC [M]  fs/reiser4/plugin/inode_ops.o
+> fs/reiser4/plugin/inode_ops.c: In function 'permission_common':
+> fs/reiser4/plugin/inode_ops.c:416: error: too few arguments to function 'generic_permission'
+> make[2]: *** [fs/reiser4/plugin/inode_ops.o] Error 1
+> make[1]: *** [fs/reiser4] Error 2
+> make: *** [fs] Error 2
+> 
+> Is where any ideas, why it could be?
+> 
+> 
+> Thank you.
+> 
+> 
+> 
+> 
+> A.
+> 
+> -------------
+> 
+> "Hic Jacet Ego"
