@@ -1,93 +1,92 @@
-From: <mail@viliar.net.ru>
-Subject: Re: 2.6.16+reiser4+openvz patches = error.
-Date: Wed, 12 Jul 2006 17:49:01 +0400
-Message-ID: <web-9762893@inc.ru>
-References: <44B4FB40.807@rosettastone.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: ReiserFS v3 choking when free space falls below 10%?
+Date: Wed, 12 Jul 2006 12:06:58 -0400
+Message-ID: <44B51E22.2040508@suse.com>
+References: <44A55271.7050501@namesys.com> <44A55591.6060500@suse.com>	 <1152059846.30139.11.camel@ipso.snappymail.ca>	 <44AB25EE.8030702@namesys.com>	 <20060706125856.fdac1d16.pegasus@nerv.eu.org>	 <1152200638.30139.45.camel@ipso.snappymail.ca> <44AD5020.6050803@suse.com>	 <1152210439.30139.59.camel@ipso.snappymail.ca> <44AD58D1.9040806@suse.com>	 <1152257397.13211.43.camel@ipso.snappymail.ca>	 <20060707174935.GB13606@atrey.karlin.mff.cuni.cz> <1152306272.13211.62.camel@ipso.snappymail.ca> <44AED01C.60601@namesys.com> <44AFFD50.8070905@suse.com> <44B44856.5070409@suse.com> <44B48BC0.2000608@namesys.com> <44B48E32.5080307@suse.com> <44B4B051.90809@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-28974-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-28975-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44B4FB40.807@rosettastone.com>
+In-Reply-To: <44B4B051.90809@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Brian Uhrain <buhrain@rosettastone.com>
-Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
+To: Hans Reiser <reiser@namesys.com>
+Cc: Mike Benoit <ipso@snappymail.ca>, Jan Kara <jack@suse.cz>, =?UTF-8?B?SnVyZSBQZcSNYXI=?= <pegasus@nerv.eu.org>, reiserfs-list@namesys.com
 
-Yes, please, post it. 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On Wed, 12 Jul 2006 14:38:08 +0100
- Brian Uhrain <buhrain@rosettastone.com> wrote:
-> Hi,
+Hans Reiser wrote:
+> Jeffrey Mahoney wrote:
 > 
-> I've played around with OpenVZ on my workstation at work, and the compilation problem is because
-> the OpenVZ patch adds an extra argument to generic_permission to accomodate the more complex
-> permission handling it has to do (e.g. no process, regardless of the UID, from a virtual server
-> instance is allowed access to files outside of it's root directory, virtual servers themselves
-> can be given disk quotas, etc; I don't remember exactly what the extra field was for as it was
-> several months ago that I poked at the code to get it to compile).  However, though I was able to
-> get reiser4 to compile with the OpenVZ patches, the fixing I did only allowed it to compile.  Not
-> knowing the full scope of the reiser4 code nor the OpenVZ changes and how they should interact,
-> OpenVZ and reiser4 don't play nicely together with the compilation fixes I made--if the virtual
-> server directories were on a reiser4 filesystem then starting a virtual server would cause the
-> system to hang fairly quickly.  My over-simplified solution to that problem was to put the OpenVZ
-> directories in a separate partition that utilizes one of the in-kernel-tree filesystems that are
-> supported by the OpenVZ patches (like reiser3 and xfs).  If anyone is interested in my compile
-> fixes, let me know and I can post them tomorrow when I'm in the office.
+>> Hans Reiser wrote:
+>>
+>>> You make this way too complicated because you are trying to be way too
+>>> perfect.  If you scan 3 bitmap blocks and find nothing, stop trying to
+>>> size match.
+>>
+>> Agreed on the trying too hard..
 > 
->   - Brian
-> 
-> 
-> mail@viliar.net.ru wrote:
-> > Hello All!
-> > 
-> > 
-> > I'm trying to compile 2.6.16 kernel with this openvz patch:
-> > (http://download.openvz.org/kernel/devel/026test015.1/patches/patch-026test015-combined.gz) 
-> > (changes: http://openvz.org/news/updates/devel-kernel-026test015.1)
-> > 
-> > and with reiser4-for-2.6.16-4.patch.gz.
-> > 
-> > Patching is finished without errors, but in process of compilation (reiser4 - module) I get
-> those
-> > errors:
-> >  
-> >  CC [M]  fs/reiser4/plugin/object.o
-> > fs/reiser4/plugin/object.c:96: warning: initialization from incompatible pointer type
-> > fs/reiser4/plugin/object.c:208: warning: initialization from incompatible pointer type
-> > fs/reiser4/plugin/object.c:254: warning: initialization from incompatible pointer type
-> > fs/reiser4/plugin/object.c:300: warning: initialization from incompatible pointer type
-> > fs/reiser4/plugin/object.c:392: warning: initialization from incompatible pointer type
-> > fs/reiser4/plugin/object.c:452: warning: initialization from incompatible pointer type
-> >   CC [M]  fs/reiser4/plugin/cluster.o
-> >   CC [M]  fs/reiser4/plugin/inode_ops.o
-> > fs/reiser4/plugin/inode_ops.c: In function 'permission_common':
-> > fs/reiser4/plugin/inode_ops.c:416: error: too few arguments to function 'generic_permission'
-> > make[2]: *** [fs/reiser4/plugin/inode_ops.o] Error 1
-> > make[1]: *** [fs/reiser4] Error 2
-> > make: *** [fs] Error 2
-> > 
-> > Is where any ideas, why it could be?
-> > 
-> > 
-> > Thank you.
-> > 
-> > 
-> > 
-> > 
-> > A.
-> > 
-> > -------------
-> > 
-> > "Hic Jacet Ego"
+> What about the actual algorithm suggested?
 
 
+"Worked" really just meant I made the initial window scanning/tracking
+code work and experimented with several ways of organizing it. I focused
+on memory usage at first and my results forced me to abandon it. More on
+that below. I didn't get as far as modifying the allocator to use this
+code. The initial idea was to keep track of the largest window available
+within a bitmap. Since any write could split a window, that necessitates
+tracking all the windows for each bitmap. Once we have that tracking, we
+can make smarter decisions involving placement and reservation windows
+if we so desired. Another advantage of maintaining a separate tree
+outside of the bitmap is that the reiserfs_in_journal() check can go
+away. When blocks are freed, we can make the journal responsible for
+freeing them in the window tree, so that the view of the bitmap is
+always "current." The window tree could be built on the first read of
+the bitmap, just like the bitmap metadata is generated now when the
+dynamic bitmap patches are applied.
 
+Seems like a good idea so far, except that the memory cost is
+unreasonable. I tried several ways of organizing the data, but none were
+small enough to be usable. The basic idea is a tree sorted by window
+size. My first attempt used lists of windows of a particular size,
+sorted by position. The memory usage was horrendous. On a worst-case
+scenario of 16k 1-bit windows, memory usage was just under 400k/bitmap
+on a 64-bit system.
 
-A.
+The second attempt still used the tree but used arrays of shorts to
+track the beginning of each window. The worst case memory usage is
+approximately 16k/bitmap if kept trimmed, but that involves quite a bit
+of overhead. The kernel has no realloc and every bit allocation/free
+would involve an allocation/copy/free cycle to occur which isn't exactly
+nice.
 
---------------
+The next incarnation managed the arrays in chunks, so that the array is
+expanded by n blocks when space was required. Shrinks would occur when
+the usage meant there was ~ 1.25 chunks free. The performance problems
+of using the arrays still existed though. I guess in contrast with
+scanning the bitmap blocks themselves, it's not so bad.
 
-"Hic Jacet Ego"
+Unfortunately, this means that up to ~64M of RAM is pinned when used on
+a 500 GB file system. I suppose that since the data is only a summary of
+what is on disk and is easily regenerated, it would be possible to make
+the cache shrinkable and regenerated when needed. When the cache is
+shrunk, we could keep the largest window as part of the bitmap metadata
+structure and regenerate it to update it.
+
+- -Jeff
+
+- --
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
+
+iD8DBQFEtR4hLPWxlyuTD7IRAp0pAKCejAb+AlMWnCa/zaZcEEYON2PIAgCff3u5
+9zDTmuFS2BKZ/tA1SBuorD4=
+=xDS+
+-----END PGP SIGNATURE-----
