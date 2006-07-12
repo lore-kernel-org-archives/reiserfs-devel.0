@@ -1,63 +1,52 @@
-From: Valdis.Kletnieks@vt.edu
+From: =?iso-8859-2?B?o3VrYXN6IE1pZXJ6d2E=?= <prymitive@pcserwis.net>
 Subject: Re: any way to disable fsync?
-Date: Tue, 11 Jul 2006 23:14:02 -0400
-Message-ID: <200607120314.k6C3E2hH009619@turing-police.cc.vt.edu>
+Date: Wed, 12 Jul 2006 06:48:14 +0200
+Message-ID: <op.tcj7mozad4os1z@localhost>
 References: <op.tcjl3meld4os1z@localhost> <200607112157.k6BLvUqk028924@turing-police.cc.vt.edu> <BAYC1-PASMTP0152E46B1E5184F223039DBF680@CEZ.ICE>
-            <44B43CA8.7010505@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1152674041_8815P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28964-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-28965-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Tue, 11 Jul 2006 17:04:56 PDT."
-             <44B43CA8.7010505@namesys.com>
+In-Reply-To: <BAYC1-PASMTP0152E46B1E5184F223039DBF680@CEZ.ICE>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: Toby Thain <toby@smartgames.ca>, =?UTF-8?B?xYF1a2FzeiBNaWVyendh?= <prymitive@pcserwis.net>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; format="flowed"; delsp="yes"; charset="iso-8859-1"
+To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
---==_Exmh_1152674041_8815P
-Content-Type: text/plain; charset=us-ascii
+Dnia Wed, 12 Jul 2006 01:41:10 +0200, Toby Thain <toby@smartgames.ca> =20
+napisa=B3:
 
-On Tue, 11 Jul 2006 17:04:56 PDT, Hans Reiser said:
-> There are legitimate applications where the value of data is low enough
-> and the load is high enough, that losing the database upon crash is ok.
 >
-> I have mixed feelings about making it a mount option for reiser4 because
-> many users will not know what they do.  In the end though, I should just
-> sell the rope and advise but not control what people do with it.   If
-> someone writes it I will take a mount option patch to disable fsync iff
-> it comes with documentation that has a lot of warnings.
+> On 11-Jul-06, at 5:57 PM, Valdis.Kletnieks@vt.edu wrote:
+>
+>> On Tue, 11 Jul 2006 23:03:12 +0200, =3D?iso-8859-2?B?=20
+>> o3VrYXN6IE1pZXJ6d2E=3D?=3D said:
+>>> I got problem with apps that are calling fsync, it makes my hard drive
+>>> flush like mad and it slows down things quite a lot.
+>>
+>> Several have posted how to bypass it.  I'll pose the opposite side:
+>>
+>> Usually, applications call fsync() because they're pretty sure that if
+>> the disk and in-memory copies aren't lined up, a crash at that point =20
+>> could
+>> result in data loss and/or corruption.
+>>
+>> So sqlite calls fsync() - probably because if it *doesn't*, and your
+>> system crashes/reboots, you *will* lose that sqlite database.
+>
+> Absolutely; it's required for commit semantics. :-)
+>
+>>
+>> Your data, your decision.
+>
 
-Two things to consider before writing code:
+I know it's there to keep data integrity but what should I do when it =20
+makes some apps unusable? Becouse it really hurts amarok for me and =20
+without disabling it in sqlite code amarok I can't call it listening to =20
+music. I can always patch one or few apps and live with it but what if =20
+half of my apps will do it?
+Anyway I'm goint to work now so I won't be having this problem for next 8  =
 
-1) Should it be done at the VFS level instead of in the filesystem?
-Architecturally, it might be better there, so it applies to ext3 and jfs
-and others too... 
-
-2) Alternatively, should it be done on a per-file basis (possibly
-flagged with a chattr or similar)?  It can't be done as an open()
-flag or ioctl(), because you're trying to override what the code does...
-That way, you can mitigate any fsync() load caused by one file, and
-still not leave yourself open to being screwed by some other application
-that tries to fsync() in other directories on that filesystem.  It
-would be Really Bad if /home/fred/db23.sqlite gets corrupted because
-the filesystem was mounted -nofsync because of /home/george/moby.sqlite
-overhead....
-
---==_Exmh_1152674041_8815P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFEtGj5cC3lWbTT17ARAkaEAKDHjWDAhpr26HbGe/L+zl1tT/mKcwCff3Na
-piHsOTwQjApVKyCQWLlZOEU=
-=qcCR
------END PGP SIGNATURE-----
-
---==_Exmh_1152674041_8815P--
+hours.
