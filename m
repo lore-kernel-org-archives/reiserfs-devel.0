@@ -1,26 +1,33 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: another semantic storage system (in userspace)
-Date: Thu, 13 Jul 2006 00:30:54 -0700
-Message-ID: <44B5F6AE.1040506@namesys.com>
-References: <87veq233dm.fsf@evinrude.uhoreg.ca> <20060712232207.GB31144@HAL_5000D.tc.ph.cox.net>
+Subject: Re: [PATCH] reiserfs: fix handling of device names with /'s in them
+Date: Thu, 13 Jul 2006 00:34:43 -0700
+Message-ID: <44B5F793.1000100@namesys.com>
+References: <44B52674.8060802@suse.com>	<20060712175542.108e6e37.akpm@osdl.org>	<44B5C353.9060007@namesys.com> <20060712210027.8d7a2ddc.akpm@osdl.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28985-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28986-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060712232207.GB31144@HAL_5000D.tc.ph.cox.net>
+In-Reply-To: <20060712210027.8d7a2ddc.akpm@osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Clay Barnes <clay.barnes@gmail.com>
-Cc: reiserfs-list@namesys.com
+To: Andrew Morton <akpm@osdl.org>
+Cc: jeffm@suse.com, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-I agree that it is an interesting project.
-
-What can I say, it is time for ReiserFS to leave this storage layer
-stuff behind us, and start doing the semantics.....
-
-Hopefully by January we can do so.
+Who exactly is failing to handle the slashes, forgive me for my
+confusion in asking?
 
 Hans
+
+Andrew Morton wrote:
+
+> Software sucks, and we get along better by not provoking it. So don't put
+>
+>spaces, let alone slashes into strings which we offer to userspace.
+>
+>
+>  
+>
+
