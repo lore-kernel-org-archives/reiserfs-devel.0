@@ -1,63 +1,27 @@
-From: Clay Barnes <clay.barnes@gmail.com>
-Subject: Re: another semantic storage system (in userspace)
-Date: Wed, 12 Jul 2006 16:22:07 -0700
-Message-ID: <20060712232207.GB31144@HAL_5000D.tc.ph.cox.net>
-References: <87veq233dm.fsf@evinrude.uhoreg.ca>
+From: Andrew Morton <akpm@osdl.org>
+Subject: Re: [PATCH] reiserfs: fix handling of device names with /'s in them
+Date: Wed, 12 Jul 2006 17:55:42 -0700
+Message-ID: <20060712175542.108e6e37.akpm@osdl.org>
+References: <44B52674.8060802@suse.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-28981-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <87veq233dm.fsf@evinrude.uhoreg.ca>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751479AbWGMAzx@vger.kernel.org>
+In-Reply-To: <44B52674.8060802@suse.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-On 17:44 Wed 12 Jul     , Hubert Chan wrote:
-> I thought this may be interesting to the people on the list.
-> 
-> I was pointed to the GLScube project (http://www.glscube.org/), which
-> tries to implement semantic storage in usesrpace.  GLScube (GLS^3)
-> stands for GNU/Linux Semantic Storage System.  It provides a C++ API for
-> programmers to use, and also exports a virtual filesystem (glscubefs)
-> using FUSE, so that legacy applications can take advantage of its
-> functionality.  It performs incremental indexing (I assume using
-> either inotify or dnotify).
-> 
-> It is licensed under the GPL and can be downloaded from their website.
-> Unfortunately, the 0.1 tarball that I downloaded doesn't seem to include
-> Makefiles, so I'm not sure how to build it.
-> 
-> They also have video demos available on the site.
-> 
-> I think that what makes this more interesting to ReiserFS people,
-> compared to, say, Beagle, is the glscubefs, which allows legacy
-> applications to take advantage of GLScube functionality.  Although we'll
-> have to see how much functionality is actually exposed through glscubefs
-> (i.e. can we do everything from the commandline?).
-> 
-> -- 
-> Hubert Chan - email & Jabber: hubert@uhoreg.ca - http://www.uhoreg.ca/
-> PGP/GnuPG key: 1024D/124B61FA   (Key available at wwwkeys.pgp.net)
-> Fingerprint: 96C5 012F 5F74 A5F7 1FF7  5291 AF29 C719 124B 61FA
-It's an interesting project, and we as much as anyone appreciate their
-efforts to integrate semantics into legacy applications through a
-virtual FS, but I don'te see anything in the demonstrations or
-whitepaper to benifit the Reiser4 project.  Why build a virtual
-filesystem to store semantic data when it can be built into an actual
-one?   The one benefit I see is they may be able to do more with search
-optimization in their design, but only at the expense of space.  If
-Reiser4 has a clever design for metadata storage, though, even that will
-be easly bested.
+On Wed, 12 Jul 2006 12:42:28 -0400
+Jeff Mahoney <jeffm@suse.com> wrote:
 
-I do like their careful reliance only on standard tools like inotify
-FUSE and Lucene to implement their design, instead of writing a bunch of
-redundant code and their interest in backwards compadability through a
-virtual FS---it has the chance to bring non-heriarchical storage to
-some, but it lacks the careful planning that has gone into the 
-discussion of the metadata plugin I've seen on the mailing list alone.
+>  On systems with block devices containing slashes (virtual dasd, cciss,
+>  etc), reiserfs will fail to initialize /proc/fs/reiserfs/<dev> due to
+>  it being interpreted as a subdirectory. The generic block device code
+>  changes the / to ! for use in the sysfs tree. This patch uses that
+>  convention.
 
---Clay Barnes
+Isn't it a bit dumb of us to be putting slashes in the device names anyway?
+ It would be better, if poss, to alter dasd/cciss/etc and stop all these
+s@/@!@everywhere games.
