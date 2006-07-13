@@ -1,50 +1,59 @@
 From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: 2.6.18-rc1-mm1: reiser4 panicked cowardly nikita-1936
-Date: Thu, 13 Jul 2006 18:16:15 +0400
-Message-ID: <1152800175.6353.141.camel@tribesman.namesys.com>
-References: <44B5529A.7050601@free.fr>
+Subject: Re: data corruption with 2.4.25 and datalogging patches
+Date: Thu, 13 Jul 2006 18:34:23 +0400
+Message-ID: <1152801263.6353.147.camel@tribesman.namesys.com>
+References: <200607120816.11292.fjcabello@visual-tools.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-28987-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-28988-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44B5529A.7050601@free.fr>
+In-Reply-To: <200607120816.11292.fjcabello@visual-tools.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Laurent Riffard <laurent.riffard@free.fr>
+To: Francisco Javier Cabello <fjcabello@visual-tools.com>
 Cc: reiserfs-list@namesys.com
 
 Hello
 
-On Wed, 2006-07-12 at 21:50 +0200, Laurent Riffard wrote:
-> Hello reiser4 maintainers,
+On Wed, 2006-07-12 at 08:16 +0200, Francisco Javier Cabello wrote:
+> Hello,
+> My company develops video recorder system. Basically we work with linux boxes 
+> running kernel 2.4.25. The system captures analogue video,  and after 
+> processing and compressing, digital video is stored to hard disk. We are 
+> recording continuously (24x7). 
 > 
-> I've been hit a few times by a reiser4 panic, namely nikita-1936. 
+> We have realized that more or less a 10% of our systems are suffering data 
+> corruption in the reiserfs partition. 
+
+Did unclean shutdowns take place on those systems?
+If you let us see what does reiserfsck report in those cases that could
+help to understand what is is happening.
+
+> Sometimes it's possible to fix it 
+> running 'reiserfsck --rebuild-tree' but not always.
+> More information:
+> -Kernel 2.4.25 + v4l2 patches
+> -Reiserfsprogs 3.6.19
+> -Datalogging patches. 
+> (http://mirror.mcs.anl.gov/suse-people/mason/patches/data-logging/2.4.25/)
 > 
-> The box was running 2.6.18-rc1-mm1 + hot-fixes + 
-> reiser4-generic_file_read-fix.patch (from Edward Shishkin). 
-> .config is attached.
+> I have checked datalogging patches from Reiserfs website and they seem equal 
+> to suse ones.
 > 
-> What should I do ?
-> - fsck ?
-
-You should fsck from time to time. I do not think that this panic
-indicates any corruptions in a filesystem, though.
-
-> - send a debugfs.reiser4 -P output before fsck ?
-
-no
-
-> - comment out this assertion ?
-
-no
-
-> - wait for a fix ?
+> I don't have any idea of what it's happening. The disk bandwidth is not so 
+> high (300-500kb/sec). The disk is always full at 90% (we have a process 
+> deleting old video).
 > 
-
-can you reproduce the problem? How to do that, if yes?
-can you please try to find whether previous kernel you used can also be
-crashed that way? What is that kernel?
+> I have been thinking about removing Dataloggin patches but I would like to 
+> have serious reason. It's not easy to check that the problem is solved 
+> because we are not able to reproduce the error in our headquarter. 
+> 
+> Regards,
+> 
+> Paco
+> 
+> 
 
