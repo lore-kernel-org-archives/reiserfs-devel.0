@@ -1,73 +1,66 @@
-From: Jonathan Briggs <jbriggs@esoft.com>
-Subject: Re: another semantic storage system (in userspace)
-Date: Thu, 13 Jul 2006 18:23:20 -0600
-Message-ID: <1152836600.6894.12.camel@localhost>
-References: <87veq233dm.fsf@evinrude.uhoreg.ca>
-	 <20060713170626.GE31144@HAL_5000D.tc.ph.cox.net>
-	 <44B6850F.9010801@namesys.com>  <87veq1z1qc.fsf@evinrude.uhoreg.ca>
+From: rvalles <rvalles@es.gnu.org>
+Subject: Re: short term task list for Reiser4
+Date: Fri, 14 Jul 2006 07:26:01 +0200
+Message-ID: <46954.6123910279$1152854788@news.gmane.org>
+References: <44B42064.4070802@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-+DLy/NLmSg8HNVWCeIL/"
-Return-path: <reiserfs-list-return-28996-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
+Return-path: <reiserfs-list-return-28997-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <87veq1z1qc.fsf@evinrude.uhoreg.ca>
+Content-Disposition: inline
+In-Reply-To: <44B42064.4070802@namesys.com>
+Sender: <rvalles@eww.ath.cx.>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hubert Chan <hubert@uhoreg.ca>
-Cc: Reiserfs mail-list <Reiserfs-List@namesys.com>
+To: reiserfs-list@namesys.com
 
---=-+DLy/NLmSg8HNVWCeIL/
-Content-Type: text/plain
+--OXfL5xGRrasGEqWY
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2006-07-13 at 16:30 -0400, Hubert Chan wrote:
-> On Thu, 13 Jul 2006 10:38:23 -0700, Hans Reiser <reiser@namesys.com> said=
-:
+On Tue, Jul 11, 2006 at 03:04:20PM -0700, Hans Reiser wrote:
+> Please feel free to comment on this list and the order of its tasks:
+> 4) review complaints of pauses while using reiser4 --- size of task
+> unknown, and it is also unknown how much we may have fixed it while
+> writing recent patches.
+>
+> 6) optimize fsync --- substantive task which requires using fixed area
+> for write twice logging, and using write twice logging for fsync'd
+> data.  It might require creating mount options to choose whether to
+> optimize for serialized sequential fsyncs vs. lazy fsyncs.
 >=20
-> > Clay Barnes wrote:
->=20
-> >> 1) Scope
-> >> a) Should the semantic content of files be purely user-defined?
->=20
-> > Yes.
->=20
-> I guess this also raises the question of how multiple users on the same
-> machine can define their own semantic content (e.g. if user A wants to
-> index some new file format, but doesn't want to have to bug the
-> administrator to add support for it).  Will the filesystem be talking to
-> some userspace daemons?
-
-I was thinking that the file system should only index its own meta-data
-attributes.  A user-space daemon should read the file contents and
-create these attributes.
-
-Search directories would display selected parts of the indexes.  One of
-these that would be highly useful for a user-space indexing daemon is a
-timestamp search directory.  The indexer would begin with the timestamp
-search set to (UID =3D=3D my user and timestamp > 0).  After indexing a few
-files it would update the search to (my user and > timestamp of last
-indexed file).  Or possibly, if Reiser4 has something like a 64-bit
-monotonic update ID, it could use that instead of a timestamp.
-
-If the filesystem indexes are not going to be updated in real-time but
-only at specific times, another search type that could list updated but
-not yet indexed files would also be useful.
+I believe those two are related. I'm having the "pauses" (of many
+minutes at times!) when writing to reiser4. It seems it is triggered
+mostly by the use of fsync(); NFS in sync mode manages to trigger it
+way often: I mount my old desktop's home from my new computer via synced
+NFS.
+The pauses consist in the application being frozen and the other
+applications being slowed down on their IO operations, while the disks
+writes data continously during an interval that usually last a minute or
+so, but may last many times that. It often happens with small files
+(like, when sending a mail, as it passes through the MTA), so I believe
+it probably (re)writes to disk lots of stuff that doesn't need to be
+written to disk at all.
+It only happens on reiser4 patches against 2.6.13 or newer, 2.6.12.x is
+fine.
 --=20
-Jonathan Briggs <jbriggs@esoft.com>
-eSoft, Inc.
+- Do you study theories? - Oh yes! Theories are fun. - How do you use them?=
+ - When I must act, theories are too slow. To act, I must know.
 
---=-+DLy/NLmSg8HNVWCeIL/
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+--OXfL5xGRrasGEqWY
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.4 (GNU/Linux)
+Version: GnuPG v1.4.3 (GNU/Linux)
 
-iD8DBQBEtuP4G8fHaOLTWwgRAllpAJ9dSp06VxXSDVhKIAljrmIFKWt4dACeMyfn
-CWbA8rdm2owMmkKiDsPlqw8=
-=c3xd
+iD8DBQFEtyrpfwaXC2yIZd8RAkxGAJ0UEit3hWhyYzBNM/+Wvk8ZNgWwlwCcC4yf
+Yxs0IsqYhnNziIau3DRcDAY=
+=YvlG
 -----END PGP SIGNATURE-----
 
---=-+DLy/NLmSg8HNVWCeIL/--
-
+--OXfL5xGRrasGEqWY--
