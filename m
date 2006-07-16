@@ -1,64 +1,70 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: [PATCH] reiserfs: fix handling of device names with /'s in them
-Date: Sun, 16 Jul 2006 00:12:21 -0700
-Message-ID: <44B9E6D5.2040704@namesys.com>
-References: <6xQ4C-6NB-43@gated-at.bofh.it> <6xQea-6ZX-13@gated-at.bofh.it> <E1G1QFx-0001IO-K6@be1.lrz> <44B7D97B.20708@suse.com>
+Subject: Re: short term task list for Reiser4
+Date: Sun, 16 Jul 2006 00:16:36 -0700
+Message-ID: <44B9E7D4.7060000@namesys.com>
+References: <44B42064.4070802@namesys.com>	<20060714052601.GA28835@rvalles.homedns.org.>	<44B7415D.6020305@namesys.com> <20060714195553.15e8c919@holly.localdomain>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29010-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29011-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44B7D97B.20708@suse.com>
+In-Reply-To: <20060714195553.15e8c919@holly.localdomain>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: 7eggert@gmx.de, Eric Dumazet <dada1@cosmosbay.com>, ReiserFS List <reiserfs-list@namesys.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@osdl.org>
+To: Jindrich Makovicka <makovick@gmail.com>
+Cc: reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>
 
-So the Plan 9 and Unix way would be to let the driver parse the number
-part of the name after the last slash.  What I don't understand is why
-reiserfs is getting involved here, rather than recognizing the driver as
-an extension of the namespace, seeing the driver as a mountpoint, and
-just passing number to the driver.  There must be something I don't
-grasp here, can you help me?
+Jindrich Makovicka wrote:
+
+>On Fri, 14 Jul 2006 00:01:49 -0700
+>Hans Reiser <reiser@namesys.com> wrote:
+>  
+>
+>>rvalles wrote:
+>>    
+>>
+>>>I believe those two are related. I'm having the "pauses" (of many
+>>>minutes at times!) when writing to reiser4. It seems it is triggered
+>>>mostly by the use of fsync(); NFS in sync mode manages to trigger it
+>>>way often: I mount my old desktop's home from my new computer via
+>>>synced NFS.
+>>>The pauses consist in the application being frozen and the other
+>>>applications being slowed down on their IO operations, while the
+>>>disks writes data continously during an interval that usually last a
+>>>minute or so, but may last many times that. It often happens with
+>>>small files (like, when sending a mail, as it passes through the
+>>>MTA), so I believe it probably (re)writes to disk lots of stuff that
+>>>doesn't need to be written to disk at all.
+>>>It only happens on reiser4 patches against 2.6.13 or newer, 2.6.12.x
+>>>is fine.
+>>> 
+>>>
+>>>      
+>>>
+>>So the pauses are experienced by a process waiting on fsync to finish?
+>>If yes, then the problem is a very different issue from what I
+>>thought....
+>>    
+>>
+>
+>I am pretty sure I triggered the same a couple of times with aMule,
+>which was downloading and uploading about 20-30kB per second in each
+>direction, and randomly accessing larger files. Doing a sync then
+>suddenly caused the disk seek like crazy and write about 500kB per
+>second constantly. I waited about a minute, and then better killed
+>aMule. Could it be possible that sync tries to sync the writes which
+>arrive during the operation and cannot catch up?
+>
+>  
+>
+zam, can you answer this, because he is right that if the answer is yes,
+then we have a bit of a problem we need to address.  I worry that,
+assuming the answer is yes, that one process doing a lot of fsync, could
+muck up the performance of everyone its atoms fuse with if we expire the
+atom with every fsync, but if we don't then.....
+
+Jindrich, don't let us forget this issue before we fix it, ok?  Thanks,
 
 Hans
-
-Jeff Mahoney wrote:
-
-> Bodo Eggert wrote:
->
-> >Eric Dumazet <dada1@cosmosbay.com> wrote:
->
-> >>On Wednesday 12 July 2006 18:42, Jeff Mahoney wrote:
->
-> >>> On systems with block devices containing slashes (virtual dasd, cciss,
-> >>> etc), reiserfs will fail to initialize /proc/fs/reiserfs/<dev> due to
-> >>> it being interpreted as a subdirectory. The generic block device code
-> >>> changes the / to ! for use in the sysfs tree. This patch uses that
-> >>> convention.
-> >>>
-> >>> Tested by making dm devices use dm/<number> rather than dm-<number>
-> >>
-> >>Your patch handles at most one slash. But the description mentions
-> 'slashes'
-> >>(ie several slashes)
->
-> >Besides that, there is no reason to prevent the user from using many
-> slashes.
-> >OTOH, I'd prefer propper quoting, but having each driver do this would be
-> >insane.
->
->
-> The strings aren't user-supplied, they're kernel-internal names of block
-> devices, supplied by the driver. At present there is no possibility of
-> more than one slash in the name, and I doubt we'll see any new devices
-> with one slash in them, never mind more than one.
->
-> -Jeff
->
-> --
-> Jeff Mahoney
-> SUSE Labs
-
