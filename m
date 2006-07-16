@@ -1,56 +1,24 @@
-From: Jeffrey Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH] reiserfs: fix handling of device names with /'s in them
-Date: Sun, 16 Jul 2006 11:56:18 -0400
-Message-ID: <44BA61A2.5090404@suse.com>
-References: <6xQ4C-6NB-43@gated-at.bofh.it> <6xQea-6ZX-13@gated-at.bofh.it> <E1G1QFx-0001IO-K6@be1.lrz> <44B7D97B.20708@suse.com> <44B9E6D5.2040704@namesys.com>
+From: maciejej@msoe.edu
+Subject: reiser4 OOPSes and panics when out of memory
+Date: Sun, 16 Jul 2006 12:44:53 -0500 (CDT)
+Message-ID: <63591.70.224.221.228.1153071893.squirrel@people.msoe.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29014-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-29015-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44B9E6D5.2040704@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: 7eggert@gmx.de, Eric Dumazet <dada1@cosmosbay.com>, ReiserFS List <reiserfs-list@namesys.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@osdl.org>
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Has my previous post
+(http://marc.theaimsgroup.com/?l=reiserfs&m=115259665831650&w=2) been
+overlooked, or have I not provided enough information? Do I need to
+reproduce these issues on 2.6.18-rc1-mm2? Should I be trying any patches?
 
-Hans Reiser wrote:
-> So the Plan 9 and Unix way would be to let the driver parse the number
-> part of the name after the last slash.  What I don't understand is why
-> reiserfs is getting involved here, rather than recognizing the driver as
-> an extension of the namespace, seeing the driver as a mountpoint, and
-> just passing number to the driver.  There must be something I don't
-> grasp here, can you help me?
+The bottom line is with 2.6.17-mm6, I've always been able to OOPs or panic
+reiser4 on my amd64 machine (haven't tried x86 yet) by using all available
+physical memory.
 
-The name used in procfs isn't parsed anywhere, it could just as easily
-be fs0, fs1, fs2, etc, but that wouldn't be a very user friendly way of
-indicating which file system's statistics are described in that
-directory. It's just presented to the user as a pathname to identify a
-particular file system. The problem is that reiserfs is attempting to
-use a name from a separate name space that doesn't follow the same rules
-as the standard file system name space. Block device names, initially,
-weren't intended for use as self-contained path components and aren't
-part of the file system name space. If we wish to use those names, we
-need to sanitize them to conform to the rules of the file system name
-space by removing/replacing the path separator character.
-
-It's unfortunate that some drivers use a slash rather than sticking with
-the <type><letter> convention. I don't expect new drivers to be added
-with slashes in them. If at some point the existing drivers are changed
-to remove the slash, then this patch can be removed again.
-
-
-- -Jeff
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.3 (Darwin)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
-
-iD8DBQFEumGhLPWxlyuTD7IRAvuOAJ4yYUYp9TsUervYGBERSinPyOeAJQCgn7Wm
-lgYoPKKUElaKkWcoECN9e+4=
-=Rp8I
------END PGP SIGNATURE-----
