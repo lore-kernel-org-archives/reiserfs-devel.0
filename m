@@ -1,15 +1,15 @@
 From: Francisco Javier Cabello <fjcabello@visual-tools.com>
 Subject: Re: data corruption with 2.4.25 and datalogging patches
-Date: Mon, 17 Jul 2006 10:53:33 +0200
-Message-ID: <200607171053.42044.fjcabello@visual-tools.com>
+Date: Mon, 17 Jul 2006 12:49:35 +0200
+Message-ID: <200607171249.39797.fjcabello@visual-tools.com>
 References: <200607120816.11292.fjcabello@visual-tools.com> <200607141420.36656.fjcabello@visual-tools.com> <1152881975.6407.58.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed;
-  boundary="nextPart1169444.poUhynSxv4";
+  boundary="nextPart3521496.zVDiMEUNPA";
   protocol="application/pgp-signature";
   micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29025-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29026-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -19,30 +19,22 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 To: "Vladimir V. Saveliev" <vs@namesys.com>
 Cc: reiserfs-list@namesys.com
 
---nextPart1169444.poUhynSxv4
+--nextPart3521496.zVDiMEUNPA
 Content-Type: text/plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-Hello Vladimir,
-> such corruptions used to be considered as hardware bugs. Memory failure,
-> for instance. Did you ever run memtest on your systems?
-
-Yes, We have run memtest in our system. It's very seldom to find a system w=
-ith=20
-a hardware memory problem running. When we find a memory problem the kernel=
+Hello,
+do you think it could be realted with low memory conditions? Perhaps the=20
+systems with the problem has a high memory use with a lot of swapping. I am=
 =20
-doesn't boot. I am going to pass memtest in some of the system with reiserf=
-s=20
-corruption problem.
-
-Could I give you more information? Perhaps if I run 'reiserfsck=20
-=2D-rebuild-tree' and I give you the traces... would it be useful?
+just brainstorming...
 
 Regards,
 
 Paco
+
 
 On Friday, 14 de July de 2006 14:59, Vladimir V. Saveliev wrote:
 > Hello
@@ -100,15 +92,15 @@ PGP Key available at http://pgp.mit.edu
 =2D----------------
 
 
---nextPart1169444.poUhynSxv4
+--nextPart3521496.zVDiMEUNPA
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.2.4 (GNU/Linux)
 
-iD8DBQBEu1AVVorhIru+WCARAlW/AJ4utGc+OEYkycAU1oVelA8S2+4GsgCcCEWC
-Q9i/83DYQKhktudRTIdanio=
-=okhM
+iD8DBQBEu2tDVorhIru+WCARAii4AJ9pY9DSMVhxd0vN258jFAiftPte6ACeJ9yX
+7ulQ3eTJdRX4312JIhIOlDc=
+=hY96
 -----END PGP SIGNATURE-----
 
---nextPart1169444.poUhynSxv4--
+--nextPart3521496.zVDiMEUNPA--
