@@ -1,118 +1,64 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: [PATCH] reiserfs: fix handling of device names with /'s in them
-Date: Mon, 17 Jul 2006 14:03:09 -0700
-Message-ID: <44BBFB0D.6040105@namesys.com>
-References: <6xQ4C-6NB-43@gated-at.bofh.it> <6xQea-6ZX-13@gated-at.bofh.it> <E1G1QFx-0001IO-K6@be1.lrz> <44B7D97B.20708@suse.com> <44B9E6D5.2040704@namesys.com> <44BA61A2.5090404@suse.com> <44BA8214.7040005@namesys.com> <44BABB14.6070906@suse.com> <44BAE619.9010307@namesys.com> <44BAECE2.8070301@suse.com> <44BAFDC3.7020301@namesys.com> <44BB0146.7080702@suse.com> <44BB3C42.1060309@namesys.com> <44BBA4CF.8020901@suse.com> <44BBD4B6.5020801@namesys.com> <44BBD942.3080908@suse.com> <44BBDFFC.70601@namesys.com> <44BBEC17.8020507@suse.com>
-Mime-Version: 1.0
+From: Toby Thain <toby@smartgames.ca>
+Subject: Re: data corruption with 2.4.25 and datalogging patches
+Date: Mon, 17 Jul 2006 17:01:27 -0400
+Message-ID: <BAYC1-PASMTP01FBE81BD087CB8013EF7CBF620@CEZ.ICE>
+References: <200607120816.11292.fjcabello@visual-tools.com> <200607141420.36656.fjcabello@visual-tools.com> <1152881975.6407.58.camel@tribesman.namesys.com> <200607171053.42044.fjcabello@visual-tools.com> <1153158952.6311.87.camel@tribesman.namesys.com> <1153160052.3925.5.camel@serpent.office.seatab.com>
+Mime-Version: 1.0 (Apple Message framework v750)
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29052-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29051-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44BBEC17.8020507@suse.com>
+In-Reply-To: <1153160052.3925.5.camel@serpent.office.seatab.com>
+Message-Id: <CF68940C-C297-49AC-B42F-A521CC522627@smartgames.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: 7eggert@gmx.de, Eric Dumazet <dada1@cosmosbay.com>, ReiserFS List <reiserfs-list@namesys.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@osdl.org>
+Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
+To: reiserfs-list@namesys.com
 
-Jeff Mahoney wrote:
 
-> Hans Reiser wrote:
->
-> >Jeff Mahoney wrote:
->
-> >>1) Because then the behavior of /proc/fs/reiserfs/ would be
-> >>inconsistent. Devices that contain slashes end up being one level deeper
-> >>than other devices, which is silly and a userspace visible change.
->
-> >And you think translating / to ! is less work for user space?
->
->
-> A one line s#/#!# to access devices they couldn't before versus now
-> having to deal with going deeper into a tree for no real reason? Yes,
-> I do.
+On 17-Jul-06, at 2:14 PM, Brad Dameron wrote:
 
-I am willing to bet that perl can tree iterate with one line of code....
-
-Please read the Hideous Name by Rob Pike.  You are making it more hideous.
-
+> On Mon, 2006-07-17 at 21:55 +0400, Vladimir V. Saveliev wrote:
+>> Hello
+>>
+>> On Mon, 2006-07-17 at 10:53 +0200, Francisco Javier Cabello wrote:
+>>> Hello Vladimir,
+>>>> such corruptions used to be considered as hardware bugs. Memory  
+>>>> failure,
+>>>> for instance. Did you ever run memtest on your systems?
+>>>
+>>> Yes, We have run memtest in our system. It's very seldom to find  
+>>> a system with
+>>> a hardware memory problem running. When we find a memory problem  
+>>> the kernel
+>>> doesn't boot. I am going to pass memtest in some of the system  
+>>> with reiserfs
+>>> corruption problem.
+>>>
 >
-> >Jeff, you are a programmer, not an architect, and when you disregard
-> >architects we end up with things like the performance disaster that is
-> >V3 acls.
->
->
-> This again? The original reiser3 implementation was, and still is,
-> incomplete in comparison to the design document. The design touted the
-> extensibility of the tree and item types. 
+> This is not true. There are certain memory issues that can still allow
+> the system to boot and appear to run ok. I had a system that didn't  
+> show
+> a memory error until the 4th pass on memtest. I just happened to  
+> let it
+> run over the weekend. I have seen other issues with my larger systems
+> that have 64GB of ram. To where memtest after a week didn't detect
+> anything but the kernel mcelog reported weird ECC memory issues. I
+> replaced several DIMM's and the issue went away. But who knows what
+> could of occured had I not replaced the memory.
 
-Try v4.
+I agree with Brad. Memory problems can certainly manifest in obvious  
+or obscure ways that don't prevent boot. I spent months chasing down  
+what I thought was an IDE controller chipset problem (corrupt disk I/ 
+O invisible to the kernel, hence corrupt filesystems, etc) that was  
+simply bad RAM.
 
-> My original xattr
-> implementation added another item type, but oh -- wait -- it turns out
-> that the file system isn't quite as extensible as claimed.. or, well, AT
-> ALL. Adding another item results in an incompatible file system change
-> that when mounted on another system, will panic the node. That's
-> friendly! There's not even any way to identify which items are in use on
-> a particular file system to issue a warning/error on mount. Outstanding
-> job "architecting" there.
-
-Well, if you had an obsessive desire to not use V4, you could fix this
-in V3 instead.
+--T
 
 >
-> If I could go back and do it again, I would have forked a reiserfs v3.7
-> that actually incorporated a compatibility block to identify which items
-> are in use on a particular file systems, so that the mount can succeed
-> or fail based on that. 
-
-Might be easier to use V4...  so many bugs got added to an otherwise
-stable V3.....
-
-> Xattrs would have been another item type as
-> expected, and the performance problems wouldn't be nearly as harsh as
-> they are. 
-
-Hmm, maybe it was all perfectly predictable to an architect....
-
-> Not that you wouldn't have been just as resistant to that
-> change as well.
+> Brad Dameron
+> SeaTab Software
+> www.seatab.com
 >
-> The thing is, you have a history of ignoring what users want.
-
-What quality architect does not?  Users are to be listened to with great
-care.  Users are to be listened to with great discretion.
-
-> Users
-> wanted ACLs and xattrs on reiser3, but you said, "wait for v4, it'll be
-> out soon, and it'll have them." That was 4 years ago. Reiser4 still
-> isn't completely stable 
-
-It is more stable than V3 was when it went in, and surely it is more
-stable than ext4....
-
-It is getting there.  Recent get ready for mainline changes added bugs. 
-We need to get some patches out the door tomorrow, and then we should be
-back to being stable again.
-
-> (or in mainline),
-
-not my doing;-)  we wasted a lot of time shuffling code from one side of
-the room to the other for no measurable benefit.  If only that time
-could have been spent on the things I know deserve work.
-
-> and ACLs and xattrs still
-> aren't implemented. Users that demanded ACLs certainly aren't waiting
-> around for reiser4 to be released and have ACLs added. They've long
-> since switched to a file system that actually does what they need. They
-> wanted ACLs and xattrs added to the stable file system they were using
-> and you refused in an attempt to get more support for your latest
-> project. Further, reiser3 users remember what a long painful road it was
-> to reiser3 stability
-
-so why did you take their stable branch away from them by working on
-more than bugfixes for V3?
-
-Jeff, working on v3 at this point is nuts.  V4 blows it away....
 
