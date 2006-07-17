@@ -1,91 +1,74 @@
-From: Jeff Mahoney <jeffm@suse.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: [PATCH] reiserfs: fix handling of device names with /'s in them
-Date: Mon, 17 Jul 2006 15:07:51 -0400
-Message-ID: <44BBE007.1030209@suse.com>
-References: <6xQ4C-6NB-43@gated-at.bofh.it> <6xQea-6ZX-13@gated-at.bofh.it> <E1G1QFx-0001IO-K6@be1.lrz> <44B7D97B.20708@suse.com> <44B9E6D5.2040704@namesys.com> <44BA61A2.5090404@suse.com> <44BA8214.7040005@namesys.com> <44BABB14.6070906@suse.com> <44BAE619.9010307@namesys.com> <44BAECE2.8070301@suse.com>            <44BAFDC3.7020301@namesys.com> <200607171808.k6HI8kjL018161@turing-police.cc.vt.edu> <44BBD400.3060504@suse.com> <44BBDCB5.8070906@namesys.com>
+Date: Mon, 17 Jul 2006 12:07:40 -0700
+Message-ID: <44BBDFFC.70601@namesys.com>
+References: <6xQ4C-6NB-43@gated-at.bofh.it> <6xQea-6ZX-13@gated-at.bofh.it> <E1G1QFx-0001IO-K6@be1.lrz> <44B7D97B.20708@suse.com> <44B9E6D5.2040704@namesys.com> <44BA61A2.5090404@suse.com> <44BA8214.7040005@namesys.com> <44BABB14.6070906@suse.com> <44BAE619.9010307@namesys.com> <44BAECE2.8070301@suse.com> <44BAFDC3.7020301@namesys.com> <44BB0146.7080702@suse.com> <44BB3C42.1060309@namesys.com> <44BBA4CF.8020901@suse.com> <44BBD4B6.5020801@namesys.com> <44BBD942.3080908@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29045-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29046-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44BBDCB5.8070906@namesys.com>
+In-Reply-To: <44BBD942.3080908@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Valdis.Kletnieks@vt.edu, 7eggert@gmx.de, Eric Dumazet <dada1@cosmosbay.com>, ReiserFS List <reiserfs-list@namesys.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@osdl.org>
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: 7eggert@gmx.de, Eric Dumazet <dada1@cosmosbay.com>, ReiserFS List <reiserfs-list@namesys.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@osdl.org>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Jeff Mahoney wrote:
 
-Hans Reiser wrote:
-> Jeff Mahoney wrote:
-> 
->> Valdis.Kletnieks@vt.edu wrote:
->>
->>> On Sun, 16 Jul 2006 20:02:27 PDT, Hans Reiser said:
->>>> Create a mountpoint which knows how to resolve a/b without using a
->>>> "directory".
->>> And said mountpoint gets past the '/' interpretation in the VFS, how,
->> exactly?
->>
->>> fs/namei.c, do_path_lookup() does magic on a '/' on about the 3rd line.
->>> So you're going to get handed 'a'.
->>
->> That's where he started talking about how BSD gets namei() right by
->> allowing each file system to deal with it how it chooses.
->>
->> Personally, I think it's insane. On occasion, I've started to port
->> ReiserFS to BSD-like systems, 
-> 
-> Porting V3 to anything is insane.  Why would you even consider it?
+> Hans Reiser wrote:
+>
+> >Jeff Mahoney wrote:
+>
+> >>Hans Reiser wrote:
+> >>
+> >>>I don't understand your patch and cannot support it as it is written.  
+> >>>Perhaps you can call me and explain it on the phone.
+> >>
+> >>I seriously can't tell if you're deliberately trying to be difficult or
+> >>not. It's a simple "replace / with ! before sending the name to procfs."
+> >>
+> >>Reiserfs requests that a procfs directory called
+> >>/proc/fs/reiserfs/<blockdev> be created. Some block devices contain
+> >>slashes, so with cciss/c123 it attempts to create a directory called
+> >>/proc/fs/reiserfs/cciss/c123, but cciss/ doesn't exist, shouldn't, and
+> >>never will.
+>
+> >Why not check to see if it does not exist, and create it if not,  as
+> >needed,  and skip the !'s....?
+>
+>
+> 1) Because then the behavior of /proc/fs/reiserfs/ would be
+> inconsistent. Devices that contain slashes end up being one level deeper
+> than other devices, which is silly and a userspace visible change. 
 
-Because I have an iBook I dual boot, and I wanted access to my reiserfs
-file systems while using OSX. I'd call it more of a write-from-scratch
-than a port, actually.
+And you think translating / to ! is less work for user space? 
 
->> and I get so fed up with how you have to
->> reinvent the wheel for everything. There's something to be said for
->> replaceable-anything semantics, but personally I like the Linux model
->> and having an agreed-upon framework to work with.
-> 
-> Linux vs. BSD's namei is the difference between thinking you know how to
-> do things and everyone should be forced into your mold, and thinking
-> that someone will always be more clever, at the very least with regards
-> to some special case you could never have anticipated.
+> Tools
+> that wish to parse the information would then need added complexity to
+> traverse into the next level to reach that information.
+>
+> 2) The block-device-as-path-name-component behavior is already defined
+> by sysfs (/sys/block), and it should be consistent.
 
-That's great, except that by and large, the Linux VFS covers all the
-common cases for you. This is such a ridiculous corner case that it
-hardly justifies using the BSD namei() semantics.
+Translate that as, "I won't recompile my brain no matter what you do to
+make me."
 
->> I also think it's insane to come up with a reisermetafs to export procfs
->> information when a simple s#/#!# _on a single directory name_ will do
->> the job.
-> 
-> Or just create a parent directory and skip the metafs.  Look, I don't
-> much care about the other details of coding it, but if you are changing
-> !'s to /'s, as an architect my intuition says something is wrong and
-> being papered over.  /'s are just fine, and what the block devices do is
-> elegant.   You are doing a quick hack.
+You blindly copied how someone else in a hurry did it without a thought
+to whether it was done right, and now you don't want to change it.  You
+should have asked me about it before coding it.
 
-Yes, it is a quick hack. It's called being practical and consistent
-until we can get around to removing slashes. Slashes *were* ok in block
-device names until we started using them as path name components.
+Replace block-device-as-path-name-component with
+block-device-as-path-name-suffix, and everything is very consistent. 
+And elegant.
 
-I've stated the reasons why adding a subdirectory is a bad idea multiple
-times. The fix is already accepted. I'm done discussing this.
+Jeff, you are a programmer, not an architect, and when you disregard
+architects we end up with things like the performance disaster that is
+V3 acls.
 
-- -Jeff
+Replacing / with ! is hideous.  Someone added a nifty elegance to block
+device naming, and you are desecrating it.
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
-
-iD8DBQFEu+AGLPWxlyuTD7IRAjzqAKCk/nSheinL6AL4m+9YbG5FIo7f/ACeKWOd
-Urif7U9OMFwX9JzywowrMiM=
-=86sM
------END PGP SIGNATURE-----
+Hans
