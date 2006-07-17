@@ -1,37 +1,38 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: reiser4 OOPSes and panics when out of memory
-Date: Mon, 17 Jul 2006 18:10:28 +0400
-Message-ID: <1153145428.6311.43.camel@tribesman.namesys.com>
-References: <63591.70.224.221.228.1153071893.squirrel@people.msoe.edu>
+From: Adrian Ulrich <reiser4@blinkenlights.ch>
+Subject: Re: vs-6030
+Date: Mon, 17 Jul 2006 15:15:49 +0200
+Message-ID: <20060717151549.ad23d5ab.reiser4@blinkenlights.ch>
+References: <263a8b350503031343182f4e4a@mail.gmail.com>
+	<1109923874.3504.577.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29027-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29028-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <63591.70.224.221.228.1153071893.squirrel@people.msoe.edu>
+In-Reply-To: <1109923874.3504.577.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: maciejej@msoe.edu
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello
+Hi Vladimir,
 
-On Sun, 2006-07-16 at 12:44 -0500, maciejej@msoe.edu wrote:
-> Has my previous post
-> (http://marc.theaimsgroup.com/?l=reiserfs&m=115259665831650&w=2) been
-> overlooked, or have I not provided enough information? Do I need to
-> reproduce these issues on 2.6.18-rc1-mm2? Should I be trying any patches?
-> 
+> Can you reproduce this easily?
+> If no, please tell more about what did filesystem do when panic occured.
 
-your test crashes reiser4 on my test box. I hope to get a patch ready
-later today. Not sure that I got the same problem as you, though. We
-will see. 
+I've seen the same problem (vs-6030) today on one of our hosts:
 
-> The bottom line is with 2.6.17-mm6, I've always been able to OOPs or panic
-> reiser4 on my amd64 machine (haven't tried x86 yet) by using all available
-> physical memory.
-> 
-> 
+It happened as soon as somebody tried to write data to
+/home/$affected_user/ (..or a subdirectory)
 
+ eg:
+  dd if=/dev/urandom of=/home/$affected_user/Temp/test
+
+always paniced the kernel (2.6.16.11) and reiserfsck didn't show any errors.
+
+
+I created a metadump of the filesystem, would you like to have a look at it?
+
+Regards,
+ Adrian
