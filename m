@@ -1,87 +1,47 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: data corruption with 2.4.25 and datalogging patches
-Date: Mon, 17 Jul 2006 21:55:52 +0400
-Message-ID: <1153158952.6311.87.camel@tribesman.namesys.com>
-References: <200607120816.11292.fjcabello@visual-tools.com>
-	 <200607141420.36656.fjcabello@visual-tools.com>
-	 <1152881975.6407.58.camel@tribesman.namesys.com>
-	 <200607171053.42044.fjcabello@visual-tools.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: [PATCH] reiserfs: fix handling of device names with /'s in them
+Date: Mon, 17 Jul 2006 14:08:46 -0400
+Message-ID: <200607171808.k6HI8kjL018161@turing-police.cc.vt.edu>
+References: <6xQ4C-6NB-43@gated-at.bofh.it> <6xQea-6ZX-13@gated-at.bofh.it> <E1G1QFx-0001IO-K6@be1.lrz> <44B7D97B.20708@suse.com> <44B9E6D5.2040704@namesys.com> <44BA61A2.5090404@suse.com> <44BA8214.7040005@namesys.com> <44BABB14.6070906@suse.com> <44BAE619.9010307@namesys.com> <44BAECE2.8070301@suse.com>
+            <44BAFDC3.7020301@namesys.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1153159726_13479P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29036-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29037-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200607171053.42044.fjcabello@visual-tools.com>
+In-Reply-To: Your message of "Sun, 16 Jul 2006 20:02:27 PDT."
+             <44BAFDC3.7020301@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Francisco Javier Cabello <fjcabello@visual-tools.com>
-Cc: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Jeffrey Mahoney <jeffm@suse.com>, 7eggert@gmx.de, Eric Dumazet <dada1@cosmosbay.com>, ReiserFS List <reiserfs-list@namesys.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@osdl.org>
 
-Hello
+--==_Exmh_1153159726_13479P
+Content-Type: text/plain; charset=us-ascii
 
-On Mon, 2006-07-17 at 10:53 +0200, Francisco Javier Cabello wrote:
-> Hello Vladimir,
-> > such corruptions used to be considered as hardware bugs. Memory failure,
-> > for instance. Did you ever run memtest on your systems?
-> 
-> Yes, We have run memtest in our system. It's very seldom to find a system with 
-> a hardware memory problem running. When we find a memory problem the kernel 
-> doesn't boot. I am going to pass memtest in some of the system with reiserfs 
-> corruption problem.
-> 
-please let it run few hours at least.
+On Sun, 16 Jul 2006 20:02:27 PDT, Hans Reiser said:
 
-> Could I give you more information? Perhaps if I run 'reiserfsck 
-> --rebuild-tree' and I give you the traces... would it be useful?
-> 
-ok, although
-you sent reiserfsck --check log. The corruption looked like a content of
-block was randomly overwritten by random characters. We used to consider
-such corruptions as caused by hardware faults. Especially because most
-of your systems are running in similar circumstances flawlessly.
+> Create a mountpoint which knows how to resolve a/b without using a
+> "directory".
 
-> Regards,
-> 
-> Paco
-> 
-> On Friday, 14 de July de 2006 14:59, Vladimir V. Saveliev wrote:
-> > Hello
-> >
-> > On Fri, 2006-07-14 at 14:20 +0200, Francisco Javier Cabello wrote:
-> > > Hello Vladimir,
-> > >
-> > > # reiserfsck -l /tmp/reiserfsck.log -y --check /dev/hdc1
-> > >
-> > > Standard output:
-> > > ======================================================
-> > > Will read-only check consistency of the filesystem on /dev/hdc1
-> > > Will put log info to '/tmp/reiserfsck.log'
-> > > ###########
-> > > reiserfsck --check started at Fri Jul 14 14:09:33 2006
-> > > ###########
-> > > Replaying journal..
-> > > Reiserfs journal '/dev/hdc1' in blocks [18..8211]: 0 transactions
-> > > replayed Checking internal tree..finished
-> > > Comparing bitmaps..Bad nodes were found, Semantic pass skipped
-> > > 1 found corruptions can be fixed only when running with --rebuild-tree
-> > > ###########
-> > > reiserfsck finished at Fri Jul 14 14:13:29 2006
-> > > ###########
-> > > ======================================================
-> > >
-> > > /tmp/reiserfsck.log:
-> > > ======================================================
-> > > bad_internal: vpf-10320: block 23868569, items 91 and 92: The wrong order
-> > > of items: [410810496 11321 0x16abca00 ??? (15)], [11312 11321 0x22f1c880
-> > > DIR (3)]
-> >
-> > such corruptions used to be considered as hardware bugs. Memory failure,
-> > for instance. Did you ever run memtest on your systems?
-> >
-> > >  the problem in the internal node occured (23868569), whole subtree is
-> > > skipped vpf-10640: The on-disk and the correct bitmaps differs.
-> > > ======================================================
-> 
+And said mountpoint gets past the '/' interpretation in the VFS, how, exactly?
 
+fs/namei.c, do_path_lookup() does magic on a '/' on about the 3rd line.
+So you're going to get handed 'a'.
+
+--==_Exmh_1153159726_13479P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFEu9IucC3lWbTT17ARAtwoAJ4qfPzyWr0+tF5LqSDEHJ9Krd9H/gCguaw+
+1egFENzXzu6Z6BoFu2XlVs0=
+=ZXoz
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1153159726_13479P--
