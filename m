@@ -1,47 +1,48 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: [PATCH] reiserfs: fix handling of device names with /'s in them
-Date: Mon, 17 Jul 2006 14:08:46 -0400
-Message-ID: <200607171808.k6HI8kjL018161@turing-police.cc.vt.edu>
-References: <6xQ4C-6NB-43@gated-at.bofh.it> <6xQea-6ZX-13@gated-at.bofh.it> <E1G1QFx-0001IO-K6@be1.lrz> <44B7D97B.20708@suse.com> <44B9E6D5.2040704@namesys.com> <44BA61A2.5090404@suse.com> <44BA8214.7040005@namesys.com> <44BABB14.6070906@suse.com> <44BAE619.9010307@namesys.com> <44BAECE2.8070301@suse.com>
-            <44BAFDC3.7020301@namesys.com>
+From: Brad Dameron <brad@seatab.com>
+Subject: Re: data corruption with 2.4.25 and datalogging patches
+Date: Mon, 17 Jul 2006 11:14:12 -0700
+Message-ID: <1153160052.3925.5.camel@serpent.office.seatab.com>
+References: <200607120816.11292.fjcabello@visual-tools.com>
+	 <200607141420.36656.fjcabello@visual-tools.com>
+	 <1152881975.6407.58.camel@tribesman.namesys.com>
+	 <200607171053.42044.fjcabello@visual-tools.com>
+	 <1153158952.6311.87.camel@tribesman.namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1153159726_13479P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29037-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29038-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Sun, 16 Jul 2006 20:02:27 PDT."
-             <44BAFDC3.7020301@namesys.com>
+In-Reply-To: <1153158952.6311.87.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: Jeffrey Mahoney <jeffm@suse.com>, 7eggert@gmx.de, Eric Dumazet <dada1@cosmosbay.com>, ReiserFS List <reiserfs-list@namesys.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@osdl.org>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
---==_Exmh_1153159726_13479P
-Content-Type: text/plain; charset=us-ascii
+On Mon, 2006-07-17 at 21:55 +0400, Vladimir V. Saveliev wrote:
+> Hello
+> 
+> On Mon, 2006-07-17 at 10:53 +0200, Francisco Javier Cabello wrote:
+> > Hello Vladimir,
+> > > such corruptions used to be considered as hardware bugs. Memory failure,
+> > > for instance. Did you ever run memtest on your systems?
+> > 
+> > Yes, We have run memtest in our system. It's very seldom to find a system with 
+> > a hardware memory problem running. When we find a memory problem the kernel 
+> > doesn't boot. I am going to pass memtest in some of the system with reiserfs 
+> > corruption problem.
+> > 
 
-On Sun, 16 Jul 2006 20:02:27 PDT, Hans Reiser said:
+This is not true. There are certain memory issues that can still allow
+the system to boot and appear to run ok. I had a system that didn't show
+a memory error until the 4th pass on memtest. I just happened to let it
+run over the weekend. I have seen other issues with my larger systems
+that have 64GB of ram. To where memtest after a week didn't detect
+anything but the kernel mcelog reported weird ECC memory issues. I
+replaced several DIMM's and the issue went away. But who knows what
+could of occured had I not replaced the memory.
 
-> Create a mountpoint which knows how to resolve a/b without using a
-> "directory".
+Brad Dameron
+SeaTab Software
+www.seatab.com
 
-And said mountpoint gets past the '/' interpretation in the VFS, how, exactly?
-
-fs/namei.c, do_path_lookup() does magic on a '/' on about the 3rd line.
-So you're going to get handed 'a'.
-
---==_Exmh_1153159726_13479P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.4 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFEu9IucC3lWbTT17ARAtwoAJ4qfPzyWr0+tF5LqSDEHJ9Krd9H/gCguaw+
-1egFENzXzu6Z6BoFu2XlVs0=
-=ZXoz
------END PGP SIGNATURE-----
-
---==_Exmh_1153159726_13479P--
