@@ -1,43 +1,114 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: [PATCH] reiserfs: fix handling of device names with /'s in them
-Date: Mon, 17 Jul 2006 00:29:06 -0700
-Message-ID: <44BB3C42.1060309@namesys.com>
-References: <6xQ4C-6NB-43@gated-at.bofh.it> <6xQea-6ZX-13@gated-at.bofh.it> <E1G1QFx-0001IO-K6@be1.lrz> <44B7D97B.20708@suse.com> <44B9E6D5.2040704@namesys.com> <44BA61A2.5090404@suse.com> <44BA8214.7040005@namesys.com> <44BABB14.6070906@suse.com> <44BAE619.9010307@namesys.com> <44BAECE2.8070301@suse.com> <44BAFDC3.7020301@namesys.com> <44BB0146.7080702@suse.com>
+From: Francisco Javier Cabello <fjcabello@visual-tools.com>
+Subject: Re: data corruption with 2.4.25 and datalogging patches
+Date: Mon, 17 Jul 2006 10:53:33 +0200
+Message-ID: <200607171053.42044.fjcabello@visual-tools.com>
+References: <200607120816.11292.fjcabello@visual-tools.com> <200607141420.36656.fjcabello@visual-tools.com> <1152881975.6407.58.camel@tribesman.namesys.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed;
+  boundary="nextPart1169444.poUhynSxv4";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932376AbWGQH33@vger.kernel.org>
-In-Reply-To: <44BB0146.7080702@suse.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-29025-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <1152881975.6407.58.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jeffrey Mahoney <jeffm@suse.com>
-Cc: 7eggert@gmx.de, Eric Dumazet <dada1@cosmosbay.com>, ReiserFS List <reiserfs-list@namesys.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@osdl.org>
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Jeffrey Mahoney wrote:
+--nextPart1169444.poUhynSxv4
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-> Hans Reiser wrote:
+Hello Vladimir,
+> such corruptions used to be considered as hardware bugs. Memory failure,
+> for instance. Did you ever run memtest on your systems?
+
+Yes, We have run memtest in our system. It's very seldom to find a system w=
+ith=20
+a hardware memory problem running. When we find a memory problem the kernel=
+=20
+doesn't boot. I am going to pass memtest in some of the system with reiserf=
+s=20
+corruption problem.
+
+Could I give you more information? Perhaps if I run 'reiserfsck=20
+=2D-rebuild-tree' and I give you the traces... would it be useful?
+
+Regards,
+
+Paco
+
+On Friday, 14 de July de 2006 14:59, Vladimir V. Saveliev wrote:
+> Hello
 >
-> >Jeffrey Mahoney wrote:
+> On Fri, 2006-07-14 at 14:20 +0200, Francisco Javier Cabello wrote:
+> > Hello Vladimir,
+> >
+> > # reiserfsck -l /tmp/reiserfsck.log -y --check /dev/hdc1
+> >
+> > Standard output:
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> > Will read-only check consistency of the filesystem on /dev/hdc1
+> > Will put log info to '/tmp/reiserfsck.log'
+> > ###########
+> > reiserfsck --check started at Fri Jul 14 14:09:33 2006
+> > ###########
+> > Replaying journal..
+> > Reiserfs journal '/dev/hdc1' in blocks [18..8211]: 0 transactions
+> > replayed Checking internal tree..finished
+> > Comparing bitmaps..Bad nodes were found, Semantic pass skipped
+> > 1 found corruptions can be fixed only when running with --rebuild-tree
+> > ###########
+> > reiserfsck finished at Fri Jul 14 14:13:29 2006
+> > ###########
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> >
+> > /tmp/reiserfsck.log:
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> > bad_internal: vpf-10320: block 23868569, items 91 and 92: The wrong ord=
+er
+> > of items: [410810496 11321 0x16abca00 ??? (15)], [11312 11321 0x22f1c880
+> > DIR (3)]
 >
-> >>This is not
-> >>the desired interpretation, which is why we need to replace the pathname
-> >>separator in the name. ReiserFS is the component that is choosing to use
-> >>the block device name as a pathname component and is responsible for
-> >>making any translation to that usage.
+> such corruptions used to be considered as hardware bugs. Memory failure,
+> for instance. Did you ever run memtest on your systems?
 >
-> >This makes no sense.  I have the feeling you see trees and I see forest.
->
->
-> No, Hans. I see a problem that has been fixed elsewhere in an identical
-> manner. The real solution is to eliminate / from block devices in the
-> long run, not to start introducing mount points with different pathname
-> interpretation rules. Those may have a place elsewhere, after a tough
-> uphill battle, and are most certainly overkill for this problem.
->
-> -Jeff
+> >  the problem in the internal node occured (23868569), whole subtree is
+> > skipped vpf-10640: The on-disk and the correct bitmaps differs.
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+
+=2D-=20
+One of my most productive days was throwing away 1000 lines of code (Ken=20
+Thompson)
+=2D----------------
+PGP fingerprint: AF69 62B4 97EB F5BB 2C60  B802 568A E122 BBBE 5820
+PGP Key available at http://pgp.mit.edu
+=2D----------------
 
 
-I don't understand your patch and cannot support it as it is written.  
-Perhaps you can call me and explain it on the phone.
+--nextPart1169444.poUhynSxv4
+Content-Type: application/pgp-signature
 
-Hans
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQBEu1AVVorhIru+WCARAlW/AJ4utGc+OEYkycAU1oVelA8S2+4GsgCcCEWC
+Q9i/83DYQKhktudRTIdanio=
+=okhM
+-----END PGP SIGNATURE-----
+
+--nextPart1169444.poUhynSxv4--
