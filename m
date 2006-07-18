@@ -1,48 +1,30 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: remount with open files
-Date: Tue, 18 Jul 2006 13:17:25 -0400
-Message-ID: <44BD17A5.6060002@suse.com>
-References: <e9hvov$4dt$1@sea.gmane.org>
+From: "Pekka Enberg" <penberg@cs.helsinki.fi>
+Subject: Re: Re: [PATCH] reiserfs: fix handling of device names with /'s in them
+Date: Tue, 18 Jul 2006 21:37:30 +0300
+Message-ID: <84144f020607181137u51639699m1fd5c86bc9d078ec@mail.gmail.com>
+References: <6xQ4C-6NB-43@gated-at.bofh.it> <44BAE619.9010307@namesys.com>
+	 <44BAECE2.8070301@suse.com> <44BAFDC3.7020301@namesys.com>
+	 <44BB0146.7080702@suse.com> <44BB3C42.1060309@namesys.com>
+	 <44BBA4CF.8020901@suse.com> <44BBD4B6.5020801@namesys.com>
+	 <44BBD942.3080908@suse.com> <44BBDFFC.70601@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29063-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29064-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e9hvov$4dt$1@sea.gmane.org>
+Sender: penberg@gmail.com
+In-Reply-To: <44BBDFFC.70601@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Andreas Moroder <andreas.moroder@sb-brixen.it>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Jeff Mahoney <jeffm@suse.com>, 7eggert@gmx.de, Eric Dumazet <dada1@cosmosbay.com>, ReiserFS List <reiserfs-list@namesys.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@osdl.org>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On 7/17/06, Hans Reiser <reiser@namesys.com> wrote:
+> Replacing / with ! is hideous.  Someone added a nifty elegance to block
+> device naming, and you are desecrating it.
 
-Andreas Moroder wrote:
-> Hello,
-> 
-> we have a SLES8 system with kernel 2.4.19-64GB-SMP and would like to add
-> ACLs to the files system. As far as I can see the ACL options are
-> compoled into the kernel. Is it possible to add the acl option to the
-> /etc/fstab entry and then remount the filesystem with -o remount even
-> with open files ?
-> 
-> When the remount is done do I have to starta another program or so or is
-> this all I have to do ?
-
-Yes, ACLs are safe to enable and disable on-the-fly with -oremount,{,no}acl.
-
-- -Jeff
-
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
-
-iD8DBQFEvRelLPWxlyuTD7IRApAwAJ4+RNlJmHj5P0X21iZDc3HnGRGVmgCfee9s
-4EM3hm3HrblEkqMXw8xBAPc=
-=2Kbs
------END PGP SIGNATURE-----
+You're free to send a patch to fix it all, you know. Until then, lets
+make reiserfs consistent with rest of the kernel, ok?
