@@ -1,51 +1,137 @@
-From: Horst von Brand <vonbrand@inf.utfsm.cl>
-Subject: Re: [PATCH] reiserfs: fix handling of device names with /'s in them
-Date: Mon, 17 Jul 2006 20:26:49 -0400
-Message-ID: <200607180026.k6I0Qo1m010430@laptop11.inf.utfsm.cl>
-References: <reiser@namesys.com>
-Return-path: <reiserfs-list-return-29054-reiserfs=m.gmane.org@namesys.com>
+From: Jake Maciejewski <maciejej@msoe.edu>
+Subject: Re: reiser4 OOPSes and panics when out of memory
+Date: Tue, 18 Jul 2006 00:52:07 -0600
+Message-ID: <1153205527.9866.20.camel@gentoo>
+References: <63591.70.224.221.228.1153071893.squirrel@people.msoe.edu>
+	 <1153145428.6311.43.camel@tribesman.namesys.com>
+	 <1153157891.6311.71.camel@tribesman.namesys.com>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="=-8CmlfhaRIBq22PCKXFcS"
+Return-path: <reiserfs-list-return-29055-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
-   of "Mon, 17 Jul 2006 14:03:09 MST." <44BBFB0D.6040105@namesys.com> 
+In-Reply-To: <1153157891.6311.71.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: reiserfs-list@namesys.com
+
+--=-8CmlfhaRIBq22PCKXFcS
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Jeff Mahoney <jeffm@suse.com>, 7eggert@gmx.de, Eric Dumazet <dada1@cosmosbay.com>, ReiserFS List <reiserfs-list@namesys.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@osdl.org>
 
-Hans Reiser <reiser@namesys.com> wrote:
-> Jeff Mahoney wrote:
-> > Hans Reiser wrote:
-> > >Jeff Mahoney wrote:
-> > >>1) Because then the behavior of /proc/fs/reiserfs/ would be
-> > >>inconsistent. Devices that contain slashes end up being one level deeper
-> > >>than other devices, which is silly and a userspace visible change.
-> >
-> > >And you think translating / to ! is less work for user space?
-> >
-> >
-> > A one line s#/#!# to access devices they couldn't before versus now
-> > having to deal with going deeper into a tree for no real reason? Yes,
-> > I do.
+Thanks for the patch, but I can still reproduce the problem. I've been
+running the attached program to try to speed up the testing process a
+bit. Interrupting and restarting the compilation loop also seems to
+help.
 
-> I am willing to bet that perl can tree iterate with one line of code....
+If I had hours to wait, it would probably crash eventually without
+additional encouragement, but I'm doing everything as an unprivileged
+user, so I don't think my tests are unreasonable.
 
-;-)
+Anyway, I'm still getting a panic with debug enabled:
 
-> Please read the Hideous Name by Rob Pike.
+reiser4 panicked cowardly: reiser4[find(16411)]: reiser4_dirty_inode (fs/reiser4/super_ops.c:173)[]:
+Kernel panic - not syncing: reiser4[find(16411)]: reiser4_dirty_inode (fs/reiser4/super_ops.c:173)[]:
 
-Interesting read.
+Without debug enabled I've seen:
 
->                                           You are making it more hideous.
+http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060718/messages1.txt.gz
+http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060718/fsck1_--check.txt.gz
+http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060718/fsck1_--fix.txt.gz
+http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060718/fsck1_--check_after_--fix.txt.gz
 
-By insisting that something that is /not/ a directory /is/ written as such?
-Sorry, they are asking for exactly the opposite.
+but usually I get:
+
+http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060718/messages3.txt.gz
+
+with no corruption (although I've been rebooting before complete
+failure).
+
+On Mon, 2006-07-17 at 21:38 +0400, Vladimir V. Saveliev wrote:
+> Hello
+> 
+> On Mon, 2006-07-17 at 18:10 +0400, Vladimir V. Saveliev wrote:
+> > Hello
+> > 
+> > On Sun, 2006-07-16 at 12:44 -0500, maciejej@msoe.edu wrote:
+> > > Has my previous post
+> > > (http://marc.theaimsgroup.com/?l=reiserfs&m=115259665831650&w=2) been
+> > > overlooked, or have I not provided enough information? Do I need to
+> > > reproduce these issues on 2.6.18-rc1-mm2? Should I be trying any patches?
+> > > 
+> > 
+> 
+> please try the attached patch.
+> 
+> > your test crashes reiser4 on my test box. I hope to get a patch ready
+> > later today. Not sure that I got the same problem as you, though. We
+> > will see. 
+> > 
+> > > The bottom line is with 2.6.17-mm6, I've always been able to OOPs or panic
+> > > reiser4 on my amd64 machine (haven't tried x86 yet) by using all available
+> > > physical memory.
+> > > 
+> > > 
+> > 
+> > 
 -- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+Jake Maciejewski <maciejej@msoe.edu>
+
+--=-8CmlfhaRIBq22PCKXFcS
+Content-Disposition: attachment; filename=waste_memory.c
+Content-Type: text/x-csrc; name=waste_memory.c; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+
+#include <sys/sysinfo.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+
+#define MB 1048576
+#define DEFAULT_SAVE 0
+#define DELAY 10
+
+int main(int argc, char *argv[]) {
+
+struct sysinfo info;
+size_t waste, save;
+void *ptr;
+
+sysinfo(&info);
+
+if(argc>1)
+	save = atoi(argv[1])*MB;
+else
+	save = DEFAULT_SAVE*MB;
+
+if( save >= info.freeram ) {
+	fprintf(stderr, "error: only %iMB free\n", (int)info.freeram/MB);
+	return ENOMEM;
+	}
+
+while(1) {
+	sysinfo(&info);
+	waste = (info.freeram-save)>0 ? info.freeram-save : 0;
+
+	ptr = malloc(waste);
+	if( ptr == 0 ) {
+		perror("malloc() failed\n");
+		return ENOMEM;
+		}
+
+	printf("reserving %iMB, wasting %iMB\n", (int)save/MB, (int)waste/MB);
+	memset(ptr, 0, waste);
+
+	sleep(DELAY);
+	free(ptr);
+	}
+
+return 0;
+}
+
+--=-8CmlfhaRIBq22PCKXFcS--
+
