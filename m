@@ -1,110 +1,173 @@
-From: Jake Maciejewski <maciejej@msoe.edu>
-Subject: Re: reiser4 OOPSes and panics when out of memory
-Date: Wed, 19 Jul 2006 07:28:02 -0600
-Message-ID: <1153315682.9708.5.camel@gentoo>
-References: <63591.70.224.221.228.1153071893.squirrel@people.msoe.edu>
-	 <1153145428.6311.43.camel@tribesman.namesys.com>
-	 <1153157891.6311.71.camel@tribesman.namesys.com>
-	 <1153205527.9866.20.camel@gentoo>
-	 <1153232327.6355.41.camel@tribesman.namesys.com>
+From: Francisco Javier Cabello <fjcabello@visual-tools.com>
+Subject: Re: data corruption with 2.4.25 and datalogging patches
+Date: Wed, 19 Jul 2006 14:33:14 +0200
+Message-ID: <200607191433.18082.fjcabello@visual-tools.com>
+References: <200607120816.11292.fjcabello@visual-tools.com> <200607141420.36656.fjcabello@visual-tools.com> <1152881975.6407.58.camel@tribesman.namesys.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed;
+  boundary="nextPart2664698.VvNIU5I0BN";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29069-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29070-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1153232327.6355.41.camel@tribesman.namesys.com>
+In-Reply-To: <1152881975.6407.58.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: "Vladimir V. Saveliev" <vs@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Thanks. Now with debug enabled I've gotten:
+--nextPart2664698.VvNIU5I0BN
+Content-Type: multipart/mixed;
+  boundary="Boundary-01=_LaivEmaHboK3PLe"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060719/panic1.txt.gz
-http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060719/fsck1_--check.txt.gz
-http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060719/fsck1_--fix.txt.gz
-http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060719/fsck1_--check_after_--fix.txt.gz
+--Boundary-01=_LaivEmaHboK3PLe
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-and
+Hello,
+I think It's not a memory problem. I have run memtest for more than 24 hour=
+s=20
+and the memory is OK.=20
+We use the best memory in the market (Kingston). When a system=20
+fails we check hardware devices first. If we find a hardware problem we=20
+usually don't check for software problem.=20
 
-http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060719/messages2.txt.gz
-followed by
-http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060719/messages2b.txt.gz
+I have other system with reiserfs corruption. I send you attached reisefsck=
+=20
+output for  'reiserfsck --check' and 'reiserfsck --check --fix-fixable'
 
-and without debug:
+Regards,
 
-http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060719/messages3.txt.gz
-http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060719/fsck3_--check.txt.gz
-http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060719/fsck3_--fix.txt.gz
-http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060719/fsck3_--check_after_--fix.txt.gz
+Paco
 
-On Tue, 2006-07-18 at 18:18 +0400, Vladimir V. Saveliev wrote:
+
+
+
+On Friday, 14 de July de 2006 14:59, Vladimir V. Saveliev wrote:
 > Hello
-> 
-> On Tue, 2006-07-18 at 00:52 -0600, Jake Maciejewski wrote:
-> > Thanks for the patch, but I can still reproduce the problem. I've been
-> > running the attached program to try to speed up the testing process a
-> > bit. Interrupting and restarting the compilation loop also seems to
-> > help.
-> > 
-> 
-> ok
-> 
-> > If I had hours to wait, it would probably crash eventually without
-> > additional encouragement, but I'm doing everything as an unprivileged
-> > user, so I don't think my tests are unreasonable.
-> > 
-> > Anyway, I'm still getting a panic with debug enabled:
-> > 
-> > reiser4 panicked cowardly: reiser4[find(16411)]: reiser4_dirty_inode (fs/reiser4/super_ops.c:173)[]:
-> > Kernel panic - not syncing: reiser4[find(16411)]: reiser4_dirty_inode (fs/reiser4/super_ops.c:173)[]:
-> > 
-> 
-> The attached patch should fix the above.
-> 
-> > Without debug enabled I've seen:
-> > 
-> > http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060718/messages1.txt.gz
-> > http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060718/fsck1_--check.txt.gz
-> > http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060718/fsck1_--fix.txt.gz
-> > http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060718/fsck1_--check_after_--fix.txt.gz
-> > 
-> > but usually I get:
-> > 
-> > http://people.msoe.edu/~maciejej/patches/AMD64_reiser4_debug/20060718/messages3.txt.gz
-> > 
-> > with no corruption (although I've been rebooting before complete
-> > failure).
-> > 
-> > On Mon, 2006-07-17 at 21:38 +0400, Vladimir V. Saveliev wrote:
-> > > Hello
-> > > 
-> > > On Mon, 2006-07-17 at 18:10 +0400, Vladimir V. Saveliev wrote:
-> > > > Hello
-> > > > 
-> > > > On Sun, 2006-07-16 at 12:44 -0500, maciejej@msoe.edu wrote:
-> > > > > Has my previous post
-> > > > > (http://marc.theaimsgroup.com/?l=reiserfs&m=115259665831650&w=2) been
-> > > > > overlooked, or have I not provided enough information? Do I need to
-> > > > > reproduce these issues on 2.6.18-rc1-mm2? Should I be trying any patches?
-> > > > > 
-> > > > 
-> > > 
-> > > please try the attached patch.
-> > > 
-> > > > your test crashes reiser4 on my test box. I hope to get a patch ready
-> > > > later today. Not sure that I got the same problem as you, though. We
-> > > > will see. 
-> > > > 
-> > > > > The bottom line is with 2.6.17-mm6, I've always been able to OOPs or panic
-> > > > > reiser4 on my amd64 machine (haven't tried x86 yet) by using all available
-> > > > > physical memory.
-> > > > > 
-> > > > > 
-> > > > 
-> > > > 
--- 
-Jake Maciejewski <maciejej@msoe.edu>
+>
+> On Fri, 2006-07-14 at 14:20 +0200, Francisco Javier Cabello wrote:
+> > Hello Vladimir,
+> >
+> > # reiserfsck -l /tmp/reiserfsck.log -y --check /dev/hdc1
+> >
+> > Standard output:
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> > Will read-only check consistency of the filesystem on /dev/hdc1
+> > Will put log info to '/tmp/reiserfsck.log'
+> > ###########
+> > reiserfsck --check started at Fri Jul 14 14:09:33 2006
+> > ###########
+> > Replaying journal..
+> > Reiserfs journal '/dev/hdc1' in blocks [18..8211]: 0 transactions
+> > replayed Checking internal tree..finished
+> > Comparing bitmaps..Bad nodes were found, Semantic pass skipped
+> > 1 found corruptions can be fixed only when running with --rebuild-tree
+> > ###########
+> > reiserfsck finished at Fri Jul 14 14:13:29 2006
+> > ###########
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> >
+> > /tmp/reiserfsck.log:
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> > bad_internal: vpf-10320: block 23868569, items 91 and 92: The wrong ord=
+er
+> > of items: [410810496 11321 0x16abca00 ??? (15)], [11312 11321 0x22f1c880
+> > DIR (3)]
+>
+> such corruptions used to be considered as hardware bugs. Memory failure,
+> for instance. Did you ever run memtest on your systems?
+>
+> >  the problem in the internal node occured (23868569), whole subtree is
+> > skipped vpf-10640: The on-disk and the correct bitmaps differs.
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
 
+=2D-=20
+One of my most productive days was throwing away 1000 lines of code (Ken=20
+Thompson)
+=2D----------------
+PGP fingerprint: AF69 62B4 97EB F5BB 2C60  B802 568A E122 BBBE 5820
+PGP Key available at http://pgp.mit.edu
+=2D----------------
+
+
+
+--Boundary-01=_LaivEmaHboK3PLe
+Content-Type: text/plain;
+  charset="iso-8859-1";
+  name="reiserfsck_check_with_fixfixable"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="reiserfsck_check_with_fixfixable"
+
+bad_stat_data: The objectid (14933) is shared by at least two files. Can be fixed with --rebuild-tree only.
+vpf-10630: The on-disk and the correct bitmaps differs. Will be fixed later.
+vpf-10650: The directory [14056 14057] has the wrong size in the StatData (16320) - corrected to (16248)
+check_semantic_pass: Name "C04_060228T175015298+000-175337903+000_0000240_792.mpeg" in directory [14056 14063] points to nowhere
+ - removed
+check_semantic_pass: Name "C04_060228T173711821+000-174033786+000_0000240_773.mpeg" in directory [14056 14063] points to nowhere
+ - removed
+check_semantic_pass: Name "C04_060228T173404188+000-173711581+000_0000240_758.mpeg" in directory [14056 14063] points to nowhere
+ - removed
+check_semantic_pass: Name "C04_060228T174034066+000-174357422+000_0000240_782.mpeg" in directory [14056 14063] points to nowhere
+ - removed
+check_semantic_pass: Name "C04_060228T174357662+000-174701364+000_0000240_762.mpeg" in directory [14056 14063] points to nowhere
+ - removed
+check_semantic_pass: Name "C04_060228T174701604+000-175015018+000_0000240_773.mpeg" in directory [14056 14063] points to nowhere
+ - removed
+vpf-10650: The directory [14056 14063] has the wrong size in the StatData (7104) - corrected to (6672)
+
+--Boundary-01=_LaivEmaHboK3PLe
+Content-Type: text/plain;
+  charset="iso-8859-1";
+  name="reiserfsck_check_without_fixfixable"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="reiserfsck_check_without_fixfixable"
+
+bad_stat_data: The objectid (14933) is shared by at least two files. Can be fixed with --rebuild-tree only.
+vpf-10640: The on-disk and the correct bitmaps differs.
+vpf-10650: The directory [14056 14057] has the wrong size in the StatData (16320), should be (16248)
+check_semantic_pass: Name "C04_060228T175015298+000-175337903+000_0000240_792.mpeg" in directory [14056 14063] points to nowhere
+
+check_semantic_pass: Name "C04_060228T173711821+000-174033786+000_0000240_773.mpeg" in directory [14056 14063] points to nowhere
+
+check_semantic_pass: Name "C04_060228T173404188+000-173711581+000_0000240_758.mpeg" in directory [14056 14063] points to nowhere
+
+check_semantic_pass: Name "C04_060228T174034066+000-174357422+000_0000240_782.mpeg" in directory [14056 14063] points to nowhere
+
+check_semantic_pass: Name "C04_060228T174357662+000-174701364+000_0000240_762.mpeg" in directory [14056 14063] points to nowhere
+
+check_semantic_pass: Name "C04_060228T174701604+000-175015018+000_0000240_773.mpeg" in directory [14056 14063] points to nowhere
+
+vpf-10650: The directory [14056 14063] has the wrong size in the StatData (7104), should be (6672)
+
+--Boundary-01=_LaivEmaHboK3PLe--
+
+--nextPart2664698.VvNIU5I0BN
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQBEviaOVorhIru+WCARAsuDAJsG6HIbG2ezl00AJ9Wio1CbXS1WWwCcC9us
+HDzroRKYq0BRRVumNjwCPfc=
+=ZNKu
+-----END PGP SIGNATURE-----
+
+--nextPart2664698.VvNIU5I0BN--
