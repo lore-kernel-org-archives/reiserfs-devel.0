@@ -1,38 +1,28 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: backporting?
-Date: Wed, 19 Jul 2006 11:19:52 +0400
-Message-ID: <1153293592.6383.19.camel@tribesman.namesys.com>
-References: <44BD4C93.504@slaphack.com>
+From: Mark F <mfaine@knology.net>
+Subject: create very large file system
+Date: Wed, 19 Jul 2006 07:10:56 -0500
+Message-ID: <e9l7bh$134$1@sea.gmane.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29067-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29068-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44BD4C93.504@slaphack.com>
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: Reiserfs List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
+Cc: Ext3-users@redhat.com
 
-Hello
+Suse Linux Enterprise Server 9 SP3
 
-On Tue, 2006-07-18 at 16:03 -0500, David Masover wrote:
-> I also wanted to say that I'm back -- all problems with my mailserver 
-> bouncing messages should be fixed now.
-> 
-> But I do have a legitimate question:  I get my Reiser4 as the 
-> reiser4-for-2.6 patches.  Do new versions ever get backported to older 
-> kernel versions?
-> 
+I've tried to create a large 5TB file system using both reiserfs and ext3 and both have failed.
 
-I am sorry to say, but, no.
-The latest is against 2.6.17.
+I end up with only a 1.5TB file system.  Does anyone know why this doesn't work, what to do to fix it?
 
-> This is not a feature request -- if there's no backport, I'll do 
-> without.  I'm currently stuck on 2.6.13.4 because of a network driver, 
-> but it's probably easier to fix a network driver than to backport a 
-> filesystem.
-> 
+Others have suggested that  only XFS or JFS will work.  Is this so?
+
+Thanks,
+-Mark
 
