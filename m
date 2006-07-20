@@ -1,93 +1,37 @@
-From: =?UTF-8?B?RnJpZWRlciBCw7xyemVsZQ==?= <linux-stuff@arcor.de>
-Subject: Cannot display some characters anymore [reiser4-2.6.17-1] (was Re:
- reiser4 for 2.6.16 (version 3))
-Date: Thu, 20 Jul 2006 10:46:27 +0200
-Message-ID: <44BF42E3.80900@arcor.de>
+From: Christian Iversen <chrivers@iversen-net.dk>
+Subject: Re: create very large file system
+Date: Thu, 20 Jul 2006 13:17:54 +0200
+Message-ID: <200607201317.54566.chrivers@iversen-net.dk>
+References: <e9l7bh$134$1@sea.gmane.org> <200607191657.38644.zam@namesys.com> <20060720062646.GA6174@schatzie.adilger.int>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-29084-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29085-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20060720062646.GA6174@schatzie.adilger.int>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Alexander Zarochentsev <zam@namesys.com>, reiserfs-list@namesys.com, Mark F <mfaine@knology.net>, Ext3-users@redhat.com
 
-Hi,
+On Thursday 20 July 2006 08:26, Andreas Dilger wrote:
+> On Jul 19, 2006  16:57 +0400, Alexander Zarochentsev wrote:
+> > On Wednesday 19 July 2006 16:10, Mark F wrote:
+> > > I've tried to create a large 5TB file system using both reiserfs and
+> > > ext3 and both have failed.
+> >
+> > you might need to convert the partition table to GPT format for
+> > supporting 2TB+ partitions.  it can be done by the gnu parted tool.
+>
+> Or, for that matter, don't use a partition table at all, since this
+> adds an unhelpful offset to all the filesystem structures and can
+> hurt performance on RAID where the filesystem is trying to align IO
+> to RAID stripe boundaries.
 
-some time ago I reported an issue with characters not being displayed.
-This problem with netbeans (java) still persists with the latest patch 
-reiser4-2.6.17-1
-Thx for your work.
+Can linux still auto-detect raid volumes if there's no partition table?
 
-Greetz
-
-    Frieder
-
-
--------- Original Message --------
-Date:     Tue, 06 Jun 2006 01:15:25 +0200
-From:     Frieder Bürzele <linux-stuff@arcor.de>
-To:     reiserfs-list@namesys.com
-Subject:     Re: reiser4 for 2.6.16 (version 3)
-
-
-Vladimir V. Saveliev wrote:
- > Hello
- >
- > 
-ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.16/reiser4-for-2.6.16-3.patch.gz 
-
- > contains the most recent reiser4 code which is considered stable
- > inside Namesys.
- > This code is supposed to be in mm kernel next to 2.6.17-rc4-mm3.
- >
- > Please try it. Any feedback is welcome.
- >
- >
- >  
-Hi,
-
-so far reiser4-for-2.6.16-[3|4].patch.gz runs great here, but I've
-recongised that when building a java-project with netbeans I got this
-output in the netbeans message-window:
-
-
-init:
-�����������
-���������
-������������������������������������������������
---snip--
-
-
-instead of what I was used to see before with
-reiser4-for-2.6.16-2.patch.gz:
-
-init:
-deps-jar:
-compile:
-To run this application from the command line without Ant, try:
---snip--
-
-
-This seems very weird to me. I can't imagine that this could be issued
-by the filesystem so I just build "clean" kernels with the "working and
-non-working" patch. But problem still persist.
-
-system info:
-(default-linux/x86/2005.1, gcc-4.1.0, glibc-2.3.6-r4, 2.6.16 i686)
-=================================================================
-System uname: 2.6.16 i686 AMD Athlon(tm) XP 2100+
-Gentoo Base System version 1.6.14
-
-Sun JDK 1.5.0.05 [sun-jdk-1.5]
-netbeans-5.0
-
-
-thx
-
-Frieder
-
-
-
+-- 
+Regards,
+Christian Iversen
