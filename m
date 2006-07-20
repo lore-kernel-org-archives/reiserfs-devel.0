@@ -1,144 +1,93 @@
-From: Francisco Javier Cabello <fjcabello@visual-tools.com>
-Subject: Re: data corruption with 2.4.25 and datalogging patches
-Date: Thu, 20 Jul 2006 09:29:50 +0200
-Message-ID: <200607200929.53331.fjcabello@visual-tools.com>
-References: <200607120816.11292.fjcabello@visual-tools.com> <1152881975.6407.58.camel@tribesman.namesys.com> <200607191433.18082.fjcabello@visual-tools.com>
+From: =?UTF-8?B?RnJpZWRlciBCw7xyemVsZQ==?= <linux-stuff@arcor.de>
+Subject: Cannot display some characters anymore [reiser4-2.6.17-1] (was Re:
+ reiser4 for 2.6.16 (version 3))
+Date: Thu, 20 Jul 2006 10:46:27 +0200
+Message-ID: <44BF42E3.80900@arcor.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart1934319.H5SD26WPj8";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29083-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-29084-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200607191433.18082.fjcabello@visual-tools.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 To: reiserfs-list@namesys.com
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>
 
---nextPart1934319.H5SD26WPj8
-Content-Type: multipart/mixed;
-  boundary="Boundary-01=_uDzvEvBca4+IuAy"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Hi,
 
---Boundary-01=_uDzvEvBca4+IuAy
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+some time ago I reported an issue with characters not being displayed.
+This problem with netbeans (java) still persists with the latest patch 
+reiser4-2.6.17-1
+Thx for your work.
 
-At the end I could fix the filesystem. I attach the output of 'reiserfsck=20
-=2D-rebuild-tree'
+Greetz
 
-Do you have any idea?
-
-Regards,
-
-Paco
+    Frieder
 
 
-On Wednesday, 19 de July de 2006 14:33, Francisco Javier Cabello wrote:
-> Hello,
-> I think It's not a memory problem. I have run memtest for more than 24
-> hours and the memory is OK.
-> We use the best memory in the market (Kingston). When a system
-> fails we check hardware devices first. If we find a hardware problem we
-> usually don't check for software problem.
->
-> I have other system with reiserfs corruption. I send you attached reisefs=
-ck
-> output for  'reiserfsck --check' and 'reiserfsck --check --fix-fixable'
->
-> Regards,
->
-> Paco
->
-> On Friday, 14 de July de 2006 14:59, Vladimir V. Saveliev wrote:
-> > Hello
-> >
-> > On Fri, 2006-07-14 at 14:20 +0200, Francisco Javier Cabello wrote:
-> > > Hello Vladimir,
-> > >
-> > > # reiserfsck -l /tmp/reiserfsck.log -y --check /dev/hdc1
-> > >
-> > > Standard output:
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> > > Will read-only check consistency of the filesystem on /dev/hdc1
-> > > Will put log info to '/tmp/reiserfsck.log'
-> > > ###########
-> > > reiserfsck --check started at Fri Jul 14 14:09:33 2006
-> > > ###########
-> > > Replaying journal..
-> > > Reiserfs journal '/dev/hdc1' in blocks [18..8211]: 0 transactions
-> > > replayed Checking internal tree..finished
-> > > Comparing bitmaps..Bad nodes were found, Semantic pass skipped
-> > > 1 found corruptions can be fixed only when running with --rebuild-tree
-> > > ###########
-> > > reiserfsck finished at Fri Jul 14 14:13:29 2006
-> > > ###########
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> > >
-> > > /tmp/reiserfsck.log:
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> > > bad_internal: vpf-10320: block 23868569, items 91 and 92: The wrong
-> > > order of items: [410810496 11321 0x16abca00 ??? (15)], [11312 11321
-> > > 0x22f1c880 DIR (3)]
-> >
-> > such corruptions used to be considered as hardware bugs. Memory failure,
-> > for instance. Did you ever run memtest on your systems?
-> >
-> > >  the problem in the internal node occured (23868569), whole subtree is
-> > > skipped vpf-10640: The on-disk and the correct bitmaps differs.
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-
-=2D-=20
-One of my most productive days was throwing away 1000 lines of code (Ken=20
-Thompson)
-=2D----------------
-PGP fingerprint: AF69 62B4 97EB F5BB 2C60  B802 568A E122 BBBE 5820
-PGP Key available at http://pgp.mit.edu
-=2D----------------
+-------- Original Message --------
+Date:     Tue, 06 Jun 2006 01:15:25 +0200
+From:     Frieder Bürzele <linux-stuff@arcor.de>
+To:     reiserfs-list@namesys.com
+Subject:     Re: reiser4 for 2.6.16 (version 3)
 
 
---Boundary-01=_uDzvEvBca4+IuAy
-Content-Type: text/plain;
-  charset="iso-8859-1";
-  name="reiserfsck_rebuildtree"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="reiserfsck_rebuildtree"
+Vladimir V. Saveliev wrote:
+ > Hello
+ >
+ > 
+ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.16/reiser4-for-2.6.16-3.patch.gz 
 
-####### Pass 0 #######
-24011 directory entries were hashed with "r5" hash.
-####### Pass 1 #######
-####### Pass 2 #######
-####### Pass 3 #########
-####### Pass 3a (lost+found pass) #########
-rewrite_file: 3 items of file [14057 14933] moved to [14057 23960]
+ > contains the most recent reiser4 code which is considered stable
+ > inside Namesys.
+ > This code is supposed to be in mm kernel next to 2.6.17-rc4-mm3.
+ >
+ > Please try it. Any feedback is welcome.
+ >
+ >
+ >  
+Hi,
 
---Boundary-01=_uDzvEvBca4+IuAy--
+so far reiser4-for-2.6.16-[3|4].patch.gz runs great here, but I've
+recongised that when building a java-project with netbeans I got this
+output in the netbeans message-window:
 
---nextPart1934319.H5SD26WPj8
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
+init:
+�����������
+���������
+������������������������������������������������
+--snip--
 
-iD8DBQBEvzDxVorhIru+WCARAqSgAKCENDfTXJlOcraDD5JKE8ds+b2oSwCeOPKf
-xwQN2Z5CAHuhOAln2RvhS84=
-=mLkr
------END PGP SIGNATURE-----
 
---nextPart1934319.H5SD26WPj8--
+instead of what I was used to see before with
+reiser4-for-2.6.16-2.patch.gz:
+
+init:
+deps-jar:
+compile:
+To run this application from the command line without Ant, try:
+--snip--
+
+
+This seems very weird to me. I can't imagine that this could be issued
+by the filesystem so I just build "clean" kernels with the "working and
+non-working" patch. But problem still persist.
+
+system info:
+(default-linux/x86/2005.1, gcc-4.1.0, glibc-2.3.6-r4, 2.6.16 i686)
+=================================================================
+System uname: 2.6.16 i686 AMD Athlon(tm) XP 2100+
+Gentoo Base System version 1.6.14
+
+Sun JDK 1.5.0.05 [sun-jdk-1.5]
+netbeans-5.0
+
+
+thx
+
+Frieder
+
+
+
