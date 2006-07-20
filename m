@@ -1,47 +1,66 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: other system with datacorruption  (2.425 + datalogging patches)
-Date: Thu, 20 Jul 2006 17:38:10 +0400
-Message-ID: <1153402690.6436.63.camel@tribesman.namesys.com>
-References: <200607201452.09270.fjcabello@visual-tools.com>
+From: Jonathan Briggs <jbriggs@esoft.com>
+Subject: Re: create very large file system
+Date: Thu, 20 Jul 2006 10:22:55 -0600
+Message-ID: <1153412575.9802.7.camel@localhost>
+References: <e9l7bh$134$1@sea.gmane.org>
+	 <200607191657.38644.zam@namesys.com>
+	 <20060720062646.GA6174@schatzie.adilger.int>
+	 <200607201317.54566.chrivers@iversen-net.dk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29087-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-pXa3QdGhUPSS2VnqIHVI"
+Return-path: <reiserfs-list-return-29088-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200607201452.09270.fjcabello@visual-tools.com>
+In-Reply-To: <200607201317.54566.chrivers@iversen-net.dk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Francisco Javier Cabello <fjcabello@visual-tools.com>
-Cc: reiserfs-list@namesys.com
+To: Christian Iversen <chrivers@iversen-net.dk>
+Cc: Alexander Zarochentsev <zam@namesys.com>, reiserfs-list@namesys.com, Mark F <mfaine@knology.net>, Ext3-users@redhat.com
 
-Hello
+--=-pXa3QdGhUPSS2VnqIHVI
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2006-07-20 at 14:52 +0200, Francisco Javier Cabello wrote:
-> Hello,
-> I have other system with data corruption.
+On Thu, 2006-07-20 at 13:17 +0200, Christian Iversen wrote:
+> On Thursday 20 July 2006 08:26, Andreas Dilger wrote:
+> > On Jul 19, 2006  16:57 +0400, Alexander Zarochentsev wrote:
+> > > On Wednesday 19 July 2006 16:10, Mark F wrote:
+> > > > I've tried to create a large 5TB file system using both reiserfs an=
+d
+> > > > ext3 and both have failed.
+> > >
+> > > you might need to convert the partition table to GPT format for
+> > > supporting 2TB+ partitions.  it can be done by the gnu parted tool.
+> >
+> > Or, for that matter, don't use a partition table at all, since this
+> > adds an unhelpful offset to all the filesystem structures and can
+> > hurt performance on RAID where the filesystem is trying to align IO
+> > to RAID stripe boundaries.
+>=20
+> Can linux still auto-detect raid volumes if there's no partition table?
 
-were there unclean shutdowns?
-how do you decide when to reiserfsck?
-can you please set
-hdparm -W 0 
-for systems which corrupts often and check if that will change anything?
+You're not supposed to be doing it that way these days.  RAID autodetect
+is getting tossed out of the kernel in the future (probably still many
+versions away though), and RAID, DM, LVM, and maybe even regular
+partition setup is going to be done in initramfs / initrd.
 
-> I send you the output of 'reiserfsck --check' 
-> 
-not good.
+At least, that is what I read.
+--=20
+Jonathan Briggs <jbriggs@esoft.com>
+eSoft, Inc.
 
-Is there a chance to try whether data gets corrupted on 2.6.17? Can you
-also try to reproduce corruption on kernel not patched with datalogging
-patches?
-I ask because I guess that you are encountering problems which do not
-present in newer kernels.
+--=-pXa3QdGhUPSS2VnqIHVI
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
-please describe the load in more details:
-how many processes do write to a filesystem at the same time? is that
-filesystem the only reiserfs one in the system dedicated especially for
-video recording? What is directory structures? How long does it take to
-get filesystem corrupted? etc. The more details the better
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.4 (GNU/Linux)
 
+iD8DBQBEv63fG8fHaOLTWwgRAugjAJ97ef/UNyphyTYkgPDN3tIysyavjgCcDbb3
+GIVYQiOfxpAu/DyJeBX1Bm8=
+=Gr9l
+-----END PGP SIGNATURE-----
+
+--=-pXa3QdGhUPSS2VnqIHVI--
 
