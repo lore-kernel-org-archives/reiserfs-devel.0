@@ -1,40 +1,44 @@
-From: David Masover <ninja@slaphack.com>
+From: Andreas Dilger <adilger@clusterfs.com>
 Subject: Re: create very large file system
-Date: Thu, 20 Jul 2006 12:32:36 -0500
-Message-ID: <44BFBE34.80001@slaphack.com>
-References: <e9l7bh$134$1@sea.gmane.org> <200607191657.38644.zam@namesys.com>	 <20060720062646.GA6174@schatzie.adilger.int>	 <200607201317.54566.chrivers@iversen-net.dk>	 <1153412575.9802.7.camel@localhost> <3aa654a40607200956j37aeed0o66218c7ff94d815a@mail.gmail.com>
+Date: Thu, 20 Jul 2006 11:02:09 -0400
+Message-ID: <20060720150209.GA5299@schatzie.adilger.int>
+References: <e9l7bh$134$1@sea.gmane.org> <200607191657.38644.zam@namesys.com> <20060720062646.GA6174@schatzie.adilger.int> <200607201317.54566.chrivers@iversen-net.dk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29091-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29092-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <3aa654a40607200956j37aeed0o66218c7ff94d815a@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <200607201317.54566.chrivers@iversen-net.dk>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Avuton Olrich <avuton@gmail.com>
-Cc: Jonathan Briggs <jbriggs@esoft.com>, Christian Iversen <chrivers@iversen-net.dk>, Alexander Zarochentsev <zam@namesys.com>, reiserfs-list@namesys.com, Mark F <mfaine@knology.net>, Ext3-users@redhat.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christian Iversen <chrivers@iversen-net.dk>
+Cc: Alexander Zarochentsev <zam@namesys.com>, reiserfs-list@namesys.com, Mark F <mfaine@knology.net>, Ext3-users@redhat.com
 
-Avuton Olrich wrote:
-> On 7/20/06, Jonathan Briggs <jbriggs@esoft.com> wrote:
->> You're not supposed to be doing it that way these days.  RAID autodetect
->> is getting tossed out of the kernel in the future (probably still many
+On Jul 20, 2006  13:17 +0200, Christian Iversen wrote:
+> On Thursday 20 July 2006 08:26, Andreas Dilger wrote:
+> > On Jul 19, 2006  16:57 +0400, Alexander Zarochentsev wrote:
+> > > On Wednesday 19 July 2006 16:10, Mark F wrote:
+> > > > I've tried to create a large 5TB file system using both reiserfs and
+> > > > ext3 and both have failed.
+> > >
+> > > you might need to convert the partition table to GPT format for
+> > > supporting 2TB+ partitions.  it can be done by the gnu parted tool.
+> >
+> > Or, for that matter, don't use a partition table at all, since this
+> > adds an unhelpful offset to all the filesystem structures and can
+> > hurt performance on RAID where the filesystem is trying to align IO
+> > to RAID stripe boundaries.
 > 
-> Bit OT, but is there something that is supposed to replace RAID
-> autodetect, or we're just supposed to make initscripts to run mdadm?
+> Can linux still auto-detect raid volumes if there's no partition table?
 
-I'm not sure, but I suspect it may have something to do with the 
-device-mapper.  I know that's what I use for a striped array -- and yes, 
-I have to make an initscript -- initrd, because I boot off the thing -- 
-to set them up.  The good news is, the detection can be done in userland 
-now -- since mine is nvidia raid, I can use dmraid, which runs entirely 
-in userland, autodetects from BIOS settings, then sets up a proper 
-device-mapper table in the kernel.
+Hmm, that I'm not sure of - we mostly deal with external RAID devices.
 
-Device-mapper doesn't support everything yet (as far as I know), but the 
-principle should be about the same for more complex RAID -- some 
-userland tool.  There really is no reason for this autodetection to be 
-in the kernel.
+Cheers, Andreas
+--
+Andreas Dilger
+Principal Software Engineer
+Cluster File Systems, Inc.
 
-In the meantime, there may be rough edges...
