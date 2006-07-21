@@ -1,49 +1,50 @@
-From: Ingo Bormuth <ibormuth@efil.de>
-Subject: Re: 2.6.17 patch is in testing now
-Date: Fri, 21 Jul 2006 18:15:15 +0200
-Message-ID: <20060721161515.GA12068@kruemel>
-References: <e649ab20607161451y4153fa42u605b074dfc542fed@mail.gmail.com> <1153137424.6311.21.camel@tribesman.namesys.com> <44BBD391.3040907@namesys.com> <1153239449.6355.42.camel@tribesman.namesys.com> <44BD47F4.4080103@namesys.com>
-Reply-To: Ingo Bormuth <ibormuth@efil.de>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: somewhat OT query on journalling
+Date: Fri, 21 Jul 2006 13:54:41 -0500
+Message-ID: <44C122F1.7000109@slaphack.com>
+References: <20060719152744.GA26155@tranquility.scriptkitchen.com> <44BE95F6.50004@namesys.com> <20060721124518.GA1977@tranquility.scriptkitchen.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
-Return-path: <reiserfs-list-return-29104-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29105-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <44BD47F4.4080103@namesys.com>
+In-Reply-To: <20060721124518.GA1977@tranquility.scriptkitchen.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Payal Rathod <payal-fs@scriptkitchen.com>
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
 
---sm4nu43k4a2Rpi4c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Payal Rathod wrote:
+> On Wed, Jul 19, 2006 at 01:28:38PM -0700, Hans Reiser wrote:
+>> V3 defaults to metadata only, V4 does data also because we can do it
+>> without performance loss.
+> 
+> wwwwwwowwwww!!! 
 
-On 2006-07-18 13:43, Hans Reiser wrote:
-> If testing goes well we will release it tomorrow.
+Don't get too excited -- the transactions probably aren't done yet. 
+Without those, no filesystem that claims to journal data is really any 
+better than a filesystem which only journals metadata.  Even once they 
+are implemented (or even if they are already), applications have to 
+support them directly.
 
-Hmm, so what would you say - should it be regarded as released ?
+Regarding transactions in general, you should probably look for some 
+papers or tutorials for how they are implemented in databases.  You 
+might also read the Reiser4 whitepaper for an idea of how they could be 
+implemented in a filesystem.
 
+But no transactional system will work unless applications at least know 
+about it.  This is why apps currently rely on features that are known to 
+be atomic in a filesystem.  For instance, look at maildirs -- they are 
+effectively 100% data journaled on any filesystem that journals metadata 
+properly.
 
+>> reiserfs does not use inodes at all.  see our website for more.
+> 
+> Any particular page you are referring to? I didn't see a page for that 
+> there.
 
---=20
-Ingo Bormuth, voicebox & telefax: +49-12125-10226517       '(~o-o~)'
-public key 86326EC9, http://ibormuth.efil.de/contact   --ooO--(.)--Ooo--
-
---sm4nu43k4a2Rpi4c
-Content-Type: application/pgp-signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.4 (GNU/Linux)
-
-iD8DBQFEwP2TNzWqdIYybskRApgGAJ4vWQ/Xi+X6ieh3+UIXWJNcZOf46QCfWAwa
-UeVj4OLY92t5Wx5z/KuKd4I=
-=RqVd
------END PGP SIGNATURE-----
-
---sm4nu43k4a2Rpi4c--
-
+Front page of Namesys.com has the Reiser4 whitepaper.  It's a bit out of 
+date, as some features still listed for 4.0 have been pushed to 4.1 or 
+later, but I don't think the overall plan has changed.
