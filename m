@@ -1,151 +1,161 @@
-From: "Joel Heenan" <joel.heenan@gmail.com>
-Subject: Re: fsck.reiserfs --rebuild-tree out of disk space aborted
-Date: Sat, 22 Jul 2006 08:37:20 +1000
-Message-ID: <843700460607211537o70d9b179o1c7448e47ef5d829@mail.gmail.com>
-References: <843700460607201709i44c2d1f4i846a0cb716c80234@mail.gmail.com>
-	 <1153492956.6271.37.camel@tribesman.namesys.com>
-Reply-To: joelh@planetjoel.com
+From: David Masover <ninja@slaphack.com>
+Subject: Re: reiser4 status (correction)
+Date: Fri, 21 Jul 2006 17:40:18 -0500
+Message-ID: <44C157D2.5060202@slaphack.com>
+References: <44BFFCB1.4020009@namesys.com> <44C043B5.3070501@slaphack.com>	 <44C093D2.1040703@namesys.com>	 <1153514509.6659.41.camel@ipso.snappymail.ca>	 <44C141C4.1030802@slaphack.com> <1153517853.6659.56.camel@ipso.snappymail.ca>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29116-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29117-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1153492956.6271.37.camel@tribesman.namesys.com>
-Content-Disposition: inline
+In-Reply-To: <1153517853.6659.56.camel@ipso.snappymail.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: Mike Benoit <ipso@snappymail.ca>
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>
 
-On 7/22/06, Vladimir V. Saveliev <vs@namesys.com> wrote:
-> hello
->
-> On Fri, 2006-07-21 at 10:09 +1000, Joel Heenan wrote:
-> > Hi,
-> >
-> > I can home about two weeks ago and found my media box locked up. I was
-> > able to discover that it had filled up its /dev/md2 partition (mounted
-> > on /home) which surprised me because it is 550 gigs. Perhaps mythtv
-> > went nuts and used it all up. It was only a temporary thing I was
-> > going to move mythtv to another partition anyway and boy I wish I had
-> > now :-P.
-> >
-> > Anyway I rebooted and the fsck said I had to run rebuild-tree. So I
-> > ran that and a few days later it said "out of disk space, aborted". I
-> > can't mount the partition it says "No folder found I believe". I tried
-> > it a few times with both the reiserfsprogs from etch:
-> >
-> > ii  reiserfsprogs                    3.6.19-2
-> > User-level tools for ReiserFS filesystems
-> >
-> > and the latest ones downloaded from the website (3.6.19). I am
-> > currently trying it with the -S option.
-> >
-> there is no need to use -S in your case.
->
-> > I'm running a custom 2.6.12 kernel which is basically the same as the
-> > default debian one except it includes some drivers for my dvico fusion
-> > tv tuner.
-> >
-> > I read that the best way to fix this problem is to dd to a bigger
-> > partition but there is really no easy way for me to do that - it will
-> > probably involve me purchasing 2x300gig partitions, raiding them, then
-> > performing the restore.
-> >
-> > Please let me know if there is a way I can fix this without going to a
-> > bigger partition.
-> >
-> > Here is output of the fsck:
-> >
-> > """
-> > fsck.reiserfs --rebuild-tree /dev/md2
-> > reiserfsck 3.6.19 (2003 www.namesys.com)
-> >
-> > *************************************************************
-> > ** Do not  run  the  program  with  --rebuild-tree  unless **
-> > ** something is broken and MAKE A BACKUP  before using it. **
-> > ** If you have bad sectors on a drive  it is usually a bad **
-> > ** idea to continue using it. Then you probably should get **
-> > ** a working hard drive, copy the file system from the bad **
-> > ** drive  to the good one -- dd_rescue is  a good tool for **
-> > ** that -- and only then run this program.                 **
-> > ** If you are using the latest reiserfsprogs and  it fails **
-> > ** please  email bug reports to reiserfs-list@namesys.com, **
-> > ** providing  as  much  information  as  possible --  your **
-> > ** hardware,  kernel,  patches,  settings,  all reiserfsck **
-> > ** messages  (including version),  the reiserfsck logfile, **
-> > ** check  the  syslog file  for  any  related information. **
-> > ** If you would like advice on using this program, support **
-> > ** is available  for $25 at  www.namesys.com/support.html. **
-> > *************************************************************
-> >
-> > Will rebuild the filesystem (/dev/md2) tree
-> > Will put log info to 'stdout'
-> >
-> > Do you want to run this program?[N/Yes] (note need to type Yes if you do):Yes
-> > Replaying journal..
-> > Reiserfs journal '/dev/md2' in blocks [18..8211]: 0 transactions replayed
-> > ###########
-> > reiserfsck --rebuild-tree started at Mon Jul 17 21:41:44 2006
-> > ###########
-> >
-> > Pass 0:
-> > ####### Pass 0 #######
-> > Loading on-disk bitmap .. ok, 116676032 blocks marked used
-> > Skipping 11771 blocks (super block, journal, bitmaps) 116664261 blocks
-> > will be read
-> > 0%....20%....block 85875092: The number of items (256) is incorrect,
-> > should be (1) - corrected
-> > block 85875092: The free space (1) is incorrect, should be (208) - corrected
-> > pass0: vpf-10110: block 85875092, item (0): Unknown item type found
-> > [33488896 65537 0x100 ??? (15)] - deleted
-> >                                                    left 0, 15065 /seccseccccc
-> > 108413 directory entries were hashed with "r5" hash.
-> >         "r5" hash is selected
-> > Flushing..finished
-> >         Read blocks (but not data blocks) 116664261
-> >                 Leaves among those 87768646
-> >                         - leaves all contents of which could not be
-> > saved and deleted 1
-> >                 Objectids found 108417
-> >
-> > Pass 1 (will try to insert 87768645 leaves):
-> > ####### Pass 1 #######
-> > Looking for allocable blocks .. finished
-> > 0%....20%....40%..Not enough allocable blocks, checking bitmap...there
-> > are 1 allocable blocks, btw
-> >
->
-> I am working on a fix for this problem. But the above output looks
-> suspicious.
->
-> What kind of files are there, would you describe?
+Mike Benoit wrote:
+> On Fri, 2006-07-21 at 16:06 -0500, David Masover wrote:
+>> Mike Benoit wrote:
+>>
+>>> Tuning fsync will fix the last wart on Reiser4 as far as benchmarks are
+>>> concerned won't it? Right now Reiser4 looks excellent on the benchmarks
+>>> that don't use fsync often (mongo?), but last I recall the fsync
+>>> performance was so poor it overshadows the rest of the performance. It
+>>> would also probably be more useful to a much wider audience, especially
+>>> if Namesys decides to charge for the repacker.
+>> If Namesys does decide to charge for the repacker, I'll have to consider 
+>> whether it's worth it to pay for it or to use XFS instead.  Reiser4 
+>> tends to become much more fragmented than most other Linux FSes -- 
+>> purely subjective, but probably true.
+>>
+> 
+> I would like to see some actual data on this. I haven't used Reiser4 for
+> over a year, and when I did it was only to benchmark it. But Reiser4
+> allocates on flush, so in theory this should decrease fragmentation, not
+> increase it. Due to this I question what you are _really_ seeing, or if
+> perhaps it is a bug in the allocator? Why would XFS or any other
+> multi-purpose file system resist fragmentation noticeably more then
+> Reiser4 does.
 
-It is the /home folder on my media box. So it has around 10gigs of
-personal files (normal everyday file usage), and the rest is media.
-There is 40 gigs of mp3s. 100 gigs of avi files of different sizes but
-mostly large at least 100 megs or more.
+Maybe not XFS, but in any case, Reiser4 fragments more because of how 
+its journaling works.  It's the wandering logs.
 
-It also has 200 gigs of mythtv NUV files.
+Basically, when most Linux filesystems allocate space, they do try to 
+allocate it contiguously, and it generally stays in the same place. 
+With ext3, if you write to the middle of a file, or overwrite the entire 
+file, you're generally going to see your writes be written once to the 
+journal, and then again to the same place the file originally was.
 
-My suspicion is that mythtv went nuts and began recording something
-and never closed the file and used up all the space. But really I
-don't know because it has been unusable since I found the problem.
+Similarly, if you delete and then create a bunch of small files, you're 
+generally going to see the new files created in the same place the old 
+files were.
 
-> Are they long? Did you mount reiserfs with any options?
+With Reiser4, wandering logs means that rather than write to the 
+journal, if you write to the middle of the file, it writes that chunk to 
+somewhere else on the disk, and somehow gets it down to one atomic 
+operation where it simply changes the file to point to the new location 
+on disk.  Which means if you have a filesystem that is physically laid 
+out on disk like this (for simplicity, assume it only has a single file):
 
-Some of the files are long, there would be some files that are 4 gigs
-in size. Sometimes mythtv makes very large files.
+# is data
+* is also data
+- is free space
 
-I mounted reiserfs with "defaults"
+######*****########--------------
 
-> Can you give me ssh access to the filesystem so that I could take a look
-> at it myself?
+When you try to write in the middle (the '*' chars) -- let's say we're 
+changing them to '%' chars, this happens:
 
-The filesystem contains some sensitive data so I can't really do this
-I'm afraid. I'm happy to run any diagnostic tools you have or provide
-any more information.
+######*****########%%%%%---------
 
-Joel
+Once that's done, the file is updated so that the middle of it points to 
+the fragment in the new location, and the old location is freed:
+
+######-----########%%%%%---------
+
+
+
+Keep in mind, because of lazy writes, it's much more likely for the 
+whole change to happen at once.  Here's another example:
+
+#####------------
+
+Let's say we just want to overwrite the file with another one of the 
+same length:
+
+#####%%%%%-------
+
+then, commit the transaction:
+
+-----%%%%%-------
+
+You see the problem?  You've now split the free space in half. 
+Realistically, of course, it wouldn't be by halves, but you're basically 
+inserting random air holes all over the place, and your FS is becoming 
+more like foam, taking up more of the free space, until you can no 
+longer use the free space....  In the above example, if we then have to 
+come write some huge file, it looks like this:
+
+*****%%%%%*******
+
+Split right in half.  Now imagine this effect multiplied by hundreds or 
+thousands of files, over time...
+
+This is why Reiser4 needs a repacker.  While it's fine for larger files 
+-- I believe after a certain point, it will write twice, so looking at 
+our first example:
+
+
+######*****########--------------
+
+Write to a new, temporary place:
+
+######*****########%%%%%---------
+
+Write back to the original place:
+
+######%%%%%########%%%%%---------
+
+Complete the transaction and free the temporary space:
+
+######%%%%%########--------------
+
+
+This technique is what other journaling filesystems use, and it also 
+means that writing is literally twice as slow as on a non-journaling 
+filesystem, or on one with wandering logs like Reiser4.  But, it's a 
+practical necessity when you're dealing with some 300 gig MySQL database 
+of which only small 10k chunks are changing.  Taking twice as long on a 
+10k chunk won't kill anyone, but fragmenting your 300 gig database (on a 
+320 gig partition) will kill your performance, and will be very 
+difficult to defragment.
+
+But on smaller files, it would be very beneficial if we could allow the 
+FS to slowly fragment (to foam-ify, if you will) and defrag once a week. 
+  The amount of speed gained in each write -- and read, if it's not 
+getting too awful during that week -- definitely makes up for having to 
+spend an hour or so defragmenting, especially if the FS can be online at 
+the time.
+
+And you can probably figure out an optimal time to wait before 
+defragmenting, since your biggest fragmentation problems happen when the 
+chunk of contiguous space at the end of the disk disappears, and all of 
+your free space is scattered (fragmented) throughout the disk.
+
+Anyway, that's why.  If you disable the wandering log behavior, your 
+write performance drops in half.  If you don't have a repacker, your FS 
+becomes very fragmented, very fast.
+
+I apologize for my poor ASCII art, especially if I'm dead wrong...
+
+
+> No Linux file system that I'm aware of has a defragmentor, but they DO
+> become fragmented, just not near as bad as FAT32 used to when MS created
+> their defragmentor. The highest "non-contiguous" percent I've seen with
+> EXT3 is about 12%, FAT32 I have seen over 50%, and NTFS over 30%. In
+
+I'd like to see some numbers on Reiser4, then.  Maybe a formal 
+fragmentation benchmark?
