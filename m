@@ -1,58 +1,49 @@
-From: Mike Benoit <ipso@snappymail.ca>
-Subject: Utilizing OSDL's STP for Reiser4 testing/benchmarks?
-Date: Fri, 21 Jul 2006 09:06:25 -0700
-Message-ID: <1153497985.6659.16.camel@ipso.snappymail.ca>
+From: Ingo Bormuth <ibormuth@efil.de>
+Subject: Re: 2.6.17 patch is in testing now
+Date: Fri, 21 Jul 2006 18:15:15 +0200
+Message-ID: <20060721161515.GA12068@kruemel>
+References: <e649ab20607161451y4153fa42u605b074dfc542fed@mail.gmail.com> <1153137424.6311.21.camel@tribesman.namesys.com> <44BBD391.3040907@namesys.com> <1153239449.6355.42.camel@tribesman.namesys.com> <44BD47F4.4080103@namesys.com>
+Reply-To: Ingo Bormuth <ibormuth@efil.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-N9yZfWjBW+QNHiMV4pc7"
-Return-path: <reiserfs-list-return-29103-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
+Return-path: <reiserfs-list-return-29104-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <44BD47F4.4080103@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-list@namesys.com
 
---=-N9yZfWjBW+QNHiMV4pc7
-Content-Type: text/plain
+--sm4nu43k4a2Rpi4c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Has the Reiser4 team looked at utilizing the OSDL Scalable Test Platform
-(STP) service to benchmark and test Reiser4 patches? They seem to offer
-a wide variety of hardware to test on, and already have some file system
-benchmarks available to choose from.=20
+On 2006-07-18 13:43, Hans Reiser wrote:
+> If testing goes well we will release it tomorrow.
 
-I noticed the Namesys benchmark page hasn't been updated in quite some
-time, understandably so, as benchmarking can be incredibly time
-consuming.  Perhaps using the STP would make this much easier to do more
-frequently?
+Hmm, so what would you say - should it be regarded as released ?
 
-It would be really nice to see how the batch_write/read(?) patches to
-the kernel affect things, and how Reiser4 performance progresses over
-time. I know Hans has mentioned CPU usage dropping in recent patches,
-but actual numbers from a benchmark are usually more compelling to see.
 
-User Guide:
-http://www.osdl.org/lab_activities/kernel_testing/stp/guide.html/document_v=
-iew
-
-Test Details:
-http://www.osdl.org/lab_activities/kernel_testing/stp/test_details.html/doc=
-ument_view
 
 --=20
-Mike Benoit <ipso@snappymail.ca>
+Ingo Bormuth, voicebox & telefax: +49-12125-10226517       '(~o-o~)'
+public key 86326EC9, http://ibormuth.efil.de/contact   --ooO--(.)--Ooo--
 
---=-N9yZfWjBW+QNHiMV4pc7
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+--sm4nu43k4a2Rpi4c
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
+Version: GnuPG v1.4.4 (GNU/Linux)
 
-iD8DBQBEwPuAMhKjsejwBhgRAp6XAJsHhFs0uQu4qzJhrI/37xyvhgrNJgCgnsLX
-jcF1IpsnyQKPE/17Kn2cJzo=
-=CU/Q
+iD8DBQFEwP2TNzWqdIYybskRApgGAJ4vWQ/Xi+X6ieh3+UIXWJNcZOf46QCfWAwa
+UeVj4OLY92t5Wx5z/KuKd4I=
+=RqVd
 -----END PGP SIGNATURE-----
 
---=-N9yZfWjBW+QNHiMV4pc7--
+--sm4nu43k4a2Rpi4c--
 
