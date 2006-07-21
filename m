@@ -1,86 +1,54 @@
-From: Mike Benoit <ipso@snappymail.ca>
-Subject: Re: reiser4 status (correction)
-Date: Fri, 21 Jul 2006 14:37:33 -0700
-Message-ID: <1153517853.6659.56.camel@ipso.snappymail.ca>
-References: <44BFFCB1.4020009@namesys.com> <44C043B5.3070501@slaphack.com>
-	 <44C093D2.1040703@namesys.com>
-	 <1153514509.6659.41.camel@ipso.snappymail.ca>
-	 <44C141C4.1030802@slaphack.com>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: somewhat OT query on journalling
+Date: Fri, 21 Jul 2006 16:53:54 -0500
+Message-ID: <44C14CF2.4080401@slaphack.com>
+References: <20060719152744.GA26155@tranquility.scriptkitchen.com> <44BE95F6.50004@namesys.com> <20060721124518.GA1977@tranquility.scriptkitchen.com> <44C122F1.7000109@slaphack.com> <20060721212611.GA13453@wintermute>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-rwD954q7P5CG9220I0iS"
-Return-path: <reiserfs-list-return-29113-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-29114-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44C141C4.1030802@slaphack.com>
+In-Reply-To: <20060721212611.GA13453@wintermute>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: David Masover <ninja@slaphack.com>
-Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?Andreas_Sch=E4fer?= <gentryx@gmx.de>
+Cc: reiserfs-list@namesys.com
 
---=-rwD954q7P5CG9220I0iS
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, 2006-07-21 at 16:06 -0500, David Masover wrote:
-> Mike Benoit wrote:
+Andreas Sch=E4fer wrote:
+>> Don't get too excited -- the transactions probably aren't done yet. With=
+out those, no filesystem that claims to journal data is really any better t=
+han a filesystem which only journals metadata.  Even once=20
+>> they are implemented (or even if they are already), applications have to=
+ support them directly.
 >=20
-> > Tuning fsync will fix the last wart on Reiser4 as far as benchmarks are
-> > concerned won't it? Right now Reiser4 looks excellent on the benchmarks
-> > that don't use fsync often (mongo?), but last I recall the fsync
-> > performance was so poor it overshadows the rest of the performance. It
-> > would also probably be more useful to a much wider audience, especially
-> > if Namesys decides to charge for the repacker.
->=20
-> If Namesys does decide to charge for the repacker, I'll have to consider=20
-> whether it's worth it to pay for it or to use XFS instead.  Reiser4=20
-> tends to become much more fragmented than most other Linux FSes --=20
-> purely subjective, but probably true.
->=20
+> Actually, I think transactions in a filesystem context are a bit
+> different from the transactions you know form databases. Generally
 
-I would like to see some actual data on this. I haven't used Reiser4 for
-over a year, and when I did it was only to benchmark it. But Reiser4
-allocates on flush, so in theory this should decrease fragmentation, not
-increase it. Due to this I question what you are _really_ seeing, or if
-perhaps it is a bug in the allocator? Why would XFS or any other
-multi-purpose file system resist fragmentation noticeably more then
-Reiser4 does.
+Yes, generally speaking, you're entirely right.  But in the case of=20
+Reiser4, at least for a single file, you can perform a number of writes=20
+and declare them a single transaction.
 
-I don't think the repacker is designed to be a "must have" for every
-Reiser4 installation. If it was, I would consider Reiser4 to be
-seriously flawed. Instead I think it is simply designed to improve
-certain workloads that may cause high fragmentation in hopes of keeping
-I/O speeds at their peek.=20
+I believe there are some other oddities, such as:  The FS doesn't always=20
+do the rollback, sometimes it delegates to the app for that, and it may=20
+be possible to perform transactions on a number of files.  I don't=20
+believe transactions imply locking, only serialization -- that is, the=20
+last transaction that goes through is the one that counts, and=20
+overwrites any transactions that completed before, even if they were=20
+started after.  So:
 
-Am I correct in this assumption Hans?
-=20
-No Linux file system that I'm aware of has a defragmentor, but they DO
-become fragmented, just not near as bad as FAT32 used to when MS created
-their defragmentor. The highest "non-contiguous" percent I've seen with
-EXT3 is about 12%, FAT32 I have seen over 50%, and NTFS over 30%. In
-fact I'm running in to a fragmentation issue with ReiserV3 right now
-that Jeff is working on, but it is more of a worst case scenario issue,
-not a regular occurrence issue.
+Alice opens foo
+Alice starts writing
+Bob opens foo
+Bob starts writing
+Alice writes some more
+Bob writes more
+Bob closes foo
+Alice closes foo
 
-For "normal" workloads I doubt you would notice much difference at all
-by using a repacker, 10% maybe? Which is one of the reasons you probably
-haven't seen a repacker for EXT2/3, even though I'm sure it would
-improve performance for some people.
+Even though Bob opened foo last, and did the last write, Alice was the=20
+last to close a transaction.  If you want to avoid this situation, you=20
+use locking.  Locking isn't mandatory, but neither are transactions.
 
---=20
-Mike Benoit <ipso@snappymail.ca>
-
---=-rwD954q7P5CG9220I0iS
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-
-iD8DBQBEwUkdMhKjsejwBhgRAmrBAJ42Pzsea000Ux6Pf/MqzkjlXFpQJwCdGK/Y
-9gVDoD4qbrr3zurH/3xuaFk=
-=DQNW
------END PGP SIGNATURE-----
-
---=-rwD954q7P5CG9220I0iS--
-
+But I could be entirely wrong also.
