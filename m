@@ -1,50 +1,70 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: somewhat OT query on journalling
-Date: Fri, 21 Jul 2006 13:54:41 -0500
-Message-ID: <44C122F1.7000109@slaphack.com>
-References: <20060719152744.GA26155@tranquility.scriptkitchen.com> <44BE95F6.50004@namesys.com> <20060721124518.GA1977@tranquility.scriptkitchen.com>
+Subject: Re: reiser4 status (correction)
+Date: Fri, 21 Jul 2006 14:13:04 -0500
+Message-ID: <44C12740.1040203@slaphack.com>
+References: <44BFFCB1.4020009@namesys.com> <44C043B5.3070501@slaphack.com> <44C093D2.1040703@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29105-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29106-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060721124518.GA1977@tranquility.scriptkitchen.com>
+In-Reply-To: <44C093D2.1040703@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Payal Rathod <payal-fs@scriptkitchen.com>
-Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com, LKML <linux-kernel@vger.kernel.org>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>
 
-Payal Rathod wrote:
-> On Wed, Jul 19, 2006 at 01:28:38PM -0700, Hans Reiser wrote:
->> V3 defaults to metadata only, V4 does data also because we can do it
->> without performance loss.
-> 
-> wwwwwwowwwww!!! 
+Hans Reiser wrote:
 
-Don't get too excited -- the transactions probably aren't done yet. 
-Without those, no filesystem that claims to journal data is really any 
-better than a filesystem which only journals metadata.  Even once they 
-are implemented (or even if they are already), applications have to 
-support them directly.
+> I am not sure that putting the repacker after fsync is the right choice....
 
-Regarding transactions in general, you should probably look for some 
-papers or tutorials for how they are implemented in databases.  You 
-might also read the Reiser4 whitepaper for an idea of how they could be 
-implemented in a filesystem.
+Does the repacker use fsync?  I wouldn't expect it to.
 
-But no transactional system will work unless applications at least know 
-about it.  This is why apps currently rely on features that are known to 
-be atomic in a filesystem.  For instance, look at maildirs -- they are 
-effectively 100% data journaled on any filesystem that journals metadata 
-properly.
+Does fsync benefit from a properly packed FS?  Probably.
 
->> reiserfs does not use inodes at all.  see our website for more.
-> 
-> Any particular page you are referring to? I didn't see a page for that 
-> there.
+Also, while I don't expect anyone else to be so bold, there is a way 
+around fsync performance:  Disable it.  Patch the kernel so that any 
+fsync call from userspace gets ignored, but lie and tell them it worked. 
+  Basically:
 
-Front page of Namesys.com has the Reiser4 whitepaper.  It's a bit out of 
-date, as some features still listed for 4.0 have been pushed to 4.1 or 
-later, but I don't think the overall plan has changed.
+  asmlinkage long sys_fsync(unsigned int fd)
+  {
+-       return do_fsync(fd, 0);
++       return 0;       // do_fsync(fd, 0);
+  }
+
+In order to make this sane, you should have backups and an Uninterrupted 
+Power Supply.  In the case of a loss of power, the box should notice and 
+immediately sync, then either shut down or software suspend.  Any UPS 
+battery should be able to handle the amount of time it takes to shut the 
+system off.
+
+Since anything mission critical should have backups and a UPS anyway, 
+the only problem left is what happens if the system crashes.  But system 
+crashes are something you have to plan for anyway.  Disks fail -- stuff 
+happens.  RAID won't save you -- the RAID controller itself will 
+eventually fail.
+
+So suppose you're running some very critical server -- for now, chances 
+are it's running some sort of database.  In this case, what you really 
+want is database replication.  Have at least two servers up and running, 
+and consider the transaction complete not when it hits the disk, but 
+when all running servers acknowledge the transaction.  The RAM of two 
+boxes should be safer than the disk of one.
+
+What about a repacker?  The best I can do to hack around that is to 
+restore the whole box from backup every now and then, but this requires 
+the box to be down for awhile -- it's a repacker, but not an online one. 
+  In this case, the solution would be to have the same two servers 
+(replicating databases), and bring first one down, and then the other.
+
+That would make me much more nervous than disabling fsync, though, 
+because now you only have the one server running, and if it goes down... 
+  And depending on the size of the data in question, this may not be 
+feasable.  It seems entirely possible that in some setups like this, the 
+only backup you'd be able to afford would be in the form of replication.
+
+In my own personal case, I'd prefer the repacker to tuning fsync.  But 
+arguments could be made for both.
