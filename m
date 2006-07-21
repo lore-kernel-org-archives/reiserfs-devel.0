@@ -1,54 +1,47 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: somewhat OT query on journalling
-Date: Fri, 21 Jul 2006 16:53:54 -0500
-Message-ID: <44C14CF2.4080401@slaphack.com>
-References: <20060719152744.GA26155@tranquility.scriptkitchen.com> <44BE95F6.50004@namesys.com> <20060721124518.GA1977@tranquility.scriptkitchen.com> <44C122F1.7000109@slaphack.com> <20060721212611.GA13453@wintermute>
+From: Andreas =?iso-8859-1?Q?Sch=E4fer?= <gentryx@gmx.de>
+Subject: Re: reiser4 status (correction)
+Date: Sat, 22 Jul 2006 00:29:17 +0200
+Message-ID: <20060721222917.GA15944@wintermute>
+References: <44BFFCB1.4020009@namesys.com> <44C043B5.3070501@slaphack.com> <44C093D2.1040703@namesys.com> <1153514509.6659.41.camel@ipso.snappymail.ca> <44C141C4.1030802@slaphack.com> <1153517853.6659.56.camel@ipso.snappymail.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-29114-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="wac7ysb48OaltWcw"
+Return-path: <reiserfs-list-return-29115-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060721212611.GA13453@wintermute>
+Content-Disposition: inline
+In-Reply-To: <1153517853.6659.56.camel@ipso.snappymail.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-1?Q?Andreas_Sch=E4fer?= <gentryx@gmx.de>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Andreas Sch=E4fer wrote:
->> Don't get too excited -- the transactions probably aren't done yet. With=
-out those, no filesystem that claims to journal data is really any better t=
-han a filesystem which only journals metadata.  Even once=20
->> they are implemented (or even if they are already), applications have to=
- support them directly.
->=20
-> Actually, I think transactions in a filesystem context are a bit
-> different from the transactions you know form databases. Generally
+--wac7ysb48OaltWcw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yes, generally speaking, you're entirely right.  But in the case of=20
-Reiser4, at least for a single file, you can perform a number of writes=20
-and declare them a single transaction.
+On 14:37 Fri 21 Jul     , Mike Benoit wrote:
+> No Linux file system that I'm aware of has a defragmentor, but they DO
+> become fragmented, just not near as bad as FAT32 used to when MS created
+> their defragmentor.
 
-I believe there are some other oddities, such as:  The FS doesn't always=20
-do the rollback, sometimes it delegates to the app for that, and it may=20
-be possible to perform transactions on a number of files.  I don't=20
-believe transactions imply locking, only serialization -- that is, the=20
-last transaction that goes through is the one that counts, and=20
-overwrites any transactions that completed before, even if they were=20
-started after.  So:
+Forgotten ext2? ;-) Funny thing: If your ext3 got too fragmented:
+convert it back to ext2, defrag and reconvert it again to ext3. All of
+this can be done "in place", i.e. without moving the data to other
+partitions etc.
 
-Alice opens foo
-Alice starts writing
-Bob opens foo
-Bob starts writing
-Alice writes some more
-Bob writes more
-Bob closes foo
-Alice closes foo
+-Andreas
 
-Even though Bob opened foo last, and did the last write, Alice was the=20
-last to close a transaction.  If you want to avoid this situation, you=20
-use locking.  Locking isn't mandatory, but neither are transactions.
+--wac7ysb48OaltWcw
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
-But I could be entirely wrong also.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.4 (GNU/Linux)
+
+iD8DBQFEwVU9xQzSAzXqsyYRAm9HAKCsbLtFYRrRLx0iA76j2q2qG9cewgCfWLKu
+XhH0ceVNI8EQNvr3AyfEMQs=
+=i3kI
+-----END PGP SIGNATURE-----
+
+--wac7ysb48OaltWcw--
