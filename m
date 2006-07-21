@@ -1,104 +1,132 @@
-From: Francisco Javier Cabello <fjcabello@visual-tools.com>
-Subject: Re: other system with datacorruption  (2.425 + datalogging patches)
-Date: Fri, 21 Jul 2006 11:33:58 +0200
-Message-ID: <200607211134.01403.fjcabello@visual-tools.com>
-References: <200607201452.09270.fjcabello@visual-tools.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: fsck.reiserfs --rebuild-tree out of disk space aborted
+Date: Fri, 21 Jul 2006 02:43:18 -0600
+Message-ID: <44C093A6.3000302@namesys.com>
+References: <843700460607201709i44c2d1f4i846a0cb716c80234@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart2401959.cUyLkxPGN6";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29096-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29097-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200607201452.09270.fjcabello@visual-tools.com>
+In-Reply-To: <843700460607201709i44c2d1f4i846a0cb716c80234@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: joelh@planetjoel.com, vs <vs@thebsh.namesys.com>
+Cc: reiserfs-list@namesys.com
 
---nextPart2401959.cUyLkxPGN6
-Content-Type: multipart/mixed;
-  boundary="Boundary-01=_H+JwEOUhJzyw4Sf"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+vs will try to help you....  Did Jeff fix the mythtv performance problem
+yet?  If not, vs, please rip out the "optimization" which goes looking
+for the perfect length spot for files, and send both joel and akpm the
+patch.  It is really not such a bad algorithm to just use the spots that
+are free in the order that they are found, and it can certainly be used
+until a well tested and benchmarked alternative algorithm is presented
+to me in detail.
 
---Boundary-01=_H+JwEOUhJzyw4Sf
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Hans
 
-Hello,
-The rebuild tree succeed. I send you the output.
+Joel Heenan wrote:
 
-Regards,
-
-Paco
-
-On Thursday, 20 de July de 2006 14:52, Francisco Javier Cabello wrote:
-> Hello,
-> I have other system with data corruption.
-> I send you the output of 'reiserfsck --check'
+> Hi,
 >
-> Regards,
+> I can home about two weeks ago and found my media box locked up. I was
+> able to discover that it had filled up its /dev/md2 partition (mounted
+> on /home) which surprised me because it is 550 gigs. Perhaps mythtv
+> went nuts and used it all up. It was only a temporary thing I was
+> going to move mythtv to another partition anyway and boy I wish I had
+> now :-P.
 >
-> Paco
+> Anyway I rebooted and the fsck said I had to run rebuild-tree. So I
+> ran that and a few days later it said "out of disk space, aborted". I
+> can't mount the partition it says "No folder found I believe". I tried
+> it a few times with both the reiserfsprogs from etch:
+>
+> ii  reiserfsprogs                    3.6.19-2
+> User-level tools for ReiserFS filesystems
+>
+> and the latest ones downloaded from the website (3.6.19). I am
+> currently trying it with the -S option.
+>
+> I'm running a custom 2.6.12 kernel which is basically the same as the
+> default debian one except it includes some drivers for my dvico fusion
+> tv tuner.
+>
+> I read that the best way to fix this problem is to dd to a bigger
+> partition but there is really no easy way for me to do that - it will
+> probably involve me purchasing 2x300gig partitions, raiding them, then
+> performing the restore.
+>
+> Please let me know if there is a way I can fix this without going to a
+> bigger partition.
+>
+> Here is output of the fsck:
+>
+> """
+> fsck.reiserfs --rebuild-tree /dev/md2
+> reiserfsck 3.6.19 (2003 www.namesys.com)
+>
+> *************************************************************
+> ** Do not  run  the  program  with  --rebuild-tree  unless **
+> ** something is broken and MAKE A BACKUP  before using it. **
+> ** If you have bad sectors on a drive  it is usually a bad **
+> ** idea to continue using it. Then you probably should get **
+> ** a working hard drive, copy the file system from the bad **
+> ** drive  to the good one -- dd_rescue is  a good tool for **
+> ** that -- and only then run this program.                 **
+> ** If you are using the latest reiserfsprogs and  it fails **
+> ** please  email bug reports to reiserfs-list@namesys.com, **
+> ** providing  as  much  information  as  possible --  your **
+> ** hardware,  kernel,  patches,  settings,  all reiserfsck **
+> ** messages  (including version),  the reiserfsck logfile, **
+> ** check  the  syslog file  for  any  related information. **
+> ** If you would like advice on using this program, support **
+> ** is available  for $25 at  www.namesys.com/support.html. **
+> *************************************************************
+>
+> Will rebuild the filesystem (/dev/md2) tree
+> Will put log info to 'stdout'
+>
+> Do you want to run this program?[N/Yes] (note need to type Yes if you
+> do):Yes
+> Replaying journal..
+> Reiserfs journal '/dev/md2' in blocks [18..8211]: 0 transactions replayed
+> ###########
+> reiserfsck --rebuild-tree started at Mon Jul 17 21:41:44 2006
+> ###########
+>
+> Pass 0:
+> ####### Pass 0 #######
+> Loading on-disk bitmap .. ok, 116676032 blocks marked used
+> Skipping 11771 blocks (super block, journal, bitmaps) 116664261 blocks
+> will be read
+> 0%....20%....block 85875092: The number of items (256) is incorrect,
+> should be (1) - corrected
+> block 85875092: The free space (1) is incorrect, should be (208) -
+> corrected
+> pass0: vpf-10110: block 85875092, item (0): Unknown item type found
+> [33488896 65537 0x100 ??? (15)] - deleted
+>                                                   left 0, 15065
+> /seccseccccc
+> 108413 directory entries were hashed with "r5" hash.
+>        "r5" hash is selected
+> Flushing..finished
+>        Read blocks (but not data blocks) 116664261
+>                Leaves among those 87768646
+>                        - leaves all contents of which could not be
+> saved and deleted 1
+>                Objectids found 108417
+>
+> Pass 1 (will try to insert 87768645 leaves):
+> ####### Pass 1 #######
+> Looking for allocable blocks .. finished
+> 0%....20%....40%..Not enough allocable blocks, checking bitmap...there
+> are 1 allocable blocks, btw
+>
+> out of disk space
+> Aborted
+> """
+>
+>
 
-=2D-=20
-One of my most productive days was throwing away 1000 lines of code (Ken=20
-Thompson)
-=2D----------------
-PGP fingerprint: AF69 62B4 97EB F5BB 2C60  B802 568A E122 BBBE 5820
-PGP Key available at http://pgp.mit.edu
-=2D----------------
 
-
---Boundary-01=_H+JwEOUhJzyw4Sf
-Content-Type: application/x-gzip;
-  name="reiserfsc_rebuild_tree.gz"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
-	filename="reiserfsc_rebuild_tree.gz"
-
-H4sICByfwEQAA3JlaXNlcmZzY19yZWJ1aWxkX3RyZWUAzVlLb+M2EL7nVxDJxcYmi+HwIXIvi2Jz
-6aUo2ix6WASBY9OxGkcyJGXT9Nd3SNqOXk7kxvVWQSCREmY+fvPN8OGzs3CxXydlyYDF1tnJiprw
-iX1fzS84SKTH22U+vWcorTaQyHOWVu6B6U/sjyLP7lhezFzB8nnoLtkFmy4m2Z1j1YL+n1fOv/LP
-9+6ZfUOBXCRMckRuGfzF2c+/XLIRH1+zKmeXaeGmVQuBeReC/PZPMnmTzt6Acfnblys2wogj9Jsm
-jgRewXFFhsPzU1ot2FNENZ+XriJwbOmyO+qe54/ZrOnbkG8NUHN/7r9mnFukcczc0lVudhLdCpsA
-16iiu+zx4bY+6pFNpBmztGRpNs0LT+Q5Kxf543LGbp2n2BMTX+wwOS+cY+VqMqXPlVUIr5gTYEzT
-YoMtzrdsbXys2RrB+BP7mt1n+VMWe4JI1uQIoZRCRLBMABGkeMKJIwsT4Ldg6G+q+Jx9/vyZjSQF
-64UjycFgwmZBQnnxzFxWFakr2ZMrHFtMyoWbxfCcFuo0dHw8OaunAN+mQKMbt91xaKhhTVe6dGSd
-Tch+mpWuqFIKu9dY5p7Wg6VgKwpluIm63mOcURlSEdE0qdKcwq44BtzPxOtjVjE4Z/OSOMwcgfeN
-vHiYVN4+hSYjpdIwWJaz36tJdTmpJucbIGTsiV6V9+lqReQ0BiQ2A9oOSZv6kL4hU9fBsh9LFHMM
-ZQSVZuHFxicFAi1lhJYtRfhMGpnxDh+RGG4t8P2cKd31IkCOTwp3+5guZzele5hkVTq98YqMPiOn
-Naccrtno9CfgN6BBc3FFijVImZh8oI6L0OKoQusG6BIIN/jxYeXuTj31NZ1949bwdYjxmq1yCkzp
-UZHCF157Fz6LCveQf6dItMjYaWYPRtB2CeFiy7vaz1WZ/u26PrgUSQ/vmmszmHjpPWpIPPNfALfM
-B3YTrSLzviVBqj2Zl28yvx9K24fSIsgNSoXaStFEKY6PU0YdN3BikuALm9vWFic/Okrdg1KQdmox
-37R+DEpfEnQ75JzCzUkKW5DhaoCEI4NE2QaJPBF+ufAfg9xdxAMuny97lCxr+qo4lVy9XzWhVUpP
-ntLCAZIX/WtsKQuPGrWQAKYvAZSEWgIkiZYNmOLoKPvIRGPqKGkpd/jSPGhSlHspjPOeSREGTood
-V/2ToqLps+tFWjl8MaJDUmPkXdYqD0qZ1Mrjv0lqfSh1BJA86YIEJY1aVx5Ouxq0aJs1fECqHRim
-jZlWh8mFoC3bC0zFdRNmcmSQCF0uCVYNJIVfm2Y5oN3isbns6pIbWpzpTcg5SZ32sk2YRw85qjbM
-9Zz4v0of0eWS2JNqs+HwyaQE/kguw62T5v7i2zQHWhJZk7SkCYfIoN1LjMCgn0P3WmLIvu0oGujs
-SHcCPtZ803G1Y76hj3vmG62Gr5pMSJj1Sle1E8a8K2HM0Ai/TkYnzP1kSKBIdg8CjJa7Txw0QFDS
-fscb/UqySgylfe0W16mlm7Qj8HfQTrYPUwA8yHDjbZShAKiIKxQAKkuyVajAHgDnAHkEM0PkIbDv
-NErwwWszDeGgCE2kI2kHTbwraG8fFA0GGW6ijTIETSe2FjQK295BOyBOPwmqNkxPpDDyPbvXISB3
-F4R4BLlfrSfPPbtXZYwZVO8D4EEaViB7NIxv+bEi1BvRKXM7zvb6djFYq6OvOuls/PudaOwZirZD
-S+j6FxMB9UMaJeCKupRXeqxOKDg1oH1uq3ecJQXDYe9L9t9Rnlp2Bk1fyvQQIhXHceu0nj5e5mX1
-If5C4skZ1w7w/wHU0VIDxRsAAA==
-
---Boundary-01=_H+JwEOUhJzyw4Sf--
-
---nextPart2401959.cUyLkxPGN6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQBEwJ+JVorhIru+WCARAn9rAJ9V6RSFZ+Ivgrni80mNCO/s868F7gCcCcDR
-IE4gwVCtZKTYMrs/4ZYEaBU=
-=Xfpr
------END PGP SIGNATURE-----
-
---nextPart2401959.cUyLkxPGN6--
