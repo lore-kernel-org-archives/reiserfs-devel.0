@@ -1,112 +1,39 @@
-From: "Joel Heenan" <joel.heenan@gmail.com>
-Subject: fsck.reiserfs --rebuild-tree out of disk space aborted
-Date: Fri, 21 Jul 2006 10:09:01 +1000
-Message-ID: <843700460607201709i44c2d1f4i846a0cb716c80234@mail.gmail.com>
-Reply-To: joelh@planetjoel.com
+From: David Masover <ninja@slaphack.com>
+Subject: Re: reiser4 status (correction)
+Date: Thu, 20 Jul 2006 22:02:13 -0500
+Message-ID: <44C043B5.3070501@slaphack.com>
+References: <44BFFCB1.4020009@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29094-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29095-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
+In-Reply-To: <44BFFCB1.4020009@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Hi,
+Hans Reiser wrote:
 
-I can home about two weeks ago and found my media box locked up. I was
-able to discover that it had filled up its /dev/md2 partition (mounted
-on /home) which surprised me because it is 550 gigs. Perhaps mythtv
-went nuts and used it all up. It was only a temporary thing I was
-going to move mythtv to another partition anyway and boy I wish I had
-now :-P.
+> On a more positive note, Reiser4.1 is getting closer to release....
 
-Anyway I rebooted and the fsck said I had to run rebuild-tree. So I
-ran that and a few days later it said "out of disk space, aborted". I
-can't mount the partition it says "No folder found I believe". I tried
-it a few times with both the reiserfsprogs from etch:
+Good news!  But it's been awhile since I've followed development, and 
+the homepage seems out of date (as usual).  Where can I find a list of 
+changes since v4?
 
-ii  reiserfsprogs                    3.6.19-2
-User-level tools for ReiserFS filesystems
+By "out of date", I mean things like this:
 
-and the latest ones downloaded from the website (3.6.19). I am
-currently trying it with the -S option.
+"Reiser4.1 will modify the repacker to insert controlled "air holes", as 
+it is well known that insertion efficiency is harmed by overly tight 
+packing."
 
-I'm running a custom 2.6.12 kernel which is basically the same as the
-default debian one except it includes some drivers for my dvico fusion
-tv tuner.
+Am I to understand that this text hasn't changed since the repacker was 
+essentially canceled/removed/commercialized?  Or is there actually a 
+repacker somewhere usable, today, that is still scheduled to insert air 
+holes by v4.1?
 
-I read that the best way to fix this problem is to dd to a bigger
-partition but there is really no easy way for me to do that - it will
-probably involve me purchasing 2x300gig partitions, raiding them, then
-performing the restore.
-
-Please let me know if there is a way I can fix this without going to a
-bigger partition.
-
-Here is output of the fsck:
-
-"""
-fsck.reiserfs --rebuild-tree /dev/md2
-reiserfsck 3.6.19 (2003 www.namesys.com)
-
-*************************************************************
-** Do not  run  the  program  with  --rebuild-tree  unless **
-** something is broken and MAKE A BACKUP  before using it. **
-** If you have bad sectors on a drive  it is usually a bad **
-** idea to continue using it. Then you probably should get **
-** a working hard drive, copy the file system from the bad **
-** drive  to the good one -- dd_rescue is  a good tool for **
-** that -- and only then run this program.                 **
-** If you are using the latest reiserfsprogs and  it fails **
-** please  email bug reports to reiserfs-list@namesys.com, **
-** providing  as  much  information  as  possible --  your **
-** hardware,  kernel,  patches,  settings,  all reiserfsck **
-** messages  (including version),  the reiserfsck logfile, **
-** check  the  syslog file  for  any  related information. **
-** If you would like advice on using this program, support **
-** is available  for $25 at  www.namesys.com/support.html. **
-*************************************************************
-
-Will rebuild the filesystem (/dev/md2) tree
-Will put log info to 'stdout'
-
-Do you want to run this program?[N/Yes] (note need to type Yes if you do):Yes
-Replaying journal..
-Reiserfs journal '/dev/md2' in blocks [18..8211]: 0 transactions replayed
-###########
-reiserfsck --rebuild-tree started at Mon Jul 17 21:41:44 2006
-###########
-
-Pass 0:
-####### Pass 0 #######
-Loading on-disk bitmap .. ok, 116676032 blocks marked used
-Skipping 11771 blocks (super block, journal, bitmaps) 116664261 blocks
-will be read
-0%....20%....block 85875092: The number of items (256) is incorrect,
-should be (1) - corrected
-block 85875092: The free space (1) is incorrect, should be (208) - corrected
-pass0: vpf-10110: block 85875092, item (0): Unknown item type found
-[33488896 65537 0x100 ??? (15)] - deleted
-                                                   left 0, 15065 /seccseccccc
-108413 directory entries were hashed with "r5" hash.
-        "r5" hash is selected
-Flushing..finished
-        Read blocks (but not data blocks) 116664261
-                Leaves among those 87768646
-                        - leaves all contents of which could not be
-saved and deleted 1
-                Objectids found 108417
-
-Pass 1 (will try to insert 87768645 leaves):
-####### Pass 1 #######
-Looking for allocable blocks .. finished
-0%....20%....40%..Not enough allocable blocks, checking bitmap...there
-are 1 allocable blocks, btw
-
-out of disk space
-Aborted
-"""
+Removed LKML from CC for now, for no particular reason.  Add them back 
+in, if you like.
