@@ -1,43 +1,60 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: somewhat OT query on journalling
-Date: Fri, 21 Jul 2006 18:54:49 -0600
-Message-ID: <44C17759.5080603@namesys.com>
-References: <20060719152744.GA26155@tranquility.scriptkitchen.com> <44BE95F6.50004@namesys.com> <20060721124518.GA1977@tranquility.scriptkitchen.com> <44C122F1.7000109@slaphack.com> <20060721212611.GA13453@wintermute> <44C14CF2.4080401@slaphack.com>
+Subject: Re: storing images thumbnails as pseudo files?
+Date: Fri, 21 Jul 2006 18:56:25 -0600
+Message-ID: <44C177B9.7070604@namesys.com>
+References: <5710000871.20060721212932@wp.pl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-29124-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29125-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44C14CF2.4080401@slaphack.com>
+In-Reply-To: <5710000871.20060721212932@wp.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: David Masover <ninja@slaphack.com>
-Cc: =?ISO-8859-1?Q?Andreas_Sch=E4fer?= <gentryx@gmx.de>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Pysiak Satriani <pysiak.satriani@wp.pl>
+Cc: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-David Masover wrote:
+Pysiak Satriani wrote:
 
-> Andreas Sch=E4fer wrote:
+>Hello,
 >
->>> Don't get too excited -- the transactions probably aren't done yet.
->>> Without those, no filesystem that claims to journal data is really
->>> any better than a filesystem which only journals metadata.  Even
->>> once they are implemented (or even if they are already),
->>> applications have to support them directly.
->>
->>
->> Actually, I think transactions in a filesystem context are a bit
->> different from the transactions you know form databases. Generally
+>suppose pseudo files, file-as-directory are on my r4 partition and are usuable.
+>
+>Does namesys' vision allow things like storing image thumbnails "inside the file
+>itself" ?
+>
+>Example using jpgtn (jpgtn creates thumbnails of jpg files)
+>
+>// create 150px thumbnail
+>$ jpgtn -s 150 -H test.jpg
+>
+>// move the thumbnail "into" the file
+>$ mv tn_test test.jpg/thumbs/150px
+>
+>// the same but a 100px thumbnail
+>$ jpgtn -s 100 -H test.jpg
+>$ mv tn_test test.jpg/thumbs/100px
+>
+>Then I could write HTML code like this:
+>
+><a href="test.jpg"><img src="test.jpg/thumbs/150px" /></a>
+>
+>This idea came to me because of a project that has to create many thumbnails
+>for many files. That requires to make a naming scheme, parse filenames and
+>don't make one mistake. If I could do things this way it would be much
+>easier and elegant to do.
+>
+>But that's just an idea from someone not really knowledgible enough in
+>the area.
+>
+>Best regards,
+>Maciej Soltysiak
 >
 >
-> Yes, generally speaking, you're entirely right.  But in the case of
-> Reiser4, at least for a single file, you can perform a number of
-> writes and declare them a single transaction.
-
-If we finish that code you can.;-)  One of the problems that we need to
-deal with is that we are shipping a product pared of all functionality
-not essential so that we can get it out the door, and the website still
-describes the whole vision.  We will do the whole vision, but first we
-need to get some income flowing.
-
+>
+>
+>  
+>
+What you describe is the vision we are trying for.
