@@ -1,68 +1,61 @@
-From: Jeff Mahoney <jeffm@suse.com>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
  regarding reiser4 inclusion
-Date: Sun, 23 Jul 2006 16:46:57 -0400
-Message-ID: <44C3E041.1020909@suse.com>
-References: <44C12F0A.1010008@namesys.com> <20060722130219.GB7321@thunk.org> <44C26F65.4000103@namesys.com> <44C28A8F.1050408@garzik.org> <44C32348.8020704@namesys.com>
+Date: Sun, 23 Jul 2006 15:15:26 -0600
+Message-ID: <44C3E6EE.8080607@namesys.com>
+References: <44C12F0A.1010008@namesys.com> <20060722130219.GB7321@thunk.org> <44C26F65.4000103@namesys.com> <44C28A8F.1050408@garzik.org> <44C32348.8020704@namesys.com> <44C3E041.1020909@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29162-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29163-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44C32348.8020704@namesys.com>
+In-Reply-To: <44C3E041.1020909@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
+To: Jeff Mahoney <jeffm@suse.com>
 Cc: Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Jeff Mahoney wrote:
 
-Hans Reiser wrote:
-> I just got an email from the programmer who wrote the MythTV bug saying
-> that he is just too busy to bother fixing the bug in his code.....  so
-> my response is that a Namesys programmer is going to fix it on Monday.
+>
+>
+> That particular bug isn't in the bitmap scanning code, it's a side
+> effect of the write batching higher up.
 
+Did you write the code that looks for a window of 32
+blocks?  If not, and if this code has been around for a long time, I
+apologize.   I thought you did write it and added it in recent months.
 
-Hans -
+>
+>
+> It's a pathological case when the file system is seriously fragmented.
 
-I'll accept blame when it's my bug, but the MythTV one isn't. I've been
-working with the bitmap code and did the analysis to track down what was
-happening, but that doesn't make it a bug in my code.
+Most bugs are pathological cases.;-)
 
-That particular bug isn't in the bitmap scanning code, it's a side
-effect of the write batching higher up. It's looking for a window of 32
-blocks, and there's just no window that large available. It ends up
-scanning all the bitmaps looking for the window, and then backs off to
-single block allocations. The scanning code works fine, and it does skip
-where there aren't enough free blocks available in a particular bitmap.
+> A
+> quick fix would be to set a flag indicating that future writes shouldn't
+> bother trying to find a window that large,
 
-It's a pathological case when the file system is seriously fragmented. A
-quick fix would be to set a flag indicating that future writes shouldn't
-bother trying to find a window that large, but that's a hack. A better
-allocation algorithm would keep track of free space extents in memory,
-subject to getting dropped by memory pressure. Since that information
-would be separate from the bitmaps themselves, we could get rid of that
-nasty "is this block free, but in the journal?" check that we need to do
-as well. It's invasive, and a quicker fix would just be to track the
-largest window, and rescan when it gets used or a block in that bitmap
-gets freed.
+There are lots of quick fixes.  1) The quickest is to not scan for the
+window at all.  2) The second quickest is to limit the number of bitmaps
+that will be scanned to some number like 3.  3) The not at all quickest
+is to track free extents like XFS does, which is not a hack, but it
+belongs in a development branch.  I am not sure it is worth the
+complexity, but my mind is not closed.
 
-That said, I actually did start work on a fix for this one, but I really
-just don't have the time right now.
+On monday we will do 1) or 2), probably 1).   After the repacker is
+done, we should review all our block allocation algorithms.  I have an
+idea for how to do things more optimally for streaming media that will
+avoid fragmentation over time, and when combined with the repacker may
+make 3 not worthwhile.
 
-- -Jeff
+I am grateful that you and Chris do bug fixes, but when you guys are too
+busy, (and that can and will happen to any of us), the baton needs to
+get passed.  V3 needs to be a zero defect product, and once we know it
+is a bug I don't want bugs in V3 to remain unfixed for more than a day
+plus the time it takes to fix it.    If you do add code, I want any bugs
+that show up in the aftermath of mainstream merging to get jumped on.
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
-
-iD8DBQFEw+BBLPWxlyuTD7IRAtG8AKCOWW/AH3NAen6gd6BToJGVfzdnNACfYkVS
-j2/6yAAeWKAhs4ng9fdGW0Y=
-=gB+v
------END PGP SIGNATURE-----
+Hans
