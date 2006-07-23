@@ -1,86 +1,68 @@
-From: Toby Thain <toby@smartgames.ca>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
-Date: Sun, 23 Jul 2006 13:43:47 -0400
-Message-ID: <BAYC1-PASMTP072AFC813FC1F2F87D10C8BF640@CEZ.ICE>
-References: <44C12F0A.1010008@namesys.com> <20060722130219.GB7321@thunk.org> <44C26F65.4000103@namesys.com> <44C28A8F.1050408@garzik.org> <44C32348.8020704@namesys.com> <20060723114828.GC27825@lug-owl.de>
-Mime-Version: 1.0 (Apple Message framework v750)
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
+ regarding reiser4 inclusion
+Date: Sun, 23 Jul 2006 16:46:57 -0400
+Message-ID: <44C3E041.1020909@suse.com>
+References: <44C12F0A.1010008@namesys.com> <20060722130219.GB7321@thunk.org> <44C26F65.4000103@namesys.com> <44C28A8F.1050408@garzik.org> <44C32348.8020704@namesys.com>
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29161-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29162-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060723114828.GC27825@lug-owl.de>
-Message-Id: <D798DA48-2B56-4943-BE2A-4A3983B00B80@smartgames.ca>
+In-Reply-To: <44C32348.8020704@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
-To: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hans Reiser wrote:
+> I just got an email from the programmer who wrote the MythTV bug saying
+> that he is just too busy to bother fixing the bug in his code.....  so
+> my response is that a Namesys programmer is going to fix it on Monday.
 
 
-On 23-Jul-06, at 7:48 AM, Jan-Benedict Glaw wrote:
+Hans -
 
-> On Sun, 2006-07-23 01:20:40 -0600, Hans Reiser <reiser@namesys.com>  
-> wrote:
->> There is nothing about small patches that makes them better code.   
->> There
->
-> Erm, a small patch is something which should _obviously_ fix one
-> issue. A small patch, containing at max some 100 lines, can easily be
-> read and understood.
->
-> A complete filesystem (I'm co-maintaining one for an ancient on-disk
-> format, too) isn't really easy to understand or to verify from looking
-> at it for 5min.
+I'll accept blame when it's my bug, but the MythTV one isn't. I've been
+working with the bitmap code and did the analysis to track down what was
+happening, but that doesn't make it a bug in my code.
 
-Nonetheless, "There is nothing about small patches that makes them  
-better code".
+That particular bug isn't in the bitmap scanning code, it's a side
+effect of the write batching higher up. It's looking for a window of 32
+blocks, and there's just no window that large available. It ends up
+scanning all the bitmaps looking for the window, and then backs off to
+single block allocations. The scanning code works fine, and it does skip
+where there aren't enough free blocks available in a particular bitmap.
 
-Hans is quite right. Long patches just take longer to read. This can  
-make them harder to penetrate review, as he describes, with analogy.
+It's a pathological case when the file system is seriously fragmented. A
+quick fix would be to set a flag indicating that future writes shouldn't
+bother trying to find a window that large, but that's a hack. A better
+allocation algorithm would keep track of free space extents in memory,
+subject to getting dropped by memory pressure. Since that information
+would be separate from the bitmaps themselves, we could get rid of that
+nasty "is this block free, but in the journal?" check that we need to do
+as well. It's invasive, and a quicker fix would just be to track the
+largest window, and rescan when it gets used or a block in that bitmap
+gets freed.
 
->
->> is no reason we should favor them, if the developers are willing  
->> to work
->> on something for 5 years to escape a local optimum, that is often the
->> RIGHT thing to do.
->
-> I give a shit of nothing to some 5 year work if I cannot verify that
-> it won't hurt me at some point.
+That said, I actually did start work on a fix for this one, but I really
+just don't have the time right now.
 
-Do you really review all patches to ensure this? It is well  
-understood that only once r4 reaches mainline will it get the wider  
-testing it must have to shake down.
+- -Jeff
 
-Lucky Namesys is not deterred by ingratitude or there would be no "5  
-year work" for us to contemplate at all.
+- --
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
 
->
->> It is importand that we embrace our diversity, and be happy for the
->> strength it gives us.  Some of us are good at small patches that  
->> evolve,
->> and some are good at escaping local optimums.  We all have value,  
->> both
->> trees and grass have their place in the world.
->
-> Just put reiser4 in some GIT tree and publish it. Maybe you can place
-> it on git.kernel.org .
-
-Why should Hans give up the aspiration to have r4 in mainline due to  
-a small number of regressive personalities (a.k.a. politics)?
-
-To much of the Linux world R3 has been an extremely valuable  
-contribution; r4 promises to be even more so.
-
---T
-
->
-> MfG, JBG
->
-> -- 
->        Jan-Benedict Glaw       jbglaw@lug-owl.de                 
-> +49-172-7608481
->  Signature of:                     ...und wenn Du denkst, es geht  
-> nicht mehr,
->  the second  :                            kommt irgendwo ein  
-> Lichtlein her.
-
+iD8DBQFEw+BBLPWxlyuTD7IRAtG8AKCOWW/AH3NAen6gd6BToJGVfzdnNACfYkVS
+j2/6yAAeWKAhs4ng9fdGW0Y=
+=gB+v
+-----END PGP SIGNATURE-----
