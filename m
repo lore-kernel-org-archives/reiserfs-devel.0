@@ -1,55 +1,73 @@
-From: Sander Sweers <sander.sweers@gmail.com>
-Subject: Re: future r4 maintenance question
-Date: Sun, 23 Jul 2006 13:11:03 +0200
-Message-ID: <1153653064.7877.13.camel@localhost>
-References: <1992401892.20060722173244@wp.pl>
-	 <1153594386.6659.172.camel@ipso.snappymail.ca>
-	 <44C27F99.3050109@slaphack.com>
+From: Jan-Benedict Glaw <jbglaw@lug-owl.de>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
+Date: Sun, 23 Jul 2006 13:48:28 +0200
+Message-ID: <20060723114828.GC27825@lug-owl.de>
+References: <44C12F0A.1010008@namesys.com> <20060722130219.GB7321@thunk.org> <44C26F65.4000103@namesys.com> <44C28A8F.1050408@garzik.org> <44C32348.8020704@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29159-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="S1BNGpv0yoYahz37"
+Return-path: <reiserfs-list-return-29160-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44C27F99.3050109@slaphack.com>
+Content-Disposition: inline
+In-Reply-To: <44C32348.8020704@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: Mike Benoit <ipso@snappymail.ca>, Pysiak Satriani <pysiak.satriani@wp.pl>, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Sat, 2006-07-22 at 14:42 -0500, David Masover wrote:
-> Mike Benoit wrote:
-> 
-[...]
-> 
-> You would hope.  The problem is, most of the ideas we have for 
-> amazing/useless/practical plugins have already been done as specialized 
-> filesystems in FUSE.  What's more, FUSE doesn't usually require root 
-> privileges to run, causing some people to do such useless things as 
-> support for various filesystems already in the kernel (so you can 
-> loop-mount filesystems without using the loop device or having root 
-> privileges).
-> 
-> Although, there is one other thing to consider -- NTFS in the kernel has 
-> stagnated for something like 10 years without write support, while 
-> userspace tools like ntfsck and resize_ntfs, using libntfs, have 
-> actually gotten relatively stable at dealing with all kinds of ntfs 
-> oddities.  For awhile, we had captive-ntfs (also done in FUSE), but more 
-> recently, someone wrote a FUSE driver for libntfs, making the first 
-> reasonably stable fully featured read/write NTFS driver for Linux.
-> 
-> It's also reasonably fast, sometimes faster than ext2/3, I'm told.
+--S1BNGpv0yoYahz37
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I am using the official libntfs fuse module but it is not all that fast
-if you compare how much more cpu power is needed. And even then it is
-NOT faster then ext2/3. I am copying a couple of 650mb iso's and I have
-100% cpu utilisation and it still takes tens of minutes to copy just 1.
+On Sun, 2006-07-23 01:20:40 -0600, Hans Reiser <reiser@namesys.com> wrote:
+> There is nothing about small patches that makes them better code.  There
 
-Fuse is nice for things like gmailfs or beaglefs but if you really want
-performance, kernelspace imho is the only place to implement a
-filesystems.
+Erm, a small patch is something which should _obviously_ fix one
+issue. A small patch, containing at max some 100 lines, can easily be
+read and understood.
 
-Greets
-Sander
+A complete filesystem (I'm co-maintaining one for an ancient on-disk
+format, too) isn't really easy to understand or to verify from looking
+at it for 5min.
 
+> is no reason we should favor them, if the developers are willing to work
+> on something for 5 years to escape a local optimum, that is often the
+> RIGHT thing to do.
+
+I give a shit of nothing to some 5 year work if I cannot verify that
+it won't hurt me at some point.
+
+> It is importand that we embrace our diversity, and be happy for the
+> strength it gives us.  Some of us are good at small patches that evolve,
+> and some are good at escaping local optimums.  We all have value, both
+> trees and grass have their place in the world.
+
+Just put reiser4 in some GIT tree and publish it. Maybe you can place
+it on git.kernel.org .
+
+MfG, JBG
+
+--=20
+       Jan-Benedict Glaw       jbglaw@lug-owl.de                +49-172-760=
+8481
+ Signature of:                     ...und wenn Du denkst, es geht nicht meh=
+r,
+ the second  :                            kommt irgendwo ein Lichtlein her.
+
+--S1BNGpv0yoYahz37
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+
+iD8DBQFEw2IMHb1edYOZ4bsRAtBDAJ0Qym+4r9bF+dHPNoYYiOAmfVEkZgCfXkWF
+3zck3qVosxcJYtP3AZyCC4U=
+=AqyK
+-----END PGP SIGNATURE-----
+
+--S1BNGpv0yoYahz37--
