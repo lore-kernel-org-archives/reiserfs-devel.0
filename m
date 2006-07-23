@@ -1,111 +1,83 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: reiser4 status (correction)
-Date: Sun, 23 Jul 2006 00:19:47 -0600
-Message-ID: <44C31503.9000005@namesys.com>
-References: <44BFFCB1.4020009@namesys.com> <44C043B5.3070501@slaphack.com>	 <44C093D2.1040703@namesys.com>	 <1153514509.6659.41.camel@ipso.snappymail.ca>	 <44C141C4.1030802@slaphack.com>	 <1153517853.6659.56.camel@ipso.snappymail.ca>	 <44C157D2.5060202@slaphack.com>	 <1153525982.6659.108.camel@ipso.snappymail.ca>	 <44C191FD.4010302@slaphack.com>  <44C1BD65.8070204@namesys.com>	 <1153558557.6659.152.camel@ipso.snappymail.ca>	 <44C21B3A.9050000@slaphack.com> <1153598173.6659.219.camel@ipso.snappymail.ca>
+Subject: Re: future r4 maintenance question
+Date: Sun, 23 Jul 2006 00:23:38 -0600
+Message-ID: <44C315EA.4080903@namesys.com>
+References: <1992401892.20060722173244@wp.pl> <44C26870.6090200@namesys.com> <1287558327.20060722215128@wp.pl> <44C287B0.2060907@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29154-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29155-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1153598173.6659.219.camel@ipso.snappymail.ca>
+In-Reply-To: <44C287B0.2060907@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Mike Benoit <ipso@snappymail.ca>
-Cc: David Masover <ninja@slaphack.com>, reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>
+To: David Masover <ninja@slaphack.com>
+Cc: =?UTF-8?B?TWFjaWVqIFNvxYJ0eXNpYWs=?= <pysiak.satriani@wp.pl>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-Mike Benoit wrote:
 
->On Sat, 2006-07-22 at 07:34 -0500, David Masover wrote:
->
->  
->
->>The compression will probably mostly be about speed.  Remember, if
->>we're 
->>talking about people who want to see tangible, visceral results,
->>we're 
->>probably also talking about end-users.  And trust me, the vast
->>majority 
->>of most of my data (as an end-user) is not very compressible.
->>
->>    
->>
->
->Sure, mine too. Between the many gigs of MP3s and movies I have stored
->on my HD, only about 10-20GB is the OS, Email, and documents/source
->code. Even just compressing that small portion though I could probably
->save between 5-10GB. The difference is though I can do a df before, and
->a df after, and I can instantly see I got my moneys worth. Same with
->encryption. 
->  
->
-I am looking forward to the first user email complaining that he
-compressed a file stored on reiser4 and it didn't save space (and then
-someday maybe even an email saying that he compressed a file and it took
-up more space but the user space compressor is sure that it saved space
-and he does not understand....).:)
 
->With the repacker it is much more difficult (for average users) to time
->how long a program takes to load some file (or launch), before the
->repacker and after.
->
-I think you are confusing repacking and compression?  Repacking, by
-removing seeks, will make it more predictable not less.
+I am going to do the enhanced semantics first, so that somebody does not
+beat me to it.
 
-> Especially since caching comes in to play. 
->
->Also, according to this little poll on one of the compressed FUSE sites
->you linked to, more people are looking to compression for space saving,
->then for speed:
->http://parallel.vub.ac.be/~johan/compFUSEd/index.php?option=polls&task=results&pollid=31
->
->
->  
->
->>No, mostly we're talking about things like office documents, the 
->>majority of which fit in less than a gigabyte, and multimedia (music, 
->>movies, games) which will gain very little from compression.  If 
->>anything, the benefit would be mostly in compressing software.
->>
->>    
->>
->>>less tangible like fragmentation percentages and minor I/O throughput
->>>improvements. I used to work at a large, world wide web hosting company
->>>and I could see making a case to management for purchasing Reiser4
->>>compression would be pretty easy for our shared servers. Instantly
->>>freeing up large amounts of disk space (where .html/.php files were the
->>>vast majority) would save huge amounts of money on disk drives,
->>>especially since most of the servers used RAID1 and adding new drives
->>>was a huge pain in the neck. Making a case to purchase a repacker would
->>>be much, much more difficult.
->>>      
->>>
->>Hmm, the problem is, if storage space is really the big deal, it's been 
->>done before, and some of these efforts are still usable and free:
->>
->>http://parallel.vub.ac.be/~johan/compFUSEd/
->>http://www.miio.net/fusecompress/
->>http://north.one.pl/~kazik/pub/LZOlayer/
->>http://apfs.humorgraficojr.com/apfs_ingles.html
->>
->>And while we're on the topic, here's an FS that does unpacking of 
->>archives, probably about the same way we imagined it in Reiser4 
->>pseudofiles/magic:
->>
->>http://www.nongnu.org/unpackfs/
->>
->>But regardless, as far as I can tell, the only real, tangible benefit of 
->>using Reiser4 compression instead of one of those four FUSE filesystems 
->>is speed.  Reiser4 would compress/decompress when actually hitting the 
->>disk, not just the FS, and it would also probably use in-kernel 
->>compression, rather than calling out to userspace on every FS operation.
->>    
->>
-I think that compressing only on flush is a big issue.  It was a lot
-harder to code it, but it really makes a difference.  You don't want a
-machine with a working set that fits into RAM to be compressing, that
-would be lethal to performance, and it is a very important case.
+David's examples are good.
 
-Hans
+>
+> There's another note to kernel developers -- if Reiser5, 6, and 7 are
+> implemented as suites of plugins on top of Reiser4, then the Reiser4
+> code will be maintained for a very long time.  Kind of like ext2 vs
+> ext3, only moreso -- a Reiser5 FS may well be a Reiser4 FS mounted
+> with additional mount options.
+>
+> There is definitely a lot that can be done to move Reiser4 (as it is
+> today) closer to the Reiser4 whitepaper on the homepage.  ACLs are one
+> thing, files as a directory are another.  The idea of v4 is to do away
+> with many cases where a separate namespace is created for no good
+> reason -- for instance, where is the data in an id3 tag?  It's inside
+> an mp3 file, and you can only get to it with tools written for id3
+> tags of mp3 files.  The Reiser4 concept is to allow things like that
+> to exist, but not require programs to know about libid3 or whatever. 
+> Want to know what the artist of a particular file is?
+>
+> foo.mp3/.../id3/artist
+>
+> Or maybe a more generic way:
+>
+> foo.mp3/.../song-info/artist
+>
+> That way, you could have tools which don't even have to know if the
+> file has an id3 tag, or something entirely new, or if the metadata is
+> being stored outside the main file.  It'd be entirely possible to
+> allow that file to be treated as a separate file entirely by the
+> plugin, rather than something derived from foo.mp3.
+>
+> The advantages don't seem immediately obvious until you consider that
+> the program which does this doesn't have to even know that it's
+> dealing with song metadata.  Consider some of the one-line shell
+> scripts possible:
+>
+>
+> # Change the artist name for all songs in the directory:
+> for i in *; do echo 'Jimi Hendrix' > foo.mp3/.../song-info/artist; done
+>
+> # Make a playlist of all files by Hendrix, mp3 or otherwise:
+> for i in `find`; do
+>     if [ `cat "$i/.../song-info/artist"` == 'Jimi Hendrix' ]; then
+>         echo "../$i" >> playlists/hendrix.m3u;
+>     fi;
+> done
+>
+> # Copy all files needed by said playlist to a USB device:
+> cp playlist/hendrix.m3u/.../files/* /mnt/usb
+> cp playlist/hendrix.m3u /mnt/usb
+>
+>
+> I'm sure others can think of much more interesting examples.
+>
+> All of that is planned for v4, eventually.  It's very pluggable.
+>
+> Well, I think it is.  I don't work here...
+>
+>
+
