@@ -1,40 +1,55 @@
-From: Matt Heler <lkml@lpbproductions.com>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
-Date: Sun, 23 Jul 2006 02:12:54 -0700
-Message-ID: <200607230212.55293.lkml@lpbproductions.com>
-References: <44C12F0A.1010008@namesys.com> <44C28A8F.1050408@garzik.org> <44C32348.8020704@namesys.com>
-Reply-To: lkml@lpbproductions.com
+From: Sander Sweers <sander.sweers@gmail.com>
+Subject: Re: future r4 maintenance question
+Date: Sun, 23 Jul 2006 13:11:03 +0200
+Message-ID: <1153653064.7877.13.camel@localhost>
+References: <1992401892.20060722173244@wp.pl>
+	 <1153594386.6659.172.camel@ipso.snappymail.ca>
+	 <44C27F99.3050109@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751165AbWGWJMy@vger.kernel.org>
-In-Reply-To: <44C32348.8020704@namesys.com>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-29159-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <44C27F99.3050109@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: David Masover <ninja@slaphack.com>
+Cc: Mike Benoit <ipso@snappymail.ca>, Pysiak Satriani <pysiak.satriani@wp.pl>, reiserfs-list@namesys.com
 
-On Sunday 23 July 2006 12:20 am, Hans Reiser wrote:
-> I just got an email from the programmer who wrote the MythTV bug saying
-> that he is just too busy to bother fixing the bug in his code.....  so
-> my response is that a Namesys programmer is going to fix it on Monday.
+On Sat, 2006-07-22 at 14:42 -0500, David Masover wrote:
+> Mike Benoit wrote:
+> 
+[...]
+> 
+> You would hope.  The problem is, most of the ideas we have for 
+> amazing/useless/practical plugins have already been done as specialized 
+> filesystems in FUSE.  What's more, FUSE doesn't usually require root 
+> privileges to run, causing some people to do such useless things as 
+> support for various filesystems already in the kernel (so you can 
+> loop-mount filesystems without using the loop device or having root 
+> privileges).
+> 
+> Although, there is one other thing to consider -- NTFS in the kernel has 
+> stagnated for something like 10 years without write support, while 
+> userspace tools like ntfsck and resize_ntfs, using libntfs, have 
+> actually gotten relatively stable at dealing with all kinds of ntfs 
+> oddities.  For awhile, we had captive-ntfs (also done in FUSE), but more 
+> recently, someone wrote a FUSE driver for libntfs, making the first 
+> reasonably stable fully featured read/write NTFS driver for Linux.
+> 
+> It's also reasonably fast, sometimes faster than ext2/3, I'm told.
 
-The way you wrote this, makes it sound like a userspace issue, and _not_ a 
-problem with reiserfs.
+I am using the official libntfs fuse module but it is not all that fast
+if you compare how much more cpu power is needed. And even then it is
+NOT faster then ext2/3. I am copying a couple of 650mb iso's and I have
+100% cpu utilisation and it still takes tens of minutes to copy just 1.
 
-> And look at how Linus abandoned 2.4!  Users of 2.4 needed so many
-> features that were put into 2.6 instead, and they were just abandoned
-> and neglected and....  Do you think he will abandon 2.6.18 also?
+Fuse is nice for things like gmailfs or beaglefs but if you really want
+performance, kernelspace imho is the only place to implement a
+filesystems.
 
-Not entirely true, he did not abandon the 2.4 kernel branch, he passed on 
-maintainership to Marcelo. Similar to how he passed the torch on the 2.2 
-kernel branch to Alan Cox. Also on a side note, many new features ( and a ton 
-of bug fixes !! ) were added to the 2.4 series _after_ Linus started working 
-on the 2.5 branch.
-
-
-
-
-
+Greets
+Sander
 
