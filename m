@@ -1,36 +1,65 @@
-From: Matthias Andree <matthias.andree@gmx.de>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
-Date: Mon, 24 Jul 2006 12:25:08 +0200
-Message-ID: <20060724102508.GA26553@merlin.emma.line.org>
-References: <44C12F0A.1010008@namesys.com> <44C28A8F.1050408@garzik.org> <44C32348.8020704@namesys.com> <200607230212.55293.lkml@lpbproductions.com> <44C44622.9050504@namesys.com> <20060724085455.GD24299@merlin.emma.line.org> <44C4813E.2030907@namesys.com>
+From: Francisco Javier Cabello <fjcabello@visual-tools.com>
+Subject: Re: other system with datacorruption  (2.425 + datalogging patches)
+Date: Mon, 24 Jul 2006 12:30:45 +0200
+Message-ID: <200607241230.48265.fjcabello@visual-tools.com>
+References: <200607201452.09270.fjcabello@visual-tools.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-29169-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed;
+  boundary="nextPart3022949.BnFqXJb4Mc";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29170-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <44C4813E.2030907@namesys.com>
+In-Reply-To: <200607201452.09270.fjcabello@visual-tools.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Matthias Andree <matthias.andree@gmx.de>, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Mon, 24 Jul 2006, Hans Reiser wrote:
+--nextPart3022949.BnFqXJb4Mc
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-> >and that's the end
-> >of the story for me. There's nothing wrong about focusing on newer code,
-> >but the old code needs to be cared for, too, to fix remaining issues
-> >such as the "can only have N files with the same hash value". 
+Hello,
+I have been 'googling' and I have found people reporting problems with Myth=
+tv=20
+and reiserfs v3. Could be any problem if freespace falls bellow 10%?
+
+Regards,
+
+Paco
+
+On Thursday, 20 de July de 2006 14:52, Francisco Javier Cabello wrote:
+> Hello,
+> I have other system with data corruption.
+> I send you the output of 'reiserfsck --check'
 >
-> Requires a disk format change, in a filesystem without plugins, to fix it.
+> Regards,
+>
+> Paco
 
-You see, I don't care a iota about "plugins" or other implementation details.
+=2D-=20
+One of my most productive days was throwing away 1000 lines of code (Ken=20
+Thompson)
+=2D----------------
+PGP fingerprint: AF69 62B4 97EB F5BB 2C60  B802 568A E122 BBBE 5820
+PGP Key available at http://pgp.mit.edu
+=2D----------------
 
-The bottom line is reiserfs 3.6 imposes practial limits that ext3fs
-doesn't impose and that's reason enough for an administrator not to
-install reiserfs 3.6. Sorry.
 
--- 
-Matthias Andree
+--nextPart3022949.BnFqXJb4Mc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQBExKFYVorhIru+WCARAvPNAJ9gEsPPCrjY8jzGsOnceKkLkj2SxACcDCgC
+wTyht7ZvHRYRDhXyv5Marn0=
+=rrZx
+-----END PGP SIGNATURE-----
+
+--nextPart3022949.BnFqXJb4Mc--
