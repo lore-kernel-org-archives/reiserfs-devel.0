@@ -1,47 +1,86 @@
-From: Christian Iversen <chrivers@iversen-net.dk>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
-Date: Mon, 24 Jul 2006 13:34:11 +0200
-Message-ID: <200607241334.12218.chrivers@iversen-net.dk>
-References: <44C12F0A.1010008@namesys.com> <44C4813E.2030907@namesys.com> <20060724102508.GA26553@merlin.emma.line.org>
+From: Francisco Javier Cabello <fjcabello@visual-tools.com>
+Subject: Re: other system with datacorruption  (2.425 + datalogging patches)
+Date: Mon, 24 Jul 2006 14:24:23 +0200
+Message-ID: <200607241424.25532.fjcabello@visual-tools.com>
+References: <200607201452.09270.fjcabello@visual-tools.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed;
+  boundary="nextPart1315259.U1aKZbNQsp";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29173-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29174-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060724102508.GA26553@merlin.emma.line.org>
-Content-Disposition: inline
+In-Reply-To: <200607201452.09270.fjcabello@visual-tools.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Hans Reiser <reiser@namesys.com>, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
 
-On Monday 24 July 2006 12:25, Matthias Andree wrote:
-> On Mon, 24 Jul 2006, Hans Reiser wrote:
-> > >and that's the end
-> > >of the story for me. There's nothing wrong about focusing on newer code,
-> > >but the old code needs to be cared for, too, to fix remaining issues
-> > >such as the "can only have N files with the same hash value".
-> >
-> > Requires a disk format change, in a filesystem without plugins, to fix
-> > it.
->
-> You see, I don't care a iota about "plugins" or other implementation
-> details.
->
-> The bottom line is reiserfs 3.6 imposes practial limits that ext3fs
-> doesn't impose and that's reason enough for an administrator not to
-> install reiserfs 3.6. Sorry.
+--nextPart1315259.U1aKZbNQsp
+Content-Type: multipart/mixed;
+  boundary="Boundary-01=_3vLxEabZ4Qyu23V"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-And what do you do if you, say, run of of inodes on ext3? Do you think the 
-users will care about that? Or what if the number of files in your mail queue 
-or proxy cache* become large enough for your fs operations to slow to a 
-crawl?
+--Boundary-01=_3vLxEabZ4Qyu23V
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
+Another one :(
+This time rebuild-tree failed. I guess the system didn't have enough memory.
+Swap is mounted as loopback file inside the reiserfs filesystem, then when =
+I=20
+umount filesystem to check I lose swap.
 
-* Yes I know most programs work around this by using many subdirs, but that's 
-really a bandaid solution.
-
--- 
 Regards,
-Christian Iversen
+
+Paco
+
+On Thursday, 20 de July de 2006 14:52, Francisco Javier Cabello wrote:
+> Hello,
+> I have other system with data corruption.
+> I send you the output of 'reiserfsck --check'
+>
+> Regards,
+>
+> Paco
+
+=2D-=20
+One of my most productive days was throwing away 1000 lines of code (Ken=20
+Thompson)
+=2D----------------
+PGP fingerprint: AF69 62B4 97EB F5BB 2C60  B802 568A E122 BBBE 5820
+PGP Key available at http://pgp.mit.edu
+=2D----------------
+
+
+--Boundary-01=_3vLxEabZ4Qyu23V
+Content-Type: text/plain;
+  charset="iso-8859-1";
+  name="reiserfsck_check"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="reiserfsck_check"
+
+bad_internal: vpf-10320: block 263224, items 3 and 4: The wrong order of items: [2 5 0x87bb2001 IND (1)], [2 5 0xee9e001 IND (1)]
+ the problem in the internal node occured (263224), whole subtree is skipped
+vpf-10640: The on-disk and the correct bitmaps differs.
+
+--Boundary-01=_3vLxEabZ4Qyu23V--
+
+--nextPart1315259.U1aKZbNQsp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQBExLv5VorhIru+WCARAlUpAJ4prYTKsdJ9yYJUe5wxZjI3AFoGoACdFVAL
+bWh2thG/AAT0sD9/LwtnsqE=
+=D3b/
+-----END PGP SIGNATURE-----
+
+--nextPart1315259.U1aKZbNQsp--
