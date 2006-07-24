@@ -1,63 +1,82 @@
-From: Christian Trefzer <ctrefzer@gmx.de>
-Subject: wiki entry (Was: Re: portage tree)
-Date: Mon, 24 Jul 2006 17:12:07 +0200
-Message-ID: <20060724151207.GB2581@hermes.uziel.local>
-References: <44C043B5.3070501@slaphack.com> <44C093D2.1040703@namesys.com> <1153514509.6659.41.camel@ipso.snappymail.ca> <44C141C4.1030802@slaphack.com> <1153517853.6659.56.camel@ipso.snappymail.ca> <44C157D2.5060202@slaphack.com> <1153525982.6659.108.camel@ipso.snappymail.ca> <44C191FD.4010302@slaphack.com> <20060722154005.GB21976@hermes.uziel.local> <44C30E20.60806@namesys.com>
+From: Mike Benoit <ipso@snappymail.ca>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
+	regarding reiser4 inclusion
+Date: Mon, 24 Jul 2006 09:57:24 -0700
+Message-ID: <1153760245.5735.47.camel@ipso.snappymail.ca>
+References: <44C12F0A.1010008@namesys.com> <44C28A8F.1050408@garzik.org>
+	 <44C32348.8020704@namesys.com> <200607230212.55293.lkml@lpbproductions.com>
+	 <44C44622.9050504@namesys.com>
+	 <20060724085455.GD24299@merlin.emma.line.org>
+	 <44C4813E.2030907@namesys.com>
+	 <20060724102508.GA26553@merlin.emma.line.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gatW/ieO32f1wygP"
-Return-path: <reiserfs-list-return-29177-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <44C30E20.60806@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-hy1dBR9GcM+ZB2Rkbv6q"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932218AbWGXQ57@vger.kernel.org>
+In-Reply-To: <20060724102508.GA26553@merlin.emma.line.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: David Masover <ninja@slaphack.com>, Mike Benoit <ipso@snappymail.ca>, Alexander Zarochentcev <zam@namesys.com>, vs <vs@thebsh.namesys.com>, reiserfs-list@namesys.com
+To: Matthias Andree <matthias.andree@gmx.de>
+Cc: Hans Reiser <reiser@namesys.com>, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
---gatW/ieO32f1wygP
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 
-On Sat, Jul 22, 2006 at 11:50:24PM -0600, Hans Reiser wrote:
-> Thanks Christian.  You can go ahead and add something to our wiki
-> pointing to it if you would like.....  This might help tide people
-> over until the repacker ships.
+--=-hy1dBR9GcM+ZB2Rkbv6q
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-I'd love to, but alas, wiki.namesys.com appears to have a serious
-problem at the moment. The machine (193.232.112.68) responds to ping,
-the http port is open but connections fail. The university's squid
-proxies have quite some timeout, and I repeatedly get "connection reset
-by peer". Google search result yields "This wiki is installed on a busy
-underpowered server running Reiser4." which seems like a mild
-understatement. How "busy" is that machine, actually?
+On Mon, 2006-07-24 at 12:25 +0200, Matthias Andree wrote:
+> On Mon, 24 Jul 2006, Hans Reiser wrote:
+>=20
+> > >and that's the end
+> > >of the story for me. There's nothing wrong about focusing on newer cod=
+e,
+> > >but the old code needs to be cared for, too, to fix remaining issues
+> > >such as the "can only have N files with the same hash value".=20
+> >
+> > Requires a disk format change, in a filesystem without plugins, to fix =
+it.
+>=20
+> You see, I don't care a iota about "plugins" or other implementation deta=
+ils.
+>=20
+> The bottom line is reiserfs 3.6 imposes practial limits that ext3fs
+> doesn't impose and that's reason enough for an administrator not to
+> install reiserfs 3.6. Sorry.
+>=20
 
-Kind regards,
-Chris
+And EXT3 imposes practical limits that ReiserFS doesn't as well. The big
+one being a fixed number of inodes that can't be adjusted on the fly,
+which was reason enough for me to not use EXT3 and use ReiserFS
+instead.=20
 
---gatW/ieO32f1wygP
-Content-Type: application/pgp-signature
-Content-Disposition: inline
+Do you consider the EXT3 developers to have "abandoned" it because they
+haven't fixed this issue? I don't, I just think of it as using the right
+tool for the job.
+
+I've been bitten by running out of inodes on several occasions, and by
+switching to ReiserFS it saved one company I worked for over $250,000
+because they didn't need to buy a totally new piece of software.
+
+I haven't been able to use EXT3 on a backup server for the last ~5 years
+due to inode limitations. Instead, ReiserFS has been filling that spot
+like a champ.=20
+
+The bottom line is that every file system imposes some sort of limits
+that bite someone. In your case it sounds like EXT3 limits weren't an
+issue for you, in my case they were. Thats life.=20
+
+--=20
+Mike Benoit <ipso@snappymail.ca>
+
+--=-hy1dBR9GcM+ZB2Rkbv6q
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.4 (GNU/Linux)
+Version: GnuPG v1.4.2 (GNU/Linux)
 
-iQIVAwUBRMTjRanY3eLOiwZcAQr3phAAt6ef0wnVlaC07jnyB87Cw/R+1kuy8Y68
-1zSneVgX/Kaow3VBL029XGYZzA94qOHYM/wvv2usf13gypZ4s/NAEMwIx9EW4pix
-5anIKqYcw0pbVjihLFjR0mD0nRVZRCUDkz15B5JZ2OkCQ3BVtIpsiBFfoMOYGaOm
-7XdxqImN1HLRpJqEmDhrU8lMJJPTd+Rxov/8drLzPvGI00r90FtN4CQ0Ov3AXk5f
-BWYbW9ORDxiN7trJBOslZwWWsLqxMZA0ez/XXZw4K8OsAzP6hX6ipI9pifiZUsj4
-mei3gYIfEiStST3cATKjtdIHZRKNxFuTSkvoXFENtcKw5RcK76h+FeV50iWj8+ZX
-/PS8zn12zYYXRyOQsEClTIHqyApnumUZ7Pv41h4sPocGW3jaWzq/gav030ZjQYAV
-WkTjGnyC0X5gCog43619s1RWeDeGWrnji1PwnpZ8Dj3dF8ylvo4wa0oQ41z/n7SD
-sE5Vy4xVrDI3ds21C0hAmFy8ZB0fkkPDfP2AQcUm0Z/O60e0+34zDl/ybvq9wuKP
-SKqVXDnNMpMtxaVtruNQx/gKv5Nf+Sw8VicgwrkmuqAdrE3pZyThDmlaCarks0Er
-yIGzZZqiGPcYUk+Iet7dBeahYYtcd3sbGHAL6403u3YVitBIHNefoxs97oMEiVK5
-RGeKrOz7jJg=
-=+d4E
+iD8DBQBExPv0MhKjsejwBhgRApGXAJ0ZLb8PDVvRoTUCIBkwedpKy7qBKwCcCxIv
+F71NjdfIZN13Wsr4UR755Tc=
+=x4MO
 -----END PGP SIGNATURE-----
 
---gatW/ieO32f1wygP--
-
+--=-hy1dBR9GcM+ZB2Rkbv6q--
