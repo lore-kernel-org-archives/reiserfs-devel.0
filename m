@@ -1,56 +1,86 @@
-From: "Lex Lyamin" <flx@namesys.com>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
-Date: Tue, 25 Jul 2006 00:28:38 +0400
-Message-ID: <80294dc60607241328w6b225f09m386587da4ce03705@mail.gmail.com>
-References: <44C12F0A.1010008@namesys.com> <44C28A8F.1050408@garzik.org>
-	 <44C32348.8020704@namesys.com>
-	 <200607230212.55293.lkml@lpbproductions.com>
-	 <44C44622.9050504@namesys.com>
-	 <20060724085455.GD24299@merlin.emma.line.org>
-	 <44C4813E.2030907@namesys.com>
-	 <20060724102508.GA26553@merlin.emma.line.org>
+From: Mike Benoit <ipso@snappymail.ca>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
+	regarding reiser4 inclusion
+Date: Mon, 24 Jul 2006 13:37:13 -0700
+Message-ID: <1153773433.5735.85.camel@ipso.snappymail.ca>
+References: <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; 
-	boundary="----=_Part_214868_6711116.1153772918714"
-Return-path: <reiserfs-list-return-29180-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Sender: melanor9@gmail.com
-In-Reply-To: <20060724102508.GA26553@merlin.emma.line.org>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-vhGPuPo1eaME6S/qGcNi"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751428AbWGXUhj@vger.kernel.org>
+In-Reply-To: <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
-Cc: Matthias Andree <matthias.andree@gmx.de>
+To: "Horst H. von Brand" <vonbrand@inf.utfsm.cl>
+Cc: Matthias Andree <matthias.andree@gmx.de>, Hans Reiser <reiser@namesys.com>, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-------=_Part_214868_6711116.1153772918714
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
-You see, I don't care a iota about "plugins" or other implementation
-> details.
->
-> The bottom line is reiserfs 3.6 imposes practial limits that ext3fs
-> doesn't impose and that's reason enough for an administrator not to
-> install reiserfs 3.6. Sorry.
->
->
-I dont care a iota about ext3fs, reiser3 does its job for me.
-Ext3 got  quite a number of its own limits, but your iotas and ext3 limit
-are not even close to ssubject of this conversation.
+--=-vhGPuPo1eaME6S/qGcNi
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-thank you.
--- 
-liberation loophole will make it clear
+On Mon, 2006-07-24 at 14:06 -0400, Horst H. von Brand wrote:
+> > And EXT3 imposes practical limits that ReiserFS doesn't as well. The bi=
+g
+> > one being a fixed number of inodes that can't be adjusted on the fly,
+>=20
+> Right. Plan ahead.
 
-------=_Part_214868_6711116.1153772918714
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+That is great in theory. But back to reality, when your working for a
+company that is growing by leaps and bounds that isn't always possible.
+Why would I want to intentionally limit myself to a set number of inodes
+when I can get a performance increase and not have to worry about it by
+simply using ReiserFS?=20
 
-<br><br><div><span class="gmail_quote"><br></span><blockquote class="gmail_quote" style="border-left: 1px solid rgb(204, 204, 204); margin: 0pt 0pt 0pt 0.8ex; padding-left: 1ex;">You see, I don't care a iota about &quot;plugins&quot; or other implementation details.
-<br><br>The bottom line is reiserfs 3.6 imposes practial limits that ext3fs<br>doesn't impose and that's reason enough for an administrator not to<br>install reiserfs 3.6. Sorry.<br><br></blockquote></div><br>I dont care a iota about ext3fs, reiser3 does its job for me.
-<br>Ext3 got&nbsp; quite a number of its own limits, but your iotas and ext3 limit are not even close to ssubject of this conversation.<br><br>thank you.<br>-- <br>liberation loophole will make it clear
+It all boils down to using the right tool for the job, ReiserFS was the
+right tool for this job.=20
 
-------=_Part_214868_6711116.1153772918714--
+> > I've been bitten by running out of inodes on several occasions,
+>=20
+> Me too. It was rather painful each time, but fixable (and in hindsight,
+> dumb user (setup) error).
+>=20
+> >                                                                 and by
+> > switching to ReiserFS it saved one company I worked for over $250,000
+> > because they didn't need to buy a totally new piece of software.
+>=20
+> How can a filesystem (which by basic requirements and design is almost
+> transparent to applications) make such a difference?!
+
+Very easily, the backup software the company had spent ~$75,000 on
+before I started working there used tiny little files as its "database".
+Once the inodes ran out the entire system pretty much came to a
+screeching halt. We basically had two options, use ReiserFS, or find
+another piece of software that didn't use tiny little files as its
+database. If I recall correctly the database went from about 2million
+files to over 40 million in the span of just a few months. No one could
+have predicted that. I believe this database was on an 18GB SCSI drive,
+so even using 1K blocks wouldn't have worked. According to the mke2fs
+man page:
+
+"-i bytes-per-inode
+This value generally shouldn't be smaller than the blocksize  of
+the filesystem,  since  then  too many inodes will be made."
+
+The only other option at that time was to purchase Veritas backup and
+its not cheap. We ended up switching to ReiserFS, it increased our
+backup/restore time immensely and also bought us about 1year before the
+system finally outgrew itself for good. By that time the company could
+afford to drop $250,000 on high end backup software so we could grow
+past 10TB.
+
+--=20
+Mike Benoit <ipso@snappymail.ca>
+
+--=-vhGPuPo1eaME6S/qGcNi
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
+
+iD8DBQBExS95MhKjsejwBhgRAoNuAJwIX3bh1f83ayUThSRQUkI2cVb7uQCgnJ5b
+kLJyoDBrN9oKs8wxDQgSLVo=
+=GyVM
+-----END PGP SIGNATURE-----
+
+--=-vhGPuPo1eaME6S/qGcNi--
