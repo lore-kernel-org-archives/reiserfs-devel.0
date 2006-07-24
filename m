@@ -1,58 +1,100 @@
 From: Hans Reiser <reiser@namesys.com>
 Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
  regarding reiser4 inclusion
-Date: Sun, 23 Jul 2006 16:35:07 -0600
-Message-ID: <44C3F99B.9000307@namesys.com>
-References: <44C12F0A.1010008@namesys.com> <20060722130219.GB7321@thunk.org> <44C26F65.4000103@namesys.com> <44C28A8F.1050408@garzik.org> <44C32348.8020704@namesys.com> <44C3E041.1020909@suse.com> <44C3E6EE.8080607@namesys.com> <44C404C9.6050409@suse.com>
+Date: Sun, 23 Jul 2006 22:01:38 -0600
+Message-ID: <44C44622.9050504@namesys.com>
+References: <44C12F0A.1010008@namesys.com> <44C28A8F.1050408@garzik.org> <44C32348.8020704@namesys.com> <200607230212.55293.lkml@lpbproductions.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29165-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29166-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44C404C9.6050409@suse.com>
+In-Reply-To: <200607230212.55293.lkml@lpbproductions.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>
+To: lkml@lpbproductions.com
 Cc: Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Jeff Mahoney wrote:
+Matt Heler wrote:
 
+>On Sunday 23 July 2006 12:20 am, Hans Reiser wrote:
+>  
 >
 >
-> Anyone up for it? :) There are changes I'd like to see in reiser3,
-> particularly ones that address the severe problems observed in David
-> Chinner's high bandwidth file system talk this year at OLS. Specifically,
-> it ended up making very little progress and spending the majority of the
-> time in the journal when the workload is streaming data at the disk at a
-> very high rate on a very large file system. Yes, that is certainly XFS's
-> sweet spot, but barely making progress at all is a bit more severe than
-> "poor performance." Perhaps mkreiserfs should be a bit saner about
-> choosing
-> journal sizes, since a 32 MB journal is not a good fit for all cases.
-> Also,
-> I'd like to see the usage of the BKL gone as it severely limits
-> performance
-> when more than one thread is writing to the file system, or even another
-> reiserfs file system. It's not entirely low hanging fruit since the nested
-> cases need to be audited, but it shouldn't be too hard to eliminate the
-> inter-filesystem lock contention by replacing the BKL with a per-sb mutex.
-
-Getting rid of the BKL is a huge task that was done in V4 for a reason. 
-You are talking about 6+ man-months, and years of shake-out to fully
-debug.  Actually, it is a tribute to Zam's skill that V4's locking got
-debugged so fast: I gave him the task knowing it was going to be the
-hardest code to debug, and he did it very well.
-
-These things you discuss, except for the journal size, are not things to
-fix in a stable branch.
-
-My apologies that I thought this was a new bug.  Let us be glad that a
-user gave us enough detail we saw it.
-
-> I have some more things, but I have nowhere near the time to do them,
-> and other file systems will perform fine.
+>The way you wrote this, makes it sound like a userspace issue, and _not_ a 
+>problem with reiserfs.
+>  
 >
+It was a problem with reiserfs.  Code was added to search for the
+perfect spot to fit a file.  If there is no perfect spot, it searches
+every bitmap for that spot before giving up.  However, Jeff kindly gave
+us a little patch to fix this and made the whole issue moot.  It also
+seems I was in error, and we actually have had this problem since 2002. 
+Now some past remarks from users about fragmentation make more sense. 
+What can I say, since I have no MP3s I never get anywhere near full on
+my personal hard drive.
+
+>  
 >
+>>And look at how Linus abandoned 2.4!  Users of 2.4 needed so many
+>>features that were put into 2.6 instead, and they were just abandoned
+>>and neglected and....  Do you think he will abandon 2.6.18 also?
+>>    
+>>
 >
+>Not entirely true, he did not abandon the 2.4 kernel branch, he passed on 
+>maintainership to Marcelo. Similar to how he passed the torch on the 2.2 
+>kernel branch to Alan Cox. Also on a side note, many new features ( and a ton 
+>of bug fixes !! ) were added to the 2.4 series _after_ Linus started working 
+>on the 2.5 branch.
+>  
+>
+You missed the sarcasm in my voice, my apologies, it is the trouble I
+have with email.
+
+Just to balance everything with some nuance, let me add that when a
+development branch is first opened, there is usually a bit of gray as to
+whether particular small features should go into the development branch
+or the stable branch.  As the stable branch gets more stable the
+incentive to not destabilize it increases, and as a development branch
+becomes usable, the delay to users due to putting features only there
+reduces.
+
+I want reiserfs to be the filesystem that professional system
+administrators view as the one with both the fastest technological pace,
+and the most conservative release management.
+
+I apologize to users  that the technology required a 5 year gap between
+releases.   It just did, an outsider may not realize how deep the
+changes we made were.  Things like per node locking based on a whole new
+approach to tree locking that goes bottom up instead of the usual top
+down are big tasks.    Dancing trees are a big change, getting rid of
+blobs is a big change, wandering logs.....  We did a lot of things like
+that, and got very fortunate with them.  If we had tried to add such
+changes to V3, the code would have been unstable the whole 5 years, and
+would not have come out right.
+
+Experienced writers know that often, if you want to fix a passage, even
+a passage that is quite good in some parts, sometimes it is better to
+write the whole passage again without looking at the text of the first
+draft of the old passage, because sometimes your muse just needs the
+freedom, and without the freedom the awkwardness of the old passage is
+incurable.  Probably there is some very sophisticated neurological
+reason why that is.  Code can be the same.  Sometimes.  I knew that
+reiser4 HAD to be written from scratch without reference to the old code
+if it was to come out right. 
+
+If I cannot be a great artist, at least I can try to have the
+temperament of one, yes? :-)
+
+I sincerely hope that using mount options to select default plugins, and
+making development code go into new plugins means that releases after
+this can be roughly quarterly, and that we can start doing a whole bunch
+of quick little plugins.  Technically, I think it is going to be
+downhill skiing from here, and some very visible bits of functionality
+will get added much more easily than this difficult infrastructure we
+just coded.
+
+Hans
