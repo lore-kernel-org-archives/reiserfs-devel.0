@@ -1,86 +1,52 @@
-From: Francisco Javier Cabello <fjcabello@visual-tools.com>
-Subject: Re: other system with datacorruption  (2.425 + datalogging patches)
-Date: Mon, 24 Jul 2006 14:24:23 +0200
-Message-ID: <200607241424.25532.fjcabello@visual-tools.com>
-References: <200607201452.09270.fjcabello@visual-tools.com>
+From: Erik Mouw <erik@harddisk-recovery.com>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
+Date: Mon, 24 Jul 2006 14:37:05 +0200
+Message-ID: <20060724123705.GA18904@harddisk-recovery.com>
+References: <44C12F0A.1010008@namesys.com> <44C4813E.2030907@namesys.com> <20060724102508.GA26553@merlin.emma.line.org> <200607241334.12218.chrivers@iversen-net.dk>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart1315259.U1aKZbNQsp";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29174-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <200607201452.09270.fjcabello@visual-tools.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932135AbWGXMhK@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <200607241334.12218.chrivers@iversen-net.dk>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
-
---nextPart1315259.U1aKZbNQsp
-Content-Type: multipart/mixed;
-  boundary="Boundary-01=_3vLxEabZ4Qyu23V"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: Christian Iversen <chrivers@iversen-net.dk>
+Cc: Hans Reiser <reiser@namesys.com>, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
---Boundary-01=_3vLxEabZ4Qyu23V
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+On Mon, Jul 24, 2006 at 01:34:11PM +0200, Christian Iversen wrote:
+> On Monday 24 July 2006 12:25, Matthias Andree wrote:
+> > The bottom line is reiserfs 3.6 imposes practial limits that ext3fs
+> > doesn't impose and that's reason enough for an administrator not to
+> > install reiserfs 3.6. Sorry.
+> 
+> And what do you do if you, say, run of of inodes on ext3? Do you think the 
+> users will care about that?
 
-Another one :(
-This time rebuild-tree failed. I guess the system didn't have enough memory.
-Swap is mounted as loopback file inside the reiserfs filesystem, then when =
-I=20
-umount filesystem to check I lose swap.
+From what I've seen from our customers, that never happens. Yes, there
+are sometimes people with a million inodes in use, and we've seen four
+million once, but that's never been a problem, even not with a huge
+mail server with thousands of users having mailboxes in maildir format.
 
-Regards,
+We usually limit our own filesystems to 12 million inodes and it's
+never been a problem to store files from our customers.
 
-Paco
+> Or what if the number of files in your mail queue 
+> or proxy cache* become large enough for your fs operations to slow to a 
+> crawl?
 
-On Thursday, 20 de July de 2006 14:52, Francisco Javier Cabello wrote:
-> Hello,
-> I have other system with data corruption.
-> I send you the output of 'reiserfsck --check'
->
-> Regards,
->
-> Paco
+Not a problem anymore with htree dirextory indexing. If it's not yet
+enabled (dumpe2fs the filesystem and look for the "dir_index" feature),
+enable it with:
 
-=2D-=20
-One of my most productive days was throwing away 1000 lines of code (Ken=20
-Thompson)
-=2D----------------
-PGP fingerprint: AF69 62B4 97EB F5BB 2C60  B802 568A E122 BBBE 5820
-PGP Key available at http://pgp.mit.edu
-=2D----------------
+  tune2fs -O dir_index /dev/whatever
+    
+After the next mount the filesystem will use it for new directories. To
+optimize existing directories, run e2fsck -D.
 
 
---Boundary-01=_3vLxEabZ4Qyu23V
-Content-Type: text/plain;
-  charset="iso-8859-1";
-  name="reiserfsck_check"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="reiserfsck_check"
+Erik
 
-bad_internal: vpf-10320: block 263224, items 3 and 4: The wrong order of items: [2 5 0x87bb2001 IND (1)], [2 5 0xee9e001 IND (1)]
- the problem in the internal node occured (263224), whole subtree is skipped
-vpf-10640: The on-disk and the correct bitmaps differs.
-
---Boundary-01=_3vLxEabZ4Qyu23V--
-
---nextPart1315259.U1aKZbNQsp
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQBExLv5VorhIru+WCARAlUpAJ4prYTKsdJ9yYJUe5wxZjI3AFoGoACdFVAL
-bWh2thG/AAT0sD9/LwtnsqE=
-=D3b/
------END PGP SIGNATURE-----
-
---nextPart1315259.U1aKZbNQsp--
+-- 
++-- Erik Mouw -- www.harddisk-recovery.com -- +31 70 370 12 90 --
+| Lab address: Delftechpark 26, 2628 XH, Delft, The Netherlands
