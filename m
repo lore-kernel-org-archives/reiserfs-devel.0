@@ -1,61 +1,96 @@
-From: Jan-Benedict Glaw <jbglaw@lug-owl.de>
+From: "Horst H. von Brand" <vonbrand@inf.utfsm.cl>
 Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
-Date: Mon, 24 Jul 2006 23:22:57 +0200
-Message-ID: <20060724212257.GD1665@lug-owl.de>
-References: <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl> <1153773433.5735.85.camel@ipso.snappymail.ca>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Xm/fll+QQv+hsKip"
-Return-path: <reiserfs-list-return-29184-reiserfs=m.gmane.org@namesys.com>
+Date: Mon, 24 Jul 2006 17:51:13 -0400
+Message-ID: <200607242151.k6OLpDZu009297@laptop13.inf.utfsm.cl>
+References: <ipso@snappymail.ca>
+Return-path: <reiserfs-list-return-29185-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1153773433.5735.85.camel@ipso.snappymail.ca>
+In-Reply-To: Message from Mike Benoit <ipso@snappymail.ca> 
+   of "Mon, 24 Jul 2006 13:37:13 MST." <1153773433.5735.85.camel@ipso.snappymail.ca> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Mike Benoit <ipso@snappymail.ca>
 Cc: "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Matthias Andree <matthias.andree@gmx.de>, Hans Reiser <reiser@namesys.com>, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
---Xm/fll+QQv+hsKip
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, 2006-07-24 13:37:13 -0700, Mike Benoit <ipso@snappymail.ca> wrote:
+Mike Benoit <ipso@snappymail.ca> wrote:
 > On Mon, 2006-07-24 at 14:06 -0400, Horst H. von Brand wrote:
-> The only other option at that time was to purchase Veritas backup and
+> > > And EXT3 imposes practical limits that ReiserFS doesn't as well. The big
+> > > one being a fixed number of inodes that can't be adjusted on the fly,
+
+> > Right. Plan ahead.
+
+> That is great in theory. But back to reality, when your working for a
+> company that is growing by leaps and bounds that isn't always possible.
+> Why would I want to intentionally limit myself to a set number of inodes
+> when I can get a performance increase and not have to worry about it by
+> simply using ReiserFS? 
+
+Place your filesystems on LVN, when they grow the number of inodes grows to
+match. Or did you run out of inodes and not of diskspace? Only ever
+happened to me on (static) /dev, or (wrong configured) newsspools...
+
+> It all boils down to using the right tool for the job, ReiserFS was the
+> right tool for this job. 
+
+/One/ tool that did the job. Not "the" right one, perhaps not even the best
+one.
+
+> > > I've been bitten by running out of inodes on several occasions,
+
+> > Me too. It was rather painful each time, but fixable (and in hindsight,
+> > dumb user (setup) error).
+
+> > >                                                                 and by
+> > > switching to ReiserFS it saved one company I worked for over $250,000
+> > > because they didn't need to buy a totally new piece of software.
+
+> > How can a filesystem (which by basic requirements and design is almost
+> > transparent to applications) make such a difference?!
+
+> Very easily, the backup software the company had spent ~$75,000 on
+> before I started working there used tiny little files as its "database".
+
+If you know that, you configure your filesystem like a newsspool or some
+such.
+
+> Once the inodes ran out the entire system pretty much came to a
+> screeching halt.
+
+Get a clue by for, apply to the vendor (for the design, or at the very
+least for not warning unsuspecting users)?
+
+>                  We basically had two options, use ReiserFS, or find
+> another piece of software that didn't use tiny little files as its
+> database.
+
+Or reconfigure the filesystem with more inodes (you were willing to rebuild
+the filesystem in any case, so...)
+
+>           If I recall correctly the database went from about 2million
+> files to over 40 million in the span of just a few months. No one could
+> have predicted that. I believe this database was on an 18GB SCSI drive,
+> so even using 1K blocks wouldn't have worked. According to the mke2fs
+> man page:
+
+> "-i bytes-per-inode
+> This value generally shouldn't be smaller than the blocksize  of
+> the filesystem,  since  then  too many inodes will be made."
+
+18GiB = 18 million KiB, you do have a point there. But 40 million files on
+that, with some space to spare, just doesn't add up.
+
+> The only other option at that time was to purchase Veritas backup
+
+... or a larger disk...
+
+>                                                                   and
 > its not cheap. We ended up switching to ReiserFS, it increased our
 > backup/restore time immensely and also bought us about 1year before the
 > system finally outgrew itself for good. By that time the company could
 > afford to drop $250,000 on high end backup software so we could grow
 > past 10TB.
-
-Erm, how does your data look like and why does it require a $250,000
-backup solution? Sounds like I'm in the wrong business...
-
-But that's for sure not lkml related...
-
-MfG, JBG
-
---=20
-       Jan-Benedict Glaw       jbglaw@lug-owl.de                +49-172-760=
-8481
- Signature of:                       Don't believe in miracles: Rely on the=
-m!
- the second  :
-
---Xm/fll+QQv+hsKip
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-
-iD8DBQFExToxHb1edYOZ4bsRApnXAJ9utx/Q6J8MHxaHj7AcmBvnvzFmbQCffdIo
-ShDUb0BCp155FvER4GjkvFk=
-=8UlR
------END PGP SIGNATURE-----
-
---Xm/fll+QQv+hsKip--
