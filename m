@@ -1,86 +1,47 @@
-From: "Horst H. von Brand" <vonbrand@inf.utfsm.cl>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
-Date: Mon, 24 Jul 2006 14:06:56 -0400
-Message-ID: <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl>
-References: <ipso@snappymail.ca>
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932282AbWGXSJ6@vger.kernel.org>
-In-Reply-To: Message from Mike Benoit <ipso@snappymail.ca> 
-   of "Mon, 24 Jul 2006 09:57:24 MST." <1153760245.5735.47.camel@ipso.snappymail.ca> 
+Date: Mon, 24 Jul 2006 14:28:39 -0400
+Message-ID: <200607241828.k6OISdHq014568@turing-police.cc.vt.edu>
+References: <44C12F0A.1010008@namesys.com> <44C28A8F.1050408@garzik.org> <44C32348.8020704@namesys.com> <200607230212.55293.lkml@lpbproductions.com> <44C44622.9050504@namesys.com> <20060724085455.GD24299@merlin.emma.line.org> <44C4813E.2030907@namesys.com> <20060724102508.GA26553@merlin.emma.line.org> <1153760245.5735.47.camel@ipso.snappymail.ca>
+            <44C504DC.6080907@gmx.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1153765719_3460P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751378AbWGXSaP@vger.kernel.org>
+In-Reply-To: Your message of "Mon, 24 Jul 2006 19:35:24 +0200."
+             <44C504DC.6080907@gmx.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mike Benoit <ipso@snappymail.ca>
-Cc: Matthias Andree <matthias.andree@gmx.de>, Hans Reiser <reiser@namesys.com>, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Matthias Andree <matthias.andree@gmx.de>
+Cc: Mike Benoit <ipso@snappymail.ca>, Hans Reiser <reiser@namesys.com>, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Mike Benoit <ipso@snappymail.ca> wrote:
-> On Mon, 2006-07-24 at 12:25 +0200, Matthias Andree wrote:
-> > On Mon, 24 Jul 2006, Hans Reiser wrote:
-> > 
-> > > >and that's the end
-> > > >of the story for me. There's nothing wrong about focusing on newer code,
-> > > >but the old code needs to be cared for, too, to fix remaining issues
-> > > >such as the "can only have N files with the same hash value". 
-> > >
-> > > Requires a disk format change, in a filesystem without plugins, to fix it.
-> > You see, I don't care a iota about "plugins" or other implementation details.
-> > 
-> > The bottom line is reiserfs 3.6 imposes practial limits that ext3fs
-> > doesn't impose and that's reason enough for an administrator not to
-> > install reiserfs 3.6. Sorry.
+--==_Exmh_1153765719_3460P
+Content-Type: text/plain; charset=us-ascii
 
-> And EXT3 imposes practical limits that ReiserFS doesn't as well. The big
-> one being a fixed number of inodes that can't be adjusted on the fly,
+On Mon, 24 Jul 2006 19:35:24 +0200, Matthias Andree said:
+> Mike Benoit wrote:
+> 
+> > I've been bitten by running out of inodes on several occasions, and by
+> > switching to ReiserFS it saved one company I worked for over $250,000
+> > because they didn't need to buy a totally new piece of software.
+> 
+> ext3fs's inode density is configurable, reiserfs's hash overflow chain
+> length is not, and it doesn't show in df -i either.
 
-Right. Plan ahead.
+Equally important - you can usually *see* "out of inodes" coming on a 'df -i'
+long before a reiser3 filesystem hits the wall on a hash issue.
 
-> which was reason enough for me to not use EXT3 and use ReiserFS
-> instead. 
+--==_Exmh_1153765719_3460P
+Content-Type: application/pgp-signature
 
-I don't see this following in any way.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.4 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-> Do you consider the EXT3 developers to have "abandoned" it because they
-> haven't fixed this issue? I don't, I just think of it as using the right
-> tool for the job.
+iD8DBQFExRFXcC3lWbTT17ARAuFrAKCZMgezkVvb0c9PWOmUJDaOEZO9gQCdGE1/
+UwKKZ8n+RS27xTBde0kL6qk=
+=R2kD
+-----END PGP SIGNATURE-----
 
-Dangerous parallel, that one...
-
-> I've been bitten by running out of inodes on several occasions,
-
-Me too. It was rather painful each time, but fixable (and in hindsight,
-dumb user (setup) error).
-
->                                                                 and by
-> switching to ReiserFS it saved one company I worked for over $250,000
-> because they didn't need to buy a totally new piece of software.
-
-How can a filesystem (which by basic requirements and design is almost
-transparent to applications) make such a difference?!
-
-> I haven't been able to use EXT3 on a backup server for the last ~5 years
-> due to inode limitations.
-
-See comment above. Read mke2fs(8) with care.
-
->                           Instead, ReiserFS has been filling that spot
-> like a champ. 
-
-Nice for you.
-
-> The bottom line is that every file system imposes some sort of limits
-> that bite someone.
-
-Mostly that infinite disks are hard to come by ;-)
-
->                    In your case it sounds like EXT3 limits weren't an
-> issue for you, in my case they were.
-
-I'd suspect the limits you ran into weren't exactly in ext3.
-
->                                      Thats life. 
--- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+--==_Exmh_1153765719_3460P--
