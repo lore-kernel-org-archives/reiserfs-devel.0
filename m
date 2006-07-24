@@ -1,82 +1,65 @@
 From: Mike Benoit <ipso@snappymail.ca>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
-	regarding reiser4 inclusion
-Date: Mon, 24 Jul 2006 09:57:24 -0700
-Message-ID: <1153760245.5735.47.camel@ipso.snappymail.ca>
-References: <44C12F0A.1010008@namesys.com> <44C28A8F.1050408@garzik.org>
-	 <44C32348.8020704@namesys.com> <200607230212.55293.lkml@lpbproductions.com>
-	 <44C44622.9050504@namesys.com>
-	 <20060724085455.GD24299@merlin.emma.line.org>
-	 <44C4813E.2030907@namesys.com>
-	 <20060724102508.GA26553@merlin.emma.line.org>
+Subject: Re: other system with datacorruption  (2.425 + datalogging patches)
+Date: Mon, 24 Jul 2006 09:16:47 -0700
+Message-ID: <1153757807.5735.30.camel@ipso.snappymail.ca>
+References: <200607201452.09270.fjcabello@visual-tools.com>
+	 <200607241230.48265.fjcabello@visual-tools.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-hy1dBR9GcM+ZB2Rkbv6q"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932218AbWGXQ57@vger.kernel.org>
-In-Reply-To: <20060724102508.GA26553@merlin.emma.line.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-NNtx1NF++huc4Krzf9K3"
+Return-path: <reiserfs-list-return-29178-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <200607241230.48265.fjcabello@visual-tools.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Matthias Andree <matthias.andree@gmx.de>
-Cc: Hans Reiser <reiser@namesys.com>, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Francisco Javier Cabello <fjcabello@visual-tools.com>
+Cc: reiserfs-list@namesys.com
 
-
---=-hy1dBR9GcM+ZB2Rkbv6q
+--=-NNtx1NF++huc4Krzf9K3
 Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2006-07-24 at 12:25 +0200, Matthias Andree wrote:
-> On Mon, 24 Jul 2006, Hans Reiser wrote:
+The MythTV issue should only cause severe slowdown while writing data
+after freespace falls below 10%. I have not seen it cause any corruption
+whatsoever.
+
+I'm in the process of testing Jeff's patch to fix this issue right now.
+
+
+On Mon, 2006-07-24 at 12:30 +0200, Francisco Javier Cabello wrote:
+> Hello,
+> I have been 'googling' and I have found people reporting problems with My=
+thtv=20
+> and reiserfs v3. Could be any problem if freespace falls bellow 10%?
 >=20
-> > >and that's the end
-> > >of the story for me. There's nothing wrong about focusing on newer cod=
-e,
-> > >but the old code needs to be cared for, too, to fix remaining issues
-> > >such as the "can only have N files with the same hash value".=20
+> Regards,
+>=20
+> Paco
+>=20
+> On Thursday, 20 de July de 2006 14:52, Francisco Javier Cabello wrote:
+> > Hello,
+> > I have other system with data corruption.
+> > I send you the output of 'reiserfsck --check'
 > >
-> > Requires a disk format change, in a filesystem without plugins, to fix =
-it.
+> > Regards,
+> >
+> > Paco
 >=20
-> You see, I don't care a iota about "plugins" or other implementation deta=
-ils.
->=20
-> The bottom line is reiserfs 3.6 imposes practial limits that ext3fs
-> doesn't impose and that's reason enough for an administrator not to
-> install reiserfs 3.6. Sorry.
->=20
-
-And EXT3 imposes practical limits that ReiserFS doesn't as well. The big
-one being a fixed number of inodes that can't be adjusted on the fly,
-which was reason enough for me to not use EXT3 and use ReiserFS
-instead.=20
-
-Do you consider the EXT3 developers to have "abandoned" it because they
-haven't fixed this issue? I don't, I just think of it as using the right
-tool for the job.
-
-I've been bitten by running out of inodes on several occasions, and by
-switching to ReiserFS it saved one company I worked for over $250,000
-because they didn't need to buy a totally new piece of software.
-
-I haven't been able to use EXT3 on a backup server for the last ~5 years
-due to inode limitations. Instead, ReiserFS has been filling that spot
-like a champ.=20
-
-The bottom line is that every file system imposes some sort of limits
-that bite someone. In your case it sounds like EXT3 limits weren't an
-issue for you, in my case they were. Thats life.=20
-
 --=20
 Mike Benoit <ipso@snappymail.ca>
 
---=-hy1dBR9GcM+ZB2Rkbv6q
+--=-NNtx1NF++huc4Krzf9K3
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.2 (GNU/Linux)
 
-iD8DBQBExPv0MhKjsejwBhgRApGXAJ0ZLb8PDVvRoTUCIBkwedpKy7qBKwCcCxIv
-F71NjdfIZN13Wsr4UR755Tc=
-=x4MO
+iD8DBQBExPJvMhKjsejwBhgRAmxVAKCNvgghXKRCGHVXysnT7HNY7QgaFwCfWf7x
+NwhbG2fK8EhfFLHT/bJCkb4=
+=Rp7g
 -----END PGP SIGNATURE-----
 
---=-hy1dBR9GcM+ZB2Rkbv6q--
+--=-NNtx1NF++huc4Krzf9K3--
+
