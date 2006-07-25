@@ -1,60 +1,44 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
- regarding reiser4 inclusion
-Date: Tue, 25 Jul 2006 18:04:48 -0500
-Message-ID: <44C6A390.2040001@slaphack.com>
-References: <200607242151.k6OLpDZu009297@laptop13.inf.utfsm.cl> <200607251708.13660.vda.linux@googlemail.com> <20060725204910.GA4807@merlin.emma.line.org>
+From: Andreas Dilger <adilger@clusterfs.com>
+Subject: Re: possible recursive locking detected - while running fs operations in loops - 2.6.18-rc2-git5
+Date: Tue, 25 Jul 2006 17:29:24 -0600
+Message-ID: <20060725232924.GU6452@schatzie.adilger.int>
+References: <9a8748490607251516j1433306ek9c64cc84c0838f7b@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="------------enig3AB948C6AEC81EAAA4E63C90"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1030237AbWGYXEu@vger.kernel.org>
-In-Reply-To: <20060725204910.GA4807@merlin.emma.line.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1030252AbWGYX31@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <9a8748490607251516j1433306ek9c64cc84c0838f7b@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Denis Vlasenko <vda.linux@googlemail.com>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Mike Benoit <ipso@snappymail.ca>, Hans Reiser <reiser@namesys.com>, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jesper Juhl <jesper.juhl@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans Reiser <reiser@namesys.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Al Viro <viro@ftp.linux.org.uk>, reiserfs-dev@namesys.com, reiserfs-list@namesys.com
 
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enig3AB948C6AEC81EAAA4E63C90
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On Jul 26, 2006  00:16 +0200, Jesper Juhl wrote:
+> What I did to provoke it was to run 6 different xterms (with a bash
+> shell) with the following loops in them in a test directory that was
+> initially empty :
+> 
+> xterm1:   while true; do mkdir a; done
+> xterm2:   while true; do rmdir a; done
+> xterm3:   while true; do touch a/foo; done
+> xterm4:   while true; do find .; done
+> xterm5:   while true; do sync; sleep 1; done
+> xterm6:   while true; do rm -r a; done
 
-Matthias Andree wrote:
-> On Tue, 25 Jul 2006, Denis Vlasenko wrote:
->=20
->> I, on the contrary, want software to impose as few limits on me
->> as possible.
->=20
-> As long as it's choosing some limit, I'll pick the one with fewer
-> surprises.
+See racer test at ftp.lustre.org/pub/benchmarks/racer-lustre.tar.gz
 
-Running out of inodes would be pretty surprising for me.
+It does the above, but a bunch more things and is a truly pathalogical
+test script that does lots of "stupid user tricks", unlike normal tests
+which are only doing operations that expect to be successful.
 
-But then, I guess it's a good thing I don't admin for a living anymore.
+PS - during the racer.sh test run "rm" is known to segfault after hitting
+     an internal assertion, nobody is sure why.
+PPS- I don't know who wrote this program, it was originally posted by
+     someone not the author to linux-fsdevel or something.
 
-
---------------enig3AB948C6AEC81EAAA4E63C90
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.4 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
-
-iQIVAwUBRMajkHgHNmZLgCUhAQqG+Q/+J5WCPpEEt46ElExhrIpUnYORb1eqaU04
-pacSGlXKtln4c9TSaDmfCqt/vodhd0XKUkJ5Yh0E8aIw2SBwLORejs+2VGI8wAkp
-nNqKpEVzjgat0RzWbteyRcQ78CNO5peMoBfS4puwm8mJSa+QtmQn+4rPBwxdxTXS
-ce96eHE8TQ5khlWkE57W/DaHEKaxhPQfGMubRBgA1at0yjVfAY/wE2bmirxXaGSn
-27x+lipo/2LqUuBik1ptbWkmz9VkyeQOOrxLN9z1Rk4MFGOp01rnZeLipEgnPxJ6
-pW7Ttk7TrXdwfM7UgCRiRfQ6rSmGvUJALKz6kt0iL1aC20R3verVJ4Elch0fOOKM
-/DfV2IX4vzNGsIHaPCxPFu4Aoax7yP6u5/ydFtypOKHq0AZdbXTPAZ8B5fFoFgaE
-AKCSSQPk80/z0HPKIVTCT0Pu8DMEoKKlzCIcFLNK0j3g2G0O+m45IPcN77BAdHQf
-qydHitt+Un9gvcVoN4faKIYoqrC/ZXnnoIJqFWKvc39Y75RXArsjenifLUUc7Wr1
-YeGAXOEOPkipmjoLAyu9W7MLzYxlaP+lNPBTXWRz3uLveIpOpvffnn4ztHnJOBz0
-2HF9xZxjQ2SxDyiyYJ0r61rqQ3phNuLyQFXf8zwB3Tb0QcRdGHoIZT0gSwXXSiP4
-5S0kdpIP9ik=
-=Yj0e
------END PGP SIGNATURE-----
-
---------------enig3AB948C6AEC81EAAA4E63C90--
+Cheers, Andreas
+--
+Andreas Dilger
+Principal Software Engineer
+Cluster File Systems, Inc.
