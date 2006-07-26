@@ -1,56 +1,91 @@
-From: Mike Benoit <ipso@snappymail.ca>
-Subject: Re: ReiserFS v3 choking when free space falls below 10% - FIXED
-Date: Tue, 25 Jul 2006 19:25:33 -0700
-Message-ID: <1153880733.9308.1.camel@ipso.snappymail.ca>
-References: <1151602916.32453.40.camel@ipso.snappymail.ca>
-	 <1153779982.5735.128.camel@ipso.snappymail.ca>
-	 <44C6B2DC.5050503@slaphack.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-+u9ZHmSLgpslexZKRYh7"
-Return-path: <reiserfs-list-return-29209-reiserfs=m.gmane.org@namesys.com>
+From: Toby Thain <toby@smartgames.ca>
+Subject: Re: Viewing files as directories
+Date: Tue, 25 Jul 2006 22:39:50 -0400
+Message-ID: <BAYC1-PASMTP12B100C145103939458DB6BF5B0@CEZ.ICE>
+References: <20060725133522.68964.qmail@web51314.mail.yahoo.com> <44C6B283.9010703@slaphack.com>
+Mime-Version: 1.0 (Apple Message framework v750)
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29210-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44C6B2DC.5050503@slaphack.com>
+In-Reply-To: <44C6B283.9010703@slaphack.com>
+Message-Id: <BDFC842D-87C3-444D-B38C-0E958C33FE02@smartgames.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: David Masover <ninja@slaphack.com>
-Cc: reiserfs-list@namesys.com, Jeff Mahoney <jeffm@suse.com>
+Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
+To: ReiserFS List <reiserfs-list@namesys.com>
 
---=-+u9ZHmSLgpslexZKRYh7
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2006-07-25 at 19:10 -0500, David Masover wrote:
-> Mike Benoit wrote:
->=20
-> > Thanks for all your hard work, I'm sure many other MythTV users will be
-> > appreciate it.
->=20
-> As a future MythTV user a bit late to this discussion, I'm curious --
-> was this Reiser3 or 4?  Are there any known MythTV issues with v4?  I
-> say this because the box with my capture card is running on a Reiser4
-> root right now...
->=20
+On 25-Jul-06, at 8:08 PM, David Masover wrote:
 
-It was Reiser3. I personally don't know of any issues with Reiser4 and
-MythTV, but if Reiser4 has "pauses" or "hangs" during flush that I have
-heard so much about, I could see that posing a problem to MythTV.
+> Timothy Webster wrote:
+> ...
+>> Yes it would be really wonderful, if we could just see
+>> directories as file and files as directories. Which of
+>> course means a file and a directory are one in the
+>> same.
+>
+> Ever use OS X?  It does this, to some extent, in Finder, which  
+> supports
+> the lkml point that doing this in the filesystem, or anywhere in the
+> kernel, is unnecessary and a bad idea.
+>
+>> As things stand now the way forward seams to be per
+>> application program mime types. Simple right, but it
+>> is not because, applications tools like svn, brz,
+>
+> There are two OS X file types that I know of, and probably quite a few
+> more, which are actually stored on disk as folders,
 
---=20
-Mike Benoit <ipso@snappymail.ca>
+Apple calls them "packages": http://developer.apple.com/documentation/ 
+DeveloperTools/Conceptual/SoftwareDistribution/Managed_Installs/ 
+chapter_5_section_2.html
 
---=-+u9ZHmSLgpslexZKRYh7
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+(I actually thought they were called "bundles", but as the following  
+page explains, "The term bundle indicates a directory with a specific  
+hierarchical structure, whereas the term package indicates a  
+directory that is treated as an opaque entity by the Finder.")
+http://developer.apple.com/documentation/CoreFoundation/Conceptual/ 
+CFBundles/Concepts/about.html
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
 
-iD8DBQBExtKdMhKjsejwBhgRAm86AJ96kFkAGhie2TLwcU5paEDA0jIIogCff6oH
-HpsGAIBulpNkIXZWGouSVrQ=
-=43OB
------END PGP SIGNATURE-----
+> which is why most
+> Mac software is distributed as disk images or zipfiles.  One is the
+> Application type (.app, though Finder hides the extension) and the  
+> other
+> is the MPKG type (whatever it stands for, extension is .mpkg).
 
---=-+u9ZHmSLgpslexZKRYh7--
+Apart from .pkg and .mpkg, bundle extensions are also treated  
+specially including .bundle, .component, .qtx, etc.
+
+>
+> Basically, they appear as ordinary files to Finder, which means that
+> most of the time, you cannot see that there are files inside them.   
+> You
+> double click on a .app, and it runs a script in a predefined relative
+> location inside the folder.  Double click on a .mpkg, and it launches
+> their installer program.  ...
+>
+> By the way, Hans, Apple has beaten you by quite a bit for at least  
+> some
+> of the functionality we've discussed.  You can do operations on Search
+> Folders easily, which work by using Spotlight (an indexed fulltext  
+> local
+> system search engine).
+
+Apparently running SQLite underneath.
+
+> You can have files-as-directories, to a point.
+> There are generic ways of getting at metadata, and they are done as
+> plugins -- Spotlight plugins, anyway.
+>
+> I'd much rather use the Reiser4 described in the whitepaper, of  
+> course,
+> and I am getting sick of the lack of decent package management for my
+> Mac, so I'll be adding a Linux boot.  I'm curious to see if Reiser4 is
+> stable on PowerPC -- this is a year-old G4, I missed the Intel  
+> cores by
+> just a few short months...
+>
 
