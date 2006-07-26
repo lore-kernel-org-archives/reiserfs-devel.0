@@ -1,64 +1,58 @@
-From: Andrew Morton <akpm@osdl.org>
-Subject: Re: [patch] lockdep: annotate vfs_rmdir for filesystems that take
- i_mutex in delete_inode
-Date: Wed, 26 Jul 2006 00:04:52 -0700
-Message-ID: <20060726000452.52179c32.akpm@osdl.org>
-References: <9a8748490607251516j1433306ek9c64cc84c0838f7b@mail.gmail.com>
-	<20060725223327.b6d039b2.akpm@osdl.org>
-	<1153896441.2896.11.camel@laptopd505.fenrus.org>
+From: "Luigi Genoni" <genoni@sns.it>
+Subject: Re: the ' 'official' point of view' expressed by kernelnewbies.org 
+     regarding reiser4 inclusion
+Date: Wed, 26 Jul 2006 09:59:00 +0200 (CEST)
+Message-ID: <1740.192.167.206.189.1153900740.squirrel@darkstar.linuxpratico.net>
+References: <44C12F0A.1010008@namesys.com> <20060722130219.GB7321@thunk.org>
+    <44C26F65.4000103@namesys.com> <44C28A8F.1050408@garzik.org>
+    <44C32348.8020704@namesys.com> <44C6BADE.4030202@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1030307AbWGZHIP@vger.kernel.org>
-In-Reply-To: <1153896441.2896.11.camel@laptopd505.fenrus.org>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1030260AbWGZH7b@vger.kernel.org>
+In-Reply-To: <44C6BADE.4030202@slaphack.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Arjan van de Ven <arjan@linux.intel.com>
-Cc: mingo@elte.hu, reiserfs-list@namesys.com, reiserfs-dev@namesys.com, viro@ftp.linux.org.uk, viro@zeniv.linux.org.uk, reiser@namesys.com, linux-kernel@vger.kernel.org, jesper.juhl@gmail.com
+To: David Masover <ninja@slaphack.com>
+Cc: Hans Reiser <reiser@namesys.com>, Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Wed, 26 Jul 2006 08:47:21 +0200
-Arjan van de Ven <arjan@linux.intel.com> wrote:
 
-> On Tue, 2006-07-25 at 22:33 -0700, Andrew Morton wrote:
-> > On Wed, 26 Jul 2006 00:16:42 +0200
-> > The VFS takes the directory i_mutex and reiserfs_delete_inode() takes the
-> > to-be-deleted file's i_mutex.
-> > 
-> > That's notabug and lockdep will need to be taught about it.
-> 
-> [2nd try, now with coffee]
-> 
-> This is another 3 level locking ordering:
-> do_rmdir takes the mutex of the parent directory
-> vfs_rmdir takes the mutex of the victim
-> shrink_dcache_parent ends up in the reiser delete_inode which takes the
-> mutex of dead children of the victim
-> 
-> the I_MUTEX ordering rules are
-> 
-> I_MUTEX_PARENT -> I_MUTEX_CHILD -> <normal>
-> 
-> do_rmdir already has I_MUTEX_PARENT, delete_inode does <normal> so
-> vfs_rmdir needs I_MUTEX_CHILD (which is also logical)
-> 
-> Signed-off-by: Arjan van de Ven <arjan@linux.intel.com>
-> 
-> Index: linux-2.6.18-rc2-git5/fs/namei.c
-> ===================================================================
-> --- linux-2.6.18-rc2-git5.orig/fs/namei.c
-> +++ linux-2.6.18-rc2-git5/fs/namei.c
-> @@ -1967,7 +1967,7 @@ int vfs_rmdir(struct inode *dir, struct 
->  
->  	DQUOT_INIT(dir);
->  
-> -	mutex_lock(&dentry->d_inode->i_mutex);
-> +	mutex_lock_nested(&dentry->d_inode->i_mutex, I_MUTEX_CHILD);
->  	dentry_unhash(dentry);
->  	if (d_mountpoint(dentry))
->  		error = -EBUSY;
 
-If there's a reason why a filesystem shuld take an i_mutex under
-vfs_rmdir() then fine.  But I don't think there is, in which case the
-warning can be kept.
 
-Can a reiserfs person please comment?
+On Wed, July 26, 2006 02:44, David Masover wrote:
+> Hans Reiser wrote:
+>
+>
+>> to use as his default.  Now that we paid the 5 year development price tag
+>> to get everything as plugins, we can now upgrade in littler pieces than
+>> any other FS.  Hmm, I need a buzz phrase, its not extreme programming,
+>> maybe "moderate programming".  Does that sound exciting to
+>
+> Hah!  No, it doesn't sound exciting.
+>
+>
+> Plugins don't work well either, not as a marketing concept.  People have
+> had so many bad experiences with plugins, and they're only ever visible when
+> you have a bad experience.  Think about it -- missing plugin (so you have to
+> download it),
+>
+marketing?
+</joke mode on>
+if you do not like the word "plugin" why don't you suggest some alternative?
+like "modules"?
+</joke mode off>
+
+Seriously, please leave out this kind of marketing. The plugin concept in
+reiser4 is probably the most interessant feature I filesystem some users
+could need.
+
+>
+> Fluid programming?  If you build a solution from the bottom up with
+> gravel or large rocks, you leave gaps that are hard to fill without ripping
+> off the top layer and redoing it.  But if you can do fluid programming, your
+> program just flows around any obstacle, and into every crack / between every
+> space (metaphor for new customer requirements)...
+
+probably I do not know english enought well to appraciate this metaphor and
+to understand what it means.
+
