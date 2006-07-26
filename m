@@ -1,69 +1,42 @@
-From: Andrew Morton <akpm@osdl.org>
-Subject: Re: possible recursive locking detected - while running fs
- operations in loops - 2.6.18-rc2-git5
-Date: Tue, 25 Jul 2006 22:33:27 -0700
-Message-ID: <20060725223327.b6d039b2.akpm@osdl.org>
+From: Arjan van de Ven <arjan@linux.intel.com>
+Subject: [patch] lockdep: annotate vfs_rmdir for filesystems that take
+	i_mutex in delete_inode
+Date: Wed, 26 Jul 2006 08:32:04 +0200
+Message-ID: <1153895524.2896.2.camel@laptopd505.fenrus.org>
 References: <9a8748490607251516j1433306ek9c64cc84c0838f7b@mail.gmail.com>
+	 <20060725223327.b6d039b2.akpm@osdl.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1030389AbWGZFhK@vger.kernel.org>
-In-Reply-To: <9a8748490607251516j1433306ek9c64cc84c0838f7b@mail.gmail.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1030412AbWGZGeX@vger.kernel.org>
+In-Reply-To: <20060725223327.b6d039b2.akpm@osdl.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jesper Juhl <jesper.juhl@gmail.com>
-Cc: linux-kernel@vger.kernel.org, reiser@namesys.com, viro@zeniv.linux.org.uk, viro@ftp.linux.org.uk, reiserfs-dev@namesys.com, reiserfs-list@namesys.com, Ingo Molnar <mingo@elte.hu>, Arjan van de Ven <arjan@infradead.org>
+To: Andrew Morton <akpm@osdl.org>
+Cc: Ingo Molnar <mingo@elte.hu>, reiserfs-list@namesys.com, reiserfs-dev@namesys.com, viro@ftp.linux.org.uk, viro@zeniv.linux.org.uk, reiser@namesys.com, linux-kernel@vger.kernel.org, Jesper Juhl <jesper.juhl@gmail.com>
 
-On Wed, 26 Jul 2006 00:16:42 +0200
-"Jesper Juhl" <jesper.juhl@gmail.com> wrote:
 
-> I just got this from the lock validator :
+> The VFS takes the directory i_mutex and reiserfs_delete_inode() takes the
+> to-be-deleted file's i_mutex.
 > 
-> =============================================
-> [ INFO: possible recursive locking detected ]
-> ---------------------------------------------
-> rm/2498 is trying to acquire lock:
->  (&inode->i_mutex){--..}, at: [<c031c3ac>] mutex_lock+0x1c/0x20
-> 
-> but task is already holding lock:
->  (&inode->i_mutex){--..}, at: [<c031c3ac>] mutex_lock+0x1c/0x20
-> 
-> other info that might help us debug this:
-> 2 locks held by rm/2498:
->  #0:  (&inode->i_mutex/1){--..}, at: [<c017b6f3>] do_rmdir+0x73/0xe0
->  #1:  (&inode->i_mutex){--..}, at: [<c031c3ac>] mutex_lock+0x1c/0x20
-> 
-> stack backtrace:
->  [<c0103faa>] show_trace_log_lvl+0x12a/0x150
->  [<c0103fe2>] show_trace+0x12/0x20
->  [<c01040f9>] dump_stack+0x19/0x20
->  [<c0138a19>] print_deadlock_bug+0xb9/0xd0
->  [<c0138a9b>] check_deadlock+0x6b/0x80
->  [<c013a344>] __lock_acquire+0x354/0x990
->  [<c013b0a5>] lock_acquire+0x75/0xa0
->  [<c031c430>] __mutex_lock_slowpath+0x70/0x2a0
->  [<c031c3ac>] mutex_lock+0x1c/0x20
->  [<c01ac8b3>] reiserfs_delete_inode+0x63/0xd0
->  [<c01854e1>] generic_delete_inode+0x61/0xe0
->  [<c01856af>] generic_drop_inode+0xf/0x20
->  [<c0185716>] iput+0x56/0x80
->  [<c01826de>] dentry_iput+0x5e/0xc0
->  [<c01827e8>] dput+0xa8/0x170
->  [<c0182c0b>] prune_one_dentry+0x6b/0x80
->  [<c0182d7b>] prune_dcache+0x15b/0x170
->  [<c0182ff0>] shrink_dcache_parent+0x10/0x20
->  [<c017b55a>] dentry_unhash+0x5a/0xc0
->  [<c017b61f>] vfs_rmdir+0x5f/0xc0
->  [<c017b74d>] do_rmdir+0xcd/0xe0
->  [<c017b770>] sys_rmdir+0x10/0x20
->  [<c010304b>] syscall_call+0x7/0xb
->  [<b7e79d7d>] 0xb7e79d7d
+> That's notabug and lockdep will need to be taught about it.
 
-The VFS takes the directory i_mutex and reiserfs_delete_inode() takes the
-to-be-deleted file's i_mutex.
+Actually the annotation is in vfs_rmdir() since that is where the parent
+is taken (this may sound odd but the I_MUTEX_* ordering rules require
+the parent taking to be annotated rather than the child)
 
-That's notabug and lockdep will need to be taught about it.
+Signed-off-by: Arjan van de Ven <arjan@linux.intel.com>
 
-That being said, the reiserfs locking appears to be unneeded - this inode
-is going down and nobody else can look it up, so what is to be locked
-against?
+Index: linux-2.6.18-rc2-git5/fs/namei.c
+===================================================================
+--- linux-2.6.18-rc2-git5.orig/fs/namei.c
++++ linux-2.6.18-rc2-git5/fs/namei.c
+@@ -1967,7 +1967,7 @@ int vfs_rmdir(struct inode *dir, struct 
+ 
+ 	DQUOT_INIT(dir);
+ 
+-	mutex_lock(&dentry->d_inode->i_mutex);
++	mutex_lock_nested(&dentry->d_inode->i_mutex, I_MUTEX_PARENT);
+ 	dentry_unhash(dentry);
+ 	if (d_mountpoint(dentry))
+ 		error = -EBUSY;
