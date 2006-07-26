@@ -1,52 +1,50 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
  regarding reiser4 inclusion
-Date: Tue, 25 Jul 2006 19:44:14 -0500
-Message-ID: <44C6BADE.4030202@slaphack.com>
-References: <44C12F0A.1010008@namesys.com> <20060722130219.GB7321@thunk.org> <44C26F65.4000103@namesys.com> <44C28A8F.1050408@garzik.org> <44C32348.8020704@namesys.com>
+Date: Tue, 25 Jul 2006 19:47:33 -0500
+Message-ID: <44C6BBA5.3050704@slaphack.com>
+References: <200607242151.k6OLpDZu009297@laptop13.inf.utfsm.cl> <44C6B784.5050507@slaphack.com> <Pine.LNX.4.63.0607251732001.9159@qynat.qvtvafvgr.pbz>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="------------enig8750CF5B2435204DB7209302"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1030299AbWGZAoR@vger.kernel.org>
-In-Reply-To: <44C32348.8020704@namesys.com>
+ boundary="------------enigB330AB0C700B0888B0BC2F22"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1030297AbWGZArf@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.63.0607251732001.9159@qynat.qvtvafvgr.pbz>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: David Lang <dlang@digitalinsight.com>
+Cc: "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Mike Benoit <ipso@snappymail.ca>, Matthias Andree <matthias.andree@gmx.de>, Hans Reiser <reiser@namesys.com>, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
 This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enig8750CF5B2435204DB7209302
+--------------enigB330AB0C700B0888B0BC2F22
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-Hans Reiser wrote:
+David Lang wrote:
+> On Tue, 25 Jul 2006, David Masover wrote:
+>=20
+>> Horst H. von Brand wrote:
+>>
+>>> 18GiB =3D 18 million KiB, you do have a point there. But 40 million
+>>> files on
+>>> that, with some space to spare, just doesn't add up.
+>=20
+> if you have 18 million KiB and each file is a single block (512 Bytes =3D=
 
-> to use as his default.  Now that we paid the 5 year development price
-> tag to get everything as plugins, we can now upgrade in littler pieces
-> than any other FS.  Hmm, I need a buzz phrase, its not extreme
-> programming, maybe "moderate programming".  Does that sound exciting to=
+> 0.5 Kib) then assuming zero overhead you could fit 18 Million KiB / 0.5=
 
+> KiB =3D 36 Million files on the drive.
+>=20
+> thus being scheptical about 40 million files on a 18G drive.
+>=20
+> this is only possible if you are abel to have multiple files per 512
+> byte block.
 
-Hah!  No, it doesn't sound exciting.
-
-Plugins don't work well either, not as a marketing concept.  People have
-had so many bad experiences with plugins, and they're only ever visible
-when you have a bad experience.  Think about it -- missing plugin (so
-you have to download it),
-
-On the other hand, it works for WordPress.  My day job is work on a
-plugin for WordPress.  Not including a link because I feel dirty for
-having to work with PHP...
-
-Fluid programming?  If you build a solution from the bottom up with
-gravel or large rocks, you leave gaps that are hard to fill without
-ripping off the top layer and redoing it.  But if you can do fluid
-programming, your program just flows around any obstacle, and into every
-crack / between every space (metaphor for new customer requirements)...
+I believe Reiser4 does this.  Does ext3?  I know I heard somewhere in
+this thread that you can't set the blocksize lower than 1k...
 
 
---------------enig8750CF5B2435204DB7209302
+--------------enigB330AB0C700B0888B0BC2F22
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -55,19 +53,19 @@ Content-Disposition: attachment; filename="signature.asc"
 Version: GnuPG v1.4.4 (GNU/Linux)
 Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
 
-iQIVAwUBRMa63ngHNmZLgCUhAQo71w//QMCtkf9L//RKEaZJ8OUBeJoDViNNQnqg
-ZXqX4B2fbzYW4XyWHSVBkHr4i8dA+5MAQFLGdfKGWkG1cH0S2MyukOXIlhApgwmk
-Gt9oLbZNP407X+dB4s7vJLODmCLyA+M0zm9y/M1UfcZ6WMPGWjhrUbJIH1F1k/OV
-2pAWy2LXaNVf3XuQ9crT+7d3g+HcAiH0X/2kj3PDvQ4kCT+tXIPFnB+VlXPSZr3y
-Ne5i+BpRfEZ6PVGNjke33sGE7ESERNvzbaXiw15rWsTDSHzXmLR8HoYkRYm/dGoS
-jpNrWBTTGW7n0aGeE+w290rPCQhJ7AtpN/EvWn8BhpYv4O+TB2GblIU4Qzy6dVaX
-oNaIbQPvS+kH3/F86nW+tjGIVV7Egeb4cTXmsJAD1moV5NgVSpJfsfo44QeKQhLI
-yxDVNWWwNLHTyqFMRCrp8GAXr5IXB4y8YarMuFn1qqVM/n0cDnEXtkJhPgMgOqu+
-R4JXHBUju4jPs0ZtWyrZNtX7Xo1wDOkjdKqxBFUiJqjEVHYk4OH5/AFGf1UtooHa
-cNuQallxHBSHZgKXbB0teWfI4AyKO+SRPoE+udnNJEmbrS7IrnE8Qm2MgVEJ0gAN
-oQXQMjZK5GQg3Sasz1aG2z6PszWHtz3Jcb9wjShFBDRL+fIyRRYSzUfEEnIV+fvm
-AoeW6e+hTXg=
-=zmIa
+iQIVAwUBRMa7pXgHNmZLgCUhAQoFSw//RjP2QZv13yH8jJ66biGd0FE/HkezJTGV
+iXIk87bzPPPVjBrr5d3qrOERpnH90+J0lBZK1KGA4Kka14dy4WAchzNofszik/cC
+y5F/blSlf9fFWX4tnM/gab+AuUM0eE4LxYuU7l6gacDA+LvwUgm350ONULUl6Bs+
+KO2t5h3jHzQ8PiVesv8ZI9DQoM7AGi7MmTnm4oHNehDZhxjn0p7X8AIfIjteZXYP
+pCJE8NuRncK2psH+bigHbjWtkg+OAraSzlIDJWNq8wK26GYFG1mb/cgAGk0K/HLA
+p3qQkRQJhpdPGC/fowqIdKHe06cx1sDNicqMwA9o5FCGaxOZqT1uoJGOf6rOuMIA
+0RhF5h/2JR+aiZNRw5Ipv/ec0Cm8Uyq3cAmksD6LJqlpYyYQ2D69QYAfovpgLsz9
+9I7zGISViDmDz/SbsJDdFrUsv3pRyM9j89SlGrMEYlyGZa25ITf9FJkwH9H2Ji2G
+y60CPlZzECUFsOg5VdtKEAZeoc/NfGMtxFch4PLjdNPkknsDc31tV6jphhSsJKk1
+WhBQZ1VVfEAu1V3F/Thd3gddlG3tBxwlPgtRyfAcUapjOOhIAvHEQnwWXeu92BAJ
+iqZnhWm3itKDPzcZJnC6hC+3lZmHo/TRqIZIbU1RkqW0gFI9ChtoLhvx75BuQC4t
+aXWxVDwIrUQ=
+=esNy
 -----END PGP SIGNATURE-----
 
---------------enig8750CF5B2435204DB7209302--
+--------------enigB330AB0C700B0888B0BC2F22--
