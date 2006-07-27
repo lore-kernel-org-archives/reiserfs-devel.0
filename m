@@ -1,44 +1,54 @@
-From: Grzegorz Kulewski <kangur@polcom.net>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
- regarding reiser4 inclusion
-Date: Thu, 27 Jul 2006 17:39:40 +0200 (CEST)
-Message-ID: <Pine.LNX.4.63.0607271732010.8976@alpha.polcom.net>
-References: <44C12F0A.1010008@namesys.com> <44C28A8F.1050408@garzik.org>
- <44C32348.8020704@namesys.com> <200607230212.55293.lkml@lpbproductions.com>
- <44C44622.9050504@namesys.com> <20060724085455.GD24299@merlin.emma.line.org>
- <44C4813E.2030907@namesys.com> <20060726131709.GB5270@ucw.cz>
+From: Matthias Andree <matthias.andree@gmx.de>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
+Date: Thu, 27 Jul 2006 19:28:52 +0200
+Message-ID: <20060727172852.GA11321@merlin.emma.line.org>
+References: <44C12F0A.1010008@namesys.com> <44C28A8F.1050408@garzik.org> <44C32348.8020704@namesys.com> <200607230212.55293.lkml@lpbproductions.com> <44C44622.9050504@namesys.com> <20060724085455.GD24299@merlin.emma.line.org> <44C4813E.2030907@namesys.com> <20060726131709.GB5270@ucw.cz> <Pine.LNX.4.63.0607271732010.8976@alpha.polcom.net>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932570AbWG0Pjv@vger.kernel.org>
-In-Reply-To: <20060726131709.GB5270@ucw.cz>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751873AbWG0R25@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.63.0607271732010.8976@alpha.polcom.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Hans Reiser <reiser@namesys.com>, Matthias Andree <matthias.andree@gmx.de>, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Grzegorz Kulewski <kangur@polcom.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Wed, 26 Jul 2006, Pavel Machek wrote:
+On Thu, 27 Jul 2006, Grzegorz Kulewski wrote:
 
-> Hi!
->
->>> of the story for me. There's nothing wrong about focusing on newer code,
->>> but the old code needs to be cared for, too, to fix remaining issues
->>> such as the "can only have N files with the same hash value".
->>>
->> Requires a disk format change, in a filesystem without plugins, to fix it.
->
-> Well, too bad, if reiser3 is so broken it needs on-disk-format-change,
-> then I guess doing that change is the right thing to do...
+> Sorry for my stupid question, but could you tell me why starting to make 
+> incompatible changes to reiserfs3 now (when reiserfs3 "technology" is 
+> rather old) and making reiserfs3 unstable (again), possibly for several 
+> months or even years is better than fixing big issues with reiser4 (if 
+> there are any really big left) merging it and trying to stabilize it?
+> 
+> For end user both ways will result in mkfs so...
 
-Sorry for my stupid question, but could you tell me why starting to make 
-incompatible changes to reiserfs3 now (when reiserfs3 "technology" is 
-rather old) and making reiserfs3 unstable (again), possibly for several 
-months or even years is better than fixing big issues with reiser4 (if 
-there are any really big left) merging it and trying to stabilize it?
+ext2fs and ext3fs, without "plugins", added dir_index as a compatible
+upgrade, with an e2fsck option (that implies optional) to build indices
+for directories without them.
 
-For end user both ways will result in mkfs so...
+ext3fs is a compatible upgrade from ext2fs, it's as simple as unmount,
+tune2fs -j, mount.
 
+reiserfs 3.6 could deal with 3.5 file systems, and "mount -o conv" with
+a 3.6 driver would convert a 3.5 file system to 3.6 level
+(ISTR it had to do with large file support and perhaps NFS
+exportability, but don't quote me on that).
 
-Thanks,
+I wonder what makes the hash overflow issue so complicated (other than
+differing business plans, that is) that upgrading in place isn't
+possible. Changes introduce instability, but namesys were proud of their
+regression testing - so how sustainable is their internal test suite?
 
-Grzegorz Kulewski
+Instead, we're told reiser4 would fix this (quite likely) and we should
+wait until it's ready (OK, we shouldn't be using experimental stuff for
+production but rather for /tmp, but the file system will take many
+months to mature after integration) and it will be "mkfs" time - so
+reiser4 better be mature before we go that way if there's no way back
+short of "amrecover", "restore" or "tar -x".
+
+Smashing out most of the Cc:s in order not to bore people.
+
+-- 
+Matthias Andree
