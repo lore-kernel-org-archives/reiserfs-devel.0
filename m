@@ -1,86 +1,113 @@
-From: Mike Benoit <ipso@snappymail.ca>
-Subject: Re: metadata plugins (was Re: the " 'official' point of view"
-	expressed by kernelnewbies.org regarding reiser4 inclusion)
-Date: Fri, 28 Jul 2006 14:32:03 -0700
-Message-ID: <1154122323.18406.22.camel@ipso.snappymail.ca>
-References: <200607281402.k6SE245v004715@laptop13.inf.utfsm.cl>
-	 <44CA31D2.70203@slaphack.com>
-	 <Pine.LNX.4.64.0607280859380.4168@g5.osdl.org>
-	 <44C9FB93.9040201@namesys.com> <44CA6905.4050002@slaphack.com>
-	 <44CA126C.7050403@namesys.com>  <op.tde267fpd4os1z@localhost>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: metadata plugins (was Re: the " 'official' point of view" expressed
+ by kernelnewbies.org regarding reiser4 inclusion)
+Date: Fri, 28 Jul 2006 16:53:53 -0500
+Message-ID: <44CA8771.1040708@slaphack.com>
+References: <200607281402.k6SE245v004715@laptop13.inf.utfsm.cl> <44CA31D2.70203@slaphack.com> <Pine.LNX.4.64.0607280859380.4168@g5.osdl.org> <44C9FB93.9040201@namesys.com> <44CA6905.4050002@slaphack.com> <44CA126C.7050403@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-eo5zDGI9Hrn4ojQLKMUN"
-Return-path: <reiserfs-list-return-29242-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <op.tde267fpd4os1z@localhost>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1161320AbWG1Vx7@vger.kernel.org>
+In-Reply-To: <44CA126C.7050403@namesys.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: =?UTF-8?Q?=C5=81ukasz?= Mierzwa <prymitive@pcserwis.net>
-Cc: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: Linus Torvalds <torvalds@osdl.org>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Jeff Garzik <jeff@garzik.org>, Andrew Morton <akpm@osdl.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
---=-eo5zDGI9Hrn4ojQLKMUN
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Hans Reiser wrote:
 
-On Fri, 2006-07-28 at 22:58 +0200, =C5=81ukasz Mierzwa wrote:
-> It just hited me that 90% of mails (those I've read and remember) in whic=
-h =20
-> You guys are talking why r4 should or should not be merged did not contai=
-n =20
-> a patch or not even a line of code as a reference, most of complains feel=
-s =20
-> so abstract and ahead of time, there is nothing wrong with planing ahead =
-=20
-> but does it still makes sense when nobody else actually said that he woul=
-d =20
-> want to use it in future? Can't it be pusshed up to vfs later if it prove=
-s =20
-> itself and there is demand for it?
-> My question is what does it break now? It's been in mm for some time now,=
- =20
-> what troubles does it couse? Did anyone complained that it breaks mm and =
-=20
-> should be dropped?
-> I'm just a end user and have no idea of linux internals, but all the fuzz=
- =20
-> about r4 seems so political and it's not just me who things so.
+> plugins if not for us.  Our plugins affect no one else.  Our
+> self-contained code should not be delayed because other people delayed
 
-Agreed. As an outsider looking in trying to understand this all, it
-sounds like Hans can't win either way. People complain if the plugin
-code is contained entirely within Reiser4 and people complain if he
-tries to add functionality to the VFS that only Reiser4 will likely use
-for the foreseeable future. Or maybe ever use, we don't know yet?
+And at the moment, I can still use Reiser4.  If I ever make a distro, I 
+will include Reiser4 support, probably as the default FS.  That will 
+help with getting into the kernel.
 
-Ignoring pseudo files which Hans has pulled for now anyways, what
-difference is their between Reiser4 plugins and what EXT3 does with
-mount options like dir_index? 3rd party plugins can't be dynamically
-loaded, and some of them need mount options to enable them even after
-they are compiled in. So people can't "mistakenly" load some plugin that
-corrupts their data, or changes the on-disk format making it impossible
-to downgrade kernel versions.
+So, why is it that it's urgent to get into the kernel?  It will have to 
+be bootstrapped one way or another -- either get it into the kernel so 
+distros are more likely to include it, or get it into distros so the 
+kernel is more likely to include it.
 
-Is it the fact that Reiser4 plugins can be enabled/disable on a per file
-basis?
+But this is exactly the kind of thing that has happened before.  With 
+XFS, with Nvidia even -- clean it up, do it the way the kernel people 
+want you to, because they're the ones who will have to maintain it for 
+20 years, and make sure it doesn't stop working or break anything else.
 
-If you don't use the word "plugin", how is adding dir_index code to EXT3
-any different then adding encryption/compression code to Reiser4?
+> advantage from leading.  If they want to some distant day implement
+> generic plugins, for which they have written not one line of code to
+> date, fine, we'll use it when it exists, but right now those who haven't
+> coded should get out of the way of people with working code.  It is not
+> fair or just to do otherwise.  It also prevents users from getting
+> advances they could be getting today, for no reason.
 
---=20
-Mike Benoit <ipso@snappymail.ca>
+It prevents users from doing nothing.
 
---=-eo5zDGI9Hrn4ojQLKMUN
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+> Our code will not
+> be harder to change once it is in the kernel, it will be easier, because
+> there will be more staff funded to work on it.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
+If indeed it can be changed easily at all.  I think the burden is on you 
+to prove that you can change it to be more generic, rather than saying 
+"Well, we could do it later, if people want us to..."
 
-iD8DBQBEyoJRMhKjsejwBhgRAjR1AKCHYVV7/OnioC8REmk6Za99ewtePACfW2HR
-FKwh3i9XR5c46StV6hp8jHQ=
-=4t1e
------END PGP SIGNATURE-----
+> As for this "we are all too grand to be bothered with money to feed our
+> families" business, building a system in which those who contribute can
+> find a way to be rewarded is what managers do.   Free software
+> programmers may be willing to live on less than others, but they cannot
+> live on nothing, and code that does not ever ship means living on nothing.
 
---=-eo5zDGI9Hrn4ojQLKMUN--
+Let me put this in perspective the best way I know how, with an inane 
+analogy:
 
+Suppose there's a band.  A good band, full of impossible superstars, led 
+by a benevolent dictator -- for the sake of argument, let's call him 
+Elvis. (the King -- dictator...)  The band's doing really well, and 
+Elvis & crew are getting paid fairly well just to share their music.
+
+(Ok, maybe Elvis didn't write anything, but bear with me...)
+
+Now, along comes a young Jimi Hendrix.  He wants to be in the band, and 
+Elvis says "Sure, just come up with a song we like and we'll play it, 
+and you can even play it with us!"  Sounds like a pretty good deal, so 
+Jimi goes and tells all his friends, a couple of girls...
+
+Now, Jimi finishes his song, Elvis listens to it, and if you know 
+anything about the music Elvis did and the music Hendrix did, you can 
+imagine what happens next.  Elvis says "This song just isn't us.  But if 
+you change it here, and here, and maybe here, we'll play it."
+
+Jimi is devastated.  He'd been counting on playing it with them that 
+night, and if he doesn't, he won't have any groupies, all his friends 
+will laugh at him, and his life will kind of suck.
+
+But, does anyone really think Elvis has any business singing Voodoo 
+Child?  Or Purple Haze?  Is it really fair to ask Elvis to completely 
+change his act and embarrass himself to help Jimi out?
+
+The answer is, Jimi shouldn't have staked so much on something that was 
+never a guarantee.  And what's more, the real-life Jimi Hendrix never 
+played with Elvis, but had a very successful band of his own.  And if 
+Elvis was still alive, seeing Jimi play might make him change his mind, 
+maybe -- but at least with his own band, Jimi's success isn't pinned on 
+playing with Elvis.
+
+This analogy is flawed in many ways, aside from just being plain 
+chronologically impossible, but while I'm sure Linus feels bad for you, 
+I don't think it's his obligation to compromise his kernel to help you 
+out with your financial situation.  So it would help a lot if you 
+wouldn't keep bringing it up in what should be a technical discussion.
+
+
+
+So, if you can't make it work with VFS, then I guess you can't, and 
+you're stuck either creating another interface which is not tied to any 
+one filesystem and isn't tied to the VFS either, or coming up with a 
+better (more specific) idea of how to make the Reiser4 plugin system 
+acceptable to kernel maintainers without having to eat Ramen for a few 
+years.
+
+Understand that I'm putting on my devil's advocate hat right now.  I'd 
+love to see Reiser4 merged tomorrow, or a week from now, exactly as it's 
+written today, but I just don't see it happening.  I'd also love to get 
+more technical, but I just don't know the Reiser4 internals well enough 
+to understand the feasibility (or not) of any of my vague ideas.
