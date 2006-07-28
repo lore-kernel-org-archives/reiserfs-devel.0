@@ -1,63 +1,93 @@
-From: Linus Torvalds <torvalds@osdl.org>
-Subject: Re: metadata plugins (was Re: the " 'official' point of view"
- expressed by kernelnewbies.org regarding reiser4 inclusion)
-Date: Fri, 28 Jul 2006 09:33:56 -0700 (PDT)
-Message-ID: <Pine.LNX.4.64.0607280859380.4168@g5.osdl.org>
-References: <200607281402.k6SE245v004715@laptop13.inf.utfsm.cl>
- <44CA31D2.70203@slaphack.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: metadata plugins (was Re: the " 'official' point of view" expressed
+ by kernelnewbies.org regarding reiser4 inclusion)
+Date: Fri, 28 Jul 2006 05:57:07 -0600
+Message-ID: <44C9FB93.9040201@namesys.com>
+References: <200607281402.k6SE245v004715@laptop13.inf.utfsm.cl> <44CA31D2.70203@slaphack.com> <Pine.LNX.4.64.0607280859380.4168@g5.osdl.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-29234-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <44CA31D2.70203@slaphack.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
-Cc: "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Jeff Garzik <jeff@garzik.org>, Hans Reiser <reiser@namesys.com>, Andrew Morton <akpm@osdl.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1161237AbWG1S5e@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.64.0607280859380.4168@g5.osdl.org>
+Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Linus Torvalds <torvalds@osdl.org>
+Cc: David Masover <ninja@slaphack.com>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Jeff Garzik <jeff@garzik.org>, Andrew Morton <akpm@osdl.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
+Linus Torvalds wrote:
 
+>
+>
+>In other words, if a filesystem wants to do something fancy, it needs to 
+>do so WITH THE VFS LAYER, not as some plugin architecture of its own.
+>
+Where does VFS store the plugin ids that specify per file variations? 
+/etc/fstab?  Also, is (current) VFS the interface for specifying where
+the hash directory plugin goes (specifies what order directory entries
+are within the directory)?  What about the node layout plugin?  The disk
+format plugin?  Etc.?  Our approach is different, but it has reasons.
 
-On Fri, 28 Jul 2006, David Masover wrote:
-> 
-> But what's wrong with people doing such experiments outside the kernel?
-> AFAICS, "exotic, site-specific one" is not something that would be considered
-> for inclusion.
+We eliminated the layer of indirection that Hellwig objected to, in
+which VFS called the plugin which called its method. 
 
-Here's a few ground rules at least from my viewpoint:
+(Let us try to avoid arguments over whether if you extend VFS it is
+still called VFS or is called reiser4's plugin layer, agreed?)
 
- - as long you call them "plugins" and treat them as such, I (and I 
-   suspect a lot of other people) are totally uninterested, and in fact, a 
-   lot of people will suspect that the primary aim is to either subvert 
-   the kernel copyright rules, or at best to create a mess of incompatible 
-   semantics with no sane overlying rules for locking etc.
+Regarding copyright, these plugins are compiled in.  I have resisted
+dynamically loaded plugins for now, for reasons I will not go into here.
 
- - the kernel does not, and _will_ not, support "hooks" that aren't 
-   actually used (and make sense) by normal kernel uses, for largely the 
-   same reasons. Interfaces need to be architected, make sense, and have 
-   real and valid GPL'd uses.
+You can either portray reiser4 as duplicating VFS, or you can portray it
+as taking it to the next level, in which files (objects with classes and
+methods) vary rather than solely filesystems.  I would prefer the latter.;-)
 
-In other words, if a filesystem wants to do something fancy, it needs to 
-do so WITH THE VFS LAYER, not as some plugin architecture of its own. We 
-already have exactly the plugin interface we need, and it literally _is_ 
-the VFS interfaces - you can plug in your own filesystems with 
-"register_filesystem()", which in turn indirectly allows you to plug in 
-your per-file and per-directory operations for things like lookup etc.
+If you agree with taking it to the next level, then it is only to be
+expected that there are things that aren't well suited as they are, like
+parsing /etc/fstab when you have a trillion files.  It is not very
+feasible to do it for all of the filesystems all at once given finite
+resources, it needs a prototype. 
 
-If that isn't enough, then the filesystem shouldn't make its own internal 
-plug-in architecture that bypasses the VFS layer and exposes functionality 
-that isn't necessarily sane. For example, reiser4 used to have (perhaps 
-still does) these cool files that can be both directories and links, and I 
-don't mind that at all, but I _do_ mind the fact that when Al Viro (long 
-long ago) pointed out serious locking issues with them, those seemed to be 
-totally brushed away.
+> We 
+>already have exactly the plugin interface we need, and it literally _is_ 
+>the VFS interfaces - you can plug in your own filesystems with 
+>"register_filesystem()", which in turn indirectly allows you to plug in 
+>your per-file and per-directory operations for things like lookup etc.
+>
+>If that isn't enough, then the filesystem shouldn't make its own internal 
+>plug-in architecture that bypasses the VFS layer and exposes functionality 
+>that isn't necessarily sane. For example, reiser4 used to have (perhaps 
+>still does) these cool files that can be both directories and links, and I 
+>don't mind that at all, but I _do_ mind the fact that when Al Viro (long 
+>long ago) pointed out serious locking issues with them, those seemed to be 
+>totally brushed away.
+>  
+>
+We disabled them, and we won't enable them until them until the bug is
+fixed.  It is fixable, but not within this year's programmer resources
+to fix it.  I thank him for pointing out the bug, and it is not trivial
+to fix it.
 
-So as far as I'm concerned, the problem with reiser4 is that it hasn't 
-tried to work with the VFS people. Now, I realize that the main VFS people 
-aren't always easy to work with (Al and Christoph, take a bow), but that 
-doesn't really change the basic facts. Al in particular is _always_ right. 
-I don't think I've ever had the cojones to argue with Al..
+>I don't think I've ever had the cojones to argue with Al..
+>  
+>
+Linux needs all kinds of people, not just the kind that can audit
+locking and copy Plan 9 well (which was very valuable to do), but now
+that Linux is large in the market it also needs those who can take it
+where Plan 9 has not already been.   Why should we remain technology
+trailers instead of moving into the role of leaders?
 
-			Linus
+We have finite resources.  We can give you a working filesystem with
+roughly twice the IO performance of the next fastest you have that does
+not disturb other filesystems,.  (4x once the compression plugin is
+fully debugged).  It also fixes various V3 bugs without disturbing that
+code with deep fixes.  We cannot take every advantage reiser4 has and
+port it to every other filesystem in the form of genericized code as a
+prerequisite for going in, we just don't have the finances.  Without
+plugins our per file compression plugins and encryption plugins cannot
+work.  We can however let other filesystems use our code, and cooperate
+as they extend it and genericize it for their needs.  Imposing code on
+other development teams is not how one best leads in open source, one
+sets an example and sees if others copy it.  That is what I propose to
+do with our plugins.  If no one copies, then we have harmed no one. 
+Reasonable?
+
+Hans
