@@ -1,78 +1,38 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: metadata plugins (was Re: the " 'official' point of view" expressed
  by kernelnewbies.org regarding reiser4 inclusion)
-Date: Sat, 29 Jul 2006 13:25:24 -0500
-Message-ID: <44CBA814.7000906@slaphack.com>
-References: <200607281402.k6SE245v004715@laptop13.inf.utfsm.cl> <44CA31D2.70203@slaphack.com> <Pine.LNX.4.64.0607280859380.4168@g5.osdl.org> <44C9FB93.9040201@namesys.com> <44CA6905.4050002@slaphack.com> <44CA126C.7050403@namesys.com> <44CA8771.1040708@slaphack.com> <44CABB87.3050509@namesys.com>
+Date: Sat, 29 Jul 2006 13:31:59 -0500
+Message-ID: <44CBA99F.2040306@slaphack.com>
+References: <200607281402.k6SE245v004715@laptop13.inf.utfsm.cl>	<44CA31D2.70203@slaphack.com>	<Pine.LNX.4.64.0607280859380.4168@g5.osdl.org>	<44C9FB93.9040201@namesys.com>	<44CA6905.4050002@slaphack.com>	<44CA126C.7050403@namesys.com>	<44CA8771.1040708@slaphack.com>	<44CABB87.3050509@namesys.com> <17611.21640.208153.492074@gargle.gargle.HOWL>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="------------enig87CFB6CF2548B78C9CC21640"
-Return-path: <reiserfs-list-return-29251-reiserfs=m.gmane.org@namesys.com>
+ boundary="------------enigB9E0BFBC06FA43D6B113FBF9"
+Return-path: <reiserfs-list-return-29252-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44CABB87.3050509@namesys.com>
+In-Reply-To: <17611.21640.208153.492074@gargle.gargle.HOWL>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Hans Reiser <reiser@namesys.com>
-Cc: Linus Torvalds <torvalds@osdl.org>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Jeff Garzik <jeff@garzik.org>, Andrew Morton <akpm@osdl.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Nikita Danilov <nikita@clusterfs.com>
+Cc: Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Jeff Garzik <jeff@garzik.org>, Andrew Morton <akpm@osdl.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
---------------enig87CFB6CF2548B78C9CC21640
+--------------enigB9E0BFBC06FA43D6B113FBF9
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-Hans Reiser wrote:
-> David Masover wrote:
->=20
->> If indeed it can be changed easily at all.  I think the burden is on
->> you to prove that you can change it to be more generic, rather than
->> saying "Well, we could do it later, if people want us to..."
->=20
-> None of the filesystems other than reiser4 have any interest in using
-> plugins, and this whole argument over how it should be in VFS is
-> nonsensical because nobody but us has any interest in using the
-> functionality.  The burden is on the generic code authors to prove that=
+Nikita Danilov wrote:
 
-> they will ever ever do anything at all besides complain.  Frankly, I
-> don't think they will.  I think they will never produce one line of cod=
-e.
+> As you see, ext2 code already has multiple file "plugins", with
+> persistent "plugin id" (stored in i_mode field of on-disk struct
+> ext2_inode).
 
-I think it's fair to say that 5-10 years from now, with different ext3
-maintainers, when the Reiser4 concept has proven itself, people will
-want plugins for ext3, and the ext3 developers will like the idea.
-
-ext* is one of those things that just refuses to die.  I use ext3 for my
-/boot fs, so that I don't have to patch Grub for Reiser4, and so that at
-least I can mess with the bootloader from any rescue CD if something
-goes wrong.  It's for kind of the same reason that Gentoo builds a
-32-bit Grub, even though I'm booting a 64-bit OS -- just in case.
-
-I also use ext2 for my initrd.
-
-There are other monstrosities that will likely never die, also.
-ISO9660, UDF, and VFAT probably all have worse storage characteristics
-than Reiser4, in that as I understand it, they won't pack multiple files
-into a block.  So Reiser4 might even make a good boot cd FS, storing
-things more efficiently -- but even if I'm right, those three
-filesystems will last forever, because they are currently well supported
-on every major OS, and I think one of ISO/UDF is required for DVDs.
-
-So for whatever reason someone's using another filesystem, even if all
-they need is the on-disk format (my reason for ext3 /boot and vfat on
-USB thumbdrives), I think it's reasonable to expect that they may one
-day want plugin functionality.  People who like Reiser filesystems will
-do just fine running Reiser4 with a (udf|iso|vfat) storage driver, but
-people who don't will just want the higher level stuff.
-
-You're probably right and this is years of work for something that may
-not be worth anything, but I think this is what is going through
-people's heads as they look at this plugin system.
-
-So see my comments about distro inclusion.
+Aha!  So here's another question:  Is it fair to ask Reiser4 to make its
+plugins generic, or should we be asking ext2/3 first?
 
 
---------------enig87CFB6CF2548B78C9CC21640
+--------------enigB9E0BFBC06FA43D6B113FBF9
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -81,19 +41,19 @@ Content-Disposition: attachment; filename="signature.asc"
 Version: GnuPG v1.4.4 (GNU/Linux)
 Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
 
-iQIVAwUBRMuoFHgHNmZLgCUhAQpqZA//RXqhw8qAmmIr5vZNt3jVXjHMf/gz+ryp
-EQCSOgAMiNRCrrXucu/B/0+2ymJ/3zyyHgFEsEZ6SuWupkTeIKEpFnV62B7aGuvA
-mZMN7owThyRIfpYI06y3gc0DQfaFWiKaQAOUjxUiju05wrecAaSmx1nfOHiguWtJ
-/rf+w9DaM9MdtsOjBWKqC5uxZZZY6A2csLsx781MSsqgIrvu/r5+M2BnuYMFnhgG
-cnKQm19kELfwEXVjOs1QbjF8eiYtHhYyqnMxYEBHCP9z0jH0Nlp+v7RBjetQ0Lxj
-5Ijnt+vuXgMh6fLdhJrEONAxfQf8l3/SbI5azpxufxFymQBcOcVw4eLDbKYJx2Vr
-PiTsBA8LuDb0+jCHEVH5qH8hrRn/xO+7ZTz91/SAJht42Y6I/ObwXRXlzqJdn/Mu
-Zs2JiMVfTtBR5irJ5tOgs8TQQwWfxYNVsY9dGDzNKxvf8qV+f/3cYBVJG2L9wXj9
-quRwkY95El0vDV5lKg2e867mW33ZTq3frWsycdljFtycNsRYxA/TjOBp6fivJVqn
-4Yr2X/CON1o6MsKmgccGSCLi0xPLSW45GfjtIBPQfC5otMxLkrVjBSsMKBPGOvTV
-PNRsNQYTOUgIUhGzA8/TXWJavrSRf4qukkExuTXlfpLzaAbAfakhGPOOx0DhsZ4Y
-woFH+EDDTaU=
-=+8SP
+iQIVAwUBRMupn3gHNmZLgCUhAQpg9w//QOGlEsogxzZ3lLeUV68odeka5lfGp2ai
+T6m07iECAKKHcm9Jw+vWuKAeZBr20Jrw0AYC163c7jdVA420VH0/8ou5IUsMRzGx
+9k5bT/QjSPu52432mrn3iY8pqGDu50j3hggCie4O1Fy0bMq2Aqg5D5tdw53/kRem
+VxWA4SP5dTIMJ/Vdf7PpC/CvZ2d6Hs4K70LzFW+ojTYB1ezM4LhvVJ3PSo8DE6TA
+nqkRUPuHfKtjoWXM77I1vcVckV4NEuW2ta3Lv8j8T8qivHwk4pt6IttoDKke+rsx
+fQBYluN2jRDFX0SxgqE75R/Q26l8aCvVac42qJ0oIHtVcskL4Q/Gp6qo96qRbWft
+TIe01aImVUUjVcA3PaJtwxa83Uzo9FRam9PHRrczQRysEWe7Spy3EJ2a1ExTSVUM
+aoe4SL23wpUntXPyVcOeBMyoPAWT4gHyKVGcJVVPW5CUDU/Kv0+KoQyai1Ped/7x
+sSNLNPAMxqpgJ91fN/SojM0ErijmHLaNI7sCL9mor23sPs3a0oUzyDA7wr7FxxqP
+Y6fEgIQ7KQ69j59UzvKTLnkKVmZjF8M/UuJrUfgIOx3u0EvHdq+qxEAJ1xFYSYgX
+W8xkfOKwHQd8dwnV2u+SdBEOEX47gtcqcRPabm5A5zNyD8ALMue2bp3dPPS2A3uz
+abCP6hKHon4=
+=xEQW
 -----END PGP SIGNATURE-----
 
---------------enig87CFB6CF2548B78C9CC21640--
+--------------enigB9E0BFBC06FA43D6B113FBF9--
