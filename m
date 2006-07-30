@@ -1,83 +1,46 @@
-From: Jesper Juhl <jesper.juhl@gmail.com>
-Subject: Re: 2.6.18-rc3 - ReiserFS - warning: vs-8115: get_num_ver: not directory or indirect item
-Date: Sun, 30 Jul 2006 16:53:43 +0200
-Message-ID: <200607301653.43919.jesper.juhl@gmail.com>
-References: <9a8748490607300608v65ce3bdcsbb47273bb82a2d6c@mail.gmail.com> <1154266306.13635.28.camel@localhost>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: metadata plugins (was Re: the " 'official' point of view" expressed
+ by kernelnewbies.org regarding reiser4 inclusion)
+Date: Sun, 30 Jul 2006 10:33:25 -0500
+Message-ID: <44CCD145.1040801@slaphack.com>
+References: <200607281402.k6SE245v004715@laptop13.inf.utfsm.cl> <44CA31D2.70203@slaphack.com> <Pine.LNX.4.64.0607280859380.4168@g5.osdl.org> <44C9FB93.9040201@namesys.com> <44CA6905.4050002@slaphack.com> <44CA126C.7050403@namesys.com> <44CA8771.1040708@slaphack.com> <44CABB87.3050509@namesys.com> <17611.21640.208153.492074@gargle.gargle.HOWL> <44CBA99F.2040306@slaphack.com> <op.tdhyo9utd4os1z@localhost>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29271-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-29272-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1154266306.13635.28.camel@localhost>
-Content-Disposition: inline
+In-Reply-To: <op.tdhyo9utd4os1z@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Redeeman <redeeman@metanurb.dk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans Reiser <reiser@namesys.com>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-2?Q?=A3ukasz_Mierzwa?= <prymitive@pcserwis.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-On Sunday 30 July 2006 15:31, Redeeman wrote:
-> On Sun, 2006-07-30 at 15:08 +0200, Jesper Juhl wrote:
-> > I just got a warning message with 2.6.18-rc3 that I've never seen before :
-> > 
-> >   ReiserFS: sda4: warning: vs-8115: get_num_ver: not directory or indirect item
-> > 
-> > The message showed up twice in dmesg during two parallel "make -j3"
-> > builds of the 2.6.18-rc3 kernel source in two sepperate directories.
-> > I've tried to reproduce it but without luck.
-> > 
-> > It would be nice if someone could tell me what the message means and
-> > wether or not I should be worried about it.
-> by default i would suggest worried mode.
-> 
-> what does fsck.reiserfs say?
-> > 
+=A3ukasz Mierzwa wrote:
+> Dnia Sat, 29 Jul 2006 20:31:59 +0200, David Masover <ninja@slaphack.com> =
 
-nothing much : 
+> napisa=B3:
+>=20
+>> Nikita Danilov wrote:
+>>
+>>> As you see, ext2 code already has multiple file "plugins", with
+>>> persistent "plugin id" (stored in i_mode field of on-disk struct
+>>> ext2_inode).
+>>
+>> Aha!  So here's another question:  Is it fair to ask Reiser4 to make its
+>> plugins generic, or should we be asking ext2/3 first?
+>>
+>=20
+> Doesn't iptables have plugins? Maybe we should make them generic so=20
+> other packet filters can use them ;)
 
-root@dragon:~# fsck.reiserfs /dev/sda4
-reiserfsck 3.6.19 (2003 www.namesys.com)
+Hey, yeah!  I mean, not everyone wants to run the ipchains emulation on=20
+top of iptables!  Some people really want to run ipchains with iptables=20
+plugins!
 
-*************************************************************
-** If you are using the latest reiserfsprogs and  it fails **
-** please  email bug reports to reiserfs-list@namesys.com, **
-** providing  as  much  information  as  possible --  your **
-** hardware,  kernel,  patches,  settings,  all reiserfsck **
-** messages  (including version),  the reiserfsck logfile, **
-** check  the  syslog file  for  any  related information. **
-** If you would like advice on using this program, support **
-** is available  for $25 at  www.namesys.com/support.html. **
-*************************************************************
+</sarcasm>
 
-Will read-only check consistency of the filesystem on /dev/sda4
-Will put log info to 'stdout'
-
-Do you want to run this program?[N/Yes] (note need to type Yes if you do):Yes
-###########
-reiserfsck --check started at Sun Jul 30 16:03:39 2006
-###########
-Replaying journal..
-Reiserfs journal '/dev/sda4' in blocks [18..8211]: 0 transactions replayed
-Checking internal tree..finished
-Comparing bitmaps..finished
-Checking Semantic tree:
-finished
-No corruptions found
-There are on the filesystem:
-        Leaves 139587
-        Internal nodes 937
-        Directories 33870
-        Other files 516740
-        Data block pointers 3875183 (1397 of them are zero)
-        Safe links 0
-###########
-reiserfsck finished at Sun Jul 30 16:18:47 2006
-###########
-root@dragon:~#
-
-
--- 
-Jesper Juhl <jesper.juhl@gmail.com>
-
-
+It is REALLY time for this discussion to get technical again, and to go=20
+way, way over my head.  And it's time for me to go build my MythTV box,=20
+and see if I can shake out some Reiser4 bugs.
