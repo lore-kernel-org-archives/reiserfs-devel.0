@@ -1,111 +1,89 @@
-From: "Horst H. von Brand" <vonbrand@inf.utfsm.cl>
-Subject: Re: metadata plugins (was Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion)
-Date: Sun, 30 Jul 2006 14:41:24 -0400
-Message-ID: <200607301841.k6UIfO1P004213@laptop13.inf.utfsm.cl>
-References: <reiser@namesys.com>
-Return-path: <reiserfs-list-return-29276-reiserfs=m.gmane.org@namesys.com>
+From: Laurent Riffard <laurent.riffard@free.fr>
+Subject: reiser4-2.6.18-rc2-mm1: possible circular locking dependency detected
+ in txn_end
+Date: Sun, 30 Jul 2006 20:57:25 +0200
+Message-ID: <44CD0115.4010608@free.fr>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29277-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
-   of "Fri, 28 Jul 2006 07:34:36 CST." <44CA126C.7050403@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: David Masover <ninja@slaphack.com>, Linus Torvalds <torvalds@osdl.org>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Jeff Garzik <jeff@garzik.org>, Andrew Morton <akpm@osdl.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Kernel development list <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
 
-Hans Reiser <reiser@namesys.com> wrote:
-> Let me put it from my perspective and stop pretending to be unbiased, so
-> others can see where I am coming from.
 
-OK, but /that/ was pretty clear from day one...
+=======================================================
+[ INFO: possible circular locking dependency detected ]
+-------------------------------------------------------
+mv/29012 is trying to acquire lock:
+ (&txnh->hlock){--..}, at: [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
 
->                                         No one was interested in our
-> plugins.
+but task is already holding lock:
+ (&atom->alock){--..}, at: [<e0c8a640>] txnh_get_atom+0xf6/0x39e
+[reiser4]
 
-Should tell you something...
+which lock already depends on the new lock.
 
->           We put the design on a website, spoke at conferences, no one
-> but users were interested.
 
-Again, should tell you something... "Look, a cool new gadget nobody ever
-imagined before" sure attracts lots of people. Intriguing. Play around a
-bit. Go for next "last novel gadget". Rinse, repeat.
+the existing dependency chain (in reverse order) is:
 
->                             No one would have conceived of having
-> plugins if not for us.
+-> #1 (&atom->alock){--..}:
+       [<c012ce2f>] lock_acquire+0x60/0x80
+       [<c0292968>] _spin_lock+0x19/0x28
+       [<e0c8bbd7>] try_capture+0x7cf/0x1cd7 [reiser4]
+       [<e0c786e1>] longterm_lock_znode+0x427/0x84f [reiser4]
+       [<e0ca55dc>] coord_by_handle+0x2be/0x7f7 [reiser4]
+       [<e0ca5f89>] coord_by_key+0x1e3/0x22d [reiser4]
+       [<e0c7dbd2>] insert_by_key+0x8f/0xe0 [reiser4]
+       [<e0cbf7f1>] write_sd_by_inode_common+0x361/0x61a [reiser4]
+       [<e0cbfce4>] create_object_common+0xf1/0xf6 [reiser4]
+       [<e0cbaebf>] create_vfs_object+0x51d/0x732 [reiser4]
+       [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
+       [<c015ed33>] vfs_mkdir+0x5a/0x9d
+       [<c0160f5e>] sys_mkdirat+0x88/0xc0
+       [<c0160fa6>] sys_mkdir+0x10/0x12
+       [<c0102c2d>] sysenter_past_esp+0x56/0x8d
 
-Perhaps because nobody else sees any sense in them?
+-> #0 (&txnh->hlock){--..}:
+       [<c012ce2f>] lock_acquire+0x60/0x80
+       [<c0292968>] _spin_lock+0x19/0x28
+       [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
+       [<e0c7f97d>] reiser4_exit_context+0x1c2/0x571 [reiser4]
+       [<e0cbb091>] create_vfs_object+0x6ef/0x732 [reiser4]
+       [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
+       [<c015ed33>] vfs_mkdir+0x5a/0x9d
+       [<c0160f5e>] sys_mkdirat+0x88/0xc0
+       [<c0160fa6>] sys_mkdir+0x10/0x12
+       [<c0102c2d>] sysenter_past_esp+0x56/0x8d
 
->                         Our plugins affect no one else.
+other info that might help us debug this:
 
-Wrong. Others will want plugins if they are any use, at the very least. And
-then there is the possibility of /massive/ maintainance problems ("So, you
-/are/ using Reiser 4, the broken file has attached plugin A version 5.3,
-and is reached through a "directory" with plugin D 3.4rc5, and ..."). /I/
-wouldn't want to be at the receiving end of bug reports which after a dozen
-rounds boil down to this.
+2 locks held by mv/29012:
+ #0:  (&inode->i_mutex/1){--..}, at: [<c015f50b>]
+lookup_create+0x1d/0x73
+ #1:  (&atom->alock){--..}, at: [<e0c8a640>]
+txnh_get_atom+0xf6/0x39e [reiser4]
 
->                                                          Our
-> self-contained code should not be delayed
+stack backtrace:
+ [<c0104df0>] show_trace+0xd/0x10
+ [<c0104e0c>] dump_stack+0x19/0x1d
+ [<c012bc62>] print_circular_bug_tail+0x59/0x64
+ [<c012cc3e>] __lock_acquire+0x814/0x9a5
+ [<c012ce2f>] lock_acquire+0x60/0x80
+ [<c0292968>] _spin_lock+0x19/0x28
+ [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
+ [<e0c7f97d>] reiser4_exit_context+0x1c2/0x571 [reiser4]
+ [<e0cbb091>] create_vfs_object+0x6ef/0x732 [reiser4]
+ [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
+ [<c015ed33>] vfs_mkdir+0x5a/0x9d
+ [<c0160f5e>] sys_mkdirat+0x88/0xc0
+ [<c0160fa6>] sys_mkdir+0x10/0x12
+ [<c0102c2d>] sysenter_past_esp+0x56/0x8d
 
-Not your call to make.
-
->                                           because other people delayed
-> getting interested in our ideas and now they don't want us to have an
-> advantage from leading.
-
-Your problem, not Linux'.
-
->                          If they want to some distant day implement
-> generic plugins, for which they have written not one line of code to
-> date, fine, we'll use it when it exists, but right now those who haven't
-> coded should get out of the way of people with working code.
-
-But they are! Just branch the kernel, and be done with it.
-
->                                                               It is not
-> fair or just to do otherwise.
-
-/You/ are asking the kernel developers for a /huge/ favor. Even totally go
-out of their ways, and acting contrary to their set ways and beliefs.
-Saying "no" to that can't be called "unfair"...
-
->                                It also prevents users from getting
-> advances they could be getting today, for no reason.
-
-OK, so you have /never/ seen any reasons given here for not placing Reiser
-4 into the kernel? Strange...
-
->                                                       Our code will not
-> be harder to change once it is in the kernel, it will be easier, because
-> there will be more staff funded to work on it.
-
-Right. Just like Reiser 3 right now.
-
-> As for this "we are all too grand to be bothered with money to feed our
-> families" business, building a system in which those who contribute can
-> find a way to be rewarded is what managers do.   Free software
-> programmers may be willing to live on less than others, but they cannot
-> live on nothing, and code that does not ever ship means living on
-> nothing.
-
-Then go do something else...
-
-> If reiser4 is delayed enough, for reasons that have nothing to do with
-> its needs, and without it having encumbered anyone else, it won't be
-> ahead of the other filesystems when it ships.
-
-How is that important in any way for the Linux kernel? This is not (and has
-not been for quite some time now) an experimental operating system. And it
-has /never/ been a dumpling ground for the next grand idea, it has always
-been about sound engineering.
+(Linux antares.localdomain 2.6.18-rc2-mm1 #77 Sun Jul 30 15:09:34
+CEST 2006 i686 AMD Athlon(TM) XP 1600+ unknown GNU/Linux)
 -- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
-
+laurent
