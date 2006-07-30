@@ -1,50 +1,38 @@
-From: "Jesper Juhl" <jesper.juhl@gmail.com>
-Subject: Re: possible recursive locking detected - while running fs operations in loops - 2.6.18-rc2-git5
-Date: Sun, 30 Jul 2006 00:18:50 +0200
-Message-ID: <9a8748490607291518m59573244wac00486a64f6385b@mail.gmail.com>
-References: <9a8748490607251516j1433306ek9c64cc84c0838f7b@mail.gmail.com>
-	 <20060725232924.GU6452@schatzie.adilger.int>
+From: =?utf-8?Q?Maciej_So=C5=82tysiak?= <pysiak.satriani@wp.pl>
+Subject: Re: metadata plugins (was Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion)
+Date: Sun, 30 Jul 2006 02:45:39 +0200
+Message-ID: <1986618636.20060730024539@wp.pl>
+References: <200607281402.k6SE245v004715@laptop13.inf.utfsm.cl>  <44CA31D2.70203@slaphack.com>  <Pine.LNX.4.64.0607280859380.4168@g5.osdl.org>  <44C9FB93.9040201@namesys.com> <44CA6905.4050002@slaphack.com>  <44CA126C.7050403@namesys.com> <44CA8771.1040708@slaphack.com>  <44CABB87.3050509@namesys.com> <1154164364.2903.10.camel@laptopd505.fenrus.org> <44CBA4BF.80301@slaphack.com>
+Reply-To: =?utf-8?Q?Maciej_So=C5=82tysiak?= <pysiak.satriani@wp.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29256-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29257-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060725232924.GU6452@schatzie.adilger.int>
-Content-Disposition: inline
+In-Reply-To: <44CBA4BF.80301@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jesper Juhl <jesper.juhl@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans Reiser <reiser@namesys.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Al Viro <viro@ftp.linux.org.uk>, reiserfs-dev@namesys.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: David Masover <ninja@slaphack.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-On 26/07/06, Andreas Dilger <adilger@clusterfs.com> wrote:
-> On Jul 26, 2006  00:16 +0200, Jesper Juhl wrote:
-> > What I did to provoke it was to run 6 different xterms (with a bash
-> > shell) with the following loops in them in a test directory that was
-> > initially empty :
-> >
-> > xterm1:   while true; do mkdir a; done
-> > xterm2:   while true; do rmdir a; done
-> > xterm3:   while true; do touch a/foo; done
-> > xterm4:   while true; do find .; done
-> > xterm5:   while true; do sync; sleep 1; done
-> > xterm6:   while true; do rm -r a; done
->
-> See racer test at ftp.lustre.org/pub/benchmarks/racer-lustre.tar.gz
->
-> It does the above, but a bunch more things and is a truly pathalogical
-> test script that does lots of "stupid user tricks", unlike normal tests
-> which are only doing operations that expect to be successful.
->
-> PS - during the racer.sh test run "rm" is known to segfault after hitting
->      an internal assertion, nobody is sure why.
-> PPS- I don't know who wrote this program, it was originally posted by
->      someone not the author to linux-fsdevel or something.
->
+Hello David,
 
-Thanks. That's a nice little test suite.
+Saturday, July 29, 2006, 8:11:11 PM, you wrote:
+> What's more, many distros patch their kernels extensively.  They listen
+> to their users, too.  So if there are a lot of users wanting this to be
+> in the kernel, let them complain -- loudly -- to their distro to patch
+> for Reiser4.
+Hmm, what about linspire / freespire ? Linsire is a proud reiser4 debugging
+sponsor as the website (http://www.namesys.com) says.
+
+Wouldn't they want to include reiser4 in their distro first?
+
+I removed the busy people from CC to save their time reading this.
 
 -- 
-Jesper Juhl <jesper.juhl@gmail.com>
-Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
-Plain text mails only, please      http://www.expita.com/nomime.html
+Best regards,
+Maciej
+
+
