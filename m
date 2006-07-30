@@ -1,89 +1,49 @@
-From: Laurent Riffard <laurent.riffard@free.fr>
-Subject: reiser4-2.6.18-rc2-mm1: possible circular locking dependency detected
- in txn_end
-Date: Sun, 30 Jul 2006 20:57:25 +0200
-Message-ID: <44CD0115.4010608@free.fr>
+From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe@gramoulle.com>
+Subject: Re: 2.6.18-rc3 - ReiserFS - warning: vs-8115: get_num_ver: not
+ directory or indirect item
+Date: Sun, 30 Jul 2006 22:37:26 +0200
+Message-ID: <20060730203726.E5F7E16D7@philou.gramoulle.local>
+References: <9a8748490607300608v65ce3bdcsbb47273bb82a2d6c@mail.gmail.com>
+	<p737j1v3sum.fsf@verdi.suse.de>
+	<9a8748490607301039k1057da87i237ee42e83f8ef4b@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29277-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29278-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <9a8748490607301039k1057da87i237ee42e83f8ef4b@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Kernel development list <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
 
-=======================================================
-[ INFO: possible circular locking dependency detected ]
--------------------------------------------------------
-mv/29012 is trying to acquire lock:
- (&txnh->hlock){--..}, at: [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
+Hello Jesper,
 
-but task is already holding lock:
- (&atom->alock){--..}, at: [<e0c8a640>] txnh_get_atom+0xf6/0x39e
-[reiser4]
+On Sun, 30 Jul 2006 19:39:07 +0200
+"Jesper Juhl" <jesper.juhl@gmail.com> wrote:
 
-which lock already depends on the new lock.
+  | they don't seem to have caused any trouble/corruption here, so if you
+  | haven't experienced any problems either I think I'll relax and just
+  | wait for an explanation from some reiserfs folks.
+  | 
+  | Thank you for replying - nice to know that I'm not the only one seeing
+  | this and that it's not something that has caused massive troubles for
+  | someone else.
 
+I reported such a message back in May 2004 ( kernel 2.6.6-rc3 ), to which 
+Vladimir replied :
 
-the existing dependency chain (in reverse order) is:
+On Thu, 06 May 2004 14:43:22 +0400
+Vladimir Saveliev <vs@namesys.com> wrote:
 
--> #1 (&atom->alock){--..}:
-       [<c012ce2f>] lock_acquire+0x60/0x80
-       [<c0292968>] _spin_lock+0x19/0x28
-       [<e0c8bbd7>] try_capture+0x7cf/0x1cd7 [reiser4]
-       [<e0c786e1>] longterm_lock_znode+0x427/0x84f [reiser4]
-       [<e0ca55dc>] coord_by_handle+0x2be/0x7f7 [reiser4]
-       [<e0ca5f89>] coord_by_key+0x1e3/0x22d [reiser4]
-       [<e0c7dbd2>] insert_by_key+0x8f/0xe0 [reiser4]
-       [<e0cbf7f1>] write_sd_by_inode_common+0x361/0x61a [reiser4]
-       [<e0cbfce4>] create_object_common+0xf1/0xf6 [reiser4]
-       [<e0cbaebf>] create_vfs_object+0x51d/0x732 [reiser4]
-       [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
-       [<c015ed33>] vfs_mkdir+0x5a/0x9d
-       [<c0160f5e>] sys_mkdirat+0x88/0xc0
-       [<c0160fa6>] sys_mkdir+0x10/0x12
-       [<c0102c2d>] sysenter_past_esp+0x56/0x8d
+  | I guess that warning became obsolete when Oleg <green@clusterfs.com>
+  | added possibility to insert long indirect items.
 
--> #0 (&txnh->hlock){--..}:
-       [<c012ce2f>] lock_acquire+0x60/0x80
-       [<c0292968>] _spin_lock+0x19/0x28
-       [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
-       [<e0c7f97d>] reiser4_exit_context+0x1c2/0x571 [reiser4]
-       [<e0cbb091>] create_vfs_object+0x6ef/0x732 [reiser4]
-       [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
-       [<c015ed33>] vfs_mkdir+0x5a/0x9d
-       [<c0160f5e>] sys_mkdirat+0x88/0xc0
-       [<c0160fa6>] sys_mkdir+0x10/0x12
-       [<c0102c2d>] sysenter_past_esp+0x56/0x8d
+Then Hans asked for that warning to be removed, and i guess it must have slipped through
+the TODO list :)
 
-other info that might help us debug this:
+Thanks,
 
-2 locks held by mv/29012:
- #0:  (&inode->i_mutex/1){--..}, at: [<c015f50b>]
-lookup_create+0x1d/0x73
- #1:  (&atom->alock){--..}, at: [<e0c8a640>]
-txnh_get_atom+0xf6/0x39e [reiser4]
-
-stack backtrace:
- [<c0104df0>] show_trace+0xd/0x10
- [<c0104e0c>] dump_stack+0x19/0x1d
- [<c012bc62>] print_circular_bug_tail+0x59/0x64
- [<c012cc3e>] __lock_acquire+0x814/0x9a5
- [<c012ce2f>] lock_acquire+0x60/0x80
- [<c0292968>] _spin_lock+0x19/0x28
- [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
- [<e0c7f97d>] reiser4_exit_context+0x1c2/0x571 [reiser4]
- [<e0cbb091>] create_vfs_object+0x6ef/0x732 [reiser4]
- [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
- [<c015ed33>] vfs_mkdir+0x5a/0x9d
- [<c0160f5e>] sys_mkdirat+0x88/0xc0
- [<c0160fa6>] sys_mkdir+0x10/0x12
- [<c0102c2d>] sysenter_past_esp+0x56/0x8d
-
-(Linux antares.localdomain 2.6.18-rc2-mm1 #77 Sun Jul 30 15:09:34
-CEST 2006 i686 AMD Athlon(TM) XP 1600+ unknown GNU/Linux)
--- 
-laurent
+Philippe
