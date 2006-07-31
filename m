@@ -1,87 +1,82 @@
 From: Dan Oglesby <doglesby@teleformix.com>
 Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
 	regarding reiser4 inclusion
-Date: Mon, 31 Jul 2006 12:44:22 -0500
-Message-ID: <1154367862.7964.47.camel@localhost>
+Date: Mon, 31 Jul 2006 12:46:57 -0500
+Message-ID: <1154368017.7964.50.camel@localhost>
 References: <1153760245.5735.47.camel@ipso.snappymail.ca>
 	 <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl>
 	 <20060731125846.aafa9c7c.reiser4@blinkenlights.ch>
 	 <20060731144736.GA1389@merlin.emma.line.org>
 	 <20060731175958.1626513b.reiser4@blinkenlights.ch>
-	 <20060731162224.GJ31121@lug-owl.de> <1154364421.7964.22.camel@localhost>
-	 <20060731171620.GL31121@lug-owl.de>
+	 <20060731162224.GJ31121@lug-owl.de>
+	 <Pine.LNX.4.64.0607311842120.13492@nedra.edsons.demon.nl>
+	 <20060731173239.GO31121@lug-owl.de>
 Reply-To: doglesby@teleformix.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29308-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29309-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060731171620.GL31121@lug-owl.de>
+In-Reply-To: <20060731173239.GO31121@lug-owl.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Jan-Benedict Glaw <jbglaw@lug-owl.de>
-Cc: Adrian Ulrich <reiser4@blinkenlights.ch>, Matthias Andree <matthias.andree@gmx.de>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Cc: Rudy Zijlstra <rudy@edsons.demon.nl>, Adrian Ulrich <reiser4@blinkenlights.ch>, Matthias Andree <matthias.andree@gmx.de>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-On Mon, 2006-07-31 at 19:16 +0200, Jan-Benedict Glaw wrote:
-> On Mon, 2006-07-31 11:47:00 -0500, Dan Oglesby <doglesby@teleformix.com> wrote:
-> > On Mon, 2006-07-31 at 18:22 +0200, Jan-Benedict Glaw wrote:
-> > > On Mon, 2006-07-31 17:59:58 +0200, Adrian Ulrich <reiser4@blinkenlights.ch> wrote:
+On Mon, 2006-07-31 at 19:32 +0200, Jan-Benedict Glaw wrote:
+> On Mon, 2006-07-31 18:44:33 +0200, Rudy Zijlstra <rudy@edsons.demon.nl> wrote:
+> > On Mon, 31 Jul 2006, Jan-Benedict Glaw wrote:
+> > > On Mon, 2006-07-31 17:59:58 +0200, Adrian Ulrich 
+> > > <reiser4@blinkenlights.ch> wrote:
 > > > > A colleague of mine happened to create a ~300gb filesystem and started
 > > > > to migrate Mailboxes (Maildir-style format = many small files (1-3kb))
 > > > > to the new LUN. At about 70% the filesystem ran out of inodes; Not a
+> > >
 > > > So preparation work wasn't done.
 > > 
-> > As someone who is currently planning to migrate ~100GB of stored mail to
-> > the Maildirs format, it was pretty clear early on that EXT3 would not
-> > cut it (from past and current experiences), and not just for the sake of
-> > calculating inodes.
+> > Of course you are right. Preparation work was not fully done. And using 
+> > ext1 would also have been possible. I suspect you are still using ext1, 
+> > cause with proper preparation it is perfectly usable.
 > 
-> Uh?  Where did you face a problem there?
+> Oh, and before people start laughing at me, here are some personal or
+> friend's experiences with different filesystems:
 > 
-
-Past experiences dealing with systems that generate several thousand to
-tens of thousands of files a day, adding up to well in the millions over
-the course of normal production (this is not for a mail server, BTW).
-Once we got close to a million files, filesystem transactions started
-bogging the system, driving the load over 50.  Simply switching to
-ReiserFS v3 allowed us to go well past the number of files EXT3 could
-handle reasonably and the max load stayed right around the number of
-CPUs the system contained (typically 8).
-
-There is a LOT going on with these systems, not just filesystem
-transactions.  EXT3 does not do well in our environment at all.
-
-> With maildir, you shouldn't face any problems IMO. Even users with
-> zillions of mails should work properly with the dir_index stuff:
+>   * reiser3: A HDD containing a reiser3 filesystem was tried to be
+>     booted on a machine that fucked up DMA writes. Fortunately, it
+>     crashed really soon (right after going for read-write.)  After
+>     rebooting the HDD on a sane PeeCee, it refused to boot. Starting
+>     off some rescue system showed an _empty_ root filesystem.
 > 
-> 	tune2fs -O dir_index /dev/hdXX
+>   * A friend's XFS data partition (portable USB/FireWire HDD) once
+>     crashed due to being hot-unplugged off the USB.  The in-kernel XFS
+>     driver refused to mount that thing again, and the tools also
+>     refused to fix any errors. (Don't ask, no details at my hands...)
 > 
-> or alternatively (to start that for already existing directories):
+>   * JFS just always worked for me. Though I've never ever had a broken
+>     HDD where it (or it's tools) could have shown how well-done they
+>     were, so from a crash-recovery point of view, it's untested.
 > 
-> 	e2fsck -fD /dev/hdXX
+>   * Being a regular ext3 user, I had lots of broken HDDs containing
+>     ext3 filesystems. For every single case, it has been easy fixing
+>     the filesystem after cloning. Just _once_, fsck wasn't able to fix
+>     something, so I did it manually with some disk editor. This worked
+>     well because the on-disk data structures are actually as simple as
+>     they are.
 > 
-> 
-
-I've been tuning EXT3 to see what performance I can get for the mail
-server, and it's just not there compared to ReiserFS with minimal
-tuning.
-
-> Of course, you'll always face a problem with lots of files in one
-> directory at getdents() time (eg. opendir()/readdir()/closedir()), but
-> this is a common limit for all filesystems.
+> ext3 always worked well for me, so why should I abandon it?
 > 
 > MfG, JBG
-> 
 
-Of course, but the issue is EXT3 does this a whole lot worse than
-ReiserFS v3 from my experiences.
+I've lost EXT2 and EXT3 filesystems from machines with no bad hardware
+(power loss during writes).
 
-At any rate, that's about all I have to say about this issue.  I'll be
-patiently waiting to see ReiserFS v4 included in the main kernel, so I
-have less hoops to jump through to implement the latest and greatest
-from Namesys.
+I've recovered all but a handful of files from a RAID-5 array running
+ReiserFS v3 that had two drives fail in rapid succession with bad
+sectors.
+
+Sometimes you're lucky, sometimes you're not.
 
 --Dan
 
