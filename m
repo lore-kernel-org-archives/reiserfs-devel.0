@@ -1,60 +1,86 @@
-From: "Horst H. von Brand" <vonbrand@inf.utfsm.cl>
-Subject: Re: metadata plugins (was Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion)
-Date: Mon, 31 Jul 2006 09:28:38 -0400
-Message-ID: <200607311328.k6VDScg6003611@laptop13.inf.utfsm.cl>
-References: <reiser@namesys.com>
-Return-path: <reiserfs-list-return-29291-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
-   of "Fri, 28 Jul 2006 19:36:07 CST." <44CABB87.3050509@namesys.com> 
+From: Matthias Andree <matthias.andree@gmx.de>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
+Date: Mon, 31 Jul 2006 16:47:36 +0200
+Message-ID: <20060731144736.GA1389@merlin.emma.line.org>
+References: <1153760245.5735.47.camel@ipso.snappymail.ca> <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl> <20060731125846.aafa9c7c.reiser4@blinkenlights.ch>
+Mime-Version: 1.0
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750892AbWGaOro@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20060731125846.aafa9c7c.reiser4@blinkenlights.ch>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: David Masover <ninja@slaphack.com>, Linus Torvalds <torvalds@osdl.org>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Jeff Garzik <jeff@garzik.org>, Andrew Morton <akpm@osdl.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+To: Adrian Ulrich <reiser4@blinkenlights.ch>
+Cc: "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, ipso@snappymail.ca, matthias.andree@gmx.de, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Hans Reiser <reiser@namesys.com> wrote:
-> David Masover wrote:
-> > If indeed it can be changed easily at all.  I think the burden is on
-> > you to prove that you can change it to be more generic, rather than
-> > saying "Well, we could do it later, if people want us to..."
+Adrian Ulrich schrieb am 2006-07-31:
 
-> None of the filesystems other than reiser4 have any interest in using
-> plugins,
+> > > And EXT3 imposes practical limits that ReiserFS doesn't as well. The big
+> > > one being a fixed number of inodes that can't be adjusted on the fly,
+> > 
+> > Right. Plan ahead.
+> 
+> Ok: Assume that i've read the mke2fs manpage and added more inodes to
+> my filesystem.
+> 
+> So: What happens if i need to grow my filesystem by 200% after 1-2
+> years? Can i add more inodes to Ext3 on-the-fly ?
 
-Then they are probably nonsense...
+Since you "grow", you'll be using resize2fs (or growfs or mkfs -G for
+UFS). resize2fs and the other tools do exactly that: add inodes - and
+you could easily have told this either from reading the resize2fs code
+or just trying it on a temp file:
 
->          and this whole argument over how it should be in VFS is
-> nonsensical because nobody but us has any interest in using the
-> functionality.  The burden is on the generic code authors to prove that
-> they will ever ever do anything at all besides complain.  Frankly, I
-> don't think they will.  I think they will never produce one line of code.
+  -- create file system
+  dd if=/dev/zero of=/tmp/foo bs=1k count=50000
+  /sbin/mke2fs -F -j /tmp/foo
 
-It is /your/ burden to show that they are worthwhile. And if they are, thay
-aren't worthwhile only in your pet filesystem...
+  -- check no. of inodes
+  /sbin/tune2fs -l /tmp/foo | grep -i inode | head -2
+  # Inode count:              12544
+  # Free inodes:              12533
 
-> Please cite one ext3 developer who is signed up to implement ext3 using
-> plugins if they are supported by VFS.
+  -- resize
+  /sbin/e2fsck -f /tmp/foo
+  dd if=/dev/zero bs=1k count=50000 >>/tmp/foo
+  /sbin/resize2fs /tmp/foo
 
-Have you asked?
+  -- check no. of inodes
+  /sbin/tune2fs -l /tmp/foo | grep -i inode
+  # Inode count:              23296
+  # Free inodes:              23285
 
-> >> .  It also prevents users from getting
-> >> advances they could be getting today, for no reason.
+Trying the same after mke2fs -b 1024 -i 1024 shows that the inode
+density will continue to be respected.
 
-> > It prevents users from doing nothing.
+FreeBSD 6.1's growfs(8) increases the number of inodes. This is
+documented to work since 4.4.
 
-> Most users not only cannot patch a kernel, they don't know what a patch
-> is.  It most certainly does. 
+Solaris 8's mkfs -G also increases the number of inodes and apparently
+also works for mounted file systems.
 
-Simple answer: Fork the kernel with all your grandiose plans, and see which
-one wins. Open source, remember? It is not as if your only chance is to get
-it into the official kernel.
+This looks rather like an education issue rather than a technical limit.
+
+> A filesystem with a fixed number of inodes (= not readjustable while
+> mounted) is ehr.. somewhat unuseable for a lot of people with
+> big and *flexible* storage needs (Talking about NetApp/EMC owners)
+
+Which is untrue at least for Solaris, which allows resizing a life file
+system. FreeBSD and Linux require an unmount.
+
+> Why are a lot of Solaris-people using (buying) VxFS? Maybe because UFS
+> also has such silly limitations? (..and performs awkward with trillions
+> of files..?..)
+
+Well, such "silly limitations"... looks like they are mostly hot air
+spewn by marketroids that need to justify people spending money on their
+new filesystem.
+
+The only problem remains if you grossly overestimate the average file
+size and with it underestimate the number of inodes needed. But even
+then, I'd be interested to know if that's a real problem for systems
+such as ZFS.
+
 -- 
-Dr. Horst H. von Brand                   User #22616 counter.li.org
-Departamento de Informatica                     Fono: +56 32 654431
-Universidad Tecnica Federico Santa Maria              +56 32 654239
-Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
+Matthias Andree
