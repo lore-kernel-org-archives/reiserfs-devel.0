@@ -1,71 +1,57 @@
 From: Jan-Benedict Glaw <jbglaw@lug-owl.de>
 Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
-Date: Mon, 31 Jul 2006 20:36:20 +0200
-Message-ID: <20060731183620.GP31121@lug-owl.de>
-References: <1153760245.5735.47.camel@ipso.snappymail.ca> <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl> <20060731125846.aafa9c7c.reiser4@blinkenlights.ch> <20060731144736.GA1389@merlin.emma.line.org> <20060731175958.1626513b.reiser4@blinkenlights.ch> <20060731162224.GJ31121@lug-owl.de> <44CE3369.8040704@slaphack.com>
+Date: Mon, 31 Jul 2006 20:43:14 +0200
+Message-ID: <20060731184314.GQ31121@lug-owl.de>
+References: <1153760245.5735.47.camel@ipso.snappymail.ca> <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl> <20060731125846.aafa9c7c.reiser4@blinkenlights.ch> <20060731144736.GA1389@merlin.emma.line.org> <20060731175958.1626513b.reiser4@blinkenlights.ch> <20060731162224.GJ31121@lug-owl.de> <Pine.LNX.4.64.0607311842120.13492@nedra.edsons.demon.nl> <20060731173239.GO31121@lug-owl.de> <20060731181120.GA9667@merlin.emma.line.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="s3R87C3fwYeCSZ0b"
-Return-path: <reiserfs-list-return-29312-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+	protocol="application/pgp-signature"; boundary="LkYZvX65tyO4RZtj"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1030309AbWGaSnQ@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <44CE3369.8040704@slaphack.com>
+In-Reply-To: <20060731181120.GA9667@merlin.emma.line.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: David Masover <ninja@slaphack.com>
-Cc: Adrian Ulrich <reiser4@blinkenlights.ch>, Matthias Andree <matthias.andree@gmx.de>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Rudy Zijlstra <rudy@edsons.demon.nl>, Adrian Ulrich <reiser4@blinkenlights.ch>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
---s3R87C3fwYeCSZ0b
+
+--LkYZvX65tyO4RZtj
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2006-07-31 11:44:25 -0500, David Masover <ninja@slaphack.com> wrote:
-> Jan-Benedict Glaw wrote:
-> > On Mon, 2006-07-31 17:59:58 +0200, Adrian Ulrich=20
-> > <reiser4@blinkenlights.ch> wrote:
-> > > A colleague of mine happened to create a ~300gb filesystem and started
-> > > to migrate Mailboxes (Maildir-style format =3D many small files (1-3k=
-b))
-> > > to the new LUN. At about 70% the filesystem ran out of inodes; Not a
-> >
-> > So preparation work wasn't done.
+On Mon, 2006-07-31 20:11:20 +0200, Matthias Andree <matthias.andree@gmx.de>=
+ wrote:
+> Jan-Benedict Glaw schrieb am 2006-07-31:
+> >   * reiser3: A HDD containing a reiser3 filesystem was tried to be
+> >     booted on a machine that fucked up DMA writes. Fortunately, it
+> >     crashed really soon (right after going for read-write.)  After
+> >     rebooting the HDD on a sane PeeCee, it refused to boot. Starting
+> >     off some rescue system showed an _empty_ root filesystem.
 >=20
-> Let me put it this way -- You're back in college, and it's time to write=
-=20
-> a thesis.  You have a choice of software packages:
->=20
-> Package A:  You have to specify how many pages, and how many words,=20
-> you're likely to use before you start typing.  Guess too high, and=20
-> you'll print out a bunch of blank pages at the end.  Guess too low, and=
-=20
-> you'll run out of space and have to start over, copy and paste your=20
-> document back in, and hope it gets all the formatting right, which it=20
-> probably won't.
->=20
-> Package B:  Your document grows as you type.  When it's time to print,=20
-> only the pages you've actually written something on -- but all of the=20
-> pages you've actually written something on -- are printed.
->=20
-> All other things being equal, which would you choose?  Which one seems=20
-> more modern?
+> Massive hardware problems don't count. ext2/ext3 doesn't look much better=
+ in
+> such cases. I had a machine with RAM gone bad (no ECC - I wonder what
 
-:)  Well, given that TeX needs two (or even three!) runs to get all
-page references right, why should I choose MS Word, where you won't
-see that problem at all?
+They do! Very much, actually. These happen In Real Life, so I have to
+pay attention to them. Once you're in setups with > 10000 machines,
+everything counts. At some certain point, you can even use HDD's
+temperature sensors in old machines to diagnose dead fans.
+
+Everything that eases recovery for whatever reason is something you
+have to pay attention to. The simplicity of ext{2,3} is something I
+really fail to find proper words for. As well as the really good fsck.
+Once seen a SIGSEGV'ing fsck, you really don't want to go there.
 
 MfG, JBG
 
 --=20
        Jan-Benedict Glaw       jbglaw@lug-owl.de                +49-172-760=
 8481
- Signature of:                               If it doesn't work, force it.
- the second  :                      If it breaks, it needed replacing anywa=
-y.
+ Signature of:                       Eine Freie Meinung in einem Freien Kopf
+ the second  :                     f=C3=BCr einen Freien Staat voll Freier =
+B=C3=BCrger.
 
---s3R87C3fwYeCSZ0b
+--LkYZvX65tyO4RZtj
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 Content-Disposition: inline
@@ -73,9 +59,9 @@ Content-Disposition: inline
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 
-iD8DBQFEzk2kHb1edYOZ4bsRAqEcAJ99by4eA0AfcVNx8N2TUf+rPghXsACbBmfL
-JYGJrTHXR0j9oSxtmU70Adg=
-=Bf+p
+iD8DBQFEzk9CHb1edYOZ4bsRAmsiAJwMqr7hsRDF1pxvmPOhHiY+6HO51ACeId1T
+3+MQfOpVL48J6jjeqK6I0m4=
+=D7WL
 -----END PGP SIGNATURE-----
 
---s3R87C3fwYeCSZ0b--
+--LkYZvX65tyO4RZtj--
