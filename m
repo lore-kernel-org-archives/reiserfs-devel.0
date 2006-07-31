@@ -1,43 +1,45 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
- regarding reiser4 inclusion
-Date: Mon, 31 Jul 2006 15:00:19 -0500
-Message-ID: <44CE6153.7090704@slaphack.com>
-References: <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl> <20060731125846.aafa9c7c.reiser4@blinkenlights.ch> <20060731144736.GA1389@merlin.emma.line.org> <20060731175958.1626513b.reiser4@blinkenlights.ch> <20060731162224.GJ31121@lug-owl.de> <Pine.LNX.4.64.0607311842120.13492@nedra.edsons.demon.nl> <20060731173239.GO31121@lug-owl.de> <20060731181120.GA9667@merlin.emma.line.org> <20060731184314.GQ31121@lug-owl.de> <20060731191712.GE17206@HAL_5000D.tc.ph.cox.net> <20060731192902.GS31121@lug-owl.de>
+From: Matthias Andree <matthias.andree@gmx.de>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
+Date: Mon, 31 Jul 2006 22:07:18 +0200
+Message-ID: <20060731200718.GA13257@merlin.emma.line.org>
+References: <20060731175958.1626513b.reiser4@blinkenlights.ch> <20060731165406.GA8526@merlin.emma.line.org> <20060731195621.367ed702.reiser4@blinkenlights.ch>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29322-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29323-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060731192902.GS31121@lug-owl.de>
+Content-Disposition: inline
+In-Reply-To: <20060731195621.367ed702.reiser4@blinkenlights.ch>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Clay Barnes <clay.barnes@gmail.com>, Rudy Zijlstra <rudy@edsons.demon.nl>, Adrian Ulrich <reiser4@blinkenlights.ch>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Adrian Ulrich <reiser4@blinkenlights.ch>
+Cc: Matthias Andree <matthias.andree@gmx.de>, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Jan-Benedict Glaw wrote:
-> On Mon, 2006-07-31 12:17:12 -0700, Clay Barnes <clay.barnes@gmail.com> wrote:
->> On 20:43 Mon 31 Jul     , Jan-Benedict Glaw wrote:
->>> On Mon, 2006-07-31 20:11:20 +0200, Matthias Andree <matthias.andree@gmx.de> wrote:
->>>> Jan-Benedict Glaw schrieb am 2006-07-31:
-> [Crippled DMA writes]
->>>> Massive hardware problems don't count. ext2/ext3 doesn't look much better in
->>>> such cases. I had a machine with RAM gone bad (no ECC - I wonder what
->>> They do! Very much, actually. These happen In Real Life, so I have to
->> I think what he meant was that it is unfair to blame reiser3 for data
->> loss in a massive failure situation as a case example by itself.  What
+Adrian Ulrich schrieb am 2006-07-31:
+
+> Ehr: Such a migration (on a very busy system) takes *some* time (weeks).
+> Re-Doing (migrate users back / recreate the FS / start again) the whole
+> thing isn't really an option..
+
+All the more important to think about FS requirements *before*
+newfs-ing if a quick "one day for rsync/star/dump+restore" isn't
+available. If you're hitting, for instance, the hash collision problem
+in reiser3, you're as dead as with a FS without inodes.
+
+> > > Have you ever seen VxFS or WAFL in action?
+> > 
+> > No I haven't. As long as they are commercial, it's not likely that I
+> > will.
 > 
-> Crippling a few KB of metadata in the ext{2,3} case probably wouldn't
-> fobar the filesystem...
+> Why?
 
-Probably.  By the time a few KB of metadata are corrupted, I'm reaching 
-for my backup.  I don't care what filesystem it is or how easy it is to 
-edit the on-disk structures.
+I'm trying to shift my focus away from computer administration and
+better file systems than old-style non-journalling, non-softupdates UFS
+are available today and more will follow.
 
-This isn't to say that having robust on-disk structures isn't a good 
-thing.  I have no idea how Reiser4 will hold up either way.  But 
-ultimately, what you want is the journaling (so power failure / crashes 
-still leave you in an OK state), backups (so when blocks go bad, you 
-don't care), and performance (so you can spend less money on hardware 
-and more money on backup hardware).
+Cc: list weeded out.
+
+-- 
+Matthias Andree
