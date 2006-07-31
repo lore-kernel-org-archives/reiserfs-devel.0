@@ -1,43 +1,32 @@
-From: "Jeff V. Merkey" <jmerkey@wolfmountaingroup.com>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
- regarding reiser4 inclusion
-Date: Mon, 31 Jul 2006 16:21:13 -0600
-Message-ID: <44CE8259.6090200@wolfmountaingroup.com>
-References: <1153760245.5735.47.camel@ipso.snappymail.ca>	 <20060731144736.GA1389@merlin.emma.line.org>	 <20060731175958.1626513b.reiser4@blinkenlights.ch>	 <20060731162224.GJ31121@lug-owl.de>	 <Pine.LNX.4.64.0607311842120.13492@nedra.edsons.demon.nl>	 <20060731173239.GO31121@lug-owl.de>	 <20060731181120.GA9667@merlin.emma.line.org>	 <20060731184314.GQ31121@lug-owl.de>	 <20060731191712.GE17206@HAL_5000D.tc.ph.cox.net>	 <1154374923.7230.99.camel@localhost.localdomain> <e692861c0607311400x412d2e6bv71f474ea959c9e00@mail.gmail.com> <44CE7C11.7020202@wolfmountaingroup.com> <44CE7DFD.7030903@wolfmountaingroup.com>
+From: Matthias Andree <matthias.andree@gmx.de>
+Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of view"
+ expressed by kernelnewbies.org regarding reiser4 inclusion]
+Date: Mon, 31 Jul 2006 23:54:57 +0200
+Message-ID: <44CE7C31.5090402@gmx.de>
+References: <20060731175958.1626513b.reiser4@blinkenlights.ch>	<200607311918.k6VJIqTN011066@laptop13.inf.utfsm.cl> <20060731225734.ecf5eb4d.reiser4@blinkenlights.ch>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29340-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <44CE7DFD.7030903@wolfmountaingroup.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751366AbWGaVzE@vger.kernel.org>
+In-Reply-To: <20060731225734.ecf5eb4d.reiser4@blinkenlights.ch>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Jeff V. Merkey" <jmerkey@wolfmountaingroup.com>
-Cc: Gregory Maxwell <gmaxwell@gmail.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Clay Barnes <clay.barnes@gmail.com>, Rudy Zijlstra <rudy@edsons.demon.nl>, Adrian Ulrich <reiser4@blinkenlights.ch>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Adrian Ulrich <reiser4@blinkenlights.ch>
+Cc: "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
+Adrian Ulrich wrote:
 
->
-> Correction,
->
-> That's "MediWiki" appliances.   Two many transposed acronyms...
->
-> www.wolfmountaingroup.com
->
-> :-)
->
-> Jeff
->
-And WMFS does not belong to the WolfMountainGroup any longer.  It has 
-been acquired by another company, so you won't see any info
-about it on the website.  It's has been rolled into another company.  I 
-can bundle it with appliances but it is no longer the property of
-Wolf Mountain Group.  WMG is a MediaWiki/Wikipedia Appliance company 
-that does Machine translations of Wikipedia into several
-Native American Languages.  The Translator is Linux and Windows based, 
-but WMFS has a new home now. 
+> See also: http://spam.workaround.ch/dull/postmark.txt
+> 
+> A quick'n'dirty ZFS-vs-UFS-vs-Reiser3-vs-Reiser4-vs-Ext3 'benchmark'
 
-Just to clarify. 
+Whatever Postmark does, this looks pretty besides the point.
 
-Jeff
+Are these actual transactions with the "D"urability guarantee?
+3000/s doesn't look too much like you're doing synchronous I/O (else
+figures around 70/s perhaps 100/s would be more adequate), and cache
+exercise is rather irrelevant for databases that manage real (=valuable)
+data...
+
+-- 
+Matthias Andree
