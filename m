@@ -1,70 +1,111 @@
-From: =?iso-8859-2?B?o3VrYXN6IE1pZXJ6d2E=?= <prymitive@pcserwis.net>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
-Date: Mon, 31 Jul 2006 23:21:42 +0200
-Message-ID: <op.tdkoagt5d4os1z@localhost>
-References: <1153760245.5735.47.camel@ipso.snappymail.ca> <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl> <20060731125846.aafa9c7c.reiser4@blinkenlights.ch> <20060731144736.GA1389@merlin.emma.line.org> <20060731175958.1626513b.reiser4@blinkenlights.ch> <20060731162224.GJ31121@lug-owl.de> <Pine.LNX.4.64.0607311842120.13492@nedra.edsons.demon.nl> <20060731173239.GO31121@lug-owl.de>
+From: Laurent Riffard <laurent.riffard@free.fr>
+Subject: Re: reiser4-2.6.18-rc2-mm1: possible circular locking dependency
+ detected in txn_end
+Date: Mon, 31 Jul 2006 23:29:02 +0200
+Message-ID: <44CE761E.8080809@free.fr>
+References: <44CD0115.4010608@free.fr> <1154375700.6460.125.camel@tribesman.namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-29334-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29335-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060731173239.GO31121@lug-owl.de>
+In-Reply-To: <1154375700.6460.125.camel@tribesman.namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; delsp="yes"; charset="iso-8859-1"
-To: Jan-Benedict Glaw <jbglaw@lug-owl.de>, LKML <linux-kernel@vger.kernel.org>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-Dnia Mon, 31 Jul 2006 19:32:39 +0200, Jan-Benedict Glaw =20
-<jbglaw@lug-owl.de> napisa=B3:
 
-> On Mon, 2006-07-31 18:44:33 +0200, Rudy Zijlstra <rudy@edsons.demon.nl>  =
+Le 31.07.2006 21:55, Vladimir V. Saveliev a =E9crit :
+> Hello
+>=20
+> What kind of load did you run on reiser4 at that time?
 
-> wrote:
->> On Mon, 31 Jul 2006, Jan-Benedict Glaw wrote:
->> > On Mon, 2006-07-31 17:59:58 +0200, Adrian Ulrich
->> > <reiser4@blinkenlights.ch> wrote:
->> > > A colleague of mine happened to create a ~300gb filesystem and =20
->> started
->> > > to migrate Mailboxes (Maildir-style format =3D many small files =20
->> (1-3kb))
->> > > to the new LUN. At about 70% the filesystem ran out of inodes; Not a
->> >
->> > So preparation work wasn't done.
+I just formatted a new 2GB Reiser4 FS, then I moved a whole ccache
+cache tree to this new FS (cache size was about 20~30 Mbytes).
+Something like:
+
+# mkfs.reiser4 /dev/vglinux1/ccache
+# mount -tauto -onoatime /dev/vglinux1/ccache /mnt/disk
+# mv ~laurent/.ccache/* /mnt/disk/
+
+
+> On Sun, 2006-07-30 at 20:57 +0200, Laurent Riffard wrote:
+>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+>> [ INFO: possible circular locking dependency detected ]
+>> -------------------------------------------------------
+>> mv/29012 is trying to acquire lock:
+>>  (&txnh->hlock){--..}, at: [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
 >>
->> Of course you are right. Preparation work was not fully done. And using
->> ext1 would also have been possible. I suspect you are still using ext1,
->> cause with proper preparation it is perfectly usable.
->
-> Oh, and before people start laughing at me, here are some personal or
-> friend's experiences with different filesystems:
->
->   * reiser3: A HDD containing a reiser3 filesystem was tried to be
->     booted on a machine that fucked up DMA writes. Fortunately, it
->     crashed really soon (right after going for read-write.)  After
->     rebooting the HDD on a sane PeeCee, it refused to boot. Starting
->     off some rescue system showed an _empty_ root filesystem.
->
->   * A friend's XFS data partition (portable USB/FireWire HDD) once
->     crashed due to being hot-unplugged off the USB.  The in-kernel XFS
->     driver refused to mount that thing again, and the tools also
->     refused to fix any errors. (Don't ask, no details at my hands...)
->
->   * JFS just always worked for me. Though I've never ever had a broken
->     HDD where it (or it's tools) could have shown how well-done they
->     were, so from a crash-recovery point of view, it's untested.
->
->   * Being a regular ext3 user, I had lots of broken HDDs containing
->     ext3 filesystems. For every single case, it has been easy fixing
->     the filesystem after cloning. Just _once_, fsck wasn't able to fix
->     something, so I did it manually with some disk editor. This worked
->     well because the on-disk data structures are actually as simple as
->     they are.
+>> but task is already holding lock:
+>>  (&atom->alock){--..}, at: [<e0c8a640>] txnh_get_atom+0xf6/0x39e
+>> [reiser4]
+>>
+>> which lock already depends on the new lock.
+>>
+>>
+>> the existing dependency chain (in reverse order) is:
+>>
+>> -> #1 (&atom->alock){--..}:
+>>        [<c012ce2f>] lock_acquire+0x60/0x80
+>>        [<c0292968>] _spin_lock+0x19/0x28
+>>        [<e0c8bbd7>] try_capture+0x7cf/0x1cd7 [reiser4]
+>>        [<e0c786e1>] longterm_lock_znode+0x427/0x84f [reiser4]
+>>        [<e0ca55dc>] coord_by_handle+0x2be/0x7f7 [reiser4]
+>>        [<e0ca5f89>] coord_by_key+0x1e3/0x22d [reiser4]
+>>        [<e0c7dbd2>] insert_by_key+0x8f/0xe0 [reiser4]
+>>        [<e0cbf7f1>] write_sd_by_inode_common+0x361/0x61a [reiser4]
+>>        [<e0cbfce4>] create_object_common+0xf1/0xf6 [reiser4]
+>>        [<e0cbaebf>] create_vfs_object+0x51d/0x732 [reiser4]
+>>        [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
+>>        [<c015ed33>] vfs_mkdir+0x5a/0x9d
+>>        [<c0160f5e>] sys_mkdirat+0x88/0xc0
+>>        [<c0160fa6>] sys_mkdir+0x10/0x12
+>>        [<c0102c2d>] sysenter_past_esp+0x56/0x8d
+>>
+>> -> #0 (&txnh->hlock){--..}:
+>>        [<c012ce2f>] lock_acquire+0x60/0x80
+>>        [<c0292968>] _spin_lock+0x19/0x28
+>>        [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
+>>        [<e0c7f97d>] reiser4_exit_context+0x1c2/0x571 [reiser4]
+>>        [<e0cbb091>] create_vfs_object+0x6ef/0x732 [reiser4]
+>>        [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
+>>        [<c015ed33>] vfs_mkdir+0x5a/0x9d
+>>        [<c0160f5e>] sys_mkdirat+0x88/0xc0
+>>        [<c0160fa6>] sys_mkdir+0x10/0x12
+>>        [<c0102c2d>] sysenter_past_esp+0x56/0x8d
+>>
+>> other info that might help us debug this:
+>>
+>> 2 locks held by mv/29012:
+>>  #0:  (&inode->i_mutex/1){--..}, at: [<c015f50b>]
+>> lookup_create+0x1d/0x73
+>>  #1:  (&atom->alock){--..}, at: [<e0c8a640>]
+>> txnh_get_atom+0xf6/0x39e [reiser4]
+>>
+>> stack backtrace:
+>>  [<c0104df0>] show_trace+0xd/0x10
+>>  [<c0104e0c>] dump_stack+0x19/0x1d
+>>  [<c012bc62>] print_circular_bug_tail+0x59/0x64
+>>  [<c012cc3e>] __lock_acquire+0x814/0x9a5
+>>  [<c012ce2f>] lock_acquire+0x60/0x80
+>>  [<c0292968>] _spin_lock+0x19/0x28
+>>  [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
+>>  [<e0c7f97d>] reiser4_exit_context+0x1c2/0x571 [reiser4]
+>>  [<e0cbb091>] create_vfs_object+0x6ef/0x732 [reiser4]
+>>  [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
+>>  [<c015ed33>] vfs_mkdir+0x5a/0x9d
+>>  [<c0160f5e>] sys_mkdirat+0x88/0xc0
+>>  [<c0160fa6>] sys_mkdir+0x10/0x12
+>>  [<c0102c2d>] sysenter_past_esp+0x56/0x8d
+>>
+>> (Linux antares.localdomain 2.6.18-rc2-mm1 #77 Sun Jul 30 15:09:34
+>> CEST 2006 i686 AMD Athlon(TM) XP 1600+ unknown GNU/Linux)
+>=20
 
-Is this some kind of "who lost more files on what fs" competition? What's  =
-
-the prize?
-Topic subject sugests that it should cover something else. Please, let's =20
-get back on track.
-First of all, it's about reiser4 so can't we forget about other =20
-filesystem's unless it's got something to do with reiser4 merge?
+--=20
+laurent
