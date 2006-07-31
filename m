@@ -1,64 +1,79 @@
-From: Matthias Andree <matthias.andree@gmx.de>
+From: Jan-Benedict Glaw <jbglaw@lug-owl.de>
 Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
-Date: Mon, 31 Jul 2006 18:54:06 +0200
-Message-ID: <20060731165406.GA8526@merlin.emma.line.org>
-References: <20060731175958.1626513b.reiser4@blinkenlights.ch>
+Date: Mon, 31 Jul 2006 19:16:20 +0200
+Message-ID: <20060731171620.GL31121@lug-owl.de>
+References: <1153760245.5735.47.camel@ipso.snappymail.ca> <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl> <20060731125846.aafa9c7c.reiser4@blinkenlights.ch> <20060731144736.GA1389@merlin.emma.line.org> <20060731175958.1626513b.reiser4@blinkenlights.ch> <20060731162224.GJ31121@lug-owl.de> <1154364421.7964.22.camel@localhost>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-29303-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zROEGoKAXsG5UqGB"
+Return-path: <reiserfs-list-return-29304-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <20060731175958.1626513b.reiser4@blinkenlights.ch>
+In-Reply-To: <1154364421.7964.22.camel@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Adrian Ulrich <reiser4@blinkenlights.ch>
-Cc: vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Dan Oglesby <doglesby@teleformix.com>
+Cc: Adrian Ulrich <reiser4@blinkenlights.ch>, Matthias Andree <matthias.andree@gmx.de>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-(resending complete message to the list).
+--zROEGoKAXsG5UqGB
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Adrian Ulrich schrieb am 2006-07-31:
+On Mon, 2006-07-31 11:47:00 -0500, Dan Oglesby <doglesby@teleformix.com> wr=
+ote:
+> On Mon, 2006-07-31 at 18:22 +0200, Jan-Benedict Glaw wrote:
+> > On Mon, 2006-07-31 17:59:58 +0200, Adrian Ulrich <reiser4@blinkenlights=
+=2Ech> wrote:
+> > > A colleague of mine happened to create a ~300gb filesystem and started
+> > > to migrate Mailboxes (Maildir-style format =3D many small files (1-3k=
+b))
+> > > to the new LUN. At about 70% the filesystem ran out of inodes; Not a
+> > So preparation work wasn't done.
+>=20
+> As someone who is currently planning to migrate ~100GB of stored mail to
+> the Maildirs format, it was pretty clear early on that EXT3 would not
+> cut it (from past and current experiences), and not just for the sake of
+> calculating inodes.
 
-> Hello Matthias,
-> 
-> > This looks rather like an education issue rather than a technical limit.
-> 
-> We aren't talking about the same issue: I was asking to do it
-> on-the-fly. Umounting the filesystem, running e2fsck and resize2fs
-> is something different ;-)
+Uh?  Where did you face a problem there?
 
-There was stuff by Andreas Dilger, to support "online" resizing of
-mounted ext2 file systems. I never cared to look for this (does it
-support ext3, does it work with current kernels, merge status) since
-offline resizing was always sufficient for me.
+With maildir, you shouldn't face any problems IMO. Even users with
+zillions of mails should work properly with the dir_index stuff:
 
-> A colleague of mine happened to create a ~300gb filesystem and started
-> to migrate Mailboxes (Maildir-style format = many small files (1-3kb))
-> to the new LUN. At about 70% the filesystem ran out of inodes;
+	tune2fs -O dir_index /dev/hdXX
 
-Well - easy to fix, newfs again with proper inode density (perhaps 1 per
-2 kB) and redo the migration. Of course you're free to pay for a new
-file system if your fellow admin can't be bothered to remember newfs's
--i option.
+or alternatively (to start that for already existing directories):
 
-> > Well, such "silly limitations"... looks like they are mostly hot air
-> > spewn by marketroids that need to justify people spending money on their
-> > new filesystem.
-> 
-> Have you ever seen VxFS or WAFL in action?
+	e2fsck -fD /dev/hdXX
 
-No I haven't. As long as they are commercial, it's not likely that I
-will.
 
-> Great to see that Sun ships a state-of-the-art Filesystem with
-> Solaris... I think linux should do the same...
+Of course, you'll always face a problem with lots of files in one
+directory at getdents() time (eg. opendir()/readdir()/closedir()), but
+this is a common limit for all filesystems.
 
-I think reallocating inodes for UFS and/or ext2/ext3 is possible, even
-online, but someone needs to write, debug and field-test the code to do
-that - possibly based on Andreas Dilger's earlier ext2 online resizing
-work.
+MfG, JBG
 
--- 
-Matthias Andree
+--=20
+       Jan-Benedict Glaw       jbglaw@lug-owl.de                +49-172-760=
+8481
+Signature of:           Alles wird gut! ...und heute wirds schon ein bi=C3=
+=9Fchen besser.
+the second  :
+
+--zROEGoKAXsG5UqGB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+
+iD8DBQFEzjrkHb1edYOZ4bsRAjZUAJ4jmxJQFGQSzz6CfPEbZeVAbPIUNQCeMIlB
+1lhHhNKeQxAgf7hj7UsnYws=
+=aNZk
+-----END PGP SIGNATURE-----
+
+--zROEGoKAXsG5UqGB--
