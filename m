@@ -1,111 +1,44 @@
-From: Laurent Riffard <laurent.riffard@free.fr>
-Subject: Re: reiser4-2.6.18-rc2-mm1: possible circular locking dependency
- detected in txn_end
-Date: Mon, 31 Jul 2006 23:29:02 +0200
-Message-ID: <44CE761E.8080809@free.fr>
-References: <44CD0115.4010608@free.fr> <1154375700.6460.125.camel@tribesman.namesys.com>
+From: =?utf-8?Q?Maciej_So=C5=82tysiak?= <pysiak.satriani@wp.pl>
+Subject: Re: reiser4 can now bear with filled fs, looks stable to me...
+Date: Mon, 31 Jul 2006 23:28:49 +0200
+Message-ID: <11910177823.20060731232849@wp.pl>
+References: <20060730223755.GA14386@hermes.uziel.local> <44CD4127.9010202@slaphack.com>
+Reply-To: =?utf-8?Q?Maciej_So=C5=82tysiak?= <pysiak.satriani@wp.pl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-29335-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29336-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1154375700.6460.125.camel@tribesman.namesys.com>
+In-Reply-To: <44CD4127.9010202@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com, reiserfs-list@namesys.com
+
+Hello David,
+
+Monday, July 31, 2006, 1:30:47 AM, you wrote:
+> Amen.  I do not want to see Reiser4 not succeed because of politics, and
+> it really looks like the only way to win the political war is not to 
+> play.  The technical stuff is really the last way in, but neither side
+> has said anything technical in awhile.  The most technical things that
+> have happened lately is Hans pointing to benchmarks and LKML pointing to
+> ext3 "plugins".
+So let's do the math (cost-wise, time-wise)
+- it is cheaper to develop:
+  a) quality patches
+  b) distro rpms
+  c) repositories with patched sources and binary kernels for debian/ubuntu
+  d) other
+- it is more expensive to:
+  a) succeed at kernel inclusion
+  b) argue
+  c) waste time
 
 
-Le 31.07.2006 21:55, Vladimir V. Saveliev a =E9crit :
-> Hello
->=20
-> What kind of load did you run on reiser4 at that time?
-
-I just formatted a new 2GB Reiser4 FS, then I moved a whole ccache
-cache tree to this new FS (cache size was about 20~30 Mbytes).
-Something like:
-
-# mkfs.reiser4 /dev/vglinux1/ccache
-# mount -tauto -onoatime /dev/vglinux1/ccache /mnt/disk
-# mv ~laurent/.ccache/* /mnt/disk/
+-- 
+Best regards,
+Maciej
 
 
-> On Sun, 2006-07-30 at 20:57 +0200, Laurent Riffard wrote:
->> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
->> [ INFO: possible circular locking dependency detected ]
->> -------------------------------------------------------
->> mv/29012 is trying to acquire lock:
->>  (&txnh->hlock){--..}, at: [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
->>
->> but task is already holding lock:
->>  (&atom->alock){--..}, at: [<e0c8a640>] txnh_get_atom+0xf6/0x39e
->> [reiser4]
->>
->> which lock already depends on the new lock.
->>
->>
->> the existing dependency chain (in reverse order) is:
->>
->> -> #1 (&atom->alock){--..}:
->>        [<c012ce2f>] lock_acquire+0x60/0x80
->>        [<c0292968>] _spin_lock+0x19/0x28
->>        [<e0c8bbd7>] try_capture+0x7cf/0x1cd7 [reiser4]
->>        [<e0c786e1>] longterm_lock_znode+0x427/0x84f [reiser4]
->>        [<e0ca55dc>] coord_by_handle+0x2be/0x7f7 [reiser4]
->>        [<e0ca5f89>] coord_by_key+0x1e3/0x22d [reiser4]
->>        [<e0c7dbd2>] insert_by_key+0x8f/0xe0 [reiser4]
->>        [<e0cbf7f1>] write_sd_by_inode_common+0x361/0x61a [reiser4]
->>        [<e0cbfce4>] create_object_common+0xf1/0xf6 [reiser4]
->>        [<e0cbaebf>] create_vfs_object+0x51d/0x732 [reiser4]
->>        [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
->>        [<c015ed33>] vfs_mkdir+0x5a/0x9d
->>        [<c0160f5e>] sys_mkdirat+0x88/0xc0
->>        [<c0160fa6>] sys_mkdir+0x10/0x12
->>        [<c0102c2d>] sysenter_past_esp+0x56/0x8d
->>
->> -> #0 (&txnh->hlock){--..}:
->>        [<c012ce2f>] lock_acquire+0x60/0x80
->>        [<c0292968>] _spin_lock+0x19/0x28
->>        [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
->>        [<e0c7f97d>] reiser4_exit_context+0x1c2/0x571 [reiser4]
->>        [<e0cbb091>] create_vfs_object+0x6ef/0x732 [reiser4]
->>        [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
->>        [<c015ed33>] vfs_mkdir+0x5a/0x9d
->>        [<c0160f5e>] sys_mkdirat+0x88/0xc0
->>        [<c0160fa6>] sys_mkdir+0x10/0x12
->>        [<c0102c2d>] sysenter_past_esp+0x56/0x8d
->>
->> other info that might help us debug this:
->>
->> 2 locks held by mv/29012:
->>  #0:  (&inode->i_mutex/1){--..}, at: [<c015f50b>]
->> lookup_create+0x1d/0x73
->>  #1:  (&atom->alock){--..}, at: [<e0c8a640>]
->> txnh_get_atom+0xf6/0x39e [reiser4]
->>
->> stack backtrace:
->>  [<c0104df0>] show_trace+0xd/0x10
->>  [<c0104e0c>] dump_stack+0x19/0x1d
->>  [<c012bc62>] print_circular_bug_tail+0x59/0x64
->>  [<c012cc3e>] __lock_acquire+0x814/0x9a5
->>  [<c012ce2f>] lock_acquire+0x60/0x80
->>  [<c0292968>] _spin_lock+0x19/0x28
->>  [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
->>  [<e0c7f97d>] reiser4_exit_context+0x1c2/0x571 [reiser4]
->>  [<e0cbb091>] create_vfs_object+0x6ef/0x732 [reiser4]
->>  [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
->>  [<c015ed33>] vfs_mkdir+0x5a/0x9d
->>  [<c0160f5e>] sys_mkdirat+0x88/0xc0
->>  [<c0160fa6>] sys_mkdir+0x10/0x12
->>  [<c0102c2d>] sysenter_past_esp+0x56/0x8d
->>
->> (Linux antares.localdomain 2.6.18-rc2-mm1 #77 Sun Jul 30 15:09:34
->> CEST 2006 i686 AMD Athlon(TM) XP 1600+ unknown GNU/Linux)
->=20
-
---=20
-laurent
