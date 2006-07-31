@@ -1,50 +1,53 @@
-From: David Lang <dlang@digitalinsight.com>
-Subject: Re: the " 'official' point of view" expressed by  kernelnewbies.orgregarding
- reiser4 inclusion
-Date: Mon, 31 Jul 2006 13:53:09 -0700 (PDT)
-Message-ID: <Pine.LNX.4.63.0607311348150.14631@qynat.qvtvafvgr.pbz>
-References: <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl> 
- <20060731125846.aafa9c7c.reiser4@blinkenlights.ch>  <20060731144736.GA1389@merlin.emma.line.org>
-  <20060731175958.1626513b.reiser4@blinkenlights.ch>  <20060731162224.GJ31121@lug-owl.de>
-  <Pine.LNX.4.64.0607311842120.13492@nedra.edsons.demon.nl> 
- <20060731173239.GO31121@lug-owl.de>  <20060731181120.GA9667@merlin.emma.line.org>
-  <20060731184314.GQ31121@lug-owl.de>  <20060731191712.GE17206@HAL_5000D.tc.ph.cox.net>
-  <20060731192902.GS31121@lug-owl.de> <44CE6153.7090704@slaphack.com>
+From: Adrian Ulrich <reiser4@blinkenlights.ch>
+Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of view"
+ expressed by kernelnewbies.org regarding reiser4 inclusion]
+Date: Mon, 31 Jul 2006 22:57:34 +0200
+Message-ID: <20060731225734.ecf5eb4d.reiser4@blinkenlights.ch>
+References: <20060731175958.1626513b.reiser4@blinkenlights.ch>
+	<200607311918.k6VJIqTN011066@laptop13.inf.utfsm.cl>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-29327-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-29328-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44CE6153.7090704@slaphack.com>
+In-Reply-To: <200607311918.k6VJIqTN011066@laptop13.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
-Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
-Cc: Clay Barnes <clay.barnes@gmail.com>, Rudy Zijlstra <rudy@edsons.demon.nl>, Adrian Ulrich <reiser4@blinkenlights.ch>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+Cc: matthias.andree@gmx.de, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-On Mon, 31 Jul 2006, David Masover wrote:
 
-> Probably.  By the time a few KB of metadata are corrupted, I'm reaching for 
-> my backup.  I don't care what filesystem it is or how easy it is to edit the 
-> on-disk structures.
->
-> This isn't to say that having robust on-disk structures isn't a good thing. 
-> I have no idea how Reiser4 will hold up either way.  But ultimately, what you 
-> want is the journaling (so power failure / crashes still leave you in an OK 
-> state), backups (so when blocks go bad, you don't care), and performance (so 
-> you can spend less money on hardware and more money on backup hardware).
+> > Great to see that Sun ships a state-of-the-art Filesystem with
+> > Solaris... I think linux should do the same...
+>=20
+> This would be worthwhile, if only to be able to futz around in Solaris-ma=
+de
+> filesystems.
 
-please read the discussion that took place at the filesystem summit a couple 
-weeks ago (available on lwn.net)
+s/I think linux should do the same/I think linux should include Reiser4/
+ ;-)
 
-one of the things that they pointed out there is that as disks get larger the 
-ratio of bad spots per Gig of storage is remaining about the same. As is the 
-rate of failures per Gig of storage.
 
-As a result of this the idea of only running on perfect disks that never have 
-any failures is becomeing significantly less realistic, instead you need to take 
-measures to survive in the face of minor corruption (including robust 
-filesystems, raid, etc)
+> First question is if there are any restrictions (patent or otherwise) on
+> doing this,
 
-David Lang
+Quoting from
+ http://it.sun.com/eventi/jc06/pdf/mi27_p5_poccia_virtualization.pdf
+
+=AD> 47 ZFS patents added to CDDL patent commons
+
+But i'd rather like to see a Linux version of WAFL :-)
+
+ZFS didn't really impress me:=20
+The Volume-Manager is nice but the Filesystem.. well: It beats UFS .. somet=
+imes ;-)
+
+See also: http://spam.workaround.ch/dull/postmark.txt
+
+A quick'n'dirty ZFS-vs-UFS-vs-Reiser3-vs-Reiser4-vs-Ext3 'benchmark'
+
+
+
+Regards,
+ Adrian
