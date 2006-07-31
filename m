@@ -1,69 +1,70 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
-	regarding reiser4 inclusion
-Date: Mon, 31 Jul 2006 22:40:26 +0100
-Message-ID: <1154382026.7230.110.camel@localhost.localdomain>
-References: <1153760245.5735.47.camel@ipso.snappymail.ca>
-	 <20060731144736.GA1389@merlin.emma.line.org>
-	 <20060731175958.1626513b.reiser4@blinkenlights.ch>
-	 <20060731162224.GJ31121@lug-owl.de>
-	 <Pine.LNX.4.64.0607311842120.13492@nedra.edsons.demon.nl>
-	 <20060731173239.GO31121@lug-owl.de>
-	 <20060731181120.GA9667@merlin.emma.line.org>
-	 <20060731184314.GQ31121@lug-owl.de>
-	 <20060731191712.GE17206@HAL_5000D.tc.ph.cox.net>
-	 <1154374923.7230.99.camel@localhost.localdomain>
-	 <e692861c0607311400x412d2e6bv71f474ea959c9e00@mail.gmail.com>
+From: =?iso-8859-2?B?o3VrYXN6IE1pZXJ6d2E=?= <prymitive@pcserwis.net>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
+Date: Mon, 31 Jul 2006 23:21:42 +0200
+Message-ID: <op.tdkoagt5d4os1z@localhost>
+References: <1153760245.5735.47.camel@ipso.snappymail.ca> <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl> <20060731125846.aafa9c7c.reiser4@blinkenlights.ch> <20060731144736.GA1389@merlin.emma.line.org> <20060731175958.1626513b.reiser4@blinkenlights.ch> <20060731162224.GJ31121@lug-owl.de> <Pine.LNX.4.64.0607311842120.13492@nedra.edsons.demon.nl> <20060731173239.GO31121@lug-owl.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29333-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-29334-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <e692861c0607311400x412d2e6bv71f474ea959c9e00@mail.gmail.com>
+In-Reply-To: <20060731173239.GO31121@lug-owl.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Gregory Maxwell <gmaxwell@gmail.com>
-Cc: Clay Barnes <clay.barnes@gmail.com>, Rudy Zijlstra <rudy@edsons.demon.nl>, Adrian Ulrich <reiser4@blinkenlights.ch>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; format="flowed"; delsp="yes"; charset="iso-8859-1"
+To: Jan-Benedict Glaw <jbglaw@lug-owl.de>, LKML <linux-kernel@vger.kernel.org>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-Ar Llu, 2006-07-31 am 17:00 -0400, ysgrifennodd Gregory Maxwell:
-> On 7/31/06, Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
-> > Its well accepted that reiserfs3 has some robustness problems in the
-> > face of physical media errors. The structure of the file system and the
-> > tree basis make it very hard to avoid such problems. XFS appears to have
-> > managed to achieve both robustness and better data structures.
-> >
-> > How reiser4 compares I've no idea.
-> 
-> Citation?
+Dnia Mon, 31 Jul 2006 19:32:39 +0200, Jan-Benedict Glaw =20
+<jbglaw@lug-owl.de> napisa=B3:
 
-Two sources, the cases I've looked at myself when IDE maintainer and
-also comments Hans made when we met at UKUUG a few years ago. Generally
-speaking on an IDE failure that lost chunks of disk the ext2/ext3 users
-got most of their data back. The reiserfs ones sometimes got it back and
-sometimes got catastrophic failure.
+> On Mon, 2006-07-31 18:44:33 +0200, Rudy Zijlstra <rudy@edsons.demon.nl>  =
 
-The ext3 fsck is extremely effective in the face of serious errors. Some
-of that is clever code that knows about things like rewriting inode
-blocks to force reallocation of failed metadata by the drive but the
-majority of it is simply because you *know* where inode X is on the disk
-rather than having to deal with data structures and walk them.
+> wrote:
+>> On Mon, 31 Jul 2006, Jan-Benedict Glaw wrote:
+>> > On Mon, 2006-07-31 17:59:58 +0200, Adrian Ulrich
+>> > <reiser4@blinkenlights.ch> wrote:
+>> > > A colleague of mine happened to create a ~300gb filesystem and =20
+>> started
+>> > > to migrate Mailboxes (Maildir-style format =3D many small files =20
+>> (1-3kb))
+>> > > to the new LUN. At about 70% the filesystem ran out of inodes; Not a
+>> >
+>> > So preparation work wasn't done.
+>>
+>> Of course you are right. Preparation work was not fully done. And using
+>> ext1 would also have been possible. I suspect you are still using ext1,
+>> cause with proper preparation it is perfectly usable.
+>
+> Oh, and before people start laughing at me, here are some personal or
+> friend's experiences with different filesystems:
+>
+>   * reiser3: A HDD containing a reiser3 filesystem was tried to be
+>     booted on a machine that fucked up DMA writes. Fortunately, it
+>     crashed really soon (right after going for read-write.)  After
+>     rebooting the HDD on a sane PeeCee, it refused to boot. Starting
+>     off some rescue system showed an _empty_ root filesystem.
+>
+>   * A friend's XFS data partition (portable USB/FireWire HDD) once
+>     crashed due to being hot-unplugged off the USB.  The in-kernel XFS
+>     driver refused to mount that thing again, and the tools also
+>     refused to fix any errors. (Don't ask, no details at my hands...)
+>
+>   * JFS just always worked for me. Though I've never ever had a broken
+>     HDD where it (or it's tools) could have shown how well-done they
+>     were, so from a crash-recovery point of view, it's untested.
+>
+>   * Being a regular ext3 user, I had lots of broken HDDs containing
+>     ext3 filesystems. For every single case, it has been easy fixing
+>     the filesystem after cloning. Just _once_, fsck wasn't able to fix
+>     something, so I did it manually with some disk editor. This worked
+>     well because the on-disk data structures are actually as simple as
+>     they are.
 
-That's a tradeoff with the reiser performance with small files and until
-recently the reiser large directory performance. Which is right is
-another question altogether. Its also something I think XFS demonstrates
-can be done better so doesn't invalidate the theory behind reiserfs just
-the rev 3 implementation.
+Is this some kind of "who lost more files on what fs" competition? What's  =
 
-> Are you sure that you aren't commenting on cases where Reiser3 alerts
-> the user to a critical data condition (via a panic) which leads to a
-> trouble report while ext3 ignores the problem which suppresses the
-> trouble report from the user?
-
-man mount
-
-Ext3 is configurable, and has been for years via the errors= option.
-
-Alan
-
+the prize?
+Topic subject sugests that it should cover something else. Please, let's =20
+get back on track.
+First of all, it's about reiser4 so can't we forget about other =20
+filesystem's unless it's got something to do with reiser4 merge?
