@@ -1,42 +1,88 @@
-From: Matthias Andree <matthias.andree@gmx.de>
+From: "Nate Diller" <nate.diller@gmail.com>
 Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
-Date: Tue, 1 Aug 2006 00:53:48 +0200
-Message-ID: <20060731225348.GB16440@merlin.emma.line.org>
-References: <20060731175958.1626513b.reiser4@blinkenlights.ch> <20060731165406.GA8526@merlin.emma.line.org> <20060731194127.GA13912@thunk.org>
+Date: Mon, 31 Jul 2006 15:56:50 -0700
+Message-ID: <5c49b0ed0607311556s50b77c07o150497f8e4bd3fd3@mail.gmail.com>
+References: <1153760245.5735.47.camel@ipso.snappymail.ca>
+	 <20060731162224.GJ31121@lug-owl.de>
+	 <Pine.LNX.4.64.0607311842120.13492@nedra.edsons.demon.nl>
+	 <20060731173239.GO31121@lug-owl.de>
+	 <20060731181120.GA9667@merlin.emma.line.org>
+	 <20060731184314.GQ31121@lug-owl.de>
+	 <20060731191712.GE17206@HAL_5000D.tc.ph.cox.net>
+	 <1154374923.7230.99.camel@localhost.localdomain>
+	 <e692861c0607311400x412d2e6bv71f474ea959c9e00@mail.gmail.com>
+	 <44CE7C11.7020202@wolfmountaingroup.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-29345-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29346-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <44CE7C11.7020202@wolfmountaingroup.com>
 Content-Disposition: inline
-In-Reply-To: <20060731194127.GA13912@thunk.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Theodore Tso <tytso@mit.edu>, Adrian Ulrich <reiser4@blinkenlights.ch>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "Jeff V. Merkey" <jmerkey@wolfmountaingroup.com>
+Cc: Gregory Maxwell <gmaxwell@gmail.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Clay Barnes <clay.barnes@gmail.com>, Rudy Zijlstra <rudy@edsons.demon.nl>, Adrian Ulrich <reiser4@blinkenlights.ch>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Theodore Tso schrieb am 2006-07-31:
+On 7/31/06, Jeff V. Merkey <jmerkey@wolfmountaingroup.com> wrote:
+> Gregory Maxwell wrote:
+>
+> > On 7/31/06, Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
+> >
+> >> Its well accepted that reiserfs3 has some robustness problems in the
+> >> face of physical media errors. The structure of the file system and the
+> >> tree basis make it very hard to avoid such problems. XFS appears to have
+> >> managed to achieve both robustness and better data structures.
+> >>
+> >> How reiser4 compares I've no idea.
+> >
+> >
+> > Citation?
+> >
+> > I ask because your clam differs from the only detailed research that
+> > I'm aware of on the subject[1]. In figure 2 of the iron filesystems
+> > paper that Ext3 is show to ignore a great number of data-loss inducing
+> > failure conditions that Reiser3 detects an panics under.
+> >
+> > Are you sure that you aren't commenting on cases where Reiser3 alerts
+> > the user to a critical data condition (via a panic) which leads to a
+> > trouble report while ext3 ignores the problem which suppresses the
+> > trouble report from the user?
+> >
+> > *1) http://www.cs.wisc.edu/adsl/Publications/iron-sosp05.pdf
+>
+> Hi Gregory, Wikimedia Foundation and LKML?
+>
+> How's Wikimania going. :-)
+>
+> What he says is correct.  I have seen some serious issues with reiserfs
+> in terms of stability and
+> data corruption.  Resier is however FASTER, but the statement is has
+> robustness issues is accurate.
+> I was using reiserfs but we opted to make EXT3 the default for Solera
+> appliances, even when using Suse 10
+> due to issues I have seen with data corruption and hard hangs on RAID 0
+> read/write sector errors.  I have
+> stopped using it for local drives and based everything on EXT3.  Not to
+> say it won't get there eventually, but
+> file systems have to endure a lot of time in the field and deployment
+> befor they are ready for prime time.
+>
+> The Wikimedia appliances use Wolf Mountain, and I've tested it for about
+> 4 months with few problems, but
+> I only use it for hosting the Cherokee Langauge Wikipedia.  It's
+> performance is several magnitudes better
+> than either EXT3 or ReiserFS.  Despite this, for vertical wiki servers,
+> its ok to go out with, folks can specifiy
+> whether they want appliances with EXT3, Reiser, or WMFS, but iit's a
+> long way from being "cooked"
+> completely, though it does scale to 1 exabyte FS images.
 
-> With the latest e2fsprogs and 2.6 kernels, the online resizing support
-> has been merged in, and as long as the filesystem was created with
-> space reserved for growing the filesystem (which is now the default,
-> or if the filesystem has the off-line prepration step ext2prepare run
-> on it), you can run resize2fs on a mounted filesystem and grow an
-> ext2/3 filesystem on-line.  And yes, you get more inodes as you add
-> more disk blocks, using the original inode ratio that was established
-> when the filesystem was created.
+i've seen you mention the Wolf Mountain FS in other emails, but google
+isn't telling me a lot about it.  Do you have a whitepaper?  are there
+any published benchmark results?  what sort of workloads do you
+benchmark?
 
-That's cool.
-
-The interesting part for some people would be, if I read past postings
-correctly, to change the inode ratio in an existing (perhaps even
-mounted) file system without losing data.
-
-(I'm not sure how many blocks have to be moved and/or changed for that
-purpose, because I know too little about the on-disk ext2 layout, but
-since block relocating is already in place for shrink support in the
-offline resizer, some of the work appears to be done already.)
-
--- 
-Matthias Andree
+NATE
