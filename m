@@ -1,50 +1,60 @@
-From: Nikita Danilov <nikita@clusterfs.com>
+From: "Horst H. von Brand" <vonbrand@inf.utfsm.cl>
 Subject: Re: metadata plugins (was Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion)
-Date: Mon, 31 Jul 2006 15:58:30 +0400
-Message-ID: <17613.61542.441990.620222@gargle.gargle.HOWL>
-References: <200607281402.k6SE245v004715@laptop13.inf.utfsm.cl>
-	<44CA31D2.70203@slaphack.com>
-	<Pine.LNX.4.64.0607280859380.4168@g5.osdl.org>
-	<44C9FB93.9040201@namesys.com>
-	<44CA6905.4050002@slaphack.com>
-	<44CA126C.7050403@namesys.com>
-	<44CA8771.1040708@slaphack.com>
-	<44CABB87.3050509@namesys.com>
-	<17611.21640.208153.492074@gargle.gargle.HOWL>
-	<44CBE7FF.2030109@namesys.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750905AbWGaMD3@vger.kernel.org>
-In-Reply-To: <44CBE7FF.2030109@namesys.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Date: Mon, 31 Jul 2006 09:28:38 -0400
+Message-ID: <200607311328.k6VDScg6003611@laptop13.inf.utfsm.cl>
+References: <reiser@namesys.com>
+Return-path: <reiserfs-list-return-29291-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: Message from Hans Reiser <reiser@namesys.com> 
+   of "Fri, 28 Jul 2006 19:36:07 CST." <44CABB87.3050509@namesys.com> 
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Hans Reiser <reiser@namesys.com>
-Cc: Linus Torvalds <torvalds@osdl.org>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Jeff Garzik <jeff@garzik.org>, Andrew Morton <akpm@osdl.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Cc: David Masover <ninja@slaphack.com>, Linus Torvalds <torvalds@osdl.org>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Jeff Garzik <jeff@garzik.org>, Andrew Morton <akpm@osdl.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Hans Reiser writes:
- > Nikita Danilov wrote:
+Hans Reiser <reiser@namesys.com> wrote:
+> David Masover wrote:
+> > If indeed it can be changed easily at all.  I think the burden is on
+> > you to prove that you can change it to be more generic, rather than
+> > saying "Well, we could do it later, if people want us to..."
 
-[...]
+> None of the filesystems other than reiser4 have any interest in using
+> plugins,
 
- > >
- > >As you see, ext2 code already has multiple file "plugins", with
- > >persistent "plugin id" (stored in i_mode field of on-disk struct
- > >ext2_inode).
- > >
- > >Nikita.
- > >
- > >
- > So the job is already done.  Good.  Reiser4 can be included then.:) 
+Then they are probably nonsense...
 
-Indeed, namesys already implemented requirements pointed to by Christoph
-Hellwig, as far as meta-data plugins are concerned, so this issue is not
-an obstacle.
+>          and this whole argument over how it should be in VFS is
+> nonsensical because nobody but us has any interest in using the
+> functionality.  The burden is on the generic code authors to prove that
+> they will ever ever do anything at all besides complain.  Frankly, I
+> don't think they will.  I think they will never produce one line of code.
 
- > 
- > Hans "The Easily Agreeable" Reiser
- > 
+It is /your/ burden to show that they are worthwhile. And if they are, thay
+aren't worthwhile only in your pet filesystem...
 
-PS: please, don't trim CC lists.
+> Please cite one ext3 developer who is signed up to implement ext3 using
+> plugins if they are supported by VFS.
 
-Nikita.
+Have you asked?
+
+> >> .  It also prevents users from getting
+> >> advances they could be getting today, for no reason.
+
+> > It prevents users from doing nothing.
+
+> Most users not only cannot patch a kernel, they don't know what a patch
+> is.  It most certainly does. 
+
+Simple answer: Fork the kernel with all your grandiose plans, and see which
+one wins. Open source, remember? It is not as if your only chance is to get
+it into the official kernel.
+-- 
+Dr. Horst H. von Brand                   User #22616 counter.li.org
+Departamento de Informatica                     Fono: +56 32 654431
+Universidad Tecnica Federico Santa Maria              +56 32 654239
+Casilla 110-V, Valparaiso, Chile                Fax:  +56 32 797513
