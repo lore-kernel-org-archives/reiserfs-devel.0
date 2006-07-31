@@ -1,12 +1,12 @@
 From: Jan-Benedict Glaw <jbglaw@lug-owl.de>
 Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
-Date: Mon, 31 Jul 2006 19:20:02 +0200
-Message-ID: <20060731172002.GM31121@lug-owl.de>
+Date: Mon, 31 Jul 2006 19:32:39 +0200
+Message-ID: <20060731173239.GO31121@lug-owl.de>
 References: <1153760245.5735.47.camel@ipso.snappymail.ca> <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl> <20060731125846.aafa9c7c.reiser4@blinkenlights.ch> <20060731144736.GA1389@merlin.emma.line.org> <20060731175958.1626513b.reiser4@blinkenlights.ch> <20060731162224.GJ31121@lug-owl.de> <Pine.LNX.4.64.0607311842120.13492@nedra.edsons.demon.nl>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rPgHZmYkQ+bUEpVC"
-Return-path: <reiserfs-list-return-29305-reiserfs=m.gmane.org@namesys.com>
+	protocol="application/pgp-signature"; boundary="xNm6VWMD3PcA105u"
+Return-path: <reiserfs-list-return-29306-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -17,7 +17,7 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 To: Rudy Zijlstra <rudy@edsons.demon.nl>
 Cc: Adrian Ulrich <reiser4@blinkenlights.ch>, Matthias Andree <matthias.andree@gmx.de>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
---rPgHZmYkQ+bUEpVC
+--xNm6VWMD3PcA105u
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -31,7 +31,7 @@ te:
 > > > to migrate Mailboxes (Maildir-style format =3D many small files (1-3k=
 b))
 > > > to the new LUN. At about 70% the filesystem ran out of inodes; Not a
-> >=20
+> >
 > > So preparation work wasn't done.
 >=20
 > Of course you are right. Preparation work was not fully done. And using=
@@ -40,26 +40,43 @@ b))
 =20
 > cause with proper preparation it is perfectly usable.
 
-Nope, I'm a quite happy ext3 user for quite divergent workloads.
-Starting with storing loads of small files in a hugh number of
-directories (mkfs -T news) over hugh numbers of files in few
-directories (mkfs -O dir_index) to only a small number of really hugh
-files (mkfs -T largefile4).
+Oh, and before people start laughing at me, here are some personal or
+friend's experiences with different filesystems:
 
-All that I still need to catch up with is 4TB sized files. But I guess
-this is really an uncommon workload, but ISTR that somebody even works
-on this.
+  * reiser3: A HDD containing a reiser3 filesystem was tried to be
+    booted on a machine that fucked up DMA writes. Fortunately, it
+    crashed really soon (right after going for read-write.)  After
+    rebooting the HDD on a sane PeeCee, it refused to boot. Starting
+    off some rescue system showed an _empty_ root filesystem.
+
+  * A friend's XFS data partition (portable USB/FireWire HDD) once
+    crashed due to being hot-unplugged off the USB.  The in-kernel XFS
+    driver refused to mount that thing again, and the tools also
+    refused to fix any errors. (Don't ask, no details at my hands...)
+
+  * JFS just always worked for me. Though I've never ever had a broken
+    HDD where it (or it's tools) could have shown how well-done they
+    were, so from a crash-recovery point of view, it's untested.
+
+  * Being a regular ext3 user, I had lots of broken HDDs containing
+    ext3 filesystems. For every single case, it has been easy fixing
+    the filesystem after cloning. Just _once_, fsck wasn't able to fix
+    something, so I did it manually with some disk editor. This worked
+    well because the on-disk data structures are actually as simple as
+    they are.
+
+ext3 always worked well for me, so why should I abandon it?
 
 MfG, JBG
 
 --=20
        Jan-Benedict Glaw       jbglaw@lug-owl.de                +49-172-760=
 8481
- Signature of:                       Don't believe in miracles: Rely on the=
-m!
- the second  :
+ Signature of:                               If it doesn't work, force it.
+ the second  :                      If it breaks, it needed replacing anywa=
+y.
 
---rPgHZmYkQ+bUEpVC
+--xNm6VWMD3PcA105u
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 Content-Disposition: inline
@@ -67,9 +84,9 @@ Content-Disposition: inline
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 
-iD8DBQFEzjvCHb1edYOZ4bsRAh/CAJsH2mGOd2BsF6emuzMtt+D1Ub4GtgCfY7w6
-EbL/cKZsOAC4Rw0SwXi845o=
-=f1Q9
+iD8DBQFEzj63Hb1edYOZ4bsRAqJ5AJ47ER7VgMV07l/8ohUX9UVIafYOgwCfS5yn
+0yy/GU+pE2fU22CZ0l9z65E=
+=dtHL
 -----END PGP SIGNATURE-----
 
---rPgHZmYkQ+bUEpVC--
+--xNm6VWMD3PcA105u--
