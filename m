@@ -1,74 +1,79 @@
-From: Jan-Benedict Glaw <jbglaw@lug-owl.de>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
-Date: Mon, 31 Jul 2006 21:29:03 +0200
-Message-ID: <20060731192902.GS31121@lug-owl.de>
-References: <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl> <20060731125846.aafa9c7c.reiser4@blinkenlights.ch> <20060731144736.GA1389@merlin.emma.line.org> <20060731175958.1626513b.reiser4@blinkenlights.ch> <20060731162224.GJ31121@lug-owl.de> <Pine.LNX.4.64.0607311842120.13492@nedra.edsons.demon.nl> <20060731173239.GO31121@lug-owl.de> <20060731181120.GA9667@merlin.emma.line.org> <20060731184314.GQ31121@lug-owl.de> <20060731191712.GE17206@HAL_5000D.tc.ph.cox.net>
+From: Alexander Zarochentsev <zam@namesys.com>
+Subject: Re: possible recursive locking detected - while running fs operations in loops - 2.6.18-rc2-git5
+Date: Mon, 31 Jul 2006 23:34:55 +0400
+Message-ID: <200607312334.56203.zam@namesys.com>
+References: <9a8748490607251516j1433306ek9c64cc84c0838f7b@mail.gmail.com> <44CBEA7A.4010308@namesys.com> <9a8748490607292317t405c906ek8b1577920eeace65@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="r3KnbM2MoJFBL7Dl"
-Return-path: <reiserfs-list-return-29318-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932146AbWGaTeP@vger.kernel.org>
+In-Reply-To: <9a8748490607292317t405c906ek8b1577920eeace65@mail.gmail.com>
 Content-Disposition: inline
-In-Reply-To: <20060731191712.GE17206@HAL_5000D.tc.ph.cox.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Clay Barnes <clay.barnes@gmail.com>
-Cc: Rudy Zijlstra <rudy@edsons.demon.nl>, Adrian Ulrich <reiser4@blinkenlights.ch>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: akpm@osdl.org
+Cc: reiserfs-list@namesys.com, Jesper Juhl <jesper.juhl@gmail.com>, Hans Reiser <reiser@namesys.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Al Viro <viro@ftp.linux.org.uk>, reiserfs-dev@namesys.com
 
---r3KnbM2MoJFBL7Dl
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-On Mon, 2006-07-31 12:17:12 -0700, Clay Barnes <clay.barnes@gmail.com> wrot=
-e:
-> On 20:43 Mon 31 Jul     , Jan-Benedict Glaw wrote:
-> > On Mon, 2006-07-31 20:11:20 +0200, Matthias Andree <matthias.andree@gmx=
-=2Ede> wrote:
-> > > Jan-Benedict Glaw schrieb am 2006-07-31:
-[Crippled DMA writes]
-> > > Massive hardware problems don't count. ext2/ext3 doesn't look much be=
-tter in
-> > > such cases. I had a machine with RAM gone bad (no ECC - I wonder what
-> >=20
-> > They do! Very much, actually. These happen In Real Life, so I have to
->=20
-> I think what he meant was that it is unfair to blame reiser3 for data
-> loss in a massive failure situation as a case example by itself.  What
+On Sunday 30 July 2006 10:17, Jesper Juhl wrote:
+> On 30/07/06, Hans Reiser <reiser@namesys.com> wrote:
+> > Jesper Juhl wrote:
+> > > Thanks. That's a nice little test suite.
+> >
+> > Yes, it is quite useful, our developers have added it to the
+> > regression suite....
+>
+> That's nice.
+>
+> Now how about that lock validator message I managed to tease out?
+>
+> Akpm said "... the reiserfs locking appears to be unneeded - this
+> inode is going down and nobody else can look it up, so what is to be
+> locked against?" - can you comment on that?
 
-Crippling a few KB of metadata in the ext{2,3} case probably wouldn't
-fobar the filesystem...
+Thanks. it is correct.
+Andrew, please apply the following patch: 
 
-> failure robustness counts... "  This of course assumes you actually had
-> the *exact* same problem with hardware under ext3, pretty much in every
-> detail.  Of course, so many subtleties interact in massive ways with
+i_mutex does not need to be locked in reiserfs_delete_inode.
 
-The point is that it's quite hard to really fuck up ext{2,3} with only
-some KB being written while it seems (due to the
-fragile^Wsophisticated on-disk data structures) that it's just easy to
-kill a reiser3 filesystem.
+Signed-off-by: Alexander Zarochentsev <zam@namesys.com>
 
-MfG, JBG
+fs/reiserfs/inode.c |   12 ++----------
+ 1 files changed, 2 insertions(+), 10 deletions(-)
 
---=20
-       Jan-Benedict Glaw       jbglaw@lug-owl.de                +49-172-760=
-8481
-   Signature of:                            Zensur im Internet? Nein danke!
-   the second  :
+Index: linux-2.6-git/fs/reiserfs/inode.c
+===================================================================
+--- linux-2.6-git.orig/fs/reiserfs/inode.c
++++ linux-2.6-git/fs/reiserfs/inode.c
+@@ -37,14 +37,10 @@ void reiserfs_delete_inode(struct inode 
+ 
+ 	/* The = 0 happens when we abort creating a new inode for some reason like lack of space.. */
+ 	if (!(inode->i_state & I_NEW) && INODE_PKEY(inode)->k_objectid != 0) {	/* also handles bad_inode case */
+-		mutex_lock(&inode->i_mutex);
+-
+ 		reiserfs_delete_xattrs(inode);
+ 
+-		if (journal_begin(&th, inode->i_sb, jbegin_count)) {
+-			mutex_unlock(&inode->i_mutex);
++		if (journal_begin(&th, inode->i_sb, jbegin_count))
+ 			goto out;
+-		}
+ 		reiserfs_update_inode_transaction(inode);
+ 
+ 		err = reiserfs_delete_object(&th, inode);
+@@ -55,12 +51,8 @@ void reiserfs_delete_inode(struct inode 
+ 		if (!err) 
+ 			DQUOT_FREE_INODE(inode);
+ 
+-		if (journal_end(&th, inode->i_sb, jbegin_count)) {
+-			mutex_unlock(&inode->i_mutex);
++		if (journal_end(&th, inode->i_sb, jbegin_count))
+ 			goto out;
+-		}
+-
+-		mutex_unlock(&inode->i_mutex);
+ 
+ 		/* check return value from reiserfs_delete_object after
+ 		 * ending the transaction
 
---r3KnbM2MoJFBL7Dl
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-
-iD8DBQFEzln+Hb1edYOZ4bsRAuvGAJ91Dr8JUemgL/p7VLScPQQGgfZsFwCeIQY9
-p2hMLDRQ9eudbNCpNjwKsU4=
-=JHrz
------END PGP SIGNATURE-----
-
---r3KnbM2MoJFBL7Dl--
