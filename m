@@ -1,62 +1,46 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: metadata plugins (was Re: the " 'official' point of view"
-	expressed by kernelnewbies.org regarding reiser4 inclusion)
-Date: Tue, 01 Aug 2006 20:43:33 +0400
-Message-ID: <1154450613.10043.136.camel@tribesman.namesys.com>
-References: <200607281402.k6SE245v004715@laptop13.inf.utfsm.cl>
-	 <44CA31D2.70203@slaphack.com>
-	 <Pine.LNX.4.64.0607280859380.4168@g5.osdl.org>
-	 <op.tdl2s2fpd4os1z@localhost>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: metadata plugins (was Re: the " 'official' point of view" expressed
+ by kernelnewbies.org regarding reiser4 inclusion)
+Date: Tue, 01 Aug 2006 11:59:21 -0500
+Message-ID: <44CF8869.2000501@slaphack.com>
+References: <1154164364.2903.10.camel@laptopd505.fenrus.org> <44CBA4BF.80301@slaphack.com> <200607300132.28326.sarathmenon@gmail.com> <44CBC557.4050403@slaphack.com> <20060730115526.GB5336@hermes.uziel.local> <7a329d910607301410x6d6fb4f0sa946c8764be82ab1@mail.gmail.com> <20060730213757.GB6420@hermes.uziel.local> <20060730214237.GC6420@hermes.uziel.local> <7a329d910607310821p69e964f7t8d29300f3221cfa3@mail.gmail.com> <44CE286F.6000700@slaphack.com> <20060801085033.GA14461@hermes.uziel.local>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-29403-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29404-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <op.tdl2s2fpd4os1z@localhost>
+In-Reply-To: <20060801085033.GA14461@hermes.uziel.local>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: =?iso-8859-2?Q?=A3ukasz?= Mierzwa <prymitive@pcserwis.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Christian Trefzer <ctrefzer@gmx.de>
+Cc: Wil Reichert <wil.reichert@gmail.com>, Sarath Menon <sarathmenon@gmail.com>, reiserfs-list@namesys.com
 
-Hello
-
-On Tue, 2006-08-01 at 17:32 +0200, Łukasz Mierzwa wrote:
-> Dnia Fri, 28 Jul 2006 18:33:56 +0200, Linus Torvalds <torvalds@osdl.org>  
-> napisał:
+Christian Trefzer wrote:
+> On Mon, Jul 31, 2006 at 10:57:35AM -0500, David Masover wrote:
+>> Wil Reichert wrote:
+>>
+>>> Any idea how the fragmentation resulting from re-syncing the tree
+>>> affects performance over time?
+>> Yes, it does affect it a lot.  I have no idea how much, and I've never 
+>> benchmarked it, but purely subjectively, my portage has gotten slower 
+>> over time.
 > 
-> > In other words, if a filesystem wants to do something fancy, it needs to
-> > do so WITH THE VFS LAYER, not as some plugin architecture of its own. We
-> > already have exactly the plugin interface we need, and it literally _is_
-> > the VFS interfaces - you can plug in your own filesystems with
-> > "register_filesystem()", which in turn indirectly allows you to plug in
-> > your per-file and per-directory operations for things like lookup etc.
+> Delayed allocation still performs a lot better here than the v3
+> "immediate" allocation. In addition, tree balancing operations are
+> performed on flush as well, so what you get on disk is basically an
+> almost-optimal tree. Of course, this will change a bit over time, but
+> with v4 it takes a lot longer for that to happen than with v3 afaict.
+> There _has_ been some worthwile development in the meantime : )
 
-> What fancy (beside cryptocompress) does reiser4 do now?
+Hmm.  The thing is, I don't remember v3 slowing down much at all, 
+whereas v4 slowed down pretty dramatically after the first few weeks. 
+It does seem pretty stable now, though, and it doesn't seem to be 
+getting any slower.
 
-it is supposed to provide an ability to easy modify filesystem behaviour
-in various aspects without breaking compatibility.
+I've had this particular FS since...  hmm...  Is there an FS tool to 
+check mkfs time?  I think it's a year now, but I'd like to be sure.
 
-> Can someone point me to a list of things that are required by kernel  
-> mainteiners to merge reiser4 into vanilla?
-
-list of features reiser4 does not have now:
-O_DIRECT support - we are working on it now
-various block size support
-quota support
-xattrs and acls
-
-list of warnings about reiser4 code:
-I think that last big list of useful comments (from Christoph Hellwig
-<hch@infradead.org>) is addressed. Well, except for one minor (I
-believe) place in file release.
-
-Currently, Andrew is trying to find some time to review reiser4 code.
-
-> I feel like I'm getting lost with current reiser4 status and things that  
-> are need to be done.
-> 
-> Łukasz Mierzwa
-> 
-
+If not, I'll just find the oldest file, but the clock on this machine 
+isn't reliable (have to set it with NTP every boot)...
