@@ -1,46 +1,66 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: metadata plugins (was Re: the " 'official' point of view" expressed
- by kernelnewbies.org regarding reiser4 inclusion)
-Date: Tue, 01 Aug 2006 11:59:21 -0500
-Message-ID: <44CF8869.2000501@slaphack.com>
-References: <1154164364.2903.10.camel@laptopd505.fenrus.org> <44CBA4BF.80301@slaphack.com> <200607300132.28326.sarathmenon@gmail.com> <44CBC557.4050403@slaphack.com> <20060730115526.GB5336@hermes.uziel.local> <7a329d910607301410x6d6fb4f0sa946c8764be82ab1@mail.gmail.com> <20060730213757.GB6420@hermes.uziel.local> <20060730214237.GC6420@hermes.uziel.local> <7a329d910607310821p69e964f7t8d29300f3221cfa3@mail.gmail.com> <44CE286F.6000700@slaphack.com> <20060801085033.GA14461@hermes.uziel.local>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
+	regarding reiser4 inclusion
+Date: Tue, 01 Aug 2006 18:19:30 +0100
+Message-ID: <1154452770.15540.65.camel@localhost.localdomain>
+References: <200607312314.37863.bernd-schubert@gmx.de>
+	 <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl>
+	 <20060801165234.9448cb6f.reiser4@blinkenlights.ch>
+	 <1154446189.15540.43.camel@localhost.localdomain>
+	 <44CF84F0.8080303@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29404-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29405-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060801085033.GA14461@hermes.uziel.local>
+In-Reply-To: <44CF84F0.8080303@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Christian Trefzer <ctrefzer@gmx.de>
-Cc: Wil Reichert <wil.reichert@gmail.com>, Sarath Menon <sarathmenon@gmail.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: David Masover <ninja@slaphack.com>
+Cc: Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, bernd-schubert@gmx.de, reiserfs-list@namesys.com, jbglaw@lug-owl.de, clay.barnes@gmail.com, rudy@edsons.demon.nl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
 
-Christian Trefzer wrote:
-> On Mon, Jul 31, 2006 at 10:57:35AM -0500, David Masover wrote:
->> Wil Reichert wrote:
->>
->>> Any idea how the fragmentation resulting from re-syncing the tree
->>> affects performance over time?
->> Yes, it does affect it a lot.  I have no idea how much, and I've never 
->> benchmarked it, but purely subjectively, my portage has gotten slower 
->> over time.
+Ar Maw, 2006-08-01 am 11:44 -0500, ysgrifennodd David Masover:
+> Yikes.  Undetected.
 > 
-> Delayed allocation still performs a lot better here than the v3
-> "immediate" allocation. In addition, tree balancing operations are
-> performed on flush as well, so what you get on disk is basically an
-> almost-optimal tree. Of course, this will change a bit over time, but
-> with v4 it takes a lot longer for that to happen than with v3 afaict.
-> There _has_ been some worthwile development in the meantime : )
+> Wait, what?  Disks, at least, would be protected by RAID.  Are you 
+> telling me RAID won't detect such an error?
 
-Hmm.  The thing is, I don't remember v3 slowing down much at all, 
-whereas v4 slowed down pretty dramatically after the first few weeks. 
-It does seem pretty stable now, though, and it doesn't seem to be 
-getting any slower.
+Yes.
 
-I've had this particular FS since...  hmm...  Is there an FS tool to 
-check mkfs time?  I think it's a year now, but I'd like to be sure.
+RAID deals with the case where a device fails. RAID 1 with 2 disks can
+in theory detect an internal inconsistency but cannot fix it.
 
-If not, I'll just find the oldest file, but the clock on this machine 
-isn't reliable (have to set it with NTP every boot)...
+> we're OK with that, so long as our filesystems are robust enough.  If 
+> it's an _undetected_ error, doesn't that cause way more problems 
+> (impossible problems) than FS corruption?  Ok, your FS is fine -- but 
+> now your bank database shows $1k less on random accounts -- is that ok?
+
+Not really no. Your bank is probably using a machine (hopefully using a
+machine) with ECC memory, ECC cache and the like. The UDMA and SATA
+storage subsystems use CRC checksums between the controller and the
+device. SCSI uses various similar systems - some older ones just use a
+parity bit so have only a 50/50 chance of noticing a bit error.
+
+Similarly the media itself is recorded with a lot of FEC (forward error
+correction) so will spot most changes.
+
+Unfortunately when you throw this lot together with astronomical amounts
+of data you get burned now and then, especially as most systems are not
+using ECC ram, do not have ECC on the CPU registers and may not even
+have ECC on the caches in the disks.
+
+> > The sort of changes this needs hit the block layer and ever fs.
+> 
+> Seems it would need to hit every application also...
+
+Depending how far you propogate it. Someone people working with huge
+data sets already write and check user level CRC values for this reason
+(in fact bitkeeper does it for one example). It should be relatively
+cheap to get much of that benefit without doing application to
+application just as TCP gets most of its benefit without going app to
+app.
+
+Alan
+
