@@ -1,37 +1,34 @@
-From: Matthias Andree <matthias.andree@gmx.de>
-Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of view"expressed by kernelnewbies.org regarding reiser4 inclusion]
-Date: Tue, 1 Aug 2006 11:25:14 +0200
-Message-ID: <20060801092514.GB2974@merlin.emma.line.org>
-References: <20060801064837.GB1987@thunk.org> <44CF01C1.9070802@argo.co.il>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
+ regarding reiser4 inclusion
+Date: Mon, 31 Jul 2006 20:33:27 -0600
+Message-ID: <44CEBD77.2060502@namesys.com>
+References: <20060731165406.GA8526@merlin.emma.line.org>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932538AbWHAJZW@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <44CF01C1.9070802@argo.co.il>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29380-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <20060731165406.GA8526@merlin.emma.line.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Avi Kivity <avi@argo.co.il>
-Cc: Theodore Tso <tytso@mit.edu>, David Lang <dlang@digitalinsight.com>, David Masover <ninja@slaphack.com>, tdwebste2@yahoo.com, Nate Diller <nate.diller@gmail.com>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Matthias Andree <matthias.andree@gmx.de>
+Cc: Adrian Ulrich <reiser4@blinkenlights.ch>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-On Tue, 01 Aug 2006, Avi Kivity wrote:
+Matthias Andree wrote:
 
-> There's no reason to repack *all* of the data.  Many workloads write and 
-> delete whole files, so file data should be contiguous.  The repacker 
-> would only need to move metadata and small files.
-
-Move small files? What for?
-
-Even if it is "only" moving metadata, it is not different from what ext3
-or xfs are doing today (rewriting metadata from the intent log or block
-journal to the final location).
-
-The UFS+softupdates from the BSD world looks pretty good at avoiding
-unnecessary writes (at the expense of a long-running but nice background
-fsck after a crash, which is however easy on the I/O as of recent FreeBSD
-versions).  Which was their main point against logging/journaling BTW,
-but they are porting XFS as well to save those that need instant
-complete recovery.
-
--- 
-Matthias Andree
+>
+>>Have you ever seen VxFS or WAFL in action?
+>>    
+>>
+>
+>No I haven't. As long as they are commercial, it's not likely that I
+>will.
+>  
+>
+WAFL was well done.   It has several innovations that I admire,
+including quota trees, non-support of fragments for performance reasons,
+and the basic WAFL notion applied to an NFS RAID special (though
+important) case.
