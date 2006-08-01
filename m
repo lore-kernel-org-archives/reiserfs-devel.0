@@ -1,27 +1,62 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
- regarding reiser4 inclusion
-Date: Tue, 01 Aug 2006 11:57:10 -0500
-Message-ID: <44CF87E6.1050004@slaphack.com>
-References: <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: metadata plugins (was Re: the " 'official' point of view"
+	expressed by kernelnewbies.org regarding reiser4 inclusion)
+Date: Tue, 01 Aug 2006 20:43:33 +0400
+Message-ID: <1154450613.10043.136.camel@tribesman.namesys.com>
+References: <200607281402.k6SE245v004715@laptop13.inf.utfsm.cl>
+	 <44CA31D2.70203@slaphack.com>
+	 <Pine.LNX.4.64.0607280859380.4168@g5.osdl.org>
+	 <op.tdl2s2fpd4os1z@localhost>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751283AbWHAQ5Q@vger.kernel.org>
-In-Reply-To: <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-29403-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <op.tdl2s2fpd4os1z@localhost>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Horst H. von Brand" <vonbrand@inf.utfsm.cl>
-Cc: Bernd Schubert <bernd-schubert@gmx.de>, reiserfs-list@namesys.com, Jan-Benedict Glaw <jbglaw@lug-owl.de>, Clay Barnes <clay.barnes@gmail.com>, Rudy Zijlstra <rudy@edsons.demon.nl>, Adrian Ulrich <reiser4@blinkenlights.ch>, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+To: =?iso-8859-2?Q?=A3ukasz?= Mierzwa <prymitive@pcserwis.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-Horst H. von Brand wrote:
-> Bernd Schubert <bernd-schubert@gmx.de> wrote:
+Hello
 
->> While filesystem speed is nice, it also would be great if reiser4.x would be 
->> very robust against any kind of hardware failures.
+On Tue, 2006-08-01 at 17:32 +0200, Łukasz Mierzwa wrote:
+> Dnia Fri, 28 Jul 2006 18:33:56 +0200, Linus Torvalds <torvalds@osdl.org>  
+> napisał:
 > 
-> Can't have both.
+> > In other words, if a filesystem wants to do something fancy, it needs to
+> > do so WITH THE VFS LAYER, not as some plugin architecture of its own. We
+> > already have exactly the plugin interface we need, and it literally _is_
+> > the VFS interfaces - you can plug in your own filesystems with
+> > "register_filesystem()", which in turn indirectly allows you to plug in
+> > your per-file and per-directory operations for things like lookup etc.
 
-Why not?  I mean, other than TANSTAAFL, is there a technical reason for 
-them being mutually exclusive?  I suspect it's more "we haven't found a 
-way yet..."
+> What fancy (beside cryptocompress) does reiser4 do now?
+
+it is supposed to provide an ability to easy modify filesystem behaviour
+in various aspects without breaking compatibility.
+
+> Can someone point me to a list of things that are required by kernel  
+> mainteiners to merge reiser4 into vanilla?
+
+list of features reiser4 does not have now:
+O_DIRECT support - we are working on it now
+various block size support
+quota support
+xattrs and acls
+
+list of warnings about reiser4 code:
+I think that last big list of useful comments (from Christoph Hellwig
+<hch@infradead.org>) is addressed. Well, except for one minor (I
+believe) place in file release.
+
+Currently, Andrew is trying to find some time to review reiser4 code.
+
+> I feel like I'm getting lost with current reiser4 status and things that  
+> are need to be done.
+> 
+> Łukasz Mierzwa
+> 
+
