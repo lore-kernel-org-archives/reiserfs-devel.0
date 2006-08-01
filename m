@@ -1,60 +1,63 @@
-From: Sander Sweers <sander.sweers@gmail.com>
-Subject: Ebuild/rpm/deb repo's (was Re: reiser4 can now bear with filled
-	fs, looks stable to me...)
-Date: Tue, 01 Aug 2006 20:10:34 +0200
-Message-ID: <1154455834.10745.21.camel@localhost>
-References: <20060730223755.GA14386@hermes.uziel.local>
-	 <44CD4127.9010202@slaphack.com> <11910177823.20060731232849@wp.pl>
-	 <44CE7A3A.2010503@slaphack.com>  <1256888283.20060801132818@wp.pl>
+From: Adrian Ulrich <reiser4@blinkenlights.ch>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
+ regarding reiser4 inclusion
+Date: Tue, 1 Aug 2006 20:11:34 +0200
+Message-ID: <20060801201134.d3523944.reiser4@blinkenlights.ch>
+References: <200607312314.37863.bernd-schubert@gmx.de>
+	<200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl>
+	<20060801165234.9448cb6f.reiser4@blinkenlights.ch>
+	<1154446189.15540.43.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-29411-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <1256888283.20060801132818@wp.pl>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751339AbWHASLh@vger.kernel.org>
+In-Reply-To: <1154446189.15540.43.camel@localhost.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: vonbrand@inf.utfsm.cl, bernd-schubert@gmx.de, reiserfs-list@namesys.com, jbglaw@lug-owl.de, clay.barnes@gmail.com, rudy@edsons.demon.nl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
 
-On Tue, 2006-08-01 at 13:28 +0200, Maciej So=B3tysiak wrote:
-> Hello David,
->=20
-> Monday, July 31, 2006, 11:46:34 PM, you wrote:
-> > You must be new here...
-> ;-)
->=20
-> I wanted to point out that because:
-> > Options B and C are all that ever seems to happen when reiserfs-list and
-> > lkml collide.
->=20
-> and:
-> >   The speed of a nonworking program is irrelevant.
-> >   The cost-effectiveness of an impossible solution is irrelevant.
->=20
-> maybe the more important thing is to allow people use r4 on their own
-> (rpms, debs, apt/gentoo/repositories, etc.) better, than to push that har=
-d for kernel inclusion.
->=20
+> You do it turns out. Its becoming an issue more and more that the sheer
+> amount of storage means that the undetected error rate from disks,
+> hosts, memory, cables and everything else is rising.
 
-Yes, and in case of gentoo there are already people maintaining an
-ebuild which pull in r4 on the wiki.
-http://gentoo-wiki.com/HOWTO_Reiser4_With_Gentoo-Sources
+IMHO the possibility to hit such a random-so-far-undetected-corruption
+is very low with one of the big/expensive raid systems as they are
+doing fancy stuff like 'disk scrubbing' and usually do fail disks
+at very early stages..
 
-WHen you make it easy for people to use reiser4 by providing ebuilds,
-rpm's or deb's more users will be tempted to try out reiser4 who would
-normally not be able or willing to patch the kernel.
+ * I've seen storage systems from a BIG vendor die due to
+   firmware bugs
+ * I've seen FC-Cards die.. SAN-switches rebooted.. People used
+   my cables to do rope skipping
+ * We had Fire, non-working UPS and faulty diesel generators..
 
-Maintaning an ebuild for example is easy. And adding in another patch to
-a kernel deb/rpm should also not be too difficult. It will take some
-time to do each month but sacrificing a few hours to update these to me
-would be worth it.
+but so far the FSes (and applications) on the Storage never
+complained about corrupted data.
 
-Maybe the reiser cummunity can help out the namesys devs?
+..YMMV..
 
-Greets
-Sander
+Btw: I don't think that Reiserfs really behaves this bad
+with broken hardware. So far, Reiser3 survived 2 broken Harddrives
+without problems while i've seen ext2/3 die 4 times so far...
+(= everything inside /lost+found). Reiser4 survived
+ # mkisofs . > /dev/sda
+
+Lucky me.. maybe..
 
 
+To get back on-topic:
 
+Some people try very hard to claim that the world doesn't need
+Reiser4 and that you can do everything with ext3.
+
+Ext3 may be fine for them but some people (like me) really need Reiser4
+because they got applications/workloads that won't work good (fast) on ext3.
+
+Why is it such a big thing to include a filesystem?
+Even if it's unstable: does anyone care? Eg: the HFS+ driver
+is buggy (corrupted the FS of my OSX installation 3 times so far) but
+does this buggyness affect people *not* using it? No.
+
+Regards,
+ Adrian
