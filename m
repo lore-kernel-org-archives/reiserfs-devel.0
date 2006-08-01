@@ -1,99 +1,115 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of  view"expressed
- by kernelnewbies.org regarding reiser4 inclusion]
-Date: Mon, 31 Jul 2006 23:57:14 -0500
-Message-ID: <44CEDF2A.6080500@slaphack.com>
-References: <20060801034726.58097.qmail@web51311.mail.yahoo.com> <44CED777.5080308@slaphack.com> <Pine.LNX.4.63.0607312133080.15179@qynat.qvtvafvgr.pbz>
+Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of   view"expressedby
+ kernelnewbies.org regarding reiser4 inclusion]
+Date: Tue, 01 Aug 2006 00:59:22 -0500
+Message-ID: <44CEEDBA.6040403@slaphack.com>
+References: <20060731175958.1626513b.reiser4@blinkenlights.ch>   <200607311918.k6VJIqTN011066@laptop13.inf.utfsm.cl>   <20060731225734.ecf5eb4d.reiser4@blinkenlights.ch>   <44CE7C31.5090402@gmx.de>   <5c49b0ed0607311621i54f1c46fh9137f8955c9ea4be@mail.gmail.com>   <Pine.LNX.4.63.0607311621360.14674@qynat.qvtvafvgr.pbz>   <5c49b0ed0607311650j4b86d0c3h853578f58db16140@mail.gmail.com>   <Pine.LNX.4.63.0607311651410.14674@qynat.qvtvafvgr.pbz>   <5c49b0ed0607311705t1eb8fc6bs9a68a43059bfa91a@mail.gmail.com>   <20060801010215.GA24946@merlin.emma.line.org>  <44CEAEF4.9070100@slaphack.com>  <Pine.LNX.4.63.0607312114500.15179@qynat.qvtvafvgr.pbz> <44CED95C.10709@slaphack.com> <Pine.LNX.4.63.0607312142020.15179@qynat.qvtvafvgr.pbz>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29368-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29369-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.63.0607312133080.15179@qynat.qvtvafvgr.pbz>
+In-Reply-To: <Pine.LNX.4.63.0607312142020.15179@qynat.qvtvafvgr.pbz>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: David Lang <dlang@digitalinsight.com>
-Cc: tdwebste2@yahoo.com, Theodore Tso <tytso@mit.edu>, Nate Diller <nate.diller@gmail.com>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Cc: Nate Diller <nate.diller@gmail.com>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
 David Lang wrote:
 > On Mon, 31 Jul 2006, David Masover wrote:
+
+>> Aha, so back to the usual argument:  UPS!  It takes a fraction of a 
+>> second to flush that cache.
 > 
->>> And perhaps a
->>> really good clustering filesystem for markets that
->>> require NO downtime. 
->>
->> Thing is, a cluster is about the only FS I can imagine that could 
->> reasonably require (and MAYBE provide) absolutely no downtime. 
->> Everything else, the more you say it requires no downtime, the more I 
->> say it requires redundancy.
->>
->> Am I missing any more obvious examples where you can't have enough 
->> redundancy, but you can't have downtime either?
+> which does absolutly no good if someone trips over the power cord, the 
+> fuse blows in the power supply, someone yanks the drive out of the 
+> hot-swap bay, etc.
+
+Power supply fuse...  Yeah, it happens.  Drives die, too.  This seems 
+fairly uncommon.  And dear God, please tell me anyone smart enough to 
+set up a UPS would also be smart enough to make tripping over the power 
+cord rare or impossible.
+
+My box has a cable that runs down behind a desk, between the desk and 
+the wall.  Power strip is on the floor, where a UPS will be when I get 
+around to buying one.  If someone kicks any cable, it would be where the 
+UPS hits the wall -- but that's also behind the same desk.
+
+
+> as I understand it flash reads are fast (ram speeds), but writes are 
+> pretty slow (comparable or worse to spinning media)
 > 
-> just becouse you have redundancy doesn't mean that your data is idle 
-> enough for you to run a repacker with your spare cycles.
+> writing to a ram cache, but having a flash drive behind it doesn't gain 
+> you any protection. and I don't think you need it for reads
 
-Then you don't have redundancy, at least not for reliability.  In that 
-case, you have redundancy for speed.
+Does gain you protection if you're not using the RAM cache, if you're 
+that paranoid.  I don't know if it's cheaper than RAM, but more read 
+cache is always better.  And losing power seems a lot less likely than 
+crashing, especially on a Windows laptop, so it does make sense as a 
+product.  And a laptop, having a battery, will give you a good bit of 
+warning before it dies.  My Powerbook syncs and goes into Sleep mode 
+when it runs low on power (~1%/5mins)
 
-> to run a 
-> repacker you need a time when the chunk of the filesystem that you are 
-> repacking is not being accessed or written to.
+>>> external battery backed cache is readily available, either on 
+>>> high-end raid controllers or as seperate ram drives (and in raid 
+>>> array boxes), but nothing on individual drives.
+>>
+>> Ah.  Curses.
+>>
+>> UPS, then.  If you have enough time, you could even do a Software 
+>> Suspend first -- that way, when power comes back on, you boot back up, 
+>> and if it's done quickly enough, connections won't even be dropped...
+> 
+> remember, it can take 90W of power to run your CPU, 100+ to run your 
+> video card, plus everything else. even a few seconds of power for this 
+> is a very significant amount of energy storage.
 
-Reasonably, yes.  But it will be an online repacker, so it will be 
-somewhat tolerant of this.
+Suspend2 can take about 10-20 seconds.  It should be possible to work 
+out the maximum amount of time it can take.
 
-> it doesn't matter if that 
-> data lives on one disk or 9 disks all mirroring the same data, you can't 
-> just break off 1 of the copies and repack that becouse by the time you 
-> finish it won't match the live drives anymore.
+Anyway, according to a quick Google search, my CPU is more like 70W. 
+Video card isn't required on a server, but you may be right on mine.  I 
+haven't looked at UPSes lately, though.  I need about 3 seconds for a 
+sync, maybe 10 for a suspend, so to be safe I can say for sure I'd be 
+down in about 30 seconds.
 
-Aha.  That really depends how you're doing the mirroring.
+So, another Google search, and while you can get a cheap UPS for 
+anywhere from $10 to $100, the sweet spot seems to be a little over $200.
 
-If you're doing it at the block level, then no, it won't work.  But if 
-you're doing it at the filesystem level (a cluster-based FS, or 
-something that layers on top of an FS), or (most likely) the 
-database/application level, then when you come back up, the new data is 
-just pulled in from the logs as if it had been written to the FS.
+$229, and it's 865W, supposedly for 3.7 minutes.  Here's a review:
 
-The only example I can think of that I've actually used and seen working 
-is MySQL tables, but that already covers a huge number of websites.
+"This is a great product. It powers an AMD 64 3200+ with beefy (6800GT) 
+graphics card, 21" CRT monitor, secondary 19" CRT, a linux server, a 15" 
+CRT, Cisco 2800XL switch, Linksys WRTG54GS, cable modem, speakers, and 
+many other things. The software says I will get 9 minutes runtime with 
+all of that hooked up, realistically it's about 4 minutes."
 
-> database servers have a repacker (vaccum), and they are under tremendous 
-> preasure from their users to avoid having to use it becouse of the 
-> performance hit that it generates. (the theory in the past is exactly 
-> what was presented in this thread, make things run faster most of the 
-> time and accept the performance hit when you repack). the trend seems to 
-> be for a repacker thread that runs continuously, causing a small impact 
-> all the time (that can be calculated into the capacity planning) instead 
-> of a large impact once in a while.
+This was the lowest time reported.  Most of the other reviews say at 
+least 15 minutes, sometimes 30 minutes, with fairly high-end computers 
+listed (and monitors, sometimes two computers/monitors), but nowhere 
+near as much stuff as this guy has.
 
-Hmm, if that could be done right, it wouldn't be so bad -- if you get 
-twice the performance but have to repack for 2 hrs at the end of the 
-week, repacker is better, right?  So if you could spread the 2 hours out 
-over the week, in theory, you'd still be pretty close to twice the 
-performance.
+I checked most of these for Linux support, and UPSes in general seem 
+well supported.  So yes, the box will shut off automatically.  On a 
+network, it shouldn't be too hard to get one box to shut off all the rest.
 
-But that is fairly difficult to do, and may be more difficult to do well 
-than to implement, say, a Reiser4 plugin that operates about on the 
-level of rsync, but on every file modification.
+It's a lot of money, even at the low end, but when you're already 
+spending a pile of money on a new computer, keep power in mind.  And 
+really, even 11 minutes would be fine, but 40 minutes of power is quite 
+a lot compared to less than a minute of time taken to shut down normally 
+-- not even suspend, but a normal shut down.  I'd be tempted to try to 
+ride it out for the first 20 minutes, see if power comes back up...
 
-> the other thing they are seeing as new people start useing them is that 
-> the newbys don't realize they need to do somthing as archaic as running 
-> a repacker periodicly, as a result they let things devolve down to where 
-> performance is really bad without understanding why.
+> however, I did get a pointer recently at a company makeing super-high 
+> capcity caps, up to 2600F (F, not uF!) in a 138mmx tall 57mm dia 
+> cyliner, however it only handles 2.7v (they have modules that handle 
+> higher voltages available)
+> http://www.maxwell.com/ultracapacitors/index.html
+> 
+> however I don't see these as being standard equipment in systems or on 
+> drives anytime soon
 
-Yikes.  But then, that may be a failure of distro maintainers for not 
-throwing it in cron for them.
-
-I had a similar problem with MySQL.  I turned on binary logging so I 
-could do database replication, but I didn't realize I had to actually 
-delete the logs.  I now have a daily cron job that wipes out everything 
-except the last day's logs.  It could probably be modified pretty easily 
-to run hourly, if I needed to.
-
-Moral of the story?  Maybe there's something to this "continuous 
-repacker" idea, but don't ruin a good thing for the rest of us because 
-of newbies.
+This seems to be a whole different approach -- more along the lines of 
+in the drive, which would be cool...
