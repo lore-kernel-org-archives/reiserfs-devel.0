@@ -1,72 +1,50 @@
-From: Andrew Morton <akpm@osdl.org>
-Subject: Re: reiser4: maybe just fix bugs?
-Date: Tue, 1 Aug 2006 07:33:16 -0700
-Message-ID: <20060801073316.ee77036e.akpm@osdl.org>
-References: <1158166a0607310226m5e134307o8c6bedd1f883479c@mail.gmail.com>
-	<20060801013104.f7557fb1.akpm@osdl.org>
-	<44CEBA0A.3060206@namesys.com>
-	<1154431477.10043.55.camel@tribesman.namesys.com>
+From: Adrian Ulrich <reiser4@blinkenlights.ch>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
+ regarding reiser4 inclusion
+Date: Tue, 1 Aug 2006 16:52:34 +0200
+Message-ID: <20060801165234.9448cb6f.reiser4@blinkenlights.ch>
+References: <200607312314.37863.bernd-schubert@gmx.de>
+	<200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29395-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29396-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1154431477.10043.55.camel@tribesman.namesys.com>
+In-Reply-To: <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: vda.linux@googlemail.com, linux-kernel@vger.kernel.org, Reiserfs-List@namesys.com
+Cc: bernd-schubert@gmx.de, reiserfs-list@namesys.com, jbglaw@lug-owl.de, clay.barnes@gmail.com, rudy@edsons.demon.nl, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
 
-On Tue, 01 Aug 2006 15:24:37 +0400
-"Vladimir V. Saveliev" <vs@namesys.com> wrote:
 
-> > >The writeout code is ugly, although that's largely due to a mismatch between
-> > >what reiser4 wants to do and what the VFS/MM expects it to do.
+> > While filesystem speed is nice, it also would be great if reiser4.x would be 
+> > very robust against any kind of hardware failures.
 > 
-> Yes. reiser4 writeouts atoms. Most of pages get into atoms via
-> sys_write. But pages dirtied via shared mapping do not. They get into
-> atoms in reiser4's writepages address space operation.
+> Can't have both.
 
-It think you mean ->writepage - reiser4 desn't implement ->writepages().
+..and some people simply don't care about this:
 
-I assume you considered hooking into ->set_page_dirty() to do the
-add-to-atom thing earlier on?
+If you are running a 'big' Storage-System with battery protected
+WriteCache, Mirroring between 2 Datacenters, snapshotting.. etc..
+you don't need your filesystem beeing super-robust against bad sectors
+and such stuff because:
 
-We'll merge mm-tracking-shared-dirty-pages.patch into 2.6.19-rc1, which
-would make that approach considerably more successful, I expect. 
-->set_page_dirty() is a bit awkward because it can be called under
-spinlock.
+ a) You've paid enough money to let the storage care about 
+    Hardware issues.
+ b) If your storage is on fire you can do a failover using the mirror.
+ c) And if someone ran dd if=/dev/urandom of=/dev/sda you could
+    even rollback your Snapshot.
+    (Btw: i did this once to a Reiser4 filesystem (overwritten about
+    1.2gb). fsck.reiser4 --rebuild-sb was able to fix it.)
 
-Maybe comething could also be gained from the new
-vm_operations_struct.page_mkwrite(), although that's less obvious...
 
-> That is why
-> reiser4_sync_inodes has two steps: on first one it calls
-> generic_sync_sb_inodes to call writepages for dirty inodes to capture
-> pages dirtied via shared mapping into atoms. Second step flushes atoms.
-> 
-> > >
-> > I agree --- both with it being ugly, and that being part of why.
-> > 
-> > >  If it
-> > >works, we can live with it, although perhaps the VFS could be made smarter.
-> > >  
-> > >
-> > I would be curious regarding any ideas on that.  Next time I read
-> > through that code, I will keep in mind that you are open to making VFS
-> > changes if it improves things, and I will try to get clever somehow and
-> > send it by you.  Our squalloc code though is I must say the most
-> > complicated and ugliest piece of code I ever worked on for which every
-> > cumulative ugliness had a substantive performance advantage requiring us
-> > to keep it.  If you spare yourself from reading that, it is
-> > understandable to do so.
-> > 
-> > >I'd say that resier4's major problem is the lack of xattrs, acls and
-> > >direct-io.  That's likely to significantly limit its vendor uptake. 
-> 
-> xattrs is really a problem.
+..but what you really need is a flexible and **fast** filesystem: Like
+Reiser4.
 
-That's not good.  The ability to properly support SELinux is likely to be
-important.
+(Yeah.. yeah.. i know: ext3 is also flexible and fast.. but Reiser4
+simply is *MUCH* faster than ext3 for 'my' workload/application).
+
+Regards,
+ Adrian
+
