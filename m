@@ -1,62 +1,72 @@
-From: Matthias Andree <matthias.andree@gmx.de>
-Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion]
-Date: Tue, 1 Aug 2006 11:09:47 +0200
-Message-ID: <20060801090947.GA2974@merlin.emma.line.org>
-References: <200607311918.k6VJIqTN011066@laptop13.inf.utfsm.cl> <20060731225734.ecf5eb4d.reiser4@blinkenlights.ch> <44CE7C31.5090402@gmx.de> <5c49b0ed0607311621i54f1c46fh9137f8955c9ea4be@mail.gmail.com> <Pine.LNX.4.63.0607311621360.14674@qynat.qvtvafvgr.pbz> <5c49b0ed0607311650j4b86d0c3h853578f58db16140@mail.gmail.com> <Pine.LNX.4.63.0607311651410.14674@qynat.qvtvafvgr.pbz> <5c49b0ed0607311705t1eb8fc6bs9a68a43059bfa91a@mail.gmail.com> <20060801010215.GA24946@merlin.emma.line.org> <20060801095141.5ec0b479.reiser4@blinkenlights.ch>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: reiser4: maybe just fix bugs?
+Date: Mon, 31 Jul 2006 20:18:50 -0600
+Message-ID: <44CEBA0A.3060206@namesys.com>
+References: <1158166a0607310226m5e134307o8c6bedd1f883479c@mail.gmail.com> <20060801013104.f7557fb1.akpm@osdl.org>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751341AbWHAJJx@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20060801095141.5ec0b479.reiser4@blinkenlights.ch>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932456AbWHAJTN@vger.kernel.org>
+In-Reply-To: <20060801013104.f7557fb1.akpm@osdl.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Adrian Ulrich <reiser4@blinkenlights.ch>
-Cc: Matthias Andree <matthias.andree@gmx.de>, nate.diller@gmail.com, dlang@digitalinsight.com, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Andrew Morton <akpm@osdl.org>
+Cc: Denis Vlasenko <vda.linux@googlemail.com>, linux-kernel@vger.kernel.org, Reiserfs mail-list <Reiserfs-List@namesys.com>, Reiserfs developers mail-list <Reiserfs-Dev@namesys.com>
 
-Adrian Ulrich schrieb am 2006-08-01:
+Andrew Morton wrote:
 
-> > suspect, particularly with 7200/min (s)ATA crap. 
-> 
-> Quoting myself (again):
-> >> A quick'n'dirty ZFS-vs-UFS-vs-Reiser3-vs-Reiser4-vs-Ext3 'benchmark'
-> 
-> Yeah, the test ran on a single SATA-Harddisk (quick'n'dirty).
-> I'm so sorry but i don't have access to a $$$ Raid-System at home. 
+>On Mon, 31 Jul 2006 10:26:55 +0100
+>"Denis Vlasenko" <vda.linux@googlemail.com> wrote:
+>
+>  
+>
+>>The reiser4 thread seem to be longer than usual.
+>>    
+>>
+>
+>Meanwhile here's poor old me trying to find another four hours to finish
+>reviewing the thing.
+>  
+>
+Thanks Andrew.
 
-I'm not asking for you to perform testing on a $$$$ RAID system with
-SCSI or SAS, but I consider the obtained data (I am focussing on
-transactions per unit of time) highly suspicious, and suspect write
-caches might have contributed their share - I haven't seen a drive that
-shipped with write cache disabled in the past years.
+>The writeout code is ugly, although that's largely due to a mismatch between
+>what reiser4 wants to do and what the VFS/MM expects it to do.
+>
+I agree --- both with it being ugly, and that being part of why.
 
-> > sdparm --clear=WCE /dev/sda   # please.
-> 
-> How about using /dev/emcpower* for the next benchmark?
+>  If it
+>works, we can live with it, although perhaps the VFS could be made smarter.
+>  
+>
+I would be curious regarding any ideas on that.  Next time I read
+through that code, I will keep in mind that you are open to making VFS
+changes if it improves things, and I will try to get clever somehow and
+send it by you.  Our squalloc code though is I must say the most
+complicated and ugliest piece of code I ever worked on for which every
+cumulative ugliness had a substantive performance advantage requiring us
+to keep it.  If you spare yourself from reading that, it is
+understandable to do so.
 
-No, it is valid to run the test on commodity hardware, but if you (or
-the benchmark rather) is claiming "transactions", I tend to think
-"ACID", and I highly doubt any 200 GB SATA drive manages 3000
-synchronous writes per second without causing either serious
-fragmentation or background block moving.
+>I'd say that resier4's major problem is the lack of xattrs, acls and
+>direct-io.  That's likely to significantly limit its vendor uptake.  (As
+>might the copyright assignment thing, but is that a kernel.org concern?)
+>  
+>
+Thanks to you and the batch write code, direct io support will now be
+much easier to code, and it probably will get coded the soonest of those
+features.  acls are on the todo list, but doing them right might require
+solving a few additional issues (finishing the inheritance code, etc.)
 
-This is a figure I'd expect for synchronous random access to RAM disks
-that have no seek and rotational latencies (and research for hybrid
-disks w/ flash or other nonvolatile fast random access media to cache
-actual rotating magnetic plattern access is going on elsewhere).
-
-I didn't mean to say your particular drive were crap, but 200GB SATA
-drives are low end, like it or not -- still, I have one in my home
-computer because these Samsung SP2004C are so nicely quiet.
-
-> I mighty be able to re-run it in a few weeks if people are interested
-> and if i receive constructive suggestions (= Postmark parameters,
-> mkfs options, etc..)
-
-I don't know Postmark, I did suggest to turn the write cache off. If
-your systems uses hdparm -W0 /dev/sda instead, go ahead. But you're
-right to collect and evaluate suggestions first if you don't want to run
-a new benchmark every day :)
-
--- 
-Matthias Andree
+>The plugins appear to be wildly misnamed - they're just an internal
+>abstraction layer which permits later feature additions to be added in a
+>clean and safe manner.  Certainly not worth all this fuss.
+>
+>Could I suggest that further technical critiques of reiser4 include a
+>file-and-line reference?  That should ease the load on vger.
+>
+>Thanks.
+>
+>
+>  
+>
