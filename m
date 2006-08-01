@@ -1,34 +1,51 @@
-From: Avi Kivity <avi@argo.co.il>
-Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of view"
- expressed by kernelnewbies.org regarding reiser4 inclusion]
-Date: Tue, 01 Aug 2006 12:57:03 +0300
-Message-ID: <44CF256F.1020605@argo.co.il>
-References: <20060801090947.GA2974@merlin.emma.line.org>
+From: Helge Hafting <helgehaf@aitel.hist.no>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
+Date: Tue, 1 Aug 2006 12:40:14 +0200
+Message-ID: <20060801104013.GA18239@aitel.hist.no>
+References: <1153760245.5735.47.camel@ipso.snappymail.ca> <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl> <20060731125846.aafa9c7c.reiser4@blinkenlights.ch> <20060731144736.GA1389@merlin.emma.line.org> <20060731175958.1626513b.reiser4@blinkenlights.ch>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29383-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29385-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060801090947.GA2974@merlin.emma.line.org>
+Content-Disposition: inline
+In-Reply-To: <20060731175958.1626513b.reiser4@blinkenlights.ch>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Matthias Andree <matthias.andree@gmx.de>
-Cc: Adrian Ulrich <reiser4@blinkenlights.ch>, nate.diller@gmail.com, dlang@digitalinsight.com, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Adrian Ulrich <reiser4@blinkenlights.ch>
+Cc: Matthias Andree <matthias.andree@gmx.de>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Matthias Andree wrote:
->
-> No, it is valid to run the test on commodity hardware, but if you (or
-> the benchmark rather) is claiming "transactions", I tend to think
-> "ACID", and I highly doubt any 200 GB SATA drive manages 3000
-> synchronous writes per second without causing either serious
-> fragmentation or background block moving.
->
-You are assuming 1 transaction = 1 sync write.  That's not true.  
-Databases and log filesystems can get much more out of a disk write.
+On Mon, Jul 31, 2006 at 05:59:58PM +0200, Adrian Ulrich wrote:
+> Hello Matthias,
+> 
+> > This looks rather like an education issue rather than a technical limit.
+> 
+> We aren't talking about the same issue: I was asking to do it
+> on-the-fly. Umounting the filesystem, running e2fsck and resize2fs
+> is something different ;-)
+> 
+> > Which is untrue at least for Solaris, which allows resizing a life file
+> > system. FreeBSD and Linux require an unmount.
+> 
+> Correct: You can add more inodes to a Solaris UFS on-the-fly if you are
+> lucky enough to have some free space available.
+> 
+> A colleague of mine happened to create a ~300gb filesystem and started
+> to migrate Mailboxes (Maildir-style format = many small files (1-3kb))
+> to the new LUN. At about 70% the filesystem ran out of inodes; Not a
+> big deal with VxFS because such a problem is fixable within seconds.
+> What would have happened if he had used UFS? mkfs -G wouldn't work
+> because he had no additional Diskspace left... *ouch*..
+> 
+This case is solvable by planning.  When you know that the new fs
+must be created with all inodes from the start, simply count
+how many you need before migration.  (And add a decent safety margin.)
+That's what I do with my home machine ask disks wear out every third 
+year or so. The tools for ext2/3 tells how many inodes are in use,
+and the new fs can be made accordingly.  The approach works for bigger
+machines too of course.
 
-
--- 
-error compiling committee.c: too many arguments to function
+Helge Hafting
 
