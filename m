@@ -1,64 +1,59 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of view"
- expressed by kernelnewbies.org regarding reiser4 inclusion]
-Date: Mon, 31 Jul 2006 20:31:32 -0500
-Message-ID: <44CEAEF4.9070100@slaphack.com>
-References: <20060731175958.1626513b.reiser4@blinkenlights.ch> <200607311918.k6VJIqTN011066@laptop13.inf.utfsm.cl> <20060731225734.ecf5eb4d.reiser4@blinkenlights.ch> <44CE7C31.5090402@gmx.de> <5c49b0ed0607311621i54f1c46fh9137f8955c9ea4be@mail.gmail.com> <Pine.LNX.4.63.0607311621360.14674@qynat.qvtvafvgr.pbz> <5c49b0ed0607311650j4b86d0c3h853578f58db16140@mail.gmail.com> <Pine.LNX.4.63.0607311651410.14674@qynat.qvtvafvgr.pbz> <5c49b0ed0607311705t1eb8fc6bs9a68a43059bfa91a@mail.gmail.com> <20060801010215.GA24946@merlin.emma.line.org>
+From: Theodore Tso <tytso@mit.edu>
+Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion]
+Date: Mon, 31 Jul 2006 23:00:05 -0400
+Message-ID: <20060801030005.GA1987@thunk.org>
+References: <200607311918.k6VJIqTN011066@laptop13.inf.utfsm.cl> <20060731225734.ecf5eb4d.reiser4@blinkenlights.ch> <44CE7C31.5090402@gmx.de> <5c49b0ed0607311621i54f1c46fh9137f8955c9ea4be@mail.gmail.com> <Pine.LNX.4.63.0607311621360.14674@qynat.qvtvafvgr.pbz> <5c49b0ed0607311650j4b86d0c3h853578f58db16140@mail.gmail.com> <Pine.LNX.4.63.0607311651410.14674@qynat.qvtvafvgr.pbz> <5c49b0ed0607311705t1eb8fc6bs9a68a43059bfa91a@mail.gmail.com> <20060801010215.GA24946@merlin.emma.line.org> <44CEAEF4.9070100@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29358-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <20060801010215.GA24946@merlin.emma.line.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1030410AbWHADAn@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <44CEAEF4.9070100@slaphack.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Nate Diller <nate.diller@gmail.com>, David Lang <dlang@digitalinsight.com>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Masover <ninja@slaphack.com>
+Cc: Nate Diller <nate.diller@gmail.com>, David Lang <dlang@digitalinsight.com>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Matthias Andree wrote:
-> On Mon, 31 Jul 2006, Nate Diller wrote:
-> 
->> this is only a limitation for filesystems which do in-place data and
->> metadata updates.  this is why i mentioned the similarities to log
->> file systems (see rosenblum and ousterhout, 1991).  they observed an
->> order-of-magnitude increase in performance for such workloads on their
->> system.
-> 
-> It's well known that transactions that would thrash on UFS or ext2fs may
-> have quieter access patterns with shorter strokes can benefit from
-> logging, data journaling, whatever else turns seeks into serial writes.
-> And then, the other question with wandering logs (to avoid double
-> writes) and such, you start wondering how much fragmentation you get as
-> the price to pay for avoiding seeks and double writes at the same time.
+On Mon, Jul 31, 2006 at 08:31:32PM -0500, David Masover wrote:
+> So you use a repacker.  Nice thing about a repacker is, everyone has 
+> downtime.  Better to plan to be a little sluggish when you'll have 
+> 1/10th or 1/50th of the users than be MUCH slower all the time.
 
-So you use a repacker.  Nice thing about a repacker is, everyone has 
-downtime.  Better to plan to be a little sluggish when you'll have 
-1/10th or 1/50th of the users than be MUCH slower all the time.
+Actually, that's a problem with log-structured filesystems in general.
+There are quite a few real-life workloads where you *don't* have
+downtime.  The thing is, in a global economy, you move from the
+London/European stock exchanges, to the New York/US exchanges, to the
+Asian exchanges, with little to no downtime available.  In addition,
+people have been getting more sophisticated with workload
+consolidation tricks so that you use your "downtime" for other
+applications (either to service other parts of the world, or to do
+daily summaries, 3-d frame rendering at animation companies, etc.)  So
+the assumption that there will always be time to run the repacker is a
+dangerous one.
 
-You're right, though, to ask the question:
+The problem is that many benchmarks (such as taring and untaring the
+kernel sources in reiser4 sort order) are overly simplistic, in that
+they don't really reflect how people use the filesystem in real life.
+(How many times can you guarantee that files will be written in the
+precise hash/tree order so that the filesystem gets the best possible
+time?)  A more subtle version of this problem happens for filesystems
+where their performance degrades dramatically over-time without a
+repacker.  If the benchmark doesn't take into account the need for
+repacker, or if the repacker is disabled or fails to run during the
+benchmark, the filesystem are in effect "cheating" on the benchmark
+because there is critical work which is necessary for the long-term
+health of the filesystem which is getting deferred until after the
+benchmark has finished measuring the performance of the system under
+test.
 
-> TANSTAAFL, or how long the system can sustain such access patterns,
-> particularly if it gets under memory pressure and must move.
+This sort of marketing benchmarks ("lies, d*mn lies, and benchmarks")
+may be useful for trying to scam mainline acceptance of the filesystem
+code, or to make pretty graphs that make log-structured filesystems
+look good on Usenix papers, but despite the fact that huge numbers of
+papers were written about the lfs filesystem two decades ago, it never
+was used in real-life by any of the commercial Unix systems.  This
+wasn't an accident, and it wasn't due to a secret conspiracy of BSD
+fast filesystem hackers keeping people from using lfs.  No, the BSD
+lfs died on its own merits....
 
-Anyone care to run some very long benchmarks?
-
-> Even with
-> lazy allocation and other optimizations, I question the validity of
-> 3000/s or faster transaction frequencies. Even the 500 on ext3 are
-> suspect, particularly with 7200/min (s)ATA crap. This sounds pretty much
-> like the drive doing its best to shuffle blocks around in its 8 MB cache
-> and lazily writing back.
-
-Oh, I'm curious -- do hard drives ever carry enough battery/capacitance 
-to cover their caches?  It doesn't seem like it would be that 
-hard/expensive, and if it is done that way, then I think it's valid to 
-leave them on.  You could just say that other filesystems aren't taking 
-as much advantage of newer drive features as Reiser :P
-
-Anyway, remember that the primary tool of science is not logic.  Logic 
-is the primary tool of philosophy.  The primary tool of science is 
-observation.
-
-Sorry, the only machines I could really run this on are about to be in 
-remote only mode for a couple weeks.  I'm hesitant to hit them too hard.
+						- Ted
