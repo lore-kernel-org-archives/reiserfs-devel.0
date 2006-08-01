@@ -1,98 +1,34 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: reiser4: maybe just fix bugs?
-Date: Tue, 01 Aug 2006 19:07:02 +0400
-Message-ID: <1154444822.10043.106.camel@tribesman.namesys.com>
-References: <1158166a0607310226m5e134307o8c6bedd1f883479c@mail.gmail.com>
-	 <20060801013104.f7557fb1.akpm@osdl.org> <44CEBA0A.3060206@namesys.com>
-	 <1154431477.10043.55.camel@tribesman.namesys.com>
-	 <20060801073316.ee77036e.akpm@osdl.org>
+From: =?iso-8859-2?B?o3VrYXN6IE1pZXJ6d2E=?= <prymitive@pcserwis.net>
+Subject: Re: metadata plugins (was Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion)
+Date: Tue, 01 Aug 2006 17:32:52 +0200
+Message-ID: <op.tdl2s2fpd4os1z@localhost>
+References: <200607281402.k6SE245v004715@laptop13.inf.utfsm.cl> <44CA31D2.70203@slaphack.com> <Pine.LNX.4.64.0607280859380.4168@g5.osdl.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29398-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-29399-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060801073316.ee77036e.akpm@osdl.org>
+In-Reply-To: <Pine.LNX.4.64.0607280859380.4168@g5.osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Andrew Morton <akpm@osdl.org>
-Cc: vda.linux@googlemail.com, linux-kernel@vger.kernel.org, Reiserfs-List@namesys.com
+Content-Type: text/plain; format="flowed"; delsp="yes"; charset="iso-8859-1"
+To: Linus Torvalds <torvalds@osdl.org>, LKML <linux-kernel@vger.kernel.org>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-Hello
+Dnia Fri, 28 Jul 2006 18:33:56 +0200, Linus Torvalds <torvalds@osdl.org> =20
+napisa=B3:
 
-On Tue, 2006-08-01 at 07:33 -0700, Andrew Morton wrote:
-> On Tue, 01 Aug 2006 15:24:37 +0400
-> "Vladimir V. Saveliev" <vs@namesys.com> wrote:
-> 
-> > > >The writeout code is ugly, although that's largely due to a mismatch between
-> > > >what reiser4 wants to do and what the VFS/MM expects it to do.
-> > 
-> > Yes. reiser4 writeouts atoms. Most of pages get into atoms via
-> > sys_write. But pages dirtied via shared mapping do not. They get into
-> > atoms in reiser4's writepages address space operation.
-> 
-> It think you mean ->writepage - reiser4 desn't implement ->writepages().
-> 
+> In other words, if a filesystem wants to do something fancy, it needs to
+> do so WITH THE VFS LAYER, not as some plugin architecture of its own. We
+> already have exactly the plugin interface we need, and it literally _is_
+> the VFS interfaces - you can plug in your own filesystems with
+> "register_filesystem()", which in turn indirectly allows you to plug in
+> your per-file and per-directory operations for things like lookup etc.
 
-no.
-there is one. It is reiser4/plugin/file/file.c:writepages_unix_file().
+What fancy (beside cryptocompress) does reiser4 do now?
+Can someone point me to a list of things that are required by kernel =20
+mainteiners to merge reiser4 into vanilla?
+I feel like I'm getting lost with current reiser4 status and things that =20
+are need to be done.
 
-reiser4_writepage just kicks kernel thread (entd) which works similar to
-reiser4_sync_inodes() (described earlier) and waits until several pages
-(including the one reiser4_writepage is called with) are written.
-
-> I assume you considered hooking into ->set_page_dirty() to do the
-> add-to-atom thing earlier on?
-> 
-
-Currently, add-to-atom is not simple. It may require memory allocations
-and disk i/o-s. I guess these are not supposed to be called in
-->set_page_dirty(). That is why in reiser4_set_page_dirty we just mark
-the page in mapping's tree and dealy adding to atoms until flush time.
-
-
-> We'll merge mm-tracking-shared-dirty-pages.patch into 2.6.19-rc1, which
-> would make that approach considerably more successful, I expect. 
-> ->set_page_dirty() is a bit awkward because it can be called under
-> spinlock.
-> 
-> Maybe comething could also be gained from the new
-> vm_operations_struct.page_mkwrite(), although that's less obvious...
-> 
-> > That is why
-> > reiser4_sync_inodes has two steps: on first one it calls
-> > generic_sync_sb_inodes to call writepages for dirty inodes to capture
-> > pages dirtied via shared mapping into atoms. Second step flushes atoms.
-> > 
-> > > >
-> > > I agree --- both with it being ugly, and that being part of why.
-> > > 
-> > > >  If it
-> > > >works, we can live with it, although perhaps the VFS could be made smarter.
-> > > >  
-> > > >
-> > > I would be curious regarding any ideas on that.  Next time I read
-> > > through that code, I will keep in mind that you are open to making VFS
-> > > changes if it improves things, and I will try to get clever somehow and
-> > > send it by you.  Our squalloc code though is I must say the most
-> > > complicated and ugliest piece of code I ever worked on for which every
-> > > cumulative ugliness had a substantive performance advantage requiring us
-> > > to keep it.  If you spare yourself from reading that, it is
-> > > understandable to do so.
-> > > 
-> > > >I'd say that resier4's major problem is the lack of xattrs, acls and
-> > > >direct-io.  That's likely to significantly limit its vendor uptake. 
-> > 
-> > xattrs is really a problem.
-> 
-> That's not good.  The ability to properly support SELinux is likely to be
-> important.
-> 
-
-Do you think that if reiser4 supported xattrs - it would increase its
-chances on inclusion?
-
-PS: what exactly did you refer to when you said that writeout code is
-ugly?
-
+=A3ukasz Mierzwa
