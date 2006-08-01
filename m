@@ -1,89 +1,105 @@
-From: "Nate Diller" <nate.diller@gmail.com>
-Subject: Re: reiser4: maybe just fix bugs?
-Date: Tue, 1 Aug 2006 12:14:58 -0700
-Message-ID: <5c49b0ed0608011214x23e18275s9b9d30ac9d0b5056@mail.gmail.com>
-References: <1158166a0607310226m5e134307o8c6bedd1f883479c@mail.gmail.com>
-	 <20060801013104.f7557fb1.akpm@osdl.org> <44CEBA0A.3060206@namesys.com>
-	 <1154431477.10043.55.camel@tribesman.namesys.com>
-	 <20060801073316.ee77036e.akpm@osdl.org>
+From: Alexander Zarochentsev <zam@namesys.com>
+Subject: Re: reiser4-2.6.18-rc2-mm1: possible circular locking dependency detected in txn_end
+Date: Tue, 1 Aug 2006 23:18:36 +0400
+Message-ID: <200608012318.36995.zam@namesys.com>
+References: <44CD0115.4010608@free.fr>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29419-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <20060801073316.ee77036e.akpm@osdl.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751823AbWHATSP@vger.kernel.org>
+In-Reply-To: <44CD0115.4010608@free.fr>
 Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Andrew Morton <akpm@osdl.org>
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, vda.linux@googlemail.com, linux-kernel@vger.kernel.org, Reiserfs-List@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Ingo Molnar <mingo@elte.hu>
+Cc: reiserfs-list@namesys.com, Laurent Riffard <laurent.riffard@free.fr>, Kernel development list <linux-kernel@vger.kernel.org>
 
-On 8/1/06, Andrew Morton <akpm@osdl.org> wrote:
-> On Tue, 01 Aug 2006 15:24:37 +0400
-> "Vladimir V. Saveliev" <vs@namesys.com> wrote:
->
-> > > >The writeout code is ugly, although that's largely due to a mismatch between
-> > > >what reiser4 wants to do and what the VFS/MM expects it to do.
-> >
-> > Yes. reiser4 writeouts atoms. Most of pages get into atoms via
-> > sys_write. But pages dirtied via shared mapping do not. They get into
-> > atoms in reiser4's writepages address space operation.
->
-> It think you mean ->writepage - reiser4 desn't implement ->writepages().
->
-> I assume you considered hooking into ->set_page_dirty() to do the
-> add-to-atom thing earlier on?
->
-> We'll merge mm-tracking-shared-dirty-pages.patch into 2.6.19-rc1, which
-> would make that approach considerably more successful, I expect.
-> ->set_page_dirty() is a bit awkward because it can be called under
-> spinlock.
->
-> Maybe comething could also be gained from the new
-> vm_operations_struct.page_mkwrite(), although that's less obvious...
->
-> > That is why
-> > reiser4_sync_inodes has two steps: on first one it calls
-> > generic_sync_sb_inodes to call writepages for dirty inodes to capture
-> > pages dirtied via shared mapping into atoms. Second step flushes atoms.
-> >
-> > > >
-> > > I agree --- both with it being ugly, and that being part of why.
-> > >
-> > > >  If it
-> > > >works, we can live with it, although perhaps the VFS could be made smarter.
-> > > >
-> > > >
-> > > I would be curious regarding any ideas on that.  Next time I read
-> > > through that code, I will keep in mind that you are open to making VFS
-> > > changes if it improves things, and I will try to get clever somehow and
-> > > send it by you.  Our squalloc code though is I must say the most
-> > > complicated and ugliest piece of code I ever worked on for which every
-> > > cumulative ugliness had a substantive performance advantage requiring us
-> > > to keep it.  If you spare yourself from reading that, it is
-> > > understandable to do so.
-> > >
-> > > >I'd say that resier4's major problem is the lack of xattrs, acls and
-> > > >direct-io.  That's likely to significantly limit its vendor uptake.
-> >
-> > xattrs is really a problem.
->
-> That's not good.  The ability to properly support SELinux is likely to be
-> important.
+Hello Ingo,
 
-i disagreee that it will be difficult.  unfortunately, the patch that
-I am working on right now, which fixes the various reiser4 specific
-functions to avoid using VFS data structures unless needed, is a
-prerequisite to enabling xattrs.  creating it is a time of tedium for
-me, and it will cause a bit of internal churn (1000 lines and
-counting).  it's all in the fs/reiser4 directory though, and it should
-cause minimal disruption, as far as runtime bugs introduced.
+there is a new reiser4 / lock validator problem:
 
-once that's taken care of, i will be delighted to enable xattr support
-in a way that will make selinux and beagle and such run as expected,
-and will have the added advantage of some major scalability
-improvements for certain lookup and update operations.
+On Sunday 30 July 2006 22:57, Laurent Riffard wrote:
+> =======================================================
+> [ INFO: possible circular locking dependency detected ]
+> -------------------------------------------------------
+> mv/29012 is trying to acquire lock:
+>  (&txnh->hlock){--..}, at: [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
+>
+> but task is already holding lock:
+>  (&atom->alock){--..}, at: [<e0c8a640>] txnh_get_atom+0xf6/0x39e
+> [reiser4]
+>
+> which lock already depends on the new lock.
 
-NATE
+it is absolutely legal in reiser4 to lock atom first, then lock 
+transaction handle.
+
+i guess the lock validator recorded wrong dependency rule from one place 
+where the spinlocks are taken in reverse order.  that place is in 
+fs/reiser4/txnmgr.c:atom_begin_and_assign_to_txnh, that atom is new, 
+just kmalloc'ed object which is inaccessible for others, so it can't a 
+source for deadlock.
+
+but how to explain that to the lock validator?
+
+>
+> the existing dependency chain (in reverse order) is:
+>
+> -> #1 (&atom->alock){--..}:
+>        [<c012ce2f>] lock_acquire+0x60/0x80
+>        [<c0292968>] _spin_lock+0x19/0x28
+>        [<e0c8bbd7>] try_capture+0x7cf/0x1cd7 [reiser4]
+>        [<e0c786e1>] longterm_lock_znode+0x427/0x84f [reiser4]
+>        [<e0ca55dc>] coord_by_handle+0x2be/0x7f7 [reiser4]
+>        [<e0ca5f89>] coord_by_key+0x1e3/0x22d [reiser4]
+>        [<e0c7dbd2>] insert_by_key+0x8f/0xe0 [reiser4]
+>        [<e0cbf7f1>] write_sd_by_inode_common+0x361/0x61a [reiser4]
+>        [<e0cbfce4>] create_object_common+0xf1/0xf6 [reiser4]
+>        [<e0cbaebf>] create_vfs_object+0x51d/0x732 [reiser4]
+>        [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
+>        [<c015ed33>] vfs_mkdir+0x5a/0x9d
+>        [<c0160f5e>] sys_mkdirat+0x88/0xc0
+>        [<c0160fa6>] sys_mkdir+0x10/0x12
+>        [<c0102c2d>] sysenter_past_esp+0x56/0x8d
+>
+> -> #0 (&txnh->hlock){--..}:
+>        [<c012ce2f>] lock_acquire+0x60/0x80
+>        [<c0292968>] _spin_lock+0x19/0x28
+>        [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
+>        [<e0c7f97d>] reiser4_exit_context+0x1c2/0x571 [reiser4]
+>        [<e0cbb091>] create_vfs_object+0x6ef/0x732 [reiser4]
+>        [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
+>        [<c015ed33>] vfs_mkdir+0x5a/0x9d
+>        [<c0160f5e>] sys_mkdirat+0x88/0xc0
+>        [<c0160fa6>] sys_mkdir+0x10/0x12
+>        [<c0102c2d>] sysenter_past_esp+0x56/0x8d
+>
+> other info that might help us debug this:
+>
+> 2 locks held by mv/29012:
+>  #0:  (&inode->i_mutex/1){--..}, at: [<c015f50b>]
+> lookup_create+0x1d/0x73
+>  #1:  (&atom->alock){--..}, at: [<e0c8a640>]
+> txnh_get_atom+0xf6/0x39e [reiser4]
+>
+> stack backtrace:
+>  [<c0104df0>] show_trace+0xd/0x10
+>  [<c0104e0c>] dump_stack+0x19/0x1d
+>  [<c012bc62>] print_circular_bug_tail+0x59/0x64
+>  [<c012cc3e>] __lock_acquire+0x814/0x9a5
+>  [<c012ce2f>] lock_acquire+0x60/0x80
+>  [<c0292968>] _spin_lock+0x19/0x28
+>  [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
+>  [<e0c7f97d>] reiser4_exit_context+0x1c2/0x571 [reiser4]
+>  [<e0cbb091>] create_vfs_object+0x6ef/0x732 [reiser4]
+>  [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
+>  [<c015ed33>] vfs_mkdir+0x5a/0x9d
+>  [<c0160f5e>] sys_mkdirat+0x88/0xc0
+>  [<c0160fa6>] sys_mkdir+0x10/0x12
+>  [<c0102c2d>] sysenter_past_esp+0x56/0x8d
+>
+> (Linux antares.localdomain 2.6.18-rc2-mm1 #77 Sun Jul 30 15:09:34
+> CEST 2006 i686 AMD Athlon(TM) XP 1600+ unknown GNU/Linux)
+
+-- 
+Alex.
