@@ -1,102 +1,54 @@
-From: Mike Benoit <ipso@snappymail.ca>
-Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of view"
-	expressed by kernelnewbies.org regarding reiser4 inclusion]
-Date: Mon, 31 Jul 2006 21:38:31 -0700
-Message-ID: <1154407111.24208.26.camel@ipso.snappymail.ca>
-References: <200607311918.k6VJIqTN011066@laptop13.inf.utfsm.cl>
-	 <20060731225734.ecf5eb4d.reiser4@blinkenlights.ch>
-	 <44CE7C31.5090402@gmx.de>
-	 <5c49b0ed0607311621i54f1c46fh9137f8955c9ea4be@mail.gmail.com>
-	 <Pine.LNX.4.63.0607311621360.14674@qynat.qvtvafvgr.pbz>
-	 <5c49b0ed0607311650j4b86d0c3h853578f58db16140@mail.gmail.com>
-	 <Pine.LNX.4.63.0607311651410.14674@qynat.qvtvafvgr.pbz>
-	 <5c49b0ed0607311705t1eb8fc6bs9a68a43059bfa91a@mail.gmail.com>
-	 <20060801010215.GA24946@merlin.emma.line.org>
-	 <44CEAEF4.9070100@slaphack.com>  <20060801030005.GA1987@thunk.org>
+From: David Lang <dlang@digitalinsight.com>
+Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of 
+ view"expressed by kernelnewbies.org regarding reiser4 inclusion]
+Date: Mon, 31 Jul 2006 21:41:02 -0700 (PDT)
+Message-ID: <Pine.LNX.4.63.0607312133080.15179@qynat.qvtvafvgr.pbz>
+References: <20060801034726.58097.qmail@web51311.mail.yahoo.com>
+ <44CED777.5080308@slaphack.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-3glcH00JuqkOm2hATg1g"
-Return-path: <reiserfs-list-return-29365-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29366-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060801030005.GA1987@thunk.org>
+In-Reply-To: <44CED777.5080308@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Theodore Tso <tytso@mit.edu>
-Cc: David Masover <ninja@slaphack.com>, Nate Diller <nate.diller@gmail.com>, David Lang <dlang@digitalinsight.com>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
+Content-Transfer-Encoding: 7bit
+To: David Masover <ninja@slaphack.com>
+Cc: tdwebste2@yahoo.com, Theodore Tso <tytso@mit.edu>, Nate Diller <nate.diller@gmail.com>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
---=-3glcH00JuqkOm2hATg1g
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Mon, 31 Jul 2006, David Masover wrote:
 
-On Mon, 2006-07-31 at 23:00 -0400, Theodore Tso wrote:
-> The problem is that many benchmarks (such as taring and untaring the
-> kernel sources in reiser4 sort order) are overly simplistic, in that
-> they don't really reflect how people use the filesystem in real life.
-> (How many times can you guarantee that files will be written in the
-> precise hash/tree order so that the filesystem gets the best possible
-> time?)  A more subtle version of this problem happens for filesystems
-> where their performance degrades dramatically over-time without a
-> repacker.  If the benchmark doesn't take into account the need for
-> repacker, or if the repacker is disabled or fails to run during the
-> benchmark, the filesystem are in effect "cheating" on the benchmark
-> because there is critical work which is necessary for the long-term
-> health of the filesystem which is getting deferred until after the
-> benchmark has finished measuring the performance of the system under
-> test.
+>> And perhaps a
+>> really good clustering filesystem for markets that
+>> require NO downtime. 
+>
+> Thing is, a cluster is about the only FS I can imagine that could reasonably 
+> require (and MAYBE provide) absolutely no downtime. Everything else, the more 
+> you say it requires no downtime, the more I say it requires redundancy.
+>
+> Am I missing any more obvious examples where you can't have enough 
+> redundancy, but you can't have downtime either?
 
-If the file system that requires a repacker can do X operations in 1/2
-the time all week long, even if the repacker takes several hours once a
-week to run, you're still ahead of the game. The load averages on the
-vast majority of servers have significant peaks and valleys throughout
-the day, and throughout the week, it wouldn't be hard to find a time
-where a online repacker is virtually unnoticeable to users. Delaying
-certain work until the server is less busy might be considered
-"cheating" on benchmarks, but in the real world most people would
-consider it good use of resources.=20
+just becouse you have redundancy doesn't mean that your data is idle enough for 
+you to run a repacker with your spare cycles. to run a repacker you need a time 
+when the chunk of the filesystem that you are repacking is not being accessed or 
+written to. it doesn't matter if that data lives on one disk or 9 disks all 
+mirroring the same data, you can't just break off 1 of the copies and repack 
+that becouse by the time you finish it won't match the live drives anymore.
 
-Just like RAID rebuilds, where you can set maximum IO speeds I could see
-a repacker working in a similar fashion.=20
+database servers have a repacker (vaccum), and they are under tremendous 
+preasure from their users to avoid having to use it becouse of the performance 
+hit that it generates. (the theory in the past is exactly what was presented in 
+this thread, make things run faster most of the time and accept the performance 
+hit when you repack). the trend seems to be for a repacker thread that runs 
+continuously, causing a small impact all the time (that can be calculated into 
+the capacity planning) instead of a large impact once in a while.
 
-Obviously there are some servers where this is unacceptable and in such
-cases, don't use Reiser4, but I would guess they are few and far
-between. No file system is perfect for 100% of the work loads thrown at
-it.
+the other thing they are seeing as new people start useing them is that the 
+newbys don't realize they need to do somthing as archaic as running a repacker 
+periodicly, as a result they let things devolve down to where performance is 
+really bad without understanding why.
 
-PostgreSQL and its vacuum process comes to mind as something similar to
-a repacker. PostgreSQL puts off doing some work to later, and it has
-proven itself over and over again, especially when it comes to
-scalability. PostgreSQL has recently (v8.0 I believe) moved to a system
-where it can automatically detect the need to vacuum specific tables, so
-tables that need it are vacuumed more often, and tables that don't are
-rarely touched. I don't see any reason why a repacker couldn't work in a
-similar fashion, once it detects a file to be fragmented over some
-value, it gets scheduled for repacking when there is idle disk IO
-available.=20
-
-The bottom line is once you have a online repacker you instantly open up
-all sorts of doors. Its well known that disk drives have different
-sustained read/write performance depending on if the data is on the
-inside or outside tracks. Perhaps the repacker could also move files
-around on the disk to get further gains, for instance larger or most
-commonly used files could be moved to where the disk has the highest
-sustained read/write performance, and smaller less used files could be
-moved to the slowest sustained read/write performance areas.
-
---=20
-Mike Benoit <ipso@snappymail.ca>
-
---=-3glcH00JuqkOm2hATg1g
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-
-iD8DBQBEztrHMhKjsejwBhgRAqDEAJ4o50PFBSBT7CKKcOIHXsSDFWjhqwCdFvBl
-sSGWVucfOd0ZJAtqbInUjJU=
-=m6PB
------END PGP SIGNATURE-----
-
---=-3glcH00JuqkOm2hATg1g--
-
+David Lang
