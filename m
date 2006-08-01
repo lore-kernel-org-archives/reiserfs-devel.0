@@ -1,36 +1,30 @@
 From: Jan Engelhardt <jengelh@linux01.gwdg.de>
-Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of view"
- expressed by kernelnewbies.org regarding reiser4 inclusion]
-Date: Tue, 1 Aug 2006 12:57:22 +0200 (MEST)
-Message-ID: <Pine.LNX.4.61.0608011255130.29748@yvahk01.tjqt.qr>
-References: <200607311918.k6VJIqTN011066@laptop13.inf.utfsm.cl>
- <20060731225734.ecf5eb4d.reiser4@blinkenlights.ch> <44CE7C31.5090402@gmx.de>
- <5c49b0ed0607311621i54f1c46fh9137f8955c9ea4be@mail.gmail.com>
- <Pine.LNX.4.63.0607311621360.14674@qynat.qvtvafvgr.pbz>
- <5c49b0ed0607311650j4b86d0c3h853578f58db16140@mail.gmail.com>
- <Pine.LNX.4.63.0607311651410.14674@qynat.qvtvafvgr.pbz>
- <5c49b0ed0607311705t1eb8fc6bs9a68a43059bfa91a@mail.gmail.com>
- <20060801010215.GA24946@merlin.emma.line.org> <20060801095141.5ec0b479.reiser4@blinkenlights.ch>
- <20060801090947.GA2974@merlin.emma.line.org>
+Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of
+ view"expressed by kernelnewbies.org regarding reiser4 inclusion]
+Date: Tue, 1 Aug 2006 12:59:15 +0200 (MEST)
+Message-ID: <Pine.LNX.4.61.0608011258450.29748@yvahk01.tjqt.qr>
+References: <20060801034726.58097.qmail@web51311.mail.yahoo.com>
+ <44CED777.5080308@slaphack.com> <Pine.LNX.4.63.0607312133080.15179@qynat.qvtvafvgr.pbz>
+ <20060801064837.GB1987@thunk.org> <44CEBF33.4020208@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-29387-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29388-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060801090947.GA2974@merlin.emma.line.org>
+In-Reply-To: <44CEBF33.4020208@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthias Andree <matthias.andree@gmx.de>
-Cc: Adrian Ulrich <reiser4@blinkenlights.ch>, nate.diller@gmail.com, dlang@digitalinsight.com, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Hans Reiser <reiser@namesys.com>
+Cc: Theodore Tso <tytso@mit.edu>, David Lang <dlang@digitalinsight.com>, David Masover <ninja@slaphack.com>, tdwebste2@yahoo.com, Nate Diller <nate.diller@gmail.com>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, ipso@snappymail.ca, lkml@lpbproductions.com, jeff@garzik.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>
 
 >
->I didn't mean to say your particular drive were crap, but 200GB SATA
->drives are low end, like it or not --
+>Wandering logs is a term specific to reiser4, and I think you are making
+>a more general remark.
 
-And you think an 18 GB SCSI disk just does it better because it's SCSI?
-Esp. in long sequential reads.
+So, what is UDF's "wandering" log then?
+
 
 
 Jan Engelhardt
