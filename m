@@ -1,105 +1,159 @@
-From: "Nate Diller" <nate.diller@gmail.com>
-Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion]
-Date: Mon, 31 Jul 2006 17:05:51 -0700
-Message-ID: <5c49b0ed0607311705t1eb8fc6bs9a68a43059bfa91a@mail.gmail.com>
-References: <20060731175958.1626513b.reiser4@blinkenlights.ch>
-	 <200607311918.k6VJIqTN011066@laptop13.inf.utfsm.cl>
-	 <20060731225734.ecf5eb4d.reiser4@blinkenlights.ch>
-	 <44CE7C31.5090402@gmx.de>
-	 <5c49b0ed0607311621i54f1c46fh9137f8955c9ea4be@mail.gmail.com>
-	 <Pine.LNX.4.63.0607311621360.14674@qynat.qvtvafvgr.pbz>
-	 <5c49b0ed0607311650j4b86d0c3h853578f58db16140@mail.gmail.com>
-	 <Pine.LNX.4.63.0607311651410.14674@qynat.qvtvafvgr.pbz>
+From: "Jeffrey V. Merkey" <jmerkey@wolfmountaingroup.com>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
+ regarding reiser4 inclusion
+Date: Mon, 31 Jul 2006 18:15:49 -0600
+Message-ID: <44CE9D35.1070406@wolfmountaingroup.com>
+References: <1153760245.5735.47.camel@ipso.snappymail.ca>	 <20060731173239.GO31121@lug-owl.de>	 <20060731181120.GA9667@merlin.emma.line.org>	 <20060731184314.GQ31121@lug-owl.de>	 <20060731191712.GE17206@HAL_5000D.tc.ph.cox.net>	 <1154374923.7230.99.camel@localhost.localdomain>	 <e692861c0607311400x412d2e6bv71f474ea959c9e00@mail.gmail.com>	 <44CE7C11.7020202@wolfmountaingroup.com>	 <5c49b0ed0607311556s50b77c07o150497f8e4bd3fd3@mail.gmail.com>	 <44CE97AD.7030300@wolfmountaingroup.com> <5c49b0ed0607311643r61570665ga4d8a70beaeb17f@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29354-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29355-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.63.0607311651410.14674@qynat.qvtvafvgr.pbz>
-Content-Disposition: inline
+In-Reply-To: <5c49b0ed0607311643r61570665ga4d8a70beaeb17f@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Lang <dlang@digitalinsight.com>
-Cc: Matthias Andree <matthias.andree@gmx.de>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Nate Diller <nate.diller@gmail.com>
+Cc: Gregory Maxwell <gmaxwell@gmail.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Clay Barnes <clay.barnes@gmail.com>, Rudy Zijlstra <rudy@edsons.demon.nl>, Adrian Ulrich <reiser4@blinkenlights.ch>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-On 7/31/06, David Lang <dlang@digitalinsight.com> wrote:
-> On Mon, 31 Jul 2006, Nate Diller wrote:
+Nate Diller wrote:
+
+> On 7/31/06, Jeff V. Merkey <jmerkey@wolfmountaingroup.com> wrote:
 >
-> > On 7/31/06, David Lang <dlang@digitalinsight.com> wrote:
-> >> On Mon, 31 Jul 2006, Nate Diller wrote:
-> >>
-> >> >
-> >> > On 7/31/06, Matthias Andree <matthias.andree@gmx.de> wrote:
-> >> >> Adrian Ulrich wrote:
-> >> >>
-> >> >> > See also: http://spam.workaround.ch/dull/postmark.txt
-> >> >> >
-> >> >> > A quick'n'dirty ZFS-vs-UFS-vs-Reiser3-vs-Reiser4-vs-Ext3 'benchmark'
-> >> >>
-> >> >> Whatever Postmark does, this looks pretty besides the point.
-> >> >
-> >> > why's that?  postmark is one of the standard benchmarks...
-> >> >
-> >> >> Are these actual transactions with the "D"urability guarantee?
-> >> >> 3000/s doesn't look too much like you're doing synchronous I/O (else
-> >> >> figures around 70/s perhaps 100/s would be more adequate), and cache
-> >> >> exercise is rather irrelevant for databases that manage real (=valuable)
-> >> >> data...
-> >> >
-> >> > Data:
-> >> >       204.62 megabytes read (8.53 megabytes per second)
-> >> >       271.49 megabytes written (11.31 megabytes per second)
-> >> >
-> >> > looks pretty I/O bound to me, 11.31 MB/s isn't exactly your latest DDR
-> >> > RAM bandwidth.  as far as the synchronous I/O question, Reiser4 in
-> >> > this case acts more like a log-based FS.  That allows it to "overlap"
-> >> > synchronous operations that are being submitted by multiple threads.
-> >>
-> >> what you are missing is that apps that need to do lots of syncing
-> >> (databases,
-> >> mail servers) need to wait for the data to hit non-volitile media before
-> >> the
-> >> write is complete. this limits such apps to ~1 write per revolution of the
-> >> platters (yes it's possible for a limited time to have multiple writes to
-> >> different things happen to be on the same track, but the counter is the
-> >> extra
-> >> seek time needed between tracks)
-> >
-> > this is true so long as there is only one thread submitting I/O and
-> > doing fsync().  for something like a mail server, it can run
-> > multi-threaded, and still get data integrity, if the changes are
-> > spread out across more than one file.
+>> Nate Diller wrote:
+>>
+>> > On 7/31/06, Jeff V. Merkey <jmerkey@wolfmountaingroup.com> wrote:
+>> >
+>> >> Gregory Maxwell wrote:
+>> >>
+>> >> > On 7/31/06, Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
+>> >> >
+>> >> >> Its well accepted that reiserfs3 has some robustness problems 
+>> in the
+>> >> >> face of physical media errors. The structure of the file system
+>> >> and the
+>> >> >> tree basis make it very hard to avoid such problems. XFS appears
+>> >> to have
+>> >> >> managed to achieve both robustness and better data structures.
+>> >> >>
+>> >> >> How reiser4 compares I've no idea.
+>> >> >
+>> >> >
+>> >> > Citation?
+>> >> >
+>> >> > I ask because your clam differs from the only detailed research 
+>> that
+>> >> > I'm aware of on the subject[1]. In figure 2 of the iron filesystems
+>> >> > paper that Ext3 is show to ignore a great number of data-loss 
+>> inducing
+>> >> > failure conditions that Reiser3 detects an panics under.
+>> >> >
+>> >> > Are you sure that you aren't commenting on cases where Reiser3 
+>> alerts
+>> >> > the user to a critical data condition (via a panic) which leads 
+>> to a
+>> >> > trouble report while ext3 ignores the problem which suppresses the
+>> >> > trouble report from the user?
+>> >> >
+>> >> > *1) http://www.cs.wisc.edu/adsl/Publications/iron-sosp05.pdf
+>> >>
+>> >> Hi Gregory, Wikimedia Foundation and LKML?
+>> >>
+>> >> How's Wikimania going. :-)
+>> >>
+>> >> What he says is correct.  I have seen some serious issues with 
+>> reiserfs
+>> >> in terms of stability and
+>> >> data corruption.  Resier is however FASTER, but the statement is has
+>> >> robustness issues is accurate.
+>> >> I was using reiserfs but we opted to make EXT3 the default for Solera
+>> >> appliances, even when using Suse 10
+>> >> due to issues I have seen with data corruption and hard hangs on 
+>> RAID 0
+>> >> read/write sector errors.  I have
+>> >> stopped using it for local drives and based everything on EXT3.  
+>> Not to
+>> >> say it won't get there eventually, but
+>> >> file systems have to endure a lot of time in the field and deployment
+>> >> befor they are ready for prime time.
+>> >>
+>> >> The Wikimedia appliances use Wolf Mountain, and I've tested it for 
+>> about
+>> >> 4 months with few problems, but
+>> >> I only use it for hosting the Cherokee Langauge Wikipedia.  It's
+>> >> performance is several magnitudes better
+>> >> than either EXT3 or ReiserFS.  Despite this, for vertical wiki 
+>> servers,
+>> >> its ok to go out with, folks can specifiy
+>> >> whether they want appliances with EXT3, Reiser, or WMFS, but iit's a
+>> >> long way from being "cooked"
+>> >> completely, though it does scale to 1 exabyte FS images.
+>> >
+>> >
+>> > i've seen you mention the Wolf Mountain FS in other emails, but google
+>> > isn't telling me a lot about it.  Do you have a whitepaper?  are there
+>> > any published benchmark results?  what sort of workloads do you
+>> > benchmark?
+>> >
+>> > NATE
+>> >
+>> Wikipedia is the app for now.  I have not done any benchmarks on the FS
+>> side, just the capture side, and its been transferred to
+>> another entity.  I have no idea what they are naming it to, but I expect
+>> you may hear about it soon.  One of the incarnations
+>> of it is Solera's DSFS which can be reviewed here:
+>>
+>> www.soleranetworks.com
 >
-> only if those multiple files all happen to live (along with their metadata) on
-> the same track.
-
-this is only a limitation for filesystems which do in-place data and
-metadata updates.  this is why i mentioned the similarities to log
-file systems (see rosenblum and ousterhout, 1991).  they observed an
-order-of-magnitude increase in performance for such workloads on their
-system.
-
-> >> so any benchmark that shows more transactions then the media has
-> >> revolutions is
-> >> highly suspect (now if you have battery-backed cache, or the equivalent you
-> >> can
-> >> blow past these limits)
-> >
-> > not all workloads are completely serial, transactions themselves may
-> > have no inter-dependencies at all.  so it depends on the benchmark,
-> > and what workload you're measuring.  in cases like this, threading can
-> > have a big advantage.
 >
-> in the real-world (and benchmarks that simulate it fairly) the data spans
-> multiple tracks so your best case is considerably less then the max I listed
-> becouse you frequently have to seek around a lot to do your writes to multiple
-> places on disk. more threads running should mean that you are attempting to
-> write to more places on disk, which will cause more seeks, dropping you further
-> below the max.
+> so this is a single stream, write only? ...
+>
+>> I can sustain 850 MB/S throughput from user space with it -- about 5 x
+>> any other FS.  On some hardware, I've broken
+>> the 1.25 GB/S (gigabyte/second) windows with it.
+>
+>
+> and you're saying it scales to much higher multi-spindle
+> single-machine throughput.  cool.
+>
+> i'd love to see a whitepaper, or failing that, have an off-list
+> discussion of your approach and the various kernel limitations you ran
+> up against in testing.  i don't suppose they invited you to the Kernel
+> Summit to talk about it, heh.
+>
+> NATE
+>
+The patents have been filed for over a year, and will publish in several 
+weeks at uspto.gov -- that's the only acclaim I care for --
+one that results in value for the industry and more patent protection 
+for Linux and profits for folks.  No, I have not been invited
+to the summit, probably because of the lawsuit I filed against some 
+folks who were threatening my family -- Peter Anvin booted
+me off Kernel.org after allowing folks to pinch my code and copy my bash 
+history files all over the internet, and several folks
+have stiffed me.  I could care less.  I keep creating cool technology, 
+make tons of money off of it, and I have cultivated an
+excellent relationship with the Wikimedia Foundation, and I am now the 
+principal contributor on the Cherokee Wikipedia.  Wales
+even deleted the article folks had used to smear me and made folks 
+rewrite it.  Wales is a very nice man and good dude.
 
-postmark is very much real world.  reiser4 just doesn't always do
-in-place writes.
+I am content to contribute to Linux from a business viewpoint, and if 
+the treatment I received from Anvin is par for kernel.org accounts,
+I don't care for one -- IP addresses are rather cheap on the 
+internet.    I was and have remained loyal to Linux through it all.
 
-NATE
+I am appreciative of your interest.  Check uspto.gov in next few weeks 
+for published applications, it's all described there, distributed
+architecture and all. 
+
+All my Wikilove.
+
+Jeff
+
+
+
+
+
+
