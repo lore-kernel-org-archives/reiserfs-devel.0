@@ -1,40 +1,36 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of view"expressed
- by kernelnewbies.org regarding reiser4 inclusion]
-Date: Tue, 01 Aug 2006 12:03:05 -0500
-Message-ID: <44CF8949.707@slaphack.com>
-References: <20060801034726.58097.qmail@web51311.mail.yahoo.com> <44CED777.5080308@slaphack.com> <Pine.LNX.4.63.0607312133080.15179@qynat.qvtvafvgr.pbz> <20060801064837.GB1987@thunk.org>
+From: "Gregory Maxwell" <gmaxwell@gmail.com>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
+Date: Tue, 1 Aug 2006 13:04:56 -0400
+Message-ID: <e692861c0608011004x2ac1d9fcu353cd8e0d72eaac4@mail.gmail.com>
+References: <200607312314.37863.bernd-schubert@gmx.de>
+	 <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl>
+	 <20060801165234.9448cb6f.reiser4@blinkenlights.ch>
+	 <1154446189.15540.43.camel@localhost.localdomain>
+	 <44CF84F0.8080303@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29406-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <20060801064837.GB1987@thunk.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750866AbWHARFL@vger.kernel.org>
+In-Reply-To: <44CF84F0.8080303@slaphack.com>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Theodore Tso <tytso@mit.edu>, David Lang <dlang@digitalinsight.com>, David Masover <ninja@slaphack.com>, tdwebste2@yahoo.com, Nate Diller <nate.diller@gmail.com>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, bernd-schubert@gmx.de, reiserfs-list@namesys.com, jbglaw@lug-owl.de, clay.barnes@gmail.com, rudy@edsons.demon.nl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
 
-Theodore Tso wrote:
+On 8/1/06, David Masover <ninja@slaphack.com> wrote:
+> Yikes.  Undetected.
+>
+> Wait, what?  Disks, at least, would be protected by RAID.  Are you
+> telling me RAID won't detect such an error?
 
-> Ah, but as soon as the repacker thread runs continuously, then you
-> lose all or most of the claimed advantage of "wandering logs".
-[...]
-> So instead of a write-write overhead, you end up with a
-> write-read-write overhead.
+Unless the disk ECC catches it raid won't know anything is wrong.
 
-This would tend to suggest that the repacker should not run constantly, 
-but also that while it's running, performance could be almost as good as 
-ext3.
+This is why ZFS offers block checksums... it can then try all the
+permutations of raid regens to find a solution which gives the right
+checksum.
 
-> But of course, people tend to disable the repacker when doing
-> benchmarks because they're trying to play the "my filesystem/database
-> has bigger performance numbers than yours" game....
-
-So you run your own benchmarks, I'll run mine...  Benchmarks for 
-everyone!  I'd especially like to see what performance is like with the 
-repacker not running, and during the repack.  If performance during a 
-repack is comparable to ext3, I think we win, although we have to amend 
-that statement to "My filesystem/database has the same or bigger 
-perfomance numbers than yours."
+Every level of the system must be paranoid and take measure to avoid
+corruption if the system is to avoid it... it's a tough problem. It
+seems that the ZFS folks have addressed this challenge by building as
+much of what is classically separate layers into one part.
