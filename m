@@ -1,91 +1,89 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
- regarding reiser4 inclusion
-Date: Tue, 01 Aug 2006 14:11:30 -0500
-Message-ID: <44CFA762.2040508@slaphack.com>
-References: <200607312314.37863.bernd-schubert@gmx.de>	 <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl>	 <20060801165234.9448cb6f.reiser4@blinkenlights.ch> <1154446189.15540.43.camel@localhost.localdomain> <44CF9BAD.5020003@emc.com>
+From: "Nate Diller" <nate.diller@gmail.com>
+Subject: Re: reiser4: maybe just fix bugs?
+Date: Tue, 1 Aug 2006 12:14:58 -0700
+Message-ID: <5c49b0ed0608011214x23e18275s9b9d30ac9d0b5056@mail.gmail.com>
+References: <1158166a0607310226m5e134307o8c6bedd1f883479c@mail.gmail.com>
+	 <20060801013104.f7557fb1.akpm@osdl.org> <44CEBA0A.3060206@namesys.com>
+	 <1154431477.10043.55.camel@tribesman.namesys.com>
+	 <20060801073316.ee77036e.akpm@osdl.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29418-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29419-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44CF9BAD.5020003@emc.com>
+In-Reply-To: <20060801073316.ee77036e.akpm@osdl.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ric@emc.com
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, bernd-schubert@gmx.de, reiserfs-list@namesys.com, jbglaw@lug-owl.de, clay.barnes@gmail.com, rudy@edsons.demon.nl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@osdl.org>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, vda.linux@googlemail.com, linux-kernel@vger.kernel.org, Reiserfs-List@namesys.com
 
-Ric Wheeler wrote:
-> Alan Cox wrote:
->> Ar Maw, 2006-08-01 am 16:52 +0200, ysgrifennodd Adrian Ulrich:
->>
->>> WriteCache, Mirroring between 2 Datacenters, snapshotting.. etc..
->>> you don't need your filesystem beeing super-robust against bad sectors
->>> and such stuff because:
->>
->>
->> You do it turns out. Its becoming an issue more and more that the sheer
->> amount of storage means that the undetected error rate from disks,
->> hosts, memory, cables and everything else is rising.
+On 8/1/06, Andrew Morton <akpm@osdl.org> wrote:
+> On Tue, 01 Aug 2006 15:24:37 +0400
+> "Vladimir V. Saveliev" <vs@namesys.com> wrote:
+>
+> > > >The writeout code is ugly, although that's largely due to a mismatch between
+> > > >what reiser4 wants to do and what the VFS/MM expects it to do.
+> >
+> > Yes. reiser4 writeouts atoms. Most of pages get into atoms via
+> > sys_write. But pages dirtied via shared mapping do not. They get into
+> > atoms in reiser4's writepages address space operation.
+>
+> It think you mean ->writepage - reiser4 desn't implement ->writepages().
+>
+> I assume you considered hooking into ->set_page_dirty() to do the
+> add-to-atom thing earlier on?
+>
+> We'll merge mm-tracking-shared-dirty-pages.patch into 2.6.19-rc1, which
+> would make that approach considerably more successful, I expect.
+> ->set_page_dirty() is a bit awkward because it can be called under
+> spinlock.
+>
+> Maybe comething could also be gained from the new
+> vm_operations_struct.page_mkwrite(), although that's less obvious...
+>
+> > That is why
+> > reiser4_sync_inodes has two steps: on first one it calls
+> > generic_sync_sb_inodes to call writepages for dirty inodes to capture
+> > pages dirtied via shared mapping into atoms. Second step flushes atoms.
+> >
+> > > >
+> > > I agree --- both with it being ugly, and that being part of why.
+> > >
+> > > >  If it
+> > > >works, we can live with it, although perhaps the VFS could be made smarter.
+> > > >
+> > > >
+> > > I would be curious regarding any ideas on that.  Next time I read
+> > > through that code, I will keep in mind that you are open to making VFS
+> > > changes if it improves things, and I will try to get clever somehow and
+> > > send it by you.  Our squalloc code though is I must say the most
+> > > complicated and ugliest piece of code I ever worked on for which every
+> > > cumulative ugliness had a substantive performance advantage requiring us
+> > > to keep it.  If you spare yourself from reading that, it is
+> > > understandable to do so.
+> > >
+> > > >I'd say that resier4's major problem is the lack of xattrs, acls and
+> > > >direct-io.  That's likely to significantly limit its vendor uptake.
+> >
+> > xattrs is really a problem.
+>
+> That's not good.  The ability to properly support SELinux is likely to be
+> important.
 
-> Most people use absolutely giant disks in laptops and desktop systems 
-> (300GB & 500GB are common, 750GB on the way). File systems need to be as 
-> robust as possible for users of these systems as people are commonly 
-> storing personal "critical" data like photos mostly on these unprotected 
-> drives.
+i disagreee that it will be difficult.  unfortunately, the patch that
+I am working on right now, which fixes the various reiser4 specific
+functions to avoid using VFS data structures unless needed, is a
+prerequisite to enabling xattrs.  creating it is a time of tedium for
+me, and it will cause a bit of internal churn (1000 lines and
+counting).  it's all in the fs/reiser4 directory though, and it should
+cause minimal disruption, as far as runtime bugs introduced.
 
-Their loss.  Robust FS is good, but really, if you aren't doing backup, 
-you are going to lose data.  End of story.
+once that's taken care of, i will be delighted to enable xattr support
+in a way that will make selinux and beagle and such run as expected,
+and will have the added advantage of some major scalability
+improvements for certain lookup and update operations.
 
-> Even for the high end users, array based mirroring and so on can only do 
-> so much to protect you.
-> 
-> Mirroring a corrupt file system to a remote data center will mirror your 
-> corruption.
-
-Assuming it's undetected.  Why would it be undetected?
-
-> Rolling back to a snapshot typically only happens when you notice a 
-> corruption which can go undetected for quite a while, so even that will 
-> benefit from having "reliability" baked into the file system (i.e., it 
-> should grumble about corruption to let you know that you need to roll 
-> back or fsck or whatever).
-
-Yes, the filesystem should complain about corruption.  So should the 
-block layer -- if you don't trust the FS, use a checksum at the block 
-layer.  So should...
-
-There are just so many other, better places to do this than the FS.  The 
-FS should complain, yes, but if the disk is bad, there's going to be 
-corruption.
-
-> An even larger issue is that our tools, like fsck, which are used to 
-> uncover these silent corruptions need to scale up to the point that they 
-> can uncover issues in minutes instead of days.  A lot of the focus at 
-> the file system workshop was around how to dramatically reduce the 
-> repair time of file systems.
-
-That would be interesting.  I know from experience that fsck.reiser4 is 
-amazing.  Blew away my data with something akin to an rm -rf, and fsck 
-fixed it.  Tons of crashing/instability in the early days, but only once 
--- before they even had a version instead of a date, I think -- did I 
-ever have a case where fsck couldn't fix it.
-
-So I guess the next step would be to make fsck faster.  Someone 
-mentioned a fsck that repairs the FS in the background?
-
-> In a way, having super reliable storage hardware is only as good as the 
-> file system layer on top of it - reliability needs to be baked into the 
-> entire IO system stack...
-
-That bit makes no sense.  If you have super reliable storage failure 
-(never dies), and your FS is also reliable (never dies unless hardware 
-does, but may go bat-shit insane when hardware dies), then you've got a 
-super reliable system.
-
-You're right, running Linux's HFS+ or NTFS write support is generally a 
-bad idea, no matter how reliable your hardware is.  But this discussion 
-was not about whether an FS is stable, but how well an FS survives 
-hardware corruption.
+NATE
