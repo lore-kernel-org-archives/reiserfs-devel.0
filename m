@@ -1,77 +1,37 @@
-From: venom@sns.it
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
- regarding reiser4 inclusion
-Date: Tue, 1 Aug 2006 12:59:41 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0608011255150.10035@Expansa.sns.it>
-References: <1153760245.5735.47.camel@ipso.snappymail.ca>
- <200607241806.k6OI6uWY006324@laptop13.inf.utfsm.cl>
- <20060731125846.aafa9c7c.reiser4@blinkenlights.ch> <20060731144736.GA1389@merlin.emma.line.org>
- <20060731175958.1626513b.reiser4@blinkenlights.ch> <20060801104013.GA18239@aitel.hist.no>
+From: Jan Engelhardt <jengelh@linux01.gwdg.de>
+Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of view"
+ expressed by kernelnewbies.org regarding reiser4 inclusion]
+Date: Tue, 1 Aug 2006 12:57:22 +0200 (MEST)
+Message-ID: <Pine.LNX.4.61.0608011255130.29748@yvahk01.tjqt.qr>
+References: <200607311918.k6VJIqTN011066@laptop13.inf.utfsm.cl>
+ <20060731225734.ecf5eb4d.reiser4@blinkenlights.ch> <44CE7C31.5090402@gmx.de>
+ <5c49b0ed0607311621i54f1c46fh9137f8955c9ea4be@mail.gmail.com>
+ <Pine.LNX.4.63.0607311621360.14674@qynat.qvtvafvgr.pbz>
+ <5c49b0ed0607311650j4b86d0c3h853578f58db16140@mail.gmail.com>
+ <Pine.LNX.4.63.0607311651410.14674@qynat.qvtvafvgr.pbz>
+ <5c49b0ed0607311705t1eb8fc6bs9a68a43059bfa91a@mail.gmail.com>
+ <20060801010215.GA24946@merlin.emma.line.org> <20060801095141.5ec0b479.reiser4@blinkenlights.ch>
+ <20060801090947.GA2974@merlin.emma.line.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-29386-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29387-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060801104013.GA18239@aitel.hist.no>
+In-Reply-To: <20060801090947.GA2974@merlin.emma.line.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Helge Hafting <helgehaf@aitel.hist.no>
-Cc: Adrian Ulrich <reiser4@blinkenlights.ch>, Matthias Andree <matthias.andree@gmx.de>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+To: Matthias Andree <matthias.andree@gmx.de>
+Cc: Adrian Ulrich <reiser4@blinkenlights.ch>, nate.diller@gmail.com, dlang@digitalinsight.com, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-planning sometimes is not possible, exspecially in certain highly stressed 
-environment.
-
-Just think. I had 3 years ago a database that was 2 TB, we were supposing 
-it could grow in three years of 6 TB, but now it is 40 TB because
-the market situation is changed, and with this the number of the users and 
-their needs.
-
-Please you have to suppose that when you 
-have to deal with filesystems use for some kind of services, it is 
-impossible to predict the grown rate, and this is true also about the 
-numeber of used i-nodes.
-
-
-
-On Tue, 1 Aug 2006, Helge Hafting wrote:
-
-> On Mon, Jul 31, 2006 at 05:59:58PM +0200, Adrian Ulrich wrote:
->> Hello Matthias,
->>
->>> This looks rather like an education issue rather than a technical limit.
->>
->> We aren't talking about the same issue: I was asking to do it
->> on-the-fly. Umounting the filesystem, running e2fsck and resize2fs
->> is something different ;-)
->>
->>> Which is untrue at least for Solaris, which allows resizing a life file
->>> system. FreeBSD and Linux require an unmount.
->>
->> Correct: You can add more inodes to a Solaris UFS on-the-fly if you are
->> lucky enough to have some free space available.
->>
->> A colleague of mine happened to create a ~300gb filesystem and started
->> to migrate Mailboxes (Maildir-style format = many small files (1-3kb))
->> to the new LUN. At about 70% the filesystem ran out of inodes; Not a
->> big deal with VxFS because such a problem is fixable within seconds.
->> What would have happened if he had used UFS? mkfs -G wouldn't work
->> because he had no additional Diskspace left... *ouch*..
->>
-> This case is solvable by planning.  When you know that the new fs
-> must be created with all inodes from the start, simply count
-> how many you need before migration.  (And add a decent safety margin.)
-> That's what I do with my home machine ask disks wear out every third
-> year or so. The tools for ext2/3 tells how many inodes are in use,
-> and the new fs can be made accordingly.  The approach works for bigger
-> machines too of course.
 >
-> Helge Hafting
->
-> -
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
->
+>I didn't mean to say your particular drive were crap, but 200GB SATA
+>drives are low end, like it or not --
+
+And you think an 18 GB SCSI disk just does it better because it's SCSI?
+Esp. in long sequential reads.
+
+
+Jan Engelhardt
+-- 
