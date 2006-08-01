@@ -1,105 +1,88 @@
-From: Alexander Zarochentsev <zam@namesys.com>
-Subject: Re: reiser4-2.6.18-rc2-mm1: possible circular locking dependency detected in txn_end
-Date: Tue, 1 Aug 2006 23:18:36 +0400
-Message-ID: <200608012318.36995.zam@namesys.com>
-References: <44CD0115.4010608@free.fr>
+From: "Nate Diller" <nate.diller@gmail.com>
+Subject: Re: reiser4: maybe just fix bugs?
+Date: Tue, 1 Aug 2006 12:26:38 -0700
+Message-ID: <5c49b0ed0608011226w328d809fy9d50aa785ad93536@mail.gmail.com>
+References: <1158166a0607310226m5e134307o8c6bedd1f883479c@mail.gmail.com>
+	 <20060801013104.f7557fb1.akpm@osdl.org> <44CEBA0A.3060206@namesys.com>
+	 <1154431477.10043.55.camel@tribesman.namesys.com>
+	 <20060801073316.ee77036e.akpm@osdl.org>
+	 <1154444822.10043.106.camel@tribesman.namesys.com>
+	 <44CF879D.1000803@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751823AbWHATSP@vger.kernel.org>
-In-Reply-To: <44CD0115.4010608@free.fr>
+Return-path: <reiserfs-list-return-29421-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <44CF879D.1000803@slaphack.com>
 Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Ingo Molnar <mingo@elte.hu>
-Cc: reiserfs-list@namesys.com, Laurent Riffard <laurent.riffard@free.fr>, Kernel development list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: David Masover <ninja@slaphack.com>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, Andrew Morton <akpm@osdl.org>, vda.linux@googlemail.com, linux-kernel@vger.kernel.org, Reiserfs-List@namesys.com
 
-Hello Ingo,
+On 8/1/06, David Masover <ninja@slaphack.com> wrote:
+> Vladimir V. Saveliev wrote:
+>
+> > Do you think that if reiser4 supported xattrs - it would increase its
+> > chances on inclusion?
+>
+> Probably the opposite.
+>
+> If I understand it right, the original Reiser4 model of file metadata is
+> the file-as-directory stuff that caused such a furor the last big push
+> for inclusion (search for "Silent semantic changes in Reiser4"):
+>
+> foo.mp3/.../rwx    # permissions
+> foo.mp3/.../artist # part of the id3 tag
+>
+> So I suspect xattrs would just be a different interface to this stuff,
+> maybe just a subset of it (to prevent namespace collisions):
+>
+> foo.mp3/.../xattr/ # contains files representing attributes
+>
+> Of course, you'd be able to use the standard interface for
+> getting/setting these.  The point is, I don't think Hans/Namesys wants
+> to do this unless they're going to do it right, especially because they
+> already have the file-as-dir stuff somewhat done.  Note that these are
+> neither mutually exclusive nor mutually dependent -- you don't have to
+> enable file-as-dir to make xattrs work.
+>
+> I know it's not done yet, though.  I can understand Hans dragging his
+> feet here, because xattrs and traditional acls are examples of things
+> Reiser4 is supposed to eventually replace.
+>
+> Anyway, if xattrs were done now, the only good that would come of it is
+> building a userbase outside the vanilla kernel.  I can't see it as doing
+> anything but hurting inclusion by introducing more confusion about
+> "plugins".
+>
+> I could be entirely wrong, though.  I speak for neither
+> Hans/Namesys/reiserfs nor LKML.  Talk amongst yourselves...
 
-there is a new reiser4 / lock validator problem:
+i should clarify things a bit here.  yes, hans' goal is for there to
+be no difference between the "xattr" namespace and the "readdir" one.
+unfortunately, this is not feasible with the current VFS, and some
+major work would have to be done to enable this without some
+pathological cases cropping up.  some very smart people think that it
+cannot be done at all.
 
-On Sunday 30 July 2006 22:57, Laurent Riffard wrote:
-> =======================================================
-> [ INFO: possible circular locking dependency detected ]
-> -------------------------------------------------------
-> mv/29012 is trying to acquire lock:
->  (&txnh->hlock){--..}, at: [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
->
-> but task is already holding lock:
->  (&atom->alock){--..}, at: [<e0c8a640>] txnh_get_atom+0xf6/0x39e
-> [reiser4]
->
-> which lock already depends on the new lock.
+xattr is a seperate VFS interface, which avoids those problems by
+defining certain restrictions on how the 'files' which live in that
+namespace can be manupulated.  for instance, hard links are
+non-existent, and the 'mv' command cannot move a file between
+different xattr namespaces.
 
-it is absolutely legal in reiser4 to lock atom first, then lock 
-transaction handle.
+enabling xattr would have no connection to the file-as-directory
+stuff, and (without extra work) would not even allow access to the
+things reiser4 defined in the '...' directory.  also enabling xattr in
+the way i intend would in no way compromise hans' long-term vision.
 
-i guess the lock validator recorded wrong dependency rule from one place 
-where the spinlocks are taken in reverse order.  that place is in 
-fs/reiser4/txnmgr.c:atom_begin_and_assign_to_txnh, that atom is new, 
-just kmalloc'ed object which is inaccessible for others, so it can't a 
-source for deadlock.
+HOWEVER, i *need* to point out that hans and i disagree somewhat on
+the specifics here, and so i should say adamently "i don't speak here
+on behalf of hans or namesys".
 
-but how to explain that to the lock validator?
+that won't stop me from submitting my own patch though :)
 
->
-> the existing dependency chain (in reverse order) is:
->
-> -> #1 (&atom->alock){--..}:
->        [<c012ce2f>] lock_acquire+0x60/0x80
->        [<c0292968>] _spin_lock+0x19/0x28
->        [<e0c8bbd7>] try_capture+0x7cf/0x1cd7 [reiser4]
->        [<e0c786e1>] longterm_lock_znode+0x427/0x84f [reiser4]
->        [<e0ca55dc>] coord_by_handle+0x2be/0x7f7 [reiser4]
->        [<e0ca5f89>] coord_by_key+0x1e3/0x22d [reiser4]
->        [<e0c7dbd2>] insert_by_key+0x8f/0xe0 [reiser4]
->        [<e0cbf7f1>] write_sd_by_inode_common+0x361/0x61a [reiser4]
->        [<e0cbfce4>] create_object_common+0xf1/0xf6 [reiser4]
->        [<e0cbaebf>] create_vfs_object+0x51d/0x732 [reiser4]
->        [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
->        [<c015ed33>] vfs_mkdir+0x5a/0x9d
->        [<c0160f5e>] sys_mkdirat+0x88/0xc0
->        [<c0160fa6>] sys_mkdir+0x10/0x12
->        [<c0102c2d>] sysenter_past_esp+0x56/0x8d
->
-> -> #0 (&txnh->hlock){--..}:
->        [<c012ce2f>] lock_acquire+0x60/0x80
->        [<c0292968>] _spin_lock+0x19/0x28
->        [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
->        [<e0c7f97d>] reiser4_exit_context+0x1c2/0x571 [reiser4]
->        [<e0cbb091>] create_vfs_object+0x6ef/0x732 [reiser4]
->        [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
->        [<c015ed33>] vfs_mkdir+0x5a/0x9d
->        [<c0160f5e>] sys_mkdirat+0x88/0xc0
->        [<c0160fa6>] sys_mkdir+0x10/0x12
->        [<c0102c2d>] sysenter_past_esp+0x56/0x8d
->
-> other info that might help us debug this:
->
-> 2 locks held by mv/29012:
->  #0:  (&inode->i_mutex/1){--..}, at: [<c015f50b>]
-> lookup_create+0x1d/0x73
->  #1:  (&atom->alock){--..}, at: [<e0c8a640>]
-> txnh_get_atom+0xf6/0x39e [reiser4]
->
-> stack backtrace:
->  [<c0104df0>] show_trace+0xd/0x10
->  [<c0104e0c>] dump_stack+0x19/0x1d
->  [<c012bc62>] print_circular_bug_tail+0x59/0x64
->  [<c012cc3e>] __lock_acquire+0x814/0x9a5
->  [<c012ce2f>] lock_acquire+0x60/0x80
->  [<c0292968>] _spin_lock+0x19/0x28
->  [<e0c8e09b>] txn_end+0x191/0x368 [reiser4]
->  [<e0c7f97d>] reiser4_exit_context+0x1c2/0x571 [reiser4]
->  [<e0cbb091>] create_vfs_object+0x6ef/0x732 [reiser4]
->  [<e0cbb1fd>] mkdir_common+0x43/0x4b [reiser4]
->  [<c015ed33>] vfs_mkdir+0x5a/0x9d
->  [<c0160f5e>] sys_mkdirat+0x88/0xc0
->  [<c0160fa6>] sys_mkdir+0x10/0x12
->  [<c0102c2d>] sysenter_past_esp+0x56/0x8d
->
-> (Linux antares.localdomain 2.6.18-rc2-mm1 #77 Sun Jul 30 15:09:34
-> CEST 2006 i686 AMD Athlon(TM) XP 1600+ unknown GNU/Linux)
-
--- 
-Alex.
+NATE
