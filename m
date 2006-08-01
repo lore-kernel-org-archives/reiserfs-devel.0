@@ -1,66 +1,40 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
-	regarding reiser4 inclusion
-Date: Tue, 01 Aug 2006 18:19:30 +0100
-Message-ID: <1154452770.15540.65.camel@localhost.localdomain>
-References: <200607312314.37863.bernd-schubert@gmx.de>
-	 <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl>
-	 <20060801165234.9448cb6f.reiser4@blinkenlights.ch>
-	 <1154446189.15540.43.camel@localhost.localdomain>
-	 <44CF84F0.8080303@slaphack.com>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: Solaris ZFS on Linux [Was: Re: the " 'official' point of view"expressed
+ by kernelnewbies.org regarding reiser4 inclusion]
+Date: Tue, 01 Aug 2006 12:03:05 -0500
+Message-ID: <44CF8949.707@slaphack.com>
+References: <20060801034726.58097.qmail@web51311.mail.yahoo.com> <44CED777.5080308@slaphack.com> <Pine.LNX.4.63.0607312133080.15179@qynat.qvtvafvgr.pbz> <20060801064837.GB1987@thunk.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29405-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29406-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44CF84F0.8080303@slaphack.com>
+In-Reply-To: <20060801064837.GB1987@thunk.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, bernd-schubert@gmx.de, reiserfs-list@namesys.com, jbglaw@lug-owl.de, clay.barnes@gmail.com, rudy@edsons.demon.nl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Theodore Tso <tytso@mit.edu>, David Lang <dlang@digitalinsight.com>, David Masover <ninja@slaphack.com>, tdwebste2@yahoo.com, Nate Diller <nate.diller@gmail.com>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Ar Maw, 2006-08-01 am 11:44 -0500, ysgrifennodd David Masover:
-> Yikes.  Undetected.
-> 
-> Wait, what?  Disks, at least, would be protected by RAID.  Are you 
-> telling me RAID won't detect such an error?
+Theodore Tso wrote:
 
-Yes.
+> Ah, but as soon as the repacker thread runs continuously, then you
+> lose all or most of the claimed advantage of "wandering logs".
+[...]
+> So instead of a write-write overhead, you end up with a
+> write-read-write overhead.
 
-RAID deals with the case where a device fails. RAID 1 with 2 disks can
-in theory detect an internal inconsistency but cannot fix it.
+This would tend to suggest that the repacker should not run constantly, 
+but also that while it's running, performance could be almost as good as 
+ext3.
 
-> we're OK with that, so long as our filesystems are robust enough.  If 
-> it's an _undetected_ error, doesn't that cause way more problems 
-> (impossible problems) than FS corruption?  Ok, your FS is fine -- but 
-> now your bank database shows $1k less on random accounts -- is that ok?
+> But of course, people tend to disable the repacker when doing
+> benchmarks because they're trying to play the "my filesystem/database
+> has bigger performance numbers than yours" game....
 
-Not really no. Your bank is probably using a machine (hopefully using a
-machine) with ECC memory, ECC cache and the like. The UDMA and SATA
-storage subsystems use CRC checksums between the controller and the
-device. SCSI uses various similar systems - some older ones just use a
-parity bit so have only a 50/50 chance of noticing a bit error.
-
-Similarly the media itself is recorded with a lot of FEC (forward error
-correction) so will spot most changes.
-
-Unfortunately when you throw this lot together with astronomical amounts
-of data you get burned now and then, especially as most systems are not
-using ECC ram, do not have ECC on the CPU registers and may not even
-have ECC on the caches in the disks.
-
-> > The sort of changes this needs hit the block layer and ever fs.
-> 
-> Seems it would need to hit every application also...
-
-Depending how far you propogate it. Someone people working with huge
-data sets already write and check user level CRC values for this reason
-(in fact bitkeeper does it for one example). It should be relatively
-cheap to get much of that benefit without doing application to
-application just as TCP gets most of its benefit without going app to
-app.
-
-Alan
-
+So you run your own benchmarks, I'll run mine...  Benchmarks for 
+everyone!  I'd especially like to see what performance is like with the 
+repacker not running, and during the repack.  If performance during a 
+repack is comparable to ext3, I think we win, although we have to amend 
+that statement to "My filesystem/database has the same or bigger 
+perfomance numbers than yours."
