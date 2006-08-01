@@ -1,50 +1,32 @@
-From: Adrian Ulrich <reiser4@blinkenlights.ch>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
 Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
- regarding reiser4 inclusion
-Date: Tue, 1 Aug 2006 16:52:34 +0200
-Message-ID: <20060801165234.9448cb6f.reiser4@blinkenlights.ch>
+	regarding reiser4 inclusion
+Date: Tue, 01 Aug 2006 16:29:49 +0100
+Message-ID: <1154446189.15540.43.camel@localhost.localdomain>
 References: <200607312314.37863.bernd-schubert@gmx.de>
-	<200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl>
+	 <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl>
+	 <20060801165234.9448cb6f.reiser4@blinkenlights.ch>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29396-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750780AbWHAPLT@vger.kernel.org>
+In-Reply-To: <20060801165234.9448cb6f.reiser4@blinkenlights.ch>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Cc: bernd-schubert@gmx.de, reiserfs-list@namesys.com, jbglaw@lug-owl.de, clay.barnes@gmail.com, rudy@edsons.demon.nl, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
+To: Adrian Ulrich <reiser4@blinkenlights.ch>
+Cc: "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, bernd-schubert@gmx.de, reiserfs-list@namesys.com, jbglaw@lug-owl.de, clay.barnes@gmail.com, rudy@edsons.demon.nl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
 
+Ar Maw, 2006-08-01 am 16:52 +0200, ysgrifennodd Adrian Ulrich:
+> WriteCache, Mirroring between 2 Datacenters, snapshotting.. etc..
+> you don't need your filesystem beeing super-robust against bad sectors
+> and such stuff because:
 
-> > While filesystem speed is nice, it also would be great if reiser4.x would be 
-> > very robust against any kind of hardware failures.
-> 
-> Can't have both.
+You do it turns out. Its becoming an issue more and more that the sheer
+amount of storage means that the undetected error rate from disks,
+hosts, memory, cables and everything else is rising.
 
-..and some people simply don't care about this:
+There has been a great deal of discussion about this at the filesystem
+and kernel summits - and data is getting kicked the way of networking -
+end to end not reliability in the middle.
 
-If you are running a 'big' Storage-System with battery protected
-WriteCache, Mirroring between 2 Datacenters, snapshotting.. etc..
-you don't need your filesystem beeing super-robust against bad sectors
-and such stuff because:
-
- a) You've paid enough money to let the storage care about 
-    Hardware issues.
- b) If your storage is on fire you can do a failover using the mirror.
- c) And if someone ran dd if=/dev/urandom of=/dev/sda you could
-    even rollback your Snapshot.
-    (Btw: i did this once to a Reiser4 filesystem (overwritten about
-    1.2gb). fsck.reiser4 --rebuild-sb was able to fix it.)
-
-
-..but what you really need is a flexible and **fast** filesystem: Like
-Reiser4.
-
-(Yeah.. yeah.. i know: ext3 is also flexible and fast.. but Reiser4
-simply is *MUCH* faster than ext3 for 'my' workload/application).
-
-Regards,
- Adrian
-
+The sort of changes this needs hit the block layer and ever fs.
