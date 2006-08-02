@@ -1,120 +1,51 @@
-From: "Ricardo \(Tru64 User\)" <tru64user@yahoo.com>
-Subject: Re: reiserfs 3.6 with 2TB file size limitation!
-Date: Wed, 2 Aug 2006 06:38:52 -0700 (PDT)
-Message-ID: <20060802133852.21519.qmail@web51413.mail.yahoo.com>
-References: <44CFD524.4020509@namesys.com>
+From: Krzysztof Halasa <khc@pm.waw.pl>
+Subject: Re: Solaris ZFS on Linux
+Date: Wed, 02 Aug 2006 16:28:20 +0200
+Message-ID: <m3ejvzqkjf.fsf@defiant.localdomain>
+References: <20060731175958.1626513b.reiser4@blinkenlights.ch>
+	<200607311918.k6VJIqTN011066@laptop13.inf.utfsm.cl>
+	<20060731225734.ecf5eb4d.reiser4@blinkenlights.ch>
+	<44CE7C31.5090402@gmx.de>
+	<5c49b0ed0607311621i54f1c46fh9137f8955c9ea4be@mail.gmail.com>
+	<Pine.LNX.4.63.0607311621360.14674@qynat.qvtvafvgr.pbz>
+	<5c49b0ed0607311650j4b86d0c3h853578f58db16140@mail.gmail.com>
+	<Pine.LNX.4.63.0607311651410.14674@qynat.qvtvafvgr.pbz>
+	<5c49b0ed0607311705t1eb8fc6bs9a68a43059bfa91a@mail.gmail.com>
+	<20060801010215.GA24946@merlin.emma.line.org>
+	<44CEAEF4.9070100@slaphack.com>
+	<Pine.LNX.4.63.0607312114500.15179@qynat.qvtvafvgr.pbz>
+	<44CED95C.10709@slaphack.com> <44CFE8D9.9090606@mauve.plus.com>
+	<0DA0B214-50BC-4E20-A520-B7AB121BB38B@mac.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-29433-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29434-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44CFD524.4020509@namesys.com>
+In-Reply-To: <0DA0B214-50BC-4E20-A520-B7AB121BB38B@mac.com> (Kyle Moffett's message of "Tue, 1 Aug 2006 22:29:20 -0400")
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward@namesys.com>
-Cc: Reiserfs-List@namesys.com
+Content-Transfer-Encoding: 7bit
+To: Kyle Moffett <mrmacman_g4@mac.com>
+Cc: Ian Stirling <ian.stirling@mauve.plus.com>, David Masover <ninja@slaphack.com>, David Lang <dlang@digitalinsight.com>, Nate Diller <nate.diller@gmail.com>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, ipso@snappymail.ca, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Ts'o <tytso@mit.edu>, LKML Kernel <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
 
---- Edward Shishkin <edward@namesys.com> wrote:
+Kyle Moffett <mrmacman_g4@mac.com> writes:
 
-> Ricardo (Tru64 User) wrote:
-> > Hi,
-> 
-> Hello
-> 
-> > I read on reiserfs site, faq #1, about max file
-> sizes:
-> > max file size 2^60 - bytes => 1 Ei, 
-> > but page cache limits this to 8 Ti on
-> architectures
-> > with 32 bit int for reiserfs 3.6
-> > 
-> > I do have a reiserfs 3.6 filesystem, on kernel 
-> > 2.6.12-21mdksmp (mandriva 2006) that would not
-> take a
-> > filesize greater than 2TB!
-> > 
-> > Filesize in question::
-> > -rw-r--r--  1 myuser users 2147483647 Aug  1 16:41
-> > myfile.out
-> 
-> Hmm.. actually this file has size 2GB, not 2TB.
-> Did you try to specify O_LARGEFILE when creating a
-> file?
-> (man creat)
-> 
-> > 
-> > Error received:
-> > "Filesize limit exceeded"
-> > 
-> > This filesystem is on a scsi device connected via 
-> > Adaptec AIC-7899P U160/m card (if it matters).
-> > 
-> > # debugreiserfs /dev/sda1
-> > debugreiserfs 3.6.19 (2003 www.namesys.com)
-> > 
-> > 
-> > Filesystem state: consistency is not checked after
-> > last mounting
-> > 
-> > Reiserfs super block in block 16 on 0x801 of
-> format
-> > 3.6 with standard journal
-> > Count of blocks on the device: 292967356
-> > Number of bitmaps: 8941
-> > Blocksize: 4096
-> > Free blocks (count of blocks - used [journal,
-> bitmaps,
-> > data, reserved] blocks): 172310677
-> > Root block: 121672
-> > Filesystem is NOT clean
-> > Tree height: 5
-> > Hash function used to sort names: "r5"
-> > Objectid map size 2, max 972
-> > Journal parameters:
-> >         Device [0x0]
-> >         Magic [0x5613f7b2]
-> >         Size 8193 blocks (including 1 for journal
-> > header) (first block 18)
-> >         Max transaction length 1024 blocks
-> >         Max batch size 900 blocks
-> >         Max commit age 30
-> > Blocks reserved by journal: 0
-> > Fs state field: 0x0:
-> > sb_version: 2
-> > inode generation number: 1507612
-> > UUID: 78e233e1-8210-4c9f-8f5d-7159c754db16
-> > LABEL: 
-> > Set flags in SB:
-> >         ATTRIBUTES CLEAN
-> > 
-> > Any idea why i would receive this limitation, with
-> a
-> > 2.6 kernel and reiserfs 3.6? Can this be corrected
-> to
-> > allow the full file size?
-> > I would appreciate any hints....
-> > I check the kernel-sources for the kernel version
-> i am
-> > running, and i dont see any mention of "large
-> > file/filesystem support" that i recall was
-> available
-> > in  older kernel compiles, so it is probably
-> > integrated now?
-> > 
-> > 
-> > _Thanks
-> > 
-> > Richard
+> IMHO the best alternative for a situation like that is a storage
+> controller with a battery-backed cache and a hunk of flash NVRAM for
+> when the power shuts off (just in case you run out of battery), as
+> well as a separate 1GB battery-backed PCI ramdisk for an external
+> journal device (likewise equipped with flash NVRAM).  It doesn't take
+> much power at all to write a gig of stuff to a small flash chip
+> (Think about your digital camera which runs off a couple AA's), so
+> with a fair-sized on-board battery pack you could easily transfer its
+> data to NVRAM and still have power left to back up data in RAM for 12
+> hours or so.  That way bootup is fast (no reading 1GB of data from
+> NVRAM) but there's no risk of data loss.
 
-
-Ohh yes.....my (user's) fault. This is an application
-limitation (fortran) probably for not using the right
-switch. And, yes, the file size i posted is only 2gb!
-Please ignore this post.
-
-__________________________________________________
-Do You Yahoo!?
-Tired of spam?  Yahoo! Mail has the best spam protection around 
-http://mail.yahoo.com 
+Not sure - reading flash is fast, but writing is quite slow.
+A digital camera can consume a set of 2 or 4 2500 mAh AA cells
+for a fraction of 1 GB (of course, only a part of power goes
+to flash).
+-- 
+Krzysztof Halasa
