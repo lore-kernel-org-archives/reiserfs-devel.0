@@ -1,44 +1,38 @@
-From: "Sander Sweers" <sander.sweers@gmail.com>
-Subject: Re: Ebuild/rpm/deb repo's (was Re: reiser4 can now bear with filled fs, looks stable to me...)
-Date: Thu, 3 Aug 2006 13:49:34 +0200
-Message-ID: <b65fbb130608030449v607eebd2u83e8a8f7c12cd662@mail.gmail.com>
-References: <20060730223755.GA14386@hermes.uziel.local>
-	 <1154469566.10745.48.camel@localhost>
-	 <200608031055.42846.marcel@hilzinger.hu>
-	 <200608031102.57446.marcel@hilzinger.hu>
-	 <44D1BBAD.2040104@namesys.com> <1166782224.20060803130201@wp.pl>
+From: Andrew James Wade <andrew.j.wade@gmail.com>
+Subject: Re: [nikita-3002]: assertion failed: carry_level_invariant(doing, CARRY_DOING)
+Date: Thu, 3 Aug 2006 08:51:29 -0400
+Message-ID: <200608030851.30457.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+References: <200608021749.30205.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+Reply-To: ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-29453-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29454-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1166782224.20060803130201@wp.pl>
+In-Reply-To: <200608021749.30205.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="macroman"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-T24gMDMvMDgvMDYsIE1hY2llaiBTb8WCdHlzaWFrIDxweXNpYWsuc2F0cmlhbmlAd3AucGw+IHdy
-b3RlOgo+ID4+SXQncyBxdWl0ZSBsYXRlIGZvciBpbmNsdXNpb24gaW4gdGhlIG5leHQgVWJ1bnR1
-IHJlbGVhc2UsIGJ1dCB3aG8ga25vd3MuCj4gTWF5YmUgaXQgaXMgbm90LCBpdCdzIGEgcGxheWdy
-b3VuZCwgTWFyayB3b3VsZCBub3QgaGVzaXRhdGUgdG8gcG9zdHBvbmUKPiBFZGd5J3MgcmVsZWFz
-ZSBpZiBpdCByZXF1aXJlcyBwb2xpc2hpbmcgdGhlIHdob2xlIHRoaW5nIGR1ZSB0byAiZWRneSIK
-PiBmZWF0dXJlcy4KPgo+ID4gQ291bGQgeW91IGNvbnRhY3QgaGltIGZvciB1cywgYW5kIGFzaz8g
-IEl0IGlzIG1vcmUgY29udmluY2luZyB3aGVuIHVzZXJzCj4gPiBhc2suLi4uLgo+IEhlaGUsIEhh
-bnMsIEkgdHJpZWQgY29udGFjdGluZyBoaW0uIE9uIGhpcyB3ZWJzaXRlIGhlIHBvaW50cyB0byBo
-aXMKPiBzZWNyYXRhcnkgQ2xhaXJlLiBTaGUncyBvbiBtYXRlcm5pdHkgbGVhdmUsIHNvIGFub3Ro
-ZXIgZ2lybCwgYWxzbyBuYW1lZAo+IENsYWlyZSByZXBsaWVzLgo+IEhlcmUncyB3aGF0IEkgZ290
-IGZvciBhc2tpbmcgYWJvdXQgTWFyayBjb2xsYWJvcmF0aW5nIHdpdGggSGFuczoKPgo+ICIKPiBI
-aSBNYWNpZWoKPgo+IFRoYW5rIHlvdSBmb3IgeW91ciBlLW1haWwgYW5kIGludGVyZXN0IGluIFVi
-dW50dS4gVW5mb3J0dW5hdGVseSwgdGhpcyBpcwo+IG5vdCBzb21ldGhpbmcgd2UgY2FuIGhlbHAg
-eW91IHdpdGguCj4KPiBJIGhvcGUgdGhhdCB5b3UgYXJlIGFibGUgdG8gZmluZCB0aGUgaGVscCB5
-b3UgcmVxdWlyZSBlbHNld2hlcmUuCj4KPiBraW5kIHJlZ2FyZHMKPgo+IENsYWlyZQo+ICIKPgo+
-IEdvZCBkYW1uIGl0LCBzZWNyYXRhcmllcy4uLgo+IEkgaGF2ZW4ndCBmb3VuZCBNYXJrJ3MgZW1h
-aWwgYWRkcmVzcyBhbnl3aGVyZSwgZGlkIGFueW9uZSBoYXZlPwo+CgpNYXliZSBpdCBpcyBiZXR0
-ZXIgdG8gZ2V0IGluIGNvbnRhY3Qgd2l0aCB0aGUgMiBwZW9wbGUgZnJvbSB0aGlzIGxpbmsuCmh0
-dHBzOi8vd2lraS51YnVudHUuY29tL1JlaXNlcjQKCkRhdmlkIGlzIGEgZm9ybWVyIGdlbnRvbyB1
-c2VycyBhbmQgd2FzIHRoZSBvbmUgd2hvIG1haW50YWluZWQgdGhlIGxvdmUtc291cmNlcy4KClRo
-ZSBvbmx5IGUtbWFpbCBhZGRyZXNzIEkgY291bGQgZmluZCBmb3IgaGltIHdhcyBnbm9tZXVzZXJA
-Z21haWwuY29tCihoaXMgamFiYmVyIGJ1dCBpdCBsb29rcyBvay4KCkdyZWV0cwpTYW5kZXIK
+I've just had some warnings show up in my kernel log. I don't know if
+they're related to the troubles I've been having (I fscked after the
+last panic).
+
+reiser4[updatedb(32445)]: key_warning (fs/reiser4/plugin/file_plugin_common.c:513)[nikita-717]:
+WARNING: Error for inode 401698 (-2)
+for key: (6211c:1:656e646f727365:0:62122:0)[stat data]
+reiser4[updatedb(32445)]: key_warning (fs/reiser4/plugin/file_plugin_common.c:513)[nikita-717]:
+WARNING: Error for inode 401697 (-2)
+for key: (6211c:1:6576656e74732e:0:62121:0)[stat data]
+reiser4[updatedb(32445)]: key_warning (fs/reiser4/plugin/file_plugin_common.c:513)[nikita-717]:
+WARNING: Error for inode 401694 (-2)
+for key: (6211c:1:736e617073686f:0:6211e:0)[stat data]
+reiser4[updatedb(32445)]: key_warning (fs/reiser4/plugin/file_plugin_common.c:513)[nikita-717]:
+WARNING: Error for inode 401699 (-2)
+for key: (6211c:1:776f6d656e5f6c:0:62123:0)[stat data]
+
+Hope this helps,
+Andrew Wade
