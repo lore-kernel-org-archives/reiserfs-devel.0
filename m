@@ -1,52 +1,128 @@
-From: "Wil Reichert" <wil.reichert@gmail.com>
-Subject: Re: Solaris ZFS on Linux
-Date: Wed, 2 Aug 2006 19:20:25 -0700
-Message-ID: <7a329d910608021920h6c1bb625q5336115cfd253adf@mail.gmail.com>
-References: <20060731175958.1626513b.reiser4@blinkenlights.ch>
-	 <Pine.LNX.4.63.0607311651410.14674@qynat.qvtvafvgr.pbz>
-	 <5c49b0ed0607311705t1eb8fc6bs9a68a43059bfa91a@mail.gmail.com>
-	 <20060801010215.GA24946@merlin.emma.line.org>
-	 <44CEAEF4.9070100@slaphack.com>
-	 <Pine.LNX.4.63.0607312114500.15179@qynat.qvtvafvgr.pbz>
-	 <44CED95C.10709@slaphack.com> <44CFE8D9.9090606@mauve.plus.com>
-	 <0DA0B214-50BC-4E20-A520-B7AB121BB38B@mac.com>
-	 <m3ejvzqkjf.fsf@defiant.localdomain>
+From: Alexander Zarochentsev <zam@namesys.com>
+Subject: Re: reiser4-2.6.18-rc2-mm1: possible circular locking dependency detected in txn_end
+Date: Thu, 3 Aug 2006 10:09:17 +0400
+Message-ID: <200608031009.18204.zam@namesys.com>
+References: <44CD0115.4010608@free.fr> <1154375700.6460.125.camel@tribesman.namesys.com> <44CE761E.8080809@free.fr>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29444-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-29445-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <m3ejvzqkjf.fsf@defiant.localdomain>
+In-Reply-To: <44CE761E.8080809@free.fr>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Krzysztof Halasa <khc@pm.waw.pl>
-Cc: Kyle Moffett <mrmacman_g4@mac.com>, Ian Stirling <ian.stirling@mauve.plus.com>, David Masover <ninja@slaphack.com>, David Lang <dlang@digitalinsight.com>, Nate Diller <nate.diller@gmail.com>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, ipso@snappymail.ca, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Ts'o <tytso@mit.edu>, LKML Kernel <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
+Cc: Laurent Riffard <laurent.riffard@free.fr>, "Vladimir V. Saveliev" <vs@namesys.com>
 
-On 8/2/06, Krzysztof Halasa <khc@pm.waw.pl> wrote:
-> Kyle Moffett <mrmacman_g4@mac.com> writes:
+On Tuesday 01 August 2006 01:29, Laurent Riffard wrote:
+> Le 31.07.2006 21:55, Vladimir V. Saveliev a =E9crit :
+> > Hello
+> >
+> > What kind of load did you run on reiser4 at that time?
 >
-> > IMHO the best alternative for a situation like that is a storage
-> > controller with a battery-backed cache and a hunk of flash NVRAM for
-> > when the power shuts off (just in case you run out of battery), as
-> > well as a separate 1GB battery-backed PCI ramdisk for an external
-> > journal device (likewise equipped with flash NVRAM).  It doesn't take
-> > much power at all to write a gig of stuff to a small flash chip
-> > (Think about your digital camera which runs off a couple AA's), so
-> > with a fair-sized on-board battery pack you could easily transfer its
-> > data to NVRAM and still have power left to back up data in RAM for 12
-> > hours or so.  That way bootup is fast (no reading 1GB of data from
-> > NVRAM) but there's no risk of data loss.
+> I just formatted a new 2GB Reiser4 FS, then I moved a whole ccache
+> cache tree to this new FS (cache size was about 20~30 Mbytes).
+> Something like:
 >
-> Not sure - reading flash is fast, but writing is quite slow.
-> A digital camera can consume a set of 2 or 4 2500 mAh AA cells
-> for a fraction of 1 GB (of course, only a part of power goes
-> to flash).
+> # mkfs.reiser4 /dev/vglinux1/ccache
+> # mount -tauto -onoatime /dev/vglinux1/ccache /mnt/disk
+> # mv ~laurent/.ccache/* /mnt/disk/
 
-Seeks are fast, throughput is terrible, power is minimal:
+I was not able to reproduce it.  Can you please try the following patch?
 
-http://techreport.com/reviews/2006q3/supertalent-flashide/index.x?pg=1
 
-Wil
+lock validator friendly locking of new atom in=20
+atom_begin_and_assign_to_txnh and locking of two atoms.
+
+Signed-off-by: Alexander Zarochentsev <zam@namesys.com>
+=2D--
+
+ fs/reiser4/txnmgr.c |   14 ++++++++------
+ fs/reiser4/txnmgr.h |   15 +++++++++++++++
+ 2 files changed, 23 insertions(+), 6 deletions(-)
+
+Index: linux-2.6-git/fs/reiser4/txnmgr.c
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=2D-- linux-2.6-git.orig/fs/reiser4/txnmgr.c
++++ linux-2.6-git/fs/reiser4/txnmgr.c
+@@ -730,10 +730,12 @@ static int atom_begin_and_assign_to_txnh
+ 	assert("jmacd-17", atom_isclean(atom));
+=20
+         /*
+=2D	 * do not use spin_lock_atom because we have broken lock ordering here
+=2D	 * which is ok, as long as @atom is new and inaccessible for others.
++	 * lock ordering is broken here. It is ok, as long as @atom is new
++	 * and inaccessible for others. We can't use spin_lock_atom or
++	 * spin_lock(&atom->alock) because they care about locking
++	 * dependencies. spin_trylock_lock doesn't.
+ 	 */
+=2D	spin_lock(&(atom->alock));
++	check_me("", spin_trylock_atom(atom));
+=20
+ 	/* add atom to the end of transaction manager's list of atoms */
+ 	list_add_tail(&atom->atom_link, &mgr->atoms_list);
+@@ -749,7 +751,7 @@ static int atom_begin_and_assign_to_txnh
+ 	atom->super =3D reiser4_get_current_sb();
+ 	capture_assign_txnh_nolock(atom, txnh);
+=20
+=2D	spin_unlock(&(atom->alock));
++	spin_unlock_atom(atom);
+ 	spin_unlock_txnh(txnh);
+=20
+ 	return -E_REPEAT;
+@@ -2791,10 +2793,10 @@ static void lock_two_atoms(txn_atom * on
+ 	/* lock the atom with lesser address first */
+ 	if (one < two) {
+ 		spin_lock_atom(one);
+=2D		spin_lock_atom(two);
++		spin_lock_atom_nested(two);
+ 	} else {
+ 		spin_lock_atom(two);
+=2D		spin_lock_atom(one);
++		spin_lock_atom_nested(one);
+ 	}
+ }
+=20
+Index: linux-2.6-git/fs/reiser4/txnmgr.h
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=2D-- linux-2.6-git.orig/fs/reiser4/txnmgr.h
++++ linux-2.6-git/fs/reiser4/txnmgr.h
+@@ -502,6 +502,7 @@ static inline void spin_lock_atom(txn_at
+ {
+ 	/* check that spinlocks of lower priorities are not held */
+ 	assert("", (LOCK_CNT_NIL(spin_locked_txnh) &&
++		    LOCK_CNT_NIL(spin_locked_atom) &&
+ 		    LOCK_CNT_NIL(spin_locked_jnode) &&
+ 		    LOCK_CNT_NIL(spin_locked_zlock) &&
+ 		    LOCK_CNT_NIL(rw_locked_dk) &&
+@@ -513,6 +514,20 @@ static inline void spin_lock_atom(txn_at
+ 	LOCK_CNT_INC(spin_locked);
+ }
+=20
++static inline void spin_lock_atom_nested(txn_atom *atom)
++{
++	assert("", (LOCK_CNT_NIL(spin_locked_txnh) &&
++		    LOCK_CNT_NIL(spin_locked_jnode) &&
++		    LOCK_CNT_NIL(spin_locked_zlock) &&
++		    LOCK_CNT_NIL(rw_locked_dk) &&
++		    LOCK_CNT_NIL(rw_locked_tree)));
++
++	spin_lock_nested(&(atom->alock), SINGLE_DEPTH_NESTING);
++
++	LOCK_CNT_INC(spin_locked_atom);
++	LOCK_CNT_INC(spin_locked);
++}
++
+ static inline int spin_trylock_atom(txn_atom *atom)
+ {
+ 	if (spin_trylock(&(atom->alock))) {
+
+
+
