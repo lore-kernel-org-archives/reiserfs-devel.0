@@ -1,54 +1,46 @@
-From: Alexander Zarochentsev <zam@namesys.com>
-Subject: Re: [nikita-3002]: assertion failed: carry_level_invariant(doing, CARRY_DOING)
-Date: Thu, 3 Aug 2006 19:28:23 +0400
-Message-ID: <200608031928.25155.zam@namesys.com>
-References: <200608021749.30205.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608030851.30457.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
+ regarding reiser4 inclusion
+Date: Thu, 03 Aug 2006 19:44:57 +0400
+Message-ID: <44D219F9.9080404@namesys.com>
+References: <200607312314.37863.bernd-schubert@gmx.de> <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl> <20060801165234.9448cb6f.reiser4@blinkenlights.ch> <1154446189.15540.43.camel@localhost.localdomain> <44CF9BAD.5020003@emc.com> <44CF3DE0.3010501@namesys.com> <20060803140344.GC7431@merlin.emma.line.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29460-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29461-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200608030851.30457.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
-Content-Disposition: inline
+In-Reply-To: <20060803140344.GC7431@merlin.emma.line.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com, Andrew James Wade <andrew.j.wade@gmail.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Matthias Andree <matthias.andree@gmx.de>
+Cc: Hans Reiser <reiser@namesys.com>, ric@emc.com, Alan Cox <alan@lxorguk.ukuu.org.uk>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, bernd-schubert@gmx.de, reiserfs-list@namesys.com, jbglaw@lug-owl.de, clay.barnes@gmail.com, rudy@edsons.demon.nl, ipso@snappymail.ca, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
 
-Hello,
-
-> I've just had some warnings show up in my kernel log. I don't know if
-> they're related to the troubles I've been having (I fscked after the
-> last panic).
-
-please apply the following patch:
-
-re-add to reiser4_releasepage mistakenly removed page_count check.
-extra page reference is used to protect page from detaching from the 
-jnode.
-
-Signed-off-by: Alexander Zarochentsev <zam@namesys.com>
----
- fs/reiser4/as_ops.c |    5 +++++
- 1 file changed, 5 insertions(+)
-
-Index: linux-2.6-git/fs/reiser4/as_ops.c
-===================================================================
---- linux-2.6-git.orig/fs/reiser4/as_ops.c
-+++ linux-2.6-git/fs/reiser4/as_ops.c
-@@ -350,6 +350,11 @@ int reiser4_releasepage(struct page *pag
- 	if (PageDirty(page))
- 		return 0;
- 
-+	/* extra page reference is used by reiser4 to protect
-+	 * jnode<->page link from this ->releasepage(). */
-+	if (page_count(page) > 3)
-+		return 0;
-+
- 	/* releasable() needs jnode lock, because it looks at the jnode fields
- 	 * and we need jload_lock here to avoid races with jload(). */
- 	spin_lock_jnode(node);
+Matthias Andree wrote:
+> On Tue, 01 Aug 2006, Hans Reiser wrote:
+> 
+> 
+>>You will want to try our compression plugin, it has an ecc for every 64k....
+> 
+> 
+> What kind of forward error correction would that be,
 
 
+Actually we use checksums, not ECC. If checksum is wrong, then run
+fsck - it will remove the whole disk cluster, that represent 64K of
+data.
 
+
+  and how much and
+> what failure patterns can it correct? URL suffices.
+> 
+
+Checksum is checked before unsafe decompression (when trying to
+decompress incorrect data can lead to fatal things). It can be
+broken because of many reasons. The main one is tree corruption
+(for example, when disk cluster became incomplete - ECC can not
+help here). Perhaps such checksumming is also useful for other
+things, I didnt classify the patterns..
+
+Edward.
