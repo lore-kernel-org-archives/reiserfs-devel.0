@@ -1,43 +1,44 @@
-From: Theodore Tso <tytso@mit.edu>
-Subject: Re: reiser4: maybe just fix bugs?
-Date: Thu, 3 Aug 2006 03:46:51 -0400
-Message-ID: <20060803074651.GA27835@thunk.org>
-References: <1158166a0607310226m5e134307o8c6bedd1f883479c@mail.gmail.com> <20060801013104.f7557fb1.akpm@osdl.org> <44CEBA0A.3060206@namesys.com> <1154431477.10043.55.camel@tribesman.namesys.com> <20060801073316.ee77036e.akpm@osdl.org> <1154444822.10043.106.camel@tribesman.namesys.com> <44CF879D.1000803@slaphack.com>
+From: Marcel Hilzinger <marcel@hilzinger.hu>
+Subject: Re: Ebuild/rpm/deb repo's (was Re: reiser4 can now bear with filled fs, looks stable to me...)
+Date: Thu, 3 Aug 2006 10:55:42 +0200
+Message-ID: <200608031055.42846.marcel@hilzinger.hu>
+References: <20060730223755.GA14386@hermes.uziel.local> <1692247736.20060801231255@wp.pl> <1154469566.10745.48.camel@localhost>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932375AbWHCHrS@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-29448-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <1154469566.10745.48.camel@localhost>
 Content-Disposition: inline
-In-Reply-To: <44CF879D.1000803@slaphack.com>
-Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Masover <ninja@slaphack.com>
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, Andrew Morton <akpm@osdl.org>, vda.linux@googlemail.com, linux-kernel@vger.kernel.org, Reiserfs-List@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
 
-On Tue, Aug 01, 2006 at 11:55:57AM -0500, David Masover wrote:
-> 
-> If I understand it right, the original Reiser4 model of file metadata is 
-> the file-as-directory stuff that caused such a furor the last big push 
-> for inclusion (search for "Silent semantic changes in Reiser4"):
+Am Dienstag, 1. August 2006 23:59 schrieb Sander Sweers:
+> On Tue, 2006-08-01 at 23:12 +0200, Maciej So=B3tysiak wrote:
+[...]
+> Are there any on the list who know of rpm's for Suse/Redhat/Mandrake
+> that include reiser4?
+Suse excluded reiser4 from 10.1 because they want to keep the kernel "clean=
+er"=20
+than in previous versions. Il ask what's the status with 10.2, but I think=
+=20
+it's still left out. With the new build-server=20
+(http://en.opensuse.org/Build_Service) it shouldn't be too hard to build=20
+packages. Also Suse supports now special packages for kernel-modules, which=
+=20
+can even survive a kernel-update, if the API does not change.
 
-The furor was caused by concerns Al Viro expressed about
-locking/deadlock issues that reiser4 introduced.  
-
-The bigger issue with xattr support is two-fold.  First of all, there
-are the progams that are expecting the existing extended attribute
-interface, and not implementing it will simply mean that as far as
-Samba, and other applications, Reiser4 simply will not haved xattr
-support.
-
-More importantly are the system-level extended attributes, such as
-those used by SELINUX, which by definition are not supposed to be
-visible to the user at all, but only are supposed to be there for the
-SELINUX (or some other kernel layer, in general) to access.   
-
-Not supporting xattrs means that those distro's that use SELINUX by
-default (i.e., RHEL, Fedora, etc.) won't want to use reiser4, because
-SELINUX won't work on reiser4 filesytstems.
-
-Whether or not Hans cares about this is up to him....
-
-						- Ted
+But I see another important point: Reiser4 is very fast if you have more th=
+an=20
+one reiser4 partition. But: most home users make one or two reiser4=20
+partitions for testing purpose. Until the whole system does not run on=20
+reiser4 the speed improvement cannot be felt 100%. So community members=20
+should make pressure at Suse, Fedora, Mandriva to get reiser4 supported by=
+=20
+the distro.
+=2D-=20
+=DCdv=F6zlettel -- Mit freundlichen Gr=FCssen,
+Marcel Hilzinger
