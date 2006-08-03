@@ -1,41 +1,52 @@
-From: Marcel Hilzinger <marcel@hilzinger.hu>
-Subject: Re: Ebuild/rpm/deb repo's (was Re: reiser4 can now bear with filled fs, looks stable to me...)
-Date: Thu, 3 Aug 2006 11:02:56 +0200
-Message-ID: <200608031102.57446.marcel@hilzinger.hu>
-References: <20060730223755.GA14386@hermes.uziel.local> <1154469566.10745.48.camel@localhost> <200608031055.42846.marcel@hilzinger.hu>
+From: Helge Hafting <helgehaf@aitel.hist.no>
+Subject: Re: Solaris ZFS on Linux
+Date: Thu, 3 Aug 2006 11:32:13 +0200
+Message-ID: <20060803093213.GA12071@aitel.hist.no>
+References: <Pine.LNX.4.63.0607311651410.14674@qynat.qvtvafvgr.pbz> <5c49b0ed0607311705t1eb8fc6bs9a68a43059bfa91a@mail.gmail.com> <20060801010215.GA24946@merlin.emma.line.org> <44CEAEF4.9070100@slaphack.com> <Pine.LNX.4.63.0607312114500.15179@qynat.qvtvafvgr.pbz> <44CED95C.10709@slaphack.com> <44CFE8D9.9090606@mauve.plus.com> <0DA0B214-50BC-4E20-A520-B7AB121BB38B@mac.com> <m3ejvzqkjf.fsf@defiant.localdomain> <7a329d910608021920h6c1bb625q5336115cfd253adf@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-29449-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <200608031055.42846.marcel@hilzinger.hu>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932441AbWHCJfU@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <7a329d910608021920h6c1bb625q5336115cfd253adf@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Wil Reichert <wil.reichert@gmail.com>
+Cc: Krzysztof Halasa <khc@pm.waw.pl>, Kyle Moffett <mrmacman_g4@mac.com>, Ian Stirling <ian.stirling@mauve.plus.com>, David Masover <ninja@slaphack.com>, David Lang <dlang@digitalinsight.com>, Nate Diller <nate.diller@gmail.com>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, ipso@snappymail.ca, lkml@lpbproductions.com, Jeff Garzik <jeff@garzik.org>, Theodore Ts'o <tytso@mit.edu>, LKML Kernel <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com
 
-Am Donnerstag, 3. August 2006 10:55 schrieb Marcel Hilzinger:
-> Am Dienstag, 1. August 2006 23:59 schrieb Sander Sweers:
-> > On Tue, 2006-08-01 at 23:12 +0200, Maciej So=B3tysiak wrote:
->
-> [...]
->
-> > Are there any on the list who know of rpm's for Suse/Redhat/Mandrake
-> > that include reiser4?
-One more idea:
+On Wed, Aug 02, 2006 at 07:20:25PM -0700, Wil Reichert wrote:
+> On 8/2/06, Krzysztof Halasa <khc@pm.waw.pl> wrote:
+> >Kyle Moffett <mrmacman_g4@mac.com> writes:
+> >
+> >> IMHO the best alternative for a situation like that is a storage
+> >> controller with a battery-backed cache and a hunk of flash NVRAM for
+> >> when the power shuts off (just in case you run out of battery), as
+> >> well as a separate 1GB battery-backed PCI ramdisk for an external
+> >> journal device (likewise equipped with flash NVRAM).  It doesn't take
+> >> much power at all to write a gig of stuff to a small flash chip
+> >> (Think about your digital camera which runs off a couple AA's), so
+> >> with a fair-sized on-board battery pack you could easily transfer its
+> >> data to NVRAM and still have power left to back up data in RAM for 12
+> >> hours or so.  That way bootup is fast (no reading 1GB of data from
+> >> NVRAM) but there's no risk of data loss.
+> >
+> >Not sure - reading flash is fast, but writing is quite slow.
+> >A digital camera can consume a set of 2 or 4 2500 mAh AA cells
+> >for a fraction of 1 GB (of course, only a part of power goes
+> >to flash).
+> 
+> Seeks are fast, throughput is terrible, power is minimal:
+> 
+> http://techreport.com/reviews/2006q3/supertalent-flashide/index.x?pg=1
+> 
+That particular flash drive had terrible througput.
 
-The next release of Ubuntu is a "playground release". Hans, perhaps you sho=
-uld=20
-have a meeting with Mark Shuttleworth. Reiser4 inclusion in Linspire was a=
-=20
-big step, but Linspire has not really a community. If you get Reiser4=20
-included in the next Ubuntu release (and can make it rock stable then!), yo=
-u=20
-do not have to bother about Fedora or Suse...
+But there are other alternatives.  I use a kingston 4GB 
+compactflash card as a disk, and it reads 22MB/s, according to
+specs and tests with hdparm.  And it writes 16MB/s.  
 
-It's quite late for inclusion in the next Ubuntu release, but who knows.
-=2D-=20
-=DCdv=F6zlettel -- Mit freundlichen Gr=FCssen,
-Marcel Hilzinger
+Much better than the sorry thing in that test, about the same
+read speed as their worst platter-based harddisk.  And of course it still have
+the nice seek times of non-rotating media. :-)
+
+Helge Hafting
