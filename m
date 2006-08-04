@@ -1,64 +1,82 @@
-From: Jorgen Hermanrud Fjeld <jhf@hex.no>
-Subject: Re: Article on LWN about recent discussions on reiser4 and inclusion
-Date: Fri, 4 Aug 2006 10:06:14 +0200
-Message-ID: <20060804080614.GC31560@hex.no>
-References: <20060803212031.GA31560@hex.no> <44D2DED7.8@namesys.com>
+From: Russell Leighton <russ@elegant-software.com>
+Subject: Re: Checksumming blocks? [was Re: the " 'official' point of view"
+ expressed by kernelnewbies.org regarding reiser4 inclusion]
+Date: Fri, 04 Aug 2006 07:55:42 -0400
+Message-ID: <44D335BE.8080908@elegant-software.com>
+References: <200607312314.37863.bernd-schubert@gmx.de> <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl> <20060801165234.9448cb6f.reiser4@blinkenlights.ch> <1154446189.15540.43.camel@localhost.localdomain> <44CF84F0.8080303@slaphack.com> <1154452770.15540.65.camel@localhost.localdomain> <44CF9217.6040609@slaphack.com> <20060803135811.GA7431@merlin.emma.line.org> <44D285DF.7060905@elegant-software.com> <8618C0ED-A530-4414-8B86-3D6B42C84604@smartgames.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-29472-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29473-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <44D2DED7.8@namesys.com>
+In-Reply-To: <8618C0ED-A530-4414-8B86-3D6B42C84604@smartgames.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Hans Reiser <reiser@namesys.com>
-Cc: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Toby Thain <toby@smartgames.ca>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Hi,
 
-On 2006-08-03 23:44:55, Hans Reiser wrote:
-> Jorgen Hermanrud Fjeld wrote:
->=20
-> >The recent discussions regarding reiser4 and possible inclusion have
-> >also caught the eye(s) of LWN.
-> >I have made the article available for you, non-lwn-subscribers, so that =
-you may
-> >have a look at it here "http://lwn.net/SubscriberLink/193663/9d2ac03195c=
-775bc/".
-> >
-> Jorgen, are you with lwn?  Thanks Jorgen.
->=20
-You are welcome. I'm just a subscriber of LWN, which gives me the
-possibility of getting direct links to articles, before they are publicly
-available next week.
-I just thought you should be aware of the press, and have the
-possibility of making your own remarks, if need be.
+That was exactly the summary I was looking for.
 
-> It was a remarkably positive article, and the posters were also quite
-> positive.....
->=20
-Yes the article was nice, and when I reveal that I used the name Armagh as =
-a=20
-game alias when I was younger, my post is also evident.
+I would enourage folks to read the referenced link Toby sent:
 
-When I first have your personal attention, I would like to thank you for
-your good work. I think your ideas on the future of file systems, as I have=
-=20
-read about them on namesys and in the mailing-list, are profoundly importan=
-t.=20
+    http://blogs.sun.com/roller/page/bonwick?entry=zfs_end_to_end_data
 
-I have been using reiser3 for a long time, and would just like express
-my support and gratitude.=20
+...also the linked RAID-Z summary from this article was very 
+interesting, since something like this is needed for recovery from 
+checksum failures:
 
---=20
-Sincerely | Homepage:
-J=F8rgen    | http://www.hex.no/jhf
-          | Public GPG key:
-          | http://www.hex.no/jhf/key.txt
+> Which brings us to the coolest thing about RAID-Z: self-healing data. 
+> In addition to handling whole-disk failure, RAID-Z can also detect and 
+> correct silent data corruption. Whenever you read a RAID-Z block, ZFS 
+> compares it against its checksum. If the data disks didn't return the 
+> right answer, ZFS reads the parity and then does combinatorial 
+> reconstruction to figure out which disk returned bad data. It then 
+> repairs the damaged disk and returns good data to the application. ZFS 
+> also reports the incident through Solaris FMA so that the system 
+> administrator knows that one of the disks is silently failing.
+>
+> Finally, note that *RAID-Z doesn't require any special hardware.* It 
+> doesn't need NVRAM for correctness, and it doesn't need write 
+> buffering for good performance. With RAID-Z, ZFS makes good on the 
+> original RAID promise: it provides fast, reliable storage using cheap, 
+> commodity disks.
+>
 
-The solution of problems is the most characteristic and peculiar sort
-of voluntary thinking.
-		-- William James
+    http://blogs.sun.com/roller/page/bonwick?entry=raid_z
+
+
+
+
+Toby Thain wrote:
+
+>
+> On 4-Aug-06, at 3:25 AM, Russell Leighton wrote:
+>
+>>
+>> If the software (filesystem like ZFS or database like Berkeley DB)   
+>> finds a mismatch for a checksum on a block read, then what?
+>>
+>> Is there a recovery mechanism, or do you just be happy you know  
+>> there is a problem (and go to backup)?
+>
+>
+> ZFS will correct from a good mirror 
+> (http://blogs.sun.com/roller/page/bonwick?entry=zfs_end_to_end_data).
+> --T
+>
+>>
+>> Thx
+>>
+>> Matthias Andree wrote:
+>>
+>>> Berkeley DB can, since version 4.1 (IIRC), write checksums (newer
+>>> versions document this as SHA1) on its database pages, to detect
+>>> corruptions and writes that were supposed to be atomic but failed
+>>> (because you cannot write 4K or 16K atomically on a disk drive).
+>>>
+>>
+>
+
