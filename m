@@ -1,27 +1,76 @@
 From: David Masover <ninja@slaphack.com>
-Subject: Re: Checksumming blocks? [was Re: the " 'official' point of view"
- expressed by kernelnewbies.org regarding reiser4 inclusion]
-Date: Fri, 04 Aug 2006 16:51:59 -0400
-Message-ID: <44D3B36F.7010501@slaphack.com>
-References: <200607312314.37863.bernd-schubert@gmx.de> <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl> <20060801165234.9448cb6f.reiser4@blinkenlights.ch> <1154446189.15540.43.camel@localhost.localdomain> <44CF84F0.8080303@slaphack.com> <1154452770.15540.65.camel@localhost.localdomain> <44CF9217.6040609@slaphack.com> <20060803135811.GA7431@merlin.emma.line.org> <44D285DF.7060905@elegant-software.com>
+Subject: Re: reiser4: maybe just fix bugs?
+Date: Fri, 04 Aug 2006 17:09:30 -0400
+Message-ID: <44D3B78A.8000900@slaphack.com>
+References: <1158166a0607310226m5e134307o8c6bedd1f883479c@mail.gmail.com> <20060801013104.f7557fb1.akpm@osdl.org> <44CEBA0A.3060206@namesys.com> <1154431477.10043.55.camel@tribesman.namesys.com> <20060801073316.ee77036e.akpm@osdl.org> <1154444822.10043.106.camel@tribesman.namesys.com> <44CF879D.1000803@slaphack.com> <20060803074651.GA27835@thunk.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29476-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29477-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44D285DF.7060905@elegant-software.com>
+In-Reply-To: <20060803074651.GA27835@thunk.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Russell Leighton <russ@elegant-software.com>
-Cc: Matthias Andree <matthias.andree@gmx.de>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, bernd-schubert@gmx.de, reiserfs-list@namesys.com, jbglaw@lug-owl.de, clay.barnes@gmail.com, rudy@edsons.demon.nl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
+To: Theodore Tso <tytso@mit.edu>, David Masover <ninja@slaphack.com>, "Vladimir V. Saveliev" <vs@namesys.com>, Andrew Morton <akpm@osdl.org>, vda.linux@googlemail.com, linux-kernel@vger.kernel.org, Reiserfs-List@namesys.com
 
-Russell Leighton wrote:
+Theodore Tso wrote:
+> On Tue, Aug 01, 2006 at 11:55:57AM -0500, David Masover wrote:
+>> If I understand it right, the original Reiser4 model of file metadata is 
+>> the file-as-directory stuff that caused such a furor the last big push 
+>> for inclusion (search for "Silent semantic changes in Reiser4"):
+> 
+> The furor was caused by concerns Al Viro expressed about
+> locking/deadlock issues that reiser4 introduced.  
 
-> Is there a recovery mechanism, or do you just be happy you know there is 
-> a problem (and go to backup)?
+Which, I believe, was about file-as-dir.  Which also had problems with 
+things like directory loops.  That's sort of a disk space memory leak.
 
-You probably go to backup anyway.  The recovery mechanism just means you 
-get to choose the downtime to restore from backup (if there is 
-downtime), versus being suddenly down until you can restore.
+> The bigger issue with xattr support is two-fold.  First of all, there
+> are the progams that are expecting the existing extended attribute
+> interface,
+
+Yeah...
+
+> More importantly are the system-level extended attributes, such as
+> those used by SELINUX, which by definition are not supposed to be
+> visible to the user at all,
+
+I don't see why either of these are issues.  The SELINUX stuff can be a 
+plugin which doesn't necessarily have a user-level interface. 
+Cryptocompress, for instance, exists independent of its user-level 
+interface (probably the file-as-dir stuff), and will probably be 
+implemented in some sort of stable form as a system-wide default for new 
+files.
+
+So, certainly metadata (xattrs) as a plugin could be implemented with no 
+UI at all, or any given UI.
+
+... Anyway, I still see no reason why these cannot be implemented in 
+Reiser4, other than the possibility that if it uses "plugins", I 
+guarantee that at least one or two people will hate the implementation 
+for that reason alone.
+
+> Not supporting xattrs means that those distro's that use SELINUX by
+> default (i.e., RHEL, Fedora, etc.) won't want to use reiser4, because
+> SELINUX won't work on reiser4 filesytstems.
+
+Right.  So they will be implemented, eventually.
+
+> Whether or not Hans cares about this is up to him....
+
+He does, or he should.  Reiser4 needs every bit of acceptance it can get 
+right now, as long as it can get them without compromising its goals or 
+philosophy.  Extended attributes only compromise these because it 
+provides less incentive to learn any other metadata interface that 
+Reiser4 provides.  But that's irrelevant if Reiser4 doesn't gain enough 
+acceptance due to lack of xattr support, anything it has will be 
+irrelevant anyway.
+
+So just as we provide the standard interface to Unix permissions (even 
+though we intend to implement things like acls and views, and even 
+though there was a file/.pseudo/rwx interface), we should provide the 
+standard xattr interface, and the standard direct IO interface, and 
+anything else that's practical.  Be a good, standard filesystem first, 
+and an innovative filesystem second.
