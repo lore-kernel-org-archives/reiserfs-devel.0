@@ -1,76 +1,66 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: reiser4: maybe just fix bugs?
-Date: Fri, 04 Aug 2006 17:09:30 -0400
-Message-ID: <44D3B78A.8000900@slaphack.com>
-References: <1158166a0607310226m5e134307o8c6bedd1f883479c@mail.gmail.com> <20060801013104.f7557fb1.akpm@osdl.org> <44CEBA0A.3060206@namesys.com> <1154431477.10043.55.camel@tribesman.namesys.com> <20060801073316.ee77036e.akpm@osdl.org> <1154444822.10043.106.camel@tribesman.namesys.com> <44CF879D.1000803@slaphack.com> <20060803074651.GA27835@thunk.org>
+From: "Gurganus, Brant L" <gurganbl@rose-hulman.edu>
+Subject: symlink issues with reiser4
+Date: Fri, 4 Aug 2006 20:47:15 -0400
+Message-ID: <694BEB694DD961439ABAE82D1322B5FB14F4C1@EVS2.ms.rose-hulman.edu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29477-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative;
+	boundary="----_=_NextPart_001_01C6B828.B1FCBCF6"
+Return-path: <reiserfs-list-return-29482-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060803074651.GA27835@thunk.org>
+Content-class: urn:content-classes:message
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Theodore Tso <tytso@mit.edu>, David Masover <ninja@slaphack.com>, "Vladimir V. Saveliev" <vs@namesys.com>, Andrew Morton <akpm@osdl.org>, vda.linux@googlemail.com, linux-kernel@vger.kernel.org, Reiserfs-List@namesys.com
+To: reiserfs-list@namesys.com
 
-Theodore Tso wrote:
-> On Tue, Aug 01, 2006 at 11:55:57AM -0500, David Masover wrote:
->> If I understand it right, the original Reiser4 model of file metadata is 
->> the file-as-directory stuff that caused such a furor the last big push 
->> for inclusion (search for "Silent semantic changes in Reiser4"):
-> 
-> The furor was caused by concerns Al Viro expressed about
-> locking/deadlock issues that reiser4 introduced.  
+------_=_NextPart_001_01C6B828.B1FCBCF6
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-Which, I believe, was about file-as-dir.  Which also had problems with 
-things like directory loops.  That's sort of a disk space memory leak.
+Before I investigate whether it is a problem with the test or tested =
+program or something else, are there known issues with symbolic links =
+and reiser4? See =
+http://forums.gentoo.org/viewtopic-t-485689-highlight-reiser4+symbolic.ht=
+ml for details on what I am seeing.
 
-> The bigger issue with xattr support is two-fold.  First of all, there
-> are the progams that are expecting the existing extended attribute
-> interface,
+Brant Gurganus
+http://www.rose-hulman.edu/~gurganbl
 
-Yeah...
 
-> More importantly are the system-level extended attributes, such as
-> those used by SELINUX, which by definition are not supposed to be
-> visible to the user at all,
+------_=_NextPart_001_01C6B828.B1FCBCF6
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-I don't see why either of these are issues.  The SELINUX stuff can be a 
-plugin which doesn't necessarily have a user-level interface. 
-Cryptocompress, for instance, exists independent of its user-level 
-interface (probably the file-as-dir stuff), and will probably be 
-implemented in some sort of stable form as a system-wide default for new 
-files.
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV=3D"Content-Type" CONTENT=3D"text/html; =
+charset=3Diso-8859-1">
+<META NAME=3D"Generator" CONTENT=3D"MS Exchange Server version =
+6.5.7650.28">
+<TITLE>symlink issues with reiser4</TITLE>
+</HEAD>
+<BODY>
+<!-- Converted from text/plain format -->
 
-So, certainly metadata (xattrs) as a plugin could be implemented with no 
-UI at all, or any given UI.
+<P><FONT SIZE=3D2>Before I investigate whether it is a problem with the =
+test or tested program or something else, are there known issues with =
+symbolic links and reiser4? See <A =
+HREF=3D"http://forums.gentoo.org/viewtopic-t-485689-highlight-reiser4+sym=
+bolic.html">http://forums.gentoo.org/viewtopic-t-485689-highlight-reiser4=
++symbolic.html</A> for details on what I am seeing.<BR>
+<BR>
+Brant Gurganus<BR>
+<A =
+HREF=3D"http://www.rose-hulman.edu/~gurganbl">http://www.rose-hulman.edu/=
+~gurganbl</A><BR>
+<BR>
+</FONT>
+</P>
 
-... Anyway, I still see no reason why these cannot be implemented in 
-Reiser4, other than the possibility that if it uses "plugins", I 
-guarantee that at least one or two people will hate the implementation 
-for that reason alone.
-
-> Not supporting xattrs means that those distro's that use SELINUX by
-> default (i.e., RHEL, Fedora, etc.) won't want to use reiser4, because
-> SELINUX won't work on reiser4 filesytstems.
-
-Right.  So they will be implemented, eventually.
-
-> Whether or not Hans cares about this is up to him....
-
-He does, or he should.  Reiser4 needs every bit of acceptance it can get 
-right now, as long as it can get them without compromising its goals or 
-philosophy.  Extended attributes only compromise these because it 
-provides less incentive to learn any other metadata interface that 
-Reiser4 provides.  But that's irrelevant if Reiser4 doesn't gain enough 
-acceptance due to lack of xattr support, anything it has will be 
-irrelevant anyway.
-
-So just as we provide the standard interface to Unix permissions (even 
-though we intend to implement things like acls and views, and even 
-though there was a file/.pseudo/rwx interface), we should provide the 
-standard xattr interface, and the standard direct IO interface, and 
-anything else that's practical.  Be a good, standard filesystem first, 
-and an innovative filesystem second.
+</BODY>
+</HTML>
+------_=_NextPart_001_01C6B828.B1FCBCF6--
