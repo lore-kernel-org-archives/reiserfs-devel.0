@@ -1,49 +1,51 @@
-From: Lexington Luthor <Lexington.Luthor@gmail.com>
-Subject: Re: Another article abour Reiser4 on linux.com
-Date: Sun, 06 Aug 2006 18:06:53 +0100
-Message-ID: <eb57je$cll$1@sea.gmane.org>
-References: <87bqqzbaug.fsf@baldur.nicundtas.de> <200608061304.42692.bernd-schubert@gmx.de> <eb4o19$5ik$1@sea.gmane.org> <200608061515.28467.bernd-schubert@gmx.de>
+From: Bodo Eggert <7eggert@gmx.de>
+Subject: Re: e2fsck "unfixable" corruptions (was: the " 'official' point of
+ view" expressed by kernelnewbies.org regarding reiser4 inclusion)
+Date: Sun, 6 Aug 2006 20:15:15 +0200 (CEST)
+Message-ID: <Pine.LNX.4.58.0608062006400.2655@be1.lrz>
+References: <6EHfR-8uS-33@gated-at.bofh.it> <6EIvf-29Z-33@gated-at.bofh.it>
+ <6EIOE-2xY-7@gated-at.bofh.it> <6EJ7V-2Xa-7@gated-at.bofh.it>
+ <6EJUk-4br-11@gated-at.bofh.it> <6EKx5-5dy-19@gated-at.bofh.it>
+ <6EL03-5OU-1@gated-at.bofh.it> <6ELt2-6Eh-1@gated-at.bofh.it>
+ <6ELCQ-6Rl-13@gated-at.bofh.it> <E1G9Rz1-0000ks-R7@be1.lrz>
+ <20060806163853.GA31894@merlin.emma.line.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29513-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29514-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200608061515.28467.bernd-schubert@gmx.de>
-Sender: news <news@sea.gmane.org>
+In-Reply-To: <20060806163853.GA31894@merlin.emma.line.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Matthias Andree <matthias.andree@gmx.de>
+Cc: 7eggert@gmx.de, tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Bernd Schubert wrote:
-> Well, by having a FUSE port just more users would use reiser4, which might 
-> increase the force to the linux distributors to include reiser4 into their 
-> kernel versions. 
+On Sun, 6 Aug 2006, Matthias Andree wrote:
+> (changing subject to catch Ted's attention)
+> Bodo Eggert schrieb am 2006-08-05:
+
+> > - I have an ext3 that can't be fixed by e2fsck (see below). fsck will fix
+> >   some errors, trash some files and leave a fs waiting to throw the same
+> >   error again. I'm fixing it using mkreiserfs now.
 > 
+> If such a bug persists with the latest released e2fsck version - you're
+> not showing e2fsck logs - I'm rather sure Ted Ts'o would like to have a
+> look at your file system meta data in order to teach e2fsck how to fix
+> this.
 
-I don't think reiser4 would gain many users if it is crippled by being 
-in userspace. All the lazy flushing and aggressive caching become 
-useless if it cannot interact directly with the pagecache and respond to 
-memory pressure. Would you tolerate a 2GB process just to run a 
-filesystem? Thats what reiser4 can do if it is in the kernel, and 
-silently give back memory only when needed.
+Unfortunately I had no time to generate a fsck log before doing mkfs, nor
+did I catch the fsck log before. The best thing I could do at that moment
+was appending an except from thr log hoping it can be usefull.
 
-> Regarding the speed, I understand that its slower with FUSE, I was also deeply 
-> impressed when I read this  
-> (http://sourceforge.net/mailarchive/forum.php?thread_id=23836054&forum_id=2697)
-> 
-> 	But being twice as fast as ext3 is enough currently. It's even faster than 
-> 	xfs what I use. Sometimes I'm quite suprised why something is so fast when
-> 	I realize that it was actually ntfs-3g :-)
-> 
+My main intention was posting a differently biased view on fs robustness.
 
-Those micro-benchmarks do not represent anything like normal use. NTFS 
-is probably the most complicated filesystem on the planet, so there is 
-zero chance that a *working* implementation of it can outperform 
-something like XFS... even reiser4 barely beats XFS in many situations 
-(actually slower than XFS for heavy local rsync activity).
+> I've seen sufficient releases of reiserfsck that couldn't fix certain
+> bugs, too, so trying with the latest version of the respective tools is
+> a must.
 
-
-- LL
-
+It was the latest version I found.
+-- 
+            A. Top posters
+            Q. What's the most annoying thing on Usenet?
