@@ -1,32 +1,38 @@
-From: "Clemens Eisserer" <linuxhippy@gmail.com>
-Subject: Re: article abour Reiser4 on linux.com
-Date: Sun, 6 Aug 2006 18:26:20 +0200
-Message-ID: <194f62550608060926k7b35ee44m91f505105e3ff6cd@mail.gmail.com>
-References: <87bqqzbaug.fsf@baldur.nicundtas.de> <44D5B43D.3060501@namesys.com>
+From: Matthias Andree <matthias.andree@gmx.de>
+Subject: e2fsck "unfixable" corruptions (was: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion)
+Date: Sun, 6 Aug 2006 18:38:53 +0200
+Message-ID: <20060806163853.GA31894@merlin.emma.line.org>
+References: <6EHfR-8uS-33@gated-at.bofh.it> <6EIvf-29Z-33@gated-at.bofh.it> <6EIOE-2xY-7@gated-at.bofh.it> <6EJ7V-2Xa-7@gated-at.bofh.it> <6EJUk-4br-11@gated-at.bofh.it> <6EKx5-5dy-19@gated-at.bofh.it> <6EL03-5OU-1@gated-at.bofh.it> <6ELt2-6Eh-1@gated-at.bofh.it> <6ELCQ-6Rl-13@gated-at.bofh.it> <E1G9Rz1-0000ks-R7@be1.lrz>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29511-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29512-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44D5B43D.3060501@namesys.com>
 Content-Disposition: inline
+In-Reply-To: <E1G9Rz1-0000ks-R7@be1.lrz>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: 7eggert@gmx.de
+Cc: tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Hi again,
+(changing subject to catch Ted's attention)
 
-> I think your characterization of plugins as something we impose on the
-> VFS is unfair.  Plugins exist entirely internally to reiser4 --- we
+Bodo Eggert schrieb am 2006-08-05:
 
-to be honest I hope the force from kernel developers will not take
-away any more abilities and features away from reiserfs!
-If reiser4 is tied witth VFS whats about ports to e.g. windows or
-other unix systems - its more or less a lock-in ... an own
-implementation could solve. XFS also does not integrate well into the
-linux kernel (its basically a big mess), so I don't think the "does
-not integrate nicely" argument counts at all.
+> - I have an ext3 that can't be fixed by e2fsck (see below). fsck will fix
+>   some errors, trash some files and leave a fs waiting to throw the same
+>   error again. I'm fixing it using mkreiserfs now.
 
-lg Clemens
+If such a bug persists with the latest released e2fsck version - you're
+not showing e2fsck logs - I'm rather sure Ted Ts'o would like to have a
+look at your file system meta data in order to teach e2fsck how to fix
+this.
+
+I've seen sufficient releases of reiserfsck that couldn't fix certain
+bugs, too, so trying with the latest version of the respective tools is
+a must.
+
+-- 
+Matthias Andree
