@@ -1,72 +1,50 @@
-From: Bernd Schubert <bernd-schubert@gmx.de>
-Subject: Re: Another article abour Reiser4 on linux.com
-Date: Sun, 6 Aug 2006 15:15:28 +0200
-Message-ID: <200608061515.28467.bernd-schubert@gmx.de>
-References: <87bqqzbaug.fsf@baldur.nicundtas.de> <200608061304.42692.bernd-schubert@gmx.de> <eb4o19$5ik$1@sea.gmane.org>
+From: =?windows-1250?Q?Maciej_So=B3tysiak?= <pysiak.satriani@wp.pl>
+Subject: Re: Ebuild/rpm/deb repo's (was Re: reiser4 can now bear with filled fs, looks stable to me...)
+Date: Sun, 6 Aug 2006 16:23:16 +0200
+Message-ID: <916440956.20060806162316@wp.pl>
+References: <20060730223755.GA14386@hermes.uziel.local> <44CD4127.9010202@slaphack.com> <11910177823.20060731232849@wp.pl> <44CE7A3A.2010503@slaphack.com>  <1256888283.20060801132818@wp.pl> <1154455834.10745.21.camel@localhost> <1692247736.20060801231255@wp.pl>
+Reply-To: =?windows-1250?Q?Maciej_So=B3tysiak?= <pysiak.satriani@wp.pl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-29508-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29509-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <eb4o19$5ik$1@sea.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <1692247736.20060801231255@wp.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="macroman"
-To: reiserfs-list@namesys.com, Lexington Luthor <Lexington.Luthor@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-On Sunday 06 August 2006 14:41, Lexington Luthor wrote:
-> Bernd Schubert wrote:
-> > An alternative might be a reiser4 fuse port. Has some advantages:
-> >
-> > - Doesn't need to be included into the kernel.
-> >
-> > - can be GPL
-> >
-> > - Referring to the fuse site it also works on BSD
-> > (http://fuse4bsd.creo.hu/).
-> >
-> > - Kills one of the major arguments on LKML - if reiser4 is included but
-> > Namesys abandons  it in the future and reiser4 has to be removed from t=
-he
-> > kernel that time again, it still could be mounted.
->
-> Please please no. The kernel people will use that as an argument for
-> keeping it out of the kernel. I want reiser4 to be popular enough to
-> make my apps depend on it and not have the users complain about having
-> to use an obscure fs.
->
-> Besides, the only thing about reiser4 that interests me more than XFS or
-> reiserfs is the speed. In FUSE, you lose all that (as well as millions
-> of context switches, there is a huge amount of copying going on). If
-> reiser4 gets slower, I might as well use XFS or even old reiserfs.
+> I know it is very easy to create ubuntu kernel packages (I have done a few)
+> I might try to do one for current dapper kernel for i386. But it would have
+> to wait due to time my personal constraints (projects, etc.)
+Answering myself...
 
-Well, by having a FUSE port just more users would use reiser4, which might=
-=20
-increase the force to the linux distributors to include reiser4 into their=
-=20
-kernel versions.=20
+I tried to create a kernel package with reiser4 for ubuntu-server (dapper)
+They ship a 2.6.15 (heavily modified) kernel upon which the current
+reiser4-for-2.6.17-3.patch applies fine but unfortunately miscompiles, eg.
+fs/reiser4/plugin/file_ops_readdir.c: In function 'llseek_common_dir':
+fs/reiser4/plugin/file_ops_readdir.c:486: warning: implicit declaration of function 'mutex_lock'
+fs/reiser4/plugin/file_ops_readdir.c:486: error: 'struct inode' has no member named 'i_mutex'
+fs/reiser4/plugin/file_ops_readdir.c:508: warning: implicit declaration of function 'mutex_unlock'
+fs/reiser4/plugin/file_ops_readdir.c:508: error: 'struct inode' has no member named 'i_mutex'
 
-Regarding the speed, I understand that its slower with FUSE, I was also dee=
-ply=20
-impressed when I read this =20
-(http://sourceforge.net/mailarchive/forum.php?thread_id=3D23836054&forum_id=
-=3D2697)
+I bet these are trivial to fix and I will try to do this but my time constraints
+currently prevent me from doing that.
 
-	But being twice as fast as ext3 is enough currently. It's even faster than=
-=20
-	xfs what I use. Sometimes I'm quite suprised why something is so fast when
-	I realize that it was actually ntfs-3g :-)
+There also is an issue with grub. The kernel alone is fine for creating partitions
+(or loop devices) but with grub not patched we can't install boot partitions. No biggy,
+I guess, but still a problem.
+
+I could create a vanilla + reiser4 kernel package easily but that would be stripped
+off of the important dapper/debian patches and that is a no-no for dapper users, I guess.
+At least for non-guru freaks who run their own, modified kernels.
 
 
-Cheers,
-	Bernd
 
-=2D-=20
-Bernd Schubert
-PCI / Theoretische Chemie
-Universit=C3=A4t Heidelberg
-INF 229
-69120 Heidelberg
+-- 
+Best regards,
+Maciej
+
 
