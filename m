@@ -1,38 +1,49 @@
-From: Matthias Andree <matthias.andree@gmx.de>
-Subject: e2fsck "unfixable" corruptions (was: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion)
-Date: Sun, 6 Aug 2006 18:38:53 +0200
-Message-ID: <20060806163853.GA31894@merlin.emma.line.org>
-References: <6EHfR-8uS-33@gated-at.bofh.it> <6EIvf-29Z-33@gated-at.bofh.it> <6EIOE-2xY-7@gated-at.bofh.it> <6EJ7V-2Xa-7@gated-at.bofh.it> <6EJUk-4br-11@gated-at.bofh.it> <6EKx5-5dy-19@gated-at.bofh.it> <6EL03-5OU-1@gated-at.bofh.it> <6ELt2-6Eh-1@gated-at.bofh.it> <6ELCQ-6Rl-13@gated-at.bofh.it> <E1G9Rz1-0000ks-R7@be1.lrz>
+From: Lexington Luthor <Lexington.Luthor@gmail.com>
+Subject: Re: Another article abour Reiser4 on linux.com
+Date: Sun, 06 Aug 2006 18:06:53 +0100
+Message-ID: <eb57je$cll$1@sea.gmane.org>
+References: <87bqqzbaug.fsf@baldur.nicundtas.de> <200608061304.42692.bernd-schubert@gmx.de> <eb4o19$5ik$1@sea.gmane.org> <200608061515.28467.bernd-schubert@gmx.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-29512-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29513-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <E1G9Rz1-0000ks-R7@be1.lrz>
+In-Reply-To: <200608061515.28467.bernd-schubert@gmx.de>
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: 7eggert@gmx.de
-Cc: tytso@mit.edu, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-(changing subject to catch Ted's attention)
+Bernd Schubert wrote:
+> Well, by having a FUSE port just more users would use reiser4, which might 
+> increase the force to the linux distributors to include reiser4 into their 
+> kernel versions. 
+> 
 
-Bodo Eggert schrieb am 2006-08-05:
+I don't think reiser4 would gain many users if it is crippled by being 
+in userspace. All the lazy flushing and aggressive caching become 
+useless if it cannot interact directly with the pagecache and respond to 
+memory pressure. Would you tolerate a 2GB process just to run a 
+filesystem? Thats what reiser4 can do if it is in the kernel, and 
+silently give back memory only when needed.
 
-> - I have an ext3 that can't be fixed by e2fsck (see below). fsck will fix
->   some errors, trash some files and leave a fs waiting to throw the same
->   error again. I'm fixing it using mkreiserfs now.
+> Regarding the speed, I understand that its slower with FUSE, I was also deeply 
+> impressed when I read this  
+> (http://sourceforge.net/mailarchive/forum.php?thread_id=23836054&forum_id=2697)
+> 
+> 	But being twice as fast as ext3 is enough currently. It's even faster than 
+> 	xfs what I use. Sometimes I'm quite suprised why something is so fast when
+> 	I realize that it was actually ntfs-3g :-)
+> 
 
-If such a bug persists with the latest released e2fsck version - you're
-not showing e2fsck logs - I'm rather sure Ted Ts'o would like to have a
-look at your file system meta data in order to teach e2fsck how to fix
-this.
+Those micro-benchmarks do not represent anything like normal use. NTFS 
+is probably the most complicated filesystem on the planet, so there is 
+zero chance that a *working* implementation of it can outperform 
+something like XFS... even reiser4 barely beats XFS in many situations 
+(actually slower than XFS for heavy local rsync activity).
 
-I've seen sufficient releases of reiserfsck that couldn't fix certain
-bugs, too, so trying with the latest version of the respective tools is
-a must.
 
--- 
-Matthias Andree
+- LL
+
