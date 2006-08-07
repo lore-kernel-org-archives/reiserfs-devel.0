@@ -1,50 +1,38 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
- regarding reiser4 inclusion
-Date: Sun, 06 Aug 2006 19:36:22 -0400
-Message-ID: <44D67CF6.3010905@slaphack.com>
-References: <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl> <44CF87E6.1050004@slaphack.com> <20060806225912.GC4205@ucw.cz>
+From: Andrew James Wade <andrew.j.wade@gmail.com>
+Subject: Re: [nikita-3002]: assertion failed: carry_level_invariant(doing, CARRY_DOING)
+Date: Sun, 6 Aug 2006 22:24:43 -0400
+Message-ID: <200608062224.43728.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+References: <200608021749.30205.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608030851.30457.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608031928.25155.zam@namesys.com>
+Reply-To: ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29521-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29522-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060806225912.GC4205@ucw.cz>
+In-Reply-To: <200608031928.25155.zam@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Pavel Machek <pavel@ucw.cz>
-Cc: "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Bernd Schubert <bernd-schubert@gmx.de>, reiserfs-list@namesys.com, Jan-Benedict Glaw <jbglaw@lug-owl.de>, Clay Barnes <clay.barnes@gmail.com>, Rudy Zijlstra <rudy@edsons.demon.nl>, Adrian Ulrich <reiser4@blinkenlights.ch>, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+Cc: Alexander Zarochentsev <zam@namesys.com>
 
-Pavel Machek wrote:
-> On Tue 01-08-06 11:57:10, David Masover wrote:
->> Horst H. von Brand wrote:
->>> Bernd Schubert <bernd-schubert@gmx.de> wrote:
->>>> While filesystem speed is nice, it also would be great 
->>>> if reiser4.x would be very robust against any kind of 
->>>> hardware failures.
->>> Can't have both.
->> Why not?  I mean, other than TANSTAAFL, is there a 
->> technical reason for them being mutually exclusive?  I 
->> suspect it's more "we haven't found a way yet..."
-> 
-> What does the acronym mean?
+Hello,
 
-There Ain't No Such Thing As A Free Lunch.
+I have had another assertion fail. This one is with 2.6.18-rc2-mm1 +
+the fix in reiser4_releasepage. This was on a filesystem that had not
+been unmounted cleanly. (2.6.18-rc3-mm1 crashed on me). 
 
-> Yes, I'm afraid redundancy/checksums kill write speed, and you need
-> that for robustness...
+reiser4 panicked cowardly: reiser4[ktxnmgrd:hdb1:r(1977)]: sibling_list_remove (fs/reiser4/tree_walk.c:813)[zam-32245]:
+assertion failed: keyeq(znode_get_rd_key(node), znode_get_ld_key(node->right))
+Kernel panic - not syncing: reiser4[ktxnmgrd:hdb1:r(1977)]: sibling_list_remove (fs/reiser4/tree_walk.c:813)[zam-32245]:
+assertion failed: keyeq(znode_get_rd_key(node), znode_get_ld_key(node->right))
 
-Not necessarily -- if you do it on flush, and store it near the data it 
-relates to, you can expect a similar impact to compression, except that 
-due to slow disks, the compression can actually speed things up 2x, 
-whereas checksums should be some insignificant amount slower than 1x.
+The next boot had this diagnostic:
+reiser4[kde-config(3707)]: present_lw_sd (fs/reiser4/plugin/item/static_stat.c:276)[]:
+WARNING: partially converted file is encountered
+and is continuing to work fine. I have not yet fscked the filesystem.
 
-Redundancy, sure, but checksums should be easy, and I don't see what 
-robustness (abilities of fsck) has to do with it.
-
-> You could have filesystem that can be tuned for reliability and tuned
-> for speed... but you can't have both in one filesystem instance.
-
-That's an example of TANSTAAFL, if it's true.
+I hope this helps,
+Andrew Wade
