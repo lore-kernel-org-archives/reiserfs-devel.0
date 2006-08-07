@@ -1,36 +1,33 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: ext3 vs reiserfs speed (was Re: metadata plugins (was Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion))
-Date: Mon, 7 Aug 2006 21:56:02 +0000
-Message-ID: <20060807215602.GA4540@ucw.cz>
-References: <200607281402.k6SE245v004715@laptop13.inf.utfsm.cl> <44CA31D2.70203@slaphack.com> <Pine.LNX.4.64.0607280859380.4168@g5.osdl.org> <44C9FB93.9040201@namesys.com> <44CA6905.4050002@slaphack.com> <44CA126C.7050403@namesys.com> <44CA98F9.1040900@garzik.org> <44CAD3FF.8060203@namesys.com>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: Ebuild/rpm/deb repo's (was Re: reiser4 can now bear with filled
+ fs, looks stable to me...)
+Date: Mon, 07 Aug 2006 19:23:01 -0400
+Message-ID: <44D7CB55.9050805@slaphack.com>
+References: <20060730223755.GA14386@hermes.uziel.local> <44CD4127.9010202@slaphack.com> <11910177823.20060731232849@wp.pl> <44CE7A3A.2010503@slaphack.com> <1256888283.20060801132818@wp.pl> <1154455834.10745.21.camel@localhost> <1692247736.20060801231255@wp.pl> <916440956.20060806162316@wp.pl> <20060807092435.GA11596@zeus.uziel.local> <44D773D6.4020504@slaphack.com> <961493611.20060807205216@wp.pl>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-29535-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-29536-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <44CAD3FF.8060203@namesys.com>
+In-Reply-To: <961493611.20060807205216@wp.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Reiser <reiser@namesys.com>
-Cc: Jeff Garzik <jeff@garzik.org>, David Masover <ninja@slaphack.com>, Linus Torvalds <torvalds@osdl.org>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Andrew Morton <akpm@osdl.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="windows-1252"; format="flowed"
+To: =?UTF-8?B?TWFjaWVqIFNvxYJ0eXNpYWs=?= <pysiak.satriani@wp.pl>
+Cc: reiserfs-list@namesys.com
 
-Hi!
+Maciej So=C5=82tysiak wrote:
+> Hello David,
 
-> > Using guilt as an argument in a technical discussion is a flashing red
-> > sign that says "I have no technical rebuttal"
-> 
-> Wow, that is really nervy.  Let's recap this all:
-> 
-> * reiser4 has a 2x performance advantage over the next fastest FS
-> (ext3), and when compression ships in a month that will double again as
-> well as save space.  See http://www.namesys.com/benchmarks.html, and
+hi
 
-Does that mean that ext3 is faster than reiser3? Wow, that would be
-good reason to switch default filesystem to ext3 (or reiser4?) in next
-suse release.
-							Pavel
--- 
-Thanks for all the (sleeping) penguins.
+> I have built today an r4-patched ubuntu kernel package (yes, debs!)
+
+Sounds good.  I don't have an ubuntu to test with at the moment, though.
+
+> Please note, that this is done all under virtualization
+> (Microsoft Virtual PC).
+
+Not to nitpick, but isn't that emulation?  Or have they actually done=20
+real virtualization yet?
