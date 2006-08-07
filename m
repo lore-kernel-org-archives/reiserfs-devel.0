@@ -1,42 +1,79 @@
-From: =?utf-8?Q?Maciej_So=C5=82tysiak?= <pysiak.satriani@wp.pl>
-Subject: Re: Ebuild/rpm/deb repo's (was Re: reiser4 can now bear with filled fs, looks stable to me...)
-Date: Mon, 7 Aug 2006 20:52:16 +0200
-Message-ID: <961493611.20060807205216@wp.pl>
-References: <20060730223755.GA14386@hermes.uziel.local> <44CD4127.9010202@slaphack.com> <11910177823.20060731232849@wp.pl> <44CE7A3A.2010503@slaphack.com> <1256888283.20060801132818@wp.pl> <1154455834.10745.21.camel@localhost> <1692247736.20060801231255@wp.pl> <916440956.20060806162316@wp.pl> <20060807092435.GA11596@zeus.uziel.local> <44D773D6.4020504@slaphack.com>
-Reply-To: =?utf-8?Q?Maciej_So=C5=82tysiak?= <pysiak.satriani@wp.pl>
+From: =?windows-1250?Q?Maciej_So=B3tysiak?= <pysiak.satriani@wp.pl>
+Subject: Experimental Reiser4-enabled Ubuntu kernels ready for testing
+Date: Mon, 7 Aug 2006 21:25:56 +0200
+Message-ID: <1871286894.20060807212556@wp.pl>
+Reply-To: =?windows-1250?Q?Maciej_So=B3tysiak?= <pysiak.satriani@wp.pl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29529-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-29531-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44D773D6.4020504@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
 
-Hello David,
+Hello,
 
-Monday, August 7, 2006, 7:09:42 PM, you wrote:
-> I mean, having Grub support everything would be nice, but if you're
-> reformatting anyway, I don't think it's that imperative.
-I have come up to that conclusion too. If someone would be getting
-an r4-enabled kernel on an already installed system they would not
-care much for grub support unless they have only one root partition.
+as I said, I'd be doing this, so...
 
-I have built today an r4-patched ubuntu kernel package (yes, debs!)
-using edgy eft's git-based build system, which allows me to build ubuntu
-kernels! Yes, with all the stuff they have in there, with all the
-configuration versions they support (-386, -k7, -server, etc...)
+ftp://ubuntu.ae.poznan.pl/
 
-I booted one and I will try to create an r4 partition later today.
+There is a readme.txt file that says:
+=3D=3D Description =3D=3D
+This directory contains Ubuntu Linux kernel image packages with support
+for Reiser4 (http://wiki.namesys.com)
 
-Please note, that this is done all under virtualization
-(Microsoft Virtual PC).
+=3D=3D Usage =3D=3D
+1. download a desired kernel image
+2. install the kernel:
 
--- 
-Best regards,
-Maciej
+$ sudo dpkg -i <downloaded_file>
+
+3. reboot, let the new kernel boot
+4. prepare a partition (eg. fdisk /dev/sdb)
+5. get reiser4progs (mkfs.reiser4, fsck.reiser4, ...)=20
+
+$ sudo apt-get install reiser4progs
+
+6. make the filesystem:
+
+$ mkfs.reiser4 /dev/sdb1
+
+7. mount it:
+
+$ mkdir /mnt/r4
+$ mount /dev/sdb1 /mnt/r4
+
+8. mount should show:
+$ mount | grep reiser4
+/dev/sdb1 on /r4 type reiser4 (rw)
+
+9. lsmod | grep reiser4 shoud show:
+reiser4               418392  1
+
+10. Play!
+
+=3D=3D Technical details =3D=3D
+The images were built using Edgy Eft's build system on current ubuntu
+GIT repository. The configurations of the kernels are the same as ubuntu
+ships them + reiser4 option enabled as module.
+
+The images come in a few flavours: 386,686,k7, server-bigiron, server.
+
+=3D=3D Disclaimer =3D=3D
+This is all experimental stuff. These are my first publicly available
+kernel images. Tested *only* on my virtualized machine on Edgy Eft!
+
+Please test and report. I am open to suggestions.
+
+One more thing... If it breaks, don't sue me, my pet hamster is an
+excellent attourney.
+
+=3D=3D Contact =3D=3D
+My name is Maciej So=B3tysiak
+
+You can reach me at maciej(at)soltysiak(dot)com
 
 
