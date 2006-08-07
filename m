@@ -1,54 +1,42 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
- regarding reiser4 inclusion
-Date: Tue, 08 Aug 2006 15:06:21 +0400
-Message-ID: <44D8702D.1090005@namesys.com>
-References: <200607312314.37863.bernd-schubert@gmx.de> <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl> <20060801165234.9448cb6f.reiser4@blinkenlights.ch> <1154446189.15540.43.camel@localhost.localdomain> <44CF9BAD.5020003@emc.com> <44CF3DE0.3010501@namesys.com> <20060803140344.GC7431@merlin.emma.line.org> <44D219F9.9080404@namesys.com> <20060807075744.GA8894@merlin.emma.line.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: metadata plugins (was Re: the " 'official' point of view"	expressed by kernelnewbies.org regarding reiser4 inclusion)
+Date: Mon, 7 Aug 2006 22:00:36 +0000
+Message-ID: <20060807220035.GB4540@ucw.cz>
+References: <200607281402.k6SE245v004715@laptop13.inf.utfsm.cl> <44CA31D2.70203@slaphack.com> <Pine.LNX.4.64.0607280859380.4168@g5.osdl.org> <44C9FB93.9040201@namesys.com> <44CA6905.4050002@slaphack.com> <44CA126C.7050403@namesys.com> <44CA8771.1040708@slaphack.com> <44CABB87.3050509@namesys.com> <1154164364.2903.10.camel@laptopd505.fenrus.org> <44CBA4BF.80301@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29543-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29544-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060807075744.GA8894@merlin.emma.line.org>
+Content-Disposition: inline
+In-Reply-To: <44CBA4BF.80301@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Matthias Andree <matthias.andree@gmx.de>
-Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Masover <ninja@slaphack.com>
+Cc: Arjan van de Ven <arjan@infradead.org>, Hans Reiser <reiser@namesys.com>, Linus Torvalds <torvalds@osdl.org>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Jeff Garzik <jeff@garzik.org>, Andrew Morton <akpm@osdl.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-Matthias Andree wrote:
-> [stripping Cc: list]
-> 
-> On Thu, 03 Aug 2006, Edward Shishkin wrote:
-> 
-> 
->>>What kind of forward error correction would that be,
->>
->>Actually we use checksums, not ECC. If checksum is wrong, then run
->>fsck - it will remove the whole disk cluster, that represent 64K of
->>data.
-> 
-> 
-> Well, that's quite a difference...
-> 
-> 
->>Checksum is checked before unsafe decompression (when trying to
->>decompress incorrect data can lead to fatal things).
-> 
-> 
-> Is this sufficient? How about corruptions that lead to the same checksum
-> and can then confuse the decompressor? 
+Hi!
 
-
-It is a multiplication of two unlikely events: fs corruption
-and 32-hash collision. Paranoid people can assign zlib-based
-transform plugin: afaik everything is safe there.
-
-
-Is the decompressor safe in that
-> it does not scribble over memory it has not allocated?
+> >> Most users not only cannot patch a kernel, they don't know what a patch
+> >> is.  It most certainly does. 
+> > 
+> > 
+> > obviously you can provide complete kernels, including precompiled ones.
+> > Most distros have a yum or apt or similar tool to suck down packages,
+> > it's trivial for users to add a site to that, so you could provide
+> > packages if you want and make it easy for them.
 > 
+> What's more, many distros patch their kernels extensively.  They listen
+> to their users, too.  So if there are a lot of users wanting this to be
+> in the kernel, let them complain -- loudly -- to their distro to patch
+> for Reiser4.
 
-yes
-
+This is not true any more. SUSE (and RedHat) really try not to add
+patches to their kernels unless patch is obvious bugfix or merged to
+some later mainline. Yeah, we do exceptions, but getting exception is
+*way* harder than it used to be.
+							Pavel
+-- 
+Thanks for all the (sleeping) penguins.
