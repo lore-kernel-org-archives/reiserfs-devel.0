@@ -1,44 +1,36 @@
-From: Sander Sweers <sander.sweers@gmail.com>
-Subject: Re: Experimental Reiser4-enabled Ubuntu kernels ready for testing
-Date: Mon, 07 Aug 2006 21:58:24 +0200
-Message-ID: <1154980705.7296.3.camel@localhost>
-References: <1871286894.20060807212556@wp.pl>
-	 <1253397355.20060807212937@wp.pl>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: ext3 vs reiserfs speed (was Re: metadata plugins (was Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion))
+Date: Mon, 7 Aug 2006 21:56:02 +0000
+Message-ID: <20060807215602.GA4540@ucw.cz>
+References: <200607281402.k6SE245v004715@laptop13.inf.utfsm.cl> <44CA31D2.70203@slaphack.com> <Pine.LNX.4.64.0607280859380.4168@g5.osdl.org> <44C9FB93.9040201@namesys.com> <44CA6905.4050002@slaphack.com> <44CA126C.7050403@namesys.com> <44CA98F9.1040900@garzik.org> <44CAD3FF.8060203@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-29534-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29535-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1253397355.20060807212937@wp.pl>
+Content-Disposition: inline
+In-Reply-To: <44CAD3FF.8060203@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Maciej =?iso-8859-2?Q?So=B3tysiak?= <pysiak.satriani@wp.pl>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Jeff Garzik <jeff@garzik.org>, David Masover <ninja@slaphack.com>, Linus Torvalds <torvalds@osdl.org>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Andrew Morton <akpm@osdl.org>, Theodore Tso <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On Mon, 2006-08-07 at 21:29 +0200, Maciej So=B3tysiak wrote:
-> > There is a readme.txt file that says:
-> Keyboard shortcuts made me send prematurely :-|
->=20
-> Please note that these are my first images done with not much
-> of experience in the area.
->=20
-> The host: ubuntu.ae.poznan.pl is a virtualized machine, so
-> don't go crazy if it's slow or dead, just notify me :-)
->=20
-> Please test, I have been testing it only under one instalation
-> under virtual pc.
->=20
-> Regards,
-> Maciej
+Hi!
 
-Nice :)
+> > Using guilt as an argument in a technical discussion is a flashing red
+> > sign that says "I have no technical rebuttal"
+> 
+> Wow, that is really nervy.  Let's recap this all:
+> 
+> * reiser4 has a 2x performance advantage over the next fastest FS
+> (ext3), and when compression ships in a month that will double again as
+> well as save space.  See http://www.namesys.com/benchmarks.html, and
 
-http://wiki.namesys.com/Howto_reiser4_ububtu are the instructions from
-your e-mail. http://wiki.namesys.com/installreiser4 is the general Howto
-list for as many as 2 distro's, Gentoo and Ubuntu!
-
-Greets
-Sander
-
+Does that mean that ext3 is faster than reiser3? Wow, that would be
+good reason to switch default filesystem to ext3 (or reiser4?) in next
+suse release.
+							Pavel
+-- 
+Thanks for all the (sleeping) penguins.
