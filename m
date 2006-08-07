@@ -1,38 +1,65 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Ebuild/rpm/deb repo's (was Re: reiser4 can now bear with filled
- fs, looks stable to me...)
-Date: Mon, 07 Aug 2006 13:09:42 -0400
-Message-ID: <44D773D6.4020504@slaphack.com>
-References: <20060730223755.GA14386@hermes.uziel.local> <44CD4127.9010202@slaphack.com> <11910177823.20060731232849@wp.pl> <44CE7A3A.2010503@slaphack.com> <1256888283.20060801132818@wp.pl> <1154455834.10745.21.camel@localhost> <1692247736.20060801231255@wp.pl> <916440956.20060806162316@wp.pl> <20060807092435.GA11596@zeus.uziel.local>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-29526-reiserfs=m.gmane.org@namesys.com>
+From: greg@enjellic.com
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
+Date: Mon, 7 Aug 2006 12:37:45 -0500
+Message-ID: <200608071737.k77Hbjph002429@wind.enjellic.com>
+References: <tytso@mit.edu>
+Reply-To: greg@enjellic.com
+Return-path: <reiserfs-list-return-29527-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060807092435.GA11596@zeus.uziel.local>
+In-Reply-To: Theodore Tso <tytso@mit.edu>
+       "Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion" (Jul 31,  3:41pm)
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"; format="flowed"
-To: Christian Trefzer <ctrefzer@gmx.de>
-Cc: =?UTF-8?B?TWFjaWVqIFNvxYJ0eXNpYWs=?= <pysiak.satriani@wp.pl>, reiserfs-list@namesys.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Theodore Tso <tytso@mit.edu>, Adrian Ulrich <reiser4@blinkenlights.ch>, vonbrand@inf.utfsm.cl, ipso@snappymail.ca, reiser@namesys.com, lkml@lpbproductions.com, jeff@garzik.org, linux-kernel@vger.kernel.org, reiserfs-list@namesys.com
 
-Christian Trefzer wrote:
-> On Sun, Aug 06, 2006 at 04:23:16PM +0200, Maciej So=C5=82tysiak wrote:
+On Jul 31,  3:41pm, Theodore Tso wrote:
+} Subject: Re: the " 'official' point of view" expressed by kernelnewbies.or
 
->> There also is an issue with grub. The kernel alone is fine for creating =
-partitions
->> (or loop devices) but with grub not patched we can't install boot partit=
-ions. No biggy,
->> I guess, but still a problem.
->=20
-> Few people keep a 32MB ext2 for /boot purposes these days, so it really
-> is imperative that grub can read kernel images off a reiser4 /.
+> On Mon, Jul 31, 2006 at 06:54:06PM +0200, Matthias Andree wrote:
+> > > > This looks rather like an education issue rather than a technical limit.
+> > > 
+> > > We aren't talking about the same issue: I was asking to do it
+> > > on-the-fly. Umounting the filesystem, running e2fsck and resize2fs
+> > > is something different ;-)
+> > 
+> > There was stuff by Andreas Dilger, to support "online" resizing of
+> > mounted ext2 file systems. I never cared to look for this (does it
+> > support ext3, does it work with current kernels, merge status) since
+> > offline resizing was always sufficient for me.
 
-I think there are patches, but I do keep a 32 meg ext3 for /boot,=20
-because it seems like no matter what FS I choose, there's some sort of=20
-caveat involving Grub.  I know when installing XFS as a root FS on=20
-Ubuntu, it talks about Grub problems...
+> With the latest e2fsprogs and 2.6 kernels, the online resizing
+> support has been merged in, and as long as the filesystem was
+> created with space reserved for growing the filesystem (which is now
+> the default, or if the filesystem has the off-line prepration step
+> ext2prepare run on it), you can run resize2fs on a mounted
+> filesystem and grow an ext2/3 filesystem on-line.  And yes, you get
+> more inodes as you add more disk blocks, using the original inode
+> ratio that was established when the filesystem was created.
 
-I mean, having Grub support everything would be nice, but if you're=20
-reformatting anyway, I don't think it's that imperative.
+Are all the necessary tools in and documented in e2fsprogs?
+
+It seems that finding all the bits and pieces to do ext3 on-line
+expansion has been a study in obfuscation.  Somewhat surprising since
+this feature is a must for enterprise class storage management.
+
+> 						- Ted
+
+Best wishes for a productive week.
+
+}-- End of excerpt from Theodore Tso
+
+As always,
+Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+4206 N. 19th Ave.           Specializing in information infra-structure
+Fargo, ND  58102            development.
+PH: 701-281-1686
+FAX: 701-281-3949           EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"Ooohh.. FreeBSD is faster over loopback, when compared to Linux over
+the wire.  Film at 11."
+                                -- Linus Torvalds
