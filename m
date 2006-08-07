@@ -1,95 +1,64 @@
-From: Christian Trefzer <ctrefzer@gmx.de>
-Subject: Re: Ebuild/rpm/deb repo's (was Re: reiser4 can now bear with filled fs, looks stable to me...)
-Date: Mon, 7 Aug 2006 11:24:35 +0200
-Message-ID: <20060807092435.GA11596@zeus.uziel.local>
-References: <20060730223755.GA14386@hermes.uziel.local> <44CD4127.9010202@slaphack.com> <11910177823.20060731232849@wp.pl> <44CE7A3A.2010503@slaphack.com> <1256888283.20060801132818@wp.pl> <1154455834.10745.21.camel@localhost> <1692247736.20060801231255@wp.pl> <916440956.20060806162316@wp.pl>
+From: "Nate Diller" <nate.diller@gmail.com>
+Subject: Re: The Infamous Reiser4-randomly-blocks-for-ages-and-writes-the-hd-continously-in-the-mean-while now with a btrace log! (hope it helps)
+Date: Mon, 7 Aug 2006 02:33:15 -0700
+Message-ID: <5c49b0ed0608070233p68204fd1la2630e49fb08fad7@mail.gmail.com>
+References: <20060806162017.GB8613@rvalles.homedns.org.>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
-Return-path: <reiserfs-list-return-29524-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29525-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <20060806162017.GB8613@rvalles.homedns.org.>
 Content-Disposition: inline
-In-Reply-To: <916440956.20060806162316@wp.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Maciej =?utf-8?Q?So=C5=82tysiak?= <pysiak.satriani@wp.pl>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: rvalles <rvalles@es.gnu.org>
+Cc: reiserfs-list@namesys.com, reiser@namesys.com
 
---n8g4imXOkfNTN/H1
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 8/6/06, rvalles <rvalles@es.gnu.org> wrote:
+> The bug is as I've explained a thousand times. (and it does only affect
+> kernels newer than 2.6.12, all of them, that's one thing I'm sure)
+>
+> Newer kernels have a nice feature called "blktrace" to trace the block
+> layer activity. I include with this mail a log of the whole block (this
+> time it was just about 30 seconds, the previous one, when I was sending
+> a mail to a maillist, it was 10 minutes or maybe more).
+>
+> How did I do it:
+> - Write a mail to myself (small mail, btw).
+> - Start the btrace.
+> - Send it. (I pressed 'y' at mutt mail sending screen)
+> - Look at the HD led.
+> - When it stopped, the crap @ btrace stopped too. I then stopped btrace.
+>
+> I hope that this log helps enlighten someone.
+>
+> Now, to add to the data about the bug:
+> - My new desktop uses reiser4. It is affected, too.
+> - Just by typing "reboot" at my old desktop, the bug triggers inmediatly
+>   after the wall message is sent, and lasts about 10 minutes.
+> - Latest reiser4 fsck was run with --build-fs on my old desktop the day
+>   before; The FS had got, before that, some corrupcion (probably a bug)
+>   that caused kernel panics, so the FS is quite clean now, yet I can
+>   reproduce the bugs.
+>
+> I will be happy to help further in any way.
+>
+> I also have many friends who use reiser4 and are experiencing it; it
+> would be a shame if reiser4 finally got merged into the kernel with
+> this bug still there.
 
-On Sun, Aug 06, 2006 at 04:23:16PM +0200, Maciej So=C5=82tysiak wrote:
-> I tried to create a kernel package with reiser4 for ubuntu-server (dapper)
-> They ship a 2.6.15 (heavily modified) kernel upon which the current
-> reiser4-for-2.6.17-3.patch applies fine but unfortunately miscompiles, eg.
-> fs/reiser4/plugin/file_ops_readdir.c: In function 'llseek_common_dir':
-> fs/reiser4/plugin/file_ops_readdir.c:486: warning: implicit declaration o=
-f function 'mutex_lock'
-> fs/reiser4/plugin/file_ops_readdir.c:486: error: 'struct inode' has no me=
-mber named 'i_mutex'
-> fs/reiser4/plugin/file_ops_readdir.c:508: warning: implicit declaration o=
-f function 'mutex_unlock'
-> fs/reiser4/plugin/file_ops_readdir.c:508: error: 'struct inode' has no me=
-mber named 'i_mutex'
->=20
-> I bet these are trivial to fix and I will try to do this but my time cons=
-traints
-> currently prevent me from doing that.
+91% of the requests are 4K in size, 77% of requests are write
+barriers.  looks like there's something that causes bitmap blocks to
+be written synchronously.
 
-Guess these won't be so easy, afaik 2.6.15 lacks the semaphore->mutex
-transition.
+there's also a LOT of duplication, blocks that are written and then
+immediately RE-written.  the 4k block at sector 23246207 is written
+226 times over the course of this trace, each time seemingly in a pair
+(write it, rewrite it, do other stuff, write it, re-write it, etc).
+this is pathological behavior, it's a real bug even without the
+performance loss.
 
-
-> There also is an issue with grub. The kernel alone is fine for creating p=
-artitions
-> (or loop devices) but with grub not patched we can't install boot partiti=
-ons. No biggy,
-> I guess, but still a problem.
-
-Few people keep a 32MB ext2 for /boot purposes these days, so it really
-is imperative that grub can read kernel images off a reiser4 /.
-
-
-> I could create a vanilla + reiser4 kernel package easily but that would b=
-e stripped
-> off of the important dapper/debian patches and that is a no-no for dapper=
- users, I guess.
-> At least for non-guru freaks who run their own, modified kernels.
-
-Sure. The best thing might be to back-port "internal" fixes in
-fs/reiser4/ to reiser4-for-2.6.15-x so the API calls match the kernel.
-Patching 2.6.15 with a 2.6.17 patch is a no-no.
-=20
-But you _are_ taking a step forward, and your effort is appreciated : D
-
-Kind regards,
-Chris
-
---n8g4imXOkfNTN/H1
-Content-Type: application/pgp-signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.5 (GNU/Linux)
-
-iQIVAwUBRNcG06nY3eLOiwZcAQqp2BAAn0BUD2TgslvguwRPKpZV5FMXY3y4bETb
-HJBw0P2/fwdBlwsgB4fEJhxvX1tnoSRwuJ05Gy2n7cCgxSy3ZrLCETHBGw6d8pvR
-A42oJd1zqYwV6w1p05XUKP6fPX5sjwdKqebKGREtjEPK3YVYQTXK7y0JC05Oe/fX
-5Y5jMog1zolshxzGOmwj0phJkkAfVmaP/mcv/rHb/p81BPk/16ekKYBiSbT33t9U
-ytwmkgVtKBz0CnKRVqIX3uZ9XnwvfC3o3wKL3RzKHCLaLmV/KBgT17Qy8AfRwi9C
-Rt5AG+9pTR0DRJ8zJAB7qbtAg0eBMFXBroGhrM7oSgvF/k8L34y2MuF1/zzvspH2
-CYiB4m135dioSGvtoZhMuW1X/x9Wcsk/XnuNAhOkIsXxd7giYjxuo3RAV7UVZJ66
-9PbbZa1VibscjV1W6gm5Gy1ccuP1dSzRZBtQ2kUCcohOsIyzU+Ule9+rARL8gSP4
-uK+96x7NuVQa3GqfHSkuRyyrhDY8jFiAaF7w104SIpt8jsokG2zaqsypSdMOnYMG
-nlYEEzDq/TK8zoJsK0ayLQD2HOQCwoXgMGyfjq6sSv6SPYlzWZ202IM4INhdolUc
-uysTcsViQ4If+cUlIXhn4bDYBbKdqU7g6EnnAv3/V/BXkSyDt21OzDjjUlaaI+Sl
-hlwAHNfOwa4=
-=MRW0
------END PGP SIGNATURE-----
-
---n8g4imXOkfNTN/H1--
-
+NATE
