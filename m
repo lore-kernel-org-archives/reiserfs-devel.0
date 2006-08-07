@@ -1,38 +1,40 @@
-From: Andrew James Wade <andrew.j.wade@gmail.com>
-Subject: Re: [nikita-3002]: assertion failed: carry_level_invariant(doing, CARRY_DOING)
-Date: Sun, 6 Aug 2006 22:24:43 -0400
-Message-ID: <200608062224.43728.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
-References: <200608021749.30205.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608030851.30457.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608031928.25155.zam@namesys.com>
-Reply-To: ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com
+From: Matthias Andree <matthias.andree@gmx.de>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org regarding reiser4 inclusion
+Date: Mon, 7 Aug 2006 09:57:44 +0200
+Message-ID: <20060807075744.GA8894@merlin.emma.line.org>
+References: <200607312314.37863.bernd-schubert@gmx.de> <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl> <20060801165234.9448cb6f.reiser4@blinkenlights.ch> <1154446189.15540.43.camel@localhost.localdomain> <44CF9BAD.5020003@emc.com> <44CF3DE0.3010501@namesys.com> <20060803140344.GC7431@merlin.emma.line.org> <44D219F9.9080404@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29522-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29523-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200608031928.25155.zam@namesys.com>
 Content-Disposition: inline
+In-Reply-To: <44D219F9.9080404@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Alexander Zarochentsev <zam@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: Edward Shishkin <edward@namesys.com>
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-Hello,
+[stripping Cc: list]
 
-I have had another assertion fail. This one is with 2.6.18-rc2-mm1 +
-the fix in reiser4_releasepage. This was on a filesystem that had not
-been unmounted cleanly. (2.6.18-rc3-mm1 crashed on me). 
+On Thu, 03 Aug 2006, Edward Shishkin wrote:
 
-reiser4 panicked cowardly: reiser4[ktxnmgrd:hdb1:r(1977)]: sibling_list_remove (fs/reiser4/tree_walk.c:813)[zam-32245]:
-assertion failed: keyeq(znode_get_rd_key(node), znode_get_ld_key(node->right))
-Kernel panic - not syncing: reiser4[ktxnmgrd:hdb1:r(1977)]: sibling_list_remove (fs/reiser4/tree_walk.c:813)[zam-32245]:
-assertion failed: keyeq(znode_get_rd_key(node), znode_get_ld_key(node->right))
+> >What kind of forward error correction would that be,
+> 
+> Actually we use checksums, not ECC. If checksum is wrong, then run
+> fsck - it will remove the whole disk cluster, that represent 64K of
+> data.
 
-The next boot had this diagnostic:
-reiser4[kde-config(3707)]: present_lw_sd (fs/reiser4/plugin/item/static_stat.c:276)[]:
-WARNING: partially converted file is encountered
-and is continuing to work fine. I have not yet fscked the filesystem.
+Well, that's quite a difference...
 
-I hope this helps,
-Andrew Wade
+> Checksum is checked before unsafe decompression (when trying to
+> decompress incorrect data can lead to fatal things).
+
+Is this sufficient? How about corruptions that lead to the same checksum
+and can then confuse the decompressor? Is the decompressor safe in that
+it does not scribble over memory it has not allocated?
+
+-- 
+Matthias Andree
