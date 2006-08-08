@@ -1,38 +1,54 @@
-From: "Sarath Menon" <sarathmenon@gmail.com>
-Subject: Re: Ebuild/rpm/deb repo's (was Re: reiser4 can now bear with filled fs, looks stable to me...)
-Date: Tue, 8 Aug 2006 15:56:04 +0530
-Message-ID: <932539950608080326w6ff472ebkc32437e4da455f68@mail.gmail.com>
-References: <20060730223755.GA14386@hermes.uziel.local>
-	 <11910177823.20060731232849@wp.pl> <44CE7A3A.2010503@slaphack.com>
-	 <1256888283.20060801132818@wp.pl>
-	 <1154455834.10745.21.camel@localhost>
-	 <1692247736.20060801231255@wp.pl> <916440956.20060806162316@wp.pl>
-	 <20060807092435.GA11596@zeus.uziel.local>
-	 <44D773D6.4020504@slaphack.com>
-	 <20060808095658.GA6834@hermes.uziel.local>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
+ regarding reiser4 inclusion
+Date: Tue, 08 Aug 2006 15:06:21 +0400
+Message-ID: <44D8702D.1090005@namesys.com>
+References: <200607312314.37863.bernd-schubert@gmx.de> <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl> <20060801165234.9448cb6f.reiser4@blinkenlights.ch> <1154446189.15540.43.camel@localhost.localdomain> <44CF9BAD.5020003@emc.com> <44CF3DE0.3010501@namesys.com> <20060803140344.GC7431@merlin.emma.line.org> <44D219F9.9080404@namesys.com> <20060807075744.GA8894@merlin.emma.line.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29542-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29543-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060808095658.GA6834@hermes.uziel.local>
-Content-Disposition: inline
+In-Reply-To: <20060807075744.GA8894@merlin.emma.line.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Christian Trefzer <ctrefzer@gmx.de>
-Cc: David Masover <ninja@slaphack.com>, =?ISO-8859-2?Q?Maciej_So=B3tysiak?= <pysiak.satriani@wp.pl>, reiserfs-list@namesys.com
+To: Matthias Andree <matthias.andree@gmx.de>
+Cc: Hans Reiser <reiser@namesys.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-On 8/8/06, Christian Trefzer <ctrefzer@gmx.de> wrote:
-> Grub is a bootloader and as such should (as an optimum) be able to grab
-> kernels off of any fs. I guess patches are accepted by upstream
-> developers?
+Matthias Andree wrote:
+> [stripping Cc: list]
+> 
+> On Thu, 03 Aug 2006, Edward Shishkin wrote:
+> 
+> 
+>>>What kind of forward error correction would that be,
+>>
+>>Actually we use checksums, not ECC. If checksum is wrong, then run
+>>fsck - it will remove the whole disk cluster, that represent 64K of
+>>data.
+> 
+> 
+> Well, that's quite a difference...
+> 
+> 
+>>Checksum is checked before unsafe decompression (when trying to
+>>decompress incorrect data can lead to fatal things).
+> 
+> 
+> Is this sufficient? How about corruptions that lead to the same checksum
+> and can then confuse the decompressor? 
 
-Grub v1 (The one we all know) is alpha status according to their devs.
-Its no longer under active development - in favour of v2. AFAIK, they
-have stopped accepting patches for it, and they have no plans to
-release v2 in the near future. and I don't think it is even compilable
-That doesn't stop mainline distros to accept namesys' patch anyway.
 
-Sarath
+It is a multiplication of two unlikely events: fs corruption
+and 32-hash collision. Paranoid people can assign zlib-based
+transform plugin: afaik everything is safe there.
+
+
+Is the decompressor safe in that
+> it does not scribble over memory it has not allocated?
+> 
+
+yes
+
