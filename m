@@ -1,50 +1,41 @@
-From: Hans Reiser <reiser@namesys.com>
+From: Jan Engelhardt <jengelh@linux01.gwdg.de>
 Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
  regarding reiser4 inclusion
-Date: Wed, 09 Aug 2006 03:15:26 -0600
-Message-ID: <44D9A7AE.5060405@namesys.com>
-References: <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl> <44CF87E6.1050004@slaphack.com> <20060806225912.GC4205@ucw.cz> <44D99ED9.1030003@namesys.com> <20060809094813.GE3308@elf.ucw.cz>
+Date: Wed, 9 Aug 2006 13:53:31 +0200 (MEST)
+Message-ID: <Pine.LNX.4.61.0608091352440.23404@yvahk01.tjqt.qr>
+References: <200607312314.37863.bernd-schubert@gmx.de>
+ <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl>
+ <20060801165234.9448cb6f.reiser4@blinkenlights.ch>
+ <1154446189.15540.43.camel@localhost.localdomain> <44CF9BAD.5020003@emc.com>
+ <44CF3DE0.3010501@namesys.com> <20060803140344.GC7431@merlin.emma.line.org>
+ <44D219F9.9080404@namesys.com> <44D231DF.1080804@namesys.com>
+ <44D37E1B.1040109@namesys.com> <44D3ECB5.1060106@namesys.com>
+ <44D66ADD.6020007@namesys.com> <44D99F96.4090804@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29554-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29555-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060809094813.GE3308@elf.ucw.cz>
+In-Reply-To: <44D99F96.4090804@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Pavel Machek <pavel@suse.cz>
-Cc: David Masover <ninja@slaphack.com>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Bernd Schubert <bernd-schubert@gmx.de>, reiserfs-list@namesys.com, Jan-Benedict Glaw <jbglaw@lug-owl.de>, Clay Barnes <clay.barnes@gmail.com>, Rudy Zijlstra <rudy@edsons.demon.nl>, Adrian Ulrich <reiser4@blinkenlights.ch>, ipso@snappymail.ca, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Reiser <reiser@namesys.com>
+Cc: Edward Shishkin <edward@namesys.com>, Matthias Andree <matthias.andree@gmx.de>, ric@emc.com, Alan Cox <alan@lxorguk.ukuu.org.uk>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, bernd-schubert@gmx.de, reiserfs-list@namesys.com, jbglaw@lug-owl.de, clay.barnes@gmail.com, rudy@edsons.demon.nl, ipso@snappymail.ca, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
 
-Pavel Machek wrote:
+>> Yes, it looks like a business of node plugin, but AFAIK, you
+>> objected against such checks:
+>
+>Did I really?  Well, I think that allowing users to choose whether to
+>checksum or not is a reasonable thing to allow them.  I personally would
+>skip the checksum on my computer, but others....
+>
+>It could be a useful mkfs option....
 
->On Wed 2006-08-09 02:37:45, Hans Reiser wrote:
->  
->
->>Pavel Machek wrote:
->>
->>    
->>
->>>Yes, I'm afraid redundancy/checksums kill write speed,
->>>
->>>      
->>>
->>they kill write speed to cache, but not to disk....  our compression
->>plugin is faster than the uncompressed plugin.....
->>    
->>
->
->Yes, you can get clever. But your compression plugin also means that
->single bit error means whole block is lost, so there _is_ speed
->vs. stability-against-hw-problems.
->
->But you are right that compression will catch same class of errors
->checksums will, so that it is probably good thing w.r.t. stability.
->
->								Pavel
->  
->
-So we need to use ecc not checksums if we want to increase
-reliability.   Edward, can you comment in more detail regarding your
-views and the performance issues for ecc that you see?
+It should preferably a runtime tunable variable, at best even
+per-superblock and (overriding the sb setting), per-file.
+
+
+Jan Engelhardt
+-- 
