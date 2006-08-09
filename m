@@ -1,66 +1,58 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
- regarding reiser4 inclusion
-Date: Wed, 09 Aug 2006 02:40:54 -0600
-Message-ID: <44D99F96.4090804@namesys.com>
-References: <200607312314.37863.bernd-schubert@gmx.de> <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl> <20060801165234.9448cb6f.reiser4@blinkenlights.ch> <1154446189.15540.43.camel@localhost.localdomain> <44CF9BAD.5020003@emc.com> <44CF3DE0.3010501@namesys.com> <20060803140344.GC7431@merlin.emma.line.org> <44D219F9.9080404@namesys.com> <44D231DF.1080804@namesys.com> <44D37E1B.1040109@namesys.com> <44D3ECB5.1060106@namesys.com> <44D66ADD.6020007@namesys.com>
+From: Andreas =?iso-8859-1?Q?Sch=E4fer?= <gentryx@gmx.de>
+Subject: Re: article abour Reiser4 on linux.com
+Date: Wed, 9 Aug 2006 11:47:09 +0200
+Message-ID: <20060809094708.GA21342@wintermute>
+References: <87bqqzbaug.fsf@baldur.nicundtas.de> <44D5B43D.3060501@namesys.com> <1154904931.6553.34.camel@localhost.localdomain> <44D99CA9.9040807@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29551-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+Return-path: <reiserfs-list-return-29552-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44D66ADD.6020007@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <44D99CA9.9040807@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward@namesys.com>
-Cc: Matthias Andree <matthias.andree@gmx.de>, ric@emc.com, Alan Cox <alan@lxorguk.ukuu.org.uk>, Adrian Ulrich <reiser4@blinkenlights.ch>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, bernd-schubert@gmx.de, reiserfs-list@namesys.com, jbglaw@lug-owl.de, clay.barnes@gmail.com, rudy@edsons.demon.nl, ipso@snappymail.ca, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
+To: reiserfs-list@namesys.com
 
-Edward Shishkin wrote:
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hans Reiser wrote:
->
->> Edward Shishkin wrote:
->>
->>
->>>>
->>>> How about we switch to ecc, which would help with bit rot not sector
->>>> loss?
->>>
->>>
->>>
->>> Interesting aspect.
->>>
->>> Yes, we can implement ECC as a special crypto transform that inflates
->>> data. As I mentioned earlier, it is possible via translation of key
->>> offsets with scale factor > 1.
->>>
->>> Of course, it is better then nothing, but anyway meta-data remains
->>> ecc-unprotected, and, hence, robustness is not increased..
->>>
->>> Edward.
->>
->>
->>
->> Would you prefer to do it as a node layout plugin instead, so as to get
->> the metadata?
->>
->
-> Yes, it looks like a business of node plugin, but AFAIK, you
-> objected against such checks:
+On 02:28 Wed 09 Aug     , Hans Reiser wrote:
+> >Unfortunately, it's not one of which editors approve. It too easily
+> >looks as though the writer is being influenced by the source.=20
+> > =20
+> >
+>=20
+> >If I were to do so, I'd risk being banned from publication.=20
 
-Did I really?  Well, I think that allowing users to choose whether to
-checksum or not is a reasonable thing to allow them.  I personally would
-skip the checksum on my computer, but others....
+Uhm... interesting. It's not that I have so much experience with the
+press (just three interviews so far), but everytime I got the article
+for review before publication. It is considered as good manners here
+to avoid misquoting. Of course the can always opt to disregard any
+changes, but in reality this procedure is just like a two phase
+interview with the goal to improve accuracy.
 
-It could be a useful mkfs option....
+If you didn't trust the source in the first place, why should you
+bother to take information from it at all? If you do trust it, why not
+ask again?
 
-> currently only bitmap nodes have
-> a protection (checksum); supporting ecc-signatures is more
-> space/cpu expensive.
->
-> Edward.
->
->
+Just my (humble and uninformed) $0.02 8-)
+-Andreas
 
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.5 (GNU/Linux)
+
+iD8DBQFE2a8cxQzSAzXqsyYRAmTmAJkBkDDIYKNyc85UMaA4b+Qu+nJTNwCfY0aa
+3wLNhJbWVaaHY8dbivJZhX0=
+=g1jf
+-----END PGP SIGNATURE-----
+
+--CE+1k2dSO48ffgeK--
