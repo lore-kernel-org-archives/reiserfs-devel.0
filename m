@@ -1,48 +1,28 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: article abour Reiser4 on linux.com
-Date: Wed, 09 Aug 2006 02:28:25 -0600
-Message-ID: <44D99CA9.9040807@namesys.com>
-References: <87bqqzbaug.fsf@baldur.nicundtas.de>	 <44D5B43D.3060501@namesys.com> <1154904931.6553.34.camel@localhost.localdomain>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
+ regarding reiser4 inclusion
+Date: Wed, 09 Aug 2006 02:37:45 -0600
+Message-ID: <44D99ED9.1030003@namesys.com>
+References: <200608011428.k71ESIuv007094@laptop13.inf.utfsm.cl> <44CF87E6.1050004@slaphack.com> <20060806225912.GC4205@ucw.cz>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29549-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29550-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1154904931.6553.34.camel@localhost.localdomain>
+In-Reply-To: <20060806225912.GC4205@ucw.cz>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: bbyfield@axion.net
-Cc: Tassilo Horn <heimdall@uni-koblenz.de>, reiserfs-list@namesys.com
+To: Pavel Machek <pavel@ucw.cz>
+Cc: David Masover <ninja@slaphack.com>, "Horst H. von Brand" <vonbrand@inf.utfsm.cl>, Bernd Schubert <bernd-schubert@gmx.de>, reiserfs-list@namesys.com, Jan-Benedict Glaw <jbglaw@lug-owl.de>, Clay Barnes <clay.barnes@gmail.com>, Rudy Zijlstra <rudy@edsons.demon.nl>, Adrian Ulrich <reiser4@blinkenlights.ch>, ipso@snappymail.ca, lkml@lpbproductions.com, jeff@garzik.org, tytso@mit.edu, linux-kernel@vger.kernel.org
 
-Bruce, I read your article on Linus and GPL V3, and I understand that
-you are frustrated by his not going for V3.   I suspect the main thing
-that sparked your concern in writing the article about reiser4 is that I
-am somehow doing something different that affects licensing, and not
-conforming on that issue.  Plugins have nothing to do with licensing
-issues --- that was purely Linus getting confused.  Plugins are compiled in.
-
-Bruce Byfield wrote:
-
->
-> I believe that you make a
->reference to two people working on XFS, one of whom other people later
->identify as Steve Lord. 
->  
->
-They wrongly identify him.
+Pavel Machek wrote:
 
 >
 >
->Unfortunately, it's not one of which editors approve. It too easily
->looks as though the writer is being influenced by the source. 
->  
+>Yes, I'm afraid redundancy/checksums kill write speed,
 >
-
->If I were to do so, I'd risk being banned from publication. 
->  
->
-Wow.  I thought only the judiciary insulated itself from ever learning
-of its mistakes that well.:-/
+they kill write speed to cache, but not to disk....  our compression
+plugin is faster than the uncompressed plugin.....
 
