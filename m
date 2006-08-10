@@ -1,64 +1,26 @@
-From: Andrew James Wade <andrew.j.wade@gmail.com>
-Subject: Re: [nikita-3002]: assertion failed: carry_level_invariant(doing, CARRY_DOING)
-Date: Thu, 10 Aug 2006 13:55:27 -0400
-Message-ID: <200608101355.29298.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
-References: <200608021749.30205.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608031928.25155.zam@namesys.com> <200608062224.43728.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
-Reply-To: ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com
+From: David Masover <ninja@slaphack.com>
+Subject: Re: The Infamous Reiser4-randomly-blocks-for-ages-and-writes-the-hd-continously-in-the-mean-while
+ now with a btrace log! (hope it helps)
+Date: Thu, 10 Aug 2006 14:48:59 -0400
+Message-ID: <44DB7F9B.4030504@slaphack.com>
+References: <20060806162017.GB8613@rvalles.homedns.org.> <5c49b0ed0608070233p68204fd1la2630e49fb08fad7@mail.gmail.com> <44DB6080.8070306@iki.fi>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29567-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29568-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200608062224.43728.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
-Content-Disposition: inline
+In-Reply-To: <44DB6080.8070306@iki.fi>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Alexander Zarochentsev <zam@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Vesa Kaihlavirta <vegai@iki.fi>
+Cc: reiserfs-list@namesys.com
 
-Hello,
+Vesa Kaihlavirta wrote:
 
-I've had another panic on a fscked filesystem:
+> Incidentally, I've witnessed similar behaviour in various simple tasks,
+> e.g. writing
+> entries to an sqlite database, or receiving mail from pop3 in thunderbird.
 
-reiser4 panicked cowardly: reiser4[updatedb(3302)]: reiser4_writepage (fs/reiser4/page_cache.c:521)[]:
-assertion failed: can_hit_entd(ctx, s)
-Kernel panic - not syncing: reiser4[updatedb(3302)]: reiser4_writepage (fs/reiser4/page_cache.c:521)[]:
-assertion failed: can_hit_entd(ctx, s)
-
-It's getting pretty obvious that there must be something unusual/unique
-in my setup that's giving me grief. My guess would be that data is
-getting corrupted going between the drive and memory. I do have my
-pci bus underclocked to 30 MHz so maybe that's a factor. I have had
-problems with memory corruption in the past (hence the underclocking),
-but I haven't had any of the symptoms of memory corruption
-re-appearing. (Note that /dev/hdb is my /home filesystem only, so
-it's plausible that problems there would mostly tickle reiser4 code).
-
-If that's what is going on, I would expect file contents to also
-corrupt. I'm going to whip up some scripts to exercise the reading
-and writing large amounts of data to the disk and and see if I can
-find corruption of the data. (I hope to be able to use O_DIRECT to
-avoid thrashing). 
-
-I suppose another possibility is that there is something strange in
-my filesystem that survives fsck, but causes problems. Given the
-variety of symptoms (and the lack of other reports) I would tend to
-discount that though. For the record this is what fsck keeps telling
-me:
-
-FSCK: Node (33160105), item (0), [29:1(SD):0:2a:0]: the slot (9) contains the invalid opset member (compress mode), id (2).
-FSCK: Node (33160105), item (0), [29:1(SD):0:2a:0]: removing broken slots.
-FSCK: Node (33160105), item (0), [29:1(SD):0:2a:0]: item has the wrong length (94). Should be (90). Fixed.
-
-I'm going to run fsck twice in a row to verify that fsck fixes the
-problems, but I'm working under the assumption that what fsck is
-finding is unrelated.
-
-I think the ball is in my court: fortunately I now have time to devote
-to investigation. I'll let you know what I find.
-
-Comments?
-
-Andrew Wade
+Sounds like fsync issues.  That is being worked on.
