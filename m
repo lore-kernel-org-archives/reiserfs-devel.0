@@ -1,88 +1,111 @@
-From: "Danny Milosavljevic" <danny.milo@scratchpost.org>
-Subject: cryptcompress 2.6.16-5 reiser4 and/or 2.6.17-mm5
-Date: Fri, 11 Aug 2006 18:39:57 +0000 (UTC)
-Message-ID: <ebiitt$f07$1@sea.gmane.org>
-Reply-To: danny.milo@scratchpost.org
+From: Craig Shelley <craig@microtron.org.uk>
+Subject: A Word of Warning about Linux Software Raid
+Date: Fri, 11 Aug 2006 19:09:46 +0100
+Message-ID: <1155319786.8121.43.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-29576-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-JmoilcXv4B6Jvv2mkjSN"
+Return-path: <reiserfs-list-return-29577-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hi,
+--=-JmoilcXv4B6Jvv2mkjSN
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-So after an insane amount of time of slacking off I'm actually trying the
-cryptcompress stuff now...
+Hi all,
 
-However, I face some problems setting it up, because I deviate from the
-instructions :)
+I have a little story that made me learn some very important lessons
+about Linux Software Raid1 (Mirroring).
 
-What I tried:
+A local power outage caused my system to turn off in a very rough way.
+The power didn't cleanly go off, instead it toggled on and off a few
+times quickly before finally staying off.
 
-1) download
-ftp://ftp.namesys.com/pub/tmp/cryptcompress_patches/2.6.16/
- reiser4progs-1.0.6.tar.gz
+When the power was restored my reiser4 partitions were a bit poorly, and
+required some attention with fsck.reiser4.
 
-2) compile and run,
-./mkfs.reiser4 -o create=ccreg40 /dev/sda1
-in the source directory
+Ever since this event, reiser4 warnings have often been displayed on the
+console on unmount when shutting down/rebooting. Each time I saw the
+messages, I ran fsck.reiser4 which sometimes resulted in errors being
+found and fixed. Not knowing what partition was causing the problem was
+a bit annoying since I have 4 reiser4 partitions.
 
-Works fine, it seems (note that I used libaal 1.0.5).
+Yesterday, running fsck.reiser4 resulted in not being able to boot the
+system. Further runs of fsck.reiser4 would sometimes result in further
+errors being found, and a few minutes later resulted in no errors being
+found. At this point I began to wonder if my SATA controller had gone
+faulty since the hardware was appearing to be time-variant.
 
-3) get my 2.6.17-mm5 version without any extra patches to support it
-  (probably no use trying, but...)
+Eventually the problem was diagnosed to be caused by the data on the two
+mirrored disks not being identical. It seems that the kernel does not
+check the integrity of the data on mirrored raid, and returns a "mix" of
+data from each disk as it is accessed. Over time bad shutdowns/crashes
+lead to differences between the data on the two mirrored disks, and this
+can eventually have catastrophic consequences.
 
-mount /dev/sda1 /mnt/tmp
-dmesg
-[ 3584.914789] reiser4[mount(28515)]: plugin_by_unsafe_id
-(/home/dannym/work/src/kernels/linux-2.6.17/fs/reiser4/plugin/plugin.c:276)
-[nikita-2913]:
-[ 3584.914792] WARNING: Invalid plugin id: [16:4] [ 3584.914798]
-reiser4[mount(28515)]: unknown_plugin
-(/home/dannym/work/src/kernels/linux-2.6.17/fs/reiser4/plugin/item/
-static_stat.c:58)[nikita-620]:
-[ 3584.914801] WARNING: Unknown plugin 4 in 42 [ 3584.914804]
-reiser4[mount(28515)]: init_inode_static_sd
-(/home/dannym/work/src/kernels/linux-2.6.17/fs/reiser4/plugin/item/
-static_stat.c:177)[nikita-631]:
-[ 3584.914807] WARNING: unused space in inode 42
 
-failed (as expected, probably)...
+I re-synced the disks using the following commands:  (let me know if
+there is a nicer way)
 
-4) okay, so I thought it was time to do it properly and tried to use 
- 2.6.16 vanilla, plus
-ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.16/
- reiser4-for-2.6.16-5.patch.gz
-plus
-ftp://ftp.namesys.com/pub/tmp/cryptcompress_patches/2.6.16/patches/*
+prometheus:~# cat /proc/mdstat
+Personalities : [linear] [raid0] [raid1]
+md0 : active raid1 hdc1[1] hda1[0]
+      4883648 blocks [2/2] [UU]
+...
 
-Unfortunately, the patches from the last URL do not apply to that (most
-were already applied, save a few hunks that actually did get applied fine
-and the small remainder of rejects).
+prometheus:~# mdadm --manage --fail /dev/md0 /dev/hdc1
+mdadm: set /dev/hdc1 faulty in /dev/md0
+prometheus:~# mdadm --manage --remove /dev/md0 /dev/hdc1
+mdadm: hot removed /dev/hdc1
+prometheus:~# mdadm --manage --add /dev/md0 /dev/hdc1
+mdadm: hot added /dev/hdc1
 
-trying to mount the filesystem with that kind of monster kernel (yeah, I
-actually finished compiling that kernel :)) causes:
-mount /dev/sda1 /mnt/tmp
-reiser4[mount(1190)]: init_read_super
-(fs/reiser4/init_super.c:602)[nikita-2608]:
-WARNING: mmcblk0p1: wrong master super block magic 
+prometheus:~# cat /proc/mdstat
+Personalities : [linear] [raid0] [raid1]
+md0 : active raid1 hdc1[2] hda1[0]
+      4883648 blocks [2/1] [U_]
+      [=3D=3D=3D=3D>................]  recovery =3D 22.4% (1098368/4883648)
+finish=3D3.0min speed=3D20364K/sec
+...
 
-So, are there any more current 2.6.16 cryptcompress patches? 
 
-Should I do it differently? Is it ok to start from
-"reiser4-for-2.6.16-2.patch" as README says? I figured rather start from
-the latest reiser4 fixes so that my testing makes any sense...
+fsck.reiser4 could then be run to properly fix the errors.
 
-(as for my choice of "2.6.16", it's the one with the newest mtime on
-the directory ("ftp://ftp.namesys.com/pub/reiser4-for-2.6/"), and it was
-easier to do :))
+I checked several other systems that I admin, and after re-syncing the
+mirrored partitions on each system, errors were found on their
+filesystems.=20
 
-cheers,
-  Danny
+It would be nice if in a similar way to how the kernel can hot-add disks
+to the mirror, copying the data across in the background, that it could
+also be told to run a background consistency check on the raid array,
+and report/fix errors as it goes.
+Are there any tools to do this or similar?
+
+Although this is not a reiser4 issue, I thought it was important that I
+make everyone aware of it.
+
+Regards,
+
+--=20
+Craig Shelley
+EMail: craig@microtron.org.uk
+Jabber: shell@jabber.earth.li
+
+--=-JmoilcXv4B6Jvv2mkjSN
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+
+iD8DBQBE3Mfq5OI9vmOoVqERAjqYAKCXUOn7WGcbLv3GNM3SWUp2bV3NBwCfcviS
+zUD8vr9arQyItzE5ZUZcmSk=
+=WkeY
+-----END PGP SIGNATURE-----
+
+--=-JmoilcXv4B6Jvv2mkjSN--
 
