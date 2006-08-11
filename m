@@ -1,62 +1,72 @@
-From: Gasper Azman <gazman@email.si>
-Subject: some testing questions
-Date: Fri, 11 Aug 2006 19:44:44 +0200
-Message-ID: <44DCC20C.7020400@email.si>
+From: Andrew James Wade <andrew.j.wade@gmail.com>
+Subject: Re: [nikita-3002]: assertion failed: carry_level_invariant(doing, CARRY_DOING)
+Date: Fri, 11 Aug 2006 14:37:18 -0400
+Message-ID: <200608111437.22403.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+References: <200608021749.30205.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608101355.29298.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608111315.17116.vs@namesys.com>
+Reply-To: ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="------------enigE9BBCBF67B1B262765301B9C"
-Return-path: <reiserfs-list-return-29574-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29575-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200608111315.17116.vs@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, andrew.j.wade@gmail.com, Alexander Zarochentsev <zam@namesys.com>
 
---------------enigE9BBCBF67B1B262765301B9C
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Friday 11 August 2006 05:15, Vladimir V. Saveliev wrote:
+> Hello
+> 
+> On Thursday 10 August 2006 21:55, Andrew James Wade wrote:
+> > Hello,
+> >
+> > I've had another panic on a fscked filesystem:
+> >
+> > reiser4 panicked cowardly: reiser4[updatedb(3302)]: reiser4_writepage
+> > (fs/reiser4/page_cache.c:521)[]: assertion failed: can_hit_entd(ctx, s)
+> > Kernel panic - not syncing: reiser4[updatedb(3302)]: reiser4_writepage
+> > (fs/reiser4/page_cache.c:521)[]: assertion failed: can_hit_entd(ctx, s)
+> >
+> 
+> What kernel do you use? Recently we had few fixes of such problem.
 
-Hello everyone, especially the namesys team.
+2.6.18-rc3-mm2 + the patch below.
 
+I've been unable to observe any corruption in over 300 GB of file data
+written to the hd, so I don't think I have a hardware issue.
 
-I have been reading this list for quite some time, and saw that issues
-of fragmentation have again arisen. So, a decision was made to put the
-portage tree on a separate reiser4 partition, and to benchmark it over ti=
-me.
+I will continue poking away at the problem.
 
-Because I know I'm not the smartest guy in the universe, I'm asking
-everyone here which data they would require (or want to see), how to
-obtain it (program names would suffice, but other advice will not go
-amiss) and how frequently the analysis is to be run. Since this would be
-a new partition with nothing but the portage tree, it is an ideal and
-clean environment for testing a specific feature of reiser4 (as has been
-frequently mentioned).
+Andrew Wade
 
-I hope to make a small contribution to the development of IMHO the most
-promising filesystem since ext3. :)
+------
 
+re-add to reiser4_releasepage mistakenly removed page_count check.
+extra page reference is used to protect page from detaching from the 
+jnode.
 
+Signed-off-by: Alexander Zarochentsev <zam@namesys.com>
+---
+ fs/reiser4/as_ops.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-Keep it up,
-
-
-Gasper
-
-
---------------enigE9BBCBF67B1B262765301B9C
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.4 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
-
-iD8DBQFE3MIOEpY+TjzLRFcRAggDAJ4xsW4y1hdZxczEX/S2SWrC68kiuACfXGKc
-gnCe1Nee4oJKwAAv4Eh+Znk=
-=AHyH
------END PGP SIGNATURE-----
-
---------------enigE9BBCBF67B1B262765301B9C--
+Index: linux-2.6-git/fs/reiser4/as_ops.c
+===================================================================
+--- linux-2.6-git.orig/fs/reiser4/as_ops.c
++++ linux-2.6-git/fs/reiser4/as_ops.c
+@@ -350,6 +350,11 @@ int reiser4_releasepage(struct page *pag
+        if (PageDirty(page))
+                return 0;
+ 
++       /* extra page reference is used by reiser4 to protect
++        * jnode<->page link from this ->releasepage(). */
++       if (page_count(page) > 3)
++               return 0;
++
+        /* releasable() needs jnode lock, because it looks at the jnode fields
+         * and we need jload_lock here to avoid races with jload(). */
+        spin_lock_jnode(node);
