@@ -1,53 +1,71 @@
-From: =?iso-8859-2?B?o3VrYXN6IE1pZXJ6d2E=?= <prymitive@pcserwis.net>
-Subject: Re: The Infamous Reiser4-randomly-blocks-for-ages-and-writes-the-hd-continously-in-the-mean-while now with a btrace log! (hope it helps)
-Date: Thu, 10 Aug 2006 23:06:20 +0200
-Message-ID: <op.td258uwvd4os1z@localhost>
-References: <20060806162017.GB8613@rvalles.homedns.org.> <5c49b0ed0608070233p68204fd1la2630e49fb08fad7@mail.gmail.com> <44DB6080.8070306@iki.fi> <44DB7F9B.4030504@slaphack.com> <op.td2z6u11d4os1z@localhost> <44DB9E32.9010308@slaphack.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: [nikita-3002]: assertion failed: carry_level_invariant(doing, CARRY_DOING)
+Date: Fri, 11 Aug 2006 13:15:16 +0400
+Message-ID: <200608111315.17116.vs@namesys.com>
+References: <200608021749.30205.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608062224.43728.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608101355.29298.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-29571-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29573-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44DB9E32.9010308@slaphack.com>
+In-Reply-To: <200608101355.29298.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; delsp="yes"; charset="iso-8859-1"
-To: David Masover <ninja@slaphack.com>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com, andrew.j.wade@gmail.com
+Cc: Alexander Zarochentsev <zam@namesys.com>
 
-Dnia Thu, 10 Aug 2006 22:59:30 +0200, David Masover <ninja@slaphack.com> =20
-napisa=B3:
+Hello
 
-> =A3ukasz Mierzwa wrote:
->> Dnia Thu, 10 Aug 2006 20:48:59 +0200, David Masover =20
->> <ninja@slaphack.com> napisa=B3:
->>
->>> Vesa Kaihlavirta wrote:
->>>
->>>> Incidentally, I've witnessed similar behaviour in various simple =20
->>>> tasks,
->>>> e.g. writing
->>>> entries to an sqlite database, or receiving mail from pop3 in =20
->>>> thunderbird.
->>>
->>> Sounds like fsync issues.  That is being worked on.
->>  I'm think it's writeout that's involved, I tried to disable fsync and  =
-
->> it helped for apps that are calling fsync to keep data integrity (like  =
-
->> sqlite) but it also happens when I'm downloading files using rtorrent =20
->> which does not call fsync but generetes many little writes.
+On Thursday 10 August 2006 21:55, Andrew James Wade wrote:
+> Hello,
 >
-> Hmm.  Fragmentation, maybe?  Is this easily reproduceable with a =20
-> freshly-formatted fs?
+> I've had another panic on a fscked filesystem:
 >
-> I'm just guessing here...
+> reiser4 panicked cowardly: reiser4[updatedb(3302)]: reiser4_writepage
+> (fs/reiser4/page_cache.c:521)[]: assertion failed: can_hit_entd(ctx, s)
+> Kernel panic - not syncing: reiser4[updatedb(3302)]: reiser4_writepage
+> (fs/reiser4/page_cache.c:521)[]: assertion failed: can_hit_entd(ctx, s)
+>
 
-That's hard for me to try as I'm using single reiser4 partition for all my =
-=20
-data, after pushing my reset button several times I'm quite sure that my =20
-files are safe (if I won't hit any crazy bug ;) ).
-But maybe You are right, it's slowly getting full and I did rebuild entire =
-=20
-system few times. When I will have some free space for backup I'll =20
-reformat my disk.
+What kernel do you use? Recently we had few fixes of such problem.
+
+> It's getting pretty obvious that there must be something unusual/unique
+> in my setup that's giving me grief. My guess would be that data is
+> getting corrupted going between the drive and memory. I do have my
+> pci bus underclocked to 30 MHz so maybe that's a factor. I have had
+> problems with memory corruption in the past (hence the underclocking),
+> but I haven't had any of the symptoms of memory corruption
+> re-appearing. (Note that /dev/hdb is my /home filesystem only, so
+> it's plausible that problems there would mostly tickle reiser4 code).
+>
+> If that's what is going on, I would expect file contents to also
+> corrupt. I'm going to whip up some scripts to exercise the reading
+> and writing large amounts of data to the disk and and see if I can
+> find corruption of the data. (I hope to be able to use O_DIRECT to
+> avoid thrashing).
+>
+> I suppose another possibility is that there is something strange in
+> my filesystem that survives fsck, but causes problems. Given the
+> variety of symptoms (and the lack of other reports) I would tend to
+> discount that though. For the record this is what fsck keeps telling
+> me:
+>
+> FSCK: Node (33160105), item (0), [29:1(SD):0:2a:0]: the slot (9) contains
+> the invalid opset member (compress mode), id (2). FSCK: Node (33160105),
+> item (0), [29:1(SD):0:2a:0]: removing broken slots. FSCK: Node (33160105),
+> item (0), [29:1(SD):0:2a:0]: item has the wrong length (94). Should be
+> (90). Fixed.
+>
+> I'm going to run fsck twice in a row to verify that fsck fixes the
+> problems, but I'm working under the assumption that what fsck is
+> finding is unrelated.
+>
+> I think the ball is in my court: fortunately I now have time to devote
+> to investigation. I'll let you know what I find.
+>
+> Comments?
+>
+> Andrew Wade
