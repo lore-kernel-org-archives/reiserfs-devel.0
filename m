@@ -1,50 +1,107 @@
-From: Philippe =?ISO-8859-15?Q?Gramoull=E9?= <philippe@gramoulle.com>
-Subject: Re: A Word of Warning about Linux Software Raid
-Date: Sat, 12 Aug 2006 14:33:41 +0200
-Message-ID: <20060812123342.BEFC03BE@philou.gramoulle.local>
-References: <1155319786.8121.43.camel@localhost.localdomain>
-	<20060811213450.cf67e32e.reiser4@blinkenlights.ch>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: cryptcompress 2.6.16-5 reiser4 and/or 2.6.17-mm5
+Date: Sat, 12 Aug 2006 17:14:34 +0400
+Message-ID: <44DDD43A.4030606@namesys.com>
+References: <ebiitt$f07$1@sea.gmane.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29582-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29583-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060811213450.cf67e32e.reiser4@blinkenlights.ch>
+In-Reply-To: <ebiitt$f07$1@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: danny.milo@scratchpost.org
+Cc: reiserfs-list@namesys.com
 
+Danny Milosavljevic wrote:
+> Hi,
+> 
+> So after an insane amount of time of slacking off I'm actually trying the
+> cryptcompress stuff now...
+> 
+> However, I face some problems setting it up, because I deviate from the
+> instructions :)
+> 
+> What I tried:
+> 
+> 1) download
+> ftp://ftp.namesys.com/pub/tmp/cryptcompress_patches/2.6.16/
+>  reiser4progs-1.0.6.tar.gz
+> 
+> 2) compile and run,
+> ./mkfs.reiser4 -o create=ccreg40 /dev/sda1
+> in the source directory
+> 
+> Works fine, it seems (note that I used libaal 1.0.5).
+> 
+> 3) get my 2.6.17-mm5 version without any extra patches to support it
+>   (probably no use trying, but...)
+> 
+> mount /dev/sda1 /mnt/tmp
+> dmesg
+> [ 3584.914789] reiser4[mount(28515)]: plugin_by_unsafe_id
+> (/home/dannym/work/src/kernels/linux-2.6.17/fs/reiser4/plugin/plugin.c:276)
+> [nikita-2913]:
+> [ 3584.914792] WARNING: Invalid plugin id: [16:4] [ 3584.914798]
+> reiser4[mount(28515)]: unknown_plugin
+> (/home/dannym/work/src/kernels/linux-2.6.17/fs/reiser4/plugin/item/
+> static_stat.c:58)[nikita-620]:
+> [ 3584.914801] WARNING: Unknown plugin 4 in 42 [ 3584.914804]
+> reiser4[mount(28515)]: init_inode_static_sd
+> (/home/dannym/work/src/kernels/linux-2.6.17/fs/reiser4/plugin/item/
+> static_stat.c:177)[nikita-631]:
+> [ 3584.914807] WARNING: unused space in inode 42
+> 
+> failed (as expected, probably)...
+> 
+> 4) okay, so I thought it was time to do it properly and tried to use 
+>  2.6.16 vanilla, plus
+> ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.16/
+>  reiser4-for-2.6.16-5.patch.gz
+> plus
+> ftp://ftp.namesys.com/pub/tmp/cryptcompress_patches/2.6.16/patches/*
+> 
 
-Hello,
+Hmm... This is for internal usage only. I have removed it, sorry
+(nothing really confidential, but this stuff changes disk format
+including your old reiser4 partitions). Wait for official release.
+Everyone who wants to test it, send us a private message.
 
-On Fri, 11 Aug 2006 21:34:50 +0200
-Adrian Ulrich <reiser4@blinkenlights.ch> wrote:
+> Unfortunately, the patches from the last URL do not apply to that (most
+> were already applied, save a few hunks that actually did get applied fine
+> and the small remainder of rejects).
+> 
+> trying to mount the filesystem with that kind of monster kernel (yeah, I
+> actually finished compiling that kernel :)) causes:
+> mount /dev/sda1 /mnt/tmp
+> reiser4[mount(1190)]: init_read_super
+> (fs/reiser4/init_super.c:602)[nikita-2608]:
+> WARNING: mmcblk0p1: wrong master super block magic 
+> 
+> So, are there any more current 2.6.16 cryptcompress patches? 
+> 
+> Should I do it differently? Is it ok to start from
+> "reiser4-for-2.6.16-2.patch" as README says? 
 
-  | > It seems that the kernel does not check the integrity of the data on mirrored raid,  
-  | 
-  | It does if you tell the kernel to do so:
-  | 
-  | # echo check > /sys/block/md0/md/sync_action 
-
-I have just upgraded from an older kernel to be able to use such a functionality but :
-
-boogie:~# cat /proc/mdstat
-Personalities : [linear] [raid0] [raid1] [raid5] [raid4] [raid6] [multipath] 
-md0 : active raid0 sde1[0] sdk1[6] sdj1[5] sdi1[4] sdh1[3] sdg1[2] sdf1[1]
-      501773440 blocks 64k chunks
-      
-unused devices: <none>
-
-boogie:~# echo check > /sys/block/md0/md/sync_action
--bash: /sys/block/md0/md/sync_action: Permission denied
-
-boogie:~# mount | grep sys
-sysfs on /sys type sysfs (rw)
-
-What am i missing here ?
+Yes, follow the instructions precisely, and please,
+read warnings in the README carefully. libaal-1.0.5 - ok.
 
 Thanks,
+Edward.
 
-Philippe
+I figured rather start from
+> the latest reiser4 fixes so that my testing makes any sense...
+> 
+> (as for my choice of "2.6.16", it's the one with the newest mtime on
+> the directory ("ftp://ftp.namesys.com/pub/reiser4-for-2.6/"), and it was
+> easier to do :))
+> 
+> cheers,
+>   Danny
+> 
+> 
+> 
+
