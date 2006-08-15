@@ -1,41 +1,54 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: some testing questions
-Date: Tue, 15 Aug 2006 16:52:47 -0500
-Message-ID: <44E2422F.8090708@slaphack.com>
-References: <44DCC20C.7020400@email.si> <200608141615.58185.vs@namesys.com> <20060815142140.GA4247@kruemel> <44E228B7.10505@namesys.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
+Date: Tue, 15 Aug 2006 14:55:54 -0700
+Message-ID: <44E242EA.2030605@namesys.com>
+References: <BAY19-F195F80B4801CAB6EEB6C46944F0@phx.gbl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29601-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29602-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44E228B7.10505@namesys.com>
+In-Reply-To: <BAY19-F195F80B4801CAB6EEB6C46944F0@phx.gbl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Hans Reiser <reiser@namesys.com>
-Cc: Ingo Bormuth <ibormuth@efil.de>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Tom Reinhart <rhino_tom@hotmail.com>
+Cc: reiserfs-list@namesys.com
 
-Hans Reiser wrote:
-> Ingo Bormuth wrote:
->>
->> #df:
->> /dev/hda8              6357768   3478716   2879052  55% /cache
->>  
->> Before doing so, the partition was >90% full. 
-> The performance difference between >90% full and 55% full will be large
-> on every filesystem.  When we ship a repacker, that will be less true,
-> because we will have large chunks of unused space after the repacker runs.
+Tom Reinhart wrote:
+> Anyone with serious need for data integrity already uses RAID, so why
+> add brand new complexity for a solved problem?
+>
+> RAID is great at recovering data, but not detecting errors.  File
+> system can detect errors with checksum.  What is missing is an API
+> between layers for filesystem to say "this sector is bad, go rebuild it."
+I agree that such an API is needed.  I think there are a lot of systems
+on desktops that lack RAID though.  Probably I should leave ECC for some
+"hopefully next year" future release though.
+>
+> This seems like a much more simple and useful thing than adding ECC
+> into the filesystem itself.
+>
+>
+>>>> How about we switch to ecc, which would help with bit rot not sector
+>>>> loss?
+>>>
+>>>
+>>> Interesting aspect.
+>>>
+>>> Yes, we can implement ECC as a special crypto transform that inflates
+>>> data. As I mentioned earlier, it is possible via translation of key
+>>> offsets with scale factor > 1.
+>>>
+>>> Of course, it is better then nothing, but anyway meta-data remains
+>>> ecc-unprotected, and, hence, robustness is not increased..
+>>>
+>
+> _________________________________________________________________
+> On the road to retirement? Check out MSN Life Events for advice on how
+> to get there! http://lifeevents.msn.com/category.aspx?cid=Retirement
+>
+>
+>
 
-Not always true.  For one, doesn't Reiser4 arbitrarily reserve 5%?  For 
-another, look at his results -- unless I'm wrong, that's 3-7% 
-fragmentation.  If I'm wrong, it's more like .03-.07%.
-
-And lastly, at a certain point, percentages aren't really that accurate. 
-  I've got a 350 or 400 gig partition which is 95% full, according to df 
-(which if I was right about that 5%, it's more like 90% full) and that 
-still leaves a solid 10-20 gigs free.
-
-I mean, yes, performance will eventually start to suffer, but how much 
-time and activity will it take to fragment 20 gigs of free space, 
-especially with lazy allocation?
