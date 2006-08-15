@@ -1,167 +1,94 @@
-From: Gasper Azman <gazman@email.si>
+From: Ingo Bormuth <ibormuth@efil.de>
 Subject: Re: some testing questions
-Date: Mon, 14 Aug 2006 16:07:52 +0200
-Message-ID: <44E083B8.1030800@email.si>
+Date: Tue, 15 Aug 2006 16:21:40 +0200
+Message-ID: <20060815142140.GA4247@kruemel>
+References: <44DCC20C.7020400@email.si> <200608141615.58185.vs@namesys.com>
+Reply-To: Ingo Bormuth <ibormuth@efil.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="------------enig6FE06D874EC113079D4520FE"
-Return-path: <reiserfs-list-return-29595-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29598-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Content-Disposition: inline
+In-Reply-To: <200608141615.58185.vs@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
---------------enig6FE06D874EC113079D4520FE
-Content-Type: multipart/mixed;
- boundary="------------010602020500040804020302"
-
-This is a multi-part message in MIME format.
---------------010602020500040804020302
-Content-Type: multipart/alternative;
- boundary="------------080708000603010702060907"
-
-
---------------080708000603010702060907
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-Vladimir V. Saveliev wrote:
-> Hello
->
-> On Friday 11 August 2006 21:44, Gasper Azman wrote:
->  =20
->> Hello everyone, especially the namesys team.
->>
->>
->> I have been reading this list for quite some time, and saw that issues=
-
->> of fragmentation have again arisen. So, a decision was made to put the=
-
->> portage tree on a separate reiser4 partition, and to benchmark it over=
-
->> time.
->>
->> Because I know I'm not the smartest guy in the universe, I'm asking
->> everyone here which data they would require (or want to see), how to
->> obtain it (program names would suffice, but other advice will not go
->> amiss) and how frequently the analysis is to be run.=20
->>    =20
->
-> reiser4progs incluses a program measurefs.reiser4. It should be able to=
-=20
-> measure tree fragmentation. I am not sure how does portage tree evolve,=
- but=20
-> maybe it could be interesting too see how does reiser4 tree fragmentati=
-on=20
+On 2006-08-14 16:15, Vladimir V. Saveliev wrote:
+> reiser4progs incluses a program measurefs.reiser4. It should be able to 
+> measure tree fragmentation. I am not sure how does portage tree evolve, but 
+> maybe it could be interesting too see how does reiser4 tree fragmentation 
 > change when filesystem is loaded regularly.
->  =20
-Ok. I'm gonna see about the program, and run it after each emerge --sync.=
+
+This is a reiser4 partition holding the following:
+
+  - portage tree (synced every three days)
+  - ccache (compiler cache allowed to grow to 3GB - recently cleared)
+  - firefox's and opera's cache
+  - /tmp (portage builds everything in here)
+
+The filesystem was created around 1.5 years ago (how can I say).
+
+#cat /proc/version
+Linux version 2.6.17.8-reiser4-r3 (root@kruemel) (gcc version 3.4.6 (Gentoo 3.4.6-r1, ssp-3.4.5-1.0, pie-8.7.9)) #2 Sat Aug 12 12:03:25 CEST 2006
+
+#df:
+/dev/hda8              6357768   3478716   2879052  55% /cache
+
+#cat /etc/fstab:
+/dev/hda8  /cache  reiser4  noatime,nodiratime,nodev,nosuid,tmgr.atom_max_age=500000  0 0
+
+#measurefs.reiser4 -S:
+measurefs.reiser4 1.0.5
+Copyright (C) 2001, 2002, 2003, 2004 by Hans Reiser, licensing governed by
+reiser4progs/COPYING.
+
+Tree statistics ... done
+Packing statistics:
+  Formatted nodes:    3622.85b (88.45%)
+  Branch nodes:       2792.00b (68.16%)
+  Twig nodes:         3233.75b (78.95%)
+  Leaf nodes:         3966.47b (96.84%)
+
+Node statistics:
+  Total nodes:         871653
+  Formatted nodes:      75571
+  Unformatted nodes:   796082
+  Branch nodes:            23
+  Twig nodes:            1360
+  Leaf nodes:          870270
+
+Item statistics:
+  Total items:         542211
+  Nodeptr items:        75570
+  Statdata items:     214695
+  Direntry items:       37432
+  Tail items:          207819
+  Extent items:          6695
 
 
-About the portage tree evolving, it's a lot (~150000) of <2k files, some
-never change, and some change very often. New ones are added and old
-ones deleted on a similar principle. People have been complaining for
-quite some time that, while at first they experienced major speedups
-regarding the operation of portage and the rsync process, it slowed to a
-halt about half a year afterwards. Some blame fragmentation, and this
-may be the key to diagnosing the problem.
+Tree fragmentation: 0.074648
 
-Thanks for your help.
+Data fragmentation: 0.039962
 
-Gasper
+Last week I recompiled gcc and afterwards cleared 3GB of ccache data. 
+Before doing so, the partition was >90% full. My feeling is that now 
+that it's half empty performance is much better. Emerge sync used to 
+take _ages_ rebuilding its cache and now is quite fast. Also CPU usage 
+during compilation seems much lower. I can't remember to ever hear the 
+CPU fan running during recent compilations (700MHZ PIII). Before clearing 
+the cache it ran continuously and still felt hot.
 
---------------080708000603010702060907
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-  <meta content=3D"text/html;charset=3DUTF-8" http-equiv=3D"Content-Type"=
->
-  <title></title>
-</head>
-<body bgcolor=3D"#ffffff" text=3D"#000000">
-<meta content=3D"text/html;charset=3DUTF-8" http-equiv=3D"Content-Type">
-<title></title>
-Vladimir V. Saveliev wrote:
-<blockquote cite=3D"mid200608141615.58185.vs@namesys.com" type=3D"cite">
-  <pre wrap=3D"">Hello
-
-On Friday 11 August 2006 21:44, Gasper Azman wrote:
-  </pre>
-  <blockquote type=3D"cite">
-    <pre wrap=3D"">Hello everyone, especially the namesys team.
+I know none of this is hard data. If you are interested in a follow up,
+just let me know.
 
 
-I have been reading this list for quite some time, and saw that issues
-of fragmentation have again arisen. So, a decision was made to put the
-portage tree on a separate reiser4 partition, and to benchmark it over
-time.
+BTW: Is it save to run measurefs.reiser4 -S -T -D on a mounted fs ?
 
-Because I know I'm not the smartest guy in the universe, I'm asking
-everyone here which data they would require (or want to see), how to
-obtain it (program names would suffice, but other advice will not go
-amiss) and how frequently the analysis is to be run.=20
-    </pre>
-  </blockquote>
-  <pre wrap=3D""><!---->
-reiser4progs incluses a program measurefs.reiser4. It should be able to=20
-measure tree fragmentation. I am not sure how does portage tree evolve, b=
-ut=20
-maybe it could be interesting too see how does reiser4 tree fragmentation=
-=20
-change when filesystem is loaded regularly.
-  </pre>
-</blockquote>
-Ok. I'm gonna see about the program, and run it after each emerge
---sync.<br>
-<br>
-About the portage tree evolving, it's a lot (~150000) of &lt;2k files,
-some never change, and some change very often. New ones are added and
-old ones deleted on a similar principle. People have been complaining
-for quite some time that, while at first they experienced major
-speedups regarding the operation of portage and the rsync process, it
-slowed to a halt about half a year afterwards. Some blame
-fragmentation, and this may be the key to diagnosing the problem.<br>
-<br>
-Thanks for your help.<br>
-<br>
-Gasper<br>
-</body>
-</html>
+-- 
+Ingo Bormuth, voicebox & telefax: +49-12125-10226517       '(~o-o~)'
+public key 86326EC9, http://ibormuth.efil.de/contact   --ooO--(.)--Ooo--
 
---------------080708000603010702060907--
-
---------------010602020500040804020302
-Content-Type: application/pgp-signature;
- name="signature.asc"
-Content-Transfer-Encoding: base64
-Content-Disposition: inline;
- filename="signature.asc"
-
-LS0tLS1CRUdJTiBQR1AgU0lHTkFUVVJFLS0tLS0KVmVyc2lvbjogR251UEcgdjEuNC40IChH
-TlUvTGludXgpCkNvbW1lbnQ6IFVzaW5nIEdudVBHIHdpdGggTW96aWxsYSAtIGh0dHA6Ly9l
-bmlnbWFpbC5tb3pkZXYub3JnCgppRDhEQlFGRTRJRGtFcFkrVGp6TFJGY1JBckI5QUtDSDAy
-NWs2dDdDb1BNR20yZFB3NVplVVRkNGVnQ2VNK25uCkRkd0MxTmF0Q25BcnQ3SFNxUmNBSkhJ
-PQo9MDNXTAotLS0tLUVORCBQR1AgU0lHTkFUVVJFLS0tLS0KCg==
---------------010602020500040804020302--
-
---------------enig6FE06D874EC113079D4520FE
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.4 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
-
-iD8DBQFE4IO7EpY+TjzLRFcRAnR+AJ0VK1dw4zuQ/XSka/u8sy18ByNEkQCePVHC
-A0mQTDfq0YpXdox/7kqAnq4=
-=RrM1
------END PGP SIGNATURE-----
-
---------------enig6FE06D874EC113079D4520FE--
