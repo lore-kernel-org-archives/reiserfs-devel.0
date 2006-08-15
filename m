@@ -1,54 +1,23 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
-Date: Tue, 15 Aug 2006 14:55:54 -0700
-Message-ID: <44E242EA.2030605@namesys.com>
-References: <BAY19-F195F80B4801CAB6EEB6C46944F0@phx.gbl>
+Subject: Re: some testing questions
+Date: Tue, 15 Aug 2006 15:03:52 -0700
+Message-ID: <44E244C8.3040005@namesys.com>
+References: <44DCC20C.7020400@email.si> <200608141615.58185.vs@namesys.com> <20060815142140.GA4247@kruemel> <44E228B7.10505@namesys.com> <44E2422F.8090708@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29602-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29603-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <BAY19-F195F80B4801CAB6EEB6C46944F0@phx.gbl>
+In-Reply-To: <44E2422F.8090708@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Tom Reinhart <rhino_tom@hotmail.com>
-Cc: reiserfs-list@namesys.com
+To: David Masover <ninja@slaphack.com>
+Cc: Ingo Bormuth <ibormuth@efil.de>, reiserfs-list@namesys.com
 
-Tom Reinhart wrote:
-> Anyone with serious need for data integrity already uses RAID, so why
-> add brand new complexity for a solved problem?
->
-> RAID is great at recovering data, but not detecting errors.  File
-> system can detect errors with checksum.  What is missing is an API
-> between layers for filesystem to say "this sector is bad, go rebuild it."
-I agree that such an API is needed.  I think there are a lot of systems
-on desktops that lack RAID though.  Probably I should leave ECC for some
-"hopefully next year" future release though.
->
-> This seems like a much more simple and useful thing than adding ECC
-> into the filesystem itself.
->
->
->>>> How about we switch to ecc, which would help with bit rot not sector
->>>> loss?
->>>
->>>
->>> Interesting aspect.
->>>
->>> Yes, we can implement ECC as a special crypto transform that inflates
->>> data. As I mentioned earlier, it is possible via translation of key
->>> offsets with scale factor > 1.
->>>
->>> Of course, it is better then nothing, but anyway meta-data remains
->>> ecc-unprotected, and, hence, robustness is not increased..
->>>
->
-> _________________________________________________________________
-> On the road to retirement? Check out MSN Life Events for advice on how
-> to get there! http://lifeevents.msn.com/category.aspx?cid=Retirement
->
->
->
-
+David Masover wrote:
+>  that's 3-7% fragmentation.  
+which is high enough to hurt performance..... 50mb/s * 0.01 seconds =
+amount of transfer a seek costs.  He needs a repacker.  After we resolve
+code review issues from akpm.....
