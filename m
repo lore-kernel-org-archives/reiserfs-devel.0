@@ -1,23 +1,63 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: some testing questions
-Date: Tue, 15 Aug 2006 15:03:52 -0700
-Message-ID: <44E244C8.3040005@namesys.com>
-References: <44DCC20C.7020400@email.si> <200608141615.58185.vs@namesys.com> <20060815142140.GA4247@kruemel> <44E228B7.10505@namesys.com> <44E2422F.8090708@slaphack.com>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
+Date: Wed, 16 Aug 2006 02:06:27 +0400
+Message-ID: <44E24563.1040900@namesys.com>
+References: <BAY19-F195F80B4801CAB6EEB6C46944F0@phx.gbl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29603-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29604-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44E2422F.8090708@slaphack.com>
+In-Reply-To: <BAY19-F195F80B4801CAB6EEB6C46944F0@phx.gbl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: Ingo Bormuth <ibormuth@efil.de>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Tom Reinhart <rhino_tom@hotmail.com>
+Cc: reiserfs-list@namesys.com
 
-David Masover wrote:
->  that's 3-7% fragmentation.  
-which is high enough to hurt performance..... 50mb/s * 0.01 seconds =
-amount of transfer a seek costs.  He needs a repacker.  After we resolve
-code review issues from akpm.....
+Tom Reinhart wrote:
+> Anyone with serious need for data integrity already uses RAID, so why 
+> add brand new complexity for a solved problem?
+> 
+> RAID is great at recovering data, but not detecting errors.  File system 
+> can detect errors with checksum.  What is missing is an API between 
+> layers for filesystem to say "this sector is bad, go rebuild it."
+> 
+
+Actually we dont need a special API: kernel should warn and recommend
+running fsck, which scans the whole tree and handles blocks with bad
+checksums.
+
+> This seems like a much more simple and useful thing than adding ECC into 
+> the filesystem itself.
+
+checksumming is _not_ much more easy then ecc-ing from implementation
+standpoint, however it would be nice, if some part of errors will get
+fixed without massive surgery performed by fsck
+
+
+> 
+> 
+>>>> How about we switch to ecc, which would help with bit rot not sector
+>>>> loss?
+>>>
+>>>
+>>>
+>>> Interesting aspect.
+>>>
+>>> Yes, we can implement ECC as a special crypto transform that inflates
+>>> data. As I mentioned earlier, it is possible via translation of key
+>>> offsets with scale factor > 1.
+>>>
+>>> Of course, it is better then nothing, but anyway meta-data remains
+>>> ecc-unprotected, and, hence, robustness is not increased..
+>>>
+> 
+> _________________________________________________________________
+> On the road to retirement? Check out MSN Life Events for advice on how 
+> to get there! http://lifeevents.msn.com/category.aspx?cid=Retirement
+> 
+> 
+> 
+
