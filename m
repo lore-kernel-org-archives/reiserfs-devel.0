@@ -1,110 +1,66 @@
-From: "Gregory Maxwell" <gmaxwell@gmail.com>
+From: "Tom Reinhart" <rhino_tom@hotmail.com>
 Subject: Re: the " 'official' point of view" expressed by kernelnewbies.org
-Date: Tue, 15 Aug 2006 21:14:04 -0400
-Message-ID: <e692861c0608151814x3e704156j32c2b34b8637a943@mail.gmail.com>
-References: <BAY19-F195F80B4801CAB6EEB6C46944F0@phx.gbl>
-	 <44E24563.1040900@namesys.com>
+Date: Tue, 15 Aug 2006 19:34:47 -0700
+Message-ID: <BAY19-F100664FF73F5E9174FEC39944C0@phx.gbl>
+References: <44E24899.8080201@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29609-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29610-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44E24563.1040900@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <44E24899.8080201@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Edward Shishkin <edward@namesys.com>
-Cc: Tom Reinhart <rhino_tom@hotmail.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; format=flowed; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: reiser@namesys.com, edward@namesys.com
+Cc: reiserfs-list@namesys.com
 
-On 8/15/06, Edward Shishkin <edward@namesys.com> wrote:
-> checksumming is _not_ much more easy then ecc-ing from implementation
-> standpoint, however it would be nice, if some part of errors will get
-> fixed without massive surgery performed by fsck
 
-We need checksumming even with eccing... ECCing on large spans of data
-is too computationally costly to do unless we know something is wrong
-(via a checksum).
+>>Anyone with serious need for data integrity already uses RAID, so why
+>>add brand new complexity for a solved problem?
+>>
+>>RAID is great at recovering data, but not detecting errors.  File
+>>system can detect errors with checksum.  What is missing is an API
+>>between layers for filesystem to say "this sector is bad, go rebuild it."
 
-Lets pause for a minute, when you talk about ECC what are you actually
-talking about?   If you're talking about a hamming code (used on ram,
-http://en.wikipedia.org/wiki/Hamming_code) or Convolutional code (used
-on telecom links, http://en.wikipedia.org/wiki/Convolutional_code) or
-are you talking about an erasure code like RS coding
-(http://en.wikipedia.org/wiki/Reed-Solomon_code)?
+>I agree that such an API is needed.  I think there are a lot of systems
+>on desktops that lack RAID though.  Probably I should leave ECC for some
+>"hopefully next year" future release though.
 
-I assume in the discussions that you're not talking about an RS like
-code... because RAID-5 and RAID-6 are, fundamentally, a form of RS
-coding. They don't solve bit errors, but when you know you've lost a
-block of data they can recover it.
+Of course, not everyone uses RAID.  ECC would benefit some people in some=20
+cases... no argument there.
 
-Non-RS forms of ECC are very slow in software (esp decoding) .. and
-really aren't that useful: most of the time HDD's will lose data in
-nice big chunks that erasure codes handle well but other codes do not.
+But as a business man, you know about targetting the right features to the =
 
-The challenge with erasure codes is that you must know that a block is
-bad... most of the times the drives will tell you, but some times
-corruption leaks through. This is where block level checksums come
-into play... they allow you to detect bad blocks and then your erasure
-code allows you to recover the data.   The checksum must be fast
-because you must perform it on every read from disk... this makes ECC
-unsuitable, because although it could detect errors, it is too slow.
-Also, the number of additional errors ECC could fix are very small..
-It would simply be better to store more erasure code blocks.
+right customers:
 
-An optimal RS codes which allows one block of N to fail (and require
-one block extra storage)  is computationally trivial. We call it
-raid-5.  If your 'threat model' is bad sectors rather than bad disks
-(an increasingly realistic shift) then N needs to have nothing to do
-with the number of disks you have and can be instead related to how
-much protection you want on a file.
+Customer 1 uses RAID.  Obviously, reliability is very important to customer=
+=20
+1, he is willing to take the extra expense to get it.  Adding another level=
+=20
+of protection (checksumming/RAID restore) is a no brainer, especially since=
+=20
+it adds very little overhead over what he already sacrificed to RAID.
 
-If 1:N isn't enough for you, RS can be generalized to any number of
-redundant blocks. Unfortunately, doing so requires modular aritmetic
-which current CPUs are not too impressively fast at. However, the
-Linux Raid-6 code demonstrates that two part parity can be done quite
-quickly in software.
+Customer 2 doesn't use RAID.  You can add all the fancy features to the=20
+filesystem you want, this customer is already vulnerable to total disk loss=
+.=20
+  If he really cared about integrity, he would be customer 1.  If he won't =
 
-As such, I think 'ecc' is useless.. checksums are useful because they
-are cheap and allow us to use cheap erasure coding (which could be in
-a lower levle raid driver, or implemented in the FS) to achieve data
-integrity.
+pay for RAID, why would he pay for ECC?  (in money or disk space overhead).
 
-The question of including error coding in the FS or in a lower level
-is, as far as I'm concerned, so clear a matter that it is hardly worth
-discussing anymore.  In my view it is absolutely idiotic to place
-redundancy in a lower level.
+Having ECC without RAID recovery is simply targetting the wrong person.
 
-The advantage of placing redundancy in a lower level is code
-simplicity and sharing.
+(having both wouldn't suck.  The more layers of protection, the better,=20
+although ECC would only be necessary against RAID failures, which just adds=
+=20
+more .9's to the reliability score.  But, you can also do this by adding=20
+more redundanncy disks to the array, so it's questionable if having both is=
+=20
+even worth the development expense)
 
-The problem with doing so, however, is many fold.
+_________________________________________________________________
+FREE pop-up blocking with the new MSN Toolbar =96 get it now!=20
+http://toolbar.msn.click-url.com/go/onm00200415ave/direct/01/
 
-The redundancy requirements for various parts of the file system
-differ dramatically, without tight FS integration matching the need to
-the service is nearly impossible.
-
-The most important reason, however, is performance.  Raid-5 (and
-raid-6) suffer a tremendous performance hit because of the requirement
-to write a full stripe OR execute a read modify write cycle.  With FS
-integrated erasure codes it is possible to adjust the layout of the
-written blocks to ensure that every write is a full stripe write,
-effectively you adjust the stripe width with every write to ensure
-that the write always spans all the disks.  Alternatively you can
-reduce the number of stripe chunks  (i.e. number of disks) in the
-parity computation to make the write fit (although doing so wastes
-space)...
-
-FS redundancy integration also solves the layout problem. From my
-experience most systems with hardware raid are getting far below
-optimal performance because even when their FS is smart enough to do
-file allocation in a raid aware way (XFS and to a lesser extent
-EXT2/3) this is usually foiled by the partition table at the beginning
-of the raid device. Resulting in 1:N FS blocks actually spanning two
-disks! (thus reading that block incurres potentially 2x disk latency).
-
-Seperated FS and redundancy layers are an antiquated concept.. The
-FS's job is to provide reliable storage, fully stop.  It's shocking to
-see that a dinosaur like SUN has figured this out but the free
-software community still fights against it.
