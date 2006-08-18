@@ -1,83 +1,60 @@
-From: Andrew James Wade <andrew.j.wade@gmail.com>
-Subject: Re: [nikita-3002]: assertion failed: carry_level_invariant(doing, CARRY_DOING)
-Date: Thu, 17 Aug 2006 16:34:12 -0400
-Message-ID: <200608171634.13172.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
-References: <200608021749.30205.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608111315.17116.vs@namesys.com> <5832497.post@talk.nabble.com>
-Reply-To: ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com
+From: Francisco Javier Cabello <fjcabello@visual-tools.com>
+Subject: reiserfs and IDE write cache
+Date: Fri, 18 Aug 2006 09:22:18 +0200
+Message-ID: <200608180922.23867.fjcabello@visual-tools.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed;
+  boundary="nextPart1773903.0qJqmHFsvC";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29623-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29624-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <5832497.post@talk.nabble.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
-Cc: Benjamin Vander Jagt <benjamin@winchesterpc.com>
 
-On Wednesday 16 August 2006 09:32, Benjamin Vander Jagt wrote:
+--nextPart1773903.0qJqmHFsvC
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-> I am having the exact same problems but with one difference.  After
-> a while, the drive starts thrashing, and the system becomes totally
-> unresponsive. 
-     I've been getting occasional short freezes of a couple of minutes.
-But that's probably unrelated: as I have debugging turned on and am
-deliberately stressing the fs poor performance is not unexpected.
+Hello,
+I have been 'googling' and I have found a lot of people warning about the=20
+problems with IDE write cache and journaling filesystems.=20
+Should I disable write cache in my systems using reiserfs3+2.4.25?
 
-...
-> Andrew, may I ask for the contents of your /proc/meminfo file? 
+I have tried to disable write cache with hdparm (hdparm -W0 /dev/hdc) but i=
+t=20
+is not working  ( you can see write cache is enabled with hdparm=20
+=2Di /dev/hdc).
+Is there other way to disable write cache?
 
-Sure:
+Regards,
 
-MemTotal:       512648 kB
-MemFree:         70612 kB
-Buffers:          2800 kB
-Cached:         105236 kB
-SwapCached:      33812 kB
-Active:         335988 kB
-Inactive:        63028 kB
-SwapTotal:     9791608 kB
-SwapFree:      9757768 kB
-Dirty:              84 kB
-Writeback:           0 kB
-AnonPages:      267960 kB
-Mapped:          52792 kB
-Slab:            22760 kB
-PageTables:       3148 kB
-NFS Unstable:        0 kB
-Bounce:              0 kB
-CommitLimit:  10047932 kB
-Committed_AS:   686084 kB
-VmallocTotal:   515796 kB
-VmallocUsed:     25572 kB
-VmallocChunk:   489680 kB
-HugePages_Total:     0
-HugePages_Free:      0
-HugePages_Rsvd:      0
-Hugepagesize:     4096 kB
+Paco
 
-I am currently trying to distill a test-case for crashing the fs.
-It is going slowly, but I have managed to provoke a few panics,
-including some new ones:
+=2D-=20
+One of my most productive days was throwing away 1000 lines of code (Ken=20
+Thompson)
+=2D----------------
+PGP fingerprint: AF69 62B4 97EB F5BB 2C60  B802 568A E122 BBBE 5820
+PGP Key available at http://pgp.mit.edu
+=2D----------------
 
-reiser4 panicked cowardly: reiser4[scatteredwrites(4506)]: reiser4_writepage (fs/reiser4/page_cache.c:522)[]:
-assertion failed: can_hit_entd(ctx, s)
-Kernel panic - not syncing: reiser4[scatteredwrites(4506)]: reiser4_writepage (fs/reiser4/page_cache.c:522)[]:
-assertion failed: can_hit_entd(ctx, s)
 
-reiser4 panicked cowardly: reiser4[tar(4238)]: reiser4_update_extent (fs/reiser4/plugin/item/extent_file_ops.c:807)[]:
-assertion failed: reiser4_lock_counters()->d_refs == 0
-Kernel panic - not syncing: reiser4[tar(4238)]: reiser4_update_extent (fs/reiser4/plugin/item/extent_file_ops.c:807)[]:
-assertion failed: reiser4_lock_counters()->d_refs == 0
+--nextPart1773903.0qJqmHFsvC
+Content-Type: application/pgp-signature
 
-reiser4 panicked cowardly: reiser4[patch(9302)]: reiser4_set_page_dirty_internal (fs/reiser4/page_cache.c:475)[]:
-assertion failed: JF_ISSET(jprivate(page), JNODE_DIRTY)
-Kernel panic - not syncing: reiser4[patch(9302)]: reiser4_set_page_dirty_internal (fs/reiser4/page_cache.c:475)[]:
-assertion failed: JF_ISSET(jprivate(page), JNODE_DIRTY)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
 
-These are all for 2.6.18-rc4-mm1 + the small patch upthread.
+iD8DBQBE5WqvVorhIru+WCARAs2rAJ92Iydw67HvOTA6eSCxKTj/JrjsFQCcDWEq
+J7b3jr4tRnb7t2zyl3wk3z8=
+=G+6+
+-----END PGP SIGNATURE-----
 
-Andrew Wade
+--nextPart1773903.0qJqmHFsvC--
