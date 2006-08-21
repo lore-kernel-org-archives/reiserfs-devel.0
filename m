@@ -1,43 +1,51 @@
-From: Edward Shishkin <edward@namesys.com>
+From: Marcos Dione <mdione@grulic.org.ar>
 Subject: Re: problem with reiser3
-Date: Tue, 22 Aug 2006 03:38:40 +0400
-Message-ID: <44EA4400.6090501@namesys.com>
-References: <20060821222421.GC14067@grulic.org.ar>
+Date: Mon, 21 Aug 2006 20:53:38 -0300
+Message-ID: <20060821235338.GE14067@grulic.org.ar>
+References: <20060821222421.GC14067@grulic.org.ar> <44EA4400.6090501@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29647-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29648-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060821222421.GC14067@grulic.org.ar>
+Content-Disposition: inline
+In-Reply-To: <44EA4400.6090501@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Marcos Dione <mdione@grulic.org.ar>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Edward Shishkin <edward@namesys.com>
 Cc: reiserfs-list@namesys.com
 
-Marcos Dione wrote:
->     hi all. I'm having problems checking a reiser3 filesystem.
-> reiserfsck says: 
+On Tue, Aug 22, 2006 at 03:38:40AM +0400, Edward Shishkin wrote:
+> Marcos Dione wrote:
+> >    hi all. I'm having problems checking a reiser3 filesystem.
+> >reiserfsck says: 
+> >
+> >bread: Cannot read the block (27887610): (Input/output error).
+> >
+> >    I passed badblocks over the partition and found 61 bad sectors
+> >(which I know is bad), 
 > 
-> bread: Cannot read the block (27887610): (Input/output error).
 > 
->     I passed badblocks over the partition and found 61 bad sectors
-> (which I know is bad), 
+> did you specify reiserfs block size (via option -b) when creating a list
+> of bad blocks?
 
+    dunno which is the block size. tried to figure it out, but (from
+dmesg trying to mount the partition):
+    
+ReiserFS: sda1: journal params: device sda1, size 8192, journal first block 18, max trans len 1024, max batch 900, max commit age 30, max trans age 30
 
-did you specify reiserfs block size (via option -b) when creating a list
-of bad blocks?
+    and:
 
+$ sudo reiserfstune /dev/sda1
+reiserfstune: Filesystem looks not cleanly umounted, check the consistency first.
 
-then run reiserfsck -B with the bad blocks file
-> and got the same, but also this:
-> 
-> create_badblock_bitmap: block number (111550463) points out of fs size (39072080).
-> 
->     any hints?
-> 
+    I assume it's the 8192 the kernel reports...
 
-it would be better to create a backup on a spare bigger partition
-using dd_rescue (pad not recoverable zones with zeroes), then run
-fsck on the created image.
+> it would be better to create a backup on a spare bigger partition
+> using dd_rescue (pad not recoverable zones with zeroes), then run
+> fsck on the created image.
+
+    unluckly I can't. it's a 160 GiB partition and I don't have spare
+space.
