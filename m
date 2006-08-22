@@ -1,12 +1,12 @@
 From: Andrew James Wade <andrew.j.wade@gmail.com>
 Subject: Re: Reiser4 stress test.
-Date: Tue, 22 Aug 2006 18:07:16 -0400
-Message-ID: <200608221807.17116.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+Date: Tue, 22 Aug 2006 17:57:18 -0400
+Message-ID: <200608221757.18738.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
 References: <200608211759.04151.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <44EA94B5.4040505@namesys.com>
 Reply-To: ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29662-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29663-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -24,9 +24,9 @@ On Tuesday 22 August 2006 01:23, Hans Reiser wrote:
 > hours a day due to an illness.
 
 No problem. I'll post what I find to the list; the posts will still be
-there when you have the time to devote to solving bugs. The delay will
-do me no harm whatsoever and I may even get to the bottom of one or
-two bugs in the meantime. (I happen to have time to spare at the
-moment).
+there when you have time to devote to chasing bugs. They're not urgent
+problems for me; I just happen to have the time and interest to devote
+myself to solving them right now, and it appears I'll be able to muddle
+through the code okay.
 
-Andrew Wade
+Andrew
