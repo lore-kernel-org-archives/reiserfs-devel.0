@@ -1,32 +1,30 @@
-From: Andrew James Wade <andrew.j.wade@gmail.com>
-Subject: Re: Reiser4 stress test.
-Date: Tue, 22 Aug 2006 17:57:18 -0400
-Message-ID: <200608221757.18738.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
-References: <200608211759.04151.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <44EA94B5.4040505@namesys.com>
-Reply-To: ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: [PATCH] reiserfs: eliminate minimum window size for bitmap searching
+Date: Tue, 22 Aug 2006 17:07:04 -0700
+Message-ID: <44EB9C28.9030204@namesys.com>
+References: <44EB1484.2040502@suse.com> <44EB23D9.9000508@slaphack.com> <44EB28EC.50802@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29663-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29664-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44EA94B5.4040505@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <44EB28EC.50802@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Hans Reiser <reiser@namesys.com>
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: David Masover <ninja@slaphack.com>, Andrew Morton <akpm@osdl.org>, Linus Torvalds <torvalds@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>, Mike Benoit <ipso@snappymail.ca>
 
-On Tuesday 22 August 2006 01:23, Hans Reiser wrote:
-> Thanks Andrew, please be patient and persistent with us at this time, as
-> one programmer is on vacation, and the other is only able to work a few
-> hours a day due to an illness.
-
-No problem. I'll post what I find to the list; the posts will still be
-there when you have time to devote to chasing bugs. They're not urgent
-problems for me; I just happen to have the time and interest to devote
-myself to solving them right now, and it appears I'll be able to muddle
-through the code okay.
-
-Andrew
+Jeff Mahoney wrote:
+>
+>
+> Also, I think the bigalloc behavior just ultimately ends up introducing
+> even more fragmentation on an already fragmented file system. It'll keep
+> contiguous chunks together, but those chunks can end up being spread all
+> over the disk.
+>
+> -Jeff
+>
+Yes, and almost as important, it makes it difficult to understand and
+predict the allocator, which means other optimizations become harder to do.
