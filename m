@@ -1,10 +1,10 @@
-From: Brian Davis <bridavis@comcast.net>
-Subject: Need help retrieving data
-Date: Thu, 24 Aug 2006 13:43:58 -0400
-Message-ID: <44EDE55E.7030106@comcast.net>
+From: Cesar Augusto Bonadio <bonadio@picture.com.br>
+Subject: slow rebuild-tree
+Date: Thu, 24 Aug 2006 15:48:01 -0300
+Message-ID: <44EDF461.8020805@picture.com.br>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29683-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29685-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -13,92 +13,25 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hello,
+Hello
 
-I've paid the 25 dollars, but I haven't gotten a 
-response yet so I'm trying this list....
+We have a server with a partition of 1.1TB, last saturday
+the machine locked up and we had to reboot, after that
 
-I have a disk which has a single partition with reiserfs version 3 on it.
+when we access some files we received and "permission denied"
+so we started a reiserfsck with rebuild-tree, the process is still running
 
-One day I put the disk on a 3Ware 7506-4LP RAID controller card and 
-tried to mount the partition through the normal mechanisms. (mount -t 
-xfs /dev/..). It was not part of a RAID array, it was just setup as a 
-single disk on the controller.
+19047 root      25   0  141m 140m 2748 R 99.9  7.0   6401:43 reiserfsck
 
-When I did this, mount hung for what seemed to be a long time and then 
-Seg Faulted.  Since then I have not been able to mount the partition on 
-either the RAID controller or a normal IDE controller.
+we are running reiserfsprogs  3.6.19-1, I saw a post about running 3.6.20
+but I could not find this file.
 
-I get the following error when trying to mount:
+Is this normal to take this long? any ideas?
 
-localhost ~ # mount -t reiserfs /dev/hde1 /stuff
-mount: wrong fs type, bad option, bad superblock on /dev/hde1,
-      missing codepage or other error
-      In some cases useful info is found in syslog - try
-      dmesg | tail  or so
+Thanks for any help
 
-Checking /var/log/messages reveals the following:
-
-ReiserFS: hde1: found reiserfs format "3.6" with standard journal
-ReiserFS: hde1: using ordered data mode
-ReiserFS: hde1: journal params: device hde1, size 8192, journal first 
-block 18, max trans len 1024, max batch 900, max commit age 30, max 
-trans age 30
-ReiserFS: hde1: checking transaction log (hde1)
-ReiserFS: hde1: warning: vs-7000: search_by_entry_key: search_by_key 
-returned item position == 0
-
-I then run reiserfsck, which doesn't find any errors:
-
-localhost ~ # reiserfsck /dev/hde1
-reiserfsck 3.6.19 (2003 www.namesys.com)
-
-*************************************************************
-** If you are using the latest reiserfsprogs and  it fails **
-** please  email bug reports to reiserfs-list@namesys.com, **
-** providing  as  much  information  as  possible --  your **
-** hardware,  kernel,  patches,  settings,  all reiserfsck **
-** messages  (including version),  the reiserfsck logfile, **
-** check  the  syslog file  for  any  related information. **
-** If you would like advice on using this program, support **
-** is available  for $25 at  www.namesys.com/support.html. **
-*************************************************************
-
-Will read-only check consistency of the filesystem on /dev/hde1
-Will put log info to 'stdout'
-
-Do you want to run this program?[N/Yes] (note need to type Yes if you 
-do):Yes
-###########
-reiserfsck --check started at Tue Aug 22 19:21:46 2006
-###########
-Replaying journal..
-Reiserfs journal '/dev/hde1' in blocks [18..8211]: 0 transactions replayed
-Checking internal tree..finished                              
-Comparing bitmaps..finished
-Checking Semantic tree:
-finished                                                                       
-
-No corruptions found
-There are on the filesystem:
-       Leaves 40825
-       Internal nodes 270
-       Directories 2351
-       Other files 34336
-       Data block pointers 34474385 (536372 of them are zero)
-       Safe links 0
-###########
-reiserfsck finished at Tue Aug 22 19:26:56 2006
-###########
-
-Trying to mount again after running reiserfsck still results in the same 
-error as above.
-
-I'm at a loss for the next steps to take, I'm hoping you can help be get 
-my data back from this drive/partition.
-
-Thanks,
-Brian
+running Debian  with 2.6.16.13
+the server has 4 400GB SATA II in RAID5 with megaraid controller
 
 
 
