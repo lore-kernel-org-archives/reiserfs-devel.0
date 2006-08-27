@@ -1,40 +1,41 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Reiser4 und LZO compression
-Date: Sun, 27 Aug 2006 04:42:59 -0500
-Message-ID: <44F16923.9050609@slaphack.com>
-References: <20060827003426.GB5204@martell.zuzino.mipt.ru> <20060827010428.5c9d943b.akpm@osdl.org>
+From: "Ivan Pulleyn" <ivan.pulleyn@gmail.com>
+Subject: Re: Possible bug with FIBMAP
+Date: Sun, 27 Aug 2006 12:35:25 -0700
+Message-ID: <755b32b20608271235s5878fba3pf01b4250cd07f2a9@mail.gmail.com>
+References: <200608271057.12684.un_brice@vleu.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29699-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29701-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060827010428.5c9d943b.akpm@osdl.org>
+In-Reply-To: <200608271057.12684.un_brice@vleu.net>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Andrew Morton <akpm@osdl.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+To: Brice Arnould <un_brice@vleu.net>
+Cc: reiserfs-list@namesys.com
 
-Andrew Morton wrote:
-> On Sun, 27 Aug 2006 04:34:26 +0400
-> Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> 
->> The patch below is so-called reiser4 LZO compression plugin as extracted
->> from 2.6.18-rc4-mm3.
->>
->> I think it is an unauditable piece of shit and thus should not enter
->> mainline.
-> 
-> Like lib/inflate.c (and this new code should arguably be in lib/).
-> 
-> The problem is that if we clean this up, we've diverged very much from the
-> upstream implementation.  So taking in fixes and features from upstream
-> becomes harder and more error-prone.
+-22 is EINVAL, or an invalid argument. Your file descriptor is
+invalid, as proved by the assert().
 
-Well, what kinds of changes have to happen?  I doubt upstream would care 
-about moving some of it to lib/ -- and anyway, reiserfs-list is on the 
-CC.  We are speaking of upstream in the third party in the presence of 
-upstream, so...
+Ivan...
 
-Maybe just ask upstream?
+On 8/27/06, Brice Arnould <un_brice@vleu.net> wrote:
+> Hi
+>
+> Two users of a hack I wrote told me that
+> http://vleu.net/shake/fb_r4.c (also attached with the mail)
+> returned "FIBMAP=-22, FIGETBSZ=4096"
+> on some of their files on reiser4 filesystems.
+>
+> Does this value of "-22" have a special meaning (would be strange), or is it a
+> bug in Reiser4 ?
+> I can ask them for more details, if you want.
+>
+> Thanks
+> Brice
+>
+>
+>
