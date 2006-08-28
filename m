@@ -1,55 +1,68 @@
-From: =?iso-8859-1?Q?J=F6rn?= Engel <joern@wohnheim.fh-wedel.de>
+From: Hans Reiser <reiser@namesys.com>
 Subject: Re: Reiser4 und LZO compression
-Date: Mon, 28 Aug 2006 14:42:13 +0200
-Message-ID: <20060828124213.GA26698@wohnheim.fh-wedel.de>
-References: <20060827003426.GB5204@martell.zuzino.mipt.ru> <20060827010428.5c9d943b.akpm@osdl.org>
+Date: Mon, 28 Aug 2006 10:06:46 -0700
+Message-ID: <44F322A6.9020200@namesys.com>
+References: <20060827003426.GB5204@martell.zuzino.mipt.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-29708-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29710-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20060827010428.5c9d943b.akpm@osdl.org>
+In-Reply-To: <20060827003426.GB5204@martell.zuzino.mipt.ru>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Andrew Morton <akpm@osdl.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, Andrew Morton <akpm@osdl.org>
 
-On Sun, 27 August 2006 01:04:28 -0700, Andrew Morton wrote:
->=20
-> Like lib/inflate.c (and this new code should arguably be in lib/).
->=20
-> The problem is that if we clean this up, we've diverged very much from the
-> upstream implementation.  So taking in fixes and features from upstream
-> becomes harder and more error-prone.
+Alexey Dobriyan wrote:
+> Reiser4 developers, Andrew,
+>
+> The patch below is so-called reiser4 LZO compression plugin as extracted
+> from 2.6.18-rc4-mm3.
+>
+> I think it is an unauditable piece of shit and thus should not enter
+> mainline.
+>
+>   
+Hmm.  LZO is the best compression algorithm for the task as measured by
+the objectives of good compression effectiveness while still having very
+low CPU usage (the best of those written and GPL'd, there is a slightly
+better one which is proprietary and uses more CPU, LZRW if I remember
+right.  The gzip code base uses too much CPU, though I think Edward made
+an option of it....).  Could you be kind enough to send me a plugin
+which is better at those two measures, I'd be quite grateful?
 
-I've had an identical argument with Linus about lib/zlib_*.  He
-decided that he didn't care about diverging, I went ahead and changed
-the code.  In the process, I merged a couple of outstanding bugfixes
-and reduced memory consumption by 25%.  Looks like Linus was right on
-that one.
+By the way, could you tell me about this "auditing" stuff?  Last I
+remember, when I mentioned that the US Defense community had coding
+practices worth adopting by the Kernel Community, I was pretty much
+disregarded.  So, while I understand that the FSB has serious security
+issues what with all these Americans seeking to crack their Linux boxen,
+complaining to me about auditability seems a bit graceless.;-) 
+Especially if there is no offer of replacement compression code.
 
-> I'd suspect that the maturity of these utilities is such that we could
-> afford to turn them into kernel code in the expectation that any future
-> changes will be small.  But it's not a completely simple call.
->=20
-> (iirc the inflate code had a buffer overrun a while back, which was found
-> and fixed in the upstream version).
+Oh, and this LZO code is not written by Namesys.  You can tell by the
+utter lack of comments, assertions, etc.  We are just seeking to reuse
+well known widely used code.  I have in the past been capable of
+demanding that my programmers comment code not written by them before we
+use it, but this time I did not.  I have mixed feeling about us adding
+our comments to code written by a compression specialist.  If Andrew
+wants us to write our own compression code, or comment this code and
+fill it with asserts, we will grumble a bit and do it.  It is not a task
+I am eager for, as compression code is a highly competitive field which
+gives me the surface impression that if you are not gripped by what you
+are sure is an inspiration you should stay out of it.  
 
-Dito in lib/zlib_*.  lib/inflage.c is only used for the various
-in-kernel bootloaders to uncompress a kernel image.  Anyone tampering
-with the image to cause a buffer overrun already owns the machine
-anyway.
+Jorn wrote:
 
-Whether any of our experiences with zlib apply to lzo remains a
-question, though.
+    I've had an identical argument with Linus about lib/zlib_*.  He
+    decided that he didn't care about diverging, I went ahead and changed
+    the code.  In the process, I merged a couple of outstanding bugfixes
+    and reduced memory consumption by 25%.  Looks like Linus was right on
+    that one.
 
-J=F6rn
+Anyone sends myself or Edward a patch, that's great.  Jorn, sounds like
+you did a good job on that one.
 
---=20
-I've never met a human being who would want to read 17,000 pages of
-documentation, and if there was, I'd kill him to get him out of the
-gene pool.
--- Joseph Costello
+Hans
