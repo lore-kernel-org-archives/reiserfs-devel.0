@@ -1,66 +1,55 @@
-From: Alexander Zarochentsev <zam@namesys.com>
-Subject: Re: Possible bug with FIBMAP
-Date: Mon, 28 Aug 2006 12:33:47 +0400
-Message-ID: <200608281233.48338.zam@namesys.com>
-References: <200608271057.12684.un_brice@vleu.net>
+From: =?iso-8859-1?Q?J=F6rn?= Engel <joern@wohnheim.fh-wedel.de>
+Subject: Re: Reiser4 und LZO compression
+Date: Mon, 28 Aug 2006 14:42:13 +0200
+Message-ID: <20060828124213.GA26698@wohnheim.fh-wedel.de>
+References: <20060827003426.GB5204@martell.zuzino.mipt.ru> <20060827010428.5c9d943b.akpm@osdl.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29707-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-29708-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200608271057.12684.un_brice@vleu.net>
 Content-Disposition: inline
+In-Reply-To: <20060827010428.5c9d943b.akpm@osdl.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
-Cc: Brice Arnould <un_brice@vleu.net>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Andrew Morton <akpm@osdl.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-On 27 August 2006 12:57, Brice Arnould wrote:
-> Hi
->
-> Two users of a hack I wrote told me that
-> http://vleu.net/shake/fb_r4.c (also attached with the mail)
-> returned "FIBMAP=-22, FIGETBSZ=4096"
-> on some of their files on reiser4 filesystems.
->
-> Does this value of "-22" have a special meaning (would be strange),
-> or is it a bug in Reiser4 ?
-> I can ask them for more details, if you want.
+On Sun, 27 August 2006 01:04:28 -0700, Andrew Morton wrote:
+>=20
+> Like lib/inflate.c (and this new code should arguably be in lib/).
+>=20
+> The problem is that if we clean this up, we've diverged very much from the
+> upstream implementation.  So taking in fixes and features from upstream
+> becomes harder and more error-prone.
 
-Reiser4: restore FIBMAP ioctl support for packed files
+I've had an identical argument with Linus about lib/zlib_*.  He
+decided that he didn't care about diverging, I went ahead and changed
+the code.  In the process, I merged a couple of outstanding bugfixes
+and reduced memory consumption by 25%.  Looks like Linus was right on
+that one.
 
-restore FIBMAP ioctl support for packed files,
-don't report block numbers for not yet mapped to
-disk nodes.
+> I'd suspect that the maturity of these utilities is such that we could
+> afford to turn them into kernel code in the expectation that any future
+> changes will be small.  But it's not a completely simple call.
+>=20
+> (iirc the inflate code had a buffer overrun a while back, which was found
+> and fixed in the upstream version).
 
-Signed-off-by: Alexander Zarochentsev <zam@namesys.com>
----
- fs/reiser4/plugin/item/item.c |    2 +-
- fs/reiser4/plugin/item/tail.c |    2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Dito in lib/zlib_*.  lib/inflage.c is only used for the various
+in-kernel bootloaders to uncompress a kernel image.  Anyone tampering
+with the image to cause a buffer overrun already owns the machine
+anyway.
 
---- linux-2.6-git.orig/fs/reiser4/plugin/item/item.c
-+++ linux-2.6-git/fs/reiser4/plugin/item/item.c
-@@ -614,7 +614,7 @@ item_plugin item_plugins[LAST_ITEM_ID] =
- 				.write = reiser4_write_tail,
- 				.read = reiser4_read_tail,
- 				.readpage = readpage_tail,
--				.get_block = NULL,
-+				.get_block = get_block_address_tail,
- 				.append_key = append_key_tail,
- 				.init_coord_extension =
- 				init_coord_extension_tail
---- linux-2.6-git.orig/fs/reiser4/plugin/item/tail.c
-+++ linux-2.6-git/fs/reiser4/plugin/item/tail.c
-@@ -791,6 +791,8 @@ get_block_address_tail(const coord_t * c
- 	assert("nikita-3252", znode_get_level(coord->node) == LEAF_LEVEL);
- 
- 	*block = *znode_get_block(coord->node);
-+	if (reiser4_blocknr_is_fake(block))
-+		*block = 0;
- 	return 0;
- }
- 
+Whether any of our experiences with zlib apply to lzo remains a
+question, though.
 
+J=F6rn
+
+--=20
+I've never met a human being who would want to read 17,000 pages of
+documentation, and if there was, I'd kill him to get him out of the
+gene pool.
+-- Joseph Costello
