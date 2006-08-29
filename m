@@ -1,74 +1,42 @@
-From: "Gregory Maxwell" <gmaxwell@gmail.com>
+From: PFC <lists@peufeu.com>
 Subject: Re: Reiser4 und LZO compression
-Date: Tue, 29 Aug 2006 11:41:47 -0400
-Message-ID: <e692861c0608290841u725e60dfl32ce79b29e53156f@mail.gmail.com>
-References: <20060827003426.GB5204@martell.zuzino.mipt.ru>
-	 <44F322A6.9020200@namesys.com>
-	 <20060828173721.GA11332@hello-penguin.com>
-	 <44F332D6.6040209@namesys.com>
-	 <1156801705.2969.6.camel@nigel.suspend2.net>
-	 <20060829045937.GA9181@localhost.hsdv.com>
-	 <op.te1sixuycigqcu@apollo13>
+Date: Tue, 29 Aug 2006 17:55:49 +0200
+Message-ID: <op.te1yjbp7cigqcu@apollo13>
+References: <20060827003426.GB5204@martell.zuzino.mipt.ru> <44F322A6.9020200@namesys.com> <20060828173721.GA11332@hello-penguin.com> <44F332D6.6040209@namesys.com> <1156801705.2969.6.camel@nigel.suspend2.net> <20060829045937.GA9181@localhost.hsdv.com> <op.te1sixuycigqcu@apollo13> <20060829143814.GA21868@hello-penguin.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29734-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29735-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <op.te1sixuycigqcu@apollo13>
-Content-Disposition: inline
+In-Reply-To: <20060829143814.GA21868@hello-penguin.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: PFC <lists@peufeu.com>
-Cc: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Content-Type: text/plain; format="flowed"; delsp="yes"; charset="us-ascii"
+To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-On 8/29/06, PFC <lists@peufeu.com> wrote:
->         Anyone has a bench for lzf ?
 
-This is on a opteron 1.8GHz box. Everything tested hot cache.
+	I have made a little openoffice spreadsheet with the results.
+	You can have fun entering stuff and seeing the results.
 
-Testing on a fairly repetative but real test case (an SQL dump of one
-of the Wikipedia tables):
--rw-rw-r-- 1 gmaxwell gmaxwell 426162134 Jul 20 06:54 ../page.sql
+http://peufeu.free.fr/compression.ods
 
-$time lzop -c ../page.sql > page.sql.lzo
-real    0m8.618s
-user    0m7.800s
-sys     0m0.808s
+	Basically, a laptop having the same processor as my PC and a crummy 15  
+MB/s drive (like most laptop drives) will get a 2.5x speedup using lzf,  
+while using 40% CPU for compression and 15% CPU for decompression. I'd say  
+it's a clear, huuuuge win.
 
-$time lzop -9c ../page.sql > page.sql.lzo-9
-real    4m45.299s
-user    4m44.474s
-sys     0m0.712s
+	A desktop computer with a modern IDE drive doing 50 MB/s will still get  
+nice speedups (1.8x on write, 2.5x on read) but of course, more CPU will  
+be used because of the higher throughput. In this case it is CPU limited  
+on compression and disk limited on decompression. However soon everyone  
+will have dual core monsters so...
 
-$time gzip -1 -c ../page.sql > page.sql.gz
-real    0m19.292s
-user    0m18.545s
-sys     0m0.748s
+	A big ass RAID will not get much benefit unless :
+	- the buffer cache stores compressed pages, so compression virtually  
+doubles the RAM cache
+	- or the CPU is really fast
+	- or you put one of these neat FPGA modules in a free Opteron socket and  
+upload a soft-hardware LZF in it with a few gigabytes/s throughput
 
-$time lzop -d -c ./page.sql.lzo > /dev/null
-real    0m3.061s
-user    0m2.836s
-sys     0m0.224s
-
-$time gzip -dc page.sql.gz >/dev/null
-real    0m7.199s
-user    0m7.020s
-sys     0m0.176s
-
-$time ./lzf -d  < page.sql.lzf > /dev/null
-real    0m2.398s
-user    0m2.224s
-sys     0m0.172s
-
--rw-rw-r-- 1 gmaxwell gmaxwell 193853815 Aug 29 10:59 page.sql.gz
--rw-rw-r-- 1 gmaxwell gmaxwell 243497298 Aug 29 10:47 page.sql.lzf
--rw-rw-r-- 1 gmaxwell gmaxwell 259986955 Jul 20 06:54 page.sql.lzo
--rw-rw-r-- 1 gmaxwell gmaxwell 204930904 Jul 20 06:54 page.sql.lzo-9
-
-(decompression of the differing lzo levels is the same speed)
-
-None of them really decompress fast enough to keep up with the disks
-in this system, lzf or lzo wouldn't be a big loss. (Bonnie scores:
-floodlamp,64G,,,246163,52,145536,35,,,365198,42,781.2,2,16,4540,69,+++++,+++,2454,31,4807,76,+++++,+++,2027,36)
+	...
