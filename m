@@ -1,49 +1,28 @@
 From: PFC <lists@peufeu.com>
 Subject: Re: Reiser4 und LZO compression
-Date: Tue, 29 Aug 2006 15:14:42 +0200
-Message-ID: <op.te1q2sfbcigqcu@apollo13>
-References: <20060827003426.GB5204@martell.zuzino.mipt.ru> <20060827010428.5c9d943b.akpm@osdl.org>
+Date: Tue, 29 Aug 2006 15:45:59 +0200
+Message-ID: <op.te1sixuycigqcu@apollo13>
+References: <20060827003426.GB5204@martell.zuzino.mipt.ru> <44F322A6.9020200@namesys.com> <20060828173721.GA11332@hello-penguin.com> <44F332D6.6040209@namesys.com> <1156801705.2969.6.camel@nigel.suspend2.net> <20060829045937.GA9181@localhost.hsdv.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29731-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29732-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060827010428.5c9d943b.akpm@osdl.org>
+In-Reply-To: <20060829045937.GA9181@localhost.hsdv.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; format="flowed"; delsp="yes"; charset="us-ascii"
-To: Andrew Morton <akpm@osdl.org>, Alexey Dobriyan <adobriyan@gmail.com>
-Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
+To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
 
+	I made a little benchmark on my own PC (Athlon64 3200+ in 64 bit gentoo)
 
-	Would it be, by any chance, possible to tweak the thing so that reiserfs  
-plugins become kernel modules, so that the reiserfs core can be put in the  
-kernel without the plugins slowing down its acceptance ?
+http://peufeu.free.fr/compression.html
 
-	(and updating plugins without rebooting would be a nice extra)
+	So, gzip could be used on PCs having very fast processors and very slow  
+harddrives, like Core Duo laptops.
+	However, lzo compresses nearly as much and is still a lot faster. I don't  
+see a reason for gzip in a FS application.
 
->> The patch below is so-called reiser4 LZO compression plugin as extracted
->> from 2.6.18-rc4-mm3.
->>
->> I think it is an unauditable piece of shit and thus should not enter
->> mainline.
->
-> Like lib/inflate.c (and this new code should arguably be in lib/).
->
-> The problem is that if we clean this up, we've diverged very much from  
-> the
-> upstream implementation.  So taking in fixes and features from upstream
-> becomes harder and more error-prone.
->
-> I'd suspect that the maturity of these utilities is such that we could
-> afford to turn them into kernel code in the expectation that any future
-> changes will be small.  But it's not a completely simple call.
->
-> (iirc the inflate code had a buffer overrun a while back, which was found
-> and fixed in the upstream version).
->
->
-
-
+	Anyone has a bench for lzf ?
