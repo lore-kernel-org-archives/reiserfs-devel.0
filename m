@@ -1,58 +1,70 @@
 From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiser4 und LZO compression
-Date: Tue, 29 Aug 2006 10:56:59 -0700
-Message-ID: <44F47FEB.9060005@namesys.com>
-References: <20060827003426.GB5204@martell.zuzino.mipt.ru> <44F322A6.9020200@namesys.com> <20060828173721.GA11332@hello-penguin.com> <44F332D6.6040209@namesys.com> <1156801705.2969.6.camel@nigel.suspend2.net> <20060829045937.GA9181@localhost.hsdv.com> <op.te1sixuycigqcu@apollo13> <20060829143814.GA21868@hello-penguin.com> <op.te1yjbp7cigqcu@apollo13>
+Subject: Re: mutt tells me: "Fetching message... Bus error"
+Date: Tue, 29 Aug 2006 11:12:01 -0700
+Message-ID: <44F48371.7080606@namesys.com>
+References: <20060829093756.GA9135@jolie.SPINNEN-NET>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29738-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29739-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <op.te1yjbp7cigqcu@apollo13>
+In-Reply-To: <20060829093756.GA9135@jolie.SPINNEN-NET>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: PFC <lists@peufeu.com>
-Cc: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+To: Posern <foo@posern.org>
+Cc: reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>
 
-PFC, thanks for giving us some real data.  May I post it to the lkml thread?
-
-In essence, LZO wins the benchmarks, and the code is hard to read.  I
-guess I have to go with LZO, and encourage people to take a stab at
-dethroning it.
+Thanks.  Did you run an older version of reiser4 before this?  If yes,
+then this may have been fixed but only showed up for you now.  Zam?
 
 Hans
 
-PFC wrote:
+Posern wrote:
+> Hi.
 >
->     I have made a little openoffice spreadsheet with the results.
->     You can have fun entering stuff and seeing the results.
+> I don't know if this can help you to improve reiser4:
 >
-> http://peufeu.free.fr/compression.ods
+> On a:
+> Linux jolie 2.6.17.8-reiser4-r3-jolie #1 Tue Aug 15 00:14:45 CEST 2006 i686 Intel(R) Pentium(R) 4 CPU 2.53GHz GNU/Linux
 >
->     Basically, a laptop having the same processor as my PC and a
-> crummy 15 MB/s drive (like most laptop drives) will get a 2.5x speedup
-> using lzf, while using 40% CPU for compression and 15% CPU for
-> decompression. I'd say it's a clear, huuuuge win.
+> I was opening a maildir-email-file in mutt via IMAP-SSL running on the same machine. The home and root partition on this machine are reiser4.
 >
->     A desktop computer with a modern IDE drive doing 50 MB/s will
-> still get nice speedups (1.8x on write, 2.5x on read) but of course,
-> more CPU will be used because of the higher throughput. In this case
-> it is CPU limited on compression and disk limited on decompression.
-> However soon everyone will have dual core monsters so...
+> Mutt did NOT open the Email, but told me: "Fetching message... Bus error" in the status line.
 >
->     A big ass RAID will not get much benefit unless :
->     - the buffer cache stores compressed pages, so compression
-> virtually doubles the RAM cache
->     - or the CPU is really fast
->     - or you put one of these neat FPGA modules in a free Opteron
-> socket and upload a soft-hardware LZF in it with a few gigabytes/s
-> throughput
-Or you look the sysadmin in the eyes, and say, your file servers have
-more out of disk space problems than load problems, yes?
+> The kernel-log from this time told me:
+> Aug 29 09:55:26 [kernel] [17183751.088000] reiser4[mutt(8457)]: present_lw_sd (fs/reiser4/plugin/item/static_stat.c:277)[]:
+> Aug 29 09:55:26 [kernel] [17183751.088000] WARNING: partially converted file is encountered
+> Aug 29 09:55:26 [imapd-ssl] Unexpected SSL connection shutdown.
+> Aug 29 09:55:26 [imapd-ssl] DISCONNECTED, user=me, ip=[::ffff:127.0.0.1], headers=16823, body=254592, time=3339, starttls=1
+> Aug 29 09:55:26 [kernel] [17183751.132000] reiser4[mutt(8457)]: extent2tail (fs/reiser4/plugin/file/tail_conversion.c:714)[nikita-2282]:
+> Aug 29 09:55:26 [kernel] [17183751.132000] WARNING: Partial conversion of 2413985: 2 of 3: -22
+> Aug 29 09:55:26 [kernel] [17183751.132000] reiser4[mutt(8457)]: release_unix_file (fs/reiser4/plugin/file/file.c:2268)[nikita-3233]:
+> Aug 29 09:55:26 [kernel] [17183751.132000] WARNING: Failed (-22) to convert in release_unix_file (2413985)
+> Aug 29 09:55:29 [imapd-ssl] Connection, ip=[::ffff:127.0.0.1]
+> Aug 29 09:55:30 [mutt] unable to dlopen /usr/lib/sasl2/libsql.so: /usr/lib/sasl2/libsql.so: cannot open shared object file: No such file or directory
+> Aug 29 09:55:30 [imapd-ssl] LOGIN, user=me, ip=[::ffff:127.0.0.1], protocol=IMAP
+> Aug 29 09:55:34 [kernel] [17183758.976000] reiser4[mutt(9207)]: extent2tail (fs/reiser4/plugin/file/tail_conversion.c:714)[nikita-2282]:
+> Aug 29 09:55:34 [kernel] [17183758.976000] WARNING: Partial conversion of 2413985: 2 of 3: -22
+> Aug 29 09:55:34 [kernel] [17183758.976000] reiser4[mutt(9207)]: release_unix_file (fs/reiser4/plugin/file/file.c:2268)[nikita-3233]:
+> Aug 29 09:55:34 [kernel] [17183758.976000] WARNING: Failed (-22) to convert in release_unix_file (2413985)
+> Aug 29 09:55:34 [imapd-ssl] Unexpected SSL connection shutdown.
+> Aug 29 09:55:34 [imapd-ssl] DISCONNECTED, user=me, ip=[::ffff:127.0.0.1], headers=15902, body=3979, time=4, starttls=1
+> Aug 29 09:58:59 [imapd-ssl] Connection, ip=[::ffff:10.10.10.28]
+> Aug 29 09:58:59 [imapd-ssl] LOGIN, user=me, ip=[::ffff:10.10.10.28], protocol=IMAP
+> ================================================================================================
 >
->     ...
+> Even though with thunderbird via IMAP-SSL from another computer I could open this message!
 >
+> After I booted with the www.sysresccd.org v0.2.19 and did a fsck.reiser4 on this partition. It said I should run "fsck.reiser4 --build-fs".
+> Unfortunatly I don't have the output of this call (next time :-).
 >
+> Then I booted into my gentoo linux again ... and now the mail opens in mutt without error message.
+>
+> Greetings,
+>
+> K. Posern
+>
+>   
 
