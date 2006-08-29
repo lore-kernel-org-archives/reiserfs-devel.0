@@ -1,36 +1,108 @@
-From: Paul Mundt <lethal@linux-sh.org>
+From: Nigel Cunningham <ncunningham@linuxmail.org>
 Subject: Re: Reiser4 und LZO compression
-Date: Tue, 29 Aug 2006 13:59:37 +0900
-Message-ID: <20060829045937.GA9181@localhost.hsdv.com>
-References: <20060827003426.GB5204@martell.zuzino.mipt.ru> <44F322A6.9020200@namesys.com> <20060828173721.GA11332@hello-penguin.com> <44F332D6.6040209@namesys.com> <1156801705.2969.6.camel@nigel.suspend2.net>
+Date: Tue, 29 Aug 2006 15:41:42 +1000
+Message-ID: <1156830102.3790.15.camel@nigel.suspend2.net>
+References: <20060827003426.GB5204@martell.zuzino.mipt.ru>
+	 <44F322A6.9020200@namesys.com> <20060828173721.GA11332@hello-penguin.com>
+	 <44F332D6.6040209@namesys.com> <1156801705.2969.6.camel@nigel.suspend2.net>
+	 <Pine.LNX.4.61.0608290603330.8045@yvahk01.tjqt.qr>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-29719-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <1156801705.2969.6.camel@nigel.suspend2.net>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751180AbWH2FmM@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.61.0608290603330.8045@yvahk01.tjqt.qr>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Nigel Cunningham <ncunningham@linuxmail.org>
-Cc: Edward Shishkin <edward@namesys.com>, Stefan Traby <stefan@hello-penguin.com>, Hans Reiser <reiser@namesys.com>, Alexey Dobriyan <adobriyan@gmail.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, Andrew Morton <akpm@osdl.org>, nitingupta.mail@gmail.com
+To: Jan Engelhardt <jengelh@linux01.gwdg.de>
+Cc: Edward Shishkin <edward@namesys.com>, Stefan Traby <stefan@hello-penguin.com>, Hans Reiser <reiser@namesys.com>, Alexey Dobriyan <adobriyan@gmail.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, Andrew Morton <akpm@osdl.org>
 
-On Tue, Aug 29, 2006 at 07:48:25AM +1000, Nigel Cunningham wrote:
-> For Suspend2, we ended up converting the LZF support to a cryptoapi
-> plugin. Is there any chance that you could use cryptoapi modules? We
-> could then have a hope of sharing the support.
+Hi.
+
+On Tue, 2006-08-29 at 06:05 +0200, Jan Engelhardt wrote:
+> >> >>Hmm.  LZO is the best compression algorithm for the task as measured by
+> >> >>the objectives of good compression effectiveness while still having very
+> >> >>low CPU usage (the best of those written and GPL'd, there is a slightly
+> >> >>better one which is proprietary and uses more CPU, LZRW if I remember
+> >> >>right.  The gzip code base uses too much CPU, though I think Edward made
+> >> > 
+> >> > I don't think that LZO beats LZF in both speed and compression ratio.
+> >> > 
+> >> > LZF is also available under GPL (dual-licensed BSD) and was choosen in favor
+> >> > of LZO for the next generation suspend-to-disk code of the Linux kernel.
+> >> > 
+> >> > see: http://www.goof.com/pcg/marc/liblzf.html
+> >> 
+> >> thanks for the info, we will compare them
+> >
+> >For Suspend2, we ended up converting the LZF support to a cryptoapi
+> >plugin. Is there any chance that you could use cryptoapi modules? We
+> >could then have a hope of sharing the support.
 > 
-Using cryptoapi plugins for the compression methods is an interesting
-approach, there's a few other places in the kernel that could probably
-benefit from this as well, such as jffs2 (which at the moment rolls its
-own compression subsystem), and the out-of-tree page and swap cache
-compression work.
+> I am throwing in gzip: would it be meaningful to use that instead? The 
+> decoder (inflate.c) is already there.
+> 
+> 06:04 shanghai:~/liblzf-1.6 > l configure*
+> -rwxr-xr-x  1 jengelh users 154894 Mar  3  2005 configure
+> -rwxr-xr-x  1 jengelh users  26810 Mar  3  2005 configure.bz2
+> -rw-r--r--  1 jengelh users  30611 Aug 28 20:32 configure.gz-z9
+> -rw-r--r--  1 jengelh users  30693 Aug 28 20:32 configure.gz-z6
+> -rw-r--r--  1 jengelh users  53077 Aug 28 20:32 configure.lzf
 
-Assuming you were wrapping in to LZF directly prior to the cryptoapi
-integration, do you happen to have before and after numbers to determine
-how heavyweight the rest of the cryptoapi overhead is? It would be
-interesting to profile this and consider migrating the in-tree users,
-rather than duplicating the compress/decompress routines all over the
-place.
+We used gzip when we first implemented compression support, and found it
+to be far too slow. Even with the fastest compression options, we were
+only getting a few megabytes per second. Perhaps I did something wrong
+in configuring it, but there's not that many things to get wrong!
+
+In contrast, with LZF, we get very high throughput. My current laptop is
+an 1.8MHz Turion with a 7200 RPM (PATA) drive. Without LZF compression,
+my throughput in writing an image is the maximum the drive & interface
+can manage - 38MB/s. With LZF, I get roughly that divided by compression
+ratio achieved, so if the compression ratio is ~50%, as it generally is,
+I'm reading and writing the image at 75-80MB/s. During this time, all
+the computer is doing is compressing pages using LZF and submitting
+bios, with the odd message being send to the userspace interface app via
+netlink. I realise this is very different to the workload you'll be
+doing, but hopefully the numbers are somewhat useful:
+
+nigel@nigel:~$ cat /sys/power/suspend2/debug_info
+Suspend2 debugging info:
+- SUSPEND core   : 2.2.7.4
+- Kernel Version : 2.6.18-rc4
+- Compiler vers. : 4.1
+- Attempt number : 1
+- Parameters     : 0 32785 0 0 0 0
+- Overall expected compression percentage: 0.
+- Compressor is 'lzf'.
+  Compressed 820006912 bytes into 430426371 (47 percent compression).
+- Swapwriter active.
+  Swap available for image: 487964 pages.
+- Filewriter inactive.
+- I/O speed: Write 74 MB/s, Read 70 MB/s.
+- Extra pages    : 1913 used/2100.
+nigel@nigel:~$
+
+(Modify hibernate.conf to disable compression, suspend again...)
+
+nigel@nigel:~$ cat /sys/power/suspend2/debug_info
+Suspend2 debugging info:
+- SUSPEND core   : 2.2.7.4
+- Kernel Version : 2.6.18-rc4
+- Compiler vers. : 4.1
+- Attempt number : 2
+- Parameters     : 0 32785 0 0 0 0
+- Overall expected compression percentage: 0.
+- Swapwriter active.
+  Swap available for image: 487964 pages.
+- Filewriter inactive.
+- I/O speed: Write 38 MB/s, Read 39 MB/s.
+- Extra pages    : 1907 used/2100.
+nigel@nigel:~$
+
+Oh, I also have a debugging mode where I can get Suspend2 to just
+compress the pages but not actually write anything. If I do that, it
+says it can do 80MB/s on my kernel image, so the disk is still the
+bottleneck, it seems.
+
+Hope this all helps (and isn't information overload!)
+
+Nigel
