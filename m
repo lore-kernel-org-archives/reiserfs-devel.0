@@ -1,46 +1,54 @@
-From: Nigel Cunningham <ncunningham@linuxmail.org>
-Subject: Re: Reiser4 und LZO compression
-Date: Tue, 29 Aug 2006 15:47:15 +1000
-Message-ID: <1156830435.3790.21.camel@nigel.suspend2.net>
-References: <20060827003426.GB5204@martell.zuzino.mipt.ru>
-	 <44F322A6.9020200@namesys.com> <20060828173721.GA11332@hello-penguin.com>
-	 <44F332D6.6040209@namesys.com> <1156801705.2969.6.camel@nigel.suspend2.net>
-	 <20060829045937.GA9181@localhost.hsdv.com>
+From: Alexander Zarochentsev <zam@namesys.com>
+Subject: Re: Is as_ops.c releasepage patch still needed?
+Date: Tue, 29 Aug 2006 10:01:53 +0400
+Message-ID: <200608291001.53573.zam@namesys.com>
+References: <1156186198.10806.5.camel@localhost>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751115AbWH2Frm@vger.kernel.org>
-In-Reply-To: <20060829045937.GA9181@localhost.hsdv.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-29722-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <1156186198.10806.5.camel@localhost>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Paul Mundt <lethal@linux-sh.org>
-Cc: Edward Shishkin <edward@namesys.com>, Stefan Traby <stefan@hello-penguin.com>, Hans Reiser <reiser@namesys.com>, Alexey Dobriyan <adobriyan@gmail.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, Andrew Morton <akpm@osdl.org>, nitingupta.mail@gmail.com
+To: reiserfs-list@namesys.com
+Cc: Jonathan Briggs <jbriggs@esoft.com>
 
-Hi.
+Hi,
 
-On Tue, 2006-08-29 at 13:59 +0900, Paul Mundt wrote:
-> On Tue, Aug 29, 2006 at 07:48:25AM +1000, Nigel Cunningham wrote:
-> > For Suspend2, we ended up converting the LZF support to a cryptoapi
-> > plugin. Is there any chance that you could use cryptoapi modules? We
-> > could then have a hope of sharing the support.
-> > 
-> Using cryptoapi plugins for the compression methods is an interesting
-> approach, there's a few other places in the kernel that could probably
-> benefit from this as well, such as jffs2 (which at the moment rolls its
-> own compression subsystem), and the out-of-tree page and swap cache
-> compression work.
-> 
-> Assuming you were wrapping in to LZF directly prior to the cryptoapi
-> integration, do you happen to have before and after numbers to determine
-> how heavyweight the rest of the cryptoapi overhead is? It would be
-> interesting to profile this and consider migrating the in-tree users,
-> rather than duplicating the compress/decompress routines all over the
-> place.
+On 21 August 2006 22:49, Jonathan Briggs wrote:
+> The following patch was posted to the Reiser4 list August 3 by zam. 
+> Is it still needed?  It solved many problems for me, making my
+> systems able to actually complete full Beagle indexing.
 
-I was, but I don't have numbers right now. I'm about to go out, but will
-see if I can find them when I get back later. From memory, it wasn't a
-huge change in terms of lines of code.
+the patch submitted already and will be included into the next -mm 
+kernel (after 2.6.18-rc4-mm3).
 
-Regards,
+>
+> But I have not seen this patch show up in the last two mm kernel
+> releases.  Did something else fix it or is this patch still needed?
+>
+>
+> Index: linux-2.6-git/fs/reiser4/as_ops.c
+> ===================================================================
+> --- linux-2.6-git.orig/fs/reiser4/as_ops.c
+> +++ linux-2.6-git/fs/reiser4/as_ops.c
+> @@ -350,6 +350,11 @@ int reiser4_releasepage(struct page *pag
+>         if (PageDirty(page))
+>                 return 0;
+>
+> +       /* extra page reference is used by reiser4 to protect
+> +        * jnode<->page link from this ->releasepage(). */
+> +       if (page_count(page) > 3)
+> +               return 0;
+> +
+>         /* releasable() needs jnode lock, because it looks at the
+> jnode fields * and we need jload_lock here to avoid races with
+> jload(). */ spin_lock_jnode(node);
 
-Nigel
+-- 
+Alex.
+
