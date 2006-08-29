@@ -1,70 +1,73 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: mutt tells me: "Fetching message... Bus error"
-Date: Tue, 29 Aug 2006 11:12:01 -0700
-Message-ID: <44F48371.7080606@namesys.com>
-References: <20060829093756.GA9135@jolie.SPINNEN-NET>
+From: David Masover <ninja@slaphack.com>
+Subject: Re: Reiser4 und LZO compression
+Date: Tue, 29 Aug 2006 13:31:40 -0500
+Message-ID: <44F4880C.3050507@slaphack.com>
+References: <20060827003426.GB5204@martell.zuzino.mipt.ru> <44F322A6.9020200@namesys.com> <20060828173721.GA11332@hello-penguin.com> <44F332D6.6040209@namesys.com> <1156801705.2969.6.camel@nigel.suspend2.net> <20060829045937.GA9181@localhost.hsdv.com> <op.te1sixuycigqcu@apollo13> <20060829143814.GA21868@hello-penguin.com> <op.te1yjbp7cigqcu@apollo13> <44F47FEB.9060005@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29739-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29740-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20060829093756.GA9135@jolie.SPINNEN-NET>
+In-Reply-To: <44F47FEB.9060005@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Posern <foo@posern.org>
-Cc: reiserfs-list@namesys.com, Alexander Zarochentcev <zam@namesys.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Hans Reiser <reiser@namesys.com>
+Cc: PFC <lists@peufeu.com>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-Thanks.  Did you run an older version of reiser4 before this?  If yes,
-then this may have been fixed but only showed up for you now.  Zam?
+Hans Reiser wrote:
 
-Hans
+> PFC wrote:
 
-Posern wrote:
-> Hi.
->
-> I don't know if this can help you to improve reiser4:
->
-> On a:
-> Linux jolie 2.6.17.8-reiser4-r3-jolie #1 Tue Aug 15 00:14:45 CEST 2006 i686 Intel(R) Pentium(R) 4 CPU 2.53GHz GNU/Linux
->
-> I was opening a maildir-email-file in mutt via IMAP-SSL running on the same machine. The home and root partition on this machine are reiser4.
->
-> Mutt did NOT open the Email, but told me: "Fetching message... Bus error" in the status line.
->
-> The kernel-log from this time told me:
-> Aug 29 09:55:26 [kernel] [17183751.088000] reiser4[mutt(8457)]: present_lw_sd (fs/reiser4/plugin/item/static_stat.c:277)[]:
-> Aug 29 09:55:26 [kernel] [17183751.088000] WARNING: partially converted file is encountered
-> Aug 29 09:55:26 [imapd-ssl] Unexpected SSL connection shutdown.
-> Aug 29 09:55:26 [imapd-ssl] DISCONNECTED, user=me, ip=[::ffff:127.0.0.1], headers=16823, body=254592, time=3339, starttls=1
-> Aug 29 09:55:26 [kernel] [17183751.132000] reiser4[mutt(8457)]: extent2tail (fs/reiser4/plugin/file/tail_conversion.c:714)[nikita-2282]:
-> Aug 29 09:55:26 [kernel] [17183751.132000] WARNING: Partial conversion of 2413985: 2 of 3: -22
-> Aug 29 09:55:26 [kernel] [17183751.132000] reiser4[mutt(8457)]: release_unix_file (fs/reiser4/plugin/file/file.c:2268)[nikita-3233]:
-> Aug 29 09:55:26 [kernel] [17183751.132000] WARNING: Failed (-22) to convert in release_unix_file (2413985)
-> Aug 29 09:55:29 [imapd-ssl] Connection, ip=[::ffff:127.0.0.1]
-> Aug 29 09:55:30 [mutt] unable to dlopen /usr/lib/sasl2/libsql.so: /usr/lib/sasl2/libsql.so: cannot open shared object file: No such file or directory
-> Aug 29 09:55:30 [imapd-ssl] LOGIN, user=me, ip=[::ffff:127.0.0.1], protocol=IMAP
-> Aug 29 09:55:34 [kernel] [17183758.976000] reiser4[mutt(9207)]: extent2tail (fs/reiser4/plugin/file/tail_conversion.c:714)[nikita-2282]:
-> Aug 29 09:55:34 [kernel] [17183758.976000] WARNING: Partial conversion of 2413985: 2 of 3: -22
-> Aug 29 09:55:34 [kernel] [17183758.976000] reiser4[mutt(9207)]: release_unix_file (fs/reiser4/plugin/file/file.c:2268)[nikita-3233]:
-> Aug 29 09:55:34 [kernel] [17183758.976000] WARNING: Failed (-22) to convert in release_unix_file (2413985)
-> Aug 29 09:55:34 [imapd-ssl] Unexpected SSL connection shutdown.
-> Aug 29 09:55:34 [imapd-ssl] DISCONNECTED, user=me, ip=[::ffff:127.0.0.1], headers=15902, body=3979, time=4, starttls=1
-> Aug 29 09:58:59 [imapd-ssl] Connection, ip=[::ffff:10.10.10.28]
-> Aug 29 09:58:59 [imapd-ssl] LOGIN, user=me, ip=[::ffff:10.10.10.28], protocol=IMAP
-> ================================================================================================
->
-> Even though with thunderbird via IMAP-SSL from another computer I could open this message!
->
-> After I booted with the www.sysresccd.org v0.2.19 and did a fsck.reiser4 on this partition. It said I should run "fsck.reiser4 --build-fs".
-> Unfortunatly I don't have the output of this call (next time :-).
->
-> Then I booted into my gentoo linux again ... and now the mail opens in mutt without error message.
->
-> Greetings,
->
-> K. Posern
->
->   
+>>     A big ass RAID will not get much benefit unless :
+>>     - the buffer cache stores compressed pages, so compression
+>> virtually doubles the RAM cache
+>>     - or the CPU is really fast
+>>     - or you put one of these neat FPGA modules in a free Opteron
+>> socket and upload a soft-hardware LZF in it with a few gigabytes/s
+>> throughput
+> Or you look the sysadmin in the eyes, and say, your file servers have
+> more out of disk space problems than load problems, yes?
 
+I'd look at the IO-Wait number, also.
+
+Compression makes sense if:
+   - You spend a lot of time waiting for the disk.
+   - You need disk space, and either:
+      - You already have enough spare CPU to do compression
+      - It's cheaper to buy enough CPU than to buy the space compression 
+would save you.
+
+Conversely, compression does NOT make sense if:
+   - You spend a lot of time with the CPU busy and the disk idle.
+   - You have more than enough disk space.
+   - Disk space is cheaper than buying enough CPU to handle compression.
+   - You've tried compression, and the CPU requirements slowed you more 
+than you saved in disk access.
+
+After a certain amount of RAID -- really, after the second or third disk 
+in a mirrored array, or the third or fourth disk in RAID 5 -- at that 
+point, I don't think adding more disks is really doing a huge amount to 
+increase reliability, which means you're either trying to increase speed 
+or space.  You can increase both of these by using compression, if you 
+have the spare CPU, so the question becomes:  Does the CPU power 
+necessary to do the compression cost more or less than another drive?
+
+Especially in a big-ass RAID, you'll also want to be thinking about heat 
+and power consumption, too.
+
+There are still cases where compression loses, but they seem 
+pathological enough that you'd want to benchmark to see if they really 
+apply to you.  For instance, if you're dealing with lots of quick, 
+read-only access to very tiny amounts of data, compression will likely 
+slow you down, whereas adding another disk can speed you up.  If your 
+data isn't very compressible, then you're just burning cycles for no 
+point.  And, of course, the price/performance ratio (CPUs) and price/gig 
+ratio (disk space) changes all the time.
+
+And all of this is ignoring the very real possibility of a dedicated 
+hardware compressor -- at which point, we could afford pretty much any 
+algorithm you like, as long as the hardware can do it quickly enough. 
+This is an advantage to using cryptoapi for the cryptocompress plugin, 
+by the way -- it's one place where we could call out to the hardware later.
