@@ -1,31 +1,89 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Reiser4 und LZO compression
-Date: Tue, 29 Aug 2006 17:42:17 -0500
-Message-ID: <44F4C2C9.3070101@slaphack.com>
-References: <20060827003426.GB5204@martell.zuzino.mipt.ru>	 <20060828173721.GA11332@hello-penguin.com>	 <44F332D6.6040209@namesys.com>	 <1156801705.2969.6.camel@nigel.suspend2.net>	 <20060829045937.GA9181@localhost.hsdv.com>	 <op.te1sixuycigqcu@apollo13>	 <20060829143814.GA21868@hello-penguin.com>	 <op.te1yjbp7cigqcu@apollo13> <44F47FEB.9060005@namesys.com>	 <44F4880C.3050507@slaphack.com> <e692861c0608291136j6ae2293cha230575acf6c031d@mail.gmail.com> <44F4914A.1010005@slaphack.com> <44F4979E.9020101@namesys.com> <44F49D7F.3010403@slaphack.com> <0954BE4F-E3A4-4A59-B275-10C1D8DB5101@smartgames.ca>
+From: Alexander Zarochentsev <zam@namesys.com>
+Subject: Re: [patch] Re: assertion failed: can_hit_entd(ctx, s)
+Date: Wed, 30 Aug 2006 10:45:39 +0400
+Message-ID: <200608301045.39978.zam@namesys.com>
+References: <200608211759.04151.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608252242.36985.zam@namesys.com> <200608291710.06096.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29750-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29751-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <0954BE4F-E3A4-4A59-B275-10C1D8DB5101@smartgames.ca>
+In-Reply-To: <200608291710.06096.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Toby Thain <toby@smartgames.ca>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: andrew.j.wade@gmail.com
+Cc: reiserfs-list@namesys.com
 
-Toby Thain wrote:
+Hello,
 
-> Gamer systems, whether from coder's or player's p.o.v., would appear 
-> fairly irrelevant to reiserfs and this list. I'd trust Carmack's eye 
-> candy credentials but doubt he has much to say about filesystems or 
-> server threading...
+On 30 August 2006 01:10, Andrew James Wade wrote:
+> Hello Alexander,
+>
+> In addition to your patch, I've also applied the patch below. With
+> these two patches the fs is much more stable for me.
 
-Maybe, but Reiser4 is supposed to be a general purpose filesystem, so 
-talking about its advantages/disadvantages wrt. gaming makes sense, 
-especially considering gamers are the most likely to tune their desktop 
-for perfomance.
+That code was removed from reiser4 recently, the patch will be in the 
+next -mm kernel.
 
-That was a bit much, though.  I apologize.
+I knew there was a bug somewhere :) 
+
+>
+> However, something is holding a d_ref across the calls to
+> reiser4_writepage. It's not clear to me that this is allowed so my
+> patch may not be a full fix.
+>
+> Andrew Wade
+>
+> signed-off-by: <andrew.j.wade@gmail.com>
+>
+> diff -rupN a/fs/reiser4/plugin/item/extent_file_ops.c
+> b/fs/reiser4/plugin/item/extent_file_ops.c ---
+> a/fs/reiser4/plugin/item/extent_file_ops.c	2006-08-28
+> 11:30:33.000000000 -0400 +++
+> b/fs/reiser4/plugin/item/extent_file_ops.c	2006-08-29
+> 13:06:20.000000000 -0400 @@ -1320,20 +1320,22 @@ static int
+> extent_readpage_filler(void * TWIG_LEVEL, CBK_UNIQUE, NULL);
+>  		if (result != CBK_COORD_FOUND) {
+>  			reiser4_unset_hint(hint);
+> -			return result;
+> +			goto out;
+>  		}
+>  		ext_coord->valid = 0;
+>  	}
+>
+>  	if (zload(ext_coord->coord.node)) {
+>  		reiser4_unset_hint(hint);
+> -		return RETERR(-EIO);
+> +		result = RETERR(-EIO);
+> +		goto out;
+>  	}
+>  	if (!item_is_extent(&ext_coord->coord)) {
+>  		/* tail conversion is running in parallel */
+>  		zrelse(ext_coord->coord.node);
+>  		reiser4_unset_hint(hint);
+> -		return RETERR(-EIO);
+> +		result = RETERR(-EIO);
+> +		goto out;
+>  	}
+>
+>  	if (ext_coord->valid == 0)
+> @@ -1358,6 +1360,10 @@ static int extent_readpage_filler(void *
+>  	} else
+>  		reiser4_unset_hint(hint);
+>  	zrelse(ext_coord->coord.node);
+> +
+> +out:
+> +	/* Calls to this function may be intermingled with VM writeback. */
+> +	reiser4_txn_restart_current();
+>  	return result;
+>  }
+>
+>
+> !DSPAM:44f4ad37293861987214747!
+
+Thanks,
+Alex.
+
