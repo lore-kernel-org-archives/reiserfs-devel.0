@@ -1,30 +1,32 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: Reiser4 und LZO compression
-Date: Wed, 30 Aug 2006 09:55:47 -0700
-Message-ID: <44F5C313.40905@namesys.com>
-References: <20060827003426.GB5204@martell.zuzino.mipt.ru> <20060828173721.GA11332@hello-penguin.com> <44F332D6.6040209@namesys.com> <1156801705.2969.6.camel@nigel.suspend2.net> <20060829045937.GA9181@localhost.hsdv.com> <op.te1sixuycigqcu@apollo13> <20060829143814.GA21868@hello-penguin.com> <op.te1yjbp7cigqcu@apollo13> <44F47FEB.9060005@namesys.com> <44F4880C.3050507@slaphack.com> <e692861c0608291136j6ae2293cha230575acf6c031d@mail.gmail.com> <44F4914A.1010005@slaphack.com> <44F4979E.9020101@namesys.com> <44F49D7F.3010403@slaphack.com> <0954BE4F-E3A4-4A59-B275-10C1D8DB5101@smartgames.ca> <44F4C2C9.3070101@slaphack.com> <op.te3aq1uwcigqcu@apollo13> <44F5C1D7.5060904@namesys.com>
+From: Andrew James Wade <andrew.j.wade@gmail.com>
+Subject: Re: assertion failed: JF_ISSET(jprivate(page), JNODE_DIRTY)
+Date: Wed, 30 Aug 2006 17:29:17 -0400
+Message-ID: <200608301729.18303.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+References: <200608211759.04151.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608291738.21648.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608301426.12602.zam@namesys.com>
+Reply-To: andrew.j.wade@gmail.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29759-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29760-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44F5C1D7.5060904@namesys.com>
+In-Reply-To: <200608301426.12602.zam@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward@namesys.com>
-Cc: PFC <lists@peufeu.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list@namesys.com
+Cc: Alexander Zarochentsev <zam@namesys.com>, andrew.j.wade@gmail.com
 
-Edward Shishkin wrote:
->
-> (Plain) file is considered as a set of logical clusters (64K by
-> default). Minimal unit occupied in memory by (plain) file is one
-> page. Compressed logical cluster is stored on disk in so-called
-> "disk clusters". Disk cluster is a set of special items (aka "ctails",
-> or "compressed bodies"), so that one block can contain (compressed)
-> data of many files and everything is packed tightly on disk.
->
->
->
-So the compression unit is 64k for purposes of your benchmarks.
+On Wednesday 30 August 2006 06:26, Alexander Zarochentsev wrote:
+> On 30 August 2006 01:38, Andrew James Wade wrote:
+> > I now have a stack trace for this assertion:
+> 
+> there  is a race between znode_make_dirty and flushing dirty node to 
+> disk.  I guess (but not sure by 100%) it has no bad effect so the 
+> assertion is wrong.
+> 
+Okay, I'll change that to a WARN_ON in my tree and see what falls out.
+
+Thanks,
+Andrew Wade
