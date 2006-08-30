@@ -1,32 +1,47 @@
-From: Andrew James Wade <andrew.j.wade@gmail.com>
-Subject: Re: assertion failed: JF_ISSET(jprivate(page), JNODE_DIRTY)
-Date: Wed, 30 Aug 2006 17:29:17 -0400
-Message-ID: <200608301729.18303.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
-References: <200608211759.04151.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608291738.21648.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608301426.12602.zam@namesys.com>
-Reply-To: andrew.j.wade@gmail.com
+From: =?ISO-8859-1?Q?Xu=E2n_Baldauf?=
+ <xuan--2006.08.31--reiserfs-list--namesys.com@baldauf.org>
+Subject: bug: Unable to mount reiserfs from DVD+R
+Date: Thu, 31 Aug 2006 01:33:57 +0200
+Message-ID: <44F62065.5020500@baldauf.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29760-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-29761-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200608301426.12602.zam@namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 To: reiserfs-list@namesys.com
-Cc: Alexander Zarochentsev <zam@namesys.com>, andrew.j.wade@gmail.com
 
-On Wednesday 30 August 2006 06:26, Alexander Zarochentsev wrote:
-> On 30 August 2006 01:38, Andrew James Wade wrote:
-> > I now have a stack trace for this assertion:
-> 
-> there  is a race between znode_make_dirty and flushing dirty node to 
-> disk.  I guess (but not sure by 100%) it has no bad effect so the 
-> assertion is wrong.
-> 
-Okay, I'll change that to a WARN_ON in my tree and see what falls out.
+Hello,
 
-Thanks,
-Andrew Wade
+I created backup DVDs formatted using reiserfs. However, mounting them
+is not possible. If I try to mount such a DVD, I get following results:
+
+Aug 31 01:08:18 notebook2 kernel: ReiserFS: hdc: using ordered data mode
+Aug 31 01:08:18 notebook2 kernel: ReiserFS: hdc: warning: sh-458:
+journal_init_dev: cannot init journal device 'unknown-block(22,0)': -30
+Aug 31 01:08:18 notebook2 kernel: ReiserFS: hdc: warning: sh-462: unable
+to initialize jornal device
+Aug 31 01:08:18 notebook2 kernel: ReiserFS: hdc: warning: sh-2022:
+reiserfs_fill_super: unable to initialize journal space
+
+I get this error even when mounting using "-o ro,nolog".
+
+I tracked this down to the method "journal_init_dev", which opens the
+journal device with mode "blkdev_mode =3D FMODE_READ | FMODE_WRITE;"
+except when the journal device is marked read only. However, as it
+seems, my DVD burner drive is able to write DVD media (so it is not a
+read-only-device, in general), but the particular DVD is only readable,
+not writable. That's why (I think) the journal device itself is not
+marked read only and yet "open_by_devnum(jdev, blkdev_mode);" fails.
+
+The method "journal_init_dev" should honor the mount options "ro" or
+"nolog" or both, which it currently does not (as of Linux 2.6.18-rc4).
+Alternatively, method "journal_init_dev" might try to open the journal
+device again (only using "read only" mode) in case the first try to open
+results in -EROFS.
+
+Xu=E2n Baldauf.
+
