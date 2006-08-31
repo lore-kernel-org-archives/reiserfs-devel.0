@@ -1,30 +1,54 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Reiser4 und LZO compression
-Date: Thu, 31 Aug 2006 14:22:17 -0500
-Message-ID: <44F736E9.1000101@slaphack.com>
-References: <20060827003426.GB5204@martell.zuzino.mipt.ru>	 <e692861c0608291136j6ae2293cha230575acf6c031d@mail.gmail.com>	 <44F4914A.1010005@slaphack.com> <44F4979E.9020101@namesys.com>	 <44F49D7F.3010403@slaphack.com>	 <0954BE4F-E3A4-4A59-B275-10C1D8DB5101@smartgames.ca>	 <44F4C2C9.3070101@slaphack.com> <op.te3aq1uwcigqcu@apollo13>	 <44F5C1D7.5060904@namesys.com> <44F5C313.40905@namesys.com> <194f62550608310232h3425638dx9876abb7f0f88422@mail.gmail.com>
+From: Hans Reiser <reiser@namesys.com>
+Subject: Re: bug: Unable to mount reiserfs from DVD+R
+Date: Thu, 31 Aug 2006 12:54:10 -0700
+Message-ID: <44F73E62.3030605@namesys.com>
+References: <44F62065.5020500@baldauf.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29769-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-29770-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <194f62550608310232h3425638dx9876abb7f0f88422@mail.gmail.com>
+In-Reply-To: <44F62065.5020500@baldauf.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Clemens Eisserer <linuxhippy@gmail.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-list@namesys.com
+Cc: Chris Mason <mason@suse.com>
 
-Clemens Eisserer wrote:
->> But speaking of single threadedness, more and more desktops are shipping
->> with ridiculously more power than people need.  Even a gamer really
-> Will the LZO compression code in reiser4 be able to use multi-processor 
-> systems?
-
-Good point, but it wasn't what I was talking about.  I was talking about 
-the compression happening on one CPU, meaning even if it takes most of 
-the CPU to saturate disk throughput, your other CPU is still 100% 
-available, meaning the typical desktop user won't notice their apps 
-running slower, they'll just notice disk access being faster.
-
+Xu=E2n Baldauf wrote:
+> Hello,
+>
+> I created backup DVDs formatted using reiserfs. However, mounting them
+> is not possible. If I try to mount such a DVD, I get following results:
+>
+> Aug 31 01:08:18 notebook2 kernel: ReiserFS: hdc: using ordered data mode
+> Aug 31 01:08:18 notebook2 kernel: ReiserFS: hdc: warning: sh-458:
+> journal_init_dev: cannot init journal device 'unknown-block(22,0)': -30
+> Aug 31 01:08:18 notebook2 kernel: ReiserFS: hdc: warning: sh-462: unable
+> to initialize jornal device
+> Aug 31 01:08:18 notebook2 kernel: ReiserFS: hdc: warning: sh-2022:
+> reiserfs_fill_super: unable to initialize journal space
+>
+> I get this error even when mounting using "-o ro,nolog".
+>
+> I tracked this down to the method "journal_init_dev", which opens the
+> journal device with mode "blkdev_mode =3D FMODE_READ | FMODE_WRITE;"
+> except when the journal device is marked read only. However, as it
+> seems, my DVD burner drive is able to write DVD media (so it is not a
+> read-only-device, in general), but the particular DVD is only readable,
+> not writable. That's why (I think) the journal device itself is not
+> marked read only and yet "open_by_devnum(jdev, blkdev_mode);" fails.
+>
+> The method "journal_init_dev" should honor the mount options "ro" or
+> "nolog" or both, which it currently does not (as of Linux 2.6.18-rc4).
+> Alternatively, method "journal_init_dev" might try to open the journal
+> device again (only using "read only" mode) in case the first try to open
+> results in -EROFS.
+>
+> Xu=E2n Baldauf.
+>
+>
+>
+>  =20
+Sounds reasonable to me, Chris?
