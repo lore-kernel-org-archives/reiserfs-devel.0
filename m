@@ -1,41 +1,40 @@
-From: Hans Reiser <reiser@namesys.com>
+From: "Peter" <sw98234-PkbjNfxxIARBDgjK7y7TUQ@public.gmane.org>
 Subject: Re: FEATURE Req: integrate badblocks check into fsck.reiser*
-Date: Fri, 01 Sep 2006 16:00:20 -0700
-Message-ID: <44F8BB84.80603@namesys.com>
-References: <ed9tqo$2tc$1@sea.gmane.org> <200609012250.44548.vs@namesys.com> <44F8B3C8.1050802@slaphack.com>
+Date: Fri, 1 Sep 2006 23:02:57 +0000 (UTC)
+Message-ID: <edae71$iqf$1@sea.gmane.org>
+References: <ed9tqo$2tc$1@sea.gmane.org> <200609012250.44548.vs@namesys.com>
+	<44F8B3C8.1050802@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29784-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <44F8B3C8.1050802@slaphack.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-29785-reiserfs=m.gmane.org-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
+list-help: <mailto:reiserfs-list-help-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
+list-post: <mailto:reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
+Errors-To: flx-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
+Sender: news <news-WnDAp88bSu3NLxjTenLetw@public.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>, ReiserFS List <reiserfs-list@namesys.com>
+To: reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
 
-David Masover wrote:
-> Vladimir V. Saveliev wrote:
->> Hello
->>
->> On Friday 01 September 2006 22:23, Peter wrote:
->>> Perhaps this has been mentioned before. If so, sorry. IMHO, it would be
->>> useful to integrate a call to badblocks in the fsck/mkfs.reiser*
->>> programs
->>> so that more thorough disk checking can be done at format time. Sort of
->>> like the option e2fsck -c. If this is added, the output could be fed
->>> immediately to the reiser format program and badblocks spared prior to
->>> filesystem use.
->>>
->>> JM$0.02
->>
+On Fri, 01 Sep 2006 17:27:20 -0500, David Masover wrote:
+snip...
 >> both mkfs.reiserfs and fsck.reiserfs have -B option to accept list of
 >> bad blocks. We thought that should be enough.
->
-> It really should.  Why bother with a patch?  Just write a wrapper
-> script that runs badblocks and passes in the list to mkfs.
->
->
-For average sysadmins, it would be nice to just add a flag and it
-happens.  I will take a patch, but I won't write it.;-)
+> 
+> It really should.  Why bother with a patch?  Just write a wrapper script
+> that runs badblocks and passes in the list to mkfs.
+
+It was just a thought from userland. My perspective was that a user, not a
+hard-boiled geek, might get lulled into a false sense of security but may
+not have the wherewithal to write a wrapper. If nothing else, when the
+final doc is written (did I say final?:)), it should include a notice
+about not running badblocks.
+
+-- 
+Peter
++++++
+Do not reply to this email, it is a spam trap and not monitored.
+I can be reached via this list, or via 
+jabber: pete4abw at jabber.org
+ICQ: 73676357
+
