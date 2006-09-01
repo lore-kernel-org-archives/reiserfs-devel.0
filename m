@@ -1,54 +1,309 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: bug: Unable to mount reiserfs from DVD+R
-Date: Thu, 31 Aug 2006 12:54:10 -0700
-Message-ID: <44F73E62.3030605@namesys.com>
-References: <44F62065.5020500@baldauf.org>
+From: Alex Efros <powerman-asdf@yandex.ru>
+Subject: Re: Need help retrieving data
+Date: Fri, 1 Sep 2006 03:30:29 -0700 (PDT)
+Message-ID: <6096245.post@talk.nabble.com>
+References: <44EDE55E.7030106@comcast.net> <44EE0F5F.1040009@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-29770-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29773-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44F62065.5020500@baldauf.org>
+In-Reply-To: <44EE0F5F.1040009@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
-Cc: Chris Mason <mason@suse.com>
 
-Xu=E2n Baldauf wrote:
-> Hello,
->
-> I created backup DVDs formatted using reiserfs. However, mounting them
-> is not possible. If I try to mount such a DVD, I get following results:
->
-> Aug 31 01:08:18 notebook2 kernel: ReiserFS: hdc: using ordered data mode
-> Aug 31 01:08:18 notebook2 kernel: ReiserFS: hdc: warning: sh-458:
-> journal_init_dev: cannot init journal device 'unknown-block(22,0)': -30
-> Aug 31 01:08:18 notebook2 kernel: ReiserFS: hdc: warning: sh-462: unable
-> to initialize jornal device
-> Aug 31 01:08:18 notebook2 kernel: ReiserFS: hdc: warning: sh-2022:
-> reiserfs_fill_super: unable to initialize journal space
->
-> I get this error even when mounting using "-o ro,nolog".
->
-> I tracked this down to the method "journal_init_dev", which opens the
-> journal device with mode "blkdev_mode =3D FMODE_READ | FMODE_WRITE;"
-> except when the journal device is marked read only. However, as it
-> seems, my DVD burner drive is able to write DVD media (so it is not a
-> read-only-device, in general), but the particular DVD is only readable,
-> not writable. That's why (I think) the journal device itself is not
-> marked read only and yet "open_by_devnum(jdev, blkdev_mode);" fails.
->
-> The method "journal_init_dev" should honor the mount options "ro" or
-> "nolog" or both, which it currently does not (as of Linux 2.6.18-rc4).
-> Alternatively, method "journal_init_dev" might try to open the journal
-> device again (only using "read only" mode) in case the first try to open
-> results in -EROFS.
->
-> Xu=E2n Baldauf.
->
->
->
->  =20
-Sounds reasonable to me, Chris?
+
+I've similar problem. Looks like --rebuild-tree finally fixed everything, but
+there is a bug in reiserfsck because it doesn't see any errors while mount
+unable to work.
+I've a copy of this partition in file (3GB) on my harddrive in broken state
+(i.e. before running any reiserfsck). I can't upload it, of course, :) but
+if you wish to analyse it I can run anything you say on this file and send
+you results. I'll keep this file while I'm waiting for your answers - about
+a week.
+(I'm not really subscribed to list, so please CC: me, but I'll monitor this
+thread using web gate www.nabble.com anyway.)
+
+I've no idea how filesystem become damaged. Only suspicious thing was dead
+CMOS battery (this comp is old Celeron 333), but I don't really think dead
+CMOS battery can affect this... So, linux was booted 2-3 times after BIOS
+warning 'Press F1 to continue' and on next boot Grub refuse to boot with
+'Error 17'. There no bad blocks on this partition.
+
+I've moved harddrive to another comp and checked reiserfs, results is below.
+Here is configuration of these computers (both has Gentoo Hardened
+installed).
+Original:
+    sys-fs/reiserfsprogs-3.6.19
+    bzImage-2.6.14-hardened-r7
+Fixer:
+    sys-fs/reiserfsprogs-3.6.19
+    bzImage-2.6.16-hardened-r10
+
+-----------------------------------------------------------
+
+# mount -t reiserfs /dev/hdc5 /mnt/cdrom/
+
+2006-08-31_08:49:02.92678 kern.warn: ReiserFS: hdc5: warning: sh-2021:
+reiserfs_fill_super: can not find reiserfs on hdc5
+
+-----------------------------------------------------------
+
+# reiserfsck /dev/hdc5
+reiserfsck 3.6.19 (2003 www.namesys.com)
+...
+reiserfs_open: the reiserfs superblock cannot be found on /dev/hdc5.
+Failed to open the filesystem.
+
+If the partition table has not been changed, and the partition is
+valid  and  it really  contains  a reiserfs  partition,  then the
+superblock  is corrupted and you need to run this utility with
+--rebuild-sb.
+
+-----------------------------------------------------------
+
+# reiserfsck --rebuild-sb /dev/hdc5
+...
+reiserfs_open: the reiserfs superblock cannot be found on /dev/hdc5.
+
+what the version of ReiserFS do you use[1-4]
+        (1)   3.6.x
+        (2) >=3.5.9 (introduced in the middle of 1999) (if you use linux
+2.2, choose this one)
+        (3) < 3.5.9 converted to new format (don't choose if unsure)
+        (4) < 3.5.9 (this is very old format, don't choose if unsure)
+        (X)   exit
+1
+
+Enter block size [4096]: 
+4096
+
+No journal device was specified. (If journal is not available, re-run with
+--no-journal-available option specified).
+Is journal default? (y/n)[y]: y
+
+Did you use resizer(y/n)[n]: n
+
+rebuild-sb: You either have a corrupted journal or have just changed
+the start of the partition with some partition table editor. If you are
+sure that the start of the partition is ok, rebuild the journal header.
+Do you want to rebuild the journal header? (y/n)[n]: y
+
+Reiserfs super block in block 16 on 0x1605 of format 3.6 with standard
+journal
+Count of blocks on the device: 769104
+Number of bitmaps: 24
+Blocksize: 4096
+Free blocks (count of blocks - used [journal, bitmaps, data, reserved]
+blocks): 0
+Root block: 0
+Filesystem is NOT clean
+Tree height: 0
+Hash function used to sort names: not set
+Objectid map size 0, max 972
+Journal parameters:
+        Device [0x0]
+        Magic [0x0]
+        Size 8193 blocks (including 1 for journal header) (first block 18)
+        Max transaction length 1024 blocks
+        Max batch size 900 blocks
+        Max commit age 30
+Blocks reserved by journal: 0
+Fs state field: 0x1:
+         some corruptions exist.
+sb_version: 2
+inode generation number: 0
+UUID: 4390ff17-0cca-462a-ae4f-8aa75f9f3dd8
+LABEL: 
+Set flags in SB:
+Is this ok ? (y/n)[n]: y
+The fs may still be unconsistent. Run reiserfsck --check.
+
+-----------------------------------------------------------
+
+# reiserfsck /dev/hdc5
+...
+###########
+reiserfsck --check started at Thu Aug 31 11:55:23 2006
+###########
+Replaying journal..
+Trans replayed: mountid 946, transid 887592, desc 4062, len 7, commit 4070,
+next trans offset 4053
+Trans replayed: mountid 946, transid 887593, desc 4071, len 1, commit 4073,
+next trans offset 4056
+Trans replayed: mountid 946, transid 887594, desc 4074, len 7, commit 4082,
+next trans offset 4065
+Trans replayed: mountid 946, transid 887595, desc 4083, len 1, commit 4085,
+next trans offset 4068
+Trans replayed: mountid 946, transid 887596, desc 4086, len 16, commit 4103,
+next trans offset 4086
+Trans replayed: mountid 946, transid 887597, desc 4104, len 7, commit 4112,
+next trans offset 4095
+Reiserfs journal '/dev/hdc5' in blocks [18..8211]: 6 transactions replayed
+hecking internal tree..finished                               
+Comparing bitmaps..finished
+Checking Semantic tree:
+finished                                                                       
+No corruptions found
+There are on the filesystem:
+        Leaves 47645
+        Internal nodes 307
+        Directories 28553
+        Other files 217465
+        Data block pointers 661164 (25894 of them are zero)
+        Safe links 1
+###########
+reiserfsck finished at Thu Aug 31 11:59:37 2006
+###########
+
+-----------------------------------------------------------
+
+# mount -t reiserfs /dev/hdc5 /mnt/cdrom/
+
+2006-08-31_09:07:44.70007 kern.notice: ReiserFS: hdc5: found reiserfs format
+"3.6" with standard journal
+2006-08-31_09:07:44.94496 kern.notice: ReiserFS: hdc5: using ordered data
+mode
+2006-08-31_09:07:44.95777 kern.notice: ReiserFS: hdc5: journal params:
+device hdc5, size 8192, journal first block 18, max trans len 1024, max
+batch 900, max commit age 30, max trans age 30
+2006-08-31_09:07:44.95868 kern.notice: ReiserFS: hdc5: checking transaction
+log (hdc5)
+2006-08-31_09:07:45.02493 kern.warn: ReiserFS: hdc5: warning: vs-7000:
+search_by_entry_key: search_by_key returned item position == 0
+
+-----------------------------------------------------------
+
+# reiserfsck /dev/hdc5
+...
+###########
+reiserfsck --check started at Thu Aug 31 12:08:42 2006
+###########
+Replaying journal..
+Reiserfs journal '/dev/hdc5' in blocks [18..8211]: 0 transactions replayed
+Checking internal tree..finished                               
+Comparing bitmaps..finished
+Checking Semantic tree:
+finished                                                                       
+No corruptions found
+There are on the filesystem:
+        Leaves 47645
+        Internal nodes 307
+        Directories 28553
+        Other files 217465
+        Data block pointers 661164 (25894 of them are zero)
+        Safe links 1
+###########
+reiserfsck finished at Thu Aug 31 12:13:01 2006
+###########
+
+-----------------------------------------------------------
+
+# mount -t reiserfs /dev/hdc5 /mnt/cdrom/
+
+2006-08-31_09:13:26.36449 kern.notice: ReiserFS: hdc5: found reiserfs format
+"3.6" with standard journal
+2006-08-31_09:13:26.61720 kern.notice: ReiserFS: hdc5: using ordered data
+mode
+2006-08-31_09:13:26.62994 kern.notice: ReiserFS: hdc5: journal params:
+device hdc5, size 8192, journal first block 18, max trans len 1024, max
+batch 900, max commit age 30, max trans age 30
+2006-08-31_09:13:26.63087 kern.notice: ReiserFS: hdc5: checking transaction
+log (hdc5)
+2006-08-31_09:13:26.69717 kern.warn: ReiserFS: hdc5: warning: vs-7000:
+search_by_entry_key: search_by_key returned item position == 0
+
+-----------------------------------------------------------
+
+# reiserfsck --rebuild-tree /dev/hdc5
+...
+Replaying journal..
+Reiserfs journal '/dev/hdc5' in blocks [18..8211]: 0 transactions replayed
+###########
+reiserfsck --rebuild-tree started at Thu Aug 31 12:15:35 2006
+###########
+
+Pass 0:
+####### Pass 0 #######
+Loading on-disk bitmap .. ok, 691456 blocks marked used
+Skipping 8234 blocks (super block, journal, bitmaps) 683222 blocks will be
+read
+0%....20%....40%....60%block 496367: The number of items (31) is incorrect,
+should be (1) - corrected
+block 496367: The free space (5825) is incorrect, should be (4048) -
+corrected
+pass0: vpf-10110: block 496367, item (0): Unknown item type found [37280 205
+0x10002 ??? (15)] - deleted
+....80%....100%                        left 0, 3036 /sec
+246017 directory entries were hashed with "r5" hash.
+Selected hash ("r5") does not match to the hash set in the super block (not
+set).
+        "r5" hash is selected
+Flushing..finished
+        Read blocks (but not data blocks) 683222
+                Leaves among those 47647
+                        - leaves all contents of which could not be saved
+and deleted 2
+                Objectids found 246880
+
+Pass 1 (will try to insert 47645 leaves):
+####### Pass 1 #######
+Looking for allocable blocks .. finished
+0%....20%....40%....60%....80%....100%                         left 0, 680
+/sec
+Flushing..finished
+        47645 leaves read
+                47351 inserted
+                294 not inserted
+####### Pass 2 #######
+
+Pass 2:
+0%....20%....40%....60%....80%....100%                           left 0, 0
+/sec
+Flushing..finished
+        Leaves inserted item by item 294
+Pass 3 (semantic):
+####### Pass 3 #########
+Flushing..finished                                                             
+        Files found: 212104
+        Directories found: 28554
+        Symlinks found: 3668
+        Others: 311
+Pass 3a (looking for lost dir/files):
+####### Pass 3a (lost+found pass) #########
+Looking for lost directories:
+Looking for lost files:7 /sec
+Flushing..finishede 0, 0 /sec
+        Objects without names 1
+        Files linked to /lost+found 1
+Pass 4 - finished   done 6512, 77 /sec
+Flushing..finished
+Syncing..finished
+###########
+reiserfsck finished at Thu Aug 31 12:22:32 2006
+###########
+
+-----------------------------------------------------------
+
+# mount -t reiserfs /dev/hdc5 /mnt/cdrom/
+
+2006-08-31_09:23:32.10428 kern.notice: ReiserFS: hdc5: found reiserfs format
+"3.6" with standard journal
+2006-08-31_09:23:32.34628 kern.notice: ReiserFS: hdc5: using ordered data
+mode
+2006-08-31_09:23:32.37018 kern.notice: ReiserFS: hdc5: journal params:
+device hdc5, size 8192, journal first block 18, max trans len 1024, max
+batch 900, max commit age 30, max trans age 30
+2006-08-31_09:23:32.37114 kern.notice: ReiserFS: hdc5: checking transaction
+log (hdc5)
+2006-08-31_09:23:32.41506 kern.notice: ReiserFS: hdc5: Using r5 hash to sort
+names
+
+
+-- 
+View this message in context: http://www.nabble.com/Need-help-retrieving-data-tf2160099.html#a6096245
+Sent from the ReiserFS - General forum at Nabble.com.
+
