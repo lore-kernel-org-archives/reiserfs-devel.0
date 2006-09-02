@@ -1,49 +1,47 @@
-From: Hans Reiser <reiser@namesys.com>
-Subject: Re: FEATURE Req: integrate badblocks check into fsck.reiser*
-Date: Fri, 01 Sep 2006 16:16:06 -0700
-Message-ID: <44F8BF36.1010007@namesys.com>
-References: <ed9tqo$2tc$1@sea.gmane.org> <200609012250.44548.vs@namesys.com>	<44F8B3C8.1050802@slaphack.com> <edae71$iqf$1@sea.gmane.org> <44F8BE78.1080503@slaphack.com>
+From: Andrew James Wade <andrew.j.wade@gmail.com>
+Subject: [patch] Fix use after free in jrelse_tail
+Date: Fri, 1 Sep 2006 20:35:56 -0400
+Message-ID: <200609012035.58725.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+References: <200608211759.04151.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com> <200608211935.35024.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+Reply-To: andrew.j.wade@gmail.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29787-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29788-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <44F8BE78.1080503@slaphack.com>
+In-Reply-To: <200608211935.35024.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: David Masover <ninja@slaphack.com>
-Cc: Peter <sw98234@hotmail.com>, reiserfs-list@namesys.com
+To: Alexander Zarochentsev <zam@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-David Masover wrote:
-> Peter wrote:
->> On Fri, 01 Sep 2006 17:27:20 -0500, David Masover wrote:
->> snip...
->>>> both mkfs.reiserfs and fsck.reiserfs have -B option to accept list of
->>>> bad blocks. We thought that should be enough.
->>> It really should.  Why bother with a patch?  Just write a wrapper
->>> script
->>> that runs badblocks and passes in the list to mkfs.
->>
->> It was just a thought from userland. My perspective was that a user,
->> not a
->> hard-boiled geek, might get lulled into a false sense of security but
->> may
->> not have the wherewithal to write a wrapper. If nothing else, when the
->> final doc is written (did I say final?:)), it should include a notice
->> about not running badblocks.
->
-> Well, let's see...  Most hard drives come more thoroughly tested at
-> the factory than anything badblocks would do.
-They leave more tested, they arrive.... ;-)  and you assume it is a new
-drive.....
-> Also, it seems redundant to have every single mkfs have to implement a
-> badblocks flag..
->
-> I'd suggest a universal wrapper, then, or a modification to the "mkfs"
-> frontend, so that this works the same way across all filesystems.
-> Something like "mkfs -B -t reiser4"
->
->
+Hello Alexander,
 
+"[nikita-1936] assertion failed: reiser4_no_counters_are_held()"
+turned out to be a bug in the debugging code. I've applied the patch
+below and haven't had a recurrence.
+
+Cheers,
+Andrew Wade
+
+signed-off-by <andrew.j.wade@gmail.com>
+
+diff -rupN a/fs/reiser4/jnode.c b/fs/reiser4/jnode.c
+--- a/fs/reiser4/jnode.c	2006-09-01 16:44:51.000000000 -0400
++++ b/fs/reiser4/jnode.c	2006-09-01 16:58:06.000000000 -0400
+@@ -999,10 +999,10 @@ void jrelse_tail(jnode * node /* jnode t
+ {
+ 	assert("nikita-489", atomic_read(&node->d_count) > 0);
+ 	atomic_dec(&node->d_count);
+-	/* release reference acquired in jload_gfp() or jinit_new() */
+-	jput(node);
+ 	if (jnode_is_unformatted(node) || jnode_is_znode(node))
+ 		LOCK_CNT_DEC(d_refs);
++	/* release reference acquired in jload_gfp() or jinit_new() */
++	jput(node);
+ }
+ 
+ /* drop reference to node data. When last reference is dropped, data are
