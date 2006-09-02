@@ -1,42 +1,78 @@
-From: "Peter" <sw98234-PkbjNfxxIARBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: reiser4 corruption on initial copy
-Date: Sat, 2 Sep 2006 10:26:34 +0000 (UTC)
-Message-ID: <edbm8q$ana$1@sea.gmane.org>
-References: <ed9412$2r9$1@sea.gmane.org> <44F8B5B1.1020009@slaphack.com>
+From: Alexander Zarochentsev <zam@namesys.com>
+Subject: Re: Need help retrieving data
+Date: Sat, 2 Sep 2006 15:26:05 +0400
+Message-ID: <200609021526.05313.zam@namesys.com>
+References: <44EDE55E.7030106@comcast.net> <200609011545.33194.zam@namesys.com> <6110980.post@talk.nabble.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-29790-reiserfs=m.gmane.org-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-list-help: <mailto:reiserfs-list-help-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-list-post: <mailto:reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-Errors-To: flx-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
-Sender: news <news-WnDAp88bSu3NLxjTenLetw@public.gmane.org>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-29791-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <6110980.post@talk.nabble.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"
+To: reiserfs-list@namesys.com
+Cc: Alex Efros <powerman-asdf@yandex.ru>
 
-On Fri, 01 Sep 2006 17:35:29 -0500, David Masover wrote:
+On 2 September 2006 13:32, Alex Efros wrote:
+> Hi!
+>
+> So, I did everything correctly to fix it? --rebuild-tree doesn't
+> broke anything?
 
-> Peter wrote:
-> 
->> 2) I did run badblocks on the dest, and it was clean. 3) I am using the
->> patch from 2.6.17.3 and in my kernel, I have full preempt and cfq
->> scheduling.
-> 
-> What about the kernel on the livecd?
+usually not.
 
+but reiserfsck --rebuild-tree is a complex operation. It has a possibility =
+to=20
+insert wrong blocks into the tree if your fs was used to store another=20
+reiserfs image. and you have a chance to hit new reiserfsck bug.
 
-Anticipatory
-Voluntary
+> > unfortunately no fix for fsck is available yet.
+>
+> If you provide fixed reiserfsck version, I can run it on my image to
+> test it and confirm image become mountabe after --rebuild-sb. But I
+> can't leave this 3GB image on my drive for months, so if you wish
 
-Plus, it is smp, so there are some additional options checked. Should I
-have preempt=none with reiser4?
+to make the partition mountable again it is enough to change=20
+one byte in the super block from 0 (hash is not set) to 3 (r5 hash). =20
+It can be done by a hex editor.
 
--- 
-Peter
-+++++
-Do not reply to this email, it is a spam trap and not monitored.
-I can be reached via this list, or via 
-jabber: pete4abw at jabber.org
-ICQ: 73676357
+hexdump -C of block #16 (reiserfs uses 4k-size blocks, numbers start with 0=
+):
+
+=2E..
+00000030  06 00 01 00 52 65 49 73  45 72 32 46 73 00 00 00  |....ReIsEr2Fs.=
+=2E.|
+00000040  03 00 00 00 05 00 c6 04  02 00 00 00 89 28 00 00  |......=C6.....=
+=89(..|
+          ^^=20
+          this byte.
+=2E..
+
+according with:
+
+struct reiserfs_super_block_v1 {
+=2E..
+        char s_magic[10];       /* reiserfs magic string indicates that
+                                 * file system is reiserfs:
+                                 * "ReIsErFs" or "ReIsEr2Fs" or "ReIsEr3Fs"=
+ */
+        __le16 s_fs_state;      /* it is set to used by fsck to mark which
+                                 * phase of rebuilding is done */
+        __le32 s_hash_function_code;    /* indicate, what hash function is =
+being use
+=2E..
+
+> this testing from me - please provide fixed version in about 7-10
+
+> days or at least notify me when it will be ready - if your need more
+> time I probably move it to DVD-RW.
+
+I already have a broken fs to experiment with.=20
+
+=2D-=20
+Alex.
 
