@@ -1,78 +1,96 @@
-From: Alexander Zarochentsev <zam@namesys.com>
-Subject: Re: Need help retrieving data
-Date: Sat, 2 Sep 2006 15:26:05 +0400
-Message-ID: <200609021526.05313.zam@namesys.com>
-References: <44EDE55E.7030106@comcast.net> <200609011545.33194.zam@namesys.com> <6110980.post@talk.nabble.com>
+From: Bernd Schubert <bernd-schubert@gmx.de>
+Subject: quota problem with 2.6.15.7
+Date: Sat, 2 Sep 2006 15:57:03 +0200
+Message-ID: <200609021557.03885.bernd-schubert@gmx.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-29791-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29792-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <6110980.post@talk.nabble.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-To: reiserfs-list@namesys.com
-Cc: Alex Efros <powerman-asdf@yandex.ru>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Reiserfs <reiserfs-list@namesys.com>
+Cc: linux-kernel@vger.kernel.org
 
-On 2 September 2006 13:32, Alex Efros wrote:
-> Hi!
->
-> So, I did everything correctly to fix it? --rebuild-tree doesn't
-> broke anything?
+Hi,
 
-usually not.
+I just wanted to enable quotas on one of our server systems and got an oops.
+This is an opteron system with a kernel in 64bit mode.=20
+As you can see, the filesystem is reiserfs.
 
-but reiserfsck --rebuild-tree is a complex operation. It has a possibility =
-to=20
-insert wrong blocks into the tree if your fs was used to store another=20
-reiserfs image. and you have a chance to hit new reiserfsck bug.
+[8278222.836924] Unable to handle kernel paging request at 000000000fd00007=
+ RIP:
+[8278222.842655] <ffffffff80394699>{__down_read+101}
+[8278222.851260] PGD f3509067 PUD adf61067 PMD 0
+[8278222.856596] Oops: 0002 [1] SMP
+[8278222.860597] CPU 1
+[8278222.863231] Modules linked in: ipt_MASQUERADE ipt_state iptable_filter=
+ nfsd exportfs iptable_nat ip_nat ip_conntrack ip_tables i2c_
+amd8111 pl2303 usbserial ohci_hcd usbcore bluesmoke_k8 bluesmoke_mc w83627h=
+f i2c_isa lm85 adm1026 hwmon_vid i2c_amd756 i2c_core bcm5700
+[8278222.891808] Pid: 16212, comm: quotaon Not tainted 2.6.15.7 #1
+[8278222.898891] RIP: 0010:[<ffffffff80394699>] <ffffffff80394699>{__down_r=
+ead+101}
+[8278222.907557] RSP: 0018:ffff81003b987b50  EFLAGS: 00010206
+[8278222.914370] RAX: ffff8100f81b1408 RBX: ffff810043336180 RCX: ffff8100f=
+81b1530
+[8278222.923148] RDX: 000000000fd00007 RSI: 0000000000000000 RDI: ffff81003=
+b987bc8
+[8278222.931931] RBP: ffff8100f81b1400 R08: 0000000000000000 R09: ffff81008=
+1ad9440
+[8278222.940723] R10: 0000000000001000 R11: ffffffff80394646 R12: 000000000=
+0000001
+[8278222.949497] R13: 0000000000000000 R14: 0000000000000000 R15: 000000000=
+0000001
+[8278222.958273] FS:  00002aaaaae00090(0000) GS:ffffffff80515880(0000) knlG=
+S:00000000558dd2a0
+[8278222.968202] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+[8278222.975283] CR2: 000000000fd00007 CR3: 00000000dc0aa000 CR4: 000000000=
+00006e0
+[8278222.984061] Process quotaon (pid: 16212, threadinfo ffff81003b986000, =
+task ffff810043336180)
+[8278222.994398] Stack: ffff8100f81b1408 0000000000000000 ffff810043336180 =
+ffff810000000001
+[8278223.004002]        ffff8100f9fb23c0 0000000100000001 ffffffff00000000 =
+0000000100000001
+[8278223.013841]        ffff810000000000 0000000000000000
+[8278223.020126] Call Trace:<ffffffff8017bc08>{link_path_walk+194} <fffffff=
+f80394646>{__down_read+18}
+[8278223.030894]        <ffffffff80229853>{_atomic_dec_and_lock+43} <ffffff=
+ff801bc1f1>{reiserfs_quota_on+191}
+[8278223.042504]        <ffffffff8017bc08>{link_path_walk+194} <ffffffff803=
+94646>{__down_read+18}
+[8278223.052854]        <ffffffff8019f482>{sys_quotactl+960} <ffffffff8014e=
+2c5>{find_get_page+31}
+[8278223.063186]        <ffffffff8014ed81>{filemap_nopage+364} <ffffffff801=
+5ec3e>{__handle_mm_fault+1740}
+[8278223.074364]        <ffffffff801766ac>{vfs_getattr_it+72} <ffffffff8017=
+6852>{vfs_fstat+108}
+[8278223.084496]        <ffffffff80176add>{cp_new_stat+233} <ffffffff802298=
+53>{_atomic_dec_and_lock+43}
+[8278223.095483]        <ffffffff80183702>{dput+49} <ffffffff80187f9b>{mntp=
+ut_no_expire+23}
+[8278223.105218]        <ffffffff8016dd9f>{filp_close+89} <ffffffff8010d852=
+>{system_call+126}
+[8278223.115142]
+[8278223.118114]
+[8278223.118115] Code: 48 89 22 48 89 54 24 08 c7 45 04 01 00 00 00 fb 48 8=
+3 7c 24
+[8278223.129157] RIP <ffffffff80394699>{__down_read+101} RSP <ffff81003b987=
+b50>
+[8278223.137621] CR2: 000000000fd00007
 
-> > unfortunately no fix for fsck is available yet.
->
-> If you provide fixed reiserfsck version, I can run it on my image to
-> test it and confirm image become mountabe after --rebuild-sb. But I
-> can't leave this 3GB image on my drive for months, so if you wish
 
-to make the partition mountable again it is enough to change=20
-one byte in the super block from 0 (hash is not set) to 3 (r5 hash). =20
-It can be done by a hex editor.
-
-hexdump -C of block #16 (reiserfs uses 4k-size blocks, numbers start with 0=
-):
-
-=2E..
-00000030  06 00 01 00 52 65 49 73  45 72 32 46 73 00 00 00  |....ReIsEr2Fs.=
-=2E.|
-00000040  03 00 00 00 05 00 c6 04  02 00 00 00 89 28 00 00  |......=C6.....=
-=89(..|
-          ^^=20
-          this byte.
-=2E..
-
-according with:
-
-struct reiserfs_super_block_v1 {
-=2E..
-        char s_magic[10];       /* reiserfs magic string indicates that
-                                 * file system is reiserfs:
-                                 * "ReIsErFs" or "ReIsEr2Fs" or "ReIsEr3Fs"=
- */
-        __le16 s_fs_state;      /* it is set to used by fsck to mark which
-                                 * phase of rebuilding is done */
-        __le32 s_hash_function_code;    /* indicate, what hash function is =
-being use
-=2E..
-
-> this testing from me - please provide fixed version in about 7-10
-
-> days or at least notify me when it will be ready - if your need more
-> time I probably move it to DVD-RW.
-
-I already have a broken fs to experiment with.=20
+Thanks,
+Bernd
 
 =2D-=20
-Alex.
+Bernd Schubert
+PCI / Theoretische Chemie
+Universit=E4t Heidelberg
+INF 229
+69120 Heidelberg
 
