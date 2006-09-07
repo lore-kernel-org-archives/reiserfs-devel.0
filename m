@@ -1,80 +1,50 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: FEATURE Req: integrate badblocks check into fsck.reiser*
-Date: Thu, 07 Sep 2006 12:35:06 -0500
-Message-ID: <4500584A.4040601@slaphack.com>
-References: <ed9tqo$2tc$1@sea.gmane.org> <200609012250.44548.vs@namesys.com>	<44F8B3C8.1050802@slaphack.com> <edae71$iqf$1@sea.gmane.org> <44F8BE78.1080503@slaphack.com> <44FB925E.2000300@emc.com> <44FE1C04.70800@namesys.com> <44FEE45B.4060607@slaphack.com> <44FFF5DB.3050200@emc.com> <4500472F.7050902@slaphack.com> <4500529F.2040603@emc.com>
+From: Mattia Dongili <malattia@linux.it>
+Subject: argh! it's reiserfs deadlocking! [was: Re: JFS - real deadlock and lockdep warning (2.6.18-rc5-mm1)]
+Date: Thu, 7 Sep 2006 20:49:30 +0200
+Message-ID: <20060907184930.GA13380@inferi.kami.home>
+References: <20060905203309.GA3981@inferi.kami.home> <1157580028.8200.72.camel@kleikamp.austin.ibm.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29825-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <4500529F.2040603@emc.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750916AbWIGSuk@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1157580028.8200.72.camel@kleikamp.austin.ibm.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ric@emc.com
-Cc: Hans Reiser <reiser@namesys.com>, Peter <sw98234@hotmail.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dave Kleikamp <shaggy@austin.ibm.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, akpm@osdl.org, reiserfs-dev@namesys.com, reiserfs-list@namesys.com
 
-Ric Wheeler wrote:
-> David Masover wrote:
-
->> Why do you presume to make this decision for users?
+On Wed, Sep 06, 2006 at 05:00:28PM -0500, Dave Kleikamp wrote:
+> I meant to reply to this earlier.  I've had a lot of distractions.
 > 
-> It's not a decision that I want to make for users, it is a decision that 
-> Hans and his team need to make about how best to spend their limited 
-> resources.
+> On Tue, 2006-09-05 at 22:33 +0200, Mattia Dongili wrote:
+> > Hello,
+> > 
+> > as the subject says it's some time[0] I'm experiencing deadlocks[1] (I'm
+> > only tracking -mm, and sporadically using the stable series). I have a
+> > couple of use cases that seem to reliably trigger the deadlock, namely
+> > using Eclipse and Firefox.
+[...]
+> > /dev/hda1 on / type reiserfs (rw)
+> > /dev/hda3 on /usr type reiserfs (rw)
+> > /dev/hda5 on /home type jfs (rw)
+> > 
+> > bootlog: http://oioio.altervista.org/linux/dmesg-2.6.18-rc5-mm1-lockdep
+> > config: http://oioio.altervista.org/linux/config-2.6.18-rc5-mm1-lockdep
 
-Agreed.  It's not important if it takes more than, say, an hour.
+Dave,
 
-> It will also give more users a bad experience with the file system, 
-> since users rarely have the in depth knowledge required to make this 
-> kind of choice.
+I have to apologize. Reiser3 seem to be the one deadlocking here
+actually. Changing /home to reiser4 still deadlocks.
 
-While it's true that most users just click through dialog boxes, I 
-imagine this would be sufficient:
+Now, reiserfs-developers:
+would you want me to keep the filesystem around to try to test patches
+or potential fixes or can I wipe it out?
+The good thing is that the deadlock is 100% repeatable, the bad thing is
+that this laptop has a broken cdrom and I have to take the drive out and
+fsck it via usb1.1 each time. :)
 
-===WARNING===WARNING===WARNING===
----------------------------------
-THIS DISK IS BAD!
-If you continue with the format,
-we will not help you when you lose data.
-When, not if.  You are strongly encouraged to
-THROW THIS DISK OUT!
----------------------------------------------
-ARE YOU ABSOLUTELY SURE YOU WANT TO CONTINUE?
-(yes/no):
-
-And require an actual "yes" or "no" answer.  No "y/n".
-
-Now, compare that to a filesystem which doesn't allow badblocks in mkfs 
-at all.  While it's rare, I suspect that would be a worse experience if 
-you actually had a real need for it.  If you've got a huge 300 gig drive 
-with some bad blocks, you can always throw some stuff on it anyway, for 
-backup, or stuff you don't care about, even knowing it'll fail soon.
-
-Again, probably not a high priority item at all, but it certainly won't 
-make the user experience worse.  Any user who says "yes" to the above 
-warning does not get to complain about their experience.
-
-> Here we mostly agree.  The need for enhanced tools is not to encourage 
-> people to keep using bad drives, rather to allow them to fsck & remount 
-> a drive for data recovery.  If you cannot mount & fsck fails to repair 
-> enough to give you at least a readable file system, then you are in real 
-> trouble ;-)
-> 
-> Also, unlike failing writes, disk read errors are quite often ephemeral 
-> and will be self correcting on the next write (you might get an error 
-> from dust, etc that gets "swept" clean on the next write).
-
-Either one, I would personally feel quite a lot safer grabbing a disk 
-image and doing the fsck once the image was on known good media.
-
-One thing that would be even better here, though, if you don't want to 
-spend the time for a huge backup:  A way to tell badblocks to only scan 
-space which is actually being used, and then enough free space to make 
-sure relocations work.  If you're mounting readonly, you shouldn't care 
-about marking every single bad sector in free space.  I guess this would 
-require a lot more intelligence from fsck, though -- it would have to be 
-able to constantly check for bad blocks, as opposed to just running 
-badblocks once and grabbing a list to avoid.
+Thanks
+-- 
+mattia
+:wq!
