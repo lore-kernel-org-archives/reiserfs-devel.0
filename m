@@ -1,50 +1,103 @@
-From: Mattia Dongili <malattia@linux.it>
-Subject: argh! it's reiserfs deadlocking! [was: Re: JFS - real deadlock and lockdep warning (2.6.18-rc5-mm1)]
-Date: Thu, 7 Sep 2006 20:49:30 +0200
-Message-ID: <20060907184930.GA13380@inferi.kami.home>
-References: <20060905203309.GA3981@inferi.kami.home> <1157580028.8200.72.camel@kleikamp.austin.ibm.com>
+From: grossnik.mailinglists@hispeed.ch
+Subject: reiserfsck (3.6.19) --rebuild-tree failed
+Date: Fri, 8 Sep 2006 11:51:45 +0200
+Message-ID: <200609080951.k889pjsh014685@smtp.hispeed.ch>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750916AbWIGSuk@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-29827-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
 Content-Disposition: inline
-In-Reply-To: <1157580028.8200.72.camel@kleikamp.austin.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: Grossniklaus Mailinglists <grossnik.mailinglists@hispeed.ch>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dave Kleikamp <shaggy@austin.ibm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, akpm@osdl.org, reiserfs-dev@namesys.com, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-On Wed, Sep 06, 2006 at 05:00:28PM -0500, Dave Kleikamp wrote:
-> I meant to reply to this earlier.  I've had a lot of distractions.
-> 
-> On Tue, 2006-09-05 at 22:33 +0200, Mattia Dongili wrote:
-> > Hello,
-> > 
-> > as the subject says it's some time[0] I'm experiencing deadlocks[1] (I'm
-> > only tracking -mm, and sporadically using the stable series). I have a
-> > couple of use cases that seem to reliably trigger the deadlock, namely
-> > using Eclipse and Firefox.
-[...]
-> > /dev/hda1 on / type reiserfs (rw)
-> > /dev/hda3 on /usr type reiserfs (rw)
-> > /dev/hda5 on /home type jfs (rw)
-> > 
-> > bootlog: http://oioio.altervista.org/linux/dmesg-2.6.18-rc5-mm1-lockdep
-> > config: http://oioio.altervista.org/linux/config-2.6.18-rc5-mm1-lockdep
+Dear all
+I did a big mistake:
+- I got bad blocks on my home partition
+- I created a badblock file using:
+  badblocks -b 4096 -s -v -o /root/hda3.bad /de/hda3
+- I tried to use reiserfstune to apply bad blocks:
+ reisefstune -B /root/hda3.bad /dev/hda3
+- The tool said I have to use reiserfsck =3D>
 
-Dave,
+$ reiserfsck --rebuild-tree --badblocks /root/hda3.bad /dev/hda3
 
-I have to apologize. Reiser3 seem to be the one deadlocking here
-actually. Changing /home to reiser4 still deadlocks.
+Then I provides "Yes"
 
-Now, reiserfs-developers:
-would you want me to keep the filesystem around to try to test patches
-or potential fixes or can I wipe it out?
-The good thing is that the deadlock is 100% repeatable, the bad thing is
-that this laptop has a broken cdrom and I have to take the drive out and
-fsck it via usb1.1 each time. :)
+after 25% the --rebuild-tree  stopped saing that there were bad blocks and =
+that I've to provide the -B option and a badblock file.
 
-Thanks
--- 
-mattia
-:wq!
+But this is what I did (using --badblocks /root/hda3.bad).
+
+Now /dev/hda3 can't be mounted (rood inode is set to -1).
+
+I would be VERY happy if I could mount the partition read only!
+
+What can I do?
+
+Many Thx in advance
+
+Bruno
+
+Kernel is 2.6.15 (Debian)
+reiserfsck -V =3D> 3.6.19
+
+debugreiserfs /dev/hda3:
+Filesystem state: consistent
+
+/home: Reiserfs super block in block 16 on 0x303 of format 3.6 with standar=
+d journal
+Count of blocks on the device: 4883760
+Number of bitmaps: 150
+Blocksize: 4096
+Free blocks (count of blocks - used [journal, bitmaps, data, reserved] bloc=
+ks): 4883760
+Root block: 0
+Filesystem is clean
+Tree height: 65535
+Hash function used to sort names: "r5"
+Objectid map size 614, max 972
+Journal parameters:
+	Device [0x0]
+	Magic [0x78b2a94e]
+	Size 8193 blocks (including 1 for journal header) (first block 18)
+	Max transaction length 1024 blocks
+	Max batch size 900 blocks
+	Max commit age 30
+Blocks reserved by journal: 0
+Fs state field: 0x0:
+sb_version: 2
+inode generation number: 500386
+UUID: f4fcb46d-04da-43c9-918d-2ef00f8d8412
+LABEL: /home
+Set flags in SB:
+	ATTRIBUTES CLEAN
+
+
+
+cat /root/hda3.bad
+4602176
+4602179
+4602180
+4602181
+4602182
+4602183
+4602185
+4602186
+4602187
+4602188
+4602189
+4602190
+4602191
+4602193
+4602194
+4602195
+4602196
+4602197
+4602198
+4602199
+4602201
