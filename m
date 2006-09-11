@@ -1,14 +1,12 @@
 From: "Peter" <sw98234-PkbjNfxxIARBDgjK7y7TUQ@public.gmane.org>
 Subject: Re: reiser4: mount -o remount,ro / causes error on reboot
-Date: Mon, 11 Sep 2006 11:43:30 +0000 (UTC)
-Message-ID: <ee3i52$mvq$1@sea.gmane.org>
+Date: Mon, 11 Sep 2006 12:21:45 +0000 (UTC)
+Message-ID: <ee3kcp$as$2@sea.gmane.org>
 References: <ee1gcu$dgb$1@sea.gmane.org> <45047190.2040101@slaphack.com>
 	<ee1vth$dgb$2@sea.gmane.org> <200609111130.39647.vs@namesys.com>
-	<ee3cl8$5fo$1@sea.gmane.org>
-	<b65fbb130609110410x146bd9f5i9cdd1f96836eaf78@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-29852-reiserfs=m.gmane.org-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
+Return-path: <reiserfs-list-return-29853-reiserfs=m.gmane.org-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
 list-help: <mailto:reiserfs-list-help-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
 list-post: <mailto:reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
@@ -18,23 +16,24 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
 
-On Mon, 11 Sep 2006 13:10:54 +0200, Sander Sweers wrote:
+On Mon, 11 Sep 2006 11:30:39 +0400, Vladimir V. Saveliev wrote:
 
 snip...
-
-> There was a bug in baselayout which caused partition (except /) not to
-> remount ro properly. The bug number is 131001 [1], is this your problem?
+> Sorry, I am confused. In the first mail you said:
+> "On reboot or after a poweroff, root does not mount properly, and after
+> some modules are loaded, there are segfaults when running init scripts."
 > 
-> Greets
-> Sander
+> This looks like  you have problems on startup. Would you, please, describe the 
+> sequence of operations which leads to the problem with more details.
 > 
-> 1: http://bugs.gentoo.org/show_bug.cgi?id=131001
+I should have written that it occurs always after a normal shutdown or
+reboot. On initial startup, the error occurs. Then, after CTRL-D, the
+system reboots and all is fine. Then, after the day, normal shutdown, then
+abnormal startup.
 
-Thank you, I read that. My version of baselayout has that fix, but that
-does not appear to be the problem. I think it has more specifically to do
-with the way the remount option is affecting the reiser4 fs. And, only /
-is left when the remount,ro part comes anyway. Everything else is
-unmounted by that time.
+Some more information, I looked at the output from the final mount -v -n -o
+remont,ro / command, it appears perfectly normal. However, I am not sure
+it is working normally!
 
 -- 
 Peter
