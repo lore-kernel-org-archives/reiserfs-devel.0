@@ -1,58 +1,43 @@
-From: "Peter" <sw98234-PkbjNfxxIARBDgjK7y7TUQ@public.gmane.org>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
 Subject: Re: reiser4: mount -o remount,ro / causes error on reboot
-Date: Wed, 13 Sep 2006 09:31:40 +0000 (UTC)
-Message-ID: <ee8j5s$ibt$1@sea.gmane.org>
+Date: Wed, 13 Sep 2006 14:49:05 +0400
+Message-ID: <200609131449.05193.vs@namesys.com>
 References: <ee1gcu$dgb$1@sea.gmane.org> <ee77ng$3o1$1@sea.gmane.org>
-	<45077170.1070301@slaphack.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-29863-reiserfs=m.gmane.org-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-list-help: <mailto:reiserfs-list-help-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-list-post: <mailto:reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-Errors-To: flx-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
-Sender: news <news-WnDAp88bSu3NLxjTenLetw@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29864-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <ee77ng$3o1$1@sea.gmane.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
+To: Peter <sw98234@hotmail.com>
+Cc: reiserfs-list@namesys.com
 
-On Tue, 12 Sep 2006 21:48:16 -0500, David Masover wrote:
+Hello
 
-snip...
->> Sorry to report this as an r4 bug, although it's interesting to note that
->> the 1.12.4 baselayout did NOT cause this problem in reiserfs3.6
-> 
-> Mine was doubtlessly a Reiser4 bug, as it resulted in either an oops or 
-> a panic, I'm not sure which.  I think it was an oops, and after that 
-> oops, the disk is inaccessible.  Since it's a root FS, this is a 
-> problem!  The init scripts should not be able to cause this, no matter 
-> how buggy they are.
-> 
+On Wednesday 13 September 2006 01:10, Peter wrote:
+> On Sun, 10 Sep 2006 17:01:18 +0000, Peter wrote:
+> all snip...
+>
+> To Vladimir and David:
+>
+> This appears to be a nasty gentoo issue. After perusing the forums and
+> bugzilla, it appears that we are not alone in having difficulties with the
+> baselayout. Nonetheless, as the reporter did, I downgraded baselayout from
+> 1.12.4-r7-r7 to 1.11.15-r3 and the reboot problem I noted went away. It is
+> interesting to note that it may be a C program startstop-daemon.c that may
+> be the culprit. I don't expect much help from the gentoo devs since they
+> won't support reiser4, but thought I would throw this out.
+>
+> Sorry to report this as an r4 bug, although it's interesting to note that
+> the 1.12.4 baselayout did NOT cause this problem in reiserfs3.6
+>
 
-That's good to know...I guess :)
-> 
-> I haven't done this already, because everything works now, and no one's 
-> asked me to yet.
-
-I find this curious, don't you?
-
-I'm wondering if kernel preemption settings and anticipatory read ahead
-settings could play a role? Mine are CONFIG_PREEMPT=y and
-CONFIG_DEFAULT_IOSCHED=CFQ. One other thing of note is that my kernel has
-Jens Axboe's iosched-rollup-2.6.17.4-2 patch. My reiser4 patch is
-2.6.17-3. The iosched patch removed a lot of dma messages in the kernel
-log (not disk errors).
-
-Anyway, whatever changed in my downgraded baselayout, at least it's not
-causing reiser4 to hiccup. Curious problem in that it only occurs
-immediately after a shutdown, not after the error and a reboot from a
-maintenance prompt.
-
--- 
-Peter
-+++++
-Do not reply to this email, it is a spam trap and not monitored.
-I can be reached via this list, or via 
-jabber: pete4abw at jabber.org
-ICQ: 73676357
-
+I still think that the problem is in reiser4. When the system fails on boot it 
+usually outputs something which may help to understand the problem. Do you 
+see anything like that on faulty startups? You can use either serial or 
+network console to catch kernel output.
