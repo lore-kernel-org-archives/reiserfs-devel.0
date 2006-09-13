@@ -1,145 +1,130 @@
 From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: Reiser FS will not boot after crash
-Date: Wed, 13 Sep 2006 18:52:00 +0400
-Message-ID: <200609131852.00988.vs@namesys.com>
-References: <Pine.LNX.4.04.10609041516380.4384-100000@nei15.nei1.nei.mv.com> <200609042333.27778.vs@namesys.com> <45080EE8.4050702@suse.com>
+Subject: [PATCH] reiser4: fix readv
+Date: Wed, 13 Sep 2006 22:12:54 +0400
+Message-ID: <200609132212.54871.vs@namesys.com>
 Mime-Version: 1.0
-Content-Type: Multipart/Mixed;
-  boundary="Boundary-00=_QsBCFubyB1o6JXZ"
-Return-path: <reiserfs-list-return-29870-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29871-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <45080EE8.4050702@suse.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-To: jmh5@nei.mv.com
-Cc: reiserfs-list@namesys.com, Jeff Mahoney <jeffm@suse.com>
-
---Boundary-00=_QsBCFubyB1o6JXZ
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: akpm@osdl.org
+Cc: reiserfs-list@namesys.com
 
-Hello
+Hello, Andrew
 
-On Wednesday 13 September 2006 18:00, Jeff Mahoney wrote:
-> Vladimir V. Saveliev wrote:
-> > Hello
-> >
-> > On Monday 04 September 2006 23:26, jmh5@nei.mv.com wrote:
-> >> Hi,
-> >>
-> >>   I am observing the following Reiser failure:
-> >>
-> >>   I am trying to use camorama with a Creative WebCam Live spca5xx driver
-> >> (recently downloaded and compiled) . Camorama does not start and
-> >> computer freezes (no response to mouse, or keyboard. Can't change to
-> >> terminal window.
-> >>
-> >>   Reset or pull plug leaves Knoppix 5.0.1-DVD unbootable:
-> >>
-> >>   The actual message from GRUB is inconsistent filesystem?! From a boot
-> >> loader?
-> >
-> > after unclean shutdown journal reply is necessary to return reiserfs to
-> > consistent state. Maybe GRUB did not do that?
->
-> Grub uses the journal in a read-only mode. It doesn't replay it in a
-> writable fashion. When grub needs a block, it scans the blocks used in
-> the journal, and uses the most recent copy it finds there before looking
-> out to the rest of the file system.
->
-> >>   The 'fix' is even stranger. I execute fsck.reiserfs from another OS
-> >> partition on the Knoppix 5.0.1-DVD partition (takes forever).
-> >
-> > Did fsck complete? What did it report?
-> >
-> >> Somehow
-> >> 'reading' the Knoppix filesystem 'fixes' whatever was preventing Knoppix
-> >> 5.0.1-DVD from booting.
-> >
-> > fsck replayed the journal.
-> > Does camorama work now?
-> >
-> > If it still causes computer freeze - can you please install serial or
-> > network console and try to catch what does kernel output when it freezes.
->
-> If the system doesn't work still, I believe grub has a debugging output
-> mode that could yield more information. You'd need to rebuild and
-> reinstall it.
->
-knoppix 5.0.1 uses grub-0.97. John, can you, please, patch it with the 
-attached patch, build and re-install as boot loader it and try to reproduce 
-the problem. Hopefuly, added output will help us to understand why grub finds 
-the filesystem is inconsistent.
+reiser4 in 2.6.18-rc6-mm2 has a bug. It can not do readv.
+
+The attached patch fixes it by implementing reiser4' aio_read file operation.
+Unfortunately, it appeared to get a loop which is very similar to the one of
+fs/read_write.c:do_loop_readv_writev().
+Alternatively, if do_loop_readv_writev were EXPORT_SYMBOL-ed
+reiser4' aio_read could use it instead. But, there is a problem with do_loop_readv_writev EXPORT_SYMBOL-ing:
+one if its arguments is io_fn_t, which is declared in fs/read_write.h.
+If it is ok to move io_fn_t and do_loop_readv_writev declarations to include/linux/fs.h and to EXPORT_SYMBOL 
+do_loop_readv_writev the fix will be smaller. Please, let me know what would you prefer.
+
+
+From: Vladimir Saveliev <vs@namesys.com>
+
+This patch adds implementation of aio_read file operation for reiser4.
+It is needed because in reiser4 there are files which can not be dealt
+with via generic page cache routines.
+In case of readv, reiser4 has no meaning to find out file type and to choose proper
+way to read it. As result generic page cache read gets called for files which can not be 
+read that way. Reiser4' aio_read method is to fix that problem. 
+
+Signed-off-by: Vladimir Saveliev <vs@namesys.com>
 
 
 
 
-> -Jeff
-
---Boundary-00=_QsBCFubyB1o6JXZ
-Content-Type: text/x-diff;
-  charset="iso-8859-1";
-  name="reiserfs-debug.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="reiserfs-debug.patch"
-
-
-diff -puN stage2/fsys_reiserfs.c~reiserfs-debug stage2/fsys_reiserfs.c
---- grub-0.97/stage2/fsys_reiserfs.c~reiserfs-debug	2006-09-13 18:41:43.000000000 +0400
-+++ grub-0.97-vs/stage2/fsys_reiserfs.c	2006-09-13 18:45:40.000000000 +0400
-@@ -22,7 +22,7 @@
- #include "shared.h"
- #include "filesys.h"
- 
--#undef REISERDEBUG
-+#define REISERDEBUG 1
- 
- /* Some parts of this code (mainly the structures and defines) are
-  * from the original reiser fs code, as found in the linux kernel.
-@@ -664,6 +664,9 @@ reiserfs_mount (void)
-   return 1;
+diff -puN fs/reiser4/plugin/object.c~reiser4-add-aio_read fs/reiser4/plugin/object.c
+--- linux-2.6.18-rc6-mm2/fs/reiser4/plugin/object.c~reiser4-add-aio_read	2006-09-13 20:18:23.000000000 +0400
++++ linux-2.6.18-rc6-mm2-vs/fs/reiser4/plugin/object.c	2006-09-13 20:18:23.000000000 +0400
+@@ -101,7 +101,7 @@ file_plugin file_plugins[LAST_FILE_PLUGI
+ 			.llseek = generic_file_llseek,
+ 			.read = read_unix_file,
+ 			.write = do_sync_write,
+-			.aio_read = generic_file_aio_read,
++			.aio_read = aio_read_unix_file,
+ 			.aio_write = generic_file_aio_write,
+ 			.ioctl = ioctl_unix_file,
+ 			.mmap = mmap_unix_file,
+diff -puN fs/reiser4/plugin/file/file.c~reiser4-add-aio_read fs/reiser4/plugin/file/file.c
+--- linux-2.6.18-rc6-mm2/fs/reiser4/plugin/file/file.c~reiser4-add-aio_read	2006-09-13 20:18:23.000000000 +0400
++++ linux-2.6.18-rc6-mm2-vs/fs/reiser4/plugin/file/file.c	2006-09-13 20:52:30.000000000 +0400
+@@ -2011,6 +2011,54 @@ out:
+        return result;
  }
  
-+#define fs_corrupted()							\
-+  printf("%s: %d: %s: fs inconsistency is found\n", __FILE__, __LINE__, __FUNCTION__)
++/**
++ * aio_read_unix_file - aio_read of struct file_operations
++ * @iocb: i/o control block
++ * @iov: i/o vector
++ * @nr_segs: number of segments in the i/o vector
++ * @pos: file position to read from
++ *
++ * When it is called within reiser4 context (this happens when sys_read is
++ * reading a file built of extents) - just call generic_file_aio_read to
++ * perform read into page cache. When it is called without reiser4 context
++ * (sys_readv) - call read_unix_file for each segments of i/o vector, so that
++ * read_unix_file will be able to choose whether the file is to be read into
++ * page cache or the file is built of tail items and page cache read is not
++ * suitable for it.
++ */
++ssize_t aio_read_unix_file(struct kiocb *iocb, const struct iovec *iov,
++			   unsigned long nr_segs, loff_t pos)
++{
++	ssize_t ret = 0;
 +
- /***************** TREE ACCESSING METHODS *****************************/
- 
- /* I assume you are familiar with the ReiserFS tree, if not go to
-@@ -713,6 +716,7 @@ read_tree_node (unsigned int blockNr, in
-   /* Make sure it has the right node level */
-   if (BLOCKHEAD (cache)->blk_level != depth)
-     {
-+      fs_corrupted();
-       errnum = ERR_FSYS_CORRUPT;
-       return 0;
-     }
-@@ -878,6 +882,7 @@ search_stat (__u32 dir_id, __u32 objecti
- 	}
-       ih++;
-     }
-+  fs_corrupted();
-   errnum = ERR_FSYS_CORRUPT;
-   return 0;
- }
-@@ -1058,8 +1063,10 @@ reiserfs_dir (char *dirname)
- 	  if (! next_key ()
- 	      || reiserfs_read (linkbuf, filemax) != filemax)
- 	    {
--	      if (! errnum)
-+	      if (! errnum) {
-+		fs_corrupted();
- 		errnum = ERR_FSYS_CORRUPT;
-+	      }
- 	      return 0;
- 	    }
- 
++	if (is_in_reiser4_context())
++		return generic_file_aio_read(iocb, iov, nr_segs, pos);
++
++	while (nr_segs > 0) {
++		void __user *base;
++		size_t len;
++		ssize_t nr;
++
++		base = iov->iov_base;
++		len = iov->iov_len;
++		iov++;
++		nr_segs--;
++
++		nr = read_unix_file(iocb->ki_filp, base, len, &iocb->ki_pos);
++		if (nr < 0) {
++			if (!ret)
++				ret = nr;
++			break;
++		}
++		ret += nr;
++		if (nr != len)
++			break;
++	}
++
++	return ret;
++
++}
++
+ static ssize_t read_unix_file_container_tails(
+ 	struct file *file, char __user *buf, size_t read_amount, loff_t *off)
+ {
+diff -puN fs/reiser4/plugin/file/file.h~reiser4-add-aio_read fs/reiser4/plugin/file/file.h
+--- linux-2.6.18-rc6-mm2/fs/reiser4/plugin/file/file.h~reiser4-add-aio_read	2006-09-13 20:18:23.000000000 +0400
++++ linux-2.6.18-rc6-mm2-vs/fs/reiser4/plugin/file/file.h	2006-09-13 20:18:23.000000000 +0400
+@@ -15,6 +15,8 @@ int setattr_unix_file(struct dentry *, s
+ /* file operations */
+ ssize_t read_unix_file(struct file *, char __user *buf, size_t read_amount,
+ 		       loff_t *off);
++ssize_t aio_read_unix_file(struct kiocb *, const struct iovec *,
++			   unsigned long nr_segs, loff_t pos);
+ ssize_t write_unix_file(struct file *, const char __user *buf, size_t write_amount,
+ 			loff_t * off);
+ int ioctl_unix_file(struct inode *, struct file *, unsigned int cmd,
 
 _
 
---Boundary-00=_QsBCFubyB1o6JXZ--
