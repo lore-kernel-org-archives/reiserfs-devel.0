@@ -1,20 +1,20 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: setfacl curiously slow
-Date: Wed, 13 Sep 2006 09:55:58 -0400
-Message-ID: <45080DEE.9080606@suse.com>
-References: <a7466f460609121223t35ee8500x24e72f989029b611@mail.gmail.com> <200609122323.00866.vs@namesys.com>
+Subject: Re: Reiser FS will not boot after crash
+Date: Wed, 13 Sep 2006 10:00:08 -0400
+Message-ID: <45080EE8.4050702@suse.com>
+References: <Pine.LNX.4.04.10609041516380.4384-100000@nei15.nei1.nei.mv.com> <200609042333.27778.vs@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29867-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29868-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200609122323.00866.vs@namesys.com>
+In-Reply-To: <200609042333.27778.vs@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: Dragan Krnic <dkrnic@googlemail.com>, reiserfs-list@namesys.com, support@namesys.com
+Cc: reiserfs-list@namesys.com, jmh5@nei.mv.com
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
@@ -22,58 +22,48 @@ Hash: SHA1
 Vladimir V. Saveliev wrote:
 > Hello
 > 
-> On Tuesday 12 September 2006 23:23, Dragan Krnic wrote:
->> Hi, everyone,
+> On Monday 04 September 2006 23:26, jmh5@nei.mv.com wrote:
+>> Hi,
 >>
->> I've migrated important user data from an older PC to some fairly
->> contemporary hardware.
+>>   I am observing the following Reiser failure:
 >>
->> The old hardware was Intel Pentium 4 3 GHz, single CPU, 2 GB RAM,
->> 6 x 250 GB S-ATA connected via 2 Promise Tx2 cards and the on-board
->> 2-port controller, managed as a software raid5 with 5 disks and 1 spare,
->> with 83% used up, which is about 790 gigibytes net.
+>>   I am trying to use camorama with a Creative WebCam Live spca5xx driver
+>> (recently downloaded and compiled) . Camorama does not start and computer
+>> freezes (no response to mouse, or keyboard. Can't change to terminal
+>> window.
 >>
->> The new hardware is a Tyan S2895, 2 dual-core Opteron280, 8 GB RAM,
->> 8 x 500 GB S-ATA connected via Areca ARC-1120 133 MHz/64-bit PCI-X
->> 8-port, managed as a hardware raid5 with 8 disks no spares.
+>>   Reset or pull plug leaves Knoppix 5.0.1-DVD unbootable:
 >>
->> The tar backup of the old machine to a second similarly new PC ran at
->> about 30 MB/s. The tar restore onto the new hardware was about twice as
->> fast, as was expected.
->>
->> But! The restoration of ACLs took an enormous amount of time.
->>
->> The ACLs backup was created on the old machine in about 28 minutes,
->> but it took 74 minutes to restore the ACLs on the new hardware. During
->> that time the disk activity looked like what you can see in the enclosed
->> PDF file. Short intervals of intense writing with much longer intervals of
->> inactivity. In top the process "setfacl --restore=acls.local" and "pdflush"
->> were in state "D" all the time. From time to time a process "reiserfsd"
->> joined them in the same state.
->>
->> A login to the computer during that time was considerably slowed down.
->> Otherwise the computer was still free from any load.
->>
->> I'm not sure if that's a problem or just normal but you will know better.
+>>   The actual message from GRUB is inconsistent filesystem?! From a boot
+>> loader?
+> 
+> after unclean shutdown journal reply is necessary to return reiserfs to 
+> consistent state. Maybe GRUB did not do that?
+
+Grub uses the journal in a read-only mode. It doesn't replay it in a
+writable fashion. When grub needs a block, it scans the blocks used in
+the journal, and uses the most recent copy it finds there before looking
+out to the rest of the file system.
+
+>>   The 'fix' is even stranger. I execute fsck.reiserfs from another OS
+>> partition on the Knoppix 5.0.1-DVD partition (takes forever). 
+> 
+> Did fsck complete? What did it report?
+> 
+>> Somehow 
+>> 'reading' the Knoppix filesystem 'fixes' whatever was preventing Knoppix
+>> 5.0.1-DVD from booting.
 >>
 > 
-> I believe Jeff as reiserfs acl author will be interested by this question.
-> But may I ask you to try your test on ext2 to check whether ACL restoring is 
-> much faster there?
+> fsck replayed the journal.
+> Does camorama work now?
 > 
->> There were 796,115 files to apply ACLs to.
+> If it still causes computer freeze - can you please install serial or network 
+> console and try to catch what does kernel output when it freezes.
 
-What file system was on the old hardware? Taking longer to restore the
-ACLs than backing them up isn't notable at all. It's expected that reads
-are faster than writes.
-
-pdflush is responsible for flushing dirty pages to disk, kreiserfsd is
-the journal commit thread. Both are essential for writing on a reiserfs
-file system, and their being in "D" state is normal.
-
-It's known that ACLs on reiserfs have performance issues. There's been
-several threads on this list and linux-kernel discussing it and we don't
-need to rehash them.
+If the system doesn't work still, I believe grub has a debugging output
+mode that could yield more information. You'd need to rebuild and
+reinstall it.
 
 - -Jeff
 
@@ -84,7 +74,7 @@ SUSE Labs
 Version: GnuPG v1.4.2 (GNU/Linux)
 Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
 
-iD8DBQFFCA3uLPWxlyuTD7IRAjlSAJ9z+XmFVQqBQ2oisUjNOPfR5NM5bQCgmmOj
-0grcUTiDnMrxJAfzxbBKNB8=
-=5Iva
+iD8DBQFFCA7nLPWxlyuTD7IRAh4DAJwOP1vihfFBRSWT9p8i5MXTxzEP+QCeI3mJ
+7P2HrZdP1Hy1BbvhPi8bXbo=
+=k2E8
 -----END PGP SIGNATURE-----
