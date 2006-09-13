@@ -1,10 +1,10 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: [PATCH] reiser4: fix readv
-Date: Wed, 13 Sep 2006 22:12:54 +0400
-Message-ID: <200609132212.54871.vs@namesys.com>
+From: Quinn Harris <lists@qutek.net>
+Subject: Relocating files for faster boot/start-up on reiser(fs/4)
+Date: Wed, 13 Sep 2006 14:51:39 -0600
+Message-ID: <200609131451.42474.lists@qutek.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29871-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29876-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -12,119 +12,113 @@ Errors-To: flx@namesys.com
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: akpm@osdl.org
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello, Andrew
+I have been playing around with relocating file data to improve boot time and 
+app start-up time (like OpenOffice) on reiser(fs/4).  This is done by 
+monitoring the files accessed during boot/start-up then copying these files 
+into a single directory with sequential names 0001 0002 ... matching the 
+access order.  Finally the new files are hard linked (rename should work too) 
+to the same location as the original files.
 
-reiser4 in 2.6.18-rc6-mm2 has a bug. It can not do readv.
+As I understand it both reiserfs and reiser4 assign keys to items based on the 
+file name and the parent directory.  The file system then attempts to match 
+block order with key order .  This allows the above trick to work for placing 
+files in a specific order next to each other on disk.
 
-The attached patch fixes it by implementing reiser4' aio_read file operation.
-Unfortunately, it appeared to get a loop which is very similar to the one of
-fs/read_write.c:do_loop_readv_writev().
-Alternatively, if do_loop_readv_writev were EXPORT_SYMBOL-ed
-reiser4' aio_read could use it instead. But, there is a problem with do_loop_readv_writev EXPORT_SYMBOL-ing:
-one if its arguments is io_fn_t, which is declared in fs/read_write.h.
-If it is ok to move io_fn_t and do_loop_readv_writev declarations to include/linux/fs.h and to EXPORT_SYMBOL 
-do_loop_readv_writev the fix will be smaller. Please, let me know what would you prefer.
+I am using readahead-watch on Ubuntu.  This little tool uses inotify to 
+monitor all file accesses while it runs.  The accessed files are written to a 
+text file by disk order.  I have modified this tool to also write them by 
+access time.  I then use a script (ruby) to do the above copy and link using 
+the output from readahead-watch.
 
+I have done some tests on my Athlon 2200 laptop running reiserfs.  Hard drive 
+is a 40GB Hitachi Travelstar 80GB has a max real Tx of 25MB/s and access time 
+of 12ms.
 
-From: Vladimir Saveliev <vs@namesys.com>
+The reiserfs partition size is 36G with 8.9G used.
 
-This patch adds implementation of aio_read file operation for reiser4.
-It is needed because in reiser4 there are files which can not be dealt
-with via generic page cache routines.
-In case of readv, reiser4 has no meaning to find out file type and to choose proper
-way to read it. As result generic page cache read gets called for files which can not be 
-read that way. Reiser4' aio_read method is to fix that problem. 
+I used readahead-watch to create a readahead log during boot on Ubuntu Edgy 
+much like the default configuration with the "profile" boot option except set 
+to record by access time and I manually killed it after the system fully 
+booted.  The with this log used for readahead the system booted in 2:15 from 
+grub load to usable desktop (auto login) as measured manually by a stop 
+watch.  After running the relocate script the boot time with the same 
+readahead log was 1:38.  I then reran the readahead-watch during boot set to 
+sort by disk order, resulting in a boot time of 1:15.  I booted twice for 
+each test to make sure the results were within a few seconds.
 
-Signed-off-by: Vladimir Saveliev <vs@namesys.com>
+I also used bootchart, but this didn't measure Gnome start-up and requires a 
+bit of ambition to analyze thoroughly.  But it was evident that running the 
+relocate script did increase peek disk throughput from 6MB/s to 13MB/s and 
+increased the averate throughput rate.  But most of boot time is still spent 
+waiting on the disk.  My relocate script relocated 310Mb of files.  If those 
+where perfectly contiguous on disk, this drive should be able to load that in 
+under 20s.  Thought I expect only a fraction of that is actually accessed 
+during boot.
 
+Using 'filefrag' it is evident that the relocate scripts attempt to relocate 
+the file continuously was a bit half assed, but from the boot times it was 
+clearly an improvement.
 
+I also used readahead-watch to monitor the accessed files of openoffice writer 
+on startup.  The initial cold start time was 17s (about 0.5s variation from 
+load to load).  A warm start (start right after its closed) was 3.6s.  The 
+results from readahead-watch where filtered through a script to remove all 
+files that where open when openoffice wasn't running (using fuser).  Running 
+the relocate script on some of the X and gnome libraries broke my system 
+nicely until a reboot.  After running the relocate script the cold start time 
+became 14s.  When readahead-list is run on the same files relocated before 
+starting openoffice the load time was 6.5s.  sudo sh -c "echo 1 
+> /proc/sys/vm/drop_caches" was used to ensure the disk was read between 
+runs.
 
+Of course, these results are highly dependent on how fragmented the files 
+where before and how effectively the relocation worked.  I expect others 
+could reproduce speedups but how much will vary.  I did these tests on my 
+laptop with a slow hard drive so the results would be more evident.
 
-diff -puN fs/reiser4/plugin/object.c~reiser4-add-aio_read fs/reiser4/plugin/object.c
---- linux-2.6.18-rc6-mm2/fs/reiser4/plugin/object.c~reiser4-add-aio_read	2006-09-13 20:18:23.000000000 +0400
-+++ linux-2.6.18-rc6-mm2-vs/fs/reiser4/plugin/object.c	2006-09-13 20:18:23.000000000 +0400
-@@ -101,7 +101,7 @@ file_plugin file_plugins[LAST_FILE_PLUGI
- 			.llseek = generic_file_llseek,
- 			.read = read_unix_file,
- 			.write = do_sync_write,
--			.aio_read = generic_file_aio_read,
-+			.aio_read = aio_read_unix_file,
- 			.aio_write = generic_file_aio_write,
- 			.ioctl = ioctl_unix_file,
- 			.mmap = mmap_unix_file,
-diff -puN fs/reiser4/plugin/file/file.c~reiser4-add-aio_read fs/reiser4/plugin/file/file.c
---- linux-2.6.18-rc6-mm2/fs/reiser4/plugin/file/file.c~reiser4-add-aio_read	2006-09-13 20:18:23.000000000 +0400
-+++ linux-2.6.18-rc6-mm2-vs/fs/reiser4/plugin/file/file.c	2006-09-13 20:52:30.000000000 +0400
-@@ -2011,6 +2011,54 @@ out:
-        return result;
- }
- 
-+/**
-+ * aio_read_unix_file - aio_read of struct file_operations
-+ * @iocb: i/o control block
-+ * @iov: i/o vector
-+ * @nr_segs: number of segments in the i/o vector
-+ * @pos: file position to read from
-+ *
-+ * When it is called within reiser4 context (this happens when sys_read is
-+ * reading a file built of extents) - just call generic_file_aio_read to
-+ * perform read into page cache. When it is called without reiser4 context
-+ * (sys_readv) - call read_unix_file for each segments of i/o vector, so that
-+ * read_unix_file will be able to choose whether the file is to be read into
-+ * page cache or the file is built of tail items and page cache read is not
-+ * suitable for it.
-+ */
-+ssize_t aio_read_unix_file(struct kiocb *iocb, const struct iovec *iov,
-+			   unsigned long nr_segs, loff_t pos)
-+{
-+	ssize_t ret = 0;
-+
-+	if (is_in_reiser4_context())
-+		return generic_file_aio_read(iocb, iov, nr_segs, pos);
-+
-+	while (nr_segs > 0) {
-+		void __user *base;
-+		size_t len;
-+		ssize_t nr;
-+
-+		base = iov->iov_base;
-+		len = iov->iov_len;
-+		iov++;
-+		nr_segs--;
-+
-+		nr = read_unix_file(iocb->ki_filp, base, len, &iocb->ki_pos);
-+		if (nr < 0) {
-+			if (!ret)
-+				ret = nr;
-+			break;
-+		}
-+		ret += nr;
-+		if (nr != len)
-+			break;
-+	}
-+
-+	return ret;
-+
-+}
-+
- static ssize_t read_unix_file_container_tails(
- 	struct file *file, char __user *buf, size_t read_amount, loff_t *off)
- {
-diff -puN fs/reiser4/plugin/file/file.h~reiser4-add-aio_read fs/reiser4/plugin/file/file.h
---- linux-2.6.18-rc6-mm2/fs/reiser4/plugin/file/file.h~reiser4-add-aio_read	2006-09-13 20:18:23.000000000 +0400
-+++ linux-2.6.18-rc6-mm2-vs/fs/reiser4/plugin/file/file.h	2006-09-13 20:18:23.000000000 +0400
-@@ -15,6 +15,8 @@ int setattr_unix_file(struct dentry *, s
- /* file operations */
- ssize_t read_unix_file(struct file *, char __user *buf, size_t read_amount,
- 		       loff_t *off);
-+ssize_t aio_read_unix_file(struct kiocb *, const struct iovec *,
-+			   unsigned long nr_segs, loff_t pos);
- ssize_t write_unix_file(struct file *, const char __user *buf, size_t write_amount,
- 			loff_t * off);
- int ioctl_unix_file(struct inode *, struct file *, unsigned int cmd,
+I also did some test with fresh reiserfs, reiser4, and ext3 on a 100MB 
+loopback to see how well the file system would take the hint to order data 
+sequentially.  Creating 10 5MB files with sequential names on reiser4 
+resulted in one fragment (measured by 'filefrag') for the whole bunch 
+probably a disk allocation bitmap, nearly perfect.  reiserfs generally would 
+end up with 3-4 fragments for the same test.  And ext3 didn't appear to make 
+any real attempt to order the files sequentially on disk.
 
-_
+I have a 29GB reiser4 partition with 21GB used I have been running for a few 
+years now (sometime before release).  When I ran the same 10 5MB file test on 
+it, the total resulted in 1000+ fragments (didn't bother to count, but it was 
+a lot).  But the files where allocated head to tail.  Its a bit scary to 
+think the file system can't find a few MB unallocated region on disk.  
+Clearly a repacker would be really nice.
 
+Relocating file data to match pre-measured access patterns can clearly make a 
+big performance difference.  Reiser(fs/4) provides an easy mechanism to hint 
+at disk order which can be used to measurably improve boot/startup times.  
+But, I expect more can be done to achieve better results.  This includes 
+better measurements of read patterns and better allocation of the data.
+
+I hope to rerun these tests with Reiser4 (maybe 4.1) on the same hardware.  I 
+expect with a fresh (not fragmented) Reiser4 partition, the improvements will 
+be more pronounced.  But a repacker should allow more reproducible results 
+and nearly perfect data placement for boot and app start-up.
+
+I hope with reiser4, relocation, and the new upstart (Ubuntu's sysvinit 
+replacement) with good scripts, I will get this system to boot to usable in 
+30 seconds.  And slowoffice (aka openoffice)  to load in 6s cold.  Am I 
+overoptimistic?
+
+What about a mechanism to explicitly set or hint at item keys?  Maybe someday, 
+linux packages could include preferred file order information that a file 
+system like reiser4 could use to order the files on disk resulting in fast 
+load times without the need for the user to profile the app.
+
+I think there is a lot to be said for measuring access patterns and using that 
+to set keys in addition to deducing it from semantics using a fibration 
+plug-in.
+
+Thoughts?
+
+--
+Quinn Harris
