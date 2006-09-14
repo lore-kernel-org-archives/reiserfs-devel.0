@@ -1,67 +1,50 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: argh! it's reiserfs deadlocking! [was: Re: JFS - real deadlock
- and lockdep warning (2.6.18-rc5-mm1)]
-Date: Thu, 14 Sep 2006 09:42:48 -0400
-Message-ID: <45095C58.5020106@suse.com>
-References: <20060905203309.GA3981@inferi.kami.home> <1157580028.8200.72.camel@kleikamp.austin.ibm.com> <20060907184930.GA13380@inferi.kami.home>
+From: cmaurand <cmaurand@bluetarp.com>
+Subject: Re: Relocating files for faster boot/start-up on reiser(fs/4)
+Date: Thu, 14 Sep 2006 10:01:52 -0400
+Message-ID: <450960D0.9020203@bluetarp.com>
+References: <200609131451.42474.lists@qutek.net> <ee9s4k$f58$1@sea.gmane.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750754AbWINNmw@vger.kernel.org>
-In-Reply-To: <20060907184930.GA13380@inferi.kami.home>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-29885-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <ee9s4k$f58$1@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Dave Kleikamp <shaggy@austin.ibm.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, akpm@osdl.org, reiserfs-dev@namesys.com, reiserfs-list@namesys.com
+To: Peter <sw98234@hotmail.com>
+Cc: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
 
-Mattia Dongili wrote:
-> On Wed, Sep 06, 2006 at 05:00:28PM -0500, Dave Kleikamp wrote:
->> I meant to reply to this earlier.  I've had a lot of distractions.
+SCO has done this solution, thats why its such a dog.
+
+Peter wrote:
+> On Wed, 13 Sep 2006 14:51:39 -0600, Quinn Harris wrote:
+>> Thoughts?
 >>
->> On Tue, 2006-09-05 at 22:33 +0200, Mattia Dongili wrote:
->>> Hello,
->>>
->>> as the subject says it's some time[0] I'm experiencing deadlocks[1] (I'm
->>> only tracking -mm, and sporadically using the stable series). I have a
->>> couple of use cases that seem to reliably trigger the deadlock, namely
->>> using Eclipse and Firefox.
-> [...]
->>> /dev/hda1 on / type reiserfs (rw)
->>> /dev/hda3 on /usr type reiserfs (rw)
->>> /dev/hda5 on /home type jfs (rw)
->>>
->>> bootlog: http://oioio.altervista.org/linux/dmesg-2.6.18-rc5-mm1-lockdep
->>> config: http://oioio.altervista.org/linux/config-2.6.18-rc5-mm1-lockdep
 > 
-> Dave,
+> Yes. Why on earth would you do this? By copying the files and renaming and
+> hardlinking them is nothing a sysadmin would ever do. Just by copying you
+> are allowing reiser to optimize the dir. You're trying to duplicate what a
+> tree-based design does automatically. Moreover, remember that reiser packs
+> files into clusters so that you may read more than just your one file from
+> time to time which could end up adding time to your test.
 > 
-> I have to apologize. Reiser3 seem to be the one deadlocking here
-> actually. Changing /home to reiser4 still deadlocks.
+> If reiser needs speedup it certainly won't be done by renaming files!
 > 
-> Now, reiserfs-developers:
-> would you want me to keep the filesystem around to try to test patches
-> or potential fixes or can I wipe it out?
-> The good thing is that the deadlock is 100% repeatable, the bad thing is
-> that this laptop has a broken cdrom and I have to take the drive out and
-> fsck it via usb1.1 each time. :)
+> JM$0.02
 > 
-> Thanks
 
 
-How is it that you arrived on reiser3 and reiser4 deadlocking here?
-
-- -Jeff
-
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
-
-iD8DBQFFCVxYLPWxlyuTD7IRArZ1AJ9pJPRw0ERLLS36xhn6dyHiXZJtVgCeN+Xe
-OVBhxH0xk8UL/YaUKlHJuEE=
-=9R9c
------END PGP SIGNATURE-----
+-- 
+Curtis Maurand
+Senior Network & Systems Engineer
+BlueTarp Financial, Inc.
+443 Congress St.
+6th Floor
+Portland, ME 04101
+207.797.5900 x233 (office)
+207.797.3833	  (fax)
+mailto:cmaurand@bluetarp.com
+http://www.bluetarp.com
