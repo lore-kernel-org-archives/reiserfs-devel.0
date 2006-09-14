@@ -1,32 +1,45 @@
-From: "Peter" <sw98234-PkbjNfxxIARBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: reiser4: mount -o remount,ro / causes error on reboot
-Date: Thu, 14 Sep 2006 11:37:41 +0000 (UTC)
-Message-ID: <eebeu5$mi1$1@sea.gmane.org>
-References: <ee1gcu$dgb$1@sea.gmane.org>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: [PATCH] reiser4: fix readv
+Date: Thu, 14 Sep 2006 15:15:06 +0400
+Message-ID: <200609141515.06532.vs@namesys.com>
+References: <200609132212.54871.vs@namesys.com> <20060914092829.GA13737@hermes.uziel.local> <eebb8l$jg6$1@sea.gmane.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-29882-reiserfs=m.gmane.org-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-list-help: <mailto:reiserfs-list-help-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-list-post: <mailto:reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-Errors-To: flx-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
-Sender: news <news-WnDAp88bSu3NLxjTenLetw@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29883-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <eebb8l$jg6$1@sea.gmane.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
+To: Peter <sw98234@hotmail.com>
+Cc: reiserfs-list@namesys.com
 
-On Sun, 10 Sep 2006 17:01:18 +0000, Peter wrote:
+Hello
 
-this bug was also reported on gentoo wrt the newer baselayout. Indications
-are it may be a r4 issue, although no one seems to know why!
+On Thursday 14 September 2006 14:35, Peter wrote:
+> On Thu, 14 Sep 2006 11:28:29 +0200, Christian Trefzer wrote:
+> 
+> > Hi Vladimir,
+> > 
+> > this fixes a bunch of random user space oddities for me. Just patched
+> > 2.6.18-rc6-mm2 with this, and some annoyances I could not trace back to
+> > a change in user space just went bye-bye.
+> > 
+> > Thanks a lot!
+> > Chris
+> 
+> This does not patch against 2.6.17-3 patchset however. 
 
-http://bugs.gentoo.org/show_bug.cgi?id=144093
+2.6.17-3 does not have the problem which that patch fixes. So you do not need it.
 
--- 
-Peter
-+++++
-Do not reply to this email, it is a spam trap and not monitored.
-I can be reached via this list, or via 
-jabber: pete4abw at jabber.org
-ICQ: 73676357
+> Any possibility 
+> this may be related to some startup issues as noted on other threads here?
+> 
 
+no. 
+
+> Thx
+> 
