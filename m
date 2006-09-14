@@ -1,78 +1,86 @@
-From: Mattia Dongili <malattia@linux.it>
-Subject: Re: argh! it's reiserfs deadlocking! [was: Re: JFS - real deadlock and lockdep warning (2.6.18-rc5-mm1)]
-Date: Thu, 14 Sep 2006 22:30:36 +0200
-Message-ID: <20060914203036.GC3963@inferi.kami.home>
-References: <20060905203309.GA3981@inferi.kami.home> <1157580028.8200.72.camel@kleikamp.austin.ibm.com> <20060907184930.GA13380@inferi.kami.home> <45095C58.5020106@suse.com>
+From: Quinn Harris <lists@qutek.net>
+Subject: Re: Relocating files for faster boot/start-up on reiser(fs/4)
+Date: Thu, 14 Sep 2006 16:09:04 -0600
+Message-ID: <200609141609.06713.lists@qutek.net>
+References: <200609131451.42474.lists@qutek.net> <200609132110.45703.lists@qutek.net> <4509B3CD.3010903@slaphack.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-29890-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-29891-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <4509B3CD.3010903@slaphack.com>
 Content-Disposition: inline
-In-Reply-To: <45095C58.5020106@suse.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Dave Kleikamp <shaggy@austin.ibm.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, akpm@osdl.org, reiserfs-dev@namesys.com, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-n Thu, Sep 14, 2006 at 09:42:48AM -0400, Jeff Mahoney wrote:
-> Mattia Dongili wrote:
-> > On Wed, Sep 06, 2006 at 05:00:28PM -0500, Dave Kleikamp wrote:
-> >> I meant to reply to this earlier.  I've had a lot of distractions.
-> >>
-> >> On Tue, 2006-09-05 at 22:33 +0200, Mattia Dongili wrote:
-> >>> Hello,
-> >>>
-> >>> as the subject says it's some time[0] I'm experiencing deadlocks[1] (I'm
-> >>> only tracking -mm, and sporadically using the stable series). I have a
-> >>> couple of use cases that seem to reliably trigger the deadlock, namely
-> >>> using Eclipse and Firefox.
-> > [...]
-> >>> /dev/hda1 on / type reiserfs (rw)
-> >>> /dev/hda3 on /usr type reiserfs (rw)
-> >>> /dev/hda5 on /home type jfs (rw)
-> >>>
-> >>> bootlog: http://oioio.altervista.org/linux/dmesg-2.6.18-rc5-mm1-lockdep
-> >>> config: http://oioio.altervista.org/linux/config-2.6.18-rc5-mm1-lockdep
-> > 
-> > Dave,
-> > 
-> > I have to apologize. Reiser3 seem to be the one deadlocking here
-> > actually. Changing /home to reiser4 still deadlocks.
-> > 
-> > Now, reiserfs-developers:
-> > would you want me to keep the filesystem around to try to test patches
-> > or potential fixes or can I wipe it out?
-> > The good thing is that the deadlock is 100% repeatable, the bad thing is
-> > that this laptop has a broken cdrom and I have to take the drive out and
-> > fsck it via usb1.1 each time. :)
-> > 
-> > Thanks
-> 
-> 
-> How is it that you arrived on reiser3 and reiser4 deadlocking here?
+On Thursday 14 September 2006 13:55, David Masover wrote:
+> Quinn Harris wrote:
+> > The boot optimization was over 3885 files.  Ideally those files would be
+> > ordered head to tail in a sequence that perfectly matches the order they
+> > will be read.
+> >
+> > I bring this up here because I expect with reiser4, a repacker, and this
+>
+> Now that you mention it, do you have a control of some sort to prove
+> this isn't just fragmentation?  That is, copy the files you're messing
+> with in some random order (that should make booting slower), and
+> benchmark that?
 
-oh, no that's not what I said.
+That is a good point.  Recording the disk layout before and after to compar=
+e=20
+relative fragmentation would be a good idea.  As well as randomizing the=20
+sequence as a sanity check.
 
-I had:
+Also note that during boot I was using readahead on all 3885 files.  So the=
+=20
+kernel has a good opportunity to rearrange the reads.  And the read sequenc=
+e=20
+doesn't necessary match the order its needed (though I tried to get that).
 
-/dev/hda1 on / type reiserfs (rw)
-/dev/hda3 on /usr type reiserfs (rw)
-/dev/hda5 on /home type jfs (rw)
+=46rom what I have done, it would be unreasonable to say anything other tha=
+n,=20
+this has a good change of working.  I really think this should work in=20
+theory.  That's why I tried it in the first place and required relatively=20
+little data to convince myself I am not smoking crack.
 
-the deadlock was there. I then changed to
+A simple test with reiser4 suggests that it will pack the files right up ne=
+xt=20
+to each other in the specified sequence.  Take a look at the section "If It=
+=20
+Is In RAM, Dirty, and Contiguous, Then Squeeze It ALL Together Just Before=
+=20
+Writing" on www.namesys.com.
 
-/dev/hda1 on / type reiserfs (rw)
-/dev/hda3 on /usr type reiserfs (rw)
-/dev/hda5 on /home type reiser4 (rw)
+I will redo this on a fresh reiser4 filesystem to reduce initial fragmentat=
+ion=20
+and run some test to eliminate reasonable confounds.
+=20
 
-still deadlocking, so it wasn't jfs but reiserfs.
+>
+> I'm guessing a repacker would speed things up much more than this,
+> although this is interesting and helpful for systems which need to be
+> rebooted often.  (I'd prefer a working suspend2...)
+This idea complements a repacker.  The core idea is to cause the fs to orde=
+r=20
+files based on recorded access patterns that will likely happen again=20
+(instead of just the location in the directory tree).  A repacker would=20
+ensure files are placed in the exact order back to back as we expect them t=
+o=20
+be accessed.  File system fragmentation will substantially inhibit this fro=
+m=20
+happening.  That said, this is causing a basic form of repacking.=20
 
-Anyway I wiped out the reiserfs partitions, it was starting to become
-really annoying sorry.
+Yeah a good suspend will probably result in faster boot no matter how many=
+=20
+tricks you use to improve normal boot, but this could also improve cold loa=
+d=20
+times for apps like Open Office and Firefox.  In addition suspend drops the=
+=20
+disk cache.  Profiling access patterns on resuming from suspend then=20
+relocating based on that might improve restore times.
 
--- 
-mattia
-:wq!
+Any time file access is very predictable, and doesn't closely follow the=20
+default key assignment order, this could be improve performance.
