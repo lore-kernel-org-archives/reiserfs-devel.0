@@ -1,50 +1,36 @@
-From: cmaurand <cmaurand@bluetarp.com>
-Subject: Re: Relocating files for faster boot/start-up on reiser(fs/4)
-Date: Thu, 14 Sep 2006 10:01:52 -0400
-Message-ID: <450960D0.9020203@bluetarp.com>
-References: <200609131451.42474.lists@qutek.net> <ee9s4k$f58$1@sea.gmane.org>
+From: Payal Rathod <payal-fs@scriptkitchen.com>
+Subject: a bit OT: traditional Unix filesystems
+Date: Thu, 14 Sep 2006 13:05:44 -0400
+Message-ID: <20060914170544.GA7793@tranquility.scriptkitchen.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29885-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29886-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <ee9s4k$f58$1@sea.gmane.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Peter <sw98234@hotmail.com>
-Cc: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
+Hi,
+I have a small OT query on working of traditional filesystem of Unix.
+Can someone comment/correct me on the query below?
 
-SCO has done this solution, thats why its such a dog.
+If i type $ cat /tmp/payal.txt (according to my knowledge) inode of / is 
+found out (2) from super-block. From there physical location of "/" is 
+read (i.e. the directory entry) and from there inode of tmp is found 
+out. Then directory entry of tmp is read and inode of payal.txt is found 
+out and then data blocks of that file are read.
+Am I correct in this?
 
-Peter wrote:
-> On Wed, 13 Sep 2006 14:51:39 -0600, Quinn Harris wrote:
->> Thoughts?
->>
-> 
-> Yes. Why on earth would you do this? By copying the files and renaming and
-> hardlinking them is nothing a sysadmin would ever do. Just by copying you
-> are allowing reiser to optimize the dir. You're trying to duplicate what a
-> tree-based design does automatically. Moreover, remember that reiser packs
-> files into clusters so that you may read more than just your one file from
-> time to time which could end up adding time to your test.
-> 
-> If reiser needs speedup it certainly won't be done by renaming files!
-> 
-> JM$0.02
-> 
+Now if tmp is on different partition or harddisk, how will directory 
+entry of "?" point it out exactly? As far as I know, directory entry 
+contains names and inode number and not the device details, then how 
+does it exactly work? I googled a lot for it, but didn't find exact 
+answer. Can someone please explain?
 
+With warm regards,
+-Payal
 
--- 
-Curtis Maurand
-Senior Network & Systems Engineer
-BlueTarp Financial, Inc.
-443 Congress St.
-6th Floor
-Portland, ME 04101
-207.797.5900 x233 (office)
-207.797.3833	  (fax)
-mailto:cmaurand@bluetarp.com
-http://www.bluetarp.com
