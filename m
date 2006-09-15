@@ -1,144 +1,43 @@
-From: Andrew Morton <akpm@osdl.org>
-Subject: Re: [PATCH] reiser4: fix readv
-Date: Thu, 14 Sep 2006 19:24:15 -0700
-Message-ID: <20060914192415.a356d950.akpm@osdl.org>
-References: <200609132212.54871.vs@namesys.com>
-Mime-Version: 1.0
+From: Toby Thain <toby@smartgames.ca>
+Subject: Re: Relocating files for faster boot/start-up on reiser(fs/4)
+Date: Fri, 15 Sep 2006 01:15:35 -0400
+Message-ID: <54E99998-88D2-4E0D-8970-1C3DA365DBE0@smartgames.ca>
+References: <200609131451.42474.lists@qutek.net> <200609132110.45703.lists@qutek.net> <4509B3CD.3010903@slaphack.com> <200609141609.06713.lists@qutek.net> <4509D65D.7040908@slaphack.com>
+Mime-Version: 1.0 (Apple Message framework v752.2)
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29893-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29894-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200609132212.54871.vs@namesys.com>
+In-Reply-To: <4509D65D.7040908@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: reiserfs-list@namesys.com, Christoph Hellwig <hch@lst.de>, Badari Pulavarty <pbadari@us.ibm.com>
-
-On Wed, 13 Sep 2006 22:12:54 +0400
-"Vladimir V. Saveliev" <vs@namesys.com> wrote:
-
-> Hello, Andrew
-> 
-> reiser4 in 2.6.18-rc6-mm2 has a bug. It can not do readv.
-> 
-> The attached patch fixes it by implementing reiser4' aio_read file operation.
-> Unfortunately, it appeared to get a loop which is very similar to the one of
-> fs/read_write.c:do_loop_readv_writev().
-> Alternatively, if do_loop_readv_writev were EXPORT_SYMBOL-ed
-> reiser4' aio_read could use it instead. But, there is a problem with do_loop_readv_writev EXPORT_SYMBOL-ing:
-> one if its arguments is io_fn_t, which is declared in fs/read_write.h.
-> If it is ok to move io_fn_t and do_loop_readv_writev declarations to include/linux/fs.h and to EXPORT_SYMBOL 
-> do_loop_readv_writev the fix will be smaller. Please, let me know what would you prefer.
-> 
-
-Yes, I'd say that do_loop_readv_writev() is suitable for exporting to
-filesystems, and that doing so is preferable to duplicating it.
-
-That'd be two patches, please: one to do the export and one to use it in
-reiser4.
-
-I assume there's a good reason why reiser4 cannot use
-generic_file_aio_read() or vfs_readv().  Please capture that discussion in
-the changelog for the first patch, thanks.
+Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
+To: David Masover <ninja@slaphack.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
 
-> From: Vladimir Saveliev <vs@namesys.com>
-> 
-> This patch adds implementation of aio_read file operation for reiser4.
-> It is needed because in reiser4 there are files which can not be dealt
-> with via generic page cache routines.
-> In case of readv, reiser4 has no meaning to find out file type and to choose proper
-> way to read it. As result generic page cache read gets called for files which can not be 
-> read that way. Reiser4' aio_read method is to fix that problem. 
-> 
-> Signed-off-by: Vladimir Saveliev <vs@namesys.com>
-> 
-> 
-> 
-> 
-> diff -puN fs/reiser4/plugin/object.c~reiser4-add-aio_read fs/reiser4/plugin/object.c
-> --- linux-2.6.18-rc6-mm2/fs/reiser4/plugin/object.c~reiser4-add-aio_read	2006-09-13 20:18:23.000000000 +0400
-> +++ linux-2.6.18-rc6-mm2-vs/fs/reiser4/plugin/object.c	2006-09-13 20:18:23.000000000 +0400
-> @@ -101,7 +101,7 @@ file_plugin file_plugins[LAST_FILE_PLUGI
->  			.llseek = generic_file_llseek,
->  			.read = read_unix_file,
->  			.write = do_sync_write,
-> -			.aio_read = generic_file_aio_read,
-> +			.aio_read = aio_read_unix_file,
->  			.aio_write = generic_file_aio_write,
->  			.ioctl = ioctl_unix_file,
->  			.mmap = mmap_unix_file,
-> diff -puN fs/reiser4/plugin/file/file.c~reiser4-add-aio_read fs/reiser4/plugin/file/file.c
-> --- linux-2.6.18-rc6-mm2/fs/reiser4/plugin/file/file.c~reiser4-add-aio_read	2006-09-13 20:18:23.000000000 +0400
-> +++ linux-2.6.18-rc6-mm2-vs/fs/reiser4/plugin/file/file.c	2006-09-13 20:52:30.000000000 +0400
-> @@ -2011,6 +2011,54 @@ out:
->         return result;
->  }
->  
-> +/**
-> + * aio_read_unix_file - aio_read of struct file_operations
-> + * @iocb: i/o control block
-> + * @iov: i/o vector
-> + * @nr_segs: number of segments in the i/o vector
-> + * @pos: file position to read from
-> + *
-> + * When it is called within reiser4 context (this happens when sys_read is
-> + * reading a file built of extents) - just call generic_file_aio_read to
-> + * perform read into page cache. When it is called without reiser4 context
-> + * (sys_readv) - call read_unix_file for each segments of i/o vector, so that
-> + * read_unix_file will be able to choose whether the file is to be read into
-> + * page cache or the file is built of tail items and page cache read is not
-> + * suitable for it.
-> + */
-> +ssize_t aio_read_unix_file(struct kiocb *iocb, const struct iovec *iov,
-> +			   unsigned long nr_segs, loff_t pos)
-> +{
-> +	ssize_t ret = 0;
-> +
-> +	if (is_in_reiser4_context())
-> +		return generic_file_aio_read(iocb, iov, nr_segs, pos);
-> +
-> +	while (nr_segs > 0) {
-> +		void __user *base;
-> +		size_t len;
-> +		ssize_t nr;
-> +
-> +		base = iov->iov_base;
-> +		len = iov->iov_len;
-> +		iov++;
-> +		nr_segs--;
-> +
-> +		nr = read_unix_file(iocb->ki_filp, base, len, &iocb->ki_pos);
-> +		if (nr < 0) {
-> +			if (!ret)
-> +				ret = nr;
-> +			break;
-> +		}
-> +		ret += nr;
-> +		if (nr != len)
-> +			break;
-> +	}
-> +
-> +	return ret;
-> +
-> +}
-> +
->  static ssize_t read_unix_file_container_tails(
->  	struct file *file, char __user *buf, size_t read_amount, loff_t *off)
->  {
-> diff -puN fs/reiser4/plugin/file/file.h~reiser4-add-aio_read fs/reiser4/plugin/file/file.h
-> --- linux-2.6.18-rc6-mm2/fs/reiser4/plugin/file/file.h~reiser4-add-aio_read	2006-09-13 20:18:23.000000000 +0400
-> +++ linux-2.6.18-rc6-mm2-vs/fs/reiser4/plugin/file/file.h	2006-09-13 20:18:23.000000000 +0400
-> @@ -15,6 +15,8 @@ int setattr_unix_file(struct dentry *, s
->  /* file operations */
->  ssize_t read_unix_file(struct file *, char __user *buf, size_t read_amount,
->  		       loff_t *off);
-> +ssize_t aio_read_unix_file(struct kiocb *, const struct iovec *,
-> +			   unsigned long nr_segs, loff_t pos);
->  ssize_t write_unix_file(struct file *, const char __user *buf, size_t write_amount,
->  			loff_t * off);
->  int ioctl_unix_file(struct inode *, struct file *, unsigned int cmd,
-> 
-> _
+On 14-Sep-06, at 6:23 PM, David Masover wrote:
+
+> Quinn Harris wrote:
+>> On Thursday 14 September 2006 13:55, David Masover wrote:
+>>> ...
+>> That is a good point.  Recording the disk layout before and after  
+>> to compare relative fragmentation would be a good idea.  As well  
+>> as randomizing the sequence as a sanity check.
+>> Also note that during boot I was using readahead on all 3885  
+>> files.  So the kernel has a good opportunity to rearrange the  
+>> reads.  And the read sequence doesn't necessary match the order  
+>> its needed (though I tried to get that).
+>
+> Speaking of which, did you parallize the boot process at all?
+
+Just off the top of my head, wouldn't that make the access sequence  
+asynchronous & thereby less predictable? (Although I'm sure it's a  
+net win.)
+
+> I'd estimate my system easily spent more than 50% of its boot time  
+> not touching the disk at all before I did that.  Gentoo can do  
+> this, I'm not sure what else, as it kind of needs your init system  
+> to understand dependencies.
+...
