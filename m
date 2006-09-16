@@ -1,29 +1,30 @@
-From: "=?ISO-8859-2?Q?Grzegorz_Ja=B6kiewicz?=" <gryzman@gmail.com>
-Subject: Re: Re: v3 rebuild-tree left system in unusable state because of space shortage
-Date: Sat, 16 Sep 2006 14:18:11 +0200
-Message-ID: <2f4958ff0609160518l307df492i814c35f90bb3eeb5@mail.gmail.com>
-References: <2f4958ff0609150125w123284b0if6f59ca0a6df8d05@mail.gmail.com>
-	 <200609151343.39692.vs@namesys.com>
-	 <2f4958ff0609150334l2f52574el151e1dcff1f721be@mail.gmail.com>
+From: "Pawel Jagoda" <blue@bluenet.waw.pl>
+Subject: Files > 2GB and 3.6 version (after converting from 3.5)
+Date: Sat, 16 Sep 2006 14:25:02 +0200 (CEST)
+Message-ID: <1156.192.168.0.1.1158409502.squirrel@www.bluenet.waw.pl>
+Reply-To: pjagoda@bluenet.waw.pl
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29908-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-29909-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <2f4958ff0609150334l2f52574el151e1dcff1f721be@mail.gmail.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-it worked okay.
-now I wonder, if I can use your instructions to "join" 120GB partition
-with new 220GB one, where the later one is the current one, and I
-would like to extend it to 220+120GB.
-220 one is /dev/hda3 , the one that I would like to attach to the end
-of it is /dev/hdc3.
-how can I do this without destructing data on the first one? I guess I
-should use MD ? right ?
+Hello.
+
+I've backup my data - one file, which have 4060 MB. Unfortunetly I didn't
+point out that my destination file system is in old 3.5.x version. And of
+course I cannot read my data after 2GB (it says: Input/Output Error). I
+have converted my filesystem into 3.6.x, but still I'm not able to read
+this file. But if I create new file (for example: dd if=/dev/zero
+of=/mnt/hda3/some_file bs=1M count=3000), there is no problem to read it.
+Is it possible, to do something to restore my backup from this file? If
+yes, then how can I do it?
+
+
+Paul.
+
