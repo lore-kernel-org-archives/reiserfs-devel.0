@@ -1,46 +1,42 @@
-From: Andrew Morton <akpm@osdl.org>
-Subject: Re: [PATCH] reiser4: fix readv
-Date: Sun, 17 Sep 2006 12:53:57 -0700
-Message-ID: <20060917125357.0e42a8fa.akpm@osdl.org>
-References: <200609132212.54871.vs@namesys.com>
-	<20060914192415.a356d950.akpm@osdl.org>
-	<200609172239.08025.vs@namesys.com>
+From: "Pawel Jagoda" <blue@bluenet.waw.pl>
+Subject: Re: Files > 2GB and 3.6 version (after converting from 3.5)
+Date: Sun, 17 Sep 2006 23:20:28 +0200 (CEST)
+Message-ID: <4569.192.168.0.1.1158528028.squirrel@www.bluenet.waw.pl>
+References: <1156.192.168.0.1.1158409502.squirrel@www.bluenet.waw.pl>
+    <200609172324.10289.vs@namesys.com>
+Reply-To: pjagoda@bluenet.waw.pl
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29918-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-29920-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200609172239.08025.vs@namesys.com>
+In-Reply-To: <200609172324.10289.vs@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: reiserfs-list@namesys.com, Christoph Hellwig <hch@lst.de>, Badari Pulavarty <pbadari@us.ibm.com>
+To: reiserfs-list@namesys.com
 
+> Hello
+>
+> On Saturday 16 September 2006 16:25, Pawel Jagoda wrote:
+>> Hello.
+>>
+>> I've backup my data - one file, which have 4060 MB. Unfortunetly I
+>> didn't
+>> point out that my destination file system is in old 3.5.x version. And
+>> of
+>> course I cannot read my data after 2GB (it says: Input/Output Error). I
+>> have converted my filesystem into 3.6.x, but still I'm not able to read
+>> this file. But if I create new file (for example: dd if=/dev/zero
+>> of=/mnt/hda3/some_file bs=1M count=3000), there is no problem to read
+>> it.
+>> Is it possible, to do something to restore my backup from this file? If
+>> yes, then how can I do it?
+>>
+>
+> Which kernel did you use?
+>
 
-btw, please be aware that the post-2.6.17 deadlock fixes which went into
-generic_file_buffered_write() caused a few problems:
+2.6.14.7
 
-a) Significant NFS overwrite performance regression (due to running
-   prepare_write/commit_write) against each writev segment.
-
-b) Smaller but significant performance regression for all writev()
-   usages (I expect - haven't measured this yet).
-
-c) It's still theoretically deadlockable.
-
-I am (slowly) working on addressing these issues - more info later.
-
-Basically, we will again need to be able to traverse multiple iovec
-segments within a single prepare_write/commit_write instance.  This will
-impact your batch_write patch, because that patch somewhat codifies in the
-function layout the concept that we do one-segment-pre-prepare_write().
-
-So that patch will need significant rework, I suspect.
-
-What I'm hoping to be able to do is to simply revert the two deadlock-fix
-patches (so we go back to the 2.6.17 code) and to remove
-fault_in_pages_readable() and to simply unlock the page after
-->prepare_write() and lock it again prior to ->commit_write().  But I
-haven't tried that yet - there's quite a bit of preparatory work needed.
