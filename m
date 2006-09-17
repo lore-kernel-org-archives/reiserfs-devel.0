@@ -1,30 +1,33 @@
-From: "Pawel Jagoda" <blue@bluenet.waw.pl>
-Subject: Files > 2GB and 3.6 version (after converting from 3.5)
-Date: Sat, 16 Sep 2006 14:25:02 +0200 (CEST)
-Message-ID: <1156.192.168.0.1.1158409502.squirrel@www.bluenet.waw.pl>
-Reply-To: pjagoda@bluenet.waw.pl
+From: =?UTF-8?B?SnVzc2kgU3V1dGFyaS1Kw6TDpHNrw7Y=?= <energy@ee.oulu.fi>
+Subject: Re: reiser4: mount -o remount,ro / causes error on reboot
+Date: Sun, 17 Sep 2006 21:45:29 +0300
+Message-ID: <450D97C9.7060808@ee.oulu.fi>
+References: <ee1gcu$dgb$1@sea.gmane.org> <eebeu5$mi1$1@sea.gmane.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-29909-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-list-return-29914-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-reply-to: <eebeu5$mi1$1@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hello.
-
-I've backup my data - one file, which have 4060 MB. Unfortunetly I didn't
-point out that my destination file system is in old 3.5.x version. And of
-course I cannot read my data after 2GB (it says: Input/Output Error). I
-have converted my filesystem into 3.6.x, but still I'm not able to read
-this file. But if I create new file (for example: dd if=/dev/zero
-of=/mnt/hda3/some_file bs=1M count=3000), there is no problem to read it.
-Is it possible, to do something to restore my backup from this file? If
-yes, then how can I do it?
-
-
-Paul.
-
+Peter wrote:
+> On Sun, 10 Sep 2006 17:01:18 +0000, Peter wrote:
+>
+> this bug was also reported on gentoo wrt the newer baselayout. Indications
+> are it may be a r4 issue, although no one seems to know why!
+>
+> http://bugs.gentoo.org/show_bug.cgi?id=144093
+>
+>   
+I have the same problem, segfault on boot if the system was shutdown 
+properly.
+For me the trouble appeared after upgrading to glibc-2.4, there's no 
+problem at
+all with glibc-2.3.6. On my system (amd64 platform with 64-bit gentoo 
+installation)
+it doesn't have anything to do with baselayout, just the glibc.
