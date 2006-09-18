@@ -1,68 +1,120 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: Files > 2GB and 3.6 version (after converting from 3.5)
-Date: Tue, 19 Sep 2006 01:16:24 +0400
-Message-ID: <200609190116.24775.vs@namesys.com>
-References: <1156.192.168.0.1.1158409502.squirrel@www.bluenet.waw.pl> <200609172324.10289.vs@namesys.com> <4569.192.168.0.1.1158528028.squirrel@www.bluenet.waw.pl>
+From: Quinn Harris <lists@qutek.net>
+Subject: Re: Relocating files for faster boot/start-up on reiser(fs/4)
+Date: Mon, 18 Sep 2006 16:32:30 -0600
+Message-ID: <200609181632.33930.lists@qutek.net>
+References: <200609131451.42474.lists@qutek.net> <200609151520.39826.lists@qutek.net> <op.tf2ibi00cigqcu@apollo13>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29931-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29932-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4569.192.168.0.1.1158528028.squirrel@www.bluenet.waw.pl>
+In-Reply-To: <op.tf2ibi00cigqcu@apollo13>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: pjagoda@bluenet.waw.pl
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-Hello
+On Monday 18 September 2006 03:36, PFC wrote:
+> 	Windows already does this.
+I am familiar with this, it was in part the inspiration for this idea.
 
-On Monday 18 September 2006 01:20, Pawel Jagoda wrote:
-> > Hello
-> >
-> > On Saturday 16 September 2006 16:25, Pawel Jagoda wrote:
-> >> Hello.
-> >>
-> >> I've backup my data - one file, which have 4060 MB. Unfortunetly I
-> >> didn't
-> >> point out that my destination file system is in old 3.5.x version. And
-> >> of
-> >> course I cannot read my data after 2GB (it says: Input/Output Error). I
-> >> have converted my filesystem into 3.6.x, but still I'm not able to read
-> >> this file. But if I create new file (for example: dd if=/dev/zero
-> >> of=/mnt/hda3/some_file bs=1M count=3000), there is no problem to read
-> >> it.
-> >> Is it possible, to do something to restore my backup from this file? If
-> >> yes, then how can I do it?
-> >>
-> >
-> > Which kernel did you use?
-> >
-> 
-> 2.6.14.7
-> 
-> 
+>
+> 	It has a service which monitors filesystem usage, and writes data to disk
+> ; the defragmenter uses this data to lay the files on disk so that boot is
+> very fast.
+Yep, my tests suggest for Ubuntu boot that typical improvements will be on the 
+order of 5-15s (substantially dependent on how fragmented the file system is 
+and complexity of boot).  The system needs about 70MB of data to boot.  
+Typical fragmentation on a fresh filesystem will cause 2-3x slowdown over 
+perfect packing.  70MB at 20MB/s is 2.5s so our gain would be 5s.  The 
+improvement wasn't as good as I was originally expecting but still very 
+measurable.
 
-Please try whether the attached patch helps.
+I am not sure this is enough of a win to justify integrating this idea in a 
+major distro.  But without a 
+
+>
+> 	However think it optimizes only the time to the login screen ; so windows
+> boot is extremely fast ; of course, once you have logged in, you have to
+> wait forever until all the crap system tray apps launch themselves and eat
+> all your RAM...
+In practice what I am doing improves system responsiveness.  This is because I 
+am measuring all file access to an idle state then reallocating and 
+preloading all that data.  Gnome still has a bit of data to page in after the 
+menus are available (like menu icons)
+
+>
+> 	My own repacker is very simple, and it handles any filesystem !
+>
+> - boot from Kanotix CD
+> - tar cv /mnt/my_disk | lzop -c | ssh -c blowfish other_machine "cat
+>
+> >backup.tar.lzo"
+>
+> - umount, mkfs, mount
+> - ssh -c blowfish other_machine "cat backup.tar.lzo" | lzop -cd | tar xv
+>
+> 	You can also use an USB disk, or other disks in the machine. The effects
+> are pretty visible.
+> 	I do the first part often to make a full disk backup to a USB harddrive.
+>
+> 	Anyway, IMHO the best way to have a super responsive system would be :
+>
+Are you essentially copying all the files off a file system, recreating a 
+fresh fs and writing them back?  This allows the file system to reconstruct 
+the files in a good defraged order.  Problem is it takes along time and takes 
+the system down (or at least the fs).  The Reiser4 repacker would have the 
+same effect but without any downtime.  Windows defrag does the same.
+
+This doesn't place files used at boot right next to each other on disk like 
+what I am doing, but both our approaches reduces fragmentation.
+
+My script can do its thing in about 10s (for just one thing like better 
+bootup) and without disrupting the running system.  (Actually I have seen it 
+break some things, but I expect this can be mitigated by avoiding repacking 
+open files)
+
+> Have a daemon which monitors which files, or parts of files, are read, and
+> in what context :
+>
+> - boot to fully loaded KDE/Gnome
+> - launching an application
+>
+> You already have this apparently...
+>
+> The repacker would then use this information to lay files on disk (just
+> like windows does).
+The python script I am using to measure fragmentation shows that what I am 
+doing results in packing that is within 1% of idea in terms of disk read 
+time.  This only works well on a fresh filesystem with large contiguous 
+unallocated space but not so well on a heavily fragmented fs.
+
+This suggests for reiser (maybe other fs), a special kernel or defrag tool for 
+this type of reallocation is unnecessary.
 
 
-diff -puN fs/reiserfs/inode.c~reiserfs-debug-read fs/reiserfs/inode.c
+>
+> Then, the daemon would trigger readahead, when booting or detecting the
+> launch of an application, and read everything in (which would be a nice
+> sequential read)...
+
+I hope in a good time to write a python script that allows the user to do 
+something like "reallocate.py oowriter".  It will profile Open Office writer 
+on startup using inotify to generating a readahead log.  Then reallocate with 
+the copy trick.  If the command is run again, it will readahead the files for 
+oowriter and launch the app.  I think this could double cold start times.  
+Part from just the readahead and part from the reallocation.
+
+It is evident that the inotify file monitoring (using Ubuntu readahead-watch) 
+is not catching everything.  If I readahead for oowriter then lanuch it, it 
+takes 6-7s.  But it takes 3.6 to start after immediately closing it.  In 
+principal, I would think the readahead should be able to load all files 
+oowriter needs into cache getting the 3.6s time after readahead.
+
+Also this doesn't monitor access patterns within a file.  How much of the data 
+in a file is really needed?  I am not sure I would be able to pack only parts 
+of files, but I might with sparse files.
 
 
-
-diff -puN fs/reiserfs/inode.c~reiserfs-read-4gb-files fs/reiserfs/inode.c
---- linux-2.6.14.7/fs/reiserfs/inode.c~reiserfs-read-4gb-files	2006-09-19 01:41:46.000000000 +0400
-+++ linux-2.6.14.7-vs/fs/reiserfs/inode.c	2006-09-19 01:41:46.000000000 +0400
-@@ -206,7 +206,7 @@ static inline void set_block_dev_mapped(
- static int file_capable(struct inode *inode, long block)
- {
- 	if (get_inode_item_key_version(inode) != KEY_FORMAT_3_5 ||	// it is new file.
--	    block < (1 << (31 - inode->i_sb->s_blocksize_bits)))	// old file, but 'block' is inside of 2gb
-+	    block < (1 << (32 - inode->i_sb->s_blocksize_bits)))	// old file, but 'block' is inside of 2gb
- 		return 1;
- 
- 	return 0;
-
-_
