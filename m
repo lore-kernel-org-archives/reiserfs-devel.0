@@ -1,58 +1,54 @@
-From: PFC <lists@peufeu.com>
-Subject: Re: Relocating files for faster boot/start-up on reiser(fs/4)
-Date: Mon, 18 Sep 2006 11:36:44 +0200
-Message-ID: <op.tf2ibi00cigqcu@apollo13>
-References: <200609131451.42474.lists@qutek.net> <4509D65D.7040908@slaphack.com> <54E99998-88D2-4E0D-8970-1C3DA365DBE0@smartgames.ca> <200609151520.39826.lists@qutek.net>
+From: "Peter" <sw98234-PkbjNfxxIARBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: reiser4: mount -o remount,ro / causes error on reboot
+Date: Mon, 18 Sep 2006 09:52:12 +0000 (UTC)
+Message-ID: <eelq8c$f6t$1@sea.gmane.org>
+References: <ee1gcu$dgb$1@sea.gmane.org> <eebeu5$mi1$1@sea.gmane.org>
+	<450D97C9.7060808@ee.oulu.fi>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29921-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <200609151520.39826.lists@qutek.net>
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-list-return-29922-reiserfs=m.gmane.org-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
+list-help: <mailto:reiserfs-list-help-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
+list-post: <mailto:reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
+Errors-To: flx-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
+Sender: news <news-WnDAp88bSu3NLxjTenLetw@public.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; delsp="yes"; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="utf-8"
+To: reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
 
+On Sun, 17 Sep 2006 21:45:29 +0300, Jussi Suutari-Jääskö wrote:
 
-	Windows already does this.
+> Peter wrote:
+>> On Sun, 10 Sep 2006 17:01:18 +0000, Peter wrote:
+>>
+>> this bug was also reported on gentoo wrt the newer baselayout. Indications
+>> are it may be a r4 issue, although no one seems to know why!
+>>
+>> http://bugs.gentoo.org/show_bug.cgi?id=144093
+>>
+>>   
+> I have the same problem, segfault on boot if the system was shutdown 
+> properly.
+> For me the trouble appeared after upgrading to glibc-2.4, there's no 
+> problem at
+> all with glibc-2.3.6. On my system (amd64 platform with 64-bit gentoo 
+> installation)
+> it doesn't have anything to do with baselayout, just the glibc.
 
-	It has a service which monitors filesystem usage, and writes data to disk  
-; the defragmenter uses this data to lay the files on disk so that boot is  
-very fast.
+That does not explain why reverting to baselayout 1.11.15 allows the
+system to work! Also, for me, at least, this only occurs with reiser4 as
+root, not reiser3. You may be correct about glibc-2.4 but the timing is
+inconsistent. I upgraded to 2.4 on 9/1, but did not see the problem until
+the baselayout incremented. Did you actually try downgrading your glibc
+and if so, did the problem go away?
 
-	However think it optimizes only the time to the login screen ; so windows  
-boot is extremely fast ; of course, once you have logged in, you have to  
-wait forever until all the crap system tray apps launch themselves and eat  
-all your RAM...
+Would you please add your observation to the bug report? Thx for the input.
 
-	My own repacker is very simple, and it handles any filesystem !
-
-- boot from Kanotix CD
-- tar cv /mnt/my_disk | lzop -c | ssh -c blowfish other_machine "cat  
->backup.tar.lzo"
-- umount, mkfs, mount
-- ssh -c blowfish other_machine "cat backup.tar.lzo" | lzop -cd | tar xv
-
-	You can also use an USB disk, or other disks in the machine. The effects  
-are pretty visible.
-	I do the first part often to make a full disk backup to a USB harddrive.
-
-	Anyway, IMHO the best way to have a super responsive system would be :
-
-Have a daemon which monitors which files, or parts of files, are read, and  
-in what context :
-
-- boot to fully loaded KDE/Gnome
-- launching an application
-
-You already have this apparently...
-
-The repacker would then use this information to lay files on disk (just  
-like windows does).
-
-Then, the daemon would trigger readahead, when booting or detecting the  
-launch of an application, and read everything in (which would be a nice  
-sequential read)...
+-- 
+Peter
++++++
+Do not reply to this email, it is a spam trap and not monitored.
+I can be reached via this list, or via 
+jabber: pete4abw at jabber.org
+ICQ: 73676357
 
