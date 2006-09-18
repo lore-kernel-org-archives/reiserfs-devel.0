@@ -1,42 +1,58 @@
-From: "Pawel Jagoda" <blue@bluenet.waw.pl>
-Subject: Re: Files > 2GB and 3.6 version (after converting from 3.5)
-Date: Sun, 17 Sep 2006 23:20:28 +0200 (CEST)
-Message-ID: <4569.192.168.0.1.1158528028.squirrel@www.bluenet.waw.pl>
-References: <1156.192.168.0.1.1158409502.squirrel@www.bluenet.waw.pl>
-    <200609172324.10289.vs@namesys.com>
-Reply-To: pjagoda@bluenet.waw.pl
+From: PFC <lists@peufeu.com>
+Subject: Re: Relocating files for faster boot/start-up on reiser(fs/4)
+Date: Mon, 18 Sep 2006 11:36:44 +0200
+Message-ID: <op.tf2ibi00cigqcu@apollo13>
+References: <200609131451.42474.lists@qutek.net> <4509D65D.7040908@slaphack.com> <54E99998-88D2-4E0D-8970-1C3DA365DBE0@smartgames.ca> <200609151520.39826.lists@qutek.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-29920-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29921-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200609172324.10289.vs@namesys.com>
+In-Reply-To: <200609151520.39826.lists@qutek.net>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; format="flowed"; delsp="yes"; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-> Hello
->
-> On Saturday 16 September 2006 16:25, Pawel Jagoda wrote:
->> Hello.
->>
->> I've backup my data - one file, which have 4060 MB. Unfortunetly I
->> didn't
->> point out that my destination file system is in old 3.5.x version. And
->> of
->> course I cannot read my data after 2GB (it says: Input/Output Error). I
->> have converted my filesystem into 3.6.x, but still I'm not able to read
->> this file. But if I create new file (for example: dd if=/dev/zero
->> of=/mnt/hda3/some_file bs=1M count=3000), there is no problem to read
->> it.
->> Is it possible, to do something to restore my backup from this file? If
->> yes, then how can I do it?
->>
->
-> Which kernel did you use?
->
 
-2.6.14.7
+	Windows already does this.
+
+	It has a service which monitors filesystem usage, and writes data to disk  
+; the defragmenter uses this data to lay the files on disk so that boot is  
+very fast.
+
+	However think it optimizes only the time to the login screen ; so windows  
+boot is extremely fast ; of course, once you have logged in, you have to  
+wait forever until all the crap system tray apps launch themselves and eat  
+all your RAM...
+
+	My own repacker is very simple, and it handles any filesystem !
+
+- boot from Kanotix CD
+- tar cv /mnt/my_disk | lzop -c | ssh -c blowfish other_machine "cat  
+>backup.tar.lzo"
+- umount, mkfs, mount
+- ssh -c blowfish other_machine "cat backup.tar.lzo" | lzop -cd | tar xv
+
+	You can also use an USB disk, or other disks in the machine. The effects  
+are pretty visible.
+	I do the first part often to make a full disk backup to a USB harddrive.
+
+	Anyway, IMHO the best way to have a super responsive system would be :
+
+Have a daemon which monitors which files, or parts of files, are read, and  
+in what context :
+
+- boot to fully loaded KDE/Gnome
+- launching an application
+
+You already have this apparently...
+
+The repacker would then use this information to lay files on disk (just  
+like windows does).
+
+Then, the daemon would trigger readahead, when booting or detecting the  
+launch of an application, and read everything in (which would be a nice  
+sequential read)...
 
