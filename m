@@ -1,53 +1,58 @@
-From: "Peter" <sw98234-PkbjNfxxIARBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: reiser4: mount -o remount,ro / causes error on reboot
-Date: Mon, 18 Sep 2006 15:14:18 +0000 (UTC)
-Message-ID: <eemd4a$sur$1@sea.gmane.org>
-References: <ee1gcu$dgb$1@sea.gmane.org> <eebeu5$mi1$1@sea.gmane.org>
-	<450D97C9.7060808@ee.oulu.fi>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: Files > 2GB and 3.6 version (after converting from 3.5)
+Date: Mon, 18 Sep 2006 12:14:40 -0400
+Message-ID: <450EC5F0.7030201@suse.com>
+References: <1156.192.168.0.1.1158409502.squirrel@www.bluenet.waw.pl>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-29927-reiserfs=m.gmane.org-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-list-help: <mailto:reiserfs-list-help-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-list-post: <mailto:reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-Errors-To: flx-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
-Sender: news <news-WnDAp88bSu3NLxjTenLetw@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29928-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <1156.192.168.0.1.1158409502.squirrel@www.bluenet.waw.pl>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+To: pjagoda@bluenet.waw.pl
+Cc: reiserfs-list@namesys.com
 
-On Sun, 17 Sep 2006 21:45:29 +0300, Jussi Suutari-Jääskö wrote:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-> Peter wrote:
->> On Sun, 10 Sep 2006 17:01:18 +0000, Peter wrote:
->>
->> this bug was also reported on gentoo wrt the newer baselayout. Indications
->> are it may be a r4 issue, although no one seems to know why!
->>
->> http://bugs.gentoo.org/show_bug.cgi?id=144093
->>
->>   
-> I have the same problem, segfault on boot if the system was shutdown 
-> properly.
-> For me the trouble appeared after upgrading to glibc-2.4, there's no 
-> problem at
-> all with glibc-2.3.6. On my system (amd64 platform with 64-bit gentoo 
-> installation)
-> it doesn't have anything to do with baselayout, just the glibc.
+Pawel Jagoda wrote:
+> Hello.
+> 
+> I've backup my data - one file, which have 4060 MB. Unfortunetly I didn't
+> point out that my destination file system is in old 3.5.x version. And of
+> course I cannot read my data after 2GB (it says: Input/Output Error). I
+> have converted my filesystem into 3.6.x, but still I'm not able to read
+> this file. But if I create new file (for example: dd if=/dev/zero
+> of=/mnt/hda3/some_file bs=1M count=3000), there is no problem to read it.
+> Is it possible, to do something to restore my backup from this file? If
+> yes, then how can I do it?
 
-The fellow who originally posted the bug does not use r4 nor does he use
-glibc 2.4.
+Unfortunately, if you've removed your backup of the original file, the
+data is lost.
 
-http://bugs.gentoo.org/show_bug.cgi?id=147622
+If you still have a copy of the original file, you can remove the copy
+on the converted file system and replace it. The problem you're running
+into is that converting a file system to v3.6 from v3.5 allows *new*
+files to grow beyond the 2 GB limit, but not existing ones. The reason
+for this is that converting the file system only indicates that it has
+the ability to use files larger than that, but it doesn't update all the
+existing files. If you create a new file, it uses the newer metadata
+format that can describe much larger files.
 
-Yet, he has the problem we all are enduring. :(
+- -Jeff
 
+- --
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
 
--- 
-Peter
-+++++
-Do not reply to this email, it is a spam trap and not monitored.
-I can be reached via this list, or via 
-jabber: pete4abw at jabber.org
-ICQ: 73676357
-
+iD8DBQFFDsXvLPWxlyuTD7IRAheZAJ9hIwFztEGNgAu12XWunj42e7SYGACglca3
+HQI+nvkGehJxOe9asRZweGg=
+=NUad
+-----END PGP SIGNATURE-----
