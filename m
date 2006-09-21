@@ -1,42 +1,32 @@
-From: "Peter" <sw98234-PkbjNfxxIARBDgjK7y7TUQ@public.gmane.org>
+From: Huub <huubvanniekerk@gmail.com>
 Subject: Re: partition cannot be mounted from grub
-Date: Thu, 21 Sep 2006 14:36:58 +0000 (UTC)
-Message-ID: <eeu82a$vjq$4@sea.gmane.org>
-References: <eet9jg$463$1@sea.gmane.org> <eetanq$6ij$1@sea.gmane.org>
-	<eetru8$vjq$1@sea.gmane.org> <45129B6B.6090005@suse.com>
+Date: Thu, 21 Sep 2006 18:39:43 +0200
+Message-ID: <eeuf8g$anr$1@sea.gmane.org>
+References: <eet9jg$463$1@sea.gmane.org> <200609211559.12052.vs@namesys.com> <eetvnu$c38$1@sea.gmane.org> <200609211643.06775.vs@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-29965-reiserfs=m.gmane.org-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-list-help: <mailto:reiserfs-list-help-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-list-post: <mailto:reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
-Errors-To: flx-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
-Sender: news <news-WnDAp88bSu3NLxjTenLetw@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29966-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <200609211643.06775.vs@namesys.com>
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
-On Thu, 21 Sep 2006 10:02:19 -0400, Jeff Mahoney wrote:
-
-snip...
-> I'm curious what version of grub caused you to come to these
-> conclusions. Grub has been using the REISERFS_IOC_UNPACK ioctl for ages.
-> It's the same thing lilo uses and causes those files to only use
-> indirect blocks (ie: no tails). If you've been running into this problem
-> with any recent version of grub, it's a bug.
+> I would guess that you got partition table corruption. 
+> You may want to try to fdisk /dev/hdc in the way it was partitioned before. 
+> However, boundaries of partitions are to known presizely for that, though.
 > 
-> - -Jeff
+> You may also try gpart(8). It does not look at partition table and may find partition boundaries.
+> 
 
-0.94/0.97 (not grub2). Just happened yesterday as a test. I also found it
-impossible to run grub in its /boot/grub mounted partition. I had to boot
-off another partition or a live cd and run grub from there. I did not find
-this trouble with r4 however. Just my experience however.
-
--- 
-Peter
-+++++
-Do not reply to this email, it is a spam trap and not monitored.
-I can be reached via this list, or via 
-jabber: pete4abw at jabber.org
-ICQ: 73676357
+Reinstalled Suse 10.1 from scratch. Went very smooth. Running 
+again...just curious for how long.
+Another question however: is ReiserFS capable of handling sudden 
+reboots? I suspect my systemboard needs to be replaced since it reboot 
+or freezes now and then, but so far I never had an fs being ruined 
+beyond repair.
 
