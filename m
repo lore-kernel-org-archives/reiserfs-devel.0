@@ -1,77 +1,69 @@
 From: David Masover <ninja@slaphack.com>
 Subject: Re: reiser4 resize
-Date: Thu, 21 Sep 2006 02:30:09 -0500
-Message-ID: <45123F81.4040909@slaphack.com>
-References: <eeng4b$i68$1@sea.gmane.org> <200609191723.01936.vs@namesys.com>	 <45102ED6.6080209@slaphack.com>	 <b5d90b2a0609200039g70c40f5bvb374b5f15b42988d@mail.gmail.com>	 <op.tf52pansd4os1z@localhost> <b5d90b2a0609200200s5838456bm618093395356390a@mail.gmail.com>
+Date: Thu, 21 Sep 2006 02:48:49 -0500
+Message-ID: <451243E1.9050205@slaphack.com>
+References: <eeng4b$i68$1@sea.gmane.org> <200609191723.01936.vs@namesys.com>	 <45102ED6.6080209@slaphack.com> <b5d90b2a0609200039g70c40f5bvb374b5f15b42988d@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-29952-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-29953-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <b5d90b2a0609200200s5838456bm618093395356390a@mail.gmail.com>
+In-Reply-To: <b5d90b2a0609200039g70c40f5bvb374b5f15b42988d@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Alexey Polyakov <alexey.polyakov@gmail.com>
-Cc: =?ISO-8859-2?Q?=A3ukasz_Mierzwa?= <prymitive@pcserwis.net>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
 
 Alexey Polyakov wrote:
-> On 9/20/06, =A3ukasz Mierzwa <prymitive@pcserwis.net> wrote:
->=20
->> It's been proven that flushes are doing much more job then they should.
->> Not so long ago someone send a trace of block device io accesess during
->> reiser4 work and someone anylized it and said that some files or parts of
->> file where written over and over 200 times or so.
+> On 9/19/06, David Masover <ninja@slaphack.com> wrote:
+> 
+>> When I have over a
+>> gig of RAM free (not even buffer/cache, but _free_), and am trying to
+>> download anything over BitTorrent, even if it's less than 200 megs, the
+>> disk thrashes so badly that the system is really only usable for web and
+>> email.  Even movies will occasionally stall when this is happening, and
+>> by "occasionally", I mean every minute or so.
+> 
+> Do you have this problem on plain vanilla + reiser4?
 
-Wow.  I should go back and read that -- I assume this is being worked on?
+Yes.
 
->> a few months old filesystem that had been used often just shows a week
->> spot in reiser4, while downloading files with azureus with only 64KB of
->> data per second I got disk lid on almost all the time, swithcing to
->> rtorrent helped as it does not seem to call fsync ( I think I disabled
->> fsync in azureus).
+Well, no.  My kernel is:
 
-Hmm, strange.  I am using Azureus, but I don't think it's fsync.  I can=20
-try rtorrent, but there are several things I like about Azureus that=20
-nothing else seems to do yet.
+vanilla 2.6.17.13 on amd64
 
-But also, Azureus didn't always do this.  In fact, I used it for several=20
-months before I started having this problem.
+patches:
+sk98lin 8.36, latest from the manufacturer
+reiser4-for-2.6.17-3
+my own patch that disables fsync and fdatasync
 
-> Ah, I see, if bittorrent calls fsync often, it's no wonder that
-> reiser4 behaves badly. I had to preload libnosync for some of my
-> programs that do fsync to avoid this.
+external modules, installed via Portage:
+ALSA 1.0.11 driver, using snd_emu10k1 and all sorts of support stuff 
+(OSS emulation, synth, etc)
+nvidia driver, 1.0.8762
 
-Way ahead of you.  I noticed how much fsync performance sucked when=20
-using vim, and I was sick of waiting 10 seconds every time I hit :w -- a=20
-LOT of stuff can pile up in 2 gigs of disk buffer, and at the time,=20
-Reiser4 fsync effectively just called sync.
+I've also been having a bit of instability issues, but only very rarely 
+do these seem at all FS-related.  I'm overclocked a bit, and I can 
+reliably crash my system by playing Neverball, Doom 3, or Quake 4 for 
+several hours.  I strongly suspect this is either my overclocking or the 
+nvidia drivers here.
 
-I didn't know about libnosync (or it didn't exist yet, or didn't work,=20
-I'm not entirely sure), so I was faced with either patching vim, which=20
-had just been patched to _add_ fsync'ing, not to mention all the other=20
-programs that might fsync too much;  patching glibc (huge, I don't=20
-update it often, and I'd have no idea where to start);  or patching the=20
-kernel.
+However, I doubt anything I've done beyond vanilla+reiser4 is affecting 
+this disk access issue, and I'm pretty much rock solid when I'm not 
+playing a game.  I also have a close-to-identical machine nearby which 
+is not overclocked, same kernel, same modules, everything except the 
+nvidia driver, been rock solid for a year, no performance issues to 
+speak of.  The main difference, other than graphics, is that the stable 
+machine is using 21 gigs out of 72, whereas the unstable one (the one 
+that's sluggish for BitTorrent) is using 279 gigs out of 350, and has 
+been up to 320 or 330 at least before I started cleaning things out.
 
-I now keep backups, and I maintain and apply the following (STUPID,=20
-DON'T TRY THIS AT HOME) patch to my kernel:
-
---- linux/fs/buffer.c   2006-08-15 20:40:36.504608696 -0500
-+++ linux/fs/buffer.c.new       2006-08-15 20:42:35.877461264 -0500
-@@ -366,12 +366,12 @@
-
-  asmlinkage long sys_fsync(unsigned int fd)
-  {
--       return __do_fsync(fd, 0);
-+       return 0;
-  }
-
-  asmlinkage long sys_fdatasync(unsigned int fd)
-  {
--       return __do_fsync(fd, 1);
-+       return 0;
-  }
-
-  /*
+So I think we're down to two possibilities:  Either an update to Azureus 
+has found a way to sync that I'm not aware of, or this is the behavior 
+someone described where Reiser4 will attempt to find contiguous space to 
+allocate, and continue searching and re-searching the same areas of the 
+disk almost every write.  To be honest, I hope it's about syncing, 
+somehow, because I'd much rather believe my disk isn't horrendously 
+fragmented...
