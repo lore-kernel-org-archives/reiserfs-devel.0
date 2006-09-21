@@ -1,11 +1,11 @@
 From: "Peter" <sw98234-PkbjNfxxIARBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: partition cannot be mounted from grub
-Date: Thu, 21 Sep 2006 11:10:00 +0000 (UTC)
-Message-ID: <eetru8$vjq$1@sea.gmane.org>
-References: <eet9jg$463$1@sea.gmane.org> <eetanq$6ij$1@sea.gmane.org>
+Subject: Re: r4 observations
+Date: Thu, 21 Sep 2006 11:18:41 +0000 (UTC)
+Message-ID: <eetseh$vjq$2@sea.gmane.org>
+References: <ees2cj$15h$1@sea.gmane.org> <200609211502.01497.vs@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-list-return-29959-reiserfs=m.gmane.org-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
+Return-path: <reiserfs-list-return-29960-reiserfs=m.gmane.org-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
 list-help: <mailto:reiserfs-list-help-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
 list-post: <mailto:reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org>
@@ -15,60 +15,48 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list-nJ1KrdHEGnBBDgjK7y7TUQ@public.gmane.org
 
-On Thu, 21 Sep 2006 08:16:26 +0200, Huub wrote:
+On Thu, 21 Sep 2006 15:02:01 +0400, Vladimir V. Saveliev wrote:
 
-> Huub wrote:
->> Hi,
+> Hello
+> 
+> On Wednesday 20 September 2006 22:47, Peter wrote:
+>> I booted from a non-reiser4 partition in order to make a backup of my main 
+>> / which was a r4 partition.
 >> 
->> Using Suse 10.1, I had a spontaneous reboot after which I got a fast 
->> running screen full of reiserfs messages. Another (inflicted) reboot and 
->> Grub gives error 17, meaning it cannot mount a recognized partition.
->> Using the boot-dvd, I selected Rescue, and logged in as root but I have 
->> no idea how to proceed trying to save my system.
->> Help is appreciated.
+>> After the backup, I unmounted the drive explicitly, then rebooted.
 >> 
->> Thanks,
+>> I did not use the backed up drive for anything except tar-ring its files.
 >> 
->> Huub
+>> On next boot to the r4 / partition, all kinds of file not found errors
+>> occurred. I booted again to my non-r4 partition, and ran fsck.reiser4
+>> --check -y there were fatal errors on my r4 /.
 >> 
+>> The backup was fine. I downgraded back to reiserfs which does not exhibit
+>> this problem.
+>> 
+>> I have not experienced any problem with other r4 partitions. Just /.
+>> /home, /tmp, /src, etc. are fine.
+>> 
+>> Unfortunately, I don't have time to keep wondering where the problem is or
+>> why. Perhaps it's the kernel or the init scripts. Nonetheless, the
+>> instability of whatever the problem is is unnerving.
 >> 
 > 
-> Correction: errormessage means:
-> 
-> This error is returned if the partition requested exists, but the 
-> filesystem type cannot be recognized by GRUB.
-> 
-> I.e. GRUB doesn't recognize it's a ReiserFS partition...
+> Please provide information about which kernel and which reiser4 did you use.
+> Am I correct that you were trying to run gentoo on reiser4?
 
-Two suggestions.
+Yes, Vladimir. When making the backup, I was not running Gentoo at all. I
+was running Slackware 10.2. I booted into Slackware with the beyond
+patchset (ck superset) based on 2.6.17.11 with the reiser4 2.6.17-3 patch.
+All of the work on backup mount and unmount was on Slackware. It was when
+rebooting back into Gentoo (with the init and base layout which DID NOT
+CAUSE a boot problem) that the fatal errors occurred. Interestingly, and
+maybe this is helpful, only the / partition seems to be affected. I have
+observed no problematic behavior with any of the other three partitions I
+used r4 for. In fact, even though I downgraded / to reiserfs3, the other
+r4 partitions work fine. Please let me know if I can provide additional
+information.
 
-1) I have found that grub files in r3 have to be copied using -o notail on
-the mount command. If you do not use notail, the files are not able to be
-read by grub.
-2) do not try and create a grub boot while in the r3 partition. Make sure
-the partition is unmounted, then boot from a live cd and run grub from
-there.
-
-e.g. in your case, with /dev/hdc2 being your root
-
-root(hd2,1)
-# at this point grub should respond that filesystem is reiserfs
-setup(hd2)
-# at this point, grub should install the boot loader.
-# unless hdc is NOT your boot disk. If not, then use hd0 or 1.
-
-If not, try recopying /boot/grub by doing this from the live cd.
-
-mount /dev/hdc2 /mnt/wherever -o notail,rw,[noatime]
-cd /boot
-cp -rP grub grub2
-rm -fr grub
-mv grub2 grub
-
-then umount it and try the grub commands above.
-
-I have had lots of woes with grub and reiser 3/4. This seems to work for
-me.
 -- 
 Peter
 +++++
