@@ -1,50 +1,48 @@
-From: James Beal <james_@catbus.co.uk>
-Subject: Re: Reiser (3.6) PANIC.
-Date: Thu, 28 Sep 2006 22:21:30 +0100
-Message-ID: <451C3CDA.1030309@catbus.co.uk>
-References: <451860D5.2060305@catbus.co.uk> <4518DB3B.3070808@namesys.com> <45191F61.90406@catbus.co.uk> <45193922.7040504@namesys.com>
+From: "Chris Witham" <christopher.witham@gmail.com>
+Subject: icheck and ncheck on ReiserFS to convert bad sector numbers to filenames
+Date: Thu, 28 Sep 2006 19:51:50 -0400
+Message-ID: <60509cfa0609281651v5553d879jd65b8e6d6041b14c@mail.gmail.com>
+Reply-To: chris@witham.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29985-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-29986-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <45193922.7040504@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+I have a hard drive which has failed.  I posted about it here[1], and
+was referred to ddrescue[2] to create an image of the failed disk.
+This was successful, and I now have an image of the drive, including
+the 1688 bad sectors that couldn't be read.  The logfile lists all the
+the bad sectors, and I was referred to these[3] instructions to
+convert the bad sector numbers into filenames that are corrupted.
 
-Edward Shishkin wrote:
-> James Beal wrote:
->
->> Edward Shishkin wrote:
->>
->> >James Beal wrote:
->>
->> >>This occurrs when trying to delete some files, repeatedly even
->> after a
->> >>/sbin/reiserfsck --rebuild-tree ?
->> >>Any hints ?
->> >>
->> >Would you please upgrade your kernel to the latest stable version.
->> >I believe this bug is fixed there.
->>
-The bug is fixed in 2.6.18 which I built. But not
-(2.6.9-42.0.2.plus.c4) which is the latest standard centos/redhat
-kernel that support reiserfs.
+Unfortunately, those instructions involve debugfs, which is
+ext2/ext3-specific.  What little information I was able to find online
+about the icheck and ncheck commands used in the instructions and
+ReiserFS has led me to either complaints that they are not implemented
+for ReiserFS, or some variant of a post[4] to this mailing list that
+suggests using 'find / -type f -exec cat {} > /dev/null \;' at
+watching for the filenames that fail.
 
-Thank you.
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.3 (Darwin)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+That seems like a complete brute force method (scanning over 110GB to
+locate 800kB of bad data!), and will almost certainly return
+inaccurate results because the drive is continuing to fail and will
+return more problems than it experienced initially when the drive
+image was made.  (Not to mention stress the disk further and make any
+more work I may need to do on it more difficult.)
 
-iD8DBQFFHDza3PHqsTsIeJ4RAjIjAKCFFOAOHvLn7CHaS+Nk6dN0YIKNzwCdHr5x
-QHZvGAuzRqpU89g44mtcDT4=
-=HXzp
------END PGP SIGNATURE-----
+Is there any way to do the equivalent of icheck or ncheck in ReiserFS?
+ If not now, are there plans to implement this functionality anytime
+soon?
 
+
+[1] http://www.linuxquestions.org/questions/showthread.php?t=485322
+[2] http://savannah.gnu.org/projects/ddrescue/
+[3] http://smartmontools.sourceforge.net/BadBlockHowTo.txt
+[4] http://marc.theaimsgroup.com/?l=reiserfs&m=114425109321290&w=2
