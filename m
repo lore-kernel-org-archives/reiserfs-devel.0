@@ -1,36 +1,50 @@
-From: "Chris Witham" <chris@witham.com>
-Subject: Re: icheck and ncheck on ReiserFS to convert bad sector numbers to filenames
-Date: Tue, 3 Oct 2006 09:51:11 -0400
-Message-ID: <60509cfa0610030651j65e94b39w3f06a1606863e555@mail.gmail.com>
-References: <60509cfa0609281651v5553d879jd65b8e6d6041b14c@mail.gmail.com>
-	 <451C7099.4050708@suse.com>
+From: rvalles <rvalles@es.gnu.org>
+Subject: Re: BitTorrent+Reiser4: curiouser and curiouser
+Date: Thu, 5 Oct 2006 05:08:51 +0200
+Message-ID: <26283.221357926$1160017781@news.gmane.org>
+References: <4513827A.50809@slaphack.com> <20061002153947.GB12563@rvalles.homedns.org> <200610031647.50053.csawtell@paradise.net.nz>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-29994-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
+Return-path: <reiserfs-list-return-29999-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Sender: christopher.witham@gmail.com
-In-Reply-To: <451C7099.4050708@suse.com>
 Content-Disposition: inline
+In-Reply-To: <200610031647.50053.csawtell@paradise.net.nz>
+Sender: <rvalles@eww.ath.cx.>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jeff Mahoney <jeffm@suse.com>
+To: Christopher Sawtell <csawtell@paradise.net.nz>
 Cc: reiserfs-list@namesys.com
 
-On 28/09/06, Jeff Mahoney <jeffm@suse.com> wrote:
->
-> I'm afraid the icheck/ncheck way of doing things isn't much less
-> brute-force, it's just hidden from you. You could do what you're looking
-> for with a perl script that parses the debugreiserfs output.
+--5vNYLRcllDrimb99
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- I ended up using the brute-force 'find' to scan the failing HD, and
-it only identified 3 unimportant files as corrupt.  I restored the
-files from the disk image, deleted the 3 bad files, and everything
-seems to be OK from there.
+On Tue, Oct 03, 2006 at 04:47:49PM +1300, Christopher Sawtell wrote:
+> On Tuesday 03 October 2006 04:39, rvalles wrote:
+> > Too bad it's the only client with
+> > the so popular "azureus DHT" which works on GNU/Linux.
+> KDE's ktorrent has DHT also.
+Sure, but not "azureus DHT", which is a different thing (works as a
+fallback when trackers fail, the torrent doesn't have to be a
+"trackerless torrent").
+--=20
+- Do you study theories? - Oh yes! Theories are fun. - How do you use them?=
+ - When I must act, theories are too slow. To act, I must know.
 
- Thanks for the help!
+--5vNYLRcllDrimb99
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.5 (GNU/Linux)
 
-Chris
+iD8DBQFFJHdDfwaXC2yIZd8RAk0QAJsHuF7/MSvzQ2e/+GfnVFiz20hD/wCfS9Id
+ptCld9fQ1wmlSIHXnd6cfyk=
+=pEws
+-----END PGP SIGNATURE-----
+
+--5vNYLRcllDrimb99--
