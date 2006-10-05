@@ -1,26 +1,23 @@
-From: Dennis Heuer <dh@triple-media.com>
-Subject: linux 2.6.18, headers_install, and asm/unaligned.h
-Date: Thu, 5 Oct 2006 15:17:20 +0200
-Message-ID: <20061005151720.22b254c0.dh@triple-media.com>
+From: Sander Sweers <sander.sweers@gmail.com>
+Subject: Reiser4 for 2.6.18
+Date: Thu, 05 Oct 2006 16:22:34 +0200
+Message-ID: <4525152A.3020608@Gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30002-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30003-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hello
+Hello Devs,
 
-I tried to install the newest reiserfstools on a pure x86_64 linux
-2.6.18 system. The 64bit were not the problem but linux 2.6.18
-has introduced 'make headers_install' and the header 'asm/unaligned.h'
-is not installed by this. I got reiserfstools working via CFLAGS to
-the linux source but you should possibly update reiserfstools to reflect
-this change in strategy in the linux configuration system.
+Is it possible that you can make a patch for 2.6.18 vanilla? I have 
+tried to extract the patches from mm and apply to vanilla but this fails 
+to build. 2.6.18-MM oopses so that is also out.
 
-Regards,
-Dennis
+Thanks
+Sander
