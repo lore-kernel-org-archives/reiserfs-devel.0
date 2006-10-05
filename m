@@ -1,50 +1,32 @@
-From: rvalles <rvalles@es.gnu.org>
-Subject: Re: BitTorrent+Reiser4: curiouser and curiouser
-Date: Thu, 5 Oct 2006 05:08:51 +0200
-Message-ID: <26283.221357926$1160017781@news.gmane.org>
-References: <4513827A.50809@slaphack.com> <20061002153947.GB12563@rvalles.homedns.org> <200610031647.50053.csawtell@paradise.net.nz>
+From: Eric Sesterhenn <snakebyte@gmx.de>
+Subject: Dereference in fs/reiserfs/bitmap.c
+Date: Thu, 05 Oct 2006 12:50:02 +0200
+Message-ID: <1160045402.6153.6.camel@alice>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
-Return-path: <reiserfs-list-return-29999-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30000-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <200610031647.50053.csawtell@paradise.net.nz>
-Sender: <rvalles@eww.ath.cx.>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Christopher Sawtell <csawtell@paradise.net.nz>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
---5vNYLRcllDrimb99
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+hi,
 
-On Tue, Oct 03, 2006 at 04:47:49PM +1300, Christopher Sawtell wrote:
-> On Tuesday 03 October 2006 04:39, rvalles wrote:
-> > Too bad it's the only client with
-> > the so popular "azureus DHT" which works on GNU/Linux.
-> KDE's ktorrent has DHT also.
-Sure, but not "azureus DHT", which is a different thing (works as a
-fallback when trackers fail, the torrent doesn't have to be a
-"trackerless torrent").
---=20
-- Do you study theories? - Oh yes! Theories are fun. - How do you use them?=
- - When I must act, theories are too slow. To act, I must know.
+coverity spotted another dereference in the reiser code,
+which i am able to verify, but not sure how to fix:
 
---5vNYLRcllDrimb99
-Content-Type: application/pgp-signature
-Content-Disposition: inline
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.5 (GNU/Linux)
+1305 		bh = sb_bread(sb, block);
+1306 		if (bh == NULL)
+1307 			reiserfs_warning(sb, "sh-2029: %s: bitmap block (#%lu) "
+1308 			                 "reading failed", __FUNCTION__, bh->b_blocknr);
 
-iD8DBQFFJHdDfwaXC2yIZd8RAk0QAJsHuF7/MSvzQ2e/+GfnVFiz20hD/wCfS9Id
-ptCld9fQ1wmlSIHXnd6cfyk=
-=pEws
------END PGP SIGNATURE-----
+if bh is NULL, we dereference it in the warning as bh->b_blocknr.
+Maybe one of you guys knows what warning is useful to print in this
+case and can cook up a patch for this.
 
---5vNYLRcllDrimb99--
+Thanks, Eric
+
