@@ -1,49 +1,73 @@
-From: =?ISO-8859-1?Q?Konstantin_M=FCnning?= <konstantin@muenning.com>
-Subject: Re: is quotacheck slow with reiserfs
-Date: Thu, 05 Oct 2006 09:33:04 +0200
-Message-ID: <4524B530.9060100@muenning.com>
-References: <20061005203445.GA7650@apartia.fr> <200610060209.11952.vs@namesys.com> <20061006075016.GA2414@apartia.fr>
+From: Bas van Schaik <bas@tuxes.nl>
+Subject: Re: Problems with "--rebuild-tree" on network (ENBD) storage
+Date: Fri, 06 Oct 2006 15:10:45 +0200
+Message-ID: <452655D5.7090009@tuxes.nl>
+References: <4524BD36.1090002@tuxes.nl> <200610060223.23700.vs@namesys.com> <4525893C.1060405@tuxes.nl> <200610061639.21377.vs@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-30013-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30014-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <20061006075016.GA2414@apartia.fr>
+In-Reply-To: <200610061639.21377.vs@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: ReiserFS list <reiserfs-list@namesys.com>
 
-Louis-David Mitterrand wrote:
-> On Fri, Oct 06, 2006 at 02:09:11AM +0400, Vladimir V. Saveliev wrote:
->> On Friday 06 October 2006 00:34, Louis-David Mitterrand wrote:
->>> On a 200-user mail server with a 500gb reiser3 fs, quotacheck takes an =
+Hi Vladimir,
+>>> ok, may I ask you to run badblocks on that device? reiserfsck wants to be able to read and write filesystem device.
+>>> badblocks will show us whether your device is in good shape. 
+>>>       
+>> Of course you may ask me this, but I really don't think it's relevant.
+>> ReiserFS is on top of (in this specific order) CryptoLoop, LVM, RAID5
+>> and ENBD. If there are bad blocks on one of the 12 (!) disks, then one
+>> of my storage servers in the ENBD-cluster would report a bunch of I/O
+>> errors, RAID5 would drop the device and ReiserFS won't even notice that
+>> a hard drive failed.
+>> Furthermore, every RAID5 device has had a resync since the filesystem
+>> resize operation, which implies that every bit has been checked at least
+>> once.
+>>
+>> I think the problem lies within the way reiserfsck reads and writes to
+>> the underlying block device. Maybe reiserfsck isn't opening the device
+>> in direct I/O (O_DIRECT) mode? 
+>>     
+> Yes, it does not. But why would it have to?
+>
+>   
+>> I think it should, because it's safer, 
+>> though slower. Maybe O_DIRECT can be set optionally on (or off) using a
+>> commandline switch?
+>>
+>>     
+> Maybe O_DIRECT should be used, I do not argue. But there is nothing wrong in not using O_DIRECT.
+> Why would user land application make a computer unusable?
+> reiserfsck uses standard libc's low level i/o functions to read and write a device, it also analyses and modify read data before writing them back.
+> The worst thing reiserfsck can do is 100% CPU consumption. But that also should not hurt a system.
+>
+> I hope you understand what I mean: if user land application makes a box unusable - something is wrong in kernel.
+> I have never dealt with setup like yours. There are so many layers, why there can not be any errors?
+>   
+That's true, of course. But there's (at least) one place in the kernel
+where userland touches kernel space: buffering. In my case, I think
+reiserfsck is causing starvation of my TCP buffers, because it doesn't
+use direct I/O but buffered I/O. Of course, this is a normal (and maybe
+wise) thing to do when the bottom layer is ATA or SATA (or something
+like that), but in my case there's a network somewhere between
+reiserfsck and ATA/SATA. So, I don't expect reiserfsck to use direct I/O
+by default, but it would be a nice feature for me (and the few others
+with the same problem?) if direct I/O can be enabled by a commandline
+switch.
 
->>> hour at boot time. This is a mail server with 200 users.=20
->>>
->> which linux version is in use on the server?
->=20
-> Debian unstable with latest kernel 2.6.17.
->=20
->>> Is that normal? Is there a way to speed it up?
->>>
->> How do users store their mails? If they store one mail in a separate=20
->> file, then quotacheck is to iterate over
->> a lot files which can be very time consuming.
->=20
-> We use maildir, so, yes, it's a lot of files.
->=20
-> Isn't there a way to run quotacheck in the background while daemons=20
-> start serving users?=20
->=20
-> Or must it absolutely be run at mount time to be effective?
+> Can you dd_rescue your filesystem to a spare device which has less underlaying layers (linear raid or oven plain hard disk)
+> and try reiserfsck --rebuild-tree oin it?
+I'm sorry, the system is built upon 12 harddrives, with a total of more
+than 3TB of disk space. I don't have that amount of drives available for
+creating a backup!
 
-You may run quotacheck at any time if you don't mind slightly incorrect
-qotas as changes done on already checked files while qotacheck is
-running wouldn't be noticed. You may skip quotacheck at startup at all -
-if your server didn't crash quotas should stay in sync. So you could use
-some off-peak time for quotacheck at runtime and do this once in a while.
+Thanks for you thoughts,
 
---=20
-Konstantin M=FCnning
+  -- Bas
+
