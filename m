@@ -1,55 +1,47 @@
-From: "Giovanni A. Orlando" <gorlando@futuretg.com>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: Hans Reiser arrested...
-Date: Thu, 12 Oct 2006 10:30:36 +0200
-Message-ID: <452DFD2C.30800@futuretg.com>
-References: <452C5D8D.3030605@netvigator.com> <086701c6ed41$d3e53970$d60310ac@homedom> <452CB9ED.2020903@futuretg.com> <200610121128.01140.csawtell@paradise.net.nz>
-Reply-To: gorlando@futuretg.com
+Date: Thu, 12 Oct 2006 10:38:21 -0400
+Message-ID: <200610121438.k9CEcLFf004258@turing-police.cc.vt.edu>
+References: <452C5D8D.3030605@netvigator.com> <b65fbb130610110337u1b8799edn82a1ee728eca1906@mail.gmail.com> <086701c6ed41$d3e53970$d60310ac@homedom> <452CB9ED.2020903@futuretg.com>
+            <04EF24A3-9565-4B88-9B1C-752D22664004@smartgames.ca>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-30044-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; boundary="==_Exmh_1160663901_2819P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30045-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200610121128.01140.csawtell@paradise.net.nz>
+In-Reply-To: Your message of "Wed, 11 Oct 2006 13:32:22 EDT."
+             <04EF24A3-9565-4B88-9B1C-752D22664004@smartgames.ca>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Christopher Sawtell <csawtell@paradise.net.nz>
-Cc: reiserfs-list@namesys.com
+To: Toby Thain <toby@smartgames.ca>
+Cc: gorlando@futuretg.com, reiserfs-list@namesys.com
 
-Christopher Sawtell escribi=F3:
-> On Wednesday 11 October 2006 22:31, Giovanni A. Orlando wrote:
->  =20
->> Again, locate Hans and offer comfort and a path to leave this situation.
->>    =20
-> It would seem that the establishment of a legal defence fund is going to =
-be=20
-> needed, irrespective of Hans' guilt or innocence.
->  =20
-I agree!
+--==_Exmh_1160663901_2819P
+Content-Type: text/plain; charset=us-ascii
 
-I propose to setup a PayPal account handled by someone close to Hans=20
-Reiser in Bay Area, like a friend,
-or directly by him attorney.
+On Wed, 11 Oct 2006 13:32:22 EDT, Toby Thain said:
 
-Thanks,
-Giovanni.
-> --
-> Christopher Sawtell.
->
->
->  =20
+> He's in custody of the police; apparently even his lawyer can't see him.
 
+"Even his lawyer can't see him" is the sort of thing that only happens
+in 3rd world countries with shaky grasp on human rights.
 
---=20
+Of course, this *is* the US, so maybe in fact Hans isn't being allowed
+to see his lawyer....
 
-Future Technologies=20
-E-Learning, Linux, OpenSource Projects,
-... Operating Systems, Web 2.0 and more!!!
+--==_Exmh_1160663901_2819P
+Content-Type: application/pgp-signature
 
-	Italy - USA - Venezuela
-Check http://www.futuretg.com/FT/Contact.html
-for addresses.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.5 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
+iD8DBQFFLlNdcC3lWbTT17ARAu+MAJ97T3iSekhmHiHZBtzJ7SypoIvKfACeJsPM
+DjPWEGDkTLaXlVtQoib1t5Y=
+=f3B3
+-----END PGP SIGNATURE-----
 
-
+--==_Exmh_1160663901_2819P--
