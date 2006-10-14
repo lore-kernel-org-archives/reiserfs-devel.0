@@ -1,24 +1,44 @@
-From: "Clemens Eisserer" <linuxhippy@gmail.com>
-Subject: Which version will be merged into mainline kernel?
-Date: Mon, 16 Oct 2006 11:50:51 +0200
-Message-ID: <194f62550610160250u265ef120lee3cf9a17266939f@mail.gmail.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: Fund raising
+Date: Sat, 14 Oct 2006 17:26:07 +0400
+Message-ID: <200610141726.08275.vs@namesys.com>
+References: <1161017697.13422.188.camel@localhost>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30054-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30055-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1161017697.13422.188.camel@localhost>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Joe Barr <joe@pjprimer.com>, William DuBois <whdubois@comcast.net>, reiserfs-list@namesys.com
 
-Hello,
+Hello
 
-Will reiser-4.0 or reiser-4.1 be merged into mainline kernel, I ask
-because I am quite interrested in trying out the compression plugin.
+On Monday 16 October 2006 20:54, Joe Barr wrote:
+> 
+> Vladimer,
+> 
+> We received a note from Hans' lawyer about an appeal for fund raising,
+> with you given as the contact point for donations.
+> 
+> Can you give us more details on this, please?
+> 
 
-Sorry about what happend in the last few days :-/
+I had no any contacts about this with anybody.
+William, If I can do anything - please let me know.
 
-lg Clemens
+Btw, can this
+http://www.namesys.com/support.html
+be used to collect those donations?
+
+> Thanks,
+> Joe Barr
+> NewsForge/Linux.com
+> 
+> 
+> 
+> 
