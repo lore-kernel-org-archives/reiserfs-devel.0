@@ -1,121 +1,55 @@
-From: "Lex Lyamin" <flx@namesys.com>
+From: aba cus <cus_aba@yahoo.com>
 Subject: Re: Hans Reiser arrested...
-Date: Sat, 14 Oct 2006 00:38:42 +0400
-Message-ID: <80294dc60610131338p62f88088w522964a4b689ba5e@mail.gmail.com>
-References: <452C5D8D.3030605@netvigator.com>
-	 <086701c6ed41$d3e53970$d60310ac@homedom>
-	 <452CB9ED.2020903@futuretg.com>
-	 <200610121128.01140.csawtell@paradise.net.nz>
-	 <452DFD2C.30800@futuretg.com>
+Date: Fri, 13 Oct 2006 21:50:02 -0700 (PDT)
+Message-ID: <20061014045002.37443.qmail@web58105.mail.re3.yahoo.com>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; 
-	boundary="----=_Part_40425_128181.1160771922944"
-Return-path: <reiserfs-list-return-30048-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; boundary="0-1151353887-1160801402=:33509"
+Return-path: <reiserfs-list-return-30049-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Sender: melanor9@gmail.com
-In-Reply-To: <452DFD2C.30800@futuretg.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: gorlando@futuretg.com
-Cc: Christopher Sawtell <csawtell@paradise.net.nz>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-------=_Part_40425_128181.1160771922944
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+--0-1151353887-1160801402=:33509
+Content-Type: text/plain; charset=ascii
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
-I will try to reach his mother and ask what can be done there.
-At this moment there is
-
-$25 Gets You
-an Answer <http://www.namesys.com/support.html>
-
-at our webpage, but i'm not sure at this moment if its a good idea to use
-this
-since Hans most likely cant manage this account, being under arrest.
-
-Thanks guys.
-
-
-On 10/12/06, Giovanni A. Orlando <gorlando@futuretg.com> wrote:
->
-> Christopher Sawtell escribi=F3:
-> > On Wednesday 11 October 2006 22:31, Giovanni A. Orlando wrote:
-> >
-> >> Again, locate Hans and offer comfort and a path to leave this
-> situation.
-> >>
-> > It would seem that the establishment of a legal defence fund is going t=
-o
-> be
-> > needed, irrespective of Hans' guilt or innocence.
-> >
-> I agree!
->
-> I propose to setup a PayPal account handled by someone close to Hans
-> Reiser in Bay Area, like a friend,
-> or directly by him attorney.
->
-> Thanks,
-> Giovanni.
-> > --
-> > Christopher Sawtell.
-> >
-> >
-> >
->
->
-> --
->
-> Future Technologies
-> E-Learning, Linux, OpenSource Projects,
-> ... Operating Systems, Web 2.0 and more!!!
->
->         Italy - USA - Venezuela
-> Check http://www.futuretg.com/FT/Contact.html
-> for addresses.
->
->
->
->
-
-
---=20
-liberation loophole will make it clear
-
-------=_Part_40425_128181.1160771922944
-Content-Type: text/html; charset=ISO-8859-1
+Let's try to help in a practical way. It would be important to try to=0Afin=
+d out (ideally from Hans, or someone who has spoken to him recently=0Aor cl=
+ose to him) what help he needs. The people who may know most about=0Athe si=
+tuation are probably his parents, but I am not sure that we can=0Adisturb t=
+hem, they must have other worries than to talk to us. Has=0Aanyone from Nam=
+esys or anyone on this list spoken to them recently? It=0Ais probably best =
+if only one person tries to get in touch. All we=0Ashould try to find out i=
+f there is anything we can try to help with.=0A(Probably no other informati=
+on should be made public anyway.)=0A=0A=0A=0AToby Thain wrote:=0A=0A> He's =
+in custody of the police; apparently even his lawyer can't see him.=0A=0A=
+=0A=0AHas anyone actually checked that this is in fact true.=0A=0AAccording=
+ to news reports, Hans is held in Santa Rita Jail in Dublin.=0A=0Ahttp://al=
+amedacountysheriff.org/DC/jail_info.htm=0A=0ACould someone try to find out =
+for certain?=0A=0A=0A=0A=0A
+--0-1151353887-1160801402=:33509
+Content-Type: text/html; charset=ascii
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
-<br>I will try to reach his mother and ask what can be done there.<br>At th=
-is moment there is <br><br><a class=3D"menu" href=3D"http://www.namesys.com=
-/support.html">
-$25 Gets
-You<br> an Answer</a>
-<br><br>at our webpage, but i'm not sure at this moment if its a good idea =
-to use this<br>since Hans most likely cant manage this account, being under=
- arrest. <br><br>Thanks guys.<br><br><br><div><span class=3D"gmail_quote">
-On 10/12/06, <b class=3D"gmail_sendername">Giovanni A. Orlando</b> &lt;<a h=
-ref=3D"mailto:gorlando@futuretg.com">gorlando@futuretg.com</a>&gt; wrote:</=
-span><blockquote class=3D"gmail_quote" style=3D"border-left: 1px solid rgb(=
-204, 204, 204); margin: 0pt 0pt 0pt 0.8ex; padding-left: 1ex;">
-Christopher Sawtell escribi=F3:<br>&gt; On Wednesday 11 October 2006 22:31,=
- Giovanni A. Orlando wrote:<br>&gt;<br>&gt;&gt; Again, locate Hans and offe=
-r comfort and a path to leave this situation.<br>&gt;&gt;<br>&gt; It would =
-seem that the establishment of a legal defence fund is going to be
-<br>&gt; needed, irrespective of Hans' guilt or innocence.<br>&gt;<br>I agr=
-ee!<br><br>I propose to setup a PayPal account handled by someone close to =
-Hans<br>Reiser in Bay Area, like a friend,<br>or directly by him attorney.
-<br><br>Thanks,<br>Giovanni.<br>&gt; --<br>&gt; Christopher Sawtell.<br>&gt=
-;<br>&gt;<br>&gt;<br><br><br>--<br><br>Future Technologies<br>E-Learning, L=
-inux, OpenSource Projects,<br>... Operating Systems, Web 2.0 and more!!!
-<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Italy - USA - Venez=
-uela<br>Check <a href=3D"http://www.futuretg.com/FT/Contact.html">http://ww=
-w.futuretg.com/FT/Contact.html</a><br>for addresses.<br><br><br><br></block=
-quote></div><br><br clear=3D"all"><br>--=20
-<br>liberation loophole will make it clear
-
-------=_Part_40425_128181.1160771922944--
+<html><head><style type=3D"text/css"><!-- DIV {margin:0px;} --></style></he=
+ad><body><div style=3D"font-family:times new roman, new york, times, serif;=
+font-size:12pt"><div>Let's try to help in a practical way. It would be impo=
+rtant to try to=0Afind out (ideally from Hans, or someone who has spoken to=
+ him recently=0Aor close to him) what help he needs. The people who may kno=
+w most about=0Athe situation are probably his parents, but I am not sure th=
+at we can=0Adisturb them, they must have other worries than to talk to us. =
+Has=0Aanyone from Namesys or anyone on this list spoken to them recently? I=
+t=0Ais probably best if only one person tries to get in touch. All we=0Asho=
+uld try to find out if there is anything we can try to help with.=0A(Probab=
+ly no other information should be made public anyway.)<br>=0A<br>=0AToby Th=
+ain wrote:<br>=0A&gt; He's in custody of the police; apparently even his la=
+wyer can't see him.<br>=0A<br>=0AHas anyone actually checked that this is i=
+n fact true.<br>=0AAccording to news reports, Hans is held in Santa Rita Ja=
+il in Dublin.<br><span>=0A<a target=3D"_blank" href=3D"http://alamedacounty=
+sheriff.org/DC/jail_info.htm">http://alamedacountysheriff.org/DC/jail_info.=
+htm</a></span><br>=0ACould someone try to find out for certain?<br><br></di=
+v></div><br></body></html>
+--0-1151353887-1160801402=:33509--
