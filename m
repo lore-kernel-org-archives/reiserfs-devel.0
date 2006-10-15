@@ -1,104 +1,71 @@
-From: "Giovanni A. Orlando" <gorlando@futuretg.com>
-Subject: Re: Hans Reiser arrested...
-Date: Sat, 14 Oct 2006 15:07:09 +0200
-Message-ID: <4530E0FD.3080005@futuretg.com>
-References: <452C5D8D.3030605@netvigator.com>	 <086701c6ed41$d3e53970$d60310ac@homedom>	 <452CB9ED.2020903@futuretg.com>	 <200610121128.01140.csawtell@paradise.net.nz>	 <452DFD2C.30800@futuretg.com> <80294dc60610131338p62f88088w522964a4b689ba5e@mail.gmail.com>
-Reply-To: gorlando@futuretg.com
+From: Christopher Sawtell <csawtell@paradise.net.nz>
+Subject: Copy of message to William du Bois.
+Date: Sun, 15 Oct 2006 21:26:50 +1300
+Message-ID: <200610152126.50514.csawtell@paradise.net.nz>
+References: <452C5D8D.3030605@netvigator.com>
+ <80294dc60610131338p62f88088w522964a4b689ba5e@mail.gmail.com>
+ <4530E0FD.3080005@futuretg.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-30050-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30052-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <80294dc60610131338p62f88088w522964a4b689ba5e@mail.gmail.com>
+In-reply-to: <4530E0FD.3080005@futuretg.com>
+Content-disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Lex Lyamin <flx@namesys.com>
-Cc: Christopher Sawtell <csawtell@paradise.net.nz>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
+Cc: Lex Lyamin <flx@namesys.com>
 
-Lex Lyamin wrote:
+Greetings,
 
-Hi all,
+FYI, I have just e-mailed William du Bois - Hans's attorney via his web <-> 
+email bridge at
+http://www.trabackdubois.com/Bio/WilliamDuBois.asp
+thusly:-
 
-    I propose that someone in Bay Area call the attorney and interact=20
-with him,
-    or he directly send an email to this mailing list, and we depending=20
-on our
-    possibilities send with Paypal ... some money and contrib.
+====
 
-Thanks,
-Giovanni.
->
-> I will try to reach his mother and ask what can be done there.
-> At this moment there is
->
-> $25 Gets You
-> an Answer <http://www.namesys.com/support.html>
->
-> at our webpage, but i'm not sure at this moment if its a good idea to=20
-> use this
-> since Hans most likely cant manage this account, being under arrest.
->
-> Thanks guys.
->
->
-> On 10/12/06, *Giovanni A. Orlando* <gorlando@futuretg.com=20
-> <mailto:gorlando@futuretg.com>> wrote:
->
->     Christopher Sawtell escribi=F3:
->     > On Wednesday 11 October 2006 22:31, Giovanni A. Orlando wrote:
->     >
->     >> Again, locate Hans and offer comfort and a path to leave this
->     situation.
->     >>
->     > It would seem that the establishment of a legal defence fund is
->     going to be
->     > needed, irrespective of Hans' guilt or innocence.
->     >
->     I agree!
->
->     I propose to setup a PayPal account handled by someone close to Hans
->     Reiser in Bay Area, like a friend,
->     or directly by him attorney.
->
->     Thanks,
->     Giovanni.
->     > --
->     > Christopher Sawtell.
->     >
->     >
->     >
->
->
->     --
->
->     Future Technologies
->     E-Learning, Linux, OpenSource Projects,
->     ... Operating Systems, Web 2.0 and more!!!
->
->             Italy - USA - Venezuela
->     Check http://www.futuretg.com/FT/Contact.html
->     for addresses.
->
->
->
->
->
->
-> --=20
-> liberation loophole will make it clear=20
+I am a user of Hans Reiser's latest software, and am therefore concerned for 
+and about him as a fellow human being in his current circumstances.
 
+I'd just like to ask a few questions, and would be very grateful if you would 
+be so kind as to tell me:
 
---=20
+1) Is there a need for the establishment of a legal defence fund?
 
-Future Technologies=20
-E-Learning, Linux, OpenSource Projects,
-... Operating Systems, Web 2.0 and more!!!
+2) Can I take it that the delay between his arrest and the date set for him to 
+plead is an indication that a serious professional effort is being made to 
+ensure that he is in fact psychiatrically fit to plead?
 
-	Italy - USA - Venezuela
-Check http://www.futuretg.com/FT/Contact.html
-for addresses.
+I ask this question simply because some of his public writings would indicate 
+that at times the state of Hans's mind hovers directly over  the line which 
+separates true genius from insanity.
 
+3) I'm not American so I would like to know if capital punishment still used 
+in California?
 
+4) Is Hans currently able to receive postal mail or e-mail? If so what is his 
+address please?
 
+5) Is he in need of any small items for his physical comfort?
+ 
+If you would care to tell all Hans's user and development community what the 
+situation is then an e-mail to:- 
+reiserfs-list@namesys.com
+which I believe is still working, would get to us all.
+
+In any case I would be grateful for a reply to my own address:-
+csawtell@paradise.net.nz
+
+Many thanks.
+
+ps Please would you be kind enough - with appropriate subtlety - to let all 
+the various law enforcement people concerned know that what they are doing is 
+being watched carefully by people all over the world.
+
+--
+Sincerely etc.,
+Christopher Sawtell
