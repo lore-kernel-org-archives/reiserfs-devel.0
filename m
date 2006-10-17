@@ -1,37 +1,36 @@
-From: =?utf-8?Q?Maciej_So=C5=82tysiak?= <pysiak.satriani@wp.pl>
-Subject: Re: Which version will be merged into mainline kernel?
-Date: Wed, 18 Oct 2006 00:03:09 +0200
-Message-ID: <1248747534.20061018000309@wp.pl>
-References: <194f62550610160250u265ef120lee3cf9a17266939f@mail.gmail.com> <4533D788.3000406@namesys.com> <194f62550610171414g5fe6b0f5o603eb3f7fe54d029@mail.gmail.com>
-Reply-To: =?utf-8?Q?Maciej_So=C5=82tysiak?= <pysiak.satriani@wp.pl>
+From: James Bottomley <James.Bottomley@SteelEye.com>
+Subject: Re: CFP: Linux 2007 File System & IO Workshop
+Date: Tue, 17 Oct 2006 18:40:34 -0400
+Message-ID: <1161124834.6245.51.camel@mulgrave.il.steeleye.com>
+References: <4534268E.9030201@emc.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30063-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <194f62550610171414g5fe6b0f5o603eb3f7fe54d029@mail.gmail.com>
+Return-path: <linux-ext4-owner@vger.kernel.org>
+In-Reply-To: <4534268E.9030201@emc.com>
+Sender: linux-ext4-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Ric Wheeler <ric@emc.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, xfs@oss.sgi.com, reiserfs-list@namesys.com, ext2-devel@lists.sourceforge.net, linux-ide@vger.kernel.org, ocfs2-devel@oss.oracle.com, linux-scsi@vger.kernel.org, lsf07pc@usenix.org
 
-Hello Clemens,
+On Mon, 2006-10-16 at 20:40 -0400, Ric Wheeler wrote:
+> On  February 12-13, we have put together a combined Linux file system & 
+> IO 2-day workshop in San Jose, CA. Note that the USENIX File System and 
+> Storage Technologies conference follows us in the same venue, so we hope 
+> to get some interaction between the two groups as well as leverage the 
+> USENIX people to help us get this done.
+> 
+> For more information, please see:
+> 
+> http://www.usenix.org/events/lsf07/
 
-Tuesday, October 17, 2006, 11:14:33 PM, you wrote:
-> somewhere that first 2.6.19 was the goal but now it is 20 or 21. Is it
-> now more or less a predictable thing, only when exactly is still open
-> or can kernel devs still change their opinion?
-It is largely up to Andrew Morton. I trust him and I think that when
-he says r4 is ready, it is ready. Andrew keeps knows that there are
-both sides of the story here and he does his best to push r4 into
-mainline while keeping to it that the code adhers to requirements
-and guidelines stated by kernel developers.
+Just to clarify, this event is a follow on to the Vancouver Storage
+summit.   Although USENIX is helping us to run it, you don't have to be
+a USENIX member to submit a position paper.  The idea of the position
+papers is to give the limited number of places (for storage we've got
+about 20-25 and about the same again for fs) to people who have
+interesting topics they need to discuss---so if you submit, be prepared
+to make a presentation of it.
 
-I belive r4 is soon to be merged, if not in december/january then surely
-before easter. (would be a good xmas present,hehe)
-
-Regards,
-Maciej
-
+James
 
