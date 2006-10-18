@@ -1,20 +1,33 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: =?UTF-8?B?UmU6IFsyLjYuMTktcmMyLW1tMV0gZXJyb3I6IHRvbyBmZXcgYXJndW0=?=
- =?UTF-8?B?ZW50cyB0byBmdW5jdGlvbiDigJhjcnlwdG9fYWxsb2NfaGFzaOKAmQ==?=
-Date: Wed, 18 Oct 2006 13:59:29 +0400
-Message-ID: <4535FB01.9070504@namesys.com>
-References: <20061016230645.fed53c5b.akpm@osdl.org> <200610171603.38253.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+From: "Corey McGuire" <coreyfro@coreyfro.com>
+Subject: Crash Corse in Partition Recovery
+Date: Wed, 18 Oct 2006 06:06:36 -0700
+Message-ID: <cc3fd8f30610180606n12707760h747c95d214324ed8@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30068-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30069-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200610171603.38253.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Edward Shishkin <edward@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-test
+Hey all,
+
+I was updating my system's bios and my drives got reordered.  When I
+went to nuke my Windows drive, I missed and hit my swap and reiserfs
+drive.  I was wondering if there is a web sight that gives step by
+step instructions for recovery, or if you guys had a silver bullet
+method for findind the begining and ends of a partition.  I don't
+remember the exact size of my swap, but I know it came first.  Nothing
+has happened since I messed up the partition table and I ran "DD" so I
+have an image of the drive for safe exploration.
+
+Thanks!
+
+-- 
+c==>==========-
+
+I Tilt for Windmills
