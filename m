@@ -1,48 +1,20 @@
-From: Luben Tuikov <ltuikov@yahoo.com>
-Subject: Re: CFP: Linux 2007 File System & IO Workshop
-Date: Tue, 17 Oct 2006 17:50:12 -0700 (PDT)
-Message-ID: <20061018005013.97509.qmail@web31803.mail.mud.yahoo.com>
-References: <1161129608.6245.61.camel@mulgrave.il.steeleye.com>
-Reply-To: ltuikov@yahoo.com
+From: Edward Shishkin <edward@namesys.com>
+Subject: =?UTF-8?B?UmU6IFsyLjYuMTktcmMyLW1tMV0gZXJyb3I6IHRvbyBmZXcgYXJndW0=?=
+ =?UTF-8?B?ZW50cyB0byBmdW5jdGlvbiDigJhjcnlwdG9fYWxsb2NfaGFzaOKAmQ==?=
+Date: Wed, 18 Oct 2006 13:59:29 +0400
+Message-ID: <4535FB01.9070504@namesys.com>
+References: <20061016230645.fed53c5b.akpm@osdl.org> <200610171603.38253.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <xfs-bounce@oss.sgi.com>
-In-Reply-To: <1161129608.6245.61.camel@mulgrave.il.steeleye.com>
-Sender: xfs-bounce@oss.sgi.com
-Errors-to: xfs-bounce@oss.sgi.com
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30068-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <200610171603.38253.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: James Bottomley <James.Bottomley@SteelEye.com>
-Cc: Ric Wheeler <ric@emc.com>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, xfs@oss.sgi.com, reiserfs-list@namesys.com, ext4@lists.sourceforge.net, linux-ide@vger.kernel.org, ocfs2-devel@oss.oracle.com, linux-scsi@vger.kernel.org, lsf07pc@usenix.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Edward Shishkin <edward@namesys.com>
+Cc: reiserfs-list@namesys.com
 
---- James Bottomley <James.Bottomley@SteelEye.com> wrote:
-> You can submit it as your position paper, certainly.
-
-It is not a "position" paper.  There is too much SCSI
-Architecture Model (SAM) in it.  But from linux-scsi point of view
-I guess it is.
-
-> However, the object of this event is not to collect a list of papers to
-> be presented: it's not a conference with hundreds of attendees (if you
-> want to present to an audience, you should submit to FAST, which is such
-> a conference, with which we're co-located).  It's a roundtable type
-> discussion with 20-25 people in the field; plus some plenary sessions to
-> get input and ideas from people working on the filesystem layer.  The
-> object is to stimulate discussion of important issues (which may be
-> guided by papers or other materials).  The position paper thing is only
-> to ensure people actually have things they want to discuss (and to allow
-> the programme committee to pick the attendees if there would be too
-> many).
-
-Ok, so this is targeted at the same 20-25 Linux people who attended
-the "Vancouver Storage summit" and you're just using FAST to co-locate.
-
-I incorrectly assumed that this was targeted at storage professionals
-not necessarily Linux related, but with Linux exposure so as to hear
-new ideas and pathways.  I also missed to see the "by-invitation" clause
-at the top.
-
-Thanks for the explanation!
-   Luben
-
-
+test
