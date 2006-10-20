@@ -1,44 +1,49 @@
 From: Christophe Greisberger <greisberger@zenon-media.com>
 Subject: Re: Segfault mounting a reiserfs 3.6 partition
-Date: Thu, 19 Oct 2006 18:30:03 +0200
-Message-ID: <200610191830.10675.greisberger@zenon-media.com>
-References: <200610190903.43896.greisberger@zenon-media.com> <45374943.5050009@namesys.com>
+Date: Fri, 20 Oct 2006 10:29:38 +0200
+Message-ID: <200610201031.11208.greisberger@zenon-media.com>
+References: <200610190903.43896.greisberger@zenon-media.com> <45374943.5050009@namesys.com> <200610191830.10675.greisberger@zenon-media.com>
 Reply-To: greisberger@zenon-media.net
 Mime-Version: 1.0
 Content-Type: multipart/signed;
-  boundary="nextPart2308397.121NXP8QX8";
+  boundary="nextPart6141213.P4SoeYpYOl";
   protocol="application/pkcs7-signature";
   micalg=sha1
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30075-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30076-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <45374943.5050009@namesys.com>
+In-Reply-To: <200610191830.10675.greisberger@zenon-media.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-list@namesys.com
 
---nextPart2308397.121NXP8QX8
+--nextPart6141213.P4SoeYpYOl
 Content-Type: text/plain;
-  charset="iso-8859-1"
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-Hmmm.
-I'll search for a Live CD with the latest kernel.
+Yesssssssssss!
 
+I could mount the partition with the latest Gentoo live CD.
+I'll now tar the data and reformat the partition.
+Thanks for your help!
 
-On Thursday, 19 October 2006 11:45, Edward Shishkin wrote:
-> Hello.
-> would you please upgrade your kernel to the latest stable version
-> (2.6.18) and try to mount again.
+On Thursday, 19 October 2006 18:30, Christophe Greisberger wrote:
+> Hmmm.
+> I'll search for a Live CD with the latest kernel.
 >
-> Thanks,
-> Edward.
->
+> On Thursday, 19 October 2006 11:45, Edward Shishkin wrote:
+> > Hello.
+> > would you please upgrade your kernel to the latest stable version
+> > (2.6.18) and try to mount again.
+> >
+> > Thanks,
+> > Edward.
 
---nextPart2308397.121NXP8QX8
+--nextPart6141213.P4SoeYpYOl
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Disposition: attachment; filename="smime.p7s"
 Content-Transfer-Encoding: base64
@@ -75,13 +80,13 @@ bcaPpgxYzy/78X1t7xo2jL4HkazNw3AB63Red2hmOns1SEDI/LrDMktDAxyT4NHEtxxzuLN1Mezl
 KA8HDsRXBUFHoAcflzZs1Bp8MYICMjCCAi4CAQEwgYAweTEQMA4GA1UEChMHUm9vdCBDQTEeMBwG
 A1UECxMVaHR0cDovL3d3dy5jYWNlcnQub3JnMSIwIAYDVQQDExlDQSBDZXJ0IFNpZ25pbmcgQXV0
 aG9yaXR5MSEwHwYJKoZIhvcNAQkBFhJzdXBwb3J0QGNhY2VydC5vcmcCAwJpUjAHBgUrDgMCGqCB
-izAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0wNjEwMTkxNjMwMTBa
-MCMGCSqGSIb3DQEJBDEWBBSaYL/QgIBAIFnRk690BKEsn74DEzAsBgkqhkiG9w0BCQ8xHzAdMA0G
-CWCGSAFlAwQBAgUAMAwGCCqGSIb3DQMHBQAwCwYJKoZIhvcNAQEBBIIBAIq9V5pH2eE5MV8WTX5u
-jOjxDWaQGAWlQWNJoGBPZID+NHs9MMzj4J0SmkjsjShdHltxIe54HJq19ZWITNGHYsT0eNEAHysS
-8z1rtL2q1Ot/wIO7IJnqVJWt+8T5EkKYO3+RCk6FJ6pIdBX3Kf/qfXHZqjIF0H5yPxXWTd4MPfsD
-dJG3dxFeanYuwT62iyZqsIGWIwYXvyetxZbw0JOeq6pykFjUL92a3CkwgG1du1WEa7DQGExmqDnm
-8AVYAEQQ1HVV5uNv8FYjj8O4m0lSHzW9srMxs+nBlKYvEx1OXtTX6Ns9XIdtg+c5y14q2y/HcS2j
-s6mRXDQfVXvu7k3XpHIAAAAAAAA=
+izAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0wNjEwMjAwODI5NTBa
+MCMGCSqGSIb3DQEJBDEWBBRsZZRPZnRaQnKbb1yXSLaSrXlXHjAsBgkqhkiG9w0BCQ8xHzAdMA0G
+CWCGSAFlAwQBAgUAMAwGCCqGSIb3DQMHBQAwCwYJKoZIhvcNAQEBBIIBAHfvw/3fOPSsqWv/NUdI
+Zkr8N6ETn47b09nXsS9qyqElST+u7escnYA20EF2uwnIZRyrAMj8XcKHjVg+OIYuKaY67gjZ6uS7
+kzxh4xNIcgo/eWpJrHn2OLx0T3ug6kFhqCGBL8j07JdVlio92ynB6Qa2KDxR3OJ93LNfLINJ3m6s
+qPKwW4EDq5iOqfeJ6rApj1bl9RfgAtvLoUlfwJ679FGg0w+X88n+x/97FQhni0phx0hxJEFlVU0I
+p5D3u00RLmwyp2vp1/8n/G6KSWhUlPMzAUTeBkiunHsKencAsMbN7LZ9/4VbNPY85BPYcNnX+Kkq
+Als2suS1eQ0iFAw1Cf4AAAAAAAA=
 
---nextPart2308397.121NXP8QX8--
+--nextPart6141213.P4SoeYpYOl--
