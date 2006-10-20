@@ -1,92 +1,33 @@
-From: Christophe Greisberger <greisberger@zenon-media.com>
+From: Christian Kujau <lists@nerdbynature.de>
 Subject: Re: Segfault mounting a reiserfs 3.6 partition
-Date: Fri, 20 Oct 2006 10:29:38 +0200
-Message-ID: <200610201031.11208.greisberger@zenon-media.com>
-References: <200610190903.43896.greisberger@zenon-media.com> <45374943.5050009@namesys.com> <200610191830.10675.greisberger@zenon-media.com>
-Reply-To: greisberger@zenon-media.net
+Date: Fri, 20 Oct 2006 20:50:28 +0100 (BST)
+Message-ID: <Pine.LNX.4.64.0610202047060.7154@sheep.housecafe.de>
+References: <200610190903.43896.greisberger@zenon-media.com>
+ <45374943.5050009@namesys.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart6141213.P4SoeYpYOl";
-  protocol="application/pkcs7-signature";
-  micalg=sha1
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30076-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30077-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200610191830.10675.greisberger@zenon-media.com>
+In-Reply-To: <45374943.5050009@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
---nextPart6141213.P4SoeYpYOl
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+On Thu, 19 Oct 2006, Edward Shishkin wrote:
+> would you please upgrade your kernel to the latest stable version (2.6.18)
+> and try to mount again.
 
-Yesssssssssss!
+While I'm happy that Christophe can access his data with the latest 
+kernel, did you have any special in mind when you suggested to upgrade 
+from 2.4.20 or 2.6.13 (apart from the fact that both kernels are quite 
+old)?
 
-I could mount the partition with the latest Gentoo live CD.
-I'll now tar the data and reformat the partition.
-Thanks for your help!
+Thanks,
+Christian.
+-- 
+BOFH excuse #257:
 
-On Thursday, 19 October 2006 18:30, Christophe Greisberger wrote:
-> Hmmm.
-> I'll search for a Live CD with the latest kernel.
->
-> On Thursday, 19 October 2006 11:45, Edward Shishkin wrote:
-> > Hello.
-> > would you please upgrade your kernel to the latest stable version
-> > (2.6.18) and try to mount again.
-> >
-> > Thanks,
-> > Edward.
-
---nextPart6141213.P4SoeYpYOl
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIGUzCCBk8w
-ggQ3oAMCAQICAwJpUjANBgkqhkiG9w0BAQUFADB5MRAwDgYDVQQKEwdSb290IENBMR4wHAYDVQQL
-ExVodHRwOi8vd3d3LmNhY2VydC5vcmcxIjAgBgNVBAMTGUNBIENlcnQgU2lnbmluZyBBdXRob3Jp
-dHkxITAfBgkqhkiG9w0BCQEWEnN1cHBvcnRAY2FjZXJ0Lm9yZzAeFw0wNjA2MjkxMDMwMjNaFw0w
-NzA2MjkxMDMwMjNaMIIBEjEfMB0GA1UEAxMWQ2hyaXN0b3BoZSBHcmVpc2JlcmdlcjEpMCcGCSqG
-SIb3DQEJARYaY2hyaXN0b3BoZUBncmVpc2Jlcmdlci5uZXQxIjAgBgkqhkiG9w0BCQEWE2dyZWlz
-YnlAaG90bWFpbC5jb20xHzAdBgkqhkiG9w0BCQEWEGdyZWlzYnlAeWFob28uZnIxIDAeBgkqhkiG
-9w0BCQEWEWdyZWlzYnlAZ21haWwuY29tMTEwLwYJKoZIhvcNAQkBFiJjaHJpc3RvcGhlLmdyZWlz
-YmVyZ2VyQGxhcG9zdGUubmV0MSowKAYJKoZIhvcNAQkBFhtncmVpc2JlcmdlckB6ZW5vbi1tZWRp
-YS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCgpa8R5H20HLu1hob8rWDxJ/+L
-kS4ajgq4uooJjMed4nfGTGH9MwzMcvcpSLFjlYSYktDnVPoVlvmW9xyYGVJFozIJOtL+lRAOUohl
-SAm6l5JgULzrF9AJ55utfc3R7uHyDUvpnlllbGOZVBGwXz1Ew0MyUQUOUoY8IpdxrtMcL87h8wOQ
-eTtcRj9HDzLHyLslz5nMiESsGdRtEhfVkXhn3rjUjDK2vWo4Qr4bAjNZjXccXkyUPFU/ATYFWBFm
-7wA8VJgDuK3rb/xlVSWl2sMUDFLJo5Zik7UC/DQbcZFq6gVIJaRBxIvsRcoLnbpB/YdB3Wrhjjn3
-88jBqy2FQHiPAgMBAAGjggFDMIIBPzAMBgNVHRMBAf8EAjAAMFYGCWCGSAGG+EIBDQRJFkdUbyBn
-ZXQgeW91ciBvd24gY2VydGlmaWNhdGUgZm9yIEZSRUUgaGVhZCBvdmVyIHRvIGh0dHA6Ly93d3cu
-Q0FjZXJ0Lm9yZzAyBggrBgEFBQcBAQQmMCQwIgYIKwYBBQUHMAGGFmh0dHA6Ly9vY3NwLmNhY2Vy
-dC5vcmcwgaIGA1UdEQSBmjCBl4EaY2hyaXN0b3BoZUBncmVpc2Jlcmdlci5uZXSBE2dyZWlzYnlA
-aG90bWFpbC5jb22BEGdyZWlzYnlAeWFob28uZnKBEWdyZWlzYnlAZ21haWwuY29tgSJjaHJpc3Rv
-cGhlLmdyZWlzYmVyZ2VyQGxhcG9zdGUubmV0gRtncmVpc2JlcmdlckB6ZW5vbi1tZWRpYS5jb20w
-DQYJKoZIhvcNAQEFBQADggIBAEg4UL5xF8qITPMzO0wEsW8PqNslcATMoFaAdj8Sjv5c44miWtWZ
-yNG1/AI9UginSoDMhlZOh6KsSYJDA8Au6olyYdSpfI1MPoQoMcgGB8EejLiTL3DbbI+YxoGmqxQR
-aH7/sg8wqFbP39WBtspyVnmJ5dksUOOCin4Y3KHyA55zTg/vSTAKSx3bjaH0qjLxBCgNvaq4+B2Y
-gFJRot1HGNPpCFWHh7hWiqU4deteBFyKW9wN6Qt1Tmpq0MulqWQij6YXxwAth+8i5gh22SOB3jzD
-TykFxz+e7UZLzcaQeUcObierSLhNwCJFARD9pyeo09Blz1V9YuOnh2RIYTUgKjx8i8zshn6rv1v2
-VV5I58Mtgd4xi3c61ur4LEYWdYbrBtzngvMo9we5B05C/LiB7N8jmQ4Lg9QunrZmymYdPq9qp4Tk
-diyZdVs+Laa+pdUySJn6jc2ZFMyGUwNJZpVrYpIq4BAELvvBndJUos57UKT2mqZcXX4ifWTkxqxZ
-bcaPpgxYzy/78X1t7xo2jL4HkazNw3AB63Red2hmOns1SEDI/LrDMktDAxyT4NHEtxxzuLN1Mezl
-1VEoxulwOGz3cpqQuVTEkQ5KYk1xzPsVbhSMFXe8yWQJsVW3VhMdlAmUgERcJvPZOUn+iQNGCKWH
-KA8HDsRXBUFHoAcflzZs1Bp8MYICMjCCAi4CAQEwgYAweTEQMA4GA1UEChMHUm9vdCBDQTEeMBwG
-A1UECxMVaHR0cDovL3d3dy5jYWNlcnQub3JnMSIwIAYDVQQDExlDQSBDZXJ0IFNpZ25pbmcgQXV0
-aG9yaXR5MSEwHwYJKoZIhvcNAQkBFhJzdXBwb3J0QGNhY2VydC5vcmcCAwJpUjAHBgUrDgMCGqCB
-izAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0wNjEwMjAwODI5NTBa
-MCMGCSqGSIb3DQEJBDEWBBRsZZRPZnRaQnKbb1yXSLaSrXlXHjAsBgkqhkiG9w0BCQ8xHzAdMA0G
-CWCGSAFlAwQBAgUAMAwGCCqGSIb3DQMHBQAwCwYJKoZIhvcNAQEBBIIBAHfvw/3fOPSsqWv/NUdI
-Zkr8N6ETn47b09nXsS9qyqElST+u7escnYA20EF2uwnIZRyrAMj8XcKHjVg+OIYuKaY67gjZ6uS7
-kzxh4xNIcgo/eWpJrHn2OLx0T3ug6kFhqCGBL8j07JdVlio92ynB6Qa2KDxR3OJ93LNfLINJ3m6s
-qPKwW4EDq5iOqfeJ6rApj1bl9RfgAtvLoUlfwJ679FGg0w+X88n+x/97FQhni0phx0hxJEFlVU0I
-p5D3u00RLmwyp2vp1/8n/G6KSWhUlPMzAUTeBkiunHsKencAsMbN7LZ9/4VbNPY85BPYcNnX+Kkq
-Als2suS1eQ0iFAw1Cf4AAAAAAAA=
-
---nextPart6141213.P4SoeYpYOl--
+That would be because the software doesn't work.
