@@ -1,53 +1,34 @@
-From: Christopher Chan <chrisfz@netvigator.com>
-Subject: Re: hans' case
-Date: Tue, 31 Oct 2006 17:39:23 +0800
-Message-ID: <454719CB.70205@netvigator.com>
-References: <1535879158.20061031011524@wp.pl> <4546B9EE.9020607@netvigator.com> <45471396.70608@slaphack.com>
+From: "Clemens Eisserer" <linuxhippy@gmail.com>
+Subject: Re: Which version will be merged into mainline kernel?
+Date: Wed, 1 Nov 2006 14:24:00 +0100
+Message-ID: <194f62550611010524t6d2b9e40n422e63de1e9a48b1@mail.gmail.com>
+References: <194f62550610160250u265ef120lee3cf9a17266939f@mail.gmail.com>
+	 <4533D788.3000406@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30088-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30090-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <45471396.70608@slaphack.com>
+In-Reply-To: <4533D788.3000406@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-David Masover wrote:
-> Christopher Chan wrote:
-> 
->> Then again, the quietness of the list could very well be a sign of the 
->> robustness of reiserfs :D
-> 
-> I only wish.
-> 
-> Partly out of respect, and partly out of cowardice, I've avoided posting 
-> anything, especially bug reports. I'm attempting to solve the issues as 
-> best I can, and maybe I'll have a pile of logs for Hans if he gets back.
-> 
-> Also, I'm afraid of referring to Hans in the past tense, but the impulse 
-> to do that is strong enough that I know I'll do it unconsciously unless 
-> I avoid posting.
+Hi,
 
-If Hans is reiser4 then I see little hope on the filesystem side of 
-things in Linux.
+> If you want to try out in the latest -mm kernel,
+> then we will send you the setup.
 
-> 
-> Also, I don't often start threads, and nobody's talking right now.
-> 
-> Personally, I wish Hans the best, and I'd be praying for an acquittal if 
-> I was religious. But regardless of the outcome, I'll continue to use 
-> Reiser4 as long as I can -- I'm not afraid of a "tainted name". What I 
-> am afraid of is whether the FS will be properly maintained. There's a 
-> reason I use Linux instead of the more obscure OSes -- Linux has 
-> horrible design, but it's actively supported.
-> 
-> I don't mean to imply that my data is more important than Hans' 
-> situation, but I can't neglect my data, and I don't know what I can do 
-> to help Hans.
+I'll setup my laptop within the next days and will compile the latest
+-mm kernel.
+Could you send me the "setup", please? (Do you mean the kernel-setup,
+or a howto?)
 
-Hans and his family have had it rough. One wonders whether all the 
-resistance involved in getting reiserfs/reiser4 into Linux was partly to 
-blame.
+Thanks a lot in advance, lg Clemens
+
+Btw. a very last question about compression: Will the disk-cache held
+in RAM be also compressed? Would be great for machines with slow disk,
+little RAM but fast processor... (e.g. my laptop ;) )
