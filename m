@@ -1,27 +1,32 @@
-From: "Christopher Covington" <covracer@gmail.com>
-Subject: getting_started_with_cryptcompress.txt reiser4progs 1.0.6
-Date: Thu, 2 Nov 2006 16:19:40 +0100
-Message-ID: <dcdcb9a80611020719r24501a21n9d0a1befbbb89e01@mail.gmail.com>
+From: "Clemens Eisserer" <linuxhippy@gmail.com>
+Subject: Re: Which version will be merged into mainline kernel?
+Date: Thu, 2 Nov 2006 20:43:07 +0100
+Message-ID: <194f62550611021143n2fe17b33k6d28b23664e6983b@mail.gmail.com>
+References: <194f62550610160250u265ef120lee3cf9a17266939f@mail.gmail.com>
+	 <4533D788.3000406@namesys.com>
+	 <194f62550611010524t6d2b9e40n422e63de1e9a48b1@mail.gmail.com>
+	 <45495858.6020507@namesys.com>
+	 <194f62550611020109x7733dff0ic475414afbf783af@mail.gmail.com>
+	 <454A2AB9.3060103@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30093-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30094-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <454A2AB9.3060103@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-I was googling around looking for definitive instructions on how to
-use cryptcompress, which I finally found [1] . The instructions talk
-about reiser4progs >= 1.0.6, though, which I can't find anywhere. Is
-1.0.6 not yet released and the instructions written ahead of time or
-is that a typo in the document or did I just look in the wrong place
-[2]?
+Hi again,
 
-Chris
+> How much RAM?
+512mb, DDR1 "PC2700"
 
-1. http://www.namesys.com/v4/getting_started_with_cryptcompress.txt
-2. ftp://ftp.namesys.com/pub/reiser4progs/
+> Thanks, but the status of this account seems to be unclear
+Ok, then I'll wait till there are other ways to donate.
+
+Thanks a lot, Clemens
