@@ -1,54 +1,53 @@
-From: "Danny Milosavljevic" <danny_milo@yahoo.com>
-Subject: Re: reiser4 cryptcompress test setup: bug
-Date: Tue, 7 Nov 2006 15:13:30 +0000 (UTC)
-Message-ID: <eiq7qq$de5$1@sea.gmane.org>
-References: <eio2bt$hdj$1@sea.gmane.org>
-	<200611062207.kA6M7Gsj002629@turing-police.cc.vt.edu>
-Reply-To: danny.milo@scratchpost.org
+From: "Clemens Eisserer" <linuxhippy@gmail.com>
+Subject: Re: Which version will be merged into mainline kernel?
+Date: Wed, 8 Nov 2006 08:21:49 +0100
+Message-ID: <194f62550611072321j1cd34205u55f3c121dcac7aac@mail.gmail.com>
+References: <194f62550610160250u265ef120lee3cf9a17266939f@mail.gmail.com>
+	 <4533D788.3000406@namesys.com>
+	 <194f62550611010524t6d2b9e40n422e63de1e9a48b1@mail.gmail.com>
+	 <45495858.6020507@namesys.com>
+	 <194f62550611020109x7733dff0ic475414afbf783af@mail.gmail.com>
+	 <454A2AB9.3060103@namesys.com>
+	 <194f62550611021143n2fe17b33k6d28b23664e6983b@mail.gmail.com>
+	 <454A596F.8070909@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-30111-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30112-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-Sender: news <news@sea.gmane.org>
+In-Reply-To: <454A596F.8070909@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Hi,
+Hello again,
 
-On Mon, 06 Nov 2006 17:07:16 -0500, Valdis.Kletnieks wrote:
+Thanks a lot for all the help, well ... I now use reiser4 as root-partition :-)
 
-> On Mon, 06 Nov 2006 19:27:57 GMT, Danny Milosavljevic said:
->> Hi Edward,
->> 
->> I finally tried your cryptcompress setup (2.6.18-mm3) and just did the
->> first evil thing I could think of:
->> 
->> the reiser4 partition with ccreg40 enabled is /dev/sda1 (/mnt/tmp/)
->> (mkfs'ed, thus empty).
-> 
->> [  372.564358]  [<c01b6400>] ext3_dirty_inode+0x30/0x90
->> [  372.564364]  [<c016b4b9>] cp_new_stat64+0xf9/0x110
-> 
-> You might want to check /home sometime - this looks like an ext3 botch
-> rather than a reiserfs botch, unless reiser4 is stomping on something
-> behind ext3's back.
+Everything works ok and I haven't seen any crashes or compatibility
+problems, simply wonderful :-). If something bad happens I'll let you
+know ;)
 
-Well, I thought so at first, but:
-/home is reiser4
-/ is ext3 
-no other ext3s
+However performance is so-and-so, the system was faster with ext3,
+although I compiled the kernel with "-O3 -march=pentium4
+-mtune=pentium4 -mno-sse -mno-sse3". Booting the system into KDE takes
+about twice the time, although I have to admit I was using another
+harddrive - I now use a 60GB/4200RPM instead an 40GB/4200RPM which
+both show quite the same hdparm-results,
+I use the lzo1 plugin (default ccreg40).
 
-~/doc/literatur is on /home (checked via 'df .').
+Are there some settings (or ext3 optimizations) in FC6, or could it be
+that some of my kernel-settings slow things down for FC6 (the same
+compiled kernel-binary was already used for ext3). The
+reiser4-partition is mounted with "noatime".
 
-So, well, although it looks like it ext3 is the culprit, it is improbable
-that it actually was the one triggering first (I never saw that
-backtrace before, too). Naturally once Edwards says he doesn't need the
-partition for analyzing, I'll nuke it and try to reproduce it again :)
+These are some features I could imagine causing problems:
+* Inotify
+* Adaptive file readahead + hit feedback + fine grained readahead aging
+* Timer with 1kHz
+* Readahead-script of the distribution
 
-cheers,
-  Danny
-
+Thanks a lot, lg Clemens
