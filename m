@@ -1,40 +1,26 @@
-From: David Masover <ninja@slaphack.com>
-Subject: Re: Problem with multiple mounts
-Date: Thu, 09 Nov 2006 10:37:18 -0600
-Message-ID: <4553593E.3070202@slaphack.com>
-References: <45522E67.7050907@linux.vnet.ibm.com> <20061108203323.GA8238@csclub.uwaterloo.ca> <45525C82.5080303@linux.vnet.ibm.com> <20061108230623.GZ6012@schatzie.adilger.int> <20061109151546.GA8236@csclub.uwaterloo.ca>
+From: Guilherme Covolo <smyows@youare.not.br>
+Subject: reiser4-for-2.6.18 series :)
+Date: Thu, 9 Nov 2006 16:07:29 -0200
+Message-ID: <200611091607.29482.smyows@youare.not.br>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S966042AbWKIQhJ@vger.kernel.org>
-In-Reply-To: <20061109151546.GA8236@csclub.uwaterloo.ca>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-30124-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Lennart Sorensen <lsorense@csclub.uwaterloo.ca>
-Cc: Suzuki <suzuki@linux.vnet.ibm.com>, reiserfs-list@namesys.com, lkml <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-Lennart Sorensen wrote:
-> On Wed, Nov 08, 2006 at 04:06:23PM -0700, Andreas Dilger wrote:
->> I would suggest that even while this is not supported, it would be prudent
->> to fix such a bug.  It might be possible to hit a similar problem if there
->> is corruption of the on-disk data in the journal and oopsing the kernel
->> isn't a graceful way to deal with bad data on disk.
-> 
-> On the other hand corrupt data at least doesn't change under you while
-> you are trying to figure out the filesystem.
+hi people!
 
-It might.
+i made patch of reiser4 for linux-2.6.18! o/ port of reiser4-for-2.6.17-3 to 
+2.6.18.
 
-I'd suspect that there can, in fact, be something done about this, 
-assuming good RAM. After all, a corrupt image won't crash a decent web 
-browser.
+sorry my english ;)
 
-It might sacrifice a ton of performance, though. I suggest it shouldn't 
-be a priority to try to figure this out, and if it's ever implemented, 
-make it a mount option -- -o paranoid or something. Obviously we don't 
-care if a rescue disc takes forever, but we don't want to be waiting for 
-hours on our FS boot, which is why I have an initrd mount my Reiser4 FS 
-with "-o dont_load_bitmap"
+have fun!
 
-(Yes, I realize the right way to do this is initramfs now. I'm too lazy 
-to figure out how to make that work.)
+http://www.youare.not.br download here! 
