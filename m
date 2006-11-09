@@ -1,32 +1,40 @@
-From: Lennart Sorensen <lsorense@csclub.uwaterloo.ca>
+From: David Masover <ninja@slaphack.com>
 Subject: Re: Problem with multiple mounts
-Date: Thu, 9 Nov 2006 10:15:46 -0500
-Message-ID: <20061109151546.GA8236@csclub.uwaterloo.ca>
-References: <45522E67.7050907@linux.vnet.ibm.com> <20061108203323.GA8238@csclub.uwaterloo.ca> <45525C82.5080303@linux.vnet.ibm.com> <20061108230623.GZ6012@schatzie.adilger.int>
+Date: Thu, 09 Nov 2006 10:37:18 -0600
+Message-ID: <4553593E.3070202@slaphack.com>
+References: <45522E67.7050907@linux.vnet.ibm.com> <20061108203323.GA8238@csclub.uwaterloo.ca> <45525C82.5080303@linux.vnet.ibm.com> <20061108230623.GZ6012@schatzie.adilger.int> <20061109151546.GA8236@csclub.uwaterloo.ca>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-30123-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
-In-Reply-To: <20061108230623.GZ6012@schatzie.adilger.int>
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Suzuki <suzuki@linux.vnet.ibm.com>, reiserfs-list@namesys.com, lkml <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S966042AbWKIQhJ@vger.kernel.org>
+In-Reply-To: <20061109151546.GA8236@csclub.uwaterloo.ca>
+Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Lennart Sorensen <lsorense@csclub.uwaterloo.ca>
+Cc: Suzuki <suzuki@linux.vnet.ibm.com>, reiserfs-list@namesys.com, lkml <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>
 
-On Wed, Nov 08, 2006 at 04:06:23PM -0700, Andreas Dilger wrote:
-> I would suggest that even while this is not supported, it would be prudent
-> to fix such a bug.  It might be possible to hit a similar problem if there
-> is corruption of the on-disk data in the journal and oopsing the kernel
-> isn't a graceful way to deal with bad data on disk.
+Lennart Sorensen wrote:
+> On Wed, Nov 08, 2006 at 04:06:23PM -0700, Andreas Dilger wrote:
+>> I would suggest that even while this is not supported, it would be prudent
+>> to fix such a bug.  It might be possible to hit a similar problem if there
+>> is corruption of the on-disk data in the journal and oopsing the kernel
+>> isn't a graceful way to deal with bad data on disk.
+> 
+> On the other hand corrupt data at least doesn't change under you while
+> you are trying to figure out the filesystem.
 
-On the other hand corrupt data at least doesn't change under you while
-you are trying to figure out the filesystem.  This particular use would
-have meta data changing while you are trying to read it, making things
-not be consistent with each other from one moment to another.  There may
-be nothing that can be done about it.
+It might.
 
---
-Len Sorensen
+I'd suspect that there can, in fact, be something done about this, 
+assuming good RAM. After all, a corrupt image won't crash a decent web 
+browser.
+
+It might sacrifice a ton of performance, though. I suggest it shouldn't 
+be a priority to try to figure this out, and if it's ever implemented, 
+make it a mount option -- -o paranoid or something. Obviously we don't 
+care if a rescue disc takes forever, but we don't want to be waiting for 
+hours on our FS boot, which is why I have an initrd mount my Reiser4 FS 
+with "-o dont_load_bitmap"
+
+(Yes, I realize the right way to do this is initramfs now. I'm too lazy 
+to figure out how to make that work.)
