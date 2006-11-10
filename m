@@ -1,103 +1,49 @@
-From: Guilherme Covolo <smyows@youare.not.br>
-Subject: Re: reiser4 experimental patch
-Date: Fri, 10 Nov 2006 10:59:30 -0200
-Message-ID: <200611101059.30441.smyows@youare.not.br>
-References: <200611091723.20881.smyows@youare.not.br> <200611101244.47290.hirtejs@idmt.fraunhofer.de> <200611100957.05438.smyows@youare.not.br>
+From: "Roger Lucas" <roger@planbit.co.uk>
+Subject: reiserfsck with LVM read-only snapshot
+Date: Fri, 10 Nov 2006 14:02:00 -0000
+Message-ID: <20061110140000.16B3F12EE1@bluewhale.planbit.co.uk>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30132-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30133-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200611100957.05438.smyows@youare.not.br>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-the diference between my an  Johannes Hirte's patch is:
+I am sure that this question must have been asked before, but I have searched the lists and googled with no success.
 
-/fs/reiser4/plugins/item/item.h
+I have a system that uses Reiser and LVM.  I would like to be able to take a snapshot of the system, verify the snapshot is correct,
+then save the snapshot elsewhere.  I take SHA1 checksums of the backed up images so it is important that the snapshot is read-only.
 
-<       ssize_t (*write) (struct file *, const char __user *, size_t, loff_t 
-*pos);
----
->       int (*write) (struct file *, const char __user *, size_t, loff_t 
-*pos);
-*********************************************************
+My test script is:
 
-/fs/reiser4/super_ops.c
+lvcreate --snapshot -p r --size 128M --name snaptest1 /dev/serverstore/test1
+reiserfsck --check -q -y /dev/serverstore/snaptest1
+dd if=/dev/serverstore/snaptest1 bs=16M | openssl sha1 > copyImageSHA1
+dd if=/dev/serverstore/snaptest1 of=copyimage bs=16M
 
-290c290
-< static int reiser4_statfs(struct dentry *dentry, struct kstatfs *statfs)
----
-> static int reiser4_statfs(struct super_block *super, struct kstatfs *statfs)
-292,293d291
-<       struct super_block *super = dentry->d_sb;
-<
-571a570,571
->
-> // alterado
-575,576c575
-<                                         void *data,
-<                                         struct vfsmount *mnt)
----
->                                         void *data, struct vfsmount *mnt)
-582c581,582
-< static struct file_system_type reiser4_fs_type = {
----
-> // alterado
-> struct file_system_type reiser4_fs_type = {
-*********************************************************
+In this situation, reiserfsck always fails with error
 
-i change my super_ops.c but why you alter te int to ssize_t on item.h?
+Trans replayed: mountid 10, transid 10, desc 18, len 199, commit 218, next trans offset 201
+bwrite: write 4096 bytes returned -1 (block=16, dev=3): Operation not permitted
 
-()'s
+I have tried adding the "--no-journal-available" option to tell it *not* to replay the journal, but it insists on trying to replay
+the journal, even though I have told it not to.  When it does this, the same error occurs.
 
-Em Sexta 10 Novembro 2006 09:57, Guilherme Covolo escreveu:
-> Em Sexta 10 Novembro 2006 09:44, Johannes Hirte escreveu:
-> > Am Freitag, 10. November 2006 00:39 schrieb smyows@youare.not.br:
-> > > thanks for answer! :)
-> > >
-> > > so, the patch compiles fine (one warning in super_ops.c), the FS boot
-> > > correctly, but if i execute for exemple startx, kernel panic! i compile
-> > > reiser4 built in with debug, i will send the error (kernel panic) to
-> > > the list tomorow because i'm now in my house, and the experinet is on
-> > > my work computer :)
-> >
-> > I didn't look closer on your patch, but you shouldn't get a warning in
-> > super_ops.c. Which compiler do you use?
-> > Can you try the patch, I've made?
-> > http://www.stud.tu-ilmenau.de/~johi-in/patch-reiser4-2.6.18.bz2
->
-> Hello,
->
-> i use gcc 3.4.6 on slamd64 (www.slamd64.com), x86_64.
->
-> i will try your patch :)
->
-> i'm on-line now on irc.oftc.net nick smyows #reiser4 and my nootebook is on
-> kernel-2.6.18@my_experimental_reiser4_patch ...
->
-> error from boot today..
->
-> reiser4 panicked cowaedly: reiser4[mount(1909)]: check_blocks_bitmap
-> (fs/reiser4/plugin/space/bitmap.c:1268)[zam-623]: assertion failed:
-> reiser4_find_next_zero_bit(bnode_working_data(bnode), end_offset,
-> start_offset) >= end_offset
->
-> Kernel panic - not syncing: reiser4[mount(1909)]: check_blocks_bitmap
-> (fs/reiser4/plugin/space/bitmap.c:1268)[zam-623]: assertion failed:
-> reiser4_find_next_zero_bit(bnode_working_data(bnode), end_offset,
-> start_offset) >= end_offset
->
-> ...
->
-> yesterday give some error but in /fs/reiser4/context.c line 79
->
-> i reboot the computer and works now.
->
-> i'll compare the super_ops.c :)
->
-> thaks
+I understand that Reiser3 is a journalling file system and you would normally replay the journal, but I want to check my read-only
+copy of the snapshot so that I know it is valid.  I don't want to change the snapshot in any way (e.g. such as writing the journal
+changes to it) so that I know the checksum and image data match.  If I take a R/W snapshot then run reiserfsck, it writes changes to
+the snapshot.  Sometimes these changes take time to propagate down to the LVM image.  When this happens, the SHA1 checksum may be
+done on the old data whilst the copy is done using the new data.  I don't want to take the SHA1 checksum on the destination of the
+copy - in the real system, this is a remote machine, and I want the SHA1 checksum done locally to detect any link errors (yes, I am
+paranoid).
+
+Is there any way to get reiserfsck to analyse a read-only LVM snapshot, even if the journal isn't replayed, etc etc?
+
+Thanks,
+
+Roger
+
