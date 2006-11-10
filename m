@@ -1,80 +1,59 @@
-From: Johannes Hirte <hirtejs@idmt.fraunhofer.de>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: reiser4 experimental patch
-Date: Fri, 10 Nov 2006 15:39:45 +0100
-Message-ID: <200611101539.46266.hirtejs@idmt.fraunhofer.de>
-References: <200611091723.20881.smyows@youare.not.br> <200611100957.05438.smyows@youare.not.br> <200611101059.30441.smyows@youare.not.br>
+Date: Fri, 10 Nov 2006 09:42:42 -0500
+Message-ID: <200611101442.kAAEghne006274@turing-police.cc.vt.edu>
+References: <200611091723.20881.smyows@youare.not.br> <200611101244.47290.hirtejs@idmt.fraunhofer.de> <200611100957.05438.smyows@youare.not.br>
+            <200611101059.30441.smyows@youare.not.br>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1163169762_6430P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30134-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30135-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200611101059.30441.smyows@youare.not.br>
-Content-Disposition: inline
+In-Reply-To: Your message of "Fri, 10 Nov 2006 10:59:30 -0200."
+             <200611101059.30441.smyows@youare.not.br>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Guilherme Covolo <smyows@youare.not.br>
+Cc: reiserfs-list@namesys.com
 
-Am Freitag, 10. November 2006 13:59 schrieb Guilherme Covolo:
+--==_Exmh_1163169762_6430P
+Content-Type: text/plain; charset=us-ascii
+
+On Fri, 10 Nov 2006 10:59:30 -0200, Guilherme Covolo said:
 > the diference between my an  Johannes Hirte's patch is:
->
-> /fs/reiser4/plugins/item/item.h
->
-> <       ssize_t (*write) (struct file *, const char __user *, size_t,
-> loff_t *pos);
-> ---
->
-> >       int (*write) (struct file *, const char __user *, size_t, loff_t
->
-> *pos);
 > *********************************************************
-Don't know, if this is only cosmetic or really necessary. See below.
-
+> 
 > /fs/reiser4/super_ops.c
->
+> 
 > 290c290
 > < static int reiser4_statfs(struct dentry *dentry, struct kstatfs *statfs)
 > ---
->
-> > static int reiser4_statfs(struct super_block *super, struct kstatfs
-> > *statfs)
->
-> 292,293d291
-> <       struct super_block *super = dentry->d_sb;
-> <
-> 571a570,571
->
-> > // alterado
->
-> 575,576c575
-> <                                         void *data,
-> <                                         struct vfsmount *mnt)
-> ---
->
-> >                                         void *data, struct vfsmount *mnt)
->
-> 582c581,582
-> < static struct file_system_type reiser4_fs_type = {
-> ---
->
-> > // alterado
-> > struct file_system_type reiser4_fs_type = {
+> > static int reiser4_statfs(struct super_block *super, struct kstatfs *statfs
 
-Ok, with gcc-4.1 your patch won't even compile. After fixing this, it should 
-work. Please consider that this code ist still buggy and will oops if the 
-filesystem runs full. Don't use it in productive environment.
+diff -c or diff -u please.  That way, if some unrelated thing moves the lines
+up or down 1 or 2, it still applies.  Also, it's easier to look at a 'diff -u'
+and understand what's going on, because you get to see 3-4 lines either side
+of the changed lines.
 
-> *********************************************************
->
 > i change my super_ops.c but why you alter te int to ssize_t on item.h?
 
-This is for fixing a compiler warning on x86_64, where size_t is 64bit:
-  CC      fs/reiser4/plugin/item/item.o
-fs/reiser4/plugin/item/item.c:561: warning: initialization from incompatible 
-pointer type
-fs/reiser4/plugin/item/item.c:615: warning: initialization from incompatible 
-pointer type
-  CC      fs/reiser4/plugin/security/perm.o
+ssize_t isn't an int on some architectures, it's a 'long'.  As a result if
+you reference a 32 bit value where you should use 64, you'll certainly
+end up with something unexpected (probably an oops).
 
-I'm still not shure, if this is really necessary.
+--==_Exmh_1163169762_6430P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.5 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFFVI/icC3lWbTT17ARAgUqAJ9b0MjcUoiBoQ42fJbGj+QBUzMvagCfWGXG
+UtmXlw+00zRkNI43kst8GMI=
+=/Jlw
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1163169762_6430P--
