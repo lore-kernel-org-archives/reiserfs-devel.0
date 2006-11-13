@@ -1,51 +1,59 @@
-From: "Danny Milosavljevic" <danny_milo@yahoo.com>
-Subject: Re: Which version will be merged into mainline kernel?
-Date: Mon, 13 Nov 2006 21:27:07 +0000 (UTC)
-Message-ID: <ejanvb$dgm$2@sea.gmane.org>
-References: <194f62550610160250u265ef120lee3cf9a17266939f@mail.gmail.com>
-	<454A596F.8070909@namesys.com>
-	<194f62550611072321j1cd34205u55f3c121dcac7aac@mail.gmail.com>
-	<200611081015.14320.biscani@pd.astro.it>
-	<20061108102136.GS6012@schatzie.adilger.int> <ej4pca$tft$1@sea.gmane.org>
-	<200611111928.kABJSgre030118@turing-police.cc.vt.edu>
-Reply-To: danny.milo@scratchpost.org
+From: Jure =?UTF-8?B?UGXEjWFy?= <pegasus@nerv.eu.org>
+Subject: Re: bio too big device dm-XX (256 > 255) on 2.6.17
+Date: Tue, 14 Nov 2006 00:41:20 +0100
+Message-ID: <20061114004120.30c821c8.pegasus@nerv.eu.org>
+References: <20061109005227.73b4fd14.pegasus@nerv.eu.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-30151-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Sender: news <news@sea.gmane.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-raid-owner@vger.kernel.org>
+In-Reply-To: <20061109005227.73b4fd14.pegasus@nerv.eu.org>
+Sender: linux-raid-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
-
-Hi,
-
-On Sat, 11 Nov 2006 14:28:42 -0500, Valdis.Kletnieks wrote:
-[...]
-> I've never understood this kind of attitude some filesystems have. Usually
-> the hardware would make sure that stuff doesn't disappear, and not some
-> weird software workarounds like journalling or write barriers that
-> complicate and slow down everything.
-> 
-> Now as you were saying?
-
-Hehehe. Well, you turned it all around... insightful :)
+Content-Type: text/plain; charset="utf-8"
+To: linux-raid@vger.kernel.org
+Cc: evms-devel@lists.sourceforge.net, dm-devel@redhat.com, reiserfs-list@namesys.com
 
 
-While we are at it:
+Hello,
 
-I take it that this is the reason journalling support is only picking up
-now: the disks are so big that even in the unlikely event that some of the
-hardware failsafes fail, one just cannot fsck all the disks completely
-anymore, ever.
+this is getting more and more annoying.
 
-So the choice is really 'borked once, borked forever' / 'journal it and at
-least somehow get it back online without fscking /
-copying-to-new-disks-if-at-all-possible for 5 days straight'.
+Somewhere in the stack reiserfs-dm-md-hd[bd] lies the problem that's ca=
+using "bio too big device dm-10 (256 > 255)" errors, which cause i/o fa=
+ilures.
 
-cheers,
-  Danny
+It works as expected on reiserfs-dm-sda and on ext3-dm-md-hd[bd].
 
+Debian Etch, 2.6.17-2.
+
+
+
+On Thu, 9 Nov 2006 00:52:27 +0100
+Jure Pe=C4=8Dar <pegasus@nerv.eu.org> wrote:
+
+>=20
+> Hello,
+>=20
+> Recently I upgraded my home server. I moved EVMS volumes from 3ware h=
+w
+> mirrors (lvm2) to a md raid1 (lvm2) and am now getting lots of these
+> errors, which result in Input/output errors trying to read files from
+> those volumes. It's kind of ugly because I have all the data, I just
+> cannot read it ...
+>=20
+> Google comes up with mails from 2003 mentioning such problems. Are th=
+ere
+> any known such problems in recent kernels or am I hitting something n=
+ew
+> here?
+
+
+--=20
+
+Jure Pe=C4=8Dar
+http://jure.pecar.org/
+-
+To unsubscribe from this list: send the line "unsubscribe linux-raid" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
