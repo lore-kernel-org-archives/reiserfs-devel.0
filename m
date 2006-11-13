@@ -1,55 +1,116 @@
-From: Christopher Chan <chrisfz@netvigator.com>
-Subject: Re: Which version will be merged into mainline kernel?
-Date: Mon, 13 Nov 2006 17:34:59 +0800
-Message-ID: <45583C43.5070904@netvigator.com>
-References: <194f62550610160250u265ef120lee3cf9a17266939f@mail.gmail.com>	<454A596F.8070909@namesys.com>	<194f62550611072321j1cd34205u55f3c121dcac7aac@mail.gmail.com>	<200611081015.14320.biscani@pd.astro.it>	<20061108102136.GS6012@schatzie.adilger.int> <ej4pca$tft$1@sea.gmane.org> <4557E254.5060404@netvigator.com> <45582353.3070709@slaphack.com>
+From: Enrico Cavalli <cavalli@cilea.it>
+Subject: kernel oops with 10T filesystem
+Date: Mon, 13 Nov 2006 14:09:11 +0100
+Message-ID: <1163423352.5434.59.camel@cavalli-laptop>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30145-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30146-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <45582353.3070709@slaphack.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: David Masover <ninja@slaphack.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-list@namesys.com
 
-David Masover wrote:
-> Christopher Chan wrote:
->> Danny Milosavljevic wrote:
-> 
->>> The only possibility one could still lose mail when having proper
->>> hardware failsafes would be if the kernel had a bug and crashed (and
->>> that's
->>> so bad, it doesn't really warrant any working around it).
->> Ever used DOS with smartdrv? smartdrv gave a performance boost by
->> storing recently touched files in memory and writing to disk later. This
->> is called a disk cache. You would be explicitly told to NOT just turn
->> off the computer each time smartdrv was loaded. You had to first clear
->> the cache and then you could power off the box otherwise you would lose
->> any data sitting in the cache that had not been flushed.
-> 
-> Which means that, if you have proper hardware failsafes, you will only
-> lose data if you don't properly clear the cache before shutting down
-> (which Linux shutdown scripts will do for you), or if there's a crash.
-> I'm sure many people used smartdrv without problems, and appreciated the
-> performance boost.
+Hello, we are getting random kernel opps with a 10T reiserfs (v 3.6)
 
-Which is why data important software use fsync/fsyncdata to minimize 
-data loss from crashes.
+The filesystem is mounted from a FC controller. We exclude hardware
+problems at the moment. Another machine works on a 11T fs without any
+apparent problems.
 
-> 
-> Moral of the story: Data loss is a Bad Thing. Those who would give up
-> essential data safety for a little temporary performance deserve
-> neither. (With apologies to Ben Franklin.)
-> 
-> And while reading this, it's important to keep in mind that I do not
-> practice what I've just preached. I'm addicted to the performance, and I
-> could probably argue the other side just as effectively. Besides, at
-> least on my experimental/gaming rig, I like a little adrenaline in my
-> admin work!
-> 
+We are using linux 2.6.18.1, on debian 3.1.
 
-Try arguing why you lost thousands of mails when the box crashed and 
-justifying it.
+FC driver is qla2300 from qlogic.
+
+This is what I see in logs
+
+BUG: unable to handle kernel paging request at virtual address 07b5f4df
+ printing eip:
+c01a7828
+*pde = 00000000
+Oops: 0002 [#1]
+SMP
+Modules linked in: xt_tcpudp xt_state iptable_filter iptable_nat ip_nat
+ip_tables x_tables ipv6 8250 serial_core dm_mod qla2300 qla2xxx
+qla2xxx_conf intermodule ip_conntrack_ftp ip_conntrack
+CPU:    0
+EIP:    0060:[<c01a7828>]    Tainted: GF     VLI
+EFLAGS: 00010287   (2.6.18.1 #2)
+EIP is at cleanup_bitmap_list+0x53/0xa7
+eax: 07b5f4df   ebx: f8d3e000   ecx: f8d3e0d0   edx: cfb9d248
+esi: 07b5f4d7   edi: 00002c90   ebp: f8d3e0fc   esp: d5631d40
+ds: 007b   es: 007b   ss: 0068
+Process umount (pid: 5879, ti=d5630000 task=c6b10a70 task.ti=d5630000)
+Stack: d5f3ee00 eef7e440 eef7e440 00000002 d5f3ee00 c01a7cde 00000001
+c01a86fa
+       00001000 00000705 f6db1f58 00000000 00000803 00000000 ddc2f000
+000007f1
+       00000100 00000000 00000000 f8d3e000 00000001 
+
+
+This is a debugreisers output.
+
+
+ debugreiserfs /dev/sde
+debugreiserfs 3.6.19 (2003 www.namesys.com)
+
+
+Filesystem state: consistency is not checked after last mounting
+
+Reiserfs super block in block 16 on 0x840 of format 3.6 with standard
+journal
+Count of blocks on the device: 2441871360
+Number of bitmaps: 8984
+Blocksize: 4096
+Free blocks (count of blocks - used [journal, bitmaps, data, reserved]
+blocks): 2265270265
+Root block: 10606881
+Filesystem is NOT clean
+Tree height: 5
+Hash function used to sort names: "r5"
+Objectid map size 2, max 972
+Journal parameters:
+        Device [0x0]
+        Magic [0x7efbef9d]
+        Size 8193 blocks (including 1 for journal header) (first block
+18)
+        Max transaction length 1024 blocks
+        Max batch size 900 blocks
+        Max commit age 30
+Blocks reserved by journal: 0
+Fs state field: 0x0:
+sb_version: 2
+inode generation number: 13972
+UUID: <no libuuid installed>
+LABEL:
+Set flags in SB:
+        ATTRIBUTES CLEAN
+
+Also, if I try reiserfsck I get this error:
+
+###########
+reiserfsck --check started at Mon Nov 13 13:05:01 2006
+###########
+Replaying journal..
+Reiserfs journal '/dev/sde' in blocks [18..8211]: 0 transactions
+replayed
+reiserfs_open_ondisk_bitmap: wrong either bitmaps number,
+count of blocks or blocksize, run with --rebuild-sb to fix it
+reiserfsck: Could not open bitmap
+
+Problem persists even if I use the --rebuild-sb switch. (This happens
+also on the twin machine that works correctly).
+
+What can It be? I would be grateful if someone could give me any usefulf
+hint.
+
+Best regards,
+
+
+-- 
+Enrico Cavalli
+CILEA - via R. Sanzio 4, 20090 - Segrate (MI), Italy
+phone: +39 02 26995.1 - fax: +39 02 2135520 - skype: enricocavalli
+PGP Fingerprint: 3762 7B1B 743E 029C 8F94  8ADE BC4B 43A7 0485 30E5
+
