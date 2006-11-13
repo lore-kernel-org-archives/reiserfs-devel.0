@@ -1,51 +1,51 @@
-From: Valdis.Kletnieks@vt.edu
+From: Christopher Chan <chrisfz@netvigator.com>
 Subject: Re: Which version will be merged into mainline kernel?
-Date: Sat, 11 Nov 2006 14:28:42 -0500
-Message-ID: <200611111928.kABJSgre030118@turing-police.cc.vt.edu>
-References: <194f62550610160250u265ef120lee3cf9a17266939f@mail.gmail.com> <454A596F.8070909@namesys.com> <194f62550611072321j1cd34205u55f3c121dcac7aac@mail.gmail.com> <200611081015.14320.biscani@pd.astro.it> <20061108102136.GS6012@schatzie.adilger.int>
-            <ej4pca$tft$1@sea.gmane.org>
+Date: Mon, 13 Nov 2006 11:11:16 +0800
+Message-ID: <4557E254.5060404@netvigator.com>
+References: <194f62550610160250u265ef120lee3cf9a17266939f@mail.gmail.com>	<454A596F.8070909@namesys.com>	<194f62550611072321j1cd34205u55f3c121dcac7aac@mail.gmail.com>	<200611081015.14320.biscani@pd.astro.it>	<20061108102136.GS6012@schatzie.adilger.int> <ej4pca$tft$1@sea.gmane.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1163273321_6400P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30140-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30143-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: Your message of "Sat, 11 Nov 2006 15:14:18 GMT."
-             <ej4pca$tft$1@sea.gmane.org>
+In-Reply-To: <ej4pca$tft$1@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: danny.milo@scratchpost.org
 Cc: reiserfs-list@namesys.com
 
---==_Exmh_1163273321_6400P
-Content-Type: text/plain; charset=us-ascii
-
-On Sat, 11 Nov 2006 15:14:18 GMT, Danny Milosavljevic said:
+Danny Milosavljevic wrote:
+> Hi,
+> 
+> On Wed, 08 Nov 2006 03:21:36 -0700, Andreas Dilger wrote:
+> 
+>> On Nov 08, 2006  10:15 +0100, Francesco Biscani wrote:
+>>> I think the slow performance you're experiencing are caused by the fsync() 
+>>> call not being well-optimized in reiser4. I've commented out the function in 
+>>> fs/buffer.c, and I'm having much better performance on my / partition.
+>> I don't think this can be advocated as a real solution to performance
+>> problems.  This can mean data loss for some applications like email that
+>> expect "fsync return" to mean "this data is safely on disk".  
+> 
 > I've never understood this kind of attitude some MTAs have. Usually the
 > hardware would make sure that stuff doesn't disappear (UPS, powered RAM,
 > harddisk condenser) and not some weird software workaround that complicates
 > and slows down everything.
+> 
+> The only possibility one could still lose mail when having proper
+> hardware failsafes would be if the kernel had a bug and crashed (and that's
+> so bad, it doesn't really warrant any working around it).
 
-I've never understood this kind of attitude some filesystems have. Usually
-the hardware would make sure that stuff doesn't disappear, and not some
-weird software workarounds like journalling or write barriers that
-complicate and slow down everything.
+Ever used DOS with smartdrv? smartdrv gave a performance boost by 
+storing recently touched files in memory and writing to disk later. This 
+is called a disk cache. You would be explicitly told to NOT just turn 
+off the computer each time smartdrv was loaded. You had to first clear 
+the cache and then you could power off the box otherwise you would lose 
+any data sitting in the cache that had not been flushed.
 
-Now as you were saying?
-
-
---==_Exmh_1163273321_6400P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.5 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFFViRpcC3lWbTT17ARAs25AKD69p3THlSHekGJ5eTkhd9JKOyobwCgpdTR
-4tucRxLGDPzGwaBYvaF1l+Y=
-=KyEJ
------END PGP SIGNATURE-----
-
---==_Exmh_1163273321_6400P--
+All current Unices have disk cache capabilities built-in and the only 
+way to bypass the disk cache for those applications that needed to have 
+their data definitely written to disk and not sitting the cache was the 
+fsync and fsyncdata calls.
