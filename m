@@ -1,52 +1,48 @@
-From: Neil Brown <neilb@suse.de>
-Subject: Re: bio too big device dm-XX (256 > 255) on 2.6.17
-Date: Tue, 14 Nov 2006 15:25:08 +1100
-Message-ID: <17753.17700.818164.511147@cse.unsw.edu.au>
-References: <20061109005227.73b4fd14.pegasus@nerv.eu.org>
-	<20061114004120.30c821c8.pegasus@nerv.eu.org>
+From: Christopher Chan <chrisfz@netvigator.com>
+Subject: Re: Which version will be merged into mainline kernel?
+Date: Tue, 14 Nov 2006 13:51:06 +0800
+Message-ID: <4559594A.1090602@netvigator.com>
+References: <194f62550610160250u265ef120lee3cf9a17266939f@mail.gmail.com>	<454A596F.8070909@namesys.com>	<194f62550611072321j1cd34205u55f3c121dcac7aac@mail.gmail.com>	<200611081015.14320.biscani@pd.astro.it>	<20061108102136.GS6012@schatzie.adilger.int> <ej4pca$tft$1@sea.gmane.org>	<200611111928.kABJSgre030118@turing-police.cc.vt.edu> <ejanvb$dgm$2@sea.gmane.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-raid-owner@vger.kernel.org>
-In-Reply-To: message from Jure  =?ISO-8859-1?Q?=20Pe=1B$,1?=  =?ISO-8859-1?Q?=20-=1B(Bar?= on Tuesday November 14
-Sender: linux-raid-owner@vger.kernel.org
+Return-path: <reiserfs-list-return-30156-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <ejanvb$dgm$2@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jure =?UTF-8?B?UGXEjWFy?= <pegasus@nerv.eu.org>
-Cc: linux-raid@vger.kernel.org, evms-devel@lists.sourceforge.net, dm-devel@redhat.com, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: danny.milo@scratchpost.org, reiserfs-list@namesys.com
 
-On Tuesday November 14, pegasus@nerv.eu.org wrote:
-> 
-> Hello,
-> 
-> this is getting more and more annoying.
-> 
-> Somewhere in the stack reiserfs-dm-md-hd[bd] lies the problem that's causing "bio too big device dm-10 (256 > 255)" errors, which cause i/o failures.
-> 
-> It works as expected on reiserfs-dm-sda and on ext3-dm-md-hd[bd].
-> 
-> Debian Etch, 2.6.17-2.
-> 
 
-Please try this patch (I can give more detailed instructions if needed).
+> While we are at it:
+> 
+> I take it that this is the reason journalling support is only picking up
+> now: the disks are so big that even in the unlikely event that some of the
+> hardware failsafes fail, one just cannot fsck all the disks completely
+> anymore, ever.
 
-NeilBrown
+Only picking up now??
 
-Signed-off-by: Neil Brown <neilb@suse.de>
+reiserfs was the first filesystem available for Linux with journaling 
+support. NTFS for Windows had it a long time ago. Other Unix's had 
+journaling a long time ago too.
 
-### Diffstat output
- ./drivers/md/dm-table.c |    3 +++
- 1 file changed, 3 insertions(+)
+FreeBSD, Solaris and the other BSD's had another theory for file system 
+reliability and speed implemented under softupdates a long time ago too.
 
-diff .prev/drivers/md/dm-table.c ./drivers/md/dm-table.c
---- .prev/drivers/md/dm-table.c	2006-11-14 15:23:08.000000000 +1100
-+++ ./drivers/md/dm-table.c	2006-11-14 15:23:57.000000000 +1100
-@@ -99,6 +99,9 @@ static void combine_restrictions_low(str
- 	lhs->max_segment_size =
- 		min_not_zero(lhs->max_segment_size, rhs->max_segment_size);
- 
-+	lhs->max_hw_sectors = 
-+		min_not_zero(lhs->max_hw_sectors, rhs->max_hw_sectors);
-+
- 	lhs->seg_boundary_mask =
- 		min_not_zero(lhs->seg_boundary_mask, rhs->seg_boundary_mask);
- 
+journaling support has been late on Linux. Everything seems to be late 
+on Linux. Real-time support, preemptive support...
+
+> 
+> So the choice is really 'borked once, borked forever' / 'journal it and at
+> least somehow get it back online without fscking /
+> copying-to-new-disks-if-at-all-possible for 5 days straight'.
+
+No. Choices are: sync only (no write caching), turn on softupdates if 
+supported, turn on various degrees of journaling if supported or async 
+only (who cares?)
+
+If you have fsync/fsyncdata available, databases, mtas and other 
+software should not care less how the filesystem is mounted.
