@@ -1,50 +1,24 @@
-From: "Edward Shishkin" <edward.shishkin@gmail.com>
-Subject: Reiser4 for 2.6.18
-Date: Wed, 15 Nov 2006 17:30:15 +0300
-Message-ID: <5c7c368b0611150630p66b683abs90aebceabc3cd428@mail.gmail.com>
+From: Devils-Hawk <devilshawk@aon.at>
+Subject: Kernel panic with reiser4 for 2.6.18-2
+Date: Wed, 15 Nov 2006 22:17:19 +0100
+Message-ID: <455B83DF.8090209@aon.at>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; 
-	boundary="----=_Part_25067_27227538.1163601015224"
-Return-path: <reiserfs-list-return-30170-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30173-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-------=_Part_25067_27227538.1163601015224
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+reiser4 partition is /, happens during kernel boot, checked the fs 
+before boot and was clean. kernel is gentoo-sources-2.6.18-r2.
 
-Hello everyone.
-This is made of 2.6.19-rc5-mm1 plus recent changes:
+reiser4 panicked cowardly: reiser4[hotplug(313)]: readpage_tail 
+(fs/reiser4/plugin/item/tail.c:426)[umka-2517]: assertion failed: 
+!jprivate(page) && !PagePrivate(page)
 
-ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-2.patch.gz
-
-Thanks,
-Edward.
-
-------=_Part_25067_27227538.1163601015224
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-Hello everyone.
-<br>
-This is made of 2.6.19-rc5-mm1 plus recent changes:
-<br>
-
-<br>
-<a class="moz-txt-link-freetext" href="ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-2.patch.gz">ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-2.patch.gz</a> 
-
-<br>
-
-<br>
-Thanks,
-<br>
-Edward.
-<br>
-
-------=_Part_25067_27227538.1163601015224--
+if u need more info, feel free to ask
+regards, devh
