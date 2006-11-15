@@ -1,24 +1,50 @@
-From: "Clemens Eisserer" <linuxhippy@gmail.com>
-Subject: Re: Which version will be merged into mainline kernel?
-Date: Wed, 15 Nov 2006 09:47:47 +0100
-Message-ID: <194f62550611150047i398dfb0embff2e40e9697129f@mail.gmail.com>
-References: <194f62550610160250u265ef120lee3cf9a17266939f@mail.gmail.com>
-	 <4557E254.5060404@netvigator.com> <45582353.3070709@slaphack.com>
-	 <45583C43.5070904@netvigator.com> <45589ECD.4070105@slaphack.com>
-	 <45595BBC.6000602@netvigator.com> <455986CB.6010608@slaphack.com>
-	 <45599454.1070701@netvigator.com> <455A0E5A.9060404@slaphack.com>
-	 <455A87D0.7030404@netvigator.com>
+From: "Edward Shishkin" <edward.shishkin@gmail.com>
+Subject: Reiser4 for 2.6.18
+Date: Wed, 15 Nov 2006 17:30:15 +0300
+Message-ID: <5c7c368b0611150630p66b683abs90aebceabc3cd428@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30167-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_25067_27227538.1163601015224"
+Return-path: <reiserfs-list-return-30170-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <455A87D0.7030404@netvigator.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Only a fool argues against a fool ;)
+------=_Part_25067_27227538.1163601015224
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+Hello everyone.
+This is made of 2.6.19-rc5-mm1 plus recent changes:
+
+ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-2.patch.gz
+
+Thanks,
+Edward.
+
+------=_Part_25067_27227538.1163601015224
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+Hello everyone.
+<br>
+This is made of 2.6.19-rc5-mm1 plus recent changes:
+<br>
+
+<br>
+<a class="moz-txt-link-freetext" href="ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-2.patch.gz">ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-2.patch.gz</a> 
+
+<br>
+
+<br>
+Thanks,
+<br>
+Edward.
+<br>
+
+------=_Part_25067_27227538.1163601015224--
