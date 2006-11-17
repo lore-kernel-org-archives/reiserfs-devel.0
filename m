@@ -1,53 +1,70 @@
-From: Devils-Hawk <devilshawk@aon.at>
-Subject: Re: Kernel panic with reiser4 for 2.6.18-2
-Date: Thu, 16 Nov 2006 20:43:10 +0100
-Message-ID: <455CBF4E.4060001@aon.at>
-References: <455B83DF.8090209@aon.at> <455B9469.9000908@namesys.com>
+From: "Marat Buharov" <marat.buharov@gmail.com>
+Subject: Re: Reiser4 for 2.6.18
+Date: Sat, 18 Nov 2006 01:34:52 +0300
+Message-ID: <698310e10611171434y894fe0ao445a1d53aef3f197@mail.gmail.com>
+References: <5c7c368b0611150630p66b683abs90aebceabc3cd428@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30180-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_69883_28680680.1163802892813"
+Return-path: <reiserfs-list-return-30188-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <455B9469.9000908@namesys.com>
+In-Reply-To: <5c7c368b0611150630p66b683abs90aebceabc3cd428@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Edward Shishkin <edward@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com
 
-I will try to get a proper backtrace as soon as possible. The oops 
-occurs directly after mount during system boot so i'll need to get 
-serial or network console up and running first.
+------=_Part_69883_28680680.1163802892813
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-The fs was created with mkfs.reiser4 without any options given. Kernel 
-during that time was a 2.6.17 series with reiser4-for-2.6.17-3.patch. 
-reiser4progs version is 1.0.5. disk is SATA on an Promise PCI controller 
-card.
+ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-2.patch.gz
+550 No such file or directory.
+ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/<ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-2.patch.gz>is
+empty. :-(
 
-regards devh
 
-Edward Shishkin wrote:
-> Devils-Hawk wrote:
-> 
->> reiser4 partition is /, happens during kernel boot, checked the fs 
->> before boot and was clean. kernel is gentoo-sources-2.6.18-r2.
->>
->> reiser4 panicked cowardly: reiser4[hotplug(313)]: readpage_tail 
->> (fs/reiser4/plugin/item/tail.c:426)[umka-2517]: assertion failed: 
->> !jprivate(page) && !PagePrivate(page)
->>
->> if u need more info, feel free to ask
->> regards, devh
->>
->>
-> 
-> would you please provide a backtrace, if possible.
-> what reiser4 stuff did you use before the upgrade?
-> 
+On 11/15/06, Edward Shishkin <edward.shishkin@gmail.com> wrote:
+>
+> Hello everyone.
+> This is made of 2.6.19-rc5-mm1 plus recent changes:
+>
+>
+> ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-2.patch.gz
+>
 > Thanks,
 > Edward.
-> 
-> 
-> 
+>
 
+------=_Part_69883_28680680.1163802892813
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+<a href="ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-2.patch.gz" target="_blank" onclick="return top.js.OpenExtLink(window,event,this)">ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-2.patch.gz
+</a> 
+
+<br>550 No such file or directory.<br><a href="ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-2.patch.gz" target="_blank" onclick="return top.js.OpenExtLink(window,event,this)">ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/
+</a> is empty. :-(<br><br><br><div><span class="gmail_quote">On 11/15/06, <b class="gmail_sendername">Edward Shishkin</b> &lt;<a href="mailto:edward.shishkin@gmail.com">edward.shishkin@gmail.com</a>&gt; wrote:</span><blockquote class="gmail_quote" style="border-left: 1px solid rgb(204, 204, 204); margin: 0pt 0pt 0pt 0.8ex; padding-left: 1ex;">
+Hello everyone.
+<br>
+This is made of 2.6.19-rc5-mm1 plus recent changes:
+<br>
+
+<br>
+<a href="ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-2.patch.gz" target="_blank" onclick="return top.js.OpenExtLink(window,event,this)">ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-2.patch.gz
+</a> 
+
+<br>
+
+<br>
+Thanks,
+<br><span class="sg">
+Edward.
+<br>
+
+</span></blockquote></div><br>
+
+------=_Part_69883_28680680.1163802892813--
