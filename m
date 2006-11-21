@@ -1,29 +1,47 @@
-From: Corey Hickey <bugfood-ml@fatooh.org>
-Subject: Re: Reiser4 for 2.6.18
-Date: Mon, 20 Nov 2006 22:14:39 -0800
-Message-ID: <4562994F.3010208@fatooh.org>
-References: <5c7c368b0611150630p66b683abs90aebceabc3cd428@mail.gmail.com> <698310e10611171434y894fe0ao445a1d53aef3f197@mail.gmail.com>
+From: Christian Kujau <lists@nerdbynature.de>
+Subject: 2.6.19-rc5-git4 benchmarks
+Date: Tue, 21 Nov 2006 19:09:41 +0000 (GMT)
+Message-ID: <Pine.LNX.4.64.0611211802570.6933@sheep.housecafe.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30201-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <698310e10611171434y894fe0ao445a1d53aef3f197@mail.gmail.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+Return-path: <jfs-discussion-bounces@lists.sourceforge.net>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/jfs-discussion>, 
+	<mailto:jfs-discussion-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum=jfs-discussion>
+List-Post: <mailto:jfs-discussion@lists.sourceforge.net>
+List-Help: <mailto:jfs-discussion-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/jfs-discussion>, 
+	<mailto:jfs-discussion-request@lists.sourceforge.net?subject=subscribe>
+Sender: jfs-discussion-bounces@lists.sourceforge.net
+Errors-To: jfs-discussion-bounces@lists.sourceforge.net
+To: ext3-users@redhat.com
+Cc: reiserfs-list@namesys.com, jfs-discussion@lists.sourceforge.net, linux-crypto@nl.linux.org, xfs@oss.sgi.com
 
-Marat Buharov wrote:
-> ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-2.patch.gz
-> 
-> 550 No such file or directory.
-> ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/
-> is empty. :-(
+Apologies for the wide alias, but as it may interest serveral
+fs groups, here it is:
 
-Try now; there appears to be a new patch.
+In the everlasting search for the best fs for my shiny new disks, I
+was interested in some numbers, here're the results:
 
-ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-3.patch.gz
+http://nerdbynature.de/bench/amd64/2.6.19-rc5-git4/test-3/dm-crypt-3.html
 
--Corey
+details: http://nerdbynature.de/wp/?cat=4
+
+(in short: ext3 pretty fast in all operations. then again, the numbers 
+suggest that sometimes a crypto-fs is faster than withou crypto, eg.
+'ext3_no-cipher' vs. 'ext3_aes-cbc-essiv:md5'...that's strange, no?)
+
+Thanks,
+Christian.
+-- 
+BOFH excuse #11:
+
+magnetic interference from money/credit cards
+
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys - and earn cash
+http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
