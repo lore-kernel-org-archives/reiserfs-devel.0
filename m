@@ -1,17 +1,19 @@
 From: "Clemens Eisserer" <linuxhippy@gmail.com>
 Subject: Re: Possible interference between reiser4 and usb-storage?
-Date: Sat, 25 Nov 2006 10:17:14 +0100
-Message-ID: <194f62550611250117j30835681o8d824812f60f5dca@mail.gmail.com>
+Date: Sat, 25 Nov 2006 12:43:24 +0100
+Message-ID: <194f62550611250343t5d5693a5q1db39c22d618b6fc@mail.gmail.com>
 References: <194f62550611191252l612ac827tc2f0e581d01be46a@mail.gmail.com>
 	 <Pine.LNX.4.64.0611250538370.16392@sheep.housecafe.de>
+	 <194f62550611250117j30835681o8d824812f60f5dca@mail.gmail.com>
+	 <45681726.3050809@slaphack.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30217-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30218-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.64.0611250538370.16392@sheep.housecafe.de>
+In-Reply-To: <45681726.3050809@slaphack.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
@@ -19,34 +21,23 @@ To: reiserfs-list@namesys.com
 
 Hi again,
 
-> ..."after some time", so right after mkfs df(1) is telling the truth?
-> Does it drop to 52MB all of a sudden or does it decrease slowly? does it
-> happen with other/former kernels too?
-Well the cable was bad - it worked well on another computer but on
-mine it lead to usb read failures.
-It never drops to 52mb, it gros to a 55GB disk, this happened as soon
-as I got messages about invalid fat read operations on syslog. (caused
-by the usb problems)
+Sorry but I wonder why you worry about my setup...
 
-> Does it happen without the tweak? Why are you using -O3 anyway, does it
-> really make a difference?
-Don't know since it works now. Well under normal circumstances I guess
--O3 does not make much difference (since kernel is much more "generic"
-code instead of numbercrunching stuff) but since I use cryptocompress
-at least reiser4 is crunching numbers ;)
+> The kernel is also something that should arguably take up less RAM. For
+> one thing, it can't be swapped out...
+Well I am completly happy with my kernel build - the executable is
+about 1.5mb which I don't care at all. The ~0.2mb I would save with O2
+don't matter at all.
+Another more dramatic effect which needs to be analyzed are L1/L2
+cache misses which are more likely to occur with larger code - but
+since the LZO-code of Reiser4 is very small it fits into L1 anyway.
 
-lg Clemens
-
-PS: I am really impressed about the stability of reiser4 - I never
-ever had a single problem. However performance is terrible with
-cryptocompress enabled:
-- Drive does way too much seeks
-- Directory listing is slow - a directory listing using konqueror
-takes about 10s the first time I open konqueror (with 148files/folders
-in it), the second time its as fast as it should.
-- Writes block sometimes the system, nerving while watching video or
-playing games.
-- Delete operations sometimes take a lot of time (deleting a e.g.
-500mb video file).
+> biggest optimization you do when compiling your own kernel is selecting
+> a CPU.
+Well but at least for kernel 2.6.19 it does not make any difference if
+you select p-pro, p2, p3 or p4 - the emitted code will alway be i686
+compatible, only instruction sceduling is tuned for the given CPU.
+Thats why I altered my Makefile.cpu to : cflags-$(CONFIG_MPENTIUM4)	+=
+-march=pentium4 -mno-sse -mno-sse2 -mtune=pentium4
 
 lg Clemens
