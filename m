@@ -1,43 +1,187 @@
-From: "Clemens Eisserer" <linuxhippy@gmail.com>
-Subject: Re: Possible interference between reiser4 and usb-storage?
-Date: Sat, 25 Nov 2006 12:43:24 +0100
-Message-ID: <194f62550611250343t5d5693a5q1db39c22d618b6fc@mail.gmail.com>
-References: <194f62550611191252l612ac827tc2f0e581d01be46a@mail.gmail.com>
-	 <Pine.LNX.4.64.0611250538370.16392@sheep.housecafe.de>
-	 <194f62550611250117j30835681o8d824812f60f5dca@mail.gmail.com>
-	 <45681726.3050809@slaphack.com>
+From: Suzuki <suzuki@in.ibm.com>
+Subject: Re: [BUG] Reiserfs panic while running fsstress due to multiple truncate
+ "safe links" for a file.
+Date: Mon, 27 Nov 2006 15:37:49 -0800
+Message-ID: <456B76CD.5000600@in.ibm.com>
+References: <445F2C95.4000604@in.ibm.com> <20060730161348.94ecc5e0.akpm@osdl.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30218-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-In-Reply-To: <45681726.3050809@slaphack.com>
-Content-Disposition: inline
+Content-Type: multipart/mixed;
+ boundary="------------010702040207040904090204"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758616AbWK0Xh6@vger.kernel.org>
+In-Reply-To: <20060730161348.94ecc5e0.akpm@osdl.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+To: Andrew Morton <akpm@osdl.org>
+Cc: amitarora@in.ibm.com, "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com, reiserfs-dev@namesys.com, lkml <linux-kernel@vger.kernel.org>, rdunlap@xenotime.net
 
-Hi again,
+This is a multi-part message in MIME format.
+--------------010702040207040904090204
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Sorry but I wonder why you worry about my setup...
+Andrew Morton wrote:
+> On Mon, 08 May 2006 17:03:41 +0530
+> Suzuki <suzuki@in.ibm.com> wrote:
+> 
+> 
+>>Resending, since there were no responses to the earlier post.
+>>
+>>Hi,
+>>
+>>
+>>I was working on a reiserfs panic with 2.6.17-rc3, while running fs
+>>stress tests.
+>>
+>>The panic message looked like :
+>>
+>>" REISERFS: panic (device Null superblock): reiserfs[4248]: assertion
+>>!(truncate && (REISERFS_I(inode)->i_flags & i_link_saved_truncate_mask)
+>>) failed at fs/reiserfs/super.c:328:add_save_link: saved link already re
+>>exists for truncated inode 13b5a "
+>>
+>>------ Summary of the problem -----------
+>>
+>>Reiserfs uses "safe links" ( directory entries with some special key
+>>value) to keep track of "truncated" or "unlinked" files to ensure
+>>integrity across crashes.
+>>
+>>Whenever there is a truncate/unlink on a file, Reiserfs creates a safe
+>>link for the same and deletes the same once the operation is complete.
+>>If the machine crashes before committing the operation, whenever the fs
+>>is mounted next time, the fs will look for the saved links ( easy to
+>>find out, since they have special key) and commit the operation that was
+>>unfinished.
+>>
+>>
+>>The problem here occurs as follows:
+>>
+>>  Whenever there is an extending DIO write operation, the fs would
+>>create a safe link so as to ensure the file size consistent, if there is
+>>crash in between the DIO. This will be deleted once the write operation
+>>finishes.
+>>
+>>  If the DIO write happens to go through a "HOLE" region in the file, it
+>>will fall into normal "buffered write", which is done  through the
+>>address space operations prepare_write() & commit_write(). Now, the
+>>prepare_write() might allocate blocks for the file (if needed). So if
+>>there is some error at a later point (say ENOSPC) in prepare_write(), we
+>>need to discard the allocated blocks. This is done by calling
+>>"vmtruncate()" on the file. This call leads to reiserfs specific
+>>truncate, which would try to add a save link for the file.
+>>
+>>This addition causes a reiserfs_panic, since there is already a "save
+>>link" stored for the file.
+>>
+>>
+>>I have a simple testcase to reproduce the problem, which does the same 
+>>as described above. I will attach it if required.
+>>
+>>Any thoughts on how to fix this ?
+>>
+> 
+> 
+> Did we end up fixing this?
 
-> The kernel is also something that should arguably take up less RAM. For
-> one thing, it can't be swapped out...
-Well I am completly happy with my kernel build - the executable is
-about 1.5mb which I don't care at all. The ~0.2mb I would save with O2
-don't matter at all.
-Another more dramatic effect which needs to be analyzed are L1/L2
-cache misses which are more likely to occur with larger code - but
-since the LZO-code of Reiser4 is very small it fits into L1 anyway.
+Finally, we were able to verify this on 2.6.18-rc7. Sorry for the delay.
 
-> biggest optimization you do when compiling your own kernel is selecting
-> a CPU.
-Well but at least for kernel 2.6.19 it does not make any difference if
-you select p-pro, p2, p3 or p4 - the emitted code will alway be i686
-compatible, only instruction sceduling is tuned for the given CPU.
-Thats why I altered my Makefile.cpu to : cflags-$(CONFIG_MPENTIUM4)	+=
--march=pentium4 -mno-sse -mno-sse2 -mtune=pentium4
+Vladimir wrote :
 
-lg Clemens
+     "I am not sure why safe link is needed for write. Maybe one who 
+added that still remembers why that was done and can explain, please? "
+
+
+The patch attached by Vladimir has been modified to fit into the current 
+level.
+
+The patch is on 2.6.19-rc1.
+
+Thanks,
+
+-Suzuki
+
+> 
+> Thanks.
+
+
+--------------010702040207040904090204
+Content-Type: text/x-patch;
+ name="reiserfs-no-save-links-on-write.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="reiserfs-no-save-links-on-write.diff"
+
+* Do not add save links for O_DIRECT writes.  
+
+We add a save link for O_DIRECT writes to protect the i_size against the crashes before we actually finish the I/O. If we hit an -ENOSPC in aops->prepare_write(), we would do a truncate() to release the blocks which might have got initialized. Now the truncate would add another save link for the same inode causing a reiserfs panic for having multiple save links for the same inode.
+
+
+Signed-off-by:  Vladimir V. Saveliev <vs@namesys.com>
+Signed-off-by:  Amit Arora <amitarora@in.ibm.com>
+Signed-off-by:  Suzuki K P <suzuki@in.ibm.com>
+
+
+Index: linux-2.6.19-rc1/fs/reiserfs/file.c
+===================================================================
+--- linux-2.6.19-rc1.orig/fs/reiserfs/file.c	2006-10-10 05:54:30.000000000 -0700
++++ linux-2.6.19-rc1/fs/reiserfs/file.c	2006-11-21 17:17:36.000000000 -0800
+@@ -1306,56 +1306,8 @@
+ 			count = MAX_NON_LFS - (unsigned long)*ppos;
+ 	}
+ 
+-	if (file->f_flags & O_DIRECT) {	// Direct IO needs treatment
+-		ssize_t result, after_file_end = 0;
+-		if ((*ppos + count >= inode->i_size)
+-		    || (file->f_flags & O_APPEND)) {
+-			/* If we are appending a file, we need to put this savelink in here.
+-			   If we will crash while doing direct io, finish_unfinished will
+-			   cut the garbage from the file end. */
+-			reiserfs_write_lock(inode->i_sb);
+-			err =
+-			    journal_begin(&th, inode->i_sb,
+-					  JOURNAL_PER_BALANCE_CNT);
+-			if (err) {
+-				reiserfs_write_unlock(inode->i_sb);
+-				return err;
+-			}
+-			reiserfs_update_inode_transaction(inode);
+-			add_save_link(&th, inode, 1 /* Truncate */ );
+-			after_file_end = 1;
+-			err =
+-			    journal_end(&th, inode->i_sb,
+-					JOURNAL_PER_BALANCE_CNT);
+-			reiserfs_write_unlock(inode->i_sb);
+-			if (err)
+-				return err;
+-		}
+-		result = do_sync_write(file, buf, count, ppos);
+-
+-		if (after_file_end) {	/* Now update i_size and remove the savelink */
+-			struct reiserfs_transaction_handle th;
+-			reiserfs_write_lock(inode->i_sb);
+-			err = journal_begin(&th, inode->i_sb, 1);
+-			if (err) {
+-				reiserfs_write_unlock(inode->i_sb);
+-				return err;
+-			}
+-			reiserfs_update_inode_transaction(inode);
+-			mark_inode_dirty(inode);
+-			err = journal_end(&th, inode->i_sb, 1);
+-			if (err) {
+-				reiserfs_write_unlock(inode->i_sb);
+-				return err;
+-			}
+-			err = remove_save_link(inode, 1 /* truncate */ );
+-			reiserfs_write_unlock(inode->i_sb);
+-			if (err)
+-				return err;
+-		}
+-
+-		return result;
+-	}
++	if (file->f_flags & O_DIRECT) 
++		return do_sync_write(file, buf, count, ppos);
+ 
+ 	if (unlikely((ssize_t) count < 0))
+ 		return -EINVAL;
+
+--------------010702040207040904090204--
