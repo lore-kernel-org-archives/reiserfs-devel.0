@@ -1,38 +1,34 @@
-From: Tim Heinrich <thecurse@gmx.com>
-Subject: Compress Plugin
-Date: Sat, 02 Dec 2006 17:15:03 +0100
-Message-ID: <1165076103.17339.1.camel@gentoo.homenet>
+From: "Clemens Eisserer" <linuxhippy@gmail.com>
+Subject: Re: Compress Plugin
+Date: Sat, 2 Dec 2006 17:31:19 +0100
+Message-ID: <194f62550612020831g1c0a4f57tb2907d260673ee2a@mail.gmail.com>
+References: <1165076103.17339.1.camel@gentoo.homenet>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-dH7LBS0d+h3yFQhTgoSQ"
-Return-path: <reiserfs-list-return-30280-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30281-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <1165076103.17339.1.camel@gentoo.homenet>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
---=-dH7LBS0d+h3yFQhTgoSQ
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+At least what I can tell its both - you need a patch and some
+arguments for mkfs.
+Search the list, about one month ago edward explained it to me (with
+link to patches and README file).
 
-Hi, i have heard about the compress plugin, but I could not find
-information how to use it... Do I need a special patch or is it a option
-to mkfs.reiser4?
+Good luck, lg Clemens
 
-Tim
-
---=-dH7LBS0d+h3yFQhTgoSQ
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Dies ist ein digital signierter Nachrichtenteil
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.5 (GNU/Linux)
-
-iD8DBQBFcaaHsRExAnpsy3YRAtr5AJ9qWLiJnVPsScJ00W9/jELSf1CEUQCg5v/m
-KcXNwCzRoErIP/NI1lMRy+E=
-=z42d
------END PGP SIGNATURE-----
-
---=-dH7LBS0d+h3yFQhTgoSQ--
-
+2006/12/2, Tim Heinrich <thecurse@gmx.com>:
+> Hi, i have heard about the compress plugin, but I could not find
+> information how to use it... Do I need a special patch or is it a option
+> to mkfs.reiser4?
+>
+> Tim
+>
+>
+>
