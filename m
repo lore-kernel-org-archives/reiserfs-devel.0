@@ -1,54 +1,41 @@
 From: Laurent Riffard <laurent.riffard@free.fr>
-Subject: Reiser4 for 2.6.19
-Date: Sat,  2 Dec 2006 14:16:21 +0100
-Message-ID: <1165065391908-git-send-email-laurent.riffard@free.fr>
-Return-path: <reiserfs-list-return-30274-reiserfs=m.gmane.org@namesys.com>
+Subject: [PATCH 8/10] Reiser4: inode.i_blksize suppression
+Date: Sat,  2 Dec 2006 14:16:29 +0100
+Message-ID: <11650653923903-git-send-email-laurent.riffard@free.fr>
+References: <1165065391908-git-send-email-laurent.riffard@free.fr> <1165065391122-git-send-email-laurent.riffard@free.fr> <1165065391534-git-send-email-laurent.riffard@free.fr> <11650653912299-git-send-email-laurent.riffard@free.fr> <11650653921903-git-send-email-laurent.riffard@free.fr> <11650653921405-git-send-email-laurent.riffard@free.fr> <11650653923297-git-send-email-laurent.riffard@free.fr> <11650653921199-git-send-email-laurent.riffard@free.fr>
+Return-path: <reiserfs-list-return-30275-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <11650653921199-git-send-email-laurent.riffard@free.fr>
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
+Cc: Laurent Riffard <laurent.riffard@free.fr>
 
-Hi,
+This patch updates the reiser4 code to reflect the suppression of the
+inode.i_blksize field (see commit
+ba52de123d454b57369f291348266d86f4b35070).
+---
+ fs/reiser4/plugin/item/static_stat.c |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
 
-There is 10 patches in this series, first one is "Reiser4 for 2.6.18
-version 3". It's made up from the last Namesys Reiser4 patch for vanilla
-kernel
-(http://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-3.patch.gz),
-updated to apply cleanly on top of 2.6.19 kernel. One can alternatively
-apply the original patch from Namesys (reiser4-for-2.6.18-3.patch.gz) on
-top of 2.6.19 kernel, it will successfully apply with some oddities.
-
-The 9 next patches are compile-fixes for 2.6.19 or bug-fixes I picked up from
-reiserfs mailing-list.
-
-Andrew Wade (3):
-      Reiser4: fix use after free in jrelse_tail
-      Reiser4: release d_ref
-      Reiser4: release d_ref (fix)
-
-Edward Shishkin (2):
-      Reiser4 for 2.6.18 version 3
-      reiser4-generic_file_read-fix
-
-Laurent Riffard (5):
-      Reiser4: cometics changes in mm/filemap.c.
-      Reiser4: fix calls to kmem_cache_destroy
-      Reiser4: Replace inode.u.generic_ip with inode.i_private
-      Reiser4: inode.i_blksize suppression
-      Reiser4: remove unnecessary config.h includes.
-
-The whole series is available as in a single patch:
-http://laurent.riffard.free.fr/reiser4/reiser4-for-2.6.19.patch.gz.
-
-I'm not a filesystem guru, nor I'm affiliated with Namesys. These
-patches just suit my needs. It works for me and I hope it will help
-somebody else. 
-
-~~
-laurent 
+diff --git a/fs/reiser4/plugin/item/static_stat.c b/fs/reiser4/plugin/item/static_stat.c
+index 0ef01e6..f53a5aa 100644
+--- a/fs/reiser4/plugin/item/static_stat.c
++++ b/fs/reiser4/plugin/item/static_stat.c
+@@ -168,8 +168,6 @@ int init_inode_static_sd(struct inode *inode /* object being processed */ ,
+ 			break;
+ 	}
+ 	state->extmask = bigmask;
+-	/* common initialisations */
+-	inode->i_blksize = get_super_private(inode->i_sb)->optimal_io_size;
+ 	if (len - (bit / 16 * sizeof(d16)) > 0) {
+ 		/* alignment in save_len_static_sd() is taken into account
+ 		   -edward */
+-- 
+1.4.4.1.gaed4
 
