@@ -1,50 +1,46 @@
-From: Laurent Riffard <laurent.riffard@free.fr>
-Subject: [PATCH 9/10] Reiser4: remove unnecessary config.h includes.
-Date: Sat,  2 Dec 2006 14:16:30 +0100
-Message-ID: <11650653921081-git-send-email-laurent.riffard@free.fr>
-References: <1165065391908-git-send-email-laurent.riffard@free.fr> <1165065391122-git-send-email-laurent.riffard@free.fr> <1165065391534-git-send-email-laurent.riffard@free.fr> <11650653912299-git-send-email-laurent.riffard@free.fr> <11650653921903-git-send-email-laurent.riffard@free.fr> <11650653921405-git-send-email-laurent.riffard@free.fr> <11650653923297-git-send-email-laurent.riffard@free.fr> <11650653921199-git-send-email-laurent.riffard@free.fr> <11650653923903-git-send-email-laurent.riffard@free.fr>
-Return-path: <reiserfs-list-return-30277-reiserfs=m.gmane.org@namesys.com>
+From: "Clemens Eisserer" <linuxhippy@gmail.com>
+Subject: Re: Possible interference between reiser4 and usb-storage?
+Date: Sat, 2 Dec 2006 15:59:06 +0100
+Message-ID: <194f62550612020659h10cf0e8aj2cc0a16778382901@mail.gmail.com>
+References: <194f62550611191252l612ac827tc2f0e581d01be46a@mail.gmail.com>
+	 <Pine.LNX.4.64.0611250538370.16392@sheep.housecafe.de>
+	 <194f62550611250117j30835681o8d824812f60f5dca@mail.gmail.com>
+	 <4569CA44.9060907@namesys.com>
+	 <194f62550612020315t55a13c40h175845803c8c8775@mail.gmail.com>
+	 <45718F51.1080606@namesys.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30278-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <11650653923903-git-send-email-laurent.riffard@free.fr>
+In-Reply-To: <45718F51.1080606@namesys.com>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
-Cc: Laurent Riffard <laurent.riffard@free.fr>
 
----
- fs/reiser4/plugin/compress/compress.c |    1 -
- fs/reiser4/reiser4.h                  |    1 -
- 2 files changed, 0 insertions(+), 2 deletions(-)
+Thanks a lot for the detailed explanation.
 
-diff --git a/fs/reiser4/plugin/compress/compress.c b/fs/reiser4/plugin/compress/compress.c
-index 25d4dea..1a7122d 100644
---- a/fs/reiser4/plugin/compress/compress.c
-+++ b/fs/reiser4/plugin/compress/compress.c
-@@ -6,7 +6,6 @@
- #include "../plugin.h"
- #include "minilzo.h"
- 
--#include <linux/config.h>
- #include <linux/zlib.h>
- #include <linux/types.h>
- #include <linux/hardirq.h>
-diff --git a/fs/reiser4/reiser4.h b/fs/reiser4/reiser4.h
-index ec94eec..cdae341 100644
---- a/fs/reiser4/reiser4.h
-+++ b/fs/reiser4/reiser4.h
-@@ -6,7 +6,6 @@
- #if !defined( __REISER4_H__ )
- #define __REISER4_H__
- 
--#include <linux/config.h>
- #include <asm/param.h>		/* for HZ */
- #include <linux/errno.h>
- #include <linux/types.h>
--- 
-1.4.4.1.gaed4
+> Current conversion policy (convert to extent, if first 64K are
+> incompressible)
+> allows to properly handle ~50% of all mpegs. I hope it can be increased
+> up to
+> 70-80% using only cosmetic changes. However, other problems you described
+> (a lot of HD seeks, slow directory listing) should disappear with the
+> _current_
+> conversion stuff.
 
+1.) Ok, you convinced me ... I'll try it out very soon. Is the patch
+you mentioned against my patched 2.6.19rc4-mm1 kernel which has
+already been patched by a patch you posted on the list about 1 month
+ago when I asked about compression?
+I'll do some timings before and let you know how well it does.
+
+2.) Is there a way to find out how much a file / files have/has been
+compression.
+If I ask konqueror how large all sub-stuff of a directory is, is this
+the compressed size or the size the uncompressed files have?
+
+Thanks a lot for all your patience, lg Clemens
