@@ -1,48 +1,54 @@
 From: Laurent Riffard <laurent.riffard@free.fr>
-Subject: [PATCH 6/10] Reiser4: fix calls to kmem_cache_destroy
-Date: Sat,  2 Dec 2006 14:16:27 +0100
-Message-ID: <11650653923297-git-send-email-laurent.riffard@free.fr>
-References: <1165065391908-git-send-email-laurent.riffard@free.fr> <1165065391122-git-send-email-laurent.riffard@free.fr> <1165065391534-git-send-email-laurent.riffard@free.fr> <11650653912299-git-send-email-laurent.riffard@free.fr> <11650653921903-git-send-email-laurent.riffard@free.fr> <11650653921405-git-send-email-laurent.riffard@free.fr>
-Return-path: <reiserfs-list-return-30273-reiserfs=m.gmane.org@namesys.com>
+Subject: Reiser4 for 2.6.19
+Date: Sat,  2 Dec 2006 14:16:21 +0100
+Message-ID: <1165065391908-git-send-email-laurent.riffard@free.fr>
+Return-path: <reiserfs-list-return-30274-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <11650653921405-git-send-email-laurent.riffard@free.fr>
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
-Cc: Laurent Riffard <laurent.riffard@free.fr>
 
-Since Linux v2.6.19-rc1, kmem_cache_destroy() returns void because there
-is very little filesystem driver code can do upon failed
-kmem_cache_destroy().
+Hi,
 
-This patch updates Reiser4 code to reflect this change. BTW, we do not
-test anymore for null argument since kmem_cache_destroy does this check.
----
- fs/reiser4/super_ops.c |    6 +-----
- 1 files changed, 1 insertions(+), 5 deletions(-)
+There is 10 patches in this series, first one is "Reiser4 for 2.6.18
+version 3". It's made up from the last Namesys Reiser4 patch for vanilla
+kernel
+(http://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-3.patch.gz),
+updated to apply cleanly on top of 2.6.19 kernel. One can alternatively
+apply the original patch from Namesys (reiser4-for-2.6.18-3.patch.gz) on
+top of 2.6.19 kernel, it will successfully apply with some oddities.
 
-diff --git a/fs/reiser4/super_ops.c b/fs/reiser4/super_ops.c
-index 0f39702..04fa72d 100644
---- a/fs/reiser4/super_ops.c
-+++ b/fs/reiser4/super_ops.c
-@@ -589,11 +589,7 @@ static struct file_system_type reiser4_fs_type = {
- 
- void destroy_reiser4_cache(kmem_cache_t **cachep)
- {
--	int result;
--
--	BUG_ON(*cachep == NULL);
--	result = kmem_cache_destroy(*cachep);
--	BUG_ON(result != 0);
-+	kmem_cache_destroy(*cachep);
- 	*cachep = NULL;
- }
- 
--- 
-1.4.4.1.gaed4
+The 9 next patches are compile-fixes for 2.6.19 or bug-fixes I picked up from
+reiserfs mailing-list.
+
+Andrew Wade (3):
+      Reiser4: fix use after free in jrelse_tail
+      Reiser4: release d_ref
+      Reiser4: release d_ref (fix)
+
+Edward Shishkin (2):
+      Reiser4 for 2.6.18 version 3
+      reiser4-generic_file_read-fix
+
+Laurent Riffard (5):
+      Reiser4: cometics changes in mm/filemap.c.
+      Reiser4: fix calls to kmem_cache_destroy
+      Reiser4: Replace inode.u.generic_ip with inode.i_private
+      Reiser4: inode.i_blksize suppression
+      Reiser4: remove unnecessary config.h includes.
+
+The whole series is available as in a single patch:
+http://laurent.riffard.free.fr/reiser4/reiser4-for-2.6.19.patch.gz.
+
+I'm not a filesystem guru, nor I'm affiliated with Namesys. These
+patches just suit my needs. It works for me and I hope it will help
+somebody else. 
+
+~~
+laurent 
 
