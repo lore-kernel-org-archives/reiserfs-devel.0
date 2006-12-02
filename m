@@ -1,46 +1,34 @@
 From: "Clemens Eisserer" <linuxhippy@gmail.com>
-Subject: Re: Possible interference between reiser4 and usb-storage?
-Date: Sat, 2 Dec 2006 15:59:06 +0100
-Message-ID: <194f62550612020659h10cf0e8aj2cc0a16778382901@mail.gmail.com>
-References: <194f62550611191252l612ac827tc2f0e581d01be46a@mail.gmail.com>
-	 <Pine.LNX.4.64.0611250538370.16392@sheep.housecafe.de>
-	 <194f62550611250117j30835681o8d824812f60f5dca@mail.gmail.com>
-	 <4569CA44.9060907@namesys.com>
-	 <194f62550612020315t55a13c40h175845803c8c8775@mail.gmail.com>
-	 <45718F51.1080606@namesys.com>
+Subject: Howto help hans?
+Date: Sat, 2 Dec 2006 16:28:28 +0100
+Message-ID: <194f62550612020728l7f81f634r5ae18881d2ee60f7@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30278-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30279-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <45718F51.1080606@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-Thanks a lot for the detailed explanation.
+Hello again,
 
-> Current conversion policy (convert to extent, if first 64K are
-> incompressible)
-> allows to properly handle ~50% of all mpegs. I hope it can be increased
-> up to
-> 70-80% using only cosmetic changes. However, other problems you described
-> (a lot of HD seeks, slow directory listing) should disappear with the
-> _current_
-> conversion stuff.
+I just read in a german online news-site
+http://forum.tecchannel.de/news/themen/linux/456733/ that Hans'
+advocate Daniel Horowitz (I don't know wether this is the right word,
+that one how helps hans in front of the court) stopped working for
+hime because Hans was not able to pay him anymore.
 
-1.) Ok, you convinced me ... I'll try it out very soon. Is the patch
-you mentioned against my patched 2.6.19rc4-mm1 kernel which has
-already been patched by a patch you posted on the list about 1 month
-ago when I asked about compression?
-I'll do some timings before and let you know how well it does.
+I don't know wether this is right or just imagination of newspapers,
+but if thats right we should help somehow. As far as I know there is
+currently no way of donating to Reiser4's developmant nore to help
+Hans in any way? Any ideas?
+Whats about registering a domain with sum fund stuff - donate to
+Reiser4 / help Hans?
 
-2.) Is there a way to find out how much a file / files have/has been
-compression.
-If I ask konqueror how large all sub-stuff of a directory is, is this
-the compressed size or the size the uncompressed files have?
+Does nobody care?!
 
-Thanks a lot for all your patience, lg Clemens
+lg Clemens
