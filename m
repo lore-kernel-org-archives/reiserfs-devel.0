@@ -1,103 +1,206 @@
-From: "Lars O. Grobe" <grobe@gmx.net>
-Subject: Re: Howto help hans?
-Date: Sun, 03 Dec 2006 14:38:18 +0200
-Message-ID: <4572C53A.8070408@gmx.net>
-References: <194f62550612020728l7f81f634r5ae18881d2ee60f7@mail.gmail.com>
+From: Laurent Riffard <laurent.riffard@free.fr>
+Subject: [PATCH 1/10] Reiser4 for 2.6.18 version 3
+Date: Sun, 03 Dec 2006 14:49:55 +0100
+Message-ID: <4572D603.7010400@free.fr>
+References: <4571D852.3080401@free.fr>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg=sha1; boundary="------------ms090507070703040105000408"
-Return-path: <reiserfs-list-return-30283-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30284-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <194f62550612020728l7f81f634r5ae18881d2ee60f7@mail.gmail.com>
+In-Reply-To: <4571D852.3080401@free.fr>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
---------------ms090507070703040105000408
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-> I just read in a german online news-site
-> http://forum.tecchannel.de/news/themen/linux/456733/ that Hans'
-> advocate Daniel Horowitz (I don't know wether this is the right word,
-> that one how helps hans in front of the court) stopped working for
-> hime because Hans was not able to pay him anymore.
+This is the last reiser4 patch for vanilla kernel from namesys.com 
+(http://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-3.patch.gz).
 
-Hi namesys folks, do you have any information if this is the case, and
-if yes, how one can help out? I do not want to believe that someone who
-has done development that was given away for free to the Linux community
-cannot pay an advocate when he needs to!
+---
+Documentation/Changes                         |   12 +
+Documentation/filesystems/reiser4.txt         |   75 +
+arch/i386/lib/usercopy.c                      |    2 +
+fs/Kconfig                                    |    2 +
+fs/Makefile                                   |    1 +
+fs/fs-writeback.c                             |   26 +-
+fs/reiser4/Kconfig                            |   31 +
+fs/reiser4/Makefile                           |  100 +
+fs/reiser4/README                             |  125 +
+fs/reiser4/as_ops.c                           |  391 +++
+fs/reiser4/block_alloc.c                      | 1139 ++++++++
+fs/reiser4/block_alloc.h                      |  175 ++
+fs/reiser4/blocknrset.c                       |  368 +++
+fs/reiser4/carry.c                            | 1381 +++++++++
+fs/reiser4/carry.h                            |  442 +++
+fs/reiser4/carry_ops.c                        | 2103 ++++++++++++++
+fs/reiser4/carry_ops.h                        |   42 +
+fs/reiser4/context.c                          |  278 ++
+fs/reiser4/context.h                          |  228 ++
+fs/reiser4/coord.c                            |  937 ++++++
+fs/reiser4/coord.h                            |  389 +++
+fs/reiser4/debug.c                            |  300 ++
+fs/reiser4/debug.h                            |  350 +++
+fs/reiser4/dformat.h                          |   71 +
+fs/reiser4/dscale.c                           |  174 ++
+fs/reiser4/dscale.h                           |   27 +
+fs/reiser4/entd.c                             |  354 +++
+fs/reiser4/entd.h                             |   90 +
+fs/reiser4/eottl.c                            |  510 ++++
+fs/reiser4/estimate.c                         |  111 +
+fs/reiser4/export_ops.c                       |  296 ++
+fs/reiser4/flush.c                            | 3626 +++++++++++++++++++++++
+fs/reiser4/flush.h                            |  274 ++
+fs/reiser4/flush_queue.c                      |  681 +++++
+fs/reiser4/forward.h                          |  258 ++
+fs/reiser4/fsdata.c                           |  803 ++++++
+fs/reiser4/fsdata.h                           |  218 ++
+fs/reiser4/init_super.c                       |  739 +++++
+fs/reiser4/inode.c                            |  727 +++++
+fs/reiser4/inode.h                            |  430 +++
+fs/reiser4/ioctl.h                            |   41 +
+fs/reiser4/jnode.c                            | 1922 +++++++++++++
+fs/reiser4/jnode.h                            |  707 +++++
+fs/reiser4/kassign.c                          |  659 +++++
+fs/reiser4/kassign.h                          |  110 +
+fs/reiser4/key.c                              |  137 +
+fs/reiser4/key.h                              |  384 +++
+fs/reiser4/ktxnmgrd.c                         |  214 ++
+fs/reiser4/ktxnmgrd.h                         |   52 +
+fs/reiser4/lock.c                             | 1261 ++++++++
+fs/reiser4/lock.h                             |  272 ++
+fs/reiser4/oid.c                              |  141 +
+fs/reiser4/page_cache.c                       |  712 +++++
+fs/reiser4/page_cache.h                       |   62 +
+fs/reiser4/plugin/Makefile                    |   26 +
+fs/reiser4/plugin/cluster.c                   |   66 +
+fs/reiser4/plugin/cluster.h                   |  315 ++
+fs/reiser4/plugin/compress/Makefile           |    6 +
+fs/reiser4/plugin/compress/compress.c         |  370 +++
+fs/reiser4/plugin/compress/compress.h         |   38 +
+fs/reiser4/plugin/compress/compress_mode.c    |  163 ++
+fs/reiser4/plugin/compress/lzoconf.h          |  420 +++
+fs/reiser4/plugin/compress/minilzo.c          | 2155 ++++++++++++++
+fs/reiser4/plugin/compress/minilzo.h          |   94 +
+fs/reiser4/plugin/crypto/cipher.c             |  116 +
+fs/reiser4/plugin/crypto/cipher.h             |   67 +
+fs/reiser4/plugin/crypto/digest.c             |   58 +
+fs/reiser4/plugin/dir/Makefile                |    5 +
+fs/reiser4/plugin/dir/dir.h                   |   36 +
+fs/reiser4/plugin/dir/hashed_dir.c            |   81 +
+fs/reiser4/plugin/dir/seekable_dir.c          |   46 +
+fs/reiser4/plugin/dir_plugin_common.c         |  864 ++++++
+fs/reiser4/plugin/disk_format/Makefile        |    5 +
+fs/reiser4/plugin/disk_format/disk_format.c   |   37 +
+fs/reiser4/plugin/disk_format/disk_format.h   |   27 +
+fs/reiser4/plugin/disk_format/disk_format40.c |  556 ++++
+fs/reiser4/plugin/disk_format/disk_format40.h |   99 +
+fs/reiser4/plugin/fibration.c                 |  174 ++
+fs/reiser4/plugin/fibration.h                 |   37 +
+fs/reiser4/plugin/file/Makefile               |    7 +
+fs/reiser4/plugin/file/cryptcompress.c        | 3819 +++++++++++++++++++++++++
+fs/reiser4/plugin/file/cryptcompress.h        |  549 ++++
+fs/reiser4/plugin/file/file.c                 | 2713 ++++++++++++++++++
+fs/reiser4/plugin/file/file.h                 |  257 ++
+fs/reiser4/plugin/file/invert.c               |  493 ++++
+fs/reiser4/plugin/file/symfile.c              |   87 +
+fs/reiser4/plugin/file/symlink.c              |   92 +
+fs/reiser4/plugin/file/tail_conversion.c      |  728 +++++
+fs/reiser4/plugin/file_ops.c                  |  167 ++
+fs/reiser4/plugin/file_ops_readdir.c          |  655 +++++
+fs/reiser4/plugin/file_plugin_common.c        |  929 ++++++
+fs/reiser4/plugin/hash.c                      |  350 +++
+fs/reiser4/plugin/inode_ops.c                 |  886 ++++++
+fs/reiser4/plugin/inode_ops_rename.c          |  904 ++++++
+fs/reiser4/plugin/item/Makefile               |   18 +
+fs/reiser4/plugin/item/acl.h                  |   66 +
+fs/reiser4/plugin/item/blackbox.c             |  142 +
+fs/reiser4/plugin/item/blackbox.h             |   33 +
+fs/reiser4/plugin/item/cde.c                  | 1007 +++++++
+fs/reiser4/plugin/item/cde.h                  |   87 +
+fs/reiser4/plugin/item/ctail.c                | 1588 ++++++++++
+fs/reiser4/plugin/item/ctail.h                |   89 +
+fs/reiser4/plugin/item/extent.c               |  197 ++
+fs/reiser4/plugin/item/extent.h               |  228 ++
+fs/reiser4/plugin/item/extent_file_ops.c      | 1710 +++++++++++
+fs/reiser4/plugin/item/extent_flush_ops.c     | 1018 +++++++
+fs/reiser4/plugin/item/extent_item_ops.c      |  882 ++++++
+fs/reiser4/plugin/item/internal.c             |  392 +++
+fs/reiser4/plugin/item/internal.h             |   57 +
+fs/reiser4/plugin/item/item.c                 |  727 +++++
+fs/reiser4/plugin/item/item.h                 |  399 +++
+fs/reiser4/plugin/item/sde.c                  |  190 ++
+fs/reiser4/plugin/item/sde.h                  |   66 +
+fs/reiser4/plugin/item/static_stat.c          | 1040 +++++++
+fs/reiser4/plugin/item/static_stat.h          |  219 ++
+fs/reiser4/plugin/item/tail.c                 |  805 ++++++
+fs/reiser4/plugin/item/tail.h                 |   58 +
+fs/reiser4/plugin/node/Makefile               |    5 +
+fs/reiser4/plugin/node/node.c                 |  131 +
+fs/reiser4/plugin/node/node.h                 |  272 ++
+fs/reiser4/plugin/node/node40.c               | 2924 +++++++++++++++++++
+fs/reiser4/plugin/node/node40.h               |  125 +
+fs/reiser4/plugin/object.c                    |  501 ++++
+fs/reiser4/plugin/object.h                    |  121 +
+fs/reiser4/plugin/plugin.c                    |  535 ++++
+fs/reiser4/plugin/plugin.h                    |  935 ++++++
+fs/reiser4/plugin/plugin_header.h             |  136 +
+fs/reiser4/plugin/plugin_set.c                |  378 +++
+fs/reiser4/plugin/plugin_set.h                |   82 +
+fs/reiser4/plugin/regular.c                   |   44 +
+fs/reiser4/plugin/security/Makefile           |    4 +
+fs/reiser4/plugin/security/perm.c             |   44 +
+fs/reiser4/plugin/security/perm.h             |   82 +
+fs/reiser4/plugin/space/Makefile              |    4 +
+fs/reiser4/plugin/space/bitmap.c              | 1592 +++++++++++
+fs/reiser4/plugin/space/bitmap.h              |   47 +
+fs/reiser4/plugin/space/space_allocator.h     |   80 +
+fs/reiser4/plugin/tail_policy.c               |  113 +
+fs/reiser4/pool.c                             |  236 ++
+fs/reiser4/pool.h                             |   54 +
+fs/reiser4/readahead.c                        |  138 +
+fs/reiser4/readahead.h                        |   48 +
+fs/reiser4/reiser4.h                          |  276 ++
+fs/reiser4/safe_link.c                        |  351 +++
+fs/reiser4/safe_link.h                        |   29 +
+fs/reiser4/seal.c                             |  217 ++
+fs/reiser4/seal.h                             |   49 +
+fs/reiser4/search.c                           | 1611 +++++++++++
+fs/reiser4/status_flags.c                     |  176 ++
+fs/reiser4/status_flags.h                     |   43 +
+fs/reiser4/super.c                            |  313 ++
+fs/reiser4/super.h                            |  467 +++
+fs/reiser4/super_ops.c                        |  724 +++++
+fs/reiser4/tap.c                              |  377 +++
+fs/reiser4/tap.h                              |   69 +
+fs/reiser4/tree.c                             | 1875 ++++++++++++
+fs/reiser4/tree.h                             |  579 ++++
+fs/reiser4/tree_mod.c                         |  383 +++
+fs/reiser4/tree_mod.h                         |   29 +
+fs/reiser4/tree_walk.c                        |  926 ++++++
+fs/reiser4/tree_walk.h                        |  125 +
+fs/reiser4/txnmgr.c                           | 3158 ++++++++++++++++++++
+fs/reiser4/txnmgr.h                           |  703 +++++
+fs/reiser4/type_safe_hash.h                   |  320 +++
+fs/reiser4/vfs_ops.c                          |  267 ++
+fs/reiser4/vfs_ops.h                          |   58 +
+fs/reiser4/wander.c                           | 1799 ++++++++++++
+fs/reiser4/wander.h                           |  135 +
+fs/reiser4/writeout.h                         |   21 +
+fs/reiser4/znode.c                            | 1028 +++++++
+fs/reiser4/znode.h                            |  434 +++
+include/linux/fs.h                            |    3 +
+lib/radix-tree.c                              |    1 +
+mm/filemap.c                                  |    5 +
+mm/readahead.c                                |    1 +
+175 files changed, 79648 insertions(+), 10 deletions(-)
 
---------------ms090507070703040105000408
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIJ2DCC
-BOgwggLQoAMCAQICAwH/TTANBgkqhkiG9w0BAQUFADB5MRAwDgYDVQQKEwdSb290IENBMR4w
-HAYDVQQLExVodHRwOi8vd3d3LmNhY2VydC5vcmcxIjAgBgNVBAMTGUNBIENlcnQgU2lnbmlu
-ZyBBdXRob3JpdHkxITAfBgkqhkiG9w0BCQEWEnN1cHBvcnRAY2FjZXJ0Lm9yZzAeFw0wNjAz
-MDQyMTMzNTJaFw0wNzAzMDQyMTMzNTJaMDoxGjAYBgNVBAMTEUxhcnMgT2xpdmVyIEdyb2Jl
-MRwwGgYJKoZIhvcNAQkBFg1ncm9iZUBnbXgubmV0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A
-MIIBCgKCAQEAr6OYSNg9wFfq0hakrFvsmrJn3h1wjFXBAHj6jn8oCocbaS4ejM3pPxHxMLRg
-HP/LAdIOzvFVRd5KYE1kUrDNiTYlZ5hxVQU476Lhfs1M1wg2bwh8+kvcgTd+t7fupWf8ZzSr
-6QfOVQg9HSaID6Tk+En6a5I1BMiyBwDn/Enyt6v7jYxPIJBDqGbFJH/yFFXLl1YAQlnn4Jfe
-X5wVajoCJq+Dh0yphgbRnPpepR9KsXyaH4zOvr1z2nKde+rDkOp/DvK2wHEVHOS/Dgp3jWKE
-wa4T/U8t4HF8pyYOHV5pfVL1HbtQpc84Z0zambqtSrqRpAUExxMuFjSYTcVuor8VpwIDAQAB
-o4G3MIG0MAwGA1UdEwEB/wQCMAAwVgYJYIZIAYb4QgENBEkWR1RvIGdldCB5b3VyIG93biBj
-ZXJ0aWZpY2F0ZSBmb3IgRlJFRSBoZWFkIG92ZXIgdG8gaHR0cDovL3d3dy5DQWNlcnQub3Jn
-MDIGCCsGAQUFBwEBBCYwJDAiBggrBgEFBQcwAYYWaHR0cDovL29jc3AuY2FjZXJ0Lm9yZzAY
-BgNVHREEETAPgQ1ncm9iZUBnbXgubmV0MA0GCSqGSIb3DQEBBQUAA4ICAQBOXZp/sb5+ldjy
-Dk0IQAElEBgpv5oS2b8RUo7pyiHt+IKXNMfETHzNI9XpvEsLOKNepEKTxEq4nFtHZE4icclv
-HarGXlB/z5Rt5koVGPX3+z4cCW8BlKfTzyUw4G2/FjfRndwSc4weZClwjAhIhVi1yCq+eOsC
-ELnW1yyI1JUeE6Dv1ej2qiaZz/YxSzbjdJYO0K2MKhGN5zr1ZbDXyauoqnMMiZU/ln8fWNBT
-exniKuDQ171Z8aE1p+NwH22+Gxm8kES2MC8r6ScfWtTM5UF0uYRR3pMuz1wsVzHbsvGgShta
-vTEowBSFYlQPD2/vDgBJPxsCKYuI2gqsfopVzxHIw6bF8HAhiUcz2iQb56E1MBUARXMfaS+j
-d7wjiY8fIQ0ZAbGc5oLJGcuJ0+wRf1y1v3CrjJCFucgNYAOHC0vryPDJdl8tiJ7RxQZwN6TH
-VTdbAxN2HIsbEKV5VXmFspp500qwBXtL45L+3dsNhab2WXggNxdm2T8zEWTkbDXs5eXmfV6a
-NS9Yg52RMGNbN9mddopvEV7mwBC1ABP9zv3pYCXQRcN5UQjJsQArwTDRAF4CBnN3QdVrBtyn
-zJRadlbhfbbxKmigJKuAS2ArMLoakoQn5yW7zI0tY4UpOyfY7eyVNxKunRYtsjyMJKw4hwOD
-Mj/+TtPVkeqBBYHYTVDZCTCCBOgwggLQoAMCAQICAwH/TTANBgkqhkiG9w0BAQUFADB5MRAw
-DgYDVQQKEwdSb290IENBMR4wHAYDVQQLExVodHRwOi8vd3d3LmNhY2VydC5vcmcxIjAgBgNV
-BAMTGUNBIENlcnQgU2lnbmluZyBBdXRob3JpdHkxITAfBgkqhkiG9w0BCQEWEnN1cHBvcnRA
-Y2FjZXJ0Lm9yZzAeFw0wNjAzMDQyMTMzNTJaFw0wNzAzMDQyMTMzNTJaMDoxGjAYBgNVBAMT
-EUxhcnMgT2xpdmVyIEdyb2JlMRwwGgYJKoZIhvcNAQkBFg1ncm9iZUBnbXgubmV0MIIBIjAN
-BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr6OYSNg9wFfq0hakrFvsmrJn3h1wjFXBAHj6
-jn8oCocbaS4ejM3pPxHxMLRgHP/LAdIOzvFVRd5KYE1kUrDNiTYlZ5hxVQU476Lhfs1M1wg2
-bwh8+kvcgTd+t7fupWf8ZzSr6QfOVQg9HSaID6Tk+En6a5I1BMiyBwDn/Enyt6v7jYxPIJBD
-qGbFJH/yFFXLl1YAQlnn4JfeX5wVajoCJq+Dh0yphgbRnPpepR9KsXyaH4zOvr1z2nKde+rD
-kOp/DvK2wHEVHOS/Dgp3jWKEwa4T/U8t4HF8pyYOHV5pfVL1HbtQpc84Z0zambqtSrqRpAUE
-xxMuFjSYTcVuor8VpwIDAQABo4G3MIG0MAwGA1UdEwEB/wQCMAAwVgYJYIZIAYb4QgENBEkW
-R1RvIGdldCB5b3VyIG93biBjZXJ0aWZpY2F0ZSBmb3IgRlJFRSBoZWFkIG92ZXIgdG8gaHR0
-cDovL3d3dy5DQWNlcnQub3JnMDIGCCsGAQUFBwEBBCYwJDAiBggrBgEFBQcwAYYWaHR0cDov
-L29jc3AuY2FjZXJ0Lm9yZzAYBgNVHREEETAPgQ1ncm9iZUBnbXgubmV0MA0GCSqGSIb3DQEB
-BQUAA4ICAQBOXZp/sb5+ldjyDk0IQAElEBgpv5oS2b8RUo7pyiHt+IKXNMfETHzNI9XpvEsL
-OKNepEKTxEq4nFtHZE4icclvHarGXlB/z5Rt5koVGPX3+z4cCW8BlKfTzyUw4G2/FjfRndwS
-c4weZClwjAhIhVi1yCq+eOsCELnW1yyI1JUeE6Dv1ej2qiaZz/YxSzbjdJYO0K2MKhGN5zr1
-ZbDXyauoqnMMiZU/ln8fWNBTexniKuDQ171Z8aE1p+NwH22+Gxm8kES2MC8r6ScfWtTM5UF0
-uYRR3pMuz1wsVzHbsvGgShtavTEowBSFYlQPD2/vDgBJPxsCKYuI2gqsfopVzxHIw6bF8HAh
-iUcz2iQb56E1MBUARXMfaS+jd7wjiY8fIQ0ZAbGc5oLJGcuJ0+wRf1y1v3CrjJCFucgNYAOH
-C0vryPDJdl8tiJ7RxQZwN6THVTdbAxN2HIsbEKV5VXmFspp500qwBXtL45L+3dsNhab2WXgg
-Nxdm2T8zEWTkbDXs5eXmfV6aNS9Yg52RMGNbN9mddopvEV7mwBC1ABP9zv3pYCXQRcN5UQjJ
-sQArwTDRAF4CBnN3QdVrBtynzJRadlbhfbbxKmigJKuAS2ArMLoakoQn5yW7zI0tY4UpOyfY
-7eyVNxKunRYtsjyMJKw4hwODMj/+TtPVkeqBBYHYTVDZCTGCA4cwggODAgEBMIGAMHkxEDAO
-BgNVBAoTB1Jvb3QgQ0ExHjAcBgNVBAsTFWh0dHA6Ly93d3cuY2FjZXJ0Lm9yZzEiMCAGA1UE
-AxMZQ0EgQ2VydCBTaWduaW5nIEF1dGhvcml0eTEhMB8GCSqGSIb3DQEJARYSc3VwcG9ydEBj
-YWNlcnQub3JnAgMB/00wCQYFKw4DAhoFAKCCAdswGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEH
-ATAcBgkqhkiG9w0BCQUxDxcNMDYxMjAzMTIzODE4WjAjBgkqhkiG9w0BCQQxFgQUhcafhjeG
-qEUqSPgUMYamSGU/s/owUgYJKoZIhvcNAQkPMUUwQzAKBggqhkiG9w0DBzAOBggqhkiG9w0D
-AgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgZEGCSsGAQQB
-gjcQBDGBgzCBgDB5MRAwDgYDVQQKEwdSb290IENBMR4wHAYDVQQLExVodHRwOi8vd3d3LmNh
-Y2VydC5vcmcxIjAgBgNVBAMTGUNBIENlcnQgU2lnbmluZyBBdXRob3JpdHkxITAfBgkqhkiG
-9w0BCQEWEnN1cHBvcnRAY2FjZXJ0Lm9yZwIDAf9NMIGTBgsqhkiG9w0BCRACCzGBg6CBgDB5
-MRAwDgYDVQQKEwdSb290IENBMR4wHAYDVQQLExVodHRwOi8vd3d3LmNhY2VydC5vcmcxIjAg
-BgNVBAMTGUNBIENlcnQgU2lnbmluZyBBdXRob3JpdHkxITAfBgkqhkiG9w0BCQEWEnN1cHBv
-cnRAY2FjZXJ0Lm9yZwIDAf9NMA0GCSqGSIb3DQEBAQUABIIBAAJjiTAJ66v0Ib8Gg10ydkf6
-HbVPcd0IutJOmhHg17kqS3GH+0CbLJIDJxnQhXhkgNIIvO2l4dm8JL8iED5FrbYD/TpYrWmZ
-PUsEAuWRwD/RNiKpbHMYp4k4j8fGOmxPLfj7KH1841uNccIrzqjyZXCSG/rJ3810R85kSmkr
-F2O6xNlqqo6p9w+w82keyidwVHxxnqa5XGxJN8hwiJhiYvLq/FQxAdAN/fu0yMzBFn2s0RhH
-uVpayY4S2j8A4BWk0gJg1aNui8NRyCB0WjvOWcG+bcGoTF5PIbOg32HtY0mvjPUoDYLyt2PM
-7osB/z8Loeq1SpQX6ZeoBSj5bqrXqhoAAAAAAAA=
---------------ms090507070703040105000408--
+Since this patch is really big, it is available from 
+http://laurent.riffard.free.fr/reiser4/reiser4-for-2.6.18-3-for-2.6.19.patch.gz
+[597 kiB].
+
+-- 1.4.4.1.gaed4 
+
