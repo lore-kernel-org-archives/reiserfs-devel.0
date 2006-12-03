@@ -1,34 +1,103 @@
-From: "Clemens Eisserer" <linuxhippy@gmail.com>
-Subject: Re: Compress Plugin
-Date: Sat, 2 Dec 2006 17:31:19 +0100
-Message-ID: <194f62550612020831g1c0a4f57tb2907d260673ee2a@mail.gmail.com>
-References: <1165076103.17339.1.camel@gentoo.homenet>
+From: "Lars O. Grobe" <grobe@gmx.net>
+Subject: Re: Howto help hans?
+Date: Sun, 03 Dec 2006 14:38:18 +0200
+Message-ID: <4572C53A.8070408@gmx.net>
+References: <194f62550612020728l7f81f634r5ae18881d2ee60f7@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30281-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg=sha1; boundary="------------ms090507070703040105000408"
+Return-path: <reiserfs-list-return-30283-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <1165076103.17339.1.camel@gentoo.homenet>
-Content-Disposition: inline
+In-Reply-To: <194f62550612020728l7f81f634r5ae18881d2ee60f7@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-At least what I can tell its both - you need a patch and some
-arguments for mkfs.
-Search the list, about one month ago edward explained it to me (with
-link to patches and README file).
+--------------ms090507070703040105000408
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Good luck, lg Clemens
+> I just read in a german online news-site
+> http://forum.tecchannel.de/news/themen/linux/456733/ that Hans'
+> advocate Daniel Horowitz (I don't know wether this is the right word,
+> that one how helps hans in front of the court) stopped working for
+> hime because Hans was not able to pay him anymore.
 
-2006/12/2, Tim Heinrich <thecurse@gmx.com>:
-> Hi, i have heard about the compress plugin, but I could not find
-> information how to use it... Do I need a special patch or is it a option
-> to mkfs.reiser4?
->
-> Tim
->
->
->
+Hi namesys folks, do you have any information if this is the case, and
+if yes, how one can help out? I do not want to believe that someone who
+has done development that was given away for free to the Linux community
+cannot pay an advocate when he needs to!
+
+--------------ms090507070703040105000408
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIJ2DCC
+BOgwggLQoAMCAQICAwH/TTANBgkqhkiG9w0BAQUFADB5MRAwDgYDVQQKEwdSb290IENBMR4w
+HAYDVQQLExVodHRwOi8vd3d3LmNhY2VydC5vcmcxIjAgBgNVBAMTGUNBIENlcnQgU2lnbmlu
+ZyBBdXRob3JpdHkxITAfBgkqhkiG9w0BCQEWEnN1cHBvcnRAY2FjZXJ0Lm9yZzAeFw0wNjAz
+MDQyMTMzNTJaFw0wNzAzMDQyMTMzNTJaMDoxGjAYBgNVBAMTEUxhcnMgT2xpdmVyIEdyb2Jl
+MRwwGgYJKoZIhvcNAQkBFg1ncm9iZUBnbXgubmV0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A
+MIIBCgKCAQEAr6OYSNg9wFfq0hakrFvsmrJn3h1wjFXBAHj6jn8oCocbaS4ejM3pPxHxMLRg
+HP/LAdIOzvFVRd5KYE1kUrDNiTYlZ5hxVQU476Lhfs1M1wg2bwh8+kvcgTd+t7fupWf8ZzSr
+6QfOVQg9HSaID6Tk+En6a5I1BMiyBwDn/Enyt6v7jYxPIJBDqGbFJH/yFFXLl1YAQlnn4Jfe
+X5wVajoCJq+Dh0yphgbRnPpepR9KsXyaH4zOvr1z2nKde+rDkOp/DvK2wHEVHOS/Dgp3jWKE
+wa4T/U8t4HF8pyYOHV5pfVL1HbtQpc84Z0zambqtSrqRpAUExxMuFjSYTcVuor8VpwIDAQAB
+o4G3MIG0MAwGA1UdEwEB/wQCMAAwVgYJYIZIAYb4QgENBEkWR1RvIGdldCB5b3VyIG93biBj
+ZXJ0aWZpY2F0ZSBmb3IgRlJFRSBoZWFkIG92ZXIgdG8gaHR0cDovL3d3dy5DQWNlcnQub3Jn
+MDIGCCsGAQUFBwEBBCYwJDAiBggrBgEFBQcwAYYWaHR0cDovL29jc3AuY2FjZXJ0Lm9yZzAY
+BgNVHREEETAPgQ1ncm9iZUBnbXgubmV0MA0GCSqGSIb3DQEBBQUAA4ICAQBOXZp/sb5+ldjy
+Dk0IQAElEBgpv5oS2b8RUo7pyiHt+IKXNMfETHzNI9XpvEsLOKNepEKTxEq4nFtHZE4icclv
+HarGXlB/z5Rt5koVGPX3+z4cCW8BlKfTzyUw4G2/FjfRndwSc4weZClwjAhIhVi1yCq+eOsC
+ELnW1yyI1JUeE6Dv1ej2qiaZz/YxSzbjdJYO0K2MKhGN5zr1ZbDXyauoqnMMiZU/ln8fWNBT
+exniKuDQ171Z8aE1p+NwH22+Gxm8kES2MC8r6ScfWtTM5UF0uYRR3pMuz1wsVzHbsvGgShta
+vTEowBSFYlQPD2/vDgBJPxsCKYuI2gqsfopVzxHIw6bF8HAhiUcz2iQb56E1MBUARXMfaS+j
+d7wjiY8fIQ0ZAbGc5oLJGcuJ0+wRf1y1v3CrjJCFucgNYAOHC0vryPDJdl8tiJ7RxQZwN6TH
+VTdbAxN2HIsbEKV5VXmFspp500qwBXtL45L+3dsNhab2WXggNxdm2T8zEWTkbDXs5eXmfV6a
+NS9Yg52RMGNbN9mddopvEV7mwBC1ABP9zv3pYCXQRcN5UQjJsQArwTDRAF4CBnN3QdVrBtyn
+zJRadlbhfbbxKmigJKuAS2ArMLoakoQn5yW7zI0tY4UpOyfY7eyVNxKunRYtsjyMJKw4hwOD
+Mj/+TtPVkeqBBYHYTVDZCTCCBOgwggLQoAMCAQICAwH/TTANBgkqhkiG9w0BAQUFADB5MRAw
+DgYDVQQKEwdSb290IENBMR4wHAYDVQQLExVodHRwOi8vd3d3LmNhY2VydC5vcmcxIjAgBgNV
+BAMTGUNBIENlcnQgU2lnbmluZyBBdXRob3JpdHkxITAfBgkqhkiG9w0BCQEWEnN1cHBvcnRA
+Y2FjZXJ0Lm9yZzAeFw0wNjAzMDQyMTMzNTJaFw0wNzAzMDQyMTMzNTJaMDoxGjAYBgNVBAMT
+EUxhcnMgT2xpdmVyIEdyb2JlMRwwGgYJKoZIhvcNAQkBFg1ncm9iZUBnbXgubmV0MIIBIjAN
+BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr6OYSNg9wFfq0hakrFvsmrJn3h1wjFXBAHj6
+jn8oCocbaS4ejM3pPxHxMLRgHP/LAdIOzvFVRd5KYE1kUrDNiTYlZ5hxVQU476Lhfs1M1wg2
+bwh8+kvcgTd+t7fupWf8ZzSr6QfOVQg9HSaID6Tk+En6a5I1BMiyBwDn/Enyt6v7jYxPIJBD
+qGbFJH/yFFXLl1YAQlnn4JfeX5wVajoCJq+Dh0yphgbRnPpepR9KsXyaH4zOvr1z2nKde+rD
+kOp/DvK2wHEVHOS/Dgp3jWKEwa4T/U8t4HF8pyYOHV5pfVL1HbtQpc84Z0zambqtSrqRpAUE
+xxMuFjSYTcVuor8VpwIDAQABo4G3MIG0MAwGA1UdEwEB/wQCMAAwVgYJYIZIAYb4QgENBEkW
+R1RvIGdldCB5b3VyIG93biBjZXJ0aWZpY2F0ZSBmb3IgRlJFRSBoZWFkIG92ZXIgdG8gaHR0
+cDovL3d3dy5DQWNlcnQub3JnMDIGCCsGAQUFBwEBBCYwJDAiBggrBgEFBQcwAYYWaHR0cDov
+L29jc3AuY2FjZXJ0Lm9yZzAYBgNVHREEETAPgQ1ncm9iZUBnbXgubmV0MA0GCSqGSIb3DQEB
+BQUAA4ICAQBOXZp/sb5+ldjyDk0IQAElEBgpv5oS2b8RUo7pyiHt+IKXNMfETHzNI9XpvEsL
+OKNepEKTxEq4nFtHZE4icclvHarGXlB/z5Rt5koVGPX3+z4cCW8BlKfTzyUw4G2/FjfRndwS
+c4weZClwjAhIhVi1yCq+eOsCELnW1yyI1JUeE6Dv1ej2qiaZz/YxSzbjdJYO0K2MKhGN5zr1
+ZbDXyauoqnMMiZU/ln8fWNBTexniKuDQ171Z8aE1p+NwH22+Gxm8kES2MC8r6ScfWtTM5UF0
+uYRR3pMuz1wsVzHbsvGgShtavTEowBSFYlQPD2/vDgBJPxsCKYuI2gqsfopVzxHIw6bF8HAh
+iUcz2iQb56E1MBUARXMfaS+jd7wjiY8fIQ0ZAbGc5oLJGcuJ0+wRf1y1v3CrjJCFucgNYAOH
+C0vryPDJdl8tiJ7RxQZwN6THVTdbAxN2HIsbEKV5VXmFspp500qwBXtL45L+3dsNhab2WXgg
+Nxdm2T8zEWTkbDXs5eXmfV6aNS9Yg52RMGNbN9mddopvEV7mwBC1ABP9zv3pYCXQRcN5UQjJ
+sQArwTDRAF4CBnN3QdVrBtynzJRadlbhfbbxKmigJKuAS2ArMLoakoQn5yW7zI0tY4UpOyfY
+7eyVNxKunRYtsjyMJKw4hwODMj/+TtPVkeqBBYHYTVDZCTGCA4cwggODAgEBMIGAMHkxEDAO
+BgNVBAoTB1Jvb3QgQ0ExHjAcBgNVBAsTFWh0dHA6Ly93d3cuY2FjZXJ0Lm9yZzEiMCAGA1UE
+AxMZQ0EgQ2VydCBTaWduaW5nIEF1dGhvcml0eTEhMB8GCSqGSIb3DQEJARYSc3VwcG9ydEBj
+YWNlcnQub3JnAgMB/00wCQYFKw4DAhoFAKCCAdswGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEH
+ATAcBgkqhkiG9w0BCQUxDxcNMDYxMjAzMTIzODE4WjAjBgkqhkiG9w0BCQQxFgQUhcafhjeG
+qEUqSPgUMYamSGU/s/owUgYJKoZIhvcNAQkPMUUwQzAKBggqhkiG9w0DBzAOBggqhkiG9w0D
+AgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgZEGCSsGAQQB
+gjcQBDGBgzCBgDB5MRAwDgYDVQQKEwdSb290IENBMR4wHAYDVQQLExVodHRwOi8vd3d3LmNh
+Y2VydC5vcmcxIjAgBgNVBAMTGUNBIENlcnQgU2lnbmluZyBBdXRob3JpdHkxITAfBgkqhkiG
+9w0BCQEWEnN1cHBvcnRAY2FjZXJ0Lm9yZwIDAf9NMIGTBgsqhkiG9w0BCRACCzGBg6CBgDB5
+MRAwDgYDVQQKEwdSb290IENBMR4wHAYDVQQLExVodHRwOi8vd3d3LmNhY2VydC5vcmcxIjAg
+BgNVBAMTGUNBIENlcnQgU2lnbmluZyBBdXRob3JpdHkxITAfBgkqhkiG9w0BCQEWEnN1cHBv
+cnRAY2FjZXJ0Lm9yZwIDAf9NMA0GCSqGSIb3DQEBAQUABIIBAAJjiTAJ66v0Ib8Gg10ydkf6
+HbVPcd0IutJOmhHg17kqS3GH+0CbLJIDJxnQhXhkgNIIvO2l4dm8JL8iED5FrbYD/TpYrWmZ
+PUsEAuWRwD/RNiKpbHMYp4k4j8fGOmxPLfj7KH1841uNccIrzqjyZXCSG/rJ3810R85kSmkr
+F2O6xNlqqo6p9w+w82keyidwVHxxnqa5XGxJN8hwiJhiYvLq/FQxAdAN/fu0yMzBFn2s0RhH
+uVpayY4S2j8A4BWk0gJg1aNui8NRyCB0WjvOWcG+bcGoTF5PIbOg32HtY0mvjPUoDYLyt2PM
+7osB/z8Loeq1SpQX6ZeoBSj5bqrXqhoAAAAAAAA=
+--------------ms090507070703040105000408--
