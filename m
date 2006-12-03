@@ -1,11 +1,11 @@
 From: Laurent Riffard <laurent.riffard@free.fr>
-Subject: [PATCH 3/10] Reiser4: fix use after free in jrelse_tail
-Date: Sun, 03 Dec 2006 14:50:25 +0100
-Message-ID: <4572D621.4040800a@free.fr>
+Subject: [PATCH 10/10] reiser4-generic_file_read-fix
+Date: Sun, 03 Dec 2006 14:51:40 +0100
+Message-ID: <4572D66C.5000403a@free.fr>
 References: <4571D852.3080401@free.fr>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30292-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30293-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -15,34 +15,40 @@ List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
 
-(From Andrew Wade <andrew.j.wade@gmail.com>)
+(From Edward Shishkin <edward.shishkin@gmail.com>)
 
-"[nikita-1936] assertion failed: reiser4_no_counters_are_held()" turned
-out to be a bug in the debugging code. I've applied the patch below and
-haven't had a recurrence.
+Use do_sync_read() instead of generic_file_read()
 ---
-fs/reiser4/jnode.c |    4 ++--
-1 files changed, 2 insertions(+), 2 deletions(-)
+fs/reiser4/plugin/file/cryptcompress.c |    2 +-
+fs/reiser4/plugin/object.c             |    1 +
+2 files changed, 2 insertions(+), 1 deletions(-)
 
-diff --git a/fs/reiser4/jnode.c b/fs/reiser4/jnode.c
-index e814712..8e4c026 100644
---- a/fs/reiser4/jnode.c
-+++ b/fs/reiser4/jnode.c
-@@ -999,10 +999,10 @@ void jrelse_tail(jnode * node /* jnode to release references to */ )
-{
-	assert("nikita-489", atomic_read(&node->d_count) > 0);
-	atomic_dec(&node->d_count);
--	/* release reference acquired in jload_gfp() or jinit_new() */
--	jput(node);
-	if (jnode_is_unformatted(node) || jnode_is_znode(node))
-		LOCK_CNT_DEC(d_refs);
-+	/* release reference acquired in jload_gfp() or jinit_new() */
-+	jput(node);
-}
+diff --git a/fs/reiser4/plugin/file/cryptcompress.c b/fs/reiser4/plugin/file/cryptcompress.c
+index b587933..64137dc 100644
+--- a/fs/reiser4/plugin/file/cryptcompress.c
++++ b/fs/reiser4/plugin/file/cryptcompress.c
+@@ -2883,7 +2883,7 @@ ssize_t read_cryptcompress(struct file * file, char __user *buf, size_t size,
+	down_read(&info->lock);
+	LOCK_CNT_INC(inode_sem_r);
 
-/* drop reference to node data. When last reference is dropped, data are
+-	result = generic_file_read(file, buf, size, off);
++	result = do_sync_read(file, buf, size, off);
+
+	up_read(&info->lock);
+	LOCK_CNT_DEC(inode_sem_r);
+diff --git a/fs/reiser4/plugin/object.c b/fs/reiser4/plugin/object.c
+index a57ce06..9f11dd6 100644
+--- a/fs/reiser4/plugin/object.c
++++ b/fs/reiser4/plugin/object.c
+@@ -305,6 +305,7 @@ file_plugin file_plugins[LAST_FILE_PLUGIN_ID] = {
+			.llseek = generic_file_llseek,
+			.read = read_cryptcompress,
+			.write = write_cryptcompress,
++			.aio_read = generic_file_aio_read,
+			.mmap = mmap_cryptcompress,
+			.release = release_cryptcompress,
+			.fsync = sync_common,
 -- 1.4.4.1.gaed4 
-
 
 
 
