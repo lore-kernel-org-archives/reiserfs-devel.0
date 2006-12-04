@@ -1,39 +1,45 @@
-From: "Bryan Petty" <etierra@gmail.com>
+From: Valdis.Kletnieks@vt.edu
 Subject: Re: Howto help hans?
-Date: Mon, 4 Dec 2006 09:07:06 -0700
-Message-ID: <c7ef32a70612040807n7eb1cfe4l9a48429580413a42@mail.gmail.com>
+Date: Mon, 04 Dec 2006 13:16:47 -0500
+Message-ID: <200612041816.kB4IGlYj003526@turing-police.cc.vt.edu>
 References: <194f62550612020728l7f81f634r5ae18881d2ee60f7@mail.gmail.com>
-	 <el168n$5j1$1@sea.gmane.org>
+            <el168n$5j1$1@sea.gmane.org>
 Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1165256207_15310P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30304-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30305-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <el168n$5j1$1@sea.gmane.org>
-Content-Disposition: inline
+In-Reply-To: Your message of "Mon, 04 Dec 2006 13:02:15 GMT."
+             <el168n$5j1$1@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: danny.milo@scratchpost.org
 Cc: reiserfs-list@namesys.com
 
-On 12/4/06, Danny Milosavljevic <danny_milo@yahoo.com> wrote:
-> Hmm? I don't know how it is in the United States of America, but doesn't
-> the plaintiff get an attourney paid "by the court" if he can't afford one?
+--==_Exmh_1165256207_15310P
+Content-Type: text/plain; charset=us-ascii
 
-Yes, and William DuBois is that attorney as recent news articles state.
-
+On Mon, 04 Dec 2006 13:02:15 GMT, Danny Milosavljevic said:
 > What does an attourney cost for, say, 100 hours over there?
 
-Even if I had some idea, it would be significantly more in the Oakland
-area than where I live.
+Guesstimating $200/hour (minimum), you're looking at $20K and up.  Taking
+a case to trial is going to take a lot more than 100 billable hours.
 
-> Also, someone (best: multiple persons) from the Oakland, California area
-> should attend the hearing at 11 Dec 2006 to see that nothing fishy goes
-> on.
 
-Sorry, I'm not anywhere close enough to make that.
 
-Regards,
-Bryan Petty
+--==_Exmh_1165256207_15310P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.5 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFFdGYPcC3lWbTT17ARAi6OAKDTGYmMSqUZRjGXSrzVGKoLgGP4WgCg65NV
+KKazfeJr3DsltQnUkrtJSkA=
+=Tk7F
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1165256207_15310P--
