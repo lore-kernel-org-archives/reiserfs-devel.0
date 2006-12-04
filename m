@@ -1,63 +1,54 @@
-From: Guilherme Covolo <smyows@youare.not.br>
-Subject: Re: Reiser4 for 2.6.19
-Date: Mon, 4 Dec 2006 08:53:37 -0200
-Message-ID: <200612040853.37449.smyows@youare.not.br>
-References: <4571D852.3080401@free.fr>
+From: Gorazd Golob <gorazd.golob@interseek.si>
+Subject: Re: Howto help hans?
+Date: Mon, 04 Dec 2006 13:23:35 +0100
+Message-ID: <1165235015.5486.12.camel@belin>
+References: <194f62550612020728l7f81f634r5ae18881d2ee60f7@mail.gmail.com>
+	 <200612031123.43193.ailau@bidz.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30300-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30301-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4571D852.3080401@free.fr>
-Content-Disposition: inline
+In-Reply-To: <200612031123.43193.ailau@bidz.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+To: Anatoli <ailau@bidz.com>
+Cc: reiserfs-list@namesys.com
 
-great job :)
+I guess it should be possible somehow to raise some funds - guys from
+namesys should give us number of his account or paypal would be safer ?
+I don't have enough experience with all that e-commerce stuff.. 
 
-Em Domingo 03 Dezembro 2006 11:49, Laurent Riffard escreveu:
-> [this is a repost, since half of my previous mails didn't reach
->  reiserfs mailing-list]
->
+
+On Sun, 2006-12-03 at 11:23 -0800, Anatoli wrote:
 > Hi,
->
-> There is 10 patches in this series, first one is "Reiser4 for 2.6.18
-> version 3". It's made up from the last Namesys Reiser4 patch for vanilla
-> kernel
-> (http://ftp.namesys.com/pub/reiser4-for-2.6/2.6.18/reiser4-for-2.6.18-3.pat
->ch.gz), updated to apply cleanly on top of 2.6.19 kernel. One can
-> alternatively apply the original patch from Namesys
-> (reiser4-for-2.6.18-3.patch.gz) on top of 2.6.19 kernel, it will
-> successfully apply with some oddities.
->
-> The 9 next patches are compile-fixes for 2.6.19 or bug-fixes I picked up
-> from reiserfs mailing-list.
->
-> Andrew Wade (3):
->     Reiser4: fix use after free in jrelse_tail
->     Reiser4: release d_ref
->     Reiser4: release d_ref (fix)
->
-> Edward Shishkin (2):
->     Reiser4 for 2.6.18 version 3
->     reiser4-generic_file_read-fix
->
-> Laurent Riffard (5):
->     Reiser4: cometics changes in mm/filemap.c.
->     Reiser4: fix calls to kmem_cache_destroy
->     Reiser4: Replace inode.u.generic_ip with inode.i_private
->     Reiser4: inode.i_blksize suppression
->     Reiser4: remove unnecessary config.h includes.
->
-> The whole series is available as in a single patch:
-> http://laurent.riffard.free.fr/reiser4/reiser4-for-2.6.19.patch.gz.
->
-> I'm not a filesystem guru, nor I'm affiliated with Namesys. These
-> patches just suit my needs. It works for me and I hope it will help
-> somebody else.
->
-> ~~
-> laurent
+> 
+> I talk to peoples here but wasn't be able ot find any ways to help him 
+> eather. :-(
+> If you find anything, could you please let me know also?
+> 
+> Thank you,
+> Anatoli.
+> 
+> On Saturday 02 December 2006 07:28, Clemens Eisserer wrote:
+> > Hello again,
+> >
+> > I just read in a german online news-site
+> > http://forum.tecchannel.de/news/themen/linux/456733/ that Hans'
+> > advocate Daniel Horowitz (I don't know wether this is the right word,
+> > that one how helps hans in front of the court) stopped working for
+> > hime because Hans was not able to pay him anymore.
+> >
+> > I don't know wether this is right or just imagination of newspapers,
+> > but if thats right we should help somehow. As far as I know there is
+> > currently no way of donating to Reiser4's developmant nore to help
+> > Hans in any way? Any ideas?
+> > Whats about registering a domain with sum fund stuff - donate to
+> > Reiser4 / help Hans?
+> >
+> > Does nobody care?!
+> >
+> > lg Clemens
+
