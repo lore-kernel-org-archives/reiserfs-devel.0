@@ -1,40 +1,69 @@
-From: David <lists@edeca.net>
-Subject: --rebuild-tree with no free space and not an md
-Date: Mon, 11 Dec 2006 14:00:20 +0000
-Message-ID: <20061211140020.p1ifuqdeb4o8sgcg@my.pengus.net>
+From: Johannes Hirte <hirtejs@idmt.fraunhofer.de>
+Subject: deadlock produced by reiser4-patch
+Date: Thu, 14 Dec 2006 21:13:26 +0100
+Message-ID: <200612142113.27072.hirtejs@idmt.fraunhofer.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30313-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30322-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; delsp="Yes"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hello,
+The reiser4-patch for 2.6.18 (also included in the mm-tree) contains some 
+changes to sync_sb_inodes, which produces a deadlock on SMP-configured 
+kernels.
 
-I have a problem very similar to the thread below.  A runaway file  
-filled my disk, my machine became unresponsive and then I needed to do  
-a --rebuild-tree (as instructed by --check in the init script).
+diff -urN linux-2.6.18.orig/fs/fs-writeback.c linux-2.6.18/fs/fs-writeback.c
+--- linux-2.6.18.orig/fs/fs-writeback.c	2006-11-20 00:43:20.178243289 +0300
++++ linux-2.6.18/fs/fs-writeback.c	2006-11-19 17:36:10.394665097 +0300
+@@ -286,8 +286,6 @@
+  * WB_SYNC_HOLD is a hack for sys_sync(): reattach the inode to sb->s_dirty 
+so
+  * that it can be located for waiting on in __writeback_single_inode().
+  *
+- * Called under inode_lock.
+- *
+  * If `bdi' is non-zero then we're being asked to writeback a specific queue.
+  * This function assumes that the blockdev superblock's inodes are backed by
+  * a variety of queues, so all inodes are searched.  For other superblocks,
+@@ -303,11 +301,13 @@
+  * on the writer throttling path, and we get decent balancing between many
+  * throttled threads: we don't want them all piling up on __wait_on_inode.
+  */
+-static void
+-sync_sb_inodes(struct super_block *sb, struct writeback_control *wbc)
++void
++generic_sync_sb_inodes(struct super_block *sb, struct writeback_control *wbc)
+ {
+ 	const unsigned long start = jiffies;	/* livelock avoidance */
+ 
++	spin_lock(&inode_lock);
++
+ 	if (!wbc->for_kupdate || list_empty(&sb->s_io))
+ 		list_splice_init(&sb->s_dirty, &sb->s_io);
+ 
+@@ -387,8 +387,19 @@
+ 		if (wbc->nr_to_write <= 0)
+ 			break;
+ 	}
++	spin_unlock(&inode_lock);
+ 	return;		/* Leave any unwritten inodes on s_io */
+ }
++EXPORT_SYMBOL(generic_sync_sb_inodes);
++
++static void
++sync_sb_inodes(struct super_block *sb, struct writeback_control *wbc)
++{
++	if (sb->s_op->sync_inodes)
++		sb->s_op->sync_inodes(sb, wbc);
++	else
++		generic_sync_sb_inodes(sb, wbc);
++}
 
-http://marc.theaimsgroup.com/?l=reiserfs&m=115830875615699&w=2
-
-However, I'm not using md or LVM so I cannot grow the underlying  
-partition.  It is possible that I will be able to get a bigger disk  
-and dd (or ddrescue) an image onto it.  However, will I be able to  
-"add" space to the image in order that --rebuild-tree can succeed?
-
-I don't particularly care about shrinking it again after or copying it  
-back to the original disk, if I can save (some of) the files off of  
-the disk I will be very happy.
-
-I cannot at present mount it and remove a file (though there are  
-plenty which I don't need that would free up space) because it  
-refuses, due to the failed --rebuild-tree.
-
-Thanks,
-
-David
+The spinlock, which is introduced here, is already held by sync_inodes_sb, 
+which themselve call sync_sb_inodes, the system hangs here. 
