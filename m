@@ -1,48 +1,91 @@
 From: "Clemens Eisserer" <linuxhippy@gmail.com>
-Subject: Re: Rescue cds for fsck'ing reiser4?
-Date: Fri, 15 Dec 2006 21:21:43 +0100
-Message-ID: <194f62550612151221s648e80e8q570a7e1934adf3e1@mail.gmail.com>
-References: <194f62550612151028m1e006131w38d3f941e6e2e39e@mail.gmail.com>
-	 <4582F0CB.6030703@namesys.com>
+Subject: Exact error Mssages.
+Date: Fri, 15 Dec 2006 21:32:04 +0100
+Message-ID: <194f62550612151232m69ac7bacod778363c0854b38@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30327-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30328-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <4582F0CB.6030703@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Edward Shishkin <edward@namesys.com>, reiserfs-list@namesys.com
+To: reiserfs-list@namesys.com, Edward Shishkin <edward@namesys.com>
 
 Hi again,
 
-> 1. make sure you have reiser4progs-1.0.6 installed
-> 2. close all applications.
-> 3. start single mode (init 1).
-> 4. remount root partition to "readonly".
-> 5. run fsck.reiser4 root_device_name (if you use cryptcompress, then pass
->    options -n --fix for the first run).
+I thought maybe the exact error-messages could help finding the root
+of the problem. By the way I thought fsck.reiser4 won't write anything
+except I agree that it does?!
 
-Ooops. I did not pass the -n --fix options first, but let fsck.reiser4
-run without any additional options - it stopped with 2 corruptions. I
-decided not to do anything further because I already lost data with
-reiser3's fsck.reiser.
+This are the messages I get from mount:
+reiser4[mount(4030)]: try_init_format40
+(fs/reiser4/plugin/disk_format/disk_format40.c:301)[vpf-1364]:
+NOTICE: Warning: mounting sda3 with fatal errors, forcing read-only mount.
+reiser4: sda3: found disk format 4.0.0.
+reiser4[mount(4030)]: parse_node40
+(fs/reiser4/plugin/node/node40.c:672)[nikita-494]:
+WARNING: Wrong level found in node: 5 != 19
+reiser4[mount(4030)]: key_warning
+(fs/reiser4/plugin/file_plugin_common.c:512)[nikita-717]:
+WARNING: Error for inode 42 (-5)
 
-When rebooting mount claims that it will only load reiser4 read-only
-because it contains errors but it ends up that it can't be mounted at
-all.
+These are the messages from fsck.reiser4:
+[root@localhost ce]# /usr/local/sbin/fsck.reiser4 /dev/sda3
+*******************************************************************
+This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+*******************************************************************
 
-Now I tried to re-run with exactly the options you gave me (I had a
-disk with the same kernel / toolset laying arround) gut it bails out
-with "1 fatal corruption was found". It says the storage tree does not
-exist.
+Fscking the /dev/sda3 block device.
+Will check the consistency of the Reiser4 SuperBlock.
+Will check the consistency of the Reiser4 FileSystem.
+Continue?
+(Yes/No): Yes
+***** fsck.reiser4 started at Fri Dec 15 21:35:34 2006
+Reiser4 fs was detected on /dev/sda3.
+Master super block (16):
+magic:          ReIsEr4
+blksize:        4096
+format:         0x0 (format40)
+uuid:           b5ca3542-79a1-4e8f-b75f-6131aa1b1e6c
+label:          <none>
 
-Any options to get my data back without rebuilding the filesystem. How
-likely is it to get my data back if I choose to rebuild it. I wrote
-some quite tricky pieces of code lately ... would be sad to loose them
-:-/
+Format super block (17):
+plugin:         format40
+description:    Disk-format plugin.
+version:        0
+magic:          ReIsEr40FoRmAt
+mkfs id:        0x3ce373f4
+flushes:        0
+blocks:         14488608
+free blocks:    6920687
+root block:     23
+tail policy:    0x2 (smart)
+next oid:       0x13d5af
+file count:     429397
+tree height:    5
+key policy:     LARGE
 
-Thank you in advance, lg Clemens
+
+CHECKING THE STORAGE TREE
+FSCK: filter.c: 626: repair_filter_traverse: Node (23): failed to open the root
+node. The whole filter pass is skipped.
+Warn : Reiser4 storage tree does not exist. Filter pass skipped.
+        Read nodes 0
+        Nodes left in the tree 0
+                Leaves of them 0, Twigs of them 0
+        Invalid node pointers 1
+        Time interval: Fri Dec 15 21:35:41 2006 - Fri Dec 15 21:35:41 2006
+CHECKING EXTENT REGIONS.
+        Read twigs 0
+        Time interval: Fri Dec 15 21:35:41 2006 - Fri Dec 15 21:35:41 2006
+Warn : Fatal corruptions were found. Semantic pass is skipped.
+***** fsck.reiser4 finished at Fri Dec 15 21:35:41 2006
+Closing fs...done
+
+1 fatal corruptions were detected in FileSystem. Run with --build-fs
+option to fix them.
+
+Hope that helps, lg Clemens
