@@ -1,39 +1,37 @@
-From: "Christopher Covington" <covracer@gmail.com>
-Subject: Rescue cds for fsck'ing reiser4?
-Date: Sat, 16 Dec 2006 12:32:48 +0100
-Message-ID: <dcdcb9a80612160332s138f62e3k3badde1d2e82c68@mail.gmail.com>
-References: <194f62550612151028m1e006131w38d3f941e6e2e39e@mail.gmail.com>
-	 <4582F0CB.6030703@namesys.com>
-	 <194f62550612151221s648e80e8q570a7e1934adf3e1@mail.gmail.com>
-	 <4583166D.60709@namesys.com>
-	 <194f62550612151403h20e5de7x55bc2149f2a236b9@mail.gmail.com>
-	 <dcdcb9a80612160332y7a0bc203p39679cbb031836ce@mail.gmail.com>
+From: "Clemens Eisserer" <linuxhippy@gmail.com>
+Subject: Re: Exact error Mssages.
+Date: Sat, 16 Dec 2006 12:42:13 +0100
+Message-ID: <194f62550612160342m5d449c9bjcfc4dbab3ddeefa5@mail.gmail.com>
+References: <194f62550612151232m69ac7bacod778363c0854b38@mail.gmail.com>
+	 <45831897.2060309@namesys.com>
+	 <194f62550612151404j77797befj9cf6e18dc95e48f2@mail.gmail.com>
+	 <458322A3.2050400@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30330-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30331-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <dcdcb9a80612160332y7a0bc203p39679cbb031836ce@mail.gmail.com>
+In-Reply-To: <458322A3.2050400@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+To: Edward Shishkin <edward@namesys.com>, reiserfs-list@namesys.com
 
-When I was having different and obviously filesystem problems, booting
-up with a reiser4-enabled livecd and rebuilding the tree fixed my fs.
-This is of course only a very small piece of anecdotal evidence
-regarding the reliability of fsck.reiser4's ability to fix the
-filesystem.
+Hi Edward,
 
-Did you check dmesg for file access or write problems? That will tell
-you if the problem is really the filesystem. The crashes could have
-been due to other problems (on from-source distros, reverse
-dependencies often need to be rebuilt to fix linking).
+> Frankly, it is dangerous,
+Well seems I had luck - all the files I would really miss (especially
+the source files changed lately) are there again :-)
 
-The CD I used was the Conrad
-livecd--http://www.elfenbeinturm.cc/download/. SystemrescueCD also has
-r4 support.
+> and it seems you didn't do any backups
+> as I insisted, because cryptcompress stuff is very experimental. Isn't it?
+Of course I did backups, about a week ago or so. However I coded a lot
+this week -> would have been sad to loose this stuff.
 
-Chris
+The sad thing is that I thought I could help making it more stable or
+so by submitting stack-traces - however I never experienced crashes. I
+never had power-downs and my hardware is (really) ok.
+
+Thanks for your patience, lg Clemens
