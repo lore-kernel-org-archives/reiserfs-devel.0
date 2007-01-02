@@ -1,41 +1,28 @@
-From: "Robert MannI" <robmnl@gmail.com>
-Subject: Files as directories
-Date: Mon, 1 Jan 2007 17:57:59 +0100
-Message-ID: <45cff9770701010857i29231cedlb829705bfd37482a@mail.gmail.com>
+From: Joachim Wagner <jwagner@computing.dcu.ie>
+Subject: Re: fsck option --lost-and-found
+Date: Tue, 2 Jan 2007 18:10:43 +0000
+Message-ID: <200701021810.43926.jwagner@computing.dcu.ie>
+References: <200612271816.54908.jwagner@computing.dcu.ie> <200612301337.03373.jwagner@computing.dcu.ie> <200612310407.08436.vs@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30350-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30351-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <200612310407.08436.vs@namesys.com>
 Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: reiserfs-list@namesys.com
 
-Hello!
+Hi Vladimir,
 
+> Do you still reproduce the problem with 
+> ftp://ftp.namesys.com/pub/tmp/reiserfsprogs-3.6.19.tar.gz?
+I didn't make a copy of the partition nor a debugreiserfs image, so I cannot 
+tell.
 
-Is reiser4 capable of having files within files?
-
-e.g.:
-song.mp3/artist.txt
-song.mp3/albumart.jpg
-etc.
-
-
-If it is, how do I get it to work? I compiled linux 2.6.15 + reiser4
-patch + metas patch, but all I get from that is the capability of
-using the .... (metas) directory within files:
-
-cd song.mp3/....
-cat uid
-etc
-
-
-
-
-
-Thanks,
-Robert
+Happy New Year
+Joachim
