@@ -1,32 +1,31 @@
-From: Jens Axboe <jens.axboe@oracle.com>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
 Subject: Re: 2.6.20-rc3-mm1: umount reiser4 FS stuck in D state
-Date: Sat, 6 Jan 2007 17:37:50 +0100
-Message-ID: <20070106163750.GK11203@kernel.dk>
+Date: Sat, 6 Jan 2007 21:58:05 +0300
+Message-ID: <200701062158.06329.vs@namesys.com>
 References: <20070104220200.ae4e9a46.akpm@osdl.org> <459F80E2.7080903@free.fr>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-30359-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Content-Disposition: inline
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932106AbXAFT2Y@vger.kernel.org>
 In-Reply-To: <459F80E2.7080903@free.fr>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
 To: Laurent Riffard <laurent.riffard@free.fr>
-Cc: Andrew Morton <akpm@osdl.org>, Kernel development list <linux-kernel@vger.kernel.org>, "reiserfs-list@namesys.com" <reiserfs-list@namesys.com>
+Cc: reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>, Kernel development list <linux-kernel@vger.kernel.org>
 
-On Sat, Jan 06 2007, Laurent Riffard wrote:
+Hello
+
+On Saturday 06 January 2007 13:58, Laurent Riffard wrote:
 > Le 05.01.2007 07:02, Andrew Morton a =E9crit :
-> >Temporarily at
-> >
-> >	http://userweb.kernel.org/~akpm/2.6.20-rc3-mm1/
-> >
-> >will appear later at
-> >
-> >	ftp://ftp.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.20-rc=
-3/2.6.20-rc3-mm1/
+> > Temporarily at
+> >=20
+> > 	http://userweb.kernel.org/~akpm/2.6.20-rc3-mm1/
+> >=20
+> > will appear later at
+> >=20
+> > 	ftp://ftp.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.=
+20-rc3/2.6.20-rc3-mm1/
 >=20
 > Hello,
 >=20
@@ -35,22 +34,65 @@ On Sat, Jan 06 2007, Laurent Riffard wrote:
 > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > SysRq : Show Blocked State
 >=20
->                         free                        sibling
->  task             PC    stack   pid father child younger older
-> umount        D C013135E  6044  1168   1150                     (NOTLB)
->       de591ae4 00000086 de591abc c013135e dff979c8 c012a6fe 00000046=20
->       00000007 dfd94ac0 128d3000 00000026 00000000 dfd94bcc dff979c8=20
->       de591ae4 dffda038 00000002 dff979c0 dff979bc dff979c8 de591b10=20
->       c012d600 dff979f8 00000000 Call Trace:
-> [<c012d600>] synchronize_qrcu+0x70/0x8c
-> [<c01bede4>] __make_request+0x4c/0x29b
-> [<c01bd24b>] generic_make_request+0x1b0/0x1de
-> [<c01bf354>] submit_bio+0xda/0xe2
+>                          free                        sibling
+>   task             PC    stack   pid father child younger older
+> umount        D C013135E  6044  1168   1150                     (NOTL=
+B)
+>        de591ae4 00000086 de591abc c013135e dff979c8 c012a6fe 00000046=
+ 00000007=20
+>        dfd94ac0 128d3000 00000026 00000000 dfd94bcc dff979c8 de591ae4=
+ dffda038=20
+>        00000002 dff979c0 dff979bc dff979c8 de591b10 c012d600 dff979f8=
+ 00000000=20
+> Call Trace:
+>  [<c012d600>] synchronize_qrcu+0x70/0x8c
+>  [<c01bede4>] __make_request+0x4c/0x29b
+>  [<c01bd24b>] generic_make_request+0x1b0/0x1de
+>  [<c01bf354>] submit_bio+0xda/0xe2
+>  [<e12674bd>] write_jnodes_to_disk_extent+0x920/0x974 [reiser4]
+>  [<e12678dd>] update_journal_footer+0x29f/0x2b7 [reiser4]
+>  [<e1268b65>] write_tx_back+0x149/0x185 [reiser4]
+>  [<e126a8e7>] reiser4_write_logs+0xea4/0xfd2 [reiser4]
+>  [<e125626a>] try_commit_txnh+0x7e6/0xa4f [reiser4]
+>  [<e125661b>] reiser4_txn_end+0x148/0x3cf [reiser4]
+>  [<e12568ad>] reiser4_txn_restart+0xb/0x1a [reiser4]
+>  [<e125692f>] reiser4_txn_restart_current+0x73/0x75 [reiser4]
+>  [<e1256b89>] force_commit_atom+0x258/0x261 [reiser4]
+>  [<e1257703>] txnmgr_force_commit_all+0x406/0x697 [reiser4]
+>  [<e12e5e08>] release_format40+0x10c/0x193 [reiser4]
+>  [<e1279922>] reiser4_put_super+0x134/0x16a [reiser4]
+>  [<c015c930>] generic_shutdown_super+0x55/0xd8
+>  [<c015c9d3>] kill_block_super+0x20/0x32
+>  [<c015ca75>] deactivate_super+0x3f/0x51
+>  [<c016d903>] mntput_no_expire+0x42/0x5f
+>  [<c0160f37>] path_release_on_umount+0x15/0x18
+>  [<c016df77>] sys_umount+0x1a3/0x1cb
+>  [<c016dfb8>] sys_oldumount+0x19/0x1b
+>  [<c0103ed2>] sysenter_past_esp+0x5f/0x99
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> Scenario:
+> - umount a reiser4 FS (no need to write something before)
 
-That's certainly a barrier related hang. Since raid and XFS both hang as
-well, it might be the same problem. I'll get it fixed up, don't expect
-anything before monday though.
+Hmm, I can not reproduce this with 2.6.20-rc3-mm1. Probably I need to c=
+onfig the kernel more close to your system.
 
---=20
-Jens Axboe
+>=20
+> Earlier kernels were OK.
+>=20
+> I tested Frederik Deweerdt's patch for "lockdep: unbalance at=20
+> generic_sync_sb_inodes", it did not help.
+>=20
+> I think I'll a give a try to=20
+> http://userweb.kernel.org/~akpm/2.6.20-rc3-mm1x.bz2 (basically=20
+> 2.6.20-rc3-mm1, minus git-block.patch).
+>=20
+> .config attached
+>=20
 
+
+> ~~
+> laurent
+>=20
+>=20
+>=20
