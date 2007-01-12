@@ -1,37 +1,53 @@
-From: =?windows-1250?Q?Maciej_So=B3tysiak?= <pysiak.satriani@wp.pl>
-Subject: reiserfs --rebuild-tree rocks! :-)
-Date: Mon, 8 Jan 2007 23:43:03 +0100
-Message-ID: <608329969.20070108234303@wp.pl>
-Reply-To: =?windows-1250?Q?Maciej_So=B3tysiak?= <pysiak.satriani@wp.pl>
+From: Eriberto <eriberto@eriberto.pro.br>
+Subject: tail packing don't works with tails
+Date: Thu, 11 Jan 2007 23:57:37 -0200
+Message-ID: <eo6puj$eao$1@sea.gmane.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30367-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30374-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+Sender: news <news@sea.gmane.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-Hi,
+Hello all,
 
-I have a 4GB reiserfs partition and today it found a corruption
-requiring --rebuild-tree. I made a backup then fsck with --rebuild-tree
-and ...
+I have a Debian Etch and a partition formated with ReiserFS 3.6. When I
+put a file less than 4 KB in this partition, the df command don't show a
+variation. Example:
 
-Whhooaaaah, now that is the best looking fsck I have ever seen.
+# df /dev/hda7
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/hda7              9477976     32840   9445136   1% /mnt
 
-Cool words, nice looking progress, quickly changing numbers and directory
-names. Visually intriguing. I am Impressed, it could be used to plant
-awe (or excitement) in any geek :-)
+# dd if=/dev/zero of=/mnt/3k count=1 bs=3k
 
-I really liked it and I would give it a 5/5 points in entertainment
-value :-)
+# df /dev/hda7
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/hda7              9477976     32840   9445136   1% /mnt
 
-Best regards,
-Maciej
+Well, the used space didn't modified. Then the new file was stored in
+the BTree. But when I make a file with 5 KB, two blocks (8 KB) are
+occupied. Example:
 
-ps. I hope that Hans is doing well.
+# df /dev/hda7
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/hda7              9477976     32840   9445136   1% /mnt
 
+# dd if=/dev/zero of=/mnt/5k count=1 bs=5k
+
+# df /dev/hda7
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/hda7              9477976     32848   9445136   1% /mnt
+
+I think a file with 5 KB must occupy one block only (4 KB) and 3 KB must
+be put in the BTree. I would like to know if I am right.
+
+Thanks,
+
+Eriberto - Brazil
 
