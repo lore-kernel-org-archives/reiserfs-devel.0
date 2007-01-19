@@ -1,57 +1,60 @@
-From: "Matheus Izvekov" <mizvekov@gmail.com>
-Subject: Re: bad reiser4 fs causes system to freeze
-Date: Sun, 14 Jan 2007 18:42:30 -0200
-Message-ID: <305c16960701141242t6ec9c478oaf1f0147f0074c78@mail.gmail.com>
-References: <305c16960701130129n3122c73co89d85504267a724a@mail.gmail.com>
-	 <45AA5A3A.50002@namesys.com>
+From: Zan Lynx <zlynx@acm.org>
+Subject: linux-2.6.20-rc4-mm1 Reiser4 filesystem freeze and corruption
+Date: Fri, 19 Jan 2007 10:58:10 -0700
+Message-ID: <1169229490.6266.11.camel@oberon>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30390-reiserfs=m.gmane.org@namesys.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-egadha93x63bRqo945nm"
+Return-path: <reiserfs-list-return-30416-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <45AA5A3A.50002@namesys.com>
-Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Edward Shishkin <edward@namesys.com>
-Cc: reiserfs-list@namesys.com
+To: Linux kernel mailing list <linux-kernel@vger.kernel.org>, ReiserFS List <reiserfs-list@namesys.com>
 
-On 1/14/07, Edward Shishkin <edward@namesys.com> wrote:
-> Matheus Izvekov wrote:
->
-> > Hi all
-> > This filesystem got corrupted by a crash in the middle of an rsync,
->
->
-> what did the first crash look like? also freezing?
->
+--=-egadha93x63bRqo945nm
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-I cant tell, because i was in X, and even the mouse pointer froze.
-Also, nothing got saved in my log file, which was in another fs.
+I have been running 2.6.20-rc2-mm1 without problems, but both rc3-mm1
+and rc4-mm1 have been giving me these freezes.  They were happening
+inside X and without external console it was impossible to get anything,
+plus I was reluctant to test it since the freeze sometimes requires a
+full fsck.reiser4 --build-fs to recover the filesystem.
 
-> > and after that whenever i try to rsync again, my system completely
-> > freezes and i cant even get the oops msg.
->
->
-> serial console would help here..
->
+But I finally got some output in a console session.  I wasn't able to
+get it all, I made some notes of what I think the problem is.  I may try
+again later once I get netconsole working (netconsole fails as a
+built-in, I'll try it as a module next).
 
-Its a bit painful to setup a serial console here. please take a look
-at the dump and try to reproduce it (it was 100% reproducible in 6
-times i tried). if you cant, ill try to get that oops message.
+1 lock held by pdflush/185:
+#0: (&type->s_umount_key#15) ... writeback_inodes+0x89
 
-> > Im using 2.6.19 with latest patch from namesys.
-> > i have a metadata dump of this, its a 8mb bzip2 file. I can send it on
-> > request.
-> >
->
-> ok, let's take a look..
+3 locks held by realsync/12942:
+#0: (&type->s_umount_key#15) at ... __sync_inodes+0x78
+#1: (&mgr->commit_mutex) ... reiser4_txn_end+0x37a
+#2: (&qp->mutex) ... synchronize_qrcu+0x19
 
-Its sent in private
+So, I *think* the problem is two locks on s_umount_key#15.  Does that
+sound likely?  I also noticed QRCU may be involved.
 
-> Thanks.
->
+Perhaps someone will look at this and instantly know what the problem
+is.
 
-Thanks
+If not, I'll be following up with more details like .config and perhaps
+a full sysrq-T dump as soon as that fsck finishes.
+
+--=-egadha93x63bRqo945nm
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQBFsQayG8fHaOLTWwgRAsm3AJ4olwpFn/9rrMvjc9fKuV7178sJzACeL/Ez
+R/vqYlLg1XxkewWgnvQ+VQs=
+=G6Uu
+-----END PGP SIGNATURE-----
+
+--=-egadha93x63bRqo945nm--
+
