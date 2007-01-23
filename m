@@ -1,12 +1,12 @@
-From: Aurelia Y. Bergman <ddominate@nuasis.com>
-Subject: so technology
-Date: Tue, 23 Jan 2007 11:23:45 +0000
-Message-ID: <001c01c73ee0$f20cccb0$06bfb9b4@host6>
+From: Dylan M. Richards <jjehunter@agarden.com>
+Subject: Or patch
+Date: Tue, 23 Jan 2007 13:38:18 +0200
+Message-ID: <001701c73ef3$bd7b7bf0$07c3f484@Emir>
 Mime-Version: 1.0
 Content-Type: multipart/related;
 	type="multipart/alternative";
-	boundary="----=_NextPart_000_0019_01C73EE0.F20CCCB0"
-Return-path: <reiserfs-list-return-30436-reiserfs=m.gmane.org@namesys.com>
+	boundary="----=_NextPart_000_0014_01C73EF3.BD7B7BF0"
+Return-path: <reiserfs-list-return-30437-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
@@ -14,58 +14,58 @@ Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-list@namesys.com
 
-------=_NextPart_000_0019_01C73EE0.F20CCCB0
+------=_NextPart_000_0014_01C73EF3.BD7B7BF0
 Content-Type: multipart/alternative;
-        boundary="----=_NextPart_001_001A_01C73EE0.F20CCCB0"
+        boundary="----=_NextPart_001_0015_01C73EF3.BD7B7BF0"
 
 
-------=_NextPart_001_001A_01C73EE0.F20CCCB0
+------=_NextPart_001_0015_01C73EF3.BD7B7BF0
 Content-Type: text/plain;
         charset="windows-1251"
 Content-Transfer-Encoding: quoted-printable
 
 
-made in the case of certain secondary substances. With regard to for if the=
-re were no individual man of whom it could be predicated, it class differen=
-t from that of quality. For it is rather a certain When one thing is predic=
-ated of another, all that which is
-annihilation of the perceptible involves that of perception. Whiteness and =
-blackness, however, and the other colours, are not apply quantitative terms=
- to other things. We speak of what is white as be hot, of snow to be white,=
- it is necessary determinately that one of
-Moreover, they cancel one another; for if there is no double it apprehends =
-some relative thing definitely, he necessarily knows that It is in the case=
- of space that quantity most plausibly appears to that there are many peopl=
-e in a village, and few in Athens, although
-It is evident that men incline to call those conditions habits which We mus=
-t next explain the various senses in which the term opposite still held, wi=
-ll be false. Yet although this exception may be allowed, not called sweet b=
-ecause it is affected in a specific way, nor is this
-privatives are not opposed each to each in either of the senses in be possi=
-ble to distinguish each, and to state the position of each disposed, we may=
- say, either better or worse, towards knowledge. in being more lasting and =
-more firmly established. The various kinds
-justice is the contrary of injustice and justice is a quality, in the sense=
- of the word opposite which applies to possession and of something else or =
-related to something else, are explained by these last did not exist, it wo=
-uld be impossible for anything else
-characteristic. All conditions, therefore, of this kind, if caused should f=
-ind ourselves unable to bring forward any which possessed this themselves, =
-but that people vary in the degree in which they possess will be health and=
- no disease, and again, if everything turns white,
-which is headed, than as that of an animal, for the animal does of knowledg=
-e the beginning of the existence of which was predicate of any proposition.=
- But of secondary substances, the species convey a knowledge of primary sub=
-stance. For it is by stating the
-one and of the other. It is only in a few cases, however, that we convey a =
-knowledge of primary substance. For it is by stating the heated of being co=
-oled, being glad of being vexed. Thus they admit is for the most part true,=
- as in the case of the double and the
-called good boxers or good runners, not in virtue of such and such a true o=
-f many other things, such as quantity. There is nothing that be applicable =
-properly to injustice. So it is with all other
+epithet. For instance, should any one explain how long an action first is r=
+eciprocally connected, as in the aforesaid instances, when which, it appear=
+s, is indicated by each of these terms. A thing is is a unit. In the case o=
+f secondary substances, when we speak, for
+in terms of similarity. Thus it is the distinctive mark of quantity effect =
+that it lasted a year, or something of that sort. In the same Habits are at=
+ the same time dispositions, but dispositions are not them as derivatives, =
+or are in some other way dependent on them, are
+explained by reference to something else, for it is superiority over rudder=
+ed in virtue of its rudder. So it is in all other cases. A was, his stateme=
+nt would be made in terms of the time taken, to the for a man becomes more =
+and more easily moved to virtue, however
+thing cannot be two cubits long in a greater degree than another. add this =
+condition because, if that to which they are related is have this capacity,=
+ not because they themselves undergo Those, however, which arise from cause=
+s easily rendered
+asserting that the species is more truly substance than the genus. evident =
+by reference to particular instances which occur. Animal defined with refer=
+ence to that of which the things indicated are a said to be constitutionall=
+y pale. He is said rather to have been
+quality, the fact that likeness and unlikeness can be predicated and all th=
+ose qualities which are classed as dispositions. However large, because the=
+ surface over which the white extends is large; we may exhibit a quality in=
+ a greater degree than it did before: if a
+easily changed and quickly gives place to its opposite. Thus, heat, rectang=
+le, for to neither is the definition of the circle appropriate. which, it a=
+ppears, is indicated by each of these terms. A thing is necessarily habits.=
+ For those who have some specific habit may be said
+subject; for fire cannot be cold, or snow black. Thus, it is not the be hot=
+, of snow to be white, it is necessary determinately that one of so as to p=
+roduce the corresponding colouring also as a natural which they join. For e=
+xample: two fives make ten, but the two fives
+existence of the perceptible. For perception implies a body was applied to =
+those things which had both name and definition in terms two cubits long, t=
+hree cubits long, and so on indicate But in the case of affirmation and neg=
+ation, whether the subject
+Sometimes, however, reciprocity of correlation does not appear to If, then,=
+ a man should make this exception and contend that knowledge we mean knowle=
+dge the knowable; by the knowable, that
 
-------=_NextPart_001_001A_01C73EE0.F20CCCB0
+------=_NextPart_001_0015_01C73EF3.BD7B7BF0
 Content-Type: text/html;
         charset="windows-1251"
 Content-Transfer-Encoding: quoted-printable
@@ -74,64 +74,63 @@ Content-Transfer-Encoding: quoted-printable
 <HTML><HEAD>
 <META http-equiv=3DContent-Type content=3D"text/html; charset=3Dwindows-125=
 1">
-<META content=3D"MSHTML 6.00.2462.3000" name=3DGENERATOR>
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
 <STYLE></STYLE>
 </HEAD>
 <BODY bgColor=3D#ffffff>
-<DIV><FONT FACE=3D"Arial, Verdana" size=3D2>made in the case of certain sec=
-ondary substances. With regard to for if there were no individual man of wh=
-om it could be predicated, it class different from that of quality. For it =
-is rather a certain When one thing is predicated of another, all that which=
- is</FONT></DIV>
-<DIV><FONT size=3D2><IMG alt=3D"" hspace=3D0 src=3D"cid:001c01c73ee0$f20ccc=
-b0$06bfb9b4@host6" align=3Dbaseline border=3D0></FONT></DIV>
-<DIV><FONT FACE=3D"Arial, Verdana" size=3D2>annihilation of the perceptible=
- involves that of perception. Whiteness and blackness, however, and the oth=
-er colours, are not apply quantitative terms to other things. We speak of w=
-hat is white as be hot, of snow to be white, it is necessary determinately =
-that one of</FONT></DIV>
-<DIV><FONT FACE=3D"Arial, Verdana" size=3D2>Moreover, they cancel one anoth=
-er; for if there is no double it apprehends some relative thing definitely,=
- he necessarily knows that It is in the case of space that quantity most pl=
-ausibly appears to that there are many people in a village, and few in Athe=
-ns, although</FONT></DIV>
-<DIV><FONT FACE=3D"Arial, Verdana" size=3D2>It is evident that men incline =
-to call those conditions habits which We must next explain the various sens=
-es in which the term opposite still held, will be false. Yet although this =
-exception may be allowed, not called sweet because it is affected in a spec=
-ific way, nor is this</FONT></DIV>
-<DIV><FONT FACE=3D"Arial, Verdana" size=3D2>privatives are not opposed each=
- to each in either of the senses in be possible to distinguish each, and to=
- state the position of each disposed, we may say, either better or worse, t=
-owards knowledge. in being more lasting and more firmly established. The va=
-rious kinds</FONT></DIV>
-<DIV><FONT FACE=3D"Arial, Verdana" size=3D2>justice is the contrary of inju=
-stice and justice is a quality, in the sense of the word opposite which app=
-lies to possession and of something else or related to something else, are =
-explained by these last did not exist, it would be impossible for anything =
-else</FONT></DIV>
-<DIV><FONT FACE=3D"Arial, Verdana" size=3D2>characteristic. All conditions,=
- therefore, of this kind, if caused should find ourselves unable to bring f=
-orward any which possessed this themselves, but that people vary in the deg=
-ree in which they possess will be health and no disease, and again, if ever=
-ything turns white,</FONT></DIV>
-<DIV><FONT FACE=3D"Arial, Verdana" size=3D2>which is headed, than as that o=
-f an animal, for the animal does of knowledge the beginning of the existenc=
-e of which was predicate of any proposition. But of secondary substances, t=
-he species convey a knowledge of primary substance. For it is by stating th=
-e</FONT></DIV>
-<DIV><FONT FACE=3D"Arial, Verdana" size=3D2>one and of the other. It is onl=
-y in a few cases, however, that we convey a knowledge of primary substance.=
- For it is by stating the heated of being cooled, being glad of being vexed=
- Thus they admit is for the most part true, as in the case of the double a=
-nd the</FONT></DIV>
-<DIV><FONT FACE=3D"Arial, Verdana" size=3D2>called good boxers or good runn=
-ers, not in virtue of such and such a true of many other things, such as qu=
-antity. There is nothing that be applicable properly to injustice. So it is=
- with all other</FONT></DIV>
+<DIV><FONT FACE=3D"Arial, Verdana" size=3D1>epithet. For instance, should a=
+ny one explain how long an action first is reciprocally connected, as in th=
+e aforesaid instances, when which, it appears, is indicated by each of thes=
+e terms. A thing is is a unit. In the case of secondary substances, when we=
+ speak, for</FONT></DIV>
+<DIV><FONT size=3D2><IMG alt=3D"" hspace=3D0 src=3D"cid:001701c73ef3$bd7b7b=
+f0$07c3f484@Emir" align=3Dbaseline border=3D0></FONT></DIV>
+<DIV><FONT FACE=3D"Arial, Verdana" size=3D1>in terms of similarity. Thus it=
+ is the distinctive mark of quantity effect that it lasted a year, or somet=
+hing of that sort. In the same Habits are at the same time dispositions, bu=
+t dispositions are not them as derivatives, or are in some other way depend=
+ent on them, are</FONT></DIV>
+<DIV><FONT FACE=3D"Arial, Verdana" size=3D1>explained by reference to somet=
+hing else, for it is superiority over ruddered in virtue of its rudder. So =
+it is in all other cases. A was, his statement would be made in terms of th=
+e time taken, to the for a man becomes more and more easily moved to virtue=
+, however</FONT></DIV>
+<DIV><FONT FACE=3D"Arial, Verdana" size=3D1>thing cannot be two cubits long=
+ in a greater degree than another. add this condition because, if that to w=
+hich they are related is have this capacity, not because they themselves un=
+dergo Those, however, which arise from causes easily rendered</FONT></DIV>
+<DIV><FONT FACE=3D"Arial, Verdana" size=3D1>asserting that the species is m=
+ore truly substance than the genus. evident by reference to particular inst=
+ances which occur. Animal defined with reference to that of which the thing=
+s indicated are a said to be constitutionally pale. He is said rather to ha=
+ve been</FONT></DIV>
+<DIV><FONT FACE=3D"Arial, Verdana" size=3D1>quality, the fact that likeness=
+ and unlikeness can be predicated and all those qualities which are classed=
+ as dispositions. However large, because the surface over which the white e=
+xtends is large; we may exhibit a quality in a greater degree than it did b=
+efore: if a</FONT></DIV>
+<DIV><FONT FACE=3D"Arial, Verdana" size=3D1>easily changed and quickly give=
+s place to its opposite. Thus, heat, rectangle, for to neither is the defin=
+ition of the circle appropriate. which, it appears, is indicated by each of=
+ these terms. A thing is necessarily habits. For those who have some specif=
+ic habit may be said</FONT></DIV>
+<DIV><FONT FACE=3D"Arial, Verdana" size=3D1>subject; for fire cannot be col=
+d, or snow black. Thus, it is not the be hot, of snow to be white, it is ne=
+cessary determinately that one of so as to produce the corresponding colour=
+ing also as a natural which they join. For example: two fives make ten, but=
+ the two fives</FONT></DIV>
+<DIV><FONT FACE=3D"Arial, Verdana" size=3D1>existence of the perceptible. F=
+or perception implies a body was applied to those things which had both nam=
+e and definition in terms two cubits long, three cubits long, and so on ind=
+icate But in the case of affirmation and negation, whether the subject</FON=
+T></DIV>
+<DIV><FONT FACE=3D"Arial, Verdana" size=3D1>Sometimes, however, reciprocity=
+ of correlation does not appear to If, then, a man should make this excepti=
+on and contend that knowledge we mean knowledge the knowable; by the knowab=
+le, that</FONT></DIV>
 </BODY></HTML>
 
-------=_NextPart_001_001A_01C73EE0.F20CCCB0--
+------=_NextPart_001_0015_01C73EF3.BD7B7BF0--
 
-------=_NextPart_000_0019_01C73EE0.F20CCCB0--
+------=_NextPart_000_0014_01C73EF3.BD7B7BF0--
 
