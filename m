@@ -1,119 +1,107 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
-Subject: Re: linux-2.6.20-rc4-mm1 Reiser4 filesystem freeze and corruption
-Date: Tue, 23 Jan 2007 22:15:36 +0300
-Message-ID: <200701232215.37321.vs@namesys.com>
-References: <1169229490.6266.11.camel@oberon> <45B5BB5E.4010802@laposte.net>
+From: Laurent Riffard <laurent.riffard@free.fr>
+Subject: Re: 2.6.20-rc3-mm1: umount reiser4 FS stuck in D state
+Date: Tue, 23 Jan 2007 19:21:40 +0100
+Message-ID: <45B65234.4000203@free.fr>
+References: <20070104220200.ae4e9a46.akpm@osdl.org> <200701062158.06329.vs@namesys.com> <45A81231.6040104@free.fr> <200701231940.58053.vs@namesys.com> <20070123154617.GE11995@kernel.dk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932437AbXAWSQK@vger.kernel.org>
-In-Reply-To: <45B5BB5E.4010802@laposte.net>
-Content-Disposition: inline
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S933101AbXAWSVr@vger.kernel.org>
+In-Reply-To: <20070123154617.GE11995@kernel.dk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>
-Cc: Vince <fuzzy77@laposte.net>, Linux kernel mailing list <linux-kernel@vger.kernel.org>, Zan Lynx <zlynx@acm.org>
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com, Kernel development list <linux-kernel@vger.kernel.org>
 
-Hello
+Le 23.01.2007 16:46, Jens Axboe a =E9crit :
+> On Tue, Jan 23 2007, Vladimir V. Saveliev wrote:
+>> Hello
+>>
+>> On Saturday 13 January 2007 01:56, Laurent Riffard wrote:
+>>> Le 06.01.2007 19:58, Vladimir V. Saveliev a =E9crit :
+>>>> Hello
+>>>>
+>>>> On Saturday 06 January 2007 13:58, Laurent Riffard wrote:
+>>>>> Hello,
+>>>>>
+>>>>> got this with 2.6.20-rc3-mm1:
+>>>>>
+>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+>>>>> SysRq : Show Blocked State
+>>>>>
+>>>>>                          free                        sibling
+>>>>>   task             PC    stack   pid father child younger older
+>>>>> umount        D C013135E  6044  1168   1150                     (=
+NOTLB)
+>>>>>        de591ae4 00000086 de591abc c013135e dff979c8 c012a6fe 0000=
+0046 00000007=20
+>>>>>        dfd94ac0 128d3000 00000026 00000000 dfd94bcc dff979c8 de59=
+1ae4 dffda038=20
+>>>>>        00000002 dff979c0 dff979bc dff979c8 de591b10 c012d600 dff9=
+79f8 00000000=20
+>>>>> Call Trace:
+>>>>>  [<c012d600>] synchronize_qrcu+0x70/0x8c
+>>>>>  [<c01bede4>] __make_request+0x4c/0x29b
+>>>>>  [<c01bd24b>] generic_make_request+0x1b0/0x1de
+>>>>>  [<c01bf354>] submit_bio+0xda/0xe2
+>>>>>  [<e12674bd>] write_jnodes_to_disk_extent+0x920/0x974 [reiser4]
+>>>>>  [<e12678dd>] update_journal_footer+0x29f/0x2b7 [reiser4]
+>>>>>  [<e1268b65>] write_tx_back+0x149/0x185 [reiser4]
+>>>>>  [<e126a8e7>] reiser4_write_logs+0xea4/0xfd2 [reiser4]
+>>>>>  [<e125626a>] try_commit_txnh+0x7e6/0xa4f [reiser4]
+>>>>>  [<e125661b>] reiser4_txn_end+0x148/0x3cf [reiser4]
+>>>>>  [<e12568ad>] reiser4_txn_restart+0xb/0x1a [reiser4]
+>>>>>  [<e125692f>] reiser4_txn_restart_current+0x73/0x75 [reiser4]
+>>>>>  [<e1256b89>] force_commit_atom+0x258/0x261 [reiser4]
+>>>>>  [<e1257703>] txnmgr_force_commit_all+0x406/0x697 [reiser4]
+>>>>>  [<e12e5e08>] release_format40+0x10c/0x193 [reiser4]
+>>>>>  [<e1279922>] reiser4_put_super+0x134/0x16a [reiser4]
+>>>>>  [<c015c930>] generic_shutdown_super+0x55/0xd8
+>>>>>  [<c015c9d3>] kill_block_super+0x20/0x32
+>>>>>  [<c015ca75>] deactivate_super+0x3f/0x51
+>>>>>  [<c016d903>] mntput_no_expire+0x42/0x5f
+>>>>>  [<c0160f37>] path_release_on_umount+0x15/0x18
+>>>>>  [<c016df77>] sys_umount+0x1a3/0x1cb
+>>>>>  [<c016dfb8>] sys_oldumount+0x19/0x1b
+>>>>>  [<c0103ed2>] sysenter_past_esp+0x5f/0x99
+>>>>>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+>>>>>
+>>>>> Scenario:
+>>>>> - umount a reiser4 FS (no need to write something before)
+>>>> Hmm, I can not reproduce this with 2.6.20-rc3-mm1. Probably I need=
+ to config the kernel more close to your system.
+>>>>
+>>>>> Earlier kernels were OK.
+>>> This still happens with 2.6.20-rc4-mm1...
+>>>
+>>> Should I open a bug report at http://bugzilla.kernel.org?
+>>>
+>> Which device with reiser4 did you try to umount?  Jens wrote that it
+>> could be a barrier related. If there are no multidevices involved -
+>> please report to bugzilla.
+>=20
+> Make sure that your kernel contains this fix:
+>=20
+> http://git.kernel.dk/?p=3Dlinux-2.6-block.git;a=3Dcommitdiff;h=3D4af0=
+9c42ee1af70356471f51c1f40c1ff7881b68;hp=3D036f6008f43b5b4dd8c825365f154=
+34d75005c6d
+>=20
+> I think it missed 2.6.20-rc3-mm1. Again, that assumes you are using m=
+d
+> or dm.
 
-On Tuesday 23 January 2007 10:38, Vince wrote:
-> Zan Lynx wrote:
-> > I have been running 2.6.20-rc2-mm1 without problems, but both rc3-mm1
-> > and rc4-mm1 have been giving me these freezes.  They were happening
-> > inside X and without external console it was impossible to get anything,
-> > plus I was reluctant to test it since the freeze sometimes requires a
-> > full fsck.reiser4 --build-fs to recover the filesystem.
->  > [...]
-> 
-> Hi,
-> 
-> I don't know if it is related, but I've had the following BUG on 
-> 2.6.20-rc4-mm1 (+ hot-fixes patches applied) :
-> 
-> -------------------
-> kernel BUG at fs/reiser4/plugin/item/extent_file_ops.c:973!
+I've got 2 reiser4 FS:
+- one with /dev/sdb6
+- the other with /dev/vglinux1/ccache (vglinux1 is built on /dev/sda4=20
+and /dev/sdb7).
+There is no md here, only dm.
 
-This is another problem than Zan's one. The attached patch should fix it.
+I applied the above patch on top of 2.6.20-rc4-mm1, but the problem=20
+still happens with the two devices.
 
-Andrew, please apply.
+thanks
+--=20
+laurent
 
-
-From: Vladimir Saveliev <vs@namesys.com>
-
-remove_suid may open a transaction in reiser4 which is to be restarted
-before entering into main write loop.
-
-Signed-off-by: Vladimir Saveliev <vs@namesys.com>
-
-
-
-
-diff -puN fs/reiser4/plugin/file/file.c~reiser4-restart-transaction-after-remove_suid fs/reiser4/plugin/file/file.c
---- linux-2.6.20-rc3-mm1/fs/reiser4/plugin/file/file.c~reiser4-restart-transaction-after-remove_suid	2007-01-23 18:59:14.000000000 +0300
-+++ linux-2.6.20-rc3-mm1-vs/fs/reiser4/plugin/file/file.c	2007-01-23 19:00:37.000000000 +0300
-@@ -2175,6 +2175,8 @@ ssize_t write_unix_file(struct file *fil
- 		reiser4_exit_context(ctx);
- 		return result;
- 	}
-+	/* remove_suid might create a transaction */
-+	reiser4_txn_restart(ctx);
- 
- 	uf_info = unix_file_inode_data(inode);
- 
-
-_
-
-
-> invalid opcode: 0000 [#1]
-> PREEMPT
-> last sysfs file: /devices/pci0000:00/0000:00:13.0/eth0/statistics/collisions
-> Modules linked in: binfmt_misc nfs lockd sunrpc radeon drm reiser4 
-> ati_remote fuse usbhid snd_via82xx snd_ac97_codec ac97_bus snd_pcm_oss 
-> snd_mixer_oss snd_pcm snd_page_alloc snd_mpu401_uart snd_seq_oss 
-> snd_seq_midi snd_rawmidi snd_seq_midi_event snd_seq snd_timer 
-> snd_seq_device ohci1394 ieee1394 psmouse sr_mod cdrom sg ehci_hcd 
-> via_agp agpgart uhci_hcd usbcore i2c_viapro snd soundcore
-> CPU:    0
-> EIP:    0060:[<f9b8a2e0>]    Not tainted VLI
-> EFLAGS: 00010282   (2.6.20-rc4-mm1 #1)
-> EIP is at reiser4_write_extent+0xd5/0x626 [reiser4]
-> eax: ccca139c   ebx: 00000200   ecx: f5bec400   edx: ffffffe4
-> esi: 00000000   edi: f5bec414   ebp: da6ff274   esp: e17d7e34
-> ds: 007b   es: 007b   fs: 00d8  gs: 0033  ss: 0068
-> Process sstrip (pid: 23858, ti=e17d6000 task=d8ffc570 task.ti=e17d6000)
-> Stack: 00000000 00100100 00200200 00100100 00000034 bf826a50 e083ff00 
-> 00000000
->         c0000000 da6ff2c8 dccba4c0 00000005 000001ff 0000021e 00000000 
-> 00000000
->         00000000 00000000 00000004 f9b6cdad 00000000 00000004 00000004 
-> 00000001
-> Call Trace:
->   [<f9b6cdad>] reiser4_update_sd+0x22/0x28 [reiser4]
->   [<c0162459>] notify_change+0x200/0x20f
->   [<c01b89ed>] vsscanf+0x1e2/0x3ff
->   [<f9b75c80>] write_unix_file+0x0/0x495 [reiser4]
->   [<c013630d>] __remove_suid+0x10/0x14
->   [<c013d847>] mark_page_accessed+0x1c/0x2e
->   [<f9b5fbc2>] reiser4_txn_begin+0x1c/0x2e [reiser4]
->   [<f9b8a20b>] reiser4_write_extent+0x0/0x626 [reiser4]
->   [<f9b75eda>] write_unix_file+0x25a/0x495 [reiser4]
->   [<c0142601>] __handle_mm_fault+0x2bd/0x79b
->   [<f9b75c80>] write_unix_file+0x0/0x495 [reiser4]
->   [<c01514e9>] vfs_write+0x8a/0x136
->   [<c0151a27>] sys_write+0x41/0x67
->   [<c0103c86>] sysenter_past_esp+0x5f/0x85
->   =======================
-> Code: 04 89 0c 24 31 c9 89 5c 24 04 e8 52 fc ff ff 31 d2 e9 59 05 00 00 
-> 64 a1 08 00 00 00 8b 80 b4 04 00 00 8b 40 38 83 78 08 00 74 04 <0f> 0b 
-> eb fe 8b 8c 24 e0 00 00 00 31 db 8b 01 8b 51 04 89 c1 0f
-> EIP: [<f9b8a2e0>] reiser4_write_extent+0xd5/0x626 [reiser4] SS:ESP 
-> 0068:e17d7e34
->   <4>reiser4[sstrip(23858)]: release_unix_file 
-> (fs/reiser4/plugin/file/file.c:2417)[vs-44]:
-> WARNING: out of memory?
-> reiser4[sstrip(23858)]: release_unix_file 
-> (fs/reiser4/plugin/file/file.c:2417)[vs-44]:
-> WARNING: out of memory?
-> 
-> 
-> 
