@@ -1,140 +1,85 @@
-From: sean finney <seanius@seanius.net>
-Subject: reiserfsprogs: options for recovering from reiserfsck/"Not enough
-	allocable blocks"
-Date: Tue, 23 Jan 2007 14:29:09 +0100
-Message-ID: <1169558949.5468.40.camel@localhost>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
+Subject: Re: 2.6.20-rc3-mm1: umount reiser4 FS stuck in D state
+Date: Tue, 23 Jan 2007 19:40:57 +0300
+Message-ID: <200701231940.58053.vs@namesys.com>
+References: <20070104220200.ae4e9a46.akpm@osdl.org> <200701062158.06329.vs@namesys.com> <45A81231.6040104@free.fr>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-44xx7Pc2nCVXX/EmEalO"
-Return-path: <reiserfs-list-return-30439-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932622AbXAWPl3@vger.kernel.org>
+In-Reply-To: <45A81231.6040104@free.fr>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"
+To: Laurent Riffard <laurent.riffard@free.fr>
+Cc: reiserfs-list@namesys.com, Kernel development list <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@suse.de>
 
---=-44xx7Pc2nCVXX/EmEalO
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hello
 
-hi folks,
+On Saturday 13 January 2007 01:56, Laurent Riffard wrote:
+> Le 06.01.2007 19:58, Vladimir V. Saveliev a =E9crit :
+> > Hello
+> >=20
+> > On Saturday 06 January 2007 13:58, Laurent Riffard wrote:
+> >> Hello,
+> >>
+> >> got this with 2.6.20-rc3-mm1:
+> >>
+> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+> >> SysRq : Show Blocked State
+> >>
+> >>                          free                        sibling
+> >>   task             PC    stack   pid father child younger older
+> >> umount        D C013135E  6044  1168   1150                     (N=
+OTLB)
+> >>        de591ae4 00000086 de591abc c013135e dff979c8 c012a6fe 00000=
+046 00000007=20
+> >>        dfd94ac0 128d3000 00000026 00000000 dfd94bcc dff979c8 de591=
+ae4 dffda038=20
+> >>        00000002 dff979c0 dff979bc dff979c8 de591b10 c012d600 dff97=
+9f8 00000000=20
+> >> Call Trace:
+> >>  [<c012d600>] synchronize_qrcu+0x70/0x8c
+> >>  [<c01bede4>] __make_request+0x4c/0x29b
+> >>  [<c01bd24b>] generic_make_request+0x1b0/0x1de
+> >>  [<c01bf354>] submit_bio+0xda/0xe2
+> >>  [<e12674bd>] write_jnodes_to_disk_extent+0x920/0x974 [reiser4]
+> >>  [<e12678dd>] update_journal_footer+0x29f/0x2b7 [reiser4]
+> >>  [<e1268b65>] write_tx_back+0x149/0x185 [reiser4]
+> >>  [<e126a8e7>] reiser4_write_logs+0xea4/0xfd2 [reiser4]
+> >>  [<e125626a>] try_commit_txnh+0x7e6/0xa4f [reiser4]
+> >>  [<e125661b>] reiser4_txn_end+0x148/0x3cf [reiser4]
+> >>  [<e12568ad>] reiser4_txn_restart+0xb/0x1a [reiser4]
+> >>  [<e125692f>] reiser4_txn_restart_current+0x73/0x75 [reiser4]
+> >>  [<e1256b89>] force_commit_atom+0x258/0x261 [reiser4]
+> >>  [<e1257703>] txnmgr_force_commit_all+0x406/0x697 [reiser4]
+> >>  [<e12e5e08>] release_format40+0x10c/0x193 [reiser4]
+> >>  [<e1279922>] reiser4_put_super+0x134/0x16a [reiser4]
+> >>  [<c015c930>] generic_shutdown_super+0x55/0xd8
+> >>  [<c015c9d3>] kill_block_super+0x20/0x32
+> >>  [<c015ca75>] deactivate_super+0x3f/0x51
+> >>  [<c016d903>] mntput_no_expire+0x42/0x5f
+> >>  [<c0160f37>] path_release_on_umount+0x15/0x18
+> >>  [<c016df77>] sys_umount+0x1a3/0x1cb
+> >>  [<c016dfb8>] sys_oldumount+0x19/0x1b
+> >>  [<c0103ed2>] sysenter_past_esp+0x5f/0x99
+> >>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+> >>
+> >> Scenario:
+> >> - umount a reiser4 FS (no need to write something before)
+> >=20
+> > Hmm, I can not reproduce this with 2.6.20-rc3-mm1. Probably I need =
+to config the kernel more close to your system.
+> >=20
+> >> Earlier kernels were OK.
+>=20
+> This still happens with 2.6.20-rc4-mm1...
+>=20
+> Should I open a bug report at http://bugzilla.kernel.org?
+>=20
 
-first, some background:
-
-the server:
-
-reiserfsprogs-3.6.19-1mdk
-Mandrakelinux release 10.2 (Limited Edition 2005) for i586
-Linux 2.6.11-6mdk i686
-
-the partition in question:
-
-~250 GB md(raid1)/lvm reisers partition. =20
-
-what happened:
-
-during all that crazy cross-europe stormy weather last week, there was a
-power outage and this server came up with some filesystem problems.  the
-filesystem mounted, but some files couldn't be deleted/listed/etc.
-fscking led to "you must run with rebuild-tree (cringe)", and re-running
-it gave the following:
-
-(sorry for the line-wrapping)=20
-
-[root@nnnn /]# fsck.reiserfs --rebuild-tree /dev/mapper/vg0-backup
-reiserfsck 3.6.19 (2003 www.namesys.com)
-
-*************************************************************
-** Do not  run  the  program  with  --rebuild-tree  unless **
-
-<snip>
-
-Will rebuild the filesystem (/dev/mapper/vg0-backup) tree
-Will put log info to 'stdout'
-
-Do you want to run this program?[N/Yes] (note need to type Yes if you
-do):Yes
-Replaying journal..
-Reiserfs journal '/dev/mapper/vg0-backup' in blocks [18..8211]: 0
-transactions replayed
-###########
-reiserfsck --rebuild-tree started at Tue Jan 23 10:32:54 2007
-###########
-
-Pass 0:
-####### Pass 0 #######
-Loading on-disk bitmap .. ok, 73257983 blocks marked used
-Skipping 10446 blocks (super block, journal, bitmaps) 73247537 blocks
-will be read
-0%block 1444048: The number of items (1792) is incorrect, should be (1)
-- corrected
-block 1444048: The free space (38084) is incorrect, should be (4048) -
-correctedpass0: vpf-10110: block 1444048, item (0): Unknown item type
-found [808466737 667936 0x421117 ??? (15)] - deleted
-block 1584107: The number of items (1536) is incorrect, should be (1) -
-corrected
-
-<snip maybe 200 or so entries>
-
-block 73233074: The free space (749) is incorrect, should be (4072) -
-corrected
-                                              left 0, 9774 /sec
-2 directory entries were hashed with not set hash.
-8277276 directory entries were hashed with "r5" hash.
-        "r5" hash is selected
-Flushing..finished
-        Read blocks (but not data blocks) 73247537
-                Leaves among those 308680
-                        - leaves all contents of which could not be
-saved and deleted 29
-                Objectids found 2876806
-
-Pass 1 (will try to insert 308651 leaves):
-####### Pass 1 #######
-Looking for allocable blocks .. finished
-0%....20%....40%....60%....80%....pass1: block 72549223, item 0, entry
-60: The entry "continuous_measuremunt_20021031150614.txt" of the
-[3326546 6081821 0xd2c5200 DIR (3)] is hashed with not set whereas
-proper hash is "r5" - deleted
-Not enough allocable blocks, checking bitmap...there are 1 allocable
-blocks, btwout of disk space
-Aborted (core dumped)
-
-
-
-and so goes the saga.  being a good netizen, i've done some preliminary
-googling before coming to you.  it seems there are two common
-suggestions for when this happens:
-
-(1) extend the device (and the fs?) and re-run.  unfortunately this
-isn't really an option for me as that's pretty much all the disk space
-on the system, and it's in LVM on an existing raid1 device (which would
-really complicate things and i've had bad experiences with removing
-logical volumes from an LVM volume group at a later point)
-
-(2) reiserfsprogs 3.6.20, which may have a fix?  doesn't look released
-yet, and i'm not sure how stable/dangerous it is.
-
-also, i've heard mention of --scan-whole-partition.  would that be
-advisable in this situation with 3.6.19?  are there any other
-suggestions?
-
-any help would be much appreciated,
-	sean
-
-
-
---=-44xx7Pc2nCVXX/EmEalO
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2.2 (GNU/Linux)
-
-iD8DBQBFtg2lynjLPm522B0RAv6JAJ0bpJ8yP6Men+qA3KReksbOaYMAfgCfVMqT
-P8DKl1pI6RIOFf3J/2yJMiU=
-=fpMM
------END PGP SIGNATURE-----
-
---=-44xx7Pc2nCVXX/EmEalO--
-
+Which device with reiser4 did you try to umount?
+Jens wrote that it could be a barrier related. If there are no multidev=
+ices involved - please report to bugzilla.
