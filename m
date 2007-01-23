@@ -1,98 +1,69 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: 2.6.20-rc3-mm1: umount reiser4 FS stuck in D state
-Date: Tue, 23 Jan 2007 16:46:17 +0100
-Message-ID: <20070123154617.GE11995@kernel.dk>
-References: <20070104220200.ae4e9a46.akpm@osdl.org> <200701062158.06329.vs@namesys.com> <45A81231.6040104@free.fr> <200701231940.58053.vs@namesys.com>
+From: sean finney <seanius@seanius.net>
+Subject: Re: reiserfsprogs: options for recovering from reiserfsck/"Not
+	enough allocable blocks"
+Date: Tue, 23 Jan 2007 17:05:26 +0100
+Message-ID: <1169568327.5468.71.camel@localhost>
+References: <1169558949.5468.40.camel@localhost>
+	 <200701231919.37775.vs@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932902AbXAWPoo@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <200701231940.58053.vs@namesys.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-c9rVk33qWNh0RkHgZn7B"
+Return-path: <reiserfs-list-return-30442-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+In-Reply-To: <200701231919.37775.vs@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
 To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: Laurent Riffard <laurent.riffard@free.fr>, reiserfs-list@namesys.com, Kernel development list <linux-kernel@vger.kernel.org>
+Cc: reiserfs-list@namesys.com
 
-On Tue, Jan 23 2007, Vladimir V. Saveliev wrote:
-> Hello
+--=-c9rVk33qWNh0RkHgZn7B
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+hi vladimir,
+
+On Tue, 2007-01-23 at 19:19 +0300, Vladimir V. Saveliev wrote:
+> You should setup a linear raid (IMPORTANT: with no persistent super block=
+) of /dev/mapper/vg0-backup and some spare device.
+> Spare device does not have to be big. I do not think that you can not fin=
+d 50mb of disk space to create a loop device on that space.
+> Then you have to run --rebuild-sb and --rebuild-tree
 >=20
-> On Saturday 13 January 2007 01:56, Laurent Riffard wrote:
-> > Le 06.01.2007 19:58, Vladimir V. Saveliev a =E9crit :
-> > > Hello
-> > >=20
-> > > On Saturday 06 January 2007 13:58, Laurent Riffard wrote:
-> > >> Hello,
-> > >>
-> > >> got this with 2.6.20-rc3-mm1:
-> > >>
-> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-> > >> SysRq : Show Blocked State
-> > >>
-> > >>                          free                        sibling
-> > >>   task             PC    stack   pid father child younger older
-> > >> umount        D C013135E  6044  1168   1150                     =
-(NOTLB)
-> > >>        de591ae4 00000086 de591abc c013135e dff979c8 c012a6fe 000=
-00046 00000007=20
-> > >>        dfd94ac0 128d3000 00000026 00000000 dfd94bcc dff979c8 de5=
-91ae4 dffda038=20
-> > >>        00000002 dff979c0 dff979bc dff979c8 de591b10 c012d600 dff=
-979f8 00000000=20
-> > >> Call Trace:
-> > >>  [<c012d600>] synchronize_qrcu+0x70/0x8c
-> > >>  [<c01bede4>] __make_request+0x4c/0x29b
-> > >>  [<c01bd24b>] generic_make_request+0x1b0/0x1de
-> > >>  [<c01bf354>] submit_bio+0xda/0xe2
-> > >>  [<e12674bd>] write_jnodes_to_disk_extent+0x920/0x974 [reiser4]
-> > >>  [<e12678dd>] update_journal_footer+0x29f/0x2b7 [reiser4]
-> > >>  [<e1268b65>] write_tx_back+0x149/0x185 [reiser4]
-> > >>  [<e126a8e7>] reiser4_write_logs+0xea4/0xfd2 [reiser4]
-> > >>  [<e125626a>] try_commit_txnh+0x7e6/0xa4f [reiser4]
-> > >>  [<e125661b>] reiser4_txn_end+0x148/0x3cf [reiser4]
-> > >>  [<e12568ad>] reiser4_txn_restart+0xb/0x1a [reiser4]
-> > >>  [<e125692f>] reiser4_txn_restart_current+0x73/0x75 [reiser4]
-> > >>  [<e1256b89>] force_commit_atom+0x258/0x261 [reiser4]
-> > >>  [<e1257703>] txnmgr_force_commit_all+0x406/0x697 [reiser4]
-> > >>  [<e12e5e08>] release_format40+0x10c/0x193 [reiser4]
-> > >>  [<e1279922>] reiser4_put_super+0x134/0x16a [reiser4]
-> > >>  [<c015c930>] generic_shutdown_super+0x55/0xd8
-> > >>  [<c015c9d3>] kill_block_super+0x20/0x32
-> > >>  [<c015ca75>] deactivate_super+0x3f/0x51
-> > >>  [<c016d903>] mntput_no_expire+0x42/0x5f
-> > >>  [<c0160f37>] path_release_on_umount+0x15/0x18
-> > >>  [<c016df77>] sys_umount+0x1a3/0x1cb
-> > >>  [<c016dfb8>] sys_oldumount+0x19/0x1b
-> > >>  [<c0103ed2>] sysenter_past_esp+0x5f/0x99
-> > >>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> > >>
-> > >> Scenario:
-> > >> - umount a reiser4 FS (no need to write something before)
-> > >=20
-> > > Hmm, I can not reproduce this with 2.6.20-rc3-mm1. Probably I nee=
-d to config the kernel more close to your system.
-> > >=20
-> > >> Earlier kernels were OK.
+> See more details at http://www.mail-archive.com/reiserfs-list@namesys.com=
+/msg21597.html
+
+thanks for this.  it's less complicated than i thought.  i'll report
+back tomorrow morning/afternoon after i've had the chance to run it.
+
+> > (2) reiserfsprogs 3.6.20, which may have a fix?  doesn't look released
+> > yet, and i'm not sure how stable/dangerous it is.
 > >=20
-> > This still happens with 2.6.20-rc4-mm1...
-> >=20
-> > Should I open a bug report at http://bugzilla.kernel.org?
-> >=20
+> 3.6.20 does not have a fix for that bug.
 >=20
-> Which device with reiser4 did you try to umount?  Jens wrote that it
-> could be a barrier related. If there are no multidevices involved -
-> please report to bugzilla.
+> > also, i've heard mention of --scan-whole-partition.  would that be
+> > advisable in this situation with 3.6.19? =20
+>=20
+> no
 
-Make sure that your kernel contains this fix:
+thanks for the clarifications on these, saves me some time and possible
+fs corruption :)
 
-http://git.kernel.dk/?p=3Dlinux-2.6-block.git;a=3Dcommitdiff;h=3D4af09c=
-42ee1af70356471f51c1f40c1ff7881b68;hp=3D036f6008f43b5b4dd8c825365f15434=
-d75005c6d
 
-I think it missed 2.6.20-rc3-mm1. Again, that assumes you are using md
-or dm.
 
---=20
-Jens Axboe
+	sean
+
+--=-c9rVk33qWNh0RkHgZn7B
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2.2 (GNU/Linux)
+
+iD8DBQBFtjJGynjLPm522B0RAtznAKCJYZUmZFnF45GJtmBVgzhEbe+nDQCfeEOv
+k2HsjpJDj3RKmXORnoyvsFY=
+=dh8R
+-----END PGP SIGNATURE-----
+
+--=-c9rVk33qWNh0RkHgZn7B--
+
