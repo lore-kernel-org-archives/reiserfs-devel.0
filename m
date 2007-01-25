@@ -1,50 +1,47 @@
-From: "Xu CanHao" <xucanhao@gmail.com>
-Subject: Re: Reiser4 terribly slow
-Date: Thu, 25 Jan 2007 08:57:29 +0800
-Message-ID: <6ec7a4340701241657o6e160e33ue221abf3c318a7a5@mail.gmail.com>
-References: <6ec7a4340701240605x43297e01xdee68fb7f1d69746@mail.gmail.com>
-	 <200701241942.l0OJgFGM021169@turing-police.cc.vt.edu>
+From: Vince <fuzzy77@laposte.net>
+Subject: Re: linux-2.6.20-rc4-mm1 Reiser4 filesystem freeze and corruption
+Date: Thu, 25 Jan 2007 08:33:28 +0100
+Message-ID: <45B85D48.9080403@laposte.net>
+References: <1169229490.6266.11.camel@oberon> <45B5BB5E.4010802@laposte.net> <200701232215.37321.vs@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30452-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30456-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <200701241942.l0OJgFGM021169@turing-police.cc.vt.edu>
-Content-Disposition: inline
+In-Reply-To: <200701232215.37321.vs@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Valdis.Kletnieks@vt.edu" <Valdis.Kletnieks@vt.edu>, reiserfs-list@namesys.com, reiserfs-dev@namesys.com
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: reiserfs-list@namesys.com, Andrew Morton <akpm@osdl.org>, Linux kernel mailing list <linux-kernel@vger.kernel.org>
 
-AFAIK, vim fsyncs, azureus fsyncs, and may be many other applications
-fsyncs but not only databases.
+Vladimir V. Saveliev wrote:
+> Hello
+> 
+> On Tuesday 23 January 2007 10:38, Vince wrote:
+[...]
+>> I don't know if it is related, but I've had the following BUG on 
+>> 2.6.20-rc4-mm1 (+ hot-fixes patches applied) :
+>>
+>> -------------------
+>> kernel BUG at fs/reiser4/plugin/item/extent_file_ops.c:973!
+> 
+> This is another problem than Zan's one. The attached patch should fix it.
+> 
+> Andrew, please apply.
+> 
+> 
+> From: Vladimir Saveliev <vs@namesys.com>
+> 
+> remove_suid may open a transaction in reiser4 which is to be restarted
+> before entering into main write loop.
+> 
+> Signed-off-by: Vladimir Saveliev <vs@namesys.com>
 
-Definitly turn off fsync() is a bad idea. I just wonder how bad r4's
-fsync() performance is.
+I'm pleased to confirm I wasn't able to reproduce the bug with your 
+patch applied.
 
-It seems the result is: "disabled fsync() r4" is even slower than
-"enabled fsync() ext3.o"
+Regards,
 
-Is it never be possible to improve that? I found in the mailing-list
-that Hans talked it for many years. this must be a CRITICAL
-performance flaw for r4.
-
-2007/1/25, Valdis.Kletnieks@vt.edu <Valdis.Kletnieks@vt.edu>:
-> On Wed, 24 Jan 2007 22:05:53 +0800, Xu CanHao said:
-> > extremely low performance, i managed to turn off fsync() in
-> > fs/reiser4/plugin/file/file.c (nullify the sync_unix_file() function),
->
-> (Maybe you understand the following, if so, feel free to ignore.  I'm
-> mostly making sure the list archives have this note so anybody else tempted
-> to do this will think twice)...
->
-> Note that this can be *very* dangerous to the health of your database
-> if you implement it blindly without understanding the *full* implications.
->
-> Basically, applications almost never call fsync() unless they need it for
-> database consistency.  A system crash at an inopportune time *will* totally
-> ruin your database.
->
->
->
+Vince
