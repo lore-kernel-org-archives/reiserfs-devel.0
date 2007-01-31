@@ -1,35 +1,31 @@
-From: Chris Dukes <pakrat@ftp.linux.org.uk>
+From: "Bryan Petty" <etierra@gmail.com>
 Subject: Re: Spam coming from reiserfs-list
-Date: Wed, 31 Jan 2007 12:19:23 +0000
-Message-ID: <20070131121923.GA31498@ftp.linux.org.uk>
+Date: Wed, 31 Jan 2007 08:42:36 -0700
+Message-ID: <c7ef32a70701310742tb8a5599ue872d39f0abf4071@mail.gmail.com>
 References: <45C02B4D.60601@ultraviolet.org>
+	 <200701311327.32963.vs@namesys.com> <45C06A29.2010609@ultraviolet.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-30495-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30496-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+In-Reply-To: <45C06A29.2010609@ultraviolet.org>
 Content-Disposition: inline
-In-Reply-To: <45C02B4D.60601@ultraviolet.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Tracy R Reed <treed@ultraviolet.org>
-Cc: reiserfs-list@namesys.com
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
 
-On Tue, Jan 30, 2007 at 09:38:21PM -0800, Tracy R Reed wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
-> 
-> 
-> Would someone please restrict this list to subscriber-only like all of
-> the other lists out there? Spam far outnumbers legit posts.
+On 1/31/07, Tracy R Reed <treed@ultraviolet.org> wrote:
+> I understand that. Those people should simply subscribe if they want to
+> post. That is how every one of the other 30 mailing lists I am on works.
+> Otherwise your list is just a spam amplifier.
 
-It's been that way for years.
-Hell there was even the spiffy incident where Hans directed
-one of his minions to delete me from the list to stop me
-from complaining about the spam.
+That isn't an optimal solution since a number of conversations in the
+past have been shared with LKML, and I would like to see those replies
+without needing to subscribe to that mailing list as well.
 
--- 
-Chris Dukes
-"In cynicism she's about 35" -- Terry Pratchett's "Hog Father"
+Regards,
+Bryan Petty
