@@ -1,31 +1,4270 @@
-From: "Bryan Petty" <etierra@gmail.com>
-Subject: Re: Spam coming from reiserfs-list
-Date: Wed, 31 Jan 2007 08:42:36 -0700
-Message-ID: <c7ef32a70701310742tb8a5599ue872d39f0abf4071@mail.gmail.com>
-References: <45C02B4D.60601@ultraviolet.org>
-	 <200701311327.32963.vs@namesys.com> <45C06A29.2010609@ultraviolet.org>
+From: Zan Lynx <zlynx@acm.org>
+Subject: Re: linux-2.6.20-rc4-mm1 Reiser4 filesystem freeze and corruption
+Date: Wed, 31 Jan 2007 11:13:58 -0700
+Message-ID: <1170267238.22971.1.camel@oberon>
+References: <1169229490.6266.11.camel@oberon>
+	 <200701200334.07690.vs@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30496-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30498-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <45C06A29.2010609@ultraviolet.org>
-Content-Disposition: inline
+In-Reply-To: <200701200334.07690.vs@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Tracy R Reed <treed@ultraviolet.org>
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: reiserfs-list@namesys.com, Linux kernel mailing list <linux-kernel@vger.kernel.org>
 
-On 1/31/07, Tracy R Reed <treed@ultraviolet.org> wrote:
-> I understand that. Those people should simply subscribe if they want to
-> post. That is how every one of the other 30 mailing lists I am on works.
-> Otherwise your list is just a spam amplifier.
+On Sat, 2007-01-20 at 03:34 +0300, Vladimir V. Saveliev wrote:
+> Hello
+> 
+> On Friday 19 January 2007 20:58, Zan Lynx wrote:
+> > I have been running 2.6.20-rc2-mm1 without problems, but both rc3-mm1
+> > and rc4-mm1 have been giving me these freezes.  They were happening
+> > inside X and without external console it was impossible to get anything,
+> > plus I was reluctant to test it since the freeze sometimes requires a
+> > full fsck.reiser4 --build-fs to recover the filesystem.
+> > 
+> > But I finally got some output in a console session.  I wasn't able to
+> > get it all, I made some notes of what I think the problem is.  I may try
+> > again later once I get netconsole working (netconsole fails as a
+> > built-in, I'll try it as a module next).
+[snip]
+> yes, please provide more information. Full kernel output at time of freeze is very desirable.
 
-That isn't an optimal solution since a number of conversations in the
-past have been shared with LKML, and I would like to see those replies
-without needing to subscribe to that mailing list as well.
+Here comes a full sized bug report, as best as I can do it.  This is
+kernel 2.6.20-rc6-mm3 instead of rc4-mm1.  Still has the problem.
 
-Regards,
-Bryan Petty
+System slowly freezes up
+
+First local shells stop responding, gkrellm continues working, eventually
+remote shells freeze also.  Keyboard LEDs stop responding but SysRq works.
+
+I believe its disk or VFS access that kills it.
+
+Some unusual things about the system are:
+Reiser4
+Gentoo Emerge was running and was forcing writes to disk.
+Custom program 'readlock' has large numbers of system binaries and libraries mmap'd and mlocked into RAM.
+
+[4.] Kernel information
+[4.1.] Kernel version (from /proc/version):
+# cat /proc/version 
+Linux version 2.6.20-rc6-mm3 (root@zephyr) (gcc version 4.2.0-alpha20070117 (prerelease) (Gentoo 4.2.0_alpha20070117)) #1 Tue Jan 30 13:15:43 MST 2007
+
+[4.2.] Kernel .config file:
+# Automatically generated make config: don't edit
+# Linux kernel version: 2.6.20-rc6-mm3
+# Tue Jan 30 12:52:27 2007
+#
+CONFIG_X86_64=y
+CONFIG_64BIT=y
+CONFIG_X86=y
+CONFIG_GENERIC_TIME=y
+CONFIG_GENERIC_TIME_VSYSCALL=y
+CONFIG_ZONE_DMA32=y
+CONFIG_LOCKDEP_SUPPORT=y
+CONFIG_STACKTRACE_SUPPORT=y
+CONFIG_SEMAPHORE_SLEEPERS=y
+CONFIG_MMU=y
+CONFIG_ZONE_DMA=y
+CONFIG_RWSEM_GENERIC_SPINLOCK=y
+CONFIG_GENERIC_HWEIGHT=y
+CONFIG_GENERIC_CALIBRATE_DELAY=y
+CONFIG_X86_CMPXCHG=y
+CONFIG_EARLY_PRINTK=y
+CONFIG_GENERIC_ISA_DMA=y
+CONFIG_GENERIC_IOMAP=y
+CONFIG_ARCH_MAY_HAVE_PC_FDC=y
+CONFIG_ARCH_POPULATES_NODE_MAP=y
+CONFIG_DMI=y
+CONFIG_AUDIT_ARCH=y
+CONFIG_GENERIC_BUG=y
+# CONFIG_ARCH_HAS_ILOG2_U32 is not set
+# CONFIG_ARCH_HAS_ILOG2_U64 is not set
+CONFIG_DEFCONFIG_LIST="/lib/modules/$UNAME_RELEASE/.config"
+
+#
+# Code maturity level options
+#
+CONFIG_EXPERIMENTAL=y
+CONFIG_BROKEN_ON_SMP=y
+CONFIG_INIT_ENV_ARG_LIMIT=32
+
+#
+# General setup
+#
+CONFIG_LOCALVERSION=""
+# CONFIG_LOCALVERSION_AUTO is not set
+CONFIG_SWAP=y
+CONFIG_SWAP_PREFETCH=y
+CONFIG_SYSVIPC=y
+CONFIG_SYSVIPC_SYSCTL=y
+CONFIG_POSIX_MQUEUE=y
+# CONFIG_BSD_PROCESS_ACCT is not set
+CONFIG_TASKSTATS=y
+CONFIG_TASK_DELAY_ACCT=y
+CONFIG_USER_NS=y
+CONFIG_AUDIT=y
+CONFIG_AUDITSYSCALL=y
+CONFIG_IKCONFIG=y
+CONFIG_IKCONFIG_PROC=y
+# CONFIG_SYSFS_DEPRECATED is not set
+CONFIG_RELAY=y
+# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
+# CONFIG_TASK_XACCT is not set
+CONFIG_SYSCTL=y
+# CONFIG_EMBEDDED is not set
+CONFIG_UID16=y
+CONFIG_SYSCTL_SYSCALL=y
+CONFIG_KALLSYMS=y
+CONFIG_KALLSYMS_ALL=y
+# CONFIG_KALLSYMS_EXTRA_PASS is not set
+CONFIG_HOTPLUG=y
+CONFIG_PRINTK=y
+CONFIG_BUG=y
+CONFIG_ELF_CORE=y
+CONFIG_BASE_FULL=y
+CONFIG_FUTEX=y
+CONFIG_EPOLL=y
+CONFIG_SHMEM=y
+CONFIG_SLAB=y
+CONFIG_VM_EVENT_COUNTERS=y
+CONFIG_CLASSIC_RCU=y
+# CONFIG_PREEMPT_RCU is not set
+# CONFIG_RCU_TRACE is not set
+CONFIG_RT_MUTEXES=y
+# CONFIG_TINY_SHMEM is not set
+CONFIG_BASE_SMALL=0
+# CONFIG_SLOB is not set
+
+#
+# Loadable module support
+#
+CONFIG_MODULES=y
+CONFIG_MODULE_UNLOAD=y
+CONFIG_MODULE_FORCE_UNLOAD=y
+# CONFIG_MODVERSIONS is not set
+# CONFIG_MODULE_SRCVERSION_ALL is not set
+CONFIG_KMOD=y
+
+#
+# Block layer
+#
+CONFIG_BLOCK=y
+CONFIG_BLK_DEV_IO_TRACE=y
+
+#
+# IO Schedulers
+#
+CONFIG_IOSCHED_NOOP=y
+CONFIG_IOSCHED_AS=y
+CONFIG_IOSCHED_DEADLINE=y
+CONFIG_IOSCHED_CFQ=y
+# CONFIG_DEFAULT_AS is not set
+# CONFIG_DEFAULT_DEADLINE is not set
+CONFIG_DEFAULT_CFQ=y
+# CONFIG_DEFAULT_NOOP is not set
+CONFIG_DEFAULT_IOSCHED="cfq"
+
+#
+# Processor type and features
+#
+CONFIG_X86_PC=y
+# CONFIG_X86_VSMP is not set
+CONFIG_MK8=y
+# CONFIG_MPSC is not set
+# CONFIG_MCORE2 is not set
+# CONFIG_GENERIC_CPU is not set
+CONFIG_X86_L1_CACHE_BYTES=64
+CONFIG_X86_L1_CACHE_SHIFT=6
+CONFIG_X86_INTERNODE_CACHE_BYTES=64
+CONFIG_X86_TSC=y
+CONFIG_X86_GOOD_APIC=y
+# CONFIG_MICROCODE is not set
+CONFIG_X86_MSR=y
+CONFIG_X86_CPUID=y
+CONFIG_X86_IO_APIC=y
+CONFIG_X86_LOCAL_APIC=y
+CONFIG_MTRR=y
+# CONFIG_SMP is not set
+# CONFIG_PREEMPT_NONE is not set
+CONFIG_PREEMPT_VOLUNTARY=y
+# CONFIG_PREEMPT is not set
+CONFIG_ARCH_SPARSEMEM_ENABLE=y
+CONFIG_ARCH_FLATMEM_ENABLE=y
+CONFIG_SELECT_MEMORY_MODEL=y
+CONFIG_FLATMEM_MANUAL=y
+# CONFIG_DISCONTIGMEM_MANUAL is not set
+# CONFIG_SPARSEMEM_MANUAL is not set
+CONFIG_FLATMEM=y
+CONFIG_FLAT_NODE_MEM_MAP=y
+# CONFIG_SPARSEMEM_STATIC is not set
+CONFIG_SPLIT_PTLOCK_CPUS=4
+CONFIG_RESOURCES_64BIT=y
+CONFIG_ZONE_DMA_FLAG=1
+CONFIG_ADAPTIVE_READAHEAD=y
+# CONFIG_DEBUG_READAHEAD is not set
+CONFIG_ARCH_HAS_SETUP_ADDITIONAL_PAGES=y
+CONFIG_ARCH_ENABLE_MEMORY_HOTPLUG=y
+CONFIG_HPET_TIMER=y
+CONFIG_HPET_EMULATE_RTC=y
+CONFIG_IOMMU=y
+# CONFIG_CALGARY_IOMMU is not set
+CONFIG_SWIOTLB=y
+CONFIG_X86_MCE=y
+# CONFIG_X86_MCE_INTEL is not set
+CONFIG_X86_MCE_AMD=y
+CONFIG_KEXEC=y
+# CONFIG_CRASH_DUMP is not set
+CONFIG_PHYSICAL_START=0x200000
+CONFIG_SECCOMP=y
+CONFIG_CC_STACKPROTECTOR=y
+# CONFIG_CC_STACKPROTECTOR_ALL is not set
+# CONFIG_HZ_100 is not set
+CONFIG_HZ_250=y
+# CONFIG_HZ_300 is not set
+# CONFIG_HZ_1000 is not set
+CONFIG_HZ=250
+CONFIG_REORDER=y
+CONFIG_K8_NB=y
+CONFIG_GENERIC_HARDIRQS=y
+CONFIG_GENERIC_IRQ_PROBE=y
+CONFIG_ISA_DMA_API=y
+
+#
+# Power management options
+#
+CONFIG_PM=y
+CONFIG_PM_LEGACY=y
+CONFIG_PM_DEBUG=y
+CONFIG_DISABLE_CONSOLE_SUSPEND=y
+# CONFIG_PM_SYSFS_DEPRECATED is not set
+CONFIG_SOFTWARE_SUSPEND=y
+CONFIG_PM_STD_PARTITION="/dev/hda3"
+
+#
+# ACPI (Advanced Configuration and Power Interface) Support
+#
+CONFIG_ACPI=y
+CONFIG_ACPI_SLEEP=y
+CONFIG_ACPI_SLEEP_PROC_FS=y
+# CONFIG_ACPI_SLEEP_PROC_SLEEP is not set
+CONFIG_ACPI_AC=y
+CONFIG_ACPI_BATTERY=y
+CONFIG_ACPI_BUTTON=y
+CONFIG_ACPI_VIDEO=y
+CONFIG_ACPI_HOTKEY=y
+CONFIG_ACPI_FAN=y
+CONFIG_ACPI_DOCK=y
+# CONFIG_ACPI_BAY is not set
+CONFIG_ACPI_PROCESSOR=y
+CONFIG_ACPI_THERMAL=y
+# CONFIG_ACPI_ASUS is not set
+# CONFIG_ACPI_IBM is not set
+# CONFIG_ACPI_TOSHIBA is not set
+# CONFIG_ACPI_SONY is not set
+CONFIG_ACPI_BLACKLIST_YEAR=0
+CONFIG_ACPI_DEBUG=y
+CONFIG_ACPI_EC=y
+CONFIG_ACPI_POWER=y
+CONFIG_ACPI_SYSTEM=y
+CONFIG_X86_PM_TIMER=y
+# CONFIG_ACPI_CONTAINER is not set
+
+#
+# CPU Frequency scaling
+#
+CONFIG_CPU_FREQ=y
+CONFIG_CPU_FREQ_TABLE=y
+# CONFIG_CPU_FREQ_DEBUG is not set
+CONFIG_CPU_FREQ_STAT=y
+CONFIG_CPU_FREQ_STAT_DETAILS=y
+# CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE is not set
+CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE=y
+CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
+CONFIG_CPU_FREQ_GOV_POWERSAVE=y
+CONFIG_CPU_FREQ_GOV_USERSPACE=y
+CONFIG_CPU_FREQ_GOV_ONDEMAND=y
+CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
+
+#
+# CPUFreq processor drivers
+#
+CONFIG_X86_POWERNOW_K8=y
+CONFIG_X86_POWERNOW_K8_ACPI=y
+# CONFIG_X86_SPEEDSTEP_CENTRINO is not set
+CONFIG_X86_ACPI_CPUFREQ=y
+
+#
+# shared options
+#
+# CONFIG_X86_ACPI_CPUFREQ_PROC_INTF is not set
+# CONFIG_X86_SPEEDSTEP_LIB is not set
+
+#
+# Bus options (PCI etc.)
+#
+CONFIG_PCI=y
+CONFIG_PCI_DIRECT=y
+CONFIG_PCI_MMCONFIG=y
+# CONFIG_PCI_DOMAINS is not set
+# CONFIG_PCIEPORTBUS is not set
+CONFIG_PCI_MSI=y
+# CONFIG_PCI_DEBUG is not set
+CONFIG_HT_IRQ=y
+
+#
+# PCCARD (PCMCIA/CardBus) support
+#
+CONFIG_PCCARD=y
+CONFIG_PCMCIA_DEBUG=y
+CONFIG_PCMCIA=y
+CONFIG_PCMCIA_LOAD_CIS=y
+# CONFIG_PCMCIA_IOCTL is not set
+CONFIG_CARDBUS=y
+
+#
+# PC-card bridges
+#
+CONFIG_YENTA=m
+CONFIG_YENTA_O2=y
+CONFIG_YENTA_RICOH=y
+CONFIG_YENTA_TI=y
+CONFIG_YENTA_ENE_TUNE=y
+CONFIG_YENTA_TOSHIBA=y
+# CONFIG_PD6729 is not set
+# CONFIG_I82092 is not set
+CONFIG_PCCARD_NONSTATIC=m
+
+#
+# PCI Hotplug Support
+#
+# CONFIG_HOTPLUG_PCI is not set
+
+#
+# Executable file formats / Emulations
+#
+CONFIG_BINFMT_ELF=y
+CONFIG_BINFMT_MISC=y
+CONFIG_IA32_EMULATION=y
+CONFIG_IA32_AOUT=y
+CONFIG_COMPAT=y
+CONFIG_SYSVIPC_COMPAT=y
+
+#
+# Networking
+#
+CONFIG_NET=y
+
+#
+# Networking options
+#
+# CONFIG_NETDEBUG is not set
+CONFIG_PACKET=y
+CONFIG_PACKET_MMAP=y
+CONFIG_UNIX=y
+CONFIG_XFRM=y
+CONFIG_XFRM_USER=y
+# CONFIG_XFRM_SUB_POLICY is not set
+CONFIG_NET_KEY=y
+CONFIG_INET=y
+CONFIG_IP_MULTICAST=y
+# CONFIG_IP_ADVANCED_ROUTER is not set
+CONFIG_IP_FIB_HASH=y
+# CONFIG_IP_PNP is not set
+CONFIG_NET_IPIP=m
+CONFIG_NET_IPGRE=m
+# CONFIG_NET_IPGRE_BROADCAST is not set
+# CONFIG_IP_MROUTE is not set
+# CONFIG_ARPD is not set
+# CONFIG_SYN_COOKIES is not set
+CONFIG_INET_AH=m
+CONFIG_INET_ESP=m
+CONFIG_INET_IPCOMP=m
+CONFIG_INET_XFRM_TUNNEL=m
+CONFIG_INET_TUNNEL=m
+CONFIG_INET_XFRM_MODE_TRANSPORT=y
+CONFIG_INET_XFRM_MODE_TUNNEL=y
+CONFIG_INET_XFRM_MODE_BEET=y
+CONFIG_INET_DIAG=y
+CONFIG_INET_TCP_DIAG=y
+# CONFIG_TCP_CONG_ADVANCED is not set
+CONFIG_TCP_CONG_CUBIC=y
+CONFIG_DEFAULT_TCP_CONG="cubic"
+# CONFIG_TCP_MD5SIG is not set
+CONFIG_IPV6=m
+# CONFIG_IPV6_PRIVACY is not set
+# CONFIG_IPV6_ROUTER_PREF is not set
+# CONFIG_INET6_AH is not set
+# CONFIG_INET6_ESP is not set
+# CONFIG_INET6_IPCOMP is not set
+# CONFIG_IPV6_MIP6 is not set
+# CONFIG_INET6_XFRM_TUNNEL is not set
+CONFIG_INET6_TUNNEL=m
+# CONFIG_INET6_XFRM_MODE_TRANSPORT is not set
+# CONFIG_INET6_XFRM_MODE_TUNNEL is not set
+# CONFIG_INET6_XFRM_MODE_BEET is not set
+# CONFIG_INET6_XFRM_MODE_ROUTEOPTIMIZATION is not set
+CONFIG_IPV6_SIT=m
+CONFIG_IPV6_TUNNEL=m
+# CONFIG_IPV6_MULTIPLE_TABLES is not set
+# CONFIG_NETWORK_SECMARK is not set
+# CONFIG_NETFILTER is not set
+
+#
+# DCCP Configuration (EXPERIMENTAL)
+#
+CONFIG_IP_DCCP=m
+CONFIG_INET_DCCP_DIAG=m
+CONFIG_IP_DCCP_ACKVEC=y
+
+#
+# DCCP CCIDs Configuration (EXPERIMENTAL)
+#
+CONFIG_IP_DCCP_CCID2=m
+# CONFIG_IP_DCCP_CCID2_DEBUG is not set
+CONFIG_IP_DCCP_CCID3=m
+CONFIG_IP_DCCP_TFRC_LIB=m
+# CONFIG_IP_DCCP_CCID3_DEBUG is not set
+CONFIG_IP_DCCP_CCID3_RTO=100
+
+#
+# DCCP Kernel Hacking
+#
+CONFIG_IP_DCCP_DEBUG=y
+# CONFIG_NET_DCCPPROBE is not set
+
+#
+# SCTP Configuration (EXPERIMENTAL)
+#
+CONFIG_IP_SCTP=m
+# CONFIG_SCTP_DBG_MSG is not set
+# CONFIG_SCTP_DBG_OBJCNT is not set
+# CONFIG_SCTP_HMAC_NONE is not set
+CONFIG_SCTP_HMAC_SHA1=y
+# CONFIG_SCTP_HMAC_MD5 is not set
+
+#
+# TIPC Configuration (EXPERIMENTAL)
+#
+# CONFIG_TIPC is not set
+# CONFIG_ATM is not set
+# CONFIG_BRIDGE is not set
+CONFIG_VLAN_8021Q=m
+# CONFIG_DECNET is not set
+# CONFIG_LLC2 is not set
+# CONFIG_IPX is not set
+# CONFIG_ATALK is not set
+# CONFIG_X25 is not set
+# CONFIG_LAPB is not set
+# CONFIG_ECONET is not set
+# CONFIG_WAN_ROUTER is not set
+
+#
+# QoS and/or fair queueing
+#
+# CONFIG_NET_SCHED is not set
+
+#
+# Network testing
+#
+# CONFIG_NET_PKTGEN is not set
+# CONFIG_NET_TCPPROBE is not set
+# CONFIG_HAMRADIO is not set
+# CONFIG_IRDA is not set
+CONFIG_BT=m
+CONFIG_BT_L2CAP=m
+CONFIG_BT_SCO=m
+CONFIG_BT_RFCOMM=m
+CONFIG_BT_RFCOMM_TTY=y
+CONFIG_BT_BNEP=m
+CONFIG_BT_BNEP_MC_FILTER=y
+CONFIG_BT_BNEP_PROTO_FILTER=y
+CONFIG_BT_HIDP=m
+
+#
+# Bluetooth device drivers
+#
+CONFIG_BT_HCIUSB=m
+CONFIG_BT_HCIUSB_SCO=y
+CONFIG_BT_HCIUART=m
+CONFIG_BT_HCIUART_H4=y
+CONFIG_BT_HCIUART_BCSP=y
+CONFIG_BT_HCIBCM203X=m
+CONFIG_BT_HCIBPA10X=m
+CONFIG_BT_HCIBFUSB=m
+# CONFIG_BT_HCIDTL1 is not set
+# CONFIG_BT_HCIBT3C is not set
+# CONFIG_BT_HCIBLUECARD is not set
+# CONFIG_BT_HCIBTUART is not set
+CONFIG_BT_HCIVHCI=m
+CONFIG_IEEE80211=y
+CONFIG_IEEE80211_DEBUG=y
+CONFIG_IEEE80211_CRYPT_WEP=m
+CONFIG_IEEE80211_CRYPT_CCMP=m
+CONFIG_IEEE80211_CRYPT_TKIP=m
+CONFIG_IEEE80211_SOFTMAC=m
+CONFIG_IEEE80211_SOFTMAC_DEBUG=y
+CONFIG_WIRELESS_EXT=y
+
+#
+# Device Drivers
+#
+
+#
+# Generic Driver Options
+#
+CONFIG_STANDALONE=y
+CONFIG_PREVENT_FIRMWARE_BUILD=y
+CONFIG_FW_LOADER=y
+# CONFIG_DEBUG_DRIVER is not set
+# CONFIG_SYS_HYPERVISOR is not set
+
+#
+# Connector - unified userspace <-> kernelspace linker
+#
+CONFIG_CONNECTOR=m
+
+#
+# Memory Technology Devices (MTD)
+#
+# CONFIG_MTD is not set
+
+#
+# Parallel port support
+#
+# CONFIG_PARPORT is not set
+
+#
+# Plug and Play support
+#
+# CONFIG_PNP is not set
+
+#
+# Block devices
+#
+# CONFIG_BLK_DEV_FD is not set
+# CONFIG_BLK_CPQ_DA is not set
+# CONFIG_BLK_CPQ_CISS_DA is not set
+# CONFIG_BLK_DEV_DAC960 is not set
+# CONFIG_BLK_DEV_UMEM is not set
+# CONFIG_BLK_DEV_COW_COMMON is not set
+CONFIG_BLK_DEV_LOOP=y
+# CONFIG_BLK_DEV_CRYPTOLOOP is not set
+# CONFIG_BLK_DEV_NBD is not set
+# CONFIG_BLK_DEV_SX8 is not set
+# CONFIG_BLK_DEV_UB is not set
+# CONFIG_BLK_DEV_RAM is not set
+# CONFIG_BLK_DEV_INITRD is not set
+CONFIG_CDROM_PKTCDVD=m
+CONFIG_CDROM_PKTCDVD_BUFFERS=8
+CONFIG_CDROM_PKTCDVD_WCACHE=y
+# CONFIG_ATA_OVER_ETH is not set
+
+#
+# Misc devices
+#
+# CONFIG_IBM_ASM is not set
+# CONFIG_SGI_IOC4 is not set
+CONFIG_TIFM_CORE=m
+CONFIG_TIFM_7XX1=m
+# CONFIG_MSI_LAPTOP is not set
+# CONFIG_BLINK is not set
+
+#
+# ATA/ATAPI/MFM/RLL support
+#
+# CONFIG_IDE is not set
+
+#
+# SCSI device support
+#
+# CONFIG_RAID_ATTRS is not set
+CONFIG_SCSI=y
+CONFIG_SCSI_TGT=m
+# CONFIG_SCSI_NETLINK is not set
+# CONFIG_SCSI_PROC_FS is not set
+
+#
+# SCSI support type (disk, tape, CD-ROM)
+#
+CONFIG_BLK_DEV_SD=y
+# CONFIG_CHR_DEV_ST is not set
+# CONFIG_CHR_DEV_OSST is not set
+CONFIG_BLK_DEV_SR=y
+# CONFIG_BLK_DEV_SR_VENDOR is not set
+CONFIG_CHR_DEV_SG=m
+# CONFIG_CHR_DEV_SCH is not set
+
+#
+# Some SCSI devices (e.g. CD jukebox) support multiple LUNs
+#
+# CONFIG_SCSI_MULTI_LUN is not set
+# CONFIG_SCSI_CONSTANTS is not set
+# CONFIG_SCSI_LOGGING is not set
+# CONFIG_SCSI_SCAN_ASYNC is not set
+
+#
+# SCSI Transports
+#
+# CONFIG_SCSI_SPI_ATTRS is not set
+# CONFIG_SCSI_FC_ATTRS is not set
+# CONFIG_SCSI_ISCSI_ATTRS is not set
+# CONFIG_SCSI_SAS_ATTRS is not set
+# CONFIG_SCSI_SAS_LIBSAS is not set
+
+#
+# SCSI low-level drivers
+#
+# CONFIG_ISCSI_TCP is not set
+# CONFIG_BLK_DEV_3W_XXXX_RAID is not set
+# CONFIG_SCSI_3W_9XXX is not set
+# CONFIG_SCSI_ACARD is not set
+# CONFIG_SCSI_AACRAID is not set
+# CONFIG_SCSI_AIC7XXX is not set
+# CONFIG_SCSI_AIC7XXX_OLD is not set
+# CONFIG_SCSI_AIC79XX is not set
+# CONFIG_SCSI_AIC94XX is not set
+# CONFIG_SCSI_ARCMSR is not set
+# CONFIG_MEGARAID_NEWGEN is not set
+# CONFIG_MEGARAID_LEGACY is not set
+# CONFIG_MEGARAID_SAS is not set
+# CONFIG_SCSI_HPTIOP is not set
+# CONFIG_SCSI_BUSLOGIC is not set
+# CONFIG_SCSI_DMX3191D is not set
+# CONFIG_SCSI_EATA is not set
+# CONFIG_SCSI_FUTURE_DOMAIN is not set
+# CONFIG_SCSI_GDTH is not set
+# CONFIG_SCSI_IPS is not set
+# CONFIG_SCSI_INITIO is not set
+# CONFIG_SCSI_INIA100 is not set
+# CONFIG_SCSI_STEX is not set
+# CONFIG_SCSI_SYM53C8XX_2 is not set
+# CONFIG_SCSI_IPR is not set
+# CONFIG_SCSI_QLOGIC_1280 is not set
+# CONFIG_SCSI_QLA_FC is not set
+# CONFIG_SCSI_QLA_ISCSI is not set
+# CONFIG_SCSI_LPFC is not set
+# CONFIG_SCSI_DC395x is not set
+# CONFIG_SCSI_DC390T is not set
+# CONFIG_SCSI_DEBUG is not set
+# CONFIG_SCSI_SRP is not set
+
+#
+# PCMCIA SCSI adapter support
+#
+CONFIG_PCMCIA_FDOMAIN=m
+CONFIG_PCMCIA_QLOGIC=m
+CONFIG_PCMCIA_SYM53C500=m
+
+#
+# Serial ATA (prod) and Parallel ATA (experimental) drivers
+#
+CONFIG_ATA=y
+# CONFIG_ATA_NONSTANDARD is not set
+# CONFIG_SATA_AHCI is not set
+# CONFIG_SATA_SVW is not set
+# CONFIG_ATA_PIIX is not set
+# CONFIG_SATA_MV is not set
+CONFIG_SATA_NV=y
+# CONFIG_PDC_ADMA is not set
+# CONFIG_SATA_QSTOR is not set
+# CONFIG_SATA_PROMISE is not set
+# CONFIG_SATA_SX4 is not set
+# CONFIG_SATA_SIL is not set
+# CONFIG_SATA_SIL24 is not set
+# CONFIG_SATA_SIS is not set
+# CONFIG_SATA_ULI is not set
+# CONFIG_SATA_VIA is not set
+# CONFIG_SATA_VITESSE is not set
+# CONFIG_SATA_INIC162X is not set
+CONFIG_SATA_ACPI=y
+# CONFIG_PATA_ALI is not set
+CONFIG_PATA_AMD=y
+# CONFIG_PATA_ARTOP is not set
+# CONFIG_PATA_ATIIXP is not set
+# CONFIG_PATA_CMD64X is not set
+# CONFIG_PATA_CS5520 is not set
+# CONFIG_PATA_CS5530 is not set
+# CONFIG_PATA_CYPRESS is not set
+# CONFIG_PATA_EFAR is not set
+CONFIG_ATA_GENERIC=y
+# CONFIG_PATA_HPT366 is not set
+# CONFIG_PATA_HPT37X is not set
+# CONFIG_PATA_HPT3X2N is not set
+# CONFIG_PATA_HPT3X3 is not set
+# CONFIG_PATA_IT821X is not set
+# CONFIG_PATA_IT8213 is not set
+# CONFIG_PATA_JMICRON is not set
+# CONFIG_PATA_TRIFLEX is not set
+# CONFIG_PATA_MARVELL is not set
+# CONFIG_PATA_MPIIX is not set
+# CONFIG_PATA_OLDPIIX is not set
+# CONFIG_PATA_NETCELL is not set
+# CONFIG_PATA_NS87410 is not set
+# CONFIG_PATA_OPTI is not set
+# CONFIG_PATA_OPTIDMA is not set
+# CONFIG_PATA_PCMCIA is not set
+# CONFIG_PATA_PDC_OLD is not set
+# CONFIG_PATA_RADISYS is not set
+# CONFIG_PATA_RZ1000 is not set
+# CONFIG_PATA_SC1200 is not set
+# CONFIG_PATA_SERVERWORKS is not set
+# CONFIG_PATA_PDC2027X is not set
+# CONFIG_PATA_SIL680 is not set
+# CONFIG_PATA_SIS is not set
+# CONFIG_PATA_VIA is not set
+# CONFIG_PATA_WINBOND is not set
+
+#
+# Multi-device support (RAID and LVM)
+#
+CONFIG_MD=y
+# CONFIG_BLK_DEV_MD is not set
+CONFIG_BLK_DEV_DM=m
+# CONFIG_DM_DEBUG is not set
+CONFIG_DM_CRYPT=m
+CONFIG_DM_SNAPSHOT=m
+CONFIG_DM_MIRROR=m
+CONFIG_DM_ZERO=m
+# CONFIG_DM_MULTIPATH is not set
+
+#
+# Fusion MPT device support
+#
+# CONFIG_FUSION is not set
+# CONFIG_FUSION_SPI is not set
+# CONFIG_FUSION_FC is not set
+# CONFIG_FUSION_SAS is not set
+
+#
+# IEEE 1394 (FireWire) support
+#
+# CONFIG_FW is not set
+CONFIG_IEEE1394=m
+
+#
+# Subsystem Options
+#
+# CONFIG_IEEE1394_VERBOSEDEBUG is not set
+CONFIG_IEEE1394_EXTRA_CONFIG_ROMS=y
+CONFIG_IEEE1394_CONFIG_ROM_IP1394=y
+
+#
+# Device Drivers
+#
+
+#
+# Texas Instruments PCILynx requires I2C
+#
+CONFIG_IEEE1394_OHCI1394=m
+
+#
+# Protocol Drivers
+#
+CONFIG_IEEE1394_VIDEO1394=m
+CONFIG_IEEE1394_SBP2=m
+CONFIG_IEEE1394_ETH1394=m
+CONFIG_IEEE1394_DV1394=m
+CONFIG_IEEE1394_RAWIO=m
+
+#
+# I2O device support
+#
+# CONFIG_I2O is not set
+
+#
+# Macintosh device drivers
+#
+# CONFIG_MAC_EMUMOUSEBTN is not set
+
+#
+# Network device support
+#
+CONFIG_NETDEVICES=y
+# CONFIG_DUMMY is not set
+CONFIG_BONDING=m
+# CONFIG_EQUALIZER is not set
+CONFIG_TUN=m
+
+#
+# ARCnet devices
+#
+# CONFIG_ARCNET is not set
+
+#
+# PHY device support
+#
+CONFIG_PHYLIB=y
+
+#
+# MII PHY device drivers
+#
+CONFIG_MARVELL_PHY=y
+CONFIG_DAVICOM_PHY=y
+CONFIG_QSEMI_PHY=y
+CONFIG_LXT_PHY=y
+CONFIG_CICADA_PHY=y
+# CONFIG_VITESSE_PHY is not set
+CONFIG_SMSC_PHY=y
+# CONFIG_BROADCOM_PHY is not set
+# CONFIG_FIXED_PHY is not set
+
+#
+# Ethernet (10 or 100Mbit)
+#
+CONFIG_NET_ETHERNET=y
+CONFIG_MII=y
+# CONFIG_HAPPYMEAL is not set
+# CONFIG_SUNGEM is not set
+# CONFIG_CASSINI is not set
+# CONFIG_NET_VENDOR_3COM is not set
+
+#
+# Tulip family network device support
+#
+# CONFIG_NET_TULIP is not set
+# CONFIG_HP100 is not set
+CONFIG_NET_PCI=y
+# CONFIG_PCNET32 is not set
+# CONFIG_AMD8111_ETH is not set
+# CONFIG_ADAPTEC_STARFIRE is not set
+# CONFIG_B44 is not set
+# CONFIG_FORCEDETH is not set
+# CONFIG_DGRS is not set
+# CONFIG_EEPRO100 is not set
+# CONFIG_E100 is not set
+# CONFIG_FEALNX is not set
+# CONFIG_NATSEMI is not set
+# CONFIG_NE2K_PCI is not set
+# CONFIG_8139CP is not set
+CONFIG_8139TOO=y
+# CONFIG_8139TOO_PIO is not set
+# CONFIG_8139TOO_TUNE_TWISTER is not set
+# CONFIG_8139TOO_8129 is not set
+# CONFIG_8139_OLD_RX_RESET is not set
+# CONFIG_SIS900 is not set
+# CONFIG_EPIC100 is not set
+# CONFIG_SUNDANCE is not set
+# CONFIG_VIA_RHINE is not set
+# CONFIG_SC92031 is not set
+
+#
+# Ethernet (1000 Mbit)
+#
+# CONFIG_ACENIC is not set
+# CONFIG_DL2K is not set
+# CONFIG_E1000 is not set
+# CONFIG_NS83820 is not set
+# CONFIG_HAMACHI is not set
+# CONFIG_YELLOWFIN is not set
+# CONFIG_R8169 is not set
+# CONFIG_SIS190 is not set
+# CONFIG_SKGE is not set
+# CONFIG_SKY2 is not set
+# CONFIG_SK98LIN is not set
+# CONFIG_VIA_VELOCITY is not set
+# CONFIG_TIGON3 is not set
+# CONFIG_BNX2 is not set
+# CONFIG_QLA3XXX is not set
+# CONFIG_ATL1 is not set
+
+#
+# Ethernet (10000 Mbit)
+#
+# CONFIG_CHELSIO_T1 is not set
+# CONFIG_CHELSIO_T3 is not set
+# CONFIG_IXGB is not set
+# CONFIG_S2IO is not set
+# CONFIG_MYRI10GE is not set
+# CONFIG_NETXEN_NIC is not set
+
+#
+# Token Ring devices
+#
+# CONFIG_TR is not set
+
+#
+# Wireless LAN (non-hamradio)
+#
+CONFIG_NET_RADIO=y
+CONFIG_NET_WIRELESS_RTNETLINK=y
+
+#
+# Obsolete Wireless cards support (pre-802.11)
+#
+# CONFIG_STRIP is not set
+# CONFIG_PCMCIA_WAVELAN is not set
+# CONFIG_PCMCIA_NETWAVE is not set
+
+#
+# Wireless 802.11 Frequency Hopping cards support
+#
+# CONFIG_PCMCIA_RAYCS is not set
+
+#
+# Wireless 802.11b ISA/PCI cards support
+#
+# CONFIG_IPW2100 is not set
+# CONFIG_IPW2200 is not set
+# CONFIG_AIRO is not set
+CONFIG_HERMES=m
+CONFIG_PLX_HERMES=m
+CONFIG_TMD_HERMES=m
+# CONFIG_NORTEL_HERMES is not set
+CONFIG_PCI_HERMES=m
+CONFIG_ATMEL=m
+CONFIG_PCI_ATMEL=m
+
+#
+# Wireless 802.11b Pcmcia/Cardbus cards support
+#
+CONFIG_PCMCIA_HERMES=m
+CONFIG_PCMCIA_SPECTRUM=m
+CONFIG_AIRO_CS=m
+CONFIG_PCMCIA_ATMEL=m
+CONFIG_PCMCIA_WL3501=m
+
+#
+# Prism GT/Duette 802.11(a/b/g) PCI/Cardbus support
+#
+CONFIG_PRISM54=m
+CONFIG_USB_ZD1201=m
+CONFIG_HOSTAP=m
+CONFIG_HOSTAP_FIRMWARE=y
+# CONFIG_HOSTAP_FIRMWARE_NVRAM is not set
+CONFIG_HOSTAP_PLX=m
+CONFIG_HOSTAP_PCI=m
+CONFIG_HOSTAP_CS=m
+CONFIG_BCM43XX=m
+CONFIG_BCM43XX_DEBUG=y
+CONFIG_BCM43XX_DMA=y
+CONFIG_BCM43XX_PIO=y
+CONFIG_BCM43XX_DMA_AND_PIO_MODE=y
+# CONFIG_BCM43XX_DMA_MODE is not set
+# CONFIG_BCM43XX_PIO_MODE is not set
+# CONFIG_ZD1211RW is not set
+CONFIG_NET_WIRELESS=y
+
+#
+# PCMCIA network device support
+#
+CONFIG_NET_PCMCIA=y
+CONFIG_PCMCIA_3C589=m
+CONFIG_PCMCIA_3C574=m
+CONFIG_PCMCIA_FMVJ18X=m
+CONFIG_PCMCIA_PCNET=m
+CONFIG_PCMCIA_NMCLAN=m
+CONFIG_PCMCIA_SMC91C92=m
+CONFIG_PCMCIA_XIRC2PS=m
+CONFIG_PCMCIA_AXNET=m
+
+#
+# Wan interfaces
+#
+# CONFIG_WAN is not set
+# CONFIG_FDDI is not set
+# CONFIG_HIPPI is not set
+CONFIG_PPP=m
+# CONFIG_PPP_MULTILINK is not set
+# CONFIG_PPP_FILTER is not set
+CONFIG_PPP_ASYNC=m
+# CONFIG_PPP_SYNC_TTY is not set
+CONFIG_PPP_DEFLATE=m
+CONFIG_PPP_BSDCOMP=m
+CONFIG_PPP_MPPE=m
+CONFIG_PPPOE=m
+# CONFIG_SLIP is not set
+CONFIG_SLHC=m
+# CONFIG_NET_FC is not set
+# CONFIG_SHAPER is not set
+CONFIG_NETCONSOLE=m
+CONFIG_NETPOLL=y
+# CONFIG_NETPOLL_RX is not set
+# CONFIG_NETPOLL_TRAP is not set
+CONFIG_NET_POLL_CONTROLLER=y
+
+#
+# ISDN subsystem
+#
+# CONFIG_ISDN is not set
+
+#
+# Telephony Support
+#
+# CONFIG_PHONE is not set
+
+#
+# Input device support
+#
+CONFIG_INPUT=y
+# CONFIG_INPUT_FF_MEMLESS is not set
+
+#
+# Userland interfaces
+#
+CONFIG_INPUT_MOUSEDEV=y
+CONFIG_INPUT_MOUSEDEV_PSAUX=y
+CONFIG_INPUT_MOUSEDEV_SCREEN_X=1024
+CONFIG_INPUT_MOUSEDEV_SCREEN_Y=640
+CONFIG_INPUT_JOYDEV=m
+# CONFIG_INPUT_TSDEV is not set
+CONFIG_INPUT_EVDEV=m
+# CONFIG_INPUT_EVBUG is not set
+
+#
+# Input Device Drivers
+#
+CONFIG_INPUT_KEYBOARD=y
+CONFIG_KEYBOARD_ATKBD=y
+# CONFIG_KEYBOARD_SUNKBD is not set
+# CONFIG_KEYBOARD_LKKBD is not set
+# CONFIG_KEYBOARD_XTKBD is not set
+# CONFIG_KEYBOARD_NEWTON is not set
+# CONFIG_KEYBOARD_STOWAWAY is not set
+CONFIG_INPUT_MOUSE=y
+CONFIG_MOUSE_PS2=m
+# CONFIG_MOUSE_SERIAL is not set
+# CONFIG_MOUSE_VSXXXAA is not set
+# CONFIG_INPUT_JOYSTICK is not set
+# CONFIG_INPUT_TOUCHSCREEN is not set
+# CONFIG_INPUT_MISC is not set
+
+#
+# Hardware I/O ports
+#
+CONFIG_SERIO=y
+CONFIG_SERIO_I8042=y
+# CONFIG_SERIO_SERPORT is not set
+# CONFIG_SERIO_CT82C710 is not set
+# CONFIG_SERIO_PCIPS2 is not set
+CONFIG_SERIO_LIBPS2=y
+CONFIG_SERIO_RAW=m
+# CONFIG_GAMEPORT is not set
+
+#
+# Character devices
+#
+CONFIG_VT=y
+CONFIG_VT_CONSOLE=y
+CONFIG_HW_CONSOLE=y
+# CONFIG_VT_HW_CONSOLE_BINDING is not set
+# CONFIG_SERIAL_NONSTANDARD is not set
+# CONFIG_NOZOMI is not set
+
+#
+# Serial drivers
+#
+# CONFIG_SERIAL_8250 is not set
+
+#
+# Non-8250 serial port support
+#
+# CONFIG_SERIAL_JSM is not set
+CONFIG_UNIX98_PTYS=y
+# CONFIG_LEGACY_PTYS is not set
+
+#
+# IPMI
+#
+# CONFIG_IPMI_HANDLER is not set
+
+#
+# Watchdog Cards
+#
+CONFIG_WATCHDOG=y
+# CONFIG_WATCHDOG_NOWAYOUT is not set
+
+#
+# Watchdog Device Drivers
+#
+CONFIG_SOFT_WATCHDOG=y
+# CONFIG_ACQUIRE_WDT is not set
+# CONFIG_ADVANTECH_WDT is not set
+# CONFIG_ALIM1535_WDT is not set
+# CONFIG_ALIM7101_WDT is not set
+# CONFIG_SC520_WDT is not set
+# CONFIG_EUROTECH_WDT is not set
+# CONFIG_IB700_WDT is not set
+# CONFIG_IBMASR is not set
+# CONFIG_WAFER_WDT is not set
+# CONFIG_I6300ESB_WDT is not set
+# CONFIG_I8XX_TCO is not set
+# CONFIG_ITCO_WDT is not set
+# CONFIG_SC1200_WDT is not set
+# CONFIG_PC87413_WDT is not set
+# CONFIG_60XX_WDT is not set
+# CONFIG_SBC8360_WDT is not set
+# CONFIG_CPU5_WDT is not set
+# CONFIG_SMSC37B787_WDT is not set
+# CONFIG_W83627HF_WDT is not set
+# CONFIG_W83697HF_WDT is not set
+# CONFIG_W83877F_WDT is not set
+# CONFIG_W83977F_WDT is not set
+# CONFIG_MACHZ_WDT is not set
+# CONFIG_SBC_EPX_C3_WATCHDOG is not set
+
+#
+# PCI-based Watchdog Cards
+#
+# CONFIG_PCIPCWATCHDOG is not set
+# CONFIG_WDTPCI is not set
+
+#
+# USB-based Watchdog Cards
+#
+# CONFIG_USBPCWATCHDOG is not set
+CONFIG_HW_RANDOM=y
+# CONFIG_HW_RANDOM_INTEL is not set
+CONFIG_HW_RANDOM_AMD=y
+# CONFIG_HW_RANDOM_GEODE is not set
+CONFIG_NVRAM=m
+CONFIG_RTC=y
+# CONFIG_DTLK is not set
+# CONFIG_R3964 is not set
+# CONFIG_APPLICOM is not set
+CONFIG_AGP=y
+CONFIG_AGP_AMD64=y
+# CONFIG_AGP_INTEL is not set
+# CONFIG_AGP_SIS is not set
+# CONFIG_AGP_VIA is not set
+# CONFIG_DRM is not set
+
+#
+# PCMCIA character devices
+#
+# CONFIG_SYNCLINK_CS is not set
+# CONFIG_CARDMAN_4000 is not set
+# CONFIG_CARDMAN_4040 is not set
+# CONFIG_IPWIRELESS_CS is not set
+# CONFIG_MWAVE is not set
+# CONFIG_PC8736x_GPIO is not set
+# CONFIG_RAW_DRIVER is not set
+CONFIG_HPET=y
+# CONFIG_HPET_RTC_IRQ is not set
+CONFIG_HPET_MMAP=y
+CONFIG_HANGCHECK_TIMER=y
+
+#
+# TPM devices
+#
+# CONFIG_TCG_TPM is not set
+# CONFIG_TELCLOCK is not set
+
+#
+# I2C support
+#
+# CONFIG_I2C is not set
+
+#
+# SPI support
+#
+CONFIG_SPI=y
+# CONFIG_SPI_DEBUG is not set
+CONFIG_SPI_MASTER=y
+
+#
+# SPI Master Controller Drivers
+#
+CONFIG_SPI_BITBANG=m
+
+#
+# SPI Protocol Masters
+#
+
+#
+# Dallas's 1-wire bus
+#
+# CONFIG_W1 is not set
+
+#
+# Hardware Monitoring support
+#
+# CONFIG_HWMON is not set
+# CONFIG_HWMON_VID is not set
+
+#
+# Multimedia devices
+#
+# CONFIG_VIDEO_DEV is not set
+
+#
+# Digital Video Broadcasting Devices
+#
+# CONFIG_DVB is not set
+# CONFIG_USB_DABUSB is not set
+
+#
+# Graphics support
+#
+CONFIG_BACKLIGHT_LCD_SUPPORT=y
+CONFIG_BACKLIGHT_CLASS_DEVICE=y
+CONFIG_BACKLIGHT_DEVICE=y
+CONFIG_LCD_CLASS_DEVICE=y
+# CONFIG_FB is not set
+
+#
+# Console display driver support
+#
+CONFIG_VGA_CONSOLE=y
+# CONFIG_VGACON_SOFT_SCROLLBACK is not set
+CONFIG_VIDEO_SELECT=y
+CONFIG_DUMMY_CONSOLE=y
+
+#
+# Sound
+#
+CONFIG_SOUND=y
+
+#
+# Advanced Linux Sound Architecture
+#
+CONFIG_SND=m
+CONFIG_SND_TIMER=m
+CONFIG_SND_PCM=m
+# CONFIG_SND_SEQUENCER is not set
+CONFIG_SND_OSSEMUL=y
+CONFIG_SND_MIXER_OSS=m
+CONFIG_SND_PCM_OSS=m
+CONFIG_SND_PCM_OSS_PLUGINS=y
+CONFIG_SND_RTCTIMER=m
+# CONFIG_SND_DYNAMIC_MINORS is not set
+# CONFIG_SND_SUPPORT_OLD_API is not set
+CONFIG_SND_VERBOSE_PROCFS=y
+# CONFIG_SND_VERBOSE_PRINTK is not set
+# CONFIG_SND_DEBUG is not set
+
+#
+# Generic devices
+#
+CONFIG_SND_AC97_CODEC=m
+# CONFIG_SND_DUMMY is not set
+# CONFIG_SND_MTPAV is not set
+# CONFIG_SND_SERIAL_U16550 is not set
+# CONFIG_SND_MPU401 is not set
+
+#
+# PCI devices
+#
+# CONFIG_SND_AD1889 is not set
+# CONFIG_SND_ALS300 is not set
+# CONFIG_SND_ALS4000 is not set
+# CONFIG_SND_ALI5451 is not set
+# CONFIG_SND_ATIIXP is not set
+# CONFIG_SND_ATIIXP_MODEM is not set
+# CONFIG_SND_AU8810 is not set
+# CONFIG_SND_AU8820 is not set
+# CONFIG_SND_AU8830 is not set
+# CONFIG_SND_AZT3328 is not set
+# CONFIG_SND_BT87X is not set
+# CONFIG_SND_CA0106 is not set
+# CONFIG_SND_CMIPCI is not set
+# CONFIG_SND_CS4281 is not set
+# CONFIG_SND_CS46XX is not set
+# CONFIG_SND_DARLA20 is not set
+# CONFIG_SND_GINA20 is not set
+# CONFIG_SND_LAYLA20 is not set
+# CONFIG_SND_DARLA24 is not set
+# CONFIG_SND_GINA24 is not set
+# CONFIG_SND_LAYLA24 is not set
+# CONFIG_SND_MONA is not set
+# CONFIG_SND_MIA is not set
+# CONFIG_SND_ECHO3G is not set
+# CONFIG_SND_INDIGO is not set
+# CONFIG_SND_INDIGOIO is not set
+# CONFIG_SND_INDIGODJ is not set
+# CONFIG_SND_EMU10K1 is not set
+# CONFIG_SND_EMU10K1X is not set
+# CONFIG_SND_ENS1370 is not set
+# CONFIG_SND_ENS1371 is not set
+# CONFIG_SND_ES1938 is not set
+# CONFIG_SND_ES1968 is not set
+# CONFIG_SND_FM801 is not set
+# CONFIG_SND_HDA_INTEL is not set
+# CONFIG_SND_HDSP is not set
+# CONFIG_SND_HDSPM is not set
+# CONFIG_SND_ICE1712 is not set
+# CONFIG_SND_ICE1724 is not set
+CONFIG_SND_INTEL8X0=m
+# CONFIG_SND_INTEL8X0M is not set
+# CONFIG_SND_KORG1212 is not set
+# CONFIG_SND_MAESTRO3 is not set
+# CONFIG_SND_MIXART is not set
+# CONFIG_SND_NM256 is not set
+# CONFIG_SND_PCXHR is not set
+# CONFIG_SND_RIPTIDE is not set
+# CONFIG_SND_RME32 is not set
+# CONFIG_SND_RME96 is not set
+# CONFIG_SND_RME9652 is not set
+# CONFIG_SND_SONICVIBES is not set
+# CONFIG_SND_TRIDENT is not set
+# CONFIG_SND_VIA82XX is not set
+# CONFIG_SND_VIA82XX_MODEM is not set
+# CONFIG_SND_VX222 is not set
+# CONFIG_SND_YMFPCI is not set
+CONFIG_SND_AC97_POWER_SAVE=y
+
+#
+# USB devices
+#
+# CONFIG_SND_USB_AUDIO is not set
+# CONFIG_SND_USB_USX2Y is not set
+
+#
+# PCMCIA devices
+#
+# CONFIG_SND_VXPOCKET is not set
+# CONFIG_SND_PDAUDIOCF is not set
+
+#
+# SoC audio support
+#
+# CONFIG_SND_SOC is not set
+
+#
+# Open Sound System
+#
+# CONFIG_SOUND_PRIME is not set
+CONFIG_AC97_BUS=m
+
+#
+# HID Devices
+#
+CONFIG_HID=m
+# CONFIG_HID_DEBUG is not set
+
+#
+# USB support
+#
+CONFIG_USB_ARCH_HAS_HCD=y
+CONFIG_USB_ARCH_HAS_OHCI=y
+CONFIG_USB_ARCH_HAS_EHCI=y
+CONFIG_USB=m
+# CONFIG_USB_DEBUG is not set
+
+#
+# Miscellaneous USB options
+#
+CONFIG_USB_DEVICEFS=y
+CONFIG_USB_DYNAMIC_MINORS=y
+CONFIG_USB_SUSPEND=y
+# CONFIG_USB_OTG is not set
+
+#
+# USB Host Controller Drivers
+#
+CONFIG_USB_EHCI_HCD=m
+CONFIG_USB_EHCI_SPLIT_ISO=y
+CONFIG_USB_EHCI_ROOT_HUB_TT=y
+CONFIG_USB_EHCI_TT_NEWSCHED=y
+# CONFIG_USB_EHCI_BIG_ENDIAN_MMIO is not set
+# CONFIG_USB_ISP116X_HCD is not set
+CONFIG_USB_OHCI_HCD=m
+# CONFIG_USB_OHCI_BIG_ENDIAN_DESC is not set
+# CONFIG_USB_OHCI_BIG_ENDIAN_MMIO is not set
+CONFIG_USB_OHCI_LITTLE_ENDIAN=y
+# CONFIG_USB_UHCI_HCD is not set
+# CONFIG_USB_U132_HCD is not set
+# CONFIG_USB_SL811_HCD is not set
+
+#
+# USB Device Class drivers
+#
+CONFIG_USB_ACM=m
+CONFIG_USB_PRINTER=m
+
+#
+# NOTE: USB_STORAGE enables SCSI, and 'SCSI disk support'
+#
+
+#
+# may also be needed; see USB_STORAGE Help for more information
+#
+CONFIG_USB_STORAGE=m
+# CONFIG_USB_STORAGE_DEBUG is not set
+CONFIG_USB_STORAGE_DATAFAB=y
+CONFIG_USB_STORAGE_FREECOM=y
+CONFIG_USB_STORAGE_DPCM=y
+CONFIG_USB_STORAGE_USBAT=y
+CONFIG_USB_STORAGE_SDDR09=y
+CONFIG_USB_STORAGE_SDDR55=y
+CONFIG_USB_STORAGE_JUMPSHOT=y
+CONFIG_USB_STORAGE_ALAUDA=y
+# CONFIG_USB_STORAGE_KARMA is not set
+# CONFIG_USB_LIBUSUAL is not set
+
+#
+# USB Input Devices
+#
+CONFIG_USB_HID=m
+# CONFIG_USB_HIDINPUT_POWERBOOK is not set
+# CONFIG_HID_FF is not set
+CONFIG_USB_HIDDEV=y
+
+#
+# USB HID Boot Protocol drivers
+#
+# CONFIG_USB_KBD is not set
+# CONFIG_USB_MOUSE is not set
+CONFIG_USB_AIPTEK=m
+CONFIG_USB_WACOM=m
+# CONFIG_USB_ACECAD is not set
+CONFIG_USB_KBTAB=m
+CONFIG_USB_POWERMATE=m
+CONFIG_USB_TOUCHSCREEN=m
+CONFIG_USB_TOUCHSCREEN_EGALAX=y
+CONFIG_USB_TOUCHSCREEN_PANJIT=y
+CONFIG_USB_TOUCHSCREEN_3M=y
+CONFIG_USB_TOUCHSCREEN_ITM=y
+CONFIG_USB_TOUCHSCREEN_ETURBO=y
+CONFIG_USB_TOUCHSCREEN_GUNZE=y
+CONFIG_USB_TOUCHSCREEN_DMC_TSC10=y
+CONFIG_USB_YEALINK=m
+CONFIG_USB_XPAD=m
+CONFIG_USB_ATI_REMOTE=m
+CONFIG_USB_ATI_REMOTE2=m
+# CONFIG_USB_KEYSPAN_REMOTE is not set
+CONFIG_USB_APPLETOUCH=m
+# CONFIG_USB_GTCO is not set
+
+#
+# USB Imaging devices
+#
+CONFIG_USB_MDC800=m
+# CONFIG_USB_MICROTEK is not set
+
+#
+# USB Network Adapters
+#
+CONFIG_USB_CATC=m
+CONFIG_USB_KAWETH=m
+CONFIG_USB_PEGASUS=m
+CONFIG_USB_RTL8150=m
+CONFIG_USB_USBNET_MII=m
+CONFIG_USB_USBNET=m
+CONFIG_USB_NET_AX8817X=m
+CONFIG_USB_NET_CDCETHER=m
+CONFIG_USB_NET_GL620A=m
+CONFIG_USB_NET_NET1080=m
+CONFIG_USB_NET_PLUSB=m
+# CONFIG_USB_NET_MCS7830 is not set
+CONFIG_USB_NET_RNDIS_HOST=m
+CONFIG_USB_NET_CDC_SUBSET=m
+CONFIG_USB_ALI_M5632=y
+CONFIG_USB_AN2720=y
+CONFIG_USB_BELKIN=y
+CONFIG_USB_ARMLINUX=y
+CONFIG_USB_EPSON2888=y
+CONFIG_USB_NET_ZAURUS=m
+CONFIG_USB_MON=y
+
+#
+# USB port drivers
+#
+
+#
+# USB Serial Converter support
+#
+CONFIG_USB_SERIAL=m
+CONFIG_USB_SERIAL_GENERIC=y
+CONFIG_USB_SERIAL_AIRCABLE=m
+CONFIG_USB_SERIAL_AIRPRIME=m
+CONFIG_USB_SERIAL_ARK3116=m
+CONFIG_USB_SERIAL_BELKIN=m
+CONFIG_USB_SERIAL_WHITEHEAT=m
+CONFIG_USB_SERIAL_DIGI_ACCELEPORT=m
+CONFIG_USB_SERIAL_CP2101=m
+CONFIG_USB_SERIAL_CYPRESS_M8=m
+CONFIG_USB_SERIAL_EMPEG=m
+CONFIG_USB_SERIAL_FTDI_SIO=m
+CONFIG_USB_SERIAL_FUNSOFT=m
+CONFIG_USB_SERIAL_VISOR=m
+CONFIG_USB_SERIAL_IPAQ=m
+CONFIG_USB_SERIAL_IR=m
+CONFIG_USB_SERIAL_EDGEPORT=m
+CONFIG_USB_SERIAL_EDGEPORT_TI=m
+CONFIG_USB_SERIAL_GARMIN=m
+CONFIG_USB_SERIAL_IPW=m
+CONFIG_USB_SERIAL_KEYSPAN_PDA=m
+CONFIG_USB_SERIAL_KEYSPAN=m
+# CONFIG_USB_SERIAL_KEYSPAN_MPR is not set
+# CONFIG_USB_SERIAL_KEYSPAN_USA28 is not set
+# CONFIG_USB_SERIAL_KEYSPAN_USA28X is not set
+# CONFIG_USB_SERIAL_KEYSPAN_USA28XA is not set
+# CONFIG_USB_SERIAL_KEYSPAN_USA28XB is not set
+# CONFIG_USB_SERIAL_KEYSPAN_USA19 is not set
+# CONFIG_USB_SERIAL_KEYSPAN_USA18X is not set
+# CONFIG_USB_SERIAL_KEYSPAN_USA19W is not set
+# CONFIG_USB_SERIAL_KEYSPAN_USA19QW is not set
+# CONFIG_USB_SERIAL_KEYSPAN_USA19QI is not set
+# CONFIG_USB_SERIAL_KEYSPAN_USA49W is not set
+# CONFIG_USB_SERIAL_KEYSPAN_USA49WLC is not set
+# CONFIG_USB_SERIAL_KLSI is not set
+CONFIG_USB_SERIAL_KOBIL_SCT=m
+CONFIG_USB_SERIAL_MCT_U232=m
+CONFIG_USB_SERIAL_MOS7720=m
+CONFIG_USB_SERIAL_MOS7840=m
+CONFIG_USB_SERIAL_NAVMAN=m
+CONFIG_USB_SERIAL_PL2303=m
+CONFIG_USB_SERIAL_HP4X=m
+CONFIG_USB_SERIAL_SAFE=m
+CONFIG_USB_SERIAL_SAFE_PADDED=y
+CONFIG_USB_SERIAL_SIERRAWIRELESS=m
+CONFIG_USB_SERIAL_TI=m
+CONFIG_USB_SERIAL_CYBERJACK=m
+CONFIG_USB_SERIAL_XIRCOM=m
+CONFIG_USB_SERIAL_OPTION=m
+CONFIG_USB_SERIAL_OMNINET=m
+# CONFIG_USB_SERIAL_DEBUG is not set
+CONFIG_USB_EZUSB=y
+
+#
+# USB Miscellaneous drivers
+#
+CONFIG_USB_EMI62=m
+CONFIG_USB_EMI26=m
+CONFIG_USB_ADUTUX=m
+CONFIG_USB_AUERSWALD=m
+CONFIG_USB_RIO500=m
+CONFIG_USB_LEGOTOWER=m
+CONFIG_USB_LCD=m
+# CONFIG_USB_BERRY_CHARGE is not set
+CONFIG_USB_LED=m
+CONFIG_USB_CYPRESS_CY7C63=m
+CONFIG_USB_CYTHERM=m
+CONFIG_USB_PHIDGET=m
+CONFIG_USB_PHIDGETKIT=m
+CONFIG_USB_PHIDGETMOTORCONTROL=m
+CONFIG_USB_PHIDGETSERVO=m
+CONFIG_USB_IDMOUSE=m
+CONFIG_USB_FTDI_ELAN=m
+# CONFIG_USB_APPLEDISPLAY is not set
+# CONFIG_USB_SISUSBVGA is not set
+CONFIG_USB_LD=m
+# CONFIG_USB_TRANCEVIBRATOR is not set
+CONFIG_USB_TEST=m
+CONFIG_USB_GOTEMP=m
+
+#
+# USB DSL modem support
+#
+
+#
+# USB Gadget Support
+#
+# CONFIG_USB_GADGET is not set
+
+#
+# MMC/SD Card support
+#
+CONFIG_MMC=m
+CONFIG_MMC_DEBUG=y
+# CONFIG_MMC_PASSWORDS is not set
+CONFIG_MMC_BLOCK=m
+CONFIG_MMC_SDHCI=m
+CONFIG_MMC_WBSD=m
+CONFIG_MMC_TIFM_SD=m
+
+#
+# LED devices
+#
+# CONFIG_NEW_LEDS is not set
+
+#
+# LED drivers
+#
+
+#
+# LED Triggers
+#
+
+#
+# InfiniBand support
+#
+# CONFIG_INFINIBAND is not set
+
+#
+# EDAC - error detection and reporting (RAS) (EXPERIMENTAL)
+#
+CONFIG_EDAC=y
+
+#
+# Reporting subsystems
+#
+# CONFIG_EDAC_DEBUG is not set
+CONFIG_EDAC_MM_EDAC=y
+# CONFIG_EDAC_E752X is not set
+CONFIG_EDAC_K8=y
+CONFIG_EDAC_POLL=y
+
+#
+# Real Time Clock
+#
+# CONFIG_RTC_CLASS is not set
+
+#
+# DMA Engine support
+#
+# CONFIG_DMA_ENGINE is not set
+
+#
+# DMA Clients
+#
+
+#
+# DMA Devices
+#
+
+#
+# Auxiliary Display support
+#
+
+#
+# Virtualization
+#
+# CONFIG_KVM is not set
+
+#
+# Userspace I/O
+#
+# CONFIG_UIO is not set
+
+#
+# Firmware Drivers
+#
+# CONFIG_EDD is not set
+# CONFIG_DELL_RBU is not set
+# CONFIG_DCDBAS is not set
+
+#
+# File systems
+#
+# CONFIG_EXT2_FS is not set
+CONFIG_EXT3_FS=m
+CONFIG_EXT3_FS_XATTR=y
+# CONFIG_EXT3_FS_POSIX_ACL is not set
+# CONFIG_EXT3_FS_SECURITY is not set
+CONFIG_EXT4DEV_FS=m
+CONFIG_EXT4DEV_FS_XATTR=y
+# CONFIG_EXT4DEV_FS_POSIX_ACL is not set
+# CONFIG_EXT4DEV_FS_SECURITY is not set
+CONFIG_JBD=m
+# CONFIG_JBD_DEBUG is not set
+CONFIG_JBD2=m
+# CONFIG_JBD2_DEBUG is not set
+CONFIG_FS_MBCACHE=m
+CONFIG_REISER4_FS=y
+# CONFIG_REISER4_DEBUG is not set
+CONFIG_REISERFS_FS=y
+# CONFIG_REISERFS_CHECK is not set
+CONFIG_REISERFS_PROC_INFO=y
+CONFIG_REISERFS_FS_XATTR=y
+CONFIG_REISERFS_FS_POSIX_ACL=y
+CONFIG_REISERFS_FS_SECURITY=y
+# CONFIG_JFS_FS is not set
+CONFIG_FS_POSIX_ACL=y
+# CONFIG_XFS_FS is not set
+# CONFIG_GFS2_FS is not set
+# CONFIG_OCFS2_FS is not set
+# CONFIG_MINIX_FS is not set
+# CONFIG_ROMFS_FS is not set
+CONFIG_INOTIFY=y
+CONFIG_INOTIFY_USER=y
+# CONFIG_QUOTA is not set
+CONFIG_DNOTIFY=y
+# CONFIG_AUTOFS_FS is not set
+CONFIG_AUTOFS4_FS=y
+# CONFIG_FUSE_FS is not set
+
+#
+# CD-ROM/DVD Filesystems
+#
+CONFIG_ISO9660_FS=m
+CONFIG_JOLIET=y
+CONFIG_ZISOFS=y
+CONFIG_UDF_FS=m
+CONFIG_UDF_NLS=y
+
+#
+# DOS/FAT/NT Filesystems
+#
+CONFIG_FAT_FS=m
+CONFIG_MSDOS_FS=m
+CONFIG_VFAT_FS=m
+CONFIG_FAT_DEFAULT_CODEPAGE=437
+CONFIG_FAT_DEFAULT_IOCHARSET="iso8859-1"
+CONFIG_NTFS_FS=m
+# CONFIG_NTFS_DEBUG is not set
+# CONFIG_NTFS_RW is not set
+
+#
+# Pseudo filesystems
+#
+CONFIG_PROC_FS=y
+CONFIG_PROC_KCORE=y
+CONFIG_PROC_SYSCTL=y
+CONFIG_SYSFS=y
+CONFIG_TMPFS=y
+# CONFIG_TMPFS_POSIX_ACL is not set
+CONFIG_HUGETLBFS=y
+CONFIG_HUGETLB_PAGE=y
+CONFIG_RAMFS=y
+# CONFIG_CONFIGFS_FS is not set
+
+#
+# Miscellaneous filesystems
+#
+# CONFIG_ADFS_FS is not set
+# CONFIG_AFFS_FS is not set
+# CONFIG_ECRYPT_FS is not set
+# CONFIG_HFS_FS is not set
+# CONFIG_HFSPLUS_FS is not set
+# CONFIG_BEFS_FS is not set
+# CONFIG_BFS_FS is not set
+# CONFIG_EFS_FS is not set
+# CONFIG_CRAMFS is not set
+# CONFIG_VXFS_FS is not set
+# CONFIG_HPFS_FS is not set
+# CONFIG_QNX4FS_FS is not set
+# CONFIG_SYSV_FS is not set
+# CONFIG_UFS_FS is not set
+CONFIG_UNION_FS=m
+# CONFIG_UNION_FS_XATTR is not set
+
+#
+# Network File Systems
+#
+CONFIG_NFS_FS=y
+CONFIG_NFS_V3=y
+# CONFIG_NFS_V3_ACL is not set
+# CONFIG_NFS_V4 is not set
+# CONFIG_NFS_DIRECTIO is not set
+CONFIG_NFSD=y
+CONFIG_NFSD_V3=y
+# CONFIG_NFSD_V3_ACL is not set
+# CONFIG_NFSD_V4 is not set
+CONFIG_NFSD_TCP=y
+CONFIG_LOCKD=y
+CONFIG_LOCKD_V4=y
+CONFIG_EXPORTFS=y
+CONFIG_NFS_COMMON=y
+CONFIG_SUNRPC=y
+# CONFIG_RPCSEC_GSS_KRB5 is not set
+# CONFIG_RPCSEC_GSS_SPKM3 is not set
+# CONFIG_SMB_FS is not set
+CONFIG_CIFS=m
+# CONFIG_CIFS_STATS is not set
+# CONFIG_CIFS_WEAK_PW_HASH is not set
+# CONFIG_CIFS_XATTR is not set
+# CONFIG_CIFS_DEBUG2 is not set
+# CONFIG_CIFS_EXPERIMENTAL is not set
+# CONFIG_NCP_FS is not set
+# CONFIG_CODA_FS is not set
+# CONFIG_AFS_FS is not set
+# CONFIG_9P_FS is not set
+
+#
+# Partition Types
+#
+# CONFIG_PARTITION_ADVANCED is not set
+CONFIG_MSDOS_PARTITION=y
+
+#
+# Native Language Support
+#
+CONFIG_NLS=m
+CONFIG_NLS_DEFAULT="iso8859-1"
+CONFIG_NLS_CODEPAGE_437=m
+# CONFIG_NLS_CODEPAGE_737 is not set
+# CONFIG_NLS_CODEPAGE_775 is not set
+# CONFIG_NLS_CODEPAGE_850 is not set
+# CONFIG_NLS_CODEPAGE_852 is not set
+# CONFIG_NLS_CODEPAGE_855 is not set
+# CONFIG_NLS_CODEPAGE_857 is not set
+# CONFIG_NLS_CODEPAGE_860 is not set
+# CONFIG_NLS_CODEPAGE_861 is not set
+# CONFIG_NLS_CODEPAGE_862 is not set
+# CONFIG_NLS_CODEPAGE_863 is not set
+# CONFIG_NLS_CODEPAGE_864 is not set
+# CONFIG_NLS_CODEPAGE_865 is not set
+# CONFIG_NLS_CODEPAGE_866 is not set
+# CONFIG_NLS_CODEPAGE_869 is not set
+# CONFIG_NLS_CODEPAGE_936 is not set
+# CONFIG_NLS_CODEPAGE_950 is not set
+# CONFIG_NLS_CODEPAGE_932 is not set
+# CONFIG_NLS_CODEPAGE_949 is not set
+# CONFIG_NLS_CODEPAGE_874 is not set
+# CONFIG_NLS_ISO8859_8 is not set
+# CONFIG_NLS_CODEPAGE_1250 is not set
+# CONFIG_NLS_CODEPAGE_1251 is not set
+# CONFIG_NLS_ASCII is not set
+CONFIG_NLS_ISO8859_1=m
+# CONFIG_NLS_ISO8859_2 is not set
+# CONFIG_NLS_ISO8859_3 is not set
+# CONFIG_NLS_ISO8859_4 is not set
+# CONFIG_NLS_ISO8859_5 is not set
+# CONFIG_NLS_ISO8859_6 is not set
+# CONFIG_NLS_ISO8859_7 is not set
+# CONFIG_NLS_ISO8859_9 is not set
+# CONFIG_NLS_ISO8859_13 is not set
+# CONFIG_NLS_ISO8859_14 is not set
+# CONFIG_NLS_ISO8859_15 is not set
+# CONFIG_NLS_KOI8_R is not set
+# CONFIG_NLS_KOI8_U is not set
+CONFIG_NLS_UTF8=m
+
+#
+# Distributed Lock Manager
+#
+# CONFIG_DLM is not set
+
+#
+# Instrumentation Support
+#
+CONFIG_PROFILING=y
+CONFIG_OPROFILE=m
+CONFIG_KPROBES=y
+
+#
+# Kernel hacking
+#
+CONFIG_TRACE_IRQFLAGS_SUPPORT=y
+CONFIG_PRINTK_TIME=y
+# CONFIG_ENABLE_MUST_CHECK is not set
+CONFIG_MAGIC_SYSRQ=y
+# CONFIG_UNUSED_SYMBOLS is not set
+# CONFIG_PAGE_OWNER is not set
+CONFIG_DEBUG_FS=y
+# CONFIG_HEADERS_CHECK is not set
+CONFIG_DEBUG_KERNEL=y
+CONFIG_DEBUG_SHIRQ=y
+CONFIG_LOG_BUF_SHIFT=18
+CONFIG_DETECT_SOFTLOCKUP=y
+CONFIG_SCHEDSTATS=y
+# CONFIG_TIMER_STATS is not set
+# CONFIG_DEBUG_SLAB is not set
+CONFIG_DEBUG_RT_MUTEXES=y
+CONFIG_DEBUG_PI_LIST=y
+# CONFIG_RT_MUTEX_TESTER is not set
+CONFIG_DEBUG_SPINLOCK=y
+CONFIG_DEBUG_MUTEXES=y
+CONFIG_DEBUG_LOCK_ALLOC=y
+CONFIG_PROVE_LOCKING=y
+CONFIG_LOCKDEP=y
+# CONFIG_DEBUG_LOCKDEP is not set
+CONFIG_TRACE_IRQFLAGS=y
+CONFIG_DEBUG_SPINLOCK_SLEEP=y
+# CONFIG_DEBUG_LOCKING_API_SELFTESTS is not set
+CONFIG_STACKTRACE=y
+# CONFIG_DEBUG_KOBJECT is not set
+CONFIG_DEBUG_BUGVERBOSE=y
+# CONFIG_DEBUG_INFO is not set
+# CONFIG_DEBUG_VM is not set
+# CONFIG_DEBUG_LIST is not set
+# CONFIG_FRAME_POINTER is not set
+# CONFIG_PROFILE_LIKELY is not set
+# CONFIG_FORCED_INLINING is not set
+# CONFIG_DEBUG_SYNCHRO_TEST is not set
+# CONFIG_RCU_TORTURE_TEST is not set
+# CONFIG_LKDTM is not set
+# CONFIG_FAULT_INJECTION is not set
+# CONFIG_DEBUG_RODATA is not set
+# CONFIG_IOMMU_DEBUG is not set
+CONFIG_DEBUG_STACKOVERFLOW=y
+# CONFIG_DEBUG_STACK_USAGE is not set
+
+#
+# Security options
+#
+CONFIG_KEYS=y
+CONFIG_KEYS_DEBUG_PROC_KEYS=y
+# CONFIG_INTEGRITY is not set
+# CONFIG_SECURITY is not set
+# CONFIG_SECURITY_FS_CAPABILITIES is not set
+
+#
+# Cryptographic options
+#
+CONFIG_CRYPTO=y
+CONFIG_CRYPTO_ALGAPI=y
+CONFIG_CRYPTO_BLKCIPHER=m
+CONFIG_CRYPTO_HASH=y
+CONFIG_CRYPTO_MANAGER=y
+CONFIG_CRYPTO_HMAC=y
+CONFIG_CRYPTO_XCBC=y
+CONFIG_CRYPTO_NULL=m
+CONFIG_CRYPTO_MD4=m
+CONFIG_CRYPTO_MD5=m
+CONFIG_CRYPTO_SHA1=m
+CONFIG_CRYPTO_SHA256=m
+CONFIG_CRYPTO_SHA512=m
+CONFIG_CRYPTO_WP512=m
+CONFIG_CRYPTO_TGR192=m
+CONFIG_CRYPTO_GF128MUL=m
+CONFIG_CRYPTO_ECB=m
+CONFIG_CRYPTO_CBC=m
+CONFIG_CRYPTO_PCBC=m
+CONFIG_CRYPTO_LRW=m
+CONFIG_CRYPTO_DES=m
+CONFIG_CRYPTO_FCRYPT=m
+CONFIG_CRYPTO_BLOWFISH=m
+CONFIG_CRYPTO_TWOFISH=m
+CONFIG_CRYPTO_TWOFISH_COMMON=m
+CONFIG_CRYPTO_TWOFISH_X86_64=m
+CONFIG_CRYPTO_SERPENT=m
+CONFIG_CRYPTO_AES=m
+CONFIG_CRYPTO_AES_X86_64=m
+CONFIG_CRYPTO_CAST5=m
+CONFIG_CRYPTO_CAST6=m
+CONFIG_CRYPTO_TEA=m
+CONFIG_CRYPTO_ARC4=m
+CONFIG_CRYPTO_KHAZAD=m
+CONFIG_CRYPTO_ANUBIS=m
+CONFIG_CRYPTO_DEFLATE=m
+CONFIG_CRYPTO_MICHAEL_MIC=m
+CONFIG_CRYPTO_CRC32C=m
+CONFIG_CRYPTO_CAMELLIA=m
+# CONFIG_CRYPTO_TEST is not set
+
+#
+# Hardware crypto devices
+#
+
+#
+# Library routines
+#
+CONFIG_BITREVERSE=y
+CONFIG_CRC_CCITT=m
+CONFIG_CRC16=m
+CONFIG_CRC32=y
+CONFIG_LIBCRC32C=m
+CONFIG_ZLIB_INFLATE=y
+CONFIG_ZLIB_DEFLATE=y
+CONFIG_PLIST=y
+CONFIG_IOMAP_COPY=y
+
+[5.] Most recent kernel version which did not have the bug:
+2.4.20-rc2-mm1 is fine.
+
+[8.] Environment
+[8.1.] Software (add the output of the ver_linux script here)
+# scripts/ver_linux 
+If some fields are empty or look unusual you may have an old version.
+Compare to the current minimal requirements in Documentation/Changes.
+ 
+Linux zephyr 2.6.20-rc6-mm3 #1 Tue Jan 30 13:15:43 MST 2007 x86_64 AMD Athlon(tm) 64 Processor 3400+ AuthenticAMD GNU/Linux
+ 
+Gnu C                  4.2.0-alpha20070117
+Gnu make               3.81
+binutils               2.17.50.0.10
+util-linux             2.12r
+mount                  2.12r
+module-init-tools      3.2.2
+e2fsprogs              1.39
+reiserfsprogs          3.6.19
+reiser4progs           1.0.5
+pcmciautils            014
+pcmcia-cs              3.2.9
+PPP                    2.4.4
+nfs-utils              1.0.7
+Linux C Library        > libc.2.5
+Dynamic linker (ldd)   2.5
+Procps                 3.2.7
+Net-tools              1.60
+Kbd                    1.12
+oprofile               0.9.2
+Sh-utils               6.7
+udev                   104
+wireless-tools         29
+Modules Loaded         netconsole snd_pcm_oss snd_mixer_oss rfcomm hidp l2cap ipv6 eth1394 hci_usb usb_storage bluetooth joydev ohci1394 psmouse ieee1394 serio_raw yenta_socket rsrc_nonstatic snd_intel8x0 snd_ac97_codec ac97_bus snd_pcm ehci_hcd snd_timer ohci_hcd snd usbcore snd_page_alloc evdev sg
+
+[8.2.] Processor information (from /proc/cpuinfo):
+# cat /proc/cpuinfo 
+processor       : 0
+vendor_id       : AuthenticAMD
+cpu family      : 15
+model           : 4
+model name      : AMD Athlon(tm) 64 Processor 3400+
+stepping        : 10
+cpu MHz         : 800.000
+cache size      : 1024 KB
+fpu             : yes
+fpu_exception   : yes
+cpuid level     : 1
+wp              : yes
+flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx mmxext lm 3dnowext 3dnow
+bogomips        : 1597.72
+TLB size        : 1024 4K pages
+clflush size    : 64
+cache_alignment : 64
+address sizes   : 40 bits physical, 48 bits virtual
+power management: ts fid vid ttp
+
+[8.3.] Module information (from /proc/modules):
+# cat /proc/modules 
+netconsole 3296 0 - Live 0xffffffff8804b000
+snd_pcm_oss 43584 0 - Live 0xffffffff8816c000
+snd_mixer_oss 16200 1 snd_pcm_oss, Live 0xffffffff88167000
+rfcomm 36728 0 - Live 0xffffffff8815d000
+hidp 14216 2 - Live 0xffffffff88158000
+l2cap 21200 10 rfcomm,hidp, Live 0xffffffff88151000
+ipv6 249600 20 - Live 0xffffffff88113000
+eth1394 18464 0 - Live 0xffffffff8810d000
+hci_usb 17996 2 - Live 0xffffffff88107000
+usb_storage 85856 0 - Live 0xffffffff880f1000
+bluetooth 52164 8 rfcomm,hidp,l2cap,hci_usb, Live 0xffffffff880e3000
+joydev 9984 0 - Live 0xffffffff880df000
+ohci1394 33192 0 - Live 0xffffffff880d5000
+psmouse 42604 0 - Live 0xffffffff880c9000
+ieee1394 99048 2 eth1394,ohci1394, Live 0xffffffff880af000
+serio_raw 6916 0 - Live 0xffffffff880ac000
+yenta_socket 25612 2 - Live 0xffffffff880a4000
+rsrc_nonstatic 11008 1 yenta_socket, Live 0xffffffff880a0000
+snd_intel8x0 33776 0 - Live 0xffffffff88094000
+snd_ac97_codec 114328 1 snd_intel8x0, Live 0xffffffff88077000
+ac97_bus 3456 1 snd_ac97_codec, Live 0xffffffff88075000
+snd_pcm 80560 3 snd_pcm_oss,snd_intel8x0,snd_ac97_codec, Live 0xffffffff88060000
+ehci_hcd 34452 0 - Live 0xffffffff88054000
+snd_timer 22240 1 snd_pcm, Live 0xffffffff8804d000
+ohci_hcd 21132 0 - Live 0xffffffff88044000
+snd 57320 6 snd_pcm_oss,snd_mixer_oss,snd_intel8x0,snd_ac97_codec,snd_pcm,snd_timer, Live 0xffffffff88035000
+usbcore 137816 5 hci_usb,usb_storage,ehci_hcd,ohci_hcd, Live 0xffffffff88012000
+snd_page_alloc 8464 2 snd_intel8x0,snd_pcm, Live 0xffffffff8800e000
+evdev 9856 1 - Live 0xffffffff8800a000
+sg 24616 0 - Live 0xffffffff88002000
+
+[8.4.] Loaded driver and hardware information (/proc/ioports, /proc/iomem)
+# cat /proc/ioports 
+0000-001f : dma1
+0020-0021 : pic1
+0040-0043 : timer0
+0050-0053 : timer1
+0060-006f : keyboard
+0070-0077 : rtc
+0080-008f : dma page reg
+00a0-00a1 : pic2
+00c0-00df : dma2
+00f0-00ff : fpu
+0170-0177 : 0000:00:08.0
+  0170-0177 : libata
+01f0-01f7 : 0000:00:08.0
+  01f0-01f7 : libata
+0376-0376 : 0000:00:08.0
+  0376-0376 : libata
+03c0-03df : vga+
+03f6-03f6 : 0000:00:08.0
+  03f6-03f6 : libata
+0cf8-0cff : PCI conf1
+1400-14ff : 0000:00:06.0
+  1400-14ff : NVidia nForce3
+1800-18ff : 0000:00:06.1
+1c00-1c7f : 0000:00:06.0
+  1c00-1c7f : NVidia nForce3
+1c80-1cff : 0000:00:06.1
+2000-203f : 0000:00:01.1
+2040-207f : 0000:00:01.1
+2080-208f : 0000:00:08.0
+  2080-208f : libata
+3000-7fff : PCI Bus #02
+  3000-30ff : PCI CardBus #03
+  3400-34ff : PCI CardBus #03
+  3800-38ff : PCI CardBus #07
+  3c00-3cff : PCI CardBus #07
+  7000-70ff : 0000:02:01.0
+    7000-70ff : 8139too
+  7400-743f : 0000:02:04.2
+8000-8003 : ACPI PM1a_EVT_BLK
+8004-8005 : ACPI PM1a_CNT_BLK
+8008-800b : ACPI PM_TMR
+8010-8015 : ACPI CPU throttle
+801c-801c : ACPI PM2_CNT_BLK
+8020-8027 : ACPI GPE0_BLK
+84a0-84af : ACPI GPE1_BLK
+zephyr linux # cat /proc/iomem 
+00000000-0009f7ff : System RAM
+  00000000-00000000 : Crash kernel
+0009f800-0009ffff : reserved
+000a0000-000bffff : Video RAM area
+000c0000-000c7fff : Video ROM
+000d4000-000de9ff : Adapter ROM
+000f0000-000fffff : System ROM
+00100000-3ff6ffff : System RAM
+  00200000-004e42f0 : Kernel code
+  004e42f1-0064ad57 : Kernel data
+3ff70000-3ff7efff : ACPI Tables
+3ff7f000-3ff7ffff : ACPI Non-volatile Storage
+3ff80000-3fffffff : reserved
+50000000-57ffffff : PCI Bus #02
+  50000000-53ffffff : PCI CardBus #03
+  54000000-57ffffff : PCI CardBus #07
+e0000000-e0000fff : 0000:00:02.0
+  e0000000-e0000fff : ohci_hcd
+e0001000-e0001fff : 0000:00:02.1
+  e0001000-e0001fff : ohci_hcd
+e0002000-e0002fff : 0000:00:06.0
+  e0002000-e0002fff : NVidia nForce3
+e0003000-e0003fff : 0000:00:06.1
+e0004000-e00040ff : 0000:00:02.2
+  e0004000-e00040ff : ehci_hcd
+e0100000-e17fffff : PCI Bus #02
+  e0100000-e0103fff : 0000:02:00.0
+  e0104000-e0105fff : 0000:02:02.0
+  e0106000-e0106fff : 0000:02:04.0
+    e0106000-e0106fff : yenta_socket
+  e0107000-e0107fff : 0000:02:04.1
+    e0107000-e0107fff : yenta_socket
+  e0108000-e01087ff : 0000:02:00.0
+    e0108000-e01087ff : ohci1394
+  e0108800-e01088ff : 0000:02:01.0
+    e0108800-e01088ff : 8139too
+  e0400000-e07fffff : PCI CardBus #03
+  e0c00000-e0ffffff : PCI CardBus #07
+e2000000-e2ffffff : PCI Bus #01
+  e2000000-e2ffffff : 0000:01:00.0
+e8000000-efffffff : GART
+  e8000000-efffffff : aperture
+f0000000-f80fffff : PCI Bus #01
+  f0000000-f7ffffff : 0000:01:00.0
+  f8000000-f807ffff : 0000:01:00.0
+  f8080000-f809ffff : 0000:01:00.0
+fec00000-fec00fff : IOAPIC 0
+fee00000-fee00fff : Local APIC
+fff80000-ffffffff : reserved
+
+
+X. Other Stuff
+Netconsole Output From Before and After Freeze (Much SysRq command output):
+[  897.756767] 
+[  897.756772] =======================================================
+[  897.756796] [ INFO: possible circular locking dependency detected ]
+[  897.756806] 2.6.20-rc6-mm3 #1
+[  897.756814] -------------------------------------------------------
+[  897.756888] evolution-data-/8360 is trying to acquire lock:
+[  897.756897]  (&mm->mmap_sem){----}, at: [<ffffffff80266096>] do_page_fault+0x3f6/0x8a0
+[  897.756992] 
+[  897.756994] but task is already holding lock:
+[  897.757064]  (&data->latch){----}, at: [<ffffffff8034f131>] get_exclusive_access+0x11/0x20
+[  897.757214] 
+[  897.757216] which lock already depends on the new lock.
+[  897.757219] 
+[  897.757233] 
+[  897.757235] the existing dependency chain (in reverse order) is:
+[  897.757305] 
+[  897.757307] -> #1 (&data->latch){----}:
+[  897.757447]        [<ffffffff8029e968>] __lock_acquire+0xd48/0xff0
+[  897.757668]        [<ffffffff8029ec5b>] lock_acquire+0x4b/0x70
+[  897.757886]        [<ffffffff8034f131>] get_exclusive_access+0x11/0x20
+[  897.758103]        [<ffffffff80298db4>] down_write+0x34/0x40
+[  897.758322]        [<ffffffff8034f131>] get_exclusive_access+0x11/0x20
+[  897.758539]        [<ffffffff8034e49e>] mmap_unix_file+0x8e/0x1a0
+[  897.758757]        [<ffffffff8020d80b>] do_mmap_pgoff+0x4eb/0x820
+[  897.758975]        [<ffffffff8029d496>] mark_held_locks+0x76/0xa0
+[  897.759193]        [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[  897.759410]        [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[  897.759626]        [<ffffffff80233e73>] elf_map+0xa3/0x100
+[  897.759845]        [<ffffffff80217990>] load_elf_binary+0x920/0x1cd0
+[  897.760007]        [<ffffffff8020ab35>] kfree+0xd5/0xf0
+[  897.760223]      __lock_acquire+0xc07/0xff0
+[  897.765241]         mark_held_locks+0x76/0xa0
+[  897.765459]        [<ffffffff8029ec5b>] lock_acquire+0x4b/0x70
+[  897.765676]        [<ffffffff80266096>] do_page_fault+0x3f6/0x8a0
+[  897.765893]        [<ffffffff80298cd7>] down_read+0x37/0x40
+[  897.766111]        [<ffffffff80266096>] do_page_fault+0x3f6/0x8a0
+[  897.766328]        [<ffffffff803343f2>] txnh_get_atom+0x22/0x90
+[  897.766547]        [<ffffffff8029d889>] debug_check_no_locks_freed+0x199/0x1b0
+[  897.766765]        [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[  897.766983]        [<ffffffff8029b50f>] lockdep_init_map+0xaf/0x4c0
+[  897.767201]        [<ffffffff8026412d>] error_exit+0x0/0x96
+[  897.767417]        [<ffffffff8034d2b7>] read_unix_file+0x1f7/0x450
+[  897.767577]        [<ffffffff8034d27a>] read_unix_file+0x1ba/0x450
+[  897.767794]     [  911.399596] Hangcheck: hangcheck value past margin!
+[ 1218.856135] Hangcheck: hangcheck value past margin!
+[ 1684.712557] Hangcheck: hangcheck value past margin!
+[ 2171.584083] Hangcheck: hangcheck value past margin!
+[ 2658.165996] Hangcheck: hangcheck value past margin!
+[ 2821.474624] SysRq : HELP : loglevel0-8 reBoot Crashdump show-all-locks(D) tErm Full kIll saK showMem Nice powerOff showPc show-all-timers(Q) unRaw Sync showTasks Unmount shoW-blocked-tasks 
+[ 2823.256504] SysRq : Show State
+[ 2823.256528] 
+[ 2823.256531]                                  free                        sibling
+[ 2823.256544]   task                 PC        stack   pid father child younger older
+[ 2823.256617] init          S 000000000000000a     0     1      0     2               (NOTLB)
+[ 2823.256771]  ffff81003ff019e8 0000000000000092 ffffffff806ea720 ffff810001fa7040
+[ 2823.256860]  ffff81002be170c0 ffff810001fa7248 ffff81003ff019f8 ffffffff806a85a8
+[ 2823.257006]  ffffffff806ea720 ffffffff8021c0fe 0000000000000000 00000000000004e2
+[ 2823.257086] Call Trace:
+[ 2823.257177]  [<ffffffff8021c0fe>] __mod_timer+0x9e/0xb0
+[ 2823.257196]  [<ffffffff8026162a>] schedule_timeout+0x9a/0xd0
+[ 2823.257212]  [<ffffffff8028c6f0>] process_timeout+0x0/0x10
+[ 2823.257285]  [<ffffffff80210534>] do_select+0x4b4/0x520
+[ 2823.257307]  [<ffffffff8021e270>] __pollwait+0x0/0x120
+[ 2823.257324]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.257341]  [<ffffffff803478b0>] reiser4_permission_common+0x0/0x10
+[ 2823.257419]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 2823.257437]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 2823.257451]  [<ffffffff8020cb7f>] dput+0x3f/0x1b0
+[ 2823.257469]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 2823.257539]  [<ffffffff8020bca2>] _atomic_dec_and_lock+0x32/0x50
+[ 2823.257553]  [<ffffffff8022c36f>] mntput_no_expire+0x1f/0x90
+[ 2823.257567]  [<ffffffff8020e454>] link_path_walk+0xd4/0xf0
+[ 2823.257586]  [<ffffffff802d3481>] core_sys_select+0x201/0x2d0
+[ 2823.257664]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 2823.257676]  [<ffffffff8020bca2>] _atomic_dec_and_lock+0x32/0x50
+[ 2823.257689]  [<ffffffff8022c36f>] mntput_no_expire+0x1f/0x90
+[ 2823.257703]  [<ffffffff8021a2a5>] cp_new_stat+0xe5/0x100
+[ 2823.257786]  [<ffffffff80215912>] sys_select+0x192/0x1e0
+[ 2823.257800]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 2823.257817]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.257831] 
+[ 2823.257896] ksoftirqd/0   S 0000000000000009     0     2      1             3       (L-TLB)
+[ 2823.258048]  ffff81003ff05ee0 0000000000000082 ffff81003aa96080 ffff810001fa5080
+[ 2823.258134]  ffffffff80602520 ffff810001fa5288 ffff81003e6240c0 00000000fffffffc
+[ 2823.258280]  ffff81003ff01cd0 ffffffff80288cb0 0000000000000000 00000000fffffffc
+[ 2823.258360] Call Trace:
+[ 2823.258437]  [<ffffffff80288cb0>] ksoftirqd+0x0/0xb0
+[ 2823.258449]  [<ffffffff80288cb0>] ksoftirqd+0x0/0xb0
+[ 2823.258462]  [<ffffffff80288cfc>] ksoftirqd+0x4c/0xb0
+[ 2823.258533]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.258550]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.258563]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.258575]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.258649]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.258661]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.258670] 
+[ 2823.258676] watchdog/0    S 0000000000000001     0     3      1             4     2 (L-TLB)
+[ 2823.258885]  ffff81003ff09ed0 0000000000000082 000000000000007d ffff810001fa40c0
+[ 2823.258971]  ffff81000a231040 ffff810001fa42c8 ffffffff80602520 ffffffff806a85a8
+[ 2823.259115]  0000000000000286 ffff810001fa42c8 ffff810001fa7040 00000000fffffffc
+[ 2823.259197] Call Trace:
+[ 2823.259219]  [<ffffffff802b42d0>] watchdog+0x0/0x70
+[ 2823.259291]  [<ffffffff802b431f>] watchdog+0x4f/0x70
+[ 2823.259305]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.259321]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.259333]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.259404]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.259420]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.259432]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.259441] 
+[ 2823.259506] khelper       S 000000000000000a     0     5      1             6     4 (L-TLB)
+[ 2823.259657]  ffff81003ff2de60 0000000000000086 ffff81003ff0adc8 ffff81003ff0c080
+[ 2823.259743]  ffff810028da4040 ffff81003ff0c288 ffff81003ff01c90 ffff81003ff0adc8
+[ 2823.259887]  0000000000000000 ffffffff8029d6ab ffff81003ff01c90 ffff81003ff0ad80
+[ 2823.259970] Call Trace:
+[ 2823.259989]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.260063]  [<ffffffff80248a05>] worker_thread+0x115/0x180
+[ 2823.260078]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 2823.260095]  [<ffffffff802488f0>] worker_thread+0x0/0x180
+[ 2823.260107]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.260182]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.260194]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.260207]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.260222]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.260293]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.260302] 
+[ 2823.260308] kthread       S 000000000000000a     0     6      1    36     498     5 (L-TLB)
+[ 2823.260460]  ffff81003ff31e60 0000000000000086 ffff81003ff0acc8 ffff81003ff130c0
+[ 2823.260605]  ffff81002d1cc040 ffff81003ff132c8 ffff81003ff0acd8 0000000000000046
+[ 2823.260691]  ffff81003ff0acd8 0000000000000286 ffff81003ff01c90 ffff81003ff0ac80
+[ 2823.260772] Call Trace:
+[ 2823.260852]  [<ffffffff80248a05>] worker_thread+0x115/0x180
+[ 2823.260865]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 2823.260883]  [<ffffffff802488f0>] worker_thread+0x0/0x180
+[ 2823.260953]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.260969]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.260982]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.260994]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.261068]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.261080]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.261089] 
+[ 2823.261096] kblockd/0     S 000000000000000a     0    36      6            37       (L-TLB)
+[ 2823.261304]  ffff81003fe4de60 0000000000000086 ffff81003fe43b08 ffff81003fe450c0
+[ 2823.261391]  ffff81002c577040 ffff81003fe452c8 ffff81003fe43b18 0000000000000046
+[ 2823.261535]  ffff81003fe43b18 0000000000000286 ffff81003ff01c80 ffff81003fe43ac0
+[ 2823.261616] Call Trace:
+[ 2823.261695]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.261708]  [<ffffffff80248a05>] worker_thread+0x115/0x180
+[ 2823.261721]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 2823.261795]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.261809]  [<ffffffff802488f0>] worker_thread+0x0/0x180
+[ 2823.261821]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.261834]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.261907]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.261920]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.261932]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.261948]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.262018]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.262027] 
+[ 2823.262034] kacpid        S 0000000000000001     0    37      6           139    36 (L-TLB)
+[ 2823.262185]  ffff81003fe4fe60 0000000000000086 ffff81003fe43a08 ffff81003fe49040
+[ 2823.262330]  ffff81003ff0c080 ffff81003fe49248 ffff81003ff01c50 ffffffff806a85a8
+[ 2823.262417]  ffffffff80296340 ffffffff8029d6ab ffff81003ff01c50 ffff81003fe439c0
+[ 2823.262500] Call Trace:
+[ 2823.262576]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.262588]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.262603]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.262674]  [<ffffffff80248a05>] worker_thread+0x115/0x180
+[ 2823.262687]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 2823.262702]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.262716]  [<ffffffff802488f0>] worker_thread+0x0/0x180
+[ 2823.262787]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.262799]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.262815]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.262827]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.262898]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.262914]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.262925]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.262934] 
+[ 2823.262999] ata/0         S 000000000000000a     0   139      6           140    37 (L-TLB)
+[ 2823.263152]  ffff81003fc23e60 0000000000000086 ffff81003fe96bc8 ffff810001fcd0c0
+[ 2823.263238]  ffff81003a80b040 ffff810001fcd2c8 ffff81003fe96bd8 0000000000000046
+[ 2823.263383]  ffff81003fe96bd8 0000000000000286 ffff81003ff01c90 ffff81003fe96b80
+[ 2823.263464] Call Trace:
+[ 2823.263543]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.263556]  [<ffffffff80248a05>] worker_thread+0x115/0x180
+[ 2823.263569]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 2823.263643]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.263657]  [<ffffffff802488f0>] worker_thread+0x0/0x180
+[ 2823.263669]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.263682]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.263756]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.263768]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.263780]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.263796]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.263866]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.263875] 
+[ 2823.263882] ata_aux       S 0000000000000001     0   140      6           141   139 (L-TLB)
+[ 2823.264034]  ffff81003fc25e60 0000000000000086 ffff81003fe96ac8 ffff810001fcb080
+[ 2823.264179]  ffff81003ff130c0 ffff810001fcb288 ffff81003ff01c90 ffffffff806a85a8
+[ 2823.264266]  ffffffff80296340 ffffffff8029d6ab ffff81003ff01c90 ffff81003fe96a80
+[ 2823.264349] Call Trace:
+[ 2823.264425]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.264438]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.264510]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.264523]  [<ffffffff80248a05>] worker_thread+0x115/0x180
+[ 2823.264536]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 2823.264551]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.264624]  [<ffffffff802488f0>] worker_thread+0x0/0x180
+[ 2823.264636]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.264648]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.264664]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.264734]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.264747]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.264762]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.264774]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.264841] 
+[ 2823.264848] kseriod       S 000000000000000a     0   141      6           172   140 (L-TLB)
+[ 2823.265000]  ffff81003fc27e90 0000000000000086 ffffffff8045db20 ffff81003fe03040
+[ 2823.265144]  ffff81003de52040 ffff81003fe03248 0000000000000282 ffffffff806a85a8
+[ 2823.265231]  ffff81003fc27eb8 ffffffff8029d6ab 0000000000000282 ffffffff8063d410
+[ 2823.265311] Call Trace:
+[ 2823.265387]  [<ffffffff8045db20>] serio_thread+0x0/0x330
+[ 2823.265402]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.265474]  [<ffffffff8045db20>] serio_thread+0x0/0x330
+[ 2823.265488]  [<ffffffff8045ddf5>] serio_thread+0x2d5/0x330
+[ 2823.265501]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 2823.265517]  [<ffffffff8045db20>] serio_thread+0x0/0x330
+[ 2823.265587]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.265600]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.265612]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.265627]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.265698]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.265711]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.265726]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.265738]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.265805] 
+[ 2823.265812] kswapd0       S 000000000000000a     0   172      6           173   141 (L-TLB)
+[ 2823.265963]  ffff81003fd07de0 0000000000000082 ffffffff80611ca8 ffff81003fe09040
+[ 2823.266108]  ffff81002be170c0 ffff81003fe09248 ffffffff80612368 ffffffff806a85a8
+[ 2823.266196]  ffffffff80612368 0000000000000282 ffffffff806119a0 0000000000000001
+[ 2823.266275] Call Trace:
+[ 2823.266354]  [<ffffffff80296300>] kthread_stop+0x40/0x80
+[ 2823.266369]  [<ffffffff80255ebd>] kswapd+0x10d/0x4b0
+[ 2823.266446]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.266459]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 2823.266474]  [<ffffffff80255db0>] kswapd+0x0/0x4b0
+[ 2823.266486]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.266560]  [<ffffffff80255db0>] kswapd+0x0/0x4b0
+[ 2823.266571]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.266584]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.266597]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.266671]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.266683]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.266695]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.266711]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.266781]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.266790] 
+[ 2823.266797] kprefetchd    S 0000000000000001     0   173      6           174   172 (L-TLB)
+[ 2823.266948]  ffff81003fd0be60 0000000000000086 ffffffff806ea720 ffff81003fe0b080
+[ 2823.267093]  ffffffff80602520 ffff81003fe0b288 ffff81003fd0be70 ffff81003fd0be70
+[ 2823.267180]  ffffffff806ea720 ffffffff8021c0fe 0000000000000000 00000000000004e2
+[ 2823.267260] Call Trace:
+[ 2823.267337]  [<ffffffff8021c0fe>] __mod_timer+0x9e/0xb0
+[ 2823.267351]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.267424]  [<ffffffff8026162a>] schedule_timeout+0x9a/0xd0
+[ 2823.267437]  [<ffffffff8028c6f0>] process_timeout+0x0/0x10
+[ 2823.267452]  [<ffffffff802c7570>] kprefetchd+0x440/0x490
+[ 2823.267467]  [<ffffffff802c7130>] kprefetchd+0x0/0x490
+[ 2823.267537]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.267550]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.267565]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.267577]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.267648]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.267664]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.267675]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.267684] 
+[ 2823.267750] aio/0         S 0000000000000001     0   174      6       [ 2823.269036]  0000000000000282 0000000000000282
+[ 2823.269176] Call Trace:
+[ 2823.269195]  [<ffffffff80430cc0>] __scsi_iterate_devices+0x60/0x80
+[ 2823.269272]  [<ffffffff804346b6>] scsi_error_handler+0x76/0x340
+[ 2823.269283]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.269297]  [<ffffffff80260bf0>] thread_return+0x75/0xf5
+[ 2823.269312]  [<ffffffff80434640>] scsi_error_handler+0x0/0x340
+[ 2823.269382]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.269395]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.269409]  [<ffffffff80434640>] scsi_error_handler+0x0/0x340
+[ 2823.269421]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.269493]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.269505]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.269521]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.269533]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.269604]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.269620]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.269631]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.269640] 
+[ 2823.269705] scsi_eh_1     S 000000000000000a     0   283      6           306   282 (L-TLB)
+[ 2823.269856]  ffff81003f60fe50 0000000000000086 0000000000000286 ffff81003f629080
+[ 2823.269941]  ffff81003a80b040 ffff81003f629288 0000000000000000 ffffffff80430ccd
+[ 2823.270086]  ffff81003f68b000 ffff81003f640000 ffff81003ff01a60 0000000000000282
+[ 2823.270167] Call Trace:
+[ 2823.270185]  [<ffffffff80430ccd>] __scsi_iterate_devices+0x6d/0x80
+[ 2823.270261]  [<ffffffff804346b6>] scsi_error_handler+0x76/0x340
+[ 2823.270273]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.270285]  [<ffffffff80260bf0>] thread_return+0x75/0xf5
+[ 2823.270301]  [<ffffffff80434640>] scsi_error_handler+0x0/0x340
+[ 2823.270372]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.270384]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.270398]  [<ffffffff80434640>] scsi_error_handler+0x0/0x340
+[ 2823.270411]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.270482]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.270494]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.270510]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.270522]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.270593]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.270609]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.270620]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.270629] 
+[ 2823.270694] kedac         S 000000000000000a     0   306      6           313   283 (L-TLB)
+[ 2823.270845]  ffff81003f6bfe70 0000000000000082 ffffffff806ea720 ffff81003f6cd0c0
+[ 2823.270931]  ffff81002be170c0 ffff81003f6cd2c8 ffff81003f6bfe80 ffffffff806a85a8
+[ 2823.271077]  ffffffff806ea720 ffffffff8021c0fe ffff81003f6bfe70 00000000000000fa
+[ 2823.271158] Call Trace:
+[ 2823.271177]  [<ffffffff8021c0fe>] __mod_timer+0x9e/0xb0
+[ 2823.271250]  [<ffffffff804660d0>] edac_kernel_thread+0x0/0x150
+[ 2823.271262]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.271276]  [<ffffffff8026162a>] schedule_timeout+0x9a/0xd0
+[ 2823.271289]  [<ffffffff8028c6f0>] process_timeout+0x0/0x10
+[ 2823.271361]  [<ffffffff804660d0>] edac_kernel_thread+0x0/0x150
+[ 2823.271374]  [<ffffffff804661e9>] edac_kernel_thread+0x119/0x150
+[ 2823.271388]  [<ffffffff804660d0>] edac_kernel_thread+0x0/0x150
+[ 2823.271400]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.271471]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.271487]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.271499]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.271511]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.271585]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.271597]  [<ffffffff8025cace>] child_rip+0x0/0x12
+ 0000000000000001 ffff81003dee1080
+
+[ 2823.282434]  ffffffff806a8500 0000000000000046 ffff81003dee1080 00000000fffffffc
+[ 2823.282514] Call Trace:
+[ 2823.282597]  [<ffffffff804346b6>] scsi_error_handler+0x76/0x340
+[ 2823.282609]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.282622]  [<ffffffff80260bf0>] thread_return+0x75/0xf5
+[ 2823.282696]  [<ffffffff80434640>] scsi_error_handler+0x0/0x340
+[ 2823.282708]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.282720]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.282735]  [<ffffffff80434640>] scsi_error_handler+0x0/0x340
+[ 2823.282806]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.282819]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.282831]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.282846]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.282917]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.282930]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.282945]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.282957]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.283024] 
+[ 2823.283031] usb-storage   S 000000000000000a     0  1345      6          1552  1344 (L-TLB)
+[ 2823.283183]  ffff81003d20bde0 0000000000000082 ffff81003d041810 ffff81003e6240c0
+[ 2823.283327]  ffff810001fa5080 ffff81003e6242c8 ffff81003e6240c0 ffffffff806a85a8
+[ 2823.283415]  ffff81003d041a40 0000000000000282 ffff81003d041a40 ffff81003d041a38
+[ 2823.283496] Call Trace:
+[ 2823.283576]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.283591]  [<ffffffff8026354f>] __down_interruptible+0xdf/0x160
+[ 2823.283605]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.283681]  [<ffffffff802632c4>] __down_failed_interruptible+0x35/0x3a
+[ 2823.283712]  [<ffffffff880ffc5d>] :usb_storage:usb_stor_control_thread+0x5d/0x220
+[ 2823.283736]  [<ffffffff880ffc00>] :usb_storage:usb_stor_control_thread+0x0/0x220
+[ 2823.283750]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.283821]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.283846]  [<ffffffff880ffc00>] :usb_storage:usb_stor_control_thread+0x0/0x220
+[ 2823.283859]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.283871]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.283943]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.283958]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.283971]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.283983]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.284058]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.284070]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.284079] 
+[ 2823.284085] reiserfs/0    S 000000000000000a     0  1552      6          8584  1345 (L-TLB)
+[ 2823.284238]  ffff81003e59be60 0000000000000086 ffff81003d0807c8 ffff81003e639080
+[ 2823.284383]  ffff81003e3dc080 ffff81003e639288 ffff81003e1156b8 ffff81003d0807c8
+[ 2823.284471]  ffffffff80296340 ffffffff8029d6ab ffff81003e1156b8 ffff81003d080780
+[ 2823.284553] Call Trace:
+[ 2823.284629]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.284642]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.284656]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.284727]  [<ffffffff80248a05>] worker_thread+0x115/0x180
+[ 2823.284740]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 2823.284755]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.284770]  [<ffffffff802488f0>] worker_thread+0x0/0x180
+[ 2823.284840]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 2823.284853]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 2823.284868]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.284881]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.284951]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.284967]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 2823.284979]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.284988] 
+[ 2823.285053] readlock      S 0000000000000009     0  2882      1          2984   498 (NOTLB)
+[ 2823.285206]  ffff81003b819e98 0000000000000092 000001bb04103242 ffff81003bf94040
+[ 2823.285292]  ffff81000be15040 ffff81003bf94248 0000000000000296 ffff81003b819ed8
+[ 2823.285436]  ffffffff8060f710 ffffffff8023b7d3 ffffffff8020da21 ffff81003b819ed8
+[ 2823.285519] Call Trace:
+[ 2823.285537]  [<ffffffff8023b7d3>] hrtimer_start+0x93/0xc0
+[ 2823.285607]  [<ffffffff8020da21>] do_mmap_pgoff+0x701/0x820
+[ 2823.285623]  [<ffffffff802626eb>] do_nanosleep+0x4b/0x90
+[ 2823.285636]  [<ffffffff8025861f>] hrtimer_nanosleep+0x6f/0x160
+[ 2823.285652]  [<ffffffff802989a0>] hrtimer_wakeup+0x0/0x30
+[ 2823.285728]  [<ffffffff80252304>] sys_nanosleep+0x54/0x80
+[ 2823.285742]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.285756] 
+[ 2823.285763] dbus-daemon   S 000000000000000a     0  2984      1          3593  2882 (NOTLB)
+[ 2823.285972]  ffff81003c26bb18 0000000000000096 0000000000000001 ffff81003ccb3040
+[ 2823.286056]  ffffffff80602520 ffff81003ccb3248 ffff810034f71040 ffffffff806a85a8
+[ 2823.286202]  ffff81003c26be5c 0000000000000296 ffff81003c26be64 7fffffffffffffff
+[ 2823.286282] Call Trace:
+[ 2823.286363]  [<ffffffff802615b5>] schedule_timeout+0x25/0xd0
+[ 2823.286380]  [<ffffffff8022ead8>] do_sys_poll+0x2b8/0x3d0
+[ 2823.286396]  [<ffffffff8021e270>] __pollwait+0x0/0x120
+[ 2823.286469]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.286485]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.286500]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.286516]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.286589]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.286605]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.286620]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.286636]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.286709]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.286725]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.286758]  [<ffffffff8024ab7a>] sys_poll+0x3a/0x50
+[ 2823.286771]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.286844] 
+[ 2823.286851] hcid          S 000000000000000a     0  3593      1          3647  2984 (NOTLB)
+[ 2823.287003]  ffff81003b563b18 0000000000000096 ffff81003e3797f8 ffff81003e379080
+[ 2823.287148]  ffffffff80602520 ffff81003e379288 ffffffff8076e120 0000000000000046
+[ 2823.287234]  ffff81003b563e24 0000000000000296 ffff81003b563e2c 7fffffffffffffff
+[ 2823.287315] Call Trace:
+[ 2823.287396]  [<ffffffff802615b5>] schedule_timeout+0x25/0xd0
+[ 2823.287413]  [<ffffffff8022ead8>] do_sys_poll+0x2b8/0x3d0
+[ 2823.287429]  [<ffffffff8021e270>] __pollwait+0x0/0x120
+[ 2823.287502]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.287518]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.287533]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.287554]  [<ffffffff8029e296>] __lock_acquire+0x676/0xff0
+[ 2823.287656]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 2823.287669]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 2823.287686]  [<ffffffff8024ab7a>] sys_poll+0x3a/0x50
+[ 2823.287700]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.287773] 
+[ 2823.287780] sdpd          S 0000000000000007     0  3647      1          3741  3593 (NOTLB)
+[ 2823.287932]  ffff81003e47f9e8 0000000000000092 ffff81003bf957f8 ffff81003bf95080
+[ 2823.288076]  ffff81002ce7f0c0 ffff81003bf95288 0000000000000006 0000000000000046
+[ 2823.288161]  ffff8100291ae080 0000000000000292 0000000000000005 7fffffffffffffff
+[ 2823.288299] Call Trace:
+[ 2823.288322]  [<ffffffff802615b5>] schedule_timeout+0x25/0xd0
+[ 2823.288397]  [<ffffffff80210534>] do_select+0x4b4/0x520
+[ 2823.288420]  [<ffffffff8021e270>] __pollwait+0x0/0x120
+[ 2823.288434]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.288450]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.288524]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.288538]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.288555]  [<ffffffff80263847>] _read_unlock+0x17/0x20
+[ 2823.288567]  [<ffffffff80248f68>] unix_stream_sendmsg+0x248/0x310
+[ 2823.288648]  [<ffffffff80252964>] sock_sendmsg+0xd4/0xf0
+[ 2823.288671]  [<ffffffff802d3481>] core_sys_select+0x201/0x2d0
+[ 2823.288696]  [<ffffffff8046f9c2>] sys_sendto+0x142/0x1a0
+[ 2823.288712]  [<ffffffff8046fc52>] move_addr_to_user+0x72/0xa0
+[ 2823.288782]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.288801]  [<ffffffff8021585c>] sys_select+0xdc/0x1e0
+[ 2823.288814]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 2823.288831]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.288903] 
+[ 2823.288910] hidd          S 000000000000000a     0  3741      1          3786  3647 (NOTLB)
+[ 2823.289061]  ffff81003ca09b18 0000000000000096 ffffffff806ea720 ffff81003ff360c0
+[ 2823.289206]  ffff810023c4f040 ffff81003ff362c8 ffff81003ca09b28 ffffffff806a85a8
+[ 2823.289294]  ffffffff806ea720 ffffffff8021c0fe ffff81003ca09e24 0000000000000019
+[ 2823.289375] Call Trace:
+[ 2823.289452]  [<ffffffff8021c0fe>] __mod_timer+0x9e/0xb0
+[ 2823.289468]  [<ffffffff8026162a>] schedule_timeout+0x9a/0xd0
+[ 2823.289482]  [<ffffffff8028c6f0>] process_timeout+0x0/0x10
+[ 2823.289555]  [<ffffffff8022ead8>] do_sys_poll+0x2b8/0x3d0
+[ 2823.289572]  [<ffffffff8021e270>] __pollwait+0x0/0x120
+[ 2823.289587]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.289602]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.289680]  [<ffffffff80263c85>] _spin_unlock_irqrestore+0x55/0x70
+[ 2823.289694]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.289715]  [<ffffffff88158d24>] :hidp:hidp_add_connection+0x444/0x4c0
+[ 2823.289742]  [<ffffffff80263c85>] _spin_unlock_irqrestore+0x55/0x70
+[ 2823.289818]  [<ffffffff8023a06f>] hrtimer_try_to_cancel+0x6f/0x90
+[ 2823.289836]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 2823.289850]  [<ffffffff802b5c0f>] handle_fasteoi_irq+0x6f/0xd0
+[ 2823.289865]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.289939]  [<ffffffff8024ab7a>] sys_poll+0x3a/0x50
+[ 2823.289953]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.289967] 
+[ 2823.289974] krfcommd      S 0000000000000005     0  3786      1          4272  3741 (L-TLB)
+[ 2823.290184]  ffff81003ca25df0 0000000000000086 ffff81003ff6f0c0 ffff81003d48a0c0
+[ 2823.290271]  ffff81003d18f0c0 ffff81003d48a2c8 ffffffff88153c00 ffff81003c3d9440
+[ 2823.290416]  0000000000000246 ffffffff802ccb5e 0000000000000004 ffff81003b65d800
+[ 2823.290498] Call Trace:
+[ 2823.290578]  [<ffffffff88153c00>] :l2cap:l2cap_sock_listen+0xe0/0x100
+[ 2823.290593]  [<ffffffff802ccb5e>] kmem_cache_zalloc+0x9e/0xc0
+[ 2823.290617]  [<ffffffff8815e212>] :rfcomm:rfcomm_run+0x1f2/0x1410
+[ 2823.290701]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.290715]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 2823.290729]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.290745]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 2823.290816]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.290828]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.290850]  [<ffffffff8815e020>] :rfcomm:rfcomm_run+0x0/0x1410
+[ 2823.290862]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 2823.290930] 
+[ 2823.290937] ifplugd       S 000000000000000a     0  4272      1          5256  3786 (NOTLB)
+[ 2823.291088]  ffff81003c57f9e8 0000000000000092 ffffffff806ea720 ffff81003c53d0c0
+[ 2823.291233]  ffff81002be170c0 ffff81003c53d2c8 ffff81003c57f9f8 ffffffff806a85a8
+[ 2823.291320]  ffffffff806ea720 ffffffff8021c0fe 0000000000000000 00000000000000fa
+[ 2823.291400] Call Trace:
+[ 2823.291477]  [<ffffffff8021c0fe>] __mod_timer+0x9e/0xb0
+[ 2823.291493]  [<ffffffff8026162a>] schedule_timeout+0x9a/0xd0
+[ 2823.291565]  [<ffffffff8028c6f0>] process_timeout+0x0/0x10
+[ 2823.291579]  [<ffffffff80210534>] do_select+0x4b4/0x520
+[ 2823.291602]  [<ffffffff8021e270>] __pollwait+0x0/0x120
+[ 2823.291617]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.291693]  [<ffffffff80263c85>] _spin_unlock_irqrestore+0x55/0x70
+[ 2823.291705]  [<ffffffff8029d496>] mark_held_locks+0x76/0xa0
+[ 2823.291717]  [<ffffffff80263c85>] _spin_unlock_irqrestore+0x55/0x70
+[ 2823.291731]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.291807]  [<ffffffff80263847>] _read_unlock+0x17/0x20
+[ 2823.291821]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 2823.291835]  [<ffffffff802b5c0f>] handle_fasteoi_irq+0x6f/0xd0
+[ 2823.291850]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.291925]  [<ffffffff80477173>] __dev_get_by_name+0x93/0xb0
+[ 2823.291939]  [<ffffffff80479dd3>] dev_ethtool+0x513/0x1380
+[ 2823.291958]  [<ffffffff802d3481>] core_sys_select+0x201/0x2d0
+[ 2823.291976]  [<ffffffff80479379>] netdev_run_todo+0x239/0x250
+[ 2823.292050]  [<ffffffff80478d18>] dev_ioctl+0x378/0x3d0
+[ 2823.292064]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 2823.292078]  [<ffffffff802b5c0f>] handle_fasteoi_irq+0x6f/0xd0
+[ 2823.292093]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 2823.292171]  [<ffffffff80215912>] sys_select+0x192/0x1e0
+[ 2823.292184]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 2823.292200]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.292215] 
+[ 2823.292280] dhcpcd        S 0000000000000007     0  5256      1          5982  4272 (NOTLB)
+[ 2823.292433]  ffff81003b77d9e8 0000000000000092 ffffffff806ea720 ffff81003de52040
+[ 2823.292520]  ffff81003d14b040 ffff81003de52248 ffff81003b77d9f8 ffff81003b77d9f8
+[ 2823.292666]  ffffffff806ea720 ffffffff8021c0fe 0000000000000006 00000000005265c0
+[ 2823.292747] Call Trace:
+[ 2823.292824]  [<ffffffff8021c0fe>] __mod_timer+0x9e/0xb0
+[ 2823.292840]  [<ffffffff8026162a>] schedule_timeout+0x9a/0xd0
+[ 2823.292853]  [<ffffffff8028c6f0>] process_timeout+0x0/0x10
+[ 2823.292927]  [<ffffffff80210534>] do_select+0x4b4/0x520
+[ 2823.292949]  [<ffffffff8021e270>] __pollwait+0x0/0x120
+[ 2823.292964]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.292983]  [<ffffffff8020a195>] get_page_from_freelist+0x235/0x3b0
+[ 2823.293055]  [<ffffffff8029d496>] mark_held_locks+0x76/0xa0
+[ 2823.293067]  [<ffffffff8020a195>] get_page_from_freelist+0x235/0x3b0
+[ 2823.293081]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.293103]  [<ffffffff80263c24>] _read_unlock_irq+0x24/0x30
+[ 2823.293177]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.293198]  [<ffffffff802d3481>] core_sys_select+0x201/0x2d0
+[ 2823.293216]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.293233]  [<ffffffff80266177>] do_page_fault+0x4d7/0x8a0
+[ 2823.293311]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 2823.293330]  [<ffffffff80215912>] sys_select+0x192/0x1e0
+[ 2823.293343]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 2823.293360]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.293433] 
+[ 2823.293439] syslogd       D 000000000000000a     0  5959      1          6372  5982 (NOTLB)
+[ 2823.293592]  ffff81003a0ef678 0000000000000096 ffff81000e5a0c08 ffff81003bd110c0
+[ 2823.293737]  ffff810028cce0c0 ffff81003bd112c8 ffff81000e5a0c90 ffffffff806a85a8
+[ 2823.293824]  ffff81000e5a0c90 0000000000000296 00000000fffffe09 ffff81000e5a0c08
+[ 2823.293904] Call Trace:
+[ 2823.293987]  [<ffffffff8032daef>] reiser4_go_to_sleep+0x6f/0x90
+[ 2823.294000]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 2823.294017]  [<ffffffff80333eee>] capture_fuse_wait+0x12e/0x1b0
+[ 2823.294089]  [<ffffffff80333270>] wait_for_fusion+0x0/0x20
+[ 2823.294103]  [<ffffffff803348d0>] reiser4_try_capture+0x470/0xae0
+[ 2823.294117]  [<ffffffff8033494c>] reiser4_try_capture+0x4ec/0xae0
+[ 2823.365223]  ffff810028cce0c0 ffff81002a123248 0000000000000296 ffffffff806a85a8
+[ 2823.365369]  ffffffff8060f710 ffffffff8023b7d3 0000000000001002 ffff810027a25ed8
+[ 2823.365450] Call Trace:
+[ 2823.365526]  [<ffffffff8023b7d3>] hrtimer_start+0x93/0xc0
+[ 2823.365543]  [<ffffffff802626eb>] do_nanosleep+0x4b/0x90
+[ 2823.365555]  [<ffffffff8025861f>] hrtimer_nanosleep+0x6f/0x160
+[ 2823.365630]  [<ffffffff802989a0>] hrtimer_wakeup+0x0/0x30
+[ 2823.365647]  [<ffffffff80252304>] sys_nanosleep+0x54/0x80
+[ 2823.365661]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.365676] 
+[ 2823.365741] mono          S 000000000000000a     0  7272      1          7273  7245 (NOTLB)
+[ 2823.365894]  ffff810024b63cb8 0000000000000092 0000000000000001 ffff810028f00040
+[ 2823.365979]  ffff81002a041080 ffff810028f00248 0000000000000001 0000000000000000
+[ 2823.366121]  0000000000000000 0000000000000046 7fffffffffffffff 7fffffffffffffff
+[ 2823.366202] Call Trace:
+[ 2823.366284]  [<ffffffff802615b5>] schedule_timeout+0x25/0xd0
+[ 2823.366296]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.366312]  [<ffffffff8023dd7a>] do_futex+0x26a/0xe00
+[ 2823.366403]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.366418]  [<ffffffff80241da4>] sys_rt_sigreturn+0x2b4/0x3b0
+[ 2823.366432]  [<ffffffff80241e46>] sys_rt_sigreturn+0x356/0x3b0
+[ 2823.366450]  [<ffffffff802a0c5f>] sys_futex+0xcf/0x110
+[ 2823.366526]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.366541] 
+[ 2823.366547] beagle-search S 0000000000000006     0  7425      1          7457  7424 (NOTLB)
+[ 2823.366699]  ffff81001de55e58 0000000000000092 0000000000000000 ffff8100234d5080
+[ 2823.366843]  ffff81002cf140c0 ffff8100234d5288 0000000000000001 0000000000000000
+[ 2823.366928]  ffff8100234d57f8 0000000100000000 ffff8100234d57f8 7fffffffffffffff
+[ 2823.367069] Call Trace:
+[ 2823.367092]  [<ffffffff802615b5>] schedule_timeout+0x25/0xd0
+[ 2823.367163]  [<ffffffff8029d6ab>] trace_hardirqs_on+0x13b/0x180
+[ 2823.367180]  [<ffffffff802e9e0f>] sys_epoll_wait+0x1cf/0x4e0
+[ 2823.367199]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.367213]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 2823.367288]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.367303] 
+[ 2823.367309] gnome-volume- S 000000000000000a     0  7163      1          7161  7157 (NOTLB)
+[ 2823.367462]  ffff810029885b18 0000000000000096 ffffffff806ea720 ffff810034f71040
+[ 2823.367607]  ffff81003ccb3040 ffff810034f71248 ffff810029885b28 ffffffff806a85a8
+[ 2823.367694]  ffffffff806ea720 ffffffff8021c0fe ffff810029885e5c 0000000000000ea6
+[ 2823.367775] Call Trace:
+[ 2823.367852]  [<ffffffff8021c0fe>] __mod_timer+0x9e/0xb0
+[ 2823.367868]  [<ffffffff8026162a>] schedule_timeout+0x9a/0xd0
+[ 2823.367882]  [<ffffffff8028c6f0>] process_timeout+0x0/0x10
+[ 2823.369034]  [<ffffffff8028c6f0>] process_timeout+0x0/0x10
+[ 2823.369154]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.369232]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 2823.369245]  [<ffffffff8020cb7f>] dput+0x3f/0x1b0
+[ 2823.369263]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 2823.369275]  [<ffffffff8020bca2>] _atomic_dec_and_lock+0x32/0x50
+[ 2823.369347]  [<ffffffff8022c36f>] mntput_no_expire+0x1f/0x90
+[ 2823.369360]  [<ffffffff8020e454>] link_path_walk+0xd4/0xf0
+[ 2823.369375]  [<ffffffff8022a097>] sys_newlstat+0x27/0x50
+[ 2823.369391]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 2823.369463]  [<ffffffff803478b0>] reiser4_permission_common+0x0/0x10
+[ 2823.369482]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 2823.369494]  [<ffffffff8020bca2>] _atomic_dec_and_lock+0x32/0x50
+[ 2823.369507]  [<ffffffff8022c36f>] mntput_no_expire+0x1f/0x90
+[ 2823.369580]  [<ffffffff80231c4f>] sys_faccessat+0x13f/0x1b0
+[ 2823.369594]  [<ffffffff8022a097>] sys_newlstat+0x27/0x50
+[ 2823.369611]  [<ffffffff8024ab7a>] sys_poll+0x3a/0x50
+[ 2823.369624]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.369697] 
+[ 2823.369704] mono          S 000000000000000a     0  7206      1          7192  7205 (NOTLB)
+[ 2823.369856]  ffff810027ae1e98 0000000000000092 00000177b61133d9 ffff810028b3d080
+[ 2823.370001]  ffffffff80602520 ffff810028b3d288 0000000000000296 ffff810027ae1ed8
+[ 2823.370088]  ffffffff8060f710 ffffffff8023b7d3 0000000000001002 ffff810027ae1ed8
+[ 2823.370170] Call Trace:
+[ 2823.370246]  [<ffffffff8023b7d3>] hrtimer_start+0x93/0xc0
+[ 2823.370262]  [<ffffffff802626eb>] do_nanosleep+0x4b/0x90
+[ 2823.370333]  [<ffffffff8025861f>] hrtimer_nanosleep+0x6f/0x160
+[ 2823.370349]  [<ffffffff802989a0>] hrtimer_wakeup+0x0/0x30
+[ 2823.370367]  [<ffffffff80252304>] sys_nanosleep+0x54/0x80
+[ 2823.370380]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.370454] 
+[ 2823.370460] mono          S 000000000000000a     0  7273      1          7280  7272 (NOTLB)
+[ 2823.370612]  ffff810024b65cb8 0000000000000092 0000000000000001 ffff810028dca080
+[ 2823.370756]  ffff810023c86080 ffff810028dca288 ffff81003dd4e5e8 0000000000000046
+[ 2823.370841]  0000000000000000 0000000000000046 7fffffffffffffff 7fffffffffffffff
+[ 2823.370923] Call Trace:
+[ 2823.371004]  [<ffffffff802615b5>] schedule_timeout+0x25/0xd0
+[ 2823.371020]  [<ffffffff8023dd7a>] do_futex+0x26a/0xe00
+[ 2823.371033]  [<ffffffff8021001f>] do_wp_page+0x4bf/0x520
+[ 2823.371109]  [<ffffffff80208f61>] __handle_mm_fault+0xab1/0xb70
+[ 2823.371127]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 2823.371147]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.371162]  [<ffffffff80241da4>] sys_rt_sigreturn+0x2b4/0x3b0
+[ 2823.371235]  [<ffffffff80241e46>] sys_rt_sigreturn+0x356/0x3b0
+[ 2823.371253]  [<ffffffff802a0c5f>] sys_futex+0xcf/0x110
+[ 2823.371268]  [<ffffffff802b5c0f>] handle_fasteoi_irq+0x6f/0xd0
+[ 2823.371283]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.371356] 
+[ 2823.371363] beagled       S 000000000000000a     0  7413      1          7419  7388 (NOTLB)
+[ 2823.371516]  ffff81001f7d3d78 0000000000000096 0000000000000001 ffff810020adf040
+[ 2823.371660]  ffff810023c86080 ffff810020adf248 000000007fffffff ffff81001f7d3e58
+[ 2823.371747]  ffffffff8059ddd9 0000000000000046 ffff81001fbb1070 7fffffffffffffff
+[ 2823.371829] Call Trace:
+[ 2823.371910]  [<ffffffff802615b5>] schedule_timeout+0x25/0xd0
+[ 2823.371928]  [<ffffffff8025304c>] skb_recv_datagram+0x18c/0x210
+[ 2823.372002]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 2823.372020]  [<ffffffff804c0653>] unix_accept+0x73/0x130
+[ 2823.372036]  [<ffffffff8046ff44>] sys_accept+0xf4/0x1b0
+[ 2823.372049]  [<ffffffff80241e46>] sys_rt_sigreturn+0x356/0x3b0
+[ 2823.372125]  [<ffffffff802a0c5f>] sys_futex+0xcf/0x110
+[ 2823.372143]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.372157] 
+[ 2823.372164] beagled       S 000000000000000a     0  7424      1          7425  7419 (NOTLB)
+[ 2823.372317]  ffff81001de53e58 0000000000000092 00000000418b8b18 ffff810023e2c0c0
+[ 2823.372461]  ffff810023c86080 ffff810023e2c2c8 0000000000000001 ffff810000000000
+[ 2823.372546]  0000000000000000 0000000000000000 ffff810023e2c440 7fffffffffffffff
+[ 2823.372686] Call Trace:
+[ 2823.372709]  [<ffffffff802615b5>] schedule_timeout+0x25/0xd0
+[ 2823.372785]  [<ffffffff802e9e0f>] sys_epoll_wait+0x1cf/0x4e0
+[ 2823.372804]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.372818]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 2823.372835]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.372908] 
+[ 2823.372915] beagled       D 000000000000000a     0  7457      1          7458  7425 (NOTLB)
+[ 2823.373067]  ffff81001b627668 0000000000000096 ffff81001e407c08 ffff810023c86080
+[ 2823.373212]  ffff81000a231040 ffff810023c86288 ffff81001e407c90 ffffffff806a85a8
+[ 2823.373300]  ffff81001e407c90 0000000000000292 00000000fffffe09 ffff81001e407c08
+[ 2823.373381] Call Trace:
+[ 2823.373462]  [<ffffffff8032daef>] reiser4_go_to_sleep+0x6f/0x90
+[ 2823.373476]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 2823.373492]  [<ffffffff80333eee>] capture_fuse_wait+0x12e/0x1b0
+[ 2823.373565]  [<ffffffff80333270>] wait_for_fusion+0x0/0x20
+[ 2823.373578]  [<ffffffff803348d0>] reiser4_try_capture+0x470/0xae0
+[ 2823.373592]  [<ffffffff8033494c>] reiser4_try_capture+0x4ec/0xae0
+[ 2823.373613]  [<ffffffff8032e2ed>] longterm_lock_znode+0x1fd/0x4a0
+[ 2823.373692]  [<ffffffff8033dcd0>] coord_by_handle+0xce0/0xd10
+[ 2823.373707]  [<ffffffff8033cbd6>] cbk_pack+0x46/0xc0
+[ 2823.373724]  [<ffffffff8033df79>] reiser4_object_lookup+0xf9/0x140
+[ 2823.373744]  [<ffffffff80368101>] item_body_by_coord_hard+0x11/0x20
+[ 2823.373815]  [<ffffffff8035f836>] unit_key_cde+0x66/0x80
+[ 2823.373828]  [<ffffffff8033cbd6>] cbk_pack+0x46/0xc0
+[ 2823.373844]  [<ffffffff8033de6c>] coord_by_key+0x7c/0x90
+[ 2823.373872]  [<ffffffff803436f1>] reiser4_iget+0x101/0x390
+[ 2823.373945]  [<ffffffff802620e1>] __mutex_lock_slowpath+0x251/0x260
+[ 2823.373959]  [<ffffffff8034a479>] lookup_sd+0x79/0xc0
+[ 2823.373976]  [<ffffffff80343737>] reiser4_iget+0x147/0x390
+[ 2823.373990]  [<ffffffff80356ee4>] reiser4_lookup_name+0x124/0x160
+[ 2823.374068]  [<ffffffff80330dd2>] _reiser4_init_context+0x72/0xb0
+[ 2823.374085]  [<ffffffff80348241>] reiser4_lookup_common+0xd1/0x160
+[ 2823.374115]  [<ffffffff8020c645>] do_lookup+0xe5/0x210
+[ 2823.374189]  [<ffffffff80209a8a>] __link_path_walk+0x92a/0xe00
+[ 2823.374209]  [<ffffffff8020e3dc>] link_path_walk+0x5c/0xf0
+[ 2823.374223]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.374245]  [<ffffffff8020c3ac>] do_path_lookup+0x1dc/0x260
+[ 2823.374316]  [<ffffffff802113e7>] getname+0x167/0x1e0
+[ 2823.374330]  [<ffffffff80222d5b>] __user_walk_fd+0x4b/0x80
+[ 2823.374343]  [<ffffffff802280cf>] vfs_stat_fd+0x2f/0x80
+[ 2823.374357]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.374437]  [<ffffffff80222a27>] sys_newstat+0x27/0x50
+[ 2823.374451]  [<ffffffff802a0c5f>] sys_futex+0xcf/0x110
+[ 2823.374465]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 2823.374479]  [<ffffffff80275010>] flat_send_IPI_mask+0x0/0x70
+[ 2823.374553]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.374568] 
+[ 2823.374574] beagled       S 000000000000000a     0  7458      1          7459  7457 (NOTLB)
+[ 2823.374727]  ffff81001b647b18 0000000000000096 ffffffffffffffff ffff8100235c50c0
+[ 2823.374814]  ffff810023c86080 ffff8100235c52c8 ffff810021468c80 ffffffff806a85a8
+[ 2823.374960]  ffff81001b647e24 ffff81001b647e08 ffff81001b647bb8 7fffffffffffffff
+[ 2823.375042] Call Trace:
+[ 2823.375065]  [<ffffffff802615b5>] schedule_timeout+0x25/0xd0
+[ 2823.375138]  [<ffffffff8022d053>] pipe_poll+0x33/0xa0
+[ 2823.375152]  [<ffffffff8022ead8>] do_sys_poll+0x2b8/0x3d0
+[ 2823.375168]  [<ffffffff8021e270>] __pollwait+0x0/0x120
+[ 2823.375183]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.375257]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.375283]  [<ffffffff8023e447>] do_futex+0x937/0xe00
+[ 2823.375314]  [<ffffffff8023a06f>] hrtimer_try_to_cancel+0x6f/0x90
+[ 2823.375328]  [<ffffffff8025875c>] hrtimer_cancel+0xc/0x20
+[ 2823.375400]  [<ffffffff802626f3>] do_nanosleep+0x53/0x90
+[ 2823.375413]  [<ffffffff8025861f>] hrtimer_nanosleep+0x6f/0x160
+[ 2823.375429]  [<ffffffff802989a0>] hrtimer_wakeup+0x0/0x30
+[ 2823.375444]  [<ffffffff8024ab7a>] sys_poll+0x3a/0x50
+[ 2823.375517]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.375532] 
+[ 2823.375538] beagled       S 000000000000000a     0  7459      1          7470  7458 (NOTLB)
+[ 2823.375691]  ffff81001b6a7cb8[ 2823.416339]  [<ffffffff8021c238>] vma_link+0x88/0x150
+[ 2823.416417]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 2823.416430]  [<ffffffff80260bf0>] thread_return+0x75/0xf5
+[ 2823.416446]  [<ffffffff8024ab7a>] sys_poll+0x3a/0x50
+[ 2823.416459]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.416532] 
+[ 2823.416539] notification- S 000000000000000a     0  7955      1          8024  7790 (NOTLB)
+[ 2823.416691]  ffff81000a1dfb18 0000000000000096 ffffffff80275010 ffff810024222080
+[ 2823.416836]  ffff81003df120c0 ffff810024222288 ffff810024a4f980 0000000000000046
+[ 2823.416922]  ffff81000a1dfe44 0000000000000296 ffff81000a1dfe4c 7fffffffffffffff
+[ 2823.417003] Call Trace:
+[ 2823.417077]  [<ffffffff80275010>] flat_send_IPI_mask+0x0/0x70
+[ 2823.417097]  [<ffffffff802615b5>] schedule_timeout+0x25/0xd0
+[ 2823.417113]  [<ffffffff8022ead8>] do_sys_poll+0x2b8/0x3d0
+[ 2823.417188]  [<ffffffff8021e270>] __pollwait+0x0/0x120
+[ 2823.417203]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.417219]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.417234]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.417308]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.417324]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.417339]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.417355]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.417434]  [<ffffffff8020c50b>] do_sync_read+0xdb/0x130
+[ 2823.417453]  [<ffffffff80296540>] wake_bit_function+0x0/0x30
+[ 2823.417471]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 2823.417484]  [<ffffffff804bf904>] unix_ioctl+0xf4/0x110
+[ 2823.417556]  [<ffffffff8046eddc>] sock_ioctl+0x20c/0x240
+[ 2823.417569]  [<ffffffff8024042b>] do_ioctl+0x1b/0x60
+[ 2823.417584]  [<ffffffff8024ab7a>] sys_poll+0x3a/0x50
+[ 2823.417598]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.417671] 
+[ 2823.417678] ssh           S 000000000000000a     0  8159   7128                7620 (NOTLB)
+[ 2823.417831]  ffff810016adb9e8 0000000000000092 0000000300000000 ffff810011ff3080
+[ 2823.417976]  ffff810019ef8040 ffff810011ff3288 0000000000000092 0000000000000046
+[ 2823.418061]  ffffffff8062cd60 0000000000000092 0000000000000104 7fffffffffffffff
+[ 2823.418142] Call Trace:
+[ 2823.418223]  [<ffffffff802615b5>] schedule_timeout+0x25/0xd0
+[ 2823.418236]  [<ffffffff802253a1>] tty_poll+0x71/0xa0
+[ 2823.418309]  [<ffffffff80210534>] do_select+0x4b4/0x520
+[ 2823.418332]  [<ffffffff8021e270>] __pollwait+0x0/0x120
+[ 2823.418347]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.418363]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.418437]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.418460]  [<ffffffff802458e4>] try_to_wake_up+0x164/0x180
+[ 2823.418473]  [<ffffffff8021ce90>] tcp_recvmsg+0x740/0x890
+[ 2823.418489]  [<ffffffff80283434>] __wake_up_common+0x44/0x80
+[ 2823.418567]  [<ffffffff80214008>] n_tty_receive_buf+0xde8/0xe50
+[ 2823.418581]  [<ffffffff8046eba7>] sock_aio_read+0x107/0x130
+[ 2823.418597]  [<ffffffff802d3481>] core_sys_select+0x201/0x2d0
+[ 2823.418634]  [<ffffffff8021585c>] sys_select+0xdc/0x1e0
+[ 2823.418706]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 2823.418719]  [<ffffffff8020c14e>] dnotify_parent+0x2e/0xb0
+[ 2823.418734]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.418748] 
+[ 2823.418813] evolution     D 000000000000000a     0  8219      1  8254    8243  8024 (NOTLB)
+[ 2823.418967]  ffff8100137ab6e8 0000000000000092 ffff81002db7a1c0 ffff810011fa5040
+
+[ 2823.446917] Call Trace:
+[ 2823.447026]  [<ffffffff802d1c26>] pipe_read+0x366/0x490
+[ 2823.447104]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 2823.447119]  [<ffffffff8020c50b>] do_sync_read+0xdb/0x130
+[ 2823.447138]  [<ffffffff8021604b>] vma_merge+0x12b/0x1e0
+[ 2823.447150]  [<ffffffff80296540>] wake_bit_function+0x0/0x30
+[ 2823.447231]  [<ffffffff8020ac0a>] vfs_read+0xba/0x180
+[ 2823.447245]  [<ffffffff80210753>] sys_read+0x53/0x90
+[ 2823.447260]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.447275] 
+[ 2823.447340] sh            S 0000000000000003     0 49474  49473 49475               (NOTLB)
+[ 2823.447492]  ffff81001363fe78 0000000000000096 0000000000000004 ffff81000b143040
+[ 2823.447577]  ffff81000e39a080 ffff81000b143248 00007fff843b0d14 00000000ffffffff
+[ 2823.447721]  0000000000000004 0000000000000246 ffffffff8064b080 ffff81000e39a1e8
+[ 2823.447802] Call Trace:
+[ 2823.447882]  [<ffffffff80227a75>] do_wait+0xb45/0xc60
+[ 2823.447903]  [<ffffffff80241f34>] sys_rt_sigaction+0x94/0xc0
+[ 2823.447917]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 2823.447992]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.448006] 
+[ 2823.448013] randbg        D 0000000000000002     0 49475  49474                     (NOTLB)
+[ 2823.448164]  ffff81000d617948 0000000000000092 ffff810025ad5a08 ffff81000e39a080
+[ 2823.448309]  ffffffff80602520 ffff81000e39a288 ffff810025ad5a90 0000000000000046
+[ 2823.448395]  ffff810025ad5a90 0000000000000296 00000000fffffe09 ffff810025ad5a08
+[ 2823.448476] Call Trace:
+[ 2823.448558]  [<ffffffff8032daef>] reiser4_go_to_sleep+0x6f/0x90
+[ 2823.448572]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 2823.448587]  [<ffffffff80333eee>] capture_fuse_wait+0x12e/0x1b0
+[ 2823.448660]  [<ffffffff80333270>] wait_for_fusion+0x0/0x20
+[ 2823.448673]  [<ffffffff803348d0>] reiser4_try_capture+0x470/0xae0
+[ 2823.448688]  [<ffffffff8033494c>] reiser4_try_capture+0x4ec/0xae0
+[ 2823.448701]  [<ffffffff8033ca11>] cbk_cache_add+0x21/0xa0
+[ 2823.448779]  [<ffffffff8032e2ed>] longterm_lock_znode+0x1fd/0x4a0
+[ 2823.448800]  [<ffffffff8033d4da>] coord_by_handle+0x4ea/0xd10
+[ 2823.448826]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 2823.448840]  [<ffffffff8033cbd6>] cbk_pack+0x46/0xc0
+[ 2823.448915]  [<ffffffff8033df79>] reiser4_object_lookup+0xf9/0x140
+[ 2823.448949]  [<ffffffff8034bdeb>] find_file_item_nohint+0x4b/0x50
+[ 2823.448963]  [<ffffffff8034c703>] find_file_item+0x103/0x160
+[ 2823.448979]  [<ffffffff8034d353>] read_unix_file+0x293/0x450
+[ 2823.449062]  [<ffffffff8020ac0a>] vfs_read+0xba/0x180
+[ 2823.449076]  [<ffffffff80210753>] sys_read+0x53/0x90
+[ 2823.449090]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 2823.449105] 
+[ 2823.449170] 
+[ 2823.449172] Showing all locks held in the system:
+[ 2823.449191] 1 lock held by agetty/6936:
+[ 2823.449198]  #0:  (&tty->atomic_read_lock){--..}, at: [<ffffffff80229042>] read_chan+0x262/0x680
+[ 2823.449351] 1 lock held by agetty/6939:
+[ 2823.449358]  #0:  (&tty->atomic_read_lock){--..}, at: [<ffffffff80229042>] read_chan+0x262/0x680
+[ 2823.449509] 1 lock held by agetty/6942:
+[ 2823.449516]  #0:  (&tty->atomic_read_lock){--..}, at: [<ffffffff80229042>] read_chan+0x262/0x680
+[ 2823.449666] 1 lock held by agetty/6945:
+[ 2823.449673]  #0:  (&tty->atomic_read_lock){--..}, at: [<ffffffff80229042>] read_chan+0x262/0x680
+[ 2823.449822] 1 lock held by agetty/6946:
+[ 2823.449829]  #0:  (&tty->atomic_read_lock){--..}, at: [<ffffffff80229042>] read_chan+0x262/0x680
+[ 2823.449979] 1 lock held by bash/6967:
+
+[ 3131.241531] SysRq : HELP : loglevel0-8 reBoot Crashdump show-all-locks(D) tErm Full kIll saK showMem Nice powerOff showPc show-all-timers(Q) unRaw Sync showTasks Unmount shoW-blocked-tasks 
+[ 3138.442498] SysRq : Show Blocked State
+[ 3138.442522] 
+[ 3138.442524]                                  free                        sibling
+[ 3138.442538]   task                 PC        stack   pid father child younger older
+[ 3138.442615] ktxnmgrd:sda2 D 000000000000000a     0   317      6           318   313 (L-TLB)
+[ 3138.442770]  ffff81003f6b5550 0000000000000086 ffff81002db7a1c0 ffff81003ff3d0c0
+[ 3138.442857]  ffff81002a0170c0 ffff81003ff3d2c8 ffff81003f6b5da0 ffffffff806a85a8
+[ 3138.443004]  ffff81003f6b5da0 0000000000000282 00000000fffffe09 ffff81003f6b5d18
+[ 3138.443084] Call Trace:
+[ 3138.443179]  [<ffffffff8032daef>] reiser4_go_to_sleep+0x6f/0x90
+[ 3138.443196]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 3138.443213]  [<ffffffff80333eee>] capture_fuse_wait+0x12e/0x1b0
+[ 3138.443286]  [<ffffffff80333270>] wait_for_fusion+0x0/0x20
+[ 3138.443299]  [<ffffffff80334e24>] reiser4_try_capture+0x9c4/0xae0
+[ 3138.443313]  [<ffffffff80334e36>] reiser4_try_capture+0x9d6/0xae0
+[ 3138.443333]  [<ffffffff8032e2ed>] longterm_lock_znode+0x1fd/0x4a0
+[ 3138.443413]  [<ffffffff8033d4da>] coord_by_handle+0x4ea/0xd10
+[ 3138.443440]  [<ffffffff8033cbd6>] cbk_pack+0x46/0xc0
+[ 3138.443455]  [<ffffffff8033de6c>] coord_by_key+0x7c/0x90
+[ 3138.443488]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 3138.443559]  [<ffffffff80336eb1>] jnode_lock_parent_coord+0xe1/0x2e0
+[ 3138.443580]  [<ffffffff80337257>] scan_unformatted+0x137/0x4c0
+[ 3138.443596]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 3138.443619]  [<ffffffff80337614>] scan_common+0x34/0x190
+[ 3138.443692]  [<ffffffff80339986>] flush_current_atom+0x466/0xa00
+[ 3138.443714]  [<ffffffff803343f2>] txnh_get_atom+0x22/0x90
+[ 3138.443730]  [<ffffffff80335301>] reiser4_txn_end+0x241/0x530
+[ 3138.443750]  [<ffffffff803355f9>] reiser4_txn_restart+0x9/0x20
+[ 3138.443821]  [<ffffffff80335a54>] commit_some_atoms+0x124/0x140
+[ 3138.443836]  [<ffffffff8033f924>] ktxnmgrd+0x154/0x190
+[ 3138.443876]  [<ffffffff8033f7d0>] ktxnmgrd+0x0/0x190
+[ 3138.443888]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 3138.443961]  [<ffffffff80231ed3>] kthread+0xd3/0x110
+[ 3138.443973]  [<ffffffff80296340>] keventd_create_kthread+0x0/0x90
+[ 3138.443989]  [<ffffffff8025cad8>] child_rip+0xa/0x12
+[ 3138.444002]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 3138.444073]  [<ffffffff8025c6bc>] restore_args+0x0/0x30
+[ 3138.444088]  [<ffffffff80231e00>] kthread+0x0/0x110
+[ 3138.444100]  [<ffffffff8025cace>] child_rip+0x0/0x12
+[ 3138.444109] 
+[ 3138.444178] syslogd       D 000000000000000a     0  5959      1          6372  5982 (NOTLB)
+[ 3138.444331]  ffff81003a0ef678 0000000000000096 ffff81000e5a0c08 ffff81003bd110c0
+[ 3138.444417]  ffff810028cce0c0 ffff81003bd112c8 ffff81000e5a0c90 ffffffff806a85a8
+[ 3138.444563]  ffff81000e5a0c90 0000000000000296 00000000fffffe09 ffff81000e5a0c08
+[ 3138.444644] Call Trace:
+[ 3138.444726]  [<ffffffff8032daef>] reiser4_go_to_sleep+0x6f/0x90
+[ 3138.444739]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 3138.444754]  [<ffffffff80333eee>] capture_fuse_wait+0x12e/0x1b0
+[ 3138.444827]  [<ffffffff80333270>] wait_for_fusion+0x0/0x20
+[ 3138.444840]  [<ffffffff803348d0>] reiser4_try_capture+0x470/0xae0
+[ 3138.444854]  [<ffffffff8033494c>] reiser4_try_capture+0x4ec/0xae0
+[ 3138.444874]  [<ffffffff8032e2ed>] longterm_lock_znode+0x1fd/0x4a0
+[ 3138.444953]  [<ffffffff8033d4da>] coord_by_handle+0x4ea/0xd10
+[ 3138.444980]  [<ffffffff8033cbd6>] cbk_pack+0x46/0xc0
+[ 3138.444996]  [<ffffffff8033df79>] reiser4_object_lookup+0xf9/0x140
+[ 3138.445031]  [<ffffffff8034bdeb>] find_file_item_nohint+0x4b/0x50
+[ 3138.445104]  [<ffffffff8034c703>] find_file_item+0x103/0x160
+[ 3138.445119]  [<ffffffff8034e9e5>] readpage_unix_file+0x175/0x420
+[ 3138.445142]  [<ffffffff80365dfa>] reiser4_write_extent+0x31a/0x720
+[ 3138.445159]  [<ffffffff8032e79b>] longterm_unlock_znode+0x20b/0x240
+[ 3138.445245]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 3138.445258]  [<ffffffff802631e5>] __down_read+0x35/0xa5
+[ 3138.445270]  [<ffffffff80365ae0>] reiser4_write_extent+0x0/0x720
+[ 3138.445284]  [<ffffffff8034d9ae>] write_unix_file+0x29e/0x4f0
+[ 3138.445360]  [<ffffffff8034d710>] write_unix_file+0x0/0x4f0
+[ 3138.445375]  [<ffffffff802cdc3e>] do_loop_readv_writev+0x3e/0x80
+[ 3138.445391]  [<ffffffff802ce38d>] do_readv_writev+0x10d/0x210
+[ 3138.445417]  [<ffffffff802ce533>] sys_writev+0x53/0xc0
+[ 3138.445490]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 3138.445504] 
+[ 3138.445513] ntpd          D 000000000000000a     0  6539      1          6538  6524 (NOTLB)
+[ 3138.445665]  ffff810038ad7768 0000000000000096 ffff8100137f2808 ffff81003bdc90c0
+[ 3138.445809]  ffffffff80602520 ffff81003bdc92c8 ffff8100137f2890 0000000000000046
+[ 3138.445895]  ffff8100137f2890 0000000000000292 00000000fffffe09 ffff8100137f2808
+[ 3138.445975] Call Trace:
+[ 3138.446056]  [<ffffffff8032daef>] reiser4_go_to_sleep+0x6f/0x90
+[ 3138.446070]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 3138.446085]  [<ffffffff80333eee>] capture_fuse_wait+0x12e/0x1b0
+[ 3138.446158]  [<ffffffff80333270>] wait_for_fusion+0x0/0x20
+[ 3138.446171]  [<ffffffff803348d0>] reiser4_try_capture+0x470/0xae0
+[ 3138.446185]  [<ffffffff8033494c>] reiser4_try_capture+0x4ec/0xae0
+[ 3138.446205]  [<ffffffff8032e2ed>] longterm_lock_znode+0x1fd/0x4a0
+[ 3138.446277]  [<ffffffff8032924c>] get_htable+0xc/0x30
+[ 3138.446296]  [<ffffffff8033d4da>] coord_by_handle+0x4ea/0xd10
+[ 3138.446309]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 3138.446322]  [<ffffffff80260bf0>] thread_return+0x75/0xf5
+[ 3138.446404]  [<ffffffff804a1a8d>] udp_poll+0x2d/0x190
+[ 3138.446418]  [<ffffffff8033cbd6>] cbk_pack+0x46/0xc0
+[ 3138.446435]  [<ffffffff8033df79>] reiser4_object_lookup+0xf9/0x140
+[ 3138.446468]  [<ffffffff8034bdeb>] find_file_item_nohint+0x4b/0x50
+[ 3138.446541]  [<ffffffff8034c703>] find_file_item+0x103/0x160
+[ 3138.446556]  [<ffffffff8034e9e5>] readpage_unix_file+0x175/0x420
+[ 3138.446578]  [<ffffffff80365dfa>] reiser4_write_extent+0x31a/0x720
+[ 3138.446596]  [<ffffffff80256425>] __ip_route_output_key+0xb5/0x7e0
+[ 3138.446677]  [<ffffffff804753f6>] verify_iovec+0x46/0xa0
+[ 3138.446697]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 3138.446710]  [<ffffffff802631e5>] __down_read+0x35/0xa5
+[ 3138.446722]  [<ffffffff80365ae0>] reiser4_write_extent+0x0/0x720
+[ 3138.446795]  [<ffffffff8034d9ae>] write_unix_file+0x29e/0x4f0
+[ 3138.446815]  [<ffffffff80215a1d>] vfs_write+0xbd/0x180
+[ 3138.446830]  [<ffffffff802164c3>] sys_write+0x53/0x90
+[ 3138.446845]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 3138.446917] 
+[ 3138.446926] nmbd          D 000000000000000a     0  6701      1          6813  6678 (NOTLB)
+[ 3138.447077]  ffff8100364e5758 0000000000000092 ffff810025ad5e08 ffff81003b8220c0
+[ 3138.447221]  ffffffff80602520 ffff81003b8222c8 ffff810025ad5e90 0000000000000046
+[ 3138.447306]  ffff810025ad5e90 0000000000000296 00000000fffffe09 ffff810025ad5e08
+[ 3138.447444] Call Trace:
+[ 3138.447467]  [<ffffffff8032daef>] reiser4_go_to_sleep+0x6f/0x90
+[ 3138.447539]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 3138.447554]  [<ffffffff80333eee>] capture_fuse_wait+0x12e/0x1b0
+[ 3138.447568]  [<ffffffff80333270>] wait_for_fusion+0x0/0x20
+[ 3138.447581]  [<ffffffff803348d0>] reiser4_try_capture+0x470/0xae0
+[ 3138.447654]  [<ffffffff8033494c>] reiser4_try_capture+0x4ec/0xae0
+[ 3138.447674]  [<ffffffff8032e2ed>] longterm_lock_znode+0x1fd/0x4a0
+[ 3138.447687]  [<ffffffff8032924c>] get_htable+0xc/0x30
+[ 3138.447705]  [<ffffffff8033d4da>] coord_by_handle+0x4ea/0xd10
+[ 3138.447790]  [<ffffffff802d3271>] free_poll_entry+0x11/0x20
+[ 3138.447802]  [<ffffffff8033cbd6>] cbk_pack+0x46/0xc0
+[ 3138.447818]  [<ffffffff8033df79>] reiser4_object_lookup+0xf9/0x140
+[ 3138.447849]  [<ffffffff8033698b>] complete_entry_key+0xab/0xf0
+[ 3138.447924]  [<ffffffff80356bf2>] reiser4_find_entry+0x122/0x2f0
+[ 3138.447941]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 3138.447953]  [<ffffffff8025b070>] cache_alloc_refill+0x1e0/0x520
+[ 3138.447975]  [<ffffffff80356e6b>] reiser4_lookup_name+0xab/0x160
+[ 3138.448048]  [<ffffffff803bb247>] __spin_lock_init+0x37/0x90
+[ 3138.448066]  [<ffffffff80330dd2>] _reiser4_init_context+0x72/0xb0
+[ 3138.448084]  [<ffffffff803481da>] reiser4_lookup_common+0x6a/0x160
+[ 3138.448098]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 3138.448171]  [<ffffffff80221c4c>] d_alloc+0x1ec/0x200
+[ 3138.448186]  [<ffffffff80235fa9>] __lookup_hash+0x119/0x160
+[ 3138.448202]  [<ffffffff8021a55e>] open_namei+0xee/0x700
+[ 3138.448218]  [<ffffffff8022b295>] sys_recvfrom+0x125/0x190
+[ 3138.448291]  [<ffffffff80226a6c>] do_filp_open+0x1c/0x40
+[ 3138.448309]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 3138.448321]  [<ffffffff80214f3d>] get_unused_fd+0xed/0x100
+[ 3138.448336]  [<ffffffff80219068>] do_sys_open+0x58/0xf0
+[ 3138.448408]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 3138.448422] 
+[ 3138.448436] gkrellm2      D 000000000000000a     0  7130      1          7133  7128 (NOTLB)
+[ 3138.448587]  ffff81002c643598 0000000000000092 ffff81000ac3b808 ffff81002c577040
+[ 3138.448732]  ffff81002be170c0 ffff81002c577248 ffff81000ac3b890 ffffffff806a8e88
+[ 3138.448819]  ffff81000ac3b890 0000000000000292 00000000fffffe09 ffff81000ac3b808
+[ 3138.448899] Call Trace:
+[ 3138.448981]  [<ffffffff8032daef>] reiser4_go_to_sleep+0x6f/0x90
+[ 3138.448994]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 3138.449009]  [<ffffffff80333eee>] capture_fuse_wait+0x12e/0x1b0
+[ 3138.449082]  [<ffffffff80333270>] wait_for_fusion+0x0/0x20
+[ 3138.449095]  [<ffffffff803348d0>] reiser4_try_capture+0x470/0xae0
+[ 3138.449109]  [<ffffffff8033494c>] reiser4_try_capture+0x4ec/0xae0
+[ 3138.449129]  [<ffffffff8032e2ed>] longterm_lock_znode+0x1fd/0x4a0
+[ 3138.449201]  [<ffffffff8032924c>] get_htable+0xc/0x30
+[ 3138.449219]  [<ffffffff8033d4da>] coord_by_handle+0x4ea/0xd10
+[ 3138.449247]  [<ffffffff8033cbd6>] cbk_pack+0x46/0xc0
+[ 3138.449263]  [<ffffffff8033df79>] reiser4_object_lookup+0xf9/0x140
+[ 3138.449353]  [<ffffffff803f4ab2>] acpi_ut_status_exit+0x6a/0x7c
+[ 3138.449366]  [<ffffffff8033698b>] complete_entry_key+0xab/0xf0
+[ 3138.449382]  [<ffffffff80356bf2>] reiser4_find_entry+0x122/0x2f0
+[ 3138.449400]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 3138.449470]  [<ffffffff8025b070>] cache_alloc_refill+0x1e0/0x520
+[ 3138.449492]  [<ffffffff80356e6b>] reiser4_lookup_name+0xab/0x160
+[ 3138.449505]  [<ffffffff803bb247>] __spin_lock_init+0x37/0x90
+[ 3138.449523]  [<ffffffff80330dd2>] _reiser4_init_context+0x72/0xb0
+[ 3138.449598]  [<ffffffff803481da>] reiser4_lookup_common+0x6a/0x160
+[ 3138.449612]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 3138.449626]  [<ffffffff80221c4c>] d_alloc+0x1ec/0x200
+[ 3138.449639]  [<ffffffff8020c645>] do_lookup+0xe5/0x210
+[ 3138.449714]  [<ffffffff80209a8a>] __link_path_walk+0x92a/0xe00
+[ 3138.449734]  [<ffffffff8020e3dc>] link_path_walk+0x5c/0xf0
+[ 3138.449750]  [<ffffffff802620e1>] __mutex_lock_slowpath+0x251/0x260
+[ 3138.449770]  [<ffffffff8020c3ac>] do_path_lookup+0x1dc/0x260
+[ 3138.449841]  [<ffffffff802113e7>] getname+0x167/0x1e0
+[ 3138.449854]  [<ffffffff80222d5b>] __user_walk_fd+0x4b/0x80
+[ 3138.449868]  [<ffffffff802280cf>] vfs_stat_fd+0x2f/0x80
+[ 3138.449884]  [<ffffffff802620e1>] __mutex_lock_slowpath+0x251/0x260
+[ 3138.449962]  [<ffffffff80222a27>] sys_newstat+0x27/0x50
+[ 3138.449978]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 3138.449994]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 3138.450008] 
+[ 3138.450074] epiphany      D 0000000000000009     0  7148      1  8416    7151  7142 (NOTLB)
+[ 3138.450226]  ffff81002bb276f8 0000000000000092 ffff81002589fc08 ffff81002bdb3040
+[ 3138.450312]  ffff81002be170c0 ffff81002bdb3248 ffff81002589fc90 ffffffff806a8e88
+[ 3138.450458]  ffff81002589fc90 0000000000000292 00000000fffffe09 ffff81002589fc08
+[ 3138.450538] Call Trace:
+[ 3138.450619]  [<ffffffff8032daef>] reiser4_go_to_sleep+0x6f/0x90
+[ 3138.450632]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 3138.450648]  [<ffffffff80333eee>] capture_fuse_wait+0x12e/0x1b0
+[ 3138.450720]  [<ffffffff80333270>] wait_for_fusion+0x0/0x20
+[ 3138.450733]  [<ffffffff803348d0>] reiser4_try_capture+0x470/0xae0
+[ 3138.450748]  [<ffffffff8033494c>] reiser4_try_capture+0x4ec/0xae0
+[ 3138.450768]  [<ffffffff8032e2ed>] longterm_lock_znode+0x1fd/0x4a0
+[ 3138.450847]  [<ffffffff8033d4da>] coord_by_handle+0x4ea/0xd10
+[ 3138.450860]  [<ffffffff8033d200>] coord_by_handle+0x210/0xd10
+[ 3138.450874]  [<ffffffff8033d200>] coord_by_handle+0x210/0xd10
+[ 3138.450896]  [<ffffffff8033cbd6>] cbk_pack+0x46/0xc0
+[ 3138.450969]  [<ffffffff8033cbd6>] cbk_pack+0x46/0xc0
+[ 3138.450985]  [<ffffffff8033df79>] reiser4_object_lookup+0xf9/0x140
+[ 3138.451019]  [<ffffffff8034bdeb>] find_file_item_nohint+0x4b/0x50
+[ 3138.451033]  [<ffffffff8034c703>] find_file_item+0x103/0x160
+[ 3138.451108]  [<ffffffff8036555a>] update_extents+0x8a/0x1f0
+[ 3138.451136]  [<ffffffff80366120>] reiser4_write_extent+0x640/0x720
+[ 3138.451166]  [<ffffffff80263bf4>] _spin_unlock_irq+0x24/0x30
+[ 3138.451179]  [<ffffffff80263127>] __down_write_nested+0x37/0xb0
+[ 3138.451250]  [<ffffffff8034f131>] get_exclusive_access+0x11/0x20
+[ 3138.451263]  [<ffffffff80365ae0>] reiser4_write_extent+0x0/0x720
+[ 3138.451277]  [<ffffffff8034d9ae>] write_unix_file+0x29e/0x4f0
+[ 3138.451296]  [<ffffffff80215a1d>] vfs_write+0xbd/0x180
+[ 3138.451369]  [<ffffffff802164c3>] sys_write+0x53/0x90
+[ 3138.451384]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 3138.451398] 
+[ 3138.451408] beagled       D 000000000000000a     0  7457      1          7458  7425 (NOTLB)
+[ 3138.451617]  ffff81001b627668 0000000000000096 ffff81001e407c08 ffff810023c86080
+[ 3138.451704]  ffff81000a231040 ffff810023c86288 ffff81001e407c90 ffffffff806a85a8
+[ 3138.451849]  ffff81001e407c90 0000000000000292 00000000fffffe09 ffff81001e407c08
+[ 3138.451929] Call Trace:
+[ 3138.452010]  [<ffffffff8032daef>] reiser4_go_to_sleep+0x6f/0x90
+[ 3138.452024]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 3138.452039]  [<ffffffff80333eee>] capture_fuse_wait+0x12e/0x1b0
+[ 3138.452111]  [<ffffffff80333270>] wait_for_fusion+0x0/0x20
+[ 3138.452125]  [<ffffffff803348d0>] reiser4_try_capture+0x470/0xae0
+[ 3138.452139]  [<ffffffff8033494c>] reiser4_try_capture+0x4ec/0xae0
+[ 3138.452159]  [<ffffffff8032e2ed>] longterm_lock_znode+0x1fd/0x4a0
+[ 3138.452238]  [<ffffffff8033dcd0>] coord_by_handle+0xce0/0xd10
+[ 3138.452253]  [<ffffffff8033cbd6>] cbk_pack+0x46/0xc0
+[ 3138.452269]  [<ffffffff8033df79>] reiser4_object_lookup+0xf9/0x140
+[ 3138.452288]  [<ffffffff80368101>] item_body_by_coord_hard+0x11/0x20
+[ 3138.452359]  [<ffffffff8035f836>] unit_key_cde+0x66/0x80
+[ 3138.452372]  [<ffffffff8033cbd6>] cbk_pack+0x46/0xc0
+[ 3138.452388]  [<ffffffff8033de6c>] coord_by_key+0x7c/0x90
+[ 3138.452416]  [<ffffffff803436f1>] reiser4_iget+0x101/0x390
+[ 3138.452488]  [<ffffffff802620e1>] __mutex_lock_slowpath+0x251/0x260
+[ 3138.452502]  [<ffffffff8034a479>] lookup_sd+0x79/0xc0
+[ 3138.452520]  [<ffffffff80343737>] reiser4_iget+0x147/0x390
+[ 3138.452532]  [<ffffffff80356ee4>] reiser4_lookup_name+0x124/0x160
+[ 3138.452611]  [<ffffffff80330dd2>] _reiser4_init_context+0x72/0xb0
+[ 3138.452627]  [<ffffffff80348241>] reiser4_lookup_common+0xd1/0x160
+[ 3138.452643]  [<ffffffff80221c4c>] d_alloc+0x1ec/0x200
+[ 3138.452656]  [<ffffffff8020c645>] do_lookup+0xe5/0x210
+[ 3138.452730]  [<ffffffff80209a8a>] __link_path_walk+0x92a/0xe00
+[ 3138.452750]  [<ffffffff8020e3dc>] link_path_walk+0x5c/0xf0
+[ 3138.452766]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 3138.452788]  [<ffffffff8020c3ac>] do_path_lookup+0x1dc/0x260
+[ 3138.452858]  [<ffffffff802113e7>] getname+0x167/0x1e0
+[ 3138.452872]  [<ffffffff80222d5b>] __user_walk_fd+0x4b/0x80
+[ 3138.452885]  [<ffffffff802280cf>] vfs_stat_fd+0x2f/0x80
+[ 3138.452898]  [<ffffffff802847c0>] default_wake_function+0x0/0x10
+[ 3138.452979]  [<ffffffff80222a27>] sys_newstat+0x27/0x50
+[ 3138.452993]  [<ffffffff802a0c5f>] sys_futex+0xcf/0x110
+[ 3138.453008]  [<ffffffff80263372>] trace_hardirqs_on_thunk+0x35/0x37
+[ 3138.453022]  [<ffffffff80275010>] flat_send_IPI_mask+0x0/0x70
+[ 3138.453095]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 3138.453110] 
+[ 3138.453124] evolution     D 000000000000000a     0  8219      1  8254    8243  8024 (NOTLB)
+[ 3138.453276]  ffff8100137ab6e8 0000000000000092 ffff81002db7a1c0 ffff810011fa5040
+[ 3138.453420]  ffff81002be170c0 ffff810011fa5248 ffff81000e5b8c90 ffffffff806a85a8
+[ 3138.453507]  ffff81000e5b8c90 0000000000000296 00000000fffffe09 ffff81000e5b8c08
+[ 3138.453587] Call Trace:
+[ 3138.453668]  [<ffffffff8032daef>] reiser4_go_to_sleep+0x6f/0x90
+[ 3138.453682]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 3138.453697]  [<ffffffff80333eee>] capture_fuse_wait+0x12e/0x1b0
+[ 3138.453770]  [<ffffffff80333270>] wait_for_fusion+0x0/0x20
+[ 3138.453783]  [<ffffffff80334e24>] reiser4_try_capture+0x9c4/0xae0
+[ 3138.453797]  [<ffffffff80334e36>] reiser4_try_capture+0x9d6/0xae0
+[ 3138.453818]  [<ffffffff8032e2ed>] longterm_lock_znode+0x1fd/0x4a0
+[ 3138.453896]  [<ffffffff8033d4da>] coord_by_handle+0x4ea/0xd10
+[ 3138.453919]  [<ffffffff8033bef3>] handle_eottl+0x53/0x850
+[ 3138.453936]  [<ffffffff8033cbd6>] cbk_pack+0x46/0xc0
+[ 3138.453952]  [<ffffffff8033de6c>] coord_by_key+0x7c/0x90
+[ 3138.454038]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 3138.454052]  [<ffffffff8032e79b>] longterm_unlock_znode+0x20b/0x240
+[ 3138.455096] Call Trace:
+[ 3138.455177]  [<ffffffff8032daef>] reiser4_go_to_sleep+0x6f/0x90
+[ 3138.455191]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 3138.455206]  [<ffffffff80333eee>] capture_fuse_wait+0x12e/0x1b0
+[ 3138.455279]  [<ffffffff80333270>] wait_for_fusion+0x0/0x20
+[ 3138.455292]  [<ffffffff80334e24>] reiser4_try_capture+0x9c4/0xae0
+[ 3138.455306]  [<ffffffff80334e36>] reiser4_try_capture+0x9d6/0xae0
+[ 3138.455326]  [<ffffffff8032e2ed>] longterm_lock_znode+0x1fd/0x4a0
+[ 3138.455405]  [<ffffffff8033d4da>] coord_by_handle+0x4ea/0xd10
+[ 3138.455419]  [<ffffffff8033d200>] coord_by_handle+0x210/0xd10
+[ 3138.455441]  [<ffffffff8033cbd6>] cbk_pack+0x46/0xc0
+[ 3138.455457]  [<ffffffff8033cbd6>] cbk_pack+0x46/0xc0
+[ 3138.455531]  [<ffffffff8033de6c>] coord_by_key+0x7c/0x90
+[ 3138.455557]  [<ffffffff80334316>] znode_make_dirty+0x76/0xa0
+[ 3138.455571]  [<ffffffff8033025c>] insert_into_item+0x15c/0x280
+[ 3138.455583]  [<ffffffff8032924c>] get_htable+0xc/0x30
+[ 3138.455655]  [<ffffffff8034a479>] lookup_sd+0x79/0xc0
+[ 3138.455672]  [<ffffffff8034adfa>] write_sd_by_inode_common+0x37a/0x6b0
+[ 3138.455696]  [<ffffffff8034a7c7>] reiser4_add_link_common+0x17/0x30
+[ 3138.455713]  [<ffffffff80347dbe>] create_vfs_object+0x49e/0x5f0
+[ 3138.455796]  [<ffffffff80348096>] reiser4_create_common+0xb6/0xd0
+[ 3138.455816]  [<ffffffff80239565>] vfs_create+0x95/0x130
+[ 3138.455830]  [<ffffffff8021a676>] open_namei+0x206/0x700
+[ 3138.455849]  [<ffffffff80226a6c>] do_filp_open+0x1c/0x40
+[ 3138.455926]  [<ffffffff80263897>] _spin_unlock+0x17/0x20
+[ 3138.455938]  [<ffffffff80214f3d>] get_unused_fd+0xed/0x100
+[ 3138.455953]  [<ffffffff80219068>] do_sys_open+0x58/0xf0
+[ 3138.455967]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 3138.456040] 
+[ 3138.456046] debugedit     D 0000000000000004     0 49458  49429                     (NOTLB)
+[ 3138.456197]  ffff810021589bf8 0000000000000092 ffff81002db7a1c0 ffff8100161e40c0
+[ 3138.456341]  ffff810012d3d0c0 ffff8100161e42c8 ffff81000ee8ef00 0000000000000046
+[ 3138.456427]  ffff81000ee8ef00 0000000000000292 ffff81000ee8ee80 ffff81000ee8ef00
+[ 3138.456566] Call Trace:
+[ 3138.456588]  [<ffffffff8033f5de>] current_atom_finish_all_fq+0x12e/0x280
+[ 3138.456661]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
+[ 3138.456674]  [<ffffffff803350ac>] submit_wb_list+0x11c/0x130
+[ 3138.456690]  [<ffffffff80335409>] reiser4_txn_end+0x349/0x530
+[ 3138.456710]  [<ffffffff803355f9>] reiser4_txn_restart+0x9/0x20
+[ 3138.456781]  [<ffffffff80335680>] force_commit_atom+0x50/0x60
+[ 3138.456793]  [<ffffffff8034cfb1>] writepages_unix_file+0x671/0x780
+[ 3138.456824]  [<ffffffff802590b3>] do_writepages+0x43/0x80
+[ 3138.456838]  [<ffffffff8024dbf8>] __filemap_fdatawrite_range+0x58/0x70
+[ 3138.456914]  [<ffffffff8024e19d>] do_fsync+0x3d/0xe0
+[ 3138.456930]  [<ffffffff802c2473>] sys_msync+0x143/0x1f0
+[ 3138.456945]  [<ffffffff8025c11e>] system_call+0x7e/0x83
+[ 3138.456960] 
+[ 3138.457025] randbg        D 0000000000000002     0 49475  49474                     (NOTLB)
+[ 3138.457176]  ffff81000d617948 0000000000000092 ffff810025ad5a08 ffff81000e39a080
+[ 3138.457262]  ffffffff80602520 ffff81000e39a288 ffff810025ad5a90 0000000000000046
+[ 3143.157301] SysRq : HELP : loglevel0-8 reBoot Crashdump show-all-locks(D) tErm Full kIll saK showMem Nice powerOff showPc show-all-timers(Q) unRaw Sync showTasks Unmount shoW-blocked-tasks 
+[ 3149.835124] SysRq : Emergency Sync
+[ 3154.270203] SysRq : Show Locks Held
+[ 3154.270224] 
+[ 3154.270226] Showing all locks held in the system:
+[ 3154.270251] 1 lock held by agetty/6936:
+[ 3154.270322]  #0:  (&tty->atomic_read_lock){--..}, at: [<ffffffff80229042>] read_chan+0x262/0x680
+[ 3154.270423] 1 lock held by agetty/6939:
+[ 3154.270490]  #0:  (&tty->atomic_read_lock){--..}, at: [<ffffffff80229042>] read_chan+0x262/0x680
+[ 3154.270641] 1 lock held by agetty/6942:
+[ 3154.270648]  #0:  (&tty->atomic_read_lock){--..}, at: [<ffffffff80229042>] read_chan+0x262/0x680
+[ 3154.270799] 1 lock held by agetty/6945:
+[ 3154.270806]  #0:  (&tty->atomic_read_lock){--..}, at: [<ffffffff80229042>] read_chan+0x262/0x680
+[ 3154.270957] 1 lock held by agetty/6946:
+[ 3154.270964]  #0:  (&tty->atomic_read_lock){--..}, at: [<ffffffff80229042>] read_chan+0x262/0x680
+[ 3154.271114] 1 lock held by bash/6967:
+[ 3154.271121]  #0:  (&tty->atomic_read_lock){--..}, at: [<ffffffff80229042>] read_chan+0x262/0x680
+[ 3154.271277] 1 lock held by gkrellm2/7130:
+[ 3154.271284]  #0:  (&p->lock){--..}, at: [<ffffffff8023f306>] seq_read+0x36/0x2d0
+[ 3154.271444] 1 lock held by evolution-data-/7473:
+[ 3154.271451]  #0:  (&mm->mmap_sem){----}, at: [<ffffffff80266096>] do_page_fault+0x3f6/0x8a0
+[ 3154.271604] 1 lock held by evolution-data-/7477:
+[ 3154.271611]  #0:  (&mm->mmap_sem){----}, at: [<ffffffff8029fbab>] futex_wake+0x2b/0xf0
+[ 3154.271767] 1 lock held by emerge/7768:
+[ 3154.271774]  #0:  (&inode->i_mutex){--..}, at: [<ffffffff8020c5f7>] do_lookup+0x97/0x210
+[ 3154.271929] 1 lock held by evolution-alarm/8337:
+[ 3154.271936]  #0:  (&data->latch){----}, at: [<ffffffff8034d157>] read_unix_file+0x97/0x450
+[ 3154.272091] 
+[ 3154.272098] =============================================
+[ 3154.272101] 
+
+dmesg from the next reboot, but the exact same configuration:
+lynx@zephyr ~ $ dmesg
+[    0.000000] Linux version 2.6.20-rc6-mm3 (root@zephyr) (gcc version 4.2.0-alpha20070117 (prerelease) (Gentoo 4.2.0_alpha20070117)) #1 Tue Jan 30 13:15:43 MST 2007
+[    0.000000] Command line: root=/dev/sda2 rootfstype=reiser4 ro i8042.nomux elevator=cfq quiet resume=/dev/sda3
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000]  BIOS-e820: 0000000000000000 - 000000000009f800 (usable)
+[    0.000000]  BIOS-e820: 000000000009f800 - 00000000000a0000 (reserved)
+[    0.000000]  BIOS-e820: 00000000000d0000 - 0000000000100000 (reserved)
+[    0.000000]  BIOS-e820: 0000000000100000 - 000000003ff70000 (usable)
+[    0.000000]  BIOS-e820: 000000003ff70000 - 000000003ff7f000 (ACPI data)
+[    0.000000]  BIOS-e820: 000000003ff7f000 - 000000003ff80000 (ACPI NVS)
+[    0.000000]  BIOS-e820: 000000003ff80000 - 0000000040000000 (reserved)
+[    0.000000]  BIOS-e820: 00000000fff80000 - 0000000100000000 (reserved)
+[    0.000000] Entering add_active_range(0, 0, 159) 0 entries of 256 used
+[    0.000000] Entering add_active_range(0, 256, 262000) 1 entries of 256 used
+[    0.000000] end_pfn_map = 1048576
+[    0.000000] DMI present.
+[    0.000000] ACPI: RSDP @ 0x00000000000f7240/0x0014 (v000 PTLTD )
+[    0.000000] ACPI: RSDT @ 0x000000003ff7a87e/0x0034 (v001 PTLTD    RSDT   0x06040000  LTP 0x00000000)
+[    0.000000] ACPI: FACP @ 0x000000003ff7ee13/0x0074 (v001 NVIDIA CK8      0x06040000 PTL_ 0x000F4240)
+[    0.000000] ACPI: DSDT @ 0x000000003ff7a8b2/0x4561 (v001 NVIDIA      CK8 0x06040000 MSFT 0x0100000E)
+[    0.000000] ACPI: FACS @ 0x000000003ff7ffc0/0x0040
+[    0.000000] ACPI: APIC @ 0x000000003ff7ee87/0x005A (v001 NVIDIA NV_APIC_ 0x06040000  LTP 0x00000000)
+[    0.000000] ACPI: BOOT @ 0x000000003ff7eee1/0x0028 (v001 PTLTD  $SBFTBL$ 0x06040000  LTP 0x00000001)
+[    0.000000] ACPI: SSDT @ 0x000000003ff7ef09/0x00F7 (v001 PTLTD  POWERNOW 0x06040000  LTP 0x00000001)
+[    0.000000] Entering add_active_range(0, 0, 159) 0 entries of 256 used
+[    0.000000] Entering add_active_range(0, 256, 262000) 1 entries of 256 used
+[    0.000000] No mptable found.
+[    0.000000] sizeof(struct page) = 56
+[    0.000000] Zone PFN ranges:
+[    0.000000]   DMA             0 ->     4096
+[    0.000000]   DMA32        4096 ->  1048576
+[    0.000000]   Normal    1048576 ->  1048576
+[    0.000000] early_node_map[2] active PFN ranges
+[    0.000000]     0:        0 ->      159
+[    0.000000]     0:      256 ->   262000
+[    0.000000] On node 0 totalpages: 261903
+[    0.000000] Node 0 memmap at 0xffff810001000000 size 14680064 first pfn 0xffff810001000000
+[    0.000000]   DMA zone: 56 pages used for memmap
+[    0.000000]   DMA zone: 2225 pages reserved
+[    0.000000]   DMA zone: 1718 pages, LIFO batch:0
+[    0.000000]   DMA32 zone: 3526 pages used for memmap
+[    0.000000]   DMA32 zone: 254378 pages, LIFO batch:31
+[    0.000000]   Normal zone: 0 pages used for memmap
+[    0.000000] Nvidia board detected. Ignoring ACPI timer override.
+[    0.000000] If you got timer trouble try acpi_use_timer_override
+[    0.000000] ACPI: PM-Timer IO Port: 0x8008
+[    0.000000] ACPI: Local APIC address 0xfee00000
+[    0.000000] ACPI: LAPIC (acpi_id[0x00] lapic_id[0x00] enabled)
+[    0.000000] Processor #0 (Bootup-CPU)
+[    0.000000] ACPI: LAPIC_NMI (acpi_id[0x00] high edge lint[0x1])
+[    0.000000] ACPI: IOAPIC (id[0x02] address[0xfec00000] gsi_base[0])
+[    0.000000] IOAPIC[0]: apic_id 2, address 0xfec00000, GSI 0-23
+[    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 low level)
+[    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+[    0.000000] ACPI: BIOS IRQ0 pin2 override ignored.
+[    0.000000] ACPI: IRQ9 used by override.
+[    0.000000] Setting APIC routing to flat
+[    0.000000] Using ACPI (MADT) for SMP configuration information
+[    0.000000] Nosave address range: 000000000009f000 - 00000000000a0000
+[    0.000000] Nosave address range: 00000000000a0000 - 00000000000d0000
+[    0.000000] Nosave address range: 00000000000d0000 - 0000000000100000
+[    0.000000] Allocating PCI resources starting at 50000000 (gap: 40000000:bff80000)
+[    0.000000] Built 1 zonelists.  Total pages: 256096
+[    0.000000] Kernel command line: root=/dev/sda2 rootfstype=reiser4 ro i8042.nomux elevator=cfq quiet resume=/dev/sda3
+[    0.000000] Initializing CPU#0
+[    0.000000] PID hash table entries: 4096 (order: 12, 32768 bytes)
+[   14.466902] time.c: Detected 797.956 MHz processor.
+[   14.468578] Console: colour VGA+ 80x25
+[   14.468626] Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar
+[   14.468631] ... MAX_LOCKDEP_SUBCLASSES:    8
+[   14.468636] ... MAX_LOCK_DEPTH:          30
+[   14.468640] ... MAX_LOCKDEP_KEYS:        2048
+[   14.468644] ... CLASSHASH_SIZE:           1024
+[   14.468648] ... MAX_LOCKDEP_ENTRIES:     8192
+[   14.468653] ... MAX_LOCKDEP_CHAINS:      16384
+[   14.468657] ... CHAINHASH_SIZE:          8192
+[   14.468661]  memory used by lock dependency info: 1648 kB
+[   14.468666]  per task-struct memory footprint: 1680 bytes
+[   14.469718] Dentry cache hash table entries: 131072 (order: 8, 1048576 bytes)
+[   14.470931] Inode-cache hash table entries: 65536 (order: 7, 524288 bytes)
+[   14.471298] Checking aperture...
+[   14.471305] CPU 0: aperture @ e8000000 size 128 MB
+[   14.491592] Memory: 1022384k/1048000k available (2960k kernel code, 24924k reserved, 1434k data, 180k init)
+[   14.568885] Calibrating delay using timer specific routine.. 1597.72 BogoMIPS (lpj=3195456)
+[   14.569176] Mount-cache hash table entries: 256
+[   14.570131] CPU: L1 I Cache: 64K (64 bytes/line), D cache 64K (64 bytes/line)
+[   14.570138] CPU: L2 Cache: 1024K (64 bytes/line)
+[   14.570158] CPU: AMD Athlon(tm) 64 Processor 3400+ stepping 0a
+[   14.570181] ACPI: Core revision 20070126
+[   14.585321] Parsing all Control Methods:
+[   14.585728] Table [DSDT](id 0001) - 650 Objects with 66 Devices 205 Methods 24 Regions
+[   14.585849] Parsing all Control Methods:
+[   14.586184] Table [SSDT](id 0002) - 3 Objects with 0 Devices 1 Methods 0 Regions
+[   14.586192]  tbxface-0586 [02] tb_load_namespace     : ACPI Tables successfully acquired
+[   14.606982] evxfevnt-0091 [02] enable                : Transition to ACPI mode successful
+[   14.647799] Using local APIC timer interrupts.
+[   14.773098] result 12468076
+[   14.773102] Detected 12.468 MHz APIC timer.
+[   14.777244] PM: Adding info for No Bus:platform
+[   14.777675] NET: Registered protocol family 16
+[   14.778087] No dock devices found.
+[   14.778173] PM: Adding info for No Bus:vtcon0
+[   14.778609] ACPI: bus type pci registered
+[   14.778623] PCI: Using configuration type 1
+[   14.782680] evgpeblk-0952 [04] ev_create_gpe_block   : GPE 00 to 1F [_GPE] 4 regs on int 0x9
+[   14.782728] evgpeblk-0952 [04] ev_create_gpe_block   : GPE 20 to 5F [_GPE] 8 regs on int 0x9
+[   14.783570] evgpeblk-1049 [03] ev_initialize_gpe_bloc: Found 5 Wake, Enabled 1 Runtime GPEs in this block
+[   14.783949] evgpeblk-1049 [03] ev_initialize_gpe_bloc: Found 0 Wake, Enabled 1 Runtime GPEs in this block
+[   14.785018] Completing Region/Field/Buffer/Package initialization:.....................................................................
+[   14.789847] Initialized 24/24 Regions 2/2 Fields 29/29 Buffers 14/21 Packages (662 nodes)
+[   14.789855] Initializing Device/Processor/Thermal objects by executing _INI methods:.
+[   14.790075] Executed 1 _INI methods requiring 0 _STA executions (examined 70 objects)
+[   14.790109] ACPI: Interpreter enabled
+[   14.790113] ACPI: Using IOAPIC for interrupt routing
+[   14.790329] Found System \ [ffffffffffffffff]
+[   14.790391] PM: Adding info for acpi:acpi_system:00
+[   14.790541] Found Power Button PWRB [0000000000000000]
+[   14.790575] PM: Adding info for acpi:button_power:00
+[   14.790712] Found Processor \_PR_.CPU0 [ffff81003ff40a30]
+[   14.790733] PM: Adding info for acpi:ACPI0007:00
+[   14.790943] Found Device \_SB_ [ffff81003ff40390]
+[   14.790963] PM: Adding info for acpi:device:00
+[   14.791146] Found Device \_SB_.WMID [ffff81003ff40950]
+[   14.791179] PM: Adding info for acpi:pnp0c14:00
+[   14.791564] Found Device \_SB_.PWRB [ffff81003ff407f0]
+[   14.791587] PM: Adding info for acpi:PNP0C0C:00
+[   14.791787] Found Device \_SB_.LID_ [ffff81003ff40790]
+[   14.791808] PM: Adding info for acpi:PNP0C0D:00
+[   14.792026] Found Device \_SB_.PCI0 [ffff81003ff40730]
+[   14.792063] PM: Adding info for acpi:PNP0A03:00
+[   14.792466] Found Device \_SB_.PCI0.USB0 [ffff81003ff405f0]
+[   14.792488] PM: Adding info for acpi:device:01
+[   14.792948] Found Device \_SB_.PCI0.USB1 [ffff81003ff40550]
+[   14.792972] PM: Adding info for acpi:device:02
+[   14.793187] Found Device \_SB_.PCI0.USB2 [ffff81003ff404b0]
+[   14.793221] PM: Adding info for acpi:device:03
+[   14.793422] Found Device \_SB_.PCI0.IDE0 [ffff81003ff40450]
+[   14.793443] PM: Adding info for acpi:device:04
+[   14.793659] Found Device \_SB_.PCI0.IDE0.PRI0 [ffff81003ff40d50]
+[   14.793684] PM: Adding info for acpi:device:05
+[   14.793878] Found Device \_SB_.PCI0.IDE0.PRI0.MAST [ffff81003ff40cd0]
+[   14.793913] PM: Adding info for acpi:device:06
+[   14.794105] Found Device \_SB_.PCI0.IDE0.PRI0.SLAV [ffff81003ff40c70]
+[   14.794127] PM: Adding info for acpi:device:07
+[   14.794342] Found Device \_SB_.PCI0.IDE0.SEC0 [ffff81003ff40c10]
+[   14.794363] PM: Adding info for acpi:device:08
+[   14.794555] Found Device \_SB_.PCI0.IDE0.SEC0.MAST [ffff81003ff40b90]
+[   14.794590] PM: Adding info for acpi:device:09
+[   14.794786] Found Device \_SB_.PCI0.IDE0.SEC0.SLAV [ffff810001fb8930]
+[   14.794807] PM: Adding info for acpi:device:0a
+[   14.795022] Found Device \_SB_.PCI0.SIDE [ffff810001fb88d0]
+[   14.795044] PM: Adding info for acpi:device:0b
+[   14.795251] Found Device \_SB_.PCI0.SIDE.PRI0 [ffff810001fb85d0]
+[   14.795288] PM: Adding info for acpi:device:0c
+[   14.795487] Found Device \_SB_.PCI0.SIDE.PRI0.MAST [ffff810001fb8550]
+[   14.795508] PM: Adding info for acpi:device:0d
+[   14.795718] Found Device \_SB_.PCI0.SIDE.PRI0.SLAV [ffff810001fb84f0]
+[   14.795740] PM: Adding info for acpi:device:0e
+[   14.795937] Found Device \_SB_.PCI0.SIDE.SEC0 [ffff810001fb8490]
+[   14.795972] PM: Adding info for acpi:device:0f
+[   14.796167] Found Device \_SB_.PCI0.SIDE.SEC0.MAST [ffff810001fb8410]
+[   14.796188] PM: Adding info for acpi:device:10
+[   14.796396] Found Device \_SB_.PCI0.SIDE.SEC0.SLAV [ffff810001fb83b0]
+[   14.796421] PM: Adding info for acpi:device:11
+[   14.796621] Found Device \_SB_.PCI0.SMB0 [ffff810001fb8350]
+[   14.796656] PM: Adding info for acpi:device:12
+[   14.796867] Found Device \_SB_.PCI0.AUD0 [ffff810001fb8290]
+[   14.796889] PM: Adding info for acpi:device:13
+[   14.797099] Found Device \_SB_.PCI0.MODM [ffff810001fb8250]
+[   14.797122] PM: Adding info for acpi:device:14
+[   14.797325] Found Device \_SB_.PCI0.LPC0 [ffff810001fb8210]
+[   14.797361] PM: Adding info for acpi:device:15
+[   14.797550] Found Device \_SB_.PCI0.LPC0.ACAD [ffff810001fb8f90]
+[   14.797571] PM: Adding info for acpi:ACPI0003:00
+[   14.797787] Found Device \_SB_.PCI0.LPC0.PMIO [ffff810001fb8cd0]
+[   14.797808] PM: Adding info for acpi:PNP0C02:00
+[   14.798006] Found Device \_SB_.PCI0.LPC0.MEM0 [ffff810001fb8c50]
+[   14.798041] PM: Adding info for acpi:PNP0C01:00
+[   14.798254] Found Device \_SB_.PCI0.LPC0.EC0_ [ffff810001fb8bd0]
+[   14.798276] PM: Adding info for acpi:PNP0C09:00
+[   14.836959] Found Device \_SB_.PCI0.LPC0.BAT1 [ffff810001fb5990]
+[   14.836985] PM: Adding info for acpi:PNP0C0A:00
+[   14.837188] Found Device \_SB_.PCI0.LPC0.SYS0 [ffff810001fb4730]
+[   14.837224] PM: Adding info for acpi:PNP0C02:01
+[   14.837415] Found Device \_SB_.PCI0.LPC0.PIC0 [ffff810001fb46b0]
+[   14.837437] PM: Adding info for acpi:PNP0000:00
+[   14.837633] Found Device \_SB_.PCI0.LPC0.PIT0 [ffff810001fb4650]
+[   14.837655] PM: Adding info for acpi:PNP0100:00
+[   14.837844] Found Device \_SB_.PCI0.LPC0.DMA0 [ffff810001fb45f0]
+[   14.837879] PM: Adding info for acpi:PNP0200:00
+[   14.838062] Found Device \_SB_.PCI0.LPC0.SPK0 [ffff810001fb4590]
+[   14.838085] PM: Adding info for acpi:PNP0800:00
+[   14.838286] Found Device \_SB_.PCI0.LPC0.RTC0 [ffff810001fb4530]
+[   14.838309] PM: Adding info for acpi:PNP0B00:00
+[   14.838492] Found Device \_SB_.PCI0.LPC0.MTH0 [ffff810001fb44d0]
+[   14.838528] PM: Adding info for acpi:PNP0C04:00
+[   14.838929] Found Device \_SB_.PCI0.LPC0.PS2K [ffff810001fb4470]
+[   14.838954] PM: Adding info for acpi:PNP0303:00
+[   14.839369] Found Device \_SB_.PCI0.LPC0.PS2M [ffff810001fb43b0]
+[   14.839395] PM: Adding info for acpi:PNP0F13:00
+[   14.839592] Found Device \_SB_.PCI0.LPC0.SIO_ [ffff810001fb42f0]
+[   14.839628] PM: Adding info for acpi:PNP0A05:00
+[   14.840965] Found Device \_SB_.PCI0.LPC0.SIO_.FDC0 [ffff810001fb4e90]
+[   14.840990] PM: Adding info for acpi:PNP0700:00
+[   14.847544] Found Device \_SB_.PCI0.LPC0.SIO_.ECP1 [ffff810001fb4b30]
+[   14.847571] PM: Adding info for acpi:PNP0401:00
+[   14.848145] Found Device \_SB_.PCI0.P2P0 [ffff810001fb2950]
+[   14.848183] PM: Adding info for acpi:device:16
+[   14.848598] Found Device \_SB_.PCI0.P2P0.MAC0 [ffff810001fb2870]
+[   14.848621] PM: Adding info for acpi:device:17
+[   14.849082] Found Device \_SB_.PCI0.AGP0 [ffff810001fb27f0]
+[   14.849107] PM: Adding info for acpi:device:18
+[   14.849540] Found Device \_SB_.PCI0.AGP0.VGA_ [ffff810001fb2710]
+[   14.849576] PM: Adding info for acpi:video:00
+[   14.849877] Found Device \_SB_.PCI0.AGP0.VGA_.CRT_ [ffff810001fb2550]
+[   14.849900] PM: Adding info for acpi:device:19
+[   14.850213] Found Device \_SB_.PCI0.AGP0.VGA_.LCD_ [ffff810001fb24b0]
+[   14.850237] PM: Adding info for acpi:device:1a
+[   14.850533] Found Device \_SB_.PCI0.AGP0.VGA_.TV__ [ffff810001fb2410]
+[   14.850569] PM: Adding info for acpi:device:1b
+[   14.851521] Found Device \_SB_.PCI0.LNK1 [ffff810001fb2d30]
+[   14.851547] PM: Adding info for acpi:PNP0C0F:00
+[   14.852020] Found Device \_SB_.PCI0.LNK2 [ffff810001fb2c30]
+[   14.852045] PM: Adding info for acpi:PNP0C0F:01
+[   14.852507] Found Device \_SB_.PCI0.LNK3 [ffff810001fb2b30]
+[   14.852546] PM: Adding info for acpi:PNP0C0F:02
+[   14.853028] Found Device \_SB_.PCI0.LNK4 [ffff810001fb2a30]
+[   14.853054] PM: Adding info for acpi:PNP0C0F:03
+[   14.853531] Found Device \_SB_.PCI0.LNK5 [ffff810001fb0930]
+[   14.853561] PM: Adding info for acpi:PNP0C0F:04
+[   14.854028] Found Device \_SB_.PCI0.LSMB [ffff810001fb0830]
+[   14.854067] PM: Adding info for acpi:PNP0C0F:05
+[   14.854529] Found Device \_SB_.PCI0.LUS0 [ffff810001fb0730]
+[   14.854556] PM: Adding info for acpi:PNP0C0F:06
+[   14.855030] Found Device \_SB_.PCI0.LUS1 [ffff810001fb0630]
+[   14.855056] PM: Adding info for acpi:PNP0C0F:07
+[   14.855524] Found Device \_SB_.PCI0.LUS2 [ffff810001fb0530]
+[   14.855563] PM: Adding info for acpi:PNP0C0F:08
+[   14.856040] Found Device \_SB_.PCI0.LMAC [ffff810001fb0430]
+[   14.856071] PM: Adding info for acpi:PNP0C0F:09
+[   14.856549] Found Device \_SB_.PCI0.LACI [ffff810001fb0330]
+[   14.856580] PM: Adding info for acpi:PNP0C0F:0a
+[   14.857071] Found Device \_SB_.PCI0.LMCI [ffff810001fb0230]
+[   14.857111] PM: Adding info for acpi:PNP0C0F:0b
+[   14.857587] Found Device \_SB_.PCI0.LPID [ffff810001fb0f30]
+[   14.857614] PM: Adding info for acpi:PNP0C0F:0c
+[   14.858099] Found Device \_SB_.PCI0.LTID [ffff810001fb0e30]
+[   14.858127] PM: Adding info for acpi:PNP0C0F:0d
+[   14.858287] Found Thermal Zone \_TZ_ [ffff81003ff40350]
+[   14.858322] PM: Adding info for acpi:thermal:00
+[   14.858461] Found Thermal Zone \_TZ_.THRM [ffff810001fb0cb0]
+[   14.858486] PM: Adding info for acpi:thermal:01
+[   14.859358] ACPI: PCI Root Bridge [PCI0] (0000:00)
+[   14.859476] PM: Adding info for No Bus:pci0000:00
+[   14.861322] PCI: Bus #03 (-#06) is hidden behind  bridge #02 (-#02) (try 'pci=assign-busses')
+[   14.861328] Please report the result to linux-kernel to fix this permanently
+[   14.861453] PCI: Bus #07 (-#0a) is hidden behind  bridge #02 (-#02) (try 'pci=assign-busses')
+[   14.861459] Please report the result to linux-kernel to fix this permanently
+[   14.861673] Boot video device is 0000:01:00.0
+[   14.861781] ACPI: PCI Interrupt Routing Table [\_SB_.PCI0._PRT]
+[   14.862152] ACPI: PCI Interrupt Routing Table [\_SB_.PCI0.P2P0._PRT]
+[   14.862333] ACPI: PCI Interrupt Routing Table [\_SB_.PCI0.AGP0._PRT]
+[   14.865595] PM: Adding info for pci:0000:00:00.0
+[   14.868906] PM: Adding info for pci:0000:00:01.0
+[   14.872186] PM: Adding info for pci:0000:00:01.1
+[   14.875532] PM: Adding info for pci:0000:00:02.0
+[   14.878841] PM: Adding info for pci:0000:00:02.1
+[   14.882148] PM: Adding info for pci:0000:00:02.2
+[   14.885455] PM: Adding info for pci:0000:00:06.0
+[   14.888752] PM: Adding info for pci:0000:00:06.1
+[   14.892046] PM: Adding info for pci:0000:00:08.0
+[   14.895359] PM: Adding info for pci:0000:00:0a.0
+[   14.898674] PM: Adding info for pci:0000:00:0b.0
+[   14.901970] PM: Adding info for pci:0000:00:18.0
+[   14.905292] PM: Adding info for pci:0000:00:18.1
+[   14.908581] PM: Adding info for pci:0000:00:18.2
+[   14.911873] PM: Adding info for pci:0000:00:18.3
+[   14.912175] PM: Adding info for pci:0000:02:00.0
+[   14.912475] PM: Adding info for pci:0000:02:01.0
+[   14.912762] PM: Adding info for pci:0000:02:02.0
+[   14.913078] PM: Adding info for pci:0000:02:04.0
+[   14.913375] PM: Adding info for pci:0000:02:04.1
+[   14.913663] PM: Adding info for pci:0000:02:04.2
+[   14.913975] PM: Adding info for pci:0000:01:00.0
+[   14.915057] ACPI: PCI Interrupt Link [LNK1] (IRQs 16 18 19) *0
+[   14.915823] ACPI: PCI Interrupt Link [LNK2] (IRQs 16 18 19) *0
+[   14.916585] ACPI: PCI Interrupt Link [LNK3] (IRQs 17) *0
+[   14.917358] ACPI: PCI Interrupt Link [LNK4] (IRQs 16 18 19) *0, disabled.
+[   14.918120] ACPI: PCI Interrupt Link [LNK5] (IRQs 16 18 19) *0
+[   14.918855] ACPI: PCI Interrupt Link [LSMB] (IRQs 20 21 22) *0
+[   14.919587] ACPI: PCI Interrupt Link [LUS0] (IRQs 20 21 22) *0
+[   14.920319] ACPI: PCI Interrupt Link [LUS1] (IRQs 20 21 22) *0
+[   14.921093] ACPI: PCI Interrupt Link [LUS2] (IRQs 20 21 22) *0
+[   14.921834] ACPI: PCI Interrupt Link [LMAC] (IRQs 20 21 22) *0, disabled.
+[   14.922570] ACPI: PCI Interrupt Link [LACI] (IRQs 20 21 22) *0
+[   14.923309] ACPI: PCI Interrupt Link [LMCI] (IRQs 20 21 22) *0
+[   14.924046] ACPI: PCI Interrupt Link [LPID] (IRQs 20 21 22) *0, disabled.
+[   14.924825] ACPI: PCI Interrupt Link [LTID] (IRQs 20 21 22) *0, disabled.
+[   14.925306] Generic PHY: Registered new driver
+[   14.925717] SCSI subsystem initialized
+[   14.925801] libata version 2.00 loaded.
+[   14.925971] PCI: Using ACPI for IRQ routing
+[   14.925977] PCI: If a device doesn't work, try "pci=routeirq".  If it helps, post a report
+[   14.926000] PCI: Cannot allocate resource region 0 of device 0000:00:00.0
+[   14.926534] agpgart: Detected AGP bridge 0
+[   14.926547] agpgart: Setting up Nforce3 AGP.
+[   14.933821] PM: Adding info for No Bus:agpgart
+[   14.933973] agpgart: AGP aperture is 128M @ 0xe8000000
+[   14.934224] PM: Adding info for No Bus:mem
+[   14.934335] PM: Adding info for No Bus:kmem
+[   14.934454] PM: Adding info for No Bus:null
+[   14.934564] PM: Adding info for No Bus:port
+[   14.934663] PM: Adding info for No Bus:zero
+[   14.934776] PM: Adding info for No Bus:full
+[   14.934888] PM: Adding info for No Bus:random
+[   14.934985] PM: Adding info for No Bus:urandom
+[   14.935099] PM: Adding info for No Bus:kmsg
+[   14.935344] PCI: Failed to allocate mem resource #10:4000000@e4000000 for 0000:02:04.0
+[   14.935404] PCI: Failed to allocate mem resource #10:4000000@e4000000 for 0000:02:04.1
+[   14.935461] PCI: Bus 3, cardbus bridge: 0000:02:04.0
+[   14.935467]   IO window: 00003000-000030ff
+[   14.935475]   IO window: 00003400-000034ff
+[   14.935484]   PREFETCH window: 50000000-53ffffff
+[   14.935492] PCI: Bus 7, cardbus bridge: 0000:02:04.1
+[   14.935497]   IO window: 00003800-000038ff
+[   14.935505]   IO window: 00003c00-00003cff
+[   14.935514]   PREFETCH window: 54000000-57ffffff
+[   14.935521] PCI: Bridge: 0000:00:0a.0
+[   14.935527]   IO window: 3000-7fff
+[   14.935536]   MEM window: e0100000-e17fffff
+[   14.935544]   PREFETCH window: 50000000-57ffffff
+[   14.935554] PCI: Bridge: 0000:00:0b.0
+[   14.935557]   IO window: disabled.
+[   14.935568]   MEM window: e2000000-e2ffffff
+[   14.935576]   PREFETCH window: f0000000-f80fffff
+[   14.935596] PCI: Setting latency timer of device 0000:00:0a.0 to 64
+[   14.936868] ACPI: PCI Interrupt Link [LNK1] enabled at IRQ 19
+[   14.936885] ACPI: PCI Interrupt 0000:02:04.0[A] -> Link [LNK1] -> GSI 19 (level, low) -> IRQ 19
+[   14.938170] ACPI: PCI Interrupt Link [LNK2] enabled at IRQ 18
+[   14.938183] ACPI: PCI Interrupt 0000:02:04.1[B] -> Link [LNK2] -> GSI 18 (level, low) -> IRQ 18
+[   14.938262] NET: Registered protocol family 2
+[   14.972943] IP route cache hash table entries: 32768 (order: 6, 262144 bytes)
+[   14.973336] TCP established hash table entries: 32768 (order: 9, 2359296 bytes)
+[   14.979659] TCP bind hash table entries: 16384 (order: 8, 1310720 bytes)
+[   14.983271] TCP: Hash tables configured (established 32768 bind 16384)
+[   14.983317] TCP reno registered
+[   14.993397] Simple Boot Flag at 0x37 set to 0x1
+[   14.993633] PM: Adding info for No Bus:mcelog
+[   14.993805] PM: Adding info for No Bus:msr0
+[   14.993951] PM: Adding info for No Bus:cpu0
+[   14.995057] PM: Adding info for No Bus:snapshot
+[   14.995152] audit: initializing netlink socket (disabled)
+[   14.995201] audit(1170265666.392:1): initialized
+[   14.995503] Total HugeTLB memory allocated, 0
+[   14.996260] Loading Reiser4. See www.namesys.com for a description of Reiser4.
+[   14.996869] Installing knfsd (copyright (C) 1996 okir@monad.swb.de).
+[   14.997588] io scheduler noop registered
+[   14.997594] io scheduler anticipatory registered
+[   14.997600] io scheduler deadline registered
+[   14.997639] io scheduler cfq registered (default)
+[   14.999744] ACPI: AC Adapter [ACAD] (on-line)
+[   15.104005] ACPI: Battery Slot [BAT1] (battery present)
+[   15.104327] input: Power Button (CM) as /class/input/input0
+[   15.104350] ACPI: Power Button (CM) [PWRB]
+[   15.104540] input: Lid Switch as /class/input/input1
+[   15.104546] ACPI: Lid Switch [LID]
+[   15.105600] ACPI: Video Device [VGA] (multi-head: yes  rom: no  post: no)
+[   15.105625] Using specific hotkey driver
+[   15.107202] ACPI: CPU0 (power states: C1[C1] C2[C2])
+[   15.115425] ACPI Exception (acpi_thermal-0413): AE_NOT_FOUND, Invalid active threshold [0] [20070126]
+[   15.118207] ACPI: Thermal Zone [THRM] (45 C)
+[   15.118308] PM: Adding info for No Bus:tty
+[   15.118424] PM: Adding info for No Bus:console
+[   15.118548] PM: Adding info for No Bus:ptmx
+[   15.118670] PM: Adding info for No Bus:tty0
+[   15.118807] PM: Adding info for No Bus:vcs
+[   15.118924] PM: Adding info for No Bus:vcsa
+[   15.119037] PM: Adding info for No Bus:tty1
+[   15.119151] PM: Adding info for No Bus:tty2
+[   15.119270] PM: Adding info for No Bus:tty3
+[   15.119378] PM: Adding info for No Bus:tty4
+[   15.119497] PM: Adding info for No Bus:tty5
+[   15.119611] PM: Adding info for No Bus:tty6
+[   15.119717] PM: Adding info for No Bus:tty7
+[   15.119833] PM: Adding info for No Bus:tty8
+[   15.119955] PM: Adding info for No Bus:tty9
+[   15.120058] PM: Adding info for No Bus:tty10
+[   15.120181] PM: Adding info for No Bus:tty11
+[   15.120298] PM: Adding info for No Bus:tty12
+[   15.120405] PM: Adding info for No Bus:tty13
+[   15.120525] PM: Adding info for No Bus:tty14
+[   15.120646] PM: Adding info for No Bus:tty15
+[   15.120751] PM: Adding info for No Bus:tty16
+[   15.120902] PM: Adding info for No Bus:tty17
+[   15.121022] PM: Adding info for No Bus:tty18
+[   15.121129] PM: Adding info for No Bus:tty19
+[   15.121252] PM: Adding info for No Bus:tty20
+[   15.121376] PM: Adding info for No Bus:tty21
+[   15.121484] PM: Adding info for No Bus:tty22
+[   15.121608] PM: Adding info for No Bus:tty23
+[   15.121737] PM: Adding info for No Bus:tty24
+[   15.121849] PM: Adding info for No Bus:tty25
+[   15.121972] PM: Adding info for No Bus:tty26
+[   15.122096] PM: Adding info for No Bus:tty27
+[   15.122206] PM: Adding info for No Bus:tty28
+[   15.122335] PM: Adding info for No Bus:tty29
+[   15.122457] PM: Adding info for No Bus:tty30
+[   15.122577] PM: Adding info for No Bus:tty31
+[   15.122701] PM: Adding info for No Bus:tty32
+[   15.122830] PM: Adding info for No Bus:tty33
+[   15.122945] PM: Adding info for No Bus:tty34
+[   15.123076] PM: Adding info for No Bus:tty35
+[   15.123204] PM: Adding info for No Bus:tty36
+[   15.123317] PM: Adding info for No Bus:tty37
+[   15.123449] PM: Adding info for No Bus:tty38
+[   15.123583] PM: Adding info for No Bus:tty39
+[   15.123694] PM: Adding info for No Bus:tty40
+[   15.123822] PM: Adding info for No Bus:tty41
+[   15.123952] PM: Adding info for No Bus:tty42
+[   15.124070] PM: Adding info for No Bus:tty43
+[   15.124196] PM: Adding info for No Bus:tty44
+[   15.124327] PM: Adding info for No Bus:tty45
+[   15.124443] PM: Adding info for No Bus:tty46
+[   15.124573] PM: Adding info for No Bus:tty47
+[   15.124706] PM: Adding info for No Bus:tty48
+[   15.124835] PM: Adding info for No Bus:tty49
+[   15.124966] PM: Adding info for No Bus:tty50
+[   15.125094] PM: Adding info for No Bus:tty51
+[   15.125214] PM: Adding info for No Bus:tty52
+[   15.125347] PM: Adding info for No Bus:tty53
+[   15.125475] PM: Adding info for No Bus:tty54
+[   15.125592] PM: Adding info for No Bus:tty55
+[   15.125723] PM: Adding info for No Bus:tty56
+[   15.125857] PM: Adding info for No Bus:tty57
+[   15.125973] PM: Adding info for No Bus:tty58
+[   15.126108] PM: Adding info for No Bus:tty59
+[   15.126236] PM: Adding info for No Bus:tty60
+[   15.126357] PM: Adding info for No Bus:tty61
+[   15.126490] PM: Adding info for No Bus:tty62
+[   15.126626] PM: Adding info for No Bus:tty63
+[   15.126885] PM: Adding info for No Bus:rtc
+[   15.127011] Real Time Clock Driver v1.12ac
+[   15.127040] PM: Adding info for No Bus:hpet
+[   15.127354] PM: Adding info for No Bus:watchdog
+[   15.127445] Software Watchdog Timer: 0.07 initialized. soft_noboot=0 soft_margin=60 sec (nowayout= 0)
+[   15.127453] Linux agpgart interface v0.102 (c) Dave Jones
+[   15.127459] Hangcheck: starting hangcheck timer 0.9.0 (tick is 180 seconds, margin is 60 seconds).
+[   15.127465] Hangcheck: Using get_cycles().
+[   15.128516] loop: loaded (max 8 devices)
+[   15.128621] Marvell 88E1101: Registered new driver
+[   15.128714] Davicom DM9161E: Registered new driver
+[   15.128917] Davicom DM9131: Registered new driver
+[   15.129019] Cicada Cis8204: Registered new driver
+[   15.129104] Cicada Cis8201: Registered new driver
+[   15.129188] LXT970: Registered new driver
+[   15.129285] LXT971: Registered new driver
+[   15.129369] QS6612: Registered new driver
+[   15.129454] SMSC LAN83C185: Registered new driver
+[   15.129672] PM: Adding info for No Bus:lo
+[   15.130146] 8139too Fast Ethernet driver 0.9.28
+[   15.130189] ACPI: PCI Interrupt 0000:02:01.0[A] -> Link [LNK2] -> GSI 18 (level, low) -> IRQ 18
+[   15.130603] PM: Adding info for No Bus:eth0
+[   15.130733] eth0: RealTek RTL8139 at 0xffffc20000014800, 00:0f:b0:07:dc:49, IRQ 18
+[   15.130740] eth0:  Identified 8139 chip type 'RTL-8101'
+[   15.131235] pata_amd 0000:00:08.0: version 0.2.7
+[   15.131273] PCI: Setting latency timer of device 0000:00:08.0 to 64
+[   15.131457] ata1: PATA max UDMA/133 cmd 0x1F0 ctl 0x3F6 bmdma 0x2080 irq 14
+[   15.131531] ata2: PATA max UDMA/133 cmd 0x170 ctl 0x376 bmdma 0x2088 irq 15
+[   15.131560] scsi0 : pata_amd
+[   15.131596] PM: Adding info for No Bus:host0
+[   15.294337] ata1.00: ATA-6, max UDMA/100, 195371568 sectors: LBA48 
+[   15.294345] ata1.00: ata1: dev 0 multi count 16
+[   15.302094] ata1.00: configured for UDMA/100
+[   15.302113] scsi1 : pata_amd
+[   15.302148] PM: Adding info for No Bus:host1
+[   15.622228] ata2.00: ATAPI, max MWDMA2
+[   15.786041] ata2.00: configured for MWDMA2
+[   15.786091] PM: Adding info for No Bus:target0:0:0
+[   15.786669] scsi 0:0:0:0: Direct-Access     ATA      HTS721010G9AT00  MCZO PQ: 0 ANSI: 5
+[   15.786794] PM: Adding info for scsi:0:0:0:0
+[   15.787417] SCSI device sda: 195371568 512-byte hdwr sectors (100030 MB)
+[   15.787453] sda: Write Protect is off
+[   15.787458] sda: Mode Sense: 00 3a 00 00
+[   15.787514] SCSI device sda: write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+[   15.788286] SCSI device sda: 195371568 512-byte hdwr sectors (100030 MB)
+[   15.788318] sda: Write Protect is off
+[   15.788323] sda: Mode Sense: 00 3a 00 00
+[   15.788378] SCSI device sda: write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+[   15.788469]  sda: sda1 sda2 sda3
+[   15.804616] sd 0:0:0:0: Attached scsi disk sda
+[   15.804803] PM: Adding info for No Bus:target1:0:0
+[   15.805497] scsi 1:0:0:0: CD-ROM            HL-DT-ST DVD+RW GCA-4040N 1.19 PQ: 0 ANSI: 5
+[   15.805519] PM: Adding info for scsi:1:0:0:0
+[   15.810368] sr0: scsi3-mmc drive: 24x/24x writer cd/rw xa/form2 cdda tray
+[   15.810375] Uniform CD-ROM driver Revision: 3.20
+[   15.810687] sr 1:0:0:0: Attached scsi CD-ROM sr0
+[   15.811111] PM: Adding info for platform:i8042
+[   15.820096] serio: i8042 KBD port at 0x60,0x64 irq 1
+[   15.820144] serio: i8042 AUX port at 0x60,0x64 irq 12
+[   15.820285] PM: Adding info for serio:serio0
+[   15.820515] PM: Adding info for No Bus:psaux
+[   15.820666] PM: Adding info for serio:serio1
+[   15.820786] mice: PS/2 mouse device common for all mice
+[   15.820956] EDAC MC: Ver: 2.0.1 Jan 30 2007
+[   15.822143] EDAC MC0: Giving out device to k8_edac Athlon64/Opteron: DEV 0000:00:18.2
+[   15.822317] TCP cubic registered
+[   15.822322] Initializing XFRM netlink socket
+[   15.822375] NET: Registered protocol family 1
+[   15.822385] NET: Registered protocol family 17
+[   15.822418] NET: Registered protocol family 15
+[   15.822496] ieee80211: 802.11 data/management/control stack, git-1.1.13
+[   15.822502] ieee80211: Copyright (C) 2004-2005 Intel Corporation <jketreno@linux.intel.com>
+[   15.822519] ieee80211_crypt: registered algorithm 'NULL'
+[   15.822531] powernow-k8: Found 1 AMD Athlon(tm) 64 Processor 3400+ processors (version 2.00.00)
+[   15.822767] powernow-k8:    0 : fid 0xe (2200 MHz), vid 0x2
+[   15.822773] powernow-k8:    1 : fid 0xa (1800 MHz), vid 0xa
+[   15.822778] powernow-k8:    2 : fid 0x0 (800 MHz), vid 0x12
+[   15.824258] swsusp: Resume From Partition /dev/sda3
+[   15.824263] PM: Checking swsusp image.
+[   15.824668] Time: acpi_pm clocksource has been installed.
+[   15.842558] PM: Resume from disk failed.
+[   15.842711] ACPI: (supports S0 S3 S4 S5)
+[   15.845725] input: AT Translated Set 2 keyboard as /class/input/input2
+[   15.969677] reiser4: sda2: found disk format 4.0.0.
+[   21.728071] VFS: Mounted root (reiser4 filesystem) readonly.
+[   21.728186] Freeing unused kernel memory: 180k freed
+[   21.773777] PM: Adding info for No Bus:vcs1
+[   21.977472] PM: Adding info for No Bus:vcsa1
+[   22.721603] PM: Removing info for No Bus:vcs1
+[   22.723220] PM: Removing info for No Bus:vcsa1
+[   22.724530] PM: Adding info for No Bus:vcs1
+[   22.725711] PM: Adding info for No Bus:vcsa1
+[   22.727001] PM: Removing info for No Bus:vcs1
+[   22.728343] PM: Removing info for No Bus:vcsa1
+[   22.845715] PM: Adding info for No Bus:vcs1
+[   22.847247] PM: Adding info for No Bus:vcsa1
+[   22.849057] PM: Removing info for No Bus:vcs1
+[   22.850479] PM: Removing info for No Bus:vcsa1
+[   22.851950] PM: Adding info for No Bus:vcs1
+[   22.853324] PM: Adding info for No Bus:vcsa1
+[   22.854748] PM: Removing info for No Bus:vcs1
+[   22.856151] PM: Removing info for No Bus:vcsa1
+[   22.857598] PM: Adding info for No Bus:vcs1
+[   22.858961] PM: Adding info for No Bus:vcsa1
+[   22.868029] PM: Removing info for No Bus:vcs1
+[   22.869613] PM: Removing info for No Bus:vcsa1
+[   22.917430] PM: Adding info for No Bus:vcs1
+[   22.919606] PM: Adding info for No Bus:vcsa1
+[   26.168624] sd 0:0:0:0: Attached scsi generic sg0 type 0
+[   26.168689] sr 1:0:0:0: Attached scsi generic sg1 type 5
+[   26.477898] usbcore: registered new interface driver usbfs
+[   26.478103] usbcore: registered new interface driver hub
+[   26.478243] usbcore: registered new device driver usb
+[   26.540767] ohci_hcd: 2006 August 04 USB 1.1 'Open' Host Controller (OHCI) Driver
+[   26.540846] PCI: Enabling device 0000:00:02.0 (0004 -> 0006)
+[   26.542261] ACPI: PCI Interrupt Link [LUS0] enabled at IRQ 22
+[   26.542281] ACPI: PCI Interrupt 0000:00:02.0[A] -> Link [LUS0] -> GSI 22 (level, low) -> IRQ 22
+[   26.542314] PCI: Setting latency timer of device 0000:00:02.0 to 64
+[   26.542323] ohci_hcd 0000:00:02.0: OHCI Host Controller
+[   26.544435] ohci_hcd 0000:00:02.0: new USB bus registered, assigned bus number 1
+[   26.750574] PM: Adding info for No Bus:timer
+[   26.754754] ohci_hcd 0000:00:02.0: irq 22, io mem 0xe0000000
+[   26.813517] usb usb1: new device found, idVendor=0000, idProduct=0000
+[   26.813525] usb usb1: new device strings: Mfr=3, Product=2, SerialNumber=1
+[   26.813532] usb usb1: Product: OHCI Host Controller
+[   26.813537] usb usb1: Manufacturer: Linux 2.6.20-rc6-mm3 ohci_hcd
+[   26.813541] usb usb1: SerialNumber: 0000:00:02.0
+[   26.813741] PM: Adding info for usb:usb1
+[   26.815023] PM: Adding info for No Bus:usbdev1.1_ep00
+[   26.815107] usb usb1: configuration #1 chosen from 1 choice
+[   26.815535] PM: Adding info for usb:1-0:1.0
+[   26.816039] hub 1-0:1.0: USB hub found
+[   26.816280] hub 1-0:1.0: 3 ports detected
+[   26.919721] PM: Adding info for No Bus:usbdev1.1_ep81
+[   26.920540] PM: Adding info for No Bus:usbdev1.1
+[   26.921749] PCI: Enabling device 0000:00:02.1 (0004 -> 0006)
+[   26.923058] ACPI: PCI Interrupt Link [LUS1] enabled at IRQ 21
+[   26.923076] ACPI: PCI Interrupt 0000:00:02.1[B] -> Link [LUS1] -> GSI 21 (level, low) -> IRQ 21
+[   26.923111] PCI: Setting latency timer of device 0000:00:02.1 to 64
+[   26.923119] ohci_hcd 0000:00:02.1: OHCI Host Controller
+[   26.923200] ohci_hcd 0000:00:02.1: new USB bus registered, assigned bus number 2
+[   27.134731] ohci_hcd 0000:00:02.1: irq 21, io mem 0xe0001000
+[   27.192891] usb usb2: new device found, idVendor=0000, idProduct=0000
+[   27.192900] usb usb2: new device strings: Mfr=3, Product=2, SerialNumber=1
+[   27.192906] usb usb2: Product: OHCI Host Controller
+[   27.192911] usb usb2: Manufacturer: Linux 2.6.20-rc6-mm3 ohci_hcd
+[   27.192916] usb usb2: SerialNumber: 0000:00:02.1
+[   27.192974] PM: Adding info for usb:usb2
+[   27.193115] PM: Adding info for No Bus:usbdev2.1_ep00
+[   27.193188] usb usb2: configuration #1 chosen from 1 choice
+[   27.193228] PM: Adding info for usb:2-0:1.0
+[   27.193284] hub 2-0:1.0: USB hub found
+[   27.193309] hub 2-0:1.0: 3 ports detected
+[   27.294760] PM: Adding info for No Bus:usbdev2.1_ep81
+[   27.294883] PM: Adding info for No Bus:usbdev2.1
+[   27.296727] ACPI: PCI Interrupt Link [LUS2] enabled at IRQ 20
+[   27.296746] ACPI: PCI Interrupt 0000:00:02.2[C] -> Link [LUS2] -> GSI 20 (level, low) -> IRQ 20
+[   27.296779] PCI: Setting latency timer of device 0000:00:02.2 to 64
+[   27.296787] ehci_hcd 0000:00:02.2: EHCI Host Controller
+[   27.296860] ehci_hcd 0000:00:02.2: new USB bus registered, assigned bus number 3
+[   27.296934] PCI: cache line size of 64 is not supported by device 0000:00:02.2
+[   27.296956] ehci_hcd 0000:00:02.2: irq 20, io mem 0xe0004000
+[   27.296966] ehci_hcd 0000:00:02.2: USB 2.0 started, EHCI 1.00, driver 10 Dec 2004
+[   27.297052] usb usb3: new device found, idVendor=0000, idProduct=0000
+[   27.297059] usb usb3: new device strings: Mfr=3, Product=2, SerialNumber=1
+[   27.297064] usb usb3: Product: EHCI Host Controller
+[   27.297069] usb usb3: Manufacturer: Linux 2.6.20-rc6-mm3 ehci_hcd
+[   27.297074] usb usb3: SerialNumber: 0000:00:02.2
+[   27.297109] PM: Adding info for usb:usb3
+[   27.297229] PM: Adding info for No Bus:usbdev3.1_ep00
+[   27.297304] usb usb3: configuration #1 chosen from 1 choice
+[   27.297340] PM: Adding info for usb:3-0:1.0
+[   27.297392] hub 3-0:1.0: USB hub found
+[   27.297704] hub 3-0:1.0: 6 ports detected
+[   27.398792] PM: Adding info for No Bus:usbdev3.1_ep81
+[   27.398911] PM: Adding info for No Bus:usbdev3.1
+[   27.400947] ACPI: PCI Interrupt Link [LACI] enabled at IRQ 22
+[   27.400956] ACPI: PCI Interrupt 0000:00:06.0[A] -> Link [LACI] -> GSI 22 (level, low) -> IRQ 22
+[   27.401013] PCI: Setting latency timer of device 0000:00:06.0 to 64
+[   27.510646] AC'97 0 analog subsections not ready
+[   27.858566] usb 3-2: new high speed USB device using ehci_hcd and address 2
+[   27.990956] usb 3-2: new device found, idVendor=050d, idProduct=0237
+[   27.990965] usb 3-2: new device strings: Mfr=0, Product=0, SerialNumber=0
+[   27.991018] PM: Adding info for usb:3-2
+[   27.991164] PM: Adding info for No Bus:usbdev3.2_ep00
+[   27.991229] usb 3-2: configuration #1 chosen from 1 choice
+[   27.991592] PM: Adding info for usb:3-2:1.0
+[   27.991649] hub 3-2:1.0: USB hub found
+[   27.991824] hub 3-2:1.0: 7 ports detected
+[   27.992014] PM: Adding info for No Bus:usbdev3.2_ep81
+[   28.044346] ieee1394: Initialized config rom entry `ip1394'
+[   28.078522] intel8x0_measure_ac97_clock: measured 54841 usecs
+[   28.078530] intel8x0: clocking to 47430
+[   28.078590] PM: Adding info for No Bus:card0
+[   28.079084] PM: Adding info for No Bus:pcmC0D2p
+[   28.079556] PM: Adding info for No Bus:pcmC0D1c
+[   28.079645] PM: Adding info for No Bus:pcmC0D0p
+[   28.079739] PM: Adding info for No Bus:pcmC0D0c
+[   28.079961] PM: Adding info for ac97:0-0:AD1981B
+[   28.080038] PM: Adding info for No Bus:controlC0
+[   28.080950] Yenta: CardBus bridge found at 0000:02:04.0 [103c:006d]
+[   28.080982] PCI: Bus 3, cardbus bridge: 0000:02:04.0
+[   28.080987]   IO window: 00003000-000030ff
+[   28.080995]   IO window: 00003400-000034ff
+[   28.081004]   PREFETCH window: 50000000-53ffffff
+[   28.081013]   MEM window: e0400000-e07fffff
+[   28.081022] Yenta: Enabling burst memory read transactions
+[   28.081030] Yenta: Using CSCINT to route CSC interrupts to PCI
+[   28.081035] Yenta: Routing CardBus interrupts to PCI
+[   28.081044] Yenta TI: socket 0000:02:04.0, mfunc 0x01111d22, devctl 0x64
+[   28.094737] PM: Removing info for No Bus:usbdev3.2_ep81
+[   28.094903] PM: Adding info for No Bus:usbdev3.2
+[   28.311536] Yenta: ISA IRQ mask 0x0cf8, PCI irq 19
+[   28.311545] Socket status: 30000086
+[   28.311551] Yenta: Raising subordinate bus# of parent bus (#02) from #02 to #06
+[   28.311564] pcmcia: parent PCI bridge I/O window: 0x3000 - 0x7fff
+[   28.311787] pcmcia: parent PCI bridge Memory window: 0xe0100000 - 0xe17fffff
+[   28.311795] pcmcia: parent PCI bridge Memory window: 0x50000000 - 0x57ffffff
+[   28.312274] PM: Adding info for No Bus:pcmcia_socket0
+[   28.435899] input: PS/2 Mouse as /class/input/input3
+[   28.461004] input: AlpsPS/2 ALPS GlidePoint as /class/input/input4
+[   28.534583] usb 3-2.3: new high speed USB device using ehci_hcd and address 4
+[   28.566899] Yenta: CardBus bridge found at 0000:02:04.1 [103c:006d]
+[   28.566935] Yenta: Using CSCINT to route CSC interrupts to PCI
+[   28.566940] Yenta: Routing CardBus interrupts to PCI
+[   28.566951] Yenta TI: socket 0000:02:04.1, mfunc 0x01111d22, devctl 0x64
+[   28.656792] usb 3-2.3: new device found, idVendor=0781, idProduct=b4b5
+[   28.656801] usb 3-2.3: new device strings: Mfr=3, Product=4, SerialNumber=5
+[   28.656808] usb 3-2.3: Product: ImageMate 14 in 1 Reader/Writer 
+[   28.656813] usb 3-2.3: Manufacturer: SanDisk 
+[   28.656817] usb 3-2.3: SerialNumber: 0304237855
+[   28.656866] PM: Adding info for usb:3-2.3
+[   28.657013] PM: Adding info for No Bus:usbdev3.4_ep00
+[   28.657075] usb 3-2.3: configuration #1 chosen from 1 choice
+[   28.657806] PM: Adding info for usb:3-2.3:1.0
+[   28.657912] PM: Adding info for No Bus:usbdev3.4_ep81
+[   28.657982] PM: Adding info for No Bus:usbdev3.4_ep02
+[   28.658196] PM: Adding info for No Bus:usbdev3.4
+[   28.799415] Yenta: ISA IRQ mask 0x0cf8, PCI irq 18
+[   28.799423] Socket status: 30000006
+[   28.799430] Yenta: Raising subordinate bus# of parent bus (#02) from #06 to #0a
+[   28.799442] pcmcia: parent PCI bridge I/O window: 0x3000 - 0x7fff
+[   28.799452] pcmcia: parent PCI bridge Memory window: 0xe0100000 - 0xe17fffff
+[   28.799460] pcmcia: parent PCI bridge Memory window: 0x50000000 - 0x57ffffff
+[   28.799650] PM: Adding info for No Bus:pcmcia_socket1
+[   28.962363] usb 2-2: new full speed USB device using ohci_hcd and address 2
+[   29.056492] ACPI: PCI Interrupt 0000:02:00.0[A] -> Link [LNK1] -> GSI 19 (level, low) -> IRQ 19
+[   29.056752] PM: Adding info for ieee1394:fw-host0
+[   29.110366] ohci1394: fw-host0: OHCI-1394 1.1 (PCI): IRQ=[19]  MMIO=[e0108000-e01087ff]  Max Packet=[2048]  IR/IT contexts=[4/8]
+[   29.225212] usb 2-2: new device found, idVendor=049f, idProduct=0086
+[   29.225220] usb 2-2: new device strings: Mfr=1, Product=2, SerialNumber=0
+[   29.225226] usb 2-2: Product: Bluetooth by hp
+[   29.225231] usb 2-2: Manufacturer: ACTIONTEC
+[   29.225271] PM: Adding info for usb:2-2
+[   29.225409] PM: Adding info for No Bus:usbdev2.2_ep00
+[   29.225484] usb 2-2: configuration #1 chosen from 1 choice
+[   29.229248] PM: Adding info for usb:2-2:1.0
+[   29.229381] PM: Adding info for No Bus:usbdev2.2_ep81
+[   29.229459] PM: Adding info for No Bus:usbdev2.2_ep02
+[   29.229567] PM: Adding info for No Bus:usbdev2.2_ep82
+[   29.229644] PM: Adding info for usb:2-2:1.1
+[   29.229734] PM: Adding info for No Bus:usbdev2.2_ep03
+[   29.229827] PM: Adding info for No Bus:usbdev2.2_ep83
+[   29.229900] PM: Adding info for usb:2-2:1.2
+[   29.230105] PM: Adding info for No Bus:usbdev2.2
+[   29.508826] Bluetooth: Core ver 2.11
+[   29.508873] PM: Adding info for platform:bluetooth
+[   29.509740] NET: Registered protocol family 31
+[   29.509745] Bluetooth: HCI device and connection manager initialized
+[   29.509941] Bluetooth: HCI socket layer initialized
+[   29.514329] Initializing USB Mass Storage driver...
+[   29.515228] scsi2 : SCSI emulation for USB Mass Storage devices
+[   29.515264] PM: Adding info for No Bus:host2
+[   29.516168] usb-storage: device found at 4
+[   29.516173] usb-storage: waiting for device to settle before scanning
+[   29.516232] usbcore: registered new interface driver usb-storage
+[   29.516239] USB Mass Storage support registered.
+[   29.570139] Bluetooth: HCI USB driver ver 2.9
+[   29.572164] PM: Removing info for No Bus:usbdev2.2_ep03
+[   29.572597] PM: Removing info for No Bus:usbdev2.2_ep83
+[   29.572990] PM: Adding info for No Bus:usbdev2.2_ep03
+[   29.573338] PM: Adding info for No Bus:usbdev2.2_ep83
+[   29.573981] PM: Adding info for No Bus:hci0
+[   29.574616] usbcore: registered new interface driver hci_usb
+[   30.383368] PM: Adding info for ieee1394:473f0200473f0200
+[   30.383901] ieee1394: Host added: ID:BUS[0-00:1023]  GUID[473f0200473f0200]
+[   30.383990] PM: Adding info for ieee1394:473f0200473f0200-0
+[   30.610993] PM: Adding info for No Bus:eth1
+[   30.611925] eth1394: eth1: IEEE-1394 IPv4 over 1394 Ethernet (fw-host0)
+[   31.757478] NET: Registered protocol family 10
+[   33.093243] ReiserFS: sda1: found reiserfs format "3.6" with standard journal
+[   33.093429] ReiserFS: sda1: using ordered data mode
+[   33.094675] ReiserFS: sda1: journal params: device sda1, size 8192, journal first block 18, max trans len 1024, max batch 900, max commit age 30, max trans age 30
+[   33.096716] ReiserFS: sda1: checking transaction log (sda1)
+[   33.114225] ReiserFS: sda1: Using r5 hash to sort names
+[   33.303780] Adding 2843496k swap on /dev/disk/by-uuid/fd35277a-8dc7-4afe-8257-fda61b757344.  Priority:-1 extents:1 across:2843496k
+[   34.514389] PM: Adding info for No Bus:target2:0:0
+[   34.517403] scsi 2:0:0:0: Direct-Access     Generic  STORAGE DEVICE   9339 PQ: 0 ANSI: 0
+[   34.517429] PM: Adding info for scsi:2:0:0:0
+[   35.649176] SCSI device sdb: 8018640 512-byte hdwr sectors (4106 MB)
+[   35.650407] sdb: Write Protect is off
+[   35.650413] sdb: Mode Sense: 03 00 00 00
+[   35.650418] sdb: assuming drive cache: write through
+[   35.657182] SCSI device sdb: 8018640 512-byte hdwr sectors (4106 MB)
+[   35.658526] sdb: Write Protect is off
+[   35.658532] sdb: Mode Sense: 03 00 00 00
+[   35.658537] sdb: assuming drive cache: write through
+[   35.658551]  sdb: sdb1
+[   35.661450] sd 2:0:0:0: Attached scsi removable disk sdb
+[   35.661819] sd 2:0:0:0: Attached scsi generic sg2 type 0
+[   35.661904] PM: Adding info for No Bus:target2:0:1
+[   35.666399] PM: Removing info for No Bus:target2:0:1
+[   35.666699] PM: Adding info for No Bus:target2:0:2
+[   35.669231] PM: Removing info for No Bus:target2:0:2
+[   35.669291] PM: Adding info for No Bus:target2:0:3
+[   35.673179] PM: Removing info for No Bus:target2:0:3
+[   35.673236] PM: Adding info for No Bus:target2:0:4
+[   35.677169] PM: Removing info for No Bus:target2:0:4
+[   35.677217] PM: Adding info for No Bus:target2:0:5
+[   35.681159] PM: Removing info for No Bus:target2:0:5
+[   35.681206] PM: Adding info for No Bus:target2:0:6
+[   35.685160] PM: Removing info for No Bus:target2:0:6
+[   35.685208] PM: Adding info for No Bus:target2:0:7
+[   35.689157] PM: Removing info for No Bus:target2:0:7
+[   35.689189] usb-storage: device scan complete
+[   44.077761] PM: Removing info for No Bus:vcs1
+[   44.078982] PM: Removing info for No Bus:vcsa1
+[   44.120202] PM: Adding info for No Bus:vcs1
+[   44.120272] PM: Adding info for No Bus:vcsa1
+[   51.103797] PM: Adding info for No Bus:vcs2
+[   51.105962] PM: Adding info for No Bus:vcsa2
+[   51.106791] PM: Removing info for No Bus:vcs2
+[   51.107594] PM: Removing info for No Bus:vcsa2
+[   51.108142] PM: Adding info for No Bus:vcs3
+[   51.108910] PM: Adding info for No Bus:vcsa3
+[   51.109760] PM: Removing info for No Bus:vcs3
+[   51.109824] PM: Removing info for No Bus:vcsa3
+[   51.110020] PM: Adding info for No Bus:vcs4
+[   51.110078] PM: Adding info for No Bus:vcsa4
+[   51.110154] PM: Removing info for No Bus:vcs4
+[   51.110212] PM: Removing info for No Bus:vcsa4
+[   51.110412] PM: Adding info for No Bus:vcs5
+[   51.110467] PM: Adding info for No Bus:vcsa5
+[   51.110543] PM: Removing info for No Bus:vcs5
+[   51.110600] PM: Removing info for No Bus:vcsa5
+[   51.110778] PM: Adding info for No Bus:vcs6
+[   51.110833] PM: Adding info for No Bus:vcsa6
+[   51.110906] PM: Removing info for No Bus:vcs6
+[   51.110962] PM: Removing info for No Bus:vcsa6
+[   51.111136] PM: Adding info for No Bus:vcs7
+[   51.111188] PM: Adding info for No Bus:vcsa7
+[   51.111262] PM: Removing info for No Bus:vcs7
+[   51.111317] PM: Removing info for No Bus:vcsa7
+[   51.111498] PM: Adding info for No Bus:vcs8
+[   51.111553] PM: Adding info for No Bus:vcsa8
+[   51.111628] PM: Removing info for No Bus:vcs8
+[   51.111684] PM: Removing info for No Bus:vcsa8
+[   51.111858] PM: Adding info for No Bus:vcs9
+[   51.111914] PM: Adding info for No Bus:vcsa9
+[   51.111992] PM: Removing info for No Bus:vcs9
+[   51.112049] PM: Removing info for No Bus:vcsa9
+[   51.112222] PM: Adding info for No Bus:vcs10
+[   51.112278] PM: Adding info for No Bus:vcsa10
+[   51.112353] PM: Removing info for No Bus:vcs10
+[   51.112409] PM: Removing info for No Bus:vcsa10
+[   51.112586] PM: Adding info for No Bus:vcs11
+[   51.112640] PM: Adding info for No Bus:vcsa11
+[   51.112714] PM: Removing info for No Bus:vcs11
+[   51.112770] PM: Removing info for No Bus:vcsa11
+[   54.030534] PM: Adding info for No Bus:vcs2
+[   54.030602] PM: Adding info for No Bus:vcsa2
+[   54.042508] PM: Removing info for No Bus:vcs2
+[   54.042594] PM: Removing info for No Bus:vcsa2
+[   54.045967] PM: Adding info for No Bus:vcs3
+[   54.046025] PM: Adding info for No Bus:vcsa3
+[   54.142513] PM: Removing info for No Bus:vcs3
+[   54.142600] PM: Removing info for No Bus:vcsa3
+[   54.145889] PM: Adding info for No Bus:vcs4
+[   54.145950] PM: Adding info for No Bus:vcsa4
+[   54.200250] PM: Removing info for No Bus:vcs4
+[   54.200337] PM: Removing info for No Bus:vcsa4
+[   54.203635] PM: Adding info for No Bus:vcs5
+[   54.203696] PM: Adding info for No Bus:vcsa5
+[   54.278720] PM: Removing info for No Bus:vcs5
+[   54.278808] PM: Removing info for No Bus:vcsa5
+[   54.342835] PM: Adding info for No Bus:vcs6
+[   54.342908] PM: Adding info for No Bus:vcsa6
+[   54.355255] PM: Removing info for No Bus:vcs6
+[   54.355344] PM: Removing info for No Bus:vcsa6
+[   54.430994] PM: Adding info for No Bus:vcs7
+[   54.431063] PM: Adding info for No Bus:vcsa7
+[   54.443205] PM: Removing info for No Bus:vcs7
+[   54.443291] PM: Removing info for No Bus:vcsa7
+[   54.446643] PM: Adding info for No Bus:vcs8
+[   54.446705] PM: Adding info for No Bus:vcsa8
+[   54.458677] PM: Removing info for No Bus:vcs8
+[   54.458764] PM: Removing info for No Bus:vcsa8
+[   54.462107] PM: Adding info for No Bus:vcs9
+[   54.462165] PM: Adding info for No Bus:vcsa9
+[   54.474144] PM: Removing info for No Bus:vcs9
+[   54.474228] PM: Removing info for No Bus:vcsa9
+[   54.477530] PM: Adding info for No Bus:vcs10
+[   54.477590] PM: Adding info for No Bus:vcsa10
+[   54.489454] PM: Removing info for No Bus:vcs10
+[   54.489541] PM: Removing info for No Bus:vcsa10
+[   54.492870] PM: Adding info for No Bus:vcs11
+[   54.492928] PM: Adding info for No Bus:vcsa11
+[   54.601085] PM: Removing info for No Bus:vcs11
+[   54.601169] PM: Removing info for No Bus:vcsa11
+[   55.599083] Bluetooth: L2CAP ver 2.8
+[   55.599089] Bluetooth: L2CAP socket layer initialized
+[   56.252870] Bluetooth: HIDP (Human Interface Emulation) ver 1.1
+[   56.527166] Bluetooth: RFCOMM socket layer initialized
+[   56.527196] Bluetooth: RFCOMM TTY layer initialized
+[   56.527202] Bluetooth: RFCOMM ver 1.8
+[   57.649002] eth0: link up, 100Mbps, full-duplex, lpa 0x45E1
+[   58.526581] PM: Removing info for No Bus:vcs1
+[   58.532672] PM: Removing info for No Bus:vcsa1
+[   58.553225] PM: Adding info for No Bus:vcs1
+[   58.555241] PM: Adding info for No Bus:vcsa1
+[   58.555637] PM: Removing info for No Bus:vcs1
+[   58.561511] PM: Removing info for No Bus:vcsa1
+[   58.562030] PM: Adding info for No Bus:vcs1
+[   58.562387] PM: Adding info for No Bus:vcsa1
+[   58.562762] PM: Removing info for No Bus:vcs1
+[   58.563068] PM: Removing info for No Bus:vcsa1
+[   58.563421] PM: Adding info for No Bus:vcs1
+[   58.563725] PM: Adding info for No Bus:vcsa1
+[   58.564127] PM: Removing info for No Bus:vcs1
+[   58.564440] PM: Removing info for No Bus:vcsa1
+[   58.565609] PM: Adding info for No Bus:vcs1
+[   58.565928] PM: Adding info for No Bus:vcsa1
+[   68.435291] eth0: no IPv6 routers present
+[   89.791939] PM: Adding info for No Bus:vcs7
+[   89.792916] PM: Adding info for No Bus:vcsa7
+[   89.999588] PM: Removing info for No Bus:vcs7
+[   90.006690] PM: Removing info for No Bus:vcsa7
+[   90.565758] PM: Adding info for No Bus:vcs7
+[   90.568738] PM: Adding info for No Bus:vcsa7
+[   92.490731] PM: Adding info for No Bus:mixer
+[   92.853320] PM: Adding info for No Bus:adsp
+[   92.868995] PM: Adding info for No Bus:dsp
+[   92.882386] PM: Adding info for No Bus:audio
+[   95.310007] PM: Adding info for No Bus:vcs2
+[   95.310093] PM: Adding info for No Bus:vcsa2
+[   95.313414] PM: Adding info for No Bus:vcs3
+[   95.313492] PM: Adding info for No Bus:vcsa3
+[   95.333158] PM: Adding info for No Bus:vcs5
+[   95.335051] PM: Adding info for No Bus:vcsa5
+[   95.340411] PM: Adding info for No Bus:vcs6
+[   95.341953] PM: Adding info for No Bus:vcsa6
+[   95.351608] PM: Adding info for No Bus:vcs4
+[   95.353126] PM: Adding info for No Bus:vcsa4
+[  120.534625] netconsole: local port 6665
+[  120.534634] netconsole: interface eth0
+[  120.534640] netconsole: remote port 6666
+[  120.534647] netconsole: remote IP 192.168.100.113
+[  120.534656] netconsole: remote ethernet address 00:0a:e6:a7:29:60
+[  120.537485] netconsole: local IP 192.168.100.215
+[  120.550963] netconsole: network logging started
+
+
