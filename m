@@ -1,160 +1,123 @@
 From: Edward Shishkin <edward@namesys.com>
-Subject: Re: linux-2.6.20-rc4-mm1 Reiser4 filesystem freeze and corruption
-Date: Thu, 01 Feb 2007 18:54:41 +0300
-Message-ID: <45C20D41.6040608@namesys.com>
-References: <1169229490.6266.11.camel@oberon>	 <200701200334.07690.vs@namesys.com> <1170267238.22971.1.camel@oberon>
+Subject: Re: 2.6.20-rc3-mm1: umount reiser4 FS stuck in D state
+Date: Thu, 01 Feb 2007 23:04:59 +0300
+Message-ID: <45C247EB.6000806@namesys.com>
+References: <20070104220200.ae4e9a46.akpm@osdl.org> <200701062158.06329.vs@namesys.com> <45A81231.6040104@free.fr> <200701231940.58053.vs@namesys.com> <20070123154617.GE11995@kernel.dk> <45B65234.4000203@free.fr>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------070200040704060302040100"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1161181AbXBAPzH@vger.kernel.org>
-In-Reply-To: <1170267238.22971.1.camel@oberon>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1422957AbXBAUFO@vger.kernel.org>
+In-Reply-To: <45B65234.4000203@free.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Zan Lynx <zlynx@acm.org>, Andrew Morton <akpm@osdl.org>
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com, Linux kernel mailing list <linux-kernel@vger.kernel.org>, Reiserfs-dev <reiserfs-dev@namesys.com>
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: Laurent Riffard <laurent.riffard@free.fr>
+Cc: Jens Axboe <jens.axboe@oracle.com>, "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com, Kernel development list <linux-kernel@vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------070200040704060302040100
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+Laurent Riffard wrote:
 
-Zan Lynx wrote:
-
->On Sat, 2007-01-20 at 03:34 +0300, Vladimir V. Saveliev wrote:
->  
+> Le 23.01.2007 16:46, Jens Axboe a =E9crit :
 >
->>Hello
+>> On Tue, Jan 23 2007, Vladimir V. Saveliev wrote:
 >>
->>On Friday 19 January 2007 20:58, Zan Lynx wrote:
->>    
->>
->>>I have been running 2.6.20-rc2-mm1 without problems, but both rc3-mm1
->>>and rc4-mm1 have been giving me these freezes.  They were happening
->>>inside X and without external console it was impossible to get anything,
->>>plus I was reluctant to test it since the freeze sometimes requires a
->>>full fsck.reiser4 --build-fs to recover the filesystem.
+>>> Hello
 >>>
->>>But I finally got some output in a console session.  I wasn't able to
->>>get it all, I made some notes of what I think the problem is.  I may try
->>>again later once I get netconsole working (netconsole fails as a
->>>built-in, I'll try it as a module next).
->>>      
+>>> On Saturday 13 January 2007 01:56, Laurent Riffard wrote:
 >>>
->[snip]
->  
->
->>yes, please provide more information. Full kernel output at time of freeze is very desirable.
->>    
+>>>> Le 06.01.2007 19:58, Vladimir V. Saveliev a =E9crit :
+>>>>
+>>>>> Hello
+>>>>>
+>>>>> On Saturday 06 January 2007 13:58, Laurent Riffard wrote:
+>>>>>
+>>>>>> Hello,
+>>>>>>
+>>>>>> got this with 2.6.20-rc3-mm1:
+>>>>>>
+>>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+>>>>>> SysRq : Show Blocked State
+>>>>>>
+>>>>>>                          free                        sibling
+>>>>>>   task             PC    stack   pid father child younger older
+>>>>>> umount        D C013135E  6044  1168   1150                    =20
+>>>>>> (NOTLB)
+>>>>>>        de591ae4 00000086 de591abc c013135e dff979c8 c012a6fe=20
+>>>>>> 00000046 00000007        dfd94ac0 128d3000 00000026 00000000=20
+>>>>>> dfd94bcc dff979c8 de591ae4 dffda038        00000002 dff979c0=20
+>>>>>> dff979bc dff979c8 de591b10 c012d600 dff979f8 00000000 Call Trace=
+:
+>>>>>>  [<c012d600>] synchronize_qrcu+0x70/0x8c
+>>>>>>  [<c01bede4>] __make_request+0x4c/0x29b
+>>>>>>  [<c01bd24b>] generic_make_request+0x1b0/0x1de
+>>>>>>  [<c01bf354>] submit_bio+0xda/0xe2
+>>>>>>  [<e12674bd>] write_jnodes_to_disk_extent+0x920/0x974 [reiser4]
+>>>>>>  [<e12678dd>] update_journal_footer+0x29f/0x2b7 [reiser4]
+>>>>>>  [<e1268b65>] write_tx_back+0x149/0x185 [reiser4]
+>>>>>>  [<e126a8e7>] reiser4_write_logs+0xea4/0xfd2 [reiser4]
+>>>>>>  [<e125626a>] try_commit_txnh+0x7e6/0xa4f [reiser4]
+>>>>>>  [<e125661b>] reiser4_txn_end+0x148/0x3cf [reiser4]
+>>>>>>  [<e12568ad>] reiser4_txn_restart+0xb/0x1a [reiser4]
+>>>>>>  [<e125692f>] reiser4_txn_restart_current+0x73/0x75 [reiser4]
+>>>>>>  [<e1256b89>] force_commit_atom+0x258/0x261 [reiser4]
+>>>>>>  [<e1257703>] txnmgr_force_commit_all+0x406/0x697 [reiser4]
+>>>>>>  [<e12e5e08>] release_format40+0x10c/0x193 [reiser4]
+>>>>>>  [<e1279922>] reiser4_put_super+0x134/0x16a [reiser4]
+>>>>>>  [<c015c930>] generic_shutdown_super+0x55/0xd8
+>>>>>>  [<c015c9d3>] kill_block_super+0x20/0x32
+>>>>>>  [<c015ca75>] deactivate_super+0x3f/0x51
+>>>>>>  [<c016d903>] mntput_no_expire+0x42/0x5f
+>>>>>>  [<c0160f37>] path_release_on_umount+0x15/0x18
+>>>>>>  [<c016df77>] sys_umount+0x1a3/0x1cb
+>>>>>>  [<c016dfb8>] sys_oldumount+0x19/0x1b
+>>>>>>  [<c0103ed2>] sysenter_past_esp+0x5f/0x99
+>>>>>>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+>>>>>>
+>>>>>> Scenario:
+>>>>>> - umount a reiser4 FS (no need to write something before)
+>>>>>
+>>>>> Hmm, I can not reproduce this with 2.6.20-rc3-mm1. Probably I nee=
+d=20
+>>>>> to config the kernel more close to your system.
+>>>>>
+>>>>>> Earlier kernels were OK.
+>>>>>
+>>>> This still happens with 2.6.20-rc4-mm1...
+>>>>
+>>>> Should I open a bug report at http://bugzilla.kernel.org?
+>>>>
+>>> Which device with reiser4 did you try to umount?  Jens wrote that i=
+t
+>>> could be a barrier related. If there are no multidevices involved -
+>>> please report to bugzilla.
 >>
+>>
+>> Make sure that your kernel contains this fix:
+>>
+>> http://git.kernel.dk/?p=3Dlinux-2.6-block.git;a=3Dcommitdiff;h=3D4af=
+09c42ee1af70356471f51c1f40c1ff7881b68;hp=3D036f6008f43b5b4dd8c825365f15=
+434d75005c6d=20
+>>
+>>
+>> I think it missed 2.6.20-rc3-mm1. Again, that assumes you are using =
+md
+>> or dm.
 >
->Here comes a full sized bug report, as best as I can do it.  This is
->kernel 2.6.20-rc6-mm3 instead of rc4-mm1.  Still has the problem.
->  
 >
-
-Thanks for the dump.
-
->[ 3138.456588]  [<ffffffff8033f5de>] current_atom_finish_all_fq+0x12e/0x280
->[ 3138.456661]  [<ffffffff80296510>] autoremove_wake_function+0x0/0x30
->[ 3138.456674]  [<ffffffff803350ac>] submit_wb_list+0x11c/0x130
->[ 3138.456690]  [<ffffffff80335409>] reiser4_txn_end+0x349/0x530
->[ 3138.456710]  [<ffffffff803355f9>] reiser4_txn_restart+0x9/0x20
->[ 3138.456781]  [<ffffffff80335680>] force_commit_atom+0x50/0x60
->[ 3138.456793]  [<ffffffff8034cfb1>] writepages_unix_file+0x671/0x780
->[ 3138.456824]  [<ffffffff802590b3>] do_writepages+0x43/0x80
->[ 3138.456838]  [<ffffffff8024dbf8>] __filemap_fdatawrite_range+0x58/0x70
->[ 3138.456914]  [<ffffffff8024e19d>] do_fsync+0x3d/0xe0
->[ 3138.456930]  [<ffffffff802c2473>] sys_msync+0x143/0x1f0
->[ 3138.456945]  [<ffffffff8025c11e>] system_call+0x7e/0x83
->  
+> I've got 2 reiser4 FS:
+> - one with /dev/sdb6
+> - the other with /dev/vglinux1/ccache (vglinux1 is built on /dev/sda4=
+=20
+> and /dev/sdb7).
+> There is no md here, only dm.
 >
+> I applied the above patch on top of 2.6.20-rc4-mm1, but the problem=20
+> still happens with the two devices.
+>
+> thanks
 
-This is waiting for IO completion, and no success because of new plugging
-policy introduced by block layer folks. The attached patch should help.
-Andrew, please apply.
+Laurent, would you please try 2.6.20-rc6-mm3 + this patch:
+http://lkml.org/lkml/diff/2007/2/1/195/1
 
 Thanks,
 Edward.
-
-
---------------070200040704060302040100
-Content-Type: text/x-patch;
- name="reiser4-vs-git-block3.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="reiser4-vs-git-block3.patch"
-
-Signed-off-by: Edward Shishkin <edward@namesys.com>
----
- linux-2.6.20-rc6-mm3/fs/reiser4/status_flags.c |    2 ++
- linux-2.6.20-rc6-mm3/fs/reiser4/wander.c       |   18 +++++++++++-------
- 2 files changed, 13 insertions(+), 7 deletions(-)
-
---- linux-2.6.20-rc6-mm3/fs/reiser4/status_flags.c.orig
-+++ linux-2.6.20-rc6-mm3/fs/reiser4/status_flags.c
-@@ -63,6 +63,7 @@
- 	}
- 	lock_page(page);
- 	submit_bio(READ, bio);
-+	blk_replug_current_nested();
- 	wait_on_page_locked(page);
- 	if (!PageUptodate(page)) {
- 		warning("green-2007",
-@@ -157,6 +158,7 @@
- 	lock_page(get_super_private(sb)->status_page);	// Safe as nobody should touch our page.
- 	/* We can block now, but we have no other choice anyway */
- 	submit_bio(WRITE, bio);
-+	blk_replug_current_nested();
- 	return 0;		// We do not wait for io to finish.
- }
- 
---- linux-2.6.20-rc6-mm3/fs/reiser4/wander.c.orig
-+++ linux-2.6.20-rc6-mm3/fs/reiser4/wander.c
-@@ -718,6 +718,7 @@
- 	jnode *first, int nr, const reiser4_block_nr *block_p,
- 	flush_queue_t *fq, int flags)
- {
-+	int ret = 0;
- 	struct super_block *super = reiser4_get_current_sb();
- 	int write_op = ( flags & WRITEOUT_BARRIER ) ? WRITE_BARRIER : WRITE;
- 	int max_blocks;
-@@ -738,9 +739,10 @@
- 		int nr_used;
- 
- 		bio = bio_alloc(GFP_NOIO, nr_blocks);
--		if (!bio)
--			return RETERR(-ENOMEM);
--
-+		if (!bio) {
-+			ret = RETERR(-ENOMEM);
-+			break;
-+		}
- 		bio->bi_bdev = super->s_bdev;
- 		bio->bi_sector = block * (super->s_blocksize >> 9);
- 		for (nr_used = 0, i = 0; i < nr_blocks; i++) {
-@@ -843,8 +845,10 @@
- 				reiser4_submit_bio(write_op, bio);
- 				not_supported = bio_flagged(bio, BIO_EOPNOTSUPP);
- 				bio_put(bio);
--				if (not_supported)
--					return -EOPNOTSUPP;
-+				if (not_supported) {
-+					ret = -EOPNOTSUPP;
-+					break;
-+				}
- 			}
- 
- 			block += nr_used - 1;
-@@ -855,8 +859,8 @@
- 		}
- 		nr -= nr_used;
- 	}
--
--	return 0;
-+	blk_replug_current_nested();
-+	return ret;
- }
- 
- /* This is a procedure which recovers a contiguous sequences of disk block
-
---------------070200040704060302040100--
