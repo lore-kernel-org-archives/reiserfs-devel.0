@@ -1,72 +1,149 @@
-From: Marcus Better <marcus@better.se>
-Subject: Partition full after deleting a large file
-Date: Thu, 01 Feb 2007 21:47:34 +0100
-Message-ID: <eptjl6$dd5$1@sea.gmane.org>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: 2.6.20-rc3-mm1: umount reiser4 FS stuck in D state
+Date: Fri, 02 Feb 2007 00:52:48 +0300
+Message-ID: <45C26130.5090108@namesys.com>
+References: <20070104220200.ae4e9a46.akpm@osdl.org> <200701062158.06329.vs@namesys.com> <45A81231.6040104@free.fr> <200701231940.58053.vs@namesys.com> <20070123154617.GE11995@kernel.dk> <45B65234.4000203@free.fr> <45C247EB.6000806@namesys.com> <45C250C9.3040307@free.fr>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Return-path: <reiserfs-list-return-30511-reiserfs=m.gmane.org@namesys.com>
-list-help: <mailto:reiserfs-list-help@namesys.com>
-list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
-list-post: <mailto:reiserfs-list@namesys.com>
-Errors-To: flx@namesys.com
-Sender: news <news@sea.gmane.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750958AbXBAVxD@vger.kernel.org>
+In-Reply-To: <45C250C9.3040307@free.fr>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: Laurent Riffard <laurent.riffard@free.fr>
+Cc: Jens Axboe <jens.axboe@oracle.com>, "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com, Kernel development list <linux-kernel@vger.kernel.org>
 
-Hi,
+Laurent Riffard wrote:
 
-a buggy mail client (kmail) filled up my 4 Gb /home partition by filling
-the .xsession-errors with several gigabytes of the same error message. I
-removed the file, which was well over 2 Gb. But "df" still shows zero free
-space, and I cannot create new files.
+>
+>
+> Le 01.02.2007 21:04, Edward Shishkin a =E9crit :
+>
+>> Laurent Riffard wrote:
+>>
+>>> Le 23.01.2007 16:46, Jens Axboe a =E9crit :
+>>>
+>>>> On Tue, Jan 23 2007, Vladimir V. Saveliev wrote:
+>>>>
+>>>>> Hello
+>>>>>
+>>>>> On Saturday 13 January 2007 01:56, Laurent Riffard wrote:
+>>>>>
+>>>>>> Le 06.01.2007 19:58, Vladimir V. Saveliev a =E9crit :
+>>>>>>
+>>>>>>> Hello
+>>>>>>>
+>>>>>>> On Saturday 06 January 2007 13:58, Laurent Riffard wrote:
+>>>>>>>
+>>>>>>>> Hello,
+>>>>>>>>
+>>>>>>>> got this with 2.6.20-rc3-mm1:
+>>>>>>>>
+>>>>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+>>>>>>>> SysRq : Show Blocked State
+>>>>>>>>
+>>>>>>>>                          free                        sibling
+>>>>>>>>   task             PC    stack   pid father child younger olde=
+r
+>>>>>>>> umount        D C013135E  6044  1168   1150                   =
+ =20
+>>>>>>>> (NOTLB)
+>>>>>>>>        de591ae4 00000086 de591abc c013135e dff979c8 c012a6fe=20
+>>>>>>>> 00000046 00000007        dfd94ac0 128d3000 00000026 00000000=20
+>>>>>>>> dfd94bcc dff979c8 de591ae4 dffda038        00000002 dff979c0=20
+>>>>>>>> dff979bc dff979c8 de591b10 c012d600 dff979f8 00000000 Call Tra=
+ce:
+>>>>>>>>  [<c012d600>] synchronize_qrcu+0x70/0x8c
+>>>>>>>>  [<c01bede4>] __make_request+0x4c/0x29b
+>>>>>>>>  [<c01bd24b>] generic_make_request+0x1b0/0x1de
+>>>>>>>>  [<c01bf354>] submit_bio+0xda/0xe2
+>>>>>>>>  [<e12674bd>] write_jnodes_to_disk_extent+0x920/0x974 [reiser4=
+]
+>>>>>>>>  [<e12678dd>] update_journal_footer+0x29f/0x2b7 [reiser4]
+>>>>>>>>  [<e1268b65>] write_tx_back+0x149/0x185 [reiser4]
+>>>>>>>>  [<e126a8e7>] reiser4_write_logs+0xea4/0xfd2 [reiser4]
+>>>>>>>>  [<e125626a>] try_commit_txnh+0x7e6/0xa4f [reiser4]
+>>>>>>>>  [<e125661b>] reiser4_txn_end+0x148/0x3cf [reiser4]
+>>>>>>>>  [<e12568ad>] reiser4_txn_restart+0xb/0x1a [reiser4]
+>>>>>>>>  [<e125692f>] reiser4_txn_restart_current+0x73/0x75 [reiser4]
+>>>>>>>>  [<e1256b89>] force_commit_atom+0x258/0x261 [reiser4]
+>>>>>>>>  [<e1257703>] txnmgr_force_commit_all+0x406/0x697 [reiser4]
+>>>>>>>>  [<e12e5e08>] release_format40+0x10c/0x193 [reiser4]
+>>>>>>>>  [<e1279922>] reiser4_put_super+0x134/0x16a [reiser4]
+>>>>>>>>  [<c015c930>] generic_shutdown_super+0x55/0xd8
+>>>>>>>>  [<c015c9d3>] kill_block_super+0x20/0x32
+>>>>>>>>  [<c015ca75>] deactivate_super+0x3f/0x51
+>>>>>>>>  [<c016d903>] mntput_no_expire+0x42/0x5f
+>>>>>>>>  [<c0160f37>] path_release_on_umount+0x15/0x18
+>>>>>>>>  [<c016df77>] sys_umount+0x1a3/0x1cb
+>>>>>>>>  [<c016dfb8>] sys_oldumount+0x19/0x1b
+>>>>>>>>  [<c0103ed2>] sysenter_past_esp+0x5f/0x99
+>>>>>>>>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+>>>>>>>>
+>>>>>>>> Scenario:
+>>>>>>>> - umount a reiser4 FS (no need to write something before)
+>>>>>>>
+>>>>>>>
+>>>>>>> Hmm, I can not reproduce this with 2.6.20-rc3-mm1. Probably I=20
+>>>>>>> need to config the kernel more close to your system.
+>>>>>>>
+>>>>>>>> Earlier kernels were OK.
+>>>>>>>
+>>>>>>>
+>>>>>> This still happens with 2.6.20-rc4-mm1...
+>>>>>>
+>>>>>> Should I open a bug report at http://bugzilla.kernel.org?
+>>>>>>
+>>>>> Which device with reiser4 did you try to umount?  Jens wrote that=
+ it
+>>>>> could be a barrier related. If there are no multidevices involved=
+ -
+>>>>> please report to bugzilla.
+>>>>
+>>>>
+>>>>
+>>>> Make sure that your kernel contains this fix:
+>>>>
+>>>> http://git.kernel.dk/?p=3Dlinux-2.6-block.git;a=3Dcommitdiff;h=3D4=
+af09c42ee1af70356471f51c1f40c1ff7881b68;hp=3D036f6008f43b5b4dd8c825365f=
+15434d75005c6d=20
+>>>>
+>>>>
+>>>> I think it missed 2.6.20-rc3-mm1. Again, that assumes you are usin=
+g md
+>>>> or dm.
+>>>
+>>>
+>>>
+>>> I've got 2 reiser4 FS:
+>>> - one with /dev/sdb6
+>>> - the other with /dev/vglinux1/ccache (vglinux1 is built on=20
+>>> /dev/sda4 and /dev/sdb7).
+>>> There is no md here, only dm.
+>>>
+>>> I applied the above patch on top of 2.6.20-rc4-mm1, but the problem=
+=20
+>>> still happens with the two devices.
+>>>
+>>> thanks
+>>
+>>
+>> Laurent, would you please try 2.6.20-rc6-mm3 + this patch:
+>> http://lkml.org/lkml/diff/2007/2/1/195/1
+>
+>
+> Reiser4 works fine with 2.6.20-rc6-mm2 or 2.6.20-rc6-mm3 without any=20
+> additional patch (it was broken in rc6-mm1).
+>
+> FWIW, Andrew removed git-block.patch from 2.6.20-rc6-mm2, and he=20
+> restored git-block.patch without some problematic CFQ updates in=20
+> 2.6.20-rc6-mm3.
+>
+> In this case, does this patch need testing in rc6-mm3 ?
 
-The /home partition is on a dmcrypt volume on LVM. The system is a Thinkpad
-R60 (Core 2 Duo) running Debian unstable with custom kernel 2.6.20-rc6
-(from the wireless-dev tree).
-
-Here is some debug info:
-~# df /home/
-Filesystem           1K-blocks      Used Available Use% Mounted on
-/dev/mapper/home       4193596   4193596         0 100% /home
-
-~# debugreiserfs /dev/mapper/home
-debugreiserfs 3.6.19 (2003 www.namesys.com)
-
-
-Filesystem state: consistency is not checked after last mounting
-
-home: Reiserfs super block in block 16 on 0xfe09 of format 3.6 with standard
-journal
-Count of blocks on the device: 1048432
-Number of bitmaps: 32
-Blocksize: 4096
-Free blocks (count of blocks - used [journal, bitmaps, data, reserved]
-blocks): 0
-Root block: 32941
-Filesystem is NOT clean
-Tree height: 4
-Hash function used to sort names: "r5"
-Objectid map size 2, max 972
-Journal parameters:
-        Device [0x0]
-        Magic [0x725b2966]
-        Size 8193 blocks (including 1 for journal header) (first block 18)
-        Max transaction length 1024 blocks
-        Max batch size 900 blocks
-        Max commit age 30
-Blocks reserved by journal: 0
-Fs state field: 0x0:
-sb_version: 2
-inode generation number: 1128605
-UUID: 549f4bc1-6db1-44f6-9c69-1df7d5c440b5
-LABEL: home
-Set flags in SB:
-        ATTRIBUTES CLEAN
-
-
-Regards,
-
-Marcus
-
-
+Yes. This is against git-block patch to prevent endless waiting for IO=20
+completion.
+I have reproduced it by ./iozone -B -a -n 524288 -f /mnt/foo
+on x86 box with 512M RAM available.
