@@ -1,123 +1,136 @@
-From: Edward Shishkin <edward@namesys.com>
+From: Laurent Riffard <laurent.riffard@free.fr>
 Subject: Re: 2.6.20-rc3-mm1: umount reiser4 FS stuck in D state
-Date: Thu, 01 Feb 2007 23:04:59 +0300
-Message-ID: <45C247EB.6000806@namesys.com>
-References: <20070104220200.ae4e9a46.akpm@osdl.org> <200701062158.06329.vs@namesys.com> <45A81231.6040104@free.fr> <200701231940.58053.vs@namesys.com> <20070123154617.GE11995@kernel.dk> <45B65234.4000203@free.fr>
+Date: Thu, 01 Feb 2007 21:42:49 +0100
+Message-ID: <45C250C9.3040307@free.fr>
+References: <20070104220200.ae4e9a46.akpm@osdl.org> <200701062158.06329.vs@namesys.com> <45A81231.6040104@free.fr> <200701231940.58053.vs@namesys.com> <20070123154617.GE11995@kernel.dk> <45B65234.4000203@free.fr> <45C247EB.6000806@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1422957AbXBAUFO@vger.kernel.org>
-In-Reply-To: <45B65234.4000203@free.fr>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1423000AbXBAUm4@vger.kernel.org>
+In-Reply-To: <45C247EB.6000806@namesys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Laurent Riffard <laurent.riffard@free.fr>
+To: Edward Shishkin <edward@namesys.com>
 Cc: Jens Axboe <jens.axboe@oracle.com>, "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-list@namesys.com, Kernel development list <linux-kernel@vger.kernel.org>
 
-Laurent Riffard wrote:
 
-> Le 23.01.2007 16:46, Jens Axboe a =E9crit :
->
->> On Tue, Jan 23 2007, Vladimir V. Saveliev wrote:
+
+Le 01.02.2007 21:04, Edward Shishkin a =E9crit :
+> Laurent Riffard wrote:
+>=20
+>> Le 23.01.2007 16:46, Jens Axboe a =E9crit :
 >>
->>> Hello
+>>> On Tue, Jan 23 2007, Vladimir V. Saveliev wrote:
 >>>
->>> On Saturday 13 January 2007 01:56, Laurent Riffard wrote:
->>>
->>>> Le 06.01.2007 19:58, Vladimir V. Saveliev a =E9crit :
+>>>> Hello
 >>>>
->>>>> Hello
+>>>> On Saturday 13 January 2007 01:56, Laurent Riffard wrote:
+>>>>
+>>>>> Le 06.01.2007 19:58, Vladimir V. Saveliev a =E9crit :
 >>>>>
->>>>> On Saturday 06 January 2007 13:58, Laurent Riffard wrote:
->>>>>
->>>>>> Hello,
+>>>>>> Hello
 >>>>>>
->>>>>> got this with 2.6.20-rc3-mm1:
+>>>>>> On Saturday 06 January 2007 13:58, Laurent Riffard wrote:
 >>>>>>
->>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
->>>>>> SysRq : Show Blocked State
->>>>>>
->>>>>>                          free                        sibling
->>>>>>   task             PC    stack   pid father child younger older
->>>>>> umount        D C013135E  6044  1168   1150                    =20
->>>>>> (NOTLB)
->>>>>>        de591ae4 00000086 de591abc c013135e dff979c8 c012a6fe=20
->>>>>> 00000046 00000007        dfd94ac0 128d3000 00000026 00000000=20
->>>>>> dfd94bcc dff979c8 de591ae4 dffda038        00000002 dff979c0=20
->>>>>> dff979bc dff979c8 de591b10 c012d600 dff979f8 00000000 Call Trace=
-:
->>>>>>  [<c012d600>] synchronize_qrcu+0x70/0x8c
->>>>>>  [<c01bede4>] __make_request+0x4c/0x29b
->>>>>>  [<c01bd24b>] generic_make_request+0x1b0/0x1de
->>>>>>  [<c01bf354>] submit_bio+0xda/0xe2
->>>>>>  [<e12674bd>] write_jnodes_to_disk_extent+0x920/0x974 [reiser4]
->>>>>>  [<e12678dd>] update_journal_footer+0x29f/0x2b7 [reiser4]
->>>>>>  [<e1268b65>] write_tx_back+0x149/0x185 [reiser4]
->>>>>>  [<e126a8e7>] reiser4_write_logs+0xea4/0xfd2 [reiser4]
->>>>>>  [<e125626a>] try_commit_txnh+0x7e6/0xa4f [reiser4]
->>>>>>  [<e125661b>] reiser4_txn_end+0x148/0x3cf [reiser4]
->>>>>>  [<e12568ad>] reiser4_txn_restart+0xb/0x1a [reiser4]
->>>>>>  [<e125692f>] reiser4_txn_restart_current+0x73/0x75 [reiser4]
->>>>>>  [<e1256b89>] force_commit_atom+0x258/0x261 [reiser4]
->>>>>>  [<e1257703>] txnmgr_force_commit_all+0x406/0x697 [reiser4]
->>>>>>  [<e12e5e08>] release_format40+0x10c/0x193 [reiser4]
->>>>>>  [<e1279922>] reiser4_put_super+0x134/0x16a [reiser4]
->>>>>>  [<c015c930>] generic_shutdown_super+0x55/0xd8
->>>>>>  [<c015c9d3>] kill_block_super+0x20/0x32
->>>>>>  [<c015ca75>] deactivate_super+0x3f/0x51
->>>>>>  [<c016d903>] mntput_no_expire+0x42/0x5f
->>>>>>  [<c0160f37>] path_release_on_umount+0x15/0x18
->>>>>>  [<c016df77>] sys_umount+0x1a3/0x1cb
->>>>>>  [<c016dfb8>] sys_oldumount+0x19/0x1b
->>>>>>  [<c0103ed2>] sysenter_past_esp+0x5f/0x99
->>>>>>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+>>>>>>> Hello,
+>>>>>>>
+>>>>>>> got this with 2.6.20-rc3-mm1:
+>>>>>>>
+>>>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D
->>>>>>
->>>>>> Scenario:
->>>>>> - umount a reiser4 FS (no need to write something before)
->>>>>
->>>>> Hmm, I can not reproduce this with 2.6.20-rc3-mm1. Probably I nee=
-d=20
->>>>> to config the kernel more close to your system.
->>>>>
->>>>>> Earlier kernels were OK.
->>>>>
->>>> This still happens with 2.6.20-rc4-mm1...
->>>>
->>>> Should I open a bug report at http://bugzilla.kernel.org?
->>>>
->>> Which device with reiser4 did you try to umount?  Jens wrote that i=
-t
->>> could be a barrier related. If there are no multidevices involved -
->>> please report to bugzilla.
->>
->>
->> Make sure that your kernel contains this fix:
->>
->> http://git.kernel.dk/?p=3Dlinux-2.6-block.git;a=3Dcommitdiff;h=3D4af=
-09c42ee1af70356471f51c1f40c1ff7881b68;hp=3D036f6008f43b5b4dd8c825365f15=
-434d75005c6d=20
->>
->>
->> I think it missed 2.6.20-rc3-mm1. Again, that assumes you are using =
-md
->> or dm.
->
->
-> I've got 2 reiser4 FS:
-> - one with /dev/sdb6
-> - the other with /dev/vglinux1/ccache (vglinux1 is built on /dev/sda4=
+>>>>>>> SysRq : Show Blocked State
+>>>>>>>
+>>>>>>>                          free                        sibling
+>>>>>>>   task             PC    stack   pid father child younger older
+>>>>>>> umount        D C013135E  6044  1168   1150                    =
 =20
-> and /dev/sdb7).
-> There is no md here, only dm.
->
-> I applied the above patch on top of 2.6.20-rc4-mm1, but the problem=20
-> still happens with the two devices.
->
-> thanks
+>>>>>>> (NOTLB)
+>>>>>>>        de591ae4 00000086 de591abc c013135e dff979c8 c012a6fe=20
+>>>>>>> 00000046 00000007        dfd94ac0 128d3000 00000026 00000000=20
+>>>>>>> dfd94bcc dff979c8 de591ae4 dffda038        00000002 dff979c0=20
+>>>>>>> dff979bc dff979c8 de591b10 c012d600 dff979f8 00000000 Call Trac=
+e:
+>>>>>>>  [<c012d600>] synchronize_qrcu+0x70/0x8c
+>>>>>>>  [<c01bede4>] __make_request+0x4c/0x29b
+>>>>>>>  [<c01bd24b>] generic_make_request+0x1b0/0x1de
+>>>>>>>  [<c01bf354>] submit_bio+0xda/0xe2
+>>>>>>>  [<e12674bd>] write_jnodes_to_disk_extent+0x920/0x974 [reiser4]
+>>>>>>>  [<e12678dd>] update_journal_footer+0x29f/0x2b7 [reiser4]
+>>>>>>>  [<e1268b65>] write_tx_back+0x149/0x185 [reiser4]
+>>>>>>>  [<e126a8e7>] reiser4_write_logs+0xea4/0xfd2 [reiser4]
+>>>>>>>  [<e125626a>] try_commit_txnh+0x7e6/0xa4f [reiser4]
+>>>>>>>  [<e125661b>] reiser4_txn_end+0x148/0x3cf [reiser4]
+>>>>>>>  [<e12568ad>] reiser4_txn_restart+0xb/0x1a [reiser4]
+>>>>>>>  [<e125692f>] reiser4_txn_restart_current+0x73/0x75 [reiser4]
+>>>>>>>  [<e1256b89>] force_commit_atom+0x258/0x261 [reiser4]
+>>>>>>>  [<e1257703>] txnmgr_force_commit_all+0x406/0x697 [reiser4]
+>>>>>>>  [<e12e5e08>] release_format40+0x10c/0x193 [reiser4]
+>>>>>>>  [<e1279922>] reiser4_put_super+0x134/0x16a [reiser4]
+>>>>>>>  [<c015c930>] generic_shutdown_super+0x55/0xd8
+>>>>>>>  [<c015c9d3>] kill_block_super+0x20/0x32
+>>>>>>>  [<c015ca75>] deactivate_super+0x3f/0x51
+>>>>>>>  [<c016d903>] mntput_no_expire+0x42/0x5f
+>>>>>>>  [<c0160f37>] path_release_on_umount+0x15/0x18
+>>>>>>>  [<c016df77>] sys_umount+0x1a3/0x1cb
+>>>>>>>  [<c016dfb8>] sys_oldumount+0x19/0x1b
+>>>>>>>  [<c0103ed2>] sysenter_past_esp+0x5f/0x99
+>>>>>>>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+>>>>>>>
+>>>>>>> Scenario:
+>>>>>>> - umount a reiser4 FS (no need to write something before)
+>>>>>>
+>>>>>> Hmm, I can not reproduce this with 2.6.20-rc3-mm1. Probably I ne=
+ed=20
+>>>>>> to config the kernel more close to your system.
+>>>>>>
+>>>>>>> Earlier kernels were OK.
+>>>>>>
+>>>>> This still happens with 2.6.20-rc4-mm1...
+>>>>>
+>>>>> Should I open a bug report at http://bugzilla.kernel.org?
+>>>>>
+>>>> Which device with reiser4 did you try to umount?  Jens wrote that =
+it
+>>>> could be a barrier related. If there are no multidevices involved =
+-
+>>>> please report to bugzilla.
+>>>
+>>>
+>>> Make sure that your kernel contains this fix:
+>>>
+>>> http://git.kernel.dk/?p=3Dlinux-2.6-block.git;a=3Dcommitdiff;h=3D4a=
+f09c42ee1af70356471f51c1f40c1ff7881b68;hp=3D036f6008f43b5b4dd8c825365f1=
+5434d75005c6d=20
+>>>
+>>>
+>>> I think it missed 2.6.20-rc3-mm1. Again, that assumes you are using=
+ md
+>>> or dm.
+>>
+>>
+>> I've got 2 reiser4 FS:
+>> - one with /dev/sdb6
+>> - the other with /dev/vglinux1/ccache (vglinux1 is built on /dev/sda=
+4=20
+>> and /dev/sdb7).
+>> There is no md here, only dm.
+>>
+>> I applied the above patch on top of 2.6.20-rc4-mm1, but the problem=20
+>> still happens with the two devices.
+>>
+>> thanks
+>=20
+> Laurent, would you please try 2.6.20-rc6-mm3 + this patch:
+> http://lkml.org/lkml/diff/2007/2/1/195/1
 
-Laurent, would you please try 2.6.20-rc6-mm3 + this patch:
-http://lkml.org/lkml/diff/2007/2/1/195/1
+Reiser4 works fine with 2.6.20-rc6-mm2 or 2.6.20-rc6-mm3 without any=20
+additional patch (it was broken in rc6-mm1).
 
-Thanks,
-Edward.
+=46WIW, Andrew removed git-block.patch from 2.6.20-rc6-mm2, and he=20
+restored git-block.patch without some problematic CFQ updates in=20
+2.6.20-rc6-mm3.
+
+In this case, does this patch need testing in rc6-mm3 ?
+--=20
+laurent
