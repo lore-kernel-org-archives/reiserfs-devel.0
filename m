@@ -1,244 +1,501 @@
-From: "Xu CanHao" <xucanhao@gmail.com>
-Subject: Fwd: Investigate on r4 iozone/sql-bench performance bottleneck: stage one
-Date: Thu, 8 Feb 2007 19:13:05 +0800
-Message-ID: <6ec7a4340702080313y6829d653kdec72aa5230aba6b@mail.gmail.com>
-References: <6ec7a4340702060037i4d3de586ua89ca4d3d749d140@mail.gmail.com>
-	 <6ec7a4340702062302t24d0fa3bv9c17e9b89e1d9f00@mail.gmail.com>
-	 <6ec7a4340702072018k6cc75c3cgc99551db01ff6ce4@mail.gmail.com>
-	 <200702081354.03644.vs@namesys.com>
-	 <6ec7a4340702080306k681b16c8raa58a9408467157d@mail.gmail.com>
+From: squadra <jg@internetx.de>
+Subject: Re: [patch] reiser4-for-2.6.20
+Date: Fri, 9 Feb 2007 23:26:04 -0800 (PST)
+Message-ID: <8898527.post@talk.nabble.com>
+References: <20070205030106.GA10122@efil.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
-Return-path: <reiserfs-list-return-30553-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30561-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <6ec7a4340702080306k681b16c8raa58a9408467157d@mail.gmail.com>
-Content-Disposition: inline
+In-Reply-To: <20070205030106.GA10122@efil.de>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-list@namesys.com
 
-LS0tLS0tLS0tLSBGb3J3YXJkZWQgbWVzc2FnZSAtLS0tLS0tLS0tCkZyb206IFh1IENhbkhhbyA8
-eHVjYW5oYW9AZ21haWwuY29tPgpEYXRlOiAwOC4wMi4yMDA3IDE5OjA2ClN1YmplY3Q6IFJlOiBJ
-bnZlc3RpZ2F0ZSBvbiByNCBpb3pvbmUvc3FsLWJlbmNoIHBlcmZvcm1hbmNlCmJvdHRsZW5lY2s6
-IHN0YWdlIG9uZQpUbzogIlZsYWRpbWlyIFYuIFNhdmVsaWV2IiA8dnNAbmFtZXN5cy5jb20+CgoK
-WWVzLCBCdXQgbm90IGV4dDMsIGl0J3MgdGhlIGNoYW1waW9uIEpGUzoKCkkgc3RyYWNlZCBKRlMv
-cjMvcjQgdG8gc29tZSBmaWxlIG9uIHRoZSB0ZXN0LWNyZWF0ZToKCkkgd3JvdGUgYSBzbWFsbCBz
-aGVsbCBzY3JpcHQgdG8gY2FsY3VsYXRlIHRoZQpyZWFkKCkvd3JpdGUoKS9mZGF0YXN5bmMoKSB0
-aGF0IHN0cmFjZWQod2l0aCAtZmYpOgoKIzEwMCBzYW1wbGVzIG9mIGZkYXRhc3luYygpCiNjYXQg
-dHJhY2UtSkZTIHwgZ3JlcCBmZGF0YXN5bmNcKDI3XCkgfCBoZWFkIC1uMTAwIHwgc2VkCidzLy4q
-PFwoLipcKT4vXDEvJyB8IGF3ayAnTlI9PTF7bWluPSQwfXt0b3RhbCs9JDA7aWYgKCQwPm1heCkK
-bWF4PSQwO2lmICgkMDxtaW4pIG1pbj0kMH1FTkR7cHJpbnQKIkhpOiIsbWF4LCJMbzoiLG1pbiwi
-U3VtOiIsdG90YWwsIkF2ZzoiLHRvdGFsL05SLCJOdW06IixOUn0nCgojNDAwMCBzYW1wbGVzIG9m
-IHdyaXRlKCkKI2NhdCB0cmFjZS1KRlMgfCBncmVwIHdyaXRlXCgyNyB8IGhlYWQgLW40MDAwIHwg
-c2VkICdzLy4qPFwoLipcKT4vXDEvJwp8IGF3ayAnTlI9PTF7bWluPSQwfXt0b3RhbCs9JDA7aWYg
-KCQwPm1heCkgbWF4PSQwO2lmICgkMDxtaW4pCm1pbj0kMH1FTkR7cHJpbnQKIkhpOiIsbWF4LCJM
-bzoiLG1pbiwiU3VtOiIsdG90YWwsIkF2ZzoiLHRvdGFsL05SLCJOdW06IixOUn0nCgojNjAwIHNh
-bXBsZXMgb2YgcmVhZCgpCiNjYXQgdHJhY2UtSkZTIHwgZ3JlcCByZWFkXCgyNy4qXDwwLiogfCBo
-ZWFkIC1uNjAwIHwgc2VkCidzLy4qPFwoLipcKT4vXDEvJyB8IGF3ayAnTlI9PTF7bWluPSQwfXt0
-b3RhbCs9JDA7aWYgKCQwPm1heCkKbWF4PSQwO2lmICgkMDxtaW4pIG1pbj0kMH1FTkR7cHJpbnQK
-IkhpOiIsbWF4LCJMbzoiLG1pbiwiU3VtOiIsdG90YWwsIkF2ZzoiLHRvdGFsL05SLCJOdW06IixO
-Un0nCgpUaGUgUmVzdWx0IGlzOgoKcmVhZCgpOgpKRlM6IEhpOiAwLjAwMDQ2NiBMbzogMC4wMDAw
-MDcgU3VtOiAwLjAxMzE0MSBBdmc6IDEuOTk0MDhlLTA1IE51bTogNjAwCnIzOiAgICBIaTogMC4w
-MDA2MDQgTG86IDAuMDAwMDA3IFN1bTogMC4wMTQ2MyBBdmc6IDIuMzQwOGUtMDUgTnVtOiA2MDAK
-cjQ6ICAgIEhpOiAwLjAwMDgyMyBMbzogMC4wMDAwMTAgU3VtOiAwLjAyMDEwNSBBdmc6IDMuMTkx
-MjdlLTA1IE51bTogNjAwCgp3cml0ZSgpOgpKRlM6IEhpOiAwLjAxMzEzMSBMbzogMC4wMDAwMDYg
-U3VtOiAwLjEwMTY3MiBBdmc6IDIuNTQxOGUtMDUgTnVtOiA0MDAwCnIzOiAgICBIaTogMC4wMDE3
-NzUgTG86IDAuMDAwMDA2IFN1bTogMC4wOTc2NzEgQXZnOiAyLjQ0MTc3ZS0wNSBOdW06IDQwMDAK
-cjQ6ICAgIEhpOiAwLjAwMjgzNyBMbzogMC4wMDAwMDcgU3VtOiAwLjEyNDg2NiBBdmc6IDMuMTIx
-NjVlLTA1IE51bTogNDAwMAoKZmRhdGFzeW5jKCk6CkpGUzogSGk6IDAuMDA4MjY0IExvOiAwLjAw
-MDYyNSBTdW06IDAuMDk1MjI3IEF2ZzogMC4wMDA5NTIyNyBOdW06IDEwMApyMzogICAgSGk6IDAu
-MTE0NDQyIExvOiAwLjAwMjExNiBTdW06IDAuNDIyNDE3IEF2ZzogMC4wMDQyMjQxNyBOdW06IDEw
-MApyNDogICAgSGk6IDAuMTE1MTYyIExvOiAwLjA0NTc0NyBTdW06IDcuMTIwNTUgQXZnOiAwLjA3
-MTIwNTUgTnVtOiAxMDAKClNPLCB0aGUgY29uY2x1c2lvbiBtYXliZTogZmRhdGFzeW5jKCkgcnVp
-bmVkIHI0LCBidXQgd2FpdC4uLi4uCgogICAgICAgICAgIEFsdGVyICBBVElTICBCaWcgIENvbm5l
-Y3QgIENyZWF0ZSAgSW5zZXJ0CkV4dDMubyAgIDMyICAgICAyMSAgICAyNSAgICAgIDIyMSAgICAg
-ICAgMjAzICAgIDE5NzkKSkZTICAgICAgMTUgICAgIDIxICAgIDI1ICAgICAgMjIzICAgICAgICAx
-MTQgICAgMTcxMQpYRlMgICAgIDIyICAgICAyMiAgICAyNSAgICAgICAyMjkgICAgICAxMDkxICAg
-IDE3NDQKUjMgICAgICAgIDI5ICAgICAyMCAgICAyNSAgICAgIDIyNCAgICAgICAgMTk0ICAgIDE3
-MzEKUjQgICAgICAgIDcwICAgICA3MyAgICAyNyAgICAgIDI3NiAgICAgICAyNjY3ICAgIDM0OTkK
-UjQgICAgICAgIDUxICAgICA3MiAgICAyNiAgICAgIDI3MSAgICAgICAgNTk0ICAgIDMyMjcoc3lu
-Y191bml4X2ZpbGUoKSBlbXB0aWVkKQpSNCghISkgICAgIDcgICAgICAgMjEgICAgMjUgICAgICAy
-MTkgICAgICAgIDc1Ci4uLi4oc3luY191bml4X2ZpbGUoKSBlbXB0aWVkICYmIHVzZSBnZW5lcmlj
-X2ZpbGVfcmVhZCgpIGluc3RlYWQpCgpZRVMsIFlFUywgWUVTLi4uLi4uLiB0aGUgcmVhZF91bml4
-X2ZpbGUoKSBhbHNvIHN1Y2tzLiB0aGVzZSB0d28gbXVzdApiZSBjcml0aWNhbCBwZXJmb3JtYW5j
-ZSBmbGF3IG9mIHI0IGFuZCBuZWVkIGFuIGltbWVkaWF0ZWx5CmltcHJvdmVtZW50Li4uKEkgS05P
-VyBlbXB0eSB0aGUgZnN5bmMvZmRhdGFzeW5jIGlzIGEgYmFkIGlkZWEsIGJ1dApqdXN0IGZvciBh
-IHJlZmVyZW5jZSkKClBTKCEhKToKSSB0cmllZCByZXBsYWNpbmcgInJlYWRfdW5peF9maWxlKCki
-IHdpdGggImdlbmVyaWNfZmlsZV9yZWFkKCkiIGluCnBsdWdpbi9vYmplY3QuYywgaXQgZGlkIG5v
-dCBjcmFzaCBidXQgc29tZSBteXN0ZXJpZXMgdGhpbmcgaGFwcGVuZWQ6CgpBLT5pZiBJIGRvIGEg
-Im1ha2UgbW9kdWxlcyItPiAibWFrZSBtb2R1bGVzX2luc3RhbGwiIC0+c3RvcF9teXNxbAotPnVt
-b3VudCAtPiBybW1vZC0+IG1vZHByb2JlLT4KbWtmcy5yZWlzZXI0JiZtb3VudCYmbXlzcWxfaW5z
-dGFsbF9kYiYmc3RhcnRfbXlzcWwsIG15c3FsIHJldHVybnMgYQoiYWNjZXNzIGRlbmllZCBlcnJv
-ciIsIHRoZSBzYW1lIHByb2Nlc3MgSSBkbyB3aXRoIGV4dDMgYmVoYXZlcyBub3JtYWwuCkItPmlm
-IEkgZG8gYSAibWFrZSBtb2R1bGVzIi0+ICJtYWtlIG1vZHVsZXNfaW5zdGFsbCIgLT5zdG9wX215
-c3FsCi0+dW1vdW50IC0+IHJtbW9kLT4gbW9kcHJvYmUtPiBtb3VudCYmc3RhcnRfbXlzcWwoTk8g
-bWtmcy5yZWlzZXI0LCBOTwpteXNxbF9pbnN0YWxsX2RiLCBqdXN0IGtlZXAgYW4gb3JpZ2luYWwo
-YmVmb3JlIHRoZSBjb2RlIGNoYW5nZXMgbWFkZSkKcjQgcGFydGl0aW9uIHVuY2hhbmdlZCksIG15
-c3FsIHdvcmtzIGdvb2QuCgpzbywgdGhlcmUgbXVzdCBiZSBzb21ldGhpbmcgZGlmZmVyZW50IG9m
-IHN1Y2ggcmVwbGFjZW1lbnQoaXMgdGhlIGFib3ZlIGNsZWFyPykuCgoyMDA3LzIvOCwgVmxhZGlt
-aXIgVi4gU2F2ZWxpZXYgPHZzQG5hbWVzeXMuY29tPjoKPiDy1cTE3Qo+Cj4gT24gVGh1cnNkYXkg
-MDggRmVicnVhcnkgMjAwNyAwNzoxOCwgeW91IHdyb3RlOgo+ID4gT0ssIEkgdGhpbmsgSSBkaXNj
-b3ZlcmVkIHNvbWUgcmVhc29uIHdoeSBzcWwtYmVuY2ggc2xvdy4gVGhlIHNxbC1iZW5jaAo+ID4g
-ZG8gYWxvdCBjcmVhdGUvc2VsZWN0L3VwZGF0ZS9pbnNlcnQvZGVsZXRlIG9wZXJhdGlvbnMsIHdo
-aWNoIGhlYXZpbHkKPiA+IHJlYWQoKS93cml0ZSgpL2ZzeW5jKCkvZmRhdGFzeW5jKCkuCj4gPgo+
-ID4gQlVUIHIzIGlzIHN0aWxsIGFzIHNsb3cgYXQgZnN5bmMoKSBhcyByNCwgd2h5IHIzIG11Y2gg
-bW9yZSBmYXN0ZXIgdGhhbgo+ID4gcjQgaXMgc3RpbGwgbmVlZCBzb21lIGRheXMgb2YgaW52ZXN0
-bWVudChtYXliZSB0cnkKPiA+IG5vZnN5bmMrZ2VuZXJpY19maWxlX3JlYWQgZm9yIHI0PykuCj4g
-Pgo+ID4gICAgICAgICAgICBBbHRlciAgQVRJUyAgQmlnICBDb25uZWN0ICBDcmVhdGUgIEluc2Vy
-dAo+ID4gIEV4dDMubyAgIDMyICAgICAyMSAgICAyNSAgICAgIDIyMSAgICAgICAgMjAzICAgIDE5
-NzkKPiA+ICBKRlMgICAgICAxNSAgICAgMjEgICAgMjUgICAgICAyMjMgICAgICAgIDExNCAgICAx
-NzExCj4gPiAgWEZTICAgICAyMiAgICAgMjIgICAgMjUgICAgICAgMjI5ICAgICAgMTA5MSAgICAx
-NzQ0Cj4gPiAgUjMgICAgICAgIDI5ICAgICAyMCAgICAyNSAgICAgIDIyNCAgICAgICAgMTk0ICAg
-IDE3MzEKPiA+ICBSNCAgICAgICAgNzAgICAgIDczICAgIDI3ICAgICAgMjc2ICAgICAgIDI2Njcg
-ICAgMzQ5OQo+Cj4gQ2FuIHlvdSBwbGVhc2UgdHJ5IHRvIHNlcGFyYXRlIGFuZCBzdHJhY2UgY3Jl
-YXRlIHBoYXNlIG9mIHRoZSBiZW5jaG1hcmsgZm9yIGV4dDMgYW5kIHJlaXNlcjQ/Cj4KPiA+ICBu
-b2ZzeW5jIDUxICAgICA3MiAgICAyNiAgICAgIDI3MSAgICAgICAgNTk0ICAgIDMyMjcKPiA+Cj4g
-Pgo+ID4KPiA+IDIwMDcvMi83LCBYdSBDYW5IYW8gPHh1Y2FuaGFvQGdtYWlsLmNvbT46Cj4gPiA+
-IEhpIQo+ID4gPgo+ID4gPiAxLCBJIHRyaWVkIHJlcGxhY2luZyAicmVhZF91bml4X2ZpbGUoKSIg
-d2l0aCAiZ2VuZXJpY19maWxlX3JlYWQiIGluCj4gPiA+IHBsdWdpbi9vYmplY3QuYywgaXQgZGlk
-IG5vdCBjcmFzaCBidXQgc29tZSBteXN0ZXJpZXMgdGhpbmcgaGFwcGVuZWQ6Cj4gPiA+Cj4gPiA+
-IEEtPmlmIEkgZG8gYSAibWFrZSBtb2R1bGVzIi0+ICJtYWtlIG1vZHVsZXNfaW5zdGFsbCIgLT5z
-dG9wX215c3FsCj4gPiA+IC0+dW1vdW50IC0+IHJtbW9kLT4gbW9kcHJvYmUtPgo+ID4gPiBta2Zz
-LnJlaXNlcjQmJm1vdW50JiZteXNxbF9pbnN0YWxsX2RiJiZzdGFydF9teXNxbCwgbXlzcWwgcmV0
-dXJucyBhCj4gPiA+ICJhY2Nlc3MgZGVuaWVkIGVycm9yIiwgdGhlIHNhbWUgcHJvY2VzcyBJIGRv
-IHdpdGggZXh0MyBiZWhhdmVzIG5vcm1hbC4KPiA+ID4gQi0+aWYgSSBkbyBhICJtYWtlIG1vZHVs
-ZXMiLT4gIm1ha2UgbW9kdWxlc19pbnN0YWxsIiAtPnN0b3BfbXlzcWwKPiA+ID4gLT51bW91bnQg
-LT4gcm1tb2QtPiBtb2Rwcm9iZS0+IG1vdW50JiZzdGFydF9teXNxbChOTyBta2ZzLnJlaXNlcjQs
-IE5PCj4gPiA+IG15c3FsX2luc3RhbGxfZGIsIGp1c3Qga2VlcCBhbiBvcmlnaW5hbChiZWZvcmUg
-dGhlIGNvZGUgY2hhbmdlcyBtYWRlKQo+ID4gPiByNCBwYXJ0aXRpb24gdW5jaGFuZ2VkKSwgbXlz
-cWwgd29ya3MgZ29vZC4KPiA+ID4KPiA+ID4gc28sIHRoZXJlIG11c3QgYmUgc29tZXRoaW5nIGRp
-ZmZlcmVudCBvZiBzdWNoIHJlcGxhY2VtZW50Lgo+ID4gPgo+ID4gPiAyLCBJZiBJIHRha2UgIkIi
-LCByNCB1c2VzICJnZW5lcmljX2ZpbGVfcmVhZCIgYXMgcmVhZCgpLiBpb3pvbmUKPiA+ID4gcmVh
-ZC1iZW5jaCBudW1iZXJzIHJhaXNlZCBmcm9tIH44MDAwMDAgdG8gfjE2MDAwMDAsIHNlZW1zIHBy
-ZXR0eSBnb29kLgo+ID4gPiBCVVQgd2hlbiBJIHRha2UgdGVzdC1jcmVhdGUgb24gc3FsLWJlbmNo
-LCBJIGZvdW5kIGF2ZyByZWFkKCkgY29zdHMKPiA+ID4gZGVjcmVhc2VkIGZyb20gfjAuMTFzIHRv
-IH4wLjA3cywgU1RJTEwgc2xvdyBjb21wYXJlcyB3aXRoIGV4dDMuCj4gPiA+Cj4gPiA+IDMsIFdo
-YXQncyBtb3JlIG15c3RlcmllcywgdGhlIHJlYWQoZmQpIHBlcmZvcm1lZCBieSB0ZXN0LWNyZWF0
-ZSBpcwo+ID4gPiBhY3R1YWxseSBhIGZkIGJ5IHNvY2tldChQRl9GSUxFLCBTT0NLX1NUUkVBTSwg
-MCksIGFuZCB0aGUgZm9sbG93aW5nCj4gPiA+IGNvbm5lY3QoKSBzZXQgdGhlIHBhdGggdG8gIi92
-YXIvcnVuL215c3FsL215c3FsLnNvY2siKG15IC92YXIvcnVuLi4uLi4KPiA+ID4gaXMgcmVpc2Vy
-MykuIFdoeSB3b3VsZCBzdWNoIGEgY2lyY3Vtc3RhbmNlKHBlcmZvcm1hbmNlIGV4dDMvcjQpCj4g
-PiA+IGhhcHBlbj8KPiA+ID4KPiA+ID4gMjAwNy8yLzcsIFZsYWRpbWlyIFYuIFNhdmVsaWV2IDx2
-c0BuYW1lc3lzLmNvbT46Cj4gPiA+ID4gSGVsbG8KPiA+ID4gPgo+ID4gPiA+IE9uIFR1ZXNkYXkg
-MDYgRmVicnVhcnkgMjAwNyAxMTozNywgWHUgQ2FuSGFvIHdyb3RlOgo+ID4gPiA+ID4gSGkhCj4g
-PiA+ID4gPgo+ID4gPiA+ID4gSSd2ZSBtYWRlIGFuIGFuYWx5c2lzIG9mIHI0IHBlcmZvcm1hbmNl
-IGJvdHRsZW5lY2sgb24gc3FsLWJlbmNoL2lvem9uZQo+ID4gPiA+ID4gcmVjZW50bHksIGFuZCBo
-ZXJlIGlzIHRoZSBjb25jbHVzaW9uOgo+ID4gPiA+ID4KPiA+ID4gPiA+IDEsIGRlZmF1bHQgaW96
-b25lIGJlbmNobWFya3MoLVJhKSBvbmx5IGludm9sdmVzCj4gPiA+ID4gPiByZWFkKCkvd3JpdGUo
-KS9mcmVhZCgpL2Z3cml0ZSgpLi4uZXRjLCBhbHRob3VnaCBtYW55IGZzeW5jKCkgZHVyaW5nCj4g
-PiA+ID4gPiBpb3pvbmUsIHRoZSBmc3luYygpIHRpbWUgaXMgbm90IGNhbGN1bGF0ZWQgaW4gdGhl
-IHJlc3VsdCwgdGhlIGZ1bmN0aW9uCj4gPiA+ID4gPiBpbnZvY2F0aW9uIHBhdHRlcm4gaXMgbGlr
-ZShpb3pvbmUgLXMgNEsgLXIgMUspOgo+ID4gPiA+ID4KPiA+ID4gPiA+IGdldHRpbWVvZmRheSh7
-MTE3MDc0OTU0MSwgMzEzMTc5fSwgTlVMTCkgPSAwIDwwLjAwMDAxNT4KPiA+ID4gPiA+IHdyaXRl
-KDMsICJ2dnZ2dnZ2dlwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFww
-XDAiLi4uLAo+ID4gPiA+ID4gMTAyNCkgPSAxMDI0IDwwLjAwMDE3ND4KPiA+ID4gPiA+IHdyaXRl
-KDMsICJ2dnZ2dnZ2dlwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFww
-XDAiLi4uLAo+ID4gPiA+ID4gMTAyNCkgPSAxMDI0IDwwLjAwMDA2MD4KPiA+ID4gPiA+IHdyaXRl
-KDMsICJ2dnZ2dnZ2dlwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFww
-XDAiLi4uLAo+ID4gPiA+ID4gMTAyNCkgPSAxMDI0IDwwLjAwMDA1Nz4KPiA+ID4gPiA+IHdyaXRl
-KDMsICJ2dnZ2dnZ2dlwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFww
-XDAiLi4uLAo+ID4gPiA+ID4gMTAyNCkgPSAxMDI0IDwwLjAwMDA5ND4KPiA+ID4gPiA+IGdldHRp
-bWVvZmRheSh7MTE3MDc0OTU0MSwgMzEzOTA0fSwgTlVMTCkgPSAwIDwwLjAwMDAwOD4KPiA+ID4g
-PiA+Cj4gPiA+ID4gPgo+ID4gPiA+ID4gZ2V0dGltZW9mZGF5KHsxMTcwNzQ5NTQxLCA3MzMxNjV9
-LCBOVUxMKSA9IDAgPDAuMDAwMDE1Pgo+ID4gPiA+ID4gcmVhZCgzLCAidnZ2dnZ2dnZcMFwwXDBc
-MFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwIi4uLiwKPiA+ID4gPiA+IDEw
-MjQpID0gMTAyNCA8MC4wMDAwMTk+Cj4gPiA+ID4gPiByZWFkKDMsICJ2dnZ2dnZ2dlwwXDBcMFww
-XDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDAiLi4uLAo+ID4gPiA+ID4gMTAy
-NCkgPSAxMDI0IDwwLjAwMDAyMD4KPiA+ID4gPiA+IHJlYWQoMywgInZ2dnZ2dnZ2XDBcMFwwXDBc
-MFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMCIuLi4sCj4gPiA+ID4gPiAxMDI0
-KSA9IDEwMjQgPDAuMDAwMDE3Pgo+ID4gPiA+ID4gcmVhZCgzLCAidnZ2dnZ2dnZcMFwwXDBcMFww
-XDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwXDBcMFwwIi4uLiwKPiA+ID4gPiA+IDEwMjQp
-ID0gMTAyNCA8MC4wMDAwMjA+Cj4gPiA+ID4gPiBnZXR0aW1lb2ZkYXkoezExNzA3NDk1NDEsIDcz
-MzUyN30sIE5VTEwpID0gMCA8MC4wMDAwMTQ+Cj4gPiA+ID4gPgo+ID4gPiA+ID4gMiwgc3FsLWJl
-bmNoIGlzIHRoZSBzYW1lKG9ubHkgdXNlICd0ZXN0LWNyZWF0ZScpLAo+ID4gPiA+ID4KPiA+ID4g
-PiA+IGhlcmUgaXMgdGhlIHBhdHRlcm4gb2YgcjQ6Cj4gPiA+ID4gPgo+ID4gPiA+ID4gcmVhZCgz
-LCAiXDdcMFwwXDFcMFwwXDBcMlwwXDBcMCIsIDE2Mzg0KSA9IDExIDwwLjExMDEwNj4KPiA+ID4g
-PiA+IHBvbGwoW3tmZD0zLCBldmVudHM9UE9MTElOfFBPTExQUkl9XSwgMSwgMCkgPSAwIDwwLjAw
-MDAwOD4KPiA+ID4gPiA+IHdyaXRlKDMsICJjXDBcMFwwXDNjcmVhdGUgdGFibGUgYmVuY2hfMTI3
-IChpIGkiLi4uLCAxMDMpID0gMTAzIDwwLjAwMDAwOD4KPiA+ID4gPiA+IHJlYWQoMywgIlw3XDBc
-MFwxXDBcMFwwXDJcMFwwXDAiLCAxNjM4NCkgPSAxMSA8MC4xMjEwNTg+Cj4gPiA+ID4gPiBwb2xs
-KFt7ZmQ9MywgZXZlbnRzPVBPTExJTnxQT0xMUFJJfV0sIDEsIDApID0gMCA8MC4wMDAxMTM+Cj4g
-PiA+ID4gPiB3cml0ZSgzLCAiY1wwXDBcMFwzY3JlYXRlIHRhYmxlIGJlbmNoXzEyOCAoaSBpIi4u
-LiwgMTAzKSA9IDEwMyA8MC4wMDAwMTc+Cj4gPiA+ID4gPiByZWFkKDMsICJcN1wwXDBcMVwwXDBc
-MFwyXDBcMFwwIiwgMTYzODQpID0gMTEgPDAuMTEwMDM0Pgo+ID4gPiA+ID4gcG9sbChbe2ZkPTMs
-IGV2ZW50cz1QT0xMSU58UE9MTFBSSX1dLCAxLCAwKSA9IDAgPDAuMDAwMDE3Pgo+ID4gPiA+ID4g
-d3JpdGUoMywgImNcMFwwXDBcM2NyZWF0ZSB0YWJsZSBiZW5jaF8xMjkgKGkgaSIuLi4sIDEwMykg
-PSAxMDMgPDAuMDAwMDE3Pgo+ID4gPiA+ID4KPiA+ID4gPiA+IGFuZCBleHQzOgo+ID4gPiA+ID4K
-PiA+ID4gPiA+IHJlYWQoMywgIlw3XDBcMFwxXDBcMFwwXDJcMFwwXDAiLCAxNjM4NCkgPSAxMSA8
-MC4wMDMyNTc+Cj4gPiA+ID4gPiBwb2xsKFt7ZmQ9MywgZXZlbnRzPVBPTExJTnxQT0xMUFJJfV0s
-IDEsIDApID0gMCA8MC4wMDAwMTc+Cj4gPiA+ID4gPiB3cml0ZSgzLCAiY1wwXDBcMFwzY3JlYXRl
-IHRhYmxlIGJlbmNoXzgwNSAoaSBpIi4uLiwgMTAzKSA9IDEwMyA8MC4wMDAwMTY+Cj4gPiA+ID4g
-PiByZWFkKDMsICJcN1wwXDBcMVwwXDBcMFwyXDBcMFwwIiwgMTYzODQpID0gMTEgPDAuMDA0MDAx
-Pgo+ID4gPiA+ID4gcG9sbChbe2ZkPTMsIGV2ZW50cz1QT0xMSU58UE9MTFBSSX1dLCAxLCAwKSA9
-IDAgPDAuMDAwMDE3Pgo+ID4gPiA+ID4gd3JpdGUoMywgImNcMFwwXDBcM2NyZWF0ZSB0YWJsZSBi
-ZW5jaF84MDYgKGkgaSIuLi4sIDEwMykgPSAxMDMgPDAuMDAwMDA4Pgo+ID4gPiA+ID4gcmVhZCgz
-LCAiXDdcMFwwXDFcMFwwXDBcMlwwXDBcMCIsIDE2Mzg0KSA9IDExIDwwLjAwMzY5Nz4KPiA+ID4g
-PiA+IHBvbGwoW3tmZD0zLCBldmVudHM9UE9MTElOfFBPTExQUkl9XSwgMSwgMCkgPSAwIDwwLjAw
-MDAxNz4KPiA+ID4gPiA+IHdyaXRlKDMsICJjXDBcMFwwXDNjcmVhdGUgdGFibGUgYmVuY2hfODA3
-IChpIGkiLi4uLCAxMDMpID0gMTAzIDwwLjAwMDAxOD4KPiA+ID4gPiA+Cj4gPiA+ID4gPiB5ZXMu
-Li5yZWFkKCkgb24gcjQgY29zdHMgfjAuMTFzIHdoaWxlIGV4dDMgfjAuMDAzcywgZGVmaW5pdGVs
-eSB0aGUKPiA+ID4gPiA+IHJlYXNvbiB3aHkgcjQgY29zdHMgMjY2N3Mgb24gY3JlYXRlIHRhYmxl
-cyBhbmQgZXh0MydzIDIwM3MKPiA+ID4gPiA+Cj4gPiA+ID4KPiA+ID4gPiByZWFkIGlzIGNhbGxl
-ZCB0byByZWFkIDE2Mzg0IGJ5dGVzLCBhbmQgb25seSAxMSBieXRlcyBnZXQgcmVhZC4gTWF5YmUg
-cmVpc2VyNCB0cmllcyB0byByZWFkIG5vbiBleGlzdGVudCBkYXRhIHRvbyBoYXJkLgo+ID4gPiA+
-Cj4gPiA+ID4gPiAzLCBtb25nb19yZWFkLmMgaW4gbW9uZ28gdGVzdHMgdXNlcyBhIHJlYWQoLi4u
-LCAuLi4sIDQwOTYpLCBhbmQgdGhlCj4gPiA+ID4gPiByZXN1bHQgaXMgZ29vZCBmb3IgcjQuCj4g
-PiA+ID4gPgo+ID4gPiA+ID4gNCwgJ2NwJyB1c2VzIGEgcmVhZCguLi4sIC4uLiwgNjU1MzYpLCBh
-bmQgdGhlIHJlc3VsdCBpcyBnb29kIGZvciByNCB0b28uCj4gPiA+ID4gPiAoYSBwYXJ0IG9mIHBh
-dHRlcm4gd2hlbiBjb3B5aW5nIGEgYmlnIGZpbGUpCj4gPiA+ID4gPiByZWFkKDMsICI6XDAwNjRv
-XDI3MFwyNzZcMjExKFwyMzZcMjQxXDI0MlwyMDUhXDM3MlwzNzVaXDM3MS9cMzAiLi4uLAo+ID4g
-PiA+ID4gNjU1MzYpID0gNjU1MzYgPDAuMDAwMDY3Pgo+ID4gPiA+ID4gd3JpdGUoNCwgIjpcMDA2
-NG9cMjcwXDI3NlwyMTEoXDIzNlwyNDFcMjQyXDIwNSFcMzcyXDM3NVpcMzcxL1wzMCIuLi4sCj4g
-PiA+ID4gPiA2NTUzNikgPSA2NTUzNiA8MC4wMDAwOTM+Cj4gPiA+ID4gPiByZWFkKDMsICJcMzdY
-XHRcMjA1XDMzNFwyMTBcMjQyRSU4XHRcMjExXDJjXDM2NVwzN1wzNjNcMzVcMzA1JVwyMDYiLi4u
-LAo+ID4gPiA+ID4gNjU1MzYpID0gNjU1MzYgPDAuMDAwMjE3Pgo+ID4gPiA+ID4gd3JpdGUoNCwg
-IlwzN1hcdFwyMDVcMzM0XDIxMFwyNDJFJThcdFwyMTFcMmNcMzY1XDM3XDM2M1wzNVwzMDUlXDIw
-NiIuLi4sCj4gPiA+ID4gPiA2NTUzNikgPSA2NTUzNiA8MC4wMDAwODM+Cj4gPiA+ID4gPiByZWFk
-KDMsICJcMjc1XDIwNSVcMjYzXDBcMjczTVwyMDZcMjAwXDI0XDMxXDI0M1wyMDRcMzchXDI1Mlwy
-MzEiLi4uLAo+ID4gPiA+ID4gNjU1MzYpID0gNjU1MzYgPDAuMDAwMDY2Pgo+ID4gPiA+ID4gd3Jp
-dGUoNCwgIlwyNzVcMjA1JVwyNjNcMFwyNzNNXDIwNlwyMDBcMjRcMzFcMjQzXDIwNFwzNyFcMjUy
-XDIzMSIuLi4sCj4gPiA+ID4gPiA2NTUzNikgPSA2NTUzNiA8MC4wMDAwODE+Cj4gPiA+ID4gPgo+
-ID4gPiA+ID4gNSwgVGhlIENvbmNsdXNpb24gIk1BWUJFIjogSkZTIHVzZXMgImdlbmVyaWNfZmls
-ZV8qIiBvbiByZWFkKCkvd3JpdGUoKQo+ID4gPiA+ID4gYW5kIHBlcmZvcm1zIGJlc3QgaW4gaW96
-b25lL3NxbC1iZW5jaC4gcjMgdXNlcyAiZ2VuZXJpY19maWxlX3JlYWQiIG9uCj4gPiA+ID4gPiBy
-ZWFkKCkgYW5kIHBlcmZvcm1zIGdvb2Qgb24gc3FsLWJlbmNoIHRvby4gcjQgdXNlcyBpdHMgb3du
-Cj4gPiA+ID4gPiAicmVhZF91bml4X2ZpbGUiIG9uIHJlYWQoKSwgYmVoYXZlcyB3b3JzdCBvbiBp
-b3pvbmUvc3FsLWJlbmNoIGFuZCBiZXN0Cj4gPiA+ID4gPiBvbiBtb25nb19yZWFkL2NwLiBBbnlo
-b3csIHJlYWRfdW5peF9maWxlKCkgbXVzdCBiZSBpbXByb3ZlZChpdCBpcyBub3QKPiA+ID4gPiA+
-IGJlIHBvc3NpYmxlIHJlcGxhY2VkIGJ5IGdlbmVyaWNfZmlsZV9yZWFkIGRpcmVjdGx5KS4KPiA+
-ID4gPiA+Cj4gPiA+ID4gPiBDb21tZW50cy4uLj8KPiA+ID4gPgo+ID4gPiA+IFdlIHRyaWVkIHRv
-IGltcGxlbWVudCByZWlzZXI0IHJlYWQgdmlhIGdlbmVyaWNfZmlsZV9yZWFkIGFuZCB0aGF0IGRp
-ZCBub3QgbWFrZSBzdWJzdGFudGlhbCBkaWZmZXJlbmNlLgo+ID4gPiA+IEkgZG8gbm90IHRoaW5r
-IHRoYXQgd2UgdGVzdGVkIGl0IHdpdGggc3FsLWJlbmNoLCB0aG91Z2guCj4gPiA+ID4KPiA+ID4g
-PiA+Cj4gPiA+ID4gPgo+ID4gPiA+ID4gT24gV2VkbmVzZGF5IDI0IEphbnVhcnkgMjAwNyAxNzow
-NSwgWHUgQ2FuSGFvIHdyb3RlOgo+ID4gPiA+ID4gPiBIaSEKPiA+ID4gPiA+ID4KPiA+ID4gPiA+
-ID4gSSd2ZSBnb3QgYSBiZW5jaG1hcmsgYWJvdXQgInJlaXNlcjQgb24gbXlzcWwiIGFuZCBmb3Vu
-ZCBhIHJlbWFya2FibGUKPiA+ID4gPiA+ID4gZXh0cmVtZWx5IGxvdyBwZXJmb3JtYW5jZSwgaSBt
-YW5hZ2VkIHRvIHR1cm4gb2ZmIGZzeW5jKCkgaW4KPiA+ID4gPiA+ID4gZnMvcmVpc2VyNC9wbHVn
-aW4vZmlsZS9maWxlLmMgKG51bGxpZnkgdGhlIHN5bmNfdW5peF9maWxlKCkgZnVuY3Rpb24pLAo+
-ID4gPiA+ID4gPiBidXQgaXQgU1RJTEwgVkVSWSBTTE9XLiBJIGNvdWxkIG5vdCBmb3VuZCBhbnkg
-aW5mb3JtYXRpb24gYWJvdXQgYm90aAo+ID4gPiA+ID4gPiBpbiB0aGUgbWFpbGluZy1saXN0IGFu
-ZCBnb29nbGUtZ3JvdXBzLiBIZXJlIGlzIHRoZSBkZXRhaWw6Cj4gPiA+ID4gPiA+Cj4gPiA+ID4g
-PiA+IEMyLjI2K0k4NDVHKzI1Nk1CK1dEODBHQgo+ID4gPiA+ID4gPiBTbGFja3dhcmUgMTEuMChW
-YW5pbGxhIDIuNi4xOC4zK3I0X3BhdGNoKzEuMC41KQo+ID4gPiA+ID4gPiBteXNxbC01LjAuMjRh
-Cj4gPiA+ID4gPiA+IHRlc3RpbmcgdXNlIHRoZSAic3FsLWJlbmNoIiwgYWxsIHJlc3VsdCBpbiBz
-ZWNvbmRzLgo+ID4gPiA+ID4gPgo+ID4gPiA+ID4gPiAgICAgICAgICAgQWx0ZXIgIEFUSVMgIEJp
-ZyAgQ29ubmVjdCAgQ3JlYXRlICBJbnNlcnQKPiA+ID4gPiA+ID4gRXh0My5vICAgMzIgICAgIDIx
-ICAgIDI1ICAgICAgMjIxICAgICAgICAyMDMgICAgMTk3OQo+ID4gPiA+ID4gPiBKRlMgICAgICAx
-NSAgICAgMjEgICAgMjUgICAgICAyMjMgICAgICAgIDExNCAgICAxNzExCj4gPiA+ID4gPiA+IFhG
-UyAgICAgMjIgICAgIDIyICAgIDI1ICAgICAgIDIyOSAgICAgIDEwOTEgICAgMTc0NAo+ID4gPiA+
-ID4gPiBSMyAgICAgICAgMjkgICAgIDIwICAgIDI1ICAgICAgMjI0ICAgICAgICAxOTQgICAgMTcz
-MQo+ID4gPiA+ID4gPiBSNCAgICAgICAgNzAgICAgIDczICAgIDI3ICAgICAgMjc2ICAgICAgIDI2
-NjcgICAgMzQ5OQo+ID4gPiA+ID4gPiBub2ZzeW5jIDUxICAgICA3MiAgICAyNiAgICAgIDI3MSAg
-ICAgICAgNTk0ICAgIDMyMjcKPiA+ID4gPiA+ID4KPiA+ID4gPiA+ID4gU2VlbXMgZXZlbiBSNCB3
-L28gZnN5bmMgc3BlZWRzIHVwIGFiaXQsIGl0J3Mgc3RpbGwgVEVSUklCTFkgU0xPVy4KPiA+ID4g
-PiA+ID4gY291bGQgeW91IHRlbGwgbWUgd2h5Pwo+ID4gPiA+ID4KPiA+ID4gPiA+Cj4gPiA+ID4g
-Pgo+ID4gPiA+ID4gPj4gNi5XaGF0IGVsc2UgcGVyZm9ybWFuY2UgYm90dGxlbmVja3MgZG8geW91
-IGtub3csIGV4Y2VwdAo+ID4gPiA+ID4gPiBmc3luYy9zcWwtYmVuY2g/IENvdWxkIHlvdSBnaXZl
-IG1lIGEgbGlzdD8KPiA+ID4gPiA+ID4KPiA+ID4gPiA+Cj4gPiA+ID4gPiBJIHVzZWQgdG8gYmVu
-Y2htYXJrIHdpdGggaW96b25lIGFuZCBpb3pvbmUgLUIuIExhc3QgdGltZSBJIGRpZCByZWlzZXI0
-Cj4gPiA+ID4gPiBkaWQgIG5vdCBwZXJmb3JybSB3ZWxsIG9uIGl0Lgo+ID4gPiA+ID4KPiA+ID4g
-PiA+Cj4gPiA+ID4KPiA+ID4KPiA+Cj4gPgo+Cg==
+
+Hi 
+
+i m getting lots of errormessages with the 2.6.20 patch, it looks to me like
+they start when i copy files from  a reiser4 partition, to a ext3.
+
+Call Trace:
+ [<ffffffff8805099f>] :ext3:ext3_write_inode+0x22/0x40
+ [<ffffffff80293594>] __writeback_single_inode+0x225/0x3be
+ [<ffffffff8805099f>] :ext3:ext3_write_inode+0x22/0x40
+ [<ffffffff80293594>] __writeback_single_inode+0x225/0x3be
+ [<ffffffff88072ff1>] :reiser4:flush_some_atom+0x45c/0x483
+ [<ffffffff88072ff1>] :reiser4:flush_some_atom+0x45c/0x483
+ [<ffffffff88094247>] :reiser4:save_unix_sd+0x5a/0x69
+ [<ffffffff88094247>] :reiser4:save_unix_sd+0x5a/0x69
+ [<ffffffff8807e6c4>] :reiser4:reiser4_writeout+0xe8/0x171
+ [<ffffffff8807e6c4>] :reiser4:reiser4_writeout+0xe8/0x171
+ [<ffffffff80293a92>] generic_sync_sb_inodes+0x1dc/0x2ca
+ [<ffffffff80293f3e>] writeback_inodes+0x6e/0xb8
+ [<ffffffff80293a92>] generic_sync_sb_inodes+0x1dc/0x2ca
+ [<ffffffff8025bbbe>] balance_dirty_pages_ratelimited_nr+0x132/0x221
+ [<ffffffff80293f3e>] writeback_inodes+0x6e/0xb8
+ [<ffffffff8025bbbe>] balance_dirty_pages_ratelimited_nr+0x132/0x221
+ [<ffffffff8806ebff>] :reiser4:reiser4_exit_context+0x70/0x115
+ [<ffffffff8806ebff>] :reiser4:reiser4_exit_context+0x70/0x115
+ [<ffffffff8808772e>] :reiser4:write_unix_file+0x413/0x488
+ [<ffffffff8027a787>] vfs_write+0xad/0x156
+ [<ffffffff8027ad29>] sys_write+0x45/0x6e
+ [<ffffffff80209b2e>] system_call+0x7e/0x83
+
+ [<ffffffff8808772e>] :reiser4:write_unix_file+0x413/0x488
+
+Call Trace:
+ [<ffffffff8027a787>] vfs_write+0xad/0x156
+ [<ffffffff8805099f>] :ext3:ext3_write_inode+0x22/0x40
+ [<ffffffff80293594>] __writeback_single_inode+0x225/0x3be
+ [<ffffffff8027ad29>] sys_write+0x45/0x6e
+ [<ffffffff80209b2e>] system_call+0x7e/0x83
+
+ [<ffffffff88072ff1>] :reiser4:flush_some_atom+0x45c/0x483
+
+Call Trace:
+ [<ffffffff8805099f>] :ext3:ext3_write_inode+0x22/0x40
+ [<ffffffff80293594>] __writeback_single_inode+0x225/0x3be
+ [<ffffffff88094247>] :reiser4:save_unix_sd+0x5a/0x69
+ [<ffffffff88072ff1>] :reiser4:flush_some_atom+0x45c/0x483
+ [<ffffffff8807e6c4>] :reiser4:reiser4_writeout+0xe8/0x171
+ [<ffffffff80293a92>] generic_sync_sb_inodes+0x1dc/0x2ca
+ [<ffffffff80293f3e>] writeback_inodes+0x6e/0xb8
+ [<ffffffff88094247>] :reiser4:save_unix_sd+0x5a/0x69
+ [<ffffffff8025bbbe>] balance_dirty_pages_ratelimited_nr+0x132/0x221
+ [<ffffffff8807e6c4>] :reiser4:reiser4_writeout+0xe8/0x171
+ [<ffffffff8806ebff>] :reiser4:reiser4_exit_context+0x70/0x115
+ [<ffffffff80293a92>] generic_sync_sb_inodes+0x1dc/0x2ca
+ [<ffffffff80293f3e>] writeback_inodes+0x6e/0xb8
+ [<ffffffff8025bbbe>] balance_dirty_pages_ratelimited_nr+0x132/0x221
+ [<ffffffff8808772e>] :reiser4:write_unix_file+0x413/0x488
+ [<ffffffff8027a787>] vfs_write+0xad/0x156
+ [<ffffffff8027ad29>] sys_write+0x45/0x6e
+ [<ffffffff8806ebff>] :reiser4:reiser4_exit_context+0x70/0x115
+ [<ffffffff80209b2e>] system_call+0x7e/0x83
+
+ [<ffffffff8808772e>] :reiser4:write_unix_file+0x413/0x488
+ [<ffffffff8027a787>] vfs_write+0xad/0x156
+ [<ffffffff8027ad29>] sys_write+0x45/0x6e
+ [<ffffffff80209b2e>] system_call+0x7e/0x83
+
+
+Call Trace:
+ [<ffffffff8805099f>] :ext3:ext3_write_inode+0x22/0x40
+ [<ffffffff80293594>] __writeback_single_inode+0x225/0x3be
+ [<ffffffff88072ff1>] :reiser4:flush_some_atom+0x45c/0x483
+ [<ffffffff88094247>] :reiser4:save_unix_sd+0x5a/0x69
+ [<ffffffff8807e6c4>] :reiser4:reiser4_writeout+0xe8/0x171
+ [<ffffffff80293a92>] generic_sync_sb_inodes+0x1dc/0x2ca
+ [<ffffffff80293f3e>] writeback_inodes+0x6e/0xb8
+ [<ffffffff8025bbbe>] balance_dirty_pages_ratelimited_nr+0x132/0x221
+ [<ffffffff8806ebff>] :reiser4:reiser4_exit_context+0x70/0x115
+ [<ffffffff8808772e>] :reiser4:write_unix_file+0x413/0x488
+ [<ffffffff8027a787>] vfs_write+0xad/0x156
+ [<ffffffff8027ad29>] sys_write+0x45/0x6e
+ [<ffffffff80209b2e>] system_call+0x7e/0x83
+
+
+Call Trace:
+ [<ffffffff8805099f>] :ext3:ext3_write_inode+0x22/0x40
+ [<ffffffff80293594>] __writeback_single_inode+0x225/0x3be
+ [<ffffffff88072ff1>] :reiser4:flush_some_atom+0x45c/0x483
+ [<ffffffff88094247>] :reiser4:save_unix_sd+0x5a/0x69
+ [<ffffffff8807e6c4>] :reiser4:reiser4_writeout+0xe8/0x171
+ [<ffffffff80293a92>] generic_sync_sb_inodes+0x1dc/0x2ca
+ [<ffffffff80293f3e>] writeback_inodes+0x6e/0xb8
+ [<ffffffff8025bbbe>] balance_dirty_pages_ratelimited_nr+0x132/0x221
+ [<ffffffff8806ebff>] :reiser4:reiser4_exit_context+0x70/0x115
+ [<ffffffff8808772e>] :reiser4:write_unix_file+0x413/0x488
+ [<ffffffff8027a787>] vfs_write+0xad/0x156
+ [<ffffffff8027ad29>] sys_write+0x45/0x6e
+ [<ffffffff80209b2e>] system_call+0x7e/0x83
+
+
+Call Trace:
+ [<ffffffff8805099f>] :ext3:ext3_write_inode+0x22/0x40
+ [<ffffffff80293594>] __writeback_single_inode+0x225/0x3be
+ [<ffffffff88072ff1>] :reiser4:flush_some_atom+0x45c/0x483
+ [<ffffffff88094247>] :reiser4:save_unix_sd+0x5a/0x69
+ [<ffffffff8807e6c4>] :reiser4:reiser4_writeout+0xe8/0x171
+ [<ffffffff80293a92>] generic_sync_sb_inodes+0x1dc/0x2ca
+ [<ffffffff80293f3e>] writeback_inodes+0x6e/0xb8
+ [<ffffffff8025bbbe>] balance_dirty_pages_ratelimited_nr+0x132/0x221
+ [<ffffffff8806ebff>] :reiser4:reiser4_exit_context+0x70/0x115
+ [<ffffffff8808772e>] :reiser4:write_unix_file+0x413/0x488
+ [<ffffffff8027a787>] vfs_write+0xad/0x156
+ [<ffffffff8027ad29>] sys_write+0x45/0x6e
+ [<ffffffff80209b2e>] system_call+0x7e/0x83
+
+
+Call Trace:
+ [<ffffffff8805099f>] :ext3:ext3_write_inode+0x22/0x40
+ [<ffffffff80293594>] __writeback_single_inode+0x225/0x3be
+ [<ffffffff88072ff1>] :reiser4:flush_some_atom+0x45c/0x483
+ [<ffffffff88094247>] :reiser4:save_unix_sd+0x5a/0x69
+ [<ffffffff8807e6c4>] :reiser4:reiser4_writeout+0xe8/0x171
+ [<ffffffff80293a92>] generic_sync_sb_inodes+0x1dc/0x2ca
+ [<ffffffff80293f3e>] writeback_inodes+0x6e/0xb8
+ [<ffffffff8025bbbe>] balance_dirty_pages_ratelimited_nr+0x132/0x221
+ [<ffffffff8806ebff>] :reiser4:reiser4_exit_context+0x70/0x115
+ [<ffffffff8808772e>] :reiser4:write_unix_file+0x413/0x488
+ [<ffffffff8027a787>] vfs_write+0xad/0x156
+ [<ffffffff8027ad29>] sys_write+0x45/0x6e
+ [<ffffffff80209b2e>] system_call+0x7e/0x83
+
+
+Call Trace:
+ [<ffffffff8805099f>] :ext3:ext3_write_inode+0x22/0x40
+ [<ffffffff80293594>] __writeback_single_inode+0x225/0x3be
+ [<ffffffff88072ff1>] :reiser4:flush_some_atom+0x45c/0x483
+ [<ffffffff88094247>] :reiser4:save_unix_sd+0x5a/0x69
+ [<ffffffff8807e6c4>] :reiser4:reiser4_writeout+0xe8/0x171
+ [<ffffffff80293a92>] generic_sync_sb_inodes+0x1dc/0x2ca
+ [<ffffffff80293f3e>] writeback_inodes+0x6e/0xb8
+ [<ffffffff8025bbbe>] balance_dirty_pages_ratelimited_nr+0x132/0x221
+ [<ffffffff8806ebff>] :reiser4:reiser4_exit_context+0x70/0x115
+ [<ffffffff8808772e>] :reiser4:write_unix_file+0x413/0x488
+ [<ffffffff8027a787>] vfs_write+0xad/0x156
+ [<ffffffff8027ad29>] sys_write+0x45/0x6e
+ [<ffffffff80209b2e>] system_call+0x7e/0x83
+
+
+Call Trace:
+ [<ffffffff8805099f>] :ext3:ext3_write_inode+0x22/0x40
+ [<ffffffff80293594>] __writeback_single_inode+0x225/0x3be
+ [<ffffffff88072ff1>] :reiser4:flush_some_atom+0x45c/0x483
+ [<ffffffff88094247>] :reiser4:save_unix_sd+0x5a/0x69
+ [<ffffffff8807e6c4>] :reiser4:reiser4_writeout+0xe8/0x171
+ [<ffffffff80293a92>] generic_sync_sb_inodes+0x1dc/0x2ca
+ [<ffffffff80293f3e>] writeback_inodes+0x6e/0xb8
+ [<ffffffff8025bbbe>] balance_dirty_pages_ratelimited_nr+0x132/0x221
+ [<ffffffff8806ebff>] :reiser4:reiser4_exit_context+0x70/0x115
+ [<ffffffff8808772e>] :reiser4:write_unix_file+0x413/0x488
+ [<ffffffff8027a787>] vfs_write+0xad/0x156
+ [<ffffffff8027ad29>] sys_write+0x45/0x6e
+ [<ffffffff80209b2e>] system_call+0x7e/0x83
+
+
+Call Trace:
+ [<ffffffff8805099f>] :ext3:ext3_write_inode+0x22/0x40
+ [<ffffffff80293594>] __writeback_single_inode+0x225/0x3be
+ [<ffffffff88072ff1>] :reiser4:flush_some_atom+0x45c/0x483
+ [<ffffffff88094247>] :reiser4:save_unix_sd+0x5a/0x69
+ [<ffffffff8807e6c4>] :reiser4:reiser4_writeout+0xe8/0x171
+ [<ffffffff80293a92>] generic_sync_sb_inodes+0x1dc/0x2ca
+ [<ffffffff80293f3e>] writeback_inodes+0x6e/0xb8
+ [<ffffffff8025bbbe>] balance_dirty_pages_ratelimited_nr+0x132/0x221
+ [<ffffffff8806ebff>] :reiser4:reiser4_exit_context+0x70/0x115
+ [<ffffffff8808772e>] :reiser4:write_unix_file+0x413/0x488
+ [<ffffffff8027a787>] vfs_write+0xad/0x156
+ [<ffffffff8027ad29>] sys_write+0x45/0x6e
+ [<ffffffff80209b2e>] system_call+0x7e/0x83
+
+
+Call Trace:
+ [<ffffffff8805099f>] :ext3:ext3_write_inode+0x22/0x40
+ [<ffffffff80293594>] __writeback_single_inode+0x225/0x3be
+ [<ffffffff88072ff1>] :reiser4:flush_some_atom+0x45c/0x483
+ [<ffffffff88094247>] :reiser4:save_unix_sd+0x5a/0x69
+ [<ffffffff8807e6c4>] :reiser4:reiser4_writeout+0xe8/0x171
+ [<ffffffff80293a92>] generic_sync_sb_inodes+0x1dc/0x2ca
+ [<ffffffff80293f3e>] writeback_inodes+0x6e/0xb8
+ [<ffffffff8025bbbe>] balance_dirty_pages_ratelimited_nr+0x132/0x221
+ [<ffffffff8806ebff>] :reiser4:reiser4_exit_context+0x70/0x115
+ [<ffffffff8808772e>] :reiser4:write_unix_file+0x413/0x488
+ [<ffffffff8027a787>] vfs_write+0xad/0x156
+ [<ffffffff8027ad29>] sys_write+0x45/0x6e
+ [<ffffffff80209b2e>] system_call+0x7e/0x83
+
+
+Call Trace:
+ [<ffffffff8805099f>] :ext3:ext3_write_inode+0x22/0x40
+ [<ffffffff80293594>] __writeback_single_inode+0x225/0x3be
+ [<ffffffff88072ff1>] :reiser4:flush_some_atom+0x45c/0x483
+ [<ffffffff8807e6c4>] :reiser4:reiser4_writeout+0xe8/0x171
+ [<ffffffff80293a92>] generic_sync_sb_inodes+0x1dc/0x2ca
+ [<ffffffff80293f3e>] writeback_inodes+0x6e/0xb8
+ [<ffffffff8025bbbe>] balance_dirty_pages_ratelimited_nr+0x132/0x221
+ [<ffffffff8807bc2b>] :reiser4:reiser4_delete_inode+0x0/0xc1
+ [<ffffffff8806ebff>] :reiser4:reiser4_exit_context+0x70/0x115
+ [<ffffffff8028b3f2>] generic_delete_inode+0x75/0xeb
+ [<ffffffff8028310e>] do_unlinkat+0xd5/0x14b
+ [<ffffffff8028d299>] mntput_no_expire+0x19/0x73
+ [<ffffffff80278abe>] filp_close+0x5d/0x65
+ [<ffffffff80209b2e>] system_call+0x7e/0x83
+
+
+greetings
+
+Juergen
+
+Ingo Bormuth wrote:
+> 
+> 
+> Please find my reiser4 patch for 2.6.20 at
+> 
+>    http://public.efil.de/reiser4-for-2.6.20-0.patch.gz
+> 
+> 
+> See attachment for changes versus 2.6.19.2 from [1]
+> 
+> I don't use cryptocompress and kindly ask you to confirm
+> 'cancel_dirty_page(clust->pages[i], PAGE_CACHE_SIZE);'
+> in plugin/file/cryptcompress.c, line 1303. As far as I understand
+> forget_cluster_pages is only called _after_ the cluster's pages have
+> successfully been flushed. That would make for case (b) in [2].
+> 
+> 
+> [1]
+> ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.19/reiser4-for-2.6.19-2.patch.gz
+> [2]
+> http://www2.kernel.org/git/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=fba2591bf4e418b6c3f9f8794c9dd8fe40ae7bd9
+> 
+> 
+> 
+> -- 
+> Ingo Bormuth, voicebox & fax: +49-(0)-12125-10226517
+> public key 86326EC9, http://ibormuth.efil.de/contact
+> 
+> diff -Nru linux-2.6.20-reiser4/fs/reiser4/entd.c
+> new-linux-2.6.20-reiser4/fs/reiser4/entd.c
+> --- linux-2.6.20-reiser4/fs/reiser4/entd.c	2007-02-05 01:55:43.000000000
+> +0100
+> +++ new-linux-2.6.20-reiser4/fs/reiser4/entd.c	2007-02-05
+> 01:47:42.000000000 +0100
+> @@ -14,13 +14,12 @@
+>  #include "page_cache.h"
+>  #include "inode.h"
+>  
+> -#include <linux/sched.h>	/* struct task_struct */
+> +#include <linux/freezer.h>
+>  #include <linux/suspend.h>
+>  #include <linux/kernel.h>
+>  #include <linux/writeback.h>
+>  #include <linux/time.h>		/* INITIAL_JIFFIES */
+>  #include <linux/backing-dev.h>	/* bdi_write_congested */
+> -#include <linux/wait.h>
+>  #include <linux/kthread.h>
+>  
+>  #define DEF_PRIORITY 12
+> diff -Nru linux-2.6.20-reiser4/fs/reiser4/flush_queue.c
+> new-linux-2.6.20-reiser4/fs/reiser4/flush_queue.c
+> --- linux-2.6.20-reiser4/fs/reiser4/flush_queue.c	2007-02-05
+> 01:55:43.000000000 +0100
+> +++ new-linux-2.6.20-reiser4/fs/reiser4/flush_queue.c	2007-02-05
+> 01:30:45.000000000 +0100
+> @@ -107,7 +107,7 @@
+>  }
+>  
+>  /* slab for flush queues */
+> -static kmem_cache_t *fq_slab;
+> +static struct kmem_cache *fq_slab;
+>  
+>  /**
+>   * reiser4_init_fqs - create flush queue cache
+> diff -Nru linux-2.6.20-reiser4/fs/reiser4/fsdata.c
+> new-linux-2.6.20-reiser4/fs/reiser4/fsdata.c
+> --- linux-2.6.20-reiser4/fs/reiser4/fsdata.c	2007-02-05 01:55:43.000000000
+> +0100
+> +++ new-linux-2.6.20-reiser4/fs/reiser4/fsdata.c	2007-02-05
+> 01:30:45.000000000 +0100
+> @@ -5,7 +5,7 @@
+>  #include "inode.h"
+>  
+>  /* cache or dir_cursors */
+> -static kmem_cache_t *d_cursor_cache;
+> +static struct kmem_cache *d_cursor_cache;
+>  static struct shrinker *d_cursor_shrinker;
+>  
+>  /* list of unused cursors */
+> @@ -594,7 +594,7 @@
+>  }
+>  
+>  /* slab for reiser4_dentry_fsdata */
+> -static kmem_cache_t *dentry_fsdata_cache;
+> +static struct kmem_cache *dentry_fsdata_cache;
+>  
+>  /**
+>   * reiser4_init_dentry_fsdata - create cache of dentry_fsdata
+> @@ -661,7 +661,7 @@
+>  }
+>  
+>  /* slab for reiser4_file_fsdata */
+> -static kmem_cache_t *file_fsdata_cache;
+> +static struct kmem_cache *file_fsdata_cache;
+>  
+>  /**
+>   * reiser4_init_file_fsdata - create cache of reiser4_file_fsdata
+> diff -Nru linux-2.6.20-reiser4/fs/reiser4/jnode.c
+> new-linux-2.6.20-reiser4/fs/reiser4/jnode.c
+> --- linux-2.6.20-reiser4/fs/reiser4/jnode.c	2007-02-05 01:55:43.000000000
+> +0100
+> +++ new-linux-2.6.20-reiser4/fs/reiser4/jnode.c	2007-02-05
+> 01:30:46.000000000 +0100
+> @@ -123,7 +123,7 @@
+>  #include <linux/fs.h>		/* for struct address_space  */
+>  #include <linux/writeback.h>	/* for inode_lock */
+>  
+> -static kmem_cache_t *_jnode_slab = NULL;
+> +static struct kmem_cache *_jnode_slab = NULL;
+>  
+>  static void jnode_set_type(jnode * node, jnode_type type);
+>  static int jdelete(jnode * node);
+> diff -Nru linux-2.6.20-reiser4/fs/reiser4/ktxnmgrd.c
+> new-linux-2.6.20-reiser4/fs/reiser4/ktxnmgrd.c
+> --- linux-2.6.20-reiser4/fs/reiser4/ktxnmgrd.c	2007-02-05
+> 01:55:43.000000000 +0100
+> +++ new-linux-2.6.20-reiser4/fs/reiser4/ktxnmgrd.c	2007-02-05
+> 01:48:14.000000000 +0100
+> @@ -29,12 +29,11 @@
+>  #include "super.h"
+>  #include "reiser4.h"
+>  
+> -#include <linux/sched.h>	/* for struct task_struct */
+> -#include <linux/wait.h>
+>  #include <linux/suspend.h>
+>  #include <linux/kernel.h>
+>  #include <linux/writeback.h>
+>  #include <linux/kthread.h>
+> +#include <linux/freezer.h>
+>  
+>  static int scan_mgr(struct super_block *);
+>  
+> diff -Nru linux-2.6.20-reiser4/fs/reiser4/plugin/file/cryptcompress.c
+> new-linux-2.6.20-reiser4/fs/reiser4/plugin/file/cryptcompress.c
+> --- linux-2.6.20-reiser4/fs/reiser4/plugin/file/cryptcompress.c	2007-02-05
+> 01:55:43.000000000 +0100
+> +++ new-linux-2.6.20-reiser4/fs/reiser4/plugin/file/cryptcompress.c
+> 2007-02-05 01:21:48.000000000 +0100
+> @@ -1300,7 +1300,7 @@
+>  		lock_page(clust->pages[i]);
+>  		if (PageDirty(clust->pages[i])) {
+>  			assert("edward-1277", PageUptodate(clust->pages[i]));
+> -			test_clear_page_dirty(clust->pages[i]);
+> +			cancel_dirty_page(clust->pages[i], PAGE_CACHE_SIZE);
+>  		}
+>  #if REISER4_DEBUG
+>  		else
+> diff -Nru linux-2.6.20-reiser4/fs/reiser4/plugin/plugin_set.c
+> new-linux-2.6.20-reiser4/fs/reiser4/plugin/plugin_set.c
+> --- linux-2.6.20-reiser4/fs/reiser4/plugin/plugin_set.c	2007-02-05
+> 01:55:43.000000000 +0100
+> +++ new-linux-2.6.20-reiser4/fs/reiser4/plugin/plugin_set.c	2007-02-05
+> 01:30:45.000000000 +0100
+> @@ -31,7 +31,7 @@
+>  #include <linux/stddef.h>
+>  
+>  /* slab for plugin sets */
+> -static kmem_cache_t *plugin_set_slab;
+> +static struct kmem_cache *plugin_set_slab;
+>  
+>  static spinlock_t plugin_set_lock[8] __cacheline_aligned_in_smp = {
+>  	[0 ... 7] = SPIN_LOCK_UNLOCKED
+> diff -Nru linux-2.6.20-reiser4/fs/reiser4/super.h
+> new-linux-2.6.20-reiser4/fs/reiser4/super.h
+> --- linux-2.6.20-reiser4/fs/reiser4/super.h	2007-02-05 01:55:43.000000000
+> +0100
+> +++ new-linux-2.6.20-reiser4/fs/reiser4/super.h	2007-02-05
+> 01:30:46.000000000 +0100
+> @@ -444,7 +444,7 @@
+>  void print_fs_info(const char *prefix, const struct super_block *);
+>  #endif
+>  
+> -extern void destroy_reiser4_cache(kmem_cache_t **);
+> +extern void destroy_reiser4_cache(struct kmem_cache **);
+>  
+>  extern struct super_operations reiser4_super_operations;
+>  extern struct export_operations reiser4_export_operations;
+> diff -Nru linux-2.6.20-reiser4/fs/reiser4/super_ops.c
+> new-linux-2.6.20-reiser4/fs/reiser4/super_ops.c
+> --- linux-2.6.20-reiser4/fs/reiser4/super_ops.c	2007-02-05
+> 01:55:43.000000000 +0100
+> +++ new-linux-2.6.20-reiser4/fs/reiser4/super_ops.c	2007-02-05
+> 01:30:46.000000000 +0100
+> @@ -14,7 +14,7 @@
+>  #include <linux/debugfs.h>
+>  
+>  /* slab cache for inodes */
+> -static kmem_cache_t *inode_cache;
+> +static struct kmem_cache *inode_cache;
+>  
+>  static struct dentry *reiser4_debugfs_root = NULL;
+>  
+> @@ -27,7 +27,7 @@
+>   * Initialization function to be called when new page is allocated by
+> reiser4
+>   * inode cache. It is set on inode cache creation.
+>   */
+> -static void init_once(void *obj, kmem_cache_t *cache, unsigned long
+> flags)
+> +static void init_once(void *obj, struct kmem_cache *cache, unsigned long
+> flags)
+>  {
+>  	reiser4_inode_object *info;
+>  
+> @@ -595,7 +595,7 @@
+>  	.next = NULL
+>  };
+>  
+> -void destroy_reiser4_cache(kmem_cache_t **cachep)
+> +void destroy_reiser4_cache(struct kmem_cache **cachep)
+>  {
+>  	BUG_ON(*cachep == NULL);
+>  	kmem_cache_destroy(*cachep);
+> diff -Nru linux-2.6.20-reiser4/fs/reiser4/txnmgr.c
+> new-linux-2.6.20-reiser4/fs/reiser4/txnmgr.c
+> --- linux-2.6.20-reiser4/fs/reiser4/txnmgr.c	2007-02-05 01:55:43.000000000
+> +0100
+> +++ new-linux-2.6.20-reiser4/fs/reiser4/txnmgr.c	2007-02-05
+> 01:30:46.000000000 +0100
+> @@ -90,7 +90,7 @@
+>     For actually implementing these out-of-system-call-scopped
+> transcrashes, the
+>     reiser4_context has a "txn_handle *trans" pointer that may be set to
+> an open
+>     transcrash.  Currently there are no dynamically-allocated
+> transcrashes, but there is a
+> -   "kmem_cache_t *_txnh_slab" created for that purpose in this file.
+> +   "struct kmem_cache *_txnh_slab" created for that purpose in this file.
+>  */
+>  
+>  /* Extending the other system call interfaces for future transaction
+> features:
+> @@ -279,9 +279,9 @@
+>  
+>  /* FIXME: In theory, we should be using the slab cache init & destructor
+>     methods instead of, e.g., jnode_init, etc. */
+> -static kmem_cache_t *_atom_slab = NULL;
+> +static struct kmem_cache *_atom_slab = NULL;
+>  /* this is for user-visible, cross system-call transactions. */
+> -static kmem_cache_t *_txnh_slab = NULL;
+> +static struct kmem_cache *_txnh_slab = NULL;
+>  
+>  /**
+>   * init_txnmgr_static - create transaction manager slab caches
+> diff -Nru linux-2.6.20-reiser4/fs/reiser4/znode.c
+> new-linux-2.6.20-reiser4/fs/reiser4/znode.c
+> --- linux-2.6.20-reiser4/fs/reiser4/znode.c	2007-02-05 01:55:43.000000000
+> +0100
+> +++ new-linux-2.6.20-reiser4/fs/reiser4/znode.c	2007-02-05
+> 01:30:46.000000000 +0100
+> @@ -196,7 +196,7 @@
+>  #undef KMALLOC
+>  
+>  /* slab for znodes */
+> -static kmem_cache_t *znode_cache;
+> +static struct kmem_cache *znode_cache;
+>  
+>  int znode_shift_order;
+>  
+> 
+>  
+> 
+
+-- 
+View this message in context: http://www.nabble.com/-patch--reiser4-for-2.6.20-tf3172392.html#a8898527
+Sent from the ReiserFS - General mailing list archive at Nabble.com.
+
