@@ -1,41 +1,27 @@
-From: Dmitriy Monakhov <dmonakhov@sw.ru>
-Subject: [patch] reiserfs: possible null pointer dereference during resize
-Date: Tue, 20 Feb 2007 10:58:21 +0300
-Message-ID: <87ps85z2ea.fsf@sw.ru>
+From: "Clemens Eisserer" <linuxhippy@gmail.com>
+Subject: Re: acess reiser4 partition under windows
+Date: Sat, 24 Feb 2007 12:33:58 +0100
+Message-ID: <194f62550702240333jfd69156i33bb55ec6843ae7d@mail.gmail.com>
+References: <45C2EDBC.6090706@stuffit.at>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-=-="
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S964866AbXBTH56@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30574-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
+        d=gmail.com; s=beta;
+        h=domainkey-signature:received:received:message-id:date:from:to:subject:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+        b=QO5iiulYq8WZZuqYmGtIxDarTEwrrneyqggKYSvm+zLrepVHmTsYntDo/tun1K2gTL/Nl4RR3GWY5dMGyWtaYSqIbw9ekT5ao8+wMJPrKQbLGfG2cfdD9ZiUp6cSRn0WIvxZaifMYDJ1NyxVKPksfUVzX6wNnQ/2C0nSje1P7p8=
+In-Reply-To: <45C2EDBC.6090706@stuffit.at>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-list@namesys.com
 
---=-=-=
+> i tried rfstool unfortunately with no success, and i'm running out of
+> ideas, is there a way to access my r4 partition from windows?
+No.
 
-sb_read may return NULL, let's explicitly check it.
-If so free new bitmap blocks array, after this we may safely exit as it done
-above during bitmap allocation.
-Signed-off-by: Dmitriy Monakhov <dmonakhov@openvz.org>
--------------
-
---=-=-=
-Content-Disposition: inline;
- filename=diff-mm-reiserfs-resize-sb_read-errh-fix
-
-diff --git a/fs/reiserfs/resize.c b/fs/reiserfs/resize.c
-index 3156847..976cc78 100644
---- a/fs/reiserfs/resize.c
-+++ b/fs/reiserfs/resize.c
-@@ -131,6 +131,10 @@ int reiserfs_resize(struct super_block *s, unsigned long block_count_new)
- 			/* don't use read_bitmap_block since it will cache
- 			 * the uninitialized bitmap */
- 			bh = sb_bread(s, i * s->s_blocksize * 8);
-+			if (!bh) {
-+				vfree(bitmap);
-+				return -EIO;
-+			}
- 			memset(bh->b_data, 0, sb_blocksize(sb));
- 			reiserfs_test_and_set_le_bit(0, bh->b_data);
- 			reiserfs_cache_bitmap_metadata(s, bh, bitmap + i);
-
---=-=-=--
+lg Clemens
