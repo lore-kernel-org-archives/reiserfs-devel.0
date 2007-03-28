@@ -1,69 +1,44 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: [Fwd: reiser4 bugs in 2.6.21-rc4]
-Date: Wed, 28 Mar 2007 00:14:31 +0400
-Message-ID: <46097B27.6090606@namesys.com>
-References: <460974EE.8080006@gmail.com>
+From: "Xu CanHao" <xucanhao@gmail.com>
+Subject: Reiser4 does a disk write with even no disk activity during every fsync()
+Date: Wed, 28 Mar 2007 18:18:11 +0800
+Message-ID: <6ec7a4340703280318p27bf30adp1455af6f71f9bb00@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30622-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30623-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <460974EE.8080006@gmail.com>
+DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
+        d=gmail.com; s=beta;
+        h=domainkey-signature:received:received:message-id:date:from:to:subject:mime-version:content-type:content-transfer-encoding:content-disposition;
+        b=WMECRZH3V705qRdBoe9OSnmXBIi3+dLucRISu+bqG8CJAOo9P9XDbYYLwmvbaP6FvEe7PjNLfns6yxokyrR8daVBtTQlrQe4KwgH+nDhZJbcbs2U1AgFC71kinmt2Eh3hKo58ps1c+SrOlsQvdkHwaXN0oD8sNHpte/h3LzIUQ8=
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ignatich <ignatich@gmail.com>
-Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, Jonathan Briggs <jbriggs@esoft.com>
+To: reiserfs-list@namesys.com
 
-Ignatich wrote:
+Hi!
 
->
->
-> ------------------------------------------------------------------------
->
-> Subject:
-> reiser4 bugs in 2.6.21-rc4
-> From:
-> Ignatich <ignatich@gmail.com>
-> Date:
-> Tue, 27 Mar 2007 23:29:18 +0400
-> To:
-> linux-kernel@vger.kernel.org
->
-> To:
-> linux-kernel@vger.kernel.org
->
-> Message-ID:
-> <4609708E.5090908@gmail.com>
-> User-Agent:
-> Thunderbird 1.5.0.10 (Windows/20070221)
-> MIME-Version:
-> 1.0
-> Content-Type:
-> text/plain; charset=windows-1251; format=flowed
-> Content-Transfer-Encoding:
-> 7bit
->
->
-> There are two bugs I found in current -mm reiser4 code.
->
-> 1. Some files seem to be zeroed out randomly. Usually it's 
-> /lib/security/pam_limits.so and /lib/security/pam_deny.so. As 
-> fsck.reiser4 didn't find anything wrong I decided to create clean 
-> installation in vmware and see if this bug appears on newly formatted 
-> partition. It did.
->
-> 2. Sometimes I get oppses in reiser4_do_readpage_extent. Assert codes 
-> are vs-1426 and nikita-2688. A patch was posted on namesys list to 
-> address this problem, but it didn't help.
->
-> Kernel: 2.6.21-rc4 with manually applied reiser4 patches from -mm. 
-> Arch: x86-64
->
+I see a previous topic talking about sync(), I wrote a program write()
+a 44B file, and then fsync()
+I used "#iostat -d 1 -p hda|grep hda3" monitored many times and found:
 
-We are working on this.
-Thanks for reports,
+for a single fsync(), these sectors were wrote:
+ext2         16
+ext3j/o/w  32
+jfs            16
+xfs           10
+reiser3     48
+reiser4     128
 
-Edward.
+for multiple fsync(), I use "while (1) {sleep(1); fsync()}"
+ext2         16/0/0/0/0/0.....
+ext3j/o/w  32/0/0/0/0/0.....
+jfs            16/0/0/0/0/0.....
+xfs           10/0/0/0/0/0.....
+reiser3     48/0/0/0/0/0.....
+reiser4     128/48/48/48/48/48.....
 
+so you see while there is no other disk activities in /dev/hda3,
+reiser4 continues writing something......?
