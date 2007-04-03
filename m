@@ -1,30 +1,26 @@
-From: sbenni@gmx.de
-Subject: reiser4 causes system freeze for 1-2 seconds
-Date: Tue, 3 Apr 2007 15:37:55 +0200
-Message-ID: <20070403153755.1fc7bc4b@pluto.milky.way>
+From: Eddie Atherton <stunnel@attglobal.net>
+Subject: Convert Sector Address to File
+Date: Tue, 03 Apr 2007 14:35:05 -0700
+Message-ID: <4612C889.8050800@attglobal.net>
+Reply-To: stunnel@attglobal.net
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30627-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30628-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
+I'm currently running SpinRite to attempt to recover a drive that 
+suddenly developed a bunch of problems. It's managed to recover most of 
+the disc, but there a whole bunch of sectors that are reported as only 
+partially recovered.
 
-Hello,
+Is there any way to "reverse" back from the relative sector in the 
+partition, back to the actual file/directory, so I can see which 
+files/directories are still damaged.
 
-I have a 120Gb partition with reiser4. If I start a command like "cp <500mb file> dd" within it the system frequently freezes for 1-2 seconds and ent:hda8! uses nearly 100% cpu. This causes the sound output from xmms to be interrupted and my mouse freezes also. If i renice X and xmms to -10 it is okay. 
-
-Is this the desired behaviour ?
-
-Can I do sth. else than renicing all time critical programs ?
-
-My system is a debian amd64 with linux-2.6.16-mm2.
-
-
-Best Regards
-
-Benni
+Cheers.
