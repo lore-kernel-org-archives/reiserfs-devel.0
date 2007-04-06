@@ -1,98 +1,33 @@
-From: johnrobertbanks@fastmail.fm
+From: "H. Peter Anvin" <hpa@zytor.com>
 Subject: Re: Reiser4. BEST FILESYSTEM EVER.
-Date: Thu, 05 Apr 2007 18:34:48 -0700
-Message-ID: <1175823288.25662.1183293506@webmail.messagingengine.com>
-References: <46157B5B.5000602@gmail.com>
-   <1175817921.18400.1183285196@webmail.messagingengine.com>
-   <461592FB.5060507@zytor.com>
-   <1175819681.20754.1183287946@webmail.messagingengine.com>
-   <461596DE.2020802@zytor.com>
+Date: Thu, 05 Apr 2007 21:07:28 -0700
+Message-ID: <4615C780.5040407@zytor.com>
+References: <46157B5B.5000602@gmail.com>   <1175817921.18400.1183285196@webmail.messagingengine.com>   <461592FB.5060507@zytor.com>   <1175819681.20754.1183287946@webmail.messagingengine.com>   <461596DE.2020802@zytor.com> <1175823288.25662.1183293506@webmail.messagingengine.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1767490AbXDFBeu@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <461596DE.2020802@zytor.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1767525AbXDFEHl@vger.kernel.org>
+In-Reply-To: <1175823288.25662.1183293506@webmail.messagingengine.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: johnrobertbanks@fastmail.fm
 Cc: Ignatich <ignatich@gmail.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-Hi Peter,
-
-You say that the results may be accurate, but not relevant.
-
-.-------------------------.
-| FILESYSTEM | TIME |DISK |
-| TYPE       |(secs)|USAGE|
-.-------------------------.
-|REISER4 lzo | 1938 | 278 |
-|REISER4 gzip| 2295 | 213 |
-|REISER4     | 3462 | 692 |
-|EXT2        | 4092 | 816 |
-|JFS         | 4225 | 806 |
-|EXT4        | 4408 | 816 |
-|EXT3        | 4421 | 816 |
-|XFS         | 4625 | 779 |
-|REISER3     | 6178 | 793 |
-|FAT32       |12342 | 988 |
-|NTFS-3g     |10414 | 772 |
-.-------------------------.
-
-If they are accurate,.... THEN they are obviously very relevant.
-
-Trying to follow http://linuxhelp.150m.com/resources/fs-benchmarks.htm 
-
-I have set up a Reiser4 partition with gzip compression, here is the
-difference in disk usage of a typical Debian installation on two 10GB
-partitions, one with Reiser3 and the other with Reiser4.
-
-debian:/# df
-Filesystem           1K-blocks      Used Available Use% Mounted on
-/dev/sda3             10490104   6379164   4110940  61% /3
-/dev/sda7              9967960   2632488   7335472  27% /7
-
-Partitions 3 and 7 have exactly the same data on them (the typical
-Debian install).
-
-The partitions are exactly the same size (although df records different
-sizes).
-
-Partition 3 is Reiser3 -- uses 6.4 GB.
-Partition 7 is Reiser4 -- uses 2.6 GB.
-
-So Reiser4 uses 2.6 GB to store the (typical) data that it takes Reiser3
-6.4 GB to store (note it would take ext2/3/4 some 7 GB to store the same
-info).
-
-This seems very relevant to me.
-
-John.
-
-
-
-On Thu, 05 Apr 2007 17:39:58 -0700, "H. Peter Anvin" <hpa@zytor.com>
-said:
-> johnrobertbanks@fastmail.fm wrote:
-> > Yeap, I guess that will probably work. 
-> > 
-> > And here I was trying to compile old versions of GRUB from namesys.com.
-> > 
-> > By the way, do you think the benchmarks from:
-> > 
-> > http://linuxhelp.150m.com/resources/fs-benchmarks.htm and
-> > http://m.domaindlx.com/LinuxHelp/resources/fs-benchmarks.htm
-> > 
-> > are accurate?
-> > 
+johnrobertbanks@fastmail.fm wrote:
+> Hi Peter,
 > 
-> Accurate, probably.  Whether or not they're *relevant* is a totally 
-> different ball of wax.
+> You say that the results may be accurate, but not relevant.
 > 
-> 	-hpa
--- 
-  
-  johnrobertbanks@fastmail.fm
 
--- 
-http://www.fastmail.fm - mmm... Fastmail...
+NO, I said that whether they're accurate is another matter.
+
+> If they are accurate,.... THEN they are obviously very relevant.
+
+Crap-o-la.  Whether or not they're relevant depends on how well they 
+happen to reflect your particular usage pattern.
+
+There are NO benchmarks which are relevant to all users.  Understanding 
+whether or not a benchmark is relevant to one's particular application 
+is one of the trickiest things about benchmarks.
+
+	-hpa
