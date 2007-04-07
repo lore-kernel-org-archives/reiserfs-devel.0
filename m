@@ -1,54 +1,60 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: COMPILING AND CONFIGURING A NEW KERNEL.
-Date: Sat, 07 Apr 2007 12:57:02 -0400
-Message-ID: <13183.1175965022@turing-police.cc.vt.edu>
-References: <46157B5B.5000602@gmail.com> <1175817921.18400.1183285196@webmail.messagingengine.com> <1175909205.905.1183425104@webmail.messagingengine.com>
-            <1175931932.27274.1183445262@webmail.messagingengine.com>
+From: lsorense@csclub.uwaterloo.ca (Lennart Sorensen)
+Subject: Re: Reiser4. BEST FILESYSTEM EVER.
+Date: Sat, 7 Apr 2007 15:17:15 -0400
+Message-ID: <20070407191715.GG3510@csclub.uwaterloo.ca>
+References: <46157B5B.5000602@gmail.com> <1175817921.18400.1183285196@webmail.messagingengine.com> <461592FB.5060507@zytor.com> <1175819681.20754.1183287946@webmail.messagingengine.com> <461596DE.2020802@zytor.com> <1175823288.25662.1183293506@webmail.messagingengine.com> <4615C780.5040407@zytor.com> <1175833931.8916.1183307802@webmail.messagingengine.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1175965022_4736P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S966108AbXDGQ5L@vger.kernel.org>
-In-Reply-To: Your message of "Sat, 07 Apr 2007 00:45:32 PDT."
-             <1175931932.27274.1183445262@webmail.messagingengine.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1175833931.8916.1183307802@webmail.messagingengine.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: johnrobertbanks@fastmail.fm
-Cc: Ignatich <ignatich@gmail.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Ignatich <ignatich@gmail.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 
---==_Exmh_1175965022_4736P
-Content-Type: text/plain; charset=us-ascii
+On Thu, Apr 05, 2007 at 09:32:11PM -0700, johnrobertbanks@fastmail.fm wrote:
+> Don't you agree, that "If they are accurate,.... THEN they are obviously
+> very relevant."
 
-On Sat, 07 Apr 2007 00:45:32 PDT, johnrobertbanks@fastmail.fm said:
+Nope, if they are accurate and they have something to do with your
+particular usage and applications, then they are relevant.  But it
+requires both to make them relevant.  Although it may be possible for a
+benchmark to be relevant even if not particularly accurate.
 
-> Use rpm-pkg to create a Red Hat RPM kernel package.
-> # make rpm-pkg
+> I have set up a Reiser4 partition with gzip compression, here is the
+> difference in disk usage of a typical Debian installation on two 10GB
+> partitions, one with Reiser3 and the other with Reiser4.
 > 
-> When built, the RPM package is put in
-> /usr/src/packages/RPMS/*your*architecture*
+> debian:/# df
+> Filesystem           1K-blocks      Used Available Use% Mounted on
+> /dev/sda3             10490104   6379164   4110940  61% /3
+> /dev/sda7              9967960   2632488   7335472  27% /7
 > 
-> # cd /usr/src/packages/RPMS/x86_64
+> Partitions 3 and 7 have exactly the same data on them (the typical
+> Debian install).
 > 
-> Install the package (you may have to un-install previous installs)
-> # rpm -i kernel-2.6.20-1.x86_64.rpm
+> The partitions are exactly the same size (although df records different
+> sizes).
+> 
+> Partition 3 is Reiser3 -- uses 6.4 GB.
+> Partition 7 is Reiser4 -- uses 2.6 GB.
+> 
+> So Reiser4 uses 2.6 GB to store the (typical) data that it takes Reiser3
+> 6.4 GB to store (note it would take ext2/3/4 some 7 GB to store the same
+> info).
+> 
+> Don't you think this result is significant in itself?
 
-It is *highly* recommended that you change the kernel identifier at
-least slightly, so that you can install '2.6.20-1.local' without overlaying
-the vendor-supplied 2.6.20-1 kernel.  Among other things, this lets you
-boot back to the equivalent code level in the vendor kernel, so you can figure
-out if it's your .config file that's broken, or if you hit a bug upggrading
-from 2.6.19-10 to 2.6.20-1.
+Only if you think disk space is so valuable that trading cpu time to
+compress and decompress the data is a good trade off.  It is not one I
+would want to make.  So you saved 3GB, what is that?  About $1 worth?
+maybe $2 if you have raid.  How much extra time and cpu will it take to
+access the data that way?  How much extra electricity will the cpu use?
+What is your time worth?  There are so many variables.  Do you _trust_
+reiserfs4 to not loose your data any more or less than some other
+filesystem?
 
---==_Exmh_1175965022_4736P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.7 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iD8DBQFGF81ecC3lWbTT17ARAq6zAKDlzFh1SIH00/TlrtFOHyUma0DmjQCfW6Xl
-HZbqcmdLjRKrH0RrxIeAgYI=
-=5UYo
------END PGP SIGNATURE-----
-
---==_Exmh_1175965022_4736P--
+--
+Len Sorensen
