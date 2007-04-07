@@ -1,60 +1,49 @@
-From: lsorense@csclub.uwaterloo.ca (Lennart Sorensen)
-Subject: Re: Reiser4. BEST FILESYSTEM EVER.
-Date: Sat, 7 Apr 2007 15:17:15 -0400
-Message-ID: <20070407191715.GG3510@csclub.uwaterloo.ca>
-References: <46157B5B.5000602@gmail.com> <1175817921.18400.1183285196@webmail.messagingengine.com> <461592FB.5060507@zytor.com> <1175819681.20754.1183287946@webmail.messagingengine.com> <461596DE.2020802@zytor.com> <1175823288.25662.1183293506@webmail.messagingengine.com> <4615C780.5040407@zytor.com> <1175833931.8916.1183307802@webmail.messagingengine.com>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: REISER4: fix for reiser4_write_extent
+Date: Sat, 07 Apr 2007 23:29:49 +0400
+Message-ID: <4617F12D.8080905@namesys.com>
+References: <46157B5B.5000602@gmail.com> <461793E4.5040706@free.fr>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1175833931.8916.1183307802@webmail.messagingengine.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S965737AbXDGTaF@vger.kernel.org>
+In-Reply-To: <461793E4.5040706@free.fr>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: johnrobertbanks@fastmail.fm
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Ignatich <ignatich@gmail.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: Laurent Riffard <laurent.riffard@free.fr>
+Cc: Ignatich <ignatich@gmail.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2007 at 09:32:11PM -0700, johnrobertbanks@fastmail.fm wrote:
-> Don't you agree, that "If they are accurate,.... THEN they are obviously
-> very relevant."
+Laurent Riffard wrote:
 
-Nope, if they are accurate and they have something to do with your
-particular usage and applications, then they are relevant.  But it
-requires both to make them relevant.  Although it may be possible for a
-benchmark to be relevant even if not particularly accurate.
+> Le 06.04.2007 00:42, Ignatich a =C3=A9crit :
+>
+>> While trying to find the cause of problems with reiser4 in recent=20
+>> kernels I came across this.
+>>
+>> Incomplete write handling seem to be missing from=20
+>> reiser4_write_extent() thanks to reiser4-temp-fix.patch. Strangely,=20
+>> there is a patch by Edward Shishkin that should address that issue,=20
+>> but it is missing from -mm tree. Please check.
+>>
+>>    Max
+>>
+>
+> This patch was added to -mm tree the 14 Dec 2006 (see=20
+> http://www.mail-archive.com/mm-commits@vger.kernel.org/msg05338.html)=
+=2E
+>
+> It was then dropped from -mm tree the 05 Mar 2007 (see=20
+> http://www.mail-archive.com/mm-commits@vger.kernel.org/msg10818.html)=
+,=20
+> with this comment:
+>     "This patch was dropped because it is obsolete"
+>
+> No idea why it was obsolete. Does somebody know ?
 
-> I have set up a Reiser4 partition with gzip compression, here is the
-> difference in disk usage of a typical Debian installation on two 10GB
-> partitions, one with Reiser3 and the other with Reiser4.
-> 
-> debian:/# df
-> Filesystem           1K-blocks      Used Available Use% Mounted on
-> /dev/sda3             10490104   6379164   4110940  61% /3
-> /dev/sda7              9967960   2632488   7335472  27% /7
-> 
-> Partitions 3 and 7 have exactly the same data on them (the typical
-> Debian install).
-> 
-> The partitions are exactly the same size (although df records different
-> sizes).
-> 
-> Partition 3 is Reiser3 -- uses 6.4 GB.
-> Partition 7 is Reiser4 -- uses 2.6 GB.
-> 
-> So Reiser4 uses 2.6 GB to store the (typical) data that it takes Reiser3
-> 6.4 GB to store (note it would take ext2/3/4 some 7 GB to store the same
-> info).
-> 
-> Don't you think this result is significant in itself?
 
-Only if you think disk space is so valuable that trading cpu time to
-compress and decompress the data is a good trade off.  It is not one I
-would want to make.  So you saved 3GB, what is that?  About $1 worth?
-maybe $2 if you have raid.  How much extra time and cpu will it take to
-access the data that way?  How much extra electricity will the cpu use?
-What is your time worth?  There are so many variables.  Do you _trust_
-reiserfs4 to not loose your data any more or less than some other
-filesystem?
+This uses not settled interface filemap_copy_from_user_atomic/nonatomic
+However, those things should be fixed. I'll prepare the patch a bit lat=
+er..
 
---
-Len Sorensen
+Thanks,
+Edward.
