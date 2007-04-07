@@ -1,167 +1,41 @@
-From: johnrobertbanks@fastmail.fm
-Subject: Re: COMPILING AND CONFIGURING A NEW KERNEL.
-Date: Sat, 07 Apr 2007 00:45:32 -0700
-Message-ID: <1175931932.27274.1183445262@webmail.messagingengine.com>
+From: Laurent Riffard <laurent.riffard@free.fr>
+Subject: Re: REISER4: fix for reiser4_write_extent
+Date: Sat, 07 Apr 2007 14:51:48 +0200
+Message-ID: <461793E4.5040706@free.fr>
 References: <46157B5B.5000602@gmail.com>
-   <1175817921.18400.1183285196@webmail.messagingengine.com>
-   <1175909205.905.1183425104@webmail.messagingengine.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1175909205.905.1183425104@webmail.messagingengine.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S965824AbXDGMwF@vger.kernel.org>
+In-Reply-To: <46157B5B.5000602@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: johnrobertbanks@fastmail.fm, Ignatich <ignatich@gmail.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: Ignatich <ignatich@gmail.com>
+Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, Edward Shishkin <edward@namesys.com>
 
+Le 06.04.2007 00:42, Ignatich a =C3=A9crit :
+> While trying to find the cause of problems with reiser4 in recent=20
+> kernels I came across this.
+>=20
+> Incomplete write handling seem to be missing from reiser4_write_exten=
+t()=20
+> thanks to reiser4-temp-fix.patch. Strangely, there is a patch by Edwa=
+rd=20
+> Shishkin that should address that issue, but it is missing from -mm=20
+> tree. Please check.
+>=20
+>    Max
+>=20
 
-Just correcting some errors and typos. 
+This patch was added to -mm tree the 14 Dec 2006 (see=20
+http://www.mail-archive.com/mm-commits@vger.kernel.org/msg05338.html).
 
-Wouldn't want you to say that the linux kernel mailing list gave you
-incorrect info.
+It was then dropped from -mm tree the 05 Mar 2007 (see=20
+http://www.mail-archive.com/mm-commits@vger.kernel.org/msg10818.html),=20
+with this comment:
+	"This patch was dropped because it is obsolete"
 
-COMPILING AND CONFIGURING A NEW KERNEL.
+No idea why it was obsolete. Does somebody know ?
 
-Download a recent kernel from http://www.kernel.org/
-I will use the kernel linux-2.6.20.tar.bz2
-
-You will have to change details of the following to suit your purposes.
-
-Save it in /usr/src/
-# mv linux-2.6.20.tar.bz2 /usr/src/
-
-Unzip the kernel package
-# tar -jxf linux-2.6.20.tar.bz2
-
-Copy the original kernel configuration file (that came with your distro)
-to .config
-# cp /boot/config-2.6.13-15-default /usr/src/linux-2.6.20/.config
-
-Change to the new kernel source directory
-# cd /usr/src/linux-2.6.20/
-
-Look at the available kernel building options
-# make help
-
-Run oldconfig to update the original kernel configuration to a current
-configuration
-# make oldconfig
-
-Use menuconfig (or xconfig or gconfig) to make any further changes
-# make menuconfig
-
-YOU SHOULD compile all the drivers necessary to boot your system, into
-the kernel (ie, such drivers should not be built as modules).
-
-This way you will NOT need an initrd file.
-
-Use rpm-pkg to create a Red Hat RPM kernel package.
-# make rpm-pkg
-
-When built, the RPM package is put in
-/usr/src/packages/RPMS/*your*architecture*
-
-# cd /usr/src/packages/RPMS/x86_64
-
-Install the package (you may have to un-install previous installs)
-# rpm -i kernel-2.6.20-1.x86_64.rpm
-
-Use deb-pkg to create a Debian .deb kernel package.
-# make deb-pkg
-
-When built, the .deb package is put in /usr/src/
-# cd /usr/src/
-
-Install the package (you may have to un-install previous installs)
-# dpkg --install linux-2.6.20_2.6.20_amd64.deb
-
-If you were unable to determine which drivers you need (to boot), then
-you will need an initrd file. To build it use the command
-# mkinitrd -o /boot/initrd-2.6.20
-
-IF YOU ARE CUSTOMIZING YOUR KERNEL, YOU SHOULD PUT IN THE EFFORT TO
-BUILD A KERNEL THAT DOES NOT NEED AN INITRD FILE.
-
-It is possible that deb-pkg and rpm-pkg take care of creating the initrd
-automatically.
-
-I have always compiled in the important drivers, so I do not know.
-
-Does any caring person here know the answer to this question?
-
-------------------------------------------------------
-
-Now you need to configure your kernel. Using GRUB you need to change the
-menu.lst file.
-
-# emacs /boot/grub/menu.lst &
-
-The grub entry that you presently boot with, will look something like:
-
-###Don't change this comment - YaST2 identifier: Original name: linux###
-title SUSE LINUX 10.0
-    root (hd0,2)
-    kernel /boot/vmlinuz-2.6.13-15-default root=/dev/hda3
-    resume=/dev/hda5 vga=0x317 video=vesafb:nomtrr splash=silent
-    initrd /boot/initrd
-
-Do NOT delete the old boot entry, so you can boot it, if things go wrong
-with the new kernel.
-
-Cut a copy of it and paste it above the original. Then adjust the copy
-for the new kernel.
-
-###Don't change this comment - YaST2 identifier: Original name: linux###
-title MY NEW KERNEL
-    root (hd0,2)
-    kernel /boot/linux-2.6.20 root=/dev/hda3 resume=/dev/hda5 vga=0x317
-    video=vesafb:nomtrr splash=silent
-
-Of course, you don't need a initrd entry as you have compiled in all the
-vital drivers,... right?
-If you could not determine the vital drivers and needed to build an
-initrd file, then you need an entry, like
-
-    initrd /boot/initrd-2.6.20
-
-------------------------------------------------------
-
-If your new kernel is destined to have the same name as the old one, you
-need to do something about it (unless you do not mind the old one being
-overwritten).
-
-Use your favorite text editor to change the top level Makefile
-# emacs /usr/src/linux-2.6.20/Makefile &
-
-change the line 
-EXTRAVERSION
-to 
-EXTRAVERSION = something
-
-This will change the name of the new kernel to linux-2.6.20-something
-
-Your /boot/grub/menu.lst entry will now look something like:
-
-###Don't change this comment - YaST2 identifier: Original name: linux###
-title MY NEW KERNEL
-    root (hd0,2)
-    kernel /boot/linux-2.6.20-something root=/dev/hda3 resume=/dev/hda5
-    vga=0x317 video=vesafb:nomtrr splash=silent
-
-and perhaps an entry
-
-    initrd /boot/initrd-2.6.20-something
-
-------------------------------------------------------
-
-Now reboot and choose the "MY NEW KERNEL" entry from the GRUB boot menu,
-and see how you went.
-
--- 
-  
-  johnrobertbanks@fastmail.fm
-
--- 
-http://www.fastmail.fm - Send your email first class
-
+~~
+laurent
