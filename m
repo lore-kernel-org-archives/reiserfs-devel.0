@@ -1,41 +1,50 @@
-From: Laurent Riffard <laurent.riffard@free.fr>
-Subject: Re: REISER4: fix for reiser4_write_extent
-Date: Sat, 07 Apr 2007 14:51:48 +0200
-Message-ID: <461793E4.5040706@free.fr>
-References: <46157B5B.5000602@gmail.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: COMPILING AND CONFIGURING A NEW KERNEL.
+Date: Sat, 07 Apr 2007 12:42:54 -0400
+Message-ID: <12252.1175964174@turing-police.cc.vt.edu>
+References: <46157B5B.5000602@gmail.com> <1175817921.18400.1183285196@webmail.messagingengine.com>
+            <1175909205.905.1183425104@webmail.messagingengine.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S965824AbXDGMwF@vger.kernel.org>
-In-Reply-To: <46157B5B.5000602@gmail.com>
+Content-Type: multipart/signed; boundary="==_Exmh_1175964174_4736P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S966083AbXDGQnG@vger.kernel.org>
+In-Reply-To: Your message of "Fri, 06 Apr 2007 18:26:45 PDT."
+             <1175909205.905.1183425104@webmail.messagingengine.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: Ignatich <ignatich@gmail.com>
-Cc: reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, Edward Shishkin <edward@namesys.com>
+To: johnrobertbanks@fastmail.fm
+Cc: Ignatich <ignatich@gmail.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org
 
-Le 06.04.2007 00:42, Ignatich a =C3=A9crit :
-> While trying to find the cause of problems with reiser4 in recent=20
-> kernels I came across this.
+--==_Exmh_1175964174_4736P
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, 06 Apr 2007 18:26:45 PDT, johnrobertbanks=40fastmail.fm said:
+>
+> YOU SHOULD compile all the drivers necessary to boot your system, into
+> the kernel (ie, such drivers should not be built as modules).
 >=20
-> Incomplete write handling seem to be missing from reiser4_write_exten=
-t()=20
-> thanks to reiser4-temp-fix.patch. Strangely, there is a patch by Edwa=
-rd=20
-> Shishkin that should address that issue, but it is missing from -mm=20
-> tree. Please check.
->=20
->    Max
->=20
+> This way you will NOT need an initrd file.
 
-This patch was added to -mm tree the 14 Dec 2006 (see=20
-http://www.mail-archive.com/mm-commits@vger.kernel.org/msg05338.html).
+It is quite possible to build a kernel that has all the drivers built-in,=
 
-It was then dropped from -mm tree the 05 Mar 2007 (see=20
-http://www.mail-archive.com/mm-commits@vger.kernel.org/msg10818.html),=20
-with this comment:
-	"This patch was dropped because it is obsolete"
+but still require an initrd file.  For instance, if you have a recent
+RedHat or Fedora system, '/' may very well be on an LVM partition, which
+means you need an initrd to do a 'lvm varyonvg' before mounting your real=
 
-No idea why it was obsolete. Does somebody know ?
+root filesystem will work....
 
-~~
-laurent
+--==_Exmh_1175964174_4736P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.7 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iD8DBQFGF8oOcC3lWbTT17ARAkHXAKC27KCQjHJkkA8CUR6e1r5Hi6f5mwCgwUSo
+VegXdIBZlaLBC2Bnxp+1z4Y=
+=F1Jj
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1175964174_4736P--
