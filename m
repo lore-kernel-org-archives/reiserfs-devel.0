@@ -1,141 +1,110 @@
-From: johnrobertbanks@fastmail.fm
+From: Christer Weinigel <christer@weinigel.se>
 Subject: Re: Reiser4. BEST FILESYSTEM EVER.
-Date: Sat, 07 Apr 2007 21:13:32 -0700
-Message-ID: <1176005612.15484.1183524228@webmail.messagingengine.com>
+Date: 08 Apr 2007 06:32:26 +0200
+Message-ID: <m3zm5jebad.fsf@zoo.weinigel.se>
 References: <46157B5B.5000602@gmail.com>
-   <1175817921.18400.1183285196@webmail.messagingengine.com>
-   <461592FB.5060507@zytor.com>
-   <1175819681.20754.1183287946@webmail.messagingengine.com>
-   <461596DE.2020802@zytor.com>
-   <1175823288.25662.1183293506@webmail.messagingengine.com>
-   <4615C780.5040407@zytor.com>
-   <1175833931.8916.1183307802@webmail.messagingengine.com>
-   <20070407191715.GG3510@csclub.uwaterloo.ca>
-   <1175993097.32498.1183512070@webmail.messagingengine.com>
-   <20070408025632.GA17646@thunk.org>
+	<1175817921.18400.1183285196@webmail.messagingengine.com>
+	<461592FB.5060507@zytor.com>
+	<1175819681.20754.1183287946@webmail.messagingengine.com>
+	<461596DE.2020802@zytor.com>
+	<1175823288.25662.1183293506@webmail.messagingengine.com>
+	<4615C780.5040407@zytor.com>
+	<1175833931.8916.1183307802@webmail.messagingengine.com>
+	<20070407191715.GG3510@csclub.uwaterloo.ca>
+	<1175993097.32498.1183512070@webmail.messagingengine.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20070408025632.GA17646@thunk.org>
+In-Reply-To: <1175993097.32498.1183512070@webmail.messagingengine.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Theodore Tso <tytso@mit.edu>
+Content-Transfer-Encoding: 7bit
+To: johnrobertbanks@fastmail.fm
 Cc: Lennart Sorensen <lsorense@csclub.uwaterloo.ca>, "H. Peter Anvin" <hpa@zytor.com>, Ignatich <ignatich@gmail.com>, reiserfs-list@namesys.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 
-Teddy,
+johnrobertbanks@fastmail.fm writes:
 
-It is a pity you don't address the full set of results, when you make
-your snide comments.
-
-Now since you have them,... why don't you make reasoned comment about
-them.
-
-You can read more here:
-
-http://linuxhelp.150m.com/resources/fs-benchmarks.htm and
-http://m.domaindlx.com/LinuxHelp/resources/fs-benchmarks.htm
-
-.-------------------------.
-| FILESYSTEM | TIME |DISK |
-| TYPE       |(secs)|USAGE|
-.-------------------------.
-|REISER4 lzo | 1938 | 278 |
-|REISER4 gzip| 2295 | 213 |
-|REISER4     | 3462 | 692 |
-|EXT2        | 4092 | 816 |
-|JFS         | 4225 | 806 |
-|EXT4        | 4408 | 816 |
-|EXT3        | 4421 | 816 |
-|XFS         | 4625 | 779 |
-|REISER3     | 6178 | 793 |
-|FAT32       |12342 | 988 |
-|NTFS-3g     |10414 | 772 |
-.-------------------------.
-
-
-Column one measures the time taken to complete the bonnie++ benchmarking
-test (run with the parameters bonnie++ -n128:128k:0)
-
-Column two, Disk Usage: measures the amount of disk used to store 655MB
-of raw data (which was 3 different copies of the Linux kernel sources).
-
-OR LOOK AT THE FULL RESULTS:
-
-.-------------------------------------------------.
-|File         |Disk |Copy |Copy |Tar  |Unzip| Del |
-|System       |Usage|655MB|655MB|Gzip |UnTar| 2.5 |
-|Type         | (MB)| (1) | (2) |655MB|655MB| Gig |
-.-------------------------------------------------.
-|REISER4 gzip | 213 | 148 |  68 |  83 |  48 |  70 |
-|REISER4 lzo  | 278 | 138 |  56 |  80 |  34 |  84 |
-|REISER4 tails| 673 | 148 |  63 |  78 |  33 |  65 |
-|REISER4      | 692 | 148 |  55 |  67 |  25 |  56 |
-|NTFS3g       | 772 |1333 |1426 | 585 | 767 | 194 |
-|NTFS         | 779 | 781 | 173 |   X |   X |   X |
-|REISER3      | 793 | 184 |  98 |  85 |  63 |  22 |
-|XFS          | 799 | 220 | 173 | 119 |  90 | 106 |
-|JFS          | 806 | 228 | 202 |  95 |  97 | 127 |
-|EXT4 extents | 806 | 162 |  55 |  69 |  36 |  32 |
-|EXT4 default | 816 | 174 |  70 |  74 |  42 |  50 |
-|EXT3         | 816 | 182 |  74 |  73 |  43 |  51 |
-|EXT2         | 816 | 201 |  82 |  73 |  39 |  67 |
-|FAT32        | 988 | 253 | 158 | 118 |  81 |  95 |
-.-------------------------------------------------.
-
-
-Each test was preformed 5 times and the average value recorded.
-Disk Usage: The amount of disk used to store the data (which was 3
-different copies of the Linux kernel sources).
-The raw data (without filesystem meta-data, block alignment wastage,
-etc) was 655MB.
-Copy 655MB (1): Copy the data over a partition boundary.
-Copy 655MB (2): Copy the data within a partition.
-Tar Gzip 655MB: Tar and Gzip the data.
-Unzip UnTar 655MB: UnGzip and UnTar the data.
-Del 2.5 Gig: Delete everything just written (about 2.5 Gig).
-
-
-To get a feel for the performance increases that can be achieved by
-using compression, we look at the total time (in seconds) to run the
-test:
-
-bonnie++ -n128:128k:0 (bonnie++ is Version 1.93c)
-
-.-------------------.
-| FILESYSTEM | TIME |
-.-------------------.
-|REISER4 lzo |  1938|
-|REISER4 gzip|  2295|
-|REISER4     |  3462|
-|EXT4        |  4408|
-|EXT2        |  4092|
-|JFS         |  4225|
-|EXT3        |  4421|
-|XFS         |  4625|
-|REISER3     |  6178|
-|FAT32       | 12342|
-|NTFS-3g     |>10414|
-.-------------------.
-
-
-
-On Sat, 7 Apr 2007 22:56:32 -0400, "Theodore Tso" <tytso@mit.edu> said:
-> On Sat, Apr 07, 2007 at 05:44:57PM -0700, johnrobertbanks@fastmail.fm
-> wrote:
-> > To get a feel for the performance increases that can be achieved by
-> > using compression, we look at the total time (in seconds) to run the
-> > test:
+> Lennart. Tell me again that these results from 
 > 
-> You mean the performance increases of writing a file which is mostly
-> all zero's?  Yawn.....
+> http://linuxhelp.150m.com/resources/fs-benchmarks.htm and
+> http://m.domaindlx.com/LinuxHelp/resources/fs-benchmarks.htm
 > 
-> 					- Ted
--- 
-  
-  johnrobertbanks@fastmail.fm
+> are not of interest to you. I still don't understand why you have your
+> head in the sand.
+
+Oh, for fucks sake, stop sounding like a broken record.  You have
+repeated the same totally meaningless statistics more times than I
+care to count.  Please shut the fuck up.
+
+As you discovered yourself (even though you seem to fail to understand
+the significance of your discovery), bonnie writes files that consist
+of mostly zeroes.  If your normal use cases consist of creating a
+bunch of files containing zeroes, reiser4 with compression will do
+great.  Just lovely.  Except that nobody sane would store a lot of
+files containing zeroes, except an an excercize in mental
+masturbation.  So the two bonnie benchmarks with lzo and gzip are
+totally meaningless for any real life usages.
+
+As for the amount of disk needed to store three kernel trees, the
+figures you quote show that Reiser4 does tail combining where the tail
+of multiple files are stored in one disk block.  A nice trick that
+seems save you about 15% disk space compared to ext3.  Now you have to
+realise what that means, it means that if the disk block containing
+those tails (or any metadata pointing at that block) gets corrupted,
+instead of just losing one disk block for one file, you will have lost
+the tail for all the files sharing that disk block.  Depending on your
+personal prioritites, saving 15% of the space may be worth the risk to
+you, or maybe not.  Personally, for the only disk I'm short on space
+on, I mostly store flac encoded images of my CD collection, and saving
+2kByte out of every 300MByte disk simply doesn't make any difference,
+and I much prefer a stable file system that I can trust not to lose my
+data.  You might make different choices.
+
+The same goes for just about every feature that you tout, it has its
+advantages, and it has its disadvantages.  Doing compression on data
+is great if the data you store is compressible, and sucks if it isn't.
+Doing compression on each disk block and then packing multiple
+compressed blocks into each physical disk block will probably save
+some space if the data is compressible, but at the same time it means
+that you will spend a lot of CPU (and cache footprint) compressing and
+uncompressing that data.  On a single user system where the CPU is
+mostly idle it might not make much of a difference, on a heavily
+loaded multiuser system it might do.
+
+Logs can be compressed quite well using a block based compression
+scheme, but the logs can be compressed even better by doing
+compression on the whole file with gzip.  So what's the best choice,
+to do transparent compression on the fly giving ok compression or
+teaching the userspace tools to do compression of old logs and get
+really good compression?  Or maybe disk space really isn't that
+important anyway and the best thing is to just leave the logs
+uncompressed.
+
+Another example: one of the things Reiser3 is supposed to be really
+good for is storing an INN news spool, doing tail merging of lots of
+individual files containing articles gives a great space saving, and
+since it's just a news spool, reliability in face of a system crashes
+really don't matter all that much.  On the other hand, INN's Cyclic
+News File System running on top of ext2 is probably an even better
+choice in that case.  What do you want to use?
+
+What I want to get at is that you can troll the mailing lists (and
+crossposting stupid inflammatory material with an inane subject to a
+bunch of mailing lists the way you have done definitely is trolling)
+trying to say that whatever you're trying to sell is the best, but at
+the end, if a file system is better or not is a lot more complex than
+quoting just one benchmark (which, once again, is meaningless,
+compressing a lot of zeroes is simple and really does not tell you
+anything about real world usages).  And there are other considerations
+too, even if Reiser4 would be the best thing since sliced breadd, can
+I trust Hans Reiser to support Reiser4 for the next five years?  Or
+will he drop support for Reiser4 the same way he dropped support for
+the old Reiser3 when Reiser4 came along?  Or will he drop Reiser4 when
+the grant to do Reiser 4 development expires?
+
+  /Christer
 
 -- 
-http://www.fastmail.fm - IMAP accessible web-mail
+"Just how much can I get away with and still go to heaven?"
 
+Christer Weinigel <christer@weinigel.se>  http://www.weinigel.se
