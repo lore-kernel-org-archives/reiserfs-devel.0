@@ -1,37 +1,103 @@
-From: Willy Tarreau <w@1wt.eu>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
 Subject: Re: Reiser4. BEST FILESYSTEM EVER - Christer Weinigel
-Date: Mon, 9 Apr 2007 09:07:26 +0200
-Message-ID: <20070409070726.GG943@1wt.eu>
-References: <461596DE.2020802@zytor.com> <1175823288.25662.1183293506@webmail.messagingengine.com> <4615C780.5040407@zytor.com> <1175833931.8916.1183307802@webmail.messagingengine.com> <20070407191715.GG3510@csclub.uwaterloo.ca> <1175993097.32498.1183512070@webmail.messagingengine.com> <m3zm5jebad.fsf@zoo.weinigel.se> <1176069053.31062.1183584012@webmail.messagingengine.com> <461973AD.5060906@student.ltu.se> <1176095658.16239.1183614988@webmail.messagingengine.com>
+Date: Mon, 09 Apr 2007 18:10:56 +0200
+Message-ID: <461A6590.20501@student.ltu.se>
+References: <46157B5B.5000602@gmail.com>   <1175817921.18400.1183285196@webmail.messagingengine.com>   <461592FB.5060507@zytor.com>   <1175819681.20754.1183287946@webmail.messagingengine.com>   <461596DE.2020802@zytor.com>   <1175823288.25662.1183293506@webmail.messagingengine.com>   <4615C780.5040407@zytor.com>   <1175833931.8916.1183307802@webmail.messagingengine.com>   <20070407191715.GG3510@csclub.uwaterloo.ca>   <1175993097.32498.1183512070@webmail.messagingengine.com>   <m3zm5jebad.fsf@zoo.weinigel.se>   <1176069053.31062.1183584012@webmail.messagingengine.com>   <461973AD.5060906@student.ltu.se> <1176095658.16239.1183614988@webmail.messagingengine.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
 In-Reply-To: <1176095658.16239.1183614988@webmail.messagingengine.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: johnrobertbanks@fastmail.fm
-Cc: Richard Knutsson <ricknu-0@student.ltu.se>, Christer Weinigel <christer@weinigel.se>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
+Cc: Christer Weinigel <christer@weinigel.se>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
 
-On Sun, Apr 08, 2007 at 10:14:18PM -0700, johnrobertbanks@fastmail.fm wrote:
+johnrobertbanks@fastmail.fm wrote:
+> On Mon, 09 Apr 2007 00:58:53 +0200, "Richard Knutsson"
+> <ricknu-0@student.ltu.se> said:
+>   
+>> Wow, I'm impressed. Think you got the record on how many mails you 
+>> referenced to in a reply... 
+>>     
+>
+> TWO actually. I guess you are easily impressed.
+>   
+Oh, took it to be from 5-6 sources...
+>> + you have repeated the same statement several times, that is 
+>> not the best way of convincing people.
+>>     
+>
+> I know you DON'T believe that, as you are about the tenth person to
+> repeat that "repeating stuff has no effect."
+>   
+Why should we change our response to the same error? The only solution 
+to this loop is when people stops answering you and you "lose".
+>> I believe you picked up the "anti-Reiser religion"-phrase from previous 
+>> rant-wars (otherwise, why does that "religion"-phrase always come up, 
+>> and (almost) only when dealing with Reiser-fs), and yes, there has been 
+>> some clashes caused by both sides, so please be careful when dealing 
+>> with this matter.
+>>     
+>
 > NO. You people simply come across as zealots who work together, against
 > Reiser4.
+>
+> Hence the term "anti-Reiser religion."
+>   
+Please, don't address someone you meet for the first time as "you people"!
+Yes, we do _work_ together, it is a community and as a community you 
+have to follow the social rules agreed upon. Without all those 
+pro-Reiser peoples who knew how to work with the rest, there would not 
+be a ResierFS/Reiser3 in the kernel. Unfortunately, Hans is in this case 
+his own worst enemy and has ruffed quite a few feathers over the time. I 
+don't think you would like someone who tells you "if you do it my way, 
+then you are doing it wrong"...
 
-Poor guy ! People are not against Reiser4, they are against the stupid and
-irritating person who pollutes the lists always sending the same results
-without any comment because he doesn't even understand the results. Just
-like the kid on the beach "Look Ma, I found a soft shell!". "Leave it
-overthere, it's a jellyfish !".  "I don't know what a jellyfish is, I will
-take all those soft shells with me".
+But personally, even if I find Hans a bit too strong-headed, he got some 
+interesting design-ideas and the Reiser-filesystem is something I think 
+many find interesting as a concept but not yet trust-worthy for their 
+own machines.
+>> Would you be willing to benchmark Reiser4 with some compressed 
+>> binary-blob and show the time as well as the CPU-usage? 
+>>     
+>
+> I might be. I don't really know how to set it all up.
+>
+> Perhaps if you guided me through it.
+>   
+Am not sure how much help I would be but from the responses to your 
+benchmark-list, there seems to be many who could help you. But first I 
+think you should set up a system to test on, and then after some tests 
+and made the result public, there will (most likely) be people who ask 
+you to test it in some specific way.
+>> I may have missed something, but if my room-mate took my harddrive, 
+>> screwed it open, wrote a love-letter on the disk with a pencil and then 
+>> returned it (ok, there may be some more plausible reasons for 
+>> corruption), is the OS really suppose to handle it? 
+>>     
+>
+> Yeah, I can't see how the OS could read the love-letter either.
+>
+> But one thing is for sure. The FS ain't responsible for reading it.
+>   
+And no-one has asked the file-system to _read_ the disk, but to be 
+designed to help restore the file-structure. This I have found to be the 
+main-point people complains about.
+It is like arguing against air-bags in a car. Of course the car should 
+not be responsible for preventing accidents, but they are designed so 
+_if_ it happens, you should not be totally screwed.
+>> Yes, it should not 
+>> assign any new data to those blocks but should it not also fall into the 
+>> file-systems domain to be able to restore some/all data?
+>>     
+>
+> It's a tough ask of any FS. 
+>
+> Microsoft's filesystem checker totally roasted all my data on an XP-box
+> last night. 
+>   
+Sorry to hear that, but two wrongs does not make it right.
 
-You keep saying people do not want to read you, but there is nothing to read.
-In fact, you hope that people will comment on your results so that you will
-finally understand them, but people keep saying there is nothing to read there.
-
-When will you stop annoying people with your noisy toys ?
-
-Oh, and please send your conspiracy claims somewhere else.
-
-Willy
+Richard Knutsson
 
