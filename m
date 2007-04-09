@@ -1,110 +1,37 @@
-From: johnrobertbanks@fastmail.fm
+From: Willy Tarreau <w@1wt.eu>
 Subject: Re: Reiser4. BEST FILESYSTEM EVER - Christer Weinigel
-Date: Sun, 08 Apr 2007 22:14:18 -0700
-Message-ID: <1176095658.16239.1183614988@webmail.messagingengine.com>
-References: <46157B5B.5000602@gmail.com>
-   <1175817921.18400.1183285196@webmail.messagingengine.com>
-   <461592FB.5060507@zytor.com>
-   <1175819681.20754.1183287946@webmail.messagingengine.com>
-   <461596DE.2020802@zytor.com>
-   <1175823288.25662.1183293506@webmail.messagingengine.com>
-   <4615C780.5040407@zytor.com>
-   <1175833931.8916.1183307802@webmail.messagingengine.com>
-   <20070407191715.GG3510@csclub.uwaterloo.ca>
-   <1175993097.32498.1183512070@webmail.messagingengine.com>
-   <m3zm5jebad.fsf@zoo.weinigel.se>
-   <1176069053.31062.1183584012@webmail.messagingengine.com>
-   <461973AD.5060906@student.ltu.se>
+Date: Mon, 9 Apr 2007 09:07:26 +0200
+Message-ID: <20070409070726.GG943@1wt.eu>
+References: <461596DE.2020802@zytor.com> <1175823288.25662.1183293506@webmail.messagingengine.com> <4615C780.5040407@zytor.com> <1175833931.8916.1183307802@webmail.messagingengine.com> <20070407191715.GG3510@csclub.uwaterloo.ca> <1175993097.32498.1183512070@webmail.messagingengine.com> <m3zm5jebad.fsf@zoo.weinigel.se> <1176069053.31062.1183584012@webmail.messagingengine.com> <461973AD.5060906@student.ltu.se> <1176095658.16239.1183614988@webmail.messagingengine.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <461973AD.5060906@student.ltu.se>
+In-Reply-To: <1176095658.16239.1183614988@webmail.messagingengine.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Richard Knutsson <ricknu-0@student.ltu.se>
-Cc: Christer Weinigel <christer@weinigel.se>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
+Content-Transfer-Encoding: 7bit
+To: johnrobertbanks@fastmail.fm
+Cc: Richard Knutsson <ricknu-0@student.ltu.se>, Christer Weinigel <christer@weinigel.se>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-list@namesys.com
 
-On Mon, 09 Apr 2007 00:58:53 +0200, "Richard Knutsson"
-<ricknu-0@student.ltu.se> said:
-> Wow, I'm impressed. Think you got the record on how many mails you 
-> referenced to in a reply... 
+On Sun, Apr 08, 2007 at 10:14:18PM -0700, johnrobertbanks@fastmail.fm wrote:
+> NO. You people simply come across as zealots who work together, against
+> Reiser4.
 
-TWO actually. I guess you are easily impressed.
+Poor guy ! People are not against Reiser4, they are against the stupid and
+irritating person who pollutes the lists always sending the same results
+without any comment because he doesn't even understand the results. Just
+like the kid on the beach "Look Ma, I found a soft shell!". "Leave it
+overthere, it's a jellyfish !".  "I don't know what a jellyfish is, I will
+take all those soft shells with me".
 
-A simple cut and paste error.
+You keep saying people do not want to read you, but there is nothing to read.
+In fact, you hope that people will comment on your results so that you will
+finally understand them, but people keep saying there is nothing to read there.
 
-> You have got some rude answers and you have called them back on it 
+When will you stop annoying people with your noisy toys ?
 
-Yeah, I (fairly closely) mimicked their behavior to make a point.
+Oh, and please send your conspiracy claims somewhere else.
 
-> + you have repeated the same statement several times, that is 
-> not the best way of convincing people.
-
-I know you DON'T believe that, as you are about the tenth person to
-repeat that "repeating stuff has no effect."
-
-> I believe you picked up the "anti-Reiser religion"-phrase from previous 
-> rant-wars (otherwise, why does that "religion"-phrase always come up, 
-> and (almost) only when dealing with Reiser-fs), and yes, there has been 
-> some clashes caused by both sides, so please be careful when dealing 
-> with this matter.
-
-NO. You people simply come across as zealots who work together, against
-Reiser4.
-
-Hence the term "anti-Reiser religion."
-
-> Would you be willing to benchmark Reiser4 with some compressed 
-> binary-blob and show the time as well as the CPU-usage? 
-
-I might be. I don't really know how to set it all up.
-
-Perhaps if you guided me through it.
-
-> >
-> > You deliberately ignored the fact that bad blocks are NOT dealt with by
-> > the filesystem,... but by the operating system. Like I said: If your
-> > filesystem is writing to bad blocks, then throw away your operating
-> > system.
-> >   
-
-> I may have missed something, but if my room-mate took my harddrive, 
-> screwed it open, wrote a love-letter on the disk with a pencil and then 
-> returned it (ok, there may be some more plausible reasons for 
-> corruption), is the OS really suppose to handle it? 
-
-Yeah, I can't see how the OS could read the love-letter either.
-
-But one thing is for sure. The FS ain't responsible for reading it.
-
-> Yes, it should not 
-> assign any new data to those blocks but should it not also fall into the 
-> file-systems domain to be able to restore some/all data?
-
-It's a tough ask of any FS. 
-
-Microsoft's filesystem checker totally roasted all my data on an XP-box
-last night. 
-
-I had used ntfsresize to reduce the partition size and had a power
-outage. 
-
-Later, Windows booted, ran the filesystem checker, seemed OK. 
-
-Next time I boot, all I get is Input/Output error.
-
-> 
-> Just my 2c to the pond
-> Richard Knutsson
-> 
-Addin my 2c
-John.
--- 
-  
-  johnrobertbanks@fastmail.fm
-
--- 
-http://www.fastmail.fm - A no graphics, no pop-ups email service
+Willy
 
