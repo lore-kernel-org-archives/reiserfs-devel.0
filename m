@@ -1,33 +1,51 @@
-From: Ric Wheeler <ric@emc.com>
-Subject: Linux 2007 File System & IO Workshop notes & talks
-Date: Tue, 10 Apr 2007 09:23:47 -0400
-Message-ID: <461B8FE3.3010600@emc.com>
-Reply-To: ric@emc.com
+From: Milind Arun Choudhary <milindchoudhary@gmail.com>
+Subject: [KJ] [PATCH 04/04]use set_current_state in fs
+Date: Sat, 14 Apr 2007 14:20:11 +0530
+Message-ID: <20070414085011.GE14084@arun.site>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ide-owner@vger.kernel.org>
-Sender: linux-ide-owner@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <kernel-janitors-bounces@lists.linux-foundation.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, xfs@oss.sgi.com, reiserfs-list@namesys.com, ext2-devel@lists.sourceforge.net, linux-ide@vger.kernel.org, ocfs2-devel@oss.oracle.com, linux-scsi@vger.kernel.org
+List-Unsubscribe: <https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors>,
+	<mailto:kernel-janitors-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linux-foundation.org/pipermail/kernel-janitors>
+List-Post: <mailto:kernel-janitors@lists.linux-foundation.org>
+List-Help: <mailto:kernel-janitors-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors>,
+	<mailto:kernel-janitors-request@lists.linux-foundation.org?subject=subscribe>
+Sender: kernel-janitors-bounces@lists.linux-foundation.org
+Errors-To: kernel-janitors-bounces@lists.linux-foundation.org
+Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@lists.osdl.org, reiserfs-list@namesys.com
+Cc: akpm@linux-foundation.org, reiserfs-dev@namesys.com, linux-kernel@vger.kernel.org
+
+use set_current_state(TASK_*) instead of current->state =3D TASK_*, in fs/r=
+eiserfs
+
+Signed-off-by: Milind Arun Choudhary <milindchoudhary@gmail.com>
+
+---
+
+ journal.c |    2 +-
+ 1 files changed, 1 insertion(+), 1 deletion(-)
 
 
-We have some of the material reviewed and posted now from the IO & FS 
-workshop.
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 7280a23..864b15a 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -2918,7 +2918,7 @@ static void queue_log_writer(struct super_block *s)
+ 	set_current_state(TASK_UNINTERRUPTIBLE);
+ 	if (test_bit(J_WRITERS_QUEUED, &journal->j_state))
+ 		schedule();
+-	current->state =3D TASK_RUNNING;
++	set_current_state(TASK_RUNNING);
+ 	remove_wait_queue(&journal->j_join_wait, &wait);
+ }
+ =
 
-USENIX has posted the talks at:
 
-http://www.usenix.org/events/lsf07/tech/tech.html
+-- =
 
-A write up of the workshop went out at LWN and invoked a healthy discussion:
-
-http://lwn.net/Articles/226351/
-
-At that LWN article, there is a link to the Linux FS wiki with good notes:
-
-http://linuxfs.pbwiki.com/LSF07-Workshop-Notes
-
-Another summary will go out in the next USENIX ;login edition.
-
-ric
-
+Milind Arun Choudhary
