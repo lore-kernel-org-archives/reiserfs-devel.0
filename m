@@ -1,59 +1,123 @@
-From: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [RFC][PATCH] reiserfs vs BKL
-Date: Sat, 21 Apr 2007 18:23:31 +0200
-Message-ID: <1177172611.7316.22.camel@twins>
-References: <1177170364.7316.17.camel@twins>  <462A3871.3060104@suse.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752463AbXDUQXg@vger.kernel.org>
-In-Reply-To: <462A3871.3060104@suse.com>
-Sender: linux-kernel-owner@vger.kernel.org
+From: Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: 2.6.21-rc7 new aops patchset
+Date: Mon, 23 Apr 2007 14:17:55 +0200
+Message-ID: <E1HfxUR-0006Ta-00@dorka.pomaz.szeredi.hu>
+References: <20070421143200.GA23326@wotan.suse.de>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <20070421143200.GA23326@wotan.suse.de> (message from Nick Piggin
+	on Sat, 21 Apr 2007 16:32:04 +0200)
+Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, reiserfs-list@namesys.com, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Chris Mason <chris.mason@oracle.com>, Nikita Danilov <nikita@clusterfs.com>
+Content-Transfer-Encoding: 7bit
+To: npiggin@suse.de
+Cc: linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org, mark.fasheh@oracle.com, reiserfs-dev@namesys.com, reiserfs-list@namesys.com
 
-On Sat, 2007-04-21 at 12:14 -0400, Jeff Mahoney wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
-> 
-> Peter Zijlstra wrote:
-> > Replace all the lock_kernel() instances with reiserfs_write_lock(sb),
-> > and make that use an actual per super-block mutex instead of
-> > lock_kernel().
-> > 
-> > This should make reiserfs safe from PREEMPT_BKL=n, since it seems to
-> > rely on being able to schedule. Also, it removes the dependency on the
-> > BKL, and thereby is not prone to cause prio inversion with remaining BKL
-> > users (notably tty).
-> > 
-> > Compile tested only, since I didn't dare boot it.
-> 
-> NACK.
+Nick,
 
-darn, I suspected it would be wrong :-/, it was too easy to be right.
+Thanks for converting fuse, and testing.  Here's a minor update to
+fs-fuse-aops.patch.
 
-> Believe me, I would *love* to nuke the BKL from reiserfs, but a search
-> and replace of this nature is just wrong. reiserfs_write_lock() using
-> the BKL isn't an accident - it depends on its nesting properties. If you
-> did try to boot this kernel, you'd deadlock pretty quickly.
+Miklos
 
-Right, I see. 
+----
+Convert fuse to new aops.
 
-> This one has been on my TODO list for a long time. Interestingly, I've
-> been doing reiserfs xattr development recently using 2.6.21-rc7-git2,
-> and I'm not seeing any of these messages.
+[mszeredi]
+ - don't send zero length write requests
+ - it is not legal for the filesystem to return with zero written bytes
 
-Yeah, that would be pretty close to what I ran.
+Signed-off-by: Nick Piggin <npiggin@suse.de>
+Signed-off-by: Miklos Szeredi <mszeredi@suse.cz>
 
-> # CONFIG_PREEMPT_NONE is not set
-> CONFIG_PREEMPT_VOLUNTARY=y
-> # CONFIG_PREEMPT is not set
-> # CONFIG_PREEMPT_BKL is not set
-
-I have CONFIG_PREEMPT=y, but seeing how one of those points came from a
-cond_resched() within a lock_kernel() section, I'm not seeing how you
-don't get these.
-
-A well, I really do hope you come up with something some day, for me its
-time to go change filesystems - bah, the pain...
+Index: linux/fs/fuse/file.c
+===================================================================
+--- linux.orig/fs/fuse/file.c	2007-04-23 12:04:10.000000000 +0200
++++ linux/fs/fuse/file.c	2007-04-23 13:56:48.000000000 +0200
+@@ -443,22 +443,25 @@ static size_t fuse_send_write(struct fus
+ 	return outarg.size;
+ }
+ 
+-static int fuse_prepare_write(struct file *file, struct page *page,
+-			      unsigned offset, unsigned to)
+-{
+-	/* No op */
++static int fuse_write_begin(struct file *file, struct address_space *mapping,
++			loff_t pos, unsigned len, unsigned flags,
++			struct page **pagep, void **fsdata)
++{
++	pgoff_t index = pos >> PAGE_CACHE_SHIFT;
++
++	*pagep = __grab_cache_page(mapping, index);
++	if (!*pagep)
++		return -ENOMEM;
+ 	return 0;
+ }
+ 
+-static int fuse_commit_write(struct file *file, struct page *page,
+-			     unsigned offset, unsigned to)
++static int fuse_buffered_write(struct file *file, struct inode *inode,
++			       loff_t pos, unsigned count, struct page *page)
+ {
+ 	int err;
+ 	size_t nres;
+-	unsigned count = to - offset;
+-	struct inode *inode = page->mapping->host;
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+-	loff_t pos = page_offset(page) + offset;
++	unsigned offset = pos & (PAGE_CACHE_SIZE - 1);
+ 	struct fuse_req *req;
+ 
+ 	if (is_bad_inode(inode))
+@@ -474,20 +477,35 @@ static int fuse_commit_write(struct file
+ 	nres = fuse_send_write(req, file, inode, pos, count);
+ 	err = req->out.h.error;
+ 	fuse_put_request(fc, req);
+-	if (!err && nres != count)
++	if (!err && !nres)
+ 		err = -EIO;
+ 	if (!err) {
+-		pos += count;
++		pos += nres;
+ 		spin_lock(&fc->lock);
+ 		if (pos > inode->i_size)
+ 			i_size_write(inode, pos);
+ 		spin_unlock(&fc->lock);
+ 
+-		if (offset == 0 && to == PAGE_CACHE_SIZE)
++		if (count == PAGE_CACHE_SIZE)
+ 			SetPageUptodate(page);
+ 	}
+ 	fuse_invalidate_attr(inode);
+-	return err;
++	return err ? err : nres;
++}
++
++static int fuse_write_end(struct file *file, struct address_space *mapping,
++			loff_t pos, unsigned len, unsigned copied,
++			struct page *page, void *fsdata)
++{
++	struct inode *inode = mapping->host;
++	int res = 0;
++
++	if (copied)
++		res = fuse_buffered_write(file, inode, pos, copied, page);
++
++	unlock_page(page);
++	page_cache_release(page);
++	return res;
+ }
+ 
+ static void fuse_release_user_pages(struct fuse_req *req, int write)
+@@ -817,8 +835,8 @@ static const struct file_operations fuse
+ 
+ static const struct address_space_operations fuse_file_aops  = {
+ 	.readpage	= fuse_readpage,
+-	.prepare_write	= fuse_prepare_write,
+-	.commit_write	= fuse_commit_write,
++	.write_begin	= fuse_write_begin,
++	.write_end	= fuse_write_end,
+ 	.readpages	= fuse_readpages,
+ 	.set_page_dirty	= fuse_set_page_dirty,
+ 	.bmap		= fuse_bmap,
