@@ -1,35 +1,26 @@
-From: Nick Piggin <npiggin@suse.de>
-Subject: Re: 2.6.21-rc7 new aops patchset
-Date: Tue, 24 Apr 2007 02:42:02 +0200
-Message-ID: <20070424004202.GB29950@wotan.suse.de>
-References: <20070421143200.GA23326@wotan.suse.de> <E1HfxUR-0006Ta-00@dorka.pomaz.szeredi.hu>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Reiser4 patches
+Date: Sun, 06 May 2007 16:05:54 +0400
+Message-ID: <463DC4A2.4030708@namesys.com>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <E1HfxUR-0006Ta-00@dorka.pomaz.szeredi.hu>
-Sender: linux-fsdevel-owner@vger.kernel.org
-List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org, mark.fasheh@oracle.com, reiserfs-dev@namesys.com, reiserfs-list@namesys.com
+Return-path: <reiserfs-list-return-30639-reiserfs=m.gmane.org@namesys.com>
+list-help: <mailto:reiserfs-list-help@namesys.com>
+list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
+list-post: <mailto:reiserfs-list@namesys.com>
+Errors-To: flx@namesys.com
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS List <reiserfs-list@namesys.com>, Reiserfs-dev <reiserfs-dev@namesys.com>, maestromae@kateos.org
 
-On Mon, Apr 23, 2007 at 02:17:55PM +0200, Miklos Szeredi wrote:
-> Nick,
-> 
-> Thanks for converting fuse, and testing.  Here's a minor update to
-> fs-fuse-aops.patch.
-> 
-> Miklos
-> 
-> ----
-> Convert fuse to new aops.
-> 
-> [mszeredi]
->  - don't send zero length write requests
->  - it is not legal for the filesystem to return with zero written bytes
-> 
-> Signed-off-by: Nick Piggin <npiggin@suse.de>
-> Signed-off-by: Miklos Szeredi <mszeredi@suse.cz>
+Hello everyone.
 
-Thanks, applied.
+reiser4-for-2.6.19-4.patch
+reiser4-for-2.6.20.patch
+reiser4-for-2.6.21.patch
+
+can be found as usual on
+ftp://ftp.namesys.com/pub/reiser4-for-2.6/
+
+Thanks,
+Edward.
