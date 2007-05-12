@@ -1,30 +1,33 @@
-From: "=?ISO-8859-2?Q?Grzegorz_Ja=B6kiewicz?=" <gryzman@gmail.com>
+From: Toby Thain <toby@smartgames.ca>
 Subject: Re: Why reiser does a disk write on every sync() call?
-Date: Sat, 12 May 2007 14:03:44 +0100
-Message-ID: <2f4958ff0705120603x4da5bcdq2c48c9394586f6c@mail.gmail.com>
-References: <08A9A3213527A6428774900A80DBD8D803BB80B4@xmb-sjc-222.amer.cisco.com>
-	 <200703272254.46500.vs@namesys.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30645-reiserfs=m.gmane.org@namesys.com>
+Date: Sat, 12 May 2007 10:56:49 -0400
+Message-ID: <E7801829-5267-4254-8FA0-E2A2316192BE@smartgames.ca>
+References: <08A9A3213527A6428774900A80DBD8D803BB80B4@xmb-sjc-222.amer.cisco.com> <200703272254.46500.vs@namesys.com> <2f4958ff0705120603x4da5bcdq2c48c9394586f6c@mail.gmail.com>
+Mime-Version: 1.0 (Apple Message framework v752.2)
+Content-Transfer-Encoding: quoted-printable
+Return-path: <reiserfs-list-return-30646-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
-        d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
-        b=PfQgIO6CfOUvWuOMM+ErWkkbVX5dPXjyBd3fDQnhb0MjDqEp+qpVCO+zhw21eM6xP/NWq+y9kJowQ+dcGlcDoufiSFD9xD+nI5O/g53ALTAr5xF720/FmLmPLWzLPLpPH77t+w/KYwJVO1mp/dftcifpesAp5qR7MMadZxr+WsE=
-In-Reply-To: <200703272254.46500.vs@namesys.com>
-Content-Disposition: inline
+In-Reply-To: <2f4958ff0705120603x4da5bcdq2c48c9394586f6c@mail.gmail.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="windows-1252"; format="flowed"
+To: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-sounds like useless waste of time and space
-You haven't stated the reason, why it has to create and commit empty
-transaction.
 
--- 
-GJ
+On 12-May-07, at 9:03 AM, Grzegorz Ja=C5=9Bkiewicz wrote:
+
+> sounds like useless waste of time and space
+> You haven't stated the reason, why it has to create and commit empty
+> transaction.
+
+Why'd you call sync()?
+
+--T
+
+>
+> --=20
+> GJ
+
