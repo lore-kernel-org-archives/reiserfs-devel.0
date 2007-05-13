@@ -1,33 +1,32 @@
-From: Toby Thain <toby@smartgames.ca>
-Subject: Re: Why reiser does a disk write on every sync() call?
-Date: Sat, 12 May 2007 10:56:49 -0400
-Message-ID: <E7801829-5267-4254-8FA0-E2A2316192BE@smartgames.ca>
-References: <08A9A3213527A6428774900A80DBD8D803BB80B4@xmb-sjc-222.amer.cisco.com> <200703272254.46500.vs@namesys.com> <2f4958ff0705120603x4da5bcdq2c48c9394586f6c@mail.gmail.com>
-Mime-Version: 1.0 (Apple Message framework v752.2)
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-30646-reiserfs=m.gmane.org@namesys.com>
+From: Devils-Hawk <devilshawk@aon.at>
+Subject: Re: Reiser4 patches
+Date: Sun, 13 May 2007 15:43:29 +0200
+Message-ID: <46471601.3090205@aon.at>
+References: <463DC4A2.4030708@namesys.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30648-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <2f4958ff0705120603x4da5bcdq2c48c9394586f6c@mail.gmail.com>
+In-Reply-To: <463DC4A2.4030708@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"; format="flowed"
-To: =?UTF-8?Q?Grzegorz_Ja=C5=9Bkiewicz?= <gryzman@gmail.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward@namesys.com>, reiserfs-list@namesys.com
 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
 
-On 12-May-07, at 9:03 AM, Grzegorz Ja=C5=9Bkiewicz wrote:
+reiser4-for-2.6.20.patch works fine now on my setup. No more panics in
+do_readpage_extent. System is up and running under heavy disk io for 3
+days now. Thank you very much, for the great work.
 
-> sounds like useless waste of time and space
-> You haven't stated the reason, why it has to create and commit empty
-> transaction.
+regards DevH
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
 
-Why'd you call sync()?
-
---T
-
->
-> --=20
-> GJ
-
+iD8DBQFGRxU4CbmO6P7mspMRCqbQAJ0S1JXYJ25WUMJTh4OYDEZ/cpdMhQCgmADW
+7lbiyiCSCNMPenk8Z4Rbvho=
+=XReE
+-----END PGP SIGNATURE-----
