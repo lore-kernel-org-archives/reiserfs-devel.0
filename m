@@ -1,43 +1,54 @@
-From: Laurent CARON <lcaron@lncsa.com>
+From: Christian Kujau <lists@nerdbynature.de>
 Subject: Re: Filesystem corruption
-Date: Mon, 28 May 2007 20:16:48 +0200
-Message-ID: <465B1C90.6040009@lncsa.com>
-References: <46598532.5060505@lncsa.com> <Pine.LNX.4.64.0705280025570.10429@sheep.housecafe.de> <Pine.LNX.4.64.0705281829510.6275@sheep.housecafe.de>
+Date: Tue, 29 May 2007 00:19:10 +0100 (BST)
+Message-ID: <alpine.DEB.0.99.0705290014560.20505@sheep.housecafe.de>
+References: <46598532.5060505@lncsa.com> <Pine.LNX.4.64.0705280025570.10429@sheep.housecafe.de>
+ <Pine.LNX.4.64.0705281829510.6275@sheep.housecafe.de>
+ <465B1C90.6040009@lncsa.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-30662-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30663-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <Pine.LNX.4.64.0705281829510.6275@sheep.housecafe.de>
+In-Reply-To: <465B1C90.6040009@lncsa.com>
+Sender: "evil@g-house.de"@mail.g-house.de
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+Content-Type: TEXT/PLAIN; format="flowed"; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-list@namesys.com
 
-Christian Kujau a =E9crit :
->> Please try to check the fs with a current version of reiserfsprogs=20
->> first. As the manpage advises, try --check first and use=20
->> --rebuild-tree only if you know what you're doing, IOW: have a current=20
->> backup.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Over the past few years, i experienced a few reiser corruption on=20
-various hardware (dell, hp, asus, sata, scsi, ide...) with the same=20
-symptoms (unredable file/dir).
-Always ran check which told me to run fix-fixable or rebuild-tree, which=20
-I did after ensuring of backup reliability, and the error was corrected=20
-(after eventually losing a few files i fortunately had in the backups).
+On Mon, 28 May 2007, Laurent CARON wrote:
+> Always ran check which told me to run fix-fixable or rebuild-tree, which I 
+> did after ensuring of backup reliability, and the error was corrected (after 
+> eventually losing a few files i fortunately had in the backups).
 
->>
->> Also, which kernel/machine is this running on? Do you know *why* this=20
->> corruption may have occured? Any recent hardware issues? Is ther=20
->> anything in the logs regarding fs/device errors?
+Well, lucky you :)
 
-Kernel is 2.6.19.
-The machine does not seem to have any HW issue, nothing strange in the=20
-logs..... :$
-This is just a plain Dell 2650 server with a bunch of SCSI HDD, software=20
-raid5 array, reiserfs on top of it.
+> The machine does not seem to have any HW issue, nothing strange in the 
+> logs..... :$
+> This is just a plain Dell 2650 server with a bunch of SCSI HDD, software 
+> raid5 array, reiserfs on top of it.
 
-Laurent
+...and no power-failures, bad memory whatsoever?
+Hm, too bad, since now it's unclear 
+what *caused* the corruptions in the first place. You'll probably 
+(hopefully) be able to correct this corruption with --rebuild-tree but 
+I'd have a close look on this filesystem for further curruptions.
+
+Christian.
+- -- 
+BOFH excuse #118:
+
+the router thinks its a printer.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQFGW2N/+A7rjkF8z0wRAg9yAJ9PgWYfv1KC1Z3o/cVXScqxTYDPfwCdHKDD
+Wy3p1M9ODJFfuqn0JaCEu8U=
+=uCAH
+-----END PGP SIGNATURE-----
 
