@@ -1,54 +1,41 @@
-From: Christian Kujau <lists@nerdbynature.de>
+From: "Vladimir V. Saveliev" <vs@namesys.com>
 Subject: Re: Filesystem corruption
-Date: Tue, 29 May 2007 00:19:10 +0100 (BST)
-Message-ID: <alpine.DEB.0.99.0705290014560.20505@sheep.housecafe.de>
-References: <46598532.5060505@lncsa.com> <Pine.LNX.4.64.0705280025570.10429@sheep.housecafe.de>
- <Pine.LNX.4.64.0705281829510.6275@sheep.housecafe.de>
- <465B1C90.6040009@lncsa.com>
+Date: Tue, 29 May 2007 12:15:47 +0400
+Message-ID: <200705291215.48354.vs@namesys.com>
+References: <46598532.5060505@lncsa.com> <465BA9AC.8040805@ultraviolet.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-30663-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30664-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <465B1C90.6040009@lncsa.com>
-Sender: "evil@g-house.de"@mail.g-house.de
+In-Reply-To: <465BA9AC.8040805@ultraviolet.org>
+Content-Disposition: inline
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; format="flowed"; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"
+To: Tracy R Reed <treed@ultraviolet.org>
+Cc: Laurent CARON <lcaron@lncsa.com>, reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hello
 
-On Mon, 28 May 2007, Laurent CARON wrote:
-> Always ran check which told me to run fix-fixable or rebuild-tree, which I 
-> did after ensuring of backup reliability, and the error was corrected (after 
-> eventually losing a few files i fortunately had in the backups).
+On Tuesday 29 May 2007 08:18, Tracy R Reed wrote:
+> Laurent CARON wrote:
+> > Seems to me it is a filesystem corruption.
+> 
+> Did I miss it or did not a single person ask you if this happened with
+> reiserfs 3 or 4?
+> 
 
-Well, lucky you :)
+Laurent mentioned rebuild-tree mode of reiserfsck. So the problem happened  with reiserfs 3.
 
-> The machine does not seem to have any HW issue, nothing strange in the 
-> logs..... :$
-> This is just a plain Dell 2650 server with a bunch of SCSI HDD, software 
-> raid5 array, reiserfs on top of it.
-
-...and no power-failures, bad memory whatsoever?
-Hm, too bad, since now it's unclear 
-what *caused* the corruptions in the first place. You'll probably 
-(hopefully) be able to correct this corruption with --rebuild-tree but 
-I'd have a close look on this filesystem for further curruptions.
-
-Christian.
-- -- 
-BOFH excuse #118:
-
-the router thinks its a printer.
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-iD8DBQFGW2N/+A7rjkF8z0wRAg9yAJ9PgWYfv1KC1Z3o/cVXScqxTYDPfwCdHKDD
-Wy3p1M9ODJFfuqn0JaCEu8U=
-=uCAH
------END PGP SIGNATURE-----
-
+> I would be quite surprised if this were reiser 3 and not so surprised if
+> it were reiser 4 which is still beta afaik.
+> 
+> Reiser has a nasty reputation for filesystem corruption more than any
+> other fs. I have always found reiser3 to be rock solid but you can't
+> mention using reiserfs in mixed company without someone accusing you of
+> throwing your data away. You would think the developers would be doing
+> more to counter this but I have been following reiserfs for years and
+> nobody seems to really care all that much.
+> 
