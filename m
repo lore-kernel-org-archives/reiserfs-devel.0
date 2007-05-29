@@ -1,58 +1,40 @@
-From: "Vladimir V. Saveliev" <vs@namesys.com>
+From: Toby Thain <toby@smartgames.ca>
 Subject: Re: Filesystem corruption
-Date: Tue, 29 May 2007 12:39:34 +0400
-Message-ID: <200705291239.34445.vs@namesys.com>
-References: <46598532.5060505@lncsa.com> <Pine.LNX.4.64.0705281829510.6275@sheep.housecafe.de> <465B1C90.6040009@lncsa.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Return-path: <reiserfs-list-return-30665-reiserfs=m.gmane.org@namesys.com>
+Date: Tue, 29 May 2007 09:36:13 -0300
+Message-ID: <1138AFDD-ED08-4390-A418-807A84342AE9@smartgames.ca>
+References: <46598532.5060505@lncsa.com> <465BA9AC.8040805@ultraviolet.org> <200705291215.48354.vs@namesys.com>
+Mime-Version: 1.0 (Apple Message framework v752.2)
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30666-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <465B1C90.6040009@lncsa.com>
-Content-Disposition: inline
+In-Reply-To: <200705291215.48354.vs@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Laurent CARON <lcaron@lncsa.com>
-Cc: reiserfs-list@namesys.com
+Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
+To: "Vladimir V. Saveliev" <vs@namesys.com>
+Cc: ReiserFS List <reiserfs-list@namesys.com>
 
-Hello
+>>  I have always found reiser3 to be rock solid
 
-On Monday 28 May 2007 22:16, Laurent CARON wrote:
-> Christian Kujau a =E9crit :
-> >> Please try to check the fs with a current version of reiserfsprogs=20
-> >> first. As the manpage advises, try --check first and use=20
-> >> --rebuild-tree only if you know what you're doing, IOW: have a current=
-=20
-> >> backup.
->=20
-> Over the past few years, i experienced a few reiser corruption on=20
-> various hardware (dell, hp, asus, sata, scsi, ide...) with the same=20
-> symptoms (unredable file/dir).
-> Always ran check which told me to run fix-fixable or rebuild-tree, which=
-=20
-> I did after ensuring of backup reliability, and the error was corrected=20
-> (after eventually losing a few files i fortunately had in the backups).
->=20
+My experienced too, over many server years.
 
-Would you run reiserfsck --check -l log and let us see the log?
-That may give a hint about which kind of corruptions do you have.
+>> but you can't
+>> mention using reiserfs in mixed company without someone accusing  
+>> you of
+>> throwing your data away.
 
-> >>
-> >> Also, which kernel/machine is this running on? Do you know *why* this=
-=20
-> >> corruption may have occured? Any recent hardware issues? Is ther=20
-> >> anything in the logs regarding fs/device errors?
->=20
-> Kernel is 2.6.19.
-> The machine does not seem to have any HW issue, nothing strange in the=20
-> logs..... :$
-> This is just a plain Dell 2650 server with a bunch of SCSI HDD, software=
-=20
-> raid5 array, reiserfs on top of it.
->=20
-> Laurent
->=20
->=20
->=20
+People who repeat this rarely have any direct experience of Reiser;  
+they repeat what they've heard; like all myths and legends they are  
+transmitted orally rather than based on scientific observation.
+
+>> You would think the developers would be doing
+>> more to counter this but I have been following reiserfs for years and
+>> nobody seems to really care all that much.
+>>
+
+Can't do much about human nature. MySQL suffers from the same  
+baseless poisoned folk wisdom.
+
+--Toby
