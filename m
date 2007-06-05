@@ -1,46 +1,43 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [ANNOUNCEMENT/ACTION REQUIRED] reiserfs-list is moving to a new
- home
-Date: Mon, 04 Jun 2007 14:11:17 -0400
-Message-ID: <466455C5.2050904@suse.com>
-References: <466438CA.30305@suse.com> <466453A5.9070105@namesys.com>
+From: Ingo Bormuth <ibormuth@efil.de>
+Subject: Re: Filesystem corruption
+Date: Wed, 6 Jun 2007 01:20:00 +0200
+Message-ID: <20070605232000.GA1283@efil.de>
+References: <160382.11806.qm@web31708.mail.mud.yahoo.com> <200705301503.15105.ninja@slaphack.com> <20070531001151.GA9933@efil.de> <4661F8ED.4070001@namesys.com> <20070604025528.GA19513@efil.de> <4663DE53.6000509@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-list-return-30685-reiserfs=m.gmane.org@namesys.com>
+Return-path: <reiserfs-list-return-30686-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
-In-Reply-To: <466453A5.9070105@namesys.com>
+Content-Disposition: inline
+In-Reply-To: <4663DE53.6000509@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward@namesys.com>
-Cc: ReiserFS List <reiserfs-list@namesys.com>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-list@namesys.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On 2007-06-04 13:41, Edward Shishkin wrote:
 
-Edward Shishkin wrote:
-> Fine, thanks!
-> Btw, I found your patches blackholed in google, so
-> you might want to resend it a bit later to the new home..
+> When performing mapping read (needed for execution, etc) reiser4
+> converts small files from tails to extents and back (your /bin/sleep
+> is less then 4 * blocksize, right?)
 
-I wondered where they went the second time. :)
+Yes, it's 15k. 
 
-My plan was to wait a few days for people to subscribe and then resend
-the queue. They're receiving testing already in the SUSE kernel of the
-day. That kernel will become openSUSE 10.3 alpha5 as well.
+The conversion is done on disk, even when mounted read only?  I'd like
+to see the logic in the code. In case you just know by heart, it' would
+be nice if you could give me a little hint where to start at.
 
-- -Jeff
+> Please, rebuild your kernel with the official patch
+> [...]
+> Please, report, if such data loss still takes place after upgrade.
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.5 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
+I'll keep you informed ...
 
-iD8DBQFGZFXFLPWxlyuTD7IRAvi3AJ0dFfb/D1FcA8YVuhvgktKwPiHIfQCeIs50
-8pr2dg7FS4KpMJm7A6gFWro=
-=S02+
------END PGP SIGNATURE-----
+Thanks.
+
+
+-- 
+Ingo Bormuth, voicebox & fax: +49-(0)-12125-10226517
+public key 86326EC9, http://ibormuth.efil.de/contact
+
