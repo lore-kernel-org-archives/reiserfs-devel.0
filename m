@@ -1,43 +1,23 @@
-From: Ingo Bormuth <ibormuth@efil.de>
+From: "Xu CanHao" <xucanhao@gmail.com>
 Subject: Re: Filesystem corruption
-Date: Wed, 6 Jun 2007 01:20:00 +0200
-Message-ID: <20070605232000.GA1283@efil.de>
-References: <160382.11806.qm@web31708.mail.mud.yahoo.com> <200705301503.15105.ninja@slaphack.com> <20070531001151.GA9933@efil.de> <4661F8ED.4070001@namesys.com> <20070604025528.GA19513@efil.de> <4663DE53.6000509@namesys.com>
+Date: Wed, 6 Jun 2007 11:10:45 +0800
+Message-ID: <6ec7a4340706052010r55ad07b5yc966f63622a443ae@mail.gmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-list-return-30686-reiserfs=m.gmane.org@namesys.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-list-return-30687-reiserfs=m.gmane.org@namesys.com>
 list-help: <mailto:reiserfs-list-help@namesys.com>
 list-unsubscribe: <mailto:reiserfs-list-unsubscribe@namesys.com>
 list-post: <mailto:reiserfs-list@namesys.com>
 Errors-To: flx@namesys.com
+DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
+        d=gmail.com; s=beta;
+        h=domainkey-signature:received:received:message-id:date:from:to:subject:mime-version:content-type:content-transfer-encoding:content-disposition;
+        b=U9+CazKOz9YjEVJdUvuQtVXftdPDPViQtS+y2JjtZAUyH55D+hFGv35/bSgGjyU5DzP7OEs7Z8OsGJGvW2N9T/bCApQ8V6iEJRjUcR/09Hw+CXPkhoVffPy+9S5Zjv4vy+lRrmSVtfShJmpkTgQ0x4+EIv1F9c1fOcladGzxYMg=
 Content-Disposition: inline
-In-Reply-To: <4663DE53.6000509@namesys.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-list@namesys.com
 
-On 2007-06-04 13:41, Edward Shishkin wrote:
-
-> When performing mapping read (needed for execution, etc) reiser4
-> converts small files from tails to extents and back (your /bin/sleep
-> is less then 4 * blocksize, right?)
-
-Yes, it's 15k. 
-
-The conversion is done on disk, even when mounted read only?  I'd like
-to see the logic in the code. In case you just know by heart, it' would
-be nice if you could give me a little hint where to start at.
-
-> Please, rebuild your kernel with the official patch
-> [...]
-> Please, report, if such data loss still takes place after upgrade.
-
-I'll keep you informed ...
-
-Thanks.
-
-
--- 
-Ingo Bormuth, voicebox & fax: +49-(0)-12125-10226517
-public key 86326EC9, http://ibormuth.efil.de/contact
-
+So maybe I'd suggest anybody take the _official_ reiser4 patch-set and
+_vanilla_ kernel source, these things should provide the maximum
+stability. My root filesystem with reiser4 never loses data.
