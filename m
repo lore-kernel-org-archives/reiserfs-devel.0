@@ -1,72 +1,99 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH 07/39] reiserfs: introduce reiserfs_error()
-Date: Fri, 08 Jun 2007 14:59:21 -0400
-Message-ID: <4669A709.70707@suse.com>
-References: <20070530220511.681688471@mail.jeffreymahoney.com> <20070530222058.368999370@mail.jeffreymahoney.com> <46688BE3.2000807@namesys.com>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: stupid end-user question about reiser4
+Date: Sat, 09 Jun 2007 01:25:04 +0400
+Message-ID: <4669C930.8010605@namesys.com>
+References: <200706081745.16699.volker.armin.hemmann@tu-clausthal.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <46688BE3.2000807@namesys.com>
+In-Reply-To: <200706081745.16699.volker.armin.hemmann@tu-clausthal.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: "Vladimir V. Saveliev" <vs@namesys.com>
-Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: "Hemmann, Volker Armin" <volker.armin.hemmann@tu-clausthal.de>
+Cc: reiserfs-devel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hemmann, Volker Armin wrote:
 
-Vladimir V. Saveliev wrote:
-> Jeff Mahoney wrote:
->>  Although reiserfs can currently handle severe errors such as journal failure,
->>  it cannot handle less severe errors like metadata i/o failure. The following
->>  patch adds a reiserfs_error() function akin to the one in ext3.
->>
->>  Subsequent patches will use this new error handler to handle errors more
->>  gracefully in general.
->>
->>
->> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
->>
->> --
->>  fs/reiserfs/prints.c        |   33 +++++++++++++++++++++++++++++++++
->>  include/linux/reiserfs_fs.h |    3 +++
->>  2 files changed, 36 insertions(+)
->>
->> --- a/fs/reiserfs/prints.c	2007-05-30 15:43:37.000000000 -0400
->> +++ b/fs/reiserfs/prints.c	2007-05-30 17:55:06.000000000 -0400
->> @@ -373,6 +373,39 @@ void __reiserfs_panic(struct super_block
->>  		      id ? id : "", id ? " " : "", function, error_buf);
->>  }
->>  
->> +void reiserfs_handle_error(struct super_block *sb, int errno)
->> +{
->> +
->> +	if (sb->s_flags & MS_RDONLY)
->> +		return;
->> +
->> +	if (reiserfs_error_ro(sb)) {
->> +		reiserfs_info(sb, "Remounting filesystem read-only\n");
->> +		sb->s_flags |= MS_RDONLY;
->> +	} else {
->> +		reiserfs_journal_abort(sb, errno);
->> +	}
-> 
-> shouldn't reiserfs_journal_abort be called in either case?
+>Hi,
+> =20
+>
 
-Yeah, you're probably right. I mostly lifted the logic for this from
-ext3, which is less fragile in that sense.
 
-- -Jeff
+Hello.
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.5 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
+>I am using reiser4 for a couple of weeks for /home and some other stuf=
+f that I=20
+>backup regularly or not really care about.
+>
+>Today I accidentally hit reset instead of the power button (I use the =
+power=20
+>button to switch to a vt sometimes) and upon reboot I got the usual me=
+ssages=20
+>about the reiserfs partitions,  but nothing from the reiser4's.
+>
+>[  45.727197] reiser4: sda5: found disk format 4.0.0.
+>[   51.014021] reiser4: sda6: found disk format 4.0.0.
+>[   52.317456] ReiserFS: sdb3: found reiserfs format "3.6" with standa=
+rd=20
+>journal
+>[   52.317465] ReiserFS: sdb3: using journaled data mode
+>[   52.345958] ReiserFS: sdb3: journal params: device sdb3, size 8192,=
+ journal=20
+>first block 18, max trans len 1024, max batch 900, max commit age 30, =
+max=20
+>trans age 30
+>[   52.347407] ReiserFS: sdb3: checking transaction log (sdb3)
+>[   52.356272] ReiserFS: sdb3: replayed 1 transactions in 0 seconds
+>[   52.387631] ReiserFS: sdb3: Using r5 hash to sort names
+>[   52.416347] ReiserFS: sdb5: found reiserfs format "3.6" with standa=
+rd=20
+>journal
+>[   52.416357] ReiserFS: sdb5: using ordered data mode
+>[   52.428653] ReiserFS: sdb5: journal params: device sdb5, size 8192,=
+ journal=20
+>first block 18, max trans len 1024, max batch 900, max commit age 30, =
+max=20
+>trans age 30
+>[   52.430128] ReiserFS: sdb5: checking transaction log (sdb5)
+>[   52.437570] ReiserFS: sdb5: replayed 1 transactions in 0 seconds
+>[   52.484026] ReiserFS: sdb5: Using r5 hash to sort names
+>[   52.517833] reiser4: sdb6: found disk format 4.0.0.
+>
+>Is this normal behaviour of reiser4? to just mount silently and go on =
+as if=20
+>nothing happend?
+>
 
-iD8DBQFGaacJLPWxlyuTD7IRAvxeAJ9gj/bPaTeCI6TLo8lvT8fA8ziGnQCgori6
-xmnW1N/FAUefyCVl42HEYIo=
-=9vBW
------END PGP SIGNATURE-----
+yes
+
+> Or is there a bug in the init-scripts?
+> =20
+>
+
+your scripts are alright.
+
+Thanks,
+Edward.
+
+>I haven't found anything about this in the documentation, so I am aski=
+ng here.=20
+>If this is explained somewhere, I would be very happy about a link.
+>
+>Gl=FCck Auf
+>Volker
+>-
+>To unsubscribe from this list: send the line "unsubscribe reiserfs-dev=
+el" in
+>the body of a message to majordomo@vger.kernel.org
+>More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+> =20
+>
+
+-
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
