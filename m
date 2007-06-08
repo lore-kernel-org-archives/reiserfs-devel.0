@@ -1,61 +1,67 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH 33/39] reiserfs: split right balancing part of	balance_leaf()
- off
-Date: Thu, 07 Jun 2007 21:28:55 -0400
-Message-ID: <4668B0D7.3050100@suse.com>
-References: <20070530220511.681688471@mail.jeffreymahoney.com>	 <20070530222101.190219224@mail.jeffreymahoney.com>	 <4668805C.2070408@namesys.com>  <46688053.4050409@suse.com> <1181257975.21257.9.camel@localhost>
+From: "Hemmann, Volker Armin" <volker.armin.hemmann@tu-clausthal.de>
+Subject: stupid end-user question about reiser4
+Date: Fri, 8 Jun 2007 17:45:16 +0200
+Message-ID: <200706081745.16699.volker.armin.hemmann@tu-clausthal.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1181257975.21257.9.camel@localhost>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Zan Lynx <zlynx@acm.org>
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-devel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hi,
 
-Zan Lynx wrote:
-> On Thu, 2007-06-07 at 18:01 -0400, Jeff Mahoney wrote:
->> Vladimir V. Saveliev wrote:
-> [cut] 
->>> shouldn't function name prefixes be more consistent? Either bl_ or
->>> balance_leaf everywhere?
->>>
->> Yes, absolutely. Initially they were, but
->> balance_leaf_function_subfunction(parameter list) ended up with the
->> parameters grouped along the right margin. I wouldn't be opposed to
->> changing them all to bl_* except for balance_leaf itself.
-> 
-> Or you could trade vertical space for horizontal space and do like:
-> 
-> static void
-> balance_leaf_right_paste_de_partial(
-> 	struct tree_balance *tb, struct item_head *ih,
-> 	const char *body, int flag, int *zeros_num,
-> 	int item_pos, int *pos_in_item
-> ) {
-> 
-> I always thought wasting all that horizontal space in parameter lists
-> was silly just to save some vertical, and so many people get the
-> tab-stop/space mix wrong.
+I am using reiser4 for a couple of weeks for /home and some other stuff=
+ that I=20
+backup regularly or not really care about.
 
-Well, I actually meant with the call sites, where the start of the
-funciton call is already two or three tab stops in. The next revision
-uses bl_* for all of them.
+Today I accidentally hit reset instead of the power button (I use the p=
+ower=20
+button to switch to a vt sometimes) and upon reboot I got the usual mes=
+sages=20
+about the reiserfs partitions,  but nothing from the reiser4's.
 
-- -Jeff
+[  45.727197] reiser4: sda5: found disk format 4.0.0.
+[   51.014021] reiser4: sda6: found disk format 4.0.0.
+[   52.317456] ReiserFS: sdb3: found reiserfs format "3.6" with standar=
+d=20
+journal
+[   52.317465] ReiserFS: sdb3: using journaled data mode
+[   52.345958] ReiserFS: sdb3: journal params: device sdb3, size 8192, =
+journal=20
+first block 18, max trans len 1024, max batch 900, max commit age 30, m=
+ax=20
+trans age 30
+[   52.347407] ReiserFS: sdb3: checking transaction log (sdb3)
+[   52.356272] ReiserFS: sdb3: replayed 1 transactions in 0 seconds
+[   52.387631] ReiserFS: sdb3: Using r5 hash to sort names
+[   52.416347] ReiserFS: sdb5: found reiserfs format "3.6" with standar=
+d=20
+journal
+[   52.416357] ReiserFS: sdb5: using ordered data mode
+[   52.428653] ReiserFS: sdb5: journal params: device sdb5, size 8192, =
+journal=20
+first block 18, max trans len 1024, max batch 900, max commit age 30, m=
+ax=20
+trans age 30
+[   52.430128] ReiserFS: sdb5: checking transaction log (sdb5)
+[   52.437570] ReiserFS: sdb5: replayed 1 transactions in 0 seconds
+[   52.484026] ReiserFS: sdb5: Using r5 hash to sort names
+[   52.517833] reiser4: sdb6: found disk format 4.0.0.
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.5 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
+Is this normal behaviour of reiser4? to just mount silently and go on a=
+s if=20
+nothing happend? Or is there a bug in the init-scripts?
+I haven't found anything about this in the documentation, so I am askin=
+g here.=20
+If this is explained somewhere, I would be very happy about a link.
 
-iD8DBQFGaLDXLPWxlyuTD7IRArMUAJ49r+82Hbj7TpHZOAIf3q1z3egV5ACeN+IH
-iJroW0vmxIY1I6fiNDy/Dyg=
-=p/e1
------END PGP SIGNATURE-----
+Gl=FCck Auf
+Volker
+-
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
