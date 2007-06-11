@@ -1,10 +1,10 @@
 From: jeffm@suse.com
-Subject: [patch 03/40] reiserfs: use is_reusable to catch corruption
-Date: Mon, 11 Jun 2007 15:03:12 -0400
-Message-ID: <20070611190629.567169530@suse.com>
+Subject: [patch 06/40] reiserfs: make some warnings informational
+Date: Mon, 11 Jun 2007 15:03:15 -0400
+Message-ID: <20070611190629.913621555@suse.com>
 References: <20070611190309.532091171@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-use-is_reusable.diff
+Content-Disposition: inline; filename=reiserfs-reiserfs_info.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -12,72 +12,88 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
- This patch builds in is_reusable() unconditionally and uses it to catch
- corruption before it reaches the block freeing paths.
+ In several places, reiserfs_warning is used when there is no warning, just
+ a notice. This patch changes some of them to indicate that the message
+ is merely informational.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
 --
+ fs/reiserfs/bitmap.c |    4 ++--
+ fs/reiserfs/super.c  |   14 ++++++--------
+ fs/reiserfs/xattr.c  |   10 ++++------
+ 3 files changed, 12 insertions(+), 16 deletions(-)
 
- fs/reiserfs/bitmap.c |   21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
-
---- a/fs/reiserfs/bitmap.c	2007-06-11 14:49:05.000000000 -0400
-+++ b/fs/reiserfs/bitmap.c	2007-06-11 14:50:11.000000000 -0400
-@@ -56,7 +56,6 @@ static inline void get_bit_address(struc
- 	*offset = block & ((s->s_blocksize << 3) - 1);
+--- a/fs/reiserfs/bitmap.c	2007-06-11 14:49:32.000000000 -0400
++++ b/fs/reiserfs/bitmap.c	2007-06-11 14:50:10.000000000 -0400
+@@ -40,7 +40,7 @@
+ 
+ #define SET_OPTION(optname) \
+    do { \
+-        reiserfs_warning(s, "reiserfs: option \"%s\" is set", #optname); \
++        reiserfs_info(s, "block allocator option \"%s\" is set", #optname); \
+         set_bit(_ALLOC_ ## optname , &SB_ALLOC_OPTS(s)); \
+     } while(0)
+ #define TEST_OPTION(optname, s) \
+@@ -633,7 +633,7 @@ int reiserfs_parse_alloc_options(struct 
+ 		return 1;
+ 	}
+ 
+-	reiserfs_warning(s, "allocator options = [%08x]\n", SB_ALLOC_OPTS(s));
++	reiserfs_info(s, "allocator options = [%08x]\n", SB_ALLOC_OPTS(s));
+ 	return 0;
  }
  
--#ifdef CONFIG_REISERFS_CHECK
- int is_reusable(struct super_block *s, b_blocknr_t block, int bit_value)
- {
- 	int bmap, offset;
-@@ -106,7 +105,6 @@ int is_reusable(struct super_block *s, b
+--- a/fs/reiserfs/super.c	2007-06-11 14:49:05.000000000 -0400
++++ b/fs/reiserfs/super.c	2007-06-11 14:50:10.000000000 -0400
+@@ -1308,13 +1308,11 @@ static int read_super_block(struct super
+ 		/* magic is of non-standard journal filesystem, look at s_version to
+ 		   find which format is in use */
+ 		if (sb_version(rs) == REISERFS_VERSION_2)
+-			reiserfs_warning(s,
+-					 "read_super_block: found reiserfs format \"3.6\""
+-					 " with non-standard journal");
++			reiserfs_info(s, "found reiserfs format \"3.6\""
++			              " with non-standard journal\n");
+ 		else if (sb_version(rs) == REISERFS_VERSION_1)
+-			reiserfs_warning(s,
+-					 "read_super_block: found reiserfs format \"3.5\""
+-					 " with non-standard journal");
++			reiserfs_info(s, "found reiserfs format \"3.5\""
++			              " with non-standard journal\n");
+ 		else {
+ 			reiserfs_warning(s,
+ 					 "sh-2012: read_super_block: found unknown "
+@@ -1393,8 +1391,8 @@ static __u32 find_hash_out(struct super_
+ 			if (reiserfs_rupasov_hash(s)) {
+ 				hash = YURA_HASH;
+ 			}
+-			reiserfs_warning(s, "FS seems to be empty, autodetect "
+-					 "is using the default hash");
++			reiserfs_info(s, "FS seems to be empty, autodetect "
++					 "is using the default hash\n");
+ 			break;
+ 		}
+ 		r5hash = GET_HASH_VALUE(r5_hash(de.de_name, de.de_namelen));
+--- a/fs/reiserfs/xattr.c	2007-06-11 14:49:31.000000000 -0400
++++ b/fs/reiserfs/xattr.c	2007-06-11 14:50:10.000000000 -0400
+@@ -1227,12 +1227,10 @@ int reiserfs_xattr_init(struct super_blo
+ 				}
  
- 	return 1;
- }
--#endif				/* CONFIG_REISERFS_CHECK */
- 
- /* searches in journal structures for a given block number (bmap, off). If block
-    is found in reiserfs journal it suggests next free block candidate to test. */
-@@ -434,12 +432,19 @@ void reiserfs_free_block(struct reiserfs
- 			 int for_unformatted)
- {
- 	struct super_block *s = th->t_super;
--
- 	BUG_ON(!th->t_trans_id);
- 
- 	RFALSE(!s, "vs-4061: trying to free block on nonexistent device");
--	RFALSE(is_reusable(s, block, 1) == 0,
--	       "vs-4071: can not free such block");
-+	if (!is_reusable(s, block, 1))
-+		return;
-+
-+	if (sb_block_count(REISERFS_SB(s)->s_rs) > blocks) {
-+		reiserfs_error(th->t_super, "bitmap-4072",
-+		               "Trying to free block outside file system "
-+			       "boundaries (%lu > %lu)",
-+			       block, blocks);
-+		return;
-+	}
- 	/* mark it before we clear it, just in case */
- 	journal_mark_freed(th, s, block);
- 	_reiserfs_free_block(th, inode, block, for_unformatted);
-@@ -449,11 +454,11 @@ void reiserfs_free_block(struct reiserfs
- static void reiserfs_free_prealloc_block(struct reiserfs_transaction_handle *th,
- 					 struct inode *inode, b_blocknr_t block)
- {
-+	BUG_ON(!th->t_trans_id);
- 	RFALSE(!th->t_super,
- 	       "vs-4060: trying to free block on nonexistent device");
--	RFALSE(is_reusable(th->t_super, block, 1) == 0,
--	       "vs-4070: can not free such block");
--	BUG_ON(!th->t_trans_id);
-+	if (!is_reusable(th->t_super, block, 1))
-+		return;
- 	_reiserfs_free_block(th, inode, block, 1);
- }
- 
+ 				if (dentry && dentry->d_inode)
+-					reiserfs_warning(s,
+-							 "Created %s on %s - reserved for "
+-							 "xattr storage.",
+-							 PRIVROOT_NAME,
+-							 reiserfs_bdevname
+-							 (inode->i_sb));
++					reiserfs_info(s, "Created %s - "
++					              "reserved for xattr "
++						      "storage.\n",
++						      PRIVROOT_NAME);
+ 			} else if (!dentry->d_inode) {
+ 				dput(dentry);
+ 				dentry = NULL;
 
 -- 
 Jeff Mahoney
