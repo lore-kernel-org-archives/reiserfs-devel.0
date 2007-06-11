@@ -1,10 +1,10 @@
 From: jeffm@suse.com
-Subject: [patch 06/40] reiserfs: make some warnings informational
-Date: Mon, 11 Jun 2007 15:03:15 -0400
-Message-ID: <20070611190629.913621555@suse.com>
+Subject: [patch 04/40] reiserfs: make bitmap use cached first zero bit
+Date: Mon, 11 Jun 2007 15:03:13 -0400
+Message-ID: <20070611190629.688573338@suse.com>
 References: <20070611190309.532091171@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-reiserfs_info.diff
+Content-Disposition: inline; filename=reiserfs-bitmap-use-first-zero-hint.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -12,88 +12,34 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
- In several places, reiserfs_warning is used when there is no warning, just
- a notice. This patch changes some of them to indicate that the message
- is merely informational.
+ Currently, the bitmap code uses half of the hinting data gathered and cached
+ and wastes the other half. We'll skip completely full bitmaps, but start
+ scanning in bitmaps at locations where if we consulted the zero bit hint,
+ we'd know there aren't any free bits available.
+
+ This patch uses the first zero hint to bump the beginning of the search
+ window to where we know there is at least one zero bit.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
 
---
- fs/reiserfs/bitmap.c |    4 ++--
- fs/reiserfs/super.c  |   14 ++++++--------
- fs/reiserfs/xattr.c  |   10 ++++------
- 3 files changed, 12 insertions(+), 16 deletions(-)
+ fs/reiserfs/bitmap.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 --- a/fs/reiserfs/bitmap.c	2007-06-11 14:49:32.000000000 -0400
 +++ b/fs/reiserfs/bitmap.c	2007-06-11 14:50:10.000000000 -0400
-@@ -40,7 +40,7 @@
- 
- #define SET_OPTION(optname) \
-    do { \
--        reiserfs_warning(s, "reiserfs: option \"%s\" is set", #optname); \
-+        reiserfs_info(s, "block allocator option \"%s\" is set", #optname); \
-         set_bit(_ALLOC_ ## optname , &SB_ALLOC_OPTS(s)); \
-     } while(0)
- #define TEST_OPTION(optname, s) \
-@@ -633,7 +633,7 @@ int reiserfs_parse_alloc_options(struct 
- 		return 1;
- 	}
- 
--	reiserfs_warning(s, "allocator options = [%08x]\n", SB_ALLOC_OPTS(s));
-+	reiserfs_info(s, "allocator options = [%08x]\n", SB_ALLOC_OPTS(s));
- 	return 0;
- }
- 
---- a/fs/reiserfs/super.c	2007-06-11 14:49:05.000000000 -0400
-+++ b/fs/reiserfs/super.c	2007-06-11 14:50:10.000000000 -0400
-@@ -1308,13 +1308,11 @@ static int read_super_block(struct super
- 		/* magic is of non-standard journal filesystem, look at s_version to
- 		   find which format is in use */
- 		if (sb_version(rs) == REISERFS_VERSION_2)
--			reiserfs_warning(s,
--					 "read_super_block: found reiserfs format \"3.6\""
--					 " with non-standard journal");
-+			reiserfs_info(s, "found reiserfs format \"3.6\""
-+			              " with non-standard journal\n");
- 		else if (sb_version(rs) == REISERFS_VERSION_1)
--			reiserfs_warning(s,
--					 "read_super_block: found reiserfs format \"3.5\""
--					 " with non-standard journal");
-+			reiserfs_info(s, "found reiserfs format \"3.5\""
-+			              " with non-standard journal\n");
- 		else {
- 			reiserfs_warning(s,
- 					 "sh-2012: read_super_block: found unknown "
-@@ -1393,8 +1391,8 @@ static __u32 find_hash_out(struct super_
- 			if (reiserfs_rupasov_hash(s)) {
- 				hash = YURA_HASH;
- 			}
--			reiserfs_warning(s, "FS seems to be empty, autodetect "
--					 "is using the default hash");
-+			reiserfs_info(s, "FS seems to be empty, autodetect "
-+					 "is using the default hash\n");
- 			break;
+@@ -166,7 +166,10 @@ static int scan_bitmap_block(struct reis
+ 			return 0;	// No free blocks in this bitmap
  		}
- 		r5hash = GET_HASH_VALUE(r5_hash(de.de_name, de.de_namelen));
---- a/fs/reiserfs/xattr.c	2007-06-11 14:49:31.000000000 -0400
-+++ b/fs/reiserfs/xattr.c	2007-06-11 14:50:10.000000000 -0400
-@@ -1227,12 +1227,10 @@ int reiserfs_xattr_init(struct super_blo
- 				}
  
- 				if (dentry && dentry->d_inode)
--					reiserfs_warning(s,
--							 "Created %s on %s - reserved for "
--							 "xattr storage.",
--							 PRIVROOT_NAME,
--							 reiserfs_bdevname
--							 (inode->i_sb));
-+					reiserfs_info(s, "Created %s - "
-+					              "reserved for xattr "
-+						      "storage.\n",
-+						      PRIVROOT_NAME);
- 			} else if (!dentry->d_inode) {
- 				dput(dentry);
- 				dentry = NULL;
+-		/* search for a first zero bit -- beggining of a window */
++		if (*beg < bi->first_zero_hint)
++			*beg = bi->first_zero_hint;
++
++		/* search for a first zero bit -- beginning of a window */
+ 		*beg = reiserfs_find_next_zero_le_bit
+ 		    ((unsigned long *)(bh->b_data), boundary, *beg);
+ 
 
 -- 
 Jeff Mahoney
