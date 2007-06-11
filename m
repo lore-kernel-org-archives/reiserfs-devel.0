@@ -1,10 +1,10 @@
 From: jeffm@suse.com
-Subject: [patch 26/40] reiserfs: rename p_s_bh to bh
-Date: Mon, 11 Jun 2007 15:03:35 -0400
-Message-ID: <20070611190632.259323087@suse.com>
+Subject: [patch 24/40] reiserfs: strip trailing whitespace
+Date: Mon, 11 Jun 2007 15:03:33 -0400
+Message-ID: <20070611190632.008682925@suse.com>
 References: <20070611190309.532091171@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-rename-p_s_bh.diff
+Content-Disposition: inline; filename=reiserfs-strip-whitespace.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -12,491 +12,1383 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
- This patch is a simple s/p_s_bh/bh/g to the reiserfs code. This is the second
- in a series of patches to rip out some of the awful variable naming in
- reiserfs.
+ This patch strips trailing whitespace from the reiserfs code.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
 ---
+ fs/reiserfs/README             |    4 -
+ fs/reiserfs/do_balan.c         |   14 ++--
+ fs/reiserfs/file.c             |   14 ++--
+ fs/reiserfs/fix_node.c         |   38 ++++++------
+ fs/reiserfs/hashes.c           |    2 
+ fs/reiserfs/ibalance.c         |   10 +--
+ fs/reiserfs/inode.c            |   52 ++++++++---------
+ fs/reiserfs/ioctl.c            |    2 
+ fs/reiserfs/journal.c          |  124 ++++++++++++++++++++---------------------
+ fs/reiserfs/lbalance.c         |   18 ++---
+ fs/reiserfs/namei.c            |   30 ++++-----
+ fs/reiserfs/objectid.c         |    2 
+ fs/reiserfs/prints.c           |   26 ++++----
+ fs/reiserfs/procfs.c           |    2 
+ fs/reiserfs/resize.c           |    6 -
+ fs/reiserfs/stree.c            |    8 +-
+ fs/reiserfs/super.c            |   10 +--
+ fs/reiserfs/tail_conversion.c  |    2 
+ include/linux/reiserfs_fs_sb.h |   14 ++--
+ 19 files changed, 189 insertions(+), 189 deletions(-)
 
- fs/reiserfs/fix_node.c      |   88 ++++++++++++++++++++++----------------------
- fs/reiserfs/stree.c         |   62 +++++++++++++++----------------
- include/linux/reiserfs_fs.h |   36 +++++++++---------
- 3 files changed, 93 insertions(+), 93 deletions(-)
-
---- a/fs/reiserfs/fix_node.c	2007-06-11 14:49:39.000000000 -0400
-+++ b/fs/reiserfs/fix_node.c	2007-06-11 14:50:03.000000000 -0400
-@@ -1885,7 +1885,7 @@ static int check_balance(int mode,
- /* Check whether parent at the path is the really parent of the current node.*/
- static int get_direct_parent(struct tree_balance *p_s_tb, int n_h)
+--- a/fs/reiserfs/README	2007-06-11 14:49:03.000000000 -0400
++++ b/fs/reiserfs/README	2007-06-11 14:49:39.000000000 -0400
+@@ -1,4 +1,4 @@
+-[LICENSING] 
++[LICENSING]
+ 
+ ReiserFS is hereby licensed under the GNU General
+ Public License version 2.
+@@ -31,7 +31,7 @@ the GPL as not allowing those additional
+ it wrongly, and Richard Stallman agrees with me, when carefully read
+ you can see that those restrictions on additional terms do not apply
+ to the owner of the copyright, and my interpretation of this shall
+-govern for this license.  
++govern for this license.
+ 
+ Finally, nothing in this license shall be interpreted to allow you to
+ fail to fairly credit me, or to remove my credits, without my
+--- a/fs/reiserfs/do_balan.c	2007-06-11 14:49:34.000000000 -0400
++++ b/fs/reiserfs/do_balan.c	2007-06-11 14:50:01.000000000 -0400
+@@ -39,21 +39,21 @@ inline void do_balance_mark_leaf_dirty(s
+ #define do_balance_mark_internal_dirty do_balance_mark_leaf_dirty
+ #define do_balance_mark_sb_dirty do_balance_mark_leaf_dirty
+ 
+-/* summary: 
++/* summary:
+  if deleting something ( tb->insert_size[0] < 0 )
+    return(balance_leaf_when_delete()); (flag d handled here)
+  else
+    if lnum is larger than 0 we put items into the left node
+    if rnum is larger than 0 we put items into the right node
+    if snum1 is larger than 0 we put items into the new node s1
+-   if snum2 is larger than 0 we put items into the new node s2 
++   if snum2 is larger than 0 we put items into the new node s2
+ Note that all *num* count new items being created.
+ 
+ It would be easier to read balance_leaf() if each of these summary
+ lines was a separate procedure rather than being inlined.  I think
+ that there are many passages here and in balance_leaf_when_delete() in
+ which two calls to one procedure can replace two passages, and it
+-might save cache space and improve software maintenance costs to do so.  
++might save cache space and improve software maintenance costs to do so.
+ 
+ Vladimir made the perceptive comment that we should offload most of
+ the decision making in this function into fix_nodes/check_balance, and
+@@ -258,15 +258,15 @@ static int balance_leaf(struct tree_bala
+     )
  {
--	struct buffer_head *p_s_bh;
-+	struct buffer_head *bh;
- 	struct treepath *p_s_path = p_s_tb->tb_path;
- 	int n_position,
- 	    n_path_offset = PATH_H_PATH_OFFSET(p_s_tb->tb_path, n_h);
-@@ -1907,21 +1907,21 @@ static int get_direct_parent(struct tree
- 	}
+ 	struct buffer_head *tbS0 = PATH_PLAST_BUFFER(tb->tb_path);
+-	int item_pos = PATH_LAST_POSITION(tb->tb_path);	/*  index into the array of item headers in S[0] 
++	int item_pos = PATH_LAST_POSITION(tb->tb_path);	/*  index into the array of item headers in S[0]
+ 							   of the affected item */
+ 	struct buffer_info bi;
+ 	struct buffer_head *S_new[2];	/* new nodes allocated to hold what could not fit into S */
+ 	int snum[2];		/* number of items that will be placed
+ 				   into S_new (includes partially shifted
+ 				   items) */
+-	int sbytes[2];		/* if an item is partially shifted into S_new then 
+-				   if it is a directory item 
++	int sbytes[2];		/* if an item is partially shifted into S_new then
++				   if it is a directory item
+ 				   it is the number of entries from the item that are shifted into S_new
+ 				   else
+ 				   it is the number of bytes from the item that are shifted into S_new
+@@ -2036,7 +2036,7 @@ static inline void do_balance_starts(str
+ 	/* store_print_tb (tb); */
  
- 	if (!B_IS_IN_TREE
--	    (p_s_bh = PATH_OFFSET_PBUFFER(p_s_path, n_path_offset - 1)))
-+	    (bh = PATH_OFFSET_PBUFFER(p_s_path, n_path_offset - 1)))
- 		return REPEAT_SEARCH;	/* Parent in the path is not in the tree. */
- 
- 	if ((n_position =
- 	     PATH_OFFSET_POSITION(p_s_path,
--				  n_path_offset - 1)) > B_NR_ITEMS(p_s_bh))
-+				  n_path_offset - 1)) > B_NR_ITEMS(bh))
- 		return REPEAT_SEARCH;
- 
--	if (B_N_CHILD_NUM(p_s_bh, n_position) !=
-+	if (B_N_CHILD_NUM(bh, n_position) !=
- 	    PATH_OFFSET_PBUFFER(p_s_path, n_path_offset)->b_blocknr)
- 		/* Parent in the path is not parent of the current node in the tree. */
- 		return REPEAT_SEARCH;
- 
--	if (buffer_locked(p_s_bh)) {
--		__wait_on_buffer(p_s_bh);
-+	if (buffer_locked(bh)) {
-+		__wait_on_buffer(bh);
- 		if (FILESYSTEM_CHANGED_TB(p_s_tb))
- 			return REPEAT_SEARCH;
- 	}
-@@ -1941,29 +1941,29 @@ static int get_neighbors(struct tree_bal
- 	    n_path_offset = PATH_H_PATH_OFFSET(p_s_tb->tb_path, n_h + 1);
- 	unsigned long n_son_number;
- 	struct super_block *sb = p_s_tb->tb_sb;
--	struct buffer_head *p_s_bh;
-+	struct buffer_head *bh;
- 
- 	PROC_INFO_INC(sb, get_neighbors[n_h]);
- 
- 	if (p_s_tb->lnum[n_h]) {
- 		/* We need left neighbor to balance S[n_h]. */
- 		PROC_INFO_INC(sb, need_l_neighbor[n_h]);
--		p_s_bh = PATH_OFFSET_PBUFFER(p_s_tb->tb_path, n_path_offset);
-+		bh = PATH_OFFSET_PBUFFER(p_s_tb->tb_path, n_path_offset);
- 
--		RFALSE(p_s_bh == p_s_tb->FL[n_h] &&
-+		RFALSE(bh == p_s_tb->FL[n_h] &&
- 		       !PATH_OFFSET_POSITION(p_s_tb->tb_path, n_path_offset),
- 		       "PAP-8270: invalid position in the parent");
- 
- 		n_child_position =
--		    (p_s_bh ==
-+		    (bh ==
- 		     p_s_tb->FL[n_h]) ? p_s_tb->lkey[n_h] : B_NR_ITEMS(p_s_tb->
- 								       FL[n_h]);
- 		n_son_number = B_N_CHILD_NUM(p_s_tb->FL[n_h], n_child_position);
--		p_s_bh = sb_bread(sb, n_son_number);
--		if (!p_s_bh)
-+		bh = sb_bread(sb, n_son_number);
-+		if (!bh)
- 			return IO_ERROR;
- 		if (FILESYSTEM_CHANGED_TB(p_s_tb)) {
--			brelse(p_s_bh);
-+			brelse(bh);
- 			PROC_INFO_INC(sb, get_neighbors_restart[n_h]);
- 			return REPEAT_SEARCH;
- 		}
-@@ -1971,48 +1971,48 @@ static int get_neighbors(struct tree_bal
- 		RFALSE(!B_IS_IN_TREE(p_s_tb->FL[n_h]) ||
- 		       n_child_position > B_NR_ITEMS(p_s_tb->FL[n_h]) ||
- 		       B_N_CHILD_NUM(p_s_tb->FL[n_h], n_child_position) !=
--		       p_s_bh->b_blocknr, "PAP-8275: invalid parent");
--		RFALSE(!B_IS_IN_TREE(p_s_bh), "PAP-8280: invalid child");
-+		       bh->b_blocknr, "PAP-8275: invalid parent");
-+		RFALSE(!B_IS_IN_TREE(bh), "PAP-8280: invalid child");
- 		RFALSE(!n_h &&
--		       B_FREE_SPACE(p_s_bh) !=
--		       MAX_CHILD_SIZE(p_s_bh) -
-+		       B_FREE_SPACE(bh) !=
-+		       MAX_CHILD_SIZE(bh) -
- 		       dc_size(B_N_CHILD(p_s_tb->FL[0], n_child_position)),
- 		       "PAP-8290: invalid child size of left neighbor");
- 
- 		brelse(p_s_tb->L[n_h]);
--		p_s_tb->L[n_h] = p_s_bh;
-+		p_s_tb->L[n_h] = bh;
- 	}
- 
- 	if (p_s_tb->rnum[n_h]) {	/* We need right neighbor to balance S[n_path_offset]. */
- 		PROC_INFO_INC(sb, need_r_neighbor[n_h]);
--		p_s_bh = PATH_OFFSET_PBUFFER(p_s_tb->tb_path, n_path_offset);
-+		bh = PATH_OFFSET_PBUFFER(p_s_tb->tb_path, n_path_offset);
- 
--		RFALSE(p_s_bh == p_s_tb->FR[n_h] &&
-+		RFALSE(bh == p_s_tb->FR[n_h] &&
- 		       PATH_OFFSET_POSITION(p_s_tb->tb_path,
- 					    n_path_offset) >=
--		       B_NR_ITEMS(p_s_bh),
-+		       B_NR_ITEMS(bh),
- 		       "PAP-8295: invalid position in the parent");
- 
- 		n_child_position =
--		    (p_s_bh == p_s_tb->FR[n_h]) ? p_s_tb->rkey[n_h] + 1 : 0;
-+		    (bh == p_s_tb->FR[n_h]) ? p_s_tb->rkey[n_h] + 1 : 0;
- 		n_son_number = B_N_CHILD_NUM(p_s_tb->FR[n_h], n_child_position);
--		p_s_bh = sb_bread(sb, n_son_number);
--		if (!p_s_bh)
-+		bh = sb_bread(sb, n_son_number);
-+		if (!bh)
- 			return IO_ERROR;
- 		if (FILESYSTEM_CHANGED_TB(p_s_tb)) {
--			brelse(p_s_bh);
-+			brelse(bh);
- 			PROC_INFO_INC(sb, get_neighbors_restart[n_h]);
- 			return REPEAT_SEARCH;
- 		}
- 		brelse(p_s_tb->R[n_h]);
--		p_s_tb->R[n_h] = p_s_bh;
-+		p_s_tb->R[n_h] = bh;
- 
- 		RFALSE(!n_h
--		       && B_FREE_SPACE(p_s_bh) !=
--		       MAX_CHILD_SIZE(p_s_bh) -
-+		       && B_FREE_SPACE(bh) !=
-+		       MAX_CHILD_SIZE(bh) -
- 		       dc_size(B_N_CHILD(p_s_tb->FR[0], n_child_position)),
- 		       "PAP-8300: invalid child size of right neighbor (%d != %d - %d)",
--		       B_FREE_SPACE(p_s_bh), MAX_CHILD_SIZE(p_s_bh),
-+		       B_FREE_SPACE(bh), MAX_CHILD_SIZE(bh),
- 		       dc_size(B_N_CHILD(p_s_tb->FR[0], n_child_position)));
- 
- 	}
-@@ -2088,51 +2088,51 @@ static int get_mem_for_virtual_node(stru
- 
+ 	/* do not delete, just comment it out */
+-/*    print_tb(flag, PATH_LAST_POSITION(tb->tb_path), tb->tb_path->pos_in_item, tb, 
++/*    print_tb(flag, PATH_LAST_POSITION(tb->tb_path), tb->tb_path->pos_in_item, tb,
+ 	     "check");*/
+ 	RFALSE(check_before_balancing(tb), "PAP-12340: locked buffers in TB");
  #ifdef CONFIG_REISERFS_CHECK
- static void tb_buffer_sanity_check(struct super_block *sb,
--				   struct buffer_head *p_s_bh,
-+				   struct buffer_head *bh,
- 				   const char *descr, int level)
+--- a/fs/reiserfs/file.c	2007-06-11 14:49:38.000000000 -0400
++++ b/fs/reiserfs/file.c	2007-06-11 14:50:03.000000000 -0400
+@@ -20,14 +20,14 @@
+ ** insertion/balancing, for files that are written in one write.
+ ** It avoids unnecessary tail packings (balances) for files that are written in
+ ** multiple writes and are small enough to have tails.
+-** 
++**
+ ** file_release is called by the VFS layer when the file is closed.  If
+ ** this is the last open file descriptor, and the file
+ ** small enough to have a tail, and the tail is currently in an
+ ** unformatted node, the tail is converted back into a direct item.
+-** 
++**
+ ** We use reiserfs_truncate_file to pack the tail, since it already has
+-** all the conditions coded.  
++** all the conditions coded.
+ */
+ static int reiserfs_file_release(struct inode *inode, struct file *filp)
  {
--	if (p_s_bh) {
--		if (atomic_read(&(p_s_bh->b_count)) <= 0) {
-+	if (bh) {
-+		if (atomic_read(&(bh->b_count)) <= 0) {
+@@ -723,7 +723,7 @@ static void reiserfs_unprepare_pages(str
+ static int reiserfs_copy_from_user_to_file_region(loff_t pos,	/* In-file position */
+ 						  int num_pages,	/* Number of pages affected */
+ 						  int write_bytes,	/* Amount of bytes to write */
+-						  struct page **prepared_pages,	/* pointer to 
++						  struct page **prepared_pages,	/* pointer to
+ 										   array to
+ 										   prepared pages
+ 										 */
+@@ -900,7 +900,7 @@ static int reiserfs_submit_file_region_f
+ 	}
+ 	th->t_trans_id = 0;
  
- 			reiserfs_panic(sb, "jmacd-1", "negative or zero "
- 			               "reference counter for buffer %s[%d] "
--				       "(%b)", descr, level, p_s_bh);
-+				       "(%b)", descr, level, bh);
+-	/* 
++	/*
+ 	 * we have to unlock the pages after updating i_size, otherwise
+ 	 * we race with writepage
+ 	 */
+@@ -971,7 +971,7 @@ static int reiserfs_check_for_tail_and_c
+    @prepared_pages array. Also buffers are allocated for these pages.
+    First and last page of the region is read if it is overwritten only
+    partially. If last page did not exist before write (file hole or file
+-   append), it is zeroed, then. 
++   append), it is zeroed, then.
+    Returns number of unallocated blocks that should be allocated to cover
+    new file data.*/
+ static int reiserfs_prepare_file_region_for_write(struct inode *inode
+@@ -1256,7 +1256,7 @@ static int reiserfs_prepare_file_region_
+ }
+ 
+ /* Write @count bytes at position @ppos in a file indicated by @file
+-   from the buffer @buf.  
++   from the buffer @buf.
+ 
+    generic_file_write() is only appropriate for filesystems that are not seeking to optimize performance and want
+    something simple that works.  It is not for serious use by general purpose filesystems, excepting the one that it was
+--- a/fs/reiserfs/fix_node.c	2007-06-11 14:49:39.000000000 -0400
++++ b/fs/reiserfs/fix_node.c	2007-06-11 14:50:04.000000000 -0400
+@@ -30,8 +30,8 @@
+  ** get_direct_parent
+  ** get_neighbors
+  ** fix_nodes
+- ** 
+- ** 
++ **
++ **
+  **/
+ 
+ #include <linux/time.h>
+@@ -377,9 +377,9 @@ static int get_num_ver(int mode, struct 
+ 	int needed_nodes;
+ 	int start_item,		/* position of item we start filling node from */
+ 	 end_item,		/* position of item we finish filling node by */
+-	 start_bytes,		/* number of first bytes (entries for directory) of start_item-th item 
++	 start_bytes,		/* number of first bytes (entries for directory) of start_item-th item
+ 				   we do not include into node that is being filled */
+-	 end_bytes;		/* number of last bytes (entries for directory) of end_item-th item 
++	 end_bytes;		/* number of last bytes (entries for directory) of end_item-th item
+ 				   we do node include into node that is being filled */
+ 	int split_item_positions[2];	/* these are positions in virtual item of
+ 					   items, that are split between S[0] and
+@@ -569,7 +569,7 @@ extern struct tree_balance *cur_tb;
+ 
+ /* Set parameters for balancing.
+  * Performs write of results of analysis of balancing into structure tb,
+- * where it will later be used by the functions that actually do the balancing. 
++ * where it will later be used by the functions that actually do the balancing.
+  * Parameters:
+  *	tb	tree_balance structure;
+  *	h	current level of the node;
+@@ -1202,7 +1202,7 @@ static inline int can_node_be_removed(in
+  *	h	current level of the node;
+  *	inum	item number in S[h];
+  *	mode	i - insert, p - paste;
+- * Returns:	1 - schedule occurred; 
++ * Returns:	1 - schedule occurred;
+  *	        0 - balancing for higher levels needed;
+  *	       -1 - no balancing for higher levels needed;
+  *	       -2 - no disk space.
+@@ -1237,7 +1237,7 @@ static int ip_check_balance(struct tree_
+ 	/* we perform 8 calls to get_num_ver().  For each call we calculate five parameters.
+ 	   where 4th parameter is s1bytes and 5th - s2bytes
+ 	 */
+-	short snum012[40] = { 0, };	/* s0num, s1num, s2num for 8 cases 
++	short snum012[40] = { 0, };	/* s0num, s1num, s2num for 8 cases
+ 					   0,1 - do not shift and do not shift but bottle
+ 					   2 - shift only whole item to left
+ 					   3 - shift to left and bottle as much as possible
+@@ -1286,7 +1286,7 @@ static int ip_check_balance(struct tree_
+ 
+ 	create_virtual_node(tb, h);
+ 
+-	/*  
++	/*
+ 	   determine maximal number of items we can shift to the left neighbor (in tb structure)
+ 	   and the maximal number of bytes that can flow to the left neighbor
+ 	   from the left most liquid item that cannot be shifted from S[0] entirely (returned value)
+@@ -1347,13 +1347,13 @@ static int ip_check_balance(struct tree_
+ 
+ 	{
+ 		int lpar, rpar, nset, lset, rset, lrset;
+-		/* 
++		/*
+ 		 * regular overflowing of the node
+ 		 */
+ 
+-		/* get_num_ver works in 2 modes (FLOW & NO_FLOW) 
++		/* get_num_ver works in 2 modes (FLOW & NO_FLOW)
+ 		   lpar, rpar - number of items we can shift to left/right neighbor (including splitting item)
+-		   nset, lset, rset, lrset - shows, whether flowing items give better packing 
++		   nset, lset, rset, lrset - shows, whether flowing items give better packing
+ 		 */
+ #define FLOW 1
+ #define NO_FLOW 0		/* do not any splitting */
+@@ -1543,7 +1543,7 @@ static int ip_check_balance(struct tree_
+  *	h	current level of the node;
+  *	inum	item number in S[h];
+  *	mode	i - insert, p - paste;
+- * Returns:	1 - schedule occurred; 
++ * Returns:	1 - schedule occurred;
+  *	        0 - balancing for higher levels needed;
+  *	       -1 - no balancing for higher levels needed;
+  *	       -2 - no disk space.
+@@ -1726,7 +1726,7 @@ static int dc_check_balance_internal(str
+  *	h	current level of the node;
+  *	inum	item number in S[h];
+  *	mode	i - insert, p - paste;
+- * Returns:	1 - schedule occurred; 
++ * Returns:	1 - schedule occurred;
+  *	        0 - balancing for higher levels needed;
+  *	       -1 - no balancing for higher levels needed;
+  *	       -2 - no disk space.
+@@ -1820,7 +1820,7 @@ static int dc_check_balance_leaf(struct 
+  *	h	current level of the node;
+  *	inum	item number in S[h];
+  *	mode	d - delete, c - cut.
+- * Returns:	1 - schedule occurred; 
++ * Returns:	1 - schedule occurred;
+  *	        0 - balancing for higher levels needed;
+  *	       -1 - no balancing for higher levels needed;
+  *	       -2 - no disk space.
+@@ -1849,7 +1849,7 @@ static int dc_check_balance(struct tree_
+  *	h	current level of the node;
+  *	inum	item number in S[h];
+  *	mode	i - insert, p - paste, d - delete, c - cut.
+- * Returns:	1 - schedule occurred; 
++ * Returns:	1 - schedule occurred;
+  *	        0 - balancing for higher levels needed;
+  *	       -1 - no balancing for higher levels needed;
+  *	       -2 - no disk space.
+@@ -2294,15 +2294,15 @@ static int wait_tb_buffers_until_unlocke
+  *	analyze what and where should be moved;
+  *	get sufficient number of new nodes;
+  * Balancing will start only after all resources will be collected at a time.
+- * 
++ *
+  * When ported to SMP kernels, only at the last moment after all needed nodes
+  * are collected in cache, will the resources be locked using the usual
+  * textbook ordered lock acquisition algorithms.  Note that ensuring that
+  * this code neither write locks what it does not need to write lock nor locks out of order
+  * will be a pain in the butt that could have been avoided.  Grumble grumble. -Hans
+- * 
++ *
+  * fix is meant in the sense of render unchanging
+- * 
++ *
+  * Latency might be improved by first gathering a list of what buffers are needed
+  * and then getting as many of them in parallel as possible? -Hans
+  *
+@@ -2314,7 +2314,7 @@ static int wait_tb_buffers_until_unlocke
+  *      ins_ih & ins_sd are used when inserting
+  * Returns:	1 - schedule occurred while the function worked;
+  *	        0 - schedule didn't occur while the function worked;
+- *             -1 - if no_disk_space 
++ *             -1 - if no_disk_space
+  */
+ 
+ int fix_nodes(int n_op_mode, struct tree_balance *p_s_tb, struct item_head *p_s_ins_ih,	// item head of item being inserted
+--- a/fs/reiserfs/hashes.c	2007-06-11 14:49:05.000000000 -0400
++++ b/fs/reiserfs/hashes.c	2007-06-11 14:49:39.000000000 -0400
+@@ -7,7 +7,7 @@
+  * (see Applied Cryptography, 2nd edition, p448).
+  *
+  * Jeremy Fitzhardinge <jeremy@zip.com.au> 1998
+- * 
++ *
+  * Jeremy has agreed to the contents of reiserfs/README. -Hans
+  * Yura's function is added (04/07/2000)
+  */
+--- a/fs/reiserfs/ibalance.c	2007-06-11 14:49:34.000000000 -0400
++++ b/fs/reiserfs/ibalance.c	2007-06-11 14:49:39.000000000 -0400
+@@ -278,7 +278,7 @@ static void internal_delete_childs(struc
+ 
+ /* copy cpy_num node pointers and cpy_num - 1 items from buffer src to buffer dest
+ * last_first == FIRST_TO_LAST means, that we copy first items from src to tail of dest
+- * last_first == LAST_TO_FIRST means, that we copy last items from src to head of dest 
++ * last_first == LAST_TO_FIRST means, that we copy last items from src to head of dest
+  */
+ static void internal_copy_pointers_items(struct buffer_info *dest_bi,
+ 					 struct buffer_head *src,
+@@ -385,7 +385,7 @@ static void internal_move_pointers_items
+ 	if (last_first == FIRST_TO_LAST) {	/* shift_left occurs */
+ 		first_pointer = 0;
+ 		first_item = 0;
+-		/* delete cpy_num - del_par pointers and keys starting for pointers with first_pointer, 
++		/* delete cpy_num - del_par pointers and keys starting for pointers with first_pointer,
+ 		   for key - with first_item */
+ 		internal_delete_pointers_items(src_bi, first_pointer,
+ 					       first_item, cpy_num - del_par);
+@@ -453,7 +453,7 @@ static void internal_insert_key(struct b
+ 	}
+ }
+ 
+-/* Insert d_key'th (delimiting) key from buffer cfl to tail of dest. 
++/* Insert d_key'th (delimiting) key from buffer cfl to tail of dest.
+  * Copy pointer_amount node pointers and pointer_amount - 1 items from buffer src to buffer dest.
+  * Replace  d_key'th key in buffer cfl.
+  * Delete pointer_amount items and node pointers from buffer src.
+@@ -518,7 +518,7 @@ static void internal_shift1_left(struct 
+ 	/*    internal_move_pointers_items (tb->L[h], tb->S[h], FIRST_TO_LAST, pointer_amount, 1); */
+ }
+ 
+-/* Insert d_key'th (delimiting) key from buffer cfr to head of dest. 
++/* Insert d_key'th (delimiting) key from buffer cfr to head of dest.
+  * Copy n node pointers and n - 1 items from buffer src to buffer dest.
+  * Replace  d_key'th key in buffer cfr.
+  * Delete n items and node pointers from buffer src.
+@@ -749,7 +749,7 @@ int balance_internal(struct tree_balance
+        this means that new pointers and items must be inserted AFTER *
+        child_pos
+        }
+-       else 
++       else
+        {
+        it is the position of the leftmost pointer that must be deleted (together with
+        its corresponding key to the left of the pointer)
+--- a/fs/reiserfs/inode.c	2007-06-11 14:49:38.000000000 -0400
++++ b/fs/reiserfs/inode.c	2007-06-11 14:50:03.000000000 -0400
+@@ -48,7 +48,7 @@ void reiserfs_delete_inode(struct inode 
+ 		/* Do quota update inside a transaction for journaled quotas. We must do that
+ 		 * after delete_object so that quota updates go into the same transaction as
+ 		 * stat data deletion */
+-		if (!err) 
++		if (!err)
+ 			DQUOT_FREE_INODE(inode);
+ 
+ 		if (journal_end(&th, inode->i_sb, jbegin_count))
+@@ -359,7 +359,7 @@ static int _get_block_create_0(struct in
  		}
+ 		/* make sure we don't read more bytes than actually exist in
+ 		 ** the file.  This can happen in odd cases where i_size isn't
+-		 ** correct, and when direct item padding results in a few 
++		 ** correct, and when direct item padding results in a few
+ 		 ** extra bytes at the end of the direct item
+ 		 */
+ 		if ((le_ih_k_offset(ih) + path.pos_in_item) > inode->i_size)
+@@ -434,15 +434,15 @@ static int reiserfs_bmap(struct inode *i
+ ** -ENOENT instead of a valid buffer.  block_prepare_write expects to
+ ** be able to do i/o on the buffers returned, unless an error value
+ ** is also returned.
+-** 
++**
+ ** So, this allows block_prepare_write to be used for reading a single block
+ ** in a page.  Where it does not produce a valid page for holes, or past the
+ ** end of the file.  This turns out to be exactly what we need for reading
+ ** tails for conversion.
+ **
+ ** The point of the wrapper is forcing a certain value for create, even
+-** though the VFS layer is calling this function with create==1.  If you 
+-** don't want to send create == GET_BLOCK_NO_HOLE to reiserfs_get_block, 
++** though the VFS layer is calling this function with create==1.  If you
++** don't want to send create == GET_BLOCK_NO_HOLE to reiserfs_get_block,
+ ** don't use this function.
+ */
+ static int reiserfs_get_block_create_0(struct inode *inode, sector_t block,
+@@ -598,7 +598,7 @@ int reiserfs_get_block(struct inode *ino
+ 	int done;
+ 	int fs_gen;
+ 	struct reiserfs_transaction_handle *th = NULL;
+-	/* space reserved in transaction batch: 
++	/* space reserved in transaction batch:
+ 	   . 3 balancings in direct->indirect conversion
+ 	   . 1 block involved into reiserfs_update_sd()
+ 	   XXX in practically impossible worst case direct2indirect()
+@@ -750,7 +750,7 @@ int reiserfs_get_block(struct inode *ino
+ 		reiserfs_write_unlock(inode->i_sb);
  
--		if (!buffer_uptodate(p_s_bh)) {
-+		if (!buffer_uptodate(bh)) {
- 			reiserfs_panic(sb, "jmacd-2", "buffer is not up "
- 			               "to date %s[%d] (%b)",
--				       descr, level, p_s_bh);
-+				       descr, level, bh);
+ 		/* the item was found, so new blocks were not added to the file
+-		 ** there is no need to make sure the inode is updated with this 
++		 ** there is no need to make sure the inode is updated with this
+ 		 ** transaction
+ 		 */
+ 		return retval;
+@@ -981,7 +981,7 @@ int reiserfs_get_block(struct inode *ino
+ 
+ 		/* this loop could log more blocks than we had originally asked
+ 		 ** for.  So, we have to allow the transaction to end if it is
+-		 ** too big or too full.  Update the inode so things are 
++		 ** too big or too full.  Update the inode so things are
+ 		 ** consistent if we crash before the function returns
+ 		 **
+ 		 ** release the path so that anybody waiting on the path before
+@@ -992,7 +992,7 @@ int reiserfs_get_block(struct inode *ino
+ 			if (retval)
+ 				goto failure;
  		}
+-		/* inserting indirect pointers for a hole can take a 
++		/* inserting indirect pointers for a hole can take a
+ 		 ** long time.  reschedule if needed
+ 		 */
+ 		cond_resched();
+@@ -1438,7 +1438,7 @@ void reiserfs_read_locked_inode(struct i
+ 	   update sd on unlink all that is required is to check for nlink
+ 	   here. This bug was first found by Sizif when debugging
+ 	   SquidNG/Butterfly, forgotten, and found again after Philippe
+-	   Gramoulle <philippe.gramoulle@mmania.com> reproduced it. 
++	   Gramoulle <philippe.gramoulle@mmania.com> reproduced it.
  
--		if (!B_IS_IN_TREE(p_s_bh)) {
-+		if (!B_IS_IN_TREE(bh)) {
- 			reiserfs_panic(sb, "jmacd-3", "buffer is not "
- 			               "in tree %s[%d] (%b)",
--				       descr, level, p_s_bh);
-+				       descr, level, bh);
+ 	   More logical fix would require changes in fs/inode.c:iput() to
+ 	   remove inode from hash-table _after_ fs cleaned disk stuff up and
+@@ -1630,7 +1630,7 @@ int reiserfs_write_inode(struct inode *i
+ 	if (inode->i_sb->s_flags & MS_RDONLY)
+ 		return -EROFS;
+ 	/* memory pressure can sometimes initiate write_inode calls with sync == 1,
+-	 ** these cases are just when the system needs ram, not when the 
++	 ** these cases are just when the system needs ram, not when the
+ 	 ** inode needs to reach disk for safety, and they can safely be
+ 	 ** ignored because the altered inode has already been logged.
+ 	 */
+@@ -1747,7 +1747,7 @@ static int reiserfs_new_symlink(struct r
+ /* inserts the stat data into the tree, and then calls
+    reiserfs_new_directory (to insert ".", ".." item if new object is
+    directory) or reiserfs_new_symlink (to insert symlink body if new
+-   object is symlink) or nothing (if new object is regular file) 
++   object is symlink) or nothing (if new object is regular file)
+ 
+    NOTE! uid and gid must already be set in the inode.  If we return
+    non-zero due to an error, we have to drop the quota previously allocated
+@@ -1755,7 +1755,7 @@ static int reiserfs_new_symlink(struct r
+    if we return non-zero, we also end the transaction.  */
+ int reiserfs_new_inode(struct reiserfs_transaction_handle *th,
+ 		       struct inode *dir, int mode, const char *symname,
+-		       /* 0 for regular, EMTRY_DIR_SIZE for dirs, 
++		       /* 0 for regular, EMTRY_DIR_SIZE for dirs,
+ 		          strlen (symname) for symlinks) */
+ 		       loff_t i_size, struct dentry *dentry,
+ 		       struct inode *inode,
+@@ -1790,7 +1790,7 @@ int reiserfs_new_inode(struct reiserfs_t
+ 		goto out_bad_inode;
+ 	}
+ 	if (old_format_only(sb))
+-		/* not a perfect generation count, as object ids can be reused, but 
++		/* not a perfect generation count, as object ids can be reused, but
+ 		 ** this is as good as reiserfs can do right now.
+ 		 ** note that the private part of inode isn't filled in yet, we have
+ 		 ** to use the directory.
+@@ -2088,7 +2088,7 @@ int reiserfs_truncate_file(struct inode 
+ 
+ 	if (p_s_inode->i_size > 0) {
+ 		if ((error = grab_tail_page(p_s_inode, &page, &bh))) {
+-			// -ENOENT means we truncated past the end of the file, 
++			// -ENOENT means we truncated past the end of the file,
+ 			// and get_block_create_0 could not find a block to read in,
+ 			// which is ok.
+ 			if (error != -ENOENT)
+@@ -2100,11 +2100,11 @@ int reiserfs_truncate_file(struct inode 
  		}
+ 	}
  
--		if (p_s_bh->b_bdev != sb->s_bdev) {
-+		if (bh->b_bdev != sb->s_bdev) {
- 			reiserfs_panic(sb, "jmacd-4", "buffer has wrong "
- 			               "device %s[%d] (%b)",
--				       descr, level, p_s_bh);
-+				       descr, level, bh);
- 		}
+-	/* so, if page != NULL, we have a buffer head for the offset at 
+-	 ** the end of the file. if the bh is mapped, and bh->b_blocknr != 0, 
+-	 ** then we have an unformatted node.  Otherwise, we have a direct item, 
+-	 ** and no zeroing is required on disk.  We zero after the truncate, 
+-	 ** because the truncate might pack the item anyway 
++	/* so, if page != NULL, we have a buffer head for the offset at
++	 ** the end of the file. if the bh is mapped, and bh->b_blocknr != 0,
++	 ** then we have an unformatted node.  Otherwise, we have a direct item,
++	 ** and no zeroing is required on disk.  We zero after the truncate,
++	 ** because the truncate might pack the item anyway
+ 	 ** (it will unmap bh if it packs).
+ 	 */
+ 	/* it is enough to reserve space in transaction for 2 balancings:
+@@ -2313,8 +2313,8 @@ static int map_block_for_writepage(struc
+ 	return retval;
+ }
  
--		if (p_s_bh->b_size != sb->s_blocksize) {
-+		if (bh->b_size != sb->s_blocksize) {
- 			reiserfs_panic(sb, "jmacd-5", "buffer has wrong "
- 			               "blocksize %s[%d] (%b)",
--				       descr, level, p_s_bh);
-+				       descr, level, bh);
- 		}
+-/* 
+- * mason@suse.com: updated in 2.5.54 to follow the same general io 
++/*
++ * mason@suse.com: updated in 2.5.54 to follow the same general io
+  * start/recovery path as __block_write_full_page, along with special
+  * code to handle reiserfs tails.
+  */
+@@ -2454,7 +2454,7 @@ static int reiserfs_write_full_page(stru
+ 	unlock_page(page);
  
--		if (p_s_bh->b_blocknr > SB_BLOCK_COUNT(sb)) {
-+		if (bh->b_blocknr > SB_BLOCK_COUNT(sb)) {
- 			reiserfs_panic(sb, "jmacd-6", "buffer block "
- 			               "number too high %s[%d] (%b)",
--				       descr, level, p_s_bh);
-+				       descr, level, bh);
+ 	/*
+-	 * since any buffer might be the only dirty buffer on the page, 
++	 * since any buffer might be the only dirty buffer on the page,
+ 	 * the first submit_bh can bring the page out of writeback.
+ 	 * be careful with the buffers.
+ 	 */
+@@ -2473,8 +2473,8 @@ static int reiserfs_write_full_page(stru
+ 	if (nr == 0) {
+ 		/*
+ 		 * if this page only had a direct item, it is very possible for
+-		 * no io to be required without there being an error.  Or, 
+-		 * someone else could have locked them and sent them down the 
++		 * no io to be required without there being an error.  Or,
++		 * someone else could have locked them and sent them down the
+ 		 * pipe without locking the page
+ 		 */
+ 		bh = head;
+@@ -2493,7 +2493,7 @@ static int reiserfs_write_full_page(stru
+ 
+       fail:
+ 	/* catches various errors, we need to make sure any valid dirty blocks
+-	 * get to the media.  The page is currently locked and not marked for 
++	 * get to the media.  The page is currently locked and not marked for
+ 	 * writeback
+ 	 */
+ 	ClearPageUptodate(page);
+--- a/fs/reiserfs/ioctl.c	2007-06-11 14:49:05.000000000 -0400
++++ b/fs/reiserfs/ioctl.c	2007-06-11 14:49:39.000000000 -0400
+@@ -166,7 +166,7 @@ static int reiserfs_unpack(struct inode 
+ 	}
+ 
+ 	/* we unpack by finding the page with the tail, and calling
+-	 ** reiserfs_prepare_write on that page.  This will force a 
++	 ** reiserfs_prepare_write on that page.  This will force a
+ 	 ** reiserfs_get_block to unpack the tail for us.
+ 	 */
+ 	index = inode->i_size >> PAGE_CACHE_SHIFT;
+--- a/fs/reiserfs/journal.c	2007-06-11 14:49:34.000000000 -0400
++++ b/fs/reiserfs/journal.c	2007-06-11 14:50:04.000000000 -0400
+@@ -1,36 +1,36 @@
+ /*
+ ** Write ahead logging implementation copyright Chris Mason 2000
+ **
+-** The background commits make this code very interelated, and 
++** The background commits make this code very interelated, and
+ ** overly complex.  I need to rethink things a bit....The major players:
+ **
+-** journal_begin -- call with the number of blocks you expect to log.  
++** journal_begin -- call with the number of blocks you expect to log.
+ **                  If the current transaction is too
+-** 		    old, it will block until the current transaction is 
++** 		    old, it will block until the current transaction is
+ ** 		    finished, and then start a new one.
+-**		    Usually, your transaction will get joined in with 
++**		    Usually, your transaction will get joined in with
+ **                  previous ones for speed.
+ **
+-** journal_join  -- same as journal_begin, but won't block on the current 
++** journal_join  -- same as journal_begin, but won't block on the current
+ **                  transaction regardless of age.  Don't ever call
+-**                  this.  Ever.  There are only two places it should be 
++**                  this.  Ever.  There are only two places it should be
+ **                  called from, and they are both inside this file.
+ **
+-** journal_mark_dirty -- adds blocks into this transaction.  clears any flags 
++** journal_mark_dirty -- adds blocks into this transaction.  clears any flags
+ **                       that might make them get sent to disk
+-**                       and then marks them BH_JDirty.  Puts the buffer head 
+-**                       into the current transaction hash.  
++**                       and then marks them BH_JDirty.  Puts the buffer head
++**                       into the current transaction hash.
+ **
+ ** journal_end -- if the current transaction is batchable, it does nothing
+ **                   otherwise, it could do an async/synchronous commit, or
+-**                   a full flush of all log and real blocks in the 
++**                   a full flush of all log and real blocks in the
+ **                   transaction.
+ **
+-** flush_old_commits -- if the current transaction is too old, it is ended and 
+-**                      commit blocks are sent to disk.  Forces commit blocks 
+-**                      to disk for all backgrounded commits that have been 
++** flush_old_commits -- if the current transaction is too old, it is ended and
++**                      commit blocks are sent to disk.  Forces commit blocks
++**                      to disk for all backgrounded commits that have been
+ **                      around too long.
+-**		     -- Note, if you call this as an immediate flush from 
++**		     -- Note, if you call this as an immediate flush from
+ **		        from within kupdate, it will ignore the immediate flag
+ */
+ 
+@@ -214,7 +214,7 @@ static void allocate_bitmap_nodes(struct
+ 			list_add(&bn->list, &journal->j_bitmap_nodes);
+ 			journal->j_free_bitmap_nodes++;
+ 		} else {
+-			break;	// this is ok, we'll try again when more are needed 
++			break;	// this is ok, we'll try again when more are needed
  		}
  	}
  }
- #else
- static void tb_buffer_sanity_check(struct super_block *sb,
--				   struct buffer_head *p_s_bh,
-+				   struct buffer_head *bh,
- 				   const char *descr, int level)
- {;
- }
---- a/fs/reiserfs/stree.c	2007-06-11 14:49:39.000000000 -0400
-+++ b/fs/reiserfs/stree.c	2007-06-11 14:50:03.000000000 -0400
-@@ -56,13 +56,13 @@
- #include <linux/quotaops.h>
- 
- /* Does the buffer contain a disk block which is in the tree. */
--inline int B_IS_IN_TREE(const struct buffer_head *p_s_bh)
-+inline int B_IS_IN_TREE(const struct buffer_head *bh)
- {
- 
--	RFALSE(B_LEVEL(p_s_bh) > MAX_HEIGHT,
--	       "PAP-1010: block (%b) has too big level (%z)", p_s_bh, p_s_bh);
-+	RFALSE(B_LEVEL(bh) > MAX_HEIGHT,
-+	       "PAP-1010: block (%b) has too big level (%z)", bh, bh);
- 
--	return (B_LEVEL(p_s_bh) != FREE_LEVEL);
-+	return (B_LEVEL(bh) != FREE_LEVEL);
+@@ -284,7 +284,7 @@ static int free_bitmap_nodes(struct supe
  }
  
- //
-@@ -579,7 +579,7 @@ int search_by_key(struct super_block *sb
+ /*
+-** get memory for JOURNAL_NUM_BITMAPS worth of bitmaps. 
++** get memory for JOURNAL_NUM_BITMAPS worth of bitmaps.
+ ** jb_array is the array to be filled in.
+ */
+ int reiserfs_allocate_list_bitmaps(struct super_block *p_s_sb,
+@@ -316,7 +316,7 @@ int reiserfs_allocate_list_bitmaps(struc
+ }
+ 
+ /*
+-** find an available list bitmap.  If you can't find one, flush a commit list 
++** find an available list bitmap.  If you can't find one, flush a commit list
+ ** and try again
+ */
+ static struct reiserfs_list_bitmap *get_list_bitmap(struct super_block *p_s_sb,
+@@ -349,7 +349,7 @@ static struct reiserfs_list_bitmap *get_
+ 	return jb;
+ }
+ 
+-/* 
++/*
+ ** allocates a new chunk of X nodes, and links them all together as a list.
+ ** Uses the cnode->next and cnode->prev pointers
+ ** returns NULL on failure
+@@ -377,7 +377,7 @@ static struct reiserfs_journal_cnode *al
+ }
+ 
+ /*
+-** pulls a cnode off the free list, or returns NULL on failure 
++** pulls a cnode off the free list, or returns NULL on failure
+ */
+ static struct reiserfs_journal_cnode *get_cnode(struct super_block *p_s_sb)
  {
- 	int n_block_number;
- 	int expected_level;
--	struct buffer_head *p_s_bh;
-+	struct buffer_head *bh;
- 	struct path_element *p_s_last_element;
- 	int n_node_level, n_retval;
- 	int right_neighbor_of_leaf_node;
-@@ -626,15 +626,15 @@ int search_by_key(struct super_block *sb
+@@ -404,7 +404,7 @@ static struct reiserfs_journal_cnode *ge
+ }
  
- 		/* Read the next tree node, and set the last element in the path to
- 		   have a pointer to it. */
--		if ((p_s_bh = p_s_last_element->pe_buffer =
-+		if ((bh = p_s_last_element->pe_buffer =
- 		     sb_getblk(sb, n_block_number))) {
--			if (!buffer_uptodate(p_s_bh) && reada_count > 1) {
-+			if (!buffer_uptodate(bh) && reada_count > 1) {
- 				search_by_key_reada(sb, reada_bh,
- 						    reada_blocks, reada_count);
- 			}
--			ll_rw_block(READ, 1, &p_s_bh);
--			wait_on_buffer(p_s_bh);
--			if (!buffer_uptodate(p_s_bh))
-+			ll_rw_block(READ, 1, &bh);
-+			wait_on_buffer(bh);
-+			if (!buffer_uptodate(bh))
- 				goto io_error;
- 		} else {
- 		      io_error:
-@@ -651,8 +651,8 @@ int search_by_key(struct super_block *sb
- 		   to search is still in the tree rooted from the current buffer. If
- 		   not then repeat search from the root. */
- 		if (fs_changed(fs_gen, sb) &&
--		    (!B_IS_IN_TREE(p_s_bh) ||
--		     B_LEVEL(p_s_bh) != expected_level ||
-+		    (!B_IS_IN_TREE(bh) ||
-+		     B_LEVEL(bh) != expected_level ||
- 		     !key_in_buffer(p_s_search_path, p_s_key, sb))) {
- 			PROC_INFO_INC(sb, search_by_key_fs_changed);
- 			PROC_INFO_INC(sb, search_by_key_restarted);
-@@ -686,25 +686,25 @@ int search_by_key(struct super_block *sb
+ /*
+-** returns a cnode to the free list 
++** returns a cnode to the free list
+ */
+ static void free_cnode(struct super_block *p_s_sb,
+ 		       struct reiserfs_journal_cnode *cn)
+@@ -1166,8 +1166,8 @@ static int flush_commit_list(struct supe
+ }
  
- 		// make sure, that the node contents look like a node of
- 		// certain level
--		if (!is_tree_node(p_s_bh, expected_level)) {
-+		if (!is_tree_node(bh, expected_level)) {
- 			reiserfs_error(sb, "vs-5150",
- 			               "invalid format found in block %ld. "
--			               "Fsck?", p_s_bh->b_blocknr);
-+			               "Fsck?", bh->b_blocknr);
- 			pathrelse(p_s_search_path);
- 			return IO_ERROR;
+ /*
+-** flush_journal_list frequently needs to find a newer transaction for a given block.  This does that, or 
+-** returns NULL if it can't find anything 
++** flush_journal_list frequently needs to find a newer transaction for a given block.  This does that, or
++** returns NULL if it can't find anything
+ */
+ static struct reiserfs_journal_list *find_newer_jl_for_cn(struct
+ 							  reiserfs_journal_cnode
+@@ -1309,8 +1309,8 @@ static int update_journal_header_block(s
+ 	return _update_journal_header_block(p_s_sb, offset, trans_id);
+ }
+ 
+-/* 
+-** flush any and all journal lists older than you are 
++/*
++** flush any and all journal lists older than you are
+ ** can only be called from flush_journal_list
+ */
+ static int flush_older_journal_lists(struct super_block *p_s_sb,
+@@ -1356,8 +1356,8 @@ static void del_from_work_list(struct su
+ ** always set flushall to 1, unless you are calling from inside
+ ** flush_journal_list
+ **
+-** IMPORTANT.  This can only be called while there are no journal writers, 
+-** and the journal is locked.  That means it can only be called from 
++** IMPORTANT.  This can only be called while there are no journal writers,
++** and the journal is locked.  That means it can only be called from
+ ** do_journal_end, or by journal_release
+ */
+ static int flush_journal_list(struct super_block *s,
+@@ -1403,7 +1403,7 @@ static int flush_journal_list(struct sup
+ 		goto flush_older_and_return;
+ 	}
+ 
+-	/* start by putting the commit list on disk.  This will also flush 
++	/* start by putting the commit list on disk.  This will also flush
+ 	 ** the commit lists of any olders transactions
+ 	 */
+ 	flush_commit_list(s, jl, 1);
+@@ -1418,8 +1418,8 @@ static int flush_journal_list(struct sup
+ 		goto flush_older_and_return;
+ 	}
+ 
+-	/* loop through each cnode, see if we need to write it, 
+-	 ** or wait on a more recent transaction, or just ignore it 
++	/* loop through each cnode, see if we need to write it,
++	 ** or wait on a more recent transaction, or just ignore it
+ 	 */
+ 	if (atomic_read(&(journal->j_wcount)) != 0) {
+ 		reiserfs_panic(s, "journal-844", "journal list is flushing, "
+@@ -1447,8 +1447,8 @@ static int flush_journal_list(struct sup
+ 		if (!pjl && cn->bh) {
+ 			saved_bh = cn->bh;
+ 
+-			/* we do this to make sure nobody releases the buffer while 
+-			 ** we are working with it 
++			/* we do this to make sure nobody releases the buffer while
++			 ** we are working with it
+ 			 */
+ 			get_bh(saved_bh);
+ 
+@@ -1471,8 +1471,8 @@ static int flush_journal_list(struct sup
+ 			goto free_cnode;
  		}
  
- 		/* ok, we have acquired next formatted node in the tree */
--		n_node_level = B_LEVEL(p_s_bh);
-+		n_node_level = B_LEVEL(bh);
+-		/* bh == NULL when the block got to disk on its own, OR, 
+-		 ** the block got freed in a future transaction 
++		/* bh == NULL when the block got to disk on its own, OR,
++		 ** the block got freed in a future transaction
+ 		 */
+ 		if (saved_bh == NULL) {
+ 			goto free_cnode;
+@@ -1559,7 +1559,7 @@ static int flush_journal_list(struct sup
+ 			       __FUNCTION__);
+       flush_older_and_return:
  
--		PROC_INFO_BH_STAT(sb, p_s_bh, n_node_level - 1);
-+		PROC_INFO_BH_STAT(sb, bh, n_node_level - 1);
+-	/* before we can update the journal header block, we _must_ flush all 
++	/* before we can update the journal header block, we _must_ flush all
+ 	 ** real blocks from all older transactions to disk.  This is because
+ 	 ** once the header block is updated, this transaction will not be
+ 	 ** replayed after a crash
+@@ -1569,7 +1569,7 @@ static int flush_journal_list(struct sup
+ 	}
  
- 		RFALSE(n_node_level < n_stop_level,
- 		       "vs-5152: tree level (%d) is less than stop level (%d)",
- 		       n_node_level, n_stop_level);
+ 	err = journal->j_errno;
+-	/* before we can remove everything from the hash tables for this 
++	/* before we can remove everything from the hash tables for this
+ 	 ** transaction, we must make sure it can never be replayed
+ 	 **
+ 	 ** since we are only called from do_journal_end, we know for sure there
+@@ -1989,9 +1989,9 @@ static int journal_compare_desc_commit(s
+ 	return 0;
+ }
  
--		n_retval = bin_search(p_s_key, B_N_PITEM_HEAD(p_s_bh, 0),
--				      B_NR_ITEMS(p_s_bh),
-+		n_retval = bin_search(p_s_key, B_N_PITEM_HEAD(bh, 0),
-+				      B_NR_ITEMS(bh),
- 				      (n_node_level ==
- 				       DISK_LEAF_NODE_LEVEL) ? IH_SIZE :
- 				      KEY_SIZE,
-@@ -726,13 +726,13 @@ int search_by_key(struct super_block *sb
- 		   an internal node.  Now we calculate child block number by
- 		   position in the node. */
- 		n_block_number =
--		    B_N_CHILD_NUM(p_s_bh, p_s_last_element->pe_position);
-+		    B_N_CHILD_NUM(bh, p_s_last_element->pe_position);
+-/* returns 0 if it did not find a description block  
++/* returns 0 if it did not find a description block
+ ** returns -1 if it found a corrupt commit block
+-** returns 1 if both desc and commit were valid 
++** returns 1 if both desc and commit were valid
+ */
+ static int journal_transaction_is_valid(struct super_block *p_s_sb,
+ 					struct buffer_head *d_bh,
+@@ -2352,8 +2352,8 @@ static int journal_read(struct super_blo
+ 		      bdevname(journal->j_dev_bd, b));
+ 	start = get_seconds();
  
- 		/* if we are going to read leaf nodes, try for read ahead as well */
- 		if ((p_s_search_path->reada & PATH_READA) &&
- 		    n_node_level == DISK_LEAF_NODE_LEVEL + 1) {
- 			int pos = p_s_last_element->pe_position;
--			int limit = B_NR_ITEMS(p_s_bh);
-+			int limit = B_NR_ITEMS(bh);
- 			struct reiserfs_key *le_key;
+-	/* step 1, read in the journal header block.  Check the transaction it says 
+-	 ** is the first unflushed, and if that transaction is not valid, 
++	/* step 1, read in the journal header block.  Check the transaction it says
++	 ** is the first unflushed, and if that transaction is not valid,
+ 	 ** replay is done
+ 	 */
+ 	journal->j_header_bh = journal_bread(p_s_sb,
+@@ -2378,8 +2378,8 @@ static int journal_read(struct super_blo
+ 			       le32_to_cpu(jh->j_last_flush_trans_id));
+ 		valid_journal_header = 1;
  
- 			if (p_s_search_path->reada & PATH_READA_BACK)
-@@ -741,7 +741,7 @@ int search_by_key(struct super_block *sb
- 				if (pos == limit)
- 					break;
- 				reada_blocks[reada_count++] =
--				    B_N_CHILD_NUM(p_s_bh, pos);
-+				    B_N_CHILD_NUM(bh, pos);
- 				if (p_s_search_path->reada & PATH_READA_BACK)
- 					pos--;
- 				else
-@@ -750,7 +750,7 @@ int search_by_key(struct super_block *sb
- 				/*
- 				 * check to make sure we're in the same object
- 				 */
--				le_key = B_N_PDELIM_KEY(p_s_bh, pos);
-+				le_key = B_N_PDELIM_KEY(bh, pos);
- 				if (le32_to_cpu(le_key->k_objectid) !=
- 				    p_s_key->on_disk_key.k_objectid) {
- 					break;
-@@ -851,15 +851,15 @@ int search_for_position_by_key(struct su
- /* Compare given item and item pointed to by the path. */
- int comp_items(const struct item_head *stored_ih, const struct treepath *p_s_path)
- {
--	struct buffer_head *p_s_bh;
-+	struct buffer_head *bh;
- 	struct item_head *ih;
+-		/* now, we try to read the first unflushed offset.  If it is not valid, 
+-		 ** there is nothing more we can do, and it makes no sense to read 
++		/* now, we try to read the first unflushed offset.  If it is not valid,
++		 ** there is nothing more we can do, and it makes no sense to read
+ 		 ** through the whole log.
+ 		 */
+ 		d_bh =
+@@ -2749,7 +2749,7 @@ int journal_init(struct super_block *p_s
+ 	}
  
- 	/* Last buffer at the path is not in the tree. */
--	if (!B_IS_IN_TREE(p_s_bh = PATH_PLAST_BUFFER(p_s_path)))
-+	if (!B_IS_IN_TREE(bh = PATH_PLAST_BUFFER(p_s_path)))
+ 	if (!journal->j_trans_max) {
+-		/*we have the file system was created by old version of mkreiserfs 
++		/*we have the file system was created by old version of mkreiserfs
+ 		   so this field contains zero value */
+ 		journal->j_trans_max = JOURNAL_TRANS_MAX_DEFAULT;
+ 		journal->j_max_batch = JOURNAL_MAX_BATCH_DEFAULT;
+@@ -2876,7 +2876,7 @@ int journal_transaction_should_end(struc
+ 	return 0;
+ }
+ 
+-/* this must be called inside a transaction, and requires the 
++/* this must be called inside a transaction, and requires the
+ ** kernel_lock to be held
+ */
+ void reiserfs_block_writes(struct reiserfs_transaction_handle *th)
+@@ -2997,7 +2997,7 @@ static int do_journal_begin_r(struct rei
+ 	now = get_seconds();
+ 
+ 	/* if there is no room in the journal OR
+-	 ** if this transaction is too old, and we weren't called joinable, wait for it to finish before beginning 
++	 ** if this transaction is too old, and we weren't called joinable, wait for it to finish before beginning
+ 	 ** we don't sleep if there aren't other writers
+ 	 */
+ 
+@@ -3197,7 +3197,7 @@ int journal_begin(struct reiserfs_transa
+ **
+ ** if it was dirty, cleans and files onto the clean list.  I can't let it be dirty again until the
+ ** transaction is committed.
+-** 
++**
+ ** if j_len, is bigger than j_len_alloc, it pushes j_len_alloc to 10 + j_len.
+ */
+ int journal_mark_dirty(struct reiserfs_transaction_handle *th,
+@@ -3247,7 +3247,7 @@ int journal_mark_dirty(struct reiserfs_t
+ 				 atomic_read(&(journal->j_wcount)));
  		return 1;
+ 	}
+-	/* this error means I've screwed up, and we've overflowed the transaction.  
++	/* this error means I've screwed up, and we've overflowed the transaction.
+ 	 ** Nothing can be done here, except make the FS readonly or panic.
+ 	 */
+ 	if (journal->j_len >= journal->j_trans_max) {
+@@ -3336,7 +3336,7 @@ int journal_end(struct reiserfs_transact
+ 	}
+ }
  
- 	/* Last path position is invalid. */
--	if (PATH_LAST_POSITION(p_s_path) >= B_NR_ITEMS(p_s_bh))
-+	if (PATH_LAST_POSITION(p_s_path) >= B_NR_ITEMS(bh))
- 		return 1;
+-/* removes from the current transaction, relsing and descrementing any counters.  
++/* removes from the current transaction, relsing and descrementing any counters.
+ ** also files the removed buffer directly onto the clean list
+ **
+ ** called by journal_mark_freed when a block has been deleted
+@@ -3434,7 +3434,7 @@ static int can_dirty(struct reiserfs_jou
+ }
  
- 	/* we need only to know, whether it is the same item */
-@@ -959,7 +959,7 @@ static char prepare_for_delete_or_cut(st
- {
- 	struct super_block *sb = inode->i_sb;
- 	struct item_head *p_le_ih = PATH_PITEM_HEAD(p_s_path);
--	struct buffer_head *p_s_bh = PATH_PLAST_BUFFER(p_s_path);
-+	struct buffer_head *bh = PATH_PLAST_BUFFER(p_s_path);
+ /* syncs the commit blocks, but does not force the real buffers to disk
+-** will wait until the current transaction is done/committed before returning 
++** will wait until the current transaction is done/committed before returning
+ */
+ int journal_end_sync(struct reiserfs_transaction_handle *th,
+ 		     struct super_block *p_s_sb, unsigned long nblocks)
+@@ -3516,13 +3516,13 @@ int reiserfs_flush_old_commits(struct su
  
- 	BUG_ON(!th->t_trans_id);
+ /*
+ ** returns 0 if do_journal_end should return right away, returns 1 if do_journal_end should finish the commit
+-** 
+-** if the current transaction is too old, but still has writers, this will wait on j_join_wait until all 
++**
++** if the current transaction is too old, but still has writers, this will wait on j_join_wait until all
+ ** the writers are done.  By the time it wakes up, the transaction it was called has already ended, so it just
+ ** flushes the commit list and returns 0.
+ **
+ ** Won't batch when flush or commit_now is set.  Also won't batch when others are waiting on j_join_wait.
+-** 
++**
+ ** Note, we can't allow the journal_end to proceed while there are still writers in the log.
+ */
+ static int check_journal_end(struct reiserfs_transaction_handle *th,
+@@ -3550,7 +3550,7 @@ static int check_journal_end(struct reis
+ 		atomic_dec(&(journal->j_wcount));
+ 	}
  
-@@ -1003,7 +1003,7 @@ static char prepare_for_delete_or_cut(st
- 	    do {
- 		need_re_search = 0;
- 		*p_n_cut_size = 0;
--		p_s_bh = PATH_PLAST_BUFFER(p_s_path);
-+		bh = PATH_PLAST_BUFFER(p_s_path);
- 		copy_item_head(&s_ih, PATH_PITEM_HEAD(p_s_path));
- 		pos = I_UNFM_NUM(&s_ih);
+-	/* BUG, deal with case where j_len is 0, but people previously freed blocks need to be released 
++	/* BUG, deal with case where j_len is 0, but people previously freed blocks need to be released
+ 	 ** will be dealt with by next transaction that actually writes something, but should be taken
+ 	 ** care of in this trans
+ 	 */
+@@ -3559,7 +3559,7 @@ static int check_journal_end(struct reis
+ 	/* if wcount > 0, and we are called to with flush or commit_now,
+ 	 ** we wait on j_join_wait.  We will wake up when the last writer has
+ 	 ** finished the transaction, and started it on its way to the disk.
+-	 ** Then, we flush the commit or journal list, and just return 0 
++	 ** Then, we flush the commit or journal list, and just return 0
+ 	 ** because the rest of journal end was already done for this transaction.
+ 	 */
+ 	if (atomic_read(&(journal->j_wcount)) > 0) {
+@@ -3630,7 +3630,7 @@ static int check_journal_end(struct reis
+ /*
+ ** Does all the work that makes deleting blocks safe.
+ ** when deleting a block mark BH_JNew, just remove it from the current transaction, clean it's buffer_head and move on.
+-** 
++**
+ ** otherwise:
+ ** set a bit for the block in the journal bitmap.  That will prevent it from being allocated for unformatted nodes
+ ** before this transaction has finished.
+@@ -3687,7 +3687,7 @@ int journal_mark_freed(struct reiserfs_t
+ 				set_bit(BLOCK_FREED, &cn->state);
+ 				if (cn->bh) {
+ 					if (!cleaned) {
+-						/* remove_from_transaction will brelse the buffer if it was 
++						/* remove_from_transaction will brelse the buffer if it was
+ 						 ** in the current trans
+ 						 */
+ 						clear_buffer_journal_dirty(cn->
+@@ -3839,7 +3839,7 @@ extern struct tree_balance *cur_tb;
+ ** be written to disk while we are altering it.  So, we must:
+ ** clean it
+ ** wait on it.
+-** 
++**
+ */
+ int reiserfs_prepare_for_journal(struct super_block *p_s_sb,
+ 				 struct buffer_head *bh, int wait)
+@@ -3881,7 +3881,7 @@ static void flush_old_journal_lists(stru
+ 	}
+ }
  
-@@ -1018,13 +1018,13 @@ static char prepare_for_delete_or_cut(st
- 			break;
- 		    }
+-/* 
++/*
+ ** long and ugly.  If flush, will not return until all commit
+ ** blocks and all real buffers in the trans are on disk.
+ ** If no_async, won't return until all commit blocks are on disk.
+@@ -3942,7 +3942,7 @@ static int do_journal_end(struct reiserf
+ 		wait_on_commit = 1;
+ 	}
  
--		    unfm = (__u32 *)B_I_PITEM(p_s_bh, &s_ih) + pos - 1;
-+		    unfm = (__u32 *)B_I_PITEM(bh, &s_ih) + pos - 1;
- 		    block = get_block_num(unfm, 0);
+-	/* check_journal_end locks the journal, and unlocks if it does not return 1 
++	/* check_journal_end locks the journal, and unlocks if it does not return 1
+ 	 ** it tells us if we should continue with the journal_end, or just return
+ 	 */
+ 	if (!check_journal_end(th, p_s_sb, nblocks, flags)) {
+@@ -4039,7 +4039,7 @@ static int do_journal_end(struct reiserf
+ 				last_cn->next = jl_cn;
+ 			}
+ 			last_cn = jl_cn;
+-			/* make sure the block we are trying to log is not a block 
++			/* make sure the block we are trying to log is not a block
+ 			   of journal or reserved area */
  
- 		    if (block != 0) {
--			reiserfs_prepare_for_journal(sb, p_s_bh, 1);
-+			reiserfs_prepare_for_journal(sb, bh, 1);
- 			put_block_num(unfm, 0, 0);
--			journal_mark_dirty (th, sb, p_s_bh);
-+			journal_mark_dirty (th, sb, bh);
- 			reiserfs_free_block(th, inode, block, 1);
- 		    }
+ 			if (is_block_in_log_or_reserved_area
+@@ -4186,9 +4186,9 @@ static int do_journal_end(struct reiserf
+ 	} else if (!(jl->j_state & LIST_COMMIT_PENDING))
+ 		queue_delayed_work(commit_wq, &journal->j_work, HZ / 10);
  
-@@ -1048,7 +1048,7 @@ static char prepare_for_delete_or_cut(st
- 		/* a trick.  If the buffer has been logged, this will do nothing.  If
- 		** we've broken the loop without logging it, it will restore the
- 		** buffer */
--		reiserfs_restore_prepared_buffer(sb, p_s_bh);
-+		reiserfs_restore_prepared_buffer(sb, bh);
- 	    } while (need_re_search &&
- 		     search_for_position_by_key(sb, p_s_item_key, p_s_path) == POSITION_FOUND);
- 	    pos_in_item(p_s_path) = pos * UNFM_P_SIZE;
---- a/include/linux/reiserfs_fs.h	2007-06-11 14:49:39.000000000 -0400
-+++ b/include/linux/reiserfs_fs.h	2007-06-11 14:50:03.000000000 -0400
-@@ -731,25 +731,25 @@ struct block_head {
- #define DISK_LEAF_NODE_LEVEL  1	/* Leaf node level. */
+-	/* if the next transaction has any chance of wrapping, flush 
+-	 ** transactions that might get overwritten.  If any journal lists are very 
+-	 ** old flush them as well.  
++	/* if the next transaction has any chance of wrapping, flush
++	 ** transactions that might get overwritten.  If any journal lists are very
++	 ** old flush them as well.
+ 	 */
+       first_jl:
+ 	list_for_each_safe(entry, safe, &journal->j_journal_list) {
+--- a/fs/reiserfs/lbalance.c	2007-06-11 14:49:35.000000000 -0400
++++ b/fs/reiserfs/lbalance.c	2007-06-11 14:49:39.000000000 -0400
+@@ -119,8 +119,8 @@ static void leaf_copy_dir_entries(struct
+ 			   DEH_SIZE * copy_count + copy_records_len);
+ }
  
- /* Given the buffer head of a formatted node, resolve to the block head of that node. */
--#define B_BLK_HEAD(p_s_bh)            ((struct block_head *)((p_s_bh)->b_data))
-+#define B_BLK_HEAD(bh)            ((struct block_head *)((bh)->b_data))
- /* Number of items that are in buffer. */
--#define B_NR_ITEMS(p_s_bh)            (blkh_nr_item(B_BLK_HEAD(p_s_bh)))
--#define B_LEVEL(p_s_bh)               (blkh_level(B_BLK_HEAD(p_s_bh)))
--#define B_FREE_SPACE(p_s_bh)          (blkh_free_space(B_BLK_HEAD(p_s_bh)))
--
--#define PUT_B_NR_ITEMS(p_s_bh,val)    do { set_blkh_nr_item(B_BLK_HEAD(p_s_bh),val); } while (0)
--#define PUT_B_LEVEL(p_s_bh,val)       do { set_blkh_level(B_BLK_HEAD(p_s_bh),val); } while (0)
--#define PUT_B_FREE_SPACE(p_s_bh,val)  do { set_blkh_free_space(B_BLK_HEAD(p_s_bh),val); } while (0)
-+#define B_NR_ITEMS(bh)            (blkh_nr_item(B_BLK_HEAD(bh)))
-+#define B_LEVEL(bh)               (blkh_level(B_BLK_HEAD(bh)))
-+#define B_FREE_SPACE(bh)          (blkh_free_space(B_BLK_HEAD(bh)))
+-/* Copy the first (if last_first == FIRST_TO_LAST) or last (last_first == LAST_TO_FIRST) item or 
+-   part of it or nothing (see the return 0 below) from SOURCE to the end 
++/* Copy the first (if last_first == FIRST_TO_LAST) or last (last_first == LAST_TO_FIRST) item or
++   part of it or nothing (see the return 0 below) from SOURCE to the end
+    (if last_first) or beginning (!last_first) of the DEST */
+ /* returns 1 if anything was copied, else 0 */
+ static int leaf_copy_boundary_item(struct buffer_info *dest_bi,
+@@ -396,7 +396,7 @@ static void leaf_item_bottle(struct buff
+ 		else {
+ 			struct item_head n_ih;
+ 
+-			/* copy part of the body of the item number 'item_num' of SOURCE to the end of the DEST 
++			/* copy part of the body of the item number 'item_num' of SOURCE to the end of the DEST
+ 			   part defined by 'cpy_bytes'; create new item header; change old item_header (????);
+ 			   n_ih = new item_header;
+ 			 */
+@@ -426,7 +426,7 @@ static void leaf_item_bottle(struct buff
+ 		else {
+ 			struct item_head n_ih;
+ 
+-			/* copy part of the body of the item number 'item_num' of SOURCE to the begin of the DEST 
++			/* copy part of the body of the item number 'item_num' of SOURCE to the begin of the DEST
+ 			   part defined by 'cpy_bytes'; create new item header;
+ 			   n_ih = new item_header;
+ 			 */
+@@ -724,7 +724,7 @@ int leaf_shift_right(struct tree_balance
+ static void leaf_delete_items_entirely(struct buffer_info *bi,
+ 				       int first, int del_num);
+ /*  If del_bytes == -1, starting from position 'first' delete del_num items in whole in buffer CUR.
+-    If not. 
++    If not.
+     If last_first == 0. Starting from position 'first' delete del_num-1 items in whole. Delete part of body of
+     the first item. Part defined by del_bytes. Don't delete first item header
+     If last_first == 1. Starting from position 'first+1' delete del_num-1 items in whole. Delete part of body of
+@@ -783,7 +783,7 @@ void leaf_delete_items(struct buffer_inf
+ 				/* len = body len of item */
+ 				len = ih_item_len(ih);
+ 
+-			/* delete the part of the last item of the bh 
++			/* delete the part of the last item of the bh
+ 			   do not delete item header
+ 			 */
+ 			leaf_cut_from_buffer(cur_bi, B_NR_ITEMS(bh) - 1,
+@@ -865,7 +865,7 @@ void leaf_insert_into_buf(struct buffer_
+ 	}
+ }
+ 
+-/* paste paste_size bytes to affected_item_num-th item. 
++/* paste paste_size bytes to affected_item_num-th item.
+    When item is a directory, this only prepare space for new entries */
+ void leaf_paste_in_buffer(struct buffer_info *bi, int affected_item_num,
+ 			  int pos_in_item, int paste_size,
+@@ -1022,7 +1022,7 @@ static int leaf_cut_entries(struct buffe
+ /*  when cut item is part of regular file
+         pos_in_item - first byte that must be cut
+         cut_size - number of bytes to be cut beginning from pos_in_item
+- 
 +
-+#define PUT_B_NR_ITEMS(bh,val)    do { set_blkh_nr_item(B_BLK_HEAD(bh),val); } while (0)
-+#define PUT_B_LEVEL(bh,val)       do { set_blkh_level(B_BLK_HEAD(bh),val); } while (0)
-+#define PUT_B_FREE_SPACE(bh,val)  do { set_blkh_free_space(B_BLK_HEAD(bh),val); } while (0)
+    when cut item is part of directory
+         pos_in_item - number of first deleted entry
+         cut_size - count of deleted entries
+@@ -1274,7 +1274,7 @@ void leaf_paste_entries(struct buffer_he
+ 	/* change item key if necessary (when we paste before 0-th entry */
+ 	if (!before) {
+ 		set_le_ih_k_offset(ih, deh_offset(new_dehs));
+-/*      memcpy (&ih->ih_key.k_offset, 
++/*      memcpy (&ih->ih_key.k_offset,
+ 		       &new_dehs->deh_offset, SHORT_KEY_SIZE);*/
+ 	}
+ #ifdef CONFIG_REISERFS_CHECK
+--- a/fs/reiserfs/namei.c	2007-06-11 14:49:38.000000000 -0400
++++ b/fs/reiserfs/namei.c	2007-06-11 14:49:39.000000000 -0400
+@@ -106,7 +106,7 @@ key of the first directory entry in it.
+ This function first calls search_by_key, then, if item whose first
+ entry matches is not found it looks for the entry inside directory
+ item found by search_by_key. Fills the path to the entry, and to the
+-entry position in the item 
++entry position in the item
  
- /* Get right delimiting key. -- little endian */
--#define B_PRIGHT_DELIM_KEY(p_s_bh)   (&(blk_right_delim_key(B_BLK_HEAD(p_s_bh))))
-+#define B_PRIGHT_DELIM_KEY(bh)   (&(blk_right_delim_key(B_BLK_HEAD(bh))))
+ */
  
- /* Does the buffer contain a disk leaf. */
--#define B_IS_ITEMS_LEVEL(p_s_bh)     (B_LEVEL(p_s_bh) == DISK_LEAF_NODE_LEVEL)
-+#define B_IS_ITEMS_LEVEL(bh)     (B_LEVEL(bh) == DISK_LEAF_NODE_LEVEL)
+@@ -370,7 +370,7 @@ static struct dentry *reiserfs_lookup(st
+ 	return d_splice_alias(inode, dentry);
+ }
  
- /* Does the buffer contain a disk internal node */
--#define B_IS_KEYS_LEVEL(p_s_bh)      (B_LEVEL(p_s_bh) > DISK_LEAF_NODE_LEVEL \
--                                            && B_LEVEL(p_s_bh) <= MAX_HEIGHT)
-+#define B_IS_KEYS_LEVEL(bh)      (B_LEVEL(bh) > DISK_LEAF_NODE_LEVEL \
-+                                            && B_LEVEL(bh) <= MAX_HEIGHT)
+-/* 
++/*
+ ** looks up the dentry of the parent directory for child.
+ ** taken from ext2_get_parent
+ */
+@@ -409,7 +409,7 @@ struct dentry *reiserfs_get_parent(struc
+ 	return parent;
+ }
  
- /***************************************************************************/
- /*                             STAT DATA                                   */
-@@ -1099,12 +1099,12 @@ struct disk_child {
- #define put_dc_size(dc_p, val)   do { (dc_p)->dc_size = cpu_to_le16(val); } while(0)
+-/* add entry to the directory (entry can be hidden). 
++/* add entry to the directory (entry can be hidden).
  
- /* Get disk child by buffer header and position in the tree node. */
--#define B_N_CHILD(p_s_bh,n_pos)  ((struct disk_child *)\
--((p_s_bh)->b_data+BLKH_SIZE+B_NR_ITEMS(p_s_bh)*KEY_SIZE+DC_SIZE*(n_pos)))
-+#define B_N_CHILD(bh,n_pos)  ((struct disk_child *)\
-+((bh)->b_data+BLKH_SIZE+B_NR_ITEMS(bh)*KEY_SIZE+DC_SIZE*(n_pos)))
+ insert definition of when hidden directories are used here -Hans
  
- /* Get disk child number by buffer header and position in the tree node. */
--#define B_N_CHILD_NUM(p_s_bh,n_pos) (dc_block_number(B_N_CHILD(p_s_bh,n_pos)))
--#define PUT_B_N_CHILD_NUM(p_s_bh,n_pos, val) (put_dc_block_number(B_N_CHILD(p_s_bh,n_pos), val ))
-+#define B_N_CHILD_NUM(bh,n_pos) (dc_block_number(B_N_CHILD(bh,n_pos)))
-+#define PUT_B_N_CHILD_NUM(bh,n_pos, val) (put_dc_block_number(B_N_CHILD(bh,n_pos), val ))
+@@ -567,7 +567,7 @@ static int drop_new_inode(struct inode *
+ 	return 0;
+ }
  
-  /* maximal value of field child_size in structure disk_child */
-  /* child size is the combined size of all items and their headers */
-@@ -1827,7 +1827,7 @@ int search_by_key(struct super_block *, 
- int search_for_position_by_key(struct super_block *sb,
- 			       const struct cpu_key *p_s_cpu_key,
- 			       struct treepath *p_s_search_path);
--extern void decrement_bcount(struct buffer_head *p_s_bh);
-+extern void decrement_bcount(struct buffer_head *bh);
- void decrement_counters_in_path(struct treepath *p_s_search_path);
- void pathrelse(struct treepath *p_s_search_path);
- int reiserfs_check_path(struct treepath *p);
-@@ -1972,7 +1972,7 @@ int reiserfs_global_version_in_proc(char
- #define PROC_INFO_MAX( sb, field, value ) VOID_V
- #define PROC_INFO_INC( sb, field ) VOID_V
- #define PROC_INFO_ADD( sb, field, val ) VOID_V
--#define PROC_INFO_BH_STAT( sb, p_s_bh, n_node_level ) VOID_V
-+#define PROC_INFO_BH_STAT( sb, bh, n_node_level ) VOID_V
- #endif
+-/* utility function that does setup for reiserfs_new_inode.  
++/* utility function that does setup for reiserfs_new_inode.
+ ** DQUOT_INIT needs lots of credits so it's better to have it
+ ** outside of a transaction, so we had to pull some bits of
+ ** reiserfs_new_inode out into this func.
+@@ -822,7 +822,7 @@ static inline int reiserfs_empty_dir(str
+ {
+ 	/* we can cheat because an old format dir cannot have
+ 	 ** EMPTY_DIR_SIZE, and a new format dir cannot have
+-	 ** EMPTY_DIR_SIZE_V1.  So, if the inode is either size, 
++	 ** EMPTY_DIR_SIZE_V1.  So, if the inode is either size,
+ 	 ** regardless of disk format version, the directory is empty.
+ 	 */
+ 	if (inode->i_size != EMPTY_DIR_SIZE &&
+@@ -1162,7 +1162,7 @@ static int reiserfs_link(struct dentry *
+ 	return retval;
+ }
  
- /* dir.c */
+-// de contains information pointing to an entry which 
++// de contains information pointing to an entry which
+ static int de_still_valid(const char *name, int len,
+ 			  struct reiserfs_dir_entry *de)
+ {
+@@ -1206,10 +1206,10 @@ static void set_ino_in_dir_entry(struct 
+ 	de->de_deh[de->de_entry_num].deh_objectid = key->k_objectid;
+ }
+ 
+-/* 
++/*
+  * process, that is going to call fix_nodes/do_balance must hold only
+  * one path. If it holds 2 or more, it can get into endless waiting in
+- * get_empty_nodes or its clones 
++ * get_empty_nodes or its clones
+  */
+ static int reiserfs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 			   struct inode *new_dir, struct dentry *new_dentry)
+@@ -1263,7 +1263,7 @@ static int reiserfs_rename(struct inode 
+ 
+ 	old_inode_mode = old_inode->i_mode;
+ 	if (S_ISDIR(old_inode_mode)) {
+-		// make sure, that directory being renamed has correct ".." 
++		// make sure, that directory being renamed has correct ".."
+ 		// and that its new parent directory has not too many links
+ 		// already
+ 
+@@ -1274,8 +1274,8 @@ static int reiserfs_rename(struct inode 
+ 			}
+ 		}
+ 
+-		/* directory is renamed, its parent directory will be changed, 
+-		 ** so find ".." entry 
++		/* directory is renamed, its parent directory will be changed,
++		 ** so find ".." entry
+ 		 */
+ 		dot_dot_de.de_gen_number_bit_string = NULL;
+ 		retval =
+@@ -1385,9 +1385,9 @@ static int reiserfs_rename(struct inode 
+ 		   this stuff, yes? Then, having
+ 		   gathered everything into RAM we
+ 		   should lock the buffers, yes?  -Hans */
+-		/* probably.  our rename needs to hold more 
+-		 ** than one path at once.  The seals would 
+-		 ** have to be written to deal with multi-path 
++		/* probably.  our rename needs to hold more
++		 ** than one path at once.  The seals would
++		 ** have to be written to deal with multi-path
+ 		 ** issues -chris
+ 		 */
+ 		/* sanity checking before doing the rename - avoid races many
+@@ -1465,7 +1465,7 @@ static int reiserfs_rename(struct inode 
+ 	}
+ 
+ 	if (S_ISDIR(old_inode_mode)) {
+-		// adjust ".." of renamed directory 
++		// adjust ".." of renamed directory
+ 		set_ino_in_dir_entry(&dot_dot_de, INODE_PKEY(new_dir));
+ 		journal_mark_dirty(&th, new_dir->i_sb, dot_dot_de.de_bh);
+ 
+--- a/fs/reiserfs/objectid.c	2007-06-11 14:49:35.000000000 -0400
++++ b/fs/reiserfs/objectid.c	2007-06-11 14:49:39.000000000 -0400
+@@ -181,7 +181,7 @@ int reiserfs_convert_objectid_map_v1(str
+ 
+ 	if (cur_size > new_size) {
+ 		/* mark everyone used that was listed as free at the end of the objectid
+-		 ** map 
++		 ** map
+ 		 */
+ 		objectid_map[new_size - 1] = objectid_map[cur_size - 1];
+ 		set_sb_oid_cursize(disk_sb, new_size);
+--- a/fs/reiserfs/prints.c	2007-06-11 14:49:35.000000000 -0400
++++ b/fs/reiserfs/prints.c	2007-06-11 14:50:01.000000000 -0400
+@@ -181,11 +181,11 @@ static char *is_there_reiserfs_struct(ch
+    appropriative printk. With this reiserfs_warning you can use format
+    specification for complex structures like you used to do with
+    printfs for integers, doubles and pointers. For instance, to print
+-   out key structure you have to write just: 
+-   reiserfs_warning ("bad key %k", key); 
+-   instead of 
+-   printk ("bad key %lu %lu %lu %lu", key->k_dir_id, key->k_objectid, 
+-           key->k_offset, key->k_uniqueness); 
++   out key structure you have to write just:
++   reiserfs_warning ("bad key %k", key);
++   instead of
++   printk ("bad key %lu %lu %lu %lu", key->k_dir_id, key->k_objectid,
++           key->k_offset, key->k_uniqueness);
+ */
+ 
+ static void prepare_error_buf(const char *fmt, va_list args)
+@@ -247,11 +247,11 @@ static void prepare_error_buf(const char
+ }
+ 
+ /* in addition to usual conversion specifiers this accepts reiserfs
+-   specific conversion specifiers: 
+-   %k to print little endian key, 
+-   %K to print cpu key, 
++   specific conversion specifiers:
++   %k to print little endian key,
++   %K to print cpu key,
+    %h to print item_head,
+-   %t to print directory entry 
++   %t to print directory entry
+    %z to print block head (arg must be struct buffer_head *
+    %b to print buffer_head
+ */
+@@ -317,17 +317,17 @@ void reiserfs_debug(struct super_block *
+     maintainer-errorid.  Don't bother with reusing errorids, there are
+     lots of numbers out there.
+ 
+-    Example: 
+-    
++    Example:
++
+     reiserfs_panic(
+ 	p_sb, "reiser-29: reiserfs_new_blocknrs: "
+ 	"one of search_start or rn(%d) is equal to MAX_B_NUM,"
+-	"which means that we are optimizing location based on the bogus location of a temp buffer (%p).", 
++	"which means that we are optimizing location based on the bogus location of a temp buffer (%p).",
+ 	rn, bh
+     );
+ 
+     Regular panic()s sometimes clear the screen before the message can
+-    be read, thus the need for the while loop.  
++    be read, thus the need for the while loop.
+ 
+     Numbering scheme for panic used by Vladimir and Anatoly( Hans completely ignores this scheme, and considers it
+     pointless complexity):
+--- a/fs/reiserfs/procfs.c	2007-06-11 14:49:34.000000000 -0400
++++ b/fs/reiserfs/procfs.c	2007-06-11 14:49:39.000000000 -0400
+@@ -645,7 +645,7 @@ int reiserfs_global_version_in_proc(char
+  *
+  */
+ 
+-/* 
++/*
+  * Make Linus happy.
+  * Local variables:
+  * c-indentation-style: "K&R"
+--- a/fs/reiserfs/resize.c	2007-06-11 14:49:05.000000000 -0400
++++ b/fs/reiserfs/resize.c	2007-06-11 14:49:39.000000000 -0400
+@@ -1,8 +1,8 @@
+-/* 
++/*
+  * Copyright 2000 by Hans Reiser, licensing governed by reiserfs/README
+  */
+ 
+-/* 
++/*
+  * Written by Alexander Zarochentcev.
+  *
+  * The kernel part of the (on-line) reiserfs resizer.
+@@ -100,7 +100,7 @@ int reiserfs_resize(struct super_block *
+ 			memcpy(jbitmap[i].bitmaps, jb->bitmaps, copy_size);
+ 
+ 			/* just in case vfree schedules on us, copy the new
+-			 ** pointer into the journal struct before freeing the 
++			 ** pointer into the journal struct before freeing the
+ 			 ** old one
+ 			 */
+ 			node_tmp = jb->bitmaps;
+--- a/fs/reiserfs/stree.c	2007-06-11 14:49:39.000000000 -0400
++++ b/fs/reiserfs/stree.c	2007-06-11 14:50:04.000000000 -0400
+@@ -77,7 +77,7 @@ inline void copy_item_head(struct item_h
+ /* k1 is pointer to on-disk structure which is stored in little-endian
+    form. k2 is pointer to cpu variable. For key of items of the same
+    object this returns 0.
+-   Returns: -1 if key1 < key2 
++   Returns: -1 if key1 < key2
+    0 if key1 == key2
+    1 if key1 > key2 */
+ inline int comp_short_keys(const struct reiserfs_key *le_key,
+@@ -890,7 +890,7 @@ static inline int prepare_for_direct_ite
+ 	}
+ 	// new file gets truncated
+ 	if (get_inode_item_key_version(inode) == KEY_FORMAT_3_6) {
+-		// 
++		//
+ 		round_len = ROUND_UP(new_file_length);
+ 		/* this was n_new_file_length < le_ih ... */
+ 		if (round_len < le_ih_k_offset(le_ih)) {
+@@ -1446,7 +1446,7 @@ static int maybe_indirect_to_direct(stru
+ 	if (atomic_read(&p_s_inode->i_count) > 1 ||
+ 	    !tail_has_to_be_packed(p_s_inode) ||
+ 	    !page || (REISERFS_I(p_s_inode)->i_flags & i_nopack_mask)) {
+-		// leave tail in an unformatted node    
++		// leave tail in an unformatted node
+ 		*p_c_mode = M_SKIP_BALANCING;
+ 		cut_bytes =
+ 		    n_block_size - (n_new_file_size & (n_block_size - 1));
+@@ -1829,7 +1829,7 @@ int reiserfs_do_truncate(struct reiserfs
+ 		/* While there are bytes to truncate and previous file item is presented in the tree. */
+ 
+ 		/*
+-		 ** This loop could take a really long time, and could log 
++		 ** This loop could take a really long time, and could log
+ 		 ** many more blocks than a transaction can hold.  So, we do a polite
+ 		 ** journal end here, and if the transaction needs ending, we make
+ 		 ** sure the file is consistent before ending the current trans
+--- a/fs/reiserfs/super.c	2007-06-11 14:49:37.000000000 -0400
++++ b/fs/reiserfs/super.c	2007-06-11 14:49:39.000000000 -0400
+@@ -739,7 +739,7 @@ static int reiserfs_getopt(struct super_
+ 			   char **opt_arg, unsigned long *bit_flags)
+ {
+ 	char *p;
+-	/* foo=bar, 
++	/* foo=bar,
+ 	   ^   ^  ^
+ 	   |   |  +-- option_end
+ 	   |   +-- arg_start
+@@ -1280,7 +1280,7 @@ static int read_super_block(struct super
+ 	}
+ 	//
+ 	// ok, reiserfs signature (old or new) found in at the given offset
+-	//    
++	//
+ 	fs_blocksize = sb_blocksize(rs);
+ 	brelse(bh);
+ 	sb_set_blocksize(s, fs_blocksize);
+@@ -1466,8 +1466,8 @@ static int what_hash(struct super_block 
+ 		code = find_hash_out(s);
+ 
+ 	if (code != UNSET_HASH && reiserfs_hash_detect(s)) {
+-		/* detection has found the hash, and we must check against the 
+-		 ** mount options 
++		/* detection has found the hash, and we must check against the
++		 ** mount options
+ 		 */
+ 		if (reiserfs_rupasov_hash(s) && code != YURA_HASH) {
+ 			reiserfs_warning(s, "reiserfs-2507",
+@@ -1499,7 +1499,7 @@ static int what_hash(struct super_block 
+ 		}
+ 	}
+ 
+-	/* if we are mounted RW, and we have a new valid hash code, update 
++	/* if we are mounted RW, and we have a new valid hash code, update
+ 	 ** the super
+ 	 */
+ 	if (code != UNSET_HASH &&
+--- a/fs/reiserfs/tail_conversion.c	2007-06-11 14:49:35.000000000 -0400
++++ b/fs/reiserfs/tail_conversion.c	2007-06-11 14:50:04.000000000 -0400
+@@ -46,7 +46,7 @@ int direct2indirect(struct reiserfs_tran
+ 	/* Set the key to search for the place for new unfm pointer */
+ 	make_cpu_key(&end_key, inode, tail_offset, TYPE_INDIRECT, 4);
+ 
+-	// FIXME: we could avoid this 
++	// FIXME: we could avoid this
+ 	if (search_for_position_by_key(sb, &end_key, path) == POSITION_FOUND) {
+ 		reiserfs_error(sb, "PAP-14030",
+ 		               "pasted or inserted byte exists in "
+--- a/include/linux/reiserfs_fs_sb.h	2007-06-11 14:49:37.000000000 -0400
++++ b/include/linux/reiserfs_fs_sb.h	2007-06-11 14:49:39.000000000 -0400
+@@ -14,7 +14,7 @@ typedef enum {
+ } reiserfs_super_block_flags;
+ 
+ /* struct reiserfs_super_block accessors/mutators
+- * since this is a disk structure, it will always be in 
++ * since this is a disk structure, it will always be in
+  * little endian format. */
+ #define sb_block_count(sbp)         (le32_to_cpu((sbp)->s_v1.s_block_count))
+ #define set_sb_block_count(sbp,v)   ((sbp)->s_v1.s_block_count = cpu_to_le32(v))
+@@ -80,16 +80,16 @@ typedef enum {
+ 
+ /* LOGGING -- */
+ 
+-/* These all interelate for performance.  
++/* These all interelate for performance.
+ **
+-** If the journal block count is smaller than n transactions, you lose speed. 
++** If the journal block count is smaller than n transactions, you lose speed.
+ ** I don't know what n is yet, I'm guessing 8-16.
+ **
+ ** typical transaction size depends on the application, how often fsync is
+-** called, and how many metadata blocks you dirty in a 30 second period.  
++** called, and how many metadata blocks you dirty in a 30 second period.
+ ** The more small files (<16k) you use, the larger your transactions will
+ ** be.
+-** 
++**
+ ** If your journal fills faster than dirty buffers get flushed to disk, it must flush them before allowing the journal
+ ** to wrap, which slows things down.  If you need high speed meta data updates, the journal should be big enough
+ ** to prevent wrapping before dirty meta blocks get to disk.
+@@ -239,7 +239,7 @@ struct reiserfs_journal {
+ 
+ 	struct reiserfs_list_bitmap j_list_bitmap[JOURNAL_NUM_BITMAPS];	/* array of bitmaps to record the deleted blocks */
+ 	struct reiserfs_journal_cnode *j_hash_table[JOURNAL_HASH_SIZE];	/* hash table for real buffer heads in current trans */
+-	struct reiserfs_journal_cnode *j_list_hash_table[JOURNAL_HASH_SIZE];	/* hash table for all the real buffer heads in all 
++	struct reiserfs_journal_cnode *j_list_hash_table[JOURNAL_HASH_SIZE];	/* hash table for all the real buffer heads in all
+ 										   the transactions */
+ 	struct list_head j_prealloc_list;	/* list of inodes which have preallocated blocks */
+ 	int j_persistent_trans;
+@@ -427,7 +427,7 @@ enum reiserfs_mount_options {
+ 				   partition will be dealt with in a
+ 				   manner of 3.5.x */
+ 
+-/* -o hash={tea, rupasov, r5, detect} is meant for properly mounting 
++/* -o hash={tea, rupasov, r5, detect} is meant for properly mounting
+ ** reiserfs disks from 3.5.19 or earlier.  99% of the time, this option
+ ** is not required.  If the normal autodection code can't determine which
+ ** hash to use (because both hashes had the same value for a file)
 
 -- 
 Jeff Mahoney
