@@ -1,10 +1,10 @@
 From: jeffm@suse.com
-Subject: [patch 37/40] reiserfs: clean up bl_when_delete
-Date: Mon, 11 Jun 2007 15:03:46 -0400
-Message-ID: <20070611190633.507538231@suse.com>
+Subject: [patch 38/40] reiserfs: clean up balancing modes
+Date: Mon, 11 Jun 2007 15:03:47 -0400
+Message-ID: <20070611190633.631633722@suse.com>
 References: <20070611190309.532091171@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-split-balance_leaf.diff
+Content-Disposition: inline; filename=reiserfs-cleanup-balancing-modes.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -12,110 +12,95 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
+ This patch turns the character balancing modes into an enum, since the
+ letter itself is irrelevant.
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com.
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
 ---
- fs/reiserfs/do_balan.c |   71 ++++++++++++++++++++++---------------------------
- 1 file changed, 33 insertions(+), 38 deletions(-)
+ fs/reiserfs/prints.c        |   17 +++++++++++++++++
+ include/linux/reiserfs_fs.h |   34 ++++++++++++++++------------------
+ 2 files changed, 33 insertions(+), 18 deletions(-)
 
---- a/fs/reiserfs/do_balan.c	2007-06-11 14:49:42.000000000 -0400
-+++ b/fs/reiserfs/do_balan.c	2007-06-11 14:49:59.000000000 -0400
-@@ -115,6 +115,13 @@ static int balance_leaf_when_delete(stru
- 	int n;
- 	struct item_head *ih;
+--- a/fs/reiserfs/prints.c	2007-06-11 14:49:41.000000000 -0400
++++ b/fs/reiserfs/prints.c	2007-06-11 14:49:43.000000000 -0400
+@@ -14,6 +14,23 @@ static char error_buf[1024];
+ static char fmt_buf[1024];
+ static char off_buf[80];
  
-+	if (flag != M_DELETE && flag != M_CUT) {
-+		print_cur_tb("12040");
-+		reiserfs_panic(tb->tb_sb, "PAP-12040",
-+		               "unexpected mode: %s(%d)",
-+			       tb_mode_names(flag), flag);
-+	}
++const char *tb_mode_names(enum tb_modes mode)
++{
++	char * const names[] = {
++	"INSERT",
++	"PASTE",
++	"DELETE",
++	"CUT",
++	"INTERNAL",
++	"SKIP_BALANCING",
++	"CONVERT",
++	};
 +
- 	RFALSE(tb->FR[0] && B_LEVEL(tb->FR[0]) != DISK_LEAF_NODE_LEVEL + 1,
- 	       "vs- 12000: level: wrong FR %z", tb->FR[0]);
- 	RFALSE(tb->blknum[0] > 1,
-@@ -127,9 +134,7 @@ static int balance_leaf_when_delete(stru
- 
- 	/* Delete or truncate the item */
- 
--	switch (flag) {
--	case M_DELETE:		/* delete item in S[0] */
--
-+	if (flag == M_DELETE) {
- 		RFALSE(ih_item_len(ih) + IH_SIZE != -tb->insert_size[0],
- 		       "vs-12013: mode Delete, insert size %d, ih to be deleted %h",
- 		       -tb->insert_size[0], ih);
-@@ -151,44 +156,34 @@ static int balance_leaf_when_delete(stru
- 		RFALSE(!item_pos && !tb->CFL[0],
- 		       "PAP-12020: tb->CFL[0]==%p, tb->L[0]==%p", tb->CFL[0],
- 		       tb->L[0]);
-+	} else { /* M_CUT */
-+		if (is_direntry_le_ih(ih)) {
- 
--		break;
--
--	case M_CUT:{		/* cut item in S[0] */
--			if (is_direntry_le_ih(ih)) {
--
--				/* UFS unlink semantics are such that you can only delete one directory entry at a time. */
--				/* when we cut a directory tb->insert_size[0] means number of entries to be cut (always 1) */
--				tb->insert_size[0] = -1;
--				leaf_cut_from_buffer(&bi, item_pos, pos_in_item,
--						     -tb->insert_size[0]);
--
--				RFALSE(!item_pos && !pos_in_item && !tb->CFL[0],
--				       "PAP-12030: can not change delimiting key. CFL[0]=%p",
--				       tb->CFL[0]);
--
--				if (!item_pos && !pos_in_item && tb->CFL[0]) {
--					replace_key(tb, tb->CFL[0], tb->lkey[0],
--						    tbS0, 0);
--				}
--			} else {
--				leaf_cut_from_buffer(&bi, item_pos, pos_in_item,
--						     -tb->insert_size[0]);
--
--				RFALSE(!ih_item_len(ih),
--				       "PAP-12035: cut must leave non-zero dynamic length of item");
-+			/* UFS unlink semantics are such that
-+			 * you can only delete one directory entry
-+			 * at a time. */
-+			/* when we cut a directory tb->insert_size[0]
-+			 * means number of entries to be cut
-+			 * (always 1) */
-+			tb->insert_size[0] = -1;
-+			leaf_cut_from_buffer(&bi, item_pos, pos_in_item,
-+					     -tb->insert_size[0]);
++	if (mode >= M_MAX_MODES)
++		return "UNKNOWN";
++	return names[mode];
++}
 +
-+			RFALSE(!item_pos && !pos_in_item && !tb->CFL[0],
-+			       "PAP-12030: can not change delimiting key. CFL[0]=%p",
-+			       tb->CFL[0]);
-+
-+			if (!item_pos && !pos_in_item && tb->CFL[0]) {
-+				replace_key(tb, tb->CFL[0], tb->lkey[0],
-+					    tbS0, 0);
- 			}
--			break;
--		}
-+		} else {
-+			leaf_cut_from_buffer(&bi, item_pos, pos_in_item,
-+					     -tb->insert_size[0]);
+ static char *reiserfs_cpu_offset(struct cpu_key *key)
+ {
+ 	if (cpu_key_k_type(key) == TYPE_DIRENTRY)
+--- a/include/linux/reiserfs_fs.h	2007-06-11 14:49:41.000000000 -0400
++++ b/include/linux/reiserfs_fs.h	2007-06-11 14:49:43.000000000 -0400
+@@ -1388,27 +1388,24 @@ struct tree_balance {
+ 	struct in_core_key key;	/* key pointer, to pass to block allocator or
+ 				   another low-level subsystem */
+ #endif
++	struct bl_context *context;
+ };
  
--	default:
--		print_cur_tb("12040");
--		reiserfs_panic(tb->tb_sb, "PAP-12040",
--		               "unexpected mode: %s(%d)",
--			       (flag ==
--				M_PASTE) ? "PASTE" : ((flag ==
--						       M_INSERT) ? "INSERT" :
--						      "UNKNOWN"), flag);
-+			RFALSE(!ih_item_len(ih), "PAP-12035: cut must "
-+			       "leave non-zero dynamic length of item");
-+		}
- 	}
+ /* These are modes of balancing */
+-
+-/* When inserting an item. */
+-#define M_INSERT	'i'
+-/* When inserting into (directories only) or appending onto an already
+-   existant item. */
+-#define M_PASTE		'p'
+-/* When deleting an item. */
+-#define M_DELETE	'd'
+-/* When truncating an item or removing an entry from a (directory) item. */
+-#define M_CUT 		'c'
+-
+-/* used when balancing on leaf level skipped (in reiserfsck) */
+-#define M_INTERNAL	'n'
+-
+-/* When further balancing is not needed, then do_balance does not need
+-   to be called. */
+-#define M_SKIP_BALANCING 		's'
+-#define M_CONVERT	'v'
++enum tb_modes {
++	M_INSERT = 0,	/* When inserting an item. */
++	M_PASTE,	/* When inserting into (directories only) or
++			 * appending onto an already existant item. */
++	M_DELETE,	/* When deleting an item. */
++	M_CUT,		/* When truncating an item or removing an entry
++	                 * from a (directory) item. */
++	M_INTERNAL,	/* used when balancing on leaf level
++			 * skipped (in reiserfsck) */
++	M_SKIP_BALANCING, /* When further balancing is not needed,
++			   * then do_balance does not need to be called. */
++	M_CONVERT,
++	M_MAX_MODES
++};
  
- 	/* the rule is that no shifting occurs unless by shifting a node can be freed */
+ /* modes of leaf_move_items */
+ #define LEAF_FROM_S_TO_L 0
+@@ -2027,6 +2024,7 @@ void check_leaf(struct buffer_head *bh);
+ void check_internal(struct buffer_head *bh);
+ void print_statistics(struct super_block *s);
+ char *reiserfs_hashname(int code);
++const char *tb_mode_names(enum tb_modes);
+ 
+ /* lbalance.c */
+ int leaf_move_items(int shift_mode, struct tree_balance *tb, int mov_num,
 
 -- 
 Jeff Mahoney
