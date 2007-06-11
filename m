@@ -1,10 +1,8 @@
 From: jeffm@suse.com
-Subject: [patch 05/40] reiserfs: use more consistent printk formatting
-Date: Mon, 11 Jun 2007 15:03:14 -0400
-Message-ID: <20070611190629.801007660@suse.com>
-References: <20070611190309.532091171@suse.com>
+Subject: [patch 00/40] reiserfs: patch queue (v2)
+Date: Mon, 11 Jun 2007 15:03:09 -0400
+Message-ID: <20070611190309.532091171@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-consistent-messages.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -12,83 +10,79 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
- The output format between a warning/error/panic/info/etc changes with
- which one is used.
+Hi all -
 
- The following patch makes the messages more internally consistent, but also
- more consistent with other Linux filesystems.
+The following are a series of patches that have been kicking around for a
+while. I thought I'd just put them out there to gauge interest and to get
+some testing before submitting to -mm.
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+I've re-ordered a few of the patches. This is actually four distinct,
+unrelated, though context-dependent, patch series. I've moved the trivial
+changes to the front of the list to better reflect that.
 
---
- fs/reiserfs/prints.c |   28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+There are a few groups:
+* Little changes (01-04)
+  - Fixes lockdep warnings in xattr code.
+  - Changes reiserfs_panic() to panic() instead of BUG.
+  - Includes bitmap is_reusable unconditionally and uses to to catch
+    corruption. This is light-weight now that the stupid loop is gone.
+  - Make bitmap used cached first zero bit.
 
---- a/fs/reiserfs/prints.c	2007-06-11 14:49:31.000000000 -0400
-+++ b/fs/reiserfs/prints.c	2007-06-11 14:50:10.000000000 -0400
-@@ -268,10 +268,10 @@ void reiserfs_warning(struct super_block
- {
- 	do_reiserfs_warning(fmt);
- 	if (sb)
--		printk(KERN_WARNING "ReiserFS: %s: warning: %s\n",
--		       reiserfs_bdevname(sb), error_buf);
-+		printk(KERN_WARNING "REISERFS warning (device %s): %s\n",
-+		       sb->s_id, error_buf);
- 	else
--		printk(KERN_WARNING "ReiserFS: warning: %s\n", error_buf);
-+		printk(KERN_WARNING "REISERFS warning: %s\n", error_buf);
- }
+* Error handling (05-11)
+  - Reformat error/warning/panic/info/etc messages to be consistent with one
+    another.
+  - Makes some warnings informational. Rather than printing the
+    reiserfs_warning() full preamble to declare that a mount option was
+    invalid, we use reiserfs_info instead.
+  - Rework reiserfs_warning to take a unique ID, print the function name,
+    print the device name.
+  - Rework reiserfs_panic similarly.
+  - Add reiserfs_error() to handle metadata errors.
+  - Use reiserfs_error().
+
+* Extended attributes (12-22)
+  - Simplify internal file lookups/opens.
+  - Eliminate per-super xattr lock.
+  - Make per-inode xattr lock more fine-grained.
+  - Remove i_has_xattr_dir flag.
+  - Remove shared xattr detection (unused).
+  - Use generic xattr handler infrastructure.
+  - Use O_NOATIME for internal file opens.
+  - Add per-file data=ordered mode and use it for xattrs.
+  - Journal xattrs.
+  - Kill xattr_readdir in favor of a for_each_xattr.
+  - Add atomic addition of selinux attributes during inode creation.
  
- /* No newline.. reiserfs_info calls can be followed by printk's */
-@@ -279,10 +279,10 @@ void reiserfs_info(struct super_block *s
- {
- 	do_reiserfs_warning(fmt);
- 	if (sb)
--		printk(KERN_NOTICE "ReiserFS: %s: %s",
--		       reiserfs_bdevname(sb), error_buf);
-+		printk(KERN_NOTICE "REISERFS (device %s): %s",
-+		       sb->s_id, error_buf);
- 	else
--		printk(KERN_NOTICE "ReiserFS: %s", error_buf);
-+		printk(KERN_NOTICE "REISERFS %s:", error_buf);
- }
- 
- /* No newline.. reiserfs_printk calls can be followed by printk's */
-@@ -297,10 +297,10 @@ void reiserfs_debug(struct super_block *
- #ifdef CONFIG_REISERFS_CHECK
- 	do_reiserfs_warning(fmt);
- 	if (s)
--		printk(KERN_DEBUG "ReiserFS: %s: %s\n",
--		       reiserfs_bdevname(s), error_buf);
-+		printk(KERN_DEBUG "REISERFS debug (device %s): %s\n",
-+		       s->s_id, error_buf);
- 	else
--		printk(KERN_DEBUG "ReiserFS: %s\n", error_buf);
-+		printk(KERN_DEBUG "REISERFS debug: %s\n", error_buf);
- #endif
- }
- 
-@@ -365,15 +365,15 @@ void reiserfs_abort(struct super_block *
- 	do_reiserfs_warning(fmt);
- 
- 	if (reiserfs_error_panic(sb)) {
--		panic(KERN_CRIT "REISERFS: panic (device %s): %s\n",
--		      reiserfs_bdevname(sb), error_buf);
-+		panic(KERN_CRIT "REISERFS panic (device %s): %s\n", sb->s_id,
-+		      error_buf);
- 	}
- 
--	if (sb->s_flags & MS_RDONLY)
-+	if (reiserfs_is_journal_aborted(SB_JOURNAL(sb)))
- 		return;
- 
--	printk(KERN_CRIT "REISERFS: abort (device %s): %s\n",
--	       reiserfs_bdevname(sb), error_buf);
-+	printk(KERN_CRIT "REISERFS abort (device %s): %s\n", sb->s_id,
-+	       error_buf);
- 
- 	sb->s_flags |= MS_RDONLY;
- 	reiserfs_journal_abort(sb, errno);
+* Cleanups, code readability (23-30)
+  - Cleanup path functions to reduce redundancy.
+  - Strip trailing whitespace from all reiserfs code.
+  - Rename p_s_sb to sb.
+  - Rename p_s_bh to bh.
+  - Rename p_s_inode to inode.
+  - Rename p_s_tb to tb.
+  - Rename misc p_._ variables.
+  - Rename [cn]_* variables.
+
+* Clean up do_balan.c (31-40)
+  - Factor out buffer_info initializations.
+  - Turn tb->s[12]num and tb[12]bytes into an array.
+  - Split balance_leaf from the 2500 line beast to more manageable chunks.
+  - Clean up balance_leaf_when_delete.
+  - Clean up comments.
+
+I look forward to comments. The journaled xattr changes in particular need 
+testing as deadlocks may still lurk in there.
+
+Changes:
+ - Reworked journal abort code to provide cleaner syslog output 
+ - Always abort journal on error, unless panicking
+ - Always use bl_ prefix in do_balan.c
+ - Fixed unchecked deref in reiserfs_free_block
+
+I've also posted the patch set here:
+ftp://ftp.suse.com/pub/people/jeffm/reiserfs/kernel-v2.6/2.6.22-rc4-git3/
+
+-Jeff
 
 -- 
 Jeff Mahoney
