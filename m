@@ -1,10 +1,10 @@
 From: jeffm@suse.com
-Subject: [patch 22/40] reiserfs: add atomic addition of selinux attributes during inode creation
-Date: Mon, 11 Jun 2007 15:03:31 -0400
-Message-ID: <20070611190631.769291495@suse.com>
+Subject: [patch 23/40] reiserfs: cleanup path functions
+Date: Mon, 11 Jun 2007 15:03:32 -0400
+Message-ID: <20070611190631.887462600@suse.com>
 References: <20070611190309.532091171@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-selinux.diff
+Content-Disposition: inline; filename=reiserfs-cleanup-path-funcs.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -12,321 +12,293 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
- Some time ago, some changes were made to make security inode attributes
- be atomically written during inode creation. ReiserFS fell behind in this
- area, but with the reworking of the xattr code, it's now fairly easy to add.
+ This patch cleans up some redundancies in the reiserfs tree path code.
 
- The following patch adds the ability for security attributes to be added
- automatically during inode creation.
+ decrement_bcount() is essentially the same function as brelse(), so we use
+ that instead.
+
+ decrement_counters_in_path() is exactly the same function as pathrelse(), so
+ we kill that and use pathrelse() instead.
+
+ There's also a bit of cleanup that makes the code a bit more readable.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
---
- fs/reiserfs/inode.c            |   16 +++++++++++
- fs/reiserfs/namei.c            |   37 ++++++++++++++++++++++++---
- fs/reiserfs/xattr_security.c   |   55 +++++++++++++++++++++++++++++++++++++++--
- include/linux/reiserfs_fs.h    |    4 ++
- include/linux/reiserfs_xattr.h |   31 +++++++++++++++++++++++
- 5 files changed, 135 insertions(+), 8 deletions(-)
+---
 
---- a/fs/reiserfs/inode.c	2007-06-11 14:49:38.000000000 -0400
-+++ b/fs/reiserfs/inode.c	2007-06-11 14:50:04.000000000 -0400
-@@ -1758,7 +1758,8 @@ int reiserfs_new_inode(struct reiserfs_t
- 		       /* 0 for regular, EMTRY_DIR_SIZE for dirs, 
- 		          strlen (symname) for symlinks) */
- 		       loff_t i_size, struct dentry *dentry,
--		       struct inode *inode)
-+		       struct inode *inode,
-+		       struct reiserfs_security_handle *security)
+ fs/reiserfs/fix_node.c |   58 ++++++++++++++++++++++++------------------------
+ fs/reiserfs/stree.c    |   59 ++++++++++---------------------------------------
+ 2 files changed, 43 insertions(+), 74 deletions(-)
+
+--- a/fs/reiserfs/fix_node.c	2007-06-11 14:49:34.000000000 -0400
++++ b/fs/reiserfs/fix_node.c	2007-06-11 14:50:04.000000000 -0400
+@@ -753,20 +753,21 @@ static void free_buffers_in_tb(struct tr
  {
- 	struct super_block *sb;
- 	INITIALIZE_PATH(path_to_key);
-@@ -1936,6 +1937,19 @@ int reiserfs_new_inode(struct reiserfs_t
- 		reiserfs_mark_inode_private(inode);
- 	}
+ 	int n_counter;
  
-+	if (security->name) {
-+		retval = reiserfs_security_write(th, inode, security);
-+		if (retval) {
-+			err = retval;
-+			reiserfs_check_path(&path_to_key);
-+			retval = journal_end(th, th->t_super,
-+			                     th->t_blocks_allocated);
-+			if (retval)
-+				err = retval;
-+			goto out_inserted_sd;
-+		}
-+	}
+-	decrement_counters_in_path(p_s_tb->tb_path);
++	pathrelse(p_s_tb->tb_path);
+ 
+ 	for (n_counter = 0; n_counter < MAX_HEIGHT; n_counter++) {
+-		decrement_bcount(p_s_tb->L[n_counter]);
++		brelse(p_s_tb->L[n_counter]);
++		brelse(p_s_tb->R[n_counter]);
++		brelse(p_s_tb->FL[n_counter]);
++		brelse(p_s_tb->FR[n_counter]);
++		brelse(p_s_tb->CFL[n_counter]);
++		brelse(p_s_tb->CFR[n_counter]);
 +
- 	insert_inode_hash(inode);
- 	reiserfs_update_sd(th, inode);
- 	reiserfs_check_path(&path_to_key);
---- a/fs/reiserfs/namei.c	2007-06-11 14:49:38.000000000 -0400
-+++ b/fs/reiserfs/namei.c	2007-06-11 14:50:04.000000000 -0400
-@@ -606,6 +606,7 @@ static int reiserfs_create(struct inode 
- 	    2 * (REISERFS_QUOTA_INIT_BLOCKS(dir->i_sb) +
- 		 REISERFS_QUOTA_TRANS_BLOCKS(dir->i_sb));
- 	struct reiserfs_transaction_handle th;
-+	struct reiserfs_security_handle security;
- 
- 	if (!(inode = new_inode(dir->i_sb))) {
- 		return -ENOMEM;
-@@ -613,6 +614,12 @@ static int reiserfs_create(struct inode 
- 	new_inode_init(inode, dir, mode);
- 
- 	jbegin_count += reiserfs_cache_default_acl(dir);
-+	retval = reiserfs_security_init(dir, inode, &security);
-+	if (retval < 0) {
-+		drop_new_inode(inode);
-+		return retval;
-+	}
-+	jbegin_count += retval;
- 	reiserfs_write_lock(dir->i_sb);
- 
- 	retval = journal_begin(&th, dir->i_sb, jbegin_count);
-@@ -623,7 +630,7 @@ static int reiserfs_create(struct inode 
- 
- 	retval =
- 	    reiserfs_new_inode(&th, dir, mode, NULL, 0 /*i_size */ , dentry,
--			       inode);
-+			       inode, &security);
- 	if (retval)
- 		goto out_failed;
- 
-@@ -661,6 +668,7 @@ static int reiserfs_mknod(struct inode *
- 	int retval;
- 	struct inode *inode;
- 	struct reiserfs_transaction_handle th;
-+	struct reiserfs_security_handle security;
- 	/* We need blocks for transaction + (user+group)*(quotas for new inode + update of quota for directory owner) */
- 	int jbegin_count =
- 	    JOURNAL_PER_BALANCE_CNT * 3 +
-@@ -676,6 +684,12 @@ static int reiserfs_mknod(struct inode *
- 	new_inode_init(inode, dir, mode);
- 
- 	jbegin_count += reiserfs_cache_default_acl(dir);
-+	retval = reiserfs_security_init(dir, inode, &security);
-+	if (retval < 0) {
-+		drop_new_inode(inode);
-+		return retval;
-+	}
-+	jbegin_count += retval;
- 	reiserfs_write_lock(dir->i_sb);
- 
- 	retval = journal_begin(&th, dir->i_sb, jbegin_count);
-@@ -686,7 +700,7 @@ static int reiserfs_mknod(struct inode *
- 
- 	retval =
- 	    reiserfs_new_inode(&th, dir, mode, NULL, 0 /*i_size */ , dentry,
--			       inode);
-+			       inode, &security);
- 	if (retval) {
- 		goto out_failed;
+ 		p_s_tb->L[n_counter] = NULL;
+-		decrement_bcount(p_s_tb->R[n_counter]);
+ 		p_s_tb->R[n_counter] = NULL;
+-		decrement_bcount(p_s_tb->FL[n_counter]);
+ 		p_s_tb->FL[n_counter] = NULL;
+-		decrement_bcount(p_s_tb->FR[n_counter]);
+ 		p_s_tb->FR[n_counter] = NULL;
+-		decrement_bcount(p_s_tb->CFL[n_counter]);
+ 		p_s_tb->CFL[n_counter] = NULL;
+-		decrement_bcount(p_s_tb->CFR[n_counter]);
+ 		p_s_tb->CFR[n_counter] = NULL;
  	}
-@@ -727,6 +741,7 @@ static int reiserfs_mkdir(struct inode *
- 	int retval;
- 	struct inode *inode;
- 	struct reiserfs_transaction_handle th;
-+	struct reiserfs_security_handle security;
- 	/* We need blocks for transaction + (user+group)*(quotas for new inode + update of quota for directory owner) */
- 	int jbegin_count =
- 	    JOURNAL_PER_BALANCE_CNT * 3 +
-@@ -744,6 +759,12 @@ static int reiserfs_mkdir(struct inode *
- 	new_inode_init(inode, dir, mode);
- 
- 	jbegin_count += reiserfs_cache_default_acl(dir);
-+	retval = reiserfs_security_init(dir, inode, &security);
-+	if (retval < 0) {
-+		drop_new_inode(inode);
-+		return retval;
-+	}
-+	jbegin_count += retval;
- 	reiserfs_write_lock(dir->i_sb);
- 
- 	retval = journal_begin(&th, dir->i_sb, jbegin_count);
-@@ -760,7 +781,7 @@ static int reiserfs_mkdir(struct inode *
- 	    retval = reiserfs_new_inode(&th, dir, mode, NULL /*symlink */ ,
- 					old_format_only(dir->i_sb) ?
- 					EMPTY_DIR_SIZE_V1 : EMPTY_DIR_SIZE,
--					dentry, inode);
-+					dentry, inode, &security);
- 	if (retval) {
- 		dir->i_nlink--;
- 		goto out_failed;
-@@ -1001,6 +1022,7 @@ static int reiserfs_symlink(struct inode
- 	char *name;
- 	int item_len;
- 	struct reiserfs_transaction_handle th;
-+	struct reiserfs_security_handle security;
- 	int mode = S_IFLNK | S_IRWXUGO;
- 	/* We need blocks for transaction + (user+group)*(quotas for new inode + update of quota for directory owner) */
- 	int jbegin_count =
-@@ -1013,6 +1035,13 @@ static int reiserfs_symlink(struct inode
+ }
+@@ -1020,7 +1021,7 @@ static int get_far_parent(struct tree_ba
+ 	if (buffer_locked(*pp_s_com_father)) {
+ 		__wait_on_buffer(*pp_s_com_father);
+ 		if (FILESYSTEM_CHANGED_TB(p_s_tb)) {
+-			decrement_bcount(*pp_s_com_father);
++			brelse(*pp_s_com_father);
+ 			return REPEAT_SEARCH;
+ 		}
  	}
- 	new_inode_init(inode, parent_dir, mode);
+@@ -1048,8 +1049,8 @@ static int get_far_parent(struct tree_ba
+ 		return IO_ERROR;
  
-+	retval = reiserfs_security_init(parent_dir, inode, &security);
-+	if (retval < 0) {
-+		drop_new_inode(inode);
-+		return retval;
-+	}
-+	jbegin_count += retval;
+ 	if (FILESYSTEM_CHANGED_TB(p_s_tb)) {
+-		decrement_counters_in_path(&s_path_to_neighbor_father);
+-		decrement_bcount(*pp_s_com_father);
++		pathrelse(&s_path_to_neighbor_father);
++		brelse(*pp_s_com_father);
+ 		return REPEAT_SEARCH;
+ 	}
+ 
+@@ -1061,7 +1062,7 @@ static int get_far_parent(struct tree_ba
+ 	       FIRST_PATH_ELEMENT_OFFSET, "PAP-8192: path length is too small");
+ 
+ 	s_path_to_neighbor_father.path_length--;
+-	decrement_counters_in_path(&s_path_to_neighbor_father);
++	pathrelse(&s_path_to_neighbor_father);
+ 	return CARRY_ON;
+ }
+ 
+@@ -1084,10 +1085,10 @@ static int get_parents(struct tree_balan
+ 	if (n_path_offset <= FIRST_PATH_ELEMENT_OFFSET) {
+ 		/* The root can not have parents.
+ 		   Release nodes which previously were obtained as parents of the current node neighbors. */
+-		decrement_bcount(p_s_tb->FL[n_h]);
+-		decrement_bcount(p_s_tb->CFL[n_h]);
+-		decrement_bcount(p_s_tb->FR[n_h]);
+-		decrement_bcount(p_s_tb->CFR[n_h]);
++		brelse(p_s_tb->FL[n_h]);
++		brelse(p_s_tb->CFL[n_h]);
++		brelse(p_s_tb->FR[n_h]);
++		brelse(p_s_tb->CFR[n_h]);
+ 		p_s_tb->FL[n_h] = p_s_tb->CFL[n_h] = p_s_tb->FR[n_h] =
+ 		    p_s_tb->CFR[n_h] = NULL;
+ 		return CARRY_ON;
+@@ -1113,9 +1114,9 @@ static int get_parents(struct tree_balan
+ 			return n_ret_value;
+ 	}
+ 
+-	decrement_bcount(p_s_tb->FL[n_h]);
++	brelse(p_s_tb->FL[n_h]);
+ 	p_s_tb->FL[n_h] = p_s_curf;	/* New initialization of FL[n_h]. */
+-	decrement_bcount(p_s_tb->CFL[n_h]);
++	brelse(p_s_tb->CFL[n_h]);
+ 	p_s_tb->CFL[n_h] = p_s_curcf;	/* New initialization of CFL[n_h]. */
+ 
+ 	RFALSE((p_s_curf && !B_IS_IN_TREE(p_s_curf)) ||
+@@ -1143,10 +1144,10 @@ static int get_parents(struct tree_balan
+ 		p_s_tb->rkey[n_h] = n_position;
+ 	}
+ 
+-	decrement_bcount(p_s_tb->FR[n_h]);
++	brelse(p_s_tb->FR[n_h]);
+ 	p_s_tb->FR[n_h] = p_s_curf;	/* New initialization of FR[n_path_offset]. */
+ 
+-	decrement_bcount(p_s_tb->CFR[n_h]);
++	brelse(p_s_tb->CFR[n_h]);
+ 	p_s_tb->CFR[n_h] = p_s_curcf;	/* New initialization of CFR[n_path_offset]. */
+ 
+ 	RFALSE((p_s_curf && !B_IS_IN_TREE(p_s_curf)) ||
+@@ -1962,7 +1963,7 @@ static int get_neighbors(struct tree_bal
+ 		if (!p_s_bh)
+ 			return IO_ERROR;
+ 		if (FILESYSTEM_CHANGED_TB(p_s_tb)) {
+-			decrement_bcount(p_s_bh);
++			brelse(p_s_bh);
+ 			PROC_INFO_INC(p_s_sb, get_neighbors_restart[n_h]);
+ 			return REPEAT_SEARCH;
+ 		}
+@@ -1978,7 +1979,7 @@ static int get_neighbors(struct tree_bal
+ 		       dc_size(B_N_CHILD(p_s_tb->FL[0], n_child_position)),
+ 		       "PAP-8290: invalid child size of left neighbor");
+ 
+-		decrement_bcount(p_s_tb->L[n_h]);
++		brelse(p_s_tb->L[n_h]);
+ 		p_s_tb->L[n_h] = p_s_bh;
+ 	}
+ 
+@@ -1999,11 +2000,11 @@ static int get_neighbors(struct tree_bal
+ 		if (!p_s_bh)
+ 			return IO_ERROR;
+ 		if (FILESYSTEM_CHANGED_TB(p_s_tb)) {
+-			decrement_bcount(p_s_bh);
++			brelse(p_s_bh);
+ 			PROC_INFO_INC(p_s_sb, get_neighbors_restart[n_h]);
+ 			return REPEAT_SEARCH;
+ 		}
+-		decrement_bcount(p_s_tb->R[n_h]);
++		brelse(p_s_tb->R[n_h]);
+ 		p_s_tb->R[n_h] = p_s_bh;
+ 
+ 		RFALSE(!n_h
+@@ -2509,16 +2510,17 @@ int fix_nodes(int n_op_mode, struct tree
+ 			}
+ 
+ 			brelse(p_s_tb->L[i]);
+-			p_s_tb->L[i] = NULL;
+ 			brelse(p_s_tb->R[i]);
+-			p_s_tb->R[i] = NULL;
+ 			brelse(p_s_tb->FL[i]);
+-			p_s_tb->FL[i] = NULL;
+ 			brelse(p_s_tb->FR[i]);
+-			p_s_tb->FR[i] = NULL;
+ 			brelse(p_s_tb->CFL[i]);
+-			p_s_tb->CFL[i] = NULL;
+ 			brelse(p_s_tb->CFR[i]);
 +
- 	reiserfs_write_lock(parent_dir->i_sb);
- 	item_len = ROUND_UP(strlen(symname));
- 	if (item_len > MAX_DIRECT_ITEM_LEN(parent_dir->i_sb->s_blocksize)) {
-@@ -1039,7 +1068,7 @@ static int reiserfs_symlink(struct inode
++			p_s_tb->L[i] = NULL;
++			p_s_tb->R[i] = NULL;
++			p_s_tb->FL[i] = NULL;
++			p_s_tb->FR[i] = NULL;
++			p_s_tb->CFL[i] = NULL;
+ 			p_s_tb->CFR[i] = NULL;
+ 		}
  
- 	retval =
- 	    reiserfs_new_inode(&th, parent_dir, mode, name, strlen(symname),
--			       dentry, inode);
-+			       dentry, inode, &security);
- 	kfree(name);
- 	if (retval) {		/* reiserfs_new_inode iputs for us */
- 		goto out_failed;
---- a/fs/reiserfs/xattr_security.c	2007-06-11 14:49:37.000000000 -0400
-+++ b/fs/reiserfs/xattr_security.c	2007-06-11 14:49:38.000000000 -0400
-@@ -4,10 +4,9 @@
- #include <linux/pagemap.h>
- #include <linux/xattr.h>
- #include <linux/reiserfs_xattr.h>
-+#include <linux/security.h>
- #include <asm/uaccess.h>
+--- a/fs/reiserfs/stree.c	2007-06-11 14:49:35.000000000 -0400
++++ b/fs/reiserfs/stree.c	2007-06-11 14:50:04.000000000 -0400
+@@ -23,7 +23,6 @@
+  * get_rkey
+  * key_in_buffer
+  * decrement_bcount
+- * decrement_counters_in_path
+  * reiserfs_check_path
+  * pathrelse_and_restore
+  * pathrelse
+@@ -359,36 +358,6 @@ static inline int key_in_buffer(struct t
+ 	return 1;
+ }
  
--#define XATTR_SECURITY_PREFIX "security."
+-inline void decrement_bcount(struct buffer_head *p_s_bh)
+-{
+-	if (p_s_bh) {
+-		if (atomic_read(&(p_s_bh->b_count))) {
+-			put_bh(p_s_bh);
+-			return;
+-		}
+-		reiserfs_panic(NULL, "PAP-5070",
+-		               "trying to free free buffer %b", p_s_bh);
+-	}
+-}
 -
- static int
- security_get(struct inode *inode, const char *name, void *buffer, size_t size)
+-/* Decrement b_count field of the all buffers in the path. */
+-void decrement_counters_in_path(struct treepath *p_s_search_path)
+-{
+-	int n_path_offset = p_s_search_path->path_length;
+-
+-	RFALSE(n_path_offset < ILLEGAL_PATH_ELEMENT_OFFSET ||
+-	       n_path_offset > EXTENDED_MAX_HEIGHT - 1,
+-	       "PAP-5080: invalid path offset of %d", n_path_offset);
+-
+-	while (n_path_offset > ILLEGAL_PATH_ELEMENT_OFFSET) {
+-		struct buffer_head *bh;
+-
+-		bh = PATH_OFFSET_PBUFFER(p_s_search_path, n_path_offset--);
+-		decrement_bcount(bh);
+-	}
+-	p_s_search_path->path_length = ILLEGAL_PATH_ELEMENT_OFFSET;
+-}
+-
+ int reiserfs_check_path(struct treepath *p)
  {
-@@ -49,6 +48,58 @@ static size_t security_list(struct inode
- 	return len;
+ 	RFALSE(p->path_length != ILLEGAL_PATH_ELEMENT_OFFSET,
+@@ -396,12 +365,11 @@ int reiserfs_check_path(struct treepath 
+ 	return 0;
  }
  
-+/* Initializes the security context for a new inode and returns the number
-+ * of blocks needed for the transaction. If successful, reiserfs_security
-+ * must be released using reiserfs_security_free when the caller is done. */
-+int reiserfs_security_init(struct inode *dir, struct inode *inode,
-+                           struct reiserfs_security_handle *sec)
-+{
-+	int blocks = 0;
-+	int error = security_inode_init_security(inode, dir, &sec->name,
-+	                                         &sec->value, &sec->length);
-+	if (error) {
-+		if (error == -EOPNOTSUPP)
-+			error = 0;
-+
-+		sec->name = NULL;
-+		sec->value = NULL;
-+		sec->length = 0;
-+		return error;
-+	}
-+
-+	if (sec->length) {
-+		blocks = reiserfs_xattr_jcreate_nblocks(inode) +
-+		         reiserfs_xattr_nblocks(inode, sec->length);
-+		/* We don't want to count the directories twice if we have
-+		 * a default ACL. */
-+		REISERFS_I(inode)->i_flags |= i_has_xattr_dir;
-+	}
-+	return blocks;
-+}
-+
-+int reiserfs_security_write(struct reiserfs_transaction_handle *th,
-+                            struct inode *inode,
-+                            struct reiserfs_security_handle *sec)
-+{
-+	int error;
-+	if (strlen(sec->name) < sizeof(XATTR_SECURITY_PREFIX))
-+		return -EINVAL;
-+
-+	error = reiserfs_xattr_set_handle(th, inode, sec->name, sec->value,
-+	                                  sec->length, XATTR_CREATE);
-+	if (error == -ENODATA || error == -EOPNOTSUPP)
-+		error = 0;
-+
-+	return error;
-+}
-+
-+void reiserfs_security_free(struct reiserfs_security_handle *sec)
-+{
-+	kfree(sec->name);
-+	kfree(sec->value);
-+	sec->name = sec->value = NULL;
-+}
-+
- struct xattr_handler reiserfs_xattr_security_handler = {
- 	.prefix = XATTR_SECURITY_PREFIX,
- 	.get = security_get,
---- a/include/linux/reiserfs_fs.h	2007-06-11 14:49:38.000000000 -0400
-+++ b/include/linux/reiserfs_fs.h	2007-06-11 14:50:04.000000000 -0400
-@@ -1909,10 +1909,12 @@ void make_le_item_head(struct item_head 
- 		       loff_t offset, int type, int length, int entry_count);
- struct inode *reiserfs_iget(struct super_block *s, const struct cpu_key *key);
+-/* Release all buffers in the path. Restore dirty bits clean
+-** when preparing the buffer for the log
+-**
+-** only called from fix_nodes()
+-*/
+-void pathrelse_and_restore(struct super_block *s, struct treepath *p_s_search_path)
++/* Drop the reference to each buffer in a path and restore
++ * dirty bits clean when preparing the buffer for the log.
++ * This version should only be called from fix_nodes() */
++void pathrelse_and_restore(struct super_block *sb,
++                           struct treepath *p_s_search_path)
+ {
+ 	int n_path_offset = p_s_search_path->path_length;
  
-+struct reiserfs_security_handle;
- int reiserfs_new_inode(struct reiserfs_transaction_handle *th,
- 		       struct inode *dir, int mode,
- 		       const char *symname, loff_t i_size,
--		       struct dentry *dentry, struct inode *inode);
-+		       struct dentry *dentry, struct inode *inode,
-+		       struct reiserfs_security_handle *security);
+@@ -409,16 +377,15 @@ void pathrelse_and_restore(struct super_
+ 	       "clm-4000: invalid path offset");
  
- void reiserfs_update_sd_size(struct reiserfs_transaction_handle *th,
- 			     struct inode *inode, loff_t size);
---- a/include/linux/reiserfs_xattr.h	2007-06-11 14:49:38.000000000 -0400
-+++ b/include/linux/reiserfs_xattr.h	2007-06-11 14:49:38.000000000 -0400
-@@ -15,6 +15,12 @@ struct reiserfs_xattr_header {
- 	__le32 h_hash;		/* hash of the value */
- };
- 
-+struct reiserfs_security_handle {
-+	char *name;
-+	void *value;
-+	size_t length;
-+};
-+
- #ifdef __KERNEL__
- 
- #include <linux/init.h>
-@@ -50,6 +56,14 @@ int reiserfs_xattr_set_handle(struct rei
- extern struct xattr_handler reiserfs_xattr_user_handler;
- extern struct xattr_handler reiserfs_xattr_trusted_handler;
- extern struct xattr_handler reiserfs_xattr_security_handler;
-+#ifdef CONFIG_REISERFS_FS_SECURITY
-+int reiserfs_security_init(struct inode *dir, struct inode *inode,
-+                           struct reiserfs_security_handle *sec);
-+int reiserfs_security_write(struct reiserfs_transaction_handle *th,
-+                            struct inode *inode,
-+			    struct reiserfs_security_handle *sec);
-+void reiserfs_security_free(struct reiserfs_security_handle *sec);
-+#endif
- 
- 
- static inline void reiserfs_mark_inode_private(struct inode *inode)
-@@ -114,6 +128,23 @@ static inline void reiserfs_init_xattr_r
+ 	while (n_path_offset > ILLEGAL_PATH_ELEMENT_OFFSET) {
+-		reiserfs_restore_prepared_buffer(s,
+-						 PATH_OFFSET_PBUFFER
+-						 (p_s_search_path,
+-						  n_path_offset));
+-		brelse(PATH_OFFSET_PBUFFER(p_s_search_path, n_path_offset--));
++		struct buffer_head *bh;
++		bh = PATH_OFFSET_PBUFFER(p_s_search_path, n_path_offset--);
++		reiserfs_restore_prepared_buffer(sb, bh);
++		brelse(bh);
+ 	}
+ 	p_s_search_path->path_length = ILLEGAL_PATH_ELEMENT_OFFSET;
  }
- #endif  /*  CONFIG_REISERFS_FS_XATTR  */
  
-+#ifndef CONFIG_REISERFS_FS_SECURITY
-+static inline int reiserfs_security_init(struct inode *dir,
-+                                         struct inode *inode,
-+                                         struct reiserfs_security_handle *sec)
-+{
-+	return 0;
-+}
-+static inline int reiserfs_security_write(struct reiserfs_transaction_handle *th,
-+                                          struct inode *inode,
-+					  struct reiserfs_security_handle *sec)
-+{
-+	return 0;
-+}
-+static inline void reiserfs_security_free(struct reiserfs_security_handle *sec)
-+{}
-+#endif
-+
- #endif  /*  __KERNEL__  */
+-/* Release all buffers in the path. */
++/* Drop the reference to each buffer in a path */
+ void pathrelse(struct treepath *p_s_search_path)
+ {
+ 	int n_path_offset = p_s_search_path->path_length;
+@@ -631,7 +598,7 @@ int search_by_key(struct super_block *p_
+ 	   we must be careful to release all nodes in a path before we either
+ 	   discard the path struct or re-use the path struct, as we do here. */
  
- #endif  /*  _LINUX_REISERFS_XATTR_H  */
+-	decrement_counters_in_path(p_s_search_path);
++	pathrelse(p_s_search_path);
+ 
+ 	right_neighbor_of_leaf_node = 0;
+ 
+@@ -691,7 +658,7 @@ int search_by_key(struct super_block *p_
+ 			PROC_INFO_INC(p_s_sb, search_by_key_restarted);
+ 			PROC_INFO_INC(p_s_sb,
+ 				      sbk_restarted[expected_level - 1]);
+-			decrement_counters_in_path(p_s_search_path);
++			pathrelse(p_s_search_path);
+ 
+ 			/* Get the root block number so that we can repeat the search
+ 			   starting from the root. */
+@@ -1871,7 +1838,7 @@ int reiserfs_do_truncate(struct reiserfs
+ 		if (journal_transaction_should_end(th, 0) ||
+ 		    reiserfs_transaction_free_space(th) <= JOURNAL_FOR_FREE_BLOCK_AND_UPDATE_SD) {
+ 			int orig_len_alloc = th->t_blocks_allocated;
+-			decrement_counters_in_path(&s_search_path);
++			pathrelse(&s_search_path);
+ 
+ 			if (update_timestamps) {
+ 				p_s_inode->i_mtime = p_s_inode->i_ctime =
 
 -- 
 Jeff Mahoney
