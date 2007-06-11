@@ -1,10 +1,10 @@
 From: jeffm@suse.com
-Subject: [patch 36/40] reiserfs: split out current node handling from balance_leaf
-Date: Mon, 11 Jun 2007 15:03:45 -0400
-Message-ID: <20070611190633.390001807@suse.com>
+Subject: [patch 37/40] reiserfs: clean up bl_when_delete
+Date: Mon, 11 Jun 2007 15:03:46 -0400
+Message-ID: <20070611190633.507538231@suse.com>
 References: <20070611190309.532091171@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-split-balance_leaf-remainder.diff
+Content-Disposition: inline; filename=reiserfs-split-balance_leaf.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -12,314 +12,110 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
- This is the last in a set of 4 patches that split balance_leaf up into
- a group of functions rather than the 2500 beast it once was.
 
- This patch splits off the current node balancing behavior.
-
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+Signed-off-by: Jeff Mahoney <jeffm@suse.com.
 
 ---
- fs/reiserfs/do_balan.c |  273 +++++++++++++++++++++++++------------------------
- 1 file changed, 142 insertions(+), 131 deletions(-)
+ fs/reiserfs/do_balan.c |   71 ++++++++++++++++++++++---------------------------
+ 1 file changed, 33 insertions(+), 38 deletions(-)
 
 --- a/fs/reiserfs/do_balan.c	2007-06-11 14:49:42.000000000 -0400
-+++ b/fs/reiserfs/do_balan.c	2007-06-11 14:50:00.000000000 -0400
-@@ -1210,6 +1210,146 @@ bl_new_nodes(struct tree_balance *tb, st
- 	}
- }
++++ b/fs/reiserfs/do_balan.c	2007-06-11 14:49:59.000000000 -0400
+@@ -115,6 +115,13 @@ static int balance_leaf_when_delete(stru
+ 	int n;
+ 	struct item_head *ih;
  
-+/* insert item into S[0] */
-+static void
-+bl_current_node_insert(struct tree_balance *tb, struct item_head *ih,
-+                           const char *body, int flag, int zeros_num,
-+                           int item_pos)
-+{
-+	struct buffer_info bi;
-+	struct buffer_head *tbS0 = PATH_PLAST_BUFFER(tb->tb_path);
-+	buffer_info_init_tbS0(tb, &bi);
-+	leaf_insert_into_buf(&bi, item_pos, ih, body, zeros_num);
-+
-+	/* If we insert the first key change the delimiting key */
-+	/* CFL[0] can be 0 in reiserfsck */
-+	if (item_pos == 0 && tb->CFL[0])
-+		replace_key(tb, tb->CFL[0], tb->lkey[0], tbS0, 0);
-+}
-+
-+static void
-+bl_current_node_paste_de_partial(struct tree_balance *tb,
-+                                     struct item_head *ih, const char *body,
-+                                     int flag, int zeros_num, int item_pos,
-+                                     int pos_in_item)
-+{
-+	struct buffer_head *tbS0 = PATH_PLAST_BUFFER(tb->tb_path);
-+	struct item_head *pasted = B_N_PITEM_HEAD(tbS0, item_pos);
-+	struct buffer_info bi;
-+
-+	if (pos_in_item < 0 || pos_in_item > ih_entry_count(pasted))
-+		return;
-+
-+	RFALSE(!tb->insert_size[0],
-+	       "PAP-12260: insert_size is 0 already");
-+
-+	/* prepare space */
-+	buffer_info_init_tbS0(tb, &bi);
-+	leaf_paste_in_buffer(&bi, item_pos, pos_in_item, tb->insert_size[0],
-+	                     body, zeros_num);
-+
-+	/* paste entry */
-+	leaf_paste_entries(bi.bi_bh, item_pos, pos_in_item, 1,
-+			   (struct reiserfs_de_head *)body, body + DEH_SIZE,
-+			   tb->insert_size[0]);
-+
-+	if (!item_pos && !pos_in_item) {
-+		RFALSE(!tb->CFL[0] || !tb->L[0],
-+		       "PAP-12270: CFL[0]/L[0] must be specified");
-+		if (tb->CFL[0])
-+			replace_key(tb, tb->CFL[0], tb->lkey[0], tbS0, 0);
++	if (flag != M_DELETE && flag != M_CUT) {
++		print_cur_tb("12040");
++		reiserfs_panic(tb->tb_sb, "PAP-12040",
++		               "unexpected mode: %s(%d)",
++			       tb_mode_names(flag), flag);
 +	}
-+	tb->insert_size[0] = 0;
-+}
 +
-+static void
-+bl_current_node_paste_non_de_partial(struct tree_balance *tb,
-+                                         struct item_head *ih,
-+                                         const char *body, int flag,
-+                                         int zeros_num, int item_pos,
-+                                         int pos_in_item)
-+{
-+	struct buffer_head *tbS0 = PATH_PLAST_BUFFER(tb->tb_path);
-+	struct item_head *pasted = B_N_PITEM_HEAD(tbS0, item_pos);
-+	struct buffer_info bi;
-+
-+#ifdef CONFIG_REISERFS_CHECK
-+	if (pos_in_item != ih_item_len(pasted)) {
-+		if (tb->insert_size[0]) {
-+			print_cur_tb("12285");
-+			reiserfs_panic(tb->tb_sb, "PAP-12285",
-+			               "insert_size must be 0 (%d)",
-+				       tb->insert_size[0]);
-+		}
-+		return;
-+	}
-+#endif
-+	RFALSE(tb->insert_size[0] <= 0,
-+	       "PAP-12275: insert size must not be %d", tb->insert_size[0]);
-+	buffer_info_init_tbS0(tb, &bi);
-+	leaf_paste_in_buffer(&bi, item_pos, pos_in_item, tb->insert_size[0],
-+	                     body, zeros_num);
-+
-+	if (is_indirect_le_ih(pasted)) {
-+#if 0
-+		RFALSE(tb->insert_size[0] != UNFM_P_SIZE, "PAP-12280",
-+		       "insert_size for indirect item must be %d, not %d",
-+		       UNFM_P_SIZE, tb->insert_size[0]);
-+#endif
-+		set_ih_free_space (pasted, 0);
-+	}
-+	tb->insert_size[0] = 0;
-+}
-+
-+static void
-+bl_current_node_paste(struct tree_balance *tb, struct item_head *ih,
-+                          const char *body, int flag, int zeros_num,
-+                          int item_pos, int pos_in_item)
-+{
-+	struct buffer_head *tbS0 = PATH_PLAST_BUFFER(tb->tb_path);
-+	struct item_head *pasted = B_N_PITEM_HEAD(tbS0, item_pos);
-+	/* when directory, may be new entry already pasted */
-+	if (is_direntry_le_ih(pasted))
-+		bl_current_node_paste_de_partial(tb, ih, body, flag,
-+		                                     zeros_num, item_pos,
-+		                                     pos_in_item);
-+	else
-+		bl_current_node_paste_non_de_partial(tb, ih, body, flag,
-+		                                         zeros_num, item_pos,
-+		                                         pos_in_item);
-+#ifdef CONFIG_REISERFS_CHECK
-+	if (tb->insert_size[0]) {
-+		print_cur_tb("12290");
-+		reiserfs_panic(tb->tb_sb,
-+		               "PAP-12290", "insert_size is still not 0 (%d)",
-+		               tb->insert_size[0]);
-+	}
-+#endif				/* CONFIG_REISERFS_CHECK */
-+}
-+
-+/* If the affected item was not wholly shifted then we perform all
-+ * necessary operations on that part or whole of the affected item
-+ * which remains in S */
-+static void
-+bl_current_node(struct tree_balance *tb, struct item_head *ih,
-+		   const char *body, int flag, int zeros_num, int item_pos,
-+		   int pos_in_item)
-+{
-+	BUG_ON(flag != M_INSERT && flag != M_PASTE);
-+
-+	/* if we must insert or append into buffer S[0] */
-+	if (item_pos < 0 || item_pos >= tb->s0num)
-+		return;
-+
-+	if (flag == M_INSERT)
-+		bl_current_node_insert(tb, ih, body, flag, zeros_num,
-+		                           item_pos);
-+	else
-+		bl_current_node_paste(tb, ih, body, flag, zeros_num,
-+		                          item_pos, pos_in_item);
-+}
-+
-+
- static int balance_leaf(struct tree_balance *tb, struct item_head *ih,	/* item header of inserted item (this is on little endian) */
- 			const char *body,	/* body  of inserted item or bytes to paste */
- 			int flag,	/* i - insert, d - delete, c - cut, p - paste
-@@ -1224,7 +1364,6 @@ static int balance_leaf(struct tree_bala
- 	struct buffer_head *tbS0 = PATH_PLAST_BUFFER(tb->tb_path);
- 	int item_pos = PATH_LAST_POSITION(tb->tb_path);	/*  index into the array of item headers in S[0]
- 							   of the affected item */
--	struct buffer_info bi;
- 	int pos_in_item;
- 	int zeros_num;
+ 	RFALSE(tb->FR[0] && B_LEVEL(tb->FR[0]) != DISK_LEAF_NODE_LEVEL + 1,
+ 	       "vs- 12000: level: wrong FR %z", tb->FR[0]);
+ 	RFALSE(tb->blknum[0] > 1,
+@@ -127,9 +134,7 @@ static int balance_leaf_when_delete(stru
  
-@@ -1290,137 +1429,9 @@ static int balance_leaf(struct tree_bala
- 	bl_new_nodes(tb, ih, body, flag, insert_key, insert_ptr,
- 	                       &zeros_num, item_pos, &pos_in_item);
+ 	/* Delete or truncate the item */
  
--	/* if the affected item was not wholly shifted then we perform all necessary operations on that part or whole of the
--	   affected item which remains in S */
--	if (0 <= item_pos && item_pos < tb->s0num) {	/* if we must insert or append into buffer S[0] */
+-	switch (flag) {
+-	case M_DELETE:		/* delete item in S[0] */
 -
--		switch (flag) {
--		case M_INSERT:	/* insert item into S[0] */
--			buffer_info_init_tbS0(tb, &bi);
--			leaf_insert_into_buf(&bi, item_pos, ih, body,
--					     zeros_num);
++	if (flag == M_DELETE) {
+ 		RFALSE(ih_item_len(ih) + IH_SIZE != -tb->insert_size[0],
+ 		       "vs-12013: mode Delete, insert size %d, ih to be deleted %h",
+ 		       -tb->insert_size[0], ih);
+@@ -151,44 +156,34 @@ static int balance_leaf_when_delete(stru
+ 		RFALSE(!item_pos && !tb->CFL[0],
+ 		       "PAP-12020: tb->CFL[0]==%p, tb->L[0]==%p", tb->CFL[0],
+ 		       tb->L[0]);
++	} else { /* M_CUT */
++		if (is_direntry_le_ih(ih)) {
+ 
+-		break;
 -
--			/* If we insert the first key change the delimiting key */
--			if (item_pos == 0) {
--				if (tb->CFL[0])	/* can be 0 in reiserfsck */
+-	case M_CUT:{		/* cut item in S[0] */
+-			if (is_direntry_le_ih(ih)) {
+-
+-				/* UFS unlink semantics are such that you can only delete one directory entry at a time. */
+-				/* when we cut a directory tb->insert_size[0] means number of entries to be cut (always 1) */
+-				tb->insert_size[0] = -1;
+-				leaf_cut_from_buffer(&bi, item_pos, pos_in_item,
+-						     -tb->insert_size[0]);
+-
+-				RFALSE(!item_pos && !pos_in_item && !tb->CFL[0],
+-				       "PAP-12030: can not change delimiting key. CFL[0]=%p",
+-				       tb->CFL[0]);
+-
+-				if (!item_pos && !pos_in_item && tb->CFL[0]) {
 -					replace_key(tb, tb->CFL[0], tb->lkey[0],
 -						    tbS0, 0);
--
--			}
--			break;
-+	bl_current_node(tb, ih, body, flag, zeros_num, item_pos,
-+		          pos_in_item);
- 
--		case M_PASTE:{	/* append item in S[0] */
--				struct item_head *pasted;
--
--				pasted = B_N_PITEM_HEAD(tbS0, item_pos);
--				/* when directory, may be new entry already pasted */
--				if (is_direntry_le_ih(pasted)) {
--					if (pos_in_item >= 0 &&
--					    pos_in_item <=
--					    ih_entry_count(pasted)) {
--
--						RFALSE(!tb->insert_size[0],
--						       "PAP-12260: insert_size is 0 already");
--
--						/* prepare space */
--						buffer_info_init_tbS0(tb, &bi);
--						leaf_paste_in_buffer(&bi,
--								     item_pos,
--								     pos_in_item,
--								     tb->
--								     insert_size
--								     [0], body,
--								     zeros_num);
--
--						/* paste entry */
--						leaf_paste_entries(bi.bi_bh,
--								   item_pos,
--								   pos_in_item,
--								   1,
--								   (struct
--								    reiserfs_de_head
--								    *)body,
--								   body +
--								   DEH_SIZE,
--								   tb->
--								   insert_size
--								   [0]
--						    );
--						if (!item_pos && !pos_in_item) {
--							RFALSE(!tb->CFL[0]
--							       || !tb->L[0],
--							       "PAP-12270: CFL[0]/L[0] must be specified");
--							if (tb->CFL[0]) {
--								replace_key(tb,
--									    tb->
--									    CFL
--									    [0],
--									    tb->
--									    lkey
--									    [0],
--									    tbS0,
--									    0);
--
--							}
--						}
--						tb->insert_size[0] = 0;
--					}
--				} else {	/* regular object */
--					if (pos_in_item == ih_item_len(pasted)) {
--
--						RFALSE(tb->insert_size[0] <= 0,
--						       "PAP-12275: insert size must not be %d",
--						       tb->insert_size[0]);
--						buffer_info_init_tbS0(tb, &bi);
--						leaf_paste_in_buffer(&bi,
--								     item_pos,
--								     pos_in_item,
--								     tb->
--								     insert_size
--								     [0], body,
--								     zeros_num);
--
--						if (is_indirect_le_ih(pasted)) {
--#if 0
--							RFALSE(tb->
--							       insert_size[0] !=
--							       UNFM_P_SIZE,
--							       "PAP-12280: insert_size for indirect item must be %d, not %d",
--							       UNFM_P_SIZE,
--							       tb->
--							       insert_size[0]);
--#endif
--							set_ih_free_space
--							    (pasted, 0);
--						}
--						tb->insert_size[0] = 0;
--					}
--#ifdef CONFIG_REISERFS_CHECK
--					else {
--						if (tb->insert_size[0]) {
--							print_cur_tb("12285");
--							reiserfs_panic(tb->
--								       tb_sb,
--								       "PAP-12285", "insert_size must be 0 (%d)",
--								       tb->
--								       insert_size
--								       [0]);
--						}
--					}
--#endif				/* CONFIG_REISERFS_CHECK */
--
 -				}
--			}	/* case M_PASTE: */
+-			} else {
+-				leaf_cut_from_buffer(&bi, item_pos, pos_in_item,
+-						     -tb->insert_size[0]);
+-
+-				RFALSE(!ih_item_len(ih),
+-				       "PAP-12035: cut must leave non-zero dynamic length of item");
++			/* UFS unlink semantics are such that
++			 * you can only delete one directory entry
++			 * at a time. */
++			/* when we cut a directory tb->insert_size[0]
++			 * means number of entries to be cut
++			 * (always 1) */
++			tb->insert_size[0] = -1;
++			leaf_cut_from_buffer(&bi, item_pos, pos_in_item,
++					     -tb->insert_size[0]);
++
++			RFALSE(!item_pos && !pos_in_item && !tb->CFL[0],
++			       "PAP-12030: can not change delimiting key. CFL[0]=%p",
++			       tb->CFL[0]);
++
++			if (!item_pos && !pos_in_item && tb->CFL[0]) {
++				replace_key(tb, tb->CFL[0], tb->lkey[0],
++					    tbS0, 0);
+ 			}
+-			break;
 -		}
--	}
--#ifdef CONFIG_REISERFS_CHECK
--	if (flag == M_PASTE && tb->insert_size[0]) {
--		print_cur_tb("12290");
--		reiserfs_panic(tb->tb_sb,
--		               "PAP-12290", "insert_size is still not 0 (%d)",
--		               tb->insert_size[0]);
--	}
--#endif				/* CONFIG_REISERFS_CHECK */
- 	return 0;
- }				/* Leaf level of the tree is balanced (end of balance_leaf) */
++		} else {
++			leaf_cut_from_buffer(&bi, item_pos, pos_in_item,
++					     -tb->insert_size[0]);
  
+-	default:
+-		print_cur_tb("12040");
+-		reiserfs_panic(tb->tb_sb, "PAP-12040",
+-		               "unexpected mode: %s(%d)",
+-			       (flag ==
+-				M_PASTE) ? "PASTE" : ((flag ==
+-						       M_INSERT) ? "INSERT" :
+-						      "UNKNOWN"), flag);
++			RFALSE(!ih_item_len(ih), "PAP-12035: cut must "
++			       "leave non-zero dynamic length of item");
++		}
+ 	}
+ 
+ 	/* the rule is that no shifting occurs unless by shifting a node can be freed */
 
 -- 
 Jeff Mahoney
