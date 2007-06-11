@@ -1,10 +1,10 @@
 From: jeffm@suse.com
-Subject: [patch 01/40] reiserfs: fix up lockdep warnings
-Date: Mon, 11 Jun 2007 15:03:10 -0400
-Message-ID: <20070611190629.358670369@suse.com>
+Subject: [patch 02/40] reiserfs: dont use BUG when panicking
+Date: Mon, 11 Jun 2007 15:03:11 -0400
+Message-ID: <20070611190629.457662968@suse.com>
 References: <20070611190309.532091171@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-fix-lockdep-warnings
+Content-Disposition: inline; filename=reiserfs-no-bug-on-panic.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -12,36 +12,33 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
- This patch adds I_MUTEX_XATTR annotations to the inode locking in
- the reiserfs xattr code.
+ This patch changes reiserfs_panic() to use panic() initially instead of
+ BUG(). Using BUG() ignores the configurable panic behavior, so systems
+ that should be failing and rebooting are left hanging. This causes problems
+ in active/standby HA scenarios.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-
 ---
- fs/reiserfs/xattr.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/reiserfs/prints.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
---- a/fs/reiserfs/xattr.c	2007-06-11 14:49:05.000000000 -0400
-+++ b/fs/reiserfs/xattr.c	2007-06-11 14:50:10.000000000 -0400
-@@ -478,7 +478,7 @@ reiserfs_xattr_set(struct inode *inode, 
- 	/* Resize it so we're ok to write there */
- 	newattrs.ia_size = buffer_size;
- 	newattrs.ia_valid = ATTR_SIZE | ATTR_CTIME;
--	mutex_lock(&xinode->i_mutex);
-+	mutex_lock_nested(&xinode->i_mutex, I_MUTEX_XATTR);
- 	err = notify_change(fp->f_path.dentry, &newattrs);
- 	if (err)
- 		goto out_filp;
-@@ -1217,7 +1217,8 @@ int reiserfs_xattr_init(struct super_blo
- 		if (!IS_ERR(dentry)) {
- 			if (!(mount_flags & MS_RDONLY) && !dentry->d_inode) {
- 				struct inode *inode = dentry->d_parent->d_inode;
--				mutex_lock(&inode->i_mutex);
-+				mutex_lock_nested(&inode->i_mutex,
-+				                  I_MUTEX_XATTR);
- 				err = inode->i_op->mkdir(inode, dentry, 0700);
- 				mutex_unlock(&inode->i_mutex);
- 				if (err) {
+--- a/fs/reiserfs/prints.c	2007-06-11 14:49:05.000000000 -0400
++++ b/fs/reiserfs/prints.c	2007-06-11 14:50:11.000000000 -0400
+@@ -356,13 +356,8 @@ extern struct tree_balance *cur_tb;
+ void reiserfs_panic(struct super_block *sb, const char *fmt, ...)
+ {
+ 	do_reiserfs_warning(fmt);
+-	printk(KERN_EMERG "REISERFS: panic (device %s): %s\n",
++	panic(KERN_EMERG "REISERFS: panic (device %s): %s\n",
+ 	       reiserfs_bdevname(sb), error_buf);
+-	BUG();
+-
+-	/* this is not actually called, but makes reiserfs_panic() "noreturn" */
+-	panic("REISERFS: panic (device %s): %s\n",
+-	      reiserfs_bdevname(sb), error_buf);
+ }
+ 
+ void reiserfs_abort(struct super_block *sb, int errno, const char *fmt, ...)
 
 -- 
 Jeff Mahoney
