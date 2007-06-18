@@ -1,75 +1,32 @@
-From: Michal Piotrowski <michal.k.k.piotrowski@gmail.com>
-Subject: [1/2] 2.6.22-rc5: known regressions
-Date: Sun, 17 Jun 2007 16:23:29 +0200
-Message-ID: <467543E1.1060001@googlemail.com>
+From: Malte Cornils <malte@cornils.net>
+Subject: Re: [1/2] 2.6.22-rc5: known regressions
+Date: Mon, 18 Jun 2007 13:02:42 +0200
+Message-ID: <200706181302.42951.malte@cornils.net>
+References: <467543E1.1060001@googlemail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
-        d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:message-id:date:user-agent:mime-version:to:subject:content-type:content-transfer-encoding:from;
-        b=RBwxnPgP5iEYY22JcL0nN6VJmD/wUIgCFgJm9geG/8aCxZeo/yf37ElkrGUJ3oK/gaKyZ4u894OGTM1zOmBEHNWeUlMqmMkp9jXKVDqJrXUdOmYIL0CgYL1ulcyqrgpG12MLlTtyc3DbszF9pem1Inf9DVX123wAiKcDGxbUyo4=
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1762916AbXFRLDJ@vger.kernel.org>
+In-Reply-To: <467543E1.1060001@googlemail.com>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Rodrigo Luiz <troops.of.doom@gmail.com>, "Darrick J. Wong" <djwong@us.ibm.com>, "Siddha, Suresh B" <suresh.b.siddha@intel.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@suse.cz>, Ben Collins <bcollins@ubuntu.com>, reiserfs-devel@vger.kernel.org, "Vladimir V. Saveliev" <vs@namesys.com>, Randy Dunlap <randy.dunlap@oracle.com>, linux-pci@atrey.karlin.mff.cuni.cz, Greg Kroah-Hartman <gregkh@suse.de>, Malte Cornils <malte@cornils.net>
+Content-Type: text/plain; charset="us-ascii"
+To: Michal Piotrowski <michal.k.k.piotrowski@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Rodrigo Luiz <troops.of.doom@gmail.com>, "Darrick J. Wong" <djwong@us.ibm.com>, "Siddha, Suresh B" <suresh.b.siddha@intel.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@suse.cz>, Ben Collins <bcollins@ubuntu.com>, reiserfs-devel@vger.kernel.org, "Vladimir V. Saveliev" <vs@namesys.com>, Randy Dunlap <randy.dunlap@oracle.com>, linux-pci@atrey.karlin.mff.cuni.cz, Greg Kroah-Hartman <gregkh@suse.de>
 
-Hi all,
+Hello,
 
-Here is a list of some known regressions in 2.6.22-rc5.
+Am Sonntag, 17. Juni 2007 16:23 schrieb Michal Piotrowski:
+> Here is a list of some known regressions in 2.6.22-rc5.
+> PCI
+>
+> Subject    : PCI setup hangs on Asus Notebook (nolapic helps)
+> References : http://lkml.org/lkml/2007/6/14/161
+> Submitter  : Malte Cornils <malte@cornils.net>
+> Status     : unknown
 
-Feel free to add new regressions/remove fixed etc.
-http://kernelnewbies.org/known_regressions
+The original report was made on 2.6.22-rc3, I just checked and it still 
+happens on 2.6.22-rc5.
 
-
-
-Unclassified
-
-Subject    : Kernel hang on CMOS_READ
-References : http://lkml.org/lkml/2007/6/3/138
-Submitter  : Rodrigo Luiz <troops.of.doom@gmail.com>
-Status     : Unknown
-
-Subject    : Device hang when offlining a CPU due to IRQ misrouting
-References : http://lkml.org/lkml/2007/5/31/419
-Submitter  : Darrick J. Wong <djwong@us.ibm.com>
-Handled-By : Siddha, Suresh B <suresh.b.siddha@intel.com>
-Status     : problem is being debugged
-
-
-
-ALSA
-
-Subject    : snd-aoa causes badness in lib/kref.c:33
-References : http://bugzilla.kernel.org/show_bug.cgi?id=8513
-Submitter  : Ben Collins <bcollins@ubuntu.com>
-Handled-By : Takashi Iwai <tiwai@suse.de>
-Status     : Unknown
-
-
-
-FS
-
-Subject    : 2.6.22-rc4-git5 reiserfs: null ptr deref.
-References : http://lkml.org/lkml/2007/6/13/322
-Submitter  : Randy Dunlap <randy.dunlap@oracle.com>
-Handled-By : Vladimir V. Saveliev <vs@namesys.com>
-Status     : problem is being debugged
-
-
-
-PCI
-
-Subject    : PCI setup hangs on Asus Notebook (nolapic helps)
-References : http://lkml.org/lkml/2007/6/14/161
-Submitter  : Malte Cornils <malte@cornils.net>
-Status     : unknown
-
-
-
-Regards,
-Michal
-
---
-LOG
-http://www.stardust.webpages.pl/log/
+Yours
+-Malte Cornils
