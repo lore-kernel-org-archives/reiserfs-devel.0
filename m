@@ -1,37 +1,36 @@
-From: Greg KH <greg@kroah.com>
+From: Malte Cornils <malte@cornils.net>
 Subject: Re: [1/2] 2.6.22-rc5: known regressions
-Date: Mon, 18 Jun 2007 09:29:15 -0700
-Message-ID: <20070618162915.GA7440@kroah.com>
-References: <467543E1.1060001@googlemail.com> <200706181302.42951.malte@cornils.net>
+Date: Tue, 19 Jun 2007 01:26:22 +0200
+Message-ID: <200706190126.23091.malte@cornils.net>
+References: <467543E1.1060001@googlemail.com> <200706181302.42951.malte@cornils.net> <20070618162915.GA7440@kroah.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S933791AbXFRX0x@vger.kernel.org>
+In-Reply-To: <20070618162915.GA7440@kroah.com>
 Content-Disposition: inline
-In-Reply-To: <200706181302.42951.malte@cornils.net>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Malte Cornils <malte@cornils.net>
+To: Greg KH <greg@kroah.com>
 Cc: Michal Piotrowski <michal.k.k.piotrowski@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Rodrigo Luiz <troops.of.doom@gmail.com>, "Darrick J. Wong" <djwong@us.ibm.com>, "Siddha, Suresh B" <suresh.b.siddha@intel.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@suse.cz>, Ben Collins <bcollins@ubuntu.com>, reiserfs-devel@vger.kernel.org, "Vladimir V. Saveliev" <vs@namesys.com>, Randy Dunlap <randy.dunlap@oracle.com>, linux-pci@atrey.karlin.mff.cuni.cz, Greg Kroah-Hartman <gregkh@suse.de>
 
-On Mon, Jun 18, 2007 at 01:02:42PM +0200, Malte Cornils wrote:
-> Hello,
-> 
-> Am Sonntag, 17. Juni 2007 16:23 schrieb Michal Piotrowski:
-> > Here is a list of some known regressions in 2.6.22-rc5.
-> > PCI
+Hello,
+
+Am Montag, 18. Juni 2007 18:29 schrieb Greg KH:
+> On Mon, Jun 18, 2007 at 01:02:42PM +0200, Malte Cornils wrote:
+> > Hello,
+> > > Subject    : PCI setup hangs on Asus Notebook (nolapic helps)
+> > > References : http://lkml.org/lkml/2007/6/14/161
+> > > Submitter  : Malte Cornils <malte@cornils.net>
+> > > Status     : unknown
 > >
-> > Subject    : PCI setup hangs on Asus Notebook (nolapic helps)
-> > References : http://lkml.org/lkml/2007/6/14/161
-> > Submitter  : Malte Cornils <malte@cornils.net>
-> > Status     : unknown
-> 
-> The original report was made on 2.6.22-rc3, I just checked and it still 
-> happens on 2.6.22-rc5.
+> > The original report was made on 2.6.22-rc3, I just checked and it still
+> > happens on 2.6.22-rc5.
+>
+> Can you use 'git bisect' to track down the patch that causes this to
+> fail?
 
-Can you use 'git bisect' to track down the patch that causes this to
-fail?
+I will do this, however, it will likely take me a day or two to find. I'll 
+report back then.
 
-thanks,
-
-greg k-h
+-Malte Cornils
