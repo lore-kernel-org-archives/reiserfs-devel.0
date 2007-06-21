@@ -1,40 +1,75 @@
-From: "Michal Piotrowski" <michal.k.k.piotrowski@gmail.com>
-Subject: Re: reproducible hang with reiserfs and bash_shared_mapping
-Date: Thu, 21 Jun 2007 17:44:43 +0200
-Message-ID: <6bffcb0e0706210844k6f83a0f8n4ee60d98344e7bd8@mail.gmail.com>
-References: <200706211226.03994.oliver@neukum.org>
+From: Michal Piotrowski <michal.k.k.piotrowski@gmail.com>
+Subject: [1/2] 2.6.22-rc5: known regressions v2
+Date: Thu, 21 Jun 2007 18:34:51 +0200
+Message-ID: <467AA8AB.2010107@googlemail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
         d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
-        b=XKe4U0RmN+/eCGW8hEfXfVDB+EmsCdMtvgBtc77//+8+vD/oATSRT2E7dUWwIbhKibioDAFhlB1zIZzkTE2ranKoktS6GbLtJV9j6te98c+K+fNm5xD+rpa438IAmmQtP5SOcG/mw2EHGI0qXD6UYWtUb8qEuLNbk2Y40oHDgyA=
-In-Reply-To: <200706211226.03994.oliver@neukum.org>
-Content-Disposition: inline
+        h=domainkey-signature:received:received:message-id:date:user-agent:mime-version:to:subject:content-type:content-transfer-encoding:from;
+        b=m4VarHy7KrS4qO5bd4p6W/Bc6pd1c+UYvy5xcZp5J8qVUpALKZgfqNffV3O/l0GhtUO2XaUVnGzkyprc7yQcT3DEtzY6sXHdNT1o2LdgwuMDbGOn27Zckq/OHKAVnsvA7/c5bl81ZKN5QYGAI9MFzVkaraJRKgAdHbkeKs0SHgI=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Oliver Neukum <oliver@neukum.org>
-Cc: reiserfs-dev@namesys.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Andi Kleen <ak@suse.de>, Rodrigo Luiz <troops.of.doom@gmail.com>, CHIKAMA Masaki <masaki-c@nict.go.jp>, Christian Volkmann <haveaniceday@cv-sv.de>, Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@suse.cz>, Ben Collins <bcollins@ubuntu.com>, reiserfs-devel@vger.kernel.org, "Vladimir V. Saveliev" <vs@namesys.com>, Randy Dunlap <randy.dunlap@oracle.com>
 
-Hi Oliver,
+Hi all,
 
-On 21/06/07, Oliver Neukum <oliver@neukum.org> wrote:
-> Hi,
->
-> I get reproducible hangs when running bash_shared_mapping from the
-> autotest suite. I've tested with a USB mass storage device and a PATA
-> hard drive. No difference. Vanilla 2.6.22-rc5 and -git5 are affected. Ext3
-> works flawlessly on both devices. Below is the result of sysrq-t while
-> tasks are hanging.
->
+Here is a list of some known regressions in 2.6.22-rc5.
 
-Is this a regression?
+Feel free to add new regressions/remove fixed etc.
+http://kernelnewbies.org/known_regressions
+
+(BTW. There is a new category called "Will be fixed in 2.6.23")
+
+
+
+Unclassified
+
+Subject    : PANIC: CPU too old for this kernel. with Crusoe CPU
+References : http://bugzilla.kernel.org/show_bug.cgi?id=8647
+Submitter  : CHIKAMA Masaki <masaki-c@nict.go.jp>
+Caused-By  : Andi Kleen <ak@suse.de>
+             or Christian Volkmann <haveaniceday@cv-sv.de>
+             one of those commits:
+             commit 4c1f59d8be7e5da75d9380da23671005b363c45c
+             commit 39427d6e595ebee38fdd77bcf55d6b13d7a4324a
+             commit fd0581bbb40d8f4b0e4b3a4de2258a50df37bb57
+             commit c7f81c9453375d6416658995eafd3397cb9bba1d
+             commit 3671df8572a299acff9c9cac2bf7279ee614d154
+Status     : unknown
+
+Subject    : Kernel hang on CMOS_READ
+References : http://lkml.org/lkml/2007/6/3/138
+Submitter  : Rodrigo Luiz <troops.of.doom@gmail.com>
+Status     : Unknown
+
+
+
+ALSA
+
+Subject    : snd-aoa causes badness in lib/kref.c:33
+References : http://bugzilla.kernel.org/show_bug.cgi?id=8513
+Submitter  : Ben Collins <bcollins@ubuntu.com>
+Handled-By : Takashi Iwai <tiwai@suse.de>
+Status     : Unknown
+
+
+
+FS
+
+Subject    : 2.6.22-rc4-git5 reiserfs: null ptr deref.
+References : http://lkml.org/lkml/2007/6/13/322
+Submitter  : Randy Dunlap <randy.dunlap@oracle.com>
+Handled-By : Vladimir V. Saveliev <vs@namesys.com>
+Status     : problem is being debugged
+
+
 
 Regards,
 Michal
 
--- 
+--
 LOG
 http://www.stardust.webpages.pl/log/
