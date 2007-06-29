@@ -1,75 +1,40 @@
-From: Michal Piotrowski <michal.k.k.piotrowski@gmail.com>
-Subject: [1/2] 2.6.22-rc5: known regressions v2
-Date: Thu, 21 Jun 2007 18:34:51 +0200
-Message-ID: <467AA8AB.2010107@googlemail.com>
+From: carmen <_@whats-your.name>
+Subject: eliminating intrusive lockups
+Date: Fri, 29 Jun 2007 03:24:57 -0400
+Message-ID: <20070629072456.GD1626@replic.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
-        d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:message-id:date:user-agent:mime-version:to:subject:content-type:content-transfer-encoding:from;
-        b=m4VarHy7KrS4qO5bd4p6W/Bc6pd1c+UYvy5xcZp5J8qVUpALKZgfqNffV3O/l0GhtUO2XaUVnGzkyprc7yQcT3DEtzY6sXHdNT1o2LdgwuMDbGOn27Zckq/OHKAVnsvA7/c5bl81ZKN5QYGAI9MFzVkaraJRKgAdHbkeKs0SHgI=
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Andi Kleen <ak@suse.de>, Rodrigo Luiz <troops.of.doom@gmail.com>, CHIKAMA Masaki <masaki-c@nict.go.jp>, Christian Volkmann <haveaniceday@cv-sv.de>, Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@suse.cz>, Ben Collins <bcollins@ubuntu.com>, reiserfs-devel@vger.kernel.org, "Vladimir V. Saveliev" <vs@namesys.com>, Randy Dunlap <randy.dunlap@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-Hi all,
+inspired by the quality and performance of git and paludis, and frusted by the needless indirection and bloat of existing SQL based RDF storage options, i decided to go filesystem..
 
-Here is a list of some known regressions in 2.6.22-rc5.
+ a tree of files,
 
-Feel free to add new regressions/remove fixed etc.
-http://kernelnewbies.org/known_regressions
+ /path/to/resource/.s/predicate/object , where object is either a small file, or a symlink to another resource. 
 
-(BTW. There is a new category called "Will be fixed in 2.6.23")
+(optimally, the .s dir would go away, and predicate would become some kind of metadata attribute on the resource node, at FS level.. if was getting paid to write a plugin)
 
-
-
-Unclassified
-
-Subject    : PANIC: CPU too old for this kernel. with Crusoe CPU
-References : http://bugzilla.kernel.org/show_bug.cgi?id=8647
-Submitter  : CHIKAMA Masaki <masaki-c@nict.go.jp>
-Caused-By  : Andi Kleen <ak@suse.de>
-             or Christian Volkmann <haveaniceday@cv-sv.de>
-             one of those commits:
-             commit 4c1f59d8be7e5da75d9380da23671005b363c45c
-             commit 39427d6e595ebee38fdd77bcf55d6b13d7a4324a
-             commit fd0581bbb40d8f4b0e4b3a4de2258a50df37bb57
-             commit c7f81c9453375d6416658995eafd3397cb9bba1d
-             commit 3671df8572a299acff9c9cac2bf7279ee614d154
-Status     : unknown
-
-Subject    : Kernel hang on CMOS_READ
-References : http://lkml.org/lkml/2007/6/3/138
-Submitter  : Rodrigo Luiz <troops.of.doom@gmail.com>
-Status     : Unknown
+so each resource usually has about 5 dirs and 15 files or symlinks. an index is generated as another series of dirs containing symlinks. querying is done by set-intersections of 'ls' inside these index dirs. an index dir typically contains 10 to 1000 files or so. with somewhere around 100K rdf triples or statements, everything is quite instantaneous, which is great. and, what took 210 mb on ext3 takes about 20 mb on reiser4.. since there were a lot of 40-100 byte files taking up 4096 bytes no matter what.. 
 
 
-
-ALSA
-
-Subject    : snd-aoa causes badness in lib/kref.c:33
-References : http://bugzilla.kernel.org/show_bug.cgi?id=8513
-Submitter  : Ben Collins <bcollins@ubuntu.com>
-Handled-By : Takashi Iwai <tiwai@suse.de>
-Status     : Unknown
+the main problem is occasional 'lockups' of the entire filesystem for about 15-20 seconds. this happens every few minutes when running a keyword indexer script which generates tons of symlinks from dirs corresponding to wordnet URIs back to other directories. everything is quite fast really, slow Ruby is checking the existence of hundreds of dirs/symlinks a second it seems. its just some kind of commit is building up and when it has to rebalance a tree or write out, everything just locks up?
 
 
+im using 2.6.21 vanilla with patches from ftp.namesys.com. since the mm-sources didnt want to mount the fs on boot.. 
 
-FS
+/dev/hda1		/    	     reiser4		   	 noatime	      0 1
 
-Subject    : 2.6.22-rc4-git5 reiserfs: null ptr deref.
-References : http://lkml.org/lkml/2007/6/13/322
-Submitter  : Randy Dunlap <randy.dunlap@oracle.com>
-Handled-By : Vladimir V. Saveliev <vs@namesys.com>
-Status     : problem is being debugged
+im not sure if theres any options to tune things, or 'avoid creating lots of files/symlinks at once' (unavoidable in this usage scenario, for data importing)..
 
+rtorrent is also running at the same time with a single torrent, which "differentiates itself from other implementations by transfering directly from file pages to the network stack",
 
+after a few of these freezes, the ipw2200 module panics, something about deferencing a null pointer during a spinloop in tx_data_read or something...
 
-Regards,
-Michal
+so besides being annoying, this bug contributes to system instability.. ive never had the ipw driver freak out before and have been using it for years  - this is all pretty subjective evidence, but if i ctrl-Z the ruby script the system freezes stop happening, so... :)
 
---
-LOG
-http://www.stardust.webpages.pl/log/
+any tips? maybe i can bump up fsync() frequency or somethign. i know the ruby VM sucks, but a script shouldnt be able to temporarily halt the system imo..
