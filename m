@@ -1,91 +1,31 @@
-From: Michal Piotrowski <michal.k.k.piotrowski@gmail.com>
-Subject: [1/2] 2.6.22-rc6: known regressions v2
-Date: Fri, 29 Jun 2007 17:13:11 +0200
-Message-ID: <46852187.3080504@googlemail.com>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: [1/2] 2.6.22-rc6: known regressions v2
+Date: Fri, 29 Jun 2007 17:59:20 +0100
+Message-ID: <20070629175920.6af0c62b@the-village.bc.nu>
+References: <46852187.3080504@googlemail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-ide-owner@vger.kernel.org>
-DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
-        d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:message-id:date:user-agent:mime-version:to:subject:x-enigmail-version:content-type:content-transfer-encoding:from;
-        b=NZvLb3FjYq84ylhOcXFBLzkpMk8TE25E6TSY5Ys7IqS3ElKlisjTfPa5hRtz+u1qj7AxRJtbYPFTKjRe9A0z/aid/XjPzp+PeZLhn53LQ0+yRQBu/iGHYe9VTWRj0jzlzrWEu7PZ/LFe1kE530k5dQgPnHq/GQtBqQ8Y+wdIC7A=
+In-Reply-To: <46852187.3080504@googlemail.com>
 Sender: linux-ide-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Rodrigo Luiz <troops.of.doom@gmail.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@suse.cz>, Ben Collins <bcollins@ubuntu.com>, reiserfs-devel@vger.kernel.org, "Vladimir V. Saveliev" <vs@namesys.com>, Randy Dunlap <randy.dunlap@oracle.com>, linux-ide@vger.kernel.org, David Chinner <dgc@sgi.com>, Jeff Garzik <jeff@garzik.org>, Tejun Heo <htejun@gmail.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Rodney Gordon II <meff@spherevision.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Michal Piotrowski <michal.k.k.piotrowski@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Rodrigo Luiz <troops.of.doom@gmail.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@suse.cz>, Ben Collins <bcollins@ubuntu.com>, reiserfs-devel@vger.kernel.org, "Vladimir V. Saveliev" <vs@namesys.com>, Randy Dunlap <randy.dunlap@oracle.com>, linux-ide@vger.kernel.org, David Chinner <dgc@sgi.com>, Jeff Garzik <jeff@garzik.org>, Tejun Heo <htejun@gmail.com>, Rodney Gordon II <meff@spherevision.org>
 
-Hi all,
+> SATA/PATA
+> 
+> Subject    : libata IT821X driver still fails! Hard-freezes system
+> References : http://lkml.org/lkml/2007/6/14/82
+> Submitter  : Rodney Gordon II <meff@spherevision.org>
+> Status     : unknown
 
-Here is a list of some known regressions in 2.6.22-rc6.
+Not a regression as it seems this user's box has always been broken. I've
+been running heavy testing with 2.6.22rc6 and IT8212 and its working
+reliably for the "dumb" mode in question.
 
-=46eel free to add new regressions/remove fixed etc.
-http://kernelnewbies.org/known_regressions
+The hardware mode needs a fix Tejun has queued somewhere (probably in
+Jeff's vast backlog) and then works too.
 
-List of Aces
-
-Name                    Regressions fixed since 21-Jun-2007
-Hugh Dickins                           2
-Andi Kleen                             1
-Bj=F6rn Steinbrink                       1
-Bjorn Helgaas                          1
-Jean Delvare                           1
-Olaf Hering                            1
-Siddha, Suresh B                       1
-Trent Piepho                           1
-Ville Syrj=E4l=E4                          1
-
-
-
-Unclassified
-
-Subject    : Kernel hang on CMOS_READ
-References : http://lkml.org/lkml/2007/6/3/138
-Submitter  : Rodrigo Luiz <troops.of.doom@gmail.com>
-Status     : Unknown
-
-
-
-ALSA
-
-Subject    : snd-aoa causes badness in lib/kref.c:33
-References : http://bugzilla.kernel.org/show_bug.cgi?id=3D8513
-Submitter  : Ben Collins <bcollins@ubuntu.com>
-Handled-By : Takashi Iwai <tiwai@suse.de>
-Status     : Unknown
-
-
-
-=46S
-
-Subject    : 2.6.22-rc4-git5 reiserfs: null ptr deref.
-References : http://lkml.org/lkml/2007/6/13/322
-Submitter  : Randy Dunlap <randy.dunlap@oracle.com>
-Handled-By : Vladimir V. Saveliev <vs@namesys.com>
-Status     : problem is being debugged
-
-
-
-IDE
-
-Subject    : 2.6.22-rcX: hda: lost interrupt
-References : http://lkml.org/lkml/2007/6/29/121
-Submitter  : David Chinner <dgc@sgi.com>
-Status     : unknown
-
-
-
-SATA/PATA
-
-Subject    : libata IT821X driver still fails! Hard-freezes system
-References : http://lkml.org/lkml/2007/6/14/82
-Submitter  : Rodney Gordon II <meff@spherevision.org>
-Status     : unknown
-
-
-
-Regards,
-Michal
-
---
-LOG
-http://www.stardust.webpages.pl/log/
+I'm not even sure this report is IT8212 related rather than just an IRQ
+storm
