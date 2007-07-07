@@ -1,40 +1,103 @@
-From: devzero@web.de
-Subject: Reiser @ wired.com
-Date: Fri, 06 Jul 2007 09:42:52 +0200
-Message-ID: <1870448099@web.de>
+From: Michal Piotrowski <michal.k.k.piotrowski@gmail.com>
+Subject: 2.6.22-rc7: known regressions v2
+Date: Sat, 07 Jul 2007 18:06:44 +0200
+Message-ID: <468FBA14.9040706@googlemail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753346AbXGGQHI@vger.kernel.org>
+DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
+        d=gmail.com; s=beta;
+        h=domainkey-signature:received:received:message-id:date:user-agent:mime-version:to:subject:x-enigmail-version:content-type:content-transfer-encoding:from;
+        b=hdYDhpEnl9bQs9P7JqrPgD7AeFRtwgujxzCa3ZX63XXZZ/y9tlFfVISEfbodS1EhkztDC8BzlQY21wArtPvapJseNPT+7BVi4vlHy0rU5yBpVAYNcLI3JkBtax1LMFnrSAUTAupIsaNkK2z5IKzUsG02eFZJA3yEjnFnd3zpjqU=
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"
-To: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Antonino Daplas <adaplas@gmail.com>, David Woodhouse <dwmw2@infradead.org>, "Ben. Herrenschmidt" <benh@kernel.crashing.org>, Ani Joshi <ajoshi@kernel.crashing.org>, reiserfs-devel@vger.kernel.org, "Vladimir V. Saveliev" <vs@namesys.com>, Randy Dunlap <randy.dunlap@oracle.com>, sparclinux@vger.kernel.org, David Miller <davem@davemloft.net>, Mikael Pettersson <mikpe@it.uu.se>, linux-pm@lists.linux-foundation.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Pavel Machek <pavel@ucw.cz>, Andrey Borzenkov <arvidjaar@mail.ru>, Andi Kleen <ak@suse.de>, discuss@x86-64.org, Ioan Ionita <opslynx@gmail.com>
 
-Hi !
+Hi all,
 
-it seems that it hasn`t brought up here yet, so I`d like to let you kno=
-w that there is some long Reiser-Story at WIRED MAGAZINE: ISSUE 15.07.
+Here is a list of some known regressions in 2.6.22-rc7.
 
-=46or all you gossip fans ;) or for those who want to have some more "i=
-n depth" information obout the incident or the person Hans Reiser himse=
-lf - it`s at:
+=46eel free to add new regressions/remove fixed etc.
+http://kernelnewbies.org/known_regressions
 
-http://www.wired.com/techbiz/people/magazine/15-07/ff_hansreiser
+List of Aces
 
-scary.....
-nearly sounds like stuff for a movie for me......
+Name                    Regressions fixed since 21-Jun-2007
+Hugh Dickins                           2
+Andi Kleen                             2
+Andrew Morton                          1
+Benjamin Herrenschmidt                 1
+Bj=F6rn Steinbrink                       1
+Bjorn Helgaas                          1
+Christoph Lameter                      1
+David Woodhouse                        1
+Jean Delvare                           1
+Olaf Hering                            1
+Siddha, Suresh B                       1
+Trent Piepho                           1
+Ville Syrj=E4l=E4                          1
 
-roland
+
+
+=46BDEV
+
+Subject         : SLUB kmalloc-32768: Poison check failed@0xc1e20000 sl=
+ab 0xc04de400
+References      : http://lkml.org/lkml/2007/7/4/305
+Last known good : ?
+Submitter       : David Woodhouse <dwmw2@infradead.org>
+Caused-By       : ?
+Handled-By      : ?
+Status          : unknown
 
 
 
-_______________________________________________________________________
-Jetzt neu! Sch=FCtzen Sie Ihren PC mit McAfee und WEB.DE. 3 Monate
-kostenlos testen. http://www.pc-sicherheit.web.de/startseite/?mc=3D0222=
-20
+=46S
 
--
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Subject    : 2.6.22-rc4-git5 reiserfs: null ptr deref.
+References : http://lkml.org/lkml/2007/6/13/322
+Submitter  : Randy Dunlap <randy.dunlap@oracle.com>
+Handled-By : Vladimir V. Saveliev <vs@namesys.com>
+Status     : problem is being debugged
+
+
+
+Sparc64
+
+Subject    : 2.6.22-rc broke X on Ultra5
+References : http://lkml.org/lkml/2007/5/22/78
+Submitter  : Mikael Pettersson <mikpe@it.uu.se>
+Handled-By : David Miller <davem@davemloft.net>
+Status     : problem is being debugged
+
+
+
+Suspend
+
+Subject         : reiserfs/libata sporadically hangs on resume from hib=
+ernation
+References      : http://lkml.org/lkml/2007/6/30/5
+Last known good : ?
+Submitter       : Andrey Borzenkov <arvidjaar@mail.ru>
+Caused-By       : ?
+Handled-By      : Rafael J. Wysocki <rjw@sisk.pl>
+Status          : problem is being debugged
+
+
+
+x86-64
+
+Subject    : x86-64 2.6.22-rc2 random segfaults
+References : http://lkml.org/lkml/2007/5/24/275
+Submitter  : Ioan Ionita <opslynx@gmail.com>
+Status     : Unknown
+
+
+
+Regards,
+Michal
+
+--
+LOG
+http://www.stardust.webpages.pl/log/
