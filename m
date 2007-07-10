@@ -1,103 +1,65 @@
-From: Michal Piotrowski <michal.k.k.piotrowski@gmail.com>
-Subject: 2.6.22-rc7: known regressions v2
-Date: Sat, 07 Jul 2007 18:06:44 +0200
-Message-ID: <468FBA14.9040706@googlemail.com>
+From: "Raymond A. Meijer" <rmeijer@internet.gr>
+Subject: Reiser4 for linux-2.6.22?
+Date: Tue, 10 Jul 2007 16:11:21 +0300
+Message-ID: <200707101611.22496.rmeijer@internet.gr>
 Mime-Version: 1.0
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753346AbXGGQHI@vger.kernel.org>
-DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
-        d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:message-id:date:user-agent:mime-version:to:subject:x-enigmail-version:content-type:content-transfer-encoding:from;
-        b=hdYDhpEnl9bQs9P7JqrPgD7AeFRtwgujxzCa3ZX63XXZZ/y9tlFfVISEfbodS1EhkztDC8BzlQY21wArtPvapJseNPT+7BVi4vlHy0rU5yBpVAYNcLI3JkBtax1LMFnrSAUTAupIsaNkK2z5IKzUsG02eFZJA3yEjnFnd3zpjqU=
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Antonino Daplas <adaplas@gmail.com>, David Woodhouse <dwmw2@infradead.org>, "Ben. Herrenschmidt" <benh@kernel.crashing.org>, Ani Joshi <ajoshi@kernel.crashing.org>, reiserfs-devel@vger.kernel.org, "Vladimir V. Saveliev" <vs@namesys.com>, Randy Dunlap <randy.dunlap@oracle.com>, sparclinux@vger.kernel.org, David Miller <davem@davemloft.net>, Mikael Pettersson <mikpe@it.uu.se>, linux-pm@lists.linux-foundation.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Pavel Machek <pavel@ucw.cz>, Andrey Borzenkov <arvidjaar@mail.ru>, Andi Kleen <ak@suse.de>, discuss@x86-64.org, Ioan Ionita <opslynx@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+To: reiserfs-devel@vger.kernel.org
 
-Hi all,
+Hello,
 
-Here is a list of some known regressions in 2.6.22-rc7.
+Is there a patch for kernel 2.6.22 yet?
 
-=46eel free to add new regressions/remove fixed etc.
-http://kernelnewbies.org/known_regressions
+When I try to use reiser4-for-2.6.21.patch.gz I get:
 
-List of Aces
+[...]
+patching file mm/filemap.c
+Hunk #3 succeeded at 721 (offset 1 line).
+Hunk #4 succeeded at 841 with fuzz 2 (offset 60 lines).
+Hunk #5 succeeded at 842 (offset 3 lines).
+[...]
 
-Name                    Regressions fixed since 21-Jun-2007
-Hugh Dickins                           2
-Andi Kleen                             2
-Andrew Morton                          1
-Benjamin Herrenschmidt                 1
-Bj=F6rn Steinbrink                       1
-Bjorn Helgaas                          1
-Christoph Lameter                      1
-David Woodhouse                        1
-Jean Delvare                           1
-Olaf Hering                            1
-Siddha, Suresh B                       1
-Trent Piepho                           1
-Ville Syrj=E4l=E4                          1
+and finally:
 
+[...]
+mm/filemap.c:845: error: redefinition of =E2=80=98__kcrctab_find_get_pa=
+ges_tag=E2=80=99
+mm/filemap.c:786: error: previous definition of =E2=80=98__kcrctab_find=
+_get_pages_tag=E2=80=99=20
+was here
+mm/filemap.c:845: error: redefinition of =E2=80=98__kstrtab_find_get_pa=
+ges_tag=E2=80=99
+mm/filemap.c:786: error: previous definition of =E2=80=98__kstrtab_find=
+_get_pages_tag=E2=80=99=20
+was here
+mm/filemap.c:845: error: redefinition of =E2=80=98__ksymtab_find_get_pa=
+ges_tag=E2=80=99
+mm/filemap.c:786: error: previous definition of =E2=80=98__ksymtab_find=
+_get_pages_tag=E2=80=99=20
+was here
+make[1]: *** [mm/filemap.o] Error 1
+make: *** [mm] Error 2
+make: *** Waiting for unfinished jobs....
+[...]
 
-
-=46BDEV
-
-Subject         : SLUB kmalloc-32768: Poison check failed@0xc1e20000 sl=
-ab 0xc04de400
-References      : http://lkml.org/lkml/2007/7/4/305
-Last known good : ?
-Submitter       : David Woodhouse <dwmw2@infradead.org>
-Caused-By       : ?
-Handled-By      : ?
-Status          : unknown
-
-
-
-=46S
-
-Subject    : 2.6.22-rc4-git5 reiserfs: null ptr deref.
-References : http://lkml.org/lkml/2007/6/13/322
-Submitter  : Randy Dunlap <randy.dunlap@oracle.com>
-Handled-By : Vladimir V. Saveliev <vs@namesys.com>
-Status     : problem is being debugged
+Any ideas?
 
 
+Thanks,
 
-Sparc64
+Ray
 
-Subject    : 2.6.22-rc broke X on Ultra5
-References : http://lkml.org/lkml/2007/5/22/78
-Submitter  : Mikael Pettersson <mikpe@it.uu.se>
-Handled-By : David Miller <davem@davemloft.net>
-Status     : problem is being debugged
-
-
-
-Suspend
-
-Subject         : reiserfs/libata sporadically hangs on resume from hib=
-ernation
-References      : http://lkml.org/lkml/2007/6/30/5
-Last known good : ?
-Submitter       : Andrey Borzenkov <arvidjaar@mail.ru>
-Caused-By       : ?
-Handled-By      : Rafael J. Wysocki <rjw@sisk.pl>
-Status          : problem is being debugged
-
-
-
-x86-64
-
-Subject    : x86-64 2.6.22-rc2 random segfaults
-References : http://lkml.org/lkml/2007/5/24/275
-Submitter  : Ioan Ionita <opslynx@gmail.com>
-Status     : Unknown
-
-
-
-Regards,
-Michal
-
---
-LOG
-http://www.stardust.webpages.pl/log/
+--=20
+You cannot discover new oceans unless
+you have the courage to lose sight of
+the shore
+-
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
