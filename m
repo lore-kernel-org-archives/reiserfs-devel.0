@@ -1,10 +1,10 @@
 From: jeffm@suse.com
-Subject: [patch 03/11] reiserfs: use is_reusable to catch corruption
-Date: Thu, 12 Jul 2007 15:37:41 -0400
-Message-ID: <20070712193756.865856676@mail.jeffreymahoney.com>
+Subject: [patch 04/11] reiserfs: make bitmap use cached first zero bit
+Date: Thu, 12 Jul 2007 15:37:42 -0400
+Message-ID: <20070712193756.917377639@mail.jeffreymahoney.com>
 References: <20070712193738.112875514@mail.jeffreymahoney.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-use-is_reusable.diff
+Content-Disposition: inline; filename=reiserfs-bitmap-use-first-zero-hint.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -12,71 +12,33 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: ReiserFS Development Mailing List <reiserfs-devel@vger.namesys.com>, Vladimir Saveliev <vs@namesys.com>
 
- This patch builds in is_reusable() unconditionally and uses it to catch
- corruption before it reaches the block freeing paths.
+ Currently, the bitmap code uses half of the hinting data gathered and cached
+ and wastes the other half. We'll skip completely full bitmaps, but start
+ scanning in bitmaps at locations where if we consulted the zero bit hint,
+ we'd know there aren't any free bits available.
+
+ This patch uses the first zero hint to bump the beginning of the search
+ window to where we know there is at least one zero bit.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
 
---
+ fs/reiserfs/bitmap.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
- fs/reiserfs/bitmap.c |   21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
-
---- a/fs/reiserfs/bitmap.c	2007-06-13 11:51:51.000000000 -0400
-+++ b/fs/reiserfs/bitmap.c	2007-06-13 11:54:53.000000000 -0400
-@@ -56,7 +56,6 @@ static inline void get_bit_address(struc
- 	*offset = block & ((s->s_blocksize << 3) - 1);
- }
+--- a/fs/reiserfs/bitmap.c	2007-06-11 14:49:32.000000000 -0400
++++ b/fs/reiserfs/bitmap.c	2007-06-11 14:50:10.000000000 -0400
+@@ -166,7 +166,10 @@ static int scan_bitmap_block(struct reis
+ 			return 0;	// No free blocks in this bitmap
+ 		}
  
--#ifdef CONFIG_REISERFS_CHECK
- int is_reusable(struct super_block *s, b_blocknr_t block, int bit_value)
- {
- 	int bmap, offset;
-@@ -106,7 +105,6 @@ int is_reusable(struct super_block *s, b
- 
- 	return 1;
- }
--#endif				/* CONFIG_REISERFS_CHECK */
- 
- /* searches in journal structures for a given block number (bmap, off). If block
-    is found in reiserfs journal it suggests next free block candidate to test. */
-@@ -434,12 +432,19 @@ void reiserfs_free_block(struct reiserfs
- 			 int for_unformatted)
- {
- 	struct super_block *s = th->t_super;
--
- 	BUG_ON(!th->t_trans_id);
- 
- 	RFALSE(!s, "vs-4061: trying to free block on nonexistent device");
--	RFALSE(is_reusable(s, block, 1) == 0,
--	       "vs-4071: can not free such block");
-+	if (!is_reusable(s, block, 1))
-+		return;
+-		/* search for a first zero bit -- beggining of a window */
++		if (*beg < bi->first_zero_hint)
++			*beg = bi->first_zero_hint;
 +
-+	if (block > sb_block_count(REISERFS_SB(s)->s_rs)) {
-+		reiserfs_panic(th->t_super, "bitmap-4072",
-+		               "Trying to free block outside file system "
-+			       "boundaries (%lu > %lu)",
-+			       block, sb_block_count(REISERFS_SB(s)->s_rs));
-+		return;
-+	}
- 	/* mark it before we clear it, just in case */
- 	journal_mark_freed(th, s, block);
- 	_reiserfs_free_block(th, inode, block, for_unformatted);
-@@ -449,11 +454,11 @@ void reiserfs_free_block(struct reiserfs
- static void reiserfs_free_prealloc_block(struct reiserfs_transaction_handle *th,
- 					 struct inode *inode, b_blocknr_t block)
- {
-+	BUG_ON(!th->t_trans_id);
- 	RFALSE(!th->t_super,
- 	       "vs-4060: trying to free block on nonexistent device");
--	RFALSE(is_reusable(th->t_super, block, 1) == 0,
--	       "vs-4070: can not free such block");
--	BUG_ON(!th->t_trans_id);
-+	if (!is_reusable(th->t_super, block, 1))
-+		return;
- 	_reiserfs_free_block(th, inode, block, 1);
- }
++		/* search for a first zero bit -- beginning of a window */
+ 		*beg = reiserfs_find_next_zero_le_bit
+ 		    ((unsigned long *)(bh->b_data), boundary, *beg);
  
 
 -- 
