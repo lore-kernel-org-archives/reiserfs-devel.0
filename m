@@ -1,10 +1,10 @@
 From: jeffm@suse.com
-Subject: [patch 01/11] reiserfs: fix up lockdep warnings
-Date: Thu, 12 Jul 2007 15:37:39 -0400
-Message-ID: <20070712193756.651211790@mail.jeffreymahoney.com>
+Subject: [patch 03/11] reiserfs: use is_reusable to catch corruption
+Date: Thu, 12 Jul 2007 15:37:41 -0400
+Message-ID: <20070712193756.865856676@mail.jeffreymahoney.com>
 References: <20070712193738.112875514@mail.jeffreymahoney.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-fix-lockdep-warnings
+Content-Disposition: inline; filename=reiserfs-use-is_reusable.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -12,36 +12,72 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: ReiserFS Development Mailing List <reiserfs-devel@vger.namesys.com>, Vladimir Saveliev <vs@namesys.com>
 
- This patch adds I_MUTEX_XATTR annotations to the inode locking in
- the reiserfs xattr code.
+ This patch builds in is_reusable() unconditionally and uses it to catch
+ corruption before it reaches the block freeing paths.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
----
- fs/reiserfs/xattr.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+--
 
---- a/fs/reiserfs/xattr.c	2007-06-13 11:51:51.000000000 -0400
-+++ b/fs/reiserfs/xattr.c	2007-06-13 13:39:14.000000000 -0400
-@@ -478,7 +478,7 @@ reiserfs_xattr_set(struct inode *inode, 
- 	/* Resize it so we're ok to write there */
- 	newattrs.ia_size = buffer_size;
- 	newattrs.ia_valid = ATTR_SIZE | ATTR_CTIME;
--	mutex_lock(&xinode->i_mutex);
-+	mutex_lock_nested(&xinode->i_mutex, I_MUTEX_XATTR);
- 	err = notify_change(fp->f_path.dentry, &newattrs);
- 	if (err)
- 		goto out_filp;
-@@ -1217,7 +1217,8 @@ int reiserfs_xattr_init(struct super_blo
- 		if (!IS_ERR(dentry)) {
- 			if (!(mount_flags & MS_RDONLY) && !dentry->d_inode) {
- 				struct inode *inode = dentry->d_parent->d_inode;
--				mutex_lock(&inode->i_mutex);
-+				mutex_lock_nested(&inode->i_mutex,
-+				                  I_MUTEX_XATTR);
- 				err = inode->i_op->mkdir(inode, dentry, 0700);
- 				mutex_unlock(&inode->i_mutex);
- 				if (err) {
+ fs/reiserfs/bitmap.c |   21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
+
+--- a/fs/reiserfs/bitmap.c	2007-06-13 11:51:51.000000000 -0400
++++ b/fs/reiserfs/bitmap.c	2007-06-13 11:54:53.000000000 -0400
+@@ -56,7 +56,6 @@ static inline void get_bit_address(struc
+ 	*offset = block & ((s->s_blocksize << 3) - 1);
+ }
+ 
+-#ifdef CONFIG_REISERFS_CHECK
+ int is_reusable(struct super_block *s, b_blocknr_t block, int bit_value)
+ {
+ 	int bmap, offset;
+@@ -106,7 +105,6 @@ int is_reusable(struct super_block *s, b
+ 
+ 	return 1;
+ }
+-#endif				/* CONFIG_REISERFS_CHECK */
+ 
+ /* searches in journal structures for a given block number (bmap, off). If block
+    is found in reiserfs journal it suggests next free block candidate to test. */
+@@ -434,12 +432,19 @@ void reiserfs_free_block(struct reiserfs
+ 			 int for_unformatted)
+ {
+ 	struct super_block *s = th->t_super;
+-
+ 	BUG_ON(!th->t_trans_id);
+ 
+ 	RFALSE(!s, "vs-4061: trying to free block on nonexistent device");
+-	RFALSE(is_reusable(s, block, 1) == 0,
+-	       "vs-4071: can not free such block");
++	if (!is_reusable(s, block, 1))
++		return;
++
++	if (block > sb_block_count(REISERFS_SB(s)->s_rs)) {
++		reiserfs_panic(th->t_super, "bitmap-4072",
++		               "Trying to free block outside file system "
++			       "boundaries (%lu > %lu)",
++			       block, sb_block_count(REISERFS_SB(s)->s_rs));
++		return;
++	}
+ 	/* mark it before we clear it, just in case */
+ 	journal_mark_freed(th, s, block);
+ 	_reiserfs_free_block(th, inode, block, for_unformatted);
+@@ -449,11 +454,11 @@ void reiserfs_free_block(struct reiserfs
+ static void reiserfs_free_prealloc_block(struct reiserfs_transaction_handle *th,
+ 					 struct inode *inode, b_blocknr_t block)
+ {
++	BUG_ON(!th->t_trans_id);
+ 	RFALSE(!th->t_super,
+ 	       "vs-4060: trying to free block on nonexistent device");
+-	RFALSE(is_reusable(th->t_super, block, 1) == 0,
+-	       "vs-4070: can not free such block");
+-	BUG_ON(!th->t_trans_id);
++	if (!is_reusable(th->t_super, block, 1))
++		return;
+ 	_reiserfs_free_block(th, inode, block, 1);
+ }
+ 
 
 -- 
 Jeff Mahoney
