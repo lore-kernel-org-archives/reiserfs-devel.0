@@ -1,32 +1,49 @@
-From: "Christopher Covington" <covracer@gmail.com>
-Subject: Re: Undeletable directory in reiser4
-Date: Thu, 12 Jul 2007 10:50:08 +0200
-Message-ID: <dcdcb9a80707120150t3c03700ame7155bf758715b4d@mail.gmail.com>
-References: <2a12af650707101003i660dc33fv33ff1557ee84e3e2@mail.gmail.com>
-	 <4694CDA7.504@namesys.com>
-	 <2a12af650707110835u5e1f0ecfwd1bf41a19fef1da3@mail.gmail.com>
-	 <469503B7.0@namesys.com>
-	 <2a12af650707111002i5ca3933dibeafe0ab40f2ebe0@mail.gmail.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+From: jeffm@suse.com
+Subject: [patch 01/11] reiserfs: fix up lockdep warnings
+Date: Thu, 12 Jul 2007 15:37:39 -0400
+Message-ID: <20070712193756.651211790@mail.jeffreymahoney.com>
+References: <20070712193738.112875514@mail.jeffreymahoney.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
-        d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
-        b=TEY5Fq3OKkJjPZa5s3u6Y7/6m/pxBUL4o38xMoEqTKrdis2BzwzNGyKqCkF/bxT/OFCbVhGbTeGOVTpyAUgTBzgwr/B+IelivemYkdRbh8uftyUFclNILrHJ8a6XvvxV3RPMS64duHJlrqx+9CTqjVyXsKU+fmA8KN19vrvlNQQ=
-In-Reply-To: <2a12af650707111002i5ca3933dibeafe0ab40f2ebe0@mail.gmail.com>
-Content-Disposition: inline
+Content-Disposition: inline; filename=reiserfs-fix-lockdep-warnings
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ReiserFS Development Mailing List <reiserfs-devel@vger.namesys.com>, Vladimir Saveliev <vs@namesys.com>
 
-Although I don't have any useful information to report because this
-happened to me a while ago and I was too lazy to report it or maybe
-thought it was my own fault, I had the same problem (indeed with some
-work directory of a java package on gentoo). Rebuilding the filesystem
-may have fixed it,--'m relatively certain I'm rid of the annoyance now
-and wouldn't have taken any steps more advanced than running fsck.
+ This patch adds I_MUTEX_XATTR annotations to the inode locking in
+ the reiserfs xattr code.
 
-Regards,
-Chris
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+
+---
+ fs/reiserfs/xattr.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- a/fs/reiserfs/xattr.c	2007-06-13 11:51:51.000000000 -0400
++++ b/fs/reiserfs/xattr.c	2007-06-13 13:39:14.000000000 -0400
+@@ -478,7 +478,7 @@ reiserfs_xattr_set(struct inode *inode, 
+ 	/* Resize it so we're ok to write there */
+ 	newattrs.ia_size = buffer_size;
+ 	newattrs.ia_valid = ATTR_SIZE | ATTR_CTIME;
+-	mutex_lock(&xinode->i_mutex);
++	mutex_lock_nested(&xinode->i_mutex, I_MUTEX_XATTR);
+ 	err = notify_change(fp->f_path.dentry, &newattrs);
+ 	if (err)
+ 		goto out_filp;
+@@ -1217,7 +1217,8 @@ int reiserfs_xattr_init(struct super_blo
+ 		if (!IS_ERR(dentry)) {
+ 			if (!(mount_flags & MS_RDONLY) && !dentry->d_inode) {
+ 				struct inode *inode = dentry->d_parent->d_inode;
+-				mutex_lock(&inode->i_mutex);
++				mutex_lock_nested(&inode->i_mutex,
++				                  I_MUTEX_XATTR);
+ 				err = inode->i_op->mkdir(inode, dentry, 0700);
+ 				mutex_unlock(&inode->i_mutex);
+ 				if (err) {
+
+-- 
+Jeff Mahoney
+SUSE Labs
+
