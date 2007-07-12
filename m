@@ -1,8 +1,10 @@
 From: jeffm@suse.com
-Subject: [patch 00/11] reiserfs fixups and error handling
-Date: Thu, 12 Jul 2007 15:37:38 -0400
-Message-ID: <20070712193738.112875514@mail.jeffreymahoney.com>
+Subject: [patch 06/11] reiserfs: make some warnings informational
+Date: Thu, 12 Jul 2007 15:37:44 -0400
+Message-ID: <20070712193757.107892643@mail.jeffreymahoney.com>
+References: <20070712193738.112875514@mail.jeffreymahoney.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Disposition: inline; filename=reiserfs-reiserfs_info.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -10,33 +12,88 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: ReiserFS Development Mailing List <reiserfs-devel@vger.namesys.com>, Vladimir Saveliev <vs@namesys.com>
 
- This is the first part of a series of patches I've been developing for
- reiserfs. I'm posting them now for review followed by submission to 2.6.23.
+ In several places, reiserfs_warning is used when there is no warning, just
+ a notice. This patch changes some of them to indicate that the message
+ is merely informational.
 
- The first 4 patches are small fixes:
- * Adding proper lockdep annotation to xattrs
- * Switching to panic() instead of BUG() in reiserfs_panic()
- * Making is_reusable bitmap sanity checking unconditional
- * Using the first zero hint in bitmap iteration
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
- The remaining 7 work to make reiserfs error handling more consistent
- and robust:
- * Use consistent message prefixes for all reiserfs log output
- * Add a reiserfs_info() call for multiline output that doesn't
-   masquerade as a warning.
- * Make reiserfs_warning() calls more consistent, requiring an ID, and
-   including the device and function where the warning is occuring.
- * Make reiserfs_panic() more consistent in the same manner.
- * Rearrange reiserfs_journal_abort() since it was modelled after jbd's
-   call and doesn't need to be. There's several function calls that
-   just get optimized out anyway.
+--
+ fs/reiserfs/bitmap.c |    4 ++--
+ fs/reiserfs/super.c  |   14 ++++++--------
+ fs/reiserfs/xattr.c  |   10 ++++------
+ 3 files changed, 12 insertions(+), 16 deletions(-)
 
- * Add a reiserfs_error() call to handle metadata errors by aborting
-   the journal and marking the file system read-only.
- * Convert 50 reiserfs_warning(), 2 reiserfs_panic(), and one BUG_ON
-   site to use the new reiserfs_error().,
-
--Jeff
+--- a/fs/reiserfs/bitmap.c	2007-06-11 14:49:32.000000000 -0400
++++ b/fs/reiserfs/bitmap.c	2007-06-11 14:50:10.000000000 -0400
+@@ -40,7 +40,7 @@
+ 
+ #define SET_OPTION(optname) \
+    do { \
+-        reiserfs_warning(s, "reiserfs: option \"%s\" is set", #optname); \
++        reiserfs_info(s, "block allocator option \"%s\" is set", #optname); \
+         set_bit(_ALLOC_ ## optname , &SB_ALLOC_OPTS(s)); \
+     } while(0)
+ #define TEST_OPTION(optname, s) \
+@@ -633,7 +633,7 @@ int reiserfs_parse_alloc_options(struct 
+ 		return 1;
+ 	}
+ 
+-	reiserfs_warning(s, "allocator options = [%08x]\n", SB_ALLOC_OPTS(s));
++	reiserfs_info(s, "allocator options = [%08x]\n", SB_ALLOC_OPTS(s));
+ 	return 0;
+ }
+ 
+--- a/fs/reiserfs/super.c	2007-06-11 14:49:05.000000000 -0400
++++ b/fs/reiserfs/super.c	2007-06-11 14:50:10.000000000 -0400
+@@ -1308,13 +1308,11 @@ static int read_super_block(struct super
+ 		/* magic is of non-standard journal filesystem, look at s_version to
+ 		   find which format is in use */
+ 		if (sb_version(rs) == REISERFS_VERSION_2)
+-			reiserfs_warning(s,
+-					 "read_super_block: found reiserfs format \"3.6\""
+-					 " with non-standard journal");
++			reiserfs_info(s, "found reiserfs format \"3.6\""
++			              " with non-standard journal\n");
+ 		else if (sb_version(rs) == REISERFS_VERSION_1)
+-			reiserfs_warning(s,
+-					 "read_super_block: found reiserfs format \"3.5\""
+-					 " with non-standard journal");
++			reiserfs_info(s, "found reiserfs format \"3.5\""
++			              " with non-standard journal\n");
+ 		else {
+ 			reiserfs_warning(s,
+ 					 "sh-2012: read_super_block: found unknown "
+@@ -1393,8 +1391,8 @@ static __u32 find_hash_out(struct super_
+ 			if (reiserfs_rupasov_hash(s)) {
+ 				hash = YURA_HASH;
+ 			}
+-			reiserfs_warning(s, "FS seems to be empty, autodetect "
+-					 "is using the default hash");
++			reiserfs_info(s, "FS seems to be empty, autodetect "
++					 "is using the default hash\n");
+ 			break;
+ 		}
+ 		r5hash = GET_HASH_VALUE(r5_hash(de.de_name, de.de_namelen));
+--- a/fs/reiserfs/xattr.c	2007-06-11 14:49:31.000000000 -0400
++++ b/fs/reiserfs/xattr.c	2007-06-11 14:50:10.000000000 -0400
+@@ -1227,12 +1227,10 @@ int reiserfs_xattr_init(struct super_blo
+ 				}
+ 
+ 				if (dentry && dentry->d_inode)
+-					reiserfs_warning(s,
+-							 "Created %s on %s - reserved for "
+-							 "xattr storage.",
+-							 PRIVROOT_NAME,
+-							 reiserfs_bdevname
+-							 (inode->i_sb));
++					reiserfs_info(s, "Created %s - "
++					              "reserved for xattr "
++						      "storage.\n",
++						      PRIVROOT_NAME);
+ 			} else if (!dentry->d_inode) {
+ 				dput(dentry);
+ 				dentry = NULL;
 
 -- 
 Jeff Mahoney
