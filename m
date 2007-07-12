@@ -1,10 +1,10 @@
 From: jeffm@suse.com
-Subject: [patch 06/11] reiserfs: make some warnings informational
-Date: Thu, 12 Jul 2007 15:37:44 -0400
-Message-ID: <20070712193757.107892643@mail.jeffreymahoney.com>
+Subject: [patch 10/11] reiserfs: introduce reiserfs_error()
+Date: Thu, 12 Jul 2007 15:37:48 -0400
+Message-ID: <20070712193757.467888784@mail.jeffreymahoney.com>
 References: <20070712193738.112875514@mail.jeffreymahoney.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-reiserfs_info.diff
+Content-Disposition: inline; filename=reiserfs-add-reiserfs_error.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -12,88 +12,65 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: ReiserFS Development Mailing List <reiserfs-devel@vger.namesys.com>, Vladimir Saveliev <vs@namesys.com>
 
- In several places, reiserfs_warning is used when there is no warning, just
- a notice. This patch changes some of them to indicate that the message
- is merely informational.
+ Although reiserfs can currently handle severe errors such as journal failure,
+ it cannot handle less severe errors like metadata i/o failure. The following
+ patch adds a reiserfs_error() function akin to the one in ext3.
+
+ Subsequent patches will use this new error handler to handle errors more
+ gracefully in general.
+
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
 --
- fs/reiserfs/bitmap.c |    4 ++--
- fs/reiserfs/super.c  |   14 ++++++--------
- fs/reiserfs/xattr.c  |   10 ++++------
- 3 files changed, 12 insertions(+), 16 deletions(-)
+ fs/reiserfs/prints.c        |   23 +++++++++++++++++++++++
+ include/linux/reiserfs_fs.h |    3 +++
+ 2 files changed, 26 insertions(+)
 
---- a/fs/reiserfs/bitmap.c	2007-06-11 14:49:32.000000000 -0400
-+++ b/fs/reiserfs/bitmap.c	2007-06-11 14:50:10.000000000 -0400
-@@ -40,7 +40,7 @@
- 
- #define SET_OPTION(optname) \
-    do { \
--        reiserfs_warning(s, "reiserfs: option \"%s\" is set", #optname); \
-+        reiserfs_info(s, "block allocator option \"%s\" is set", #optname); \
-         set_bit(_ALLOC_ ## optname , &SB_ALLOC_OPTS(s)); \
-     } while(0)
- #define TEST_OPTION(optname, s) \
-@@ -633,7 +633,7 @@ int reiserfs_parse_alloc_options(struct 
- 		return 1;
- 	}
- 
--	reiserfs_warning(s, "allocator options = [%08x]\n", SB_ALLOC_OPTS(s));
-+	reiserfs_info(s, "allocator options = [%08x]\n", SB_ALLOC_OPTS(s));
- 	return 0;
+--- a/fs/reiserfs/prints.c	2007-06-11 14:49:34.000000000 -0400
++++ b/fs/reiserfs/prints.c	2007-06-11 14:50:04.000000000 -0400
+@@ -373,6 +373,29 @@ void __reiserfs_panic(struct super_block
+ 		      id ? id : "", id ? " " : "", function, error_buf);
  }
  
---- a/fs/reiserfs/super.c	2007-06-11 14:49:05.000000000 -0400
-+++ b/fs/reiserfs/super.c	2007-06-11 14:50:10.000000000 -0400
-@@ -1308,13 +1308,11 @@ static int read_super_block(struct super
- 		/* magic is of non-standard journal filesystem, look at s_version to
- 		   find which format is in use */
- 		if (sb_version(rs) == REISERFS_VERSION_2)
--			reiserfs_warning(s,
--					 "read_super_block: found reiserfs format \"3.6\""
--					 " with non-standard journal");
-+			reiserfs_info(s, "found reiserfs format \"3.6\""
-+			              " with non-standard journal\n");
- 		else if (sb_version(rs) == REISERFS_VERSION_1)
--			reiserfs_warning(s,
--					 "read_super_block: found reiserfs format \"3.5\""
--					 " with non-standard journal");
-+			reiserfs_info(s, "found reiserfs format \"3.5\""
-+			              " with non-standard journal\n");
- 		else {
- 			reiserfs_warning(s,
- 					 "sh-2012: read_super_block: found unknown "
-@@ -1393,8 +1391,8 @@ static __u32 find_hash_out(struct super_
- 			if (reiserfs_rupasov_hash(s)) {
- 				hash = YURA_HASH;
- 			}
--			reiserfs_warning(s, "FS seems to be empty, autodetect "
--					 "is using the default hash");
-+			reiserfs_info(s, "FS seems to be empty, autodetect "
-+					 "is using the default hash\n");
- 			break;
- 		}
- 		r5hash = GET_HASH_VALUE(r5_hash(de.de_name, de.de_namelen));
---- a/fs/reiserfs/xattr.c	2007-06-11 14:49:31.000000000 -0400
-+++ b/fs/reiserfs/xattr.c	2007-06-11 14:50:10.000000000 -0400
-@@ -1227,12 +1227,10 @@ int reiserfs_xattr_init(struct super_blo
- 				}
- 
- 				if (dentry && dentry->d_inode)
--					reiserfs_warning(s,
--							 "Created %s on %s - reserved for "
--							 "xattr storage.",
--							 PRIVROOT_NAME,
--							 reiserfs_bdevname
--							 (inode->i_sb));
-+					reiserfs_info(s, "Created %s - "
-+					              "reserved for xattr "
-+						      "storage.\n",
-+						      PRIVROOT_NAME);
- 			} else if (!dentry->d_inode) {
- 				dput(dentry);
- 				dentry = NULL;
++void __reiserfs_error(struct super_block *sb, const char *id,
++                      const char *function, const char *fmt, ...)
++{
++	do_reiserfs_warning(fmt);
++
++	if (reiserfs_error_panic(sb))
++		__reiserfs_panic(sb, id, function, error_buf);
++
++	if (id && id[0])
++		printk(KERN_CRIT "REISERFS error (device %s): %s %s: %s\n",
++	               sb->s_id, id, function, error_buf);
++	else
++		printk(KERN_CRIT "REISERFS error (device %s): %s: %s\n",
++	               sb->s_id, function, error_buf);
++
++	if (sb->s_flags & MS_RDONLY)
++		return;
++
++	reiserfs_info(sb, "Remounting filesystem read-only\n");
++	sb->s_flags |= MS_RDONLY;
++	reiserfs_abort_journal(sb, -EIO);
++}
++
+ void reiserfs_abort(struct super_block *sb, int errno, const char *fmt, ...)
+ {
+ 	do_reiserfs_warning(fmt);
+--- a/include/linux/reiserfs_fs.h	2007-06-11 14:49:35.000000000 -0400
++++ b/include/linux/reiserfs_fs.h	2007-06-11 14:50:08.000000000 -0400
+@@ -1992,6 +1992,9 @@ void __reiserfs_panic(struct super_block
+     __attribute__ ((noreturn));
+ #define reiserfs_panic(s, id, fmt, args...) \
+         __reiserfs_panic(s, id, __FUNCTION__, fmt, ##args)
++void __reiserfs_error(struct super_block *s, const char *id, const char *function, const char *fmt, ...);
++#define reiserfs_error(s, id, fmt, args...) \
++        __reiserfs_error(s, id, __FUNCTION__, fmt, ##args)
+ void reiserfs_info(struct super_block *s, const char *fmt, ...);
+ void reiserfs_debug(struct super_block *s, int level, const char *fmt, ...);
+ void print_indirect_item(struct buffer_head *bh, int item_num);
 
 -- 
 Jeff Mahoney
