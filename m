@@ -1,952 +1,830 @@
-From: Zan Lynx <zlynx@acm.org>
-Subject: Re: 2.6.22-rc6-mm1 reiser4_tree_by_page NULL pointer
-Date: Fri, 13 Jul 2007 10:41:53 -0600
-Message-ID: <1184344914.468943.3.camel@localhost>
-References: <1184090582.6933.20.camel@localhost>
-	 <469523FA.7010308@namesys.com>  <46968F88.7070300@acm.org>
+From: Andrey Borzenkov <arvidjaar@mail.ru>
+Subject: Re: [possible regression] 2.6.22 reiserfs/libata sporadically hangs on resume from hibernation
+Date: Sun, 15 Jul 2007 22:56:05 +0400
+Message-ID: <200707152256.07251.arvidjaar@mail.ru>
+References: <200706300859.47133.arvidjaar@mail.ru> <200707010134.30843.arvidjaar@mail.ru> <200707011209.29250.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-R9kFVlrp3TEaBCr9sBFX"
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <46968F88.7070300@acm.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Content-Type: multipart/signed;
+  boundary="nextPart2441476.ea4NWOx8h9";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758941AbXGOS42@vger.kernel.org>
+In-Reply-To: <200707011209.29250.rjw@sisk.pl>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Edward Shishkin <edward@namesys.com>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, "Vladimir V. Saveliev" <vs@namesys.com>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: michal.k.k.piotrowski@gmail.com, linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>, Andrew Morton <akpm@linux-foundation.org>, reiserfs-devel@vger.kernel.org
 
-
---=-R9kFVlrp3TEaBCr9sBFX
-Content-Type: text/plain
+--nextPart2441476.ea4NWOx8h9
+Content-Type: text/plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-On Thu, 2007-07-12 at 14:31 -0600, Zan Lynx wrote:
-> Edward Shishkin wrote:
-> >=20
-> > I have found the bug, which kills data
-> > when booting after crash, power loss, etc.
-> > The patch is attached.
-> > Please, ping me, if it doesn't help..
->=20
-> It appears to be holding up well so far.  About 5 hours of Gentoo=20
-> updating and compiling.
+On Sunday 01 July 2007, Rafael J. Wysocki wrote:
+> On Saturday, 30 June 2007 23:34, Andrey Borzenkov wrote:
+> > On Sunday 01 July 2007, Rafael J. Wysocki wrote:
+> > > On Saturday, 30 June 2007 06:59, Andrey Borzenkov wrote:
+> > > > Since 2.6.18 I do not have suspend to RAM; now I am starting to lose
+> > > > suspend to disk :)
+> > > >
+> > > > Environment - vanilla kernel (2.6.22-rc6 currently + squashfs +
+> > > > single pata_ali patch to switch off DMA on CD-ROM), single root on
+> > > > reiserfs, libata with pata_ali driver.
+> > > >
+> > > > Until 2.6.22-rc I never had problems with hibernation. With 2.6.22-=
+rc
+> > > > system hung at least once in every rcX. Up to rc6 those lockups were
+> > > > absolutely silent (black screen without reaction to any key). In rc6
+> > > > I just got something different. After resume I got on screem:
+> > > >
+> > > > swsusp: Marking nosave pages: 000000000009f000-0000000000100000
+> > > > swsusp: Basic memory bitmaps created
+> > > > swsusp: Basic memory bitmaps freed
+> > > >
+> > > > After that it just sits there doing nothing. Ther was brief sound of
+> > > > HDD but I suspect it was related more to power-on. System was
+> > > > responding to power-on button press:
+> > > >
+> > > > ACPI Error (event-0305): No installed handler for fixed event
+> > > > [00000002 20070125]
+> > > >
+> > > > And SysRq was functioning.
+> > >
+> > > That probably means that there's a deadlock somewhere in there.
+> > >
+> > > > Unfortunately I do not have serial console so I
+> > > > copy manually stacks from several last screens of output; I have
+> > > > tried to make a photo but right now my kbluetooth is refusing to wo=
+rk
+> > > > at all so I cannot transfer them :( (but I suspect quality would be
+> > > > too bad anyway)
+> > > >
+> > > > laptop_mode D
+> > > > 	io_schedule+0xe/0x20
+> > >
+> > > Looks suspicious to me.  Can you identify what line of code this poin=
+ts
+> > > to?
+> >
+> > If you could explain how to ...
+>
+> Michal has already done that. :-)
+>
 
-Maybe it isn't fixed so well at that.
-I got one of these today, here is the dmesg (at the bottom):
+(gdb) l *io_schedule+0xe
+0xc02aa84e is in io_schedule (include2/asm/atomic.h:110).
+105      *
+106      * Atomically decrements @v by 1.
+107      */
+108     static __inline__ void atomic_dec(atomic_t *v)
+109     {
+110             __asm__ __volatile__(
+111                     LOCK_PREFIX "decl %0"
+112                     :"+m" (v->counter));
+113     }
+114
 
-Linux version 2.6.22-rc6-mm1 (root@zephyr) (gcc version 4.2.0 (Gentoo 4.2.0=
-)) #4 SMP PREEMPT Wed Jul 11 23:22:08 MDT 2007
-Command line: root=3D/dev/sda2 rootfstype=3Dreiser4 ro i8042.nomux elevator=
-=3Danticipatory resume=3D/dev/sda3 panic=3D5 nmi_watchdog=3D2,panic debug k=
-ernelcore=3D384M
-BIOS-provided physical RAM map:
- BIOS-e820: 0000000000000000 - 000000000009f800 (usable)
- BIOS-e820: 000000000009f800 - 00000000000a0000 (reserved)
- BIOS-e820: 00000000000d0000 - 0000000000100000 (reserved)
- BIOS-e820: 0000000000100000 - 000000003ff70000 (usable)
- BIOS-e820: 000000003ff70000 - 000000003ff7f000 (ACPI data)
- BIOS-e820: 000000003ff7f000 - 000000003ff80000 (ACPI NVS)
- BIOS-e820: 000000003ff80000 - 0000000040000000 (reserved)
- BIOS-e820: 00000000fff80000 - 0000000100000000 (reserved)
-Entering add_active_range(0, 0, 159) 0 entries of 256 used
-Entering add_active_range(0, 256, 262000) 1 entries of 256 used
-end_pfn_map =3D 1048576
-DMI present.
-ACPI: RSDP 000F7240, 0014 (r0 PTLTD )
-ACPI: RSDT 3FF7A87E, 0034 (r1 PTLTD    RSDT    6040000  LTP        0)
-ACPI: FACP 3FF7EE13, 0074 (r1 NVIDIA CK8       6040000 PTL_    F4240)
-ACPI: DSDT 3FF7A8B2, 4561 (r1 NVIDIA      CK8  6040000 MSFT  100000E)
-ACPI: FACS 3FF7FFC0, 0040
-ACPI: APIC 3FF7EE87, 005A (r1 NVIDIA NV_APIC_  6040000  LTP        0)
-ACPI: BOOT 3FF7EEE1, 0028 (r1 PTLTD  $SBFTBL$  6040000  LTP        1)
-ACPI: SSDT 3FF7EF09, 00F7 (r1 PTLTD  POWERNOW  6040000  LTP        1)
-Entering add_active_range(0, 0, 159) 0 entries of 256 used
-Entering add_active_range(0, 256, 262000) 1 entries of 256 used
-No mptable found.
-sizeof(struct page) =3D 88
-Zone PFN ranges:
-  DMA             0 ->     4096
-  DMA32        4096 ->  1048576
-  Normal    1048576 ->  1048576
-Movable zone start PFN for each node
-  Node 0: 99328
-early_node_map[2] active PFN ranges
-    0:        0 ->      159
-    0:      256 ->   262000
-On node 0 totalpages: 261903
-Node 0 memmap at 0xffff810001000000 size 23068672 first pfn 0xffff810001000=
-000
-  DMA zone: 88 pages used for memmap
-  DMA zone: 2784 pages reserved
-  DMA zone: 1127 pages, LIFO batch:0
-  DMA32 zone: 2046 pages used for memmap
-  DMA32 zone: 93186 pages, LIFO batch:31
-  Normal zone: 0 pages used for memmap
-  Movable zone: 3494 pages used for memmap
-  Movable zone: 159178 pages, LIFO batch:31
-Nvidia board detected. Ignoring ACPI timer override.
-If you got timer trouble try acpi_use_timer_override
-ACPI: PM-Timer IO Port: 0x8008
-ACPI: Local APIC address 0xfee00000
-ACPI: LAPIC (acpi_id[0x00] lapic_id[0x00] enabled)
-Processor #0 (Bootup-CPU)
-ACPI: LAPIC_NMI (acpi_id[0x00] high edge lint[0x1])
-ACPI: IOAPIC (id[0x02] address[0xfec00000] gsi_base[0])
-IOAPIC[0]: apic_id 2, address 0xfec00000, GSI 0-23
-ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 low level)
-ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
-ACPI: BIOS IRQ0 pin2 override ignored.
-ACPI: IRQ9 used by override.
-Setting APIC routing to flat
-Using ACPI (MADT) for SMP configuration information
-swsusp: Registered nosave memory region: 000000000009f000 - 00000000000a000=
-0
-swsusp: Registered nosave memory region: 00000000000a0000 - 00000000000d000=
-0
-swsusp: Registered nosave memory region: 00000000000d0000 - 000000000010000=
-0
-Allocating PCI resources starting at 50000000 (gap: 40000000:bff80000)
-SMP: Allowing 1 CPUs, 0 hotplug CPUs
-PERCPU: Allocating 33144 bytes of per cpu data
-Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 253491
-Kernel command line: root=3D/dev/sda2 rootfstype=3Dreiser4 ro i8042.nomux e=
-levator=3Danticipatory resume=3D/dev/sda3 panic=3D5 nmi_watchdog=3D2,panic =
-debug kernelcore=3D384M
-Initializing CPU#0
-PID hash table entries: 4096 (order: 12, 32768 bytes)
-TSC calibrated against PM_TIMER
-time.c: Detected 797.942 MHz processor.
-Console: colour VGA+ 80x25
-console [tty0] enabled
-Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar
-... MAX_LOCKDEP_SUBCLASSES:    8
-... MAX_LOCK_DEPTH:          30
-... MAX_LOCKDEP_KEYS:        2048
-... CLASSHASH_SIZE:           1024
-... MAX_LOCKDEP_ENTRIES:     8192
-... MAX_LOCKDEP_CHAINS:      16384
-... CHAINHASH_SIZE:          8192
- memory used by lock dependency info: 1648 kB
- per task-struct memory footprint: 1680 bytes
-------------------------
-| Locking API testsuite:
----------------------------------------------------------------------------=
--
-                                 | spin |wlock |rlock |mutex | wsem | rsem =
-|
-  -------------------------------------------------------------------------=
--
-                     A-A deadlock:  ok  |  ok  |  ok  |  ok  |  ok  |  ok  =
-|
-                 A-B-B-A deadlock:  ok  |  ok  |  ok  |  ok  |  ok  |  ok  =
-|
-             A-B-B-C-C-A deadlock:  ok  |  ok  |  ok  |  ok  |  ok  |  ok  =
-|
-             A-B-C-A-B-C deadlock:  ok  |  ok  |  ok  |  ok  |  ok  |  ok  =
-|
-         A-B-B-C-C-D-D-A deadlock:  ok  |  ok  |  ok  |  ok  |  ok  |  ok  =
-|
-         A-B-C-D-B-D-D-A deadlock:  ok  |  ok  |  ok  |  ok  |  ok  |  ok  =
-|
-         A-B-C-D-B-C-D-A deadlock:  ok  |  ok  |  ok  |  ok  |  ok  |  ok  =
-|
-                    double unlock:  ok  |  ok  |  ok  |  ok  |  ok  |  ok  =
-|
-                  initialize held:  ok  |  ok  |  ok  |  ok  |  ok  |  ok  =
-|
-                 bad unlock order:  ok  |  ok  |  ok  |  ok  |  ok  |  ok  =
-|
-  -------------------------------------------------------------------------=
--
-              recursive read-lock:             |  ok  |             |  ok  =
-|
-           recursive read-lock #2:             |  ok  |             |  ok  =
-|
-            mixed read-write-lock:             |  ok  |             |  ok  =
-|
-            mixed write-read-lock:             |  ok  |             |  ok  =
-|
-  -------------------------------------------------------------------------=
--
-     hard-irqs-on + irq-safe-A/12:  ok  |  ok  |  ok  |
-     soft-irqs-on + irq-safe-A/12:  ok  |  ok  |  ok  |
-     hard-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
-     soft-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
-       sirq-safe-A =3D> hirqs-on/12:  ok  |  ok  |  ok  |
-       sirq-safe-A =3D> hirqs-on/21:  ok  |  ok  |  ok  |
-         hard-safe-A + irqs-on/12:  ok  |  ok  |  ok  |
-         soft-safe-A + irqs-on/12:  ok  |  ok  |  ok  |
-         hard-safe-A + irqs-on/21:  ok  |  ok  |  ok  |
-         soft-safe-A + irqs-on/21:  ok  |  ok  |  ok  |
-    hard-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
-    soft-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
-    hard-safe-A + unsafe-B #1/132:  ok  |  ok  |  ok  |
-    soft-safe-A + unsafe-B #1/132:  ok  |  ok  |  ok  |
-    hard-safe-A + unsafe-B #1/213:  ok  |  ok  |  ok  |
-    soft-safe-A + unsafe-B #1/213:  ok  |  ok  |  ok  |
-    hard-safe-A + unsafe-B #1/231:  ok  |  ok  |  ok  |
-    soft-safe-A + unsafe-B #1/231:  ok  |  ok  |  ok  |
-    hard-safe-A + unsafe-B #1/312:  ok  |  ok  |  ok  |
-    soft-safe-A + unsafe-B #1/312:  ok  |  ok  |  ok  |
-    hard-safe-A + unsafe-B #1/321:  ok  |  ok  |  ok  |
-    soft-safe-A + unsafe-B #1/321:  ok  |  ok  |  ok  |
-    hard-safe-A + unsafe-B #2/123:  ok  |  ok  |  ok  |
-    soft-safe-A + unsafe-B #2/123:  ok  |  ok  |  ok  |
-    hard-safe-A + unsafe-B #2/132:  ok  |  ok  |  ok  |
-    soft-safe-A + unsafe-B #2/132:  ok  |  ok  |  ok  |
-    hard-safe-A + unsafe-B #2/213:  ok  |  ok  |  ok  |
-    soft-safe-A + unsafe-B #2/213:  ok  |  ok  |  ok  |
-    hard-safe-A + unsafe-B #2/231:  ok  |  ok  |  ok  |
-    soft-safe-A + unsafe-B #2/231:  ok  |  ok  |  ok  |
-    hard-safe-A + unsafe-B #2/312:  ok  |  ok  |  ok  |
-    soft-safe-A + unsafe-B #2/312:  ok  |  ok  |  ok  |
-    hard-safe-A + unsafe-B #2/321:  ok  |  ok  |  ok  |
-    soft-safe-A + unsafe-B #2/321:  ok  |  ok  |  ok  |
-      hard-irq lock-inversion/123:  ok  |  ok  |  ok  |
-      soft-irq lock-inversion/123:  ok  |  ok  |  ok  |
-      hard-irq lock-inversion/132:  ok  |  ok  |  ok  |
-      soft-irq lock-inversion/132:  ok  |  ok  |  ok  |
-      hard-irq lock-inversion/213:  ok  |  ok  |  ok  |
-      soft-irq lock-inversion/213:  ok  |  ok  |  ok  |
-      hard-irq lock-inversion/231:  ok  |  ok  |  ok  |
-      soft-irq lock-inversion/231:  ok  |  ok  |  ok  |
-      hard-irq lock-inversion/312:  ok  |  ok  |  ok  |
-      soft-irq lock-inversion/312:  ok  |  ok  |  ok  |
-      hard-irq lock-inversion/321:  ok  |  ok  |  ok  |
-      soft-irq lock-inversion/321:  ok  |  ok  |  ok  |
-      hard-irq read-recursion/123:  ok  |
-      soft-irq read-recursion/123:  ok  |
-      hard-irq read-recursion/132:  ok  |
-      soft-irq read-recursion/132:  ok  |
-      hard-irq read-recursion/213:  ok  |
-      soft-irq read-recursion/213:  ok  |
-      hard-irq read-recursion/231:  ok  |
-      soft-irq read-recursion/231:  ok  |
-      hard-irq read-recursion/312:  ok  |
-      soft-irq read-recursion/312:  ok  |
-      hard-irq read-recursion/321:  ok  |
-      soft-irq read-recursion/321:  ok  |
--------------------------------------------------------
-Good, all 218 testcases passed! |
----------------------------------
-Dentry cache hash table entries: 131072 (order: 8, 1048576 bytes)
-Inode-cache hash table entries: 65536 (order: 7, 524288 bytes)
-Checking aperture...
-CPU 0: aperture @ e8000000 size 128 MB
-Memory: 1011952k/1048000k available (3284k kernel code, 35388k reserved, 21=
-98k data, 1108k init)
-SLUB: Genslabs=3D22, HWalign=3D64, Order=3D0-3, MinObjects=3D16, CPUs=3D1, =
-Nodes=3D1
-Calibrating delay using timer specific routine.. 1597.32 BogoMIPS (lpj=3D79=
-8660)
-kswapd reclaim order set to 3
-Mount-cache hash table entries: 256
-CPU: L1 I Cache: 64K (64 bytes/line), D cache 64K (64 bytes/line)
-CPU: L2 Cache: 1024K (64 bytes/line)
-SMP alternatives: switching to UP code
-Freeing SMP alternatives: 25k freed
-ACPI: Core revision 20070126
-Parsing all Control Methods:
-Table [DSDT](id 0001) - 650 Objects with 66 Devices 205 Methods 24 Regions
-Parsing all Control Methods:
-Table [SSDT](id 0002) - 3 Objects with 0 Devices 1 Methods 0 Regions
- tbxface-0587 [00] tb_load_namespace     : ACPI Tables successfully acquire=
-d
-evxfevnt-0091 [00] enable                : Transition to ACPI mode successf=
-ul
-Using local APIC timer interrupts.
-Brought up 1 CPUs
-testing NMI watchdog ... OK.
-NET: Registered protocol family 16
-No dock devices found.
-ACPI: bus type pci registered
-PCI: Using configuration type 1
-evgpeblk-0956 [00] ev_create_gpe_block   : GPE 00 to 1F [_GPE] 4 regs on in=
-t 0x9
-evgpeblk-0956 [00] ev_create_gpe_block   : GPE 20 to 5F [_GPE] 8 regs on in=
-t 0x9
-evgpeblk-1052 [00] ev_initialize_gpe_bloc: Found 5 Wake, Enabled 1 Runtime =
-GPEs in this block
-evgpeblk-1052 [00] ev_initialize_gpe_bloc: Found 0 Wake, Enabled 1 Runtime =
-GPEs in this block
-Completing Region/Field/Buffer/Package initialization:.....................=
-................................................
-Initialized 24/24 Regions 2/2 Fields 29/29 Buffers 14/21 Packages (662 node=
+> [--snip--]
+>
+> > > I see you're using CFQ as the default IO scheduler.  Can you please
+> > > switch to AS and see if that changes anything?
+> >
+> > Sure, but given that I have no idea how to reproduce the lockup, we may
+> > never know whether it actually helped.
+>
+> Well, if the lockup never happens with AS, that will indicate something .=
+=2E.
+>
+
+Well, I was about to say that it is probably gone as it hit again. Now with=
+=20
+IDE, so we at least can rule out libata. But reiserfs is still in path, so =
+I=20
+Cc list. It is stock 2.6.22. I will switch to AS, but it took 2 weeks to=20
+happen with CFS and in one week I will be off for a couple of weeks.
+
+Here is hand-copied information about locks and blocked processes.
+
+Showing all locks held in the system:
+
+1 lock held by syslogd/2515
+ #0: (&inode->i_mutex){--..}, at: [<c02ab4d15>] mutex_lock+0x21/0x30
+1 lock held by X/3800:
+ #0: (&mm->mmap_sem){----}, at: [<c02ae2e8>] do_page_fault+0x1e8/0x5e0
+6 times migetty - 1 lock held by mingetty/3838:
+ #0: (&tty->atomic_read_lock){--..}, at: [<c02ab0915>]=20
+mutex_lock_interruptible+0x21/0x30
+2 times zsh - 1 lock held by zsh/4276:
+ #0: (&tty->atomic_read_lock){--..}, at: [<c02ab0915>]=20
+mutex_lock_interruptible+0x21/0x30
+1 lock held by consolehelper-g/21231:
+ #0: (&inode->i_mutex){--..}, at: [<c02ab4b1>] mutex_lock+0x21/0x30
+1 lock held by kio_http/31282:
+ #0: (&inode->i_mutex){--..}, at: [<c02ab4b1>] mutex_lock+0x21/0x30
+
+and list of blocked tasks:
+
+syslogd
+ io_schedule+0xe/0x20
+ sync_buffer+0x35/0x40
+ __wait_on_bit+0x45/0x70
+ out_of_line_wait_on_bit+0x50/0x60
+ __wait_on_buffer+0x27/0x30
+ flush_commit_list+0x397/0x610 [reiserfs]
+ do_journal_end+0xadc/0xc90 [reiserfs]
+ journal_end_sync+0x5d/0x70 [reiserfs]
+ reiserfs_commit_for_inode+0x17e/0x1a0 [reiserfs]
+ reiserfs_sync_file+0x2d/0x70 [reiserfs]
+ do_fsync+0x28/0x40
+ sys_fsync+0xd/0x10
+ sysenter_past_esp+0x5f/0x99
+
+X
+ io_schedule+0xe/0x20
+ sync_page+0x3a/0x50
+ __wait_on_bit_lock+0x3f/0x70
+ __lock_page+0x4c/0x60
+ __handle_mm_fault+0x657/0x860
+ do_page_fault+0x2f4/0x5e0
+ error_code+0x6a/0x70
+
+consolehelper
+ io_schedule+0xe/0x20
+ sync_buffer+0x35/0x40
+ __wait_on_bit+0x45/0x70
+ out_of_line_wait_on_bit+0x50/0x60
+ __wait_on_buffer+0x27/0x30
+ search_by_key+0x17e/0x1370 [reiserfs]
+ search_by_entry_key+0x1c/0x2a0 [reiserfs]
+ reiserfs_find_entry+0x7d/0x3a0 [reiserfs]
+ reiserfs_lookup+0x75/0x120 [reiserfs]
+ do_lookup+0x133/0x180
+ __link_path_walk+0x765/0xd10
+ link_path_walk+0x44/0xc0
+ path_walk+0x18/0x20
+ do_path_lookup+0x7c/0x200
+ __path_lookup_intent_open+0x1f/0x30
+ open_namei+0x66/0x670
+ do_filp_open+0x2c/0x50
+ do_sys_open+0x47/0xd0
+ sys_open+0x1c/0x20
+ syscall_call+0x7/0xb
+
+kio_http
+ io_schedule+0xe/0x20
+ sync_buffer+0x35/0x40
+ __wait_on_bit+0x45/0x70
+ out_of_line_wait_on_bit+0x50/0x60
+ __wait_on_buffer+0x27/0x30
+ search_by_key+0x17e/0x1370 [reiserfs]
+ reiserfs_read_locked_inode+0x63/0x570 [reiserfs]
+ reiserfs_iget+0x87/0x90 [reiserfs]
+ reiserfs_lookup+0xed/0x120 [reiserfs]
+ do_lookup+0x133/0x180
+ __link_path_walk+0x765/0xd10
+ link_path_walk+0x44/0xc0
+ path_walk+0x18/0x20
+ do_path_lookup+0x7c/0x200
+ __user_walk_fd+0x38/0x50
+ vfs_lstat_fd+0x1e/0x50
+ vfs_lstat+0x11/0x20
+ sys_lstat64+0x14/0x30
+ sysenter_past_esp+0x5f/0x99
+
+90clock
+ io_schedule+0xe/0x20
+ sync_page+0x3a/0x50
+ __wait_on_bit_lock+0x3f/0x70
+ __lock_page+0x4c/0x60
+ do_generic_mapping_read+0x1cb/0x4e0
+ generic_file_aio_read+0x132/0x160
+ do_sync_read+0xcd/0x110
+ vfs_read+0x94/0x130
+ kernel_read+0x3a/0x50
+ prepare_binprm+0xaf/0xe0
+ do_execve+0xd7/0x1b0
+ sys_execve+0x2e/0x80
+ sysenter_past_esp+0x5f/0x99
+
+65alsa
+ io_schedule+0xe/0x20
+ sync_page+0x3a/0x50
+ __wait_on_bit_lock+0x3f/0x70
+ __lock_page+0x4c/0x60
+ do_generic_mapping_read+0x1cb/0x4e0
+ generic_file_aio_read+0x132/0x160
+ do_sync_read+0xcd/0x110
+ vfs_read+0x94/0x130
+ kernel_read+0x3a/0x50
+ prepare_binprm+0xaf/0xe0
+ do_execve+0xd7/0x1b0
+ sys_execve+0x2e/0x80
+ sysenter_past_esp+0x5f/0x99
+
+
+current function is acpi_processor_idle so it is 100% deadlock.
+
+dmesg with IDE drivers:
+
+[    0.000000] Linux version 2.6.22-2avb (bor@cooker) (gcc version 4.2.1=20
+20070704 (prerelease) (4.2.1-3mdv2008.0)) #23 Sat Jul 14 21:04:49 MSD 2007
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000]  BIOS-e820: 0000000000000000 - 000000000009fc00 (usable)
+[    0.000000]  BIOS-e820: 000000000009fc00 - 00000000000a0000 (reserved)
+[    0.000000]  BIOS-e820: 00000000000e0000 - 00000000000eee00 (reserved)
+[    0.000000]  BIOS-e820: 00000000000eee00 - 00000000000ef000 (ACPI NVS)
+[    0.000000]  BIOS-e820: 00000000000ef000 - 0000000000100000 (reserved)
+[    0.000000]  BIOS-e820: 0000000000100000 - 000000001ef60000 (usable)
+[    0.000000]  BIOS-e820: 000000001ef60000 - 000000001ef70000 (ACPI data)
+[    0.000000]  BIOS-e820: 000000001ef70000 - 0000000020000000 (reserved)
+[    0.000000]  BIOS-e820: 00000000fff80000 - 0000000100000000 (reserved)
+[    0.000000] 495MB LOWMEM available.
+[    0.000000] Entering add_active_range(0, 0, 126816) 0 entries of 256 used
+[    0.000000] Zone PFN ranges:
+[    0.000000]   DMA             0 ->     4096
+[    0.000000]   Normal       4096 ->   126816
+[    0.000000] early_node_map[1] active PFN ranges
+[    0.000000]     0:        0 ->   126816
+[    0.000000] On node 0 totalpages: 126816
+[    0.000000]   DMA zone: 32 pages used for memmap
+[    0.000000]   DMA zone: 0 pages reserved
+[    0.000000]   DMA zone: 4064 pages, LIFO batch:0
+[    0.000000]   Normal zone: 958 pages used for memmap
+[    0.000000]   Normal zone: 121762 pages, LIFO batch:31
+[    0.000000] DMI 2.3 present.
+[    0.000000] ACPI: RSDP 000F0090, 0014 (r0 TOSHIB)
+[    0.000000] ACPI: RSDT 1EF60000, 0028 (r1 TOSHIB 750        970814 TASM =
+=20
+4010000)
+[    0.000000] ACPI: FACP 1EF60054, 0084 (r2 TOSHIB 750        970814 TASM =
+=20
+4010000)
+[    0.000000] ACPI: DSDT 1EF600D8, 68DA (r1 TOSHIB 4000     20020417 MSFT =
+=20
+100000A)
+[    0.000000] ACPI: FACS 000EEE00, 0040
+[    0.000000] ACPI: PM-Timer IO Port: 0xee08
+[    0.000000] Allocating PCI resources starting at 30000000 (gap:=20
+20000000:dff80000)
+[    0.000000] swsusp: Registered nosave memory region: 000000000009f000 -=
+=20
+00000000000a0000
+[    0.000000] swsusp: Registered nosave memory region: 00000000000a0000 -=
+=20
+00000000000e0000
+[    0.000000] swsusp: Registered nosave memory region: 00000000000e0000 -=
+=20
+00000000000ee000
+[    0.000000] swsusp: Registered nosave memory region: 00000000000ee000 -=
+=20
+00000000000ef000
+[    0.000000] swsusp: Registered nosave memory region: 00000000000ef000 -=
+=20
+0000000000100000
+[    0.000000] Built 1 zonelists.  Total pages: 125826
+[    0.000000] Kernel command line: BOOT_IMAGE=3D2.6.22-2avb root=3DLABEL=
+=3D/=20
+resume=3DLABEL=3Dswap splash=3Dsilent vga=3D791
+[    0.000000] Enabling fast FPU save and restore... done.
+[    0.000000] Enabling unmasked SIMD FPU exception support... done.
+[    0.000000] Initializing CPU#0
+[    0.000000] PID hash table entries: 2048 (order: 11, 8192 bytes)
+[    0.000000] Detected 747.765 MHz processor.
+[  146.118249] Console: colour dummy device 80x25
+[  146.118448] Lock dependency validator: Copyright (c) 2006 Red Hat, Inc.,=
+=20
+Ingo Molnar
+[  146.118464] ... MAX_LOCKDEP_SUBCLASSES:    8
+[  146.118473] ... MAX_LOCK_DEPTH:          30
+[  146.118482] ... MAX_LOCKDEP_KEYS:        2048
+[  146.118491] ... CLASSHASH_SIZE:           1024
+[  146.118501] ... MAX_LOCKDEP_ENTRIES:     8192
+[  146.118510] ... MAX_LOCKDEP_CHAINS:      16384
+[  146.118520] ... CHAINHASH_SIZE:          8192
+[  146.118529]  memory used by lock dependency info: 992 kB
+[  146.118540]  per task-struct memory footprint: 1200 bytes
+[  146.118551] ------------------------
+[  146.118559] | Locking API testsuite:
+[ =20
+146.118569] ---------------------------------------------------------------=
+=2D------------
+[  146.118583]                                  | spin |wlock |rlock |mutex=
+ |=20
+wsem | rsem |
+[ =20
+146.118599]   -------------------------------------------------------------=
+=2D------------
+[  146.118644]                      A-A deadlock:  ok  |  ok  |  ok  |  ok =
+ | =20
+ok  |  ok  |
+[  146.121564]                  A-B-B-A deadlock:  ok  |  ok  |  ok  |  ok =
+ | =20
+ok  |  ok  |
+[  146.123727]              A-B-B-C-C-A deadlock:  ok  |  ok  |  ok  |  ok =
+ | =20
+ok  |  ok  |
+[  146.125935]              A-B-C-A-B-C deadlock:  ok  |  ok  |  ok  |  ok =
+ | =20
+ok  |  ok  |
+[  146.128140]          A-B-B-C-C-D-D-A deadlock:  ok  |  ok  |  ok  |  ok =
+ | =20
+ok  |  ok  |
+[  146.130405]          A-B-C-D-B-D-D-A deadlock:  ok  |  ok  |  ok  |  ok =
+ | =20
+ok  |  ok  |
+[  146.132668]          A-B-C-D-B-C-D-A deadlock:  ok  |  ok  |  ok  |  ok =
+ | =20
+ok  |  ok  |
+[  146.134937]                     double unlock:  ok  |  ok  |  ok  |  ok =
+ | =20
+ok  |  ok  |
+[  146.137052]                   initialize held:  ok  |  ok  |  ok  |  ok =
+ | =20
+ok  |  ok  |
+[  146.139158]                  bad unlock order:  ok  |  ok  |  ok  |  ok =
+ | =20
+ok  |  ok  |
+[ =20
+146.141310]   -------------------------------------------------------------=
+=2D------------
+[  146.141325]               recursive read-lock:             | =20
+ok  |             |  ok  |
+[  146.142040]            recursive read-lock #2:             | =20
+ok  |             |  ok  |
+[  146.142755]             mixed read-write-lock:             | =20
+ok  |             |  ok  |
+[  146.143476]             mixed write-read-lock:             | =20
+ok  |             |  ok  |
+[ =20
+146.144196]   -------------------------------------------------------------=
+=2D------------
+[  146.144211]      hard-irqs-on + irq-safe-A/12:  ok  |  ok  |  ok  |
+[  146.145281]      soft-irqs-on + irq-safe-A/12:  ok  |  ok  |  ok  |
+[  146.146355]      hard-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
+[  146.147418]      soft-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
+[  146.148481]        sirq-safe-A =3D> hirqs-on/12:  ok  |  ok  |  ok  |
+[  146.149546]        sirq-safe-A =3D> hirqs-on/21:  ok  |  ok  |  ok  |
+[  146.150610]          hard-safe-A + irqs-on/12:  ok  |  ok  |  ok  |
+[  146.151672]          soft-safe-A + irqs-on/12:  ok  |  ok  |  ok  |
+[  146.152739]          hard-safe-A + irqs-on/21:  ok  |  ok  |  ok  |
+[  146.153802]          soft-safe-A + irqs-on/21:  ok  |  ok  |  ok  |
+[  146.154865]     hard-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
+[  146.155957]     soft-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
+[  146.157044]     hard-safe-A + unsafe-B #1/132:  ok  |  ok  |  ok  |
+[  146.158129]     soft-safe-A + unsafe-B #1/132:  ok  |  ok  |  ok  |
+[  146.159217]     hard-safe-A + unsafe-B #1/213:  ok  |  ok  |  ok  |
+[  146.160302]     soft-safe-A + unsafe-B #1/213:  ok  |  ok  |  ok  |
+[  146.161386]     hard-safe-A + unsafe-B #1/231:  ok  |  ok  |  ok  |
+[  146.162466]     soft-safe-A + unsafe-B #1/231:  ok  |  ok  |  ok  |
+[  146.163549]     hard-safe-A + unsafe-B #1/312:  ok  |  ok  |  ok  |
+[  146.164621]     soft-safe-A + unsafe-B #1/312:  ok  |  ok  |  ok  |
+[  146.165693]     hard-safe-A + unsafe-B #1/321:  ok  |  ok  |  ok  |
+[  146.166773]     soft-safe-A + unsafe-B #1/321:  ok  |  ok  |  ok  |
+[  146.167857]     hard-safe-A + unsafe-B #2/123:  ok  |  ok  |  ok  |
+[  146.168947]     soft-safe-A + unsafe-B #2/123:  ok  |  ok  |  ok  |
+[  146.170040]     hard-safe-A + unsafe-B #2/132:  ok  |  ok  |  ok  |
+[  146.171123]     soft-safe-A + unsafe-B #2/132:  ok  |  ok  |  ok  |
+[  146.172211]     hard-safe-A + unsafe-B #2/213:  ok  |  ok  |  ok  |
+[  146.173294]     soft-safe-A + unsafe-B #2/213:  ok  |  ok  |  ok  |
+[  146.174383]     hard-safe-A + unsafe-B #2/231:  ok  |  ok  |  ok  |
+[  146.175462]     soft-safe-A + unsafe-B #2/231:  ok  |  ok  |  ok  |
+[  146.176546]     hard-safe-A + unsafe-B #2/312:  ok  |  ok  |  ok  |
+[  146.177625]     soft-safe-A + unsafe-B #2/312:  ok  |  ok  |  ok  |
+[  146.178714]     hard-safe-A + unsafe-B #2/321:  ok  |  ok  |  ok  |
+[  146.179795]     soft-safe-A + unsafe-B #2/321:  ok  |  ok  |  ok  |
+[  146.180880]       hard-irq lock-inversion/123:  ok  |  ok  |  ok  |
+[  146.181964]       soft-irq lock-inversion/123:  ok  |  ok  |  ok  |
+[  146.183056]       hard-irq lock-inversion/132:  ok  |  ok  |  ok  |
+[  146.184140]       soft-irq lock-inversion/132:  ok  |  ok  |  ok  |
+[  146.185230]       hard-irq lock-inversion/213:  ok  |  ok  |  ok  |
+[  146.186314]       soft-irq lock-inversion/213:  ok  |  ok  |  ok  |
+[  146.187403]       hard-irq lock-inversion/231:  ok  |  ok  |  ok  |
+[  146.188483]       soft-irq lock-inversion/231:  ok  |  ok  |  ok  |
+[  146.189570]       hard-irq lock-inversion/312:  ok  |  ok  |  ok  |
+[  146.190653]       soft-irq lock-inversion/312:  ok  |  ok  |  ok  |
+[  146.191743]       hard-irq lock-inversion/321:  ok  |  ok  |  ok  |
+[  146.192825]       soft-irq lock-inversion/321:  ok  |  ok  |  ok  |
+[  146.193911]       hard-irq read-recursion/123:  ok  |
+[  146.194280]       soft-irq read-recursion/123:  ok  |
+[  146.194652]       hard-irq read-recursion/132:  ok  |
+[  146.195019]       soft-irq read-recursion/132:  ok  |
+[  146.195390]       hard-irq read-recursion/213:  ok  |
+[  146.195758]       soft-irq read-recursion/213:  ok  |
+[  146.196127]       hard-irq read-recursion/231:  ok  |
+[  146.196495]       soft-irq read-recursion/231:  ok  |
+[  146.196864]       hard-irq read-recursion/312:  ok  |
+[  146.197233]       soft-irq read-recursion/312:  ok  |
+[  146.197602]       hard-irq read-recursion/321:  ok  |
+[  146.197971]       soft-irq read-recursion/321:  ok  |
+[  146.198342] -------------------------------------------------------
+[  146.198354] Good, all 218 testcases passed! |
+[  146.198364] ---------------------------------
+[  146.200019] Dentry cache hash table entries: 65536 (order: 6, 262144 byt=
+es)
+[  146.202916] Inode-cache hash table entries: 32768 (order: 5, 131072 byte=
 s)
-Initializing Device/Processor/Thermal objects by executing _INI methods:.
-Executed 1 _INI methods requiring 0 _STA executions (examined 70 objects)
-ACPI: Interpreter enabled
-ACPI: (supports S0 S3 S4 S5)
-ACPI: Using IOAPIC for interrupt routing
-ACPI: EC: GPE =3D 0x21, I/O: command/status =3D 0x66, data =3D 0x62<6>ACPI:=
- PCI Root Bridge [PCI0] (0000:00)
-PCI: Probing PCI hardware (bus 00)
-PCI: Bus #03 (-#06) is hidden behind  bridge #02 (-#02) (try 'pci=3Dassign-=
-busses')
-Please report the result to <bk@suse.de> to fix this permanently
-PCI: Bus #07 (-#0a) is hidden behind  bridge #02 (-#02) (try 'pci=3Dassign-=
-busses')
-Please report the result to <bk@suse.de> to fix this permanently
-ACPI: PCI Interrupt Routing Table [\_SB_.PCI0._PRT]
-ACPI: PCI Interrupt Routing Table [\_SB_.PCI0.P2P0._PRT]
-ACPI: PCI Interrupt Routing Table [\_SB_.PCI0.AGP0._PRT]
-ACPI: PCI Interrupt Link [LNK1] (IRQs 16 18 19) *0
-ACPI: PCI Interrupt Link [LNK2] (IRQs 16 18 19) *0
-ACPI: PCI Interrupt Link [LNK3] (IRQs 17) *0
-ACPI: PCI Interrupt Link [LNK4] (IRQs 16 18 19) *0, disabled.
-ACPI: PCI Interrupt Link [LNK5] (IRQs 16 18 19) *0
-ACPI: PCI Interrupt Link [LSMB] (IRQs 20 21 22) *0
-ACPI: PCI Interrupt Link [LUS0] (IRQs 20 21 22) *0
-ACPI: PCI Interrupt Link [LUS1] (IRQs 20 21 22) *0
-ACPI: PCI Interrupt Link [LUS2] (IRQs 20 21 22) *0
-ACPI: PCI Interrupt Link [LMAC] (IRQs 20 21 22) *0, disabled.
-ACPI: PCI Interrupt Link [LACI] (IRQs 20 21 22) *0
-ACPI: PCI Interrupt Link [LMCI] (IRQs 20 21 22) *0
-ACPI: PCI Interrupt Link [LPID] (IRQs 20 21 22) *0, disabled.
-ACPI: PCI Interrupt Link [LTID] (IRQs 20 21 22) *0, disabled.
-Linux Plug and Play Support v0.97 (c) Adam Belay
-pnp: PnP ACPI init
-ACPI: bus type pnp registered
-pnp: PnP ACPI: found 12 devices
-ACPI: ACPI bus type pnp unregistered
-Generic PHY: Registered new driver
-SCSI subsystem initialized
-libata version 2.21 loaded.
-PCI: Using ACPI for IRQ routing
-PCI: If a device doesn't work, try "pci=3Drouteirq".  If it helps, post a r=
-eport
-PCI: Cannot allocate resource region 0 of device 0000:00:00.0
-agpgart: Detected AGP bridge 0
-agpgart: Setting up Nforce3 AGP.
-agpgart: AGP aperture is 128M @ 0xe8000000
-Time: tsc clocksource has been installed.
-Switched to high resolution mode on CPU 0
-pnp: 00:01: ioport range 0x8000-0x807f has been reserved
-pnp: 00:01: ioport range 0x8080-0x80ff has been reserved
-pnp: 00:01: ioport range 0x8400-0x847f has been reserved
-pnp: 00:01: ioport range 0x8480-0x84ff has been reserved
-pnp: 00:01: ioport range 0x8800-0x887f has been reserved
-pnp: 00:01: ioport range 0x8880-0x88ff has been reserved
-pnp: 00:01: ioport range 0x2040-0x207f has been reserved
-pnp: 00:01: ioport range 0x2000-0x203f has been reserved
-pnp: 00:02: iomem range 0xfff80000-0xffffffff could not be reserved
-pnp: 00:02: iomem range 0xfec00000-0xfec00fff has been reserved
-pnp: 00:02: iomem range 0xfee00000-0xfeefffff could not be reserved
-pnp: 00:02: iomem range 0xfed00000-0xfed00fff has been reserved
-PCI: Failed to allocate mem resource #10:4000000@e4000000 for 0000:02:04.0
-PCI: Failed to allocate mem resource #10:4000000@e4000000 for 0000:02:04.1
-PCI: Bus 3, cardbus bridge: 0000:02:04.0
-  IO window: 00003000-000030ff
-  IO window: 00003400-000034ff
-  PREFETCH window: 50000000-53ffffff
-PCI: Bus 7, cardbus bridge: 0000:02:04.1
-  IO window: 00003800-000038ff
-  IO window: 00003c00-00003cff
-  PREFETCH window: 54000000-57ffffff
-PCI: Bridge: 0000:00:0a.0
-  IO window: 3000-7fff
-  MEM window: e0100000-e17fffff
-  PREFETCH window: 50000000-57ffffff
-PCI: Bridge: 0000:00:0b.0
-  IO window: disabled.
-  MEM window: e2000000-e2ffffff
-  PREFETCH window: f0000000-f80fffff
-PCI: Setting latency timer of device 0000:00:0a.0 to 64
-ACPI: PCI Interrupt Link [LNK1] enabled at IRQ 19
-ACPI: PCI Interrupt 0000:02:04.0[A] -> Link [LNK1] -> GSI 19 (level, low) -=
-> IRQ 19
-ACPI: PCI Interrupt Link [LNK2] enabled at IRQ 18
-ACPI: PCI Interrupt 0000:02:04.1[B] -> Link [LNK2] -> GSI 18 (level, low) -=
-> IRQ 18
-NET: Registered protocol family 2
-IP route cache hash table entries: 32768 (order: 6, 262144 bytes)
-TCP established hash table entries: 65536 (order: 10, 4194304 bytes)
-TCP bind hash table entries: 65536 (order: 9, 3670016 bytes)
-TCP: Hash tables configured (established 65536 bind 65536)
-TCP reno registered
-Simple Boot Flag at 0x37 set to 0x1
-audit: initializing netlink socket (disabled)
-audit(1184218128.567:1): initialized
-Total HugeTLB memory allocated, 0
-Loading Reiser4. See www.namesys.com for a description of Reiser4.
-Installing knfsd (copyright (C) 1996 okir@monad.swb.de).
-io scheduler noop registered
-io scheduler anticipatory registered (default)
-io scheduler deadline registered
-io scheduler cfq registered
-Boot video device is 0000:01:00.0
-ACPI: AC Adapter [ACAD] (on-line)
-ACPI: Battery Slot [BAT1] (battery present)
-input: Power Button (FF) as /devices/virtual/input/input0
-ACPI: Power Button (FF) [PWRF]
-input: Power Button (CM) as /devices/virtual/input/input1
-ACPI: Power Button (CM) [PWRB]
-input: Lid Switch as /devices/virtual/input/input2
-ACPI: Lid Switch [LID]
-ACPI Exception (processor_throttling-0084): AE_NOT_FOUND, Evaluating _PTC [=
-20070126]
-ACPI Exception (processor_throttling-0147): AE_NOT_FOUND, Evaluating _TSS [=
-20070126]
-ACPI: CPU0 (power states: C1[C1] C2[C2])
-ACPI Exception (thermal-0400): AE_NOT_FOUND, Invalid active threshold [0] [=
-20070126]
-ACPI: Thermal Zone [THRM] (52 C)
-Real Time Clock Driver v1.12ac
-Linux agpgart interface v0.102 (c) Dave Jones
-Hangcheck: starting hangcheck timer 0.9.0 (tick is 180 seconds, margin is 6=
-0 seconds).
-Hangcheck: Using get_cycles().
-loop: module loaded
-Marvell 88E1101: Registered new driver
-Marvell 88E1111: Registered new driver
-Marvell 88E1145: Registered new driver
-Davicom DM9161E: Registered new driver
-Davicom DM9161A: Registered new driver
-Davicom DM9131: Registered new driver
-Cicada Cis8204: Registered new driver
-Cicada Cis8201: Registered new driver
-LXT970: Registered new driver
-LXT971: Registered new driver
-QS6612: Registered new driver
-SMSC LAN83C185: Registered new driver
-Vitesse VSC8244: Registered new driver
-Broadcom BCM5411: Registered new driver
-Broadcom BCM5421: Registered new driver
-Broadcom BCM5461: Registered new driver
-ICPlus IP175C: Registered new driver
-8139too Fast Ethernet driver 0.9.28
-ACPI: PCI Interrupt 0000:02:01.0[A] -> Link [LNK2] -> GSI 18 (level, low) -=
-> IRQ 18
-eth0: RealTek RTL8139 at 0xffffc2000001e800, 00:0f:b0:07:dc:49, IRQ 18
-eth0:  Identified 8139 chip type 'RTL-8101'
-pata_amd 0000:00:08.0: version 0.3.8
-PCI: Setting latency timer of device 0000:00:08.0 to 64
-scsi0 : pata_amd
-scsi1 : pata_amd
-ata1: PATA max UDMA/133 cmd 0x00000000000101f0 ctl 0x00000000000103f6 bmdma=
- 0x0000000000012080 irq 14
-ata2: PATA max UDMA/133 cmd 0x0000000000010170 ctl 0x0000000000010376 bmdma=
- 0x0000000000012088 irq 15
-ata1.00: ATA-6: HTS721010G9AT00, MCZOA51A, max UDMA/100
-ata1.00: 195371568 sectors, multi 16: LBA48=20
-ata1.00: configured for UDMA/100
-ata2.00: ATAPI: HL-DT-ST DVD+RW GCA-4040N, 1.19, max MWDMA2
-ata2.00: configured for MWDMA2
-scsi 0:0:0:0: Direct-Access     ATA      HTS721010G9AT00  MCZO PQ: 0 ANSI: =
-5
-sd 0:0:0:0: [sda] 195371568 512-byte hardware sectors (100030 MB)
-sd 0:0:0:0: [sda] Write Protect is off
-sd 0:0:0:0: [sda] Mode Sense: 00 3a 00 00
-sd 0:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't suppor=
-t DPO or FUA
-sd 0:0:0:0: [sda] 195371568 512-byte hardware sectors (100030 MB)
-sd 0:0:0:0: [sda] Write Protect is off
-sd 0:0:0:0: [sda] Mode Sense: 00 3a 00 00
-sd 0:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't suppor=
-t DPO or FUA
- sda: sda1 sda2 sda3
-sd 0:0:0:0: [sda] Attached SCSI disk
-scsi 1:0:0:0: CD-ROM            HL-DT-ST DVD+RW GCA-4040N 1.19 PQ: 0 ANSI: =
-5
-sr0: scsi3-mmc drive: 40x/24x writer cd/rw xa/form2 cdda tray
-Uniform CD-ROM driver Revision: 3.20
-sr 1:0:0:0: Attached scsi CD-ROM sr0
-Yenta: CardBus bridge found at 0000:02:04.0 [103c:006d]
-PCI: Bus 3, cardbus bridge: 0000:02:04.0
-  IO window: 00003000-000030ff
-  IO window: 00003400-000034ff
-  PREFETCH window: 50000000-53ffffff
-  MEM window: e0400000-e07fffff
-Yenta: Enabling burst memory read transactions
-Yenta: Using CSCINT to route CSC interrupts to PCI
-Yenta: Routing CardBus interrupts to PCI
-Yenta TI: socket 0000:02:04.0, mfunc 0x01111d22, devctl 0x64
-Yenta: ISA IRQ mask 0x0cf8, PCI irq 19
-Socket status: 30000086
-Yenta: Raising subordinate bus# of parent bus (#02) from #02 to #06
-pcmcia: parent PCI bridge I/O window: 0x3000 - 0x7fff
-pcmcia: parent PCI bridge Memory window: 0xe0100000 - 0xe17fffff
-pcmcia: parent PCI bridge Memory window: 0x50000000 - 0x57ffffff
-Yenta: CardBus bridge found at 0000:02:04.1 [103c:006d]
-Yenta: Using CSCINT to route CSC interrupts to PCI
-Yenta: Routing CardBus interrupts to PCI
-Yenta TI: socket 0000:02:04.1, mfunc 0x01111d22, devctl 0x64
-Yenta: ISA IRQ mask 0x0cf8, PCI irq 18
-Socket status: 30000006
-Yenta: Raising subordinate bus# of parent bus (#02) from #06 to #0a
-pcmcia: parent PCI bridge I/O window: 0x3000 - 0x7fff
-pcmcia: parent PCI bridge Memory window: 0xe0100000 - 0xe17fffff
-pcmcia: parent PCI bridge Memory window: 0x50000000 - 0x57ffffff
-PNP: PS/2 Controller [PNP0303:PS2K,PNP0f13:PS2M] at 0x60,0x64 irq 1,12
-serio: i8042 KBD port at 0x60,0x64 irq 1
-serio: i8042 AUX port at 0x60,0x64 irq 12
-mice: PS/2 mouse device common for all mice
-cpuidle: using governor ladder
-input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input=
-/input3
-cpuidle: using governor menu
-TCP cubic registered
-Initializing XFRM netlink socket
-NET: Registered protocol family 1
-NET: Registered protocol family 17
-NET: Registered protocol family 15
-powernow-k8: Found 1 AMD Athlon(tm) 64 Processor 3400+ processors (1 cpu co=
-res) (version 2.00.00)
-powernow-k8:    0 : fid 0xe (2200 MHz), vid 0x2
-powernow-k8:    1 : fid 0xa (1800 MHz), vid 0xa
-powernow-k8:    2 : fid 0x0 (800 MHz), vid 0x12
-swsusp: Resume From Partition /dev/sda3
-PM: Checking swsusp image.
-Marking TSC unstable due to possible TSC halt in C2
-Time: acpi_pm clocksource has been installed.
-PM: Resume from disk failed.
-registered taskstats version 1
-Freeing unused kernel memory: 1108k freed
-reiser4: sda2: found disk format 4.0.0.
-sd 0:0:0:0: Attached scsi generic sg0 type 0
-sr 1:0:0:0: Attached scsi generic sg1 type 5
-usbcore: registered new interface driver usbfs
-usbcore: registered new interface driver hub
-usbcore: registered new device driver usb
-ehci_hcd: block sizes: qh 192 qtd 96 itd 192 sitd 96
-ohci_hcd: 2006 August 04 USB 1.1 'Open' Host Controller (OHCI) Driver
-ohci_hcd: block sizes: ed 80 td 96
-ACPI: PCI Interrupt Link [LUS2] enabled at IRQ 22
-ACPI: PCI Interrupt 0000:00:02.2[C] -> Link [LUS2] -> GSI 22 (level, low) -=
-> IRQ 22
-PCI: Setting latency timer of device 0000:00:02.2 to 64
-ehci_hcd 0000:00:02.2: EHCI Host Controller
-drivers/usb/core/inode.c: creating file 'devices'
-drivers/usb/core/inode.c: creating file '001'
-ehci_hcd 0000:00:02.2: new USB bus registered, assigned bus number 1
-ehci_hcd 0000:00:02.2: reset hcs_params 0x102486 dbg=3D1 cc=3D2 pcc=3D4 !pp=
-c ports=3D6
-ehci_hcd 0000:00:02.2: reset portroute 0 0 1 1 1 0=20
-ehci_hcd 0000:00:02.2: reset hcc_params a086 caching frame 256/512/1024 par=
-k
-ehci_hcd 0000:00:02.2: park 0
-PCI: cache line size of 64 is not supported by device 0000:00:02.2
-ehci_hcd 0000:00:02.2: supports USB remote wakeup
-ehci_hcd 0000:00:02.2: irq 22, io mem 0xe0004000
-ehci_hcd 0000:00:02.2: reset command 080b02 park=3D3 ithresh=3D8 period=3D1=
-024 Reset HALT
-ehci_hcd 0000:00:02.2: init command 010009 (park)=3D0 ithresh=3D1 period=3D=
-256 RUN
-ehci_hcd 0000:00:02.2: USB 2.0 started, EHCI 1.00, driver 10 Dec 2004
-usb usb1: default language 0x0409
-usb usb1: new device found, idVendor=3D0000, idProduct=3D0000
-usb usb1: new device strings: Mfr=3D3, Product=3D2, SerialNumber=3D1
-usb usb1: Product: EHCI Host Controller
-usb usb1: Manufacturer: Linux 2.6.22-rc6-mm1 ehci_hcd
-usb usb1: SerialNumber: 0000:00:02.2
-usb usb1: uevent
-usb usb1: usb_probe_device
-usb usb1: configuration #1 chosen from 1 choice
-usb usb1: adding 1-0:1.0 (config #1, interface 0)
-usb 1-0:1.0: uevent
-usb 1-0:1.0: uevent
-hub 1-0:1.0: usb_probe_interface
-hub 1-0:1.0: usb_probe_interface - got id
-hub 1-0:1.0: USB hub found
-hub 1-0:1.0: 6 ports detected
-hub 1-0:1.0: standalone hub
-hub 1-0:1.0: no power switching (usb 1.0)
-hub 1-0:1.0: individual port over-current protection
-hub 1-0:1.0: Single TT
-hub 1-0:1.0: TT requires at most 8 FS bit times (666 ns)
-hub 1-0:1.0: power on to power good time: 20ms
-hub 1-0:1.0: local power source is good
-hub 1-0:1.0: trying to enable port power on non-switchable hub
-hub 1-0:1.0: state 7 ports 6 chg 0000 evt 0000
-drivers/usb/core/inode.c: creating file '001'
-ehci_hcd 0000:00:02.2: GetStatus port 3 status 001803 POWER sig=3Dj CSC CON=
-NECT
-hub 1-0:1.0: port 3, status 0501, change 0001, 480 Mb/s
-PCI: Enabling device 0000:00:02.0 (0004 -> 0006)
-ACPI: PCI Interrupt Link [LUS0] enabled at IRQ 21
-ACPI: PCI Interrupt 0000:00:02.0[A] -> Link [LUS0] -> GSI 21 (level, low) -=
-> IRQ 21
-PCI: Setting latency timer of device 0000:00:02.0 to 64
-ohci_hcd 0000:00:02.0: OHCI Host Controller
-drivers/usb/core/inode.c: creating file '002'
-ohci_hcd 0000:00:02.0: new USB bus registered, assigned bus number 2
-ohci_hcd 0000:00:02.0: USB HC TakeOver from BIOS/SMM
-ohci_hcd 0000:00:02.0: created debug files
-ohci_hcd 0000:00:02.0: irq 21, io mem 0xe0000000
-hub 1-0:1.0: debounce: port 3: total 100ms stable 100ms status 0x501
-ohci_hcd 0000:00:02.0: OHCI controller state
-ohci_hcd 0000:00:02.0: OHCI 1.0, NO legacy support registers
-ohci_hcd 0000:00:02.0: control 0x683 RWE RWC HCFS=3Doperational CBSR=3D3
-ohci_hcd 0000:00:02.0: cmdstatus 0x00000 SOC=3D0
-ohci_hcd 0000:00:02.0: intrstatus 0x00000004 SF
-ohci_hcd 0000:00:02.0: intrenable 0x8000004a MIE RHSC RD WDH
-ohci_hcd 0000:00:02.0: hcca frame #0003
-ohci_hcd 0000:00:02.0: roothub.a 01000203 POTPGT=3D1 NPS NDP=3D3(3)
-ohci_hcd 0000:00:02.0: roothub.b 00000000 PPCM=3D0000 DR=3D0000
-ohci_hcd 0000:00:02.0: roothub.status 00008000 DRWE
-ohci_hcd 0000:00:02.0: roothub.portstatus [0] 0x00000100 PPS
-ohci_hcd 0000:00:02.0: roothub.portstatus [1] 0x00000100 PPS
-ohci_hcd 0000:00:02.0: roothub.portstatus [2] 0x00000100 PPS
-usb usb2: default language 0x0409
-usb usb2: new device found, idVendor=3D0000, idProduct=3D0000
-usb usb2: new device strings: Mfr=3D3, Product=3D2, SerialNumber=3D1
-usb usb2: Product: OHCI Host Controller
-usb usb2: Manufacturer: Linux 2.6.22-rc6-mm1 ohci_hcd
-usb usb2: SerialNumber: 0000:00:02.0
-usb usb2: uevent
-usb usb2: usb_probe_device
-usb usb2: configuration #1 chosen from 1 choice
-usb usb2: adding 2-0:1.0 (config #1, interface 0)
-usb 2-0:1.0: uevent
-usb 2-0:1.0: uevent
-hub 2-0:1.0: usb_probe_interface
-hub 2-0:1.0: usb_probe_interface - got id
-hub 2-0:1.0: USB hub found
-hub 2-0:1.0: 3 ports detected
-hub 2-0:1.0: standalone hub
-hub 2-0:1.0: no power switching (usb 1.0)
-hub 2-0:1.0: global over-current protection
-hub 2-0:1.0: power on to power good time: 2ms
-hub 2-0:1.0: local power source is good
-hub 2-0:1.0: no over-current condition exists
-hub 2-0:1.0: trying to enable port power on non-switchable hub
-input: PS/2 Mouse as /devices/virtual/input/input4
-ehci_hcd 0000:00:02.2: port 3 full speed --> companion
-ehci_hcd 0000:00:02.2: GetStatus port 3 status 003001 POWER OWNER sig=3Dse0=
- CONNECT
-hub 1-0:1.0: port 3 not reset yet, waiting 50ms
-input: AlpsPS/2 ALPS GlidePoint as /devices/platform/i8042/serio1/input/inp=
-ut5
-ehci_hcd 0000:00:02.2: GetStatus port 3 status 003802 POWER OWNER sig=3Dj C=
-SC
-hub 1-0:1.0: state 7 ports 6 chg 0000 evt 0008
-hub 2-0:1.0: state 7 ports 3 chg 0000 evt 0000
-drivers/usb/core/inode.c: creating file '001'
-PCI: Enabling device 0000:00:02.1 (0004 -> 0006)
-ACPI: PCI Interrupt Link [LUS1] enabled at IRQ 20
-ACPI: PCI Interrupt 0000:00:02.1[B] -> Link [LUS1] -> GSI 20 (level, low) -=
-> IRQ 20
-PCI: Setting latency timer of device 0000:00:02.1 to 64
-ohci_hcd 0000:00:02.1: OHCI Host Controller
-drivers/usb/core/inode.c: creating file '003'
-ohci_hcd 0000:00:02.1: new USB bus registered, assigned bus number 3
-ohci_hcd 0000:00:02.1: USB HC TakeOver from BIOS/SMM
-ohci_hcd 0000:00:02.1: created debug files
-ohci_hcd 0000:00:02.1: irq 20, io mem 0xe0001000
-ohci_hcd 0000:00:02.1: OHCI controller state
-ohci_hcd 0000:00:02.1: OHCI 1.0, NO legacy support registers
-ohci_hcd 0000:00:02.1: control 0x683 RWE RWC HCFS=3Doperational CBSR=3D3
-ohci_hcd 0000:00:02.1: cmdstatus 0x00000 SOC=3D0
-ohci_hcd 0000:00:02.1: intrstatus 0x00000044 RHSC SF
-ohci_hcd 0000:00:02.1: intrenable 0x8000000a MIE RD WDH
-ohci_hcd 0000:00:02.1: hcca frame #0003
-ohci_hcd 0000:00:02.1: roothub.a 01000203 POTPGT=3D1 NPS NDP=3D3(3)
-ohci_hcd 0000:00:02.1: roothub.b 00000000 PPCM=3D0000 DR=3D0000
-ohci_hcd 0000:00:02.1: roothub.status 00008000 DRWE
-ohci_hcd 0000:00:02.1: roothub.portstatus [0] 0x00010101 CSC PPS CCS
-ohci_hcd 0000:00:02.1: roothub.portstatus [1] 0x00000100 PPS
-ohci_hcd 0000:00:02.1: roothub.portstatus [2] 0x00000100 PPS
-usb usb3: default language 0x0409
-usb usb3: new device found, idVendor=3D0000, idProduct=3D0000
-usb usb3: new device strings: Mfr=3D3, Product=3D2, SerialNumber=3D1
-usb usb3: Product: OHCI Host Controller
-usb usb3: Manufacturer: Linux 2.6.22-rc6-mm1 ohci_hcd
-usb usb3: SerialNumber: 0000:00:02.1
-usb usb3: uevent
-usb usb3: usb_probe_device
-usb usb3: configuration #1 chosen from 1 choice
-usb usb3: adding 3-0:1.0 (config #1, interface 0)
-usb 3-0:1.0: uevent
-usb 3-0:1.0: uevent
-hub 3-0:1.0: usb_probe_interface
-hub 3-0:1.0: usb_probe_interface - got id
-hub 3-0:1.0: USB hub found
-hub 3-0:1.0: 3 ports detected
-hub 3-0:1.0: standalone hub
-hub 3-0:1.0: no power switching (usb 1.0)
-hub 3-0:1.0: global over-current protection
-hub 3-0:1.0: power on to power good time: 2ms
-hub 3-0:1.0: local power source is good
-hub 3-0:1.0: no over-current condition exists
-hub 3-0:1.0: trying to enable port power on non-switchable hub
-hub 3-0:1.0: state 7 ports 3 chg 0000 evt 0000
-drivers/usb/core/inode.c: creating file '001'
-ohci_hcd 0000:00:02.1: GetStatus roothub.portstatus [0] =3D 0x00010101 CSC =
-PPS CCS
-hub 3-0:1.0: port 1, status 0101, change 0001, 12 Mb/s
-hub 3-0:1.0: debounce: port 1: total 100ms stable 100ms status 0x101
-ohci_hcd 0000:00:02.1: GetStatus roothub.portstatus [0] =3D 0x00100103 PRSC=
- PPS PES CCS
-usb 3-1: new full speed USB device using ohci_hcd and address 2
-ACPI: PCI Interrupt Link [LACI] enabled at IRQ 22
-ACPI: PCI Interrupt 0000:00:06.0[A] -> Link [LACI] -> GSI 22 (level, low) -=
-> IRQ 22
-PCI: Setting latency timer of device 0000:00:06.0 to 64
-ohci_hcd 0000:00:02.1: GetStatus roothub.portstatus [0] =3D 0x00100103 PRSC=
- PPS PES CCS
-usb 3-1: ep0 maxpacket =3D 8
-usb 3-1: default language 0x0409
-usb 3-1: new device found, idVendor=3D0451, idProduct=3D2036
-usb 3-1: new device strings: Mfr=3D0, Product=3D1, SerialNumber=3D0
-usb 3-1: Product: General Purpose USB Hub
-usb 3-1: uevent
-usb 3-1: usb_probe_device
-usb 3-1: configuration #1 chosen from 1 choice
-usb 3-1: adding 3-1:1.0 (config #1, interface 0)
-usb 3-1:1.0: uevent
-usb 3-1:1.0: uevent
-hub 3-1:1.0: usb_probe_interface
-hub 3-1:1.0: usb_probe_interface - got id
-hub 3-1:1.0: USB hub found
-hub 3-1:1.0: 2 ports detected
-hub 3-1:1.0: compound device; port removable status: FF
-hub 3-1:1.0: ganged power switching
-hub 3-1:1.0: no over-current protection
-hub 3-1:1.0: power on to power good time: 100ms
-hub 3-1:1.0: hub controller current requirement: 100mA
-hub 3-1:1.0: 100mA bus power budget for each child
-hub 3-1:1.0: enabling power on all ports
-AC'97 0 analog subsections not ready
-drivers/usb/core/inode.c: creating file '002'
-hub 3-0:1.0: state 7 ports 3 chg 0000 evt 0002
-hub 3-1:1.0: state 7 ports 2 chg 0000 evt 0000
-hub 3-1:1.0: port 1, status 0301, change 0001, 1.5 Mb/s
-hub 3-1:1.0: debounce: port 1: total 100ms stable 100ms status 0x301
-usb 3-1.1: new low speed USB device using ohci_hcd and address 3
-ohci_hcd 0000:00:02.0: auto-stop root hub
-usb 3-1.1: skipped 1 descriptor after interface
-usb 3-1.1: skipped 1 descriptor after interface
-usb 3-1.1: default language 0x0409
-usb 3-1.1: new device found, idVendor=3D046d, idProduct=3Dc704
-usb 3-1.1: new device strings: Mfr=3D1, Product=3D2, SerialNumber=3D3
-usb 3-1.1: Product: USB Receiver
-usb 3-1.1: Manufacturer: Logitech
-usb 3-1.1: SerialNumber: 04E5EF
-usb 3-1.1: uevent
-usb 3-1.1: usb_probe_device
-usb 3-1.1: configuration #1 chosen from 1 choice
-usb 3-1.1: adding 3-1.1:1.0 (config #1, interface 0)
-usb 3-1.1:1.0: uevent
-usb 3-1.1:1.0: uevent
-usb 3-1.1: adding 3-1.1:1.1 (config #1, interface 1)
-usb 3-1.1:1.1: uevent
-usb 3-1.1:1.1: uevent
-drivers/usb/core/inode.c: creating file '003'
-hub 3-1:1.0: 302mA power budget left
-hub 3-1:1.0: state 7 ports 2 chg 0000 evt 0002
-intel8x0_measure_ac97_clock: measured 50428 usecs
-intel8x0: measured clock 634 rejected
-intel8x0: clocking to 48000
-hub 1-0:1.0: hub_suspend
-usb usb1: bus auto-suspend
-ehci_hcd 0000:00:02.2: suspend root hub
-hub 2-0:1.0: hub_suspend
-usb usb2: bus auto-suspend
-ohci_hcd 0000:00:02.0: suspend root hub
-usbhid 3-1.1:1.0: usb_probe_interface
-usbhid 3-1.1:1.0: usb_probe_interface - got id
-input: Logitech USB Receiver as /devices/pci0000:00/0000:00:02.1/usb3/3-1/3=
--1.1/3-1.1:1.0/input/input6
-input: USB HID v1.10 Keyboard [Logitech USB Receiver] on usb-0000:00:02.1-1=
-.1
-usbhid 3-1.1:1.1: usb_probe_interface
-usbhid 3-1.1:1.1: usb_probe_interface - got id
-input: Logitech USB Receiver as /devices/pci0000:00/0000:00:02.1/usb3/3-1/3=
--1.1/3-1.1:1.1/input/input7
-input: USB HID v1.10 Mouse [Logitech USB Receiver] on usb-0000:00:02.1-1.1
-usbcore: registered new interface driver usbhid
-drivers/hid/usbhid/hid-core.c: v2.6:USB HID core driver
-NET: Registered protocol family 10
-ReiserFS: sda1: found reiserfs format "3.6" with standard journal
-ReiserFS: sda1: using ordered data mode
-ReiserFS: sda1: journal params: device sda1, size 8192, journal first block=
- 18, max trans len 1024, max batch 900, max commit age 30, max trans age 30
-ReiserFS: sda1: checking transaction log (sda1)
-ReiserFS: sda1: Using r5 hash to sort names
-Adding 2843496k swap on /dev/disk/by-uuid/fd35277a-8dc7-4afe-8257-fda61b757=
-344.  Priority:100 extents:1 across:2843496k
-eth0: link up, 100Mbps, full-duplex, lpa 0x45E1
-netconsole: local port 6665
-netconsole: interface eth0
-netconsole: remote port 6666
-netconsole: remote IP 192.168.100.113
-netconsole: remote ethernet address 00:0a:e6:a7:29:60
-netconsole: local IP 192.168.100.213
-console [netcon0] enabled
-netconsole: network logging started
-eth0: no IPv6 routers present
-Hangcheck: hangcheck value past margin!
+[  146.308222] Memory: 496732k/507264k available (1728k kernel code, 9908k=
+=20
+reserved, 789k data, 180k init, 0k highmem)
+[  146.308297] virtual kernel memory layout:
+[  146.308300]     fixmap  : 0xffff8000 - 0xfffff000   (  28 kB)
+[  146.308305]     vmalloc : 0xdf800000 - 0xffff6000   ( 519 MB)
+[  146.308309]     lowmem  : 0xc0000000 - 0xdef60000   ( 495 MB)
+[  146.308314]       .init : 0xc0378000 - 0xc03a5000   ( 180 kB)
+[  146.308318]       .data : 0xc02b0045 - 0xc0375564   ( 789 kB)
+[  146.308322]       .text : 0xc0100000 - 0xc02b0045   (1728 kB)
+[  146.308358] Checking if this processor honours the WP bit even in=20
+supervisor mode... Ok.
+[  146.308605] SLUB: Genslabs=3D22, HWalign=3D32, Order=3D0-1, MinObjects=
+=3D4, CPUs=3D1,=20
+Nodes=3D1
+[  146.392001] Calibrating delay using timer specific routine.. 1497.71=20
+BogoMIPS (lpj=3D2495547)
+[  146.392203] Mount-cache hash table entries: 512
+[  146.393145] CPU: After generic identify, caps: 0383f9ff 00000000 0000000=
+0=20
+00000000 00000000 00000000 00000000
+[  146.393185] CPU: L1 I cache: 16K, L1 D cache: 16K
+[  146.393200] CPU: L2 cache: 256K
+[  146.393216] CPU: After all inits, caps: 0383f9ff 00000000 00000000 00000=
+040=20
+00000000 00000000 00000000
+[  146.393253] Compat vDSO mapped to ffffe000.
+[  146.393308] CPU: Intel Pentium III (Coppermine) stepping 0a
+[  146.393333] Checking 'hlt' instruction... OK.
+[  146.405681] ACPI: Core revision 20070126
+[  146.413827] ACPI: setting ELCR to 0200 (from 0a00)
+[  146.415895] NET: Registered protocol family 16
+[  146.417085] ACPI: bus type pci registered
+[  146.418107] PCI: PCI BIOS revision 2.10 entry at 0xfe5ae, last bus=3D5
+[  146.418121] PCI: Using configuration type 1
+[  146.418131] Setting up standard PCI resources
+[  146.436807] ACPI: Interpreter enabled
+[  146.436860] ACPI: (supports S0 S3 S4 S5)
+[  146.436957] ACPI: Using PIC for interrupt routing
+[  146.464951] ACPI: PCI Root Bridge [PCI0] (0000:00)
+[  146.465088] PCI: Probing PCI hardware (bus 00)
+[  146.466289] PCI quirk: region ee00-ee3f claimed by ali7101 ACPI
+[  146.466322] PCI quirk: region ef00-ef1f claimed by ali7101 SMB
+[  146.466391] PCI: Firmware left 0000:00:0a.0 e100 interrupts enabled,=20
+disabling
+[  146.468056] ACPI: PCI Interrupt Routing Table [\_SB_.PCI0._PRT]
+[  146.468498] ACPI: PCI Interrupt Routing Table [\_SB_.PCI0.PCI1._PRT]
+[  146.488967] ACPI: PCI Interrupt Link [LNKA] (IRQs 3 4 5 6 7 10 *11)
+[  146.489593] ACPI: PCI Interrupt Link [LNKB] (IRQs 3 4 5 6 7 10 *11)
+[  146.490174] ACPI: PCI Interrupt Link [LNKC] (IRQs 3 4 5 6 7 10 *11)
+[  146.490754] ACPI: PCI Interrupt Link [LNKD] (IRQs 3 4 5 6 7 10 *11)
+[  146.491334] ACPI: PCI Interrupt Link [LNKG] (IRQs 3 4 5 6 7 10 *11)
+[  146.491932] ACPI: PCI Interrupt Link [LNKH] (IRQs 3 4 5 6 7 10 *11)
+[  146.492999] ACPI: Power Resource [PFAN] (off)
+[  146.493056] Linux Plug and Play Support v0.97 (c) Adam Belay
+[  146.493177] pnp: PnP ACPI init
+[  146.493293] ACPI: bus type pnp registered
+[  146.511398] pnp: Device 00:0a activated.
+[  146.511456]  00:0a: SMCf010 not responding at SIR 0x100, FIR 0x2e8;=20
+auto-configuring
+[  146.513004] pnp: Device 00:0a disabled.
+[  146.518367] pnp: Device 00:0a activated.
+[  146.518394]  00:0a: not responding at SIR 0x100, FIR 0x2e8; swapping=20
+SIR/FIR and reconfiguring
+[  146.519911] pnp: Device 00:0a disabled.
+[  146.526303] pnp: Device 00:0a activated.
+[  146.526329]  00:0a: responds at SIR 0x2e8, FIR 0x100
+[  146.533859] pnp: PnP ACPI: found 12 devices
+[  146.533901] ACPI: ACPI bus type pnp unregistered
+[  146.534220] PCI: Using ACPI for IRQ routing
+[  146.534237] PCI: If a device doesn't work, try "pci=3Drouteirq".  If it=
+=20
+helps, post a report
+[  146.545182] pnp: 00:00: iomem range 0x0-0x9ffff could not be reserved
+[  146.545211] pnp: 00:00: iomem range 0xe0000-0xeffff could not be reserved
+[  146.545227] pnp: 00:00: iomem range 0xf0000-0xfffff could not be reserved
+[  146.545243] pnp: 00:00: iomem range 0x100000-0x1ef5ffff could not be=20
+reserved
+[  146.545270] Time: tsc clocksource has been installed.
+[  146.577296] PCI: Bridge: 0000:00:01.0
+[  146.577317]   IO window: disabled.
+[  146.577337]   MEM window: f7f00000-fdffffff
+[  146.577354]   PREFETCH window: 48000000-480fffff
+[  146.577374] PCI: Bus 2, cardbus bridge: 0000:00:10.0
+[  146.577386]   IO window: 00001000-000010ff
+[  146.577401]   IO window: 00001400-000014ff
+[  146.577416]   PREFETCH window: 30000000-33ffffff
+[  146.577431]   MEM window: 34000000-37ffffff
+[  146.577447] PCI: Bus 6, cardbus bridge: 0000:00:11.0
+[  146.577457]   IO window: 00001800-000018ff
+[  146.577472]   IO window: 00001c00-00001cff
+[  146.577488]   PREFETCH window: 38000000-3bffffff
+[  146.577504]   MEM window: 3c000000-3fffffff
+[  146.577519] PCI: Bus 10, cardbus bridge: 0000:00:11.1
+[  146.577529]   IO window: 00002000-000020ff
+[  146.577544]   IO window: 00002400-000024ff
+[  146.577560]   PREFETCH window: 40000000-43ffffff
+[  146.577576]   MEM window: 44000000-47ffffff
+[  146.577613] PCI: Setting latency timer of device 0000:00:01.0 to 64
+[  146.577657] PCI: Enabling device 0000:00:10.0 (0000 -> 0003)
+[  146.579064] ACPI: PCI Interrupt Link [LNKC] enabled at IRQ 11
+[  146.579086] PCI: setting IRQ 11 as level-triggered
+[  146.579095] ACPI: PCI Interrupt 0000:00:10.0[A] -> Link [LNKC] -> GSI 11=
+=20
+(level, low) -> IRQ 11
+[  146.579151] PCI: Enabling device 0000:00:11.0 (0000 -> 0003)
+[  146.580128] ACPI: PCI Interrupt Link [LNKA] enabled at IRQ 11
+[  146.580142] ACPI: PCI Interrupt 0000:00:11.0[A] -> Link [LNKA] -> GSI 11=
+=20
+(level, low) -> IRQ 11
+[  146.580195] PCI: Enabling device 0000:00:11.1 (0000 -> 0003)
+[  146.581166] ACPI: PCI Interrupt Link [LNKB] enabled at IRQ 11
+[  146.581180] ACPI: PCI Interrupt 0000:00:11.1[B] -> Link [LNKB] -> GSI 11=
+=20
+(level, low) -> IRQ 11
+[  146.581272] NET: Registered protocol family 2
+[  146.612106] IP route cache hash table entries: 4096 (order: 2, 16384 byt=
+es)
+[  146.612526] TCP established hash table entries: 16384 (order: 7, 720896=
+=20
+bytes)
+[  146.619101] TCP bind hash table entries: 16384 (order: 7, 720896 bytes)
+[  146.625913] TCP: Hash tables configured (established 16384 bind 16384)
+[  146.626073] TCP reno registered
+[  146.636127] checking if image is initramfs... it is
+[  146.756565] Freeing initrd memory: 487k freed
+[  146.759186] audit: initializing netlink socket (disabled)
+[  146.759327] audit(1184521988.239:1): initialized
+[  146.776388] io scheduler noop registered
+[  146.776439] io scheduler anticipatory registered
+[  146.776450] io scheduler deadline registered
+[  146.776893] io scheduler cfq registered (default)
+[  146.776986] Activating ISA DMA hang workarounds.
+[  146.777032] Boot video device is 0000:01:00.0
+[  146.777689] vesafb: framebuffer at 0xfc000000, mapped to 0xdf880000, usi=
+ng=20
+3072k, total 16384k
+[  146.777726] vesafb: mode is 1024x768x16, linelength=3D2048, pages=3D9
+[  146.777738] vesafb: protected mode interface info at c000:775e
+[  146.777752] vesafb: pmi: set display start =3D c00c777f, set palette =3D=
+=20
+c00c77e2
+[  146.777763] vesafb: scrolling: redraw
+[  146.777777] vesafb: Truecolor: size=3D0:5:6:5, shift=3D0:11:5:0
+[  146.847494] Console: switching to colour frame buffer device 128x48
+[  146.910097] fb0: VESA VGA frame buffer device
+[  147.078558] Switched to high resolution mode on CPU 0
+[  147.204546] Real Time Clock Driver v1.12ac
+[  147.209934] RAMDISK driver initialized: 16 RAM disks of 32000K size 1024=
+=20
+blocksize
+[  147.212888] PNP: PS/2 Controller [PNP0303:KBC,PNP0f13:PS2M] at 0x60,0x64=
+=20
+irq 1,12
+[  147.218692] serio: i8042 KBD port at 0x60,0x64 irq 1
+[  147.219384] serio: i8042 AUX port at 0x60,0x64 irq 12
+[  147.221082] mice: PS/2 mouse device common for all mice
+[  147.222415] TCP cubic registered
+[  147.223486] NET: Registered protocol family 1
+[  147.224082] Using IPI Shortcut mode
+[  147.225839] BIOS EDD facility v0.16 2004-Jun-25, 1 devices found
+[  147.227600] Freeing unused kernel memory: 180k freed
+[  147.228588] Write protecting the kernel read-only data: 634k
+[  147.251478] Uniform Multi-Platform E-IDE driver Revision: 7.00alpha2
+[  147.252452] ide: Assuming 33MHz system bus speed for PIO modes; override=
+=20
+with idebus=3Dxx
+[  147.307813] input: AT Translated Set 2 keyboard as /class/input/input0
+[  147.334723] ALI15X3: IDE controller at PCI slot 0000:00:04.0
+[  147.360583] ACPI: Unable to derive IRQ for device 0000:00:04.0
+[  147.386108] ACPI: PCI Interrupt 0000:00:04.0[A]: no GSI
+[  147.411406] ALI15X3: chipset revision 195
+[  147.436332] ALI15X3: not 100% native mode: will probe irqs later
+[  147.461604]     ide0: BM-DMA at 0xeff0-0xeff7, BIOS settings: hda:DMA,=20
+hdb:pio
+[  147.487333]     ide1: BM-DMA at 0xeff8-0xefff, BIOS settings: hdc:DMA,=20
+hdd:pio
+[  147.512683] Probing IDE interface ide0...
+[  147.788565] hda: IC25N020ATDA04-0, ATA DISK drive
+[  148.451540] hda: host side 80-wire cable detection failed, limiting max=
+=20
+speed to UDMA33
+[  148.477492] hda: selected mode 0x42
+[  148.477894] ide0 at 0x1f0-0x1f7,0x3f6 on irq 14
+[  148.522057] Probing IDE interface ide1...
+[  149.221564] hdc: TOSHIBA DVD-ROM SD-C2502, ATAPI CD/DVD-ROM drive
+[  149.887862] hdc: selected mode 0x42
+[  149.908921] ide1 at 0x170-0x177,0x376 on irq 15
+[  149.969074] hda: max request size: 128KiB
+[  149.996202] hda: 39070080 sectors (20003 MB) w/1806KiB Cache,=20
+CHS=3D38760/16/63, UDMA(33)
+[  150.023520] hda: cache flushes not supported
+[  150.050630]  hda: hda1 hda2
+[  150.494277] swsusp: Marking nosave pages: 000000000009f000 -=20
+0000000000100000
+[  150.494305] swsusp: Basic memory bitmaps created
+[  150.529321] swsusp: Basic memory bitmaps freed
+[  150.656261] ReiserFS: hda2: found reiserfs format "3.6" with standard=20
+journal
+[  150.681676] ReiserFS: hda2: using ordered data mode
+[  150.718127] ReiserFS: hda2: journal params: device hda2, size 8192, jour=
+nal=20
+first block 18, max trans len 1024, max batch 900, max commit age 30, max=20
+trans age 30
+[  150.778293] ReiserFS: hda2: checking transaction log (hda2)
+[  217.761107] ReiserFS: hda2: replayed 351 transactions in 67 seconds
+[  218.335983] ReiserFS: hda2: Using r5 hash to sort names
+[  226.284018] Linux agpgart interface v0.102 (c) Dave Jones
+[  226.352722] agpgart: Detected ALi M1644 chipset
+[  226.362582] agpgart: AGP aperture is 64M @ 0xf0000000
+[  226.577189] usbcore: registered new interface driver usbfs
+[  226.577458] usbcore: registered new interface driver hub
+[  226.577667] usbcore: registered new device driver usb
+[  226.652012] ohci_hcd: 2006 August 04 USB 1.1 'Open' Host Controller (OHC=
+I)=20
+Driver
+[  226.653704] ACPI: PCI Interrupt Link [LNKG] enabled at IRQ 11
+[  226.653720] ACPI: PCI Interrupt 0000:00:02.0[A] -> Link [LNKG] -> GSI 11=
+=20
+(level, low) -> IRQ 11
+[  226.653776] ohci_hcd 0000:00:02.0: OHCI Host Controller
+[  226.655696] ohci_hcd 0000:00:02.0: new USB bus registered, assigned bus=
+=20
+number 1
+[  226.655787] ohci_hcd 0000:00:02.0: irq 11, io mem 0xf7eff000
+[  226.709833] usb usb1: configuration #1 chosen from 1 choice
+[  226.710157] hub 1-0:1.0: USB hub found
+[  226.710253] hub 1-0:1.0: 3 ports detected
+[  226.954131] e100: Intel(R) PRO/100 Network Driver, 3.5.17-k4-NAPI
+[  226.954148] e100: Copyright(c) 1999-2006 Intel Corporation
+[  226.955954] ACPI: PCI Interrupt Link [LNKD] enabled at IRQ 11
+[  226.955966] ACPI: PCI Interrupt 0000:00:0a.0[A] -> Link [LNKD] -> GSI 11=
+=20
+(level, low) -> IRQ 11
+[  226.986154] e100: eth0: e100_probe: addr 0xf7efd000, irq 11, MAC addr=20
+00:00:39:D7:14:A1
+[  227.294046] hdc: ATAPI 24X DVD-ROM drive, 128kB Cache, UDMA(33)
+[  227.294087] Uniform CD-ROM driver Revision: 3.20
+[  227.395342] Yenta: CardBus bridge found at 0000:00:10.0 [12a3:ab01]
+[  227.395399] Yenta: Using CSCINT to route CSC interrupts to PCI
+[  227.395406] Yenta: Routing CardBus interrupts to PCI
+[  227.395419] Yenta TI: socket 0000:00:10.0, mfunc 0x01000002, devctl 0x60
+[  227.623765] Yenta: ISA IRQ mask 0x0000, PCI irq 11
+[  227.623782] Socket status: 30000059
+[  227.624796] Yenta: CardBus bridge found at 0000:00:11.0 [1179:0001]
+[  227.750531] Yenta: ISA IRQ mask 0x04b8, PCI irq 11
+[  227.750549] Socket status: 30000007
+[  227.751283] Yenta: CardBus bridge found at 0000:00:11.1 [1179:0001]
+[  227.877170] Yenta: ISA IRQ mask 0x04b8, PCI irq 11
+[  227.877188] Socket status: 30000007
+[  227.881919] ACPI: PCI Interrupt Link [LNKH] enabled at IRQ 11
+[  227.881939] ACPI: PCI Interrupt 0000:00:06.0[A] -> Link [LNKH] -> GSI 11=
+=20
+(level, low) -> IRQ 11
+[  228.038205] Serial: 8250/16550 driver $Revision: 1.90 $ 4 ports, IRQ=20
+sharing enabled
+[  228.144257] 00:09: ttyS0 at I/O 0x3f8 (irq =3D 4) is a 16550A
+[  228.249319] NET: Registered protocol family 23
+[  228.256343] pccard: PCMCIA card inserted into slot 0
+[  228.291675] Detected unconfigured Toshiba laptop with ALi ISA bridge SMS=
+C=20
+IrDA chip, pre-configuring device.
+[  228.291709] Activated ALi 1533 ISA bridge port 0x02e8.
+[  228.291722] Activated ALi 1533 ISA bridge port 0x02f8.
+[  228.291929] found SMC SuperIO Chip (devid=3D0x5a rev=3D00 base=3D0x002e)=
+:=20
+LPC47N227
+[  228.291961] smsc_superio_flat(): fir: 0x2f8, sir: 0x2e8, dma: 03, irq: 7=
+,=20
+mode: 0x0e
+[  228.291996] SMsC IrDA Controller found
+[  228.292000]  IrCC version 2.0, firport 0x2f8, sirport 0x2e8 dma=3D3, irq=
+=3D7
+[  228.292200] No transceiver found. Defaulting to Fast pin select
+[  228.292765] IrDA: Registered device irda0
+[  232.249472] cs: IO port probe 0x100-0x3af: excluding 0x200-0x207=20
+0x220-0x22f 0x330-0x337 0x378-0x37f 0x388-0x38f
+[  232.252448] cs: IO port probe 0x3e0-0x4ff: excluding 0x408-0x40f=20
+0x480-0x48f 0x4d0-0x4d7
+[  232.253743] cs: IO port probe 0x820-0x8ff: clean.
+[  232.254912] cs: IO port probe 0xc00-0xcf7: clean.
+[  232.256835] cs: IO port probe 0xa00-0xaff: clean.
+[  232.267012] cs: IO port probe 0x100-0x3af: excluding 0x200-0x207=20
+0x220-0x22f 0x330-0x337 0x378-0x37f 0x388-0x38f
+[  232.294588] cs: IO port probe 0x100-0x3af: excluding 0x200-0x207=20
+0x220-0x22f 0x330-0x337 0x378-0x37f 0x388-0x38f
+[  232.297589] cs: IO port probe 0x3e0-0x4ff: excluding 0x408-0x40f=20
+0x480-0x48f 0x4d0-0x4d7
+[  232.298932] cs: IO port probe 0x820-0x8ff: clean.
+[  232.300105] cs: IO port probe 0xc00-0xcf7: clean.
+[  232.302039] cs: IO port probe 0xa00-0xaff: clean.
+[  232.303572] cs: memory probe 0xa0000000-0xa0ffffff: clean.
+[  232.315722] pcmcia: registering new device pcmcia0.0
+[  232.334945] cs: IO port probe 0x3e0-0x4ff: excluding 0x408-0x40f=20
+0x480-0x48f 0x4d0-0x4d7
+[  232.336352] cs: IO port probe 0x820-0x8ff: clean.
+[  232.337514] cs: IO port probe 0xc00-0xcf7: clean.
+[  232.339443] cs: IO port probe 0xa00-0xaff: clean.
+[  232.384182] wlags49_h1_cs v7.18 for PCMCIA, 03/31/2004 14:31:00 by Agere=
+=20
+Systems, http://www.agere.com
+[  232.384202] *** Modified for kernel 2.6 by Andrey Borzenkov=20
+<arvidjaar@mail.ru> $Revision: 39 $
+[  232.384211] *** Station Mode (STA) Support: YES
+[  232.384216] *** Access Point Mode (AP) Support: YES
+[  232.873999] eth1: PRI 31 variant 2 version 9.48
+[  232.874064] eth1: NIC 5 variant 2 version 1.02
+[  232.877896] eth1: Wireless, io_addr 0x100, irq 11, mac_address=20
+00:02:2D:26:95:6C
+[  233.379918] Toshiba System Managment Mode driver v1.11 26/9/2001
+[  233.563548] Non-volatile memory driver v1.2
+[  233.675575] input: ImPS/2 Generic Wheel Mouse as /class/input/input1
+[  234.292054] ACPI: AC Adapter [ADP1] (on-line)
+[  234.351376] ACPI: Battery Slot [BAT1] (battery present)
+[  234.351659] ACPI: Battery Slot [BAT2] (battery absent)
+[  234.386464] input: Power Button (FF) as /class/input/input2
+[  234.386616] ACPI: Power Button (FF) [PWRF]
+[  234.387013] input: Lid Switch as /class/input/input3
+[  234.387127] ACPI: Lid Switch [LID]
+[  234.558828] ACPI: Transitioning device [FAN] to D3
+[  234.558846] ACPI: Transitioning device [FAN] to D3
+[  234.558871] ACPI: Fan [FAN] (off)
+[  234.711418] ACPI: CPU0 (power states: C1[C1] C2[C2])
+[  234.756382] ACPI: Thermal Zone [THRM] (59 C)
+[  234.800663] toshiba_acpi: Toshiba Laptop ACPI Extras version 0.18
+[  234.800684] toshiba_acpi:     HCI method: \_SB_.VALD.GHCI
+[  234.839715] ACPI: Video Device [VGA] (multi-head: yes  rom: yes  post: n=
+o)
+[   88.683324] Marking TSC unstable due to: possible TSC halt in C2.
+[   88.686657] Time: acpi_pm clocksource has been installed.
+[   88.716657] device-mapper: ioctl: 4.11.0-ioctl (2006-10-12) initialised:=
+=20
+dm-devel@redhat.com
+[   89.216657] loop: module loaded
+[   89.269991] Clocksource tsc unstable (delta =3D -145662416 ns)
+[   92.553324] ReiserFS: hda2: Removing [671391 1519587 0x0 SD]..done
+[   92.556657] ReiserFS: hda2: Removing [671391 1519520 0x0 SD]..done
+[   92.556657] ReiserFS: hda2: Removing [671391 1516060 0x0 SD]..done
+[   92.556657] ReiserFS: hda2: Removing [671391 1515999 0x0 SD]..done
+[   92.556657] ReiserFS: hda2: Removing [671391 1515981 0x0 SD]..done
+[   92.556657] ReiserFS: hda2: Removing [671391 1502008 0x0 SD]..done
+[   92.556657] ReiserFS: hda2: Removing [671391 1498678 0x0 SD]..done
+[   92.556657] ReiserFS: hda2: Removing [21277 1394770 0x0 SD]..done
+[   92.556657] ReiserFS: hda2: Removing [671391 1210424 0x0 SD]..done
+[   92.556657] ReiserFS: hda2: Removing [671391 1210410 0x0 SD]..done
+[   92.556657] ReiserFS: hda2: Removing [671391 1210303 0x0 SD]..done
+[   92.556657] ReiserFS: hda2: Removing [671391 1210296 0x0 SD]..done
+[   92.556657] ReiserFS: hda2: Removing [671391 1210291 0x0 SD]..done
+[   92.556657] ReiserFS: hda2: Removing [671391 1210274 0x0 SD]..done
+[   92.573324] ReiserFS: hda2: Removing [671391 1210112 0x0 SD]..done
+[   92.573324] ReiserFS: hda2: Removing [671391 1209595 0x0 SD]..done
+[   92.576657] ReiserFS: hda2: Removing [671391 1151901 0x0 SD]..done
+[   92.576657] ReiserFS: hda2: Removing [671391 1151853 0x0 SD]..done
+[   92.576657] ReiserFS: hda2: Removing [671391 1135802 0x0 SD]..done
+[   92.576657] ReiserFS: hda2: Removing [671391 1135733 0x0 SD]..done
+[   92.576657] ReiserFS: hda2: Removing [671391 282007 0x0 SD]..done
+[   92.576657] ReiserFS: hda2: Removing [21277 281960 0x0 SD]..done
+[   92.576657] ReiserFS: hda2: Removing [21277 281955 0x0 SD]..done
+[   92.576657] ReiserFS: hda2: There were 23 uncompleted unlinks/truncates.=
+=20
+Completed
+[   93.533323] Adding 500432k swap on /dev/hda1.  Priority:-1 extents:1=20
+across:500432k
+[  104.616656] IrCOMM protocol (Dag Brattli)
+[  108.646655] PPP generic driver version 2.4.2
+[  111.209988] Bluetooth: Core ver 2.11
+[  111.209988] NET: Registered protocol family 31
+[  111.209988] Bluetooth: HCI device and connection manager initialized
+[  111.209988] Bluetooth: HCI socket layer initialized
+[  111.576655] Bluetooth: L2CAP ver 2.8
+[  111.576655] Bluetooth: L2CAP socket layer initialized
+[  112.349988] hdc: drive_cmd: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+[  112.349988] hdc: drive_cmd: error=3D0x04 { AbortedCommand }
+[  112.349988] ide: failed opcode was: 0xec
+[  112.873322] Bluetooth: RFCOMM socket layer initialized
+[  112.873322] Bluetooth: RFCOMM TTY layer initialized
+[  112.873322] Bluetooth: RFCOMM ver 1.8
+[  113.349988] NET: Registered protocol family 17
+[  113.543321] hdc: drive_cmd: status=3D0x51 { DriveReady SeekComplete Erro=
+r }
+[  113.543321] hdc: drive_cmd: error=3D0x04 { AbortedCommand }
+[  113.543321] ide: failed opcode was: 0xec
+[  117.346654] eth1: PRI 31 variant 2 version 9.48
+[  117.346654] eth1: NIC 5 variant 2 version 1.02
+[  118.053321] eth1: PRI 31 variant 2 version 9.48
+[  118.053321] eth1: NIC 5 variant 2 version 1.02
+[  118.379988] eth1: PRI 31 variant 2 version 9.48
+[  118.379988] eth1: NIC 5 variant 2 version 1.02
 
-[snip many hangchecks]
-
-ISO 9660 Extensions: Microsoft Joliet Level 3
-ISO 9660 Extensions: RRIP_1991A
-Hangcheck: hangcheck value past margin!
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-[ INFO: possible circular locking dependency detected ]
-2.6.22-rc6-mm1 #4
--------------------------------------------------------
-evolution-data-/469063 is trying to acquire lock:
- (&mm->mmap_sem){----}, at: [<ffffffff80530d4c>] do_page_fault+0x17c/0x8c0
-
-but task is already holding lock:
- (&data->latch){----}, at: [<ffffffff8034ebb1>] get_exclusive_access+0x11/0=
-x20
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&data->latch){----}:
-       [<ffffffff80261bab>] __lock_acquire+0xc8b/0x1180
-       [<ffffffff802620f3>] lock_acquire+0x53/0x70
-       [<ffffffff8034ebb1>] get_exclusive_access+0x11/0x20
-       [<ffffffff802583af>] down_write+0x2f/0x40
-       [<ffffffff8034ebb1>] get_exclusive_access+0x11/0x20
-       [<ffffffff8034dd58>] mmap_unix_file+0x58/0x140
-       [<ffffffff802981c5>] mmap_region+0x195/0x540
-       [<ffffffff80298bce>] do_mmap_pgoff+0x2fe/0x390
-       [<ffffffff8052e7df>] _spin_unlock_irq+0x2f/0x50
-       [<ffffffff802e928e>] elf_map+0x11e/0x180
-       [<ffffffff802ea9ba>] load_elf_binary+0x6ea/0x2050
-       [<ffffffff802614a3>] __lock_acquire+0x583/0x1180
-       [<ffffffff8052e669>] _spin_unlock+0x29/0x50
-       [<ffffffff80291871>] follow_page+0x241/0x270
-       [<ffffffff80293598>] get_user_pages+0x2e8/0x430
-       [<ffffffff802614a3>] __lock_acquire+0x583/0x1180
-       [<ffffffff80231380>] load_aout_binary+0x0/0x980
-       [<ffffffff802ea2d0>] load_elf_binary+0x0/0x2050
-       [<ffffffff802b1846>] search_binary_handler+0xf6/0x290
-       [<ffffffff802b36f1>] do_execve+0x1b1/0x1f0
-       [<ffffffff8020aae4>] sys_execve+0x44/0xb0
-       [<ffffffff8020c5d7>] stub_execve+0x67/0xb0
-       [<ffffffffffffffff>] 0xffffffffffffffff
-
--> #0 (&mm->mmap_sem){----}:
-       [<ffffffff8025fd98>] print_circular_bug_header+0xe8/0xf0
-       [<ffffffff802619e0>] __lock_acquire+0xac0/0x1180
-       [<ffffffff802620f3>] lock_acquire+0x53/0x70
-       [<ffffffff80530d4c>] do_page_fault+0x17c/0x8c0
-       [<ffffffff80258472>] down_read+0x32/0x40
-       [<ffffffff80530d4c>] do_page_fault+0x17c/0x8c0
-       [<ffffffff802a7704>] check_object+0x224/0x260
-       [<ffffffff8052ee0d>] error_exit+0x0/0x96
-       [<ffffffff8034ccbb>] read_unix_file+0x1bb/0x4c0
-       [<ffffffff8034cc5b>] read_unix_file+0x15b/0x4c0
-       [<ffffffff802352fb>] try_to_wake_up+0x6b/0x3e0
-       [<ffffffff802ad995>] vfs_read+0xc5/0x180
-       [<ffffffff802ade93>] sys_read+0x53/0x90
-       [<ffffffff8020c1de>] system_call+0x7e/0x83
-       [<ffffffffffffffff>] 0xffffffffffffffff
-
-other info that might help us debug this:
-
-1 lock held by evolution-data-/469063:
- #0:  (&data->latch){----}, at: [<ffffffff8034ebb1>] get_exclusive_access+0=
-x11/0x20
-
-stack backtrace:
-
-Call Trace:
- [<ffffffff8025f8e3>] print_circular_bug_tail+0x83/0x90
- [<ffffffff8025fd98>] print_circular_bug_header+0xe8/0xf0
- [<ffffffff802619e0>] __lock_acquire+0xac0/0x1180
- [<ffffffff802620f3>] lock_acquire+0x53/0x70
- [<ffffffff80530d4c>] do_page_fault+0x17c/0x8c0
- [<ffffffff80258472>] down_read+0x32/0x40
- [<ffffffff80530d4c>] do_page_fault+0x17c/0x8c0
- [<ffffffff802a7704>] check_object+0x224/0x260
- [<ffffffff8052ee0d>] error_exit+0x0/0x96
- [<ffffffff8034ccbb>] read_unix_file+0x1bb/0x4c0
- [<ffffffff8034cc5b>] read_unix_file+0x15b/0x4c0
- [<ffffffff802352fb>] try_to_wake_up+0x6b/0x3e0
- [<ffffffff802ad995>] vfs_read+0xc5/0x180
- [<ffffffff802ade93>] sys_read+0x53/0x90
- [<ffffffff8020c1de>] system_call+0x7e/0x83
-
-INFO: lockdep is turned off.
-Hangcheck: hangcheck value past margin!
-Hangcheck: hangcheck value past margin!
-Hangcheck: hangcheck value past margin!
-Hangcheck: hangcheck value past margin!
-Hangcheck: hangcheck value past margin!
-Hangcheck: hangcheck value past margin!
-Hangcheck: hangcheck value past margin!
-Hangcheck: hangcheck value past margin!
-Unable to handle kernel NULL pointer dereference at 0000000000000000 RIP:=20
- [<ffffffff8033d324>] reiser4_tree_by_page+0x4/0x20
-PGD 17594067 PUD d025067 PMD 0=20
-Oops: 0000 [1] PREEMPT SMP=20
-CPU 0=20
-Modules linked in: nls_iso8859_1 isofs nls_base snd_pcm_oss snd_mixer_oss n=
-etconsole ipv6 usbhid hid snd_intel8x0 snd_ac97_codec ac97_bus snd_pcm snd_=
-timer psmouse serio_raw evdev snd snd_page_alloc ohci_hcd ehci_hcd usbcore =
-sg
-Pid: 469720, comm: rhythmbox Not tainted 2.6.22-rc6-mm1 #4
-RIP: 0010:[<ffffffff8033d324>]  [<ffffffff8033d324>] reiser4_tree_by_page+0=
-x4/0x20
-RSP: 0018:ffff81000ba03940  EFLAGS: 00010296
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 000000000000000c
-RDX: 0000000000000559 RSI: 0000000000000000 RDI: ffff810001433a88
-RBP: ffff810001433a88 R08: 0000000000000000 R09: 0000000000000001
-R10: 0000000000000000 R11: ffffffff8035a350 R12: ffff810001433a88
-R13: ffff81000ba03a90 R14: ffff8100125e0224 R15: ffff8100125e0224
-FS:  0000000043806940(0063) GS:ffffffff8075b000(0000) knlGS:00000000f7cd76b=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
-CR2: 0000000000000000 CR3: 0000000004b9e000 CR4: 00000000000006e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-Process rhythmbox (pid: 469720, threadinfo ffff81000ba02000, task ffff81001=
-3c4edd0)
-Stack:  ffffffff8032649a ffff81000ba03a90 0000000000000000 ffff810001433a88
- ffff81000ba03a58 ffff81000ba03a90 ffff8100125e0224 ffff8100125e0224
- ffffffff8034db75 ffff810000000002 ffff810000000002 ffff810000000002
-Call Trace:
- [<ffffffff8032649a>] jnode_of_page+0x2a/0x2c0
- [<ffffffff8034db75>] uf_readpages_filler+0x235/0x300
- [<ffffffff8034d940>] uf_readpages_filler+0x0/0x300
- [<ffffffff8028a586>] read_cache_pages+0x96/0xc0
- [<ffffffff8034dc96>] readpages_unix_file+0x56/0xc0
- [<ffffffff8028a381>] __do_page_cache_readahead+0x1e1/0x2c0
- [<ffffffff8028a66b>] ondemand_readahead+0xbb/0x120
- [<ffffffff80282bc6>] do_generic_mapping_read+0x1b6/0x4b0
- [<ffffffff80281fb0>] file_read_actor+0x0/0x1b0
- [<ffffffff80284f46>] generic_file_aio_read+0x106/0x1c0
- [<ffffffff802ad019>] do_sync_read+0xd9/0x120
- [<ffffffff802a723b>] check_bytes_and_report+0x4b/0x100
- [<ffffffff802a7704>] check_object+0x224/0x260
- [<ffffffff80254580>] autoremove_wake_function+0x0/0x30
- [<ffffffff8052e669>] _spin_unlock+0x29/0x50
- [<ffffffff80330e2c>] reiser4_grab+0x8c/0xd0
- [<ffffffff8034cf9f>] read_unix_file+0x49f/0x4c0
- [<ffffffff802ad995>] vfs_read+0xc5/0x180
- [<ffffffff802ade93>] sys_read+0x53/0x90
- [<ffffffff8020c1de>] system_call+0x7e/0x83
-
-INFO: lockdep is turned off.
-
-Code: 48 8b 00 48 8b 80 d0 01 00 00 48 8b 80 18 04 00 00 48 83 c0=20
-RIP  [<ffffffff8033d324>] reiser4_tree_by_page+0x4/0x20
- RSP <ffff81000ba03940>
-CR2: 0000000000000000
-
---=20
-Zan Lynx <zlynx@acm.org>
-
---=-R9kFVlrp3TEaBCr9sBFX
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+--nextPart2441476.ea4NWOx8h9
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.5 (GNU/Linux)
+Version: GnuPG v1.4.7 (GNU/Linux)
 
-iD8DBQBGl6tRG8fHaOLTWwgRAhhfAJ4p8ZNTiPtrZ0SRRvtD7KHb2tN0bQCdGLSx
-l8OfFmEmfavztRIJtfNWQMY=
-=8VvW
+iD8DBQBGmm3HR6LMutpd94wRAjrVAJ9CFigWG72+kh03vxSeB5PUEH8okgCfe8LC
+f84CPNOkSxTusfYD6AiFiqo=
+=z8gz
 -----END PGP SIGNATURE-----
 
---=-R9kFVlrp3TEaBCr9sBFX--
-
+--nextPart2441476.ea4NWOx8h9--
