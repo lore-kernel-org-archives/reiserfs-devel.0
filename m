@@ -1,7 +1,7 @@
 From: "Raymond A. Meijer" <rmeijer@internet.gr>
 Subject: Re: Reiser4 for 2.6.22
-Date: Mon, 23 Jul 2007 09:45:46 +0300
-Message-ID: <200707230945.47954.rmeijer@internet.gr>
+Date: Mon, 23 Jul 2007 10:03:14 +0300
+Message-ID: <200707231003.15582.rmeijer@internet.gr>
 References: <46A25C36.1060005@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -16,17 +16,12 @@ Cc: Edward Shishkin <edward@namesys.com>, Edward Shishkin <edward.shishkin@gmail
 
 On Sat 21 Jul 2007 22:19, Edward Shishkin wrote:
 
-Hello,
-
-> The corporative Namesys server doesn't work,
-> and I don't know how much time it will be in such
-> state. So I have put the patch in this place:
 > http://chichkin_i.zelnet.ru/namesys/index.html
 
-Great; thanks!
+Everything working perfectly here with 2.6.22-ck1+reiser4 :)
 
-Compile finished: rebooting...
 
+Thanks a lot,
 
 Ray
 
