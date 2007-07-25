@@ -1,124 +1,68 @@
-From: Jake Maciejewski <maciejej@msoe.edu>
-Subject: Re: Nikita 19891
-Date: Mon, 23 Jul 2007 18:09:38 -0500
-Message-ID: <1185232178.10128.11.camel@gentoo>
-References: <20070711044617.GA12129@efil.de>
-	 <1184128537.10438.16.camel@gentoo>  <4695341B.3000303@namesys.com>
-	 <1184303576.8861.12.camel@gentoo>  <46979B83.2040809@namesys.com>
+From: Michal Piotrowski <michal.k.k.piotrowski@gmail.com>
+Subject: Re: 2.6.23-rc1-mm1
+Date: Wed, 25 Jul 2007 18:32:58 +0200
+Message-ID: <46A77B3A.8080503@googlemail.com>
+References: <20070725040304.111550f4.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <46979B83.2040809@namesys.com>
+DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
+        d=gmail.com; s=beta;
+        h=domainkey-signature:received:received:message-id:date:user-agent:mime-version:to:cc:subject:references:in-reply-to:x-enigmail-version:content-type:content-transfer-encoding:from;
+        b=Nq2CLTtVpXGZVDbod4fjBp6xe5uquFeNofVY9+HHuAJV2opdrpWeK9Iyp3v/v0Zp3LLezXGG/biQpA+qraZ4PCGlf43HsMRhs2edqb9Ev0MvbgpTFEJZgrO3eMuJEUuy1Pw3IU2rWervScRfyfa5ZFWbX6KDePyxbnw+LFqln+0=
+In-Reply-To: <20070725040304.111550f4.akpm@linux-foundation.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward@namesys.com>
-Cc: Ingo Bormuth <ibormuth@efil.de>, reiserfs-devel@vger.kernel.org, "Vladimir V. Saveliev" <vs@namesys.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
 
-On Fri, 2007-07-13 at 19:34 +0400, Edward Shishkin wrote:
-> Jake Maciejewski wrote:
+Andrew Morton pisze:
+> ftp://ftp.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.23-rc1/2.6.23-rc1-mm1/
 > 
-> >On Wed, 2007-07-11 at 23:48 +0400, Edward Shishkin wrote:
-> >  
-> >
-> >>Jake Maciejewski wrote:
-> >>
-> >>    
-> >>
-> >>>I've hit the same panic looping kernel builds (while true ; do make
-> >>>mrproper ; make allmodconfig ; make -j4 ; done) on 2.6.21.1 with the
-> >>>Namesys patch and reiser4 debug enabled. I've seen it on my amd64
-> >>>desktop and x86 laptop.
-> >>>
-> >>>Another one I've seen is:
-> >>>       reiser4 panicked cowardly: reiser4[fixdep(16043)]: sibling_list_remove (fs/reiser4/tree_walk.c:814)[zam-32245]
-> >>>
-> >>>In both cases the fsck didn't find anything, as you observed.
-> >>>
-> >>>On Wed, 2007-07-11 at 06:46 +0200, Ingo Bormuth wrote:
-> >>> 
-> >>>
-> >>>      
-> >>>
-> >>>>Hmm, whenever I try to build busybox (1.4.2) I get nikita-191 panics:
-> >>>>
-> >>>>[...]
-> >>>>cc	console_tools/clear.o
-> >>>>reiser4 panicked cowardly: reiser4[cc1(13066)]: save_file_hint (fs/reiser4/plugin/file.c:705) [nikity-1991]:
-> >>>>kernel panic - not syncing: reiser4[cc1(13066)]: save_file_hint (fs/reiser4/plugin/file.c:705) [nikity-1991]:
-> >>>>   
-> >>>>
-> >>>>        
-> >>>>
-> >>Somebody missed set_file_hint(), which synchronizes the coords.
-> >>    
-> >>
-> err, sorry, its name is reiser4_set_hint
-> 
-> >>Unfortunately I can not reproduce it. Would you please (if possible)
-> >>catch the stack with the attached patch?
-> >>    
-> >>
-> >
-> >[<ffffffff88186b5e>] :reiser4:save_file_hint+0xee/0x3c0
-> >[<ffffffff88189c60>] :reiser4:read_unix_file+0x940/0xa10
-> >[<ffffffff80276bbb>] vfs_read+0xdb/0x180
-> >[<ffffffff80277083>] sys_read+0x53/0x90
-> >[<ffffffff8020993e>] system_call+0x7e/0x83
-> >  
-> >
-> 
-> Thanks!
-> Indeed, the coords are not synchronized when reading tails. However,
-> it is not a fatal bug: we are victims of brain damaged and unreadable
-> hint interface.
-> 
-> The possible fix is attached. Would you please test it?
-> Also don't forget to apply this patch: 
-> http://lkml.org/lkml/diff/2007/7/11/396/1
-> as it also can be related to the problem.
-> 
-> Edward.
 
-Sorry for being so late to reply. Yes, the fix works, but it took some
-time to test because I'm still seeing the previously mentioned panic in
-sibling_list_remove, except now it takes an hour or two to panic. I'm
-reasonably sure I'm not seeing the save_file_hint panic anymore, though.
+nokturn vs. reiserfs 1:0
 
-> 
-> >As for reproducing it, I think I should mention that:
-> >
-> >1. I'm using distcc to speed things up. Without offloading the compiling
-> >work, my laptop has lasted ~3.5hrs before a panic. My desktop with
-> >distcc configured usually only lasts a few minutes.
-> >
-> >2. My local storage is encrypted through dm-crypt, but I've also tried
-> >over open-iscsi and got the same results.
-> >
-> >  
-> >
-> >>>>Running fsck.reiser4 before and after the panic doesn't show any complaints.
-> >>>>The partition is heavily used. I'm not aware of any other problem.
-> >>>>
-> >>>>Vanilla-2.6.21.6 (kernel.org) with reiser4-2.6.21-path (namesys.com).
-> >>>>
-> >>>>Not that I understood the code, but why is it an assertion at all?
-> >>>>Couldn't one just use an empty hint if the current one is invalid?
-> >>>>   
-> >>>>
-> >>>>        
-> >>>>
-> >>Sure, it is possible to not use it at all. But if the current one is valid,
-> >>it would be nice to use it to avoid tree traversal with waiting for 
-> >>possible locks, etc..
-> >>
-> >>Thanks,
-> >>Edward.
-> >>
-> >>    
-> >>
-> 
-> 
+[ 1228.964379] =============================================
+[ 1228.971271] [ INFO: possible recursive locking detected ]
+[ 1228.976674] 2.6.23-rc1-mm1 #1
+[ 1228.979655] ---------------------------------------------
+[ 1228.985064] chcon/21470 is trying to acquire lock:
+[ 1228.989858]  (&inode->i_mutex){--..}, at: [<c06993ea>] mutex_lock+0x1c/0x1f
+[ 1228.996968] 
+[ 1228.996972] but task is already holding lock:
+[ 1229.002834]  (&inode->i_mutex){--..}, at: [<c06993ea>] mutex_lock+0x1c/0x1f
+[ 1229.009958] 
+[ 1229.009962] other info that might help us debug this:
+[ 1229.016510] 3 locks held by chcon/21470:
+[ 1229.020434]  #0:  (&inode->i_mutex){--..}, at: [<c06993ea>] mutex_lock+0x1c/0x1f
+[ 1229.027971]  #1:  (&REISERFS_I(inode)->xattr_sem){----}, at: [<fdd59d36>] reiserfs_setxattr+0x54/0xf2 [reiserfs]
+[ 1229.038282]  #2:  (&REISERFS_SB(s)->xattr_dir_sem){----}, at: [<fdd59d55>] reiserfs_setxattr+0x73/0xf2 [reiserfs]
+[ 1229.048682] 
+[ 1229.048687] stack backtrace:
+[ 1229.053070]  [<c04053eb>] show_trace_log_lvl+0x1a/0x30
+[ 1229.058254]  [<c0406073>] show_trace+0x12/0x14
+[ 1229.062734]  [<c04061a8>] dump_stack+0x16/0x18
+[ 1229.067222]  [<c044c887>] __lock_acquire+0xe19/0x125c
+[ 1229.072309]  [<c044cd71>] lock_acquire+0xa7/0xc1
+[ 1229.076967]  [<c069908e>] __mutex_lock_slowpath+0x9b/0x3db
+[ 1229.082493]  [<c06993ea>] mutex_lock+0x1c/0x1f
+[ 1229.086972]  [<fdd5a2d1>] reiserfs_xattr_set+0x14c/0x2db [reiserfs]
+[ 1229.093281]  [<fdd5a7e2>] security_set+0x4d/0x51 [reiserfs]
+[ 1229.098898]  [<fdd59d6d>] reiserfs_setxattr+0x8b/0xf2 [reiserfs]
+[ 1229.104950]  [<c04aee43>] vfs_setxattr+0x8a/0x199
+[ 1229.109696]  [<c04aefcf>] setxattr+0x7d/0x109
+[ 1229.114087]  [<c04af0ec>] sys_setxattr+0x41/0x53
+[ 1229.118737]  [<c04043ba>] syscall_call+0x7/0xb
+[ 1229.123215]  =======================
+[ 1229.249502] chcon used greatest stack depth: 1080 bytes left
+
+http://www.stardust.webpages.pl/files/tbf/bitis-gabonica/2.6.23-rc1-mm1/console.log
+http://www.stardust.webpages.pl/files/tbf/bitis-gabonica/2.6.23-rc1-mm1/mm-config
+
+Regards,
+Michal
+
 -- 
-Jake Maciejewski <maciejej@msoe.edu>
-
+LOG
+http://www.stardust.webpages.pl/log/
