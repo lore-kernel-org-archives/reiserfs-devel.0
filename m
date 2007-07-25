@@ -1,101 +1,63 @@
-From: "Rob Mueller" <robm@fastmail.fm>
-Subject: Re: Memory leaking behaviour in 2.6.20.11, reiserfs related?
-Date: Mon, 6 Aug 2007 14:27:35 +1000
-Message-ID: <2cdd01c7d7e2$1fb7fa00$0a01a8c0@robmhp>
-References: <1185436893.18946.1202118935@webmail.messagingengine.com> <20070727130739.9376a2b5.akpm@linux-foundation.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
+From: Jeff Layton <jlayton@redhat.com>
+Subject: [PATCH 00/25] move handling of setuid/gid bits from
+	VFS into individual setattr functions
+Date: Wed, 25 Jul 2007 12:47:28 -0400
+Message-ID: <200708061317.l76DHc8e001653@dantu.rdu.redhat.com>
+Return-path: <cluster-devel-bounces@redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; charset="us-ascii"; reply-type="original"
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, Bron Gondwana <brong@fastmail.fm>, Oleg Drokin <green@linuxhacker.ru>
+List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/cluster-devel>
+List-Post: <mailto:cluster-devel@redhat.com>
+List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=subscribe>
+Sender: cluster-devel-bounces@redhat.com
+Errors-To: cluster-devel-bounces@redhat.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: codalist@TELEMANN.coda.cs.cmu.edu, cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net, mikulas@artax.karlin.mff.cuni.cz, zippel@linux-m68k.org, xfs@oss.sgi.com, joel.becker@oracle.com, wli@holomorphy.com, reiserfs-devel@vger.kernel.org, dhowells@redhat.com, fuse-devel@lists.sourceforge.net, jffs-dev@axis.com, user-mode-linux-user@lists.sourceforge.net, v9fs-developer@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-cifs-client@lists.samba.org, ocfs2-devel@oss.oracle.com, bfennema@falcon.csc.calpoly.edu
 
->> This is pretty much a vanilla kernel, with just one patch to work
->> around a deadlock problem in the reiserfs_file_write code that I
->> think isn't fixed.
->>
->> http://lists.linuxcoding.com/kernel/2006-q1/msg32508.html
->
-> So that sounds like a reiserfs bug.
+( Please consider trimming the Cc list if discussing some aspect of this that doesn't concern everyone )
 
-Yes, and it was definitely there still in 2.6.16. I don't know if it's been 
-fixed since or not, haven't heard anything more from anyone on it.
+When an unprivileged process attempts to modify a file that has the
+setuid or setgid bits set, the VFS will attempt to clear these bits. The
+VFS will set the ATTR_KILL_SUID or ATTR_KILL_SGID bits in the ia_valid
+mask, and then call notify_change to clear these bits and set the mode
+accordingly.
 
->> BUG: at fs/reiserfs/inode.c:2868 reiserfs_releasepage()
->>  [<c0199ecb>] reiserfs_releasepage+0xa3/0xa8
-...
->>  [<c010383b>] kernel_thread_helper+0x7/0x1c
->>  =======================
->
-> And so does that.
+With a networked filesystem (NFS in particular but most likely others),
+the client machine may not have credentials that allow for the clearing
+of these bits. In some situations, this can lead to file corruption, or
+to an operation failing outright because the setattr fails.
 
-These messages are "new", in that I think we've only seen them since 
-upgrading to 2.6.20, they weren't in 2.6.16. They do seem like a reiserfs 
-bug, but haven't seen any confirmation of that either. I thought they might 
-be related to the leak behaviour.
+In this situation, we'd like to just leave the handling of this to
+the server and ignore these bits. The problem is that by the time
+nfs_setattr is called, the VFS has already reinterpreted the ATTR_KILL_*
+bits into a mode change. We can't fix this in the filesystems where
+this is a problem, as doing so would leave us having to second-guess
+what the VFS wants us to do. So we need to change it so that filesystems
+have more flexibility in how to interpret the ATTR_KILL_* bits.
 
-> Re: 2.6.22-rc6-mm1 + leak patches
+The first patch in the following patchset moves this logic into a helper
+function, and then only calls this helper function for inodes that do
+not have a setattr operation defined. The subsequent patches fix up
+individual filesystem setattr functions to call this helper function.
 
-I haven't had a chance to test these. Given that you're not sure they'll 
-even be helpful, is there something else we can test first before going down 
-this path?
+The upshot of this is that with this change, filesystems that define
+a setattr inode operation are now responsible for handling the ATTR_KILL
+bits as well. They can trivially do so by calling the helper, but they
+must do so.
 
-> Quite a few people are using reiserfs and yours is the only report of this
-> which I can recall.  Can you think of any reason why your setup differs
-> from most other people's?
+Some of the follow-on patches may not be strictly necessary, but I
+decided that it was better to take the conservative approach and call
+the helper when I wasn't sure. I've tried to CC the maintainers
+for the individual filesystems as well where I could find them,
+please let me know if there are others who should be informed.
 
-No, not really, that 1 patch I mentioned previously is the only difference 
-to a vanilla kernel.
+Comments and suggestions appreciated...
 
-Some other things that are interesting/strange
-
-1. After rebooting that machine, I found it in the same memory leaked state 
-17 hours later, so it doesn't even take a day to leak all that memory.
-2. Although it ended up in the same leaked state after just 17 hours, even a 
-week later, the machine is still running fine. It seems to reach a "steady 
-state" where it has lots of leaked memory, but it doesn't cause the machine 
-to swap or do anything particularly crazy, it just sits in that state.
-3. We use the exact same kernel on some Prescott Xeon based machines with 8G 
-of memory, and they don't display the same problem at all. The problem only 
-seems to be occuring on our newer 12G Woodcrest Xeon based machines. For 
-example.
-
-[root@imap8 ~]$ uname -a
-Linux imap8 2.6.20.11-reiserfix-fai #1 SMP Wed May 23 09:40:20 UTC 2007 i686 
-GNU/Linux
-[root@imap8 ~]$ cat /proc/cpuinfo | grep 'model name'
-model name      : Intel(R) Xeon(TM) CPU 3.00GHz
-model name      : Intel(R) Xeon(TM) CPU 3.00GHz
-[root@imap8 ~]$ free
-             total       used       free     shared    buffers     cached
-Mem:       8308908    8034260     274648          0     493724    2008128
--/+ buffers/cache:    5532408    2776500
-Swap:      2048276      61820    1986456
-[root@imap8 ~]$ ps auxw | wc -l
-1538
-
-[root@imap9 ~]$ uname -a
-Linux imap9 2.6.20.11-reiserfix-fai #1 SMP Thu May 10 01:57:03 UTC 2007 i686 
-GNU/Linux
-[root@imap9 ~]$ cat /proc/cpuinfo | grep 'model name'
-model name      : Intel(R) Xeon(R) CPU            5130  @ 2.00GHz
-model name      : Intel(R) Xeon(R) CPU            5130  @ 2.00GHz
-[root@imap9 ~]$ free
-             total       used       free     shared    buffers     cached
-Mem:      12466848   12419764      47084          0     463564    1550232
--/+ buffers/cache:   10405968    2060880
-Swap:      2048276      69828    1978448
-[root@imap9 ~]$ ps auxw | wc -l
-1523
-
-Actually, maybe the other machines are displaying the same problem, I just 
-wasn't as aware of it because it doesn't actually make the machine seem to 
-do anything crazy. I guess I realised that there was definitely a problem 
-with the new machines, because they were using a similar number and mix of 
-processes to the other machines, but seemed to be using twice as much 
-memory!
-
-Rob
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
 
