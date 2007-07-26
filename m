@@ -1,57 +1,51 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: Reiser4 for 2.6.22
-Date: Fri, 27 Jul 2007 01:49:03 +0400
-Message-ID: <46A916CF.3020408@namesys.com>
-References: <46A25C36.1060005@namesys.com> <20070726195357.GA31116@izvekov.dyndns.org>
+From: Zan Lynx <zlynx@acm.org>
+Subject: Question about memory pressure freezes
+Date: Thu, 26 Jul 2007 16:25:57 -0600
+Message-ID: <1185488757.33588.6.camel@localhost>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-gWQngKWDIAwniOoDG8Qk"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20070726195357.GA31116@izvekov.dyndns.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Matheus Izvekov <mizvekov@izvekov.dyndns.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
-Matheus Izvekov wrote:
 
->On 23:19 Sat 21 Jul     , Edward Shishkin wrote:
->  
->
->> Hello everyone.
->>
->> The corporative Namesys server doesn't work,
->> and I don't know how much time it will be in such
->> state. So I have put the patch in this place:
->> http://chichkin_i.zelnet.ru/namesys/index.html 
->> <http://chichkin_i.zelnet.ru/namesys/index.html>
->>    
->>
->
->That server is down for 2 days at least. Can we get it from anywhere
->else?
->  
->
+--=-gWQngKWDIAwniOoDG8Qk
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Hmm, actually it is not down, just seems to be accessible not for 
-everyone for
-unknown reasons..
+I have often experienced nearly full system freezes for up to five
+seconds at a time while memory is being flushed to disk.
 
-You can find it on usual place:
-ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.22/
-(I hope it works for you?)
+I'm not sure if this is a general Linux problem or a Reiser4 problem, so
+I thought I'd ask.
 
-Thanks,
-Edward.
+A sysrq-T during the freeze shows many processes trying to acquire a
+memory page, and Reiser4 flushing atoms and doing sync things.
 
->Thanks
->  
->
->> Thanks,
->> Edward.
->>    
->>
->
->
->  
->
+My working theory right now is that Reiser4 spends time flushing a lot
+of data at once before returning.
+
+If I am right about that, would it not make more sense to flush a few
+pages, return to the kernel, flush a few more pages, return to the
+kernel, etc, etc?  That way programs could get a bit of RAM and make
+some progress.
+
+Of course I could be completely off about what's going on.
+--=20
+Zan Lynx <zlynx@acm.org>
+
+--=-gWQngKWDIAwniOoDG8Qk
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.5 (GNU/Linux)
+
+iD8DBQBGqR91G8fHaOLTWwgRAoQhAJ4yHfeMog/dSZhMR2PladZQ7l94zACfQIf2
+30fiDTmlN3U1AJ32GOb0NZg=
+=WH8f
+-----END PGP SIGNATURE-----
+
+--=-gWQngKWDIAwniOoDG8Qk--
 
