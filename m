@@ -1,63 +1,37 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: Question about memory pressure freezes
-Date: Fri, 27 Jul 2007 18:54:15 +0400
-Message-ID: <46AA0717.90306@namesys.com>
-References: <1185488757.33588.6.camel@localhost>
+From: Richard Purdie <rpurdie@openedhand.com>
+Subject: Re: 2.6.23-rc1-mm1: reiser4 <-> lzo compile error
+Date: Fri, 27 Jul 2007 16:11:28 +0100
+Message-ID: <1185549088.6148.20.camel@localhost.localdomain>
+References: <20070725040304.111550f4.akpm@linux-foundation.org>
+	 <20070725182221.GG3572@stusta.de>  <46A9E691.5080308@namesys.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1185488757.33588.6.camel@localhost>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S937443AbXG0PL7@vger.kernel.org>
+In-Reply-To: <46A9E691.5080308@namesys.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Zan Lynx <zlynx@acm.org>
-Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward@namesys.com>
+Cc: Adrian Bunk <bunk@stusta.de>, Nitin Gupta <nitingupta910@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
 
-Zan Lynx wrote:
+On Fri, 2007-07-27 at 16:35 +0400, Edward Shishkin wrote:
+> Sorry, guys, I am not happy with the modified LZO:
+> the compressor tries to test bytes which are out of bounds.
+> 
+> The attached module testlzo.c causes an oops in the second pass:
+> AFAIK, both, @m and @m_pos should be in [wrkmem, wrkmem + 64K);
+> I have attached trace.txt with their actual values.
+> 
+> Not ready to migrate to this library.
+> 
+> Any ideas?
 
->I have often experienced nearly full system freezes for up to five
->seconds at a time while memory is being flushed to disk.
->
->I'm not sure if this is a general Linux problem or a Reiser4 problem, so
->I thought I'd ask.
->
->  
->
+I can confirm its broken, it give an oops on ARM 2.6.23-rc1 too in the
+first pass.
 
-I wouldn't separate the only one of them to blame ;)
+I guess the only real solution now is to compare the byte code from the
+new and original and find out where this problem has crept in from and
+check there are no others. I'll look into it but its going to take time.
+There goes my weekend :-(
 
->A sysrq-T during the freeze shows many processes trying to acquire a
->memory page, and Reiser4 flushing atoms and doing sync things.
->  
->
-
-yup, and all processes (including interactive ones) wait for 
-reiser4_writepage
-completion.. This takes place for mapped writes, which can not balance dirty
-pages like usual writes..
-
->My working theory right now is that Reiser4 spends time flushing a lot
->of data at once before returning.
->  
->
-
-right,
-there was a lightweight reaction on memory pressure notification (emergency
-flush) a long time ago, but Hans couldn't live with such "swapping" 
-mechanism.
-Also the emergency flush itself had some problems.
-
->If I am right about that, would it not make more sense to flush a few
->pages, return to the kernel, flush a few more pages, return to the
->kernel, etc, etc?  That way programs could get a bit of RAM and make
->some progress.
->  
->
-
-I have spent 1-2 days of moving in this direction: no progress.
-I wouldn't say that this is ultimately wrong way: just requires
-more time to investigate..
-
->Of course I could be completely off about what's going on.
->  
->
+Richard
