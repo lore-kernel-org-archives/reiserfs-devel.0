@@ -1,61 +1,54 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: 2.6.23-rc1-mm1: reiser4 compressed and zero length file
-Date: Sat, 28 Jul 2007 01:58:36 +0400
-Message-ID: <46AA6A8C.7000504@namesys.com>
-References: <200707272140.39114.lardel@interia.pl>
+From: Richard Purdie <richard@openedhand.com>
+Subject: [PATCH] lzo: Add some missing casts
+Date: Sat, 28 Jul 2007 00:30:55 +0100
+Message-ID: <1185579055.6148.29.camel@localhost.localdomain>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <200707272140.39114.lardel@interia.pl>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S965348AbXG0XbX@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: lardel@interia.pl
-Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward@namesys.com>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>
+Cc: Nitin Gupta <nitingupta910@gmail.com>, reiserfs-devel <reiserfs-devel@vger.kernel.org>, Adrian Bunk <bunk@stusta.de>
 
-lardel@interia.pl wrote:
+Add some casts to the LZO compression algorithm after they were removed
+during cleanup and shouldn't have been.
 
->Hi,
->A filesystem created by:
->mkfs.reiser4 -o create=ccreg40 /dev/sda8
->can't read zero length files:
-># touch test
-># cat test
->cat: test: Invalid argument
->
->Uncompressed filesystems are ok. vanilla with 2.6.22 patch is fine too.
->
->  
->
+Signed-off-by: Richard Purdie <rpurdie@openedhand.com>
 
-Hello,
-the cryptcompress-related fixups from reiser4-for-2.6.22 are not yet in 
--mm tree
-and can be found here:
-ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.23-rc1-mm1
+---
 
-Thanks,
-Edward.
+This fixes the reported problems for me, I've checked fairly carefully
+and I can't see any other issues. Edward, could you see if this resolves
+the problems in your case please?
 
->Regards,
->Rafal
->
->----------------------------------------------------------------------
->Piekne kobiety wsrod samych swin!
->Obejrzyj
->
->  
->
->>>>http://link.interia.pl/f1b18
->>>>        
->>>>
->
->-
->To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
->the body of a message to majordomo@vger.kernel.org
->More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
->  
->
+Index: linux-2.6.22/lib/lzo/lzo1x_compress.c
+===================================================================
+--- linux-2.6.22.orig/lib/lzo/lzo1x_compress.c
++++ linux-2.6.22/lib/lzo/lzo1x_compress.c
+@@ -32,13 +32,13 @@ _lzo1x_1_do_compress(const unsigned char
+ 	ip += 4;
+ 
+ 	for (;;) {
+-		dindex = ((0x21 * DX3(ip, 5, 5, 6)) >> 5) & D_MASK;
++		dindex = ((size_t)(0x21 * DX3(ip, 5, 5, 6)) >> 5) & D_MASK;
+ 		m_pos = dict[dindex];
+ 
+ 		if (m_pos < in)
+ 			goto literal;
+ 
+-		if (ip == m_pos || (ip - m_pos) > M4_MAX_OFFSET)
++		if (ip == m_pos || ((size_t)(ip - m_pos) > M4_MAX_OFFSET))
+ 			goto literal;
+ 
+ 		m_off = ip - m_pos;
+@@ -51,7 +51,7 @@ _lzo1x_1_do_compress(const unsigned char
+ 		if (m_pos < in)
+ 			goto literal;
+ 
+-		if (ip == m_pos || (ip - m_pos) > M4_MAX_OFFSET)
++		if (ip == m_pos || ((size_t)(ip - m_pos) > M4_MAX_OFFSET))
+ 			goto literal;
+ 
+ 		m_off = ip - m_pos;
 
