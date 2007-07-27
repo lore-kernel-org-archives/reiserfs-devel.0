@@ -1,24 +1,63 @@
-From: Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: request for patches: showing mount options
-Date: Fri, 27 Jul 2007 16:20:28 +0200
-Message-ID: <E1IEQg8-0000ut-00@dorka.pomaz.szeredi.hu>
-References: <E1IEQ7q-0000qE-00@dorka.pomaz.szeredi.hu> <524f69650707270710u7c21aea0v5d997484f33b3434@mail.gmail.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <524f69650707270710u7c21aea0v5d997484f33b3434@mail.gmail.com>
-	(smfrench@gmail.com)
-Sender: linux-fsdevel-owner@vger.kernel.org
-List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: Question about memory pressure freezes
+Date: Fri, 27 Jul 2007 18:54:15 +0400
+Message-ID: <46AA0717.90306@namesys.com>
+References: <1185488757.33588.6.camel@localhost>
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: smfrench@gmail.com
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, kzak@redhat.com, ericvh@gmail.com, lucho@ionkov.net, zippel@linux-m68k.org, hpa@zytor.com, raven@themaw.net, rathamahata@php4.ru, dhowells@redhat.com, sfrench@samba.org, mhalcrow@us.ibm.com, phillip@hellewell.homeip.net, hirofumi@mail.parknet.co.jp, mikulas@artax.karlin.mff.cuni.cz, wli@holomorphy.com, shaggy@austin.ibm.com, vandrove@vc.cvut.cz, trond.myklebust@fys.uio.no, aia21@cantab.net, mark.fasheh@oracle.com, kurt.hackel@oracle.com, reiserfs-devel@vger.kernel.org, bfennema@falcon.csc.calpoly.edu, dushistov@mail.ru, xfs-masters@oss.sgi.com, arnd@arndb.de, holzheu@de.ibm.com
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <1185488757.33588.6.camel@localhost>
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Zan Lynx <zlynx@acm.org>
+Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
-> What do you consider the best example so far of a kernel module's
-> equivalent of "parse_mount_options" (handling a mix of options of
-> different types) and show_options.
+Zan Lynx wrote:
 
-For example gfs2 is pretty good.  It has lots of different type of
-options, and it handles them in remount as well as mount.
+>I have often experienced nearly full system freezes for up to five
+>seconds at a time while memory is being flushed to disk.
+>
+>I'm not sure if this is a general Linux problem or a Reiser4 problem, so
+>I thought I'd ask.
+>
+>  
+>
 
-Miklos
+I wouldn't separate the only one of them to blame ;)
+
+>A sysrq-T during the freeze shows many processes trying to acquire a
+>memory page, and Reiser4 flushing atoms and doing sync things.
+>  
+>
+
+yup, and all processes (including interactive ones) wait for 
+reiser4_writepage
+completion.. This takes place for mapped writes, which can not balance dirty
+pages like usual writes..
+
+>My working theory right now is that Reiser4 spends time flushing a lot
+>of data at once before returning.
+>  
+>
+
+right,
+there was a lightweight reaction on memory pressure notification (emergency
+flush) a long time ago, but Hans couldn't live with such "swapping" 
+mechanism.
+Also the emergency flush itself had some problems.
+
+>If I am right about that, would it not make more sense to flush a few
+>pages, return to the kernel, flush a few more pages, return to the
+>kernel, etc, etc?  That way programs could get a bit of RAM and make
+>some progress.
+>  
+>
+
+I have spent 1-2 days of moving in this direction: no progress.
+I wouldn't say that this is ultimately wrong way: just requires
+more time to investigate..
+
+>Of course I could be completely off about what's going on.
+>  
+>
