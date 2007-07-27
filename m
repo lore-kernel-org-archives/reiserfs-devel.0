@@ -1,35 +1,179 @@
-From: Miklos Szeredi <miklos@szeredi.hu>
+From: Chuck Lever <chuck.lever@oracle.com>
 Subject: Re: request for patches: showing mount options
-Date: Fri, 27 Jul 2007 18:09:34 +0200
-Message-ID: <E1IESNi-0001B9-00@dorka.pomaz.szeredi.hu>
+Date: Fri, 27 Jul 2007 15:43:01 -0400
+Message-ID: <46AA4AC5.2050200@oracle.com>
 References: <E1IEQ7q-0000qE-00@dorka.pomaz.szeredi.hu>
-	 <1185550256.3203.77.camel@raven.themaw.net>
-	 <E1IERvH-00016M-00@dorka.pomaz.szeredi.hu> <524f69650707270904j24038282le55f3981dff560a@mail.gmail.com>
+Reply-To: chuck.lever@oracle.com
+Mime-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="------------060701040909080305090608"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-reply-to: <524f69650707270904j24038282le55f3981dff560a@mail.gmail.com>
-	(smfrench@gmail.com)
+In-Reply-To: <E1IEQ7q-0000qE-00@dorka.pomaz.szeredi.hu>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, kzak@redhat.com, ericvh@gmail.com, lucho@ionkov.net, zippel@linux-m68k.org, hpa@zytor.com, raven@themaw.net, rathamahata@php4.ru, dhowells@redhat.com, sfrench@samba.org, mhalcrow@us.ibm.com, phillip@hellewell.homeip.net, hirofumi@mail.parknet.co.jp, mikulas@artax.karlin.mff.cuni.cz, wli@holomorphy.com, shaggy@austin.ibm.com, vandrove@vc.cvut.cz, trond.myklebust@fys.uio.no, aia21@cantab.net, mark.fasheh@oracle.com, kurt.hackel@oracle.com, reiserfs-devel@vger.kernel.org, bfennema@falcon.csc.calpoly.edu, dushistov@mail.ru, xfs-masters@oss.sgi.com, arnd@arndb.de, holzheu@de.ibm.com
+
+This is a multi-part message in MIME format.
+--------------060701040909080305090608
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-To: smfrench@gmail.com
-Cc: miklos@szeredi.hu, raven@themaw.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, kzak@redhat.com, ericvh@gmail.com, lucho@ionkov.net, zippel@linux-m68k.org, hpa@zytor.com, rathamahata@php4.ru, dhowells@redhat.com, sfrench@samba.org, mhalcrow@us.ibm.com, phillip@hellewell.homeip.net, hirofumi@mail.parknet.co.jp, mikulas@artax.karlin.mff.cuni.cz, wli@holomorphy.com, shaggy@austin.ibm.com, vandrove@vc.cvut.cz, trond.myklebust@fys.uio.no, aia21@cantab.net, mark.fasheh@oracle.com, kurt.hackel@oracle.com, reiserfs-devel@vger.kernel.org, bfennema@falcon.csc.calpoly.edu, dushistov@mail.ru, xfs-masters@oss.sgi.com, arnd@arndb.de, holzheu@de.ibm.com
 
-> cifs and nfs (probably others) have some mount options which are mount
-> order dependent ie may be invalid or ignored when you have more than
-> one mount to the same server, or mount the same resource in two places
-> with different options.  In the long run, at least for cifs, we may be
-> able to better handle a user mounting to the same server twice with
-> e.g. different security options (authentication, packet signing ...),
-> but in the meantime are there any thoughts on whether those type of
-> mount options should be displayed differently
+Miklos:
 
-I think they should be displayed normally, just as all the other
-options.  If an option is shared by multiple mounts, that option
-should be displayed for all of them.
+Some mount options are never passed to the kernel, and thus can't appear 
+in /proc/mounts.  Examples include user, users, and _netdev for NFS.
 
-This is similar to the case of per-mount vs. per-superblock options,
-which aren't separated either.
+Miklos Szeredi wrote:
+> [please consider pruning the CC list if discussing some aspect, which
+> doesn't concern all]
+> 
+> I've done an audit of all filesystems with regards to showing mount
+> options in /proc/<pid>/mounts.  Unfortunately most of them show none
+> or only a part of all accepted options (for details see list of
+> filesystems at the end of the mail).
+> 
+> This is currently not a big problem, because mount(8) stores the given
+> options in /etc/mtab.  However we want to get rid of mtab, and this
+> requires, that the option showing be fixed up.
+> 
+> It would be easiest if this was done by the VFS instead of having to
+> deal with it in filesystems.  However there are differences in how
+> filesytems handle options during mount and remount, and it would be
+> impossible to take this into account in all cases.
+> 
+> If you are CC-ed, and responsible for one of these filesystems, please
+> take a moment to fully implement the ->show_options() method.  In most
+> cases it should be an easy task.
+> 
+> If for some reason you are unable to do this, please let me know and
+> I'll fix it up.
+> 
+> Here are some guidelines for showing options.  I'll also add these to
+> Documentation/filesystems/vfs.txt
+> 
+> +   If a filesystem accepts mount options, it must define show_options()
+> +   to show all the currently active options.  The rules are:
+> +
+> +     - options MUST be shown which are not default or their values differ
+> +       from the default
+> +
+> +     - options MAY be shown which are enabled by default or have their
+> +       default value
+> +
+> +   Options used only internally between a mount helper and the kernel
+> +   (such as file descriptors), or which only have an effect during the
+> +   mounting (such as ones controlling the creation of a journal) are exempt
+> +   from the above rules.
+> 
+> Thanks,
+> Miklos
+> 
+> -------
+> legend:
+> 
+>   all - fs has options, but doesn't define ->show_options()
+>   some - fs defines ->show_options(), but some options are not shown
+>   noopt - fs does not have options
+>   good - fs shows all options
+>   patch - I have a patch
+> 
+> 
+> 9p          some
+> adfs        all (maintainer?)
+> affs        all
+> afs         all
+> autofs      all
+> autofs4     some
+> befs        all
+> bfs         noopt
+> cifs        some (odd parser)
+> coda        noopt
+> configfs    noopt
+> cramfs      noopt
+> debugfs     noopt
+> devpts      patch
+> ecryptfs    some
+> efs         noopt
+> ext2        patch
+> ext3        patch
+> ext4        patch
+> fat         some
+> freevxfs    noopt
+> fuse        patch
+> gfs2        good
+> hfs         good
+> hfsplus     good
+> hostfs      patch
+> hpfs        all
+> hppfs       noopt
+> hugetlbfs   all
+> isofs       all (maintainer?)
+> jffs2       noopt
+> jfs         some
+> minix       noopt
+> msdos       ->fat
+> ncpfs       all (FS_BINARY_MOUNTDATA?)
+> nfs         some
+> nfsd        noopt
+> ntfs        good (odd parser)
+> ocfs2       all
+> openpromfs  noopt
+> proc        noopt
+> qnx4        noopt
+> ramfs       noopt
+> reiserfs    all
+> romfs       noopt
+> smbfs       good (odd parser) (maintainer?)
+> sysfs       noopt
+> sysv        noopt
+> udf         all
+> ufs         all
+> vfat        ->fat
+> xfs         some (odd parser)
+> 
+> mm/shmem.c                                    patch
+> drivers/oprofile/oprofilefs.c                 noopt
+> drivers/infiniband/hw/ipath/ipath_fs.c        noopt
+> drivers/misc/ibmasm/ibmasmfs.c                noopt
+> drivers/usb/core (usbfs)                      noopt
+> drivers/usb/gadget (gadgetfs)                 noopt
+> drivers/isdn/capi/capifs.c                    noopt
+> kernel/cpuset.c                               noopt
+> fs/binfmt_misc.c                              noopt
+> net/sunrpc/rpc_pipe.c                         noopt
+> arch/powerpc/platforms/cell/spufs             all
+> arch/s390/hypfs                               all
+> ipc/mqueue.c                                  noopt
+> security (securityfs)                         noopt
+> security/selinux/selinuxfs.c                  noopt
+> 
+> in -mm:
+> 
+> reiser4                some (odd parser)
+> kernel/container.c     good (odd parser)
+> -
+> To unsubscribe from this list: send the line "unsubscribe linux-fsdevel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Miklos
+--------------060701040909080305090608
+Content-Type: text/x-vcard; charset=utf-8;
+ name="chuck.lever.vcf"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="chuck.lever.vcf"
+
+begin:vcard
+fn:Chuck Lever
+n:Lever;Chuck
+org:Oracle Corporation;Corporate Architecture: Linux Projects Group
+adr:;;1015 Granger Avenue;Ann Arbor;MI;48104;USA
+title:Principal Member of Staff
+tel;work:+1 248 614 5091
+x-mozilla-html:FALSE
+version:2.1
+end:vcard
+
+
+--------------060701040909080305090608--
