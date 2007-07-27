@@ -1,151 +1,140 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: 2.6.23-rc1-mm1: reiser4 <-> lzo compile error
-Date: Fri, 27 Jul 2007 16:35:29 +0400
-Message-ID: <46A9E691.5080308@namesys.com>
-References: <20070725040304.111550f4.akpm@linux-foundation.org> <20070725182221.GG3572@stusta.de>
-Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------060305090705050407030405"
+From: Miklos Szeredi <miklos@szeredi.hu>
+Subject: request for patches: showing mount options
+Date: Fri, 27 Jul 2007 15:45:02 +0200
+Message-ID: <E1IEQ7q-0000qE-00@dorka.pomaz.szeredi.hu>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20070725182221.GG3572@stusta.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Adrian Bunk <bunk@stusta.de>, Nitin Gupta <nitingupta910@gmail.com>, Richard Purdie <rpurdie@openedhand.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
-
-This is a multi-part message in MIME format.
---------------060305090705050407030405
-Content-Type: text/plain; charset=us-ascii; format=flowed
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org, kzak@redhat.com, ericvh@gmail.com, lucho@ionkov.net, zippel@linux-m68k.org, hpa@zytor.com, raven@themaw.net, rathamahata@php4.ru, dhowells@redhat.com, sfrench@samba.org, mhalcrow@us.ibm.com, phillip@hellewell.homeip.net, hirofumi@mail.parknet.co.jp, mikulas@artax.karlin.mff.cuni.cz, wli@holomorphy.com, shaggy@austin.ibm.com, vandrove@vc.cvut.cz, trond.myklebust@fys.uio.no, aia21@cantab.net, mark.fasheh@oracle.com, kurt.hackel@oracle.com, reiserfs-devel@vger.kernel.org, bfennema@falcon.csc.calpoly.edu, dushistov@mail.ru, xfs-masters@oss.sgi.com, arnd@arndb.de, holzheu@de.ibm.com
 
-Adrian Bunk wrote:
+[please consider pruning the CC list if discussing some aspect, which
+doesn't concern all]
 
-><--  snip  -->
->
->...
->  LD      .tmp_vmlinux1
->lib/built-in.o: In function `lzo1x_1_compress':
->(.text+0x13eae): multiple definition of `lzo1x_1_compress'
->fs/built-in.o:(.text+0x117075): first defined here
->make[1]: *** [.tmp_vmlinux1] Error 1
->
-><--  snip  -->
->
->AFAIR, we once had a patch in -mm changing reiser4 to use the
->LZO code that is now in the kernel?
->
->cu
->Adrian
->
->  
->
-Sorry, guys, I am not happy with the modified LZO:
-the compressor tries to test bytes which are out of bounds.
+I've done an audit of all filesystems with regards to showing mount
+options in /proc/<pid>/mounts.  Unfortunately most of them show none
+or only a part of all accepted options (for details see list of
+filesystems at the end of the mail).
 
-The attached module testlzo.c causes an oops in the second pass:
-AFAIK, both, @m and @m_pos should be in [wrkmem, wrkmem + 64K);
-I have attached trace.txt with their actual values.
+This is currently not a big problem, because mount(8) stores the given
+options in /etc/mtab.  However we want to get rid of mtab, and this
+requires, that the option showing be fixed up.
 
-Not ready to migrate to this library.
+It would be easiest if this was done by the VFS instead of having to
+deal with it in filesystems.  However there are differences in how
+filesytems handle options during mount and remount, and it would be
+impossible to take this into account in all cases.
 
-Any ideas?
+If you are CC-ed, and responsible for one of these filesystems, please
+take a moment to fully implement the ->show_options() method.  In most
+cases it should be an easy task.
+
+If for some reason you are unable to do this, please let me know and
+I'll fix it up.
+
+Here are some guidelines for showing options.  I'll also add these to
+Documentation/filesystems/vfs.txt
+
++   If a filesystem accepts mount options, it must define show_options()
++   to show all the currently active options.  The rules are:
++
++     - options MUST be shown which are not default or their values differ
++       from the default
++
++     - options MAY be shown which are enabled by default or have their
++       default value
++
++   Options used only internally between a mount helper and the kernel
++   (such as file descriptors), or which only have an effect during the
++   mounting (such as ones controlling the creation of a journal) are exempt
++   from the above rules.
 
 Thanks,
-Edward.
+Miklos
 
-P.S.
-kernel: 2.6.23-rc1-mm1
-box: x86
+-------
+legend:
 
---------------060305090705050407030405
-Content-Type: text/x-csrc;
- name="testlzo.c"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="testlzo.c"
+  all - fs has options, but doesn't define ->show_options()
+  some - fs defines ->show_options(), but some options are not shown
+  noopt - fs does not have options
+  good - fs shows all options
+  patch - I have a patch
 
-#include <linux/module.h>
-#include <linux/kernel.h>
-#include <linux/init.h>
-#include <linux/lzo.h>
-#include <linux/vmalloc.h>
 
-MODULE_LICENSE("GPL");
-MODULE_DESCRIPTION("Compress 64K zeroed chunk");
+9p          some
+adfs        all (maintainer?)
+affs        all
+afs         all
+autofs      all
+autofs4     some
+befs        all
+bfs         noopt
+cifs        some (odd parser)
+coda        noopt
+configfs    noopt
+cramfs      noopt
+debugfs     noopt
+devpts      patch
+ecryptfs    some
+efs         noopt
+ext2        patch
+ext3        patch
+ext4        patch
+fat         some
+freevxfs    noopt
+fuse        patch
+gfs2        good
+hfs         good
+hfsplus     good
+hostfs      patch
+hpfs        all
+hppfs       noopt
+hugetlbfs   all
+isofs       all (maintainer?)
+jffs2       noopt
+jfs         some
+minix       noopt
+msdos       ->fat
+ncpfs       all (FS_BINARY_MOUNTDATA?)
+nfs         some
+nfsd        noopt
+ntfs        good (odd parser)
+ocfs2       all
+openpromfs  noopt
+proc        noopt
+qnx4        noopt
+ramfs       noopt
+reiserfs    all
+romfs       noopt
+smbfs       good (odd parser) (maintainer?)
+sysfs       noopt
+sysv        noopt
+udf         all
+ufs         all
+vfat        ->fat
+xfs         some (odd parser)
 
-#define CHUNK_SIZE 65536
-#define NR_PASSES 2
+mm/shmem.c                                    patch
+drivers/oprofile/oprofilefs.c                 noopt
+drivers/infiniband/hw/ipath/ipath_fs.c        noopt
+drivers/misc/ibmasm/ibmasmfs.c                noopt
+drivers/usb/core (usbfs)                      noopt
+drivers/usb/gadget (gadgetfs)                 noopt
+drivers/isdn/capi/capifs.c                    noopt
+kernel/cpuset.c                               noopt
+fs/binfmt_misc.c                              noopt
+net/sunrpc/rpc_pipe.c                         noopt
+arch/powerpc/platforms/cell/spufs             all
+arch/s390/hypfs                               all
+ipc/mqueue.c                                  noopt
+security (securityfs)                         noopt
+security/selinux/selinuxfs.c                  noopt
 
-static int __init lkp_init( void )
-{
-	int i;
-	int ret;
-	void * wrkmem;
-	unsigned char * src_buf;
-	unsigned char * dst_buf;
-	size_t src_len;
-	size_t dst_len;
+in -mm:
 
-	src_len = CHUNK_SIZE;
-	dst_len = lzo1x_worst_compress(src_len);
-
-	printk("<1> Testing LZO: start...\n");
-
-	wrkmem = vmalloc(LZO1X_1_MEM_COMPRESS);
-	if (!wrkmem)
-		goto enomem;
-	src_buf = vmalloc(src_len);
-	if (!src_buf) {
-		vfree(wrkmem);
-		goto enomem;
-	}
-	memset(src_buf, 0, src_len);
-
-	dst_buf = vmalloc(dst_len);
-	if (!dst_buf) {
-		vfree(wrkmem);
-		vfree(src_buf);
-		goto enomem;
-	}
-	for (i = 0; i < NR_PASSES; i++) {
-		size_t out_len;
-		ret = lzo1x_1_compress(src_buf, src_len,
-				       dst_buf, &out_len,
-				       wrkmem);
-		if (ret)
-			break;
-		printk("pass %d: compressed to %d bytes\n", i, out_len);
-	}
-	vfree(wrkmem);
-	vfree(src_buf);
-	vfree(dst_buf);
-	return ret;
- enomem:
-	printk("vmalloc failed\n");
-	return -ENOMEM;
-}
-
-static void __exit lkp_cleanup( void )
-{
-	printk("<1>Testing LZO : finish\n");
-}
-module_init(lkp_init);
-module_exit(lkp_cleanup);
-
---------------060305090705050407030405
-Content-Type: text/plain;
- name="trace.txt"
-Content-Transfer-Encoding: base64
-Content-Disposition: inline;
- filename="trace.txt"
-
-UHJvZ3JhbSByZWNlaXZlZCBzaWduYWwgU0lHU0VHViwgU2VnbWVudGF0aW9uIGZhdWx0Lgow
-eGMwMmVmZWM4IGluIF9sem8xeF8xX2RvX2NvbXByZXNzIChpbj0weGUwOGM5MDAwICIiLCBp
-bl9sZW49VmFyaWFibGUgImluX2xlbiIgaXMgbm90IGF2YWlsYWJsZS4KKSBhdCBsem8xeF9j
-b21wcmVzcy5jOjEzMAoxMzAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-aXArKzsKKGdkYikgcCBtCiQyID0gKGNvbnN0IHVuc2lnbmVkIGNoYXIgKikgMHhlMDhkOTAw
-MCA8QWRkcmVzcyAweGUwOGQ5MDAwIG91dCBvZiBib3VuZHM+CihnZGIpIHAgd3JrbWVtCiQz
-ID0gKHZvaWQgKikgMHhlMDhiODAwMAooZ2RiKSBwIG0gLSB3cmttZW0KJDQgPSAxMzUxNjgK
-KGdkYikgcCBtX3BvcwokNSA9IChjb25zdCB1bnNpZ25lZCBjaGFyICopIDB4ZTA4YzkwMDUg
-IiIKKGdkYikgcCBtX3BvcyAtIHdya21lbQokNiA9IDY5NjM3Cg==
---------------060305090705050407030405--
+reiser4                some (odd parser)
+kernel/container.c     good (odd parser)
