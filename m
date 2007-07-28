@@ -1,72 +1,79 @@
-From: Zan Lynx <zlynx@acm.org>
-Subject: Another odd sort of Reiser4 freeze
-Date: Fri, 27 Jul 2007 18:07:47 -0600
-Message-ID: <1185581267.12557.6.camel@localhost>
+From: "Xu CanHao" <xucanhao@gmail.com>
+Subject: Re: Question about memory pressure freezes
+Date: Sat, 28 Jul 2007 09:52:04 +0800
+Message-ID: <6ec7a4340707271852y870e692sd7dddbe2916e4779@mail.gmail.com>
+References: <1185488757.33588.6.camel@localhost>
+	 <6ec7a4340707261840r34a68951s26a2691778c3ca15@mail.gmail.com>
+	 <1185557881.8434.6.camel@localhost>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-gPiAaQIh2OkM+gqLUCpG"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
+        d=gmail.com; s=beta;
+        h=domainkey-signature:received:received:message-id:date:from:to:subject:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+        b=hwDyv92QDDcoP/voO/LcffOtMRiWaeWErRF59WO2ZzKxAyQVSLuZn0lhdE71JZhBthhqrY2nJyXr8EuPoY5leTOb95nPdonzReqZgiWpySTYecp9iNUPRPynytiRqvCCCmUfZ23YaKsBXrtQ8jzpVIsfYZ6zoWOVvpT8zAsNXiY=
+In-Reply-To: <1185557881.8434.6.camel@localhost>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Zan Lynx <zlynx@acm.org>, Edward Shishkin <edward@namesys.com>, reiserfs-devel@vger.kernel.org
+
+Hello!
+
+    Since the default atom_max_size is RAM/4, that means 256MB of
+maximum atom in your computer, and your HDD does 30MB/s which means
+you'll have 8s-9s "flush/system freeze" time.
+
+    IIRC, edward said the atom_max_size mount option is useless, so
+I'd suggest you modify your reiser4/init_super.c and change:
+       sbinfo->tmgr.atom_max_size = totalram_pages / 4;
+to
+       sbinfo->tmgr.atom_max_size = totalram_pages / 16;
+which means your atom would have a maximum size of 64MB and a maximum
+freeze time of only 2 seconds.
+
+Thanks!
 
 
---=-gPiAaQIh2OkM+gqLUCpG
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-I was running "top" and it stopped updating.  At the end of this message
-is top's trace out of a sysrq-t.
-
-I don't understand why a file *read* resulted in waiting for a write to
-complete. At a guess, the read attached itself to a transaction that was
-in the process of write-out?
-
-Would it be possible for a read to return the data without waiting for
-the writes to actually reach disk?
-
-top           D ffff810003dfd580     0 12032  12013
- ffff810013c2d988 0000000000000092 0000000000000292 ffffffff803c2b09
- ffff81001044b7c8 ffffffff80918160 0000000000000002 ffffffff807ff700
- ffffffff807ff700 ffffffff807ff700 ffffffff807ff700 ffffffff807ff700
-Call Trace:
- [<ffffffff803c2b09>] cfq_set_request+0xe9/0x3d0
- [<ffffffff80258f36>] getnstimeofday+0x36/0xb0
- [<ffffffff8053433d>] io_schedule+0x5d/0xa0
- [<ffffffff803b84b9>] get_request_wait+0xe9/0x190
- [<ffffffff80254060>] autoremove_wake_function+0x0/0x30
- [<ffffffff803b9a90>] __make_request+0x90/0x660
- [<ffffffff802a0000>] add_to_swap+0x70/0x90
- [<ffffffff803b68f3>] generic_make_request+0x163/0x320
- [<ffffffff8025d847>] mark_held_locks+0x57/0xa0
- [<ffffffff80291cc5>] inc_zone_page_state+0x65/0x80
- [<ffffffff803b94cc>] submit_bio+0x8c/0x130
- [<ffffffff8033d08d>] write_jnodes_to_disk_extent+0x40d/0x440
- [<ffffffff8033d175>] write_jnode_list+0xb5/0xf0
- [<ffffffff8033e3d3>] reiser4_write_logs+0x733/0xda0
- [<ffffffff803378bd>] reiser4_txn_end+0x3ad/0x570
- [<ffffffff8025da01>] trace_hardirqs_on+0xc1/0x160
- [<ffffffff80337a89>] reiser4_txn_restart+0x9/0x20
- [<ffffffff803509b5>] read_unix_file+0x345/0x4c0
- [<ffffffff8053717f>] _spin_unlock_irq+0x2f/0x50
- [<ffffffff802b0085>] vfs_read+0xc5/0x180
- [<ffffffff802b0583>] sys_read+0x53/0x90
- [<ffffffff8020c1de>] system_call+0x7e/0x83
-
-
---=20
-Zan Lynx <zlynx@acm.org>
-
---=-gPiAaQIh2OkM+gqLUCpG
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.5 (GNU/Linux)
-
-iD8DBQBGqojTG8fHaOLTWwgRAv+AAJ0S806YtCDSmlQk6tpEHdCOqTNflQCeN9b8
-saALqg/u3W7eL+vS7ezjuas=
-=eK8x
------END PGP SIGNATURE-----
-
---=-gPiAaQIh2OkM+gqLUCpG--
-
+2007/7/28, Zan Lynx <zlynx@acm.org>:
+> Edward answered my question mostly.
+>
+> But, I have 1 GB RAM and a Hitachi 7,200 RPM laptop drive.  It does
+> about 30 MB/s.
+>
+> On Fri, 2007-07-27 at 09:40 +0800, Xu CanHao wrote:
+> > Hello!
+> >
+> >    How much is your RAM?
+> >    What is the result of your HDD's hdparm -t?
+> >
+> > Thanks!
+> >
+> > 2007/7/27, Zan Lynx <zlynx@acm.org>:
+> > > I have often experienced nearly full system freezes for up to five
+> > > seconds at a time while memory is being flushed to disk.
+> > >
+> > > I'm not sure if this is a general Linux problem or a Reiser4 problem, so
+> > > I thought I'd ask.
+> > >
+> > > A sysrq-T during the freeze shows many processes trying to acquire a
+> > > memory page, and Reiser4 flushing atoms and doing sync things.
+> > >
+> > > My working theory right now is that Reiser4 spends time flushing a lot
+> > > of data at once before returning.
+> > >
+> > > If I am right about that, would it not make more sense to flush a few
+> > > pages, return to the kernel, flush a few more pages, return to the
+> > > kernel, etc, etc?  That way programs could get a bit of RAM and make
+> > > some progress.
+> > >
+> > > Of course I could be completely off about what's going on.
+> > > --
+> > > Zan Lynx <zlynx@acm.org>
+> > >
+> > >
+> --
+> Zan Lynx <zlynx@acm.org>
+>
+>
