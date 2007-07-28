@@ -1,79 +1,59 @@
-From: "Xu CanHao" <xucanhao@gmail.com>
-Subject: Re: Question about memory pressure freezes
-Date: Sat, 28 Jul 2007 09:52:04 +0800
-Message-ID: <6ec7a4340707271852y870e692sd7dddbe2916e4779@mail.gmail.com>
-References: <1185488757.33588.6.camel@localhost>
-	 <6ec7a4340707261840r34a68951s26a2691778c3ca15@mail.gmail.com>
-	 <1185557881.8434.6.camel@localhost>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+From: Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: request for patches: showing mount options
+Date: Sat, 28 Jul 2007 07:37:09 +0200
+Message-ID: <E1IEezF-0002g6-00@dorka.pomaz.szeredi.hu>
+References: <E1IEQ7q-0000qE-00@dorka.pomaz.szeredi.hu> <46AA4AC5.2050200@oracle.com> <E1IEW21-0001kL-00@dorka.pomaz.szeredi.hu> <46AA51CA.7030105@oracle.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
-        d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
-        b=hwDyv92QDDcoP/voO/LcffOtMRiWaeWErRF59WO2ZzKxAyQVSLuZn0lhdE71JZhBthhqrY2nJyXr8EuPoY5leTOb95nPdonzReqZgiWpySTYecp9iNUPRPynytiRqvCCCmUfZ23YaKsBXrtQ8jzpVIsfYZ6zoWOVvpT8zAsNXiY=
-In-Reply-To: <1185557881.8434.6.camel@localhost>
-Content-Disposition: inline
+In-reply-to: <46AA51CA.7030105@oracle.com> (message from Chuck Lever on Fri,
+	27 Jul 2007 16:12:58 -0400)
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Zan Lynx <zlynx@acm.org>, Edward Shishkin <edward@namesys.com>, reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: chuck.lever@oracle.com
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, kzak@redhat.com, ericvh@gmail.com, lucho@ionkov.net, zippel@linux-m68k.org, hpa@zytor.com, raven@themaw.net, rathamahata@php4.ru, dhowells@redhat.com, sfrench@samba.org, mhalcrow@us.ibm.com, phillip@hellewell.homeip.net, hirofumi@mail.parknet.co.jp, mikulas@artax.karlin.mff.cuni.cz, wli@holomorphy.com, shaggy@austin.ibm.com, vandrove@vc.cvut.cz, trond.myklebust@fys.uio.no, aia21@cantab.net, mark.fasheh@oracle.com, kurt.hackel@oracle.com, reiserfs-devel@vger.kernel.org, bfennema@falcon.csc.calpoly.edu, dushistov@mail.ru, xfs-masters@oss.sgi.com, arnd@arndb.de, holzheu@de.ibm.com
 
-Hello!
+> >> Some mount options are never passed to the kernel, and thus can't appear 
+> >> in /proc/mounts.  Examples include user, users, and _netdev for NFS.
+> > 
+> > These options control *who* may mount and *when* to mount.  They are
+> > not a property of the mount itself and are not added to /etc/mtab.
+> > 
+> > There's a "user=ID" option that is added to /etc/mtab in case of user
+> > mounts.  This identifies the owner of the mount, so that it can be
+> > unmounted by that user.  There are patches in -mm that enable the
+> > kernel to store this info.
+> > 
+> > Do you have other examples in mind?
+> 
+> [no]quota comes to mind;
 
-    Since the default atom_max_size is RAM/4, that means 256MB of
-maximum atom in your computer, and your HDD does 30MB/s which means
-you'll have 8s-9s "flush/system freeze" time.
+These are passed to the kernel.
 
-    IIRC, edward said the atom_max_size mount option is useless, so
-I'd suggest you modify your reiser4/init_super.c and change:
-       sbinfo->tmgr.atom_max_size = totalram_pages / 4;
-to
-       sbinfo->tmgr.atom_max_size = totalram_pages / 16;
-which means your atom would have a maximum size of 64MB and a maximum
-freeze time of only 2 seconds.
+> also auto,
 
-Thanks!
+This controls when a filesystem is mounted, same category as '_netdev'
 
+> [no]owner, [no]group,
 
-2007/7/28, Zan Lynx <zlynx@acm.org>:
-> Edward answered my question mostly.
->
-> But, I have 1 GB RAM and a Hitachi 7,200 RPM laptop drive.  It does
-> about 30 MB/s.
->
-> On Fri, 2007-07-27 at 09:40 +0800, Xu CanHao wrote:
-> > Hello!
-> >
-> >    How much is your RAM?
-> >    What is the result of your HDD's hdparm -t?
-> >
-> > Thanks!
-> >
-> > 2007/7/27, Zan Lynx <zlynx@acm.org>:
-> > > I have often experienced nearly full system freezes for up to five
-> > > seconds at a time while memory is being flushed to disk.
-> > >
-> > > I'm not sure if this is a general Linux problem or a Reiser4 problem, so
-> > > I thought I'd ask.
-> > >
-> > > A sysrq-T during the freeze shows many processes trying to acquire a
-> > > memory page, and Reiser4 flushing atoms and doing sync things.
-> > >
-> > > My working theory right now is that Reiser4 spends time flushing a lot
-> > > of data at once before returning.
-> > >
-> > > If I am right about that, would it not make more sense to flush a few
-> > > pages, return to the kernel, flush a few more pages, return to the
-> > > kernel, etc, etc?  That way programs could get a bit of RAM and make
-> > > some progress.
-> > >
-> > > Of course I could be completely off about what's going on.
-> > > --
-> > > Zan Lynx <zlynx@acm.org>
-> > >
-> > >
-> --
-> Zan Lynx <zlynx@acm.org>
->
->
+These control who can mount the filesystem, same category as 'user' and 'users'
+
+> quiet/loud,
+
+I can't find these in the manual as universal options.  Quiet is
+defined for a couple of filesystems but with different meaning for
+each of them.
+
+> Aside: It's a confusing artifact of the mount CLI that these options 
+> control who/when but are passed to the mount command in the same way the 
+> other options are.
+
+Yes, slightly.  Actually most of these options are just ignored on the
+command line.  They only have an affect in /etc/fstab.
+
+The right behavior of mount(8) would probably be to error out on these
+options, since they make no sense on the command line.  But this is
+not a kernel issue.
+
+Miklos
