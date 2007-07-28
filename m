@@ -1,59 +1,63 @@
-From: Miklos Szeredi <miklos@szeredi.hu>
+From: Ian Kent <raven@themaw.net>
 Subject: Re: request for patches: showing mount options
-Date: Sat, 28 Jul 2007 07:37:09 +0200
-Message-ID: <E1IEezF-0002g6-00@dorka.pomaz.szeredi.hu>
-References: <E1IEQ7q-0000qE-00@dorka.pomaz.szeredi.hu> <46AA4AC5.2050200@oracle.com> <E1IEW21-0001kL-00@dorka.pomaz.szeredi.hu> <46AA51CA.7030105@oracle.com>
+Date: Sat, 28 Jul 2007 14:45:59 +0800
+Message-ID: <1185605159.8326.5.camel@raven.themaw.net>
+References: <E1IEQ7q-0000qE-00@dorka.pomaz.szeredi.hu>
+	 <1185550256.3203.77.camel@raven.themaw.net>
+	 <E1IERvH-00016M-00@dorka.pomaz.szeredi.hu>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-reply-to: <46AA51CA.7030105@oracle.com> (message from Chuck Lever on Fri,
-	27 Jul 2007 16:12:58 -0400)
+In-Reply-To: <E1IERvH-00016M-00@dorka.pomaz.szeredi.hu>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: chuck.lever@oracle.com
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, kzak@redhat.com, ericvh@gmail.com, lucho@ionkov.net, zippel@linux-m68k.org, hpa@zytor.com, raven@themaw.net, rathamahata@php4.ru, dhowells@redhat.com, sfrench@samba.org, mhalcrow@us.ibm.com, phillip@hellewell.homeip.net, hirofumi@mail.parknet.co.jp, mikulas@artax.karlin.mff.cuni.cz, wli@holomorphy.com, shaggy@austin.ibm.com, vandrove@vc.cvut.cz, trond.myklebust@fys.uio.no, aia21@cantab.net, mark.fasheh@oracle.com, kurt.hackel@oracle.com, reiserfs-devel@vger.kernel.org, bfennema@falcon.csc.calpoly.edu, dushistov@mail.ru, xfs-masters@oss.sgi.com, arnd@arndb.de, holzheu@de.ibm.com
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, kzak@redhat.com, ericvh@gmail.com, lucho@ionkov.net, zippel@linux-m68k.org, hpa@zytor.com, rathamahata@php4.ru, dhowells@redhat.com, sfrench@samba.org, mhalcrow@us.ibm.com, phillip@hellewell.homeip.net, hirofumi@mail.parknet.co.jp, mikulas@artax.karlin.mff.cuni.cz, wli@holomorphy.com, shaggy@austin.ibm.com, vandrove@vc.cvut.cz, trond.myklebust@fys.uio.no, aia21@cantab.net, mark.fasheh@oracle.com, kurt.hackel@oracle.com, reiserfs-devel@vger.kernel.org, bfennema@falcon.csc.calpoly.edu, dushistov@mail.ru, xfs-masters@oss.sgi.com, arnd@arndb.de, holzheu@de.ibm.com
 
-> >> Some mount options are never passed to the kernel, and thus can't appear 
-> >> in /proc/mounts.  Examples include user, users, and _netdev for NFS.
-> > 
-> > These options control *who* may mount and *when* to mount.  They are
-> > not a property of the mount itself and are not added to /etc/mtab.
-> > 
-> > There's a "user=ID" option that is added to /etc/mtab in case of user
-> > mounts.  This identifies the owner of the mount, so that it can be
-> > unmounted by that user.  There are patches in -mm that enable the
-> > kernel to store this info.
-> > 
-> > Do you have other examples in mind?
+On Fri, 2007-07-27 at 17:40 +0200, Miklos Szeredi wrote:
+> >   all - fs has options, but doesn't define ->show_options()
+> >   some - fs defines ->show_options(), but some options are not shown
+> >   noopt - fs does not have options
+> >   good - fs shows all options
+> >   patch - I have a patch
 > 
-> [no]quota comes to mind;
+> [...]
+> 
+> > > autofs      all
+> > 
+> > I'm not sure I understand this.
+> > How does autofs show it's options without a ->show_options method?
+> 
+> It doesn't.  The "all" means, all of them need to be added to
+> ->show_options(), not that all are shown.
 
-These are passed to the kernel.
+Oh .. sorry, I wasn't paying enough attention.
 
-> also auto,
+But now might be a good time to propose the removal of autofs and rename
+autofs4 to autofs. I would need to provide some way to map autofs4
+module load requests to autofs for backward compatibility but haven't
+thought about that yet.
 
-This controls when a filesystem is mounted, same category as '_netdev'
+> 
+> I can see now that this is slightly confusing, sorry.
+> 
+> So the ones that need attention are "all" and "some".  The others are
+> fine in theory.  Of course I may have missed something.
+> 
+> > > autofs4     some
+> > 
+> > OK, uid and gid aren't shown.
+> > That should be straight forward to fix.
+> > What's your time frame for this?
+> 
+> ASAP ;)
+> 
+> 2.6.24 would be a nice, but it won't be easy...
 
-> [no]owner, [no]group,
+The autofs4 (and, if needed autofs) should be straight forward.
+I'll do these.
 
-These control who can mount the filesystem, same category as 'user' and 'users'
+Ian
 
-> quiet/loud,
 
-I can't find these in the manual as universal options.  Quiet is
-defined for a couple of filesystems but with different meaning for
-each of them.
-
-> Aside: It's a confusing artifact of the mount CLI that these options 
-> control who/when but are passed to the mount command in the same way the 
-> other options are.
-
-Yes, slightly.  Actually most of these options are just ignored on the
-command line.  They only have an affect in /etc/fstab.
-
-The right behavior of mount(8) would probably be to error out on these
-options, since they make no sense on the command line.  But this is
-not a kernel issue.
-
-Miklos
