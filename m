@@ -1,130 +1,197 @@
-From: "Xu CanHao" <xucanhao@gmail.com>
-Subject: Re: Question about memory pressure freezes
-Date: Sun, 29 Jul 2007 11:11:16 +0800
-Message-ID: <6ec7a4340707282011t781da198w658dc7fe2a93c330@mail.gmail.com>
-References: <1185488757.33588.6.camel@localhost>
-	 <6ec7a4340707261840r34a68951s26a2691778c3ca15@mail.gmail.com>
-	 <1185557881.8434.6.camel@localhost>
-	 <6ec7a4340707271852y870e692sd7dddbe2916e4779@mail.gmail.com>
-	 <46ABB6F1.6060304@namesys.com>
+From: Adrian Bunk <bunk@stusta.de>
+Subject: [RFC: 2.6 patch] make the *FS_SECURITY options no
+	longer user	visible
+Date: Sun, 29 Jul 2007 17:02:09 +0200
+Message-ID: <20070729150209.GS16817@stusta.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
-        d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
-        b=iSii6ulElAp0+fB678scw7nTuoJEbLXkIngHe4Ij93wZ7yRPbtZWqwgubgWSyfOjZeqx0LGBM4mArJyjxFF4ngw1jzogkH84nbtE8K+ziSZ+NjX/hoLU7MmIUKqwUPw4FNAF5jZCRuFtZHBY3MS43M9EoAmAlTU8z8IYG3YyL+U=
-In-Reply-To: <46ABB6F1.6060304@namesys.com>
-Content-Disposition: inline
-Sender: reiserfs-devel-owner@vger.kernel.org
-List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward@namesys.com>, Zan Lynx <zlynx@acm.org>, reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <jfs-discussion-bounces@lists.sourceforge.net>
+Content-Disposition: inline
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/jfs-discussion>, 
+	<mailto:jfs-discussion-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=jfs-discussion>
+List-Post: <mailto:jfs-discussion@lists.sourceforge.net>
+List-Help: <mailto:jfs-discussion-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/jfs-discussion>, 
+	<mailto:jfs-discussion-request@lists.sourceforge.net?subject=subscribe>
+Sender: jfs-discussion-bounces@lists.sourceforge.net
+Errors-To: jfs-discussion-bounces@lists.sourceforge.net
+To: chrisw@sous-sol.org
+Cc: jfs-discussion@lists.sourceforge.net, jmorris@namei.org, reiserfs-devel@vger.kernel.org, xfs-masters@oss.sgi.com, linux-security-module@vger.kernel.org, jffs-dev@axis.com, eparis@parisplace.org, linux-ext4@vger.kernel.org, sds@tycho.nsa.gov
 
-2007/7/29, Edward Shishkin <edward@namesys.com>:
-> Xu CanHao wrote:
->
-> >Hello!
-> >
-> >    Since the default atom_max_size is RAM/4, that means 256MB of
-> >maximum atom in your computer, and your HDD does 30MB/s which means
-> >you'll have 8s-9s "flush/system freeze" time.
-> >
-> >    IIRC, edward said the atom_max_size mount option is useless,
-> >
->
-> It is  useless for remount, in other cases it works fine
-> (for root file system it makes sense to edit fstab).
-> So you can pass the option "tmgr.atom_max_size=N",
-> where N  is atom size in blocks
+Please correct me if any of the following assumptions is wrong:
+- SELinux is currently the only user of filesystem security labels
+  shipped with the Linux kernel
+- if a user has SELinux enabled he wants his filesystems to support
+  security labels
 
-IIRC months ago I asked you about something that when I pass the
-option "tmgr.atom_max_size=N" to /etc/fstab(root partition) and
-/proc/mounts still shows the original RAM/4 value, you said it's
-mysteries and a long-term object.
+Based on these assumption, it doesn't make sense to have the
+*FS_SECURITY user visible since we can perfectly determine automatically 
+when turning them on makes sense.
 
-But the option worked with newly mounted partition such as "#mount
-.... -o tmgr.atom_max_size=N"
+Signed-off-by: Adrian Bunk <bunk@stusta.de>
 
->
-> > so
-> >I'd suggest you modify your reiser4/init_super.c and change:
-> >       sbinfo->tmgr.atom_max_size = totalram_pages / 4;
-> >to
-> >       sbinfo->tmgr.atom_max_size = totalram_pages / 16;
-> >which means your atom would have a maximum size of 64MB and a maximum
-> >freeze time of only 2 seconds.
-> >
-> >
->
-> Such nice linear dependency disappears with some workload,
-> so freeze time is not comforting also for small atoms..
+---
 
-Then maybe a value of RAM/128 or 256 or 512... small enough to make
-the freeze time short enough...  ;)
+ fs/Kconfig     |   82 +++++++++++++------------------------------------
+ fs/xfs/Kconfig |   13 +------
+ 2 files changed, 25 insertions(+), 70 deletions(-)
 
->
-> >Thanks!
-> >
-> >
-> >2007/7/28, Zan Lynx <zlynx@acm.org>:
-> >
-> >
-> >>Edward answered my question mostly.
-> >>
-> >>But, I have 1 GB RAM and a Hitachi 7,200 RPM laptop drive.  It does
-> >>about 30 MB/s.
-> >>
-> >>On Fri, 2007-07-27 at 09:40 +0800, Xu CanHao wrote:
-> >>
-> >>
-> >>>Hello!
-> >>>
-> >>>   How much is your RAM?
-> >>>   What is the result of your HDD's hdparm -t?
-> >>>
-> >>>Thanks!
-> >>>
-> >>>2007/7/27, Zan Lynx <zlynx@acm.org>:
-> >>>
-> >>>
-> >>>>I have often experienced nearly full system freezes for up to five
-> >>>>seconds at a time while memory is being flushed to disk.
-> >>>>
-> >>>>I'm not sure if this is a general Linux problem or a Reiser4 problem, so
-> >>>>I thought I'd ask.
-> >>>>
-> >>>>A sysrq-T during the freeze shows many processes trying to acquire a
-> >>>>memory page, and Reiser4 flushing atoms and doing sync things.
-> >>>>
-> >>>>My working theory right now is that Reiser4 spends time flushing a lot
-> >>>>of data at once before returning.
-> >>>>
-> >>>>If I am right about that, would it not make more sense to flush a few
-> >>>>pages, return to the kernel, flush a few more pages, return to the
-> >>>>kernel, etc, etc?  That way programs could get a bit of RAM and make
-> >>>>some progress.
-> >>>>
-> >>>>Of course I could be completely off about what's going on.
-> >>>>--
-> >>>>Zan Lynx <zlynx@acm.org>
-> >>>>
-> >>>>
-> >>>>
-> >>>>
-> >>--
-> >>Zan Lynx <zlynx@acm.org>
-> >>
-> >>
-> >>
-> >>
-> >-
-> >To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> >the body of a message to majordomo@vger.kernel.org
-> >More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >
-> >
-> >
-> >
->
->
+--- linux-2.6.23-rc1-mm1/fs/Kconfig.old	2007-07-28 23:12:19.000000000 +0200
++++ linux-2.6.23-rc1-mm1/fs/Kconfig	2007-07-28 23:17:33.000000000 +0200
+@@ -40,16 +40,10 @@ config EXT2_FS_POSIX_ACL
+ 	  If you don't know what Access Control Lists are, say N
+ 
+ config EXT2_FS_SECURITY
+-	bool "Ext2 Security Labels"
+-	depends on EXT2_FS_XATTR
+-	help
+-	  Security labels support alternative access control models
+-	  implemented by security modules like SELinux.  This option
+-	  enables an extended attribute handler for file security
+-	  labels in the ext2 filesystem.
+-
+-	  If you are not using a security module that requires using
+-	  extended attributes for file security labels, say N.
++	bool
++	depends on EXT2_FS && SECURITY_SELINUX
++	select EXT2_FS_XATTR
++	default y
+ 
+ config EXT2_FS_XIP
+ 	bool "Ext2 execute in place support"
+@@ -125,16 +119,10 @@ config EXT3_FS_POSIX_ACL
+ 	  If you don't know what Access Control Lists are, say N
+ 
+ config EXT3_FS_SECURITY
+-	bool "Ext3 Security Labels"
+-	depends on EXT3_FS_XATTR
+-	help
+-	  Security labels support alternative access control models
+-	  implemented by security modules like SELinux.  This option
+-	  enables an extended attribute handler for file security
+-	  labels in the ext3 filesystem.
+-
+-	  If you are not using a security module that requires using
+-	  extended attributes for file security labels, say N.
++	bool
++	depends on EXT3_FS && SECURITY_SELINUX
++	select EXT3_FS_XATTR
++	default y
+ 
+ config EXT4DEV_FS
+ 	tristate "Ext4dev/ext4 extended fs support development (EXPERIMENTAL)"
+@@ -190,16 +178,10 @@ config EXT4DEV_FS_POSIX_ACL
+ 	  If you don't know what Access Control Lists are, say N
+ 
+ config EXT4DEV_FS_SECURITY
+-	bool "Ext4dev Security Labels"
+-	depends on EXT4DEV_FS_XATTR
+-	help
+-	  Security labels support alternative access control models
+-	  implemented by security modules like SELinux.  This option
+-	  enables an extended attribute handler for file security
+-	  labels in the ext4dev/ext4 filesystem.
+-
+-	  If you are not using a security module that requires using
+-	  extended attributes for file security labels, say N.
++	bool
++	depends on EXT4DEV_FS && SECURITY_SELINUX
++	select EXT4DEV_FS_XATTR
++	default y
+ 
+ config JBD
+ 	tristate
+@@ -349,16 +331,10 @@ config REISERFS_FS_POSIX_ACL
+ 	  If you don't know what Access Control Lists are, say N
+ 
+ config REISERFS_FS_SECURITY
+-	bool "ReiserFS Security Labels"
+-	depends on REISERFS_FS_XATTR
+-	help
+-	  Security labels support alternative access control models
+-	  implemented by security modules like SELinux.  This option
+-	  enables an extended attribute handler for file security
+-	  labels in the ReiserFS filesystem.
+-
+-	  If you are not using a security module that requires using
+-	  extended attributes for file security labels, say N.
++	bool
++	depends on REISERFS_FS && SECURITY_SELINUX
++	select REISERFS_FS_XATTR
++	default y
+ 
+ config JFS_FS
+ 	tristate "JFS filesystem support"
+@@ -383,16 +359,9 @@ config JFS_POSIX_ACL
+ 	  If you don't know what Access Control Lists are, say N
+ 
+ config JFS_SECURITY
+-	bool "JFS Security Labels"
+-	depends on JFS_FS
+-	help
+-	  Security labels support alternative access control models
+-	  implemented by security modules like SELinux.  This option
+-	  enables an extended attribute handler for file security
+-	  labels in the jfs filesystem.
+-
+-	  If you are not using a security module that requires using
+-	  extended attributes for file security labels, say N.
++	bool
++	depends on JFS_FS && SECURITY_SELINUX
++	default y
+ 
+ config JFS_DEBUG
+ 	bool "JFS debugging"
+@@ -1300,17 +1269,10 @@ config JFFS2_FS_POSIX_ACL
+ 	  If you don't know what Access Control Lists are, say N
+ 
+ config JFFS2_FS_SECURITY
+-	bool "JFFS2 Security Labels"
+-	depends on JFFS2_FS_XATTR
++	bool
++	depends on JFFS2_FS && SECURITY_SELINUX
++	select JFFS2_FS_XATTR
+ 	default y
+-	help
+-	  Security labels support alternative access control models
+-	  implemented by security modules like SELinux.  This option
+-	  enables an extended attribute handler for file security
+-	  labels in the jffs2 filesystem.
+-
+-	  If you are not using a security module that requires using
+-	  extended attributes for file security labels, say N.
+ 
+ config JFFS2_COMPRESSION_OPTIONS
+ 	bool "Advanced compression options for JFFS2"
+--- linux-2.6.23-rc1-mm1/fs/xfs/Kconfig.old	2007-07-28 23:19:13.000000000 +0200
++++ linux-2.6.23-rc1-mm1/fs/xfs/Kconfig	2007-07-28 23:19:49.000000000 +0200
+@@ -36,16 +36,9 @@ config XFS_QUOTA
+ 	  they are completely independent subsystems.
+ 
+ config XFS_SECURITY
+-	bool "XFS Security Label support"
+-	depends on XFS_FS
+-	help
+-	  Security labels support alternative access control models
+-	  implemented by security modules like SELinux.  This option
+-	  enables an extended attribute namespace for inode security
+-	  labels in the XFS filesystem.
+-
+-	  If you are not using a security module that requires using
+-	  extended attributes for inode security labels, say N.
++	bool
++	depends on XFS_FS && SECURITY_SELINUX
++	default y
+ 
+ config XFS_POSIX_ACL
+ 	bool "XFS POSIX ACL support"
+
+
+-------------------------------------------------------------------------
+This SF.net email is sponsored by: Splunk Inc.
+Still grepping through log files to find problems?  Stop.
+Now Search log events and configuration files using AJAX and a browser.
+Download your FREE copy of Splunk now >>  http://get.splunk.com/
