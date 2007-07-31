@@ -1,73 +1,43 @@
-From: Chuck Lever <chuck.lever@oracle.com>
-Subject: Re: request for patches: showing mount options
-Date: Mon, 30 Jul 2007 11:20:34 -0400
-Message-ID: <46AE01C2.3000008@oracle.com>
-References: <E1IEQ7q-0000qE-00@dorka.pomaz.szeredi.hu> <46AA4AC5.2050200@oracle.com> <E1IEW21-0001kL-00@dorka.pomaz.szeredi.hu> <46AA51CA.7030105@oracle.com> <E1IEezF-0002g6-00@dorka.pomaz.szeredi.hu>
-Reply-To: chuck.lever@oracle.com
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Subject: [PATCH 12] fs/reiser4/plugin/file/cryptcompress.c: kmalloc + memset conversion to kzalloc
+Date: Tue, 31 Jul 2007 19:16:13 +0200
+Message-ID: <200707311916.13506.m.kozlowski@tuxland.pl>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------030900090601050100040108"
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <E1IEezF-0002g6-00@dorka.pomaz.szeredi.hu>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
+Content-Disposition: inline
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, kzak@redhat.com, ericvh@gmail.com, lucho@ionkov.net, zippel@linux-m68k.org, hpa@zytor.com, raven@themaw.net, rathamahata@php4.ru, dhowells@redhat.com, sfrench@samba.org, mhalcrow@us.ibm.com, phillip@hellewell.homeip.net, hirofumi@mail.parknet.co.jp, mikulas@artax.karlin.mff.cuni.cz, wli@holomorphy.com, shaggy@austin.ibm.com, vandrove@vc.cvut.cz, trond.myklebust@fys.uio.no, aia21@cantab.net, mark.fasheh@oracle.com, kurt.hackel@oracle.com, reiserfs-devel@vger.kernel.org, bfennema@falcon.csc.calpoly.edu, dushistov@mail.ru, xfs-masters@oss.sgi.com, arnd@arndb.de, holzheu@de.ibm.com
+Content-Type: text/plain; charset="us-ascii"
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, reiserfs-dev@namesys.com, reiserfs-devel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------030900090601050100040108
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
+ fs/reiser4/plugin/file/cryptcompress.c | 101386 -> 101352 (-34 bytes)
+ fs/reiser4/plugin/file/cryptcompress.o | 456784 -> 456644 (-140 bytes)
 
+ fs/reiser4/plugin/file/cryptcompress.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Miklos Szeredi wrote:
->>>> Some mount options are never passed to the kernel, and thus can't appear 
->>>> in /proc/mounts.  Examples include user, users, and _netdev for NFS.
->>> These options control *who* may mount and *when* to mount.  They are
->>> not a property of the mount itself and are not added to /etc/mtab.
->>>
->>> There's a "user=ID" option that is added to /etc/mtab in case of user
->>> mounts.  This identifies the owner of the mount, so that it can be
->>> unmounted by that user.  There are patches in -mm that enable the
->>> kernel to store this info.
->>>
->>> Do you have other examples in mind?
+--- linux-2.6.23-rc1-mm1-a/fs/reiser4/plugin/file/cryptcompress.c	2007-07-26 13:07:46.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/fs/reiser4/plugin/file/cryptcompress.c	2007-07-31 15:00:24.000000000 +0200
+@@ -74,13 +74,13 @@ static void set_inode_crypto_info (struc
+ /* allocate a cipher key info */
+ struct reiser4_crypto_info * reiser4_alloc_crypto_info (struct inode * inode)
+ {
+-	struct reiser4_crypto_info * info;
++	struct reiser4_crypto_info *info;
+ 	int fipsize;
 
-There are a few more cases for NFS mount.
-
-After a successful mount, the NFS mount command tucks some options into 
-/etc/mtab that reflect which mountd was used for the mount, and what 
-protocol version and port was used for the mount request.  Those options 
-are not passed to the kernel, and do not appear in /proc/mounts today. 
-See nfs(5)'s discussion of the mountport, mounthost, mountprog, and 
-mountvers options.
-
-However, the trend for NFS is to push mount option parsing into the 
-kernel.  Thus all options will be passed to the kernel, and at that 
-point it should be able to reflect the mount* options in /proc/mounts. 
-But it doesn't do that quite yet.
-
-I'm wondering if there are other such cases in other file systems.
-
---------------030900090601050100040108
-Content-Type: text/x-vcard; charset=utf-8;
- name="chuck.lever.vcf"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="chuck.lever.vcf"
-
-begin:vcard
-fn:Chuck Lever
-n:Lever;Chuck
-org:Oracle Corporation;Corporate Architecture: Linux Projects Group
-adr:;;1015 Granger Avenue;Ann Arbor;MI;48104;USA
-title:Principal Member of Staff
-tel;work:+1 248 614 5091
-x-mozilla-html:FALSE
-url:http://oss.oracle.com/~cel
-version:2.1
-end:vcard
-
-
---------------030900090601050100040108--
+-	info = kmalloc(sizeof(*info), reiser4_ctx_gfp_mask_get());
++	info = kzalloc(sizeof(*info), reiser4_ctx_gfp_mask_get());
+ 	if (!info)
+ 		return ERR_PTR(-ENOMEM);
+-	memset(info, 0, sizeof (*info));
++
+ 	fipsize = inode_digest_plugin(inode)->fipsize;
+ 	info->keyid = kmalloc(fipsize, reiser4_ctx_gfp_mask_get());
+ 	if (!info->keyid) {
