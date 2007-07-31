@@ -1,7 +1,7 @@
 From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Subject: [PATCH 33] fs/reiser4/init_super.c: kmalloc + memset conversion to kzalloc
-Date: Tue, 31 Jul 2007 20:04:29 +0200
-Message-ID: <200707312004.29404.m.kozlowski@tuxland.pl>
+Subject: [PATCH 35] fs/reiser4/plugin/inode_ops_rename.c: kmalloc + memset conversion to kzalloc
+Date: Tue, 31 Jul 2007 20:06:54 +0200
+Message-ID: <200707312006.54765.m.kozlowski@tuxland.pl>
 References: <200707311845.48807.m.kozlowski@tuxland.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -16,27 +16,30 @@ Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
 
 Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
- fs/reiser4/init_super.c | 19283 -> 19246 (-37 bytes)
- fs/reiser4/init_super.o | 155348 -> 155152 (-196 bytes)
+ fs/reiser4/plugin/inode_ops_rename.c | 28474 -> 28344 (-130 bytes)
+ fs/reiser4/plugin/inode_ops_rename.o | 142600 -> 142476 (-124 bytes)
 
- fs/reiser4/init_super.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/reiser4/plugin/inode_ops_rename.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- linux-2.6.23-rc1-mm1-a/fs/reiser4/init_super.c	2007-07-26 13:07:46.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/fs/reiser4/init_super.c	2007-07-30 00:00:32.000000000 +0200
-@@ -17,14 +17,13 @@ int reiser4_init_fs_info(struct super_bl
- {
- 	reiser4_super_info_data *sbinfo;
+--- linux-2.6.23-rc1-mm1-a/fs/reiser4/plugin/inode_ops_rename.c	2007-07-26 13:07:46.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/fs/reiser4/plugin/inode_ops_rename.c	2007-07-31 15:02:58.000000000 +0200
+@@ -392,16 +392,14 @@ int reiser4_rename_common(struct inode *
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
 
--	sbinfo = kmalloc(sizeof(reiser4_super_info_data),
-+	sbinfo = kzalloc(sizeof(reiser4_super_info_data),
- 			 reiser4_ctx_gfp_mask_get());
- 	if (!sbinfo)
+-	old_entry = kmalloc(3 * sizeof(*old_entry) + 2 * sizeof(*new_lh) +
++	old_entry = kzalloc(3 * sizeof(*old_entry) + 2 * sizeof(*new_lh) +
+ 			    sizeof(*dotdot_name) + sizeof(*dataonstack),
+ 			    reiser4_ctx_gfp_mask_get());
+-	if (old_entry == NULL) {
++	if (!old_entry) {
+ 		context_set_commit_async(ctx);
+ 		reiser4_exit_context(ctx);
  		return RETERR(-ENOMEM);
+ 	}
+-	memset(old_entry, 0, 3 * sizeof(*old_entry) + 2 * sizeof(*new_lh) +
+-	       sizeof(*dotdot_name) + sizeof(*dataonstack));
 
- 	super->s_fs_info = sbinfo;
- 	super->s_op = NULL;
--	memset(sbinfo, 0, sizeof(*sbinfo));
-
- 	ON_DEBUG(INIT_LIST_HEAD(&sbinfo->all_jnodes));
- 	ON_DEBUG(spin_lock_init(&sbinfo->all_guard));
+ 	new_entry = old_entry + 1;
+ 	dotdot_entry = old_entry + 2;
