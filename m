@@ -1,14 +1,14 @@
 From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Subject: [PATCH 35] fs/reiser4/plugin/inode_ops_rename.c: kmalloc + memset conversion to kzalloc
-Date: Tue, 31 Jul 2007 20:06:54 +0200
-Message-ID: <200707312006.54765.m.kozlowski@tuxland.pl>
+Subject: [PATCH 43] fs/reiser4/ktxnmgrd.c: kmalloc + memset conversion to kzalloc
+Date: Tue, 31 Jul 2007 20:24:05 +0200
+Message-ID: <200707312024.06110.m.kozlowski@tuxland.pl>
 References: <200707311845.48807.m.kozlowski@tuxland.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <kernel-janitors-owner@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 Content-Disposition: inline
-Sender: kernel-janitors-owner@vger.kernel.org
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-kernel@vger.kernel.org
@@ -16,30 +16,27 @@ Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
 
 Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
- fs/reiser4/plugin/inode_ops_rename.c | 28474 -> 28344 (-130 bytes)
- fs/reiser4/plugin/inode_ops_rename.o | 142600 -> 142476 (-124 bytes)
+ fs/reiser4/ktxnmgrd.c | 5314 -> 5277 (-37 bytes)
+ fs/reiser4/ktxnmgrd.o | 131624 -> 131496 (-128 bytes)
 
- fs/reiser4/plugin/inode_ops_rename.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ fs/reiser4/ktxnmgrd.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- linux-2.6.23-rc1-mm1-a/fs/reiser4/plugin/inode_ops_rename.c	2007-07-26 13:07:46.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/fs/reiser4/plugin/inode_ops_rename.c	2007-07-31 15:02:58.000000000 +0200
-@@ -392,16 +392,14 @@ int reiser4_rename_common(struct inode *
- 	if (IS_ERR(ctx))
- 		return PTR_ERR(ctx);
+--- linux-2.6.23-rc1-mm1-a/fs/reiser4/ktxnmgrd.c	2007-07-26 13:07:46.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/fs/reiser4/ktxnmgrd.c	2007-07-31 14:58:09.000000000 +0200
+@@ -130,13 +130,12 @@ int reiser4_init_ktxnmgrd(struct super_b
 
--	old_entry = kmalloc(3 * sizeof(*old_entry) + 2 * sizeof(*new_lh) +
-+	old_entry = kzalloc(3 * sizeof(*old_entry) + 2 * sizeof(*new_lh) +
- 			    sizeof(*dotdot_name) + sizeof(*dataonstack),
- 			    reiser4_ctx_gfp_mask_get());
--	if (old_entry == NULL) {
-+	if (!old_entry) {
- 		context_set_commit_async(ctx);
- 		reiser4_exit_context(ctx);
+ 	assert("zam-1014", mgr->daemon == NULL);
+
+-	ctx = kmalloc(sizeof(ktxnmgrd_context), reiser4_ctx_gfp_mask_get());
+-	if (ctx == NULL)
++	ctx = kzalloc(sizeof(ktxnmgrd_context), reiser4_ctx_gfp_mask_get());
++	if (!ctx)
  		return RETERR(-ENOMEM);
- 	}
--	memset(old_entry, 0, 3 * sizeof(*old_entry) + 2 * sizeof(*new_lh) +
--	       sizeof(*dotdot_name) + sizeof(*dataonstack));
 
- 	new_entry = old_entry + 1;
- 	dotdot_entry = old_entry + 2;
+ 	assert("nikita-2442", ctx != NULL);
+
+-	memset(ctx, 0, sizeof *ctx);
+ 	init_waitqueue_head(&ctx->wait);
+
+ 	/*kcond_init(&ctx->startup);*/
