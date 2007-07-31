@@ -1,14 +1,14 @@
 From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Subject: [PATCH 14] kmalloc + memset conversion to kzalloc
-Date: Tue, 31 Jul 2007 19:19:57 +0200
-Message-ID: <200707311919.58196.m.kozlowski@tuxland.pl>
+Subject: [PATCH 33] fs/reiser4/init_super.c: kmalloc + memset conversion to kzalloc
+Date: Tue, 31 Jul 2007 20:04:29 +0200
+Message-ID: <200707312004.29404.m.kozlowski@tuxland.pl>
 References: <200707311845.48807.m.kozlowski@tuxland.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <kernel-janitors-owner@vger.kernel.org>
 In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 Content-Disposition: inline
-Sender: reiserfs-devel-owner@vger.kernel.org
+Sender: kernel-janitors-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-kernel@vger.kernel.org
@@ -16,24 +16,27 @@ Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
 
 Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
- fs/reiser4/plugin/item/ctail.c | 41897 -> 41859 (-38 bytes)
- fs/reiser4/plugin/item/ctail.o | 306180 -> 305904 (-276 bytes)
+ fs/reiser4/init_super.c | 19283 -> 19246 (-37 bytes)
+ fs/reiser4/init_super.o | 155348 -> 155152 (-196 bytes)
 
- fs/reiser4/plugin/item/ctail.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/reiser4/init_super.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- linux-2.6.23-rc1-mm1-a/fs/reiser4/plugin/item/ctail.c	2007-07-26 13:07:46.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/fs/reiser4/plugin/item/ctail.c	2007-07-31 15:03:52.000000000 +0200
-@@ -1148,10 +1148,10 @@ static int alloc_convert_data(flush_pos_
- 	assert("edward-821", pos != NULL);
- 	assert("edward-822", pos->sq == NULL);
+--- linux-2.6.23-rc1-mm1-a/fs/reiser4/init_super.c	2007-07-26 13:07:46.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/fs/reiser4/init_super.c	2007-07-30 00:00:32.000000000 +0200
+@@ -17,14 +17,13 @@ int reiser4_init_fs_info(struct super_bl
+ {
+ 	reiser4_super_info_data *sbinfo;
 
--	pos->sq = kmalloc(sizeof(*pos->sq), reiser4_ctx_gfp_mask_get());
-+	pos->sq = kzalloc(sizeof(*pos->sq), reiser4_ctx_gfp_mask_get());
- 	if (!pos->sq)
+-	sbinfo = kmalloc(sizeof(reiser4_super_info_data),
++	sbinfo = kzalloc(sizeof(reiser4_super_info_data),
+ 			 reiser4_ctx_gfp_mask_get());
+ 	if (!sbinfo)
  		return RETERR(-ENOMEM);
--	memset(pos->sq, 0, sizeof(*pos->sq));
-+
- 	cluster_init_write(&pos->sq->clust, NULL);
- 	return 0;
- }
+
+ 	super->s_fs_info = sbinfo;
+ 	super->s_op = NULL;
+-	memset(sbinfo, 0, sizeof(*sbinfo));
+
+ 	ON_DEBUG(INIT_LIST_HEAD(&sbinfo->all_jnodes));
+ 	ON_DEBUG(spin_lock_init(&sbinfo->all_guard));
