@@ -1,74 +1,50 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: 2.6.23-rc1-mm2 Invalid argument on some files, depends on file
- contents?
-Date: Thu, 02 Aug 2007 03:48:44 +0400
-Message-ID: <46B11BDC.8050608@namesys.com>
-References: <1186005421.9066.9.camel@localhost>
+From: David Chinner <dgc@sgi.com>
+Subject: Re: [xfs-masters] [RFC: 2.6 patch] make the *FS_SECURITY options no longer user visible
+Date: Thu, 2 Aug 2007 22:21:22 +1000
+Message-ID: <20070802122122.GR12413810@sgi.com>
+References: <20070729150209.GS16817@stusta.de> <20070729232905.GG31489@sgi.com> <1185798467.15215.12.camel@moss-spartans.epoch.ncsc.mil>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1186005421.9066.9.camel@localhost>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-ext4-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1185798467.15215.12.camel@moss-spartans.epoch.ncsc.mil>
+Sender: linux-ext4-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Zan Lynx <zlynx@acm.org>
-Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: David Chinner <dgc@sgi.com>, xfs-masters@oss.sgi.com, chrisw@sous-sol.org, linux-security-module@vger.kernel.org, jmorris@namei.org, eparis@parisplace.org, linux-ext4@vger.kernel.org, reiserfs-devel@vger.kernel.org, jfs-discussion@lists.sourceforge.net, jffs-dev@axis.com
 
-Zan Lynx wrote:
+On Mon, Jul 30, 2007 at 08:27:47AM -0400, Stephen Smalley wrote:
+> On Mon, 2007-07-30 at 09:29 +1000, David Chinner wrote:
+> > On Sun, Jul 29, 2007 at 05:02:09PM +0200, Adrian Bunk wrote:
+> > > Please correct me if any of the following assumptions is wrong:
+> > > - SELinux is currently the only user of filesystem security labels
+> > >   shipped with the Linux kernel
+> > > - if a user has SELinux enabled he wants his filesystems to support
+> > >   security labels
+> > > 
+> > > Based on these assumption, it doesn't make sense to have the
+> > > *FS_SECURITY user visible since we can perfectly determine automatically 
+> > > when turning them on makes sense.
+> > 
+> > Hmmm. The code in XFS is not dependent on selinux, but this change
+> > would mean that testing the security xattr namespace would require a
+> > selinux enabled kernel.
+> > 
+> > I agree that the default for these should be "y" and selected if
+> > selinux is enabled, but forcing us to use selinux enabled kernels
+> > (on distro's that may not support selinux) just to test the
+> > security xattr namespace is a bit of a pain.
+> 
+> You can enable SECURITY_SELINUX in the kernel config but still have it
+> boot disabled by default via SECURITY_SELINUX_BOOTPARAM_VALUE=0.
 
->Several of my files have been doing this.  I really noticed it when I
->ran a backup last night and there were many of these errors.  It has
->also started affecting documents I really care about.
->
->I was wondering if I somehow have compression enabled.  I didn't do it
->on purpose! :)
->
->  
->
+Ok, that shouldn't cause a problem then. Objection withdrawn. ;)
 
-If so, then definitely _no_.
+Cheers,
 
->I remember reading some comment about lzo being messed up and the
->patches not included in mm yet?  This is rc1-mm2 so I thought it might
->be fixed, but I guess not.
->  
->
-
-Reiser4 in rc1-mm2 is already ported to the new lzo, however this library
-is not used by default (unix-file) plugin.
-
->Here is a snippet of a shell session showing the problem.  It's a good
->thing it didn't affect the OpenOffice format original!
->
->$ cat * >/dev/null
->cat: URL Database Design.doc.backup: Invalid argument
->$ cp URL\ Database\ Design.doc.backup{,.test}
->$ cat * >/dev/null
->cat: URL Database Design.doc.backup: Invalid argument
->cat: URL Database Design.doc.backup.test: Invalid argument
->$ echo blah >> URL\ Database\ Design.doc.backup.test 
->$ cat * >/dev/null
->cat: URL Database Design.doc.backup: Invalid argument
->$ ls -l
->-rw-r--r-- 1 lynx users 286720 2007-07-31 18:16 URL Database Design.doc.backup
->-rw-r--r-- 1 lynx users 286725 2007-08-01 15:48 URL Database Design.doc.backup.test
->-rw-r--r-- 1 lynx users 154915 2007-07-31 16:53 URL Database Design.odt
->-rw-r--r-- 1 lynx users 154915 2007-07-31 18:16 URL Database Design.odt.backup
->
->As you can see, a copy shows the same problem.  But adding "blah\n" to
->the end makes the problem go away...
->  
->
-
-Yeah,  I have also noted this badness: if file size % page size == 0, 
-then md5sum
-complaints.
-
-This is one more bug in new file_read: if vfs asks to read page out of 
-file size,
-then fs should fill it by zeros (reiser4 returns -EINVAL instead). I'll 
-prepare the
-patch a bit later..
-
-Thanks,
-Edward.
+Dave.
+-- 
+Dave Chinner
+Principal Engineer
+SGI Australian Software Group
