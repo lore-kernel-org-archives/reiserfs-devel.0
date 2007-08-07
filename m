@@ -1,59 +1,35 @@
-From: Zan Lynx <zlynx@acm.org>
-Subject: Re: Interesting observation on Reiser4 flush delays and IO
-	scheduler
-Date: Tue, 07 Aug 2007 11:40:28 -0600
-Message-ID: <1186508428.232321.10.camel@localhost>
-References: <1186086508.14479.14.camel@localhost>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 00/25] move handling of setuid/gid bits
+	from VFS into individual setattr functions (RESEND)
+Date: Tue, 7 Aug 2007 21:49:09 +0100
+Message-ID: <20070807204909.GA30159@infradead.org>
+References: <200708061354.l76Ds3mU002255@dantu.rdu.redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-U1dQSNtoQcH32C+B5Ozd"
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1186086508.14479.14.camel@localhost>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <cluster-devel-bounces@redhat.com>
+Content-Disposition: inline
+In-Reply-To: <200708061354.l76Ds3mU002255@dantu.rdu.redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/cluster-devel>
+List-Post: <mailto:cluster-devel@redhat.com>
+List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=subscribe>
+Sender: cluster-devel-bounces@redhat.com
+Errors-To: cluster-devel-bounces@redhat.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jeff Layton <jlayton@redhat.com>
+Cc: codalist@TELEMANN.coda.cs.cmu.edu, cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net, mikulas@artax.karlin.mff.cuni.cz, reiserfs-devel@vger.kernel.org, zippel@linux-m68k.org, xfs@oss.sgi.com, linux-kernel@vger.kernel.org, wli@holomorphy.com, joel.becker@oracle.com, dhowells@redhat.com, fuse-devel@lists.sourceforge.net, jffs-dev@axis.com, user-mode-linux-user@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, v9fs-developer@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-cifs-client@lists.samba.org, ocfs2-devel@oss.oracle.com, bfennema@falcon.csc.calpoly.edu
 
+First thanks a lot for doing this work, it's been long needed.
 
---=-U1dQSNtoQcH32C+B5Ozd
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, 2007-08-02 at 14:28 -0600, Zan Lynx wrote:
-> On my laptop while running heavy disk read/write loads, I have
-> discovered that the deadline IO scheduler gives me a much better "feel"
-> and much shorter (and fewer) system freezes.  This is as compared to the
-> CFQ scheduler.
-
-Something else I found today.  I'm back to the CFQ scheduler.  Deadline
-was better in the heavy write-out situation, but not so good at reading.
-
-It appears nr_requests was too low at the default of 128.  I have bumped
-it to 1024.  Watching iostat's avgqu-sz field during writeout, I see it
-hit over 450 now.  Pauses in things like music playback are much
-reduced.
-
-My theory is that an atom writeout stalls and blocks read requests if it
-can't stuff the whole thing into the disk queue.
-
-If that's true, it'd almost be nice to have a printk "stall warning" or
-just have Reiser4 shove nr_requests up automatically until the queue can
-hold a complete atom write.
-
-I'm probably wrong with my theory, but I hope the nr_requests suggestion
-can help other's with lag problems.
---=20
-Zan Lynx <zlynx@acm.org>
-
---=-U1dQSNtoQcH32C+B5Ozd
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.5 (GNU/Linux)
-
-iD8DBQBGuK6MG8fHaOLTWwgRArmlAJ9O29E832adOcWuR89w1/o+c+SUrACggw+I
-BnZH36kxWkttywkC4UCGP1M=
-=u0Cc
------END PGP SIGNATURE-----
-
---=-U1dQSNtoQcH32C+B5Ozd--
+Second please don't send out that many patches.  We encourage people
+to split things into small patches when the changes are logially
+separated.  Which these are not - it's a flag day change (which btw
+is fine despite the rants soe people spewed in reply to this), so it
+should be one single patch. (Or one for all mainline filesystems +
+one per fs only in -mm to make Andrew's life a little easier if you
+really care.)
 
