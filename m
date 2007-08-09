@@ -1,62 +1,30 @@
 From: "Tom Mortensen" <tmmlkml@gmail.com>
 Subject: Re: reiserfs fs/reiserfs/bitmap.c:1287
-Date: Thu, 9 Aug 2007 10:55:56 -0700
-Message-ID: <a52a95e30708091055t584cb46ga5147d2c12e4bf9c@mail.gmail.com>
+Date: Thu, 9 Aug 2007 11:18:27 -0700
+Message-ID: <a52a95e30708091118k1aa962d8u214a7f0624df78e3@mail.gmail.com>
 References: <15366.199.125.14.2.1184261266.squirrel@localmail-dr.mcsimons.com>
 	 <46967D7D.5090204@suse.com>
 	 <a52a95e30708081529i7cee02ddq61471378c2a12ffa@mail.gmail.com>
 	 <46BA57AC.2040306@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759417AbXHISSo@vger.kernel.org>
 DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
         d=gmail.com; s=beta;
         h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
-        b=MwGo6HwhuOn5KrouCrI0f+uW1Q2ojzSUsq2xr9X/Vhc3/kITDRYws5V6Qr5Mu/M3cQmHC3qHHakbXMcVzAXgRxUhDISbWG2kkVlbNf9oWry49la3kzvcXpoCh7q1xdWrvHT60ubHCpkP3hYYaiu8n6unMbnKS7jigQdRNLP5iS0=
+        b=M8D1mYvTRMjIvZZ1rWZLwvZH6r7n9+8H+ONHaeuSf3F7TAGya9c7p0muijPzar/rZBCBLP5IZ46DxVvlNiKkiLQxrEhVFQECsB8apL0FPknhjbdhKU2z2lMiBonb+a8wLfWOisgDtwwNvIi8CI4CC8bThLh3MiJt6XVCn1Q+dRQ=
 In-Reply-To: <46BA57AC.2040306@suse.com>
 Content-Disposition: inline
-Sender: reiserfs-devel-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Jeff Mahoney <jeffm@suse.com>
 Cc: tony@tvortex.net, linux-kernel@vger.kernel.org, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
-The hard drive is only 80GB and the ReiserFS file system is on
-paritition 1 which spans the entire hard drive.
-
-I recently upgraded to kernel 2.6.22.1.  Previously was running 2.4.31
-and never encountered this error before.
-
-I'm presently trying to make it fail again to see if I can gather more
-information.  I can also revert to a previous kernel release (either
-2.4.x or 2.6.x), any suggestion?
-
+Using mkreiserfs version 3.6.19.  But file system is less than 80GB.
 
 On 8/8/07, Jeff Mahoney <jeffm@suse.com> wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
->
-> Tom Mortensen wrote:
-> > I'm wondering if any resolution to this particular bug?  I see this
-> > exact kernel bug in copying large data sets (40GB+), and can reproduce
-> > fairly well.  Running reiserfsck produces this message:
-> >
-> > "Zero bit found in on-disk bitmap after the last valid bit."
->
-> BTW, this error describes the following condition:
->
-> With a 4KiB blocksize (assumed), each bitmap describes 128MiB chunks. If
-> your file system is of such a size that it's not an even multiple of
-> 128MiB, the final bitmap will describe blocks that aren't part of the
-> file system. The easiest way to represent them is to mark them used so
-> that they won't end up getting allocated, ever.
->
-> The message quoted above means that some of the bits that describe the
-> blocks beyond the end of the file system have been zeroed, indicating
-> that the space is available. If you were actually hit by this condition
-> at runtime, you'd get "attempt to access beyond end of device" or
-> something like that in your log.
->
+
 > In any event, something is corrupting your bitmaps and that needs to get
 > tracked down. The size of the file system is important. I've been seeing
 > reports of users hitting similar problems with file systems larger than
@@ -66,23 +34,3 @@ On 8/8/07, Jeff Mahoney <jeffm@suse.com> wrote:
 > mkreiserfs >= 3.6.20 will zero the value out, causing a mount failure
 > unless the kernel has been patched to support the full size and to
 > interpret s_bmap_nr == 0 as "value has overflowed."
->
-> I've posted some lightly tested versions of patches to handle > 8TiB
-> file systems on the reiserfs-devel mailing list and hope to finalize
-> them this week. If your file system isn't larger than 8 TiB, then we'll
-> have to do a bit more hunting.
->
-> - -Jeff
->
-> - --
-> Jeff Mahoney
-> SUSE Labs
-> -----BEGIN PGP SIGNATURE-----
-> Version: GnuPG v2.0.4-svn0 (GNU/Linux)
-> Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
->
-> iD8DBQFGulesLPWxlyuTD7IRAsK2AJ9hHXP/u/U39ilYbJzuJZH1Ak7n3ACfb/Oo
-> 2GIGKznayXqevH6lVGh8vew=
-> =q4Ca
-> -----END PGP SIGNATURE-----
->
