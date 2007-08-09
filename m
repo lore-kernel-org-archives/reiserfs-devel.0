@@ -1,42 +1,63 @@
-From: jeffm@suse.com
-Subject: [patch 3/3 (right version)] reiserfs: fix memset byte count during resize
-Date: Wed, 08 Aug 2007 21:32:50 -0400
-Message-ID: <20070809013428.426984951@suse.com>
-References: <20070809013247.791820925@suse.com>
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-fix-resize-meminit.diff
-Sender: reiserfs-devel-owner@vger.kernel.org
-List-Id: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Jeff Layton <jlayton@redhat.com>
+Subject: Re: [fuse-devel] [PATCH 00/25] move handling of
+ setuid/gid bits from VFS into individual setattr functions (RESEND)
+Date: Thu, 9 Aug 2007 07:55:02 -0400
+Message-ID: <20070809075502.b3426ce9.jlayton@redhat.com>
+References: <200708061354.l76Ds3mU002255@dantu.rdu.redhat.com>
+	<20070807171501.e31c4a97.akpm@linux-foundation.org>
+	<20070808085435.722f2b10.jlayton@redhat.com>
+	<20070808094853.8c27450c.akpm@linux-foundation.org>
+	<Pine.LNX.4.64.0708082204210.10387@fbirervta.pbzchgretzou.qr>
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: ReiserFS Development Mailing List <reiserfs-devel@vger.kernel.org>
-Cc: Vladimir Saveliev <vs@namesys.com>
+Return-path: <cluster-devel-bounces@redhat.com>
+In-Reply-To: <Pine.LNX.4.64.0708082204210.10387@fbirervta.pbzchgretzou.qr>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/cluster-devel>
+List-Post: <mailto:cluster-devel@redhat.com>
+List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=subscribe>
+Sender: cluster-devel-bounces@redhat.com
+Errors-To: cluster-devel-bounces@redhat.com
+Content-Type: text/plain; charset="us-ascii"
+To: Jan Engelhardt <jengelh@computergmbh.de>
+Cc: codalist@TELEMANN.coda.cs.cmu.edu, dhowells@redhat.com, jfs-discussion@lists.sourceforge.net, jffs-dev@axis.com, zippel@linux-m68k.org, linux-kernel@vger.kernel.org, user-mode-linux-user@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, wli@holomorphy.com, xfs@oss.sgi.com, cluster-devel@redhat.com, fuse-devel@lists.sourceforge.net, joel.becker@oracle.com, mikulas@artax.karlin.mff.cuni.cz, linux-fsdevel@vger.kernel.org, v9fs-developer@lists.sourceforge.net, Andrew Morton <akpm@linux-foundation.org>, linux-ext4@vger.kernel.org, linux-cifs-client@lists.samba.org, ocfs2-devel@oss.oracle.com, bfennema@falcon.csc.calpoly.edu
 
- The following patch corrects the memset in reiserfs_resize to clear
- the memory allocated for the new bitmap info structs. Previously,
- it would clear the memory used by the old size. Depending on the
- contents of memory, this could cause incorrect caching behavior for
- bitmap blocks in the newly allocated area.
+On Wed, 8 Aug 2007 22:05:13 +0200 (CEST)
+Jan Engelhardt <jengelh@computergmbh.de> wrote:
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- fs/reiserfs/resize.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> On Aug 8 2007 09:48, Andrew Morton wrote:
+> >> > On Mon, 6 Aug 2007 09:54:03 -0400
+> >> > Jeff Layton <jlayton@redhat.com> wrote:
+> >> > 
+> >> > Is there any way in which we can prevent these problems?  Say
+> >> > 
+> >> > - rename something so that unconverted filesystems will reliably fail to
+> >> >   compile?
+> >> > 
+> >> 
+> >> I suppose we could rename the .setattr inode operation to something
+> >> else, but then we'll be stuck with it for at least a while. That seems
+> >> sort of kludgey too...
+> >
+> >Sure.  We're changing the required behaviour of .setattr.  Changing its
+> >name is a fine and reasonably reliable way to communicate that fact.
+> 
+> Maybe ->chattr/->chgattr?
+> 
+> 
 
---- a/fs/reiserfs/resize.c	2007-08-07 11:07:15.000000000 -0400
-+++ b/fs/reiserfs/resize.c	2007-08-07 11:07:25.000000000 -0400
-@@ -119,7 +119,7 @@ int reiserfs_resize(struct super_block *
- 			return -ENOMEM;
- 		}
- 		memset(bitmap, 0,
--		       sizeof(struct reiserfs_bitmap_info) * SB_BMAP_NR(s));
-+		       sizeof(struct reiserfs_bitmap_info) * bmap_nr_new);
- 		for (i = 0; i < bmap_nr; i++)
- 			bitmap[i] = old_bitmap[i];
- 
+That seems like a good replacement name. :-)
 
--- 
-Jeff Mahoney
-SUSE Labs
+Now that I think on this further though, maybe Trond's suggestion to
+change how the return code works is the best one. That would
+(hopefully) catch this problem at runtime, so if someone is using a
+precompiled but unconverted module then that would be detected too.
+
+--
+Jeff Layton <jlayton@redhat.com>
 
