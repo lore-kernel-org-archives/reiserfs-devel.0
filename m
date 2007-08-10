@@ -1,36 +1,57 @@
-From: "Tom Mortensen" <tmmlkml@gmail.com>
-Subject: Re: reiserfs fs/reiserfs/bitmap.c:1287
-Date: Thu, 9 Aug 2007 11:18:27 -0700
-Message-ID: <a52a95e30708091118k1aa962d8u214a7f0624df78e3@mail.gmail.com>
-References: <15366.199.125.14.2.1184261266.squirrel@localmail-dr.mcsimons.com>
-	 <46967D7D.5090204@suse.com>
-	 <a52a95e30708081529i7cee02ddq61471378c2a12ffa@mail.gmail.com>
-	 <46BA57AC.2040306@suse.com>
+From: Jeff Layton <jlayton@redhat.com>
+Subject: Re: [PATCH 00/25] move handling of setuid/gid bits
+ from VFS into individual setattr functions (RESEND)
+Date: Fri, 10 Aug 2007 16:47:52 -0400
+Message-ID: <20070810164752.23117e0e.jlayton@redhat.com>
+References: <200708061354.l76Ds3mU002255@dantu.rdu.redhat.com>
+	<20070807171501.e31c4a97.akpm@linux-foundation.org>
+	<1186533934.6625.91.camel@heimdal.trondhjem.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759417AbXHISSo@vger.kernel.org>
-DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
-        d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
-        b=M8D1mYvTRMjIvZZ1rWZLwvZH6r7n9+8H+ONHaeuSf3F7TAGya9c7p0muijPzar/rZBCBLP5IZ46DxVvlNiKkiLQxrEhVFQECsB8apL0FPknhjbdhKU2z2lMiBonb+a8wLfWOisgDtwwNvIi8CI4CC8bThLh3MiJt6XVCn1Q+dRQ=
-In-Reply-To: <46BA57AC.2040306@suse.com>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <cluster-devel-bounces@redhat.com>
+In-Reply-To: <1186533934.6625.91.camel@heimdal.trondhjem.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/cluster-devel>
+List-Post: <mailto:cluster-devel@redhat.com>
+List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=subscribe>
+Sender: cluster-devel-bounces@redhat.com
+Errors-To: cluster-devel-bounces@redhat.com
 Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: tony@tvortex.net, linux-kernel@vger.kernel.org, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: jfs-discussion@lists.sourceforge.net, zippel@linux-m68k.org, wli@holomorphy.com, dhowells@redhat.com, mikulas@artax.karlin.mff.cuni.cz, Jeff Layton <jlayton@redhat.com>, joel.becker@oracle.com, cluster-devel@redhat.com, v9fs-developer@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-cifs-client@lists.samba.org, fuse-devel@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, user-mode-linux-user@lists.sourceforge.net, codalist@TELEMANN.coda.cs.cmu.edu, linux-kernel@vger.kernel.org, bfennema@falcon.csc.calpoly.edu, jffs-dev@axis.com, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, ocfs2-devel@oss.oracle.com
 
-Using mkreiserfs version 3.6.19.  But file system is less than 80GB.
+On Tue, 07 Aug 2007 20:45:34 -0400
+Trond Myklebust <trond.myklebust@fys.uio.no> wrote:
+> > - rename something so that unconverted filesystems will reliably fail to
+> >   compile?
+> > 
+> > - leave existing filesystems alone, but add a new
+> >   inode_operations.setattr_jeff, which the networked filesytems can
+> >   implement, and teach core vfs to call setattr_jeff in preference to
+> >   setattr?
+> 
+> If you really need to know that the filesystem is handling the flags,
+> then how about instead having ->setattr() return something which
+> indicates which flags it actually handled? That is likely to be a far
+> more intrusive change, but it is one which is future-proof.
+> 
 
-On 8/8/07, Jeff Mahoney <jeffm@suse.com> wrote:
+One thing that we could do here is have notify_change check
+attr->ia_valid after the setattr operation returns. If either ATTR_KILL_*
+bit is set then BUG(). The helper function already clears those bits
+so anything using it should automatically be ok. We'd have to fix
+up NFS and a few others that don't implement suid/sgid.
 
-> In any event, something is corrupting your bitmaps and that needs to get
-> tracked down. The size of the file system is important. I've been seeing
-> reports of users hitting similar problems with file systems larger than
-> 8 TiB. The cause is that the s_bmap_nr field in the superblock is 16
-> bit, and the file system assumes it's correct. mkreiserfs < 3.6.20 will
-> happily create those file systems with a value that has wrapped, while
-> mkreiserfs >= 3.6.20 will zero the value out, causing a mount failure
-> unless the kernel has been patched to support the full size and to
-> interpret s_bmap_nr == 0 as "value has overflowed."
+This is not as certain as changing the name of the inode operation. It
+would only pop when someone is attempting to change a setuid/setgid
+file on these filesystems. Still, it should conceivably catch most if
+not all offenders. Would that be sufficient to take care of everyone's
+concerns?
+
+-- 
+Jeff Layton <jlayton@redhat.com>
+
