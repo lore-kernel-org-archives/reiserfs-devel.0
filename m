@@ -1,48 +1,71 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 00/25] move handling of setuid/gid bits
-	from VFS into individual setattr functions (RESEND)
-Date: Sat, 11 Aug 2007 03:57:39 +0100
-Message-ID: <20070811025739.GA21244@infradead.org>
-References: <200708061354.l76Ds3mU002255@dantu.rdu.redhat.com>
-	<20070807171501.e31c4a97.akpm@linux-foundation.org>
-	<1186533934.6625.91.camel@heimdal.trondhjem.org>
-	<20070810164752.23117e0e.jlayton@redhat.com>
+From: Edward Shishkin <edward@namesys.com>
+Subject: [PATCH] reiser4: fix readpage_unix_file
+Date: Sun, 12 Aug 2007 00:02:23 +0400
+Message-ID: <46BE15CF.50605@namesys.com>
 Mime-Version: 1.0
-Return-path: <cluster-devel-bounces@redhat.com>
-Content-Disposition: inline
-In-Reply-To: <20070810164752.23117e0e.jlayton@redhat.com>
+Content-Type: multipart/mixed;
+ boundary="------------070900000101050203070709"
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
-	<mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/cluster-devel>
-List-Post: <mailto:cluster-devel@redhat.com>
-List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
-	<mailto:cluster-devel-request@redhat.com?subject=subscribe>
-Sender: cluster-devel-bounces@redhat.com
-Errors-To: cluster-devel-bounces@redhat.com
-Content-Type: text/plain; charset="us-ascii"
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, Zan Lynx <zlynx@acm.org>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
+
+This is a multi-part message in MIME format.
+--------------070900000101050203070709
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
-To: Jeff Layton <jlayton@redhat.com>
-Cc: jfs-discussion@lists.sourceforge.net, zippel@linux-m68k.org, wli@holomorphy.com, dhowells@redhat.com, mikulas@artax.karlin.mff.cuni.cz, joel.becker@oracle.com, cluster-devel@redhat.com, v9fs-developer@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-cifs-client@lists.samba.org, fuse-devel@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, user-mode-linux-user@lists.sourceforge.net, codalist@TELEMANN.coda.cs.cmu.edu, linux-kernel@vger.kernel.org, Trond Myklebust <trond.myklebust@fys.uio.no>, bfennema@falcon.csc.calpoly.edu, jffs-dev@axis.com, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, ocfs2-devel@oss.oracle.com
 
-On Fri, Aug 10, 2007 at 04:47:52PM -0400, Jeff Layton wrote:
-> attr->ia_valid after the setattr operation returns. If either ATTR_KILL_*
-> bit is set then BUG(). The helper function already clears those bits
-> so anything using it should automatically be ok. We'd have to fix
-> up NFS and a few others that don't implement suid/sgid.
-> 
-> This is not as certain as changing the name of the inode operation. It
-> would only pop when someone is attempting to change a setuid/setgid
-> file on these filesystems. Still, it should conceivably catch most if
-> not all offenders. Would that be sufficient to take care of everyone's
-> concerns?
+Andrew,
+please, apply.
 
-I like the idea of checking ia_valid after return a lot.  But instead of
-going BUG() it should just do the default action, that we can avoid
-touching all the filesystem and only need to change those that need
-special care.  I also have plans to add some new AT_ flags for implementing
-some filesystem ioctl in generic code that would benefit greatly from
-the ia_valid checkin after return to return ENOTTY fr filesystems not
-implementing those ioctls.
+Thanks,
+Edward.
 
+--------------070900000101050203070709
+Content-Type: text/x-patch;
+ name="reiser4-fix-readpage_unix_file.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="reiser4-fix-readpage_unix_file.patch"
+
+. If nominated (by VFS) page is out of file size, then fill it
+  by zeros instead of returning -EINVAL (this prevents returning
+  an unexpected error (-EINVAL) by some apps that don't check
+  file size).
+
+. Check if the page became uptodate while it was being unlocked.
+
+Signed-off-by: Edward Shishkin <edward@namesys.com> 
+---
+ linux-2.6.23-rc1-mm1/fs/reiser4/plugin/file/file.c |    8 ++++++--
+ 1 files changed, 6 insertions(+), 2 deletions(-)
+
+--- linux-2.6.23-rc1-mm1/fs/reiser4/plugin/file/file.c.orig
++++ linux-2.6.23-rc1-mm1/fs/reiser4/plugin/file/file.c
+@@ -1436,9 +1436,11 @@
+ 	assert("vs-1061", page->mapping && page->mapping->host);
+ 
+ 	if (page->mapping->host->i_size <= page_offset(page)) {
+-		/* page is out of file already */
++		/* page is out of file */
++		zero_user_page(page, 0, PAGE_CACHE_SIZE, KM_USER0);
++		SetPageUptodate(page);
+ 		unlock_page(page);
+-		return -EINVAL;
++		return 0;
+ 	}
+ 
+ 	inode = page->mapping->host;
+@@ -1625,6 +1627,8 @@
+ 		if (unlikely(ret))
+ 			goto exit;
+ 		lock_page(page);
++		if (PageUptodate(page))
++			goto unlock;
+ 		cbk_done = 1;
+ 	}
+ 	ret = zload(rc->coord.node);
+
+
+--------------070900000101050203070709--
