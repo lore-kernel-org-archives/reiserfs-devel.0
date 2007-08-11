@@ -1,15 +1,16 @@
-From: Jeff Layton <jlayton@redhat.com>
+From: Christoph Hellwig <hch@infradead.org>
 Subject: Re: [PATCH 00/25] move handling of setuid/gid bits
- from VFS into individual setattr functions (RESEND)
-Date: Fri, 10 Aug 2007 16:47:52 -0400
-Message-ID: <20070810164752.23117e0e.jlayton@redhat.com>
+	from VFS into individual setattr functions (RESEND)
+Date: Sat, 11 Aug 2007 03:57:39 +0100
+Message-ID: <20070811025739.GA21244@infradead.org>
 References: <200708061354.l76Ds3mU002255@dantu.rdu.redhat.com>
 	<20070807171501.e31c4a97.akpm@linux-foundation.org>
 	<1186533934.6625.91.camel@heimdal.trondhjem.org>
+	<20070810164752.23117e0e.jlayton@redhat.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <cluster-devel-bounces@redhat.com>
-In-Reply-To: <1186533934.6625.91.camel@heimdal.trondhjem.org>
+Content-Disposition: inline
+In-Reply-To: <20070810164752.23117e0e.jlayton@redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
 	<mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
@@ -21,37 +22,27 @@ List-Subscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
 Sender: cluster-devel-bounces@redhat.com
 Errors-To: cluster-devel-bounces@redhat.com
 Content-Type: text/plain; charset="us-ascii"
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: jfs-discussion@lists.sourceforge.net, zippel@linux-m68k.org, wli@holomorphy.com, dhowells@redhat.com, mikulas@artax.karlin.mff.cuni.cz, Jeff Layton <jlayton@redhat.com>, joel.becker@oracle.com, cluster-devel@redhat.com, v9fs-developer@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-cifs-client@lists.samba.org, fuse-devel@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, user-mode-linux-user@lists.sourceforge.net, codalist@TELEMANN.coda.cs.cmu.edu, linux-kernel@vger.kernel.org, bfennema@falcon.csc.calpoly.edu, jffs-dev@axis.com, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, ocfs2-devel@oss.oracle.com
+Content-Transfer-Encoding: 7bit
+To: Jeff Layton <jlayton@redhat.com>
+Cc: jfs-discussion@lists.sourceforge.net, zippel@linux-m68k.org, wli@holomorphy.com, dhowells@redhat.com, mikulas@artax.karlin.mff.cuni.cz, joel.becker@oracle.com, cluster-devel@redhat.com, v9fs-developer@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-cifs-client@lists.samba.org, fuse-devel@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, user-mode-linux-user@lists.sourceforge.net, codalist@TELEMANN.coda.cs.cmu.edu, linux-kernel@vger.kernel.org, Trond Myklebust <trond.myklebust@fys.uio.no>, bfennema@falcon.csc.calpoly.edu, jffs-dev@axis.com, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, ocfs2-devel@oss.oracle.com
 
-On Tue, 07 Aug 2007 20:45:34 -0400
-Trond Myklebust <trond.myklebust@fys.uio.no> wrote:
-> > - rename something so that unconverted filesystems will reliably fail to
-> >   compile?
-> > 
-> > - leave existing filesystems alone, but add a new
-> >   inode_operations.setattr_jeff, which the networked filesytems can
-> >   implement, and teach core vfs to call setattr_jeff in preference to
-> >   setattr?
+On Fri, Aug 10, 2007 at 04:47:52PM -0400, Jeff Layton wrote:
+> attr->ia_valid after the setattr operation returns. If either ATTR_KILL_*
+> bit is set then BUG(). The helper function already clears those bits
+> so anything using it should automatically be ok. We'd have to fix
+> up NFS and a few others that don't implement suid/sgid.
 > 
-> If you really need to know that the filesystem is handling the flags,
-> then how about instead having ->setattr() return something which
-> indicates which flags it actually handled? That is likely to be a far
-> more intrusive change, but it is one which is future-proof.
-> 
+> This is not as certain as changing the name of the inode operation. It
+> would only pop when someone is attempting to change a setuid/setgid
+> file on these filesystems. Still, it should conceivably catch most if
+> not all offenders. Would that be sufficient to take care of everyone's
+> concerns?
 
-One thing that we could do here is have notify_change check
-attr->ia_valid after the setattr operation returns. If either ATTR_KILL_*
-bit is set then BUG(). The helper function already clears those bits
-so anything using it should automatically be ok. We'd have to fix
-up NFS and a few others that don't implement suid/sgid.
-
-This is not as certain as changing the name of the inode operation. It
-would only pop when someone is attempting to change a setuid/setgid
-file on these filesystems. Still, it should conceivably catch most if
-not all offenders. Would that be sufficient to take care of everyone's
-concerns?
-
--- 
-Jeff Layton <jlayton@redhat.com>
+I like the idea of checking ia_valid after return a lot.  But instead of
+going BUG() it should just do the default action, that we can avoid
+touching all the filesystem and only need to change those that need
+special care.  I also have plans to add some new AT_ flags for implementing
+some filesystem ioctl in generic code that would benefit greatly from
+the ia_valid checkin after return to return ENOTTY fr filesystems not
+implementing those ioctls.
 
