@@ -1,71 +1,68 @@
 From: Edward Shishkin <edward@namesys.com>
-Subject: [PATCH] reiser4: fix readpage_unix_file
-Date: Sun, 12 Aug 2007 00:02:23 +0400
-Message-ID: <46BE15CF.50605@namesys.com>
+Subject: [PATCH] reiser4: cryptcompress misc fixups-2
+Date: Sun, 12 Aug 2007 00:02:38 +0400
+Message-ID: <46BE15DE.7080304@namesys.com>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- boundary="------------070900000101050203070709"
+ boundary="------------020407090007040109050704"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Vladimir V. Saveliev" <vs@namesys.com>, Zan Lynx <zlynx@acm.org>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
 This is a multi-part message in MIME format.
---------------070900000101050203070709
+--------------020407090007040109050704
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Andrew,
-please, apply.
 
-Thanks,
-Edward.
 
---------------070900000101050203070709
+
+--------------020407090007040109050704
 Content-Type: text/x-patch;
- name="reiser4-fix-readpage_unix_file.patch"
+ name="reiser4-cryptcompress-misc-fixups-2.patch"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
- filename="reiser4-fix-readpage_unix_file.patch"
+ filename="reiser4-cryptcompress-misc-fixups-2.patch"
 
-. If nominated (by VFS) page is out of file size, then fill it
-  by zeros instead of returning -EINVAL (this prevents returning
-  an unexpected error (-EINVAL) by some apps that don't check
-  file size).
+Check a file plugin id before manipulating
+with plugin-specific counter.
 
-. Check if the page became uptodate while it was being unlocked.
-
-Signed-off-by: Edward Shishkin <edward@namesys.com> 
+Signed-off-by: Edward Shishkin <edward@namesys.com>
 ---
- linux-2.6.23-rc1-mm1/fs/reiser4/plugin/file/file.c |    8 ++++++--
- 1 files changed, 6 insertions(+), 2 deletions(-)
+ linux-2.6.23-rc1-mm1/fs/reiser4/plugin/file/cryptcompress.h |   18 ++++++++++--
+ 1 files changed, 15 insertions(+), 3 deletions(-)
 
---- linux-2.6.23-rc1-mm1/fs/reiser4/plugin/file/file.c.orig
-+++ linux-2.6.23-rc1-mm1/fs/reiser4/plugin/file/file.c
-@@ -1436,9 +1436,11 @@
- 	assert("vs-1061", page->mapping && page->mapping->host);
+--- linux-2.6.23-rc1-mm1/fs/reiser4/plugin/file/cryptcompress.h.orig
++++ linux-2.6.23-rc1-mm1/fs/reiser4/plugin/file/cryptcompress.h
+@@ -38,11 +38,23 @@
  
- 	if (page->mapping->host->i_size <= page_offset(page)) {
--		/* page is out of file already */
-+		/* page is out of file */
-+		zero_user_page(page, 0, PAGE_CACHE_SIZE, KM_USER0);
-+		SetPageUptodate(page);
- 		unlock_page(page);
--		return -EINVAL;
-+		return 0;
- 	}
- 
- 	inode = page->mapping->host;
-@@ -1625,6 +1627,8 @@
- 		if (unlikely(ret))
- 			goto exit;
- 		lock_page(page);
-+		if (PageUptodate(page))
-+			goto unlock;
- 		cbk_done = 1;
- 	}
- 	ret = zload(rc->coord.node);
+ #if REISER4_DEBUG
+ #define INODE_PGCOUNT(inode)						\
+-	(atomic_read(&cryptcompress_inode_data(inode)->pgcount))
++({								        \
++	assert("edward-1530", inode_file_plugin(inode) ==		\
++	       file_plugin_by_id(CRYPTCOMPRESS_FILE_PLUGIN_ID));	\
++	atomic_read(&cryptcompress_inode_data(inode)->pgcount);		\
++ })
+ #define INODE_PGCOUNT_INC(inode)					\
+-	(atomic_inc(&cryptcompress_inode_data(inode)->pgcount))
++do {								        \
++	assert("edward-1531", inode_file_plugin(inode) ==		\
++	       file_plugin_by_id(CRYPTCOMPRESS_FILE_PLUGIN_ID));	\
++	atomic_inc(&cryptcompress_inode_data(inode)->pgcount);		\
++} while (0)
+ #define INODE_PGCOUNT_DEC(inode)					\
+-	(atomic_dec(&cryptcompress_inode_data(inode)->pgcount))
++do {								        \
++	if (inode_file_plugin(inode) ==					\
++	    file_plugin_by_id(CRYPTCOMPRESS_FILE_PLUGIN_ID))		\
++		atomic_dec(&cryptcompress_inode_data(inode)->pgcount);	\
++} while (0)
+ #else
+ #define INODE_PGCOUNT(inode) (0)
+ #define INODE_PGCOUNT_INC(inode)
 
 
---------------070900000101050203070709--
+--------------020407090007040109050704--
