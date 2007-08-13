@@ -1,55 +1,116 @@
-From: Zan Lynx <zlynx@acm.org>
-Subject: Re: [PATCH] reiser4: fix readpage_unix_file
-Date: Mon, 13 Aug 2007 10:37:27 -0600
-Message-ID: <1187023047.7855.1.camel@localhost>
-References: <46BE15CF.50605@namesys.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] reiserfsprogs: enforce 2^32-1 block limit
+Date: Mon, 13 Aug 2007 14:45:34 -0400
+Message-ID: <46C0A6CE.1010807@suse.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-y3ke0/3aASIH8Ns0X7wM"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <46BE15CF.50605@namesys.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Edward Shishkin <edward@namesys.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Vladimir V. Saveliev" <vs@namesys.com>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Cc: "Vladimir V. Saveliev" <vs@namesys.com>
 
+ Currently, mkreiserfs on a block device >= 16 TiB will fail with this error:
+ reiserfs_create_journal: cannot create a journal of 8193 blocks with
+ 18 offset on 0 blocks
 
---=-y3ke0/3aASIH8Ns0X7wM
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+ The message doesn't adequately describe that the problem is that reiserfs
+ supports file system sizes up to 2^32-1 blocks, and it silently overflows.
 
-On Sun, 2007-08-12 at 00:02 +0400, Edward Shishkin wrote:
-> Andrew,
-> please, apply.
->=20
-> Thanks,
-> Edward.
+ This patch treats the block device size, as well as the <blocks> command
+ line parameter as __u64's, so that they can be safely compared to UINT_MAX.
 
-> . If nominated (by VFS) page is out of file size, then fill it
->   by zeros instead of returning -EINVAL (this prevents returning
->   an unexpected error (-EINVAL) by some apps that don't check
->   file size).
->=20
-> . Check if the page became uptodate while it was being unlocked.
->=20
-> Signed-off-by: Edward Shishkin <edward@namesys.com>=20
+ If the block device is too large, we warn the user, offer to truncate the
+ file system to 2^32-1 blocks, and confirm. This is overridable by the -f
+ option, which will elect to truncate automatically.
 
-I applied this patch this weekend.  It has fixed the problem I was
-having.  My system backup completed without any of the invalid read
-errors and all files appear correct.  Thank you.
---=20
-Zan Lynx <zlynx@acm.org>
+ If the user has specified a block count that is too large, we fail always
+ since the user has provided invalid input.
 
---=-y3ke0/3aASIH8Ns0X7wM
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+ Please apply.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.5 (GNU/Linux)
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
-iD8DBQBGwIjHG8fHaOLTWwgRAqaSAJ4wOxFyQJ0rIFmjLUsb6vnvSQclAACgnye4
-4awCcCacQXrXmVuzrQv5KWw=
-=kC0l
------END PGP SIGNATURE-----
+--- a/utils/mkfs/mkreiserfs.c	2007-08-13 13:34:15.000000000 -0400
++++ b/utils/mkfs/mkreiserfs.c	2007-08-13 14:42:02.000000000 -0400
+@@ -29,6 +29,7 @@
+ #include <time.h>
+ #include <unistd.h>
+ #include <errno.h>
++#include <limits.h>
+ 
+ #ifdef HAVE_UNAME
+ # include <sys/utsname.h>
+@@ -438,6 +439,21 @@
+     return val;
+ }
+ 
++static __u64 str2u64 (char *str)
++{
++    __u64 val;
++    char *tmp;
++
++    val = (__u64)strtoll(str, &tmp, 0);
++
++    if (*tmp) {
++	reiserfs_exit (1, "%s: strtoll is unable to make an integer of %s\n",
++		       program_name, str);
++    }
++
++    return val;
++}
++
+ 
+ static void set_block_size (char * str, int *b_size)
+ {
+@@ -575,7 +591,7 @@
+     int force = 0;
+     char * device_name = NULL;
+     char * jdevice_name = NULL;
+-    unsigned long fs_size = 0;
++    __u64 fs_size = 0;
+     int c;
+     static int flag;
+ 
+@@ -710,7 +726,7 @@
+     
+     if (optind == argc - 2) {
+         /* number of blocks for filesystem is specified */
+-        fs_size = str2int (argv[optind + 1]);
++        fs_size = str2u64 (argv[optind + 1]);
+     } else if (optind == argc - 1) {
+         /* number of blocks is not specified */
+         if (!(fs_size = misc_device_count_blocks (device_name, Block_size)))
+@@ -719,6 +735,27 @@
+         print_usage_and_exit ();
+     }
+ 
++    if (fs_size >= UINT_MAX) {
++	fprintf(stderr, ">>> ReiserFS supports file systems of up to %u "
++	        "blocks.\n>>> The maximum size with a block size of %u bytes "
++		"is about %Lu MiB.\n>>> This file system would occupy %Lu "
++		"blocks. ", UINT_MAX, Block_size,
++		((__u64)UINT_MAX * Block_size) / (1024 * 1024), fs_size);
++
++	if (optind == argc - 1) {
++	    if (!force &&
++		!util_user_confirmed (stderr, "Truncate? (y/N): ", "y\n")) {
++		fprintf(stderr, "\nExiting.\n\n");
++		exit(1);
++	    }
++	    fprintf(stderr, "Truncating.\n\n");
++	    fs_size = UINT_MAX;
++	} else {
++	    fprintf(stderr, "Exiting.\n\n");
++	    exit(1);
++	}
++    }
++
+     if (is_journal_default (device_name, jdevice_name, Block_size))
+         Create_default_journal = 1;
+     
 
---=-y3ke0/3aASIH8Ns0X7wM--
-
+-- 
+Jeff Mahoney
+SUSE Labs
