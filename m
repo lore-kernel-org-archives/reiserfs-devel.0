@@ -1,17 +1,18 @@
 From: Jeff Layton <jlayton@redhat.com>
 Subject: Re: [PATCH 00/25] move handling of setuid/gid bits
  from VFS into individual setattr functions (RESEND)
-Date: Mon, 13 Aug 2007 08:01:34 -0400
-Message-ID: <20070813080134.f770814b.jlayton@redhat.com>
+Date: Mon, 13 Aug 2007 08:36:16 -0400
+Message-ID: <20070813083616.642c7f27.jlayton@redhat.com>
 References: <200708061354.l76Ds3mU002255@dantu.rdu.redhat.com>
 	<20070807171501.e31c4a97.akpm@linux-foundation.org>
 	<1186533934.6625.91.camel@heimdal.trondhjem.org>
 	<20070810164752.23117e0e.jlayton@redhat.com>
 	<20070811025739.GA21244@infradead.org>
+	<20070813080134.f770814b.jlayton@redhat.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <cluster-devel-bounces@redhat.com>
-In-Reply-To: <20070811025739.GA21244@infradead.org>
+In-Reply-To: <20070813080134.f770814b.jlayton@redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
 List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
 	<mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
@@ -23,35 +24,43 @@ List-Subscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
 Sender: cluster-devel-bounces@redhat.com
 Errors-To: cluster-devel-bounces@redhat.com
 Content-Type: text/plain; charset="us-ascii"
-To: Christoph Hellwig <hch@infradead.org>
-Cc: jfs-discussion@lists.sourceforge.net, zippel@linux-m68k.org, wli@holomorphy.com, dhowells@redhat.com, mikulas@artax.karlin.mff.cuni.cz, joel.becker@oracle.com, cluster-devel@redhat.com, v9fs-developer@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-cifs-client@lists.samba.org, fuse-devel@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, user-mode-linux-user@lists.sourceforge.net, codalist@TELEMANN.coda.cs.cmu.edu, linux-kernel@vger.kernel.org, Trond Myklebust <trond.myklebust@fys.uio.no>, bfennema@falcon.csc.calpoly.edu, jffs-dev@axis.com, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, ocfs2-devel@oss.oracle.com
+To: Jeff Layton <jlayton@redhat.com>
+Cc: jfs-discussion@lists.sourceforge.net, zippel@linux-m68k.org, wli@holomorphy.com, dhowells@redhat.com, mikulas@artax.karlin.mff.cuni.cz, Christoph Hellwig <hch@infradead.org>, joel.becker@oracle.com, cluster-devel@redhat.com, v9fs-developer@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-cifs-client@lists.samba.org, fuse-devel@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, user-mode-linux-user@lists.sourceforge.net, codalist@TELEMANN.coda.cs.cmu.edu, linux-kernel@vger.kernel.org, Trond Myklebust <trond.myklebust@fys.uio.no>, bfennema@falcon.csc.calpoly.edu, jffs-dev@axis.com, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, ocfs2-devel@oss.oracle.com
 
-On Sat, 11 Aug 2007 03:57:39 +0100
-Christoph Hellwig <hch@infradead.org> wrote:
+On Mon, 13 Aug 2007 08:01:34 -0400
+Jeff Layton <jlayton@redhat.com> wrote:
+
+> On Sat, 11 Aug 2007 03:57:39 +0100
+> Christoph Hellwig <hch@infradead.org> wrote:
+> > 
+> > I like the idea of checking ia_valid after return a lot.  But instead of
+> > going BUG() it should just do the default action, that we can avoid
+> > touching all the filesystem and only need to change those that need
+> > special care.  I also have plans to add some new AT_ flags for implementing
+> > some filesystem ioctl in generic code that would benefit greatly from
+> > the ia_valid checkin after return to return ENOTTY fr filesystems not
+> > implementing those ioctls.
 > 
-> I like the idea of checking ia_valid after return a lot.  But instead of
-> going BUG() it should just do the default action, that we can avoid
-> touching all the filesystem and only need to change those that need
-> special care.  I also have plans to add some new AT_ flags for implementing
-> some filesystem ioctl in generic code that would benefit greatly from
-> the ia_valid checkin after return to return ENOTTY fr filesystems not
-> implementing those ioctls.
+> That sounds good (if I follow your meaning correctly). How about
+> something like the patch below? If either ATTR_KILL bit is set after
+> the setattr, try to handle them in the "standard" way with a second
+> setattr call. It also does a printk in this situation to alert
+> filesystem developers that they should convert to the "new" scheme,
+> so they can avoid this second setattr call.
+> 
+> If this idea seems sound then I'll start the grunt work to fix up the
+> in-tree filesystems so that they don't need the second setattr call.
+> 
 
-That sounds good (if I follow your meaning correctly). How about
-something like the patch below? If either ATTR_KILL bit is set after
-the setattr, try to handle them in the "standard" way with a second
-setattr call. It also does a printk in this situation to alert
-filesystem developers that they should convert to the "new" scheme,
-so they can avoid this second setattr call.
-
-If this idea seems sound then I'll start the grunt work to fix up the
-in-tree filesystems so that they don't need the second setattr call.
+The earlier patch has a misplaced comma and won't build. This one
+builds. This should be considered an RFC, as I've not yet done any
+real testing of this patch:
 
 Signed-off-by: Jeff Layton <jlayton@redhat.com>
 
-commit 521ada37ab165d9d0a12dfb59a631a2ec58a8f84
+commit ad00450c4532da32718efe39e27d99060f04e396
 Author: Jeff Layton <jlayton@redhat.com>
-Date:   Mon Aug 13 07:43:56 2007 -0400
+Date:   Mon Aug 13 08:33:10 2007 -0400
 
     VFS: move ATTR_KILL handling from notify_change into helper function
     
@@ -69,7 +78,7 @@ Date:   Mon Aug 13 07:43:56 2007 -0400
     don't handle these bits correctly without breaking them outright.
 
 diff --git a/fs/attr.c b/fs/attr.c
-index f8dfc22..7cbb883 100644
+index f8dfc22..9585e45 100644
 --- a/fs/attr.c
 +++ b/fs/attr.c
 @@ -100,15 +100,53 @@ int inode_setattr(struct inode * inode, struct iattr * attr)
@@ -186,8 +195,8 @@ index f8dfc22..7cbb883 100644
 +			if (printk_ratelimit())
 +				printk(KERN_ERR "%s: %s doesn't seem to "
 +					"handle setuid/setgid bit clearing "
-+					"correctly.\n"
-+					__func__, inode->i_sb->s_type->name);
++					"correctly.\n", __func__,
++					inode->i_sb->s_type->name);
 +			goto try_again;
 +		}
  	} else {
@@ -207,4 +216,5 @@ index 6bf1395..daac0e5 100644
  extern int notify_change(struct dentry *, struct iattr *);
  extern int permission(struct inode *, int, struct nameidata *);
  extern int generic_permission(struct inode *, int,
+
 
