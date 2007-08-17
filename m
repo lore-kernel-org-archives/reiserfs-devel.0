@@ -1,119 +1,82 @@
-From: Adrian Bunk <bunk@kernel.org>
-Subject: [-mm patch] fs/reiser4/plugin/: make 3 functions static
-Date: Tue, 14 Aug 2007 23:21:52 +0200
-Message-ID: <20070814212152.GT18945@stusta.de>
-References: <20070731230932.a9459617.akpm@linux-foundation.org>
+From: Matthew <jackdachef@gmail.com>
+Subject: Re: reiser4-for-2.6.22-2.patch
+Date: Fri, 17 Aug 2007 16:50:49 +0200
+Message-ID: <e85b9d30708170750sb68c969s1980a35d9a63667d@mail.gmail.com>
+References: <loom.20070728T013136-358@post.gmane.org>
+	 <46ABACE8.4050306@namesys.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
+        d=gmail.com; s=beta;
+        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+        b=ElId6PUc+Fq4GjbmlJSFjfwSNM4aSKobpGU0IJoXQV3qVYGVRjpN7ON2+i51xrsO7GEL7+7blsE2N+pQXwfE8bDO09grrMQW0hrA5A2S18hCKW0i4/aotiWegJi/T9mfa3MmIVI3quDEQq2JyeOQJEnPW3jTC3DGLxYL5EG+1jw=
+In-Reply-To: <46ABACE8.4050306@namesys.com>
 Content-Disposition: inline
-In-Reply-To: <20070731230932.a9459617.akpm@linux-foundation.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Edward Shishkin <edward@namesys.com>
-Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+To: Edward Shishkin <edward@namesys.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-On Tue, Jul 31, 2007 at 11:09:32PM -0700, Andrew Morton wrote:
->...
-> Changes since 2.6.23-rc1-mm1:
->...
-> +reiser4-cryptcompress-misc-fixups.patch
->...
->  reiser4 updates
->...
+On 7/28/07, Edward Shishkin <edward@namesys.com> wrote:
 
-This patch makes the following needlessly global functions static:
-- file/cryptcompress.c: __put_page_cluster()
-- file/cryptcompress.c: put_hint_cluster()
-- item/ctail.c: ctail_read_disk_cluster()
+    Mat wrote:
 
-Signed-off-by: Adrian Bunk <bunk@kernel.org>
+    >I compiled a 2.6.22-based kernel with this patch & ran some tests
+with default
+    >reiser4 today - all I can say:
+    >
+    >you guys did an excellent job!
+    >there's no corruption anymore, reiser4 feels rockstable & fast as always
+    >
+    >thanks a lot :)
+    >
+    >(I will test cryptcompress later, probably during the weekend & post if I
+    >encounter any significant problems which I don't expect to happen :) )
+    >
+    >
 
----
+    Yes, please.. Have the latest patch:
+    ftp://ftp.namesys.com/pub/reiser4-for-2.6/2.6.22/reiser4-for-2.6.22-2.patch.gz
+    (it fixes some problems in the case when compression is enabled _and_ debug
+    option is on).
 
- fs/reiser4/plugin/cluster.h            |    4 ----
- fs/reiser4/plugin/file/cryptcompress.c |    8 ++++----
- fs/reiser4/plugin/file/cryptcompress.h |    2 --
- fs/reiser4/plugin/item/ctail.c         |    5 +++--
- 4 files changed, 7 insertions(+), 12 deletions(-)
+    Thanks,
+    Edward.
 
-dcbd29fcda0d6143ab0ec5f91e347d6e540f27bd 
-diff --git a/fs/reiser4/plugin/cluster.h b/fs/reiser4/plugin/cluster.h
-index 7856074..af7a305 100644
---- a/fs/reiser4/plugin/cluster.h
-+++ b/fs/reiser4/plugin/cluster.h
-@@ -326,8 +326,6 @@ int reiser4_deflate_cluster(struct cluster_handle *, struct inode *);
- void truncate_complete_page_cluster(struct inode *inode, cloff_t start,
- 					 int even_cows);
- void invalidate_hint_cluster(struct cluster_handle * clust);
--void put_hint_cluster(struct cluster_handle * clust, struct inode *inode,
--		      znode_lock_mode mode);
- int get_disk_cluster_locked(struct cluster_handle * clust, struct inode * inode,
- 			    znode_lock_mode lock_mode);
- void reset_cluster_params(struct cluster_handle * clust);
-@@ -335,8 +333,6 @@ int set_cluster_by_page(struct cluster_handle * clust, struct page * page,
- 			int count);
- int prepare_page_cluster(struct inode *inode, struct cluster_handle * clust,
- 			 rw_op rw);
--void __put_page_cluster(int from, int to, struct page ** pages,
--			struct inode * inode);
- void put_page_cluster(struct cluster_handle * clust,
- 		      struct inode  * inode, rw_op rw);
- void put_cluster_handle(struct cluster_handle * clust);
-diff --git a/fs/reiser4/plugin/file/cryptcompress.c b/fs/reiser4/plugin/file/cryptcompress.c
-index f0f0bee..9724d64 100644
---- a/fs/reiser4/plugin/file/cryptcompress.c
-+++ b/fs/reiser4/plugin/file/cryptcompress.c
-@@ -1378,8 +1378,8 @@ static void truncate_page_cluster_range(struct inode * inode,
- }
- 
- /* Put @count pages starting from @from offset */
--void __put_page_cluster(int from, int count,
--			struct page ** pages, struct inode  * inode)
-+static void __put_page_cluster(int from, int count,
-+			       struct page ** pages, struct inode  * inode)
- {
- 	int i;
- 	assert("edward-1468", pages != NULL);
-@@ -1975,8 +1975,8 @@ void invalidate_hint_cluster(struct cluster_handle * clust)
- 	hint_clr_valid(clust->hint);
- }
- 
--void put_hint_cluster(struct cluster_handle * clust, struct inode *inode,
--		      znode_lock_mode mode)
-+static void put_hint_cluster(struct cluster_handle * clust,
-+			     struct inode *inode, znode_lock_mode mode)
- {
- 	assert("edward-1286", clust != NULL);
- 	assert("edward-1287", clust->hint != NULL);
-diff --git a/fs/reiser4/plugin/file/cryptcompress.h b/fs/reiser4/plugin/file/cryptcompress.h
-index 5984e3c..117d377 100644
---- a/fs/reiser4/plugin/file/cryptcompress.h
-+++ b/fs/reiser4/plugin/file/cryptcompress.h
-@@ -530,8 +530,6 @@ int equal_to_rdk(znode *, const reiser4_key *);
- int goto_right_neighbor(coord_t *, lock_handle *);
- int cryptcompress_inode_ok(struct inode *inode);
- int coord_is_unprepped_ctail(const coord_t * coord);
--extern int ctail_read_disk_cluster (struct cluster_handle *, struct inode *,
--				    struct page *, znode_lock_mode mode);
- extern int do_readpage_ctail(struct inode *, struct cluster_handle *,
- 			     struct page * page, znode_lock_mode mode);
- extern int ctail_insert_unprepped_cluster(struct cluster_handle * clust,
-diff --git a/fs/reiser4/plugin/item/ctail.c b/fs/reiser4/plugin/item/ctail.c
-index a931392..33ab44a 100644
---- a/fs/reiser4/plugin/item/ctail.c
-+++ b/fs/reiser4/plugin/item/ctail.c
-@@ -551,8 +551,9 @@ int read_ctail(struct file *file UNUSED_ARG, flow_t * f, hint_t * hint)
-  * Prepare transform stream with plain text for page
-  * @page taking into account synchronization issues.
-  */
--int ctail_read_disk_cluster(struct cluster_handle * clust, struct inode * inode,
--			    struct page * page, znode_lock_mode mode)
-+static int ctail_read_disk_cluster(struct cluster_handle * clust,
-+				   struct inode * inode, struct page * page,
-+				   znode_lock_mode mode)
- {
- 	int result;
- 
 
+First of all sorry for the long delay and thanks for that patch :) ,
+
+I'm rebuilding 2 systems right now and haven't noticed any severe hang
+ups or data losses - great !
+as memory is limited on these machines (1 GB) and heavy compiling is
+happening I had expected OOM error or similar problems like in earlier
+kernel versions but none happened!
+a clear sign, that reiser4 is getting pretty mature
+
+access time from time to time is a little high (e.g. launching of
+firefox, openoffice and the kind) but ok, probably due to debug being
+enabled
+
+the only real "issue" is its still bad fsync / sync behavior:
+
+in several cases if I call: "sync" it just sits there and syncs for up
+to 15-30 minutes ! (called during idle),
+I'm still able to launch apps but that state's not really acceptable
+during everyday work or in heavy loads ( e.g. wanting to sync & then
+shutdown the computer / laptop)
+I suspect that it has to do something with preemptible setting in the
+kernel but not sure, on the other computer with voluntary preemption
+it seems to do better
+
+I unfortunately can't investigate any further but only use it
+regularly and see if I encounter any other problems (much work to do)
+
+that's all so far
+
+as already written:
+keep up the good work & thanks a lot
+
+
+Mat
