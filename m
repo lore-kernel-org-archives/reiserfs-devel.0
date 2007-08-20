@@ -1,73 +1,77 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: reiser4-for-2.6.22-2.patch
-Date: Sat, 18 Aug 2007 23:44:17 +0400
-Message-ID: <46C74C11.7020304@namesys.com>
-References: <loom.20070728T013136-358@post.gmane.org>	 <46ABACE8.4050306@namesys.com> <e85b9d30708181048v35301591vba01deced5e0824d@mail.gmail.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <e85b9d30708181048v35301591vba01deced5e0824d@mail.gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+From: Jeff Layton <jlayton@redhat.com>
+Subject: [PATCH 0/4] move handling of setuid/gid bits from
+	VFS into individual setattr functions (try 2)
+Date: Mon, 20 Aug 2007 16:53:09 -0400
+Message-ID: <200708202053.l7KKr9eE017753@dantu.rdu.redhat.com>
+Return-path: <cluster-devel-bounces@redhat.com>
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Matthew <jackdachef@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/cluster-devel>
+List-Post: <mailto:cluster-devel@redhat.com>
+List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=subscribe>
+Sender: cluster-devel-bounces@redhat.com
+Errors-To: cluster-devel-bounces@redhat.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: codalist@TELEMANN.coda.cs.cmu.edu, cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net, mikulas@artax.karlin.mff.cuni.cz, zippel@linux-m68k.org, xfs@oss.sgi.com, joel.becker@oracle.com, wli@holomorphy.com, reiserfs-devel@vger.kernel.org, dhowells@redhat.com, fuse-devel@lists.sourceforge.net, nfs@lists.sourceforge.net, jffs-dev@axis.com, user-mode-linux-user@lists.sourceforge.net, v9fs-developer@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-cifs-client@lists.samba.org, ocfs2-devel@oss.oracle.com, bfennema@falcon.csc.calpoly.edu
 
-Matthew wrote:
+When an unprivileged process attempts to modify a file that has the
+setuid or setgid bits set, the VFS will attempt to clear these bits. The
+VFS will set the ATTR_KILL_SUID or ATTR_KILL_SGID bits in the ia_valid
+mask, and then call notify_change to clear these bits and set the mode
+accordingly.
 
->Edward,
->
->I just encountered a pretty strange situation:
->
->first some data:
->I'm running hardened Gentoo with glibc 2.6.1 & gcc-4.2.1 both with
->hardened use-flags enabled
->- my kernel running is a 2.6.22-based kernel with grsecurity and some
->other fine speed enhancements (ck-patchset, adaptive readahead, latest
->reiser4 patch 2.6.22-2)
->- this also happens with hardened-sources 2.6.22-r2 + latest reiser4
->patch 2.6.22-2
->
->every time I'm booting into that system I get a corrupted libuuid.so* file:
->it says things like: libfoo isn't an elf-file or similar
->
->it doesn't seem to matter if I'm using e2fsprogs 1.39 and
->corresponding ss and com_err or e2fsprogs 1.40 with corresponding ss
->and com_err, with booting I mean it only gets to that point and then
->refuses and reboots since it's dependent on that critical thing (??)
->other files also seem to get corrupted, I can't say which ones since
->it reboots pretty fast
->
->util-linux version is 2.12r-r7
->
->it's strange to say but it doesn't matter if I'm booting the kernel
->with ro or rw on /root data still gets corrupted (where /root is/was a
->standard formatted reiser4 partition with mkfs.reiser4 out from a
->livecd with 2.6.21-based kernel with reiser4-patch from namesys if I
->recall right
->
->there's also no difference whether I use the old baselayout-1 or the
->new and faster baselayout-2 (for that I have to append 'rw' at boot
->otherwise reiser4 won't boot since it isn't recognized right)
->
->gcc-version is 4.2.1 hardened with pie 9.0.7, I'm sure this also would
->happen with other gcc version
->
->I'm attaching my kernel-config so that you might be able to reproduce
->it (hopefully) or at least get an idea of it
->
->since I need this pc right now I had to replay my system from a
->tarball to a reiserfs partition, so I unfortunately can't collect any
->further data
->
->Mat
->  
->
+With a networked filesystem (NFS and CIFS in particular but likely
+others), the client machine may not have credentials that allow for
+setting the mode. In some situations, this can lead to file corruption,
+an operation failing outright because the setattr fails, or to races
+that lead to a mode change being reverted.
 
-Hmm.. It would be nice to compare hexdumps of "corrupted" and original
-files. Although, you have migrated to v3 already.. Well, I will keep it 
-in mind,
-thanks for the report!
+In this situation, we'd like to just leave the handling of this to the
+server and ignore these bits. The problem is that by the time the
+setattr op is called, the VFS has already reinterpreted the ATTR_KILL_*
+bits into a mode change. We can't fix this in the filesystems where this
+is a problem, as doing so would leave us having to second-guess what the
+VFS wants us to do. So we need to change it so that filesystems have
+more flexibility in how to interpret the ATTR_KILL_* bits.
 
-Edward.
+The first patch in the following patchset moves this logic out of
+notify_change and into a helper function. It then has notify_change call
+this helper function for inodes that do not have a setattr operation
+defined. The other patches fix up the individual filesystems for the new
+scheme, mostly by having them call the new helper.
+
+Changing this abruptly could introduce security issues for filesystems
+that live out-of-tree or if an in-tree filesystem is missed. As a
+precaution, the patchset has notify_change check the ia_valid in the
+iattr struct after the setattr call returns. If any ATTR_KILL_* bits are
+still set, then notify_change assumes that the filesystem didn't handle
+these bits correctly. It printk's a warning and attempts to clear them
+the with another setattr call.
+
+The upshot of this is that with this change, filesystems that define a
+setattr inode operation are now responsible for handling the ATTR_KILL
+bits as well. They can trivially do so by calling the helper, but
+they should be converted to do so as soon as possible.
+
+Some of the follow-on patches may not be strictly necessary, but I
+decided that it was better to take the conservative approach and call
+the helper when I wasn't sure. I've tried to CC the maintainers for the
+individual filesystems where I could find them. Please let me know if
+there are others who should be informed.
+
+This patchset should apply cleanly to the current -mm tree. I've rolled
+the patches that fix individual filesystems together per Christoph's
+suggestion, though I can also provide them broken out individually
+again if needed.
+
+Comments and suggestions appreciated. Also, please let me know if
+I've missed any filesystems that need to be converted...
+
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
 
