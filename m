@@ -1,51 +1,32 @@
-From: Phillip Susi <psusi@cfl.rr.com>
-Subject: Re: fs corruption by doing nothing
-Date: Thu, 23 Aug 2007 12:34:59 -0400
-Message-ID: <46CDB733.2000506@cfl.rr.com>
-References: <46CD92B6.5090900@itwm.fraunhofer.de>
+From: Christian Kujau <lists@nerdbynature.de>
+Subject: Re: Reiser4: File lost during log rollback.
+Date: Sun, 2 Sep 2007 20:14:14 +0200 (CEST)
+Message-ID: <alpine.DEB.0.999.0709022011310.7103@sheep.housecafe.de>
+References: <6ec7a4340708280229l61d86d1dsf113890277bee68e@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1764983AbXHWQfN@vger.kernel.org>
-In-Reply-To: <46CD92B6.5090900@itwm.fraunhofer.de>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <6ec7a4340708280229l61d86d1dsf113890277bee68e@mail.gmail.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Martin Vogt <vogt@itwm.fraunhofer.de>
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: TEXT/PLAIN; format="flowed"; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Xu CanHao <xucanhao@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-Martin Vogt wrote:
-> 
-> Hello,
-> 
-> this bug report describes the following scenario:
-> 
-> - Insert a Knoppix 5.1.1 CD
->   into a fileserver with a clean reiserfs system and
->   Knoppix completely destroys the reiser filesystem on the fileserver,
->   just by booting Knoppix.
-> 
-> 
-> Its unclear if this is a knoppix bug, but reiserfs
-> simply tries to "correct something" which is wrong.
-> 
->> ReiserFS: sda2: found reiserfs format "3.6" with standard journal
->> ReiserFS: sda2: using ordered data mode
->> ReiserFS: sda2: warning: sh-461: journal_init: wrong transaction max size
->> (144767). Changed to 1024
-> 
-> ^^^^^^^^^^here
-> 
->> ReiserFS: sdb2: found reiserfs format "3.6" with standard journal
->> ReiserFS: sdb2: using ordered data mode
->> ReiserFS: sdb2: warning: sh-461: journal_init: wrong transaction max size
->> (144767). Changed to 1024
-> 
-> ^^^^^^^^^^here
-> 
-> After that the filesystem is completely broken.
+On Tue, 28 Aug 2007, Xu CanHao wrote:
+> I've heard someone said reiser4's possibility of losing some file
+> when crash. Well, I have one exactly the same experience: my system is
+> slackware 11.0, and vanilla 2.6.21+patch for 2.6.21+r4tools 1.0.5,
+> after one or two times of power loss, (at least)my /usr/sbin/sendmail
+> lost, and the partition free space have a ~200MB less. Because of
+> /usr/sbin/sendmail is not system critical file, I think the loss could
+> happened some days ago. Any ideas?
 
-Looks to me that there are two bugs here.  The first is with knoppix as 
-it is mounting each individual mirrored disk instead of the raid device. 
-  The second appears to be in the kernel as it is detecting and 
-correcting what it thinks is an error but isn't.
+Does this happen to your system when it has crashed or are you losing
+files during runtime? Did you try 2.6.22? Checked /lost+found, the system 
+logs? Does fsck report something useful?
 
+-- 
+BOFH excuse #435:
+
+Internet shut down due to maintenance
