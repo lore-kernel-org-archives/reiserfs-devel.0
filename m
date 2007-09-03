@@ -1,56 +1,42 @@
-From: "Rob Mueller" <robm@fastmail.fm>
-Subject: BUG: at fs/reiserfs/inode.c:2868 reiserfs_releasepage()
-Date: Mon, 3 Sep 2007 16:47:07 +1000
-Message-ID: <1d7601c7edf6$40655930$8700a8c0@robmhp>
+From: "=?ISO-8859-2?Q?Grzegorz_Ja=B6kiewicz?=" <gryzman@gmail.com>
+Subject: Re: BUG: at fs/reiserfs/inode.c:2868 reiserfs_releasepage()
+Date: Mon, 3 Sep 2007 13:00:15 +0100
+Message-ID: <2f4958ff0709030500w2bc8d064q351c1b8e05e71b31@mail.gmail.com>
+References: <1d7601c7edf6$40655930$8700a8c0@robmhp>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
+        d=gmail.com; s=beta;
+        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+        b=nizW2CqCYZCoPLR7HUY5fxa25aNVa0t+AjWlbM/NujpjuMwdPq0CqdqTvPWvBkwHB2WOazUIyHxTBkMFTL+4vtdVjmZ6MrsyS2R97BplH5A1EUrCioCs02HSroU4Oao3k9gDzRHPprapyzfH2m2L2l6r+gMz2ZejIs66at2cGPo=
+In-Reply-To: <1d7601c7edf6$40655930$8700a8c0@robmhp>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; format="flowed"; charset="us-ascii"; reply-type="original"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Rob Mueller <robm@fastmail.fm>
+Cc: reiserfs-devel@vger.kernel.org
 
-We're seeing the above error repeated numerous times in our dmesg log, 
-though it doesn't seem to be causing any major problems. The full message 
-is:
+On 9/3/07, Rob Mueller <robm@fastmail.fm> wrote:
+> This is linux 2.6.20.11 with one patch applied to work around this bug
+> http://lists.linuxcoding.com/kernel/2006-q1/msg32508.html, the patch is:
+>
+> -----
+> --- linux/fs/reiserfs/file.c   2006-11-29 16:57:37.000000000 -0500
+> +++ linux-syncwrite/fs/reiserfs/file.c 2007-02-02 01:01:36.000000000 -0500
+> @@ -1358,6 +1358,8 @@
+>                 return result;
+>         }
+>
+> +       return do_sync_write(file, buf, count, ppos);
+> +
+>         if (unlikely((ssize_t) count < 0))
+>                 return -EINVAL;
 
-BUG: at fs/reiserfs/inode.c:2868 reiserfs_releasepage()
- [<c0199ecb>] reiserfs_releasepage+0xa3/0xa8
- [<c0199e28>] reiserfs_releasepage+0x0/0xa8
- [<c013c8e9>] try_to_release_page+0x2c/0x40
- [<c0141386>] pagevec_strip+0x52/0x54
- [<c0142027>] shrink_active_list+0x347/0x3d1
- [<c0142b33>] shrink_zone+0xd8/0xf5
- [<c014307c>] kswapd+0x322/0x423
- [<c012b4e4>] autoremove_wake_function+0x0/0x37
- [<c0142d5a>] kswapd+0x0/0x423
- [<c012b362>] kthread+0xae/0xd3
- [<c012b2b4>] kthread+0x0/0xd3
- [<c010383b>] kernel_thread_helper+0x7/0x1c
- =======================
+that's the dead code than, because you put return upfront. this ain't
+any fix, problem probably lies somewhere else - and is exposed by
+'unlikely()' function.
 
-$ uptime
- 02:45:06 up 38 days, 23:53,  1 user,  load average: 1.47, 1.35, 1.78
-$ dmesg | grep BUG: | grep releasepage | wc -l
-226
-
-This is linux 2.6.20.11 with one patch applied to work around this bug 
-http://lists.linuxcoding.com/kernel/2006-q1/msg32508.html, the patch is:
-
------
---- linux/fs/reiserfs/file.c   2006-11-29 16:57:37.000000000 -0500
-+++ linux-syncwrite/fs/reiserfs/file.c 2007-02-02 01:01:36.000000000 -0500
-@@ -1358,6 +1358,8 @@
-                return result;
-        }
-
-+       return do_sync_write(file, buf, count, ppos);
-+
-        if (unlikely((ssize_t) count < 0))
-                return -EINVAL;
-------
-
-Any idea what's causing this?
-
-Rob
-
+-- 
+GJ
