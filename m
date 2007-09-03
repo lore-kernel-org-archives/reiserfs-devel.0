@@ -1,42 +1,53 @@
-From: "=?ISO-8859-2?Q?Grzegorz_Ja=B6kiewicz?=" <gryzman@gmail.com>
-Subject: Re: BUG: at fs/reiserfs/inode.c:2868 reiserfs_releasepage()
-Date: Mon, 3 Sep 2007 13:00:15 +0100
-Message-ID: <2f4958ff0709030500w2bc8d064q351c1b8e05e71b31@mail.gmail.com>
-References: <1d7601c7edf6$40655930$8700a8c0@robmhp>
+From: "Xu CanHao" <xucanhao@gmail.com>
+Subject: Reiser4: File lost during log rollback.
+Date: Mon, 3 Sep 2007 20:07:18 +0800
+Message-ID: <6ec7a4340709030507u2cb968eche850f7365011c38@mail.gmail.com>
+References: <6ec7a4340708280229l61d86d1dsf113890277bee68e@mail.gmail.com>
+	 <alpine.DEB.0.999.0709022011310.7103@sheep.housecafe.de>
+	 <6ec7a4340709030319k58b3a1afm994e188cb37170fe@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
         d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
-        b=nizW2CqCYZCoPLR7HUY5fxa25aNVa0t+AjWlbM/NujpjuMwdPq0CqdqTvPWvBkwHB2WOazUIyHxTBkMFTL+4vtdVjmZ6MrsyS2R97BplH5A1EUrCioCs02HSroU4Oao3k9gDzRHPprapyzfH2m2L2l6r+gMz2ZejIs66at2cGPo=
-In-Reply-To: <1d7601c7edf6$40655930$8700a8c0@robmhp>
+        h=domainkey-signature:received:received:message-id:date:from:to:subject:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+        b=j5aYDyBWAaQmTgfc1H8DZzeIvN3NAJbZgynM2oovhJMms4bOhT4u7tSBgu1EVe+2tFvfjBSZWu7maCiAcqSd5t3rFy627I9fUvmX8mVWHwK3ggdTek8amoq5h5ul00ls6X6pdSjw/WsEOqdBSjk6tTwt+KaGzb6LzULaB1To6d4=
+In-Reply-To: <6ec7a4340709030319k58b3a1afm994e188cb37170fe@mail.gmail.com>
 Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Rob Mueller <robm@fastmail.fm>
-Cc: reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-On 9/3/07, Rob Mueller <robm@fastmail.fm> wrote:
-> This is linux 2.6.20.11 with one patch applied to work around this bug
-> http://lists.linuxcoding.com/kernel/2006-q1/msg32508.html, the patch is:
+Hello!
+
+1, The system had some power lost recently, I believe the file lost
+during one time(I did not write to that file at once).
+2, Is there any evidence show that 2.6.22 much more stable(or at least
+solved that behavior)?
+3, There is no /lost+found directory in a reiser4 partition(AFAIK it's ext2/3).
+4, I've no idea _when_ does the file lost, so tracing the logs is not possible.
+5, fsck.reiser4 reports no corruption.
+
+Thanks!
+
+
+2007/9/3, Christian Kujau <lists@nerdbynature.de>:
+> On Tue, 28 Aug 2007, Xu CanHao wrote:
+> > I've heard someone said reiser4's possibility of losing some file
+> > when crash. Well, I have one exactly the same experience: my system is
+> > slackware 11.0, and vanilla 2.6.21+patch for 2.6.21+r4tools 1.0.5,
+> > after one or two times of power loss, (at least)my /usr/sbin/sendmail
+> > lost, and the partition free space have a ~200MB less. Because of
+> > /usr/sbin/sendmail is not system critical file, I think the loss could
+> > happened some days ago. Any ideas?
 >
-> -----
-> --- linux/fs/reiserfs/file.c   2006-11-29 16:57:37.000000000 -0500
-> +++ linux-syncwrite/fs/reiserfs/file.c 2007-02-02 01:01:36.000000000 -0500
-> @@ -1358,6 +1358,8 @@
->                 return result;
->         }
+> Does this happen to your system when it has crashed or are you losing
+> files during runtime? Did you try 2.6.22? Checked /lost+found, the system
+> logs? Does fsck report something useful?
 >
-> +       return do_sync_write(file, buf, count, ppos);
-> +
->         if (unlikely((ssize_t) count < 0))
->                 return -EINVAL;
-
-that's the dead code than, because you put return upfront. this ain't
-any fix, problem probably lies somewhere else - and is exposed by
-'unlikely()' function.
-
--- 
-GJ
+> --
+> BOFH excuse #435:
+>
+> Internet shut down due to maintenance
+>
