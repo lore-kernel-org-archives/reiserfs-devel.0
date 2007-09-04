@@ -1,73 +1,37 @@
-From: Jeff Layton <jlayton@redhat.com>
-Subject: [PATCH 7/7] unionfs: fix unionfs_create and
-	unionfs_setattr to handle ATTR_KILL_S*ID
-Date: Tue, 4 Sep 2007 10:37:55 -0400
-Message-ID: <200709041437.l84EbtRZ010033@dantu.rdu.redhat.com>
-Return-path: <linux-cifs-client-bounces+glfc-linux-cifs-client=gmane.org@lists.samba.org>
+From: Christian Kujau <lists@nerdbynature.de>
+Subject: Re: Reiser4: File lost during log rollback.
+Date: Tue, 4 Sep 2007 20:58:37 +0200 (CEST)
+Message-ID: <alpine.DEB.0.999.0709042048160.7103@sheep.housecafe.de>
+References: <6ec7a4340708280229l61d86d1dsf113890277bee68e@mail.gmail.com> 
+ <alpine.DEB.0.999.0709022011310.7103@sheep.housecafe.de> 
+ <6ec7a4340709030319k58b3a1afm994e188cb37170fe@mail.gmail.com>
+ <6ec7a4340709030507u2cb968eche850f7365011c38@mail.gmail.com>
+Mime-Version: 1.0
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <6ec7a4340709030507u2cb968eche850f7365011c38@mail.gmail.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://lists.samba.org/mailman/listinfo/linux-cifs-client>, 
-	<mailto:linux-cifs-client-request@lists.samba.org?subject=unsubscribe>
-List-Archive: <http://lists.samba.org/archive/linux-cifs-client>
-List-Post: <mailto:linux-cifs-client@lists.samba.org>
-List-Help: <mailto:linux-cifs-client-request@lists.samba.org?subject=help>
-List-Subscribe: <https://lists.samba.org/mailman/listinfo/linux-cifs-client>, 
-	<mailto:linux-cifs-client-request@lists.samba.org?subject=subscribe>
-Sender: linux-cifs-client-bounces+glfc-linux-cifs-client=gmane.org@lists.samba.org
-Errors-To: linux-cifs-client-bounces+glfc-linux-cifs-client=gmane.org@lists.samba.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc: nfs@lists.sourceforge.net, unionfs@filesystems.org, linux-cifs-client@lists.samba.org, ecryptfs-devel@lists.sourceforge.net, reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-Don't allow either function to trip the BUG() in notify_change. For
-unionfs_setattr, clear ATTR_MODE if the either ATTR_KILL_S*ID is set.
+On Mon, 3 Sep 2007, Xu CanHao wrote:
+> 1, The system had some power lost recently, I believe the file lost
+> during one time(I did not write to that file at once).
 
-unionfs_create is setting the mode explicitly already.  Don't set
-ATTR_KILL_S*ID. Just fix up the mode to have the same effect. Also, move
-locking the i_mutex to lower in the function. It's not needed until it
-checks the i_size.
+Hm, I'm not entirely sure if Reiser4 guarantees userdata consistency or 
+"just" meta-data consistency. If the latter is the case: if the 
+filesystem was in a usable state, reiser4 helped - if not, one should 
+try to reproduce it and file a bug...
 
-(Jeff Sipek indicated that he was planning to change some of this code,
-so this patch may need changes if it goes in after his patchset)
+> 2, Is there any evidence show that 2.6.22 much more stable(or at least
+> solved that behavior)?
 
-Signed-off-by: Jeff Layton <jlayton@redhat.com>
----
- fs/unionfs/inode.c |   10 ++++++----
- 1 files changed, 6 insertions(+), 4 deletions(-)
+I don't use reiser4 on a regular basis, but given that development is 
+still in flux, it's worth a try, IMHO.
 
-diff --git a/fs/unionfs/inode.c b/fs/unionfs/inode.c
-index 59bb418..f2e7f25 100644
---- a/fs/unionfs/inode.c
-+++ b/fs/unionfs/inode.c
-@@ -78,15 +78,14 @@ static int unionfs_create(struct inode *parent, struct dentry *dentry,
- 		struct dentry *lower_dir_dentry;
- 		struct iattr newattrs;
- 
--		mutex_lock(&wh_dentry->d_inode->i_mutex);
- 		newattrs.ia_valid = ATTR_CTIME | ATTR_MODE | ATTR_ATIME
--			| ATTR_MTIME | ATTR_UID | ATTR_GID | ATTR_FORCE
--			| ATTR_KILL_SUID | ATTR_KILL_SGID;
-+			| ATTR_MTIME | ATTR_UID | ATTR_GID | ATTR_FORCE;
- 
--		newattrs.ia_mode = mode & ~current->fs->umask;
-+		newattrs.ia_mode = mode & ~(current->fs->umask|S_ISUID|S_ISGID);
- 		newattrs.ia_uid = current->fsuid;
- 		newattrs.ia_gid = current->fsgid;
- 
-+		mutex_lock(&wh_dentry->d_inode->i_mutex);
- 		if (wh_dentry->d_inode->i_size != 0) {
- 			newattrs.ia_valid |= ATTR_SIZE;
- 			newattrs.ia_size = 0;
-@@ -1032,6 +1031,9 @@ static int unionfs_setattr(struct dentry *dentry, struct iattr *ia)
- 	bend = dbend(dentry);
- 	inode = dentry->d_inode;
- 
-+	if (ia->ia_valid & (ATTR_KILL_SUID | ATTR_KILL_SGID))
-+		ia->ia_valid &= ~ATTR_MODE;
-+
- 	for (bindex = bstart; (bindex <= bend) || (bindex == bstart);
- 	     bindex++) {
- 		lower_dentry = unionfs_lower_dentry_idx(dentry, bindex);
+C.
 -- 
-1.5.2.1
+BOFH excuse #251:
+
+Processes running slowly due to weak power supply
