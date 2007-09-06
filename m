@@ -1,58 +1,53 @@
-From: "Xu CanHao" <xucanhao@gmail.com>
-Subject: Re: Reiser4: File lost during log rollback.
-Date: Wed, 5 Sep 2007 21:15:27 +0800
-Message-ID: <6ec7a4340709050615i59cdec6ck32036d12b931cb79@mail.gmail.com>
-References: <6ec7a4340708280229l61d86d1dsf113890277bee68e@mail.gmail.com>
-	 <alpine.DEB.0.999.0709022011310.7103@sheep.housecafe.de>
-	 <6ec7a4340709030319k58b3a1afm994e188cb37170fe@mail.gmail.com>
-	 <6ec7a4340709030507u2cb968eche850f7365011c38@mail.gmail.com>
-	 <alpine.DEB.0.999.0709042048160.7103@sheep.housecafe.de>
+From: "Marti Raudsepp" <marti@juffo.org>
+Subject: ReiserFS: clm-2100: nesting info a different FS
+Date: Thu, 6 Sep 2007 17:31:53 +0300
+Message-ID: <2a12af650709060731m64d7ff9es7f702d5c300cfcc2@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: a=rsa-sha1; c=relaxed/relaxed;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
-        b=t0DtvsP1vBpCUIF4toOzXjiE1BrCxfx2TL7+9hLmy0gHa7L+WlJtD7SrBv0W6pYM7n2kPhg2XmqzKHjFoZ8lVUwIvM/tywe/LJ8HUhsrggZXsAQREXwHDa+cUGZw3JJ65pnwycQuazyx1uffR9dIAff1g0doRMRzY/0HWAiHFTk=
-In-Reply-To: <alpine.DEB.0.999.0709042048160.7103@sheep.housecafe.de>
+        h=domainkey-signature:received:received:message-id:date:from:sender:to:subject:mime-version:content-type:content-transfer-encoding:content-disposition:x-google-sender-auth;
+        bh=ojJ0oROWbbmu6ddY4AtBB9AyW3kmXoWBHsqL0025ZCU=;
+        b=Kds1pEjjYWRkkHjnsdN34am9JtYoT4OL9CmL8/r2cmRr12GKPW4kjzJ3oRM22y0G6hA9tHgjtmRU27HoocgiaDGInZL2pb/MvfDOPH98scxs+4+nzIu4Ha6As6xPKJudhjL0D61xmlgwdplTzZCdh8bRnHYImw+2vhRTeiCgiAw=
 Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christian Kujau <lists@nerdbynature.de>
-Cc: reiserfs-devel@vger.kernel.org
+To: reiserfs-devel <reiserfs-devel@vger.kernel.org>, fsdevel <linux-fsdevel@vger.kernel.org>
 
-2007/9/5, Christian Kujau <lists@nerdbynature.de>:
-> On Mon, 3 Sep 2007, Xu CanHao wrote:
-> > 1, The system had some power lost recently, I believe the file lost
-> > during one time(I did not write to that file at once).
->
-> Hm, I'm not entirely sure if Reiser4 guarantees userdata consistency or
-> "just" meta-data consistency. If the latter is the case: if the
-> filesystem was in a usable state, reiser4 helped - if not, one should
-> try to reproduce it and file a bug...
+Hi,
 
-Reiser4's wandering log is something different with traditional
-data/meta-data consistency. And the problem is: the file
-/usr/sbin/sendmail totally lost.
+My dmesg output contains a lot of warning messages from reiserfs and
+I'm wondering if this is anything important:
+ReiserFS: dm-0: warning: clm-2100: nesting info a different FS
 
->
-> > 2, Is there any evidence show that 2.6.22 much more stable(or at least
-> > solved that behavior)?
->
-> I don't use reiser4 on a regular basis, but given that development is
-> still in flux, it's worth a try, IMHO.
+I'm running Hardened Gentoo kernel 2.6.16-r11 on AMD64. I've got three
+reiserfs filesystems: one for root which is mounted directly from a
+RAID1 array (/dev/md/2), and two are LVM volumes from another RAID1
+array (/dev/md/3); one of the latter has usrquota enabled. I'm not
+really sure which block device "dm-0" refers to. The computer is doing
+relatively little disk I/O most of the time.
 
-Yes, definitely not on a production system.
+The comment in fs/reiserfs/journal.c says:
+/* we've ended up with a handle from a different filesystem.
+ ** save it and restore on journal_end.  This should never
+ ** really happen...
+ */
 
->
-> C.
-> --
-> BOFH excuse #251:
->
-> Processes running slowly due to weak power supply
-> -
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+The "should never really happen" part made me wonder, is this anything
+I should be worried about? Over the last 92 days, my dmesg contains
+123 errors like this; 90 of those appeared on 3rd of September, the
+rest are many days apart; there doesn't appear to be any correlation
+with any messages in other log files. They appear to come in bursts of
+spanning 0.4 or less milliseconds, and are sometimes followed by more
+bursts a few seconds later.
+
+There have been no apparent problems with the performance of the disks
+or system as a result. According to Google searches, earlier kernels
+exhibited this problem with quotas enabled, but that bug was fixed
+back in 2.6.14. And nothing significant appears to have changed in
+fs/reiserfs/journal.c from 2.6.16 till today.
+
+Regards,
+Marti Raudsepp
