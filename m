@@ -1,71 +1,39 @@
-From: Chris Mason <chris.mason@oracle.com>
-Subject: Re: ReiserFS: clm-2100: nesting info a different FS
-Date: Mon, 10 Sep 2007 09:40:16 -0400
-Message-ID: <20070910094016.5ca9f72e@think.oraclecorp.com>
-References: <2a12af650709060731m64d7ff9es7f702d5c300cfcc2@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=MP_PXjm5JgwQnmuSIhH8YptiF5
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <2a12af650709060731m64d7ff9es7f702d5c300cfcc2@mail.gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+From: Jeff Layton <jlayton@redhat.com>
+Subject: [PATCH 6/7] NFS: if ATTR_KILL_S*ID bits are set, then skip mode change
+Date: Mon, 10 Sep 2007 10:52:47 -0400
+Message-ID: <200709101452.l8AEqlcP016294@dantu.rdu.redhat.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S933463AbXIJO4X@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Marti Raudsepp <marti@juffo.org>
-Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>, fsdevel <linux-fsdevel@vger.kernel.org>
-
---MP_PXjm5JgwQnmuSIhH8YptiF5
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: linux-cifs-client@lists.samba.org, nfs@lists.sourceforge.net, ecryptfs-devel@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, unionfs@filesystems.org
 
-On Thu, 6 Sep 2007 17:31:53 +0300
-"Marti Raudsepp" <marti@juffo.org> wrote:
+If the ATTR_KILL_S*ID bits are set then any mode change is only for
+clearing the setuid/setgid bits. For NFS skip the mode change and
+let the server handle it.
 
-> Hi,
-> 
-> My dmesg output contains a lot of warning messages from reiserfs and
-> I'm wondering if this is anything important:
-> ReiserFS: dm-0: warning: clm-2100: nesting info a different FS
-> 
-> I'm running Hardened Gentoo kernel 2.6.16-r11 on AMD64. I've got three
-> reiserfs filesystems: one for root which is mounted directly from a
-> RAID1 array (/dev/md/2), and two are LVM volumes from another RAID1
-> array (/dev/md/3); one of the latter has usrquota enabled. I'm not
-> really sure which block device "dm-0" refers to. The computer is doing
-> relatively little disk I/O most of the time.
-> 
-> The comment in fs/reiserfs/journal.c says:
-> /* we've ended up with a handle from a different filesystem.
->  ** save it and restore on journal_end.  This should never
->  ** really happen...
->  */
-> 
-> The "should never really happen" part made me wonder, is this anything
-> I should be worried about?
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
+---
+ fs/nfs/inode.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
-Well, it's really not supposed to happen, and hopefully it indicates
-that someone is doing an allocation without GFP_NOFS when they really
-should be using it.  A simple stack trace will show us pretty quickly.
-
-Can you try a patch to add a stack trace to this warning?  I've
-attached it.
-
--chris
-
---MP_PXjm5JgwQnmuSIhH8YptiF5
-Content-Type: text/x-patch; name=warning.patch
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename=warning.patch
-
-diff -r 70b4267862e0 fs/reiserfs/journal.c
---- a/fs/reiserfs/journal.c	Mon Jul 09 00:00:31 2007 +0000
-+++ b/fs/reiserfs/journal.c	Mon Sep 10 09:37:39 2007 -0400
-@@ -3165,6 +3165,7 @@ int journal_begin(struct reiserfs_transa
- 			 */
- 			reiserfs_warning(p_s_sb,
- 					 "clm-2100: nesting info a different FS");
-+			WARN_ON(1);
- 			th->t_handle_save = current->journal_info;
- 			current->journal_info = th;
- 		}
-
---MP_PXjm5JgwQnmuSIhH8YptiF5--
+diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+index 45633f9..441bd8b 100644
+--- a/fs/nfs/inode.c
++++ b/fs/nfs/inode.c
+@@ -327,6 +327,10 @@ nfs_setattr(struct dentry *dentry, struct iattr *attr)
+ 
+ 	nfs_inc_stats(inode, NFSIOS_VFSSETATTR);
+ 
++	/* skip mode change if it's just for clearing setuid/setgid */
++	if (attr->ia_valid & (ATTR_KILL_SUID | ATTR_KILL_SGID))
++		attr->ia_valid &= ~ATTR_MODE;
++
+ 	if (attr->ia_valid & ATTR_SIZE) {
+ 		if (!S_ISREG(inode->i_mode) || attr->ia_size == i_size_read(inode))
+ 			attr->ia_valid &= ~ATTR_SIZE;
+-- 
+1.5.2.1
