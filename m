@@ -1,54 +1,114 @@
-From: Jeff Layton <jlayton@redhat.com>
-Subject: Re: [PATCH 0/7] fix setuid/setgid clearing in networked
- filesystems (take 6)
-Date: Wed, 19 Sep 2007 11:52:50 -0400
-Message-ID: <20070919115250.b55a90cc.jlayton@redhat.com>
-References: <200709171129.l8HBT5Kq024360@dantu.rdu.redhat.com>
+From: "Xu CanHao" <xucanhao@gmail.com>
+Subject: Re: Reiser4: File lost during log rollback.
+Date: Thu, 20 Sep 2007 14:41:24 +0800
+Message-ID: <6ec7a4340709192341y318f1730gcddf3c5607fbf873@mail.gmail.com>
+References: <6ec7a4340708280229l61d86d1dsf113890277bee68e@mail.gmail.com>
+	 <alpine.DEB.0.999.0709022011310.7103@sheep.housecafe.de>
+	 <6ec7a4340709030319k58b3a1afm994e188cb37170fe@mail.gmail.com>
+	 <6ec7a4340709030507u2cb968eche850f7365011c38@mail.gmail.com>
+	 <46F13942.4020507@namesys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <nfs-bounces@lists.sourceforge.net>
-In-Reply-To: <200709171129.l8HBT5Kq024360@dantu.rdu.redhat.com>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=beta;
+        h=domainkey-signature:received:received:message-id:date:from:to:subject:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+        bh=7X7TJCHJKUnAoQrLm21rpIL9CnmOAGWNPMsM3UP7sP8=;
+        b=uEIHL8FdokmZydqiuPn42tUvxukxtayiHwI1B0c6Pp30hyzeVQ+at3O9i9mBaUbvRQ1NL8115L17VTDCjPsMNufkof5HfxaFU+3WEYhuGod1JoAwUYbu4E2mbOnrJ74750d/UDB6GYWrdf3MOHNCWMGeYWW8dXdSNImUZXumzz8=
+In-Reply-To: <46F13942.4020507@namesys.com>
+Content-Disposition: inline
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/nfs>,
-	<mailto:nfs-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=nfs>
-List-Post: <mailto:nfs@lists.sourceforge.net>
-List-Help: <mailto:nfs-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/nfs>,
-	<mailto:nfs-request@lists.sourceforge.net?subject=subscribe>
-Sender: nfs-bounces@lists.sourceforge.net
-Errors-To: nfs-bounces@lists.sourceforge.net
-To: Jeff Layton <jlayton@redhat.com>
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, ecryptfs-devel@lists.sourceforge.net, nfs@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org, unionfs@filesystems.org, linux-cifs-client@lists.samba.org
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward@namesys.com>, reiserfs-devel@vger.kernel.org
 
-On Mon, 17 Sep 2007 07:29:05 -0400
-Jeff Layton <jlayton@redhat.com> wrote:
+2007/9/19, Edward Shishkin <edward@namesys.com>:
+> Xu CanHao wrote:
+>
+> >Hello!
+> >
+> >1, The system had some power lost recently, I believe the file lost
+> >during one time(I did not write to that file at once).
+> >2, Is there any evidence show that 2.6.22 much more stable(or at least
+> >solved that behavior)?
+> >
+> >
+>
+> Yes,
+> it seems, you encountered the bug fixed in reiser4 patch for 2.6.22.
+> This was discussed in the list a long time ago, also the description
+> can be found in the patch header:
+>
+> ...
+> 2) unix-file plugin fixups:
+>    . Fixed bug in extent2tail conversion.
+>      Bug description:
+>        when converting partially converted file
+>        (with flag REISER4_PART_MIXED installed)
+>        reiser4_cut_tree() starts to cut old metatada
+>        from wrong offset. Result is data corruption
+>        when booting after system crach, power loss,
+>        etc.;
+> ...
+>
+> Please, update your reiser4 and reiser4progs to the latest
+> versions, and let me know if any problems.
+>
+> Thanks,
+> Edward.
 
-> This patchset is the latest one for fixing the clearing of setuid/setgid
-> bits in networked filesystems. It should apply cleanly to 2.6.23-rc4-mm1.
-> This is basically the same patchset as take 5. The main differences are
-> that the patches have been reordered to make the tree cleanly bisectable,
-> and the comment in notify_change is now a bit more descriptive. I've also
-> moved the description of the main rationale for the patch into patch 5.
-> 
-> Andrew, would it be possible to go ahead and get this committed to -mm?
-> 
-> Signed-off-by: Jeff Layton <jlayton@redhat.com>
+oic, I recalled one of my partition is extent-only and it does not
+have any data-lost for several months. It seems that if one use
+extent-only, he/she would not experience such corruption(and maybe
+better performance due to less tail_conversions?).
 
-Andrew,
-  This will need some changes before it can apply cleanly to
-2.6.23-rc6-mm1. You can ignore this for now. I'll respin, retest and
-repost...
+BTW: the latest _stable_ version is "reiser4-for-2.6.22-2.patch.gz"
+for vanilla "linux-2.6.22.6.tar.bz2" and "reiser4progs-1.0.6.tar.gz",
+right?
 
-Thanks,
--- 
-Jeff Layton <jlayton@redhat.com>
+Thanks!
 
--------------------------------------------------------------------------
-This SF.net email is sponsored by: Microsoft
-Defy all challenges. Microsoft(R) Visual Studio 2005.
-http://clk.atdmt.com/MRT/go/vse0120000070mrt/direct/01/
-_______________________________________________
-NFS maillist  -  NFS@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/nfs
+>
+> >3, There is no /lost+found directory in a reiser4 partition(AFAIK it's ext2/3).
+> >4, I've no idea _when_ does the file lost, so tracing the logs is not possible.
+> >5, fsck.reiser4 reports no corruption.
+> >
+> >Thanks!
+> >
+> >
+> >2007/9/3, Christian Kujau <lists@nerdbynature.de>:
+> >
+> >
+> >>On Tue, 28 Aug 2007, Xu CanHao wrote:
+> >>
+> >>
+> >>>I've heard someone said reiser4's possibility of losing some file
+> >>>when crash. Well, I have one exactly the same experience: my system is
+> >>>slackware 11.0, and vanilla 2.6.21+patch for 2.6.21+r4tools 1.0.5,
+> >>>after one or two times of power loss, (at least)my /usr/sbin/sendmail
+> >>>lost, and the partition free space have a ~200MB less. Because of
+> >>>/usr/sbin/sendmail is not system critical file, I think the loss could
+> >>>happened some days ago. Any ideas?
+> >>>
+> >>>
+> >>Does this happen to your system when it has crashed or are you losing
+> >>files during runtime? Did you try 2.6.22? Checked /lost+found, the system
+> >>logs? Does fsck report something useful?
+> >>
+> >>--
+> >>BOFH excuse #435:
+> >>
+> >>Internet shut down due to maintenance
+> >>
+> >>
+> >>
+> >-
+> >To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+> >the body of a message to majordomo@vger.kernel.org
+> >More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> >
+> >
+> >
+> >
+>
+>
