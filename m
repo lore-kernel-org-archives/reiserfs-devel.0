@@ -1,150 +1,83 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: 2.6.23-rc8-mm2 NULL dereference in __mnt_is_readonly in	ftruncate
-Date: Sat, 29 Sep 2007 02:39:20 +0400
-Message-ID: <46FD8298.5020804@namesys.com>
-References: <1190930060.7667.5.camel@localhost>	 <20070928013024.c7522542.akpm@linux-foundation.org> <1190996517.7344.79.camel@localhost>
+From: Ric Wheeler <ric@emc.com>
+Subject: batching support for transactions
+Date: Tue, 02 Oct 2007 08:57:53 -0400
+Message-ID: <47024051.2030303@emc.com>
+Reply-To: ric@emc.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1190996517.7344.79.camel@localhost>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Dave Hansen <haveblue@us.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Zan Lynx <zlynx@acm.org>, Linux Kernel <linux-kernel@vger.kernel.org>, reiserfs-devel <reiserfs-devel@vger.kernel.org>, hch <hch@infradead.org>
+To: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, reiserfs-devel@vger.kernel.org
+Cc: "Feld, Andy" <Feld_Andy@emc.com>, Jens Axboe <jens.axboe@oracle.com>
 
-Dave Hansen wrote:
 
->On Fri, 2007-09-28 at 01:30 -0700, Andrew Morton wrote:
->  
->
->>On Thu, 27 Sep 2007 15:54:20 -0600 Zan Lynx <zlynx@acm.org> wrote:
->>    
->>
->>>Near the end of my boot sequence, there is a kernel error.  I am not
->>>sure exactly what user-space is doing to make this happen, but I know
->>>that a simple shell and some filesystem operations do not cause it.
->>>
->>>This error also occurred in 2.6.23-rc8-mm1 but I didn't have time to
->>>post it and hoped it would just go away.  I never tested 2.6.23-rc7-mm*,
->>>and the error did not happen in rc6-mm1.
->>>
->>>console [netcon0] enabled
->>>netconsole: network logging started
->>>eth0: no IPv6 routers present
->>>Unable to handle kernel NULL pointer dereference at 0000000000000053 RIP: 
->>> [<ffffffff802c96c0>] __mnt_is_readonly+0x0/0x20
->>>PGD 0 
->>>Oops: 0000 [1] SMP 
->>>last sysfs file: /block/sr0/size
->>>CPU 0 
->>>Modules linked in: netconsole configfs sg ipv6 evdev usbhid hid usb_storage libusual psmouse serio_raw ssb video output ehci_hcd ohci_hcd usbcore snd_intel8x0 snd_ac97_codec ac97_bus snd_pcm snd_timer snd snd_page_alloc
->>>Pid: 7291, comm: smbd Not tainted 2.6.23-rc8-mm2 #1
->>>RIP: 0010:[<ffffffff802c96c0>]  [<ffffffff802c96c0>] __mnt_is_readonly+0x0/0x20
->>>RSP: 0018:ffff8100068b1b60  EFLAGS: 00010296
->>>RAX: ffff810007108000 RBX: ffff81000261d8c0 RCX: ffffffff8093aca0
->>>RDX: 0000000000000004 RSI: ffffffff8092e950 RDI: 0000000000000003
->>>RBP: 0000000000000003 R08: 0000000000000003 R09: ffffffff8061f7cd
->>>R10: 00000000b256aacb R11: 0000000000000000 R12: 00000000ffffffe2
->>>R13: ffff8100068b1bd8 R14: ffff8100068b1ee8 R15: ffff81000655a910
->>>FS:  00007f6f0930c6f0(0000) GS:ffffffff806ce000(0000) knlGS:0000000000000000
->>>CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
->>>CR2: 0000000000000053 CR3: 0000000007cb2000 CR4: 00000000000006e0
->>>DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
->>>Process smbd (pid: 7291, threadinfo ffff8100068b0000, task ffff810007108000)
->>>last branch before last exception/interrupt
->>> from  [<ffffffff802cc37a>] mnt_want_write+0x3a/0x90
->>> to  [<ffffffff802c96c0>] __mnt_is_readonly+0x0/0x20
->>>Stack:  ffffffff802cc37f ffff8100078cd9a0 ffff8100068b1bd8 ffff8100078cd9a0
->>> ffffffff802c82bc ffff8100078cd780 0000000000000000 ffff8100078cd9a0
->>> ffff8100068b1bd8 ffff8100068b1ee8 0000000000003000 0000000000000000
->>>Call Trace:
->>> [<ffffffff802cc37f>] mnt_want_write+0x3f/0x90
->>> [<ffffffff802c82bc>] file_update_time+0x2c/0xe0
->>> [<ffffffff803506a8>] truncate_file_body+0x148/0x3f0
->>> [<ffffffff802647a3>] __lock_acquire+0x583/0x1180
->>> [<ffffffff80537f17>] _spin_unlock+0x17/0x20
->>> [<ffffffff80363822>] store_black_box+0x82/0x90
->>> [<ffffffff8034a845>] safe_link_add+0x75/0xd0
->>> [<ffffffff803521f7>] setattr_unix_file+0x207/0x220
->>> [<ffffffff80538274>] _spin_unlock_irq+0x24/0x30
->>> [<ffffffff805377f1>] __down_write_nested+0xa1/0xc0
->>> [<ffffffff802c8857>] notify_change+0xf7/0x2c0
->>> [<ffffffff802b051e>] do_truncate+0x5e/0x80
->>> [<ffffffff802b0659>] sys_ftruncate+0x119/0x130
->>> [<ffffffff8020c39e>] system_call+0x7e/0x83
->>>      
->>>
->>But you oopsed in a different place, via resier4.  I don't know if Dave
->>considers that part of his mandate - he could reasonably ask the reiser4
->>guys to help fix things up.
->>    
->>
->
->First of all, thanks a bunch for the report.  It really helps.
->
->This could probably be considered a reiser4 bug, excited by the r/o bind
->mount changes.  See how that pointer is 0x...053?  That's a weird offset
->for a structure that should be mostly word-aligned.  
->
->I think that's because reiser4 stack-allocates a 'struct file', and then
->only initializes parts of it, *not* including the vfsmount.  The test in
->file_update_time() is for f->f_vfsmnt == NULL, and I think we had
->something like 0x1 in there.
->
->I think that stack allocation is a pretty nasty trick for a structure
->that's supposed to be pretty persistent and dynamically allocated, and
->is certainly something that needs to get fixed up in a proper way.
->  
->
+After several years of helping tune file systems for normal (ATA/S-ATA) 
+drives, we have been doing some performance work on ext3 & reiserfs on 
+disk arrays.
 
-agreed.
+One thing that jumps out is that the way we currently batch synchronous 
+work loads into transactions does really horrible things to performance 
+for storage devices which have really low latency.
 
->This works around the problem for now, but this could potentially cause
->more bugs any time we add some member to 'struct file' and depend on its
->state being sane anywhere in the VFS.  If there's a list anywhere of
->merge-stopper reiser4 bugs around, this should probably go in there. 
->
->  
->
+For example, one a mid-range clariion box, we can use a single thread to 
+write around 750 (10240 byte) files/sec to a single directory in ext3. 
+That gives us an average time around 1.3ms per file.
 
-will be fixed.
+With 2 threads writing to the same directory, we instantly drop down to 
+234 files/sec.
 
->In general, I think reiser4 also lets the 'struct file' get way too deep
->into its internals.  For instance, I would expect reiser4_write_extent()
->to take a plain inode, not a 'struct file'.
->  
->
+The culprit seems to be the assumptions in journal_stop() which throw in 
+a call to schedule_timeout_uninterruptible(1):
 
-This uses struct file's private data for so-called hints (speedup 
-technique).
-Why not plain inode? I think because this is remains of removed
-file-as-directory stuff.
+         /*
+          * Implement synchronous transaction batching.  If the handle
+          * was synchronous, don't force a commit immediately.  Let's
+          * yield and let another thread piggyback onto this transaction.
+          * Keep doing that while new threads continue to arrive.
+          * It doesn't cost much - we're about to run a commit and sleep
+          * on IO anyway.  Speeds up many-threaded, many-dir operations
+          * by 30x or more...
+          *
+          * But don't do this if this process was the most recent one to
+          * perform a synchronous write.  We do this to detect the case 
+where a
+          * single process is doing a stream of sync writes.  No point 
+in waiting
+          * for joiners in that case.
+          */
+         pid = current->pid;
+         if (handle->h_sync && journal->j_last_sync_writer != pid) {
+                 journal->j_last_sync_writer = pid;
+                 do {
+                         old_handle_count = transaction->t_handle_count;
+                         schedule_timeout_uninterruptible(1);
+                 } while (old_handle_count != transaction->t_handle_count);
+         }
 
->Signed-off-by: Dave Hansen <haveblue@us.ibm.com>
->
->---
->
-> lxc-dave/fs/reiser4/plugin/file/file.c |    1 +
-> 1 file changed, 1 insertion(+)
->
->diff -puN fs/reiser4/plugin/file/file.c~reiser4-need-to-initialize-file-f_mnt fs/reiser4/plugin/file/file.c
->--- lxc/fs/reiser4/plugin/file/file.c~reiser4-need-to-initialize-file-f_mnt	2007-09-28 09:10:51.000000000 -0700
->+++ lxc-dave/fs/reiser4/plugin/file/file.c	2007-09-28 09:11:20.000000000 -0700
->@@ -581,6 +581,7 @@ static int truncate_file_body(struct ino
-> 		file.private_data = NULL;
-> 		file.f_pos = new_size;
-> 		file.private_data = NULL;
->+		file.f_vfsmnt = NULL;
-> 		uf_info = unix_file_inode_data(inode);
-> 		result = find_file_state(inode, uf_info);
-> 		if (result)
->_
->
->
->  
->
 
-Many thanks,
-Edward.
+reiserfs and ext4 have similar if not exactly the same logic.
+
+What seems to be needed here is either a static per file system/storage 
+device tunable to allow us to change this timeout (maybe with "0" 
+defaulting back to the old reiserfs trick of simply doing a yield()?) or 
+a more dynamic, per device way to keep track of the average time it 
+takes to commit a transaction to disk. Based on that rate, we could 
+dynamically adjust our logic to account for lower latency devices.
+
+A couple of last thoughts. One, if for some reason you don't have a low 
+latency storage array handy and want to test this for yourselves, you 
+can test the worst case by using a ram disk.
+
+The test we used was fs_mark with 10240 bytes files, writing to one 
+shared directory with varying the numbers of threads from 1 up to 40. In 
+the ext3 case, it takes 8 concurrent threads to catch up to the single 
+thread writing case.
+
+We are continuing to play with the code and try out some ideas, but I 
+wanted to bounce this off the broader list to see if this makes sense...
+
+ric
+
+
