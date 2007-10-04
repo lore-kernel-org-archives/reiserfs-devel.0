@@ -1,80 +1,225 @@
-From: Ric Wheeler <ric@emc.com>
-Subject: Re: batching support for transactions
-Date: Wed, 03 Oct 2007 17:33:11 -0400
-Message-ID: <47040A97.40409@emc.com>
-References: <47024051.2030303@emc.com> <20071003071653.GE5578@schatzie.adilger.int> <4703721B.9050600@emc.com> <20071003210256.GO5578@schatzie.adilger.int>
+From: Edward Shishkin <edward@namesys.com>
+Subject: [patch] reiser4: do not allocate struct file on stack
+Date: Fri, 05 Oct 2007 03:22:22 +0400
+Message-ID: <470575AE.9060902@namesys.com>
+References: <1190930060.7667.5.camel@localhost>	 <20070928013024.c7522542.akpm@linux-foundation.org> <1190996517.7344.79.camel@localhost> <46FD8298.5020804@namesys.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20071003210256.GO5578@schatzie.adilger.int>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Content-Type: multipart/mixed;
+ boundary="------------080606060105080104080505"
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <46FD8298.5020804@namesys.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ric Wheeler <ric@emc.com>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, reiserfs-devel@vger.kernel.org, "Feld, Andy" <Feld_Andy@emc.com>, Jens Axboe <jens.axboe@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>, "Vladimir V. Saveliev" <vs@clusterfs.com>
+Cc: Dave Hansen <haveblue@us.ibm.com>, Zan Lynx <zlynx@acm.org>, Linux Kernel <linux-kernel@vger.kernel.org>, reiserfs-devel <reiserfs-devel@vger.kernel.org>, hch <hch@infradead.org>
 
-Andreas Dilger wrote:
-> On Oct 03, 2007  06:42 -0400, Ric Wheeler wrote:
->>>> With 2 threads writing to the same directory, we instantly drop down to 
->>>> 234 files/sec.
->>> Is this with HZ=250?
->> Yes - I assume that with HZ=1000 the batching would start to work again 
->> since the penalty for batching would only be 1ms which would add a 0.3ms 
->> overhead while waiting for some other thread to join.
-> 
-> This is probably the easiest solution, but at the same time using HZ=1000
-> adds overhead to the server because of extra interrupts, etc.
+This is a multi-part message in MIME format.
+--------------080606060105080104080505
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-We will do some testing with this in the next day or so.
+Edward Shishkin wrote:
 
->>> It would seem one of the problems is that we shouldn't really be
->>> scheduling for a fixed 1 jiffie timeout, but rather only until the
->>> other threads have a chance to run and join the existing transaction.
->> This is really very similar to the domain of the IO schedulers - when do 
->> you hold off an IO and/or try to combine it.
-> 
-> I was thinking the same.
->>> my guess would be that yield() doesn't block the first thread long enough
->>> for the second one to get into the transaction (e.g. on an 2-CPU system
->>> with 2 threads, yield() will likely do nothing).
->> Andy tried playing with yield() and it did not do well. Note this this 
->> server is a dual CPU box, so your intuition is most likely correct.
-> 
-> How many threads did you try?
+> Dave Hansen wrote:
+>
+...
 
-Andy's tested 1, 2, 4, 8, 20 and 40 threads.  Once we review the test
-and his patch, we can post the summary data.
-
->>> It makes sense to track not only the time to commit a single synchronous
->>> transaction, but also the time between sync transactions to decide if
->>> the initial transaction should be held to allow later ones.
->> Yes, that is what I was trying to suggest with the rate. Even if we are 
->> relatively slow, if the IO's are being synched at a low rate, we are 
->> effectively adding a potentially nasty latency for each IO.
 >>
->> That would give us two measurements to track per IO device - average 
->> commit time and this average IO's/sec rate. That seems very doable.
-> 
-> Agreed.
+>> I think that stack allocation is a pretty nasty trick for a structure
+>> that's supposed to be pretty persistent and dynamically allocated, and
+>> is certainly something that needs to get fixed up in a proper way.
+>>
+>>
+>
+> agreed.
+>
+>> This works around the problem for now, but this could potentially cause
+>> more bugs any time we add some member to 'struct file' and depend on its
+>> state being sane anywhere in the VFS. If there's a list anywhere of
+>> merge-stopper reiser4 bugs around, this should probably go in there.
+>>
+>>
+>
+> will be fixed.
+>
 
-This would also seem to be code that would be good to share between all
-of the file systems for their transaction bundling.
+The promised fixup is attached.
+Andrew, please apply.
 
->>> Alternately, it might be possible to check if a new thread is trying to
->>> start a sync handle when the previous one was also synchronous and had
->>> only a single handle in it, then automatically enable the delay in that 
->>> case.
->> I am not sure that this avoids the problem with the current defaults at 
->> 250HZ where each wait is sufficient to do 3 fully independent 
->> transactions ;-)
-> 
-> I was trying to think if there was some way to non-busy-wait that is
-> less than 1 jiffie.
+Thanks,
+Edward.
 
-One other technique would be to use async IO, which could push the 
-batching of the fsync's up to application space.  For example, send down 
-a sequence of "async fsync" requests for a series of files and then poll 
-for completion once you have launched them.
+--------------080606060105080104080505
+Content-Type: text/x-patch;
+ name="reiser4-fix-null-dereference-in-__mnt_is_readonly-in-ftruncate-2.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="reiser4-fix-null-dereference-in-__mnt_is_readonly-in-ftruncate-2.patch"
 
-ric
+Do not allocate struct file on stack, pass the persistent one instead.
 
+Signed-off-by: Edward Shishkin <edward@namesys.com>
+---
+ linux-2.6.23-rc8-mm2/fs/reiser4/plugin/file/file.c            |   35 ++++------
+ linux-2.6.23-rc8-mm2/fs/reiser4/plugin/file/file.h            |    2 
+ linux-2.6.23-rc8-mm2/fs/reiser4/plugin/file/tail_conversion.c |   23 ++----
+ 3 files changed, 26 insertions(+), 34 deletions(-)
 
+--- linux-2.6.23-rc8-mm2/fs/reiser4/plugin/file/file.c.orig
++++ linux-2.6.23-rc8-mm2/fs/reiser4/plugin/file/file.c
+@@ -566,23 +566,18 @@
+  * items or add them to represent a hole at the end of file. The caller has to
+  * obtain exclusive access to the file.
+  */
+-static int truncate_file_body(struct inode *inode, loff_t new_size)
++static int truncate_file_body(struct inode *inode, struct iattr *attr)
+ {
+ 	int result;
++	loff_t new_size = attr->ia_size;
+ 
+ 	if (inode->i_size < new_size) {
+ 		/* expanding truncate */
+-		struct dentry dentry;
+-		struct file file;
+-		struct unix_file_info *uf_info;
++		struct file * file = attr->ia_file;
++		struct unix_file_info *uf_info = unix_file_inode_data(inode);
++
++		assert("edward-1532", attr->ia_valid & ATTR_FILE);
+ 
+-		dentry.d_inode = inode;
+-		file.f_dentry = &dentry;
+-		file.private_data = NULL;
+-		file.f_pos = new_size;
+-		file.private_data = NULL;
+-		file.f_vfsmnt = NULL;
+-		uf_info = unix_file_inode_data(inode);
+ 		result = find_file_state(inode, uf_info);
+ 		if (result)
+ 			return result;
+@@ -615,19 +610,19 @@
+ 						return result;
+ 				}
+ 			}
+-			result = reiser4_write_extent(&file, NULL, 0,
++			result = reiser4_write_extent(file, NULL, 0,
+ 						      &new_size);
+ 			if (result)
+ 				return result;
+ 			uf_info->container = UF_CONTAINER_EXTENTS;
+ 		} else {
+ 			if (uf_info->container ==  UF_CONTAINER_EXTENTS) {
+-				result = reiser4_write_extent(&file, NULL, 0,
++				result = reiser4_write_extent(file, NULL, 0,
+ 							      &new_size);
+ 				if (result)
+ 					return result;
+ 			} else {
+-				result = reiser4_write_tail(&file, NULL, 0,
++				result = reiser4_write_tail(file, NULL, 0,
+ 							    &new_size);
+ 				if (result)
+ 					return result;
+@@ -636,10 +631,10 @@
+ 		}
+ 		BUG_ON(result > 0);
+ 		INODE_SET_FIELD(inode, i_size, new_size);
+-		file_update_time(&file);
++		file_update_time(file);
+ 		result = reiser4_update_sd(inode);
+ 		BUG_ON(result != 0);
+-		reiser4_free_file_fsdata(&file);
++		reiser4_free_file_fsdata(file);
+ 	} else
+ 		result = shorten_file(inode, new_size);
+ 	return result;
+@@ -2092,7 +2087,7 @@
+ 		 * first item is formatting item, therefore there was
+ 		 * incomplete extent2tail conversion. Complete it
+ 		 */
+-		result = extent2tail(unix_file_inode_data(inode));
++		result = extent2tail(file, unix_file_inode_data(inode));
+ 	else
+ 		result = -EIO;
+ 
+@@ -2372,7 +2367,7 @@
+ 		    uf_info->container == UF_CONTAINER_EXTENTS &&
+ 		    !should_have_notail(uf_info, inode->i_size) &&
+ 		    !rofs_inode(inode)) {
+-			result = extent2tail(uf_info);
++			result = extent2tail(file, uf_info);
+ 			if (result != 0) {
+ 				warning("nikita-3233",
+ 					"Failed (%d) to convert in %s (%llu)",
+@@ -2638,7 +2633,7 @@
+ 	if (result == 0)
+ 		result = safe_link_add(inode, SAFE_TRUNCATE);
+ 	if (result == 0)
+-		result = truncate_file_body(inode, attr->ia_size);
++		result = truncate_file_body(inode, attr);
+ 	if (result)
+ 		warning("vs-1588", "truncate_file failed: oid %lli, "
+ 			"old size %lld, new size %lld, retval %d",
+@@ -2724,7 +2719,7 @@
+ 	/* truncate file bogy first */
+ 	uf_info = unix_file_inode_data(inode);
+ 	get_exclusive_access(uf_info);
+-	result = truncate_file_body(inode, 0 /* size */ );
++	result = shorten_file(inode, 0 /* size */ );
+ 	drop_exclusive_access(uf_info);
+ 
+ 	if (result)
+--- linux-2.6.23-rc8-mm2/fs/reiser4/plugin/file/file.h.orig
++++ linux-2.6.23-rc8-mm2/fs/reiser4/plugin/file/file.h
+@@ -237,7 +237,7 @@
+ #define WRITE_GRANULARITY 32
+ 
+ int tail2extent(struct unix_file_info *);
+-int extent2tail(struct unix_file_info *);
++int extent2tail(struct file *, struct unix_file_info *);
+ 
+ int goto_right_neighbor(coord_t *, lock_handle *);
+ int find_or_create_extent(struct page *);
+--- linux-2.6.23-rc8-mm2/fs/reiser4/plugin/file/tail_conversion.c.orig
++++ linux-2.6.23-rc8-mm2/fs/reiser4/plugin/file/tail_conversion.c
+@@ -546,7 +546,7 @@
+ 
+ /* for every page of file: read page, cut part of extent pointing to this page,
+    put data of page tree by tail item */
+-int extent2tail(struct unix_file_info *uf_info)
++int extent2tail(struct file * file, struct unix_file_info *uf_info)
+ {
+ 	int result;
+ 	struct inode *inode;
+@@ -644,20 +644,17 @@
+ 			/* last page can be incompleted */
+ 			count = (inode->i_size & ~PAGE_CACHE_MASK);
+ 		while (count) {
+-			struct dentry dentry;
+-			struct file file;
+-			loff_t pos;
+-
+-			dentry.d_inode = inode;
+-			file.f_dentry = &dentry;
+-			file.private_data = NULL;
+-			file.f_pos = start_byte;
+-			file.private_data = NULL;
+-			pos = start_byte;
+-			result = reiser4_write_tail(&file,
++			loff_t pos = start_byte;
++
++			assert("edward-1533",
++			       file != NULL && file->f_dentry != NULL);
++			assert("edward-1534",
++			       file->f_dentry->d_inode == inode);
++
++			result = reiser4_write_tail(file,
+ 						    (char __user *)kmap(page),
+ 						    count, &pos);
+-			reiser4_free_file_fsdata(&file);
++			reiser4_free_file_fsdata(file);
+ 			if (result <= 0) {
+ 				warning("", "reiser4_write_tail failed");
+ 				page_cache_release(page);
+
+--------------080606060105080104080505--
