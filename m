@@ -1,45 +1,82 @@
-From: lepton <ytht.net@gmail.com>
-Subject: Re: Increasing REISERFS_LINK_MAX
-Date: Fri, 5 Oct 2007 11:46:13 +0800
-Message-ID: <20071005034613.GA4315@router.lepton.home>
-References: <47058513.1070609@todmue.de>
+From: Zan Lynx <zlynx@acm.org>
+Subject: Re: [patch] reiser4: do not allocate struct file on stack
+Date: Fri, 05 Oct 2007 10:22:38 -0600
+Message-ID: <1191601358.61085.3.camel@localhost>
+References: <1190930060.7667.5.camel@localhost>
+	 <20070928013024.c7522542.akpm@linux-foundation.org>
+	 <1190996517.7344.79.camel@localhost> <46FD8298.5020804@namesys.com>
+	 <470575AE.9060902@namesys.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:received:date:from:to:cc:subject:message-id:references:mime-version:content-type:content-disposition:in-reply-to:user-agent;
-        bh=iLF/g7l+J2gRxRcWkI2TGXX39LG1KLzVEo0fa5k41Xg=;
-        b=RmyUCSWFo6Io/kXme8BGSX1HjAqtuHxNRBCkjDM6+l5ZllbAotwZLJqHiPxJ52cSJsC5HIu8SAJErx1rKbpVrn16Avo9UL8iUUJPZrPQDfe9lKv0lLoitS3Jc6bIIAHMKoAmtaAxKJgRzsvjnSZQkvvJr5y7tNW4HWY5CHLFhMQ=
-Content-Disposition: inline
-In-Reply-To: <47058513.1070609@todmue.de>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-I9ZjS6mjovJOpyl5Q7i2"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932090AbXJEQXP@vger.kernel.org>
+In-Reply-To: <470575AE.9060902@namesys.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Marco Gruss <marco@todmue.de>
-Cc: reiserfs-devel@vger.kernel.org
-
-I think it should be safe to increase REISERFS_LINK_MAX to 
-a number smaller than 2^32, since nlink is 32bits now.
-I sugguest you can try it in user mode linux or something like
-qemu or vmware first.
-
-On Fri, Oct 05, 2007 at 02:28:03AM +0200, Marco Gruss wrote:
-> Hey there,
-> 
-> I'm using reiserfs on a system that keeps backups. In order to
-> save space, I make very heavy use of hardlinks (using cp -al
-> for duplicating a tree and also using the excellent rdfind from
-> http://hem.bredband.net/pauls/rdfind/rdfind.html). I have now
-> run into the maximum link limit per file of 63535 (2^16-1001).
-> 
-> First thought: "Just increase it and go on". Then I thought
-> that this limit probably isn't there for fun; so here's my
-> question: Is it safe to increase REISERFS_LINK_MAX exceeding
-> unsigned int, or will horrible breakage occur?
-> 
-> Thanks in advance for any input.
-> 
->    Marco
+To: Edward Shishkin <edward@namesys.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Vladimir V. Saveliev" <vs@clusterfs.com>, Dave Hansen <haveblue@us.ibm.com>, Linux Kernel <linux-kernel@vger.kernel.org>, reiserfs-devel <reiserfs-devel@vger.kernel.org>, hch <hch@infradead.org>
 
 
+--=-I9ZjS6mjovJOpyl5Q7i2
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, 2007-10-05 at 03:22 +0400, Edward Shishkin wrote:
+> Edward Shishkin wrote:
+>=20
+> > Dave Hansen wrote:
+> >
+> ...
+>=20
+> >>
+> >> I think that stack allocation is a pretty nasty trick for a structure
+> >> that's supposed to be pretty persistent and dynamically allocated, and
+> >> is certainly something that needs to get fixed up in a proper way.
+> >>
+> >>
+> >
+> > agreed.
+> >
+> >> This works around the problem for now, but this could potentially caus=
+e
+> >> more bugs any time we add some member to 'struct file' and depend on i=
+ts
+> >> state being sane anywhere in the VFS. If there's a list anywhere of
+> >> merge-stopper reiser4 bugs around, this should probably go in there.
+> >>
+> >>
+> >
+> > will be fixed.
+> >
+>=20
+> The promised fixup is attached.
+> Andrew, please apply.
+>=20
+> Thanks,
+> Edward.
+
+There were several copies of this email, so I picked one. :)
+
+I had the crash with 2.6.23-rc8-mm2, so I applied this patch.  Hunk #1
+failed, the rest applied with fuzz.  I manually applied hunk #1 and
+recompiled.
+
+I am now running with 2.6.23-rc8-mm2 + this patch and things seem good.
+
+(Except for some issues with ACPI battery info moving out of proc and
+confusing the heck out of HAL and the GNOME power management scripts).
+--=20
+Zan Lynx <zlynx@acm.org>
+
+--=-I9ZjS6mjovJOpyl5Q7i2
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.7 (GNU/Linux)
+
+iD8DBQBHBmTOG8fHaOLTWwgRAsgeAJ9iNWOUT5HcGxy2uOSpB8/4S6RQtACfbTuu
+FYt68Kg4UpK2NPYk5Yun05U=
+=hT8B
+-----END PGP SIGNATURE-----
+
+--=-I9ZjS6mjovJOpyl5Q7i2--
