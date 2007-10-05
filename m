@@ -1,171 +1,101 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: [patch] reiserfs: do not repair wrong journal params
-Date: Fri, 05 Oct 2007 03:22:35 +0400
-Message-ID: <470575BB.3020400@namesys.com>
-References: <46CD92B6.5090900@itwm.fraunhofer.de> <Pine.LNX.4.64.0708231625360.32316@fbirervta.pbzchgretzou.qr>
+From: Marco Gruss <marco@todmue.de>
+Subject: Increasing REISERFS_LINK_MAX
+Date: Fri, 05 Oct 2007 02:28:03 +0200
+Message-ID: <47058513.1070609@todmue.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------050904090803070105000303"
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg=sha1; boundary="------------ms090901000100090501020200"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.64.0708231625360.32316@fbirervta.pbzchgretzou.qr>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, "Vladimir V. Saveliev" <vs@clusterfs.com>
-Cc: Jan Engelhardt <jengelh@computergmbh.de>, Martin Vogt <vogt@itwm.fraunhofer.de>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Mason <chris.mason@oracle.com>
+To: reiserfs-devel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------050904090803070105000303
-Content-Type: text/plain; charset=us-ascii; format=flowed
+This is a cryptographically signed message in MIME format.
+
+--------------ms090901000100090501020200
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Jan Engelhardt wrote:
+Hey there,
 
->On Aug 23 2007 15:59, Martin Vogt wrote:
->  
->
-...
+I'm using reiserfs on a system that keeps backups. In order to
+save space, I make very heavy use of hardlinks (using cp -al
+for duplicating a tree and also using the excellent rdfind from
+http://hem.bredband.net/pauls/rdfind/rdfind.html). I have now
+run into the maximum link limit per file of 63535 (2^16-1001).
 
->>Even if knoppix should not be used as a rescue/live CD, then
->>the reiserfs module should not try to correct something,
->>this should be done by another tool.(fsck.reiserfs or a module option...)
->>    
->>
+First thought: "Just increase it and go on". Then I thought
+that this limit probably isn't there for fun; so here's my
+question: Is it safe to increase REISERFS_LINK_MAX exceeding
+unsigned int, or will horrible breakage occur?
 
-The attached patch fixes this badness.
+Thanks in advance for any input.
 
-Thanks,
-Edward.
+    Marco
 
---------------050904090803070105000303
-Content-Type: text/x-patch;
- name="reiserfs-do-not-repair-journal-params.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="reiserfs-do-not-repair-journal-params.patch"
+--------------ms090901000100090501020200
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-When mounting a file system with wrong journal params 
-do not try to repair them, suggest fsck instead.
-
-Signed-off-by: Edward Shishkin <edward@namesys.com>
----
- linux-2.6.23-rc8-mm2/fs/reiserfs/journal.c |  100 ++++++++++++++++-------------
- 1 files changed, 57 insertions(+), 43 deletions(-)
-
---- linux-2.6.23-rc8-mm2/fs/reiserfs/journal.c.orig
-+++ linux-2.6.23-rc8-mm2/fs/reiserfs/journal.c
-@@ -2649,6 +2649,61 @@
- 	return result;
- }
- 
-+/**
-+ * When creating/tuning a file system user can assign some
-+ * journal params within boundaries which depend on the ratio
-+ * blocksize/standard_blocksize.
-+ *
-+ * For blocks >= standard_blocksize transaction size should
-+ * be not less then JOURNAL_TRANS_MIN_DEFAULT, and not more
-+ * then JOURNAL_TRANS_MAX_DEFAULT.
-+ *
-+ * For blocks < standard_blocksize these boundaries should be
-+ * decreased proportionally.
-+ */
-+#define REISERFS_STANDARD_BLKSIZE (4096)
-+
-+static int check_advise_trans_params(struct super_block *p_s_sb,
-+				     struct reiserfs_journal *journal)
-+{
-+        if (journal->j_trans_max) {
-+	        /* Non-default journal params.
-+		   Do sanity check for them. */
-+	        int ratio = 1;
-+		if (p_s_sb->s_blocksize < REISERFS_STANDARD_BLKSIZE)
-+		        ratio = REISERFS_STANDARD_BLKSIZE / p_s_sb->s_blocksize;
-+
-+		if (journal->j_trans_max > JOURNAL_TRANS_MAX_DEFAULT / ratio ||
-+		    journal->j_trans_max < JOURNAL_TRANS_MIN_DEFAULT / ratio ||
-+		    SB_ONDISK_JOURNAL_SIZE(p_s_sb) / journal->j_trans_max <
-+		    JOURNAL_MIN_RATIO) {
-+		        reiserfs_warning(p_s_sb,
-+				 "sh-462: bad transaction max size (%u). FSCK?",
-+				 journal->j_trans_max);
-+			return 1;
-+		}
-+		if (journal->j_max_batch != (journal->j_trans_max) *
-+		        JOURNAL_MAX_BATCH_DEFAULT/JOURNAL_TRANS_MAX_DEFAULT) {
-+		        reiserfs_warning(p_s_sb,
-+				"sh-463: bad transaction max batch (%u). FSCK?",
-+				journal->j_max_batch);
-+			return 1;
-+		}
-+	} else {
-+		/* Default journal params.
-+                   The file system was created by old version
-+		   of mkreiserfs, so some fields contain zeros,
-+		   and we need to advise proper values for them */
-+	        if (p_s_sb->s_blocksize != REISERFS_STANDARD_BLKSIZE)
-+	                reiserfs_panic(p_s_sb, "sh-464: bad blocksize (%u)",
-+				       p_s_sb->s_blocksize);
-+		journal->j_trans_max = JOURNAL_TRANS_MAX_DEFAULT;
-+		journal->j_max_batch = JOURNAL_MAX_BATCH_DEFAULT;
-+		journal->j_max_commit_age = JOURNAL_MAX_COMMIT_AGE;
-+	}
-+	return 0;
-+}
-+
- /*
- ** must be called once on fs mount.  calls journal_read for you
- */
-@@ -2744,49 +2799,8 @@
- 	    le32_to_cpu(jh->jh_journal.jp_journal_max_commit_age);
- 	journal->j_max_trans_age = JOURNAL_MAX_TRANS_AGE;
- 
--	if (journal->j_trans_max) {
--		/* make sure these parameters are available, assign it if they are not */
--		__u32 initial = journal->j_trans_max;
--		__u32 ratio = 1;
--
--		if (p_s_sb->s_blocksize < 4096)
--			ratio = 4096 / p_s_sb->s_blocksize;
--
--		if (SB_ONDISK_JOURNAL_SIZE(p_s_sb) / journal->j_trans_max <
--		    JOURNAL_MIN_RATIO)
--			journal->j_trans_max =
--			    SB_ONDISK_JOURNAL_SIZE(p_s_sb) / JOURNAL_MIN_RATIO;
--		if (journal->j_trans_max > JOURNAL_TRANS_MAX_DEFAULT / ratio)
--			journal->j_trans_max =
--			    JOURNAL_TRANS_MAX_DEFAULT / ratio;
--		if (journal->j_trans_max < JOURNAL_TRANS_MIN_DEFAULT / ratio)
--			journal->j_trans_max =
--			    JOURNAL_TRANS_MIN_DEFAULT / ratio;
--
--		if (journal->j_trans_max != initial)
--			reiserfs_warning(p_s_sb,
--					 "sh-461: journal_init: wrong transaction max size (%u). Changed to %u",
--					 initial, journal->j_trans_max);
--
--		journal->j_max_batch = journal->j_trans_max *
--		    JOURNAL_MAX_BATCH_DEFAULT / JOURNAL_TRANS_MAX_DEFAULT;
--	}
--
--	if (!journal->j_trans_max) {
--		/*we have the file system was created by old version of mkreiserfs 
--		   so this field contains zero value */
--		journal->j_trans_max = JOURNAL_TRANS_MAX_DEFAULT;
--		journal->j_max_batch = JOURNAL_MAX_BATCH_DEFAULT;
--		journal->j_max_commit_age = JOURNAL_MAX_COMMIT_AGE;
--
--		/* for blocksize >= 4096 - max transaction size is 1024. For block size < 4096
--		   trans max size is decreased proportionally */
--		if (p_s_sb->s_blocksize < 4096) {
--			journal->j_trans_max /= (4096 / p_s_sb->s_blocksize);
--			journal->j_max_batch = (journal->j_trans_max) * 9 / 10;
--		}
--	}
--
-+	if (check_advise_trans_params(p_s_sb, journal) != 0)
-+	        goto free_and_return;
- 	journal->j_default_max_commit_age = journal->j_max_commit_age;
- 
- 	if (commit_max_age != 0) {
-
---------------050904090803070105000303--
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIII+zCC
+AtgwggJBoAMCAQICEE65ZspMdINhGxayu6WX2gwwDQYJKoZIhvcNAQEFBQAwYjELMAkGA1UE
+BhMCWkExJTAjBgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMT
+I1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFpbCBJc3N1aW5nIENBMB4XDTA3MDYyMzIxNDQwN1oX
+DTA4MDYyMjIxNDQwN1owQTEfMB0GA1UEAxMWVGhhd3RlIEZyZWVtYWlsIE1lbWJlcjEeMBwG
+CSqGSIb3DQEJARYPbWFyY29AdG9kbXVlLmRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+CgKCAQEAwxWpFz/Yy7EkwI9xJqvuXhW0Cb4QvsBK57icqxc5NF75/HG/3//PF7rAhyi72Y1O
+YldytWm8ywgcLwI0WNPmF6vXE0Cjp7w6TVGgUL9rgSMFp5zEUEQmaMzsUuHBuCy4wA42GiP4
+zx3X2vvB4ZuIAzD4Zx/A7NqFD+8F/471/HR5CPP72+yHyTTXNvwaKRq0/VZy/ye0dlhFGLJr
+4CYtDdW41fpI5Doz1h0M5PqqpOm9ddClgz1MbgQI0FJq6mEvbFz+vM3/XfwOzJeAeQcavkGU
+nZhC1M7uMyvynSbcA7oTtxxHtwErr/8EpNPTw4IJw3DgVRTW1d0sUXG79VzULwIDAQABoyww
+KjAaBgNVHREEEzARgQ9tYXJjb0B0b2RtdWUuZGUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0B
+AQUFAAOBgQB+7LQP5DV5DdtvIMRes/HZ5hwOB4a9purLonVuknk3GxW75qxjm5M8HB7la7aV
+7csomwusNcofEKrH7KnvB37F/kzd6ln9ch63pxNg+Z9W0/pWrVr9WWPkVxNG9GzX2NyZF8B/
+uvDEM/KJKnoL4Z4SkMlsUOIrAgWsTGlJ43BUFzCCAtgwggJBoAMCAQICEE65ZspMdINhGxay
+u6WX2gwwDQYJKoZIhvcNAQEFBQAwYjELMAkGA1UEBhMCWkExJTAjBgNVBAoTHFRoYXd0ZSBD
+b25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFp
+bCBJc3N1aW5nIENBMB4XDTA3MDYyMzIxNDQwN1oXDTA4MDYyMjIxNDQwN1owQTEfMB0GA1UE
+AxMWVGhhd3RlIEZyZWVtYWlsIE1lbWJlcjEeMBwGCSqGSIb3DQEJARYPbWFyY29AdG9kbXVl
+LmRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwxWpFz/Yy7EkwI9xJqvuXhW0
+Cb4QvsBK57icqxc5NF75/HG/3//PF7rAhyi72Y1OYldytWm8ywgcLwI0WNPmF6vXE0Cjp7w6
+TVGgUL9rgSMFp5zEUEQmaMzsUuHBuCy4wA42GiP4zx3X2vvB4ZuIAzD4Zx/A7NqFD+8F/471
+/HR5CPP72+yHyTTXNvwaKRq0/VZy/ye0dlhFGLJr4CYtDdW41fpI5Doz1h0M5PqqpOm9ddCl
+gz1MbgQI0FJq6mEvbFz+vM3/XfwOzJeAeQcavkGUnZhC1M7uMyvynSbcA7oTtxxHtwErr/8E
+pNPTw4IJw3DgVRTW1d0sUXG79VzULwIDAQABoywwKjAaBgNVHREEEzARgQ9tYXJjb0B0b2Rt
+dWUuZGUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQUFAAOBgQB+7LQP5DV5DdtvIMRes/HZ
+5hwOB4a9purLonVuknk3GxW75qxjm5M8HB7la7aV7csomwusNcofEKrH7KnvB37F/kzd6ln9
+ch63pxNg+Z9W0/pWrVr9WWPkVxNG9GzX2NyZF8B/uvDEM/KJKnoL4Z4SkMlsUOIrAgWsTGlJ
+43BUFzCCAz8wggKooAMCAQICAQ0wDQYJKoZIhvcNAQEFBQAwgdExCzAJBgNVBAYTAlpBMRUw
+EwYDVQQIEwxXZXN0ZXJuIENhcGUxEjAQBgNVBAcTCUNhcGUgVG93bjEaMBgGA1UEChMRVGhh
+d3RlIENvbnN1bHRpbmcxKDAmBgNVBAsTH0NlcnRpZmljYXRpb24gU2VydmljZXMgRGl2aXNp
+b24xJDAiBgNVBAMTG1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFpbCBDQTErMCkGCSqGSIb3DQEJ
+ARYccGVyc29uYWwtZnJlZW1haWxAdGhhd3RlLmNvbTAeFw0wMzA3MTcwMDAwMDBaFw0xMzA3
+MTYyMzU5NTlaMGIxCzAJBgNVBAYTAlpBMSUwIwYDVQQKExxUaGF3dGUgQ29uc3VsdGluZyAo
+UHR5KSBMdGQuMSwwKgYDVQQDEyNUaGF3dGUgUGVyc29uYWwgRnJlZW1haWwgSXNzdWluZyBD
+QTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAxKY8VXNV+065yplaHmjAdQRwnd/p/6Me
+7L3N9VvyGna9fww6YfK/Uc4B1OVQCjDXAmNaLIkVcI7dyfArhVqqP3FWy688Cwfn8R+RNiQq
+E88r1fOCdz0Dviv+uxg+B79AgAJk16emu59l0cUqVIUPSAR/p7bRPGEEQB5kGXJgt/sCAwEA
+AaOBlDCBkTASBgNVHRMBAf8ECDAGAQH/AgEAMEMGA1UdHwQ8MDowOKA2oDSGMmh0dHA6Ly9j
+cmwudGhhd3RlLmNvbS9UaGF3dGVQZXJzb25hbEZyZWVtYWlsQ0EuY3JsMAsGA1UdDwQEAwIB
+BjApBgNVHREEIjAgpB4wHDEaMBgGA1UEAxMRUHJpdmF0ZUxhYmVsMi0xMzgwDQYJKoZIhvcN
+AQEFBQADgYEASIzRUIPqCy7MDaNmrGcPf6+svsIXoUOWlJ1/TCG4+DYfqi2fNi/A9BxQIJNw
+PP2t4WFiw9k6GX6EsZkbAMUaC4J0niVQlGLH2ydxVyWN3amcOY6MIE9lX5Xa9/eH1sYITq72
+6jTlEBpbNU1341YheILcIRk13iSx0x1G/11fZU8xggNkMIIDYAIBATB2MGIxCzAJBgNVBAYT
+AlpBMSUwIwYDVQQKExxUaGF3dGUgQ29uc3VsdGluZyAoUHR5KSBMdGQuMSwwKgYDVQQDEyNU
+aGF3dGUgUGVyc29uYWwgRnJlZW1haWwgSXNzdWluZyBDQQIQTrlmykx0g2EbFrK7pZfaDDAJ
+BgUrDgMCGgUAoIIBwzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
+Fw0wNzEwMDUwMDI4MDNaMCMGCSqGSIb3DQEJBDEWBBTHIZTmv/2M2cRDu7n4/pspSwj2iTBS
+BgkqhkiG9w0BCQ8xRTBDMAoGCCqGSIb3DQMHMA4GCCqGSIb3DQMCAgIAgDANBggqhkiG9w0D
+AgIBQDAHBgUrDgMCBzANBggqhkiG9w0DAgIBKDCBhQYJKwYBBAGCNxAEMXgwdjBiMQswCQYD
+VQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UE
+AxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3VpbmcgQ0ECEE65ZspMdINhGxayu6WX
+2gwwgYcGCyqGSIb3DQEJEAILMXigdjBiMQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3Rl
+IENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVt
+YWlsIElzc3VpbmcgQ0ECEE65ZspMdINhGxayu6WX2gwwDQYJKoZIhvcNAQEBBQAEggEAU4Lm
+kQtgsy2yvA4wTFf161L3Q9744FTqVZlKOncukHSq4iaNBGax9umAvKh78MJnjxjzW/vnPp3Z
+mBLpXw8tIvfJ3qBvVx9cwy62/0hbndZPBRIQwaUEDT4R7l9naSxX/1QKdEcvaFi+xEf3juky
+TBbhU7UovhBvLGY212zKeRH0cQNG377zVaOCxYxfqR+K0n+wF5YtNOTKQbxjY48RZkSXbjL9
+AKFVHt5ztMcWtnd28m5s9MzKE1cU8H4YLIEckmIQyKhbnXv+RENLuFydLzLRzKSA8UAq559R
+CRgpN90lG+UFKAKFu3OwsuaoA53iOTA0xG2oteYKxcl3P/cEOgAAAAAAAA==
+--------------ms090901000100090501020200--
