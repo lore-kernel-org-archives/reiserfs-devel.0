@@ -1,101 +1,45 @@
-From: Marco Gruss <marco@todmue.de>
-Subject: Increasing REISERFS_LINK_MAX
-Date: Fri, 05 Oct 2007 02:28:03 +0200
-Message-ID: <47058513.1070609@todmue.de>
+From: lepton <ytht.net@gmail.com>
+Subject: Re: Increasing REISERFS_LINK_MAX
+Date: Fri, 5 Oct 2007 11:46:13 +0800
+Message-ID: <20071005034613.GA4315@router.lepton.home>
+References: <47058513.1070609@todmue.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg=sha1; boundary="------------ms090901000100090501020200"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=beta;
+        h=domainkey-signature:received:received:received:date:from:to:cc:subject:message-id:references:mime-version:content-type:content-disposition:in-reply-to:user-agent;
+        bh=iLF/g7l+J2gRxRcWkI2TGXX39LG1KLzVEo0fa5k41Xg=;
+        b=RmyUCSWFo6Io/kXme8BGSX1HjAqtuHxNRBCkjDM6+l5ZllbAotwZLJqHiPxJ52cSJsC5HIu8SAJErx1rKbpVrn16Avo9UL8iUUJPZrPQDfe9lKv0lLoitS3Jc6bIIAHMKoAmtaAxKJgRzsvjnSZQkvvJr5y7tNW4HWY5CHLFhMQ=
+Content-Disposition: inline
+In-Reply-To: <47058513.1070609@todmue.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
-
-This is a cryptographically signed message in MIME format.
-
---------------ms090901000100090501020200
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Marco Gruss <marco@todmue.de>
+Cc: reiserfs-devel@vger.kernel.org
 
-Hey there,
+I think it should be safe to increase REISERFS_LINK_MAX to 
+a number smaller than 2^32, since nlink is 32bits now.
+I sugguest you can try it in user mode linux or something like
+qemu or vmware first.
 
-I'm using reiserfs on a system that keeps backups. In order to
-save space, I make very heavy use of hardlinks (using cp -al
-for duplicating a tree and also using the excellent rdfind from
-http://hem.bredband.net/pauls/rdfind/rdfind.html). I have now
-run into the maximum link limit per file of 63535 (2^16-1001).
+On Fri, Oct 05, 2007 at 02:28:03AM +0200, Marco Gruss wrote:
+> Hey there,
+> 
+> I'm using reiserfs on a system that keeps backups. In order to
+> save space, I make very heavy use of hardlinks (using cp -al
+> for duplicating a tree and also using the excellent rdfind from
+> http://hem.bredband.net/pauls/rdfind/rdfind.html). I have now
+> run into the maximum link limit per file of 63535 (2^16-1001).
+> 
+> First thought: "Just increase it and go on". Then I thought
+> that this limit probably isn't there for fun; so here's my
+> question: Is it safe to increase REISERFS_LINK_MAX exceeding
+> unsigned int, or will horrible breakage occur?
+> 
+> Thanks in advance for any input.
+> 
+>    Marco
 
-First thought: "Just increase it and go on". Then I thought
-that this limit probably isn't there for fun; so here's my
-question: Is it safe to increase REISERFS_LINK_MAX exceeding
-unsigned int, or will horrible breakage occur?
 
-Thanks in advance for any input.
-
-    Marco
-
---------------ms090901000100090501020200
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIII+zCC
-AtgwggJBoAMCAQICEE65ZspMdINhGxayu6WX2gwwDQYJKoZIhvcNAQEFBQAwYjELMAkGA1UE
-BhMCWkExJTAjBgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMT
-I1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFpbCBJc3N1aW5nIENBMB4XDTA3MDYyMzIxNDQwN1oX
-DTA4MDYyMjIxNDQwN1owQTEfMB0GA1UEAxMWVGhhd3RlIEZyZWVtYWlsIE1lbWJlcjEeMBwG
-CSqGSIb3DQEJARYPbWFyY29AdG9kbXVlLmRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
-CgKCAQEAwxWpFz/Yy7EkwI9xJqvuXhW0Cb4QvsBK57icqxc5NF75/HG/3//PF7rAhyi72Y1O
-YldytWm8ywgcLwI0WNPmF6vXE0Cjp7w6TVGgUL9rgSMFp5zEUEQmaMzsUuHBuCy4wA42GiP4
-zx3X2vvB4ZuIAzD4Zx/A7NqFD+8F/471/HR5CPP72+yHyTTXNvwaKRq0/VZy/ye0dlhFGLJr
-4CYtDdW41fpI5Doz1h0M5PqqpOm9ddClgz1MbgQI0FJq6mEvbFz+vM3/XfwOzJeAeQcavkGU
-nZhC1M7uMyvynSbcA7oTtxxHtwErr/8EpNPTw4IJw3DgVRTW1d0sUXG79VzULwIDAQABoyww
-KjAaBgNVHREEEzARgQ9tYXJjb0B0b2RtdWUuZGUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0B
-AQUFAAOBgQB+7LQP5DV5DdtvIMRes/HZ5hwOB4a9purLonVuknk3GxW75qxjm5M8HB7la7aV
-7csomwusNcofEKrH7KnvB37F/kzd6ln9ch63pxNg+Z9W0/pWrVr9WWPkVxNG9GzX2NyZF8B/
-uvDEM/KJKnoL4Z4SkMlsUOIrAgWsTGlJ43BUFzCCAtgwggJBoAMCAQICEE65ZspMdINhGxay
-u6WX2gwwDQYJKoZIhvcNAQEFBQAwYjELMAkGA1UEBhMCWkExJTAjBgNVBAoTHFRoYXd0ZSBD
-b25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFp
-bCBJc3N1aW5nIENBMB4XDTA3MDYyMzIxNDQwN1oXDTA4MDYyMjIxNDQwN1owQTEfMB0GA1UE
-AxMWVGhhd3RlIEZyZWVtYWlsIE1lbWJlcjEeMBwGCSqGSIb3DQEJARYPbWFyY29AdG9kbXVl
-LmRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwxWpFz/Yy7EkwI9xJqvuXhW0
-Cb4QvsBK57icqxc5NF75/HG/3//PF7rAhyi72Y1OYldytWm8ywgcLwI0WNPmF6vXE0Cjp7w6
-TVGgUL9rgSMFp5zEUEQmaMzsUuHBuCy4wA42GiP4zx3X2vvB4ZuIAzD4Zx/A7NqFD+8F/471
-/HR5CPP72+yHyTTXNvwaKRq0/VZy/ye0dlhFGLJr4CYtDdW41fpI5Doz1h0M5PqqpOm9ddCl
-gz1MbgQI0FJq6mEvbFz+vM3/XfwOzJeAeQcavkGUnZhC1M7uMyvynSbcA7oTtxxHtwErr/8E
-pNPTw4IJw3DgVRTW1d0sUXG79VzULwIDAQABoywwKjAaBgNVHREEEzARgQ9tYXJjb0B0b2Rt
-dWUuZGUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQUFAAOBgQB+7LQP5DV5DdtvIMRes/HZ
-5hwOB4a9purLonVuknk3GxW75qxjm5M8HB7la7aV7csomwusNcofEKrH7KnvB37F/kzd6ln9
-ch63pxNg+Z9W0/pWrVr9WWPkVxNG9GzX2NyZF8B/uvDEM/KJKnoL4Z4SkMlsUOIrAgWsTGlJ
-43BUFzCCAz8wggKooAMCAQICAQ0wDQYJKoZIhvcNAQEFBQAwgdExCzAJBgNVBAYTAlpBMRUw
-EwYDVQQIEwxXZXN0ZXJuIENhcGUxEjAQBgNVBAcTCUNhcGUgVG93bjEaMBgGA1UEChMRVGhh
-d3RlIENvbnN1bHRpbmcxKDAmBgNVBAsTH0NlcnRpZmljYXRpb24gU2VydmljZXMgRGl2aXNp
-b24xJDAiBgNVBAMTG1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFpbCBDQTErMCkGCSqGSIb3DQEJ
-ARYccGVyc29uYWwtZnJlZW1haWxAdGhhd3RlLmNvbTAeFw0wMzA3MTcwMDAwMDBaFw0xMzA3
-MTYyMzU5NTlaMGIxCzAJBgNVBAYTAlpBMSUwIwYDVQQKExxUaGF3dGUgQ29uc3VsdGluZyAo
-UHR5KSBMdGQuMSwwKgYDVQQDEyNUaGF3dGUgUGVyc29uYWwgRnJlZW1haWwgSXNzdWluZyBD
-QTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAxKY8VXNV+065yplaHmjAdQRwnd/p/6Me
-7L3N9VvyGna9fww6YfK/Uc4B1OVQCjDXAmNaLIkVcI7dyfArhVqqP3FWy688Cwfn8R+RNiQq
-E88r1fOCdz0Dviv+uxg+B79AgAJk16emu59l0cUqVIUPSAR/p7bRPGEEQB5kGXJgt/sCAwEA
-AaOBlDCBkTASBgNVHRMBAf8ECDAGAQH/AgEAMEMGA1UdHwQ8MDowOKA2oDSGMmh0dHA6Ly9j
-cmwudGhhd3RlLmNvbS9UaGF3dGVQZXJzb25hbEZyZWVtYWlsQ0EuY3JsMAsGA1UdDwQEAwIB
-BjApBgNVHREEIjAgpB4wHDEaMBgGA1UEAxMRUHJpdmF0ZUxhYmVsMi0xMzgwDQYJKoZIhvcN
-AQEFBQADgYEASIzRUIPqCy7MDaNmrGcPf6+svsIXoUOWlJ1/TCG4+DYfqi2fNi/A9BxQIJNw
-PP2t4WFiw9k6GX6EsZkbAMUaC4J0niVQlGLH2ydxVyWN3amcOY6MIE9lX5Xa9/eH1sYITq72
-6jTlEBpbNU1341YheILcIRk13iSx0x1G/11fZU8xggNkMIIDYAIBATB2MGIxCzAJBgNVBAYT
-AlpBMSUwIwYDVQQKExxUaGF3dGUgQ29uc3VsdGluZyAoUHR5KSBMdGQuMSwwKgYDVQQDEyNU
-aGF3dGUgUGVyc29uYWwgRnJlZW1haWwgSXNzdWluZyBDQQIQTrlmykx0g2EbFrK7pZfaDDAJ
-BgUrDgMCGgUAoIIBwzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-Fw0wNzEwMDUwMDI4MDNaMCMGCSqGSIb3DQEJBDEWBBTHIZTmv/2M2cRDu7n4/pspSwj2iTBS
-BgkqhkiG9w0BCQ8xRTBDMAoGCCqGSIb3DQMHMA4GCCqGSIb3DQMCAgIAgDANBggqhkiG9w0D
-AgIBQDAHBgUrDgMCBzANBggqhkiG9w0DAgIBKDCBhQYJKwYBBAGCNxAEMXgwdjBiMQswCQYD
-VQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UE
-AxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3VpbmcgQ0ECEE65ZspMdINhGxayu6WX
-2gwwgYcGCyqGSIb3DQEJEAILMXigdjBiMQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3Rl
-IENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVt
-YWlsIElzc3VpbmcgQ0ECEE65ZspMdINhGxayu6WX2gwwDQYJKoZIhvcNAQEBBQAEggEAU4Lm
-kQtgsy2yvA4wTFf161L3Q9744FTqVZlKOncukHSq4iaNBGax9umAvKh78MJnjxjzW/vnPp3Z
-mBLpXw8tIvfJ3qBvVx9cwy62/0hbndZPBRIQwaUEDT4R7l9naSxX/1QKdEcvaFi+xEf3juky
-TBbhU7UovhBvLGY212zKeRH0cQNG377zVaOCxYxfqR+K0n+wF5YtNOTKQbxjY48RZkSXbjL9
-AKFVHt5ztMcWtnd28m5s9MzKE1cU8H4YLIEckmIQyKhbnXv+RENLuFydLzLRzKSA8UAq559R
-CRgpN90lG+UFKAKFu3OwsuaoA53iOTA0xG2oteYKxcl3P/cEOgAAAAAAAA==
---------------ms090901000100090501020200--
