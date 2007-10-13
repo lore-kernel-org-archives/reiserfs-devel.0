@@ -1,64 +1,161 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: 2.6.23-mm1
-Date: Fri, 12 Oct 2007 14:00:23 -0700
-Message-ID: <20071012140023.30e5b30e.akpm@linux-foundation.org>
-References: <20071011213126.cf92efb7.akpm@linux-foundation.org>
-	<470FDB41.2000102@free.fr>
+From: Laurent Riffard <laurent.riffard@free.fr>
+Subject: [PATCH] Reiser4: Drop 'size' argument from bio_endio and bi_end_io
+Date: Sat, 13 Oct 2007 11:29:58 +0200
+Message-ID: <47109016.8000403@free.fr>
+References: <20071011213126.cf92efb7.akpm@linux-foundation.org>	<470FDB41.2000102@free.fr> <20071012140023.30e5b30e.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1760393AbXJLVBV@vger.kernel.org>
-In-Reply-To: <470FDB41.2000102@free.fr>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <20071012140023.30e5b30e.akpm@linux-foundation.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Laurent Riffard <laurent.riffard@free.fr>
+Content-Type: text/plain; charset="us-ascii"
+To: Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.de>, Edward Shishkin <edward@namesys.com>
 Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, Jens Axboe <jens.axboe@oracle.com>
 
-On Fri, 12 Oct 2007 22:38:25 +0200
-Laurent Riffard <laurent.riffard@free.fr> wrote:
+Reiser4: Drop 'size' argument from bio_endio and bi_end_io
 
-> Le 12.10.2007 06:31, Andrew Morton a =E9crit :
-> > ftp://ftp.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.2=
-3/2.6.23-mm1/
->=20
-> Mounting reiser4 fs does hang with these messages in dmesg:
->=20
->   Loading Reiser4. See www.namesys.com for a description of Reiser4.
->   reiser4[swapper(0)]: end_bio_single_page_read (fs/reiser4/page_cach=
-e.c:331)[nikita-3332]:
->   WARNING: Truncated single page read: 4096
->=20
-> Hitting SysRq-W produces this output:
->=20
->   SysRq : Show Blocked State
->     task                PC stack   pid father
->   mount         D c20d6b70  1592  2509   2495
->          c229bbd8 00000046 c239d684 c20d6b70 e0824b8d c229bc10 000000=
-00 c229bc18=20
->          c229bbe0 c02ac14e c229bbe8 c0141b7b c229bc04 c02ac344 c0141b=
-45 c1402654=20
->          c1045f60 c1045f60 c229bc10 c229bc30 c0141d6e 00000002 c1045f=
-60 00000000=20
->   Call Trace:
->    [<c02ac14e>] io_schedule+0xe/0x16
->    [<c0141b7b>] sync_page+0x36/0x3a
->    [<c02ac344>] __wait_on_bit+0x36/0x5d
->    [<c0141d6e>] wait_on_page_bit+0x55/0x5b
->    [<e1c0e1a6>] jload_gfp+0x73/0x163 [reiser4]
->    [<e1c1c7f8>] load_journal_control_block+0x4d/0x77 [reiser4]
->    [<e1c1c86e>] reiser4_init_journal_info+0x2b/0x54 [reiser4]
->    [<e1c454e6>] init_format_format40+0x79/0x4ab [reiser4]
->    [<e1c21cf8>] fill_super+0xce/0x1ee [reiser4]
->    [<c015f731>] get_sb_bdev+0xe0/0x11e
->    [<e1c21a8f>] reiser4_get_sb+0x13/0x15 [reiser4]
->    [<c015f336>] vfs_kern_mount+0x3b/0x76
->    [<c0171621>] do_mount+0x68a/0x7a3
->    [<c01717a2>] sys_mount+0x68/0xa4
->    [<c0103dee>] sysenter_past_esp+0x5f/0x99
->    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
+This patch pushes into Reiser4 the changes introduced by 
+commit 6712ecf8f648118c3363c142196418f89a510b90:
 
-ho hum.  Maybe reiser4 needs updating for the git-block changes.
+	As bi_end_io is only called once when the request is complete,
+	the 'size' argument is now redundant.  Remove it.
 
-I don't recall having seen a useful description of what's going on
-in git-block so some reverse-engineering might be needed.
+	Now there is no need for bio_endio to subtract the size completed
+	from bi_size.  So don't do that either.
+
+	While we are at it, change bi_end_io to return void.
+
+Please review.
+
+Signed-Off-By: Laurent Riffard <laurent.riffard@free.fr>
+---
+ fs/reiser4/flush_queue.c  |   10 ++--------
+ fs/reiser4/page_cache.c   |   24 ++++--------------------
+ fs/reiser4/status_flags.c |    7 +------
+ 3 files changed, 7 insertions(+), 34 deletions(-)
+
+Index: linux-2.6-mm/fs/reiser4/flush_queue.c
+===================================================================
+--- linux-2.6-mm.orig/fs/reiser4/flush_queue.c
++++ linux-2.6-mm/fs/reiser4/flush_queue.c
+@@ -391,9 +391,8 @@ int atom_fq_parts_are_clean(txn_atom * a
+ }
+ #endif
+ /* Bio i/o completion routine for reiser4 write operations. */
+-static int
+-end_io_handler(struct bio *bio, unsigned int bytes_done UNUSED_ARG,
+-	       int err)
++static void
++end_io_handler(struct bio *bio, int err)
+ {
+ 	int i;
+ 	int nr_errors = 0;
+@@ -401,10 +400,6 @@ end_io_handler(struct bio *bio, unsigned
+ 
+ 	assert("zam-958", bio->bi_rw & WRITE);
+ 
+-	/* i/o op. is not fully completed */
+-	if (bio->bi_size != 0)
+-		return 1;
+-
+ 	if (err == -EOPNOTSUPP)
+ 		set_bit(BIO_EOPNOTSUPP, &bio->bi_flags);
+ 
+@@ -447,7 +442,6 @@ end_io_handler(struct bio *bio, unsigned
+ 	}
+ 
+ 	bio_put(bio);
+-	return 0;
+ }
+ 
+ /* Count I/O requests which will be submitted by @bio in given flush queues
+Index: linux-2.6-mm/fs/reiser4/page_cache.c
+===================================================================
+--- linux-2.6-mm.orig/fs/reiser4/page_cache.c
++++ linux-2.6-mm/fs/reiser4/page_cache.c
+@@ -320,18 +320,11 @@ reiser4_tree *reiser4_tree_by_page(const
+    mpage_end_io_read() would also do. But it's static.
+ 
+ */
+-static int
+-end_bio_single_page_read(struct bio *bio, unsigned int bytes_done UNUSED_ARG,
+-			 int err UNUSED_ARG)
++static void
++end_bio_single_page_read(struct bio *bio, int err UNUSED_ARG)
+ {
+ 	struct page *page;
+ 
+-	if (bio->bi_size != 0) {
+-		warning("nikita-3332", "Truncated single page read: %i",
+-			bio->bi_size);
+-		return 1;
+-	}
+-
+ 	page = bio->bi_io_vec[0].bv_page;
+ 
+ 	if (test_bit(BIO_UPTODATE, &bio->bi_flags)) {
+@@ -342,7 +335,6 @@ end_bio_single_page_read(struct bio *bio
+ 	}
+ 	unlock_page(page);
+ 	bio_put(bio);
+-	return 0;
+ }
+ 
+ /* completion handler for single page bio-based write.
+@@ -350,25 +342,17 @@ end_bio_single_page_read(struct bio *bio
+    mpage_end_io_write() would also do. But it's static.
+ 
+ */
+-static int
+-end_bio_single_page_write(struct bio *bio, unsigned int bytes_done UNUSED_ARG,
+-			  int err UNUSED_ARG)
++static void
++end_bio_single_page_write(struct bio *bio, int err UNUSED_ARG)
+ {
+ 	struct page *page;
+ 
+-	if (bio->bi_size != 0) {
+-		warning("nikita-3333", "Truncated single page write: %i",
+-			bio->bi_size);
+-		return 1;
+-	}
+-
+ 	page = bio->bi_io_vec[0].bv_page;
+ 
+ 	if (!test_bit(BIO_UPTODATE, &bio->bi_flags))
+ 		SetPageError(page);
+ 	end_page_writeback(page);
+ 	bio_put(bio);
+-	return 0;
+ }
+ 
+ /* ->readpage() method for formatted nodes */
+Index: linux-2.6-mm/fs/reiser4/status_flags.c
+===================================================================
+--- linux-2.6-mm.orig/fs/reiser4/status_flags.c
++++ linux-2.6-mm/fs/reiser4/status_flags.c
+@@ -15,12 +15,8 @@
+ /* This is our end I/O handler that marks page uptodate if IO was successful. It also
+    unconditionally unlocks the page, so we can see that io was done.
+    We do not free bio, because we hope to reuse that. */
+-static int reiser4_status_endio(struct bio *bio, unsigned int bytes_done,
+-				int err)
++static void reiser4_status_endio(struct bio *bio, int err)
+ {
+-	if (bio->bi_size)
+-		return 1;
+-
+ 	if (test_bit(BIO_UPTODATE, &bio->bi_flags)) {
+ 		SetPageUptodate(bio->bi_io_vec->bv_page);
+ 	} else {
+@@ -28,7 +24,6 @@ static int reiser4_status_endio(struct b
+ 		SetPageError(bio->bi_io_vec->bv_page);
+ 	}
+ 	unlock_page(bio->bi_io_vec->bv_page);
+-	return 0;
+ }
+ 
+ /* Initialise status code. This is expected to be called from the disk format
+
+
