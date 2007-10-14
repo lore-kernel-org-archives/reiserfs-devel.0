@@ -1,178 +1,94 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: [PATCH] Reiser4: Drop 'size' argument from bio_endio and bi_end_io
-Date: Sun, 14 Oct 2007 17:09:52 +0400
-Message-ID: <47121520.90704@namesys.com>
-References: <20071011213126.cf92efb7.akpm@linux-foundation.org>	<470FDB41.2000102@free.fr> <20071012140023.30e5b30e.akpm@linux-foundation.org> <47109016.8000403@free.fr>
+From: Laurent Riffard <laurent.riffard@free.fr>
+Subject: Re: 2.6.23-mm1: BUG in reiserfs_delete_xattrs
+Date: Mon, 15 Oct 2007 00:34:58 +0200
+Message-ID: <47129992.4040903@free.fr>
+References: <20071011213126.cf92efb7.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <47109016.8000403@free.fr>
+In-Reply-To: <20071011213126.cf92efb7.akpm@linux-foundation.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Laurent Riffard <laurent.riffard@free.fr>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.de>, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, Jens Axboe <jens.axboe@oracle.com>, Paul Jackson <pj@sgi.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Andrew Morton <akpm@linux-foundation.org>, Dave Hansen <haveblue@us.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
 
-Laurent Riffard wrote:
+Le 12.10.2007 06:31, Andrew Morton a =E9crit :
+> ftp://ftp.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.23/=
+2.6.23-mm1/
 
->Reiser4: Drop 'size' argument from bio_endio and bi_end_io
->
->This patch pushes into Reiser4 the changes introduced by 
->commit 6712ecf8f648118c3363c142196418f89a510b90:
->
->	As bi_end_io is only called once when the request is complete,
->	the 'size' argument is now redundant.  Remove it.
->
->	Now there is no need for bio_endio to subtract the size completed
->	from bi_size.  So don't do that either.
->
->	While we are at it, change bi_end_io to return void.
->
->Please review.
->  
->
+/home is mounted with the following options:
+   /dev/mapper/vglinux1-lvhome on /home type reiserfs (rw,noatime,nodir=
+atime,user_xattr)
 
-Thanks!
+I guess that beagled (the Beagle desktop search daemon) has populated u=
+ser
+xattrs on almost all files. Now, when I delete a file, two BUGs occur
+and the system hangs. Here is the stack for the first BUG (the second
+one is very similar):
 
-Signed-Off-By: Edward Shishkin <edward@namesys.com>
+[partially hand copied stack]
+_fput
+fput
+reiserfs_delete_xattrs
+reiserfs_delete_inode
+generic_delete_inode
+generic_drop_inode
+iput
+do_unlinkat
+sys_unlink
+sys_enter_past_esp
 
->Signed-Off-By: Laurent Riffard <laurent.riffard@free.fr>
->---
-> fs/reiser4/flush_queue.c  |   10 ++--------
-> fs/reiser4/page_cache.c   |   24 ++++--------------------
-> fs/reiser4/status_flags.c |    7 +------
-> 3 files changed, 7 insertions(+), 34 deletions(-)
->
->Index: linux-2.6-mm/fs/reiser4/flush_queue.c
->===================================================================
->--- linux-2.6-mm.orig/fs/reiser4/flush_queue.c
->+++ linux-2.6-mm/fs/reiser4/flush_queue.c
->@@ -391,9 +391,8 @@ int atom_fq_parts_are_clean(txn_atom * a
-> }
-> #endif
-> /* Bio i/o completion routine for reiser4 write operations. */
->-static int
->-end_io_handler(struct bio *bio, unsigned int bytes_done UNUSED_ARG,
->-	       int err)
->+static void
->+end_io_handler(struct bio *bio, int err)
-> {
-> 	int i;
-> 	int nr_errors = 0;
->@@ -401,10 +400,6 @@ end_io_handler(struct bio *bio, unsigned
-> 
-> 	assert("zam-958", bio->bi_rw & WRITE);
-> 
->-	/* i/o op. is not fully completed */
->-	if (bio->bi_size != 0)
->-		return 1;
->-
-> 	if (err == -EOPNOTSUPP)
-> 		set_bit(BIO_EOPNOTSUPP, &bio->bi_flags);
-> 
->@@ -447,7 +442,6 @@ end_io_handler(struct bio *bio, unsigned
-> 	}
-> 
-> 	bio_put(bio);
->-	return 0;
-> }
-> 
-> /* Count I/O requests which will be submitted by @bio in given flush queues
->Index: linux-2.6-mm/fs/reiser4/page_cache.c
->===================================================================
->--- linux-2.6-mm.orig/fs/reiser4/page_cache.c
->+++ linux-2.6-mm/fs/reiser4/page_cache.c
->@@ -320,18 +320,11 @@ reiser4_tree *reiser4_tree_by_page(const
->    mpage_end_io_read() would also do. But it's static.
-> 
-> */
->-static int
->-end_bio_single_page_read(struct bio *bio, unsigned int bytes_done UNUSED_ARG,
->-			 int err UNUSED_ARG)
->+static void
->+end_bio_single_page_read(struct bio *bio, int err UNUSED_ARG)
-> {
-> 	struct page *page;
-> 
->-	if (bio->bi_size != 0) {
->-		warning("nikita-3332", "Truncated single page read: %i",
->-			bio->bi_size);
->-		return 1;
->-	}
->-
-> 	page = bio->bi_io_vec[0].bv_page;
-> 
-> 	if (test_bit(BIO_UPTODATE, &bio->bi_flags)) {
->@@ -342,7 +335,6 @@ end_bio_single_page_read(struct bio *bio
-> 	}
-> 	unlock_page(page);
-> 	bio_put(bio);
->-	return 0;
-> }
-> 
-> /* completion handler for single page bio-based write.
->@@ -350,25 +342,17 @@ end_bio_single_page_read(struct bio *bio
->    mpage_end_io_write() would also do. But it's static.
-> 
-> */
->-static int
->-end_bio_single_page_write(struct bio *bio, unsigned int bytes_done UNUSED_ARG,
->-			  int err UNUSED_ARG)
->+static void
->+end_bio_single_page_write(struct bio *bio, int err UNUSED_ARG)
-> {
-> 	struct page *page;
-> 
->-	if (bio->bi_size != 0) {
->-		warning("nikita-3333", "Truncated single page write: %i",
->-			bio->bi_size);
->-		return 1;
->-	}
->-
-> 	page = bio->bi_io_vec[0].bv_page;
-> 
-> 	if (!test_bit(BIO_UPTODATE, &bio->bi_flags))
-> 		SetPageError(page);
-> 	end_page_writeback(page);
-> 	bio_put(bio);
->-	return 0;
-> }
-> 
-> /* ->readpage() method for formatted nodes */
->Index: linux-2.6-mm/fs/reiser4/status_flags.c
->===================================================================
->--- linux-2.6-mm.orig/fs/reiser4/status_flags.c
->+++ linux-2.6-mm/fs/reiser4/status_flags.c
->@@ -15,12 +15,8 @@
-> /* This is our end I/O handler that marks page uptodate if IO was successful. It also
->    unconditionally unlocks the page, so we can see that io was done.
->    We do not free bio, because we hope to reuse that. */
->-static int reiser4_status_endio(struct bio *bio, unsigned int bytes_done,
->-				int err)
->+static void reiser4_status_endio(struct bio *bio, int err)
-> {
->-	if (bio->bi_size)
->-		return 1;
->-
-> 	if (test_bit(BIO_UPTODATE, &bio->bi_flags)) {
-> 		SetPageUptodate(bio->bi_io_vec->bv_page);
-> 	} else {
->@@ -28,7 +24,6 @@ static int reiser4_status_endio(struct b
-> 		SetPageError(bio->bi_io_vec->bv_page);
-> 	}
-> 	unlock_page(bio->bi_io_vec->bv_page);
->-	return 0;
-> }
-> 
-> /* Initialise status code. This is expected to be called from the disk format
->
->
->-
->To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
->the body of a message to majordomo@vger.kernel.org
->More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
->  
->
+I reported a similar BUG in 2.6.22-rc8-mm2 (see
+http://lkml.org/lkml/2007/9/27/235). Dave Hansen sent a patch for it, I
+tested it and it was OK for 2.6.22-rc8-mm2.
 
+I tried this patch on 2.6.23-mm1, and it fixed the BUGs here too.
+
+----
+=46rom: Dave Hansen <haveblue@us.ibm.com>
+
+The bug is caused by reiserfs creating a special 'struct file' with a
+NULL vfsmount. =20
+
+/* Opens a file pointer to the attribute associated with inode */
+static struct file *open_xa_file(const struct inode *inode, const char
+*name,
+                                 int flags)
+{
+=2E..
+        fp =3D dentry_open(xafile, NULL, O_RDWR);
+        /* dentry_open dputs the dentry if it fails */
+
+
+As Christoph just said, this is somewhat of a bandaid.  But, it
+shouldn't hurt anything.
+
+---
+
+ lxc-dave/fs/file_table.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -puN fs/open.c~fix-reiserfs-oops fs/open.c
+diff -puN fs/file_table.c~fix-reiserfs-oops fs/file_table.c
+--- lxc/fs/file_table.c~fix-reiserfs-oops	2007-09-27 13:32:20.000000000=
+ -0700
++++ lxc-dave/fs/file_table.c	2007-09-27 13:33:11.000000000 -0700
+@@ -236,7 +236,7 @@ void fastcall __fput(struct file *file)
+ 	fops_put(file->f_op);
+ 	if (file->f_mode & FMODE_WRITE) {
+ 		put_write_access(inode);
+-		if (!special_file(inode->i_mode))
++		if (!special_file(inode->i_mode) && mnt)
+ 			mnt_drop_write(mnt);
+ 	}
+ 	put_pid(file->f_owner.pid);
+diff -puN include/linux/mount.h~fix-reiserfs-oops include/linux/mount.h
+_
+
+
+-
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
