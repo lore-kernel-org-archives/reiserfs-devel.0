@@ -1,195 +1,93 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: 2.6.23-mm1: BUG in reiserfs_delete_xattrs
-Date: Mon, 15 Oct 2007 09:40:52 +0100
-Message-ID: <20071015084052.GA21870@infradead.org>
-References: <20071011213126.cf92efb7.akpm@linux-foundation.org> <47129992.4040903@free.fr>
+From: Zan Lynx <zlynx@acm.org>
+Subject: Re: 2.6.23-mm1
+Date: Mon, 15 Oct 2007 10:13:38 -0600
+Message-ID: <1192464818.8642.26.camel@localhost>
+References: <20071011213126.cf92efb7.akpm@linux-foundation.org>
+	 <470FDB41.2000102@free.fr>
+	 <20071012140023.30e5b30e.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <47129992.4040903@free.fr>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-Q+5ntblhmQ03ZlT+niwl"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1764735AbXJOQN5@vger.kernel.org>
+In-Reply-To: <20071012140023.30e5b30e.akpm@linux-foundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Laurent Riffard <laurent.riffard@free.fr>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Dave Hansen <haveblue@us.ibm.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Laurent Riffard <laurent.riffard@free.fr>, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, Jens Axboe <jens.axboe@oracle.com>
 
-On Mon, Oct 15, 2007 at 12:34:58AM +0200, Laurent Riffard wrote:
-> reiserfs_delete_xattrs
-> reiserfs_delete_inode
-> generic_delete_inode
-> generic_drop_inode
-> iput
-> do_unlinkat
-> sys_unlink
-> sys_enter_past_esp
-> 
-> I reported a similar BUG in 2.6.22-rc8-mm2 (see
-> http://lkml.org/lkml/2007/9/27/235). Dave Hansen sent a patch for it, I
-> tested it and it was OK for 2.6.22-rc8-mm2.
-> 
-> I tried this patch on 2.6.23-mm1, and it fixed the BUGs here too.
 
-The delete path is a similar case as the one Dave fixed, also cause by
-a NULL vfsmount passed to dentry_open, but through a different code-path.
+--=-Q+5ntblhmQ03ZlT+niwl
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Untested fix for this problem below:
+On Fri, 2007-10-12 at 14:00 -0700, Andrew Morton wrote:
+> On Fri, 12 Oct 2007 22:38:25 +0200
+> Laurent Riffard <laurent.riffard@free.fr> wrote:
+>=20
+> > Le 12.10.2007 06:31, Andrew Morton a =E9crit :
+> > > ftp://ftp.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.23/=
+2.6.23-mm1/
+> >=20
+> > Mounting reiser4 fs does hang with these messages in dmesg:
+> >=20
+> >   Loading Reiser4. See www.namesys.com for a description of Reiser4.
+> >   reiser4[swapper(0)]: end_bio_single_page_read (fs/reiser4/page_cache.=
+c:331)[nikita-3332]:
+> >   WARNING: Truncated single page read: 4096
+> >=20
+> > Hitting SysRq-W produces this output:
+> >=20
+> >   SysRq : Show Blocked State
+> >     task                PC stack   pid father
+> >   mount         D c20d6b70  1592  2509   2495
+> >          c229bbd8 00000046 c239d684 c20d6b70 e0824b8d c229bc10 00000000=
+ c229bc18=20
+> >          c229bbe0 c02ac14e c229bbe8 c0141b7b c229bc04 c02ac344 c0141b45=
+ c1402654=20
+> >          c1045f60 c1045f60 c229bc10 c229bc30 c0141d6e 00000002 c1045f60=
+ 00000000=20
+> >   Call Trace:
+> >    [<c02ac14e>] io_schedule+0xe/0x16
+> >    [<c0141b7b>] sync_page+0x36/0x3a
+> >    [<c02ac344>] __wait_on_bit+0x36/0x5d
+> >    [<c0141d6e>] wait_on_page_bit+0x55/0x5b
+> >    [<e1c0e1a6>] jload_gfp+0x73/0x163 [reiser4]
+> >    [<e1c1c7f8>] load_journal_control_block+0x4d/0x77 [reiser4]
+> >    [<e1c1c86e>] reiser4_init_journal_info+0x2b/0x54 [reiser4]
+> >    [<e1c454e6>] init_format_format40+0x79/0x4ab [reiser4]
+> >    [<e1c21cf8>] fill_super+0xce/0x1ee [reiser4]
+> >    [<c015f731>] get_sb_bdev+0xe0/0x11e
+> >    [<e1c21a8f>] reiser4_get_sb+0x13/0x15 [reiser4]
+> >    [<c015f336>] vfs_kern_mount+0x3b/0x76
+> >    [<c0171621>] do_mount+0x68a/0x7a3
+> >    [<c01717a2>] sys_mount+0x68/0xa4
+> >    [<c0103dee>] sysenter_past_esp+0x5f/0x99
+> >    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+>=20
+> ho hum.  Maybe reiser4 needs updating for the git-block changes.
+>=20
+> I don't recall having seen a useful description of what's going on
+> in git-block so some reverse-engineering might be needed.
 
-Index: linux-2.6.23-rc8/fs/reiserfs/xattr.c
-===================================================================
---- linux-2.6.23-rc8.orig/fs/reiserfs/xattr.c	2007-09-30 14:13:46.000000000 +0200
-+++ linux-2.6.23-rc8/fs/reiserfs/xattr.c	2007-09-30 14:18:30.000000000 +0200
-@@ -207,9 +207,8 @@ static struct dentry *get_xa_file_dentry
-  * we're called with i_mutex held, so there are no worries about the directory
-  * changing underneath us.
-  */
--static int __xattr_readdir(struct file *filp, void *dirent, filldir_t filldir)
-+static int __xattr_readdir(struct inode *inode, void *dirent, filldir_t filldir)
- {
--	struct inode *inode = filp->f_path.dentry->d_inode;
- 	struct cpu_key pos_key;	/* key of current position in the directory (key of directory entry) */
- 	INITIALIZE_PATH(path_to_entry);
- 	struct buffer_head *bh;
-@@ -352,24 +351,19 @@ static int __xattr_readdir(struct file *
-  * this is stolen from vfs_readdir
-  *
-  */
--static
--int xattr_readdir(struct file *file, filldir_t filler, void *buf)
-+static int xattr_readdir(struct inode *inode, filldir_t filler, void *buf)
- {
--	struct inode *inode = file->f_path.dentry->d_inode;
- 	int res = -ENOTDIR;
--	if (!file->f_op || !file->f_op->readdir)
--		goto out;
-+
- 	mutex_lock_nested(&inode->i_mutex, I_MUTEX_XATTR);
--//        down(&inode->i_zombie);
- 	res = -ENOENT;
- 	if (!IS_DEADDIR(inode)) {
- 		lock_kernel();
--		res = __xattr_readdir(file, buf, filler);
-+		res = __xattr_readdir(inode, buf, filler);
- 		unlock_kernel();
- 	}
--//        up(&inode->i_zombie);
- 	mutex_unlock(&inode->i_mutex);
--      out:
-+
- 	return res;
- }
- 
-@@ -721,7 +715,6 @@ reiserfs_delete_xattrs_filler(void *buf,
- /* This is called w/ inode->i_mutex downed */
- int reiserfs_delete_xattrs(struct inode *inode)
- {
--	struct file *fp;
- 	struct dentry *dir, *root;
- 	int err = 0;
- 
-@@ -742,15 +735,8 @@ int reiserfs_delete_xattrs(struct inode 
- 		return 0;
- 	}
- 
--	fp = dentry_open(dir, NULL, O_RDWR);
--	if (IS_ERR(fp)) {
--		err = PTR_ERR(fp);
--		/* dentry_open dputs the dentry if it fails */
--		goto out;
--	}
--
- 	lock_kernel();
--	err = xattr_readdir(fp, reiserfs_delete_xattrs_filler, dir);
-+	err = xattr_readdir(dir->d_inode, reiserfs_delete_xattrs_filler, dir);
- 	if (err) {
- 		unlock_kernel();
- 		goto out_dir;
-@@ -770,7 +756,7 @@ int reiserfs_delete_xattrs(struct inode 
- 	unlock_kernel();
- 
-       out_dir:
--	fput(fp);
-+	dput(dir);
- 
-       out:
- 	if (!err)
-@@ -812,7 +798,6 @@ reiserfs_chown_xattrs_filler(void *buf, 
- 
- int reiserfs_chown_xattrs(struct inode *inode, struct iattr *attrs)
- {
--	struct file *fp;
- 	struct dentry *dir;
- 	int err = 0;
- 	struct reiserfs_chown_buf buf;
-@@ -836,13 +821,6 @@ int reiserfs_chown_xattrs(struct inode *
- 		goto out;
- 	}
- 
--	fp = dentry_open(dir, NULL, O_RDWR);
--	if (IS_ERR(fp)) {
--		err = PTR_ERR(fp);
--		/* dentry_open dputs the dentry if it fails */
--		goto out;
--	}
--
- 	lock_kernel();
- 
- 	attrs->ia_valid &= (ATTR_UID | ATTR_GID | ATTR_CTIME);
-@@ -850,7 +828,7 @@ int reiserfs_chown_xattrs(struct inode *
- 	buf.attrs = attrs;
- 	buf.inode = inode;
- 
--	err = xattr_readdir(fp, reiserfs_chown_xattrs_filler, &buf);
-+	err = xattr_readdir(dir->d_inode, reiserfs_chown_xattrs_filler, &buf);
- 	if (err) {
- 		unlock_kernel();
- 		goto out_dir;
-@@ -860,7 +838,7 @@ int reiserfs_chown_xattrs(struct inode *
- 	unlock_kernel();
- 
-       out_dir:
--	fput(fp);
-+	dput(dir);
- 
-       out:
- 	attrs->ia_valid = ia_valid;
-@@ -1008,7 +986,6 @@ reiserfs_listxattr_filler(void *buf, con
-  */
- ssize_t reiserfs_listxattr(struct dentry * dentry, char *buffer, size_t size)
- {
--	struct file *fp;
- 	struct dentry *dir;
- 	int err = 0;
- 	struct reiserfs_listxattr_buf buf;
-@@ -1031,13 +1008,6 @@ ssize_t reiserfs_listxattr(struct dentry
- 		goto out;
- 	}
- 
--	fp = dentry_open(dir, NULL, O_RDWR);
--	if (IS_ERR(fp)) {
--		err = PTR_ERR(fp);
--		/* dentry_open dputs the dentry if it fails */
--		goto out;
--	}
--
- 	buf.r_buf = buffer;
- 	buf.r_size = buffer ? size : 0;
- 	buf.r_pos = 0;
-@@ -1045,7 +1015,7 @@ ssize_t reiserfs_listxattr(struct dentry
- 
- 	REISERFS_I(dentry->d_inode)->i_flags |= i_has_xattr_dir;
- 
--	err = xattr_readdir(fp, reiserfs_listxattr_filler, &buf);
-+	err = xattr_readdir(dir->d_inode, reiserfs_listxattr_filler, &buf);
- 	if (err)
- 		goto out_dir;
- 
-@@ -1055,7 +1025,7 @@ ssize_t reiserfs_listxattr(struct dentry
- 		err = buf.r_pos;
- 
-       out_dir:
--	fput(fp);
-+	dput(dir);
- 
-       out:
- 	reiserfs_read_unlock_xattr_i(dentry->d_inode);
+Hmm.  I can add more data to this.  My x86_64 mode laptop is running
+2.6.23-mm1 with Reiser4 and does not experience problems.
+
+I am using 64-bit kernel, libata (I think, whatever the SCSI-like PATA
+is called), and Reiser4.  Both libata and Reiser4 are built-in, not
+modules.
+--=20
+Zan Lynx <zlynx@acm.org>
+
+--=-Q+5ntblhmQ03ZlT+niwl
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.7 (GNU/Linux)
+
+iD8DBQBHE5GyG8fHaOLTWwgRAhS+AJ4kkY0Ck5S9lqAfMheINtRN/+NJ7gCZARrY
+YYpM5rSrN5FPzouQwzUxozk=
+=2pWg
+-----END PGP SIGNATURE-----
+
+--=-Q+5ntblhmQ03ZlT+niwl--
