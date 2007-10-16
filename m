@@ -1,10 +1,10 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [patch 6/7] reiserfs: remove first_zero_hint
-Date: Tue, 16 Oct 2007 19:02:16 -0400
-Message-ID: <20071016230258.926802000@suse.com>
+Subject: [patch 2/7] reiserfs: dont use BUG when panicking
+Date: Tue, 16 Oct 2007 19:02:12 -0400
+Message-ID: <20071016230258.609474000@suse.com>
 References: <20071016230210.779927000@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=patches.suse/reiserfs-remove-first-zero-hint.diff
+Content-Disposition: inline; filename=patches.suse/reiserfs-no-bug-on-panic.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -13,120 +13,36 @@ Content-Transfer-Encoding: 7bit
 To: Andrew Morton <akpm@linux-foundation.org>, Linux Torvalds <torvalds@linux-foundation.org>
 Cc: ReiserFS Development Mailing List <reiserfs-devel@vger.kernel.org>
 
- The first_zero_hint metadata caching was never actually used, and it's
- of dubious optimization quality. This patch removes it.
-
- It doesn't actually shrink the size of the reiserfs_bitmap_info struct,
- since that doesn't work with block sizes larger than 8K. There was a big
- fixme in there, and with all the work lately in allowing block size >
- page size, I might as well kill the fixme as well.
+ This patch changes reiserfs_panic() to use panic() initially instead of
+ BUG(). Using BUG() ignores the configurable panic behavior, so systems
+ that should be failing and rebooting are left hanging. This causes problems
+ in active/standby HA scenarios.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 ---
- fs/reiserfs/bitmap.c           |   27 +++++++++++----------------
- fs/reiserfs/resize.c           |    6 ------
- include/linux/reiserfs_fs_sb.h |    4 +---
- 3 files changed, 12 insertions(+), 25 deletions(-)
+ fs/reiserfs/prints.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
---- a/fs/reiserfs/bitmap.c	2007-10-16 18:55:51.029160630 -0400
-+++ b/fs/reiserfs/bitmap.c	2007-10-16 18:55:56.205787201 -0400
-@@ -273,7 +273,7 @@ static inline int block_group_used(struc
- 	 * to make a better decision. This favors long-term performace gain
- 	 * with a better on-disk layout vs. a short term gain of skipping the
- 	 * read and potentially having a bad placement. */
--	if (info->first_zero_hint == 0) {
-+	if (info->free_count == UINT_MAX) {
- 		struct buffer_head *bh = reiserfs_read_bitmap_block(s, bm);
- 		brelse(bh);
- 	}
-@@ -1271,27 +1271,22 @@ void reiserfs_cache_bitmap_metadata(stru
+--- a/fs/reiserfs/prints.c	2007-10-16 18:52:28.539842226 -0400
++++ b/fs/reiserfs/prints.c	2007-10-16 18:52:32.267570588 -0400
+@@ -356,13 +356,11 @@ extern struct tree_balance *cur_tb;
+ void reiserfs_panic(struct super_block *sb, const char *fmt, ...)
  {
- 	unsigned long *cur = (unsigned long *)(bh->b_data + bh->b_size);
+ 	do_reiserfs_warning(fmt);
+-	printk(KERN_EMERG "REISERFS: panic (device %s): %s\n",
+-	       reiserfs_bdevname(sb), error_buf);
+-	BUG();
  
--	info->first_zero_hint = 1 << (sb->s_blocksize_bits + 3);
-+	/* The first bit must ALWAYS be 1 */
-+	BUG_ON (!reiserfs_test_le_bit(0, (unsigned long)bh->b_data))
+-	/* this is not actually called, but makes reiserfs_panic() "noreturn" */
+-	panic("REISERFS: panic (device %s): %s\n",
+-	      reiserfs_bdevname(sb), error_buf);
++	dump_stack();
 +
-+	info->free_count = 0;
- 
- 	while (--cur >= (unsigned long *)bh->b_data) {
--		int base = ((char *)cur - bh->b_data) << 3;
-+		int i;
- 
- 		/* 0 and ~0 are special, we can optimize for them */
--		if (*cur == 0) {
--			info->first_zero_hint = base;
-+		if (*cur == 0)
- 			info->free_count += BITS_PER_LONG;
--		} else if (*cur != ~0L) {       /* A mix, investigate */
--			int b;
--			for (b = BITS_PER_LONG - 1; b >= 0; b--) {
--				if (!reiserfs_test_le_bit(b, cur)) {
--					info->first_zero_hint = base + b;
-+		else if (*cur != ~0L)	/* A mix, investigate */
-+			for (i = BITS_PER_LONG - 1; i >= 0; i--)
-+				if (!reiserfs_test_le_bit(i, cur))
- 					info->free_count++;
--				}
--			}
--		}
- 	}
--	/* The first bit must ALWAYS be 1 */
--	BUG_ON(info->first_zero_hint == 0);
++	panic(KERN_EMERG "REISERFS: panic (device %s): %s\n",
++	       reiserfs_bdevname(sb), error_buf);
  }
  
- struct buffer_head *reiserfs_read_bitmap_block(struct super_block *sb,
-@@ -1321,7 +1316,7 @@ struct buffer_head *reiserfs_read_bitmap
- 		BUG_ON(!buffer_uptodate(bh));
- 		BUG_ON(atomic_read(&bh->b_count) == 0);
- 
--		if (info->first_zero_hint == 0)
-+		if (info->free_count == UINT_MAX)
- 			reiserfs_cache_bitmap_metadata(sb, bh, info);
- 	}
- 
---- a/fs/reiserfs/resize.c	2007-10-16 18:55:51.029160630 -0400
-+++ b/fs/reiserfs/resize.c	2007-10-16 18:55:56.206787129 -0400
-@@ -143,7 +143,6 @@ int reiserfs_resize(struct super_block *
- 			mark_buffer_dirty(bh);
- 			sync_dirty_buffer(bh);
- 			// update bitmap_info stuff
--			bitmap[i].first_zero_hint = 1;
- 			bitmap[i].free_count = sb_blocksize(sb) * 8 - 1;
- 			brelse(bh);
- 		}
-@@ -173,8 +172,6 @@ int reiserfs_resize(struct super_block *
- 	for (i = block_r; i < s->s_blocksize * 8; i++)
- 		reiserfs_test_and_clear_le_bit(i, bh->b_data);
- 	info->free_count += s->s_blocksize * 8 - block_r;
--	if (!info->first_zero_hint)
--		info->first_zero_hint = block_r;
- 
- 	journal_mark_dirty(&th, s, bh);
- 	brelse(bh);
-@@ -196,9 +193,6 @@ int reiserfs_resize(struct super_block *
- 	brelse(bh);
- 
- 	info->free_count -= s->s_blocksize * 8 - block_r_new;
--	/* Extreme case where last bitmap is the only valid block in itself. */
--	if (!info->free_count)
--		info->first_zero_hint = 0;
- 	/* update super */
- 	reiserfs_prepare_for_journal(s, SB_BUFFER_WITH_SB(s), 1);
- 	free_blocks = SB_FREE_BLOCKS(s);
---- a/include/linux/reiserfs_fs_sb.h	2007-10-16 18:55:51.030160558 -0400
-+++ b/include/linux/reiserfs_fs_sb.h	2007-10-16 18:55:53.964948838 -0400
-@@ -265,9 +265,7 @@ enum journal_state_bits {
- typedef __u32(*hashf_t) (const signed char *, int);
- 
- struct reiserfs_bitmap_info {
--	// FIXME: Won't work with block sizes > 8K
--	__u16 first_zero_hint;
--	__u16 free_count;
-+	__u32 free_count;
- };
- 
- struct proc_dir_entry;
+ void reiserfs_abort(struct super_block *sb, int errno, const char *fmt, ...)
 
 -- 
 
