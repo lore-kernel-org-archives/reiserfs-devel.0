@@ -1,10 +1,10 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [patch 3/7] reiserfs: use is_reusable to catch corruption
-Date: Tue, 16 Oct 2007 19:02:13 -0400
-Message-ID: <20071016230258.686563000@suse.com>
+Subject: [patch 6/7] reiserfs: remove first_zero_hint
+Date: Tue, 16 Oct 2007 19:02:16 -0400
+Message-ID: <20071016230258.926802000@suse.com>
 References: <20071016230210.779927000@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=patches.suse/reiserfs-use-is_reusable.diff
+Content-Disposition: inline; filename=patches.suse/reiserfs-remove-first-zero-hint.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -13,72 +13,120 @@ Content-Transfer-Encoding: 7bit
 To: Andrew Morton <akpm@linux-foundation.org>, Linux Torvalds <torvalds@linux-foundation.org>
 Cc: ReiserFS Development Mailing List <reiserfs-devel@vger.kernel.org>
 
- This patch builds in is_reusable() unconditionally and uses it to catch
- corruption before it reaches the block freeing paths.
+ The first_zero_hint metadata caching was never actually used, and it's
+ of dubious optimization quality. This patch removes it.
+
+ It doesn't actually shrink the size of the reiserfs_bitmap_info struct,
+ since that doesn't work with block sizes larger than 8K. There was a big
+ fixme in there, and with all the work lately in allowing block size >
+ page size, I might as well kill the fixme as well.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ fs/reiserfs/bitmap.c           |   27 +++++++++++----------------
+ fs/reiserfs/resize.c           |    6 ------
+ include/linux/reiserfs_fs_sb.h |    4 +---
+ 3 files changed, 12 insertions(+), 25 deletions(-)
 
---
-
- fs/reiserfs/bitmap.c |   21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
-
---- a/fs/reiserfs/bitmap.c	2007-10-16 18:52:28.521843537 -0400
-+++ b/fs/reiserfs/bitmap.c	2007-10-16 18:55:57.118721353 -0400
-@@ -56,7 +56,6 @@ static inline void get_bit_address(struc
- 	*offset = block & ((s->s_blocksize << 3) - 1);
- }
- 
--#ifdef CONFIG_REISERFS_CHECK
- int is_reusable(struct super_block *s, b_blocknr_t block, int bit_value)
+--- a/fs/reiserfs/bitmap.c	2007-10-16 18:55:51.029160630 -0400
++++ b/fs/reiserfs/bitmap.c	2007-10-16 18:55:56.205787201 -0400
+@@ -273,7 +273,7 @@ static inline int block_group_used(struc
+ 	 * to make a better decision. This favors long-term performace gain
+ 	 * with a better on-disk layout vs. a short term gain of skipping the
+ 	 * read and potentially having a bad placement. */
+-	if (info->first_zero_hint == 0) {
++	if (info->free_count == UINT_MAX) {
+ 		struct buffer_head *bh = reiserfs_read_bitmap_block(s, bm);
+ 		brelse(bh);
+ 	}
+@@ -1271,27 +1271,22 @@ void reiserfs_cache_bitmap_metadata(stru
  {
- 	int bmap, offset;
-@@ -106,7 +105,6 @@ int is_reusable(struct super_block *s, b
+ 	unsigned long *cur = (unsigned long *)(bh->b_data + bh->b_size);
  
- 	return 1;
- }
--#endif				/* CONFIG_REISERFS_CHECK */
- 
- /* searches in journal structures for a given block number (bmap, off). If block
-    is found in reiserfs journal it suggests next free block candidate to test. */
-@@ -434,12 +432,19 @@ void reiserfs_free_block(struct reiserfs
- 			 int for_unformatted)
- {
- 	struct super_block *s = th->t_super;
--
- 	BUG_ON(!th->t_trans_id);
- 
- 	RFALSE(!s, "vs-4061: trying to free block on nonexistent device");
--	RFALSE(is_reusable(s, block, 1) == 0,
--	       "vs-4071: can not free such block");
-+	if (!is_reusable(s, block, 1))
-+		return;
+-	info->first_zero_hint = 1 << (sb->s_blocksize_bits + 3);
++	/* The first bit must ALWAYS be 1 */
++	BUG_ON (!reiserfs_test_le_bit(0, (unsigned long)bh->b_data))
 +
-+	if (block > sb_block_count(REISERFS_SB(s)->s_rs)) {
-+		reiserfs_panic(th->t_super, "bitmap-4072",
-+		               "Trying to free block outside file system "
-+			       "boundaries (%lu > %lu)",
-+			       block, sb_block_count(REISERFS_SB(s)->s_rs));
-+		return;
-+	}
- 	/* mark it before we clear it, just in case */
- 	journal_mark_freed(th, s, block);
- 	_reiserfs_free_block(th, inode, block, for_unformatted);
-@@ -449,11 +454,11 @@ void reiserfs_free_block(struct reiserfs
- static void reiserfs_free_prealloc_block(struct reiserfs_transaction_handle *th,
- 					 struct inode *inode, b_blocknr_t block)
- {
-+	BUG_ON(!th->t_trans_id);
- 	RFALSE(!th->t_super,
- 	       "vs-4060: trying to free block on nonexistent device");
--	RFALSE(is_reusable(th->t_super, block, 1) == 0,
--	       "vs-4070: can not free such block");
--	BUG_ON(!th->t_trans_id);
-+	if (!is_reusable(th->t_super, block, 1))
-+		return;
- 	_reiserfs_free_block(th, inode, block, 1);
++	info->free_count = 0;
+ 
+ 	while (--cur >= (unsigned long *)bh->b_data) {
+-		int base = ((char *)cur - bh->b_data) << 3;
++		int i;
+ 
+ 		/* 0 and ~0 are special, we can optimize for them */
+-		if (*cur == 0) {
+-			info->first_zero_hint = base;
++		if (*cur == 0)
+ 			info->free_count += BITS_PER_LONG;
+-		} else if (*cur != ~0L) {       /* A mix, investigate */
+-			int b;
+-			for (b = BITS_PER_LONG - 1; b >= 0; b--) {
+-				if (!reiserfs_test_le_bit(b, cur)) {
+-					info->first_zero_hint = base + b;
++		else if (*cur != ~0L)	/* A mix, investigate */
++			for (i = BITS_PER_LONG - 1; i >= 0; i--)
++				if (!reiserfs_test_le_bit(i, cur))
+ 					info->free_count++;
+-				}
+-			}
+-		}
+ 	}
+-	/* The first bit must ALWAYS be 1 */
+-	BUG_ON(info->first_zero_hint == 0);
  }
  
+ struct buffer_head *reiserfs_read_bitmap_block(struct super_block *sb,
+@@ -1321,7 +1316,7 @@ struct buffer_head *reiserfs_read_bitmap
+ 		BUG_ON(!buffer_uptodate(bh));
+ 		BUG_ON(atomic_read(&bh->b_count) == 0);
+ 
+-		if (info->first_zero_hint == 0)
++		if (info->free_count == UINT_MAX)
+ 			reiserfs_cache_bitmap_metadata(sb, bh, info);
+ 	}
+ 
+--- a/fs/reiserfs/resize.c	2007-10-16 18:55:51.029160630 -0400
++++ b/fs/reiserfs/resize.c	2007-10-16 18:55:56.206787129 -0400
+@@ -143,7 +143,6 @@ int reiserfs_resize(struct super_block *
+ 			mark_buffer_dirty(bh);
+ 			sync_dirty_buffer(bh);
+ 			// update bitmap_info stuff
+-			bitmap[i].first_zero_hint = 1;
+ 			bitmap[i].free_count = sb_blocksize(sb) * 8 - 1;
+ 			brelse(bh);
+ 		}
+@@ -173,8 +172,6 @@ int reiserfs_resize(struct super_block *
+ 	for (i = block_r; i < s->s_blocksize * 8; i++)
+ 		reiserfs_test_and_clear_le_bit(i, bh->b_data);
+ 	info->free_count += s->s_blocksize * 8 - block_r;
+-	if (!info->first_zero_hint)
+-		info->first_zero_hint = block_r;
+ 
+ 	journal_mark_dirty(&th, s, bh);
+ 	brelse(bh);
+@@ -196,9 +193,6 @@ int reiserfs_resize(struct super_block *
+ 	brelse(bh);
+ 
+ 	info->free_count -= s->s_blocksize * 8 - block_r_new;
+-	/* Extreme case where last bitmap is the only valid block in itself. */
+-	if (!info->free_count)
+-		info->first_zero_hint = 0;
+ 	/* update super */
+ 	reiserfs_prepare_for_journal(s, SB_BUFFER_WITH_SB(s), 1);
+ 	free_blocks = SB_FREE_BLOCKS(s);
+--- a/include/linux/reiserfs_fs_sb.h	2007-10-16 18:55:51.030160558 -0400
++++ b/include/linux/reiserfs_fs_sb.h	2007-10-16 18:55:53.964948838 -0400
+@@ -265,9 +265,7 @@ enum journal_state_bits {
+ typedef __u32(*hashf_t) (const signed char *, int);
+ 
+ struct reiserfs_bitmap_info {
+-	// FIXME: Won't work with block sizes > 8K
+-	__u16 first_zero_hint;
+-	__u16 free_count;
++	__u32 free_count;
+ };
+ 
+ struct proc_dir_entry;
 
 -- 
 
