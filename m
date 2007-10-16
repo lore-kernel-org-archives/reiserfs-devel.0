@@ -1,75 +1,84 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: 2.6.23-mm1: BUG in reiserfs_delete_xattrs
-Date: Mon, 15 Oct 2007 16:23:15 -0400
-Message-ID: <4713CC33.4040900@suse.com>
-References: <20071011213126.cf92efb7.akpm@linux-foundation.org> <47129992.4040903@free.fr> <20071015084052.GA21870@infradead.org> <4713B1E7.2010504@suse.com> <4713C82C.7020609@free.fr>
-Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [patch 3/7] reiserfs: use is_reusable to catch corruption
+Date: Tue, 16 Oct 2007 19:02:13 -0400
+Message-ID: <20071016230258.686563000@suse.com>
+References: <20071016230210.779927000@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4713C82C.7020609@free.fr>
+Content-Disposition: inline; filename=patches.suse/reiserfs-use-is_reusable.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Laurent Riffard <laurent.riffard@free.fr>
-Cc: Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, Dave Hansen <haveblue@us.ibm.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>, Linux Torvalds <torvalds@linux-foundation.org>
+Cc: ReiserFS Development Mailing List <reiserfs-devel@vger.kernel.org>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+ This patch builds in is_reusable() unconditionally and uses it to catch
+ corruption before it reaches the block freeing paths.
 
-Laurent Riffard wrote:
-> Le 15.10.2007 20:31, Jeff Mahoney a =E9crit :
->> Christoph Hellwig wrote:
->>> On Mon, Oct 15, 2007 at 12:34:58AM +0200, Laurent Riffard wrote:
->>>> reiserfs_delete_xattrs
->>>> reiserfs_delete_inode
->>>> generic_delete_inode
->>>> generic_drop_inode
->>>> iput
->>>> do_unlinkat
->>>> sys_unlink
->>>> sys_enter_past_esp
->>>>
->>>> I reported a similar BUG in 2.6.22-rc8-mm2 (see
->>>> http://lkml.org/lkml/2007/9/27/235). Dave Hansen sent a patch for =
-it, I
->>>> tested it and it was OK for 2.6.22-rc8-mm2.
->>>>
->>>> I tried this patch on 2.6.23-mm1, and it fixed the BUGs here too.
->>> The delete path is a similar case as the one Dave fixed, also cause=
- by
->>> a NULL vfsmount passed to dentry_open, but through a different code=
--path.
->>>
->>> Untested fix for this problem below:
->> Here's a patch I worked up the other night that kills off struct fil=
-e
->> completely from the xattr code. I've tested it locally.
->=20
-> Sorry Jeff, your patch does not apply on 2.6.23-mm1. The 'struct file=
-'
-> removal from reiserfs_xattr_ function is already in -mm
-> (make-reiserfs-stop-using-struct-file-for-internal.patch).
->=20
-> The Dave's patch I was refering to is this one:=20
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
-I'd guess not. This patch was actually against mainline. I should've
-specified. I can work up one against -mm later today if it's needed.
+--
 
-- -Jeff
+ fs/reiserfs/bitmap.c |   21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.4-svn0 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
-
-iD8DBQFHE8wyLPWxlyuTD7IRAiJrAJ4nC6gwH1cFjWx6BI04O5fDIRftmACcD2wb
-whyXThHlIBK2phnZ6Pf8Pb8=3D
-=3DKx6k
------END PGP SIGNATURE-----
+--- a/fs/reiserfs/bitmap.c	2007-10-16 18:52:28.521843537 -0400
++++ b/fs/reiserfs/bitmap.c	2007-10-16 18:55:57.118721353 -0400
+@@ -56,7 +56,6 @@ static inline void get_bit_address(struc
+ 	*offset = block & ((s->s_blocksize << 3) - 1);
+ }
+ 
+-#ifdef CONFIG_REISERFS_CHECK
+ int is_reusable(struct super_block *s, b_blocknr_t block, int bit_value)
+ {
+ 	int bmap, offset;
+@@ -106,7 +105,6 @@ int is_reusable(struct super_block *s, b
+ 
+ 	return 1;
+ }
+-#endif				/* CONFIG_REISERFS_CHECK */
+ 
+ /* searches in journal structures for a given block number (bmap, off). If block
+    is found in reiserfs journal it suggests next free block candidate to test. */
+@@ -434,12 +432,19 @@ void reiserfs_free_block(struct reiserfs
+ 			 int for_unformatted)
+ {
+ 	struct super_block *s = th->t_super;
 -
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ 	BUG_ON(!th->t_trans_id);
+ 
+ 	RFALSE(!s, "vs-4061: trying to free block on nonexistent device");
+-	RFALSE(is_reusable(s, block, 1) == 0,
+-	       "vs-4071: can not free such block");
++	if (!is_reusable(s, block, 1))
++		return;
++
++	if (block > sb_block_count(REISERFS_SB(s)->s_rs)) {
++		reiserfs_panic(th->t_super, "bitmap-4072",
++		               "Trying to free block outside file system "
++			       "boundaries (%lu > %lu)",
++			       block, sb_block_count(REISERFS_SB(s)->s_rs));
++		return;
++	}
+ 	/* mark it before we clear it, just in case */
+ 	journal_mark_freed(th, s, block);
+ 	_reiserfs_free_block(th, inode, block, for_unformatted);
+@@ -449,11 +454,11 @@ void reiserfs_free_block(struct reiserfs
+ static void reiserfs_free_prealloc_block(struct reiserfs_transaction_handle *th,
+ 					 struct inode *inode, b_blocknr_t block)
+ {
++	BUG_ON(!th->t_trans_id);
+ 	RFALSE(!th->t_super,
+ 	       "vs-4060: trying to free block on nonexistent device");
+-	RFALSE(is_reusable(th->t_super, block, 1) == 0,
+-	       "vs-4070: can not free such block");
+-	BUG_ON(!th->t_trans_id);
++	if (!is_reusable(th->t_super, block, 1))
++		return;
+ 	_reiserfs_free_block(th, inode, block, 1);
+ }
+ 
+
+-- 
+
