@@ -1,32 +1,35 @@
 From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [patch 0/7] reiserfs fixes patch set
-Date: Wed, 17 Oct 2007 15:11:40 -0700
-Message-ID: <20071017151140.c5b782ef.akpm@linux-foundation.org>
+Subject: Re: [patch 7/7] reiserfs: ignore on disk s_bmap_nr value
+Date: Wed, 17 Oct 2007 15:19:30 -0700
+Message-ID: <20071017151930.9d53a230.akpm@linux-foundation.org>
 References: <20071016230210.779927000@suse.com>
+	<20071016230259.005368000@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20071016230210.779927000@suse.com>
+In-Reply-To: <20071016230259.005368000@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Jeff Mahoney <jeffm@suse.com>
 Cc: torvalds@linux-foundation.org, reiserfs-devel@vger.kernel.org
 
-On Tue, 16 Oct 2007 19:02:10 -0400
+On Tue, 16 Oct 2007 19:02:17 -0400
 Jeff Mahoney <jeffm@suse.com> wrote:
 
->  This is a series of "safe" patches that have been in the openSUSE kernel
->  for a while now.
-> 
+> +/* s_bmap_nr is a u16 */
+> +#define reiserfs_bmap_count(sb)	reiserfs_bmap_nr(SB_BLOCK_COUNT(sb), sb->s_blocksize)
+> +#define reiserfs_bmap_nr(count, blk_size) ((count - 1) / (blk_size * 8) + 1)
+> +#define bmap_would_wrap(n)		(n > ((1LL << 16) - 1))
 
-I'm not particularly happy seeing a large number of complex-looking patches
-against a not-very-well-maintained important filesystem more than a week
-into the merge window.  It would have been far better to get this stuff
-sent a month ago.
+Please only use macros when the code HAS to be implemented as a macro for
+some reason.  These could have been implemented as (possibly inlined) C
+functions.  
 
-Now we're left with a choice between holding it all back for 2.5 months or
-just jamming it into mainline with basically no testing.  I sure hope it
-got good testing in the suse kernel.
+reiserfs_bmap_count() is in fact buggy - it references its argument more
+than once.  Nobody will be doing reiserfs_bmap_count(foo++), but it is bad
+practice.
 
+Also, all three macros fail to sufficiently parenthesise their arguments.
 
+All this is fixable by coding in C, not cpp...
