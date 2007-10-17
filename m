@@ -1,35 +1,31 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [patch 7/7] reiserfs: ignore on disk s_bmap_nr value
-Date: Wed, 17 Oct 2007 15:19:30 -0700
-Message-ID: <20071017151930.9d53a230.akpm@linux-foundation.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [patch 0/7] reiserfs fixes patch set
+Date: Wed, 17 Oct 2007 15:19:47 -0700 (PDT)
+Message-ID: <alpine.LFD.0.999.0710171518480.26902@woody.linux-foundation.org>
 References: <20071016230210.779927000@suse.com>
-	<20071016230259.005368000@suse.com>
+ <20071017151140.c5b782ef.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20071016230259.005368000@suse.com>
+In-Reply-To: <20071017151140.c5b782ef.akpm@linux-foundation.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: torvalds@linux-foundation.org, reiserfs-devel@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jeff Mahoney <jeffm@suse.com>, reiserfs-devel@vger.kernel.org
 
-On Tue, 16 Oct 2007 19:02:17 -0400
-Jeff Mahoney <jeffm@suse.com> wrote:
 
-> +/* s_bmap_nr is a u16 */
-> +#define reiserfs_bmap_count(sb)	reiserfs_bmap_nr(SB_BLOCK_COUNT(sb), sb->s_blocksize)
-> +#define reiserfs_bmap_nr(count, blk_size) ((count - 1) / (blk_size * 8) + 1)
-> +#define bmap_would_wrap(n)		(n > ((1LL << 16) - 1))
 
-Please only use macros when the code HAS to be implemented as a macro for
-some reason.  These could have been implemented as (possibly inlined) C
-functions.  
+On Wed, 17 Oct 2007, Andrew Morton wrote:
+> 
+> Now we're left with a choice between holding it all back for 2.5 months or
+> just jamming it into mainline with basically no testing.  I sure hope it
+> got good testing in the suse kernel.
 
-reiserfs_bmap_count() is in fact buggy - it references its argument more
-than once.  Nobody will be doing reiserfs_bmap_count(foo++), but it is bad
-practice.
+Well, considering that probably 95% of reiserfs users are SuSE people, it 
+probably did get a fairly good testing base.
 
-Also, all three macros fail to sufficiently parenthesise their arguments.
+That said, I agree - it would have been better to have this lined up 
+before the merge window even started, in -mm or somewhere.
 
-All this is fixable by coding in C, not cpp...
+		Linus
