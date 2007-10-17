@@ -1,44 +1,32 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: 2.6.23-mm1: BUG in reiserfs_delete_xattrs
-Date: Wed, 17 Oct 2007 10:55:03 -0400
-Message-ID: <47162247.1070006__19208.385636057$1192632812$gmane$org@suse.com>
-References: <20071011213126.cf92efb7.akpm@linux-foundation.org> <47129992.4040903@free.fr> <20071015084052.GA21870@infradead.org> <4713B1E7.2010504@suse.com> <20071017085832.GA8072@infradead.org>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [patch 0/7] reiserfs fixes patch set
+Date: Wed, 17 Oct 2007 15:11:40 -0700
+Message-ID: <20071017151140.c5b782ef.akpm@linux-foundation.org>
+References: <20071016230210.779927000@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20071017085832.GA8072@infradead.org>
+In-Reply-To: <20071016230210.779927000@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Christoph Hellwig <hch@infradead.org>, Jeff Mahoney <jeffm@suse.com>, Laurent Riffard <laurent.riffard@free.fr>, Andrew Morton <akpm@linux-foundation.org>, Dave Hansen <haveblue@us.i>
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: torvalds@linux-foundation.org, reiserfs-devel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Tue, 16 Oct 2007 19:02:10 -0400
+Jeff Mahoney <jeffm@suse.com> wrote:
 
-Christoph Hellwig wrote:
-> On Mon, Oct 15, 2007 at 02:31:03PM -0400, Jeff Mahoney wrote:
->> Here's a patch I worked up the other night that kills off struct file
->> completely from the xattr code. I've tested it locally.
+>  This is a series of "safe" patches that have been in the openSUSE kernel
+>  for a while now.
 > 
-> Looks like a merge of Dave's and my patch :)
-> 
-> ACK from me, I don't care whether it's one or two patches.
 
-Yeah, it probably is. I did it from scratch since it was my mess, and
-the patches I saw were against -mm.
+I'm not particularly happy seeing a large number of complex-looking patches
+against a not-very-well-maintained important filesystem more than a week
+into the merge window.  It would have been far better to get this stuff
+sent a month ago.
 
-*shrug* Likewise, I don't care if it's one or two.
+Now we're left with a choice between holding it all back for 2.5 months or
+just jamming it into mainline with basically no testing.  I sure hope it
+got good testing in the suse kernel.
 
-- -Jeff
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.4-svn0 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
-
-iD8DBQFHFiJHLPWxlyuTD7IRAojqAJwKS+eL1yCtUVHzBSFUxjjkW6KgPwCcDRUE
-Q1V7tCPcT9h0a8ahVmYn+ms=
-=5kMt
------END PGP SIGNATURE-----
