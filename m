@@ -1,10 +1,10 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [patch 2/7 (take 2)] reiserfs: dont use BUG when panicking
-Date: Thu, 18 Oct 2007 14:24:04 -0400
-Message-ID: <20071018182417.966844932@suse.com>
+Subject: [patch 3/7 (take 2)] reiserfs: use is_reusable to catch corruption
+Date: Thu, 18 Oct 2007 14:24:05 -0400
+Message-ID: <20071018182418.098915805@suse.com>
 References: <20071018182402.819638928@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-dont-use-BUG-when-panicking
+Content-Disposition: inline; filename=reiserfs-use-is_reusable-to-catch-corruption
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -13,38 +13,74 @@ Content-Transfer-Encoding: 7bit
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: ReiserFS Development Mailing List <reiserfs-devel@vger.kernel.org>
 
- This patch changes reiserfs_panic() to use panic() initially instead of
- BUG(). Using BUG() ignores the configurable panic behavior, so systems
- that should be failing and rebooting are left hanging. This causes problems
- in active/standby HA scenarios.
+ This patch builds in is_reusable() unconditionally and uses it to catch
+ corruption before it reaches the block freeing paths.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- fs/reiserfs/prints.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
 
-Index: b/fs/reiserfs/prints.c
+--
+
+ fs/reiserfs/bitmap.c |   21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
+
+Index: b/fs/reiserfs/bitmap.c
 ===================================================================
---- a/fs/reiserfs/prints.c	2007-10-18 14:08:46.000000000 -0400
-+++ b/fs/reiserfs/prints.c	2007-10-18 14:08:49.000000000 -0400
-@@ -356,13 +356,11 @@ extern struct tree_balance *cur_tb;
- void reiserfs_panic(struct super_block *sb, const char *fmt, ...)
- {
- 	do_reiserfs_warning(fmt);
--	printk(KERN_EMERG "REISERFS: panic (device %s): %s\n",
--	       reiserfs_bdevname(sb), error_buf);
--	BUG();
- 
--	/* this is not actually called, but makes reiserfs_panic() "noreturn" */
--	panic("REISERFS: panic (device %s): %s\n",
--	      reiserfs_bdevname(sb), error_buf);
-+	dump_stack();
-+
-+	panic(KERN_EMERG "REISERFS: panic (device %s): %s\n",
-+	       reiserfs_bdevname(sb), error_buf);
+--- a/fs/reiserfs/bitmap.c	2007-10-18 14:08:46.000000000 -0400
++++ b/fs/reiserfs/bitmap.c	2007-10-18 14:10:48.000000000 -0400
+@@ -56,7 +56,6 @@ static inline void get_bit_address(struc
+ 	*offset = block & ((s->s_blocksize << 3) - 1);
  }
  
- void reiserfs_abort(struct super_block *sb, int errno, const char *fmt, ...)
+-#ifdef CONFIG_REISERFS_CHECK
+ int is_reusable(struct super_block *s, b_blocknr_t block, int bit_value)
+ {
+ 	int bmap, offset;
+@@ -106,7 +105,6 @@ int is_reusable(struct super_block *s, b
+ 
+ 	return 1;
+ }
+-#endif				/* CONFIG_REISERFS_CHECK */
+ 
+ /* searches in journal structures for a given block number (bmap, off). If block
+    is found in reiserfs journal it suggests next free block candidate to test. */
+@@ -434,12 +432,19 @@ void reiserfs_free_block(struct reiserfs
+ 			 int for_unformatted)
+ {
+ 	struct super_block *s = th->t_super;
+-
+ 	BUG_ON(!th->t_trans_id);
+ 
+ 	RFALSE(!s, "vs-4061: trying to free block on nonexistent device");
+-	RFALSE(is_reusable(s, block, 1) == 0,
+-	       "vs-4071: can not free such block");
++	if (!is_reusable(s, block, 1))
++		return;
++
++	if (block > sb_block_count(REISERFS_SB(s)->s_rs)) {
++		reiserfs_panic(th->t_super, "bitmap-4072",
++			       "Trying to free block outside file system "
++			       "boundaries (%lu > %lu)",
++			       block, sb_block_count(REISERFS_SB(s)->s_rs));
++		return;
++	}
+ 	/* mark it before we clear it, just in case */
+ 	journal_mark_freed(th, s, block);
+ 	_reiserfs_free_block(th, inode, block, for_unformatted);
+@@ -449,11 +454,11 @@ void reiserfs_free_block(struct reiserfs
+ static void reiserfs_free_prealloc_block(struct reiserfs_transaction_handle *th,
+ 					 struct inode *inode, b_blocknr_t block)
+ {
++	BUG_ON(!th->t_trans_id);
+ 	RFALSE(!th->t_super,
+ 	       "vs-4060: trying to free block on nonexistent device");
+-	RFALSE(is_reusable(th->t_super, block, 1) == 0,
+-	       "vs-4070: can not free such block");
+-	BUG_ON(!th->t_trans_id);
++	if (!is_reusable(th->t_super, block, 1))
++		return;
+ 	_reiserfs_free_block(th, inode, block, 1);
+ }
+ 
 
 -- 
 Jeff Mahoney
