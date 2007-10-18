@@ -1,43 +1,52 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [patch 6/7] reiserfs: remove first_zero_hint
-Date: Thu, 18 Oct 2007 14:02:08 -0400
-Message-ID: <47179FA0.4010500@suse.com>
-References: <20071016230210.779927000@suse.com> <20071016230258.926802000@suse.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Subject: [patch 1/7 (take 2)] reiserfs: fix up lockdep warnings
+Date: Thu, 18 Oct 2007 14:24:03 -0400
+Message-ID: <20071018182417.865804551@suse.com>
+References: <20071018182402.819638928@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20071016230258.926802000@suse.com>
+Content-Disposition: inline; filename=reiserfs-fix-up-lockdep-warnings
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Andrew Morton <akpm@linux-foundation.org>, Linux Torvalds <torvalds@linux-foundation.org>
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>
 Cc: ReiserFS Development Mailing List <reiserfs-devel@vger.kernel.org>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+ This patch adds I_MUTEX_XATTR annotations to the inode locking in
+ the reiserfs xattr code.
 
-Jeff Mahoney wrote:
->  The first_zero_hint metadata caching was never actually used, and it's
->  of dubious optimization quality. This patch removes it.
-> 
->  It doesn't actually shrink the size of the reiserfs_bitmap_info struct,
->  since that doesn't work with block sizes larger than 8K. There was a big
->  fixme in there, and with all the work lately in allowing block size >
->  page size, I might as well kill the fixme as well.
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
-Please skip this one. It's missing a chunk. I'll post the updated patch
-shortly.
+---
+ fs/reiserfs/xattr.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-- -Jeff
+Index: b/fs/reiserfs/xattr.c
+===================================================================
+--- a/fs/reiserfs/xattr.c	2007-10-18 14:08:46.000000000 -0400
++++ b/fs/reiserfs/xattr.c	2007-10-18 14:08:49.000000000 -0400
+@@ -478,7 +478,7 @@ reiserfs_xattr_set(struct inode *inode, 
+ 	/* Resize it so we're ok to write there */
+ 	newattrs.ia_size = buffer_size;
+ 	newattrs.ia_valid = ATTR_SIZE | ATTR_CTIME;
+-	mutex_lock(&xinode->i_mutex);
++	mutex_lock_nested(&xinode->i_mutex, I_MUTEX_XATTR);
+ 	err = notify_change(fp->f_path.dentry, &newattrs);
+ 	if (err)
+ 		goto out_filp;
+@@ -1217,7 +1217,8 @@ int reiserfs_xattr_init(struct super_blo
+ 		if (!IS_ERR(dentry)) {
+ 			if (!(mount_flags & MS_RDONLY) && !dentry->d_inode) {
+ 				struct inode *inode = dentry->d_parent->d_inode;
+-				mutex_lock(&inode->i_mutex);
++				mutex_lock_nested(&inode->i_mutex,
++						  I_MUTEX_XATTR);
+ 				err = inode->i_op->mkdir(inode, dentry, 0700);
+ 				mutex_unlock(&inode->i_mutex);
+ 				if (err) {
 
-- --
+-- 
 Jeff Mahoney
 SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.4-svn0 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
 
-iD8DBQFHF5+gLPWxlyuTD7IRAvbGAKCDEzonySupZZlsByKtllxjgFLGAACgmjJw
-2nsFXIpE43J7BFzn2W+lOUA=
-=m01z
------END PGP SIGNATURE-----
