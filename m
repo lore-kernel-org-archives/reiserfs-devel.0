@@ -1,91 +1,55 @@
-From: Dushan Tcholich <dusanc@absolutok.net>
-Subject: [PATCH 1/8] as_ops.c cleanup
-Date: Tue, 23 Oct 2007 14:08:03 +0200
-Message-ID: <1193141283.6236.27.camel@krshina3.gekom>
-Reply-To: dusanc@absolutok.net
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: [PATCH 0/8] More cleanup of errors and warnings found by	checkpatch.pl
+Date: Tue, 23 Oct 2007 16:38:52 +0400
+Message-ID: <471DEB5C.2020608@namesys.com>
+References: <1193141006.6236.22.camel@krshina3.gekom>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-vx9z/1/LMyBoWEEP9l6Q"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <1193141006.6236.22.camel@krshina3.gekom>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: dusanc@absolutok.net
+Cc: reiserfs-devel@vger.kernel.org
 
+Ok,
+I'll review it and we'll push them into -mm tree.
 
---=-vx9z/1/LMyBoWEEP9l6Q
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Thanks,
+Edward.
 
-Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- as_ops.c.orig	2007-10-23 11:50:14.000000000 +0200
-+++ as_ops.c	2007-10-23 11:52:21.000000000 +0200
-@@ -169,7 +169,7 @@ void reiser4_invalidatepage(struct page 
- 
- 	node = jprivate(page);
- 	spin_lock_jnode(node);
--	if (!(node->state & ((1 << JNODE_DIRTY) | (1<< JNODE_FLUSH_QUEUED) |
-+	if (!(node->state & ((1 << JNODE_DIRTY) | (1 << JNODE_FLUSH_QUEUED) |
- 			  (1 << JNODE_WRITEBACK) | (1 << JNODE_OVRWR)))) {
- 		/* there is not need to capture */
- 		jref(node);
-@@ -211,7 +211,7 @@ void reiser4_invalidatepage(struct page 
- 
- /* help function called from reiser4_releasepage(). It returns true if
-jnode
-  * can be detached from its page and page released. */
--int jnode_is_releasable(jnode * node /* node to check */ )
-+int jnode_is_releasable(jnode * node/* node to check */)
- {
- 	assert("nikita-2781", node != NULL);
- 	assert_spin_locked(&(node->guard));
-@@ -219,9 +219,8 @@ int jnode_is_releasable(jnode * node /* 
- 
- 	/* is some thread is currently using jnode page, later cannot be
- 	 * detached */
--	if (atomic_read(&node->d_count) != 0) {
-+	if (atomic_read(&node->d_count) != 0)
- 		return 0;
--	}
- 
- 	assert("vs-1214", !jnode_is_loaded(node));
- 
+Dushan Tcholich wrote:
 
---=-vx9z/1/LMyBoWEEP9l6Q
-Content-Disposition: attachment; filename=as_ops.c.patch
-Content-Type: text/x-patch; name=as_ops.c.patch; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- as_ops.c.orig	2007-10-23 11:50:14.000000000 +0200
-+++ as_ops.c	2007-10-23 11:52:21.000000000 +0200
-@@ -169,7 +169,7 @@ void reiser4_invalidatepage(struct page 
- 
- 	node = jprivate(page);
- 	spin_lock_jnode(node);
--	if (!(node->state & ((1 << JNODE_DIRTY) | (1<< JNODE_FLUSH_QUEUED) |
-+	if (!(node->state & ((1 << JNODE_DIRTY) | (1 << JNODE_FLUSH_QUEUED) |
- 			  (1 << JNODE_WRITEBACK) | (1 << JNODE_OVRWR)))) {
- 		/* there is not need to capture */
- 		jref(node);
-@@ -211,7 +211,7 @@ void reiser4_invalidatepage(struct page 
- 
- /* help function called from reiser4_releasepage(). It returns true if jnode
-  * can be detached from its page and page released. */
--int jnode_is_releasable(jnode * node /* node to check */ )
-+int jnode_is_releasable(jnode * node/* node to check */)
- {
- 	assert("nikita-2781", node != NULL);
- 	assert_spin_locked(&(node->guard));
-@@ -219,9 +219,8 @@ int jnode_is_releasable(jnode * node /* 
- 
- 	/* is some thread is currently using jnode page, later cannot be
- 	 * detached */
--	if (atomic_read(&node->d_count) != 0) {
-+	if (atomic_read(&node->d_count) != 0)
- 		return 0;
--	}
- 
- 	assert("vs-1214", !jnode_is_loaded(node));
- 
-
---=-vx9z/1/LMyBoWEEP9l6Q--
+>This series of patches removes some of the errors and warnings found by
+>checkpatch in following files (reiser4 for 2.6.22-2):
+>					errors	warnings
+>[PATCH 1/8] as_ops.c cleanup		-2	-1
+>[PATCH 2/8] block_alloc.c cleanup	-11	-14
+>[PATCH 3/8] block_alloc.h cleanup	-2	-6
+>[PATCH 4/8] blocknrset.c cleanup	-6	-4
+>[PATCH 5/8] carry.c cleanup		-15	-9
+>[PATCH 6/8] carry.h cleanup		-51	-36
+>[PATCH 7/8] carry_ops.c cleanup		-28	-27
+>[PATCH 8/8] tree.c cleanup		-11	-8
+>				SUM=	126	105
+>So now reiser4-for-2.6.22-2.patch with these and previous cleanup should
+>be at 2054 errors and 1801 warnings, from 2488 errors and 2439 warnings
+>in its orriginal form.
+>
+>These can be aplied independently of my previous cleanup megapatch.
+>Patches aren't tested.
+>
+>Have a nice day
+>
+>Dushan
+>
+>-
+>To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+>the body of a message to majordomo@vger.kernel.org
+>More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+>  
+>
 
