@@ -1,55 +1,41 @@
-From: Edward Shishkin <edward@namesys.com>
-Subject: Re: [PATCH 0/8] More cleanup of errors and warnings found by	checkpatch.pl
-Date: Tue, 23 Oct 2007 16:38:52 +0400
-Message-ID: <471DEB5C.2020608@namesys.com>
-References: <1193141006.6236.22.camel@krshina3.gekom>
+From: Dushan Tcholich <dusanc@absolutok.net>
+Subject: [PATCH 9/8] carry_ops.h cleanup
+Date: Tue, 23 Oct 2007 15:00:24 +0200
+Message-ID: <1193144424.6236.58.camel@krshina3.gekom>
+Reply-To: dusanc@absolutok.net
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1193141006.6236.22.camel@krshina3.gekom>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: dusanc@absolutok.net
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
-Ok,
-I'll review it and we'll push them into -mm tree.
-
-Thanks,
-Edward.
-
-Dushan Tcholich wrote:
-
->This series of patches removes some of the errors and warnings found by
->checkpatch in following files (reiser4 for 2.6.22-2):
->					errors	warnings
->[PATCH 1/8] as_ops.c cleanup		-2	-1
->[PATCH 2/8] block_alloc.c cleanup	-11	-14
->[PATCH 3/8] block_alloc.h cleanup	-2	-6
->[PATCH 4/8] blocknrset.c cleanup	-6	-4
->[PATCH 5/8] carry.c cleanup		-15	-9
->[PATCH 6/8] carry.h cleanup		-51	-36
->[PATCH 7/8] carry_ops.c cleanup		-28	-27
->[PATCH 8/8] tree.c cleanup		-11	-8
->				SUM=	126	105
->So now reiser4-for-2.6.22-2.patch with these and previous cleanup should
->be at 2054 errors and 1801 warnings, from 2488 errors and 2439 warnings
->in its orriginal form.
->
->These can be aplied independently of my previous cleanup megapatch.
->Patches aren't tested.
->
->Have a nice day
->
->Dushan
->
->-
->To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
->the body of a message to majordomo@vger.kernel.org
->More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
->  
->
+Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
+--- carry_ops.h.orig	2007-10-23 14:56:05.000000000 +0200
++++ carry_ops.h	2007-10-23 14:57:35.000000000 +0200
+@@ -1,8 +1,9 @@
+-/* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by
+reiser4/README */
++/* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by
++   reiser4/README */
+ 
+ /* implementation of carry operations. See carry_ops.c for details. */
+ 
+-#if !defined( __CARRY_OPS_H__ )
++#if !defined(__CARRY_OPS_H__)
+ #define __CARRY_OPS_H__
+ 
+ #include "forward.h"
+@@ -22,7 +23,7 @@ typedef struct carry_op_handler {
+    thing. */
+ extern carry_op_handler op_dispatch_table[COP_LAST_OP];
+ 
+-unsigned int space_needed(const znode * node, const coord_t * coord,
++unsigned int space_needed(const znode * node, const coord_t *coord,
+ 			  const reiser4_item_data * data, int inserting);
+ extern carry_node *find_left_carry(carry_node * node, carry_level *
+level);
+ extern carry_node *find_right_carry(carry_node * node, carry_level *
+level);
 
