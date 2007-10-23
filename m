@@ -1,7 +1,7 @@
 From: Dushan Tcholich <dusanc@absolutok.net>
-Subject: [PATCH 9/8] carry_ops.h cleanup
-Date: Tue, 23 Oct 2007 15:00:24 +0200
-Message-ID: <1193144424.6236.58.camel@krshina3.gekom>
+Subject: [PATCH 10/8] context.c cleanup
+Date: Tue, 23 Oct 2007 15:06:30 +0200
+Message-ID: <1193144790.6236.61.camel@krshina3.gekom>
 Reply-To: dusanc@absolutok.net
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -12,30 +12,35 @@ Content-Type: text/plain; charset="us-ascii"
 To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- carry_ops.h.orig	2007-10-23 14:56:05.000000000 +0200
-+++ carry_ops.h	2007-10-23 14:57:35.000000000 +0200
-@@ -1,8 +1,9 @@
--/* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by
-reiser4/README */
-+/* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by
-+   reiser4/README */
+--- context.c.orig	2007-10-23 15:01:52.000000000 +0200
++++ context.c	2007-10-23 15:03:59.000000000 +0200
+@@ -70,7 +70,7 @@ static void _reiser4_init_context(reiser
+    This function should be called at the beginning of reiser4 part of
+    syscall.
+ */
+-reiser4_context * reiser4_init_context(struct super_block * super)
++reiser4_context * reiser4_init_context(struct super_block *super)
+ {
+ 	reiser4_context *context;
  
- /* implementation of carry operations. See carry_ops.c for details. */
+@@ -165,7 +165,8 @@ static void balance_dirty_pages_at(reise
+    thread released all locks and closed transcrash etc.
  
--#if !defined( __CARRY_OPS_H__ )
-+#if !defined(__CARRY_OPS_H__)
- #define __CARRY_OPS_H__
+ */
+-static void reiser4_done_context(reiser4_context * context /* context
+being released */ )
++static void reiser4_done_context(reiser4_context * context)
++				/* context being released */
+ {
+ 	assert("nikita-860", context != NULL);
+ 	assert("nikita-859", context->magic == context_magic);
+@@ -266,7 +267,7 @@ void reiser4_ctx_gfp_mask_set(void)
+ 		ctx->gfp_mask = GFP_NOFS;
+ }
  
- #include "forward.h"
-@@ -22,7 +23,7 @@ typedef struct carry_op_handler {
-    thing. */
- extern carry_op_handler op_dispatch_table[COP_LAST_OP];
- 
--unsigned int space_needed(const znode * node, const coord_t * coord,
-+unsigned int space_needed(const znode * node, const coord_t *coord,
- 			  const reiser4_item_data * data, int inserting);
- extern carry_node *find_left_carry(carry_node * node, carry_level *
-level);
- extern carry_node *find_right_carry(carry_node * node, carry_level *
-level);
+-void reiser4_ctx_gfp_mask_force (gfp_t mask)
++void reiser4_ctx_gfp_mask_force(gfp_t mask)
+ {
+ 	reiser4_context *ctx;
+ 	ctx = get_current_context();
 
