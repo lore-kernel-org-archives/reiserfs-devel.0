@@ -1,48 +1,45 @@
 From: Dushan Tcholich <dusanc@absolutok.net>
-Subject: [PATCH 16/8] dscale.c cleanup
-Date: Tue, 23 Oct 2007 16:35:16 +0200
-Message-ID: <1193150116.6236.83.camel@krshina3.gekom>
+Subject: [PATCH 17/8] dscale.h cleanup
+Date: Tue, 23 Oct 2007 16:37:46 +0200
+Message-ID: <1193150266.6236.85.camel@krshina3.gekom>
 Reply-To: dusanc@absolutok.net
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-OZZrEcJzMyN8R3ifEUeX"
+Content-Type: multipart/mixed; boundary="=-0CUo554MUTQiVK01Adhg"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiser4 <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward@namesys.com>
+To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 
---=-OZZrEcJzMyN8R3ifEUeX
+--=-0CUo554MUTQiVK01Adhg
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 
 
---=-OZZrEcJzMyN8R3ifEUeX
-Content-Disposition: attachment; filename=dscale.c.patch
-Content-Type: text/x-patch; name=dscale.c.patch; charset=UTF-8
+--=-0CUo554MUTQiVK01Adhg
+Content-Disposition: attachment; filename=dscale.h.patch
+Content-Type: text/x-patch; name=dscale.h.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- dscale.c.orig	2007-10-23 16:32:28.000000000 +0200
-+++ dscale.c	2007-10-23 16:33:28.000000000 +0200
-@@ -49,7 +49,7 @@ static int gettag(const unsigned char *a
- }
+--- dscale.h.orig	2007-10-23 16:35:31.000000000 +0200
++++ dscale.h	2007-10-23 16:36:17.000000000 +0200
+@@ -3,12 +3,12 @@
  
- /* clear tag from value. Clear tag embedded into @value. */
--static void cleartag(__u64 * value, int tag)
-+static void cleartag(__u64 *value, int tag)
- {
- 	/*
- 	 * W-w-what ?!
-@@ -94,7 +94,7 @@ static int dscale_range(__u64 value)
+ /* Scalable on-disk integers. See dscale.h for details. */
  
- /* restore value stored at @adderss by dscale_write() and return number of
-  * bytes consumed */
--int dscale_read(unsigned char *address, __u64 * value)
-+int dscale_read(unsigned char *address, __u64 *value)
- {
- 	int tag;
+-#if !defined( __FS_REISER4_DSCALE_H__ )
++#if !defined(__FS_REISER4_DSCALE_H__)
+ #define __FS_REISER4_DSCALE_H__
  
+ #include "dformat.h"
+ 
+-extern int dscale_read(unsigned char *address, __u64 * value);
++extern int dscale_read(unsigned char *address, __u64 *value);
+ extern int dscale_write(unsigned char *address, __u64 value);
+ extern int dscale_bytes(__u64 value);
+ extern int dscale_fit(__u64 value, __u64 other);
 
---=-OZZrEcJzMyN8R3ifEUeX--
+--=-0CUo554MUTQiVK01Adhg--
 
