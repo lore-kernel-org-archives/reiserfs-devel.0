@@ -1,304 +1,208 @@
 From: Dushan Tcholich <dusanc@gmail.com>
-Subject: [PATCH 22/8] flush.h cleanup
-Date: Wed, 24 Oct 2007 12:12:15 +0200
-Message-ID: <1193220735.24225.6.camel@krshina3.gekom>
+Subject: [PATCH 23/8] flush_queue.c cleanup
+Date: Wed, 24 Oct 2007 14:33:42 +0200
+Message-ID: <1193229222.24225.10.camel@krshina3.gekom>
 Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-Aj8PqmGqc3Qs5fmVZEF8"
+Content-Type: multipart/mixed; boundary="=-mpurDLSluayuScJ2eWLx"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 
---=-Aj8PqmGqc3Qs5fmVZEF8
+--=-mpurDLSluayuScJ2eWLx
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-orig:	total: 20 errors, 30 warnings, 295 lines checked
-patched:total: 0 errors, 3 warnings, 305 lines checked
+orig:	total: 17 errors, 4 warnings, 680 lines checked
+patched:Your patch has no obvious style problems and is ready for
+submission.
 
---=-Aj8PqmGqc3Qs5fmVZEF8
-Content-Disposition: attachment; filename=flush.h.patch
-Content-Type: text/x-patch; name=flush.h.patch; charset=UTF-8
+--=-mpurDLSluayuScJ2eWLx
+Content-Disposition: attachment; filename=flush_queue.c.patch
+Content-Type: text/x-patch; name=flush_queue.c.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- flush.h.orig	2007-10-24 11:58:00.000000000 +0200
-+++ flush.h	2007-10-24 12:10:06.000000000 +0200
-@@ -7,41 +7,45 @@
+--- flush_queue.c.orig	2007-10-24 14:23:41.000000000 +0200
++++ flush_queue.c	2007-10-24 14:30:03.000000000 +0200
+@@ -1,4 +1,5 @@
+-/* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by reiser4/README */
++/* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by
++   reiser4/README */
  
- #include "plugin/cluster.h"
+ #include "debug.h"
+ #include "super.h"
+@@ -50,7 +51,7 @@
+ #define mark_fq_ready(fq)      do { (fq)->state &= ~FQ_IN_USE;   } while (0)
  
--/* The flush_scan data structure maintains the state of an in-progress flush-scan on a
--   single level of the tree.  A flush-scan is used for counting the number of adjacent
--   nodes to flush, which is used to determine whether we should relocate, and it is also
--   used to find a starting point for flush.  A flush-scan object can scan in both right
--   and left directions via the scan_left() and scan_right() interfaces.  The
--   right- and left-variations are similar but perform different functions.  When scanning
--   left we (optionally perform rapid scanning and then) longterm-lock the endpoint node.
--   When scanning right we are simply counting the number of adjacent, dirty nodes. */
-+/* The flush_scan data structure maintains the state of an in-progress
-+   flush-scan on a single level of the tree. A flush-scan is used for counting
-+   the number of adjacent nodes to flush, which is used to determine whether we
-+   should relocate, and it is also used to find a starting point for flush. A
-+   flush-scan object can scan in both right and left directions via the
-+   scan_left() and scan_right() interfaces. The right- and left-variations are
-+   similar but perform different functions. When scanning left we (optionally
-+   perform rapid scanning and then) longterm-lock the endpoint node. When
-+   scanning right we are simply counting the number of adjacent, dirty nodes. */
- struct flush_scan {
- 
- 	/* The current number of nodes scanned on this level. */
- 	unsigned count;
- 
--	/* There may be a maximum number of nodes for a scan on any single level.  When
--	   going leftward, max_count is determined by FLUSH_SCAN_MAXNODES (see reiser4.h) */
-+	/* There may be a maximum number of nodes for a scan on any single
-+	   level. When going leftward, max_count is determined by
-+	   FLUSH_SCAN_MAXNODES (see reiser4.h) */
- 	unsigned max_count;
- 
--	/* Direction: Set to one of the sideof enumeration: { LEFT_SIDE, RIGHT_SIDE }. */
-+	/* Direction: Set to one of the sideof enumeration:
-+	   { LEFT_SIDE, RIGHT_SIDE }. */
- 	sideof direction;
- 
--	/* Initially @stop is set to false then set true once some condition stops the
--	   search (e.g., we found a clean node before reaching max_count or we found a
--	   node belonging to another atom). */
-+	/* Initially @stop is set to false then set true once some condition
-+	   stops the search (e.g., we found a clean node before reaching
-+	   max_count or we found a node belonging to another atom). */
- 	int stop;
- 
--	/* The current scan position.  If @node is non-NULL then its reference count has
--	   been incremented to reflect this reference. */
-+	/* The current scan position.  If @node is non-NULL then its reference
-+	   count has been incremented to reflect this reference. */
- 	jnode *node;
- 
- 	/* A handle for zload/zrelse of current scan position node. */
- 	load_count node_load;
- 
--	/* During left-scan, if the final position (a.k.a. endpoint node) is formatted the
--	   node is locked using this lock handle.  The endpoint needs to be locked for
--	   transfer to the flush_position object after scanning finishes. */
-+	/* During left-scan, if the final position (a.k.a. endpoint node) is
-+	   formatted the node is locked using this lock handle. The endpoint
-+	   needs to be locked for transfer to the flush_position object after
-+	   scanning finishes. */
- 	lock_handle node_lock;
- 
- 	/* When the position is unformatted, its parent, coordinate, and parent
-@@ -50,9 +54,10 @@ struct flush_scan {
- 	coord_t parent_coord;
- 	load_count parent_load;
- 
--	/* The block allocator preceder hint.  Sometimes flush_scan determines what the
--	   preceder is and if so it sets it here, after which it is copied into the
--	   flush_position.  Otherwise, the preceder is computed later. */
-+	/* The block allocator preceder hint.  Sometimes flush_scan determines
-+	   what the preceder is and if so it sets it here, after which it is
-+	   copied into the flush_position. Otherwise, the preceder is computed
-+	   later. */
- 	reiser4_block_nr preceder_blk;
- };
- 
-@@ -73,35 +78,39 @@ struct convert_info {
- typedef enum flush_position_state {
- 	POS_INVALID,		/* Invalid or stopped pos, do not continue slum
- 				 * processing */
--	POS_ON_LEAF,		/* pos points to already prepped, locked formatted node at
--				 * leaf level */
--	POS_ON_EPOINT,		/* pos keeps a lock on twig level, "coord" field is used
--				 * to traverse unformatted nodes */
-+	POS_ON_LEAF,		/* pos points to already prepped, locked
-+				 * formatted node at leaf level */
-+	POS_ON_EPOINT,		/* pos keeps a lock on twig level, "coord" field
-+				 * is used to traverse unformatted nodes */
- 	POS_TO_LEAF,		/* pos is being moved to leaf level */
- 	POS_TO_TWIG,		/* pos is being moved to twig level */
--	POS_END_OF_TWIG,	/* special case of POS_ON_TWIG, when coord is after
--				 * rightmost unit of the current twig */
--	POS_ON_INTERNAL		/* same as POS_ON_LEAF, but points to internal node */
-+	POS_END_OF_TWIG,	/* special case of POS_ON_TWIG, when coord is
-+				 * after rightmost unit of the current twig */
-+	POS_ON_INTERNAL		/* same as POS_ON_LEAF, but points to internal
-+				 * node */
- } flushpos_state_t;
- 
--/* An encapsulation of the current flush point and all the parameters that are passed
--   through the entire squeeze-and-allocate stage of the flush routine.  A single
--   flush_position object is constructed after left- and right-scanning finishes. */
-+/* An encapsulation of the current flush point and all the parameters that are
-+   passed through the entire squeeze-and-allocate stage of the flush routine.
-+   A single flush_position object is constructed after left- and right-scanning
-+   finishes. */
- struct flush_position {
- 	flushpos_state_t state;
- 
- 	coord_t coord;		/* coord to traverse unformatted nodes */
- 	lock_handle lock;	/* current lock we hold */
--	load_count load;	/* load status for current locked formatted node  */
--
-+	load_count load;	/* load status for current locked formatted node
-+				*/
- 	jnode *child;		/* for passing a reference to unformatted child
- 				 * across pos state changes */
- 
- 	reiser4_blocknr_hint preceder;	/* The flush 'hint' state. */
- 	int leaf_relocate;	/* True if enough leaf-level nodes were
- 				 * found to suggest a relocate policy. */
--	int alloc_cnt;		/* The number of nodes allocated during squeeze and allococate. */
--	int prep_or_free_cnt;	/* The number of nodes prepared for write (allocate) or squeezed and freed. */
-+	int alloc_cnt;		/* The number of nodes allocated during squeeze
-+				   and allococate. */
-+	int prep_or_free_cnt;	/* The number of nodes prepared for write
-+				   (allocate) or squeezed and freed. */
- 	flush_queue_t *fq;
- 	long *nr_written;	/* number of nodes submitted to disk */
- 	int flags;		/* a copy of jnode_flush flags argument */
-@@ -113,50 +122,51 @@ struct flush_position {
- 	unsigned long pos_in_unit;	/* for extents only. Position
- 					   within an extent unit of first
- 					   jnode of slum */
--	long nr_to_write;	/* number of unformatted nodes to handle on flush */
-+	long nr_to_write;	/* number of unformatted nodes to handle on
-+				   flush */
- };
- 
--static inline int item_convert_count(flush_pos_t * pos)
-+static inline int item_convert_count(flush_pos_t *pos)
+ /* get lock on atom from locked flush queue object */
+-static txn_atom *atom_locked_by_fq_nolock(flush_queue_t * fq)
++static txn_atom *atom_locked_by_fq_nolock(flush_queue_t *fq)
  {
- 	return pos->sq->count;
- }
--static inline void inc_item_convert_count(flush_pos_t * pos)
-+static inline void inc_item_convert_count(flush_pos_t *pos)
- {
- 	pos->sq->count++;
- }
--static inline void set_item_convert_count(flush_pos_t * pos, int count)
-+static inline void set_item_convert_count(flush_pos_t *pos, int count)
- {
- 	pos->sq->count = count;
- }
--static inline item_plugin *item_convert_plug(flush_pos_t * pos)
-+static inline item_plugin *item_convert_plug(flush_pos_t *pos)
- {
- 	return pos->sq->iplug;
+ 	/* This code is similar to jnode_get_atom(), look at it for the
+ 	 * explanation. */
+@@ -84,7 +85,7 @@ static txn_atom *atom_locked_by_fq_noloc
+ 	return atom;
  }
  
--static inline struct convert_info *convert_data(flush_pos_t * pos)
-+static inline struct convert_info *convert_data(flush_pos_t *pos)
+-txn_atom *atom_locked_by_fq(flush_queue_t * fq)
++txn_atom *atom_locked_by_fq(flush_queue_t *fq)
  {
- 	return pos->sq;
+ 	txn_atom *atom;
+ 
+@@ -94,7 +95,7 @@ txn_atom *atom_locked_by_fq(flush_queue_
+ 	return atom;
  }
  
--static inline struct convert_item_info *item_convert_data(flush_pos_t * pos)
-+static inline struct convert_item_info *item_convert_data(flush_pos_t *pos)
+-static void init_fq(flush_queue_t * fq)
++static void init_fq(flush_queue_t *fq)
  {
- 	assert("edward-955", convert_data(pos));
- 	return pos->sq->itm;
+ 	memset(fq, 0, sizeof *fq);
+ 
+@@ -148,12 +149,12 @@ static flush_queue_t *create_fq(gfp_t gf
  }
  
--static inline struct tfm_cluster * tfm_cluster_sq(flush_pos_t * pos)
-+static inline struct tfm_cluster *tfm_cluster_sq(flush_pos_t *pos)
+ /* adjust atom's and flush queue's counters of queued nodes */
+-static void count_enqueued_node(flush_queue_t * fq)
++static void count_enqueued_node(flush_queue_t *fq)
  {
- 	return &pos->sq->clust.tc;
+ 	ON_DEBUG(fq->atom->num_queued++);
  }
  
--static inline struct tfm_stream * tfm_stream_sq(flush_pos_t * pos,
-+static inline struct tfm_stream *tfm_stream_sq(flush_pos_t *pos,
- 						tfm_stream_id id)
+-static void count_dequeued_node(flush_queue_t * fq)
++static void count_dequeued_node(flush_queue_t *fq)
  {
- 	assert("edward-854", pos->sq != NULL);
- 	return get_tfm_stream(tfm_cluster_sq(pos), id);
+ 	assert("zam-993", fq->atom->num_queued > 0);
+ 	ON_DEBUG(fq->atom->num_queued--);
+@@ -168,7 +169,7 @@ static void attach_fq(txn_atom *atom, fl
+ 	ON_DEBUG(atom->nr_flush_queues++);
  }
  
--static inline int chaining_data_present(flush_pos_t * pos)
-+static inline int chaining_data_present(flush_pos_t *pos)
+-static void detach_fq(flush_queue_t * fq)
++static void detach_fq(flush_queue_t *fq)
  {
- 	return convert_data(pos) && item_convert_data(pos);
- }
-@@ -164,7 +174,7 @@ static inline int chaining_data_present(
- /* Returns true if next node contains next item of the disk cluster
-    so item convert data should be moved to the right slum neighbor.
- */
--static inline int should_chain_next_node(flush_pos_t * pos)
-+static inline int should_chain_next_node(flush_pos_t *pos)
- {
- 	int result = 0;
+ 	assert_spin_locked(&(fq->atom->alock));
  
-@@ -184,7 +194,7 @@ static inline int should_chain_next_node
- 
- /* update item state in a disk cluster to assign conversion mode */
- static inline void
--move_chaining_data(flush_pos_t * pos, int this_node /* where is next item */ )
-+move_chaining_data(flush_pos_t *pos, int this_node/* where is next item */)
- {
- 
- 	assert("edward-1010", chaining_data_present(pos));
-@@ -213,20 +223,20 @@ move_chaining_data(flush_pos_t * pos, in
- 	}
+@@ -181,7 +182,7 @@ static void detach_fq(flush_queue_t * fq
  }
  
--static inline int should_convert_node(flush_pos_t * pos, znode * node)
-+static inline int should_convert_node(flush_pos_t *pos, znode * node)
+ /* destroy flush queue object */
+-static void done_fq(flush_queue_t * fq)
++static void done_fq(flush_queue_t *fq)
  {
- 	return znode_convertible(node);
+ 	assert("zam-763", list_empty_careful(ATOM_FQ_LIST(fq)));
+ 	assert("zam-766", atomic_read(&fq->nr_submitted) == 0);
+@@ -190,7 +191,7 @@ static void done_fq(flush_queue_t * fq)
  }
  
- /* true if there is attached convert item info */
--static inline int should_convert_next_node(flush_pos_t * pos)
-+static inline int should_convert_next_node(flush_pos_t *pos)
+ /* */
+-static void mark_jnode_queued(flush_queue_t * fq, jnode * node)
++static void mark_jnode_queued(flush_queue_t *fq, jnode * node)
  {
- 	return convert_data(pos) && item_convert_data(pos);
+ 	JF_SET(node, JNODE_FLUSH_QUEUED);
+ 	count_enqueued_node(fq);
+@@ -198,7 +199,7 @@ static void mark_jnode_queued(flush_queu
+ 
+ /* Putting jnode into the flush queue. Both atom and jnode should be
+    spin-locked. */
+-void queue_jnode(flush_queue_t * fq, jnode * node)
++void queue_jnode(flush_queue_t *fq, jnode * node)
+ {
+ 	assert_spin_locked(&(node->guard));
+ 	assert("zam-713", node->atom != NULL);
+@@ -220,7 +221,7 @@ void queue_jnode(flush_queue_t * fq, jno
  }
  
- #define SQUALLOC_THRESHOLD 256
- 
--static inline int should_terminate_squalloc(flush_pos_t * pos)
-+static inline int should_terminate_squalloc(flush_pos_t *pos)
+ /* repeatable process for waiting io completion on a flush queue object */
+-static int wait_io(flush_queue_t * fq, int *nr_io_errors)
++static int wait_io(flush_queue_t *fq, int *nr_io_errors)
  {
- 	return convert_data(pos) &&
- 	    !item_convert_data(pos) &&
-@@ -236,7 +246,7 @@ static inline int should_terminate_squal
- #if 1
- #define check_convert_info(pos)						\
- do {							        	\
--	if (unlikely(should_convert_next_node(pos))){			\
-+	if (unlikely(should_convert_next_node(pos))) {			\
- 		warning("edward-1006", "unprocessed chained data");	\
- 		printk("d_cur = %d, d_next = %d, flow.len = %llu\n",	\
- 		       item_convert_data(pos)->d_cur,			\
-@@ -253,14 +263,14 @@ do {							        	\
- #define check_convert_info(pos)
- #endif /* REISER4_DEBUG */
+ 	assert("zam-738", fq->atom != NULL);
+ 	assert_spin_locked(&(fq->atom->alock));
+@@ -240,7 +241,8 @@ static int wait_io(flush_queue_t * fq, i
+ 		blk_run_address_space(reiser4_get_super_fake(super)->i_mapping);
  
--void free_convert_data(flush_pos_t * pos);
-+void free_convert_data(flush_pos_t *pos);
- /* used in extent.c */
- int scan_set_current(flush_scan * scan, jnode * node, unsigned add_size,
--		     const coord_t * parent);
-+		     const coord_t *parent);
- int reiser4_scan_finished(flush_scan * scan);
- int reiser4_scanning_left(flush_scan * scan);
- int reiser4_scan_goto(flush_scan * scan, jnode * tonode);
--txn_atom *atom_locked_by_fq(flush_queue_t * fq);
-+txn_atom *atom_locked_by_fq(flush_queue_t *fq);
- int reiser4_alloc_extent(flush_pos_t *flush_pos);
- squeeze_result squalloc_extent(znode *left, const coord_t *, flush_pos_t *,
- 			       reiser4_key *stop_key);
-@@ -274,7 +284,7 @@ extern atomic_t flush_cnt;
+ 		if (!(super->s_flags & MS_RDONLY))
+-			wait_event(fq->wait, atomic_read(&fq->nr_submitted) == 0);
++			wait_event(fq->wait,
++				   atomic_read(&fq->nr_submitted) == 0);
  
- #define check_preceder(blk) \
- assert("nikita-2588", blk < reiser4_block_count(reiser4_get_current_sb()));
--extern void check_pos(flush_pos_t * pos);
-+extern void check_pos(flush_pos_t *pos);
- #else
- #define check_preceder(b) noop
- #define check_pos(pos) noop
+ 		/* Ask the caller to re-acquire the locks and call this
+ 		   function again. Note: this technique is commonly used in
+@@ -253,7 +255,7 @@ static int wait_io(flush_queue_t * fq, i
+ }
+ 
+ /* wait on I/O completion, re-submit dirty nodes to write */
+-static int finish_fq(flush_queue_t * fq, int *nr_io_errors)
++static int finish_fq(flush_queue_t *fq, int *nr_io_errors)
+ {
+ 	int ret;
+ 	txn_atom *atom = fq->atom;
+@@ -452,7 +454,7 @@ end_io_handler(struct bio *bio, unsigned
+ 
+ /* Count I/O requests which will be submitted by @bio in given flush queues
+    @fq */
+-void add_fq_to_bio(flush_queue_t * fq, struct bio *bio)
++void add_fq_to_bio(flush_queue_t *fq, struct bio *bio)
+ {
+ 	bio->bi_private = fq;
+ 	bio->bi_end_io = end_io_handler;
+@@ -462,7 +464,7 @@ void add_fq_to_bio(flush_queue_t * fq, s
+ }
+ 
+ /* Move all queued nodes out from @fq->prepped list. */
+-static void release_prepped_list(flush_queue_t * fq)
++static void release_prepped_list(flush_queue_t *fq)
+ {
+ 	txn_atom *atom;
+ 
+@@ -484,11 +486,13 @@ static void release_prepped_list(flush_q
+ 
+ 		if (JF_ISSET(cur, JNODE_DIRTY)) {
+ 			list_add_tail(&cur->capture_link,
+-				      ATOM_DIRTY_LIST(atom, jnode_get_level(cur)));
++				      ATOM_DIRTY_LIST(atom,
++						      jnode_get_level(cur)));
+ 			ON_DEBUG(count_jnode(atom, cur, FQ_LIST,
+ 					     DIRTY_LIST, 1));
+ 		} else {
+-			list_add_tail(&cur->capture_link, ATOM_CLEAN_LIST(atom));
++			list_add_tail(&cur->capture_link,
++				      ATOM_CLEAN_LIST(atom));
+ 			ON_DEBUG(count_jnode(atom, cur, FQ_LIST,
+ 					     CLEAN_LIST, 1));
+ 		}
+@@ -506,8 +510,8 @@ static void release_prepped_list(flush_q
+ 
+    @fq: flush queue object which contains jnodes we can (and will) write.
+    @return: number of submitted blocks (>=0) if success, otherwise -- an error
+-            code (<0). */
+-int reiser4_write_fq(flush_queue_t * fq, long *nr_submitted, int flags)
++	    code (<0). */
++int reiser4_write_fq(flush_queue_t *fq, long *nr_submitted, int flags)
+ {
+ 	int ret;
+ 	txn_atom *atom;
+@@ -587,7 +591,7 @@ static int fq_by_atom_gfp(txn_atom *atom
+ 	return RETERR(-E_REPEAT);
+ }
+ 
+-int reiser4_fq_by_atom(txn_atom * atom, flush_queue_t ** new_fq)
++int reiser4_fq_by_atom(txn_atom * atom, flush_queue_t **new_fq)
+ {
+ 	return fq_by_atom_gfp(atom, new_fq, reiser4_ctx_gfp_mask_get());
+ }
+@@ -620,7 +624,7 @@ void reiser4_fq_put_nolock(flush_queue_t
+ 	ON_DEBUG(fq->owner = NULL);
+ }
+ 
+-void reiser4_fq_put(flush_queue_t * fq)
++void reiser4_fq_put(flush_queue_t *fq)
+ {
+ 	txn_atom *atom;
+ 
 
---=-Aj8PqmGqc3Qs5fmVZEF8--
+--=-mpurDLSluayuScJ2eWLx--
 
