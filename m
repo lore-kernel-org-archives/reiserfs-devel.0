@@ -1,129 +1,184 @@
 From: Dushan Tcholich <dusanc@gmail.com>
-Subject: [PATCH 31/8] jnode.h cleanup
-Date: Thu, 25 Oct 2007 01:10:28 +0200
-Message-ID: <1193267428.24225.52.camel@krshina3.gekom>
+Subject: [PATCH 32/8] kassign.c cleanup
+Date: Thu, 25 Oct 2007 01:19:34 +0200
+Message-ID: <1193267974.24225.56.camel@krshina3.gekom>
 Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-Pb84LccQYzYEzIpPov6p"
+Content-Type: multipart/mixed; boundary="=-i+Aq4OrTmBTyJYQqYrH9"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 
---=-Pb84LccQYzYEzIpPov6p
+--=-i+Aq4OrTmBTyJYQqYrH9
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-orig:	total: 7 errors, 8 warnings, 702 lines checked
-patched:total: 0 errors, 2 warnings, 704 lines checked
+orig:	total: 11 errors, 10 warnings, 661 lines checked
+patched:total: 0 errors, 1 warnings, 661 lines checked
 
 Leftovers:
 
-WARNING: do not add new typedefs
-#186: FILE: jnode.h:186:
-+typedef enum {
-
-WARNING: do not add new typedefs
-#197: FILE: jnode.h:197:
-+typedef enum {
+WARNING: line over 80 characters
+#628: FILE: kassign.c:628:
++               put_unaligned(cpu_to_le64(get_inode_ordering(inode)),
+(__le64 *)start);
 
 
---=-Pb84LccQYzYEzIpPov6p
-Content-Disposition: attachment; filename=jnode.h.patch
-Content-Type: text/x-patch; name=jnode.h.patch; charset=UTF-8
+
+
+--=-i+Aq4OrTmBTyJYQqYrH9
+Content-Disposition: attachment; filename=kassign.c.patch
+Content-Type: text/x-patch; name=kassign.c.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- jnode.h.orig	2007-10-25 01:03:37.000000000 +0200
-+++ jnode.h	2007-10-25 01:08:37.000000000 +0200
-@@ -165,7 +165,8 @@ struct jnode {
+--- kassign.c.orig	2007-10-25 01:12:24.000000000 +0200
++++ kassign.c	2007-10-25 01:18:32.000000000 +0200
+@@ -38,12 +38,12 @@
+  *
+  * DIRECTORY ITEMS
+  *
+- *  |       60     | 4 | 7 |1|   56        |        64        |        64       |
+- *  +--------------+---+---+-+-------------+------------------+-----------------+
+- *  |    dirid     | 0 | F |H|  prefix-1   |    prefix-2      |  prefix-3/hash  |
+- *  +--------------+---+---+-+-------------+------------------+-----------------+
+- *  |                  |                   |                  |                 |
+- *  |    8 bytes       |      8 bytes      |     8 bytes      |     8 bytes     |
++ * |       60     | 4 | 7 |1|   56        |        64        |        64       |
++ * +--------------+---+---+-+-------------+------------------+-----------------+
++ * |    dirid     | 0 | F |H|  prefix-1   |    prefix-2      |  prefix-3/hash  |
++ * +--------------+---+---+-+-------------+------------------+-----------------+
++ * |                  |                   |                  |                 |
++ * |    8 bytes       |      8 bytes      |     8 bytes      |     8 bytes     |
+  *
+  * dirid         objectid of directory this item is for
+  *
+@@ -262,7 +262,7 @@ static __u64 pack_string(const char *nam
  
- 	/* the real blocknr (where io is going to/from) */
- 	/*   80 */ reiser4_block_nr blocknr;
--	/* Parent item type, unformatted and CRC need it for offset => key conversion.  */
-+	/* Parent item type, unformatted and CRC need it for
-+	 * offset => key conversion.  */
- 	/* NOTE: this parent_item_id looks like jnode type. */
- 	/*   88 */ reiser4_plugin_id parent_item_id;
- 	/*   92 */
-@@ -355,7 +356,7 @@ extern void jnode_make_dirty(jnode * nod
- extern void jnode_make_clean(jnode * node) NONNULL;
- extern void jnode_make_wander_nolock(jnode * node) NONNULL;
- extern void jnode_make_wander(jnode *) NONNULL;
--extern void znode_make_reloc(znode *, flush_queue_t *) NONNULL;
-+extern void znode_make_reloc(znode * , flush_queue_t *) NONNULL;
- extern void unformatted_make_reloc(jnode *, flush_queue_t *) NONNULL;
- extern struct address_space *jnode_get_mapping(const jnode * node) NONNULL;
+ /* opposite to pack_string(). Takes value produced by pack_string(), restores
+  * string encoded in it and stores result in @buf */
+-char * reiser4_unpack_string(__u64 value, char *buf)
++char *reiser4_unpack_string(__u64 value, char *buf)
+ {
+ 	do {
+ 		*buf = value >> (64 - 8);
+@@ -343,10 +343,11 @@ void complete_entry_key(const struct ino
+ 				/* [15-23] characters to offset */
+ 				offset = pack_string(name + 15, 0);
+ 			} else {
+-				/* note in a key the fact that offset contains hash. */
++				/* note in a key the fact that offset contains
++				 * hash */
+ 				ordering |= longname_mark;
  
-@@ -396,8 +397,8 @@ static inline const reiser4_block_nr *jn
+-				/* offset is the hash of the file name's tail. */
++				/* offset is the hash of the file name's tail */
+ 				offset = inode_hash_plugin(dir)->hash(name + 15,
+ 								      len - 15);
+ 			}
+@@ -417,7 +418,7 @@ void complete_entry_key(const struct ino
  }
  
- /* Jnode flush interface. */
--extern reiser4_blocknr_hint *reiser4_pos_hint(flush_pos_t * pos);
--extern flush_queue_t *reiser4_pos_fq(flush_pos_t * pos);
-+extern reiser4_blocknr_hint *reiser4_pos_hint(flush_pos_t *pos);
-+extern flush_queue_t *reiser4_pos_fq(flush_pos_t *pos);
- 
- /* FIXME-VS: these are used in plugin/item/extent.c */
- 
-@@ -411,13 +412,13 @@ extern flush_queue_t *reiser4_pos_fq(flu
- 
- /* Macros to convert from jnode to znode, znode to jnode.  These are macros
-    because C doesn't allow overloading of const prototypes. */
--#define ZJNODE(x) (& (x) -> zjnode)
-+#define ZJNODE(x) (&(x)->zjnode)
- #define JZNODE(x)						\
- ({								\
--	typeof (x) __tmp_x;					\
-+	typeof(x) __tmp_x;					\
- 								\
- 	__tmp_x = (x);						\
--	assert ("jmacd-1300", jnode_is_znode (__tmp_x));	\
-+	assert("jmacd-1300", jnode_is_znode(__tmp_x));	\
- 	(znode*) __tmp_x;					\
- })
- 
-@@ -438,7 +439,7 @@ extern void jnode_list_remove(jnode * no
- int znode_is_root(const znode * node) NONNULL;
- 
- /* bump reference counter on @node */
--static inline void add_x_ref(jnode * node /* node to increase x_count of */ )
-+static inline void add_x_ref(jnode * node/* node to increase x_count of */)
+ /* true, if @key is the key of "." */
+-int is_dot_key(const reiser4_key * key /* key to check */ )
++int is_dot_key(const reiser4_key * key/* key to check */)
  {
- 	assert("nikita-1911", node != NULL);
+ 	assert("nikita-1717", key != NULL);
+ 	assert("nikita-1718", get_key_type(key) == KEY_FILE_NAME_MINOR);
+@@ -432,7 +433,7 @@ int is_dot_key(const reiser4_key * key /
+    method in the future. For now, let it be here.
  
-@@ -573,7 +574,8 @@ static inline int jnode_check_flushprepp
+ */
+-reiser4_key *build_sd_key(const struct inode * target /* inode of an object */ ,
++reiser4_key *build_sd_key(const struct inode *target /* inode of an object */ ,
+ 			  reiser4_key * result	/* resulting key of @target
+ 						   stat-data */ )
  {
- 	int result;
- 
--	/* It must be clean or relocated or wandered.  New allocations are set to relocate. */
-+	/* It must be clean or relocated or wandered.  New allocations are set
-+	 * to relocate. */
- 	spin_lock_jnode(node);
- 	result = jnode_is_flushprepped(node);
- 	spin_unlock_jnode(node);
-@@ -633,7 +635,7 @@ static inline void jput(jnode * node);
- extern void jput_final(jnode * node);
- 
- /* bump data counter on @node */
--static inline void add_d_ref(jnode * node /* node to increase d_count of */ )
-+static inline void add_d_ref(jnode * node/* node to increase d_count of */)
+@@ -455,7 +456,7 @@ reiser4_key *build_sd_key(const struct i
+    See &obj_key_id
+ */
+ int build_obj_key_id(const reiser4_key * key /* key to encode */ ,
+-		     obj_key_id * id /* id where key is encoded in */ )
++		     obj_key_id * id/* id where key is encoded in */)
  {
- 	assert("nikita-1962", node != NULL);
+ 	assert("nikita-1151", key != NULL);
+ 	assert("nikita-1152", id != NULL);
+@@ -468,7 +469,7 @@ int build_obj_key_id(const reiser4_key *
  
-@@ -660,9 +662,9 @@ static inline void jput(jnode * node)
- 	/*
- 	 * we don't need any kind of lock here--jput_final() uses RCU.
- 	 */
--	if (unlikely(atomic_dec_and_test(&node->x_count))) {
-+	if (unlikely(atomic_dec_and_test(&node->x_count)))
- 		jput_final(node);
--	} else
-+	else
- 		rcu_read_unlock();
- 	assert("nikita-3473", reiser4_schedulable());
+    This is like build_obj_key_id() above, but takes inode as parameter. */
+ int build_inode_key_id(const struct inode *obj /* object to build key of */ ,
+-		       obj_key_id * id /* result */ )
++		       obj_key_id * id/* result */)
+ {
+ 	reiser4_key sdkey;
+ 
+@@ -487,7 +488,7 @@ int build_inode_key_id(const struct inod
+ */
+ int extract_key_from_id(const obj_key_id * id	/* object key id to extract key
+ 						 * from */ ,
+-			reiser4_key * key /* result */ )
++			reiser4_key * key/* result */)
+ {
+ 	assert("nikita-1153", id != NULL);
+ 	assert("nikita-1154", key != NULL);
+@@ -520,7 +521,7 @@ int build_de_id(const struct inode *dir 
+ 		const struct qstr *name	/* name to be given to @obj by
+ 					 * directory entry being
+ 					 * constructed */ ,
+-		de_id * id /* short key of directory entry */ )
++		de_id * id/* short key of directory entry */)
+ {
+ 	reiser4_key key;
+ 
+@@ -542,7 +543,7 @@ int build_de_id(const struct inode *dir 
+ */
+ int build_de_id_by_key(const reiser4_key * entry_key	/* full key of directory
+ 							 * entry */ ,
+-		       de_id * id /* short key of directory entry */ )
++		       de_id * id/* short key of directory entry */)
+ {
+ 	memcpy(id, ((__u64 *) entry_key) + 1, sizeof *id);
+ 	return 0;
+@@ -557,7 +558,7 @@ int build_de_id_by_key(const reiser4_key
+ int extract_key_from_de_id(const oid_t locality	/* locality of directory
+ 						 * entry */ ,
+ 			   const de_id * id /* directory entry id */ ,
+-			   reiser4_key * key /* result */ )
++			   reiser4_key * key/* result */)
+ {
+ 	/* no need to initialise key here: all fields are overwritten */
+ 	memcpy(((__u64 *) key) + 1, id, sizeof *id);
+@@ -568,7 +569,7 @@ int extract_key_from_de_id(const oid_t l
+ 
+ /* compare two &de_id's */
+ cmp_t de_id_cmp(const de_id * id1 /* first &de_id to compare */ ,
+-		const de_id * id2 /* second &de_id to compare */ )
++		const de_id * id2/* second &de_id to compare */)
+ {
+ 	/* NOTE-NIKITA ugly implementation */
+ 	reiser4_key k1;
+@@ -581,7 +582,7 @@ cmp_t de_id_cmp(const de_id * id1 /* fir
+ 
+ /* compare &de_id with key */
+ cmp_t de_id_key_cmp(const de_id * id /* directory entry id to compare */ ,
+-		    const reiser4_key * key /* key to compare */ )
++		    const reiser4_key * key/* key to compare */)
+ {
+ 	cmp_t result;
+ 	reiser4_key *k1;
+@@ -590,9 +591,8 @@ cmp_t de_id_key_cmp(const de_id * id /* 
+ 	result = KEY_DIFF_EL(k1, key, 1);
+ 	if (result == EQUAL_TO) {
+ 		result = KEY_DIFF_EL(k1, key, 2);
+-		if (REISER4_LARGE_KEY && result == EQUAL_TO) {
++		if (REISER4_LARGE_KEY && result == EQUAL_TO)
+ 			result = KEY_DIFF_EL(k1, key, 3);
+-		}
+ 	}
+ 	return result;
  }
 
---=-Pb84LccQYzYEzIpPov6p--
+--=-i+Aq4OrTmBTyJYQqYrH9--
 
