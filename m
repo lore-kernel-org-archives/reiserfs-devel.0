@@ -1,212 +1,129 @@
 From: Dushan Tcholich <dusanc@gmail.com>
-Subject: [PATCH 30/8] jnode.c cleanup
-Date: Thu, 25 Oct 2007 01:02:12 +0200
-Message-ID: <1193266932.24225.49.camel@krshina3.gekom>
+Subject: [PATCH 31/8] jnode.h cleanup
+Date: Thu, 25 Oct 2007 01:10:28 +0200
+Message-ID: <1193267428.24225.52.camel@krshina3.gekom>
 Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-aJQTRVnLy1HfbfwwnjW5"
+Content-Type: multipart/mixed; boundary="=-Pb84LccQYzYEzIpPov6p"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 
---=-aJQTRVnLy1HfbfwwnjW5
+--=-Pb84LccQYzYEzIpPov6p
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-orig:	total: 17 errors, 9 warnings, 1924 lines checked
-patched:total: 1 errors, 4 warnings, 1923 lines checked
+orig:	total: 7 errors, 8 warnings, 702 lines checked
+patched:total: 0 errors, 2 warnings, 704 lines checked
 
 Leftovers:
 
-ERROR: do not initialise statics to 0 or NULL
-#126: FILE: jnode.c:126:
-+static struct kmem_cache *_jnode_slab = NULL;
+WARNING: do not add new typedefs
+#186: FILE: jnode.h:186:
++typedef enum {
 
-WARNING: line over 80 characters
-#853: FILE: jnode.c:853:
-+                              z->nr_items ==
-le16_to_cpu(get_unaligned(&nh->nr_items)));
-
-WARNING: printk() should include KERN_ facility level
-#1849: FILE: jnode.c:1849:
-+               printk("%s: null\n", prefix);
-
-WARNING: line over 80 characters
-#1854: FILE: jnode.c:1854:
-+           ("%s: %p: state: %lx: [%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s],
-level: %i,"
-
-WARNING: printk() should include KERN_ facility level
-#1880: FILE: jnode.c:1880:
-+               printk("inode: %llu, index: %lu, ",
+WARNING: do not add new typedefs
+#197: FILE: jnode.h:197:
++typedef enum {
 
 
-
---=-aJQTRVnLy1HfbfwwnjW5
-Content-Disposition: attachment; filename=jnode.c.patch
-Content-Type: text/x-patch; name=jnode.c.patch; charset=UTF-8
+--=-Pb84LccQYzYEzIpPov6p
+Content-Disposition: attachment; filename=jnode.h.patch
+Content-Type: text/x-patch; name=jnode.h.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- jnode.c.orig	2007-10-25 00:53:32.000000000 +0200
-+++ jnode.c	2007-10-25 00:59:42.000000000 +0200
-@@ -142,8 +142,8 @@ static inline int jnode_is_parsed(jnode 
- /* hash table support */
+--- jnode.h.orig	2007-10-25 01:03:37.000000000 +0200
++++ jnode.h	2007-10-25 01:08:37.000000000 +0200
+@@ -165,7 +165,8 @@ struct jnode {
  
- /* compare two jnode keys for equality. Used by hash-table macros */
--static inline int jnode_key_eq(const struct jnode_key * k1,
--			       const struct jnode_key * k2)
-+static inline int jnode_key_eq(const struct jnode_key *k1,
-+			       const struct jnode_key *k2)
- {
- 	assert("nikita-2350", k1 != NULL);
- 	assert("nikita-2351", k2 != NULL);
-@@ -153,7 +153,7 @@ static inline int jnode_key_eq(const str
+ 	/* the real blocknr (where io is going to/from) */
+ 	/*   80 */ reiser4_block_nr blocknr;
+-	/* Parent item type, unformatted and CRC need it for offset => key conversion.  */
++	/* Parent item type, unformatted and CRC need it for
++	 * offset => key conversion.  */
+ 	/* NOTE: this parent_item_id looks like jnode type. */
+ 	/*   88 */ reiser4_plugin_id parent_item_id;
+ 	/*   92 */
+@@ -355,7 +356,7 @@ extern void jnode_make_dirty(jnode * nod
+ extern void jnode_make_clean(jnode * node) NONNULL;
+ extern void jnode_make_wander_nolock(jnode * node) NONNULL;
+ extern void jnode_make_wander(jnode *) NONNULL;
+-extern void znode_make_reloc(znode *, flush_queue_t *) NONNULL;
++extern void znode_make_reloc(znode * , flush_queue_t *) NONNULL;
+ extern void unformatted_make_reloc(jnode *, flush_queue_t *) NONNULL;
+ extern struct address_space *jnode_get_mapping(const jnode * node) NONNULL;
  
- /* Hash jnode by its key (inode plus offset). Used by hash-table macros */
- static inline __u32 jnode_key_hashfn(j_hash_table * table,
--				     const struct jnode_key * key)
-+				     const struct jnode_key *key)
- {
- 	assert("nikita-2352", key != NULL);
- 	assert("nikita-3346", IS_POW(table->_buckets));
-@@ -171,14 +171,14 @@ TYPE_SAFE_HASH_DEFINE(j, jnode, struct j
- #undef KMALLOC
- 
- /* call this to initialise jnode hash table */
--int jnodes_tree_init(reiser4_tree * tree /* tree to initialise jnodes for */ )
-+int jnodes_tree_init(reiser4_tree * tree/* tree to initialise jnodes for */)
- {
- 	assert("nikita-2359", tree != NULL);
- 	return j_hash_init(&tree->jhash_table, 16384);
+@@ -396,8 +397,8 @@ static inline const reiser4_block_nr *jn
  }
  
- /* call this to destroy jnode hash table. This is called during umount. */
--int jnodes_tree_done(reiser4_tree * tree /* tree to destroy jnodes for */ )
-+int jnodes_tree_done(reiser4_tree * tree/* tree to destroy jnodes for */)
+ /* Jnode flush interface. */
+-extern reiser4_blocknr_hint *reiser4_pos_hint(flush_pos_t * pos);
+-extern flush_queue_t *reiser4_pos_fq(flush_pos_t * pos);
++extern reiser4_blocknr_hint *reiser4_pos_hint(flush_pos_t *pos);
++extern flush_queue_t *reiser4_pos_fq(flush_pos_t *pos);
+ 
+ /* FIXME-VS: these are used in plugin/item/extent.c */
+ 
+@@ -411,13 +412,13 @@ extern flush_queue_t *reiser4_pos_fq(flu
+ 
+ /* Macros to convert from jnode to znode, znode to jnode.  These are macros
+    because C doesn't allow overloading of const prototypes. */
+-#define ZJNODE(x) (& (x) -> zjnode)
++#define ZJNODE(x) (&(x)->zjnode)
+ #define JZNODE(x)						\
+ ({								\
+-	typeof (x) __tmp_x;					\
++	typeof(x) __tmp_x;					\
+ 								\
+ 	__tmp_x = (x);						\
+-	assert ("jmacd-1300", jnode_is_znode (__tmp_x));	\
++	assert("jmacd-1300", jnode_is_znode(__tmp_x));	\
+ 	(znode*) __tmp_x;					\
+ })
+ 
+@@ -438,7 +439,7 @@ extern void jnode_list_remove(jnode * no
+ int znode_is_root(const znode * node) NONNULL;
+ 
+ /* bump reference counter on @node */
+-static inline void add_x_ref(jnode * node /* node to increase x_count of */ )
++static inline void add_x_ref(jnode * node/* node to increase x_count of */)
  {
- 	j_hash_table *jtable;
- 	jnode *node;
-@@ -404,7 +404,7 @@ static jnode *jfind_nolock(struct addres
- 	return radix_tree_lookup(jnode_tree_by_inode(mapping->host), index);
- }
+ 	assert("nikita-1911", node != NULL);
  
--jnode *jfind(struct address_space * mapping, unsigned long index)
-+jnode *jfind(struct address_space *mapping, unsigned long index)
+@@ -573,7 +574,8 @@ static inline int jnode_check_flushprepp
  {
- 	reiser4_tree *tree;
- 	jnode *node;
-@@ -557,7 +557,8 @@ static jnode *find_get_jnode(reiser4_tre
- 	write_lock_tree(tree);
- 	shadow = jfind_nolock(mapping, index);
- 	if (likely(shadow == NULL)) {
--		/* add new jnode to hash table and inode's radix tree of jnodes */
-+		/* add new jnode to hash table and inode's radix tree of
-+		 * jnodes */
- 		jref(result);
- 		hash_unformatted_jnode(result, mapping, index);
- 	} else {
-@@ -630,7 +631,7 @@ static jnode *do_jget(reiser4_tree * tre
- /*
-  * return jnode for @pg, creating it if necessary.
-  */
--jnode *jnode_of_page(struct page * pg)
-+jnode *jnode_of_page(struct page *pg)
- {
- 	jnode *result;
- 
-@@ -739,9 +740,8 @@ static struct page *jnode_lock_page(jnod
- 
- 		spin_lock_jnode(node);
- 		page = jnode_page(node);
--		if (page == NULL) {
-+		if (page == NULL)
- 			break;
--		}
- 
- 		/* no need to page_cache_get( page ) here, because page cannot
- 		   be evicted from memory without detaching it from jnode and
-@@ -871,7 +871,7 @@ void jload_prefetch(jnode * node)
- /* load jnode's data into memory */
- int jload_gfp(jnode * node /* node to load */ ,
- 	      gfp_t gfp_flags /* allocation flags */ ,
--	      int do_kmap /* true if page should be kmapped */ )
-+	      int do_kmap/* true if page should be kmapped */)
- {
- 	struct page *page;
- 	int result = 0;
-@@ -940,7 +940,7 @@ int jload_gfp(jnode * node /* node to lo
- 
- 	return 0;
- 
--      failed:
-+failed:
- 	jrelse_tail(node);
- 	return result;
- 
-@@ -993,13 +993,13 @@ int jinit_new(jnode * node, gfp_t gfp_fl
- 
- 	return 0;
- 
--      failed:
-+failed:
- 	jrelse(node);
- 	return result;
- }
- 
- /* release a reference to jnode acquired by jload(), decrement ->d_count */
--void jrelse_tail(jnode * node /* jnode to release references to */ )
-+void jrelse_tail(jnode * node/* jnode to release references to */)
- {
- 	assert("nikita-489", atomic_read(&node->d_count) > 0);
- 	atomic_dec(&node->d_count);
-@@ -1011,7 +1011,7 @@ void jrelse_tail(jnode * node /* jnode t
- 
- /* drop reference to node data. When last reference is dropped, data are
-    unloaded. */
--void jrelse(jnode * node /* jnode to release references to */ )
-+void jrelse(jnode * node/* jnode to release references to */)
- {
- 	struct page *page;
- 
-@@ -1614,7 +1614,7 @@ static int jnode_try_drop(jnode * node)
- }
- 
- /* jdelete() -- Delete jnode from the tree and file system */
--static int jdelete(jnode * node /* jnode to finish with */ )
-+static int jdelete(jnode * node/* jnode to finish with */)
- {
- 	struct page *page;
  	int result;
-@@ -1707,9 +1707,8 @@ static int jdrop_in_tree(jnode * node, r
- 		jnode_remove(node, jtype, tree);
- 		write_unlock_tree(tree);
- 		jnode_free(node, jtype);
--		if (page != NULL) {
-+		if (page != NULL)
- 			reiser4_drop_page(page);
--		}
- 	} else {
- 		/* busy check failed: reference was acquired by concurrent
- 		 * thread. */
-@@ -1837,12 +1836,12 @@ static const char *jnode_type_name(jnode
- 	}
- }
  
--#define jnode_state_name( node, flag )			\
--	( JF_ISSET( ( node ), ( flag ) ) ? ((#flag "|")+6) : "" )
-+#define jnode_state_name(node, flag)			\
-+	(JF_ISSET((node), (flag)) ? ((#flag "|")+6) : "")
+-	/* It must be clean or relocated or wandered.  New allocations are set to relocate. */
++	/* It must be clean or relocated or wandered.  New allocations are set
++	 * to relocate. */
+ 	spin_lock_jnode(node);
+ 	result = jnode_is_flushprepped(node);
+ 	spin_unlock_jnode(node);
+@@ -633,7 +635,7 @@ static inline void jput(jnode * node);
+ extern void jput_final(jnode * node);
  
- /* debugging aid: output human readable information about @node */
- static void info_jnode(const char *prefix /* prefix to print */ ,
--		       const jnode * node /* node to print */ )
-+		       const jnode * node/* node to print */)
+ /* bump data counter on @node */
+-static inline void add_d_ref(jnode * node /* node to increase d_count of */ )
++static inline void add_d_ref(jnode * node/* node to increase d_count of */)
  {
- 	assert("umka-068", prefix != NULL);
+ 	assert("nikita-1962", node != NULL);
  
+@@ -660,9 +662,9 @@ static inline void jput(jnode * node)
+ 	/*
+ 	 * we don't need any kind of lock here--jput_final() uses RCU.
+ 	 */
+-	if (unlikely(atomic_dec_and_test(&node->x_count))) {
++	if (unlikely(atomic_dec_and_test(&node->x_count)))
+ 		jput_final(node);
+-	} else
++	else
+ 		rcu_read_unlock();
+ 	assert("nikita-3473", reiser4_schedulable());
+ }
 
---=-aJQTRVnLy1HfbfwwnjW5--
+--=-Pb84LccQYzYEzIpPov6p--
 
