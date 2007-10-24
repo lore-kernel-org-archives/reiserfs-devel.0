@@ -1,97 +1,64 @@
 From: Dushan Tcholich <dusanc@gmail.com>
-Subject: [PATCH 24/8] forward.h cleanup
-Date: Wed, 24 Oct 2007 14:44:05 +0200
-Message-ID: <1193229845.24225.15.camel@krshina3.gekom>
+Subject: [PATCH 25/8] fsdata.c cleanup
+Date: Wed, 24 Oct 2007 15:04:30 +0200
+Message-ID: <1193231070.24225.20.camel@krshina3.gekom>
 Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-INp45KgI/cn6IBRVLYQK"
+Content-Type: multipart/mixed; boundary="=-4dIqfnokDlkeBmJ5B1+i"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 
---=-INp45KgI/cn6IBRVLYQK
+--=-4dIqfnokDlkeBmJ5B1+i
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-orig:	total: 8 errors, 64 warnings, 252 lines checked
-patched:total: 0 errors, 56 warnings, 256 lines checked
+orig:	total: 5 errors, 0 warnings, 808 lines checked
+patched:total: 3 errors, 0 warnings, 808 lines checked
 
-These 56 warnings are all new typedefs. I'm not good enough to fix it
-correctly.
+1 error is bogus:
+ERROR: need consistent spacing around '*' (ctx:WxB)
+#24: FILE: fsdata.c:24:
++static void kill_cursor(dir_cursor *);
+                                    ^
+and 2 are:
+ERROR: do not initialise statics to 0 or NULL
+#16: FILE: fsdata.c:16:
++static unsigned long d_cursor_unused = 0;
 
---=-INp45KgI/cn6IBRVLYQK
-Content-Disposition: attachment; filename=forward.h.patch
-Content-Type: text/x-patch; name=forward.h.patch; charset=UTF-8
+ERROR: do not initialise statics to 0 or NULL
+#302: FILE: fsdata.c:302:
++static __u32 cid_counter = 0;
+
+
+--=-4dIqfnokDlkeBmJ5B1+i
+Content-Disposition: attachment; filename=fsdata.c.patch
+Content-Type: text/x-patch; name=fsdata.c.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- forward.h.orig	2007-10-24 14:36:29.000000000 +0200
-+++ forward.h	2007-10-24 14:41:25.000000000 +0200
-@@ -1,8 +1,9 @@
--/* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by reiser4/README */
-+/* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by
-+   reiser4/README */
+--- fsdata.c.orig	2007-10-24 14:59:50.000000000 +0200
++++ fsdata.c	2007-10-24 15:02:00.000000000 +0200
+@@ -100,7 +100,7 @@ void reiser4_done_d_cursor(void)
+ #define D_CURSOR_TABLE_SIZE (256)
  
- /* Forward declarations. Thank you Kernighan. */
- 
--#if !defined( __REISER4_FORWARD_H__ )
-+#if !defined(__REISER4_FORWARD_H__)
- #define __REISER4_FORWARD_H__
- 
- #include <asm/errno.h>
-@@ -73,8 +74,10 @@ typedef enum {
- typedef enum {
- 	FILE_NAME_FOUND = 0,
- 	FILE_NAME_NOTFOUND = -ENOENT,
--	FILE_IO_ERROR = -EIO,	/* FIXME: it seems silly to have special OOM, IO_ERROR return codes for each search. */
--	FILE_OOM = -ENOMEM	/* FIXME: it seems silly to have special OOM, IO_ERROR return codes for each search. */
-+	FILE_IO_ERROR = -EIO,	/* FIXME: it seems silly to have special OOM,
-+				   IO_ERROR return codes for each search. */
-+	FILE_OOM = -ENOMEM	/* FIXME: it seems silly to have special OOM,
-+				   IO_ERROR return codes for each search. */
- } file_lookup_result;
- 
- /* behaviors of lookup. If coord we are looking for is actually in a tree,
-@@ -131,9 +134,10 @@ typedef enum {
- 	ZNODE_LOCK_LOPRI = 0,
- 	ZNODE_LOCK_HIPRI = (1 << 0),
- 
--	/* By setting the ZNODE_LOCK_NONBLOCK flag in a lock request the call to longterm_lock_znode will not sleep
--	   waiting for the lock to become available.  If the lock is unavailable, reiser4_znode_lock will immediately
--	   return the value -E_REPEAT. */
-+	/* By setting the ZNODE_LOCK_NONBLOCK flag in a lock request the call to
-+	   longterm_lock_znode will not sleep waiting for the lock to become
-+	   available.  If the lock is unavailable, reiser4_znode_lock will
-+	   immediately return the value -E_REPEAT. */
- 	ZNODE_LOCK_NONBLOCK = (1 << 1),
- 	/* An option for longterm_lock_znode which prevents atom fusion */
- 	ZNODE_LOCK_DONT_FUSE = (1 << 2)
-@@ -152,9 +156,9 @@ typedef enum {
- 	RIGHT_SIDE
- } sideof;
- 
--#define round_up( value, order )						\
--	( ( typeof( value ) )( ( ( long ) ( value ) + ( order ) - 1U ) &	\
--			     ~( ( order ) - 1 ) ) )
-+#define round_up(value, order)						\
-+	((typeof(value))(((long) (value) + (order) - 1U) &	\
-+			     ~((order) - 1)))
- 
- /* values returned by squalloc_right_neighbor and its auxiliary functions */
- typedef enum {
-@@ -182,8 +186,8 @@ typedef enum {
- 	LAST_ITEM_ID = 0x9
- } item_id;
- 
--/* Flags passed to jnode_flush() to allow it to distinguish default settings based on
--   whether commit() was called or VM memory pressure was applied. */
-+/* Flags passed to jnode_flush() to allow it to distinguish default settings
-+   based on whether commit() was called or VM memory pressure was applied. */
- typedef enum {
- 	/* submit flush queue to disk at jnode_flush completion */
- 	JNODE_FLUSH_WRITE_BLOCKS = 1,
+ static inline unsigned long
+-d_cursor_hash(d_cursor_hash_table *table, const struct d_cursor_key *key)
++d_cursor_hash(d_cursor_hash_table * table, const struct d_cursor_key *key)
+ {
+ 	assert("nikita-3555", IS_POW(D_CURSOR_TABLE_SIZE));
+ 	return (key->oid + key->cid) & (D_CURSOR_TABLE_SIZE - 1);
+@@ -243,7 +243,7 @@ static inline struct d_cursor_info *d_in
+ /*
+  * lookup d_cursor in the per-super-block radix tree.
+  */
+-static inline dir_cursor *lookup(struct d_cursor_info * info,
++static inline dir_cursor *lookup(struct d_cursor_info *info,
+ 				 unsigned long index)
+ {
+ 	return (dir_cursor *) radix_tree_lookup(&info->tree, index);
 
---=-INp45KgI/cn6IBRVLYQK--
+--=-4dIqfnokDlkeBmJ5B1+i--
 
