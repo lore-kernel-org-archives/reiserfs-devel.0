@@ -1,64 +1,61 @@
 From: Dushan Tcholich <dusanc@gmail.com>
-Subject: [PATCH 25/8] fsdata.c cleanup
-Date: Wed, 24 Oct 2007 15:04:30 +0200
-Message-ID: <1193231070.24225.20.camel@krshina3.gekom>
+Subject: [PATCH 26/8] fsdata.h cleanup
+Date: Wed, 24 Oct 2007 15:09:34 +0200
+Message-ID: <1193231374.24225.26.camel@krshina3.gekom>
 Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-4dIqfnokDlkeBmJ5B1+i"
+Content-Type: multipart/mixed; boundary="=-63JOgFowHp/3j4c0vK3k"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 
---=-4dIqfnokDlkeBmJ5B1+i
+--=-63JOgFowHp/3j4c0vK3k
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-orig:	total: 5 errors, 0 warnings, 808 lines checked
-patched:total: 3 errors, 0 warnings, 808 lines checked
+orig:	total: 2 errors, 3 warnings, 205 lines checked
+patched:total: 0 errors, 2 warnings, 205 lines checked
 
-1 error is bogus:
-ERROR: need consistent spacing around '*' (ctx:WxB)
-#24: FILE: fsdata.c:24:
-+static void kill_cursor(dir_cursor *);
-                                    ^
-and 2 are:
-ERROR: do not initialise statics to 0 or NULL
-#16: FILE: fsdata.c:16:
-+static unsigned long d_cursor_unused = 0;
+2 warnings are typedefs
 
-ERROR: do not initialise statics to 0 or NULL
-#302: FILE: fsdata.c:302:
-+static __u32 cid_counter = 0;
+WARNING: do not add new typedefs
+#95: FILE: fsdata.h:95:
++typedef struct reiser4_file_fsdata {
 
+WARNING: do not add new typedefs
+#143: FILE: fsdata.h:143:
++typedef struct dir_cursor dir_cursor;
 
---=-4dIqfnokDlkeBmJ5B1+i
-Content-Disposition: attachment; filename=fsdata.c.patch
-Content-Type: text/x-patch; name=fsdata.c.patch; charset=UTF-8
+--=-63JOgFowHp/3j4c0vK3k
+Content-Disposition: attachment; filename=fsdata.h.patch
+Content-Type: text/x-patch; name=fsdata.h.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- fsdata.c.orig	2007-10-24 14:59:50.000000000 +0200
-+++ fsdata.c	2007-10-24 15:02:00.000000000 +0200
-@@ -100,7 +100,7 @@ void reiser4_done_d_cursor(void)
- #define D_CURSOR_TABLE_SIZE (256)
+--- fsdata.h.orig	2007-10-24 15:04:49.000000000 +0200
++++ fsdata.h	2007-10-24 15:07:52.000000000 +0200
+@@ -1,7 +1,7 @@
+ /* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by
+  * reiser4/README */
  
- static inline unsigned long
--d_cursor_hash(d_cursor_hash_table *table, const struct d_cursor_key *key)
-+d_cursor_hash(d_cursor_hash_table * table, const struct d_cursor_key *key)
- {
- 	assert("nikita-3555", IS_POW(D_CURSOR_TABLE_SIZE));
- 	return (key->oid + key->cid) & (D_CURSOR_TABLE_SIZE - 1);
-@@ -243,7 +243,7 @@ static inline struct d_cursor_info *d_in
- /*
-  * lookup d_cursor in the per-super-block radix tree.
-  */
--static inline dir_cursor *lookup(struct d_cursor_info * info,
-+static inline dir_cursor *lookup(struct d_cursor_info *info,
- 				 unsigned long index)
- {
- 	return (dir_cursor *) radix_tree_lookup(&info->tree, index);
+-#if !defined( __REISER4_FSDATA_H__ )
++#if !defined(__REISER4_FSDATA_H__)
+ #define __REISER4_FSDATA_H__
+ 
+ #include "debug.h"
+@@ -78,8 +78,8 @@ struct reiser4_dentry_fsdata {
+ 	 * stat-data.
+ 	 */
+ 	struct de_location dec;
+-	int stateless;		/* created through reiser4_decode_fh, needs special
+-				 * treatment in readdir. */
++	int stateless;		/* created through reiser4_decode_fh, needs
++				 * special treatment in readdir. */
+ };
+ 
+ extern int reiser4_init_dentry_fsdata(void);
 
---=-4dIqfnokDlkeBmJ5B1+i--
+--=-63JOgFowHp/3j4c0vK3k--
 
