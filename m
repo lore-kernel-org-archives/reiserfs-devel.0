@@ -1,110 +1,321 @@
 From: Dushan Tcholich <dusanc@gmail.com>
-Subject: [PATCH 34/8] key.c cleanup
-Date: Thu, 25 Oct 2007 01:31:07 +0200
-Message-ID: <1193268667.24225.64.camel@krshina3.gekom>
+Subject: [PATCH 35/8] key.h cleanup
+Date: Thu, 25 Oct 2007 02:03:02 +0200
+Message-ID: <1193270582.24225.69.camel@krshina3.gekom>
 Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-GkVBxbP2SNh7fcMH19JX"
+Content-Type: multipart/mixed; boundary="=-RbaxIDU2GDTjClKzA/wd"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 
---=-GkVBxbP2SNh7fcMH19JX
+--=-RbaxIDU2GDTjClKzA/wd
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-orig:	total: 7 errors, 5 warnings, 137 lines checked
-patched:total: 2 errors, 4 warnings, 138 lines checked
+orig:	total: 36 errors, 48 warnings, 384 lines checked
+patched:total: 3 errors, 5 warnings, 392 lines checked
 leftover:
 
-I think that these two errors are false:
+WARNING: do not add new typedefs
+#30: FILE: key.h:30:
++typedef enum {
+
+WARNING: do not add new typedefs
+#86: FILE: key.h:86:
++typedef enum {
+
+This is false I think:
 
 ERROR: need space after that ',' (ctx:VxB)
-#18: FILE: key.c:18:
-+               ON_LARGE_KEY(0ull,)
-                                 ^
+#91: FILE: key.h:91:
++       ON_LARGE_KEY(KEY_ORDERING_INDEX,)
+                                       ^
 
-ERROR: need space after that ',' (ctx:VxB)
-#29: FILE: key.c:29:
-+               ON_LARGE_KEY(__constant_cpu_to_le64(~0ull),)
-                                                          ^
+WARNING: do not add new typedefs
+#143: FILE: key.h:143:
++typedef enum {
 
-WARNING: printk() should include KERN_ facility level
-#81: FILE: key.c:81:
-+               printk("%s: null key\n", prefix);
+ERROR: Macros with complex values should be enclosed in parenthesis
+#171: FILE: key.h:171:
++static inline T get_key_ ## L(const reiser4_key *key)          \
 
-WARNING: printk() should include KERN_ facility level
-#84: FILE: key.c:84:
-+                       printk("%s: (%Lx:%x:%Lx:%Lx:%Lx:%Lx)", prefix,
+WARNING: do not add new typedefs
+#201: FILE: key.h:201:
++typedef __u64 oid_t;
 
-WARNING: printk() should include KERN_ facility level
-#118: FILE: key.c:118:
-+                               printk("%s]\n", buf);
+WARNING: do not add new typedefs
+#230: FILE: key.h:230:
++typedef enum { LESS_THAN = -1, /* if first key is less than second */
 
-WARNING: printk() should include KERN_ facility level
-#121: FILE: key.c:121:
-+                       printk("[%s]\n", type_name(get_key_type(key)));
+This is false I think:
+
+ERROR: need consistent spacing around '+' (ctx:WxV)
+#232: FILE: key.h:232:
++       GREATER_THAN = +1       /* if first key is greater than second
+*/
+                       ^
 
 
 
---=-GkVBxbP2SNh7fcMH19JX
-Content-Disposition: attachment; filename=key.c.patch
-Content-Type: text/x-patch; name=key.c.patch; charset=UTF-8
+--=-RbaxIDU2GDTjClKzA/wd
+Content-Disposition: attachment; filename=key.h.patch
+Content-Type: text/x-patch; name=key.h.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- key.c.orig	2007-10-25 01:25:27.000000000 +0200
-+++ key.c	2007-10-25 01:28:52.000000000 +0200
-@@ -1,4 +1,5 @@
--/* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by reiser4/README */
-+/* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by
+--- key.h.orig	2007-10-25 01:45:52.000000000 +0200
++++ key.h	2007-10-25 01:59:22.000000000 +0200
+@@ -1,8 +1,9 @@
+-/* Copyright 2000, 2001, 2002, 2003 by Hans Reiser, licensing governed by reiser4/README */
++/* Copyright 2000, 2001, 2002, 2003 by Hans Reiser, licensing governed by
 + * reiser4/README */
  
- /* Key manipulations. */
+ /* Declarations of key-related data-structures and operations on keys. */
  
-@@ -32,27 +33,27 @@ static const reiser4_key MAXIMAL_KEY = {
- };
+-#if !defined( __REISER4_KEY_H__ )
++#if !defined(__REISER4_KEY_H__)
+ #define __REISER4_KEY_H__
  
- /* Initialize key. */
--void reiser4_key_init(reiser4_key * key /* key to init */ )
-+void reiser4_key_init(reiser4_key * key/* key to init */)
- {
- 	assert("nikita-1169", key != NULL);
- 	memset(key, 0, sizeof *key);
+ #include "dformat.h"
+@@ -15,13 +16,15 @@
+ 
+ /* No access to any of these fields shall be done except via a
+    wrapping macro/function, and that wrapping macro/function shall
+-   convert to little endian order.  Compare keys will consider cpu byte order. */
++   convert to little endian order. Compare keys will consider cpu byte order. */
+ 
+-/* A storage layer implementation difference between a regular unix file body and its attributes is in the typedef below
+-   which causes all of the attributes of a file to be near in key to all of the other attributes for all of the files
+-   within that directory, and not near to the file itself.  It is interesting to consider whether this is the wrong
+-   approach, and whether there should be no difference at all. For current usage patterns this choice is probably the
+-   right one.  */
++/* A storage layer implementation difference between a regular unix file body
++   and its attributes is in the typedef below which causes all of the attributes
++   of a file to be near in key to all of the other attributes for all of the
++   files within that directory, and not near to the file itself. It is
++   interesting to consider whether this is the wrong approach, and whether there
++   should be no difference at all. For current usage patterns this choice is
++   probably the right one.  */
+ 
+ /* possible values for minor packing locality (4 bits required) */
+ typedef enum {
+@@ -37,16 +40,21 @@ typedef enum {
+ 	KEY_BODY_MINOR = 4,
+ } key_minor_locality;
+ 
+-/* everything stored in the tree has a unique key, which means that the tree is (logically) fully ordered by key.
+-   Physical order is determined by dynamic heuristics that attempt to reflect key order when allocating available space,
+-   and by the repacker.  It is stylistically better to put aggregation information into the key.  Thus, if you want to
+-   segregate extents from tails, it is better to give them distinct minor packing localities rather than changing
+-   block_alloc.c to check the node type when deciding where to allocate the node.
+-
+-   The need to randomly displace new directories and large files disturbs this symmetry unfortunately.  However, it
+-   should be noted that this is a need that is not clearly established given the existence of a repacker.  Also, in our
+-   current implementation tails have a different minor packing locality from extents, and no files have both extents and
+-   tails, so maybe symmetry can be had without performance cost after all.  Symmetry is what we ship for now....
++/* Everything stored in the tree has a unique key, which means that the tree is
++   (logically) fully ordered by key. Physical order is determined by dynamic
++   heuristics that attempt to reflect key order when allocating available space,
++   and by the repacker. It is stylistically better to put aggregation
++   information into the key. Thus, if you want to segregate extents from tails,
++   it is better to give them distinct minor packing localities rather than
++   changing block_alloc.c to check the node type when deciding where to allocate
++   the node.
++
++   The need to randomly displace new directories and large files disturbs this
++   symmetry unfortunately. However, it should be noted that this is a need that
++   is not clearly established given the existence of a repacker. Also, in our
++   current implementation tails have a different minor packing locality from
++   extents, and no files have both extents and tails, so maybe symmetry can be
++   had without performance cost after all. Symmetry is what we ship for now....
+ */
+ 
+ /* Arbitrary major packing localities can be assigned to objects using
+@@ -130,7 +138,8 @@ union reiser4_key {
+ /* ordering is whole second element */
+ #define KEY_ORDERING_MASK 0xffffffffffffffffull
+ 
+-/* how many bits key element should be shifted to left to get particular field */
++/* how many bits key element should be shifted to left to get particular field
++ */
+ typedef enum {
+ 	KEY_LOCALITY_SHIFT = 4,
+ 	KEY_TYPE_SHIFT = 0,
+@@ -158,21 +167,21 @@ set_key_el(reiser4_key * key, reiser4_ke
  }
  
- /* minimal possible key in the tree. Return pointer to the static storage. */
--const reiser4_key *reiser4_min_key(void)
-+const reiser4_key * reiser4_min_key(void)
- {
- 	return &MINIMAL_KEY;
+ /* macro to define getter and setter functions for field F with type T */
+-#define DEFINE_KEY_FIELD( L, U, T )					\
+-static inline T get_key_ ## L ( const reiser4_key *key )		\
++#define DEFINE_KEY_FIELD(L, U, T)					\
++static inline T get_key_ ## L(const reiser4_key *key)		\
+ {									\
+-	assert( "nikita-750", key != NULL );				\
+-	return ( T ) ( get_key_el( key, KEY_ ## U ## _INDEX ) &		\
+-		 KEY_ ## U ## _MASK ) >> KEY_ ## U ## _SHIFT;		\
++	assert("nikita-750", key != NULL);				\
++	return (T) (get_key_el(key, KEY_ ## U ## _INDEX) &		\
++		 KEY_ ## U ## _MASK) >> KEY_ ## U ## _SHIFT;		\
+ }									\
+ 									\
+-static inline void set_key_ ## L ( reiser4_key *key, T loc )		\
++static inline void set_key_ ## L(reiser4_key * key, T loc)		\
+ {									\
+ 	__u64 el;							\
+ 									\
+-	assert( "nikita-752", key != NULL );				\
++	assert("nikita-752", key != NULL);				\
+ 									\
+-	el = get_key_el( key, KEY_ ## U ## _INDEX );			\
++	el = get_key_el(key, KEY_ ## U ## _INDEX);			\
+ 	/* clear field bits in the key */				\
+ 	el &= ~KEY_ ## U ## _MASK;					\
+ 	/* actually it should be					\
+@@ -183,10 +192,10 @@ static inline void set_key_ ## L ( reise
+ 	   into field. Clearing extra bits is one operation, but this	\
+ 	   function is time-critical.					\
+ 	   But check this in assertion. */				\
+-	assert( "nikita-759", ( ( loc << KEY_ ## U ## _SHIFT ) &	\
+-		~KEY_ ## U ## _MASK ) == 0 );				\
+-	el |= ( loc << KEY_ ## U ## _SHIFT );				\
+-	set_key_el( key, KEY_ ## U ## _INDEX, el );			\
++	assert("nikita-759", ((loc << KEY_ ## U ## _SHIFT) &	\
++		~KEY_ ## U ## _MASK) == 0);				\
++	el |= (loc << KEY_ ## U ## _SHIFT);				\
++	set_key_el(key, KEY_ ## U ## _INDEX, el);			\
  }
  
- /* maximum possible key in the tree. Return pointer to the static storage. */
--const reiser4_key *reiser4_max_key(void)
-+const reiser4_key * reiser4_max_key(void)
+ typedef __u64 oid_t;
+@@ -230,34 +239,34 @@ extern const reiser4_key *reiser4_min_ke
+ extern const reiser4_key *reiser4_max_key(void);
+ 
+ /* helper macro for keycmp() */
+-#define KEY_DIFF(k1, k2, field)							\
+-({										\
+-	typeof (get_key_ ## field (k1)) f1;                              	\
+-	typeof (get_key_ ## field (k2)) f2;					\
+-										\
+-	f1 = get_key_ ## field (k1);						\
+-	f2 = get_key_ ## field (k2);						\
+-										\
+-	(f1 < f2) ? LESS_THAN : ((f1 == f2) ? EQUAL_TO : GREATER_THAN);		\
++#define KEY_DIFF(k1, k2, field)						\
++({									\
++	typeof(get_key_ ## field(k1)) f1;                             \
++	typeof(get_key_ ## field(k2)) f2;				\
++									\
++	f1 = get_key_ ## field(k1);					\
++	f2 = get_key_ ## field(k2);					\
++									\
++	(f1 < f2) ? LESS_THAN : ((f1 == f2) ? EQUAL_TO : GREATER_THAN);	\
+ })
+ 
+ /* helper macro for keycmp() */
+-#define KEY_DIFF_EL(k1, k2, off)						\
+-({										\
+-	__u64 e1;								\
+-	__u64 e2;								\
+-										\
+-	e1 = get_key_el(k1, off);						\
+-	e2 = get_key_el(k2, off);						\
+-										\
+-	(e1 < e2) ? LESS_THAN : ((e1 == e2) ? EQUAL_TO : GREATER_THAN);		\
++#define KEY_DIFF_EL(k1, k2, off)					\
++({									\
++	__u64 e1;							\
++	__u64 e2;							\
++									\
++	e1 = get_key_el(k1, off);					\
++	e2 = get_key_el(k2, off);					\
++									\
++	(e1 < e2) ? LESS_THAN : ((e1 == e2) ? EQUAL_TO : GREATER_THAN);	\
+ })
+ 
+ /* compare `k1' and `k2'.  This function is a heart of "key allocation
+     policy". All you need to implement new policy is to add yet another
+     clause here. */
+ static inline cmp_t keycmp(const reiser4_key * k1 /* first key to compare */ ,
+-			   const reiser4_key * k2 /* second key to compare */ )
++			   const reiser4_key * k2/* second key to compare */)
  {
- 	return &MAXIMAL_KEY;
+ 	cmp_t result;
+ 
+@@ -287,9 +296,8 @@ static inline cmp_t keycmp(const reiser4
+ 			/* compare offset */
+ 			if (result == EQUAL_TO) {
+ 				result = KEY_DIFF_EL(k1, k2, 2);
+-				if (REISER4_LARGE_KEY && result == EQUAL_TO) {
++				if (REISER4_LARGE_KEY && result == EQUAL_TO)
+ 					result = KEY_DIFF_EL(k1, k2, 3);
+-				}
+ 			}
+ 		}
+ 	} else if (REISER4_3_5_KEY_ALLOCATION) {
+@@ -309,7 +317,7 @@ static inline cmp_t keycmp(const reiser4
+ 
+ /* true if @k1 equals @k2 */
+ static inline int keyeq(const reiser4_key * k1 /* first key to compare */ ,
+-			const reiser4_key * k2 /* second key to compare */ )
++			const reiser4_key * k2/* second key to compare */)
+ {
+ 	assert("nikita-1879", k1 != NULL);
+ 	assert("nikita-1880", k2 != NULL);
+@@ -318,7 +326,7 @@ static inline int keyeq(const reiser4_ke
+ 
+ /* true if @k1 is less than @k2 */
+ static inline int keylt(const reiser4_key * k1 /* first key to compare */ ,
+-			const reiser4_key * k2 /* second key to compare */ )
++			const reiser4_key * k2/* second key to compare */)
+ {
+ 	assert("nikita-1952", k1 != NULL);
+ 	assert("nikita-1953", k2 != NULL);
+@@ -327,7 +335,7 @@ static inline int keylt(const reiser4_ke
+ 
+ /* true if @k1 is less than or equal to @k2 */
+ static inline int keyle(const reiser4_key * k1 /* first key to compare */ ,
+-			const reiser4_key * k2 /* second key to compare */ )
++			const reiser4_key * k2/* second key to compare */)
+ {
+ 	assert("nikita-1954", k1 != NULL);
+ 	assert("nikita-1955", k2 != NULL);
+@@ -336,7 +344,7 @@ static inline int keyle(const reiser4_ke
+ 
+ /* true if @k1 is greater than @k2 */
+ static inline int keygt(const reiser4_key * k1 /* first key to compare */ ,
+-			const reiser4_key * k2 /* second key to compare */ )
++			const reiser4_key * k2/* second key to compare */)
+ {
+ 	assert("nikita-1959", k1 != NULL);
+ 	assert("nikita-1960", k2 != NULL);
+@@ -345,7 +353,7 @@ static inline int keygt(const reiser4_ke
+ 
+ /* true if @k1 is greater than or equal to @k2 */
+ static inline int keyge(const reiser4_key * k1 /* first key to compare */ ,
+-			const reiser4_key * k2 /* second key to compare */ )
++			const reiser4_key * k2/* second key to compare */)
+ {
+ 	assert("nikita-1956", k1 != NULL);
+ 	assert("nikita-1957", k2 != NULL);	/* October  4: sputnik launched
+@@ -360,14 +368,14 @@ static inline void prefetchkey(reiser4_k
  }
+ 
+ /* (%Lx:%x:%Lx:%Lx:%Lx:%Lx) =
+-           1 + 16 + 1 + 1 + 1 + 1 + 1 + 16 + 1 + 16 + 1 + 16 + 1 */
++	1 + 16 + 1 + 1 + 1 + 1 + 1 + 16 + 1 + 16 + 1 + 16 + 1 */
+ /* size of a buffer suitable to hold human readable key representation */
+ #define KEY_BUF_LEN (80)
  
  #if REISER4_DEBUG
- /* debugging aid: print symbolic name of key type */
--static const char *type_name(unsigned int key_type /* key type */ )
-+static const char *type_name(unsigned int key_type/* key type */)
- {
- 	switch (key_type) {
- 	case KEY_FILE_NAME_MINOR:
-@@ -72,7 +73,7 @@ static const char *type_name(unsigned in
+ extern void reiser4_print_key(const char *prefix, const reiser4_key * key);
+ #else
+-#define reiser4_print_key(p,k) noop
++#define reiser4_print_key(p, k) noop
+ #endif
  
- /* debugging aid: print human readable information about key */
- void reiser4_print_key(const char *prefix /* prefix to print */ ,
--	       const reiser4_key * key /* key to print */ )
-+	       const reiser4_key * key/* key to print */)
- {
- 	/* turn bold on */
- 	/* printf ("\033[1m"); */
+ /* __FS_REISERFS_KEY_H__ */
 
---=-GkVBxbP2SNh7fcMH19JX--
+--=-RbaxIDU2GDTjClKzA/wd--
 
