@@ -1,80 +1,153 @@
 From: Dushan Tcholich <dusanc@gmail.com>
-Subject: [PATCH 54/8] super.h cleanup
-Date: Thu, 25 Oct 2007 18:50:35 +0200
-Message-ID: <1193331035.15901.82.camel@krshina3.gekom>
+Subject: [PATCH 55/8] super_ops.c cleanup
+Date: Thu, 25 Oct 2007 18:58:42 +0200
+Message-ID: <1193331522.15901.87.camel@krshina3.gekom>
 Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-cUscG7pmGeF+yvcdLciB"
+Content-Type: multipart/mixed; boundary="=-LQKnnboqATlC7w/jvFWb"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 
---=-cUscG7pmGeF+yvcdLciB
+--=-LQKnnboqATlC7w/jvFWb
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-orig:	total: 7 errors, 2 warnings, 464 lines checked
-patched:total: 0 errors, 1 warnings, 464 lines checked
-leftover:
+orig:	total: 23 errors, 3 warnings, 725 lines checked
+patched:total: 21 errors, 1 warnings, 726 lines checked
+leftovers:
 
-WARNING: do not add new typedefs
-#26: FILE: super.h:26:
-+typedef enum {
+ERROR: do not initialise statics to 0 or NULL
+#19: FILE: super_ops.c:19:
++static struct dentry *reiser4_debugfs_root = NULL;
+
+ERROR: do not use assignment in if condition
+#486: FILE: super_ops.c:486:
++       if ((result = reiser4_init_fs_info(super)) != 0)
+
+ERROR: do not use assignment in if condition
+#491: FILE: super_ops.c:491:
++       if ((result = reiser4_init_super_data(super, data)) != 0)
+
+ERROR: do not use assignment in if condition
+#495: FILE: super_ops.c:495:
++       if ((result = reiser4_init_read_super(super, silent)) != 0)
+
+ERROR: do not use assignment in if condition
+#502: FILE: super_ops.c:502:
++       if ((result = reiser4_init_ktxnmgrd(super)) != 0)
+
+ERROR: do not use assignment in if condition
+#506: FILE: super_ops.c:506:
++       if ((result = reiser4_init_entd(super)) != 0)
+
+ERROR: do not use assignment in if condition
+#510: FILE: super_ops.c:510:
++       if ((result = reiser4_init_formatted_fake(super)) != 0)
+
+ERROR: do not use assignment in if condition
+#514: FILE: super_ops.c:514:
++       if ((result =
+get_super_private(super)->df_plug->init_format(super,
+
+ERROR: do not use assignment in if condition
+#527: FILE: super_ops.c:527:
++       if ((result = reiser4_init_root_inode(super)) != 0)
+
+WARNING: line over 80 characters
+#530: FILE: super_ops.c:530:
++       if ((result =
+get_super_private(super)->df_plug->version_update(super)) != 0)
+
+ERROR: do not use assignment in if condition
+#530: FILE: super_ops.c:530:
++       if ((result =
+get_super_private(super)->df_plug->version_update(super)) != 0)
+
+ERROR: do not use assignment in if condition
+#617: FILE: super_ops.c:617:
++       if ((result = init_inodes()) != 0)
+
+ERROR: do not use assignment in if condition
+#621: FILE: super_ops.c:621:
++       if ((result = init_znodes()) != 0)
+
+ERROR: do not use assignment in if condition
+#625: FILE: super_ops.c:625:
++       if ((result = init_plugins()) != 0)
+
+ERROR: do not use assignment in if condition
+#629: FILE: super_ops.c:629:
++       if ((result = init_plugin_set()) != 0)
+
+ERROR: do not use assignment in if condition
+#633: FILE: super_ops.c:633:
++       if ((result = init_txnmgr_static()) != 0)
+
+ERROR: do not use assignment in if condition
+#637: FILE: super_ops.c:637:
++       if ((result = init_jnodes()) != 0)
+
+ERROR: do not use assignment in if condition
+#641: FILE: super_ops.c:641:
++       if ((result = reiser4_init_fqs()) != 0)
+
+ERROR: do not use assignment in if condition
+#645: FILE: super_ops.c:645:
++       if ((result = reiser4_init_dentry_fsdata()) != 0)
+
+ERROR: do not use assignment in if condition
+#649: FILE: super_ops.c:649:
++       if ((result = reiser4_init_file_fsdata()) != 0)
+
+ERROR: do not use assignment in if condition
+#656: FILE: super_ops.c:656:
++       if ((result = reiser4_init_d_cursor()) != 0)
+
+ERROR: do not use assignment in if condition
+#659: FILE: super_ops.c:659:
++       if ((result = register_filesystem(&reiser4_fs_type)) == 0) {
 
 
 
-
---=-cUscG7pmGeF+yvcdLciB
-Content-Disposition: attachment; filename=super.h.patch
-Content-Type: text/x-patch; name=super.h.patch; charset=UTF-8
+--=-LQKnnboqATlC7w/jvFWb
+Content-Disposition: attachment; filename=super_ops.c.patch
+Content-Type: text/x-patch; name=super_ops.c.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- super.h.orig	2007-10-25 17:36:25.000000000 +0200
-+++ super.h	2007-10-25 17:40:30.000000000 +0200
-@@ -3,7 +3,7 @@
- 
- /* Super-block functions. See super.c for details. */
- 
--#if !defined( __REISER4_SUPER_H__ )
-+#if !defined(__REISER4_SUPER_H__)
- #define __REISER4_SUPER_H__
- 
- #include "tree.h"
-@@ -297,11 +297,11 @@ struct reiser4_super_info_data {
- };
- 
- extern reiser4_super_info_data *get_super_private_nocheck(const struct
--							  super_block *super);
-+							  super_block * super);
- 
- /* Return reiser4-specific part of super block */
- static inline reiser4_super_info_data *get_super_private(const struct
--							 super_block *super)
-+							 super_block * super)
+--- super_ops.c.orig	2007-10-25 18:51:49.000000000 +0200
++++ super_ops.c	2007-10-25 18:55:28.000000000 +0200
+@@ -55,7 +55,7 @@ static void init_once(void *obj, struct 
+ /**
+  * init_inodes - create znode cache
+  *
+- * Initializes slab cache of inodes. It is part of reiser4 module initialization.
++ * Initializes slab cache of inodes. It is part of reiser4 module initialization
+  */
+ static int init_inodes(void)
  {
- 	assert("nikita-447", super != NULL);
+@@ -511,7 +511,8 @@ static int fill_super(struct super_block
+ 		goto failed_init_formatted_fake;
  
-@@ -368,7 +368,7 @@ static inline int rofs_jnode(jnode * nod
+ 	/* initialize disk format plugin */
+-	if ((result = get_super_private(super)->df_plug->init_format(super, data)) != 0 )
++	if ((result = get_super_private(super)->df_plug->init_format(super,
++								    data)) != 0)
+ 		goto failed_init_disk_format;
  
- extern __u64 reiser4_current_block_count(void);
+ 	/*
+@@ -526,7 +527,7 @@ static int fill_super(struct super_block
+ 	if ((result = reiser4_init_root_inode(super)) != 0)
+ 		goto failed_init_root_inode;
  
--extern void build_object_ops(struct super_block *super, struct object_ops * ops);
-+extern void build_object_ops(struct super_block *super, struct object_ops *ops);
+-	if ((result = get_super_private(super)->df_plug->version_update(super)) != 0 )
++	if ((result = get_super_private(super)->df_plug->version_update(super)) != 0)
+ 		goto failed_update_format_version;
  
- #define REISER4_SUPER_MAGIC 0x52345362	/* (*(__u32 *)"R4Sb"); */
- 
-@@ -431,7 +431,7 @@ extern reiser4_plugin *get_default_plugi
- /* Maximal possible object id. */
- #define  ABSOLUTE_MAX_OID ((oid_t)~0)
- 
--#define OIDS_RESERVED  ( 1 << 16 )
-+#define OIDS_RESERVED  (1 << 16)
- int oid_init_allocator(struct super_block *, oid_t nr_files, oid_t next);
- oid_t oid_allocate(struct super_block *);
- int oid_release(struct super_block *, oid_t);
+ 	process_safelinks(super);
 
---=-cUscG7pmGeF+yvcdLciB--
+--=-LQKnnboqATlC7w/jvFWb--
 
