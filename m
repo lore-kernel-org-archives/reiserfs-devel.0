@@ -1,66 +1,109 @@
 From: Dushan Tcholich <dusanc@gmail.com>
-Subject: [PATCH 43/8] pool.h cleanup
-Date: Thu, 25 Oct 2007 16:03:56 +0200
-Message-ID: <1193321036.15901.31.camel@krshina3.gekom>
+Subject: [PATCH 44/8] readahead.c cleanup
+Date: Thu, 25 Oct 2007 16:09:43 +0200
+Message-ID: <1193321383.15901.34.camel@krshina3.gekom>
 Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-7sYfVWUGG6yukscf0db7"
+Content-Type: multipart/mixed; boundary="=-sW3vOWD+a0EuWmfTLQe6"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 
---=-7sYfVWUGG6yukscf0db7
+--=-sW3vOWD+a0EuWmfTLQe6
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-orig:	total: 6 errors, 2 warnings, 56 lines checked
-patched:total: 0 errors, 1 warnings, 57 lines checked
-leftover:
-
-WARNING: do not add new typedefs
-#27: FILE: pool.h:27:
-+typedef enum {
+orig:	total: 5 errors, 4 warnings, 138 lines checked
+patched:Your patch has no obvious style problems and is ready for
+submission.
 
 
-
-
---=-7sYfVWUGG6yukscf0db7
-Content-Disposition: attachment; filename=pool.h.patch
-Content-Type: text/x-patch; name=pool.h.patch; charset=UTF-8
+--=-sW3vOWD+a0EuWmfTLQe6
+Content-Disposition: attachment; filename=readahead.c.patch
+Content-Type: text/x-patch; name=readahead.c.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- pool.h.orig	2007-10-25 16:00:35.000000000 +0200
-+++ pool.h	2007-10-25 16:02:16.000000000 +0200
-@@ -1,4 +1,5 @@
--/* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by reiser4/README */
-+/* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by
-+ * reiser4/README */
+--- readahead.c.orig	2007-10-25 16:04:37.000000000 +0200
++++ readahead.c	2007-10-25 16:08:13.000000000 +0200
+@@ -11,20 +11,22 @@
  
- /* Fast pool allocation */
+ #include <linux/swap.h>		/* for totalram_pages */
  
-@@ -32,13 +33,13 @@ typedef enum {
+-void reiser4_init_ra_info(ra_info_t * rai)
++void reiser4_init_ra_info(ra_info_t *rai)
+ {
+ 	rai->key_to_stop = *reiser4_min_key();
+ }
  
- /* pool manipulation functions */
+-/* global formatted node readahead parameter. It can be set by mount option -o readahead:NUM:1 */
++/* global formatted node readahead parameter. It can be set by mount option
++ * -o readahead:NUM:1 */
+ static inline int ra_adjacent_only(int flags)
+ {
+ 	return flags & RA_ADJACENT_ONLY;
+ }
  
--extern void reiser4_init_pool(struct reiser4_pool * pool, size_t obj_size,
-+extern void reiser4_init_pool(struct reiser4_pool *pool, size_t obj_size,
- 			      int num_of_objs, char *data);
--extern void reiser4_done_pool(struct reiser4_pool * pool);
--extern void reiser4_pool_free(struct reiser4_pool * pool,
--			      struct reiser4_pool_header * h);
--struct reiser4_pool_header *reiser4_add_obj(struct reiser4_pool * pool,
--					 struct list_head * list,
-+extern void reiser4_done_pool(struct reiser4_pool *pool);
-+extern void reiser4_pool_free(struct reiser4_pool *pool,
-+			      struct reiser4_pool_header *h);
-+struct reiser4_pool_header *reiser4_add_obj(struct reiser4_pool *pool,
-+					 struct list_head *list,
- 					 pool_ordering order,
- 					 struct reiser4_pool_header *reference);
+-/* this is used by formatted_readahead to decide whether read for right neighbor of node is to be issued. It returns 1
+-   if right neighbor's first key is less or equal to readahead's stop key */
+-static int should_readahead_neighbor(znode * node, ra_info_t * info)
++/* this is used by formatted_readahead to decide whether read for right neighbor
++ * of node is to be issued. It returns 1 if right neighbor's first key is less
++ * or equal to readahead's stop key */
++static int should_readahead_neighbor(znode * node, ra_info_t *info)
+ {
+ 	int result;
+ 
+@@ -45,7 +47,7 @@ static int low_on_memory(void)
+ }
+ 
+ /* start read for @node and for a few of its right neighbors */
+-void formatted_readahead(znode * node, ra_info_t * info)
++void formatted_readahead(znode * node, ra_info_t *info)
+ {
+ 	struct formatted_ra_params *ra_params;
+ 	znode *cur;
+@@ -53,7 +55,8 @@ void formatted_readahead(znode * node, r
+ 	int grn_flags;
+ 	lock_handle next_lh;
+ 
+-	/* do nothing if node block number has not been assigned to node (which means it is still in cache). */
++	/* do nothing if node block number has not been assigned to node (which
++	 * means it is still in cache). */
+ 	if (reiser4_blocknr_is_fake(znode_get_block(node)))
+ 		return;
+ 
+@@ -78,7 +81,7 @@ void formatted_readahead(znode * node, r
+ 	cur = zref(node);
+ 	init_lh(&next_lh);
+ 	while (i < ra_params->max) {
+-		const reiser4_block_nr *nextblk;
++		const reiser4_block_nr * nextblk;
+ 
+ 		if (!should_readahead_neighbor(cur, info))
+ 			break;
+@@ -90,9 +93,8 @@ void formatted_readahead(znode * node, r
+ 		nextblk = znode_get_block(next_lh.node);
+ 		if (reiser4_blocknr_is_fake(nextblk) ||
+ 		    (ra_adjacent_only(ra_params->flags)
+-		     && *nextblk != *znode_get_block(cur) + 1)) {
++		     && *nextblk != *znode_get_block(cur) + 1))
+ 			break;
+-		}
+ 
+ 		zput(cur);
+ 		cur = zref(next_lh.node);
+@@ -110,7 +112,7 @@ void formatted_readahead(znode * node, r
+ 	done_lh(&next_lh);
+ }
+ 
+-void reiser4_readdir_readahead_init(struct inode *dir, tap_t * tap)
++void reiser4_readdir_readahead_init(struct inode *dir, tap_t *tap)
+ {
+ 	reiser4_key *stop_key;
  
 
---=-7sYfVWUGG6yukscf0db7--
+--=-sW3vOWD+a0EuWmfTLQe6--
 
