@@ -1,109 +1,69 @@
 From: Dushan Tcholich <dusanc@gmail.com>
-Subject: [PATCH 44/8] readahead.c cleanup
-Date: Thu, 25 Oct 2007 16:09:43 +0200
-Message-ID: <1193321383.15901.34.camel@krshina3.gekom>
+Subject: [PATCH 45/8] readahead.h cleanup
+Date: Thu, 25 Oct 2007 16:13:38 +0200
+Message-ID: <1193321618.15901.38.camel@krshina3.gekom>
 Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-sW3vOWD+a0EuWmfTLQe6"
+Content-Type: multipart/mixed; boundary="=-280ggQ8/O2IvtdhVEoLl"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 
---=-sW3vOWD+a0EuWmfTLQe6
+--=-280ggQ8/O2IvtdhVEoLl
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-orig:	total: 5 errors, 4 warnings, 138 lines checked
-patched:Your patch has no obvious style problems and is ready for
-submission.
+orig:	total: 3 errors, 3 warnings, 51 lines checked
+patched:total: 0 errors, 2 warnings, 52 lines checked
+leftover:
+
+WARNING: do not add new typedefs
+#9: FILE: readahead.h:9:
++typedef enum {
+
+WARNING: do not add new typedefs
+#22: FILE: readahead.h:22:
++typedef struct {
 
 
---=-sW3vOWD+a0EuWmfTLQe6
-Content-Disposition: attachment; filename=readahead.c.patch
-Content-Type: text/x-patch; name=readahead.c.patch; charset=UTF-8
+
+--=-280ggQ8/O2IvtdhVEoLl
+Content-Disposition: attachment; filename=readahead.h.patch
+Content-Type: text/x-patch; name=readahead.h.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- readahead.c.orig	2007-10-25 16:04:37.000000000 +0200
-+++ readahead.c	2007-10-25 16:08:13.000000000 +0200
-@@ -11,20 +11,22 @@
+--- readahead.h.orig	2007-10-25 16:10:17.000000000 +0200
++++ readahead.h	2007-10-25 16:12:06.000000000 +0200
+@@ -1,4 +1,5 @@
+-/* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by reiser4/README */
++/* Copyright 2001, 2002, 2003 by Hans Reiser, licensing governed by
++ * reiser4/README */
  
- #include <linux/swap.h>		/* for totalram_pages */
+ #ifndef __READAHEAD_H__
+ #define __READAHEAD_H__
+@@ -22,8 +23,8 @@ typedef struct {
+ 	reiser4_key key_to_stop;
+ } ra_info_t;
  
--void reiser4_init_ra_info(ra_info_t * rai)
-+void reiser4_init_ra_info(ra_info_t *rai)
- {
- 	rai->key_to_stop = *reiser4_min_key();
- }
+-void formatted_readahead(znode *, ra_info_t *);
+-void reiser4_init_ra_info(ra_info_t * rai);
++void formatted_readahead(znode * , ra_info_t *);
++void reiser4_init_ra_info(ra_info_t *rai);
  
--/* global formatted node readahead parameter. It can be set by mount option -o readahead:NUM:1 */
-+/* global formatted node readahead parameter. It can be set by mount option
-+ * -o readahead:NUM:1 */
- static inline int ra_adjacent_only(int flags)
- {
- 	return flags & RA_ADJACENT_ONLY;
- }
+ struct reiser4_file_ra_state {
+ 	loff_t start;		/* Current window */
+@@ -35,7 +36,7 @@ struct reiser4_file_ra_state {
+ 	loff_t slow_start;	/* enlarging r/a size algorithm. */
+ };
  
--/* this is used by formatted_readahead to decide whether read for right neighbor of node is to be issued. It returns 1
--   if right neighbor's first key is less or equal to readahead's stop key */
--static int should_readahead_neighbor(znode * node, ra_info_t * info)
-+/* this is used by formatted_readahead to decide whether read for right neighbor
-+ * of node is to be issued. It returns 1 if right neighbor's first key is less
-+ * or equal to readahead's stop key */
-+static int should_readahead_neighbor(znode * node, ra_info_t *info)
- {
- 	int result;
+-extern void reiser4_readdir_readahead_init(struct inode *dir, tap_t * tap);
++extern void reiser4_readdir_readahead_init(struct inode *dir, tap_t *tap);
  
-@@ -45,7 +47,7 @@ static int low_on_memory(void)
- }
- 
- /* start read for @node and for a few of its right neighbors */
--void formatted_readahead(znode * node, ra_info_t * info)
-+void formatted_readahead(znode * node, ra_info_t *info)
- {
- 	struct formatted_ra_params *ra_params;
- 	znode *cur;
-@@ -53,7 +55,8 @@ void formatted_readahead(znode * node, r
- 	int grn_flags;
- 	lock_handle next_lh;
- 
--	/* do nothing if node block number has not been assigned to node (which means it is still in cache). */
-+	/* do nothing if node block number has not been assigned to node (which
-+	 * means it is still in cache). */
- 	if (reiser4_blocknr_is_fake(znode_get_block(node)))
- 		return;
- 
-@@ -78,7 +81,7 @@ void formatted_readahead(znode * node, r
- 	cur = zref(node);
- 	init_lh(&next_lh);
- 	while (i < ra_params->max) {
--		const reiser4_block_nr *nextblk;
-+		const reiser4_block_nr * nextblk;
- 
- 		if (!should_readahead_neighbor(cur, info))
- 			break;
-@@ -90,9 +93,8 @@ void formatted_readahead(znode * node, r
- 		nextblk = znode_get_block(next_lh.node);
- 		if (reiser4_blocknr_is_fake(nextblk) ||
- 		    (ra_adjacent_only(ra_params->flags)
--		     && *nextblk != *znode_get_block(cur) + 1)) {
-+		     && *nextblk != *znode_get_block(cur) + 1))
- 			break;
--		}
- 
- 		zput(cur);
- 		cur = zref(next_lh.node);
-@@ -110,7 +112,7 @@ void formatted_readahead(znode * node, r
- 	done_lh(&next_lh);
- }
- 
--void reiser4_readdir_readahead_init(struct inode *dir, tap_t * tap)
-+void reiser4_readdir_readahead_init(struct inode *dir, tap_t *tap)
- {
- 	reiser4_key *stop_key;
- 
+ /* __READAHEAD_H__ */
+ #endif
 
---=-sW3vOWD+a0EuWmfTLQe6--
+--=-280ggQ8/O2IvtdhVEoLl--
 
