@@ -1,292 +1,218 @@
 From: Dushan Tcholich <dusanc@gmail.com>
-Subject: [PATCH 59/8] plugin/cluster.h cleanup
-Date: Thu, 25 Oct 2007 21:00:25 +0200
-Message-ID: <1193338825.15901.104.camel@krshina3.gekom>
+Subject: [PATCH 60/8] plugin/dir_plugin_common.c cleanup
+Date: Thu, 25 Oct 2007 21:14:53 +0200
+Message-ID: <1193339693.15901.108.camel@krshina3.gekom>
 Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-VzKmvDKmqslAbhh1GKnK"
+Content-Type: multipart/mixed; boundary="=-Hs6KnuuYiKGkxjVbwKsF"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 
---=-VzKmvDKmqslAbhh1GKnK
+--=-Hs6KnuuYiKGkxjVbwKsF
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-orig:	total: 49 errors, 3 warnings, 399 lines checked
-patched:Your patch has no obvious style problems and is ready for
-submission.
+orig:	total: 20 errors, 5 warnings, 872 lines checked
+patched:total: 3 errors, 0 warnings, 873 lines checked
+leftover:
+
+ERROR: need consistent spacing around '*' (ctx:WxB)
+#11: FILE: dir_plugin_common.c:11:
++              lock_handle * , znode_lock_mode, reiser4_dir_entry_desc
+*);
+                                                                       ^
+
+ERROR: need consistent spacing around '+' (ctx:WxV)
+#167: FILE: dir_plugin_common.c:167:
++                                               fsdata->dec.pos + 1,
++1);
+                                                                     ^
+
+ERROR: Invalid UTF-8
+#358: FILE: dir_plugin_common.c:358:
++                  "values of B will give rise to dom!\n"
 
 
---=-VzKmvDKmqslAbhh1GKnK
-Content-Disposition: attachment; filename=cluster.h.patch
-Content-Type: text/x-patch; name=cluster.h.patch; charset=UTF-8
+
+
+--=-Hs6KnuuYiKGkxjVbwKsF
+Content-Disposition: attachment; filename=dir_plugin_common.c.patch
+Content-Type: text/x-patch; name=dir_plugin_common.c.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- cluster.h.orig	2007-10-25 20:52:10.000000000 +0200
-+++ cluster.h	2007-10-25 20:58:46.000000000 +0200
-@@ -3,7 +3,7 @@
- /* This file contains size/offset translators, modulators
-    and other helper functions. */
- 
--#if !defined( __FS_REISER4_CLUSTER_H__ )
-+#if !defined(__FS_REISER4_CLUSTER_H__)
- #define __FS_REISER4_CLUSTER_H__
- 
+--- dir_plugin_common.c.orig	2007-10-25 21:03:39.000000000 +0200
++++ dir_plugin_common.c	2007-10-25 21:11:10.000000000 +0200
+@@ -8,8 +8,9 @@
  #include "../inode.h"
-@@ -89,7 +89,7 @@ static inline unsigned off_to_cloff(loff
- 	return off & ((loff_t) (inode_cluster_size(inode)) - 1);
- }
  
--static inline  pgoff_t offset_in_clust(struct page * page)
-+static inline  pgoff_t offset_in_clust(struct page *page)
- {
- 	assert("edward-1488", page != NULL);
- 	assert("edward-1489", page->mapping != NULL);
-@@ -97,12 +97,12 @@ static inline  pgoff_t offset_in_clust(s
- 	return page_index(page) & ((cluster_nrpages(page->mapping->host)) - 1);
- }
+ int reiser4_find_entry(struct inode *dir, struct dentry *name,
+-	       lock_handle *, znode_lock_mode, reiser4_dir_entry_desc *);
+-int reiser4_lookup_name(struct inode *parent, struct dentry *dentry, reiser4_key * key);
++	       lock_handle * , znode_lock_mode, reiser4_dir_entry_desc *);
++int reiser4_lookup_name(struct inode *parent, struct dentry *dentry,
++			reiser4_key * key);
+ void check_light_weight(struct inode *inode, struct inode *parent);
  
--static inline int first_page_in_cluster(struct page * page)
-+static inline int first_page_in_cluster(struct page *page)
+ /* this is common implementation of get_parent method of dir plugin
+@@ -70,9 +71,9 @@ struct dentry *get_parent_common(struct 
+ /* this is common implementation of is_name_acceptable method of dir
+    plugin
+  */
+-int is_name_acceptable_common(const struct inode *inode,	/* directory to check */
+-			      const char *name UNUSED_ARG,	/* name to check */
+-			      int len /* @name's length */ )
++int is_name_acceptable_common(const struct inode *inode, /* directory to check*/
++			      const char *name UNUSED_ARG, /* name to check */
++			      int len/* @name's length */)
  {
- 	return offset_in_clust(page) == 0;
- }
- 
--static inline int last_page_in_cluster(struct page * page)
-+static inline int last_page_in_cluster(struct page *page)
+ 	assert("nikita-733", inode != NULL);
+ 	assert("nikita-734", name != NULL);
+@@ -91,7 +92,7 @@ int is_name_acceptable_common(const stru
+    see reiser4_readdir_common for more details
+ */
+ int build_readdir_key_common(struct file *dir /* directory being read */ ,
+-			     reiser4_key * result /* where to store key */ )
++			     reiser4_key * result/* where to store key */)
  {
- 	return offset_in_clust(page) ==
- 		cluster_nrpages(page->mapping->host) - 1;
-@@ -177,26 +177,26 @@ static inline unsigned __mbp(loff_t size
- }
- 
- /* number of file's bytes in the nominated logical cluster */
--static inline unsigned lbytes(cloff_t index, struct inode * inode)
-+static inline unsigned lbytes(cloff_t index, struct inode *inode)
+ 	reiser4_file_fsdata *fdata;
+ 	struct inode *inode;
+@@ -188,7 +189,7 @@ int reiser4_add_entry_common(struct inod
+  */
+ static int
+ rem_entry(struct inode *dir, struct dentry *dentry,
+-	  reiser4_dir_entry_desc * entry, coord_t * coord, lock_handle * lh)
++	  reiser4_dir_entry_desc * entry, coord_t *coord, lock_handle * lh)
  {
- 	return __mbb(i_size_read(inode), index, inode_cluster_shift(inode));
- }
- 
- /* number of file's bytes in the nominated page */
--static inline unsigned pbytes(pgoff_t index, struct inode * inode)
-+static inline unsigned pbytes(pgoff_t index, struct inode *inode)
+ 	item_plugin *iplug;
+ 	struct inode *child;
+@@ -226,7 +227,7 @@ rem_entry(struct inode *dir, struct dent
+  */
+ int reiser4_rem_entry_common(struct inode *dir,
+ 			     struct dentry *dentry,
+-			     reiser4_dir_entry_desc *entry)
++			     reiser4_dir_entry_desc * entry)
  {
- 	return __mbp(i_size_read(inode), index);
- }
- 
- /* return true, if logical cluster is not occupied by the file */
--static inline int new_logical_cluster(struct cluster_handle * clust,
-+static inline int new_logical_cluster(struct cluster_handle *clust,
- 				      struct inode *inode)
- {
- 	return clust_to_off(clust->index, inode) >= i_size_read(inode);
- }
- 
- /* return true, if pages @p1 and @p2 are of the same page cluster */
--static inline int same_page_cluster(struct page * p1, struct page * p2)
-+static inline int same_page_cluster(struct page *p1, struct page *p2)
- {
- 	assert("edward-1490", p1 != NULL);
- 	assert("edward-1491", p2 != NULL);
-@@ -207,35 +207,35 @@ static inline int same_page_cluster(stru
- 		pg_to_clust(page_index(p2), p2->mapping->host));
- }
- 
--static inline int cluster_is_complete(struct cluster_handle * clust,
--				      struct inode * inode)
-+static inline int cluster_is_complete(struct cluster_handle *clust,
-+				      struct inode *inode)
- {
- 	return clust->tc.lsize == inode_cluster_size(inode);
- }
- 
--static inline void reiser4_slide_init(struct reiser4_slide * win)
-+static inline void reiser4_slide_init(struct reiser4_slide *win)
- {
- 	assert("edward-1084", win != NULL);
- 	memset(win, 0, sizeof *win);
- }
- 
- static inline tfm_action
--cluster_get_tfm_act(struct tfm_cluster * tc)
-+cluster_get_tfm_act(struct tfm_cluster *tc)
- {
- 	assert("edward-1356", tc != NULL);
- 	return tc->act;
- }
- 
- static inline void
--cluster_set_tfm_act(struct tfm_cluster * tc, tfm_action act)
-+cluster_set_tfm_act(struct tfm_cluster *tc, tfm_action act)
- {
- 	assert("edward-1356", tc != NULL);
- 	tc->act = act;
- }
- 
--static inline void cluster_init_act(struct cluster_handle * clust,
-+static inline void cluster_init_act(struct cluster_handle *clust,
- 				    tfm_action act,
--				    struct reiser4_slide * window)
-+				    struct reiser4_slide *window)
- {
- 	assert("edward-84", clust != NULL);
- 	memset(clust, 0, sizeof *clust);
-@@ -244,20 +244,20 @@ static inline void cluster_init_act(stru
- 	clust->win = window;
- }
- 
--static inline void cluster_init_read(struct cluster_handle * clust,
--				     struct reiser4_slide * window)
-+static inline void cluster_init_read(struct cluster_handle *clust,
-+				     struct reiser4_slide *window)
- {
--	cluster_init_act (clust, TFMA_READ, window);
-+	cluster_init_act(clust, TFMA_READ, window);
- }
- 
--static inline void cluster_init_write(struct cluster_handle * clust,
--				      struct reiser4_slide * window)
-+static inline void cluster_init_write(struct cluster_handle *clust,
-+				      struct reiser4_slide *window)
- {
--	cluster_init_act (clust, TFMA_WRITE, window);
-+	cluster_init_act(clust, TFMA_WRITE, window);
- }
- 
- /* true if @p1 and @p2 are items of the same disk cluster */
--static inline int same_disk_cluster(const coord_t * p1, const coord_t * p2)
-+static inline int same_disk_cluster(const coord_t *p1, const coord_t *p2)
- {
- 	/* drop this if you have other items to aggregate */
- 	assert("edward-1494", item_id_by_coord(p1) == CTAIL_ID);
-@@ -265,44 +265,44 @@ static inline int same_disk_cluster(cons
- 	return item_plugin_by_coord(p1)->b.mergeable(p1, p2);
- }
- 
--static inline int dclust_get_extension_dsize(hint_t * hint)
-+static inline int dclust_get_extension_dsize(hint_t *hint)
- {
- 	return hint->ext_coord.extension.ctail.dsize;
- }
- 
--static inline void dclust_set_extension_dsize(hint_t * hint, int dsize)
-+static inline void dclust_set_extension_dsize(hint_t *hint, int dsize)
- {
- 	hint->ext_coord.extension.ctail.dsize = dsize;
- }
- 
--static inline int dclust_get_extension_shift(hint_t * hint)
-+static inline int dclust_get_extension_shift(hint_t *hint)
- {
- 	return hint->ext_coord.extension.ctail.shift;
- }
- 
--static inline int dclust_get_extension_ncount(hint_t * hint)
-+static inline int dclust_get_extension_ncount(hint_t *hint)
- {
- 	return hint->ext_coord.extension.ctail.ncount;
- }
- 
--static inline void dclust_inc_extension_ncount(hint_t * hint)
-+static inline void dclust_inc_extension_ncount(hint_t *hint)
- {
--	hint->ext_coord.extension.ctail.ncount ++;
-+	hint->ext_coord.extension.ctail.ncount++;
- }
- 
--static inline void dclust_init_extension(hint_t * hint)
-+static inline void dclust_init_extension(hint_t *hint)
- {
- 	memset(&hint->ext_coord.extension.ctail, 0,
- 	       sizeof(hint->ext_coord.extension.ctail));
- }
- 
--static inline int hint_is_unprepped_dclust(hint_t * hint)
-+static inline int hint_is_unprepped_dclust(hint_t *hint)
- {
- 	assert("edward-1451", hint_is_valid(hint));
- 	return dclust_get_extension_shift(hint) == (int)UCTAIL_SHIFT;
- }
- 
--static inline void coord_set_between_clusters(coord_t * coord)
-+static inline void coord_set_between_clusters(coord_t *coord)
- {
- #if REISER4_DEBUG
  	int result;
-@@ -321,33 +321,34 @@ static inline void coord_set_between_clu
- int reiser4_inflate_cluster(struct cluster_handle *, struct inode *);
- int find_disk_cluster(struct cluster_handle *, struct inode *, int read,
- 		      znode_lock_mode mode);
--int checkout_logical_cluster(struct cluster_handle *, jnode *, struct inode *);
-+int checkout_logical_cluster(struct cluster_handle *, jnode * , struct inode *);
- int reiser4_deflate_cluster(struct cluster_handle *, struct inode *);
- void truncate_complete_page_cluster(struct inode *inode, cloff_t start,
- 					 int even_cows);
--void invalidate_hint_cluster(struct cluster_handle * clust);
--void put_hint_cluster(struct cluster_handle * clust, struct inode *inode,
-+void invalidate_hint_cluster(struct cluster_handle *clust);
-+void put_hint_cluster(struct cluster_handle *clust, struct inode *inode,
- 		      znode_lock_mode mode);
--int get_disk_cluster_locked(struct cluster_handle * clust, struct inode * inode,
-+int get_disk_cluster_locked(struct cluster_handle *clust, struct inode *inode,
- 			    znode_lock_mode lock_mode);
--void reset_cluster_params(struct cluster_handle * clust);
--int set_cluster_by_page(struct cluster_handle * clust, struct page * page,
-+void reset_cluster_params(struct cluster_handle *clust);
-+int set_cluster_by_page(struct cluster_handle *clust, struct page *page,
- 			int count);
--int prepare_page_cluster(struct inode *inode, struct cluster_handle * clust,
-+int prepare_page_cluster(struct inode *inode, struct cluster_handle *clust,
- 			 rw_op rw);
--void __put_page_cluster(int from, int to, struct page ** pages,
--			struct inode * inode);
--void put_page_cluster(struct cluster_handle * clust,
--		      struct inode  * inode, rw_op rw);
--void put_cluster_handle(struct cluster_handle * clust);
--int grab_tfm_stream(struct inode *inode, struct tfm_cluster * tc, tfm_stream_id id);
--int tfm_cluster_is_uptodate(struct tfm_cluster * tc);
--void tfm_cluster_set_uptodate(struct tfm_cluster * tc);
--void tfm_cluster_clr_uptodate(struct tfm_cluster * tc);
-+void __put_page_cluster(int from, int to, struct page **pages,
-+			struct inode *inode);
-+void put_page_cluster(struct cluster_handle *clust,
-+		      struct inode  *inode, rw_op rw);
-+void put_cluster_handle(struct cluster_handle *clust);
-+int grab_tfm_stream(struct inode *inode, struct tfm_cluster *tc,
-+		    tfm_stream_id id);
-+int tfm_cluster_is_uptodate(struct tfm_cluster *tc);
-+void tfm_cluster_set_uptodate(struct tfm_cluster *tc);
-+void tfm_cluster_clr_uptodate(struct tfm_cluster *tc);
- 
- /* move cluster handle to the target position
-    specified by the page of index @pgidx */
--static inline void move_cluster_forward(struct cluster_handle * clust,
-+static inline void move_cluster_forward(struct cluster_handle *clust,
- 					struct inode *inode,
- 					pgoff_t pgidx)
+ 	coord_t *coord;
+@@ -323,7 +324,7 @@ int reiser4_dir_init_common(struct inode
+ /* this is common implementation of done method of dir plugin
+    remove "." entry
+ */
+-int reiser4_dir_done_common(struct inode *object /* object being deleted */ )
++int reiser4_dir_done_common(struct inode *object/* object being deleted */)
  {
-@@ -367,7 +368,7 @@ static inline void move_cluster_forward(
- 	clust->index_valid = 1;
+ 	int result;
+ 	reiser4_block_nr reserve;
+@@ -339,8 +340,8 @@ int reiser4_dir_done_common(struct inode
+ 	   reiser4_cut_tree(). */
+ 	memset(&entry, 0, sizeof entry);
+ 
+-	/* FIXME: this done method is called from reiser4_delete_dir_common which
+-	 * reserved space already */
++	/* FIXME: this done method is called from reiser4_delete_dir_common
++	 * which reserved space already */
+ 	reserve = inode_dir_plugin(object)->estimate.rem_entry(object);
+ 	if (reiser4_grab_space(reserve, BA_CAN_COMMIT | BA_RESERVED))
+ 		return RETERR(-ENOSPC);
+@@ -423,7 +424,7 @@ int reiser4_detach_common(struct inode *
+    estimation of adding entry which supposes that entry is inserting a
+    unit into item
+ */
+-reiser4_block_nr estimate_add_entry_common(const struct inode * inode)
++reiser4_block_nr estimate_add_entry_common(const struct inode *inode)
+ {
+ 	return estimate_one_insert_into_item(reiser4_tree_by_inode(inode));
+ }
+@@ -431,7 +432,7 @@ reiser4_block_nr estimate_add_entry_comm
+ /* this is common implementation of estimate.rem_entry method of dir
+    plugin
+ */
+-reiser4_block_nr estimate_rem_entry_common(const struct inode * inode)
++reiser4_block_nr estimate_rem_entry_common(const struct inode *inode)
+ {
+ 	return estimate_one_item_removal(reiser4_tree_by_inode(inode));
+ }
+@@ -440,8 +441,8 @@ reiser4_block_nr estimate_rem_entry_comm
+    plugin
+ */
+ reiser4_block_nr
+-dir_estimate_unlink_common(const struct inode * parent,
+-			   const struct inode * object)
++dir_estimate_unlink_common(const struct inode *parent,
++			   const struct inode *object)
+ {
+ 	reiser4_block_nr res;
+ 
+@@ -471,10 +472,10 @@ void check_light_weight(struct inode *in
+ 
+ /* looks for name specified in @dentry in directory @parent and if name is
+    found - key of object found entry points to is stored in @entry->key */
+-int reiser4_lookup_name(struct inode *parent,	/* inode of directory to lookup for
+-					 * name in */
++int reiser4_lookup_name(struct inode *parent,	/* inode of directory to lookup
++					 * for name in */
+ 		struct dentry *dentry,	/* name to look for */
+-		reiser4_key * key /* place to store key */ )
++		reiser4_key * key/* place to store key */)
+ {
+ 	int result;
+ 	coord_t *coord;
+@@ -542,9 +543,9 @@ estimate_init(struct inode *parent, stru
  }
  
--static inline int alloc_clust_pages(struct cluster_handle * clust,
-+static inline int alloc_clust_pages(struct cluster_handle *clust,
- 				    struct inode *inode)
+ /* helper function for reiser4_dir_init_common(). Create "." and ".." */
+-static int create_dot_dotdot(struct inode *object /* object to create dot and
+-						   * dotdot for */ ,
+-			     struct inode *parent /* parent of @object */)
++static int create_dot_dotdot(struct inode *object/* object to create dot and
++						  * dotdot for */ ,
++			     struct inode *parent/* parent of @object */)
  {
- 	assert("edward-791", clust != NULL);
-@@ -380,7 +381,7 @@ static inline int alloc_clust_pages(stru
- 	return 0;
+ 	int result;
+ 	struct dentry dots_entry;
+@@ -617,7 +618,7 @@ static int create_dot_dotdot(struct inod
+  * @name.
+  */
+ static int
+-check_item(const struct inode *dir, const coord_t * coord, const char *name)
++check_item(const struct inode *dir, const coord_t *coord, const char *name)
+ {
+ 	item_plugin *iplug;
+ 	char buf[DE_NAME_BUF_LEN];
+@@ -646,7 +647,7 @@ check_item(const struct inode *dir, cons
  }
  
--static inline void free_clust_pages(struct cluster_handle * clust)
-+static inline void free_clust_pages(struct cluster_handle *clust)
+ static int
+-check_entry(const struct inode *dir, coord_t * coord, const struct qstr *name)
++check_entry(const struct inode *dir, coord_t *coord, const struct qstr *name)
  {
- 	kfree(clust->pages);
+ 	return WITH_COORD(coord, check_item(dir, coord, name->name));
  }
+@@ -683,9 +684,9 @@ struct entry_actor_args {
+ /* Function called by reiser4_find_entry() to look for given name
+    in the directory. */
+ static int entry_actor(reiser4_tree * tree UNUSED_ARG /* tree being scanned */ ,
+-		       coord_t * coord /* current coord */ ,
++		       coord_t *coord /* current coord */ ,
+ 		       lock_handle * lh /* current lock handle */ ,
+-		       void *entry_actor_arg /* argument to scan */ )
++		       void *entry_actor_arg/* argument to scan */)
+ {
+ 	reiser4_key unit_key;
+ 	struct entry_actor_args *args;
+@@ -801,7 +802,7 @@ int reiser4_find_entry(struct inode *dir
+ 	 */
+ 	result = reiser4_object_lookup(dir, &entry->key, coord, lh, mode,
+ 				       FIND_EXACT, LEAF_LEVEL, LEAF_LEVEL,
+-				       flags, NULL /*ra_info */ );
++				       flags, NULL/*ra_info */);
+ 	if (result == CBK_COORD_FOUND) {
+ 		struct entry_actor_args arg;
+ 
 
---=-VzKmvDKmqslAbhh1GKnK--
+--=-Hs6KnuuYiKGkxjVbwKsF--
 
