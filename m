@@ -1,186 +1,117 @@
 From: Dushan Tcholich <dusanc@gmail.com>
-Subject: [PATCH 64/8] inode_ops_rename.c cleanup
-Date: Fri, 26 Oct 2007 13:38:09 +0200
-Message-ID: <1193398689.4615.7.camel@krshina3.gekom>
+Subject: [PATCH 65/8] inode_ops.c cleanup
+Date: Fri, 26 Oct 2007 13:46:44 +0200
+Message-ID: <1193399204.4615.12.camel@krshina3.gekom>
 Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-eIteHjtydCX8KSRDakJP"
+Content-Type: multipart/mixed; boundary="=-0yvz5jNPrB0cDWTDkRqD"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 
---=-eIteHjtydCX8KSRDakJP
+--=-0yvz5jNPrB0cDWTDkRqD
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-orig:	total: 12 errors, 12 warnings, 914 lines checked
-patched:total: 0 errors, 1 warnings, 921 lines checked
+orig:	total: 3 errors, 8 warnings, 897 lines checked
+patched:total: 2 errors, 0 warnings, 903 lines checked
 leftover:
 
-WARNING: line over 80 characters
-#130: FILE: inode_ops_rename.c:130:
-+
-&entry));
+#48: FILE: inode_ops.c:48:
++int reiser4_lookup_name(struct inode *dir, struct dentry *, reiser4_key
+*);
+
+^
+
+ERROR: need consistent spacing around '*' (ctx:WxB)
+#427: FILE: inode_ops.c:427:
++static int setattr_reserve(reiser4_tree *);
+                                         ^
 
 
 
 
---=-eIteHjtydCX8KSRDakJP
-Content-Disposition: attachment; filename=inode_ops_rename.c.patch
-Content-Type: text/x-patch; name=inode_ops_rename.c.patch; charset=UTF-8
+--=-0yvz5jNPrB0cDWTDkRqD
+Content-Disposition: attachment; filename=inode_ops.c.patch
+Content-Type: text/x-patch; name=inode_ops.c.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- inode_ops_rename.c.orig	2007-10-26 13:37:06.000000000 +0200
-+++ inode_ops_rename.c	2007-10-26 13:34:38.000000000 +0200
-@@ -13,11 +13,11 @@ static int replace_name(struct inode *to
- 						 * to be re-targeted at */
- 			struct inode *from_dir,	/* directory where @from_coord
- 						 * lives */
--			struct inode *from_inode,	/* inode @from_coord
--							 * originally point to */
--			coord_t * from_coord,	/* where directory entry is in
-+			struct inode *from_inode, /* inode @from_coord
-+						   * originally point to */
-+			coord_t *from_coord,	/* where directory entry is in
- 						 * the tree */
--			lock_handle * from_lh /* lock handle on @from_coord */ )
-+			lock_handle * from_lh/* lock handle on @from_coord */)
+--- inode_ops.c.orig	2007-10-26 13:44:46.000000000 +0200
++++ inode_ops.c	2007-10-26 13:44:10.000000000 +0200
+@@ -511,9 +511,10 @@ int reiser4_getattr_common(struct vfsmou
+    method of file plugin, adding directory entry to parent and update parent
+    directory's stat data.
+ */
+-static reiser4_block_nr estimate_create_vfs_object(struct inode *parent,	/* parent object */
++static reiser4_block_nr estimate_create_vfs_object(struct inode *parent,
++						   /* parent object */
+ 						   struct inode *object
+-						   /* object */ )
++						   /* object */)
  {
- 	item_plugin *from_item;
- 	int result;
-@@ -30,8 +30,7 @@ static int replace_name(struct inode *to
- 		return result;
- 	from_item = item_plugin_by_coord(from_coord);
- 	if (plugin_of_group(item_plugin_by_coord(from_coord),
--			    DIR_ENTRY_ITEM_TYPE))
--	{
-+			    DIR_ENTRY_ITEM_TYPE)) {
- 		reiser4_key to_key;
+ 	assert("vpf-309", parent != NULL);
+ 	assert("vpf-307", object != NULL);
+@@ -540,8 +541,8 @@ static reiser4_block_nr estimate_create_
+    . instantiate dentry
  
- 		build_sd_key(to_inode, &to_key);
-@@ -97,9 +96,10 @@ static int add_name(struct inode *inode,
- 						 * re-targeted at */
- 		    struct inode *dir,	/* directory where @coord lives */
- 		    struct dentry *name,	/* new name */
--		    coord_t * coord,	/* where directory entry is in the tree */
-+		    coord_t *coord,	/* where directory entry is in the tree
-+					 */
- 		    lock_handle * lh,	/* lock handle on @coord */
--		    int is_dir /* true, if @inode is directory */ )
-+		    int is_dir/* true, if @inode is directory */)
+ */
+-static int do_create_vfs_child(reiser4_object_create_data * data,	/* parameters of new
+-									   object */
++static int do_create_vfs_child(reiser4_object_create_data * data,
++				/* parameters of new object */
+ 			       struct inode **retobj)
  {
  	int result;
- 	reiser4_dir_entry_desc entry;
-@@ -142,14 +142,16 @@ static int add_name(struct inode *inode,
- 	return result;
- }
+@@ -646,7 +647,7 @@ static int do_create_vfs_child(reiser4_o
+ 	/* call file plugin's method to initialize plugin specific part of
+ 	 * inode */
+ 	if (obj_plug->init_inode_data)
+-		obj_plug->init_inode_data(object, data, 1 /*create */ );
++		obj_plug->init_inode_data(object, data, 1/*create */);
  
--static reiser4_block_nr estimate_rename(struct inode *old_dir,	/* directory where @old is located */
--					struct dentry *old_name,	/* old name */
--					struct inode *new_dir,	/* directory where @new is located */
--					struct dentry *new_name /* new name */ )
-+static reiser4_block_nr estimate_rename(struct inode *old_dir,
-+					/* directory where @old is located */
-+					struct dentry *old_name,/* old name */
-+					struct inode *new_dir,
-+					/* directory where @new is located */
-+					struct dentry *new_name/* new name */)
+ 	/* obtain directory plugin (if any) for new object. */
+ 	obj_dir = inode_dir_plugin(object);
+@@ -789,9 +790,11 @@ create_vfs_object(struct inode *parent,
+ /* helper for link_common. Estimate disk space necessary to add a link
+    from @parent to @object
+ */
+-static reiser4_block_nr common_estimate_link(struct inode *parent,	/* parent directory */
++static reiser4_block_nr common_estimate_link(struct inode *parent,
++					    /* parent directory */
+ 					     struct inode *object
+-					     /* object to which new link is being cerated */
++					    /* object to which new link is being
++					     * cerated */
+ 					     )
  {
- 	reiser4_block_nr res1, res2;
--	dir_plugin *p_parent_old, *p_parent_new;
--	file_plugin *p_child_old, *p_child_new;
-+	dir_plugin * p_parent_old, *p_parent_new;
-+	file_plugin * p_child_old, *p_child_new;
+ 	reiser4_block_nr res = 0;
+@@ -803,7 +806,8 @@ static reiser4_block_nr common_estimate_
  
- 	assert("vpf-311", old_dir != NULL);
- 	assert("vpf-312", new_dir != NULL);
-@@ -169,7 +171,8 @@ static reiser4_block_nr estimate_rename(
- 
- 	/* replace_name */
- 	{
--		/* reiser4_add_nlink(p_child_old) and reiser4_del_nlink(p_child_old) */
-+		/* reiser4_add_nlink(p_child_old) and
-+		 * reiser4_del_nlink(p_child_old) */
- 		res1 += 2 * p_child_old->estimate.update(old_name->d_inode);
- 		/* update key */
- 		res1 += 1;
-@@ -180,7 +183,8 @@ static reiser4_block_nr estimate_rename(
- 
- 	/* else add_name */
- 	{
--		/* reiser4_add_nlink(p_parent_new) and reiser4_del_nlink(p_parent_new) */
-+		/* reiser4_add_nlink(p_parent_new) and
-+		 * reiser4_del_nlink(p_parent_new) */
- 		res2 +=
- 		    2 * inode_file_plugin(new_dir)->estimate.update(new_dir);
- 		/* reiser4_add_nlink(p_parent_old) */
-@@ -227,11 +231,14 @@ static reiser4_block_nr estimate_rename(
- 	return res1;
- }
- 
--static int hashed_rename_estimate_and_grab(struct inode *old_dir,	/* directory where @old is located */
--					   struct dentry *old_name,	/* old name */
--					   struct inode *new_dir,	/* directory where @new is located */
-+static int hashed_rename_estimate_and_grab(struct inode *old_dir,
-+					/* directory where @old is located */
-+					   struct dentry *old_name,
-+					/* old name */
-+					   struct inode *new_dir,
-+					/* directory where @new is located */
- 					   struct dentry *new_name
--					   /* new name */ )
-+					/* new name */)
+ 	fplug = inode_file_plugin(object);
+ 	dplug = inode_dir_plugin(parent);
+-	/* VS-FIXME-HANS: why do we do fplug->estimate.update(object) twice instead of multiplying by 2? */
++	/* VS-FIXME-HANS: why do we do fplug->estimate.update(object) twice
++	 * instead of multiplying by 2? */
+ 	/* reiser4_add_nlink(object) */
+ 	res += fplug->estimate.update(object);
+ 	/* add_entry(parent) */
+@@ -821,9 +825,11 @@ static reiser4_block_nr common_estimate_
+ /* Estimate disk space necessary to remove a link between @parent and
+    @object.
+ */
+-static reiser4_block_nr estimate_unlink(struct inode *parent,	/* parent directory */
++static reiser4_block_nr estimate_unlink(struct inode *parent,	/* parent
++								 * directory */
+ 					struct inode *object
+-					/* object to which new link is being cerated */
++					/* object to which new link is being
++					 * created */
+ 					)
  {
- 	reiser4_block_nr reserve;
- 
-@@ -271,7 +278,7 @@ static int can_rename(struct inode *old_
- 	return 0;
- }
- 
--int reiser4_find_entry(struct inode *, struct dentry *, lock_handle *,
-+int reiser4_find_entry(struct inode *, struct dentry *, lock_handle * ,
- 	       znode_lock_mode, reiser4_dir_entry_desc *);
- int reiser4_update_dir(struct inode *);
- 
-@@ -291,7 +298,7 @@ int reiser4_rename_common(struct inode *
- 			  struct dentry *old_name /* old name */ ,
- 			  struct inode *new_dir /* directory where @new
- 						 * is located */ ,
--			  struct dentry *new_name /* new name */ )
-+			  struct dentry *new_name/* new name */)
- {
- 	/* From `The Open Group Base Specifications Issue 6'
- 
-@@ -384,7 +391,7 @@ int reiser4_rename_common(struct inode *
- 	file_plugin *fplug;
- 
- 	reiser4_dir_entry_desc *old_entry, *new_entry, *dotdot_entry;
--	lock_handle *new_lh, *dotdot_lh;
-+	lock_handle * new_lh, *dotdot_lh;
- 	struct dentry *dotdot_name;
- 	struct reiser4_dentry_fsdata *dataonstack;
- 
-@@ -619,7 +626,7 @@ int reiser4_rename_common(struct inode *
- 			  struct dentry *old_name /* old name */ ,
- 			  struct inode *new_dir /* directory where @new
- 						 * is located */ ,
--			  struct dentry *new_name /* new name */ )
-+			  struct dentry *new_name/* new name */)
- {
- 	/* From `The Open Group Base Specifications Issue 6'
- 
-@@ -906,7 +913,7 @@ int reiser4_rename_common(struct inode *
- 				result = safe_link_add(new_inode, SAFE_UNLINK);
- 		}
- 	}
--      exit:
-+exit:
- 	context_set_commit_async(ctx);
- 	reiser4_exit_context(ctx);
- 	return result;
+ 	reiser4_block_nr res = 0;
 
---=-eIteHjtydCX8KSRDakJP--
+--=-0yvz5jNPrB0cDWTDkRqD--
 
