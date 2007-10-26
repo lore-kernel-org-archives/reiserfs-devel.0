@@ -1,304 +1,151 @@
 From: Dushan Tcholich <dusanc@gmail.com>
-Subject: [PATCH 62/8] plugin/file_plugin_common.c cleanup
-Date: Thu, 25 Oct 2007 22:02:33 +0200
-Message-ID: <1193342553.15901.116.camel@krshina3.gekom>
+Subject: [PATCH 63/8] file_ops_readdir.c cleanup
+Date: Fri, 26 Oct 2007 13:25:49 +0200
+Message-ID: <1193397949.4615.2.camel@krshina3.gekom>
 Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-LQTL2OE5dkFKxwni9Bou"
+Content-Type: multipart/mixed; boundary="=-XZ4eqXb7ejejgPdp4fS5"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 
---=-LQTL2OE5dkFKxwni9Bou
+--=-XZ4eqXb7ejejgPdp4fS5
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-orig:	total: 39 errors, 4 warnings, 1007 lines checked
-patched:total: 0 errors, 2 warnings, 1009 lines checked
-leftovers:
+orig:	total: 12 errors, 4 warnings, 658 lines checked
+patched:total: 0 errors, 2 warnings, 658 lines checked
+leftover:
 
 WARNING: line over 80 characters
-#592: FILE: file_plugin_common.c:592:
-+       if (data.length >
-reiser4_tree_by_inode(inode)->nplug->max_item_size()) {
+#624: FILE: file_ops_readdir.c:624:
++                                       "reiser4_readdir_common:
+unexpected error %d",
 
 WARNING: line over 80 characters
-#961: FILE: file_plugin_common.c:961:
-+                               result =
-safe_link_del(reiser4_tree_by_inode(inode),
+#637: FILE: file_ops_readdir.c:637:
++       if
+(reiser4_grab_space_force(inode_file_plugin(inode)->estimate.update(inode),
 
 
-
-
---=-LQTL2OE5dkFKxwni9Bou
-Content-Disposition: attachment; filename=file_plugin_common.c.patch
-Content-Type: text/x-patch; name=file_plugin_common.c.patch; charset=UTF-8
+--=-XZ4eqXb7ejejgPdp4fS5
+Content-Disposition: attachment; filename=file_ops_readdir.c.patch
+Content-Type: text/x-patch; name=file_ops_readdir.c.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- file_plugin_common.c.orig	2007-10-25 21:51:26.000000000 +0200
-+++ file_plugin_common.c	2007-10-25 21:59:35.000000000 +0200
-@@ -17,7 +17,7 @@ static int update_sd(struct inode *inode
- /* this is common implementation of write_sd_by_inode method of file plugin
-    either insert stat data or update it
-  */
--int write_sd_by_inode_common(struct inode *inode /* object to save */ )
-+int write_sd_by_inode_common(struct inode *inode/* object to save */)
- {
- 	int result;
+--- file_ops_readdir.c.orig	2007-10-26 13:18:01.000000000 +0200
++++ file_ops_readdir.c	2007-10-26 13:21:40.000000000 +0200
+@@ -5,7 +5,7 @@
  
-@@ -100,7 +100,7 @@ int set_plug_in_inode_common(struct inod
-  */
- int adjust_to_parent_common(struct inode *object /* new object */ ,
- 			    struct inode *parent /* parent directory */ ,
--			    struct inode *root /* root directory */ )
-+			    struct inode *root/* root directory */)
+ /* return true, iff @coord points to the valid directory item that is part of
+  * @inode directory. */
+-static int is_valid_dir_coord(struct inode *inode, coord_t * coord)
++static int is_valid_dir_coord(struct inode *inode, coord_t *coord)
  {
- 	assert("nikita-2165", object != NULL);
- 	if (parent == NULL)
-@@ -123,7 +123,7 @@ int adjust_to_parent_common(struct inode
-  */
- int adjust_to_parent_common_dir(struct inode *object /* new object */ ,
- 				struct inode *parent /* parent directory */ ,
--				struct inode *root /* root directory */ )
-+				struct inode *root/* root directory */)
- {
- 	int result = 0;
- 	pset_member memb;
-@@ -146,21 +146,21 @@ int adjust_to_parent_common_dir(struct i
- 
- int adjust_to_parent_cryptcompress(struct inode *object /* new object */ ,
- 				   struct inode *parent /* parent directory */,
--				   struct inode *root /* root directory */)
-+				   struct inode *root/* root directory */)
- {
-- 	int result;
-- 	result = adjust_to_parent_common(object, parent, root);
-- 	if (result)
-- 		return result;
-- 	assert("edward-1416", parent != NULL);
--
-- 	grab_plugin_pset(object, parent, PSET_CLUSTER);
-- 	grab_plugin_pset(object, parent, PSET_CIPHER);
-- 	grab_plugin_pset(object, parent, PSET_DIGEST);
-- 	grab_plugin_pset(object, parent, PSET_COMPRESSION);
-- 	grab_plugin_pset(object, parent, PSET_COMPRESSION_MODE);
-+	int result;
-+	result = adjust_to_parent_common(object, parent, root);
-+	if (result)
-+		return result;
-+	assert("edward-1416", parent != NULL);
- 
-- 	return 0;
-+	grab_plugin_pset(object, parent, PSET_CLUSTER);
-+	grab_plugin_pset(object, parent, PSET_CIPHER);
-+	grab_plugin_pset(object, parent, PSET_DIGEST);
-+	grab_plugin_pset(object, parent, PSET_COMPRESSION);
-+	grab_plugin_pset(object, parent, PSET_COMPRESSION_MODE);
-+
-+	return 0;
+ 	return plugin_of_group(item_plugin_by_coord(coord),
+ 			       DIR_ENTRY_ITEM_TYPE) &&
+@@ -13,7 +13,7 @@ static int is_valid_dir_coord(struct ino
  }
  
- /* this is common implementation of create_object method of file plugin
-@@ -301,7 +301,7 @@ int rem_link_common_dir(struct inode *ob
-    compare objectids of keys in inode and coord */
- int owns_item_common(const struct inode *inode,	/* object to check
- 						 * against */
--		     const coord_t * coord /* coord to check */ )
-+		     const coord_t *coord/* coord to check */)
+ /* compare two logical positions within the same directory */
+-static cmp_t dir_pos_cmp(const struct dir_pos * p1, const struct dir_pos * p2)
++static cmp_t dir_pos_cmp(const struct dir_pos *p1, const struct dir_pos *p2)
  {
- 	reiser4_key item_key;
- 	reiser4_key file_key;
-@@ -317,8 +317,8 @@ int owns_item_common(const struct inode 
- /* this is common implementation of owns_item method of file plugin
-    for typical directory
- */
--int owns_item_common_dir(const struct inode *inode,	/* object to check against */
--			 const coord_t * coord /* coord of item to check */ )
-+int owns_item_common_dir(const struct inode *inode,/* object to check against */
-+			 const coord_t *coord/* coord of item to check */)
- {
- 	reiser4_key item_key;
+ 	cmp_t result;
  
-@@ -335,7 +335,7 @@ int owns_item_common_dir(const struct in
- /* this is common implementation of can_add_link method of file plugin
-    checks whether yet another hard links to this object can be added
- */
--int can_add_link_common(const struct inode *object /* object to check */ )
-+int can_add_link_common(const struct inode *object/* object to check */)
- {
- 	assert("nikita-732", object != NULL);
+@@ -31,11 +31,11 @@ static cmp_t dir_pos_cmp(const struct di
+ 	return result;
+ }
  
-@@ -404,7 +404,7 @@ int safelink_common(struct inode *object
-    can be used when object creation involves insertion of one item (usually stat
-    data) into tree
- */
--reiser4_block_nr estimate_create_common(const struct inode * object)
-+reiser4_block_nr estimate_create_common(const struct inode *object)
- {
- 	return estimate_one_insert_item(reiser4_tree_by_inode(object));
- }
-@@ -414,7 +414,7 @@ reiser4_block_nr estimate_create_common(
-    can be used when directory creation involves insertion of two items (usually
-    stat data and item containing "." and "..") into tree
- */
--reiser4_block_nr estimate_create_common_dir(const struct inode * object)
-+reiser4_block_nr estimate_create_common_dir(const struct inode *object)
- {
- 	return 2 * estimate_one_insert_item(reiser4_tree_by_inode(object));
- }
-@@ -423,7 +423,7 @@ reiser4_block_nr estimate_create_common_
-    can be used when stat data update does not do more than inserting a unit
-    into a stat data item which is probably true for most cases
- */
--reiser4_block_nr estimate_update_common(const struct inode * inode)
-+reiser4_block_nr estimate_update_common(const struct inode *inode)
- {
- 	return estimate_one_insert_into_item(reiser4_tree_by_inode(inode));
- }
-@@ -431,8 +431,8 @@ reiser4_block_nr estimate_update_common(
- /* this is common implementation of estimate.unlink method of file plugin
-  */
- reiser4_block_nr
--estimate_unlink_common(const struct inode * object UNUSED_ARG,
--		       const struct inode * parent UNUSED_ARG)
-+estimate_unlink_common(const struct inode *object UNUSED_ARG,
-+		       const struct inode *parent UNUSED_ARG)
- {
- 	return 0;
- }
-@@ -441,8 +441,8 @@ estimate_unlink_common(const struct inod
-    typical directory
- */
- reiser4_block_nr
--estimate_unlink_common_dir(const struct inode * object,
--			   const struct inode * parent)
-+estimate_unlink_common_dir(const struct inode *object,
-+			   const struct inode *parent)
- {
- 	dir_plugin *dplug;
- 
-@@ -503,7 +503,7 @@ void wire_done_common(reiser4_object_on_
- /* helper function to print errors */
- static void key_warning(const reiser4_key * key /* key to print */ ,
- 			const struct inode *inode,
--			int code /* error code to print */ )
-+			int code/* error code to print */)
- {
- 	assert("nikita-716", key != NULL);
- 
-@@ -518,7 +518,7 @@ static void key_warning(const reiser4_ke
- #if REISER4_DEBUG
+-/* see comment before reiser4_readdir_common() for overview of why "adjustment" is
+- * necessary. */
++/* see comment before reiser4_readdir_common() for overview of why "adjustment"
++ * is necessary. */
  static void
- check_inode_seal(const struct inode *inode,
--		 const coord_t * coord, const reiser4_key * key)
-+		 const coord_t *coord, const reiser4_key * key)
+-adjust_dir_pos(struct file *dir, struct readdir_pos * readdir_spot,
+-	       const struct dir_pos * mod_point, int adj)
++adjust_dir_pos(struct file *dir, struct readdir_pos *readdir_spot,
++	       const struct dir_pos *mod_point, int adj)
  {
- 	reiser4_key unit_key;
+ 	struct dir_pos *pos;
  
-@@ -528,7 +528,7 @@ check_inode_seal(const struct inode *ino
- 	assert("nikita-2753", get_inode_oid(inode) == get_key_objectid(key));
+@@ -127,7 +127,7 @@ void reiser4_adjust_dir_file(struct inod
+ /*
+  * traverse tree to start/continue readdir from the readdir position @pos.
+  */
+-static int dir_go_to(struct file *dir, struct readdir_pos * pos, tap_t * tap)
++static int dir_go_to(struct file *dir, struct readdir_pos *pos, tap_t *tap)
+ {
+ 	reiser4_key key;
+ 	int result;
+@@ -161,7 +161,7 @@ static int dir_go_to(struct file *dir, s
+  * handling of non-unique keys: calculate at what ordinal position within
+  * sequence of directory items with identical keys @pos is.
+  */
+-static int set_pos(struct inode *inode, struct readdir_pos * pos, tap_t * tap)
++static int set_pos(struct inode *inode, struct readdir_pos *pos, tap_t *tap)
+ {
+ 	int result;
+ 	coord_t coord;
+@@ -212,7 +212,7 @@ static int set_pos(struct inode *inode, 
+ /*
+  * "rewind" directory to @offset, i.e., set @pos and @tap correspondingly.
+  */
+-static int dir_rewind(struct file *dir, struct readdir_pos * pos, tap_t * tap)
++static int dir_rewind(struct file *dir, struct readdir_pos *pos, tap_t *tap)
+ {
+ 	__u64 destination;
+ 	__s64 shift;
+@@ -295,7 +295,7 @@ static int dir_rewind(struct file *dir, 
+  * unlocked.
+  */
+ static int
+-feed_entry(struct file *f, struct readdir_pos * pos, tap_t * tap,
++feed_entry(struct file *f, struct readdir_pos *pos, tap_t *tap,
+ 	   filldir_t filldir, void *dirent)
+ {
+ 	item_plugin *iplug;
+@@ -368,7 +368,7 @@ feed_entry(struct file *f, struct readdi
+ 	return result;
  }
  
--static void check_sd_coord(coord_t * coord, const reiser4_key * key)
-+static void check_sd_coord(coord_t *coord, const reiser4_key * key)
+-static void move_entry(struct readdir_pos * pos, coord_t * coord)
++static void move_entry(struct readdir_pos *pos, coord_t *coord)
  {
- 	reiser4_key ukey;
- 
-@@ -556,7 +556,7 @@ static void check_sd_coord(coord_t * coo
- 
- /* insert new stat-data into tree. Called with inode state
-     locked. Return inode state locked. */
--static int insert_new_sd(struct inode *inode /* inode to create sd for */ )
-+static int insert_new_sd(struct inode *inode/* inode to create sd for */)
+ 	reiser4_key de_key;
+ 	de_id *did;
+@@ -432,8 +432,8 @@ static void move_entry(struct readdir_po
+ /*
+  * prepare for readdir.
+  */
+-static int dir_readdir_init(struct file *f, tap_t * tap,
+-			    struct readdir_pos ** pos)
++static int dir_readdir_init(struct file *f, tap_t *tap,
++			    struct readdir_pos **pos)
  {
- 	int result;
- 	reiser4_key key;
-@@ -589,13 +589,14 @@ static int insert_new_sd(struct inode *i
- /* could be optimized for case where there is only one node format in
-  * use in the filesystem, probably there are lots of such
-  * places we could optimize for only one node layout.... -Hans */
--	if (data.length > reiser4_tree_by_inode(inode)->nplug->max_item_size()){
-+	if (data.length > reiser4_tree_by_inode(inode)->nplug->max_item_size()) {
- 		/* This is silly check, but we don't know actual node where
- 		   insertion will go into. */
- 		return RETERR(-ENAMETOOLONG);
- 	}
- 	oid = oid_allocate(inode->i_sb);
--/* NIKITA-FIXME-HANS: what is your opinion on whether this error check should be encapsulated into oid_allocate? */
-+/* NIKITA-FIXME-HANS: what is your opinion on whether this error check should be
-+ * encapsulated into oid_allocate? */
- 	if (oid == ABSOLUTE_MAX_OID)
- 		return RETERR(-EOVERFLOW);
- 
-@@ -642,7 +643,8 @@ static int insert_new_sd(struct inode *i
- 			if (result == 0) {
- 				/* object has stat-data now */
- 				reiser4_inode_clr_flag(inode, REISER4_NO_SD);
--				reiser4_inode_set_flag(inode, REISER4_SDLEN_KNOWN);
-+				reiser4_inode_set_flag(inode,
-+						       REISER4_SDLEN_KNOWN);
- 				/* initialise stat-data seal */
- 				reiser4_seal_init(&ref->sd_seal, &coord, &key);
- 				ref->sd_coord = coord;
-@@ -670,7 +672,7 @@ static int insert_new_sd(struct inode *i
- /* find sd of inode in a tree, deal with errors */
- int lookup_sd(struct inode *inode /* inode to look sd for */ ,
- 	      znode_lock_mode lock_mode /* lock mode */ ,
--	      coord_t * coord /* resulting coord */ ,
-+	      coord_t *coord /* resulting coord */ ,
- 	      lock_handle * lh /* resulting lock handle */ ,
- 	      const reiser4_key * key /* resulting key */ ,
- 	      int silent)
-@@ -709,7 +711,7 @@ int lookup_sd(struct inode *inode /* ino
- 
- static int
- locate_inode_sd(struct inode *inode,
--		reiser4_key * key, coord_t * coord, lock_handle * lh)
-+		reiser4_key * key, coord_t *coord, lock_handle * lh)
- {
- 	reiser4_inode *state;
- 	seal_t seal;
-@@ -757,8 +759,8 @@ static int all_but_offset_key_eq(const r
- #include "../tree_walk.h"
- 
- /* make some checks before and after stat-data resize operation */
--static int check_sd_resize(struct inode * inode, coord_t * coord,
--			   int length, int progress /* 1 means after resize */)
-+static int check_sd_resize(struct inode *inode, coord_t *coord,
-+			   int length, int progress/* 1 means after resize */)
- {
- 	int ret = 0;
- 	lock_handle left_lock;
-@@ -804,7 +806,7 @@ static int check_sd_resize(struct inode 
- 
- /* update stat-data at @coord */
- static int
--update_sd_at(struct inode *inode, coord_t * coord, reiser4_key * key,
-+update_sd_at(struct inode *inode, coord_t *coord, reiser4_key * key,
- 	     lock_handle * lh)
- {
- 	int result;
-@@ -908,7 +910,7 @@ update_sd_at(struct inode *inode, coord_
- 
- /* Update existing stat-data in a tree. Called with inode state locked. Return
-    inode state locked. */
--static int update_sd(struct inode *inode /* inode to update sd for */ )
-+static int update_sd(struct inode *inode/* inode to update sd for */)
- {
- 	int result;
- 	reiser4_key key;
-@@ -934,7 +936,7 @@ static int update_sd(struct inode *inode
-    Remove object stat data. Space for that must be reserved by caller before
+ 	struct inode *inode;
+ 	reiser4_file_fsdata *fsdata;
+@@ -473,7 +473,7 @@ static int dir_readdir_init(struct file 
+    typical directory
+    See comment before reiser4_readdir_common() for explanation.
  */
- static int
--common_object_delete_no_reserve(struct inode *inode /* object to remove */ )
-+common_object_delete_no_reserve(struct inode *inode/* object to remove */)
+-loff_t reiser4_llseek_dir_common(struct file * file, loff_t off, int origin)
++loff_t reiser4_llseek_dir_common(struct file *file, loff_t off, int origin)
  {
- 	int result;
+ 	reiser4_context *ctx;
+ 	loff_t result;
+@@ -586,7 +586,7 @@ int reiser4_readdir_common(struct file *
  
+ 	reiser4_readdir_readahead_init(inode, &tap);
+ 
+-      repeat:
++repeat:
+ 	result = dir_readdir_init(f, &tap, &pos);
+ 	if (result == 0) {
+ 		result = reiser4_tap_load(&tap);
 
---=-LQTL2OE5dkFKxwni9Bou--
+--=-XZ4eqXb7ejejgPdp4fS5--
 
