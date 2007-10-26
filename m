@@ -1,151 +1,186 @@
 From: Dushan Tcholich <dusanc@gmail.com>
-Subject: [PATCH 63/8] file_ops_readdir.c cleanup
-Date: Fri, 26 Oct 2007 13:25:49 +0200
-Message-ID: <1193397949.4615.2.camel@krshina3.gekom>
+Subject: [PATCH 64/8] inode_ops_rename.c cleanup
+Date: Fri, 26 Oct 2007 13:38:09 +0200
+Message-ID: <1193398689.4615.7.camel@krshina3.gekom>
 Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-XZ4eqXb7ejejgPdp4fS5"
+Content-Type: multipart/mixed; boundary="=-eIteHjtydCX8KSRDakJP"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 
---=-XZ4eqXb7ejejgPdp4fS5
+--=-eIteHjtydCX8KSRDakJP
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-orig:	total: 12 errors, 4 warnings, 658 lines checked
-patched:total: 0 errors, 2 warnings, 658 lines checked
+orig:	total: 12 errors, 12 warnings, 914 lines checked
+patched:total: 0 errors, 1 warnings, 921 lines checked
 leftover:
 
 WARNING: line over 80 characters
-#624: FILE: file_ops_readdir.c:624:
-+                                       "reiser4_readdir_common:
-unexpected error %d",
-
-WARNING: line over 80 characters
-#637: FILE: file_ops_readdir.c:637:
-+       if
-(reiser4_grab_space_force(inode_file_plugin(inode)->estimate.update(inode),
+#130: FILE: inode_ops_rename.c:130:
++
+&entry));
 
 
---=-XZ4eqXb7ejejgPdp4fS5
-Content-Disposition: attachment; filename=file_ops_readdir.c.patch
-Content-Type: text/x-patch; name=file_ops_readdir.c.patch; charset=UTF-8
+
+
+--=-eIteHjtydCX8KSRDakJP
+Content-Disposition: attachment; filename=inode_ops_rename.c.patch
+Content-Type: text/x-patch; name=inode_ops_rename.c.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- file_ops_readdir.c.orig	2007-10-26 13:18:01.000000000 +0200
-+++ file_ops_readdir.c	2007-10-26 13:21:40.000000000 +0200
-@@ -5,7 +5,7 @@
- 
- /* return true, iff @coord points to the valid directory item that is part of
-  * @inode directory. */
--static int is_valid_dir_coord(struct inode *inode, coord_t * coord)
-+static int is_valid_dir_coord(struct inode *inode, coord_t *coord)
+--- inode_ops_rename.c.orig	2007-10-26 13:37:06.000000000 +0200
++++ inode_ops_rename.c	2007-10-26 13:34:38.000000000 +0200
+@@ -13,11 +13,11 @@ static int replace_name(struct inode *to
+ 						 * to be re-targeted at */
+ 			struct inode *from_dir,	/* directory where @from_coord
+ 						 * lives */
+-			struct inode *from_inode,	/* inode @from_coord
+-							 * originally point to */
+-			coord_t * from_coord,	/* where directory entry is in
++			struct inode *from_inode, /* inode @from_coord
++						   * originally point to */
++			coord_t *from_coord,	/* where directory entry is in
+ 						 * the tree */
+-			lock_handle * from_lh /* lock handle on @from_coord */ )
++			lock_handle * from_lh/* lock handle on @from_coord */)
  {
- 	return plugin_of_group(item_plugin_by_coord(coord),
- 			       DIR_ENTRY_ITEM_TYPE) &&
-@@ -13,7 +13,7 @@ static int is_valid_dir_coord(struct ino
- }
+ 	item_plugin *from_item;
+ 	int result;
+@@ -30,8 +30,7 @@ static int replace_name(struct inode *to
+ 		return result;
+ 	from_item = item_plugin_by_coord(from_coord);
+ 	if (plugin_of_group(item_plugin_by_coord(from_coord),
+-			    DIR_ENTRY_ITEM_TYPE))
+-	{
++			    DIR_ENTRY_ITEM_TYPE)) {
+ 		reiser4_key to_key;
  
- /* compare two logical positions within the same directory */
--static cmp_t dir_pos_cmp(const struct dir_pos * p1, const struct dir_pos * p2)
-+static cmp_t dir_pos_cmp(const struct dir_pos *p1, const struct dir_pos *p2)
+ 		build_sd_key(to_inode, &to_key);
+@@ -97,9 +96,10 @@ static int add_name(struct inode *inode,
+ 						 * re-targeted at */
+ 		    struct inode *dir,	/* directory where @coord lives */
+ 		    struct dentry *name,	/* new name */
+-		    coord_t * coord,	/* where directory entry is in the tree */
++		    coord_t *coord,	/* where directory entry is in the tree
++					 */
+ 		    lock_handle * lh,	/* lock handle on @coord */
+-		    int is_dir /* true, if @inode is directory */ )
++		    int is_dir/* true, if @inode is directory */)
  {
- 	cmp_t result;
- 
-@@ -31,11 +31,11 @@ static cmp_t dir_pos_cmp(const struct di
+ 	int result;
+ 	reiser4_dir_entry_desc entry;
+@@ -142,14 +142,16 @@ static int add_name(struct inode *inode,
  	return result;
  }
  
--/* see comment before reiser4_readdir_common() for overview of why "adjustment" is
-- * necessary. */
-+/* see comment before reiser4_readdir_common() for overview of why "adjustment"
-+ * is necessary. */
- static void
--adjust_dir_pos(struct file *dir, struct readdir_pos * readdir_spot,
--	       const struct dir_pos * mod_point, int adj)
-+adjust_dir_pos(struct file *dir, struct readdir_pos *readdir_spot,
-+	       const struct dir_pos *mod_point, int adj)
+-static reiser4_block_nr estimate_rename(struct inode *old_dir,	/* directory where @old is located */
+-					struct dentry *old_name,	/* old name */
+-					struct inode *new_dir,	/* directory where @new is located */
+-					struct dentry *new_name /* new name */ )
++static reiser4_block_nr estimate_rename(struct inode *old_dir,
++					/* directory where @old is located */
++					struct dentry *old_name,/* old name */
++					struct inode *new_dir,
++					/* directory where @new is located */
++					struct dentry *new_name/* new name */)
  {
- 	struct dir_pos *pos;
+ 	reiser4_block_nr res1, res2;
+-	dir_plugin *p_parent_old, *p_parent_new;
+-	file_plugin *p_child_old, *p_child_new;
++	dir_plugin * p_parent_old, *p_parent_new;
++	file_plugin * p_child_old, *p_child_new;
  
-@@ -127,7 +127,7 @@ void reiser4_adjust_dir_file(struct inod
- /*
-  * traverse tree to start/continue readdir from the readdir position @pos.
-  */
--static int dir_go_to(struct file *dir, struct readdir_pos * pos, tap_t * tap)
-+static int dir_go_to(struct file *dir, struct readdir_pos *pos, tap_t *tap)
- {
- 	reiser4_key key;
- 	int result;
-@@ -161,7 +161,7 @@ static int dir_go_to(struct file *dir, s
-  * handling of non-unique keys: calculate at what ordinal position within
-  * sequence of directory items with identical keys @pos is.
-  */
--static int set_pos(struct inode *inode, struct readdir_pos * pos, tap_t * tap)
-+static int set_pos(struct inode *inode, struct readdir_pos *pos, tap_t *tap)
- {
- 	int result;
- 	coord_t coord;
-@@ -212,7 +212,7 @@ static int set_pos(struct inode *inode, 
- /*
-  * "rewind" directory to @offset, i.e., set @pos and @tap correspondingly.
-  */
--static int dir_rewind(struct file *dir, struct readdir_pos * pos, tap_t * tap)
-+static int dir_rewind(struct file *dir, struct readdir_pos *pos, tap_t *tap)
- {
- 	__u64 destination;
- 	__s64 shift;
-@@ -295,7 +295,7 @@ static int dir_rewind(struct file *dir, 
-  * unlocked.
-  */
- static int
--feed_entry(struct file *f, struct readdir_pos * pos, tap_t * tap,
-+feed_entry(struct file *f, struct readdir_pos *pos, tap_t *tap,
- 	   filldir_t filldir, void *dirent)
- {
- 	item_plugin *iplug;
-@@ -368,7 +368,7 @@ feed_entry(struct file *f, struct readdi
- 	return result;
+ 	assert("vpf-311", old_dir != NULL);
+ 	assert("vpf-312", new_dir != NULL);
+@@ -169,7 +171,8 @@ static reiser4_block_nr estimate_rename(
+ 
+ 	/* replace_name */
+ 	{
+-		/* reiser4_add_nlink(p_child_old) and reiser4_del_nlink(p_child_old) */
++		/* reiser4_add_nlink(p_child_old) and
++		 * reiser4_del_nlink(p_child_old) */
+ 		res1 += 2 * p_child_old->estimate.update(old_name->d_inode);
+ 		/* update key */
+ 		res1 += 1;
+@@ -180,7 +183,8 @@ static reiser4_block_nr estimate_rename(
+ 
+ 	/* else add_name */
+ 	{
+-		/* reiser4_add_nlink(p_parent_new) and reiser4_del_nlink(p_parent_new) */
++		/* reiser4_add_nlink(p_parent_new) and
++		 * reiser4_del_nlink(p_parent_new) */
+ 		res2 +=
+ 		    2 * inode_file_plugin(new_dir)->estimate.update(new_dir);
+ 		/* reiser4_add_nlink(p_parent_old) */
+@@ -227,11 +231,14 @@ static reiser4_block_nr estimate_rename(
+ 	return res1;
  }
  
--static void move_entry(struct readdir_pos * pos, coord_t * coord)
-+static void move_entry(struct readdir_pos *pos, coord_t *coord)
+-static int hashed_rename_estimate_and_grab(struct inode *old_dir,	/* directory where @old is located */
+-					   struct dentry *old_name,	/* old name */
+-					   struct inode *new_dir,	/* directory where @new is located */
++static int hashed_rename_estimate_and_grab(struct inode *old_dir,
++					/* directory where @old is located */
++					   struct dentry *old_name,
++					/* old name */
++					   struct inode *new_dir,
++					/* directory where @new is located */
+ 					   struct dentry *new_name
+-					   /* new name */ )
++					/* new name */)
  {
- 	reiser4_key de_key;
- 	de_id *did;
-@@ -432,8 +432,8 @@ static void move_entry(struct readdir_po
- /*
-  * prepare for readdir.
-  */
--static int dir_readdir_init(struct file *f, tap_t * tap,
--			    struct readdir_pos ** pos)
-+static int dir_readdir_init(struct file *f, tap_t *tap,
-+			    struct readdir_pos **pos)
- {
- 	struct inode *inode;
- 	reiser4_file_fsdata *fsdata;
-@@ -473,7 +473,7 @@ static int dir_readdir_init(struct file 
-    typical directory
-    See comment before reiser4_readdir_common() for explanation.
- */
--loff_t reiser4_llseek_dir_common(struct file * file, loff_t off, int origin)
-+loff_t reiser4_llseek_dir_common(struct file *file, loff_t off, int origin)
- {
- 	reiser4_context *ctx;
- 	loff_t result;
-@@ -586,7 +586,7 @@ int reiser4_readdir_common(struct file *
+ 	reiser4_block_nr reserve;
  
- 	reiser4_readdir_readahead_init(inode, &tap);
+@@ -271,7 +278,7 @@ static int can_rename(struct inode *old_
+ 	return 0;
+ }
  
--      repeat:
-+repeat:
- 	result = dir_readdir_init(f, &tap, &pos);
- 	if (result == 0) {
- 		result = reiser4_tap_load(&tap);
+-int reiser4_find_entry(struct inode *, struct dentry *, lock_handle *,
++int reiser4_find_entry(struct inode *, struct dentry *, lock_handle * ,
+ 	       znode_lock_mode, reiser4_dir_entry_desc *);
+ int reiser4_update_dir(struct inode *);
+ 
+@@ -291,7 +298,7 @@ int reiser4_rename_common(struct inode *
+ 			  struct dentry *old_name /* old name */ ,
+ 			  struct inode *new_dir /* directory where @new
+ 						 * is located */ ,
+-			  struct dentry *new_name /* new name */ )
++			  struct dentry *new_name/* new name */)
+ {
+ 	/* From `The Open Group Base Specifications Issue 6'
+ 
+@@ -384,7 +391,7 @@ int reiser4_rename_common(struct inode *
+ 	file_plugin *fplug;
+ 
+ 	reiser4_dir_entry_desc *old_entry, *new_entry, *dotdot_entry;
+-	lock_handle *new_lh, *dotdot_lh;
++	lock_handle * new_lh, *dotdot_lh;
+ 	struct dentry *dotdot_name;
+ 	struct reiser4_dentry_fsdata *dataonstack;
+ 
+@@ -619,7 +626,7 @@ int reiser4_rename_common(struct inode *
+ 			  struct dentry *old_name /* old name */ ,
+ 			  struct inode *new_dir /* directory where @new
+ 						 * is located */ ,
+-			  struct dentry *new_name /* new name */ )
++			  struct dentry *new_name/* new name */)
+ {
+ 	/* From `The Open Group Base Specifications Issue 6'
+ 
+@@ -906,7 +913,7 @@ int reiser4_rename_common(struct inode *
+ 				result = safe_link_add(new_inode, SAFE_UNLINK);
+ 		}
+ 	}
+-      exit:
++exit:
+ 	context_set_commit_async(ctx);
+ 	reiser4_exit_context(ctx);
+ 	return result;
 
---=-XZ4eqXb7ejejgPdp4fS5--
+--=-eIteHjtydCX8KSRDakJP--
 
