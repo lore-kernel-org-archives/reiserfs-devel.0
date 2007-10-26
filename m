@@ -1,140 +1,134 @@
 From: Dushan Tcholich <dusanc@gmail.com>
-Subject: [PATCH 68/8] hash.c cleanup
-Date: Fri, 26 Oct 2007 14:06:31 +0200
-Message-ID: <1193400391.4615.24.camel@krshina3.gekom>
+Subject: [PATCH 69/8] object.h cleanup
+Date: Fri, 26 Oct 2007 14:12:21 +0200
+Message-ID: <1193400741.4615.28.camel@krshina3.gekom>
 Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-v3PpV7z7q42fnrBlpt+R"
+Content-Type: multipart/mixed; boundary="=-Ua4FJAY4QnxjMdW0CrmP"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiser4 <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward@namesys.com>
+To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
 
 
---=-v3PpV7z7q42fnrBlpt+R
+--=-Ua4FJAY4QnxjMdW0CrmP
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-orig:	total: 12 errors, 1 warnings, 353 lines checked
-patched:total: 0 errors, 1 warnings, 352 lines checked
+orig:	total: 17 errors, 0 warnings, 121 lines checked
+patched:total: 11 errors, 0 warnings, 121 lines checked
 leftover:
 
-#268: FILE: hash.c:268:
-+                       result =
-aset_set_unsafe(&reiser4_inode_data(inode)->pset,
+ERROR: need consistent spacing around '*' (ctx:WxB)
+#46: FILE: object.h:46:
++int key_by_inode_and_offset_common(struct inode *, loff_t, reiser4_key
+*);
+
+^
+
+ERROR: need consistent spacing around '*' (ctx:WxB)
+#48: FILE: object.h:48:
++                            reiser4_object_create_data *);
+                                                        ^
+
+ERROR: need consistent spacing around '*' (ctx:WxB)
+#56: FILE: object.h:56:
++                                reiser4_object_create_data *);
+                                                            ^
+
+ERROR: need consistent spacing around '*' (ctx:WxB)
+#77: FILE: object.h:77:
++char *wire_read_common(char *addr, reiser4_object_on_wire *);
+                                                           ^
+
+ERROR: need consistent spacing around '*' (ctx:WxB)
+#78: FILE: object.h:78:
++struct dentry *wire_get_common(struct super_block *,
+reiser4_object_on_wire *);
+
+^
+
+ERROR: need consistent spacing around '*' (ctx:WxB)
+#80: FILE: object.h:80:
++void wire_done_common(reiser4_object_on_wire *);
+                                              ^
+
+ERROR: need consistent spacing around '*' (ctx:WxB)
+#86: FILE: object.h:86:
++                           const struct qstr *qname, reiser4_key *);
+                                                                  ^
+
+ERROR: need consistent spacing around '*' (ctx:WxB)
+#87: FILE: object.h:87:
++int build_readdir_key_common(struct file *dir, reiser4_key *);
+                                                            ^
+
+ERROR: need consistent spacing around '*' (ctx:WxB)
+#89: FILE: object.h:89:
++                    reiser4_object_create_data * ,
+reiser4_dir_entry_desc *);
+
+^
+
+ERROR: need consistent spacing around '*' (ctx:WxB)
+#91: FILE: object.h:91:
++                    reiser4_dir_entry_desc *);
+                                            ^
+
+ERROR: need consistent spacing around '*' (ctx:WxB)
+#93: FILE: object.h:93:
++                           reiser4_object_create_data *);
+                                                       ^
 
 
 
 
---=-v3PpV7z7q42fnrBlpt+R
-Content-Disposition: attachment; filename=hash.c.patch
-Content-Type: text/x-patch; name=hash.c.patch; charset=UTF-8
+--=-Ua4FJAY4QnxjMdW0CrmP
+Content-Disposition: attachment; filename=object.h.patch
+Content-Type: text/x-patch; name=object.h.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- hash.c.orig	2007-10-26 14:01:17.000000000 +0200
-+++ hash.c	2007-10-26 14:04:35.000000000 +0200
-@@ -13,7 +13,7 @@
+--- object.h.orig	2007-10-26 14:07:04.000000000 +0200
++++ object.h	2007-10-26 14:10:22.000000000 +0200
+@@ -3,7 +3,7 @@
  
- /* old rupasov (yura) hash */
- static __u64 hash_rupasov(const unsigned char *name /* name to hash */ ,
--			  int len /* @name's length */ )
-+			  int len/* @name's length */)
- {
- 	int i;
- 	int j;
-@@ -58,7 +58,7 @@ static __u64 hash_rupasov(const unsigned
+ /* Declaration of object plugin functions. */
  
- /* r5 hash */
- static __u64 hash_r5(const unsigned char *name /* name to hash */ ,
--		     int len UNUSED_ARG /* @name's length */ )
-+		     int len UNUSED_ARG/* @name's length */)
- {
- 	__u64 a = 0;
+-#if !defined( __FS_REISER4_PLUGIN_OBJECT_H__ )
++#if !defined(__FS_REISER4_PLUGIN_OBJECT_H__)
+ #define __FS_REISER4_PLUGIN_OBJECT_H__
  
-@@ -87,7 +87,7 @@ static __u64 hash_r5(const unsigned char
-    This code was blindly upgraded to __u64 by s/__u32/__u64/g.
- */
- static __u64 hash_tea(const unsigned char *name /* name to hash */ ,
--		      int len /* @name's length */ )
-+		      int len/* @name's length */)
- {
- 	__u64 k[] = { 0x9464a485u, 0x542e1a94u, 0x3e846bffu, 0xb75bcfc3u };
+ #include "../type_safe_hash.h"
+@@ -11,7 +11,7 @@
+ /* common implementations of inode operations */
+ int reiser4_create_common(struct inode *parent, struct dentry *dentry,
+ 			  int mode, struct nameidata *);
+-struct dentry * reiser4_lookup_common(struct inode *parent,
++struct dentry *reiser4_lookup_common(struct inode *parent,
+ 				      struct dentry *dentry,
+ 				      struct nameidata *nameidata);
+ int reiser4_link_common(struct dentry *existing, struct inode *parent,
+@@ -86,7 +86,7 @@ void build_entry_key_common(const struct
+ 			    const struct qstr *qname, reiser4_key *);
+ int build_readdir_key_common(struct file *dir, reiser4_key *);
+ int reiser4_add_entry_common(struct inode *object, struct dentry *where,
+-		     reiser4_object_create_data *, reiser4_dir_entry_desc *);
++		     reiser4_object_create_data * , reiser4_dir_entry_desc *);
+ int reiser4_rem_entry_common(struct inode *object, struct dentry *where,
+ 		     reiser4_dir_entry_desc *);
+ int reiser4_dir_init_common(struct inode *object, struct inode *parent,
+@@ -104,8 +104,8 @@ reiser4_block_nr dir_estimate_unlink_com
+ int do_prepare_write(struct file *, struct page *, unsigned from, unsigned to);
  
-@@ -113,16 +113,15 @@ static __u64 hash_tea(const unsigned cha
- 		b0 = h0;						\
- 		b1 = h1;						\
- 									\
--		do							\
--		{							\
-+		do {							\
- 			sum += DELTA;					\
- 			b0 += ((b1 << 4)+a) ^ (b1+sum) ^ ((b1 >> 5)+b);	\
- 			b1 += ((b0 << 4)+c) ^ (b0+sum) ^ ((b0 >> 5)+d);	\
--		} while(--n);						\
-+		} while (--n);						\
- 									\
- 		h0 += b0;						\
- 		h1 += b1;						\
--	} while(0)
-+	} while (0)
+ /* merely useful functions */
+-int lookup_sd(struct inode *, znode_lock_mode, coord_t *, lock_handle *,
+-	      const reiser4_key *, int silent);
++int lookup_sd(struct inode *, znode_lock_mode, coord_t *, lock_handle * ,
++	      const reiser4_key * , int silent);
  
- 	pad = (__u64) len | ((__u64) len << 8);
- 	pad |= pad << 16;
-@@ -144,7 +143,7 @@ static __u64 hash_tea(const unsigned cha
- 	}
- 
- 	if (len >= 12) {
--		//assert(len < 16);
-+		/* assert(len < 16); */
- 		if (len >= 16)
- 			*(int *)0 = 0;
- 
-@@ -161,7 +160,7 @@ static __u64 hash_tea(const unsigned cha
- 			d |= name[i];
- 		}
- 	} else if (len >= 8) {
--		//assert(len < 12);
-+		/* assert(len < 12); */
- 		if (len >= 12)
- 			*(int *)0 = 0;
- 		a = (__u64) name[0] | (__u64) name[1] << 8 | (__u64) name[2] <<
-@@ -175,7 +174,7 @@ static __u64 hash_tea(const unsigned cha
- 			c |= name[i];
- 		}
- 	} else if (len >= 4) {
--		//assert(len < 8);
-+		/* assert(len < 8); */
- 		if (len >= 8)
- 			*(int *)0 = 0;
- 		a = (__u64) name[0] | (__u64) name[1] << 8 | (__u64) name[2] <<
-@@ -187,7 +186,7 @@ static __u64 hash_tea(const unsigned cha
- 			b |= name[i];
- 		}
- 	} else {
--		//assert(len < 4);
-+		/* assert(len < 4); */
- 		if (len >= 4)
- 			*(int *)0 = 0;
- 		a = b = c = d = pad;
-@@ -220,7 +219,7 @@ static __u64 hash_tea(const unsigned cha
- 
- */
- static __u64 hash_fnv1(const unsigned char *name /* name to hash */ ,
--		       int len UNUSED_ARG /* @name's length */ )
-+		       int len UNUSED_ARG/* @name's length */)
- {
- 	unsigned long long a = 0xcbf29ce484222325ull;
- 	const unsigned long long fnv_64_prime = 0x100000001b3ull;
-@@ -242,7 +241,7 @@ static __u64 hash_fnv1(const unsigned ch
- /* degenerate hash function used to simplify testing of non-unique key
-    handling */
- static __u64 hash_deg(const unsigned char *name UNUSED_ARG /* name to hash */ ,
--		      int len UNUSED_ARG /* @name's length */ )
-+		      int len UNUSED_ARG/* @name's length */)
- {
- 	return 0xc0c0c0c010101010ull;
- }
+ /* __FS_REISER4_PLUGIN_OBJECT_H__ */
+ #endif
 
---=-v3PpV7z7q42fnrBlpt+R--
+--=-Ua4FJAY4QnxjMdW0CrmP--
 
