@@ -1,70 +1,64 @@
 From: Dushan Tcholich <dusanc@gmail.com>
-Subject: [PATCH 70/8] tail_policy.c cleanup
-Date: Fri, 26 Oct 2007 15:26:39 +0200
-Message-ID: <1193405199.4615.32.camel@krshina3.gekom>
+Subject: [PATCH 71/8]
+Date: Fri, 26 Oct 2007 15:32:20 +0200
+Message-ID: <1193405540.4615.37.camel@krshina3.gekom>
 Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-b4zb4liWVlXDDwp/XeeO"
+Content-Type: multipart/mixed; boundary="=-MJU2kRlOslbT/yLkQEpg"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Edward Shishkin <edward@namesys.com>, reiser4 <reiserfs-devel@vger.kernel.org>
+To: reiser4 <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward@namesys.com>
 
 
---=-b4zb4liWVlXDDwp/XeeO
+--=-MJU2kRlOslbT/yLkQEpg
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-orig:	total: 3 errors, 2 warnings, 113 lines checked
-patched:total: 0 errors, 1 warnings, 113 lines checked
-leftovers:
+orig:	total: 4 errors, 0 warnings, 379 lines checked
+patched:total: 2 errors, 0 warnings, 380 lines checked
+leftover:
 
-WARNING: line over 80 characters
-#98: FILE: tail_policy.c:98:
-+                       .desc = "store files shorter than 4 blocks in
-tail items",
+ERROR: Use of SPIN_LOCK_UNLOCKED is deprecated: see
+Documentation/spinlocks.txt
+#37: FILE: plugin_set.c:37:
++       [0 ... 7] = SPIN_LOCK_UNLOCKED
+
+ERROR: Macros with complex values should be enclosed in parenthesis
+#293: FILE: plugin_set.c:293:
++       reiser4_plugin_type PREFIX##_member_to_type_unsafe(pset_member
+memb)   \
 
 
 
---=-b4zb4liWVlXDDwp/XeeO
-Content-Disposition: attachment; filename=tail_policy.c.patch
-Content-Type: text/x-patch; name=tail_policy.c.patch; charset=UTF-8
+
+--=-MJU2kRlOslbT/yLkQEpg
+Content-Disposition: attachment; filename=plugin_set.c.patch
+Content-Type: text/x-patch; name=plugin_set.c.patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Signed-off-by: Dushan Tcholich <dusanc@gmail.com>
---- tail_policy.c.orig	2007-10-26 15:25:09.000000000 +0200
-+++ tail_policy.c	2007-10-26 15:23:43.000000000 +0200
-@@ -35,7 +35,7 @@
- /* Audited by: green(2002.06.12) */
- static int have_formatting_never(const struct inode *inode UNUSED_ARG
- 		      /* inode to operate on */ ,
--		      loff_t size UNUSED_ARG /* new object size */ )
-+		      loff_t size UNUSED_ARG/* new object size */)
- {
- 	return 0;
- }
-@@ -45,17 +45,17 @@ static int have_formatting_never(const s
- static int
- have_formatting_always(const struct inode *inode UNUSED_ARG
- 		       /* inode to operate on */ ,
--		       loff_t size UNUSED_ARG /* new object size */ )
-+		       loff_t size UNUSED_ARG/* new object size */)
- {
- 	return 1;
- }
+--- plugin_set.c.orig	2007-10-26 15:27:20.000000000 +0200
++++ plugin_set.c	2007-10-26 15:30:48.000000000 +0200
+@@ -92,7 +92,7 @@ static inline int pseq(const unsigned lo
  
--/* This function makes test if we should store file denoted @inode as tails only or
--   as extents only. */
-+/* This function makes test if we should store file denoted @inode as tails only
-+   or as extents only. */
- static int
- have_formatting_default(const struct inode *inode UNUSED_ARG
- 			/* inode to operate on */ ,
--			loff_t size /* new object size */ )
-+			loff_t size/* new object size */)
- {
- 	assert("umka-1253", inode != NULL);
+ #define HASH_FIELD(hash, set, field)		\
+ ({						\
+-        (hash) += (unsigned long)(set)->field >> 2;	\
++	(hash) += (unsigned long)(set)->field >> 2;	\
+ })
  
+ static inline unsigned long calculate_hash(const plugin_set * set)
+@@ -324,7 +324,8 @@ reiser4_plugin *PREFIX##_get(plugin_set 
+ 
+ DEFINE_PSET_OPS(aset);
+ 
+-int set_plugin(plugin_set ** set, pset_member memb, reiser4_plugin * plugin) {
++int set_plugin(plugin_set ** set, pset_member memb, reiser4_plugin * plugin)
++{
+ 	return plugin_set_field(set,
+ 		(unsigned long)plugin, pset_descr[memb].offset);
+ }
 
---=-b4zb4liWVlXDDwp/XeeO--
+--=-MJU2kRlOslbT/yLkQEpg--
 
