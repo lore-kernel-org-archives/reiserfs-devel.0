@@ -1,104 +1,87 @@
-From: Zan Lynx <zlynx@acm.org>
+From: Badari Pulavarty <pbadari@us.ibm.com>
 Subject: Re: migratepage failures on reiserfs
-Date: Wed, 31 Oct 2007 00:05:26 +0000
-Message-ID: <1193789126.7320.34.camel@localhost>
+Date: Wed, 31 Oct 2007 08:14:21 -0800
+Message-ID: <1193847261.17412.13.camel@dyn9047017100.beaverton.ibm.com>
 References: <1193768824.8904.11.camel@dyn9047017100.beaverton.ibm.com>
 	 <20071030135442.5d33c61c@think.oraclecorp.com>
 	 <1193781245.8904.28.camel@dyn9047017100.beaverton.ibm.com>
 	 <20071030185840.48f5a10b@think.oraclecorp.com>
-	 <4727B979.8030207@us.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-rnt15PnDYb7aVOWipuCx"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4727B979.8030207@us.ibm.com>
+In-Reply-To: <20071030185840.48f5a10b@think.oraclecorp.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: Badari <pbadari@us.ibm.com>
-Cc: Chris Mason <chris.mason@oracle.com>, reiserfs-devel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Chris Mason <chris.mason@oracle.com>
+Cc: reiserfs-devel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
 
+On Tue, 2007-10-30 at 18:58 -0400, Chris Mason wrote:
+> On Tue, 30 Oct 2007 13:54:05 -0800
+> Badari Pulavarty <pbadari@us.ibm.com> wrote:
+> 
+> > On Tue, 2007-10-30 at 13:54 -0400, Chris Mason wrote:
+> > > On Tue, 30 Oct 2007 10:27:04 -0800
+> > > Badari Pulavarty <pbadari@us.ibm.com> wrote:
+> > > 
+> > > > Hi,
+> > > > 
+> > > > While testing hotplug memory remove, I ran into this issue. Given
+> > > > a range of pages hotplug memory remove tries to migrate those
+> > > > pages.
+> > > > 
+> > > > migrate_pages() keeps failing to migrate pages containing
+> > > > pagecache pages for reiserfs files. I noticed that reiserfs
+> > > > doesn't have ->migratepage() ops. So, fallback_migrate_page()
+> > > > code tries to do try_to_release_page(). try_to_release_page()
+> > > > fails to drop_buffers() since b_count == 1. Here is what my debug
+> > > > shows:
+> > > > 
+> > > > 	migrate pages failed pfn 258111/flags 3f00000000801
+> > > > 	bh c00000000b53f6e0 flags 110029 count 1
+> > > > 	
+> > > > Any one know why the b_count == 1 and not getting dropped to
+> > > > zero ? 
+> > > 
+> > > If these are file data pages, the count is probably elevated as
+> > > part of the data=ordered tracking.  You can verify this via
+> > > b_private, or just mount data=writeback to double check.
+> > 
+> > 
+> > Chris,
+> > 
+> > That was my first assumption. But after looking at
+> > reiserfs_releasepage (), realized that it would do reiserfs_free_jh()
+> > and clears the b_private. I couldn't easily find out who has the ref.
+> > against this bh.
+> > 
+> > bh c00000000bdaaf00 flags 110029 count 1 private 0
+> > 
+> 
+> If I'm reading this correctly the buffer is BH_Lock | BH_Req, perhaps
+> it is currently under IO?
+> 
+> The page isn't locked, but data=ordered does IO directly on the buffer
+> heads, without taking the page lock.
+> 
+> The easy way to narrow our search is to try without data=ordered, it is
+> certainly complicating things.
 
---=-rnt15PnDYb7aVOWipuCx
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+I tried data=writeback mode and it didn't help :(
 
+unable to release the page 262070
+bh c0000000211b9408 flags 110029 count 1 private 0
+unable to release the page 262098
+bh c000000020ec9198 flags 110029 count 1 private 0
+memory offlining 3f000 to 40000 failed
 
-On Tue, 2007-10-30 at 16:08 -0700, Badari wrote:
-> Chris Mason wrote:
-> > On Tue, 30 Oct 2007 13:54:05 -0800
-[cut]
-> > The easy way to narrow our search is to try without data=3Dordered, it =
-is
-> > certainly complicating things.
-> >  =20
->=20
-> I can try that, its my root filesystem :(
+# cat /etc/mtab
+/dev/sda3 / reiserfs rw,data=writeback 0 0
+proc /proc proc rw 0 0
+tmpfs /dev/shm tmpfs rw 0 0
+devpts /dev/pts devpts rw,mode=0620,gid=5 0 0
 
-You meant to write "can't?"
+Thanks,
+Badari
 
-Download BusyBox and build it into an initramfs.  It's pretty easy, you
-can do it yourself.  Or you could download the Debian mkinitramfs (I
-think) package and look at it.  Or the Fedora equivalent (I think
-mkinitrd).
-
-Then you can boot into that and mount your / with whatever options you
-like.
-
-Here's what I use for my own custom BusyBox initramfs /init script:
-#!/bin/sh
-
-get_arg() {
-	local arg=3D"$1"
-	local x=3D`cat /proc/cmdline`
-	for i in $x; do
-		if [ "${i%=3D*}" =3D "$arg" ]; then
-			echo ${i#*=3D}
-			break
-		fi
-	done
-}
-
-do_switch() {
-	mount -t proc none /proc
-	local root=3D`get_arg root`
-	local flags=3D`get_arg rootflags`
-	mount "$root" /new ${flags:+-o "$flags"}
-	umount /proc
-	cd /new
-	exec switch_root . /sbin/init
-}
-
-do_shell() {
-	exec /sbin/init
-}
-
-# The following will wait 2 seconds for Enter before booting.
-trap "do_switch" ALRM
-
-target=3D$$
-( sleep 2; kill -ALRM $target ) &
-alarm=3D$!
-
-echo -n "Press Enter for a shell: "
-while read action; do
-	kill $alarm
-	break
-done
-do_shell
-
---=20
-Zan Lynx <zlynx@acm.org>
-
---=-rnt15PnDYb7aVOWipuCx
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.7 (GNU/Linux)
-
-iD8DBQBHJ8bGG8fHaOLTWwgRAs3SAJ48lwrAe6tUS2HMcof4YUlRN+ip5wCeLdzm
-8SgJtBGqFrgWSYrlbN30Ejo=
-=DNiW
------END PGP SIGNATURE-----
-
---=-rnt15PnDYb7aVOWipuCx--
 
