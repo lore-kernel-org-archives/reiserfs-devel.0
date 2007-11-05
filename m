@@ -1,48 +1,71 @@
-From: "Edward Shishkin" <edward.shishkin@gmail.com>
-Subject: Re: reiser4 BUG in 2.6.22: reiser4_txn_end
-Date: Mon, 5 Nov 2007 02:25:27 +0300
-Message-ID: <5c7c368b0711041525t4c49443aw15f4e7c40b1814e6@mail.gmail.com>
+From: mel@skynet.ie (Mel Gorman)
+Subject: Re: migratepage failures on reiserfs
+Date: Mon, 5 Nov 2007 10:23:35 +0000
+Message-ID: <20071105102335.GA6272@skynet.ie>
+References: <1193768824.8904.11.camel@dyn9047017100.beaverton.ibm.com> <20071030135442.5d33c61c@think.oraclecorp.com> <1193781245.8904.28.camel@dyn9047017100.beaverton.ibm.com> <20071030185840.48f5a10b@think.oraclecorp.com> <1193847261.17412.13.camel@dyn9047017100.beaverton.ibm.com> <20071031134006.2ecd520b@think.oraclecorp.com> <1193935137.26106.5.camel@dyn9047017100.beaverton.ibm.com> <20071101115103.62de4b2e@think.oraclecorp.com> <1193940626.26106.13.camel@dyn9047017100.beaverton.ibm.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:mime-version:content-type:content-transfer-encoding:content-disposition;
-        bh=O9j4g7OtA0YYQqov0KJSWF+C8YCue8PRp/AM0d9Vb1U=;
-        b=EtZsPMJYRWMFt0HIwJGjuNdfkv1sYdcsMhDD6xsQzIUfZJCYGWY05E1PofRg1gJRMf4+Q4MxLrm8dBDQ2BZzmjF7/m6KoODQfWntDXE0sjqT1mN8CYEBCS/hx0vInZzvHP+huCVAjY9Z6EbcNvzmYKq+wT/aQHlwOQmIHdxRhpg=
 Content-Disposition: inline
+In-Reply-To: <1193940626.26106.13.camel@dyn9047017100.beaverton.ibm.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: Badari Pulavarty <pbadari@us.ibm.com>
+Cc: Chris Mason <chris.mason@oracle.com>, reiserfs-devel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
 
-Hello Marti,
-I have reproduced this bug. Thanks for details.
-Will try to fix..
+On (01/11/07 10:10), Badari Pulavarty didst pronounce:
+> On Thu, 2007-11-01 at 11:51 -0400, Chris Mason wrote:
+> > On Thu, 01 Nov 2007 08:38:57 -0800
+> > Badari Pulavarty <pbadari@us.ibm.com> wrote:
+> > 
+> > > On Wed, 2007-10-31 at 13:40 -0400, Chris Mason wrote:
+> > > > On Wed, 31 Oct 2007 08:14:21 -0800
+> > > > Badari Pulavarty <pbadari@us.ibm.com> wrote:
+> > > > > 
+> > > > > I tried data=writeback mode and it didn't help :(
+> > > > 
+> > > > Ouch, so much for the easy way out.
+> > > > 
+> > > > > 
+> > > > > unable to release the page 262070
+> > > > > bh c0000000211b9408 flags 110029 count 1 private 0
+> > > > > unable to release the page 262098
+> > > > > bh c000000020ec9198 flags 110029 count 1 private 0
+> > > > > memory offlining 3f000 to 40000 failed
+> > > > > 
+> > > > 
+> > > > The only other special thing reiserfs does with the page cache is
+> > > > file tails.  I don't suppose all of these pages are index zero in
+> > > > files smaller than 4k?
+> > > 
+> > > Ahhhhhhhhhhhhh !! I am so blind :(
+> > > 
+> > > I have been suspecting reiserfs all along, since its executing
+> > > fallback_migrate_page(). Actually, these buffer heads are
+> > > backing blockdev. I guess these are metadata buffers :( 
+> > > I am not sure we can do much with these..
+> > 
+> > Hmpf, my first reply had a paragraph about the block device inode
+> > pages, I noticed the phrase file data pages and deleted it ;)
+> > 
+> > But, for the metadata buffers there's not much we can do.  They are
+> > included in a bunch of different lists and the patch would
+> > be non-trivial.
+> 
+> Unfortunately, these buffer pages are spread all around making
+> those sections of memory non-removable. Of course, one can use
+> ZONE_MOVABLE to make sure to guarantee the remove. But I am
+> hoping we could easily group all these allocations and minimize
+> spreading them around. Mel ?
 
-Edward.
+The grow_dev_page() pages should be reclaimable even though migration
+is not supported for those pages? They were marked movable as it was
+useful for lumpy reclaim taking back pages for hugepage allocations and
+the like. Would it make sense for memory unremove to attempt migration
+first and reclaim second?
 
-Marti Raudsepp wrote:
-
-One morning I happened to find this BUG traceback in my dmesg output.
-I have no clue what caused it, and it didn't seem to have any effect
-on the stability of the system.
-
-uname:
-Linux non 2.6.22-gentoo-r8 #1 Fri Sep 28 19:11:19 EEST 2007 x86_64 AMD
-Athlon(tm) 64 Processor 3000+ AuthenticAMD GNU/Linux
-
-dmesg:
-[16184.832157] reiser4[ktxnmgrd:dm-3:r(1209)]: disable_write_barrier
-(fs/reiser4/wander.c:234)[zam-1055]:
-[16184.832160] NOTICE: dm-3 does not support write barriers, using
-synchronous write instead.
-...
-[451329.064221] reiser4[cat(13038)]: extent2tail
-(fs/reiser4/plugin/file/tail_conversion.c:662)[]:
-[451329.064224] WARNING: reiser4_write_tail failed
-[451329.064232] reiser4[cat(13038)]: release_unix_file
-(fs/reiser4/plugin/file/file.c:2376)[nikita-3233]:
-[451329.064234] WARNING: Failed (-28) to convert in release_unix_file (4099340)
-[451329.067453] reiser4[cat(13039)]: extent2tail
-...
+-- 
+Mel Gorman
+Part-time Phd Student                          Linux Technology Center
+University of Limerick                         IBM Dublin Software Lab
