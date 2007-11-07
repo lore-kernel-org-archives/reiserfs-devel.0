@@ -1,50 +1,52 @@
-From: Badari Pulavarty <pbadari@us.ibm.com>
-Subject: Re: migratepage failures on reiserfs
-Date: Wed, 07 Nov 2007 07:58:57 -0800
-Message-ID: <1194451138.26782.30.camel@dyn9047017100.beaverton.ibm.com>
-References: <20071030135442.5d33c61c@think.oraclecorp.com>
-	 <1193781245.8904.28.camel@dyn9047017100.beaverton.ibm.com>
-	 <20071030185840.48f5a10b@think.oraclecorp.com>
-	 <1193847261.17412.13.camel@dyn9047017100.beaverton.ibm.com>
-	 <20071031134006.2ecd520b@think.oraclecorp.com>
-	 <1193935137.26106.5.camel@dyn9047017100.beaverton.ibm.com>
-	 <20071101115103.62de4b2e@think.oraclecorp.com>
-	 <1193940626.26106.13.camel@dyn9047017100.beaverton.ibm.com>
-	 <20071105102335.GA6272@skynet.ie>
-	 <Pine.LNX.4.64.0711051446130.20927@schroedinger.engr.sgi.com>
-	 <20071107145619.GA32737@skynet.ie>
+From: Dushan Tcholich <dusanc@gmail.com>
+Subject: [BUG] reiser4-for-2.6.22-2 Large stalls when using atime mount
+	option
+Date: Wed, 07 Nov 2007 21:24:48 +0100
+Message-ID: <1194467088.4766.0.camel@krshina3.gekom>
+Reply-To: dusanc@gmail.com
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20071107145619.GA32737@skynet.ie>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Mel Gorman <mel@skynet.ie>
-Cc: Christoph Lameter <clameter@sgi.com>, Chris Mason <chris.mason@oracle.com>, reiserfs-devel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+To: reiser4 <reiserfs-devel@vger.kernel.org>
 
-On Wed, 2007-11-07 at 14:56 +0000, Mel Gorman wrote:
-> On (05/11/07 14:46), Christoph Lameter didst pronounce:
-> > On Mon, 5 Nov 2007, Mel Gorman wrote:
-> > 
-> > > The grow_dev_page() pages should be reclaimable even though migration
-> > > is not supported for those pages? They were marked movable as it was
-> > > useful for lumpy reclaim taking back pages for hugepage allocations and
-> > > the like. Would it make sense for memory unremove to attempt migration
-> > > first and reclaim second?
-> > 
-> > Note that a page is still movable even if there is no file system method 
-> > for migration available. In that case the page needs to be cleaned before 
-> > it can be moved.
-> > 
-> 
-> Badari, do you know if the pages failed to migrate because they were
-> dirty or because the filesystem simply had ownership of the pages and
-> wouldn't let them go?
+Kernel: Gentoo 2.6.22-r2 + reiser4-for-2.6.22-2.patch
+fstab:
+/dev/sda2        /boot        ext2        noauto,noatime    1 2
+/dev/sda5        /        reiser4                0 0
+/dev/sda3        none        swap        sw        0 0 
+/dev/sda6        /home        ext3        noatime        0 0
 
-From the debug, it looks like all the buffers are clean and they
-have a b_count == 1. So drop_buffers() fails to release the buffer.
+reiser4 partition is with cryptocompress (lzo) default settings.
 
-Thanks,
-Badari
+I usually mount r4 with -noatime, but after some debbuging with some
+users on irc (rvalles), who have intermitent large stalls, we found that
+only difference between our setups was my -noatime flag in fstab. 
+I tried to mount / without -noatime, started gnome, and then in about
+same time evolution, firefox, played some mp3s, avis, did a kernel
+compile, emerge -uD world (compiled few packages), acessed some random
+fles in /usr/src/linux, started gnome disk usage analyser etc. and had
+no stalls at all. 
+And then I tried to reboot. System stalled for 3min 25 sec (i was ready
+with a watch :)) before printing the first message, with heavy disk
+activity.
+Upon reboot I just changed line in fstab with nano to mount r4 with
+-noatime and rebooted agin. Now there were no stalls. 
+
+
+Related/same bugreports:
+http://marc.info/?l=reiserfs-devel&m=113081021609510&w=2
+http://marc.info/?l=reiserfs-devel&m=114368644227582&w=2
+http://marc.info/?l=reiserfs-devel&m=115488109712570&w=2
+http://marc.info/?l=reiserfs-devel&m=117507704927976&w=2 this one is
+interesting - Reiser4 does a disk write with even no disk activity
+during every fsync()
+http://marc.info/?l=reiserfs-devel&m=115285478906088&w=2
+
+As I can see this started in 2.6.12->2.6.13 transition time.
+
+Have fun :)
+
 
