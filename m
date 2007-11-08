@@ -1,55 +1,66 @@
-From: "Edward Shishkin" <edward.shishkin@gmail.com>
-Subject: Re: [BUG] reiser4-for-2.6.22-2 Large stalls when using atime mount option
-Date: Thu, 8 Nov 2007 00:31:58 +0300
-Message-ID: <5c7c368b0711071331q496ba3b5yf2383f2a0578b3e8@mail.gmail.com>
-References: <a08621850711071223w30e5f74bua8e8189efb6814a7@mail.gmail.com>
+From: "Rob Mueller" <robm@fastmail.fm>
+Subject: Re: reiser3 memory usage
+Date: Thu, 8 Nov 2007 17:42:08 +1100
+Message-ID: <127401c821d2$7e474d70$8900a8c0@robmhp>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
-        bh=CxX1wpIuuGaRa2Wym5MORU+GZibG3nt52uK0TIcUECo=;
-        b=DBk2aS9TG4XM86+Ck/k2FElVsBiA4Hx2EtIl3+PSxwUmyikP9fcj/TKEuWGy5+NTKU9dyxkW8kzjWGiOhYvtenlX06Sshoyz6FOfZpNMSkn+7lAkkRoIA/rG8UqCRD31lNqVDPMpiia+WUQ5ZCrs8/1C8264P6ZaoJHB3WLBqts=
-In-Reply-To: <a08621850711071223w30e5f74bua8e8189efb6814a7@mail.gmail.com>
-Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Dushan Tcholich <dusanc@gmail.com>
-Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; format="flowed"; charset="us-ascii"; reply-type="response"
+To: Chris Mason <chris.mason@oracle.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: "Vladimir V. Saveliev" <saveliev.v.v@gmail.com>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Bron Gondwana <brong@fastmail.fm>
 
-Hello.
+This is a repeat email that I'm sending to the correct mailing list address.
 
-On 11/7/07, Dushan Tcholich <dusanc@gmail.com> wrote:
-> Kernel: Gentoo 2.6.22-r2 + reiser4-for-2.6.22-2.patch
-> fstab:
-> /dev/sda2        /boot        ext2        noauto,noatime    1 2
-> /dev/sda5        /        reiser4                0 0
-> /dev/sda3        none        swap        sw        0 0
-> /dev/sda6        /home        ext3        noatime        0 0
+>>> Rob, this is only lightly tested, please don't run it outside of
+>>> experimental systems for now.  This should do it though, I was able to
+>>> reproduce the problem by running fsx-linux on data=journal.  Without
+>>> the patch, the active list quickly grew to about 1/2 my total ram.
+>>> With the patch it stayed at 200M.
+>>
+>> Well it's looking good!
 >
-> reiser4 partition is with cryptocompress (lzo) default settings.
+> Just another update.
 >
-> I usually mount r4 with -noatime, but after some debbuging with some users
-> on irc (rvalles), who have intermitent large stalls, we found that only
-> difference between our setups was my -noatime flag in fstab.
+> It's been a week now, and this kernel is still running well. No memory
+> growth, nothing appearing in the dmesg log.
 
-Plus rvalles doesn't use compression (isn't it?)
+Another update.
 
-> I tried to mount / without -noatime, started gnome, and then in about same
-> time evolution, firefox, played some mp3s, avis, did a kernel compile,
-> emerge -uD world (compiled few packages), acessed some random fles in
-> /usr/src/linux, started gnome disk usage analyser etc. and had no stalls at
-> all.
-> And then I tried to reboot. System stalled for 3min 25 sec (i was ready with
-> a watch :)) before printing the first message, with heavy disk activity.
-> Upon reboot I just changed line in fstab with nano to mount r4 with -noatime
-> and rebooted agin. Now there were no stalls.
->
+It seems this kernel has been great on 64-bit systems (x86_64), but on
+32-bit systems (PAE), it hasn't actually helped at all. Unfortunately
+2/3's of our systems are still 32bit PAE systems, so it would be nice to
+work out exactly what's going on on these systems and try and fix it as
+well.
 
-Currently I am preparing a patch for this problem.
-Not sure about its efficiency: we'll take a look..
+The symptoms on PAE systems are exactly the same as before, namely used
+memory pretty much approachs total memory, but we never actually get OOM
+conditions. This is with data=journal.
 
-Thanks,
-Edward.
+Doing some more testing shows that the problem appears to be data=journal
+related. On one server we remounted everything data=ordered, and that does
+fix the problem, memory usage drops significantly as shown here:
+
+http://robm.fastmail.fm/kernel/2007-10-31/imap2.messagingengine.com-memory-week.png
+
+At that point, we become inode table limited, because based on previous
+discussion, they have to be in lowmem:
+
+http://robm.fastmail.fm/kernel/2007-10-31/imap2.messagingengine.com-open_inodes-week.png
+
+Should we try running the patched kernel with the CONFIG_PAGE_OWNER option
+set again to see if we can work out what's still going on here with the
+data=journal mode. It would be nice to squash this bug fully. If so, Andrew
+what -mm kernel would you recommend running at the moment?
+
+One other question. We still obviously will have the problem where we have
+too many inodes when running on a 32-bit kernel. Is there anything we can do
+to help that? Changing vfs_cache_pressure helps a bit, but not enough to
+allow all of memory to be used. Would using a 2G/2G or 1G/3G split kernel
+help? On these servers, none of our individual processes tend to grow very
+large (eg nothing more than 100M), so would using a 1G/3G split kernel give
+us 3G of lowmem, which would allow us to cache more inodes?
+
+Rob
+
