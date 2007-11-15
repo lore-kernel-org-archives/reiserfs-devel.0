@@ -1,75 +1,70 @@
-From: "Edward Shishkin" <edward.shishkin@gmail.com>
+From: Thomas Kuther <gimpel@sonnenkinder.org>
 Subject: Re: Reiser4 and loop device problems
-Date: Fri, 16 Nov 2007 02:03:52 +0300
-Message-ID: <5c7c368b0711151503p6ae801fcsa3803fbd65443341@mail.gmail.com>
-References: <5c7c368b0711151455l2cf7a080yff21884e5957d20b@mail.gmail.com>
+Date: Fri, 16 Nov 2007 00:27:31 +0100
+Message-ID: <20071116002731.5aa736df@sirius>
+References: <20071115224457.2202be3e@sirius>
+	<a08621850711151349m6ae91e74led14485dd41c2f8f@mail.gmail.com>
+	<20071115231053.5066b94e@sirius>
+	<b8d16a880711151502h509cac93m7453a66b551f4fae@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/IjoaD1fZwVF1QxNcNYjjgbC";
+ protocol="application/pgp-signature"; micalg=PGP-SHA1
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=beta;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
-        bh=S52o0eokA33v2ffsZupIx567U86k3q6VsgR606r3ZCI=;
-        b=MtJor61K9lKuEqEZ7oeENJRYAx/9fUqT2zKiWJBOPAUSJtTXe2UjhKN3BrCoG1JZRiP8qs6MYxaHFo+zkX9TTWdhG9nFiN8o0d/q51FEBJB/tCfuYUrmjixeHcu9ynsMPIZrmF2Dq9hJNHLtpPfXLcSy+CRJYs81aQE9DJ0wEqM=
-In-Reply-To: <5c7c368b0711151455l2cf7a080yff21884e5957d20b@mail.gmail.com>
-Content-Disposition: inline
+In-Reply-To: <b8d16a880711151502h509cac93m7453a66b551f4fae@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Thomas Kuther <gimpel@sonnenkinder.org>
-Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+To: reiserfs-devel@vger.kernel.org, Christopher Sawtell <csawtell@gmail.com>
 
-> On Do, 15.11.07 22:49 "Dushan Tcholich" <dusanc@gmail.com> wrote:
->
-> > Can you remember the last kernel that worked?
+--Sig_/IjoaD1fZwVF1QxNcNYjjgbC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+On Fr, 16.11.07 12:02 "Christopher Sawtell" <csawtell@gmail.com> wrote:
+
+> > > Can you remember the last kernel that worked?
+> > >
+> > > Thanks
+> > >
+> > > Dushan
 > >
-> > Thanks
-> >
-> > Dushan
->
-> Unfortunately not for sure. I'm not even sure if it ever worked at all,
-> to be honest. There were some old threads from 2003 saying that loop is
-> not supported (yet). Did that ever change?
+> > Unfortunately not for sure. I'm not even sure if it ever worked at
+> > all, to be honest. There were some old threads from 2003 saying
+> > that loop is not supported (yet). Did that ever change?
+>=20
+> Yes.
+>=20
+> imogen ~ # uname -r
+> 2.6.22.9
+> imogen ~ # cd /media/Isos/Debian/
+> imogen Debian # mount -o loop -t iso9660
+> Debian-Etch-4.0-r1-Binary-1-20070819.iso /mnt/tmp
+> imogen Debian # ls /mnt/tmp
+> README.html          README.txt   debian  install      md5sum.txt
+> tools README.mirrors.html  autorun.bat  dists   install.386  pics
+> README.mirrors.txt   autorun.inf  doc     isolinux     pool
+>=20
+> But it's broken for linux-2.6.23.1
+>=20
+> If I can be of any further assistance, please do not hesitate to ask.
+>=20
 
-No, it didn't.
-Sorry..
+So which version of reiser4 patch, progs etc do you use?
 
-Edward.
+Edward wrote, it never did. Now.. WTF? :)
 
->
-> Regards,
-> Tom
->
->
-> > On Nov 15, 2007 10:44 PM, Thomas Kuther <gimpel@sonnenkinder.org>
-> > wrote:
-> > > Hi,
-> > >
-> > > in recent reiser4 it is not possible to loopback mount a file
-> > > located on a reiser4 partition
-> > >
-> > > * kernel 2.6.24-rc2-git5
-> > > * reiser4progs 1.0.6
-> > > * reiser4 from 2.6.24-rc2-mm1with following series
-> > >
-> > >         sync_sb_inodes-propagate-errors.patch
-> > >         reiser4-sb_sync_inodes.patch
-> > >         reiser4-export-remove_from_page_cache.patch
-> > >         reiser4-export-find_get_pages.patch
-> > >         make-copy_from_user_inatomic-not-zero-the-tail-on-i386-vs-reiser4.patch
-> > >         reiser4.patch
-> > >         jens-broke-reiser4patch-added-to-mm-tree.patch
-> > >
-> > > * filsystem created with
-> > >         $ mkfs.reiser4
-> > > * mounted with noatime
-> > > * no cryptcompress or anything non-default
-> > >
-> > > $ mount -o loop -t
-> > > iso9660 /tmp/systemrescuecd-x86-0.4.0.iso /mnt/cdrom ioctl:
-> > > LOOP_SET_FD: Invalid argument
-> > >
-> > > Regards,
-> > > Tom
-> > >
->
+Regards,
+Tom
+
+--Sig_/IjoaD1fZwVF1QxNcNYjjgbC
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.7 (GNU/Linux)
+
+iD8DBQFHPNX1MQFfAqZTGfwRAk/GAJ4h/qFXS5/oqwtL5FT1d57KRKqY8wCfdFXL
+LOvUWRdFg/wC+E162SOrDnk=
+=7dMJ
+-----END PGP SIGNATURE-----
+
+--Sig_/IjoaD1fZwVF1QxNcNYjjgbC--
