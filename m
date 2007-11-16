@@ -1,70 +1,62 @@
-From: Thomas Kuther <gimpel@sonnenkinder.org>
+From: Arend Freije <afreije@inn.nl>
 Subject: Re: Reiser4 and loop device problems
-Date: Fri, 16 Nov 2007 00:27:31 +0100
-Message-ID: <20071116002731.5aa736df@sirius>
-References: <20071115224457.2202be3e@sirius>
-	<a08621850711151349m6ae91e74led14485dd41c2f8f@mail.gmail.com>
-	<20071115231053.5066b94e@sirius>
-	<b8d16a880711151502h509cac93m7453a66b551f4fae@mail.gmail.com>
+Date: Fri, 16 Nov 2007 08:08:26 +0100
+Message-ID: <473D41EA.4020107@inn.nl>
+References: <5c7c368b0711151455l2cf7a080yff21884e5957d20b@mail.gmail.com> <5c7c368b0711151503p6ae801fcsa3803fbd65443341@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/IjoaD1fZwVF1QxNcNYjjgbC";
- protocol="application/pgp-signature"; micalg=PGP-SHA1
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <b8d16a880711151502h509cac93m7453a66b551f4fae@mail.gmail.com>
+In-Reply-To: <5c7c368b0711151503p6ae801fcsa3803fbd65443341@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org, Christopher Sawtell <csawtell@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: Thomas Kuther <gimpel@sonnenkinder.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
---Sig_/IjoaD1fZwVF1QxNcNYjjgbC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Edward Shishkin wrote:
+>> On Do, 15.11.07 22:49 "Dushan Tcholich" <dusanc@gmail.com> wrote:
+>>
+>>     
+>>> Can you remember the last kernel that worked?
+>>>
+>>> Thanks
+>>>
+>>> Dushan
+>>>       
+>> Unfortunately not for sure. I'm not even sure if it ever worked at all,
+>> to be honest. There were some old threads from 2003 saying that loop is
+>> not supported (yet). Did that ever change?
+>>     
+>
+> No, it didn't.
+> Sorry..
+>   
+>>
+>>> On Nov 15, 2007 10:44 PM, Thomas Kuther <gimpel@sonnenkinder.org>
+>>> wrote:
+>>>       
+>>>> ...
+>>>> * filsystem created with
+>>>>         $ mkfs.reiser4
+>>>> * mounted with noatime
+>>>> * no cryptcompress or anything non-default
+>>>>
+>>>> $ mount -o loop -t
+>>>> iso9660 /tmp/systemrescuecd-x86-0.4.0.iso /mnt/cdrom ioctl:
+>>>> LOOP_SET_FD: Invalid argument
+>>>>
+>>>>         
 
-On Fr, 16.11.07 12:02 "Christopher Sawtell" <csawtell@gmail.com> wrote:
+Hi,
 
-> > > Can you remember the last kernel that worked?
-> > >
-> > > Thanks
-> > >
-> > > Dushan
-> >
-> > Unfortunately not for sure. I'm not even sure if it ever worked at
-> > all, to be honest. There were some old threads from 2003 saying
-> > that loop is not supported (yet). Did that ever change?
->=20
-> Yes.
->=20
-> imogen ~ # uname -r
-> 2.6.22.9
-> imogen ~ # cd /media/Isos/Debian/
-> imogen Debian # mount -o loop -t iso9660
-> Debian-Etch-4.0-r1-Binary-1-20070819.iso /mnt/tmp
-> imogen Debian # ls /mnt/tmp
-> README.html          README.txt   debian  install      md5sum.txt
-> tools README.mirrors.html  autorun.bat  dists   install.386  pics
-> README.mirrors.txt   autorun.inf  doc     isolinux     pool
->=20
-> But it's broken for linux-2.6.23.1
->=20
-> If I can be of any further assistance, please do not hesitate to ask.
->=20
+Sorry for intruding, but I'm a bit surprised about the conformation on
+'loop is not supported (yet)' question.
+The example of Thomas shows the mounting of an ISO-9960 file system via
+a loop device. All partions on my system are reiser4, and I can execute
+'mount -t iso9960 -o loop' without any problem. Why do you confirm that
+loop is still not supported?
 
-So which version of reiser4 patch, progs etc do you use?
+Kind Regards,
 
-Edward wrote, it never did. Now.. WTF? :)
+Arend Freije
 
-Regards,
-Tom
-
---Sig_/IjoaD1fZwVF1QxNcNYjjgbC
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.7 (GNU/Linux)
-
-iD8DBQFHPNX1MQFfAqZTGfwRAk/GAJ4h/qFXS5/oqwtL5FT1d57KRKqY8wCfdFXL
-LOvUWRdFg/wC+E162SOrDnk=
-=7dMJ
------END PGP SIGNATURE-----
-
---Sig_/IjoaD1fZwVF1QxNcNYjjgbC--
