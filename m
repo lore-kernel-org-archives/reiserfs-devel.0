@@ -1,98 +1,77 @@
-From: Thomas Kuther <gimpel@sonnenkinder.org>
+From: "Edward Shishkin" <edward.shishkin@gmail.com>
 Subject: Re: Reiser4 and loop device problems
-Date: Fri, 16 Nov 2007 10:24:23 +0100
-Message-ID: <20071116102423.1de5fb66@sirius>
-References: <20071115224457.2202be3e@sirius>
-	<a08621850711151349m6ae91e74led14485dd41c2f8f@mail.gmail.com>
-	<20071115231053.5066b94e@sirius>
-	<b8d16a880711151502h509cac93m7453a66b551f4fae@mail.gmail.com>
-	<20071116002731.5aa736df@sirius>
-	<45639.76.236.51.34.1195179949.squirrel@scotch.ics.uci.edu>
+Date: Fri, 16 Nov 2007 13:08:26 +0300
+Message-ID: <5c7c368b0711160208i5af347fcgf3f029b17809ea0f@mail.gmail.com>
+References: <5c7c368b0711151455l2cf7a080yff21884e5957d20b@mail.gmail.com>
+	 <5c7c368b0711151503p6ae801fcsa3803fbd65443341@mail.gmail.com>
+	 <473D41EA.4020107@inn.nl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Sn2XQfum6VXFnddpvFpPVvP";
- protocol="application/pgp-signature"; micalg=PGP-SHA1
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <45639.76.236.51.34.1195179949.squirrel@scotch.ics.uci.edu>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=beta;
+        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+        bh=T9C5alytMh+PyAmQ+0X6a7/gsgwj0POQA0xzsEdWCY8=;
+        b=cNQTsecHCrOC6v2VR0rLtIn3Et5ZiSxO+D/l/rdKHPrsQ1vsTl0FKAm7mIHEALmIvazZzm8afoowrferMhUN11WBNdtzIDv08cAk1z+wFmGH+C5Z3icJO9SQwoYi/qC7jHtvwUtpjWIHDS4tb7dQT4LhsGB2jbCdfLaFjyOPEBU=
+In-Reply-To: <473D41EA.4020107@inn.nl>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-To: jfeise@feise.com
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Arend Freije <afreije@inn.nl>
+Cc: Thomas Kuther <gimpel@sonnenkinder.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
---Sig_/Sn2XQfum6VXFnddpvFpPVvP
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-On Do, 15.11.07 18:25 "Joe Feise" <jfeise@feise.com> wrote:
-
-> On Thu, November 15, 2007 15:27, Thomas Kuther wrote:
-> > On Fr, 16.11.07 12:02 "Christopher Sawtell" <csawtell@gmail.com>
-> > wrote:
-> >
-> >> > > Can you remember the last kernel that worked?
-> >> > >
-> >> > > Thanks
-> >> > >
-> >> > > Dushan
-> >> >
-> >> > Unfortunately not for sure. I'm not even sure if it ever worked
-> >> > at all, to be honest. There were some old threads from 2003
-> >> > saying that loop is not supported (yet). Did that ever change?
+On 11/16/07, Arend Freije <afreije@inn.nl> wrote:
+> Edward Shishkin wrote:
+> >> On Do, 15.11.07 22:49 "Dushan Tcholich" <dusanc@gmail.com> wrote:
 > >>
-> >> Yes.
 > >>
-> >> imogen ~ # uname -r
-> >> 2.6.22.9
-> >> imogen ~ # cd /media/Isos/Debian/
-> >> imogen Debian # mount -o loop -t iso9660
-> >> Debian-Etch-4.0-r1-Binary-1-20070819.iso /mnt/tmp
-> >> imogen Debian # ls /mnt/tmp
-> >> README.html          README.txt   debian  install      md5sum.txt
-> >> tools README.mirrors.html  autorun.bat  dists   install.386  pics
-> >> README.mirrors.txt   autorun.inf  doc     isolinux     pool
-> >>
-> >> But it's broken for linux-2.6.23.1
-> >>
-> >> If I can be of any further assistance, please do not hesitate to
-> >> ask.
+> >>> Can you remember the last kernel that worked?
+> >>>
+> >>> Thanks
+> >>>
+> >>> Dushan
+> >>>
+> >> Unfortunately not for sure. I'm not even sure if it ever worked at all,
+> >> to be honest. There were some old threads from 2003 saying that loop is
+> >> not supported (yet). Did that ever change?
 > >>
 > >
-> > So which version of reiser4 patch, progs etc do you use?
+> > No, it didn't.
+> > Sorry..
 > >
-> > Edward wrote, it never did. Now.. WTF? :)
->=20
-> Works here as well on 2.6.22.6:
-> joe: mkdir mnt
-> joe: sudo mount -o loop -t iso9660 KnoppMythR5F27.iso mnt
-> joe: ls -l mnt
-> total 10
-> dr-xr-xr-x  3 root   root   2048 Sep  8 19:39 KNOPPIX/
-> dr-xr-xr-x  3 root   root   2048 May 29  2006 boot/
->=20
-> Vanilla kernel with reiser4-for-2.6.22-2.patch.gz and
-> reiser4progs-1.0.6.tar.gz
->=20
-> -Joe
->=20
+> >>
+> >>> On Nov 15, 2007 10:44 PM, Thomas Kuther <gimpel@sonnenkinder.org>
+> >>> wrote:
+> >>>
+> >>>> ...
+> >>>> * filsystem created with
+> >>>>         $ mkfs.reiser4
+> >>>> * mounted with noatime
+> >>>> * no cryptcompress or anything non-default
+> >>>>
+> >>>> $ mount -o loop -t
+> >>>> iso9660 /tmp/systemrescuecd-x86-0.4.0.iso /mnt/cdrom ioctl:
+> >>>> LOOP_SET_FD: Invalid argument
+> >>>>
+> >>>>
+>
+> Hi,
+>
 
-Jup, I also tested a plain .22 with namesys patch, and it works
-fine. Didn't test with cryptcompress though.
+Hello
 
-So it seems that something between .22 and .23 broke it again.
-Thanks for helping to answer Dushan's question :)
+> Sorry for intruding, but I'm a bit surprised about the conformation on
+> 'loop is not supported (yet)' question.
+> The example of Thomas shows the mounting of an ISO-9960 file system via
+> a loop device. All partions on my system are reiser4, and I can execute
+> 'mount -t iso9960 -o loop' without any problem. Why do you confirm that
+> loop is still not supported?
+>
 
-Regards,
-Tom
+I tested it a long time ago and there were stall problems.
+Since nobody looked at this for a long time, I think, it would be better
+for this to be disabled..
 
---Sig_/Sn2XQfum6VXFnddpvFpPVvP
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.7 (GNU/Linux)
-
-iD8DBQFHPWHNMQFfAqZTGfwRAiP9AJ9DRZEJxscFaZXJYqr+HlkpXuiX4wCbBYKV
-+wq3DcIxzHFXsuChukKBjdc=
-=vQjH
------END PGP SIGNATURE-----
-
---Sig_/Sn2XQfum6VXFnddpvFpPVvP--
+Thanks,
+Edward.
