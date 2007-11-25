@@ -1,44 +1,42 @@
-From: "Edward Shishkin" <edward.shishkin@gmail.com>
+From: Christian Kujau <lists@nerdbynature.de>
 Subject: Re: Reiser4 for 2.6.23?
-Date: Sun, 25 Nov 2007 00:49:13 +0300
-Message-ID: <5c7c368b0711241349t2eed3c3ex35f95069c5eb1236@mail.gmail.com>
-References: <5c7c368b0711241335xed6caccx40aaf1291d7684b4@mail.gmail.com>
+Date: Sun, 25 Nov 2007 21:53:23 +0100 (CET)
+Message-ID: <alpine.DEB.0.99999.0711252145590.7426@sheep.housecafe.de>
+References: <20071124182547.378b3679.listen@mjh.name>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: MULTIPART/MIXED; BOUNDARY="-1463809526-1248456904-1196024004=:7426"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
-        bh=1RR1UKtO5g3ZKZLeQ0pu2I6PYcYWqagQeYm5zEi0HbI=;
-        b=gDDFcaPc+fWECQa/tiR1k7JAfv9gheXQMwG5+n4fFKv1rVIymEb+Xid6nu2Xt24TrOac2i6SHdYkzVhZ1puqEa9ssN33XB2GxiO4j2N4Cp4cWgyj+Zm7DdFHSLCbARVQYU5FJFeAKKK6qcroZuVEYjkHJ+XE0bV7B3qeWuPYdXw=
-In-Reply-To: <5c7c368b0711241335xed6caccx40aaf1291d7684b4@mail.gmail.com>
-Content-Disposition: inline
+In-Reply-To: <20071124182547.378b3679.listen@mjh.name>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-Id: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Milan Holzaepfel <mail@mjh.name>
-Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+To: reiserfs-devel@vger.kernel.org
 
-Milan Holzaepfel <mail(a)mjh(d)name> wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> Hello,
->
+---1463809526-1248456904-1196024004=:7426
+Content-Type: TEXT/PLAIN; format="flowed"; charset="iso-8859-15"
+Content-Transfer-Encoding: quoted-printable
 
-Hello.
-
-> does a Reiser4 patch against 2.6.23 exist, or is creating one planned
-> for the near future?
-
-Will be released after fixing some problems with nfs/loopback support.
-
-Thanks,
-Edward.
-
-
- What about 2.6.24?
+On Sat, 24 Nov 2007, Milan Holz=E4pfel wrote:
+> What about 2.6.24?
 > (I'd like to continue using Reiser4 with a mostly vanilla kernel with
 > some additional patches like TuxOnIce.)
->
-> Regards,
-> Milan
->
+
+well, there's the -mm series[0] with Reiser4 support, but it's not vanilla =
+
+anymore.
+
+Out of curiosity: is there a (current) TODO list on what needs to be=20
+changed in the Reiser4 code until it can be included in mainline? I think=20
+I've seen such a thing before, but it was quite a while ago. Is inclusion=20
+still a topic?
+
+Christian.
+
+[0] http://ftp.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/?O=3DD
+--=20
+BOFH excuse #50:
+
+Change in Earth's rotational speed
+---1463809526-1248456904-1196024004=:7426--
