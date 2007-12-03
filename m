@@ -1,38 +1,98 @@
-From: Domenico Andreoli <cavokz@gmail.com>
-Subject: Re: building reiserfsprogs, no asm/unaligned.h
-Date: Sun, 2 Dec 2007 11:14:02 +0100
-Message-ID: <20071202101402.GA14881@ska.dandreoli.com>
-References: <5c7c368b0711300402l2f740carb2ad852291610bd1@mail.gmail.com> <5c7c368b0711300427k6287d43bq57f275d74e9fdc39@mail.gmail.com> <20071130082602.fdac4cfe.rdunlap@xenotime.net>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: [PATCH 2/2] reiserfs: Add mount counting
+Date: Mon, 03 Dec 2007 14:46:21 -0500
+Message-ID: <47545D0D.6080608@suse.com>
+References: <474B4BCF.1000905@suse.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20071130082602.fdac4cfe.rdunlap@xenotime.net>
+In-Reply-To: <474B4BCF.1000905@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Edward Shishkin <edward.shishkin@gmail.com>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward@namesys.com>
 
-hi,
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On Fri, Nov 30, 2007 at 08:26:02AM -0800, Randy Dunlap wrote:
+Any comments on this? I'd like to be able to check this into our kernel
+tree, but I can't do so until these fields have been officially reserved.
+
+- -Jeff
+
+Jeff Mahoney wrote:
+>  The following patch adds the fields for tracking mount counts and
+>  last fsck timestamps to the superblock. It also increments the mount
+>  count on every read-write mount.
 > 
-> The problem is more likely to be that this distro does not ship
-> <asm/unaligned.h> ... so I copied /usr/include/asm-generic/unaligned.h
-> from another system to /usr/include/asm/unaligned.h and built
-> reiserfsprogs successfully.
+> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+> ---
 > 
-> I _guess_ that the problem is that unaligned.h is not one of the
-> header files that is exported by the kernel's recent headers_install
-> script(s).  Or just that some $distro(s) forgot to ship unaligned.h
-> in /usr/include.  Anyway, I have it building now.
+>  fs/reiserfs/super.c            |    6 +++++-
+>  include/linux/reiserfs_fs.h    |    6 +++++-
+>  include/linux/reiserfs_fs_sb.h |    3 +++
+>  3 files changed, 13 insertions(+), 2 deletions(-)
+> 
+> --- a/fs/reiserfs/super.c	2007-11-26 17:09:51.000000000 -0500
+> +++ b/fs/reiserfs/super.c	2007-11-26 17:32:21.000000000 -0500
+> @@ -1239,6 +1239,8 @@ static int reiserfs_remount(struct super
+>  		REISERFS_SB(s)->s_mount_state = sb_umount_state(rs);
+>  		s->s_flags &= ~MS_RDONLY;
+>  		set_sb_umount_state(rs, REISERFS_ERROR_FS);
+> +		if (!old_format_only(s))
+> +			set_sb_mnt_count(rs, sb_mnt_count(rs) + 1);
+>  		/* mark_buffer_dirty (SB_BUFFER_WITH_SB (s), 1); */
+>  		journal_mark_dirty(&th, s, SB_BUFFER_WITH_SB(s));
+>  		REISERFS_SB(s)->s_mount_state = REISERFS_VALID_FS;
+> @@ -1764,7 +1766,9 @@ static int reiserfs_fill_super(struct su
+>  			} else if (!silent) {
+>  				reiserfs_info(s, "using 3.5.x disk format\n");
+>  			}
+> -		}
+> +		} else
+> +			set_sb_mnt_count(rs, sb_mnt_count(rs) + 1);
+> +
+>  
+>  		journal_mark_dirty(&th, s, SB_BUFFER_WITH_SB(s));
+>  		errval = journal_end(&th, s, 1);
+> --- a/include/linux/reiserfs_fs.h	2007-11-26 17:09:58.000000000 -0500
+> +++ b/include/linux/reiserfs_fs.h	2007-11-26 17:22:35.000000000 -0500
+> @@ -171,7 +171,11 @@ struct reiserfs_super_block {
+>  	__le32 s_flags;		/* Right now used only by inode-attributes, if enabled */
+>  	unsigned char s_uuid[16];	/* filesystem unique identifier */
+>  	unsigned char s_label[16];	/* filesystem volume label */
+> -	char s_unused[88];	/* zero filled by mkreiserfs and
+> +	__le16 s_mnt_count;		/* Count of mounts since last fsck */
+> +	__le16 s_max_mnt_count;		/* Maximum mounts before check */
+> +	__le32 s_lastcheck;		/* Timestamp of last fsck */
+> +	__le32 s_check_interval;	/* Interval between checks */
+> +	char s_unused[76];	/* zero filled by mkreiserfs and
+>  				 * reiserfs_convert_objectid_map_v1()
+>  				 * so any additions must be updated
+>  				 * there as well. */
+> --- a/include/linux/reiserfs_fs_sb.h	2007-11-26 17:09:58.000000000 -0500
+> +++ b/include/linux/reiserfs_fs_sb.h	2007-11-26 17:24:54.000000000 -0500
+> @@ -73,6 +73,9 @@ typedef enum {
+>  #define sb_version(sbp)            (le16_to_cpu((sbp)->s_v1.s_version))
+>  #define set_sb_version(sbp,v)      ((sbp)->s_v1.s_version = cpu_to_le16(v))
+>  
+> +#define sb_mnt_count(sbp)	   (le16_to_cpu((sbp)->s_mnt_count))
+> +#define set_sb_mnt_count(sbp, v)   ((sbp)->s_mnt_count = cpu_to_le16(v))
+> +
+>  #define sb_reserved_for_journal(sbp) \
+>                (le16_to_cpu((sbp)->s_v1.s_reserved_for_journal))
+>  #define set_sb_reserved_for_journal(sbp,v) \
+> 
 
-exactly. see bug 429006 at http://bugs.debian.org/429006.
 
-cheers,
-Domenico
+- --
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.4-svn0 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
 
------[ Domenico Andreoli, aka cavok
- --[ http://www.dandreoli.com/gpgkey.asc
-   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
+iD8DBQFHVF0NLPWxlyuTD7IRApOuAJ4+oIw0W37hkDrUv8GSGNgX9R8itwCbBWOx
+FLf7hNIByLk/lkjsLm/4HIY=
+=gzSp
+-----END PGP SIGNATURE-----
