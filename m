@@ -1,74 +1,37 @@
-From: Ric Wheeler <ric@emc.com>
-Subject: Re: [PATCH 2/2] reiserfs: Add mount counting
-Date: Wed, 05 Dec 2007 07:22:11 -0500
-Message-ID: <475697F3.8050209@emc.com>
-References: <474B4BCF.1000905@suse.com> <47545D0D.6080608@suse.com>	 <5c7c368b0712031236i33abc7bdtd7a14354c67169b3@mail.gmail.com>	 <475469B8.4050004@suse.com>	 <5c7c368b0712031251w75febd3bve5aee70c4935a7c9@mail.gmail.com>	 <475475E5.1010400@suse.com> <5c7c368b0712031456p120634behc13f2d546df8659b@mail.gmail.com> <47548A90.3060805@suse.com>
+From: "Hemmann, Volker Armin" <volker.armin.hemmann@tu-clausthal.de>
+Subject: Re: Reiser4 for Linux-2.6.23
+Date: Wed, 5 Dec 2007 13:24:15 +0100
+Message-ID: <200712051324.16124.volker.armin.hemmann@tu-clausthal.de>
+References: <4755DEFE.2000504@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <47548A90.3060805@suse.com>
+In-Reply-To: <4755DEFE.2000504@gmail.com>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jeff Mahoney <jeffm@suse.com>, Vladimir Saveliev <Vladimir.Saveliev@sun.com>
-Cc: Edward Shishkin <edward.shishkin@gmail.com>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-devel@vger.kernel.org
 
-Jeff Mahoney wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
-> 
-> Edward Shishkin wrote:
->> On 12/4/07, Jeff Mahoney <jeffm@suse.com> wrote:
->> Edward Shishkin wrote:
->>>>> On 12/3/07, Jeff Mahoney <jeffm@suse.com> wrote:
->>>>> Edward Shishkin wrote:
->>>>>>>> Hi Jeff.
->>>>>>>>
->>>>>>>> Personally, I don't object.
->>>>>>>> What does official reservation mean?
->>>>>>>> I can send a request to Hans, but I guess
->>>>>>>> we'll receive his "yes" or "no" with substantial delay..
->>>>> I just mean that those 12 bytes in the superblock are guaranteed not to
->>>>> be used for something else. Given the pace of reiserfs development, I
->>>>> don't expect this to be a problem as there are 76 more of them. :)
->>>>>
->>>>>> Well, I promise to not use them for something else ;)
->> Great. That's the assurance I was looking for. :)
->>
->>>>>> It seems we need something like reiserfsprogs-3.6.20?
->> I actually posted a patch against reiserfsprogs-3.6.20 that reserves the
->> same fields. It also implements the use of those fields. I have an
->> updated version that treats timestamps in the future as suspect and
->> forces a check. I'll post the update later today.
->>
->>> Sorry, I am a bit confused..
->>> The latest git version of reiserfsprogs is 3.6.19;
->>> The latest website version is also 3.6.19.
->>> At the same time I can google and see that some distros
->>> use reiserfsprogs-3.6.20.
->>> Suse 10.3 uses "reiserfs utility package" 3.6.19-92
->>> Also I remember that Vladimir worked on some version
->>> of reiserfsprogs not so long ago.
->>> Any ideas about really latest version?
-> 
-> I think Vladimir must have released what he was working on as 3.6.20.
-> That's the latest version I downloaded from ftp.namesys.com.
-> 
-> It reorganizes the code into a saner structure as well as cleans up the
-> code quite a bit. It also adds the > 8 TB support that I ended up
-> grafting onto 3.6.19 for our release.
-> 
-> - -Jeff
+On Mittwoch, 5. Dezember 2007, Edward Shishkin wrote:
+> Hello everyone.
 >
+> Reiser4 for linux-2.6.23 is available for download at
+> http://chichkin_i.zelnet.ru/namesys/reiser4-for-2.6.23.patch.gz
+>
+> Thanks,
+> Edward.
 
-We have also been working with & testing a draft of Vladimir's updated 
-code (not sure how different it is from what you took in).
+thank you very much.
 
-Vladimir, did Jeff's drop include all of the changes or part of what you 
-did with us?
+Installed yesterday and works fine since then - survived a forced power=
+ down=20
+and two suspend-to-ram runs.
 
-We can certainly update or refresh our copy for the next phase of qa,
-
-thanks!
-
-ric
+Gl=FCck Auf
+Volker
+-
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
