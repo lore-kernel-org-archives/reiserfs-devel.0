@@ -1,98 +1,43 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: Laurent Riffard <laurent.riffard@free.fr>
 Subject: Re: Reiser4 for Linux-2.6.23
-Date: Thu, 06 Dec 2007 00:39:48 +0300
-Message-ID: <47571AA4.3060308@gmail.com>
-References: <4755DEFE.2000504@gmail.com> <4756961E.3050408@gmail.com> <47571759.6020601@free.fr>
+Date: Wed, 05 Dec 2007 22:25:45 +0100
+Message-ID: <47571759.6020601@free.fr>
+References: <4755DEFE.2000504@gmail.com> <4756961E.3050408@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------050809080304090600050801"
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <47571759.6020601@free.fr>
+In-Reply-To: <4756961E.3050408@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Laurent Riffard <laurent.riffard@free.fr>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Edward Shishkin <edward.shishkin@gmail.com>
 Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, rvalles@es.gnu.org, Thomas Kuther <gimpel@sonnenkinder.org>, =?ISO-8859-1?Q?Milan_Holz=E4pfel?= <mail@mjh.name>, Christopher Sawtell <csawtell@gmail.com>, Arend Freije <afreije@inn.nl>
 
-This is a multi-part message in MIME format.
---------------050809080304090600050801
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-Content-Transfer-Encoding: quoted-printable
-
-Hi, Laurent
-
-Attached.
-I'll try to find a better place for it.
-
-Laurent Riffard wrote:
-
->Le 05.12.2007 13:14, Edward Shishkin a =E9crit :
-> =20
->
->>Edward Shishkin wrote:
+Le 05.12.2007 13:14, Edward Shishkin a =E9crit :
+> Edward Shishkin wrote:
+>=20
+>> Hello everyone.
 >>
->>   =20
+>> Reiser4 for linux-2.6.23 is available for download at
+>> http://chichkin_i.zelnet.ru/namesys/reiser4-for-2.6.23.patch.gz
 >>
->>>Hello everyone.
->>>
->>>Reiser4 for linux-2.6.23 is available for download at
->>>http://chichkin_i.zelnet.ru/namesys/reiser4-for-2.6.23.patch.gz
->>>
->>>     =20
->>>
->>Added a new one with NFS related fuxup:
->>http://chichkin_i.zelnet.ru/namesys/reiser4-for-2.6.23-2.patch.gz
->>
->>Thanks,
->>Edward.
->>
->>   =20
->>
->
->Edward,
->
->The PGP key you used to sign the patches seems to be unavailable=20
->from any keyserver. Where can I get it ?
->
->~~
->laurent
->
-> =20
->
+>=20
+> Added a new one with NFS related fuxup:
+> http://chichkin_i.zelnet.ru/namesys/reiser4-for-2.6.23-2.patch.gz
+>=20
+> Thanks,
+> Edward.
+>=20
 
+Edward,
 
---------------050809080304090600050801
-Content-Type: text/plain;
- name="edward_key.asc"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="edward_key.asc"
+The PGP key you used to sign the patches seems to be unavailable=20
+from any keyserver. Where can I get it ?
 
------BEGIN PGP PUBLIC KEY BLOCK-----
-Version: GnuPG v1.2.5 (GNU/Linux)
-
-mQGiBEUqbx4RBACCtv8hS7fVXoOj9TqTAFwemopZXrDipQAXIBxFA09r5jzWr9zM
-ZBo4JWt0Ooi3UGki5fSUfjcBMlu0wxhIne7Iq/UOM3TFmsWeN/g5vNc+mdPBwxr9
-WsHyiU78iyjGMlQjz7IEzcz9QrMgS1JKtquPwOSKf79t0iOVskmFm+4iBwCgum5g
-PnJxLqj46yUjNpHikWttHskD/jt0NKTKSuafUwMTD6e9FVtygzSNDuNaWV0MoBVM
-oPWkvYmDNFeIM9gZ1J8HETlU+nyCYMaedJiAv9igwdBymbKtliDgjzjiQEvFkTtt
-QB6VWQmSrdBbHQy5DpqI0TOgecAOI5KKF6DcsafCfXee/qdHK0hBqxDvP+q+obXZ
-vb5MA/9knkOaWXGN7wmmK1xlSLkq8gGSRF+vJQO7P2IM+CaOKyD+w8khkNPDVnNg
-UWvgsaZGcMWmyR/GrhesugtsoGSrjxuCT4my+xmw58jkFCDYc+q/IA3vCK0I1reM
-K935/yoX92wB3fWzrsxvz8FELIbvG8PNCV1CIH35K9KfF8LLKLQkRWR3YXJkIFNo
-aXNoa2luIDxlZHdhcmRAbmFtZXN5cy5jb20+iF4EExECAB4FAkUqbx4CGwMGCwkI
-BwMCAxUCAwMWAgECHgECF4AACgkQ7tCFoSvInRr7NwCfWeBqz/IuUsv2e0ApZHwi
-QsZ1LewAn00/tRnczHrU9v4n/29Fv0D6f/pftCtFZHdhcmQgU2hpc2hraW4gPGVk
-d2FyZC5zaGlzaGtpbkBnbWFpbC5jb20+iF4EExECAB4FAkdUYbgCGwMGCwkIBwMC
-AxUCAwMWAgECHgECF4AACgkQ7tCFoSvInRq4pQCdHdBn7NtiDXhpenTxdepMrZjQ
-vqwAn17YGQ9N7iIy4VO7zB/erBPrx0BVuQENBEUqbx8QBACwxRg2dHnx1iTSomHL
-3scEDd2Vb4es6F0EXNW+/QTOQKR7U5+pscJMea/bP8FSJLXqLhlpAz0haiEdCtlr
-kg8NjEvVUAyeIHVekvwv41B39tVNQ5oqfOmCL7ocCqCwhIq8YSKmsmKfy/d/OcPB
-hvumSL/a/8Rp8s0ayZA1jDQTlwAECwP/UvfU9vGygHrdhZRBGzd4h9z0vn100+K4
-1gS2jsqWEEpma2q5Ot4yuAw/w2PT6fiPfNRg09Qtcg+325S6ujJGbTeE/WEs8pqh
-awb0o8kG4eJ2QJAfb+I1yv67BO8evu8V3ir5Xh/ibz3mWvkoQmh77msIhcZ7YQZB
-JWWl2w/gwEaISQQYEQIACQUCRSpvHwIbDAAKCRDu0IWhK8idGsXFAKCGt3FV4rt3
-2Vza5NABd8MCVtnxdwCfYDWSbLVxF7N/V4k/oHmyPyAYU4Q=
-=EmxW
------END PGP PUBLIC KEY BLOCK-----
-
---------------050809080304090600050801--
+~~
+laurent
+-
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
