@@ -1,51 +1,98 @@
-From: Ric Wheeler <ric@emc.com>
-Subject: Re: [PATCH 2/2] reiserfs: Add mount counting
-Date: Wed, 05 Dec 2007 13:18:07 -0500
-Message-ID: <4756EB5F.5040108@emc.com>
-References: <474B4BCF.1000905@suse.com> <47545D0D.6080608@suse.com> <5c7c368b0712031236i33abc7bdtd7a14354c67169b3@mail.gmail.com> <475469B8.4050004@suse.com> <5c7c368b0712031251w75febd3bve5aee70c4935a7c9@mail.gmail.com> <475475E5.1010400@suse.com> <5c7c368b0712031456p120634behc13f2d546df8659b@mail.gmail.com> <47548A90.3060805@suse.com> <475697F3.8050209@emc.com> <4756A124.1020905@sun.com> <4756C48C.60400@suse.com> <4756E5A5.7020903@sun.com>
-Reply-To: ric@emc.com
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: Reiser4 for Linux-2.6.23
+Date: Thu, 06 Dec 2007 00:39:48 +0300
+Message-ID: <47571AA4.3060308@gmail.com>
+References: <4755DEFE.2000504@gmail.com> <4756961E.3050408@gmail.com> <47571759.6020601@free.fr>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+ boundary="------------050809080304090600050801"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4756E5A5.7020903@sun.com>
+In-Reply-To: <47571759.6020601@free.fr>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Vladimir Saveliev <vs@clusterfs.com>
-Cc: Jeff Mahoney <jeffm@suse.com>, Edward Shishkin <edward.shishkin@gmail.com>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+To: Laurent Riffard <laurent.riffard@free.fr>
+Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, rvalles@es.gnu.org, Thomas Kuther <gimpel@sonnenkinder.org>, =?ISO-8859-1?Q?Milan_Holz=E4pfel?= <mail@mjh.name>, Christopher Sawtell <csawtell@gmail.com>, Arend Freije <afreije@inn.nl>
 
-Vladimir Saveliev wrote:
-> Hello
-> 
-> Jeff Mahoney wrote:
-> 
->> That's strange. 
-> 
-> No, 3.6.20 was made by Vitaly, it mostly contains massive cleanups and
-> an --rebuild-tree optimization for specific filesystem corruption which
-> made reiserfsck to work extremely slow.
-> 
-> The work I did for EMC was about improving of overal reiserfsck
-> performance. I have local cvs repository for that work and put code
-> snapshots at ftp://ftp.namesys.com/pub/tmp. So, that work is not
-> included into 3.6.20.
-> 
-> I am sorry that things got messed up that much, please let me know if I
-> can help to work out something reasonable.
-> 
->> Someone else must've moved it to /pub/reiserfsprogs/
->> then. That's certainly where I got a copy of it. A google for
->> reiserfsprogs 3.6.20, shows several pointers to
->> ftp://ftp.namesys.com/pub/reiserfsprogs/reiserfsprogs-3.6.20.tar.gz too.
+This is a multi-part message in MIME format.
+--------------050809080304090600050801
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+Content-Transfer-Encoding: quoted-printable
+
+Hi, Laurent
+
+Attached.
+I'll try to find a better place for it.
+
+Laurent Riffard wrote:
+
+>Le 05.12.2007 13:14, Edward Shishkin a =E9crit :
+> =20
+>
+>>Edward Shishkin wrote:
 >>
-> 
-> Best regards,
-> Vladimir
+>>   =20
+>>
+>>>Hello everyone.
+>>>
+>>>Reiser4 for linux-2.6.23 is available for download at
+>>>http://chichkin_i.zelnet.ru/namesys/reiser4-for-2.6.23.patch.gz
+>>>
+>>>     =20
+>>>
+>>Added a new one with NFS related fuxup:
+>>http://chichkin_i.zelnet.ru/namesys/reiser4-for-2.6.23-2.patch.gz
+>>
+>>Thanks,
+>>Edward.
+>>
+>>   =20
+>>
+>
+>Edward,
+>
+>The PGP key you used to sign the patches seems to be unavailable=20
+>from any keyserver. Where can I get it ?
+>
+>~~
+>laurent
+>
+> =20
+>
 
 
-And of course, we will be happy to try and help with the testing/error 
-injection, etc...
+--------------050809080304090600050801
+Content-Type: text/plain;
+ name="edward_key.asc"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="edward_key.asc"
 
-It is good work and well worth getting rolled back into the changes,
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.2.5 (GNU/Linux)
 
-ric
+mQGiBEUqbx4RBACCtv8hS7fVXoOj9TqTAFwemopZXrDipQAXIBxFA09r5jzWr9zM
+ZBo4JWt0Ooi3UGki5fSUfjcBMlu0wxhIne7Iq/UOM3TFmsWeN/g5vNc+mdPBwxr9
+WsHyiU78iyjGMlQjz7IEzcz9QrMgS1JKtquPwOSKf79t0iOVskmFm+4iBwCgum5g
+PnJxLqj46yUjNpHikWttHskD/jt0NKTKSuafUwMTD6e9FVtygzSNDuNaWV0MoBVM
+oPWkvYmDNFeIM9gZ1J8HETlU+nyCYMaedJiAv9igwdBymbKtliDgjzjiQEvFkTtt
+QB6VWQmSrdBbHQy5DpqI0TOgecAOI5KKF6DcsafCfXee/qdHK0hBqxDvP+q+obXZ
+vb5MA/9knkOaWXGN7wmmK1xlSLkq8gGSRF+vJQO7P2IM+CaOKyD+w8khkNPDVnNg
+UWvgsaZGcMWmyR/GrhesugtsoGSrjxuCT4my+xmw58jkFCDYc+q/IA3vCK0I1reM
+K935/yoX92wB3fWzrsxvz8FELIbvG8PNCV1CIH35K9KfF8LLKLQkRWR3YXJkIFNo
+aXNoa2luIDxlZHdhcmRAbmFtZXN5cy5jb20+iF4EExECAB4FAkUqbx4CGwMGCwkI
+BwMCAxUCAwMWAgECHgECF4AACgkQ7tCFoSvInRr7NwCfWeBqz/IuUsv2e0ApZHwi
+QsZ1LewAn00/tRnczHrU9v4n/29Fv0D6f/pftCtFZHdhcmQgU2hpc2hraW4gPGVk
+d2FyZC5zaGlzaGtpbkBnbWFpbC5jb20+iF4EExECAB4FAkdUYbgCGwMGCwkIBwMC
+AxUCAwMWAgECHgECF4AACgkQ7tCFoSvInRq4pQCdHdBn7NtiDXhpenTxdepMrZjQ
+vqwAn17YGQ9N7iIy4VO7zB/erBPrx0BVuQENBEUqbx8QBACwxRg2dHnx1iTSomHL
+3scEDd2Vb4es6F0EXNW+/QTOQKR7U5+pscJMea/bP8FSJLXqLhlpAz0haiEdCtlr
+kg8NjEvVUAyeIHVekvwv41B39tVNQ5oqfOmCL7ocCqCwhIq8YSKmsmKfy/d/OcPB
+hvumSL/a/8Rp8s0ayZA1jDQTlwAECwP/UvfU9vGygHrdhZRBGzd4h9z0vn100+K4
+1gS2jsqWEEpma2q5Ot4yuAw/w2PT6fiPfNRg09Qtcg+325S6ujJGbTeE/WEs8pqh
+awb0o8kG4eJ2QJAfb+I1yv67BO8evu8V3ir5Xh/ibz3mWvkoQmh77msIhcZ7YQZB
+JWWl2w/gwEaISQQYEQIACQUCRSpvHwIbDAAKCRDu0IWhK8idGsXFAKCGt3FV4rt3
+2Vza5NABd8MCVtnxdwCfYDWSbLVxF7N/V4k/oHmyPyAYU4Q=
+=EmxW
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------050809080304090600050801--
