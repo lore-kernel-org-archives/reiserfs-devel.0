@@ -1,24 +1,16 @@
 From: Joe Perches <joe@perches.com>
 Subject: [PATCH] fs/: Spelling fixes
 Date: Mon, 17 Dec 2007 11:40:21 -0800
-Message-ID: <5703e57f925f31fc0eb38873bd7f10fc44f99cb4.1197918893.git.joe__12644.2537330606$1197921483$gmane$org@perches.com>
-Return-path: <cluster-devel-bounces@redhat.com>
+Message-ID: <5703e57f925f31fc0eb38873bd7f10fc44f99cb4.1197918893.git.joe__18254.5519005091$1197921828$gmane$org@perches.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S936651AbXLQUDA@vger.kernel.org>
 Message-Id: <5703e57f925f31fc0eb38873bd7f10fc44f99cb4.1197918893.git.joe@perches.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
-	<mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/cluster-devel>
-List-Post: <mailto:cluster-devel@redhat.com>
-List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
-	<mailto:cluster-devel-request@redhat.com?subject=subscribe>
-Sender: cluster-devel-bounces@redhat.com
-Errors-To: cluster-devel-bounces@redhat.com
+Sender: linux-kernel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org
-Cc: cluster-devel@redhat.com, "Sergey S. Kostyliov" <rathamahata@php4.ru>, Kurt Hackel <kurt.hackel@oracle.com>, reiserfs-devel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, Hans Reiser <reiserfs-dev@namesys.com>, ocfs2-devel@oss.oracle.com
+Cc: Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@infradead.org>, Hans Reiser <reiserfs-dev@namesys.com>, Kurt Hackel <kurt.hackel@oracle.com>, Mark Fasheh <mark.fasheh@oracle.com>, "Sergey S. Kostyliov" <rathamahata@php4.ru>, Steven Whitehouse <swhiteho@redhat.com>, cluster-devel@redhat.com, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org
 
 
 Signed-off-by: Joe Perches <joe@perches.com>
