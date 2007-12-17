@@ -1,261 +1,153 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: ISATTY_BITS set on every file using ccreg40
-Date: Mon, 17 Dec 2007 04:51:51 +0300
-Message-ID: <4765D637.9090006@gmail.com>
-References: <20071216232500.GA2314@efil.de>
+Subject: Re: bug report: reiser4 + kde4
+Date: Mon, 17 Dec 2007 05:05:54 +0300
+Message-ID: <4765D982.9010603@gmail.com>
+References: <20071122101615.178410@gmx.net> <200712151827.02309.volker.armin.hemmann@tu-clausthal.de> <200712152015.32737.volker.armin.hemmann@tu-clausthal.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------030005090505080706000603"
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20071216232500.GA2314@efil.de>
+In-Reply-To: <200712152015.32737.volker.armin.hemmann@tu-clausthal.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Ingo Bormuth <ibormuth@efil.de>, Dushan Tcholich <dusanc@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org, rvalles <rvalles@es.gnu.org>
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: "Hemmann, Volker Armin" <volker.armin.hemmann@tu-clausthal.de>
+Cc: reiserfs-devel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------030005090505080706000603
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+I have some progress in installing kde4 on my box ;)
+Hope I'll able to reproduce it.
 
-Ingo Bormuth wrote:
-
->Hi Edward,
->
->I just played around with reiser4's cryptcompress plugin
->an realized an odd behaviour.
->
->It seems, every file on any partition made with '-o ccreg40'
->has its SATTY_BITS set:
->  
->
-
-Wow, it seems Ingo has found the culprit that confused Gentoo
-manager.
-
-I was inaccurate when introducing some dummy methods
-to make file operations supplied for VFS invariant:
-ioctl_cryptcompress should return -ENOSYS, otherwise userspace
-application can make a wrong decision about file's nature.
-
-Dushan, would you please check, if the attached patch really
-fixes the python-prompt-problem?
-
-Thanks to everyone!
+Thanks,
 Edward.
 
->$mkfs.reiser4 /dev/hdaXX
->$mount /dev/hdaXX /mnt/test
->$touch /mnt/test/x; exec 3<>/mnt/test/x; test -t 3 && echo T || echo F; exec 3>&-
->F
->$umount /mnt/test
->$mkfs.reiser4 -o create=ccreg40 /dev/hdaXX
->$mount /dev/hdaXX /mnt/test
->$touch /mnt/test/x; exec 3<>/mnt/test/x; test -t 3 && echo T || echo F; exec 3>&-
->T
+Hemmann, Volker Armin wrote:
+
+>here some more usefull output:
 >
->$mkfs.reiser4 -V
->mkfs.reiser4 1.0.6
->Copyright (C) 2001-2005 by Hans Reiser, licensing governed by reiser4progs/COPYING.
+>[   86.385269] Unable to handle kernel NULL pointer dereference at=20
+>00000000000000f9 RIP:
+>[   86.385273]  [<ffffffff802ebf2a>] reiser4_tree_by_inode+0x0/0xc
+>[   86.385279] PGD 779ce067 PUD 779cf067 PMD 0
+>[   86.385281] Oops: 0000 [1] SMP
+>[   86.385283] CPU 1
+>[   86.385285] Modules linked in: k8temp w83627ehf hwmon_vid hwmon i2c=
+_core=20
+>snd_seq_midi snd_emu10k1_synth snd_emux_synth snd_seq_virmidi=20
+>snd_seq_midi_emul snd_pcm_oss snd_mixer_oss snd_seq_oss snd_seq_midi_e=
+vent=20
+>snd_seq snd_emu10k1 snd_rawmidi snd_ac97_codec ac97_bus snd_pcm=20
+>snd_seq_device snd_timer snd_page_alloc snd_util_mem snd_hwdep snd r81=
+69
+>[   86.385297] Pid: 4080, comm: kded4 Not tainted 2.6.23.9reiser4 #4
+>[   86.385299] RIP: 0010:[<ffffffff802ebf2a>]  [<ffffffff802ebf2a>]=20
+>reiser4_tree_by_inode+0x0/0xc
+>[   86.385302] RSP: 0018:ffff8100779d7b90  EFLAGS: 00010292
+>[   86.385303] RAX: 0000000000000001 RBX: 0000000000000000 RCX:=20
+>ffff8100779d7d78
+>[   86.385305] RDX: 0000000000000000 RSI: 0000000000000000 RDI:=20
+>0000000000000001
+>[   86.385306] RBP: 0000000000000000 R08: 0000000000000003 R09:=20
+>ffff8100774387b0
+>[   86.385308] R10: c0000000000000fa R11: ffffffff802f26e6 R12:=20
+>ffff810077438738
+>[   86.385310] R13: ffff8100774386c0 R14: 00000000006d6090 R15:=20
+>0000000000000000
+>[   86.385311] FS:  00002acd1b378330(0000) GS:ffff81007ff3bec0(0000)=20
+>knlGS:0000000000000000
+>[   86.385313] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>[   86.385314] CR2: 00000000000000f9 CR3: 00000000779cd000 CR4:=20
+>00000000000006e0
+>[   86.385316] DR0: 0000000000000000 DR1: 0000000000000000 DR2:=20
+>0000000000000000
+>[   86.385318] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7:=20
+>0000000000000400
+>[   86.385320] Process kded4 (pid: 4080, threadinfo ffff8100779d6000, =
+task=20
+>ffff81007d6ed8a0)
+>[   86.385321] Stack:  ffffffff80308779 ffff810000000001 ffff8100779d7=
+d78=20
+>00000000006d6090
+>[   86.385324]  ffff8100779d7c68 ffff8100779d7c48 0000000000000001=20
+>ffff81007b7f6ef8
+>[   86.385327]  ffffffff802e0522 ffff810077438738 0000000100000001=20
+>0000017500000000
+>[   86.385329] Call Trace:
+>[   86.385332]  [<ffffffff80308779>] reiser4_write_extent+0x36/0x577
+>[   86.385336]  [<ffffffff802e0522>] reiser4_txn_end+0x49a/0x4e9
+>[   86.385343]  [<ffffffff802f4fbd>] setattr_unix_file+0x174/0x32e
+>[   86.385348]  [<ffffffff802dca2d>] _reiser4_init_context+0x72/0xa3
+>[   86.385351]  [<ffffffff802f76cc>] reiser4_setattr_careful+0x100/0x1=
+25
+>[   86.385354]  [<ffffffff802895ed>] notify_change+0x122/0x235
+>[   86.385358]  [<ffffffff80276502>] do_truncate+0x5e/0x79
+>[   86.385360]  [<ffffffff8027ede2>] getname+0x14c/0x18d
+>[   86.385363]  [<ffffffff8027675f>] sys_truncate+0x144/0x166
+>[   86.385365]  [<ffffffff80268e8c>] do_mmap_pgoff+0x29d/0x2fd
+>[   86.385370]  [<ffffffff8044273d>] error_exit+0x0/0x84
+>[   86.385373]  [<ffffffff8020b66e>] system_call+0x7e/0x83
+>[   86.385375]
+>[   86.385376]
+>[   86.385377] Code: 48 8b bf f8 00 00 00 e9 5a d8 ff ff 48 b8 ff ff f=
+f ff ff=20
+>ff
+>[   86.385382] RIP  [<ffffffff802ebf2a>] reiser4_tree_by_inode+0x0/0xc
+>[   86.385385]  RSP <ffff8100779d7b90>
+>[   86.385386] CR2: 00000000000000f9
+>[   86.385902] reiser4[kded4(4080)]: release_unix_file=20
+>(fs/reiser4/plugin/file/file.c:2373)[vs-44]:
+>[   86.385904] WARNING: out of memory?
+>[   86.385914] reiser4[kded4(4080)]: release_unix_file=20
+>(fs/reiser4/plugin/file/file.c:2373)[vs-44]:
+>[   86.385915] WARNING: out of memory?
+>[   86.385922] reiser4[kded4(4080)]: release_unix_file=20
+>(fs/reiser4/plugin/file/file.c:2373)[vs-44]:
+>[   86.385923] WARNING: out of memory?
+>[   86.385930] reiser4[kded4(4080)]: release_unix_file=20
+>(fs/reiser4/plugin/file/file.c:2373)[vs-44]:
+>[   86.385931] WARNING: out of memory?
+>[   86.385938] reiser4[kded4(4080)]: release_unix_file=20
+>(fs/reiser4/plugin/file/file.c:2373)[vs-44]:
+>[   86.385940] WARNING: out of memory?
+>[   86.385947] reiser4[kded4(4080)]: release_unix_file=20
+>(fs/reiser4/plugin/file/file.c:2373)[vs-44]:
+>[   86.385948] WARNING: out of memory?
+>[   86.385955] reiser4[kded4(4080)]: release_unix_file=20
+>(fs/reiser4/plugin/file/file.c:2373)[vs-44]:
+>[   86.385956] WARNING: out of memory?
+>[   86.385963] reiser4[kded4(4080)]: release_unix_file=20
+>(fs/reiser4/plugin/file/file.c:2373)[vs-44]:
+>[   86.385964] WARNING: out of memory?
+>[   86.385971] reiser4[kded4(4080)]: release_unix_file=20
+>(fs/reiser4/plugin/file/file.c:2373)[vs-44]:
+>[   86.385972] WARNING: out of memory?
+>[   86.385979] reiser4[kded4(4080)]: release_unix_file=20
+>(fs/reiser4/plugin/file/file.c:2373)[vs-44]:
+>[   86.385981] WARNING: out of memory?
+>[   86.385987] reiser4[kded4(4080)]: release_unix_file=20
+>(fs/reiser4/plugin/file/file.c:2373)[vs-44]:
+>[   86.385989] WARNING: out of memory?
+>[   86.385996] reiser4[kded4(4080)]: release_unix_file=20
+>(fs/reiser4/plugin/file/file.c:2373)[vs-44]:
+>[   86.385997] WARNING: out of memory?
+>[   86.386362] reiser4[kded4(4080)]: release_unix_file=20
+>(fs/reiser4/plugin/file/file.c:2373)[vs-44]:
+>[   86.386363] WARNING: out of memory?
 >
->$cat /proc/version
->Linux version 2.6.23.9-reiser4-r2 (gcc version 4.1.2) #1 PREEMPT Fri Dec 14 19:34:05 CET 2007
+>also, with reiser4 debugging turned on, kernel panics when starting KD=
+E4.
 >
+>Gl=FCck Auf
+>Volker
+>-
+>To unsubscribe from this list: send the line "unsubscribe reiserfs-dev=
+el" in
+>the body of a message to majordomo@vger.kernel.org
+>More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
->Great performance andspace efficiency, no further problems, great job, btw.
->
->
->
->
->  
+> =20
 >
 
-
---------------030005090505080706000603
-Content-Type: text/x-patch;
- name="reiser4-fixups.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="reiser4-fixups.patch"
-
-Fix dummy ->ioctl() method for cryptcompress file plugin.
-Drop some ifs.
-Update comments.
-
-Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
----
- linux-2.6.24-rc3-mm2/fs/reiser4/plugin/file/cryptcompress.c   |    2 
- linux-2.6.24-rc3-mm2/fs/reiser4/plugin/file/file_conversion.c |   77 +++++-----
- 2 files changed, 42 insertions(+), 37 deletions(-)
-
---- linux-2.6.24-rc3-mm2/fs/reiser4/plugin/file/file_conversion.c.orig
-+++ linux-2.6.24-rc3-mm2/fs/reiser4/plugin/file/file_conversion.c
-@@ -50,8 +50,13 @@
-  * protection for writers. All methods with active or passive protection
-  * has suffix "careful".
-  */
--/* Macro for passive protection.
--   method_foo contains only readers */
-+/**
-+ * Macros for passive protection.
-+ *
-+ * The macro accepts the following lexemes:
-+ * @type - type of the value represented by the compound statement;
-+ * @method - invariant plugin method, which contains pset readers
-+ */
- #define PROT_PASSIVE(type, method, args)				\
- ({							                \
- 	type _result;							\
-@@ -63,11 +68,7 @@
- 		if (!should_protect(inode))				\
- 			up_read(guard);					\
- 	}								\
--	if (inode_file_plugin(inode) ==					\
--	    file_plugin_by_id(UNIX_FILE_PLUGIN_ID))			\
--		_result = method ## _unix_file args;			\
--	else								\
--		_result = method ## _cryptcompress args;		\
-+	_result = inode_file_plugin(inode)->method args;		\
- 	if (should_protect(inode))					\
- 		up_read(guard);						\
- 	_result;							\
-@@ -83,28 +84,29 @@
- 		if (!should_protect(inode))				\
- 			up_read(guard);					\
- 	}								\
--	if (inode_file_plugin(inode) ==					\
--	    file_plugin_by_id(UNIX_FILE_PLUGIN_ID))			\
--		method ## _unix_file args;				\
--	else								\
--		method ## _cryptcompress args;				\
-+	inode_file_plugin(inode)->method args;				\
-+									\
- 	if (should_protect(inode))					\
- 		up_read(guard);						\
- })
- 
- /**
-- * Macro for active protection.
-- * active_expr contains writers of pset;
-- * NOTE: after evaluating active_expr conversion should be disabled.
-+ * This macro is for invariant methods which can be decomposed
-+ * into "active expression" that goes first and contains pset
-+ * writers (and, hence, needs serialization), and generic plugin
-+ * method which doesn't need serialization.
-+ *
-+ * The macro accepts the following lexemes:
-+ * @type - type of the value represented by the compound statement;
-+ * @method - invariant plugin method, which contains pset writers;
-+ * @active_expr - name of "active expression", usually some O(1) -
-+ * heuristic for disabling a conversion.
-  */
- #define PROT_ACTIVE(type, method, args, active_expr)			\
- ({	                 						\
- 	type _result = 0;						\
- 	struct rw_semaphore * guard =					\
- 		&reiser4_inode_data(inode)->conv_sem;			\
--	reiser4_context * ctx =	reiser4_init_context(inode->i_sb);	\
--	if (IS_ERR(ctx))						\
--		return PTR_ERR(ctx);					\
- 									\
- 	if (should_protect(inode)) {					\
- 		down_write(guard);					\
-@@ -112,15 +114,7 @@
- 			_result = active_expr;				\
- 		up_write(guard);					\
- 	}								\
--	if (_result == 0) {						\
--		if (inode_file_plugin(inode) ==				\
--		    file_plugin_by_id(UNIX_FILE_PLUGIN_ID))		\
--			_result =  method ## _unix_file args;		\
--		else							\
--			_result =  method ## _cryptcompress args;	\
--	}								\
--	reiser4_exit_context(ctx);					\
--	_result;							\
-+	_result = inode_file_plugin(inode)->method args;                \
- })
- 
- /* Pass management to the unix-file plugin with "notail" policy */
-@@ -547,7 +541,8 @@
-  */
- 
- /*
-- * Reiser4 write "careful" method.  Write a file in 2 steps:
-+ * Reiser4 invariant ->write() method supplied to VFS.
-+ * Write a file in 2 steps:
-  *  . start write with initial file plugin,
-  *    switch to a new (more resonable) file plugin (if any);
-  *  . finish write with the new plugin.
-@@ -564,8 +559,9 @@
- 
- 	/**
- 	 * First step.
--	 * Sanity check: if conversion is possible,
--	 * then protect pset.
-+	 * Check, if conversion is possible.
-+	 * If yes, then ->write() method contains pset
-+	 * writers, so active protection is required.
- 	 */
- 	if (should_protect(inode)) {
- 		prot = 1;
-@@ -574,15 +570,16 @@
- 	written_old = inode_file_plugin(inode)->write(file,
- 						      buf,
- 						      count,
--						      off, &conv);
-+						      off,
-+						      &conv);
- 	if (prot)
- 		up_write(guard);
- 	if (written_old < 0 || conv == 0)
- 		return written_old;
- 	/**
- 	 * Conversion occurred.
--	 * Back conversion is impossible,
--	 * so don't protect at this step.
-+	 * Back conversion is impossible, so at
-+	 * this step protection is not required.
- 	 */
- 	assert("edward-1532",
- 	       inode_file_plugin(inode) ==
-@@ -591,15 +588,23 @@
- 	written_new = inode_file_plugin(inode)->write(file,
- 						      buf + written_old,
- 						      count - written_old,
--						      off, NULL);
-+						      off,
-+						      NULL);
- 	return written_old + (written_new < 0 ? 0 : written_new);
- }
- 
- int reiser4_setattr_careful(struct dentry *dentry, struct iattr *attr)
- {
-+	int result;
- 	struct inode * inode = dentry->d_inode;
--	return PROT_ACTIVE(int, setattr, (dentry, attr),
--			   setattr_conversion_hook(inode, attr));
-+	reiser4_context * ctx =	reiser4_init_context(inode->i_sb);
-+	if (IS_ERR(ctx))
-+		return PTR_ERR(ctx);
-+
-+	result = PROT_ACTIVE(int, setattr, (dentry, attr),
-+			     setattr_conversion_hook(inode, attr));
-+	reiser4_exit_context(ctx);
-+	return result;
- }
- 
- /* Wrappers with passive protection for:
---- linux-2.6.24-rc3-mm2/fs/reiser4/plugin/file/cryptcompress.c.orig
-+++ linux-2.6.24-rc3-mm2/fs/reiser4/plugin/file/cryptcompress.c
-@@ -3627,7 +3627,7 @@
- int ioctl_cryptcompress(struct inode *inode, struct file *filp,
- 			unsigned int cmd, unsigned long arg)
- {
--	return 0;
-+	return RETERR(-ENOSYS);
- }
- 
- /* plugin->mmap */
-
---------------030005090505080706000603--
+-
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
