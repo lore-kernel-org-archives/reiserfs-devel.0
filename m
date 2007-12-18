@@ -1,180 +1,67 @@
-From: Joe Perches <joe@perches.com>
-Subject: [PATCH] fs/: Spelling fixes
-Date: Mon, 17 Dec 2007 11:40:21 -0800
-Message-ID: <5703e57f925f31fc0eb38873bd7f10fc44f99cb4.1197918893.git.joe__18254.5519005091$1197921828$gmane$org@perches.com>
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S936651AbXLQUDA@vger.kernel.org>
-Message-Id: <5703e57f925f31fc0eb38873bd7f10fc44f99cb4.1197918893.git.joe@perches.com>
-Sender: linux-kernel-owner@vger.kernel.org
+From: Nick <nick@njw.me.uk>
+Subject: Very slow mounting of unclean partitions
+Date: Tue, 18 Dec 2007 14:24:19 +0000
+Message-ID: <20071218142419.GB5073@grace.lan>
+Mime-Version: 1.0
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@infradead.org>, Hans Reiser <reiserfs-dev@namesys.com>, Kurt Hackel <kurt.hackel@oracle.com>, Mark Fasheh <mark.fasheh@oracle.com>, "Sergey S. Kostyliov" <rathamahata@php4.ru>, Steven Whitehouse <swhiteho@redhat.com>, cluster-devel@redhat.com, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
+
+Hi there,
+
+I currently have three partitions formatted ReiserFS of around 2GB,
+600MB and 400MB on my 4GB Compact Flash card. The card is pretty
+slow to read and write, with hdparm -Tt giving the following output:
+
+Timing cached reads:   372 MB in  2.01 seconds = 185.40 MB/sec
+Timing buffered disk reads:   32 MB in  3.07 seconds =  10.42 MB/sec
+
+This however is acceptable for my purposes, and reiserfs plays
+nicely most of the time.
+
+However, if the partitions are unmounted uncleanly for any reason,
+remounting all three takes upwards of an hour. This is compared to
+an ext3 partition I have on the card, which takes about 10 seconds
+to go through the journal and mount.
+
+I get output like the folloing from dmesg after the 1 hour+
+mounting, for each partition:
+
+ReiserFS: hdd2: found reiserfs format "3.6" with standard journal
+ReiserFS: hdd2: using ordered data mode
+ReiserFS: hdd2: journal params: device hdd2, size 8192, journal
+  first block 18, max trans len 1024, max batch 900, max commit age
+  30, max trans age 30
+ReiserFS: hdd2: checking transaction log (hdd2)
+ReiserFS: hdd2: replayed 774 transactions in 2318 seconds
+ReiserFS: hdd2: Using r5 hash to sort names
+ReiserFS: hdd2: Removing [165971 11290 0x0 SD]..done
+ReiserFS: hdd2: There were 1 uncompleted unlinks/truncates.
+Completed
+
+The relevant fstab entries for the three partitions are (one is
+encrypted using LUKS):
+
+/dev/hdd2               /mnt/variable   reiserfs
+  noatime,notail  0 0
+/dev/hdd5               /mnt/shared     reiserfs
+  ro,noatime,notail       0 0
+/dev/mapper/home        /home           reiserfs
+  noatime,notail  0 0
+
+Could anybody point me in the right direction to find how to
+ensure it doesn't take so long to remount? I presume going over
+the journal shouldn't take this long.
+
+Thanks for any help or pointers you can give me.
 
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- fs/befs/btree.c            |    2 +-
- fs/befs/datastream.c       |    2 +-
- fs/freevxfs/vxfs_dir.h     |    2 +-
- fs/freevxfs/vxfs_immed.c   |    2 +-
- fs/gfs2/recovery.c         |    2 +-
- fs/ocfs2/alloc.c           |    2 +-
- fs/ocfs2/dir.c             |    2 +-
- fs/ocfs2/ocfs1_fs_compat.h |    2 +-
- fs/ocfs2/suballoc.c        |    2 +-
- fs/reiserfs/bitmap.c       |    6 +++---
- 10 files changed, 12 insertions(+), 12 deletions(-)
+Nick
 
-diff --git a/fs/befs/btree.c b/fs/befs/btree.c
-index af5bb93..4202db7 100644
---- a/fs/befs/btree.c
-+++ b/fs/befs/btree.c
-@@ -232,7 +232,7 @@ befs_bt_read_node(struct super_block *sb, befs_data_stream * ds,
-  * @key: Key string to lookup in btree
-  * @value: Value stored with @key
-  *
-- * On sucess, returns BEFS_OK and sets *@value to the value stored
-+ * On success, returns BEFS_OK and sets *@value to the value stored
-  * with @key (usually the disk block number of an inode).
-  *
-  * On failure, returns BEFS_ERR or BEFS_BT_NOT_FOUND.
-diff --git a/fs/befs/datastream.c b/fs/befs/datastream.c
-index aacb4da..11088f4 100644
---- a/fs/befs/datastream.c
-+++ b/fs/befs/datastream.c
-@@ -236,7 +236,7 @@ befs_count_blocks(struct super_block * sb, befs_data_stream * ds)
- 	as in the indirect region code).
- 	
- 	When/if blockno is found, if blockno is inside of a block 
--	run as stored on disk, we offset the start and lenght members 
-+	run as stored on disk, we offset the start and length members 
- 	of the block run, so that blockno is the start and len is
- 	still valid (the run ends in the same place).
- 	
-diff --git a/fs/freevxfs/vxfs_dir.h b/fs/freevxfs/vxfs_dir.h
-index 3c96d6e..aaf1fb0 100644
---- a/fs/freevxfs/vxfs_dir.h
-+++ b/fs/freevxfs/vxfs_dir.h
-@@ -41,7 +41,7 @@
-  * VxFS directory block header.
-  *
-  * This entry is the head of every filesystem block in a directory.
-- * It is used for free space managment and additionally includes
-+ * It is used for free space management and additionally includes
-  * a hash for speeding up directory search (lookup).
-  *
-  * The hash may be empty and in fact we do not use it all in the
-diff --git a/fs/freevxfs/vxfs_immed.c b/fs/freevxfs/vxfs_immed.c
-index 24b5a77..8a5959a 100644
---- a/fs/freevxfs/vxfs_immed.c
-+++ b/fs/freevxfs/vxfs_immed.c
-@@ -54,7 +54,7 @@ const struct inode_operations vxfs_immed_symlink_iops = {
- };
- 
- /*
-- * Adress space operations for immed files and directories.
-+ * Address space operations for immed files and directories.
-  */
- const struct address_space_operations vxfs_immed_aops = {
- 	.readpage =		vxfs_immed_readpage,
-diff --git a/fs/gfs2/recovery.c b/fs/gfs2/recovery.c
-index beb6c7a..b1cdfa7 100644
---- a/fs/gfs2/recovery.c
-+++ b/fs/gfs2/recovery.c
-@@ -450,7 +450,7 @@ int gfs2_recover_journal(struct gfs2_jdesc *jd)
- 		fs_info(sdp, "jid=%u: Trying to acquire journal lock...\n",
- 			jd->jd_jid);
- 
--		/* Aquire the journal lock so we can do recovery */
-+		/* Acquire the journal lock so we can do recovery */
- 
- 		error = gfs2_glock_nq_num(sdp, jd->jd_jid, &gfs2_journal_glops,
- 					  LM_ST_EXCLUSIVE,
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index ce62c15..602bf0b 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -3326,7 +3326,7 @@ static int ocfs2_insert_path(struct inode *inode,
- 	if (insert->ins_split != SPLIT_NONE) {
- 		/*
- 		 * We could call ocfs2_insert_at_leaf() for some types
--		 * of splits, but it's easier to just let one seperate
-+		 * of splits, but it's easier to just let one separate
- 		 * function sort it all out.
- 		 */
- 		ocfs2_split_record(inode, left_path, right_path,
-diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
-index 63b28fd..63fd06e 100644
---- a/fs/ocfs2/dir.c
-+++ b/fs/ocfs2/dir.c
-@@ -1215,7 +1215,7 @@ static int ocfs2_expand_inline_dir(struct inode *dir, struct buffer_head *di_bh,
- 	down_write(&oi->ip_alloc_sem);
- 
- 	/*
--	 * Prepare for worst case allocation scenario of two seperate
-+	 * Prepare for worst case allocation scenario of two separate
- 	 * extents.
- 	 */
- 	if (alloc == 2)
-diff --git a/fs/ocfs2/ocfs1_fs_compat.h b/fs/ocfs2/ocfs1_fs_compat.h
-index 0b499bc..dfb313b 100644
---- a/fs/ocfs2/ocfs1_fs_compat.h
-+++ b/fs/ocfs2/ocfs1_fs_compat.h
-@@ -77,7 +77,7 @@ struct ocfs1_disk_lock
- {
- /*00*/	__u32 curr_master;
- 	__u8 file_lock;
--	__u8 compat_pad[3];  /* Not in orignal definition.  Used to
-+	__u8 compat_pad[3];  /* Not in original definition.  Used to
- 				make the already existing alignment
- 				explicit */
- 	__u64 last_write_time;
-diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
-index 8f09f52..201f594 100644
---- a/fs/ocfs2/suballoc.c
-+++ b/fs/ocfs2/suballoc.c
-@@ -648,7 +648,7 @@ bail:
-  * sync-data inodes."
-  *
-  * Note: OCFS2 already does this differently for metadata vs data
-- * allocations, as those bitmaps are seperate and undo access is never
-+ * allocations, as those bitmaps are separate and undo access is never
-  * called on a metadata group descriptor.
-  */
- static int ocfs2_test_bg_bit_allocatable(struct buffer_head *bg_bh,
-diff --git a/fs/reiserfs/bitmap.c b/fs/reiserfs/bitmap.c
-index 16b331d..f491ceb 100644
---- a/fs/reiserfs/bitmap.c
-+++ b/fs/reiserfs/bitmap.c
-@@ -272,7 +272,7 @@ static inline int block_group_used(struct super_block *s, u32 id)
- 
- 	/* If we don't have cached information on this bitmap block, we're
- 	 * going to have to load it later anyway. Loading it here allows us
--	 * to make a better decision. This favors long-term performace gain
-+	 * to make a better decision. This favors long-term performance gain
- 	 * with a better on-disk layout vs. a short term gain of skipping the
- 	 * read and potentially having a bad placement. */
- 	if (info->free_count == UINT_MAX) {
-@@ -663,7 +663,7 @@ static inline void new_hashed_relocation(reiserfs_blocknr_hint_t * hint)
- 
- /*
-  * Relocation based on dirid, hashing them into a given bitmap block
-- * files. Formatted nodes are unaffected, a seperate policy covers them
-+ * files. Formatted nodes are unaffected, a separate policy covers them
-  */
- static void dirid_groups(reiserfs_blocknr_hint_t * hint)
- {
-@@ -688,7 +688,7 @@ static void dirid_groups(reiserfs_blocknr_hint_t * hint)
- 
- /*
-  * Relocation based on oid, hashing them into a given bitmap block
-- * files. Formatted nodes are unaffected, a seperate policy covers them
-+ * files. Formatted nodes are unaffected, a separate policy covers them
-  */
- static void oid_groups(reiserfs_blocknr_hint_t * hint)
- {
 -- 
-1.5.3.7.949.g2221a6
-
+GPG Key : www.njw.me.uk/nick.gpg.asc     GPG Key ID: 04E4653F
+  GPG Fingerprint: 9732 D7C7 A441 D79E FDF0 94F6 1F48 5674 04E4 653F
