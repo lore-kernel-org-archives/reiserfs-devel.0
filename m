@@ -1,118 +1,91 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: [PATCH] reiserfs: use open_bdev_excl
-Date: Wed, 26 Dec 2007 16:31:01 +0100
-Message-ID: <20071226153101.GA2428@lst.de>
+From: Edward Shishkin <edward@namesys.com>
+Subject: Re: reiser4 mount options
+Date: Wed, 26 Dec 2007 23:35:13 +0300
+Message-ID: <4772BB01.1070006@namesys.com>
+References: <14476466.post@talk.nabble.com> <476E6CE2.7030004@namesys.com> <14483298.post@talk.nabble.com> <476EFF85.2070002@namesys.com> <14484849.post@talk.nabble.com> <476FC217.9090408@namesys.com> <1198517663.6209.18.camel@localhost> <14493053.post@talk.nabble.com> <14498380.post@talk.nabble.com>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-fsdevel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: chris.mason@oracle.com, akpm@osdl.org
-Cc: linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <14498380.post@talk.nabble.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: butdiene <butdiene@yahoo.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-Use the proper helper to open a blockdevice by name for filesystem
-use, this makes sure it's properly claimed (also added for open-by-number)
-and gets rid of the struct file abuse.
+Hello.
 
-Tested by mounting a reiserfs filesystem with external journal.
+butdiene wrote:
 
+>unfortunately, "sync" still hangs firefox
+>
+>anything else to try?
+>  
+>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Would you please collect and send me
+sysrq-t statistics at firefox-hang time?
+It can be activated by doing
+echo t > /proc/sysrq-trigger
+in root console.
 
-Index: linux-2.6-xfs/fs/reiserfs/journal.c
-===================================================================
---- linux-2.6-xfs.orig/fs/reiserfs/journal.c	2007-12-13 18:55:40.000000000 +0100
-+++ linux-2.6-xfs/fs/reiserfs/journal.c	2007-12-26 15:13:22.000000000 +0100
-@@ -2574,11 +2574,9 @@ static int release_journal_dev(struct su
- 
- 	result = 0;
- 
--	if (journal->j_dev_file != NULL) {
--		result = filp_close(journal->j_dev_file, NULL);
--		journal->j_dev_file = NULL;
--		journal->j_dev_bd = NULL;
--	} else if (journal->j_dev_bd != NULL) {
-+	if (journal->j_dev_bd != NULL) {
-+		if (journal->j_dev_bd->bd_dev != super->s_dev)
-+			bd_release(journal->j_dev_bd);
- 		result = blkdev_put(journal->j_dev_bd);
- 		journal->j_dev_bd = NULL;
- 	}
-@@ -2603,7 +2601,6 @@ static int journal_init_dev(struct super
- 	result = 0;
- 
- 	journal->j_dev_bd = NULL;
--	journal->j_dev_file = NULL;
- 	jdev = SB_ONDISK_JOURNAL_DEVICE(super) ?
- 	    new_decode_dev(SB_ONDISK_JOURNAL_DEVICE(super)) : super->s_dev;
- 
-@@ -2620,35 +2617,34 @@ static int journal_init_dev(struct super
- 					 "cannot init journal device '%s': %i",
- 					 __bdevname(jdev, b), result);
- 			return result;
--		} else if (jdev != super->s_dev)
-+		} else if (jdev != super->s_dev) {
-+			result = bd_claim(journal->j_dev_bd, journal);
-+			if (result) {
-+				blkdev_put(journal->j_dev_bd);
-+				return result;
-+			}
-+
- 			set_blocksize(journal->j_dev_bd, super->s_blocksize);
-+		}
-+
- 		return 0;
- 	}
- 
--	journal->j_dev_file = filp_open(jdev_name, 0, 0);
--	if (!IS_ERR(journal->j_dev_file)) {
--		struct inode *jdev_inode = journal->j_dev_file->f_mapping->host;
--		if (!S_ISBLK(jdev_inode->i_mode)) {
--			reiserfs_warning(super, "journal_init_dev: '%s' is "
--					 "not a block device", jdev_name);
--			result = -ENOTBLK;
--			release_journal_dev(super, journal);
--		} else {
--			/* ok */
--			journal->j_dev_bd = I_BDEV(jdev_inode);
--			set_blocksize(journal->j_dev_bd, super->s_blocksize);
--			reiserfs_info(super,
--				      "journal_init_dev: journal device: %s\n",
--				      bdevname(journal->j_dev_bd, b));
--		}
--	} else {
--		result = PTR_ERR(journal->j_dev_file);
--		journal->j_dev_file = NULL;
-+	journal->j_dev_bd = open_bdev_excl(jdev_name, 0, journal);
-+	if (IS_ERR(journal->j_dev_bd)) {
-+		result = PTR_ERR(journal->j_dev_bd);
-+		journal->j_dev_bd = NULL;
- 		reiserfs_warning(super,
- 				 "journal_init_dev: Cannot open '%s': %i",
- 				 jdev_name, result);
-+		return result;
- 	}
--	return result;
-+
-+	set_blocksize(journal->j_dev_bd, super->s_blocksize);
-+	reiserfs_info(super,
-+		      "journal_init_dev: journal device: %s\n",
-+		      bdevname(journal->j_dev_bd, b));
-+	return 0;
- }
- 
- /**
-Index: linux-2.6-xfs/include/linux/reiserfs_fs_sb.h
-===================================================================
---- linux-2.6-xfs.orig/include/linux/reiserfs_fs_sb.h	2007-12-13 19:06:58.000000000 +0100
-+++ linux-2.6-xfs/include/linux/reiserfs_fs_sb.h	2007-12-26 15:13:22.000000000 +0100
-@@ -177,7 +177,6 @@ struct reiserfs_journal {
- 	struct reiserfs_journal_cnode *j_last;	/* newest journal block */
- 	struct reiserfs_journal_cnode *j_first;	/*  oldest journal block.  start here for traverse */
- 
--	struct file *j_dev_file;
- 	struct block_device *j_dev_bd;
- 	int j_1st_reserved_block;	/* first block on s_dev of reserved area journal */
- 
+Thanks,
+Edward.
+
+>
+>butdiene wrote:
+>  
+>
+>>/dev/root / reiser4
+>>rw,atom_max_size=0x800,atom_max_age=0x927c0,atom_min_size=0x100,atom_max_flushers=0x1,cbk_cache_slots=0x10
+>>0 0
+>>
+>>it works without initrd for me.  the mount options are set properly in
+>>/proc/mounts now. 
+>>
+>>still need to see how it performs 
+>>
+>>thanks a lot!
+>>
+>>
+>>Zan Lynx wrote:
+>>    
+>>
+>>>On Mon, 2007-12-24 at 17:28 +0300, Edward Shishkin wrote:
+>>>
+>>>      
+>>>
+>>>>Sorry, ignore my suggestion about fstab. It is impossible to pass
+>>>>reiser4-specific mount options for ''/" via fstab, because all such
+>>>>options
+>>>>are passed to "/" via remount, but ->remount_fs() super operation is not
+>>>>implemented for reiser4.
+>>>>
+>>>>However, it is possible to pass reiser4-specific mount options for "/"
+>>>>via
+>>>>boot loader. I have passed a string "rootflags=tmgr.atom_max_size=2048"
+>>>>to my grub, and it works for me. Note, that prefix "tmgr." is required
+>>>>and
+>>>>values should be passed in decimal format.
+>>>>        
+>>>>
+>>>Last year when I needed rootflags I found out that they only work if
+>>>your distro implements them through an initrd or initramfs.  Since most
+>>>distros do this it works ok.  But my Gentoo system did not use an
+>>>initramfs and I could not get rootflags options to work on the kernel
+>>>command line.
+>>>
+>>>So I made my own initramfs with BusyBox and a short script.
+>>>-- 
+>>>Zan Lynx <zlynx@acm.org>
+>>>
+>>> 
+>>>
+>>>      
+>>>
+>>    
+>>
+>
+>  
+>
+
