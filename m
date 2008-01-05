@@ -1,75 +1,69 @@
-From: Eddie Atherton <stunnel@attglobal.net>
-Subject: Question about system lock-ups
-Date: Fri, 04 Jan 2008 19:36:33 -0800
-Message-ID: <477EFB41.4070600@attglobal.net>
-Reply-To: stunnel@attglobal.net
+From: reiserfs-devel@njw.me.uk
+Subject: Very slow mounting of unclean partitions
+Date: Sat, 5 Jan 2008 15:26:52 +0000
+Message-ID: <20080105152652.GE6870@grace.lan>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-Hi,
+(not sure if this sent first time; apologies if double-posting)
 
-I don't think this issue is reiser related, but I thought I'd bounce it 
-here, in case anyone might be able to shed light on it, based on the 
-symptoms.
+Hi there,
 
-Yesterday, for the 3nd time, my system "kind of" locked up. Each time 
-this has happened, it's been after around a month of up-time, and all 
-times were at odd hours, so the system wasn't being used much, so I 
-don't think it's temperature related, otherwise I'd get them during the 
-day, when I am using the system heavily.
+I currently have three partitions formatted ReiserFS of around 2GB,
+600MB and 400MB on my 4GB Compact Flash card. The card is pretty
+slow to read and write, with hdparm -Tt giving the following output:
 
-OK, the symptoms are this. On the monitor I can see my screensaver, 
-<http://www.linuxquestions.org/questions/#>but it's not "in motion". The 
-keyboard and mouse don't work. I can't connect by ssh or VNC, 
-<http://www.linuxquestions.org/questions/#> but neither actually time 
-out, they just hang. Requests to DHCP hang. BUT, the system is still 
-running, because it acts as a server/gateway for the rest of the 
-machines in the house, and they can connect to the internet 
-<http://www.linuxquestions.org/questions/#>without problems. I can surf 
-the web, I can send and receive e-mails, anything but connect directly 
-to the server. <http://www.linuxquestions.org/questions/#>
+Timing cached reads:   372 MB in  2.01 seconds = 185.40 MB/sec
+Timing buffered disk reads:   32 MB in  3.07 seconds =  10.42 MB/sec
 
-The only way to get the system to respond, is the "big red button". On 
-restart, and here's why I'm trying this list for ideas, is that I 
-noticed, again each time, is hundreds and hundreds, if not thousands of 
-messages showing reiser replaying transactions. It takes, sometimes, 
-nearly 5 minutes for this to complete.  What kind of issue could cause 
-all of these transactions to be replayed.
+This however is acceptable for my purposes, and reiserfs plays
+nicely most of the time.
 
-Examining the logs doesn't show anything, except that all logging 
-appears to stop at the same point in time, which I think is when the 
-"issue", whatever it is, occurs, because the time was around 4 hours 
-before I noticed the lock-up.
+However, if the partitions are unmounted uncleanly for any reason,
+remounting all three takes upwards of an hour. This is compared to
+an ext3 partition I have on the card, which takes about 10 seconds
+to go through the journal and mount.
 
-thought about a drive issue, but smartd isn't reporting any problems, 
-normally, or via short/long self-tests. Plus, I'd expect some "failure" 
-messages at some point, not just a lock-up.
+I get output like the folloing from dmesg after the 1 hour+
+mounting, for each partition:
 
-Lastly, here's the only relevant message I could find in dmesg, from the 
-resultant boot:
+ReiserFS: hdd2: found reiserfs format "3.6" with standard journal
+ReiserFS: hdd2: using ordered data mode
+ReiserFS: hdd2: journal params: device hdd2, size 8192, journal
+  first block 18, max trans len 1024, max batch 900, max commit age
+  30, max trans age 30
+ReiserFS: hdd2: checking transaction log (hdd2)
+ReiserFS: hdd2: replayed 774 transactions in 2318 seconds
+ReiserFS: hdd2: Using r5 hash to sort names
+ReiserFS: hdd2: Removing [165971 11290 0x0 SD]..done
+ReiserFS: hdd2: There were 1 uncompleted unlinks/truncates.
+Completed
 
-ReiserFS: hda2: checking transaction log (hda2)
-ReiserFS: hda2: replayed 1125 transactions in 67 seconds
+The relevant fstab entries for the three partitions are (one is
+encrypted using LUKS):
 
-Now, here's the really weird part.  hda2 is an UNUSED partition.  It 
-isn't mounted on the system:
+/dev/hdd2               /mnt/variable   reiserfs
+  noatime,notail  0 0
+/dev/hdd5               /mnt/shared     reiserfs
+  ro,noatime,notail       0 0
+/dev/mapper/home        /home           reiserfs
+  noatime,notail  0 0
 
-Filesystem            Size  Used Avail Use% Mounted on
-/dev/hda1             9.3G  3.5G  5.9G  37% /
-/dev/hdb2             187G  164G   24G  88% /usr/local/NotYet
-/dev/hdb3              47G   18G   30G  37% /usr/local/Apps
-/dev/sda5             233G  140G   93G  61% /usr/local/Music
-/dev/sda6             233G  173G   60G  75% /usr/local/Backup
-tmpfs                 256M   68K  256M   1% /tmp
+Could anybody point me in the right direction to find how to
+ensure it doesn't take so long to remount? I presume going over
+the journal shouldn't take this long.
 
-Any thoughts on what might be causing this, and more importantly, how to 
-track down the culprit.
+Thanks for any help or pointers you can give me.
 
-Cheers,
-Eddie
 
+Nick
+
+-- 
+GPG Key : www.njw.me.uk/nick.gpg.asc     GPG Key ID: 04E4653F
+  GPG Fingerprint: 9732 D7C7 A441 D79E FDF0 94F6 1F48 5674 04E4 653F
