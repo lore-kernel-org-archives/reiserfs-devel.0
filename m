@@ -1,42 +1,99 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: more follow up Re: kernel messages. Re: reiser4 firefox hangs
- due to fsync, sysrq-t dump
-Date: Mon, 07 Jan 2008 01:09:54 +0300
-Message-ID: <478151B2.3080502@gmail.com>
-References: <14514445.post@talk.nabble.com> <14533387.post@talk.nabble.com> <5c7c368b0712291235m546eca35ne25548edffcdbf42@mail.gmail.com> <14546580.post@talk.nabble.com> <14547147.post@talk.nabble.com> <14567477.post@talk.nabble.com>
+Subject: Re: Question about system lock-ups
+Date: Mon, 07 Jan 2008 02:23:53 +0300
+Message-ID: <47816309.10803@gmail.com>
+References: <477EFB41.4070600@attglobal.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <14567477.post@talk.nabble.com>
+In-Reply-To: <477EFB41.4070600@attglobal.net>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: butdiene <butdiene@yahoo.com>
+To: stunnel@attglobal.net
 Cc: reiserfs-devel@vger.kernel.org
 
-butdiene wrote:
+Eddie Atherton wrote:
 
->Hi Edward,
->
->more kernel messages (both before and after disabling reiser4-debug option),
->including those reported before,
->  
->
+> Hi,
+
 
 Hello.
 
-Many thanks!
-I don't see any leak in those messages. However, such big atoms
-(atom_max_size=0x2f20c =~ 0.75G) is not that we really want
-to have in your system ;)
-Would you please repeat it with atom_max_size=0x200 (pass to the
-bootloader  "rootflags=tmgr.atom_max_size=512") plus let's take a look
-at vmstat statistics (type `vmstat 2 > vmstat_output` at the beginning of
-every session).
-So for every session attach the following info:
-. cat /proc/mounts output
-. kernel messages
-. vmstat_output
+>
+> I don't think this issue is reiser related, but I thought I'd bounce 
+> it here, in case anyone might be able to shed light on it, based on 
+> the symptoms.
+>
+> Yesterday, for the 3nd time, my system "kind of" locked up. Each time 
+> this has happened, it's been after around a month of up-time, and all 
+> times were at odd hours, so the system wasn't being used much, so I 
+> don't think it's temperature related, otherwise I'd get them during 
+> the day, when I am using the system heavily.
+>
 
-Thanks,
-Edward.
+I had something similar on my dual athlon 1700+ box.
+Getting rid of case has fixed the problem, so I didn't
+investigate this further ;)
+
+> OK, the symptoms are this. On the monitor I can see my screensaver, 
+> <http://www.linuxquestions.org/questions/#>but it's not "in motion". 
+> The keyboard and mouse don't work. I can't connect by ssh or VNC, 
+> <http://www.linuxquestions.org/questions/#> but neither actually time 
+> out, they just hang. Requests to DHCP hang. BUT, the system is still 
+> running, because it acts as a server/gateway for the rest of the 
+> machines in the house, and they can connect to the internet 
+> <http://www.linuxquestions.org/questions/#>without problems. I can 
+> surf the web, I can send and receive e-mails, anything but connect 
+> directly to the server. <http://www.linuxquestions.org/questions/#>
+>
+> The only way to get the system to respond, is the "big red button". On 
+> restart, and here's why I'm trying this list for ideas, is that I 
+> noticed, again each time, is hundreds and hundreds, if not thousands 
+> of messages showing reiser replaying transactions. It takes, 
+> sometimes, nearly 5 minutes for this to complete.  What kind of issue 
+> could cause all of these transactions to be replayed.
+
+
+For example, pushing the "big red button" when write is in progress..
+
+>
+> Examining the logs doesn't show anything, except that all logging 
+> appears to stop at the same point in time, which I think is when the 
+> "issue", whatever it is, occurs, because the time was around 4 hours 
+> before I noticed the lock-up.
+>
+> thought about a drive issue, but smartd isn't reporting any problems, 
+> normally, or via short/long self-tests. Plus, I'd expect some 
+> "failure" messages at some point, not just a lock-up.
+>
+> Lastly, here's the only relevant message I could find in dmesg, from 
+> the resultant boot:
+>
+> ReiserFS: hda2: checking transaction log (hda2)
+> ReiserFS: hda2: replayed 1125 transactions in 67 seconds
+>
+> Now, here's the really weird part.  hda2 is an UNUSED partition.  It 
+> isn't mounted on the system:
+>
+> Filesystem            Size  Used Avail Use% Mounted on
+> /dev/hda1             9.3G  3.5G  5.9G  37% /
+> /dev/hdb2             187G  164G   24G  88% /usr/local/NotYet
+> /dev/hdb3              47G   18G   30G  37% /usr/local/Apps
+> /dev/sda5             233G  140G   93G  61% /usr/local/Music
+> /dev/sda6             233G  173G   60G  75% /usr/local/Backup
+> tmpfs                 256M   68K  256M   1% /tmp
+>
+> Any thoughts on what might be causing this, and more importantly, how 
+> to track down the culprit.
+>
+> Cheers,
+> Eddie
+>
+> -
+> To unsubscribe from this list: send the line "unsubscribe 
+> reiserfs-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+
