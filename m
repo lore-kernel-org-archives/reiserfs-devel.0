@@ -1,21 +1,51 @@
-From: Mat <jackdachef@gmail.com>
-Subject: Re: reiser4 needs some love with baselayout-2 / openrc
-Date: Fri, 18 Jan 2008 14:10:17 +0000 (UTC)
-Message-ID: <loom.20080118T140429-519@post.gmane.org>
-References: <loom.20080118T124400-9@post.gmane.org> <loom.20080118T131323-824@post.gmane.org>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: bug report: reiser4 + kde4
+Date: Fri, 18 Jan 2008 17:25:32 +0300
+Message-ID: <4790B6DC.8070308@gmail.com>
+References: <20071122101615.178410@gmx.net> <200712152015.32737.volker.armin.hemmann@tu-clausthal.de> <4765D982.9010603@gmail.com> <200801172200.22182.volker.armin.hemmann@tu-clausthal.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <200801172200.22182.volker.armin.hemmann@tu-clausthal.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: "Hemmann, Volker Armin" <volker.armin.hemmann@tu-clausthal.de>
+Cc: reiserfs-devel@vger.kernel.org
 
-me again :D
+Hemmann, Volker Armin wrote:
 
-here's what I mean:
+>On Montag, 17. Dezember 2007, Edward Shishkin wrote:
+> =20
+>
+>>I have some progress in installing kde4 on my box ;)
+>>Hope I'll able to reproduce it.
+>>   =20
+>>
+>
+>any progress on this bug?=20
+>
+> =20
+>
 
-(it has lines longer 80 characters, so I have to use nopaste):
+Not yet.
+Is it possible for you to switch back to kde 3.X for a while?
 
-http://pastebin.ch/71
+>Because I just installed kde 4.0 and hit it.
+>
+>Gl=FCck Auf
+>Volker
+>-
+>To unsubscribe from this list: send the line "unsubscribe reiserfs-dev=
+el" in
+>the body of a message to majordomo@vger.kernel.org
+>More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> =20
+>
 
+-
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
