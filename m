@@ -1,147 +1,63 @@
-From: jeffm@suse.com
-Subject: [patch 4/9] [PATCH] reiserfsprogs: changes for better external journal defaults
-Date: Thu, 24 Jan 2008 15:02:30 -0500
-Message-ID: <20080124200337.426568000@suse.com>
-References: <20080124200226.606635000@suse.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: bug report: reiser4 + kde4
+Date: Fri, 25 Jan 2008 14:00:15 +0300
+Message-ID: <4799C13F.7050600@gmail.com>
+References: <20071122101615.178410@gmx.net>	 <200801172200.22182.volker.armin.hemmann@tu-clausthal.de>	 <4790B6DC.8070308@gmail.com>	 <200801181830.55677.volker.armin.hemmann@tu-clausthal.de>	 <47953052.80500@gmail.com> <e85b9d30801221033j29675024vae4eee3a90fcce73@mail.gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfsprogs-external-journal-changes.diff
+In-Reply-To: <e85b9d30801221033j29675024vae4eee3a90fcce73@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
-Cc: Edward Shishkin <edward.shishkin@gmail.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Matthew <jackdachef@gmail.com>
+Cc: "Hemmann, Volker Armin" <volker.armin.hemmann@tu-clausthal.de>, reiserfs-devel@vger.kernel.org
 
- Currently, when presented with an external journal device, reiserfsprogs will
- use the entire device. This is fine when the external device is, say, a
- 128 MB NVRAM "disk", but when it is another external partition it can
- cause problems on 32-bit machines and 64-bit machines with limited memory
- capacity.
+Matthew wrote:
 
- This patch does a few things, all related:
- * It changes the default external journal size to be journal_default_size,
-   just like the internal size.
- * If an external journal device is larger than the used space, it warns
-   the user that they are wasting space.
- * Changes the warning re: journal sizes > default size to be more descriptive.
- * Checks to see if the journal size is larger than the max size. If it is
-   an error is issued with a description why and instructions to use -f if
-   the action is truly desired.
- * Adds a "force" mode to reiserfs_create_journal()
+>>Eventually I have launched kde4 with the attached patch.
+>>The fixed problem is described in the patch header.
+>>Would you please try this?
+>>
+>>Thanks,
+>>Edward.
+>>
+>>P.S.
+>>Kde4 is nice :)
+>>
+>>    
+>>
+>
+>That DID solve it !
+>Thanks a ton, Edward, kde4 and reiser4 is the REAL winning combination ;)
+>I've tried the patch on 2 different PCs and kde4 is flying fine so far,
+>
+>there were some other little problems when launching bash-scripts from
+>within an reiser4 root-partition which should also be fixed by this
+>patch (I hope), I need to have a deeper look at that ..
+>  
+>
 
- This may all sound theoretical, but it actually causes machines to crash. We
- recenly saw a bug report where the user chose an external journal device
- of ~ 8 GB. When journal_init() tried to allocate cnodes, it failed silently
- and then panicked the node when it needed to actually use a cnode. A patch
- to address that issue follows.
+yes, please...
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- include/reiserfs_lib.h  |    2 +-
- mkreiserfs/mkreiserfs.c |    2 +-
- reiserfscore/journal.c  |   42 ++++++++++++++++++++++++++++++++++--------
- tune/tune.c             |    2 +-
- 4 files changed, 37 insertions(+), 11 deletions(-)
+>reiser4 is feeling pretty stable & safe right now :)
+>
+>Thanks again,
+>Mat
+>
+>P.S.:
+>could you safe / host a copy of the original
+>http://pub.namesys.com/Reiser4/ToDo list or wiki so that people who
+>are interested in working on reiser4 can further do so before it (the
+>list) completely vanishes of the net ? (there are still copies in
+>google-cache)
+>  
+>
 
---- a/include/reiserfs_lib.h	2004-10-01 12:19:34.000000000 -0400
-+++ b/include/reiserfs_lib.h	2008-01-24 13:39:04.000000000 -0500
-@@ -346,7 +346,7 @@ int reiserfs_open_journal (reiserfs_fils
- int reiserfs_journal_params_check(reiserfs_filsys_t *fs);
- int reiserfs_create_journal (reiserfs_filsys_t * fs, char * j_filename,
- 			     unsigned long offset, unsigned long len, 
--			     int transaction_max_size);
-+			     int transaction_max_size, int force);
- int reiserfs_journal_opened (reiserfs_filsys_t *);
- void reiserfs_flush_journal (reiserfs_filsys_t * fs);
- void reiserfs_free_journal (reiserfs_filsys_t * fs);
---- a/mkreiserfs/mkreiserfs.c	2008-01-24 13:39:03.000000000 -0500
-+++ b/mkreiserfs/mkreiserfs.c	2008-01-24 13:39:04.000000000 -0500
-@@ -702,7 +702,7 @@ int main (int argc, char **argv)
-     }
- 		
-     if (!reiserfs_create_journal (fs, jdevice_name, Offset, Journal_size, 
--	Max_trans_size)) 
-+	Max_trans_size, force))
-     {
-         return 1;
-     }
---- a/reiserfscore/journal.c	2004-10-13 09:05:15.000000000 -0400
-+++ b/reiserfscore/journal.c	2008-01-24 13:39:04.000000000 -0500
-@@ -545,7 +545,8 @@ int reiserfs_create_journal(
-     char * j_device,		/* journal device name */
-     unsigned long offset,	/* journal offset on the j_device */
-     unsigned long len,		/* including journal header */
--    int transaction_max_size)
-+    int transaction_max_size,
-+    int force)
- {
-     struct stat st;
-     struct buffer_head * bh;
-@@ -596,21 +597,46 @@ int reiserfs_create_journal(
- 		    "%lu, blocks on device %lu\n", offset, blocks);
- 		return 0;
- 	    }
--	    len = blocks - offset;
-+	    /* XXX jdm: This can end up being huge and could result
-+	     * in an unmountable file system:
-+	     * len = blocks - offset; */
-+	    len = journal_default_size(fs->fs_super_bh->b_blocknr,
-+	                               fs->fs_blocksize) + 1;
-+
- 	}
- 
--	if (len > journal_default_size (fs->fs_super_bh->b_blocknr, 
-+	if (!force && len > journal_default_size (fs->fs_super_bh->b_blocknr,
- 	    fs->fs_blocksize) + 1) 
- 	{
-+	    unsigned long journal_max = journal_max_size (fs->fs_super_bh->b_blocknr, fs->fs_blocksize);
- 	    fflush(stderr);
- 	    
--	    reiserfs_warning (stdout, "NOTE: journal new size %lu is greater "
--		"than default size %lu:\nthis may slow down initializing and "
--		"mounting of the journal. Hope it is ok.\n\n", len, 
--		journal_default_size(fs->fs_super_bh->b_blocknr, 
--		fs->fs_blocksize) + 1);
-+	    reiserfs_warning (stdout, "\n*** You've specified a journal "
-+	                      "size larger than the default size of "
-+	                      "%lu\n*** blocks. This may slow down "
-+	                      "journal initialization and mounting "
-+	                      "of\n*** the file system.%s",
-+	                      journal_default_size(fs->fs_super_bh->b_blocknr, fs->fs_blocksize) + 1,
-+	                      len > journal_max ? " " : "\n");
-+	    if (len > journal_max)
-+		reiserfs_warning (stdout, "On 32-bit systems, and on "
-+		                  "64-bit systems with\n*** limited "
-+		                  "memory, this may also cause the file "
-+		                  "system to be unmountable.\n*** Please "
-+		                  "consider using a journal size "
-+		                  "<= %lu blocks.\n\nFile system creation "
-+				  "failed. You may override this behavior "
-+				  "with the -f option.\n", journal_max);
-+		    return 0;
- 	}
- 
-+	if (len < blocks)
-+		reiserfs_warning (stdout, "\n\n*** Your journal device is %lu "
-+		                  "blocks, but your journal is only %lu "
-+				  "blocks.\n*** You may want to consider "
-+				  "resizing the journal device to avoid "
-+				  "wasting space.\n\n", blocks, len);
-+
- 	if (blocks < offset + len) {
- 	    reiserfs_warning (stderr, "reiserfs_create_journal: no enough "
- 		"blocks on device %lu, needed %lu\n", blocks, offset + len);
---- a/tune/tune.c	2004-08-19 07:23:57.000000000 -0400
-+++ b/tune/tune.c	2008-01-24 13:39:04.000000000 -0500
-@@ -710,7 +710,7 @@ int main (int argc, char **argv)
-     reiserfs_close_journal (fs);
- 
-     if (!reiserfs_create_journal (fs, j_new_device_name, Offset,
--				  Journal_size, Max_trans_size)) {
-+				  Journal_size, Max_trans_size, Force)) {
- 	message ("Could not create new journal");
- 	reiserfs_close (fs);
-         return 1;
+http://209.85.129.104/search?q=cache:tzvFNZjSsNYJ:pub.namesys.com/Reiser4/ToDo+Waaaaaaaaaaaaaaay+too+many+typedefs&hl=en&ct=clnk&cd=1
 
+Some updates are needed though. In particular, #14 should be marked
+as "not done", as eventually Vladimir hasn't supplied a patch for this.
 
+Thanks,
+Edward.
