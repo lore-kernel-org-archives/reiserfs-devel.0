@@ -1,61 +1,36 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH] reiserfsprogs: remove dependency on asm/unaligned.h
-Date: Fri, 25 Jan 2008 11:00:27 -0500
-Message-ID: <479A079B.5000309@suse.com>
-References: <20080124200226.606635000@suse.com> <4799C193.8010502@gmail.com>
+From: "Hemmann, Volker Armin" <volker.armin.hemmann@tu-clausthal.de>
+Subject: Re: Reiser4 for 2.6.24
+Date: Fri, 25 Jan 2008 17:55:47 +0100
+Message-ID: <200801251755.47550.volker.armin.hemmann@tu-clausthal.de>
+References: <4799D259.3020104@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4799C193.8010502@gmail.com>
+In-Reply-To: <4799D259.3020104@gmail.com>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-devel@vger.kernel.org
 
- We probably shouldn't have ever been including asm/unaligned.h, though I
- think I'm the one who might've added it there in the first place.
+Hi,
 
- This patch borrows the unaligned accessor functions from the 3.6.20 code.
+On Freitag, 25. Januar 2008, Edward Shishkin wrote:
+> http://chichkin_i.zelnet.ru/namesys/reiser4-for-2.6.24.patch.gz
+>
+> The same as reiser4-for-2.6.23-3 plus the following -mm stuff:
+> reiser4-fix-null-pointer-dereference-in-sys_truncate64.patch
+> reiser4-new-export-ops.patch
+> reiser4-drop-size-argument-from-bio_endio-and-bi_end_io.patch (from
+> Laurent Riffard)
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- include/reiserfs_fs.h |   20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+thank you very much Edward.=20
+So far 2.6.24+reiser4 works here without any problems.
 
---- a/include/reiserfs_fs.h	2008-01-25 10:49:50.000000000 -0500
-+++ b/include/reiserfs_fs.h	2008-01-25 10:54:05.000000000 -0500
-@@ -38,14 +38,22 @@
- # define extern_inline
- #endif
- 
--#include <asm/unaligned.h>
+Gl=FCck Auf
+Volker
 -
- #ifndef get_unaligned
--#if defined(__ppc__) || defined(ppc) || defined(__ppc) || \
--    defined(__PPC) || defined(powerpc) || defined(__powerpc__)
--#	define get_unaligned(ptr)	(*(ptr))
--#	define put_unaligned(val,ptr)	((void)(*(ptr) = (val)))
-+#define get_unaligned(ptr)				\
-+({							\
-+        __typeof__(*(ptr)) __tmp;			\
-+        memcpy(&__tmp, (ptr), sizeof(*(ptr)));		\
-+        __tmp;						\
-+})
- #endif
-+
-+#ifndef put_unaligned
-+#define put_unaligned(val, ptr)				\
-+({							\
-+        __typeof__(*(ptr)) __tmp = (val);		\
-+        memcpy((ptr), &__tmp, sizeof(*(ptr)));		\
-+        (void)0;					\
-+})
- #endif
- 
- #define get_leXX(xx,p,field)	(le##xx##_to_cpu ((p)->field))
-
--- 
-Jeff Mahoney
-SUSE Labs
-
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
