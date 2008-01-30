@@ -1,36 +1,43 @@
-From: "Hemmann, Volker Armin" <volker.armin.hemmann@tu-clausthal.de>
-Subject: Re: Reiser4 for 2.6.24
-Date: Fri, 25 Jan 2008 17:55:47 +0100
-Message-ID: <200801251755.47550.volker.armin.hemmann@tu-clausthal.de>
-References: <4799D259.3020104@gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: Reiser4 resize
+Date: Wed, 30 Jan 2008 23:40:22 +0300
+Message-ID: <47A0E0B6.5020507@gmail.com>
+References: <921794899.20080125163823@rambler.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4799D259.3020104@gmail.com>
-Content-Disposition: inline
+In-Reply-To: <921794899.20080125163823@rambler.ru>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Oleg Osovitskiy <o.osovitskiy@rambler.ru>
+Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
-Hi,
+Oleg Osovitskiy wrote:
 
-On Freitag, 25. Januar 2008, Edward Shishkin wrote:
-> http://chichkin_i.zelnet.ru/namesys/reiser4-for-2.6.24.patch.gz
+>Hello!
+>  
 >
-> The same as reiser4-for-2.6.23-3 plus the following -mm stuff:
-> reiser4-fix-null-pointer-dereference-in-sys_truncate64.patch
-> reiser4-new-export-ops.patch
-> reiser4-drop-size-argument-from-bio_endio-and-bi_end_io.patch (from
-> Laurent Riffard)
 
-thank you very much Edward.=20
-So far 2.6.24+reiser4 works here without any problems.
+Hi
 
-Gl=FCck Auf
-Volker
--
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  Does Reiser4 fs support resize as reiserfs ?
+>  
+>
+
+nop, sorry..
+
+>If yes which tool I have to use to enlarge my reiser4 fs ?
+>
+>---
+>Best regards, Oleg O. Osovitskiy
+>mailto:o.osovitskiy@rambler.ru, icq# 33366588
+>
+>-
+>To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+>the body of a message to majordomo@vger.kernel.org
+>More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>  
+>
+
