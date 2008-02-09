@@ -1,44 +1,43 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] reiserfs: use open_bdev_excl
-Date: Thu, 7 Feb 2008 06:19:56 +0100
-Message-ID: <20080207051956.GA5229@lst.de>
-References: <20071226153101.GA2428@lst.de> <20080207044513.GA4088@lst.de> <20080206211627.9683a9e2.akpm@linux-foundation.org>
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Subject: [PATCH] REISERFS: Remove commented __KERNEL__ test from
+ reiser_fs.h.
+Date: Sat, 9 Feb 2008 12:40:33 -0500 (EST)
+Message-ID: <alpine.LFD.1.00.0802091238210.10903@localhost.localdomain>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20080206211627.9683a9e2.akpm@linux-foundation.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Hellwig <hch@lst.de>, chris.mason@oracle.com, linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-On Wed, Feb 06, 2008 at 09:16:27PM -0800, Andrew Morton wrote:
-> On Thu, 7 Feb 2008 05:45:13 +0100 Christoph Hellwig <hch@lst.de> wrote:
-> 
-> > On Wed, Dec 26, 2007 at 04:31:01PM +0100, Christoph Hellwig wrote:
-> > > Use the proper helper to open a blockdevice by name for filesystem
-> > > use, this makes sure it's properly claimed (also added for open-by-number)
-> > > and gets rid of the struct file abuse.
-> > > 
-> > > Tested by mounting a reiserfs filesystem with external journal.
-> > 
-> > Folks, what do we do with this patch?  It's been out for more than a
-> > month but didn't actually get picked up in any tree.
-> 
-> It's still sitting in the great pile of things I got sent over Christmas
-> and haven't looked at yet.  It didn't look like a bugfix.
 
-Well, it's fixing that reiserds doesn't bd_claim it's journal device so
-people can open the block device with O_EXCL against the documetned
-semantics.  It's probably also fixing various corner cases that
-open_bdev_excl deals with and a hand-crafted filp_open doesn't.
+Remove the superfluous, commented test for __KERNEL__ from
+include/linux/reiser_fs.h.
 
-> >  I'd really like
-> > to see this going in soon.
-> 
-> How come?
+Signed-off-by: Robert P. J. Day <rpjday@crashcourse.ca>
 
-I just hate sitting on a stack of patches.  Even more so if I'd like to
-see the public API removed in there eventually go away.
+---
+
+diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
+index 8e7eff2..3ebd6db 100644
+--- a/include/linux/reiserfs_fs.h
++++ b/include/linux/reiserfs_fs.h
+@@ -1540,7 +1540,6 @@ struct reiserfs_iget_args {
+ /*                    FUNCTION DECLARATIONS                                */
+ /***************************************************************************/
+
+-/*#ifdef __KERNEL__*/
+ #define get_journal_desc_magic(bh) (bh->b_data + bh->b_size - 12)
+
+ #define journal_trans_half(blocksize) \
+
+
+========================================================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+Home page:                                         http://crashcourse.ca
+Fedora Cookbook:    http://crashcourse.ca/wiki/index.php/Fedora_Cookbook
+========================================================================
