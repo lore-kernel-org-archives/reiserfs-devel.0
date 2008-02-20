@@ -1,8 +1,8 @@
 From: Jeff Mahoney <jeffm@suse.com>
 Subject: Re: Lack of cached bitmap causing degraded performance and occasional
  hangs
-Date: Wed, 20 Feb 2008 14:13:43 -0500
-Message-ID: <47BC7BE7.9010400@suse.com>
+Date: Wed, 20 Feb 2008 14:38:35 -0500
+Message-ID: <47BC81BB.4080309@suse.com>
 References: <47BC6869.1020504@fatooh.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -87,29 +87,12 @@ Corey Hickey wrote:
 > time:      55.126 / 9.524 = 5.788
 > lines:     14935 / 2987   = 5.000
 > kilobytes: 29496 / 6680   = 4.416
-
-That makes sense. The number of bitmaps is a function of the size of the
-file system. There is one bitmap per 128MB of disk, and they're spaced
-as-needed, so every 128MB.
-
+> 
+> 
 > So, then, why does the larger filesystem have to read so much more
 > bitmap data before writing? As I mentioned before, /dev/md0 reads up to
 > 15 MB before writing, and /dev/sda4 reads only 600 KB.
 
-It will only read until it can find the space available. How full are
-each of these file systems?
-
-It's certainly strange behavior. I have a 1.2 TB reiserfs file system
-that I can't duplicate this behavior with, even after dropping the
-caches. It's about 67% full, so finding free space is relatively easy.
-
-Does this happen repeatedly, or just the first time a write occurs? I'd
-be surprised if it happened every time, since reiserfs caches how many
-free blocks are in each bitmap group the first time the block is read.
-The cache is updated when a block is used or freed. If an allocation
-can't be met within that group, it's skipped.
-
-- -Jeff
 
 - --
 Jeff Mahoney
@@ -118,7 +101,7 @@ SUSE Labs
 Version: GnuPG v2.0.4-svn0 (GNU/Linux)
 Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
 
-iD8DBQFHvHvnLPWxlyuTD7IRAp0kAKCJqkCWNocayJ7So94RfPhPB6DVzwCePCK/
-GOYifjzCgRRptQFs5e5YtD8=
-=cLW3
+iD8DBQFHvIG7LPWxlyuTD7IRAjLgAJsGekcbqlSyMtFpT+iWI8JU1LxUyQCfUeYy
+cf/n+R9tlBAMQtp67e2eEnE=
+=we6q
 -----END PGP SIGNATURE-----
