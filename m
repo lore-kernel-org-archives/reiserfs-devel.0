@@ -1,58 +1,67 @@
-From: Jeff Mahoney <jeffm@suse.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: [patch 0/9] reiserfsprogs patch queue
-Date: Mon, 25 Feb 2008 11:58:34 -0500
-Message-ID: <47C2F3BA.5000901@suse.com>
-References: <20080124200226.606635000@suse.com> <4799C193.8010502@gmail.com> <20080225005851.GA23416@ska.dandreoli.com> <47C2C002.4030307@gmail.com>
+Date: Mon, 25 Feb 2008 21:51:50 +0300
+Message-ID: <47C30E46.7080901@gmail.com>
+References: <20080124200226.606635000@suse.com> <4799C193.8010502@gmail.com> <20080225005851.GA23416@ska.dandreoli.com> <47C2C002.4030307@gmail.com> <47C2F3BA.5000901@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <47C2C002.4030307@gmail.com>
+In-Reply-To: <47C2F3BA.5000901@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward.shishkin@gmail.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jeff Mahoney <jeffm@suse.com>
 Cc: Domenico Andreoli <cavokz@gmail.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Jeff Mahoney wrote:
 
-Edward Shishkin wrote:
-> Domenico Andreoli wrote:
-> 
->> On Fri, Jan 25, 2008 at 02:01:39PM +0300, Edward Shishkin wrote:
->>  
->>
->>> Thanks, queued.
->>>   
->>
->> queued for what, 3.6.20?
->>
-> 
-> Nop, I guess it should be 3.6.19.xx, a stuff for
-> download available not only as a part of Suse.
-> 
->> any release date?
->>  
->>
-> 
-> Maybe next month..
+> Edward Shishkin wrote:
+>
+> >Domenico Andreoli wrote:
+>
+> >>On Fri, Jan 25, 2008 at 02:01:39PM +0300, Edward Shishkin wrote:
+> >>
+> >>
+> >>>Thanks, queued.
+> >>>  
+> >>
+> >>queued for what, 3.6.20?
+> >>
+> >Nop, I guess it should be 3.6.19.xx, a stuff for
+> >download available not only as a part of Suse.
+>
+> >>any release date?
+> >>
+> >>
+> >Maybe next month..
+>
+>
+> Edward, is there a new place for the FTP site yet? We spoke briefly
+> about getting space on kernel.org, has anything come of that?
+>
+> ftp://ftp.kernel.org/pub/linux/utils/fs/reiser{fs,4} doesn't sound so
+> bad. ;)
+>
+Sure it doesn't :)
+I have asked for account with username "reiser" in accordance
+with the following FAQ: http://www.kernel.org/faq/#account
 
-Edward, is there a new place for the FTP site yet? We spoke briefly
-about getting space on kernel.org, has anything come of that?
+They have refused with the following explanation:
 
-ftp://ftp.kernel.org/pub/linux/utils/fs/reiser{fs,4} doesn't sound so
-bad. ;)
+H. Peter Anvin wrote:
+ >
+ > This sounds like you're asking for a role account.
+ > We do not issue role accounts on kernel.org under
+ > any circumstances; all accounts are personal, even
+ > if that means we need to register additional people
+ > (we can set up groups if necessary.)
+ >
+ >     -hpa
+ >
 
-- -Jeff
+Getting a personal account requires a list of my personal
+contributions, I put this in longterm todo :)
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.4-svn0 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
+Maybe I do something wrong?
 
-iD8DBQFHwvO6LPWxlyuTD7IRAlLvAJ0QHnixqF8d+0gVbRhM5CdmrvCc7gCfdvo1
-qggOqWs8J5ZQNl2YSa9/QYI=
-=SOln
------END PGP SIGNATURE-----
+Edward.
