@@ -1,30 +1,26 @@
-From: Isaac Chanin <chanin@WPI.EDU>
-Subject: Status of Reiser4 repacker
-Date: Sun, 24 Feb 2008 19:02:48 -0500
-Message-ID: <47C205A8.90605@wpi.edu>
+From: Domenico Andreoli <cavokz@gmail.com>
+Subject: Re: [patch 0/9] reiserfsprogs patch queue
+Date: Mon, 25 Feb 2008 01:58:51 +0100
+Message-ID: <20080225005851.GA23416@ska.dandreoli.com>
+References: <20080124200226.606635000@suse.com> <4799C193.8010502@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4799C193.8010502@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
-Hey the list,
+On Fri, Jan 25, 2008 at 02:01:39PM +0300, Edward Shishkin wrote:
+> Thanks, queued.
 
-Probably a question for Edward, but if anyone else knows:
+queued for what, 3.6.20? any release date?
 
-What's the status of the repacker sub-project?
+cheers,
+Domenico
 
-If I recall correctly, way back, Hans was waiting for someone to offer 
-some money for a repacker and it was going to be Zam's project; but, all 
-of that must be obsolete by now.  Has any work happened on it since the 
-ancient version was rendered broken by other changes?
-
-Also, how much work would it potentially be to take the old one and 
-attempt to fix it to work with recent versions -- not to be a perfect 
-repacker or anything, but usable?  And if the former is feasible, any 
-tips on where to start?
-
-Cheers,
-Isaac
+-----[ Domenico Andreoli, aka cavok
+ --[ http://www.dandreoli.com/gpgkey.asc
+   ---[ 3A0F 2F80 F79C 678A 8936  4FEE 0677 9033 A20E BC50
