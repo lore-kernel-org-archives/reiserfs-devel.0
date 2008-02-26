@@ -1,110 +1,90 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: Matthew <jackdachef@gmail.com>
 Subject: Re: reiser4 w. cryptcompress data-corruption (?!)
-Date: Tue, 26 Feb 2008 02:44:42 +0300
-Message-ID: <47C352EA.5020302@gmail.com>
+Date: Tue, 26 Feb 2008 09:57:50 +0100
+Message-ID: <e85b9d30802260057s5ed62dc6t78fc5b6cfb02a5da@mail.gmail.com>
 References: <loom.20080225T213801-660@post.gmane.org>
+	 <a08621850802251503w10b88e3an59a5170dd41805bb@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <loom.20080225T213801-660@post.gmane.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+        bh=zW9WqAbWcOfXzD2V6SZxVn9TUiUc3KrDTNuz6bZmG5Y=;
+        b=NpT5wvYRDZrlqgbfdF9Hc6lTIvMovB+Rf+diMjAtT47FfbF1vqgecvK1heCV2p+LkFdzeItX0o7hWS9c2WfXjRabb7tGcugccsEPIRCuVZvYjCv+6bOgLortwhfePpDNlOn+xzCJOBgmBdsQtKYvmZd7A7BG070zxHsSuDi4mVg=
+In-Reply-To: <a08621850802251503w10b88e3an59a5170dd41805bb@mail.gmail.com>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Mat <jackdachef@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Dushan Tcholich <dusanc@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org, edward.shishkin@gmail.com
 
-Mat wrote:
+On Tue, Feb 26, 2008 at 12:03 AM, Dushan Tcholich <dusanc@gmail.com> wrote:
+> Hi
+>
+> I had a same scary experience of reiser4 repairing thousands of errors on
+> cryptocompressed partition, but it was false alarm as Edward said:
+>
+> > Me:
+>  > After fsck.reiser4 --check I had to do a fsck.reiser4 --build-fs,
+>  > which lasted ~55min. It fixed 1 error on the start and for next 50 min
+>  > fixed wrong bytes errors in every node, like in the second picture.
+>
+> Edward:
+>  Ignore reports about wrong bytes.
+>  This is because cryptcompress plugin doesn't keep a track about bytes,
+>  and fsck calculates and insert correct value. Keeping a track of bytes
+>  by kernel leads to performance drop (even worse then with atime), so
+>  we decided to not support it.
+>
+>
+> Were those thousands of errors in step 6. of your mail wrong byte errors?
+>
+> Dushan
 
->Hi Edward,
->
->I just ran into an (seemingly) data corruption incident:
->
->here the steps to (hopefully) reproduce:
->
->1. boot up system with reiser4-formatted root-partition (cryptcompress lzo1,
->algorithm)
->2. work with it, openoffice, gnome-desktop (I had compiz activated, but I'm sure
->that's only worth a side-note)
->3. plug in an usbstick with a large enough capacity (e.g. 4 GB) or a large
->enough external usb-harddrive, now format it via
->mkfs.ntfs
->
-><-- here was the point where I made the "mistake" ;), since I was concerned of
->the usbstick' life (read- and write-cycles are limited so I wanted to forcefully
->quit mkfs.ntfs and re-execute it with mkfs.ntfs -f  after that didn't help and
->the progress number stayed at around 81% I unplugged the usbstick ;)
->
->4. this should lead to a similar error message like the following in dmesg:
->
->[12423.120846] reiser4[mkfs.ntfs(22617)]: dc_check_checksum
->(fs/reiser4/plugin/file/cryptcompress.c:971)[edward-156]:
->[12423.120848] WARNING: Bad disk cluster checksum -1991768807, (should be
->1988809339) Fsck?
->[12423.120850] 
->[12423.121158] reiser4[mkfs.ntfs(22617)]: reiser4_inflate_cluster
->(fs/reiser4/plugin/file/cryptcompress.c:1138)[edward-1460]:
->[12423.121159] WARNING: Inode 75477: disk cluster 0 looks corrupted
->[12423.121307] reiser4[mkfs.ntfs(22617)]: dc_check_checksum
->(fs/reiser4/plugin/file/cryptcompress.c:971)[edward-156]:
->[12423.121308] WARNING: Bad disk cluster checksum -1991768807, (should be
->1988809339) Fsck?
->[12423.121309] 
->[12423.121472] reiser4[mkfs.ntfs(22617)]: reiser4_inflate_cluster
->(fs/reiser4/plugin/file/cryptcompress.c:1138)[edward-1460]:
->[12423.121473] WARNING: Inode 75477: disk cluster 0 looks corrupted
->  
->
+Hi, Dushan,
 
-Interesting, I'll try to reproduce it...
+no, those actually were (real) data corruption errors,
+as I wrote (I didn't made it that clear) I impatiently interrupted
+fsck.reiser4, reformatted the partition and extracted the tarball with
+the system
 
-Btw, it would be nice to figure out (by find -inum 75477)
-what is that file (It may shed some light to this corruption).
+I just woke up & thinking over it now: the corruption behavior was
+pretty similar to the corruption with bitdefender-console,
 
->5. safe your data & reboot your system with magic sysrq key
->6. I booted into a livecd & checked the reiser4-partition, there was one error
->(corrupted cluster or something, I'm apologize for not having noted it down ;( )
->after that fsck.reiser4 --build-fs
->showed thousands of errors
->  
->
+Edward:
+I hope you still have the mails were I described
+"corrupting"/triggering the error with ntfs-scanning before you fixed
+it?
 
-Yes, the kernel doesn't support i_bytes and i_blocks of compressed files
-(because of performance reason), but fsck expects this to be set properly.
-The option -n suppresses the screams..
+1.) boot into system with reiser4 as root partition
+2.) start up GUI (gnome, kde, whatever)
+3.) work with with it a little
+4.) mount ntfs-partition (it shouldn't matter if mounted with
+in-kernel ntfs-driver or ntfs3g) [the partition should ideally contain
+a windows-system with several gigabytes of data]
+5.) scan the partition with bdc --arc --files /mnt/win
+6.) filesystem corrupts,
+7.) result: nothing can be launched anymore, even bash is broken -
+just everything
 
->I'm sure it would have fixed the filesystem, however I'm dependent on this box
->right now & need to work, so I played back a tarball with the system & here I am
->  
->
+it was also the case this time:
+whenever I tried to launch epiphany, nautilus, gnome-terminal it
+wouldn't launch them
+--> the only thing still working was gnome-terminal
+after that I exited to the CLI & when I recognised it was similar to
+the previous corruption case (bitdefender-console)
+I immediately killed everything via magic sysrq key & rebooted without
+syncing to maintain my data intact (on /home)
 
-So eventually fsck.reiser4 --build-fs reported that fs is consistent?
+the behavior is pretty interesting:
+it seems to corrupt progressively in steps (such as with the
+bitdefender-console corruption)
 
->I have to give you guys involed in reiserfs creation a compliment: my /home
->partition suffered from no (0 == zero) data corruption from this incident, where
->other filesystem surely would have corrupted some files (I already had similar
->cases with other filesystems losing almost all data ;( )
->  
->
+first almost all still works, bit by bit more and more programs won't
+work anymore
 
-Thanks for your experience.
-Edward.
+Regards
 
->I hope you're able to reproduce this error
->
->comments:
->this is the 2nd case of ntfs-related access/contact leading to data corruption,
->I think Microsoft has included a secret data corruption mechanism in ntfs to
->destroy other opensource filesystems when accessed outside of windows ;)
->
->Thanks for your help & work
->
->Mat
->
->-
->To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
->the body of a message to majordomo@vger.kernel.org
->More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->  
->
-
+Mat
