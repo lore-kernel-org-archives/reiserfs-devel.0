@@ -1,134 +1,50 @@
-From: Matthew <jackdachef@gmail.com>
-Subject: Re: reiser4 w. cryptcompress data-corruption (?!)
-Date: Tue, 26 Feb 2008 13:06:58 +0100
-Message-ID: <e85b9d30802260406n6d83f63r37d1f06e7ab542d0@mail.gmail.com>
-References: <loom.20080225T213801-660@post.gmane.org>
-	 <a08621850802251503w10b88e3an59a5170dd41805bb@mail.gmail.com>
-	 <e85b9d30802260057s5ed62dc6t78fc5b6cfb02a5da@mail.gmail.com>
-	 <47C3EC20.8010208@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Subject: [PATCH 9/9] fs/reiserfs/super.c: Correct use of ! and &
+Date: Tue, 26 Feb 2008 21:46:19 +0100 (CET)
+Message-ID: <Pine.LNX.4.64.0802262145580.18200@ask.diku.dk>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
-        bh=/ecjwH4fvnWnoL/POCveyanHmrXnVHGANDnWrqvh5cU=;
-        b=PAqn2/WSF5IX4eO+FJc0wDN+q1H0zHmzRpRKWecHs17lxhB1pu26LYJ8Uqfc4la1padWstlyLgxxYhjPQT3WDrm0qYqQJVtRNS7M+U8OCg47svByQSrpXiw4OOx3DmKpdxZ/MmD9bgOBVi7aFWTfs7b8wvFin8YCl0i3i/uK0x8=
-In-Reply-To: <47C3EC20.8010208@gmail.com>
-Content-Disposition: inline
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1762582AbYBZUqx@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: Dushan Tcholich <dusanc@gmail.com>, reiserfs-devel@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-dev@namesys.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Feb 26, 2008 at 11:38 AM, Edward Shishkin
-<edward.shishkin@gmail.com> wrote:
->
-> Matthew wrote:
->
->  >On Tue, Feb 26, 2008 at 12:03 AM, Dushan Tcholich <dusanc@gmail.com> wrote:
->  >
->  >
->  >>Hi
->  >>
->  >>I had a same scary experience of reiser4 repairing thousands of errors on
->  >>cryptocompressed partition, but it was false alarm as Edward said:
->  >>
->  >>
->  >>
->  >>>Me:
->  >>>
->  >>>
->  >> > After fsck.reiser4 --check I had to do a fsck.reiser4 --build-fs,
->  >> > which lasted ~55min. It fixed 1 error on the start and for next 50 min
->  >> > fixed wrong bytes errors in every node, like in the second picture.
->  >>
->  >>Edward:
->  >> Ignore reports about wrong bytes.
->  >> This is because cryptcompress plugin doesn't keep a track about bytes,
->  >> and fsck calculates and insert correct value. Keeping a track of bytes
->  >> by kernel leads to performance drop (even worse then with atime), so
->  >> we decided to not support it.
->  >>
->  >>
->  >>Were those thousands of errors in step 6. of your mail wrong byte errors?
->  >>
->  >>Dushan
->  >>
->  >>
->  >
->  >Hi, Dushan,
->  >
->  >no, those actually were (real) data corruption errors,
->  >as I wrote (I didn't made it that clear) I impatiently interrupted
->  >fsck.reiser4, reformatted the partition and extracted the tarball with
->  >the system
->  >
->  >I just woke up & thinking over it now: the corruption behavior was
->  >pretty similar to the corruption with bitdefender-console,
->  >
->  >Edward:
->  >I hope you still have the mails were I described
->  >"corrupting"/triggering the error with ntfs-scanning before you fixed
->  >it?
->  >
->  >1.) boot into system with reiser4 as root partition
->  >2.) start up GUI (gnome, kde, whatever)
->  >3.) work with with it a little
->  >4.) mount ntfs-partition (it shouldn't matter if mounted with
->  >in-kernel ntfs-driver or ntfs3g) [the partition should ideally contain
->  >a windows-system with several gigabytes of data]
->  >5.) scan the partition with bdc --arc --files /mnt/win
->  >
->  >
->
->  what is the bdc?
->
->
->
->  >6.) filesystem corrupts,
->  >7.) result: nothing can be launched anymore, even bash is broken -
->  >just everything
->  >
->  >it was also the case this time:
->  >whenever I tried to launch epiphany, nautilus, gnome-terminal it
->  >wouldn't launch them
->  >--> the only thing still working was gnome-terminal
->  >after that I exited to the CLI & when I recognised it was similar to
->  >the previous corruption case (bitdefender-console)
->  >I immediately killed everything via magic sysrq key & rebooted without
->  >syncing to maintain my data intact (on /home)
->  >
->  >the behavior is pretty interesting:
->  >it seems to corrupt progressively in steps (such as with the
->  >bitdefender-console corruption)
->  >
->  >first almost all still works, bit by bit more and more programs won't
->  >work anymore
->  >
->  >Regards
->  >
->  >Mat
->  >
->  >
->  >
->
->
+From: Julia Lawall <julia@diku.dk>
 
-sorry for not clearing that:
+In commit e6bafba5b4765a5a252f1b8d31cbf6d2459da337, a bug was fixed that
+involved converting !x & y to !(x & y).  The code below shows the same
+pattern, and thus should perhaps be fixed in the same way.
 
-[I] app-antivirus/bitdefender-console
-     Available versions:  -7.0.1-r1 -7.0.1-r1[1] (~)7.1 (~)7.1[1]
-     Installed versions:  7.1[1](22:37:31 06.01.2008)
-     Homepage:            http://www.bitdefender.com/
-     Description:         BitDefender console antivirus
+This is not tested and clearly changes the semantics, so it is only
+something to consider.
 
-[1] "portage" /usr/local/portage
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-the name of the program's file is:
-' BitDefender-Console-Antivirus-7.1-3.linux-gcc3x.i386.run '
+// <smpl>
+@@ expression E1,E2; @@
+(
+  !E1 & !E2
+|
+- !E1 & E2
++ !(E1 & E2)
+)
+// </smpl>
 
-Thanks
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Mat
+---
+
+diff -u -p a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+--- a/fs/reiserfs/super.c 2008-02-16 18:06:38.000000000 +0100
++++ b/fs/reiserfs/super.c 2008-02-26 08:17:07.000000000 +0100
+@@ -2031,7 +2031,7 @@ static int reiserfs_quota_on(struct supe
+ 		return -EXDEV;
+ 	}
+ 	/* We must not pack tails for quota files on reiserfs for quota IO to work */
+-	if (!REISERFS_I(nd.path.dentry->d_inode)->i_flags & i_nopack_mask) {
++	if (!(REISERFS_I(nd.path.dentry->d_inode)->i_flags & i_nopack_mask)) {
+ 		reiserfs_warning(sb,
+ 				 "reiserfs: Quota file must have tail packing disabled.");
+ 		path_put(&nd.path);
