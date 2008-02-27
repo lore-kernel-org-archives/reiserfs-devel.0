@@ -1,50 +1,43 @@
-From: Julia Lawall <julia@diku.dk>
-Subject: [PATCH 9/9] fs/reiserfs/super.c: Correct use of ! and &
-Date: Tue, 26 Feb 2008 21:46:19 +0100 (CET)
-Message-ID: <Pine.LNX.4.64.0802262145580.18200@ask.diku.dk>
+From: =?iso-8859-15?q?berny=AE?= <berny@mclink.it>
+Subject: Reiser4 Netbeans 6 problems
+Date: Wed, 27 Feb 2008 21:35:41 +0100
+Message-ID: <200802272135.41599.berny@mclink.it>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1762582AbYBZUqx@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-dev@namesys.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Hi, Edward.
+Last week I reformat my Ubuntu 7.10 64bit system to try Reiser4 filesystem 
+(actually I'm using reiserfs 3.6).
+I put all my partition (even / and except boot) on reiser4 kernel was 2.6.24 
+compiled in the kernel.
 
-In commit e6bafba5b4765a5a252f1b8d31cbf6d2459da337, a bug was fixed that
-involved converting !x & y to !(x & y).  The code below shows the same
-pattern, and thus should perhaps be fixed in the same way.
+I got strange problems:
+the first was with netbeans java IDE, when I was compiling in the window on 
+the bottom of the screen I got only garbage (like little square) like when 
+you have a different char set than the good one!
+After that the java app was working but it was impossible to see compile 
+warnings or errors.
 
-This is not tested and clearly changes the semantics, so it is only
-something to consider.
+The second thing that happened was that sometimes my kde 3 desktop became 
+frozen, for example, konqueror window open then click on the cross, the 
+system froze for 10 seconds then the window close and all was normal again.
 
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+I formatted with standard options and also standard mount options for all the 
+drives and partition.
 
-// <smpl>
-@@ expression E1,E2; @@
-(
-  !E1 & !E2
-|
-- !E1 & E2
-+ !(E1 & E2)
-)
-// </smpl>
+My system is a striker extreme board, intel core 2 duo 2.4 4 gb Kingston 
+hiperX ram, 2 barracuda 500 Gb.
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Do you have some suggestions expecially about the java stuff?
+Now I'm back to reiser 3.6 because I need to work with netbeans!
 
----
+Thanks, warm regards.
+Paolo
 
-diff -u -p a/fs/reiserfs/super.c b/fs/reiserfs/super.c
---- a/fs/reiserfs/super.c 2008-02-16 18:06:38.000000000 +0100
-+++ b/fs/reiserfs/super.c 2008-02-26 08:17:07.000000000 +0100
-@@ -2031,7 +2031,7 @@ static int reiserfs_quota_on(struct supe
- 		return -EXDEV;
- 	}
- 	/* We must not pack tails for quota files on reiserfs for quota IO to work */
--	if (!REISERFS_I(nd.path.dentry->d_inode)->i_flags & i_nopack_mask) {
-+	if (!(REISERFS_I(nd.path.dentry->d_inode)->i_flags & i_nopack_mask)) {
- 		reiserfs_warning(sb,
- 				 "reiserfs: Quota file must have tail packing disabled.");
- 		path_put(&nd.path);
+ 
