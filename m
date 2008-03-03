@@ -1,36 +1,58 @@
-From: "Christopher Sawtell" <csawtell@gmail.com>
-Subject: Re: No space left on rfs4
-Date: Mon, 3 Mar 2008 11:39:36 +1300
-Message-ID: <b8d16a880803021439m58cb9251uabe3b57c1c57f971@mail.gmail.com>
-References: <47CA7EA8.8070802@gmail.com>
-	 <cd2131fe2e8cdce7c68183211d98bc90@free.fr>
+From: John <geearf@free.fr>
+Subject: Re: Reiser4 resize
+Date: Mon, 3 Mar 2008 21:59:59 +0100
+Message-ID: <0f5c92f3901a9fee53965e43e4bca960@free.fr>
+References: <b8d16a880803021439m58cb9251uabe3b57c1c57f971@mail.gmail.com>
+Reply-To: geearf@free.fr
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
-        bh=oV9DdAOEik01qCjowaDv8iP4hmQ9qoUlEcZfc18GNqg=;
-        b=m0Bb7mef/4NhoEMkbKdbgbFd8jMorTTvZhGeeJ/Effng9uC9q7y0SlfGSTqviT0Nkd09pgI9POvgfrHtfYuQyxpL3nkPSez4S1OTfuJRisrqGh77tWMct3TQpjs4LlfolqBPvpl2lZCVQ8Cxs10/ZU7e7s2qtyIn/zDJoOTThJw=
-In-Reply-To: <cd2131fe2e8cdce7c68183211d98bc90@free.fr>
-Content-Disposition: inline
+In-Reply-To: <b8d16a880803021439m58cb9251uabe3b57c1c57f971@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: geearf@free.fr
-Cc: Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
-
-My own experience with RR4 when the filesystem is full, is that it
-works perfectly if only a very few files are being written to, as in
-/var/tmp/ overflowing when it's being used to build a package in
-Gentoo, but that if there are many files open, as in an rsync session,
-or a single file being written to in many places, as in the bittorrent
-situation, then major breakage occurs. Perhaps I should say occurred
-because the overfill of the RR4 partition during a Gentoo package
-build happened 3 days ago, whereas the others many months.
+To: reiserfs-devel@vger.kernel.org
 
 
+Edward Shishkin wrote:
+>Oleg Osovitskiy wrote:
 
--- 
-Sincerely etc.
-Christopher Sawtell
+>>Hello!
+>>  
+>>
+
+>Hi
+
+>>  Does Reiser4 fs support resize as reiserfs ?
+>>  
+>>
+
+>nop, sorry..
+
+>>If yes which tool I have to use to enlarge my reiser4 fs ?
+>>
+>>---
+>>Best regards, Oleg O. Osovitskiy
+>>mailto:o.osovitskiy@rambler.ru, icq# 33366588
+
+
+Hi there,
+
+While playing with LVM today I was wondering about that too.
+How hard would that be?
+(What will follow are just assumptions from my memories of writing FS, so sorry if I'm way off with R4)
+
+- Growing should not be too hard as only the main table would need to be changed no?
+- As for shrinking I see 2 cases:
+   a- There is no data beyond my desired new end, it looks like I only need to modify the table
+   b- There is some data bothering us, now we need to pull it the same way as a repacker would do I believe.
+
+
+The first 2 cases look easy. For the last it would need something close to a defrag.
+
+So again, how hard would it be to write a dirty resizer? I have no Linux or R4 dev knowledge, but I have a lot spare time and I'm willing to put some of my data at risk. C is not an issue either. Do you think I can try something if you give me some pointers or am I just day-dreaming?
+
+Thanks,
+
+John
+
