@@ -1,58 +1,43 @@
-From: John <geearf@free.fr>
-Subject: Re: Reiser4 resize
-Date: Mon, 3 Mar 2008 21:59:59 +0100
-Message-ID: <0f5c92f3901a9fee53965e43e4bca960@free.fr>
-References: <b8d16a880803021439m58cb9251uabe3b57c1c57f971@mail.gmail.com>
-Reply-To: geearf@free.fr
+From: "Alex Caudill" <alex@erudified.com>
+Subject: A few questions
+Date: Mon, 3 Mar 2008 19:04:18 -0600
+Message-ID: <aff4f2800803031704u629ff08cr88b850dadace3eb@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <b8d16a880803021439m58cb9251uabe3b57c1c57f971@mail.gmail.com>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
+Hi,
 
-Edward Shishkin wrote:
->Oleg Osovitskiy wrote:
+With namesys.com being down, I can't find reiser4 documentation, and,
+frankly, that sucks.
 
->>Hello!
->>  
->>
+I'm prepared to:
 
->Hi
+1.) Provide free hosting for ReiserFS version control and documentation.
 
->>  Does Reiser4 fs support resize as reiserfs ?
->>  
->>
+2.) Provide an erudified.com subdomain or purchase a top-level domain
+for the same.
 
->nop, sorry..
+3.) Make a reasonable donation via PayPal to anyone willing to
+transfer Reiser4 documentation and code onto a new machine. I'm also
+willing to help with this.
 
->>If yes which tool I have to use to enlarge my reiser4 fs ?
->>
->>---
->>Best regards, Oleg O. Osovitskiy
->>mailto:o.osovitskiy@rambler.ru, icq# 33366588
+#3 applies even if you guys opt to use SourceForge or some other
+service. I don't particularly care where or how the info gets put
+online, I'd just like to see it put there.
 
+I'm not subscribed to this list, so please CC me with responses if
+you're interested.
 
-Hi there,
+Thanks in advance!
 
-While playing with LVM today I was wondering about that too.
-How hard would that be?
-(What will follow are just assumptions from my memories of writing FS, so sorry if I'm way off with R4)
-
-- Growing should not be too hard as only the main table would need to be changed no?
-- As for shrinking I see 2 cases:
-   a- There is no data beyond my desired new end, it looks like I only need to modify the table
-   b- There is some data bothering us, now we need to pull it the same way as a repacker would do I believe.
-
-
-The first 2 cases look easy. For the last it would need something close to a defrag.
-
-So again, how hard would it be to write a dirty resizer? I have no Linux or R4 dev knowledge, but I have a lot spare time and I'm willing to put some of my data at risk. C is not an issue either. Do you think I can try something if you give me some pointers or am I just day-dreaming?
-
-Thanks,
-
-John
-
+P.S. I don't care, even slightly, about any aspect of Hans' personal
+life. My lack of concern is so complete that I don't even have an
+opinion. I'm constitutionally unwilling to discuss any aspect of it,
+except to say that I don't give a shit. My interest is the
+continuation of reiser4 development.
