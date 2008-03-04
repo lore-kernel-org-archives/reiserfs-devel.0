@@ -1,83 +1,48 @@
-From: "Alex Caudill" <alex@erudified.com>
-Subject: Re: A few questions
-Date: Tue, 4 Mar 2008 01:53:32 -0600
-Message-ID: <aff4f2800803032353v79f0cd1dyb5ce7627141a6a7d@mail.gmail.com>
+From: "Christopher Sawtell" <csawtell@gmail.com>
+Subject: Fwd: A few questions
+Date: Tue, 4 Mar 2008 21:28:16 +1300
+Message-ID: <b8d16a880803040028n746575feo9cff509d943fa4a7@mail.gmail.com>
 References: <aff4f2800803031704u629ff08cr88b850dadace3eb@mail.gmail.com>
 	 <81E34349-D837-40A3-94F5-E314AAC43396@telegraphics.com.au>
+	 <aff4f2800803032353v79f0cd1dyb5ce7627141a6a7d@mail.gmail.com>
+	 <b8d16a880803040025s2bac98eaq7eb24713d3c46196@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <81E34349-D837-40A3-94F5-E314AAC43396@telegraphics.com.au>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:message-id:date:from:to:subject:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+        bh=DL1yWh0lWRryQ7GsYKJK9W6wqROxFKEmrJH0W1AjAPM=;
+        b=wYJcAKZ83lUeMPlqSwqF/nvEyJFcrVbKfdasfq/muOb3Sh6kFkQLof9biSY1LB7DCJh+aO/UO0yZvArWBghQRyXA+y7GUTDFFYCb+sqdMHTfF+Kpn8SusRn41qcfAvZnL2AnVrN8Ixe75PGoNi7hHqZRlM9wXj8QBBhIGZ5QGAQ=
+In-Reply-To: <b8d16a880803040025s2bac98eaq7eb24713d3c46196@mail.gmail.com>
 Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
-Thanks to all who followed up, and my apologies for top-posting (if I
-did). I'll subscribe after I send this.
+---------- Forwarded message ----------
+From: Christopher Sawtell <csawtell@gmail.com>
+Date: Tue, 4 Mar 2008 21:25:29 +1300
+Subject: Re: A few questions
+To: Alex Caudill <alex@erudified.com>
+> Christopher Sawtell was kind enough to send me a copy of the documentation.
+Please note that the image files for the diagrams which are be part of
+the whitepaper are missing, and that there is a lot of more up to date
+detailed doco in the source code files.
 
-Christopher Sawtell was kind enough to send me a copy of the documentation.
+If there if more work that would be well worth funding, it would be
+the proposed real-time re-packer, and the re-integration of the
+ability to access extended attributes as sub-files of the main
+data-file. Yes, I do know that 'The Powers-That-Be' don't approve, but
+it's a brilliant idea.
 
-I've made it available at:
-
-http://reiser4.erudified.com
-
-Toby Thain went ahead and registered reiser4.{com,net,org} (see below)
-and I've added ServerAlias entries for all of them, so if/when he
-points DNS to 72.249.66.100, there should be a decent TLD source for
-reiserfs information. Still, it isnt exactly authoritative, and it
-certainly doesn't contain any of the wiki entries from namesys.com.
-It's late, but I'll try to go through the google cache and add them
-this week, as well as fix any broken links.
-
-Toby also volunteered to provide hosting, and I'm sure there are
-plenty of others who'd be willing to do so. I currently use the
-machine for other things, but I can provide root access on another
-one, or simply donate some cash for those developing reiser4 to make
-their own arrangements.
-
-I think it's obviously in the project's best interests to have a
-single, authoritative source for documentation, etc, even if it's just
-until Namesys changes hands. It'd also show the community at large
-that reiser4 is still kicking, which can only be a good thing.
-
-So, again, a couple questions:
-
-1.) Are the ReiserFS developers willing to make a public statement
-about the future of the project? Will it continue as an open source
-project even if future Namesys management opts to make it proprietary?
-Is anyone even in a position to make such a statement?
-
-2.) Who's in the best position to provide hosting? My machine is a
-pretty basic dual core, 2gb ram, as much bandwidth as you can shake
-your stick at. I can donate root access to another machine with the
-same specs. Toby offered to provide hosting as well, so maybe he could
-chime in with the particulars of his arrangements. I'm willing to
-donate a fairly substantial amount of cash to any developer with a
-proven track record of ReiserFS contributions who'd like to set up
-some sort of authoritative source for ReiserFS docs/releases. If
-that's you, please drop me a line.
-
-I'd like to emphasize that I'm not at all interested in taking control
-of anything or butting heads with anyone. I'd simply like to see the
-reiser4 community come to a concensus about where and how
-documentation and releases will be made available in the absence of
-Hans' management. I'm happy to provide any kind of support I can,
-financial or otherwise.
-
-Let's get the ball rolling!
-
-And, last but not least, thanks for the great work!! =)
-
-On 3/3/08, Toby Thain <toby@telegraphics.com.au> wrote:
-
-> I would love to help. This may seem a little opportunistic, but I
->  registered reiser4.{com,net,org} just now. I can run DNS for these
->  pointing to whatever host you use (assuming that your idea progresses).
->
->  I can also provide hosting of whatever services are required (have
->  colo servers in 2 continents).
->
->  --Toby
->
+P.S. I think we should not yet do anything which would compromise
+Hans' ability to earn a crust if the current situation turns out to be
+just a ghastly nightmare.
+--
+Sincerely etc.
+Christopher Sawtell
+--
+Sincerely etc.
+Christopher Sawtell
