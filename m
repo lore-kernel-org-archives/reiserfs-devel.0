@@ -1,76 +1,348 @@
-From: "Raymond A. Meijer" <raymond@internet.gr>
-Subject: Reiser4 hang on 2.6.24-ck1
-Date: Tue, 11 Mar 2008 14:57:31 +0200
-Message-ID: <200803111457.31861.raymond@internet.gr>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: No space left on rfs4
+Date: Wed, 12 Mar 2008 00:39:08 +0300
+Message-ID: <47D6FBFC.4000905@gmail.com>
+References: <47CA7EA8.8070802@gmail.com>	 <cd2131fe2e8cdce7c68183211d98bc90@free.fr> <5c7c368b0803081124i2b6af7a1sfb576429afb58ec4@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+ boundary="------------000308060509020705030606"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
+In-Reply-To: <5c7c368b0803081124i2b6af7a1sfb576429afb58ec4@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+To: geearf@free.fr
+Cc: reiserfs-devel@vger.kernel.org
 
-Hiya,
+This is a multi-part message in MIME format.
+--------------000308060509020705030606
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-I had a problem with my Reiser4 /tmp this morning:
+Edward Shishkin wrote:
 
-Mar 11 11:31:07 x-ray kernel: ------------[ cut here ]------------
-Mar 11 11:31:07 x-ray kernel: kernel BUG at fs/reiser4/plugin/item/extent_flush_ops.c:551!
-Mar 11 11:31:07 x-ray kernel: invalid opcode: 0000 [#1]
-Mar 11 11:31:07 x-ray kernel: Modules linked in: nls_iso8859_1 nls_cp437 vfat fat nls_base loop vboxdrv usb_storage libusual fglrx(P) michael_mic arc4 ecb blkcipher cryptomgr ieee80211_crypt_tkip binfmt_misc rfcomm l2cap sbs sbshc dock 
-acpi_cpufreq cpufreq_powersave cpufreq_stats cpufreq_userspace cpufreq_conservative aes_i586 dm_crypt af_packet pcmcia crc32 hci_usb bluetooth evdev container video psmouse serio_raw sdhci mmc_core yenta_socket rsrc_nonstatic ipw2200 
-pcmcia_core ieee80211 ieee80211_crypt rng_core battery ac button iTCO_wdt iTCO_vendor_support 8250_pci 8250 serial_core intel_agp agpgart rtc pcspkr usbhid hid sg sr_mod cdrom piix generic ide_core pata_acpi ata_generic ehci_hcd 
-uhci_hcd usbcore dm_mirror dm_snapshot thermal processor fan fuse
-Mar 11 11:31:07 x-ray kernel: Pid: 4462, comm: ktxnmgrd:dm-5:r Tainted: P        (2.6.24-ck1 #11)
-Mar 11 11:31:07 x-ray kernel: EIP: 0060:[<b01cdca4>] EFLAGS: 00010246 CPU: 0
-Mar 11 11:31:07 x-ray kernel: EIP is at assign_real_blocknrs+0x66/0xa8
-Mar 11 11:31:07 x-ray kernel: EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00003fff
-Mar 11 11:31:07 x-ray kernel: ESI: 00000024 EDI: 00000000 EBP: 00000000 ESP: ee81bd28
-Mar 11 11:31:07 x-ray kernel: DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 0068
-Mar 11 11:31:07 x-ray kernel: Process ktxnmgrd:dm-5:r (pid: 4462, ti=ee81a000 task=ee0d8fc0 task.ti=ee81a000)
-Mar 11 11:31:07 x-ray kernel: Stack: 00000000 0004731c 00000000 c76e34e8 eeb91414 ee81be04 0004731c 00000000
-Mar 11 11:31:07 x-ray kernel: ee992064 b01ce874 00000000 00000006 00000000 00000024 00000000 00000000
-Mar 11 11:31:07 x-ray kernel: 00000003 c76e34e8 00000006 00000000 00000000 00000000 00000001 ee81be1c
-Mar 11 11:31:07 x-ray kernel: Call Trace:
-Mar 11 11:31:07 x-ray kernel: [<b01ce874>] reiser4_alloc_extent+0x388/0x76c
-Mar 11 11:31:07 x-ray kernel: [<b01c879c>] pointer_at+0x5/0xb
-Mar 11 11:31:07 x-ray kernel: [<b01a33b3>] check_tree_pointer+0x86/0x9a
-Mar 11 11:31:07 x-ray kernel: [<b01a26be>] move_lh_internal+0x9b/0xbc
-Mar 11 11:31:07 x-ray kernel: [<b01a94fd>] handle_pos_to_twig+0xb7/0xd0
-Mar 11 11:31:07 x-ray kernel: [<b01a9606>] handle_pos_on_twig+0xf0/0x170
-Mar 11 11:31:07 x-ray kernel: [<b01aaa5f>] flush_current_atom+0x6af/0x79c
-Mar 11 11:31:07 x-ray kernel: [<b0115582>] check_preempt_wakeup+0x4e/0x7d
-Mar 11 11:31:07 x-ray kernel: [<b01a74d8>] reiser4_txn_end+0x1b1/0x3e9
-Mar 11 11:31:07 x-ray kernel: [<b02e4d07>] schedule+0x1f0/0x20a
-Mar 11 11:31:07 x-ray kernel: [<b01a7718>] reiser4_txn_restart+0x8/0x15
-Mar 11 11:31:07 x-ray kernel: [<b01a78bd>] commit_some_atoms+0x6d/0x75
-Mar 11 11:31:07 x-ray kernel: [<b01aecc7>] ktxnmgrd+0x13c/0x155
-Mar 11 11:31:07 x-ray kernel: [<b01aeb8b>] ktxnmgrd+0x0/0x155
-Mar 11 11:31:07 x-ray kernel: [<b0124fba>] kthread+0x36/0x5c
-Mar 11 11:31:07 x-ray kernel: [<b0124f84>] kthread+0x0/0x5c
-Mar 11 11:31:07 x-ray kernel: [<b0104797>] kernel_thread_helper+0x7/0x10
-Mar 11 11:31:07 x-ray kernel: =======================
-Mar 11 11:31:07 x-ray kernel: Code: 83 c0 14 89 44 24 10 8b 74 24 34 8b 7c 24 38 eb 40 89 2c 24 8b 54 24 04 8b 4c 24 08 8b 44 24 10 e8 72 0b fd ff 89 c3 85 c0 75 04 <0f> 0b eb fe 0f ba 30 1d 89 70 40 89 78 44 8b 44 24 0c 8b 50 64
-Mar 11 11:31:07 x-ray kernel: EIP: [<b01cdca4>] assign_real_blocknrs+0x66/0xa8 SS:ESP 0068:ee81bd28
-Mar 11 11:31:07 x-ray kernel: ---[ end trace 71b7040e6721da23 ]---
+>On 3/3/08, John <geearf@free.fr> wrote:
+>  
+>
+>> On Sun, 02 Mar 2008 13:17:12 +0300, Edward Shishkin <edward.shishkin@gmail.com> wrote:
+>> > Hello.
+>> >
+>> > Yeah, indeed, I have reproduced it for reg40 (default plugin):
+>> > tar process is in permanent "+D" state. After reboot all files
+>> > were successfully deleted, although there is some leak of free
+>> > disk space there.
+>> >
+>> > Ok, I'll take a look at this more carefully (I guess -ENOSPC
+>> > error is handled incorrectly somewhere).
+>> >
+>> > If you have a problems with deleting files on reg40 partition,
+>> > then please pack your metadata by
+>> > debugfs.reiser4 -P /dev/xxx | gzip > meta.gz
+>> > and let me download the file meta.gz
+>>
+>>My FS is currently no full and with no bug, so I hope these are the metadata you wanted.
+>> If not I'll fill it again and send it to you again
+>>
+>> http://www.megaupload.com/?d=XVITV1CU
+>>
+>>    
+>>
+>
+>Eventually I have not downloaded this:
+>It said "No free slots available for your country" ;)
+>
+>Well, don't bother with this for a while:
+>I have caught a mutex leak in cryptcompress plugin,
+>(fixup is attached) this explains undeletable files in ccreg40.
+>
+>I'll try fo fix unix-file plugin a bit later.
+>
+>  
+>
 
-Every I/O to /tmp was hanging and I had to reboot my laptop...
+I have found some ancient bugs related to tail conversion.
+In particular, it take place when application writes by chunks
+< 20K in no-space-left-on-device situation (for example, tar,
+which uses 10240 bytes chunks by default).
+The bugs are:
+. leak of per-inode exclusive access;
+. leak of per-inode flag REISER4_PART_IN_CONV
+All of them are responsible for reported deadlocks , and, perhaps
+can lead to data corruptions.
 
-When this occurred I was reading my mail with kmail, and I have not
-been able to reproduce it...
+The fixup is attached.
 
-After rebooting I had to run fsck.reiser4 --build-fs /dev/system/tmp to
-fix the FS.
+There still takes place a silent leak of free disk space, when
+applications runs in no-space-left-on-device situation. This is also
+related only to (default) unix-file plugin with (default) "smart"
+formatting policy. Hope to address it soon..
 
-Do you need more info?
+Thanks for reports,
+Edward.
+
+>> (sorry I cannot send a file that big by e-mail)
+>>
+>>    
+>>
+>> > I don' t see such problems with ccreg40 (compression plugin).
+>> > Please, let me know, if something goes wrong here..
+>>
+>>I just tried and had the same issue with a ccreg40 partition.
+>> I could not remove all the files, and when I tried it just froze my shell.
+>> After killing my shell I was able to reboot but not to umount the partition.
+>> This is the debugfs output:
+>>
+>> http://www.megaupload.com/?d=CBEGIFDL
+>>
+>>
+>> I also wanted to join an fsck output but I don't know how to do that.
+>> Basically the results were in checking the semantic tree
+>> FSCK: obj40_repair.c 223: obj40_stat_unix_check: Node (XYZ), item (a), [fgfdgf:fgfdggdf:fhgfhgf] (stat40): wrong bytes (ABCDE), fixed to (EFC).
+>>
+>> (obviously this is some sort of templated message, they were all like that...)
+>>
+>>
+>> Thank you,
+>>
+>>
+>> John
+>>
+>>
+>>    
+>>
+>>------------------------------------------------------------------------
+>>
+>>---
+>> linux-2.6.23-mm1/fs/reiser4/plugin/file/cryptcompress.c |    7 ++++---
+>> 1 files changed, 4 insertions(+), 3 deletions(-)
+>>
+>>--- linux-2.6.23-mm1/fs/reiser4/plugin/file/cryptcompress.c.orig
+>>+++ linux-2.6.23-mm1/fs/reiser4/plugin/file/cryptcompress.c
+>>@@ -2721,7 +2721,8 @@
+>> 		if (result)
+>> 			goto out;
+>> 		if (cont->state == PSCHED_ASSIGNED_NEW)
+>>-			goto out_no_release;
+>>+			/* done_lh was called in write_pschedule_hook */
+>>+			goto out_no_longterm_lock;
+>> 
+>> 		result = prepare_logical_cluster(inode, pos, count, &clust,
+>> 						 LC_APPOV);
+>>@@ -2793,9 +2794,9 @@
+>> 	} while (count);
+>>  out:
+>> 	done_lh(&hint->lh);
+>>-	mutex_unlock(&info->checkin_mutex);
+>> 	save_file_hint(file, hint);
+>>- out_no_release:
+>>+ out_no_longterm_lock:
+>>+	mutex_unlock(&info->checkin_mutex);
+>> 	kfree(hint);
+>> 	put_cluster_handle(&clust);
+>> 	assert("edward-195",
+>>    
+>>
 
 
-Thank you,
+--------------000308060509020705030606
+Content-Type: text/x-patch;
+ name="reiser4-handle-enospc-fixup.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="reiser4-handle-enospc-fixup.patch"
 
-Raymond A. Meijer
+---
+ linux-2.6.23-mm1/fs/reiser4/plugin/file/cryptcompress.c   |    7 +--
+ linux-2.6.23-mm1/fs/reiser4/plugin/file/file.c            |    8 ++-
+ linux-2.6.23-mm1/fs/reiser4/plugin/file/tail_conversion.c |   29 +++++++++-----
+ linux-2.6.23-mm1/fs/reiser4/plugin/item/internal.c        |   18 ++++++--
+ 4 files changed, 43 insertions(+), 19 deletions(-)
 
--- 
-You cannot discover new oceans unless
-you have the courage to lose sight of
-the shore
+--- linux-2.6.23-mm1/fs/reiser4/plugin/file/cryptcompress.c.orig
++++ linux-2.6.23-mm1/fs/reiser4/plugin/file/cryptcompress.c
+@@ -2721,7 +2721,8 @@
+ 		if (result)
+ 			goto out;
+ 		if (cont->state == PSCHED_ASSIGNED_NEW)
+-			goto out_no_release;
++			/* done_lh was called in write_pschedule_hook */
++			goto out_no_longterm_lock;
+ 
+ 		result = prepare_logical_cluster(inode, pos, count, &clust,
+ 						 LC_APPOV);
+@@ -2793,9 +2794,9 @@
+ 	} while (count);
+  out:
+ 	done_lh(&hint->lh);
+-	mutex_unlock(&info->checkin_mutex);
+ 	save_file_hint(file, hint);
+- out_no_release:
++ out_no_longterm_lock:
++	mutex_unlock(&info->checkin_mutex);
+ 	kfree(hint);
+ 	put_cluster_handle(&clust);
+ 	assert("edward-195",
+--- linux-2.6.23-mm1/fs/reiser4/plugin/file/file.c.orig
++++ linux-2.6.23-mm1/fs/reiser4/plugin/file/file.c
+@@ -2201,8 +2201,11 @@
+ 					}
+ 					if (uf_info->container ==  UF_CONTAINER_TAILS) {
+ 						result = tail2extent(uf_info);
+-						if (result)
++						if (result) {
++							drop_exclusive_access(uf_info);
++							context_set_commit_async(ctx);
+ 							break;
++						}
+ 					}
+ 				}
+ 				drop_exclusive_access(uf_info);
+@@ -2244,7 +2247,7 @@
+ 			current->backing_dev_info = NULL;
+ 			drop_access(uf_info);
+ 			context_set_commit_async(ctx);
+-			return result;
++			break;
+ 		}
+ 		drop_access(uf_info);
+ 		ea = NEITHER_OBTAINED;
+@@ -2315,6 +2318,7 @@
+ 		    !rofs_inode(inode)) {
+ 			result = extent2tail(file, uf_info);
+ 			if (result != 0) {
++				context_set_commit_async(ctx);
+ 				warning("nikita-3233",
+ 					"Failed (%d) to convert in %s (%llu)",
+ 					result, __FUNCTION__,
+--- linux-2.6.23-mm1/fs/reiser4/plugin/file/tail_conversion.c.orig
++++ linux-2.6.23-mm1/fs/reiser4/plugin/file/tail_conversion.c
+@@ -133,9 +133,11 @@
+ 
+ 	for (i = 0; i < nr_pages; i++) {
+ 		if (pages[i] == NULL) {
++#if REISER4_DEBUG
+ 			unsigned j;
+ 			for (j = i + 1; j < nr_pages; j++)
+ 				assert("vs-1620", pages[j] == NULL);
++#endif
+ 			break;
+ 		}
+ 		page_cache_release(pages[i]);
+@@ -348,8 +350,10 @@
+ 	while (done == 0) {
+ 		memset(pages, 0, sizeof(pages));
+ 		result = reserve_tail2extent_iteration(inode);
+-		if (result != 0)
++		if (result != 0) {
++			reiser4_inode_clr_flag(inode, REISER4_PART_IN_CONV);
+ 			goto out;
++		}
+ 		if (first_iteration) {
+ 			reiser4_inode_set_flag(inode, REISER4_PART_MIXED);
+ 			reiser4_update_sd(inode);
+@@ -494,11 +498,9 @@
+ 							  REISER4_PART_MIXED));
+ 		}
+ 	}
+-
+-	reiser4_inode_clr_flag(inode, REISER4_PART_IN_CONV);
+-
+ 	if (result == 0) {
+ 		/* file is converted to extent items */
++		reiser4_inode_clr_flag(inode, REISER4_PART_IN_CONV);
+ 		assert("vs-1697", reiser4_inode_get_flag(inode,
+ 							 REISER4_PART_MIXED));
+ 
+@@ -507,16 +509,21 @@
+ 	} else {
+ 		/*
+ 		 * conversion is not complete. Inode was already marked as
+-		 * REISER4_PART_CONV and stat-data were updated at the first
++		 * REISER4_PART_MIXED and stat-data were updated at the first
+ 		 * iteration of the loop above.
+ 		 */
+-	      error:
++	error:
+ 		release_all_pages(pages, sizeof_array(pages));
+-		warning("nikita-2282", "Partial conversion of %llu: %i",
++		reiser4_inode_clr_flag(inode, REISER4_PART_IN_CONV);
++		warning("edward-1548", "Partial conversion of %llu: %i",
+ 			(unsigned long long)get_inode_oid(inode), result);
+ 	}
+ 
+-      out:
++ out:
++	/* this assertion is to make sure get_exclusive_access_careful()
++	   won't fall into deadlock loop */
++	assert("edward-1549", !reiser4_inode_get_flag(inode,
++						      REISER4_PART_IN_CONV));
+ 	return result;
+ }
+ 
+@@ -703,7 +710,7 @@
+ 	}
+ 	/*
+ 	 * conversion is not complete. Inode was already marked as
+-	 * REISER4_PART_MIXED and stat-data were updated at the first *
++	 * REISER4_PART_MIXED and stat-data were updated at the first
+ 	 * iteration of the loop above.
+ 	 */
+ 	warning("nikita-2282",
+@@ -711,6 +718,10 @@
+ 		(unsigned long long)get_inode_oid(inode), i,
+ 		num_pages, result);
+ 
++	/* this assertion is to make sure get_exclusive_access_careful()
++	   won't fall into deadlock loop */
++	assert("edward-1550", !reiser4_inode_get_flag(inode,
++						      REISER4_PART_IN_CONV));
+ 	return result;
+ }
+ 
+--- linux-2.6.23-mm1/fs/reiser4/plugin/item/internal.c.orig
++++ linux-2.6.23-mm1/fs/reiser4/plugin/item/internal.c
+@@ -308,15 +308,23 @@
+ 		       struct carry_kill_data *p UNUSED_ARG)
+ {
+ 	znode *child;
++	int result = 0;
+ 
+ 	assert("nikita-1222", item != NULL);
+ 	assert("nikita-1224", from == 0);
+ 	assert("nikita-1225", count == 1);
+ 
+ 	child = znode_at(item, item->node);
++	if (child == NULL)
++		return 0;
+ 	if (IS_ERR(child))
+ 		return PTR_ERR(child);
+-	else if (node_is_empty(child)) {
++	result = zload(child);
++	if (result) {
++		zput(child);
++		return result;
++	}
++	if (node_is_empty(child)) {
+ 		reiser4_tree *tree;
+ 
+ 		assert("nikita-1397", znode_is_write_locked(child));
+@@ -328,14 +336,14 @@
+ 		init_parent_coord(&child->in_parent, NULL);
+ 		--item->node->c_count;
+ 		write_unlock_tree(tree);
+-		zput(child);
+-		return 0;
+ 	} else {
+ 		warning("nikita-1223",
+ 			"Cowardly refuse to remove link to non-empty node");
+-		zput(child);
+-		return RETERR(-EIO);
++		result = RETERR(-EIO);
+ 	}
++	zrelse(child);
++	zput(child);
++	return result;
+ }
+ 
+ /* hook called by ->shift() node plugin method when iternal item was just
+
+--------------000308060509020705030606--
