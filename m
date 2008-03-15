@@ -1,56 +1,29 @@
-From: Ludwig Nussel <ludwig.nussel@suse.de>
-Subject: [PATCH] mkreiserfs: set the owner of the root directory to the
-	calling user
-Date: Fri, 14 Mar 2008 09:39:37 +0100
-Message-ID: <20080314083937.GA3634@suse.de>
+From: "Christopher Sawtell" <csawtell@gmail.com>
+Subject: OpenAFS on Reiser4
+Date: Sat, 15 Mar 2008 17:59:04 +1300
+Message-ID: <b8d16a880803142159h61dffabewed8870dd889af8b@mail.gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:message-id:date:from:to:subject:mime-version:content-type:content-transfer-encoding:content-disposition;
+        bh=Z7aocp27MJU6Ojx6Cru7Mb8goLZnzk5py6KoTWLRRFQ=;
+        b=MfJ5t/UQPpbnehF4ewuFccg0RMn36Zd+Tc1hTqtAUGPl2+6sll+zdHaR3wDaXEX+yUqIT2CLwnYeJHwzZ/2ShoBJOex3CRiLsRzhYrbWmnxrB5C0/j6kNbtdlxof0elIOUhUaFS8G3RhRUAgUmhbO1pE9OSskOALa9PgEXcsQLg=
 Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-Hi,
+I'm trying to set up an OpenAFS node on a machine which happens to be
+running Reiser4.
+The OpenAFS doco has dire warnings about running it with its cache on
+a ReiserFS partition.
+Do these warnings apply to the Reiser4 filesystem as well?
 
-Following patch sets the owner of the root directory to the calling
-user.
+Many thanks in advance.
 
-This is also how mke2fs behaves. It enables users to e.g. create a
-file system on removeable storage devices and then be able to
-actually use them.
-
-Signed-off-by: Ludwig Nussel <ludwig.nussel@suse.de>
-Acked-by: Jeff Mahoney <jeffm@suse.com>
-
-Index: reiserfsprogs-3.6.19/reiserfscore/reiserfslib.c
-===================================================================
---- reiserfsprogs-3.6.19.orig/reiserfscore/reiserfslib.c
-+++ reiserfsprogs-3.6.19/reiserfscore/reiserfslib.c
-@@ -1142,6 +1142,19 @@ int create_dir_sd (reiserfs_filsys_t * f
-     memset(&sd, 0, sizeof(sd));
-     make_dir_stat_data (fs->fs_blocksize, key_format, get_key_dirid (key),
- 			get_key_objectid (key), &ih, &sd);
-+    
-+    /* if calling user is not root set the owner of the root entry
-+     * to the calling user */
-+    if(getuid()) {
-+	if (key_format == KEY_FORMAT_1) {
-+	    struct stat_data_v1 *sd_v1 = (struct stat_data_v1 *)&sd;
-+	    set_sd_v1_uid (sd_v1, getuid());
-+	    set_sd_v1_gid (sd_v1, getgid());
-+	} else {
-+	    set_sd_v2_uid (&sd, getuid());
-+	    set_sd_v2_gid (&sd, getgid());
-+	}
-+    }
- 
-     if (modify_item)
- 	modify_item (&ih, &sd);
-
--- 
- (o_   Ludwig Nussel
- //\   
- V_/_  http://www.suse.de/
-SUSE LINUX Products GmbH, GF: Markus Rex, HRB 16746 (AG Nuernberg)
+--
+Sincerely etc.
+Christopher Sawtell
