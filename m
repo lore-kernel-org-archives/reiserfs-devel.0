@@ -1,29 +1,43 @@
-From: "Christopher Sawtell" <csawtell@gmail.com>
-Subject: OpenAFS on Reiser4
-Date: Sat, 15 Mar 2008 17:59:04 +1300
-Message-ID: <b8d16a880803142159h61dffabewed8870dd889af8b@mail.gmail.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: OpenAFS on Reiser4
+Date: Sun, 16 Mar 2008 14:11:48 -0400
+Message-ID: <47DD62E4.9050807@suse.com>
+References: <b8d16a880803142159h61dffabewed8870dd889af8b@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:mime-version:content-type:content-transfer-encoding:content-disposition;
-        bh=Z7aocp27MJU6Ojx6Cru7Mb8goLZnzk5py6KoTWLRRFQ=;
-        b=MfJ5t/UQPpbnehF4ewuFccg0RMn36Zd+Tc1hTqtAUGPl2+6sll+zdHaR3wDaXEX+yUqIT2CLwnYeJHwzZ/2ShoBJOex3CRiLsRzhYrbWmnxrB5C0/j6kNbtdlxof0elIOUhUaFS8G3RhRUAgUmhbO1pE9OSskOALa9PgEXcsQLg=
-Content-Disposition: inline
+In-Reply-To: <b8d16a880803142159h61dffabewed8870dd889af8b@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+To: Christopher Sawtell <csawtell@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-I'm trying to set up an OpenAFS node on a machine which happens to be
-running Reiser4.
-The OpenAFS doco has dire warnings about running it with its cache on
-a ReiserFS partition.
-Do these warnings apply to the Reiser4 filesystem as well?
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Many thanks in advance.
+Christopher Sawtell wrote:
+> I'm trying to set up an OpenAFS node on a machine which happens to be
+> running Reiser4.
+> The OpenAFS doco has dire warnings about running it with its cache on
+> a ReiserFS partition.
+> Do these warnings apply to the Reiser4 filesystem as well?
+> 
+> Many thanks in advance.
 
---
-Sincerely etc.
-Christopher Sawtell
+That's a question better asked of the OpenAFS guys. AFAIK, it only
+really works well on ext[23], but then again I don't use it.
+
+- -Jeff
+
+- --
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.4-svn0 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
+
+iD8DBQFH3WLkLPWxlyuTD7IRAtGlAJ4yTPCn+3ymeWRBEllo0Q8HNN3/ZgCfaAD0
+JQQtBEbfZn36vczXfaEvzmE=
+=Ubgw
+-----END PGP SIGNATURE-----
