@@ -1,69 +1,47 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: A few questions
-Date: Mon, 24 Mar 2008 03:18:17 +0300
-Message-ID: <47E6F349.6010208@gmail.com>
-References: <aff4f2800803031704u629ff08cr88b850dadace3eb@mail.gmail.com> <47CDAD5A.505@suse.com>
+Subject: Re: [patch 0/9] reiserfsprogs patch queue
+Date: Mon, 24 Mar 2008 03:19:11 +0300
+Message-ID: <47E6F37F.3070104@gmail.com>
+References: <20080124200226.606635000@suse.com> <4799C193.8010502@gmail.com> <20080225005851.GA23416@ska.dandreoli.com> <47C2C002.4030307@gmail.com> <47C2F3BA.5000901@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <47CDAD5A.505@suse.com>
+In-Reply-To: <47C2F3BA.5000901@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Jeff Mahoney <jeffm@suse.com>
-Cc: Alex Caudill <alex@erudified.com>, reiserfs-devel@vger.kernel.org
+Cc: Domenico Andreoli <cavokz@gmail.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
 Jeff Mahoney wrote:
 
-> Alex Caudill wrote:
+> Edward Shishkin wrote:
 >
-> >Hi,
+> >Domenico Andreoli wrote:
 >
-> >With namesys.com being down, I can't find reiser4 documentation, and,
-> >frankly, that sucks.
+> >>On Fri, Jan 25, 2008 at 02:01:39PM +0300, Edward Shishkin wrote:
+> >>
+> >>
+> >>>Thanks, queued.
+> >>>  
+> >>
+> >>queued for what, 3.6.20?
+> >>
+> >Nop, I guess it should be 3.6.19.xx, a stuff for
+> >download available not only as a part of Suse.
 >
-> >I'm prepared to:
->
-> >1.) Provide free hosting for ReiserFS version control and documentation.
->
-> >2.) Provide an erudified.com subdomain or purchase a top-level domain
-> >for the same.
->
-> >3.) Make a reasonable donation via PayPal to anyone willing to
-> >transfer Reiser4 documentation and code onto a new machine. I'm also
-> >willing to help with this.
+> >>any release date?
+> >>
+> >>
+> >Maybe next month..
 >
 >
-> I agree something needs to be done here, and appreciate the offer, but
-> I'm afraid it's one that we can't accept. I'm sure your hosting is
-> perfectly adequate, but hosting for tools that millions of people use
-> (or at least have on their systems) requires a high level of trust. The
-> trust just isn't there. I'm sure you're perfectly trustworthy, but we
-> don't know you. I've been hoping to get space on kernel.org
+> Edward, is there a new place for the FTP site yet? We spoke briefly
+> about getting space on kernel.org, has anything come of that?
+>
+> ftp://ftp.kernel.org/pub/linux/utils/fs/reiser{fs,4} doesn't sound so
+> bad. ;)
+>
 
-
-Eventually we have got it.
-Btw, it seems you are lucky.. :)
-
-> or, failing
-> that, sourceforge. These sites are accepted nearly universally as
-> trustworthy, and have gobs of bandwidth as well as extensive mirroring
-> and backup facilities.
->
-> I have space on opensuse.org that I could offer up, but I don't think
-> that's the right solution since the hosting site should be distribution
-> agnostic. Unfortunately, with namesys.com now, I fear that opensuse.org
-> may have become the de facto location to obtain reiserfsprogs (v3) 
-> sources.
->
-> -Jeff
->
-> --
-> Jeff Mahoney
-> SUSE Labs
-
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+mm... sending a request:
+this location can be qualified as "non-obvious"..
