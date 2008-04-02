@@ -1,17 +1,45 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: bad block management
-Date: Wed, 02 Apr 2008 02:11:18 +0400
-Message-ID: <47F2B306.6060202@gmail.com>
-References: <16413477.post@talk.nabble.com> <alpine.DEB.1.10.0804012050350.7128@sheep.housecafe.de> <47F28DE5.1060402@emc.com> <47F29257.3000502@suse.com>
+From: "jyotiv" <jyotiv@tataelxsi.co.in>
+Subject: RE: bad block management
+Date: Wed, 2 Apr 2008 10:20:13 +0530
+Message-ID: <000801c8947d$0a28fba0$c755a8c0@jyotis>
+References: <47F2B306.6060202@gmail.com>
+Reply-To: <jyotiv@tataelxsi.co.in>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <47F29257.3000502@suse.com>
+In-Reply-To: <47F2B306.6060202@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: ric@emc.com, Christian Kujau <lists@nerdbynature.de>, kgp <jyotiv@tataelxsi.co.in>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: 'Edward Shishkin' <edward.shishkin@gmail.com>, 'Jeff Mahoney' <jeffm@suse.com>
+Cc: ric@emc.com, 'Christian Kujau' <lists@nerdbynature.de>, reiserfs-devel@vger.kernel.org
+
+Thanks a lot.
+
+Modern disk drives manages the bad blocks(sectors).
+
+We are keeping in mind that hard drive, the  user is using may not be
+modern.
+In such case this bad block management at file system level is help ful.
+
+And for modern hard drives it is helpful only after reserved sector for
+remapping are exhasted.
+
+
+UDF what we have implemented is for hard disk with high capacity.
+Thank you every body.
+
+Rgrds,
+Kgp
+
+
+-----Original Message-----
+From: Edward Shishkin [mailto:edward.shishkin@gmail.com]
+Sent: Wednesday, April 02, 2008 3:41 AM
+To: Jeff Mahoney
+Cc: ric@emc.com; Christian Kujau; kgp; reiserfs-devel@vger.kernel.org
+Subject: Re: bad block management
+
 
 Jeff Mahoney wrote:
 
@@ -71,4 +99,9 @@ http://chichkin_i.zelnet.ru/bad-block-handling.html
 To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
 the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+The information contained in this electronic message and any attachments to this message are intended for the exclusive use of the addressee(s) and may contain proprietary, confidential or privileged information. If you are not the intended recipient, you should not disseminate, distribute or copy this e-mail. Please notify the sender immediately and destroy all copies of this message and any attachments contained in it.
+
+Contact your Administrator for further information.
 
