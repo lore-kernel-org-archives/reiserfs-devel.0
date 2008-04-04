@@ -1,60 +1,62 @@
-From: Ric Wheeler <ric@emc.com>
-Subject: Re: bad block management
-Date: Fri, 04 Apr 2008 14:58:35 -0400
-Message-ID: <47F67A5B.1010903@emc.com>
-References: <16413477.post@talk.nabble.com> <alpine.DEB.1.10.0804012050350.7128@sheep.housecafe.de> <47F28DE5.1060402@emc.com>  <47F29257.3000502@suse.com> <1207268072.379391.7.camel@localhost> <02D8FA59-0FF5-444C-BAAF-17A4BEA847AF@telegraphics.com.au>
-Reply-To: ric@emc.com
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: Reiser4: errors AFTER fsck
+Date: Sat, 05 Apr 2008 00:21:01 +0400
+Message-ID: <47F68DAD.5010305@gmail.com>
+References: <200804041938.18418.volker.armin.hemmann@tu-clausthal.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <02D8FA59-0FF5-444C-BAAF-17A4BEA847AF@telegraphics.com.au>
+In-Reply-To: <200804041938.18418.volker.armin.hemmann@tu-clausthal.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Toby Thain <toby@telegraphics.com.au>
-Cc: Zan Lynx <zlynx@acm.org>, Jeff Mahoney <jeffm@suse.com>, Christian Kujau <lists@nerdbynature.de>, kgp <jyotiv@tataelxsi.co.in>, reiserfs-devel@vger.kernel.org
+To: Volker Armin Hemmann <volker.armin.hemmann@tu-clausthal.de>
+Cc: ReiserFS List <reiserfs-devel@vger.kernel.org>
+
+Volker Armin Hemmann wrote:
+
+>Hi,
+>
+>I have /var on reiser4 with compression plugin. /var contains the usual stuff 
+>+ gentoo portage tree + kernel-sources.
+>
+>An hour ago I wanted to emerge --sync, which failed. I got fs errors.
+>  
+>
 
 
-Toby Thain wrote:
-> 
-> On 3-Apr-08, at 8:14 PM, Zan Lynx wrote:
->> On Tue, 2008-04-01 at 15:51 -0400, Jeff Mahoney wrote:
->>
->>> Ric's right about disk drives, though. They'll remap the bad sectors
->>> automatically at the hardware level. When you start to see bad sectors
->>> at the file system level, it means that the sectors reserved for
->>> remapping have been exhausted and you should replace the disk.
->>
->> There are a couple of cases where you can see bad block errors on a good
->> drive.
->>
->> If a block is written with a bad CRC for some reason...the write head
->> got a freak blip or it lost power as it was writing, or the data went
->> corrupt while sitting on disk, then it will read as a bad block, but
->> rewriting would fix it.
->>
->> A RAID media verify or a badblocks -n run can usually fix these.
-> 
-> Only if your RAID uses CRCs (most don't).
-> 
-> ZFS is the real answer to undetected corruption.
-> 
-> --Toby
+What exactly was wrong with emerge?
+Did you access to compressed reiser4 partition via nfs?
 
-Zan is right - even on a local drive, a write can repair some sectors with bad 
-protection bits. All disks have per sector data protection (reed solomon 
-encoding, etc) and there are lots of those bits per sector.
 
-There is work on adding DIF (data integrity f?) which is extra bytes that arrays 
-or local drives can store for application level protection. Martin Petersen has 
-some good slides about this on linux:
+>I rebooted into busybox and did fsck.reiser4 /dev/sda6
+>
+>It ran and told me that  --build-fs was needed.
+>
+>So I ran it. It fixed lots of stuff (mostly lenght correction) and put 222 
+>files into lost+found.
+>
+>After boot, I tried to access some of the files there, to figure out what I 
+>lost:
+>
+>[  566.765093] reiser4[ls(4761)]: key_warning 
+>(fs/reiser4/plugin/file_plugin_common.c:514)[nikita-717]:
+>[  566.765094] WARNING: Error for inode 248375 (-2)
+>[  566.765109] reiser4[ls(4761)]: key_warning 
+>(fs/reiser4/plugin/file_plugin_common.c:514)[nikita-717]:
+>[  566.765111] WARNING: Error for inode 248373 (-2)
+>[  566.765125] reiser4[ls(4761)]: key_warning 
+>(fs/reiser4/plugin/file_plugin_common.c:514)[nikita-717]:
+>[  566.765127] WARNING: Error for inode 248374 (-2)
+>
+>  
+>
 
-http://oss.oracle.com/projects/data-integrity/documentation/
+Uhm.. fsck created inaccessible lost+found..
 
-ZFS, for example, or more specifically its lvm layer, could use DIF to add this 
-kind of protection.
+Would you please pack your metadata by
+debugfs.reiser4 -P /dev/xxx | gzip > meta.gz
+and let me download the file meta.gz
 
-The other way to go is to use an enterprise class array - they all have multiple 
-layers of data integrity baked in to deal with and correct these kind of errors.
-
-ric
+Thanks,
+Edward.
