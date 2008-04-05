@@ -1,37 +1,52 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: Volker Armin Hemmann <volker.armin.hemmann@tu-clausthal.de>
 Subject: Re: Reiser4: errors AFTER fsck
-Date: Sat, 05 Apr 2008 13:38:24 +0400
-Message-ID: <47F74890.3080005@gmail.com>
-References: <200804041938.18418.volker.armin.hemmann@tu-clausthal.de> <47F68DAD.5010305@gmail.com> <200804042254.56672.volker.armin.hemmann@tu-clausthal.de>
+Date: Sat, 5 Apr 2008 11:46:11 +0200
+Message-ID: <200804051146.12025.volker.armin.hemmann@tu-clausthal.de>
+References: <200804041938.18418.volker.armin.hemmann@tu-clausthal.de> <200804042254.56672.volker.armin.hemmann@tu-clausthal.de> <47F74890.3080005@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <200804042254.56672.volker.armin.hemmann@tu-clausthal.de>
+In-Reply-To: <47F74890.3080005@gmail.com>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Volker Armin Hemmann <volker.armin.hemmann@tu-clausthal.de>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-devel@vger.kernel.org
+Cc: Edward Shishkin <edward.shishkin@gmail.com>
 
-Volker Armin Hemmann wrote:
-
->Hi,
+On Samstag, 5. April 2008, Edward Shishkin wrote:
+> Volker Armin Hemmann wrote:
+> >Hi,
+> >
+> >one essential thing I forgot:
+> >
+> >last night I switched off my computer a little bit too fast, at boot=
+ I had
+> >unclean fs. That could explain the initial corruption that portage
+> > complained about.
 >
->one essential thing I forgot:
->
->last night I switched off my computer a little bit too fast, at boot I had 
->unclean fs. That could explain the initial corruption that portage complained 
->about.
->  
->
+> Normally this shouldn't lead to data corruption.
+> So I would ask everyone to pack metadata _before_
+> --build-fs, if the last one is required after hard reset.
 
-Normally this shouldn't lead to data corruption.
-So I would ask everyone to pack metadata _before_
---build-fs, if the last one is required after hard reset.
+yeah, the other two reiser4 partitions survived very well.  The prematu=
+re=20
+shutdown was just the only unusual thing that happend that I know of so=
+ I=20
+mentioned it. But maybe the corruption happened earlier and went unnoti=
+ced=20
+for a while. /var is used in bursts ... sometimes days without me activ=
+ely=20
+accessing it and when the loggers complain, it goes on pretty much unno=
+ticed=20
+for a while.
 
-The instructions are here:
-http://marc.info/?l=reiserfs-devel&m=120734060926204&w=2
+I hope the meta.gz is helpfull.
 
-Thanks,
-Edward.
- 
+Gl=FCck Auf,
+Volker=20
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
