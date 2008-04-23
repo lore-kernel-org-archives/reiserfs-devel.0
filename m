@@ -1,52 +1,47 @@
-From: "Nathan Caldwell" <saintdev@gmail.com>
-Subject: Re: New location of Namesys software
-Date: Tue, 22 Apr 2008 18:15:25 -0600
-Message-ID: <e66692850804221715l709dd407w8c2904609e88be2@mail.gmail.com>
-References: <480930F6.8090903@gmail.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: Does Reiser3 really support data=journal mode?
+Date: Wed, 23 Apr 2008 11:43:20 +0200
+Message-ID: <20080423094320.GB32188@duck.suse.cz>
+References: <20080422141756.GC22899@duck.suse.cz> <480E2F2B.9060301@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from:to:subject:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
-        bh=H8S9O1Pb4YivffTinW8zexFzDONHu33/vRwOWYCkJzs=;
-        b=HODA3triZ+PuLj6OQ1d2a3CPrKBs88a78uMnoalDlQsVLemaGLpDa9iaGACQB/4pZOBDLMX9rsD3kqdwAz54r9x803taKww0dAMj1Jrksgy9BI+SpYd3sxmStWVxg3ezqM1PdbUVqHXuVXj9sSujHfrF9EjXb2AqquXcb7ObD9s=
-In-Reply-To: <480930F6.8090903@gmail.com>
 Content-Disposition: inline
+In-Reply-To: <480E2F2B.9060301@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-On Fri, Apr 18, 2008 at 5:38 PM, Edward Shishkin
-<edward.shishkin@gmail.com> wrote:
-> Hi everyone.
->
->  I would like to inform that kernel.org administration
->  kindly provided us space for the following projects:
->  . reiserfsprogs
->  . reiser4 patches against vanilla kernels
->  . reiser4progs
->
->  The mentioned projects can be found here:
->  http://www.kernel.org/pub/linux/kernel/people/edward/
->
->  All updates will be announced at reiserfs-devel mailing list.
->
->  Thanks,
->  Edward.
->  --
->  To unsubscribe from this list: send the line "unsubscribe reiserfs-devel"
-> in
->  the body of a message to majordomo@vger.kernel.org
->  More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+On Tue 22-04-08 14:32:11, Jeff Mahoney wrote:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+> 
+> Jan Kara wrote:
+> >   Hello,
+> > 
+> >   I've just looked into the Reiserfs code in 2.6.25 kernel and from the code
+> > it seems as data=journal mode isn't really handled any specially from
+> > data=writeback mode. So does Reiserfs really support journaling of data?
+> > If no, then we should remove the mount option. If yes, then I really wonder
+> > where is the distinction from data=writeback mode... Thanks for an answer in
+> > advance.
+> 
+> Check out reiserfs_commit_page() for the code where it is attached to a
+> transaction. Then it's handled identically to dirty metadata when the
+> transaction is committed.
+  Ah, I see, thanks. I was grepping for "reiserfs_data_log" but there is
+"reiserfs_file_data_log" which I completely missed.
+  Maybe you can help me with my original problem :) - I have a file (quota
+file) and I need to make sure that all the dirty data and metadata of that
+file is on disk in its final locations (i.e.,  not only in journal). Will
+just starting an auxiliary transaction and then doing
+  do_journal_end(th, sb, 1, FLUSH_ALL)
 
-Great news. Now there is an 'official' place to go for these.
-Just a question, any plans on having a public source code repository
-for reiser*progs and/or the reiser4 patchset?
+  do the work as I think? Thanks.
 
-Gah, forgot to CC the ML, oops.
-
+									Honza 
 -- 
--Nathan Caldwell
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
