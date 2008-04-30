@@ -1,7 +1,7 @@
 From: akpm@linux-foundation.org
-Subject: + reiserfs-fix-typos-in-messages-and-comments-journalled-journaled.patch added to -mm tree
-Date: Wed, 30 Apr 2008 10:50:09 -0700
-Message-ID: <200804301750.m3UHo992026674@imap1.linux-foundation.org>
+Subject: + reiserfs-fix-synchronization-of-quota-files-in-journal=data-mode.patch added to -mm tree
+Date: Wed, 30 Apr 2008 10:50:03 -0700
+Message-ID: <200804301750.m3UHo3A2026664@imap1.linux-foundation.org>
 Reply-To: linux-kernel@vger.kernel.org
 Return-path: <mm-commits-owner@vger.kernel.org>
 Sender: mm-commits-owner@vger.kernel.org
@@ -14,9 +14,9 @@ Cc: jack@suse.cz, reiserfs-devel@vger.kernel.org
 
 
 The patch titled
-     reiserfs: fix typos in messages and comments (journalled -> journaled)
+     reiserfs: fix synchronization of quota files in journal=data mode
 has been added to the -mm tree.  Its filename is
-     reiserfs-fix-typos-in-messages-and-comments-journalled-journaled.patch
+     reiserfs-fix-synchronization-of-quota-files-in-journal=data-mode.patch
 
 Before you just go and hit "reply", please:
    a) Consider who else should be cc'ed
@@ -32,65 +32,73 @@ out what to do about this
 The current -mm tree may be found at http://userweb.kernel.org/~akpm/mmotm/
 
 ------------------------------------------------------
-Subject: reiserfs: fix typos in messages and comments (journalled -> journaled)
+Subject: reiserfs: fix synchronization of quota files in journal=data mode
 From: Jan Kara <jack@suse.cz>
+
+In journal=data mode, it is not enough to do write_inode_now() as done in
+vfs_quota_on() to write all data to their final location (which is needed for
+quota_read to work correctly).  Calling journal_end_sync() before calling
+vfs_quota_on() does it's job because transactions are committed to the journal
+and data marked as dirty in memory so write_inode_now() writes them to their
+final locations.
 
 Cc: <reiserfs-devel@vger.kernel.org>
 Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
 
- fs/reiserfs/super.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ fs/reiserfs/super.c |   30 +++++++++++++++++++++---------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
 
-diff -puN fs/reiserfs/super.c~reiserfs-fix-typos-in-messages-and-comments-journalled-journaled fs/reiserfs/super.c
---- a/fs/reiserfs/super.c~reiserfs-fix-typos-in-messages-and-comments-journalled-journaled
+diff -puN fs/reiserfs/super.c~reiserfs-fix-synchronization-of-quota-files-in-journal=data-mode fs/reiserfs/super.c
+--- a/fs/reiserfs/super.c~reiserfs-fix-synchronization-of-quota-files-in-journal=data-mode
 +++ a/fs/reiserfs/super.c
-@@ -182,7 +182,7 @@ static int finish_unfinished(struct supe
- 			int ret = reiserfs_quota_on_mount(s, i);
- 			if (ret < 0)
- 				reiserfs_warning(s,
--						 "reiserfs: cannot turn on journalled quota: error %d",
-+						 "reiserfs: cannot turn on journaled quota: error %d",
- 						 ret);
- 		}
- 	}
-@@ -994,7 +994,7 @@ static int reiserfs_parse_options(struct
+@@ -2026,6 +2026,7 @@ static int reiserfs_quota_on(struct supe
+ 	int err;
+ 	struct nameidata nd;
+ 	struct inode *inode;
++	struct reiserfs_transaction_handle th;
  
- 			if (sb_any_quota_enabled(s)) {
- 				reiserfs_warning(s,
--						 "reiserfs_parse_options: cannot change journalled quota options when quota turned on.");
-+						 "reiserfs_parse_options: cannot change journaled quota options when quota turned on.");
- 				return 0;
- 			}
- 			if (*arg) {	/* Some filename specified? */
-@@ -1039,7 +1039,7 @@ static int reiserfs_parse_options(struct
- #else
- 		if (c == 'u' || c == 'g' || c == 'f') {
- 			reiserfs_warning(s,
--					 "reiserfs_parse_options: journalled quota options not supported.");
-+					 "reiserfs_parse_options: journaled quota options not supported.");
- 			return 0;
+ 	if (!(REISERFS_SB(sb)->s_mount_opt & (1 << REISERFS_QUOTA)))
+ 		return -EINVAL;
+@@ -2053,17 +2054,28 @@ static int reiserfs_quota_on(struct supe
  		}
- #endif
-@@ -1050,7 +1050,7 @@ static int reiserfs_parse_options(struct
- 	    && (REISERFS_SB(s)->s_qf_names[USRQUOTA]
- 		|| REISERFS_SB(s)->s_qf_names[GRPQUOTA])) {
- 		reiserfs_warning(s,
--				 "reiserfs_parse_options: journalled quota format not specified.");
-+				 "reiserfs_parse_options: journaled quota format not specified.");
- 		return 0;
+ 		mark_inode_dirty(inode);
  	}
- 	/* This checking is not precise wrt the quota type but for our purposes it is sufficient */
-@@ -1980,7 +1980,7 @@ static int reiserfs_release_dquot(struct
- 
- static int reiserfs_mark_dquot_dirty(struct dquot *dquot)
- {
--	/* Are we journalling quotas? */
-+	/* Are we journaling quotas? */
- 	if (REISERFS_SB(dquot->dq_sb)->s_qf_names[USRQUOTA] ||
- 	    REISERFS_SB(dquot->dq_sb)->s_qf_names[GRPQUOTA]) {
- 		dquot_mark_dquot_dirty(dquot);
+-	/* Not journalling quota? No more tests needed... */
+-	if (!REISERFS_SB(sb)->s_qf_names[USRQUOTA] &&
+-	    !REISERFS_SB(sb)->s_qf_names[GRPQUOTA]) {
+-		path_put(&nd.path);
+-		return vfs_quota_on(sb, type, format_id, path, 0);
+-	}
+-	/* Quotafile not of fs root? */
+-	if (nd.path.dentry->d_parent->d_inode != sb->s_root->d_inode)
+-		reiserfs_warning(sb,
++	/* Journaling quota? */
++	if (REISERFS_SB(sb)->s_qf_names[type]) {
++		/* Quotafile not of fs root? */
++		if (nd.path.dentry->d_parent->d_inode != sb->s_root->d_inode)
++			reiserfs_warning(sb,
+ 				 "reiserfs: Quota file not on filesystem root. "
+ 				 "Journalled quota will not work.");
++	}
++
++	/*
++	 * When we journal data on quota file, we have to flush journal to see
++	 * all updates to the file when we bypass pagecache...
++	 */
++	if (reiserfs_file_data_log(inode)) {
++		/* Just start temporary transaction and finish it */
++		err = journal_begin(&th, sb, 1);
++		if (err)
++			return err;
++		err = journal_end_sync(&th, sb, 1);
++		if (err)
++			return err;
++	}
+ 	path_put(&nd.path);
+ 	return vfs_quota_on(sb, type, format_id, path, 0);
+ }
 _
 
 Patches currently in -mm which might be from jack@suse.cz are
