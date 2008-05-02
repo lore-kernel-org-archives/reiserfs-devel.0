@@ -1,45 +1,36 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Calling finish_unfinished() too often?
-Date: Wed, 30 Apr 2008 22:13:35 +0400
-Message-ID: <4818B6CF.7080804@gmail.com>
-References: <20080430112329.GE19688@duck.suse.cz>
-Mime-Version: 1.0
+From: Toby Thain <toby@telegraphics.com.au>
+Subject: Re: Wired: Hans Reiser Guilty of First Degree Murder
+Date: Fri, 2 May 2008 15:16:18 +0100
+Message-ID: <214FC57C-451E-4A51-93B7-BBD40A685F3D@telegraphics.com.au>
+References: <e50d039c0804281731x5abc4969u1e61a20668bc77be@mail.gmail.com> <b8d16a880804291736o6eb6aea2s15b83b676e990323@mail.gmail.com>
+Mime-Version: 1.0 (Apple Message framework v753)
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20080430112329.GE19688@duck.suse.cz>
+In-Reply-To: <b8d16a880804291736o6eb6aea2s15b83b676e990323@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jan Kara <jack@suse.cz>
-Cc: reiserfs-devel@vger.kernel.org, Vladimir Saveliev <Vladimir.Saveliev@sun.com>
+Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
+To: Christopher Sawtell <csawtell@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-Jan Kara wrote:
 
->  Hi,
+On 30-Apr-08, at 1:36 AM, Christopher Sawtell wrote:
+> A sad, tragic business.
 >
->  I was just looking into reiserfs remount code and it seems it calls
->finish_unfinished() whenever filesystem is remounted and isn't in read-only
->mode. Isn't this unnecessary? I thought finish_unfinished() is needed only
->when we remount from read-only to read-write state for the first time...
->  
->
+> How is this going to affect the file-systems? Particularly Reiser4?
 
-Perhaps, you are right (if we don't miss some points). But we need to 
-keep a track
-of first successful remounts to rw state, and it requires a special flag 
-in in-memory
-superblock (I don't see another way).
+That's entirely up to the community!
 
->  Well, I wouldn't mind the performance impact to remount that much
 >
-
-yeah,  definitely benchmarks lack "1000 remounts"statistics ;)
-
-> but it
->would make my life with journaled quota a bit easier ;). Thanks for an
->answer in advance.
+> On 4/29/08, Robert Hulme <rob@robhulme.com> wrote:
+>> http://blog.wired.com/27bstroke6/hans_reiser_trial/#49144716
 >
->								Honza
->  
->
+> --  
+> Sincerely etc.
+> Christopher Sawtell
+> --
+> To unsubscribe from this list: send the line "unsubscribe reiserfs- 
+> devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
