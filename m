@@ -1,135 +1,64 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: Calling finish_unfinished() too often?
-Date: Tue, 6 May 2008 19:34:25 +0200
-Message-ID: <20080506173424.GF1409@duck.suse.cz>
-References: <20080430112329.GE19688@duck.suse.cz> <4818B6CF.7080804@gmail.com>
-Mime-Version: 1.0
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [patch 1/3] [PATCH] reiserfs: convert j_lock to mutex
+Date: Wed, 7 May 2008 01:51:35 +0000 (UTC)
+Message-ID: <20080508063650.394334212@suse.com>
+References: <20080508063557.757413878@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4818B6CF.7080804@gmail.com>
+Date: Thu, 08 May 2008 02:35:58 -0400
+Content-Disposition: inline; filename=reiserfs-j_lock-mutex
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org, Vladimir Saveliev <Vladimir.Saveliev@sun.com>
+To: linux-kernel@vger.kernel.org
+Cc: reiserfs-devel@vger.kernel.org
 
-On Wed 30-04-08 22:13:35, Edward Shishkin wrote:
-> Jan Kara wrote:
->
->>  Hi,
->>
->>  I was just looking into reiserfs remount code and it seems it calls
->> finish_unfinished() whenever filesystem is remounted and isn't in 
->> read-only
->> mode. Isn't this unnecessary? I thought finish_unfinished() is needed only
->> when we remount from read-only to read-write state for the first time...
->>  
->
-> Perhaps, you are right (if we don't miss some points). But we need to keep 
-> a track
-> of first successful remounts to rw state, and it requires a special flag in 
-> in-memory
-> superblock (I don't see another way).
->
->>  Well, I wouldn't mind the performance impact to remount that much
->>
->
-> yeah,  definitely benchmarks lack "1000 remounts"statistics ;)
->
->> but it
->> would make my life with journaled quota a bit easier ;). Thanks for an
->> answer in advance.
-  OK, so would you accept the patch below?
+ j_lock is a semaphore but uses it as if it were a mutex. This
+ patch converts it to a mutex.
 
-									Honza
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 ---
+ fs/reiserfs/journal.c          |    6 +++---
+ include/linux/reiserfs_fs_sb.h |    2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-From 1eb1dbd8ebb518b1299bd2c45908db988b56a287 Mon Sep 17 00:00:00 2001
-From: Jan Kara <jack@suse.cz>
-Date: Tue, 6 May 2008 19:13:38 +0200
-Subject: [PATCH] reiserfs: Call finish_unfinished() only during first remount RW
-
-We need to call finish_unfinished() only when the filesystem is remounted
-read-write for the first time. This not only saves a few cycles on remount
-(rather irrelevant) but also makes reiserfs handle journaled quota on remount
-better - quota is the correctly reenabled on remount read-write.
-
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/reiserfs/inode.c            |    2 +-
- fs/reiserfs/super.c            |    7 ++++---
- include/linux/reiserfs_fs_sb.h |    9 +++++----
- 3 files changed, 10 insertions(+), 8 deletions(-)
-
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index 5791793..c2fdeb4 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -1454,7 +1454,7 @@ void reiserfs_read_locked_inode(struct inode *inode,
- 	   nlink==0: processing of open-unlinked and half-truncated files
- 	   during mount (fs/reiserfs/super.c:finish_unfinished()). */
- 	if ((inode->i_nlink == 0) &&
--	    !REISERFS_SB(inode->i_sb)->s_is_unlinked_ok) {
-+	    REISERFS_SB(inode->i_sb)->s_unlinked_cleanup != 1) {
- 		reiserfs_warning(inode->i_sb,
- 				 "vs-13075: reiserfs_read_locked_inode: "
- 				 "dead inode read from disk %K. "
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 2c3aa5f..7faed9c 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -189,7 +189,7 @@ static int finish_unfinished(struct super_block *s)
- #endif
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -558,13 +558,13 @@ static inline void insert_journal_hash(s
+ static inline void lock_journal(struct super_block *p_s_sb)
+ {
+ 	PROC_INFO_INC(p_s_sb, journal.lock_journal);
+-	down(&SB_JOURNAL(p_s_sb)->j_lock);
++	mutex_lock(&SB_JOURNAL(p_s_sb)->j_mutex);
+ }
  
- 	done = 0;
--	REISERFS_SB(s)->s_is_unlinked_ok = 1;
-+	REISERFS_SB(s)->s_unlinked_cleanup = 1;
- 	while (!retval) {
- 		retval = search_item(s, &max_cpu_key, &path);
- 		if (retval != ITEM_NOT_FOUND) {
-@@ -298,7 +298,7 @@ static int finish_unfinished(struct super_block *s)
- 		printk("done\n");
- 		done++;
- 	}
--	REISERFS_SB(s)->s_is_unlinked_ok = 0;
-+	REISERFS_SB(s)->s_unlinked_cleanup = 2;
+ /* unlock the current transaction */
+ static inline void unlock_journal(struct super_block *p_s_sb)
+ {
+-	up(&SB_JOURNAL(p_s_sb)->j_lock);
++	mutex_unlock(&SB_JOURNAL(p_s_sb)->j_mutex);
+ }
  
- #ifdef CONFIG_QUOTA
- 	/* Turn quotas off */
-@@ -1290,7 +1290,8 @@ static int reiserfs_remount(struct super_block *s, int *mount_flags, char *arg)
- 	s->s_dirt = 0;
+ static inline void get_journal_list(struct reiserfs_journal_list *jl)
+@@ -2841,7 +2841,7 @@ int journal_init(struct super_block *p_s
+ 	journal->j_last = NULL;
+ 	journal->j_first = NULL;
+ 	init_waitqueue_head(&(journal->j_join_wait));
+-	sema_init(&journal->j_lock, 1);
++	mutex_init(&journal->j_mutex);
+ 	sema_init(&journal->j_flush_sem, 1);
  
- 	if (!(*mount_flags & MS_RDONLY)) {
--		finish_unfinished(s);
-+		if (!REISERFS_SB(s)->s_unlinked_cleanup)
-+			finish_unfinished(s);
- 		reiserfs_xattr_init(s, *mount_flags);
- 	}
- 
-diff --git a/include/linux/reiserfs_fs_sb.h b/include/linux/reiserfs_fs_sb.h
-index db5ef9b..5c703e6 100644
+ 	journal->j_trans_id = 10;
 --- a/include/linux/reiserfs_fs_sb.h
 +++ b/include/linux/reiserfs_fs_sb.h
-@@ -390,10 +390,11 @@ struct reiserfs_sb_info {
- 	int s_bmaps_without_search;
- 	int s_direct2indirect;
- 	int s_indirect2direct;
--	/* set up when it's ok for reiserfs_read_inode2() to read from
--	   disk inode with nlink==0. Currently this is only used during
--	   finish_unfinished() processing at mount time */
--	int s_is_unlinked_ok;
-+	/* set up to 0, initially, to 1 when orphan cleanup is in progress
-+	   and to 2 when it is done. Used by reiserfs_read_inode2() to check
-+	   when read of inode with nlink==0 is OK and to detect first remount
-+	   read-write during which finish_unfinished() needs to be called. */
-+	int s_unlinked_cleanup;
- 	reiserfs_proc_info_data_t s_proc_info_data;
- 	struct proc_dir_entry *procdir;
- 	int reserved_blocks;	/* amount of blocks reserved for further allocations */
--- 
-1.5.2.4
+@@ -194,7 +194,7 @@ struct reiserfs_journal {
+ 	struct buffer_head *j_header_bh;
+ 
+ 	time_t j_trans_start_time;	/* time this transaction started */
+-	struct semaphore j_lock;
++	struct mutex j_mutex;
+ 	struct semaphore j_flush_sem;
+ 	wait_queue_head_t j_join_wait;	/* wait for current transaction to finish before starting new one */
+ 	atomic_t j_jlock;	/* lock for j_join_wait */
 
