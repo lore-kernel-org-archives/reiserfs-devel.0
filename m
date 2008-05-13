@@ -1,86 +1,91 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: Matthew <jackdachef@gmail.com>
 Subject: Re: Check for ccreg40
-Date: Tue, 13 May 2008 12:53:59 +0400
-Message-ID: <48295727.9050909@gmail.com>
-References: <loom.20080512T225740-889@post.gmane.org> <5ac301dfeac0d00ba1e2b281d90be66d@free.fr> <482936F6.1020009@soltysiak.com>
+Date: Tue, 13 May 2008 11:51:28 +0200
+Message-ID: <e85b9d30805130251j36bff6fcl899e817f07b9c7a4@mail.gmail.com>
+References: <loom.20080512T225740-889@post.gmane.org>
+	 <4828CFD5.7000408@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <482936F6.1020009@soltysiak.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+        bh=1jHEjQ6j64tDFlq11mN3UnWR71Q2T800Zo2cx7xriDo=;
+        b=mQtBA44HLNC3pR1Z/8iRKgxbLuV71/2orxpujwYhU1ce8srq2kkShj5T5wRGs69HFMQHCMdwSwKYzJYjuctHUrUEp8/dcNPRAWEJAtmYdHX4dgek67Qiuc5S3uU8lDaxTrVHJtbwYyCbsKJ4/flX77xA6qnPJT8Bwuu1SZr2ick=
+In-Reply-To: <4828CFD5.7000408@gmail.com>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Maciej Soltysiak <maciej@soltysiak.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: geearf@free.fr, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
-Maciej Soltysiak wrote:
-
-> Hi,
->
-> I haven't looked at r4 development for a while now and I have a few 
-> questions.
-
-[...]
-
->>
->> I am confused, does reg40 means no compression, or does the compress 
->> lzo1 being there means compression?
->>   
->
-> Is it possible to create a regular r4 partition and choose which files 
-> keep compressed (how?)
-
-
-Not yet.
-There is a (deprecated) pseudo-file interface, which allows to set
-compression et al per directory (the latest patch is against 2.6.13).
-
-> or do I have to create a all-compressed partition?
-
-
-Yes.
-Reiser4 has means to automatically reduce cpu and memory usage on
-incompressible data.
-
-With the default plugin scheduler (compressMode: "conv") conversion
-will be performed in 2 interfaces:
-1. FILE: convert cryptcompress to unix-file plugin;
-2. COMPRESS: turn on/off compression in flush time.
-
-However, this scheduler uses very simple heuristics which work
-incorrectly on various media files, etc.. I believe it can be improved
-to process 80-90% of _all_ files properly.
-
->
-> To play with compression can I just use the standard patch from
-> http://www.kernel.org/pub/linux/kernel/people/edward/reiser4/reiser4-for-2.6/ 
-> ?
->
-
-Yes.
-
-> Does this patch include also file-as-directory stuff?
-
-
-No, this stuff was removed (see my comment about pseudo-file interface 
-above)
-
->
-> BTW it might be good to change the *Reiser4 is released!* message on
->
->        http://reiser4.erudified.com/install_v4.html
->
-> to at least point to
->
->        
-> http://www.kernel.org/pub/linux/kernel/people/edward/reiser4/reiser4-for-2.6/ 
+On Tue, May 13, 2008 at 1:16 AM, Edward Shishkin
+<edward.shishkin@gmail.com> wrote:
+> Mat wrote:
 >
 >
-> instead of giving a 404.
+> > Hi,
+> >
+> > sure,
+> >
+> > debugfs.reiser4 -p /dev/foo
+> >
+> >
+>
+>  No, with the option "-p" debugfs.reiser4 (and other utilities
+>  of reiser4progs package) prints the "default vector of plugins"
+>  and doesn't look at /dev/foo..
+>
+>  Edward.
+>
+>
+> > should print everything needed
+> >
+> > Regards
+> >
+> > Mat
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe reiserfs-devel"
+> in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> >
+> >
+> >
+>
+>
 
+oops, sorry,
+I thought it would print the plugins of the current partition
 
-This is a temporal place for Hans's whitepaper.
-I don't have a time to fix all the links to work properly.
+is there a way by showing the plugins in using grep (e.g. whether it's
+used lzo or gzip compression) ?
 
-Thanks,
-Edward.
+for example grep 'ccreg shows' the following, that should mean ccreg40
+/ cryptcompression was used, correct ?
+
+debugfs.reiser4  -t -f /dev/sdd8 | grep ccreg
+debugfs.reiser4 1.0.6
+Copyright (C) 2001-2005 by Hans Reiser, licensing governed by
+reiser4progs/COPYING.
+
+            create : id = 4 (ccreg40)
+            object : id = 4 (ccreg40)
+            object : id = 4 (ccreg40)
+            object : id = 4 (ccreg40)
+            object : id = 4 (ccreg40)
+            object : id = 4 (ccreg40)
+            object : id = 4 (ccreg40)
+            object : id = 4 (ccreg40)
+            object : id = 4 (ccreg40)
+            object : id = 4 (ccreg40)
+            object : id = 4 (ccreg40)
+            object : id = 4 (ccreg40)
+            object : id = 4 (ccreg40)
+            object : id = 4 (ccreg40)
+
+Thanks
+
+Mat
