@@ -1,46 +1,60 @@
-From: Adrian Bunk <bunk@kernel.org>
-Subject: [2.6 patch] reiserfs/procfs.c: remove CVS keywords
-Date: Tue, 20 May 2008 00:58:40 +0300
-Message-ID: <20080519215840.GT17716@cs181133002.pp.htv.fi>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] MAINTAINERS: reiserfs entry is out of date
+Date: Thu, 22 May 2008 16:25:42 -0700
+Message-ID: <20080522162542.9eb9fd01.akpm@linux-foundation.org>
+References: <20080522222321.721.16051.stgit@core>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
+In-Reply-To: <20080522222321.721.16051.stgit@core>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: reiserfs-devel@vger.kernel.org
 
-This patch removes CVS keywords that weren't updated for a long time 
-from comments.
+On Thu, 22 May 2008 23:23:22 +0100
+Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
 
-Signed-off-by: Adrian Bunk <bunk@kernel.org>
+> From: Alan Cox <alan@redhat.com>
+> 
+> 
+> 
+> Signed-off-by: Alan Cox <alan@redhat.com>
 
----
+(swtiched lists)
 
- fs/reiserfs/procfs.c |    3 ---
- 1 file changed, 3 deletions(-)
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index deda30e..163cd8c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3401,10 +3401,7 @@ L:	rtc-linux@googlegroups.com
+>  S:	Maintained
+>  
+>  REISERFS FILE SYSTEM
+> -P:	Hans Reiser
 
-a41d213debad92b6672c39b577baf58641b5c54c diff --git a/fs/reiserfs/procfs.c b/fs/reiserfs/procfs.c
-index b9dbeec..37173fa 100644
---- a/fs/reiserfs/procfs.c
-+++ b/fs/reiserfs/procfs.c
-@@ -8,8 +8,6 @@
- 
- /* proc info support a la one created by Sizif@Botik.RU for PGC */
- 
--/* $Id: procfs.c,v 1.1.8.2 2001/07/15 17:08:42 god Exp $ */
--
- #include <linux/module.h>
- #include <linux/time.h>
- #include <linux/seq_file.h>
-@@ -621,7 +619,6 @@ int reiserfs_global_version_in_proc(char *buffer, char **start,
- #endif
- 
- /*
-- * $Log: procfs.c,v $
-  * Revision 1.1.8.2  2001/07/15 17:08:42  god
-  *  . use get_super() in procfs.c
-  *  . remove remove_save_link() from reiserfs_do_truncate()
+well yes.
+
+> -M:	reiserfs-dev@namesys.com
+
+OK.
+
+>  L:	reiserfs-devel@vger.kernel.org
+
+OK
+
+> -W:	http://www.namesys.com
+
+OK
+
+>  S:	Supported
+
+That's debatable.
+
+It would be nice to have a go-to guy for reiser3.  Usually that's Jeff,
+sometimes Jan, occasionally Chris, occasionally Edward.
+
+Are people happy with Alan's proposal, or might it inspire a sudden
+spirit of volunteerism or something?
 
