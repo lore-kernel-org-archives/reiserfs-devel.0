@@ -1,82 +1,68 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH] MAINTAINERS: reiserfs entry is out of date
-Date: Fri, 23 May 2008 00:08:28 -0400
-Message-ID: <4836433C.9050105@suse.com>
-References: <20080522222321.721.16051.stgit@core> <20080522162542.9eb9fd01.akpm@linux-foundation.org>
+From: Shen Feng <shen@cn.fujitsu.com>
+Subject: [PATCH 1/3] reiserfs: remove double definitions of xattr macros
+Date: Thu, 29 May 2008 10:09:12 +0800
+Message-ID: <483E1048.6070307@cn.fujitsu.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20080522162542.9eb9fd01.akpm@linux-foundation.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, reiserfs-devel@vger.kernel.org
+To: linux-ext4@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, cmm@us.ibm.com, reiserfs-dev@namesys.com, reiserfs-devel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+remove the definitions of macros:
+XATTR_SECURITY_PREFIX
+XATTR_TRUSTED_PREFIX
+XATTR_USER_PREFIX
+since they are defined in linux/xattr.h
 
-Andrew Morton wrote:
-> On Thu, 22 May 2008 23:23:22 +0100
-> Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
-> 
->> From: Alan Cox <alan@redhat.com>
->>
->>
->>
->> Signed-off-by: Alan Cox <alan@redhat.com>
-> 
-> (swtiched lists)
-> 
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index deda30e..163cd8c 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -3401,10 +3401,7 @@ L:	rtc-linux@googlegroups.com
->>  S:	Maintained
->>  
->>  REISERFS FILE SYSTEM
->> -P:	Hans Reiser
-> 
-> well yes.
-> 
->> -M:	reiserfs-dev@namesys.com
-> 
-> OK.
-> 
->>  L:	reiserfs-devel@vger.kernel.org
-> 
-> OK
-> 
->> -W:	http://www.namesys.com
-> 
-> OK
-> 
->>  S:	Supported
-> 
-> That's debatable.
-> 
-> It would be nice to have a go-to guy for reiser3.  Usually that's Jeff,
-> sometimes Jan, occasionally Chris, occasionally Edward.
-> 
-> Are people happy with Alan's proposal, or might it inspire a sudden
-> spirit of volunteerism or something?
+Signed-off-by: Shen Feng <shen@cn.fujitsu.com>
+Signed-off-by: Mingming Cao <cmm@us.ibm.com>
+---
+ fs/reiserfs/xattr_security.c |    2 --
+ fs/reiserfs/xattr_trusted.c  |    2 --
+ fs/reiserfs/xattr_user.c     |    2 --
+ 3 files changed, 0 insertions(+), 6 deletions(-)
 
-You're right. Usually it is me and I do watch the reiserfs-devel list
-for reiser3 bugs. I also have a patch queue that I've been sitting on
-for way too long that I'm just putting the finishing touches on. I think
-I'd rather see S: Maintained instead, though.
-
-- -Jeff
-
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
-
-iEYEARECAAYFAkg2QzwACgkQLPWxlyuTD7JUwQCfSKi0rPOqmavixOoCBdrl8vSF
-a2YAnicbu94fH4zORdu1kZK0tUCqOUfR
-=N1fy
------END PGP SIGNATURE-----
+diff --git a/fs/reiserfs/xattr_security.c b/fs/reiserfs/xattr_security.c
+index 5e90a95..056008d 100644
+--- a/fs/reiserfs/xattr_security.c
++++ b/fs/reiserfs/xattr_security.c
+@@ -6,8 +6,6 @@
+ #include <linux/reiserfs_xattr.h>
+ #include <asm/uaccess.h>
+ 
+-#define XATTR_SECURITY_PREFIX "security."
+-
+ static int
+ security_get(struct inode *inode, const char *name, void *buffer, size_t size)
+ {
+diff --git a/fs/reiserfs/xattr_trusted.c b/fs/reiserfs/xattr_trusted.c
+index 024a938..60abe2b 100644
+--- a/fs/reiserfs/xattr_trusted.c
++++ b/fs/reiserfs/xattr_trusted.c
+@@ -7,8 +7,6 @@
+ #include <linux/reiserfs_xattr.h>
+ #include <asm/uaccess.h>
+ 
+-#define XATTR_TRUSTED_PREFIX "trusted."
+-
+ static int
+ trusted_get(struct inode *inode, const char *name, void *buffer, size_t size)
+ {
+diff --git a/fs/reiserfs/xattr_user.c b/fs/reiserfs/xattr_user.c
+index 073f393..1384efc 100644
+--- a/fs/reiserfs/xattr_user.c
++++ b/fs/reiserfs/xattr_user.c
+@@ -10,8 +10,6 @@
+ # include <linux/reiserfs_acl.h>
+ #endif
+ 
+-#define XATTR_USER_PREFIX "user."
+-
+ static int
+ user_get(struct inode *inode, const char *name, void *buffer, size_t size)
+ {
+-- 
+1.5.4.5
