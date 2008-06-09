@@ -1,63 +1,97 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: How do I compile a Reiser4 enabled kernel for use on opensuse
- 11rc1 - 64 bit
-Date: Tue, 10 Jun 2008 01:28:21 +0400
-Message-ID: <484DA075.5080607@gmail.com>
-References: <23466.202.168.22.19.1212986902.squirrel@webmail.velocity.net.au> <73dc97ec25ea6e13a9570f667d88b1cc@free.fr>
+Subject: Re: =?UTF-8?B?4oCeVG9vIG1hbnkgaXRlcmF0aW9uc+KAnCBhbmQgZnNjay5yZWk=?=
+ =?UTF-8?B?c2VyNCBmYWlsdXJl?=
+Date: Tue, 10 Jun 2008 01:29:12 +0400
+Message-ID: <484DA0A8.8010401@gmail.com>
+References: <17734422.post@talk.nabble.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <73dc97ec25ea6e13a9570f667d88b1cc@free.fr>
+In-Reply-To: <17734422.post@talk.nabble.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: doiggl@velocitynet.com.au
-Cc: geearf@free.fr, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+To: Andrej Podzimek <andrej@podzimek.org>
+Cc: reiserfs-devel@vger.kernel.org
 
-John wrote:
-> On Mon, 9 Jun 2008 14:48:22 +1000 (EST), doiggl@velocitynet.com.au wrote:
->   
->> Hello,
->>     
+Andrej Podzimek wrote:
+> Hello,
+>  =20
+Hello
+
+> my laptop system has been in use with Reiser v4 for half a year or so=
+=2E
+
+Please, make sure that you are using the latest version of reiser4:
+there was a bug which could cause data corruption:
+http://marc.info/?l=3Dreiserfs-devel&m=3D120914767218498&w=3D2
+
+>  There
+> may have been some unexpected restarts and system crashes during that
+> time... KDE refused to start today. This time it was not just a usual
+> problem with user permissions. This is what I found in kernel.log:
 >
-> Hello
->   
->> I have a reiser4 query.
->>
->> Questions.
->> 1. I would like to set up a reiser4 file system and I need help on how to
->> compile a kernel for it. Can you tell me the steps to compile and install
->> a reiser4 enabled kernel please ?.
-
-Is "/" supposed to be on reiser4?
-Note, that in this case SUSE10.3 requires initrd to contain reiser4 module.
-Not sure about 11.0...
-
->>  I would use a vanilla kernel to patch
->> and build.
->>     
-> Here you will find a tutorial for that:
-> http://linuxhelp.150m.com/installs/compile-kernel.htm
->   
->> 2. What command do I use to format a blank disk partition to reiser4 ? so
->> I can use it.
->>     
-> for a normal partition: mkfs.reiser4 /dev/yourpartition
-> for a cryptcompress partition: mkfs.reiser4 -o create=ccreg40 /dev/yourpartition
+> Jun  9 12:23:38 xandrej reiser4[kbuildsycoca(3104)]: traverse_tree
+> (fs/reiser4/search.c:689)[nikita-1481]:
+> Jun  9 12:23:38 xandrej WARNING: Too many iterations: 128
+>  =20
+[...]
+> (fs/reiser4/search.c:722)[nikita-373]:
+> Jun  9 12:23:40 xandrej WARNING: reiser-2018: Too many iterations. Tr=
+ee
+> corrupted, or (less likely) starvation occurring.: level: 4, lock_lev=
+el: 2,
+> stop_level: 1 lock_mode: read, bias: left-slant
+> Jun  9 12:23:40 xandrej reiser4[kbuildsycoca(3104)]: tail2extent
+> (fs/reiser4/plugin/file/tail_conversion.c:516)[nikita-2282]:
+> Jun  9 12:23:40 xandrej WARNING: Partial conversion of 2426179: -5
 >
->   
->> 3. How can I validate a reiser4 partition is ok ?.
->>
->>     
-> fsck.reiser4 /dev/yourpartition (with the partition unmounted)?
->   
->> I am using opensuse 11 rc1 (64 bit system) on a test pc with a additional
->> hard disk with no partitions on it and would like to set up reiser4 on it.
->>
->> I can get reiser4progs and reiser4progs-devel already compiled to a rpm
->> from:
->> http://download.opensuse.org/repositories/home:/lmich/openSUSE_11.0/x86_64/reiser4progs-1.0.6-15.3.x86_64.rpm
->> http://download.opensuse.org/repositories/home:/lmich/openSUSE_11.0/x86_64/reiser4progs-devel-1.0.6-15.3.x86_64.rpm
->>
->>     
-Ok, install both, it should work.
+> Running fsck.reiser4 revealed corruption on all of my Reiser4 volumes=
+=2E All
+> of them could be fixed, except for /home. :-( I ran fsck.reiser4 --bu=
+ild-fs
+> --build-sb. Everything went just fine until the sematic tree scan. It=
+ got
+> stuck at 99% with intensive disk usage. After about 10 minutes, the p=
+rogram
+> ended with an error message (=E2=80=9Eoperational error=E2=80=9C or s=
+omething of that kind).
+> (Just one line, no further details.)
+>
+>  =20
+
+This is a problem in fsck, and I can not promise to fix it quickly.
+
+Would you please pack the metadata of your /home by
+debugfs.reiser4 -P /dev/xxx | gzip > meta.gz
+and let me download the file meta.gz
+
+Thanks,
+Edward.
+
+> The hard drive is a relatively recent Seagate Momentus 100 GB, 7200 R=
+PM,
+> 2,5", IDE, checked with smartctl regularly. The drive doesn't seem to=
+ be the
+> cause of this...
+>
+> However, after the (probably unfinished) disk scan, I could still mou=
+nt the
+> /home partition and KDE started just fine this time. The file system =
+is
+> probably not in a consistent state right now. What could I do to stop
+> further corruption? What scan options should I use?
+>
+> I am using ArchLinux and the reiser4progs package supplied with the d=
+istro.
+>
+> Best regards,
+>
+> Andrej Podzimek
+>  =20
+
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
