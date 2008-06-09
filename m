@@ -1,87 +1,107 @@
-From: Ralf Gross <Ralf-Lists@ralfgross.de>
-Subject: Re: warning: is_tree_node: node level 56362 does not match to the expected one 1
-Date: Mon, 9 Jun 2008 09:29:09 +0200
-Message-ID: <20080609072909.GA22951@p15145560.pureserver.info>
-References: <20080608174322.GC19640@p15145560.pureserver.info> <484C4736.3080103@gmail.com>
+From: Andrej Podzimek <andrej@podzimek.org>
+Subject: =?UTF-8?Q?=E2=80=9EToo_many_iterations=E2=80=9C_and_fsck.reiser4_failure?=
+Date: Mon, 9 Jun 2008 07:47:55 -0700 (PDT)
+Message-ID: <17734422.post@talk.nabble.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <484C4736.3080103@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
 To: reiserfs-devel@vger.kernel.org
 
-Edward Shishkin schrieb:
-> > Last Friday a backup server running backuppc crashed and did not
-> > respond to pings anymore. I logged in using the IPMI management card
-> > and found this (sorry I couldn't scroll up or get the output from any
-> > logfile):
-> >
-> > http://pirx.askja.de/Supermicro_Daughter_Card_Remote_Console.png
-> >   
-> 
-> There is no useful info here..
-> 
-> I also don't have successful experience with such remote consoles:
-> It doesn't fit a stacktrace. Desperate attempts to parse packets with
-> ngrep didn't' t lead to happy end..
 
-Maybe I should use netconsole on my servers, but as the server was not
-responding to ping packets, I doubt it would have been a big help.
- 
-> > Next I reset the system and booted. But I couldn't boot the system to
-> > the login prompt. Many reiserfs warnings appeared.
-> >
-> > To start reiserfsck I booted grml from CD. The first run with the
-> > check option resulted in errors and I restarted reiserfsck with the
-> > --rebuilt-tree option which complained after 40% about a possible
-> > harware problems.
-> >
-> > http://pirx.askja.de/Supermicro_Daughter_Card_Remote_Console-1.png
-> >
-> > With the rescue CD I could also take a look at the system logfiles
-> > from the time of the crash:
-> >
-> >   
-> 
-> olala... it definitely seems like hardware problems..
+Hello,
 
-But I can't find any hardware problems for the last 2 days.
- 
-> > Jun  5 21:59:20 server -- MARK --
-> > Jun  5 22:05:54 server kernel: ReiserFS: warning: is_tree_node: node level 56362 does not match to the expected one 1
-> > Jun  5 22:05:54 server kernel: ReiserFS: dm-0: warning: vs-5150: search_by_key: invalid format found in block 514510379. Fsck?
-> > Jun  5 22:05:54 server kernel: ReiserFS: dm-0: warning: zam-7001: io error in reiserfs_find_entry
-> >   
-> [...]
-> > Hardware:
-> >
-> > Supermicro Mainboard
-> > C2D CPU
-> > 4 GB ECC RAM
-> > Areca SATA RAID Controller
-> >
-> > The system was running as backuppc server for 18 months without
-> > problems. No power failure or other harware problems were detected
-> > before the fail.
-> >
-> > Since Friday I've been running memtest86+ (20 passes, app. 25 hours),
-> > prime95 and badblocks. No problems so far.
-> >
-> >   
-> 
-> Did you check all your hard drives with badblocks after the crash?
+my laptop system has been in use with Reiser v4 for half a year or so. =
+There
+may have been some unexpected restarts and system crashes during that
+time... KDE refused to start today. This time it was not just a usual
+problem with user permissions. This is what I found in kernel.log:
 
-Not one by one, but the 3 raid volume sets (sdc, sdd and sde). No bad
-blocks were found (non destructiv badblock test of course). I also
-used the "Check Volume Set" option of the Arcea controller. 
- 
-> If yes, then try to build and check the same configuration with the
-> same hard drives on another box. No more ideas.
+Jun  9 12:23:38 xandrej reiser4[kbuildsycoca(3104)]: traverse_tree
+(fs/reiser4/search.c:689)[nikita-1481]:
+Jun  9 12:23:38 xandrej WARNING: Too many iterations: 128
+Jun  9 12:23:38 xandrej reiser4[kbuildsycoca(3104)]: traverse_tree
+(fs/reiser4/search.c:689)[nikita-1481]:
+Jun  9 12:23:38 xandrej WARNING: Too many iterations: 256
+Jun  9 12:23:38 xandrej reiser4[kbuildsycoca(3104)]: traverse_tree
+(fs/reiser4/search.c:689)[nikita-1481]:
+Jun  9 12:23:38 xandrej WARNING: Too many iterations: 512
+Jun  9 12:23:38 xandrej reiser4[kbuildsycoca(3104)]: traverse_tree
+(fs/reiser4/search.c:689)[nikita-1481]:
+Jun  9 12:23:38 xandrej WARNING: Too many iterations: 1024
+Jun  9 12:23:38 xandrej reiser4[kbuildsycoca(3104)]: traverse_tree
+(fs/reiser4/search.c:689)[nikita-1481]:
+Jun  9 12:23:38 xandrej WARNING: Too many iterations: 2048
+Jun  9 12:23:38 xandrej reiser4[kbuildsycoca(3104)]: traverse_tree
+(fs/reiser4/search.c:689)[nikita-1481]:
+Jun  9 12:23:38 xandrej WARNING: Too many iterations: 4096
+Jun  9 12:23:38 xandrej reiser4[kbuildsycoca(3104)]: traverse_tree
+(fs/reiser4/search.c:689)[nikita-1481]:
+Jun  9 12:23:38 xandrej WARNING: Too many iterations: 8192
+Jun  9 12:23:38 xandrej reiser4[kbuildsycoca(3104)]: traverse_tree
+(fs/reiser4/search.c:689)[nikita-1481]:
+Jun  9 12:23:38 xandrej WARNING: Too many iterations: 16384
+Jun  9 12:23:38 xandrej reiser4[kbuildsycoca(3104)]: traverse_tree
+(fs/reiser4/search.c:689)[nikita-1481]:
+Jun  9 12:23:38 xandrej WARNING: Too many iterations: 32768
+Jun  9 12:23:38 xandrej reiser4[kbuildsycoca(3104)]: traverse_tree
+(fs/reiser4/search.c:689)[nikita-1481]:
+Jun  9 12:23:38 xandrej WARNING: Too many iterations: 65536
+Jun  9 12:23:39 xandrej reiser4[kbuildsycoca(3104)]: traverse_tree
+(fs/reiser4/search.c:689)[nikita-1481]:
+Jun  9 12:23:39 xandrej WARNING: Too many iterations: 131072
+Jun  9 12:23:39 xandrej reiser4[kbuildsycoca(3104)]: traverse_tree
+(fs/reiser4/search.c:689)[nikita-1481]:
+Jun  9 12:23:39 xandrej WARNING: Too many iterations: 262144
+Jun  9 12:23:40 xandrej reiser4[kbuildsycoca(3104)]: traverse_tree
+(fs/reiser4/search.c:722)[nikita-373]:
+Jun  9 12:23:40 xandrej WARNING: reiser-2018: Too many iterations. Tree
+corrupted, or (less likely) starvation occurring.: level: 4, lock_level=
+: 2,
+stop_level: 1 lock_mode: read, bias: left-slant
+Jun  9 12:23:40 xandrej reiser4[kbuildsycoca(3104)]: tail2extent
+(fs/reiser4/plugin/file/tail_conversion.c:516)[nikita-2282]:
+Jun  9 12:23:40 xandrej WARNING: Partial conversion of 2426179: -5
 
-Moving the disks to another server is not possible I fear.
+Running fsck.reiser4 revealed corruption on all of my Reiser4 volumes. =
+All
+of them could be fixed, except for /home. :-( I ran fsck.reiser4 --buil=
+d-fs
+--build-sb. Everything went just fine until the sematic tree scan. It g=
+ot
+stuck at 99% with intensive disk usage. After about 10 minutes, the pro=
+gram
+ended with an error message (=E2=80=9Eoperational error=E2=80=9C or som=
+ething of that kind).
+(Just one line, no further details.)
 
+The hard drive is a relatively recent Seagate Momentus 100 GB, 7200 RPM=
+,
+2,5", IDE, checked with smartctl regularly. The drive doesn't seem to b=
+e the
+cause of this...
 
-Ralf
+However, after the (probably unfinished) disk scan, I could still mount=
+ the
+/home partition and KDE started just fine this time. The file system is
+probably not in a consistent state right now. What could I do to stop
+further corruption? What scan options should I use?
+
+I am using ArchLinux and the reiser4progs package supplied with the dis=
+tro.
+
+Best regards,
+
+Andrej Podzimek
+--=20
+View this message in context: http://www.nabble.com/%E2%80%9EToo-many-i=
+terations%E2%80%9C-and-fsck.reiser4-failure-tp17734422p17734422.html
+Sent from the ReiserFS - General mailing list archive at Nabble.com.
+
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
