@@ -1,103 +1,63 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: warning: is_tree_node: node level 56362 does not match to the
- expected one 1
-Date: Tue, 10 Jun 2008 01:27:25 +0400
-Message-ID: <484DA03D.5060207@gmail.com>
-References: <20080608174322.GC19640@p15145560.pureserver.info> <484C4736.3080103@gmail.com> <20080609072909.GA22951@p15145560.pureserver.info>
+Subject: Re: How do I compile a Reiser4 enabled kernel for use on opensuse
+ 11rc1 - 64 bit
+Date: Tue, 10 Jun 2008 01:28:21 +0400
+Message-ID: <484DA075.5080607@gmail.com>
+References: <23466.202.168.22.19.1212986902.squirrel@webmail.velocity.net.au> <73dc97ec25ea6e13a9570f667d88b1cc@free.fr>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20080609072909.GA22951@p15145560.pureserver.info>
+In-Reply-To: <73dc97ec25ea6e13a9570f667d88b1cc@free.fr>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Ralf Gross <Ralf-Lists@ralfgross.de>
-Cc: reiserfs-devel@vger.kernel.org
+To: doiggl@velocitynet.com.au
+Cc: geearf@free.fr, reiserfs-devel@vger.kernel.org
 
-Ralf Gross wrote:
-> Edward Shishkin schrieb:
+John wrote:
+> On Mon, 9 Jun 2008 14:48:22 +1000 (EST), doiggl@velocitynet.com.au wrote:
 >   
->>> Last Friday a backup server running backuppc crashed and did not
->>> respond to pings anymore. I logged in using the IPMI management card
->>> and found this (sorry I couldn't scroll up or get the output from any
->>> logfile):
->>>
->>> http://pirx.askja.de/Supermicro_Daughter_Card_Remote_Console.png
->>>   
->>>       
->> There is no useful info here..
+>> Hello,
+>>     
+>
+> Hello
+>   
+>> I have a reiser4 query.
 >>
->> I also don't have successful experience with such remote consoles:
->> It doesn't fit a stacktrace. Desperate attempts to parse packets with
->> ngrep didn't' t lead to happy end..
->>     
->
-> Maybe I should use netconsole on my servers, but as the server was not
-> responding to ping packets, I doubt it would have been a big help.
->  
->   
->>> Next I reset the system and booted. But I couldn't boot the system to
->>> the login prompt. Many reiserfs warnings appeared.
->>>
->>> To start reiserfsck I booted grml from CD. The first run with the
->>> check option resulted in errors and I restarted reiserfsck with the
->>> --rebuilt-tree option which complained after 40% about a possible
->>> harware problems.
->>>
->>> http://pirx.askja.de/Supermicro_Daughter_Card_Remote_Console-1.png
->>>
->>> With the rescue CD I could also take a look at the system logfiles
->>> from the time of the crash:
->>>
->>>   
->>>       
->> olala... it definitely seems like hardware problems..
->>     
->
-> But I can't find any hardware problems for the last 2 days.
->  
->   
+>> Questions.
+>> 1. I would like to set up a reiser4 file system and I need help on how to
+>> compile a kernel for it. Can you tell me the steps to compile and install
+>> a reiser4 enabled kernel please ?.
 
-How did you test it?
-Were relevant controllers, cables, etc. involved?
+Is "/" supposed to be on reiser4?
+Note, that in this case SUSE10.3 requires initrd to contain reiser4 module.
+Not sure about 11.0...
 
->>> Jun  5 21:59:20 server -- MARK --
->>> Jun  5 22:05:54 server kernel: ReiserFS: warning: is_tree_node: node level 56362 does not match to the expected one 1
->>> Jun  5 22:05:54 server kernel: ReiserFS: dm-0: warning: vs-5150: search_by_key: invalid format found in block 514510379. Fsck?
->>> Jun  5 22:05:54 server kernel: ReiserFS: dm-0: warning: zam-7001: io error in reiserfs_find_entry
->>>   
->>>       
->> [...]
+>>  I would use a vanilla kernel to patch
+>> and build.
 >>     
->>> Hardware:
->>>
->>> Supermicro Mainboard
->>> C2D CPU
->>> 4 GB ECC RAM
->>> Areca SATA RAID Controller
->>>
->>> The system was running as backuppc server for 18 months without
->>> problems. No power failure or other harware problems were detected
->>> before the fail.
->>>
->>> Since Friday I've been running memtest86+ (20 passes, app. 25 hours),
->>> prime95 and badblocks. No problems so far.
->>>
->>>   
->>>       
->> Did you check all your hard drives with badblocks after the crash?
->>     
->
-> Not one by one, but the 3 raid volume sets (sdc, sdd and sde). No bad
-> blocks were found (non destructiv badblock test of course). I also
-> used the "Check Volume Set" option of the Arcea controller. 
->  
+> Here you will find a tutorial for that:
+> http://linuxhelp.150m.com/installs/compile-kernel.htm
 >   
->> If yes, then try to build and check the same configuration with the
->> same hard drives on another box. No more ideas.
+>> 2. What command do I use to format a blank disk partition to reiser4 ? so
+>> I can use it.
 >>     
+> for a normal partition: mkfs.reiser4 /dev/yourpartition
+> for a cryptcompress partition: mkfs.reiser4 -o create=ccreg40 /dev/yourpartition
 >
-> Moving the disks to another server is not possible I fear.
 >   
-
-How much space is occupied on dm-0? (df -h)
+>> 3. How can I validate a reiser4 partition is ok ?.
+>>
+>>     
+> fsck.reiser4 /dev/yourpartition (with the partition unmounted)?
+>   
+>> I am using opensuse 11 rc1 (64 bit system) on a test pc with a additional
+>> hard disk with no partitions on it and would like to set up reiser4 on it.
+>>
+>> I can get reiser4progs and reiser4progs-devel already compiled to a rpm
+>> from:
+>> http://download.opensuse.org/repositories/home:/lmich/openSUSE_11.0/x86_64/reiser4progs-1.0.6-15.3.x86_64.rpm
+>> http://download.opensuse.org/repositories/home:/lmich/openSUSE_11.0/x86_64/reiser4progs-devel-1.0.6-15.3.x86_64.rpm
+>>
+>>     
+Ok, install both, it should work.
