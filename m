@@ -1,77 +1,33 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: warning: is_tree_node: node level 56362 does not match to the
- expected one 1
-Date: Tue, 10 Jun 2008 22:11:59 +0400
-Message-ID: <484EC3EF.8050909@gmail.com>
-References: <20080608174322.GC19640@p15145560.pureserver.info> <484C4736.3080103@gmail.com> <20080609072909.GA22951@p15145560.pureserver.info> <484DA03D.5060207@gmail.com> <20080610110119.GC22951@p15145560.pureserver.info>
+Subject: Re: =?UTF-8?B?4oCeVG9vIG1hbnkgaXRlcmF0aW9uc+KAnCBhbmQgZnNjay5yZWk=?=
+ =?UTF-8?B?c2VyNCBmYWlsdXJl?=
+Date: Wed, 11 Jun 2008 02:43:59 +0400
+Message-ID: <484F03AF.5000606@gmail.com>
+References: <17734422.post@talk.nabble.com> <484DA0A8.8010401@gmail.com> <484DB99D.5070009@podzimek.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20080610110119.GC22951@p15145560.pureserver.info>
+In-Reply-To: <484DB99D.5070009@podzimek.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Ralf Gross <Ralf-Lists@ralfgross.de>
+To: Andrej Podzimek <andrej@podzimek.org>
 Cc: reiserfs-devel@vger.kernel.org
 
-Ralf Gross wrote:
-> Edward Shishkin schrieb:
->   
->> Ralf Gross wrote:
->>     
->>> Edward Shishkin schrieb:
->>>       
->>>>> http://pirx.askja.de/Supermicro_Daughter_Card_Remote_Console-1.png
->>>>>
->>>>> With the rescue CD I could also take a look at the system logfiles
->>>>> from the time of the crash:
->>>>>
->>>>>   
->>>>>       
->>>>>           
->>>> olala... it definitely seems like hardware problems..
->>>>     
->>>>         
->>> But I can't find any hardware problems for the last 2 days.
->>>  
->>>   
->>>       
->> How did you test it?
->> Were relevant controllers, cables, etc. involved?
->>     
+Andrej Podzimek wrote:
+>> Please, make sure that you are using the latest version of reiser4:
+>> there was a bug which could cause data corruption:
+>> http://marc.info/?l=reiserfs-devel&m=120914767218498&w=2
 >
-> I didn't check the cables or opened the chassis. But neither memtest
-> nor badblocks found anything interesting. 
+> I am using Vanilla 2.6.24.7 (with Reiser4 patchset, of course). Maybe
+> I should upgrade to 2.6.25.x... The bug seems to be quite recent.
 >
->   
->> [...]
->>     
->>>> If yes, then try to build and check the same configuration with the
->>>> same hard drives on another box. No more ideas.
->>>>     
->>>>         
->>> Moving the disks to another server is not possible I fear.
->>>   
->>>       
->> How much space is occupied on dm-0? (df -h)
->>     
+>> Would you please pack the metadata of your /home by
+>> debugfs.reiser4 -P /dev/xxx | gzip > meta.gz
+>> and let me download the file meta.gz
 >
-> ~ 1 TB.
+> Yes, here it is: http://andrej.podzimek.org/meta.gz
 >
-> Anyway, I couldn't wait any longer to get the system online again. So
-> I started from scratch and created one new raid volume (instead of 3)
-> and don't use lvm anymore. As the controller has the ability to expand
-> raid volumes, I won't need lvm.
->
-> Next I'll fill the filesystem and calculate the md5sums for a couple
-> of times. If this doesn't shows any problems, I *hope* that I can
-> trust the hardware.  
->
-> Any other ideas? Is there a tool that does the above thing (fill a fs
-> and check the md5sums x times)?
->   
 
-I find md5sums over fs rather useless.
-
-If rebuild-tree stops at the same block, then it would make sense to export
-the partition somehow to look whats up..
+Your fs looks consistent, just --build-fs produces false alarm.
+I'll take a look..
