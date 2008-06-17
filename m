@@ -1,33 +1,32 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: =?UTF-8?B?4oCeVG9vIG1hbnkgaXRlcmF0aW9uc+KAnCBhbmQgZnNjay5yZWk=?=
- =?UTF-8?B?c2VyNCBmYWlsdXJl?=
-Date: Wed, 11 Jun 2008 02:43:59 +0400
-Message-ID: <484F03AF.5000606@gmail.com>
-References: <17734422.post@talk.nabble.com> <484DA0A8.8010401@gmail.com> <484DB99D.5070009@podzimek.org>
+From: Arne Babenhauserheide <arne_bab@web.de>
+Subject: Re: New location of Namesys software
+Date: Tue, 17 Jun 2008 06:34:54 +0000 (UTC)
+Message-ID: <loom.20080617T063134-626@post.gmane.org>
+References: <480930F6.8090903@gmail.com> <e66692850804221715l709dd407w8c2904609e88be2@mail.gmail.com> <4812238B.6010805@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <484DB99D.5070009@podzimek.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Andrej Podzimek <andrej@podzimek.org>
-Cc: reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-Andrej Podzimek wrote:
->> Please, make sure that you are using the latest version of reiser4:
->> there was a bug which could cause data corruption:
->> http://marc.info/?l=reiserfs-devel&m=120914767218498&w=2
->
-> I am using Vanilla 2.6.24.7 (with Reiser4 patchset, of course). Maybe
-> I should upgrade to 2.6.25.x... The bug seems to be quite recent.
->
->> Would you please pack the metadata of your /home by
->> debugfs.reiser4 -P /dev/xxx | gzip > meta.gz
->> and let me download the file meta.gz
->
-> Yes, here it is: http://andrej.podzimek.org/meta.gz
->
+Edward Shishkin <edward.shishkin <at> gmail.com> writes:
 
-Your fs looks consistent, just --build-fs produces false alarm.
-I'll take a look..
+> Yes, I think it makes sense to move namesys  git repos to 
+> http://www.kernel.org/pub/scm/
+> and, perhaps, we'll do so, as soon they are available..
+
+Are they available, now? 
+
+I saw many other public git repositories there, so I assume they are - but I'm 
+not perfectly sure about it (else I wouldn't ask). 
+
+It would be nice to have reiser4 code in the open again. It still is one of the 
+most promising filesystems for me. 
+
+Best wishes, 
+Arne
+- http://infinite-hands.draketo.de - singing a part of the history of free 
+software. 
+
