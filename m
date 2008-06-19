@@ -1,32 +1,34 @@
-From: Arne Babenhauserheide <arne_bab@web.de>
-Subject: Re: New location of Namesys software
-Date: Tue, 17 Jun 2008 06:34:54 +0000 (UTC)
-Message-ID: <loom.20080617T063134-626@post.gmane.org>
-References: <480930F6.8090903@gmail.com> <e66692850804221715l709dd407w8c2904609e88be2@mail.gmail.com> <4812238B.6010805@gmail.com>
-Mime-Version: 1.0
+From: "J. Todd Slack" <mailinglists@jasonandannette.us>
+Subject: Reiser4 Maintainer
+Date: Thu, 19 Jun 2008 10:09:50 -0700
+Message-ID: <1CCA8592-A78B-4DC8-AF53-ACD69CAE14C4@jasonandannette.us>
+Mime-Version: 1.0 (Apple Message framework v924)
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"; delsp="yes"
 To: reiserfs-devel@vger.kernel.org
 
-Edward Shishkin <edward.shishkin <at> gmail.com> writes:
+Hello All,
 
-> Yes, I think it makes sense to move namesys  git repos to 
-> http://www.kernel.org/pub/scm/
-> and, perhaps, we'll do so, as soon they are available..
+I have spend a long time over the last years studying Reiser 3 and  
+Reiser4.
 
-Are they available, now? 
+How would I go about becoming the new Reiser maintainer?
 
-I saw many other public git repositories there, so I assume they are - but I'm 
-not perfectly sure about it (else I wouldn't ask). 
+I would like to work on changing Reiser appropriately to get accepted  
+in the the kernel. I am sure that I am not aware of all issues at this  
+point, but I have known of some issues.
 
-It would be nice to have reiser4 code in the open again. It still is one of the 
-most promising filesystems for me. 
+I have attempted to contact Edward Shishkin, but no response.
 
-Best wishes, 
-Arne
-- http://infinite-hands.draketo.de - singing a part of the history of free 
-software. 
+Would anyone have thoughts?
+
+Where can one get the latest source at this point, the source base I  
+have is not current?
+
+Thanks!
+
+-Jason
 
