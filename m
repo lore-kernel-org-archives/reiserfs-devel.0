@@ -1,56 +1,60 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: New location of Namesys software
-Date: Fri, 20 Jun 2008 01:55:41 +0400
-Message-ID: <485AD5DD.50604@gmail.com>
-References: <480930F6.8090903@gmail.com> <e66692850804221715l709dd407w8c2904609e88be2@mail.gmail.com> <4812238B.6010805@gmail.com> <loom.20080617T063134-626@post.gmane.org>
+Subject: Re: Reiser4 Maintainer
+Date: Fri, 20 Jun 2008 01:56:10 +0400
+Message-ID: <485AD5FA.7090809@gmail.com>
+References: <1CCA8592-A78B-4DC8-AF53-ACD69CAE14C4@jasonandannette.us>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <loom.20080617T063134-626@post.gmane.org>
+In-Reply-To: <1CCA8592-A78B-4DC8-AF53-ACD69CAE14C4@jasonandannette.us>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Arne Babenhauserheide <arne_bab@web.de>
+To: "J. Todd Slack" <mailinglists@jasonandannette.us>
 Cc: reiserfs-devel@vger.kernel.org
 
-Arne Babenhauserheide wrote:
-> Edward Shishkin <edward.shishkin <at> gmail.com> writes:
+J. Todd Slack wrote:
+> Hello All,
 >
->   
->> Yes, I think it makes sense to move namesys  git repos to 
->> http://www.kernel.org/pub/scm/
->> and, perhaps, we'll do so, as soon they are available..
->>     
->
-> Are they available, now? 
->
->   
 
-The original repositories were on a died machine and not yet restored..
+Hello.
 
-> I saw many other public git repositories there, so I assume they are - but I'm 
-> not perfectly sure about it (else I wouldn't ask). 
+> I have spend a long time over the last years studying Reiser 3 and
+> Reiser4.
 >
->   
+> How would I go about becoming the new Reiser maintainer?
+>
+> I would like to work on changing Reiser appropriately to get accepted
+> in the the kernel. I am sure that I am not aware of all issues at this
+> point, but I have known of some issues.
+>
+> I have attempted to contact Edward Shishkin, but no response.
 
-Do you need exactly a git repository?
-The reiser4 code is also available in the -mm kernel tree..
+Yeah, sometimes I can not reply immediately..
+
+>
+> Would anyone have thoughts?
+
+Ok, let's start with #14
+Since google dropped the cache, pull it as the first item of this list:
+http://lkml.org/lkml/2006/8/3/38 (about set_page_dirty_internal).
+
+Also there is a small, but nasty leak of free disk space when process
+runs in
+no-space-left-on-device mode. It can be reproduced by the following way:
+
+1) format a small partition by mkfs.reiser4 with no options;
+2) mount it and look at "df" output;
+3) run stress.sh -n 20; let it to work some time with complaints about
+no space left on device;
+4) terminate stress benchmark and remove everything on the partition;
+5) sync and look at "df" output: it can show more used space, then it
+was reported at (2).
+
+It would be great to fix this leak.
+There is a hint: this leak is related to tail conversion (if you format
+a partition with "extents only" policy, then it doesn't take place).
 
 Thanks,
 Edward.
-
-> It would be nice to have reiser4 code in the open again. It still is one of the 
-> most promising filesystems for me. 
->
-> Best wishes, 
-> Arne
-> - http://infinite-hands.draketo.de - singing a part of the history of free 
-> software. 
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->   
 
