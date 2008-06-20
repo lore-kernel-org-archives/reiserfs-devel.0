@@ -1,44 +1,33 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: Nightly Builds
-Date: Fri, 20 Jun 2008 15:57:29 -0400
-Message-ID: <485C0BA9.5090902@suse.com>
-References: <66CE03FC-0D5A-4837-A2F5-1D00833EE70E@jasonandannette.us>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: New location of Namesys software
+Date: Sat, 21 Jun 2008 02:36:59 +0400
+Message-ID: <485C310B.3090509@gmail.com>
+References: <480930F6.8090903@gmail.com> <loom.20080617T063134-626@post.gmane.org> <485AD5DD.50604@gmail.com> <200806201126.21606.arne_bab@web.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <66CE03FC-0D5A-4837-A2F5-1D00833EE70E@jasonandannette.us>
+In-Reply-To: <200806201126.21606.arne_bab@web.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "J. Todd Slack" <mailinglists@jasonandannette.us>
+To: arne_bab@web.de
 Cc: reiserfs-devel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Arne Babenhauserheide wrote:
+> Am Donnerstag 19 Juni 2008 23:55:41 schrieb Edward Shishkin:
+>   
+>> The original repositories were on a died machine and not yet restored..
+>> Do you need exactly a git repository?
+>>     
+>
+> I would prefer a Mercurial repository, but I think having any kind of 
+> distributed source repository is what's most important. 
+>
+>   
+>> The reiser4 code is also available in the -mm kernel tree..
+>>     
+>
+> Is everything in the -mm tree?
+>   
 
-J. Todd Slack wrote:
-> Hi,
-> 
-> I was wondering if there is a automated nightly build that goes on based
-> upon source checkins for the day.
-> 
-> Would it be a good idea for someone to do this? I have the
-> infrastructure to do so.
-
-The opensuse build service would also be perfect for this. It's possible
-to have scripts using osc that will check in changes automatically. It
-has support for a ridiculous number of distributions and versions.
-
-- -Jeff
-
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
-
-iEYEARECAAYFAkhcC6kACgkQLPWxlyuTD7LAiACglwjP4FCLE2hGukk0PKwOIx7G
-f3EAn0AHrV8RJi/jKxvcBFbPUIIUqiWB
-=J3EU
------END PGP SIGNATURE-----
+yes, it contains the latest stuff
