@@ -1,33 +1,57 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: New location of Namesys software
-Date: Sat, 21 Jun 2008 02:36:59 +0400
-Message-ID: <485C310B.3090509@gmail.com>
-References: <480930F6.8090903@gmail.com> <loom.20080617T063134-626@post.gmane.org> <485AD5DD.50604@gmail.com> <200806201126.21606.arne_bab@web.de>
+Subject: Re: Reiser4 Maintainer
+Date: Sat, 21 Jun 2008 02:37:22 +0400
+Message-ID: <485C3122.70900@gmail.com>
+References: <1CCA8592-A78B-4DC8-AF53-ACD69CAE14C4@jasonandannette.us> <485AD5FA.7090809@gmail.com> <15E87432-4EBE-4268-B312-3F84E4D065E4@jasonandannette.us>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <200806201126.21606.arne_bab@web.de>
+In-Reply-To: <15E87432-4EBE-4268-B312-3F84E4D065E4@jasonandannette.us>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: arne_bab@web.de
+To: "J. Todd Slack" <mailinglists@jasonandannette.us>
 Cc: reiserfs-devel@vger.kernel.org
 
-Arne Babenhauserheide wrote:
-> Am Donnerstag 19 Juni 2008 23:55:41 schrieb Edward Shishkin:
->   
->> The original repositories were on a died machine and not yet restored..
->> Do you need exactly a git repository?
->>     
+J. Todd Slack wrote:
+> Hi,
 >
-> I would prefer a Mercurial repository, but I think having any kind of 
-> distributed source repository is what's most important. 
+>>> I have attempted to contact Edward Shishkin, but no response.
+>>
+>> Yeah, sometimes I can not reply immediately..
 >
->   
->> The reiser4 code is also available in the -mm kernel tree..
->>     
+> OK, I was just thinking that you did not exist anymore. No worries.
 >
-> Is everything in the -mm tree?
->   
+>>> Would anyone have thoughts?
+>>
+>> Ok, let's start with #14
+>> Since google dropped the cache, pull it as the first item of this list:
+>> http://lkml.org/lkml/2006/8/3/38 (about set_page_dirty_internal).
+>>
+>> Also there is a small, but nasty leak of free disk space when process
+>> runs in
+>> no-space-left-on-device mode. It can be reproduced by the following way:
+>>
+>> 1) format a small partition by mkfs.reiser4 with no options;
+>> 2) mount it and look at "df" output;
+>> 3) run stress.sh -n 20; let it to work some time with complaints about
+>> no space left on device;
+>> 4) terminate stress benchmark and remove everything on the partition;
+>> 5) sync and look at "df" output: it can show more used space, then it
+>> was reported at (2).
+>>
+>> It would be great to fix this leak.
+>> There is a hint: this leak is related to tail conversion (if you format
+>> a partition with "extents only" policy, then it doesn't take place).
+>
+> So who is the maintainer at this point?
 
-yes, it contains the latest stuff
+I am.
+
+> Is there a vacancy? 
+
+There is a number of problems to resolve.
+Most likely that nobody will touch the listed one in the near future.
+
+Thanks,
+Edward.
