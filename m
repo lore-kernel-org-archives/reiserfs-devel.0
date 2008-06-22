@@ -1,57 +1,66 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Reiser4 Maintainer
-Date: Sat, 21 Jun 2008 02:37:22 +0400
-Message-ID: <485C3122.70900@gmail.com>
-References: <1CCA8592-A78B-4DC8-AF53-ACD69CAE14C4@jasonandannette.us> <485AD5FA.7090809@gmail.com> <15E87432-4EBE-4268-B312-3F84E4D065E4@jasonandannette.us>
+From: doiggl@velocitynet.com.au
+Subject: Re: Nightly Builds
+Date: Mon, 23 Jun 2008 00:51:33 +1000 (EST)
+Message-ID: <28097.202.168.22.19.1214146293.squirrel@webmail.velocity.net.au>
+References: <66CE03FC-0D5A-4837-A2F5-1D00833EE70E@jasonandannette.us>
+    <485C0BA9.5090902@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <15E87432-4EBE-4268-B312-3F84E4D065E4@jasonandannette.us>
+In-Reply-To: <485C0BA9.5090902@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "J. Todd Slack" <mailinglists@jasonandannette.us>
-Cc: reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-J. Todd Slack wrote:
-> Hi,
+Hello,
+I tend to agree with Jeff on this one, and I would like it on the opensuse
+build service too.
+That would allow more people to access/use/test/try out a built kernel
+with those reiser4 features provided, and the build process can be
+automated as I understand and patches can go in as needed.
+Opensuse build service [for those that do not know] is located at
+https://build.opensuse.org/
+I have not got the expertise to put it on the Opensuse service myself.
+
+Is there anyone else willing to have a go to make a Reiser4 based kernel
+on the Opensuse build service ?
+Glenn.
+
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
 >
->>> I have attempted to contact Edward Shishkin, but no response.
+> J. Todd Slack wrote:
+>> Hi,
 >>
->> Yeah, sometimes I can not reply immediately..
+>> I was wondering if there is a automated nightly build that goes on based
+>> upon source checkins for the day.
+>>
+>> Would it be a good idea for someone to do this? I have the
+>> infrastructure to do so.
 >
-> OK, I was just thinking that you did not exist anymore. No worries.
+> The opensuse build service would also be perfect for this. It's possible
+> to have scripts using osc that will check in changes automatically. It
+> has support for a ridiculous number of distributions and versions.
 >
->>> Would anyone have thoughts?
->>
->> Ok, let's start with #14
->> Since google dropped the cache, pull it as the first item of this list:
->> http://lkml.org/lkml/2006/8/3/38 (about set_page_dirty_internal).
->>
->> Also there is a small, but nasty leak of free disk space when process
->> runs in
->> no-space-left-on-device mode. It can be reproduced by the following way:
->>
->> 1) format a small partition by mkfs.reiser4 with no options;
->> 2) mount it and look at "df" output;
->> 3) run stress.sh -n 20; let it to work some time with complaints about
->> no space left on device;
->> 4) terminate stress benchmark and remove everything on the partition;
->> 5) sync and look at "df" output: it can show more used space, then it
->> was reported at (2).
->>
->> It would be great to fix this leak.
->> There is a hint: this leak is related to tail conversion (if you format
->> a partition with "extents only" policy, then it doesn't take place).
+> - -Jeff
 >
-> So who is the maintainer at this point?
+> - --
+> Jeff Mahoney
+> SUSE Labs
+> -----BEGIN PGP SIGNATURE-----
+> Version: GnuPG v2.0.9 (GNU/Linux)
+> Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
+>
+> iEYEARECAAYFAkhcC6kACgkQLPWxlyuTD7LAiACglwjP4FCLE2hGukk0PKwOIx7G
+> f3EAn0AHrV8RJi/jKxvcBFbPUIIUqiWB
+> =J3EU
+> -----END PGP SIGNATURE-----
+> --
+> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
 
-I am.
 
-> Is there a vacancy? 
-
-There is a number of problems to resolve.
-Most likely that nobody will touch the listed one in the near future.
-
-Thanks,
-Edward.
