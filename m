@@ -1,47 +1,45 @@
-From: doiggl@velocitynet.com.au
-Subject: Re: Nightly Builds of reiser4
-Date: Fri, 11 Jul 2008 23:58:08 +1000 (EST)
-Message-ID: <25202.202.168.22.19.1215784688.squirrel@webmail.velocity.net.au>
-References: <48766BD8.3060902@ontolab.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] reiserfs: discard prealloc in reiserfs_delete_inode
+Date: Fri, 11 Jul 2008 12:18:50 -0700
+Message-ID: <20080711121850.dfd60681.akpm@linux-foundation.org>
+References: <4873B3D2.1090101@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <48766BD8.3060902@ontolab.com>
+In-Reply-To: <4873B3D2.1090101@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: "stroetmann@ontolab.com" <stroetmann@ontolab.com>
-Cc: reiserfs-devel@vger.kernel.org, jeffm@suse.com
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
-Hello Christian,
-I've got no cross-compilation experience, but the following entry may give
-some clues:
-The opensuse build service (https://build.opensuse.org/) caters for Debian
-Etch that may help too.
-The development list may me able to assist in some way :-)
+On Tue, 08 Jul 2008 14:37:06 -0400 Jeff Mahoney <jeffm@suse.com> wrote:
 
-The following comes from
-http://www.nabble.com/Nightly-Builds-to18036195.html
+>  With the removal of struct file from the xattr code, reiserfs_file_release()
+>  isn't used anymore, so the prealloc isn't discarded. This causes hangs
+>  later down the line.
+> 
+>  This patch adds it to reiserfs_delete_inode. In most cases it will be
+>  a no-op due to it already having been called, but will avoid hangs with xattrs.
+> 
+> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+> ---
+>  fs/reiserfs/inode.c |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> --- a/fs/reiserfs/inode.c
+> +++ b/fs/reiserfs/inode.c
+> @@ -45,6 +45,8 @@ void reiserfs_delete_inode(struct inode
+>  			goto out;
+>  		reiserfs_update_inode_transaction(inode);
+>  
+> +		reiserfs_discard_prealloc(&th, inode);
+> +
+>  		err = reiserfs_delete_object(&th, inode);
+>  
+>  		/* Do quota update inside a transaction for journaled quotas. We must do that
 
-Jeff wrote
-> No, I don't build entire kernels - just the kernel module package. The
-> package will just contain
-> /lib/modules/$VERSION/kernel/fs/reiser4/reiser4.ko. If you want to boot
-> using reiser4, put the module in your initramfs.
-> - -Jeff
+Can you please remind us when "the removal of struct file from the xattr
+code" happened?
 
-Also a big thankyou Jeff for all your help.
-Cheers Glenn
-
-
-Christian Wrote:
-> Dear Glenn
-> I have seen, that you succesfully installed the reiser4 kernel module
-> with openSUSE.
-> I would like to do it for Debian in the same way. Do you have any ideas
-> for doing this?
->
-> With best regards
-> Christian Stroetmann
-
-
+Because hangs aren't good, and 2.6.25 might want this.
