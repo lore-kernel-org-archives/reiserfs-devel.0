@@ -1,40 +1,47 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: What is fixable and what isn't? reiserfsck
-Date: Fri, 11 Jul 2008 14:40:13 +0400
-Message-ID: <4877388D.7030200@gmail.com>
-References: <18384832.post@talk.nabble.com>
+From: doiggl@velocitynet.com.au
+Subject: Re: Nightly Builds of reiser4
+Date: Fri, 11 Jul 2008 23:58:08 +1000 (EST)
+Message-ID: <25202.202.168.22.19.1215784688.squirrel@webmail.velocity.net.au>
+References: <48766BD8.3060902@ontolab.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <18384832.post@talk.nabble.com>
+In-Reply-To: <48766BD8.3060902@ontolab.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: validator <carlosemilio@hotmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+To: "stroetmann@ontolab.com" <stroetmann@ontolab.com>
+Cc: reiserfs-devel@vger.kernel.org, jeffm@suse.com
 
-Hello.
+Hello Christian,
+I've got no cross-compilation experience, but the following entry may give
+some clues:
+The opensuse build service (https://build.opensuse.org/) caters for Debian
+Etch that may help too.
+The development list may me able to assist in some way :-)
 
-I guess "fixable" corruption is what can be fixed without --rebuild-tree.
-I.e. without involving special fsck passes, that will perform a lot of
-unneeded work.
+The following comes from
+http://www.nabble.com/Nightly-Builds-to18036195.html
 
-Normally, corruption status is figured out by fsck --check (default mode)
-with the following suggestion how to fix it.
+Jeff wrote
+> No, I don't build entire kernels - just the kernel module package. The
+> package will just contain
+> /lib/modules/$VERSION/kernel/fs/reiser4/reiser4.ko. If you want to boot
+> using reiser4, put the module in your initramfs.
+> - -Jeff
 
-Thanks,
-Edward.
+Also a big thankyou Jeff for all your help.
+Cheers Glenn
 
-validator wrote:
-> Hello, I've benn trying to find a definition of a "fixable corruption" (or
-> minor corruption) versus a "non fixable" corruption. I just know that the
-> first kind can be fixed by using reiserfsck --fix-fixable and the second
-> kind with --rebuild-tree. I also know that there is a third type that
-> affects the superblock and that can be fixed with --rebuild-sb. Could
-> someone address me to a more technical definition of what is "fixable" and
-> what isn't.
+
+Christian Wrote:
+> Dear Glenn
+> I have seen, that you succesfully installed the reiser4 kernel module
+> with openSUSE.
+> I would like to do it for Debian in the same way. Do you have any ideas
+> for doing this?
 >
-> Thanks.
->
->   
+> With best regards
+> Christian Stroetmann
+
 
