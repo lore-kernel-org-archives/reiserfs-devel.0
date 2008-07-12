@@ -1,66 +1,60 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH] reiserfs: discard prealloc in reiserfs_delete_inode
-Date: Fri, 11 Jul 2008 15:23:37 -0400
-Message-ID: <4877B339.4080103@suse.com>
-References: <4873B3D2.1090101@suse.com> <20080711121850.dfd60681.akpm@linux-foundation.org>
+From: doiggl@velocitynet.com.au
+Subject: Re: Nightly Builds
+Date: Sat, 12 Jul 2008 15:21:59 +1000 (EST)
+Message-ID: <27342.202.168.22.19.1215840119.squirrel@webmail.velocity.net.au>
+References: <66CE03FC-0D5A-4837-A2F5-1D00833EE70E@jasonandannette.us>
+    <485C0BA9.5090902@suse.com>
+    <28097.202.168.22.19.1214146293.squirrel@webmail.velocity.net.au>
+    <485E788A.8020802@suse.com>
+    <15568.202.168.22.19.1214194598.squirrel@webmail.velocity.net.au>
+    <485FAF96.40608@suse.com>
+    <27533.202.168.22.19.1214318654.squirrel@webmail.velocity.net.au>
+    <48610B80.3020908@suse.com>
+    <15208.202.168.22.19.1214398774.squirrel@webmail.velocity.net.au>
+    <48626E1B.6070604@suse.com>
+    <23129.202.168.22.19.1214638448.squirrel@webmail.velocity.net.au>
+    <4866575D.1000305@suse.com>
+    <14971.202.168.22.19.1214748124.squirrel@webmail.velocity.net.au>
+    <4867DC31.2030702@suse.com>
+    <23784.202.168.22.19.1214826598.squirrel@webmail.velocity.net.au>
+    <4868F3C8.2090006@suse.com>
+    <20253.202.168.22.19.1215615647.squirrel@webmail.velocity.net.au>
+    <4874D51A.7020909@suse.com>
+    <24383.202.168.22.19.1215703298.squirrel@webmail.velocity.net.au>
+    <4876301A.6020208@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20080711121850.dfd60681.akpm@linux-foundation.org>
+In-Reply-To: <4876301A.6020208@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Greg KH <gregkh@suse.de>
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: reiserfs-devel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hello,
 
-Andrew Morton wrote:
-> On Tue, 08 Jul 2008 14:37:06 -0400 Jeff Mahoney <jeffm@suse.com> wrote:
-> 
->>  With the removal of struct file from the xattr code, reiserfs_file_release()
->>  isn't used anymore, so the prealloc isn't discarded. This causes hangs
->>  later down the line.
->>
->>  This patch adds it to reiserfs_delete_inode. In most cases it will be
->>  a no-op due to it already having been called, but will avoid hangs with xattrs.
->>
->> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
->> ---
->>  fs/reiserfs/inode.c |    2 ++
->>  1 file changed, 2 insertions(+)
->>
->> --- a/fs/reiserfs/inode.c
->> +++ b/fs/reiserfs/inode.c
->> @@ -45,6 +45,8 @@ void reiserfs_delete_inode(struct inode
->>  			goto out;
->>  		reiserfs_update_inode_transaction(inode);
->>  
->> +		reiserfs_discard_prealloc(&th, inode);
->> +
->>  		err = reiserfs_delete_object(&th, inode);
->>  
->>  		/* Do quota update inside a transaction for journaled quotas. We must do that
-> 
-> Can you please remind us when "the removal of struct file from the xattr
-> code" happened?
-> 
-> Because hangs aren't good, and 2.6.25 might want this.
+Im just trying to verify the reiser4 module exists
+# modprobe -v  reiser4
+ (returns nothing at the prompt)
 
-You're right. It was added in 2.6.25-rc7. I'll ping Greg about including
-it in the stable tree.
+A file listing shows:
+# ll /lib/modules/2.6.25.9-1-default/updates
+total 677
+-rw-r--r-- 1 root root 691602 Jul  3 07:08 reiser4.ko
 
-- -Jeff
+#uname -a
+# uname -a
+Linux orac 2.6.25.9-0.2-default #1 SMP 2008-06-28 00:00:07 +0200 x86_64
+x86_64 x86_64 GNU/Linux
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
+Question: I am puzzled because 'modprobe -v  reiser4' returns nothing at
+the prompt, but file /lib/modules/2.6.25.9-1-default/updates/reiser4.ko
+exists.
 
-iEYEARECAAYFAkh3szkACgkQLPWxlyuTD7IOyACZAd0+kO4D+bPjx1W1pX/APgl+
-eKgAoJ75yKu/IlmHxvlmyWM5DThyKCQL
-=BLAB
------END PGP SIGNATURE-----
+>> - How do I verify the reiser4 module is ready for use ?
+> - Jeff wrote
+> # modprobe reiser4
+
+Glenn
+
