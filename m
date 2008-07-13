@@ -1,32 +1,27 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: Farafonoff <farafonoff@gmail.com>
 Subject: Re: Reiserfs lost data
-Date: Sun, 13 Jul 2008 21:16:09 +0400
-Message-ID: <487A3859.9070005@gmail.com>
-References: <18430405.post@talk.nabble.com>
+Date: Sun, 13 Jul 2008 11:51:47 -0700 (PDT)
+Message-ID: <18432480.post@talk.nabble.com>
+References: <18430405.post@talk.nabble.com> <487A3859.9070005@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <18430405.post@talk.nabble.com>
+In-Reply-To: <487A3859.9070005@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Farafonoff <farafonoff@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-Farafonoff wrote:
-> today my PC had accidentaly reboot, now i have this
->
-> anima:/home/artem# ls -l /usr/lib/locale/
-> total 0
-> ?--------- ? ? ? ?            ? /usr/lib/locale/locale-archive
->
-> i tried to do reiserfsck without rebuild-tree, but it didn't helped. what
-> should i do?
->   
 
 Any related kernel messages?
+no kernel messages, filesystem mounted cleanly
+
 What does reiserfsck with no options report?
+It says I should try --rebuild-tree 
 
+I redirected fsck output to file, it is attached.
+http://www.nabble.com/file/p18432480/fsck.log fsck.log 
+-- 
+View this message in context: http://www.nabble.com/Reiserfs-lost-data-tp18430405p18432480.html
+Sent from the ReiserFS - General mailing list archive at Nabble.com.
 
-Thanks,
-Edward.
