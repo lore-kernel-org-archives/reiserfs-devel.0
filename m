@@ -1,45 +1,48 @@
-From: "Raymond A. Meijer" <rameijer@gmail.com>
-Subject: Re: Reiser4 for 2.6.26?
-Date: Tue, 15 Jul 2008 12:07:49 +0300
-Message-ID: <e5d1dc60807150207n44887096n944539e275f1f0c8@mail.gmail.com>
-References: <200807141929.38962.raymond@internet.gr>
+From: doiggl@velocitynet.com.au
+Subject: Some bonnie++ test results on a reiser4 filesystem
+Date: Wed, 16 Jul 2008 00:59:40 +1000 (EST)
+Message-ID: <28835.202.168.22.19.1216133980.squirrel@webmail.velocity.net.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from:to
-         :subject:in-reply-to:mime-version:content-type
-         :content-transfer-encoding:content-disposition:references;
-        bh=iRW0+x5mS/Lcq3jnyTzvt5w9At7BtOLnaQYgrsu5b7M=;
-        b=OT9uZNwK3J/TnjIjbKjVuSFgilg3sdlmdd4gPQ4HqWFapcJ9QzHJTrccZ/7FgsxgAY
-         S2yKwOxKSOfNW3F4oSZh1CBGj1JGuIjt0BGKQ/gcGZn+oID6mpefay+NVjbJ7tMiNQ6Y
-         +NsxbcheRU4S06QhohdLhhmH/pcRbOsHnMIkY=
-In-Reply-To: <200807141929.38962.raymond@internet.gr>
-Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
-Hello again,
+Hello
+Here are some tests i did with bonnie++
+Glenn.
 
-2008/7/14 Raymond A. Meijer <raymond@internet.gr>:
+# bonnie++ -u root -d /reiser4
+Using uid:0, gid:0.
+Writing with putc()...done
+Writing intelligently...done
+Rewriting...done
+Reading with getc()...done
+Reading intelligently...done
+start 'em...done...done...done...
+Create files in sequential order...done.
+Stat files in sequential order...done.
+Delete files in sequential order...done.
+Create files in random order...done.
+Stat files in random order...done.
+Delete files in random order...done.
+Version 1.01d       ------Sequential Output------ --Sequential Input-
+--Random-
+                    -Per Chr- --Block-- -Rewrite- -Per Chr- --Block--
+--Seeks--
+Machine        Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP 
+/sec %CP
+test            16G 20829  23 23233  12 14092   6 38735  40 39265   7
+122.0   0
+                    ------Sequential Create------ --------Random
+Create--------
+                    -Create-- --Read--- -Delete-- -Create-- --Read---
+-Delete--
+              files  /sec %CP  /sec %CP  /sec %CP  /sec %CP  /sec %CP 
+/sec %CP
+                 16 26414  99 +++++ +++ 21803 100 25668  99 +++++ +++
+20072  99
+test,16G,20829,23,23233,12,14092,6,38735,40,39265,7,122.0,0,16,26414,99,+++++,+++,21803,100,25668,99,+++++,+++,20072,99
 
-> I was wondering...is there a Reiser4 patch for kernel 2.6.26 yet?
-> I tried a patch for 2.6.26-rc8 but it wouldn't compile.
-
-I'm running 2.6.26-zen1 now, with no problems, and Reiser4 works
-fine as well...
-
-Maybe when reiser4-for-2.6.26 comes out I'll give it another try.
-
-
-Thanks,
-
-Ray
-
--- 
-You cannot discover new oceans unless
-you have the courage to lose sight of
-the shore
