@@ -1,73 +1,32 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: reiser4 for 2.6.27-rc1
-Date: Sat, 02 Aug 2008 02:40:06 +0400
-Message-ID: <489390C6.8020903@gmail.com>
-References: <48f7fe350808010649l1111f48enbb6eca3cfcbba67f@mail.gmail.com> <20080801162548.GD8654@mit.edu> <48f7fe350808010934k32b9de09we657e57087a3e3a5@mail.gmail.com> <20080801164541.GF8654@mit.edu> <489352D8.2020700@gmail.com>
+From: doiggl@velocitynet.com.au
+Subject: Re: iozone results
+Date: Sat, 2 Aug 2008 17:31:19 +1000 (EST)
+Message-ID: <25030.202.168.22.19.1217662279.squirrel@webmail.velocity.net.au>
+References: <13479.202.168.22.19.1217597929.squirrel@webmail.vel.net.au>
+    <4893169C.8010000@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <489352D8.2020700@gmail.com>
+In-Reply-To: <4893169C.8010000@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Theodore Tso <tytso@mit.edu>, Ryan Hope <rmh3093@gmail.com>
-Cc: Ric Wheeler <ricwheeler@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
+To: reiserfs-devel@vger.kernel.org
+Cc: Edward Shishkin <edward.shishkin@gmail.com>
 
-Ric Wheeler wrote:
-> Theodore Tso wrote:
->> On Fri, Aug 01, 2008 at 12:34:53PM -0400, Ryan Hope wrote:
->>  
+Questions for Edward:
+1. What are  good tests/or scripts you use (which is available and are
+valid)  to measure throughput on a reiser4 partition ?
+2. Do you have an example I can use, or try ?
+Thank you
+Glenn.
 
-Hi, I am here :)
-Join our mailing list:
-
-http://vger.kernel.org/vger-lists.html#reiserfs-devel
-http://marc.info/?l=reiserfs-devel&r=1&w=2
-
-There are many interesting tasks to resolve/investigate..
-
->>> Hmmm, removing the plugin support might not be so hard....  I might
->>> have to try this...
-
-Please, don't try to do this.
-
-I am working on the plugin design document. It will be ready
-approximately in September. I believe that it'll address all the
-mentioned complaints.
-
->>> I am not impressed with btrfs yet.
->>>     
->>
->> Well, if you're going to work on reiser4 (and I think there were other
->> people who had also expressed interest/plans to work on it; you might
->> try doing a search on the various mailing lists so you can coordinate
->> with them and avoid duplicating work), my suggestion to you would be
->> to find the comments that were made by the reviewers way back when,
->> and make sure those comments have been addressed.
->>
->> Then, re-requests a code review, and promise that you won't abuse, and
->> insult the integrity and impugn the motivations of the reviewers
-
-Well, Ted, I'll promise ;)
-We'll adhere strictly the propositional logic in the review thread..
-
-Thanks,
-Edward.
-
->> like
->> Hans did, and hopefully after they review the code, fix those problems
->> as well.  Then you can try resubmitting for inclusion.
->>
->> Best regards,
->>
->>                                              - Ted
->>   
+> Edward wrote:
+> I am sorry, but iozone doesn't take care of file content and writes
+> something like well compressible zeros. So the results above are
+> meaningless.
 >
-> My most up to date information is that Edward is still actively
-> working on reiser4....
->
-> ric
->
->
+> Thanks,
+> Edward.
 
 
