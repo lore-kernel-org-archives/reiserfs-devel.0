@@ -1,55 +1,79 @@
-From: Volker Armin Hemmann <volker.armin.hemmann@tu-clausthal.de>
-Subject: Re: kernel BUG at fs/reiser4/plugin/item/ctail.c
-Date: Tue, 5 Aug 2008 00:51:37 +0200
-Message-ID: <200808050051.37637.volker.armin.hemmann@tu-clausthal.de>
-References: <558.1643-13003-1386678025-1217242012@post.cz> <4897333E.3030600@gmail.com> <a08621850808041457y2f30559ve104c2a86a5f9970@mail.gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: reiser4 todo list
+Date: Tue, 05 Aug 2008 03:31:08 +0400
+Message-ID: <4897913C.5060901@gmail.com>
+References: <48f7fe350808041430y5fa8e87ch9e7f7e2f76a6fce0@mail.gmail.com> <a08621850808041506i2e73ee26k1ef41f99ec5e9b25@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <a08621850808041457y2f30559ve104c2a86a5f9970@mail.gmail.com>
-Content-Disposition: inline
+In-Reply-To: <a08621850808041506i2e73ee26k1ef41f99ec5e9b25@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+To: Dushan Tcholich <dusanc@gmail.com>
+Cc: Ryan Hope <rmh3093@gmail.com>, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
 
-On Montag, 4. August 2008, Dushan Tcholich wrote:
-> On Mon, Aug 4, 2008 at 6:50 PM, Edward Shishkin
+Dushan Tcholich wrote:
+> Well there's some answers to your questions in the archives:
 >
-> <edward.shishkin@gmail.com> wrote:
-> > Dushan Tcholich wrote:
-> >> On Mon, Aug 4, 2008 at 4:47 PM, Edward Shishkin
-> >>
-> >> <edward.shishkin@gmail.com> wrote:
-> >>> Dushan Tcholich wrote:
-> >>>> Would it be possible if there would be a new version of fsck.reiser4
-> >>>> to fix those false positives about wrong size when checking
-> >>>> cryptocompress partitions?
-> >>>
-> >>> Yes,  per-file warnings about wrong i_bytes should be suppressed.
-> >>> Fsck just should report at the end of work in default mode, that N
-> >>> wrong i_bytes were detected and suggest to fix it with --fix option.
-> >>> Anyone care to try to make a patch?
-> >>
-> >> But what happens with systems with ccreg and fsck on boot? They would
-> >> stop and wait for user interaction.
-> >
-> > Why?
-> > Do you have any problems with boot?
->
-> I don't have problems.
-> I just thought that checking for these false positives lasted 10
-> minutes on my 6GB / so wouldn't this be a little too long if we don't
-> put some status of some sorts?
->
-> >> Or you meant just to print a message about it with recomended solution
-> >> and continue.
-> >
-> > Everything should be the same except per-file warnings.
->
-> Maybe a better explanation would be better instead just: "600000 small
-> errors found" :)
->
+> "You have a TODO list for inclusion if you're interested at
+> http://marc.info/?l=reiserfs-devel&m=120173123713322&w=2
+>   
 
-that would completly freak out people. How about '60000 false file sizes - 
-this is normal with compression'?
+The stuff above is out of date
+
+> Also some review/comments of code would be nice. PPC64 testing too.
+> Gentoo has a vibrant reiser4 users community, you can try to solve
+> theirs reiser4 problems in bugzilla and on forums.
+> Benchmarking of various reiser4 versions from old kernels till current
+> should be usefull."
+> http://marc.info/?l=reiserfs-devel&m=121390468324634&w=2
+>   
+
+ditto
+
+> "Ok, let's start with #14
+> Since google dropped the cache, pull it as the first item of this list:
+> http://lkml.org/lkml/2006/8/3/38 (about set_page_dirty_internal).
+>
+> Also there is a small, but nasty leak of free disk space when process
+> runs in
+> no-space-left-on-device mode. It can be reproduced by the following way:
+>
+> 1) format a small partition by mkfs.reiser4 with no options;
+> 2) mount it and look at "df" output;
+> 3) run stress.sh -n 20; let it to work some time with complaints about
+> no space left on device;
+> 4) terminate stress benchmark and remove everything on the partition;
+> 5) sync and look at "df" output: it can show more used space, then it
+> was reported at (2).
+>
+> It would be great to fix this leak.
+> There is a hint: this leak is related to tail conversion (if you format
+> a partition with "extents only" policy, then it doesn't take place)."
+> http://marc.info/?l=reiserfs-devel&m=121391256004694&w=2
+>
+> Hope this helps
+> On Mon, Aug 4, 2008 at 11:30 PM, Ryan Hope <rmh3093@gmail.com> wrote:
+>   
+>> Is there a todo list, roadmap or bugtracker for what needs to get done
+>> on reiser4?
+>>
+>> -Ryan
+>> --
+>>     
+> Dushan
+>
+>   
+>> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>>     
+> --
+> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>   
+
