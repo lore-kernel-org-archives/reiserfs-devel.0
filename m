@@ -1,114 +1,128 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: reiser4 warning: nikita-3233, extent2tail/release_unix_file failure
-Date: Tue, 05 Aug 2008 22:09:04 +0400
-Message-ID: <48989740.4080004@gmail.com>
-References: <54b33ccd0808050840i5ea6c424q4aa0f5ca2cb20142@mail.gmail.com>
+Subject: Re: Todo for inclusion (updated 05 Aug 2008)
+Date: Tue, 05 Aug 2008 22:10:48 +0400
+Message-ID: <489897A8.2060308@gmail.com>
+References: <48979244.3040903@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <54b33ccd0808050840i5ea6c424q4aa0f5ca2cb20142@mail.gmail.com>
+In-Reply-To: <48979244.3040903@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Marti Raudsepp <marti@juffo.org>
-Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: Reiserfs mailing list <reiserfs-devel@vger.kernel.org>, Ryan Hope <rmh3093@gmail.com>
 
-Marti Raudsepp wrote:
-> Hello reiserfs-devel,
+                               Todo (bugtracking)
+
+
+1. Compilation warnings on powerpc machine
+
+2. Unexpected ENOSPC when free disk space is far from being exhausted:
+    http://marc.info/?l=reiserfs-devel&m=121795113124703&w=2
+    (to find the way to reproduce)
+
+3. Leak of free disk space related to tail conversion:
+   http://marc.info/?l=reiserfs-devel&m=121391256004694&w=2  
+
+
+>            Todo for inclusion (updated 05 Aug 2008)
 >
-> I don't know what sort of workload caused this problem, but I found
-> these warnings in my dmesg. I am using reiser4 for /usr/portage
+>
+> The updated todo-list initially composed by Akpm is attached.
+> It makes sense to try to address the following items
+> (complexity is increased):
+>
+> #10,11: Cleanups.
+>
+> #3 There is a pending patch to review/merge:
+> http://marc.info/?l=reiserfs-devel&m=119316601418489&w=2
+>
+> #9: I don't see any leaked jref there. Perhaps we need to rewrite this
+> portion of code to make it more clear.
+>
+> #14 needs to be addressed.
 >   
-
-Hello.
-
-Actually this is complaints about no disk space (28 == ENOSPC).
-And your free disk space looks far from being exhausted, right?
-
-I think this is other side of the problem I have announced
-(leak of disk space related to tail conversion). Unfortunately,
-I have lost the scenario for reproducing this problem.
-Will go to todo-list.
-
-Thanks,
-Edward.
-
-
-> (Gentoo Portage tree) and /usr/src and /var/tmp where compilation
-> takes place, so presumably it's one of: rsync on lots of small files,
-> untarring, compiling, copying files off the partition, or recursive
-> rm.
+> ------------------------------------------------------------------------
 >
-> I have a hunch that these errors happened during the icedtea6 Java VM
-> compilation, which failed with awkward "file not found" errors once,
-> but worked on the second attempt, and the timestamp seems to agree.
-> Whatever it was, it's gone now. Reading all files on the partition did
-> not reproduce the warnings (using "find -xdev -type f |xargs cat --
->   
->> /dev/null"); nor did fsck.reiser4 find any problems with any of the
->>     
-> file systems.
+> Tasks are needed to done for getting reiser4 code into the kernel as found by AKPM in 2.6.18-rc2-mm1 (# means that an issue is done)
 >
-> Someone else also reported this warning back in 2006 June:
-> http://www.mail-archive.com/reiserfs-list@namesys.com/msg21231.html
+>    1. - running igrab() in the writepage() path is really going to hammer inode_lock. Something else will need to be done here.
+>    2. The preferred way of solving the above would be to mark the page as
 >
-> I'm using the vanilla 2.6.26 kernel, with reiser4-for-2.6.25.patch.gz,
-> on AMD64; reiser4 partitions are all mounted from LVM2 logical volumes
-> on a single SATA disk.
+>       PageWriteback() with set_page_writeback() prior to unlocking it. That'll pin the page and the inode. It does require that the page actually get written later on. If we cannot do that then more thought is needed.
+>    3. If poss, use wake_up_process() rather than wake_up(). That'll save some locking.
+>    4. Running iput() in entd() is a bit surprising. iirc there are various ways in which this can recur into the filesystem, perform I/O, etc. I guess it works.. But again, it will hammer inode_lock.
+>    5. the writeout logic in entd_flush() is interesting (as in "holy cow"). It's very central and really needs some good comments describing what's going on in there - what problems are being solved, which decisions were taken and why, etc. The big comment in page_cache.c is useful. Please maintain it well. Boy, it has some old stuff in it.
+>    6. reiser4_wait_page_writeback() needs commenting.
+>    7. reading the comment in txnmgr.c regarding MAP_SHARED pages: a number of things have changed since then. We have page-becoming-writeable notifications and probably soon we'll always take a pagefault when a MAP_SHARED page transitions from pte-clean to pte-dirty (although I wouldn't recommend that a filesystem rely upon the latter for a while yet).
+>    8. page_cache.c: yes, mpage_end_io_write() and mpage_end_io_read() are pretty generic - we might as well export them.
+>    9. truncate_jnodes_range() looks wrong to me. When we populate gang[], there can be any number of NULL entries placed in it. But the loop which iterates across the now-populated gang[] will bale out when it its the _first_ NULL entry. Any following entries will have a leaked jref() against them.
+>   10. Waaaaaaaaaaaaaaay too many typedefs.
+>   11. There are many coding-style nits. One I will mention is very large number of unneeded braces:
+>           * if (foo) {
+>                 o bar(); 
+>             } 
+>       it'd be nice to fix these up sometime. Note: Easy to find and repair with checkpatch.pl script found at
 >
-> Here's the dmesg output:
+>       http://www.kernel.org/pub/linux/kernel/people/apw/checkpatch/
+>   12. General comment: the lack of support for extended attributes, access control lists and direct-io is a big problem and it's getting bigger. I don't see how a vendor could support reiser4 without these features and permanent lack of vendor support will hurt. What's the plan here?
+>   13. (from CH)
 >
-> [1006806.639929] reiser4[scanelf(873)]: extent2tail
-> (fs/reiser4/plugin/file/tail_conversion.c:666)[]:
-> [1006806.639931] WARNING: reiser4_write_tail failed
-> [1006806.639939] reiser4[scanelf(873)]: release_unix_file
-> (fs/reiser4/plugin/file/file.c:2332)[nikita-3233]:
-> [1006806.639941] WARNING: Failed (-28) to convert in release_unix_file (4915530)
-> [1006806.695995] reiser4[scanelf(873)]: extent2tail
-> (fs/reiser4/plugin/file/tail_conversion.c:666)[]:
-> [1006806.695995] WARNING: reiser4_write_tail failed
-> [1006806.695995] reiser4[scanelf(873)]: release_unix_file
-> (fs/reiser4/plugin/file/file.c:2332)[nikita-3233]:
-> [1006806.695995] WARNING: Failed (-28) to convert in release_unix_file (4915541)
-> [1006806.723582] reiser4[scanelf(873)]: extent2tail
-> (fs/reiser4/plugin/file/tail_conversion.c:666)[]:
-> [1006806.723584] WARNING: reiser4_write_tail failed
-> [1006806.723589] reiser4[scanelf(873)]: release_unix_file
-> (fs/reiser4/plugin/file/file.c:2332)[nikita-3233]:
-> [1006806.723591] WARNING: Failed (-28) to convert in release_unix_file (4915584)
-> [1006806.726080] reiser4[scanelf(873)]: extent2tail
-> (fs/reiser4/plugin/file/tail_conversion.c:666)[]:
-> [1006806.726082] WARNING: reiser4_write_tail failed
-> [1006806.726086] reiser4[scanelf(873)]: release_unix_file
-> (fs/reiser4/plugin/file/file.c:2332)[nikita-3233]:
-> [1006806.726088] WARNING: Failed (-28) to convert in release_unix_file (4915586)
-> [1006894.003824] reiser4[scanelf(873)]: extent2tail
-> (fs/reiser4/plugin/file/tail_conversion.c:666)[]:
-> [1006894.003826] WARNING: reiser4_write_tail failed
-> [1006894.003834] reiser4[scanelf(873)]: release_unix_file
-> (fs/reiser4/plugin/file/file.c:2332)[nikita-3233]:
-> [1006894.003836] WARNING: Failed (-28) to convert in release_unix_file (4845576)
-> [1006894.007824] reiser4[scanelf(873)]: extent2tail
-> (fs/reiser4/plugin/file/tail_conversion.c:666)[]:
-> [1006894.007826] WARNING: reiser4_write_tail failed
-> [1006894.007831] reiser4[scanelf(873)]: release_unix_file
-> (fs/reiser4/plugin/file/file.c:2332)[nikita-3233]:
-> [1006894.007832] WARNING: Failed (-28) to convert in release_unix_file (4845584)
-> [1006894.024284] reiser4[scanelf(873)]: extent2tail
-> (fs/reiser4/plugin/file/tail_conversion.c:666)[]:
-> [1006894.024286] WARNING: reiser4_write_tail failed
-> [1006894.024291] reiser4[scanelf(873)]: release_unix_file
-> (fs/reiser4/plugin/file/file.c:2332)[nikita-3233]:
-> [1006894.024293] WARNING: Failed (-28) to convert in release_unix_file (4845637)
+>       Another issue is the lack of support for blocksize < pagesize. This prevents it from being used across architectures. Even worse when I tried the last time it didn't allow me to create a 64k blocksize filesystem that I could actually test on ppc64.
+>   14.
 >
-> That's all I could think of.
+>       set_page_dirty_internal() pokes around in VFS internals. Use
+>           *
 >
-> Regards,
-> Marti
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>             set_page_dirty_no_buffers() or create a new library function in mm/page-writeback.c. In particular, it gets the radix-tree dirty tagging out of sync. 
+>   15.
 >
+>       #wbq.sem should be using a completion for the "wait until entd finishes", not a semaphore. Because there's a teeny theoretical race when using semaphores this way which completions were designed to avoid. (The waker can still be playing with the semaphore when it has gone out of scope on the wakee's stack).
+>   16.
+>
+>       #write_page_by_ent(): the "spin until entd thread" thing is gross. This function is really lock-intensive.
+>   17.
+>
+>       #entd_flush(): bug:
+>           *
+>
+>             rq->wbc->range_start = rq->page->index << PAGE_CACHE_SHIFT; 
+>
+>       this can overflow on 32-bit. Need to cast rq->page->index to loff_t.
+>   18.
+>
+>       #writeout() is a poor name for a global function. Even things like "txn_restart" are a bit generic-sounding. Low-risk, but the kernel's getting bigger... If it were mine, I'd prefix all these symbols with "r4_". prepare_to_sleep(), page_io(), drop_page(), statfs_type(), pre_commit_hook(), etc, etc, etc, etc. Much namespace pollution.
+>   19.
+>
+>       #invalidate_list() is a poorly-chosen global identifier. We already have an invalidate_list() in fs/inode.c, too. Please audit all of reiser4's global identifiers (use nm *.o) for suitable naming choices.
+>   20.
+>
+>       #- semaphores are deprecated. Please switch to mutexes and/or completions where appropriate and possible.
+>   21.
+>
+>       #drop_page() is a worry. Why _does_ reiser4 need to remove pages from pagecache? That isn't a filesystem function. drop_page() appears to leave the no-longer-present page tagged as dirty in the radix-tree.
+>   22.
+>
+>       #reiser4_invalidate_pages() is a mix of reiser4 things and of things-which-the-vfs-is-supposed-to-do. It is uncommented and I am unable to work out why it was necessary to do this, and hence what we can do about it.
+>   23.
+>
+>       #reiser4_readpages() shouldn't need to clean up the remaining pages on *pages. read_cache_pages() does that now.
+>   24.
+>
+>       #<wonders what formatted and unformatted nodes are> A brief glossary might help.
+>   25.
+>
+>       #REISER4_ERROR_CODE_BASE actually overlaps real errnos (see include/linux/errno.h). Suggest that it be changed to 1000000 or something.
+>   26.
+>
+>       #blocknr_set_add() modifies a list_head without any apparent locking. Certainly without any _documented_ locking... Ditto blocknr_set_destroy(). I'm sure there's locking, but it's harder than it should be to work out what it is. Given that proper locking is in place, the filesystem seems to use list_*_careful() a lot more than is necessary?
+>   27.
+>
+>       #It would be clearer to remove `struct blocknr_set' and just use list_head. 
+>
+> Last update: 02/06/2007
+>
+> Reiser4/ToDo (last edited 2007-11-25 21:57:14 by M9132)
 >   
 
