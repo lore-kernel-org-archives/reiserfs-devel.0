@@ -1,128 +1,101 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Todo for inclusion (updated 05 Aug 2008)
-Date: Tue, 05 Aug 2008 22:10:48 +0400
-Message-ID: <489897A8.2060308@gmail.com>
-References: <48979244.3040903@gmail.com>
+Subject: Re: kernel BUG at fs/reiser4/plugin/item/ctail.c
+Date: Wed, 06 Aug 2008 00:31:11 +0400
+Message-ID: <4898B88F.3080207@gmail.com>
+References: <558.1643-13003-1386678025-1217242012@post.cz> <4897333E.3030600@gmail.com> <a08621850808041457y2f30559ve104c2a86a5f9970@mail.gmail.com> <200808050051.37637.volker.armin.hemmann@tu-clausthal.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <48979244.3040903@gmail.com>
+In-Reply-To: <200808050051.37637.volker.armin.hemmann@tu-clausthal.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: Reiserfs mailing list <reiserfs-devel@vger.kernel.org>, Ryan Hope <rmh3093@gmail.com>
+To: Volker Armin Hemmann <volker.armin.hemmann@tu-clausthal.de>
+Cc: reiserfs-devel@vger.kernel.org
 
-                               Todo (bugtracking)
-
-
-1. Compilation warnings on powerpc machine
-
-2. Unexpected ENOSPC when free disk space is far from being exhausted:
-    http://marc.info/?l=reiserfs-devel&m=121795113124703&w=2
-    (to find the way to reproduce)
-
-3. Leak of free disk space related to tail conversion:
-   http://marc.info/?l=reiserfs-devel&m=121391256004694&w=2  
-
-
->            Todo for inclusion (updated 05 Aug 2008)
->
->
-> The updated todo-list initially composed by Akpm is attached.
-> It makes sense to try to address the following items
-> (complexity is increased):
->
-> #10,11: Cleanups.
->
-> #3 There is a pending patch to review/merge:
-> http://marc.info/?l=reiserfs-devel&m=119316601418489&w=2
->
-> #9: I don't see any leaked jref there. Perhaps we need to rewrite this
-> portion of code to make it more clear.
->
-> #14 needs to be addressed.
+Volker Armin Hemmann wrote:
+> On Montag, 4. August 2008, Dushan Tcholich wrote:
 >   
-> ------------------------------------------------------------------------
+>> On Mon, Aug 4, 2008 at 6:50 PM, Edward Shishkin
+>>
+>> <edward.shishkin@gmail.com> wrote:
+>>     
+>>> Dushan Tcholich wrote:
+>>>       
+>>>> On Mon, Aug 4, 2008 at 4:47 PM, Edward Shishkin
+>>>>
+>>>> <edward.shishkin@gmail.com> wrote:
+>>>>         
+>>>>> Dushan Tcholich wrote:
+>>>>>           
+>>>>>> Would it be possible if there would be a new version of fsck.reiser4
+>>>>>> to fix those false positives about wrong size when checking
+>>>>>> cryptocompress partitions?
+>>>>>>             
+>>>>> Yes,  per-file warnings about wrong i_bytes should be suppressed.
+>>>>> Fsck just should report at the end of work in default mode, that N
+>>>>> wrong i_bytes were detected and suggest to fix it with --fix option.
+>>>>> Anyone care to try to make a patch?
+>>>>>           
+>>>> But what happens with systems with ccreg and fsck on boot? They would
+>>>> stop and wait for user interaction.
+>>>>         
+>>> Why?
+>>> Do you have any problems with boot?
+>>>       
+>> I don't have problems.
+>> I just thought that checking for these false positives lasted 10
+>> minutes on my 6GB / so wouldn't this be a little too long if we don't
+>> put some status of some sorts?
+>>
+>>     
+>>>> Or you meant just to print a message about it with recomended solution
+>>>> and continue.
+>>>>         
+>>> Everything should be the same except per-file warnings.
+>>>       
+>> Maybe a better explanation would be better instead just: "600000 small
+>> errors found" :)
+>>
+>>     
 >
-> Tasks are needed to done for getting reiser4 code into the kernel as found by AKPM in 2.6.18-rc2-mm1 (# means that an issue is done)
+>   
+
+There is no big problem here:
+
+Kernel:
+-----------
+For unix-file plugin:
+(1) set i_size and real size which coincide with each other;
+(2) don't protect data by checksums (for performance reasons).
+
+For cryptcompress plugin:
+(1) set  i_size which usually doesn't coincide with real size;
+(2) don' t set real size for performance issues.
+(3) set data checksums for every logical cluster;
+
+Fsck:
+----------
+I. For unix-file plugin:
+(1) check if i_size == real size, if no then
+     (a) report error and
+     (b) handle as corruption
+
+II. For cryptcompress plugin:
+(1) check checksums; If wrong, then handle as corruption;
+(2) check if i_size == real size, if no, then
+     (a) report error;
+     (b) set correct real size;
+
+It is clear, that (II.2.a) is not needed. Just because (II.1): checksums is
+the best means to detect corruptions.
+
+> that would completly freak out people. How about '60000 false file sizes - 
+> this is normal with compression'?
+> --
+> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
->    1. - running igrab() in the writepage() path is really going to hammer inode_lock. Something else will need to be done here.
->    2. The preferred way of solving the above would be to mark the page as
->
->       PageWriteback() with set_page_writeback() prior to unlocking it. That'll pin the page and the inode. It does require that the page actually get written later on. If we cannot do that then more thought is needed.
->    3. If poss, use wake_up_process() rather than wake_up(). That'll save some locking.
->    4. Running iput() in entd() is a bit surprising. iirc there are various ways in which this can recur into the filesystem, perform I/O, etc. I guess it works.. But again, it will hammer inode_lock.
->    5. the writeout logic in entd_flush() is interesting (as in "holy cow"). It's very central and really needs some good comments describing what's going on in there - what problems are being solved, which decisions were taken and why, etc. The big comment in page_cache.c is useful. Please maintain it well. Boy, it has some old stuff in it.
->    6. reiser4_wait_page_writeback() needs commenting.
->    7. reading the comment in txnmgr.c regarding MAP_SHARED pages: a number of things have changed since then. We have page-becoming-writeable notifications and probably soon we'll always take a pagefault when a MAP_SHARED page transitions from pte-clean to pte-dirty (although I wouldn't recommend that a filesystem rely upon the latter for a while yet).
->    8. page_cache.c: yes, mpage_end_io_write() and mpage_end_io_read() are pretty generic - we might as well export them.
->    9. truncate_jnodes_range() looks wrong to me. When we populate gang[], there can be any number of NULL entries placed in it. But the loop which iterates across the now-populated gang[] will bale out when it its the _first_ NULL entry. Any following entries will have a leaked jref() against them.
->   10. Waaaaaaaaaaaaaaay too many typedefs.
->   11. There are many coding-style nits. One I will mention is very large number of unneeded braces:
->           * if (foo) {
->                 o bar(); 
->             } 
->       it'd be nice to fix these up sometime. Note: Easy to find and repair with checkpatch.pl script found at
->
->       http://www.kernel.org/pub/linux/kernel/people/apw/checkpatch/
->   12. General comment: the lack of support for extended attributes, access control lists and direct-io is a big problem and it's getting bigger. I don't see how a vendor could support reiser4 without these features and permanent lack of vendor support will hurt. What's the plan here?
->   13. (from CH)
->
->       Another issue is the lack of support for blocksize < pagesize. This prevents it from being used across architectures. Even worse when I tried the last time it didn't allow me to create a 64k blocksize filesystem that I could actually test on ppc64.
->   14.
->
->       set_page_dirty_internal() pokes around in VFS internals. Use
->           *
->
->             set_page_dirty_no_buffers() or create a new library function in mm/page-writeback.c. In particular, it gets the radix-tree dirty tagging out of sync. 
->   15.
->
->       #wbq.sem should be using a completion for the "wait until entd finishes", not a semaphore. Because there's a teeny theoretical race when using semaphores this way which completions were designed to avoid. (The waker can still be playing with the semaphore when it has gone out of scope on the wakee's stack).
->   16.
->
->       #write_page_by_ent(): the "spin until entd thread" thing is gross. This function is really lock-intensive.
->   17.
->
->       #entd_flush(): bug:
->           *
->
->             rq->wbc->range_start = rq->page->index << PAGE_CACHE_SHIFT; 
->
->       this can overflow on 32-bit. Need to cast rq->page->index to loff_t.
->   18.
->
->       #writeout() is a poor name for a global function. Even things like "txn_restart" are a bit generic-sounding. Low-risk, but the kernel's getting bigger... If it were mine, I'd prefix all these symbols with "r4_". prepare_to_sleep(), page_io(), drop_page(), statfs_type(), pre_commit_hook(), etc, etc, etc, etc. Much namespace pollution.
->   19.
->
->       #invalidate_list() is a poorly-chosen global identifier. We already have an invalidate_list() in fs/inode.c, too. Please audit all of reiser4's global identifiers (use nm *.o) for suitable naming choices.
->   20.
->
->       #- semaphores are deprecated. Please switch to mutexes and/or completions where appropriate and possible.
->   21.
->
->       #drop_page() is a worry. Why _does_ reiser4 need to remove pages from pagecache? That isn't a filesystem function. drop_page() appears to leave the no-longer-present page tagged as dirty in the radix-tree.
->   22.
->
->       #reiser4_invalidate_pages() is a mix of reiser4 things and of things-which-the-vfs-is-supposed-to-do. It is uncommented and I am unable to work out why it was necessary to do this, and hence what we can do about it.
->   23.
->
->       #reiser4_readpages() shouldn't need to clean up the remaining pages on *pages. read_cache_pages() does that now.
->   24.
->
->       #<wonders what formatted and unformatted nodes are> A brief glossary might help.
->   25.
->
->       #REISER4_ERROR_CODE_BASE actually overlaps real errnos (see include/linux/errno.h). Suggest that it be changed to 1000000 or something.
->   26.
->
->       #blocknr_set_add() modifies a list_head without any apparent locking. Certainly without any _documented_ locking... Ditto blocknr_set_destroy(). I'm sure there's locking, but it's harder than it should be to work out what it is. Given that proper locking is in place, the filesystem seems to use list_*_careful() a lot more than is necessary?
->   27.
->
->       #It would be clearer to remove `struct blocknr_set' and just use list_head. 
->
-> Last update: 02/06/2007
->
-> Reiser4/ToDo (last edited 2007-11-25 21:57:14 by M9132)
 >   
 
