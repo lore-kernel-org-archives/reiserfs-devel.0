@@ -1,63 +1,78 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [reiser4] Point
-Date: Sat, 09 Aug 2008 00:47:44 +0400
-Message-ID: <489CB0F0.8020806@gmail.com>
-References: <558.1643-13003-1386678025-1217242012@post.cz>	 <488DD846.70002@gmail.com>	 <a08621850808040328o36ab4901m63a0d978a221e833@mail.gmail.com>	 <48971680.2010906@gmail.com>	 <a08621850808040757h2f421e38lc295fb54fc719687@mail.gmail.com>	 <4897333E.3030600@gmail.com> <a08621850808041457y2f30559ve104c2a86a5f9970@mail.gmail.com> <489B44FD.5000108@gmail.com>
+Subject: Re: [PATCH] new code cleanups
+Date: Sat, 09 Aug 2008 00:54:16 +0400
+Message-ID: <489CB278.2070408@gmail.com>
+References: <a08621850808050554s19fedabcn1810df53826c812e@mail.gmail.com>	 <a08621850808060634n573bfd2bi189893416d938fb6@mail.gmail.com>	 <a08621850808061057j123840aeie76eaa8ed85b1308@mail.gmail.com> <48f7fe350808080804w2512e855xbc0bb6fe27593839@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <489B44FD.5000108@gmail.com>
+In-Reply-To: <48f7fe350808080804w2512e855xbc0bb6fe27593839@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Ryan Hope <rmh3093@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+Cc: Dushan Tcholich <dusanc@gmail.com>, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
 
 Ryan Hope wrote:
-> Is this todo really done?
+> Where are the other 2 patches you mention here, I cant find them anywhere.
+>   
 
-nop
-
->
-> >> As in point 6. in todo list (pub.namesys.com/Reiser4/ToDo ) try to
-> >> replace wake_up() with wake_up_process()
->
-> There are still a few more wake_up()'s in the code, the following
-> patch takes care of 2 of them.
-
- both are not obvious for me, review is needed..
+Note, that the marc mail archive rejects them.
+Are you a reiserfs-devel mailing list subscriber?
 
 Edward.
 
+> -Ryan
 >
-> diff --git a/fs/reiser4/entd.c b/fs/reiser4/entd.c
-> index a164f5a..355548d 100644
-> --- a/fs/reiser4/entd.c
-> +++ b/fs/reiser4/entd.c
-> @@ -218,7 +218,7 @@ void reiser4_leave_flush(struct super_block *super)
->  #endif
->      spin_unlock(&ent->guard);
->      if (wake_up_ent)
-> -        wake_up(&ent->wait);
-> +        wake_up_process(ent->tsk);
->  }
+> On Wed, Aug 6, 2008 at 1:57 PM, Dushan Tcholich <dusanc@gmail.com> wrote:
+>   
+>> Hi
+>> Have these mails passed to m-l? I can't see these mails in archives,
+>> but I haven't recieved the rejected mail notifications too.
+>> Mail me if you need patches sent some other way.
+>>
+>> Thanks
+>> Dushan
+>>
+>> On Wed, Aug 6, 2008 at 3:34 PM, Dushan Tcholich <dusanc@gmail.com> wrote:
+>>     
+>>> Hello
+>>> I've made more cleanups ontop of the patch from yesterday.
+>>> This new patch removes around 1200 errors and 40 warnings reported by
+>>> checkpatch-0.21
+>>> Errors removed are: ERROR: "foo * bar" should be "foo *bar"
+>>> Warnings removed are from extra spaces around parenthesis.
+>>> Patch was compile tested against 2.6.27-rc1-mm1+newcodecleanups.patch
+>>>
+>>> I hope this helps
+>>>
+>>> Have a nice day
+>>> Dushan
+>>>
+>>> PS. patch is about 400kB so i had to compress it
+>>>
+>>> On Tue, Aug 5, 2008 at 2:54 PM, Dushan Tcholich <dusanc@gmail.com> wrote:
+>>>       
+>>>> Hello
+>>>>
+>>>> While running checkpatch on newest r4 in -mm kernels I noticed that I
+>>>> already did some cleanups that were reported.
+>>>> Then I realised that one patch that I sent that removed about
+>>>> 300errors and 500 warnings was misplaced in that patchstorm :) and not
+>>>> sent to akpm.
+>>>> Here it is again rebased on 2.6.27-rc1-mm1, compile tested.
+>>>> Please review
+>>>>
+>>>> Thanks for your time
+>>>> Dushan
+>>>>
+>>>>         
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>>     
 >
->  #define ENTD_CAPTURE_APAGE_BURST SWAP_CLUSTER_MAX
-> @@ -304,7 +304,7 @@ int write_page_by_ent(struct page *page, struct
-> writeback_control *wbc)
->      ent->nr_todo_reqs++;
->      list_add_tail(&rq.link, &ent->todo_list);
->      if (ent->nr_todo_reqs == 1)
-> -        wake_up(&ent->wait);
-> +        wake_up_process(ent->tsk);
->
->      spin_unlock(&ent->guard);
->
->
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe
-> reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+>   
 
