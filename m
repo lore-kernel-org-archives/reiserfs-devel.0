@@ -1,55 +1,75 @@
-From: Ryan Hope <rmh3093@gmail.com>
-Subject: [reiser4] Point
-Date: Thu, 07 Aug 2008 14:54:53 -0400
-Message-ID: <489B44FD.5000108@gmail.com>
-References: <558.1643-13003-1386678025-1217242012@post.cz>	 <488DD846.70002@gmail.com>	 <a08621850808040328o36ab4901m63a0d978a221e833@mail.gmail.com>	 <48971680.2010906@gmail.com>	 <a08621850808040757h2f421e38lc295fb54fc719687@mail.gmail.com>	 <4897333E.3030600@gmail.com> <a08621850808041457y2f30559ve104c2a86a5f9970@mail.gmail.com>
+From: "Ryan Hope" <rmh3093@gmail.com>
+Subject: Re: [PATCH] new code cleanups
+Date: Fri, 8 Aug 2008 11:04:59 -0400
+Message-ID: <48f7fe350808080804w2512e855xbc0bb6fe27593839@mail.gmail.com>
+References: <a08621850808050554s19fedabcn1810df53826c812e@mail.gmail.com>
+	 <a08621850808060634n573bfd2bi189893416d938fb6@mail.gmail.com>
+	 <a08621850808061057j123840aeie76eaa8ed85b1308@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from
-         :user-agent:mime-version:to:subject:references:in-reply-to
-         :content-type:content-transfer-encoding;
-        bh=5KDOGoY0m/AmsuRmoKPlDC1ejQxkSc6wludclj46QbU=;
-        b=jE0gMIueT8ORxoqG7Y4j8qtgoX1mfKywh84X/UxcZac+3yEXbZSfEWBNpqlt8334+p
-         FrHsW6dUfvOGWRfyotvZ2YlfOVRTI3IKvshp63a9tLreWJn8b2lV4qzPSoiG2oeXunr8
-         Ny/dr3/ky6a0pLD4qATPbREJIYnouONaYG3Dw=
-In-Reply-To: <a08621850808041457y2f30559ve104c2a86a5f9970@mail.gmail.com>
+        h=domainkey-signature:received:received:message-id:date:from:to
+         :subject:cc:in-reply-to:mime-version:content-type
+         :content-transfer-encoding:content-disposition:references;
+        bh=e4irBiQXoXKk5qzocX16PDLFztGTJWAPrVbi8xfWwM4=;
+        b=Qf5/gnr/BgBm75rvt9O3nCY8zPhCj/VipdRF33+W2PIenCRVIfT1LTYh9ZqJWw+wvr
+         EGwOdgsYgjwHgYzwpjMond8hGsIq/wh0asEHFbsg4a3waZy6sWIxTCy5w31/Je6LqG4F
+         JgAjUD47xJ65X8xUB6WR36gNL+3OM4PACE5i4=
+In-Reply-To: <a08621850808061057j123840aeie76eaa8ed85b1308@mail.gmail.com>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: edward.shishkin@gmail.com, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Dushan Tcholich <dusanc@gmail.com>
+Cc: Reiserfs mailing list <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward.shishkin@gmail.com>
 
-Is this todo really done?
+Where are the other 2 patches you mention here, I cant find them anywhere.
+-Ryan
 
- >> As in point 6. in todo list (pub.namesys.com/Reiser4/ToDo ) try to
- >> replace wake_up() with wake_up_process()
-
-There are still a few more wake_up()'s in the code, the following patch 
-takes care of 2 of them.
-
-diff --git a/fs/reiser4/entd.c b/fs/reiser4/entd.c
-index a164f5a..355548d 100644
---- a/fs/reiser4/entd.c
-+++ b/fs/reiser4/entd.c
-@@ -218,7 +218,7 @@ void reiser4_leave_flush(struct super_block *super)
-  #endif
-  	spin_unlock(&ent->guard);
-  	if (wake_up_ent)
--		wake_up(&ent->wait);
-+		wake_up_process(ent->tsk);
-  }
-
-  #define ENTD_CAPTURE_APAGE_BURST SWAP_CLUSTER_MAX
-@@ -304,7 +304,7 @@ int write_page_by_ent(struct page *page, struct 
-writeback_control *wbc)
-  	ent->nr_todo_reqs++;
-  	list_add_tail(&rq.link, &ent->todo_list);
-  	if (ent->nr_todo_reqs == 1)
--		wake_up(&ent->wait);
-+		wake_up_process(ent->tsk);
-
-  	spin_unlock(&ent->guard);
-
-
+On Wed, Aug 6, 2008 at 1:57 PM, Dushan Tcholich <dusanc@gmail.com> wrote:
+> Hi
+> Have these mails passed to m-l? I can't see these mails in archives,
+> but I haven't recieved the rejected mail notifications too.
+> Mail me if you need patches sent some other way.
+>
+> Thanks
+> Dushan
+>
+> On Wed, Aug 6, 2008 at 3:34 PM, Dushan Tcholich <dusanc@gmail.com> wrote:
+>> Hello
+>> I've made more cleanups ontop of the patch from yesterday.
+>> This new patch removes around 1200 errors and 40 warnings reported by
+>> checkpatch-0.21
+>> Errors removed are: ERROR: "foo * bar" should be "foo *bar"
+>> Warnings removed are from extra spaces around parenthesis.
+>> Patch was compile tested against 2.6.27-rc1-mm1+newcodecleanups.patch
+>>
+>> I hope this helps
+>>
+>> Have a nice day
+>> Dushan
+>>
+>> PS. patch is about 400kB so i had to compress it
+>>
+>> On Tue, Aug 5, 2008 at 2:54 PM, Dushan Tcholich <dusanc@gmail.com> wrote:
+>>> Hello
+>>>
+>>> While running checkpatch on newest r4 in -mm kernels I noticed that I
+>>> already did some cleanups that were reported.
+>>> Then I realised that one patch that I sent that removed about
+>>> 300errors and 500 warnings was misplaced in that patchstorm :) and not
+>>> sent to akpm.
+>>> Here it is again rebased on 2.6.27-rc1-mm1, compile tested.
+>>> Please review
+>>>
+>>> Thanks for your time
+>>> Dushan
+>>>
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
