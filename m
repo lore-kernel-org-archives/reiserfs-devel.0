@@ -1,91 +1,49 @@
-From: "Ryan Hope" <rmh3093@gmail.com>
-Subject: Re: [reiser4] Point
-Date: Sat, 9 Aug 2008 11:03:55 -0400
-Message-ID: <48f7fe350808090803g56ee1a88r18f408153b1702eb@mail.gmail.com>
-References: <558.1643-13003-1386678025-1217242012@post.cz>
-	 <488DD846.70002@gmail.com>
-	 <a08621850808040328o36ab4901m63a0d978a221e833@mail.gmail.com>
-	 <48971680.2010906@gmail.com>
-	 <a08621850808040757h2f421e38lc295fb54fc719687@mail.gmail.com>
-	 <4897333E.3030600@gmail.com>
-	 <a08621850808041457y2f30559ve104c2a86a5f9970@mail.gmail.com>
-	 <489B44FD.5000108@gmail.com> <489CB0F0.8020806@gmail.com>
+From: Ryan Hope <rmh3093@gmail.com>
+Subject: [PATCH 1/3][reiser4] use wake_up_process() instead of wake_up() when
+ possible
+Date: Mon, 11 Aug 2008 18:34:50 -0400
+Message-ID: <48A0BE8A.5080600@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from:to
-         :subject:cc:in-reply-to:mime-version:content-type
-         :content-transfer-encoding:content-disposition:references;
-        bh=9OXth5IyNc6a5J+iT9IfQyFUcopEJJr5DGfpFRGzlII=;
-        b=PeZAGTlDSfowTAlvDkNGx3u+23PfC+kE5H9UksLHrBt7InOA4O+Hp6WT5UYE5XWKUV
-         kQ8eDMZEE2YG3dxQc3GpDstC5LvTtdFjz/Srk6I3CCvTLQx2QlK2mPj9gPpmU91bdOAF
-         zgvVg2OWDo0Irew3l8WA8jvVfKX+kko+OqAuw=
-In-Reply-To: <489CB0F0.8020806@gmail.com>
-Content-Disposition: inline
+        h=domainkey-signature:received:received:message-id:date:from
+         :user-agent:mime-version:to:subject:content-type
+         :content-transfer-encoding;
+        bh=TZvcX9gB8u7GGHOuHdctWgoQjbALQpcMFuGs6x72QFc=;
+        b=mpesJi2kZC8uKODbIlKDrzRmLAzRa9Jc1o6x4+VtDsWQ8d0RKn3Q6/CEAz6T0F9MR3
+         dzcMCC3cEqpl1AW0SljLe1Pl2BuzyALyo/AvktoCCSfsQwu5BoJUxdlcVO93Zj6dVVXk
+         S3ckAOup/dxOhDw2q6/GkUj4Jn4lEZZQGaC7g=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: LKML <linux-kernel@vger.kernel.org>, Edward Shishkin <edward.shishkin@gmail.com>, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-This works because the struct "ent" is of type "entd_context" which
-has members "wait_queue_head_t wait" and "struct task_struct *tsk".
-The function wake_up() takes the parameter wait_queue_head_t the
-function wake_up_process() takes task_struct... I figured this would
-be a legit switch. I have seen no adverse affects yet.
+This was item #6 on the todo list for reiser4 inclusion in mainline:
+
+diff --git a/fs/reiser4/entd.c b/fs/reiser4/entd.c
+index ecdfde6..9fd4d6e 100644
+--- a/fs/reiser4/entd.c
++++ b/fs/reiser4/entd.c
+@@ -218,7 +218,7 @@ void reiser4_leave_flush(struct super_block *super)
+  #endif
+  	spin_unlock(&ent->guard);
+  	if (wake_up_ent)
+-		wake_up(&ent->wait);
++		wake_up_process(ent->tsk);
+  }
+
+  #define ENTD_CAPTURE_APAGE_BURST SWAP_CLUSTER_MAX
+@@ -304,7 +304,7 @@ int write_page_by_ent(struct page *page, struct 
+writeback_control *wbc)
+  	ent->nr_todo_reqs++;
+  	list_add_tail(&rq.link, &ent->todo_list);
+  	if (ent->nr_todo_reqs == 1)
+-		wake_up(&ent->wait);
++		wake_up_process(ent->tsk);
+
+  	spin_unlock(&ent->guard);
+
 
 -Ryan
-
-On Fri, Aug 8, 2008 at 4:47 PM, Edward Shishkin
-<edward.shishkin@gmail.com> wrote:
-> Ryan Hope wrote:
->> Is this todo really done?
->
-> nop
->
->>
->> >> As in point 6. in todo list (pub.namesys.com/Reiser4/ToDo ) try to
->> >> replace wake_up() with wake_up_process()
->>
->> There are still a few more wake_up()'s in the code, the following
->> patch takes care of 2 of them.
->
->  both are not obvious for me, review is needed..
->
-> Edward.
->
->>
->> diff --git a/fs/reiser4/entd.c b/fs/reiser4/entd.c
->> index a164f5a..355548d 100644
->> --- a/fs/reiser4/entd.c
->> +++ b/fs/reiser4/entd.c
->> @@ -218,7 +218,7 @@ void reiser4_leave_flush(struct super_block *super)
->>  #endif
->>      spin_unlock(&ent->guard);
->>      if (wake_up_ent)
->> -        wake_up(&ent->wait);
->> +        wake_up_process(ent->tsk);
->>  }
->>
->>  #define ENTD_CAPTURE_APAGE_BURST SWAP_CLUSTER_MAX
->> @@ -304,7 +304,7 @@ int write_page_by_ent(struct page *page, struct
->> writeback_control *wbc)
->>      ent->nr_todo_reqs++;
->>      list_add_tail(&rq.link, &ent->todo_list);
->>      if (ent->nr_todo_reqs == 1)
->> -        wake_up(&ent->wait);
->> +        wake_up_process(ent->tsk);
->>
->>      spin_unlock(&ent->guard);
->>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe
->> reiserfs-devel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->
->
