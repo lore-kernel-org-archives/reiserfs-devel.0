@@ -1,44 +1,48 @@
 From: Ryan Hope <rmh3093@gmail.com>
-Subject: [PATCH 2/3][reiser4] don't leave loop prematurely
-Date: Mon, 11 Aug 2008 18:38:17 -0400
-Message-ID: <48A0BF59.4050605@gmail.com>
+Subject: [PATCH 3/3][reiser4] dont get radix-tree dirty tagging out of sync
+Date: Mon, 11 Aug 2008 18:40:09 -0400
+Message-ID: <48A0BFC9.40502@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755573AbYHKWif@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
         h=domainkey-signature:received:received:message-id:date:from
          :user-agent:mime-version:to:subject:content-type
          :content-transfer-encoding;
-        bh=MCI+fne9xZBzUbEaqL6xJ/GlzSFwVl1xFjDhmNmWD/w=;
-        b=CfOI3fqMPx7twzajsbT2npWiaiZegnJ3Ha022IUMMEqFO8kO01tg+NOuQWXji3nK1V
-         LkvSb2H0gzRgf39r+cICLbIW40Gj2zTlIzZ2EDYw9cN6EGEtxgeScJrJ2Ef+fouHlsB8
-         /weM5fYkw4PDaqAeQTUyIgfu36TTSMitrDwzs=
-Sender: linux-kernel-owner@vger.kernel.org
+        bh=K6ZVcYwfAuVHqqUXFJSvfCMeNnktB798H2rxS54jbm0=;
+        b=eoxL13tQ1D419AKSsmg11GrLV8JwEXclaM9RH/67Q/oajukSth77iI0bleJNTx6Rgo
+         k1kZ7CB1bN4leztR0zrolx/rkN/5gnOlDHM2k+SUDskwWTTIEPw1gkgl4gi/uA4XQka5
+         9z8Vc6/wybU6deI7liR/8YiNnVJsByO3ZqSEE=
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: LKML <linux-kernel@vger.kernel.org>, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Edward Shishkin <edward.shishkin@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Edward Shishkin <edward.shishkin@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
 
-This was item #9 on the todo list for reiser4 inclusion in mainline:
+This was item #14 on the todo list for reiser4 inclusion in mainline:
 
-diff --git a/52d76fde71070a6c4c8c581dd2bfe3c6ffa82ad7:fs/reiser4/page_cache.c 
-b/7f1ee1bb0c5a2948f5347646795afd088da30eaf:fs/reiser4/page_cache.c
-index 
-edf0911dc8bb61398374ecf4f849aa30753fb274..fe713681b73d2a6c4214f5938f21794573d8607d 
-100644
---- a/52d76fde71070a6c4c8c581dd2bfe3c6ffa82ad7:fs/reiser4/page_cache.c
-+++ b/7f1ee1bb0c5a2948f5347646795afd088da30eaf:fs/reiser4/page_cache.c
-@@ -658,8 +658,7 @@ truncate_jnodes_range(struct inode *inode, pgoff_t from, 
-pgoff_t count)
-  				unhash_unformatted_jnode(node);
-  				truncated_jnodes++;
-  				jput(node);
--			} else
--				break;
-+			}
-  		}
-  		if (i != taken || taken == 0)
-  			break;
+diff --git a/fs/reiser4/page_cache.c b/fs/reiser4/page_cache.c
+index fe71368..a662c25 100644
+--- a/fs/reiser4/page_cache.c
++++ b/fs/reiser4/page_cache.c
+@@ -467,15 +467,14 @@ int reiser4_set_page_dirty_internal(struct page *page)
+  	BUG_ON(mapping == NULL);
 
+  	if (!TestSetPageDirty(page)) {
++		spin_lock_irq(&mapping->tree_lock);
+  		if (mapping_cap_account_dirty(mapping))
+  			inc_zone_page_state(page, NR_FILE_DIRTY);
+-
++		radix_tree_tag_set(&mapping->page_tree,
++			page_index(page), PAGECACHE_TAG_DIRTY);
+  		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
++		spin_unlock_irq(&mapping->tree_lock);
+  	}
+-
+-	/* znode must be dirty ? */
+-	if (mapping->host == reiser4_get_super_fake(mapping->host->i_sb))
+-		assert("", JF_ISSET(jprivate(page), JNODE_DIRTY));
+  	return 0;
+  }
 
 -Ryan
