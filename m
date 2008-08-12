@@ -1,34 +1,48 @@
-From: Nick Piggin <nickpiggin@yahoo.com.au>
-Subject: Re: [PATCH 3/3][reiser4] dont get radix-tree dirty tagging out of sync
-Date: Tue, 12 Aug 2008 16:00:40 +1000
-Message-ID: <200808121600.40293.nickpiggin@yahoo.com.au>
-References: <48A0BFC9.40502@gmail.com> <200808121236.51599.nickpiggin@yahoo.com.au> <48f7fe350808112112k5e92330epa8345cbe4eb4c1b5@mail.gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: [PATCH 2/3][reiser4] don't leave loop prematurely
+Date: Tue, 12 Aug 2008 16:54:38 +0400
+Message-ID: <48A1880E.7000401@gmail.com>
+References: <48A0BF59.4050605@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752264AbYHLGA6@vger.kernel.org>
-In-Reply-To: <48f7fe350808112112k5e92330epa8345cbe4eb4c1b5@mail.gmail.com>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <48A0BF59.4050605@gmail.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Ryan Hope <rmh3093@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Edward Shishkin <edward.shishkin@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On Tuesday 12 August 2008 14:12, Ryan Hope wrote:
-> I tried just using __set_page_dirty_nobuffers but that caused issues
-> with ext3/ext4 (i can send a bug trace later if needed).
+Ryan Hope wrote:
+> This was item #9 on the todo list for reiser4 inclusion in mainline:
 >
->                                 __inc_bdi_stat(mapping->backing_dev_info,
->                                                 BDI_RECLAIMABLE);
->                                 task_io_account_write(PAGE_CACHE_SIZE);
->
-> ^^^ the above code in __set_page_dirty_nobuffers causes an issue with
-> do_writepages in ext3/4 when I use something like the code below:
->
-> int reiser4_set_page_dirty_internal(struct page *page)
-> {
->      return __set_page_dirty_nobuffers(page);
-> }
+> diff --git
+> a/52d76fde71070a6c4c8c581dd2bfe3c6ffa82ad7:fs/reiser4/page_cache.c
+> b/7f1ee1bb0c5a2948f5347646795afd088da30eaf:fs/reiser4/page_cache.c
+> index
+> edf0911dc8bb61398374ecf4f849aa30753fb274..fe713681b73d2a6c4214f5938f21794573d8607d
+> 100644
+> --- a/52d76fde71070a6c4c8c581dd2bfe3c6ffa82ad7:fs/reiser4/page_cache.c
+> +++ b/7f1ee1bb0c5a2948f5347646795afd088da30eaf:fs/reiser4/page_cache.c
+> @@ -658,8 +658,7 @@ truncate_jnodes_range(struct inode *inode, pgoff_t
+> from, pgoff_t count)
+>                  unhash_unformatted_jnode(node);
+>                  truncated_jnodes++;
+>                  jput(node);
+> -            } else
+> -                break;
+> +            }
 
-Hmm, it causes issues in ext3/4 even though it doesn't change any
-code executed by ext3/4? Yes, if you could send a trace...
+No, this is wrong:
+if (node == NULL), then there is nothing to do in this loop.
+
+Edward.
+
+>          }
+>          if (i != taken || taken == 0)
+>              break;
+>
+>
+> -Ryan
+>
+
