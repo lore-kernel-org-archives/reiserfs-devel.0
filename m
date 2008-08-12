@@ -1,48 +1,79 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [PATCH 2/3][reiser4] don't leave loop prematurely
-Date: Tue, 12 Aug 2008 16:54:38 +0400
-Message-ID: <48A1880E.7000401@gmail.com>
-References: <48A0BF59.4050605@gmail.com>
+Subject: Re: [PATCH 3/3][reiser4] dont get radix-tree dirty tagging out of
+ sync
+Date: Tue, 12 Aug 2008 16:56:16 +0400
+Message-ID: <48A18870.6070500@gmail.com>
+References: <48A0BFC9.40502@gmail.com> <200808121236.51599.nickpiggin@yahoo.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <48A0BF59.4050605@gmail.com>
+In-Reply-To: <200808121236.51599.nickpiggin@yahoo.com.au>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Ryan Hope <rmh3093@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Nick Piggin <nickpiggin@yahoo.com.au>, Ryan Hope <rmh3093@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>, Vladimir Saveliev <Vladimir.Saveliev@sun.com>
 
-Ryan Hope wrote:
-> This was item #9 on the todo list for reiser4 inclusion in mainline:
+Nick Piggin wrote:
+> On Tuesday 12 August 2008 08:40, Ryan Hope wrote:
+>   
+>> This was item #14 on the todo list for reiser4 inclusion in mainline:
+>>     
+
+No. This patch is a nonsense.
+Where did you see  radix-tree dirty tagging here?
+
+
+>> diff --git a/fs/reiser4/page_cache.c b/fs/reiser4/page_cache.c
+>> index fe71368..a662c25 100644
+>> --- a/fs/reiser4/page_cache.c
+>> +++ b/fs/reiser4/page_cache.c
+>> @@ -467,15 +467,14 @@ int reiser4_set_page_dirty_internal(struct page
+>> *page) BUG_ON(mapping == NULL);
+>>
+>>   	if (!TestSetPageDirty(page)) {
+>> +		spin_lock_irq(&mapping->tree_lock);
+>>   		if (mapping_cap_account_dirty(mapping))
+>>   			inc_zone_page_state(page, NR_FILE_DIRTY);
+>> -
+>> +		radix_tree_tag_set(&mapping->page_tree,
+>> +			page_index(page), PAGECACHE_TAG_DIRTY);
+>>   		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
+>> +		spin_unlock_irq(&mapping->tree_lock);
+>>   	}
+>> -
+>> -	/* znode must be dirty ? */
+>> -	if (mapping->host == reiser4_get_super_fake(mapping->host->i_sb))
+>> -		assert("", JF_ISSET(jprivate(page), JNODE_DIRTY));
+>>   	return 0;
+>>   }
+>>     
 >
-> diff --git
-> a/52d76fde71070a6c4c8c581dd2bfe3c6ffa82ad7:fs/reiser4/page_cache.c
-> b/7f1ee1bb0c5a2948f5347646795afd088da30eaf:fs/reiser4/page_cache.c
-> index
-> edf0911dc8bb61398374ecf4f849aa30753fb274..fe713681b73d2a6c4214f5938f21794573d8607d
-> 100644
-> --- a/52d76fde71070a6c4c8c581dd2bfe3c6ffa82ad7:fs/reiser4/page_cache.c
-> +++ b/7f1ee1bb0c5a2948f5347646795afd088da30eaf:fs/reiser4/page_cache.c
-> @@ -658,8 +658,7 @@ truncate_jnodes_range(struct inode *inode, pgoff_t
-> from, pgoff_t count)
->                  unhash_unformatted_jnode(node);
->                  truncated_jnodes++;
->                  jput(node);
-> -            } else
-> -                break;
-> +            }
+> Any reason why this can't use a generic function such as
+> __set_page_dirty_nobuffers? 
 
-No, this is wrong:
-if (node == NULL), then there is nothing to do in this loop.
+Currently reiser4 is working around "anonymous" pages dirtied
+outside of reiser4 context (e.g. via mmap), where some reiser4
+specific work (jnode creation, capturing by an atom) can not
+be done.
 
+> There are accounting changes gone in
+> there now which I suspetc may be wrong now in reiser4 (eg. task
+> io accounting).
+>   
+
+Yes, this is definitely wrong. Thanks for pointing this out.
+Such poking around vfs internals should be fixed, otherwise we'll
+have permanent problems.
+
+I have cc-ed Vladimir: maybe he has some hints. At least, I know
+that he looked at this problem..
+
+Thanks,
 Edward.
 
->          }
->          if (i != taken || taken == 0)
->              break;
+> Actually every site that does a radix_tree_operation there should
+> be reviewed to try to use core functoins.
 >
->
-> -Ryan
->
+>   
 
