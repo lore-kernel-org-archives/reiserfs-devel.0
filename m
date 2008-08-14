@@ -1,47 +1,55 @@
-From: "Alli Quaknaa" <alquaknaa@gmail.com>
-Subject: Re: [reiser4] Point
-Date: Wed, 13 Aug 2008 18:33:10 +0200
-Message-ID: <8c113a260808130933g57e4c87dw7b796c020200f3c@mail.gmail.com>
-References: <558.1643-13003-1386678025-1217242012@post.cz>
-	 <48f7fe350808090803g56ee1a88r18f408153b1702eb@mail.gmail.com>
-	 <48A1DD60.7080906@gmail.com>
-	 <e85b9d30808121305q7a3a8b08g80c26bc6b029ee56@mail.gmail.com>
-	 <48A1F6CC.1080805@gmail.com>
-	 <e85b9d30808130143h79cfa113if257e67e5386f324@mail.gmail.com>
-	 <48A2AFF1.2000009@gmail.com>
-	 <48f7fe350808130803p75fc5c13kfa40e313389f0e98@mail.gmail.com>
-	 <8c113a260808130859n1233ad6aj6e6ee1208b3b26ca@mail.gmail.com>
-	 <48f7fe350808130928l702ae3abj53f826a97aa22338@mail.gmail.com>
+From: Anders Aagaard <aagaande@gmail.com>
+Subject: WARNING: Cannot unlink 2281245 (-2)
+Date: Thu, 14 Aug 2008 10:01:19 +0200
+Message-ID: <48A3E64F.4090401@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from:to
-         :subject:cc:in-reply-to:mime-version:content-type
-         :content-transfer-encoding:content-disposition:references;
-        bh=RhmKWdNkoWbYjr1pEFHjASIXAWQ/8j+HVukR6yChmsE=;
-        b=uvUl6mPMgJg9npBGzFhZwy63iI1vX5yn8gdLZ/krUQ01R6D4Gh5+6IG27nILJTe2Lf
-         99jo2UPlvB7uFAVPRfDG8/REVAkuT2RRZlGT/BE7IkazIDD6GQch9MNxLa3XMFbXlzfG
-         YWgCQ2p7yama86uvHbgbsKgnZKxl289VE3Uyc=
-In-Reply-To: <48f7fe350808130928l702ae3abj53f826a97aa22338@mail.gmail.com>
-Content-Disposition: inline
+        h=domainkey-signature:received:received:message-id:date:from
+         :user-agent:mime-version:to:subject:content-type
+         :content-transfer-encoding;
+        bh=KL6CFgpIV5bq9npgTXGmtTKxpwb0mxeH4Osvr/nPs6k=;
+        b=UChoXRPl9qQGTUn08HgrBEQZ1rQTboEHFCm57q/cNBFweYRPxBlNAx5ke0vPrwBM+b
+         ELxXQs67FMIkcQZplJx+z0AfHUdsp8gE5Z6SRqRE0ZE0vUzPXMzA6iNotR/46nMcNPE0
+         AAlL0TFTleqdavqCuzJmhXaVnMjVjHdAkIubY=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Ryan Hope <rmh3093@gmail.com>
-Cc: Edward Shishkin <edward.shishkin@gmail.com>, Matthew <jackdachef@gmail.com>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-devel@vger.kernel.org
 
-OK, I wasn't sure if it was intended this way.
+Hi
 
-Anyway - I've just got a new notebook and I'm putting my / on reiser4
-and I've already got to a little trouble, when I tried to kill some
-processes and the kill didn't work, and dmesg reported some oops. I
-know this isn't very useful (cause I don't have the oops or other
-specific info), I just want to point out that there will probabyl be a
-higher number of problematic situations for teh fs to handle on / than
-anywhere else. I will report whatever is to come and I will try to
-help with testing as much as possible :)
+I've been testing reiser4 on root for the last day or so, and I ran into 
+some trouble while rebuilding my world file (on a gentoo system).
 
-Thanks for the great fs you're working on :)
-al-Quaknaa
+I get this rebuilding gcc:
+
+reiser4[rm(8699)]: reiser4_unlink_common 
+(fs/reiser4/plugin/inode_ops.c:295)[nikita-3398]:
+WARNING: Cannot unlink 2281245 (-2)
+
+At the same time I see this in the build output:
+rm: cannot remove directory 
+`/var/tmp/portage/sys-devel/gcc-4.2.4/work/gcc-4.2.4/libjava/classpath/resource/gnu/java/locale': 
+Directory not empty
+
+This is reiser4 mounted directly from a hd, no lvm/raid/encryption on 
+this drive, it's mounted with noatime, and built with 
+create=ccreg40,compress=lzo1.
+
+I use reiser4progs from gentoo, latest (aka reiser4progs-1.0.6 with 
+reiser4progs-1.0.6-preen.patch applied).  And gentoo-sources 2.6.25-r7 
+with reiser4-for-2.6.25.patch applied (from kernel.org).
+
+Unfortunatly due to the massive spam from reiser4fsck when running 
+compressed filesystem I have no idea if I've gotten any errors/warnings 
+there.
+
+Let me know what kind of additional information you need.
+
+Anders Aagaard
+
+PS : Computer survives memtest and prime overnight, smartd reports no 
+errors on the disk.
