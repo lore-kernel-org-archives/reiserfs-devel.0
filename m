@@ -1,27 +1,24 @@
-From: Sascha Lucas <sascha_lucas@web.de>
-Subject: Re: How do i make reiser4 filesystem available via /etc/fstab ?
-Date: Sat, 16 Aug 2008 18:14:26 +0200
-Message-ID: <200808161814.26175.sascha_lucas@web.de>
-References: <14477.202.168.22.19.1218874745.squirrel@webmail.velocity.net.au> <14774.202.168.22.19.1218883478.squirrel@webmail.velocity.net.au> <200808161347.15626.volker.armin.hemmann@tu-clausthal.de>
-Reply-To: reiserfs-devel@vger.kernel.org
+From: doiggl@velocitynet.com.au
+Subject: next major release query
+Date: Wed, 20 Aug 2008 23:34:13 +1000 (EST)
+Message-ID: <17724.202.168.22.19.1219239253.squirrel@webmail.velocity.net.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <200808161347.15626.volker.armin.hemmann@tu-clausthal.de>
-Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
-Am Samstag, 16. August 2008 13:47:15 schrieb Volker Armin Hemmann:
-> > By the way, this whole disk(separate to the o/s) was intended to be
-> > reiser4. Glenn
->
-> then create one big partition.
+Hello,
+I notice on
+http://www.kernel.org/pub/linux/kernel/people/edward/reiser4/reiser4-for-2.6/
+it is at the reiser4-for-2.6.25.* revision/level.
 
-Just want say that this is not necessary. filesystems can use the whole disk 
-without partitions. It's a common way to bypass DOS partion limitations. 
-Don't know the limit atm, but I remember to do so with >20TB :-).
+Questions:
+- What do you think the next major revision will be ?
+- Will it include all patches up to a point in time, of your choosing ?
 
-Sascha.
+Thanks for the info.
+Glenn
+
