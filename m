@@ -1,58 +1,97 @@
-From: David Howells <dhowells@redhat.com>
-Subject: [PATCH 41/59] CRED: Wrap task credential accesses in the ReiserFS
-	filesystem
-Date: Wed, 27 Aug 2008 14:49:13 +0100
-Message-ID: <20080827134913.19980.39495.stgit@warthog.procyon.org.uk>
-References: <20080827134541.19980.61042.stgit@warthog.procyon.org.uk>
+From: Steven <stevenaaus@yahoo.com>
+Subject: Re: Hi Reiserfs-dev
+Date: Wed, 27 Aug 2008 18:29:55 -0700 (PDT)
+Message-ID: <194549.89970.qm@web53201.mail.re2.yahoo.com>
+References: <200808270648.14980.volker.armin.hemmann@tu-clausthal.de>
+Reply-To: stevenaaus@yahoo.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <20080827134541.19980.61042.stgit@warthog.procyon.org.uk>
-Sender: linux-security-module-owner@vger.kernel.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <200808270648.14980.volker.armin.hemmann@tu-clausthal.de>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, David Howells <dhowells@redhat.com>, Serge Hallyn <serue@us.ibm.com>, reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-Wrap access to task credentials so that they can be separated more easily from
-the task_struct during the introduction of COW creds.
+Thanks for the replies :) Thats the first time i've heard about barriers.
 
-Change most current->(|e|s|fs)[ug]id to current_(|e|s|fs)[ug]id().
+I've always used noatime.. so thats no the issue. (I recently learnt to disable the dodgy Fedora readahead service too, and can't remember if i knew about this back then). Part of the problem is Reiser3 is so damn good (speed and robustness), and even FreeBSD has RO support nowadays, it's going to be hard to change even though reiser4's tail packing always got me excited.
 
-Change some task->e?[ug]id to task_e?[ug]id().  In some places it makes more
-sense to use RCU directly rather than a convenient wrapper; these will be
-addressed by later patches.
+--- On Wed, 8/27/08, Volker Armin Hemmann <volker.armin.hemmann@tu-clausthal.de> wrote:
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: James Morris <jmorris@namei.org>
-Acked-by: Serge Hallyn <serue@us.ibm.com>
-Cc: reiserfs-devel@vger.kernel.org
----
+> From: Volker Armin Hemmann <volker.armin.hemmann@tu-clausthal.de>
+> Subject: Re: Hi Reiserfs-dev
+> To: reiserfs-devel@vger.kernel.org
+> Date: Wednesday, August 27, 2008, 2:48 PM
+> On Mittwoch, 27. August 2008, Zan Lynx wrote:
+> > Steven wrote:
+> > > Been using Reiser 3 for years now, messing round
+> with m-multiple
+> > > operating systems. Imho, it's easily the best
+> general purpose linux
+> > > filesystem.  Does anyone here say otherwise ?
+> > >
+> > > I went through the hassle of installing reiser 4
+> on 2.6.24 about a
+> > > year ago, but it seemed to have latency issues,
+> esp. at start-up
+> > > (fedora 4, 1.13 PIII dell laptop with 256ram) and
+> reverted back to
+> > > reiser 3. Ideas?
+> > >
+> > > Thanks, Steven.
+> >
+> > I've been running Reiser4 on my laptop as / for a
+> long time now. I have
+> > two bits of advice.
+> >
+> > Make sure it mounts at boot with the noatime option.
+> Something like
+> > "rootflags=noatime" on your LILO or GRUB
+> kernel options line.
+> >
+> > Have your init scripts set the queue depth on your
+> block IO scheduler to
+> > 1024. Something like "echo 1024 >
+> /sys/block/sda/queue/nr_requests".
+> > With just 256 MB you might want to try smaller values.
+> I'm not very
+> > clear on how much RAM each queue slot can use.
+> >
+> > I found that Reiser4 will appear to hang if it cannot
+> flush an entire
+> > transaction atom to the IO queue in one go. Make sure
+> it's big enough.
+> >
+> > The other thing that seems to make it a little slow is
+> that it uses
+> > barriers.  This is a Linux feature that serious
+> filesystems use to
+> > guarantee data integrity.  ext3 uses barriers for its
+> journal and XFS
+> > uses barriers too.  I believe there were patches for
+> reiser3 to use
+> > barriers too but I don't know if those are in all
+> Linux or just SUSE.
+> 
+> reiserfs uses barriers for ages. Xfs and reiserfs use
+> barriers by default.
+> ext3 does not use barriers by default. Because of the
+> performance hit.
+> 
+> Every 'benchmark' that does not enable or disable
+> barriers is skewed in ext3's 
+> advantage. With barriers turned on for all filesystems ext3
+> is very slow.
+> 
+> 
+> 
+> --
+> To unsubscribe from this list: send the line
+> "unsubscribe reiserfs-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at 
+> http://vger.kernel.org/majordomo-info.html
 
- fs/reiserfs/namei.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
 
-
-diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-index f89ebb9..4f322e5 100644
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -573,7 +573,7 @@ static int new_inode_init(struct inode *inode, struct inode *dir, int mode)
- 	/* the quota init calls have to know who to charge the quota to, so
- 	 ** we have to set uid and gid here
- 	 */
--	inode->i_uid = current->fsuid;
-+	inode->i_uid = current_fsuid();
- 	inode->i_mode = mode;
- 	/* Make inode invalid - just in case we are going to drop it before
- 	 * the initialization happens */
-@@ -584,7 +584,7 @@ static int new_inode_init(struct inode *inode, struct inode *dir, int mode)
- 		if (S_ISDIR(mode))
- 			inode->i_mode |= S_ISGID;
- 	} else {
--		inode->i_gid = current->fsgid;
-+		inode->i_gid = current_fsgid();
- 	}
- 	DQUOT_INIT(inode);
- 	return 0;
-
+      
