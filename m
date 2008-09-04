@@ -1,53 +1,50 @@
-From: Grant Coady <grant_lkml@dodo.com.au>
-Subject: Re: reiserfs  BUG in 2.6.27-rc5
-Date: Fri, 05 Sep 2008 05:36:03 +1000
-Message-ID: <aud0c4tdtnhbjensn5mgdkl1f3cjigkmt6@4ax.com>
-References: <48BEBCCB.9000506@oracle.com> <hs9ub49fbs1uu11540i0nmdeh143sqgo7f@4ax.com> <20080903192037.e39fa931.randy.dunlap@oracle.com>
-Reply-To: Grant Coady <gcoady.lk@gmail.com>
+From: "=?UTF-8?Q?Br=C3=A1ulio_Barros_de_Oliveira?=" <brauliobo@gmail.com>
+Subject: Re: reiserfs do_journal_end unnecessary hd wake up?
+Date: Thu, 4 Sep 2008 16:46:13 -0300
+Message-ID: <1df1788c0809041246s3b6fb559y2fd12a6eaf912535@mail.gmail.com>
+References: <loom.20080904T155515-782@post.gmane.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20080903192037.e39fa931.randy.dunlap@oracle.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:message-id:date:from:to
+         :subject:cc:in-reply-to:mime-version:content-type
+         :content-transfer-encoding:content-disposition:references;
+        bh=2noAo31fqNjJGz5sAqNuhRkhmadYNSmFhxlJOes4+Bg=;
+        b=U9caZPa/HUn/mnZdJfhTIuud0wpytXZ1EY1QJgJ+lWPuo17rUzn7gizKOwhm9puZ2S
+         1sA8u9sLQ1eMr7Ws6ZJprpocLIUTdcKXu91qE+YkXeKiCxtRHobyo1r6H1pRa37rs4zs
+         SfcHbBff/z62o3R2rOjFiBt9OUNBRtzXV8fCg=
+In-Reply-To: <loom.20080904T155515-782@post.gmane.org>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Grant Coady <gcoady.lk@gmail.com>, lkml <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+To: Mat <jackdachef@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 3 Sep 2008 19:20:37 -0700, Randy Dunlap <randy.dunlap@oracle.com> wrote:
-
->On Thu, 04 Sep 2008 10:12:38 +1000 Grant Coady wrote:
->
->> On Wed, 03 Sep 2008 09:35:23 -0700, Randy Dunlap <randy.dunlap@oracle.com> wrote:
->> 
->> >Running fsx-linux on x86_64.
->> 
->> Cannot duplicate here, can you tell me which fsx-linux (url) and how 
->> called?  I'm running slamd64-12.1 on reiserfs3 here.
->
->
->fsx-linux from akpm's ext3-tools tarball which is here:
->  http://www.zip.com.au/~akpm/linux/patches/stuff/ext3-tools.tar.gz
->
->
->Run command is (roughly, it's a large script with lots of options):
->
->fsx-linux -l 100M -N 10000 -S 0 /tester/fsxtestfile
-
-Left:
-grant@pooh64:~$ fsx-linux -l 100M  -S 0 linux/testing/fsx
-...
-^Csignal 2
-testcalls = 26195489
-
-running overnight, nothing in logs, .config and dmesg on:
-  http://bugsplatter.id.au/kernel/boxen/pooh64/  {config,dmesg}-2.6.27-rc5a
-
-Grant.
->
->
->---
->~Randy
->Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
->http://linuxplumbersconf.org/
-
+VGhhbmtzIGZvciB5b3VyIHJlc3BvbnNlIE1hdC4KCkkndmUgdHJpZWQgd2hhdCB5b3Ugc2FpZCwg
+YW5kIGl0IGRvZXNuJ3QgbWFrZSBubyBkaWZmZXJlbmNlIGF0IGFsbC4gSQpjYW4gaGVhciB0aGUg
+Y2xpY2tzLCBvbiBhIGNvbXBsZXRseSBpZGxlIHN5c3RlbSwgZXZlcnkgMzAgc2Vjb25jcwoobW9y
+ZSBvciBsZXNzKS4gSGVyZSBpcyBteSBtdGFiOgoKW3Jvb3RAYnJhdWxpb3ByZXN0byBicmF1bGlv
+XSMgY2F0IC9ldGMvbXRhYgovZGV2L3NkYTIgLyByZWlzZXJmcyBydyxjb21taXQ9NTQwIDAgMApu
+b25lIC9kZXYgcmFtZnMgcncgMCAwCm5vbmUgL3Byb2MgcHJvYyBydyAwIDAKbm9uZSAvc3lzIHN5
+c2ZzIHJ3IDAgMApub25lIC9kZXYvcHRzIGRldnB0cyBydyAwIDAKbm9uZSAvZGV2L3NobSB0bXBm
+cyBydyAwIDAKL2Rldi9zZGE1IC9tbnQvYXJxdWl2b3MgcmVpc2VyZnMgcncsY29tbWl0PTU0MCAw
+IDAKbm9uZSAvbW50L3RtcGZzIHRtcGZzIHJ3LHNpemU9MmcgMCAwCi9wcm9jIC9vcHQvYXJjaDMy
+L3Byb2Mgbm9uZSBydyxiaW5kIDAgMAovcHJvYy9idXMvdXNiIC9vcHQvYXJjaDMyL3Byb2MvYnVz
+L3VzYiBub25lIHJ3LGJpbmQgMCAwCi9kZXYgL29wdC9hcmNoMzIvZGV2IG5vbmUgcncsYmluZCAw
+IDAKL2Rldi9wdHMgL29wdC9hcmNoMzIvZGV2L3B0cyBub25lIHJ3LGJpbmQgMCAwCi9kZXYvc2ht
+IC9vcHQvYXJjaDMyL2Rldi9zaG0gbm9uZSBydyxiaW5kIDAgMAovc3lzIC9vcHQvYXJjaDMyL3N5
+cyBub25lIHJ3LGJpbmQgMCAwCi90bXAgL29wdC9hcmNoMzIvdG1wIG5vbmUgcncsYmluZCAwIDAK
+L2hvbWUgL29wdC9hcmNoMzIvaG9tZSBub25lIHJ3LGJpbmQgMCAwCi9tbnQgL29wdC9hcmNoMzIv
+bW50IG5vbmUgcncsYmluZCAwIDAKL21udC9hcnF1aXZvcyAvb3B0L2FyY2gzMi9tbnQvYXJxdWl2
+b3Mgbm9uZSBydyxiaW5kIDAgMAoKYnLDoXVsaW8KCk9uIFRodSwgU2VwIDQsIDIwMDggYXQgMTI6
+NTcgUE0sIE1hdCA8amFja2RhY2hlZkBnbWFpbC5jb20+IHdyb3RlOgo+IEhpIEJyw6F1bGlvLAo+
+Cj4gZG9lcyBtb3VudGluZyB0aGUgcGFydGl0aW9uKHMpIHdpdGggc2V0dGluZyB0aGUgY29tbWl0
+LWludGVydmFsIHRvIHNvbWV0aGluZwo+IGhpZ2hlciwgZS5nLiBjb21taXQ9MTIwIG9yIGNvbW1p
+dD02MDAgbWFrZSBhIGNoYW5nZSA/Cj4KPiBSZWdhcmRzCj4KPiBNYXQKPgo+Cj4gLS0KPiBUbyB1
+bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgcmVp
+c2VyZnMtZGV2ZWwiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2Vy
+Lmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwu
+b3JnL21ham9yZG9tby1pbmZvLmh0bWwKPgo=
