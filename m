@@ -1,149 +1,97 @@
 From: "=?UTF-8?Q?Br=C3=A1ulio_Barros_de_Oliveira?=" <brauliobo@gmail.com>
 Subject: Re: Re: reiserfs do_journal_end unnecessary hd wake up?
-Date: Thu, 4 Sep 2008 20:28:58 -0300
-Message-ID: <1df1788c0809041628m269f13c3l27d9f9dd59a42fef@mail.gmail.com>
+Date: Thu, 4 Sep 2008 20:32:37 -0300
+Message-ID: <1df1788c0809041632h726fff6cq2eacd86076215017@mail.gmail.com>
 References: <loom.20080904T211127-782@post.gmane.org>
 	 <1df1788c0809041538x8d41eb8s80966f25aa2ade21@mail.gmail.com>
+	 <1df1788c0809041628m269f13c3l27d9f9dd59a42fef@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
         h=domainkey-signature:received:received:message-id:date:from:to
          :subject:cc:in-reply-to:mime-version:content-type
          :content-transfer-encoding:content-disposition:references;
-        bh=W2bbfuPHYmvVcogRQKEo+i31q5zRdIbleypvxLJPBz0=;
-        b=WKPEj6ZwaAIjqwEJrZ1TDJKxAiK7WSnK4z4JbbNJF6NLN0bRkhcJJti4710h2ks6OJ
-         tre2/H+Peg0K/TVyrIg9tAqNHJMUbIRNFbBMX+dpS3k4QBvcVKlcjOWTTRf/UlqmdpeN
-         pmuml/jxmd+E3H4ZpePkEedBVO4V3zriuTQmY=
-In-Reply-To: <1df1788c0809041538x8d41eb8s80966f25aa2ade21@mail.gmail.com>
+        bh=JhnXySqsclMGpM1jxxVEnnQ20w2GYAcYxTXHLuWnOAQ=;
+        b=q9g8lqQvJRM1yBEFz9YLB/OgOBREwNC7RsQeSXOQwKjxbMCNlinbg9V5u69rAuW4AN
+         n0AH9ShcGvO8L4bs3PxjDq4H6/7tUAv3g532/r3jOjPv47t86xl6oNK5eTN3blIgexPq
+         DYsTCXibf06Luj8y38ltAjuaIjURItMzg8soA=
+In-Reply-To: <1df1788c0809041628m269f13c3l27d9f9dd59a42fef@mail.gmail.com>
 Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 To: Mat <jackdachef@gmail.com>
 Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-hello mat, here comes the results of each action.
-in all the process i've used the iotop (what a great utility you
-pointed!), and always saw only the pdflush process acessing the hd. no
-user interface were used.
-the apm is set to 128 with hdparm
-
-ok, then try the following:
-
-you at least should have noatime,nodiratime,commit=600
-
-:) that did the job! also, i've tested without the commit option,
-which didn't changed the result.
-
-enabled for the reiserfs or >=ext3 filesystems
-
-you can also try data=writeback (but beware this might put your data at risk !)
-
-* can't try
-
-select the anticipatory i/o scheduler
-and set following stuff
-
-:( no change.
-
-echo "16" > /proc/sys/vm/page-cluster
-# default: 3
-#
-
-:( no change.
-
-echo "60" > /proc/sys/vm/swappiness
-# default: 60
-# By default, Linux will aggressively swap processes out of physical memory onto
-disk in order to keep the disk cache as large as possible.
-# This means that pages that haven't been used recently will be pushed into swap
-long before the system even comes close to running out of memory, which is an
-unexpected behavior compared to some operating systems.
-# The /proc/sys/vm/swappiness parameter controls how aggressive Linux is in this
-area.
-
-:( no change.
-
-echo "3000" > /proc/sys/vm/dirty_expire_centisecs
-# default: 3000 (30 seconds)
-#2 how long data can be in the page cache before it is considered expired and
-must be written at the next opportunity. Note that this default is very long: a
-full 30 seconds. That means that under normal circumstances, unless you write
-enough to trigger the other pdflush method, Linux won't actually commit anything
-you write until 30 seconds later.
-
-:( no change.
-
-echo "6000"  > /proc/sys/vm/dirty_writeback_centisecs
-# default: 500 (5 seconds)
-#1 how often pdflush wakes up to write data to disk. The default wakes up the
-two (or more) active threads every five seconds.
-# suggestion: 6000 (every 60 seconds)
-
-:( no change.
-
-echo "15" > /proc/sys/vm/dirty_background_ratio
-# default: 10
-#3 Maximum percentage of active memory that can be filled with dirty pages
-before pdflush begins to write them
-
-echo "50"   > /proc/sys/vm/dirty_ratio #modified
-# default: 40
-#4 Maximum percentage of total memory that can be filled with dirty pages before
-processes are forced to write dirty buffers themselves during their time slice
-instead of being allowed to do more writes.
-# modified: 50
-
-echo "25" > /proc/sys/vm/vfs_cache_pressure
-
-for i in /sys/block/sd*; do
-        /bin/echo "anticipatory" >  $i/queue/scheduler
-done
-
-for i in /sys/block/sd*; do
-        /bin/echo "0" >  $i/queue/iosched/antic_expire
-done
-
-for i in /sys/block/sd*; do
-        /bin/echo "150" >  $i/queue/iosched/read_expire
-done
-
-for i in /sys/block/sd*; do
-        /bin/echo "750" >  $i/queue/iosched/read_batch_expire
-done
-
-for i in /sys/block/sd*; do
-        /bin/echo "1200" >  $i/queue/iosched/write_batch_expire
-done
-
-for i in /sys/block/sd*; do
-        /bin/echo "1024" >  $i/queue/nr_requests
-done
-
-for i in /sys/block/sd*; do
-        /bin/echo "256" >  $i/queue/read_ahead_kb
-done
-
-for i in /sys/block/sd*; do
-        /bin/echo "256" >  $i/queue/max_sectors_kb
-done
-
-for i in /sys/class/scsi_host/host*; do
-        /bin/echo "min_power" >  $i/link_power_management_policy
-done
-
-
-
-
-try to disable each and every unneeded daemon or applets, programs, etc.
-
-by using:
-
-* powertop
-* iotop
-* htop
-* top
-* lsof | grep /home
-* ...
+YnV0IChhcyBhbHdheXMgdGhlcmUgaXMpLCB0aGUgc2l0dWF0aW9uIGlzIG5vdCBnb29kIHlldCB3
+aGVuIHVzaW5nIGtkZTQuCndpdGggaXQsIGkgY2FuJ3QgZmluZCBvdXQgd2hpY2ggcHJvY2VzcyBp
+cyBhY2Nlc3NpbmcgdGhlIGhkLCBjYXVzZQppb3RvcCBvbmx5IHNob3dzIGEgcGRmbHVzaCBhY2Nl
+c3MuCmkndmUgdHJpZWQgdG8ga2lsbCBzb21lIGFwcHMsIGJ1dCBpdCBkaWRuJ3QgaGVscC4gYW55
+IG90aGVyIHRyYWNlIHRlY2huaWM/CgpyZWdhcmRzLApicsOhdWxpbwoKT24gVGh1LCBTZXAgNCwg
+MjAwOCBhdCA4OjI4IFBNLCBCcsOhdWxpbyBCYXJyb3MgZGUgT2xpdmVpcmEKPGJyYXVsaW9ib0Bn
+bWFpbC5jb20+IHdyb3RlOgo+IGhlbGxvIG1hdCwgaGVyZSBjb21lcyB0aGUgcmVzdWx0cyBvZiBl
+YWNoIGFjdGlvbi4KPiBpbiBhbGwgdGhlIHByb2Nlc3MgaSd2ZSB1c2VkIHRoZSBpb3RvcCAod2hh
+dCBhIGdyZWF0IHV0aWxpdHkgeW91Cj4gcG9pbnRlZCEpLCBhbmQgYWx3YXlzIHNhdyBvbmx5IHRo
+ZSBwZGZsdXNoIHByb2Nlc3MgYWNlc3NpbmcgdGhlIGhkLiBubwo+IHVzZXIgaW50ZXJmYWNlIHdl
+cmUgdXNlZC4KPiB0aGUgYXBtIGlzIHNldCB0byAxMjggd2l0aCBoZHBhcm0KPgo+IG9rLCB0aGVu
+IHRyeSB0aGUgZm9sbG93aW5nOgo+Cj4geW91IGF0IGxlYXN0IHNob3VsZCBoYXZlIG5vYXRpbWUs
+bm9kaXJhdGltZSxjb21taXQ9NjAwCj4KPiA6KSB0aGF0IGRpZCB0aGUgam9iISBhbHNvLCBpJ3Zl
+IHRlc3RlZCB3aXRob3V0IHRoZSBjb21taXQgb3B0aW9uLAo+IHdoaWNoIGRpZG4ndCBjaGFuZ2Vk
+IHRoZSByZXN1bHQuCj4KPiBlbmFibGVkIGZvciB0aGUgcmVpc2VyZnMgb3IgPj1leHQzIGZpbGVz
+eXN0ZW1zCj4KPiB5b3UgY2FuIGFsc28gdHJ5IGRhdGE9d3JpdGViYWNrIChidXQgYmV3YXJlIHRo
+aXMgbWlnaHQgcHV0IHlvdXIgZGF0YSBhdCByaXNrICEpCj4KPiAqIGNhbid0IHRyeQo+Cj4gc2Vs
+ZWN0IHRoZSBhbnRpY2lwYXRvcnkgaS9vIHNjaGVkdWxlcgo+IGFuZCBzZXQgZm9sbG93aW5nIHN0
+dWZmCj4KPiA6KCBubyBjaGFuZ2UuCj4KPiBlY2hvICIxNiIgPiAvcHJvYy9zeXMvdm0vcGFnZS1j
+bHVzdGVyCj4gIyBkZWZhdWx0OiAzCj4gIwo+Cj4gOiggbm8gY2hhbmdlLgo+Cj4gZWNobyAiNjAi
+ID4gL3Byb2Mvc3lzL3ZtL3N3YXBwaW5lc3MKPiAjIGRlZmF1bHQ6IDYwCj4gIyBCeSBkZWZhdWx0
+LCBMaW51eCB3aWxsIGFnZ3Jlc3NpdmVseSBzd2FwIHByb2Nlc3NlcyBvdXQgb2YgcGh5c2ljYWwg
+bWVtb3J5IG9udG8KPiBkaXNrIGluIG9yZGVyIHRvIGtlZXAgdGhlIGRpc2sgY2FjaGUgYXMgbGFy
+Z2UgYXMgcG9zc2libGUuCj4gIyBUaGlzIG1lYW5zIHRoYXQgcGFnZXMgdGhhdCBoYXZlbid0IGJl
+ZW4gdXNlZCByZWNlbnRseSB3aWxsIGJlIHB1c2hlZCBpbnRvIHN3YXAKPiBsb25nIGJlZm9yZSB0
+aGUgc3lzdGVtIGV2ZW4gY29tZXMgY2xvc2UgdG8gcnVubmluZyBvdXQgb2YgbWVtb3J5LCB3aGlj
+aCBpcyBhbgo+IHVuZXhwZWN0ZWQgYmVoYXZpb3IgY29tcGFyZWQgdG8gc29tZSBvcGVyYXRpbmcg
+c3lzdGVtcy4KPiAjIFRoZSAvcHJvYy9zeXMvdm0vc3dhcHBpbmVzcyBwYXJhbWV0ZXIgY29udHJv
+bHMgaG93IGFnZ3Jlc3NpdmUgTGludXggaXMgaW4gdGhpcwo+IGFyZWEuCj4KPiA6KCBubyBjaGFu
+Z2UuCj4KPiBlY2hvICIzMDAwIiA+IC9wcm9jL3N5cy92bS9kaXJ0eV9leHBpcmVfY2VudGlzZWNz
+Cj4gIyBkZWZhdWx0OiAzMDAwICgzMCBzZWNvbmRzKQo+ICMyIGhvdyBsb25nIGRhdGEgY2FuIGJl
+IGluIHRoZSBwYWdlIGNhY2hlIGJlZm9yZSBpdCBpcyBjb25zaWRlcmVkIGV4cGlyZWQgYW5kCj4g
+bXVzdCBiZSB3cml0dGVuIGF0IHRoZSBuZXh0IG9wcG9ydHVuaXR5LiBOb3RlIHRoYXQgdGhpcyBk
+ZWZhdWx0IGlzIHZlcnkgbG9uZzogYQo+IGZ1bGwgMzAgc2Vjb25kcy4gVGhhdCBtZWFucyB0aGF0
+IHVuZGVyIG5vcm1hbCBjaXJjdW1zdGFuY2VzLCB1bmxlc3MgeW91IHdyaXRlCj4gZW5vdWdoIHRv
+IHRyaWdnZXIgdGhlIG90aGVyIHBkZmx1c2ggbWV0aG9kLCBMaW51eCB3b24ndCBhY3R1YWxseSBj
+b21taXQgYW55dGhpbmcKPiB5b3Ugd3JpdGUgdW50aWwgMzAgc2Vjb25kcyBsYXRlci4KPgo+IDoo
+IG5vIGNoYW5nZS4KPgo+IGVjaG8gIjYwMDAiICA+IC9wcm9jL3N5cy92bS9kaXJ0eV93cml0ZWJh
+Y2tfY2VudGlzZWNzCj4gIyBkZWZhdWx0OiA1MDAgKDUgc2Vjb25kcykKPiAjMSBob3cgb2Z0ZW4g
+cGRmbHVzaCB3YWtlcyB1cCB0byB3cml0ZSBkYXRhIHRvIGRpc2suIFRoZSBkZWZhdWx0IHdha2Vz
+IHVwIHRoZQo+IHR3byAob3IgbW9yZSkgYWN0aXZlIHRocmVhZHMgZXZlcnkgZml2ZSBzZWNvbmRz
+Lgo+ICMgc3VnZ2VzdGlvbjogNjAwMCAoZXZlcnkgNjAgc2Vjb25kcykKPgo+IDooIG5vIGNoYW5n
+ZS4KPgo+IGVjaG8gIjE1IiA+IC9wcm9jL3N5cy92bS9kaXJ0eV9iYWNrZ3JvdW5kX3JhdGlvCj4g
+IyBkZWZhdWx0OiAxMAo+ICMzIE1heGltdW0gcGVyY2VudGFnZSBvZiBhY3RpdmUgbWVtb3J5IHRo
+YXQgY2FuIGJlIGZpbGxlZCB3aXRoIGRpcnR5IHBhZ2VzCj4gYmVmb3JlIHBkZmx1c2ggYmVnaW5z
+IHRvIHdyaXRlIHRoZW0KPgo+IGVjaG8gIjUwIiAgID4gL3Byb2Mvc3lzL3ZtL2RpcnR5X3JhdGlv
+ICNtb2RpZmllZAo+ICMgZGVmYXVsdDogNDAKPiAjNCBNYXhpbXVtIHBlcmNlbnRhZ2Ugb2YgdG90
+YWwgbWVtb3J5IHRoYXQgY2FuIGJlIGZpbGxlZCB3aXRoIGRpcnR5IHBhZ2VzIGJlZm9yZQo+IHBy
+b2Nlc3NlcyBhcmUgZm9yY2VkIHRvIHdyaXRlIGRpcnR5IGJ1ZmZlcnMgdGhlbXNlbHZlcyBkdXJp
+bmcgdGhlaXIgdGltZSBzbGljZQo+IGluc3RlYWQgb2YgYmVpbmcgYWxsb3dlZCB0byBkbyBtb3Jl
+IHdyaXRlcy4KPiAjIG1vZGlmaWVkOiA1MAo+Cj4gZWNobyAiMjUiID4gL3Byb2Mvc3lzL3ZtL3Zm
+c19jYWNoZV9wcmVzc3VyZQo+Cj4gZm9yIGkgaW4gL3N5cy9ibG9jay9zZCo7IGRvCj4gICAgICAg
+IC9iaW4vZWNobyAiYW50aWNpcGF0b3J5IiA+ICAkaS9xdWV1ZS9zY2hlZHVsZXIKPiBkb25lCj4K
+PiBmb3IgaSBpbiAvc3lzL2Jsb2NrL3NkKjsgZG8KPiAgICAgICAgL2Jpbi9lY2hvICIwIiA+ICAk
+aS9xdWV1ZS9pb3NjaGVkL2FudGljX2V4cGlyZQo+IGRvbmUKPgo+IGZvciBpIGluIC9zeXMvYmxv
+Y2svc2QqOyBkbwo+ICAgICAgICAvYmluL2VjaG8gIjE1MCIgPiAgJGkvcXVldWUvaW9zY2hlZC9y
+ZWFkX2V4cGlyZQo+IGRvbmUKPgo+IGZvciBpIGluIC9zeXMvYmxvY2svc2QqOyBkbwo+ICAgICAg
+ICAvYmluL2VjaG8gIjc1MCIgPiAgJGkvcXVldWUvaW9zY2hlZC9yZWFkX2JhdGNoX2V4cGlyZQo+
+IGRvbmUKPgo+IGZvciBpIGluIC9zeXMvYmxvY2svc2QqOyBkbwo+ICAgICAgICAvYmluL2VjaG8g
+IjEyMDAiID4gICRpL3F1ZXVlL2lvc2NoZWQvd3JpdGVfYmF0Y2hfZXhwaXJlCj4gZG9uZQo+Cj4g
+Zm9yIGkgaW4gL3N5cy9ibG9jay9zZCo7IGRvCj4gICAgICAgIC9iaW4vZWNobyAiMTAyNCIgPiAg
+JGkvcXVldWUvbnJfcmVxdWVzdHMKPiBkb25lCj4KPiBmb3IgaSBpbiAvc3lzL2Jsb2NrL3NkKjsg
+ZG8KPiAgICAgICAgL2Jpbi9lY2hvICIyNTYiID4gICRpL3F1ZXVlL3JlYWRfYWhlYWRfa2IKPiBk
+b25lCj4KPiBmb3IgaSBpbiAvc3lzL2Jsb2NrL3NkKjsgZG8KPiAgICAgICAgL2Jpbi9lY2hvICIy
+NTYiID4gICRpL3F1ZXVlL21heF9zZWN0b3JzX2tiCj4gZG9uZQo+Cj4gZm9yIGkgaW4gL3N5cy9j
+bGFzcy9zY3NpX2hvc3QvaG9zdCo7IGRvCj4gICAgICAgIC9iaW4vZWNobyAibWluX3Bvd2VyIiA+
+ICAkaS9saW5rX3Bvd2VyX21hbmFnZW1lbnRfcG9saWN5Cj4gZG9uZQo+Cj4KPgo+Cj4gdHJ5IHRv
+IGRpc2FibGUgZWFjaCBhbmQgZXZlcnkgdW5uZWVkZWQgZGFlbW9uIG9yIGFwcGxldHMsIHByb2dy
+YW1zLCBldGMuCj4KPiBieSB1c2luZzoKPgo+ICogcG93ZXJ0b3AKPiAqIGlvdG9wCj4gKiBodG9w
+Cj4gKiB0b3AKPiAqIGxzb2YgfCBncmVwIC9ob21lCj4gKiAuLi4KPgo=
