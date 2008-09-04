@@ -1,105 +1,31 @@
-From: "=?UTF-8?Q?Br=C3=A1ulio_Barros_de_Oliveira?=" <brauliobo@gmail.com>
-Subject: Re: Re: reiserfs do_journal_end unnecessary hd wake up?
-Date: Thu, 4 Sep 2008 20:47:54 -0300
-Message-ID: <1df1788c0809041647n5f5e4d64yaa2f47d3302494fe@mail.gmail.com>
-References: <loom.20080904T211127-782@post.gmane.org>
-	 <1df1788c0809041538x8d41eb8s80966f25aa2ade21@mail.gmail.com>
-	 <1df1788c0809041628m269f13c3l27d9f9dd59a42fef@mail.gmail.com>
-	 <1df1788c0809041632h726fff6cq2eacd86076215017@mail.gmail.com>
+From: Volker Armin Hemmann <volker.armin.hemmann@tu-clausthal.de>
+Subject: Re: reiserfs do_journal_end unnecessary hd wake up?
+Date: Fri, 5 Sep 2008 01:54:00 +0200
+Message-ID: <200809050154.00318.volker.armin.hemmann@tu-clausthal.de>
+References: <loom.20080904T211127-782@post.gmane.org> <1df1788c0809041632h726fff6cq2eacd86076215017@mail.gmail.com> <1df1788c0809041647n5f5e4d64yaa2f47d3302494fe@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from:to
-         :subject:cc:in-reply-to:mime-version:content-type
-         :content-transfer-encoding:content-disposition:references;
-        bh=TWix22A6ZcMmbDeo3fXwAVNOYKXN+51r8GWZpu1QszM=;
-        b=rjUzWK156h6a19sX5i/ygjsB1yM79M5uHD0+btJLwtiF0mQTX8hqkM/nd4UWkAz+lX
-         AjPPuNk+avQknHcz3SXBWEX4Onym5Gs/LUDoNIpquv3OEljDEFBCoejlrRaHR+zU6p0A
-         CH1dLbcn27g91TPfx62ErZNb6c5Pxx7egimE0=
-In-Reply-To: <1df1788c0809041632h726fff6cq2eacd86076215017@mail.gmail.com>
+In-Reply-To: <1df1788c0809041647n5f5e4d64yaa2f47d3302494fe@mail.gmail.com>
 Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1254"
-To: Mat <jackdachef@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+To: reiserfs-devel@vger.kernel.org
 
-anVzdCBmb3VuZCBvdXQhIGl0IGlzIGtvbnNvbGUsIHVuYmVsaWV2YWJsZSEgZ29pbmcgdG8gZmls
-ZSBhIGJ1ZwpyZXBvcnQgcmlnaHQgbm93LgphZ2FpbiwgdGhhbmsgeW91IHZlcnkgbXVjaCBmb3Ig
-dGhlIHN1cHBvcnQuCmJyw6F1bGlvCgpPbiBUaHUsIFNlcCA0LCAyMDA4IGF0IDg6MzIgUE0sIEJy
-w6F1bGlvIEJhcnJvcyBkZSBPbGl2ZWlyYQo8YnJhdWxpb2JvQGdtYWlsLmNvbT4gd3JvdGU6Cj4g
-YnV0IChhcyBhbHdheXMgdGhlcmUgaXMpLCB0aGUgc2l0dWF0aW9uIGlzIG5vdCBnb29kIHlldCB3
-aGVuIHVzaW5nIGtkZTQuCj4gd2l0aCBpdCwgaSBjYW4ndCBmaW5kIG91dCB3aGljaCBwcm9jZXNz
-IGlzIGFjY2Vzc2luZyB0aGUgaGQsIGNhdXNlCj4gaW90b3Agb25seSBzaG93cyBhIHBkZmx1c2gg
-YWNjZXNzLgo+IGkndmUgdHJpZWQgdG8ga2lsbCBzb21lIGFwcHMsIGJ1dCBpdCBkaWRuJ3QgaGVs
-cC4gYW55IG90aGVyIHRyYWNlIHRlY2huaWM/Cj4KPiByZWdhcmRzLAo+IGJyw6F1bGlvCj4KPiBP
-biBUaHUsIFNlcCA0LCAyMDA4IGF0IDg6MjggUE0sIEJyw6F1bGlvIEJhcnJvcyBkZSBPbGl2ZWly
-YQo+IDxicmF1bGlvYm9AZ21haWwuY29tPiB3cm90ZToKPj4gaGVsbG8gbWF0LCBoZXJlIGNvbWVz
-IHRoZSByZXN1bHRzIG9mIGVhY2ggYWN0aW9uLgo+PiBpbiBhbGwgdGhlIHByb2Nlc3MgaSd2ZSB1
-c2VkIHRoZSBpb3RvcCAod2hhdCBhIGdyZWF0IHV0aWxpdHkgeW91Cj4+IHBvaW50ZWQhKSwgYW5k
-IGFsd2F5cyBzYXcgb25seSB0aGUgcGRmbHVzaCBwcm9jZXNzIGFjZXNzaW5nIHRoZSBoZC4gbm8K
-Pj4gdXNlciBpbnRlcmZhY2Ugd2VyZSB1c2VkLgo+PiB0aGUgYXBtIGlzIHNldCB0byAxMjggd2l0
-aCBoZHBhcm0KPj4KPj4gb2ssIHRoZW4gdHJ5IHRoZSBmb2xsb3dpbmc6Cj4+Cj4+IHlvdSBhdCBs
-ZWFzdCBzaG91bGQgaGF2ZSBub2F0aW1lLG5vZGlyYXRpbWUsY29tbWl0PTYwMAo+Pgo+PiA6KSB0
-aGF0IGRpZCB0aGUgam9iISBhbHNvLCBpJ3ZlIHRlc3RlZCB3aXRob3V0IHRoZSBjb21taXQgb3B0
-aW9uLAo+PiB3aGljaCBkaWRuJ3QgY2hhbmdlZCB0aGUgcmVzdWx0Lgo+Pgo+PiBlbmFibGVkIGZv
-ciB0aGUgcmVpc2VyZnMgb3IgPj1leHQzIGZpbGVzeXN0ZW1zCj4+Cj4+IHlvdSBjYW4gYWxzbyB0
-cnkgZGF0YT13cml0ZWJhY2sgKGJ1dCBiZXdhcmUgdGhpcyBtaWdodCBwdXQgeW91ciBkYXRhIGF0
-IHJpc2sgISkKPj4KPj4gKiBjYW4ndCB0cnkKPj4KPj4gc2VsZWN0IHRoZSBhbnRpY2lwYXRvcnkg
-aS9vIHNjaGVkdWxlcgo+PiBhbmQgc2V0IGZvbGxvd2luZyBzdHVmZgo+Pgo+PiA6KCBubyBjaGFu
-Z2UuCj4+Cj4+IGVjaG8gIjE2IiA+IC9wcm9jL3N5cy92bS9wYWdlLWNsdXN0ZXIKPj4gIyBkZWZh
-dWx0OiAzCj4+ICMKPj4KPj4gOiggbm8gY2hhbmdlLgo+Pgo+PiBlY2hvICI2MCIgPiAvcHJvYy9z
-eXMvdm0vc3dhcHBpbmVzcwo+PiAjIGRlZmF1bHQ6IDYwCj4+ICMgQnkgZGVmYXVsdCwgTGludXgg
-d2lsbCBhZ2dyZXNzaXZlbHkgc3dhcCBwcm9jZXNzZXMgb3V0IG9mIHBoeXNpY2FsIG1lbW9yeSBv
-bnRvCj4+IGRpc2sgaW4gb3JkZXIgdG8ga2VlcCB0aGUgZGlzayBjYWNoZSBhcyBsYXJnZSBhcyBw
-b3NzaWJsZS4KPj4gIyBUaGlzIG1lYW5zIHRoYXQgcGFnZXMgdGhhdCBoYXZlbid0IGJlZW4gdXNl
-ZCByZWNlbnRseSB3aWxsIGJlIHB1c2hlZCBpbnRvIHN3YXAKPj4gbG9uZyBiZWZvcmUgdGhlIHN5
-c3RlbSBldmVuIGNvbWVzIGNsb3NlIHRvIHJ1bm5pbmcgb3V0IG9mIG1lbW9yeSwgd2hpY2ggaXMg
-YW4KPj4gdW5leHBlY3RlZCBiZWhhdmlvciBjb21wYXJlZCB0byBzb21lIG9wZXJhdGluZyBzeXN0
-ZW1zLgo+PiAjIFRoZSAvcHJvYy9zeXMvdm0vc3dhcHBpbmVzcyBwYXJhbWV0ZXIgY29udHJvbHMg
-aG93IGFnZ3Jlc3NpdmUgTGludXggaXMgaW4gdGhpcwo+PiBhcmVhLgo+Pgo+PiA6KCBubyBjaGFu
-Z2UuCj4+Cj4+IGVjaG8gIjMwMDAiID4gL3Byb2Mvc3lzL3ZtL2RpcnR5X2V4cGlyZV9jZW50aXNl
-Y3MKPj4gIyBkZWZhdWx0OiAzMDAwICgzMCBzZWNvbmRzKQo+PiAjMiBob3cgbG9uZyBkYXRhIGNh
-biBiZSBpbiB0aGUgcGFnZSBjYWNoZSBiZWZvcmUgaXQgaXMgY29uc2lkZXJlZCBleHBpcmVkIGFu
-ZAo+PiBtdXN0IGJlIHdyaXR0ZW4gYXQgdGhlIG5leHQgb3Bwb3J0dW5pdHkuIE5vdGUgdGhhdCB0
-aGlzIGRlZmF1bHQgaXMgdmVyeSBsb25nOiBhCj4+IGZ1bGwgMzAgc2Vjb25kcy4gVGhhdCBtZWFu
-cyB0aGF0IHVuZGVyIG5vcm1hbCBjaXJjdW1zdGFuY2VzLCB1bmxlc3MgeW91IHdyaXRlCj4+IGVu
-b3VnaCB0byB0cmlnZ2VyIHRoZSBvdGhlciBwZGZsdXNoIG1ldGhvZCwgTGludXggd29uJ3QgYWN0
-dWFsbHkgY29tbWl0IGFueXRoaW5nCj4+IHlvdSB3cml0ZSB1bnRpbCAzMCBzZWNvbmRzIGxhdGVy
-Lgo+Pgo+PiA6KCBubyBjaGFuZ2UuCj4+Cj4+IGVjaG8gIjYwMDAiICA+IC9wcm9jL3N5cy92bS9k
-aXJ0eV93cml0ZWJhY2tfY2VudGlzZWNzCj4+ICMgZGVmYXVsdDogNTAwICg1IHNlY29uZHMpCj4+
-ICMxIGhvdyBvZnRlbiBwZGZsdXNoIHdha2VzIHVwIHRvIHdyaXRlIGRhdGEgdG8gZGlzay4gVGhl
-IGRlZmF1bHQgd2FrZXMgdXAgdGhlCj4+IHR3byAob3IgbW9yZSkgYWN0aXZlIHRocmVhZHMgZXZl
-cnkgZml2ZSBzZWNvbmRzLgo+PiAjIHN1Z2dlc3Rpb246IDYwMDAgKGV2ZXJ5IDYwIHNlY29uZHMp
-Cj4+Cj4+IDooIG5vIGNoYW5nZS4KPj4KPj4gZWNobyAiMTUiID4gL3Byb2Mvc3lzL3ZtL2RpcnR5
-X2JhY2tncm91bmRfcmF0aW8KPj4gIyBkZWZhdWx0OiAxMAo+PiAjMyBNYXhpbXVtIHBlcmNlbnRh
-Z2Ugb2YgYWN0aXZlIG1lbW9yeSB0aGF0IGNhbiBiZSBmaWxsZWQgd2l0aCBkaXJ0eSBwYWdlcwo+
-PiBiZWZvcmUgcGRmbHVzaCBiZWdpbnMgdG8gd3JpdGUgdGhlbQo+Pgo+PiBlY2hvICI1MCIgICA+
-IC9wcm9jL3N5cy92bS9kaXJ0eV9yYXRpbyAjbW9kaWZpZWQKPj4gIyBkZWZhdWx0OiA0MAo+PiAj
-NCBNYXhpbXVtIHBlcmNlbnRhZ2Ugb2YgdG90YWwgbWVtb3J5IHRoYXQgY2FuIGJlIGZpbGxlZCB3
-aXRoIGRpcnR5IHBhZ2VzIGJlZm9yZQo+PiBwcm9jZXNzZXMgYXJlIGZvcmNlZCB0byB3cml0ZSBk
-aXJ0eSBidWZmZXJzIHRoZW1zZWx2ZXMgZHVyaW5nIHRoZWlyIHRpbWUgc2xpY2UKPj4gaW5zdGVh
-ZCBvZiBiZWluZyBhbGxvd2VkIHRvIGRvIG1vcmUgd3JpdGVzLgo+PiAjIG1vZGlmaWVkOiA1MAo+
-Pgo+PiBlY2hvICIyNSIgPiAvcHJvYy9zeXMvdm0vdmZzX2NhY2hlX3ByZXNzdXJlCj4+Cj4+IGZv
-ciBpIGluIC9zeXMvYmxvY2svc2QqOyBkbwo+PiAgICAgICAgL2Jpbi9lY2hvICJhbnRpY2lwYXRv
-cnkiID4gICRpL3F1ZXVlL3NjaGVkdWxlcgo+PiBkb25lCj4+Cj4+IGZvciBpIGluIC9zeXMvYmxv
-Y2svc2QqOyBkbwo+PiAgICAgICAgL2Jpbi9lY2hvICIwIiA+ICAkaS9xdWV1ZS9pb3NjaGVkL2Fu
-dGljX2V4cGlyZQo+PiBkb25lCj4+Cj4+IGZvciBpIGluIC9zeXMvYmxvY2svc2QqOyBkbwo+PiAg
-ICAgICAgL2Jpbi9lY2hvICIxNTAiID4gICRpL3F1ZXVlL2lvc2NoZWQvcmVhZF9leHBpcmUKPj4g
-ZG9uZQo+Pgo+PiBmb3IgaSBpbiAvc3lzL2Jsb2NrL3NkKjsgZG8KPj4gICAgICAgIC9iaW4vZWNo
-byAiNzUwIiA+ICAkaS9xdWV1ZS9pb3NjaGVkL3JlYWRfYmF0Y2hfZXhwaXJlCj4+IGRvbmUKPj4K
-Pj4gZm9yIGkgaW4gL3N5cy9ibG9jay9zZCo7IGRvCj4+ICAgICAgICAvYmluL2VjaG8gIjEyMDAi
-ID4gICRpL3F1ZXVlL2lvc2NoZWQvd3JpdGVfYmF0Y2hfZXhwaXJlCj4+IGRvbmUKPj4KPj4gZm9y
-IGkgaW4gL3N5cy9ibG9jay9zZCo7IGRvCj4+ICAgICAgICAvYmluL2VjaG8gIjEwMjQiID4gICRp
-L3F1ZXVlL25yX3JlcXVlc3RzCj4+IGRvbmUKPj4KPj4gZm9yIGkgaW4gL3N5cy9ibG9jay9zZCo7
-IGRvCj4+ICAgICAgICAvYmluL2VjaG8gIjI1NiIgPiAgJGkvcXVldWUvcmVhZF9haGVhZF9rYgo+
-PiBkb25lCj4+Cj4+IGZvciBpIGluIC9zeXMvYmxvY2svc2QqOyBkbwo+PiAgICAgICAgL2Jpbi9l
-Y2hvICIyNTYiID4gICRpL3F1ZXVlL21heF9zZWN0b3JzX2tiCj4+IGRvbmUKPj4KPj4gZm9yIGkg
-aW4gL3N5cy9jbGFzcy9zY3NpX2hvc3QvaG9zdCo7IGRvCj4+ICAgICAgICAvYmluL2VjaG8gIm1p
-bl9wb3dlciIgPiAgJGkvbGlua19wb3dlcl9tYW5hZ2VtZW50X3BvbGljeQo+PiBkb25lCj4+Cj4+
-Cj4+Cj4+Cj4+IHRyeSB0byBkaXNhYmxlIGVhY2ggYW5kIGV2ZXJ5IHVubmVlZGVkIGRhZW1vbiBv
-ciBhcHBsZXRzLCBwcm9ncmFtcywgZXRjLgo+Pgo+PiBieSB1c2luZzoKPj4KPj4gKiBwb3dlcnRv
-cAo+PiAqIGlvdG9wCj4+ICogaHRvcAo+PiAqIHRvcAo+PiAqIGxzb2YgfCBncmVwIC9ob21lCj4+
-ICogLi4uCj4+Cj4K
+On Friday 05 September 2008, Br=C3=A1ulio Barros de Oliveira wrote:
+> just found out! it is konsole, unbelievable! going to file a bug
+> report right now.
+> again, thank you very much for the support.
+> br=C3=A1ulio
+
+let me guess - konsole writes to a temp file in /tmp containing the bac=
+klog?
+That is not a bug but a feature. You can 'save' you some trouble by put=
+ting=20
+/tmp on a tempfs. 256mb should be enough.
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
