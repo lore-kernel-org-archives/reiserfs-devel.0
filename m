@@ -1,118 +1,88 @@
-From: Mat <jackdachef@gmail.com>
-Subject: Re: Re: reiserfs =?utf-8?b?ZG9fam91cm5hbF9lbmQ=?= unnecessary hd wake up?
-Date: Thu, 4 Sep 2008 21:16:49 +0000 (UTC)
-Message-ID: <loom.20080904T211127-782@post.gmane.org>
+From: "=?UTF-8?Q?Br=C3=A1ulio_Barros_de_Oliveira?=" <brauliobo@gmail.com>
+Subject: Re: Re: reiserfs do_journal_end unnecessary hd wake up?
+Date: Thu, 4 Sep 2008 19:38:56 -0300
+Message-ID: <1df1788c0809041538x8d41eb8s80966f25aa2ade21@mail.gmail.com>
+References: <loom.20080904T211127-782@post.gmane.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:message-id:date:from:to
+         :subject:cc:in-reply-to:mime-version:content-type
+         :content-transfer-encoding:content-disposition:references;
+        bh=RB56JlgT50aCGCAY16hPfbytYOPSpWIHPL5GxiSQfTs=;
+        b=KdMs+SGONyybnXfrtoWOTcthOxAjtPo2vDSDIRwhEeG2HM64qwWimZsjgxYj06xuf+
+         +8SZjR3tL8Ml5QiE0KolOMNETX5Z9qbzygumh4IKtqxmC4Gchxp509Am6OgQkVNk9X+/
+         PlOXrqfUoburVV03mO4PdMFxMCFs0NfNVdK2w=
+In-Reply-To: <loom.20080904T211127-782@post.gmane.org>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="macroman"
+To: Mat <jackdachef@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-ok, then try the following:
-
-you at least should have noatime,nodiratime,commit=600 
-
-enabled for the reiserfs or >=ext3 filesystems
-
-you can also try data=writeback (but beware this might put your data at risk !)
-
-
-select the anticipatory i/o scheduler 
-and set following stuff
-
-echo "16" > /proc/sys/vm/page-cluster
-# default: 3
-#
-
-echo "60" > /proc/sys/vm/swappiness
-# default: 60
-# By default, Linux will aggressively swap processes out of physical memory onto
-disk in order to keep the disk cache as large as possible. 
-# This means that pages that haven't been used recently will be pushed into swap
-long before the system even comes close to running out of memory, which is an
-unexpected behavior compared to some operating systems. 
-# The /proc/sys/vm/swappiness parameter controls how aggressive Linux is in this
-area. 
-
-echo "3000" > /proc/sys/vm/dirty_expire_centisecs
-# default: 3000 (30 seconds)
-#2 how long data can be in the page cache before it is considered expired and
-must be written at the next opportunity. Note that this default is very long: a
-full 30 seconds. That means that under normal circumstances, unless you write
-enough to trigger the other pdflush method, Linux won't actually commit anything
-you write until 30 seconds later.
-
-echo "6000"  > /proc/sys/vm/dirty_writeback_centisecs
-# default: 500 (5 seconds)
-#1 how often pdflush wakes up to write data to disk. The default wakes up the
-two (or more) active threads every five seconds.
-# suggestion: 6000 (every 60 seconds)
-
-echo "15" > /proc/sys/vm/dirty_background_ratio
-# default: 10
-#3 Maximum percentage of active memory that can be filled with dirty pages
-before pdflush begins to write them
-
-echo "50"   > /proc/sys/vm/dirty_ratio #modified
-# default: 40
-#4 Maximum percentage of total memory that can be filled with dirty pages before
-processes are forced to write dirty buffers themselves during their time slice
-instead of being allowed to do more writes.
-# modified: 50
-
-echo "25" > /proc/sys/vm/vfs_cache_pressure
-
-for i in /sys/block/sd*; do
-         /bin/echo "anticipatory" >  $i/queue/scheduler
-done
-
-for i in /sys/block/sd*; do
-         /bin/echo "0" >  $i/queue/iosched/antic_expire
-done
-
-for i in /sys/block/sd*; do
-         /bin/echo "150" >  $i/queue/iosched/read_expire
-done
-
-for i in /sys/block/sd*; do
-         /bin/echo "750" >  $i/queue/iosched/read_batch_expire
-done
-
-for i in /sys/block/sd*; do
-         /bin/echo "1200" >  $i/queue/iosched/write_batch_expire
-done
-
-for i in /sys/block/sd*; do
-         /bin/echo "1024" >  $i/queue/nr_requests
-done
-
-for i in /sys/block/sd*; do
-         /bin/echo "256" >  $i/queue/read_ahead_kb
-done
-
-for i in /sys/block/sd*; do
-         /bin/echo "256" >  $i/queue/max_sectors_kb
-done
-
-for i in /sys/class/scsi_host/host*; do
-         /bin/echo "min_power" >  $i/link_power_management_policy
-done
-
-
-
-
-try to disable each and every unneeded daemon or applets, programs, etc.
-
-by using:
-
-* powertop
-* iotop
-* htop
-* top
-* lsof | grep /home
-* ...
-
-
-
+dGhhbmsgeW91IHZlcnkgbXVjaCBmb3IgdGhlIGdyZWF0IGluc3RydWN0aW9ucy4gaSdsbCBldmFs
+dWF0ZSB0aGVuIGFuZApzZW5kIHlvdSB0aGUgcmVzdWx0cy4KYnLDoXVsaW8KCk9uIFRodSwgU2Vw
+IDQsIDIwMDggYXQgNjoxNiBQTSwgTWF0IDxqYWNrZGFjaGVmQGdtYWlsLmNvbT4gd3JvdGU6Cj4g
+b2ssIHRoZW4gdHJ5IHRoZSBmb2xsb3dpbmc6Cj4KPiB5b3UgYXQgbGVhc3Qgc2hvdWxkIGhhdmUg
+bm9hdGltZSxub2RpcmF0aW1lLGNvbW1pdD02MDAKPgo+IGVuYWJsZWQgZm9yIHRoZSByZWlzZXJm
+cyBvciA+PWV4dDMgZmlsZXN5c3RlbXMKPgo+IHlvdSBjYW4gYWxzbyB0cnkgZGF0YT13cml0ZWJh
+Y2sgKGJ1dCBiZXdhcmUgdGhpcyBtaWdodCBwdXQgeW91ciBkYXRhIGF0IHJpc2sgISkKPgo+Cj4g
+c2VsZWN0IHRoZSBhbnRpY2lwYXRvcnkgaS9vIHNjaGVkdWxlcgo+IGFuZCBzZXQgZm9sbG93aW5n
+IHN0dWZmCj4KPiBlY2hvICIxNiIgPiAvcHJvYy9zeXMvdm0vcGFnZS1jbHVzdGVyCj4gIyBkZWZh
+dWx0OiAzCj4gIwo+Cj4gZWNobyAiNjAiID4gL3Byb2Mvc3lzL3ZtL3N3YXBwaW5lc3MKPiAjIGRl
+ZmF1bHQ6IDYwCj4gIyBCeSBkZWZhdWx0LCBMaW51eCB3aWxsIGFnZ3Jlc3NpdmVseSBzd2FwIHBy
+b2Nlc3NlcyBvdXQgb2YgcGh5c2ljYWwgbWVtb3J5IG9udG8KPiBkaXNrIGluIG9yZGVyIHRvIGtl
+ZXAgdGhlIGRpc2sgY2FjaGUgYXMgbGFyZ2UgYXMgcG9zc2libGUuCj4gIyBUaGlzIG1lYW5zIHRo
+YXQgcGFnZXMgdGhhdCBoYXZlbid0IGJlZW4gdXNlZCByZWNlbnRseSB3aWxsIGJlIHB1c2hlZCBp
+bnRvIHN3YXAKPiBsb25nIGJlZm9yZSB0aGUgc3lzdGVtIGV2ZW4gY29tZXMgY2xvc2UgdG8gcnVu
+bmluZyBvdXQgb2YgbWVtb3J5LCB3aGljaCBpcyBhbgo+IHVuZXhwZWN0ZWQgYmVoYXZpb3IgY29t
+cGFyZWQgdG8gc29tZSBvcGVyYXRpbmcgc3lzdGVtcy4KPiAjIFRoZSAvcHJvYy9zeXMvdm0vc3dh
+cHBpbmVzcyBwYXJhbWV0ZXIgY29udHJvbHMgaG93IGFnZ3Jlc3NpdmUgTGludXggaXMgaW4gdGhp
+cwo+IGFyZWEuCj4KPiBlY2hvICIzMDAwIiA+IC9wcm9jL3N5cy92bS9kaXJ0eV9leHBpcmVfY2Vu
+dGlzZWNzCj4gIyBkZWZhdWx0OiAzMDAwICgzMCBzZWNvbmRzKQo+ICMyIGhvdyBsb25nIGRhdGEg
+Y2FuIGJlIGluIHRoZSBwYWdlIGNhY2hlIGJlZm9yZSBpdCBpcyBjb25zaWRlcmVkIGV4cGlyZWQg
+YW5kCj4gbXVzdCBiZSB3cml0dGVuIGF0IHRoZSBuZXh0IG9wcG9ydHVuaXR5LiBOb3RlIHRoYXQg
+dGhpcyBkZWZhdWx0IGlzIHZlcnkgbG9uZzogYQo+IGZ1bGwgMzAgc2Vjb25kcy4gVGhhdCBtZWFu
+cyB0aGF0IHVuZGVyIG5vcm1hbCBjaXJjdW1zdGFuY2VzLCB1bmxlc3MgeW91IHdyaXRlCj4gZW5v
+dWdoIHRvIHRyaWdnZXIgdGhlIG90aGVyIHBkZmx1c2ggbWV0aG9kLCBMaW51eCB3b24ndCBhY3R1
+YWxseSBjb21taXQgYW55dGhpbmcKPiB5b3Ugd3JpdGUgdW50aWwgMzAgc2Vjb25kcyBsYXRlci4K
+Pgo+IGVjaG8gIjYwMDAiICA+IC9wcm9jL3N5cy92bS9kaXJ0eV93cml0ZWJhY2tfY2VudGlzZWNz
+Cj4gIyBkZWZhdWx0OiA1MDAgKDUgc2Vjb25kcykKPiAjMSBob3cgb2Z0ZW4gcGRmbHVzaCB3YWtl
+cyB1cCB0byB3cml0ZSBkYXRhIHRvIGRpc2suIFRoZSBkZWZhdWx0IHdha2VzIHVwIHRoZQo+IHR3
+byAob3IgbW9yZSkgYWN0aXZlIHRocmVhZHMgZXZlcnkgZml2ZSBzZWNvbmRzLgo+ICMgc3VnZ2Vz
+dGlvbjogNjAwMCAoZXZlcnkgNjAgc2Vjb25kcykKPgo+IGVjaG8gIjE1IiA+IC9wcm9jL3N5cy92
+bS9kaXJ0eV9iYWNrZ3JvdW5kX3JhdGlvCj4gIyBkZWZhdWx0OiAxMAo+ICMzIE1heGltdW0gcGVy
+Y2VudGFnZSBvZiBhY3RpdmUgbWVtb3J5IHRoYXQgY2FuIGJlIGZpbGxlZCB3aXRoIGRpcnR5IHBh
+Z2VzCj4gYmVmb3JlIHBkZmx1c2ggYmVnaW5zIHRvIHdyaXRlIHRoZW0KPgo+IGVjaG8gIjUwIiAg
+ID4gL3Byb2Mvc3lzL3ZtL2RpcnR5X3JhdGlvICNtb2RpZmllZAo+ICMgZGVmYXVsdDogNDAKPiAj
+NCBNYXhpbXVtIHBlcmNlbnRhZ2Ugb2YgdG90YWwgbWVtb3J5IHRoYXQgY2FuIGJlIGZpbGxlZCB3
+aXRoIGRpcnR5IHBhZ2VzIGJlZm9yZQo+IHByb2Nlc3NlcyBhcmUgZm9yY2VkIHRvIHdyaXRlIGRp
+cnR5IGJ1ZmZlcnMgdGhlbXNlbHZlcyBkdXJpbmcgdGhlaXIgdGltZSBzbGljZQo+IGluc3RlYWQg
+b2YgYmVpbmcgYWxsb3dlZCB0byBkbyBtb3JlIHdyaXRlcy4KPiAjIG1vZGlmaWVkOiA1MAo+Cj4g
+ZWNobyAiMjUiID4gL3Byb2Mvc3lzL3ZtL3Zmc19jYWNoZV9wcmVzc3VyZQo+Cj4gZm9yIGkgaW4g
+L3N5cy9ibG9jay9zZCo7IGRvCj4gICAgICAgICAvYmluL2VjaG8gImFudGljaXBhdG9yeSIgPiAg
+JGkvcXVldWUvc2NoZWR1bGVyCj4gZG9uZQo+Cj4gZm9yIGkgaW4gL3N5cy9ibG9jay9zZCo7IGRv
+Cj4gICAgICAgICAvYmluL2VjaG8gIjAiID4gICRpL3F1ZXVlL2lvc2NoZWQvYW50aWNfZXhwaXJl
+Cj4gZG9uZQo+Cj4gZm9yIGkgaW4gL3N5cy9ibG9jay9zZCo7IGRvCj4gICAgICAgICAvYmluL2Vj
+aG8gIjE1MCIgPiAgJGkvcXVldWUvaW9zY2hlZC9yZWFkX2V4cGlyZQo+IGRvbmUKPgo+IGZvciBp
+IGluIC9zeXMvYmxvY2svc2QqOyBkbwo+ICAgICAgICAgL2Jpbi9lY2hvICI3NTAiID4gICRpL3F1
+ZXVlL2lvc2NoZWQvcmVhZF9iYXRjaF9leHBpcmUKPiBkb25lCj4KPiBmb3IgaSBpbiAvc3lzL2Js
+b2NrL3NkKjsgZG8KPiAgICAgICAgIC9iaW4vZWNobyAiMTIwMCIgPiAgJGkvcXVldWUvaW9zY2hl
+ZC93cml0ZV9iYXRjaF9leHBpcmUKPiBkb25lCj4KPiBmb3IgaSBpbiAvc3lzL2Jsb2NrL3NkKjsg
+ZG8KPiAgICAgICAgIC9iaW4vZWNobyAiMTAyNCIgPiAgJGkvcXVldWUvbnJfcmVxdWVzdHMKPiBk
+b25lCj4KPiBmb3IgaSBpbiAvc3lzL2Jsb2NrL3NkKjsgZG8KPiAgICAgICAgIC9iaW4vZWNobyAi
+MjU2IiA+ICAkaS9xdWV1ZS9yZWFkX2FoZWFkX2tiCj4gZG9uZQo+Cj4gZm9yIGkgaW4gL3N5cy9i
+bG9jay9zZCo7IGRvCj4gICAgICAgICAvYmluL2VjaG8gIjI1NiIgPiAgJGkvcXVldWUvbWF4X3Nl
+Y3RvcnNfa2IKPiBkb25lCj4KPiBmb3IgaSBpbiAvc3lzL2NsYXNzL3Njc2lfaG9zdC9ob3N0Kjsg
+ZG8KPiAgICAgICAgIC9iaW4vZWNobyAibWluX3Bvd2VyIiA+ICAkaS9saW5rX3Bvd2VyX21hbmFn
+ZW1lbnRfcG9saWN5Cj4gZG9uZQo+Cj4KPgo+Cj4gdHJ5IHRvIGRpc2FibGUgZWFjaCBhbmQgZXZl
+cnkgdW5uZWVkZWQgZGFlbW9uIG9yIGFwcGxldHMsIHByb2dyYW1zLCBldGMuCj4KPiBieSB1c2lu
+ZzoKPgo+ICogcG93ZXJ0b3AKPiAqIGlvdG9wCj4gKiBodG9wCj4gKiB0b3AKPiAqIGxzb2YgfCBn
+cmVwIC9ob21lCj4gKiAuLi4KPgo+Cj4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBs
+aXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSByZWlzZXJmcy1kZXZlbCIgaW4KPiB0aGUg
+Ym9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFq
+b3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRt
+bAo+Cg==
