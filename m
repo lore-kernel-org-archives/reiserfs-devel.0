@@ -1,50 +1,118 @@
-From: "=?UTF-8?Q?Br=C3=A1ulio_Barros_de_Oliveira?=" <brauliobo@gmail.com>
-Subject: Re: reiserfs do_journal_end unnecessary hd wake up?
-Date: Thu, 4 Sep 2008 16:46:13 -0300
-Message-ID: <1df1788c0809041246s3b6fb559y2fd12a6eaf912535@mail.gmail.com>
-References: <loom.20080904T155515-782@post.gmane.org>
+From: Mat <jackdachef@gmail.com>
+Subject: Re: Re: reiserfs =?utf-8?b?ZG9fam91cm5hbF9lbmQ=?= unnecessary hd wake up?
+Date: Thu, 4 Sep 2008 21:16:49 +0000 (UTC)
+Message-ID: <loom.20080904T211127-782@post.gmane.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from:to
-         :subject:cc:in-reply-to:mime-version:content-type
-         :content-transfer-encoding:content-disposition:references;
-        bh=2noAo31fqNjJGz5sAqNuhRkhmadYNSmFhxlJOes4+Bg=;
-        b=U9caZPa/HUn/mnZdJfhTIuud0wpytXZ1EY1QJgJ+lWPuo17rUzn7gizKOwhm9puZ2S
-         1sA8u9sLQ1eMr7Ws6ZJprpocLIUTdcKXu91qE+YkXeKiCxtRHobyo1r6H1pRa37rs4zs
-         SfcHbBff/z62o3R2rOjFiBt9OUNBRtzXV8fCg=
-In-Reply-To: <loom.20080904T155515-782@post.gmane.org>
-Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Mat <jackdachef@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-VGhhbmtzIGZvciB5b3VyIHJlc3BvbnNlIE1hdC4KCkkndmUgdHJpZWQgd2hhdCB5b3Ugc2FpZCwg
-YW5kIGl0IGRvZXNuJ3QgbWFrZSBubyBkaWZmZXJlbmNlIGF0IGFsbC4gSQpjYW4gaGVhciB0aGUg
-Y2xpY2tzLCBvbiBhIGNvbXBsZXRseSBpZGxlIHN5c3RlbSwgZXZlcnkgMzAgc2Vjb25jcwoobW9y
-ZSBvciBsZXNzKS4gSGVyZSBpcyBteSBtdGFiOgoKW3Jvb3RAYnJhdWxpb3ByZXN0byBicmF1bGlv
-XSMgY2F0IC9ldGMvbXRhYgovZGV2L3NkYTIgLyByZWlzZXJmcyBydyxjb21taXQ9NTQwIDAgMApu
-b25lIC9kZXYgcmFtZnMgcncgMCAwCm5vbmUgL3Byb2MgcHJvYyBydyAwIDAKbm9uZSAvc3lzIHN5
-c2ZzIHJ3IDAgMApub25lIC9kZXYvcHRzIGRldnB0cyBydyAwIDAKbm9uZSAvZGV2L3NobSB0bXBm
-cyBydyAwIDAKL2Rldi9zZGE1IC9tbnQvYXJxdWl2b3MgcmVpc2VyZnMgcncsY29tbWl0PTU0MCAw
-IDAKbm9uZSAvbW50L3RtcGZzIHRtcGZzIHJ3LHNpemU9MmcgMCAwCi9wcm9jIC9vcHQvYXJjaDMy
-L3Byb2Mgbm9uZSBydyxiaW5kIDAgMAovcHJvYy9idXMvdXNiIC9vcHQvYXJjaDMyL3Byb2MvYnVz
-L3VzYiBub25lIHJ3LGJpbmQgMCAwCi9kZXYgL29wdC9hcmNoMzIvZGV2IG5vbmUgcncsYmluZCAw
-IDAKL2Rldi9wdHMgL29wdC9hcmNoMzIvZGV2L3B0cyBub25lIHJ3LGJpbmQgMCAwCi9kZXYvc2ht
-IC9vcHQvYXJjaDMyL2Rldi9zaG0gbm9uZSBydyxiaW5kIDAgMAovc3lzIC9vcHQvYXJjaDMyL3N5
-cyBub25lIHJ3LGJpbmQgMCAwCi90bXAgL29wdC9hcmNoMzIvdG1wIG5vbmUgcncsYmluZCAwIDAK
-L2hvbWUgL29wdC9hcmNoMzIvaG9tZSBub25lIHJ3LGJpbmQgMCAwCi9tbnQgL29wdC9hcmNoMzIv
-bW50IG5vbmUgcncsYmluZCAwIDAKL21udC9hcnF1aXZvcyAvb3B0L2FyY2gzMi9tbnQvYXJxdWl2
-b3Mgbm9uZSBydyxiaW5kIDAgMAoKYnLDoXVsaW8KCk9uIFRodSwgU2VwIDQsIDIwMDggYXQgMTI6
-NTcgUE0sIE1hdCA8amFja2RhY2hlZkBnbWFpbC5jb20+IHdyb3RlOgo+IEhpIEJyw6F1bGlvLAo+
-Cj4gZG9lcyBtb3VudGluZyB0aGUgcGFydGl0aW9uKHMpIHdpdGggc2V0dGluZyB0aGUgY29tbWl0
-LWludGVydmFsIHRvIHNvbWV0aGluZwo+IGhpZ2hlciwgZS5nLiBjb21taXQ9MTIwIG9yIGNvbW1p
-dD02MDAgbWFrZSBhIGNoYW5nZSA/Cj4KPiBSZWdhcmRzCj4KPiBNYXQKPgo+Cj4gLS0KPiBUbyB1
-bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgcmVp
-c2VyZnMtZGV2ZWwiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2Vy
-Lmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwu
-b3JnL21ham9yZG9tby1pbmZvLmh0bWwKPgo=
+ok, then try the following:
+
+you at least should have noatime,nodiratime,commit=600 
+
+enabled for the reiserfs or >=ext3 filesystems
+
+you can also try data=writeback (but beware this might put your data at risk !)
+
+
+select the anticipatory i/o scheduler 
+and set following stuff
+
+echo "16" > /proc/sys/vm/page-cluster
+# default: 3
+#
+
+echo "60" > /proc/sys/vm/swappiness
+# default: 60
+# By default, Linux will aggressively swap processes out of physical memory onto
+disk in order to keep the disk cache as large as possible. 
+# This means that pages that haven't been used recently will be pushed into swap
+long before the system even comes close to running out of memory, which is an
+unexpected behavior compared to some operating systems. 
+# The /proc/sys/vm/swappiness parameter controls how aggressive Linux is in this
+area. 
+
+echo "3000" > /proc/sys/vm/dirty_expire_centisecs
+# default: 3000 (30 seconds)
+#2 how long data can be in the page cache before it is considered expired and
+must be written at the next opportunity. Note that this default is very long: a
+full 30 seconds. That means that under normal circumstances, unless you write
+enough to trigger the other pdflush method, Linux won't actually commit anything
+you write until 30 seconds later.
+
+echo "6000"  > /proc/sys/vm/dirty_writeback_centisecs
+# default: 500 (5 seconds)
+#1 how often pdflush wakes up to write data to disk. The default wakes up the
+two (or more) active threads every five seconds.
+# suggestion: 6000 (every 60 seconds)
+
+echo "15" > /proc/sys/vm/dirty_background_ratio
+# default: 10
+#3 Maximum percentage of active memory that can be filled with dirty pages
+before pdflush begins to write them
+
+echo "50"   > /proc/sys/vm/dirty_ratio #modified
+# default: 40
+#4 Maximum percentage of total memory that can be filled with dirty pages before
+processes are forced to write dirty buffers themselves during their time slice
+instead of being allowed to do more writes.
+# modified: 50
+
+echo "25" > /proc/sys/vm/vfs_cache_pressure
+
+for i in /sys/block/sd*; do
+         /bin/echo "anticipatory" >  $i/queue/scheduler
+done
+
+for i in /sys/block/sd*; do
+         /bin/echo "0" >  $i/queue/iosched/antic_expire
+done
+
+for i in /sys/block/sd*; do
+         /bin/echo "150" >  $i/queue/iosched/read_expire
+done
+
+for i in /sys/block/sd*; do
+         /bin/echo "750" >  $i/queue/iosched/read_batch_expire
+done
+
+for i in /sys/block/sd*; do
+         /bin/echo "1200" >  $i/queue/iosched/write_batch_expire
+done
+
+for i in /sys/block/sd*; do
+         /bin/echo "1024" >  $i/queue/nr_requests
+done
+
+for i in /sys/block/sd*; do
+         /bin/echo "256" >  $i/queue/read_ahead_kb
+done
+
+for i in /sys/block/sd*; do
+         /bin/echo "256" >  $i/queue/max_sectors_kb
+done
+
+for i in /sys/class/scsi_host/host*; do
+         /bin/echo "min_power" >  $i/link_power_management_policy
+done
+
+
+
+
+try to disable each and every unneeded daemon or applets, programs, etc.
+
+by using:
+
+* powertop
+* iotop
+* htop
+* top
+* lsof | grep /home
+* ...
+
+
+
