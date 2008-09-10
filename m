@@ -1,34 +1,34 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: [PATCH] reiserfs: add missing llseek method
-Date: Mon, 8 Sep 2008 19:42:50 +0200
-Message-ID: <20080908174250.GA19912@lst.de>
+From: =?ISO-8859-1?Q?Bo_Brant=E9n?= <bosse@acc.umu.se>
+Subject: rfsd 0.25.1 released
+Date: Wed, 10 Sep 2008 02:03:53 +0200 (CEST)
+Message-ID: <Pine.A41.4.64.0809100203340.884914@stalin.acc.umu.se>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
 Content-Transfer-Encoding: 7bit
-To: viro@zeniv.linux.org.uk
-Cc: reiserfs-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-
-Reiserfs currently doesn't set a llseek method for regular files, which
-means it will fall back to default_llseek.  This means no one can seek
-beyond 2 Gigabytes on reiserfs, and that there's not protection vs
-the i_size updates from writers.
+To: reiserfs-devel@vger.kernel.org
 
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+rfsd 0.25.1 has been released, download it here: 
+http://www.acc.umu.se/~bosse/rfsd-0.25.1.zip
 
-Index: linux-2.6/fs/reiserfs/file.c
-===================================================================
---- linux-2.6.orig/fs/reiserfs/file.c	2008-09-08 19:39:09.000000000 +0200
-+++ linux-2.6/fs/reiserfs/file.c	2008-09-08 19:40:14.000000000 +0200
-@@ -296,6 +296,7 @@ const struct file_operations reiserfs_fi
- 	.aio_write = generic_file_aio_write,
- 	.splice_read = generic_file_splice_read,
- 	.splice_write = generic_file_splice_write,
-+	.llseek = generic_file_llseek,
- };
- 
- const struct inode_operations reiserfs_file_inode_operations = {
+Changed since last release:
+Fixed the directory listing bug. (This bug apeared when the caller
+supplied buffer didn't fit all the information for a directory so that
+more than one query directory call was needed, when processing the first
+directory entry in the second (and consecutive) calls the filename length
+was misscalculated since information on the directory entry before wasn't
+saved between the calls)
+
+Known problems:
+- Some files misses the last block when reading data from them. At a test
+on the linux kernel source code that contains aproximatly 24000 files,
+10% or aproximatly 2400 files showed this problem, however if the file
+system was mounted with the notail option while untaring the files on
+Linux less than 1% or 108 files showed this problem.
+- No write support yet.
+
+Bo Branten
+
