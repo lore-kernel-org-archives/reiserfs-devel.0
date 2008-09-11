@@ -1,34 +1,33 @@
-From: =?ISO-8859-1?Q?Bo_Brant=E9n?= <bosse@acc.umu.se>
-Subject: rfsd 0.25.1 released
-Date: Wed, 10 Sep 2008 02:03:53 +0200 (CEST)
-Message-ID: <Pine.A41.4.64.0809100203340.884914@stalin.acc.umu.se>
+From: Anders Aagaard <aagaande@gmail.com>
+Subject: Correct fsck behavior on boot
+Date: Thu, 11 Sep 2008 13:26:02 +0200
+Message-ID: <48C9004A.5080504@gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:message-id:date:from
+         :user-agent:mime-version:to:subject:content-type
+         :content-transfer-encoding;
+        bh=Qz31QylQd8J/JtVKw/CEEveY10HLntUh9vZCkuNqgEs=;
+        b=h+QREJ2DWiGH1nFJtjZTReV2k9BRyKY7DQcOkXIOeMmY+0vrBYCDKS6yAVID7VP83i
+         q+DprSNpkvE+GZpwZ7zidiv2X8JrchDkBDEtn5v+htZXKBcndm6dmufYqlnXAxcxtkXQ
+         Tkv+GVRApL/nWvT86gCxIEpUYMzyZuH3mmlpE=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"; format="flowed"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: reiserfs-devel@vger.kernel.org
 
+Hi
 
-rfsd 0.25.1 has been released, download it here: 
-http://www.acc.umu.se/~bosse/rfsd-0.25.1.zip
+What's the correct options to pass to reiser4.fsck on boot to get it to 
+check the filesystem when it's not marked as clean?
 
-Changed since last release:
-Fixed the directory listing bug. (This bug apeared when the caller
-supplied buffer didn't fit all the information for a directory so that
-more than one query directory call was needed, when processing the first
-directory entry in the second (and consecutive) calls the filename length
-was misscalculated since information on the directory entry before wasn't
-saved between the calls)
+reiser4 fsck does implement -a, but it seems to return right away, 
+including when the filesystem wasn't unmounted cleanly.  Is the 
+filesystem integrity still secured by hash'es, so skipping fsck is 
+intentional?
+--check --fix seems a tad bit excessive on every boot.
 
-Known problems:
-- Some files misses the last block when reading data from them. At a test
-on the linux kernel source code that contains aproximatly 24000 files,
-10% or aproximatly 2400 files showed this problem, however if the file
-system was mounted with the notail option while untaring the files on
-Linux less than 1% or 108 files showed this problem.
-- No write support yet.
-
-Bo Branten
-
+Anders Aagaard
