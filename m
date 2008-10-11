@@ -1,44 +1,43 @@
-From: Alex Brandt <alunduil@alunduil.com>
-Subject: Re: Reiser4 compile error on vanilla-sources-2.6.27
-Date: Sat, 11 Oct 2008 16:12:46 -0500
-Message-ID: <48F116CE.7070108@alunduil.com>
-References: <19928070.post@talk.nabble.com> <48EFFC5C.30504@alunduil.com> <19929422.post@talk.nabble.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Reiser4 for Linux-2.6.27
+Date: Sun, 12 Oct 2008 01:14:51 +0400
+Message-ID: <48F1174B.5050704@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <19929422.post@talk.nabble.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+To: Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
+Cc: =?ISO-8859-1?Q?Artur_Mak=F3wka?= <artur.makowka@gmail.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hello everyone.
 
-callx wrote:
-> Oh my bad, I'm the one who made the typo when I wrote down the
-> error.. :wistle: Did you use the same patch?
->
-No, just noticed that problem from the error you submitted so if
-that's not the problem in the patch, then the function in question is
-not getting defined at the appropriate time. I'll try to take a look
-at it when I get a few spare moments on Monday.
+This patch is based on reiser4-for-2.6.25 and contains the following
+changes:
 
-Regards,
+1) use trylock_page instead of !TestSetPageLocked (Mathieu B=E9langer);
+2) use file_remove_suid() instead of remove_suid() (Mathieu B=E9langer)=
+;
+3) fix the problem with gzip1 compression in the case when reiser4 is
+   compiled as a module;
+4) use __set_page_dirty_nobuffers() instead of reiser4_set_page_dirty()=
+;
+5) update reiser4_set_page_dirty_internal() to take into account the la=
+test
+   changes in vfs.
 
-Alex Brandt
+(4) and (5) fix annoying oom under heavy workload (reproducible with
+dbench 190).
 
-- --
-Student, B.S. Physics & Computer Science
-Department of Physics and Astronomy, MSUM
-Department of Computer Science and Information Systems, MSUM
-www.alunduil.com
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+The stuff for download can be found here:
+http://www.kernel.org/pub/linux/kernel/people/edward/reiser4/reiser4-fo=
+r-2.6/
 
-iEYEARECAAYFAkjxFswACgkQvpZ9jByxpSdKvwCfU/meaG6+z93Sz4GhE22ecwOg
-UfkAn37QeJ9af6iKoX8rnHprkz8OL+f3
-=n/Y1
------END PGP SIGNATURE-----
-
+Thanks,
+Edward.
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
