@@ -1,43 +1,34 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Reiser4 for Linux-2.6.27
-Date: Sun, 12 Oct 2008 01:14:51 +0400
-Message-ID: <48F1174B.5050704@gmail.com>
+From: callx <pascalim@gmail.com>
+Subject: Re: Reiser4 compile error on vanilla-sources-2.6.27
+Date: Sun, 12 Oct 2008 02:37:27 -0700 (PDT)
+Message-ID: <19939990.post@talk.nabble.com>
+References: <19928070.post@talk.nabble.com> <48EFFC5C.30504@alunduil.com> <19929422.post@talk.nabble.com> <48F116CE.7070108@alunduil.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <48F116CE.7070108@alunduil.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
-Cc: =?ISO-8859-1?Q?Artur_Mak=F3wka?= <artur.makowka@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-Hello everyone.
 
-This patch is based on reiser4-for-2.6.25 and contains the following
-changes:
+lol, i was trying the patch from andrew this time and I get different errors
+now..
 
-1) use trylock_page instead of !TestSetPageLocked (Mathieu B=E9langer);
-2) use file_remove_suid() instead of remove_suid() (Mathieu B=E9langer)=
-;
-3) fix the problem with gzip1 compression in the case when reiser4 is
-   compiled as a module;
-4) use __set_page_dirty_nobuffers() instead of reiser4_set_page_dirty()=
-;
-5) update reiser4_set_page_dirty_internal() to take into account the la=
-test
-   changes in vfs.
+http://www.kernel.org/pub/linux/kernel/people/edward/reiser4/reiser4-for-2.6/reiser4-for-2.6.27.patch.bz2
 
-(4) and (5) fix annoying oom under heavy workload (reproducible with
-dbench 190).
+Kernel: arch/x86/boot/bzImage is ready (#1)
+   Building modules, stage 2
+   MODPOST 45 modules
+ERROR: "swapper_space" [fs/reiser4/reiser4.ko] undefined!
+make[1]: *** [__modpost] Error 1
+make: *** [modules] Error 2
 
-The stuff for download can be found here:
-http://www.kernel.org/pub/linux/kernel/people/edward/reiser4/reiser4-fo=
-r-2.6/
+Am I the only one getting these errors? :(
 
-Thanks,
-Edward.
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+-- 
+View this message in context: http://www.nabble.com/Reiser4-compile-error-on-vanilla-sources-2.6.27-tp19928070p19939990.html
+Sent from the ReiserFS - General mailing list archive at Nabble.com.
+
