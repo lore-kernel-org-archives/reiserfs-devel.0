@@ -1,36 +1,64 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: [BUG] reiser4-for-2.6.27
-Date: Sun, 19 Oct 2008 22:53:26 +0400
-Message-ID: <48FB8226.3080301@gmail.com>
-References: <9bb377710810181808w5bb8b512l24cf7db8ddfcebaf@mail.gmail.com> <b8d16a880810190157i3dd52b1eof2658d9a4771a8eb@mail.gmail.com>
+Date: Sun, 19 Oct 2008 22:41:52 +0400
+Message-ID: <48FB7F70.9090900@gmail.com>
+References: <loom.20081019T090028-392@post.gmane.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+ boundary="------------090406070304000808020102"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <b8d16a880810190157i3dd52b1eof2658d9a4771a8eb@mail.gmail.com>
+In-Reply-To: <loom.20081019T090028-392@post.gmane.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Christopher Sawtell <csawtell@gmail.com>
-Cc: Brandon Berhent <cheater1034@gmail.com>, reiserfs-devel@vger.kernel.org
+To: Mat <jackdachef@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org, Brandon Berhent <cheater1034@gmail.com>
 
-Christopher Sawtell wrote:
-> 2008/10/19 Brandon Berhent <cheater1034@gmail.com>:
->   
->> Hi, i've  been reported problems with 2 people i know who have used
->> the reiser4-for-2.6.27 patch (the only people i know who have used
->> it). I have not got around to trying it myself however.
->>     
->
-> Did they report any damage to the file system?
->   
+This is a multi-part message in MIME format.
+--------------090406070304000808020102
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-It may result in wrong dirty memory accounting,
-not in file system damage..
-
-> If not, I could I could give it a spin too.
+Mat wrote:
+> Hi Edward,
 >
-> I'm currently on 2.6.25.10 which works well except it 'hibernates'
-> from time to time when copying large files.
->
+> this one's the kernel-config for the second (posted) error:
 >   
 
+Yup, it seems to be a bug: reiser4_set_page_dirty_internal() didn't
+take care about disabling preemption, while per-cpu stuff needs this.
+I wonder why nobody did report it earlier. It requires CONFIG_PREEMPT=y
+and CONFIG_DEBUG_PREEMPT=y though..
+
+A possible fixup is attached.
+
+Thank to everyone.
+Edward.
+
+--------------090406070304000808020102
+Content-Type: text/x-patch;
+ name="reiser4-disable-preemption-in-set-page-dirty.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="reiser4-disable-preemption-in-set-page-dirty.patch"
+
+---
+ linux-2.6.27/fs/reiser4/page_cache.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- linux-2.6.27/fs/reiser4/page_cache.c.orig
++++ linux-2.6.27/fs/reiser4/page_cache.c
+@@ -469,10 +469,12 @@ void reiser4_set_page_dirty_internal(str
+ 	if (!TestSetPageDirty(page)) {
+ 		WARN_ON_ONCE(!PagePrivate(page) && !PageUptodate(page));
+ 		if (mapping_cap_account_dirty(mapping)) {
++			preempt_disable();
+ 			__inc_zone_page_state(page, NR_FILE_DIRTY);
+ 			__inc_bdi_stat(mapping->backing_dev_info,
+ 				       BDI_RECLAIMABLE);
+ 			task_io_account_write(PAGE_CACHE_SIZE);
++			preempt_enable();
+ 		}
+ 		assert("edward-1558", mapping->host != NULL);
+ 		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
+
+--------------090406070304000808020102--
