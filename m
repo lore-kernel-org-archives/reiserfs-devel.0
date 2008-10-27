@@ -1,64 +1,82 @@
-From: Jan Kara <jack@suse.cz>
-Subject: [PATCH 08/14] reiserfs: Use sb_any_quota_loaded() instead of sb_any_quota_enabled().
-Date: Mon, 27 Oct 2008 13:11:46 +0100
-Message-ID: <12251095133646-git-send-email-jack@suse.cz>
-References: <1225109512852-git-send-email-jack@suse.cz>
- <12251095123763-git-send-email-jack@suse.cz>
- <12251095124166-git-send-email-jack@suse.cz>
- <1225109512758-git-send-email-jack@suse.cz>
- <12251095122803-git-send-email-jack@suse.cz>
- <12251095124165-git-send-email-jack@suse.cz>
- <1225109513735-git-send-email-jack@suse.cz>
- <12251095131095-git-send-email-jack@suse.cz>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: Fwd: reiser4progs
+Date: Tue, 28 Oct 2008 02:04:11 +0300
+Message-ID: <490648EB.9050700@gmail.com>
+References: <ee5afd760810271159i18cb94abu92075dde4bcbf9da@mail.gmail.com> <ee5afd760810271230v7487969wd7eedee194533d9b@mail.gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <12251095131095-git-send-email-jack@suse.cz>
+In-Reply-To: <ee5afd760810271230v7487969wd7eedee194533d9b@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org
+To: Jan de Kruyf <jan.de.kruyf@gmail.com>
+Cc: Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
 
-CC: reiserfs-devel@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/reiserfs/super.c |    8 +++-----
- 1 files changed, 3 insertions(+), 5 deletions(-)
+Jan de Kruyf wrote:
+> hallo Edward
 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 663a91f..a9b393a 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -994,8 +994,7 @@ static int reiserfs_parse_options(struct super_block *s, char *options,	/* strin
- 		if (c == 'u' || c == 'g') {
- 			int qtype = c == 'u' ? USRQUOTA : GRPQUOTA;
- 
--			if ((sb_any_quota_enabled(s) ||
--			     sb_any_quota_suspended(s)) &&
-+			if (sb_any_quota_loaded(s) &&
- 			    (!*arg != !REISERFS_SB(s)->s_qf_names[qtype])) {
- 				reiserfs_warning(s,
- 						 "reiserfs_parse_options: cannot change journaled quota options when quota turned on.");
-@@ -1041,8 +1040,7 @@ static int reiserfs_parse_options(struct super_block *s, char *options,	/* strin
- 						 "reiserfs_parse_options: unknown quota format specified.");
- 				return 0;
- 			}
--			if ((sb_any_quota_enabled(s) ||
--			     sb_any_quota_suspended(s)) &&
-+			if (sb_any_quota_loaded(s) &&
- 			    *qfmt != REISERFS_SB(s)->s_jquota_fmt) {
- 				reiserfs_warning(s,
- 						 "reiserfs_parse_options: cannot change journaled quota options when quota turned on.");
-@@ -1067,7 +1065,7 @@ static int reiserfs_parse_options(struct super_block *s, char *options,	/* strin
- 	}
- 	/* This checking is not precise wrt the quota type but for our purposes it is sufficient */
- 	if (!(*mount_options & (1 << REISERFS_QUOTA))
--	    && sb_any_quota_enabled(s)) {
-+	    && sb_any_quota_loaded(s)) {
- 		reiserfs_warning(s,
- 				 "reiserfs_parse_options: quota options must be present when quota is turned on.");
- 		return 0;
--- 
-1.5.6
+hello
+
+>
+> I give up. tried to send this to the list. But the list, gmail, and I
+> dont agree somehow.
+
+it seems, the list doesn't like html signatures created by gmail
+
+> Perhaps you are willing to pass it on?
+>
+> jan.
+>
+> ---------- Forwarded message ----------
+
+[...]
+>
+>
+> hallo,
+> Could someone please point me in the right direction here:
+>
+> How do I find out if a directory entry is a (sub-)directory itself in
+> the following piece of code:
+> (lifted from demos/ls.c)
+
+reiser4_object_readdir()  extracts directory
+entries, and every such entry (cde) is a pair:
+. stat-data key (without offset);
+. null-terminated name.
+
+IMHO this is not enough to make sure that
+directory entry is a directory. You might also
+want to find stat-data of each entry by its key.
+
+>
+>     reiser4_object_t *object;
+>     entry_hint_t entry;
+>
+>
+>     if (reiser4_psobj(object)->p.id.group == DIR_OBJECT) {
+>         while (reiser4_object_readdir(object, &entry) > 0) {
+>             printf("[%s] %s\n", reiser4_print_key(&entry.object),
+
+This is only a lightweight non-recursive version of "ls",
+which just types file names - it is not suitable for you..
+
+I am sure there are proper tools for your needs. Unfortunately,
+I can not drop you a quick detailed hint: I am not a specialist in
+reiser4progs..
+
+Thanks,
+Edward.
+
+>
+>      }
+>
+> as background: I am writing grub2 file system code for a reiser4 boot
+> partition, with help from libreiser4 and friends.
+>
+> regards
+>
+> Jan de Kruyf.
+>
+>
 
