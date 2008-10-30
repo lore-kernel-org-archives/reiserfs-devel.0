@@ -1,99 +1,38 @@
-From: akpm@linux-foundation.org
-Subject: + reiserfs-use-sb_any_quota_loaded-instead-of-sb_any_quota_enabled.patch added to -mm tree
-Date: Mon, 27 Oct 2008 22:56:10 -0700
-Message-ID: <200810280556.m9S5uAtj013451@imap1.linux-foundation.org>
+From: Zan Lynx <zlynx@acm.org>
+Subject: Reiser4, 2.6.28-rc2-mm1 and prepare_write / commit_write
+Date: Thu, 30 Oct 2008 10:53:50 -0600
+Message-ID: <4909E69E.6070202@acm.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: mm-commits@vger.kernel.org
-Cc: jack@suse.cz, reiserfs-devel@vger.kernel.org
+To: Reiserfs mailing list <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward.shishkin@gmail.com>
 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-The patch titled
-     reiserfs: use sb_any_quota_loaded() instead of sb_any_quota_enabled()
-has been added to the -mm tree.  Its filename is
-     reiserfs-use-sb_any_quota_loaded-instead-of-sb_any_quota_enabled.patch
+It looks like 2.6.28 committed the removal of prepare_write and
+commit_write.  They are apparently replaced with write_begin and write_end.
 
-Before you just go and hit "reply", please:
-   a) Consider who else should be cc'ed
-   b) Prefer to cc a suitable mailing list as well
-   c) Ideally: find the original patch on the mailing list and do a
-      reply-to-all to that, adding suitable additional cc's
+I thought about trying to convert Reiser4 myself but it was already past
+midnight and it looked like it might be six hour job.
 
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+The conversion does not look too complicated, but there may be some
+tricky issues.
 
-See http://userweb.kernel.org/~akpm/stuff/added-to-mm.txt to find
-out what to do about this
+I am wondering if you are already working on this, Edward?
+- --
+Zan Lynx
+zlynx@acm.org
 
-The current -mm tree may be found at http://userweb.kernel.org/~akpm/mmotm/
+"Knowledge is Power.  Power Corrupts.  Study Hard.  Be Evil."
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.8 (Darwin)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
 
-------------------------------------------------------
-Subject: reiserfs: use sb_any_quota_loaded() instead of sb_any_quota_enabled()
-From: Jan Kara <jack@suse.cz>
-
-Cc: <reiserfs-devel@vger.kernel.org>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- fs/reiserfs/super.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff -puN fs/reiserfs/super.c~reiserfs-use-sb_any_quota_loaded-instead-of-sb_any_quota_enabled fs/reiserfs/super.c
---- a/fs/reiserfs/super.c~reiserfs-use-sb_any_quota_loaded-instead-of-sb_any_quota_enabled
-+++ a/fs/reiserfs/super.c
-@@ -994,8 +994,7 @@ static int reiserfs_parse_options(struct
- 		if (c == 'u' || c == 'g') {
- 			int qtype = c == 'u' ? USRQUOTA : GRPQUOTA;
- 
--			if ((sb_any_quota_enabled(s) ||
--			     sb_any_quota_suspended(s)) &&
-+			if (sb_any_quota_loaded(s) &&
- 			    (!*arg != !REISERFS_SB(s)->s_qf_names[qtype])) {
- 				reiserfs_warning(s,
- 						 "reiserfs_parse_options: cannot change journaled quota options when quota turned on.");
-@@ -1041,8 +1040,7 @@ static int reiserfs_parse_options(struct
- 						 "reiserfs_parse_options: unknown quota format specified.");
- 				return 0;
- 			}
--			if ((sb_any_quota_enabled(s) ||
--			     sb_any_quota_suspended(s)) &&
-+			if (sb_any_quota_loaded(s) &&
- 			    *qfmt != REISERFS_SB(s)->s_jquota_fmt) {
- 				reiserfs_warning(s,
- 						 "reiserfs_parse_options: cannot change journaled quota options when quota turned on.");
-@@ -1067,7 +1065,7 @@ static int reiserfs_parse_options(struct
- 	}
- 	/* This checking is not precise wrt the quota type but for our purposes it is sufficient */
- 	if (!(*mount_options & (1 << REISERFS_QUOTA))
--	    && sb_any_quota_enabled(s)) {
-+	    && sb_any_quota_loaded(s)) {
- 		reiserfs_warning(s,
- 				 "reiserfs_parse_options: quota options must be present when quota is turned on.");
- 		return 0;
-_
-
-Patches currently in -mm which might be from jack@suse.cz are
-
-linux-next.patch
-ext4-fix-a-bug-accessing-freed-memory-in-ext4_abort.patch
-ext3-fix-a-bug-accessing-freed-memory-in-ext3_abort.patch
-quota-add-callbacks-for-allocating-and-destroying-dquot-structures.patch
-quota-increase-size-of-variables-for-limits-and-inode-usage.patch
-quota-remove-bogus-optimization-in-check_idq-and-check_bdq.patch
-quota-make-_suspended-just-a-flag.patch
-quota-permit-separately-enabling-quota-accounting-and-enforcing-limits.patch
-ext3-use-sb_any_quota_loaded-instead-of-sb_any_quota_enabled.patch
-ext4-use-sb_any_quota_loaded-instead-of-sb_any_quota_enabled.patch
-reiserfs-use-sb_any_quota_loaded-instead-of-sb_any_quota_enabled.patch
-quota-remove-compatibility-function-sb_any_quota_enabled.patch
-quota-introduce-dquot_quota_sys_file-flag.patch
-quota-move-quotaio_vh-from-include-linux-to-fs.patch
-quota-split-off-quota-tree-handling-into-a-separate-file.patch
-quota-convert-union-in-mem_dqinfo-to-a-pointer.patch
-quota-convert-union-in-mem_dqinfo-to-a-pointer-cleanup.patch
-quota-support-64-bit-quota-format.patch
-
+iEYEARECAAYFAkkJ5p4ACgkQolqWs/Y4NLwwxQCfVE8j11jDXHiLC8NVYzLmqFfV
+BAIAn0N5154aMz6TIqof+p6D3T277NXo
+=DREw
+-----END PGP SIGNATURE-----
