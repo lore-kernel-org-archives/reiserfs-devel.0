@@ -1,37 +1,29 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Reiser4, 2.6.28-rc2-mm1 and prepare_write / commit_write
-Date: Thu, 30 Oct 2008 21:03:34 +0300
-Message-ID: <4909F6F6.2080701@gmail.com>
-References: <4909E69E.6070202@acm.org>
+From: geearf@free.fr
+Subject: Reiser4 crash
+Date: Tue, 11 Nov 2008 21:50:07 +0100 (CET)
+Message-ID: <1797610419.17231226436607627.JavaMail.root@zimbra4-e1.priv.proxad.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4909E69E.6070202@acm.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Zan Lynx <zlynx@acm.org>
-Cc: Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
+To: reiserfs-devel@vger.kernel.org
 
-Zan Lynx wrote:
-> It looks like 2.6.28 committed the removal of prepare_write and
-> commit_write.  They are apparently replaced with write_begin and
-> write_end.
->
-> I thought about trying to convert Reiser4 myself but it was already past
-> midnight and it looked like it might be six hour job.
->
-> The conversion does not look too complicated, but there may be some
-> tricky issues.
->
-> I am wondering if you are already working on this, Edward?
+Hello ML,
 
-Yup.
+just to report one issue that I had yesterday with r4:
 
-This is only for loop devices, so if you don't use it,
-you can get rid of reiser4_{prepare,commit}_write
-and supply NULL to vfs as a temporary fixup.
+I restarted Xorg the hard way (ctrl alt backspace) without any real reason for that, just to try some different xorg.conf and then I could not log in KDE anymore (I had a bad crash the previous day so it could have been related).
+Result was that certain files were corrupted and fsck.reiser4 did not fully help. To fix my issues I had to fsck the partition and manually remove anything in /tmp and /var/tmp from another OS. Removing anything in /var/tmp while using that partition as the OS would result in a crash even after fsck said everything was fixed...
+
+What I saw in dmsg was pretty much the same we had a year ago when KDE4 was out, with the "out of memory?" warning and stuff till Edward fixed R4.
+
+
+I am not sure how relevant this report is but I thought I would still give it...
+I am using 2.6.27 with Edward's patch on Debian AMD64/Sid.
+
 
 Thanks,
-Edward.
+John
 
