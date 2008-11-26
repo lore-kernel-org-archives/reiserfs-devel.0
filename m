@@ -1,50 +1,84 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Reiser4: remove simple_prepare_write usage
-Date: Wed, 26 Nov 2008 20:57:05 +0300
-Message-ID: <492D8DF1.9030603@gmail.com>
-References: <492D81F4.6010507@free.fr>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <492D81F4.6010507@free.fr>
-Sender: reiserfs-devel-owner@vger.kernel.org
+From: akpm@linux-foundation.org
+Subject: - reiserfs-use-sb_any_quota_loaded-instead-of-sb_any_quota_enabled.patch removed from -mm tree
+Date: Wed, 26 Nov 2008 12:27:19 -0800
+Message-ID: <200811262027.mAQKRJTQ000413@imap1.linux-foundation.org>
+Reply-To: linux-kernel@vger.kernel.org
+Return-path: <mm-commits-owner@vger.kernel.org>
+Sender: mm-commits-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Laurent Riffard <laurent.riffard@free.fr>
-Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Andrew Morton <akpm@osdl.org>, Randy Dunlap <randy.dunlap@oracle.com>
-
-Laurent Riffard wrote:
-> Reiser4 can't be built as a module when EXPORT_UNUSED_SYMBOL is not set.
->
-> It's broken because reiser4_write_extent is calling
-> simple_prepare_write() and commit
-> 4e02ed4b4a2fae34aae766a5bb93ae235f60adb8 scheduled it for unexporting.
->
-> Signed-off-by: Laurent Riffard <laurent.riffard@free.fr>
->   
-
-Acked-by: Edward Shishkin <edward.shishkin@gmail.com>
+Content-Transfer-Encoding: 7bit
+To: jack@suse.cz, reiserfs-devel@vger.kernel.org, mm-commits@vger.kernel.org
 
 
-> ---
->  fs/reiser4/plugin/item/extent_file_ops.c |    5 +++--
->  1 files changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/reiser4/plugin/item/extent_file_ops.c b/fs/reiser4/plugin/item/extent_file_ops.c
-> index ef3744e..1eb1ab7 100644
-> --- a/fs/reiser4/plugin/item/extent_file_ops.c
-> +++ b/fs/reiser4/plugin/item/extent_file_ops.c
-> @@ -1059,8 +1059,9 @@ ssize_t reiser4_write_extent(struct file *file, struct inode * inode,
->  
->  		lock_page(page);
->  		if (!PageUptodate(page) && to_page != PAGE_CACHE_SIZE)
-> -			simple_prepare_write(file, page, page_off,
-> -					     page_off + to_page);
-> +			zero_user_segments(page, 0, page_off,
-> +			                   page_off + to_page,
-> +			                   PAGE_CACHE_SIZE);
->  
->  		written = filemap_copy_from_user(page, page_off, buf, to_page);
->  		if (unlikely(written != to_page)) {
->   
+The patch titled
+     reiserfs: use sb_any_quota_loaded() instead of sb_any_quota_enabled()
+has been removed from the -mm tree.  Its filename was
+     reiserfs-use-sb_any_quota_loaded-instead-of-sb_any_quota_enabled.patch
+
+This patch was dropped because an updated version will be merged
+
+The current -mm tree may be found at http://userweb.kernel.org/~akpm/mmotm/
+
+------------------------------------------------------
+Subject: reiserfs: use sb_any_quota_loaded() instead of sb_any_quota_enabled()
+From: Jan Kara <jack@suse.cz>
+
+Cc: <reiserfs-devel@vger.kernel.org>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ fs/reiserfs/super.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff -puN fs/reiserfs/super.c~reiserfs-use-sb_any_quota_loaded-instead-of-sb_any_quota_enabled fs/reiserfs/super.c
+--- a/fs/reiserfs/super.c~reiserfs-use-sb_any_quota_loaded-instead-of-sb_any_quota_enabled
++++ a/fs/reiserfs/super.c
+@@ -994,8 +994,7 @@ static int reiserfs_parse_options(struct
+ 		if (c == 'u' || c == 'g') {
+ 			int qtype = c == 'u' ? USRQUOTA : GRPQUOTA;
+ 
+-			if ((sb_any_quota_enabled(s) ||
+-			     sb_any_quota_suspended(s)) &&
++			if (sb_any_quota_loaded(s) &&
+ 			    (!*arg != !REISERFS_SB(s)->s_qf_names[qtype])) {
+ 				reiserfs_warning(s,
+ 						 "reiserfs_parse_options: cannot change journaled quota options when quota turned on.");
+@@ -1041,8 +1040,7 @@ static int reiserfs_parse_options(struct
+ 						 "reiserfs_parse_options: unknown quota format specified.");
+ 				return 0;
+ 			}
+-			if ((sb_any_quota_enabled(s) ||
+-			     sb_any_quota_suspended(s)) &&
++			if (sb_any_quota_loaded(s) &&
+ 			    *qfmt != REISERFS_SB(s)->s_jquota_fmt) {
+ 				reiserfs_warning(s,
+ 						 "reiserfs_parse_options: cannot change journaled quota options when quota turned on.");
+@@ -1067,7 +1065,7 @@ static int reiserfs_parse_options(struct
+ 	}
+ 	/* This checking is not precise wrt the quota type but for our purposes it is sufficient */
+ 	if (!(*mount_options & (1 << REISERFS_QUOTA))
+-	    && sb_any_quota_enabled(s)) {
++	    && sb_any_quota_loaded(s)) {
+ 		reiserfs_warning(s,
+ 				 "reiserfs_parse_options: quota options must be present when quota is turned on.");
+ 		return 0;
+_
+
+Patches currently in -mm which might be from jack@suse.cz are
+
+linux-next.patch
+reiserfs-use-sb_any_quota_loaded-instead-of-sb_any_quota_enabled.patch
+quota-remove-compatibility-function-sb_any_quota_enabled.patch
+quota-introduce-dquot_quota_sys_file-flag.patch
+quota-move-quotaio_vh-from-include-linux-to-fs.patch
+quota-move-quotaio_vh-from-include-linux-to-fs-fix.patch
+quota-split-off-quota-tree-handling-into-a-separate-file.patch
+quota-convert-union-in-mem_dqinfo-to-a-pointer.patch
+quota-convert-union-in-mem_dqinfo-to-a-pointer-cleanup.patch
+quota-support-64-bit-quota-format.patch
+quota-support-64-bit-quota-format-fix.patch
+quota-support-64-bit-quota-format-fix-2.patch
 
