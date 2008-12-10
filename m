@@ -1,32 +1,46 @@
-From: Ralph Ulrich <eulenreich@gmx.de>
+From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: The reiser4 programming style is recursive?
-Date: Wed, 10 Dec 2008 23:07:58 +0100
-Message-ID: <49403DBE.2070200@gmx.de>
-References: <494035ED.4000706@gmx.de> <b245135e0812101341k4aa15372ja2f72d0f53a7df77@mail.gmail.com>
+Date: Thu, 11 Dec 2008 01:23:33 +0300
+Message-ID: <49404165.6050806@gmail.com>
+References: <494035ED.4000706@gmx.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <b245135e0812101341k4aa15372ja2f72d0f53a7df77@mail.gmail.com>
+In-Reply-To: <494035ED.4000706@gmx.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: 
+To: Ralph Ulrich <eulenreich@gmx.de>
 Cc: reiserfs-devel@vger.kernel.org
 
-Teran McKinney schrieb:
-> Of course, D would be a great choice, but C# may be better. I hear
-> that Torvalds really wants to see more Mono drivers in the kernel.
-> What else would we do with our 4GB RAM machines?
-There is even a Ms project for that :-)
-> 
-> No seriously, nothing in the kernel is coded in anything but C or
-> assembler. You might as well just make the C code a little more
-> pretty.
-But you know that D is meant for drivers - as a C++ replacement!?
+Ralph Ulrich wrote:
+> Is it true that the programming style of reiser4 is recursive style
 
-You didn' answer my main question:
->> Is it true that the programming style of reiser4 is recursive style and
->> that this kind of style was rejected from the kernel developers?
+what is a definition of recursive programming style?
 
-Greeting from rainy Hamburg,
-Ralph
+>  and
+> that this kind of style was rejected from the kernel developers?
+>   
+
+AFAIK they were unhappy with assertions and "coding nits"  like
+if (foo) {
+        bar();
+}
+Eventually akpm said that assertions are okay and guys send
+cleanup patches against other issues once in a while.
+
+> If  true: How much effort would it be to recode reiser4 to a style which
+> has a chance of inclusion in the linux kernel?
+>
+> And if there will be a recoding effort to be made, wouldn't it be a
+> great idea to use a cleaner and more modern programming language link D ?
+>
+> Thanks in advance for answering my more general questions.
+> Ralph
+> --
+> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>   
+
