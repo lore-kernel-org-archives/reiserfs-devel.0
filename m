@@ -1,46 +1,48 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: "David Backeberg" <dbackeberg@gmail.com>
 Subject: Re: The reiser4 programming style is recursive?
-Date: Thu, 11 Dec 2008 01:23:33 +0300
-Message-ID: <49404165.6050806@gmail.com>
+Date: Wed, 10 Dec 2008 17:21:14 -0500
+Message-ID: <3de056a30812101421p1c86ae57s454ce480a89f055c@mail.gmail.com>
 References: <494035ED.4000706@gmx.de>
+	 <b245135e0812101341k4aa15372ja2f72d0f53a7df77@mail.gmail.com>
+	 <49403DBE.2070200@gmx.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <494035ED.4000706@gmx.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:message-id:date:from:to
+         :subject:in-reply-to:mime-version:content-type
+         :content-transfer-encoding:content-disposition:references;
+        bh=c8PperRh8ywEUpkTmKRvCDAK9YdFEdQmhtrApkuqyrQ=;
+        b=j/fv1aUS8ioxC/cBvoBuienQ+dG6t1HznTfVTuavhY8rRp8snHDsK0IUqw7VPmeB8f
+         0GCKtLzLvP5JhbbxtsN8v98W/4LXEf1OZVOYhlrupuBucPxiyt9RhW1Q0EfVUxoeJ/Yi
+         4+CGXvzTWexkD8zzCPLqjWuOcMAQaWrf+P2l0=
+In-Reply-To: <49403DBE.2070200@gmx.de>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Ralph Ulrich <eulenreich@gmx.de>
-Cc: reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-Ralph Ulrich wrote:
-> Is it true that the programming style of reiser4 is recursive style
+On Wed, Dec 10, 2008 at 5:07 PM, Ralph Ulrich <eulenreich@gmx.de> wrote:
+> You didn' answer my main question:
+>>> Is it true that the programming style of reiser4 is recursive style and
 
-what is a definition of recursive programming style?
+The code is open, and you're welcome to read it. I wouldn't call
+recursion a "style" so much as an approach to solving a particular
+problem. I think of "style" being things like whether your curly
+braces go on the same line or on the next line, how much whitespace
+you allow between code elements, etc. Perhaps you're just saying that
+because English isn't your primary language?
 
->  and
-> that this kind of style was rejected from the kernel developers?
->   
+>>> that this kind of style was rejected from the kernel developers?
 
-AFAIK they were unhappy with assertions and "coding nits"  like
-if (foo) {
-        bar();
-}
-Eventually akpm said that assertions are okay and guys send
-cleanup patches against other issues once in a while.
+Which rejection? And who are "kernel developers"?
 
-> If  true: How much effort would it be to recode reiser4 to a style which
-> has a chance of inclusion in the linux kernel?
->
-> And if there will be a recoding effort to be made, wouldn't it be a
-> great idea to use a cleaner and more modern programming language link D ?
->
-> Thanks in advance for answering my more general questions.
-> Ralph
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->   
+The code is in Andrew Morton's tree, and I think "kernel developers"
+would agree that Andrew Morton is a kernel developer.
 
+If your actual question is "how come reiser4 is not in mainline?"
+
+This question has been asked and answered repeatedly. In fact, try
+typing "reiser4 mainline" into google and read the results.
