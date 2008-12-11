@@ -1,48 +1,43 @@
-From: "David Backeberg" <dbackeberg@gmail.com>
+From: Ralph Ulrich <eulenreich@gmx.de>
 Subject: Re: The reiser4 programming style is recursive?
-Date: Wed, 10 Dec 2008 17:21:14 -0500
-Message-ID: <3de056a30812101421p1c86ae57s454ce480a89f055c@mail.gmail.com>
-References: <494035ED.4000706@gmx.de>
-	 <b245135e0812101341k4aa15372ja2f72d0f53a7df77@mail.gmail.com>
-	 <49403DBE.2070200@gmx.de>
+Date: Thu, 11 Dec 2008 01:09:05 +0100
+Message-ID: <49405A21.8030308@gmx.de>
+References: <494035ED.4000706@gmx.de>	 <b245135e0812101341k4aa15372ja2f72d0f53a7df77@mail.gmail.com>	 <49403DBE.2070200@gmx.de> <3de056a30812101421p1c86ae57s454ce480a89f055c@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from:to
-         :subject:in-reply-to:mime-version:content-type
-         :content-transfer-encoding:content-disposition:references;
-        bh=c8PperRh8ywEUpkTmKRvCDAK9YdFEdQmhtrApkuqyrQ=;
-        b=j/fv1aUS8ioxC/cBvoBuienQ+dG6t1HznTfVTuavhY8rRp8snHDsK0IUqw7VPmeB8f
-         0GCKtLzLvP5JhbbxtsN8v98W/4LXEf1OZVOYhlrupuBucPxiyt9RhW1Q0EfVUxoeJ/Yi
-         4+CGXvzTWexkD8zzCPLqjWuOcMAQaWrf+P2l0=
-In-Reply-To: <49403DBE.2070200@gmx.de>
-Content-Disposition: inline
+In-Reply-To: <3de056a30812101421p1c86ae57s454ce480a89f055c@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+To: 
+Cc: reiserfs-devel@vger.kernel.org
 
-On Wed, Dec 10, 2008 at 5:07 PM, Ralph Ulrich <eulenreich@gmx.de> wrote:
-> You didn' answer my main question:
->>> Is it true that the programming style of reiser4 is recursive style and
+David Backeberg schrieb:
+>> >> Is it true that the programming style of reiser4 is recursive
+style and
+> >
+> > I wouldn't call
+> > recursion a "style" so much as an approach to solving a particular
+> > problem. I think of "style" being things like whether your curly
+> > braces go on the same line or on the next line, how much whitespace
+> > you allow between code elements, etc. Perhaps you're just saying that
+> > because English isn't your primary language?
+Yes , i am german...
+But curly braces i would subsumize under "coding style".
+In german language the wording "programming" (programmieren)
+means looking for the ways of logic, managing the ways
+the streams of data go ... etc.
 
-The code is open, and you're welcome to read it. I wouldn't call
-recursion a "style" so much as an approach to solving a particular
-problem. I think of "style" being things like whether your curly
-braces go on the same line or on the next line, how much whitespace
-you allow between code elements, etc. Perhaps you're just saying that
-because English isn't your primary language?
+I watched some video of a linux convention. And there a guru
+(do not know the name anymore, some weeks ago) mentioned that
+programming recursive in the kernel is a absolute no go, every
+recursion can also be programmed without. And that is often even
+faster. Something like that he said. And for my understandings this
+was said against reiser4 even if it was not mentioned.
 
->>> that this kind of style was rejected from the kernel developers?
+Ralph
+Post Scriptum: As I know recursiveness has more beauty for
+programmers like Hans Reiser
 
-Which rejection? And who are "kernel developers"?
 
-The code is in Andrew Morton's tree, and I think "kernel developers"
-would agree that Andrew Morton is a kernel developer.
-
-If your actual question is "how come reiser4 is not in mainline?"
-
-This question has been asked and answered repeatedly. In fact, try
-typing "reiser4 mainline" into google and read the results.
