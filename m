@@ -1,7 +1,7 @@
 From: Ralph Ulrich <eulenreich@gmx.de>
-Subject: Re: The reiser4 programming style is recursive?
-Date: Thu, 11 Dec 2008 01:23:52 +0100
-Message-ID: <49405D98.7000402@gmx.de>
+Subject: Re: The reiser4 .... why it is the future
+Date: Thu, 11 Dec 2008 01:46:46 +0100
+Message-ID: <494062F6.2040809@gmx.de>
 References: <494035ED.4000706@gmx.de> <49404165.6050806@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -13,20 +13,19 @@ Content-Type: text/plain; charset="us-ascii"
 To: 
 Cc: reiserfs-devel@vger.kernel.org
 
-Edward Shishkin schrieb:
-> AFAIK they were unhappy with assertions and "coding nits"  like
-> if (foo) {         bar(); }
-....
-> Eventually akpm said that assertions are okay and guys send
-> cleanup patches against other issues once in a while.
+And why we all are waiting:
 
-And what are Your plans to get reiser4 in the kernel now!
+As it is that much standardized nowadays, because everything is nearly
+optimized - for example you cannot expect any new picture format that
+is much more effective than jpeg2000, you will have todays pdf standard
+in yeas to come ... etc -
+because the ways to handle user data nowadays will settle down,
+will ever less change - that is the chance for reiser4 with plugins
+to come to market. Hans Reiser was a bit early with his efforts.
 
-As of now it seems that brtfs,
-which has nearly the same "hardware" logic as reiser4
-but lacks the whole ground breaking philosophy,
-will get there first!
+Now, whenever the data-system (old narrow concept "filesytem") can
+handle more and more of the logic itself (through the plugins) the
+field of new connected programming logic will wide open!
 
-Edward, we are all waiting, what do you need for help?
+Ralph (unfortunately not a kernel hacker)
 
-Ralph
