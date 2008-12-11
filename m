@@ -1,31 +1,56 @@
-From: Ralph Ulrich <eulenreich@gmx.de>
-Subject: Re: The reiser4 .... why it is the future
-Date: Thu, 11 Dec 2008 01:46:46 +0100
-Message-ID: <494062F6.2040809@gmx.de>
-References: <494035ED.4000706@gmx.de> <49404165.6050806@gmail.com>
-Mime-Version: 1.0
+From: Toby Thain <toby@telegraphics.com.au>
+Subject: Re: The reiser4 programming style is recursive?
+Date: Wed, 10 Dec 2008 23:49:09 -0500
+Message-ID: <EA899519-A5D9-484E-A7D1-51BEDFC60130@telegraphics.com.au>
+References: <494035ED.4000706@gmx.de> <b245135e0812101341k4aa15372ja2f72d0f53a7df77@mail.gmail.com> <49403DBE.2070200@gmx.de>
+Mime-Version: 1.0 (Apple Message framework v753.1)
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <49404165.6050806@gmail.com>
+In-Reply-To: <49403DBE.2070200@gmx.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: 
+Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
+To: Ralph Ulrich <eulenreich@gmx.de>
 Cc: reiserfs-devel@vger.kernel.org
 
-And why we all are waiting:
 
-As it is that much standardized nowadays, because everything is nearly
-optimized - for example you cannot expect any new picture format that
-is much more effective than jpeg2000, you will have todays pdf standard
-in yeas to come ... etc -
-because the ways to handle user data nowadays will settle down,
-will ever less change - that is the chance for reiser4 with plugins
-to come to market. Hans Reiser was a bit early with his efforts.
+On 10-Dec-08, at 5:07 PM, Ralph Ulrich wrote:
 
-Now, whenever the data-system (old narrow concept "filesytem") can
-handle more and more of the logic itself (through the plugins) the
-field of new connected programming logic will wide open!
+> Teran McKinney schrieb:
+>> Of course, D would be a great choice, but C# may be better. I hear
+>> that Torvalds really wants to see more Mono drivers in the kernel.
+>> What else would we do with our 4GB RAM machines?
+> There is even a Ms project for that :-)
+>>
+>> No seriously, nothing in the kernel is coded in anything but C or
+>> assembler. You might as well just make the C code a little more
+>> pretty.
+> But you know that D is meant for drivers - as a C++ replacement!?
 
-Ralph (unfortunately not a kernel hacker)
+Define 'driver'!
+
+C++ has nothing to do with the Linux kernel (and nor does D). The  
+kernel and its subsystems will continue to be written in C for the  
+fore-C-able future.
+
+
+>
+> You didn' answer my main question:
+>>> Is it true that the programming style of reiser4 is recursive  
+>>> style and
+>>> that this kind of style was rejected from the kernel developers?
+>
+As for 'recursion', it is nothing to be afraid of. Except the kind  
+that blows stacks. ;-)
+
+--Toby
+
+
+> Greeting from rainy Hamburg,
+> Ralph
+> --
+> To unsubscribe from this list: send the line "unsubscribe reiserfs- 
+> devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
