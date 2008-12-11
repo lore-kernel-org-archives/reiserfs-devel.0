@@ -1,52 +1,28 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: The reiser4 programming style is recursive?
-Date: Thu, 11 Dec 2008 19:57:31 +0300
-Message-ID: <4941467B.30308@gmail.com>
-References: <494035ED.4000706@gmx.de> <49404165.6050806@gmail.com> <49405D98.7000402@gmx.de>
+From: Ralph <eulenreich@gmx.de>
+Subject: Re: The reiser4 ....SDK for experiments outside kernel
+Date: Thu, 11 Dec 2008 18:11:26 +0100
+Message-ID: <ghrhkn$9ht$1@ger.gmane.org>
+References: <494035ED.4000706@gmx.de> <49404165.6050806@gmail.com> <494062F6.2040809@gmx.de> <4940FB0E.8050102@gmx.de> <494105EB.3080204@gmx.de> <80294dc60812110636m70178aa3m4493e65fe4be302e@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <49405D98.7000402@gmx.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Ralph Ulrich <eulenreich@gmx.de>
-Cc: reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-Ralph Ulrich wrote:
-> Edward Shishkin schrieb:
->   
->> AFAIK they were unhappy with assertions and "coding nits"  like
->> if (foo) {         bar(); }
->>     
-> ....
->   
->> Eventually akpm said that assertions are okay and guys send
->> cleanup patches against other issues once in a while.
->>     
->
-> And what are Your plans to get reiser4 in the kernel now!
->   
+Alexander Lyamin wrote:
+>> 1. to adapt linux vfs behaviors
+> it does.
+> actually  VFS implementation is a plugin.
 
-I wouldn't force the events:
-there is no hurry, business plans, timelines, etc..
+Hi Alexander,
 
-> As of now it seems that brtfs,
-> which has nearly the same "hardware" logic as reiser4
-> but lacks the whole ground breaking philosophy,
-> will get there first!
->   
+I am not a kernel-hacker, but I would like to 
+experiment with plugins. Is there a reiser4-SDK like thing 
+that enables me to easily setup a reiser4 partition in a bigfile and 
+to run a demon which makes my yet to program plugins accessible?
 
-And what? I don't see any problems if someone gets it prior
-to reiser4.
+Ralph
 
-> Edward, we are all waiting, what do you need for help?
->   
 
-To maintain at least one reiser4 subsystem would be real help..
-However, it requires a victim in the person of some student(s),
-who is ready to kill the best years by sitting in front of monitor
-and studying reiser4 sources..
-Do you know such ones? ;)
-
-Edward.
