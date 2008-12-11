@@ -1,27 +1,34 @@
-From: Ralph <eulenreich@gmx.de>
-Subject: Re: The reiser4 ....SDK for experiments outside kernel
-Date: Thu, 11 Dec 2008 18:11:26 +0100
-Message-ID: <ghrhkn$9ht$1@ger.gmane.org>
-References: <494035ED.4000706@gmx.de> <49404165.6050806@gmail.com> <494062F6.2040809@gmx.de> <4940FB0E.8050102@gmx.de> <494105EB.3080204@gmx.de> <80294dc60812110636m70178aa3m4493e65fe4be302e@mail.gmail.com>
+From: Ralph Ulrich <eulenreich@gmx.de>
+Subject: Re: The reiser4 programming style is recursive?
+Date: Thu, 11 Dec 2008 18:37:07 +0100
+Message-ID: <49414FC3.1040206@gmx.de>
+References: <494035ED.4000706@gmx.de> <49404165.6050806@gmail.com> <49405D98.7000402@gmx.de> <4941467B.30308@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <4941467B.30308@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-Alexander Lyamin wrote:
->> 1. to adapt linux vfs behaviors
-> it does.
-> actually  VFS implementation is a plugin.
+Edward Shishkin wrote:
+>> will get there first!
+> And what? I don't see any problems if someone gets it prior
+> to reiser4.
+> 
+>> Edward, we are all waiting, what do you need for help?
+> To maintain at least one reiser4 subsystem would be real help..
+> However, it requires a victim in the person of some student(s),
+> who is ready to kill the best years by sitting in front of monitor
+> and studying reiser4 sources..
 
-Hi Alexander,
+Upto recently I had a gentoo linux with your patches running on reiser4
+without problems (but with gentoo.org politics at the moment).
 
-I am not a kernel-hacker, but I would like to 
-experiment with plugins. Is there a reiser4-SDK like thing 
-that enables me to easily setup a reiser4 partition in a bigfile and 
-to run a demon which makes my yet to program plugins accessible?
+Edward, what do you mean "reiser4 subsystem",
+"studying reiser4 sources" - debugging?
 
 Ralph
 
