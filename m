@@ -1,48 +1,48 @@
-From: Ralph <eulenreich@gmx.de>
-Subject: Re: The reiser4 programming style is recursive?
-Date: Thu, 11 Dec 2008 20:05:34 +0100
-Message-ID: <ghroan$2e2$1@ger.gmane.org>
-References: <494035ED.4000706@gmx.de> <49404165.6050806@gmail.com> <49405D98.7000402@gmx.de> <4941467B.30308@gmail.com> <49414FC3.1040206@gmx.de> <494157FD.5020708@gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: The reiser4 ....SDK for experiments outside kernel
+Date: Thu, 11 Dec 2008 22:10:28 +0300
+Message-ID: <494165A4.6040207@gmail.com>
+References: <494035ED.4000706@gmx.de> <49404165.6050806@gmail.com> <494062F6.2040809@gmx.de> <4940FB0E.8050102@gmx.de> <494105EB.3080204@gmx.de> <80294dc60812110636m70178aa3m4493e65fe4be302e@mail.gmail.com> <ghrhkn$9ht$1@ger.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <ghrhkn$9ht$1@ger.gmane.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Ralph <eulenreich@gmx.de>
+Cc: reiserfs-devel@vger.kernel.org
 
-Edward Shishkin wrote:
->>> To maintain at least one reiser4 subsystem would be real help..
->>> However, it requires a victim in the person of some student(s),
->>> who is ready to kill the best years by sitting in front of monitor
->>> and studying reiser4 sources..
->> Edward, what do you mean "reiser4 subsystem",
-> examples of subsystems:
-> 
-> in kernel:
-> . transaction manager;
-> . flush manager;
-> . tree operations (balancing);
-> . unix file plugin;
-> 
-> in user-space:
-> . libaal and reiser4progs
+Ralph wrote:
+> Alexander Lyamin wrote:
+>   
+>>> 1. to adapt linux vfs behaviors
+>>>       
+>> it does.
+>> actually  VFS implementation is a plugin.
+>>     
+>
+> Hi Alexander,
+>
+> I am not a kernel-hacker, but I would like to 
+> experiment with plugins. Is there a reiser4-SDK like thing 
+> that enables me to easily setup a reiser4 partition in a bigfile and 
+> to run a demon which makes my yet to program plugins accessible?
+>   
 
-I think the user-space libaal and reiser4progs are no problem, everybody who uses your reiser4 patches runs that....
+What this tricky business is for?
+Does everyone need this?
 
-I had a look at your reiser4 patches, and it is clear to me - as the patches
-interfere just a handful of lines with the rest of the linux kernel - there is no reiser4 transaction manager in place with just the patches, right ?
+Be careful with the notion of plugin: in reiser4 this is only
+to manage low-level data storage infrastructure.. That said,
+first, you should decide what (useful!) feature related to
+(low-level!) data storage do you want to implement, then think
+how to implement it in the plugin categories. Most likely you'll
+need to add new plugin(s) of existing or (unlikely) new interface.
+For example, in order to support (meta)data checksums you'll need
+a new node format, and, hence, new node plugin (the NODE interface
+already exists).
+All other "plugins" should go to vfs, or to various stackable
+(distributed) filesystems.
 
-Why not creating an experimental vbox real-reiser4-linux image, which everyone interested can get per torrent at mininova ?
-
-I know transaction capability of reiser4 was announced on namesys.com at that time. And the right balancing code in place would have effects like optimizing access on hard disk, right?
-
-> The best way is to start with writing something useful, say
-> xattrs support, or (meta)data checksums support.
-
-I read about the xattr problem, traditional linux xattr is to big to suit in place. This means you have to apply the reiser4-philosophy: A file can
-have sub files (is not only a file but also a directory of subfiles). Why not creating a new reiser4 specific file type just for xattr. This filetype will be ignored by vfs-api invoked commands except for xattr specific commands.
-Such a filetype would be implemented via a new file plugin, i guess, right ?
-
-Ralph
-
+Edward.
