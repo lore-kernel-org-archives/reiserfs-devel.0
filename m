@@ -1,8 +1,8 @@
 From: Ralph <eulenreich@gmx.de>
-Subject: Re: The reiser4 ....SDK for experiments outside kernel
-Date: Fri, 12 Dec 2008 01:54:28 +0100
-Message-ID: <ghscov$68h$1@ger.gmane.org>
-References: <494035ED.4000706@gmx.de> <49404165.6050806@gmail.com> <494062F6.2040809@gmx.de> <4940FB0E.8050102@gmx.de> <494105EB.3080204@gmx.de> <80294dc60812110636m70178aa3m4493e65fe4be302e@mail.gmail.com> <ghrhkn$9ht$1@ger.gmane.org> <494165A4.6040207@gmail.com> <ghrraa$dsv$1@ger.gmane.org> <49419C7E.9040401@ontolab.com>
+Subject: Re: The reiser4 programming style is recursive?
+Date: Fri, 12 Dec 2008 17:21:05 +0100
+Message-ID: <ghu32e$nqp$1@ger.gmane.org>
+References: <494035ED.4000706@gmx.de> <49404165.6050806@gmail.com> <49405D98.7000402@gmx.de> <4941467B.30308@gmail.com> <49414FC3.1040206@gmx.de> <494157FD.5020708@gmail.com> <ghroan$2e2$1@ger.gmane.org> <49419A90.4020906@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
@@ -11,32 +11,42 @@ Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-devel@vger.kernel.org
 
-Christian Stroetmann OntoLab wrote:
->> But, as Chistian Stroetmann just said in this thread:
->> Namesys philosophy is different than actual reiser4
->> aimings?
->>   
-> Despite the fact that I'm unable to follow the logics of the whole
-> thread, I would like to clarifiy that:
-> I haven't said this. I said (now in full length), that the vision of the
-> corporation Namesys for the further development of its system (including
-> reiser4 or a successor system) was different after the given
-> informations on the not anymore existing Namesys website, than the
-> vision of the Linux based project (which I'm not allowed to name here)
-> by our corporation. There were no claims about some kinds of actual
-> reiser4 aimings.
-> Regards
-> C. Stroetmann
+Edward Shishkin Thursday 11 December 2008 23:56:
+>> there is no reiser4 transaction manager in place with just
+>> the patches, right ?
+> Its code can be found in reiser4/txnmgr.c
 
-Hi Christian,
-you said some messages before: "No. That's a part of the vision of our Linux based project. The vision  from namesys was a bit different."
+And is this activated or not ready disabled code?
 
-And I thought you meant this mailing list people with your phrase "our Linux based project" I did misunderstand You, 
-Sorry, Entschuldigung!
+And transactions cannot be used by a normal user, because linux-vfs does not know anything about transactions and therefore there is no way to communicate a transaction command ? 
 
-> ... (which I'm not allowed to name here)
-I read some thread about claiming you are forking reiser4. You know
-the guy who created Gentoo? He is now creating funtoo, a fork of Gentoo, which has the aim to make it easy to create forks of Gentoo (see http://blog.funtoo.org/). And Linus Thorwalds has created git, especially to make it easy to branch! You see there are different views in opensource society!
+>>  And the right balancing code in place would have effects like
+>>  optimizing access on hard disk, right?
+>  yes
+I used gentoo half a year on reiser4 and had no performance issues, but filling was not more than half. There are performance issues with more than 80% of charge and not running the balancing code so that the "dancing trees" are about to really dance?
+ 
+>> I read about the xattr problem, traditional linux xattr is to big to
+>> suit in place. This means you have to apply the reiser4-philosophy: A
+>> file can have sub files (is not only a file but also a directory of
+>> subfiles). Why not creating a new reiser4 specific file type just for
+>> xattr.
+> 
+> Subfiles are impossible because of a problem on vfs level
+> related to hardlink functionality. It seems not yet resolved...
+
+Here perhaps I can disagree with you (but keep in mind I am not a kernel hacker and do know nearly as much as the filenames of the reiser4 source):
+
+If subfiles for xattrs that would be the clean reiser4 solution (in respect of reiser4 philosophy). But it surely breaks linux-vfs doctrins: a file has to be just a file and not a directory.
+And aiming fast inclusion in mainline kernel _without_ to have to have hard discussions, then a subfile solution is no go for now. 
+
+But for now in our discussion a push aside of linux-vfs doctins: 
+
+Isn't it easy to hide a new xattrs-subfile-plugin from linux-vfs?  
+Vfs will not see them. If the reiser4 subsystem is asked about xattrs of some file then vfs will see xattrs but no subfile because of the new to create xattrs plugin (it is hiding its content, even its existence) ! 
+
+And with such a new subfile logic for xattrs you can show the potential of reiser4. For example implementing xattr-subfiles as softlinks pointing to one little place where all xattrs of the whole partition are stored. So they can easily been cached. Performance working with xattrs would trump all other available filesystems. 
+
+And you can give the user the most powerful command ever heard: To change the xattr of thousands of files at once !
 
 Ralph
 
