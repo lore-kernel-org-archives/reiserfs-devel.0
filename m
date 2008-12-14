@@ -1,46 +1,38 @@
-From: doiggl@velocitynet.com.au
-Subject: My results when adding reiser4 module to opensuse 11.1 RC1
-Date: Mon, 15 Dec 2008 00:15:09 +1100 (EST)
-Message-ID: <27709.202.168.22.19.1229260509.squirrel@webmail.velocity.net.au>
+From: Ralph Ulrich <eulenreich@gmx.de>
+Subject: Re: The...  reiser4 with no ambiguity
+Date: Sun, 14 Dec 2008 16:24:27 +0100
+Message-ID: <gi38gg$56v$1@ger.gmane.org>
+References: <494035ED.4000706@gmx.de> <49404165.6050806@gmail.com> <49405D98.7000402@gmx.de> <4941467B.30308@gmail.com> <49414FC3.1040206@gmx.de> <494157FD.5020708@gmail.com> <ghroan$2e2$1@ger.gmane.org> <49419A90.4020906@gmail.com> <ghu32e$nqp$1@ger.gmane.org> <49440D64.9050900@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
-Just listing my result when adding reiser4 module to opensuse 11.1 RC1.
-rpm reference:
-http://download.opensuse.org/repositories/drivers:/filesystems/
+Edward Shishkin Samstag 13 Dezember 2008 20:30:
+> I don't know such vfs doctrine. Who is the keeper of this doctrine?
+> :-)))
+Please, do not be too ironicle here, because I am not an insider and english is not my motherlanguage. I meant there was a discussion that in the linux mainline kernel there should not be a filesystem which has files that can have files. A file as directory was introduced to unifiy namespace by namesys. 
 
-# uname -a
-Linux test 2.6.27.7-9-default #1 SMP 2008-12-04 18:10:04 +0100 x86_64 x86_64
-x86_64 GNU/Linux
+> Subfiles mean one more step in the procedure of name resolution.
+> You should return an allocated inode to vfs for every such subfile.
+> So subfiles also can not be hidden. There is a temptation to cheat
+> vfs, so it will think that it deals with usual files, but such
+> cheating doesn't lead to happy end..
+> 
+> xattrs is ugly, but working solution,
+> subfiles are nice, but it doesn't work.. ;)
 
-# rpm -ivhU reiser4-kmp-default-0.1_2.6.27.7_9.1-27.2.x86_64.rpm
-warning: reiser4-kmp-default-0.1_2.6.27.7_9.1-27.2.x86_64.rpm: Header V3 DSA
-signature: NOKEY, key ID 74de2879
-Preparing...                ###########################################
-[100%]
-   1:reiser4-kmp-default    ###########################################
-[100%]
-26129 blocks
+First of all I have to understand reiser4 with no ambiguity:
 
-#  modprobe -v  reiser4
-insmod
-/lib/modules/2.6.27.7-9-default/kernel/lib/zlib_deflate/zlib_deflate.ko
-insmod /lib/modules/2.6.27.7-9-default/kernel/lib/lzo/lzo_compress.ko
-insmod /lib/modules/2.6.27.7-9-default/kernel/lib/lzo/lzo_decompress.ko
-insmod /lib/modules/2.6.27.7-9-default/updates/reiser4.ko
+Are reiser4 file-plugins _only_ to handle data effective at low-level (like your compression plugin). I know you stress this quiet often in your mails. Or is it just your focussing for now to get reiser4 mainline?
 
-# mkfs.reiser4 -o create=ccreg40,compress=lzo1 /dev/sdb -fy
-# fsck.reiser4 --fix /dev/sdb -y
-# mkdir /reiser4
-# mount -t reiser4 /dev/sdb /reiser4
+Is it not possible to introduce new extended features in reiser4 and hide these features vfs? 
+In reiser4 there is no such possibility to introduce a new kind of file which is hidden from vfs?
 
-# manually added reiser4 filesystem to /etc/fstab
-/dev/sdb /reiser4 reiser4 defaults 0 0
+Semantics of reiser5 are totally out of scope here, but I thought of them as implementable above/on reiser4 - reiser4 as the technical grounds for reiser5 (as announced by namesys).
 
-
+Ralph
 
