@@ -1,76 +1,95 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: The...  reiser4 with no ambiguity
-Date: Sun, 14 Dec 2008 22:17:04 +0300
-Message-ID: <49455BB0.7000300@gmail.com>
-References: <494035ED.4000706@gmx.de> <49404165.6050806@gmail.com> <49405D98.7000402@gmx.de> <4941467B.30308@gmail.com> <49414FC3.1040206@gmx.de> <494157FD.5020708@gmail.com> <ghroan$2e2$1@ger.gmane.org> <49419A90.4020906@gmail.com> <ghu32e$nqp$1@ger.gmane.org> <49440D64.9050900@gmail.com> <gi38gg$56v$1@ger.gmane.org>
+From: Oliver Neukum <oliver@neukum.org>
+Subject: locking checker reported on reiserfs in 2.6.28-rc8
+Date: Mon, 15 Dec 2008 09:59:33 +0100
+Message-ID: <200812150959.33392.oliver@neukum.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <gi38gg$56v$1@ger.gmane.org>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Ralph Ulrich <eulenreich@gmx.de>
-Cc: reiserfs-devel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
 
-Ralph Ulrich wrote:
-> Edward Shishkin Samstag 13 Dezember 2008 20:30:
->   
->> I don't know such vfs doctrine. Who is the keeper of this doctrine?
->> :-)))
->>     
-> Please, do not be too ironicle here, because I am not an insider and english is not my motherlanguage. I meant there was a discussion that in the linux mainline kernel there should not be a filesystem which has files that can have files. A file as directory was introduced to unifiy namespace by namesys. 
->
->   
->> Subfiles mean one more step in the procedure of name resolution.
->> You should return an allocated inode to vfs for every such subfile.
->> So subfiles also can not be hidden. There is a temptation to cheat
->> vfs, so it will think that it deals with usual files, but such
->> cheating doesn't lead to happy end..
->>
->> xattrs is ugly, but working solution,
->> subfiles are nice, but it doesn't work.. ;)
->>     
->
-> First of all I have to understand reiser4 with no ambiguity:
->
-> Are reiser4 file-plugins _only_ to handle data effective at low-level (like your compression plugin).
+Hi,
 
-Nop.
+I got this in the log. No noticeable ill effect. 2.6.28-rc8 on x86_64.
 
-There can be new features, which
-. come from vfs;
-. are not related to data storage improvements;
-. require a new reiser4 plugin.
+	Regards
+		Oliver
 
-A good example - xattrs.
-
->  I know you stress this quiet often in your mails. Or is it just your focussing for now to get reiser4 mainline?
->
-> Is it not possible to introduce new extended features in reiser4 and hide these features vfs? 
->   
-
-Yes, it is possible, but, again, those features should implement
-some new (optimal, efficient, safe, reliable, etc.) form of data storage.
-
-> In reiser4 there is no such possibility to introduce a new kind of file which is hidden from vfs?
->   
-
-Yes, it is. For example, there are two regular file plugins in reiser4.
-Both are intensively used, but vfs doesn't know about them.
-
-> Semantics of reiser5 are totally out of scope here, but I thought of them as implementable above/on reiser4
-
-Yes, I have pushed some technical concepts of r5 to r4 a year ago..
-
->  - reiser4 as the technical grounds for reiser5 (as announced by namesys).
->
-> Ralph
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->   
-
+Dec 15 09:50:53 vanamonde kernel:
+Dec 15 09:50:53 vanamonde kernel: =======================================================
+Dec 15 09:50:53 vanamonde kernel: [ INFO: possible circular locking dependency detected ]
+Dec 15 09:50:53 vanamonde kernel: 2.6.28-rc8-default #3
+Dec 15 09:50:53 vanamonde kernel: -------------------------------------------------------
+Dec 15 09:50:53 vanamonde kernel: kmail/3204 is trying to acquire lock:
+Dec 15 09:50:53 vanamonde kernel:  (&sb->s_type->i_mutex_key#12){--..}, at: [<ffffffff802beb25>] vfs_rmdir+0x8b/0x104
+Dec 15 09:50:53 vanamonde kernel:
+Dec 15 09:50:53 vanamonde kernel: but task is already holding lock:
+Dec 15 09:50:53 vanamonde kernel:  (&REISERFS_SB(s)->xattr_dir_sem){----}, at: [<ffffffffa04b25f5>] reiserfs_delete_xattrs+0xff/0x16b [reiserfs]
+Dec 15 09:50:53 vanamonde kernel:
+Dec 15 09:50:53 vanamonde kernel: which lock already depends on the new lock.
+Dec 15 09:50:53 vanamonde kernel:
+Dec 15 09:50:53 vanamonde kernel:
+Dec 15 09:50:53 vanamonde kernel: the existing dependency chain (in reverse order) is:
+Dec 15 09:50:53 vanamonde kernel:
+Dec 15 09:50:53 vanamonde kernel: -> #1 (&REISERFS_SB(s)->xattr_dir_sem){----}:
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff8026231b>] __lock_acquire+0x1291/0x15be
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff802626d5>] lock_acquire+0x8d/0xba
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff804716f9>] down_read+0x45/0x52
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffffa04b3b94>] reiserfs_acl_chmod+0x69/0x1c0 [reiserfs]
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffffa0496c30>] reiserfs_setattr+0x243/0x26b [reiserfs]
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff802c92ba>] notify_change+0x194/0x2da
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff802b518c>] sys_fchmodat+0x91/0xbd
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff802b51cb>] sys_chmod+0x13/0x15
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff8020c05a>] system_call_fastpath+0x16/0x1b
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffffffffffff>] 0xffffffffffffffff
+Dec 15 09:50:53 vanamonde kernel:
+Dec 15 09:50:53 vanamonde kernel: -> #0 (&sb->s_type->i_mutex_key#12){--..}:
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff8026202c>] __lock_acquire+0xfa2/0x15be
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff802626d5>] lock_acquire+0x8d/0xba
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff80470e24>] mutex_lock_nested+0xf9/0x2a0
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff802beb25>] vfs_rmdir+0x8b/0x104
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffffa04b2601>] reiserfs_delete_xattrs+0x10b/0x16b [reiserfs]
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffffa049a65e>] reiserfs_delete_inode+0x75/0x11b [reiserfs]
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff802c89bc>] generic_delete_inode+0xb8/0x145
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff802c8a60>] generic_drop_inode+0x17/0x17c
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff802c7aa1>] iput+0x61/0x65
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff802c0b40>] do_unlinkat+0x103/0x159
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff802c0ba7>] sys_unlink+0x11/0x13
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffff8020c05a>] system_call_fastpath+0x16/0x1b
+Dec 15 09:50:53 vanamonde kernel:        [<ffffffffffffffff>] 0xffffffffffffffff
+Dec 15 09:50:53 vanamonde kernel:
+Dec 15 09:50:53 vanamonde kernel: other info that might help us debug this:
+Dec 15 09:50:53 vanamonde kernel:
+Dec 15 09:50:53 vanamonde kernel: 1 lock held by kmail/3204:
+Dec 15 09:50:53 vanamonde kernel:  #0:  (&REISERFS_SB(s)->xattr_dir_sem){----}, at: [<ffffffffa04b25f5>] reiserfs_delete_xattrs+0xff/0x16b [reiserfs]
+Dec 15 09:50:53 vanamonde kernel:
+Dec 15 09:50:53 vanamonde kernel: stack backtrace:
+Dec 15 09:50:53 vanamonde kernel: Pid: 3204, comm: kmail Not tainted 2.6.28-rc8-default #3
+Dec 15 09:50:53 vanamonde kernel: Call Trace:
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff80260ccc>] print_circular_bug_tail+0xb8/0xc3
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff8026202c>] __lock_acquire+0xfa2/0x15be
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff802626d5>] lock_acquire+0x8d/0xba
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff802beb25>] ? vfs_rmdir+0x8b/0x104
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff80470e24>] mutex_lock_nested+0xf9/0x2a0
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff802beb25>] ? vfs_rmdir+0x8b/0x104
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff802beb25>] ? vfs_rmdir+0x8b/0x104
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff804729fa>] ? _spin_unlock_irq+0x2b/0x37
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff802be128>] ? may_delete+0x65/0x147
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff802beb25>] vfs_rmdir+0x8b/0x104
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffffa04b2601>] reiserfs_delete_xattrs+0x10b/0x16b [reiserfs]
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffffa049a65e>] reiserfs_delete_inode+0x75/0x11b [reiserfs]
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff80345a17>] ? _raw_spin_unlock+0x8e/0x94
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffffa049a5e9>] ? reiserfs_delete_inode+0x0/0x11b [reiserfs]
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff802c89bc>] generic_delete_inode+0xb8/0x145
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff802c8a60>] generic_drop_inode+0x17/0x17c
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff802c7aa1>] iput+0x61/0x65
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff802c0b40>] do_unlinkat+0x103/0x159
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff8020c0aa>] ? sysret_check+0x46/0x81
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff8026073b>] ? trace_hardirqs_on_caller+0xf6/0x11a
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff804725f3>] ? trace_hardirqs_on_thunk+0x3a/0x3f
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff802c0543>] ? do_path_lookup+0x47/0x1c8
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff802c0ba7>] sys_unlink+0x11/0x13
+Dec 15 09:50:53 vanamonde kernel:  [<ffffffff8020c05a>] system_call_fastpath+0x16/0x1b
