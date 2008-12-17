@@ -1,80 +1,66 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: The...  reiser4 with no ambiguity
-Date: Thu, 18 Dec 2008 00:49:53 +0300
-Message-ID: <49497401.40005@gmail.com>
-References: <494035ED.4000706@gmx.de> <49404165.6050806@gmail.com> <49405D98.7000402@gmx.de> <4941467B.30308@gmail.com> <49414FC3.1040206@gmx.de> <494157FD.5020708@gmail.com> <ghroan$2e2$1@ger.gmane.org> <49419A90.4020906@gmail.com> <ghu32e$nqp$1@ger.gmane.org> <49440D64.9050900@gmail.com> <gi38gg$56v$1@ger.gmane.org> <49455BB0.7000300@gmail.com> <gi6uhv$akc$1@ger.gmane.org>
+Subject: Re: [Fwd: [Fwd: Re: Xattrs in reiser4 and Google Summer of Code]]
+Date: Thu, 18 Dec 2008 02:18:19 +0300
+Message-ID: <494988BB.4020908@gmail.com>
+References: <4943B62E.40706@gmail.com> <be789c640812171351k7e2dee9cg50a3803caca231d8@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <gi6uhv$akc$1@ger.gmane.org>
+In-Reply-To: <be789c640812171351k7e2dee9cg50a3803caca231d8@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Ralph Ulrich <eulenreich@gmx.de>
-Cc: reiserfs-devel@vger.kernel.org
+To: Daniel Horne <daniel.horne@gmail.com>
+Cc: Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
 
-Ralph Ulrich wrote:
-> Edward Shishkin Sunday 14 December 2008 20:17:
->   
->>>  I know you stress this quiet often in your mails. Or is it just your
->>>  focussing for now to get reiser4 mainline?
->>> Is it not possible to introduce new extended features in reiser4 and
->>> hide these features vfs?
->>>       
->> Yes, it is possible, but, again, those features should implement
->> some new (optimal, efficient, safe, reliable, etc.) form of data
->> storage.
->>     
+Daniel Horne wrote:
+> Hi..
+
+Hello,
+Let's cc the list for technical talks, ok?
+
 >
-> I have the idea to rewrite reiser4 code to another
-> language
-
-I am a bit disappointed: I wanted to concentrate efforts
-on the Linux port..
-
->  (probably D: has clean syntax, has classes and 
->   
-yup, object-oriented means would be a plus.
-
-> garbage collection) and then to have a demon system in
-> user space where I can experiment to implement 
-> sql - database features. My aim is a winfs (Microsoft)
-> like system where you have both a filesystem api 
-> and a full featured database.
+> Thanks for this. I had a brief look at the stat-data plugin, but I
+> suspect it's not *quite* general enough to implement the full range of
+> xattrs. In particular, you mention below that a stat-data item must be
+> under 4000 bytes, and that each stat-data plugin should have its own
+> behaviour written for it for reiser4tools.
 >
-> Could reiser4 fit well to my purpose ?
->   
 
-You might want a high-performance reiser4 storage level
-with EOTTL technology.
+I wanted something like a review to estimate a high boundary for total
+amount
+of space that can be occupied by pairs (key: value) in one file for
+efficient work
+of important xattrs applications like Selinux.
 
-File plugins and some methods (plug.file) of item plugins
-are heavily integrated with the Linux vm subsystem, so you
-will need to rewrite them.
+> With Xattrs you can pretty much set arbitrary key:value pairs, which
+> means that writing a stat-data plugin for each of the possible xattr
+> keys is completely impractical.
 
-> As of now all plugin types have to be "hard-formatted" 
-> on the partition. You cannot introduce
-> new plugins to an existing filesystem, yes? 
->   
+We don't need a separate stat-data plugin for _each_ possible xattr key:
+The common sd-plugin that can scan nodes in order to gather scattered
+stat-data of arbitrary length will cover _all_ cases.
 
-mm.. We can.
-There is a notion of compatible development model "4.X.Y":
-http://lwn.net/Articles/226251 (Appendix D)
-Ask, if something is not clear.
+> Also, it means that the if expressed as a list, the possible length of
+> the xattrs on an inode are potentially a lot longer than 4000.
 
-> The first part of my work would be to enable a special place 
-> on disk for definitions of used plugins.
->   
+Can you say more about this?
+Do you know an application that requires xattrs of length longer then
+4000 bytes?
 
-Sorry, can not understand the above.
+>
+> So, the temptation is to have something similar to the file plugin for
+> individual xattrs, with the xattr functions on a vfs file acting like
+> a directory of xattr-files. There'd be a large number of small objects
+> in the tree, of course, but that's a situation I understand R4 handles
+> well..
+>
+> So, what do you think?
 
-Common notes:
-1. As Flex already said, this project will take a lot of
-man-hours. I would add it might be of the same order that
-was spent for the original Reiser's project.
+Let's forget about file-as-dir stuff. All what we need is a new file plugin
+with non-NULL methods, responsible for work with xattrs , and (maybe)
+a new stat-data plugin, which can handle stat-data items of arbitrary
+length.
 
-2. You might want the plugin design document.
-I have promised it will be ready in this September..
-Sigh.. Coming soon..
-
+Thanks,
 Edward.
