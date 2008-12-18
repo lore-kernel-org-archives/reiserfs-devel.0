@@ -1,66 +1,60 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: "Daniel Horne" <daniel.horne@gmail.com>
 Subject: Re: [Fwd: [Fwd: Re: Xattrs in reiser4 and Google Summer of Code]]
-Date: Thu, 18 Dec 2008 02:18:19 +0300
-Message-ID: <494988BB.4020908@gmail.com>
-References: <4943B62E.40706@gmail.com> <be789c640812171351k7e2dee9cg50a3803caca231d8@mail.gmail.com>
+Date: Thu, 18 Dec 2008 09:53:30 +0000
+Message-ID: <be789c640812180153t13f8e9bcn16565fdbc71c1729@mail.gmail.com>
+References: <4943B62E.40706@gmail.com>
+	 <be789c640812171351k7e2dee9cg50a3803caca231d8@mail.gmail.com>
+	 <494988BB.4020908@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <be789c640812171351k7e2dee9cg50a3803caca231d8@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:message-id:date:from:to
+         :subject:cc:in-reply-to:mime-version:content-type
+         :content-transfer-encoding:content-disposition:references;
+        bh=YWQP1vFzz3e4IxbHumilpIKQPZqwi6wZeR2onzySCdo=;
+        b=LYI5e5pMEusW/HrffkE42zw9HH+rIyj8aWq4LlF0qgLMHYF9kfB2Or7x7XWFPOswZH
+         8nnIQIHuNUgdTHdJ6vJvcLQB49GXEs7/yqOus44xHWwsYSTqGaIOwoj67nNz+8JRj1HK
+         +RIePtFx1UQhRHtPI2dv4FvEEjq6Aqh3YwhVY=
+In-Reply-To: <494988BB.4020908@gmail.com>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Daniel Horne <daniel.horne@gmail.com>
+To: Edward Shishkin <edward.shishkin@gmail.com>
 Cc: Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
 
-Daniel Horne wrote:
-> Hi..
+2008/12/17 Edward Shishkin <edward.shishkin@gmail.com>
 
-Hello,
-Let's cc the list for technical talks, ok?
 
->
-> Thanks for this. I had a brief look at the stat-data plugin, but I
-> suspect it's not *quite* general enough to implement the full range of
-> xattrs. In particular, you mention below that a stat-data item must be
-> under 4000 bytes, and that each stat-data plugin should have its own
-> behaviour written for it for reiser4tools.
->
+    Can you say more about this?
+    Do you know an application that requires xattrs of length longer then
+    4000 bytes?
 
-I wanted something like a review to estimate a high boundary for total
-amount
-of space that can be occupied by pairs (key: value) in one file for
-efficient work
-of important xattrs applications like Selinux.
 
-> With Xattrs you can pretty much set arbitrary key:value pairs, which
-> means that writing a stat-data plugin for each of the possible xattr
-> keys is completely impractical.
+User xattrs. What I'm thinking is that if you can set arbitrary
+key:value pairs (which, of course, you can - through setfattr) the
+"high bound"  number of xattrs per inode, and therefore total data
+stored is pretty much unlimited.
 
-We don't need a separate stat-data plugin for _each_ possible xattr key:
-The common sd-plugin that can scan nodes in order to gather scattered
-stat-data of arbitrary length will cover _all_ cases.
 
-> Also, it means that the if expressed as a list, the possible length of
-> the xattrs on an inode are potentially a lot longer than 4000.
+    >
+    > So, the temptation is to have something similar to the file plugin for
+    > individual xattrs, with the xattr functions on a vfs file acting like
+    > a directory of xattr-files. There'd be a large number of small objects
+    > in the tree, of course, but that's a situation I understand R4 handles
+    > well..
+    >
+    > So, what do you think?
 
-Can you say more about this?
-Do you know an application that requires xattrs of length longer then
-4000 bytes?
+    Let's forget about file-as-dir stuff. All what we need is a new file plugin
+    with non-NULL methods, responsible for work with xattrs , and (maybe)
+    a new stat-data plugin, which can handle stat-data items of arbitrary
+    length.
 
->
-> So, the temptation is to have something similar to the file plugin for
-> individual xattrs, with the xattr functions on a vfs file acting like
-> a directory of xattr-files. There'd be a large number of small objects
-> in the tree, of course, but that's a situation I understand R4 handles
-> well..
->
-> So, what do you think?
 
-Let's forget about file-as-dir stuff. All what we need is a new file plugin
-with non-NULL methods, responsible for work with xattrs , and (maybe)
-a new stat-data plugin, which can handle stat-data items of arbitrary
-length.
+Agreed.
 
-Thanks,
-Edward.
+--
+DH
