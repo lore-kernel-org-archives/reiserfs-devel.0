@@ -1,79 +1,77 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: [patch 1/2] reiser4: handling error returned by d_obtain_alias fixup
-Date: Sat, 27 Dec 2008 02:33:20 +0300
-Message-ID: <495569C0.3030608@gmail.com>
+Subject: [patch 2/2] reiser4: adjust to the new aops fixup
+Date: Sat, 27 Dec 2008 02:33:34 +0300
+Message-ID: <495569CE.2030400@gmail.com>
+References: <20080924234116.GC30307@wotan.suse.de> <20081017173445.GA10293@infradead.org> <1224269128.15582.9.camel@badari-desktop> <20081021062020.GA17785@wotan.suse.de> <20081021174305.0320f52f.akpm@linux-foundation.org> <4927DB6A.50802@gmail.com> <20081127103418.GK28285@wotan.suse.de> <492EAFF2.9070605@gmail.com> <20081127144811.GS28285@wotan.suse.de>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- boundary="------------050908080005080107040802"
+ boundary="------------050308000504010004020102"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <20081127144811.GS28285@wotan.suse.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: hch@infradead.org, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
+To: Nick Piggin <npiggin@suse.de>, Andrew Morton <akpm@linux-foundation.org>
+Cc: torvalds@linux-foundation.org, hch@infradead.org, linux-fsdevel@vger.kernel.org, pbadari@us.ibm.com, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
 
 This is a multi-part message in MIME format.
---------------050908080005080107040802
+--------------050308000504010004020102
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 
+Nick Piggin wrote:
+> On Thu, Nov 27, 2008 at 05:34:26PM +0300, Edward Shishkin wrote:
+>   
+>> reiser4_write_{begin,end} works only in splice.c (i.e. only for
+>> loopback functionality) in the chunk of code which looks like this:
+>>
+>> pagecache_write_begin();
+>> ...
+>> memcpy(.., to_page);
+>> ...
+>> pagecache_write_end(.., to_page, ..);
+>>
+>> i.e. there can not be short writes and everything is uptodate.
+>>     
+>  
+> Ah OK, indeed you are right. Although that's not to say that some
+> other kernel code may not be able to start doing interruptible
+> copies, although it would be fairly unlikely. Maybe if you just have
+> a BUG_ON(!(flags & AOP_FLAG_UNINTERRUPTIBLE)); or something to just
+> make sure?
+Yup, I would say, it's a must..
 
+Thanks,
+Edward.
 
---------------050908080005080107040802
+--------------050308000504010004020102
 Content-Type: text/x-patch;
- name="reiser4-d_obtain_alias-incorrect-handling-error-fixup.patch"
+ name="reiser4-adjust-to-the-new-aops-fixup.patch"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
- filename*0="reiser4-d_obtain_alias-incorrect-handling-error-fixup.patch"
+ filename="reiser4-adjust-to-the-new-aops-fixup.patch"
 
-. Fix up incorrect handling errors reterned by d_obtain_alias.
-. Make quilt, checkpatch happy:
-  remove comment with "joke not for everyone".
+Make sure that reiser4_write_begin()
+is not called for interruptible copies.
 
 Signed-off-by: Edward Shishkin<edward.shishkin@gmail.com>
 ---
- linux-2.6.28-rc2-mm1/fs/reiser4/plugin/dir_plugin_common.c  |   10 +---------
- linux-2.6.28-rc2-mm1/fs/reiser4/plugin/file_plugin_common.c |    5 +----
- 2 files changed, 2 insertions(+), 13 deletions(-)
+ linux-2.6.28-rc2-mm1/fs/reiser4/plugin/file/file_conversion.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- linux-2.6.28-rc2-mm1/fs/reiser4/plugin/dir_plugin_common.c.orig
-+++ linux-2.6.28-rc2-mm1/fs/reiser4/plugin/dir_plugin_common.c
-@@ -56,10 +56,7 @@ struct dentry *get_parent_common(struct 
- 		check_light_weight(parent, child);
- 		reiser4_iget_complete(parent);
- 		dentry = d_obtain_alias(parent);
--		if (dentry == NULL) {
--			iput(parent);
--			dentry = ERR_PTR(RETERR(-ENOMEM));
--		} else
-+		if (!IS_ERR(dentry))
- 			dentry->d_op = &get_super_private(s)->ops.dentry;
- 	} else if (PTR_ERR(parent) == -ENOENT)
- 		dentry = ERR_PTR(RETERR(-ESTALE));
-@@ -353,11 +350,6 @@ int reiser4_dir_done_common(struct inode
- 	result = reiser4_rem_entry_common(object, &goodby_dots, &entry);
- 	reiser4_free_dentry_fsdata(&goodby_dots);
- 	if (unlikely(result != 0 && result != -ENOMEM && result != -ENOENT))
--		/* only worth a warning
--
--		   "values of B will give rise to dom!\n"
--		   -- v6src/s2/mv.c:89
--		 */
- 		warning("nikita-2252", "Cannot remove dot of %lli: %i",
- 			(unsigned long long)get_inode_oid(object), result);
- 	return 0;
---- linux-2.6.28-rc2-mm1/fs/reiser4/plugin/file_plugin_common.c.orig
-+++ linux-2.6.28-rc2-mm1/fs/reiser4/plugin/file_plugin_common.c
-@@ -476,10 +476,7 @@ struct dentry *wire_get_common(struct su
- 	if (!IS_ERR(inode)) {
- 		reiser4_iget_complete(inode);
- 		dentry = d_obtain_alias(inode);
--		if (dentry == NULL) {
--			iput(inode);
--			dentry = ERR_PTR(-ENOMEM);
--		} else
-+		if (!IS_ERR(dentry))
- 			dentry->d_op = &get_super_private(sb)->ops.dentry;
- 	} else if (PTR_ERR(inode) == -ENOENT)
- 		/*
+--- linux-2.6.28-rc2-mm1/fs/reiser4/plugin/file/file_conversion.c.orig
++++ linux-2.6.28-rc2-mm1/fs/reiser4/plugin/file/file_conversion.c
+@@ -682,6 +682,12 @@ int reiser4_write_begin_careful(struct f
+ 	reiser4_context *ctx;
+ 	struct inode * inode = file->f_dentry->d_inode;
+ 
++	/**
++	 * reiser4_write_end() can not cope with
++	 * short writes for now
++	 */
++	BUG_ON(!(flags & AOP_FLAG_UNINTERRUPTIBLE));
++
+ 	index = pos >> PAGE_CACHE_SHIFT;
+ 	start = pos & (PAGE_CACHE_SIZE - 1);
+ 	end = start + len;
 
---------------050908080005080107040802--
+--------------050308000504010004020102--
