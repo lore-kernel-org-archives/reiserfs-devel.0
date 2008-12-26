@@ -1,64 +1,79 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Xattrs in reiser4...
-Date: Sun, 21 Dec 2008 16:41:53 +0300
-Message-ID: <494E47A1.5030605@gmail.com>
-References: <4943B62E.40706@gmail.com>	 <be789c640812171351k7e2dee9cg50a3803caca231d8@mail.gmail.com>	 <494988BB.4020908@gmail.com> <be789c640812180153t13f8e9bcn16565fdbc71c1729@mail.gmail.com>
+Subject: [patch 1/2] reiser4: handling error returned by d_obtain_alias fixup
+Date: Sat, 27 Dec 2008 02:33:20 +0300
+Message-ID: <495569C0.3030608@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+ boundary="------------050908080005080107040802"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <be789c640812180153t13f8e9bcn16565fdbc71c1729@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Daniel Horne <daniel.horne@gmail.com>
-Cc: Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: hch@infradead.org, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
 
-Daniel Horne wrote:
-> 2008/12/17 Edward Shishkin <edward.shishkin@gmail.com>
->
->
->     Can you say more about this?
->     Do you know an application that requires xattrs of length longer then
->     4000 bytes?
->
->
-> User xattrs. What I'm thinking is that if you can set arbitrary
-> key:value pairs (which, of course, you can - through setfattr) the
-> "high bound"  number of xattrs per inode, and therefore total data
-> stored is pretty much unlimited.
->   
+This is a multi-part message in MIME format.
+--------------050908080005080107040802
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-Yes, there is no doubt, that somebody will want to shove
-a gigabyte of information by using setxattr(2) :)
-The question is "whether it is really needed?"
 
-Well, I think, we can implement xattrs with the mentioned
-limit for now. If it won't be enough for serious applications
-(it will be clear before xattrs release), then we'll think about
-new stat-data plugin.
 
-Edward.
+--------------050908080005080107040802
+Content-Type: text/x-patch;
+ name="reiser4-d_obtain_alias-incorrect-handling-error-fixup.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename*0="reiser4-d_obtain_alias-incorrect-handling-error-fixup.patch"
 
->
->     >
->     > So, the temptation is to have something similar to the file plugin for
->     > individual xattrs, with the xattr functions on a vfs file acting like
->     > a directory of xattr-files. There'd be a large number of small objects
->     > in the tree, of course, but that's a situation I understand R4 handles
->     > well..
->     >
->     > So, what do you think?
->
->     Let's forget about file-as-dir stuff. All what we need is a new file plugin
->     with non-NULL methods, responsible for work with xattrs , and (maybe)
->     a new stat-data plugin, which can handle stat-data items of arbitrary
->     length.
->
->
-> Agreed.
->
-> --
-> DH
->
->   
+. Fix up incorrect handling errors reterned by d_obtain_alias.
+. Make quilt, checkpatch happy:
+  remove comment with "joke not for everyone".
 
+Signed-off-by: Edward Shishkin<edward.shishkin@gmail.com>
+---
+ linux-2.6.28-rc2-mm1/fs/reiser4/plugin/dir_plugin_common.c  |   10 +---------
+ linux-2.6.28-rc2-mm1/fs/reiser4/plugin/file_plugin_common.c |    5 +----
+ 2 files changed, 2 insertions(+), 13 deletions(-)
+
+--- linux-2.6.28-rc2-mm1/fs/reiser4/plugin/dir_plugin_common.c.orig
++++ linux-2.6.28-rc2-mm1/fs/reiser4/plugin/dir_plugin_common.c
+@@ -56,10 +56,7 @@ struct dentry *get_parent_common(struct 
+ 		check_light_weight(parent, child);
+ 		reiser4_iget_complete(parent);
+ 		dentry = d_obtain_alias(parent);
+-		if (dentry == NULL) {
+-			iput(parent);
+-			dentry = ERR_PTR(RETERR(-ENOMEM));
+-		} else
++		if (!IS_ERR(dentry))
+ 			dentry->d_op = &get_super_private(s)->ops.dentry;
+ 	} else if (PTR_ERR(parent) == -ENOENT)
+ 		dentry = ERR_PTR(RETERR(-ESTALE));
+@@ -353,11 +350,6 @@ int reiser4_dir_done_common(struct inode
+ 	result = reiser4_rem_entry_common(object, &goodby_dots, &entry);
+ 	reiser4_free_dentry_fsdata(&goodby_dots);
+ 	if (unlikely(result != 0 && result != -ENOMEM && result != -ENOENT))
+-		/* only worth a warning
+-
+-		   "values of B will give rise to dom!\n"
+-		   -- v6src/s2/mv.c:89
+-		 */
+ 		warning("nikita-2252", "Cannot remove dot of %lli: %i",
+ 			(unsigned long long)get_inode_oid(object), result);
+ 	return 0;
+--- linux-2.6.28-rc2-mm1/fs/reiser4/plugin/file_plugin_common.c.orig
++++ linux-2.6.28-rc2-mm1/fs/reiser4/plugin/file_plugin_common.c
+@@ -476,10 +476,7 @@ struct dentry *wire_get_common(struct su
+ 	if (!IS_ERR(inode)) {
+ 		reiser4_iget_complete(inode);
+ 		dentry = d_obtain_alias(inode);
+-		if (dentry == NULL) {
+-			iput(inode);
+-			dentry = ERR_PTR(-ENOMEM);
+-		} else
++		if (!IS_ERR(dentry))
+ 			dentry->d_op = &get_super_private(sb)->ops.dentry;
+ 	} else if (PTR_ERR(inode) == -ENOENT)
+ 		/*
+
+--------------050908080005080107040802--
