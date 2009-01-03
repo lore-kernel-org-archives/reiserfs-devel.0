@@ -1,25 +1,21 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Reiser4 for Linux-2.6.28
-Date: Sat, 27 Dec 2008 02:53:05 +0300
-Message-ID: <49556E61.4010606@gmail.com>
+From: doiggl@velocitynet.com.au
+Subject: what is the status of reiser4 ?
+Date: Sat, 3 Jan 2009 16:39:52 +1100 (EST)
+Message-ID: <16833.202.168.22.19.1230961192.squirrel@webmail.velocity.net.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
+To: reiserfs-devel@vger.kernel.org
 
-Hello everyone.
+Hello,
+Just a query.
+Is there a current reiser4 'todo' list ?
+and are there still plans to have reiser4 included in a vanilla Linux
+kernel sometime in the future ?
 
-Changes since reiser4-for-2.6.27:
+Thanks for the info.
 
-. adjust to the new aops;
-. use d_obtain_alias instead of d_alloc_anon (Jeff Chua);
-. remove simple_prepare_write usage (Laurent Riffard).
 
-Find at
-http://www.kernel.org/pub/linux/kernel/people/edward/reiser4/reiser4-for-2.6/
-
-Thanks,
-Edward.
