@@ -1,46 +1,26 @@
-From: Oliver Neukum <oliver@neukum.org>
-Subject: problems with xattr in 2.6.28 and 2.6.27
-Date: Thu, 8 Jan 2009 11:04:40 +0100
-Message-ID: <200901081104.40980.oliver@neukum.org>
+From: doiggl@velocitynet.com.au
+Subject: please trigger build of reiser4.ko against 
+     kernel-default-base-2.6.27.10-2.1.x86_64.rpm
+Date: Thu, 8 Jan 2009 21:49:53 +1100 (EST)
+Message-ID: <17821.202.168.22.19.1231411793.squirrel@webmail.velocity.net.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Jeff Mahoney <jeffm@suse.com>
 Cc: reiserfs-devel@vger.kernel.org
 
-Hi,
+Hello,
+Question:
+- Can the reiser4 build be triggered for the reiser4.ko module
+against the kernel kernel-default-base-2.6.27.10-2.1.x86_64.rpm please.
 
-I am getting entries like this in syslog, but reiserfsck finds no errors
-in the filesystem.
+source:
+http://download.opensuse.org/repositories/Kernel:/HEAD/openSUSE_Factory/x86_64/kernel-default-base-2.6.27.10-2.1.x86_64.rpm
 
-	Regards
-		Oliver
-2.6.28:
+Thankyou
+Glenn
 
-Jan  8 08:55:14 vanamonde kernel: REISERFS warning (device sda7): jdm-20002 reiserfs_xattr_get: Invalid hash for xattr (user.Beagle) assoc
-iated with [266558 266621 0x0 SD]
-Jan  8 08:55:14 vanamonde kernel: REISERFS warning (device sda7): jdm-20002 reiserfs_xattr_get: Invalid hash for xattr (user.Beagle) assoc
-iated with [266558 266631 0x0 SD]
-Jan  8 08:55:14 vanamonde kernel: REISERFS warning (device sda7): jdm-20002 reiserfs_xattr_get: Invalid hash for xattr (user.Beagle) assoc
-iated with [266558 266669 0x0 SD]
-Jan  8 08:55:15 vanamonde kernel: REISERFS warning (device sda7): jdm-20002 reiserfs_xattr_get: Invalid hash for xattr (user.Beagle) assoc
-iated with [266558 266691 0x0 SD]
-Jan  8 08:55:16 vanamonde kernel: REISERFS warning (device sda7): jdm-20002 reiserfs_xattr_get: Invalid hash for xattr (user.Beagle) assoc
-iated with [266558 266621 0x0 SD]
-Jan  8 08:55:16 vanamonde kernel: REISERFS warning (device sda7): jdm-20002 reiserfs_xattr_get: Invalid hash for xattr (user.Beagle) assoc
-iated with [266558 266631 0x0 SD]
-Jan  8 08:55:16 vanamonde kernel: REISERFS warning (device sda7): jdm-20002 reiserfs_xattr_get: Invalid hash for xattr (user.Beagle) assoc
-iated with [266558 266669 0x0 SD]
 
-2.6.27:
-
-Jan  7 16:33:06 vanamonde kernel: ReiserFS: sda7: warning: Invalid hash for xattr (user.Beagle) associated with [959459378 3158320 0x0 SD]
-Jan  7 16:33:06 vanamonde kernel: ReiserFS: sda7: warning: Invalid hash for xattr (user.Beagle) associated with [959459378 3158320 0x0 SD]
-Jan  7 16:33:06 vanamonde kernel: ReiserFS: sda7: warning: Invalid hash for xattr (user.Beagle) associated with [959459378 3158320 0x0 SD]
-Jan  7 16:33:06 vanamonde kernel: ReiserFS: sda7: warning: Invalid hash for xattr (user.Beagle) associated with [959459378 3158320 0x0 SD]
-Jan  7 16:33:06 vanamonde kernel: ReiserFS: sda7: warning: Invalid hash for xattr (user.Beagle) associated with [959459378 3158320 0x0 SD]
-Jan  7 16:33:07 vanamonde kernel: ReiserFS: sda7: warning: Invalid hash for xattr (user.Beagle) associated with [959459378 892350768 892548608(49) DIR]
