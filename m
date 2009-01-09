@@ -1,135 +1,476 @@
-From: Oliver Neukum <oliver@neukum.org>
-Subject: Re: problems with xattr in 2.6.28 and 2.6.27
-Date: Fri, 9 Jan 2009 23:50:14 +0100
-Message-ID: <200901092350.14780.oliver@neukum.org>
-References: <200901081104.40980.oliver@neukum.org> <4966C5F4.50409@suse.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: [patch 0/9] reiserfsprogs patch queue
+Date: Fri, 09 Jan 2009 18:26:30 -0500
+Message-ID: <4967DD26.4070501@suse.com>
+References: <20080124200226.606635000@suse.com> <4799C193.8010502@gmail.com> <479A03FF.6050702@suse.com> <47E6F5A0.7070308@gmail.com> <47E7112E.1050700@suse.com> <4967CC7D.7020009@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="------------enig1D1B9764BA6D77957100910F"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4966C5F4.50409@suse.com>
-Content-Disposition: inline
+In-Reply-To: <4967CC7D.7020009@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: reiserfs-devel@vger.kernel.org
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
-Am Friday 09 January 2009 04:35:16 schrieb Jeff Mahoney:
-> Oliver Neukum wrote:
-> > Hi,
-> >
-> > I am getting entries like this in syslog, but reiserfsck finds no errors
-> > in the filesystem.
-> 
-> Yeah, reiserfsck doesn't check them. If you run into these once in a
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enig1D1B9764BA6D77957100910F
+Content-Type: multipart/mixed;
+ boundary="------------020402000100090105070906"
 
-Strictly speaking, isn't it a bit fishy to not test something in fsck the
-kernel has a run time test for?
+This is a multi-part message in MIME format.
+--------------020402000100090105070906
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-> while, then setfattr -b is the answer. If you're seeing them en masse,
-> something is wonky.
-> 
-> I saw a report on b.n.c indicating that someone ran into these while
-> running a vanilla kernel, but the suse kernel doesn't exhibit the
-> problem. This isn't really surprising since the suse kernel contains the
-> "latest" reiser3 development. I know. I need to push it upstream.
+Edward Shishkin wrote:
+> Well, I am about to release reiserfsprogs-3.6.21,
+> which includes the following changes since 3.6.19:
 
-Indeed. Only the vanilla kernel seems to be affected. Running with
-additional debugging I get a circular dependency trace from 2.6.28.
+Great!
 
-	Regards
-		Oliver
+> Jeff Mahoney:
+> - mkreiserfs-quiet.diff
+> - reiserfsprogs-large-block-warning.diff
+> - reiserfsprogs-fsck-mapid.diff
+> - reiserfsprogs-external-journal-changes.diff
+> - reiserfsprogs-remove-stupid-fsck_sleep.diff
+> - reiserfsprogs-mkfs-use-o_excl.diff
+> - reiserfsprogs-enforce-block-limit.diff
+> - reiserfsprogs-large-fs.diff
+> - reiserfsprogs-better-fsck-a-behavior.diff
+> - reiserfsprogs-remove-dependency-on-asm_unaligned.h.diff
+>=20
+> Ludwig Nussel:
+> - mkreiserfs-set-the-owner-of-the-root-directory-to-the-calling-user.di=
+ff
+>=20
+> Edward Shishkin:
+> - mkreiserfs-disable-small-block-sizes.diff
+>=20
+> Jeff, do you have something to add here?
+> Sorry for delay.
 
-Jan  8 16:45:58 vanamonde kernel: =======================================================
-Jan  8 16:45:58 vanamonde kernel: [ INFO: possible circular locking dependency detected ]
-Jan  8 16:45:58 vanamonde kernel: 2.6.28-9-default #2
-Jan  8 16:45:58 vanamonde kernel: -------------------------------------------------------
-Jan  8 16:45:58 vanamonde kernel: kmail/6496 is trying to acquire lock:
-Jan  8 16:45:58 vanamonde kernel:  (&type->i_mutex_dir_key#5){--..}, at: [<ffffffff802bb436>] vfs_rmdir+0x98/0x115
-Jan  8 16:45:58 vanamonde kernel: 
-Jan  8 16:45:58 vanamonde kernel: but task is already holding lock:
-Jan  8 16:45:58 vanamonde kernel:  (&REISERFS_SB(s)->xattr_dir_sem){----}, at: [<ffffffffa01f7823>] reiserfs_delete_xattrs+0xff/0x16b [reiserfs]
-Jan  8 16:45:58 vanamonde kernel: 
-Jan  8 16:45:58 vanamonde kernel: which lock already depends on the new lock.
-Jan  8 16:45:58 vanamonde kernel: 
-Jan  8 16:45:58 vanamonde kernel: 
-Jan  8 16:45:58 vanamonde kernel: the existing dependency chain (in reverse order) is:
-Jan  8 16:45:58 vanamonde kernel: 
-Jan  8 16:45:58 vanamonde kernel: -> #2 (&REISERFS_SB(s)->xattr_dir_sem){----}:
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff8025c34f>] __lock_acquire+0x12b0/0x161a
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff8025c70e>] lock_acquire+0x55/0x71
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff8047262f>] down_read+0x40/0x4d
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffffa01f666f>] reiserfs_check_acl+0x37/0xb6 [reiserfs]
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff802b9f20>] generic_permission+0x58/0x101
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffffa01f6636>] reiserfs_permission+0x26/0x28 [reiserfs]
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff802ba032>] inode_permission+0x69/0x97
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff802bbf20>] __link_path_walk+0x134/0xde0
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff802bcdd2>] path_walk+0x69/0xd4
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff802bd06b>] do_path_lookup+0x187/0x1df
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff802bd181>] path_lookup_open+0x5a/0x9b
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff802bdd68>] do_filp_open+0xb6/0x8a2
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff802b0f32>] do_sys_open+0x53/0xd3
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff802b0fdb>] sys_open+0x1b/0x1d
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff8020c0db>] system_call_fastpath+0x16/0x1b
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffffffffffff>] 0xffffffffffffffff
-Jan  8 16:45:58 vanamonde kernel: 
-Jan  8 16:45:58 vanamonde kernel: -> #1 (&REISERFS_I(inode)->xattr_sem){----}:
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff8025c34f>] __lock_acquire+0x12b0/0x161a
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff8025c70e>] lock_acquire+0x55/0x71
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff8047262f>] down_read+0x40/0x4d
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffffa01f8f50>] reiserfs_cache_default_acl+0x41/0xc8 [reiserfs]
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffffa01da250>] reiserfs_create+0x81/0x226 [reiserfs]
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff802bbab4>] vfs_create+0xea/0x161
-Jan  8 16:45:58 vanamonde kernel:        [<ffffffff802bdf09>] do_filp_open+0x257/0x8a2
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffff802b0f32>] do_sys_open+0x53/0xd3
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffff802b0fdb>] sys_open+0x1b/0x1d
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffff8020c0db>] system_call_fastpath+0x16/0x1b
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffffffffffff>] 0xffffffffffffffff
-Jan  8 16:45:59 vanamonde kernel: 
-Jan  8 16:45:59 vanamonde kernel: -> #0 (&type->i_mutex_dir_key#5){--..}:
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffff8025c01e>] __lock_acquire+0xf7f/0x161a
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffff8025c70e>] lock_acquire+0x55/0x71
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffff80471bb3>] mutex_lock_nested+0x10c/0x2a9
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffff802bb436>] vfs_rmdir+0x98/0x115
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffffa01f782f>] reiserfs_delete_xattrs+0x10b/0x16b [reiserfs]
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffffa01df7df>] reiserfs_delete_inode+0x75/0x12a [reiserfs]
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffff802c5552>] generic_delete_inode+0xcb/0x165
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffff802c5603>] generic_drop_inode+0x17/0x17b
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffff802c471b>] iput+0x61/0x65
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffff802bd544>] do_unlinkat+0x107/0x15d
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffff802bd5ab>] sys_unlink+0x11/0x13
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffff8020c0db>] system_call_fastpath+0x16/0x1b
-Jan  8 16:45:59 vanamonde kernel:        [<ffffffffffffffff>] 0xffffffffffffffff
-Jan  8 16:45:59 vanamonde kernel: 
-Jan  8 16:45:59 vanamonde kernel: other info that might help us debug this:
-Jan  8 16:45:59 vanamonde kernel: 
-Jan  8 16:45:59 vanamonde kernel: 1 lock held by kmail/6496:
-Jan  8 16:45:59 vanamonde kernel:  #0:  (&REISERFS_SB(s)->xattr_dir_sem){----}, at: [<ffffffffa01f7823>] reiserfs_delete_xattrs+0xff/0x16b [reiserfs]
-Jan  8 16:45:59 vanamonde kernel: 
-Jan  8 16:45:59 vanamonde kernel: stack backtrace:
-Jan  8 16:45:59 vanamonde kernel: Pid: 6496, comm: kmail Not tainted 2.6.28-9-default #2
-Jan  8 16:45:59 vanamonde kernel: Call Trace:
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff8025acb9>] print_circular_bug_tail+0xc5/0xd0
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff8025c01e>] __lock_acquire+0xf7f/0x161a
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff8025c70e>] lock_acquire+0x55/0x71
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff802bb436>] ? vfs_rmdir+0x98/0x115
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff80471bb3>] mutex_lock_nested+0x10c/0x2a9
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff802bb436>] ? vfs_rmdir+0x98/0x115
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff802bb436>] ? vfs_rmdir+0x98/0x115
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff8047375c>] ? _spin_unlock_irq+0x2b/0x30
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff802ba9c7>] ? may_delete+0x65/0x144
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff802bb436>] vfs_rmdir+0x98/0x115
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffffa01f782f>] reiserfs_delete_xattrs+0x10b/0x16b [reiserfs]
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffffa01df7df>] reiserfs_delete_inode+0x75/0x12a [reiserfs]
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffffa01df76a>] ? reiserfs_delete_inode+0x0/0x12a [reiserfs]
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff802c5552>] generic_delete_inode+0xcb/0x165
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff802c5603>] generic_drop_inode+0x17/0x17b
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff802c471b>] iput+0x61/0x65
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff802bd544>] do_unlinkat+0x107/0x15d
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff8020c10c>] ? sysret_check+0x27/0x62
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff8025a77f>] ? trace_hardirqs_on_caller+0x114/0x138
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff80473383>] ? trace_hardirqs_on_thunk+0x3a/0x3f
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff802bcf2b>] ? do_path_lookup+0x47/0x1df
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff802bd5ab>] sys_unlink+0x11/0x13
-Jan  8 16:45:59 vanamonde kernel:  [<ffffffff8020c0db>] system_call_fastpath+0x16/0x1b
+Yeah, I do. I have two more patches. The first adds a progress
+bar/spinner to fsck -a. The second reorders the link so that the right
+dependencies are met. See attached.
 
+-Jeff
+
+--=20
+Jeff Mahoney
+SUSE Labs
+
+--------------020402000100090105070906
+Content-Type: text/x-patch;
+ name="reiserfsprogs-progress.diff"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline;
+ filename="reiserfsprogs-progress.diff"
+
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] reiserprogs: add spinner and progress bar for -a mode
+
+ This patch implements a progress bar with percentages and a plain spinne=
+r
+ for when progress wants to be demonstrated but percentages aren't known.=
+
+
+ These are used during journal replay and for the internal tree check.
+
+---
+ fsck/check_tree.c      |    2=20
+ fsck/ustree.c          |    7 ++
+ include/progbar.h      |   32 +++++++++++++
+ lib/Makefile.am        |    2=20
+ lib/progbar.c          |  117 ++++++++++++++++++++++++++++++++++++++++++=
++++++++
+ reiserfscore/journal.c |   16 +++++-
+ 6 files changed, 172 insertions(+), 4 deletions(-)
+
+--- a/fsck/check_tree.c	2004-09-29 15:52:20.000000000 -0400
++++ b/fsck/check_tree.c	2008-01-24 13:39:05.000000000 -0500
+@@ -1124,7 +1124,7 @@ void check_fs_tree (reiserfs_filsys_t *=20
+ {
+     before_check_fs_tree (fs);
+    =20
+-    fsck_progress ("Checking internal tree..");
++    fsck_progress ("Checking internal tree..  ");
+     pass_through_tree (fs, bad_node, bad_path, fsck_mode(fs) =3D=3D FSCK=
+_AUTO ? 2 : -1);
+     /* internal tree is correct (including all objects have correct
+        sequences of items) */
+--- a/fsck/ustree.c	2004-05-24 18:11:43.000000000 -0400
++++ b/fsck/ustree.c	2008-01-24 13:39:05.000000000 -0500
+@@ -4,6 +4,7 @@
+  */
+=20
+ #include "fsck.h"
++#include "progbar.h"
+=20
+ struct tree_balance * cur_tb =3D 0;
+=20
+@@ -196,6 +197,9 @@ void pass_through_tree (reiserfs_filsys_
+     int h =3D 0;
+     unsigned long block =3D get_sb_root_block (fs->fs_ondisk_sb);
+     int problem;
++    struct spinner spinner;
++
++    spinner_init(&spinner, fsck_progress_file(fs));
+=20
+=20
+     if (block >=3D get_sb_block_count (fs->fs_ondisk_sb) || not_data_blo=
+ck (fs, block)) {
+@@ -223,6 +227,8 @@ void pass_through_tree (reiserfs_filsys_
+ 	    }
+ 	    problem =3D 1;	=09
+ 	} else {
++
++	    spinner_touch(&spinner);
+ 	    path[h] =3D bread (fs->fs_dev, block, fs->fs_blocksize);
+ 	    if (path[h] =3D=3D 0)
+ 		/* FIXME: handle case when read failed */
+@@ -279,4 +285,5 @@ void pass_through_tree (reiserfs_filsys_
+         block =3D first_child (path[h]);
+         h ++;
+     }
++    spinner_clear(&spinner);
+ }
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ b/include/progbar.h	2008-01-24 13:39:05.000000000 -0500
+@@ -0,0 +1,32 @@
++#ifndef _PROGBAR_H_
++#define _PROGBAR_H_
++
++enum {
++	E2F_FLAG_PROG_SUPPRESS =3D 1,
++	E2F_FLAG_PROG_BAR =3D 2,
++};
++
++struct progbar {
++	char units[16];
++	int progress_pos;
++	int progress_last_percent;
++	time_t progress_last_time;
++	int flags;
++	FILE *file;
++};
++
++struct spinner {
++	int count;
++	FILE *file;
++};
++
++void progbar_init(struct progbar *ctx, const char *units, FILE *fp);
++void progbar_clear(struct progbar * ctx);
++int progbar_update(struct progbar * ctx, const char *label, int curr, in=
+t max,
++                           unsigned int dpynum);
++
++void spinner_init(struct spinner *spinner, FILE *fp);
++void spinner_touch(struct spinner *spinner);
++void spinner_clear(struct spinner *spinner);
++
++#endif /* _PROGBAR_H_ */
+--- a/lib/Makefile.am	2004-02-17 06:35:12.000000000 -0500
++++ b/lib/Makefile.am	2008-01-24 13:39:05.000000000 -0500
+@@ -1,5 +1,5 @@
+ noinst_LIBRARIES =3D libmisc.a
+=20
+-libmisc_a_SOURCES =3D io.c misc.c=20
++libmisc_a_SOURCES =3D io.c misc.c progbar.c
+ ##reiserfs.c
+=20
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ b/lib/progbar.c	2008-01-24 13:39:05.000000000 -0500
+@@ -0,0 +1,117 @@
++#include <stdio.h>
++#include <sys/time.h>
++#include <string.h>
++
++#include "progbar.h"
++
++static char bar[128], spaces[128];
++static const char spinner[] =3D "\\|/-";
++
++void progbar_init(struct progbar *ctx, const char *units, FILE *fp)
++{
++	memset(ctx, 0, sizeof (*ctx));
++	if (!bar[0])
++		memset(bar, '=3D', sizeof(bar)-1);
++	if (!spaces[0])
++		memset(spaces, ' ', sizeof(spaces)-1);
++	strncpy(ctx->units, units, sizeof(ctx->units));
++	ctx->file =3D fp;
++}
++
++
++void progbar_clear(struct progbar * ctx)
++{
++	if (!(ctx->flags & E2F_FLAG_PROG_BAR))
++		return;
++
++	fprintf(ctx->file, "\r%*s\r", 80, " ");
++	fflush(ctx->file);
++	ctx->flags &=3D ~E2F_FLAG_PROG_BAR;
++}
++
++int progbar_update(struct progbar * ctx, const char *label, int curr, in=
+t max,
++                           unsigned int dpynum)
++{
++	int	i;
++	unsigned int	tick;
++	struct timeval	tv;
++	int dpywidth;
++	int fixed_percent;
++	float percent =3D ((float) curr) / ((float) max) * 100;
++
++	if (ctx->flags & E2F_FLAG_PROG_SUPPRESS)
++		return 0;
++
++	/*
++	 * Calculate the new progress position.  If the
++	 * percentage hasn't changed, then we skip out right
++	 * away.
++	 */
++	fixed_percent =3D (int) ((10 * percent) + 0.5);
++	if (ctx->progress_last_percent =3D=3D fixed_percent)
++		return 0;
++	ctx->progress_last_percent =3D fixed_percent;
++
++	/*
++	 * If we've already updated the spinner once within
++	 * the last 1/8th of a second, no point doing it
++	 * again.
++	 */
++	gettimeofday(&tv, NULL);
++	tick =3D (tv.tv_sec << 3) + (tv.tv_usec / (1000000 / 8));
++	if ((tick =3D=3D ctx->progress_last_time) &&
++	    (fixed_percent !=3D 0) && (fixed_percent !=3D 1000))
++		return 0;
++	ctx->progress_last_time =3D tick;
++
++	/*
++	 * Advance the spinner, and note that the progress bar
++	 * will be on the screen
++	 */
++	ctx->progress_pos =3D (ctx->progress_pos+1) & 3;
++	ctx->flags |=3D E2F_FLAG_PROG_BAR;
++
++	dpywidth =3D 66 - strlen(label);
++	dpywidth =3D 8 * (dpywidth / 8);
++	if (dpynum)
++		dpywidth -=3D 8;
++
++	i =3D ((percent * dpywidth) + 50) / 100;
++	fprintf(ctx->file, "\r%s: |%s%s", label,
++	       bar + (sizeof(bar) - (i+1)),
++	       spaces + (sizeof(spaces) - (dpywidth - i + 1)));
++	if (fixed_percent =3D=3D 1000)
++		fputc('|', ctx->file);
++	else
++		fputc(spinner[ctx->progress_pos & 3], ctx->file);
++	fprintf(ctx->file, " %4.1f%%  ", percent);
++	if (dpynum)
++		fprintf(ctx->file, "%u%s\r", dpynum, ctx->units);
++	else
++		fputs(" \r", ctx->file);
++
++	if (fixed_percent =3D=3D 1000)
++		progbar_clear(ctx);
++	fflush(ctx->file);
++
++	return 0;
++}
++
++void
++spinner_init(struct spinner *ctx, FILE *fp)
++{
++	memset(ctx, 0, sizeof (*ctx));
++	ctx->file =3D fp;
++}
++
++void
++spinner_touch(struct spinner *ctx)
++{
++	fprintf(ctx->file, "=08%c", spinner[ctx->count++ % 4]);
++}
++
++void
++spinner_clear(struct spinner *ctx)
++{
++	fputs("=08", ctx->file);
++}
+--- a/reiserfscore/journal.c	2008-01-24 13:39:04.000000000 -0500
++++ b/reiserfscore/journal.c	2008-01-24 13:39:05.000000000 -0500
+@@ -6,6 +6,7 @@
+ #define _GNU_SOURCE
+=20
+ #include "includes.h"
++#include "progbar.h"
+=20
+ /* compares description block with commit block. returns 0 if they diffe=
+r, 1
+    if they match */
+@@ -799,6 +800,8 @@ int replay_journal (reiserfs_filsys_t *=20
+     struct reiserfs_journal_header * j_head;
+     reiserfs_trans_t cur, newest, control;
+     int replayed, ret;
++    struct progbar progbar;
++    int trans_count;
+=20
+     if (!reiserfs_journal_opened (fs))
+         reiserfs_panic ("replay_journal: journal is not opened");
+@@ -806,7 +809,8 @@ int replay_journal (reiserfs_filsys_t *=20
+     if (!is_opened_rw (fs))
+         reiserfs_panic ("replay_journal: fs is not opened with write per=
+ms");
+=20
+-    reiserfs_warning (stderr, "Replaying journal..\n");
++
++    reiserfs_warning (stderr, "Replaying journal: ");
+     bh =3D fs->fs_jh_bh;
+ =09
+     j_head =3D (struct reiserfs_journal_header *)(bh->b_data);
+@@ -819,12 +823,15 @@ int replay_journal (reiserfs_filsys_t *=20
+ 	return 0;
+     }
+=20
++    trans_count =3D newest.trans_id - cur.trans_id;
++
+     /*  Smth strange with journal header or journal. We cannot say for s=
+ure what was the last=20
+ 	replaied transaction, but relying on JH data is preferable. */
+=20
+     replayed =3D 0;
+     ret =3D TRANS_FOUND;
+    =20
++    progbar_init(&progbar, " trans", stderr);
+     /* Looking to the first valid not replayed transaction. */
+     while (1) {
+ 	if (cur.mount_id =3D=3D control.mount_id &&=20
+@@ -842,6 +849,7 @@ int replay_journal (reiserfs_filsys_t *=20
+ 	    break;
+ =09
+ 	if (!transaction_check_content(fs, &cur)) {
++	    progbar_clear(&progbar);
+ 	    reiserfs_warning (stderr, "Trans broken: mountid %lu, transid %lu, =
+desc %lu, "
+ 		"len %lu, commit %lu, next trans offset %lu\n", cur.mount_id, cur.tran=
+s_id,=20
+ 		cur.desc_blocknr, cur.trans_len, cur.commit_blocknr, cur.next_trans_of=
+fset);
+@@ -857,10 +865,14 @@ int replay_journal (reiserfs_filsys_t *=20
+ 	control =3D cur;
+         replayed ++;
+=20
++	progbar_update(&progbar, "Replaying journal", replayed, trans_count,
++	               replayed);
++
+ 	ret =3D next_transaction (fs, &cur, newest);
+     }
++    progbar_clear(&progbar);
+=20
+-    reiserfs_warning (stderr, "Reiserfs journal '%s' in blocks [%u..%u]:=
+ %d "
++    reiserfs_warning (stderr, "\rReplaying journal: Done.\nReiserfs jour=
+nal '%s' in blocks [%u..%u]: %d "
+ 		      "transactions replayed\n", fs->fs_j_file_name,=20
+ 		      get_jp_journal_1st_block(sb_jp(fs->fs_ondisk_sb)),
+ 		      get_jp_journal_1st_block(sb_jp(fs->fs_ondisk_sb)) +=20
+
+--------------020402000100090105070906
+Content-Type: text/x-patch;
+ name="reiserfsprogs-reorder-libs.diff"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline;
+ filename="reiserfsprogs-reorder-libs.diff"
+
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] reiserfsprogs: reorder libcore and libmisc
+
+ For some reason, the spinner/progress bar patch didn't build without
+ reordering the libs. I don't really care to find out why.
+
+---
+ debugreiserfs/Makefile.am   |    2 +-
+ fsck/Makefile.am            |    2 +-
+ mkreiserfs/Makefile.am      |    2 +-
+ resize_reiserfs/Makefile.am |    2 +-
+ tune/Makefile.am            |    2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
+--- a/debugreiserfs/Makefile.am	2004-05-13 14:12:56.000000000 -0400
++++ b/debugreiserfs/Makefile.am	2008-01-24 13:39:06.000000000 -0500
+@@ -4,4 +4,4 @@ debugreiserfs_SOURCES =3D debugreiserfs.c=20
+ man_MANS =3D debugreiserfs.8
+ EXTRA_DIST =3D $(man_MANS)
+=20
+-LDADD =3D $(top_srcdir)/lib/libmisc.a $(top_srcdir)/reiserfscore/libcore=
+=2Ea
++LDADD =3D $(top_srcdir)/reiserfscore/libcore.a $(top_srcdir)/lib/libmisc=
+=2Ea
+--- a/fsck/Makefile.am	2004-02-17 06:35:12.000000000 -0500
++++ b/fsck/Makefile.am	2008-01-24 13:39:06.000000000 -0500
+@@ -7,5 +7,5 @@ ufile.c check_tree.c info.c super.c fsck
+ man_MANS =3D reiserfsck.8
+ EXTRA_DIST =3D $(man_MANS)
+=20
+-reiserfsck_LDADD =3D $(top_srcdir)/lib/libmisc.a $(top_srcdir)/reiserfsc=
+ore/libcore.a
++reiserfsck_LDADD =3D $(top_srcdir)/reiserfscore/libcore.a $(top_srcdir)/=
+lib/libmisc.a
+=20
+--- a/mkreiserfs/Makefile.am	2004-02-17 06:35:12.000000000 -0500
++++ b/mkreiserfs/Makefile.am	2008-01-24 13:39:06.000000000 -0500
+@@ -4,5 +4,5 @@ mkreiserfs_SOURCES =3D mkreiserfs.c
+ man_MANS =3D mkreiserfs.8
+ EXTRA_DIST =3D $(man_MANS)
+=20
+-LDADD =3D $(top_srcdir)/lib/libmisc.a $(top_srcdir)/reiserfscore/libcore=
+=2Ea
++LDADD =3D $(top_srcdir)/reiserfscore/libcore.a $(top_srcdir)/lib/libmisc=
+=2Ea
+=20
+--- a/resize_reiserfs/Makefile.am	2004-02-17 06:35:12.000000000 -0500
++++ b/resize_reiserfs/Makefile.am	2008-01-24 13:39:06.000000000 -0500
+@@ -4,5 +4,5 @@ resize_reiserfs_SOURCES =3D fe.c resize_re
+ man_MANS =3D resize_reiserfs.8
+ EXTRA_DIST =3D $(man_MANS)
+=20
+-LDADD =3D $(top_srcdir)/lib/libmisc.a $(top_srcdir)/reiserfscore/libcore=
+=2Ea
++LDADD =3D $(top_srcdir)/reiserfscore/libcore.a $(top_srcdir)/lib/libmisc=
+=2Ea
+=20
+--- a/tune/Makefile.am	2004-02-17 06:35:12.000000000 -0500
++++ b/tune/Makefile.am	2008-01-24 13:39:06.000000000 -0500
+@@ -5,5 +5,5 @@ reiserfstune_SOURCES =3D tune.c tune.h
+ man_MANS =3D reiserfstune.8
+ EXTRA_DIST =3D $(man_MANS)
+=20
+-LDADD =3D $(top_srcdir)/lib/libmisc.a $(top_srcdir)/reiserfscore/libcore=
+=2Ea
++LDADD =3D $(top_srcdir)/reiserfscore/libcore.a $(top_srcdir)/lib/libmisc=
+=2Ea
+=20
+
+--------------020402000100090105070906--
+
+--------------enig1D1B9764BA6D77957100910F
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.9 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
+
+iEYEARECAAYFAkln3SsACgkQLPWxlyuTD7L0BwCeMKdQqHUjJLyYKMvwRaJMzJly
+M38An0RlYA11DR9Puu6FzYg7ZsQ30cY0
+=jr7M
+-----END PGP SIGNATURE-----
+
+--------------enig1D1B9764BA6D77957100910F--
