@@ -1,33 +1,54 @@
-From: "Jeff Chua" <jeff.chua.linux@gmail.com>
-Subject: Re: Reiserfsprogs-3.6.21
-Date: Sun, 11 Jan 2009 09:47:33 +0800
-Message-ID: <b6a2187b0901101747m6881dd4ap230dcf8abdf8239b@mail.gmail.com>
-References: <4968CCC1.1070106@gmail.com>
+From: doiggl@velocitynet.com.au
+Subject: which kernel needed for 
+     reiser4-kmp-default-0.1_2.6.27.10_1-27.8.x86_64.rpm
+Date: Mon, 12 Jan 2009 21:03:07 +1100 (EST)
+Message-ID: <21073.202.168.22.19.1231754587.squirrel@webmail.velocity.net.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from:to
-         :subject:cc:in-reply-to:mime-version:content-type
-         :content-transfer-encoding:content-disposition:references;
-        bh=+yuaWmllyaI9gKyDefHBswdkhFxLd4G1sEQ6SVslpVY=;
-        b=jT2kJ2v25x83Hpozx7ra+lN+oYgM0QzbW9ANDGC1B57pwqCNaSVwSgHQzyXDXZ8LgX
-         gkqm/SPlt42c+d/m79LpGy4HMRT0IeHbjyjQdXoeg2CRNi2opPPv078vzQ/EsGGSE6eQ
-         7FFWZh8zbVGBlX9WE2xoIPMeQxNI0jgs2WbQc=
-In-Reply-To: <4968CCC1.1070106@gmail.com>
-Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: Reiserfs mailing list <reiserfs-devel@vger.kernel.org>, Linux kernel mailing list <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-On Sun, Jan 11, 2009 at 12:28 AM, Edward Shishkin
-<edward.shishkin@gmail.com> wrote:
-> Please, find at http://www.kernel.org/pub/linux/utils/fs/reiserfs
+Question:
+Which kernel do I need to use for:
+reiser4-kmp-default-0.1_2.6.27.10_1-27.8.x86_64.rpm
+source:
+-http://download.opensuse.org/repositories/drivers:/filesystems/openSUSE_Factory/x86_64/reiser4-kmp-default-0.1_2.6.27.10_1-27.8.x86_64.rpm
 
-Edward, we appreciate your support on reiserfs and reiser4.
 
-Thanks,
-Jeff.
+# rpm -ivhU reiser4-kmp-default-0.1_2.6.27.10_1-27.8.x86_64.rpm
+warning: reiser4-kmp-default-0.1_2.6.27.10_1-27.8.x86_64.rpm: Header V3
+DSA signature: NOKEY, key ID 74de2879
+error: Failed dependencies:
+        kernel(default:kernel) = 037fe4d3772ab0fb is needed by
+reiser4-kmp-default-0.1_2.6.27.10_1-27.8.x86_64
+        kernel(default:mm) = 7b0d5e54461ff41b is needed by
+reiser4-kmp-default-0.1_2.6.27.10_1-27.8.x86_64
+        kernel(default:vmlinux) = 6535f6c0489f55c0 is needed by
+reiser4-kmp-default-0.1_2.6.27.10_1-27.8.x86_64
+        kernel(default:arch_x86_kernel) = 104ad34f4772270c is needed by
+reiser4-kmp-default-0.1_2.6.27.10_1-27.8.x86_64
+        kernel(default:fs) = 8a2ea2f7b702a737 is needed by
+reiser4-kmp-default-0.1_2.6.27.10_1-27.8.x86_64
+        kernel(default:fs_debugfs) = 33cc6cf4c644fb99 is needed by
+reiser4-kmp-default-0.1_2.6.27.10_1-27.8.x86_64
+        kernel(default:block) = 8236e5907394d933 is needed by
+reiser4-kmp-default-0.1_2.6.27.10_1-27.8.x86_64
+        kernel(default:lib) = 3da5922757d6e24e is needed by
+reiser4-kmp-default-0.1_2.6.27.10_1-27.8.x86_64
+
+- Kernel currently used is as follows:
+
+# uname -a
+Linux test 2.6.27.7-9-default #1 SMP 2008-12-04 18:10:04 +0100 x86_64
+x86_64 x86_64 GNU/Linux
+
+# rpm -qa | grep -i kernel | sort
+kernel-default-2.6.27.7-9.1
+kernel-default-base-2.6.27.7-9.1
+kernel-default-extra-2.6.27.7-9.1
+
+
