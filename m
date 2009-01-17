@@ -1,40 +1,50 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Reiser4progs-1.0.7
-Date: Sat, 17 Jan 2009 00:44:25 +0300
-Message-ID: <4970FFB9.2060006@gmail.com>
+From: Mike Frysinger <vapier@gentoo.org>
+Subject: live source repo ?
+Date: Sat, 17 Jan 2009 11:09:46 -0500
+Message-ID: <200901171109.47346.vapier@gentoo.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed;
+  boundary="nextPart51354618.jL15HUKJ2N";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Reiserfs mailing list <reiserfs-devel@vger.kernel.org>, Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Cc: =?ISO-8859-1?Q?Mathieu_B=E9langer?= <b747xx@gmail.com>
+To: reiserfs-devel@vger.kernel.org
 
-Hello everyone.
+--nextPart51354618.jL15HUKJ2N
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Changes since reiser4progs-1.0.6:
+is there a git repo or something where reiserfsprogs is maintained ?  doesn=
+t=20
+seem to be any info in the tarball nor in the kernel.org reiserfsprogs dir =
+=2E..
+=2Dmike
 
-=2E Fixed bug in fsck reported by Mathieu B=E9langer
-  (incorrect checking compressed file bodies);
-=2E Alias -p "preen" to -a "auto" for fsck options;
-=2E Suppressed per-object fsck reports about wrong bytes for
-  files with data checksumming. Use fsck option --fix to
-  set up their correct values (in the case of transparent
-  compression i_blocks and i_bytes are not supported
-  by kernel for performance reasons). If bytes are wrong
-  because of fatal corruptions, then fsck will report about
-  last ones.
+--nextPart51354618.jL15HUKJ2N
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
 
-All the patches were announced at reiserfs-devel mailing list.
-Please, find at
-http://www.kernel.org/pub/linux/utils/fs/reiser4/reiser4progs/
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.9 (GNU/Linux)
 
-Thanks,
-Edward.
+iQIcBAABAgAGBQJJcgLLAAoJEEFjO5/oN/WBCKoP/1Uzcv+jUmGktJHeIpV4lZEm
+QN0Hy9AwKq4CglYSNftm3C9CTmYWHZyH40sZAc+3OsmVGnzsGJVksUQ2UvHjYb0/
+lD2Zwxx7/sbcdX3OYoLz+puQetxvG5C9cSzy56YMLML3pVgz7058at6PbnrnvRFe
+VeMnmj/pI6ez7djZpPfn+7TpHrmQaM6sscVtJZY1UDoOyj3UExUzNZatmpmEHSiK
+Fx1kJLQz4K3j27Uvgldcm5c8uSUz1mFQgzXIxAyI3snN7qK0jW2pQHtRSvGk5psx
+gpUjdZp/D1rF9OK1CIvKnv4bSiCPRvIciYJJjVagt6jEf4NNkxDscB5JdeOiD02t
+mPBhXLfmGsyZi7cpR0zZ94AZM6VZi/+3boifbkar6/ligculFuTD9qVPPdara9Jx
+gcPIV/wZCJbTZ9zj+VVDQtDAuNBWRg+rxLtS90Px4NOsnEKw54rwbI4Ak6PndL8U
+K84wGqVH6WzcYTCpvk+D2eTrvvVYIYAmGoG0JIU/hnQrUALPXZ8ZP2lLFmGG/fU3
+OIuSLkT2H7HxcItg5RJxbsZVSYH+povitXPRc981O97Bseh3s1/gUBXWs2XPZs+r
+84hP/EjxXBs7+b28ibd+VN3nFWHYA5ErUs6a4pRKZo5BIker6DU4IgCkgTGoJ7DT
+bNKE4TX0PuEzl5QpVvUU
+=3AY0
+-----END PGP SIGNATURE-----
 
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--nextPart51354618.jL15HUKJ2N--
