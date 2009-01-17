@@ -1,33 +1,29 @@
-From: Mike Frysinger <vapier@gentoo.org>
-Subject: [PATCH] configure: use AC_MSG_NOTICE rather than `echo`
-Date: Sat, 17 Jan 2009 11:25:51 -0500
-Message-ID: <1232209551-5088-1-git-send-email-vapier@gentoo.org>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: live source repo ?
+Date: Sat, 17 Jan 2009 19:27:48 +0300
+Message-ID: <49720704.7020909@gmail.com>
+References: <200901171109.47346.vapier@gentoo.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <200901171109.47346.vapier@gentoo.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: Mike Frysinger <vapier@gentoo.org>
+Cc: reiserfs-devel@vger.kernel.org
 
-Signed-off-by: Mike Frysinger <vapier@gentoo.org>
----
- configure.in |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
+Mike Frysinger wrote:
+> is there a git repo or something where reiserfsprogs is maintained ?  doesnt 
+> seem to be any info in the tarball nor in the kernel.org reiserfsprogs dir ...
+> -mike
+>   
+Hmm, there is a README:
+http://www.kernel.org/pub/linux/utils/fs/reiserfs/README
+Is it enough?
 
-diff --git a/configure.in b/configure.in
-index a3cc867..dd3e353 100644
---- a/configure.in
-+++ b/configure.in
-@@ -193,5 +193,6 @@ AC_OUTPUT(
-     debugreiserfs/Makefile 
-     tune/Makefile)
- 
--echo
--echo Type \'make\' to compile reiserfsprogs
-+AC_MSG_NOTICE([
-+
-+Type 'make' to compile reiserfsprogs])
--- 
-1.6.1
+Edward.
 
+P.S.:
+I'll put namesys git repos to kernel.org as soon as
+it is repaired..
