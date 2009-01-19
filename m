@@ -1,30 +1,35 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Reiser4: Compilation Error on 2.6.28.1_[Scanned]
-Date: Tue, 20 Jan 2009 00:27:54 +0300
-Message-ID: <4974F05A.7090406@gmail.com>
-References: <1232326407.2948.7.camel@localhost>
+From: Andreas Dilger <adilger@sun.com>
+Subject: Re: [PATCH 0/20] return f_fsid for statfs(2)
+Date: Tue, 20 Jan 2009 07:36:51 +0800
+Message-ID: <20090119233651.GK3286@webber.adilger.int>
+References: <4974B8C4.3070703@suse.de>
+ <1232393334.5893.42.camel@norville.austin.ibm.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1232326407.2948.7.camel@localhost>
+In-reply-to: <1232393334.5893.42.camel@norville.austin.ibm.com>
+Content-disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ibormuth@efil.de
-Cc: reiserfs devel <reiserfs-devel@vger.kernel.org>
+To: Dave Kleikamp <shaggy@linux.vnet.ibm.com>
+Cc: coly.li@suse.de, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Roman Zippel <zippel@linux-m68k.org>, "Sergey S. Kostyliov" <rathamahata@php4.ru>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, Dave Kleikamp <shaggy@austin.ibm.com>, Bob Copeland <me@bobcopeland.com>, Anders Larsen <al@alarsen.net>, reiserfs-devel@vger.kernel.org, Phillip Lougher <phillip@lougher.demon.co.uk>, Christoph Hellwig <hch@infradead.org>, Evgeniy Dushistov <dushistov@mail.ru>, Jan Kara <jack@suse.cz>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
 
-Ingo Bormuth wrote:
-> Reiser4-for-2.6.28 does apply but fails to compile on
-> vanilla-2.6.28.1 due to the following commit:
->
-> http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commitdiff;h=54566b2c1594c2326a645a3551f9d989f7ba3c5e
->
-> Attached is a tiny fix which works fine here.
-yeah, with your patch it will act as earlier,
-however, -mm guys decided to get rig of __GFP_FS flag:
-http://userweb.kernel.org/~akpm/mmotm/broken-out/fs-symlink-write_begin-allocation-context-fix-reiser4-fix.patch
-it seems they found it deadlocky..
+On Jan 19, 2009  13:28 -0600, Dave Kleikamp wrote:
+> ext[234] return a portion of the uuid in f_fsid.  There is a theoretical
+> chance of those values being non-unique.  Since there doesn't appear to
+> be any case for the fsid to be persistent between boots, I guess
+> huge_encode_dev() is probably a better choice.  In practice it probably
+> makes no difference.
 
-Thanks,
-Edward.
+I'm not sure what you mean about "no case for fsid to be persistent"?
+The whole point of fsid (for NFS) is that this identifies the filesystem
+over reboot, even if the block device ID changes, or if the filesystem
+doesn't have a block device at all (e.g. cluster filesystem).
+
+Cheers, Andreas
+--
+Andreas Dilger
+Sr. Staff Engineer, Lustre Group
+Sun Microsystems of Canada, Inc.
 
