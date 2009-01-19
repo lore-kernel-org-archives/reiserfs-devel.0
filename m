@@ -1,7 +1,7 @@
 From: Coly Li <coly.li@suse.de>
-Subject: [PATCH 0/20] return f_fsid for statfs(2)
-Date: Tue, 20 Jan 2009 01:30:44 +0800
-Message-ID: <4974B8C4.3070703@suse.de>
+Subject: [PATCH 15/20] fs/reiserfs: return f_fsid for statfs(2)
+Date: Tue, 20 Jan 2009 01:35:39 +0800
+Message-ID: <4974B9EB.7060401@suse.de>
 Reply-To: coly.li@suse.de
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -10,24 +10,43 @@ Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Roman Zippel <zippel@linux-m68k.org>, "Sergey S. Kostyliov" <rathamahata@php4.ru>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, Dave Kleikamp <shaggy@austin.ibm.com>, Bob Copeland <me@bobcopeland.com>, Anders Larsen <al@alarsen.net>, reiserfs-devel@vger.kernel.org, Phillip Lougher <phillip@lougher.demon.co.uk>, Christoph Hellwig <hch@infradead.org>, Evgeniy Dushistov <dushistov@mail.ru>, Jan Kara <jack@suse.cz>
+Cc: reiserfs-devel@vger.kernel.org
 
-Currently many file systems in Linux kernel do not return f_fsid in statfs info, the value is set as
-0 in vfs layer. Anyway, in some conditions, f_fsid from statfs(2) is useful, especially being used
-as (f_fsid, ino) pair to uniquely identify a file.
+This patch makes reiserfs3 return f_fsid info for statfs(2).
 
-Basic idea of the patches is generating a unique fs ID by huge_encode_dev(sb->s_bdev->bd_dev) during
-file system mounting life time (no endian consistent issue). sb is a point of struct super_block of
-current mounted file system being accessed by statfs(2).
+Signed-off-by: Coly Li <coly.li@suse.de>
+Cc: reiserfs-devel@vger.kernel.org
+---
+ fs/reiserfs/super.c |    7 ++++++-
+ 1 files changed, 6 insertions(+), 1 deletions(-)
 
-The patches are quite simple, any feedback or patch review is welcome.
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index f3c820b..c14fcd0 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -1883,7 +1883,9 @@ error:
 
-Thanks.
+ static int reiserfs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ {
+-	struct reiserfs_super_block *rs = SB_DISK_SUPER_BLOCK(dentry->d_sb);
++	struct super_block *sb = dentry->d_sb;
++	struct reiserfs_super_block *rs = SB_DISK_SUPER_BLOCK(sb);
++	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
+
+ 	buf->f_namelen = (REISERFS_MAX_NAME(s->s_blocksize));
+ 	buf->f_bfree = sb_free_blocks(rs);
+@@ -1892,6 +1894,9 @@ static int reiserfs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	buf->f_bsize = dentry->d_sb->s_blocksize;
+ 	/* changed to accommodate gcc folks. */
+ 	buf->f_type = REISERFS_SUPER_MAGIC;
++	buf->f_fsid.val[0] = (u32)id;
++	buf->f_fsid.val[1] = (u32)(id >> 32);
++
+ 	return 0;
+ }
+
 -- 
 Coly Li
 SuSE Labs
-
-
-
 
 
