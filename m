@@ -1,66 +1,55 @@
-From: Mike Frysinger <vapier@gentoo.org>
-Subject: Re: live source repo ?
-Date: Sat, 17 Jan 2009 11:29:54 -0500
-Message-ID: <200901171129.55102.vapier@gentoo.org>
-References: <200901171109.47346.vapier@gentoo.org> <49720704.7020909@gmail.com>
+From: "Ingo Bormuth" <ibormuth@efil.de>
+Subject: Reiser4: Compilation Error on 2.6.28.1_[Scanned]
+Date: Mon, 19 Jan 2009 01:53:27 +0100
+Message-ID: <1232326407.2948.7.camel@localhost>
+Reply-To: <ibormuth@efil.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart1580290.8ZXog5u1HY";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
+Content-Type: multipart/mixed;
+	boundary="=-miie6TzP7P0sP6R7QaiC"
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <49720704.7020909@gmail.com>
+Content-class: urn:content-classes:message
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+To: reiserfs devel <reiserfs-devel@vger.kernel.org>
 
---nextPart1580290.8ZXog5u1HY
+This is a multi-part message in MIME format.
+
+--=-miie6TzP7P0sP6R7QaiC
 Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+	charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
-On Saturday 17 January 2009 11:27:48 Edward Shishkin wrote:
-> Mike Frysinger wrote:
-> > is there a git repo or something where reiserfsprogs is maintained ?=20
-> > doesnt seem to be any info in the tarball nor in the kernel.org
-> > reiserfsprogs dir ...
->
-> Hmm, there is a README:
-> http://www.kernel.org/pub/linux/utils/fs/reiserfs/README
-> Is it enough?
+Reiser4-for-2.6.28 does apply but fails to compile on
+vanilla-2.6.28.1 due to the following commit:
 
-when i said "there is no info" i was referring to "information about the=20
-upstream scm"
+http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commitdiff;h=54566b2c1594c2326a645a3551f9d989f7ba3c5e
 
-> I'll put namesys git repos to kernel.org as soon as
-> it is repaired..
+Attached is a tiny fix which works fine here.
 
-i'm guessing this is what i'm after ...
-=2Dmike
 
---nextPart1580290.8ZXog5u1HY
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
+-- 
+Ingo Bormuth,  voicebox & telefax:  +49-(0)-12125-10226517
+PGP public key 86326EC9 at http://ibormuth.efil.de/contact
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
+--=-miie6TzP7P0sP6R7QaiC
+Content-Disposition: attachment;
+	filename="reiser4-for-2.6.28.1-grab_cache_page_write_begin.patch"
+Content-Type: text/x-patch;
+	charset="UTF-8";
+	name="reiser4-for-2.6.28.1-grab_cache_page_write_begin.patch"
+Content-Transfer-Encoding: 7bit
 
-iQIcBAABAgAGBQJJcgeDAAoJEEFjO5/oN/WB7KwP/R2JLqzTIV11CtSR7AHqonS6
-iQLFjIxl4Y51Xw5oBJ5VavulHTYAchodgCSaIxBFXgYgxFpx0oJjwz/qi8kNRVd8
-UNX5ky+Sk9G0U5K30W7TIQMUEI4uLk4nw1r2NXs/39KEfLmLoUn9FyyIfLNHvFsc
-OW6DV8pFbuHi4ABThmg4LtBlRb8pxJz6hDuZCllyiPXMpih3x/rZEB5+K5FtmGiN
-mZVw9miuzlmU3V/BqVovqzkUvDDUUhlrU6ixDUy86TsDnVoN39T6rZLaSjOAjpBW
-uoFndgRNs1s+tYCGbnOCfnr7aIAGk5UgWjCZls6JtGOol/ldYlS8uRTs1AJIOiBx
-lRuZeLOuJywpynXeeBm+/7E9did4W2MtKukMqESYa+0xv7v1/RLuuSYMvo6oTkfQ
-0iSc8W3m+pbbT07zwq3CLqxb24lV+03pjzSa/QDG/3zc5aSXs8FeUyVxAa/9tgQp
-pZo1jBLqkIfo0HdaHYQidmXtwOLi7SPxa7wISd3mWpM/HgzfekDK+mgIgAhhEpxE
-/+XuADL5LtCg15HU6yXGaJBSRZh21CV7gRP88Fs1nXssFFY1rOryMHzX4mxNeY5H
-2PVqBjdsXuSPHZaydIUlcMU3HvgyKdue7C94M3fT6OqUgz1B2mQB3ugnJMvdvASL
-EwKzdXsYkuWdXukAGW7v
-=2oQR
------END PGP SIGNATURE-----
+--- /tmp/reiser4/plugin/file/file_conversion.c	2009-01-19 00:39:04.548008815 +0100
++++ fs/reiser4/plugin/file/file_conversion.c	2009-01-19 00:41:10.956013107 +0100
+@@ -686,7 +686,7 @@
+ 	start = pos & (PAGE_CACHE_SIZE - 1);
+ 	end = start + len;
+ 
+-	page = __grab_cache_page(mapping, index);
++	page = grab_cache_page_write_begin(mapping, index, flags);
+ 	*pagep = page;
+ 	if (!page)
+ 		return -ENOMEM;
 
---nextPart1580290.8ZXog5u1HY--
+--=-miie6TzP7P0sP6R7QaiC--
