@@ -1,55 +1,33 @@
-From: "Ingo Bormuth" <ibormuth@efil.de>
-Subject: Reiser4: Compilation Error on 2.6.28.1_[Scanned]
-Date: Mon, 19 Jan 2009 01:53:27 +0100
-Message-ID: <1232326407.2948.7.camel@localhost>
-Reply-To: <ibormuth@efil.de>
+From: Coly Li <coly.li@suse.de>
+Subject: [PATCH 0/20] return f_fsid for statfs(2)
+Date: Tue, 20 Jan 2009 01:30:44 +0800
+Message-ID: <4974B8C4.3070703@suse.de>
+Reply-To: coly.li@suse.de
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
-	boundary="=-miie6TzP7P0sP6R7QaiC"
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-class: urn:content-classes:message
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs devel <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Roman Zippel <zippel@linux-m68k.org>, "Sergey S. Kostyliov" <rathamahata@php4.ru>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, Dave Kleikamp <shaggy@austin.ibm.com>, Bob Copeland <me@bobcopeland.com>, Anders Larsen <al@alarsen.net>, reiserfs-devel@vger.kernel.org, Phillip Lougher <phillip@lougher.demon.co.uk>, Christoph Hellwig <hch@infradead.org>, Evgeniy Dushistov <dushistov@mail.ru>, Jan Kara <jack@suse.cz>
 
-This is a multi-part message in MIME format.
+Currently many file systems in Linux kernel do not return f_fsid in statfs info, the value is set as
+0 in vfs layer. Anyway, in some conditions, f_fsid from statfs(2) is useful, especially being used
+as (f_fsid, ino) pair to uniquely identify a file.
 
---=-miie6TzP7P0sP6R7QaiC
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Basic idea of the patches is generating a unique fs ID by huge_encode_dev(sb->s_bdev->bd_dev) during
+file system mounting life time (no endian consistent issue). sb is a point of struct super_block of
+current mounted file system being accessed by statfs(2).
 
-Reiser4-for-2.6.28 does apply but fails to compile on
-vanilla-2.6.28.1 due to the following commit:
+The patches are quite simple, any feedback or patch review is welcome.
 
-http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commitdiff;h=54566b2c1594c2326a645a3551f9d989f7ba3c5e
-
-Attached is a tiny fix which works fine here.
-
-
+Thanks.
 -- 
-Ingo Bormuth,  voicebox & telefax:  +49-(0)-12125-10226517
-PGP public key 86326EC9 at http://ibormuth.efil.de/contact
+Coly Li
+SuSE Labs
 
---=-miie6TzP7P0sP6R7QaiC
-Content-Disposition: attachment;
-	filename="reiser4-for-2.6.28.1-grab_cache_page_write_begin.patch"
-Content-Type: text/x-patch;
-	charset="UTF-8";
-	name="reiser4-for-2.6.28.1-grab_cache_page_write_begin.patch"
-Content-Transfer-Encoding: 7bit
 
---- /tmp/reiser4/plugin/file/file_conversion.c	2009-01-19 00:39:04.548008815 +0100
-+++ fs/reiser4/plugin/file/file_conversion.c	2009-01-19 00:41:10.956013107 +0100
-@@ -686,7 +686,7 @@
- 	start = pos & (PAGE_CACHE_SIZE - 1);
- 	end = start + len;
- 
--	page = __grab_cache_page(mapping, index);
-+	page = grab_cache_page_write_begin(mapping, index, flags);
- 	*pagep = page;
- 	if (!page)
- 		return -ENOMEM;
 
---=-miie6TzP7P0sP6R7QaiC--
+
+
