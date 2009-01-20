@@ -1,43 +1,44 @@
-From: Jaswinder Singh Rajput <jaswinder@kernel.org>
-Subject: usr/include/linux/reiserfs_fs.h is having lot of KERNEL data
-Date: Tue, 20 Jan 2009 20:57:22 +0530
-Message-ID: <1232465242.3088.25.camel@localhost.localdomain>
+From: "Jaroslav Fojtik" <JaFojtik@seznam.cz>
+Subject: Re4: Reiserfs3 is crashing - where/whom to report?
+Date: Tue, 20 Jan 2009 18:49:55 +0100
+Message-ID: <49760EC3.25886.AFADA@JaFojtik.seznam.cz>
+References: <49750FC1.23700.2C929@JaFojtik.seznam.cz>, <4975AB4A.4070607@gmail.com>, <4975E58D.6040503@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1760815AbZATP1q@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7BIT
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-reply-to: <4975E58D.6040503@suse.com>
+Content-description: Mail message body
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Jeff Mahoney <jeffm@suse.com>, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
+Cc: Edward Shishkin <edward.shishkin@gmail.com>
 
-usr/include/linux/reiserfs_fs.h is giving 21 'make headers_clean' warnings:
- usr/include/linux/reiserfs_fs.h:64: leaks CONFIG_REISERFS to userspace where it is not valid
- usr/include/linux/reiserfs_fs.h:81: leaks CONFIG_REISERFS to userspace where it is not valid
- usr/include/linux/reiserfs_fs.h:687: extern's make no sense in userspace
- usr/include/linux/reiserfs_fs.h:995: extern's make no sense in userspace
- usr/include/linux/reiserfs_fs.h:997: extern's make no sense in userspace
- usr/include/linux/reiserfs_fs.h:1467: extern's make no sense in userspace
- usr/include/linux/reiserfs_fs.h:1587: leaks CONFIG_QUOTA to userspace where it is not valid
- usr/include/linux/reiserfs_fs.h:1760: extern's make no sense in userspace
- usr/include/linux/reiserfs_fs.h:1764: extern's make no sense in userspace 
- usr/include/linux/reiserfs_fs.h:1766: extern's make no sense in userspace
- usr/include/linux/reiserfs_fs.h:1769: extern's make no sense in userspace
- usr/include/linux/reiserfs_fs.h:1771: extern's make no sense in userspace
- usr/include/linux/reiserfs_fs.h:1805: extern's make no sense in userspace
- usr/include/linux/reiserfs_fs.h:1908: leaks CONFIG_PROC to userspace where it is not valid
- usr/include/linux/reiserfs_fs.h:1948: extern's make no sense in userspace
- usr/include/linux/reiserfs_fs.h:1949: extern's make no sense in userspace
- usr/include/linux/reiserfs_fs.h:1950: extern's make no sense in userspace
- usr/include/linux/reiserfs_fs.h:1951: extern's make no sense in userspace
- usr/include/linux/reiserfs_fs.h:1962: extern's make no sense in userspace
- usr/include/linux/reiserfs_fs.h:1963: extern's make no sense in userspace
- usr/include/linux/reiserfs_fs.h:1964: extern's make no sense in userspace
+Dear Jeff Mahoney,
 
-This file is huge and need lot of cleanup.
+> > Ok, please, have the 2.6.24.7 kernel and reiserfsprogs-3.6.21
+> > to format a partition:
+> > http://www.kernel.org/pub/linux/utils/fs/reiserfs/reiserfsprogs-3.6.21.tar.gz
+> > Catch all kernel messages and describe steps to reproduce the crash.
+> 
+> Since reiserfsprogs 3.6.21 doesn't support block sizes < 4k, he'll be
+> unable to.
 
-Anyone interested to fix this file.
+I would like to ask you - I have made windiff 3.6.19 and 3.6.21 and I have noted
+several changes.
 
-Thanks,
+I can comment this piece of code if you really want to catch and fix 
+a problem found:
+    } else if (blocksize < 4096) {
+        reiserfs_warning (stderr, "Block sizes smaller than 4k "
+			  "are not supported.\n");
+	return 0;
+    }
 
---
-JSR
+I do not know why these block sizes has been disabled - stability? speed?
+Overflowing block count?
+   Anyway, nothing warned me when I have installed Slackware and build and mount 
+riserfs disk of this kind.
+
+  Jara
+
