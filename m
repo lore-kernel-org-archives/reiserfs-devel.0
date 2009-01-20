@@ -1,52 +1,25 @@
-From: Coly Li <coly.li@suse.de>
-Subject: [PATCH 15/20] fs/reiserfs: return f_fsid for statfs(2), v2
-Date: Tue, 20 Jan 2009 15:09:32 +0800
-Message-ID: <497578AC.9060806@suse.de>
-Reply-To: coly.li@suse.de
+From: "Jaroslav Fojtik" <JaFojtik@seznam.cz>
+Subject: Re2: Reiserfs3 is crashing - where/whom to report?
+Date: Tue, 20 Jan 2009 10:09:01 +0100
+Message-ID: <497594AD.8523.F9DDD@JaFojtik.seznam.cz>
+References: <49750FC1.23700.2C929@JaFojtik.seznam.cz>, <497518E3.4080205@gmail.com>, <497557E6.80005@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-reply-to: <497557E6.80005@suse.com>
+Content-description: Mail message body
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org
-Cc: reiserfs-devel@vger.kernel.org
+To: Jeff Mahoney <jeffm@suse.com>, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
 
-This patch makes reiserfs3 return f_fsid info for statfs(2). By Andreas' suggestion, this patch
-populates a persistent f_fsid between boots/mounts with help of on-disk uuid record.
+Dear Jeff Mahoney,
 
-Signed-off-by: Coly Li <coly.li@suse.de>
-Cc: reiserfs-devel@vger.kernel.org
----
- fs/reiserfs/super.c |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+> > Jeff, it seems to be BUG_ONs in the old on-demand
+> > bitmap loading code?
+> 
+> Yeah, I'd prefer to see this repeated with a recent kernel before I dig in.
+Basically I CAN do this for you, if linux-2.6.21.5 is not recent enough.
 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index f3c820b..cb8e7ee 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -27,6 +27,7 @@
- #include <linux/mnt_namespace.h>
- #include <linux/mount.h>
- #include <linux/namei.h>
-+#include <linux/crc32.h>
-
- struct file_system_type reiserfs_fs_type;
-
-@@ -1892,6 +1893,10 @@ static int reiserfs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	buf->f_bsize = dentry->d_sb->s_blocksize;
- 	/* changed to accommodate gcc folks. */
- 	buf->f_type = REISERFS_SUPER_MAGIC;
-+	buf->f_fsid.val[0] = (u32)crc32_le(0, rs->s_uuid, sizeof(rs->s_uuid)/2);
-+	buf->f_fsid.val[1] = (u32)crc32_le(0, rs->s_uuid + sizeof(rs->s_uuid)/2,
-+				sizeof(rs->s_uuid)/2);
-+
- 	return 0;
- }
-
--- 
-Coly Li
-SuSE Labs
-
-
+Jara
 
