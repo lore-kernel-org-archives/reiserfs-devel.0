@@ -1,142 +1,125 @@
-From: Jaswinder Singh Rajput <jaswinder@kernel.org>
+From: Alexey Dobriyan <adobriyan@gmail.com>
 Subject: Re: usr/include/linux/reiserfs_fs.h is having lot of KERNEL data
-Date: Sat, 24 Jan 2009 12:05:34 +0530
-Message-ID: <1232778934.10414.4.camel@localhost.localdomain>
-References: <1232465242.3088.25.camel@localhost.localdomain>
+Date: Sat, 24 Jan 2009 10:32:36 +0300
+Message-ID: <20090124073236.GA6166@x200.localdomain>
+References: <1232465242.3088.25.camel@localhost.localdomain> <1232778934.10414.4.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1232465242.3088.25.camel@localhost.localdomain>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:date:from:to:cc:subject
+         :message-id:references:mime-version:content-type:content-disposition
+         :in-reply-to:user-agent;
+        bh=R1h76yMxHUZnDGGA5Cd4xoPG8k8SzfKRZAX23OJxB5w=;
+        b=fochzyguWb/wf9kpW/7CE8fISz5rYZlYok4VTIfmauQtJWaY/r7jaFtrrdSh8+WDKJ
+         gFizwfJnAD13vKiayx730IbnDLZ3HHL8v8l8eULZ7V32I+QxtQHkoOI8ih8KCdfFuYNG
+         F4LqspgWeuDSZB9nAUeVYeyCP3xuPl+FLXgAQ=
+Content-Disposition: inline
+In-Reply-To: <1232778934.10414.4.camel@localhost.localdomain>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: Jaswinder Singh Rajput <jaswinder@kernel.org>
+Cc: reiserfs-devel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 2009-01-20 at 20:57 +0530, Jaswinder Singh Rajput wrote:
-> usr/include/linux/reiserfs_fs.h is giving 21 'make headers_clean' warnings:
->  usr/include/linux/reiserfs_fs.h:64: leaks CONFIG_REISERFS to userspace where it is not valid
->  usr/include/linux/reiserfs_fs.h:81: leaks CONFIG_REISERFS to userspace where it is not valid
->  usr/include/linux/reiserfs_fs.h:687: extern's make no sense in userspace
->  usr/include/linux/reiserfs_fs.h:995: extern's make no sense in userspace
->  usr/include/linux/reiserfs_fs.h:997: extern's make no sense in userspace
->  usr/include/linux/reiserfs_fs.h:1467: extern's make no sense in userspace
->  usr/include/linux/reiserfs_fs.h:1587: leaks CONFIG_QUOTA to userspace where it is not valid
->  usr/include/linux/reiserfs_fs.h:1760: extern's make no sense in userspace
->  usr/include/linux/reiserfs_fs.h:1764: extern's make no sense in userspace 
->  usr/include/linux/reiserfs_fs.h:1766: extern's make no sense in userspace
->  usr/include/linux/reiserfs_fs.h:1769: extern's make no sense in userspace
->  usr/include/linux/reiserfs_fs.h:1771: extern's make no sense in userspace
->  usr/include/linux/reiserfs_fs.h:1805: extern's make no sense in userspace
->  usr/include/linux/reiserfs_fs.h:1908: leaks CONFIG_PROC to userspace where it is not valid
->  usr/include/linux/reiserfs_fs.h:1948: extern's make no sense in userspace
->  usr/include/linux/reiserfs_fs.h:1949: extern's make no sense in userspace
->  usr/include/linux/reiserfs_fs.h:1950: extern's make no sense in userspace
->  usr/include/linux/reiserfs_fs.h:1951: extern's make no sense in userspace
->  usr/include/linux/reiserfs_fs.h:1962: extern's make no sense in userspace
->  usr/include/linux/reiserfs_fs.h:1963: extern's make no sense in userspace
->  usr/include/linux/reiserfs_fs.h:1964: extern's make no sense in userspace
+On Sat, Jan 24, 2009 at 12:05:34PM +0530, Jaswinder Singh Rajput wrote:
+> On Tue, 2009-01-20 at 20:57 +0530, Jaswinder Singh Rajput wrote:
+> > usr/include/linux/reiserfs_fs.h is giving 21 'make headers_clean' warnings:
+> >  usr/include/linux/reiserfs_fs.h:64: leaks CONFIG_REISERFS to userspace where it is not valid
+> >  usr/include/linux/reiserfs_fs.h:81: leaks CONFIG_REISERFS to userspace where it is not valid
+> >  usr/include/linux/reiserfs_fs.h:687: extern's make no sense in userspace
+> >  usr/include/linux/reiserfs_fs.h:995: extern's make no sense in userspace
+> >  usr/include/linux/reiserfs_fs.h:997: extern's make no sense in userspace
+> >  usr/include/linux/reiserfs_fs.h:1467: extern's make no sense in userspace
+> >  usr/include/linux/reiserfs_fs.h:1587: leaks CONFIG_QUOTA to userspace where it is not valid
+> >  usr/include/linux/reiserfs_fs.h:1760: extern's make no sense in userspace
+> >  usr/include/linux/reiserfs_fs.h:1764: extern's make no sense in userspace 
+> >  usr/include/linux/reiserfs_fs.h:1766: extern's make no sense in userspace
+> >  usr/include/linux/reiserfs_fs.h:1769: extern's make no sense in userspace
+> >  usr/include/linux/reiserfs_fs.h:1771: extern's make no sense in userspace
+> >  usr/include/linux/reiserfs_fs.h:1805: extern's make no sense in userspace
+> >  usr/include/linux/reiserfs_fs.h:1908: leaks CONFIG_PROC to userspace where it is not valid
+> >  usr/include/linux/reiserfs_fs.h:1948: extern's make no sense in userspace
+> >  usr/include/linux/reiserfs_fs.h:1949: extern's make no sense in userspace
+> >  usr/include/linux/reiserfs_fs.h:1950: extern's make no sense in userspace
+> >  usr/include/linux/reiserfs_fs.h:1951: extern's make no sense in userspace
+> >  usr/include/linux/reiserfs_fs.h:1962: extern's make no sense in userspace
+> >  usr/include/linux/reiserfs_fs.h:1963: extern's make no sense in userspace
+> >  usr/include/linux/reiserfs_fs.h:1964: extern's make no sense in userspace
+> > 
+> > This file is huge and need lot of cleanup.
+> > 
 > 
-> This file is huge and need lot of cleanup.
 > 
+> If no one have any objections can I forward this patch to fix above
+> warnings:
 
+This file need more throrough cleanup than some tool thinks it needs to be:
 
-If no one have any objections can I forward this patch to fix above
-warnings:
+> --- a/include/linux/reiserfs_fs.h
+> +++ b/include/linux/reiserfs_fs.h
+> @@ -74,9 +74,7 @@ struct fid;
+>  // FIXME: do not change 4 by anything else: there is code which relies on that
+>  #define ROUND_UP(x) _ROUND_UP(x,8LL)
+>  
+> -/* debug levels.  Right now, CONFIG_REISERFS_CHECK means print all debug
+> -** messages.
+> -*/
+> +/* debug levels.  Right now, REISERFS_CHECK means print all debug messages */
 
-diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
-index bc5114d..4dae991 100644
---- a/include/linux/reiserfs_fs.h
-+++ b/include/linux/reiserfs_fs.h
-@@ -74,9 +74,7 @@ struct fid;
- // FIXME: do not change 4 by anything else: there is code which relies on that
- #define ROUND_UP(x) _ROUND_UP(x,8LL)
- 
--/* debug levels.  Right now, CONFIG_REISERFS_CHECK means print all debug
--** messages.
--*/
-+/* debug levels.  Right now, REISERFS_CHECK means print all debug messages */
- #define REISERFS_DEBUG_CODE 5	/* extra messages to help find/debug errors */
- 
- void reiserfs_warning(struct super_block *s, const char *fmt, ...);
-@@ -91,11 +89,13 @@ if( !( cond ) ) 								\
- 
- #define RASSERT(cond, format, args...) __RASSERT(cond, #cond, format, ##args)
- 
-+#ifdef __KERNEL__
- #if defined( CONFIG_REISERFS_CHECK )
- #define RFALSE(cond, format, args...) __RASSERT(!(cond), "!(" #cond ")", format, ##args)
- #else
- #define RFALSE( cond, format, args... ) do {;} while( 0 )
- #endif
-+#endif
- 
- #define CONSTF __attribute_const__
- /*
-@@ -698,7 +698,9 @@ static inline void cpu_key_k_offset_dec(struct cpu_key *key)
- /* object identifier for root dir */
- #define REISERFS_ROOT_OBJECTID 2
- #define REISERFS_ROOT_PARENT_OBJECTID 1
-+#ifdef __KERNEL__
- extern struct reiserfs_key root_key;
-+#endif /* __KERNEL__ */
- 
- /* 
-  * Picture represents a leaf of the S+tree
-@@ -1006,10 +1008,12 @@ struct reiserfs_de_head {
- #define de_visible(deh)	    	    test_bit_unaligned (DEH_Visible, &((deh)->deh_state))
- #define de_hidden(deh)	    	    !test_bit_unaligned (DEH_Visible, &((deh)->deh_state))
- 
-+#ifdef __KERNEL__
- extern void make_empty_dir_item_v1(char *body, __le32 dirid, __le32 objid,
- 				   __le32 par_dirid, __le32 par_objid);
- extern void make_empty_dir_item(char *body, __le32 dirid, __le32 objid,
- 				__le32 par_dirid, __le32 par_objid);
-+#endif /* __KERNEL__ */
- 
- /* array of the entry headers */
-  /* get item body */
-@@ -1478,7 +1482,9 @@ struct item_operations {
- 	void (*print_vi) (struct virtual_item * vi);
- };
- 
-+#ifdef __KERNEL__
- extern struct item_operations *item_ops[TYPE_ANY + 1];
-+#endif /* __KERNEL__ */
- 
- #define op_bytes_number(ih,bsize)                    item_ops[le_ih_k_type (ih)]->bytes_number (ih, bsize)
- #define op_is_left_mergeable(key,bsize)              item_ops[le_key_k_type (le_key_version (key), key)]->is_left_mergeable (key, bsize)
-@@ -1598,6 +1604,7 @@ struct reiserfs_journal_header {
- #define JOURNAL_MAX_COMMIT_AGE 30
- #define JOURNAL_MAX_TRANS_AGE 30
- #define JOURNAL_PER_BALANCE_CNT (3 * (MAX_HEIGHT-2) + 9)
-+#ifdef __KERNEL__
- #ifdef CONFIG_QUOTA
- /* We need to update data and inode (atime) */
- #define REISERFS_QUOTA_TRANS_BLOCKS(s) (REISERFS_SB(s)->s_mount_opt & (1<<REISERFS_QUOTA) ? 2 : 0)
-@@ -1612,6 +1619,7 @@ struct reiserfs_journal_header {
- #define REISERFS_QUOTA_INIT_BLOCKS(s) 0
- #define REISERFS_QUOTA_DEL_BLOCKS(s) 0
- #endif
-+#endif /* __KERNEL__ */
- 
- /* both of these can be as low as 1, or as high as you want.  The min is the
- ** number of 4k bitmap nodes preallocated on mount. New nodes are allocated
-@@ -1688,6 +1696,7 @@ struct reiserfs_jh {
- 	struct list_head list;
- };
- 
-+#ifdef __KERNEL__
- void reiserfs_free_jh(struct buffer_head *bh);
- int reiserfs_add_tail_list(struct inode *inode, struct buffer_head *bh);
- int reiserfs_add_ordered_list(struct inode *inode, struct buffer_head *bh);
-@@ -2203,4 +2212,5 @@ int reiserfs_unpack(struct inode *inode, struct file *filp);
- /* xattr stuff */
- #define REISERFS_XATTR_DIR_SEM(s) (REISERFS_SB(s)->xattr_dir_sem)
- 
-+#endif /* __KERNEL__ */
- #endif				/* _LINUX_REISER_FS_H */
+Whoa, fix the tool!
 
---
-JSR
+> @@ -91,11 +89,13 @@ if( !( cond ) ) 								\
+>  
+>  #define RASSERT(cond, format, args...) __RASSERT(cond, #cond, format, ##args)
+>  
+> +#ifdef __KERNEL__
 
+What about RASSERT?
+
+>  #if defined( CONFIG_REISERFS_CHECK )
+>  #define RFALSE(cond, format, args...) __RASSERT(!(cond), "!(" #cond ")", format, ##args)
+>  #else
+>  #define RFALSE( cond, format, args... ) do {;} while( 0 )
+>  #endif
+> +#endif
+>  
+>  #define CONSTF __attribute_const__
+>  /*
+> @@ -698,7 +698,9 @@ static inline void cpu_key_k_offset_dec(struct cpu_key *key)
+>  /* object identifier for root dir */
+>  #define REISERFS_ROOT_OBJECTID 2
+>  #define REISERFS_ROOT_PARENT_OBJECTID 1
+> +#ifdef __KERNEL__
+>  extern struct reiserfs_key root_key;
+> +#endif /* __KERNEL__ */
+>  
+>  /* 
+>   * Picture represents a leaf of the S+tree
+> @@ -1006,10 +1008,12 @@ struct reiserfs_de_head {
+>  #define de_visible(deh)	    	    test_bit_unaligned (DEH_Visible, &((deh)->deh_state))
+>  #define de_hidden(deh)	    	    !test_bit_unaligned (DEH_Visible, &((deh)->deh_state))
+>  
+> +#ifdef __KERNEL__
+>  extern void make_empty_dir_item_v1(char *body, __le32 dirid, __le32 objid,
+>  				   __le32 par_dirid, __le32 par_objid);
+>  extern void make_empty_dir_item(char *body, __le32 dirid, __le32 objid,
+>  				__le32 par_dirid, __le32 par_objid);
+> +#endif /* __KERNEL__ */
+>  
+>  /* array of the entry headers */
+>   /* get item body */
+> @@ -1478,7 +1482,9 @@ struct item_operations {
+>  	void (*print_vi) (struct virtual_item * vi);
+>  };
+>  
+> +#ifdef __KERNEL__
+>  extern struct item_operations *item_ops[TYPE_ANY + 1];
+> +#endif /* __KERNEL__ */
+
+item_ops are unused, AFAICS.
+
+> @@ -1688,6 +1696,7 @@ struct reiserfs_jh {
+
+struct reiserfs_jh is kernel-internal as well.
