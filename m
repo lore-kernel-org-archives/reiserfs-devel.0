@@ -1,40 +1,142 @@
-From: Coly Li <coly.li@suse.de>
-Subject: Re: [PATCH 0/20] return f_fsid for statfs(2)
-Date: Fri, 23 Jan 2009 03:36:52 +0800
-Message-ID: <4978CAD4.9090607@suse.de>
-References: <4974B8C4.3070703@suse.de> <1232393334.5893.42.camel@norville.austin.ibm.com> <20090119233651.GK3286@webber.adilger.int> <1232419149.19468.3.camel@norville.austin.ibm.com> <20090120041349.GL3286@webber.adilger.int> <49755376.3000100@suse.de> <20090120044447.GM3286@webber.adilger.int> <20090120184822.GF27464@shareable.org>
-Reply-To: coly.li@suse.de
+From: Jaswinder Singh Rajput <jaswinder@kernel.org>
+Subject: Re: usr/include/linux/reiserfs_fs.h is having lot of KERNEL data
+Date: Sat, 24 Jan 2009 12:05:34 +0530
+Message-ID: <1232778934.10414.4.camel@localhost.localdomain>
+References: <1232465242.3088.25.camel@localhost.localdomain>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20090120184822.GF27464@shareable.org>
+In-Reply-To: <1232465242.3088.25.camel@localhost.localdomain>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jamie Lokier <jamie@shareable.org>
-Cc: Andreas Dilger <adilger@sun.com>, Dave Kleikamp <shaggy@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Roman Zippel <zippel@linux-m68k.org>, "Sergey S. Kostyliov" <rathamahata@php4.ru>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, Bob Copeland <me@bobcopeland.com>, Anders Larsen <al@alarsen.net>, reiserfs-devel@vger.kernel.org, Phillip Lougher <phillip@lougher.demon.co.uk>, Christoph Hellwig <hch@infradead.org>, Evgeniy Dushistov <dushistov@mail.ru>, Jan Kara <jack@suse.cz>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+To: reiserfs-devel@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-
-
-Jamie Lokier Wrote:
-> Andreas Dilger wrote:
->> On Jan 20, 2009  12:30 +0800, Coly Li wrote:
->>> Ext[234] is sophisticated to have on-disk uuid record. Most file systems
->>> in the patches (except jfs and reiser3) do not have a persistent uuid,
->>> a reasonable/feasible solution without media format modification is fsid
->>> in boot/mount life cycle. That's why huge_encode_dev(sb->s_bdev->bd_dev)
->>> is used here.  For jfs and reiserfs3, is there any use case for
->>> persistent fsid cross boots ?
->> I would say yes, this is worthwhile to do, or the fsid can change between
->> boots unnecessarily.
+On Tue, 2009-01-20 at 20:57 +0530, Jaswinder Singh Rajput wrote:
+> usr/include/linux/reiserfs_fs.h is giving 21 'make headers_clean' warnings:
+>  usr/include/linux/reiserfs_fs.h:64: leaks CONFIG_REISERFS to userspace where it is not valid
+>  usr/include/linux/reiserfs_fs.h:81: leaks CONFIG_REISERFS to userspace where it is not valid
+>  usr/include/linux/reiserfs_fs.h:687: extern's make no sense in userspace
+>  usr/include/linux/reiserfs_fs.h:995: extern's make no sense in userspace
+>  usr/include/linux/reiserfs_fs.h:997: extern's make no sense in userspace
+>  usr/include/linux/reiserfs_fs.h:1467: extern's make no sense in userspace
+>  usr/include/linux/reiserfs_fs.h:1587: leaks CONFIG_QUOTA to userspace where it is not valid
+>  usr/include/linux/reiserfs_fs.h:1760: extern's make no sense in userspace
+>  usr/include/linux/reiserfs_fs.h:1764: extern's make no sense in userspace 
+>  usr/include/linux/reiserfs_fs.h:1766: extern's make no sense in userspace
+>  usr/include/linux/reiserfs_fs.h:1769: extern's make no sense in userspace
+>  usr/include/linux/reiserfs_fs.h:1771: extern's make no sense in userspace
+>  usr/include/linux/reiserfs_fs.h:1805: extern's make no sense in userspace
+>  usr/include/linux/reiserfs_fs.h:1908: leaks CONFIG_PROC to userspace where it is not valid
+>  usr/include/linux/reiserfs_fs.h:1948: extern's make no sense in userspace
+>  usr/include/linux/reiserfs_fs.h:1949: extern's make no sense in userspace
+>  usr/include/linux/reiserfs_fs.h:1950: extern's make no sense in userspace
+>  usr/include/linux/reiserfs_fs.h:1951: extern's make no sense in userspace
+>  usr/include/linux/reiserfs_fs.h:1962: extern's make no sense in userspace
+>  usr/include/linux/reiserfs_fs.h:1963: extern's make no sense in userspace
+>  usr/include/linux/reiserfs_fs.h:1964: extern's make no sense in userspace
 > 
-> Even FAT has a volume id which should probably be used.
-> I'm guessing NTFS does too.
+> This file is huge and need lot of cleanup.
 > 
-vfat volume id is assigned manually in mkfs.vfat, vfat volumes in one machine can be assigned to
-same volume id value, even worse the volume id can be modified when volume is mounted. Therefore,
-IMHO it's not suitable to be used as a fsid.
 
--- 
-Coly Li
-SuSE Labs
+
+If no one have any objections can I forward this patch to fix above
+warnings:
+
+diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
+index bc5114d..4dae991 100644
+--- a/include/linux/reiserfs_fs.h
++++ b/include/linux/reiserfs_fs.h
+@@ -74,9 +74,7 @@ struct fid;
+ // FIXME: do not change 4 by anything else: there is code which relies on that
+ #define ROUND_UP(x) _ROUND_UP(x,8LL)
+ 
+-/* debug levels.  Right now, CONFIG_REISERFS_CHECK means print all debug
+-** messages.
+-*/
++/* debug levels.  Right now, REISERFS_CHECK means print all debug messages */
+ #define REISERFS_DEBUG_CODE 5	/* extra messages to help find/debug errors */
+ 
+ void reiserfs_warning(struct super_block *s, const char *fmt, ...);
+@@ -91,11 +89,13 @@ if( !( cond ) ) 								\
+ 
+ #define RASSERT(cond, format, args...) __RASSERT(cond, #cond, format, ##args)
+ 
++#ifdef __KERNEL__
+ #if defined( CONFIG_REISERFS_CHECK )
+ #define RFALSE(cond, format, args...) __RASSERT(!(cond), "!(" #cond ")", format, ##args)
+ #else
+ #define RFALSE( cond, format, args... ) do {;} while( 0 )
+ #endif
++#endif
+ 
+ #define CONSTF __attribute_const__
+ /*
+@@ -698,7 +698,9 @@ static inline void cpu_key_k_offset_dec(struct cpu_key *key)
+ /* object identifier for root dir */
+ #define REISERFS_ROOT_OBJECTID 2
+ #define REISERFS_ROOT_PARENT_OBJECTID 1
++#ifdef __KERNEL__
+ extern struct reiserfs_key root_key;
++#endif /* __KERNEL__ */
+ 
+ /* 
+  * Picture represents a leaf of the S+tree
+@@ -1006,10 +1008,12 @@ struct reiserfs_de_head {
+ #define de_visible(deh)	    	    test_bit_unaligned (DEH_Visible, &((deh)->deh_state))
+ #define de_hidden(deh)	    	    !test_bit_unaligned (DEH_Visible, &((deh)->deh_state))
+ 
++#ifdef __KERNEL__
+ extern void make_empty_dir_item_v1(char *body, __le32 dirid, __le32 objid,
+ 				   __le32 par_dirid, __le32 par_objid);
+ extern void make_empty_dir_item(char *body, __le32 dirid, __le32 objid,
+ 				__le32 par_dirid, __le32 par_objid);
++#endif /* __KERNEL__ */
+ 
+ /* array of the entry headers */
+  /* get item body */
+@@ -1478,7 +1482,9 @@ struct item_operations {
+ 	void (*print_vi) (struct virtual_item * vi);
+ };
+ 
++#ifdef __KERNEL__
+ extern struct item_operations *item_ops[TYPE_ANY + 1];
++#endif /* __KERNEL__ */
+ 
+ #define op_bytes_number(ih,bsize)                    item_ops[le_ih_k_type (ih)]->bytes_number (ih, bsize)
+ #define op_is_left_mergeable(key,bsize)              item_ops[le_key_k_type (le_key_version (key), key)]->is_left_mergeable (key, bsize)
+@@ -1598,6 +1604,7 @@ struct reiserfs_journal_header {
+ #define JOURNAL_MAX_COMMIT_AGE 30
+ #define JOURNAL_MAX_TRANS_AGE 30
+ #define JOURNAL_PER_BALANCE_CNT (3 * (MAX_HEIGHT-2) + 9)
++#ifdef __KERNEL__
+ #ifdef CONFIG_QUOTA
+ /* We need to update data and inode (atime) */
+ #define REISERFS_QUOTA_TRANS_BLOCKS(s) (REISERFS_SB(s)->s_mount_opt & (1<<REISERFS_QUOTA) ? 2 : 0)
+@@ -1612,6 +1619,7 @@ struct reiserfs_journal_header {
+ #define REISERFS_QUOTA_INIT_BLOCKS(s) 0
+ #define REISERFS_QUOTA_DEL_BLOCKS(s) 0
+ #endif
++#endif /* __KERNEL__ */
+ 
+ /* both of these can be as low as 1, or as high as you want.  The min is the
+ ** number of 4k bitmap nodes preallocated on mount. New nodes are allocated
+@@ -1688,6 +1696,7 @@ struct reiserfs_jh {
+ 	struct list_head list;
+ };
+ 
++#ifdef __KERNEL__
+ void reiserfs_free_jh(struct buffer_head *bh);
+ int reiserfs_add_tail_list(struct inode *inode, struct buffer_head *bh);
+ int reiserfs_add_ordered_list(struct inode *inode, struct buffer_head *bh);
+@@ -2203,4 +2212,5 @@ int reiserfs_unpack(struct inode *inode, struct file *filp);
+ /* xattr stuff */
+ #define REISERFS_XATTR_DIR_SEM(s) (REISERFS_SB(s)->xattr_dir_sem)
+ 
++#endif /* __KERNEL__ */
+ #endif				/* _LINUX_REISER_FS_H */
+
+--
+JSR
+
