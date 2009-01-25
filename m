@@ -1,19 +1,12 @@
 From: Volker Armin Hemmann <volkerarmin@googlemail.com>
 Subject: Re: Reiser4: Compilation Error on 2.6.28.1_[Scanned]
-Date: Sun, 25 Jan 2009 18:15:07 +0100
-Message-ID: <200901251815.08030.volkerarmin@googlemail.com>
+Date: Sun, 25 Jan 2009 18:13:50 +0100
+Message-ID: <200901251813.50957.volkerarmin@googlemail.com>
+References: <1232326407.2948.7.camel@localhost> <4974F05A.7090406@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=gamma;
-        h=domainkey-signature:received:received:to:subject
-         :content-disposition:from:date:mime-version:content-type
-         :content-transfer-encoding:message-id;
-        bh=/6141hKL/hSlx7q1Mx4b9AFJjtCjpFeIp40IcMvl3D8=;
-        b=AVVR3dJyTOh4XMy+S1/4OC/+RMQthPThC3Ka3OX1Sn23l5HcqrROdzRFNcjtoRr2U3
-         KPC+or2ICAiowEwLg9hItezYnLkaHvZXh0xe0W6+9z47g5buMLS87qOSO0WJarn3IMKw
-         pDLlj6X0F/AA2rgBC9GVvJzluLMTFGp/iOnd8=
+In-Reply-To: <4974F05A.7090406@gmail.com>
 Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -44,7 +37,6 @@ with his patch there is a risk of deadlocks?
 
 Gl=C3=BCck Auf,
 Volker
-
 --
 To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
 l" in
