@@ -1,203 +1,120 @@
 From: Jaswinder Singh Rajput <jaswinder@kernel.org>
-Subject: [git pull -tip] headers_check fix cleanup
-Date: Tue, 03 Feb 2009 20:03:37 +0530
-Message-ID: <1233671617.27322.3.camel@localhost.localdomain>
+Subject: Re: [git-pull -tip] fix headers_check warnings
+Date: Tue, 03 Feb 2009 20:07:08 +0530
+Message-ID: <1233671828.27322.5.camel@localhost.localdomain>
+References: <1233593765.3244.14.camel@localhost.localdomain>
+	 <200902021849.58209.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <200902021849.58209.arnd@arndb.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Ingo Molnar <mingo@elte.hu>, x86 maintainers <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, Sam Ravnborg <sam@ravnborg.org>, David
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Ingo Molnar <mingo@elte.hu>, x86 maintainers <x86@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Sam Ravnborg <sam@ravnborg.org>, David Miller <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org
 
-These patchset is based on Arnd Bergmann suggestions:
+On Mon, 2009-02-02 at 18:49 +0100, Arnd Bergmann wrote:
+> On Monday 02 February 2009, Jaswinder Singh Rajput wrote:
+> 
+> > @@ -6,8 +6,10 @@
+> >  #define ARCH_GET_FS 0x1003
+> >  #define ARCH_GET_GS 0x1004
+> >  
+> > -#ifdef CONFIG_X86_64
+> > +#ifdef __KERNEL__
+> > +# ifdef CONFIG_X86_64
+> >  extern long sys_arch_prctl(int, unsigned long);
+> > -#endif /* CONFIG_X86_64 */
+> > +# endif /* CONFIG_X86_64 */
+> > +#endif /* __KERNEL__ */
+> 
+> The prototype declares a system call and should consequently
+> be moved to arch/x86/include/syscalls.h, without the #ifdef.
+> Generally, prototypes do not need to be put into #ifdef.
+> 
 
-The following changes since commit 87fe85133fa7f33c2bc9882826666a7f117c62bd:
-  Ingo Molnar (1):
-        Merge branch 'core/header-fixes' of git://git.kernel.org/.../jaswinder/linux-2.6-tipclean into core/header-fixes
+This is already fixed as suggested by Peter.
 
-are available in the git repository at:
+> > diff --git a/include/linux/coda_psdev.h b/include/linux/coda_psdev.h
+> > index 07ae8f8..6f06352 100644
+> > --- a/include/linux/coda_psdev.h
+> > +++ b/include/linux/coda_psdev.h
+> > @@ -24,7 +24,7 @@ static inline struct venus_comm *coda_vcp(struct super_block *sb)
+> >  	return (struct venus_comm *)((sb)->s_fs_info);
+> >  }
+> >  
+> > -
+> > +#ifdef __KERNEL__
+> >  /* upcalls */
+> >  int venus_rootfid(struct super_block *sb, struct CodaFid *fidp);
+> >  int venus_getattr(struct super_block *sb, struct CodaFid *fid,
+> 
+> The definitions preceeding this also should not get exported: struct venus_comm
+> and coda_vcp use kernel internal types so they cannot be part of the public
+> interface. kstatfs is another internal type.
+> 
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jaswinder/linux-2.6-tip.git core/header-fixes
+Fixed.
 
-Jaswinder Singh Rajput (3):
-      headers_check fix cleanup: linux/coda_psdev.h
-      headers_check fix cleanup: linux/nubus.h
-      headers_check fix cleanup: linux/reiserfs_fs.h
+> > --- a/include/linux/nubus.h
+> > +++ b/include/linux/nubus.h
+> > @@ -296,6 +296,7 @@ struct nubus_dev {
+> >  	struct nubus_board* board;
+> >  };
+> >  
+> > +#ifdef __KERNEL__
+> >  /* This is all NuBus devices (used to find devices later on) */
+> >  extern struct nubus_dev* nubus_devices;
+> >  /* This is all NuBus cards */
+> 
+> struct nubus_board and struct nubus_dev are clearly kernel internal,
+> as they reference a proc_dir_ent.
+> 
+> > --- a/include/linux/reiserfs_fs.h
+> > +++ b/include/linux/reiserfs_fs.h
+> 
+> The reiserfs_fs.h file is still such a mess that I would think it's
+> impossible anyone actually used this from a program. Just try
+> gcc -xc -S -o /dev/null -I. -Wall --std=c99 linux/reiserfs_fs.h
+> from your usr/include directory!
+> 
+> It would be possible to use it to describe the on-disk data layout
+> to user space, but that is obviously done elsewhere already, so
+> I'd think the cleanest way would be to #ifdef __KERNEL__ everything
+> except for the REISERFS_IOC_ definitions  (but not REISERFS_IOC32).
+> Even that can be argued is pointless because these ioctl numbers are
+> now generic across file systems.
+> 
 
- include/linux/coda_psdev.h  |    2 +-
- include/linux/nubus.h       |    2 +-
- include/linux/reiserfs_fs.h |   62 +++++++++++++++++++-----------------------
- 3 files changed, 30 insertions(+), 36 deletions(-)
+Fixed.
 
-Complete diff:
-diff --git a/include/linux/coda_psdev.h b/include/linux/coda_psdev.h
-index 6f06352..5b5d473 100644
---- a/include/linux/coda_psdev.h
-+++ b/include/linux/coda_psdev.h
-@@ -6,6 +6,7 @@
- #define CODA_PSDEV_MAJOR 67
- #define MAX_CODADEVS  5	   /* how many do we allow */
- 
-+#ifdef __KERNEL__
- struct kstatfs;
- 
- /* communication pending/processing queues */
-@@ -24,7 +25,6 @@ static inline struct venus_comm *coda_vcp(struct super_block *sb)
- 	return (struct venus_comm *)((sb)->s_fs_info);
- }
- 
--#ifdef __KERNEL__
- /* upcalls */
- int venus_rootfid(struct super_block *sb, struct CodaFid *fidp);
- int venus_getattr(struct super_block *sb, struct CodaFid *fid,
-diff --git a/include/linux/nubus.h b/include/linux/nubus.h
-index 9be57d9..e137b3c 100644
---- a/include/linux/nubus.h
-+++ b/include/linux/nubus.h
-@@ -237,6 +237,7 @@ struct nubus_dirent
- 	int mask;
- };
- 
-+#ifdef __KERNEL__
- struct nubus_board {
- 	struct nubus_board* next;
- 	struct nubus_dev* first_dev;
-@@ -296,7 +297,6 @@ struct nubus_dev {
- 	struct nubus_board* board;
- };
- 
--#ifdef __KERNEL__
- /* This is all NuBus devices (used to find devices later on) */
- extern struct nubus_dev* nubus_devices;
- /* This is all NuBus cards */
-diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
-index a4db55f..e356c99 100644
---- a/include/linux/reiserfs_fs.h
-+++ b/include/linux/reiserfs_fs.h
-@@ -28,8 +28,6 @@
- #include <linux/reiserfs_fs_sb.h>
- #endif
- 
--struct fid;
--
- /*
-  *  include/linux/reiser_fs.h
-  *
-@@ -37,6 +35,33 @@ struct fid;
-  *
-  */
- 
-+/* ioctl's command */
-+#define REISERFS_IOC_UNPACK		_IOW(0xCD,1,long)
-+/* define following flags to be the same as in ext2, so that chattr(1),
-+   lsattr(1) will work with us. */
-+#define REISERFS_IOC_GETFLAGS		FS_IOC_GETFLAGS
-+#define REISERFS_IOC_SETFLAGS		FS_IOC_SETFLAGS
-+#define REISERFS_IOC_GETVERSION		FS_IOC_GETVERSION
-+#define REISERFS_IOC_SETVERSION		FS_IOC_SETVERSION
-+
-+#ifdef __KERNEL__
-+/* the 32 bit compat definitions with int argument */
-+#define REISERFS_IOC32_UNPACK		_IOW(0xCD, 1, int)
-+#define REISERFS_IOC32_GETFLAGS		FS_IOC32_GETFLAGS
-+#define REISERFS_IOC32_SETFLAGS		FS_IOC32_SETFLAGS
-+#define REISERFS_IOC32_GETVERSION	FS_IOC32_GETVERSION
-+#define REISERFS_IOC32_SETVERSION	FS_IOC32_SETVERSION
-+
-+/* Locking primitives */
-+/* Right now we are still falling back to (un)lock_kernel, but eventually that
-+   would evolve into real per-fs locks */
-+#define reiserfs_write_lock( sb ) lock_kernel()
-+#define reiserfs_write_unlock( sb ) unlock_kernel()
-+
-+/* xattr stuff */
-+#define REISERFS_XATTR_DIR_SEM(s) (REISERFS_SB(s)->xattr_dir_sem)
-+struct fid;
-+
- /* in reading the #defines, it may help to understand that they employ
-    the following abbreviations:
- 
-@@ -698,9 +723,8 @@ static inline void cpu_key_k_offset_dec(struct cpu_key *key)
- /* object identifier for root dir */
- #define REISERFS_ROOT_OBJECTID 2
- #define REISERFS_ROOT_PARENT_OBJECTID 1
--#ifdef __KERNEL__
-+
- extern struct reiserfs_key root_key;
--#endif /* __KERNEL__ */
- 
- /* 
-  * Picture represents a leaf of the S+tree
-@@ -1008,12 +1032,10 @@ struct reiserfs_de_head {
- #define de_visible(deh)	    	    test_bit_unaligned (DEH_Visible, &((deh)->deh_state))
- #define de_hidden(deh)	    	    !test_bit_unaligned (DEH_Visible, &((deh)->deh_state))
- 
--#ifdef __KERNEL__
- extern void make_empty_dir_item_v1(char *body, __le32 dirid, __le32 objid,
- 				   __le32 par_dirid, __le32 par_objid);
- extern void make_empty_dir_item(char *body, __le32 dirid, __le32 objid,
- 				__le32 par_dirid, __le32 par_objid);
--#endif /* __KERNEL__ */
- 
- /* array of the entry headers */
-  /* get item body */
-@@ -1482,9 +1504,7 @@ struct item_operations {
- 	void (*print_vi) (struct virtual_item * vi);
- };
- 
--#ifdef __KERNEL__
- extern struct item_operations *item_ops[TYPE_ANY + 1];
--#endif /* __KERNEL__ */
- 
- #define op_bytes_number(ih,bsize)                    item_ops[le_ih_k_type (ih)]->bytes_number (ih, bsize)
- #define op_is_left_mergeable(key,bsize)              item_ops[le_key_k_type (le_key_version (key), key)]->is_left_mergeable (key, bsize)
-@@ -1546,7 +1566,6 @@ struct reiserfs_iget_args {
- /*                    FUNCTION DECLARATIONS                                */
- /***************************************************************************/
- 
--/*#ifdef __KERNEL__*/
- #define get_journal_desc_magic(bh) (bh->b_data + bh->b_size - 12)
- 
- #define journal_trans_half(blocksize) \
-@@ -1685,7 +1704,6 @@ struct reiserfs_transaction_handle {
- 	struct list_head t_list;
- };
- 
--#ifdef __KERNEL__
- /* used to keep track of ordered and tail writes, attached to the buffer
-  * head through b_journal_head.
-  */
-@@ -2185,30 +2203,6 @@ long reiserfs_compat_ioctl(struct file *filp,
- 		   unsigned int cmd, unsigned long arg);
- int reiserfs_unpack(struct inode *inode, struct file *filp);
- 
--/* ioctl's command */
--#define REISERFS_IOC_UNPACK		_IOW(0xCD,1,long)
--/* define following flags to be the same as in ext2, so that chattr(1),
--   lsattr(1) will work with us. */
--#define REISERFS_IOC_GETFLAGS		FS_IOC_GETFLAGS
--#define REISERFS_IOC_SETFLAGS		FS_IOC_SETFLAGS
--#define REISERFS_IOC_GETVERSION		FS_IOC_GETVERSION
--#define REISERFS_IOC_SETVERSION		FS_IOC_SETVERSION
--
--/* the 32 bit compat definitions with int argument */
--#define REISERFS_IOC32_UNPACK		_IOW(0xCD, 1, int)
--#define REISERFS_IOC32_GETFLAGS		FS_IOC32_GETFLAGS
--#define REISERFS_IOC32_SETFLAGS		FS_IOC32_SETFLAGS
--#define REISERFS_IOC32_GETVERSION	FS_IOC32_GETVERSION
--#define REISERFS_IOC32_SETVERSION	FS_IOC32_SETVERSION
--
--/* Locking primitives */
--/* Right now we are still falling back to (un)lock_kernel, but eventually that
--   would evolve into real per-fs locks */
--#define reiserfs_write_lock( sb ) lock_kernel()
--#define reiserfs_write_unlock( sb ) unlock_kernel()
--
--/* xattr stuff */
--#define REISERFS_XATTR_DIR_SEM(s) (REISERFS_SB(s)->xattr_dir_sem)
- 
- #endif /* __KERNEL__ */
- #endif				/* _LINUX_REISER_FS_H */
+> > diff --git a/include/linux/socket.h b/include/linux/socket.h
+> > index 20fc4bb..afc0190 100644
+> > --- a/include/linux/socket.h
+> > +++ b/include/linux/socket.h
+> > @@ -24,10 +24,12 @@ struct __kernel_sockaddr_storage {
+> >  #include <linux/types.h>		/* pid_t			*/
+> >  #include <linux/compiler.h>		/* __user			*/
+> >  
+> > -#ifdef CONFIG_PROC_FS
+> > +#ifdef __KERNEL__
+> > +# ifdef CONFIG_PROC_FS
+> >  struct seq_file;
+> >  extern void socket_seq_show(struct seq_file *seq);
+> > -#endif
+> > +# endif
+> > +#endif /* __KERNEL__ */
+> >  
+> 
+> You can drop the #ifdef CONFIG_PROC_FS here, the prototype does not hurt.
+
+Even using #ifdef CONFIG_PROC_FS will not hurt, I want to stay in safe
+side ;-)
+
+Thanks,
+
+--
+JSR
 
 
