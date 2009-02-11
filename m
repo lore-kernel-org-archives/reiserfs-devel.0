@@ -1,35 +1,33 @@
-From: Mike Frysinger <vapier@gentoo.org>
-Subject: [PATCH] dont run ldconfig when installing with DESTDIR
-Date: Mon,  9 Feb 2009 13:20:24 -0500
-Message-ID: <1234203624-19238-1-git-send-email-vapier@gentoo.org>
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: mmotm 2009-02-10-16-35 uploaded (reiser4-quota)
+Date: Wed, 11 Feb 2009 09:06:53 -0800
+Message-ID: <499305AD.4020900@oracle.com>
+References: <200902110036.n1B0aBZs013975@imap1.linux-foundation.org>
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757724AbZBKRHa@vger.kernel.org>
+In-Reply-To: <200902110036.n1B0aBZs013975@imap1.linux-foundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, jack@suse.cz, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
-Signed-off-by: Mike Frysinger <vapier@gentoo.org>
----
- run-ldconfig |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2009-02-10-16-35 has been uploaded to
+> 
+>    http://userweb.kernel.org/~akpm/mmotm/
+> 
+> and will soon be available at
+> 
+>    git://git.zen-sources.org/zen/mmotm.git
 
-diff --git a/run-ldconfig b/run-ldconfig
-index 227f126..e4b1b93 100755
---- a/run-ldconfig
-+++ b/run-ldconfig
-@@ -1,5 +1,10 @@
- #!/bin/bash
- 
-+if [ -n "$DESTDIR" ] ; then
-+	echo "Skipping ldconfig due to installing into temp root (DESTDIR)"
-+	exit 0
-+fi
-+
- ldc="";
- if [ -x /sbin/ldconfig ]; then 
- 	ldc="/sbin/ldconfig"; 
+
+mmotm-2009-0210-1635/fs/reiser4/plugin/inode_ops.c:456: error: implicit declaration of function 'DQUOT_TRANSFER'
+mmotm-2009-0210-1635/fs/reiser4/plugin/inode_ops.c:596: error: implicit declaration of function 'DQUOT_ALLOC_INODE'
+mmotm-2009-0210-1635/fs/reiser4/plugin/inode_ops.c:597: error: implicit declaration of function 'DQUOT_DROP'
+mmotm-2009-0210-1635/fs/reiser4/plugin/inode_ops.c:611: error: implicit declaration of function 'DQUOT_FREE_INODE'
+
+
 -- 
-1.6.1.2
-
+~Randy
