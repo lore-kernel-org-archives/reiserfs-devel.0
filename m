@@ -1,48 +1,82 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: mmotm 2009-02-10-16-35 uploaded (reiser4-quota)
-Date: Wed, 11 Feb 2009 20:23:03 +0300
-Message-ID: <49930977.4060904@gmail.com>
-References: <200902110036.n1B0aBZs013975@imap1.linux-foundation.org> <499305AD.4020900@oracle.com> <20090211171324.GC13817@duck.suse.cz>
+From: Frederik Himpe <fhimpe@vub.ac.be>
+Subject: libaal patch fixing pointer cast warnings
+Date: Wed, 11 Feb 2009 21:23:34 +0100
+Message-ID: <1234383815.5099.3.camel@Anastacia.local>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="=-rT4AqwSl7rbVPI2ZFpAM"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20090211171324.GC13817@duck.suse.cz>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jan Kara <jack@suse.cz>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+To: reiserfs-devel@vger.kernel.org
 
-Jan Kara wrote:
-> On Wed 11-02-09 09:06:53, Randy Dunlap wrote:
->   
->> akpm@linux-foundation.org wrote:
->>     
->>> The mm-of-the-moment snapshot 2009-02-10-16-35 has been uploaded to
->>>
->>>    http://userweb.kernel.org/~akpm/mmotm/
->>>
->>> and will soon be available at
->>>
->>>    git://git.zen-sources.org/zen/mmotm.git
->>>       
->> mmotm-2009-0210-1635/fs/reiser4/plugin/inode_ops.c:456: error: implicit declaration of function 'DQUOT_TRANSFER'
->> mmotm-2009-0210-1635/fs/reiser4/plugin/inode_ops.c:596: error: implicit declaration of function 'DQUOT_ALLOC_INODE'
->> mmotm-2009-0210-1635/fs/reiser4/plugin/inode_ops.c:597: error: implicit declaration of function 'DQUOT_DROP'
->> mmotm-2009-0210-1635/fs/reiser4/plugin/inode_ops.c:611: error: implicit declaration of function 'DQUOT_FREE_INODE'
->>     
->   Ah, out of tree filesystems... Could some of Reiser4 guys convert the
-> quota names (they should be vfs_dq_transfer, vfs_dq_alloc_inode,
->   
 
-Ok, I'll fix it at the near future.
+--=-rT4AqwSl7rbVPI2ZFpAM
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Edward.
+When compiling aalib 1.0.5 on x86_64 with gcc 4.3.2 and --enable-Werror,
+compilation fails with messages like these:
 
-> vfs_dq_drop, vfs_dq_free_inode)? I suppose I could do it myself but I'm not
-> sure if it won't clash with some other changes.
->   Thanks for report Randy.
->
-> 									Honza
->   
+cc1: warnings being treated as errors
+malloc.c: In function '__chunk_free':
+malloc.c:164: error: cast from pointer to integer of different size
+
+An updated patch based on a patch from Mandriva is attached here. Could
+you review the patch for its correctness and apply it if it's correct?
+
+Thanks,
+
+-- 
+Frederik Himpe
+
+--=-rT4AqwSl7rbVPI2ZFpAM
+Content-Disposition: attachment; filename="libaal.castint.patch"
+Content-Type: text/x-patch; name="libaal.castint.patch"; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+diff -ur libaal-1.0.5.orig/src/malloc.c libaal-1.0.5/src/malloc.c
+--- libaal-1.0.5.orig/src/malloc.c	2005-07-28 21:13:41.000000000 +0200
++++ libaal-1.0.5/src/malloc.c	2009-02-11 21:14:56.000000000 +0100
+@@ -3,6 +3,7 @@
+    
+    malloc.c -- hanlders for memory allocation functions. */
+ 
++#include <stdint.h>
+ #include <aal/libaal.h>
+ 
+ /* Checking whether allone mode is in use. If so, initializes memory working
+@@ -105,8 +106,8 @@
+ 
+ 	s = chunk->len - size - sizeof(chunk_t);
+ 	new = forw ? 
+-		(char *)chunk + sizeof(chunk_t) + size :
+-		(char *)chunk + sizeof(chunk_t) + s;
++		(void *)(intptr_t)chunk + sizeof(chunk_t) + size :
++		(void *)(intptr_t)chunk + sizeof(chunk_t) + s;
+ 	
+ 	/* Okay, we have found chunk good enough. And now we split it onto two
+ 	   chunks. */
+@@ -121,8 +122,8 @@
+ 
+ 	area_free -= (size + sizeof(chunk_t));
+ 	return forw ?
+-		(char *)chunk + sizeof(chunk_t):
+-		(char *)new + sizeof(chunk_t);
++		(void *)(intptr_t)chunk + sizeof(chunk_t):
++		(void *)(intptr_t)new + sizeof(chunk_t);
+ }
+ 
+ /* Makes search for proper memory chunk in list of chunks. If found, split it in
+@@ -157,7 +158,7 @@
+ }
+ 
+ #define ptr2chunk(ptr) \
+-        ((chunk_t *)((int)ptr - sizeof(chunk_t)))
++        ((chunk_t *)((intptr_t)ptr - sizeof(chunk_t)))
+ 
+ /* Frees passed memory pointer */
+ static void __chunk_free(void *ptr) {
+Only in libaal-1.0.5/src: malloc.c~
+
+--=-rT4AqwSl7rbVPI2ZFpAM--
 
