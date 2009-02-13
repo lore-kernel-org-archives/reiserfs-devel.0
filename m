@@ -1,267 +1,61 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: [patch 1/4] reiser4: update names of quota methods
-Date: Fri, 13 Feb 2009 14:56:40 +0300
-Message-ID: <18837.24568.377931.405371@edward.zelnet.ru>
+From: Jaswinder Singh Rajput <jaswinder@kernel.org>
+Subject: Re: [git pull -tip V2] fix headers_check warnings
+Date: Fri, 13 Feb 2009 18:21:07 +0530
+Message-ID: <1234529467.23142.1.camel@localhost.localdomain>
+References: <1233598278.10133.4.camel@localhost.localdomain>
+	 <20090203125844.GI19979@elte.hu>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759257AbZBMMwb@vger.kernel.org>
+In-Reply-To: <20090203125844.GI19979@elte.hu>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Jan Kara <jack@suse.cz>, Edward Shishkin <edward.shishkin@gmail.com>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: "David S. Miller" <davem@davemloft.net>, x86 maintainers <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Sam Ravnborg <sam@ravnborg.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org
 
-Update names of quota methods
+On Tue, 2009-02-03 at 13:58 +0100, Ingo Molnar wrote:
+> * Jaswinder Singh Rajput <jaswinder@kernel.org> wrote:
+> 
+> > 
+> > The following changes since commit 1ff8f739c7cc4eaa89b6ba986494f458ff7bdbef:
+> >   Jaswinder Singh Rajput (1):
+> >         headers_check fix: xtensa, swab.h
+> > 
+> > are available in the git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/jaswinder/linux-2.6-tipclean.git core/header-fixes
+> > 
+> > Jaswinder Singh Rajput (7):
+> >       headers_check fix: linux/coda_psdev.h
+> >       headers_check fix: linux/in6.h
+> >       headers_check fix: linux/nubus.h
+> >       headers_check fix: linux/socket.h
+> >       headers_check fix: linux/reinserfs_fs.h
+> >       headers_check fix: x86, prctl.h
+> >       headers_check fix: x86, setup.h
+> > 
+> >  arch/x86/include/asm/prctl.h    |    4 ---
+> >  arch/x86/include/asm/setup.h    |   45 +++++++++++++++++++--------------------
+> >  arch/x86/include/asm/syscalls.h |    1 +
+> >  include/linux/coda_psdev.h      |   15 ++++++-------
+> >  include/linux/in6.h             |    2 +-
+> >  include/linux/nubus.h           |    2 +
+> >  include/linux/reiserfs_fs.h     |    8 +++++++
+> >  include/linux/socket.h          |    6 +++-
+> >  8 files changed, 45 insertions(+), 38 deletions(-)
+> > 
+> > This patchset fixes 31 headers_check warnings as shown earlier.
+> 
+> Pulled into tip/core/header-fixes, thanks Jaswinder.
+> 
+> I'll put this through the -tip testing machinery as the x86 bits have the 
+> potential to have build breakage side-effects.
+> 
 
-Signed-off-by: Edward Shishkin<edward.shishkin@gmail.com>
----
- fs/reiser4/plugin/file_plugin_common.c   |    4 ++--
- fs/reiser4/plugin/inode_ops.c            |   20 ++++++++++----------
- fs/reiser4/plugin/item/cde.c             |    4 ++--
- fs/reiser4/plugin/item/extent_file_ops.c |   10 ++++++----
- fs/reiser4/plugin/item/extent_item_ops.c |    2 +-
- fs/reiser4/plugin/item/sde.c             |    4 ++--
- fs/reiser4/plugin/item/tail.c            |   16 ++++++++--------
- 7 files changed, 31 insertions(+), 29 deletions(-)
 
---- mmotm.orig/fs/reiser4/plugin/file_plugin_common.c
-+++ mmotm/fs/reiser4/plugin/file_plugin_common.c
-@@ -944,8 +944,8 @@ common_object_delete_no_reserve(struct i
- 	if (!reiser4_inode_get_flag(inode, REISER4_NO_SD)) {
- 		reiser4_key sd_key;
- 
--		DQUOT_FREE_INODE(inode);
--		DQUOT_DROP(inode);
-+		vfs_dq_free_inode(inode);
-+		vfs_dq_drop(inode);
- 
- 		build_sd_key(inode, &sd_key);
- 		result =
---- mmotm.orig/fs/reiser4/plugin/inode_ops.c
-+++ mmotm/fs/reiser4/plugin/inode_ops.c
-@@ -453,7 +453,7 @@ int reiser4_setattr_common(struct dentry
- 		if ((attr->ia_valid & ATTR_UID && attr->ia_uid != inode->i_uid)
- 		    || (attr->ia_valid & ATTR_GID
- 			&& attr->ia_gid != inode->i_gid)) {
--			result = DQUOT_TRANSFER(inode, attr) ? -EDQUOT : 0;
-+			result = vfs_dq_transfer(inode, attr) ? -EDQUOT : 0;
- 			if (result) {
- 				context_set_commit_async(ctx);
- 				reiser4_exit_context(ctx);
-@@ -593,8 +593,8 @@ static int do_create_vfs_child(reiser4_o
- 	/* So that on error iput will be called. */
- 	*retobj = object;
- 
--	if (DQUOT_ALLOC_INODE(object)) {
--		DQUOT_DROP(object);
-+	if (vfs_dq_alloc_inode(object)) {
-+		vfs_dq_drop(object);
- 		object->i_flags |= S_NOQUOTA;
- 		return RETERR(-EDQUOT);
- 	}
-@@ -608,7 +608,7 @@ static int do_create_vfs_child(reiser4_o
- 	if (result) {
- 		warning("nikita-431", "Cannot install plugin %i on %llx",
- 			data->id, (unsigned long long)get_inode_oid(object));
--		DQUOT_FREE_INODE(object);
-+		vfs_dq_free_inode(object);
- 		object->i_flags |= S_NOQUOTA;
- 		return result;
- 	}
-@@ -617,7 +617,7 @@ static int do_create_vfs_child(reiser4_o
- 	obj_plug = inode_file_plugin(object);
- 
- 	if (obj_plug->create_object == NULL) {
--		DQUOT_FREE_INODE(object);
-+		vfs_dq_free_inode(object);
- 		object->i_flags |= S_NOQUOTA;
- 		return RETERR(-EPERM);
- 	}
-@@ -636,7 +636,7 @@ static int do_create_vfs_child(reiser4_o
- 		warning("nikita-432", "Cannot inherit from %llx to %llx",
- 			(unsigned long long)get_inode_oid(parent),
- 			(unsigned long long)get_inode_oid(object));
--		DQUOT_FREE_INODE(object);
-+		vfs_dq_free_inode(object);
- 		object->i_flags |= S_NOQUOTA;
- 		return result;
- 	}
-@@ -652,7 +652,7 @@ static int do_create_vfs_child(reiser4_o
- 	/* obtain directory plugin (if any) for new object. */
- 	obj_dir = inode_dir_plugin(object);
- 	if (obj_dir != NULL && obj_dir->init == NULL) {
--		DQUOT_FREE_INODE(object);
-+		vfs_dq_free_inode(object);
- 		object->i_flags |= S_NOQUOTA;
- 		return RETERR(-EPERM);
- 	}
-@@ -661,7 +661,7 @@ static int do_create_vfs_child(reiser4_o
- 
- 	reserve = estimate_create_vfs_object(parent, object);
- 	if (reiser4_grab_space(reserve, BA_CAN_COMMIT)) {
--		DQUOT_FREE_INODE(object);
-+		vfs_dq_free_inode(object);
- 		object->i_flags |= S_NOQUOTA;
- 		return RETERR(-ENOSPC);
- 	}
-@@ -692,7 +692,7 @@ static int do_create_vfs_child(reiser4_o
- 			warning("nikita-2219",
- 				"Failed to create sd for %llu",
- 				(unsigned long long)get_inode_oid(object));
--		DQUOT_FREE_INODE(object);
-+		vfs_dq_free_inode(object);
- 		object->i_flags |= S_NOQUOTA;
- 		return result;
- 	}
-@@ -735,7 +735,7 @@ static int do_create_vfs_child(reiser4_o
- 	 */
- 	reiser4_update_sd(object);
- 	if (result != 0) {
--		DQUOT_FREE_INODE(object);
-+		vfs_dq_free_inode(object);
- 		object->i_flags |= S_NOQUOTA;
- 		/* if everything was ok (result == 0), parent stat-data is
- 		 * already updated above (update_parent_dir()) */
---- mmotm.orig/fs/reiser4/plugin/item/cde.c
-+++ mmotm/fs/reiser4/plugin/item/cde.c
-@@ -932,7 +932,7 @@ int add_entry_cde(struct inode *dir /* d
- 	data.length = estimate_cde(result ? coord : NULL, &data);
- 
- 	/* NOTE-NIKITA quota plugin? */
--	if (DQUOT_ALLOC_SPACE_NODIRTY(dir, cde_bytes(result, &data)))
-+	if (vfs_dq_alloc_space_nodirty(dir, cde_bytes(result, &data)))
- 		return RETERR(-EDQUOT);
- 
- 	if (result)
-@@ -983,7 +983,7 @@ int rem_entry_cde(struct inode *dir /* d
- 	    kill_node_content(coord, &shadow, NULL, NULL, NULL, NULL, NULL, 0);
- 	if (result == 0) {
- 		/* NOTE-NIKITA quota plugin? */
--		DQUOT_FREE_SPACE_NODIRTY(dir, length);
-+		vfs_dq_free_space_nodirty(dir, length);
- 	}
- 	return result;
- }
---- mmotm.orig/fs/reiser4/plugin/item/extent_file_ops.c
-+++ mmotm/fs/reiser4/plugin/item/extent_file_ops.c
-@@ -260,8 +260,8 @@ static int append_last_extent(uf_coord_t
- 
- 	assert("", get_key_offset(key) == (loff_t)index_jnode(jnodes[0]) * PAGE_CACHE_SIZE);
- 
--	result = DQUOT_ALLOC_BLOCK_NODIRTY(mapping_jnode(jnodes[0])->host,
--					   count);
-+	result = vfs_dq_alloc_block_nodirty(mapping_jnode(jnodes[0])->host,
-+					    count);
- 	BUG_ON(result != 0);
- 
- 	switch (state_of_extent(ext)) {
-@@ -408,7 +408,8 @@ static int insert_first_extent(uf_coord_
- 	if (count == 0)
- 		return 0;
- 
--	result = DQUOT_ALLOC_BLOCK_NODIRTY(mapping_jnode(jnodes[0])->host, count);
-+	result = vfs_dq_alloc_block_nodirty(mapping_jnode(jnodes[0])->host,
-+					    count);
- 	BUG_ON(result != 0);
- 
- 	/*
-@@ -622,7 +623,8 @@ static int overwrite_one_block(uf_coord_
- 		break;
- 
- 	case HOLE_EXTENT:
--		result = DQUOT_ALLOC_BLOCK_NODIRTY(mapping_jnode(node)->host, 1);
-+		result = vfs_dq_alloc_block_nodirty(mapping_jnode(node)->host,
-+						    1);
- 		BUG_ON(result != 0);
- 		result = plug_hole(uf_coord, key, &how);
- 		if (result)
---- mmotm.orig/fs/reiser4/plugin/item/extent_item_ops.c
-+++ mmotm/fs/reiser4/plugin/item/extent_item_ops.c
-@@ -468,7 +468,7 @@ kill_hook_extent(const coord_t * coord, 
- 			length = to_off - offset;
- 		}
- 
--		DQUOT_FREE_BLOCK_NODIRTY(inode, length);
-+		vfs_dq_free_block_nodirty(inode, length);
- 
- 		if (state_of_extent(ext) == UNALLOCATED_EXTENT) {
- 			/* some jnodes corresponding to this unallocated extent */
---- mmotm.orig/fs/reiser4/plugin/item/sde.c
-+++ mmotm/fs/reiser4/plugin/item/sde.c
-@@ -120,7 +120,7 @@ int add_entry_de(struct inode *dir /* di
- 	data.iplug = item_plugin_by_id(SIMPLE_DIR_ENTRY_ID);
- 
- 	/* NOTE-NIKITA quota plugin */
--	if (DQUOT_ALLOC_SPACE_NODIRTY(dir, data.length))
-+	if (vfs_dq_alloc_space_nodirty(dir, data.length))
- 		return -EDQUOT;
- 
- 	result = insert_by_coord(coord, &data, &entry->key, lh, 0 /*flags */ );
-@@ -168,7 +168,7 @@ int rem_entry_de(struct inode *dir /* di
- 	    kill_node_content(coord, &shadow, NULL, NULL, NULL, NULL, NULL, 0);
- 	if (result == 0) {
- 		/* NOTE-NIKITA quota plugin */
--		DQUOT_FREE_SPACE_NODIRTY(dir, length);
-+		vfs_dq_free_space_nodirty(dir, length);
- 	}
- 	return result;
- }
---- mmotm.orig/fs/reiser4/plugin/item/tail.c
-+++ mmotm/fs/reiser4/plugin/item/tail.c
-@@ -494,11 +494,11 @@ static ssize_t insert_first_tail(struct 
- 		 * were real data which are all zeros. Therefore we have to
- 		 * allocate quota here as well
- 		 */
--		if (DQUOT_ALLOC_SPACE_NODIRTY(inode, flow->length))
-+		if (vfs_dq_alloc_space_nodirty(inode, flow->length))
- 			return RETERR(-EDQUOT);
- 		result = reiser4_insert_flow(coord, lh, flow);
- 		if (flow->length)
--			DQUOT_FREE_SPACE_NODIRTY(inode, flow->length);
-+			vfs_dq_free_space_nodirty(inode, flow->length);
- 
- 		uf_info = unix_file_inode_data(inode);
- 
-@@ -518,13 +518,13 @@ static ssize_t insert_first_tail(struct 
- 	}
- 
- 	/* check quota before appending data */
--	if (DQUOT_ALLOC_SPACE_NODIRTY(inode, flow->length))
-+	if (vfs_dq_alloc_space_nodirty(inode, flow->length))
- 		return RETERR(-EDQUOT);
- 
- 	to_write = flow->length;
- 	result = reiser4_insert_flow(coord, lh, flow);
- 	if (flow->length)
--		DQUOT_FREE_SPACE_NODIRTY(inode, flow->length);
-+		vfs_dq_free_space_nodirty(inode, flow->length);
- 	return (to_write - flow->length) ? (to_write - flow->length) : result;
- }
- 
-@@ -553,22 +553,22 @@ static ssize_t append_tail(struct inode 
- 		 * were real data which are all zeros. Therefore we have to
- 		 * allocate quota here as well
- 		 */
--		if (DQUOT_ALLOC_SPACE_NODIRTY(inode, flow->length))
-+		if (vfs_dq_alloc_space_nodirty(inode, flow->length))
- 			return RETERR(-EDQUOT);
- 		result = reiser4_insert_flow(coord, lh, flow);
- 		if (flow->length)
--			DQUOT_FREE_SPACE_NODIRTY(inode, flow->length);
-+			vfs_dq_free_space_nodirty(inode, flow->length);
- 		return result;
- 	}
- 
- 	/* check quota before appending data */
--	if (DQUOT_ALLOC_SPACE_NODIRTY(inode, flow->length))
-+	if (vfs_dq_alloc_space_nodirty(inode, flow->length))
- 		return RETERR(-EDQUOT);
- 
- 	to_write = flow->length;
- 	result = reiser4_insert_flow(coord, lh, flow);
- 	if (flow->length)
--		DQUOT_FREE_SPACE_NODIRTY(inode, flow->length);
-+		vfs_dq_free_space_nodirty(inode, flow->length);
- 	return (to_write - flow->length) ? (to_write - flow->length) : result;
- }
- 
+Regarding headers_check warnings whether anyone would like to see
+anything beyond what's currently in -tip?
+
+--
+JSR
