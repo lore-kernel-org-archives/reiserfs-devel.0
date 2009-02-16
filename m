@@ -1,140 +1,181 @@
-From: Frederik Himpe <fhimpe@telenet.be>
-Subject: Patch for reiser4progs 1.0.7 to build with -Werror=format-security
-Date: Sun, 15 Feb 2009 19:24:11 +0100
-Message-ID: <1234722251.14332.9.camel@Anastacia>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: [patch 2/4] vfs: add set_page_dirty_notag
+Date: Tue, 17 Feb 2009 01:43:28 +0300
+Message-ID: <18841.60432.329341.514726@edward.zelnet.ru>
+References: <18837.24581.181196.569183@edward.zelnet.ru>
+	<1234530519.6519.46.camel@twins>
+	<49957C43.7050701@gmail.com>
+	<1234534150.6519.101.camel@twins>
+	<18838.49922.215481.399653@edward.zelnet.ru>
+	<1234645893.4695.8.camel@laptop>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-MsNZ1tNs2yUDtZIQ5sDB"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <1234645893.4695.8.camel@laptop>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Edward Shishkin <edward.shishkin@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Nick Piggin <npiggin@suse.de>, Ryan Hope <rmh3093@gmail.com>, Randy Dunlap <randy.dunlap@oracle.com>, linux-kernel@vger.kernel.org, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+
+Peter Zijlstra writes:
+[...]
+ > Maybe something like
+ > 
+ > /*
+ >  * set_page_dirty_notag() -- similar to __set_page_dirty_nobuffers()
+ >  * except it doesn't tag the page dirty in the page-cache radix tree.
+ >  * This means that the address space using this cannot use the regular
+ >  * filemap ->writepages() helpers and must provide its own means of
+ >  * tracking and finding dirty pages.
+ >  *
+ >  * NOTE: furthermore, this version also doesn't handle truncate races.
+ >  */
+ > 
+
+Yup, your version is better. I just have replaced
+^finding dirty pages^finding non-tagged dirty pages,
+see below..
 
 
---=-MsNZ1tNs2yUDtZIQ5sDB
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+ > > +int set_page_dirty_notag(struct page *page)
+ > > +{
+ > > +	struct address_space *mapping = page->mapping;
+ > > +
+ > > +	if (!TestSetPageDirty(page)) {
+ > > +		WARN_ON_ONCE(!PagePrivate(page) && !PageUptodate(page));
+ > > +		if (mapping_cap_account_dirty(mapping)) {
+ > > +		        /*
+ > > +			 * Since we don't tag the page as dirty,
+ > > +			 * acquiring the tree_lock is replaced
+ > > +			 * with disabling preemption to protect
+ > > +			 * per-cpu data used for accounting.
+ > > +			 */
+ > 
+ > This should be local_irq_save(flags)
+ > 
+ > > +			preempt_disable();
+ > > +			__inc_zone_page_state(page, NR_FILE_DIRTY);
+ > > +			__inc_bdi_stat(mapping->backing_dev_info,
+ > > +				       BDI_RECLAIMABLE);
+ > > +			task_dirty_inc(current);
+ > > +			task_io_account_write(PAGE_CACHE_SIZE);
+ > > +			preempt_enable();
+ > 
+ > local_irq_restore()
+ > 
+ > These accounting functions rely on being atomic wrt interrupts.
+ > 
 
-The attached patch fixes building reiser4progs 1.0.7 with the
--Werror=format-security CFLAG, which is used by default now in Mandriva.
-Could you review it and include it if it's correct?
+Thanks!
+
+ > > +		}
+ > > +		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
+ > > +		return 1;
+ > > +	}
+ > > +	return 0;
+ > > +}
+ > > +EXPORT_SYMBOL(set_page_dirty_notag);
+ > 
+ > How much performance gain do you see by avoiding that radix tree op? 
+ > 
+
+Nop. We want to use it with extended semantics.
+All dirty pages are divided into 2 categories:
+
+A) tagged in the radix tree (with PAGECACHE_TAG_DIRTY).
+B) captured by atoms (usual linked lists).
+
+reiser4_writepages() looks for pages of "A" in the radix tree
+and moves them to "B". set_page_dirty_notag(), introduced by
+my patch, is needed for pages of "B".
+
+If "B" is empty, then we get the traditional semantics with
+regular ->writepages().
+
+That's all!
+
+ > I take it the only reason you don't use the regular
+ > __set_page_dirty_nobuffers() and just clear the tag when you do the
+ > write-out by whatever alternative means you have to find the page, is
+ > that it gains you some performance.
+ > 
+ > It would be good to have some numbers to judge this on.
+ > 
+
+So, performance is not a concern. We want to extend
+functionality, which is currently restricted by the unnecessary(*)
+property "dirty bit is set <=> dirty tag is installed".
+
+(*) Reiser4 successfully uses such design since 2002.
+I don't remember any BUG_ONs, and related problems.
+
+Please, consider the appended patch.
 
 Thanks,
--- 
-Frederik Himpe <fhimpe@telenet.be>
+Edward.
 
---=-MsNZ1tNs2yUDtZIQ5sDB
-Content-Disposition: attachment; filename="reiser4progs-1.0.7-fix-string-format.patch"
-Content-Type: text/x-patch; name="reiser4progs-1.0.7-fix-string-format.patch"; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Add set_page_dirty_notag() to the core library to enable
+extended functionality of radix tree attached to inode->i_mapping.
 
-diff -ur reiser4progs-1.0.7.orig/libmisc/ui.c reiser4progs-1.0.7/libmisc/ui.c
---- reiser4progs-1.0.7.orig/libmisc/ui.c	2009-01-08 22:34:27.000000000 +0100
-+++ reiser4progs-1.0.7/libmisc/ui.c	2009-02-15 17:31:09.000000000 +0100
-@@ -116,7 +116,7 @@
- 				line_width = 0;
- 			}
- 
--			fprintf(stream, word);
-+			fprintf(stream, "%s", word);
- 
- 			line_width += aal_strlen(word);
- 
-diff -ur reiser4progs-1.0.7.orig/librepair/add_missing.c reiser4progs-1.0.7/librepair/add_missing.c
---- reiser4progs-1.0.7.orig/librepair/add_missing.c	2009-01-08 22:34:27.000000000 +0100
-+++ reiser4progs-1.0.7/librepair/add_missing.c	2009-02-15 18:20:14.000000000 +0100
-@@ -65,7 +65,7 @@
- 	time_str = ctime(&am->stat.time);
- 	time_str[aal_strlen(time_str) - 1] = '\0';
- 	aal_stream_format(&stream, time_str);
--	aal_mess(stream.entity);
-+	aal_mess("%s", (char *) stream.entity);
- 	aal_stream_fini(&stream);
- }
- 
-diff -ur reiser4progs-1.0.7.orig/librepair/cleanup.c reiser4progs-1.0.7/librepair/cleanup.c
---- reiser4progs-1.0.7.orig/librepair/cleanup.c	2009-01-08 22:34:27.000000000 +0100
-+++ reiser4progs-1.0.7/librepair/cleanup.c	2009-02-15 18:53:37.000000000 +0100
-@@ -26,7 +26,7 @@
- 	time_str = ctime(&cleanup->stat.time);
- 	time_str[aal_strlen(time_str) - 1] = '\0';
- 	aal_stream_format(&stream, time_str);
--	aal_mess(stream.entity);
-+	aal_mess("%s", (char *) stream.entity);
- 	aal_stream_fini(&stream);
- }
- 
-diff -ur reiser4progs-1.0.7.orig/librepair/disk_scan.c reiser4progs-1.0.7/librepair/disk_scan.c
---- reiser4progs-1.0.7.orig/librepair/disk_scan.c	2009-01-08 22:34:27.000000000 +0100
-+++ reiser4progs-1.0.7/librepair/disk_scan.c	2009-02-15 18:14:53.000000000 +0100
-@@ -45,7 +45,7 @@
- 	time_str = ctime(&ds->stat.time);
- 	time_str[aal_strlen(time_str) - 1] = '\0';
- 	aal_stream_format(&stream, time_str);
--	aal_mess(stream.entity);
-+	aal_mess("%s", (char *) stream.entity);
- 	aal_stream_fini(&stream);
- }
- 
-diff -ur reiser4progs-1.0.7.orig/librepair/filter.c reiser4progs-1.0.7/librepair/filter.c
---- reiser4progs-1.0.7.orig/librepair/filter.c	2009-01-08 22:34:27.000000000 +0100
-+++ reiser4progs-1.0.7/librepair/filter.c	2009-02-15 17:32:41.000000000 +0100
-@@ -591,7 +591,7 @@
- 	time_str = ctime(&fd->stat.time);
- 	time_str[aal_strlen(time_str) - 1] = '\0';
- 	aal_stream_format(&stream, time_str);
--	aal_mess(stream.entity);
-+	aal_mess("%s", (char *) stream.entity);
- 	aal_stream_fini(&stream);
- }
- 
-diff -ur reiser4progs-1.0.7.orig/librepair/semantic.c reiser4progs-1.0.7/librepair/semantic.c
---- reiser4progs-1.0.7.orig/librepair/semantic.c	2009-01-08 22:34:27.000000000 +0100
-+++ reiser4progs-1.0.7/librepair/semantic.c	2009-02-15 18:26:50.000000000 +0100
-@@ -791,7 +791,7 @@
- 	time_str = ctime(&sem->stat.time);
- 	time_str[aal_strlen(time_str) - 1] = '\0';
- 	aal_stream_format(&stream, time_str);
--	aal_mess(stream.entity);
-+	aal_mess("%s", (char *) stream.entity);
- 	aal_stream_fini(&stream);
- }
- 
-diff -ur reiser4progs-1.0.7.orig/librepair/twig_scan.c reiser4progs-1.0.7/librepair/twig_scan.c
---- reiser4progs-1.0.7.orig/librepair/twig_scan.c	2009-01-08 22:34:27.000000000 +0100
-+++ reiser4progs-1.0.7/librepair/twig_scan.c	2009-02-15 18:21:39.000000000 +0100
-@@ -119,7 +119,7 @@
- 	time_str[aal_strlen(time_str) - 1] = '\0';
- 	
- 	aal_stream_format(&stream, time_str);
--	aal_mess(stream.entity);
-+	aal_mess("%s", (char *) stream.entity);
- 	aal_stream_fini(&stream);
- }
- 
-diff -ur reiser4progs-1.0.7.orig/progs/debugfs/browse.c reiser4progs-1.0.7/progs/debugfs/browse.c
---- reiser4progs-1.0.7.orig/progs/debugfs/browse.c	2009-01-08 22:34:27.000000000 +0100
-+++ reiser4progs-1.0.7/progs/debugfs/browse.c	2009-02-15 19:02:02.000000000 +0100
-@@ -27,7 +27,7 @@
- 		if (read <= 0)
- 			break;
- 
--		printf(buff);
-+		printf("%s", buff);
- 	}
- 
- 	return 0;
-diff -ur reiser4progs-1.0.7.orig/progs/debugfs/print.c reiser4progs-1.0.7/progs/debugfs/print.c
---- reiser4progs-1.0.7.orig/progs/debugfs/print.c	2009-01-08 22:34:27.000000000 +0100
-+++ reiser4progs-1.0.7/progs/debugfs/print.c	2009-02-15 18:57:18.000000000 +0100
-@@ -24,7 +24,7 @@
- 		if ((size = aal_stream_read(stream, buff, size)) <= 0)
- 			return size;
- 		
--		printf(buff);
-+		printf("%s", buff);
- 	}
- 
- 	return 0;
+Signed-off-by: Edward Shishkin<edward.shishkin@gmail.com>
+---
+ include/linux/mm.h  |    1 +
+ mm/page-writeback.c |   36 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+)
 
---=-MsNZ1tNs2yUDtZIQ5sDB--
-
+--- mmotm.orig/include/linux/mm.h
++++ mmotm/include/linux/mm.h
+@@ -841,6 +841,7 @@ int redirty_page_for_writepage(struct wr
+ 				struct page *page);
+ int set_page_dirty(struct page *page);
+ int set_page_dirty_lock(struct page *page);
++int set_page_dirty_notag(struct page *page);
+ int clear_page_dirty_for_io(struct page *page);
+ 
+ extern unsigned long move_page_tables(struct vm_area_struct *vma,
+--- mmotm.orig/mm/page-writeback.c
++++ mmotm/mm/page-writeback.c
+@@ -1248,6 +1248,42 @@ int __set_page_dirty_nobuffers(struct pa
+ EXPORT_SYMBOL(__set_page_dirty_nobuffers);
+ 
+ /*
++ * set_page_dirty_notag() -- similar to __set_page_dirty_nobuffers()
++ * except it doesn't tag the page dirty in the page-cache radix tree.
++ * This means that the address space using this cannot use the regular
++ * filemap ->writepages() helpers and must provide its own means of
++ * tracking and finding non-tagged dirty pages.
++ *
++ * NOTE: furthermore, this version also doesn't handle truncate races.
++ */
++int set_page_dirty_notag(struct page *page)
++{
++	struct address_space *mapping = page->mapping;
++
++	if (!TestSetPageDirty(page)) {
++		WARN_ON_ONCE(!PagePrivate(page) && !PageUptodate(page));
++		if (mapping_cap_account_dirty(mapping)) {
++		        /*
++			 * The accounting functions rely on
++			 * being atomic wrt interrupts.
++			 */
++		        unsigned long flags;
++			local_irq_save(flags);
++			__inc_zone_page_state(page, NR_FILE_DIRTY);
++			__inc_bdi_stat(mapping->backing_dev_info,
++				       BDI_RECLAIMABLE);
++			task_dirty_inc(current);
++			task_io_account_write(PAGE_CACHE_SIZE);
++			local_irq_restore(flags);
++		}
++		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
++		return 1;
++	}
++	return 0;
++}
++EXPORT_SYMBOL(set_page_dirty_notag);
++
++/*
+  * When a writepage implementation decides that it doesn't want to write this
+  * page for some reason, it should redirty the locked page via
+  * redirty_page_for_writepage() and it should then unlock the page and return 0
