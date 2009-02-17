@@ -1,44 +1,97 @@
-From: Nick Piggin <npiggin@suse.de>
-Subject: Re: set_page_dirty races (was: Re: [patch 2/4] vfs: add set_page_dirty_notag)
-Date: Tue, 17 Feb 2009 13:30:17 +0100
-Message-ID: <20090217123017.GG26402@wotan.suse.de>
-References: <18841.60432.329341.514726@edward.zelnet.ru> <1234861781.4744.21.camel@laptop> <20090217093805.GB31323@wotan.suse.de> <1234865116.4744.46.camel@laptop> <20090217102443.GA26402@wotan.suse.de> <1234867200.4744.65.camel@laptop> <20090217112512.GD26402@wotan.suse.de> <1234870772.4744.79.camel@laptop> <20090217115532.GF26402@wotan.suse.de> <1234872334.4744.95.camel@laptop>
+From: Laurent Riffard <laurent.riffard@free.fr>
+Subject: Reiser4: possible circular locking dependency detected
+Date: Tue, 17 Feb 2009 14:41:00 +0100
+Message-ID: <499ABE6C.6010904@free.fr>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1234872334.4744.95.camel@laptop>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Edward Shishkin <edward.shishkin@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Ryan Hope <rmh3093@gmail.com>, Randy Dunlap <randy.dunlap@oracle.com>, linux-kernel@vger.kernel.org, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
-On Tue, Feb 17, 2009 at 01:05:34PM +0100, Peter Zijlstra wrote:
-> On Tue, 2009-02-17 at 12:55 +0100, Nick Piggin wrote:
-> > If nobody thinks it is insane, I'll resend to Andrew in a new thread.
-> 
-> Right, gup_fast() seems to also respect .write properly,
+Hello,
 
-Phew! :)
+I've got this warning in my logs with 2.6.29-rc5 + reiser4 patches:
 
-> so it would
-> also be used to balance that.
-> 
-> I guess gup_fast() would need to use trylock_page(), and fall back to
-> the slow path when we start taking PG_locked on .write.
+=======================================================
+[ INFO: possible circular locking dependency detected ]
+2.6.29-rc5-00012-g94aca52 #132
+-------------------------------------------------------
+git/5217 is trying to acquire lock:
+ (&data->latch){----}, at: [<f8bd442b>] get_exclusive_access+0x12/0x1c [reiser4]
 
-Yeah, you're right there. It might also be possible to have a flag
-somewhere to avoid the lock if the underlying filesystem doesn't
-have a page_mkwrite or doesn't account dirty... which could avoid
-the overhead for the common case of anonymous or tmpfs memory.
+but task is already holding lock:
+ (&mm->mmap_sem){----}, at: [<c02067b1>] sys_mmap2+0x44/0x7b
 
-For gup_fast that pretty much implies an extra page flag I think. But
-let's not get too worried with details... I don't think put_user_pages
-hurts, even if it only remains as put_page loop. Just to help reader
-through the page refcounting. 
- 
-> I suppose we should start converting a few gup users over to pup before
-> handing the thing to Andrew, to have at least a few examples in-kernel.
+which lock already depends on the new lock.
 
-Could do. There are quite a few easy ones.
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&mm->mmap_sem){----}:
+       [<c0243477>] __lock_acquire+0x98d/0xb00
+       [<c0243645>] lock_acquire+0x5b/0x81
+       [<c0269d02>] might_fault+0x68/0x88
+       [<f8be0b92>] reiser4_read_tail+0x60/0xc2 [reiser4]
+       [<f8bd3e9f>] read_unix_file+0x2da/0x3a0 [reiser4]
+       [<f8bd5348>] reiser4_read_careful+0xac/0xf4 [reiser4]
+       [<c027cd28>] vfs_read+0x79/0xaa
+       [<c027cdf2>] sys_read+0x3b/0x60
+       [<c0202fff>] sysenter_do_call+0x12/0x43
+       [<ffffffff>] 0xffffffff
+
+-> #0 (&data->latch){----}:
+       [<c024334c>] __lock_acquire+0x862/0xb00
+       [<c0243645>] lock_acquire+0x5b/0x81
+       [<c03c8d5a>] down_write+0x2a/0x46
+       [<f8bd442b>] get_exclusive_access+0x12/0x1c [reiser4]
+       [<f8bd19ff>] get_exclusive_access_careful+0x10/0x32 [reiser4]
+       [<f8bd30d2>] mmap_unix_file+0x48/0x10a [reiser4]
+       [<f8bd516d>] reiser4_mmap_careful+0xa1/0xe6 [reiser4]
+       [<c026fea9>] mmap_region+0x219/0x3b0
+       [<c0270224>] do_mmap_pgoff+0x1e4/0x230
+       [<c02067c7>] sys_mmap2+0x5a/0x7b
+       [<c0202fff>] sysenter_do_call+0x12/0x43
+       [<ffffffff>] 0xffffffff
+
+other info that might help us debug this:
+
+1 lock held by git/5217:
+ #0:  (&mm->mmap_sem){----}, at: [<c02067b1>] sys_mmap2+0x44/0x7b
+
+stack backtrace:
+Pid: 5217, comm: git Not tainted 2.6.29-rc5-00012-g94aca52 #132
+Call Trace:
+ [<c03c7800>] ? printk+0xf/0x17
+ [<c02428d3>] print_circular_bug_tail+0x5d/0x68
+ [<c024334c>] __lock_acquire+0x862/0xb00
+ [<c0241280>] ? static_obj+0x6d/0x79
+ [<c0243645>] lock_acquire+0x5b/0x81
+ [<f8bd442b>] ? get_exclusive_access+0x12/0x1c [reiser4]
+ [<c03c8d5a>] down_write+0x2a/0x46
+ [<f8bd442b>] ? get_exclusive_access+0x12/0x1c [reiser4]
+ [<f8bd442b>] get_exclusive_access+0x12/0x1c [reiser4]
+ [<f8bd19ff>] get_exclusive_access_careful+0x10/0x32 [reiser4]
+ [<f8bd30d2>] mmap_unix_file+0x48/0x10a [reiser4]
+ [<f8bd516d>] reiser4_mmap_careful+0xa1/0xe6 [reiser4]
+ [<c026fea9>] mmap_region+0x219/0x3b0
+ [<c0270224>] do_mmap_pgoff+0x1e4/0x230
+ [<c02067c7>] sys_mmap2+0x5a/0x7b
+ [<c0202fff>] sysenter_do_call+0x12/0x43
+
+
+The set of reiser4 patches I'm using is available from http://laurent.riffard.free.fr/reiser4/reiser4-for-2.6.29-rc5/:
+0001-Reiser4-for-Linux-2.6.28.patch                           
+0002-reiser4-adjust-to-the-new-aops-fixup.patch               
+0003-Reiser4-fix-BUG-using-smp_processor_id-in-preemp.patch   
+0004-Reiser4-Change-current-fs-ug-id-to-current_fs-ug-i.patch 
+0005-Reiser4-fix-__grab_cache_page-usage.patch                
+0006-Revert-Reiser4-fix-__grab_cache_page-usage.patch         
+0007-Reiser4-build-fix.patch                                  
+0008-reiser4-update-names-of-quota-methods.patch              
+
+~~
+laurent
+
+
