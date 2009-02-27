@@ -1,127 +1,52 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Reiser4: possible circular locking dependency detected
-Date: Tue, 24 Feb 2009 12:23:06 +0300
-Message-ID: <49A3BC7A.3050804@gmail.com>
-References: <499ABE6C.6010904@free.fr>
+From: Hannes Eder <hannes@hanneseder.net>
+Subject: Re: [PATCH 12/16] reiserfs: fix sparse warning: Using plain integer 
+	as NULL pointer
+Date: Fri, 27 Feb 2009 02:12:18 +0100
+Message-ID: <154e089b0902261712q3dad68d7s567d0b6d9c7ee031@mail.gmail.com>
+References: <20090221235706.17557.97714.stgit@vmbox.hanneseder.net>
+	 <20090222000511.17557.96434.stgit@vmbox.hanneseder.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <499ABE6C.6010904@free.fr>
+In-Reply-To: <20090222000511.17557.96434.stgit@vmbox.hanneseder.net>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Laurent Riffard <laurent.riffard@free.fr>
-Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+To: trivial@kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
 
-Laurent Riffard wrote:
-> Hello,
->
->   
+[Added To, Cc]
 
-Hi Laurent
-
-> I've got this warning in my logs with 2.6.29-rc5 + reiser4 patches:
+On Sun, Feb 22, 2009 at 1:05 AM, Hannes Eder <hannes@hanneseder.net> wr=
+ote:
+> Fix this sparse warning:
+> =A0fs/reiserfs/inode.c:2555:19: warning: Using plain integer as NULL =
+pointer
 >
-> =======================================================
-> [ INFO: possible circular locking dependency detected ]
-> 2.6.29-rc5-00012-g94aca52 #132
-> -------------------------------------------------------
-> git/5217 is trying to acquire lock:
->  (&data->latch){----}, at: [<f8bd442b>] get_exclusive_access+0x12/0x1c [reiser4]
+> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+> ---
+> =A0fs/reiserfs/inode.c | =A0 =A02 +-
+> =A01 files changed, 1 insertions(+), 1 deletions(-)
 >
-> but task is already holding lock:
->  (&mm->mmap_sem){----}, at: [<c02067b1>] sys_mmap2+0x44/0x7b
+> diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+> index 823227a..e69d63a 100644
+> --- a/fs/reiserfs/inode.c
+> +++ b/fs/reiserfs/inode.c
+> @@ -2552,7 +2552,7 @@ static int reiserfs_write_begin(struct file *fi=
+le,
+> =A0 =A0 =A0 =A0int old_ref =3D 0;
 >
-> which lock already depends on the new lock.
->
->
-> the existing dependency chain (in reverse order) is:
->
-> -> #1 (&mm->mmap_sem){----}:
->        [<c0243477>] __lock_acquire+0x98d/0xb00
->        [<c0243645>] lock_acquire+0x5b/0x81
->        [<c0269d02>] might_fault+0x68/0x88
->   
-
-This is a false positive provided by might_fault(),
-introduced in the latest kernels.
-
-User page has to be brought in so that major page
-fault does not occur here when the non-exclusive
-access is acquired (by read_unix_file).
-
-We need to teach the code somehow to not produce
-this false alarm. I'll take a look..
-
-Thanks,
-Edward.
-
->        [<f8be0b92>] reiser4_read_tail+0x60/0xc2 [reiser4]
->        [<f8bd3e9f>] read_unix_file+0x2da/0x3a0 [reiser4]
->        [<f8bd5348>] reiser4_read_careful+0xac/0xf4 [reiser4]
->        [<c027cd28>] vfs_read+0x79/0xaa
->        [<c027cdf2>] sys_read+0x3b/0x60
->        [<c0202fff>] sysenter_do_call+0x12/0x43
->        [<ffffffff>] 0xffffffff
->
-> -> #0 (&data->latch){----}:
->        [<c024334c>] __lock_acquire+0x862/0xb00
->        [<c0243645>] lock_acquire+0x5b/0x81
->        [<c03c8d5a>] down_write+0x2a/0x46
->        [<f8bd442b>] get_exclusive_access+0x12/0x1c [reiser4]
->        [<f8bd19ff>] get_exclusive_access_careful+0x10/0x32 [reiser4]
->        [<f8bd30d2>] mmap_unix_file+0x48/0x10a [reiser4]
->        [<f8bd516d>] reiser4_mmap_careful+0xa1/0xe6 [reiser4]
->        [<c026fea9>] mmap_region+0x219/0x3b0
->        [<c0270224>] do_mmap_pgoff+0x1e4/0x230
->        [<c02067c7>] sys_mmap2+0x5a/0x7b
->        [<c0202fff>] sysenter_do_call+0x12/0x43
->        [<ffffffff>] 0xffffffff
->
-> other info that might help us debug this:
->
-> 1 lock held by git/5217:
->  #0:  (&mm->mmap_sem){----}, at: [<c02067b1>] sys_mmap2+0x44/0x7b
->
-> stack backtrace:
-> Pid: 5217, comm: git Not tainted 2.6.29-rc5-00012-g94aca52 #132
-> Call Trace:
->  [<c03c7800>] ? printk+0xf/0x17
->  [<c02428d3>] print_circular_bug_tail+0x5d/0x68
->  [<c024334c>] __lock_acquire+0x862/0xb00
->  [<c0241280>] ? static_obj+0x6d/0x79
->  [<c0243645>] lock_acquire+0x5b/0x81
->  [<f8bd442b>] ? get_exclusive_access+0x12/0x1c [reiser4]
->  [<c03c8d5a>] down_write+0x2a/0x46
->  [<f8bd442b>] ? get_exclusive_access+0x12/0x1c [reiser4]
->  [<f8bd442b>] get_exclusive_access+0x12/0x1c [reiser4]
->  [<f8bd19ff>] get_exclusive_access_careful+0x10/0x32 [reiser4]
->  [<f8bd30d2>] mmap_unix_file+0x48/0x10a [reiser4]
->  [<f8bd516d>] reiser4_mmap_careful+0xa1/0xe6 [reiser4]
->  [<c026fea9>] mmap_region+0x219/0x3b0
->  [<c0270224>] do_mmap_pgoff+0x1e4/0x230
->  [<c02067c7>] sys_mmap2+0x5a/0x7b
->  [<c0202fff>] sysenter_do_call+0x12/0x43
+> =A0 =A0 =A0 =A0inode =3D mapping->host;
+> - =A0 =A0 =A0 *fsdata =3D 0;
+> + =A0 =A0 =A0 *fsdata =3D NULL;
+> =A0 =A0 =A0 =A0if (flags & AOP_FLAG_CONT_EXPAND &&
+> =A0 =A0 =A0 =A0 =A0 =A0(pos & (inode->i_sb->s_blocksize - 1)) =3D=3D =
+0) {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0pos ++;
 >
 >
-> The set of reiser4 patches I'm using is available from http://laurent.riffard.free.fr/reiser4/reiser4-for-2.6.29-rc5/:
-> 0001-Reiser4-for-Linux-2.6.28.patch                           
-> 0002-reiser4-adjust-to-the-new-aops-fixup.patch               
-> 0003-Reiser4-fix-BUG-using-smp_processor_id-in-preemp.patch   
-> 0004-Reiser4-Change-current-fs-ug-id-to-current_fs-ug-i.patch 
-> 0005-Reiser4-fix-__grab_cache_page-usage.patch                
-> 0006-Revert-Reiser4-fix-__grab_cache_page-usage.patch         
-> 0007-Reiser4-build-fix.patch                                  
-> 0008-reiser4-update-names-of-quota-methods.patch              
->
-> ~~
-> laurent
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->   
-
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
