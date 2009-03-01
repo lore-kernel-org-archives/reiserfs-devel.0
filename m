@@ -1,52 +1,31 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Subject: Re: [PATCH 12/16] reiserfs: fix sparse warning: Using plain integer 
-	as NULL pointer
-Date: Fri, 27 Feb 2009 02:12:18 +0100
-Message-ID: <154e089b0902261712q3dad68d7s567d0b6d9c7ee031@mail.gmail.com>
-References: <20090221235706.17557.97714.stgit@vmbox.hanneseder.net>
-	 <20090222000511.17557.96434.stgit@vmbox.hanneseder.net>
+From: Ilario Pittau <ilariopittau@gmail.com>
+Subject: (unknown)
+Date: Mon, 2 Mar 2009 00:21:01 +0100
+Message-ID: <17c9de980903011521o4603b9d0kbfceb04e27dd540c@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20090222000511.17557.96434.stgit@vmbox.hanneseder.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:received:date:message-id:subject
+         :from:to:content-type:content-transfer-encoding;
+        bh=rg8KU8X1zL2Vsh+ktJM/AiJiecGaDpEEl4UPwSTyoXI=;
+        b=kdA1DXsByjSDapX/KZVdkJq4d8/0JpSXsPOFb3f2niMS4yruw/6jT9l4DRbTKOAMZX
+         QbfweSARd1sJa7zmyO5jAIFGQ3IcCaGN58FtgQOqVCfsk1EB/QJD45KsWtB+6AQW32ux
+         8pr4/J9iIQ7xpw4hev/pu12xFKb1gfypOMtnQ=
+Subject: 
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: trivial@kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-[Added To, Cc]
+Hi,
+I have a problem with the REISERFS_CHECK module.
+When I include it in the kernel the system boots correctly and it's
+possible read from the reiserfs partition.
+But when I try to write on, the system crash and go in kernel panic.
+If I compile the kernel without the REISERFS_CHECK module it's
+possible to write also, and the system does not crashes.
 
-On Sun, Feb 22, 2009 at 1:05 AM, Hannes Eder <hannes@hanneseder.net> wr=
-ote:
-> Fix this sparse warning:
-> =A0fs/reiserfs/inode.c:2555:19: warning: Using plain integer as NULL =
-pointer
->
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
-> ---
-> =A0fs/reiserfs/inode.c | =A0 =A02 +-
-> =A01 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-> index 823227a..e69d63a 100644
-> --- a/fs/reiserfs/inode.c
-> +++ b/fs/reiserfs/inode.c
-> @@ -2552,7 +2552,7 @@ static int reiserfs_write_begin(struct file *fi=
-le,
-> =A0 =A0 =A0 =A0int old_ref =3D 0;
->
-> =A0 =A0 =A0 =A0inode =3D mapping->host;
-> - =A0 =A0 =A0 *fsdata =3D 0;
-> + =A0 =A0 =A0 *fsdata =3D NULL;
-> =A0 =A0 =A0 =A0if (flags & AOP_FLAG_CONT_EXPAND &&
-> =A0 =A0 =A0 =A0 =A0 =A0(pos & (inode->i_sb->s_blocksize - 1)) =3D=3D =
-0) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0pos ++;
->
->
 --
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Ilario Pittau
