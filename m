@@ -1,10 +1,10 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [patch 05/35 error-handling] reiserfs: make some warnings informational
-Date: Mon, 30 Mar 2009 14:02:20 -0400
-Message-ID: <20090330181009.831291133@suse.com>
+Subject: [patch 14/35 xattr-rework] reiserfs: small variable cleanup
+Date: Mon, 30 Mar 2009 14:02:29 -0400
+Message-ID: <20090330181011.080528326@suse.com>
 References: <20090330180215.951354436@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=patches.suse/reiserfs-reiserfs_info.diff
+Content-Disposition: inline; filename=patches.suse/reiserfs-remove-xinode
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -13,89 +13,100 @@ Content-Transfer-Encoding: 7bit
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
- In several places, reiserfs_warning is used when there is no warning, just
- a notice. This patch changes some of them to indicate that the message
- is merely informational.
+ This patch removes the xinode and mapping variables from
+ reiserfs_xattr_{get,set}.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ fs/reiserfs/xattr.c |   20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
---
- fs/reiserfs/bitmap.c |    6 +++---
- fs/reiserfs/super.c  |   14 ++++++--------
- fs/reiserfs/xattr.c  |   10 ++++------
- 3 files changed, 13 insertions(+), 17 deletions(-)
-
---- a/fs/reiserfs/bitmap.c
-+++ b/fs/reiserfs/bitmap.c
-@@ -40,8 +40,8 @@
- 
- #define SET_OPTION(optname) \
-    do { \
--        reiserfs_warning(s, "reiserfs: option \"%s\" is set", #optname); \
--        set_bit(_ALLOC_ ## optname , &SB_ALLOC_OPTS(s)); \
-+	reiserfs_info(s, "block allocator option \"%s\" is set", #optname); \
-+	set_bit(_ALLOC_ ## optname , &SB_ALLOC_OPTS(s)); \
-     } while(0)
- #define TEST_OPTION(optname, s) \
-     test_bit(_ALLOC_ ## optname , &SB_ALLOC_OPTS(s))
-@@ -636,7 +636,7 @@ int reiserfs_parse_alloc_options(struct
- 		return 1;
- 	}
- 
--	reiserfs_warning(s, "allocator options = [%08x]\n", SB_ALLOC_OPTS(s));
-+	reiserfs_info(s, "allocator options = [%08x]\n", SB_ALLOC_OPTS(s));
- 	return 0;
- }
- 
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -1380,13 +1380,11 @@ static int read_super_block(struct super
- 		/* magic is of non-standard journal filesystem, look at s_version to
- 		   find which format is in use */
- 		if (sb_version(rs) == REISERFS_VERSION_2)
--			reiserfs_warning(s,
--					 "read_super_block: found reiserfs format \"3.6\""
--					 " with non-standard journal");
-+			reiserfs_info(s, "found reiserfs format \"3.6\""
-+				      " with non-standard journal\n");
- 		else if (sb_version(rs) == REISERFS_VERSION_1)
--			reiserfs_warning(s,
--					 "read_super_block: found reiserfs format \"3.5\""
--					 " with non-standard journal");
-+			reiserfs_info(s, "found reiserfs format \"3.5\""
-+				      " with non-standard journal\n");
- 		else {
- 			reiserfs_warning(s,
- 					 "sh-2012: read_super_block: found unknown "
-@@ -1465,8 +1463,8 @@ static __u32 find_hash_out(struct super_
- 			if (reiserfs_rupasov_hash(s)) {
- 				hash = YURA_HASH;
- 			}
--			reiserfs_warning(s, "FS seems to be empty, autodetect "
--					 "is using the default hash");
-+			reiserfs_info(s, "FS seems to be empty, autodetect "
-+					 "is using the default hash\n");
- 			break;
- 		}
- 		r5hash = GET_HASH_VALUE(r5_hash(de.de_name, de.de_namelen));
 --- a/fs/reiserfs/xattr.c
 +++ b/fs/reiserfs/xattr.c
-@@ -1182,12 +1182,10 @@ int reiserfs_xattr_init(struct super_blo
- 				}
+@@ -420,10 +420,8 @@ reiserfs_xattr_set(struct inode *inode,
+ 	struct dentry *dentry;
+ 	struct page *page;
+ 	char *data;
+-	struct address_space *mapping;
+ 	size_t file_pos = 0;
+ 	size_t buffer_pos = 0;
+-	struct inode *xinode;
+ 	struct iattr newattrs;
+ 	__u32 xahash = 0;
  
- 				if (dentry && dentry->d_inode)
--					reiserfs_warning(s,
--							 "Created %s on %s - reserved for "
--							 "xattr storage.",
--							 PRIVROOT_NAME,
--							 reiserfs_bdevname
--							 (inode->i_sb));
-+					reiserfs_info(s, "Created %s - "
-+						      "reserved for xattr "
-+						      "storage.\n",
-+						      PRIVROOT_NAME);
- 			} else if (!dentry->d_inode) {
- 				dput(dentry);
- 				dentry = NULL;
+@@ -441,11 +439,10 @@ reiserfs_xattr_set(struct inode *inode,
+ 		goto out;
+ 	}
+ 
+-	xinode = dentry->d_inode;
+ 	REISERFS_I(inode)->i_flags |= i_has_xattr_dir;
+ 
+ 	/* we need to copy it off.. */
+-	if (xinode->i_nlink > 1) {
++	if (dentry->d_inode->i_nlink > 1) {
+ 		dput(dentry);
+ 		err = reiserfs_xattr_del(inode, name);
+ 		if (err < 0)
+@@ -459,12 +456,11 @@ reiserfs_xattr_set(struct inode *inode,
+ 	/* Resize it so we're ok to write there */
+ 	newattrs.ia_size = buffer_size;
+ 	newattrs.ia_valid = ATTR_SIZE | ATTR_CTIME;
+-	mutex_lock_nested(&xinode->i_mutex, I_MUTEX_XATTR);
++	mutex_lock_nested(&dentry->d_inode->i_mutex, I_MUTEX_XATTR);
+ 	err = notify_change(dentry, &newattrs);
+ 	if (err)
+ 		goto out_filp;
+ 
+-	mapping = xinode->i_mapping;
+ 	while (buffer_pos < buffer_size || buffer_pos == 0) {
+ 		size_t chunk;
+ 		size_t skip = 0;
+@@ -474,7 +470,8 @@ reiserfs_xattr_set(struct inode *inode,
+ 		else
+ 			chunk = buffer_size - buffer_pos;
+ 
+-		page = reiserfs_get_page(xinode, file_pos >> PAGE_CACHE_SHIFT);
++		page = reiserfs_get_page(dentry->d_inode,
++					 file_pos >> PAGE_CACHE_SHIFT);
+ 		if (IS_ERR(page)) {
+ 			err = PTR_ERR(page);
+ 			goto out_filp;
+@@ -521,7 +518,7 @@ reiserfs_xattr_set(struct inode *inode,
+ 	}
+ 
+       out_filp:
+-	mutex_unlock(&xinode->i_mutex);
++	mutex_unlock(&dentry->d_inode->i_mutex);
+ 	dput(dentry);
+ 
+       out:
+@@ -541,7 +538,6 @@ reiserfs_xattr_get(const struct inode *i
+ 	size_t file_pos = 0;
+ 	size_t buffer_pos = 0;
+ 	struct page *page;
+-	struct inode *xinode;
+ 	__u32 hash = 0;
+ 
+ 	if (name == NULL)
+@@ -558,8 +554,7 @@ reiserfs_xattr_get(const struct inode *i
+ 		goto out;
+ 	}
+ 
+-	xinode = dentry->d_inode;
+-	isize = xinode->i_size;
++	isize = i_size_read(dentry->d_inode);
+ 	REISERFS_I(inode)->i_flags |= i_has_xattr_dir;
+ 
+ 	/* Just return the size needed */
+@@ -582,7 +577,8 @@ reiserfs_xattr_get(const struct inode *i
+ 		else
+ 			chunk = isize - file_pos;
+ 
+-		page = reiserfs_get_page(xinode, file_pos >> PAGE_CACHE_SHIFT);
++		page = reiserfs_get_page(dentry->d_inode,
++					 file_pos >> PAGE_CACHE_SHIFT);
+ 		if (IS_ERR(page)) {
+ 			err = PTR_ERR(page);
+ 			goto out_dput;
 
 
