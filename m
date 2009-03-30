@@ -1,12 +1,13 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [patch 32/35 code-cleanup] reiserfs: rename p_s_inode to inode
-Date: Mon, 30 Mar 2009 15:18:10 -0400
-Message-ID: <49D11AF2.9030701@suse.com>
-References: <20090330180215.951354436@suse.com>	<20090330181013.465420330@suse.com> <87tz5alua4.fsf@basil.nowhere.org>
+Subject: Re: [patch 09/35 error-handling] reiserfs: add locking around error
+ buffer
+Date: Mon, 30 Mar 2009 15:32:39 -0400
+Message-ID: <49D11E57.7060502@suse.com>
+References: <20090330180215.951354436@suse.com>	<20090330181010.432220021@suse.com> <87y6umlud1.fsf@basil.nowhere.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <87tz5alua4.fsf@basil.nowhere.org>
+In-Reply-To: <87y6umlud1.fsf@basil.nowhere.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
@@ -18,21 +19,29 @@ Hash: SHA1
 
 Andi Kleen wrote:
 > Jeff Mahoney <jeffm@suse.com> writes:
->> --- a/fs/reiserfs/file.c
->> +++ b/fs/reiserfs/file.c
->> @@ -137,17 +137,17 @@ static void reiserfs_vfs_truncate_file(s
->>  static int reiserfs_sync_file(struct file *p_s_filp,
->>  			      struct dentry *p_s_dentry, int datasync)
->>  {
->> -	struct inode *p_s_inode = p_s_dentry->d_inode;
->> +	struct inode *inode = p_s_dentry->d_inode;
->>  	int n_err;
->>  	int barrier_done;
 > 
-> Didn't you miss one here?
+>>  The formatting of the error buffer is race prone. It uses static buffers
+>>  for both formatting and output. While overwriting the error buffer
+>>  can product garbled output, overwriting the format buffer with incompatible
+>>  % directives can cause crashes.
+> 
+> Really? Just curious but could you describe the steps how a garbled printk can
+> leads to a crash?
 
-Nope. This renamed p_s_inode, and that's a p_s_dentry. That one gets
-handled in reiserfs: rename p_._ variables.
+Yeah, I was surprised by this one as well, but I was convinced by seeing
+too many crashes that ended in prepare_error_buf with no other explanation.
+
+Reiserfs has this really hacky way of formatting extended pointer types
+where it copies the format buffer into a static buffer. If another
+thread copies its format string into the format buffer while the first
+thread is formatting its output, it can hit a pointer format that will
+consume whatever happens to be on the stack whether it's valid or not.
+
+I posted patches implementing extensible pointer types for printk to
+avoid problems like this, but nobody commented on them.
+prepare_error_buf() depends on undefined varargs behavior that just
+happens to work. Something changed recently where I had to change it
+stop consuming args manually, which is in another patch.
 
 - -Jeff
 
@@ -43,7 +52,7 @@ SUSE Labs
 Version: GnuPG v2.0.9 (GNU/Linux)
 Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
 
-iEYEARECAAYFAknRGvIACgkQLPWxlyuTD7ItdQCgiuVxsIJVzXv66VzTNuRmfF0n
-VNgAoJZHYLAtS6mj4Uzxb2+WL/J5Pv+y
-=fQ5U
+iEYEARECAAYFAknRHlcACgkQLPWxlyuTD7JgtACgiLRbO1IGhvKjmg6wCcZDhR9i
+jkwAn0e81mXl6JvgZqmKqK8f09fApaoq
+=fB0H
 -----END PGP SIGNATURE-----
