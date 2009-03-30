@@ -1,10 +1,10 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [patch 27/35 code-cleanup] reiserfs: factor out buffer_info initialization
-Date: Mon, 30 Mar 2009 14:02:42 -0400
-Message-ID: <20090330181012.815543671@suse.com>
+Subject: [patch 17/35 xattr-rework] reiserfs: remove IS_PRIVATE helpers
+Date: Mon, 30 Mar 2009 14:02:32 -0400
+Message-ID: <20090330181011.464018896@suse.com>
 References: <20090330180215.951354436@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=patches.suse/reiserfs-simplify-buffer-info.diff
+Content-Disposition: inline; filename=patches.suse/reiserfs-xattr-S_PRIVATE
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -13,365 +13,237 @@ Content-Transfer-Encoding: 7bit
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
- This is the first in a series of patches to make balance_leaf() not quite
- so insane.
-
- This patch factors out the open coded initializations of buffer_info
- structures and defines a few initializers for the 4 cases they're used.
+ There are a number of helper functions for marking a reiserfs inode
+ private that were leftover from reiserfs did its own thing wrt to
+ private inodes. S_PRIVATE has been in the kernel for some time,
+ so this patch removes the helpers and uses IS_PRIVATE instead.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-
 ---
- fs/reiserfs/do_balan.c |  175 ++++++++++++++++---------------------------------
- 1 file changed, 60 insertions(+), 115 deletions(-)
+ fs/reiserfs/inode.c            |    5 ++---
+ fs/reiserfs/namei.c            |    7 ++++---
+ fs/reiserfs/xattr.c            |   14 ++++++--------
+ fs/reiserfs/xattr_acl.c        |    6 +++---
+ fs/reiserfs/xattr_security.c   |    8 ++++----
+ fs/reiserfs/xattr_trusted.c    |    8 ++++----
+ include/linux/reiserfs_xattr.h |    8 --------
+ 7 files changed, 23 insertions(+), 33 deletions(-)
 
---- a/fs/reiserfs/do_balan.c
-+++ b/fs/reiserfs/do_balan.c
-@@ -29,6 +29,43 @@ struct tree_balance *cur_tb = NULL;	/* d
- 					   is interrupting do_balance */
- #endif
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -1932,9 +1932,8 @@ int reiserfs_new_inode(struct reiserfs_t
+ 		reiserfs_warning(inode->i_sb, "jdm-13090",
+ 				 "ACLs aren't enabled in the fs, "
+ 				 "but vfs thinks they are!");
+-	} else if (is_reiserfs_priv_object(dir)) {
+-		reiserfs_mark_inode_private(inode);
+-	}
++	} else if (IS_PRIVATE(dir))
++		inode->i_flags |= S_PRIVATE;
  
-+static inline void buffer_info_init_left(struct tree_balance *tb,
-+                                         struct buffer_info *bi)
-+{
-+	bi->tb          = tb;
-+	bi->bi_bh       = tb->L[0];
-+	bi->bi_parent   = tb->FL[0];
-+	bi->bi_position = get_left_neighbor_position(tb, 0);
-+}
-+
-+static inline void buffer_info_init_right(struct tree_balance *tb,
-+                                          struct buffer_info *bi)
-+{
-+	bi->tb          = tb;
-+	bi->bi_bh       = tb->R[0];
-+	bi->bi_parent   = tb->FR[0];
-+	bi->bi_position = get_right_neighbor_position(tb, 0);
-+}
-+
-+static inline void buffer_info_init_tbS0(struct tree_balance *tb,
-+                                         struct buffer_info *bi)
-+{
-+	bi->tb          = tb;
-+	bi->bi_bh        = PATH_PLAST_BUFFER(tb->tb_path);
-+	bi->bi_parent   = PATH_H_PPARENT(tb->tb_path, 0);
-+	bi->bi_position = PATH_H_POSITION(tb->tb_path, 1);
-+}
-+
-+static inline void buffer_info_init_bh(struct tree_balance *tb,
-+                                       struct buffer_info *bi,
-+                                       struct buffer_head *bh)
-+{
-+	bi->tb          = tb;
-+	bi->bi_bh       = bh;
-+	bi->bi_parent   = NULL;
-+	bi->bi_position = 0;
-+}
-+
- inline void do_balance_mark_leaf_dirty(struct tree_balance *tb,
- 				       struct buffer_head *bh, int flag)
+ 	reiserfs_update_sd(th, inode);
+	reiserfs_check_path(&path_to_key);
+--- a/fs/reiserfs/namei.c
++++ b/fs/reiserfs/namei.c
+@@ -358,9 +358,10 @@ static struct dentry *reiserfs_lookup(st
+ 			return ERR_PTR(-EACCES);
+ 		}
+ 
+-		/* Propogate the priv_object flag so we know we're in the priv tree */
+-		if (is_reiserfs_priv_object(dir))
+-			reiserfs_mark_inode_private(inode);
++		/* Propogate the private flag so we know we're
++		 * in the priv tree */
++		if (IS_PRIVATE(dir))
++			inode->i_flags |= S_PRIVATE;
+ 	}
+ 	reiserfs_write_unlock(dir->i_sb);
+ 	if (retval == IO_ERROR) {
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -633,14 +633,14 @@ __reiserfs_xattr_del(struct dentry *xadi
+ 	if (S_ISDIR(dentry->d_inode->i_mode))
+ 		goto out_file;
+ 
+-	if (!is_reiserfs_priv_object(dentry->d_inode)) {
++	if (!IS_PRIVATE(dentry->d_inode)) {
+ 		reiserfs_error(dir->i_sb, "jdm-20003",
+ 			       "OID %08x [%.*s/%.*s] doesn't have "
+ 			       "priv flag set [parent is %sset].",
+ 			       le32_to_cpu(INODE_PKEY(dentry->d_inode)->
+ 					   k_objectid), xadir->d_name.len,
+ 			       xadir->d_name.name, namelen, name,
+-			       is_reiserfs_priv_object(xadir->d_inode) ? "" :
++			       IS_PRIVATE(xadir->d_inode) ? "" :
+ 			       "not ");
+ 		dput(dentry);
+ 		return -EIO;
+@@ -701,8 +701,7 @@ int reiserfs_delete_xattrs(struct inode
+ 	int err = 0;
+ 
+ 	/* Skip out, an xattr has no xattrs associated with it */
+-	if (is_reiserfs_priv_object(inode) ||
+-	    get_inode_sd_version(inode) == STAT_DATA_V1 ||
++	if (IS_PRIVATE(inode) || get_inode_sd_version(inode) == STAT_DATA_V1 ||
+ 	    !reiserfs_xattrs(inode->i_sb)) {
+ 		return 0;
+ 	}
+@@ -786,8 +785,7 @@ int reiserfs_chown_xattrs(struct inode *
+ 	unsigned int ia_valid = attrs->ia_valid;
+ 
+ 	/* Skip out, an xattr has no xattrs associated with it */
+-	if (is_reiserfs_priv_object(inode) ||
+-	    get_inode_sd_version(inode) == STAT_DATA_V1 ||
++	if (IS_PRIVATE(inode) || get_inode_sd_version(inode) == STAT_DATA_V1 ||
+ 	    !reiserfs_xattrs(inode->i_sb)) {
+ 		return 0;
+ 	}
+@@ -1178,7 +1176,7 @@ int reiserfs_xattr_init(struct super_blo
+ 
+ 		if (!err && dentry) {
+ 			s->s_root->d_op = &xattr_lookup_poison_ops;
+-			reiserfs_mark_inode_private(dentry->d_inode);
++			dentry->d_inode->i_flags |= S_PRIVATE;
+ 			REISERFS_SB(s)->priv_root = dentry;
+ 		} else if (!(mount_flags & MS_RDONLY)) {	/* xattrs are unavailable */
+ 			/* If we're read-only it just means that the dir hasn't been
+@@ -1239,7 +1237,7 @@ int reiserfs_permission(struct inode *in
+ 	 * We don't do permission checks on the internal objects.
+ 	 * Permissions are determined by the "owning" object.
+ 	 */
+-	if (is_reiserfs_priv_object(inode))
++	if (IS_PRIVATE(inode))
+ 		return 0;
+ 
+ 	/*
+--- a/fs/reiserfs/xattr_acl.c
++++ b/fs/reiserfs/xattr_acl.c
+@@ -335,8 +335,8 @@ reiserfs_inherit_default_acl(struct inod
+ 	/* Don't apply ACLs to objects in the .reiserfs_priv tree.. This
+ 	 * would be useless since permissions are ignored, and a pain because
+ 	 * it introduces locking cycles */
+-	if (is_reiserfs_priv_object(dir)) {
+-		reiserfs_mark_inode_private(inode);
++	if (IS_PRIVATE(dir)) {
++		inode->i_flags |= S_PRIVATE;
+ 		goto apply_umask;
+ 	}
+ 
+@@ -401,7 +401,7 @@ reiserfs_inherit_default_acl(struct inod
+ int reiserfs_cache_default_acl(struct inode *inode)
  {
-@@ -86,6 +123,7 @@ static int balance_leaf_when_delete(stru
- 	       "PAP-12010: tree can not be empty");
+ 	int ret = 0;
+-	if (reiserfs_posixacl(inode->i_sb) && !is_reiserfs_priv_object(inode)) {
++	if (reiserfs_posixacl(inode->i_sb) && !IS_PRIVATE(inode)) {
+ 		struct posix_acl *acl;
+ 		reiserfs_read_lock_xattr_i(inode);
+ 		reiserfs_read_lock_xattrs(inode->i_sb);
+--- a/fs/reiserfs/xattr_security.c
++++ b/fs/reiserfs/xattr_security.c
+@@ -12,7 +12,7 @@ security_get(struct inode *inode, const
+ 	if (strlen(name) < sizeof(XATTR_SECURITY_PREFIX))
+ 		return -EINVAL;
  
- 	ih = B_N_PITEM_HEAD(tbS0, item_pos);
-+	buffer_info_init_tbS0(tb, &bi);
+-	if (is_reiserfs_priv_object(inode))
++	if (IS_PRIVATE(inode))
+ 		return -EPERM;
  
- 	/* Delete or truncate the item */
+ 	return reiserfs_xattr_get(inode, name, buffer, size);
+@@ -25,7 +25,7 @@ security_set(struct inode *inode, const
+ 	if (strlen(name) < sizeof(XATTR_SECURITY_PREFIX))
+ 		return -EINVAL;
  
-@@ -96,10 +134,6 @@ static int balance_leaf_when_delete(stru
- 		       "vs-12013: mode Delete, insert size %d, ih to be deleted %h",
- 		       -tb->insert_size[0], ih);
+-	if (is_reiserfs_priv_object(inode))
++	if (IS_PRIVATE(inode))
+ 		return -EPERM;
  
--		bi.tb = tb;
--		bi.bi_bh = tbS0;
--		bi.bi_parent = PATH_H_PPARENT(tb->tb_path, 0);
--		bi.bi_position = PATH_H_POSITION(tb->tb_path, 1);
- 		leaf_delete_items(&bi, 0, item_pos, 1, -1);
+ 	return reiserfs_xattr_set(inode, name, buffer, size, flags);
+@@ -36,7 +36,7 @@ static int security_del(struct inode *in
+ 	if (strlen(name) < sizeof(XATTR_SECURITY_PREFIX))
+ 		return -EINVAL;
  
- 		if (!item_pos && tb->CFL[0]) {
-@@ -121,10 +155,6 @@ static int balance_leaf_when_delete(stru
- 		break;
+-	if (is_reiserfs_priv_object(inode))
++	if (IS_PRIVATE(inode))
+ 		return -EPERM;
  
- 	case M_CUT:{		/* cut item in S[0] */
--			bi.tb = tb;
--			bi.bi_bh = tbS0;
--			bi.bi_parent = PATH_H_PPARENT(tb->tb_path, 0);
--			bi.bi_position = PATH_H_POSITION(tb->tb_path, 1);
- 			if (is_direntry_le_ih(ih)) {
- 
- 				/* UFS unlink semantics are such that you can only delete one directory entry at a time. */
-@@ -325,11 +355,7 @@ static int balance_leaf(struct tree_bala
- 					       ih_item_len(ih));
- 
- 					/* Insert new item into L[0] */
--					bi.tb = tb;
--					bi.bi_bh = tb->L[0];
--					bi.bi_parent = tb->FL[0];
--					bi.bi_position =
--					    get_left_neighbor_position(tb, 0);
-+					buffer_info_init_left(tb, &bi);
- 					leaf_insert_into_buf(&bi,
- 							     n + item_pos -
- 							     ret_val, ih, body,
-@@ -369,11 +395,7 @@ static int balance_leaf(struct tree_bala
- 					    leaf_shift_left(tb, tb->lnum[0] - 1,
- 							    tb->lbytes);
- 					/* Insert new item into L[0] */
--					bi.tb = tb;
--					bi.bi_bh = tb->L[0];
--					bi.bi_parent = tb->FL[0];
--					bi.bi_position =
--					    get_left_neighbor_position(tb, 0);
-+					buffer_info_init_left(tb, &bi);
- 					leaf_insert_into_buf(&bi,
- 							     n + item_pos -
- 							     ret_val, ih, body,
-@@ -429,13 +451,7 @@ static int balance_leaf(struct tree_bala
- 							}
- 
- 							/* Append given directory entry to directory item */
--							bi.tb = tb;
--							bi.bi_bh = tb->L[0];
--							bi.bi_parent =
--							    tb->FL[0];
--							bi.bi_position =
--							    get_left_neighbor_position
--							    (tb, 0);
-+							buffer_info_init_left(tb, &bi);
- 							leaf_paste_in_buffer
- 							    (&bi,
- 							     n + item_pos -
-@@ -523,13 +539,7 @@ static int balance_leaf(struct tree_bala
- 									     (tbS0,
- 									      item_pos)));
- 							/* Append to body of item in L[0] */
--							bi.tb = tb;
--							bi.bi_bh = tb->L[0];
--							bi.bi_parent =
--							    tb->FL[0];
--							bi.bi_position =
--							    get_left_neighbor_position
--							    (tb, 0);
-+							buffer_info_init_left(tb, &bi);
- 							leaf_paste_in_buffer
- 							    (&bi,
- 							     n + item_pos -
-@@ -680,11 +690,7 @@ static int balance_leaf(struct tree_bala
- 					    leaf_shift_left(tb, tb->lnum[0],
- 							    tb->lbytes);
- 					/* Append to body of item in L[0] */
--					bi.tb = tb;
--					bi.bi_bh = tb->L[0];
--					bi.bi_parent = tb->FL[0];
--					bi.bi_position =
--					    get_left_neighbor_position(tb, 0);
-+					buffer_info_init_left(tb, &bi);
- 					leaf_paste_in_buffer(&bi,
- 							     n + item_pos -
- 							     ret_val,
-@@ -776,11 +782,7 @@ static int balance_leaf(struct tree_bala
- 					set_le_ih_k_offset(ih, offset);
- 					put_ih_item_len(ih, tb->rbytes);
- 					/* Insert part of the item into R[0] */
--					bi.tb = tb;
--					bi.bi_bh = tb->R[0];
--					bi.bi_parent = tb->FR[0];
--					bi.bi_position =
--					    get_right_neighbor_position(tb, 0);
-+					buffer_info_init_right(tb, &bi);
- 					if ((old_len - tb->rbytes) > zeros_num) {
- 						r_zeros_number = 0;
- 						r_body =
-@@ -817,11 +819,7 @@ static int balance_leaf(struct tree_bala
- 							     tb->rnum[0] - 1,
- 							     tb->rbytes);
- 					/* Insert new item into R[0] */
--					bi.tb = tb;
--					bi.bi_bh = tb->R[0];
--					bi.bi_parent = tb->FR[0];
--					bi.bi_position =
--					    get_right_neighbor_position(tb, 0);
-+					buffer_info_init_right(tb, &bi);
- 					leaf_insert_into_buf(&bi,
- 							     item_pos - n +
- 							     tb->rnum[0] - 1,
-@@ -881,13 +879,7 @@ static int balance_leaf(struct tree_bala
- 							    pos_in_item -
- 							    entry_count +
- 							    tb->rbytes - 1;
--							bi.tb = tb;
--							bi.bi_bh = tb->R[0];
--							bi.bi_parent =
--							    tb->FR[0];
--							bi.bi_position =
--							    get_right_neighbor_position
--							    (tb, 0);
-+							buffer_info_init_right(tb, &bi);
- 							leaf_paste_in_buffer
- 							    (&bi, 0,
- 							     paste_entry_position,
-@@ -1018,12 +1010,7 @@ static int balance_leaf(struct tree_bala
- 						    (tb, tb->CFR[0], 0);
- 
- 						/* Append part of body into R[0] */
--						bi.tb = tb;
--						bi.bi_bh = tb->R[0];
--						bi.bi_parent = tb->FR[0];
--						bi.bi_position =
--						    get_right_neighbor_position
--						    (tb, 0);
-+						buffer_info_init_right(tb, &bi);
- 						if (n_rem > zeros_num) {
- 							r_zeros_number = 0;
- 							r_body =
-@@ -1070,12 +1057,7 @@ static int balance_leaf(struct tree_bala
- 							     tb->rbytes);
- 					/* append item in R[0] */
- 					if (pos_in_item >= 0) {
--						bi.tb = tb;
--						bi.bi_bh = tb->R[0];
--						bi.bi_parent = tb->FR[0];
--						bi.bi_position =
--						    get_right_neighbor_position
--						    (tb, 0);
-+						buffer_info_init_right(tb, &bi);
- 						leaf_paste_in_buffer(&bi,
- 								     item_pos -
- 								     n +
-@@ -1231,10 +1213,7 @@ static int balance_leaf(struct tree_bala
- 					put_ih_item_len(ih, sbytes[i]);
- 
- 					/* Insert part of the item into S_new[i] before 0-th item */
--					bi.tb = tb;
--					bi.bi_bh = S_new[i];
--					bi.bi_parent = NULL;
--					bi.bi_position = 0;
-+					buffer_info_init_bh(tb, &bi, S_new[i]);
- 
- 					if ((old_len - sbytes[i]) > zeros_num) {
- 						r_zeros_number = 0;
-@@ -1266,10 +1245,7 @@ static int balance_leaf(struct tree_bala
- 							S_new[i]);
- 
- 					/* Insert new item into S_new[i] */
--					bi.tb = tb;
--					bi.bi_bh = S_new[i];
--					bi.bi_parent = NULL;
--					bi.bi_position = 0;
-+					buffer_info_init_bh(tb, &bi, S_new[i]);
- 					leaf_insert_into_buf(&bi,
- 							     item_pos - n +
- 							     snum[i] - 1, ih,
-@@ -1326,10 +1302,7 @@ static int balance_leaf(struct tree_bala
- 							     sbytes[i] - 1,
- 							     S_new[i]);
- 							/* Paste given directory entry to directory item */
--							bi.tb = tb;
--							bi.bi_bh = S_new[i];
--							bi.bi_parent = NULL;
--							bi.bi_position = 0;
-+							buffer_info_init_bh(tb, &bi, S_new[i]);
- 							leaf_paste_in_buffer
- 							    (&bi, 0,
- 							     pos_in_item -
-@@ -1399,11 +1372,7 @@ static int balance_leaf(struct tree_bala
- 						if (n_rem < 0)
- 							n_rem = 0;
- 						/* Append part of body into S_new[0] */
--						bi.tb = tb;
--						bi.bi_bh = S_new[i];
--						bi.bi_parent = NULL;
--						bi.bi_position = 0;
--
-+						buffer_info_init_bh(tb, &bi, S_new[i]);
- 						if (n_rem > zeros_num) {
- 							r_zeros_number = 0;
- 							r_body =
-@@ -1490,10 +1459,7 @@ static int balance_leaf(struct tree_bala
- 					       leaf_mi);
- 
- 					/* paste into item */
--					bi.tb = tb;
--					bi.bi_bh = S_new[i];
--					bi.bi_parent = NULL;
--					bi.bi_position = 0;
-+					buffer_info_init_bh(tb, &bi, S_new[i]);
- 					leaf_paste_in_buffer(&bi,
- 							     item_pos - n +
- 							     snum[i],
-@@ -1560,10 +1526,7 @@ static int balance_leaf(struct tree_bala
- 
- 		switch (flag) {
- 		case M_INSERT:	/* insert item into S[0] */
--			bi.tb = tb;
--			bi.bi_bh = tbS0;
--			bi.bi_parent = PATH_H_PPARENT(tb->tb_path, 0);
--			bi.bi_position = PATH_H_POSITION(tb->tb_path, 1);
-+			buffer_info_init_tbS0(tb, &bi);
- 			leaf_insert_into_buf(&bi, item_pos, ih, body,
- 					     zeros_num);
- 
-@@ -1590,14 +1553,7 @@ static int balance_leaf(struct tree_bala
- 						       "PAP-12260: insert_size is 0 already");
- 
- 						/* prepare space */
--						bi.tb = tb;
--						bi.bi_bh = tbS0;
--						bi.bi_parent =
--						    PATH_H_PPARENT(tb->tb_path,
--								   0);
--						bi.bi_position =
--						    PATH_H_POSITION(tb->tb_path,
--								    1);
-+						buffer_info_init_tbS0(tb, &bi);
- 						leaf_paste_in_buffer(&bi,
- 								     item_pos,
- 								     pos_in_item,
-@@ -1645,14 +1601,7 @@ static int balance_leaf(struct tree_bala
- 						RFALSE(tb->insert_size[0] <= 0,
- 						       "PAP-12275: insert size must not be %d",
- 						       tb->insert_size[0]);
--						bi.tb = tb;
--						bi.bi_bh = tbS0;
--						bi.bi_parent =
--						    PATH_H_PPARENT(tb->tb_path,
--								   0);
--						bi.bi_position =
--						    PATH_H_POSITION(tb->tb_path,
--								    1);
-+						buffer_info_init_tbS0(tb, &bi);
- 						leaf_paste_in_buffer(&bi,
- 								     item_pos,
- 								     pos_in_item,
-@@ -1725,7 +1674,6 @@ void make_empty_node(struct buffer_info
- struct buffer_head *get_FEB(struct tree_balance *tb)
+ 	return 0;
+@@ -47,7 +47,7 @@ security_list(struct inode *inode, const
  {
- 	int i;
--	struct buffer_head *first_b;
- 	struct buffer_info bi;
+ 	int len = namelen;
  
- 	for (i = 0; i < MAX_FEB_SIZE; i++)
-@@ -1735,16 +1683,13 @@ struct buffer_head *get_FEB(struct tree_
- 	if (i == MAX_FEB_SIZE)
- 		reiserfs_panic(tb->tb_sb, "vs-12300", "FEB list is empty");
+-	if (is_reiserfs_priv_object(inode))
++	if (IS_PRIVATE(inode))
+ 		return 0;
  
--	bi.tb = tb;
--	bi.bi_bh = first_b = tb->FEB[i];
--	bi.bi_parent = NULL;
--	bi.bi_position = 0;
-+	buffer_info_init_bh(tb, &bi, tb->FEB[i]);
- 	make_empty_node(&bi);
--	set_buffer_uptodate(first_b);
-+	set_buffer_uptodate(tb->FEB[i]);
-+	tb->used[i] = tb->FEB[i];
- 	tb->FEB[i] = NULL;
--	tb->used[i] = first_b;
+ 	if (out)
+--- a/fs/reiserfs/xattr_trusted.c
++++ b/fs/reiserfs/xattr_trusted.c
+@@ -16,7 +16,7 @@ trusted_get(struct inode *inode, const c
+ 	if (!reiserfs_xattrs(inode->i_sb))
+ 		return -EOPNOTSUPP;
  
--	return (first_b);
-+	return tb->used[i];
+-	if (!(capable(CAP_SYS_ADMIN) || is_reiserfs_priv_object(inode)))
++	if (!(capable(CAP_SYS_ADMIN) || IS_PRIVATE(inode)))
+ 		return -EPERM;
+ 
+ 	return reiserfs_xattr_get(inode, name, buffer, size);
+@@ -32,7 +32,7 @@ trusted_set(struct inode *inode, const c
+ 	if (!reiserfs_xattrs(inode->i_sb))
+ 		return -EOPNOTSUPP;
+ 
+-	if (!(capable(CAP_SYS_ADMIN) || is_reiserfs_priv_object(inode)))
++	if (!(capable(CAP_SYS_ADMIN) || IS_PRIVATE(inode)))
+ 		return -EPERM;
+ 
+ 	return reiserfs_xattr_set(inode, name, buffer, size, flags);
+@@ -46,7 +46,7 @@ static int trusted_del(struct inode *ino
+ 	if (!reiserfs_xattrs(inode->i_sb))
+ 		return -EOPNOTSUPP;
+ 
+-	if (!(capable(CAP_SYS_ADMIN) || is_reiserfs_priv_object(inode)))
++	if (!(capable(CAP_SYS_ADMIN) || IS_PRIVATE(inode)))
+ 		return -EPERM;
+ 
+ 	return 0;
+@@ -60,7 +60,7 @@ trusted_list(struct inode *inode, const
+ 	if (!reiserfs_xattrs(inode->i_sb))
+ 		return 0;
+ 
+-	if (!(capable(CAP_SYS_ADMIN) || is_reiserfs_priv_object(inode)))
++	if (!(capable(CAP_SYS_ADMIN) || IS_PRIVATE(inode)))
+ 		return 0;
+ 
+ 	if (out)
+--- a/include/linux/reiserfs_xattr.h
++++ b/include/linux/reiserfs_xattr.h
+@@ -44,7 +44,6 @@ struct reiserfs_xattr_handler {
+ };
+ 
+ #ifdef CONFIG_REISERFS_FS_XATTR
+-#define is_reiserfs_priv_object(inode) IS_PRIVATE(inode)
+ #define has_xattr_dir(inode) (REISERFS_I(inode)->i_flags & i_has_xattr_dir)
+ ssize_t reiserfs_getxattr(struct dentry *dentry, const char *name,
+ 			  void *buffer, size_t size);
+@@ -104,11 +103,6 @@ static inline void reiserfs_read_unlock_
+ 	up_read(&REISERFS_I(inode)->xattr_sem);
  }
  
- /* This is now used because reiserfs_free_block has to be able to
+-static inline void reiserfs_mark_inode_private(struct inode *inode)
+-{
+-	inode->i_flags |= S_PRIVATE;
+-}
+-
+ static inline void reiserfs_init_xattr_rwsem(struct inode *inode)
+ {
+ 	init_rwsem(&REISERFS_I(inode)->xattr_sem);
+@@ -116,8 +110,6 @@ static inline void reiserfs_init_xattr_r
+ 
+ #else
+ 
+-#define is_reiserfs_priv_object(inode) 0
+-#define reiserfs_mark_inode_private(inode) do {;} while(0)
+ #define reiserfs_getxattr NULL
+ #define reiserfs_setxattr NULL
+ #define reiserfs_listxattr NULL
 
 
