@@ -1,10 +1,10 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [patch 16/35 xattr-rework] reiserfs: remove link detection code
-Date: Mon, 30 Mar 2009 14:02:31 -0400
-Message-ID: <20090330181011.335919655@suse.com>
+Subject: [patch 03/35 error-handling] reiserfs: use buffer_info for leaf_paste_entries
+Date: Mon, 30 Mar 2009 14:02:18 -0400
+Message-ID: <20090330181009.574081558@suse.com>
 References: <20090330180215.951354436@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=patches.suse/reiserfs-remove-link-detection.diff
+Content-Disposition: inline; filename=patches.suse/reiserfs-buffer-info-for-balance.diff
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -13,44 +13,124 @@ Content-Transfer-Encoding: 7bit
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
- Early in the reiserfs xattr development, there was a plan to use hardlinks
- to save disk space for identical xattrs. That code never materialized and
- isn't going to, so this patch removes the detection code.
+ This patch makes leaf_paste_entries more consistent with respect to the
+ other leaf operations. Using buffer_info instead of buffer_head directly
+ allows us to get a superblock pointer for use in error handling.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
 ---
- fs/reiserfs/xattr.c |   13 -------------
- 1 file changed, 13 deletions(-)
+ fs/reiserfs/do_balan.c      |   17 +++++++----------
+ fs/reiserfs/lbalance.c      |    5 +++--
+ include/linux/reiserfs_fs.h |    2 +-
+ 3 files changed, 11 insertions(+), 13 deletions(-)
 
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -432,7 +432,6 @@ reiserfs_xattr_set(struct inode *inode,
- 	if (buffer && buffer_size)
- 		xahash = xattr_hash(buffer, buffer_size);
+--- a/fs/reiserfs/do_balan.c
++++ b/fs/reiserfs/do_balan.c
+@@ -449,8 +449,7 @@ static int balance_leaf(struct tree_bala
+ 							/* when we have merge directory item, pos_in_item has been changed too */
  
--      open_file:
- 	dentry = get_xa_file_dentry(inode, name, flags);
- 	if (IS_ERR(dentry)) {
- 		err = PTR_ERR(dentry);
-@@ -441,18 +440,6 @@ reiserfs_xattr_set(struct inode *inode,
+ 							/* paste new directory entry. 1 is entry number */
+-							leaf_paste_entries(bi.
+-									   bi_bh,
++							leaf_paste_entries(&bi,
+ 									   n +
+ 									   item_pos
+ 									   -
+@@ -699,7 +698,7 @@ static int balance_leaf(struct tree_bala
+ 							   n + item_pos -
+ 							   ret_val);
+ 					if (is_direntry_le_ih(pasted))
+-						leaf_paste_entries(bi.bi_bh,
++						leaf_paste_entries(&bi,
+ 								   n +
+ 								   item_pos -
+ 								   ret_val,
+@@ -894,8 +893,7 @@ static int balance_leaf(struct tree_bala
+ 							     tb->insert_size[0],
+ 							     body, zeros_num);
+ 							/* paste entry */
+-							leaf_paste_entries(bi.
+-									   bi_bh,
++							leaf_paste_entries(&bi,
+ 									   0,
+ 									   paste_entry_position,
+ 									   1,
+@@ -1096,7 +1094,7 @@ static int balance_leaf(struct tree_bala
+ 							   tb->rnum[0]);
+ 					if (is_direntry_le_ih(pasted)
+ 					    && pos_in_item >= 0) {
+-						leaf_paste_entries(bi.bi_bh,
++						leaf_paste_entries(&bi,
+ 								   item_pos -
+ 								   n +
+ 								   tb->rnum[0],
+@@ -1339,8 +1337,7 @@ static int balance_leaf(struct tree_bala
+ 							     tb->insert_size[0],
+ 							     body, zeros_num);
+ 							/* paste new directory entry */
+-							leaf_paste_entries(bi.
+-									   bi_bh,
++							leaf_paste_entries(&bi,
+ 									   0,
+ 									   pos_in_item
+ 									   -
+@@ -1505,7 +1502,7 @@ static int balance_leaf(struct tree_bala
+ 							   item_pos - n +
+ 							   snum[i]);
+ 					if (is_direntry_le_ih(pasted)) {
+-						leaf_paste_entries(bi.bi_bh,
++						leaf_paste_entries(&bi,
+ 								   item_pos -
+ 								   n + snum[i],
+ 								   pos_in_item,
+@@ -1606,7 +1603,7 @@ static int balance_leaf(struct tree_bala
+ 								     zeros_num);
  
- 	REISERFS_I(inode)->i_flags |= i_has_xattr_dir;
+ 						/* paste entry */
+-						leaf_paste_entries(bi.bi_bh,
++						leaf_paste_entries(&bi,
+ 								   item_pos,
+ 								   pos_in_item,
+ 								   1,
+--- a/fs/reiserfs/lbalance.c
++++ b/fs/reiserfs/lbalance.c
+@@ -111,7 +111,7 @@ static void leaf_copy_dir_entries(struct
+ 	item_num_in_dest =
+ 	    (last_first == FIRST_TO_LAST) ? (B_NR_ITEMS(dest) - 1) : 0;
  
--	/* we need to copy it off.. */
--	if (dentry->d_inode->i_nlink > 1) {
--		dput(dentry);
--		err = reiserfs_xattr_del(inode, name);
--		if (err < 0)
--			goto out;
--		/* We just killed the old one, we're not replacing anymore */
--		if (flags & XATTR_REPLACE)
--			flags &= ~XATTR_REPLACE;
--		goto open_file;
--	}
--
- 	/* Resize it so we're ok to write there */
- 	newattrs.ia_size = buffer_size;
- 	newattrs.ia_valid = ATTR_SIZE | ATTR_CTIME;
+-	leaf_paste_entries(dest_bi->bi_bh, item_num_in_dest,
++	leaf_paste_entries(dest_bi, item_num_in_dest,
+ 			   (last_first ==
+ 			    FIRST_TO_LAST) ? I_ENTRY_COUNT(B_N_PITEM_HEAD(dest,
+ 									  item_num_in_dest))
+@@ -1191,7 +1191,7 @@ static void leaf_delete_items_entirely(s
+ }
+ 
+ /* paste new_entry_count entries (new_dehs, records) into position before to item_num-th item */
+-void leaf_paste_entries(struct buffer_head *bh,
++void leaf_paste_entries(struct buffer_info *bi,
+ 			int item_num,
+ 			int before,
+ 			int new_entry_count,
+@@ -1203,6 +1203,7 @@ void leaf_paste_entries(struct buffer_he
+ 	struct reiserfs_de_head *deh;
+ 	char *insert_point;
+ 	int i, old_entry_num;
++	struct buffer_head *bh = bi->bi_bh;
+ 
+ 	if (new_entry_count == 0)
+ 		return;
+--- a/include/linux/reiserfs_fs.h
++++ b/include/linux/reiserfs_fs.h
+@@ -2026,7 +2026,7 @@ void leaf_paste_in_buffer(struct buffer_
+ 			  int zeros_number);
+ void leaf_cut_from_buffer(struct buffer_info *bi, int cut_item_num,
+ 			  int pos_in_item, int cut_size);
+-void leaf_paste_entries(struct buffer_head *bh, int item_num, int before,
++void leaf_paste_entries(struct buffer_info *bi, int item_num, int before,
+ 			int new_entry_count, struct reiserfs_de_head *new_dehs,
+ 			const char *records, int paste_size);
+ /* ibalance.c */
 
 
