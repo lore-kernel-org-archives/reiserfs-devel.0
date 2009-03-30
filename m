@@ -1,56 +1,55 @@
-From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Subject: [PATCH] reiserfs: fix blkdev_issue_flush() failure handling
-Date: Sun, 29 Mar 2009 19:29:40 +0200
-Message-ID: <200903291929.40523.bzolnier@gmail.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [patch 09/35 error-handling] reiserfs: add locking around error buffer
+Date: Mon, 30 Mar 2009 14:02:24 -0400
+Message-ID: <20090330181010.432220021@suse.com>
+References: <20090330180215.951354436@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:from:to:subject:date
-         :user-agent:cc:mime-version:content-type:content-transfer-encoding
-         :content-disposition:message-id;
-        bh=tIqYwU+QG6Lak6gYahaHHgFvba9W3LekxXI96pfKDYU=;
-        b=TAIMvIg44eyoJaEjlJhhvsHqwLfR7YCIe4Ldn4hNkLxsXj48JgN9qD2P/7aqx1srmY
-         YFGcpfrrWMDGYeTAUAPQrpuHu/bYExu8UkoYl2qjVbxE7+PQtlYTAeqgYnFbq6TOVJv3
-         eLXZU6wUr5EleiBgR9aTafdfctMmmjL89Y++I=
-Content-Disposition: inline
+Content-Disposition: inline; filename=patches.fixes/reiserfs-error-buffer-locking
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
-blkdev_issue_flush() may fail (i.e. due to media error on FLUSH CACHE
-command execution) so its users should check for the return value.
+ The formatting of the error buffer is race prone. It uses static buffers
+ for both formatting and output. While overwriting the error buffer
+ can product garbled output, overwriting the format buffer with incompatible
+ % directives can cause crashes.
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 ---
- fs/reiserfs/file.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/reiserfs/prints.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Index: b/fs/reiserfs/file.c
-===================================================================
---- a/fs/reiserfs/file.c
-+++ b/fs/reiserfs/file.c
-@@ -140,14 +140,18 @@ static int reiserfs_sync_file(struct fil
- 	struct inode *p_s_inode = p_s_dentry->d_inode;
- 	int n_err;
- 	int barrier_done;
-+	int tmp_ret;
+--- a/fs/reiserfs/prints.c
++++ b/fs/reiserfs/prints.c
+@@ -184,7 +184,7 @@ static char *is_there_reiserfs_struct(ch
+    printk ("bad key %lu %lu %lu %lu", key->k_dir_id, key->k_objectid, 
+            key->k_offset, key->k_uniqueness); 
+ */
+-
++static DEFINE_SPINLOCK(error_lock);
+ static void prepare_error_buf(const char *fmt, va_list args)
+ {
+ 	char *fmt1 = fmt_buf;
+@@ -192,6 +192,8 @@ static void prepare_error_buf(const char
+ 	char *p = error_buf;
+ 	int what;
  
- 	BUG_ON(!S_ISREG(p_s_inode->i_mode));
- 	n_err = sync_mapping_buffers(p_s_inode->i_mapping);
- 	reiserfs_write_lock(p_s_inode->i_sb);
- 	barrier_done = reiserfs_commit_for_inode(p_s_inode);
- 	reiserfs_write_unlock(p_s_inode->i_sb);
--	if (barrier_done != 1 && reiserfs_barrier_flush(p_s_inode->i_sb))
--		blkdev_issue_flush(p_s_inode->i_sb->s_bdev, NULL);
-+	if (barrier_done != 1 && reiserfs_barrier_flush(p_s_inode->i_sb)) {
-+		tmp_ret = blkdev_issue_flush(p_s_inode->i_sb->s_bdev, NULL);
-+		if (n_err == 0 && tmp_ret < 0 && tmp_ret != -EOPNOTSUPP)
-+			n_err = tmp_ret;
-+	}
- 	if (barrier_done < 0)
- 		return barrier_done;
- 	return (n_err < 0) ? -EIO : 0;
++	spin_lock(&error_lock);
++
+ 	strcpy(fmt1, fmt);
+ 
+ 	while ((k = is_there_reiserfs_struct(fmt1, &what)) != NULL) {
+@@ -237,6 +239,7 @@ static void prepare_error_buf(const char
+ 		fmt1 = k + 2;
+ 	}
+ 	vsprintf(p, fmt1, args);
++	spin_unlock(&error_lock);
+ 
+ }
+ 
+
+
