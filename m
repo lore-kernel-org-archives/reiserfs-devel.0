@@ -1,10 +1,10 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [patch 04/35 error-handling] reiserfs: use more consistent printk formatting
-Date: Mon, 30 Mar 2009 14:02:19 -0400
-Message-ID: <20090330181009.704590533@suse.com>
+Subject: [patch 07/35 error-handling] reiserfs: prepare_error_buf wrongly consumes va_arg
+Date: Mon, 30 Mar 2009 14:02:22 -0400
+Message-ID: <20090330181010.178949983@suse.com>
 References: <20090330180215.951354436@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=patches.suse/reiserfs-consistent-messages.diff
+Content-Disposition: inline; filename=patches.fixes/reiserfs-varargs-fix
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -13,82 +13,62 @@ Content-Transfer-Encoding: 7bit
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
- The output format between a warning/error/panic/info/etc changes with
- which one is used.
+ vsprintf will consume varargs on its own. Skipping them manually
+ results in garbage in the error buffer, or Oopses in the case of
+ pointers.
 
- The following patch makes the messages more internally consistent, but also
- more consistent with other Linux filesystems.
+ This patch removes the advancement and fixes a number of bugs where
+ crashes were observed as side effects of a regular error report.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
 
---
- fs/reiserfs/prints.c |   28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ fs/reiserfs/prints.c |   12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
 --- a/fs/reiserfs/prints.c
 +++ b/fs/reiserfs/prints.c
-@@ -268,10 +268,10 @@ void reiserfs_warning(struct super_block
+@@ -157,19 +157,16 @@ static void sprintf_disk_child(char *buf
+ 		dc_size(dc));
+ }
+ 
+-static char *is_there_reiserfs_struct(char *fmt, int *what, int *skip)
++static char *is_there_reiserfs_struct(char *fmt, int *what)
  {
- 	do_reiserfs_warning(fmt);
- 	if (sb)
--		printk(KERN_WARNING "ReiserFS: %s: warning: %s\n",
--		       reiserfs_bdevname(sb), error_buf);
-+		printk(KERN_WARNING "REISERFS warning (device %s): %s\n",
-+		       sb->s_id, error_buf);
- 	else
--		printk(KERN_WARNING "ReiserFS: warning: %s\n", error_buf);
-+		printk(KERN_WARNING "REISERFS warning: %s\n", error_buf);
- }
+ 	char *k = fmt;
  
- /* No newline.. reiserfs_info calls can be followed by printk's */
-@@ -279,10 +279,10 @@ void reiserfs_info(struct super_block *s
- {
- 	do_reiserfs_warning(fmt);
- 	if (sb)
--		printk(KERN_NOTICE "ReiserFS: %s: %s",
--		       reiserfs_bdevname(sb), error_buf);
-+		printk(KERN_NOTICE "REISERFS (device %s): %s",
-+		       sb->s_id, error_buf);
- 	else
--		printk(KERN_NOTICE "ReiserFS: %s", error_buf);
-+		printk(KERN_NOTICE "REISERFS %s:", error_buf);
- }
- 
- /* No newline.. reiserfs_printk calls can be followed by printk's */
-@@ -297,10 +297,10 @@ void reiserfs_debug(struct super_block *
- #ifdef CONFIG_REISERFS_CHECK
- 	do_reiserfs_warning(fmt);
- 	if (s)
--		printk(KERN_DEBUG "ReiserFS: %s: %s\n",
--		       reiserfs_bdevname(s), error_buf);
-+		printk(KERN_DEBUG "REISERFS debug (device %s): %s\n",
-+		       s->s_id, error_buf);
- 	else
--		printk(KERN_DEBUG "ReiserFS: %s\n", error_buf);
-+		printk(KERN_DEBUG "REISERFS debug: %s\n", error_buf);
- #endif
- }
- 
-@@ -368,15 +368,15 @@ void reiserfs_abort(struct super_block *
- 	do_reiserfs_warning(fmt);
- 
- 	if (reiserfs_error_panic(sb)) {
--		panic(KERN_CRIT "REISERFS: panic (device %s): %s\n",
--		      reiserfs_bdevname(sb), error_buf);
-+		panic(KERN_CRIT "REISERFS panic (device %s): %s\n", sb->s_id,
-+		      error_buf);
+-	*skip = 0;
+-
+ 	while ((k = strchr(k, '%')) != NULL) {
+ 		if (k[1] == 'k' || k[1] == 'K' || k[1] == 'h' || k[1] == 't' ||
+ 		    k[1] == 'z' || k[1] == 'b' || k[1] == 'y' || k[1] == 'a') {
+ 			*what = k[1];
+ 			break;
+ 		}
+-		(*skip)++;
+ 		k++;
  	}
+ 	return k;
+@@ -193,18 +190,15 @@ static void prepare_error_buf(const char
+ 	char *fmt1 = fmt_buf;
+ 	char *k;
+ 	char *p = error_buf;
+-	int i, j, what, skip;
++	int what;
  
--	if (sb->s_flags & MS_RDONLY)
-+	if (reiserfs_is_journal_aborted(SB_JOURNAL(sb)))
- 		return;
+ 	strcpy(fmt1, fmt);
  
--	printk(KERN_CRIT "REISERFS: abort (device %s): %s\n",
--	       reiserfs_bdevname(sb), error_buf);
-+	printk(KERN_CRIT "REISERFS abort (device %s): %s\n", sb->s_id,
-+	       error_buf);
+-	while ((k = is_there_reiserfs_struct(fmt1, &what, &skip)) != NULL) {
++	while ((k = is_there_reiserfs_struct(fmt1, &what)) != NULL) {
+ 		*k = 0;
  
- 	sb->s_flags |= MS_RDONLY;
- 	reiserfs_journal_abort(sb, errno);
+ 		p += vsprintf(p, fmt1, args);
+ 
+-		for (i = 0; i < skip; i++)
+-			j = va_arg(args, int);
+-
+ 		switch (what) {
+ 		case 'k':
+ 			sprintf_le_key(p, va_arg(args, struct reiserfs_key *));
 
 
