@@ -1,10 +1,10 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [patch 07/35 error-handling] reiserfs: prepare_error_buf wrongly consumes va_arg
-Date: Mon, 30 Mar 2009 14:02:22 -0400
-Message-ID: <20090330181010.178949983@suse.com>
+Subject: [patch 08/35 error-handling] reiserfs: eliminate reiserfs_warning from uniqueness functions
+Date: Mon, 30 Mar 2009 14:02:23 -0400
+Message-ID: <20090330181010.295738430@suse.com>
 References: <20090330180215.951354436@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=patches.fixes/reiserfs-varargs-fix
+Content-Disposition: inline; filename=patches.suse/reiserfs_warning-reentrant
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -13,62 +13,39 @@ Content-Transfer-Encoding: 7bit
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
- vsprintf will consume varargs on its own. Skipping them manually
- results in garbage in the error buffer, or Oopses in the case of
- pointers.
-
- This patch removes the advancement and fixes a number of bugs where
- crashes were observed as side effects of a regular error report.
+ uniqueness2type and type2uniquness issue a warning when the value is
+ unknown. When called from reiserfs_warning, this causes a re-entrancy
+ problem and deadlocks on the error buffer lock.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 ---
+ include/linux/reiserfs_fs.h |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
- fs/reiserfs/prints.c |   12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
-
---- a/fs/reiserfs/prints.c
-+++ b/fs/reiserfs/prints.c
-@@ -157,19 +157,16 @@ static void sprintf_disk_child(char *buf
- 		dc_size(dc));
- }
- 
--static char *is_there_reiserfs_struct(char *fmt, int *what, int *skip)
-+static char *is_there_reiserfs_struct(char *fmt, int *what)
- {
- 	char *k = fmt;
- 
--	*skip = 0;
--
- 	while ((k = strchr(k, '%')) != NULL) {
- 		if (k[1] == 'k' || k[1] == 'K' || k[1] == 'h' || k[1] == 't' ||
- 		    k[1] == 'z' || k[1] == 'b' || k[1] == 'y' || k[1] == 'a') {
- 			*what = k[1];
- 			break;
- 		}
--		(*skip)++;
- 		k++;
+--- a/include/linux/reiserfs_fs.h
++++ b/include/linux/reiserfs_fs.h
+@@ -560,10 +560,8 @@ static inline int uniqueness2type(__u32
+ 		return TYPE_DIRECT;
+ 	case V1_DIRENTRY_UNIQUENESS:
+ 		return TYPE_DIRENTRY;
+-	default:
+-		reiserfs_warning(NULL, "vs-500", "unknown uniqueness %d",
+-				 uniqueness);
+ 	case V1_ANY_UNIQUENESS:
++	default:
+ 		return TYPE_ANY;
  	}
- 	return k;
-@@ -193,18 +190,15 @@ static void prepare_error_buf(const char
- 	char *fmt1 = fmt_buf;
- 	char *k;
- 	char *p = error_buf;
--	int i, j, what, skip;
-+	int what;
- 
- 	strcpy(fmt1, fmt);
- 
--	while ((k = is_there_reiserfs_struct(fmt1, &what, &skip)) != NULL) {
-+	while ((k = is_there_reiserfs_struct(fmt1, &what)) != NULL) {
- 		*k = 0;
- 
- 		p += vsprintf(p, fmt1, args);
- 
--		for (i = 0; i < skip; i++)
--			j = va_arg(args, int);
--
- 		switch (what) {
- 		case 'k':
- 			sprintf_le_key(p, va_arg(args, struct reiserfs_key *));
+ }
+@@ -580,9 +578,8 @@ static inline __u32 type2uniqueness(int
+ 		return V1_DIRECT_UNIQUENESS;
+ 	case TYPE_DIRENTRY:
+ 		return V1_DIRENTRY_UNIQUENESS;
+-	default:
+-		reiserfs_warning(NULL, "vs-501", "unknown type %d", type);
+ 	case TYPE_ANY:
++	default:
+ 		return V1_ANY_UNIQUENESS;
+ 	}
+ }
 
 
