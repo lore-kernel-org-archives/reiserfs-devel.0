@@ -1,66 +1,45 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [patch 00/35] Jeff's ReiserFS Patch Queue
-Date: Thu, 2 Apr 2009 01:59:39 +0200
-Message-ID: <20090401235937.GA6131@nowhere>
-References: <20090330180215.951354436@suse.com> <alpine.LFD.2.00.0903301236280.4093@localhost.localdomain> <20090401161657.GA13802@elte.hu> <49D39642.9070606@suse.com> <20090401163407.GE22517@elte.hu> <20090401165134.GA5924@nowhere> <20090401221850.GB6776@brong.net>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: [PATCH] reiserfs: fix printk format warning
+Date: Fri, 3 Apr 2009 05:34:37 +0400
+Message-ID: <20090403013437.GA29003@orion>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:received:date:from:to:cc
-         :subject:message-id:references:mime-version:content-type
-         :content-disposition:in-reply-to:user-agent;
-        bh=vV0iMfx00PELuaBcK+5CPTyI0aifMr4gZ1ODahqkhb4=;
-        b=tGSWyTU+4FgenCptJL4bhRVGJ2cs4DXuaIEQG+qde3QnI9vNgJGcoJ3yA7339hlz1D
-         9oXdYtwvVmYUvUbOIvRi9prw8QHe7mw6K6UqWQvNQB+1PXkBzEQCXACY1hGrqot+8HaC
-         1wxhqG0DOvC5NA79BNWXnYvd0cwkrXfQYiHo0=
+        h=domainkey-signature:received:received:date:from:to:subject
+         :message-id:mime-version:content-type:content-disposition:user-agent;
+        bh=zsuQ1vOOwy8HKkPxKjIOEJsSX4516UDrdDzTMsR+Bwg=;
+        b=pnk46vK74Vikz2Bf5KddujpZJlEyE/TdiqiVDNegShyOY/ilJS8aCXK5n0XSNw4wNA
+         WVJqn+EeX1AZ9++TEgyRlMALDafRrDIMo5awiTG738pOxMaYl3O09Ova/PXAHWqU6wP/
+         VrtUWLDIbQopzEodH/AyD+DC4F6ZSsqMFwaj8=
 Content-Disposition: inline
-In-Reply-To: <20090401221850.GB6776@brong.net>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bron Gondwana <brong@fastmail.fm>
-Cc: Ingo Molnar <mingo@elte.hu>, Jeff Mahoney <jeffm@suse.com>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+To: Jeff Mahoney <jeffm@suse.com>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Apr 02, 2009 at 09:18:50AM +1100, Bron Gondwana wrote:
-> On Wed, Apr 01, 2009 at 06:51:36PM +0200, Frederic Weisbecker wrote:
-> > > I'll let Frederic describe it but AFAIK the patch is working fine 
-> > > with the BKL as a mutex and no lockdep complaints or lockups. The 
-> > > main focus is now on finding the performance affecting spots, 
-> > > because Frederic's main desktop is on reiserfs and he does not 
-> > > accept a slowdown :)
-> > 
-> > Hehe :-)
-> > No actually I would accept a tiny slowdown but I fear that the common
-> > reiserfs users wouldn't.
-> 
-> We run big(ish) imap servers with up to 80 reiserfs partitions
-> spread over a bunch of SCSI or SAS attached external drive units.
-> I'm actually surprised that the BKL isn't causing us much pain
-> (load is amazingly low considering how many users are on these
-> boxes - at least now that we have 32Gb RAM and 64 bit kernels).
->
-> Are you still using an "entire reiserfs subsystem" mutex, or
-> per-filesystem locking?  If it's per filesystem, then I suspect
-> we'll be big fans!
+Fix following warning message
+fs/reiserfs/procfs.c:393: warning: format '%u' expects type 'unsigned int', but argument 22 has type 'long unsigned int'
+introduced in 600ed4167
+(reiserfs: audit transaction ids to always be unsigned ints)
 
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+---
 
+ include/linux/reiserfs_fs_sb.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Yeah. It is per superblock :-)
-
-Frederic.
-
-
->  
-> > I'm still working on this and once it's ready enough for an RFC patch,
-> > I'll explain how is done the conversion to a mutex.
-> > 
-> > Stay tuned.
-> 
-> Sure will!
-> 
-> Thanks,
-> 
-> Bron.
-
+diff --git a/include/linux/reiserfs_fs_sb.h b/include/linux/reiserfs_fs_sb.h
+index 5621d87..1d1594a 100644
+--- a/include/linux/reiserfs_fs_sb.h
++++ b/include/linux/reiserfs_fs_sb.h
+@@ -193,7 +193,7 @@ struct reiserfs_journal {
+ 	atomic_t j_wcount;	/* count of writers for current commit */
+ 	unsigned long j_bcount;	/* batch count. allows turning X transactions into 1 */
+ 	unsigned long j_first_unflushed_offset;	/* first unflushed transactions offset */
+-	unsigned long j_last_flush_trans_id;	/* last fully flushed journal timestamp */
++	unsigned int j_last_flush_trans_id;	/* last fully flushed journal timestamp */
+ 	struct buffer_head *j_header_bh;
+ 
+ 	time_t j_trans_start_time;	/* time this transaction started */
