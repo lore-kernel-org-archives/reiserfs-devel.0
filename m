@@ -1,45 +1,58 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: [PATCH] reiserfs: fix printk format warning
-Date: Fri, 3 Apr 2009 05:34:37 +0400
-Message-ID: <20090403013437.GA29003@orion>
+From: "Lelsie Rhorer" <lrhorer@satx.rr.com>
+Subject: Problem with reiserfs volume
+Date: Sat, 4 Apr 2009 12:25:32 -0500
+Message-ID: <20090404172534.YQIW19140.cdptpa-omta03.mail.rr.com@Leslie>
+Reply-To: <lrhorer@satx.rr.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:date:from:to:subject
-         :message-id:mime-version:content-type:content-disposition:user-agent;
-        bh=zsuQ1vOOwy8HKkPxKjIOEJsSX4516UDrdDzTMsR+Bwg=;
-        b=pnk46vK74Vikz2Bf5KddujpZJlEyE/TdiqiVDNegShyOY/ilJS8aCXK5n0XSNw4wNA
-         WVJqn+EeX1AZ9++TEgyRlMALDafRrDIMo5awiTG738pOxMaYl3O09Ova/PXAHWqU6wP/
-         VrtUWLDIbQopzEodH/AyD+DC4F6ZSsqMFwaj8=
-Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jeff Mahoney <jeffm@suse.com>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-Fix following warning message
-fs/reiserfs/procfs.c:393: warning: format '%u' expects type 'unsigned int', but argument 22 has type 'long unsigned int'
-introduced in 600ed4167
-(reiserfs: audit transaction ids to always be unsigned ints)
 
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
----
+I know this is a development list, so if I am posting in the wrong list,
+please forgive me and point me toward the correct one.
 
- include/linux/reiserfs_fs_sb.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+I'm having a severe problem whose root cause I cannot determine.  I have a
+RAID 6 array managed by mdadm running on Debian "Lenny" with a 3.2GHz AMD
+Athlon 64 x 2 processor and 8G of RAM.  The kernel is 2.6.26-1-amd64.  There
+are ten 1 Terabyte SATA drives, unpartitioned, fully allocated to the
+/dev/md0 device. The drive are served by 3 Silicon Image SATA port
+multipliers and a Silicon Image 4 port eSATA controller.  The /dev/md0
+device is also unpartitioned, and all 8T of active space is formatted as a
+single Reiserfs file system.  The entire volume is mounted to /RAID.
+Various directories on the volume are shared using both NFS and SAMBA.
 
-diff --git a/include/linux/reiserfs_fs_sb.h b/include/linux/reiserfs_fs_sb.h
-index 5621d87..1d1594a 100644
---- a/include/linux/reiserfs_fs_sb.h
-+++ b/include/linux/reiserfs_fs_sb.h
-@@ -193,7 +193,7 @@ struct reiserfs_journal {
- 	atomic_t j_wcount;	/* count of writers for current commit */
- 	unsigned long j_bcount;	/* batch count. allows turning X transactions into 1 */
- 	unsigned long j_first_unflushed_offset;	/* first unflushed transactions offset */
--	unsigned long j_last_flush_trans_id;	/* last fully flushed journal timestamp */
-+	unsigned int j_last_flush_trans_id;	/* last fully flushed journal timestamp */
- 	struct buffer_head *j_header_bh;
- 
- 	time_t j_trans_start_time;	/* time this transaction started */
+Performance of the RAID system is very good.  The array can read and write
+at over 450 Mbps, and I don't know if the limit is the array itself or the
+network, but since the performance is more than adequate I really am not
+concerned which is the case.
+
+The issue is the entire array will occasionally pause completely for about
+40 seconds when a file is created.  This does not always happen, but the
+situation is easily reproducible.  The frequency at which the symptom occurs
+seems to be somewhat related to the transfer load on the array.  If no other
+transfers are in process, then the failure seems somewhat more rare, perhaps
+accompanying less than 1 file creation in 10..  During heavy file transfer
+activity, sometimes the system halts with every other file creation.
+Although I have observed many dozens of these events, I have never once
+observed it to happen except when a file creation occurs. 
+Reading and writing existing files never triggers the event, although any
+read or write occurring during the event is halted for the duration. 
+(There is one cron jog which runs every half-hour that creates a tiny file;
+this is the most common failure vector.)  There are other drives formatted
+with other file systems on the machine, but the issue has never been seen on
+any of the other drives.  When the array runs its regularly scheduled health
+check, the problem is much worse.  Not only does it lock up with almost
+every single file creation, but the lock-up time is much longer - sometimes
+in excess of 2 minutes.
+
+Transfers via Linux based utilities (ftp, NFS, cp, mv, rsync, etc) all
+recover after the event, but SAMBA based transfers frequently fail, both
+reads and writes.
+
+I discussed the matter over on the linux-raid list, but so far none of the
+suggestions there have yielded any great progress in fixing the issue.
+
