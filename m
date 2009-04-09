@@ -1,65 +1,46 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [PATCH] reiserfs: kill-the-BKL
-Date: Thu, 9 Apr 2009 22:05:31 +0200
-Message-ID: <20090409200530.GB6033@nowhere>
-References: <1239070789-13354-1-git-send-email-fweisbec@gmail.com> <87tz4x97uq.fsf@basil.nowhere.org> <alpine.LFD.2.00.0904090831000.4583@localhost.localdomain> <20090409184022.GA2665@elte.hu> <20090409193635.GO14687@one.firstfloor.org>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] reiserfs: fix printk format warning
+Date: Thu, 9 Apr 2009 13:58:03 -0700
+Message-ID: <20090409135803.2c011dee.akpm@linux-foundation.org>
+References: <20090403013437.GA29003@orion>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:received:date:from:to:cc
-         :subject:message-id:references:mime-version:content-type
-         :content-disposition:in-reply-to:user-agent;
-        bh=Fm//ONClWCIi3iUtmwU+PQm33ISDY2czVK9pbcG+HUs=;
-        b=TaxOheZAXmgZ0BcGMtM+SCx4ghC2BHeJasbXX0HTb+c1xlEz3Q+VxveJCbdg+ZMUuS
-         BHGhKKKzn+m6wJrGMWEF+DOxgnGQdiiiQ8OmE29p6dBlPO8y1Luui/FNc2YQVSfHlG+g
-         va6C7awt7S0DzR2dllSNdalQKgg9LRBbezU0I=
-Content-Disposition: inline
-In-Reply-To: <20090409193635.GO14687@one.firstfloor.org>
+In-Reply-To: <20090403013437.GA29003@orion>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andi Kleen <andi@firstfloor.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Bron Gondwana <brong@fastmail.fm>, Andrew Morton <akpm@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: jeffm@suse.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Apr 09, 2009 at 09:36:35PM +0200, Andi Kleen wrote:
-> > Using a mutex seems like the sane choice here. I'd advocate spinlocks 
-> > for a new filesystem any day (but even there it's a fine choice to have 
-> > a mutex, if top of the line scalability is not an issue).
-> > 
-> > But for a legacy filesystem like reiser3, which depended on the BKL 
+On Fri, 3 Apr 2009 05:34:37 +0400
+Alexander Beregalov <a.beregalov@gmail.com> wrote:
+
+> Fix following warning message
+> fs/reiserfs/procfs.c:393: warning: format '%u' expects type 'unsigned int', but argument 22 has type 'long unsigned int'
+> introduced in 600ed4167
+> (reiserfs: audit transaction ids to always be unsigned ints)
 > 
-> reiser3 is much more widely used in the user base than a lot of "non 
-> legacy" file systems. It's very likely it has significantly
-> more users than ext4 for example. Remember that it was the default file system
-> for a major distribution until very recently. I also got a few
-> reiser3 fs still around, it tended to perform very well
-> on kernel hacker workloads.
+> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+> ---
 > 
-> Given all that I think the current performance penalties Frederic reports
-> are not acceptable. Dropping BKL is not a cause in itself, but should
-> just improve performance.
-
-
-It's not only about performances, latency is also a fair goal here.
-Moreover, reiserfs is not the only one concerned while dropping its
-Bkl, this is one big source of contention less for the rest of the system.
-
-And concerning performance, I'm working on it :-)
-
-Frederic.
-
-
-> > auto-dropping on schedule() it would be rather fragile to use spinlocks, 
-> > and it would take forever to validate the result. 
+>  include/linux/reiserfs_fs_sb.h |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
 > 
-> Not convinced it would be that hard. It could be probably done with some 
-> straight forward static code analysis. And after that since there's
-> not much development going anymore it's unlikely to break again.
-> 
-> -Andi
-> 
-> -- 
-> ak@linux.intel.com -- Speaking for myself only.
+> diff --git a/include/linux/reiserfs_fs_sb.h b/include/linux/reiserfs_fs_sb.h
+> index 5621d87..1d1594a 100644
+> --- a/include/linux/reiserfs_fs_sb.h
+> +++ b/include/linux/reiserfs_fs_sb.h
+> @@ -193,7 +193,7 @@ struct reiserfs_journal {
+>  	atomic_t j_wcount;	/* count of writers for current commit */
+>  	unsigned long j_bcount;	/* batch count. allows turning X transactions into 1 */
+>  	unsigned long j_first_unflushed_offset;	/* first unflushed transactions offset */
+> -	unsigned long j_last_flush_trans_id;	/* last fully flushed journal timestamp */
+> +	unsigned int j_last_flush_trans_id;	/* last fully flushed journal timestamp */
+>  	struct buffer_head *j_header_bh;
+>  
+>  	time_t j_trans_start_time;	/* time this transaction started */
+
+Yes, looking at the code I think it does want to be a u32.
+
 
