@@ -1,67 +1,61 @@
-From: Toby Thain <toby@telegraphics.com.au>
-Subject: Re: [PATCH] reiserfs: kill-the-BKL
-Date: Sun, 12 Apr 2009 00:05:19 -0400
-Message-ID: <8E218B71-7FED-463D-8F43-B3D5FFA3E0D0@telegraphics.com.au>
-References: <1239070789-13354-1-git-send-email-fweisbec@gmail.com> <87tz4x97uq.fsf@basil.nowhere.org> <alpine.LFD.2.00.0904090831000.4583@localhost.localdomain> <20090409184022.GA2665@elte.hu> <20090409193635.GO14687@one.firstfloor.org>
-Mime-Version: 1.0 (Apple Message framework v753.1)
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20090409193635.GO14687@one.firstfloor.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: [PATCH] kill-the-BKL: fix unsafe j_flush_mutex lock
+Date: Tue, 14 Apr 2009 00:10:35 +0200
+Message-ID: <1239660635-12940-1-git-send-email-fweisbec@gmail.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753356AbZDMWKv@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:from:to:cc:subject:date
+         :message-id:x-mailer;
+        bh=+CpOUX0NCjuYNP9AhJirLLudPd+gdJfpnMVEhH5cD3Y=;
+        b=mN87E/1RAidQv4cct4tx/XetbJ4gU/YJjZqMnlfZXdZaiV4OelObLtXU5TcQ/9cjVv
+         q2jPY82VZfYzg6JodRU5hJ8EbyWhSakvkxXshJwkQ9NJFzB7QXbkd3ytk3bMNaaW1atF
+         WjXeizjto1zK81dVwzDvT7rkVDlQ3Xol6o/Yg=
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
-To: Andi Kleen <andi@firstfloor.org>
-Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ingo Molnar <mingo@elte.hu>
+Cc: LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
+Impact: fix a deadlock
 
-On 9-Apr-09, at 3:36 PM, Andi Kleen wrote:
+The j_flush_mutex is acquired safely in journal.c:
+if we can't take it, we free the reiserfs per superblock lock
+and wait a bit.
 
->> Using a mutex seems like the sane choice here. I'd advocate spinlocks
->> for a new filesystem any day (but even there it's a fine choice to  
->> have
->> a mutex, if top of the line scalability is not an issue).
->>
->> But for a legacy filesystem like reiser3, which depended on the BKL
->
-> reiser3 is much more widely used in the user base than a lot of "non
-> legacy" file systems. It's very likely it has significantly
-> more users than ext4 for example. Remember that it was the default  
-> file system
-> for a major distribution until very recently.
+But we have a remaining place in kupdate_transactions() where
+j_flush_mutex is still acquired traditionnaly. Thus the following
+scenario (warned by lockdep) can happen:
 
-... and based on track record probably still should be :/
+A						B
 
+mutex_lock(&write_lock)			mutex_lock(&write_lock)
+	mutex_lock(&j_flush_mutex)	mutex_lock(&j_flush_mutex) //block
+	mutex_unlock(&write_lock)
+	sleep...
+	mutex_lock(&write_lock) //deadlock
 
---Toby
-(Who has no idea why good solid code that works really well magically  
-gets labelled 'legacy' and shelved in favour of flaky, immature code.)
+Fix this by using reiserfs_mutex_lock_safe() in kupdate_transactions().
 
+Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
+---
+ fs/reiserfs/journal.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-> I also got a few
-> reiser3 fs still around, it tended to perform very well
-> on kernel hacker workloads.
->
-> Given all that I think the current performance penalties Frederic  
-> reports
-> are not acceptable. Dropping BKL is not a cause in itself, but should
-> just improve performance.
->
->> auto-dropping on schedule() it would be rather fragile to use  
->> spinlocks,
->> and it would take forever to validate the result.
->
-> Not convinced it would be that hard. It could be probably done with  
-> some
-> straight forward static code analysis. And after that since there's
-> not much development going anymore it's unlikely to break again.
->
-> -Andi
->
-> -- 
-> ak@linux.intel.com -- Speaking for myself only.
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs- 
-> devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 64dcabd..7976d7d 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -1826,7 +1826,7 @@ static int kupdate_transactions(struct super_block *s,
+ 	struct reiserfs_journal *journal = SB_JOURNAL(s);
+ 	chunk.nr = 0;
+ 
+-	mutex_lock(&journal->j_flush_mutex);
++	reiserfs_mutex_lock_safe(&journal->j_flush_mutex, s);
+ 	if (!journal_list_still_alive(s, orig_trans_id)) {
+ 		goto done;
+ 	}
+-- 
+1.6.1
