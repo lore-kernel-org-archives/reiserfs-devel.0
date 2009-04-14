@@ -1,17 +1,17 @@
 From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: [PATCH 2/3] kill-the-BKL/reiserfs: lock only once in reiserfs_truncate_file
-Date: Tue, 14 Apr 2009 05:34:24 +0200
-Message-ID: <1239680065-25013-3-git-send-email-fweisbec@gmail.com>
+Subject: [PATCH 3/3] kill-the-BKL/reiserfs: only acquire the write lock once in reiserfs_dirty_inode
+Date: Tue, 14 Apr 2009 05:34:25 +0200
+Message-ID: <1239680065-25013-4-git-send-email-fweisbec@gmail.com>
 References: <1239680065-25013-1-git-send-email-fweisbec@gmail.com>
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754964AbZDNDfX@vger.kernel.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754613AbZDNDfn@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
         h=domainkey-signature:received:received:from:to:cc:subject:date
          :message-id:x-mailer:in-reply-to:references;
-        bh=OwUUdR7eMLGd5qw5dgH2Ps4vyfVYJCsel6NMpyXhPiQ=;
-        b=nVCCZ4OexDVBCcjGw/WQeKbislKcCF8GodrxClLfTHvaNcOrStXE4rqqovWHZaeau5
-         72dRGKn6JsmpSKE5fNkSyEWzI9iGhNOvmEDG76Y6BlhhWS9J1cOW9S4SN0M4O7/3s/q5
-         Gb6DZfPFxg2g8ru/KEdIP7r1LbbK5L1lDkCl8=
+        bh=Zf9yd0uSPOrxO1pXkiBtYVXTUd6FNEDlKSLx4AR5EA4=;
+        b=Gg1jL1xGQMvkBBcF18HLYt+emCBL6wNZemIc/k9ikQMEbAytBJuqojyUu6NxqWLFyc
+         MGYTNZZnSkMjlZ0N8akkFTyKqXDaSzNc93y+zWuvDHaKB3bxO54KeVZc+cjq51Gqna8C
+         E5auqr3U2P4LgGzUJf0n/N4JfOlnOq/sf7s2w=
 In-Reply-To: <1239680065-25013-1-git-send-email-fweisbec@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -23,74 +23,81 @@ Cc: LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com
 
 Impact: fix a deadlock
 
-reiserfs_truncate_file() can be called from multiple context where
-the write lock can be already hold or not.
+reiserfs_dirty_inode() is the super_operations::dirty_inode() callback
+of reiserfs. It can be called from different contexts where the write
+lock can be already held.
 
-This function also acquire (possibly recursively) the write
-lock. Subsequent releases before sleeping will not actually release
-the lock because we may be in more than one lock depth degree.
+But this function also grab the write lock (possibly recursively).
+Subsequent release of the lock before sleep will actually not release
+the lock if the caller of mark_inode_dirty() (which in turn calls
+reiserfs_dirty_inode()) already owns the lock.
 
-A typical case is:
+A typical case:
 
-reiserfs_file_release {
-	acquire_the_lock()
-	reiserfs_truncate_file()
-		reacquire_the_lock()
-		journal_begin() {
-			do_journal_begin_r() {
-				reiserfs_wait_on_write_block() {
-					/*
-					 * Not released because still one
-					 * depth owned
-					 */
-					release_lock()
-					wait_for_event()
+reiserfs_write_end() {
+	acquire_write_lock()
+	mark_inode_dirty() {
+		reiserfs_dirty_inode() {
+			reacquire_write_lock() {
+				journal_begin() {
+					do_journal_begin_r() {
+						/*
+						 * fail to release, still
+						 * one depth of lock
+						 */
+						release_write_lock()
+						reiserfs_wait_on_write_block() {
+							wait_event()
 
-At this stage the event never happen because the one which provides
-it needs the write lock.
+The event is usually provided by something which needs the write lock but
+it hasn't been released.
 
-We use reiserfs_write_lock_once() here to ensure that we don't acquire the
-write lock recursively.
+We use reiserfs_write_lock_once() here to ensure we only grab the
+write lock in one level.
 
 Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
 ---
- fs/reiserfs/inode.c |   10 +++++++---
- 1 files changed, 7 insertions(+), 3 deletions(-)
+ fs/reiserfs/super.c |   15 +++++++++------
+ 1 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index 88ef0b7..153668e 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -2083,8 +2083,9 @@ int reiserfs_truncate_file(struct inode *inode, int update_timestamps)
- 	int error;
- 	struct buffer_head *bh = NULL;
- 	int err2;
-+	int lock_depth;
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index 1ac4fcb..f6c5606 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -567,25 +567,28 @@ static void reiserfs_dirty_inode(struct inode *inode)
+ 	struct reiserfs_transaction_handle th;
  
+ 	int err = 0;
++	int lock_depth;
++
+ 	if (inode->i_sb->s_flags & MS_RDONLY) {
+ 		reiserfs_warning(inode->i_sb, "clm-6006",
+ 				 "writing inode %lu on readonly FS",
+ 				 inode->i_ino);
+ 		return;
+ 	}
 -	reiserfs_write_lock(inode->i_sb);
 +	lock_depth = reiserfs_write_lock_once(inode->i_sb);
  
- 	if (inode->i_size > 0) {
- 		error = grab_tail_page(inode, &page, &bh);
-@@ -2153,14 +2154,17 @@ int reiserfs_truncate_file(struct inode *inode, int update_timestamps)
- 		page_cache_release(page);
- 	}
- 
--	reiserfs_write_unlock(inode->i_sb);
-+	reiserfs_write_unlock_once(inode->i_sb, lock_depth);
+ 	/* this is really only used for atime updates, so they don't have
+ 	 ** to be included in O_SYNC or fsync
+ 	 */
+ 	err = journal_begin(&th, inode->i_sb, 1);
+-	if (err) {
+-		reiserfs_write_unlock(inode->i_sb);
+-		return;
+-	}
++	if (err)
++		goto out;
 +
- 	return 0;
-       out:
- 	if (page) {
- 		unlock_page(page);
- 		page_cache_release(page);
- 	}
+ 	reiserfs_update_sd(&th, inode);
+ 	journal_end(&th, inode->i_sb, 1);
 -	reiserfs_write_unlock(inode->i_sb);
 +
++out:
 +	reiserfs_write_unlock_once(inode->i_sb, lock_depth);
-+
- 	return error;
  }
  
+ #ifdef CONFIG_REISERFS_FS_POSIX_ACL
 -- 
 1.6.1
