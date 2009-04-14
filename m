@@ -1,95 +1,90 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: Frederic Weisbecker <fweisbec@gmail.com>
 Subject: Re: [tree] latest kill-the-BKL tree, v12
-Date: Tue, 14 Apr 2009 12:02:25 +0200
-Message-ID: <49E45F31.2020706@gmail.com>
+Date: Tue, 14 Apr 2009 23:27:51 +0200
+Message-ID: <20090414212749.GE5968@nowhere>
 References: <1239680065-25013-1-git-send-email-fweisbec@gmail.com> <20090414045109.GA26908@orion> <20090414090146.GH27003@elte.hu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from
-         :user-agent:mime-version:to:cc:subject:references:in-reply-to
-         :content-type:content-transfer-encoding;
-        bh=I/RiWBbP7EmNhGm912MF69lPPOjUMpoQSr2ZF1f0tfY=;
-        b=fjzjBVRwtFJvgtbPeV297uCA0MDeEV0Gw7SrdGowhj/g9y2HKn4yAOk9LR2vyk+WHy
-         SqaF9FztjjyoTAZXiPQWyjWekcZumi6McuJ8oYL8T9K9JtMof6cMhUMwHlXpJQYwv54L
-         oISUCJ+KXUkW2WsjZF+4EXDf74DtuMG7fHKhI=
+        h=domainkey-signature:received:received:received:date:from:to:cc
+         :subject:message-id:references:mime-version:content-type
+         :content-disposition:in-reply-to:user-agent;
+        bh=Jg0fC1VvRIz1JpCIK1xl6kgfHTFH2I8ibvtfcfFLhXI=;
+        b=IoZOnMgwdqqSB3NScBc3xJtMS99aqLz0oE6EXeuC/6ULKEp8vs2vTl5lmVCA9aYdhN
+         SNbLUfqEKZZ08S3PoQONTT5pC816GGkJ/fWNT9P3E6SQk6hqhMDGzpurY1Z2mk8Wvn2l
+         JLF5sMoogqtZIdkrTYIxJveuqxSfUHl4TeD7E=
+Content-Disposition: inline
 In-Reply-To: <20090414090146.GH27003@elte.hu>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Ingo Molnar <mingo@elte.hu>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Alessio Igor Bogani <abogani@texware.it>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, flx@msu.ru
+Cc: Alexander Beregalov <a.beregalov@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Alessio Igor Bogani <abogani@texware.it>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>
 
-Ingo Molnar wrote:
+On Tue, Apr 14, 2009 at 11:01:46AM +0200, Ingo Molnar wrote:
+> 
 > * Alexander Beregalov <a.beregalov@gmail.com> wrote:
->
->   
->> On Tue, Apr 14, 2009 at 05:34:22AM +0200, Frederic Weisbecker wrote:
->>     
->>> Ingo,
->>>
->>> This small patchset fixes some deadlocks I've faced after trying
->>> some pressures with dbench on a reiserfs partition.
->>>
->>> There is still some work pending such as adding some checks to ensure we
->>> _always_ release the lock before sleeping, as you suggested.
->>> Also I have to fix a lockdep warning reported by Alessio Igor Bogani.
->>> And also some optimizations....
->>>
->>> Thanks,
->>> Frederic.
->>>
->>> Frederic Weisbecker (3):
->>>   kill-the-BKL/reiserfs: provide a tool to lock only once the write lock
->>>   kill-the-BKL/reiserfs: lock only once in reiserfs_truncate_file
->>>   kill-the-BKL/reiserfs: only acquire the write lock once in
->>>     reiserfs_dirty_inode
->>>       
-
-Hello.
-Any benchmarks being?
-Thanks for doing this, but we need to make sure that
-mongo.pl doesn't show any regression. Flex, do we
-have any remote machine to measure it?
-
-Thanks,
-Edward.
-
->>>  fs/reiserfs/inode.c         |   10 +++++++---
->>>  fs/reiserfs/lock.c          |   26 ++++++++++++++++++++++++++
->>>  fs/reiserfs/super.c         |   15 +++++++++------
->>>  include/linux/reiserfs_fs.h |    2 ++
->>>  4 files changed, 44 insertions(+), 9 deletions(-)
->>>
->>>       
->> Hi
->>
->> The same test - dbench on reiserfs on loop on sparc64.
->>
->> [ INFO: possible circular locking dependency detected ]
->> 2.6.30-rc1-00457-gb21597d-dirty #2
->>     
->
+> 
+> > On Tue, Apr 14, 2009 at 05:34:22AM +0200, Frederic Weisbecker wrote:
+> > > Ingo,
+> > > 
+> > > This small patchset fixes some deadlocks I've faced after trying
+> > > some pressures with dbench on a reiserfs partition.
+> > > 
+> > > There is still some work pending such as adding some checks to ensure we
+> > > _always_ release the lock before sleeping, as you suggested.
+> > > Also I have to fix a lockdep warning reported by Alessio Igor Bogani.
+> > > And also some optimizations....
+> > > 
+> > > Thanks,
+> > > Frederic.
+> > > 
+> > > Frederic Weisbecker (3):
+> > >   kill-the-BKL/reiserfs: provide a tool to lock only once the write lock
+> > >   kill-the-BKL/reiserfs: lock only once in reiserfs_truncate_file
+> > >   kill-the-BKL/reiserfs: only acquire the write lock once in
+> > >     reiserfs_dirty_inode
+> > > 
+> > >  fs/reiserfs/inode.c         |   10 +++++++---
+> > >  fs/reiserfs/lock.c          |   26 ++++++++++++++++++++++++++
+> > >  fs/reiserfs/super.c         |   15 +++++++++------
+> > >  include/linux/reiserfs_fs.h |    2 ++
+> > >  4 files changed, 44 insertions(+), 9 deletions(-)
+> > > 
+> > 
+> > Hi
+> > 
+> > The same test - dbench on reiserfs on loop on sparc64.
+> > 
+> > [ INFO: possible circular locking dependency detected ]
+> > 2.6.30-rc1-00457-gb21597d-dirty #2
+> 
 > I'm wondering ... your version hash suggests you used vanilla 
 > upstream as a base for your test. There's a string of other fixes 
 > from Frederic in tip:core/kill-the-BKL branch, have you picked them 
 > all up when you did your testing?
->
+
+
+Indeed, I fixed it (at least looks like the same warn) 
+in a previous patch. I forgot to cc Alexander for this one.
+
+
+> 
 > The most coherent way to test this would be to pick up the latest 
 > core/kill-the-BKL git tree from:
->
+> 
 >    git://git.kernel.org/pub/scm/linux/kernel/git/tip/linux-2.6-tip.git core/kill-the-BKL
->
+> 
 > Or you can also try the combo patch below (against latest mainline). 
 > The tree already includes the latest 3 fixes from Frederic as well, 
 > so it should be a one-stop-shop.
->
+> 
 >  Thanks,
->
+> 
 > 	Ingo
->
+> 
 > ------------------>
 > Alessio Igor Bogani (17):
 >       remove the BKL: Remove BKL from tracer registration
@@ -109,15 +104,22 @@ Edward.
 >       sound/oss/dmasound/dmasound_core.c: Use &inode->i_mutex instead of the BKL
 >       remove the BKL: remove "BKL auto-drop" assumption from svc_recv()
 >       remove the BKL: remove "BKL auto-drop" assumption from nfs3_rpc_wrapper()
->
+> 
 > Frederic Weisbecker (6):
 >       reiserfs: kill-the-BKL
 >       kill-the-BKL: fix missing #include smp_lock.h
 >       reiserfs, kill-the-BKL: fix unsafe j_flush_mutex lock
+
+
+It was the above one.
+
+Frederic.
+
+
 >       kill-the-BKL/reiserfs: provide a tool to lock only once the write lock
 >       kill-the-BKL/reiserfs: lock only once in reiserfs_truncate_file
 >       kill-the-BKL/reiserfs: only acquire the write lock once in reiserfs_dirty_inode
->
+> 
 > Ingo Molnar (21):
 >       revert ("BKL: revert back to the old spinlock implementation")
 >       remove the BKL: change get_fs_type() BKL dependency
@@ -140,8 +142,8 @@ Edward.
 >       remove the BKL: use the BKL mutex on !SMP too
 >       remove the BKL: merge fix
 >       remove the BKL: fix build in fs/proc/generic.c
->
->
+> 
+> 
 >  arch/mn10300/Kconfig               |   11 +++
 >  drivers/bluetooth/hci_vhci.c       |   15 ++--
 >  drivers/char/generic_nvram.c       |   10 ++-
@@ -198,7 +200,7 @@ Edward.
 >  sound/sound_core.c                 |    6 +-
 >  54 files changed, 571 insertions(+), 318 deletions(-)
 >  create mode 100644 fs/reiserfs/lock.c
->
+> 
 > diff --git a/arch/mn10300/Kconfig b/arch/mn10300/Kconfig
 > index 3559267..adeae17 100644
 > --- a/arch/mn10300/Kconfig
@@ -2714,10 +2716,4 @@ Edward.
 >  	return -ENODEV;
 >  }
 >  
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->   
 
