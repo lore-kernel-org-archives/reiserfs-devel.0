@@ -1,103 +1,125 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: [PATCH 3/3] kill-the-BKL/reiserfs: only acquire the write lock once in reiserfs_dirty_inode
-Date: Tue, 14 Apr 2009 05:34:25 +0200
-Message-ID: <1239680065-25013-4-git-send-email-fweisbec@gmail.com>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: Re: [PATCH 0/3] kill-the-BKL/reiserfs: reiserfs fixes
+Date: Tue, 14 Apr 2009 08:51:09 +0400
+Message-ID: <20090414045109.GA26908@orion>
 References: <1239680065-25013-1-git-send-email-fweisbec@gmail.com>
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754613AbZDNDfn@vger.kernel.org>
+Mime-Version: 1.0
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:from:to:cc:subject:date
-         :message-id:x-mailer:in-reply-to:references;
-        bh=Zf9yd0uSPOrxO1pXkiBtYVXTUd6FNEDlKSLx4AR5EA4=;
-        b=Gg1jL1xGQMvkBBcF18HLYt+emCBL6wNZemIc/k9ikQMEbAytBJuqojyUu6NxqWLFyc
-         MGYTNZZnSkMjlZ0N8akkFTyKqXDaSzNc93y+zWuvDHaKB3bxO54KeVZc+cjq51Gqna8C
-         E5auqr3U2P4LgGzUJf0n/N4JfOlnOq/sf7s2w=
+        h=domainkey-signature:received:received:date:from:to:cc:subject
+         :message-id:references:mime-version:content-type:content-disposition
+         :in-reply-to:user-agent;
+        bh=CV77Q5dshfSZIey/f9MQcjM5NvA/NcTvRoM0I7l6T/s=;
+        b=HTbLlYPkxxAiy7+rXoPYTtlNpX0yPsjml3KuULDjnS4zUMzJgH0uwIV0roCtnQefO+
+         iuFgJr80aKJG2EkKaHz10EVeZ0wAkjR7rM9f6bwmRJ5sb0f6UIVzPFXnyjMVUvqN7JIH
+         BPP4JBZGVc9dLlHfe5lbWZEFMreaXS2IHWbGg=
+Content-Disposition: inline
 In-Reply-To: <1239680065-25013-1-git-send-email-fweisbec@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@elte.hu>
-Cc: LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Chris Mason <chris.mason@oracle.com>
+To: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, Alessio Igor Bogani <abogani@texware.it>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>
 
-Impact: fix a deadlock
+On Tue, Apr 14, 2009 at 05:34:22AM +0200, Frederic Weisbecker wrote:
+> Ingo,
+> 
+> This small patchset fixes some deadlocks I've faced after trying
+> some pressures with dbench on a reiserfs partition.
+> 
+> There is still some work pending such as adding some checks to ensure we
+> _always_ release the lock before sleeping, as you suggested.
+> Also I have to fix a lockdep warning reported by Alessio Igor Bogani.
+> And also some optimizations....
+> 
+> Thanks,
+> Frederic.
+> 
+> Frederic Weisbecker (3):
+>   kill-the-BKL/reiserfs: provide a tool to lock only once the write lock
+>   kill-the-BKL/reiserfs: lock only once in reiserfs_truncate_file
+>   kill-the-BKL/reiserfs: only acquire the write lock once in
+>     reiserfs_dirty_inode
+> 
+>  fs/reiserfs/inode.c         |   10 +++++++---
+>  fs/reiserfs/lock.c          |   26 ++++++++++++++++++++++++++
+>  fs/reiserfs/super.c         |   15 +++++++++------
+>  include/linux/reiserfs_fs.h |    2 ++
+>  4 files changed, 44 insertions(+), 9 deletions(-)
+> 
 
-reiserfs_dirty_inode() is the super_operations::dirty_inode() callback
-of reiserfs. It can be called from different contexts where the write
-lock can be already held.
+Hi
 
-But this function also grab the write lock (possibly recursively).
-Subsequent release of the lock before sleep will actually not release
-the lock if the caller of mark_inode_dirty() (which in turn calls
-reiserfs_dirty_inode()) already owns the lock.
+The same test - dbench on reiserfs on loop on sparc64.
 
-A typical case:
+[ INFO: possible circular locking dependency detected ]
+2.6.30-rc1-00457-gb21597d-dirty #2
+-------------------------------------------------------
+dbench/2493 is trying to acquire lock:
+ (&REISERFS_SB(s)->lock){+.+.+.}, at: [<000000001003f7a8>] reiserfs_write_lock+0x24/0x44 [reiserfs]
 
-reiserfs_write_end() {
-	acquire_write_lock()
-	mark_inode_dirty() {
-		reiserfs_dirty_inode() {
-			reacquire_write_lock() {
-				journal_begin() {
-					do_journal_begin_r() {
-						/*
-						 * fail to release, still
-						 * one depth of lock
-						 */
-						release_write_lock()
-						reiserfs_wait_on_write_block() {
-							wait_event()
+but task is already holding lock:
+ (&journal->j_flush_mutex){+.+...}, at: [<0000000010036770>] flush_journal_list+0xa0/0x830 [reiserfs]
 
-The event is usually provided by something which needs the write lock but
-it hasn't been released.
+which lock already depends on the new lock.
 
-We use reiserfs_write_lock_once() here to ensure we only grab the
-write lock in one level.
 
-Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
----
- fs/reiserfs/super.c |   15 +++++++++------
- 1 files changed, 9 insertions(+), 6 deletions(-)
+the existing dependency chain (in reverse order) is:
 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 1ac4fcb..f6c5606 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -567,25 +567,28 @@ static void reiserfs_dirty_inode(struct inode *inode)
- 	struct reiserfs_transaction_handle th;
- 
- 	int err = 0;
-+	int lock_depth;
-+
- 	if (inode->i_sb->s_flags & MS_RDONLY) {
- 		reiserfs_warning(inode->i_sb, "clm-6006",
- 				 "writing inode %lu on readonly FS",
- 				 inode->i_ino);
- 		return;
- 	}
--	reiserfs_write_lock(inode->i_sb);
-+	lock_depth = reiserfs_write_lock_once(inode->i_sb);
- 
- 	/* this is really only used for atime updates, so they don't have
- 	 ** to be included in O_SYNC or fsync
- 	 */
- 	err = journal_begin(&th, inode->i_sb, 1);
--	if (err) {
--		reiserfs_write_unlock(inode->i_sb);
--		return;
--	}
-+	if (err)
-+		goto out;
-+
- 	reiserfs_update_sd(&th, inode);
- 	journal_end(&th, inode->i_sb, 1);
--	reiserfs_write_unlock(inode->i_sb);
-+
-+out:
-+	reiserfs_write_unlock_once(inode->i_sb, lock_depth);
- }
- 
- #ifdef CONFIG_REISERFS_FS_POSIX_ACL
--- 
-1.6.1
+-> #1 (&journal->j_flush_mutex){+.+...}:
+       [<00000000004775c8>] lock_acquire+0x5c/0x74
+       [<00000000006fa73c>] mutex_lock_nested+0x48/0x380
+       [<0000000010037314>] kupdate_transactions+0x30/0x328 [reiserfs]
+       [<00000000100376d8>] flush_used_journal_lists+0xcc/0xf0 [reiserfs]
+       [<0000000010038508>] do_journal_end+0xe0c/0x127c [reiserfs]
+       [<0000000010038a00>] journal_end_sync+0x88/0x9c [reiserfs]
+       [<0000000010039370>] reiserfs_commit_for_inode+0x180/0x208 [reiserfs]
+       [<0000000010013d2c>] reiserfs_sync_file+0x54/0xb8 [reiserfs]
+       [<00000000004d5d64>] vfs_fsync+0x6c/0xa0
+       [<00000000004d5dc0>] do_fsync+0x28/0x44
+       [<00000000004d5e18>] SyS_fsync+0x14/0x28
+       [<0000000000406154>] linux_sparc_syscall32+0x34/0x40
+
+-> #0 (&REISERFS_SB(s)->lock){+.+.+.}:
+       [<00000000004775c8>] lock_acquire+0x5c/0x74
+       [<00000000006fa73c>] mutex_lock_nested+0x48/0x380
+       [<000000001003f7a8>] reiserfs_write_lock+0x24/0x44 [reiserfs]
+       [<0000000010036b10>] flush_journal_list+0x440/0x830 [reiserfs]
+       [<0000000010036c1c>] flush_journal_list+0x54c/0x830 [reiserfs]
+       [<00000000100376ec>] flush_used_journal_lists+0xe0/0xf0 [reiserfs]
+       [<0000000010038508>] do_journal_end+0xe0c/0x127c [reiserfs]
+       [<0000000010038a00>] journal_end_sync+0x88/0x9c [reiserfs]
+       [<0000000010039370>] reiserfs_commit_for_inode+0x180/0x208 [reiserfs]
+       [<0000000010013d2c>] reiserfs_sync_file+0x54/0xb8 [reiserfs]
+       [<00000000004d5d64>] vfs_fsync+0x6c/0xa0
+       [<00000000004d5dc0>] do_fsync+0x28/0x44
+       [<00000000004d5e18>] SyS_fsync+0x14/0x28
+       [<0000000000406154>] linux_sparc_syscall32+0x34/0x40
+
+other info that might help us debug this:
+
+3 locks held by dbench/2493:
+ #0:  (&sb->s_type->i_mutex_key#12){+.+.+.}, at: [<00000000004d5d50>] vfs_fsync+0x58/0xa0
+ #1:  (&journal->j_mutex){+.+...}, at: [<00000000100377d4>] do_journal_end+0xd8/0x127c [reiserfs]
+ #2:  (&journal->j_flush_mutex){+.+...}, at: [<0000000010036770>] flush_journal_list+0xa0/0x830 [reiserfs]
+
+stack backtrace:
+Call Trace:
+ [00000000004754a4] print_circular_bug_tail+0xfc/0x10c
+ [0000000000476d1c] __lock_acquire+0x12f0/0x1b40
+ [00000000004775c8] lock_acquire+0x5c/0x74
+ [00000000006fa73c] mutex_lock_nested+0x48/0x380
+ [000000001003f7a8] reiserfs_write_lock+0x24/0x44 [reiserfs]
+ [0000000010036b10] flush_journal_list+0x440/0x830 [reiserfs]
+ [0000000010036c1c] flush_journal_list+0x54c/0x830 [reiserfs]
+ [00000000100376ec] flush_used_journal_lists+0xe0/0xf0 [reiserfs]
+ [0000000010038508] do_journal_end+0xe0c/0x127c [reiserfs]
+ [0000000010038a00] journal_end_sync+0x88/0x9c [reiserfs]
+ [0000000010039370] reiserfs_commit_for_inode+0x180/0x208 [reiserfs]
+ [0000000010013d2c] reiserfs_sync_file+0x54/0xb8 [reiserfs]
+ [00000000004d5d64] vfs_fsync+0x6c/0xa0
+ [00000000004d5dc0] do_fsync+0x28/0x44
+ [00000000004d5e18] SyS_fsync+0x14/0x28
+ [0000000000406154] linux_sparc_syscall32+0x34/0x40
