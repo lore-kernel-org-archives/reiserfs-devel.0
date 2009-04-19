@@ -1,60 +1,59 @@
-From: Alexander Lyamin <flx@Msu.ru>
+From: Mat <jackdachef@gmail.com>
 Subject: Re: reiser4 inclusion?
-Date: Sun, 19 Apr 2009 15:31:29 +0400
-Message-ID: <80294dc60904190431s36a278c7nf1aaef0a50b67341@mail.gmail.com>
-References: <alpine.DEB.2.01.0904181302440.6162@bogon.housecafe.de>
-	 <49EAFBBB.5050400@ontolab.com> <49EB1E3F.1020905@gmail.com>
-	 <20090419111443.GA24164@brong.net>
+Date: Sun, 19 Apr 2009 11:41:04 +0000 (UTC)
+Message-ID: <loom.20090419T112851-56@post.gmane.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:sender:received:in-reply-to
-         :references:date:x-google-sender-auth:message-id:subject:from:to:cc
-         :content-type:content-transfer-encoding;
-        bh=UHB8S7IoBXZVhISkhY3scB8/o0gPd7bFYiFRKEAkELE=;
-        b=grshB34atqGPbWqnNgI/B/MdLXNfst4rtsSA5nKC/5a1EsFkE7b5swhhOeGnw37dqF
-         eKaI20HJf70Ch9St83FFvn45Us2EC9WwvQg/N5IhwIYI7EjjtXvJtSBJepA2zGswdl8l
-         G0AZwkeNaGBIhVKO4SnCWSUGJQnLYy7mveyBM=
-In-Reply-To: <20090419111443.GA24164@brong.net>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Bron Gondwana <brong@fastmail.fm>
-Cc: Edward Shishkin <edward.shishkin@gmail.com>, Christian Stroetmann OntoLab <stroetmann@ontolab.com>, Christian Kujau <lists@nerdbynature.de>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-Why steal instead of offering hand in development ?
+>1. Support the R4 fs under the name R4.
+>2. Set up a project page or, on the wish of the developement community, 
+>a wiki.
+>3. Under an other name, which I've choosen and I'm not allowed to name 
+>in this mailinglist, I've have even developed another kind of file system.
 
+>The results were:
+>To 1.: No echo.
 
-On Sun, Apr 19, 2009 at 3:14 PM, Bron Gondwana <brong@fastmail.fm> wrot=
-e:
-> On Sun, Apr 19, 2009 at 02:51:11PM +0200, Edward Shishkin wrote:
->> Please,
->> don't flood in this mailing list.
->> Go away!
->
-> Gosh - was it off topic or something? =A0Seems to me that it's
-> a bit strange to be unfriendly with other people who want to
-> see your code included in mainstream.
->
-> Bron ( ok, so I don't know all the underlying politics, but
-> =A0 =A0 =A0 seeing something like this doesn't encourage me to
-> =A0 =A0 =A0 think there's going to be a healthy community around
-> =A0 =A0 =A0 to maintain the filesystem in the long term )
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-de=
-vel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+yes please, please support reiser4 since its the only filesystem so far (besides
+reiserfs 3.6) being able to deal with lots of my data in a secure and
+space-efficient way while keeping the user in mind (synchronous writes while
+using dm-devices, not corrupting or zeroing files out, ...) besides that it's
+also very gentle towards harddrives (very silent operation and long battery
+runtime) and has some kind of basic SSD support already built in due to its
+"trees that cache well" from what I understand
 
+>To 2.: No replay.
 
+is there an official wiki yet ? can't it be hosted along with reiser4-patches,
+reiser4progs, etc. on the kernel.org servers ?
 
---=20
-connecting the dots
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I know there's some development going on (mainly in Russia ?) but wouldn't it be
+more efficient to let others also partake in those efforts (e.g. by posting some
+email) and learn from it in order to better understand the filesystem and then
+at a later point being able to support and enhance the filesystem ?
+
+>To 3.: I got a kindly "Go away" advice.
+
+I guess that's the freedom the developers and maintainers have ;)
+(* there's always the last resort in forking it which isn't the best way since
+it won't bundle resources and efforts)
+
+@Edward:
+
+any news on reiser4's status ?
+
+it has come a long way and - I hope - that it will find its way into Linus' tree
+(I can't believe how many trouble my few ext3 or ext4-based partitions have
+caused me recently. From my understandings reiserfs v3.6 and reiser4 wouldn't
+cause that problems (incomplete or corrupt files, data loss, etc.) due to their
+design)
+
+Thanks
+
+Mat
+
