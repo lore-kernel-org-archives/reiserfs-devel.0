@@ -1,42 +1,50 @@
-From: Bron Gondwana <brong@fastmail.fm>
+From: Dushan Tcholich <dusanc@gmail.com>
 Subject: Re: reiser4 inclusion?
-Date: Sun, 19 Apr 2009 23:00:13 +1000
-Message-ID: <20090419130013.GA2463@brong.net>
-References: <alpine.DEB.2.01.0904181302440.6162@bogon.housecafe.de> <49EAFBBB.5050400@ontolab.com> <49EB1E3F.1020905@gmail.com> <20090419111443.GA24164@brong.net> <80294dc60904190431s36a278c7nf1aaef0a50b67341@mail.gmail.com> <20090419114743.GB27415@brong.net> <a08621850904190509s1caca740l6acc4b8f922dcbba@mail.gmail.com> <20090419123207.GA31782@brong.net> <80294dc60904190545m3a4f89ccsff586143a1e9603d@mail.gmail.com>
+Date: Sun, 19 Apr 2009 15:08:19 +0200
+Message-ID: <a08621850904190608s19a98c0cn8c2b9c58f7fd01d7@mail.gmail.com>
+References: <alpine.DEB.2.01.0904181302440.6162@bogon.housecafe.de>
+	 <49EAFBBB.5050400@ontolab.com> <49EB1E3F.1020905@gmail.com>
+	 <20090419111443.GA24164@brong.net>
+	 <80294dc60904190431s36a278c7nf1aaef0a50b67341@mail.gmail.com>
+	 <20090419114743.GB27415@brong.net>
+	 <a08621850904190509s1caca740l6acc4b8f922dcbba@mail.gmail.com>
+	 <20090419123207.GA31782@brong.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <80294dc60904190545m3a4f89ccsff586143a1e9603d@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:received:in-reply-to:references
+         :date:message-id:subject:from:to:cc:content-type
+         :content-transfer-encoding;
+        bh=Ju/UfyE4NMz3xVZ6Hw+P2GU/lrSGHyLNUKz5AkLmtMg=;
+        b=PSZCr6OGGsIySoBHDG7JWrBSbOCyrP+NHrnUpG4vUPSQnowzsL7n3lYSnkDrUeQUjP
+         CdcsM9M2GLMdI/Hc8SB/sG5lPaT4xf414YUf4EnjnQ8ZVV+VyJvKMVUMOYEJoy+0EIVv
+         YAvIdbyfryf6Jk8i9Vdw/uTBMdwB79OzMgIIU=
+In-Reply-To: <20090419123207.GA31782@brong.net>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Alexander Lyamin <flx@Msu.ru>
-Cc: Bron Gondwana <brong@fastmail.fm>, Dushan Tcholich <dusanc@gmail.com>, Edward Shishkin <edward.shishkin@gmail.com>, Christian Stroetmann OntoLab <stroetmann@ontolab.com>, Christian Kujau <lists@nerdbynature.de>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Bron Gondwana <brong@fastmail.fm>
+Cc: Alexander Lyamin <flx@msu.ru>, Edward Shishkin <edward.shishkin@gmail.com>, Christian Stroetmann OntoLab <stroetmann@ontolab.com>, Christian Kujau <lists@nerdbynature.de>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-On Sun, Apr 19, 2009 at 04:45:49PM +0400, Alexander Lyamin wrote:
-> On Sun, Apr 19, 2009 at 4:32 PM, Bron Gondwana <brong@fastmail.fm> wr=
-ote:
->=20
-> > Sorry, I didn't realise it was a developers only mailing
-> > list where concerned users weren't welcome. =A0My mistake.
->=20
-> reiserfs-devel <reiserfs-devel@vger.kernel.org>
-> fine latin print.
->=20
-> please state your "concerns" in a constructive manner.
+Sorry Bron, the question was directed to Christian Stroetmann, but as
+I replied from mobile phone, I must've misquoted.
+I'm sorry if I accidentaly offended you.
+As for why there was somewhat harsh response to Christian Stroetmann,
+google for ontolabs and look into archives for his previous posts.
 
-(not a good argument, but: points up thread)
+With hope that I haven't offended you
+Dushan
 
-> have a bug report ?
-
-Yes, reiser4 is not in mainline.
-
-Thanks,
-
-Bron.
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On 4/19/09, Bron Gondwana <brong@fastmail.fm> wrote:
+> On Sun, Apr 19, 2009 at 02:09:57PM +0200, Dushan Tcholich wrote:
+>> May I see some of your patches that enhanced R4?
+>> Link? In m-l archives there are none.
+>> Any ideas/problems/solutions discussed?
+>
+> Sorry, I didn't realise it was a developers only mailing
+> list where concerned users weren't welcome.  My mistake.
+>
+> Bron.
+>
