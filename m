@@ -1,30 +1,61 @@
-From: Bron Gondwana <brong@fastmail.fm>
-Subject: Re: reiser4 inclusion?
-Date: Mon, 20 Apr 2009 16:46:18 +1000
-Message-ID: <20090420064618.GA14110@brong.net>
-References: <loom.20090419T112851-56@post.gmane.org> <alpine.DEB.2.01.0904191338340.6162@bogon.housecafe.de> <49EBF59C.4020703@ontolab.com> <49EC1478.2080004@inn.nl> <49EC17A2.2060203@ontolab.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: 2.6.30-rc2: reiserfs_delete_xattrs: Couldn't delete all xattrs
+ (-13)
+Date: Mon, 20 Apr 2009 10:13:43 -0400
+Message-ID: <49EC8317.9080300@suse.com>
+References: <a4423d670904161223r2e026b6u903137c709318551@mail.gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <49EC17A2.2060203@ontolab.com>
+In-Reply-To: <a4423d670904161223r2e026b6u903137c709318551@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christian Stroetmann OntoLab <stroetmann@ontolab.com>
-Cc: Arend Freije <afreije@inn.nl>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Apr 20, 2009 at 08:35:14AM +0200, Christian Stroetmann OntoLab wrote:
-> I would like to encourage everybody interested in this subject to first  
-> read the reiserfs-devel mailing-list and my website concerning the R4  
-> filesystem entirely and carefully. If it is helpful and still not clear  
-> what is going on, I'm also willing to write a list of the steps that  
-> have happened.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Link?  (for the website)
+Alexander Beregalov wrote:
+> Hi Jeff
+> 
+> The kernel prints this message every 20seconds
+> [  836.973100]
+> [  836.983494] REISERFS warning (device sda2): jdm-20004
+> reiserfs_delete_xattrs: Couldn't delete all xattrs (-13)
+> [  836.983496]
+> [  894.203634] REISERFS warning (device sda2): jdm-20004
+> reiserfs_delete_xattrs: Couldn't delete all xattrs (-13)
+> [  894.203636]
+> [  894.205784] REISERFS warning (device sda2): jdm-20004
+> reiserfs_delete_xattrs: Couldn't delete all xattrs (-13)
+> 
+> commit a41f1a4715
+> 
+> CONFIG_REISERFS_FS=y
+> # CONFIG_REISERFS_CHECK is not set
+> # CONFIG_REISERFS_PROC_INFO is not set
+> # CONFIG_REISERFS_FS_XATTR is not set
+> 
+> I did not enable XATTR before,
+> should I enable it now ?
 
-(reading the entire back archives would take a while, but I've been a
-subscriber on the list for a few years, so most of it has probably
-brushed past my conciousness at some time)
+You shouldn't need to, and you shouldn't be seeing those messages.
 
-Bron.
+What are you doing to reproduce it? I disabled the xattr config option,
+copied a directory tree over and removed it. I didn't see anything.
+
+- -Jeff
+
+- --
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.9 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
+
+iEYEARECAAYFAknsgxYACgkQLPWxlyuTD7KkKwCfXsftdSG2/EcN0/GLvczu77BB
+5DkAnA19mRH2GoxrM5l28kcVAXqKUcdB
+=j/bW
+-----END PGP SIGNATURE-----
