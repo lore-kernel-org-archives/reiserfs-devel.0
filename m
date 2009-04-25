@@ -1,56 +1,38 @@
-From: William Fisher <fisher@meer.net>
-Subject: Formal Reiser4 inclusion and todo list?
-Date: Sat, 25 Apr 2009 13:27:57 -0700
-Message-ID: <200904252027.n3PKReMx073755@mail.meer.net>
-References: <alpine.DEB.2.01.0904181302440.6162@bogon.housecafe.de>
- <49EB1E3F.1020905@gmail.com>
- <542E227E-E31D-496C-93FB-19393133297F@MailNewsRSS.com>
- <200904250153.33258.volkerarmin@googlemail.com>
- <2E9381E6-A09A-4330-9A61-C4B7D7CE0E71@MailNewsRSS.com>
- <49F2CF9A.1060202@inn.nl>
- <49F2D43F.90105@ontolab.com>
- <8c113a260904250416n28fbdacs682ef8e6859b7dbf@mail.gmail.com>
- <49F339A2.9080705@ontolab.com>
+From: Mat <jackdachef@gmail.com>
+Subject: Re: BUG: using =?utf-8?b?c21wX3Byb2Nlc3Nvcl9pZCgp?= in preemptible [00000000] code: khungtaskd/764, disk takes pretty long to commit files to disk
+Date: Sat, 25 Apr 2009 20:59:48 +0000 (UTC)
+Message-ID: <loom.20090425T205448-34@post.gmane.org>
+References: <loom.20090425T203214-959@post.gmane.org>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <49F339A2.9080705@ontolab.com>
-References: <alpine.DEB.2.01.0904181302440.6162@bogon.housecafe.de>
- <49EB1E3F.1020905@gmail.com>
- <542E227E-E31D-496C-93FB-19393133297F@MailNewsRSS.com>
- <200904250153.33258.volkerarmin@googlemail.com>
- <2E9381E6-A09A-4330-9A61-C4B7D7CE0E71@MailNewsRSS.com>
- <49F2CF9A.1060202@inn.nl>
- <49F2D43F.90105@ontolab.com>
- <8c113a260904250416n28fbdacs682ef8e6859b7dbf@mail.gmail.com>
- <49F339A2.9080705@ontolab.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Cc: reiserfs-devel@vger.kernel.org, fisher@meer.net
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-Folks:
+Mat <jackdachef <at> gmail.com> writes:
 
-Is there a "formal" to-do list for R4 for it's eventual
-inclusion into the kernel source tree?
+>> 
+> kernel is 2.6.30-rc2-zen0 (the additional features added on top 
+> of Linus' tree
+> can be seen at: http://git.zen-sources.org/?p=zen.git;a=shortlog)
 
-I have asked Edward this question over a year ago,
-and was pointed to some scraps of the dead
-Namesys web site. Who knows if the list is even
-accurate today? It's hard to track progress without
-a "plan" and a list of development tasks.
+the parts which are of importance for me are mostly coloured kernel-output,
+reiser4-support, fbcondecor, compcache and eventually bfq and slqb for testing
+purposes
 
-Having a development task/wish list would go a long way to
-opening up the development process. Bashing Edward does nothing
-to help things move forward IMHO. Edward at least is carrying
-the ball forward for the time he has spent on the project.
+there is an nvidia-driver loaded 185.18.04
 
-I have been writing some documentation as I
-wade through the code. If there was some formal site
-I would convert it into a set of wiki pages.
+here's another output of dmesg which should show the complete output since
+I mounted the partition:
 
-Thanks,
+http://nopaste.info/11e8264d13.html
 
 
--- Bill (fisher@meer.net)
+> 
+
+Regards
+
+Mat
 
