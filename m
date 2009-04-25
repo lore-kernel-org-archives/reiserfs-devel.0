@@ -1,12 +1,12 @@
 From: Christian Stroetmann OntoLab <stroetmann@ontolab.com>
 Subject: Re: reiser4 inclusion?
-Date: Sat, 25 Apr 2009 02:33:04 +0200
-Message-ID: <49F25A40.3070206@ontolab.com>
-References: <alpine.DEB.2.01.0904181302440.6162@bogon.housecafe.de> <542E227E-E31D-496C-93FB-19393133297F@MailNewsRSS.com> <49F2523A.70604@ontolab.com> <200904250225.26206.volkerarmin@googlemail.com>
+Date: Sat, 25 Apr 2009 02:42:03 +0200
+Message-ID: <49F25C5A.2060407@ontolab.com>
+References: <alpine.DEB.2.01.0904181302440.6162@bogon.housecafe.de> <2E9381E6-A09A-4330-9A61-C4B7D7CE0E71@MailNewsRSS.com> <49F2560F.1000002@ontolab.com> <200904250228.37848.volkerarmin@googlemail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <200904250225.26206.volkerarmin@googlemail.com>
+In-Reply-To: <200904250228.37848.volkerarmin@googlemail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
@@ -15,111 +15,94 @@ To: Volker Armin Hemmann <volkerarmin@googlemail.com>, reiserfs-devel <reiserfs-
 Volker Armin Hemmann schrieb:
 > On Samstag 25 April 2009, Christian Stroetmann OntoLab wrote:
 >   
->> Hello Jason,
+>> Jason,
 >>
 >>     
->>> Edward,
+>>> Volker,
 >>>
 >>>       
->>>> Please,
->>>> don't flood in this mailing list.
->>>> Go away!
+>>>>> First, please following mailing list etiquette and don't top post
+>>>>>           
+>>>> it is pretty much his mailing list.
 >>>>         
->>> You are totally out of line here.
+>>> Just because he is the "maintainer".
 >>>
->>> First, please following mailing list etiquette and don't top post
->>>
->>> Second, Christian, like all others, have a right to post here. You may
->>> not agree with his posts (or what he is doing with OntoFS), but that
->>> does not give you the right to tell him to go away.
->>>
->>> Third, if the community only relied on you to progress reiserfs, it
->>> has been years at this point and nothing significant. it is basically
->>> somewhat dead.
->>>
->>> If there was more co-operation and less fighting, perhaps forking
->>> would not need to be an issue, but with your head up your ass no
->>> progress gets made, no leaps forward, nada, zip, zilch.
->>>
->>> -Jason
->>>
+>>> Am I wrong, but the community owns the code, not Edward.
 >>>       
->>>> Christian Stroetmann OntoLab wrote:
->>>>         
->>>>> Dear Christian;
->>>>>
->>>>> You wrote:
->>>>>           
->>>>>> With still no project page in sight,
->>>>>>             
->>>>> Under the label of my company and taking the full risk of losing
->>>>> reputation, in contrast to other well known Linux distributions and
->>>>> former supporters of R....4 fs which (partly) jumped off the train, I
->>>>> made the following offers in the past:
->>>>> 1. Support the R4 fs under the name R4.
->>>>> 2. Set up a project page or, on the wish of the developement
->>>>> community, a wiki.
->>>>> 3. Under an other name, which I've choosen and I'm not allowed to name
->>>>> in this mailinglist, I've have even developed another kind of file
->>>>> system.
->>>>>
->>>>> The results were:
->>>>> To 1.: No echo.
->>>>> To 2.: No replay.
->>>>> To 3.: I got a kindly "Go away" advice.
->>>>> And to give it the rest: I do have alternatives and if some persons
->>>>> think, that they can gain something by their destructive attitude,
->>>>> than I have to say: Okay, have a nice day.
->>>>>
->>>>> Being constructive, I think we need a new projcet management, maybe a
->>>>> new maintainer, or some bytes for archiving the digital waste.
->>>>>
->>>>>           
->>>>>> I find it hard to track[0] the progress of the work being towards an
->>>>>> inclusion of reiser4 into mainline. Unable to help out with real
->>>>>> code, I look at the reiser4-for-2.6.29 diffstat (sans the fs/reiser4
->>>>>> parts!) and see:
->>>>>>
->>>>>> Documentation/Changes                         |   12
->>>>>> Documentation/filesystems/reiser4.txt         |   75
->>>>>> fs/Kconfig                                    |    1
->>>>>> fs/Makefile                                   |    1
->>>>>> fs/buffer.c                                   |    9
->>>>>> fs/fs-writeback.c                             |    5
->>>>>> include/linux/fs.h                            |    3
->>>>>> include/linux/mm.h                            |    2
->>>>>> mm/filemap.c                                  |    4
->>>>>> mm/page-writeback.c                           |   48
->>>>>> So, with 4 of them being "just" documentation and build magic, I take
->>>>>> it that we're 6 files and less than 100 lines of code away from at
->>>>>> least putting this file system into the new staging/ tree perhaps?
->>>>>>
->>>>>> Thoughts?
->>>>>>             
->>>>> I found it more and more jokeless, what is going on around this fs.
->>>>> Btw.: I can't and I won't follow the claims and resitances made by Al
->>>>> Viro and other hard core coders against R4 and HFS+, especially the
->>>>> arguments in the hardlink subject.
->>>>>
->>>>>           
->>>>>> Thanks,
->>>>>> Christian.
->>>>>>
->>>>>> [0] http://tinyurl.com/dexfq9
->>>>>>             
->>>>> Sincerely
->>>>> Christian *<:o)
->>>>>           
->> I would really like to know, what was and is going on behind the scenes.
->> If Mr. Shishkin wants some kind of monetary support for his work, then I
->> have to say: "Sorry, but not this way" and "The time is over since two
->> years". That  means no money! You got me? Good.
+>> I have had the same impression in the past, but now I have learned
+>> something new.
 >>
 >>     
 >
-> no, you want to make money without paying him, right?
+> people who write the code own the code. How many reiserfs or reiser4 related 
+> patches from you two got into the kernel in the last... lets say 4 years?
 >   
-Who asked this? I can't see a signature!
-
-Sincerely
-Christian *<:o)
+You don't hit the real problem. The last time we were at this question 
+in this mailing-list, I said it seems to be, that we're are running in 
+circles since 2 or 3 years. As Jason and I said, the maintainer refused 
+to communicate with persons trying to support the development of the 
+filesystem. Is this fact really so heavy to understand?
+>   
+>>> I mean, I could host a reiser list on my mail server.
+>>>       
+>> I can do it too ;)
+>>     
+>
+> if you want to - nobody is stopping you.
+>   
+?!
+>   
+>>>>> Third, if the community only relied on you to progress reiserfs, it
+>>>>> has been years at this point and nothing significant. it is basically
+>>>>> somewhat dead.
+>>>>>           
+>>>> reiserfs is in  maintenance mode - there aren't much changes. In
+>>>> fact, less
+>>>> changes is a good thing.
+>>>>         
+>>> maintenance mode = stagnant, no?
+>>>       
+>
+> wrong. maintenance mode = stable.
+>   
+?!
+>
+>   
+>>>>  Edward is also pretty much the last person working on reiser4. You are
+>>>> attacking him, but I don't see patches from you. Gives someone
+>>>> something to
+>>>> think about.
+>>>>         
+>>> Right because he has slammed heads with everyone that was willing to
+>>> help him. I was willing and when I tried talking with him he blew me
+>>> off. So I forked. OntoLab too.
+>>>       
+>> Yes, that's exactly the point.
+>>     
+>
+> and then you stayed in your little corner. Nobody knows about your forks. 
+> Nobody can use your forks.
+???
+>  Or are you sending your patches to Andrew Morton 
+> for -mm inclusion?
+>   
+We are not at this point (see above).
+>   
+>>>> look at the archives. Edward has good reasons to feel ripped of.
+>>>> Maybe it is all a big miscommunication. But that isn't solved when
+>>>> ontolabs
+>>>> guys agressively advertise for themselves.
+>>>>         
+>>> But what else is there when a snails pace is being achieved otherwise?
+>>>       
+>
+> 'diplomacy' look into it, a very interesting topic.
+>   
+???
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+With best regards
+C. Stroetmann
