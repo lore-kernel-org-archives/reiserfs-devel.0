@@ -1,102 +1,34 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: 2.6.30-rc3: reiserfs: WARNING: at fs/namei.c:1251 lookup_one_len
-Date: Wed, 29 Apr 2009 02:51:23 -0400
-Message-ID: <49F7F8EB.1080907@suse.com>
-References: <a4423d670904261715q4510bdd3u2eb1ac3b90566fbc@mail.gmail.com> <20090428201310.fd2c6c96.akpm@linux-foundation.org>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: 2.6.30-rc3: reiserfs: WARNING: at fs/namei.c:1251
+	lookup_one_len
+Date: Wed, 29 Apr 2009 08:18:11 +0100
+Message-ID: <20090429071811.GH8633@ZenIV.linux.org.uk>
+References: <a4423d670904261715q4510bdd3u2eb1ac3b90566fbc@mail.gmail.com> <20090428201310.fd2c6c96.akpm@linux-foundation.org> <49F7F8EB.1080907@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755946AbZD2Gv7@vger.kernel.org>
-In-Reply-To: <20090428201310.fd2c6c96.akpm@linux-foundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <49F7F8EB.1080907@suse.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, David <david@unsolicited.net>, Al Viro <viro@zeniv.linux.org.uk>
+Content-Transfer-Encoding: 7bit
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Alexander Beregalov <a.beregalov@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, David <david@unsolicited.net>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-Andrew Morton wrote:
-> On Mon, 27 Apr 2009 04:15:21 +0400 Alexander Beregalov <a.beregalov@gmail.com> wrote:
+On Wed, Apr 29, 2009 at 02:51:23AM -0400, Jeff Mahoney wrote:
+> > A number of people are reporting this.  Al Viro said
+> > 
+> > : Yeah, the sanity check had caught another place misusing lookup_one_len().
+> > : I'd keep the warning in place for now; I think I know how to deal with
+> > : reiserfs side of things, but if it turns out too invasive for post-rc3,
+> > : we can always turn the check off just for -final.  For now I'd keep the
+> > : check in place, just to see if anything else runs into it.
+> > 
+> > It would be nice to plug this sooner rather than later please, to save
+> > a bit of bug-reporting bandwidth.
 > 
->> Hi Jeff
->>
->> REISERFS debug (device sda1): journal-1206: Starting replay from
->> offset 6641050231768444, trans_id 1024
->> REISERFS debug (device sda1): journal-1299: Setting newest_mount_id to 186
->> REISERFS (device sda1): Using r5 hash to sort names
->> ------------[ cut here ]------------
->> WARNING: at fs/namei.c:1251 lookup_one_len+0xd6/0xf0()
->> Hardware name:
->> Modules linked in:
->> Pid: 1, comm: swapper Not tainted 2.6.30-rc3-00340-gce8a742 #3
->> Call Trace:
->>  [<c0445f82>] ? printk+0x18/0x1e
->>  [<c01284e3>] warn_slowpath+0x73/0xd0
->>  [<c014c7d2>] ? mark_held_locks+0x62/0x80
->>  [<c0102f14>] ? restore_nocheck_notrace+0x0/0xe
->>  [<c014cafc>] ? trace_hardirqs_on_caller+0x14c/0x1b0
->>  [<c02c7fe4>] ? trace_hardirqs_on_thunk+0xc/0x10
->>  [<c012cfa7>] ? do_softirq+0x47/0x70
->>  [<c0102f14>] ? restore_nocheck_notrace+0x0/0xe
->>  [<c044939f>] ? _spin_unlock_irqrestore+0x2f/0x70
->>  [<c012908d>] ? vprintk+0x27d/0x3c0
->>  [<c0129097>] ? vprintk+0x287/0x3c0
->>  [<c0192006>] lookup_one_len+0xd6/0xf0
->>  [<c04490d7>] ? _spin_unlock+0x27/0x50
->>  [<c02000b9>] reiserfs_xattr_init+0xb9/0x230
->>  [<c0445f82>] ? printk+0x18/0x1e
->>  [<c01e9207>] reiserfs_fill_super+0x9b7/0xf60
->>  [<c02c60d4>] ? string+0x34/0xd0
->>  [<c02c6b9b>] ? vsnprintf+0x2fb/0x890
->>  [<c02c71ba>] ? snprintf+0x1a/0x20
->>  [<c01c99b9>] ? disk_name+0x59/0xd0
->>  [<c018bc43>] get_sb_bdev+0x133/0x160
->>  [<c017079e>] ? kstrdup+0x2e/0x80
->>  [<c01e6eb1>] get_super_block+0x21/0x30
->> ohci_hcd 0000:00:02.0: auto-stop root hub
->>  [<c01e8850>] ? reiserfs_fill_super+0x0/0xf60
->>  [<c018a96a>] vfs_kern_mount+0x3a/0xa0
->>  [<c018aa29>] do_kern_mount+0x39/0xd0
->>  [<c01a0afb>] do_mount+0x3bb/0x7a0
->>  [<c019ed6c>] ? copy_mount_options+0x3c/0x130
->>  [<c01a0f69>] sys_mount+0x89/0xc0
->>  [<c06fac5e>] mount_block_root+0xd1/0x25e
->>  [<c0194397>] ? sys_mknod+0x27/0x30
->>  [<c06fae44>] mount_root+0x59/0x5f
->>  [<c06faf3a>] prepare_namespace+0xf0/0x16c
->>  [<c0188320>] ? sys_access+0x20/0x30
->>  [<c06fa503>] kernel_init+0xd0/0xe9
->>  [<c06fa433>] ? kernel_init+0x0/0xe9
->>  [<c0103677>] kernel_thread_helper+0x7/0x10
->> ---[ end trace 98ddce1432d20cfb ]---
->> VFS: Mounted root (reiserfs filesystem) readonly on device 8:1.
-> 
-> A number of people are reporting this.  Al Viro said
-> 
-> : Yeah, the sanity check had caught another place misusing lookup_one_len().
-> : I'd keep the warning in place for now; I think I know how to deal with
-> : reiserfs side of things, but if it turns out too invasive for post-rc3,
-> : we can always turn the check off just for -final.  For now I'd keep the
-> : check in place, just to see if anything else runs into it.
-> 
-> It would be nice to plug this sooner rather than later please, to save
-> a bit of bug-reporting bandwidth.
+> I have a fix for this that I need to test. I've been traveling and
+> haven't had a chance to. I'm back in the office and will be able to
+> later today.
 
-I have a fix for this that I need to test. I've been traveling and
-haven't had a chance to. I'm back in the office and will be able to
-later today.
-
-- -Jeff
-
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
-
-iEYEARECAAYFAkn3+OsACgkQLPWxlyuTD7JtDgCglQj0yLF30m7DakG87bwjLhfW
-rUoAoIIGjW5NBpdjF9AxM2KYrva9Ptw1
-=Oelr
------END PGP SIGNATURE-----
+Could you Cc me on that?
