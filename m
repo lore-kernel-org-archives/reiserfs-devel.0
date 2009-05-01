@@ -1,176 +1,150 @@
-From: Chris Mason <chris.mason@oracle.com>
-Subject: Re: [PATCH 1/6] kill-the-BKL/reiserfs: release write lock on
- fs_changed()
-Date: Fri, 01 May 2009 10:14:01 -0400
-Message-ID: <1241187241.13084.44.camel@think.oraclecorp.com>
-References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com>
-	 <1241145862-21700-2-git-send-email-fweisbec@gmail.com>
-	 <878wlhpc5r.fsf@basil.nowhere.org> <20090501132825.GE6011@nowhere>
-	 <1241185456.13084.28.camel@think.oraclecorp.com>
-	 <20090501140136.GI6011@nowhere>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] reiserfs: Expand i_mutex to enclose lookup_one_len
+Date: Fri, 01 May 2009 12:11:12 -0400
+Message-ID: <49FB1F20.8040400@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20090501140136.GI6011@nowhere>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Andi Kleen <andi@firstfloor.org>, Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@ftp.linux.or>
 
-On Fri, 2009-05-01 at 16:01 +0200, Frederic Weisbecker wrote:
-> On Fri, May 01, 2009 at 09:44:16AM -0400, Chris Mason wrote:
-> > On Fri, 2009-05-01 at 15:28 +0200, Frederic Weisbecker wrote:
-> > > On Fri, May 01, 2009 at 08:31:12AM +0200, Andi Kleen wrote:
-> > > > Frederic Weisbecker <fweisbec@gmail.com> writes:
-> > > > >
-> > > > > diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
-> > > > > index 6587b4e..397d281 100644
-> > > > > --- a/include/linux/reiserfs_fs.h
-> > > > > +++ b/include/linux/reiserfs_fs.h
-> > > > > @@ -1302,7 +1302,13 @@ static inline loff_t max_reiserfs_offset(struct inode *inode)
-> > > > >  #define get_generation(s) atomic_read (&fs_generation(s))
-> > > > >  #define FILESYSTEM_CHANGED_TB(tb)  (get_generation((tb)->tb_sb) != (tb)->fs_gen)
-> > > > >  #define __fs_changed(gen,s) (gen != get_generation (s))
-> > > > > -#define fs_changed(gen,s) ({cond_resched(); __fs_changed(gen, s);})
-> > > > > +#define fs_changed(gen,s)		\
-> > > > > +({					\
-> > > > > +	reiserfs_write_unlock(s);	\
-> > > > > +	cond_resched();			\
-> > > > > +	reiserfs_write_lock(s);		\
-> > > > 
-> > > > Did you try writing that 
-> > > > 
-> > > >     if (need_resched()) {               \
-> > > > 	reiserfs_write_unlock(s);	\
-> > > > 	cond_resched();			\  (or schedule(), but cond_resched does a loop)
-> > > > 	reiserfs_write_lock(s);		\
-> > > >     }				
-> > > > 
-> > > > ? That might give better performance under load because users will be better
-> > > > batched and you don't release the lock unnecessarily in the unloaded case.
-> > > 
-> > > 
-> > > 
-> > > Good catch!
-> > > And I guess this pattern matches most of the cond_resched()
-> > > all over the code (the only condition is that we must already hold
-> > > the write lock).
-> > > 
-> > > I will merge your idea and Ingo's one, write a
-> > > reiserfs_cond_resched() to have a helper which
-> > > factorizes this pattern.
-> > 
-> > The pattern you'll find goes like this:
-> > 
-> > lock_kernel()
-> > do some work
-> > do something that might schedule
-> > run fs_changed(), fixup as required.
-> > 
-> > In your setup it is translating to:
-> > 
-> > reiserfs_write_lock(s)
-> > do some work
-> > reiserfs_write_unlock(s)
-> > 
-> > do something that might schedule
-> > 
-> > reiserfs_write_lock(s)
-> > if (need_resched()) {
-> >     reiserfs_write_unlock(s)
-> >     cond_resched()
-> >     reiserfs_write_lock(s)
-> > }
-> > 
-> > if (__fs_changed()) fixup as required
-> > 
-> > You'll also find that item_moved is similar to __fs_changed() but more
-> > fine grained.
-> > 
-> > One easy optimization is to make an fs_changed_relock()
-> > 
-> > static inline int fs_changed_relock(gen, s) {
-> > 	cond_resched();
-> > 	reiserfs_write_lock(s)
-> > 	return __fs_changed(gen, s)
-> > }
-> 
-> 
-> 
-> Nice idea!
-> Does it means I can also replace the item_moved() calls to __fs_changed()?
-> 
+ 2.6.30-rc3 introduced some sanity checks in the VFS code to avoid NFS
+ bugs by ensuring that lookup_one_len is always called under i_mutex.
 
-Not quite, it looks like a common convention is also
+ This patch expands the i_mutex locking to enclose lookup_one_len. This was
+ always required, but not not enforced in the reiserfs code since it
+ does locking around the xattr interactions with the xattr_sem.
 
-if (fs_changed && item_moved) { fixup }
+ This is obvious enough, but it survived an overnight 50 thread ACL test.
 
-item_moved is the expensive check based on the contents of a btree
-block, while fs_changed is a simple generation number.
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ fs/reiserfs/xattr.c |   32 ++++++++++++++------------------
+ 1 file changed, 14 insertions(+), 18 deletions(-)
 
-> They seem to not work the same way, I guess I should provide two different
-> helpers, depending on the check.
-> 
-> 
-> > 
-> > Another cause of scheduling is going to be reiserfs_prepare_for_journal.
-> > This function gets called before we modify a metadata buffer and it
-> > waits for IO to finish.
-> > 
-> > Not sure if your patch series already found it, but if you change this:
-> > 
-> > int reiserfs_prepare_for_journal(struct super_block *sb,
-> >                                  struct buffer_head *bh, int wait)
-> > {
-> >         PROC_INFO_INC(sb, journal.prepare);
-> > 
-> >         if (!trylock_buffer(bh)) {
-> >                 if (!wait)
-> >                         return 0;
-> >                 lock_buffer(bh);
-> >         }
-> > 
-> > Into:
-> > 
-> > 	if (!trylock_buffer(bh)) {
-> > 		if (!wait)
-> > 			return 0;
-> > 		reiserfs_write_unlock(s);
-> > 		wait_on_buffer(bh);
-> > 		reiserfs_write_lock(s);
-> > 		lock_buffer(bh);
-> > 	}
-> > 
-> > You'll catch a big cause of waiting for the disk with the lock held.
-> 
-> 
-> Again, good catch. I will try that.
-> 
-> I should also check the different other lock_buffer() which
-> indeed might sleep.
-
-ftrace can help some.
-
-cd /sys/kernel/debug/tracing
-echo function > current_tracer
-echo func_stack_trace > trace_options
-echo schedule > set_ftrace_filter
-echo 1 > tracing_on
-
-trace-histogram < trace_pipe > /tmp/trace_output
-
-(in another window run the reiserfs workload)
-
-When done hit ctrl-c on the trace-histogram window
-
-You'll get the most common causes of schedule during the run, groupd by
-stack trace.  Just look for the ones that are done with the lock held.
-
-trace-histogram is here:
-
-http://oss.oracle.com/~mason/trace-histogram
-
--chris
-
-
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -120,25 +120,20 @@ static struct dentry *lookup_or_create_d
+ 	struct dentry *dentry;
+ 	BUG_ON(!parent);
+ 
++	mutex_lock_nested(&parent->d_inode->i_mutex, I_MUTEX_XATTR);
+ 	dentry = lookup_one_len(name, parent, strlen(name));
+-	if (IS_ERR(dentry))
+-		return dentry;
+-	else if (!dentry->d_inode) {
++	if (!IS_ERR(dentry) && !dentry->d_inode) {
+ 		int err = -ENODATA;
+ 
+-		if (xattr_may_create(flags)) {
+-			mutex_lock_nested(&parent->d_inode->i_mutex,
+-					  I_MUTEX_XATTR);
++		if (xattr_may_create(flags))
+ 			err = xattr_mkdir(parent->d_inode, dentry, 0700);
+-			mutex_unlock(&parent->d_inode->i_mutex);
+-		}
+ 
+ 		if (err) {
+ 			dput(dentry);
+ 			dentry = ERR_PTR(err);
+ 		}
+ 	}
+-
++	mutex_unlock(&parent->d_inode->i_mutex);
+ 	return dentry;
+ }
+ 
+@@ -184,6 +179,7 @@ fill_with_dentries(void *buf, const char
+ {
+ 	struct reiserfs_dentry_buf *dbuf = buf;
+ 	struct dentry *dentry;
++	WARN_ON_ONCE(!mutex_is_locked(&dbuf->xadir->d_inode->i_mutex));
+ 
+ 	if (dbuf->count == ARRAY_SIZE(dbuf->dentries))
+ 		return -ENOSPC;
+@@ -349,6 +345,7 @@ static struct dentry *xattr_lookup(struc
+ 	if (IS_ERR(xadir))
+ 		return ERR_CAST(xadir);
+ 
++	mutex_lock_nested(&xadir->d_inode->i_mutex, I_MUTEX_XATTR);
+ 	xafile = lookup_one_len(name, xadir, strlen(name));
+ 	if (IS_ERR(xafile)) {
+ 		err = PTR_ERR(xafile);
+@@ -360,18 +357,15 @@ static struct dentry *xattr_lookup(struc
+ 
+ 	if (!xafile->d_inode) {
+ 		err = -ENODATA;
+-		if (xattr_may_create(flags)) {
+-			mutex_lock_nested(&xadir->d_inode->i_mutex,
+-					  I_MUTEX_XATTR);
++		if (xattr_may_create(flags))
+ 			err = xattr_create(xadir->d_inode, xafile,
+ 					      0700|S_IFREG);
+-			mutex_unlock(&xadir->d_inode->i_mutex);
+-		}
+ 	}
+ 
+ 	if (err)
+ 		dput(xafile);
+ out:
++	mutex_unlock(&xadir->d_inode->i_mutex);
+ 	dput(xadir);
+ 	if (err)
+ 		return ERR_PTR(err);
+@@ -435,6 +429,7 @@ static int lookup_and_delete_xattr(struc
+ 	if (IS_ERR(xadir))
+ 		return PTR_ERR(xadir);
+ 
++	mutex_lock_nested(&xadir->d_inode->i_mutex, I_MUTEX_XATTR);
+ 	dentry = lookup_one_len(name, xadir, strlen(name));
+ 	if (IS_ERR(dentry)) {
+ 		err = PTR_ERR(dentry);
+@@ -442,14 +437,13 @@ static int lookup_and_delete_xattr(struc
+ 	}
+ 
+ 	if (dentry->d_inode) {
+-		mutex_lock_nested(&xadir->d_inode->i_mutex, I_MUTEX_XATTR);
+ 		err = xattr_unlink(xadir->d_inode, dentry);
+-		mutex_unlock(&xadir->d_inode->i_mutex);
+ 		update_ctime(inode);
+ 	}
+ 
+ 	dput(dentry);
+ out_dput:
++	mutex_unlock(&xadir->d_inode->i_mutex);
+ 	dput(xadir);
+ 	return err;
+ }
+@@ -906,9 +900,9 @@ static int create_privroot(struct dentry
+ {
+ 	int err;
+ 	struct inode *inode = dentry->d_parent->d_inode;
+-	mutex_lock_nested(&inode->i_mutex, I_MUTEX_XATTR);
++	WARN_ON_ONCE(!mutex_is_locked(&inode->i_mutex));
++
+ 	err = xattr_mkdir(inode, dentry, 0700);
+-	mutex_unlock(&inode->i_mutex);
+ 	if (err) {
+ 		dput(dentry);
+ 		dentry = NULL;
+@@ -980,6 +974,7 @@ int reiserfs_xattr_init(struct super_blo
+ 	/* If we don't have the privroot located yet - go find it */
+ 	if (!REISERFS_SB(s)->priv_root) {
+ 		struct dentry *dentry;
++		mutex_lock_nested(&s->s_root->d_inode->i_mutex, I_MUTEX_CHILD);
+ 		dentry = lookup_one_len(PRIVROOT_NAME, s->s_root,
+ 					strlen(PRIVROOT_NAME));
+ 		if (!IS_ERR(dentry)) {
+@@ -993,6 +988,7 @@ int reiserfs_xattr_init(struct super_blo
+ 			}
+ 		} else
+ 			err = PTR_ERR(dentry);
++		mutex_unlock(&s->s_root->d_inode->i_mutex);
+ 
+ 		if (!err && dentry) {
+ 			s->s_root->d_op = &xattr_lookup_poison_ops;
+-- 
+Jeff Mahoney
+SUSE Labs
