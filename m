@@ -1,53 +1,34 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH] reiserfs: Expand i_mutex to enclose lookup_one_len
-Date: Fri, 01 May 2009 16:36:31 -0400
-Message-ID: <49FB5D4F.5090600@suse.com>
-References: <49FB1F20.8040400@suse.com> <20090501125627.e13ff38f.akpm@linux-foundation.org>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH 0/6] kill-the-BKL/reiserfs3: performance improvements,
+	faster than Bkl based scheme
+Date: Fri, 1 May 2009 22:36:39 +0200
+Message-ID: <20090501203639.GA9396@elte.hu>
+References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <alpine.LFD.2.00.0905011236530.5379@localhost.localdomain> <20090501203309.GA6243@elte.hu>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20090501125627.e13ff38f.akpm@linux-foundation.org>
+Content-Disposition: inline
+In-Reply-To: <20090501203309.GA6243@elte.hu>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, viro@ftp.linux.org.uk, a.beregalov@gmail.com, david@unsolicited.net, "Rafael J. Wysocki" <rjw@sisk.pl>
+Content-Transfer-Encoding: 7bit
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
 
-Andrew Morton wrote:
-> On Fri, 01 May 2009 12:11:12 -0400
-> Jeff Mahoney <jeffm@suse.com> wrote:
-> 
->>  2.6.30-rc3 introduced some sanity checks in the VFS code to avoid NFS
->>  bugs by ensuring that lookup_one_len is always called under i_mutex.
->>
->>  This patch expands the i_mutex locking to enclose lookup_one_len. This was
->>  always required, but not not enforced in the reiserfs code since it
->>  does locking around the xattr interactions with the xattr_sem.
-> 
-> cool, so this will fix all those backtraces people have been reporting
-> coming out of the reiserfs xattr code lately?
+* Ingo Molnar <mingo@elte.hu> wrote:
 
-Yes.
+> The BKL is clearly removed at a faster reate with such debugging 
+> measures in place. With such measures the BKL _really_ hurts, and 
+> very visibly so - and that results in active removal.
 
->>  This is obvious enough, but it survived an overnight 50 thread ACL test.
-> 
-> That sounds a bit pessimistic.  I think I'll s/but/and/ ;)
+Btw., if you can think of any way to create a cleaner debug tool 
+here i'd be glad to start a new tree that adds only _that_ tool - 
+and that could perhaps be dealt with independently and possibly 
+pulled upstream too, if clean enough.
 
-Yeah, that's more accurate. :)
+The problem is, i think it would still quack like a global mutex, 
+would walk like a global mutex and would look like a global mutex
+:-/
 
-- -Jeff
-
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
-
-iEYEARECAAYFAkn7XU4ACgkQLPWxlyuTD7JOAgCfcVV+kowmYbaBKNCZG7BfNx3V
-9dwAoKGB7Uu2RkwXtkpaaCi2ADtQszC1
-=B4is
------END PGP SIGNATURE-----
+	Ingo
