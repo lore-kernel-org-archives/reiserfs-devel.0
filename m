@@ -1,17 +1,17 @@
 From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: [PATCH 3/6] kill-the-BKL/reiserfs: release write lock while rescheduling on prepare_for_delete_or_cut()
-Date: Fri,  1 May 2009 04:44:19 +0200
-Message-ID: <1241145862-21700-4-git-send-email-fweisbec@gmail.com>
+Subject: [PATCH 4/6] kill-the-BKL/reiserfs: release the write lock inside get_neighbors()
+Date: Fri,  1 May 2009 04:44:20 +0200
+Message-ID: <1241145862-21700-5-git-send-email-fweisbec@gmail.com>
 References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
         h=domainkey-signature:received:received:from:to:cc:subject:date
          :message-id:x-mailer:in-reply-to:references;
-        bh=ibgcR1gdPnYM3v85FzFaw9uBwqrSLfqdWIvyJLo2lTk=;
-        b=dYS8davfjRvwad1yjxOgkvQBWCr2xAl0OvTHQj6/8rrBv50P1zpANwd2wZgSXAxpdv
-         v3AQ8JUknW2EKSrTiZ0VtGeToUIlEQ5Vuz9FUfV/3Sm5oXAJ0gk5OG6mniFOu+dYMbYg
-         oyplOmqIbVqbAyAB4qOqKubpZdAkPVSvJPwpU=
+        bh=D5exrwvPwFJG0GEAUcIFXICXBwF3fzj9cWbGt8zY+ic=;
+        b=ghqgGtPcuoFvHk7blh7efqVW+DjFsmON9Orl1KdmoW/INl5x7dOYHD54xRp6bywfRY
+         p4EVnniwTU4a6b1+B1Lp6CAQoKpCsvpmU3BolyFTadQteReinkQKuK5rdh324il0rGGz
+         uNh5cMrWXI9ZJsdYa/32kRJmDIaiVlIhM5iZ0=
 In-Reply-To: <1241145862-21700-1-git-send-email-fweisbec@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -21,17 +21,19 @@ Content-Transfer-Encoding: 7bit
 To: Ingo Molnar <mingo@elte.hu>
 Cc: LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
 
-prepare_for_delete_or_cut() can process several types of items, including
-indirect items, ie: items which contain no file data but pointers to
-unformatted nodes scattering the datas of a file.
+get_neighbors() is used to get the left and/or right blocks
+against a given one in order to balance a tree.
 
-In this case it has to zero out these pointers to block numbers of
-unformatted nodes and release the bitmap from these block numbers.
+sb_bread() is used to read the buffer of these neighors blocks and
+while it waits for this operation, it might sleep.
 
-It can take some time, so a rescheduling() is performed between each
-block processed. We can safely release the write lock while
-rescheduling(), like the bkl did, because the code checks just after
-if the item has moved after sleeping.
+The bkl was released at this point, and then we can also release
+the write lock before calling sb_bread().
+
+This is safe because if the filesystem is changed after this
+lock release, the function returns REPEAT_SEARCH (aka SCHEDULE_OCCURRED
+in the function header comments) in order to repeat the neighbhor
+research.
 
 [ Impact: release the reiserfs write lock when it is not needed ]
 
@@ -40,23 +42,33 @@ Cc: Chris Mason <chris.mason@oracle.com>
 Cc: Alexander Beregalov <a.beregalov@gmail.com>
 Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
 ---
- fs/reiserfs/stree.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+ fs/reiserfs/fix_node.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
-diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index 6bd99a9..6ddcecb 100644
---- a/fs/reiserfs/stree.c
-+++ b/fs/reiserfs/stree.c
-@@ -1026,7 +1026,9 @@ static char prepare_for_delete_or_cut(struct reiserfs_transaction_handle *th, st
- 			reiserfs_free_block(th, inode, block, 1);
- 		    }
- 
-+		    reiserfs_write_unlock(sb);
- 		    cond_resched();
-+		    reiserfs_write_lock(sb);
- 
- 		    if (item_moved (&s_ih, path))  {
- 			need_re_search = 1;
+diff --git a/fs/reiserfs/fix_node.c b/fs/reiserfs/fix_node.c
+index bf5f2cb..3a685e3 100644
+--- a/fs/reiserfs/fix_node.c
++++ b/fs/reiserfs/fix_node.c
+@@ -1971,7 +1971,9 @@ static int get_neighbors(struct tree_balance *tb, int h)
+ 		     tb->FL[h]) ? tb->lkey[h] : B_NR_ITEMS(tb->
+ 								       FL[h]);
+ 		son_number = B_N_CHILD_NUM(tb->FL[h], child_position);
++		reiserfs_write_unlock(sb);
+ 		bh = sb_bread(sb, son_number);
++		reiserfs_write_lock(sb);
+ 		if (!bh)
+ 			return IO_ERROR;
+ 		if (FILESYSTEM_CHANGED_TB(tb)) {
+@@ -2009,7 +2011,9 @@ static int get_neighbors(struct tree_balance *tb, int h)
+ 		child_position =
+ 		    (bh == tb->FR[h]) ? tb->rkey[h] + 1 : 0;
+ 		son_number = B_N_CHILD_NUM(tb->FR[h], child_position);
++		reiserfs_write_unlock(sb);
+ 		bh = sb_bread(sb, son_number);
++		reiserfs_write_lock(sb);
+ 		if (!bh)
+ 			return IO_ERROR;
+ 		if (FILESYSTEM_CHANGED_TB(tb)) {
 -- 
 1.6.2.3
 
