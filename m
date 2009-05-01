@@ -1,49 +1,48 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH 4/6] kill-the-BKL/reiserfs: release the write lock
-	inside get_neighbors()
-Date: Fri, 1 May 2009 07:51:35 +0200
-Message-ID: <20090501055135.GF5983@elte.hu>
-References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <1241145862-21700-5-git-send-email-fweisbec@gmail.com>
+From: Andi Kleen <andi@firstfloor.org>
+Subject: Re: [PATCH 1/6] kill-the-BKL/reiserfs: release write lock on fs_changed()
+Date: Fri, 01 May 2009 08:31:12 +0200
+Message-ID: <878wlhpc5r.fsf@basil.nowhere.org>
+References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com>
+	<1241145862-21700-2-git-send-email-fweisbec@gmail.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1241145862-21700-5-git-send-email-fweisbec@gmail.com>
+In-Reply-To: <1241145862-21700-2-git-send-email-fweisbec@gmail.com> (Frederic Weisbecker's message of "Fri,  1 May 2009 04:44:17 +0200")
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
 
+Frederic Weisbecker <fweisbec@gmail.com> writes:
+>
+> diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
+> index 6587b4e..397d281 100644
+> --- a/include/linux/reiserfs_fs.h
+> +++ b/include/linux/reiserfs_fs.h
+> @@ -1302,7 +1302,13 @@ static inline loff_t max_reiserfs_offset(struct inode *inode)
+>  #define get_generation(s) atomic_read (&fs_generation(s))
+>  #define FILESYSTEM_CHANGED_TB(tb)  (get_generation((tb)->tb_sb) != (tb)->fs_gen)
+>  #define __fs_changed(gen,s) (gen != get_generation (s))
+> -#define fs_changed(gen,s) ({cond_resched(); __fs_changed(gen, s);})
+> +#define fs_changed(gen,s)		\
+> +({					\
+> +	reiserfs_write_unlock(s);	\
+> +	cond_resched();			\
+> +	reiserfs_write_lock(s);		\
 
-* Frederic Weisbecker <fweisbec@gmail.com> wrote:
+Did you try writing that 
 
-> get_neighbors() is used to get the left and/or right blocks 
-> against a given one in order to balance a tree.
-> 
-> sb_bread() is used to read the buffer of these neighors blocks and 
-> while it waits for this operation, it might sleep.
-> 
-> The bkl was released at this point, and then we can also release 
-> the write lock before calling sb_bread().
-> 
-> This is safe because if the filesystem is changed after this lock 
-> release, the function returns REPEAT_SEARCH (aka SCHEDULE_OCCURRED 
-> in the function header comments) in order to repeat the neighbhor 
-> research.
-> 
-> [ Impact: release the reiserfs write lock when it is not needed ]
+    if (need_resched()) {               \
+	reiserfs_write_unlock(s);	\
+	cond_resched();			\  (or schedule(), but cond_resched does a loop)
+	reiserfs_write_lock(s);		\
+    }				
 
-This should also be safe because under the BKL we _already_ dropped 
-the lock when sb_bread() blocked (which it really would in the 
-normal case).
+? That might give better performance under load because users will be better
+batched and you don't release the lock unnecessarily in the unloaded case.
 
-There's one special case to consider though: sb_read() maps to 
-__bread() which can return without sleeping if the bh is already 
-uptodate. So if the filesystem _knows_ that the bh is already 
-uptodate and holds a reference to it (this is common pattern in 
-filesystems), it can have a locking assumption on that.
+-Andi
 
-No such assumption seems to be present here though.
-
-	Ingo
+-- 
+ak@linux.intel.com -- Speaking for myself only.
