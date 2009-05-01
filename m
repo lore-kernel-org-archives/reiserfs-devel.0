@@ -1,136 +1,156 @@
-From: Chris Mason <chris.mason@oracle.com>
-Subject: Re: [PATCH 6/6] kill-the-BKL/reiserfs: release the write lock on
- flush_commit_list()
-Date: Fri, 01 May 2009 09:54:17 -0400
-Message-ID: <1241186057.13084.34.camel@think.oraclecorp.com>
-References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com>
-	 <1241145862-21700-7-git-send-email-fweisbec@gmail.com>
-	 <20090501054247.GD5983@elte.hu> <20090501131340.GB6011@nowhere>
-	 <1241184385.13084.11.camel@think.oraclecorp.com>
-	 <20090501132923.GA30663@elte.hu>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: [PATCH 1/6] kill-the-BKL/reiserfs: release write lock on
+	fs_changed()
+Date: Fri, 1 May 2009 16:01:37 +0200
+Message-ID: <20090501140136.GI6011@nowhere>
+References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <1241145862-21700-2-git-send-email-fweisbec@gmail.com> <878wlhpc5r.fsf@basil.nowhere.org> <20090501132825.GE6011@nowhere> <1241185456.13084.28.camel@think.oraclecorp.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20090501132923.GA30663@elte.hu>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:received:date:from:to:cc
+         :subject:message-id:references:mime-version:content-type
+         :content-disposition:in-reply-to:user-agent;
+        bh=CuNeYCGirqEGJKLw0ECi+9Nf2edfoL4t3krF8wsTBV4=;
+        b=axVqIZhcVQU6rLpyNEvepdvvihlg5IiiMZyYWjxuOPow9FAT6ywJB80A04tUlJTXIn
+         SDW+pa4Bn60ZYYqLblcGKynIurwhJGRd16a6lUlv+/NtNO+FkoTJunx7M35qKA7YN5dX
+         xh6gCHKiu9c24cwG0roLiv9PTVNjVfs8PAi5U=
+Content-Disposition: inline
+In-Reply-To: <1241185456.13084.28.camel@think.oraclecorp.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <chris.mason@oracle.com>
+Cc: Andi Kleen <andi@firstfloor.org>, Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
 
-On Fri, 2009-05-01 at 15:29 +0200, Ingo Molnar wrote:
-> * Chris Mason <chris.mason@oracle.com> wrote:
-> 
-> > On Fri, 2009-05-01 at 15:13 +0200, Frederic Weisbecker wrote:
-> > > On Fri, May 01, 2009 at 07:42:47AM +0200, Ingo Molnar wrote:
-> > > > 
-> > > > * Frederic Weisbecker <fweisbec@gmail.com> wrote:
-> > > > 
-> > > > > flush_commit_list() uses ll_rw_block() to commit the pending log blocks.
-> > > > > ll_rw_block() might sleep, and the bkl was released at this point. Then
-> > > > > we can also relax the write lock at this point.
-> > > > > 
-> > > > > [ Impact: release the reiserfs write lock when it is not needed ]
-> > > > > 
-> > > > > Cc: Jeff Mahoney <jeffm@suse.com>
-> > > > > Cc: Chris Mason <chris.mason@oracle.com>
-> > > > > Cc: Alexander Beregalov <a.beregalov@gmail.com>
-> > > > > Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
-> > > > > ---
-> > > > >  fs/reiserfs/journal.c |    7 +++++--
-> > > > >  1 files changed, 5 insertions(+), 2 deletions(-)
-> > > > > 
-> > > > > diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-> > > > > index 373d080..b1ebd5a 100644
-> > > > > --- a/fs/reiserfs/journal.c
-> > > > > +++ b/fs/reiserfs/journal.c
-> > > > > @@ -1120,8 +1120,11 @@ static int flush_commit_list(struct super_block *s,
-> > > > >  		    SB_ONDISK_JOURNAL_SIZE(s);
-> > > > >  		tbh = journal_find_get_block(s, bn);
-> > > > >  		if (tbh) {
-> > > > > -			if (buffer_dirty(tbh))
-> > > > > -			    ll_rw_block(WRITE, 1, &tbh) ;
-> > > > > +			if (buffer_dirty(tbh)) {
-> > > > > +		            reiserfs_write_unlock(s);
-> > > > > +			    ll_rw_block(WRITE, 1, &tbh);
-> > > > > +			    reiserfs_write_lock(s);
-> > > > > +			}
-> > > > >  			put_bh(tbh) ;
-> > > > >  		}
-> > > > >  	}
-> > > > 
-> > > > there's 7 other instances of ll_rw_block():
-> > > > 
-> > > > fs/reiserfs/journal.c-			spin_unlock(lock);
-> > > > fs/reiserfs/journal.c:			ll_rw_block(WRITE, 1, &bh);
-> > > > fs/reiserfs/journal.c-			spin_lock(lock);
-> > > > --
-> > > > fs/reiserfs/journal.c-		            reiserfs_write_unlock(s);
-> > > > fs/reiserfs/journal.c:			    ll_rw_block(WRITE, 1, &tbh);
-> > > > fs/reiserfs/journal.c-			    reiserfs_write_lock(s);
-> > > > --
-> > > > fs/reiserfs/journal.c-	/* read in the log blocks, memcpy to the corresponding real block */
-> > > > fs/reiserfs/journal.c:	ll_rw_block(READ, get_desc_trans_len(desc), log_blocks);
-> > > > fs/reiserfs/journal.c-	for (i = 0; i < get_desc_trans_len(desc); i++) {
-> > > > --
-> > > > fs/reiserfs/journal.c-		set_buffer_dirty(real_blocks[i]);
-> > > > fs/reiserfs/journal.c:		ll_rw_block(SWRITE, 1, real_blocks + i);
-> > > > fs/reiserfs/journal.c-	}
-> > > > --
-> > > > fs/reiserfs/journal.c-	}
-> > > > fs/reiserfs/journal.c:	ll_rw_block(READ, j, bhlist);
-> > > > fs/reiserfs/journal.c-	for (i = 1; i < j; i++)
-> > > > --
-> > > > fs/reiserfs/stree.c-		if (!buffer_uptodate(bh[j]))
-> > > > fs/reiserfs/stree.c:			ll_rw_block(READA, 1, bh + j);
-> > > > fs/reiserfs/stree.c-		brelse(bh[j]);
-> > > > --
-> > > > fs/reiserfs/stree.c-						    reada_blocks, reada_count);
-> > > > fs/reiserfs/stree.c:			ll_rw_block(READ, 1, &bh);
-> > > > fs/reiserfs/stree.c-			reiserfs_write_unlock(sb);
-> > > > --
-> > > > fs/reiserfs/super.c-{
-> > > > fs/reiserfs/super.c:	ll_rw_block(READ, 1, &(SB_BUFFER_WITH_SB(s)));
-> > > > fs/reiserfs/super.c-	reiserfs_write_unlock(s);
-> > > > 
-> > > > in particular the second stree.c one and the super.c has a 
-> > > > write-unlock straight before the lock-drop.
-> > > > 
-> > > > I think the stree.c unlock could be moved to before the 
-> > > > ll_rw_block() call straight away.
+On Fri, May 01, 2009 at 09:44:16AM -0400, Chris Mason wrote:
+> On Fri, 2009-05-01 at 15:28 +0200, Frederic Weisbecker wrote:
+> > On Fri, May 01, 2009 at 08:31:12AM +0200, Andi Kleen wrote:
+> > > Frederic Weisbecker <fweisbec@gmail.com> writes:
+> > > >
+> > > > diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
+> > > > index 6587b4e..397d281 100644
+> > > > --- a/include/linux/reiserfs_fs.h
+> > > > +++ b/include/linux/reiserfs_fs.h
+> > > > @@ -1302,7 +1302,13 @@ static inline loff_t max_reiserfs_offset(struct inode *inode)
+> > > >  #define get_generation(s) atomic_read (&fs_generation(s))
+> > > >  #define FILESYSTEM_CHANGED_TB(tb)  (get_generation((tb)->tb_sb) != (tb)->fs_gen)
+> > > >  #define __fs_changed(gen,s) (gen != get_generation (s))
+> > > > -#define fs_changed(gen,s) ({cond_resched(); __fs_changed(gen, s);})
+> > > > +#define fs_changed(gen,s)		\
+> > > > +({					\
+> > > > +	reiserfs_write_unlock(s);	\
+> > > > +	cond_resched();			\
+> > > > +	reiserfs_write_lock(s);		\
 > > > 
+> > > Did you try writing that 
 > > > 
-> > > Indeed.
+> > >     if (need_resched()) {               \
+> > > 	reiserfs_write_unlock(s);	\
+> > > 	cond_resched();			\  (or schedule(), but cond_resched does a loop)
+> > > 	reiserfs_write_lock(s);		\
+> > >     }				
 > > > 
-> > > 
-> > > > 
-> > > > The super.c one needs more care: first put &(SB_BUFFER_WITH_SB(s)) 
-> > > > into a local variable, then unlock the wite-lock, then call 
-> > > > ll_rw_block(). (This is important because &(SB_BUFFER_WITH_SB(s)) is 
-> > > > global filesystem state that has to be read with the lock held.)
-> > > 
-> > > 
-> > > Indeed &(SB_BUFFER_WITH_SB(s)) is a pointer to blocks that
-> > > reflect the state of the filesystem but it was already not
-> > > safe on the old code.
-> > > 
+> > > ? That might give better performance under load because users will be better
+> > > batched and you don't release the lock unnecessarily in the unloaded case.
 > > 
-> > SB_BUFFER_WITH_SB isn't going to change.  It gets set once during 
-> > mount and will return the same buffer from then on.
+> > 
+> > 
+> > Good catch!
+> > And I guess this pattern matches most of the cond_resched()
+> > all over the code (the only condition is that we must already hold
+> > the write lock).
+> > 
+> > I will merge your idea and Ingo's one, write a
+> > reiserfs_cond_resched() to have a helper which
+> > factorizes this pattern.
 > 
-> Are we holding a permanent reference to it after the first read? If 
-> yes then any bread done on an uptodate bh will return immediately 
-> without scheduling
+> The pattern you'll find goes like this:
+> 
+> lock_kernel()
+> do some work
+> do something that might schedule
+> run fs_changed(), fixup as required.
+> 
+> In your setup it is translating to:
+> 
+> reiserfs_write_lock(s)
+> do some work
+> reiserfs_write_unlock(s)
+> 
+> do something that might schedule
+> 
+> reiserfs_write_lock(s)
+> if (need_resched()) {
+>     reiserfs_write_unlock(s)
+>     cond_resched()
+>     reiserfs_write_lock(s)
+> }
+> 
+> if (__fs_changed()) fixup as required
+> 
+> You'll also find that item_moved is similar to __fs_changed() but more
+> fine grained.
+> 
+> One easy optimization is to make an fs_changed_relock()
+> 
+> static inline int fs_changed_relock(gen, s) {
+> 	cond_resched();
+> 	reiserfs_write_lock(s)
+> 	return __fs_changed(gen, s)
+> }
 
-Yes, it is pinned the whole time the FS is mounted.  It looks to me like
-the reread_meta_blocks() function can go away.  The log replay should be
-updating the same caches that the super block bh is in.
-
-But, this isn't very performance critical stuff, it only happens in
-reiserfs_fill_super().  I'd leave it.
-
--chris
 
 
+Nice idea!
+Does it means I can also replace the item_moved() calls to __fs_changed()?
 
+They seem to not work the same way, I guess I should provide two different
+helpers, depending on the check.
+
+
+> 
+> Another cause of scheduling is going to be reiserfs_prepare_for_journal.
+> This function gets called before we modify a metadata buffer and it
+> waits for IO to finish.
+> 
+> Not sure if your patch series already found it, but if you change this:
+> 
+> int reiserfs_prepare_for_journal(struct super_block *sb,
+>                                  struct buffer_head *bh, int wait)
+> {
+>         PROC_INFO_INC(sb, journal.prepare);
+> 
+>         if (!trylock_buffer(bh)) {
+>                 if (!wait)
+>                         return 0;
+>                 lock_buffer(bh);
+>         }
+> 
+> Into:
+> 
+> 	if (!trylock_buffer(bh)) {
+> 		if (!wait)
+> 			return 0;
+> 		reiserfs_write_unlock(s);
+> 		wait_on_buffer(bh);
+> 		reiserfs_write_lock(s);
+> 		lock_buffer(bh);
+> 	}
+> 
+> You'll catch a big cause of waiting for the disk with the lock held.
+
+
+Again, good catch. I will try that.
+
+I should also check the different other lock_buffer() which
+indeed might sleep.
+
+Thanks!
+
+
+> -chris
+> 
+> 
 
