@@ -1,129 +1,69 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH 6/6] kill-the-BKL/reiserfs: release the write lock on
-	flush_commit_list()
-Date: Fri, 1 May 2009 15:23:22 +0200
-Message-ID: <20090501132322.GA30055@elte.hu>
-References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <1241145862-21700-7-git-send-email-fweisbec@gmail.com> <20090501054247.GD5983@elte.hu> <20090501131340.GB6011@nowhere>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: [PATCH 4/6] kill-the-BKL/reiserfs: release the write lock
+	inside get_neighbors()
+Date: Fri, 1 May 2009 15:25:07 +0200
+Message-ID: <20090501132506.GD6011@nowhere>
+References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <1241145862-21700-5-git-send-email-fweisbec@gmail.com> <20090501055135.GF5983@elte.hu>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:received:date:from:to:cc
+         :subject:message-id:references:mime-version:content-type
+         :content-disposition:in-reply-to:user-agent;
+        bh=HSWmj78yERM+6Yk9RbJpwGn8Li5e2M5qLhB0jFSm0qo=;
+        b=NkaV2ikPzDjYxqkzOwFOWnzu8DSDrdLVHHzWz0Foiy2UH99rQ6Et2VPO5OVGyNWdb6
+         wjvnmEaXswFqWDPH+B6iWzxvTImmL3hXUi9y0H9zIb/vj6wOfDjRtvqDKfrjoJ59BanY
+         gEiv2zOzJPwZgde4Ss7o9LvPb7xK8hF2OK8lk=
 Content-Disposition: inline
-In-Reply-To: <20090501131340.GB6011@nowhere>
+In-Reply-To: <20090501055135.GF5983@elte.hu>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Frederic Weisbecker <fweisbec@gmail.com>
+To: Ingo Molnar <mingo@elte.hu>
 Cc: LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
 
-
-* Frederic Weisbecker <fweisbec@gmail.com> wrote:
-
-> On Fri, May 01, 2009 at 07:42:47AM +0200, Ingo Molnar wrote:
-> > 
-> > * Frederic Weisbecker <fweisbec@gmail.com> wrote:
-> > 
-> > > flush_commit_list() uses ll_rw_block() to commit the pending log blocks.
-> > > ll_rw_block() might sleep, and the bkl was released at this point. Then
-> > > we can also relax the write lock at this point.
-> > > 
-> > > [ Impact: release the reiserfs write lock when it is not needed ]
-> > > 
-> > > Cc: Jeff Mahoney <jeffm@suse.com>
-> > > Cc: Chris Mason <chris.mason@oracle.com>
-> > > Cc: Alexander Beregalov <a.beregalov@gmail.com>
-> > > Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
-> > > ---
-> > >  fs/reiserfs/journal.c |    7 +++++--
-> > >  1 files changed, 5 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-> > > index 373d080..b1ebd5a 100644
-> > > --- a/fs/reiserfs/journal.c
-> > > +++ b/fs/reiserfs/journal.c
-> > > @@ -1120,8 +1120,11 @@ static int flush_commit_list(struct super_block *s,
-> > >  		    SB_ONDISK_JOURNAL_SIZE(s);
-> > >  		tbh = journal_find_get_block(s, bn);
-> > >  		if (tbh) {
-> > > -			if (buffer_dirty(tbh))
-> > > -			    ll_rw_block(WRITE, 1, &tbh) ;
-> > > +			if (buffer_dirty(tbh)) {
-> > > +		            reiserfs_write_unlock(s);
-> > > +			    ll_rw_block(WRITE, 1, &tbh);
-> > > +			    reiserfs_write_lock(s);
-> > > +			}
-> > >  			put_bh(tbh) ;
-> > >  		}
-> > >  	}
-> > 
-> > there's 7 other instances of ll_rw_block():
-> > 
-> > fs/reiserfs/journal.c-			spin_unlock(lock);
-> > fs/reiserfs/journal.c:			ll_rw_block(WRITE, 1, &bh);
-> > fs/reiserfs/journal.c-			spin_lock(lock);
-> > --
-> > fs/reiserfs/journal.c-		            reiserfs_write_unlock(s);
-> > fs/reiserfs/journal.c:			    ll_rw_block(WRITE, 1, &tbh);
-> > fs/reiserfs/journal.c-			    reiserfs_write_lock(s);
-> > --
-> > fs/reiserfs/journal.c-	/* read in the log blocks, memcpy to the corresponding real block */
-> > fs/reiserfs/journal.c:	ll_rw_block(READ, get_desc_trans_len(desc), log_blocks);
-> > fs/reiserfs/journal.c-	for (i = 0; i < get_desc_trans_len(desc); i++) {
-> > --
-> > fs/reiserfs/journal.c-		set_buffer_dirty(real_blocks[i]);
-> > fs/reiserfs/journal.c:		ll_rw_block(SWRITE, 1, real_blocks + i);
-> > fs/reiserfs/journal.c-	}
-> > --
-> > fs/reiserfs/journal.c-	}
-> > fs/reiserfs/journal.c:	ll_rw_block(READ, j, bhlist);
-> > fs/reiserfs/journal.c-	for (i = 1; i < j; i++)
-> > --
-> > fs/reiserfs/stree.c-		if (!buffer_uptodate(bh[j]))
-> > fs/reiserfs/stree.c:			ll_rw_block(READA, 1, bh + j);
-> > fs/reiserfs/stree.c-		brelse(bh[j]);
-> > --
-> > fs/reiserfs/stree.c-						    reada_blocks, reada_count);
-> > fs/reiserfs/stree.c:			ll_rw_block(READ, 1, &bh);
-> > fs/reiserfs/stree.c-			reiserfs_write_unlock(sb);
-> > --
-> > fs/reiserfs/super.c-{
-> > fs/reiserfs/super.c:	ll_rw_block(READ, 1, &(SB_BUFFER_WITH_SB(s)));
-> > fs/reiserfs/super.c-	reiserfs_write_unlock(s);
-> > 
-> > in particular the second stree.c one and the super.c has a 
-> > write-unlock straight before the lock-drop.
-> > 
-> > I think the stree.c unlock could be moved to before the 
-> > ll_rw_block() call straight away.
+On Fri, May 01, 2009 at 07:51:35AM +0200, Ingo Molnar wrote:
 > 
+> * Frederic Weisbecker <fweisbec@gmail.com> wrote:
 > 
-> Indeed.
-> 
-> 
+> > get_neighbors() is used to get the left and/or right blocks 
+> > against a given one in order to balance a tree.
 > > 
-> > The super.c one needs more care: first put &(SB_BUFFER_WITH_SB(s)) 
-> > into a local variable, then unlock the wite-lock, then call 
-> > ll_rw_block(). (This is important because &(SB_BUFFER_WITH_SB(s)) is 
-> > global filesystem state that has to be read with the lock held.)
+> > sb_bread() is used to read the buffer of these neighors blocks and 
+> > while it waits for this operation, it might sleep.
+> > 
+> > The bkl was released at this point, and then we can also release 
+> > the write lock before calling sb_bread().
+> > 
+> > This is safe because if the filesystem is changed after this lock 
+> > release, the function returns REPEAT_SEARCH (aka SCHEDULE_OCCURRED 
+> > in the function header comments) in order to repeat the neighbhor 
+> > research.
+> > 
+> > [ Impact: release the reiserfs write lock when it is not needed ]
 > 
+> This should also be safe because under the BKL we _already_ dropped 
+> the lock when sb_bread() blocked (which it really would in the 
+> normal case).
 > 
-> Indeed &(SB_BUFFER_WITH_SB(s)) is a pointer to blocks that
-> reflect the state of the filesystem but it was already not
-> safe on the old code.
+> There's one special case to consider though: sb_read() maps to 
+> __bread() which can return without sleeping if the bh is already 
+> uptodate. So if the filesystem _knows_ that the bh is already 
+> uptodate and holds a reference to it (this is common pattern in 
+> filesystems), it can have a locking assumption on that.
 > 
-> ll_rw_block() may sleep, and wait_on_buffer() too. And this
-> pointer could have changed already during these sleeps.
+> No such assumption seems to be present here though.
+> 
+> 	Ingo
 
-No, it was safe prior. This was the prior code:
 
- fs/reiserfs/super.c:	ll_rw_block(READ, 1, &(SB_BUFFER_WITH_SB(s)));
+Yeah, fortunately it doesn't base its check on the state of the
+buffer but on the tree number of rebalancing.
 
-The argument is passed to ll_rw_block _before_ the scheduling. So 
-the dereference always happens with the BKL held, and is safe.
+But I have to remember this pattern, it could be present elsewhere
+in reiserfs.
 
-It is true that ll_rw_block() can sleep (and will most likely sleep 
-for a READ command), but that's not the issue: the issue is the 
-former dereference which can now get out from under the lock. (it 
-might still be safe in special circumstances - but has to be 
-reviewed carefully.)
+Thanks.
 
-	Ingo
