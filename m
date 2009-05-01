@@ -1,81 +1,104 @@
 From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH 0/6] kill-the-BKL/reiserfs3: performance improvements,
-	faster than Bkl based scheme
-Date: Fri, 1 May 2009 07:35:40 +0200
-Message-ID: <20090501053540.GC5983@elte.hu>
-References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com>
+Subject: Re: [PATCH 6/6] kill-the-BKL/reiserfs: release the write lock on
+	flush_commit_list()
+Date: Fri, 1 May 2009 07:42:47 +0200
+Message-ID: <20090501054247.GD5983@elte.hu>
+References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <1241145862-21700-7-git-send-email-fweisbec@gmail.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1241145862-21700-1-git-send-email-fweisbec@gmail.com>
+In-Reply-To: <1241145862-21700-7-git-send-email-fweisbec@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
 
 
 * Frederic Weisbecker <fweisbec@gmail.com> wrote:
 
-> Hi,
+> flush_commit_list() uses ll_rw_block() to commit the pending log blocks.
+> ll_rw_block() might sleep, and the bkl was released at this point. Then
+> we can also relax the write lock at this point.
 > 
-> This reiserfs patchset applies against latest tip:core/kill-the-BKL
-> It adds various explicit write lock releases on specific sleeping sections.
+> [ Impact: release the reiserfs write lock when it is not needed ]
 > 
-> A performance test with dbench on UP with 100 processus during 100 seconds
-> gives the following results:
+> Cc: Jeff Mahoney <jeffm@suse.com>
+> Cc: Chris Mason <chris.mason@oracle.com>
+> Cc: Alexander Beregalov <a.beregalov@gmail.com>
+> Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
+> ---
+>  fs/reiserfs/journal.c |    7 +++++--
+>  1 files changed, 5 insertions(+), 2 deletions(-)
 > 
-> Locking		  Throughput 
-> 
-> Bkl:              11.2587 MB/s
-> Write lock/Mutex: 12.5713 MB/s
-> 
-> So the new locking scheme makes it 11% faster than with the bkl.
+> diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+> index 373d080..b1ebd5a 100644
+> --- a/fs/reiserfs/journal.c
+> +++ b/fs/reiserfs/journal.c
+> @@ -1120,8 +1120,11 @@ static int flush_commit_list(struct super_block *s,
+>  		    SB_ONDISK_JOURNAL_SIZE(s);
+>  		tbh = journal_find_get_block(s, bn);
+>  		if (tbh) {
+> -			if (buffer_dirty(tbh))
+> -			    ll_rw_block(WRITE, 1, &tbh) ;
+> +			if (buffer_dirty(tbh)) {
+> +		            reiserfs_write_unlock(s);
+> +			    ll_rw_block(WRITE, 1, &tbh);
+> +			    reiserfs_write_lock(s);
+> +			}
+>  			put_bh(tbh) ;
+>  		}
+>  	}
 
-Wow, nice!
+there's 7 other instances of ll_rw_block():
 
-> It's not possible to compare it on the kill-the-BKL tree because the Bkl
-> is not anymore a Bkl inside but a plain Mutex.
-> 
-> Instead, you can apply the following equivalent patch against -rc3 to test it:
-> http://www.kernel.org/pub/linux/kernel/people/frederic/reiserfs-kill-the-bkl-full.patch
-> 
-> Of course it might eat your data, make you cows produce black milk, bring coffee
-> to your children at 3:00 am, turn the teletubbies song in your mind for
-> seven years long and so...
-> 
-> Frederic.
-> 
-> The following changes since commit a3a2b793d18bc068b79508e96eba33ae2326f759:
->   Alessio Igor Bogani (1):
->         remove the BKL: remove "BKL auto-drop" assumption from ext3_remount()
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.git bkl
-> 
-> Frederic Weisbecker (6):
->       kill-the-BKL/reiserfs: release write lock on fs_changed()
->       kill-the-BKL/reiserfs: release the write lock before rescheduling on do_journal_end()
->       kill-the-BKL/reiserfs: release write lock while rescheduling on prepare_for_delete_or_cut()
->       kill-the-BKL/reiserfs: release the write lock inside get_neighbors()
->       kill-the-BKL/reiserfs: release the write lock inside reiserfs_read_bitmap_block()
->       kill-the-BKL/reiserfs: release the write lock on flush_commit_list()
-> 
->  fs/reiserfs/bitmap.c        |    2 ++
->  fs/reiserfs/fix_node.c      |    4 ++++
->  fs/reiserfs/journal.c       |    9 +++++++--
->  fs/reiserfs/stree.c         |    2 ++
->  include/linux/reiserfs_fs.h |    8 +++++++-
->  5 files changed, 22 insertions(+), 3 deletions(-)
+fs/reiserfs/journal.c-			spin_unlock(lock);
+fs/reiserfs/journal.c:			ll_rw_block(WRITE, 1, &bh);
+fs/reiserfs/journal.c-			spin_lock(lock);
+--
+fs/reiserfs/journal.c-		            reiserfs_write_unlock(s);
+fs/reiserfs/journal.c:			    ll_rw_block(WRITE, 1, &tbh);
+fs/reiserfs/journal.c-			    reiserfs_write_lock(s);
+--
+fs/reiserfs/journal.c-	/* read in the log blocks, memcpy to the corresponding real block */
+fs/reiserfs/journal.c:	ll_rw_block(READ, get_desc_trans_len(desc), log_blocks);
+fs/reiserfs/journal.c-	for (i = 0; i < get_desc_trans_len(desc); i++) {
+--
+fs/reiserfs/journal.c-		set_buffer_dirty(real_blocks[i]);
+fs/reiserfs/journal.c:		ll_rw_block(SWRITE, 1, real_blocks + i);
+fs/reiserfs/journal.c-	}
+--
+fs/reiserfs/journal.c-	}
+fs/reiserfs/journal.c:	ll_rw_block(READ, j, bhlist);
+fs/reiserfs/journal.c-	for (i = 1; i < j; i++)
+--
+fs/reiserfs/stree.c-		if (!buffer_uptodate(bh[j]))
+fs/reiserfs/stree.c:			ll_rw_block(READA, 1, bh + j);
+fs/reiserfs/stree.c-		brelse(bh[j]);
+--
+fs/reiserfs/stree.c-						    reada_blocks, reada_count);
+fs/reiserfs/stree.c:			ll_rw_block(READ, 1, &bh);
+fs/reiserfs/stree.c-			reiserfs_write_unlock(sb);
+--
+fs/reiserfs/super.c-{
+fs/reiserfs/super.c:	ll_rw_block(READ, 1, &(SB_BUFFER_WITH_SB(s)));
+fs/reiserfs/super.c-	reiserfs_write_unlock(s);
 
-I've pulled it and have also merged -rc4 into the kill-the-BKL tree, 
-which can picked up from here:
+in particular the second stree.c one and the super.c has a 
+write-unlock straight before the lock-drop.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/linux-2.6-tip.git core/kill-the-BKL
+I think the stree.c unlock could be moved to before the 
+ll_rw_block() call straight away.
 
-So for comparative benchmarking, vanilla v2.6.30-rc4 (which has the 
-BKL) can be compared against latest kill-the-BKL.
+The super.c one needs more care: first put &(SB_BUFFER_WITH_SB(s)) 
+into a local variable, then unlock the wite-lock, then call 
+ll_rw_block(). (This is important because &(SB_BUFFER_WITH_SB(s)) is 
+global filesystem state that has to be read with the lock held.)
+
+ll_rw_block() generally always has a chance to block (especially on 
+READ) - so the other places could be converted to drop the 
+write-lock too. Most seem straightforward - some need similar 
+local-variable treatment as super.c.
 
 	Ingo
