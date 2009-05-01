@@ -1,13 +1,13 @@
 From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH 5/6] kill-the-BKL/reiserfs: release the write lock
-	inside reiserfs_read_bitmap_block()
-Date: Fri, 1 May 2009 07:47:34 +0200
-Message-ID: <20090501054734.GE5983@elte.hu>
-References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <1241145862-21700-6-git-send-email-fweisbec@gmail.com>
+Subject: Re: [PATCH 4/6] kill-the-BKL/reiserfs: release the write lock
+	inside get_neighbors()
+Date: Fri, 1 May 2009 07:51:35 +0200
+Message-ID: <20090501055135.GF5983@elte.hu>
+References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <1241145862-21700-5-git-send-email-fweisbec@gmail.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1241145862-21700-6-git-send-email-fweisbec@gmail.com>
+In-Reply-To: <1241145862-21700-5-git-send-email-fweisbec@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
@@ -18,40 +18,32 @@ Cc: LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS
 
 * Frederic Weisbecker <fweisbec@gmail.com> wrote:
 
-> reiserfs_read_bitmap_block() uses sb_bread() to read the bitmap block. This
-> helper might sleep.
+> get_neighbors() is used to get the left and/or right blocks 
+> against a given one in order to balance a tree.
 > 
-> Then, when the bkl was used, it was released at this point. We can then
-> relax the write lock too here.
+> sb_bread() is used to read the buffer of these neighors blocks and 
+> while it waits for this operation, it might sleep.
+> 
+> The bkl was released at this point, and then we can also release 
+> the write lock before calling sb_bread().
+> 
+> This is safe because if the filesystem is changed after this lock 
+> release, the function returns REPEAT_SEARCH (aka SCHEDULE_OCCURRED 
+> in the function header comments) in order to repeat the neighbhor 
+> research.
 > 
 > [ Impact: release the reiserfs write lock when it is not needed ]
-> 
-> Cc: Jeff Mahoney <jeffm@suse.com>
-> Cc: Chris Mason <chris.mason@oracle.com>
-> Cc: Alexander Beregalov <a.beregalov@gmail.com>
-> Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
-> ---
->  fs/reiserfs/bitmap.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/fs/reiserfs/bitmap.c b/fs/reiserfs/bitmap.c
-> index 1470334..6854957 100644
-> --- a/fs/reiserfs/bitmap.c
-> +++ b/fs/reiserfs/bitmap.c
-> @@ -1249,7 +1249,9 @@ struct buffer_head *reiserfs_read_bitmap_block(struct super_block *sb,
->  	else if (bitmap == 0)
->  		block = (REISERFS_DISK_OFFSET_IN_BYTES >> sb->s_blocksize_bits) + 1;
->  
-> +	reiserfs_write_unlock(sb);
->  	bh = sb_bread(sb, block);
-> +	reiserfs_write_lock(sb);
->  	if (bh == NULL)
->  		reiserfs_warning(sb, "sh-2029: %s: bitmap block (#%u) "
->  		                 "reading failed", __func__, block);
 
-Note, there's a side-effect here: the access to sb->b_blocksize is 
-moved outside of the lock. Previously it was accessed via the BKL. 
-On a mounted filesystem sb->b_blocksize is not supposed to change, 
-so it's probably not an issue - but wanted to mention it.
+This should also be safe because under the BKL we _already_ dropped 
+the lock when sb_bread() blocked (which it really would in the 
+normal case).
+
+There's one special case to consider though: sb_read() maps to 
+__bread() which can return without sleeping if the bh is already 
+uptodate. So if the filesystem _knows_ that the bh is already 
+uptodate and holds a reference to it (this is common pattern in 
+filesystems), it can have a locking assumption on that.
+
+No such assumption seems to be present here though.
 
 	Ingo
