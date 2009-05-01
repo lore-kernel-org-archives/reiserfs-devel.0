@@ -1,60 +1,67 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH 4/6] kill-the-BKL/reiserfs: release the write lock
-	inside get_neighbors()
-Date: Fri, 1 May 2009 15:31:30 +0200
-Message-ID: <20090501133130.GA31856@elte.hu>
-References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <1241145862-21700-5-git-send-email-fweisbec@gmail.com> <20090501055135.GF5983@elte.hu> <20090501132506.GD6011@nowhere> <1241184543.13084.13.camel@think.oraclecorp.com>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: [PATCH 2/6] kill-the-BKL/reiserfs: release the write lock
+	before rescheduling on do_journal_end()
+Date: Fri, 1 May 2009 15:31:48 +0200
+Message-ID: <20090501133147.GF6011@nowhere>
+References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <1241145862-21700-3-git-send-email-fweisbec@gmail.com> <20090501070911.GG5983@elte.hu>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:received:date:from:to:cc
+         :subject:message-id:references:mime-version:content-type
+         :content-disposition:in-reply-to:user-agent;
+        bh=q44FWtjwpyPGuCC6ntCVNSdg97EfEjsfGuhFITJ6Fh4=;
+        b=oVLvptrWrjgkbzGMLxGxgUP0EN4WHKwOMxHBz2vlHpIcvdNDQiEh9pmLmuQtwtbQz4
+         RLsDEs+/0MXvdraFgB+r9N9erahKKPG4iT2YvgW3mkePBfXBMToM8zSRUhoa55VcY27X
+         iz90LrvX4k3wmO7iLaREQbYLmq5Q3FniIqBYg=
 Content-Disposition: inline
-In-Reply-To: <1241184543.13084.13.camel@think.oraclecorp.com>
+In-Reply-To: <20090501070911.GG5983@elte.hu>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <chris.mason@oracle.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
 
-
-* Chris Mason <chris.mason@oracle.com> wrote:
-
-> On Fri, 2009-05-01 at 15:25 +0200, Frederic Weisbecker wrote:
-> > On Fri, May 01, 2009 at 07:51:35AM +0200, Ingo Molnar wrote:
-> > > 
-> > > * Frederic Weisbecker <fweisbec@gmail.com> wrote:
-> > > 
-> > > > get_neighbors() is used to get the left and/or right blocks 
-> > > > against a given one in order to balance a tree.
-> > > > 
-> > > > sb_bread() is used to read the buffer of these neighors blocks and 
-> > > > while it waits for this operation, it might sleep.
-> > > > 
-> > > > The bkl was released at this point, and then we can also release 
-> > > > the write lock before calling sb_bread().
-> > > > 
-> > > > This is safe because if the filesystem is changed after this lock 
-> > > > release, the function returns REPEAT_SEARCH (aka SCHEDULE_OCCURRED 
-> > > > in the function header comments) in order to repeat the neighbhor 
-> > > > research.
-> > > > 
-> > > > [ Impact: release the reiserfs write lock when it is not needed ]
-> > > 
-> > > This should also be safe because under the BKL we _already_ dropped 
-> > > the lock when sb_bread() blocked (which it really would in the 
-> > > normal case).
-> > > 
-> > > There's one special case to consider though: sb_read() maps to 
-> > > __bread() which can return without sleeping if the bh is already 
-> > > uptodate. So if the filesystem _knows_ that the bh is already 
-> > > uptodate and holds a reference to it (this is common pattern in 
-> > > filesystems), it can have a locking assumption on that.
-> > > 
+On Fri, May 01, 2009 at 09:09:11AM +0200, Ingo Molnar wrote:
 > 
-> sb_bread calls __bread which calls __getblk which always calls 
-> might_sleep() before returning. So, the unlock isn't adding a 
-> schedule that wasn't there before.
+> * Frederic Weisbecker <fweisbec@gmail.com> wrote:
+> 
+> > When do_journal_end() copies data to the journal blocks buffers in memory,
+> > it reschedules if needed between each block copied and dirtyfied.
+> > 
+> > We can also release the write lock at this rescheduling stage,
+> > like did the bkl implicitly.
+> > 
+> > [ Impact: release the reiserfs write lock when it is not needed ]
+> > 
+> > Cc: Jeff Mahoney <jeffm@suse.com>
+> > Cc: Chris Mason <chris.mason@oracle.com>
+> > Cc: Alexander Beregalov <a.beregalov@gmail.com>
+> > Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
+> > ---
+> >  fs/reiserfs/journal.c |    2 ++
+> >  1 files changed, 2 insertions(+), 0 deletions(-)
+> > 
+> > diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+> > index 7976d7d..373d080 100644
+> > --- a/fs/reiserfs/journal.c
+> > +++ b/fs/reiserfs/journal.c
+> > @@ -4232,7 +4232,9 @@ static int do_journal_end(struct reiserfs_transaction_handle *th,
+> >  		next = cn->next;
+> >  		free_cnode(sb, cn);
+> >  		cn = next;
+> > +		reiserfs_write_unlock(sb);
+> >  		cond_resched();
+> > +		reiserfs_write_lock(sb);
+> 
+> There's 8 cond_resched()'s in the code - i'd suggest to introduce a 
+> helper for this - reiserfs_write_cond_resched(sb) or so?
+> 
+> 	Ingo
 
-ah, and might_sleep() can schedule under CONFIG_PREEMPT_VOLUNTARY=y. 
-Good point.
+Indeed, that + the pattern suggested by Al.
 
-	Ingo
+Thanks.
+
