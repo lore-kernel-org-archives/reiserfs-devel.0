@@ -1,82 +1,53 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH 0/6] kill-the-BKL/reiserfs3: performance improvements,
-	faster than Bkl based scheme
-Date: Fri, 1 May 2009 22:33:09 +0200
-Message-ID: <20090501203309.GA6243@elte.hu>
-References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <alpine.LFD.2.00.0905011236530.5379@localhost.localdomain>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: [PATCH] reiserfs: Expand i_mutex to enclose lookup_one_len
+Date: Fri, 01 May 2009 16:36:31 -0400
+Message-ID: <49FB5D4F.5090600@suse.com>
+References: <49FB1F20.8040400@suse.com> <20090501125627.e13ff38f.akpm@linux-foundation.org>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.00.0905011236530.5379@localhost.localdomain>
+In-Reply-To: <20090501125627.e13ff38f.akpm@linux-foundation.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, viro@ftp.linux.org.uk, a.beregalov@gmail.com, david@unsolicited.net, "Rafael J. Wysocki" <rjw@sisk.pl>
 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-* Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> On Fri, 1 May 2009, Frederic Weisbecker wrote:
-> > 
-> > This reiserfs patchset applies against latest 
-> > tip:core/kill-the-BKL It adds various explicit write lock 
-> > releases on specific sleeping sections.
+Andrew Morton wrote:
+> On Fri, 01 May 2009 12:11:12 -0400
+> Jeff Mahoney <jeffm@suse.com> wrote:
 > 
-> Btw, is there any reason why it cannot just be re-based on top of 
-> standard -rc4?
+>>  2.6.30-rc3 introduced some sanity checks in the VFS code to avoid NFS
+>>  bugs by ensuring that lookup_one_len is always called under i_mutex.
+>>
+>>  This patch expands the i_mutex locking to enclose lookup_one_len. This was
+>>  always required, but not not enforced in the reiserfs code since it
+>>  does locking around the xattr interactions with the xattr_sem.
 > 
-> I'd love to pull a "reiserfs: remove bkl" branch when the next 
-> merge window opens, but there's no way I'll pull the kill-bkl 
-> thing with all the odd random tty stuff etc that is totally 
-> unrelated.
-> 
-> And as far as I can tell, all your reiserfs patches are totally 
-> unrelated to all other changes, and it would be _much_ nicer to 
-> just merge the reiserfs ones.
+> cool, so this will fix all those backtraces people have been reporting
+> coming out of the reiserfs xattr code lately?
 
-Sure, that's sensible. Perhaps the patches could show up in the VFS 
-tree once they are stable enough and are acceptable to Al. It will 
-take quite a long time for the complete BKL elimination to be 
-finished in our tree.
+Yes.
 
-> So there's
->  - the filesystem mount bkl pushdown
+>>  This is obvious enough, but it survived an overnight 50 thread ACL test.
 > 
->  - the reiserfs series
-> 
-> and quite frankly, I'll happily take the straightforward BKL 
-> pushdown, but I do _not_ want to see this mix-up with all the tty 
-> stuff, or even the NFS and RPC changes.
-> 
-> In fact, if it makes it easier for people to merge, I can take the 
-> pure VFS push-down that was already Ack'ed by Al. But the rest of 
-> the stuff really isn't appropriate.
-> 
-> For example, every single
-> 
-> 	remove the BKL: remove "BKL auto-drop" assumption from xyz
-> 
-> patch in that series is pure and utter crap. I'm not going to take 
-> things like that. But it looks like your reiserfs patches really 
-> are totally independent of everything else, and should be merged 
-> as such.
+> That sounds a bit pessimistic.  I think I'll s/but/and/ ;)
 
-Yeah, we dont need that upstream.
+Yeah, that's more accurate. :)
 
-It would obviously be a basic act of honesty and fairness to admit 
-that that "crazy thing" was the thing that spurred and enabled the 
-"good" patches to begin with.
+- -Jeff
 
-We can whitewash that piece of embarrasing history out of existence 
-of course, but i think it is axiomatic that if the only demonstrated 
-way to achieve a good end result is over a messy middle step, that 
-messy middle step shouldnt really be declared non-existent - even if 
-we can.
+- --
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.9 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
 
-The BKL is clearly removed at a faster reate with such debugging 
-measures in place. With such measures the BKL _really_ hurts, and 
-very visibly so - and that results in active removal.
-
-	Ingo
+iEYEARECAAYFAkn7XU4ACgkQLPWxlyuTD7JOAgCfcVV+kowmYbaBKNCZG7BfNx3V
+9dwAoKGB7Uu2RkwXtkpaaCi2ADtQszC1
+=B4is
+-----END PGP SIGNATURE-----
