@@ -1,78 +1,60 @@
-From: Chris Mason <chris.mason@oracle.com>
-Subject: Re: [PATCH 5/6] kill-the-BKL/reiserfs: release the write lock
- inside reiserfs_read_bitmap_block()
-Date: Fri, 01 May 2009 09:30:51 -0400
-Message-ID: <1241184651.13084.15.camel@think.oraclecorp.com>
-References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com>
-	 <1241145862-21700-6-git-send-email-fweisbec@gmail.com>
-	 <20090501054734.GE5983@elte.hu>  <20090501131955.GC6011@nowhere>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH 4/6] kill-the-BKL/reiserfs: release the write lock
+	inside get_neighbors()
+Date: Fri, 1 May 2009 15:31:30 +0200
+Message-ID: <20090501133130.GA31856@elte.hu>
+References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <1241145862-21700-5-git-send-email-fweisbec@gmail.com> <20090501055135.GF5983@elte.hu> <20090501132506.GD6011@nowhere> <1241184543.13084.13.camel@think.oraclecorp.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20090501131955.GC6011@nowhere>
+Content-Disposition: inline
+In-Reply-To: <1241184543.13084.13.camel@think.oraclecorp.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <chris.mason@oracle.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
 
-On Fri, 2009-05-01 at 15:19 +0200, Frederic Weisbecker wrote:
-> On Fri, May 01, 2009 at 07:47:34AM +0200, Ingo Molnar wrote:
-> > 
-> > * Frederic Weisbecker <fweisbec@gmail.com> wrote:
-> > 
-> > > reiserfs_read_bitmap_block() uses sb_bread() to read the bitmap block. This
-> > > helper might sleep.
+
+* Chris Mason <chris.mason@oracle.com> wrote:
+
+> On Fri, 2009-05-01 at 15:25 +0200, Frederic Weisbecker wrote:
+> > On Fri, May 01, 2009 at 07:51:35AM +0200, Ingo Molnar wrote:
 > > > 
-> > > Then, when the bkl was used, it was released at this point. We can then
-> > > relax the write lock too here.
+> > > * Frederic Weisbecker <fweisbec@gmail.com> wrote:
 > > > 
-> > > [ Impact: release the reiserfs write lock when it is not needed ]
+> > > > get_neighbors() is used to get the left and/or right blocks 
+> > > > against a given one in order to balance a tree.
+> > > > 
+> > > > sb_bread() is used to read the buffer of these neighors blocks and 
+> > > > while it waits for this operation, it might sleep.
+> > > > 
+> > > > The bkl was released at this point, and then we can also release 
+> > > > the write lock before calling sb_bread().
+> > > > 
+> > > > This is safe because if the filesystem is changed after this lock 
+> > > > release, the function returns REPEAT_SEARCH (aka SCHEDULE_OCCURRED 
+> > > > in the function header comments) in order to repeat the neighbhor 
+> > > > research.
+> > > > 
+> > > > [ Impact: release the reiserfs write lock when it is not needed ]
 > > > 
-> > > Cc: Jeff Mahoney <jeffm@suse.com>
-> > > Cc: Chris Mason <chris.mason@oracle.com>
-> > > Cc: Alexander Beregalov <a.beregalov@gmail.com>
-> > > Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
-> > > ---
-> > >  fs/reiserfs/bitmap.c |    2 ++
-> > >  1 files changed, 2 insertions(+), 0 deletions(-)
+> > > This should also be safe because under the BKL we _already_ dropped 
+> > > the lock when sb_bread() blocked (which it really would in the 
+> > > normal case).
 > > > 
-> > > diff --git a/fs/reiserfs/bitmap.c b/fs/reiserfs/bitmap.c
-> > > index 1470334..6854957 100644
-> > > --- a/fs/reiserfs/bitmap.c
-> > > +++ b/fs/reiserfs/bitmap.c
-> > > @@ -1249,7 +1249,9 @@ struct buffer_head *reiserfs_read_bitmap_block(struct super_block *sb,
-> > >  	else if (bitmap == 0)
-> > >  		block = (REISERFS_DISK_OFFSET_IN_BYTES >> sb->s_blocksize_bits) + 1;
-> > >  
-> > > +	reiserfs_write_unlock(sb);
-> > >  	bh = sb_bread(sb, block);
-> > > +	reiserfs_write_lock(sb);
-> > >  	if (bh == NULL)
-> > >  		reiserfs_warning(sb, "sh-2029: %s: bitmap block (#%u) "
-> > >  		                 "reading failed", __func__, block);
-> > 
-> > Note, there's a side-effect here: the access to sb->b_blocksize is 
-> > moved outside of the lock. Previously it was accessed via the BKL. 
-> > On a mounted filesystem sb->b_blocksize is not supposed to change, 
-> > so it's probably not an issue - but wanted to mention it.
+> > > There's one special case to consider though: sb_read() maps to 
+> > > __bread() which can return without sleeping if the bh is already 
+> > > uptodate. So if the filesystem _knows_ that the bh is already 
+> > > uptodate and holds a reference to it (this is common pattern in 
+> > > filesystems), it can have a locking assumption on that.
+> > > 
+> 
+> sb_bread calls __bread which calls __getblk which always calls 
+> might_sleep() before returning. So, the unlock isn't adding a 
+> schedule that wasn't there before.
 
-> Indeed. Well I guess it can't be dynamically changed.
-> This is something that can be chosen with mkfs on filesystem creation
-> but I guess it can't be changed, at least not while the filesystem
-> is mounted. I hope...
+ah, and might_sleep() can schedule under CONFIG_PREEMPT_VOLUNTARY=y. 
+Good point.
 
-The blocksize should only be changing very early in the mount.  It is
-basically:
-
-set the block size to something
-read the super block
-read the block size from the super block
-set the block size to the correct value
-use it from then on.
-
-This should all be done with by the time we read bitmaps.
-
--chris
-
-
+	Ingo
