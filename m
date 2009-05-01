@@ -1,150 +1,48 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH] reiserfs: Expand i_mutex to enclose lookup_one_len
-Date: Fri, 01 May 2009 12:11:12 -0400
-Message-ID: <49FB1F20.8040400@suse.com>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: Re: [PATCH] reiserfs: Expand i_mutex to enclose lookup_one_len
+Date: Fri, 1 May 2009 20:37:22 +0400
+Message-ID: <a4423d670905010937k395a0a2r2e2b3b68ffe68851@mail.gmail.com>
+References: <49FB1F20.8040400@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:received:in-reply-to:references
+         :date:message-id:subject:from:to:cc:content-type
+         :content-transfer-encoding;
+        bh=B8SO3gW22cyA1lnlCcEQH07Klxuf67QXVN9iFNBDobY=;
+        b=BeSp1CIAsYjyrntMB4fzBrjYjoacfptqAq/M7WC+6JrCJI6cX6fMdiqz7PlZE88XKF
+         F81i6ahNWr4Y3EKZkfsBhXC6FrLL/o2kvp2H2QQrBwJQVdMssnIwFYoQdBZ+sHkbi9cz
+         +Ebd6aBzjn5nbaERSeuEWokzPg2uvI7cbnbas=
+In-Reply-To: <49FB1F20.8040400@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@ftp.linux.or>
+Content-Type: text/plain; charset="utf-8"
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@ftp.linux.org.uk>, David <david@unsolicited.net>
 
- 2.6.30-rc3 introduced some sanity checks in the VFS code to avoid NFS
- bugs by ensuring that lookup_one_len is always called under i_mutex.
+2009/5/1 Jeff Mahoney <jeffm@suse.com>:
+> =C2=A02.6.30-rc3 introduced some sanity checks in the VFS code to avo=
+id NFS
+> =C2=A0bugs by ensuring that lookup_one_len is always called under i_m=
+utex.
+>
+> =C2=A0This patch expands the i_mutex locking to enclose lookup_one_le=
+n. This was
+> =C2=A0always required, but not not enforced in the reiserfs code sinc=
+e it
+> =C2=A0does locking around the xattr interactions with the xattr_sem.
+>
+> =C2=A0This is obvious enough, but it survived an overnight 50 thread =
+ACL test.
+>
+> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+Tested-by: Alexander Beregalov <a.beregalov@gmail.com>
 
- This patch expands the i_mutex locking to enclose lookup_one_len. This was
- always required, but not not enforced in the reiserfs code since it
- does locking around the xattr interactions with the xattr_sem.
-
- This is obvious enough, but it survived an overnight 50 thread ACL test.
-
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- fs/reiserfs/xattr.c |   32 ++++++++++++++------------------
- 1 file changed, 14 insertions(+), 18 deletions(-)
-
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -120,25 +120,20 @@ static struct dentry *lookup_or_create_d
- 	struct dentry *dentry;
- 	BUG_ON(!parent);
- 
-+	mutex_lock_nested(&parent->d_inode->i_mutex, I_MUTEX_XATTR);
- 	dentry = lookup_one_len(name, parent, strlen(name));
--	if (IS_ERR(dentry))
--		return dentry;
--	else if (!dentry->d_inode) {
-+	if (!IS_ERR(dentry) && !dentry->d_inode) {
- 		int err = -ENODATA;
- 
--		if (xattr_may_create(flags)) {
--			mutex_lock_nested(&parent->d_inode->i_mutex,
--					  I_MUTEX_XATTR);
-+		if (xattr_may_create(flags))
- 			err = xattr_mkdir(parent->d_inode, dentry, 0700);
--			mutex_unlock(&parent->d_inode->i_mutex);
--		}
- 
- 		if (err) {
- 			dput(dentry);
- 			dentry = ERR_PTR(err);
- 		}
- 	}
--
-+	mutex_unlock(&parent->d_inode->i_mutex);
- 	return dentry;
- }
- 
-@@ -184,6 +179,7 @@ fill_with_dentries(void *buf, const char
- {
- 	struct reiserfs_dentry_buf *dbuf = buf;
- 	struct dentry *dentry;
-+	WARN_ON_ONCE(!mutex_is_locked(&dbuf->xadir->d_inode->i_mutex));
- 
- 	if (dbuf->count == ARRAY_SIZE(dbuf->dentries))
- 		return -ENOSPC;
-@@ -349,6 +345,7 @@ static struct dentry *xattr_lookup(struc
- 	if (IS_ERR(xadir))
- 		return ERR_CAST(xadir);
- 
-+	mutex_lock_nested(&xadir->d_inode->i_mutex, I_MUTEX_XATTR);
- 	xafile = lookup_one_len(name, xadir, strlen(name));
- 	if (IS_ERR(xafile)) {
- 		err = PTR_ERR(xafile);
-@@ -360,18 +357,15 @@ static struct dentry *xattr_lookup(struc
- 
- 	if (!xafile->d_inode) {
- 		err = -ENODATA;
--		if (xattr_may_create(flags)) {
--			mutex_lock_nested(&xadir->d_inode->i_mutex,
--					  I_MUTEX_XATTR);
-+		if (xattr_may_create(flags))
- 			err = xattr_create(xadir->d_inode, xafile,
- 					      0700|S_IFREG);
--			mutex_unlock(&xadir->d_inode->i_mutex);
--		}
- 	}
- 
- 	if (err)
- 		dput(xafile);
- out:
-+	mutex_unlock(&xadir->d_inode->i_mutex);
- 	dput(xadir);
- 	if (err)
- 		return ERR_PTR(err);
-@@ -435,6 +429,7 @@ static int lookup_and_delete_xattr(struc
- 	if (IS_ERR(xadir))
- 		return PTR_ERR(xadir);
- 
-+	mutex_lock_nested(&xadir->d_inode->i_mutex, I_MUTEX_XATTR);
- 	dentry = lookup_one_len(name, xadir, strlen(name));
- 	if (IS_ERR(dentry)) {
- 		err = PTR_ERR(dentry);
-@@ -442,14 +437,13 @@ static int lookup_and_delete_xattr(struc
- 	}
- 
- 	if (dentry->d_inode) {
--		mutex_lock_nested(&xadir->d_inode->i_mutex, I_MUTEX_XATTR);
- 		err = xattr_unlink(xadir->d_inode, dentry);
--		mutex_unlock(&xadir->d_inode->i_mutex);
- 		update_ctime(inode);
- 	}
- 
- 	dput(dentry);
- out_dput:
-+	mutex_unlock(&xadir->d_inode->i_mutex);
- 	dput(xadir);
- 	return err;
- }
-@@ -906,9 +900,9 @@ static int create_privroot(struct dentry
- {
- 	int err;
- 	struct inode *inode = dentry->d_parent->d_inode;
--	mutex_lock_nested(&inode->i_mutex, I_MUTEX_XATTR);
-+	WARN_ON_ONCE(!mutex_is_locked(&inode->i_mutex));
-+
- 	err = xattr_mkdir(inode, dentry, 0700);
--	mutex_unlock(&inode->i_mutex);
- 	if (err) {
- 		dput(dentry);
- 		dentry = NULL;
-@@ -980,6 +974,7 @@ int reiserfs_xattr_init(struct super_blo
- 	/* If we don't have the privroot located yet - go find it */
- 	if (!REISERFS_SB(s)->priv_root) {
- 		struct dentry *dentry;
-+		mutex_lock_nested(&s->s_root->d_inode->i_mutex, I_MUTEX_CHILD);
- 		dentry = lookup_one_len(PRIVROOT_NAME, s->s_root,
- 					strlen(PRIVROOT_NAME));
- 		if (!IS_ERR(dentry)) {
-@@ -993,6 +988,7 @@ int reiserfs_xattr_init(struct super_blo
- 			}
- 		} else
- 			err = PTR_ERR(dentry);
-+		mutex_unlock(&s->s_root->d_inode->i_mutex);
- 
- 		if (!err && dentry) {
- 			s->s_root->d_op = &xattr_lookup_poison_ops;
--- 
-Jeff Mahoney
-SUSE Labs
+It works, thanks.
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
