@@ -1,48 +1,52 @@
-From: Andi Kleen <andi@firstfloor.org>
-Subject: Re: [PATCH 1/6] kill-the-BKL/reiserfs: release write lock on fs_changed()
-Date: Fri, 01 May 2009 08:31:12 +0200
-Message-ID: <878wlhpc5r.fsf@basil.nowhere.org>
-References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com>
-	<1241145862-21700-2-git-send-email-fweisbec@gmail.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH 2/6] kill-the-BKL/reiserfs: release the write lock
+	before rescheduling on do_journal_end()
+Date: Fri, 1 May 2009 09:09:11 +0200
+Message-ID: <20090501070911.GG5983@elte.hu>
+References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <1241145862-21700-3-git-send-email-fweisbec@gmail.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1241145862-21700-2-git-send-email-fweisbec@gmail.com> (Frederic Weisbecker's message of "Fri,  1 May 2009 04:44:17 +0200")
+Content-Disposition: inline
+In-Reply-To: <1241145862-21700-3-git-send-email-fweisbec@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
 
-Frederic Weisbecker <fweisbec@gmail.com> writes:
->
-> diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
-> index 6587b4e..397d281 100644
-> --- a/include/linux/reiserfs_fs.h
-> +++ b/include/linux/reiserfs_fs.h
-> @@ -1302,7 +1302,13 @@ static inline loff_t max_reiserfs_offset(struct inode *inode)
->  #define get_generation(s) atomic_read (&fs_generation(s))
->  #define FILESYSTEM_CHANGED_TB(tb)  (get_generation((tb)->tb_sb) != (tb)->fs_gen)
->  #define __fs_changed(gen,s) (gen != get_generation (s))
-> -#define fs_changed(gen,s) ({cond_resched(); __fs_changed(gen, s);})
-> +#define fs_changed(gen,s)		\
-> +({					\
-> +	reiserfs_write_unlock(s);	\
-> +	cond_resched();			\
-> +	reiserfs_write_lock(s);		\
 
-Did you try writing that 
+* Frederic Weisbecker <fweisbec@gmail.com> wrote:
 
-    if (need_resched()) {               \
-	reiserfs_write_unlock(s);	\
-	cond_resched();			\  (or schedule(), but cond_resched does a loop)
-	reiserfs_write_lock(s);		\
-    }				
+> When do_journal_end() copies data to the journal blocks buffers in memory,
+> it reschedules if needed between each block copied and dirtyfied.
+> 
+> We can also release the write lock at this rescheduling stage,
+> like did the bkl implicitly.
+> 
+> [ Impact: release the reiserfs write lock when it is not needed ]
+> 
+> Cc: Jeff Mahoney <jeffm@suse.com>
+> Cc: Chris Mason <chris.mason@oracle.com>
+> Cc: Alexander Beregalov <a.beregalov@gmail.com>
+> Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
+> ---
+>  fs/reiserfs/journal.c |    2 ++
+>  1 files changed, 2 insertions(+), 0 deletions(-)
+> 
+> diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+> index 7976d7d..373d080 100644
+> --- a/fs/reiserfs/journal.c
+> +++ b/fs/reiserfs/journal.c
+> @@ -4232,7 +4232,9 @@ static int do_journal_end(struct reiserfs_transaction_handle *th,
+>  		next = cn->next;
+>  		free_cnode(sb, cn);
+>  		cn = next;
+> +		reiserfs_write_unlock(sb);
+>  		cond_resched();
+> +		reiserfs_write_lock(sb);
 
-? That might give better performance under load because users will be better
-batched and you don't release the lock unnecessarily in the unloaded case.
+There's 8 cond_resched()'s in the code - i'd suggest to introduce a 
+helper for this - reiserfs_write_cond_resched(sb) or so?
 
--Andi
-
--- 
-ak@linux.intel.com -- Speaking for myself only.
+	Ingo
