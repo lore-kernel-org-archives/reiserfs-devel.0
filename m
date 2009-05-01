@@ -1,127 +1,91 @@
-From: Chris Mason <chris.mason@oracle.com>
-Subject: Re: [PATCH 1/6] kill-the-BKL/reiserfs: release write lock on
- fs_changed()
-Date: Fri, 01 May 2009 09:44:16 -0400
-Message-ID: <1241185456.13084.28.camel@think.oraclecorp.com>
-References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com>
-	 <1241145862-21700-2-git-send-email-fweisbec@gmail.com>
-	 <878wlhpc5r.fsf@basil.nowhere.org>  <20090501132825.GE6011@nowhere>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: [PATCH 5/6] kill-the-BKL/reiserfs: release the write lock
+	inside reiserfs_read_bitmap_block()
+Date: Fri, 1 May 2009 15:51:19 +0200
+Message-ID: <20090501135118.GH6011@nowhere>
+References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <1241145862-21700-6-git-send-email-fweisbec@gmail.com> <20090501054734.GE5983@elte.hu> <20090501131955.GC6011@nowhere> <1241184651.13084.15.camel@think.oraclecorp.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20090501132825.GE6011@nowhere>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:received:date:from:to:cc
+         :subject:message-id:references:mime-version:content-type
+         :content-disposition:in-reply-to:user-agent;
+        bh=DnZe9Chn+RHkbEAjdIsd2aWvSboGaK1MGn3GddCNd1Q=;
+        b=XBSOwQiTNX3/ivFuZgU9m6zDvkiljPGteZSOKoZvYm4Zh/Czp5bzcw9BkxlaMbQYci
+         pWkV+eqarTVuzwCO8cahKZZ3klEHAzqye6rQTkzr1FlZSEYS/7bKleLxrqsUjgzFRbPk
+         Pzy3yVT9MBbI8JjqWljouC+xzDrYmRltoAZBU=
+Content-Disposition: inline
+In-Reply-To: <1241184651.13084.15.camel@think.oraclecorp.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Andi Kleen <andi@firstfloor.org>, Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <chris.mason@oracle.com>
+Cc: Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
 
-On Fri, 2009-05-01 at 15:28 +0200, Frederic Weisbecker wrote:
-> On Fri, May 01, 2009 at 08:31:12AM +0200, Andi Kleen wrote:
-> > Frederic Weisbecker <fweisbec@gmail.com> writes:
-> > >
-> > > diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
-> > > index 6587b4e..397d281 100644
-> > > --- a/include/linux/reiserfs_fs.h
-> > > +++ b/include/linux/reiserfs_fs.h
-> > > @@ -1302,7 +1302,13 @@ static inline loff_t max_reiserfs_offset(struct inode *inode)
-> > >  #define get_generation(s) atomic_read (&fs_generation(s))
-> > >  #define FILESYSTEM_CHANGED_TB(tb)  (get_generation((tb)->tb_sb) != (tb)->fs_gen)
-> > >  #define __fs_changed(gen,s) (gen != get_generation (s))
-> > > -#define fs_changed(gen,s) ({cond_resched(); __fs_changed(gen, s);})
-> > > +#define fs_changed(gen,s)		\
-> > > +({					\
-> > > +	reiserfs_write_unlock(s);	\
-> > > +	cond_resched();			\
-> > > +	reiserfs_write_lock(s);		\
-> > 
-> > Did you try writing that 
-> > 
-> >     if (need_resched()) {               \
-> > 	reiserfs_write_unlock(s);	\
-> > 	cond_resched();			\  (or schedule(), but cond_resched does a loop)
-> > 	reiserfs_write_lock(s);		\
-> >     }				
-> > 
-> > ? That might give better performance under load because users will be better
-> > batched and you don't release the lock unnecessarily in the unloaded case.
+On Fri, May 01, 2009 at 09:30:51AM -0400, Chris Mason wrote:
+> On Fri, 2009-05-01 at 15:19 +0200, Frederic Weisbecker wrote:
+> > On Fri, May 01, 2009 at 07:47:34AM +0200, Ingo Molnar wrote:
+> > > 
+> > > * Frederic Weisbecker <fweisbec@gmail.com> wrote:
+> > > 
+> > > > reiserfs_read_bitmap_block() uses sb_bread() to read the bitmap block. This
+> > > > helper might sleep.
+> > > > 
+> > > > Then, when the bkl was used, it was released at this point. We can then
+> > > > relax the write lock too here.
+> > > > 
+> > > > [ Impact: release the reiserfs write lock when it is not needed ]
+> > > > 
+> > > > Cc: Jeff Mahoney <jeffm@suse.com>
+> > > > Cc: Chris Mason <chris.mason@oracle.com>
+> > > > Cc: Alexander Beregalov <a.beregalov@gmail.com>
+> > > > Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
+> > > > ---
+> > > >  fs/reiserfs/bitmap.c |    2 ++
+> > > >  1 files changed, 2 insertions(+), 0 deletions(-)
+> > > > 
+> > > > diff --git a/fs/reiserfs/bitmap.c b/fs/reiserfs/bitmap.c
+> > > > index 1470334..6854957 100644
+> > > > --- a/fs/reiserfs/bitmap.c
+> > > > +++ b/fs/reiserfs/bitmap.c
+> > > > @@ -1249,7 +1249,9 @@ struct buffer_head *reiserfs_read_bitmap_block(struct super_block *sb,
+> > > >  	else if (bitmap == 0)
+> > > >  		block = (REISERFS_DISK_OFFSET_IN_BYTES >> sb->s_blocksize_bits) + 1;
+> > > >  
+> > > > +	reiserfs_write_unlock(sb);
+> > > >  	bh = sb_bread(sb, block);
+> > > > +	reiserfs_write_lock(sb);
+> > > >  	if (bh == NULL)
+> > > >  		reiserfs_warning(sb, "sh-2029: %s: bitmap block (#%u) "
+> > > >  		                 "reading failed", __func__, block);
+> > > 
+> > > Note, there's a side-effect here: the access to sb->b_blocksize is 
+> > > moved outside of the lock. Previously it was accessed via the BKL. 
+> > > On a mounted filesystem sb->b_blocksize is not supposed to change, 
+> > > so it's probably not an issue - but wanted to mention it.
 > 
+> > Indeed. Well I guess it can't be dynamically changed.
+> > This is something that can be chosen with mkfs on filesystem creation
+> > but I guess it can't be changed, at least not while the filesystem
+> > is mounted. I hope...
 > 
+> The blocksize should only be changing very early in the mount.  It is
+> basically:
 > 
-> Good catch!
-> And I guess this pattern matches most of the cond_resched()
-> all over the code (the only condition is that we must already hold
-> the write lock).
+> set the block size to something
+> read the super block
+> read the block size from the super block
+> set the block size to the correct value
+> use it from then on.
 > 
-> I will merge your idea and Ingo's one, write a
-> reiserfs_cond_resched() to have a helper which
-> factorizes this pattern.
+> This should all be done with by the time we read bitmaps.
+> 
+> -chris
 
-The pattern you'll find goes like this:
 
-lock_kernel()
-do some work
-do something that might schedule
-run fs_changed(), fixup as required.
+Ok, thanks.
 
-In your setup it is translating to:
-
-reiserfs_write_lock(s)
-do some work
-reiserfs_write_unlock(s)
-
-do something that might schedule
-
-reiserfs_write_lock(s)
-if (need_resched()) {
-    reiserfs_write_unlock(s)
-    cond_resched()
-    reiserfs_write_lock(s)
-}
-
-if (__fs_changed()) fixup as required
-
-You'll also find that item_moved is similar to __fs_changed() but more
-fine grained.
-
-One easy optimization is to make an fs_changed_relock()
-
-static inline int fs_changed_relock(gen, s) {
-	cond_resched();
-	reiserfs_write_lock(s)
-	return __fs_changed(gen, s)
-}
-
-Another cause of scheduling is going to be reiserfs_prepare_for_journal.
-This function gets called before we modify a metadata buffer and it
-waits for IO to finish.
-
-Not sure if your patch series already found it, but if you change this:
-
-int reiserfs_prepare_for_journal(struct super_block *sb,
-                                 struct buffer_head *bh, int wait)
-{
-        PROC_INFO_INC(sb, journal.prepare);
-
-        if (!trylock_buffer(bh)) {
-                if (!wait)
-                        return 0;
-                lock_buffer(bh);
-        }
-
-Into:
-
-	if (!trylock_buffer(bh)) {
-		if (!wait)
-			return 0;
-		reiserfs_write_unlock(s);
-		wait_on_buffer(bh);
-		reiserfs_write_lock(s);
-		lock_buffer(bh);
-	}
-
-You'll catch a big cause of waiting for the disk with the lock held.
-
--chris
-
+So I guess we can keep it as is without a local variable.
 
