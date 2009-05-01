@@ -1,16 +1,18 @@
 From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: [PATCH 0/6] kill-the-BKL/reiserfs3: performance improvements, faster than Bkl based scheme
-Date: Fri,  1 May 2009 04:44:16 +0200
-Message-ID: <1241145862-21700-1-git-send-email-fweisbec@gmail.com>
+Subject: [PATCH 2/6] kill-the-BKL/reiserfs: release the write lock before rescheduling on do_journal_end()
+Date: Fri,  1 May 2009 04:44:18 +0200
+Message-ID: <1241145862-21700-3-git-send-email-fweisbec@gmail.com>
+References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
         h=domainkey-signature:received:received:from:to:cc:subject:date
-         :message-id:x-mailer;
-        bh=8loj4sOQA92EeKO1vfYmEDF+6OCoNAle87tHMa5hsc8=;
-        b=s2KX9Rzk7818YM7VPK+fjZ798EgNYv9KPNmlV8f3yVnE8oS7ih0Qk+mWbt6OYWw2Eb
-         VD3lMLKgixsguxIJG4hPwscYOoi7F2dtCSr0HV4+7WVI681VewJcsuuxfoh7XPekhgkX
-         +QolWonwxF6BG9tx33LmoiIbYEsDX7Sw21wOU=
+         :message-id:x-mailer:in-reply-to:references;
+        bh=aucFcOtcsbQ4QBIqgARDpFX6qhjyXgCrm0soB1xOtRk=;
+        b=JOBo/PYQ2doRszwsNOIjqmH7mNTZ6Uetp/uvaijQjitoHiSpn1l5oR6HgeBWU8wz4w
+         d/nJt2Xg4Ur9i1JqsZvCSUsG9ANznnHxmfBXn2ZTLcTux7br5gzcFsXL6TjjpBwU6xr0
+         Bf2pnVamAkof79VCgcy3gcj/x+xWJF+h6AG+0=
+In-Reply-To: <1241145862-21700-1-git-send-email-fweisbec@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -19,52 +21,36 @@ Content-Transfer-Encoding: 7bit
 To: Ingo Molnar <mingo@elte.hu>
 Cc: LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
 
-Hi,
+When do_journal_end() copies data to the journal blocks buffers in memory,
+it reschedules if needed between each block copied and dirtyfied.
 
-This reiserfs patchset applies against latest tip:core/kill-the-BKL
-It adds various explicit write lock releases on specific sleeping sections.
+We can also release the write lock at this rescheduling stage,
+like did the bkl implicitly.
 
-A performance test with dbench on UP with 100 processus during 100 seconds
-gives the following results:
+[ Impact: release the reiserfs write lock when it is not needed ]
 
-Locking		  Throughput 
+Cc: Jeff Mahoney <jeffm@suse.com>
+Cc: Chris Mason <chris.mason@oracle.com>
+Cc: Alexander Beregalov <a.beregalov@gmail.com>
+Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
+---
+ fs/reiserfs/journal.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-Bkl:              11.2587 MB/s
-Write lock/Mutex: 12.5713 MB/s
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 7976d7d..373d080 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -4232,7 +4232,9 @@ static int do_journal_end(struct reiserfs_transaction_handle *th,
+ 		next = cn->next;
+ 		free_cnode(sb, cn);
+ 		cn = next;
++		reiserfs_write_unlock(sb);
+ 		cond_resched();
++		reiserfs_write_lock(sb);
+ 	}
+ 
+ 	/* we are done  with both the c_bh and d_bh, but
+-- 
+1.6.2.3
 
-So the new locking scheme makes it 11% faster than with the bkl.
-
-It's not possible to compare it on the kill-the-BKL tree because the Bkl
-is not anymore a Bkl inside but a plain Mutex.
-
-Instead, you can apply the following equivalent patch against -rc3 to test it:
-http://www.kernel.org/pub/linux/kernel/people/frederic/reiserfs-kill-the-bkl-full.patch
-
-Of course it might eat your data, make you cows produce black milk, bring coffee
-to your children at 3:00 am, turn the teletubbies song in your mind for
-seven years long and so...
-
-Frederic.
-
-The following changes since commit a3a2b793d18bc068b79508e96eba33ae2326f759:
-  Alessio Igor Bogani (1):
-        remove the BKL: remove "BKL auto-drop" assumption from ext3_remount()
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.git bkl
-
-Frederic Weisbecker (6):
-      kill-the-BKL/reiserfs: release write lock on fs_changed()
-      kill-the-BKL/reiserfs: release the write lock before rescheduling on do_journal_end()
-      kill-the-BKL/reiserfs: release write lock while rescheduling on prepare_for_delete_or_cut()
-      kill-the-BKL/reiserfs: release the write lock inside get_neighbors()
-      kill-the-BKL/reiserfs: release the write lock inside reiserfs_read_bitmap_block()
-      kill-the-BKL/reiserfs: release the write lock on flush_commit_list()
-
- fs/reiserfs/bitmap.c        |    2 ++
- fs/reiserfs/fix_node.c      |    4 ++++
- fs/reiserfs/journal.c       |    9 +++++++--
- fs/reiserfs/stree.c         |    2 ++
- include/linux/reiserfs_fs.h |    8 +++++++-
- 5 files changed, 22 insertions(+), 3 deletions(-)
