@@ -1,52 +1,45 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH 2/6] kill-the-BKL/reiserfs: release the write lock
-	before rescheduling on do_journal_end()
-Date: Fri, 1 May 2009 09:09:11 +0200
-Message-ID: <20090501070911.GG5983@elte.hu>
-References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <1241145862-21700-3-git-send-email-fweisbec@gmail.com>
+From: Thomas Meyer <thomas@m3y3r.de>
+Subject: Re: [PATCH 0/6] kill-the-BKL/reiserfs3: performance improvements,
+ faster than Bkl based scheme
+Date: Fri, 01 May 2009 14:18:36 +0200
+Message-ID: <1241180316.3783.3.camel@localhost.localdomain>
+References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com>
+	 <20090501053540.GC5983@elte.hu>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1241145862-21700-3-git-send-email-fweisbec@gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758388AbZEAMTW@vger.kernel.org>
+In-Reply-To: <20090501053540.GC5983@elte.hu>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, J@pimp.vs19.net
 
-
-* Frederic Weisbecker <fweisbec@gmail.com> wrote:
-
-> When do_journal_end() copies data to the journal blocks buffers in memory,
-> it reschedules if needed between each block copied and dirtyfied.
+Am Freitag, den 01.05.2009, 07:35 +0200 schrieb Ingo Molnar:
 > 
-> We can also release the write lock at this rescheduling stage,
-> like did the bkl implicitly.
+> I've pulled it and have also merged -rc4 into the kill-the-BKL tree, 
+> which can picked up from here:
 > 
-> [ Impact: release the reiserfs write lock when it is not needed ]
+>    git://git.kernel.org/pub/scm/linux/kernel/git/tip/linux-2.6-tip.git core/kill-the-BKL
 > 
-> Cc: Jeff Mahoney <jeffm@suse.com>
-> Cc: Chris Mason <chris.mason@oracle.com>
-> Cc: Alexander Beregalov <a.beregalov@gmail.com>
-> Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
-> ---
->  fs/reiserfs/journal.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-> index 7976d7d..373d080 100644
-> --- a/fs/reiserfs/journal.c
-> +++ b/fs/reiserfs/journal.c
-> @@ -4232,7 +4232,9 @@ static int do_journal_end(struct reiserfs_transaction_handle *th,
->  		next = cn->next;
->  		free_cnode(sb, cn);
->  		cn = next;
-> +		reiserfs_write_unlock(sb);
->  		cond_resched();
-> +		reiserfs_write_lock(sb);
+> So for comparative benchmarking, vanilla v2.6.30-rc4 (which has the 
+> BKL) can be compared against latest kill-the-BKL
 
-There's 8 cond_resched()'s in the code - i'd suggest to introduce a 
-helper for this - reiserfs_write_cond_resched(sb) or so?
+Hi,
 
-	Ingo
+Kernel gets soft-locked-up in somewhere in initrd:
+
+See
+http://m3y3r.de/bilder/img_0524.jpg
+http://m3y3r.de/bilder/img_0525.jpg
+http://m3y3r.de/bilder/img_0526.jpg
+http://m3y3r.de/bilder/img_0527.jpg
+http://m3y3r.de/bilder/img_0528.jpg
+http://m3y3r.de/bilder/img_0529.jpg
+
+config is:
+http://m3y3r.de/bilder/config-2.6.30-rc4-ktb
+
+greets
+thomas
+
