@@ -1,9 +1,9 @@
 From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [PATCH 1/6] kill-the-BKL/reiserfs: release write lock on
-	fs_changed()
-Date: Fri, 1 May 2009 16:01:37 +0200
-Message-ID: <20090501140136.GI6011@nowhere>
-References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <1241145862-21700-2-git-send-email-fweisbec@gmail.com> <878wlhpc5r.fsf@basil.nowhere.org> <20090501132825.GE6011@nowhere> <1241185456.13084.28.camel@think.oraclecorp.com>
+Subject: Re: [PATCH 0/6] kill-the-BKL/reiserfs3: performance improvements,
+	faster than Bkl based scheme
+Date: Fri, 1 May 2009 16:12:09 +0200
+Message-ID: <20090501141208.GJ6011@nowhere>
+References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <20090501053540.GC5983@elte.hu> <1241180316.3783.3.camel@localhost.localdomain>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
@@ -11,146 +11,56 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         h=domainkey-signature:received:received:received:date:from:to:cc
          :subject:message-id:references:mime-version:content-type
          :content-disposition:in-reply-to:user-agent;
-        bh=CuNeYCGirqEGJKLw0ECi+9Nf2edfoL4t3krF8wsTBV4=;
-        b=axVqIZhcVQU6rLpyNEvepdvvihlg5IiiMZyYWjxuOPow9FAT6ywJB80A04tUlJTXIn
-         SDW+pa4Bn60ZYYqLblcGKynIurwhJGRd16a6lUlv+/NtNO+FkoTJunx7M35qKA7YN5dX
-         xh6gCHKiu9c24cwG0roLiv9PTVNjVfs8PAi5U=
+        bh=PzIZqnyO8FtrzfeRZXMy4JK0bxiW0z0ju9lwASdCLZs=;
+        b=qYushyj0qNI4xjqh4sTEoSOvUt1g9lco4/3Gkvg73W9gCiRM5kRQ08q9Lf8qECzvob
+         5ygxxDkVMtm5mpPXSN2e24JV0b84r2TEVFHwapu60CddPO99t3T34EtmLbag5kUShdvf
+         eduVQmTsxd/Ftyqzo2ish5TiOOpBVFQrfZphI=
 Content-Disposition: inline
-In-Reply-To: <1241185456.13084.28.camel@think.oraclecorp.com>
+In-Reply-To: <1241180316.3783.3.camel@localhost.localdomain>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <chris.mason@oracle.com>
-Cc: Andi Kleen <andi@firstfloor.org>, Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
+To: Thomas Meyer <thomas@m3y3r.de>
+Cc: Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, J@pimp.vs19.net
 
-On Fri, May 01, 2009 at 09:44:16AM -0400, Chris Mason wrote:
-> On Fri, 2009-05-01 at 15:28 +0200, Frederic Weisbecker wrote:
-> > On Fri, May 01, 2009 at 08:31:12AM +0200, Andi Kleen wrote:
-> > > Frederic Weisbecker <fweisbec@gmail.com> writes:
-> > > >
-> > > > diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
-> > > > index 6587b4e..397d281 100644
-> > > > --- a/include/linux/reiserfs_fs.h
-> > > > +++ b/include/linux/reiserfs_fs.h
-> > > > @@ -1302,7 +1302,13 @@ static inline loff_t max_reiserfs_offset(struct inode *inode)
-> > > >  #define get_generation(s) atomic_read (&fs_generation(s))
-> > > >  #define FILESYSTEM_CHANGED_TB(tb)  (get_generation((tb)->tb_sb) != (tb)->fs_gen)
-> > > >  #define __fs_changed(gen,s) (gen != get_generation (s))
-> > > > -#define fs_changed(gen,s) ({cond_resched(); __fs_changed(gen, s);})
-> > > > +#define fs_changed(gen,s)		\
-> > > > +({					\
-> > > > +	reiserfs_write_unlock(s);	\
-> > > > +	cond_resched();			\
-> > > > +	reiserfs_write_lock(s);		\
-> > > 
-> > > Did you try writing that 
-> > > 
-> > >     if (need_resched()) {               \
-> > > 	reiserfs_write_unlock(s);	\
-> > > 	cond_resched();			\  (or schedule(), but cond_resched does a loop)
-> > > 	reiserfs_write_lock(s);		\
-> > >     }				
-> > > 
-> > > ? That might give better performance under load because users will be better
-> > > batched and you don't release the lock unnecessarily in the unloaded case.
+On Fri, May 01, 2009 at 02:18:36PM +0200, Thomas Meyer wrote:
+> Am Freitag, den 01.05.2009, 07:35 +0200 schrieb Ingo Molnar:
 > > 
+> > I've pulled it and have also merged -rc4 into the kill-the-BKL tree, 
+> > which can picked up from here:
 > > 
+> >    git://git.kernel.org/pub/scm/linux/kernel/git/tip/linux-2.6-tip.git core/kill-the-BKL
 > > 
-> > Good catch!
-> > And I guess this pattern matches most of the cond_resched()
-> > all over the code (the only condition is that we must already hold
-> > the write lock).
-> > 
-> > I will merge your idea and Ingo's one, write a
-> > reiserfs_cond_resched() to have a helper which
-> > factorizes this pattern.
+> > So for comparative benchmarking, vanilla v2.6.30-rc4 (which has the 
+> > BKL) can be compared against latest kill-the-BKL
 > 
-> The pattern you'll find goes like this:
+> Hi,
 > 
-> lock_kernel()
-> do some work
-> do something that might schedule
-> run fs_changed(), fixup as required.
+> Kernel gets soft-locked-up in somewhere in initrd:
 > 
-> In your setup it is translating to:
-> 
-> reiserfs_write_lock(s)
-> do some work
-> reiserfs_write_unlock(s)
-> 
-> do something that might schedule
-> 
-> reiserfs_write_lock(s)
-> if (need_resched()) {
->     reiserfs_write_unlock(s)
->     cond_resched()
->     reiserfs_write_lock(s)
-> }
-> 
-> if (__fs_changed()) fixup as required
-> 
-> You'll also find that item_moved is similar to __fs_changed() but more
-> fine grained.
-> 
-> One easy optimization is to make an fs_changed_relock()
-> 
-> static inline int fs_changed_relock(gen, s) {
-> 	cond_resched();
-> 	reiserfs_write_lock(s)
-> 	return __fs_changed(gen, s)
-> }
+> See
+> http://m3y3r.de/bilder/img_0524.jpg
+> http://m3y3r.de/bilder/img_0525.jpg
+> http://m3y3r.de/bilder/img_0526.jpg
+> http://m3y3r.de/bilder/img_0527.jpg
+> http://m3y3r.de/bilder/img_0528.jpg
+> http://m3y3r.de/bilder/img_0529.jpg
 
 
+Looks like someone owns the kernel lock and is sleeping
+with the assumption it releases the lock, like the old bkl did.
 
-Nice idea!
-Does it means I can also replace the item_moved() calls to __fs_changed()?
-
-They seem to not work the same way, I guess I should provide two different
-helpers, depending on the check.
-
-
-> 
-> Another cause of scheduling is going to be reiserfs_prepare_for_journal.
-> This function gets called before we modify a metadata buffer and it
-> waits for IO to finish.
-> 
-> Not sure if your patch series already found it, but if you change this:
-> 
-> int reiserfs_prepare_for_journal(struct super_block *sb,
->                                  struct buffer_head *bh, int wait)
-> {
->         PROC_INFO_INC(sb, journal.prepare);
-> 
->         if (!trylock_buffer(bh)) {
->                 if (!wait)
->                         return 0;
->                 lock_buffer(bh);
->         }
-> 
-> Into:
-> 
-> 	if (!trylock_buffer(bh)) {
-> 		if (!wait)
-> 			return 0;
-> 		reiserfs_write_unlock(s);
-> 		wait_on_buffer(bh);
-> 		reiserfs_write_lock(s);
-> 		lock_buffer(bh);
-> 	}
-> 
-> You'll catch a big cause of waiting for the disk with the lock held.
+ 
+> config is:
+> http://m3y3r.de/bilder/config-2.6.30-rc4-ktb
 
 
-Again, good catch. I will try that.
-
-I should also check the different other lock_buffer() which
-indeed might sleep.
-
-Thanks!
+Thanks, I will try it out once I have some time.
 
 
-> -chris
+> greets
+> thomas
 > 
 > 
 
