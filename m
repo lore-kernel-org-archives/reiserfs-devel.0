@@ -1,99 +1,201 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Reiser4 on loopback
-Date: Sat, 02 May 2009 01:12:34 +0200
-Message-ID: <49FB81E2.3040703@gmail.com>
-References: <49FB6BBF.9000408@podzimek.org>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: [PATCH 1/6] kill-the-BKL/reiserfs: release write lock on
+	fs_changed()
+Date: Sat, 2 May 2009 03:19:15 +0200
+Message-ID: <20090502011914.GA6208@nowhere>
+References: <1241145862-21700-1-git-send-email-fweisbec@gmail.com> <1241145862-21700-2-git-send-email-fweisbec@gmail.com> <878wlhpc5r.fsf@basil.nowhere.org> <20090501132825.GE6011@nowhere> <1241185456.13084.28.camel@think.oraclecorp.com> <20090501140136.GI6011@nowhere> <1241187241.13084.44.camel@think.oraclecorp.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <49FB6BBF.9000408@podzimek.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754315AbZEBBTb@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:received:date:from:to:cc
+         :subject:message-id:references:mime-version:content-type
+         :content-disposition:in-reply-to:user-agent;
+        bh=M7ol9zE7/oDO1MsHovr29pjWYzD+QAb0VluV+OCKG5o=;
+        b=CUI4OhIfQRe55/05c59n0AMj+D4fu9Iou8ZdebSNZGE7+8z2T3c95+oXKQ7k92G/79
+         LBzVuRp/1EcIGY+0oV9LOWkuJVBaX9BwG9iann73Cs9XYOWPLqHvwrO3dzbFeQnEmyPI
+         N9Dz1n7YgiWOzImk9tCcR2VlXgBUNgNAVhEWw=
+Content-Disposition: inline
+In-Reply-To: <1241187241.13084.44.camel@think.oraclecorp.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Andrej Podzimek <andrej@podzimek.org>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <chris.mason@oracle.com>
+Cc: Andi Kleen <andi@firstfloor.org>, Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Alessio Igor Bogani <abogani@texware.it>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro <viro@zeniv.linux.org.uk>
 
-Andrej Podzimek wrote:
-> Hello,
+On Fri, May 01, 2009 at 10:14:01AM -0400, Chris Mason wrote:
+> On Fri, 2009-05-01 at 16:01 +0200, Frederic Weisbecker wrote:
+> > On Fri, May 01, 2009 at 09:44:16AM -0400, Chris Mason wrote:
+> > > On Fri, 2009-05-01 at 15:28 +0200, Frederic Weisbecker wrote:
+> > > > On Fri, May 01, 2009 at 08:31:12AM +0200, Andi Kleen wrote:
+> > > > > Frederic Weisbecker <fweisbec@gmail.com> writes:
+> > > > > >
+> > > > > > diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
+> > > > > > index 6587b4e..397d281 100644
+> > > > > > --- a/include/linux/reiserfs_fs.h
+> > > > > > +++ b/include/linux/reiserfs_fs.h
+> > > > > > @@ -1302,7 +1302,13 @@ static inline loff_t max_reiserfs_offset(struct inode *inode)
+> > > > > >  #define get_generation(s) atomic_read (&fs_generation(s))
+> > > > > >  #define FILESYSTEM_CHANGED_TB(tb)  (get_generation((tb)->tb_sb) != (tb)->fs_gen)
+> > > > > >  #define __fs_changed(gen,s) (gen != get_generation (s))
+> > > > > > -#define fs_changed(gen,s) ({cond_resched(); __fs_changed(gen, s);})
+> > > > > > +#define fs_changed(gen,s)		\
+> > > > > > +({					\
+> > > > > > +	reiserfs_write_unlock(s);	\
+> > > > > > +	cond_resched();			\
+> > > > > > +	reiserfs_write_lock(s);		\
+> > > > > 
+> > > > > Did you try writing that 
+> > > > > 
+> > > > >     if (need_resched()) {               \
+> > > > > 	reiserfs_write_unlock(s);	\
+> > > > > 	cond_resched();			\  (or schedule(), but cond_resched does a loop)
+> > > > > 	reiserfs_write_lock(s);		\
+> > > > >     }				
+> > > > > 
+> > > > > ? That might give better performance under load because users will be better
+> > > > > batched and you don't release the lock unnecessarily in the unloaded case.
+> > > > 
+> > > > 
+> > > > 
+> > > > Good catch!
+> > > > And I guess this pattern matches most of the cond_resched()
+> > > > all over the code (the only condition is that we must already hold
+> > > > the write lock).
+> > > > 
+> > > > I will merge your idea and Ingo's one, write a
+> > > > reiserfs_cond_resched() to have a helper which
+> > > > factorizes this pattern.
+> > > 
+> > > The pattern you'll find goes like this:
+> > > 
+> > > lock_kernel()
+> > > do some work
+> > > do something that might schedule
+> > > run fs_changed(), fixup as required.
+> > > 
+> > > In your setup it is translating to:
+> > > 
+> > > reiserfs_write_lock(s)
+> > > do some work
+> > > reiserfs_write_unlock(s)
+> > > 
+> > > do something that might schedule
+> > > 
+> > > reiserfs_write_lock(s)
+> > > if (need_resched()) {
+> > >     reiserfs_write_unlock(s)
+> > >     cond_resched()
+> > >     reiserfs_write_lock(s)
+> > > }
+> > > 
+> > > if (__fs_changed()) fixup as required
+> > > 
+> > > You'll also find that item_moved is similar to __fs_changed() but more
+> > > fine grained.
+> > > 
+> > > One easy optimization is to make an fs_changed_relock()
+> > > 
+> > > static inline int fs_changed_relock(gen, s) {
+> > > 	cond_resched();
+> > > 	reiserfs_write_lock(s)
+> > > 	return __fs_changed(gen, s)
+> > > }
+> > 
+> > 
+> > 
+> > Nice idea!
+> > Does it means I can also replace the item_moved() calls to __fs_changed()?
+> > 
+> 
+> Not quite, it looks like a common convention is also
+> 
+> if (fs_changed && item_moved) { fixup }
+> 
+> item_moved is the expensive check based on the contents of a btree
+> block, while fs_changed is a simple generation number.
 
-Hello.
 
->
-> I created a file of size 1 << 33 (8 GiB) and a Reiser4 filesystem on 
-> it. (The -f option was needed.) I mounted the file as a loopback 
-> device. (Mounted successfully.) Tried to unmout it right afterwards. 
-> This is what happened:
->
-> ------------[ cut here 
-> ]------------                                                                              
-> kernel BUG at fs/reiser4/plugin/file/file_conversion.c:689!
+Ok.
 
-Sorry for this kind of false positive. Would you please roll back this
-change: http://marc.info/?l=reiserfs-devel&m=123033439623573&w=2
-We'll think, how to ensure uninterruptible writes more gracefully..
+ 
+> > They seem to not work the same way, I guess I should provide two different
+> > helpers, depending on the check.
+> > 
+> > 
+> > > 
+> > > Another cause of scheduling is going to be reiserfs_prepare_for_journal.
+> > > This function gets called before we modify a metadata buffer and it
+> > > waits for IO to finish.
+> > > 
+> > > Not sure if your patch series already found it, but if you change this:
+> > > 
+> > > int reiserfs_prepare_for_journal(struct super_block *sb,
+> > >                                  struct buffer_head *bh, int wait)
+> > > {
+> > >         PROC_INFO_INC(sb, journal.prepare);
+> > > 
+> > >         if (!trylock_buffer(bh)) {
+> > >                 if (!wait)
+> > >                         return 0;
+> > >                 lock_buffer(bh);
+> > >         }
+> > > 
+> > > Into:
+> > > 
+> > > 	if (!trylock_buffer(bh)) {
+> > > 		if (!wait)
+> > > 			return 0;
+> > > 		reiserfs_write_unlock(s);
+> > > 		wait_on_buffer(bh);
+> > > 		reiserfs_write_lock(s);
+> > > 		lock_buffer(bh);
+> > > 	}
+> > > 
+> > > You'll catch a big cause of waiting for the disk with the lock held.
+> > 
+> > 
+> > Again, good catch. I will try that.
+> > 
+> > I should also check the different other lock_buffer() which
+> > indeed might sleep.
+> 
+> ftrace can help some.
+> 
+> cd /sys/kernel/debug/tracing
+> echo function > current_tracer
+> echo func_stack_trace > trace_options
+> echo schedule > set_ftrace_filter
+> echo 1 > tracing_on
+> 
+> trace-histogram < trace_pipe > /tmp/trace_output
+> 
+> (in another window run the reiserfs workload)
+> 
+> When done hit ctrl-c on the trace-histogram window
+> 
+> You'll get the most common causes of schedule during the run, groupd by
+> stack trace.  Just look for the ones that are done with the lock held.
+> 
+> trace-histogram is here:
+> 
+> http://oss.oracle.com/~mason/trace-histogram
+> 
+> -chris
 
-Report, if any problems.
 
-Thanks,
-Edward.
+Thanks, looks like a useful script! May be it could be merged
+in scripts/tracing ? I will try it out.
 
->                                                       invalid opcode: 
-> 0000 [#1] PREEMPT
-> last sysfs file: /sys/block/loop0/range
-> Modules linked in: loop usbhid dvb_usb_af9015 dvb_usb dvb_core ext2 
-> mbcache aes_i586 aes_generic lib80211_crypt_ccmp fuse ipv6 bnep rfcomm 
-> hidp sco l2cap bluetooth rng_core video uinput ohci1394 ieee1394 tun 
-> ppdev ipw2200 libipw lib80211 8139too mii lp parport_pc parport 
-> uhci_hcd ohci_hcd ehci_hcd usbcore pcspkr snd_intel8x0m snd_seq_oss 
-> snd_seq_midi_event snd_seq snd_seq_device snd_pcm_oss snd_mixer_oss 
-> snd_intel8x0 snd_ac97_codec ac97_bus snd_pcm snd_page_alloc 
-> snd_rtctimer snd_timer snd soundcore rtc psmouse nsc_ircc irda 
-> crc_ccitt cpufreq_ondemand pcmcia evdev yenta_socket rsrc_nonstatic 
-> pcmcia_core asus_laptop backlight speedstep_centrino freq_table lm90 
-> hwmon i2c_i801
->
-> Pid: 14207, comm: loop0 Not tainted (2.6.29.1-AP #1) M2N
-> EIP: 0060:[<c02016a0>] EFLAGS: 00010246 CPU: 0
-> EIP is at reiser4_write_begin_careful+0x190/0x1d0
-> EAX: ca7e2780 EBX: 00000000 ECX: 00000000 EDX: c8a56f34
-> ESI: c8a56f34 EDI: c8a56e9c EBP: 00000000 ESP: c26a0ed4
-> DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 0068
-> Process loop0 (pid: 14207, ti=c26a0000 task=c8f63ba0 task.ti=c26a0000)
-> Stack:
-> c8f63bcc d739de80 00000000 ea9771e4 00000000 c04cd3e0 00001000 00000000
-> c01606d0 00019000 00000000 00001000 00000000 c26a0f58 c26a0f54 00000000
-> c26a0f58 f033f7f8 00019000 00000000 00001000 00000000 c26a0f58 c26a0f54
-> Call Trace:
-> [<c01606d0>] pagecache_write_begin+0x40/0x50
-> [<f033f7f8>] do_lo_send_aops+0xb8/0x1b0 [loop]
-> [<c01aca00>] end_bio_bh_io_sync+0x0/0x50
-> [<f033fbc9>] loop_thread+0x2d9/0x470 [loop]
-> [<f033f740>] do_lo_send_aops+0x0/0x1b0 [loop]
-> [<c0138500>] autoremove_wake_function+0x0/0x50
-> [<f033f8f0>] loop_thread+0x0/0x470 [loop]
-> [<c01380d7>] kthread+0x37/0x70
-> [<c01380a0>] kthread+0x0/0x70
-> [<c0103a6f>] kernel_thread_helper+0x7/0x18
-> Code: ff ff 8b 15 3c cd 4c c0 8b 35 30 cd 4c c0 8d 14 96 39 d0 0f 85 
-> 72 ff ff ff 8b 44 24 0c e8 e9 b0 f3 ff e9 64ff ff ff 8d 74 26 00 <0f> 
-> 0b eb fe 8d 74 26 00 8b 44 24 08 e8 5f ff f5 ff 8b 44 24 08
-> EIP: [<c02016a0>] reiser4_write_begin_careful+0x190/0x1d0 SS:ESP 
-> 0068:c26a0ed4
-> ---[ end trace 11682d352bc37c14 ]---
->
-> BTW, the location fs/reiser4/plugin/file/file_conversion.c:689 is 
-> known to me. That's the place where a manual fix was needed in 
-> 2.6.28.x kernels.
->
-> If you want me to carry out more experiments, just let me know.
->
-> Regards,
->
-> Andrej
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe 
-> reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Recently I used a specific thing to find the hotspots which schedule
+with the lock:
 
+I enabled PREEMPT_NONE on an UP box.
+And once we find the lock contended, we print the
+stacktrace of the lock owner, we are sure that he is
+sleeping and that he does it voluntarily because of PREEMPT_NONE
+and the UP.
+
+The latest reiserfs patchset is a result of this trick.
+I will try yours now that I'm testing on SMP preempt :)
