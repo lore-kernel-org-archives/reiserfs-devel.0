@@ -1,206 +1,175 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [PATCH] reiserfs: Expand i_mutex to enclose lookup_one_len
-Date: Sun, 3 May 2009 11:06:32 +0100
-Message-ID: <20090503100632.GV8633@ZenIV.linux.org.uk>
-References: <49FB1F20.8040400@suse.com> <20090503085236.GT8633@ZenIV.linux.org.uk> <20090503091507.GU8633@ZenIV.linux.org.uk>
+From: Corey Hickey <bugfood-ml@fatooh.org>
+Subject: Re: Problem with reiserfs volume
+Date: Sun, 03 May 2009 16:54:30 -0700
+Message-ID: <49FE2EB6.9060002@fatooh.org>
+References: <20090503015844648.PNBZ22077@cdptpa-omta02.mail.rr.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20090503091507.GU8633@ZenIV.linux.org.uk>
+DKIM-Signature: v=1; a=rsa-sha1; c=simple; d=fatooh.org; h=message-id
+	:date:from:mime-version:to:subject:references:in-reply-to
+	:content-type:content-transfer-encoding; s=dkim; bh=D8IRCeZxvOio
+	TcpA6xLPIWJTgYY=; b=l/XmY1CwlVxGT73zNX1qjeC+c11o4Mt3ieedQR8Px4Ca
+	Lbkb8Kiy1dIBo/m9buakTra899T99v/yktMZvCMAk9hmdjVA871qqwqdF6q7bwU6
+	LTCoCSefYEBdtc+hqJwLNnS8J7qHrw4+HQcZaw6051bLyLPip+AEfUtjlaqU/jM=
+In-Reply-To: <20090503015844648.PNBZ22077@cdptpa-omta02.mail.rr.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@ftp.linux.org.uk>, Alexander Beregalov <a.beregalov@gmail.com>, David <david@unsolicited.net>
+To: lrhorer@satx.rr.com, reiserfs-devel@vger.kernel.org
 
-On Sun, May 03, 2009 at 10:15:08AM +0100, Al Viro wrote:
-
-> > I've applied your patch as-is, and unless you have objections to the
-> > variant above I'll do that as incremental.  Comments?
+Leslie Rhorer wrote:
+>>> The read activity at the array level also fell to zero, but at the drive
+>>> level 5 of the drives would still show activity.
+>> Are you sure the read activity for the array was 0?
 > 
-> BTW, what in the name of everything unholy is ->xattr_root?  Never
-> assigned a non-NULL value...
+> Yep.  According to iostat, absolute zilch.
 
-Looks like your xattr journalling is b0rken - the check in there should
-be that for ->priv_root, AFAICS.  Anyway, promised incremental follows (FWIW,
-it's commit ff4559 in git.kernel.org/pub/scm/linux/kernel/git/viro/vfs-2.6.git/
-on #untested).
+Peculiar. I cannot explain that.
 
-[PATCH] Always lookup priv_root on reiserfs mount and keep it
+>> If the array wasn't
+>> doing anything but the individual drives were, that would indicate a
+>> lower-level problem than the filesystem;
+> 
+> It could, yes.  In fact, it is not unlikely to be and interaction failure
+> between the file system and the RAID device management system (/dev/md0, or
+> whatever).
+> 
+>> unless I'm missing something,
+>> the filesystem can't do anything to the individual drives without it
+>> showing up as read/write from/to the array device.
+> 
+> I don't know if that's true or not.  Certainly if the FS is RAID aware, it
+> can query the RAID system for details about the array and its member
+> elements (XFS, for example does just this in order to automatically set up
+> stripe width dur8ing format). 
 
-... even if it's a negative dentry.  That way we can set ->d_op on
-root before anyone could race with us.  Simplify d_compare(), while
-we are at it.
+For XFS, this appears to be done by mkfs.xfs via a GET_ARRAY_INFO ioctl
+on the md block device. See the xfsprogs source, libdisk/md.c,
+md_get_subvol_stripe().
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/reiserfs/super.c            |    6 ++-
- fs/reiserfs/xattr.c            |   86 +++++++++++++++++-----------------------
- include/linux/reiserfs_xattr.h |    1 +
- 3 files changed, 41 insertions(+), 52 deletions(-)
+> There's nothing to prevent the FS from
+> issuing command directly to the drive management system (/dev/sda, /dev/sdb,
+> etc.).
 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 5d0064d..f45cac9 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -1845,7 +1845,8 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
- 			goto error;
- 		}
- 
--		if ((errval = reiserfs_xattr_init(s, s->s_flags))) {
-+		if ((errval = reiserfs_lookup_privroot(s)) ||
-+		    (errval = reiserfs_xattr_init(s, s->s_flags))) {
- 			dput(s->s_root);
- 			s->s_root = NULL;
- 			goto error;
-@@ -1858,7 +1859,8 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
- 			reiserfs_info(s, "using 3.5.x disk format\n");
- 		}
- 
--		if ((errval = reiserfs_xattr_init(s, s->s_flags))) {
-+		if ((errval = reiserfs_lookup_privroot(s)) ||
-+		    (errval = reiserfs_xattr_init(s, s->s_flags))) {
- 			dput(s->s_root);
- 			s->s_root = NULL;
- 			goto error;
-diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index 31a3dbb..2891f78 100644
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -903,16 +903,19 @@ static int create_privroot(struct dentry *dentry)
- 	WARN_ON_ONCE(!mutex_is_locked(&inode->i_mutex));
- 
- 	err = xattr_mkdir(inode, dentry, 0700);
--	if (err) {
--		dput(dentry);
--		dentry = NULL;
-+	if (err || !dentry->d_inode) {
-+		reiserfs_warning(dentry->d_sb, "jdm-20006",
-+				 "xattrs/ACLs enabled and couldn't "
-+				 "find/create .reiserfs_priv. "
-+				 "Failing mount.");
-+		return -EOPNOTSUPP;
- 	}
- 
--	if (dentry && dentry->d_inode)
--		reiserfs_info(dentry->d_sb, "Created %s - reserved for xattr "
--			      "storage.\n", PRIVROOT_NAME);
-+	dentry->d_inode->i_flags |= S_PRIVATE;
-+	reiserfs_info(dentry->d_sb, "Created %s - reserved for xattr "
-+		      "storage.\n", PRIVROOT_NAME);
- 
--	return err;
-+	return 0;
- }
- 
- static int xattr_mount_check(struct super_block *s)
-@@ -944,11 +947,9 @@ static int
- xattr_lookup_poison(struct dentry *dentry, struct qstr *q1, struct qstr *name)
- {
- 	struct dentry *priv_root = REISERFS_SB(dentry->d_sb)->priv_root;
--	if (name->len == priv_root->d_name.len &&
--	    name->hash == priv_root->d_name.hash &&
--	    !memcmp(name->name, priv_root->d_name.name, name->len)) {
-+	if (container_of(q1, struct dentry, d_name) == priv_root)
- 		return -ENOENT;
--	} else if (q1->len == name->len &&
-+	if (q1->len == name->len &&
- 		   !memcmp(q1->name, name->name, name->len))
- 		return 0;
- 	return 1;
-@@ -958,6 +959,27 @@ static const struct dentry_operations xattr_lookup_poison_ops = {
- 	.d_compare = xattr_lookup_poison,
- };
- 
-+int reiserfs_lookup_privroot(struct super_block *s)
-+{
-+	struct dentry *dentry;
-+	int err = 0;
-+
-+	/* If we don't have the privroot located yet - go find it */
-+	mutex_lock(&s->s_root->d_inode->i_mutex);
-+	dentry = lookup_one_len(PRIVROOT_NAME, s->s_root,
-+				strlen(PRIVROOT_NAME));
-+	if (!IS_ERR(dentry)) {
-+		REISERFS_SB(s)->priv_root = dentry;
-+		s->s_root->d_op = &xattr_lookup_poison_ops;
-+		if (dentry->d_inode)
-+			dentry->d_inode->i_flags |= S_PRIVATE;
-+	} else
-+		err = PTR_ERR(dentry);
-+	mutex_unlock(&s->s_root->d_inode->i_mutex);
-+
-+	return err;
-+}
-+
- /* We need to take a copy of the mount flags since things like
-  * MS_RDONLY don't get set until *after* we're called.
-  * mount_flags != mount_options */
-@@ -969,48 +991,12 @@ int reiserfs_xattr_init(struct super_block *s, int mount_flags)
- 	err = xattr_mount_check(s);
- 	if (err)
- 		goto error;
--#endif
- 
--	/* If we don't have the privroot located yet - go find it */
--	if (!REISERFS_SB(s)->priv_root) {
--		struct dentry *dentry;
--		mutex_lock_nested(&s->s_root->d_inode->i_mutex, I_MUTEX_CHILD);
--		dentry = lookup_one_len(PRIVROOT_NAME, s->s_root,
--					strlen(PRIVROOT_NAME));
--		if (!IS_ERR(dentry)) {
--#ifdef CONFIG_REISERFS_FS_XATTR
--			if (!(mount_flags & MS_RDONLY) && !dentry->d_inode)
--				err = create_privroot(dentry);
--#endif
--			if (!dentry->d_inode) {
--				dput(dentry);
--				dentry = NULL;
--			}
--		} else
--			err = PTR_ERR(dentry);
-+	if (!REISERFS_SB(s)->priv_root->d_inode && !(mount_flags & MS_RDONLY)) {
-+		mutex_lock(&s->s_root->d_inode->i_mutex);
-+		err = create_privroot(REISERFS_SB(s)->priv_root);
- 		mutex_unlock(&s->s_root->d_inode->i_mutex);
--
--		if (!err && dentry) {
--			s->s_root->d_op = &xattr_lookup_poison_ops;
--			dentry->d_inode->i_flags |= S_PRIVATE;
--			REISERFS_SB(s)->priv_root = dentry;
--#ifdef CONFIG_REISERFS_FS_XATTR
--		/* xattrs are unavailable */
--		} else if (!(mount_flags & MS_RDONLY)) {
--			/* If we're read-only it just means that the dir
--			 * hasn't been created. Not an error -- just no
--			 * xattrs on the fs. We'll check again if we
--			 * go read-write */
--			reiserfs_warning(s, "jdm-20006",
--					 "xattrs/ACLs enabled and couldn't "
--					 "find/create .reiserfs_priv. "
--					 "Failing mount.");
--			err = -EOPNOTSUPP;
--#endif
--		}
- 	}
--
--#ifdef CONFIG_REISERFS_FS_XATTR
- 	if (!err)
- 		s->s_xattr = reiserfs_xattr_handlers;
- 
-diff --git a/include/linux/reiserfs_xattr.h b/include/linux/reiserfs_xattr.h
-index dcae01e..fea1a8e 100644
---- a/include/linux/reiserfs_xattr.h
-+++ b/include/linux/reiserfs_xattr.h
-@@ -38,6 +38,7 @@ struct nameidata;
- int reiserfs_xattr_register_handlers(void) __init;
- void reiserfs_xattr_unregister_handlers(void);
- int reiserfs_xattr_init(struct super_block *sb, int mount_flags);
-+int reiserfs_lookup_privroot(struct super_block *sb);
- int reiserfs_delete_xattrs(struct inode *inode);
- int reiserfs_chown_xattrs(struct inode *inode, struct iattr *attrs);
- 
--- 
-1.5.6.5
+That seems to me like it would be opening a can of worms. It's the job
+of md (or lvm, dm, etc.) to figure out which disk (or partition, or
+file, etc.) to read/write; otherwise, the filesystem would have to
+consider a number of factors, even besides RAID layout. Someone please
+correct me if I'm mistaken....
 
+>> Did you ever test with dstat and debugreiserfs like I mentioned earlier
+>> in this thread?
+> 
+> Yes to the first and no to the second.  I must have missed the reference in
+> all the correspondence.  'Sorry about that.
+
+That's ok.
+
+>>>> It would always be the same 5 drives which dropped to zero
+>>>> and the same 5 which still reported some reads going on.
+>> I did the math and (if a couple reasonable assumptions I made are
+>> correct), then the reiserfs bitmaps would indeed be distributed among
+>> five of 10 drives in a RAID-6.
+>>
+>> If you're interested, ask, and I'll write it up.
+> 
+> It's academic, but I'm curious.  Why would the default parameters have
+> failed?
+
+It's not exactly a "failure"--it's just that the bitmaps are placed
+every 128 MB, and that results in a certain distribution among your disks.
+
+bitmap_freq = 128 MB * 1024 KB/MB = 131072 KB
+
+
+For a simple example, first consider a 2-disk RAID-0 with the default 64
+KB chunk size.
+
+num_data_disks = 2
+chunk_size = 64 KB
+stripe_size = chunk_size * num_data_disks = 128 KB
+stripe_offset = bitmap_freq / stripe_size = 1024
+
+131072 is a multiple of 128, so the bitmaps are all on the same disk,
+1024 stripes apart.
+
+
+Now consider a 3-disk RAID-0. 131072 is not a multiple of 192.
+
+num_data_disks = 3
+chunk_size = 64 KB
+stripe_size = chunk_size * num_data_disks = 192 KB
+stripe_offset = bitmap_freq / stripe_size = 682.6666....
+
+Bitmaps are 682 and 2/3 stripes apart. 2/3 of a 3-chunk stripe is 2
+chunks, so if the first bitmap is on the first disk, the next bitmap
+would be on the third disk, then the second disk, then back to the
+first: (A,C,B,...). In this case the bitmaps would be spread among all
+three disks.
+
+
+Now lets look at your 10-disk RAID-6. This is more complicated because
+we have to consider that two chunks out of each stripe hold parity, and
+that the chunk layout changes with each stripe. Here's where I have to
+make an assumption: I can't find out whether the layout methods for
+RAID-6 are the same as for RAID-5. If they are, the layout for your RAID
+will be like this (the default left-symmetric) or at least substantially
+similar.
+
+         disk  ABCDEFGHIJ
+
+stripe 0:      abcdefghPP
+stripe 1:      bcdefghPPa
+stripe 2:      cdefghPPab
+stripe 3:      defghPPabc
+stripe 4:      efghPPabcd
+stripe 5:      fghPPabcde
+stripe 6:      ghPPabcdef
+stripe 7:      hPPabcdefg
+stripe 8:      PPabcdefgh
+stripe 9:      PabcdefghP
+
+Note that the layout repetition period is the same as the number of
+disks. So...
+
+chunk_size = 64 KB
+num_disks = 10
+num_data_disks = num_disks - 2 = 8
+stripe_size = chunk_size * num_data_disks = 512 KB
+stripe_offset = bitmap_freq / stripe_size = 256
+
+131072 is a multiple of 512, so the bitmaps are all on the first chunk
+of a stripe, 256 stripes apart; however, 256 is not a multiple of the
+chunk layout period, so, for each stripe that holds a bitmap, the
+position of the first chunk will vary.
+
+chunk_layout_period = num_disks = 10
+stripe_layout_offset = stripe_offset % chunk_layout_period = 6
+
+That means each subsequent bitmap will be 6 stripes later within the
+stripe layout pattern: 0,6,2,8,4,...
+
+The first chunk is chunk "a", so, for each of those stripes, find which
+disk chunk "a" is on in the layout table above. That yields disks
+A,E,I,C,G: five disks out of the ten, just like you reported.
+
+
+(Hopefully I didn't screw up too much of that.)
+
+>>>> During a RAID resync, almost every file create causes a halt.
+>> Perhaps because the resync I/O caused the bitmap data to fall off the
+>> page cache.
+> 
+> How would that happen?  More to the point, how would it happen without
+> triggering activity in the FS?
+
+That was sort of a speculative statement, and I can't really back it up
+because I don't know the details of how the page cache fits in, but IF
+the data read and written during a resync gets cached, then the page
+cache might prefer to retain that data rather than the bitmap data.
+
+If the bitmap data never stays in the page cache for long, then a file
+write would pretty much always require some bitmaps to be re-read.
+
+-Corey
