@@ -1,175 +1,68 @@
-From: Corey Hickey <bugfood-ml@fatooh.org>
-Subject: Re: Problem with reiserfs volume
-Date: Sun, 03 May 2009 16:54:30 -0700
-Message-ID: <49FE2EB6.9060002@fatooh.org>
-References: <20090503015844648.PNBZ22077@cdptpa-omta02.mail.rr.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: [PATCH] reiserfs: Expand i_mutex to enclose lookup_one_len
+Date: Mon, 04 May 2009 00:51:20 -0400
+Message-ID: <49FE7448.2040302@suse.com>
+References: <49FB1F20.8040400@suse.com> <20090503085236.GT8633@ZenIV.linux.org.uk> <20090503091507.GU8633@ZenIV.linux.org.uk>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha1; c=simple; d=fatooh.org; h=message-id
-	:date:from:mime-version:to:subject:references:in-reply-to
-	:content-type:content-transfer-encoding; s=dkim; bh=D8IRCeZxvOio
-	TcpA6xLPIWJTgYY=; b=l/XmY1CwlVxGT73zNX1qjeC+c11o4Mt3ieedQR8Px4Ca
-	Lbkb8Kiy1dIBo/m9buakTra899T99v/yktMZvCMAk9hmdjVA871qqwqdF6q7bwU6
-	LTCoCSefYEBdtc+hqJwLNnS8J7qHrw4+HQcZaw6051bLyLPip+AEfUtjlaqU/jM=
-In-Reply-To: <20090503015844648.PNBZ22077@cdptpa-omta02.mail.rr.com>
+In-Reply-To: <20090503091507.GU8633@ZenIV.linux.org.uk>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: lrhorer@satx.rr.com, reiserfs-devel@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@ftp.linux.org.uk>, Alexander Beregalov <a.beregalov@gmail.com>, David <david@unsolicited.net>
 
-Leslie Rhorer wrote:
->>> The read activity at the array level also fell to zero, but at the drive
->>> level 5 of the drives would still show activity.
->> Are you sure the read activity for the array was 0?
-> 
-> Yep.  According to iostat, absolute zilch.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Peculiar. I cannot explain that.
-
->> If the array wasn't
->> doing anything but the individual drives were, that would indicate a
->> lower-level problem than the filesystem;
-> 
-> It could, yes.  In fact, it is not unlikely to be and interaction failure
-> between the file system and the RAID device management system (/dev/md0, or
-> whatever).
-> 
->> unless I'm missing something,
->> the filesystem can't do anything to the individual drives without it
->> showing up as read/write from/to the array device.
-> 
-> I don't know if that's true or not.  Certainly if the FS is RAID aware, it
-> can query the RAID system for details about the array and its member
-> elements (XFS, for example does just this in order to automatically set up
-> stripe width dur8ing format). 
-
-For XFS, this appears to be done by mkfs.xfs via a GET_ARRAY_INFO ioctl
-on the md block device. See the xfsprogs source, libdisk/md.c,
-md_get_subvol_stripe().
-
-> There's nothing to prevent the FS from
-> issuing command directly to the drive management system (/dev/sda, /dev/sdb,
-> etc.).
-
-That seems to me like it would be opening a can of worms. It's the job
-of md (or lvm, dm, etc.) to figure out which disk (or partition, or
-file, etc.) to read/write; otherwise, the filesystem would have to
-consider a number of factors, even besides RAID layout. Someone please
-correct me if I'm mistaken....
-
->> Did you ever test with dstat and debugreiserfs like I mentioned earlier
->> in this thread?
-> 
-> Yes to the first and no to the second.  I must have missed the reference in
-> all the correspondence.  'Sorry about that.
-
-That's ok.
-
->>>> It would always be the same 5 drives which dropped to zero
->>>> and the same 5 which still reported some reads going on.
->> I did the math and (if a couple reasonable assumptions I made are
->> correct), then the reiserfs bitmaps would indeed be distributed among
->> five of 10 drives in a RAID-6.
+Al Viro wrote:
+> On Sun, May 03, 2009 at 09:52:36AM +0100, Al Viro wrote:
+>> On Fri, May 01, 2009 at 12:11:12PM -0400, Jeff Mahoney wrote:
+>>>  2.6.30-rc3 introduced some sanity checks in the VFS code to avoid NFS
+>>>  bugs by ensuring that lookup_one_len is always called under i_mutex.
+>>>
+>>>  This patch expands the i_mutex locking to enclose lookup_one_len. This was
+>>>  always required, but not not enforced in the reiserfs code since it
+>>>  does locking around the xattr interactions with the xattr_sem.
+>>>
+>>>  This is obvious enough, but it survived an overnight 50 thread ACL test.
+>> It's not enough, unfortunately ;-/  It deals with the warning, but it
+>> leaves an actual hole in there.
 >>
->> If you're interested, ask, and I'll write it up.
+>> Look: what happens if we mount it r/o without that directory and then
+>> remount r/w?  We get dentry for privroot, hash it (negative at that point),
+>> then do actual mkdir, unlock root and modify the ->d_compare() of root
+>> to reject lookups on that sucker.  Too late - in the meanwhile lookups
+>> might very well come and find privroot in dcache.
+>>
+>> BTW, the way ->d_compare() is done in there is rather dumb -
+>> 	if (q1 == &priv_root->d_name)
+>> 		return -ENOENT;
+>> 	...
+>> would do just as well.  Why don't we do that lookup *once* (on ->get_sb(),
+>> before anything can come and race with us), and then just keep negative
+>> dentry if the directory hadn't been around?  And set d_compare() for root
+>> immediately after that lookup...
+>>
+>> I've applied your patch as-is, and unless you have objections to the
+>> variant above I'll do that as incremental.  Comments?
 > 
-> It's academic, but I'm curious.  Why would the default parameters have
-> failed?
+> BTW, what in the name of everything unholy is ->xattr_root?  Never
+> assigned a non-NULL value...
 
-It's not exactly a "failure"--it's just that the bitmaps are placed
-every 128 MB, and that results in a certain distribution among your disks.
+Huh. I didn't see that still in there. That's an artifact of an earlier
+version of the code where I kept a reference to /.reiserfs_priv/xattrs.
+Then I decided that .reiserfs_priv was all I needed to cache (to avoid
+recursive i_mutex locking on the fs root) and dropped the caching of
+xattrs. Looks like it didn't get totally cleared out.
 
-bitmap_freq = 128 MB * 1024 KB/MB = 131072 KB
+- -Jeff
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.9 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
 
-
-For a simple example, first consider a 2-disk RAID-0 with the default 64
-KB chunk size.
-
-num_data_disks = 2
-chunk_size = 64 KB
-stripe_size = chunk_size * num_data_disks = 128 KB
-stripe_offset = bitmap_freq / stripe_size = 1024
-
-131072 is a multiple of 128, so the bitmaps are all on the same disk,
-1024 stripes apart.
-
-
-Now consider a 3-disk RAID-0. 131072 is not a multiple of 192.
-
-num_data_disks = 3
-chunk_size = 64 KB
-stripe_size = chunk_size * num_data_disks = 192 KB
-stripe_offset = bitmap_freq / stripe_size = 682.6666....
-
-Bitmaps are 682 and 2/3 stripes apart. 2/3 of a 3-chunk stripe is 2
-chunks, so if the first bitmap is on the first disk, the next bitmap
-would be on the third disk, then the second disk, then back to the
-first: (A,C,B,...). In this case the bitmaps would be spread among all
-three disks.
-
-
-Now lets look at your 10-disk RAID-6. This is more complicated because
-we have to consider that two chunks out of each stripe hold parity, and
-that the chunk layout changes with each stripe. Here's where I have to
-make an assumption: I can't find out whether the layout methods for
-RAID-6 are the same as for RAID-5. If they are, the layout for your RAID
-will be like this (the default left-symmetric) or at least substantially
-similar.
-
-         disk  ABCDEFGHIJ
-
-stripe 0:      abcdefghPP
-stripe 1:      bcdefghPPa
-stripe 2:      cdefghPPab
-stripe 3:      defghPPabc
-stripe 4:      efghPPabcd
-stripe 5:      fghPPabcde
-stripe 6:      ghPPabcdef
-stripe 7:      hPPabcdefg
-stripe 8:      PPabcdefgh
-stripe 9:      PabcdefghP
-
-Note that the layout repetition period is the same as the number of
-disks. So...
-
-chunk_size = 64 KB
-num_disks = 10
-num_data_disks = num_disks - 2 = 8
-stripe_size = chunk_size * num_data_disks = 512 KB
-stripe_offset = bitmap_freq / stripe_size = 256
-
-131072 is a multiple of 512, so the bitmaps are all on the first chunk
-of a stripe, 256 stripes apart; however, 256 is not a multiple of the
-chunk layout period, so, for each stripe that holds a bitmap, the
-position of the first chunk will vary.
-
-chunk_layout_period = num_disks = 10
-stripe_layout_offset = stripe_offset % chunk_layout_period = 6
-
-That means each subsequent bitmap will be 6 stripes later within the
-stripe layout pattern: 0,6,2,8,4,...
-
-The first chunk is chunk "a", so, for each of those stripes, find which
-disk chunk "a" is on in the layout table above. That yields disks
-A,E,I,C,G: five disks out of the ten, just like you reported.
-
-
-(Hopefully I didn't screw up too much of that.)
-
->>>> During a RAID resync, almost every file create causes a halt.
->> Perhaps because the resync I/O caused the bitmap data to fall off the
->> page cache.
-> 
-> How would that happen?  More to the point, how would it happen without
-> triggering activity in the FS?
-
-That was sort of a speculative statement, and I can't really back it up
-because I don't know the details of how the page cache fits in, but IF
-the data read and written during a resync gets cached, then the page
-cache might prefer to retain that data rather than the bitmap data.
-
-If the bitmap data never stays in the page cache for long, then a file
-write would pretty much always require some bitmaps to be re-read.
-
--Corey
+iEYEARECAAYFAkn+dEgACgkQLPWxlyuTD7J4/ACggM4bSYzp8zuS8KXf2WaFSpS4
+458An1YCcTf4hYXjFXuU8ZS2eEWJCpaa
+=ZDpK
+-----END PGP SIGNATURE-----
