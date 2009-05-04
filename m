@@ -1,31 +1,72 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [PATCH] reiserfs: Expand i_mutex to enclose lookup_one_len
-Date: Mon, 4 May 2009 07:13:27 +0100
-Message-ID: <20090504061327.GG8633@ZenIV.linux.org.uk>
-References: <49FB1F20.8040400@suse.com> <20090503085236.GT8633@ZenIV.linux.org.uk> <20090503091507.GU8633@ZenIV.linux.org.uk> <49FE7448.2040302@suse.com>
+From: ". ." <moonraket@hotmail.com>
+Subject: attempt to access beyond end of device on encrypted harddisk with
+ reiserfs
+Date: Mon, 4 May 2009 10:36:55 +0000
+Message-ID: <COL110-W3188747D18A2EFE3CECBE7A5680@phx.gbl>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <49FE7448.2040302@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@ftp.linux.org.uk>, Alexander Beregalov <a.beregalov@gmail.com>, David <david@unsolicited.net>
+To: reiserfs-devel@vger.kernel.org
 
-On Mon, May 04, 2009 at 12:51:20AM -0400, Jeff Mahoney wrote:
 
-> Huh. I didn't see that still in there. That's an artifact of an earlier
-> version of the code where I kept a reference to /.reiserfs_priv/xattrs.
-> Then I decided that .reiserfs_priv was all I needed to cache (to avoid
-> recursive i_mutex locking on the fs root) and dropped the caching of
-> xattrs. Looks like it didn't get totally cleared out.
 
-It's not that simple ;-/  You check it in journalling code, AFAICS in order
-to decide how much will that sucker take (due to extra mkdir?) and something
-will need to be done with that check.
+Hi,
 
-Anyway, I'm going to push all that stuff to #for-next, so that -next would
-pick it.  I have *not* touched the xattr_root logics, so if you could do
-that on top of your patch + my incremental...
+
+
+when trying to mount decrypted devices, this appears in the logs:
+
+May  3 11:47:04 debian kernel: ReiserFS: dm-3: found reiserfs format "3.6" with standard journal
+May  3 11:47:04 debian kernel: ReiserFS: dm-3: using ordered data mode
+May  3 11:47:04 debian kernel: attempt to access beyond end of device
+May  3 11:47:04 debian kernel: dm-3: rw=0, want=3191529648, limit=976960845
+May  3 11:47:04 debian kernel: ReiserFS: dm-3: warning: sh-459: unable to read journal header
+May  3 11:47:04 debian kernel: ReiserFS: dm-3: warning: sh-2022: reiserfs_fill_super: unable to initialize journal space
+
+The same symptoms occur with all devices that are encrypted, 6 in total.
+
+
+
+Let me explain chronologically what happened:
+
+- encryption of harddisks with data already on it via cryptsetup && dd
+
+- mounting of the resulted encrypted devices give no problem
+
+- server is shutdown to enter a new disk, when booting it was reported
+that CTRL+D had to be pressed to continue after some 'maintenance'
+
+- after bootup, when decrypting the devices and trying to mount, aforementioned messages appear in the logs
+
+
+The system is debian 2.6.25.14 and reiserfs is version 1:3.6.19-6.
+
+
+I checked the contents of the devices with 'strings' and got almost complete dirlistings and contents of text files, so I'm thinking data recovery is possible.
+After makeing a backup of one of the devices, I checked with reiserfsck
+which says the superblock has to be rebuilt, after doing so (also rebuilding the journal) it
+complains that the tree has to be rebuilt.
+While rebuilding (with the
+extra -S flag even) one error appearing for a few 50 times is:
+init_source_bitmap: Bitmap 3714 (of 32768 bits) is wrong - mark all blocks [121700352 - 121733120] as used
+When finished only one file is found and put in lost+found.
+
+Using testdisk on the image, millions of
+partitions are found when doing a quick search for partitions, all
+reporting sizes far over the limit (most> 13TB). At the moment it's still scanning for partitions, but as this will take a few more days I wanted to know if there are other options, like upgrading to the latest reiserfs, using --no-journal, ...
+
+
+If any logs are needed, please ask.
+
+
+Thanks
+
+C.
+
+
+_________________________________________________________________
+Show them the way! Add maps and directions to your party invites. 
+http://www.microsoft.com/windows/windowslive/products/events.aspx
