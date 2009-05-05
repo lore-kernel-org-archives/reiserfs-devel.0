@@ -1,55 +1,120 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH] reiserfs: Expand i_mutex to enclose lookup_one_len
-Date: Mon, 04 May 2009 12:40:31 -0400
-Message-ID: <49FF1A7F.4010307@suse.com>
-References: <49FB1F20.8040400@suse.com> <20090503085236.GT8633@ZenIV.linux.org.uk> <20090503091507.GU8633@ZenIV.linux.org.uk> <49FE7448.2040302@suse.com> <20090504061327.GG8633@ZenIV.linux.org.uk>
+From: "Leslie Rhorer" <lrhorer@satx.rr.com>
+Subject: RE: Problem with reiserfs volume
+Date: Tue, 5 May 2009 03:43:47 -0500
+Message-ID: <20090505084353762.EEUS22077@cdptpa-omta02.mail.rr.com>
+References: <49FE2EB6.9060002@fatooh.org>
+Reply-To: <lrhorer@satx.rr.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20090504061327.GG8633@ZenIV.linux.org.uk>
+In-Reply-To: <49FE2EB6.9060002@fatooh.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@ftp.linux.org.uk>, Alexander Beregalov <a.beregalov@gmail.com>, David <david@unsolicited.net>
+To: reiserfs-devel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-Al Viro wrote:
-> On Mon, May 04, 2009 at 12:51:20AM -0400, Jeff Mahoney wrote:
+> >> If the array wasn't
+> >> doing anything but the individual drives were, that would indicate a
+> >> lower-level problem than the filesystem;
+> >
+> > It could, yes.  In fact, it is not unlikely to be and interaction
+> failure
+> > between the file system and the RAID device management system (/dev/md0,
+> or
+> > whatever).
+> >
+> >> unless I'm missing something,
+> >> the filesystem can't do anything to the individual drives without it
+> >> showing up as read/write from/to the array device.
+> >
+> > I don't know if that's true or not.  Certainly if the FS is RAID aware,
+> it
+> > can query the RAID system for details about the array and its member
+> > elements (XFS, for example does just this in order to automatically set
+> up
+> > stripe width dur8ing format).
 > 
->> Huh. I didn't see that still in there. That's an artifact of an earlier
->> version of the code where I kept a reference to /.reiserfs_priv/xattrs.
->> Then I decided that .reiserfs_priv was all I needed to cache (to avoid
->> recursive i_mutex locking on the fs root) and dropped the caching of
->> xattrs. Looks like it didn't get totally cleared out.
+> For XFS, this appears to be done by mkfs.xfs via a GET_ARRAY_INFO ioctl
+> on the md block device. See the xfsprogs source, libdisk/md.c,
+> md_get_subvol_stripe().
 > 
-> It's not that simple ;-/  You check it in journalling code, AFAICS in order
-> to decide how much will that sucker take (due to extra mkdir?) and something
-> will need to be done with that check.
+> > There's nothing to prevent the FS from
+> > issuing command directly to the drive management system (/dev/sda,
+> /dev/sdb,
+> > etc.).
+> 
+> That seems to me like it would be opening a can of worms.
 
-Yes, it's for an extra mkdir. Now that I've gotten some sleep and looked
-at the code again, I see what you're saying. At least it's broken in a
-performance way instead of causing a system crash or data corruption.
+It surely would.  'Doesn't necessarily mean someone didn't.  I have an idea,
+though...
 
-> Anyway, I'm going to push all that stuff to #for-next, so that -next would
-> pick it.  I have *not* touched the xattr_root logics, so if you could do
-> that on top of your patch + my incremental...
+> >> Did you ever test with dstat and debugreiserfs like I mentioned earlier
+> >> in this thread?
+> >
+> > Yes to the first and no to the second.  I must have missed the reference
+> in
+> > all the correspondence.  'Sorry about that.
+> 
+> That's ok.
+> 
+> >>>> It would always be the same 5 drives which dropped to zero
+> >>>> and the same 5 which still reported some reads going on.
+> >> I did the math and (if a couple reasonable assumptions I made are
+> >> correct), then the reiserfs bitmaps would indeed be distributed among
+> >> five of 10 drives in a RAID-6.
+> >>
+> >> If you're interested, ask, and I'll write it up.
+> >
+> > It's academic, but I'm curious.  Why would the default parameters have
+> > failed?
+> 
+> It's not exactly a "failure"--it's just that the bitmaps are placed
+> every 128 MB, and that results in a certain distribution among your disks.
 
-Ok, I'll fix that up and get some testing in.
+This triggered a thought.  When I built the array, it was physically in a
+termporary configuration, so that while /dev/sda was drive 0 in the array
+and /dev/sdj was drive 9 in the array when it was built, the drives were
+moved in a piecemeal fashion to the new chassis, so that the order was
+something like /dev/sdf, /dev/sdg, /dev/sdh, /dev/sdi, /dev/sdj, /dev/sda,
+/dev/sde, /dev/sdd, /dev/sdc, /dev/sb, or something like that.  This
+shouldn't create a problem, as md handles RAID assembly based upon the drive
+superblock, not the udev assignment.  Is it possible the re-arrangement
+caused a failure of the bitmap somehow?
 
-- -Jeff
+It still doesn't quite explain to me how a high read rate strictly at the
+drive level (e.g. ckarray) causes severe problems at the FS level, while an
+idle system did not exhibit nearly the frequency of problems nor did the
+hang last even a fraction as long (40 seconds vs. 20 minutes).
+ 
+> That means each subsequent bitmap will be 6 stripes later within the
+> stripe layout pattern: 0,6,2,8,4,...
+> 
+> The first chunk is chunk "a", so, for each of those stripes, find which
+> disk chunk "a" is on in the layout table above. That yields disks
+> A,E,I,C,G: five disks out of the ten, just like you reported.
+
+Yeah, that's about right.
+
+> 
+> 
+> (Hopefully I didn't screw up too much of that.)
+> 
+> >>>> During a RAID resync, almost every file create causes a halt.
+> >> Perhaps because the resync I/O caused the bitmap data to fall off the
+> >> page cache.
+> >
+> > How would that happen?  More to the point, how would it happen without
+> > triggering activity in the FS?
+> 
+> That was sort of a speculative statement, and I can't really back it up
+> because I don't know the details of how the page cache fits in, but IF
+> the data read and written during a resync gets cached, then the page
+> cache might prefer to retain that data rather than the bitmap data.
+> 
+> If the bitmap data never stays in the page cache for long, then a file
+> write would pretty much always require some bitmaps to be re-read.
+
+Except this happened without any file writes or reads other than the file
+creation itself and with no disk activity other than the array re-sync.
 
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
-
-iEYEARECAAYFAkn/Gn4ACgkQLPWxlyuTD7KclACeLNAOawW5fDxc2CqGZz4NUXpY
-21AAoJdsK3EEPweBCuv1131j3Lm8x3lk
-=0Iqb
------END PGP SIGNATURE-----
