@@ -1,93 +1,69 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
+From: Jeff Mahoney <jeffm@suse.com>
 Subject: Re: 2.6.30-rc: reiserfs_delete_xattrs log spam (bug 13122)
-Date: Sat, 9 May 2009 17:21:30 +0200 (CEST)
-Message-ID: <tkrat.efedc43c9c935741@s5r6.in-berlin.de>
-References: <4A057951.8040501@s5r6.in-berlin.de>
- <tkrat.fe49a8c298128f65@s5r6.in-berlin.de>
- <20090509130152.GD8633@ZenIV.linux.org.uk> <4A058EBD.8030302@suse.com>
+Date: Sat, 09 May 2009 11:39:17 -0400
+Message-ID: <4A05A3A5.7050707@suse.com>
+References: <4A057951.8040501@s5r6.in-berlin.de> <tkrat.fe49a8c298128f65@s5r6.in-berlin.de> <20090509130152.GD8633@ZenIV.linux.org.uk>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4A058EBD.8030302@suse.com>
-Content-Disposition: INLINE
+In-Reply-To: <20090509130152.GD8633@ZenIV.linux.org.uk>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Stefan Richter <stefanr@s5r6.in-berlin.de>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On  9 May, Jeff Mahoney wrote:
-> Al Viro wrote:
->>> On  9 May, Stefan Richter wrote:
->>>> May  9 14:27:22 stein REISERFS warning (device sda1): jdm-20004 
->>>> reiserfs_delete_xattrs: Couldn't delete all xattrs (-13)
->>>> May  9 14:27:22 stein
-...
->> Could you try to bisect it?
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-I bisected it with a series of git-format-patch output on top of
-2.6.29.3.  The last good one is "reiserfs: simplify xattr internal file
-lookups/opens", the first bad one is "reiserfs: eliminate per-super xattr lock".
-(Doh, what a surprise; grep'ing for the message in the diffs would have
-pointed to this one too... Well, the bisection homed in quickly though.)
-Of course that's only the patch which caused the symptoms to appear, not
-necessarily the one which introduced the bug.
+Al Viro wrote:
+> On Sat, May 09, 2009 at 02:44:25PM +0200, Stefan Richter wrote:
+>> On  9 May, Stefan Richter wrote:
+>>> I just switched from 2.6.29.1 to 2.6.30-rc5, and I'm getting the same as 
+>>> the reporter of http://bugzilla.kernel.org/show_bug.cgi?id=13122 alias
+>>> http://marc.info/?l=linux-kernel&m=123990989515105, i.e. repetitions of
+>>>  >>>
+>>> May  9 14:27:22 stein REISERFS warning (device sda1): jdm-20004 
+>>> reiserfs_delete_xattrs: Couldn't delete all xattrs (-13)
+>>> May  9 14:27:22 stein
+>>> <<<
+>>>
+>>> This happens in irregular intervals, but a lot of times --- presumably 
+>>> when certain files are accessed.  I'm on a recently set-up Gentoo 
+>>> machine.  I created its root filesystem using the Gentoo x86-64 minimal 
+>>> boot CD; my guess is that the kernel of the boot CD had 
+>>> CONFIG_REISERFS_FS_XATTR enabled.  All kernels which I used since then 
+>>> have it disabled:  2.6.27-gentoo-r8, 2.6.29.1, now 2.6.30-rc5.
+>> PS:  Also, the following came up at this (= first) boot of 2.6.30-rc, as
+>> a warm reboot from 2.6.29.1. I have no idea whether it's connected to
+>> the issue.
+> 
+> That WARN_ON() is fixed in the patches in VFS queue; should be gone in
+> -next and I'm going to push a bunch of fixes to Linus today, this one
+> among them.
+> 
+> The first one you've reported is a different story.  Could you try to
+> bisect it?
 
-My config contains:
-CONFIG_REISERFS_FS=y
-# CONFIG_REISERFS_CHECK is not set
-# CONFIG_REISERFS_PROC_INFO is not set
-# CONFIG_REISERFS_FS_XATTR is not set
+Ok, I've looked into it some more.
 
-(As mentioned, the filesystem was created and initially populated with a
-kernel which was differently configured; I don't have an immediate idea
-where to obtain the config.)
+The issue is that with xattrs disabled, reiserfs_permission isn't built.
+The ACL part of it doesn't matter, but the IS_PRIVATE check does. What's
+happening is that with generic_permission, a regular user doesn't have
+permission to traverse the privroot. Thus, the -EACCES.
 
-The tested series:
+I'll post a patch this afternoon.
 
-0001-reiserfs-add-support-for-mount-count-incrementing.patch
-0002-reiserfs-audit-transaction-ids-to-always-be-unsigne.patch
-0003-reiserfs-use-buffer_info-for-leaf_paste_entries.patch
-0004-reiserfs-use-more-consistent-printk-formatting.patch
-0005-reiserfs-make-some-warnings-informational.patch
-0006-reiserfs-rework-reiserfs_warning.patch
-0007-reiserfs-prepare_error_buf-wrongly-consumes-va_arg.patch
-0008-reiserfs-eliminate-reiserfs_warning-from-uniqueness.patch
-0009-reiserfs-add-locking-around-error-buffer.patch
-0010-reiserfs-rework-reiserfs_panic.patch
-0011-reiserfs-rearrange-journal-abort.patch
-0012-reiserfs-introduce-reiserfs_error.patch
-0013-reiserfs-use-reiserfs_error.patch
-0014-reiserfs-small-variable-cleanup.patch
-0015-reiserfs-xattr-reiserfs_get_page-takes-offset-inste.patch
-0016-reiserfs-remove-link-detection-code.patch
-0017-reiserfs-remove-IS_PRIVATE-helpers.patch
-0018-reiserfs-Clean-up-xattrs-when-REISERFS_FS_XATTR-is.patch
-0019-reiserfs-simplify-xattr-internal-file-lookups-opens.patch
-0020-reiserfs-eliminate-per-super-xattr-lock.patch
-0021-reiserfs-make-per-inode-xattr-locking-more-fine-gra.patch
-# 0021 doesn't build, I skipped it.
-0022-reiserfs-remove-i_has_xattr_dir.patch
-0023-reiserfs-use-generic-xattr-handlers.patch
-0024-reiserfs-journaled-xattrs.patch
-# 0024 and later build only with A. Bergalov's fix folded in.
-0025-reiserfs-use-generic-readdir-for-operations-across.patch
-0026-reiserfs-add-atomic-addition-of-selinux-attributes.patch
-0027-reiserfs-factor-out-buffer_info-initialization.patch
-0028-reiserfs-cleanup-path-functions.patch
-0029-reiserfs-strip-trailing-whitespace.patch
-0030-reiserfs-rename-p_s_sb-to-sb.patch
-0031-reiserfs-rename-p_s_bh-to-bh.patch
-0032-reiserfs-rename-p_s_inode-to-inode.patch
-0033-reiserfs-rename-p_s_tb-to-tb.patch
-0034-reiserfs-rename-p_._-variables.patch
-0035-reiserfs-rename-cn-_-variables.patch
+- -Jeff
 
-> I'm looking into this right now. I have an idea, but I haven't been able
-> to reproduce it yet to test.
+- --
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.9 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
 
-Thanks, I can test something for you.
--- 
-Stefan Richter
--=====-==--= -=-= -=--=
-http://arcgraph.de/sr/
+iEYEARECAAYFAkoFo6QACgkQLPWxlyuTD7I1gwCfbPa4ipt7FB/gq2Xxsrxkq/K6
+YggAmwf5eTyGGVwNeUmqp8yPNGc2mFbb
+=Gobs
+-----END PGP SIGNATURE-----
