@@ -1,84 +1,61 @@
-From: Corey Hickey <bugfood-ml@fatooh.org>
-Subject: Re: Problem with reiserfs volume
-Date: Wed, 06 May 2009 22:59:28 -0700
-Message-ID: <4A0278C0.5050709@fatooh.org>
-References: <20090506020455984.ECK17490@cdptpa-omta04.mail.rr.com>
+From: "Jorge Bastos" <mysql.jorge@decimal.pt>
+Subject: namei.c problem
+Date: Sat, 9 May 2009 12:44:41 +0100 (WEST)
+Message-ID: <2701.87.196.232.177.1241869481.squirrel@webmail.decimal.pt>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha1; c=simple; d=fatooh.org; h=message-id
-	:date:from:mime-version:to:cc:subject:references:in-reply-to
-	:content-type:content-transfer-encoding; s=dkim; bh=82307DyktkM1
-	HWnR52V5fp98ZOU=; b=WXr9++vd0rLvTuXurc5D/Ykzo2VW4iSZ76BMoABLSTTP
-	DGpXgsVjDL/EwtcLPmKGlCRU2UCp3UDZgs/f3vFvqw1GvemnzP4K4qtlZ7kfuMty
-	ZVwbGWh4h3/himMTom2usINwS3MBo2kfEqF1A4qMixjBz3UdnkiNyVyEVa1u5gA=
-In-Reply-To: <20090506020455984.ECK17490@cdptpa-omta04.mail.rr.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: lrhorer@satx.rr.com
-Cc: reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-Leslie Rhorer wrote:
->> I might not have been clear on this before: reading the bitmap data is
->> slow because it is distributed every 128 MB across the filesystem; this
->> means that in order to read lots of bitmaps, the disk spends most of its
->> time seeking rather than reading. For me, that's what was causing the
->> disk to "buzz", and that's why dstat showed read rates of only 400-600
->> KB/sec.
-> 
-> Yeah, but reads and writes worked just fine: up to 450 Mbps. 
+Hi there,
+Testing 2.6.30-rc5, i have this on a VMWare VM:
+If any more info is needed just say.
+Jorge,
 
-I mean, above, that read rates would fall to 400-600 KB/sec when the
-filesystem was busy reading bitmap data. That at least roughly
-corresponds to what you wrote on 2009-04-28: "The reads at the array
-level would fall to zero on 5 of the 10 drives, while the other 5 would
-report a very low level of read activity, but not zero."
 
-> Appending to
-> an existing file (or writing several GB to a file once the create was done)
-> ran like a racehorse on one or several files without ever a burp.  Reading
-> could be accomplished flat-out no matter what, but with total disk activity
-> well in excess of 500Mbps, everything would suddenly halt if a file was
-> created on an intermittent basis. 
+------------[ cut here ]------------
+WARNING: at fs/namei.c:1251 warn_slowpath_null+0x10/0x15()
+Hardware name: VMware Virtual Platform
+Modules linked in:
+Pid: 1, comm: swapper Not tainted 2.6.30-rc5 #1
+Call Trace:
+ [<c011d6b2>] warn_slowpath_fmt+0x72/0x88
+ [<c0221415>] ? notify_update+0x22/0x24
+ [<c0221628>] ? vt_console_print+0x211/0x21f
+ [<c0221417>] ? vt_console_print+0x0/0x21f
+ [<c011d7c0>] ? __call_console_drivers+0x57/0x64
+ [<c012fe3a>] ? up+0x2b/0x2f
+ [<c011db38>] ? release_console_sem+0x168/0x195
+ [<c01a87e4>] ? prepare_error_buf+0x38c/0x3e3
+ [<c016074a>] ? cache_alloc_refill+0x60/0x18d
+ [<c011d6d8>] warn_slowpath_null+0x10/0x15
+ [<c016aba6>] lookup_one_len+0x30/0x9a
+ [<c01b6911>] reiserfs_xattr_init+0x5d/0x198
+ [<c01a79a8>] reiserfs_fill_super+0x950/0xa43
+ [<c017453d>] ? mntput_no_expire+0x1c/0xed
+ [<c01d9766>] ? string+0x33/0x7f
+ [<c01da162>] ? vsnprintf+0x597/0x5d4
+ [<c01da205>] ? snprintf+0x15/0x17
+ [<c0194c06>] ? disk_name+0x5c/0x69
+ [<c0165ae5>] get_sb_bdev+0xe2/0x127
+ [<c01a5ccf>] get_super_block+0x13/0x15
+ [<c01a7058>] ? reiserfs_fill_super+0x0/0xa43
+ [<c0164c9d>] vfs_kern_mount+0x3b/0x76
+ [<c0164d1d>] do_kern_mount+0x33/0xb9
+ [<c0175ab3>] do_mount+0x610/0x649
+ [<c015e4ff>] ? alloc_pages_current+0x51/0xaa
+ [<c01446c4>] ? __get_free_pages+0x16/0x1c
+ [<c0175b56>] sys_mount+0x6a/0xa8
+ [<c0399b9c>] mount_block_root+0xab/0x1fa
+ [<c016c116>] ? sys_mknod+0x13/0x15
+ [<c0399d37>] mount_root+0x4c/0x54
+ [<c0399e47>] prepare_namespace+0x108/0x12f
+ [<c03995ae>] kernel_init+0x13e/0x14d
+ [<c0399470>] ? kernel_init+0x0/0x14d
+ [<c010324f>] kernel_thread_helper+0x7/0x10
+---[ end trace b429f1f67b756378 ]---
 
-That's just like what was happening to me. The filesystem would drop
-everything else it was doing and read bitmaps for a while.
 
->> Having the bitmaps spread out among several disks of a RAID probably
->> wouldn't help. Reiserfs doesn't try to read the bitmaps in parallel;
->> that would be bad unless it knew the RAID layout. So, each disk would
->> just be idle when it wasn't its turn to seek and read another bitmap.
-> 
-> With 400+ Mbps of data being read and written, the discs weren't idle very
-> much.
-
-Except that when the filesystem is busy reading bitmaps, it isn't doing
-anything else.... :)
-
->> Remember how in the old days (before 2.6.19, I think) large reiserfs
->> filesystems took forever to mount?
-> 
-> I have only been using reiserfs for a short time.
-
-Well, mounting did take forever. :)
-http://lkml.org/lkml/2006/1/14/223
-http://linuxgazette.net/122/TWDT.html#piszcz
-(scroll down a bit to the graphs)
-
->>> Except this happened without any file writes or reads other than the
->> file
->>> creation itself and with no disk activity other than the array re-sync.
->> I remember even 0-byte files taking a long time to write. My guess would
->> be that reiserfs doesn't know the file will end up being empty when the
->> file is created, or perhaps it tries to find some contiguous space
->> anyway so the file can be appended to without excessive fragmentation.
-> 
-> So why didn't it happen when appending data to an existing file?  Once a
-> file was created, large or small, I could write freely to it over and over,
-> either appending data or writing over data.
-
-I don't know how appends or overwrites are handled. The scheme for
-finding free space may differ.
-
--Corey
