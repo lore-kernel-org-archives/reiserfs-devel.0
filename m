@@ -1,108 +1,32 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [patch 3/4] reiserfs: fixup perms when xattrs are disabled
-Date: Sun, 10 May 2009 16:05:38 -0400
-Message-ID: <20090510200649.900586983@suse.com>
+From: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Subject: Re: [patch 0/4] reiserfs xattr fixups
+Date: Sun, 10 May 2009 23:34:13 +0200
+Message-ID: <4A074855.8070008@s5r6.in-berlin.de>
 References: <20090510200535.893737918@suse.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-xattrs-disabled-perms
+In-Reply-To: <20090510200535.893737918@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Al Viro <viro@ftp.linux.org.uk>
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, stefanr@s5r6.in-berlin.de
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: Al Viro <viro@ftp.linux.org.uk>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
- This patch CONFIG_REISERFS_FS_XATTR protection from reiserfs_permission.
+Jeff Mahoney wrote:
+>  Here are my remaining patches for reiserfs in 2.6.30:
+> 
+>  - reiserfs-xattr-fixup: Cleans up some ifdefs
+>  - reiserfs-xattr-root-fixup: Fixes an oops on open_xa_dir with
+> 			      CONFIG_REISERFS_FS_XATTR=n
+>  - reiserfs-xattrs-disabled-perms: Fixes warnings on delete with
+> 			      CONFIG_REISERFS_FS_XATTR=n (bko#13122)
+>  - reiserfs-expose-privroot: Adds a -oexpose_privroot that will allow
+> 			     access to the privroot.
 
- This is needed to avoid warnings during file deletions and chowns with
- xattrs disabled.
-
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- fs/reiserfs/xattr.c            |   37 ++++++++++++++++++++-----------------
- include/linux/reiserfs_xattr.h |    4 +---
- 2 files changed, 21 insertions(+), 20 deletions(-)
-
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -869,23 +869,6 @@ static int reiserfs_check_acl(struct ino
- 	return error;
- }
- 
--int reiserfs_permission(struct inode *inode, int mask)
--{
--	/*
--	 * We don't do permission checks on the internal objects.
--	 * Permissions are determined by the "owning" object.
--	 */
--	if (IS_PRIVATE(inode))
--		return 0;
--	/*
--	 * Stat data v1 doesn't support ACLs.
--	 */
--	if (get_inode_sd_version(inode) == STAT_DATA_V1)
--		return generic_permission(inode, mask, NULL);
--	else
--		return generic_permission(inode, mask, reiserfs_check_acl);
--}
--
- static int create_privroot(struct dentry *dentry)
- {
- 	int err;
-@@ -949,6 +932,26 @@ static int xattr_mount_check(struct supe
- 	return 0;
- }
- 
-+int reiserfs_permission(struct inode *inode, int mask)
-+{
-+	/*
-+	 * We don't do permission checks on the internal objects.
-+	 * Permissions are determined by the "owning" object.
-+	 */
-+	if (IS_PRIVATE(inode))
-+		return 0;
-+
-+#ifdef CONFIG_REISERFS_FS_XATTR
-+	/*
-+	 * Stat data v1 doesn't support ACLs.
-+	 */
-+	if (get_inode_sd_version(inode) != STAT_DATA_V1)
-+		return generic_permission(inode, mask, reiserfs_check_acl);
-+	else
-+#endif
-+		return generic_permission(inode, mask, NULL);
-+}
-+
- /* This will catch lookups from the fs root to .reiserfs_priv */
- static int
- xattr_lookup_poison(struct dentry *dentry, struct qstr *q1, struct qstr *name)
---- a/include/linux/reiserfs_xattr.h
-+++ b/include/linux/reiserfs_xattr.h
-@@ -41,6 +41,7 @@ int reiserfs_xattr_init(struct super_blo
- int reiserfs_lookup_privroot(struct super_block *sb);
- int reiserfs_delete_xattrs(struct inode *inode);
- int reiserfs_chown_xattrs(struct inode *inode, struct iattr *attrs);
-+int reiserfs_permission(struct inode *inode, int mask);
- 
- #ifdef CONFIG_REISERFS_FS_XATTR
- #define has_xattr_dir(inode) (REISERFS_I(inode)->i_flags & i_has_xattr_dir)
-@@ -50,7 +51,6 @@ int reiserfs_setxattr(struct dentry *den
- 		      const void *value, size_t size, int flags);
- ssize_t reiserfs_listxattr(struct dentry *dentry, char *buffer, size_t size);
- int reiserfs_removexattr(struct dentry *dentry, const char *name);
--int reiserfs_permission(struct inode *inode, int mask);
- 
- int reiserfs_xattr_get(struct inode *, const char *, void *, size_t);
- int reiserfs_xattr_set(struct inode *, const char *, const void *, size_t, int);
-@@ -117,8 +117,6 @@ static inline void reiserfs_init_xattr_r
- #define reiserfs_listxattr NULL
- #define reiserfs_removexattr NULL
- 
--#define reiserfs_permission NULL
--
- static inline void reiserfs_init_xattr_rwsem(struct inode *inode)
- {
- }
-
-
+I rebooted into v2.6.30-rc5-96-ga4d7749 + these four patches now.
+Looks good so far.
+-- 
+Stefan Richter
+-=====-=-=== -=-= -==-=
+http://arcgraph.de/sr/
