@@ -1,69 +1,88 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: 2.6.30-rc: reiserfs_delete_xattrs log spam (bug 13122)
-Date: Sat, 09 May 2009 11:39:17 -0400
-Message-ID: <4A05A3A5.7050707@suse.com>
-References: <4A057951.8040501@s5r6.in-berlin.de> <tkrat.fe49a8c298128f65@s5r6.in-berlin.de> <20090509130152.GD8633@ZenIV.linux.org.uk>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Subject: [patch 4/4] reiserfs: allow exposing privroot w/ xattrs enabled
+Date: Sun, 10 May 2009 16:05:39 -0400
+Message-ID: <20090510200650.028382548@suse.com>
+References: <20090510200535.893737918@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20090509130152.GD8633@ZenIV.linux.org.uk>
+Content-Disposition: inline; filename=reiserfs-expose-privroot
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Stefan Richter <stefanr@s5r6.in-berlin.de>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Al Viro <viro@ftp.linux.org.uk>
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, stefanr@s5r6.in-berlin.de
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+This patch adds an -oexpose_privroot option to allow access to the privroot.
 
-Al Viro wrote:
-> On Sat, May 09, 2009 at 02:44:25PM +0200, Stefan Richter wrote:
->> On  9 May, Stefan Richter wrote:
->>> I just switched from 2.6.29.1 to 2.6.30-rc5, and I'm getting the same as 
->>> the reporter of http://bugzilla.kernel.org/show_bug.cgi?id=13122 alias
->>> http://marc.info/?l=linux-kernel&m=123990989515105, i.e. repetitions of
->>>  >>>
->>> May  9 14:27:22 stein REISERFS warning (device sda1): jdm-20004 
->>> reiserfs_delete_xattrs: Couldn't delete all xattrs (-13)
->>> May  9 14:27:22 stein
->>> <<<
->>>
->>> This happens in irregular intervals, but a lot of times --- presumably 
->>> when certain files are accessed.  I'm on a recently set-up Gentoo 
->>> machine.  I created its root filesystem using the Gentoo x86-64 minimal 
->>> boot CD; my guess is that the kernel of the boot CD had 
->>> CONFIG_REISERFS_FS_XATTR enabled.  All kernels which I used since then 
->>> have it disabled:  2.6.27-gentoo-r8, 2.6.29.1, now 2.6.30-rc5.
->> PS:  Also, the following came up at this (= first) boot of 2.6.30-rc, as
->> a warm reboot from 2.6.29.1. I have no idea whether it's connected to
->> the issue.
-> 
-> That WARN_ON() is fixed in the patches in VFS queue; should be gone in
-> -next and I'm going to push a bunch of fixes to Linus today, this one
-> among them.
-> 
-> The first one you've reported is a different story.  Could you try to
-> bisect it?
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
 
-Ok, I've looked into it some more.
+ fs/reiserfs/dir.c              |   10 ++++------
+ fs/reiserfs/super.c            |    1 +
+ fs/reiserfs/xattr.c            |    3 ++-
+ include/linux/reiserfs_fs_sb.h |    2 ++
+ 4 files changed, 9 insertions(+), 7 deletions(-)
 
-The issue is that with xattrs disabled, reiserfs_permission isn't built.
-The ACL part of it doesn't matter, but the IS_PRIVATE check does. What's
-happening is that with generic_permission, a regular user doesn't have
-permission to traverse the privroot. Thus, the -EACCES.
+--- a/fs/reiserfs/dir.c
++++ b/fs/reiserfs/dir.c
+@@ -44,13 +44,11 @@ static int reiserfs_dir_fsync(struct fil
+ static inline bool is_privroot_deh(struct dentry *dir,
+ 				   struct reiserfs_de_head *deh)
+ {
+-	int ret = 0;
+-#ifdef CONFIG_REISERFS_FS_XATTR
+ 	struct dentry *privroot = REISERFS_SB(dir->d_sb)->priv_root;
+-	ret = (dir == dir->d_parent && privroot->d_inode &&
+-	       deh->deh_objectid == INODE_PKEY(privroot->d_inode)->k_objectid);
+-#endif
+-	return ret;
++	if (reiserfs_expose_privroot(dir->d_sb))
++		return 0;
++	return (dir == dir->d_parent && privroot->d_inode &&
++	        deh->deh_objectid == INODE_PKEY(privroot->d_inode)->k_objectid);
+ }
+ 
+ int reiserfs_readdir_dentry(struct dentry *dentry, void *dirent,
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -898,6 +898,7 @@ static int reiserfs_parse_options(struct
+ 		{"conv",.setmask = 1 << REISERFS_CONVERT},
+ 		{"attrs",.setmask = 1 << REISERFS_ATTRS},
+ 		{"noattrs",.clrmask = 1 << REISERFS_ATTRS},
++		{"expose_privroot", .setmask = 1 << REISERFS_EXPOSE_PRIVROOT},
+ #ifdef CONFIG_REISERFS_FS_XATTR
+ 		{"user_xattr",.setmask = 1 << REISERFS_XATTRS_USER},
+ 		{"nouser_xattr",.clrmask = 1 << REISERFS_XATTRS_USER},
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -982,7 +982,8 @@ int reiserfs_lookup_privroot(struct supe
+ 				strlen(PRIVROOT_NAME));
+ 	if (!IS_ERR(dentry)) {
+ 		REISERFS_SB(s)->priv_root = dentry;
+-		s->s_root->d_op = &xattr_lookup_poison_ops;
++		if (!reiserfs_expose_privroot(s))
++			s->s_root->d_op = &xattr_lookup_poison_ops;
+ 		if (dentry->d_inode)
+ 			dentry->d_inode->i_flags |= S_PRIVATE;
+ 	} else
+--- a/include/linux/reiserfs_fs_sb.h
++++ b/include/linux/reiserfs_fs_sb.h
+@@ -453,6 +453,7 @@ enum reiserfs_mount_options {
+ 	REISERFS_ATTRS,
+ 	REISERFS_XATTRS_USER,
+ 	REISERFS_POSIXACL,
++	REISERFS_EXPOSE_PRIVROOT,
+ 	REISERFS_BARRIER_NONE,
+ 	REISERFS_BARRIER_FLUSH,
+ 
+@@ -490,6 +491,7 @@ enum reiserfs_mount_options {
+ #define reiserfs_data_writeback(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_DATA_WRITEBACK))
+ #define reiserfs_xattrs_user(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_XATTRS_USER))
+ #define reiserfs_posixacl(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_POSIXACL))
++#define reiserfs_expose_privroot(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_EXPOSE_PRIVROOT))
+ #define reiserfs_xattrs_optional(s) (reiserfs_xattrs_user(s) || reiserfs_posixacl(s))
+ #define reiserfs_barrier_none(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_BARRIER_NONE))
+ #define reiserfs_barrier_flush(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_BARRIER_FLUSH))
 
-I'll post a patch this afternoon.
 
-- -Jeff
-
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
-
-iEYEARECAAYFAkoFo6QACgkQLPWxlyuTD7I1gwCfbPa4ipt7FB/gq2Xxsrxkq/K6
-YggAmwf5eTyGGVwNeUmqp8yPNGc2mFbb
-=Gobs
------END PGP SIGNATURE-----
