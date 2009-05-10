@@ -1,10 +1,10 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [patch 1/4] reiserfs: clean up ifdefs
-Date: Sun, 10 May 2009 16:05:36 -0400
-Message-ID: <20090510200649.637922982@suse.com>
+Subject: [patch 3/4] reiserfs: fixup perms when xattrs are disabled
+Date: Sun, 10 May 2009 16:05:38 -0400
+Message-ID: <20090510200649.900586983@suse.com>
 References: <20090510200535.893737918@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-xattr-fixup
+Content-Disposition: inline; filename=reiserfs-xattrs-disabled-perms
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -13,103 +13,96 @@ Content-Transfer-Encoding: 7bit
 To: Al Viro <viro@ftp.linux.org.uk>
 Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, stefanr@s5r6.in-berlin.de
 
- With xattr cleanup even with xattrs disabled, much of the initial setup
- is still performed. Some #ifdefs are just not needed since the options
- they protect wouldn't be available anyway.
+ This patch CONFIG_REISERFS_FS_XATTR protection from reiserfs_permission.
 
- This patch cleans those up.
+ This is needed to avoid warnings during file deletions and chowns with
+ xattrs disabled.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 ---
- fs/reiserfs/xattr.c |   49 ++++++++++++++++++++++++-------------------------
- 1 file changed, 24 insertions(+), 25 deletions(-)
+ fs/reiserfs/xattr.c            |   37 ++++++++++++++++++++-----------------
+ include/linux/reiserfs_xattr.h |    4 +---
+ 2 files changed, 21 insertions(+), 20 deletions(-)
 
 --- a/fs/reiserfs/xattr.c
 +++ b/fs/reiserfs/xattr.c
-@@ -685,20 +685,6 @@ out:
- 	return err;
+@@ -869,23 +869,6 @@ static int reiserfs_check_acl(struct ino
+ 	return error;
  }
  
--/* Actual operations that are exported to VFS-land */
--struct xattr_handler *reiserfs_xattr_handlers[] = {
--	&reiserfs_xattr_user_handler,
--	&reiserfs_xattr_trusted_handler,
--#ifdef CONFIG_REISERFS_FS_SECURITY
--	&reiserfs_xattr_security_handler,
--#endif
--#ifdef CONFIG_REISERFS_FS_POSIX_ACL
--	&reiserfs_posix_acl_access_handler,
--	&reiserfs_posix_acl_default_handler,
--#endif
--	NULL
--};
+-int reiserfs_permission(struct inode *inode, int mask)
+-{
+-	/*
+-	 * We don't do permission checks on the internal objects.
+-	 * Permissions are determined by the "owning" object.
+-	 */
+-	if (IS_PRIVATE(inode))
+-		return 0;
+-	/*
+-	 * Stat data v1 doesn't support ACLs.
+-	 */
+-	if (get_inode_sd_version(inode) == STAT_DATA_V1)
+-		return generic_permission(inode, mask, NULL);
+-	else
+-		return generic_permission(inode, mask, reiserfs_check_acl);
+-}
 -
- /*
-  * In order to implement different sets of xattr operations for each xattr
-  * prefix with the generic xattr API, a filesystem should create a
-@@ -922,6 +908,28 @@ static int create_privroot(struct dentry
- 	return 0;
- }
- 
-+#else
-+int __init reiserfs_xattr_register_handlers(void) { return 0; }
-+void reiserfs_xattr_unregister_handlers(void) {}
-+static int create_privroot(struct dentry *dentry) { return 0; }
-+#endif
-+
-+/* Actual operations that are exported to VFS-land */
-+struct xattr_handler *reiserfs_xattr_handlers[] = {
-+#ifdef CONFIG_REISERFS_FS_XATTR
-+	&reiserfs_xattr_user_handler,
-+	&reiserfs_xattr_trusted_handler,
-+#endif
-+#ifdef CONFIG_REISERFS_FS_SECURITY
-+	&reiserfs_xattr_security_handler,
-+#endif
-+#ifdef CONFIG_REISERFS_FS_POSIX_ACL
-+	&reiserfs_posix_acl_access_handler,
-+	&reiserfs_posix_acl_default_handler,
-+#endif
-+	NULL
-+};
-+
- static int xattr_mount_check(struct super_block *s)
+ static int create_privroot(struct dentry *dentry)
  {
- 	/* We need generation numbers to ensure that the oid mapping is correct
-@@ -941,11 +949,6 @@ static int xattr_mount_check(struct supe
+ 	int err;
+@@ -949,6 +932,26 @@ static int xattr_mount_check(struct supe
  	return 0;
  }
  
--#else
--int __init reiserfs_xattr_register_handlers(void) { return 0; }
--void reiserfs_xattr_unregister_handlers(void) {}
--#endif
--
++int reiserfs_permission(struct inode *inode, int mask)
++{
++	/*
++	 * We don't do permission checks on the internal objects.
++	 * Permissions are determined by the "owning" object.
++	 */
++	if (IS_PRIVATE(inode))
++		return 0;
++
++#ifdef CONFIG_REISERFS_FS_XATTR
++	/*
++	 * Stat data v1 doesn't support ACLs.
++	 */
++	if (get_inode_sd_version(inode) != STAT_DATA_V1)
++		return generic_permission(inode, mask, reiserfs_check_acl);
++	else
++#endif
++		return generic_permission(inode, mask, NULL);
++}
++
  /* This will catch lookups from the fs root to .reiserfs_priv */
  static int
  xattr_lookup_poison(struct dentry *dentry, struct qstr *q1, struct qstr *name)
-@@ -992,7 +995,6 @@ int reiserfs_xattr_init(struct super_blo
- 	int err = 0;
- 	struct dentry *privroot = REISERFS_SB(s)->priv_root;
+--- a/include/linux/reiserfs_xattr.h
++++ b/include/linux/reiserfs_xattr.h
+@@ -41,6 +41,7 @@ int reiserfs_xattr_init(struct super_blo
+ int reiserfs_lookup_privroot(struct super_block *sb);
+ int reiserfs_delete_xattrs(struct inode *inode);
+ int reiserfs_chown_xattrs(struct inode *inode, struct iattr *attrs);
++int reiserfs_permission(struct inode *inode, int mask);
  
--#ifdef CONFIG_REISERFS_FS_XATTR
- 	err = xattr_mount_check(s);
- 	if (err)
- 		goto error;
-@@ -1023,14 +1025,11 @@ error:
- 		clear_bit(REISERFS_XATTRS_USER, &(REISERFS_SB(s)->s_mount_opt));
- 		clear_bit(REISERFS_POSIXACL, &(REISERFS_SB(s)->s_mount_opt));
- 	}
--#endif
+ #ifdef CONFIG_REISERFS_FS_XATTR
+ #define has_xattr_dir(inode) (REISERFS_I(inode)->i_flags & i_has_xattr_dir)
+@@ -50,7 +51,6 @@ int reiserfs_setxattr(struct dentry *den
+ 		      const void *value, size_t size, int flags);
+ ssize_t reiserfs_listxattr(struct dentry *dentry, char *buffer, size_t size);
+ int reiserfs_removexattr(struct dentry *dentry, const char *name);
+-int reiserfs_permission(struct inode *inode, int mask);
  
- 	/* The super_block MS_POSIXACL must mirror the (no)acl mount option. */
--#ifdef CONFIG_REISERFS_FS_POSIX_ACL
- 	if (reiserfs_posixacl(s))
- 		s->s_flags |= MS_POSIXACL;
- 	else
--#endif
- 		s->s_flags &= ~MS_POSIXACL;
+ int reiserfs_xattr_get(struct inode *, const char *, void *, size_t);
+ int reiserfs_xattr_set(struct inode *, const char *, const void *, size_t, int);
+@@ -117,8 +117,6 @@ static inline void reiserfs_init_xattr_r
+ #define reiserfs_listxattr NULL
+ #define reiserfs_removexattr NULL
  
- 	return err;
+-#define reiserfs_permission NULL
+-
+ static inline void reiserfs_init_xattr_rwsem(struct inode *inode)
+ {
+ }
 
 
