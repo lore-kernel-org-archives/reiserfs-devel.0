@@ -1,84 +1,32 @@
-From: "Leslie Rhorer" <lrhorer@satx.rr.com>
-Subject: RE: Problem with reiserfs volume
-Date: Mon, 11 May 2009 11:37:23 -0500
-Message-ID: <20090511163720091.PLD17201@cdptpa-omta01.mail.rr.com>
-References: <4A0278C0.5050709@fatooh.org>
-Reply-To: <lrhorer@satx.rr.com>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: 2.6.30-rc5: reiserfs is broken on parisc (bisected)
+Date: Tue, 12 May 2009 20:40:20 +0400
+Message-ID: <a4423d670905120940r5de3eab7v7e8e92d89107b962__2506.54084743491$1242146438$gmane$org@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4A0278C0.5050709@fatooh.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:received:date:message-id:subject
+         :from:to:content-type:content-transfer-encoding;
+        bh=UNV5OhG8idiTn44oDyt0RDs7h+9rpEzDVyvQQYZM7vw=;
+        b=R+pe9HvmypCByq2F/MtyPFWuYhygqdFUixiNl46x2itbsTgItIYTC5hOa49+lY3q/G
+         2Lds/QWC2LNjRGBN/dXw5hs5NhSYVm8Q7zoFIRPmm++YUp3KMYkkOWJgGqFrSbTc24CN
+         IrWzB23OQlrFxvjIsNz+I9WoOgblH0l73NYus=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kernel Testers List <kernel-testers@vger.kernel.org>, linux-parisc@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>, Al Viro <v>
 
-> >> I might not have been clear on this before: reading the bitmap data is
-> >> slow because it is distributed every 128 MB across the filesystem; this
-> >> means that in order to read lots of bitmaps, the disk spends most of
-> its
-> >> time seeking rather than reading. For me, that's what was causing the
-> >> disk to "buzz", and that's why dstat showed read rates of only 400-600
-> >> KB/sec.
-> >
-> > Yeah, but reads and writes worked just fine: up to 450 Mbps.
-> 
-> I mean, above, that read rates would fall to 400-600 KB/sec when the
-> filesystem was busy reading bitmap data.
+Hi
 
-	Well, first of all, it would drop to more like 4KBps, not 400KBps.
+ab17c4f02156c4f75d7fa43a5aa2a7f942d47201 is the first bad commit
+(reiserfs: fixup xattr_root caching)
 
-> That at least roughly
-> corresponds to what you wrote on 2009-04-28: "The reads at the array
-> level would fall to zero on 5 of the 10 drives, while the other 5 would
-> report a very low level of read activity, but not zero."
-> 
-> > Appending to
-> > an existing file (or writing several GB to a file once the create was
-> done)
-> > ran like a racehorse on one or several files without ever a burp.
-> Reading
-> > could be accomplished flat-out no matter what, but with total disk
-> activity
-> > well in excess of 500Mbps, everything would suddenly halt if a file was
-> > created on an intermittent basis.
-> 
-> That's just like what was happening to me. The filesystem would drop
-> everything else it was doing and read bitmaps for a while.
-> 
-> >> Having the bitmaps spread out among several disks of a RAID probably
-> >> wouldn't help. Reiserfs doesn't try to read the bitmaps in parallel;
-> >> that would be bad unless it knew the RAID layout. So, each disk would
-> >> just be idle when it wasn't its turn to seek and read another bitmap.
-> >
-> > With 400+ Mbps of data being read and written, the discs weren't idle
-> very
-> > much.
-> 
-> Except that when the filesystem is busy reading bitmaps, it isn't doing
-> anything else.... :)
+Kernel panics when init tries to remount rootfs (reiserfs) with
+read-write access.
+Read-only access works fine.
 
-Are you saying it doesn't read the bitmaps during reads and writes?
+No more messages on the screen before panic.
 
-
-> >>> Except this happened without any file writes or reads other than the
-> >> file
-> >>> creation itself and with no disk activity other than the array re-
-> sync.
-> >> I remember even 0-byte files taking a long time to write. My guess
-> would
-> >> be that reiserfs doesn't know the file will end up being empty when the
-> >> file is created, or perhaps it tries to find some contiguous space
-> >> anyway so the file can be appended to without excessive fragmentation.
-> >
-> > So why didn't it happen when appending data to an existing file?  Once a
-> > file was created, large or small, I could write freely to it over and
-> over,
-> > either appending data or writing over data.
-> 
-> I don't know how appends or overwrites are handled. The scheme for
-> finding free space may differ.
-
-Yes, of course that's true, but I wouldn't think it would be so by design.
-It also doesn't explain why the event was more likely during heavy activity.
-
+Is it endianess related?
