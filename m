@@ -1,59 +1,60 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: 2.6.30-rc5: reiserfs is broken on parisc (bisected)
-Date: Tue, 12 May 2009 13:20:17 -0400
-Message-ID: <4A09AFD1.5090604@suse.com>
-References: <a4423d670905120940r5de3eab7v7e8e92d89107b962@mail.gmail.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: [PATCH] kill-the-bkl/reiserfs: update
+Date: Thu, 14 May 2009 04:00:48 +0200
+Message-ID: <1242266449-21121-1-git-send-email-fweisbec@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <a4423d670905120940r5de3eab7v7e8e92d89107b962@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:from:to:cc:subject:date
+         :message-id:x-mailer;
+        bh=F/DkFSDVTGireHH6C/QIk5PgZexBB2jTFQYWEPSYMX8=;
+        b=b7w3oyIg1dSmn2GY+RLn6QgIUc3/JpM1RDO06M/biz72iTWXMw8gfATHR21X08JTya
+         P6ZPMjJOSHo51mcYQeDwi8WR7b0aro/ylOaWBbs3SAa4bggnqNv8kU/bGUdhnf/2c97E
+         auz9vqWtr/DoMaoBAT0v25TTnR3QxNcB8Kpf8=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kernel Testers List <kernel-testers@vger.kernel.org>, linux-parisc@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Reiserfs <reiserfs-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Jeff Mahoney <jeffm@suse.com>, Chris Mason <chris.mason@oracle.com>, Ingo Molnar <mingo@elte.hu>, Alexander Beregalov <a.beregalov@gmail.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hi,
 
-Alexander Beregalov wrote:
-> Hi
-> 
-> ab17c4f02156c4f75d7fa43a5aa2a7f942d47201 is the first bad commit
-> (reiserfs: fixup xattr_root caching)
-> 
-> Kernel panics when init tries to remount rootfs (reiserfs) with
-> read-write access.
-> Read-only access works fine.
-> 
-> No more messages on the screen before panic.
-> 
-> Is it endianess related?
+Here is a new patch which increases the performances with
+reiserfs using a mutex instead of the bkl.
 
-No, not at all. There was a problem with the xattr code if the kernel
-was built with xattrs disabled. It assumed that
-REISERFS_SB(s)->xattr_root would be available, which isn't the case when
-xattrs aren't enabled. Part of it has been cleaned up in -git1, and I've
-sent Al some additional patches to fix the rest of it up.
+Now I've compared with dbench on a fresh and empty reiserfs
+partition with 64 GB and the results are better with the mutex than with
+the bkl.
 
-There's a thread called "reiserfs xattr fixups" that contains 4 patches.
-The patch marked with * is the one I believe will fix your problem.
+Also this new patch increases the throughput a bit more.
+Dbench on SMP (2 Cpus), Preempt and 100 threads during 400 seconds:
 
-- - reiserfs: cleanup ifdefs
-- - reiserfs: deal with NULL xattr root w/ xattrs disabled *
-- - reiserfs: fixup perms when xattrs are disabled
-- - reiserfs: allow exposing privroot w/ xattrs enabled
+Bkl:		          37.6764 MB/sec
+Mutex, before this patch: 39.4532 MB/sec
+Mutex, after this patch:  40.3758 MB/sec
 
-- -Jeff
+The following graph shows better the difference:
+http://kernel.org/pub/linux/kernel/people/frederic/dbench.pdf
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
+So it looks like on some cases, it is faster (fresh filesystem ?)
+and sometimes slower (filesystem already well filled ?).
 
-iEYEARECAAYFAkoJr9EACgkQLPWxlyuTD7JbfACfSV+WiMxReRCr/YRDT8IBf7M8
-jVkAn3fhf3R1i5cyi/YJ+vtO/WTd6Lre
-=90Xq
------END PGP SIGNATURE-----
+Of course it is also supposed to be faster on parallel multiple partitions
+accesses but I have no benchmark yet to show that.
+
+The following changes since commit 2989c5541d5ab1138e538f8c713f491f7b2416b1:
+  Frederic Weisbecker (1):
+        kill-the-bkl/reiserfs: use mutex_lock in reiserfs_mutex_lock_safe
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.git
+	kill-the-bkl/reiserfs
+
+Frederic Weisbecker (1):
+      kill-the-bkl/reiserfs: unlock only when needed in search_by_key
+
+ fs/reiserfs/stree.c |   42 ++++++++++++++++++++++++++++++++++--------
+ 1 files changed, 34 insertions(+), 8 deletions(-)
