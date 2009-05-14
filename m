@@ -1,16 +1,18 @@
 From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: [PATCH] kill-the-bkl/reiserfs: update
-Date: Thu, 14 May 2009 04:00:48 +0200
-Message-ID: <1242266449-21121-1-git-send-email-fweisbec@gmail.com>
+Subject: [PATCH] kill-the-bkl/reiserfs: unlock only when needed in search_by_key
+Date: Thu, 14 May 2009 04:00:49 +0200
+Message-ID: <1242266449-21121-2-git-send-email-fweisbec@gmail.com>
+References: <1242266449-21121-1-git-send-email-fweisbec@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
         h=domainkey-signature:received:received:from:to:cc:subject:date
-         :message-id:x-mailer;
-        bh=F/DkFSDVTGireHH6C/QIk5PgZexBB2jTFQYWEPSYMX8=;
-        b=b7w3oyIg1dSmn2GY+RLn6QgIUc3/JpM1RDO06M/biz72iTWXMw8gfATHR21X08JTya
-         P6ZPMjJOSHo51mcYQeDwi8WR7b0aro/ylOaWBbs3SAa4bggnqNv8kU/bGUdhnf/2c97E
-         auz9vqWtr/DoMaoBAT0v25TTnR3QxNcB8Kpf8=
+         :message-id:x-mailer:in-reply-to:references;
+        bh=o5LjIG8ajDXMzotVxDeOcGbkKhPLHTtyT3x2Ef9QWzI=;
+        b=ZHS+kXQ9hyoluvd5rD/jSTDJyVw/TYQJAqX9xEGeEn1k6YQTBtaIQFxWvrQ7YZZnDJ
+         7uM1vuy1DSJnRlL7Y3y0/RwvMCCS7roN88bC1YrEAsqC8xfqj1zO6w7GJvvDMZRS1tum
+         AgQPf5PhgWr59lxS3OsjFF/aqv/Qw1AvNjXtk=
+In-Reply-To: <1242266449-21121-1-git-send-email-fweisbec@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -19,42 +21,120 @@ Content-Transfer-Encoding: 7bit
 To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Reiserfs <reiserfs-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Jeff Mahoney <jeffm@suse.com>, Chris Mason <chris.mason@oracle.com>, Ingo Molnar <mingo@elte.hu>, Alexander Beregalov <a.beregalov@gmail.com>
 
-Hi,
+search_by_key() is the site which most requires the lock.
+This is mostly because it is a very central function and also
+because it releases/reaqcuires the write lock at least once each
+time it is called.
 
-Here is a new patch which increases the performances with
-reiserfs using a mutex instead of the bkl.
+Such release/reacquire creates a lot of contention in this place and
+also opens more the window which let another thread changing the tree.
+When it happens, the current path searching over the tree must be
+retried from the beggining (the root) which is a wasteful and
+time consuming recovery.
 
-Now I've compared with dbench on a fresh and empty reiserfs
-partition with 64 GB and the results are better with the mutex than with
-the bkl.
+This patch factorizes two release/reacquire sequences:
 
-Also this new patch increases the throughput a bit more.
-Dbench on SMP (2 Cpus), Preempt and 100 threads during 400 seconds:
+- reading leaf nodes blocks
+- reading current block
 
-Bkl:		          37.6764 MB/sec
-Mutex, before this patch: 39.4532 MB/sec
-Mutex, after this patch:  40.3758 MB/sec
+The latter immediately follows the former.
 
-The following graph shows better the difference:
-http://kernel.org/pub/linux/kernel/people/frederic/dbench.pdf
+The whole sequence is safe as a single unlocked section because
+we check just after if the tree has changed during these operations.
 
-So it looks like on some cases, it is faster (fresh filesystem ?)
-and sometimes slower (filesystem already well filled ?).
-
-Of course it is also supposed to be faster on parallel multiple partitions
-accesses but I have no benchmark yet to show that.
-
-The following changes since commit 2989c5541d5ab1138e538f8c713f491f7b2416b1:
-  Frederic Weisbecker (1):
-        kill-the-bkl/reiserfs: use mutex_lock in reiserfs_mutex_lock_safe
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.git
-	kill-the-bkl/reiserfs
-
-Frederic Weisbecker (1):
-      kill-the-bkl/reiserfs: unlock only when needed in search_by_key
-
+Cc: Jeff Mahoney <jeffm@suse.com>
+Cc: Chris Mason <chris.mason@oracle.com>
+Cc: Ingo Molnar <mingo@elte.hu>
+Cc: Alexander Beregalov <a.beregalov@gmail.com>
+Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
+---
  fs/reiserfs/stree.c |   42 ++++++++++++++++++++++++++++++++++--------
  1 files changed, 34 insertions(+), 8 deletions(-)
+
+diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
+index 960c911..6b025a4 100644
+--- a/fs/reiserfs/stree.c
++++ b/fs/reiserfs/stree.c
+@@ -519,12 +519,22 @@ static int is_tree_node(struct buffer_head *bh, int level)
+ 
+ #define SEARCH_BY_KEY_READA 16
+ 
+-/* The function is NOT SCHEDULE-SAFE! */
+-static void search_by_key_reada(struct super_block *s,
++/*
++ * The function is NOT SCHEDULE-SAFE!
++ * It might unlock the write lock if we needed to wait for a block
++ * to be read. Note that in this case it won't recover the lock to avoid
++ * high contention resulting from too much lock requests, especially
++ * the caller (search_by_key) will perform other schedule-unsafe
++ * operations just after calling this function.
++ *
++ * @return true if we have unlocked
++ */
++static bool search_by_key_reada(struct super_block *s,
+ 				struct buffer_head **bh,
+ 				b_blocknr_t *b, int num)
+ {
+ 	int i, j;
++	bool unlocked = false;
+ 
+ 	for (i = 0; i < num; i++) {
+ 		bh[i] = sb_getblk(s, b[i]);
+@@ -536,16 +546,21 @@ static void search_by_key_reada(struct super_block *s,
+ 	 * the lock. But it's still fine because we check later
+ 	 * if the tree changed
+ 	 */
+-	reiserfs_write_unlock(s);
+ 	for (j = 0; j < i; j++) {
+ 		/*
+ 		 * note, this needs attention if we are getting rid of the BKL
+ 		 * you have to make sure the prepared bit isn't set on this buffer
+ 		 */
+-		if (!buffer_uptodate(bh[j]))
++		if (!buffer_uptodate(bh[j])) {
++			if (!unlocked) {
++				reiserfs_write_unlock(s);
++				unlocked = true;
++			}
+ 			ll_rw_block(READA, 1, bh + j);
++		}
+ 		brelse(bh[j]);
+ 	}
++	return unlocked;
+ }
+ 
+ /**************************************************************************
+@@ -633,15 +648,26 @@ int search_by_key(struct super_block *sb, const struct cpu_key *key,	/* Key to s
+ 		   have a pointer to it. */
+ 		if ((bh = last_element->pe_buffer =
+ 		     sb_getblk(sb, block_number))) {
++			bool unlocked = false;
++
+ 			if (!buffer_uptodate(bh) && reada_count > 1)
+-				/* will unlock the write lock */
+-				search_by_key_reada(sb, reada_bh,
++				/* may unlock the write lock */
++				unlocked = search_by_key_reada(sb, reada_bh,
+ 						    reada_blocks, reada_count);
+-			else
++			/*
++			 * If we haven't already unlocked the write lock,
++			 * then we need to do that here before reading
++			 * the current block
++			 */
++			if (!buffer_uptodate(bh) && !unlocked) {
+ 				reiserfs_write_unlock(sb);
++				unlocked = true;
++			}
+ 			ll_rw_block(READ, 1, &bh);
+ 			wait_on_buffer(bh);
+-			reiserfs_write_lock(sb);
++
++			if (unlocked)
++				reiserfs_write_lock(sb);
+ 			if (!buffer_uptodate(bh))
+ 				goto io_error;
+ 		} else {
+-- 
+1.6.2.3
+
