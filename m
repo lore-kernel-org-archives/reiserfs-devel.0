@@ -1,210 +1,48 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: [PATCH 2/2] kill-the-bkl/reiserfs: move the concurrent tree accesses checks per superblock
-Date: Sat, 16 May 2009 20:02:02 +0200
-Message-ID: <1242496922-6330-3-git-send-email-fweisbec@gmail.com>
-References: <1242496922-6330-1-git-send-email-fweisbec@gmail.com>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: Re: oops with 2.6.30-rc6 and reiserfs
+Date: Sat, 16 May 2009 23:12:52 +0400
+Message-ID: <a4423d670905161212u53869568ha9b6fa6a2b1c97e4@mail.gmail.com>
+References: <87zldc9987.fsf@sycorax.lbl.gov>
+Mime-Version: 1.0
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:from:to:cc:subject:date
-         :message-id:x-mailer:in-reply-to:references;
-        bh=WuOJ+nfE6Bzx9L3iOYwxL5TU2PFXSnNvIe1gRj+8aUI=;
-        b=jA7HBs/VM0KOM3SsyFXcatzd3IfPlPinFuqzXcCiT6FkpYhNNSzEiYqNDuGHZcru8X
-         dMOwT/YE56rUHBWnm64X5JGFkL55z1F92NvFBG4W2O6IcK8G2xZRvwPeaqi1C3Vpm1QT
-         FHNBZ5nojz33XhKNU5YbjD0LZemn0AnXmkAh0=
-In-Reply-To: <1242496922-6330-1-git-send-email-fweisbec@gmail.com>
+        h=domainkey-signature:mime-version:received:in-reply-to:references
+         :date:message-id:subject:from:to:cc:content-type
+         :content-transfer-encoding;
+        bh=pgZnC7kudY79d7zGX892O76atO78YkgXsvC+3kslAO8=;
+        b=Xkd76YbLrgYH+o6vzqwgut6J832WVLEeZgOZaQxDmqCIoXRqOyPhRZnAIxt9NihUhr
+         +AwKR+Q3HAb7yEh1XeMsHJIfOEDFm7i5FlMxfPJjH4RszWAPmwZ0wn7uySi6N0Uug1ks
+         1aGN6iejIawah9YmeT+jhLVEoycvF+m4XkpLI=
+In-Reply-To: <87zldc9987.fsf@sycorax.lbl.gov>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Reiserfs <reiserfs-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Jeff Mahoney <jeffm@suse.com>, Chris Mason <chris.mason@oracle.com>, Ingo Molnar <mingo@elte.hu>, Alexander Beregalov <a.beregalov@gmail.com>
+Content-Type: text/plain; charset="iso-8859-1"
+To: Alex Romosan <romosan@sycorax.lbl.gov>
+Cc: linux-kernel@vger.kernel.org, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>
 
-When do_balance() balances the tree, a trick is performed to
-provide the ability for other tree writers/readers to check whether
-do_balance() is executing concurrently (requires CONFIG_REISERFS_CHECK).
+2009/5/16 Alex Romosan <romosan@sycorax.lbl.gov>:
+> i get an oops trying to boot into 2.6.30-rc6 with reiserfs as the roo=
+t
+> partition. the root partition never gets mounted rw so there is
+> nothing in the logs but i took a picture of the screen on the laptop:
+>
+> =C2=A0http://costard.lbl.gov/~romosan/dsc05513.jpg
+>
+> these are the config options i use relevant to reiserfs:
+>
+> CONFIG_REISERFS_FS=3Dy
+> # CONFIG_REISERFS_CHECK is not set
+> # CONFIG_REISERFS_PROC_INFO is not set
+> # CONFIG_REISERFS_FS_XATTR is not set
+>
+> hope this helps.
+>
 
-This is done to protect concurrent accesses to the tree. The trick
-is the following:
-
-When do_balance is called, a unique global variable called cur_tb
-takes a pointer to the current tree to be rebalanced.
-Once do_balance finishes its work, cur_tb takes the NULL value.
-
-Then, concurrent tree readers/writers just have to check the value
-of cur_tb to ensure do_balance isn't executing concurrently.
-If it is, then it proves that schedule() occured on do_balance(),
-which then relaxed the bkl that protected the tree.
-
-Now that the bkl has be turned into a mutex, this check is still
-fine even though do_balance() becomes preemptible: the write lock
-will not be automatically released on schedule(), so the tree is
-still protected.
-
-But this is only fine if we have a single reiserfs mountpoint.
-Indeed, because the bkl is a global lock, it didn't allowed
-concurrent executions between a tree reader/writer in a mount point
-and a do_balance() on another tree from another mountpoint.
-
-So assuming all these readers/writers weren't supposed to be
-reentrant, the current check now sometimes detect false positives with
-the current per-superblock mutex which allows this reentrancy.
-
-This patch keeps the concurrent tree accesses check but moves it
-per superblock, so that only trees from a same mount point are
-checked to be not accessed concurrently.
-
-[ Impact: fix spurious panic while running several reiserfs mount-points ]
-
-Cc: Jeff Mahoney <jeffm@suse.com>
-Cc: Chris Mason <chris.mason@oracle.com>
-Cc: Ingo Molnar <mingo@elte.hu>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>
-Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
----
- fs/reiserfs/do_balan.c         |   17 +++++------------
- fs/reiserfs/fix_node.c         |    5 +----
- fs/reiserfs/prints.c           |    4 ----
- fs/reiserfs/stree.c            |    5 +----
- include/linux/reiserfs_fs_sb.h |   11 +++++++++++
- 5 files changed, 18 insertions(+), 24 deletions(-)
-
-diff --git a/fs/reiserfs/do_balan.c b/fs/reiserfs/do_balan.c
-index 4beb964..2787349 100644
---- a/fs/reiserfs/do_balan.c
-+++ b/fs/reiserfs/do_balan.c
-@@ -21,14 +21,6 @@
- #include <linux/buffer_head.h>
- #include <linux/kernel.h>
- 
--#ifdef CONFIG_REISERFS_CHECK
--
--struct tree_balance *cur_tb = NULL;	/* detects whether more than one
--					   copy of tb exists as a means
--					   of checking whether schedule
--					   is interrupting do_balance */
--#endif
--
- static inline void buffer_info_init_left(struct tree_balance *tb,
-                                          struct buffer_info *bi)
- {
-@@ -1841,11 +1833,12 @@ static int check_before_balancing(struct tree_balance *tb)
- {
- 	int retval = 0;
- 
--	if (cur_tb) {
-+	if (REISERFS_SB(tb->tb_sb)->cur_tb) {
- 		reiserfs_panic(tb->tb_sb, "vs-12335", "suspect that schedule "
- 			       "occurred based on cur_tb not being null at "
- 			       "this point in code. do_balance cannot properly "
--			       "handle schedule occurring while it runs.");
-+			       "handle concurrent tree accesses on a same "
-+			       "mount point.");
- 	}
- 
- 	/* double check that buffers that we will modify are unlocked. (fix_nodes should already have
-@@ -1987,7 +1980,7 @@ static inline void do_balance_starts(struct tree_balance *tb)
- 	     "check");*/
- 	RFALSE(check_before_balancing(tb), "PAP-12340: locked buffers in TB");
- #ifdef CONFIG_REISERFS_CHECK
--	cur_tb = tb;
-+	REISERFS_SB(tb->tb_sb)->cur_tb = tb;
- #endif
- }
- 
-@@ -1997,7 +1990,7 @@ static inline void do_balance_completed(struct tree_balance *tb)
- #ifdef CONFIG_REISERFS_CHECK
- 	check_leaf_level(tb);
- 	check_internal_levels(tb);
--	cur_tb = NULL;
-+	REISERFS_SB(tb->tb_sb)->cur_tb = NULL;
- #endif
- 
- 	/* reiserfs_free_block is no longer schedule safe.  So, we need to
-diff --git a/fs/reiserfs/fix_node.c b/fs/reiserfs/fix_node.c
-index 3a685e3..d2f3133 100644
---- a/fs/reiserfs/fix_node.c
-+++ b/fs/reiserfs/fix_node.c
-@@ -563,9 +563,6 @@ static int get_num_ver(int mode, struct tree_balance *tb, int h,
- 	return needed_nodes;
- }
- 
--#ifdef CONFIG_REISERFS_CHECK
--extern struct tree_balance *cur_tb;
--#endif
- 
- /* Set parameters for balancing.
-  * Performs write of results of analysis of balancing into structure tb,
-@@ -2368,7 +2365,7 @@ int fix_nodes(int op_mode, struct tree_balance *tb,
- 			return REPEAT_SEARCH;
- 	}
- #ifdef CONFIG_REISERFS_CHECK
--	if (cur_tb) {
-+	if (REISERFS_SB(tb->tb_sb)->cur_tb) {
- 		print_cur_tb("fix_nodes");
- 		reiserfs_panic(tb->tb_sb, "PAP-8305",
- 			       "there is pending do_balance");
-diff --git a/fs/reiserfs/prints.c b/fs/reiserfs/prints.c
-index 536eaca..adbc6f5 100644
---- a/fs/reiserfs/prints.c
-+++ b/fs/reiserfs/prints.c
-@@ -349,10 +349,6 @@ void reiserfs_debug(struct super_block *s, int level, const char *fmt, ...)
- 
-    .  */
- 
--#ifdef CONFIG_REISERFS_CHECK
--extern struct tree_balance *cur_tb;
--#endif
--
- void __reiserfs_panic(struct super_block *sb, const char *id,
- 		      const char *function, const char *fmt, ...)
- {
-diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index 6b025a4..5fa7118 100644
---- a/fs/reiserfs/stree.c
-+++ b/fs/reiserfs/stree.c
-@@ -222,9 +222,6 @@ static inline int bin_search(const void *key,	/* Key to search for. */
- 	return ITEM_NOT_FOUND;
- }
- 
--#ifdef CONFIG_REISERFS_CHECK
--extern struct tree_balance *cur_tb;
--#endif
- 
- /* Minimal possible key. It is never in the tree. */
- const struct reiserfs_key MIN_KEY = { 0, 0, {{0, 0},} };
-@@ -711,7 +708,7 @@ int search_by_key(struct super_block *sb, const struct cpu_key *key,	/* Key to s
- 		       !key_in_buffer(search_path, key, sb),
- 		       "PAP-5130: key is not in the buffer");
- #ifdef CONFIG_REISERFS_CHECK
--		if (cur_tb) {
-+		if (REISERFS_SB(sb)->cur_tb) {
- 			print_cur_tb("5140");
- 			reiserfs_panic(sb, "PAP-5140",
- 				       "schedule occurred in do_balance!");
-diff --git a/include/linux/reiserfs_fs_sb.h b/include/linux/reiserfs_fs_sb.h
-index 8a1d409..2f8bb04 100644
---- a/include/linux/reiserfs_fs_sb.h
-+++ b/include/linux/reiserfs_fs_sb.h
-@@ -417,6 +417,17 @@ struct reiserfs_sb_info {
- 	char *s_qf_names[MAXQUOTAS];
- 	int s_jquota_fmt;
- #endif
-+#ifdef CONFIG_REISERFS_CHECK
-+
-+	struct tree_balance *cur_tb;	/*
-+					 * Detects whether more than one
-+					 * copy of tb exists per superblock
-+					 * as a means of checking whether
-+					 * do_balance is executing concurrently
-+					 * against another tree reader/writer
-+					 * on a same mount point.
-+					 */
-+#endif
- };
- 
- /* Definitions of reiserfs on-disk properties: */
--- 
-1.6.2.3
-
+Add CC.
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
