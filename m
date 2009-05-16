@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 13151] Warning about reiserfs
-Date: Sat, 16 May 2009 20:59:14 GMT
-Message-ID: <200905162059.n4GKxEnJ013519@demeter.kernel.org>
+Date: Sat, 16 May 2009 20:59:52 GMT
+Message-ID: <200905162059.n4GKxqvL013661@demeter.kernel.org>
 References: <bug-13151-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -15,17 +15,11 @@ To: reiserfs-devel@vger.kernel.org
 http://bugzilla.kernel.org/show_bug.cgi?id=13151
 
 
-Stefan Richter <stefan-r-bz@s5r6.in-berlin.de> changed:
-
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |mrb74@gmx.at
 
 
 
-
---- Comment #13 from Stefan Richter <stefan-r-bz@s5r6.in-berlin.de>  2009-05-16 20:59:13 ---
-*** Bug 13301 has been marked as a duplicate of this bug. ***
+--- Comment #14 from Stefan Richter <stefan-r-bz@s5r6.in-berlin.de>  2009-05-16 20:59:51 ---
+*** Bug 13299 has been marked as a duplicate of this bug. ***
 
 -- 
 Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
