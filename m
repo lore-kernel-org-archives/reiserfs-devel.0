@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 13321] kernel crash with NULL pointer when boot
-Date: Sat, 16 May 2009 20:06:38 GMT
-Message-ID: <200905162006.n4GK6cCQ009904@demeter.kernel.org>
+Date: Sat, 16 May 2009 20:07:06 GMT
+Message-ID: <200905162007.n4GK76HP009965@demeter.kernel.org>
 References: <bug-13321-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -19,8 +19,8 @@ Rafael J. Wysocki <rjw@sisk.pl> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-                 CC|                            |rjw@sisk.pl
-             Blocks|                            |13070
+         AssignedTo|reiserfs-devel@vger.kernel. |jeffm@suse.com
+                   |org                         |
 
 
 
