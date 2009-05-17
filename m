@@ -1,114 +1,47 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [patch 1/4] reiserfs: clean up ifdefs
-Date: Sun, 17 May 2009 01:02:01 -0400
-Message-ID: <20090517050331.670525723@suse.com>
-References: <20090517050200.786752018@suse.com>
+From: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Subject: Re: [patch 3/4] reiserfs: fixup perms when xattrs are disabled
+Date: Sun, 17 May 2009 13:50:45 +0200
+Message-ID: <4A0FFA15.6070101@s5r6.in-berlin.de>
+References: <20090517050200.786752018@suse.com> <20090517050332.303142159@suse.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=patches.fixes/reiserfs-xattr-fixup
+In-Reply-To: <20090517050332.303142159@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
 
- With xattr cleanup even with xattrs disabled, much of the initial setup
- is still performed. Some #ifdefs are just not needed since the options
- they protect wouldn't be available anyway.
+Jeff Mahoney wrote:
+>  This patch CONFIG_REISERFS_FS_XATTR protection from reiserfs_permission.
+> 
+>  This is needed to avoid warnings during file deletions and chowns with
+>  xattrs disabled.
+> 
+> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 
- This patch cleans those up.
+Al has a minimally edited version in vfs-2.6.git/for-next:
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- fs/reiserfs/xattr.c |   49 ++++++++++++++++++++++++-------------------------
- 1 file changed, 24 insertions(+), 25 deletions(-)
+[...]
+> +#ifdef CONFIG_REISERFS_FS_XATTR
+> +	/*
+> +	 * Stat data v1 doesn't support ACLs.
+> +	 */
+> +	if (get_inode_sd_version(inode) != STAT_DATA_V1)
+> +		return generic_permission(inode, mask, reiserfs_check_acl);
+> +	else
+> +#endif
+> +		return generic_permission(inode, mask, NULL);
+> +}
+> +
 
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -685,20 +685,6 @@ out:
- 	return err;
- }
- 
--/* Actual operations that are exported to VFS-land */
--struct xattr_handler *reiserfs_xattr_handlers[] = {
--	&reiserfs_xattr_user_handler,
--	&reiserfs_xattr_trusted_handler,
--#ifdef CONFIG_REISERFS_FS_SECURITY
--	&reiserfs_xattr_security_handler,
--#endif
--#ifdef CONFIG_REISERFS_FS_POSIX_ACL
--	&reiserfs_posix_acl_access_handler,
--	&reiserfs_posix_acl_default_handler,
--#endif
--	NULL
--};
--
- /*
-  * In order to implement different sets of xattr operations for each xattr
-  * prefix with the generic xattr API, a filesystem should create a
-@@ -922,6 +908,28 @@ static int create_privroot(struct dentry
- 	return 0;
- }
- 
-+#else
-+int __init reiserfs_xattr_register_handlers(void) { return 0; }
-+void reiserfs_xattr_unregister_handlers(void) {}
-+static int create_privroot(struct dentry *dentry) { return 0; }
-+#endif
-+
-+/* Actual operations that are exported to VFS-land */
-+struct xattr_handler *reiserfs_xattr_handlers[] = {
-+#ifdef CONFIG_REISERFS_FS_XATTR
-+	&reiserfs_xattr_user_handler,
-+	&reiserfs_xattr_trusted_handler,
-+#endif
-+#ifdef CONFIG_REISERFS_FS_SECURITY
-+	&reiserfs_xattr_security_handler,
-+#endif
-+#ifdef CONFIG_REISERFS_FS_POSIX_ACL
-+	&reiserfs_posix_acl_access_handler,
-+	&reiserfs_posix_acl_default_handler,
-+#endif
-+	NULL
-+};
-+
- static int xattr_mount_check(struct super_block *s)
- {
- 	/* We need generation numbers to ensure that the oid mapping is correct
-@@ -941,11 +949,6 @@ static int xattr_mount_check(struct supe
- 	return 0;
- }
- 
--#else
--int __init reiserfs_xattr_register_handlers(void) { return 0; }
--void reiserfs_xattr_unregister_handlers(void) {}
--#endif
--
- /* This will catch lookups from the fs root to .reiserfs_priv */
- static int
- xattr_lookup_poison(struct dentry *dentry, struct qstr *q1, struct qstr *name)
-@@ -992,7 +995,6 @@ int reiserfs_xattr_init(struct super_blo
- 	int err = 0;
- 	struct dentry *privroot = REISERFS_SB(s)->priv_root;
- 
--#ifdef CONFIG_REISERFS_FS_XATTR
- 	err = xattr_mount_check(s);
- 	if (err)
- 		goto error;
-@@ -1023,14 +1025,11 @@ error:
- 		clear_bit(REISERFS_XATTRS_USER, &(REISERFS_SB(s)->s_mount_opt));
- 		clear_bit(REISERFS_POSIXACL, &(REISERFS_SB(s)->s_mount_opt));
- 	}
--#endif
- 
- 	/* The super_block MS_POSIXACL must mirror the (no)acl mount option. */
--#ifdef CONFIG_REISERFS_FS_POSIX_ACL
- 	if (reiserfs_posixacl(s))
- 		s->s_flags |= MS_POSIXACL;
- 	else
--#endif
- 		s->s_flags &= ~MS_POSIXACL;
- 
- 	return err;
+The else is omitted, and hence the second return unindented.
 
+Al, did you mean to let Linus pull from your tree once more?
+(I have been using a reiserfs root FS with Jeff's four patches for a 
+week and all went smoothly.)
+-- 
+Stefan Richter
+-=====-=-=== -=-= -==-=
+http://arcgraph.de/sr/
