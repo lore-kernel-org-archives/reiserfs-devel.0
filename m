@@ -1,10 +1,10 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [patch 2/4] [PATCH] reiserfs: deal with NULL xattr root w/ xattrs disabled
-Date: Sun, 17 May 2009 01:02:02 -0400
-Message-ID: <20090517050331.993181046@suse.com>
+Subject: [patch 4/4] reiserfs: allow exposing privroot w/ xattrs enabled
+Date: Sun, 17 May 2009 01:02:04 -0400
+Message-ID: <20090517050332.566856122@suse.com>
 References: <20090517050200.786752018@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=patches.fixes/reiserfs-xattr-root-fixup
+Content-Disposition: inline; filename=patches.fixes/reiserfs-expose-privroot
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -13,43 +13,64 @@ Content-Transfer-Encoding: 7bit
 To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
- This patch avoids an Oops in open_xa_root that can occur when deleting a
- file with xattrs disabled. It assumes that the xattr root will be there,
- and that is not guaranteed.
-
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- fs/reiserfs/super.c |    2 --
- fs/reiserfs/xattr.c |    4 +++-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
+--- a/fs/reiserfs/dir.c
++++ b/fs/reiserfs/dir.c
+@@ -44,13 +44,11 @@ static int reiserfs_dir_fsync(struct fil
+ static inline bool is_privroot_deh(struct dentry *dir,
+ 				   struct reiserfs_de_head *deh)
+ {
+-	int ret = 0;
+-#ifdef CONFIG_REISERFS_FS_XATTR
+ 	struct dentry *privroot = REISERFS_SB(dir->d_sb)->priv_root;
+-	ret = (dir == dir->d_parent && privroot->d_inode &&
+-	       deh->deh_objectid == INODE_PKEY(privroot->d_inode)->k_objectid);
+-#endif
+-	return ret;
++	if (reiserfs_expose_privroot(dir->d_sb))
++		return 0;
++	return (dir == dir->d_parent && privroot->d_inode &&
++	        deh->deh_objectid == INODE_PKEY(privroot->d_inode)->k_objectid);
+ }
+ 
+ int reiserfs_readdir_dentry(struct dentry *dentry, void *dirent,
 --- a/fs/reiserfs/super.c
 +++ b/fs/reiserfs/super.c
-@@ -448,13 +448,11 @@ int remove_save_link(struct inode *inode
- static void reiserfs_kill_sb(struct super_block *s)
- {
- 	if (REISERFS_SB(s)) {
--#ifdef CONFIG_REISERFS_FS_XATTR
- 		if (REISERFS_SB(s)->xattr_root) {
- 			d_invalidate(REISERFS_SB(s)->xattr_root);
- 			dput(REISERFS_SB(s)->xattr_root);
- 			REISERFS_SB(s)->xattr_root = NULL;
- 		}
--#endif
- 		if (REISERFS_SB(s)->priv_root) {
- 			d_invalidate(REISERFS_SB(s)->priv_root);
- 			dput(REISERFS_SB(s)->priv_root);
+@@ -898,6 +898,7 @@ static int reiserfs_parse_options(struct
+ 		{"conv",.setmask = 1 << REISERFS_CONVERT},
+ 		{"attrs",.setmask = 1 << REISERFS_ATTRS},
+ 		{"noattrs",.clrmask = 1 << REISERFS_ATTRS},
++		{"expose_privroot", .setmask = 1 << REISERFS_EXPOSE_PRIVROOT},
+ #ifdef CONFIG_REISERFS_FS_XATTR
+ 		{"user_xattr",.setmask = 1 << REISERFS_XATTRS_USER},
+ 		{"nouser_xattr",.clrmask = 1 << REISERFS_XATTRS_USER},
 --- a/fs/reiserfs/xattr.c
 +++ b/fs/reiserfs/xattr.c
-@@ -123,7 +123,9 @@ static struct dentry *open_xa_root(struc
- 	mutex_lock_nested(&privroot->d_inode->i_mutex, I_MUTEX_XATTR);
+@@ -982,7 +982,8 @@ int reiserfs_lookup_privroot(struct supe
+ 				strlen(PRIVROOT_NAME));
+ 	if (!IS_ERR(dentry)) {
+ 		REISERFS_SB(s)->priv_root = dentry;
+-		s->s_root->d_op = &xattr_lookup_poison_ops;
++		if (!reiserfs_expose_privroot(s))
++			s->s_root->d_op = &xattr_lookup_poison_ops;
+ 		if (dentry->d_inode)
+ 			dentry->d_inode->i_flags |= S_PRIVATE;
+ 	} else
+--- a/include/linux/reiserfs_fs_sb.h
++++ b/include/linux/reiserfs_fs_sb.h
+@@ -453,6 +453,7 @@ enum reiserfs_mount_options {
+ 	REISERFS_ATTRS,
+ 	REISERFS_XATTRS_USER,
+ 	REISERFS_POSIXACL,
++	REISERFS_EXPOSE_PRIVROOT,
+ 	REISERFS_BARRIER_NONE,
+ 	REISERFS_BARRIER_FLUSH,
  
- 	xaroot = dget(REISERFS_SB(sb)->xattr_root);
--	if (!xaroot->d_inode) {
-+	if (!xaroot)
-+		xaroot = ERR_PTR(-ENODATA);
-+	else if (!xaroot->d_inode) {
- 		int err = -ENODATA;
- 		if (xattr_may_create(flags))
- 			err = xattr_mkdir(privroot->d_inode, xaroot, 0700);
+@@ -490,6 +491,7 @@ enum reiserfs_mount_options {
+ #define reiserfs_data_writeback(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_DATA_WRITEBACK))
+ #define reiserfs_xattrs_user(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_XATTRS_USER))
+ #define reiserfs_posixacl(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_POSIXACL))
++#define reiserfs_expose_privroot(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_EXPOSE_PRIVROOT))
+ #define reiserfs_xattrs_optional(s) (reiserfs_xattrs_user(s) || reiserfs_posixacl(s))
+ #define reiserfs_barrier_none(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_BARRIER_NONE))
+ #define reiserfs_barrier_flush(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_BARRIER_FLUSH))
 
