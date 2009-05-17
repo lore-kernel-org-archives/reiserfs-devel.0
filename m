@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 13122] reiserfs_delete_xattrs: Couldn't delete all xattrs (-13)
-Date: Sun, 17 May 2009 20:36:03 GMT
-Message-ID: <200905172036.n4HKa3LT002206@demeter.kernel.org>
+Date: Sun, 17 May 2009 20:36:11 GMT
+Message-ID: <200905172036.n4HKaBco002245@demeter.kernel.org>
 References: <bug-13122-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -19,8 +19,7 @@ Rafael J. Wysocki <rjw@sisk.pl> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-         Resolution|                            |CODE_FIX
+             Status|RESOLVED                    |CLOSED
 
 
 
