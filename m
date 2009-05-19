@@ -1,29 +1,22 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 13122] reiserfs_delete_xattrs: Couldn't delete all xattrs (-13)
-Date: Mon, 18 May 2009 20:23:45 GMT
-Message-ID: <200905182023.n4IKNjkZ018023@demeter.kernel.org>
-References: <bug-13122-695@http.bugzilla.kernel.org/>
+From: "Jorge Bastos" <mysql.jorge@decimal.pt>
+Subject: reiserfs4 question
+Date: Tue, 19 May 2009 14:09:35 +0100 (WEST)
+Message-ID: <3791.192.168.1.3.1242738575.squirrel@webmail.decimal.pt>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-13122-695@http.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-http://bugzilla.kernel.org/show_bug.cgi?id=13122
+Hi people,
 
+A simple question, does anyone can tell me information about reiserfs4, if
+is it going to be included in the main kernel, and if yes, which version?
+I ask this 'cause, thinking on what happened to the reiser creator, I'm
+thinking if my next servers will have reiserfs 3x or ext4.
 
+Thanks,
+Jorge,
 
-
-
---- Comment #9 from Tobias Jakobi <liquid.acid@gmx.net>  2009-05-18 20:23:45 ---
-Thanks Stefan for the info! I'm pretty sure it's bug #13321. I just removed
-xattr support for reiserfs from kernel config again and it also crashes in
-reiserfs_for_each_xattr on boot. Going to wait for rc7 though :)
-
--- 
-Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
