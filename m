@@ -1,68 +1,98 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re:
-Date: Wed, 20 May 2009 20:26:59 +0200
-Message-ID: <4A144B73.9080900@gmail.com>
-References: <325.1470-551-82817687-1242834506@post.cz>
+From: =?ISO-8859-1?Q?Fr=E9d=E9ric_Weisbecker?= <fweisbec@gmail.com>
+Subject: kill-the-bkl/reiserfs: request for linux-next inclusion
+Date: Thu, 21 May 2009 01:40:57 +0200
+Message-ID: <c62985530905201640j4a550b5bi7673e5a9f21029ce@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <325.1470-551-82817687-1242834506@post.cz>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:received:date:message-id:subject
+         :from:to:cc:content-type:content-transfer-encoding;
+        bh=8JfqYTPB5NUla6PQ0XfiexYdTxrt6S2QbOXHSJQ/egY=;
+        b=EoDmS1veUZ99cYxtV0yVh0+Zv38+Szufn5EHSPVZJgkOLTgwjr0vy84WBecXzgeryZ
+         FtDu4Ze9x8T8Kyuazx1KB2oWbIikuGRXz0kS2U2Ey4a9Ft9MR9QraaRCeQ30uy+WIPQB
+         308lHsq+5r8ZlVAAuy1VjGi6QVhWsUmN9ODW0=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: "Mr. Tao" <tao@post.cz>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Reiserfs <reiserfs-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Jeff Mahoney <jeffm@suse.com>, Chris Mason <chris.mason@oracle.com>, Ingo Molnar <mingo@elte.hu>, Alexander Beregalov <a.beregalov@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>
 
-Hello.
-
-Mr. Tao wrote:
-> I have reiser4 partition which seems to be in unfixable state. When I discovered corruption symptoms (I couldn't delete empty directory with something like "cannot unlink" in messages log) I ran fsck which suggested runing with --build-fs.
-> I did and it crashed at cca 96 % with segmentation fault. I got same results with fscking shen booted from latest system rescue cd.
->   
-
-Compression enabled?
-If not, then would you please pack your metadata by
-debugfs.reiser4 -P /dev/xxx | gzip > meta.gz
-and let me download the file meta.gz
-
-Thanks,
-Edward.
-
-> Contains of fsck.log (without --build-fs option):
+2009/5/16 Frederic Weisbecker <fweisbec@gmail.com>:
+> Hi Al, Stephen,
 >
-> FSCK: tree.c: 186: repair_tree_dknode_check: Node (30687): The last key 
-> [d4a5a:4(FB):73776966747765:d4a88:405a0d] in the node is greater then the right
-> delimiting key [d4a5a:4(FB):73776966747765:d4a88:382997]. 
-> FSCK: filter.c: 415: repair_filter_update_traverse: Node (blk 30802, lev 3) 
-> points (item 87, unit 0) to the node [30687] with wrong delimiting keys. The 
-> whole subtree is skipped. 
-> FSCK: tree.c: 186: repair_tree_dknode_check: Node (29633): The last key 
-> [d4b7c:4(FB):75726c636c6173:d4bf0:1a0797e] in the node is greater then the right
-> delimiting key [d4b7c:4(FB):75726c636c6173:d4bf0:10b02c3]. 
-> FSCK: filter.c: 415: repair_filter_update_traverse: Node (blk 865480, lev 4) 
-> points (item 27, unit 0) to the nFSCK: tree.c: 186: repair_tree_dknode_check: Node (30687): The last key 
-> [d4a5a:4(FB):73776966747765:d4a88:405a0d] in the node is greater then the right
-> delimiting key [d4a5a:4(FB):73776966747765:d4a88:382997]. 
-> FSCK: filter.c: 415: repair_filter_update_traverse: Node (blk 30802, lev 3) 
-> points (item 87, unit 0) to the node [30687] with wrong delimiting keys. The 
-> whole subtree is skipped. 
-> FSCK: tree.c: 186: repair_tree_dknode_check: Node (29633): The last key 
-> [d4b7c:4(FB):75726c636c6173:d4bf0:1a0797e] in the node is greater then the right
-> delimiting key [d4b7c:4(FB):75726c636c6173:d4bf0:10b02c3]. 
-> FSCK: filter.c: 415: repair_filter_update_traverse: Node (blk 865480, lev 4) 
-> points (item 27, unit 0) to the node [29633] with wrong delimiting keys. The 
-> whole subtree is skipped. 
-> FSCK: tree.c: 230: repair_tree_dknode_check: Node (blk 34369, lev 3): first key
-> [d4b7c:4(FB):75726c636c6173:d4bf0:1aa35df] does not match left delimiting key 
-> [d4b7c:4(FB):75726c636c6173:d4bf0:10b02c3] found in parent node (blk 865480, lev
-> 4, pos 28).  
-> FSCK: filter.c: 415: repair_filter_update_traverse: Node (blk 865480, lev 4) 
-> points (item 28, unit 0) to the node [34369] with wrong delimiting keys. The 
-> whole subtree is skipped.
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> This patchset is subsequent to a rebase of the bkl killing in reiserf=
+s
+> work rebased against -rc6. It contains only fixes.
+> The old topic is left unchanged but the new one reiserfs/kill-bkl-rc6=
+ can
+> be pulled against -rc6 without problem.
 >
->   
+> Also, Al, I don't know if you would still accept to apply this work i=
+n the VFS
+> tree.
+> The fact is that it becomes late in the process, we are already in -r=
+c6
+> and I would like it to be tested at least in linux-next.
+>
+> So, it's up to you. Whether you prefer to apply it and make it
+> available to next, or I can ask Stephen to pull directly from my tree=
+=2E
+>
+> Thanks,
+> Frederic.
+>
+> The following changes since commit b693ba70c541a5a26eb4e8f2db5ade454a=
+fe1c74:
+> =A0Frederic Weisbecker (1):
+> =A0 =A0 =A0 =A0kill-the-bkl/reiserfs: unlock only when needed in sear=
+ch_by_key
+>
+> are available in the git repository at:
+>
+> =A0git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-trac=
+ing.git
+> =A0 =A0 =A0 =A0reiserfs/kill-bkl-rc6
 
+
+Stephen,
+
+I guess Al is traveling or something.
+
+Until it finds its way to the VFS tree, it would be nice if this
+reiserfs bkl removal tree could be included in linux-next
+for testing.
+Could you please include it ?
+
+You can pull from:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.g=
+it
+reiserfs/kill-bkl-rc6
+
+Thanks!
+
+
+> Frederic Weisbecker (2):
+> =A0 =A0 =A0kill-the-bkl/reiserfs: acquire the inode mutex safely
+> =A0 =A0 =A0kill-the-bkl/reiserfs: move the concurrent tree accesses c=
+hecks per superblock
+>
+> =A0fs/reiserfs/do_balan.c =A0 =A0 =A0 =A0 | =A0 17 +++++------------
+> =A0fs/reiserfs/fix_node.c =A0 =A0 =A0 =A0 | =A0 =A05 +----
+> =A0fs/reiserfs/journal.c =A0 =A0 =A0 =A0 =A0| =A0 34 ----------------=
+------------------
+> =A0fs/reiserfs/prints.c =A0 =A0 =A0 =A0 =A0 | =A0 =A04 ----
+> =A0fs/reiserfs/stree.c =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A05 +----
+> =A0fs/reiserfs/xattr.c =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A04 ++--
+> =A0include/linux/reiserfs_fs.h =A0 =A0| =A0 35 ++++++++++++++++++++++=
++++++++++++++
+> =A0include/linux/reiserfs_fs_sb.h | =A0 11 +++++++++++
+> =A08 files changed, 55 insertions(+), 60 deletions(-)
+>
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
