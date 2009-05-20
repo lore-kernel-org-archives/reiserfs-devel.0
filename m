@@ -1,44 +1,47 @@
-From: Toby Thain <toby@telegraphics.com.au>
-Subject: Re: reiserfs4 question
-Date: Tue, 19 May 2009 17:12:03 -0400
-Message-ID: <AF2AB7D4-D4EF-44B2-8859-A39A566C8CAF@telegraphics.com.au>
-References: <3791.192.168.1.3.1242738575.squirrel@webmail.decimal.pt>
-Mime-Version: 1.0 (Apple Message framework v753.1)
+From: =?us-ascii?Q?Mr=2E=20Tao?= <tao@post.cz>
+Subject: (unknown)
+Date: Wed, 20 May 2009 17:48:26 +0200 (CEST)
+Message-ID: <325.1470-551-82817687-1242834506@post.cz>
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <3791.192.168.1.3.1242738575.squirrel@webmail.decimal.pt>
+Subject: 
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; delsp="yes"; format="flowed"
-To: Jorge Bastos <mysql.jorge@decimal.pt>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
+I have reiser4 partition which seems to be in unfixable state. When I discovered corruption symptoms (I couldn't delete empty directory with something like "cannot unlink" in messages log) I ran fsck which suggested runing with --build-fs.
+I did and it crashed at cca 96 % with segmentation fault. I got same results with fscking shen booted from latest system rescue cd.
 
-On 19-May-09, at 9:09 AM, Jorge Bastos wrote:
+Contains of fsck.log (without --build-fs option):
 
-> Hi people,
->
-> A simple question, does anyone can tell me information about  
-> reiserfs4, if
-> is it going to be included in the main kernel, and if yes, which  
-> version?
-> I ask this 'cause, thinking on what happened to the reiser creator,  
-> I'm
-> thinking if my next servers will have reiserfs 3x or ext4.
-
-Who not just keep using r3. It's rock solid in my experience.
-
-Hans was convicted, not his code!
-
---Toby
-
->
-> Thanks,
-> Jorge,
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs- 
-> devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+FSCK: tree.c: 186: repair_tree_dknode_check: Node (30687): The last key 
+[d4a5a:4(FB):73776966747765:d4a88:405a0d] in the node is greater then the right
+delimiting key [d4a5a:4(FB):73776966747765:d4a88:382997]. 
+FSCK: filter.c: 415: repair_filter_update_traverse: Node (blk 30802, lev 3) 
+points (item 87, unit 0) to the node [30687] with wrong delimiting keys. The 
+whole subtree is skipped. 
+FSCK: tree.c: 186: repair_tree_dknode_check: Node (29633): The last key 
+[d4b7c:4(FB):75726c636c6173:d4bf0:1a0797e] in the node is greater then the right
+delimiting key [d4b7c:4(FB):75726c636c6173:d4bf0:10b02c3]. 
+FSCK: filter.c: 415: repair_filter_update_traverse: Node (blk 865480, lev 4) 
+points (item 27, unit 0) to the nFSCK: tree.c: 186: repair_tree_dknode_check: Node (30687): The last key 
+[d4a5a:4(FB):73776966747765:d4a88:405a0d] in the node is greater then the right
+delimiting key [d4a5a:4(FB):73776966747765:d4a88:382997]. 
+FSCK: filter.c: 415: repair_filter_update_traverse: Node (blk 30802, lev 3) 
+points (item 87, unit 0) to the node [30687] with wrong delimiting keys. The 
+whole subtree is skipped. 
+FSCK: tree.c: 186: repair_tree_dknode_check: Node (29633): The last key 
+[d4b7c:4(FB):75726c636c6173:d4bf0:1a0797e] in the node is greater then the right
+delimiting key [d4b7c:4(FB):75726c636c6173:d4bf0:10b02c3]. 
+FSCK: filter.c: 415: repair_filter_update_traverse: Node (blk 865480, lev 4) 
+points (item 27, unit 0) to the node [29633] with wrong delimiting keys. The 
+whole subtree is skipped. 
+FSCK: tree.c: 230: repair_tree_dknode_check: Node (blk 34369, lev 3): first key
+[d4b7c:4(FB):75726c636c6173:d4bf0:1aa35df] does not match left delimiting key 
+[d4b7c:4(FB):75726c636c6173:d4bf0:10b02c3] found in parent node (blk 865480, lev
+4, pos 28).  
+FSCK: filter.c: 415: repair_filter_update_traverse: Node (blk 865480, lev 4) 
+points (item 28, unit 0) to the node [34369] with wrong delimiting keys. The 
+whole subtree is skipped.
