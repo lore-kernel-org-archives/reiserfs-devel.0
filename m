@@ -1,98 +1,71 @@
-From: =?ISO-8859-1?Q?Fr=E9d=E9ric_Weisbecker?= <fweisbec@gmail.com>
-Subject: kill-the-bkl/reiserfs: request for linux-next inclusion
-Date: Thu, 21 May 2009 01:40:57 +0200
-Message-ID: <c62985530905201640j4a550b5bi7673e5a9f21029ce@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: kill-the-bkl/reiserfs: request for linux-next inclusion
+Date: Fri, 22 May 2009 10:50:33 +1000
+Message-ID: <20090522105033.1426d409.sfr@canb.auug.org.au>
+References: <c62985530905201640j4a550b5bi7673e5a9f21029ce@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__22_May_2009_10_50_33_+1000_etMAzKJ0zwsHxxJi"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:received:date:message-id:subject
-         :from:to:cc:content-type:content-transfer-encoding;
-        bh=8JfqYTPB5NUla6PQ0XfiexYdTxrt6S2QbOXHSJQ/egY=;
-        b=EoDmS1veUZ99cYxtV0yVh0+Zv38+Szufn5EHSPVZJgkOLTgwjr0vy84WBecXzgeryZ
-         FtDu4Ze9x8T8Kyuazx1KB2oWbIikuGRXz0kS2U2Ey4a9Ft9MR9QraaRCeQ30uy+WIPQB
-         308lHsq+5r8ZlVAAuy1VjGi6QVhWsUmN9ODW0=
+In-Reply-To: <c62985530905201640j4a550b5bi7673e5a9f21029ce@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Reiserfs <reiserfs-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Jeff Mahoney <jeffm@suse.com>, Chris Mason <chris.mason@oracle.com>, Ingo Molnar <mingo@elte.hu>, Alexander Beregalov <a.beregalov@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>
+To: =?UTF-8?B?RnLDqWTDqXJpYw==?= Weisbecker <fweisbec@gmail.com>
+Cc: Reiserfs <reiserfs-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, Chris Mason <chris.mason@oracle.com>, Ingo Molnar <mingo@elte.hu>, Alexander Beregalov <a.beregalov@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>
 
-2009/5/16 Frederic Weisbecker <fweisbec@gmail.com>:
-> Hi Al, Stephen,
+--Signature=_Fri__22_May_2009_10_50_33_+1000_etMAzKJ0zwsHxxJi
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Fr=C3=A9d=C3=A9ric,
+
+On Thu, 21 May 2009 01:40:57 +0200 Fr=C3=A9d=C3=A9ric Weisbecker <fweisbec@=
+gmail.com> wrote:
 >
-> This patchset is subsequent to a rebase of the bkl killing in reiserf=
-s
-> work rebased against -rc6. It contains only fixes.
-> The old topic is left unchanged but the new one reiserfs/kill-bkl-rc6=
- can
-> be pulled against -rc6 without problem.
->
-> Also, Al, I don't know if you would still accept to apply this work i=
-n the VFS
-> tree.
-> The fact is that it becomes late in the process, we are already in -r=
-c6
-> and I would like it to be tested at least in linux-next.
->
-> So, it's up to you. Whether you prefer to apply it and make it
-> available to next, or I can ask Stephen to pull directly from my tree=
-=2E
->
-> Thanks,
-> Frederic.
->
-> The following changes since commit b693ba70c541a5a26eb4e8f2db5ade454a=
-fe1c74:
-> =A0Frederic Weisbecker (1):
-> =A0 =A0 =A0 =A0kill-the-bkl/reiserfs: unlock only when needed in sear=
-ch_by_key
->
-> are available in the git repository at:
->
-> =A0git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-trac=
-ing.git
-> =A0 =A0 =A0 =A0reiserfs/kill-bkl-rc6
+> I guess Al is traveling or something.
+>=20
+> Until it finds its way to the VFS tree, it would be nice if this
+> reiserfs bkl removal tree could be included in linux-next
+> for testing.
+> Could you please include it ?
+>=20
+> You can pull from:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.git
+> reiserfs/kill-bkl-rc6
 
+I have included this tree from today.
 
-Stephen,
+What I tell everyone: all patches/commits in the tree/series must
+have been:
 
-I guess Al is traveling or something.
+	posted to a relevant mailing list
+	reviewed
+	unit tested
+	destined for the next merge window (or the current release)
 
-Until it finds its way to the VFS tree, it would be nice if this
-reiserfs bkl removal tree could be included in linux-next
-for testing.
-Could you please include it ?
+*before* they are included.  The linux-next tree is for integration
+testing and to lower the impact of conflicts between subsystems in the
+next merge window.
 
-You can pull from:
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.g=
-it
-reiserfs/kill-bkl-rc6
+--Signature=_Fri__22_May_2009_10_50_33_+1000_etMAzKJ0zwsHxxJi
+Content-Type: application/pgp-signature
 
-Thanks!
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
+iEYEARECAAYFAkoV9tkACgkQjjKRsyhoI8xprACaApKle8g2Mj7PunYPOAK4NueY
+UCUAoIdW6Er9FhjAp6sRO6YDtydxDqTQ
+=KDll
+-----END PGP SIGNATURE-----
 
-> Frederic Weisbecker (2):
-> =A0 =A0 =A0kill-the-bkl/reiserfs: acquire the inode mutex safely
-> =A0 =A0 =A0kill-the-bkl/reiserfs: move the concurrent tree accesses c=
-hecks per superblock
->
-> =A0fs/reiserfs/do_balan.c =A0 =A0 =A0 =A0 | =A0 17 +++++------------
-> =A0fs/reiserfs/fix_node.c =A0 =A0 =A0 =A0 | =A0 =A05 +----
-> =A0fs/reiserfs/journal.c =A0 =A0 =A0 =A0 =A0| =A0 34 ----------------=
-------------------
-> =A0fs/reiserfs/prints.c =A0 =A0 =A0 =A0 =A0 | =A0 =A04 ----
-> =A0fs/reiserfs/stree.c =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A05 +----
-> =A0fs/reiserfs/xattr.c =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A04 ++--
-> =A0include/linux/reiserfs_fs.h =A0 =A0| =A0 35 ++++++++++++++++++++++=
-+++++++++++++
-> =A0include/linux/reiserfs_fs_sb.h | =A0 11 +++++++++++
-> =A08 files changed, 55 insertions(+), 60 deletions(-)
->
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--Signature=_Fri__22_May_2009_10_50_33_+1000_etMAzKJ0zwsHxxJi--
