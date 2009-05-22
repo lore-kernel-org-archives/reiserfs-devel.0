@@ -1,71 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: kill-the-bkl/reiserfs: request for linux-next inclusion
-Date: Fri, 22 May 2009 10:50:33 +1000
-Message-ID: <20090522105033.1426d409.sfr@canb.auug.org.au>
-References: <c62985530905201640j4a550b5bi7673e5a9f21029ce@mail.gmail.com>
+From: thomas_tsai <thomas@nchc.org.tw>
+Subject: compile error from libreiser4
+Date: Fri, 22 May 2009 00:42:03 -0700 (PDT)
+Message-ID: <23665978.post@talk.nabble.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__22_May_2009_10_50_33_+1000_etMAzKJ0zwsHxxJi"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <c62985530905201640j4a550b5bi7673e5a9f21029ce@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: =?UTF-8?B?RnLDqWTDqXJpYw==?= Weisbecker <fweisbec@gmail.com>
-Cc: Reiserfs <reiserfs-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, Chris Mason <chris.mason@oracle.com>, Ingo Molnar <mingo@elte.hu>, Alexander Beregalov <a.beregalov@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
---Signature=_Fri__22_May_2009_10_50_33_+1000_etMAzKJ0zwsHxxJi
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Fr=C3=A9d=C3=A9ric,
+Hello reiserfs
 
-On Thu, 21 May 2009 01:40:57 +0200 Fr=C3=A9d=C3=A9ric Weisbecker <fweisbec@=
-gmail.com> wrote:
->
-> I guess Al is traveling or something.
->=20
-> Until it finds its way to the VFS tree, it would be nice if this
-> reiserfs bkl removal tree could be included in linux-next
-> for testing.
-> Could you please include it ?
->=20
-> You can pull from:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.git
-> reiserfs/kill-bkl-rc6
+I use libreiser4.a to build a small test and get an error
 
-I have included this tree from today.
+ex:
+I write a test reiser4version.c
+#include <stdio.h>
+#include <reiser4/libreiser4.h>
 
-What I tell everyone: all patches/commits in the tree/series must
-have been:
+int main(int argc, char **argv){
 
-	posted to a relevant mailing list
-	reviewed
-	unit tested
-	destined for the next merge window (or the current release)
+    const char      *lib_ver;
+    lib_ver = (const char *)libreiser4_version();
+    printf("%s\n", lib_ver);
+    return 0;
 
-*before* they are included.  The linux-next tree is for integration
-testing and to lower the impact of conflicts between subsystems in the
-next merge window.
+}
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+compile it
+gcc reiser4_version.c -lreiser4 -laal
 
---Signature=_Fri__22_May_2009_10_50_33_+1000_etMAzKJ0zwsHxxJi
-Content-Type: application/pgp-signature
+get error message
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+   In function `reiser4_profile_override':
+    (.text+0x18d): undefined reference to `misc_str2long'
+    collect2: ld returned 1 exit status
 
-iEYEARECAAYFAkoV9tkACgkQjjKRsyhoI8xprACaApKle8g2Mj7PunYPOAK4NueY
-UCUAoIdW6Er9FhjAp6sRO6YDtydxDqTQ
-=KDll
------END PGP SIGNATURE-----
+IMHO, It's a link problem about misc_str2long because the function is
+defined in libmisc/misc.c.
 
---Signature=_Fri__22_May_2009_10_50_33_+1000_etMAzKJ0zwsHxxJi--
+    nm libreiser4.a | grep misc_str2long
+    U misc_str2long
+
+    nm libmisc.a | grep misc_str2long
+    000003d0 T misc_str2long
+
+My coworkers, Jazz Wang fix the problem and  it works well now...
+
+the patch file here
+http://www.nabble.com/file/p23665978/profile.patch profile.patch 
+
+I really hope it could be patch to upstream in the future version.
+tkx in advanced.
+-- 
+View this message in context: http://www.nabble.com/compile-error-from-libreiser4-tp23665978p23665978.html
+Sent from the ReiserFS - General mailing list archive at Nabble.com.
+
