@@ -1,103 +1,93 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: Reiser4 module and 2.6.29-x-default kernel
-Date: Fri, 22 May 2009 12:13:15 -0400
-Message-ID: <4A16CF1B.30509@suse.com>
-References: <13991.202.168.22.19.1242997798.squirrel@webmail.velocity.net.au> <4A16AAA5.9040105@suse.com> <4A16C922.1090700@gmail.com>
+From: =?ISO-8859-1?Q?Fr=E9d=E9ric_Weisbecker?= <fweisbec@gmail.com>
+Subject: Re: kill-the-bkl/reiserfs: request for linux-next inclusion
+Date: Sun, 24 May 2009 21:41:35 +0200
+Message-ID: <c62985530905241241x2c72e92dn8265fe849b1f0b07@mail.gmail.com>
+References: <c62985530905201640j4a550b5bi7673e5a9f21029ce@mail.gmail.com>
+	 <20090522105033.1426d409.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4A16C922.1090700@gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:received:in-reply-to:references
+         :date:message-id:subject:from:to:cc:content-type
+         :content-transfer-encoding;
+        bh=nLj9iOl2wo8TSFwhO58g5TSpYgbPThCAQ3DvSz9ouIM=;
+        b=mSJ1pw3OAfOi0rGU6t3JTl70tyryHePNaFDV0kf6eqSkZFCSCWaYxlg3JEJRsFUCkc
+         laILjaJf8tBaDr67w+A2Cwy6iVsSw+e5dLaoen2tAm/HZ58XPOaXx+dbPmK91I3xK5po
+         vCZ6Dq0RKH4tjxbTYD09iQMZxQcvY9mAutSPE=
+In-Reply-To: <20090522105033.1426d409.sfr@canb.auug.org.au>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: doiggl@velocitynet.com.au, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Reiserfs <reiserfs-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, Chris Mason <chris.mason@oracle.com>, Ingo Molnar <mingo@elte.hu>, Alexander Beregalov <a.beregalov@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-Edward Shishkin wrote:
-> Jeff Mahoney wrote:
-> doiggl@velocitynet.com.au wrote:
->  
->>>> Hello,
->>>> How can I manually create a installable reiser4 rpm module for a new
->>>> kernel, because the opensuse build service seems stuck on a older
->>>> kernel .
->>>> I need all of the steps please, (commands please) so I can create the
->>>> installable rpm module.
->>>>     
-> 
-> Hi Glenn -
-> 
->   
-> 
->> Hello everyone.
-> 
-> I'm afraid it's not as simple as a series of commands. I do need to
-> update the patch to the 2.6.29 version
-> 
->> ah, you maintain 2.6.small_nr + series of patches..?
-
-I'm one of the maintainers of the SUSE kernels. For current Factory,
-that means 2.6.30-rc6-git3 plus about 270 patches.
-
-In this case, though, I just meant that I take the patch from your FTP
-repo and turn it into a tarball for use in building an RPM. I take the
-bits that aren't under fs/reiser4/ and apply them to our kernel tree so
-users trying to use reiser4 aren't stuck having to rebuild their entire
-kernel just to use it.
-
->  which doesn't have the
-> ->commit_write and ->prepare_write hooks that have been removed.
-> 
->> this goes here:
->> http://userweb.kernel.org/~akpm/mmotm/broken-out/reiser4-adjust-to-the-new-aops.patch
-
-Yes, and as far as I saw, the current patch in the repo doesn't use them
-either.
+Le 22 mai 2009 02:50, Stephen Rothwell <sfr@canb.auug.org.au> a =E9crit=
+ :
+> Hi Fr=E9d=E9ric,
+>
+> On Thu, 21 May 2009 01:40:57 +0200 Fr=E9d=E9ric Weisbecker <fweisbec@=
+gmail.com> wrote:
+>>
+>> I guess Al is traveling or something.
+>>
+>> Until it finds its way to the VFS tree, it would be nice if this
+>> reiserfs bkl removal tree could be included in linux-next
+>> for testing.
+>> Could you please include it ?
+>>
+>> You can pull from:
+>>
+>> git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracin=
+g.git
+>> reiserfs/kill-bkl-rc6
+>
+> I have included this tree from today.
+>
+> What I tell everyone: all patches/commits in the tree/series must
+> have been:
+>
+> =A0 =A0 =A0 =A0posted to a relevant mailing list
+> =A0 =A0 =A0 =A0reviewed
+> =A0 =A0 =A0 =A0unit tested
+> =A0 =A0 =A0 =A0destined for the next merge window (or the current rel=
+ease)
 
 
->  The
-> other thing is that it needs more support in the kernel itself.
-> Previously it was limited to exports and adding a new hook, which I
-> could accept without much worry. I'm concerned about whether
-> set_buffers_dirty_notag() will make it upstream and I'm uncertain of the
-> interactions.
->   
-> 
->> I think it'll be pushed to upstream simultaneously with reiser4,
->> unless someone needs to not tag every dirty page in the radix tree..
-> 
-> Edward - What's the reasoning behind it?
-> 
->> The reason is to reduce a cost of maintenance.
-> 
->> Since reiser4_set_page_internal() is not in vfs library
->> bad things are bound to happen. For example, set_page_dirty()
->> and friends were modified by vfs folks to update dirty pages
->> accounting and of course nobody knew that there are other
->> "friends" in reiser4 code, so I have spent a lot of time to figure
->> out why oom kills processes of dbench 190...
-> 
->  Has it been submitted upstream
-> yet?
-> 
->> Nup, this is in -mm
+
+Thanks,
+
+I remember there was a checklist like that for linux-next but couldn't
+retrieve it.
+They meet all these requirements except the reviewed part.
+Some of them have been reviewed by several people but not the last batc=
+hes,
+(or at least the last batches haven't received any comments).
 
 
-Ok, if that's the goal, I can just track it when I update the reiser4 patch.
 
-- -Jeff
+> *before* they are included. =A0The linux-next tree is for integration
+> testing and to lower the impact of conflicts between subsystems in th=
+e
+> next merge window.
+>
+> Basically, this should be just what you would send to Linus (or ask h=
+im
+> to fetch). =A0It is allowed to be rebased if you deem it necessary.
 
-- --
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
 
-iEYEARECAAYFAkoWzxsACgkQLPWxlyuTD7KBqACgnERKLvlHHK7Tzhu/QSdQZBfE
-CpkAnjge3xN0v0qGH35s/A67caQ4G90K
-=Djsu
------END PGP SIGNATURE-----
+Ok thanks.
+
+
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+> http://www.canb.auug.org.au/~sfr/
+>
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
