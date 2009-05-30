@@ -1,73 +1,64 @@
-From: doiggl@velocitynet.com.au
-Subject: Re: Reiser4 module and 2.6.29-x-default kernel
-Date: Sun, 31 May 2009 00:07:03 +1000 (EST)
-Message-ID: <27301.202.168.22.19.1243692423.squirrel@webmail.velocity.net.au>
-References: <13991.202.168.22.19.1242997798.squirrel@webmail.velocity.net.au>
-    <4A16AAA5.9040105@suse.com> <4A16C922.1090700@gmail.com>
-    <4A16CF1B.30509@suse.com>
-    <11576.202.168.22.19.1243470735.squirrel@webmail.velocity.net.au>
-    <4A1E00B4.1000706@suse.com>
+From: "Trenton D. Adams" <trenton.d.adams@gmail.com>
+Subject: Re: [PATCH 1/2] kill-the-bkl/reiserfs: acquire the inode mutex safely
+Date: Sat, 30 May 2009 12:07:57 -0600
+Message-ID: <9b1675090905301107t4884caccn937b0ccfd100d6aa@mail.gmail.com>
+References: <1242496922-6330-1-git-send-email-fweisbec@gmail.com>
+	 <1242496922-6330-2-git-send-email-fweisbec@gmail.com>
+	 <9b1675090905292005p2b53de7dy9e36f84368d76f01@mail.gmail.com>
+	 <20090530032253.GA5999@nowhere>
+	 <9b1675090905292123l7c3de4b6w897e153d60e5a469@mail.gmail.com>
+	 <20090530134132.GA5969@nowhere>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4A1E00B4.1000706@suse.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:received:in-reply-to:references
+         :date:message-id:subject:from:to:cc:content-type
+         :content-transfer-encoding;
+        bh=jYqG220vt7VpZEXKLjMKxLHiyIoh60HBb0k7NsnblYQ=;
+        b=x4mu5JwVygxAfAQhywLzopmZjk8AfUyk/eX82+hlA2WmHIyil5X/wkfhACC3tLjxEz
+         GxSXgpWQo0Gj2YDAlsgE61kvh8u687sJirEbrHTdvrpEJUqIdlhS3fMhI5G4OwTNpbqT
+         IwbDL1cFZyj+uti6IJUnbBqbLzjD2J0d5LsuE=
+In-Reply-To: <20090530134132.GA5969@nowhere>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+To: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Reiserfs <reiserfs-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Jeff Mahoney <jeffm@suse.com>, Chris Mason <chris.mason@oracle.com>, Ingo Molnar <mingo@elte.hu>, Alexander Beregalov <a.beregalov@gmail.com>
 
-Hello,
-I note from the build log that it fails.
-https://build.opensuse.org/package/live_build_log?arch=x86_64&package=reiser4-kmp&project=drivers%3Afilesystems&repository=openSUSE_Factory
-note the errors on prepare_write & commit_write lines
-
- CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry_ops.o
-/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry_ops.c: In function
-'find_left_neighbor':
-/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry_ops.c:81: warning:
-suggest parentheses around operand of '!' or change '&' to '&&' or '!' to
-'~'
-/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry_ops.c: In function
-'find_right_neighbor':
-/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry_ops.c:205: warning:
-suggest parentheses around operand of '!' or change '&' to '&&' or '!' to
-'~'
-CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/lock.o
-CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/tree.o
-CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/context.o
-CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/tap.o
-CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/coord.o
-CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/block_alloc.o
-CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/txnmgr.o
-CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/kassign.o
-CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/flush.o
-CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/wander.o
-CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/eottl.o
-CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/search.o
-CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/page_cache.o
-/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/page_cache.c:563: error:
-unknown field 'prepare_write' specified in initializer
-/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/page_cache.c:564: error:
-unknown field 'commit_write' specified in initializer
-make[3]: ***
-[/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/page_cache.o] Error 1
-make[2]: *** [_module_/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug]
-Error 2
-make[1]: *** [sub-make] Error 2
-make: *** [all] Error 2
-make: Leaving directory `/usr/src/linux-2.6.30-rc6-git3-4-obj/x86_64/debug'
-error: Bad exit status from /var/tmp/rpm-tmp.67120 (%build)
-
-
-RPM build errors:
-cannot open Pubkeys index using db3 - No such file or directory (2)
-Bad exit status from /var/tmp/rpm-tmp.67120 (%build)
-System halted.
-
-
-Jeff Mahoney wrote:
-> Ok, if that's the goal, I can just track it when I update the reiser4
-patch.
-> - -Jeff
+On Sat, May 30, 2009 at 7:41 AM, Frederic Weisbecker <fweisbec@gmail.co=
+m> wrote:
+> On Fri, May 29, 2009 at 10:23:44PM -0600, Trenton D. Adams wrote:
+>>
+>> I was trying to imply that the patch might fix the problem I saw, no=
+t
+>> that it was the cause. =A0I only though that because it mentioned a
+>> potential deadlock, and it seems like that is what the problem I saw
+>> was.
 >
+>
+> Ah ok. No it's part of a tree which reworks the reiserfs locking sche=
+me
+> by removing the old one based on the legacy and obsolete bkl (big ker=
+nel
+> lock). In this tree I had to fix several deadlocks or at least unsafe
+> lock states because the bkl is converted into a mutex and some new lo=
+ck
+> dependencies were borned after that. But these issues had nothing
+> to deal with upstream problems.
+>
+> BTW, would you be interested in giving a try with this reiserfs bkl
+> removal tree? I really lack testing and feedbacks from users.
 
+Well, the problem is that I only use reiserfs on my usb stick at the
+moment.  So, the amount of testing I could do would be minimal at the
+moment.  However, if I change my local filesystems to reiserfs, I will
+remember to check back here for your patch.
+
+Thanks.
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
