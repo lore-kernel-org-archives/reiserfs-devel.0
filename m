@@ -1,97 +1,73 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [PATCH 1/2] kill-the-bkl/reiserfs: acquire the inode mutex
-	safely
-Date: Sat, 30 May 2009 15:41:33 +0200
-Message-ID: <20090530134132.GA5969@nowhere>
-References: <1242496922-6330-1-git-send-email-fweisbec@gmail.com> <1242496922-6330-2-git-send-email-fweisbec@gmail.com> <9b1675090905292005p2b53de7dy9e36f84368d76f01@mail.gmail.com> <20090530032253.GA5999@nowhere> <9b1675090905292123l7c3de4b6w897e153d60e5a469@mail.gmail.com>
+From: doiggl@velocitynet.com.au
+Subject: Re: Reiser4 module and 2.6.29-x-default kernel
+Date: Sun, 31 May 2009 00:07:03 +1000 (EST)
+Message-ID: <27301.202.168.22.19.1243692423.squirrel@webmail.velocity.net.au>
+References: <13991.202.168.22.19.1242997798.squirrel@webmail.velocity.net.au>
+    <4A16AAA5.9040105@suse.com> <4A16C922.1090700@gmail.com>
+    <4A16CF1B.30509@suse.com>
+    <11576.202.168.22.19.1243470735.squirrel@webmail.velocity.net.au>
+    <4A1E00B4.1000706@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:received:date:from:to:cc
-         :subject:message-id:references:mime-version:content-type
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ys19/eh0ivYodLnMKwJDmmH+HJ9iyuAhdW1X1RBhsPE=;
-        b=VQZREndHebmCsbNqQAMEG9dC2Lchegv+wr0nnj/zvtloKO9oa72mfTAoSdoQ0KWKUf
-         i9ln6/0x3M7CIAA7wC5it4mMkxcGGtPVmgT3YpfVrmdrgWhjwEi9ZubZeQ8+/Cl9Cm/T
-         Hq4hmgb2JgjiwNNbbp/xSOkjgu+TyPZmBgjb0=
-Content-Disposition: inline
-In-Reply-To: <9b1675090905292123l7c3de4b6w897e153d60e5a469@mail.gmail.com>
+In-Reply-To: <4A1E00B4.1000706@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: "Trenton D. Adams" <trenton.d.adams@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Reiserfs <reiserfs-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Jeff Mahoney <jeffm@suse.com>, Chris Mason <chris.mason@oracle.com>, Ingo Molnar <mingo@elte.hu>, Alexander Beregalov <a.beregalov@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Jeff Mahoney <jeffm@suse.com>, reiserfs-devel@vger.kernel.org
 
-On Fri, May 29, 2009 at 10:23:44PM -0600, Trenton D. Adams wrote:
-> On Fri, May 29, 2009 at 9:22 PM, Frederic Weisbecker <fweisbec@gmail.=
-com> wrote:
-> > On Fri, May 29, 2009 at 09:05:31PM -0600, Trenton D. Adams wrote:
-> >> On Sat, May 16, 2009 at 12:02 PM, Frederic Weisbecker
-> >> <fweisbec@gmail.com> wrote:
-> >> > While searching a pathname, an inode mutex can be acquired
-> >> > in do_lookup() which calls reiserfs_lookup() which in turn
-> >> > acquires the write lock.
-> >> >
-> >> > On the other side reiserfs_fill_super() can acquire the write_lo=
-ck
-> >> > and then call reiserfs_lookup_privroot() which can acquire an
-> >> > inode mutex (the root of the mount point).
-> >> >
-> >> > So we theoretically risk an AB - BA lock inversion that could le=
-ad
-> >> > to a deadlock.
-> >> >
-> >> > As for other lock dependencies found since the bkl to mutex
-> >> > conversion, the fix is to use reiserfs_mutex_lock_safe() which
-> >> > drops the lock dependency to the write lock.
-> >> >
-> >>
-> >> I'm curious, did this get applied, and is it related to the follow=
-ing?
-> >> =A0I was having these in 2.6.30-rc3. =A0I am now on 2.6.30-rc7 as =
-of
-> >> today. =A0I haven't seen them today. =A0But then again, I only see=
-n this
-> >> happen one time.
-> >
-> >
-> > Hi,
-> >
-> > No, may be it will come for 2.6.31 but for now it is not merged so
-> > it's not related.
-> >
-> > If you see such warning anymore, don't hesitate to tell about
-> > it!
-> >
-> > Thanks!
-> >
->=20
-> I was trying to imply that the patch might fix the problem I saw, not
-> that it was the cause.  I only though that because it mentioned a
-> potential deadlock, and it seems like that is what the problem I saw
-> was.
+Hello,
+I note from the build log that it fails.
+https://build.opensuse.org/package/live_build_log?arch=x86_64&package=reiser4-kmp&project=drivers%3Afilesystems&repository=openSUSE_Factory
+note the errors on prepare_write & commit_write lines
+
+ CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry_ops.o
+/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry_ops.c: In function
+'find_left_neighbor':
+/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry_ops.c:81: warning:
+suggest parentheses around operand of '!' or change '&' to '&&' or '!' to
+'~'
+/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry_ops.c: In function
+'find_right_neighbor':
+/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry_ops.c:205: warning:
+suggest parentheses around operand of '!' or change '&' to '&&' or '!' to
+'~'
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/lock.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/tree.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/context.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/tap.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/coord.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/block_alloc.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/txnmgr.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/kassign.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/flush.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/wander.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/eottl.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/search.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/page_cache.o
+/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/page_cache.c:563: error:
+unknown field 'prepare_write' specified in initializer
+/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/page_cache.c:564: error:
+unknown field 'commit_write' specified in initializer
+make[3]: ***
+[/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/page_cache.o] Error 1
+make[2]: *** [_module_/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug]
+Error 2
+make[1]: *** [sub-make] Error 2
+make: *** [all] Error 2
+make: Leaving directory `/usr/src/linux-2.6.30-rc6-git3-4-obj/x86_64/debug'
+error: Bad exit status from /var/tmp/rpm-tmp.67120 (%build)
 
 
-Ah ok. No it's part of a tree which reworks the reiserfs locking scheme
-by removing the old one based on the legacy and obsolete bkl (big kerne=
-l
-lock). In this tree I had to fix several deadlocks or at least unsafe
-lock states because the bkl is converted into a mutex and some new lock
-dependencies were borned after that. But these issues had nothing
-to deal with upstream problems.
+RPM build errors:
+cannot open Pubkeys index using db3 - No such file or directory (2)
+Bad exit status from /var/tmp/rpm-tmp.67120 (%build)
+System halted.
 
-BTW, would you be interested in giving a try with this reiserfs bkl
-removal tree? I really lack testing and feedbacks from users.
 
-Thanks!
+Jeff Mahoney wrote:
+> Ok, if that's the goal, I can just track it when I update the reiser4
+patch.
+> - -Jeff
+>
 
-=46rederic.
-
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
