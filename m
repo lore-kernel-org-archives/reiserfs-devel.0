@@ -1,64 +1,50 @@
-From: "Trenton D. Adams" <trenton.d.adams@gmail.com>
-Subject: Re: [PATCH 1/2] kill-the-bkl/reiserfs: acquire the inode mutex safely
-Date: Sat, 30 May 2009 12:07:57 -0600
-Message-ID: <9b1675090905301107t4884caccn937b0ccfd100d6aa@mail.gmail.com>
-References: <1242496922-6330-1-git-send-email-fweisbec@gmail.com>
-	 <1242496922-6330-2-git-send-email-fweisbec@gmail.com>
-	 <9b1675090905292005p2b53de7dy9e36f84368d76f01@mail.gmail.com>
-	 <20090530032253.GA5999@nowhere>
-	 <9b1675090905292123l7c3de4b6w897e153d60e5a469@mail.gmail.com>
-	 <20090530134132.GA5969@nowhere>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 13374] reiserfs blocked for more than 120secs
+Date: Mon, 1 Jun 2009 20:35:12 GMT
+Message-ID: <200906012035.n51KZCuF020557@demeter.kernel.org>
+References: <bug-13374-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 8BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:received:in-reply-to:references
-         :date:message-id:subject:from:to:cc:content-type
-         :content-transfer-encoding;
-        bh=jYqG220vt7VpZEXKLjMKxLHiyIoh60HBb0k7NsnblYQ=;
-        b=x4mu5JwVygxAfAQhywLzopmZjk8AfUyk/eX82+hlA2WmHIyil5X/wkfhACC3tLjxEz
-         GxSXgpWQo0Gj2YDAlsgE61kvh8u687sJirEbrHTdvrpEJUqIdlhS3fMhI5G4OwTNpbqT
-         IwbDL1cFZyj+uti6IJUnbBqbLzjD2J0d5LsuE=
-In-Reply-To: <20090530134132.GA5969@nowhere>
+In-Reply-To: <bug-13374-695@http.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Reiserfs <reiserfs-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Jeff Mahoney <jeffm@suse.com>, Chris Mason <chris.mason@oracle.com>, Ingo Molnar <mingo@elte.hu>, Alexander Beregalov <a.beregalov@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-On Sat, May 30, 2009 at 7:41 AM, Frederic Weisbecker <fweisbec@gmail.co=
-m> wrote:
-> On Fri, May 29, 2009 at 10:23:44PM -0600, Trenton D. Adams wrote:
->>
->> I was trying to imply that the patch might fix the problem I saw, no=
-t
->> that it was the cause. =A0I only though that because it mentioned a
->> potential deadlock, and it seems like that is what the problem I saw
->> was.
->
->
-> Ah ok. No it's part of a tree which reworks the reiserfs locking sche=
-me
-> by removing the old one based on the legacy and obsolete bkl (big ker=
-nel
-> lock). In this tree I had to fix several deadlocks or at least unsafe
-> lock states because the bkl is converted into a mutex and some new lo=
-ck
-> dependencies were borned after that. But these issues had nothing
-> to deal with upstream problems.
->
-> BTW, would you be interested in giving a try with this reiserfs bkl
-> removal tree? I really lack testing and feedbacks from users.
+http://bugzilla.kernel.org/show_bug.cgi?id=13374
 
-Well, the problem is that I only use reiserfs on my usb stick at the
-moment.  So, the amount of testing I could do would be minimal at the
-moment.  However, if I change my local filesystems to reiserfs, I will
-remember to check back here for your patch.
 
-Thanks.
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+--- Comment #1 from Rafael J. Wysocki <rjw@sisk.pl>  2009-06-01 20:35:12 ---
+On Sunday 31 May 2009, Frederic Weisbecker wrote:
+> On Sat, May 30, 2009 at 09:37:36PM +0200, Rafael J. Wysocki wrote:
+> > This message has been generated automatically as a part of a report
+> > of recent regressions.
+> > 
+> > The following bug entry is on the current list of known regressions
+> > from 2.6.29.  Please verify if it still should be listed and let me know
+> > (either way).
+> > 
+> > 
+> > Bug-Entry	: http://bugzilla.kernel.org/show_bug.cgi?id=13374
+> > Subject		: reiserfs blocked for more than 120secs
+> > Submitter	: Harald Dunkel <harald.dunkel@t-online.de>
+> > Date		: 2009-05-23 8:52 (8 days old)
+> > References	: http://marc.info/?l=linux-kernel&m=124306880410811&w=4
+> > 
+> 
+> Trenton D. Adams has reported something very similar for -rc3:
+> 
+> http://lkml.org/lkml/2009/5/29/389
+> 
+> Someone holds the j_commit_mutex but never release it...
+
+References : http://lkml.org/lkml/2009/5/29/389
+
+-- 
+Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
