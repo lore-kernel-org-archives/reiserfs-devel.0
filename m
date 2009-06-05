@@ -1,116 +1,36 @@
-From: Artem Bityutskiy <dedekind@infradead.org>
-Subject: [PATCH v2.1 12/17] reiserfs: do not manipulate s_dirt directly
-Date: Fri,  5 Jun 2009 16:05:50 +0300
-Message-ID: <1244207155-2092-13-git-send-email-dedekind@infradead.org>
-References: <1244207155-2092-1-git-send-email-dedekind@infradead.org>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 13374] reiserfs blocked for more than 120secs
+Date: Fri, 5 Jun 2009 18:25:48 GMT
+Message-ID: <200906051825.n55IPmoZ006512@demeter.kernel.org>
+References: <bug-13374-695@http.bugzilla.kernel.org/>
+Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1244207155-2092-1-git-send-email-dedekind@infradead.org>
+In-Reply-To: <bug-13374-695@http.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+http://bugzilla.kernel.org/show_bug.cgi?id=13374
 
-... use new VFS helpers instead.
 
-Signed-off-by: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
-Cc: reiserfs-devel@vger.kernel.org
----
- fs/reiserfs/journal.c |    6 +++---
- fs/reiserfs/resize.c  |    2 +-
- fs/reiserfs/super.c   |   10 +++++-----
- 3 files changed, 9 insertions(+), 9 deletions(-)
+Jeff Mahoney <jeffm@suse.com> changed:
 
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index 77f5bb7..1d2fb0e 100644
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -3259,7 +3259,7 @@ int journal_mark_dirty(struct reiserfs_transaction_handle *th,
- 			       th->t_trans_id, journal->j_trans_id);
- 	}
- 
--	sb->s_dirt = 1;
-+	mark_sb_dirty(sb);
- 
- 	prepared = test_clear_buffer_journal_prepared(bh);
- 	clear_buffer_journal_restore_dirty(bh);
-@@ -3554,7 +3554,7 @@ int reiserfs_flush_old_commits(struct super_block *sb)
- 			do_journal_end(&th, sb, 1, COMMIT_NOW | WAIT);
- 		}
- 	}
--	return sb->s_dirt;
-+	return is_sb_dirty(sb);
- }
- 
- /*
-@@ -3984,7 +3984,7 @@ static int do_journal_end(struct reiserfs_transaction_handle *th,
- 	 ** it tells us if we should continue with the journal_end, or just return
- 	 */
- 	if (!check_journal_end(th, sb, nblocks, flags)) {
--		sb->s_dirt = 1;
-+		mark_sb_dirty(sb);
- 		wake_queued_writers(sb);
- 		reiserfs_async_progress_wait(sb);
- 		goto out;
-diff --git a/fs/reiserfs/resize.c b/fs/reiserfs/resize.c
-index 238e9d9..9157d38 100644
---- a/fs/reiserfs/resize.c
-+++ b/fs/reiserfs/resize.c
-@@ -202,7 +202,7 @@ int reiserfs_resize(struct super_block *s, unsigned long block_count_new)
- 					  (bmap_nr_new - bmap_nr)));
- 	PUT_SB_BLOCK_COUNT(s, block_count_new);
- 	PUT_SB_BMAP_NR(s, bmap_would_wrap(bmap_nr_new) ? : bmap_nr_new);
--	s->s_dirt = 1;
-+	mark_sb_dirty(s);
- 
- 	journal_mark_dirty(&th, s, SB_BUFFER_WITH_SB(s));
- 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 90dcb7b..f45c78f 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -70,8 +70,8 @@ static int reiserfs_sync_fs(struct super_block *s, int wait)
- 	if (!journal_begin(&th, s, 1))
- 		if (!journal_end_sync(&th, s, 1))
- 			reiserfs_flush_old_commits(s);
--	s->s_dirt = 0;	/* Even if it's not true.
--			 * We'll loop forever in sync_supers otherwise */
-+	mark_sb_clean(s); /* Even if it's not true.
-+			   * We'll loop forever in sync_supers otherwise */
- 	reiserfs_write_unlock(s);
- 	return 0;
- }
-@@ -97,7 +97,7 @@ static int reiserfs_freeze(struct super_block *s)
- 			journal_end_sync(&th, s, 1);
- 		}
- 	}
--	s->s_dirt = 0;
-+	mark_sb_clean(s);
- 	reiserfs_write_unlock(s);
- 	return 0;
- }
-@@ -467,7 +467,7 @@ static void reiserfs_put_super(struct super_block *s)
- 
- 	lock_kernel();
- 
--	if (s->s_dirt)
-+	if (is_sb_dirty(s))
- 		reiserfs_write_super(s);
- 
- 	/* change file system state to current state if it was mounted with read-write permissions */
-@@ -1309,7 +1309,7 @@ static int reiserfs_remount(struct super_block *s, int *mount_flags, char *arg)
- 	err = journal_end(&th, s, 10);
- 	if (err)
- 		goto out_err;
--	s->s_dirt = 0;
-+	mark_sb_clean(s);
- 
- 	if (!(*mount_flags & MS_RDONLY)) {
- 		finish_unfinished(s);
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |jeffm@suse.com
+         AssignedTo|reiserfs-devel@vger.kernel. |jeffm@suse.com
+                   |org                         |
+
+
+
+
+--- Comment #2 from Jeff Mahoney <jeffm@suse.com>  2009-06-05 18:25:47 ---
+Can you capture a sysrq+t when this is occuring? The lock is properly released,
+but I have a hunch that another thread is waiting on ordered writeback.
+
 -- 
-1.6.0.6
-
+Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
