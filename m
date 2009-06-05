@@ -1,11 +1,11 @@
 From: Artem Bityutskiy <dedekind@infradead.org>
-Subject: [PATCH v2 12/17] reiserfs: do not manipulate s_dirt directly
-Date: Thu,  4 Jun 2009 13:41:49 +0300
-Message-ID: <1244112114-23144-13-git-send-email-dedekind@infradead.org>
-References: <1244112114-23144-1-git-send-email-dedekind@infradead.org>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <1244112114-23144-1-git-send-email-dedekind@infradead.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Subject: [PATCH v2.1 12/17] reiserfs: do not manipulate s_dirt directly
+Date: Fri,  5 Jun 2009 16:05:50 +0300
+Message-ID: <1244207155-2092-13-git-send-email-dedekind@infradead.org>
+References: <1244207155-2092-1-git-send-email-dedekind@infradead.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <1244207155-2092-1-git-send-email-dedekind@infradead.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -43,7 +43,7 @@ index 77f5bb7..1d2fb0e 100644
  		}
  	}
 -	return sb->s_dirt;
-+	return sb_is_dirty(sb);
++	return is_sb_dirty(sb);
  }
  
  /*
@@ -98,7 +98,7 @@ index 90dcb7b..f45c78f 100644
  	lock_kernel();
  
 -	if (s->s_dirt)
-+	if (sb_is_dirty(s))
++	if (is_sb_dirty(s))
  		reiserfs_write_super(s);
  
  	/* change file system state to current state if it was mounted with read-write permissions */
