@@ -1,108 +1,121 @@
-From: "Trenton D. Adams" <trenton.d.adams@gmail.com>
-Subject: Re: [PATCH 1/2] kill-the-bkl/reiserfs: acquire the inode mutex safely
-Date: Fri, 5 Jun 2009 13:57:32 -0600
-Message-ID: <9b1675090906051257t5aad47capccfcf1c94f863a66@mail.gmail.com>
-References: <1242496922-6330-1-git-send-email-fweisbec@gmail.com>
-	 <1242496922-6330-2-git-send-email-fweisbec@gmail.com>
-	 <9b1675090905292005p2b53de7dy9e36f84368d76f01@mail.gmail.com>
-	 <4A296343.4050005@suse.com>
-	 <9b1675090906051206we136e88k6a14194963726709@mail.gmail.com>
-	 <4A29723C.2030102@suse.com>
+From: doiggl@velocitynet.com.au
+Subject: Build Log failure for Package reiser4-kmp
+Date: Mon, 8 Jun 2009 15:38:52 +1000 (EST)
+Message-ID: <12161.202.168.22.19.1244439532.squirrel@webmail.velocity.net.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:received:in-reply-to:references
-         :date:message-id:subject:from:to:cc:content-type
-         :content-transfer-encoding;
-        bh=IzB+SCcJdm0uDz+gemVEIDbzdDF873HVV5gb71VDvQ8=;
-        b=ChAx/3/wosbRK/L2Vl7owbdDvJqrHZcZ3lViHfDuHGgGwyUEx7qG/iBq3WQsOBUnz7
-         4ikqTto+SOTw/TpHqPkwvAfOT8TuL2o6qzZT+Wxegxf4Gzb59OLGCUyNBErdajJbTBsZ
-         GGGjWRDvOU/gACvMJP/6Rou5chGVPG8ypjv3c=
-In-Reply-To: <4A29723C.2030102@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 To: Jeff Mahoney <jeffm@suse.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, Reiserfs <reiserfs-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Chris Mason <chris.mason@oracle.com>, Ingo Molnar <mingo@elte.hu>, Alexander Beregalov <a.beregalov@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-I'll see if I can try that this weekend.
+Hello,
+I have some questions.
+Question 1.
+Where is the place to check what kernel level the reiser 4 rpm module is
+compiled against.
+It is not easy to tell what kernel level is needed at the installation
+time of the rpm module.As an example I did install
+reiser4-kmp-default-0.1_2.6.27.13_3-27.17 on kernel 2.6.27.7-9-default
+x86_64.
+I cannot update the module to reiser4-kmp-default-0.1_2.6.27.7_9.1-27.3
+which I presume is the last successfully compiled one as I have not got
+the correct kernel installed.
+(output...)
+# rpm -ivhU reiser4-kmp-default-0.1_2.6.27.13_3-27.17.x86_64.rpm
+warning: reiser4-kmp-default-0.1_2.6.27.13_3-27.17.x86_64.rpm: Header V3
+DSA signature: NOKEY, key ID 74de2879
+error: Failed dependencies:
+        kernel(default:kernel) = c27d618420e5a365 is needed by
+reiser4-kmp-default-0.1_2.6.27.13_3-27.17.x86_64
+        kernel(default:kernel) = cb9e58600a4dd393 is needed by
+reiser4-kmp-default-0.1_2.6.27.13_3-27.17.x86_64
+        kernel(default:mm) = 86199f6cc0bdd6fa is needed by
+reiser4-kmp-default-0.1_2.6.27.13_3-27.17.x86_64
+        kernel(default:vmlinux) = 6535f6c0489f55c0 is needed by
+reiser4-kmp-default-0.1_2.6.27.13_3-27.17.x86_64
+        kernel(default:arch_x86_kernel) = 84463955bcd9679b is needed by
+reiser4-kmp-default-0.1_2.6.27.13_3-27.17.x86_64
+        kernel(default:fs) = 8a2ea2f7b702a737 is needed by
+reiser4-kmp-default-0.1_2.6.27.13_3-27.17.x86_64
+        kernel(default:fs) = f10b21074e25c0fd is needed by
+reiser4-kmp-default-0.1_2.6.27.13_3-27.17.x86_64
+        kernel(default:fs_debugfs) = 33cc6cf4c644fb99 is needed by
+reiser4-kmp-default-0.1_2.6.27.13_3-27.17.x86_64
+        kernel(default:block) = 8236e5907394d933 is needed by
+reiser4-kmp-default-0.1_2.6.27.13_3-27.17.x86_64
+        kernel(default:lib) = 0e4b7a90761724ad is needed by
+reiser4-kmp-default-0.1_2.6.27.13_3-27.17.x86_64
 
-Thanks.
 
-On Fri, Jun 5, 2009 at 1:30 PM, Jeff Mahoney<jeffm@suse.com> wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
->
-> Trenton D. Adams wrote:
->> FYI: I never did anything specific that I knew of, so I didn't
->> actually notice a delay. =A0I was rsyncing to a USB key at the time.
->> And seeing it took over an hour, I walked away, so I wouldn't have
->> noticed it. =A0But, I could fiddle around a little to see if I could=
- get
->> some sort of delay going on. =A0Any ideas on what I should try? =A0T=
-hen I
->> can do the sysreq+t for you if I can reproduce.
->
-> Well if the rsync triggered it, that's a good start.
->
-> Try applying the following patch as well. It will cause the hung task=
- detector
-> to do a sysrq+t automatically so it's not as much of a guessing game.=
- You'll need to boot with
-> hung_task_show_state=3D1.
->
+Question 2.
+Is there a chance to get the reiser4 module compiling again to a working
+state as the build shows a compile failure on the prepare_write &
+commit_write lines.
+It would be greatly appreciated to use the module for more recent kernels.
+Thanks for your help Glenn
+
+(last section of log..)
+https://build.opensuse.org/package/live_build_log?arch=x86_64&package=reiser4-kmp&project=drivers%3Afilesystems&repository=openSUSE_Factory
+.
+.
+make -C ../../../linux-2.6.30-rc6-git3-4
+O=/usr/src/linux-2.6.30-rc6-git3-4-obj/x86_64/debug/. modules
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/debug.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/jnode.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/znode.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/key.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/pool.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/tree_mod.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/estimate.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry_ops.o
+/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry_ops.c: In function
+'find_left_neighbor':
+/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry_ops.c:81: warning:
+suggest parentheses around operand of '!' or change '&' to '&&' or '!' to
+'~'
+/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry_ops.c: In function
+'find_right_neighbor':
+/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/carry_ops.c:205: warning:
+suggest parentheses around operand of '!' or change '&' to '&&' or '!' to
+'~'
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/lock.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/tree.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/context.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/tap.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/coord.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/block_alloc.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/txnmgr.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/kassign.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/flush.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/wander.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/eottl.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/search.o
+CC [M] /usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/page_cache.o
+/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/page_cache.c:563: error:
+unknown field 'prepare_write' specified in initializer
+/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/page_cache.c:564: error:
+unknown field 'commit_write' specified in initializer
+make[3]: ***
+[/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug/page_cache.o] Error 1
+make[2]: *** [_module_/usr/src/packages/BUILD/reiser4-2.6.27/obj/debug]
+Error 2
+make[1]: *** [sub-make] Error 2
+make: *** [all] Error 2
+make: Leaving directory `/usr/src/linux-2.6.30-rc6-git3-4-obj/x86_64/debug'
+error: Bad exit status from /var/tmp/rpm-tmp.67120 (%build)
+
+RPM build errors:
+cannot open Pubkeys index using db3 - No such file or directory (2)
+Bad exit status from /var/tmp/rpm-tmp.67120 (%build)
+System halted.
+
+Jeff Mahoney wrote:
+> Ok, if that's the goal, I can just track it when I update the reiser4
+patch.
 > - -Jeff
 >
-> - ---
-> =A0kernel/hung_task.c | =A0 11 +++++++++++
-> =A01 file changed, 11 insertions(+)
->
-> - --- a/kernel/hung_task.c
-> +++ b/kernel/hung_task.c
-> @@ -56,6 +56,14 @@ static int __init hung_task_panic_setup(
-> =A0}
-> =A0__setup("hung_task_panic=3D", hung_task_panic_setup);
->
-> +unsigned int __read_mostly sysctl_hung_task_show_state;
-> +static int __init hung_task_show_state_setup(char *str)
-> +{
-> + =A0 =A0 =A0 sysctl_hung_task_show_state =3D simple_strtoul(str, NUL=
-L, 0);
-> + =A0 =A0 =A0 return 1;
-> +}
-> +__setup("hung_task_show_state=3D", hung_task_show_state_setup);
-> +
-> =A0static int
-> =A0hung_task_panic(struct notifier_block *this, unsigned long event, =
-void *ptr)
-> =A0{
-> @@ -102,6 +110,9 @@ static void check_hung_task(struct task_
->
-> =A0 =A0 =A0 =A0touch_nmi_watchdog();
->
-> + =A0 =A0 =A0 if (sysctl_hung_task_show_state)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 show_state();
-> +
-> =A0 =A0 =A0 =A0if (sysctl_hung_task_panic)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0panic("hung_task: blocked tasks");
-> =A0}
->
-> - --
-> Jeff Mahoney
-> SUSE Labs
-> -----BEGIN PGP SIGNATURE-----
-> Version: GnuPG v2.0.9 (GNU/Linux)
-> Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
->
-> iEYEARECAAYFAkopcjwACgkQLPWxlyuTD7IEdgCfVVzIL/DA0stfnYEW6aixFwxM
-> qIEAnjJjyn6HQAbVIicRYzvNcGvPwbiq
-> =3Dz8Pn
-> -----END PGP SIGNATURE-----
->
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
