@@ -1,46 +1,45 @@
-From: doiggl@velocitynet.com.au
-Subject: What module  do i need  for set_page_dirty_notag error
-Date: Fri, 12 Jun 2009 14:06:59 +1000 (EST)
-Message-ID: <21908.202.168.22.19.1244779619.squirrel@webmail.velocity.net.au>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: What kernel rpm do i need  for      reiser4-kmp-default-0.1_2.6.30_rc8_6-28.1.x86_64.rpm
+Date: Fri, 12 Jun 2009 10:12:01 -0400
+Message-ID: <4A326231.10502@suse.com>
 References: <21747.202.168.22.19.1244777575.squirrel@webmail.velocity.net.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 In-Reply-To: <21747.202.168.22.19.1244777575.squirrel@webmail.velocity.net.au>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>
+To: doiggl@velocitynet.com.au
 Cc: reiserfs-devel@vger.kernel.org
 
-Hello,
-Using the smart package manager I shortened the error message list down a
-little. I think I got the the correct kernel a lot of errors went away but
-one remained.
-Wonder whats missing ?
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Error message from smart package manager:
-> Can't install reiser4-kmp-default-0.1_2.6.30_rc8_6-28.1@x86_64: no
-package > provides ksym(default:set_page_dirty_notag) = 8fd254e4
+doiggl@velocitynet.com.au wrote:
+> Hello,
+> Im just trying to install
+> reiser4-kmp-default-0.1_2.6.30_rc8_6-28.1.x86_64.rpm
+> What kernel rpm do i need ?
+> Do you have a link to the kernel it wants, as Im having difficulty finding
+> the correct kernel ?
 
-I'm just trying to install
-reiser4-kmp-default-0.1_2.6.30_rc8_6-28.1.x86_64.rpm
+I think you need this kernel:
+http://download.opensuse.org/repositories/Base:/Kernel/standard
 
-> kernel referenced
- kernel-default-2.6.30-rc8.39.1.x86_64.rpm
+For some reason, our normal method of appending rc* to the release
+string isn't working in the build service.
 
-> reiser 4 module trying to install
-reiser4-kmp-default-0.1_2.6.30_rc8_6-28.1.x86_64.rpm
+- -Jeff
 
-Thanks for the info Glenn
 
 > Other info
 > (source)
 > http://download.opensuse.org/repositories/drivers:/filesystems/openSUSE_Factory/x86_64/reiser4-kmp-debug-0.1_2.6.30_rc8_6-28.1.x86_64.rpm
 >  11-Jun-2009 06:11
-
-(previously wrote )
->
+> 
+> Thanks for the info Glenn
+> 
 > # rpm -ivhU reiser4-kmp-default-0.1_2.6.30_rc8_6-28.1.x86_64.rpm
 > warning: reiser4-kmp-default-0.1_2.6.30_rc8_6-28.1.x86_64.rpm: Header V3
 > DSA signature: NOKEY, key ID 74de2879
@@ -399,5 +398,19 @@ Thanks for the info Glenn
 > reiser4-kmp-default-0.1_2.6.30_rc8_6-28.1.x86_64
 > ksym(default:generic_sync_sb_inodes) = fff408cc is needed by
 > reiser4-kmp-default-0.1_2.6.30_rc8_6-28.1.x86_64
+> 
+> 
+> 
 
 
+- --
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.9 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org
+
+iEYEARECAAYFAkoyYjAACgkQLPWxlyuTD7IiCwCeNh3eQfqT1OfERBxpfAaruzID
+w74An3N3AZDbLGAGkW5uAk++jvi3IyCj
+=4Xub
+-----END PGP SIGNATURE-----
