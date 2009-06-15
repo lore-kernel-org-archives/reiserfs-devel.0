@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 13536] crash while copying atime with touch
-Date: Sun, 14 Jun 2009 22:45:27 GMT
-Message-ID: <200906142245.n5EMjRvI028193@demeter.kernel.org>
+Date: Mon, 15 Jun 2009 16:29:57 GMT
+Message-ID: <200906151629.n5FGTviO030273@demeter.kernel.org>
 References: <bug-13536-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -15,17 +15,13 @@ To: reiserfs-devel@vger.kernel.org
 http://bugzilla.kernel.org/show_bug.cgi?id=13536
 
 
-Jeff Mahoney <jeffm@suse.com> changed:
-
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |jeffm@suse.com
 
 
 
-
---- Comment #4 from Jeff Mahoney <jeffm@suse.com>  2009-06-14 22:45:26 ---
-Are you able to reproduce this without virtualbox?
+--- Comment #5 from Elmar Stellnberger <estellnb@gmail.com>  2009-06-15 16:29:57 ---
+did not use virtualbox in a fact.
+good idea nonetheless to dump all unnecessary kernel modules first (vmware,
+virtualbox) and retry it in runlevel 1 or 2.
 
 -- 
 Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
