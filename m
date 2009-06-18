@@ -1,29 +1,30 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 13536] crash while copying atime with touch
-Date: Thu, 18 Jun 2009 13:56:14 GMT
-Message-ID: <200906181356.n5IDuEe5014812@demeter.kernel.org>
-References: <bug-13536-695@http.bugzilla.kernel.org/>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] reiserfs: remove stray unlock_super in reiserfs_resize
+Date: Thu, 18 Jun 2009 23:18:20 +0200
+Message-ID: <20090618211820.GA28679@lst.de>
+References: <20090423192512.GA22819@lst.de> <49F0C2AD.6070502@gmail.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-13536-695@http.bugzilla.kernel.org/>
+Content-Disposition: inline
+In-Reply-To: <49F0C2AD.6070502@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>, reiserfs-devel@vger.kernel.org
 
-http://bugzilla.kernel.org/show_bug.cgi?id=13536
+On Thu, Apr 23, 2009 at 09:34:05PM +0200, Edward Shishkin wrote:
+> Christoph Hellwig wrote:
+> >Reiserfs doesn't use lock_super anywhere internally, and ->remount_fs
+> >which calls reiserfs_resize does have it currently but also expects it
+> >to be held on return, so there's no business for the unlock_super here.
+> >
+> >
+> >Signed-off-by: Christoph Hellwig <hch@lst.de>
+> >  
+> 
+> Acked by Edward Shishkin <edward.shishkin@gmail.com>
 
+Do you plan to push this to Linus?
 
-
-
-
---- Comment #10 from Elmar Stellnberger <estellnb@gmail.com>  2009-06-18 13:56:14 ---
-Created an attachment (id=21990)
- --> (http://bugzilla.kernel.org/attachment.cgi?id=21990)
-lsmods for last working full run of the timestamping script
-
--- 
-Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
