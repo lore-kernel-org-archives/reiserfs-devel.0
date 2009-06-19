@@ -1,31 +1,36 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 13579] 2.6.13-15.12-default sudden crash in ReiserFS
-Date: Fri, 19 Jun 2009 08:28:45 GMT
-Message-ID: <200906190828.n5J8SjX7007087@demeter.kernel.org>
-References: <bug-13579-695@http.bugzilla.kernel.org/>
+From: Christoph Hellwig <hch@lst.de>
+Subject: [PATCH] reiserfs: remove stray unlock_super in reiserfs_resize
+Date: Fri, 19 Jun 2009 10:30:07 +0200
+Message-ID: <20090619083007.GA19895@lst.de>
+References: <20090423192512.GA22819@lst.de>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-13579-695@http.bugzilla.kernel.org/>
+Content-Disposition: inline
+In-Reply-To: <20090423192512.GA22819@lst.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: viro@zeniv.linux.org.uk
+Cc: linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
 
-http://bugzilla.kernel.org/show_bug.cgi?id=13579
+Reiserfs doesn't use lock_super anywhere internally, and ->remount_fs
+which calls reiserfs_resize does have it currently but also expects it
+to be held on return, so there's no business for the unlock_super here.
 
 
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Acked by Edward Shishkin <edward.shishkin@gmail.com>
 
-
-
---- Comment #1 from walter <wharms@bfs.de>  2009-06-19 08:28:45 ---
-Created an attachment (id=22006)
- --> (http://bugzilla.kernel.org/attachment.cgi?id=22006)
-2 occation  of crashtump
-
-resend of crashdump
-
--- 
-Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+Index: linux-2.6/fs/reiserfs/resize.c
+===================================================================
+--- linux-2.6.orig/fs/reiserfs/resize.c	2009-04-23 21:23:25.631074621 +0200
++++ linux-2.6/fs/reiserfs/resize.c	2009-04-23 21:23:29.435949732 +0200
+@@ -82,7 +82,6 @@ int reiserfs_resize(struct super_block *
+ 		if (reiserfs_allocate_list_bitmaps(s, jbitmap, bmap_nr_new) < 0) {
+ 			printk
+ 			    ("reiserfs_resize: unable to allocate memory for journal bitmaps\n");
+-			unlock_super(s);
+ 			return -ENOMEM;
+ 		}
+ 		/* the new journal bitmaps are zero filled, now we copy in the bitmap
