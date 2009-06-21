@@ -1,17 +1,17 @@
 From: Steve Moore <steve@buddho.me.uk>
 Subject: Reiser4 for 2.6.30
-Date: Sun, 21 Jun 2009 15:06:20 +0100
-Message-ID: <4A3E3E5C.30407@buddho.me.uk>
+Date: Sun, 21 Jun 2009 15:00:20 +0100
+Message-ID: <4A3E3CF4.2040204@buddho.me.uk>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- boundary="------------010005030602000902020901"
+ boundary="------------090907040101030603070005"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-devel@vger.kernel.org
 
 This is a multi-part message in MIME format.
---------------010005030602000902020901
+--------------090907040101030603070005
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 
@@ -25,8 +25,7 @@ Regards,
 
 Steve Moore
 
-
---------------010005030602000902020901
+--------------090907040101030603070005
 Content-Type: application/x-bzip;
  name="reiser4-for-2.6.29-2.6.30.patch.bz2"
 Content-Transfer-Encoding: base64
@@ -224,4 +223,4 @@ j9IiI2Z6yJ7xLM4Q2naBfc/syHtsN77yEiPQ6vVp281xJEOnCDhid8nrBjj2DE9NGvx0tmOH
 FIflrpyDkH3dRvVs6sRYL5oBkNgWU2yie0AAlqACoNK/n2R0KfURER0ChrpXDGoKKLIh8VRP
 4QEQ05sTbXLgFc+FwqAEyjjildVVVDDVVVUqiKqvjwc+SXujBiekkccDMSPWQhpI2Z1dQ8Zg
 HTE/iwD149Y3aKKqmmLCj/8XckU4UJCfMymx
---------------010005030602000902020901--
+--------------090907040101030603070005--
