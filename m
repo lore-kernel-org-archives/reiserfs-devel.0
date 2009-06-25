@@ -1,31 +1,36 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 13556] Random oopses
-Date: Wed, 24 Jun 2009 20:21:12 GMT
-Message-ID: <200906242021.n5OKLCsV019361@demeter.kernel.org>
-References: <bug-13556-695@http.bugzilla.kernel.org/>
+From: Christian Kujau <lists@nerdbynature.de>
+Subject: reiser4.wiki.kernel.org
+Date: Thu, 25 Jun 2009 02:29:48 -0700 (PDT)
+Message-ID: <alpine.DEB.2.01.0906250212340.6439@bogon>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-13556-695@http.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-http://bugzilla.kernel.org/show_bug.cgi?id=13556
+Hi there,
 
+it finally happened, yet another filesystem collaboration platform has 
+been set up, this time for ReiserFS/Reiser4:
 
-Rafael J. Wysocki <rjw@sisk.pl> changed:
+   http://reiser4.wiki.kernel.org
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Blocks|13070                       |
-         Regression|Yes                         |No
+Until something better will be found, this could be the place to go to get 
+all the information you need to run your filesystem of choice: FAQs, 
+Manpages, Benchmark results, patch locations, etc - see for yourself.
 
+If you have some time on your hands, please help and fill out the empty 
+spaces, there's still *a lot* to do. Some bigger looking papers (from [0]) 
+still need some nice formatting to be actually readable. Oh, and we still 
+need a nice logo, maybe someone has a fine idea...
 
+Have fun,
+Christian.
 
-
+[0] http://web.archive.org/web/20070929195459/http://www.namesys.com/
 -- 
-Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+BOFH excuse #333:
+
+A plumber is needed, the network drain is clogged
