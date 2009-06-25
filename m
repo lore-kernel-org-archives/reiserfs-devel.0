@@ -1,28 +1,26 @@
-From: Eric <eric225125@yahoo.com>
+From: Christian Kujau <lists@nerdbynature.de>
 Subject: Re: reiser4.wiki.kernel.org
-Date: Thu, 25 Jun 2009 22:11:59 +0000 (UTC)
-Message-ID: <loom.20090625T220907-60@post.gmane.org>
-References: <alpine.DEB.2.01.0906250212340.6439@bogon>
+Date: Thu, 25 Jun 2009 16:43:08 -0700 (PDT)
+Message-ID: <alpine.DEB.2.01.0906251641540.6439@bogon>
+References: <alpine.DEB.2.01.0906250212340.6439@bogon> <loom.20090625T220907-60@post.gmane.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <loom.20090625T220907-60@post.gmane.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Eric <eric225125@yahoo.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-Christian Kujau <lists <at> nerdbynature.de> writes:
+On Thu, 25 Jun 2009, Eric wrote:
+> As an end user I found it fairly difficult
+> to find up-to-date information on Reiser4.
 
-> 
-> Hi there,
-> 
-> it finally happened, yet another filesystem collaboration platform has 
-> been set up, this time for ReiserFS/Reiser4:
-> 
->    http://reiser4.wiki.kernel.org
-> ...
+Well, let's all hope we can /keep/ this new place up-to-date :)
 
+Christian.
+-- 
+BOFH excuse #352:
 
-Thanks for setting this up!  As an end user I found it fairly difficult
-to find up-to-date information on Reiser4.  This really helps.
-
+The cables are not the same length.
