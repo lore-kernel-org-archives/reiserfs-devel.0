@@ -1,26 +1,36 @@
-From: Christian Kujau <lists@nerdbynature.de>
-Subject: Re: reiser4.wiki.kernel.org
-Date: Thu, 25 Jun 2009 16:43:08 -0700 (PDT)
-Message-ID: <alpine.DEB.2.01.0906251641540.6439@bogon>
-References: <alpine.DEB.2.01.0906250212340.6439@bogon> <loom.20090625T220907-60@post.gmane.org>
+From: <doiggl@velocitynet.com.au>
+Subject: reiser4.spec query in opensuse buildservice
+Date: Fri, 26 Jun 2009 12:46:45 +1000
+Message-ID: <d4603b7979e1bb9e9c0e0b96e0fe1713@mail.velocitynet.com.au>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <loom.20090625T220907-60@post.gmane.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Eric <eric225125@yahoo.com>
+Content-Type: text/plain; charset="us-ascii"
+To: Jeff Mahoney <jeffm@suse.com>
 Cc: reiserfs-devel@vger.kernel.org
 
-On Thu, 25 Jun 2009, Eric wrote:
-> As an end user I found it fairly difficult
-> to find up-to-date information on Reiser4.
+Hello
+I have some questions about reiser4.spec for package reiser4-kmp package in
+the opensuse buildservice 
 
-Well, let's all hope we can /keep/ this new place up-to-date :)
+Since the following has been released, does anything require changing in
+the reiser4.spec i.e from .29 to .30. 
+  reiser4-for-2.6.30.patch.bz2  
 
-Christian.
--- 
-BOFH excuse #352:
+The last changelog entry says "Updated against 2.6.30-rc8" does that need
+to reflect just 2.6.30
+If so, can you update the reiser4.spec please.
 
-The cables are not the same length.
+Is the _rc8_ name part in compiled file
+reiser4-kmp-debug-0.1_2.6.30_rc8_6-28.2.x86_64.rpm still required ?
+
+sources:
+https://build.opensuse.org/package/view_file?file=reiser4.spec&package=reiser4-kmp&project=drivers%3Afilesystems
+http://reiser4.wiki.kernel.org/index.php/Main_Page
+http://www.kernel.org/pub/linux/kernel/people/edward/reiser4/reiser4-for-2.6/reiser4-for-2.6.30.patch.bz2
+http://download.opensuse.org/repositories/drivers:/filesystems/openSUSE_Factory/x86_64/reiser4-kmp-debug-0.1_2.6.30_rc8_6-28.2.x86_64.rpm
+
+Thankyou Glenn
+
