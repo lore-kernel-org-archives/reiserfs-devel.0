@@ -1,7 +1,7 @@
-From: Arend Freije <afreije@inn.nl>
+From: Christian Stroetmann <stroetmann@ontolab.com>
 Subject: Re: Query on booting reiser4 and grub or grub2.
-Date: Wed, 01 Jul 2009 23:12:58 +0200
-Message-ID: <4A4BD15A.7030701@inn.nl>
+Date: Wed, 01 Jul 2009 23:25:34 +0200
+Message-ID: <4A4BD44E.9030307@ontolab.com>
 References: <fffbfbb2db7d46de46d07d2717243de3@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -9,34 +9,22 @@ Return-path: <reiserfs-devel-owner@vger.kernel.org>
 In-Reply-To: <fffbfbb2db7d46de46d07d2717243de3@mail.velocitynet.com.au>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: doiggl@velocitynet.com.au
-Cc: Reiserfs devel <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: doiggl@velocitynet.com.au, reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-doiggl@velocitynet.com.au wrote:
+Dear Glenn
+You worte:
 > Hello,
 > Has anyone got information on, written anything or knows where to locate
 > information on booting a reiser4 partition with grub or grub2 ?
 > Thanks Glenn
+> --
 >   
-Hi Glenn,
+May be you should look into the wiki (http://reiser4.wiki.kernel.org) or 
+do a google like thing (Grub R...4).
+Also, there will be a manual for this for a forked R4 file system, which 
+to name I'm not allowed on this mailing list.
 
-If you mean installing grub on a Reiser4 partion: used it a few years
-ago on my Gentoo based systems. Stopped using it because it was not
-entirely stable, and apart from that it is nice to have a boot partition
-that can be accessed with a rescue disk that doesn't have Reiser4
-support, so I now use ext2 for /boot.
+Have fun
+Christian *<:o)   O>-<   -(D)>-<
 
-See:
-http://sys-admin.org/Reiser4-Gentoo-Sources.html
-    for instructions, on the bottom of the page there are some notes on
-Grub.
-http://gentoo-overlays.zugaina.org/zen-overlay/portage/sys-boot/grub-reiser4/grub-reiser4-0.97.20050808.ebuild
-    for an ebuild
-http://ftp.icm.edu.pl/packages/linux-reiserfs/reiser4progs/
-    for a patch on grub 0.97 (original location was
-ftp://ftp.namesys.com/pub/reiser4progs/ )
-
-Cheers,
-
-Arend
