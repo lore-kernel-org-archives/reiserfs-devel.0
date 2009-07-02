@@ -1,35 +1,43 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Query on booting reiser4 and grub or grub2.
-Date: Thu, 02 Jul 2009 13:55:57 +0200
-Message-ID: <4A4CA04D.1000104@gmail.com>
-References: <fffbfbb2db7d46de46d07d2717243de3@mail.velocitynet.com.au>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 13037] reiserfs panic (device null superblock)
+Date: Thu, 2 Jul 2009 15:00:58 GMT
+Message-ID: <200907021500.n62F0wUL010466@demeter.kernel.org>
+References: <bug-13037-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <fffbfbb2db7d46de46d07d2717243de3@mail.velocitynet.com.au>
+In-Reply-To: <bug-13037-695@http.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: doiggl@velocitynet.com.au
-Cc: Reiserfs devel <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-Hello.
-grub-0.97+reiser4 requires some fixups.
-Also Jeff Chua promised us grub-2+reiser4,
-if I understood him correctly.
+http://bugzilla.kernel.org/show_bug.cgi?id=13037
 
-Thanks,
-Edward.
 
-doiggl@velocitynet.com.au wrote:
-> Hello,
-> Has anyone got information on, written anything or knows where to locate
-> information on booting a reiser4 partition with grub or grub2 ?
-> Thanks Glenn
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->   
 
+
+
+--- Comment #4 from Jeff Mahoney <jeffm@suse.com>  2009-07-02 15:00:56 ---
+So the problem exists on 2.6.28.9 and not on 2.6.28? That's strange since the
+only reiserfs change is this one:
+
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -2556,7 +2556,7 @@ static int reiserfs_write_begin(struct file *file,
+        }
+
+        index = pos >> PAGE_CACHE_SHIFT;
+-       page = __grab_cache_page(mapping, index);
++       page = grab_cache_page_write_begin(mapping, index, flags);
+        if (!page)
+                return -ENOMEM;
+        *pagep = page;
+
+I'm surprised that reiserfsck doesn't come up with anything. This is a problem
+where it's seeing an invalid bit on disk. Either that or memory corruption.
+
+-- 
+Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
