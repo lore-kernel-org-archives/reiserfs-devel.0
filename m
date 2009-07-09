@@ -1,137 +1,421 @@
-From: Michael Uleysky <uleysky@gmail.com>
-Subject: Re: Oops: Null pointer dereference in ReiserFS when under heavy load.
-Date: Tue, 7 Jul 2009 17:46:20 +1100
-Message-ID: <b1fc7e270907062346x307a6cd7k7102eeb34e89d7a4@mail.gmail.com>
-References: <4A50B439.3040101@free.fr>
-	 <alpine.DEB.2.01.0907062053570.6439@bogon>
+From: Eugene Kapun <abacabadabacaba@gmail.com>
+Subject: [PATCH 1/3] reiserfs: make extended attributes support more configurable
+Date: Thu, 09 Jul 2009 22:04:45 +0400
+Message-ID: <4A56313D.1020304@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:received:in-reply-to:references
-         :date:message-id:subject:from:to:cc:content-type
-         :content-transfer-encoding;
-        bh=OKFn7mvORiflsCuE01iO67JkQrLQF3N7ap0OrTojIMY=;
-        b=xSzpsM9g3eD/qElzm67Pm4QNlWAgMXPZKIMw0aHXIPY8euMYh3vs2wOrTRGjF2l37o
-         U+F4oV55q7xCtKFltUVkXNBf8+HI1+2RSlM3haACwHCUF19pPdn9wXYplGpnhxNpe4hR
-         TaSd0vKzIQV0/CDqTINp4IjlCbHVh836N4UsU=
-In-Reply-To: <alpine.DEB.2.01.0907062053570.6439@bogon>
+        h=domainkey-signature:received:received:message-id:date:from
+         :user-agent:mime-version:to:cc:subject:x-enigmail-version
+         :content-type:content-transfer-encoding;
+        bh=kPqYEjibR/g15SpJkjxUwJw2jjffaDwej6uRAfkIhaU=;
+        b=iR4AMsgng7ZHUcZs5b7ZX5sUr/b++eyCOQ4KZjXS7Ya4ibAZ7YLrmaHpm1WDIUTBhH
+         xZ4UTr6sw/34vu0OmE/XIZjbe5CSnXnVzkRgvhYLZiUvO5MdpfL4vT8cVh+TwJlQJEt5
+         S/quQ8dJetv2ebuiUde1hVYCyfXpr50FMqLw0=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Christian Kujau <lists@nerdbynature.de>
-Cc: =?ISO-8859-1?Q?J=E9r=F4me_M=2E_Berger?= <jeberger@free.fr>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-2009/7/7, Christian Kujau <lists@nerdbynature.de>:
-> On Sun, 5 Jul 2009, "J=E9r=F4me M. Berger" wrote:
->  > > Jun 15 23:18:02 rover kernel: BUG: unable to handle kernel NULL =
-pointer
->  > > dereference at 0000000000000018
->  > > Jun 15 23:18:02 rover kernel: IP: [<ffffffff80227a85>]
->  > > __ticket_spin_lock+0x5/0x20
->
->  Hm, this looks like http://bugzilla.kernel.org/show_bug.cgi?id=3D135=
-56 to
->  me, maybe it's the same issue?
->
->  If so: @Michael, do you still experience these oopses or has the bug
->  somehow magically resolved for you?
-Bug is rock stable :(. Below the latest oops from kernel 2.6.30.1.
-Configuration is same as in my report.
+From: Eugene Kapun <abacabadabacaba@gmail.com>
+
+Adds configuration options which control how reiserfs supports extended
+attributes. This makes support for POSIX ACLs and security labels
+independent on support for normal xattrs. This also makes possible to
+compile reiserfs without any xattrs support.
+Signed-off-by: Eugene Kapun <abacabadabacaba@gmail.com>
+---
+This patch applies to linux-2.6.31-rc2-git4.
+This patch may be useful since there are currently no means to fix some
+problems which prevent reiserfs from being mounted and therefore can't
+be solved by expose_privroot.
+
+ fs/reiserfs/Kconfig            |   14 ++++++--
+ fs/reiserfs/Makefile           |    6 ++-
+ fs/reiserfs/dir.c              |    4 ++
+ fs/reiserfs/super.c            |    8 ++++
+ fs/reiserfs/xattr.c            |   48 +++++++++++++++-------------
+ include/linux/reiserfs_fs_i.h  |    8 ++++
+ include/linux/reiserfs_fs_sb.h |   20 ++++++++++-
+ include/linux/reiserfs_xattr.h |   53 ++++++++++++++++++++++---------
+ 8 files changed, 118 insertions(+), 43 deletions(-)
+
+diff -uprN linux-2.6.31-rc2-git3.0/fs/reiserfs/dir.c linux-2.6.31-rc2-git3.1/fs/reiserfs/dir.c
+--- linux-2.6.31-rc2-git3.0/fs/reiserfs/dir.c	2009-07-09 13:52:44.000000000 +0400
++++ linux-2.6.31-rc2-git3.1/fs/reiserfs/dir.c	2009-07-09 14:04:37.000000000 +0400
+@@ -44,11 +44,15 @@ static int reiserfs_dir_fsync(struct fil
+ static inline bool is_privroot_deh(struct dentry *dir,
+ 				   struct reiserfs_de_head *deh)
+ {
++#ifdef CONFIG_REISERFS_FS_EXTENDED
+ 	struct dentry *privroot = REISERFS_SB(dir->d_sb)->priv_root;
+ 	if (reiserfs_expose_privroot(dir->d_sb))
+ 		return 0;
+ 	return (dir == dir->d_parent && privroot->d_inode &&
+ 	        deh->deh_objectid == INODE_PKEY(privroot->d_inode)->k_objectid);
++#else
++	return 0;
++#endif
+ }
+ 
+ int reiserfs_readdir_dentry(struct dentry *dentry, void *dirent,
+diff -uprN linux-2.6.31-rc2-git3.0/fs/reiserfs/Kconfig linux-2.6.31-rc2-git3.1/fs/reiserfs/Kconfig
+--- linux-2.6.31-rc2-git3.0/fs/reiserfs/Kconfig	2009-06-10 07:05:27.000000000 +0400
++++ linux-2.6.31-rc2-git3.1/fs/reiserfs/Kconfig	2009-07-09 14:05:37.000000000 +0400
+@@ -50,9 +50,17 @@ config REISERFS_PROC_INFO
+ 	  Almost everyone but ReiserFS developers and people fine-tuning
+ 	  reiserfs or tracing problems should say N.
+ 
++config REISERFS_FS_EXTENDED
++	bool "ReiserFS extended metadata"
++	depends on REISERFS_FS
++	help
++	  Allows ReiserFS to reserve a special directory for storage of
++	  extended attributes, POSIX ACLs and/or security labels. If you
++	  don't need any of these, say N.
++
+ config REISERFS_FS_XATTR
+ 	bool "ReiserFS extended attributes"
+-	depends on REISERFS_FS
++	depends on REISERFS_FS_EXTENDED
+ 	help
+ 	  Extended attributes are name:value pairs associated with inodes by
+ 	  the kernel or by users (see the attr(5) manual page, or visit
+@@ -62,7 +70,7 @@ config REISERFS_FS_XATTR
+ 
+ config REISERFS_FS_POSIX_ACL
+ 	bool "ReiserFS POSIX Access Control Lists"
+-	depends on REISERFS_FS_XATTR
++	depends on REISERFS_FS_EXTENDED
+ 	select FS_POSIX_ACL
+ 	help
+ 	  Posix Access Control Lists (ACLs) support permissions for users and
+@@ -75,7 +83,7 @@ config REISERFS_FS_POSIX_ACL
+ 
+ config REISERFS_FS_SECURITY
+ 	bool "ReiserFS Security Labels"
+-	depends on REISERFS_FS_XATTR
++	depends on REISERFS_FS_EXTENDED
+ 	help
+ 	  Security labels support alternative access control models
+ 	  implemented by security modules like SELinux.  This option
+diff -uprN linux-2.6.31-rc2-git3.0/fs/reiserfs/Makefile linux-2.6.31-rc2-git3.1/fs/reiserfs/Makefile
+--- linux-2.6.31-rc2-git3.0/fs/reiserfs/Makefile	2009-06-10 07:05:27.000000000 +0400
++++ linux-2.6.31-rc2-git3.1/fs/reiserfs/Makefile	2009-07-09 14:06:14.000000000 +0400
+@@ -7,7 +7,11 @@ obj-$(CONFIG_REISERFS_FS) += reiserfs.o
+ reiserfs-objs := bitmap.o do_balan.o namei.o inode.o file.o dir.o fix_node.o \
+ 		 super.o prints.o objectid.o lbalance.o ibalance.o stree.o \
+ 		 hashes.o tail_conversion.o journal.o resize.o \
+-		 item_ops.o ioctl.o procfs.o xattr.o
++		 item_ops.o ioctl.o procfs.o
++
++ifeq ($(CONFIG_REISERFS_FS_EXTENDED),y)
++reiserfs-objs += xattr.o
++endif
+ 
+ ifeq ($(CONFIG_REISERFS_FS_XATTR),y)
+ reiserfs-objs += xattr_user.o xattr_trusted.o
+diff -uprN linux-2.6.31-rc2-git3.0/fs/reiserfs/super.c linux-2.6.31-rc2-git3.1/fs/reiserfs/super.c
+--- linux-2.6.31-rc2-git3.0/fs/reiserfs/super.c	2009-07-09 13:53:09.000000000 +0400
++++ linux-2.6.31-rc2-git3.1/fs/reiserfs/super.c	2009-07-09 14:34:03.000000000 +0400
+@@ -444,6 +444,7 @@ int remove_save_link(struct inode *inode
+ 
+ static void reiserfs_kill_sb(struct super_block *s)
+ {
++#ifdef CONFIG_REISERFS_FS_EXTENDED
+ 	if (REISERFS_SB(s)) {
+ 		if (REISERFS_SB(s)->xattr_root) {
+ 			d_invalidate(REISERFS_SB(s)->xattr_root);
+@@ -456,6 +457,7 @@ static void reiserfs_kill_sb(struct supe
+ 			REISERFS_SB(s)->priv_root = NULL;
+ 		}
+ 	}
++#endif
+ 
+ 	kill_block_super(s);
+ }
+@@ -876,7 +878,9 @@ static int reiserfs_parse_options(struct
+ 		{"conv",.setmask = 1 << REISERFS_CONVERT},
+ 		{"attrs",.setmask = 1 << REISERFS_ATTRS},
+ 		{"noattrs",.clrmask = 1 << REISERFS_ATTRS},
++#ifdef CONFIG_REISERFS_FS_EXTENDED
+ 		{"expose_privroot", .setmask = 1 << REISERFS_EXPOSE_PRIVROOT},
++#endif
+ #ifdef CONFIG_REISERFS_FS_XATTR
+ 		{"user_xattr",.setmask = 1 << REISERFS_XATTRS_USER},
+ 		{"nouser_xattr",.clrmask = 1 << REISERFS_XATTRS_USER},
+@@ -1200,8 +1204,12 @@ static int reiserfs_remount(struct super
+ 	safe_mask |= 1 << REISERFS_HASHED_RELOCATION;
+ 	safe_mask |= 1 << REISERFS_TEST4;
+ 	safe_mask |= 1 << REISERFS_ATTRS;
++#ifdef CONFIG_REISERFS_FS_XATTR
+ 	safe_mask |= 1 << REISERFS_XATTRS_USER;
++#endif
++#ifdef CONFIG_REISERFS_FS_POSIX_ACL
+ 	safe_mask |= 1 << REISERFS_POSIXACL;
++#endif
+ 	safe_mask |= 1 << REISERFS_BARRIER_FLUSH;
+ 	safe_mask |= 1 << REISERFS_BARRIER_NONE;
+ 	safe_mask |= 1 << REISERFS_ERROR_RO;
+diff -uprN linux-2.6.31-rc2-git3.0/fs/reiserfs/xattr.c linux-2.6.31-rc2-git3.1/fs/reiserfs/xattr.c
+--- linux-2.6.31-rc2-git3.0/fs/reiserfs/xattr.c	2009-07-09 13:52:44.000000000 +0400
++++ linux-2.6.31-rc2-git3.1/fs/reiserfs/xattr.c	2009-07-09 14:15:03.000000000 +0400
+@@ -57,7 +57,7 @@
+ /* Helpers for inode ops. We do this so that we don't have all the VFS
+  * overhead and also for proper i_mutex annotation.
+  * dir->i_mutex must be held for all of them. */
+-#ifdef CONFIG_REISERFS_FS_XATTR
++#ifdef CONFIG_REISERFS_FS_ANY_XATTR
+ static int xattr_create(struct inode *dir, struct dentry *dentry, int mode)
+ {
+ 	BUG_ON(!mutex_is_locked(&dir->i_mutex));
+@@ -337,7 +337,7 @@ int reiserfs_chown_xattrs(struct inode *
+ 	return err;
+ }
+ 
+-#ifdef CONFIG_REISERFS_FS_XATTR
++#ifdef CONFIG_REISERFS_FS_ANY_XATTR
+ /* Returns a dentry corresponding to a specific extended attribute file
+  * for the inode. If flags allow, the file is created. Otherwise, a
+  * valid or negative dentry, or an error is returned. */
+@@ -853,24 +853,6 @@ out:
+ 	return err;
+ }
+ 
+-static int reiserfs_check_acl(struct inode *inode, int mask)
+-{
+-	struct posix_acl *acl;
+-	int error = -EAGAIN; /* do regular unix permission checks by default */
+-
+-	acl = reiserfs_get_acl(inode, ACL_TYPE_ACCESS);
+-
+-	if (acl) {
+-		if (!IS_ERR(acl)) {
+-			error = posix_acl_permission(inode, acl, mask);
+-			posix_acl_release(acl);
+-		} else if (PTR_ERR(acl) != -ENODATA)
+-			error = PTR_ERR(acl);
+-	}
+-
+-	return error;
+-}
+-
+ static int create_privroot(struct dentry *dentry)
+ {
+ 	int err;
+@@ -899,6 +881,26 @@ void reiserfs_xattr_unregister_handlers(
+ static int create_privroot(struct dentry *dentry) { return 0; }
+ #endif
+ 
++#ifdef CONFIG_REISERFS_FS_POSIX_ACL
++static int reiserfs_check_acl(struct inode *inode, int mask)
++{
++	struct posix_acl *acl;
++	int error = -EAGAIN; /* do regular unix permission checks by default */
++
++	acl = reiserfs_get_acl(inode, ACL_TYPE_ACCESS);
++
++	if (acl) {
++		if (!IS_ERR(acl)) {
++			error = posix_acl_permission(inode, acl, mask);
++			posix_acl_release(acl);
++		} else if (PTR_ERR(acl) != -ENODATA)
++			error = PTR_ERR(acl);
++	}
++
++	return error;
++}
++#endif
++
+ /* Actual operations that are exported to VFS-land */
+ struct xattr_handler *reiserfs_xattr_handlers[] = {
+ #ifdef CONFIG_REISERFS_FS_XATTR
+@@ -943,7 +945,7 @@ int reiserfs_permission(struct inode *in
+ 	if (IS_PRIVATE(inode))
+ 		return 0;
+ 
+-#ifdef CONFIG_REISERFS_FS_XATTR
++#ifdef CONFIG_REISERFS_FS_POSIX_ACL
+ 	/*
+ 	 * Stat data v1 doesn't support ACLs.
+ 	 */
+@@ -1027,8 +1029,12 @@ int reiserfs_xattr_init(struct super_blo
+ 
+ error:
+ 	if (err) {
++#ifdef CONFIG_REISERFS_FS_XATTR
+ 		clear_bit(REISERFS_XATTRS_USER, &(REISERFS_SB(s)->s_mount_opt));
++#endif
++#ifdef CONFIG_REISERFS_FS_POSIX_ACL
+ 		clear_bit(REISERFS_POSIXACL, &(REISERFS_SB(s)->s_mount_opt));
++#endif
+ 	}
+ 
+ 	/* The super_block MS_POSIXACL must mirror the (no)acl mount option. */
+diff -uprN linux-2.6.31-rc2-git3.0/include/linux/reiserfs_fs_i.h linux-2.6.31-rc2-git3.1/include/linux/reiserfs_fs_i.h
+--- linux-2.6.31-rc2-git3.0/include/linux/reiserfs_fs_i.h	2009-07-09 13:52:47.000000000 +0400
++++ linux-2.6.31-rc2-git3.1/include/linux/reiserfs_fs_i.h	2009-07-09 14:16:05.000000000 +0400
+@@ -3,6 +3,12 @@
+ 
+ #include <linux/list.h>
+ 
++#if defined(CONFIG_REISERFS_FS_XATTR) || \
++	defined(CONFIG_REISERFS_FS_POSIX_ACL) || \
++	defined(CONFIG_REISERFS_FS_SECURITY)
++#define CONFIG_REISERFS_FS_ANY_XATTR
++#endif
++
+ struct reiserfs_journal_list;
+ 
+ /** bitmasks for i_flags field in reiserfs-specific part of inode */
+@@ -54,7 +60,7 @@ struct reiserfs_inode_info {
+ 	unsigned int i_trans_id;
+ 	struct reiserfs_journal_list *i_jl;
+ 	struct mutex i_mmap;
+-#ifdef CONFIG_REISERFS_FS_XATTR
++#ifdef CONFIG_REISERFS_FS_ANY_XATTR
+ 	struct rw_semaphore i_xattr_sem;
+ #endif
+ 	struct inode vfs_inode;
+diff -uprN linux-2.6.31-rc2-git3.0/include/linux/reiserfs_fs_sb.h linux-2.6.31-rc2-git3.1/include/linux/reiserfs_fs_sb.h
+--- linux-2.6.31-rc2-git3.0/include/linux/reiserfs_fs_sb.h	2009-07-09 13:52:47.000000000 +0400
++++ linux-2.6.31-rc2-git3.1/include/linux/reiserfs_fs_sb.h	2009-07-09 14:18:49.000000000 +0400
+@@ -401,8 +401,10 @@ struct reiserfs_sb_info {
+ 	struct proc_dir_entry *procdir;
+ 	int reserved_blocks;	/* amount of blocks reserved for further allocations */
+ 	spinlock_t bitmap_lock;	/* this lock on now only used to protect reserved_blocks variable */
++#ifdef CONFIG_REISERFS_FS_EXTENDED
+ 	struct dentry *priv_root;	/* root of /.reiserfs_priv */
+ 	struct dentry *xattr_root;	/* root of /.reiserfs_priv/xattrs */
++#endif
+ 	int j_errno;
+ #ifdef CONFIG_QUOTA
+ 	char *s_qf_names[MAXQUOTAS];
+@@ -451,9 +453,15 @@ enum reiserfs_mount_options {
+ 	REISERFS_NO_UNHASHED_RELOCATION,
+ 	REISERFS_HASHED_RELOCATION,
+ 	REISERFS_ATTRS,
++#ifdef CONFIG_REISERFS_FS_EXTENDED
++	REISERFS_EXPOSE_PRIVROOT,
++#endif
++#ifdef CONFIG_REISERFS_FS_XATTR
+ 	REISERFS_XATTRS_USER,
++#endif
++#ifdef CONFIG_REISERFS_FS_POSIX_ACL
+ 	REISERFS_POSIXACL,
+-	REISERFS_EXPOSE_PRIVROOT,
++#endif
+ 	REISERFS_BARRIER_NONE,
+ 	REISERFS_BARRIER_FLUSH,
+ 
+@@ -489,9 +497,17 @@ enum reiserfs_mount_options {
+ #define reiserfs_data_log(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_DATA_LOG))
+ #define reiserfs_data_ordered(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_DATA_ORDERED))
+ #define reiserfs_data_writeback(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_DATA_WRITEBACK))
++#define reiserfs_expose_privroot(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_EXPOSE_PRIVROOT))
++#ifdef CONFIG_REISERFS_FS_XATTR
+ #define reiserfs_xattrs_user(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_XATTRS_USER))
++#else
++#define reiserfs_xattrs_user(s) 0
++#endif
++#ifdef CONFIG_REISERFS_FS_POSIX_ACL
+ #define reiserfs_posixacl(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_POSIXACL))
+-#define reiserfs_expose_privroot(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_EXPOSE_PRIVROOT))
++#else
++#define reiserfs_posixacl(s) 0
++#endif
+ #define reiserfs_xattrs_optional(s) (reiserfs_xattrs_user(s) || reiserfs_posixacl(s))
+ #define reiserfs_barrier_none(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_BARRIER_NONE))
+ #define reiserfs_barrier_flush(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_BARRIER_FLUSH))
+diff -uprN linux-2.6.31-rc2-git3.0/include/linux/reiserfs_xattr.h linux-2.6.31-rc2-git3.1/include/linux/reiserfs_xattr.h
+--- linux-2.6.31-rc2-git3.0/include/linux/reiserfs_xattr.h	2009-06-10 07:05:27.000000000 +0400
++++ linux-2.6.31-rc2-git3.1/include/linux/reiserfs_xattr.h	2009-07-09 14:39:36.000000000 +0400
+@@ -35,6 +35,7 @@ struct iattr;
+ struct super_block;
+ struct nameidata;
+ 
++#ifdef CONFIG_REISERFS_FS_EXTENDED
+ int reiserfs_xattr_register_handlers(void) __init;
+ void reiserfs_xattr_unregister_handlers(void);
+ int reiserfs_xattr_init(struct super_block *sb, int mount_flags);
+@@ -42,8 +43,28 @@ int reiserfs_lookup_privroot(struct supe
+ int reiserfs_delete_xattrs(struct inode *inode);
+ int reiserfs_chown_xattrs(struct inode *inode, struct iattr *attrs);
+ int reiserfs_permission(struct inode *inode, int mask);
++#else
++static inline int reiserfs_xattr_init(struct super_block *sb, int mount_flags)
++{
++	return 0;
++}
++static inline int reiserfs_lookup_privroot(struct super_block *sb)
++{
++	return 0;
++}
++static inline int reiserfs_delete_xattrs(struct inode *inode)
++{
++	return 0;
++}
++static inline int reiserfs_chown_xattrs(struct inode *inode,
++	struct iattr *attrs)
++{
++	return 0;
++}
++#define reiserfs_permission NULL
++#endif
+ 
+-#ifdef CONFIG_REISERFS_FS_XATTR
++#ifdef CONFIG_REISERFS_FS_ANY_XATTR
+ #define has_xattr_dir(inode) (REISERFS_I(inode)->i_flags & i_has_xattr_dir)
+ ssize_t reiserfs_getxattr(struct dentry *dentry, const char *name,
+ 			  void *buffer, size_t size);
+@@ -58,18 +79,6 @@ int reiserfs_xattr_set_handle(struct rei
+ 			      struct inode *, const char *, const void *,
+ 			      size_t, int);
+ 
+-extern struct xattr_handler reiserfs_xattr_user_handler;
+-extern struct xattr_handler reiserfs_xattr_trusted_handler;
+-extern struct xattr_handler reiserfs_xattr_security_handler;
+-#ifdef CONFIG_REISERFS_FS_SECURITY
+-int reiserfs_security_init(struct inode *dir, struct inode *inode,
+-			   struct reiserfs_security_handle *sec);
+-int reiserfs_security_write(struct reiserfs_transaction_handle *th,
+-			    struct inode *inode,
+-			    struct reiserfs_security_handle *sec);
+-void reiserfs_security_free(struct reiserfs_security_handle *sec);
+-#endif
+-
+ #define xattr_size(size) ((size) + sizeof(struct reiserfs_xattr_header))
+ static inline loff_t reiserfs_xattr_nblocks(struct inode *inode, loff_t size)
+ {
+@@ -120,9 +129,23 @@ static inline void reiserfs_init_xattr_r
+ static inline void reiserfs_init_xattr_rwsem(struct inode *inode)
+ {
+ }
+-#endif  /*  CONFIG_REISERFS_FS_XATTR  */
+ 
+-#ifndef CONFIG_REISERFS_FS_SECURITY
++#endif
++
++#ifdef CONFIG_REISERFS_FS_XATTR
++extern struct xattr_handler reiserfs_xattr_user_handler;
++extern struct xattr_handler reiserfs_xattr_trusted_handler;
++#endif
++
++#ifdef CONFIG_REISERFS_FS_SECURITY
++int reiserfs_security_init(struct inode *dir, struct inode *inode,
++			   struct reiserfs_security_handle *sec);
++int reiserfs_security_write(struct reiserfs_transaction_handle *th,
++			    struct inode *inode,
++			    struct reiserfs_security_handle *sec);
++void reiserfs_security_free(struct reiserfs_security_handle *sec);
++extern struct xattr_handler reiserfs_xattr_security_handler;
++#else
+ static inline int reiserfs_security_init(struct inode *dir,
+ 					 struct inode *inode,
+ 					 struct reiserfs_security_handle *sec)
 
 
-BUG: unable to handle kernel NULL pointer dereference at 00000000000000=
-18
-IP: [<ffffffff805c456a>] _spin_lock_irq+0xa/0x20
-PGD 7a939067 PUD 7a8a1067 PMD 0
-Oops: 0002 [#1] SMP
-last sysfs file: /sys/kernel/uevent_seqnum
-CPU 0
-Pid: 1551, comm: reiserfs/0 Not tainted 2.6.30.1-netconsole #1 EP45T-DS=
-3
-RIP: 0010:[<ffffffff805c456a>]  [<ffffffff805c456a>] _spin_lock_irq+0xa=
-/0x20
-RSP: 0018:ffff88007e157d30  EFLAGS: 00010082
-RAX: 0000000000000100 RBX: ffffe200016e00f8 RCX: 0000000000000001
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000018
-RBP: ffff88007e157d30 R08: ffff88007f986c00 R09: 000000000afd1261
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000018 R15: ffff88007f986c00
-=46S:  0000000000000000(0000) GS:ffff880001010000(0000) knlGS:000000000=
-0000000
-CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b
-CR2: 0000000000000018 CR3: 000000007f9f6000 CR4: 00000000000406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-Process reiserfs/0 (pid: 1551, threadinfo ffff88007e156000, task
-ffff88007ed49bd0)
-Stack:
- ffff88007e157d60 ffffffff802c19a0 ffff880067922930 0000000000000000
- ffff88007d318180 0000000000000000 ffff88007e157d80 ffffffff802c1a96
- 0000000000000000 ffffc200098d94c0 ffff88007e157e00 ffffffff80316a03
-Call Trace:
- [<ffffffff802c19a0>] __set_page_dirty+0x30/0xd0
- [<ffffffff802c1a96>] mark_buffer_dirty+0x56/0xa0
- [<ffffffff80316a03>] flush_commit_list+0x713/0x720
- [<ffffffff805c2231>] ? thread_return+0x3e/0x66d
- [<ffffffff803165ee>] flush_commit_list+0x2fe/0x720
- [<ffffffff80316b24>] flush_async_commits+0x54/0x70
- [<ffffffff80316ad0>] ? flush_async_commits+0x0/0x70
- [<ffffffff8024b6cc>] worker_thread+0x11c/0x1f0
- [<ffffffff8024fa20>] ? autoremove_wake_function+0x0/0x40
- [<ffffffff8024b5b0>] ? worker_thread+0x0/0x1f0
- [<ffffffff8024b5b0>] ? worker_thread+0x0/0x1f0
- [<ffffffff8024f616>] kthread+0x56/0x90
- [<ffffffff8020c2ba>] child_rip+0xa/0x20
- [<ffffffff8024f5c0>] ? kthread+0x0/0x90
- [<ffffffff8020c2b0>] ? child_rip+0x0/0x20
-Code: 90 55 48 89 e5 9c 58 fa ba 00 01 00 00 f0 66 0f c1 17 38 f2 74
-06 f3 90 8a 17 eb f6 c9 c3 66 66 90 55 48 89 e5 fa b8 00 01 00 00 <f0>
-66 0f c1 07 38 e0 74 06 f3 90 8a 07 eb f6 c9 c3 66 66 90 66
-RIP  [<ffffffff805c456a>] _spin_lock_irq+0xa/0x20
- RSP <ffff88007e157d30>
-CR2: 0000000000000018
----[ end trace 0c4afebe89587152 ]---
-------------[ cut here ]------------
-WARNING: at kernel/exit.c:896 do_exit+0x601/0x730()
-Hardware name: EP45T-DS3
-Pid: 1551, comm: reiserfs/0 Tainted: G      D    2.6.30.1-netconsole #1
-Call Trace:
- [<ffffffff8023d811>] ? do_exit+0x601/0x730
- [<ffffffff80239b43>] warn_slowpath_common+0x73/0xc0
- [<ffffffff80239b9f>] warn_slowpath_null+0xf/0x20
- [<ffffffff8023d811>] do_exit+0x601/0x730
- [<ffffffff8020f5db>] oops_end+0x9b/0xa0
- [<ffffffff80226c48>] no_context+0xe8/0x260
- [<ffffffff8023017a>] ? dequeue_task_fair+0x4a/0x1d0
- [<ffffffff80226f05>] __bad_area_nosemaphore+0x145/0x1e0
- [<ffffffff805c2261>] ? thread_return+0x6e/0x66d
- [<ffffffff803c108e>] ? cfq_insert_request+0x37e/0x3a0
- [<ffffffff80226fae>] bad_area_nosemaphore+0xe/0x10
- [<ffffffff80227337>] do_page_fault+0x1c7/0x280
- [<ffffffff805c4a7f>] page_fault+0x1f/0x30
- [<ffffffff805c456a>] ? _spin_lock_irq+0xa/0x20
- [<ffffffff802c19a0>] __set_page_dirty+0x30/0xd0
- [<ffffffff802c1a96>] mark_buffer_dirty+0x56/0xa0
- [<ffffffff80316a03>] flush_commit_list+0x713/0x720
- [<ffffffff805c2231>] ? thread_return+0x3e/0x66d
- [<ffffffff803165ee>] flush_commit_list+0x2fe/0x720
- [<ffffffff80316b24>] flush_async_commits+0x54/0x70
- [<ffffffff80316ad0>] ? flush_async_commits+0x0/0x70
- [<ffffffff8024b6cc>] worker_thread+0x11c/0x1f0
- [<ffffffff8024fa20>] ? autoremove_wake_function+0x0/0x40
- [<ffffffff8024b5b0>] ? worker_thread+0x0/0x1f0
- [<ffffffff8024b5b0>] ? worker_thread+0x0/0x1f0
- [<ffffffff8024f616>] kthread+0x56/0x90
- [<ffffffff8020c2ba>] child_rip+0xa/0x20
- [<ffffffff8024f5c0>] ? kthread+0x0/0x90
- [<ffffffff8020c2b0>] ? child_rip+0x0/0x20
----[ end trace 0c4afebe89587153 ]---
 
-Michael Uleysky
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
