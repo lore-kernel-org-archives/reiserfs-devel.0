@@ -1,27 +1,49 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 1/3] reiserfs: make extended attributes support more
-	configurable
-Date: Thu, 9 Jul 2009 14:32:20 -0400
-Message-ID: <20090709183220.GA6371@infradead.org>
-References: <4A56313D.1020304@gmail.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 13876] New: [x86_32, 2.6.30, reiserfs, reiser3, bug,
+ regression] kernel oopsed while Sarg was running
+Date: Thu, 30 Jul 2009 11:36:32 GMT
+Message-ID: <bug-13876-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4A56313D.1020304@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eugene Kapun <abacabadabacaba@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-On Thu, Jul 09, 2009 at 10:04:45PM +0400, Eugene Kapun wrote:
-> From: Eugene Kapun <abacabadabacaba@gmail.com>
-> 
-> Adds configuration options which control how reiserfs supports extended
-> attributes. This makes support for POSIX ACLs and security labels
-> independent on support for normal xattrs. This also makes possible to
-> compile reiserfs without any xattrs support.
+http://bugzilla.kernel.org/show_bug.cgi?id=13876
 
-There's absoutely no reason for adding even more horrible ifdef churn.
+           Summary: [x86_32, 2.6.30, reiserfs, reiser3, bug, regression]
+                    kernel oopsed while Sarg was running
+           Product: File System
+           Version: 2.5
+    Kernel Version: 2.6.30
+          Platform: All
+        OS/Version: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: high
+          Priority: P1
+         Component: ReiserFS
+        AssignedTo: reiserfs-devel@vger.kernel.org
+        ReportedBy: for.poige+bugzilla.kernel.org@gmail.com
+        Regression: Yes
 
+
+Created an attachment (id=22537)
+ --> (http://bugzilla.kernel.org/attachment.cgi?id=22537)
+partial dmesg output
+
+(Sarg is Squid statistic analyzer, giving quite valuable both disk and CPU
+load.)
+
+dmesg is in the attachment. Unfortunately, it's not complete cause the kernel's
+failure made it impossible to log in to the comp where it occurred. Possibly,
+it completely remains in the system log files, and I hope since the comp will
+get rebooted (it's a remote one for me), I'll be able to find the logs and rest
+of the filesystem... ergh... intact.
+
+-- 
+Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
