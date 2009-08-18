@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 13536] crash while copying atime with touch
-Date: Tue, 18 Aug 2009 09:07:38 GMT
-Message-ID: <200908180907.n7I97cmR009052@demeter.kernel.org>
+Date: Tue, 18 Aug 2009 09:21:01 GMT
+Message-ID: <200908180921.n7I9L1xm010896@demeter.kernel.org>
 References: <bug-13536-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -18,29 +18,25 @@ http://bugzilla.kernel.org/show_bug.cgi?id=13536
 
 
 
---- Comment #17 from Roland Kletzing <devzero@web.de>  2009-08-18 09:07:37 ---
->This should be the raw value of the SMART temperature attribute, not the 
->real value.
+--- Comment #18 from Christian Kujau <lists@nerdbynature.de>  2009-08-18 09:21:00 ---
+On 8/18/09 2:07 AM, bugzilla-daemon@bugzilla.kernel.org wrote:
+>> This should be the raw value of the SMART temperature attribute, not the
+>> real value.
+>
+> how can we determine the real value then ?
 
-how can we determine the real value then ?
+My wording was wrong: the 123 degrees were not the "raw" but the 
+"normalized" value:
 
-on my system it looks like this:
+http://smartmontools.sourceforge.net/faq.html#disk-temperature
 
-neoware:~ # smartctl -d ata -a /dev/sda |egrep "RAW_VALUE|Temperature_Celsius"
-ID# ATTRIBUTE_NAME          FLAG     VALUE WORST THRESH TYPE      UPDATED 
-WHEN_FAILED RAW_VALUE
-194 Temperature_Celsius     0x0022   076   046   000    Old_age   Always      
--       52 (Lifetime Min/Max 9/67)
+> on my system it looks like this:
+[...]
 
-mind the column "RAW_VALUE". 
-so, if smartd isn`t telling nonsense, my disk runs a little bit cooler....
-(whereas i think 52 degrees is still too hot)
+Yeah, on mine too. smartd however has to be tought to print the raw 
+("real") value as well, as the FAQ above explains.
 
-
->I will read Roland Kletzings howto on creating kernel core dumps to 
->provide useful information, soon.
-mind, that this is just a pointer. i cannot even tell how good this works or if
-it works at all, as i did not try it.
+C.
 
 -- 
 Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
