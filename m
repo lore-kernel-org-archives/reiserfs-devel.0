@@ -1,44 +1,47 @@
-From: =?UTF-8?B?7ZmN7IugIHNoaW4gaG9uZw==?= <hongshin@gmail.com>
-Subject: a question on lock ordering in write_ordered_buffers()
-Date: Thu, 20 Aug 2009 16:55:26 +0900
-Message-ID: <2014bcab0908200055w10aa616h2c779c3b5690b792@mail.gmail.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 13556] Random oopses
+Date: Thu, 20 Aug 2009 09:00:03 GMT
+Message-ID: <200908200900.n7K903Bw023675@demeter.kernel.org>
+References: <bug-13556-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:received:date:message-id:subject
-         :from:to:content-type:content-transfer-encoding;
-        bh=DViNg6T51xH7Kn/oXKbC8gt2zns1KJ1FJVogBf7NcDc=;
-        b=h8RdHjWlcZ8YJLNrPOWUOoX9aowk6rxHVA/wrVzqZwrywFtdt6SSWw9rGwrp1jMf/r
-         VOjIvnk+bzCos8EdBjyqwVQSnMtePqdGTCMxGFq8fMaS86P+OLRvq3nb05adhR1JnWzK
-         LH+w7W32AzYg110bWVmAJtswiOa24TOXCvAaQ=
+In-Reply-To: <bug-13556-695@http.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-Hi. I have a question on lock ordering
-while I read ReiserFS code in Linux 2.6.30.4.
+http://bugzilla.kernel.org/show_bug.cgi?id=13556
 
-At write_ordered_buffers() function in reiserfs/journal.c,
 
-What is the lock ordering between spin_lock(lock) and lock_buffer(bh)?
 
-It seems that the lock ordering between spin_lock(lock) and
-lock_buffer(bh) is inconsistent.
-At line 858, the lock ordering is spin_lock(lock) =E2=86=92 lock_buffer=
-(bh).
-However, at line 881, lock_buffer(bh) =E2=86=92 spin_lock(lock)  since =
-add_to_chunk()
-releases and re-takes spin_lock(lock).
 
-Is it necessary that the ordering between two locks is consistent?
 
-Sincerely
-Shin Hong
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--- Comment #3 from Michael Uleysky <uleysky@gmail.com>  2009-08-20 09:00:00 ---
+I have three reiserfs mounts (may be more, if needed) on /usr, /var and /home.
+This is output of mount:
+rootfs on / type rootfs (rw)
+/dev/root on / type ext2 (ro,relatime,errors=continue)
+none on /tmp type tmpfs (rw,nosuid,nodev,relatime,size=2097152k)
+proc on /proc type proc (rw,relatime)
+none on /dev type tmpfs (rw,nosuid,relatime,size=1024k)
+none on /sys type sysfs (rw,relatime)
+none on /dev/pts type devpts (rw,nosuid,noexec,relatime,mode=620)
+usbfs on /proc/bus/usb type usbfs (rw,relatime)
+none on /proc/fs/nfsd type nfsd (rw,relatime)
+/dev/sdb6 on /usr type reiserfs (ro,nodev,noatime)
+/dev/sdb5 on /var type reiserfs (rw,nosuid,nodev,relatime,data=journal)
+/dev/sdb8 on /home type reiserfs (rw,nosuid,nodev,relatime,data=journal)
+/dev/sdb7 on /home/common/cluster type ext2 (rw,noatime,errors=continue)
+configfs on /config type configfs (rw,relatime)
+
+I run kernel compilation on all three filesystems. On /var and /home crashes
+always happens after some time of compilation, but on /usr kernel compiles
+normally. Directories with sources was
+{/home/root/Kernels,/usr/local,/var}/linux-2.6.30. Running kernel was 2.6.30.5.
+
+-- 
+Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
