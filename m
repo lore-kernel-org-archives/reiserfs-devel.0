@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 13556] Random oopses
-Date: Thu, 20 Aug 2009 10:28:11 GMT
-Message-ID: <200908201028.n7KASBtH000618@demeter.kernel.org>
+Date: Thu, 20 Aug 2009 12:42:54 GMT
+Message-ID: <200908201242.n7KCgsvS014472@demeter.kernel.org>
 References: <bug-13556-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -18,12 +18,15 @@ http://bugzilla.kernel.org/show_bug.cgi?id=13556
 
 
 
---- Comment #4 from Roland Kletzing <devzero@web.de>  2009-08-20 10:28:09 ---
-so, f you change /usr to have same fs mount options (i suspect atime/noatime or
-data=journal) can you produce the crash with /usr, too ?
+--- Comment #5 from Michael Uleysky <uleysky@gmail.com>  2009-08-20 12:42:52 ---
+I create another reiserfs filesystem and test it with different mount options.
 
-if that is the case, can you please evaluate which specific mount option is
-causing it ?
+rw,nosuid,nodev,relatime,data=journal    -   Crash
+rw,nosuid,nodev,relatime                 -   Ok
+rw,nodev,noatime                         -   Ok
+rw,nodev,noatime,data=journal            -   Crash
+
+So, problem, most probably, in data=journal option.
 
 -- 
 Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
