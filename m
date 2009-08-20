@@ -1,44 +1,44 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 13536] crash while copying atime with touch
-Date: Tue, 18 Aug 2009 09:21:01 GMT
-Message-ID: <200908180921.n7I9L1xm010896@demeter.kernel.org>
-References: <bug-13536-695@http.bugzilla.kernel.org/>
+From: =?UTF-8?B?7ZmN7IugIHNoaW4gaG9uZw==?= <hongshin@gmail.com>
+Subject: a question on lock ordering in write_ordered_buffers()
+Date: Thu, 20 Aug 2009 16:55:26 +0900
+Message-ID: <2014bcab0908200055w10aa616h2c779c3b5690b792@mail.gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-13536-695@http.bugzilla.kernel.org/>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:received:date:message-id:subject
+         :from:to:content-type:content-transfer-encoding;
+        bh=DViNg6T51xH7Kn/oXKbC8gt2zns1KJ1FJVogBf7NcDc=;
+        b=h8RdHjWlcZ8YJLNrPOWUOoX9aowk6rxHVA/wrVzqZwrywFtdt6SSWw9rGwrp1jMf/r
+         VOjIvnk+bzCos8EdBjyqwVQSnMtePqdGTCMxGFq8fMaS86P+OLRvq3nb05adhR1JnWzK
+         LH+w7W32AzYg110bWVmAJtswiOa24TOXCvAaQ=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
 To: reiserfs-devel@vger.kernel.org
 
-http://bugzilla.kernel.org/show_bug.cgi?id=13536
+Hi. I have a question on lock ordering
+while I read ReiserFS code in Linux 2.6.30.4.
 
+At write_ordered_buffers() function in reiserfs/journal.c,
 
+What is the lock ordering between spin_lock(lock) and lock_buffer(bh)?
 
+It seems that the lock ordering between spin_lock(lock) and
+lock_buffer(bh) is inconsistent.
+At line 858, the lock ordering is spin_lock(lock) =E2=86=92 lock_buffer=
+(bh).
+However, at line 881, lock_buffer(bh) =E2=86=92 spin_lock(lock)  since =
+add_to_chunk()
+releases and re-takes spin_lock(lock).
 
+Is it necessary that the ordering between two locks is consistent?
 
---- Comment #18 from Christian Kujau <lists@nerdbynature.de>  2009-08-18 09:21:00 ---
-On 8/18/09 2:07 AM, bugzilla-daemon@bugzilla.kernel.org wrote:
->> This should be the raw value of the SMART temperature attribute, not the
->> real value.
->
-> how can we determine the real value then ?
-
-My wording was wrong: the 123 degrees were not the "raw" but the 
-"normalized" value:
-
-http://smartmontools.sourceforge.net/faq.html#disk-temperature
-
-> on my system it looks like this:
-[...]
-
-Yeah, on mine too. smartd however has to be tought to print the raw 
-("real") value as well, as the FAQ above explains.
-
-C.
-
--- 
-Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+Sincerely
+Shin Hong
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
