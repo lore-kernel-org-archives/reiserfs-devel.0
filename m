@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 13556] Random oopses
-Date: Sat, 22 Aug 2009 01:03:06 GMT
-Message-ID: <200908220103.n7M136Vg029339@demeter.kernel.org>
+Date: Sat, 22 Aug 2009 01:04:06 GMT
+Message-ID: <200908220104.n7M146Qe029472@demeter.kernel.org>
 References: <bug-13556-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -19,8 +19,7 @@ Michael Uleysky <uleysky@gmail.com> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-         Resolution|                            |PATCH_ALREADY_AVAILABLE
+         Resolution|PATCH_ALREADY_AVAILABLE     |CODE_FIX
 
 
 
