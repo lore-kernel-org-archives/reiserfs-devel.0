@@ -1,16 +1,18 @@
 From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: [PATCH 0/4] kill-the-bkl/reiserfs: fix some lock dependency inversions
-Date: Tue, 25 Aug 2009 04:32:46 +0200
-Message-ID: <1251167570-5233-1-git-send-email-fweisbec@gmail.com>
+Subject: [PATCH 2/4] kill-the-bkl/reiserfs: fix recursive reiserfs lock in reiserfs_mkdir()
+Date: Tue, 25 Aug 2009 04:32:48 +0200
+Message-ID: <1251167570-5233-3-git-send-email-fweisbec@gmail.com>
+References: <1251167570-5233-1-git-send-email-fweisbec@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
         h=domainkey-signature:received:received:from:to:cc:subject:date
-         :message-id:x-mailer:to;
-        bh=QzUhebERIe2G5UBPXPb6ysT+3tVQ9At4I6f344obqI8=;
-        b=m86zTQTX4x8RZ9hu11XzUk9QkaVlyaMs6YE8UIhblhftgSX/iAcQDSIiTLZ6/bgalM
-         qq7OvPCf+5sBGAw6Yh/yk+nocB6Xmp/BuXwWzGon9No/fPQaNemKMtLeSOrJWl62YrzL
-         ZfFXoSYVwttWHaWk2oMPnGd7ApR70W1btLBrI=
+         :message-id:x-mailer:in-reply-to:references:to;
+        bh=eyQFD0+vQV2CaL79PNy54x6fNuidtRQCMfMSTdxX3Do=;
+        b=bnZpMwTMrBoiSIiSXl0sTKRpJXJULnr7dIWahhpwclw8LzgMp7YAX9Tzs9ThaspXAF
+         ZmFsF+pyx/KdhZmRrtQFDb7aL4dinpzt43uNr6IKYvDVMKDR/R6jF4UhTqgbJETsDu6Q
+         ruv2ZyUzVp5xYdSzjhUniQlvlsKDpevdHpv6s=
+In-Reply-To: <1251167570-5233-1-git-send-email-fweisbec@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -19,36 +21,57 @@ Content-Transfer-Encoding: 7bit
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Chris Mason <chris.mason@oracle.com>, Roland Dreier <rdreier@cisco.com>, Ingo Molnar <mingo@elte.hu>, Andi Kleen <andi@firstfloor.org>, Jeff Mahoney <jeffm@suse.com>, Alexander Beregalov <a.beregalov@gmail.com>, Bron Gondwana <brong@fastmail.fm>, Reiserfs <reiserfs-devel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Andrea Gelmini <andrea.gelmini@gmail.com>, "Trenton D. Adams" <trenton.d.adams@gmail.com>, Thomas Meyer <thomas@m3y3r.de>, Alessio Igor Bogani <abogani@texware.it>, Marcel Hilzinger <mhilzinger@linuxnewmedia.de>, Edward Shishkin <edward.shishkin@gmail.com>, Laurent Riffard <laurent.riffard@free.fr>
 
-Hi,
+reiserfs_mkdir() acquires the reiserfs lock, assuming it has been called
+from the dir inodes callbacks, without the lock held.
 
-This small set fixes some lock dependency inversions found in reiserfs
-xattr and mmap paths.
-I guess there are still some of them that I'll have to hunt, especially one
-reported by Laurent Riffard and another one introduced by the reiserfs_readdir
-path optimization (though I'm not sure about the latter, I have yet to find a
-way to reproduce it properly).
+But it can also be called from other internal sites such as
+reiserfs_xattr_init() which already holds the lock. This recursive
+locking leads to further wrong assumptions. For example, later calls
+to reiserfs_mutex_lock_safe() won't actually unlock the reiserfs lock
+the time we acquire a given mutex, creating unexpected lock inversions.
 
-As usual, these patches can be found at:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.git \
-	reiserfs/kill-bkl
-
-Thanks,
-Frederic.
-
-Frederic Weisbecker (4):
-  kill-the-bkl/reiserfs: fix "reiserfs lock" / "inode mutex" lock
-    inversion dependency
-  kill-the-bkl/reiserfs: fix recursive reiserfs lock in
-    reiserfs_mkdir()
-  kill-the-bkl/reiserfs: fix recursive reiserfs write lock in
-    reiserfs_commit_write()
-  kill-the-bkl/reiserfs: panic in case of lock imbalance
-
- fs/reiserfs/inode.c |   11 ++---------
- fs/reiserfs/lock.c  |    7 +++----
+Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Jeff Mahoney <jeffm@suse.com>
+Cc: Chris Mason <chris.mason@oracle.com>
+Cc: Ingo Molnar <mingo@elte.hu>
+Cc: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: Laurent Riffard <laurent.riffard@free.fr>
+---
  fs/reiserfs/namei.c |    7 ++++---
- fs/reiserfs/xattr.c |    2 +-
- 4 files changed, 10 insertions(+), 17 deletions(-)
+ 1 files changed, 4 insertions(+), 3 deletions(-)
 
+diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
+index b3973c9..e296ff7 100644
+--- a/fs/reiserfs/namei.c
++++ b/fs/reiserfs/namei.c
+@@ -732,6 +732,7 @@ static int reiserfs_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+ 	struct inode *inode;
+ 	struct reiserfs_transaction_handle th;
+ 	struct reiserfs_security_handle security;
++	int lock_depth;
+ 	/* We need blocks for transaction + (user+group)*(quotas for new inode + update of quota for directory owner) */
+ 	int jbegin_count =
+ 	    JOURNAL_PER_BALANCE_CNT * 3 +
+@@ -755,7 +756,7 @@ static int reiserfs_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+ 		return retval;
+ 	}
+ 	jbegin_count += retval;
+-	reiserfs_write_lock(dir->i_sb);
++	lock_depth = reiserfs_write_lock_once(dir->i_sb);
+ 
+ 	retval = journal_begin(&th, dir->i_sb, jbegin_count);
+ 	if (retval) {
+@@ -805,8 +806,8 @@ static int reiserfs_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+ 	d_instantiate(dentry, inode);
+ 	unlock_new_inode(inode);
+ 	retval = journal_end(&th, dir->i_sb, jbegin_count);
+-      out_failed:
+-	reiserfs_write_unlock(dir->i_sb);
++out_failed:
++	reiserfs_write_unlock_once(dir->i_sb, lock_depth);
+ 	return retval;
+ }
+ 
+-- 
+1.6.2.3
 
