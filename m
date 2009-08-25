@@ -1,103 +1,54 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: + fs-reiser4-add-parenths-around-x-y.patch added to -mm tree
-Date: Tue, 25 Aug 2009 01:38:56 +0200
-Message-ID: <4A932490.7000808@gmail.com>
-References: <200908242056.n7OKu8RA010535@imap1.linux-foundation.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: [PATCH 0/4] kill-the-bkl/reiserfs: fix some lock dependency inversions
+Date: Tue, 25 Aug 2009 04:32:46 +0200
+Message-ID: <1251167570-5233-1-git-send-email-fweisbec@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <200908242056.n7OKu8RA010535@imap1.linux-foundation.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:from:to:cc:subject:date
+         :message-id:x-mailer:to;
+        bh=QzUhebERIe2G5UBPXPb6ysT+3tVQ9At4I6f344obqI8=;
+        b=m86zTQTX4x8RZ9hu11XzUk9QkaVlyaMs6YE8UIhblhftgSX/iAcQDSIiTLZ6/bgalM
+         qq7OvPCf+5sBGAw6Yh/yk+nocB6Xmp/BuXwWzGon9No/fPQaNemKMtLeSOrJWl62YrzL
+         ZfFXoSYVwttWHaWk2oMPnGd7ApR70W1btLBrI=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: akpm@linux-foundation.org
-Cc: jirislaby@gmail.com, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Chris Mason <chris.mason@oracle.com>, Roland Dreier <rdreier@cisco.com>, Ingo Molnar <mingo@elte.hu>, Andi Kleen <andi@firstfloor.org>, Jeff Mahoney <jeffm@suse.com>, Alexander Beregalov <a.beregalov@gmail.com>, Bron Gondwana <brong@fastmail.fm>, Reiserfs <reiserfs-devel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Andrea Gelmini <andrea.gelmini@gmail.com>, "Trenton D. Adams" <trenton.d.adams@gmail.com>, Thomas Meyer <thomas@m3y3r.de>, Alessio Igor Bogani <abogani@texware.it>, Marcel Hilzinger <mhilzinger@linuxnewmedia.de>, Edward Shishkin <edward.shishkin@gmail.com>, Laurent Riffard <laurent.riffard@free.fr>
 
-I don't understand this brain damaged deducing
-GN flags from COPI flags, but it seems that it
-doesn't have any effect and we can simply remove
-both those if-branches.
+Hi,
 
-Anyway, thanks!
+This small set fixes some lock dependency inversions found in reiserfs
+xattr and mmap paths.
+I guess there are still some of them that I'll have to hunt, especially one
+reported by Laurent Riffard and another one introduced by the reiserfs_readdir
+path optimization (though I'm not sure about the latter, I have yet to find a
+way to reproduce it properly).
 
-Edward.
+As usual, these patches can be found at:
 
-akpm@linux-foundation.org wrote:
-> The patch titled
->      fs: reiser4, add parenths around !X & Y
-> has been added to the -mm tree.  Its filename is
->      fs-reiser4-add-parenths-around-x-y.patch
->
-> Before you just go and hit "reply", please:
->    a) Consider who else should be cc'ed
->    b) Prefer to cc a suitable mailing list as well
->    c) Ideally: find the original patch on the mailing list and do a
->       reply-to-all to that, adding suitable additional cc's
->
-> *** Remember to use Documentation/SubmitChecklist when testing your code ***
->
-> See http://userweb.kernel.org/~akpm/stuff/added-to-mm.txt to find
-> out what to do about this
->
-> The current -mm tree may be found at http://userweb.kernel.org/~akpm/mmotm/
->
-> ------------------------------------------------------
-> Subject: fs: reiser4, add parenths around !X & Y
-> From: Jiri Slaby <jirislaby@gmail.com>
->
-> Change !X & Y to !(X & Y) to avoid compiler confusion and fix a bug.
->
-> Signed-off-by: Jiri Slaby <jirislaby@gmail.com>
-> Cc: Edward Shishkin <edward.shishkin@gmail.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
->
->  fs/reiser4/carry_ops.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff -puN fs/reiser4/carry_ops.c~fs-reiser4-add-parenths-around-x-y fs/reiser4/carry_ops.c
-> --- a/fs/reiser4/carry_ops.c~fs-reiser4-add-parenths-around-x-y
-> +++ a/fs/reiser4/carry_ops.c
-> @@ -79,7 +79,7 @@ static carry_node *find_left_neighbor(ca
->  	left->free = 1;
->  
->  	flags = GN_TRY_LOCK;
-> -	if (!op->u.insert.flags & COPI_LOAD_LEFT)
-> +	if (!(op->u.insert.flags & COPI_LOAD_LEFT))
->  		flags |= GN_NO_ALLOC;
->  
->  	/* then, feeling lucky, peek left neighbor in the cache. */
-> @@ -203,7 +203,7 @@ static carry_node *find_right_neighbor(c
->  	read_unlock_tree(tree);
->  
->  	flags = GN_CAN_USE_UPPER_LEVELS;
-> -	if (!op->u.insert.flags & COPI_LOAD_RIGHT)
-> +	if (!(op->u.insert.flags & COPI_LOAD_RIGHT))
->  		flags = GN_NO_ALLOC;
->  
->  	/* then, try to lock right neighbor */
-> _
->
-> Patches currently in -mm which might be from jirislaby@gmail.com are
->
-> linux-next.patch
-> toshiba_acpi-return-on-a-fail-path.patch
-> mtd-sst25l-fix-lock-imbalance.patch
-> isdn-hisax-fix-lock-imbalance.patch
-> icom-converting-space-to-tabs.patch
-> cyclades-read-buffer-overflow.patch
-> serial167-fix-read-buffer-overflow.patch
-> usb-make-usb_buffer_map_sg-consistent-with-doc.patch
-> char-riscom8-fix-shutdown-declaration.patch
-> kcore-use-registerd-physmem-information-define-node__pfn-for-non-numa-builds.patch
-> kcore-use-registerd-physmem-information-fix2.patch
-> video-console-use-div_round_up.patch
-> memory-controller-soft-limit-organize-cgroups-v9-fix.patch
-> cyclades-allow-overriding-isa-defaults-also-when-the-driver-is-built-in.patch
-> drivers-char-rio-rioctrlc-off-by-one-error-in-rioctrlc.patch
-> reiser4.patch
-> fs-reiser4-add-parenths-around-x-y.patch
->
->
->   
+git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.git \
+	reiserfs/kill-bkl
+
+Thanks,
+Frederic.
+
+Frederic Weisbecker (4):
+  kill-the-bkl/reiserfs: fix "reiserfs lock" / "inode mutex" lock
+    inversion dependency
+  kill-the-bkl/reiserfs: fix recursive reiserfs lock in
+    reiserfs_mkdir()
+  kill-the-bkl/reiserfs: fix recursive reiserfs write lock in
+    reiserfs_commit_write()
+  kill-the-bkl/reiserfs: panic in case of lock imbalance
+
+ fs/reiserfs/inode.c |   11 ++---------
+ fs/reiserfs/lock.c  |    7 +++----
+ fs/reiserfs/namei.c |    7 ++++---
+ fs/reiserfs/xattr.c |    2 +-
+ 4 files changed, 10 insertions(+), 17 deletions(-)
+
 
