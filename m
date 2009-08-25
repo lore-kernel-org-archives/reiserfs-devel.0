@@ -1,56 +1,58 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: [PATCH 1/4] kill-the-bkl/reiserfs: fix "reiserfs lock" / "inode mutex" lock inversion dependency
-Date: Tue, 25 Aug 2009 04:32:47 +0200
-Message-ID: <1251167570-5233-2-git-send-email-fweisbec@gmail.com>
-References: <1251167570-5233-1-git-send-email-fweisbec@gmail.com>
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754214AbZHYCdn@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:from:to:cc:subject:date
-         :message-id:x-mailer:in-reply-to:references:to;
-        bh=d0nL5uSdA1EEIvusWLtmEdBAKYCs84Qkgclr4sLD4lk=;
-        b=yD3JKDvi/WzmKkm0ePIuFGQ7ETFDt9A+WnkQlkmFJ6gunWy2fqV9q0JZvrUVLf6RWe
-         qC1+bNZQkjD08aj/E7f17ZHu/y0AmQz7EawKcePDvEuWTCM/+eKPdGSVqoMVVO7Ewp2v
-         Gn9RFdGBI1iDTcjBSqnH7ysDY5Qbj2lyu0w/o=
-In-Reply-To: <1251167570-5233-1-git-send-email-fweisbec@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 14055] New: crash on NFS umount
+Date: Tue, 25 Aug 2009 12:52:55 GMT
+Message-ID: <bug-14055-695@http.bugzilla.kernel.org/>
+Mime-Version: 1.0
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Chris Mason <chris.mason@oracle.com>, Roland Dreier <rdreier@cisco.com>, Ingo Molnar <mingo@elte.hu>, Andi Kleen <andi@firstfloor.org>, Jeff Mahoney <jeffm@suse.com>, Alexander Beregalov <a.beregalov@gmail.com>, Bron Gondwana <brong@fastmail.fm>, Reiserfs <reiserfs-devel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Andrea Gelmini <andrea.gelmini@gmail.com>, "Trenton D. Adams" <trenton.d.adams@gmail.com>, Thomas Meyer <thomas@m3y3r.de>, Alessio Igor Bogani <abogani@texware.it>, Marcel Hilzinger <mhilzinger@linuxnewmedia.de>, Edward Shishkin <edward.shishkin@gmail.com>, Laurent Riffard <laurent.riffard@free.fr>
+To: reiserfs-devel@vger.kernel.org
 
-reiserfs_xattr_init is called with the reiserfs write lock held, but
-if the ".reiserfs_priv" entry is not created, we take the superblock
-root directory inode mutex until .reiserfs_priv is created.
+http://bugzilla.kernel.org/show_bug.cgi?id=14055
 
-This creates a lock dependency inversion against other sites such as
-reiserfs_file_release() which takes an inode mutex and the reiserfs
-lock after.
+           Summary: crash on NFS umount
+           Product: File System
+           Version: 2.5
+    Kernel Version: 2.6.30.5
+          Platform: All
+        OS/Version: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: ReiserFS
+        AssignedTo: reiserfs-devel@vger.kernel.org
+        ReportedBy: harald.dunkel@t-online.de
+        Regression: No
 
-Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Jeff Mahoney <jeffm@suse.com>
-Cc: Chris Mason <chris.mason@oracle.com>
-Cc: Ingo Molnar <mingo@elte.hu>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: Laurent Riffard <laurent.riffard@free.fr>
----
- fs/reiserfs/xattr.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index 59870a4..58aa8e7 100644
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -1004,7 +1004,7 @@ int reiserfs_xattr_init(struct super_block *s, int mount_flags)
- 		goto error;
- 
- 	if (!privroot->d_inode && !(mount_flags & MS_RDONLY)) {
--		mutex_lock(&s->s_root->d_inode->i_mutex);
-+		reiserfs_mutex_lock_safe(&s->s_root->d_inode->i_mutex, s);
- 		err = create_privroot(REISERFS_SB(s)->priv_root);
- 		mutex_unlock(&s->s_root->d_inode->i_mutex);
- 	}
+Created an attachment (id=22841)
+ --> (http://bugzilla.kernel.org/attachment.cgi?id=22841)
+kern.log
+
+I have set up a Linux-HA cluster (2 hosts) using kernel 2.6.30.5, drbd 8.3.2
+and Heartbeat. The data partition is formatted in reiserfs. It is exported via
+NFSv3 to 3 other Linux hosts.
+
+For a stress test I run a loop to shutdown heartbeat on the current primary,
+wait 5 minutes for the other host to take over and to make sure the NFS
+timeouts on the clients have expired, startup the local heartbeat again, and
+wait
+another 30 seconds. A complete cycle takes 11 minutes.
+
+To put some load on the cluster I have started 3 kernel builds in parallel on
+each of the 3 NFS clients.
+
+
+After some time I got the attached crash. It seems that it happened when
+heartbeat tried to unmount the data partition. I had to reboot, check the file
+system (it was dirty), and start heartbeat again. After a few cycles I got the
+same problem again, but this time on the other host. After that I stopped
+testing.
+
 -- 
-1.6.2.3
+Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
