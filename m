@@ -1,36 +1,139 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 13756] Kernel panic occasionaly under load
-Date: Wed, 26 Aug 2009 17:22:29 GMT
-Message-ID: <200908261722.n7QHMTXl032542@demeter.kernel.org>
-References: <bug-13756-695@http.bugzilla.kernel.org/>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: Re: [PATCH 0/4] kill-the-bkl/reiserfs: fix some lock dependency
+	inversions
+Date: Thu, 27 Aug 2009 00:13:30 +0400
+Message-ID: <20090826201330.GA18761@orion>
+References: <1251167570-5233-1-git-send-email-fweisbec@gmail.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-13756-695@http.bugzilla.kernel.org/>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:date:from:to:cc:subject
+         :message-id:references:mime-version:content-type:content-disposition
+         :in-reply-to:user-agent;
+        bh=lVoA97HlahL8Z3QNeEWeFG3H+qWKRy9K8WRt6qY8biE=;
+        b=bO0WHImriBt9XdFeQiTrH4wanzRpGKL6fe1BzNlhcJQHB32xDGlfWtPd1UL6zvFUg2
+         l+3FFFDfLuPvQVPClYZhZoSVQihB3yO+ky/lCcr7G36dbURIKcyLFY+9iVEeYGaxIfM8
+         9O8f4pQOpW8wNGP/vgkl8cQJJfI5RTxDH0i60=
+Content-Disposition: inline
+In-Reply-To: <1251167570-5233-1-git-send-email-fweisbec@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Reiserfs <reiserfs-devel@vger.kernel.org>
 
-http://bugzilla.kernel.org/show_bug.cgi?id=13756
+On Tue, Aug 25, 2009 at 04:32:46AM +0200, Frederic Weisbecker wrote:
+> Hi,
+> 
+> This small set fixes some lock dependency inversions found in reiserfs
+> xattr and mmap paths.
+> I guess there are still some of them that I'll have to hunt, especially one
+> reported by Laurent Riffard and another one introduced by the reiserfs_readdir
+> path optimization (though I'm not sure about the latter, I have yet to find a
+> way to reproduce it properly).
+> 
+> As usual, these patches can be found at:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.git \
+> 	reiserfs/kill-bkl
+
+Hi,
+possible circular locking dependency detected
+
+Is it false positive?
+
+REISERFS (device sda1): found reiserfs format "3.6" with standard journal
+REISERFS (device sda1): using ordered data mode
+REISERFS (device sda1): journal params: device sda1, size 8192, journal first block 18, max trans len 1024, max batch 900, max commit age 30, max trans age 30
+REISERFS (device sda1): checking transaction log (sda1)
+REISERFS debug (device sda1): journal-1153: found in header: first_unflushed_offset 6766, last_flushed_trans_id 1836992
+REISERFS debug (device sda1): journal-1206: Starting replay from offset 7889824857987694, trans_id 18
+REISERFS debug (device sda1): journal-1299: Setting newest_mount_id to 229
+REISERFS (device sda1): Using r5 hash to sort names
+VFS: Mounted root (reiserfs filesystem) readonly on device 8:1.
+
+=======================================================
+[ INFO: possible circular locking dependency detected ]
+2.6.31-rc7-00135-g9399a4c #5
+-------------------------------------------------------
+init.sh/599 is trying to acquire lock:
+ (&mm->mmap_sem){++++++}, at: [<c1071056>] might_fault+0x46/0xa0
+
+but task is already holding lock:
+ (&REISERFS_SB(s)->lock){+.+.+.}, at: [<c10ff20e>] reiserfs_write_lock+0x1e/0x30
+
+which lock already depends on the new lock.
 
 
-Igor Novgorodov <igor@novg.net> changed:
+the existing dependency chain (in reverse order) is:
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-         Resolution|                            |PATCH_ALREADY_AVAILABLE
+-> #1 (&REISERFS_SB(s)->lock){+.+.+.}:
+       [<c104dd18>] __lock_acquire+0xd28/0x1390
+       [<c104e3ef>] lock_acquire+0x6f/0x90
+       [<c133af96>] __mutex_lock_common+0x46/0x310
+       [<c133b318>] mutex_lock_nested+0x38/0x40
+       [<c10ff1ce>] reiserfs_write_lock_once+0x1e/0x40
+       [<c10db74c>] reiserfs_get_block+0x5c/0x1440
+       [<c10ae7a0>] do_mpage_readpage+0x120/0x4b0
+       [<c10aec2f>] mpage_readpages+0x9f/0xe0
+       [<c10d8c39>] reiserfs_readpages+0x19/0x20
+       [<c10671f5>] __do_page_cache_readahead+0x195/0x210
+       [<c1067291>] ra_submit+0x21/0x30
+       [<c1061229>] filemap_fault+0x2e9/0x380
+       [<c1072f08>] __do_fault+0x38/0x3b0
+       [<c1073b5d>] handle_mm_fault+0xcd/0x550
+       [<c101ad63>] do_page_fault+0xf3/0x240
+       [<c133cd53>] error_code+0x63/0x68
+       [<c10baa74>] padzero+0x24/0x40
+       [<c10bc062>] load_elf_binary+0x632/0x1480
+       [<c108aafa>] search_binary_handler+0x8a/0x270
+       [<c108cb15>] do_execve+0x215/0x2a0
+       [<c1001658>] sys_execve+0x28/0x60
+       [<c1002d99>] syscall_call+0x7/0xb
+       [<ffffffff>] 0xffffffff
 
+-> #0 (&mm->mmap_sem){++++++}:
+       [<c104dd99>] __lock_acquire+0xda9/0x1390
+       [<c104e3ef>] lock_acquire+0x6f/0x90
+       [<c1071087>] might_fault+0x77/0xa0
+       [<c11c1886>] copy_to_user+0x36/0x130
+       [<c1093c29>] filldir64+0xa9/0xf0
+       [<c10deda1>] reiserfs_readdir_dentry+0x4a1/0x7b0
+       [<c10df0c7>] reiserfs_readdir+0x17/0x20
+       [<c1093eb5>] vfs_readdir+0x85/0xa0
+       [<c1093f34>] sys_getdents64+0x64/0xb0
+       [<c1002d18>] sysenter_do_call+0x12/0x36
+       [<ffffffff>] 0xffffffff
 
+other info that might help us debug this:
 
+2 locks held by init.sh/599:
+ #0:  (&sb->s_type->i_mutex_key#4){+.+.+.}, at: [<c1093e82>] vfs_readdir+0x52/0xa0
+ #1:  (&REISERFS_SB(s)->lock){+.+.+.}, at: [<c10ff20e>] reiserfs_write_lock+0x1e/0x30
 
---- Comment #8 from Igor Novgorodov <igor@novg.net>  2009-08-26 17:22:27 ---
-Well, it looks like the patch solves the problem!
-Under 31-rc7 i've recompiled the toolchain three times, and it's rock solid.
-We can close the bug now i think. Thanks to all of you!
-
--- 
-Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+stack backtrace:
+Pid: 599, comm: init.sh Not tainted 2.6.31-rc7-00135-g9399a4c #5
+Call Trace:
+ [<c133a11a>] ? printk+0x18/0x1e
+ [<c104bfdd>] print_circular_bug_tail+0x8d/0xd0
+ [<c104dd99>] __lock_acquire+0xda9/0x1390
+ [<c104e3ef>] lock_acquire+0x6f/0x90
+ [<c1071056>] ? might_fault+0x46/0xa0
+ [<c1071087>] might_fault+0x77/0xa0
+ [<c1071056>] ? might_fault+0x46/0xa0
+ [<c11c1886>] copy_to_user+0x36/0x130
+ [<c1093c29>] filldir64+0xa9/0xf0
+ [<c10ff20e>] ? reiserfs_write_lock+0x1e/0x30
+ [<c10deda1>] reiserfs_readdir_dentry+0x4a1/0x7b0
+ [<c1093b80>] ? filldir64+0x0/0xf0
+ [<c104d453>] ? __lock_acquire+0x463/0x1390
+ [<c104c62e>] ? trace_hardirqs_on_caller+0x7e/0x170
+ [<c1093b80>] ? filldir64+0x0/0xf0
+ [<c133b153>] ? __mutex_lock_common+0x203/0x310
+ [<c1093b80>] ? filldir64+0x0/0xf0
+ [<c10df0c7>] reiserfs_readdir+0x17/0x20
+ [<c1093eb5>] vfs_readdir+0x85/0xa0
+ [<c1093f34>] sys_getdents64+0x64/0xb0
+ [<c1002d18>] sysenter_do_call+0x12/0x36
