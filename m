@@ -1,44 +1,66 @@
-From: =?UTF-8?B?7ZmN7IugIHNoaW4gaG9uZw==?= <hongshin@gmail.com>
-Subject: a suspected bug at let_transaction_grow()
-Date: Tue, 1 Sep 2009 22:39:34 +0900
-Message-ID: <2014bcab0909010639k437e0fc5y14c47de28c1c57d5@mail.gmail.com>
+From: Jan Kara <jack@suse.cz>
+Subject: [PATCH] reiserfs: Truncate blocks not used by a write
+Date: Tue, 1 Sep 2009 17:55:54 +0200
+Message-ID: <20090901155554.GD8242@duck.novell.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:received:date:message-id:subject
-         :from:to:content-type;
-        bh=cw5hlFqSN1FqCSfuJDvKWrrrNTpPGSoxbdjZPslNwx4=;
-        b=uHvPXB/0j0sH3YX6c5ZI3fH7Ux9I0tUYilUoMvt06COCKwZkLUY68o+BKJbQ17RElz
-         qzaX7aGb+YzQKH7hKLv8Gf444xtzVNSN6zyqHEPgjFSPoYmdUNUegC2M28c0yk727KDR
-         RJIpsO9GwfSDfDlj7/HDdQKe21sqq5RJd5tqU=
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: reiserfs-devel@vger.kernel.org, jeffm@suse.com, LKML <linux-kernel@vger.kernel.org>
 
-Hi. I would like to report a suspected bug at let_transaction_grow()
-in fs/reiserfs/journal.c of Linux 2.6.30.4.
+It can happen that write does not use all the blocks allocated in write_begin
+either because of some filesystem error (like ENOSPC) or because page with
+data to write has been removed from memory. We truncate these blocks so that
+we don't have dangling blocks beyond i_size. 
 
-I found this suspected bug while I survey the usage of atomic instruction
-and memory barriers. I am not certain whether this report is real or not
-since I do not have ReiserFS background. But I hope that this report is helpful.
-Please examine the report and let me know your opinion.
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
 
-In let_transaction_grow(), I found the following code for busy-waiting:
+Andrew, would you merge the patch please? Thanks.
 
-	while ((atomic_read(&journal->j_wcount) > 0 ||
-                  atomic_read(&journal->j_jlock)) &&
-                  journal->j_trans_id == trans_id) {
-	    queue_log_writer(sb);
-	}
-
-However, it may result starvation(or infinite loop) since there is no
-memory barrier for atomic_read()
-(atomic_read() may read out-of-dates value).
-
-Thank you.
-
-Sincerely
-Shin Hong
+diff -rupX /home/jack/.kerndiffexclude linux-2.6.27-SLE11_BRANCH/fs/reiserfs/inode.c linux-2.6.27-SLE11_BRANCH-1-reiserfs_corruption//fs/reiserfs/inode.c
+--- linux-2.6.27-SLE11_BRANCH/fs/reiserfs/inode.c	2009-06-02 17:14:29.000000000 +0200
++++ linux-2.6.27-SLE11_BRANCH-1-reiserfs_corruption//fs/reiserfs/inode.c	2009-06-24 14:39:44.000000000 +0200
+@@ -2606,6 +2610,8 @@ static int reiserfs_write_begin(struct f
+ 	if (ret) {
+ 		unlock_page(page);
+ 		page_cache_release(page);
++		/* Truncate allocated blocks */
++		vmtruncate(inode, inode->i_size);
+ 	}
+ 	return ret;
+ }
+@@ -2698,8 +2705,7 @@ static int reiserfs_write_end(struct fil
+ 	 ** transaction tracking stuff when the size changes.  So, we have
+ 	 ** to do the i_size updates here.
+ 	 */
+-	pos += copied;
+-	if (pos > inode->i_size) {
++	if (pos + copied > inode->i_size) {
+ 		struct reiserfs_transaction_handle myth;
+ 		reiserfs_write_lock(inode->i_sb);
+ 		/* If the file have grown beyond the border where it
+@@ -2717,7 +2723,7 @@ static int reiserfs_write_end(struct fil
+ 			goto journal_error;
+ 		}
+ 		reiserfs_update_inode_transaction(inode);
+-		inode->i_size = pos;
++		inode->i_size = pos + copied;
+ 		/*
+ 		 * this will just nest into our transaction.  It's important
+ 		 * to use mark_inode_dirty so the inode gets pushed around on the
+@@ -2744,6 +2750,10 @@ static int reiserfs_write_end(struct fil
+       out:
+ 	unlock_page(page);
+ 	page_cache_release(page);
++
++	if (pos + len > inode->i_size)
++		vmtruncate(inode, inode->i_size);
++
+ 	return ret == 0 ? copied : ret;
+ 
+       journal_error:
