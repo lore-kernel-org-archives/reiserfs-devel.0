@@ -1,66 +1,27 @@
-From: Jan Kara <jack@suse.cz>
-Subject: [PATCH] reiserfs: Truncate blocks not used by a write
-Date: Tue, 1 Sep 2009 17:55:54 +0200
-Message-ID: <20090901155554.GD8242@duck.novell.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] reiserfs: Truncate blocks not used by a write
+Date: Tue, 1 Sep 2009 13:42:56 -0400
+Message-ID: <20090901174255.GA9051@infradead.org>
+References: <20090901155554.GD8242@duck.novell.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <20090901155554.GD8242@duck.novell.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: reiserfs-devel@vger.kernel.org, jeffm@suse.com, LKML <linux-kernel@vger.kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>, reiserfs-devel@vger.kernel.org, jeffm@suse.com, LKML <linux-kernel@vger.kernel.org>
 
-It can happen that write does not use all the blocks allocated in write_begin
-either because of some filesystem error (like ENOSPC) or because page with
-data to write has been removed from memory. We truncate these blocks so that
-we don't have dangling blocks beyond i_size. 
+On Tue, Sep 01, 2009 at 05:55:54PM +0200, Jan Kara wrote:
+> It can happen that write does not use all the blocks allocated in write_begin
+> either because of some filesystem error (like ENOSPC) or because page with
+> data to write has been removed from memory. We truncate these blocks so that
+> we don't have dangling blocks beyond i_size. 
 
-Signed-off-by: Jan Kara <jack@suse.cz>
----
+vmtruncate is in the process of going away for 2.6.32.  Please use a
+filesystems-specific routine to just trim the blocks, similar to what
+the vmtruncate call in the generic write_begin helper is beeing replaced
+with in Nick's truncate patch series.
 
-Andrew, would you merge the patch please? Thanks.
-
-diff -rupX /home/jack/.kerndiffexclude linux-2.6.27-SLE11_BRANCH/fs/reiserfs/inode.c linux-2.6.27-SLE11_BRANCH-1-reiserfs_corruption//fs/reiserfs/inode.c
---- linux-2.6.27-SLE11_BRANCH/fs/reiserfs/inode.c	2009-06-02 17:14:29.000000000 +0200
-+++ linux-2.6.27-SLE11_BRANCH-1-reiserfs_corruption//fs/reiserfs/inode.c	2009-06-24 14:39:44.000000000 +0200
-@@ -2606,6 +2610,8 @@ static int reiserfs_write_begin(struct f
- 	if (ret) {
- 		unlock_page(page);
- 		page_cache_release(page);
-+		/* Truncate allocated blocks */
-+		vmtruncate(inode, inode->i_size);
- 	}
- 	return ret;
- }
-@@ -2698,8 +2705,7 @@ static int reiserfs_write_end(struct fil
- 	 ** transaction tracking stuff when the size changes.  So, we have
- 	 ** to do the i_size updates here.
- 	 */
--	pos += copied;
--	if (pos > inode->i_size) {
-+	if (pos + copied > inode->i_size) {
- 		struct reiserfs_transaction_handle myth;
- 		reiserfs_write_lock(inode->i_sb);
- 		/* If the file have grown beyond the border where it
-@@ -2717,7 +2723,7 @@ static int reiserfs_write_end(struct fil
- 			goto journal_error;
- 		}
- 		reiserfs_update_inode_transaction(inode);
--		inode->i_size = pos;
-+		inode->i_size = pos + copied;
- 		/*
- 		 * this will just nest into our transaction.  It's important
- 		 * to use mark_inode_dirty so the inode gets pushed around on the
-@@ -2744,6 +2750,10 @@ static int reiserfs_write_end(struct fil
-       out:
- 	unlock_page(page);
- 	page_cache_release(page);
-+
-+	if (pos + len > inode->i_size)
-+		vmtruncate(inode, inode->i_size);
-+
- 	return ret == 0 ? copied : ret;
- 
-       journal_error:
