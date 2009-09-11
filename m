@@ -1,36 +1,26 @@
-From: Volker Armin Hemmann <volkerarmin@googlemail.com>
-Subject: Re: query - reiser4 patch for 2.6.31 kernel
-Date: Fri, 11 Sep 2009 07:38:24 +0200
-Message-ID: <200909110738.24679.volkerarmin@googlemail.com>
-References: <51ea0ee6820d1cc0bfe3b01c17c43c67@mail.velocitynet.com.au>
+From: Denic Sinisa <sdenic@yandex.ru>
+Subject: GRUB
+Date: Fri, 11 Sep 2009 17:49:28 +0400
+Message-ID: <125381252676968@webmail105.yandex.ru>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=gamma;
-        h=domainkey-signature:received:received:from:to:subject:date
-         :user-agent:cc:references:in-reply-to:mime-version:content-type
-         :content-transfer-encoding:message-id;
-        bh=rojuvGK5lP6N8SXFbPKPelilLC/6BpYwYF77Nxwn/xE=;
-        b=NIuoL6vuFokyxYzKou87e1CZA6OgUVVLFEgMlwoLSu8X2NeqUXOSulkAbf+8TWsx/F
-         BgtdwvgWd5Gw4z8Ikk5xLni3cihJl+YfiAYBa5dCkX9WtAYtR9+53aKRtNMUPqsY6Irv
-         6Fvx9AKENv9gGn05fUnsKj3cRgOhYV2n41AlM=
-In-Reply-To: <51ea0ee6820d1cc0bfe3b01c17c43c67@mail.velocitynet.com.au>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: Text/Plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 To: reiserfs-devel@vger.kernel.org
-Cc: doiggl@velocitynet.com.au
 
-On Freitag 11 September 2009, doiggl@velocitynet.com.au wrote:
-> Hello,
-> Is there a reiser4 patch available (reiser4-for-2.6.31) for the
-> linux-2.6.31 kernel since 2.6.31 has been released.
-> Cheers Glenn
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel"
->  in the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
-just use the  patch for -30 ;)
+I have a problem compiling grub-0.97 wiht reiser4 patch=20
+There are objplug and plug_call undefined functions=20
+Any idea ?=20
+Thanks, Sinisa
+--=20
+=D0=AF=D0=BD=D0=B4=D0=B5=D0=BA=D1=81.=D0=9F=D0=BE=D1=87=D1=82=D0=B0. =D0=
+=9F=D0=B8=D1=81=D1=8C=D0=BC=D0=B0 =D0=B5=D1=81=D1=82=D1=8C. =D0=A1=D0=BF=
+=D0=B0=D0=BC=D0=B0 - =D0=BD=D0=B5=D1=82. http://mail.yandex.ru/nospam/s=
+ign
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
