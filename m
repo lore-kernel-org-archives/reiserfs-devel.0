@@ -1,51 +1,56 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: [PATCH] reiserfs: Truncate blocks not used by a write (v2)
-Date: Thu, 17 Sep 2009 02:56:34 +0200
-Message-ID: <20090917005633.GC8098@nowhere>
-References: <1253121912-20718-1-git-send-email-jack@suse.cz> <20090916144815.e544b319.akpm@linux-foundation.org>
+Date: Thu, 17 Sep 2009 11:56:29 +1000
+Message-ID: <20090917115629.6f8f8f00.sfr@canb.auug.org.au>
+References: <1253121912-20718-1-git-send-email-jack@suse.cz>
+	<20090916144815.e544b319.akpm@linux-foundation.org>
+	<20090917005633.GC8098@nowhere>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__17_Sep_2009_11_56_29_+1000_S6fxau8kbRrqt9wa"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:received:date:from:to:cc
-         :subject:message-id:references:mime-version:content-type
-         :content-disposition:in-reply-to:user-agent;
-        bh=3m8Gy4P7f90srtIqMMYlS9zp/tSuVkNLiyGSS2FQN6Q=;
-        b=veWFhh1jVYlTIcuk56f7Pj/r315O5eqDWhaW/rwZnF8VOMVAAs+pe009KU6tylPRAu
-         k+gBQRw6LqM9bZCaM8HOpgso95AKsy0UaM3W/TTbE0JKfQLX5c25efLPSNHzQXoOtiId
-         BM1E51r/VwO5PhaqrQHwCtK89kacOeiXAWHjQ=
-Content-Disposition: inline
-In-Reply-To: <20090916144815.e544b319.akpm@linux-foundation.org>
+In-Reply-To: <20090917005633.GC8098@nowhere>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, hch@infradead.org, reiserfs-devel@vger.kernel.org, jeffm@suse.com
+To: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, hch@infradead.org, reiserfs-devel@vger.kernel.org, jeffm@suse.com
 
-On Wed, Sep 16, 2009 at 02:48:15PM -0700, Andrew Morton wrote:
-> On Wed, 16 Sep 2009 19:25:12 +0200
-> Jan Kara <jack@suse.cz> wrote:
-> 
-> > It can happen that write does not use all the blocks allocated in write_begin
-> > either because of some filesystem error (like ENOSPC) or because page with
-> > data to write has been removed from memory. We truncate these blocks so that
-> > we don't have dangling blocks beyond i_size.
-> 
-> This clashes a bit with the kill-the-bkl/reiserfs stuff in linux-next.
+--Signature=_Thu__17_Sep_2009_11_56_29_+1000_S6fxau8kbRrqt9wa
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Frederic,
 
-Note that the kill-the-bkl/reiserfs tree has suffered from too much
-lock inversion problems lately. Even though I just fixed the last one
-reported, I would feel more comfortable to schedule this tree for .33
-rather than .32
+On Thu, 17 Sep 2009 02:56:34 +0200 Frederic Weisbecker <fweisbec@gmail.com>=
+ wrote:
+>
+> Note that the kill-the-bkl/reiserfs tree has suffered from too much
+> lock inversion problems lately. Even though I just fixed the last one
+> reported, I would feel more comfortable to schedule this tree for .33
+> rather than .32
+>=20
+> So this tree can be removed from -next and reintegrated once -rc1 is
+> released, without problem.
 
-So this tree can be removed from -next and reintegrated once -rc1 is
-released, without problem.
+OK, I have removed it from today.  Please let me know when it should be
+readded (in case I forget - which at my age is likely :-)).
 
-So that if this patch is scheduled for .32, I can fix the conflict
-myself once -rc1 is released and not burden Stephen with this conflict
-which is useless to handle in -next for now.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks.
+--Signature=_Thu__17_Sep_2009_11_56_29_+1000_S6fxau8kbRrqt9wa
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkqxl00ACgkQjjKRsyhoI8zSbgCgh5yvlew8782uOExdZhLzB2eD
+bGoAn37vinDdlpg0Re2a/x2Mrc/Qgn+5
+=0vu0
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__17_Sep_2009_11_56_29_+1000_S6fxau8kbRrqt9wa--
