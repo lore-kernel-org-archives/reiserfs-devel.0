@@ -1,124 +1,51 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: [PATCH 0/4] kill-the-bkl/reiserfs: fix some lock dependency 
-	inversions
-Date: Thu, 17 Sep 2009 03:37:22 +0400
-Message-ID: <a4423d670909161637r67c933a0n2c142898ea493f22@mail.gmail.com>
-References: <1251167570-5233-1-git-send-email-fweisbec@gmail.com>
-	 <20090826201330.GA18761@orion> <20090914203749.GF6045@nowhere>
-	 <a4423d670909141433g18659aay6e177b1302e5b4a0@mail.gmail.com>
-	 <20090916203747.GB5068@nowhere>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: [PATCH] reiserfs: Truncate blocks not used by a write (v2)
+Date: Thu, 17 Sep 2009 02:56:34 +0200
+Message-ID: <20090917005633.GC8098@nowhere>
+References: <1253121912-20718-1-git-send-email-jack@suse.cz> <20090916144815.e544b319.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:received:in-reply-to:references
-         :date:message-id:subject:from:to:cc:content-type
-         :content-transfer-encoding;
-        bh=DV53+1N7w0aryUkV4u1TzBsSs7lXuur8fTPRF0F36go=;
-        b=hGa73n2REy+eF2CH87keikO7Ib+hmkirgrOaK930FLHh6bHv20edplcQthshFiEU36
-         qDvIRVjOiHpy9imLB6D3phRvjRvBgYtC6GTZd81BDATg9eW5r6qXhajicHv1c5DbV8s3
-         XqHgZkq3rTv9CzPnQ2qevDlQMCq5gPFNolQlk=
-In-Reply-To: <20090916203747.GB5068@nowhere>
+        h=domainkey-signature:received:received:received:date:from:to:cc
+         :subject:message-id:references:mime-version:content-type
+         :content-disposition:in-reply-to:user-agent;
+        bh=3m8Gy4P7f90srtIqMMYlS9zp/tSuVkNLiyGSS2FQN6Q=;
+        b=veWFhh1jVYlTIcuk56f7Pj/r315O5eqDWhaW/rwZnF8VOMVAAs+pe009KU6tylPRAu
+         k+gBQRw6LqM9bZCaM8HOpgso95AKsy0UaM3W/TTbE0JKfQLX5c25efLPSNHzQXoOtiId
+         BM1E51r/VwO5PhaqrQHwCtK89kacOeiXAWHjQ=
+Content-Disposition: inline
+In-Reply-To: <20090916144815.e544b319.akpm@linux-foundation.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Reiserfs <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, hch@infradead.org, reiserfs-devel@vger.kernel.org, jeffm@suse.com
 
-2009/9/17 Frederic Weisbecker <fweisbec@gmail.com>:
-> On Tue, Sep 15, 2009 at 01:33:42AM +0400, Alexander Beregalov wrote:
->> > Hi Alexander,
->> >
->> > It should be fixed now, still in the following tree:
->>
->> Hi!
->> Another one, similar:
->> It is v2.6.31-3123-g99bc470 plus your 805031859(kill-the-bkl/reiserf=
-s:
->> panic in case of lock imbalance), UP.
->
->
->
-> Although I can't reproduce it, I think I see how that can happen.
->
-> On mount time, we have the following dependency:
->
-> reiserfs_lock -> bdev_mutex -> sysfs_mutex
->
-> which happens while calling journal_init_dev() because
-> we open the device there.
->
-> But also in case of mmap on a reiserfs filesystem we
-> may call reiserfs_readpages(), holding the reiserfs lock
-> while already holding mm->mmap_sem
->
-> The above dependency is then updated:
->
-> mmap_sem
-> =C2=A0 =C2=A0 |
-> =C2=A0 =C2=A0 |
-> =C2=A0 =C2=A0 ------- reiserfs_lock -> bdev_mutex -> sysfs_mutex
->
-> And later, while doing a readdir() on a sysfs directory,
-> sysfs calls filldir, which might_fault, and then might grab
-> mmap_sem. filldir is called there while holding sys_mutex,
-> creating the new following dependency
->
-> sysfs_mutex -> mmap_sem
->
-> Hence the inversion.
-> It seems the deadlock can't ever happen, I even don't see
-> corner cases where it could happen.
->
-> But still, this dependency should disappear.
->
-> Could you please tell me if the following patch makes it shut down?
->
-> Otherwise, I may need your config. I don't know why, but I suspect
-> the lock_acquire(mmap_sem) in might_fault doesn't trigger needed the =
-lockdep
-> check, although I have the appropriate debug config, at least it seem=
-s.
-> But anyway, it should also happen in my box but it doesn't...
->
-> Thanks!
->
-> The patch:
-Yes, it is working!
+On Wed, Sep 16, 2009 at 02:48:15PM -0700, Andrew Morton wrote:
+> On Wed, 16 Sep 2009 19:25:12 +0200
+> Jan Kara <jack@suse.cz> wrote:
+> 
+> > It can happen that write does not use all the blocks allocated in write_begin
+> > either because of some filesystem error (like ENOSPC) or because page with
+> > data to write has been removed from memory. We truncate these blocks so that
+> > we don't have dangling blocks beyond i_size.
+> 
+> This clashes a bit with the kill-the-bkl/reiserfs stuff in linux-next.
 
->
-> diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-> index d23d6d7..59f7a4c 100644
-> --- a/fs/reiserfs/journal.c
-> +++ b/fs/reiserfs/journal.c
-> @@ -2801,11 +2801,14 @@ int journal_init(struct super_block *sb, cons=
-t char *j_dev_name,
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto free_and_=
-return;
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0}
->
-> + =C2=A0 =C2=A0 =C2=A0 reiserfs_write_unlock(sb);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0if (journal_init_dev(sb, journal, j_dev_na=
-me) !=3D 0) {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0reiserfs_warni=
-ng(sb, "sh-462",
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 "unable to initialize jornal=
- device");
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 reiserfs_write_loc=
-k(sb);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto free_and_=
-return;
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0}
-> + =C2=A0 =C2=A0 =C2=A0 reiserfs_write_lock(sb);
->
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0rs =3D SB_DISK_SUPER_BLOCK(sb);
->
->
->
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Note that the kill-the-bkl/reiserfs tree has suffered from too much
+lock inversion problems lately. Even though I just fixed the last one
+reported, I would feel more comfortable to schedule this tree for .33
+rather than .32
+
+So this tree can be removed from -next and reintegrated once -rc1 is
+released, without problem.
+
+So that if this patch is scheduled for .32, I can fix the conflict
+myself once -rc1 is released and not burden Stephen with this conflict
+which is useless to handle in -next for now.
+
+Thanks.
+
