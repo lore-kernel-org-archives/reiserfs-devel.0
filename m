@@ -1,27 +1,24 @@
-From: drwowe <drwowe@yahoo.com>
-Subject: Re: [patch 0/4] reiser4: pending bugfixes, cleanups
-Date: Sun, 4 Oct 2009 22:27:40 -0700 (PDT)
-Message-ID: <25745333.post@talk.nabble.com>
-References: <4AC94065.8020303@gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: reiser4-for-2.6.31.patch inclusion for obs reiser4-kmp (Project
+ drivers:filesystems)
+Date: Mon, 05 Oct 2009 16:43:33 +1100
+Message-ID: <489d8879b94eb9c0286b91be7b019ba9@mail.velocitynet.com.au>
+References: <21849.202.168.22.19.1244727030.squirrel@webmail.velocity.net.au> <4A310BD8.90802@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4AC94065.8020303@gmail.com>
+In-Reply-To: <4A310BD8.90802@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: reiserfs-devel@vger.kernel.org
 
+Hello Jeff,
+Could this the r4 module for compiled up in openSUSE_Factory please.
 
+other info
+https://build.opensuse.org/package/show?package=reiser4-kmp&project=drivers%3Afilesystems
+http://www.kernel.org/pub/linux/kernel/people/edward/reiser4/reiser4-for-2.6/reiser4-for-2.6.31.patch.gz
 
-Edward Shishkin-2 wrote:
-> 
-> Andrew,
-> please, apply.
-> 
-
-These are official updates?  Is reiser4 is going into 2.6.32 ?
--- 
-View this message in context: http://www.nabble.com/-patch-0-4--reiser4%3A-pending-bugfixes%2C-cleanups-tp25743738p25745333.html
-Sent from the ReiserFS - General mailing list archive at Nabble.com.
-
+Thanks Glenn
