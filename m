@@ -1,71 +1,141 @@
-From: <mysql.jorge@decimal.pt>
-Subject: Re: Reiser4 for Linux-2.6.31
-Date: Mon, 05 Oct 2009 17:40:38 +0100
-Message-ID: <2ec5eacc8b8d390ee6bcf88045837ba5@192.168.1.222>
-References: <4AC947C6.40005@gmail.com>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: [PATCH] kill-the-bkl/reiserfs: fix reiserfs lock to
+	cpu_add_remove_lock dependency
+Date: Mon, 5 Oct 2009 20:12:20 +0200
+Message-ID: <20091005181218.GB5218@nowhere>
+References: <1251167570-5233-1-git-send-email-fweisbec@gmail.com> <20090826201330.GA18761@orion> <20090914203749.GF6045@nowhere> <a4423d670909141433g18659aay6e177b1302e5b4a0@mail.gmail.com> <20090916203747.GB5068@nowhere> <a4423d670909161637r67c933a0n2c142898ea493f22@mail.gmail.com> <20090917050639.GA5060@nowhere> <a4423d670909220655j37cc49f8rcd29d8f154c5e6e6@mail.gmail.com> <20090929074640.GA5233@nowhere> <a4423d670909290322u4c1dd886tf55a2ea4a4a0977@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4AC947C6.40005@gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754566AbZJESND@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:received:date:from:to:cc
+         :subject:message-id:references:mime-version:content-type
+         :content-disposition:in-reply-to:user-agent;
+        bh=NfXKZ4NcrxRkSaXMWJC3LizQakMciEhOzdT8E7EGU4U=;
+        b=EgCV/pcxqM8Zmy+W1PJpbKT+7JyO18rjX5K7p5slPLjY7MDTdN4kyoK2lHa9ajcztL
+         Jfo/lZB/mgMgxfBR9KsidR6ZcqF78JnRqmGv8NgfXopURmQOVSFfple4EkOEzvtT0Hoa
+         KJjYnUPRIwYBqOuESgMb84h/zkY/1LOOKOIig=
+Content-Disposition: inline
+In-Reply-To: <a4423d670909290322u4c1dd886tf55a2ea4a4a0977@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Reiserfs <reiserfs-devel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, Chris Mason <chris.mason@oracle.com>, Ingo Molnar <mingo@elte.hu>, Alexander Beregalov <a.beregalov@gmail.com>, Laurent Riffard <laurent.riffard@free.fr>
 
-Howdy Edward,
+On Tue, Sep 29, 2009 at 02:22:42PM +0400, Alexander Beregalov wrote:
+> 2009/9/29 Frederic Weisbecker <fweisbec@gmail.com>:
+> > Yeah indeed, it's about the same kind of thing.
+> > Could you please test the following patch?
+> 
+> Thanks, the warning has gone away.
 
-To when reiserfs4 included on the main kernel?
 
-Jorge,
+Thanks a lot Alexander, your tests and reports are very precious!
+
+I've pushed the commit below, as usual it can be found at:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.git
+	reiserfs/kill-bkl
+
+---
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Date: Mon, 5 Oct 2009 16:31:37 +0200
+Subject: [PATCH] kill-the-bkl/reiserfs: fix reiserfs lock to cpu_add_remove_lock dependency
+
+While creating the reiserfs workqueue during the journal
+initialization, we are holding the reiserfs lock, but
+create_workqueue() also holds the cpu_add_remove_lock, creating
+then the following dependency:
+
+- reiserfs lock -> cpu_add_remove_lock
+
+But we also have the following existing dependencies:
+
+- mm->mmap_sem -> reiserfs lock
+- cpu_add_remove_lock -> cpu_hotplug.lock -> slub_lock -> sysfs_mutex
+
+The merged dependency chain then becomes:
+
+- mm->mmap_sem -> reiserfs lock -> cpu_add_remove_lock ->
+	cpu_hotplug.lock -> slub_lock -> sysfs_mutex
+
+But when we fill a dir entry in sysfs_readir(), we are holding the
+sysfs_mutex and we also might fault while copying the directory entry
+to the user, leading to the following dependency:
+
+- sysfs_mutex -> mm->mmap_sem
+
+The end result is then a lock inversion between sysfs_mutex and
+mm->mmap_sem, as reported in the following lockdep warning:
+
+[ INFO: possible circular locking dependency detected ]
+2.6.31-07095-g25a3912 #4
+-------------------------------------------------------
+udevadm/790 is trying to acquire lock:
+ (&mm->mmap_sem){++++++}, at: [<c1098942>] might_fault+0x72/0xc0
+
+but task is already holding lock:
+ (sysfs_mutex){+.+.+.}, at: [<c110813c>] sysfs_readdir+0x7c/0x260
+
+which lock already depends on the new lock.
+
+the existing dependency chain (in reverse order) is:
+
+-> #5 (sysfs_mutex){+.+.+.}:
+      [...]
+
+-> #4 (slub_lock){+++++.}:
+      [...]
+
+-> #3 (cpu_hotplug.lock){+.+.+.}:
+      [...]
+
+-> #2 (cpu_add_remove_lock){+.+.+.}:
+      [...]
+
+-> #1 (&REISERFS_SB(s)->lock){+.+.+.}:
+      [...]
+
+-> #0 (&mm->mmap_sem){++++++}:
+      [...]
+
+This can be fixed by relaxing the reiserfs lock while creating the
+workqueue.
+This is fine to relax the lock here, we just keep it around to pass
+through reiserfs lock checks and for paranoid reasons.
+
+Reported-by: Alexander Beregalov <a.beregalov@gmail.com>
+Tested-by: Alexander Beregalov <a.beregalov@gmail.com>
+Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Jeff Mahoney <jeffm@suse.com>
+Cc: Chris Mason <chris.mason@oracle.com>
+Cc: Ingo Molnar <mingo@elte.hu>
+Cc: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: Laurent Riffard <laurent.riffard@free.fr>
+---
+ fs/reiserfs/journal.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
+
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 04e3c42..2f8a7e7 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -2933,8 +2933,11 @@ int journal_init(struct super_block *sb, const char *j_dev_name,
+ 	}
+ 
+ 	reiserfs_mounted_fs_count++;
+-	if (reiserfs_mounted_fs_count <= 1)
++	if (reiserfs_mounted_fs_count <= 1) {
++		reiserfs_write_unlock(sb);
+ 		commit_wq = create_workqueue("reiserfs");
++		reiserfs_write_lock(sb);
++	}
+ 
+ 	INIT_DELAYED_WORK(&journal->j_work, flush_async_commits);
+ 	journal->j_work_sb = sb;
+-- 
+1.6.2.3
 
 
-On Mon, 05 Oct 2009 03:11:34 +0200, Edward Shishkin
-<edward.shishkin@gmail.com> wrote:
-> Hello everyone.
-> 
-> This includes a fixup for a rather old bug:
-> Reiser4 stepped to the journal code of other journalling
-> file systems.
-> Typical symptoms:
-> . ReiserFS complaints:
-> "clm-2100", nesting info a different FS".
-> . Ext3 complaints:
-> "called recursively, non-PF_MEMALLOC"
-> example of Call Trace:
->  [<c0535873>] ext3_write_inode+0x1e/0x3a
->  [<c04b16bc>] __writeback_single_inode+0x193/0x2ad
->  [<c0508d86>] ? flush_some_atom+0x427/0x44d
->  [<c04b1bb5>] ? generic_sync_sb_inodes+0x27c/0x338
->  [<c04b1b68>] generic_sync_sb_inodes+0x22f/0x338
->  [<c04b1c8e>] sync_sb_inodes+0x1d/0x20
->  [<c04b1e1e>] writeback_inodes+0x79/0xb9
->  [<c047c76a>] balance_dirty_pages_ratelimited_nr+0x119/0x21d
->  [<c0504803>] reiser4_exit_context+0x5f/0xf6
->  [<c051e5a3>] reiser4_write_careful+0x3ba/0x3cc
->  [<c049bc3c>] ? do_sync_read+0xab/0xe9
->  [<c0613dae>] ? selinux_file_permission+0x44/0x48
->  [<c060fea6>] ? security_file_permission+0xf/0x11
->  [<c051e1e9>] ? reiser4_write_careful+0x0/0x3cc
->  [<c049c494>] vfs_write+0x84/0xdf
->  [<c049c588>] sys_write+0x3b/0x60
->  [<c0403178>] sysenter_do_call+0x12/0x2d
-> 
-> Other changes since 2.6.30:
-> . Fix compile warnings (prepared by Brandon Berhent);
-> . Address a compiler complaints about large frame size
->   of reiser4_init_super_data() when building for x86_64.
-> 
-> Please, find at
->
-http://www.kernel.org/pub/linux/kernel/people/edward/reiser4/reiser4-for-2.6/
-> 
-> Thanks,
-> Edward.
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-reiserfs-devel"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
