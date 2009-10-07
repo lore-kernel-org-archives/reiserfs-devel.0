@@ -1,149 +1,95 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Reiser4 for Linux-2.6.31
-Date: Tue, 06 Oct 2009 18:59:45 +0200
-Message-ID: <4ACB7781.9050206@gmail.com>
-References: <4AC947C6.40005@gmail.com> <e85b9d30910060328r7deea7dak4bba307fcf995aeb@mail.gmail.com>
+From: Laurent Riffard <laurent.riffard@free.fr>
+Subject: Re: [patch 4/4] reiser4: reduce frame size of reiser4_init_super_data
+Date: Wed, 07 Oct 2009 21:45:14 +0200
+Message-ID: <4ACCEFCA.9070106@free.fr>
+References: <4AC9407C.2050105@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------040804070009040003070209"
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <e85b9d30910060328r7deea7dak4bba307fcf995aeb@mail.gmail.com>
+In-Reply-To: <4AC9407C.2050105@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Mat <jackdachef@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: akpm@linux-foundation.org, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------040804070009040003070209
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Hi Edward,
 
-Mat wrote:
-> Hi Edward,
->   
+This patch is buggy, isn't it ?
 
-Hello, Mat.
+I've got 2 reiser4 FS in my /etc/fstab:
 
-> thank you very much for the 2.6.31 patch !
->
-> Since using this patch I've observed kind of a strange behavior with
-> mount-options:
->
-> most of them don't work anymore !
->   
+/dev/vglinux1/lvkernel-r4 /home/laurent/kernel reiser4 defaults,noatime,nodiratime,tmgr.atom_max_size=2048 0 0
+/dev/disk/by-uuid/b8dbe880-b664-49aa-8050-bddc91fd5e49 /mnt/diske reiser4 noauto,users,noatime,nodiratime 0 0
 
-Yes, sorry,
-please, apply the attached patch, or use the
-updated stuff on kernel.org
+The first FS can't be mounted:
 
-Thanks!
-Edward.
+[  235.078342] reiser4[mount(4205)]: parse_options (fs/reiser4/init_super.c:253)[nikita-2307]:
+[  235.078345] WARNING: Unrecognized option: "tmgr.atom_max_size=2048"
 
-> fortunately
->
-> noatime,nodiratime,dont_load_bitmap
->
-> works
->
->
-> unfortunately most of the others don't:
->
-> [ 4995.449031] reiser4[mount(15761)]: parse_options
-> (fs/reiser4/init_super.c:253)[nikita-2307]:
-> [ 4995.449033] WARNING: Unrecognized option: "tree.cbk_cache.nr_slots=48"
->   
+although the second one can be mounted:
+
+[ 3152.046324] reiser4: sda7: found disk format 4.0.0.
 
 
---------------040804070009040003070209
-Content-Type: text/plain;
- name="reiser4-reduce-frame-size-fix.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="reiser4-reduce-frame-size-fix.patch"
+Let's have a look at the code in fs/reiser4/init_super.c:
 
-. Fix up the bug in reiser4_init_super_data():
-  The pointer "p" to opt_desc structure is not
-  incremented.
-  Pass "&p" instead of "p" to push_sb_field_opts(),
-  which is supposed to increment the pointer.
-. Modify macros PUSH_OPT, OPT_ARRAY_CHECK to accept
-  arguments.
 
-Signed-off-by Edward Shsihkin <edward.shishkin@gmail.com>
----
- fs/reiser4/init_super.c |   28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+392 int reiser4_init_super_data(struct super_block *super, char *opt_string)
+393 {
+394         int result;
+395         struct opt_desc *opts, *p;
+396         reiser4_super_info_data *sbinfo = get_super_private(super);
+397 
+...
+442         p = opts;
+443 
+444         push_sb_field_opts(p, opts, sbinfo);
 
---- mmotm.orig/fs/reiser4/init_super.c
-+++ mmotm/fs/reiser4/init_super.c
-@@ -293,27 +293,27 @@ static int parse_options(char *opt_strin
- #define MAX_NR_OPTIONS (30)
- 
- #if REISER4_DEBUG
--#  define OPT_ARRAY_CHECK if ((p) > (opts) + MAX_NR_OPTIONS) {		\
-+#  define OPT_ARRAY_CHECK(opt, array)					\
-+	if ((opt) > (array) + MAX_NR_OPTIONS) {				\
- 		warning("zam-1046", "opt array is overloaded"); break;	\
- 	}
- #else
--#   define OPT_ARRAY_CHECK noop
-+#   define OPT_ARRAY_CHECK(opt, array) noop
- #endif
- 
--#define PUSH_OPT(...)				\
-+#define PUSH_OPT(opt, array, ...)		\
- do {						\
- 	struct opt_desc o = __VA_ARGS__;	\
--	OPT_ARRAY_CHECK;			\
--	*p ++ = o;				\
-+	OPT_ARRAY_CHECK(opt, array);		\
-+	*(opt) ++ = o;				\
- } while (0)
- 
--#define PUSH_SB_FIELD_OPT(field, format) PUSH_OPT(SB_FIELD_OPT(field, format))
--#define PUSH_BIT_OPT(name, bit) PUSH_OPT(BIT_OPT(name, bit))
--
--static noinline void push_sb_field_opts(struct opt_desc *p,
-+static noinline void push_sb_field_opts(struct opt_desc **p,
- 					struct opt_desc *opts,
- 					reiser4_super_info_data *sbinfo)
- {
-+#define PUSH_SB_FIELD_OPT(field, format)		\
-+	PUSH_OPT(*p, opts, SB_FIELD_OPT(field, format))
- 	/*
- 	 * tmgr.atom_max_size=N
- 	 * Atoms containing more than N blocks will be forced to commit. N is
-@@ -441,8 +441,12 @@ int reiser4_init_super_data(struct super
- 	/* initialize structure describing reiser4 mount options */
- 	p = opts;
- 
--	push_sb_field_opts(p, opts, sbinfo);
-+	push_sb_field_opts(&p, opts, sbinfo);
- 	/* turn on BSD-style gid assignment */
-+
-+#define PUSH_BIT_OPT(name, bit)			\
-+	PUSH_OPT(p, opts, BIT_OPT(name, bit))
-+
- 	PUSH_BIT_OPT("bsdgroups", REISER4_BSD_GID);
- 	/* turn on 32 bit times */
- 	PUSH_BIT_OPT("32bittimes", REISER4_32_BIT_TIMES);
-@@ -456,7 +460,7 @@ int reiser4_init_super_data(struct super
- 	/* disable use of write barriers in the reiser4 log writer. */
- 	PUSH_BIT_OPT("no_write_barrier", REISER4_NO_WRITE_BARRIER);
- 
--	PUSH_OPT(
-+	PUSH_OPT(p, opts,
- 	{
- 		/*
- 		 * tree traversal readahead parameters:
-@@ -482,7 +486,7 @@ int reiser4_init_super_data(struct super
- 	);
- 
- 	/* What to do in case of fs error */
--	PUSH_OPT(
-+	PUSH_OPT(p, opts,
- 	{
- 		.name = "onerror",
- 		.type = OPT_ONEOF,
+p is passed by value to push_sb_field(). push_sb_field() does increment 
+its local copy of p, but here p remains equal to opts.
 
---------------040804070009040003070209--
+...
+501         result = parse_options(opt_string, opts, p - opts);
+
+3rd argument is 0 because p==opts. Now let's have a look at parse_options()
+
+230 static int parse_options(char *opt_string, struct opt_desc *opts, int nr_opts)
+231 {
+
+nr_opts always == 0 here.
+
+232         int result;
+233
+234         result = 0;
+235         while ((result == 0) && opt_string && *opt_string) {
+
+I assume opt_string is not null (opt_string == "tmgr.atom_max_size=2048" ?), 
+so let's loop:
+
+236                 int j;
+237                 char *next;
+244                 for (j = 0; j < nr_opts; ++j) {
+
+nr_opts == 0, so we won't do any iteration here.
+
+245                         if (!strncmp(opt_string, opts[j].name,
+246                                      strlen(opts[j].name))) {
+247                                 result = parse_option(opt_string, &opts[j]);
+248                                 break;
+249                         }
+250                 }
+
+here, j==0 and nr_opts==0.
+
+251                 if (j == nr_opts) {
+252                         warning("nikita-2307", "Unrecognized option: \"%s\"",
+253                                 opt_string);
+254                         /* traditionally, -EINVAL is returned on wrong mount
+255                            option */
+256                         result = RETERR(-EINVAL);
+
+oops !
+
+~~
+laurent
