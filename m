@@ -1,122 +1,40 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: [PATCH 2/3] kill-the-bkl/reiserfs: definitely drop the bkl from reiserfs_ioctl()
-Date: Thu, 15 Oct 2009 00:26:06 +0200
-Message-ID: <1255559167-5554-3-git-send-email-fweisbec@gmail.com>
-References: <1255559167-5554-1-git-send-email-fweisbec@gmail.com>
+From: Viji V Nair <viji@fedoraproject.org>
+Subject: reiserfs - recommendations for small files
+Date: Sat, 17 Oct 2009 23:41:12 +0530
+Message-ID: <84c89ac10910171111n69b9832fr42d30aa07d84b262@mail.gmail.com>
+Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:from:to:cc:subject:date
-         :message-id:x-mailer:in-reply-to:references;
-        bh=Hd5tl2dpwOY5ZdANYi9BtZ58dVOkghDyKE5KfDlH27s=;
-        b=CZ3nlchM13bS6fVk4Eu5K2W9yqlmOocUPW1B/ylSbRX4VLjgZGvaLt89JaxfJntVR+
-         hTbvJQ5YkUPbyQCXNSKTpOvPjoApQnq5b99hjFufFoUjZcNWB+ZJwJgApR2jyg7wdulK
-         yhIDFOeJ+wUhrxDQeyRHWkZVMA5KSXBA+pjR8=
-In-Reply-To: <1255559167-5554-1-git-send-email-fweisbec@gmail.com>
+        h=domainkey-signature:mime-version:sender:received:date
+         :x-google-sender-auth:message-id:subject:from:to:content-type;
+        bh=tfD5PD6/+LCc0NPjUoZYfPVXpOxd3rGOnhKnPZig6Qo=;
+        b=wkDeg9FYr4SPOABDhKJCGMZZVn+wEnjmfVjuJ42eYdyLjG1ufcyhm2j4ts7e/0NQ1V
+         4A3V+W+MOIcMvxvVB9yWYTHA2Qdk3c2eRx4Lagv7roCig6iNfGjzIbqF+/Jbh88E8drS
+         CrYZeKQ4avcQ6lZL4V08KuD2goj67ewk2TDGA=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Chris Mason <chris.mason@oracle.com>, Roland Dreier <rdreier@cisco.com>, Ingo Molnar <mingo@elte.hu>, Andi Kleen <andi@firstfloor.org>, Jeff Mahoney <jeffm@suse.com>, Alexander Beregalov <a.beregalov@gmail.com>, Bron Gondwana <brong@fastmail.fm>, Reiserfs <reiserfs-devel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Andrea Gelmini <andrea.gelmini@gmail.com>, "Trenton D. Adams" <trenton.d.adams@gmail.com>, Thomas Meyer <thomas@m3y3r.de>, Alessio Igor Bogani <abogani@texware.it>, Marcel Hilzinger <mhilzinger@linuxnewmedia.de>, Edward Shishkin <edward.shishkin@gmail.com>, Laurent Riffard <laurent.riffard@free.fr>, Thomas Gleixner <tglx@linutronix.de>
+To: reiserfs-devel@vger.kernel.org
 
-The reiserfs ioctl path doesn't need the big kernel lock anymore , now
-that the filesystem synchronizes through its own lock.
+Hi,
 
-We can then turn reiserfs_ioctl() into an unlocked_ioctl callback.
+System : Fedora 11 x86_64
+Current Filesystem: 150G ext4 (formatted with "-T small" option)
+Number of files: 50 Million, 1 to 30K png images
 
-Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Jeff Mahoney <jeffm@suse.com>
-Cc: Chris Mason <chris.mason@oracle.com>
-Cc: Ingo Molnar <mingo@elte.hu>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: Laurent Riffard <laurent.riffard@free.fr>
-Cc: Thomas Gleixner <tglx@linutronix.de>
----
- fs/reiserfs/dir.c           |    2 +-
- fs/reiserfs/file.c          |    2 +-
- fs/reiserfs/ioctl.c         |   11 +++--------
- include/linux/reiserfs_fs.h |    3 +--
- 4 files changed, 6 insertions(+), 12 deletions(-)
+We are generating these files using a python programme and getting
+very slow IO performance. While generation there are only writes, no
+read. After generation there are heavy read and no write. These files
+are not in a single directory, this is a pyramid structure. There are
+total 15 pyramids and coming down from top to bottom the sub
+directories and files  are multiplied by a factor of 4
 
-diff --git a/fs/reiserfs/dir.c b/fs/reiserfs/dir.c
-index 17f31ad..c094f58 100644
---- a/fs/reiserfs/dir.c
-+++ b/fs/reiserfs/dir.c
-@@ -20,7 +20,7 @@ const struct file_operations reiserfs_dir_operations = {
- 	.read = generic_read_dir,
- 	.readdir = reiserfs_readdir,
- 	.fsync = reiserfs_dir_fsync,
--	.ioctl = reiserfs_ioctl,
-+	.unlocked_ioctl = reiserfs_ioctl,
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl = reiserfs_compat_ioctl,
- #endif
-diff --git a/fs/reiserfs/file.c b/fs/reiserfs/file.c
-index 9f43666..da2dba0 100644
---- a/fs/reiserfs/file.c
-+++ b/fs/reiserfs/file.c
-@@ -284,7 +284,7 @@ static ssize_t reiserfs_file_write(struct file *file,	/* the file we are going t
- const struct file_operations reiserfs_file_operations = {
- 	.read = do_sync_read,
- 	.write = reiserfs_file_write,
--	.ioctl = reiserfs_ioctl,
-+	.unlocked_ioctl = reiserfs_ioctl,
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl = reiserfs_compat_ioctl,
- #endif
-diff --git a/fs/reiserfs/ioctl.c b/fs/reiserfs/ioctl.c
-index e30e8be..ace7745 100644
---- a/fs/reiserfs/ioctl.c
-+++ b/fs/reiserfs/ioctl.c
-@@ -20,9 +20,9 @@
-  *  2) REISERFS_IOC_[GS]ETFLAGS, REISERFS_IOC_[GS]ETVERSION
-  *  3) That's all for a while ...
-  */
--int reiserfs_ioctl(struct inode *inode, struct file *filp, unsigned int cmd,
--		   unsigned long arg)
-+long reiserfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
-+	struct inode *inode = filp->f_path.dentry->d_inode;
- 	unsigned int flags;
- 	int err = 0;
- 
-@@ -132,9 +132,6 @@ setversion_out:
- long reiserfs_compat_ioctl(struct file *file, unsigned int cmd,
- 				unsigned long arg)
- {
--	struct inode *inode = file->f_path.dentry->d_inode;
--	int ret;
--
- 	/* These are just misnamed, they actually get/put from/to user an int */
- 	switch (cmd) {
- 	case REISERFS_IOC32_UNPACK:
-@@ -156,9 +153,7 @@ long reiserfs_compat_ioctl(struct file *file, unsigned int cmd,
- 		return -ENOIOCTLCMD;
- 	}
- 
--	ret = reiserfs_ioctl(inode, file, cmd, (unsigned long) compat_ptr(arg));
--
--	return ret;
-+	return reiserfs_ioctl(file, cmd, (unsigned long) compat_ptr(arg));
- }
- #endif
- 
-diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
-index a498d92..a05b4a2 100644
---- a/include/linux/reiserfs_fs.h
-+++ b/include/linux/reiserfs_fs.h
-@@ -2314,8 +2314,7 @@ __u32 r5_hash(const signed char *msg, int len);
- #define SPARE_SPACE 500
- 
- /* prototypes from ioctl.c */
--int reiserfs_ioctl(struct inode *inode, struct file *filp,
--		   unsigned int cmd, unsigned long arg);
-+long reiserfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
- long reiserfs_compat_ioctl(struct file *filp,
- 		   unsigned int cmd, unsigned long arg);
- int reiserfs_unpack(struct inode *inode, struct file *filp);
--- 
-1.6.2.3
+I am looking for an alternate file system and best
+practices/recommendation to get a better performance. What the
+optimisation methods available in reiserfs for small files?
 
+Any suggestions of the above are greatly appreciated.
+
+Viji
