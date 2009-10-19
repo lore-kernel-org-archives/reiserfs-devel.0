@@ -1,79 +1,64 @@
-From: Viji V Nair <viji@fedoraproject.org>
-Subject: Re: reiserfs - recommendations for small files
-Date: Tue, 20 Oct 2009 00:56:49 +0530
-Message-ID: <84c89ac10910191226g7090dcd2m7b7550e5e2bcdcdb@mail.gmail.com>
-References: <84c89ac10910171111n69b9832fr42d30aa07d84b262@mail.gmail.com>
-	 <132F41FF-CA71-4004-9081-5246887ED708@telegraphics.com.au>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: Reiser4 on 2.6.31.4 freezes process accessing file, fsck 1.0.7
+ finds no inconsistency
+Date: Tue, 20 Oct 2009 01:07:10 +0200
+Message-ID: <4ADCF11E.9040002@gmail.com>
+References: <4ADB9242.30808@web.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:sender:received:in-reply-to
-         :references:date:x-google-sender-auth:message-id:subject:from:to:cc
-         :content-type:content-transfer-encoding;
-        bh=Jp7svQCkoNjFZG7YLkGseBQNNJXQs1v6pDUSSeNgaTM=;
-        b=lYru7xIhDtayAldCQwuMQep6P1k2OJk9ElMLoJA5OCI16Hhisy/MiYZn8wLKqapKVy
-         gKyRwUaRAnaYPdvRU6PV0S297QA52ORNDuA9htoLkFAY6Df5dxdbGMaivvAEW7I0MdCg
-         N3GIc+p2p+qzPpXpjdNEiLB+qDVYjI/fY8D90=
-In-Reply-To: <132F41FF-CA71-4004-9081-5246887ED708@telegraphics.com.au>
+In-Reply-To: <4ADB9242.30808@web.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Toby Thain <toby@telegraphics.com.au>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Konstantin <newsbox1026@web.de>
 Cc: reiserfs-devel@vger.kernel.org
 
-I
+Konstantin wrote:
+> Hi!
+>
+> I am running reiser4 for a few years now without problems. Yesterday I
+> had an undeletable directory which ls -a reported empty but rmdir
+> claimed not to be empty. There were no kernel messages about it. After
+> fsck-ing I had to run fsck.reiser4 --build-fs (reiser4progs 1.0.7) which
+> finished but printed an error at the very end like "application error"
+>   
 
-On Tue, Oct 20, 2009 at 12:46 AM, Toby Thain <toby@telegraphics.com.au>=
- wrote
->
-> On 17-Oct-09, at 2:11 PM, Viji V Nair wrote:
->
->> Hi,
->>
->> System : Fedora 11 x86_64
->> Current Filesystem: 150G ext4 (formatted with "-T small" option)
->> Number of files: 50 Million, 1 to 30K png images
->>
->> We are generating these files using a python programme and getting
->> very slow IO performance. While generation there are only writes, no
->> read. After generation there are heavy read and no write. These file=
-s
->> are not in a single directory, this is a pyramid structure. There ar=
-e
->> total 15 pyramids and coming down from top to bottom the sub
->> directories and files =A0are multiplied by a factor of 4
->>
->> I am looking for an alternate file system and best
->> practices/recommendation to get a better performance. What the
->> optimisation methods available in reiserfs for small files?
->
-> You could benchmark this on reiser3 today (it's perfectly stable & sm=
-all
-> file handling is supposedly a sweet spot).
+Maybe "Operational error occurred while fscking"?
+If so, then you have encountered a bug in fsck.
 
-I am creating a fedora 11 kernel rpm with reiserfs3 and reiser4
-support, planning to bench mark it on multiple hardware. Will update
-the results.
+> (sorry, I didn't wrote it down). A second run of fsck.reiser4 told me to
+> fix some remaining corruptions using --fix. This worked without error
+> messages and a following fsck told me everything is OK.
+>
+> But then accessing a file froze the process, consuming 100% CPU. I tried
+> cat and cp with same result. The processes could not be terminated nor
+> killed. Still no kernel messages. Only rebooting helped here and a
+> following fsck showed no corruptions. The file could be renamed and
+> deleted which kind of solved the problem. I haven't found (yet) another
+> file like this.
+>
+> Before deleting the bad file I did a debugfs.reiser4 -P to store the
+> metadata so if anyone is interested in debugging this bug contact me to
+> give you the file (34MB bz2).
+>   
 
+Yes, please,
+could you provide the metadata for download and the name
+of problem file?
+Actually, it would be better to have metadata right after the
+first fsck complaint about operational error, but anyway,
+this is better then nothing..
+
+Thanks,
+Edward.
+
+> Konstantin
 >
-> --Toby
+> --
+> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
->>
->> Any suggestions of the above are greatly appreciated.
->>
->> Viji
->> --
->> To unsubscribe from this list: send the line "unsubscribe reiserfs-d=
-evel"
->> in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
->
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>   
+
