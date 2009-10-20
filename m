@@ -1,50 +1,48 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: reiserfs - recommendations for small files
-Date: Tue, 20 Oct 2009 01:34:17 +0200
-Message-ID: <4ADCF779.1060905@gmail.com>
-References: <84c89ac10910171111n69b9832fr42d30aa07d84b262@mail.gmail.com>
+From: Viji V Nair <viji@fedoraproject.org>
+Subject: reiser4progs-1.0.7 compilation error.
+Date: Tue, 20 Oct 2009 14:05:12 +0530
+Message-ID: <84c89ac10910200135i2f8c3b11q5850d08bb63ab1e0@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <84c89ac10910171111n69b9832fr42d30aa07d84b262@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:sender:received:date
+         :x-google-sender-auth:message-id:subject:from:to:content-type;
+        bh=38li6MGzzLcz2qEG1QdgXLgVya2qZqey7gvTvlmox9A=;
+        b=PYdOr41VfrmTB/TO3ZeJMydZcU6m9/JhhKmGZO8yrHuASq7sJF5yL4l4fZXD6YKDtD
+         NrZsO2i/HjCEO2TZ+Rm8U0K8ZN69wIBqQSUX9DxalOBoZAzQdg/dNFOtWvXIqxYAXoKt
+         vdME5kPvSULlgK06SSP3jFSOKqMsCDMcXUWcw=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Viji V Nair <viji@fedoraproject.org>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-Viji V Nair wrote:
-> Hi,
->
-> System : Fedora 11 x86_64
-> Current Filesystem: 150G ext4 (formatted with "-T small" option)
-> Number of files: 50 Million, 1 to 30K png images
->
-> We are generating these files using a python programme and getting
-> very slow IO performance. While generation there are only writes, no
-> read. After generation there are heavy read and no write. These files
-> are not in a single directory, this is a pyramid structure. There are
-> total 15 pyramids and coming down from top to bottom the sub
-> directories and files  are multiplied by a factor of 4
->
-> I am looking for an alternate file system and best
-> practices/recommendation to get a better performance. What the
-> optimisation methods available in reiserfs for small files?
->   
+Hi,
 
-I think that default tail packing policy would be the best for you.
-Also use tea hash.
+I am trying to compile reiser4progs-1.0.7 on a Fedora 11 64 bit
+machine and it is throwing the following error.
 
-Thanks,
-Edward.
+<snip>
+checking aal/libaal.h usability... yes
+checking aal/libaal.h presence... yes
+checking for aal/libaal.h... yes
+checking for libaal version = 1.0.5... no
+</snip>
 
-> Any suggestions of the above are greatly appreciated.
->
-> Viji
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->   
+I was followed the step in the following URL except the "sed" part.
+(even with sed it is showing the same error)
 
+http://reiser4.wiki.kernel.org/index.php/Reiser4_Howto/GRUB
+
+The command which I have run is "CFLAGS="-fno-stack-protector
+-I/usr/local/include" LDFLAGS="-L/usr/local/lib" ./configure"
+
+I have installed libaal to /usr/local/ and there is no error while
+compiling this, add lib path to ldconfig also
+
+While googling I have found some old bug releated to this.
+
+Any help on the same is greatly appreciated.
+
+Viji
