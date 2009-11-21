@@ -1,42 +1,33 @@
-From: Christian Kujau <lists@nerdbynature.de>
-Subject: Re: reiser4 for 2.6.33?
-Date: Wed, 18 Nov 2009 11:12:12 -0800 (PST)
-Message-ID: <alpine.DEB.2.01.0911181054250.27639@bogon.housecafe.de>
-References: <alpine.DEB.2.01.0911171420480.27639@bogon.housecafe.de> <4B03FB99.6070705@gmail.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 13876] [x86_32, 2.6.30, reiserfs, reiser3, bug, regression]
+ kernel oopsed while Sarg was running
+Date: Sat, 21 Nov 2009 00:06:47 GMT
+Message-ID: <200911210006.nAL06luk028132@demeter.kernel.org>
+References: <bug-13876-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4B03FB99.6070705@gmail.com>
+In-Reply-To: <bug-13876-695@http.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm@linux-foundation.org
+To: reiserfs-devel@vger.kernel.org
 
-On Wed, 18 Nov 2009 at 14:50, Edward Shishkin wrote:
-> (a) plugin design document;
-> (b) full description of what is going on in respond to memory
->    pressure notifications;
-> 
-> The (a) is not yet ready and I don't have a time to explain
-> personally to everyone why the plugin stuff is not crappy.
+http://bugzilla.kernel.org/show_bug.cgi?id=13876
 
-Is this still a must-have? I.e. are there still strong objections against 
-the plugin design? And even if so, most of this happens in fs/reiser4 
-anyway I suppose, so the "evil" plugins are well contained :)
 
-As for (b), can't this be documented at a later point as well? 
 
-What about the technical issues, mentioned in the latest TODO list[0] 
-earlier this year? Are there any real show-stoppers left?
-Andrew (Cc'ed) had this in -mm for a longer time now, maybe he can
-comment (once again) what's left to do from his POV?
 
-Thanks,
-Christian.
 
-[0] http://marc.info/?l=reiserfs-devel&m=124069989217533&w=2
+--- Comment #8 from Roland Kletzing <devzero@web.de>  2009-11-21 00:06:46 ---
+Igor, can you try latest kernel and give some feedback as this ticket would be
+closed due to missing response?
+
+i'm quite sure this/your bug is fixed. 
+
+if your bug is different, then it`s the last chance to tell about that.
+
 -- 
-BOFH excuse #323:
-
-Your processor has processed too many instructions.  Turn it off immediately, do not type any commands!!
+Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
