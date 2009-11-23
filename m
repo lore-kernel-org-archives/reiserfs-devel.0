@@ -1,31 +1,44 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: [Bug #14656] Oops at __rmqueue+0x98 with 2.6.32-rc6
-Date: Sat, 21 Nov 2009 15:51:33 +0100 (CET)
-Message-ID: <l2_yP_tdgYK.A.1CC.E7_BLB__26283.9772775353$1258816296$gmane$org@chimera>
-References: <pohDdrcORVG.A.U2B.-6_BLB@chimera>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 13876] [x86_32, 2.6.30, reiserfs, reiser3, bug, regression]
+ kernel oopsed while Sarg was running
+Date: Mon, 23 Nov 2009 09:45:03 GMT
+Message-ID: <200911230945.nAN9j38j026832@demeter.kernel.org>
+References: <bug-13876-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <pohDdrcORVG.A.U2B.-6_BLB@chimera>
-Content-Disposition: inline
+In-Reply-To: <bug-13876-695@http.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Kernel Testers List <kernel-testers@vger.kernel.org>, "Lucas C. Villa Real" <lucasvr@gobolinux.org>, "reiserfs-devel@vger.kernel.org"@ogre.sisk.pl
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-This message has been generated automatically as a part of a report
-of recent regressions.
-
-The following bug entry is on the current list of known regressions
-from 2.6.31.  Please verify if it still should be listed and let me know
-(either way).
+http://bugzilla.kernel.org/show_bug.cgi?id=13876
 
 
-Bug-Entry	: http://bugzilla.kernel.org/show_bug.cgi?id=14656
-Subject		: Oops at __rmqueue+0x98 with 2.6.32-rc6
-Submitter	: Lucas C. Villa Real <lucasvr@gobolinux.org>
-Date		: 2009-11-19 3:48 (3 days old)
-References	: http://marc.info/?l=linux-kernel&m=125860255229092&w=4
+Igor M Podlesny <for.poige+bugzilla.kernel.org@gmail.com> changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |RESOLVED
+         Resolution|                            |CODE_FIX
 
 
+
+
+--- Comment #9 from Igor M Podlesny <for.poige+bugzilla.kernel.org@gmail.com>  2009-11-23 09:44:59 ---
+> Igor, can you try latest kernel
+
+Roland, that comp. isn't mine; it has been running 2.6.27.something happily for
+quite a long time now and its users are careless. I don't think it'd be a good
+idea to tell'em "guys, kernel devs would like to give your box another crash
+test, wouldn't ya mind, ugh?". :-)
+
+P. S. I tried reproducing this problem inside VirtualBox but failed -- 2.6.30
+inside it runs just ok. In case I'll have a chance to meet that bug I'll do my
+best reporting it. Let me mark this ticket as resolved.
+
+-- 
+Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
