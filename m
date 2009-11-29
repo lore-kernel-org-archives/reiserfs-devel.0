@@ -1,82 +1,130 @@
-From: Johannes Buchner <buchner.johannes@gmx.at>
-Subject: Re: [PATCH 3/4] reiser4: generic_sync_sb_inodes doesn't exist
- anymore
-Date: Mon, 30 Nov 2009 00:28:33 +1300
-Message-ID: <20091130002833.1102d033.buchner.johannes@gmx.at>
-References: <1259389179-3772-2-git-send-email-buchner.johannes@gmx.at>
-	<1259389684-18625-1-git-send-email-buchner.johannes@gmx.at>
-	<1259389684-18625-2-git-send-email-buchner.johannes@gmx.at>
-	<1259389684-18625-3-git-send-email-buchner.johannes@gmx.at>
-	<1259389684-18625-4-git-send-email-buchner.johannes@gmx.at>
+From: Dushan Tcholich <dusanc@gmail.com>
+Subject: Re: Fw: reiser4 git repo
+Date: Sun, 29 Nov 2009 22:44:24 +0100
+Message-ID: <a08621850911291344gd99b9bav21d317d15c862c80@mail.gmail.com>
+References: <20091127155148.dcc5cdee.buchner.johannes@gmx.at>
+	 <20091127030050.GC5406@nowhere>
+	 <20091128081440.36265403.buchner.johannes@gmx.at>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754272AbZK2L2i@vger.kernel.org>
-In-Reply-To: <1259389684-18625-4-git-send-email-buchner.johannes@gmx.at>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:received:in-reply-to:references
+         :date:message-id:subject:from:to:cc:content-type
+         :content-transfer-encoding;
+        bh=5MGOSzyFY1KeX8W+G0d649RTIQ7iUnzdW0Ivgu9/QUY=;
+        b=yFUz9CeJ6nwNnl4VhUSrk+GE9PsCLUzFMkTXmcpaWs0AoPz6MTjNbLFIXl6xYQ37JA
+         yygduoRTzwp58x9X+czw68ww7/6JW+1enoagxqj6JexyFLpaWU6HV9XPnEJe6omjdwOF
+         zJCH6jPBtio1cEjW6Lcvo1qXgK4PxMJagLf94=
+In-Reply-To: <20091128081440.36265403.buchner.johannes@gmx.at>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+To: Johannes Buchner <buchner.johannes@gmx.at>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
 
-> generic_sync_sb_inodes was removed in d8a8559cd7a9cc,
-> writeback_inodes_sb and sync_inodes_sb should replace them.
-Second version, now also fixes the last comments relating to
-generic_sync_sb_inodes.
+On Fri, Nov 27, 2009 at 8:14 PM, Johannes Buchner
+<buchner.johannes@gmx.at> wrote:
+> Hi,
+>
 
----
- fs/reiser4/context.h   |    2 +-
- fs/reiser4/entd.c      |    4 +++-
- fs/reiser4/super_ops.c |    6 ++++--
- 3 files changed, 8 insertions(+), 4 deletions(-)
+Hello
 
-Index: linux/fs/reiser4/entd.c
-===================================================================
---- linux.orig/fs/reiser4/entd.c
-+++ linux/fs/reiser4/entd.c
-@@ -241,7 +241,9 @@ static void entd_flush(struct super_bloc
- 	if (rq->wbc->nr_to_write > 0) {
- 		rq->wbc->range_start = 0;
- 		rq->wbc->range_end = LLONG_MAX;
--		generic_sync_sb_inodes(rq->wbc);
-+		writeback_inodes_sb(super);
-+		if (rq->wbc->sync_mode == WB_SYNC_ALL)
-+			sync_inodes_sb(super);
- 	}
- 	rq->wbc->nr_to_write = ENTD_CAPTURE_APAGE_BURST;
- 	reiser4_writeout(super, rq->wbc);
-Index: linux/fs/reiser4/super_ops.c
-===================================================================
---- linux.orig/fs/reiser4/super_ops.c
-+++ linux/fs/reiser4/super_ops.c
-@@ -384,7 +384,7 @@ static void reiser4_clear_inode(struct i
-  * @wbc:
-  *
-  * This method is called by background and non-backgound writeback. Reiser4's
-- * implementation uses generic_sync_sb_inodes to call reiser4_writepages for
-+ * implementation uses writeback/sync_inodes_sb to call reiser4_writepages for
-  * each of dirty inodes. Reiser4_writepages handles pages dirtied via shared
-  * mapping - dirty pages get into atoms. Writeout is called to flush some
-  * atoms.
-@@ -412,7 +412,9 @@ static void reiser4_sync_inodes(struct s
- 	 * call reiser4_writepages for each of dirty inodes to turn dirty pages
- 	 * into transactions if they were not yet.
- 	 */
--	generic_sync_sb_inodes(wbc);
-+	writeback_inodes_sb(super);
-+	if (wbc->sync_mode == WB_SYNC_ALL)
-+		sync_inodes_sb(super);
- 
- 	/* flush goes here */
- 	wbc->nr_to_write = to_write;
-Index: linux/fs/reiser4/context.h
-===================================================================
---- linux.orig/fs/reiser4/context.h
-+++ linux/fs/reiser4/context.h
-@@ -66,7 +66,7 @@ struct reiser4_context {
- 	/* count non-trivial jnode_set_dirty() calls */
- 	unsigned long nr_marked_dirty;
- 
--	/* reiser4_sync_inodes calls (via generic_sync_sb_inodes)
-+	/* reiser4_sync_inodes calls (via writeback/sync_inodes_sb)
- 	 * reiser4_writepages for each of dirty inodes. Reiser4_writepages
- 	 * captures pages. When number of pages captured in one
- 	 * reiser4_sync_inodes reaches some threshold - some atoms get
+> I had some issues with the reiser4 patch series from -mm.
+> First of all, I'm not sure what release they are based on. I used
+> a8a8a669e from Linus' git repository. I applied all reiser4 patches
+> (except reiser4-disable of course) from
+> http://userweb.kernel.org/~akpm/mmotm/, which worked fine.
+>
+> I think these patches are based on the reiser4-2.6.30 patch.
+> I also compared them to the reiser4-2.6.31 patch, which adds some
+> missing pieces ([1] reiser4-from-2.6.31-patch.patch).
+>
+> Additionally, some recent commits demand some changes, especially
+> since current_is_pdflush and generic_sync_sb_inodes are not available
+> any more (d8a8559cd7a9cc).
+> [2] reiser4-pdflush-comments.patch only fixes some comments which sti=
+ll
+> mention pdflush.
+> In [3] reiser4-generic_sync_sb_inodes.patch I tried to
+> replace generic_sync_sb_inodes. I am not 100% sure that this is
+> correct, but that is what I understood from the commit diff+message o=
+f
+> d8a8559cd7a9cc.
+>
+> The original patch
+> 'reiser4-vfs-add-super_operationssync_inodes' introduced the call fro=
+m
+> sync_inodes_sb to the super operation sync_inodes(sb, NULL). This NUL=
+L
+> pointer is dereferenced in reiser4_sync_inodes, which is fixed by
+> [4] reiser4-sync_inodes-null-dereference.patch.
+>
+> All 4 additional patches are attached. I can only say that it works o=
+n
+> my machine, before I had compilation issues and freezes on 'sync'.
+>
+> Cheers,
+> Johannes
+>
+> PS: The git repo mentioned in
+> http://userweb.kernel.org/~akpm/mmotm/mmotm-readme.txt is not availab=
+le.
+>
+
+Yeah, you can find it now at git.zen-kernel.org. They had to switch the=
+ adress.
+
+Have fun
+
+Dushan
+
+
+> On Fri, 27 Nov 2009 04:00:51 +0100
+> Frederic Weisbecker <fweisbec@gmail.com> wrote:
+>
+>> On Fri, Nov 27, 2009 at 03:51:48PM +1300, Johannes Buchner wrote:
+>> > [ I sent this 2 days ago to linux-fsdevel@vger.kernel.org, maybe
+>> > I'll get more responses in here. ]
+>> >
+>> > Hi!
+>> >
+>> > I would like to keep a git repo up to date with current kernel
+>> > development, with reiser4 patched in. I am having trouble finding =
+a
+>> > repo that provides reiser4. Is there one?
+>> >
+>> > Some people may have noticed the last patch doesn't apply cleanly
+>> > anymore. I made a few lines of modifications in my local repo. May=
+be
+>> > that repo would be interesting for others too*.
+>> >
+>> > I plan to catch up with changes from kernel development on a
+>> > daily/weekly basis; my /home partition is reiser4, so I am fairly
+>> > serious about it.
+>> >
+>> > At the moment, I fetch from torvalds/linux-2.6.git and
+>> > stable/linux-2.6.31.y.git. Am I missing any other repositories tha=
+t
+>> > I should try to keep up with? (A fs subsystem maintainer repo?)
+>> > next/linux-next.git is probably moving too fast for me.
+>>
+>>
+>> You can try the -mm tree, the reiser 4 patches can be found inside:
+>>
+>> http://userweb.kernel.org/~akpm/mmotm/
+>
+> --
+> Emails k=C3=B6nnen ge=C3=A4ndert, gef=C3=A4lscht und eingesehen werde=
+n. Signiere oder
+> versch=C3=BCssele deine Mails mit GPG.
+> http://web.student.tuwien.ac.at/~e0625457/pgp.html
+>
+>
+>
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
