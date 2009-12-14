@@ -1,49 +1,46 @@
-From: Viji V Nair <viji@fedoraproject.org>
-Subject: Re: Namesys availability
-Date: Mon, 14 Dec 2009 12:43:06 +0530
-Message-ID: <84c89ac10912132313w194e37b9jcbe4c9c6073cd6c5@mail.gmail.com>
-References: <4B23BC26.20506@ontolab.com>
+From: Christian Kujau <lists@nerdbynature.de>
+Subject: jdm-20002 reiserfs_xattr_get: Invalid hash for xattr
+Date: Mon, 14 Dec 2009 14:44:33 -0800 (PST)
+Message-ID: <alpine.DEB.2.01.0912141432170.2915@bogon.housecafe.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:sender:received:in-reply-to
-         :references:date:x-google-sender-auth:message-id:subject:from:to:cc
-         :content-type:content-transfer-encoding;
-        bh=c2gjWhV9EN3MBTHbwDHiZgZQ/jmQwl0iDO0mG9BK9Kk=;
-        b=WyCqkg0Yp40By5CC7foMBtAdabf0hidNz4NwBAkP+mbL6zXBBl284vN92xAOib85Bl
-         gcqYuLctnc+UwIRfeonM7jmoIe0iYv8X8G1e7DRQErfQGZQ4AaTppCmEcC2CHQ3qDbat
-         ZnMltmvXEIhzlL4exZTOjN2rAQeD4ZzKkKIaI=
-In-Reply-To: <4B23BC26.20506@ontolab.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Christian Stroetmann <stroetmann@ontolab.com>
-Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-http://en.wikipedia.org/wiki/Namesys
+Hi there,
 
-Viji
+I've just noticed the following in my logs:
 
-On Sat, Dec 12, 2009 at 9:22 PM, Christian Stroetmann
-<stroetmann@ontolab.com> wrote:
-> Hello Happy Coders;
->
-> Has someone of you informations to the following questions:
-> 1. Is Namesys still available?
-> 2. If point 1., then How much?
->
-> Thanks for thinking and so
-> Christian *<:o) =A0 O>-< =A0 -(D)>-<
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-de=
-vel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+REISERFS warning (device xvda3): jdm-20002 reiserfs_xattr_get: Invalid hash for xattr 
+(user.{http:%2F%2Ftwistedmatrix.com%2Fxml_namespace%2Fdav%2Fprivate%2F}quota-used) 
+associated with [765 72063 0x0 SD]
+
+and one minute later:
+
+REISERFS warning (device xvda3): jdm-20002 reiserfs_xattr_get: Invalid hash for xattr 
+(user.{http:%2F%2Ftwistedmatrix.com%2Fxml_namespace%2Fdav%2Fprivate%2F}quota-used) 
+associated with [765 72063 0x0 SD]
+
+# find /var/ -inum 72063
+/var/spool/caldavd/calendars/__uids__/afebe2f1-f51a-5859-af15-f22312ad6634
+
+# grep xvda3 /proc/mounts
+/dev/xvda3 /var reiserfs rw,nosuid,nodev,noexec,relatime,user_xattr,notail 0 0
+
+Accessing the filesystem is still fine (lsattr(1) fails, but it's 
+supposed to fail anyway, right?). This is a x86-64 Xen DomU running 
+2.6.32-rc8 with:
+
+CONFIG_REISERFS_FS=m
+CONFIG_REISERFS_FS_XATTR=y
+CONFIG_REISERFS_FS_POSIX_ACL=y
+
+Thanks,
+Christian.
+-- 
+BOFH excuse #382:
+
+Someone was smoking in the computer room and set off the halon systems.
