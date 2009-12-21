@@ -1,24 +1,18 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 14855] Reiserproblem
-Date: Mon, 21 Dec 2009 20:31:39 GMT
-Message-ID: <200912212031.nBLKVdvY017443@demeter.kernel.org>
+From: Christian Kujau <lists@nerdbynature.de>
+Subject: Re: [Bug 14855] New: Reiserproblem
+Date: Mon, 21 Dec 2009 12:31:25 -0800 (PST)
+Message-ID: <alpine.DEB.2.01.0912211219500.3483@bogon.housecafe.de>
 References: <bug-14855-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 In-Reply-To: <bug-14855-695@http.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: bugzilla-daemon@bugzilla.kernel.org
+Cc: reiserfs-devel@vger.kernel.org, randy.dunlap@oracle.com, nerijus.kislauskas@ktu.lt
 
-http://bugzilla.kernel.org/show_bug.cgi?id=14855
-
-
-
-
-
---- Comment #2 from Christian Kujau <lists@nerdbynature.de>  2009-12-21 20:31:38 ---
 On Mon, 21 Dec 2009 at 11:48, bugzilla-daemon@bugzilla.kernel.org wrote:
 > http://bugzilla.kernel.org/show_bug.cgi?id=14855
 
@@ -27,20 +21,18 @@ It's in fs/reiserfs/journal.c:531 there. There's another BUG in that area,
 also seen [1] by Randy. Can anyone confirm if they are related to this 
 one here?
 
-I've attached the first part of Nerijus' backtrace, hopefully line-unwrapped,
-below.
+I've attached the first part of Nerijus' backtrace, hopefully line-unwrapped, below.
 
 Christian.
 
 [0] http://lkml.org/lkml/2007/9/13/284
-[1]
-http://oss.oracle.com/~rdunlap/kerneltest/reiserfs-fsx/bug-2620-rc5-uni-reis-fsx
+[1] http://oss.oracle.com/~rdunlap/kerneltest/reiserfs-fsx/bug-2620-rc5-uni-reis-fsx
 
  ------------[ cut here ]------------ 
  kernel BUG at fs/reiserfs/journal.c:532!
  invalid opcode: 0000 [#1] SMP     
  Modules linked in: qla2xxx        
-
+                                   
  Pid: 14237, comm: rsync Tainted: G        W (2.6.26.5 #2)
  EIP: 0060:[<c01b511e>] EFLAGS: 00010246 CPU: 1           
  EIP is at reiserfs_in_journal+0x111/0x137                
@@ -81,13 +73,10 @@ http://oss.oracle.com/~rdunlap/kerneltest/reiserfs-fsx/bug-2620-rc5-uni-reis-fsx
   [<c0159908>] sys_write+0x41/0x6a 
   [<c0102c3d>] sysenter_past_esp+0x6a/0x91                                      
   =======================          
- Code: d0 31 c3 81 e3 ff 1f 00 00 8b 54 24 04 8b 84 9a 10 01 00 00 85 c0 75 09
-eb 15 8b 40 20 85 c0 74 0e 39 48 08 75 f4 3b 70 04 75 ef <0f> 0b eb fe 31 c0 83
-c4 08 5b 5e 5f 5d c3 83 c1 01 8b 56 0c c1                                       
- EIP: [<c01b511e>] reiserfs_in_journal+0x111/0x137 SS:ESP 0068:e4115aa8         
-  ---[ end trace 6c0651af41821b30 ]---
-
+ Code: d0 31 c3 81 e3 ff 1f 00 00 8b 54 24 04 8b 84 9a 10 01 00 00 85 c0 75 09 eb 15 8b 40 20 85 c0 74 0e 39 48 08 75 f4 3b 70 04 75 ef <0f> 0b eb fe 31 c0 83 c4 08 5b 5e 5f 5d c3 83 c1 01 8b 56 0c c1                                                                        
+ EIP: [<c01b511e>] reiserfs_in_journal+0x111/0x137 SS:ESP 0068:e4115aa8                            
+  ---[ end trace 6c0651af41821b30 ]--- 
 -- 
-Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+BOFH excuse #211:
+
+Lightning strikes.
