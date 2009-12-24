@@ -1,32 +1,42 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 14855] Reiserproblem
-Date: Tue, 22 Dec 2009 17:33:29 GMT
-Message-ID: <200912221733.nBMHXT3l007602@demeter.kernel.org>
-References: <bug-14855-695@http.bugzilla.kernel.org/>
+From: Christian Kujau <lists@nerdbynature.de>
+Subject: benchmark results
+Date: Thu, 24 Dec 2009 02:31:10 -0800 (PST)
+Message-ID: <alpine.DEB.2.01.0912240205510.3483@bogon.housecafe.de>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-14855-695@http.bugzilla.kernel.org/>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+Sender: linux-btrfs-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: xfs@oss.sgi.com, reiserfs-devel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net, ext-users <ext3-users@redhat.com>, linu
 
-http://bugzilla.kernel.org/show_bug.cgi?id=14855
+I've had the chance to use a testsystem here and couldn't resist running a 
+few benchmark programs on them: bonnie++, tiobench, dbench and a few 
+generic ones (cp/rm/tar/etc...) on ext{234}, btrfs, jfs, ufs, xfs, zfs.
 
+All with standard mkfs/mount options and +noatime for all of them.
 
+Here are the results, no graphs - sorry:
+   http://nerdbynature.de/benchmarks/v40z/2009-12-22/
 
+Reiserfs is locking up during dbench, so I removed it from the 
+config, here are some earlier results:
 
+   http://nerdbynature.de/benchmarks/v40z/2009-12-21/bonnie.html
 
---- Comment #4 from Toby Thain <toby@telegraphics.com.au>  2009-12-22 17:33:26 ---
-Memory can die over time. Another way to do quick and dirty memory testing
-while the box is in production could be to run some heavy compiles, perhaps
-many in parallel... but ideally memtest, of course :)
+Bonnie++ couldn't complete on nilfs2, only the generic tests 
+and tiobench were run. As nilfs2, ufs, zfs aren't supporting xattr, dbench 
+could not be run on these filesystems.
+   
+Short summary, AFAICT:
+    - btrfs, ext4 are the overall winners
+    - xfs to, but creating/deleting many files was *very* slow
+    - if you need only fast but no cool features or journaling, ext2
+      is still a good choice :)
 
-The main reason I mentioned it is because you are using Reiser3, which is very
-mature and stable. It seems plausible that hardware could be at fault.
-
+Thanks,
+Christian.
 -- 
-Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+BOFH excuse #84:
+
+Someone is standing on the ethernet cable, causing a kink in the cable
