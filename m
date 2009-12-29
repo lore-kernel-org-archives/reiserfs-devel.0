@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 14899] reiserfs: inconsistent lock state
-Date: Tue, 29 Dec 2009 14:58:37 GMT
-Message-ID: <200912291458.nBTEwbBB028196@demeter.kernel.org>
+Date: Tue, 29 Dec 2009 14:58:44 GMT
+Message-ID: <200912291458.nBTEwimi028224@demeter.kernel.org>
 References: <bug-14899-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -19,8 +19,7 @@ Rafael J. Wysocki <rjw@sisk.pl> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-             Status|RESOLVED                    |REOPENED
-         Resolution|PATCH_ALREADY_AVAILABLE     |
+             Status|REOPENED                    |NEW
 
 
 
