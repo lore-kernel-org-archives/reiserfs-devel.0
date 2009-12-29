@@ -1,29 +1,37 @@
-From: Christian Kujau <lists@nerdbynature.de>
-Subject: Re: [Bug 14927] New: reiserfs: circular locking dependency
- detected
-Date: Mon, 28 Dec 2009 19:28:04 -0800 (PST)
-Message-ID: <alpine.DEB.2.01.0912281925100.3483@bogon.housecafe.de>
-References: <bug-14927-695@http.bugzilla.kernel.org/>
+From: Emmanuel Florac <eflorac@intellique.com>
+Subject: Re: benchmark results
+Date: Tue, 29 Dec 2009 12:27:44 +0100
+Message-ID: <20091229122744.40a4b707@galadriel.home>
+References: <alpine.DEB.2.01.0912240205510.3483@bogon.housecafe.de>
 Mime-Version: 1.0
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-14927-695@http.bugzilla.kernel.org/>
+In-Reply-To: <alpine.DEB.2.01.0912240205510.3483@bogon.housecafe.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: rjw@sisk.pl
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+To: Christian Kujau <lists@nerdbynature.de>
+Cc: xfs@oss.sgi.com, reiserfs-devel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net, ext-users <ext3-users@redhat.com>, linux-nilfs@vger.kernel.org
 
-On Tue, 29 Dec 2009 at 00:31, bugzilla-daemon@bugzilla.kernel.org wrote:
-> http://bugzilla.kernel.org/show_bug.cgi?id=14927
+Le Thu, 24 Dec 2009 02:31:10 -0800 (PST) vous =E9criviez:
 
-Thanks for tracking this, Rafael. I was planning to do this if I hear 
-nothing back from reiserfs-devel. Also, I'm not sure this is a regression 
-from 2.6.32, as I did not have LOCKDEP_* enabled in earlier kernels. I'll 
-see if I can reproduce this with earlier kernels....
+>     - btrfs, ext4 are the overall winners
+>     - xfs to, but creating/deleting many files was *very* slow
 
-Christian.
--- 
-BOFH excuse #134:
+xfs is slow at file creation/deletion if you mount it with barriers on
+standard disk drives (not so with hardware RAID controllers).
 
-because of network lag due to too many people playing deathmatch
+--=20
+-----------------------------------------------------------------------=
+-
+Emmanuel Florac     |   Direction technique
+                    |   Intellique
+                    |	<eflorac@intellique.com>
+                    |   +33 1 78 94 84 02
+-----------------------------------------------------------------------=
+-
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
