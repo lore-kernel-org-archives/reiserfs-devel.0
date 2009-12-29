@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 14916] New: jnode_page(node) != NULL
-Date: Mon, 28 Dec 2009 14:37:15 GMT
-Message-ID: <bug-14916-695@http.bugzilla.kernel.org/>
+Subject: [Bug 14927] New: reiserfs: circular locking dependency detected
+Date: Tue, 29 Dec 2009 00:31:43 GMT
+Message-ID: <bug-14927-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
@@ -10,32 +10,32 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-http://bugzilla.kernel.org/show_bug.cgi?id=14916
+http://bugzilla.kernel.org/show_bug.cgi?id=14927
 
-           Summary: jnode_page(node) != NULL
+           Summary: reiserfs: circular locking dependency detected
            Product: File System
            Version: 2.5
-    Kernel Version: 2009-12-10-17-19
+    Kernel Version: 2.6.33-rc1
           Platform: All
         OS/Version: Linux
-              Tree: -mm
+              Tree: Mainline
             Status: NEW
           Severity: normal
           Priority: P1
-         Component: Reiser4
+         Component: ReiserFS
         AssignedTo: reiserfs-devel@vger.kernel.org
-        ReportedBy: buchner.johannes@gmx.at
-        Regression: No
+        ReportedBy: rjw@sisk.pl
+            Blocks: 14885
+        Regression: Yes
 
 
-Using several hard resets, I ran into "jnode_page(node) != NULL" asserts
-(causing kernel panics). These panics happen when some file is read (often a
-GNOME file needed for startup).
+Subject    : reiserfs: circular locking dependency detected
+Submitter  : Christian Kujau <lists@nerdbynature.de>
+Date       : 2009-12-24 11:26
+References : http://marc.info/?l=linux-kernel&m=126165398604367&w=4
 
-"fsck.reiser4 --fix" was always able to fix it, but the fs shouldn't get into
-such a state in the first place.
-
-I'm afraid I don't have a way to reproduce.
+This entry is being used for tracking a regression from 2.6.32.  Please don't
+close it until the problem is fixed in the mainline.
 
 -- 
 Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
