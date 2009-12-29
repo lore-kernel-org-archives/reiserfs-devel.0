@@ -1,37 +1,31 @@
-From: Emmanuel Florac <eflorac@intellique.com>
-Subject: Re: benchmark results
-Date: Tue, 29 Dec 2009 12:27:44 +0100
-Message-ID: <20091229122744.40a4b707@galadriel.home>
-References: <alpine.DEB.2.01.0912240205510.3483@bogon.housecafe.de>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 14899] reiserfs: inconsistent lock state
+Date: Tue, 29 Dec 2009 14:58:20 GMT
+Message-ID: <200912291458.nBTEwK8l028142@demeter.kernel.org>
+References: <bug-14899-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.01.0912240205510.3483@bogon.housecafe.de>
+In-Reply-To: <bug-14899-695@http.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Christian Kujau <lists@nerdbynature.de>
-Cc: xfs@oss.sgi.com, reiserfs-devel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net, ext-users <ext3-users@redhat.com>, linux-nilfs@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-Le Thu, 24 Dec 2009 02:31:10 -0800 (PST) vous =E9criviez:
+http://bugzilla.kernel.org/show_bug.cgi?id=14899
 
->     - btrfs, ext4 are the overall winners
->     - xfs to, but creating/deleting many files was *very* slow
 
-xfs is slow at file creation/deletion if you mount it with barriers on
-standard disk drives (not so with hardware RAID controllers).
+Rafael J. Wysocki <rjw@sisk.pl> changed:
 
---=20
------------------------------------------------------------------------=
--
-Emmanuel Florac     |   Direction technique
-                    |   Intellique
-                    |	<eflorac@intellique.com>
-                    |   +33 1 78 94 84 02
------------------------------------------------------------------------=
--
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |RESOLVED
+         Resolution|                            |PATCH_ALREADY_AVAILABLE
+
+
+
+
+-- 
+Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
