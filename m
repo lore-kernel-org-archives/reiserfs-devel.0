@@ -1,45 +1,51 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: reiserfs: circular locking dependency detected
-Date: Wed, 30 Dec 2009 01:24:51 +0100
-Message-ID: <20091230002449.GC5258@nowhere>
-References: <alpine.DEB.2.01.0912240314350.3483@bogon.housecafe.de>
+From: Christian Kujau <lists@nerdbynature.de>
+Subject: Re: [PATCH 0/5] reiserfs lock inversion fixes on xattr
+Date: Wed, 30 Dec 2009 22:32:04 -0800 (PST)
+Message-ID: <alpine.DEB.2.01.0912301943020.3483@bogon.housecafe.de>
+References: <1262150491-9983-1-git-send-regression-fweisbec@gmail.com> <1262205747-9208-1-git-send-regression-fweisbec@gmail.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:received:date:from:to:cc
-         :subject:message-id:references:mime-version:content-type
-         :content-disposition:in-reply-to:user-agent;
-        bh=cfFwkypGwUUpwBFwA3BbhGrlPprubSW0MUCxug8U18g=;
-        b=b6MCb8mq4yR5p0eWIhGr35Js8RtAyE0N9eZlg/ruNtFkSNfEvc1x4heMd6jxkIEo/O
-         kmPWS1DzoIqQntNeC7RVHUiAiI2Pi8YN3jeKDFPQ8U22H7ByXPhTzo5V9uln/+JM49A/
-         ffM+1LWGfyWz5h0bpbEg2hg+Pk7PQhewKWY74=
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.01.0912240314350.3483@bogon.housecafe.de>
+In-Reply-To: <1262205747-9208-1-git-send-regression-fweisbec@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christian Kujau <lists@nerdbynature.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org, jeffm@suse.com
+To: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Chris Mason <chris.mason@oracle.com>, Ingo Molnar <mingo@elte.hu>, reiserfs-devel@vger.kernel.org
 
-On Thu, Dec 24, 2009 at 03:26:07AM -0800, Christian Kujau wrote:
-> 
-> I've seen the lockdep warning reported in 
-> http://lkml.org/lkml/2009/12/22/365, but this one is slightly different 
-> and is not happening on mount but when dbench is run on a freshly created 
-> filesystem. Below is the lockdep warning, I've put sysrq-D/W/P/T output on 
-> 
-> http://nerdbynature.de/bits/2.6.33-rc1/reiserfs/
-> 
-> - t2 is with lockdep enabled
-> - proc-fs-reiserfs.log is me trying to cat /proc/fs/reiserfs every 
->   2 seconds while dbench is running
-> 
-> Thanks,
-> Christian.
+On Wed, 30 Dec 2009 at 21:42, Frederic Weisbecker wrote:
+> I hope you can give it a try (and/or review) before I send the whole
+> to Linus.
 
+Without your patches, "dbench -x" was pretty much instantly causing the 
+threads to lock up, forcing me to reboot the box. With LOCKDEP enabled, 
+warnings were printed. After applying your patches (and a reboot) I've run 
+"dbench -x" for quite a while now with different runtimes and number of
+clients and it's not locking up any more. I've tested with:
 
+CONFIG_REISERFS_FS=y
+CONFIG_REISERFS_CHECK=y
+CONFIG_REISERFS_PROC_INFO=y
+CONFIG_REISERFS_FS_XATTR=y
+CONFIG_REISERFS_FS_POSIX_ACL=y
+# CONFIG_REISERFS_FS_SECURITY is not set
 
-Thanks for your report. I have a pending fix, I'll post it soon.
+...and a few "Kernel hacking" options set. Full config and dmesg:
 
+   http://nerdbynature.de/bits/2.6.33-rc1/reiserfs/t3/
+
+   (although I'm not really testing -rc1 but latest mainline -git
+    and your changes pulled)
+
+So, feel free to add:
+
+  Tested-by: Christian Kujau <lists@nerdbynature.de>
+
+I can't help with the code review though :-\
+
+Thanks!
+Christian.
+-- 
+BOFH excuse #208:
+
+Your mail is being routed through Germany ... and they're censoring us.
