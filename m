@@ -1,12 +1,19 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: Frederic Weisbecker <fweisbec@gmail.com>
 Subject: Re: [PATCH 0/5] reiserfs lock inversion fixes on xattr
-Date: Fri, 1 Jan 2010 10:29:44 +0100
-Message-ID: <20100101092944.GB12203@elte.hu>
-References: <1262150491-9983-1-git-send-regression-fweisbec@gmail.com>
- <1262205747-9208-1-git-send-regression-fweisbec@gmail.com>
- <alpine.DEB.2.01.0912301943020.3483@bogon.housecafe.de>
+Date: Sat, 2 Jan 2010 02:40:06 +0100
+Message-ID: <20100102014003.GA5238@nowhere>
+References: <1262150491-9983-1-git-send-regression-fweisbec@gmail.com> <1262205747-9208-1-git-send-regression-fweisbec@gmail.com> <alpine.DEB.2.01.0912301943020.3483@bogon.housecafe.de>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:received:date:from:to:cc
+         :subject:message-id:references:mime-version:content-type
+         :content-disposition:in-reply-to:user-agent;
+        bh=SRiztdUBoizAm/qwHqhtK2vas8eudIIq3DCVly88jow=;
+        b=R65+rNjpZO7X+2lcdg7n+vBY0T54J7m4bMDU5cAwvpHzLJR9wIJ0was6zYzqB6o5K7
+         tTN7Elb2MpAGdSBlFfATrUMBz3o1XY551NGlpMeaUaf0G9ZpmL/8jq0MkSNt8++iHcNz
+         UJ14kb3QRT4PxjiXwx3e8ZMrWQKPRoC0nli0c=
 Content-Disposition: inline
 In-Reply-To: <alpine.DEB.2.01.0912301943020.3483@bogon.housecafe.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
@@ -14,11 +21,9 @@ List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Christian Kujau <lists@nerdbynature.de>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Chris Mason <chris.mason@oracle.com>, reiserfs-devel@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Chris Mason <chris.mason@oracle.com>, Ingo Molnar <mingo@elte.hu>, reiserfs-devel@vger.kernel.org
 
-
-* Christian Kujau <lists@nerdbynature.de> wrote:
-
+On Wed, Dec 30, 2009 at 10:32:04PM -0800, Christian Kujau wrote:
 > On Wed, 30 Dec 2009 at 21:42, Frederic Weisbecker wrote:
 > > I hope you can give it a try (and/or review) before I send the whole
 > > to Linus.
@@ -47,9 +52,15 @@ Cc: Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org
 > 
 >   Tested-by: Christian Kujau <lists@nerdbynature.de>
 
-Frederic, i'd suggest you send this tree to Linus with Christian's tested-by 
-tags added ASAP - we better have these fixes in -rc3.
 
-Thanks,
+Great, I've added this to the xattr related commits,
+thanks a lot!
 
-	Ingo
+
+> 
+> I can't help with the code review though :-\
+
+
+Don't worry, both testing and review are very precious
+and appreciated!
+
