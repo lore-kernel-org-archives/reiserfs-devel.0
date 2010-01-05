@@ -1,65 +1,70 @@
-From: Michael Rubin <mrubin@google.com>
+From: Dave Chinner <david@fromorbit.com>
 Subject: Re: [Jfs-discussion] benchmark results
-Date: Mon, 4 Jan 2010 10:57:49 -0800
-Message-ID: <532480951001041057w3ad8d1dfy361ced0346ebaaa4@mail.gmail.com>
-References: <alpine.DEB.2.01.0912240205510.3483@bogon.housecafe.de> 
-	<19251.26403.762180.228181@tree.ty.sabi.co.uk> <20091224212756.GM21594@thunk.org> 
-	<20091224234631.GA1028@ioremap.net> <20091225161146.GC32757@thunk.org> 
-	<20100104162748.GA11932@think>
+Date: Tue, 5 Jan 2010 11:41:17 +1100
+Message-ID: <20100105004117.GP13802@discord.disaster>
+References: <alpine.DEB.2.01.0912240205510.3483@bogon.housecafe.de> <19251.26403.762180.228181@tree.ty.sabi.co.uk> <20091224212756.GM21594@thunk.org> <20091224234631.GA1028@ioremap.net> <20091225161146.GC32757@thunk.org> <20100104162748.GA11932@think>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=google.com; s=beta;
-	t=1262631491; bh=DqeXOnYnLApXzHr6H+eXI3gRm/o=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Content-Type;
-	b=oKk/6oZFg49hwFS5SoTc1aQPCbkzRXRfBj6OCy6rigfb+LoF3ylAZfyhr6icAzgRn
-	 DaDsu8ZNwgQV0mMFq51gA==
+Return-path: <linux-ext4-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <20100104162748.GA11932@think>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Sender: linux-ext4-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <chris.mason@oracle.com>, tytso@mit.edu, Evgeniy Polyakov <zbr@ioremap.net>, Peter Grandi <pg_jf2@jf2.for.sabi.co.uk>, xfs@oss.sgi.com, reiserfs-devel@vger.kernel.org, lin
+To: Chris Mason <chris.mason@oracle.com>, tytso@mit.edu, Evgeniy Polyakov <zbr@ioremap.net>, Peter Grandi <pg_jf2@jf2.for.sabi.co.UK>, xfs@oss.sgi.com, reiserfs-devel@vger.kernel.org, lin
 
-Google is currently in the middle of upgrading from ext2 to a more up
-to date file system. We ended up choosing ext4. This thread touches
-upon many of the issues we wrestled with, so I thought it would be
-interesting to share. We should be sending out more details soon.
+On Mon, Jan 04, 2010 at 11:27:48AM -0500, Chris Mason wrote:
+> On Fri, Dec 25, 2009 at 11:11:46AM -0500, tytso@mit.edu wrote:
+> > On Fri, Dec 25, 2009 at 02:46:31AM +0300, Evgeniy Polyakov wrote:
+> > > > [1] http://samba.org/ftp/tridge/dbench/README
+> > > 
+> > > Was not able to resist to write a small notice, what no matter what, but
+> > > whatever benchmark is running, it _does_ show system behaviour in one
+> > > or another condition. And when system behaves rather badly, it is quite
+> > > a common comment, that benchmark was useless. But it did show that
+> > > system has a problem, even if rarely triggered one :)
+> > 
+> > If people are using benchmarks to improve file system, and a benchmark
+> > shows a problem, then trying to remedy the performance issue is a good
+> > thing to do, of course.  Sometimes, though the case which is
+> > demonstrated by a poor benchmark is an extremely rare corner case that
+> > doesn't accurately reflect common real-life workloads --- and if
+> > addressing it results in a tradeoff which degrades much more common
+> > real-life situations, then that would be a bad thing.
+> > 
+> > In situations where benchmarks are used competitively, it's rare that
+> > it's actually a *problem*.  Instead it's much more common that a
+> > developer is trying to prove that their file system is *better* to
+> > gullible users who think that a single one-dimentional number is
+> > enough for them to chose file system X over file system Y.
+> 
+> [ Look at all this email from my vacation...sorry for the delay ]
+> 
+> It's important that people take benchmarks from filesystem developers
+> with a big grain of salt, which is one reason the boxacle.net results
+> are so nice.  Steve more than willing to take patches and experiment to
+> improve a given FS results, but his business is a fair representation of
+> performance and it shows.
 
-The driving performance reason to upgrade is that while ext2 had been "good
-enough" for a very long time the metadata arrangement on a stale file
-system was leading to what we call "read inflation". This is where we
-end up doing many seeks to read one block of data. In general latency
-from poor block allocation was causing performance hiccups.
+Just looking at the results there, I notice that the RAID system XFS
+mailserver results dropped by an order of magnitude between
+2.6.29-rc2 and 2.6.31. The single disk results are pretty
+much identical across the two kernels.
 
-We spent a lot of time with unix standard benchmarks (dbench, compile
-bench, et al) on xfs, ext4, jfs to try to see which one was going to
-perform the best. In the end we mostly ended up using the benchmarks
-to validate our assumptions and do functional testing. Larry is
-completely right IMHO. These benchmarks were instrumental in helping
-us understand how the file systems worked in controlled situations and
-gain confidence from our customers.
+IIRC, in 2.6.31 RAID0 started passing barriers through so I suspect
+this is the issue. However, seeing as dmesg is not collected by
+the scripts after the run and the output of the mounttab does
+not show default options, I cannot tell if this is the case. This
+might be worth checking by running XFS with the "nobarrier" mount
+option....
 
-For our workloads we saw ext4 and xfs as "close enough" in performance
-in the areas we cared about. The fact that we had a much smoother
-upgrade path with ext4 clinched the deal. The only upgrade option we
-have is online. ext4 is already moving the bottleneck away from the
-storage stack for some of our most intensive applications.
+FWIW, is it possible to get these benchmarks run on each filesystem for
+each kernel release so ext/xfs/btrfs all get some regular basic
+performance regression test coverage?
 
-It was not until we moved from benchmarks to customer workload that we
-were able to make detailed performance comparisons and find bugs in
-our implementation.
+Cheers,
 
-"Iterate often" seems to be the winning strategy for SW dev. But when
-it involves rebooting a cloud of systems and making a one way
-conversion of their data it can get messy. That said I see benchmarks
-as tools to build confidence before running traffic on redundant live
-systems.
-
-mrubin
-
-PS for some reason "dbench" holds mythical power over many folks I
-have met. They just believe it's the most trusted and standard
-benchmark for file systems. In my experience it often acts as a random
-number generator. It has found some bugs in our code as it exercises
-the VFS layer very well.
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
