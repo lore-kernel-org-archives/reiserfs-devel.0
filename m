@@ -1,30 +1,31 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 14899] reiserfs: inconsistent lock state
-Date: Sun, 10 Jan 2010 23:01:13 GMT
-Message-ID: <201001102301.o0AN1DJL007128@demeter.kernel.org>
-References: <bug-14899-695@http.bugzilla.kernel.org/>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: [Bug #14656] Oops at __rmqueue+0x98 with 2.6.32-rc6
+Date: Sun, 10 Jan 2010 23:56:13 +0100 (CET)
+Message-ID: <CXIfLt-ygXM.A.HXD.PilSLB__30293.4513929815$1263165132$gmane$org@chimera>
+References: <nzLqtSp97aP.A.RGB.hglSLB@chimera>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-14899-695@http.bugzilla.kernel.org/>
+In-Reply-To: <nzLqtSp97aP.A.RGB.hglSLB@chimera>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Kernel Testers List <kernel-testers@vger.kernel.org>, "Lucas C. Villa Real" <lucasvr@gobolinux.org>, "reiserfs-devel@vger.kernel.org"@ogre.sisk.pl
 
-http://bugzilla.kernel.org/show_bug.cgi?id=14899
+This message has been generated automatically as a part of a report
+of regressions introduced between 2.6.31 and 2.6.32.
 
-
-Rafael J. Wysocki <rjw@sisk.pl> changed:
-
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|RESOLVED                    |CLOSED
+The following bug entry is on the current list of known regressions
+introduced between 2.6.31 and 2.6.32.  Please verify if it still should
+be listed and let me know (either way).
 
 
+Bug-Entry	: http://bugzilla.kernel.org/show_bug.cgi?id=14656
+Subject		: Oops at __rmqueue+0x98 with 2.6.32-rc6
+Submitter	: Lucas C. Villa Real <lucasvr@gobolinux.org>
+Date		: 2009-11-19 3:48 (53 days old)
+References	: http://marc.info/?l=linux-kernel&m=125860255229092&w=4
 
 
--- 
-Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
