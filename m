@@ -1,65 +1,69 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [Jfs-discussion] benchmark results
-Date: Fri, 15 Jan 2010 22:42:38 +0100
-Message-ID: <4B50E14E.5050204@gmail.com>
-References: <20091224212756.GM21594@thunk.org> <alpine.DEB.2.01.0912241739160.3483@bogon.housecafe.de> <20091225161453.GD32757@thunk.org> <20091225162238.GB19303@bitmover.com> <alpine.DEB.2.01.0912251042540.3483@bogon.housecafe.de> <4B36333B.3030600@hp.com> <4B365EBE.5050804@nerdbynature.de> <4B37BA76.7050403@hp.com> <alpine.DEB.2.01.0912271346240.3483@bogon.housecafe.de> <20091227223307.GA4429@thunk.org> <20091228140855.GD10982@bitmover.com>
+From: <doiggl@velocitynet.com.au>
+Subject: FYI r4 patches in http://lkml.org/lkml/2010/1/15/271
+Date: Sat, 16 Jan 2010 00:38:57 +0000
+Message-ID: <7ed5587f1fb48265e55e78f6f58f34d8@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20091228140855.GD10982@bitmover.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Larry McVoy <lm@bitmover.com>, tytso@mit.edu, Christian Kujau <lists@nerdbynature.de>, jim owens <jowens@hp.com>, jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org, x
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
+FYI: Saw this announcement at http://lkml.org/lkml/2010/1/15/271
+Cheers Glenn
 
-> When things didn't match up that was a clue that either
->
->     - the benchmark was broken
->     - the code was broken
->   
-[...]
+The mm-of-the-moment snapshot 2010-01-15-15-34 has been uploaded to
 
-I would carry out an object-oriented dualism here.
+   http://userweb.kernel.org/~akpm/mmotm/
 
+and will soon be available at
 
-[1] methods (kernel module) ---- [2] objects (formatted partition)
-
- |                                |
- |                                |
-
-[3] benchmarks ----------------- [4] user-space utilities (fsck)
-
-
-User-space utilities investigate "object corruptions",
-whereas benchmarks investigate "software corruptions"
-(including bugs in source code, broken design, etc, etc..)
-
-It is clear that "software" can be "corrupted" by a larger
-number of ways than "objects". Indeed, it is known that
-dual space V* (of all linear functions over V) is a much
-more complex object than V.
-
-So benchmark is a process which takes a set of methods
-(we consider only "software" benchmarks) and puts numerical
-values populated with a special (the worst) value CRASH.
-
-Three main categories of benchmarks using:
-
-1) Internal testing
-
-An engineer makes optimizations in a file system (e.g. for a
-customer) via choosing functions or plugins as winners in
-a set of internal (local) "nominations".
-
-2) Business plans
-
-A system administrator chooses a "winner" in some (global)
-"nomination" of file systems in accordance with internal
-business-plans.
-
-3) Flame and politics
-
-Someone presents a "nomination" (usually with the "winner"
-among restricted number of nominated members) to the public
-while nobody asked him to do it.
+   git://zen-kernel.org/kernel/mmotm.git
+It contains the following patches against 2.6.33-rc4:
+.
+.
+.
+reiser4-adjust-to-the-new-aops-fixup.patch                                
+                                                 
+reiser4-adjust-to-the-new-aops.patch                                      
+                                                 
+reiser4-drop-journal-info.patch                                           
+                                                 
+reiser4-export-find_get_pages.patch                                       
+                                                 
+reiser4-export-remove_from_page_cache-fix.patch                           
+                                                 
+reiser4-export-remove_from_page_cache.patch                               
+                                                 
+reiser4-fix-compile-warnings.patch                                        
+                                                 
+reiser4-fix.patch                                                         
+                                                 
+reiser4-fixed-null-pointer-dereference.patch                              
+                                                 
+reiser4-generic_sync_sb_inodes-doesnt-exist-anymore.patch                 
+                                                 
+reiser4-handling-error-returned-by-d_obtain_alias-fixup.patch             
+                                                 
+reiser4-reduce-frame-size-of-reiser4_init_super_data-fixup.patch          
+                                                 
+reiser4-reduce-frame-size-of-reiser4_init_super_data.patch                
+                                                 
+reiser4-remove-simple_prepare_write-usage-checkpatch-fixes.patch          
+                                                 
+reiser4-remove-simple_prepare_write-usage.patch                           
+                                                 
+reiser4-rename-psched-to-dispatch.patch                                   
+                                                 
+reiser4-some-changes-from-reiser4-2631-patch.patch                        
+                                                 
+reiser4-some-comments-were-still-mentioning-pdflush.patch                 
+                                                 
+reiser4-update-names-of-quota-methods.patch                               
+                                                 
+reiser4-use-set_page_dirty_notag.patch                                    
+                                                 
+reiser4-vfs-add-super_operationssync_inodes-2.patch                       
+                                                 
+reiser4.patch        
