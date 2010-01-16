@@ -1,69 +1,55 @@
-From: <doiggl@velocitynet.com.au>
-Subject: FYI r4 patches in http://lkml.org/lkml/2010/1/15/271
-Date: Sat, 16 Jan 2010 00:38:57 +0000
-Message-ID: <7ed5587f1fb48265e55e78f6f58f34d8@mail.velocitynet.com.au>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: FYI r4 patches in http://lkml.org/lkml/2010/1/15/271
+Date: Sat, 16 Jan 2010 02:13:19 +0100
+Message-ID: <4B5112AF.6040403@gmail.com>
+References: <7ed5587f1fb48265e55e78f6f58f34d8@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:message-id:date:from
+         :user-agent:mime-version:to:cc:subject:references:in-reply-to
+         :content-type:content-transfer-encoding;
+        bh=m22FI7uigDQppF0A+AcUNMkCWRGxddURv7w9NS1YWvc=;
+        b=UJboN1auP/VoNEjDO3WUUuDp/VuD+fib41D+p1GN1WQytto31U7kpso/Xbgifn22J0
+         P3BH+KQXmAYRzLXstgb1PDCtwcAicZzF8yzaYTYCHQiDakG9RWMzSi4fCN8BFyOPB9iv
+         K7C8TE/RlKmRLXUcCk4XZDfTDfCzumFRnCmrs=
+In-Reply-To: <7ed5587f1fb48265e55e78f6f58f34d8@mail.velocitynet.com.au>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+To: doiggl@velocitynet.com.au
+Cc: reiserfs-devel@vger.kernel.org
 
-FYI: Saw this announcement at http://lkml.org/lkml/2010/1/15/271
-Cheers Glenn
+doiggl@velocitynet.com.au wrote:
+> FYI: Saw this announcement at http://lkml.org/lkml/2010/1/15/271
+> Cheers Glenn
+>
+> The mm-of-the-moment snapshot 2010-01-15-15-34 has been uploaded to
+>
+>    http://userweb.kernel.org/~akpm/mmotm/
+>
+> and will soon be available at
+>
+>    git://zen-kernel.org/kernel/mmotm.git
+> It contains the following patches against 2.6.33-rc4:
+> .
+> .
+> .
+>   
+[...]
+>                                                  
+> reiser4-vfs-add-super_operationssync_inodes-2.patch
 
-The mm-of-the-moment snapshot 2010-01-15-15-34 has been uploaded to
+will not work
+ 
+>                                                  
+> reiser4.patch        
+> --
+> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>   
 
-   http://userweb.kernel.org/~akpm/mmotm/
-
-and will soon be available at
-
-   git://zen-kernel.org/kernel/mmotm.git
-It contains the following patches against 2.6.33-rc4:
-.
-.
-.
-reiser4-adjust-to-the-new-aops-fixup.patch                                
-                                                 
-reiser4-adjust-to-the-new-aops.patch                                      
-                                                 
-reiser4-drop-journal-info.patch                                           
-                                                 
-reiser4-export-find_get_pages.patch                                       
-                                                 
-reiser4-export-remove_from_page_cache-fix.patch                           
-                                                 
-reiser4-export-remove_from_page_cache.patch                               
-                                                 
-reiser4-fix-compile-warnings.patch                                        
-                                                 
-reiser4-fix.patch                                                         
-                                                 
-reiser4-fixed-null-pointer-dereference.patch                              
-                                                 
-reiser4-generic_sync_sb_inodes-doesnt-exist-anymore.patch                 
-                                                 
-reiser4-handling-error-returned-by-d_obtain_alias-fixup.patch             
-                                                 
-reiser4-reduce-frame-size-of-reiser4_init_super_data-fixup.patch          
-                                                 
-reiser4-reduce-frame-size-of-reiser4_init_super_data.patch                
-                                                 
-reiser4-remove-simple_prepare_write-usage-checkpatch-fixes.patch          
-                                                 
-reiser4-remove-simple_prepare_write-usage.patch                           
-                                                 
-reiser4-rename-psched-to-dispatch.patch                                   
-                                                 
-reiser4-some-changes-from-reiser4-2631-patch.patch                        
-                                                 
-reiser4-some-comments-were-still-mentioning-pdflush.patch                 
-                                                 
-reiser4-update-names-of-quota-methods.patch                               
-                                                 
-reiser4-use-set_page_dirty_notag.patch                                    
-                                                 
-reiser4-vfs-add-super_operationssync_inodes-2.patch                       
-                                                 
-reiser4.patch        
