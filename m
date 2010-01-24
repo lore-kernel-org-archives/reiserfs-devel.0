@@ -1,55 +1,31 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: FYI r4 patches in http://lkml.org/lkml/2010/1/15/271
-Date: Sat, 16 Jan 2010 02:13:19 +0100
-Message-ID: <4B5112AF.6040403@gmail.com>
-References: <7ed5587f1fb48265e55e78f6f58f34d8@mail.velocitynet.com.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: [Bug #14656] Oops at __rmqueue+0x98 with 2.6.32-rc6
+Date: Sun, 24 Jan 2010 23:22:52 +0100 (CET)
+Message-ID: <q60Z28d_9yH.A.tkB.JbMXLB__27862.9669723616$1264373107$gmane$org@chimera>
+References: <pYFNu11z2aM.A.pJH.CZMXLB@chimera>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from
-         :user-agent:mime-version:to:cc:subject:references:in-reply-to
-         :content-type:content-transfer-encoding;
-        bh=m22FI7uigDQppF0A+AcUNMkCWRGxddURv7w9NS1YWvc=;
-        b=UJboN1auP/VoNEjDO3WUUuDp/VuD+fib41D+p1GN1WQytto31U7kpso/Xbgifn22J0
-         P3BH+KQXmAYRzLXstgb1PDCtwcAicZzF8yzaYTYCHQiDakG9RWMzSi4fCN8BFyOPB9iv
-         K7C8TE/RlKmRLXUcCk4XZDfTDfCzumFRnCmrs=
-In-Reply-To: <7ed5587f1fb48265e55e78f6f58f34d8@mail.velocitynet.com.au>
+In-Reply-To: <pYFNu11z2aM.A.pJH.CZMXLB@chimera>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: doiggl@velocitynet.com.au
-Cc: reiserfs-devel@vger.kernel.org
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Kernel Testers List <kernel-testers@vger.kernel.org>, "Lucas C. Villa Real" <lucasvr@gobolinux.org>, "reiserfs-devel@vger.kernel.org"@ogre.sisk.pl
 
-doiggl@velocitynet.com.au wrote:
-> FYI: Saw this announcement at http://lkml.org/lkml/2010/1/15/271
-> Cheers Glenn
->
-> The mm-of-the-moment snapshot 2010-01-15-15-34 has been uploaded to
->
->    http://userweb.kernel.org/~akpm/mmotm/
->
-> and will soon be available at
->
->    git://zen-kernel.org/kernel/mmotm.git
-> It contains the following patches against 2.6.33-rc4:
-> .
-> .
-> .
->   
-[...]
->                                                  
-> reiser4-vfs-add-super_operationssync_inodes-2.patch
+This message has been generated automatically as a part of a report
+of regressions introduced between 2.6.31 and 2.6.32.
 
-will not work
- 
->                                                  
-> reiser4.patch        
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->   
+The following bug entry is on the current list of known regressions
+introduced between 2.6.31 and 2.6.32.  Please verify if it still should
+be listed and let me know (either way).
+
+
+Bug-Entry	: http://bugzilla.kernel.org/show_bug.cgi?id=14656
+Subject		: Oops at __rmqueue+0x98 with 2.6.32-rc6
+Submitter	: Lucas C. Villa Real <lucasvr@gobolinux.org>
+Date		: 2009-11-19 3:48 (67 days old)
+References	: http://marc.info/?l=linux-kernel&m=125860255229092&w=4
+
 
