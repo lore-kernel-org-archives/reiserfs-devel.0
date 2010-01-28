@@ -1,31 +1,53 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: [Bug #14656] Oops at __rmqueue+0x98 with 2.6.32-rc6
-Date: Sun, 24 Jan 2010 23:22:52 +0100 (CET)
-Message-ID: <q60Z28d_9yH.A.tkB.JbMXLB__27862.9669723616$1264373107$gmane$org@chimera>
-References: <pYFNu11z2aM.A.pJH.CZMXLB@chimera>
+From: Dushan Tcholich <dusanc@gmail.com>
+Subject: Slow file attribute modification
+Date: Thu, 28 Jan 2010 19:02:42 +0100
+Message-ID: <a08621851001281002u309b11a7nfbfd166e108e154e@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <pYFNu11z2aM.A.pJH.CZMXLB@chimera>
-Content-Disposition: inline
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:received:date:message-id:subject
+         :from:to:content-type;
+        bh=ETIcuQ+XSJCPmWZwi/eOLcLEPsiymQbrCTArLlEt9Ug=;
+        b=ZPqJAuBmA2AC/FrxtIkgx96gOiDkWKRBWlcNy6H+BjnT8cwRUiqMzkFGOTC4i5FVvJ
+         EX88ADFRcuDOfSg5PqGff5O1YfNPhPXg43lvZkROv4DjY2PoM1USgp8WvrNAif8US/mW
+         JkuQzRgMjcnZYHDFqsfafNP8g9RP0CrC7tgd8=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Kernel Testers List <kernel-testers@vger.kernel.org>, "Lucas C. Villa Real" <lucasvr@gobolinux.org>, "reiserfs-devel@vger.kernel.org"@ogre.sisk.pl
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward.shishkin@gmail.com>
 
-This message has been generated automatically as a part of a report
-of regressions introduced between 2.6.31 and 2.6.32.
+Hello
 
-The following bug entry is on the current list of known regressions
-introduced between 2.6.31 and 2.6.32.  Please verify if it still should
-be listed and let me know (either way).
+When discussing R4 (
+http://forums.gentoo.org/viewtopic-p-6151767.html#6151767 )some users
+mentioned slow fsync and this way to reproduce:
 
+Get a directory full of directories and small files by extracting
+portage to test dir
+http://mirror.bih.net.ba/gentoo/snapshots/portage-20100127.tar.bz2
 
-Bug-Entry	: http://bugzilla.kernel.org/show_bug.cgi?id=14656
-Subject		: Oops at __rmqueue+0x98 with 2.6.32-rc6
-Submitter	: Lucas C. Villa Real <lucasvr@gobolinux.org>
-Date		: 2009-11-19 3:48 (67 days old)
-References	: http://marc.info/?l=linux-kernel&m=125860255229092&w=4
+ls -R /mnt/media/test/ | wc -l
+177073
 
+Do a:
+ time chown -R portage:portage /mnt/media/test/
 
+Then :
+ time sync
+
+real    40m9.350s
+user    0m0.000s
+sys     0m4.884s
+
+Throughput was around 80kb/s on a WD50000AAKS, no cryptocompress,
+mounted with noatime, kernel 2.6.30
+
+Is this normal, and why people tell me that ext4 and btrfs do this in
+"several seconds"
+Does the modification hits the platter for them or is it still in buffers?
+
+Thanks
+
+Dushan
