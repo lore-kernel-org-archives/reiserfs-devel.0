@@ -1,64 +1,31 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Slow file attribute modification
-Date: Fri, 29 Jan 2010 02:52:30 +0100
-Message-ID: <5c7c368b1001281752p57d9666bxc00124a80649cdc8@mail.gmail.com>
-References: <a08621851001281002u309b11a7nfbfd166e108e154e@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: [Bug #14656] Oops at __rmqueue+0x98 with 2.6.32-rc6
+Date: Mon,  1 Feb 2010 01:43:11 +0100 (CET)
+Message-ID: <de962C6zBxL.A._dG.WHiZLB__45213.2768616595$1264986379$gmane$org@chimera>
+References: <UgwvXSBS_tM.A.alD.1EiZLB@chimera>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:received:in-reply-to:references
-         :date:message-id:subject:from:to:cc:content-type;
-        bh=PpUm+sDQkVV0LREnbcR6IO7zTvHPeXJHBoK6AembVAo=;
-        b=ReNc58CEtgTvCJ39EjyJlsBe9PP5CIsZgo0kv7zRjgGvVtG/wPrHQP/vETaGDMcr+C
-         0IyCHhtOZ/SQLcvWKMY+6MY7ULxtM7HYGXW5RI8a7DPyYhSiNeh9j16IZTvtoTwjVCZG
-         pcgDyrVC3TFweHIFFGnsfnYJSjz0m58KRwmbQ=
-In-Reply-To: <a08621851001281002u309b11a7nfbfd166e108e154e@mail.gmail.com>
+In-Reply-To: <UgwvXSBS_tM.A.alD.1EiZLB@chimera>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dushan Tcholich <dusanc@gmail.com>
-Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Kernel Testers List <kernel-testers@vger.kernel.org>, "Lucas C. Villa Real" <lucasvr@gobolinux.org>, "reiserfs-devel@vger.kernel.org"@ogre.sisk.pl
 
-On Thu, Jan 28, 2010 at 7:02 PM, Dushan Tcholich <dusanc@gmail.com> wrote:
-> Hello
->
-> When discussing R4 (
-> http://forums.gentoo.org/viewtopic-p-6151767.html#6151767 )some users
-> mentioned slow fsync and this way to reproduce:
->
-> Get a directory full of directories and small files by extracting
-> portage to test dir
-> http://mirror.bih.net.ba/gentoo/snapshots/portage-20100127.tar.bz2
->
-> ls -R /mnt/media/test/ | wc -l
-> 177073
->
-> Do a:
->  time chown -R portage:portage /mnt/media/test/
->
-> Then :
->  time sync
->
-> real    40m9.350s
-> user    0m0.000s
-> sys     0m4.884s
->
-> Throughput was around 80kb/s on a WD50000AAKS, no cryptocompress,
-> mounted with noatime, kernel 2.6.30
->
-> Is this normal,
+This message has been generated automatically as a part of a report
+of regressions introduced between 2.6.31 and 2.6.32.
 
-Do you have a spare partition on your drive?
-If yes, then try to write its random blocks and
-take a look at the throughput: it should be the
-same.
+The following bug entry is on the current list of known regressions
+introduced between 2.6.31 and 2.6.32.  Please verify if it still should
+be listed and let me know (either way).
 
-> and why people tell me that ext4 and btrfs do this in
-> "several seconds"
-> Does the modification hits the platter for them
 
-If they pack inode items together in sequential blocks,
-then why not? However in this case those file systems
-will be slower on other tests.
+Bug-Entry	: http://bugzilla.kernel.org/show_bug.cgi?id=14656
+Subject		: Oops at __rmqueue+0x98 with 2.6.32-rc6
+Submitter	: Lucas C. Villa Real <lucasvr@gobolinux.org>
+Date		: 2009-11-19 3:48 (74 days old)
+References	: http://marc.info/?l=linux-kernel&m=125860255229092&w=4
+
+
