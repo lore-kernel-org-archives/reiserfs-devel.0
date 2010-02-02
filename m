@@ -1,78 +1,219 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: [patch 7/7] reiser4: fixup checkin-checkout jnodes for entd
-Date: Tue, 2 Feb 2010 02:56:35 +0100
-Message-ID: <201002020256.35624.edward.shishkin@gmail.com>
+Subject: [patch 6/7] reiser4: writeback_inodes implementation
+Date: Tue, 2 Feb 2010 02:56:27 +0100
+Message-ID: <201002020256.27208.edward.shishkin@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
         h=domainkey-signature:received:received:received:from:to:subject:date
-         :user-agent:mime-version:message-id:content-type
+         :user-agent:mime-version:message-id:cc:content-type
          :content-transfer-encoding;
-        bh=q2ewVYvn+yvDcP3F0WL1IEImbHivie0xkJmYtGPOl8I=;
-        b=wJZbIcMRN/C65+jiPrASO2zEYaMpnk2nJknSBv4HfSlqBicJlz4YagZVJ56qvkkt1f
-         bJ+v5tqa/o9lQ1a0x0Agd1C0O/e3qtevuy5O0v9EXv7wZGK2iigB2RAbvKl/H9Fw7Is4
-         4QLKJyFz6Xe/4Y3a0ZrK6dZgGkHU4QHoe4vaM=
-Sender: reiserfs-devel-owner@vger.kernel.org
+        bh=c3zD/LlZNEeBkuHpWllRmZolDyQkFE7bA0yGA23VOjo=;
+        b=YZVZ5UYv6yyweDU1ka5n0/Yb0vUTQCw6ym+6gbPWXEVWU2qLunQte8+zg0/Jda2OP0
+         xhdP+ZYS6DnFBlYe2MDa85dO9t1hBoP8im4vLN8qRrVEob8vVi3IQjhzsDSjXWWPxt1b
+         T/YZ8yme2rPzuiy9q+HJDYEsQHurWJOCApQOc=
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: Text/Plain; charset="us-ascii"
 To: Andrew Morton <akpm@linux-foundation.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, jens.axboe@oracle.com
 
-The bug: reiser4_writeout() calls jput for jnode
-which is already destroyed:
-
-Fix up: take  the reference earler (at the point where the
-jnode is attached for entd work).
+. add reiser4 implementation of ->writeback_inodes()
+  super operation;
+. cleanup comments.
 
 Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
 ---
- fs/reiser4/plugin/file/file.c |    6 ++++--
- fs/reiser4/vfs_ops.c          |    4 +++-
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ fs/reiser4/context.c    |    3 +-
+ fs/reiser4/context.h    |    2 -
+ fs/reiser4/entd.c       |    7 ++++--
+ fs/reiser4/page_cache.c |   12 +++++------
+ fs/reiser4/super_ops.c  |   49 +++++++++++++++++++++++++++++-------------------
+ fs/reiser4/txnmgr.c     |    2 -
+ 6 files changed, 45 insertions(+), 30 deletions(-)
 
-Index: linux-2.6.33-rc5-mm1/fs/reiser4/plugin/file/file.c
+Index: linux-2.6.33-rc5-mm1/fs/reiser4/context.c
 ===================================================================
---- linux-2.6.33-rc5-mm1.orig/fs/reiser4/plugin/file/file.c
-+++ linux-2.6.33-rc5-mm1/fs/reiser4/plugin/file/file.c
-@@ -824,14 +824,16 @@ int find_or_create_extent(struct page *p
+--- linux-2.6.33-rc5-mm1.orig/fs/reiser4/context.c
++++ linux-2.6.33-rc5-mm1/fs/reiser4/context.c
+@@ -151,7 +151,8 @@ static void reiser4_throttle_write_at(re
+ 	 */
+ 	if (sbinfo != NULL && sbinfo->fake != NULL &&
+ 	    context->nr_marked_dirty != 0 &&
+-	    !(current->flags & PF_MEMALLOC))
++	    !(current->flags & PF_MEMALLOC) &&
++	    !current_is_flush_bd_task())
+ 		/* FIXME-EDWARD: throttle with nr_marked_dirty? */
+ 		reiser4_throttle_write(sbinfo->fake, 1);
+ }
+Index: linux-2.6.33-rc5-mm1/fs/reiser4/context.h
+===================================================================
+--- linux-2.6.33-rc5-mm1.orig/fs/reiser4/context.h
++++ linux-2.6.33-rc5-mm1/fs/reiser4/context.h
+@@ -66,7 +66,7 @@ struct reiser4_context {
+ 	/* count non-trivial jnode_set_dirty() calls */
+ 	unsigned long nr_marked_dirty;
  
- 	BUG_ON(node->atom == NULL);
- 	JF_CLR(node, JNODE_WRITE_PREPARED);
--	jput(node);
+-	/* reiser4_sync_inodes calls (via generic_sync_sb_inodes)
++	/* reiser4_writeback_inodes calls (via generic_writeback_sb_inodes)
+ 	 * reiser4_writepages for each of dirty inodes. Reiser4_writepages
+ 	 * captures pages. When number of pages captured in one
+ 	 * reiser4_sync_inodes reaches some threshold - some atoms get
+Index: linux-2.6.33-rc5-mm1/fs/reiser4/entd.c
+===================================================================
+--- linux-2.6.33-rc5-mm1.orig/fs/reiser4/entd.c
++++ linux-2.6.33-rc5-mm1/fs/reiser4/entd.c
+@@ -236,16 +236,19 @@ static void entd_flush(struct super_bloc
+ 	rq->wbc->range_end = rq->wbc->range_start +
+ 		(ENTD_CAPTURE_APAGE_BURST << PAGE_CACHE_SHIFT);
+ 	tmp = rq->wbc->nr_to_write;
++
++	assert("edward-1561", super == rq->wbc->sb);
++
+ 	rq->mapping->a_ops->writepages(rq->mapping, rq->wbc);
  
- 	if (get_current_context()->entd) {
- 		entd_context *ent = get_entd_context(node->tree->super);
- 
- 		if (ent->cur_request->page == page)
--			ent->cur_request->node = node;
-+			/* the following reference will be
-+			   dropped in reiser4_writeout */
-+			ent->cur_request->node = jref(node);
+ 	if (rq->wbc->nr_to_write > 0) {
+ 		rq->wbc->range_start = 0;
+ 		rq->wbc->range_end = LLONG_MAX;
+-		generic_sync_sb_inodes(rq->wbc);
++		writeback_inodes_wbc(rq->wbc);
  	}
-+	jput(node);
- 	return 0;
+ 	rq->wbc->nr_to_write = ENTD_CAPTURE_APAGE_BURST;
+-	reiser4_writeout(super, rq->wbc);
+ 
++	reiser4_writeout(super, rq->wbc);
+ 	context_set_commit_async(&ctx);
+ 	reiser4_exit_context(&ctx);
+ }
+Index: linux-2.6.33-rc5-mm1/fs/reiser4/page_cache.c
+===================================================================
+--- linux-2.6.33-rc5-mm1.orig/fs/reiser4/page_cache.c
++++ linux-2.6.33-rc5-mm1/fs/reiser4/page_cache.c
+@@ -486,15 +486,15 @@ static int can_hit_entd(reiser4_context 
+ int reiser4_writepage(struct page *page,
+ 		      struct writeback_control *wbc)
+ {
+-	struct super_block *s;
+-	reiser4_context *ctx;
+-
++	/*
++	 * assert("edward-1562",
++	 * can_hit_entd(get_current_context_check(), sb));
++	 */
+ 	assert("vs-828", PageLocked(page));
+ 
+-	s = page->mapping->host->i_sb;
+-	ctx = get_current_context_check();
++	wbc->sb = page->mapping->host->i_sb;
++	wbc->bdi = page->mapping->backing_dev_info;
+ 
+-	/* assert("", can_hit_entd(ctx, s)); */
+ 	return write_page_by_ent(page, wbc);
  }
  
-Index: linux-2.6.33-rc5-mm1/fs/reiser4/vfs_ops.c
+Index: linux-2.6.33-rc5-mm1/fs/reiser4/super_ops.c
 ===================================================================
---- linux-2.6.33-rc5-mm1.orig/fs/reiser4/vfs_ops.c
-+++ linux-2.6.33-rc5-mm1/fs/reiser4/vfs_ops.c
-@@ -184,7 +184,7 @@ void reiser4_writeout(struct super_block
- 				 * requested page itself - start flush from
- 				 * that page
- 				 */
--				node = jref(ent->cur_request->node);
-+				node = ent->cur_request->node;
- 		}
+--- linux-2.6.33-rc5-mm1.orig/fs/reiser4/super_ops.c
++++ linux-2.6.33-rc5-mm1/fs/reiser4/super_ops.c
+@@ -379,48 +379,59 @@ static void reiser4_clear_inode(struct i
+ }
  
- 		result = flush_some_atom(node, &nr_submitted, wbc,
-@@ -192,6 +192,8 @@ void reiser4_writeout(struct super_block
- 		if (result != 0)
- 			warning("nikita-31001", "Flush failed: %i", result);
- 		if (node)
-+			/* drop the reference aquired
-+			   in find_or_create_extent() */
- 			jput(node);
- 		if (!nr_submitted)
- 			break;
+ /**
+- * reiser4_sync_inodes - sync_inodes of super operations
++ * reiser4_writeback_inodes - writeback_inodes of super operations
+  * @super:
++ * @wb:
+  * @wbc:
+  *
+  * This method is called by background and non-backgound writeback. Reiser4's
+- * implementation uses generic_sync_sb_inodes to call reiser4_writepages for
+- * each of dirty inodes. Reiser4_writepages handles pages dirtied via shared
+- * mapping - dirty pages get into atoms. Writeout is called to flush some
+- * atoms.
++ * implementation uses generic_writeback_sb_inodes to call reiser4_writepages
++ * for each of dirty inodes. reiser4_writepages handles pages dirtied via shared
++ * mapping - dirty pages get into atoms. Writeout is called to flush some atoms.
+  */
+-static void reiser4_sync_inodes(struct super_block *super,
+-			       struct writeback_control *wbc)
++static int reiser4_writeback_inodes(struct super_block *super,
++				    struct bdi_writeback *wb,
++				    struct writeback_control *wbc)
+ {
+-	reiser4_context *ctx;
++	int ret;
+ 	long to_write;
++	reiser4_context *ctx;
+ 
+ 	if (wbc->for_kupdate)
+ 		/* reiser4 has its own means of periodical write-out */
+-		return;
+-
+-	to_write = wbc->nr_to_write;
++		goto skip;
+ 	assert("vs-49", wbc->older_than_this == NULL);
+ 
++	spin_unlock(&inode_lock);
+ 	ctx = reiser4_init_context(super);
+ 	if (IS_ERR(ctx)) {
+ 		warning("vs-13", "failed to init context");
+-		return;
++		spin_lock(&inode_lock);
++		goto skip;
+ 	}
+-
++	to_write = wbc->nr_to_write;
+ 	/*
+-	 * call reiser4_writepages for each of dirty inodes to turn dirty pages
+-	 * into transactions if they were not yet.
++	 * call reiser4_writepages for each of dirty inodes to turn
++	 * dirty pages into transactions if they were not yet.
+ 	 */
+-	generic_sync_sb_inodes(wbc);
++	spin_lock(&inode_lock);
++	ret = generic_writeback_sb_inodes(super, wb, wbc);
++	spin_unlock(&inode_lock);
+ 
+-	/* flush goes here */
+ 	wbc->nr_to_write = to_write;
++
++	/* flush goes here */
+ 	reiser4_writeout(super, wbc);
+ 
+-	/* avoid recursive calls to ->sync_inodes */
++	/* avoid recursive calls to ->writeback_inodes */
+ 	context_set_commit_async(ctx);
+ 	reiser4_exit_context(ctx);
++	spin_lock(&inode_lock);
++
++	return wbc->nr_to_write <= 0 ? 1 : ret;
++ skip:
++	writeback_skip_sb_inodes(super, wb);
++	return 0;
+ }
+ 
+ /**
+@@ -458,7 +469,7 @@ struct super_operations reiser4_super_op
+ 	.write_super = reiser4_write_super,
+ 	.statfs = reiser4_statfs,
+ 	.clear_inode = reiser4_clear_inode,
+-	.sync_inodes = reiser4_sync_inodes,
++	.writeback_inodes = reiser4_writeback_inodes,
+ 	.show_options = reiser4_show_options
+ };
+ 
+Index: linux-2.6.33-rc5-mm1/fs/reiser4/txnmgr.c
+===================================================================
+--- linux-2.6.33-rc5-mm1.orig/fs/reiser4/txnmgr.c
++++ linux-2.6.33-rc5-mm1/fs/reiser4/txnmgr.c
+@@ -1410,7 +1410,7 @@ flush_some_atom(jnode * start, long *nr_
+ 		 * Write throttling is case of no one atom can be
+ 		 * flushed/committed.
+ 		 */
+-		if (!wbc->nonblocking) {
++		if (!wbc->nonblocking && !current_is_flush_bd_task()) {
+ 			list_for_each_entry(atom, &tmgr->atoms_list, atom_link) {
+ 				spin_lock_atom(atom);
+ 				/* Repeat the check from the above. */
