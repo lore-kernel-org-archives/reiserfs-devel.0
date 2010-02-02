@@ -1,129 +1,73 @@
-From: Ronni Holm-Nielsen <theronni@gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: [patch 0/7] per-bdi flushing model improvements. reiser4
-Date: Wed, 3 Feb 2010 01:45:22 +0400
-Message-ID: <5e2ec5ac1002021345g569c743dtc5ccf77cde6738ae@mail.gmail.com>
-References: <201002020255.46920.edward.shishkin@gmail.com>
-	<20100202081728.GA2384@infradead.org> <4B6843E9.9070600@gmail.com>
-	<20100202194208.GD5733@kernel.dk>
+Date: Tue, 02 Feb 2010 23:26:20 +0100
+Message-ID: <4B68A68C.6030001@gmail.com>
+References: <201002020255.46920.edward.shishkin@gmail.com>	 <20100202081728.GA2384@infradead.org> <4B6843E9.9070600@gmail.com>	 <20100202194208.GD5733@kernel.dk> <5e2ec5ac1002021345g569c743dtc5ccf77cde6738ae@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1436066448414146491=="
-Return-path: <xfs-bounces@oss.sgi.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=gamma;
-	h=domainkey-signature:mime-version:received:in-reply-to:references
-	:date:message-id:subject:from:to:cc:content-type;
-	bh=Vf3bPjAm7kpKCih6ILFvGpzDAEQqbMVbO+WOCgWnU1g=;
-	b=VgSz7lwwS96MwTwxQ4rWgUi46W4f3uEp7YYen/9gFziCLz+IkJ+bsA3xOvbORkomJ1
-	hGnWrGmsENeXSRZyYemKlJuwb7H479EBYPsU78flDIAGuLf0KtQ4NjYBe4W8S1vnmnKo
-	fUTJkCY6bglkSp2Dsu+PlqDigDF95EQaeblLw=
-In-Reply-To: <20100202194208.GD5733@kernel.dk>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
-List-Archive: <http://oss.sgi.com/pipermail/xfs>
-List-Post: <mailto:xfs@oss.sgi.com>
-List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
-List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
-Sender: xfs-bounces@oss.sgi.com
-Errors-To: xfs-bounces@oss.sgi.com
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, xfs@oss.sgi.com, Edward Shishkin <edward.shishkin@gmail.com>
-
---===============1436066448414146491==
-Content-Type: multipart/alternative; boundary=000e0ce0f19ad27bf7047ea504db
-
---000e0ce0f19ad27bf7047ea504db
-Content-Type: text/plain; charset=UTF-8
-
-To clarify (being a ReiserFS subscriber):
-
-patch 0, 4-6 sent to Andrew, ReiserFS, linux-fsdevel, linux-kernel, xfs,
-jens.axboe
-patch 1-3, 7 sent to Andrew, ReiserFS
-
-- Ronni
-
-On Tue, Feb 2, 2010 at 11:42 PM, Jens Axboe <jens.axboe@oracle.com> wrote:
-
-> On Tue, Feb 02 2010, Edward Shishkin wrote:
-> > Christoph Hellwig wrote:
-> >> I got this introduction twice, but patches 1-3 didn't make it to any of
-> >> the lists.
-> >>
-> >>
-> >>
-> > done
->
-> Where?
->
-> --
-> Jens Axboe
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-
-
-
--- 
-Venlig hilsen
-Ronni
-
---000e0ce0f19ad27bf7047ea504db
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-<div>To clarify (being a ReiserFS subscriber):</div><div><br></div>patch 0,=
- 4-6 sent to=C2=A0Andrew, ReiserFS, linux-fsdevel, linux-kernel, xfs, jens.=
-axboe<div>patch 1-3, 7 sent to=C2=A0Andrew, ReiserFS</div><div><br></div><d=
-iv>- Ronni<br>
-<br><div class=3D"gmail_quote">On Tue, Feb 2, 2010 at 11:42 PM, Jens Axboe =
-<span dir=3D"ltr">&lt;<a href=3D"mailto:jens.axboe@oracle.com">jens.axboe@o=
-racle.com</a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=
-=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex;">
-<div class=3D"im">On Tue, Feb 02 2010, Edward Shishkin wrote:<br>
-&gt; Christoph Hellwig wrote:<br>
-&gt;&gt; I got this introduction twice, but patches 1-3 didn&#39;t make it =
-to any of<br>
-&gt;&gt; the lists.<br>
-&gt;&gt;<br>
-&gt;&gt;<br>
-&gt;&gt;<br>
-&gt; done<br>
-<br>
-</div>Where?<br>
-<br>
---<br>
-<font color=3D"#888888">Jens Axboe<br>
-</font><div><div></div><div class=3D"h5"><br>
---<br>
-To unsubscribe from this list: send the line &quot;unsubscribe reiserfs-dev=
-el&quot; in<br>
-the body of a message to <a href=3D"mailto:majordomo@vger.kernel.org">major=
-domo@vger.kernel.org</a><br>
-More majordomo info at =C2=A0<a href=3D"http://vger.kernel.org/majordomo-in=
-fo.html" target=3D"_blank">http://vger.kernel.org/majordomo-info.html</a><b=
-r>
-</div></div></blockquote></div><br><br clear=3D"all"><br>-- <br>Venlig hils=
-en<br>Ronni<br>
-</div>
-
---000e0ce0f19ad27bf7047ea504db--
-
-
---===============1436066448414146491==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <5e2ec5ac1002021345g569c743dtc5ccf77cde6738ae@mail.gmail.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ronni Holm-Nielsen <theronni@gmail.com>
+Cc: Jens Axboe <jens.axboe@oracle.com>, Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, Johannes Buchner <buchner.johannes@gmx.at>, Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
 
-_______________________________________________
-xfs mailing list
-xfs@oss.sgi.com
-http://oss.sgi.com/mailman/listinfo/xfs
+Hello everyone.
 
---===============1436066448414146491==--
+The patches 1-3 are reverses for the following -mm stuff:
+
+http://userweb.kernel.org/~akpm/mmotm/broken-out/reiser4-fixed-null-pointer-dereference.patch
+http://userweb.kernel.org/~akpm/mmotm/broken-out/reiser4-generic_sync_sb_inodes-doesnt-exist-anymore.patch
+http://userweb.kernel.org/~akpm/mmotm/broken-out/reiser4-vfs-add-super_operationssync_inodes-2.patch
+
+This is incorrect attempts to adjust reiser4 to the new per-bdi flushing 
+model.
+The authors are cc-ed,
+any comments, suggestions are welcome.
+
+Thanks,
+Edward.
+
+
+Ronni Holm-Nielsen wrote:
+> To clarify (being a ReiserFS subscriber):
+>
+> patch 0, 4-6 sent to Andrew, ReiserFS, linux-fsdevel, linux-kernel, xfs,
+> jens.axboe
+> patch 1-3, 7 sent to Andrew, ReiserFS
+>
+> - Ronni
+>
+> On Tue, Feb 2, 2010 at 11:42 PM, Jens Axboe <jens.axboe@oracle.com> wrote:
+>
+>   
+>> On Tue, Feb 02 2010, Edward Shishkin wrote:
+>>     
+>>> Christoph Hellwig wrote:
+>>>       
+>>>> I got this introduction twice, but patches 1-3 didn't make it to any of
+>>>> the lists.
+>>>>
+>>>>
+>>>>
+>>>>         
+>>> done
+>>>       
+>> Where?
+>>
+>> --
+>> Jens Axboe
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel"
+>> in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>>     
+>
+>
+>
+>   
 
