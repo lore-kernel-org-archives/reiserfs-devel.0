@@ -1,64 +1,83 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: [patch 0/7] per-bdi flushing model improvements. reiser4
-Date: Tue, 2 Feb 2010 02:55:46 +0100
-Message-ID: <201002020255.46920.edward.shishkin@gmail.com>
+Subject: [patch 2/7] roll back reiser4-generic_sync_sb_inodes-doesnt-exist-anymore.patch
+Date: Tue, 2 Feb 2010 02:56:11 +0100
+Message-ID: <201002020256.12110.edward.shishkin@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:from:to:subject:date
-         :user-agent:mime-version:message-id:cc:content-type
+        h=domainkey-signature:received:received:received:from:to:subject:date
+         :user-agent:mime-version:message-id:content-type
          :content-transfer-encoding;
-        bh=WvTl84i6AssHSnJeG9IiC9Zb7FQlV2PJhaSSdLfavFg=;
-        b=Um3YKDDQTTWMuGEmfb67eythFwLQWZ0KlSzhyZIrfQDeMU2uDKA72a6jP46I9NQEG6
-         IUnoDzyfybpFiUyG4eWwN+wD/PDpKgg45iXMQhauHwbPIQKd5Vah54oZx6t9fxj72rz1
-         GtJ6+4Q4voGb8q6FKbGM2YgCCPJR7T3Pc59y0=
-Sender: linux-kernel-owner@vger.kernel.org
+        bh=26J8QatdcGWztBZJ5P81Tyql6wBWFO0ZRIEvtpb2XGg=;
+        b=vDNbHg4qi40TFdRGlwuxBW11LaeA/m4f3qN9a8haSzeU+8HNwvBuqtu+ngpG18/hcy
+         8g0sT4wm4S+gyHoy3XESxXMgqP4olXLBoc5z/bXGlu6s3wEa504xsPkmeYPbNzEu8VYH
+         EbQ0HiNGDnFGJS3QIKaEHnVcARU32ymh59ZJ4=
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: Text/Plain; charset="us-ascii"
 To: Andrew Morton <akpm@linux-foundation.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, jens.axboe@oracle.com
 
-Hello.
+Roll back reiser4-generic_sync_sb_inodes-doesnt-exist-anymore.patch
+(wrong stuff)
 
-Andrew Morton wrote:
-> reiser4 is currently disabled in -mm (via reiser4-disable.patch)
-> because recent changes to fs/fs/writeback.c wrecked the build.  I fixed
-> it about ten times as the underlying code was churning, then gave up.  It
-> would be nice if you take a look at that sometime please.
->
->
+Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
+---
+ fs/reiser4/context.h   |    2 +-
+ fs/reiser4/entd.c      |    4 +---
+ fs/reiser4/super_ops.c |    6 ++----
+ 3 files changed, 4 insertions(+), 8 deletions(-)
 
-I have taken a look at fs/fs-writeback.c and found that per-superblock
-flushing interface is eliminated. However migrating to per-bdi flushing
-model doesn't necessarily means that such interface doesn't exist or is
-not needed anymore. Flushing in accordance with the scheme "data-inode-
-data-inode-..." would be very suboptimal for reiser4. Also xfs people
-were unhappy with such flushing model:
-http://article.gmane.org/gmane.linux.file-systems/30153
-
-Moreover, current stuff doesn't look fine. Why do we pin/unpin
-superblock for every inode? It would be more reasonable to pin it for the
-whole group of inodes and call a flushing handler for them. The patch 4
-introduces such handler writeback_sb_inodes (which resembles dropped
-sync_sb_inodes, the difference is that the newer version doesn't flush
-necessarily all inodes of the superblock). Please, consider pushing this
-patch to mainline.
-
-The patch 5 adds a super operation .writeback_inodes (former .sync_inodes)
-which allows a file system to make optimizations. It can happen that
-reiser4 will flush a bit more inodes then generic implementation suggests.
-"a bit more" doesn't mean "all dirty inodes of the superblock" (see a
-comment about atoms in the header of patch 6).
-
-Finally, some file systems have its own means for periodical writeout
-of dirty data. Since b_io contains inodes of many superblocks we need
-to evict our inodes back to dirty list when flushing is going on with
-for_kupdate flag installed. The new library function
-writeback_skip_sb_inodes() provides such possibility.
-
-Please, apply.
-
-Thanks,
-Edward.
+Index: linux-2.6.33-rc5-mm1/fs/reiser4/context.h
+===================================================================
+--- linux-2.6.33-rc5-mm1.orig/fs/reiser4/context.h
++++ linux-2.6.33-rc5-mm1/fs/reiser4/context.h
+@@ -66,7 +66,7 @@ struct reiser4_context {
+ 	/* count non-trivial jnode_set_dirty() calls */
+ 	unsigned long nr_marked_dirty;
+ 
+-	/* reiser4_sync_inodes calls (via writeback/sync_inodes_sb)
++	/* reiser4_sync_inodes calls (via generic_sync_sb_inodes)
+ 	 * reiser4_writepages for each of dirty inodes. Reiser4_writepages
+ 	 * captures pages. When number of pages captured in one
+ 	 * reiser4_sync_inodes reaches some threshold - some atoms get
+Index: linux-2.6.33-rc5-mm1/fs/reiser4/entd.c
+===================================================================
+--- linux-2.6.33-rc5-mm1.orig/fs/reiser4/entd.c
++++ linux-2.6.33-rc5-mm1/fs/reiser4/entd.c
+@@ -241,9 +241,7 @@ static void entd_flush(struct super_bloc
+ 	if (rq->wbc->nr_to_write > 0) {
+ 		rq->wbc->range_start = 0;
+ 		rq->wbc->range_end = LLONG_MAX;
+-		writeback_inodes_sb(super);
+-		if (rq->wbc->sync_mode == WB_SYNC_ALL)
+-			sync_inodes_sb(super);
++		generic_sync_sb_inodes(rq->wbc);
+ 	}
+ 	rq->wbc->nr_to_write = ENTD_CAPTURE_APAGE_BURST;
+ 	reiser4_writeout(super, rq->wbc);
+Index: linux-2.6.33-rc5-mm1/fs/reiser4/super_ops.c
+===================================================================
+--- linux-2.6.33-rc5-mm1.orig/fs/reiser4/super_ops.c
++++ linux-2.6.33-rc5-mm1/fs/reiser4/super_ops.c
+@@ -384,7 +384,7 @@ static void reiser4_clear_inode(struct i
+  * @wbc:
+  *
+  * This method is called by background and non-backgound writeback. Reiser4's
+- * implementation uses writeback/sync_inodes_sb to call reiser4_writepages for
++ * implementation uses generic_sync_sb_inodes to call reiser4_writepages for
+  * each of dirty inodes. Reiser4_writepages handles pages dirtied via shared
+  * mapping - dirty pages get into atoms. Writeout is called to flush some
+  * atoms.
+@@ -412,9 +412,7 @@ static void reiser4_sync_inodes(struct s
+ 	 * call reiser4_writepages for each of dirty inodes to turn dirty pages
+ 	 * into transactions if they were not yet.
+ 	 */
+-	writeback_inodes_sb(super);
+-	if (wbc->sync_mode == WB_SYNC_ALL)
+-		sync_inodes_sb(super);
++	generic_sync_sb_inodes(wbc);
+ 
+ 	/* flush goes here */
+ 	wbc->nr_to_write = to_write;
