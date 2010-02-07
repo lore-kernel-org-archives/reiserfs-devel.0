@@ -1,77 +1,70 @@
-From: Laurent Riffard <laurent.riffard@free.fr>
-Subject: Re: [patch 6/7] reiser4: writeback_inodes implementation
-Date: Sat, 06 Feb 2010 02:07:48 +0100
-Message-ID: <4B6CC0E4.1010105@free.fr>
-References: <201002020256.27208.edward.shishkin@gmail.com>
+From: Ric Wheeler <rwheeler@redhat.com>
+Subject: Linux Storage and Filesystems Summit 8-9 August
+Date: Sun, 07 Feb 2010 09:30:35 -0500
+Message-ID: <4B6ECE8B.104__23734.6602407799$1265553064$gmane$org@redhat.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201002020256.27208.edward.shishkin@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: linux-kernel@vger.kernel.org
-Cc: reiserfs-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: linux-fsdevel@vger.kernel.org, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, linux-btrfs <linux-btrfs@vger.kernel.org>, linux-nfs@vger.kernel.org, reiserfs-devel@vger.ker
+Cc: lsf10-pc@lists.linux-foundation.org
 
-Hi Edward,
 
-Le 02/02/2010 02:56, Edward Shishkin a =E9crit :
-> . add reiser4 implementation of ->writeback_inodes()
->   super operation;
-> . cleanup comments.
->=20
-> Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
-> ---
->  fs/reiser4/context.c    |    3 +-
->  fs/reiser4/context.h    |    2 -
->  fs/reiser4/entd.c       |    7 ++++--
->  fs/reiser4/page_cache.c |   12 +++++------
->  fs/reiser4/super_ops.c  |   49 +++++++++++++++++++++++++++++--------=
------------
->  fs/reiser4/txnmgr.c     |    2 -
->  6 files changed, 45 insertions(+), 30 deletions(-)
->=20
-[...]
-> =20
-> Index: linux-2.6.33-rc5-mm1/fs/reiser4/super_ops.c
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- linux-2.6.33-rc5-mm1.orig/fs/reiser4/super_ops.c
-> +++ linux-2.6.33-rc5-mm1/fs/reiser4/super_ops.c
-> @@ -379,48 +379,59 @@ static void reiser4_clear_inode(struct i
-[...]
-> -static void reiser4_sync_inodes(struct super_block *super,
-> -			       struct writeback_control *wbc)
-> +static int reiser4_writeback_inodes(struct super_block *super,
-> +				    struct bdi_writeback *wb,
-> +				    struct writeback_control *wbc)
->  {
-> -	reiser4_context *ctx;
-> +	int ret;
->  	long to_write;
-> +	reiser4_context *ctx;
-> =20
->  	if (wbc->for_kupdate)
->  		/* reiser4 has its own means of periodical write-out */
-> -		return;
-> -
-> -	to_write =3D wbc->nr_to_write;
-> +		goto skip;
->  	assert("vs-49", wbc->older_than_this =3D=3D NULL);
-> =20
-> +	spin_unlock(&inode_lock);
+This year we'll hold the Linux Storage and Filesystems summit jointly
+with the VM summit on the two days before LinuxCon in Boston (that's
+Sunday and Monday) at the Renaissance Hotel:
 
-It seems that reiser4 can't be built as a module because of these acces=
-s to inode_lock...
+http://events.linuxfoundation.org/events/linuxcon
 
-Kernel: arch/x86/boot/bzImage is ready  (#13)
-  Building modules, stage 2.
-  MODPOST 188 modules
-ERROR: "inode_lock" [fs/reiser4/reiser4.ko] undefined!
-make[1]: *** [__modpost] Erreur 1
-make: *** [modules] Erreur 2
+We're planning to hold some sessions jointly and split into three tracks
+(Filesystems, Storage and VM) for others, so we're encouraging proposals
+for discussion that cover areas relevant to all three groups as well as
+more specific technical topics.
 
-~~
-laurent
+Suggestions for agenda topics should be sent to
+
+lsf10-pc@lists.linuxfoundation.org
+
+and optionally cc the Linux list which would be most interested in it:
+
+SCSI: linux-scsi@vger.kernel.org
+FS: linux-fsdevel@vger.kernel.org (plus relevant fs specific list)
+MM: linux-mm@kvack.org
+
+Please tag your subject with [LSF/VM TOPIC] so those of us who're not
+very organised can find them easily in our inboxes.  The agenda topics
+and attendees will be selected by the programme committee, but the final
+agenda will be by formed by consensus of the attendees on the day.
+
+We'll try to cap attendance at around 20 per track to facilitate
+discussions although the final numbers will depend on the room sizes
+at the venue.
+
+Requests to attend should be sent to:
+
+lsf10-pc@lists.linuxfoundation.org
+
+please summarise what you'll bring to the meeting, and what you'd like
+to discuss.  please also tag your email with [ATTEND] so there's less
+chance of it getting lost in the large mail pile.
+
+Presentations are allowed to guide discussion, but are strongly
+discouraged.  There will be no recording or audio bridge, however
+written minutes will be published as in previous years:
+
+2009:
+http://lwn.net/Articles/327601/
+http://lwn.net/Articles/327740/
+http://lwn.net/Articles/328347/
+
+Prior years:
+http://www.usenix.org/events/lsf08/tech/lsf08sums.pdf
+http://www.usenix.org/publications/login/2007-06/openpdfs/lsf07sums.pdf
+
+If you have feedback on last year's meeting that we can use to improve
+this year's, please also send that to:
+
+lsf10-pc@lists.linuxfoundation.org
 
