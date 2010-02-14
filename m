@@ -1,48 +1,43 @@
 From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 14826] jdm-20002 reiserfs_xattr_get: Invalid hash for xattr
-Date: Sun, 14 Feb 2010 00:37:50 GMT
-Message-ID: <201002140037.o1E0boSp005597@demeter.kernel.org>
-References: <bug-14826-695@http.bugzilla.kernel.org/>
+Subject: [Bug 15309] New: reiserfs issue with 2.6.32.8
+Date: Sun, 14 Feb 2010 23:25:01 GMT
+Message-ID: <bug-15309-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-14826-695@http.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-http://bugzilla.kernel.org/show_bug.cgi?id=14826
+http://bugzilla.kernel.org/show_bug.cgi?id=15309
+
+           Summary: reiserfs issue with 2.6.32.8
+           Product: File System
+           Version: 2.5
+    Kernel Version: 2.6.32.8
+          Platform: All
+        OS/Version: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: ReiserFS
+        AssignedTo: reiserfs-devel@vger.kernel.org
+        ReportedBy: rjw@sisk.pl
+                CC: maciej.rutecki@gmail.com
+            Blocks: 14230
+        Regression: Yes
 
 
-Jethro Beekman <kernel@jbeekman.nl> changed:
+Subject    : reiserfs issue with 2.6.32.8
+Submitter  : Bret Towe <magnade@gmail.com>
+Date       : 2010-02-14 18:23
+Message-ID : dda83e781002141023t2abe95b8w83f59d6f411f68a2@mail.gmail.com
+References : http://marc.info/?l=linux-kernel&m=126617185512707&w=4
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |kernel@jbeekman.nl
-
-
-
-
---- Comment #1 from Jethro Beekman <kernel@jbeekman.nl>  2010-02-14 00:37:47 ---
-I can confirm that these messages keep popping up, seemingly at random, since I
-upgraded to 2.6.32. This is a *huge* problem when using ACLs, as the file
-becomes inaccessible.
-
-$cat thefile.xlsx 
-cat: thefile.xlsx: Input/output error
-$
-
-And in the logs:
-Feb 14 01:24:58 victoria [1149610.665902] REISERFS warning (device dm-0):
-jdm-20002 reiserfs_xattr_get: Invalid hash for xattr (system.posix_acl_access)
-associated with [1953724787 1882090853 0x7869736f UNKNOWN]
-
-I first noticed this because my automated backups failed. At first it seems
-this problem happened to a file only for a short period, because the backup
-would not complain about the same file twice in a row and I can access the
-failing files now, but for some time now I'm getting the error on one
-particular file.
+This entry is being used for tracking a regression from 2.6.31.  Please don't
+close it until the problem is fixed in the mainline.
 
 -- 
 Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
