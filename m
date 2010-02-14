@@ -1,45 +1,31 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 15309] New: reiserfs issue with 2.6.32.8
-Date: Sun, 14 Feb 2010 23:25:01 GMT
-Message-ID: <bug-15309-695@http.bugzilla.kernel.org/>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: [Bug #14656] Oops at __rmqueue+0x98 with 2.6.32-rc6
+Date: Mon, 15 Feb 2010 00:52:42 +0100 (CET)
+Message-ID: <Xv2rBFCTXTH.A.sGE.-0IeLB__45842.8006306805$1266193284$gmane$org@chimera>
+References: <fQEllunEdO.A.-LB.HyIeLB@chimera>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <fQEllunEdO.A.-LB.HyIeLB@chimera>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Kernel Testers List <kernel-testers@vger.kernel.org>, Maciej Rutecki <maciej.rutecki@gmail.com>, "Lucas C. Villa Real" <lucasvr@gobolinux.org>, "reiserfs-devel@vger.kernel.org"@ogre.sisk.pl
 
-http://bugzilla.kernel.org/show_bug.cgi?id=15309
+This message has been generated automatically as a part of a report
+of regressions introduced between 2.6.31 and 2.6.32.
 
-           Summary: reiserfs issue with 2.6.32.8
-           Product: File System
-           Version: 2.5
-    Kernel Version: 2.6.32.8
-          Platform: All
-        OS/Version: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: ReiserFS
-        AssignedTo: reiserfs-devel@vger.kernel.org
-        ReportedBy: rjw@sisk.pl
-                CC: maciej.rutecki@gmail.com
-            Blocks: 14230
-        Regression: Yes
+The following bug entry is on the current list of known regressions
+introduced between 2.6.31 and 2.6.32.  Please verify if it still should
+be listed and let the tracking team know (either way).
 
 
-Subject    : reiserfs issue with 2.6.32.8
-Submitter  : Bret Towe <magnade@gmail.com>
-Date       : 2010-02-14 18:23
-Message-ID : dda83e781002141023t2abe95b8w83f59d6f411f68a2@mail.gmail.com
-References : http://marc.info/?l=linux-kernel&m=126617185512707&w=4
+Bug-Entry	: http://bugzilla.kernel.org/show_bug.cgi?id=14656
+Subject		: Oops at __rmqueue+0x98 with 2.6.32-rc6
+Submitter	: Lucas C. Villa Real <lucasvr@gobolinux.org>
+Date		: 2009-11-19 3:48 (88 days old)
+References	: http://marc.info/?l=linux-kernel&m=125860255229092&w=4
 
-This entry is being used for tracking a regression from 2.6.31.  Please don't
-close it until the problem is fixed in the mainline.
 
--- 
-Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
