@@ -1,41 +1,50 @@
-From: Christian Kujau <lists@nerdbynature.de>
-Subject: Re: jdm-20002 reiserfs_xattr_get: Invalid hash for xattr
-Date: Thu, 11 Feb 2010 17:00:07 -0800 (PST)
-Message-ID: <alpine.DEB.2.01.1002111652330.27799@bogon.housecafe.de>
-References: <alpine.DEB.2.01.0912141432170.2915@bogon.housecafe.de> <alpine.DEB.2.01.0912141446570.2915@bogon.housecafe.de> <alpine.DEB.2.01.0912141845490.3483@bogon.housecafe.de> <alpine.DEB.2.01.0912152122470.3483@bogon.housecafe.de> <4B732171.1010609@suse.com>
- <alpine.DEB.2.01.1002101650240.27799@bogon.housecafe.de> <4B7415D4.1080201@suse.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 14826] jdm-20002 reiserfs_xattr_get: Invalid hash for xattr
+Date: Sun, 14 Feb 2010 00:37:50 GMT
+Message-ID: <201002140037.o1E0boSp005597@demeter.kernel.org>
+References: <bug-14826-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4B7415D4.1080201@suse.com>
+In-Reply-To: <bug-14826-695@http.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-On Thu, 11 Feb 2010 at 09:36, Jeff Mahoney wrote:
-> Well "buggy" depends on whether you're seeing this problem on new xattrs
-> or just ones that have been around for some time.
+http://bugzilla.kernel.org/show_bug.cgi?id=14826
 
-When I started to see the problem (Dec 2009) I removed the xattrs from the 
-files in question - only to see new warnings for other files reported. 
-However, I cannot tell *when* these xattr have been assigned to these 
-files. For that to track I could probably monitor the filesystem, generate 
-a daily list of files-with-xattrs and then wait if one of these files gets 
-reported with "Invalid hash for xattr" later on.
 
-> To locate all the broken xattrs on your system, run this as root and
-> then check your log afterwards:
-> getfattr -d -R -m '.*' /
+Jethro Beekman <kernel@jbeekman.nl> changed:
 
-Yes, thanks. I just used "find" to look for the reported inodes that were 
-included in the error message and getfattr did not generate any more 
-warnings after I removed those xattrs.
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |kernel@jbeekman.nl
 
-Thanks,
-Christian.
+
+
+
+--- Comment #1 from Jethro Beekman <kernel@jbeekman.nl>  2010-02-14 00:37:47 ---
+I can confirm that these messages keep popping up, seemingly at random, since I
+upgraded to 2.6.32. This is a *huge* problem when using ACLs, as the file
+becomes inaccessible.
+
+$cat thefile.xlsx 
+cat: thefile.xlsx: Input/output error
+$
+
+And in the logs:
+Feb 14 01:24:58 victoria [1149610.665902] REISERFS warning (device dm-0):
+jdm-20002 reiserfs_xattr_get: Invalid hash for xattr (system.posix_acl_access)
+associated with [1953724787 1882090853 0x7869736f UNKNOWN]
+
+I first noticed this because my automated backups failed. At first it seems
+this problem happened to a file only for a short period, because the backup
+would not complain about the same file twice in a row and I can access the
+failing files now, but for some time now I'm getting the error on one
+particular file.
+
 -- 
-BOFH excuse #351:
-
-PEBKAC (Problem Exists Between Keyboard And Chair)
+Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
