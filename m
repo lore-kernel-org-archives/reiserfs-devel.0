@@ -1,39 +1,50 @@
-From: hank peng <pengxihan@gmail.com>
-Subject: reiserfs issuce on MPC8548 board
-Date: Tue, 23 Feb 2010 10:14:52 +0800
-Message-ID: <389deec71002221814u29f19356ucd449762473dbdde@mail.gmail.com>
+From: Christian Kujau <lists@nerdbynature.de>
+Subject: Re: reiserfs issue with 2.6.32.8
+Date: Tue, 23 Feb 2010 23:03:49 -0800 (PST)
+Message-ID: <alpine.DEB.2.01.1002232249440.28195@bogon.housecafe.de>
+References: <dda83e781002141023t2abe95b8w83f59d6f411f68a2@mail.gmail.com>  <alpine.DEB.2.01.1002142229470.28195@bogon.housecafe.de> <dda83e781002232131i53b59c8eu7192257fc4e4f3e0@mail.gmail.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:received:date:message-id:subject
-         :from:to:content-type;
-        bh=BI9/u12uhqTzkQF7+3gy0ky2w4/F8I1ds6NIUDWXYx0=;
-        b=YeyA4zWGcES44V67PmrX6etD7ikgU955vPj8ghhM+ewP0Qx37Yy2OgGpgEH0ssbWWq
-         wBh5Wsa/IdQULg3YC+SsOuCrw7iyhwtc357KZOAP75e8xhNLfW2nI0nXraIUSZvc/t6z
-         MPxq42M5hdbJkVyeJFYOg7OfK9TiZtneFSGfU=
+In-Reply-To: <dda83e781002232131i53b59c8eu7192257fc4e4f3e0@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: Bret Towe <magnade@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org
 
-Hi, everybody:
-I am running reiserfs on a self-built MPC8548(powerpc arch) based
-board. Kernel version is 2.6.31.6.
-The filesystem has been working fine for several days until it become
-read-only, kernel message is like this:
+On Tue, 23 Feb 2010 at 21:31, Bret Towe wrote:
+> ok attached is strace log of cp on 2.6.32.9
 
-Feb  5 14:45:36 axAC123 user.crit kernel: REISERFS error (device
-dm-1): reiserfs-2025 reiserfs_cache_bitmap_metadata: bitmap block 0 is
-corrupted: first bit must be 1
-Feb  5 14:45:36 axAC123 user.notice kernel: REISERFS (device dm-1):
-Remounting filesystem read-only
-Feb  5 14:45:36 axAC123 user.warn kernel: REISERFS warning (device
-dm-1): clm-6006 reiserfs_dirty_inode: writing inode 95249 on readonly
-FS
+I've run cp through strace as well (copying something from an XFS 
+partition to a reiserfs partition, I guess that's what you did too), and 
+noticed a small difference at the end:
 
-Is it a reiserfs BUG or some other problem?
+< open("/home/foo/1", O_RDONLY)          = 3
+< fstat(3, {st_mode=S_IFREG|0640, st_size=755, ...}) = 0
+< open("2", O_WRONLY|O_CREAT|O_EXCL, 0640) = 4         
 
+While your cp(1) did:
+
+> open("downloads/[DB]_Bleach_258_[27104F7A].avi", O_RDONLY) = 3
+> fstat(3, {st_mode=S_IFREG|0644, st_size=178308328, ...}) = 0
+> open("/mdhd/media/Episodes/unwatched/[DB]_Bleach_258_[27104F7A].avi", O_WRONLY|O_CREAT|O_EXCL, 0644) = -1 EINVAL (Invalid argument)
+
+
+And open(2) will return -EINVAL when:
+   - The implementation does not support synchronised I/O for this file. 
+   - The value of the oflag argument is not valid.
+
+As we're not passing O_SYNC, it's the latter, if I read this correctly. Which
+still doesn't explain *why* (the filesystem?) returns "invalid flag". 
+
+> now I've had a hd drop out of raid (running checks on it atm)
+
+Hm, maybe it's all hardware related after all, let's see what these checks 
+turn up. Strange though, that nothing gets reported in dmesg...
+
+Christian.
 -- 
-The simplest is not all best but the best is surely the simplest!
+BOFH excuse #159:
+
+Stubborn processes
