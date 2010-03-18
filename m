@@ -1,74 +1,31 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH 2/2] reiserfs: Properly honor read-only devices
-Date: Wed, 17 Mar 2010 15:59:12 -0400
-Message-ID: <4BA13490.5070201@suse.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 14826] jdm-20002 reiserfs_xattr_get: Invalid hash for xattr
+Date: Thu, 18 Mar 2010 13:22:06 GMT
+Message-ID: <201003181322.o2IDM6vm026881@demeter.kernel.org>
+References: <bug-14826-695@http.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <bug-14826-695@http.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
- The reiserfs journal behaves inconsistently when determining whether
- to allow a mount of a read-only device.
+http://bugzilla.kernel.org/show_bug.cgi?id=14826
 
- This is due to the use of the continue_replay variable to short circuit
- the journal scanning. If it's set, it's assumed that there are
- transactions to replay, but there may not be. If it's unset, it's assumed
- that there aren't any, and that may not be the case either.
 
- I've observed two failure cases:
- 1) Where a clean file system on a read-only device refuses to mount
- 2) Where a clean file system on a read-only device passes the
-    optimization and then tries writing the journal header to update
-    the latest mount id.
+Nathan Phillip Brink (ohnobinki) <ohnobinki@ohnopublishing.net> changed:
 
- The former is easily observable by using a freshly created file system
- on a read-only loopback device.
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |ohnobinki@ohnopublishing.ne
+                   |                            |t
 
- This patch moves the check into journal_read_transaction, where it
- can bail out before it's about to replay a transaction. That way it
- can go through and skip transactions where appropriate, yet still
- refuse to mount a file system with outstanding transactions.
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- fs/reiserfs/journal.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
 
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -2217,6 +2217,15 @@ static int journal_read_transaction(stru
- 		brelse(d_bh);
- 		return 1;
- 	}
-+
-+	if (bdev_read_only(sb->s_bdev)) {
-+		reiserfs_warning(sb, "clm-2076",
-+				 "device is readonly, unable to replay log");
-+		brelse(c_bh);
-+		brelse(d_bh);
-+		return -EROFS;
-+	}
-+
- 	trans_id = get_desc_trans_id(desc);
- 	/* now we know we've got a good transaction, and it was inside the valid time ranges */
- 	log_blocks = kmalloc(get_desc_trans_len(desc) *
-@@ -2459,12 +2468,6 @@ static int journal_read(struct super_blo
- 		goto start_log_replay;
- 	}
- 
--	if (continue_replay && bdev_read_only(sb->s_bdev)) {
--		reiserfs_warning(sb, "clm-2076",
--				 "device is readonly, unable to replay log");
--		return -1;
--	}
--
- 	/* ok, there are transactions that need to be replayed.  start with the first log block, find
- 	 ** all the valid transactions, and pick out the oldest.
- 	 */
+
 -- 
-Jeff Mahoney
-SUSE Labs
+Configure bugmail: http://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
