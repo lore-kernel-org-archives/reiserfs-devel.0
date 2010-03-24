@@ -1,58 +1,34 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Segfault in fsck.reiser4
-Date: Tue, 23 Mar 2010 23:31:48 +0100
-Message-ID: <4BA94154.7010106@gmail.com>
-References: <op.u906wjlkhogzsi@g17b> <4BA9240D.4080705@gmail.com> <op.u91inegqhogzsi@g17b>
+From: Vidra.Jonas@seznam.cz
+Subject: =?us-ascii?Q?Re=3A=20Segfault=20in=20fsck=2Ereiser4?=
+Date: Wed, 24 Mar 2010 09:54:51 +0100 (CET)
+Message-ID: <7880.2170.3389-28898-1298266740-1269420891@seznam.cz>
+References: <4BA94154.7010106@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <op.u91inegqhogzsi@g17b>
+In-Reply-To: <4BA94154.7010106@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: =?UTF-8?B?Sm9uw6HFoSBWaWRyYQ==?= <vidra.jonas@seznam.cz>
-Cc: ReiserFS mailing list <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: reiserfs-devel@vger.kernel.org
+Cc: edward.shishkin@gmail.com
 
-Jon=C3=A1=C5=A1 Vidra wrote:
-> Dne Tue, 23 Mar 2010 21:26:53 +0100 Edward Shishkin=20
-> <edward.shishkin@gmail.com> napsal(a):
->
->> The most efficient way is to provide me with a root access to your=20
->> machine.
->> You have encountered a rare case of corruption, and it is important=20
->> to fix this fsck bug properly.
->
-> Well =E2=80=A6
-> I don't think that would be possible, but I'll see what I can do.
+Dne Tue, 23 Mar 2010 23:31:48 +0100 Edward Shishkin <edward.shishkin@gm=
+ail.com> napsal(a):
 
-Segfault is caused by aux_adler32: offset (4294839597) is out of bounds=
-=2E.
-Could you print and show us the structure "hint"?
+> Segfault is caused by aux_adler32: offset (4294839597) is out of boun=
+ds..
+> Could you print and show us the structure "hint"?
+
+(gdb) print hint
+No symbol "hint" in current context.
+
+Am I doing it right or should I set a breakpoint somewhere before the c=
+rash?
 
 
-> Several users have accounts on the machine, so even though they are j=
-ust
-> family members, not corporate customers, I can't allow everyone in.
-> I'd like to help, so I'll try to arrange it somehow.
->
->
->>> By the way, how do I find a filename by node number or key?
->>
->> find - inum 64881
->
-> Thanks. That's straightforward, shame on me for asking stupid questio=
-ns.
->
->
->>> I'd like to know which file caused the corruption.
->>
->> What do you want to do with this file?
->
-> I'd like to know if it is backed up somewhere, unique
-> or downloaded from the Internet or whatever.
-> I know I can't really trust *any* data on this partition anymore,
-> but I'd still like to know which files are the most likely to be lost=
-=2E
+--=20
+Jon=E1=B9 Vidra, vidra.jonas@seznam.cz
 --
 To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
 l" in
