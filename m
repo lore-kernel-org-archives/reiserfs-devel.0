@@ -1,66 +1,97 @@
-From: Marco Gatti <marco.gatti@gmail.com>
-Subject: reiserfs + acl corruption
-Date: Sun, 28 Mar 2010 17:29:03 +0200
-Message-ID: <54cce25c1003280829q2a173c91p55bc3297a3163452@mail.gmail.com>
+From: Marcus Becker <Becker_Marcus1@web.de>
+Subject: problem with corrupted filesystem
+Date: Mon, 29 Mar 2010 18:32:32 +0200 (CEST)
+Message-ID: <20393773.244349.1269880352409.JavaMail.fmail@mwmweb061>
 Mime-Version: 1.0
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:received:date:received:message-id
-         :subject:from:to:content-type;
-        bh=U2u8A7frcb2RZhCM9J8O/u/0m9tCRgWt5lJtufLzg10=;
-        b=HmV19cOxOqQteKWfocZD0tJ9UoxrYjZAGnK1Hl4NU62MF3XDP3MFxClnhisg38e33V
-         m27V7ChxUdEBU49PDnvaDCUpT2lYlT5NXHNnWqajlrerkyjBa27E+ni78xWMDsgrjQ02
-         IAPJBlQsjMKzF1AWK14fYZQnvF0AiWndmntZA=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="macroman"
 To: reiserfs-devel@vger.kernel.org
 
-I hope to post in the right place.
-I recently suffered a filesystem corruption with reiserfs in a
-production environment and I was able to reproduce it.
-The corruption started when i played with extended attributes, posix
-acls, with a partition containing hundreds of thousands of files.
-To reproduce the issue test it this way (using bash) in a separate
-disk, partition or virtual disk using loopback:
+I had some folders left after failed emerge in /var/tmp/portage, so I t=
+ried to remove the folders in there and got the error "directory not em=
+pty"
+I was able to move the subfolder "locale" to my /root folder and then r=
+emove the directory with all other subdirectories
+in the /root folder I still wasn't able to remove "locale"
 
-mkfsreiserfs /dev/sdc1
-mount -o acl /dev/sdc1 /mnt
-cd /mnt
-mkdir dir_with_many_files
-touch dir_with_many_files/{1..100000}
-setfacl -R -m u:username:rw dir_with_many_files
-setfacl -R -x u:username dir_with_many_files	(slow responsiveness of
-system during the execution of this command)
-setfacl -R -b dir_with_many_files
+After fsck.reiser4 --fix /dev/sda3 problem is solved, here is the relev=
+ant output:
 
-With a debian lenny standard kernel 2.6.26 (port amd64) these commands
-ends succesfully and no corruption occours.
-With a recent kernel, versions 2.6.32.8 - 2.6.32.9 - 2.6.32.10,
-(x86_64) compiled in different ways, from standard configuration to
-optimized versions even with no support for modules i get thousands of
-this kind of message:
+disi-laptop ~ # uname -a
+Linux disi-laptop 2.6.33-zen1 #3 ZEN SMP Sat Mar 27 17:00:34 GMT 2010=20
+i686 Intel(R) Pentium(R) M processor 1.60GHz GenuineIntel GNU/Linux
 
-REISERFS warning (device sdc1): jdm-20002 reiserfs_xattr_get: Invalid
-hash for xattr (system.posix_acl_access) associated with [2 848 0x0
-SD]
+disi-laptop ~ # mkfs.reiser4 --version
+mkfs.reiser4 1.0.7
+Copyright (C) 2001-2005 by Hans Reiser, licensing governed by=20
+reiser4progs/COPYING.
+disi-laptop ~ # ls
+locale  xorg.conf.new
+disi-laptop ~ # ls -l
+total 5
+drwx------ 2 root root    4 Mar 27 15:35 locale
+-rw-r--r-- 1 root root 3944 Mar 27 15:05 xorg.conf.new
+disi-laptop ~ # man ls
+disi-laptop ~ # ls -li
+total 5
+509520 drwx------ 2 root root    4 Mar 27 15:35 locale
+1584446 -rw-r--r-- 1 root root 3944 Mar 27 15:05 xorg.conf.new
+disi-laptop ~ # mv locale locale_moved
+disi-laptop ~ # ls -li
+total 5
+509520 drwx------ 2 root root    4 Mar 29 16:58 locale_moved
+1584446 -rw-r--r-- 1 root root 3944 Mar 27 15:05 xorg.conf.new
+disi-laptop ~ # rm -rf locale_moved/
+rm: cannot remove `locale_moved': Directory not empty
+disi-laptop ~ # ls -lai locale_moved/
+total 1
+509520 drwx------ 2 root root 4 Mar 29 16:58 .
+99103 drwx------ 3 root root 9 Mar 29 16:58 ..
+disi-laptop ~ # rmdir locale_moved/
+rmdir: failed to remove `locale_moved/': Directory not empty
+-- 3 root root 9 Mar 29 16:58 ..
 
-then wierd things start to happen and the more you use this filesystem
-the more you disrupt it: this leads to a corrupted filesystem!
-If you try with less files, let's say 50000, no corruption or error
-occour to me.
-The number of files to reproduce this behaviour could be different and
-it seems to be related to the machine you use: 100000 are enought for
-a virtual machine with 1GB of RAM, but i needed 300000 of files using
-a real machine with 4GB of RAM.
-I tested other filesystem but i get no corruption at all with ext2,
-ext3, ext4 and xfs.
-I use debian stable or testing environments and i'm using reiserfs
-included in vanilla kernels, with default options.
-Am I doing something wrong?
-Can someone test and reproduce this behaviour?
-Regards
+fsck_sda3.log:
+=46SCK: obj40_repair.c: 223: obj40_stat_unix_check: Node (411349), item=
+ (3),=20
+[7c641:6c6f63616c6500:7c650] (stat40): wrong bytes (264), Fixed to (100=
+).=20
+=46SCK: obj40_repair.c: 350: obj40_stat_lw_check: Node (411349), item (=
+3),
+[7c641:6c6f63616c6500:7c650] (stat40): wrong size (4), Fixed to (2).=20
 
-Marco Gatti
+
+disi-laptop ~ # ls
+locale_moved  xorg.conf.new
+disi-laptop ~ # ls -li
+total 5
+509520 drwx------ 2 root root    2 Mar 29 16:58 locale_moved
+1584446 -rw-r--r-- 1 root root 3944 Mar 27 15:05 xorg.conf.new
+disi-laptop ~ # mv locale_moved locale
+disi-laptop ~ # ls -li
+total 5
+509520 drwx------ 2 root root    2 Mar 29 17:20 locale
+1584446 -rw-r--r-- 1 root root 3944 Mar 27 15:05 xorg.conf.new
+disi-laptop ~ # rm -r locale
+disi-laptop ~ # ls -li
+total 4
+1584446 -rw-r--r-- 1 root root 3944 Mar 27 15:05 xorg.conf.new
+
+Here is the related forum post: http://forums.gentoo.org/viewtopic-p-62=
+23315.html#6223315
+
+thanks,
+
+Marcus
+___________________________________________________________
+WEB.DE DSL: Internet, Telefon und Entertainment f=C3=BCr nur 19,99 EUR/=
+mtl.!
+http://produkte.web.de/go/02/
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
