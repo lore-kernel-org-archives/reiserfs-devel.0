@@ -1,78 +1,72 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: problem with corrupted filesystem
-Date: Tue, 30 Mar 2010 18:50:24 +0200
-Message-ID: <4BB22BD0.6000406@gmail.com>
-References: <10637573.555449.1269939595054.JavaMail.fmail@mwmweb063>, <4BB1D144.4070506@gmail.com> <2277622.85186.1269965206483.JavaMail.fmail@mwmweb062>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] reiserfs: Remove 2 TB file size limit
+Date: Tue, 30 Mar 2010 13:15:54 -0400
+Message-ID: <4BB231CA.2050109@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <2277622.85186.1269965206483.JavaMail.fmail@mwmweb062>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: Marcus Becker <Becker_Marcus1@web.de>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
-Marcus Becker wrote:
-> Hi Edward,
->
-> I uploaded the file here:
-> http://omploader.org/vM3pxYw
->  =20
+ In its early life, reiserfs had an evolving s_max_bytes. It started out
+ at 4 GB, then was raised to MAX_LFS_FILESIZE, then dropped to 2 TiB when
+ it was observed that struct stat only had a 32-bit st_blocks field.
 
-Ok, got it. Thanks.
+ Since then, both the kernel and glibc have evolved as well and now both
+ support 64-bit st_blocks. Applications that can't deal with these ranges
+ are assumed to be "legacy" or "broken." File systems now routinely
+ support file sizes much larger than can be represented by 2^32 * 512.
 
-So what's up with your emerge? Why did it fail? With what error?
-Was is a system crash, power loss, etc?
+ But we never revisited that limitation. ReiserFS has always been able to
+ support larger file sizes (up to 16 TiB, in fact), but the s_max_bytes
+ limitation has prevented that.
 
-Edward.
+ This patch adds a max_file_offset helper to set s_max_bytes to a more
+ appropriate value. I noticed that XFS adjusts the limit based on the
+ CPU but I'd prefer to err on the side of compatibility and place the
+ limit at the smaller of the 32-bit MAX_LFS_FILESIZE and the maximum
+ supported by the file system. At a 4k block size, this is conveniently
+ also the advertised maximum file size of reiserfs.
 
-> hope I can help,
->
-> Marcus
->
->
-> -----Urspr=C3=BCngliche Nachricht-----
-> Von: Edward Shishkin <edward.shishkin@gmail.com>
-> Gesendet: Mar 30, 2010 12:24:04 PM
-> An: Marcus Becker=20
-> Betreff: Re: problem with corrupted filesystem
->
->  =20
->> Marcus Becker wrote:
->>    =20
->>> the problem is actual reproduceable. I emerged gcc again and the ex=
-cact same happened:
->>>
->>> disi-laptop portage # rm -r *
->>> rm: cannot remove `sys-devel/gcc-4.4.3/work/gcc-4.4.3/libjava/class=
-path/resource/gnu/java/locale': Directory not empty
->>>  =20
->>>      =20
->> Hello.
->>
->> Would you please pack the metadata by
->> debugfs.reiser4 -P /dev/xxx | gzip > meta.gz
->> and let me download the file meta.gz
->>
->> Thanks,
->> Edward.
->>
->>
->>    =20
->>> =20
->>>
->>> I am not sure, why it doesn't like that particular folder..
->>>      =20
-> ___________________________________________________________
-> WEB.DE DSL: Internet, Telefon und Entertainment f=C3=BCr nur 19,99 EU=
-R/mtl.!
-> http://produkte.web.de/go/02/
->
->  =20
+ This bug is tracked at: https://bugzilla.novell.com/show_bug.cgi?id=592100
 
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ fs/reiserfs/super.c |   17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -1309,6 +1309,18 @@ out_err:
+ 	return err;
+ }
+ 
++static inline loff_t
++reiserfs_max_file_offset(struct super_block *sb)
++{
++	/* Limited by stat_data->sd_blocks, 2^32-1 blocks */
++	loff_t fs_max = (sb->s_blocksize << 32) - sb->s_blocksize;
++
++	/* Limited by 32-bit MAX_LFS_FILESIZE */
++	loff_t page_cache_max = (((u64)PAGE_CACHE_SIZE << 31)-1);
++
++	return min(fs_max, page_cache_max);
++}
++
+ static int read_super_block(struct super_block *s, int offset)
+ {
+ 	struct buffer_head *bh;
+@@ -1398,10 +1410,7 @@ static int read_super_block(struct super
+ 	s->dq_op = &reiserfs_quota_operations;
+ #endif
+ 
+-	/* new format is limited by the 32 bit wide i_blocks field, want to
+-	 ** be one full block below that.
+-	 */
+-	s->s_maxbytes = (512LL << 32) - s->s_blocksize;
++	s->s_maxbytes = reiserfs_max_file_offset(s);
+ 	return 0;
+ }
+ 
