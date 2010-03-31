@@ -1,90 +1,57 @@
-From: Marcus Becker <Becker_Marcus1@web.de>
-Subject: Re: problem with corrupted filesystem
-Date: Tue, 30 Mar 2010 23:24:39 +0200 (CEST)
-Message-ID: <25733760.277198.1269984279094.JavaMail.fmail@mwmweb063>
-References: <10637573.555449.1269939595054.JavaMail.fmail@mwmweb063>,
- <4BB1D144.4070506@gmail.com>
- <2277622.85186.1269965206483.JavaMail.fmail@mwmweb062>,
- <4BB22BD0.6000406@gmail.com>
- <28084896.266414.1269980037917.JavaMail.fmail@mwmweb061>,
- <4BB26814.9000007@gmail.com>
+From: dimas <dimas000@ya.ru>
+Subject: Re: reiserfs + acl corruption
+Date: Wed, 31 Mar 2010 18:39:09 +0400
+Message-ID: <4BB35E8D.3090309@ya.ru>
+References: <54cce25c1003280829q2a173c91p55bc3297a3163452@mail.gmail.com>
+Reply-To: dimas000@ya.ru
 Mime-Version: 1.0
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4BB26814.9000007@gmail.com>
+In-Reply-To: <54cce25c1003280829q2a173c91p55bc3297a3163452@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Edward Shishkin <edward.shishkin@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+To: Marco Gatti <marco.gatti@gmail.com>
 Cc: reiserfs-devel@vger.kernel.org
 
-kk, thanks for the answer
+hello, Marco!
+i've created 1G partition for this test and made everything like you=20
+suggested. setfacl -R -m .... failed on file 150000+ with "no space lef=
+t"))
+mb will try later with bigger partition
 
-I just read that other mail from Jonas and thought I give it a shot.
-Nothing changed on the filesystem.
-If you need more information, let me know.
-
-Marcus
-
------Urspr=C3=BCngliche Nachricht-----
-Von: Edward Shishkin <edward.shishkin@gmail.com>
-Gesendet: Mar 30, 2010 11:07:32 PM
-An: Marcus Becker=20
-Betreff: Re: problem with corrupted filesystem
-
->Marcus Becker wrote:
->> Hi,
->>
->> I tried using hash=3Dtea as mount option with the same result.
->>  =20
->
->I don't think that reiser4 supports such mount option
->
->> Is this something I can change on an already formatted partition?
->>  =20
->
->What do you want to change? IMHO the type of hash can be assigned only
->in mkfs time. There was an interface to change it on-line per-director=
-y (via
->so-called pseudo-files), but this is still deprecated and is not used.
->
->> Where can I check, which hash is used?
->
->In the plugin table of (root) directory of debugfs.reiser4 -t output.
->Attributes of other objects are inherited through the semantic tree
->by default and, hence, are not shown.
->
->In your case (that you have sent me) we have the following:
->
->NODE (715370) LEVEL=3D1 ITEMS=3D22 SPACE=3D0 MKFS ID=3D0x7c4de18e FLUS=
-H=3D0x0
->#0  SD (stat40): [29:1(SD):0:2a:0] OFF=3D28, LEN=3D94, flags=3D0x0
->[...]
->permission : id =3D 0
->formatting : id =3D 2 (smart)
->hash : id =3D 1 (r5_hash) <<<<<<<<<<<<<<<
->fibration : id =3D 2 (ext_1_fibre)
->statdata : id =3D 0 (stat40)
->diritem : id =3D 2 (cde40)
->crypto : id =3D 0
->digest : id =3D 0
->compress : id =3D 0 (lzo1)
->compressMode : id =3D 4 (conv)
->cluster : id =3D 0 (64K)
->create : id =3D 0 (reg40)
->
->Edward.
->
->>  /proc/mounts doesn't list the option.
->>
->> Thanks,
->>
->> Marcus
->>
->
-___________________________________________________________
-GRATIS f=C3=BCr alle WEB.DE-Nutzer: Die maxdome Movie-FLAT!
-Jetzt freischalten unter http://movieflat.web.de
+Marco Gatti =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> I hope to post in the right place.
+> I recently suffered a filesystem corruption with reiserfs in a
+> production environment and I was able to reproduce it.
+> The corruption started when i played with extended attributes, posix
+> acls, with a partition containing hundreds of thousands of files.
+> To reproduce the issue test it this way (using bash) in a separate
+> disk, partition or virtual disk using loopback:
+>=20
+> mkfsreiserfs /dev/sdc1
+> mount -o acl /dev/sdc1 /mnt
+> cd /mnt
+> mkdir dir_with_many_files
+> touch dir_with_many_files/{1..100000}
+> setfacl -R -m u:username:rw dir_with_many_files
+> setfacl -R -x u:username dir_with_many_files	(slow responsiveness of
+> system during the execution of this command)
+> setfacl -R -b dir_with_many_files
+>=20
+> With a debian lenny standard kernel 2.6.26 (port amd64) these command=
+s
+> ends succesfully and no corruption occours.
+> With a recent kernel, versions 2.6.32.8 - 2.6.32.9 - 2.6.32.10,
+> (x86_64) compiled in different ways, from standard configuration to
+> optimized versions even with no support for modules i get thousands o=
+f
+> this kind of message:
+>=20
+> REISERFS warning (device sdc1): jdm-20002 reiserfs_xattr_get: Invalid
+> hash for xattr (system.posix_acl_access) associated with [2 848 0x0
+> SD]
+>=20
 --
 To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
 l" in
