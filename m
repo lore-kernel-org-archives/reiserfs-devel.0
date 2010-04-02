@@ -1,59 +1,134 @@
-From: dimas <dimas000@ya.ru>
-Subject: Re: reiserfs + acl corruption
-Date: Wed, 31 Mar 2010 18:39:09 +0400
-Message-ID: <4BB35E8D.3090309@ya.ru>
-References: <54cce25c1003280829q2a173c91p55bc3297a3163452@mail.gmail.com>
-Reply-To: dimas000@ya.ru
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: [patch 3/3] reiserfs: remove privroot hiding in lookup
+Date: Fri, 02 Apr 2010 17:22:17 +0200
+Message-ID: <4BB60BA9.20607@gmail.com>
+References: <20090505193014.926371851@suse.com> <20090505193206.968741619@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <54cce25c1003280829q2a173c91p55bc3297a3163452@mail.gmail.com>
+In-Reply-To: <20090505193206.968741619@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: Marco Gatti <marco.gatti@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: ReiserFS Devel <reiserfs-devel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>
 
-hello, Marco!
-i've created 1G partition for this test and made everything like you=20
-suggested. setfacl -R -m .... failed on file 150000+ with "no space lef=
-t"))
-mb will try later with bigger partition
+Jeff Mahoney wrote:
+>  With Al Viro's patch to move privroot lookup to fs mount, there's no need
+>  to have special code to hide the privroot in reiserfs_lookup.
+>   
 
-Marco Gatti =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> I hope to post in the right place.
-> I recently suffered a filesystem corruption with reiserfs in a
-> production environment and I was able to reproduce it.
-> The corruption started when i played with extended attributes, posix
-> acls, with a partition containing hundreds of thousands of files.
-> To reproduce the issue test it this way (using bash) in a separate
-> disk, partition or virtual disk using loopback:
->=20
-> mkfsreiserfs /dev/sdc1
-> mount -o acl /dev/sdc1 /mnt
-> cd /mnt
-> mkdir dir_with_many_files
-> touch dir_with_many_files/{1..100000}
-> setfacl -R -m u:username:rw dir_with_many_files
-> setfacl -R -x u:username dir_with_many_files	(slow responsiveness of
-> system during the execution of this command)
-> setfacl -R -b dir_with_many_files
->=20
-> With a debian lenny standard kernel 2.6.26 (port amd64) these command=
-s
-> ends succesfully and no corruption occours.
-> With a recent kernel, versions 2.6.32.8 - 2.6.32.9 - 2.6.32.10,
-> (x86_64) compiled in different ways, from standard configuration to
-> optimized versions even with no support for modules i get thousands o=
-f
-> this kind of message:
->=20
-> REISERFS warning (device sdc1): jdm-20002 reiserfs_xattr_get: Invalid
-> hash for xattr (system.posix_acl_access) associated with [2 848 0x0
-> SD]
->=20
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Jeff, this implication looks strange. IMHO Viro's patch just pins this in
+the cache for mount session, while after your "cleanup" everyone can
+walk here (including non-privileged users) and do what they want. Um?
+
+Edward.
+
+>  I've also cleaned up the privroot hiding in reiserfs_readdir_dentry and
+>  removed the last user of reiserfs_xattrs().
+>
+> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+> ---
+>  fs/reiserfs/dir.c              |   24 +++++++++++++-----------
+>  fs/reiserfs/namei.c            |   17 ++---------------
+>  fs/reiserfs/xattr.c            |    2 +-
+>  include/linux/reiserfs_fs_sb.h |    1 -
+>  4 files changed, 16 insertions(+), 28 deletions(-)
+>
+> --- a/fs/reiserfs/dir.c
+> +++ b/fs/reiserfs/dir.c
+> @@ -41,6 +41,18 @@ static int reiserfs_dir_fsync(struct fil
+>  
+>  #define store_ih(where,what) copy_item_head (where, what)
+>  
+> +static inline bool is_privroot_deh(struct dentry *dir,
+> +				   struct reiserfs_de_head *deh)
+> +{
+> +	int ret = 0;
+> +#ifdef CONFIG_REISERFS_FS_XATTR
+> +	struct dentry *privroot = REISERFS_SB(dir->d_sb)->priv_root;
+> +	ret = (dir == dir->d_parent && privroot->d_inode &&
+> +	       deh->deh_objectid == INODE_PKEY(privroot->d_inode)->k_objectid);
+> +#endif
+> +	return ret;
+> +}
+> +
+>  int reiserfs_readdir_dentry(struct dentry *dentry, void *dirent,
+>  			   filldir_t filldir, loff_t *pos)
+>  {
+> @@ -138,18 +150,8 @@ int reiserfs_readdir_dentry(struct dentr
+>  				}
+>  
+>  				/* Ignore the .reiserfs_priv entry */
+> -				if (reiserfs_xattrs(inode->i_sb) &&
+> -				    !old_format_only(inode->i_sb) &&
+> -				    dentry == inode->i_sb->s_root &&
+> -				    REISERFS_SB(inode->i_sb)->priv_root &&
+> -				    REISERFS_SB(inode->i_sb)->priv_root->d_inode
+> -				    && deh_objectid(deh) ==
+> -				    le32_to_cpu(INODE_PKEY
+> -						(REISERFS_SB(inode->i_sb)->
+> -						 priv_root->d_inode)->
+> -						k_objectid)) {
+> +				if (is_privroot_deh(dentry, deh))
+>  					continue;
+> -				}
+>  
+>  				d_off = deh_offset(deh);
+>  				*pos = d_off;
+> --- a/fs/reiserfs/namei.c
+> +++ b/fs/reiserfs/namei.c
+> @@ -338,21 +338,8 @@ static struct dentry *reiserfs_lookup(st
+>  				&path_to_entry, &de);
+>  	pathrelse(&path_to_entry);
+>  	if (retval == NAME_FOUND) {
+> -		/* Hide the .reiserfs_priv directory */
+> -		if (reiserfs_xattrs(dir->i_sb) &&
+> -		    !old_format_only(dir->i_sb) &&
+> -		    REISERFS_SB(dir->i_sb)->priv_root &&
+> -		    REISERFS_SB(dir->i_sb)->priv_root->d_inode &&
+> -		    de.de_objectid ==
+> -		    le32_to_cpu(INODE_PKEY
+> -				(REISERFS_SB(dir->i_sb)->priv_root->d_inode)->
+> -				k_objectid)) {
+> -			reiserfs_write_unlock(dir->i_sb);
+> -			return ERR_PTR(-EACCES);
+> -		}
+> -
+> -		inode =
+> -		    reiserfs_iget(dir->i_sb, (struct cpu_key *)&(de.de_dir_id));
+> +		inode = reiserfs_iget(dir->i_sb,
+> +				      (struct cpu_key *)&(de.de_dir_id));
+>  		if (!inode || IS_ERR(inode)) {
+>  			reiserfs_write_unlock(dir->i_sb);
+>  			return ERR_PTR(-EACCES);
+> --- a/fs/reiserfs/xattr.c
+> +++ b/fs/reiserfs/xattr.c
+> @@ -841,7 +841,7 @@ ssize_t reiserfs_listxattr(struct dentry
+>  	if (!dentry->d_inode)
+>  		return -EINVAL;
+>  
+> -	if (!reiserfs_xattrs(dentry->d_sb) ||
+> +	if (!dentry->d_sb->s_xattr ||
+>  	    get_inode_sd_version(dentry->d_inode) == STAT_DATA_V1)
+>  		return -EOPNOTSUPP;
+>  
+> --- a/include/linux/reiserfs_fs_sb.h
+> +++ b/include/linux/reiserfs_fs_sb.h
+> @@ -488,7 +488,6 @@ enum reiserfs_mount_options {
+>  #define reiserfs_data_log(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_DATA_LOG))
+>  #define reiserfs_data_ordered(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_DATA_ORDERED))
+>  #define reiserfs_data_writeback(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_DATA_WRITEBACK))
+> -#define reiserfs_xattrs(s) ((s)->s_xattr != NULL)
+>  #define reiserfs_xattrs_user(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_XATTRS_USER))
+>  #define reiserfs_posixacl(s) (REISERFS_SB(s)->s_mount_opt & (1 << REISERFS_POSIXACL))
+>  #define reiserfs_xattrs_optional(s) (reiserfs_xattrs_user(s) || reiserfs_posixacl(s))
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>   
+
