@@ -1,18 +1,15 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH] reiserfs: Fix permissions on .reiserfs_priv
-Date: Wed, 07 Apr 2010 19:18:50 -0400
-Message-ID: <4BBD12DA.30209@suse.com>
+Subject: [PATCH #2] reiserfs: Fix permissions on .reiserfs_priv
+Date: Thu, 08 Apr 2010 13:30:30 -0400
+Message-ID: <4BBE12B6.3000609@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Edward Shishkin <edward.shishkin@gmail.com>
 Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
 
  Commit 677c9b2e393a0cd203bd54e9c18b012b2c73305a removed the magic
  from the lookup code to hide the .reiserfs_priv directory since it
@@ -33,69 +30,63 @@ Hash: SHA1
  way. The effort involved in working out the corner cases wrt permissions
  and caching outweigh the benefit of the feature.
 
+ Re-sent because I forgot to turn off the GPG signing when I sent the first
+ time.
+
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-- ---
+---
 
  fs/reiserfs/dir.c   |    2 --
  fs/reiserfs/xattr.c |   17 ++++-------------
  2 files changed, 4 insertions(+), 15 deletions(-)
 
-- --- a/fs/reiserfs/dir.c
+--- a/fs/reiserfs/dir.c
 +++ b/fs/reiserfs/dir.c
 @@ -45,8 +45,6 @@ static inline bool is_privroot_deh(struc
  				   struct reiserfs_de_head *deh)
  {
  	struct dentry *privroot = REISERFS_SB(dir->d_sb)->priv_root;
-- -	if (reiserfs_expose_privroot(dir->d_sb))
-- -		return 0;
+-	if (reiserfs_expose_privroot(dir->d_sb))
+-		return 0;
  	return (dir == dir->d_parent && privroot->d_inode &&
  	        deh->deh_objectid == INODE_PKEY(privroot->d_inode)->k_objectid);
  }
-- --- a/fs/reiserfs/xattr.c
+--- a/fs/reiserfs/xattr.c
 +++ b/fs/reiserfs/xattr.c
 @@ -972,21 +972,13 @@ int reiserfs_permission(struct inode *in
  	return generic_permission(inode, mask, NULL);
  }
- 
-- -/* This will catch lookups from the fs root to .reiserfs_priv */
-- -static int
-- -xattr_lookup_poison(struct dentry *dentry, struct qstr *q1, struct qstr *name)
-+static int xattr_hide_revalidate(struct dentry *dentry, struct nameidata *nd)
+ - -/* This will catch lookups from the fs root to .reiserfs_priv */
+-static int
+-xattr_lookup_poison(struct dentry *dentry, struct qstr *q1, struct
+qstr *name)
++static int xattr_hide_revalidate(struct dentry *dentry, struct
+nameidata *nd)
  {
-- -	struct dentry *priv_root = REISERFS_SB(dentry->d_sb)->priv_root;
-- -	if (container_of(q1, struct dentry, d_name) == priv_root)
-- -		return -ENOENT;
-- -	if (q1->len == name->len &&
-- -		   !memcmp(q1->name, name->name, name->len))
-- -		return 0;
-- -	return 1;
+-	struct dentry *priv_root = REISERFS_SB(dentry->d_sb)->priv_root;
+-	if (container_of(q1, struct dentry, d_name) == priv_root)
+-		return -ENOENT;
+-	if (q1->len == name->len &&
+-		   !memcmp(q1->name, name->name, name->len))
+-		return 0;
+-	return 1;
 +	return -EPERM;
  }
- 
- static const struct dentry_operations xattr_lookup_poison_ops = {
-- -	.d_compare = xattr_lookup_poison,
+  static const struct dentry_operations xattr_lookup_poison_ops = {
+-	.d_compare = xattr_lookup_poison,
 +	.d_revalidate = xattr_hide_revalidate,
  };
- 
- int reiserfs_lookup_privroot(struct super_block *s)
+  int reiserfs_lookup_privroot(struct super_block *s)
 @@ -1000,8 +992,7 @@ int reiserfs_lookup_privroot(struct supe
  				strlen(PRIVROOT_NAME));
  	if (!IS_ERR(dentry)) {
  		REISERFS_SB(s)->priv_root = dentry;
-- -		if (!reiserfs_expose_privroot(s))
-- -			s->s_root->d_op = &xattr_lookup_poison_ops;
+-		if (!reiserfs_expose_privroot(s))
+-			s->s_root->d_op = &xattr_lookup_poison_ops;
 +		dentry->d_op = &xattr_lookup_poison_ops;
  		if (dentry->d_inode)
  			dentry->d_inode->i_flags |= S_PRIVATE;
  	} else
-- -- 
+-- 
 Jeff Mahoney
 SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.14 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
-
-iEYEARECAAYFAku9EtoACgkQLPWxlyuTD7LxOACdHf0maAVkCXKqrsMk6XP5dNT8
-XPIAoIUB9xlvRigutaWf1XBre/mzyBAk
-=G+Lo
------END PGP SIGNATURE-----
