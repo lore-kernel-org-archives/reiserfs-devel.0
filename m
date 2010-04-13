@@ -1,41 +1,50 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 14826] jdm-20002 reiserfs_xattr_get: Invalid hash for xattr
-Date: Tue, 13 Apr 2010 19:19:00 GMT
-Message-ID: <201004131919.o3DJJ0nv003483@demeter.kernel.org>
-References: <bug-14826-695@https.bugzilla.kernel.org/>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] reiserfs: Fix corruption during shrinking of xattrs
+Date: Tue, 13 Apr 2010 15:39:52 -0400
+Message-ID: <4BC4C888.9040104@suse.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-14826-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward.sh>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=14826
+ Commit 48b32a3553a54740d236b79a90f20147a25875e3 introduced a problem
+ that causes corruption when extended attributes are replaced with a
+ smaller value.
 
+ The issue is that the reiserfs_setattr to shrink the xattr file was
+ moved from before the write to after the write.
 
+ The root issue has always been in the reiserfs xattr code, but was
+ papered over by the fact that in the shrink case, the file would just
+ be expanded again while the xattr was written.
 
+ The end result is that the last 8 bytes of xattr data are lost.
 
+ This patch fixes it to use new_size.
 
---- Comment #6 from Jeff Mahoney <jeffm@suse.com>  2010-04-13 19:18:49 ---
-Ok, I've found the problem. Turns out expose_privroot is useful after all.
+ This issue was reported at: https://bugzilla.kernel.org/show_bug.cgi?id=14826
 
-The loss isn't random. It affects xattrs that have been shrunk. The test case
-in comment #2 demonstrated the issue perfectly because it removes a single ACL,
-which shrinks the xattr, before it removes all of them. The issue is that when
-an xattr is shrunk, the size of the header wasn't accounted for, so it's shrunk
-by 8 bytes too many.
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+Cc: stable@kernel.org
+---
 
-The test case is sensitive to memory pressure because the ACL is cached with
-the in-memory inode. Accesses to it use the cached value until the inode is
-dropped from memory and it needs to be re-read from disk. Upon the re-read, the
-corruption is noticed and an -EIO results.
+ fs/reiserfs/xattr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Unfortunately, this type of damage I am not going to be able to repair. I'll be
-able to fix the checksums but the data inside a shrunken xattr will be lost.
-
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -553,7 +560,7 @@ reiserfs_xattr_set_handle(struct reiserf
+ 	if (!err && new_size < i_size_read(dentry->d_inode)) {
+ 		struct iattr newattrs = {
+ 			.ia_ctime = current_fs_time(inode->i_sb),
+-			.ia_size = buffer_size,
++			.ia_size = new_size,
+ 			.ia_valid = ATTR_SIZE | ATTR_CTIME,
+ 		};
+ 
 -- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+Jeff Mahoney
+SUSE Labs
