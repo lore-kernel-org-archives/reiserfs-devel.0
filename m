@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 14826] jdm-20002 reiserfs_xattr_get: Invalid hash for xattr
-Date: Tue, 13 Apr 2010 08:55:49 GMT
-Message-ID: <201004130855.o3D8tnjt011415@demeter.kernel.org>
+Date: Tue, 13 Apr 2010 15:41:25 GMT
+Message-ID: <201004131541.o3DFfP7u002831@demeter.kernel.org>
 References: <bug-14826-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -15,25 +15,24 @@ To: reiserfs-devel@vger.kernel.org
 https://bugzilla.kernel.org/show_bug.cgi?id=14826
 
 
-Marco Gatti <marco.gatti@gmail.com> changed:
+Greg Surbey <gregsurbey@hotmail.com> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-                 CC|                            |marco.gatti@gmail.com
+                 CC|                            |jeffm@suse.com
 
 
 
 
---- Comment #3 from Marco Gatti <marco.gatti@gmail.com>  2010-04-13 08:55:39 ---
-It seems to me that things turned bad with acl with the release of kernel
-2.6.30.
-Check this discussion if you haven't:
-http://marc.info/?t=126979018700003&r=1&w=2
-
-In particular this post with a simple test case and results:
-http://marc.info/?l=reiserfs-devel&m=127056179512450&w=2
-
-Is there something i can do to help? I mean just as a linux user...
+--- Comment #4 from Greg Surbey <gregsurbey@hotmail.com>  2010-04-13 15:41:09 ---
+Considering that this bug eventually leads to completely unrepairable
+filesystem corruption, I strongly recommend that Linux revert to the old
+reiserfs xattr pre-2.6.30 code for the time being.  I realize that these code
+improvements are a worthy goal, however this is supposed to be a stable kernel
+release with a stable filesystem.  Losing data is the worst thing that can
+happen, but losing data silently/randomly is even worse.  Unless this issue is
+fixed today, this patch-set needs to go back to testing/development mode for
+the time being.
 
 -- 
 Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
