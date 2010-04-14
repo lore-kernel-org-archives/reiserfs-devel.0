@@ -1,50 +1,34 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH] reiserfs: Fix corruption during shrinking of xattrs
-Date: Tue, 13 Apr 2010 15:39:52 -0400
-Message-ID: <4BC4C888.9040104@suse.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 15309] reiserfs issue with 2.6.32.8
+Date: Wed, 14 Apr 2010 01:51:32 GMT
+Message-ID: <201004140151.o3E1pWoQ016607@demeter.kernel.org>
+References: <bug-15309-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <bug-15309-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Andrew Morton <akpm@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward.sh>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
- Commit 48b32a3553a54740d236b79a90f20147a25875e3 introduced a problem
- that causes corruption when extended attributes are replaced with a
- smaller value.
+https://bugzilla.kernel.org/show_bug.cgi?id=15309
 
- The issue is that the reiserfs_setattr to shrink the xattr file was
- moved from before the write to after the write.
 
- The root issue has always been in the reiserfs xattr code, but was
- papered over by the fact that in the shrink case, the file would just
- be expanded again while the xattr was written.
+Bret Towe <magnade@gmail.com> changed:
 
- The end result is that the last 8 bytes of xattr data are lost.
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |magnade@gmail.com
 
- This patch fixes it to use new_size.
 
- This issue was reported at: https://bugzilla.kernel.org/show_bug.cgi?id=14826
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-Cc: stable@kernel.org
----
 
- fs/reiserfs/xattr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--- Comment #1 from Bret Towe <magnade@gmail.com>  2010-04-14 01:51:25 ---
+this can be closed since switching out server hardware
+I've not seen the problem any more
 
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -553,7 +560,7 @@ reiserfs_xattr_set_handle(struct reiserf
- 	if (!err && new_size < i_size_read(dentry->d_inode)) {
- 		struct iattr newattrs = {
- 			.ia_ctime = current_fs_time(inode->i_sb),
--			.ia_size = buffer_size,
-+			.ia_size = new_size,
- 			.ia_valid = ATTR_SIZE | ATTR_CTIME,
- 		};
- 
 -- 
-Jeff Mahoney
-SUSE Labs
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
