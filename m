@@ -1,56 +1,93 @@
-From: Christian Kujau <lists@nerdbynature.de>
-Subject: Re: [PATCH] reiserfs: Fix corruption during shrinking of xattrs
-Date: Wed, 14 Apr 2010 01:32:37 -0700 (PDT)
-Message-ID: <alpine.DEB.2.01.1004140127090.29272@bogon.housecafe.de>
-References: <4BC4C888.9040104@suse.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] reiserfsprogs: fix use after free with fsck_progress
+Date: Thu, 15 Apr 2010 17:48:50 -0400
+Message-ID: <4BC789C2.4030207@suse.com>
 Mime-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="-1463809526-313401583-1271233957=:29272"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4BC4C888.9040104@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward.shishkin@gmail.com>, stable@kernel.org, kernel@jbeekman.nl, gregsurbey@hotmail.com, Marco Gatti <marco.gatti@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward.shishkin@gmail.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
----1463809526-313401583-1271233957=:29272
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+ fsck_progress uses fs to get the log file handle but fs is freed before
+ fsck_progress is caleld when it's about to print the "finished" message.
 
-On Tue, 13 Apr 2010 at 15:39, Jeff Mahoney wrote:
->  This patch fixes it to use new_size.
+ When glibc is run with:
+ MALLOC_CHECK_=3
+ MALLOC_PERTURB_=69
 
-Tested-by: Christian Kujau <lists@nerdbynature.de>
+ as is the default on newer versions of openSUSE, it poisons freed memory
+ to detect conditions like this. As a result, reiserfsck segfaults on these
+ systems.
 
-With this patch applied (to today's mainline git, 2.6.34-rc4) I was able 
-to create 30k files with xattrs on the same test system that was failing 
-to do so before.
+ This patch fixes fsck to close the file system after printing the completion
+ message.
 
-Thanks for the fix!
+ Edward, I'm working on adding support to check extended attributes, so please
+ hold off on an update until I post those patches early next week.
 
-Christian.
--- 
-BOFH excuse #88:
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+- ---
+ fsck/main.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Boss' kid fucked up the machine
----1463809526-313401583-1271233957=:29272
-Content-Type: TEXT/x-diff; name=reiserfs-xattr_rc4.diff
-Content-Transfer-Encoding: BASE64
-Content-ID: <alpine.DEB.2.01.1004140132370.29272@bogon.housecafe.de>
-Content-Description: 
-Content-Disposition: attachment; filename=reiserfs-xattr_rc4.diff
+- --- a/fsck/main.c
++++ b/fsck/main.c
+@@ -782,8 +782,8 @@ static int the_end (reiserfs_filsys_t *
+     fsck_progress ("Syncing..");
+     fs->fs_dirt = 1;
+     clean_after_dma_check(fs->fs_dev, &dma_info);
+- -    reiserfs_close (fs);
+     fsck_progress ("finished\n");
++    reiserfs_close (fs);
+ 
+     return ret;
+ }
+@@ -935,12 +935,12 @@ static void clean_attributes (reiserfs_f
+     do_clean_attributes (fs);
+ 
+     clean_after_dma_check(fs->fs_dev, &dma_info);
+- -    reiserfs_close (fs);
+- -    close_rollback_file ();
+ 
+     fsck_progress ("###########\n"
+ 		   "reiserfsck finished at %s"
+ 		   "###########\n", ctime (&t));
++    reiserfs_close (fs);
++    close_rollback_file ();
+ 
+     exit (EXIT_FIXED);
+ 
+@@ -1171,8 +1171,6 @@ static void check_fs (reiserfs_filsys_t
+         
+     id_map_free(proper_id_map (fs));
+     clean_after_dma_check(fs->fs_dev, &dma_info);
+- -    reiserfs_close (fs);
+- -    close_rollback_file ();
+     
+     //clear_relocated_list();    
+     
+@@ -1181,6 +1179,8 @@ static void check_fs (reiserfs_filsys_t
+ 		   "reiserfsck finished at %s"
+ 		   "###########\n", ctime (&t));
+ 
++    reiserfs_close (fs);
++    close_rollback_file ();
+     exit(retval);
+ }
+ 
+- -- 
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.15 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
 
-ZGlmZiAtLWdpdCBhL2ZzL3JlaXNlcmZzL3hhdHRyLmMgYi9mcy9yZWlzZXJm
-cy94YXR0ci5jDQppbmRleCA0Zjk1ODZiLi4yMDU4YzI4IDEwMDY0NA0KLS0t
-IGEvZnMvcmVpc2VyZnMveGF0dHIuYw0KKysrIGIvZnMvcmVpc2VyZnMveGF0
-dHIuYw0KQEAgLTU1NCw3ICs1NTQsNyBAQCByZWlzZXJmc194YXR0cl9zZXRf
-aGFuZGxlKHN0cnVjdCByZWlzZXJmc190cmFuc2FjdGlvbl9oYW5kbGUgKnRo
-LA0KIAlpZiAoIWVyciAmJiBuZXdfc2l6ZSA8IGlfc2l6ZV9yZWFkKGRlbnRy
-eS0+ZF9pbm9kZSkpIHsNCiAJCXN0cnVjdCBpYXR0ciBuZXdhdHRycyA9IHsN
-CiAJCQkuaWFfY3RpbWUgPSBjdXJyZW50X2ZzX3RpbWUoaW5vZGUtPmlfc2Ip
-LA0KLQkJCS5pYV9zaXplID0gYnVmZmVyX3NpemUsDQorCQkJLmlhX3NpemUg
-PSBuZXdfc2l6ZSwNCiAJCQkuaWFfdmFsaWQgPSBBVFRSX1NJWkUgfCBBVFRS
-X0NUSU1FLA0KIAkJfTsNCiANCg==
-
----1463809526-313401583-1271233957=:29272--
+iEYEARECAAYFAkvHicIACgkQLPWxlyuTD7JeKQCffKg7XjQMpddTtn9okQj1rntH
+OOEAnjRn3heRzXPgckhl7g219rFNoFXp
+=J7WL
+-----END PGP SIGNATURE-----
