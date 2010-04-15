@@ -1,93 +1,62 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH] reiserfsprogs: fix use after free with fsck_progress
-Date: Thu, 15 Apr 2010 17:48:50 -0400
-Message-ID: <4BC789C2.4030207@suse.com>
+From: Christian Kujau <lists@nerdbynature.de>
+Subject: Re: [PATCH] reiserfs: Fix corruption during shrinking of xattrs
+Date: Thu, 15 Apr 2010 16:49:15 -0700 (PDT)
+Message-ID: <alpine.DEB.2.01.1004151632110.4069@bogon.housecafe.de>
+References: <4BC4C888.9040104@suse.com> <alpine.DEB.2.01.1004140127090.29272@bogon.housecafe.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <alpine.DEB.2.01.1004140127090.29272@bogon.housecafe.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward.shishkin@gmail.com>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward.shishkin@gmail.com>, stable@kernel.org, kernel@jbeekman.nl, gregsurbey@hotmail.com, Marco Gatti <marco.gatti@gmail.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Wed, 14 Apr 2010 at 01:32, Christian Kujau wrote:
+> On Tue, 13 Apr 2010 at 15:39, Jeff Mahoney wrote:
+> >  This patch fixes it to use new_size.
+> 
+> Tested-by: Christian Kujau <lists@nerdbynature.de>
 
- fsck_progress uses fs to get the log file handle but fs is freed before
- fsck_progress is caleld when it's about to print the "finished" message.
+Dang. While this *does* seem to fix the "Input/output error after a large 
+amount of files have their xattrs removed", it does not fix the initial 
+issue in #14826, where occasionally this jdm-20002 message shows up.
 
- When glibc is run with:
- MALLOC_CHECK_=3
- MALLOC_PERTURB_=69
+I just tested this: I still have this calendarserver (caldavd) and it's 
+heavily using xattr. I have removed everything under /var/spool/caldavd, 
+started caldavd and am now importing a calendar. caldavd will now create 
+files under /var/spool/caldavd, wil assign xattrs and read them. And just 
+after a few operations, this happens again:
 
- as is the default on newer versions of openSUSE, it poisons freed memory
- to detect conditions like this. As a result, reiserfsck segfaults on these
- systems.
+[138794.184926] REISERFS warning (device xvda3): jdm-20002 
+reiserfs_xattr_get: Invalid hash for xattr 
+(user.{http:%2F%2Ftwistedmatrix.com%2Fxml_namespace%2Fdav%2Fprivate%2F}quota-used) 
+associated with [765 3282 0x0 SD]
 
- This patch fixes fsck to close the file system after printing the completion
- message.
+[139238.740552] REISERFS warning (device xvda3): jdm-20002 
+reiserfs_xattr_get: Invalid hash for xattr (user.{DAV:}displayname) 
+associated with [765 3402 0x0 SD]
 
- Edward, I'm working on adding support to check extended attributes, so please
- hold off on an update until I post those patches early next week.
+Inodes 3282, 3402, aka
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-- ---
- fsck/main.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+./calendars/__uids__/afebe2f1-f51a-5859-af15-f22312ad6634
+./calendars/__uids__/afebe2f1-f51a-5859-af15-f22312ad6634/2CC21268-C87E-4AE6-AFD4-33946D5621AB
 
-- --- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -782,8 +782,8 @@ static int the_end (reiserfs_filsys_t *
-     fsck_progress ("Syncing..");
-     fs->fs_dirt = 1;
-     clean_after_dma_check(fs->fs_dev, &dma_info);
-- -    reiserfs_close (fs);
-     fsck_progress ("finished\n");
-+    reiserfs_close (fs);
- 
-     return ret;
- }
-@@ -935,12 +935,12 @@ static void clean_attributes (reiserfs_f
-     do_clean_attributes (fs);
- 
-     clean_after_dma_check(fs->fs_dev, &dma_info);
-- -    reiserfs_close (fs);
-- -    close_rollback_file ();
- 
-     fsck_progress ("###########\n"
- 		   "reiserfsck finished at %s"
- 		   "###########\n", ctime (&t));
-+    reiserfs_close (fs);
-+    close_rollback_file ();
- 
-     exit (EXIT_FIXED);
- 
-@@ -1171,8 +1171,6 @@ static void check_fs (reiserfs_filsys_t
-         
-     id_map_free(proper_id_map (fs));
-     clean_after_dma_check(fs->fs_dev, &dma_info);
-- -    reiserfs_close (fs);
-- -    close_rollback_file ();
-     
-     //clear_relocated_list();    
-     
-@@ -1181,6 +1179,8 @@ static void check_fs (reiserfs_filsys_t
- 		   "reiserfsck finished at %s"
- 		   "###########\n", ctime (&t));
- 
-+    reiserfs_close (fs);
-+    close_rollback_file ();
-     exit(retval);
- }
- 
-- -- 
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.15 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
+....under /var/spool/caldavd. So it does happen for new files 
+(directories in this case) indeed.
 
-iEYEARECAAYFAkvHicIACgkQLPWxlyuTD7JeKQCffKg7XjQMpddTtn9okQj1rntH
-OOEAnjRn3heRzXPgckhl7g219rFNoFXp
-=J7WL
------END PGP SIGNATURE-----
+However, there's no file corruption, no I/O errors - I can still access 
+the directory and its contents. The xattr information might be lost 
+though. Bug #14826 somehow transformed into "my filesystem is corrupt", as 
+the bug with the large amount of files/xattr seems to generate the same 
+message in the syslog. But that's a different issue, methinks.
+
+Christian.
+
+[0] https://bugzilla.kernel.org/show_bug.cgi?id=14826
+-- 
+BOFH excuse #124:
+
+
+user to computer ration too low.
