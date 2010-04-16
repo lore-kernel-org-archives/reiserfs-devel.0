@@ -1,163 +1,45 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH RFC]  buffer_head: remove redundant test from
- wait_on_buffer
-Date: Fri, 16 Apr 2010 14:51:23 -0700
-Message-ID: <20100416145123.283f216c.akpm@linux-foundation.org>
-References: <1271415499.2075.19.camel@localhost>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: [PATCH RFC]  buffer_head: remove redundant test from wait_on_buffer
+Date: Fri, 16 Apr 2010 18:18:58 -0400
+Message-ID: <4BC8E252.8030400@suse.com>
+References: <1271415499.2075.19.camel@localhost> <20100416145123.283f216c.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1271415499.2075.19.camel@localhost>
+In-Reply-To: <20100416145123.283f216c.akpm@linux-foundation.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Richard Kennedy <richard@rsk.demon.co.uk>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <jens.axboe@oracle.com>, lkml <linux-kernel@vger.kernel.org>, Nick Piggin <npiggin@suse.de>, Jeff Mahoney <jeffm@suse.com>, reiserfs-devel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Richard Kennedy <richard@rsk.demon.co.uk>, Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <jens.axboe@oracle.com>, lkml <linux-kernel@vger.kernel.org>, Nick Piggin <npiggin@suse.de>, reiserfs-devel@vger.kernel.org
 
-On Fri, 16 Apr 2010 11:58:19 +0100
-Richard Kennedy <richard@rsk.demon.co.uk> wrote:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-> The comment suggests that when b_count equals zero it is calling
-> __wait_no_buffer to trigger some debug, but as there is no debug in
-> __wait_on_buffer the whole thing is redundant.
+On 04/16/2010 05:51 PM, Andrew Morton wrote:
+> And while we're there...
 > 
-> AFAICT from the git log this has been the case for at least 5 years, so
-> it seems safe just to remove this.
-> 
-> Signed-off-by: Richard Kennedy <richard@rsk.demon.co.uk>
-> ---
-> 
-> This patch against 2.6.34-rc4
-> compiled & tested on x86_64
-> 
-> regards
-> Richard
-> 
-> 
-> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-> index 16ed028..4c62dd4 100644
-> --- a/include/linux/buffer_head.h
-> +++ b/include/linux/buffer_head.h
-> @@ -305,15 +305,10 @@ map_bh(struct buffer_head *bh, struct super_block *sb, sector_t block)
->  	bh->b_size = sb->s_blocksize;
->  }
->  
-> -/*
-> - * Calling wait_on_buffer() for a zero-ref buffer is illegal, so we call into
-> - * __wait_on_buffer() just to trip a debug check.  Because debug code in inline
-> - * functions is bloaty.
-> - */
->  static inline void wait_on_buffer(struct buffer_head *bh)
->  {
->  	might_sleep();
-> -	if (buffer_locked(bh) || atomic_read(&bh->b_count) == 0)
-> +	if (buffer_locked(bh))
->  		__wait_on_buffer(bh);
->  }
+> This might make reiserfs explode.
+> We can remove __wait_on_buffer() altogether now.  For some strange reason
+> reiserfs calls __wait_on_buffer() directly.  Maybe it's passing in
+> zero-ref buffers.  If so, we'll get warnings now and shall need to look at
+> that.
 
-That debug check got inadvertently crippled during some wait_on_bit()
-conversion.
+I don't think that's the case. I think reiserfs just calls
+__wait_on_buffer just to skip the duplicate buffer_locked() test since
+every call is in an "if buffer_locked()" block. I don't think it's
+passing in zero-ref buffers anywhere, and I'd prefer it to explode if it is.
 
-It's still a nasty bug to call wait_on_buffer() against a zero-ref
-buffer so perhaps we should fix it up rather than removing its remains.
+- -Jeff
 
-diff -puN include/linux/buffer_head.h~buffer_head-remove-redundant-test-from-wait_on_buffer-fix include/linux/buffer_head.h
---- a/include/linux/buffer_head.h~buffer_head-remove-redundant-test-from-wait_on_buffer-fix
-+++ a/include/linux/buffer_head.h
-@@ -305,10 +305,15 @@ map_bh(struct buffer_head *bh, struct su
- 	bh->b_size = sb->s_blocksize;
- }
- 
-+/*
-+ * Calling wait_on_buffer() for a zero-ref buffer is illegal, so we call into
-+ * __wait_on_buffer() just to trip a debug check.  Because debug code in inline
-+ * functions is bloaty.
-+ */
- static inline void wait_on_buffer(struct buffer_head *bh)
- {
- 	might_sleep();
--	if (buffer_locked(bh))
-+	if (buffer_locked(bh) || atomic_read(&bh->b_count) == 0)
- 		__wait_on_buffer(bh);
- }
- 
-diff -puN fs/buffer.c~buffer_head-remove-redundant-test-from-wait_on_buffer-fix fs/buffer.c
---- a/fs/buffer.c~buffer_head-remove-redundant-test-from-wait_on_buffer-fix
-+++ a/fs/buffer.c
-@@ -90,6 +90,12 @@ EXPORT_SYMBOL(unlock_buffer);
-  */
- void __wait_on_buffer(struct buffer_head * bh)
- {
-+	/*
-+	 * Calling wait_on_buffer() against a zero-ref buffer is a nasty bug
-+	 * because it will almost always "work".  However this buffer can be
-+	 * reclaimed at any time.  So check for it.
-+	 */
-+	VM_BUG_ON(atomic_read(&bh->b_count) == 0);
- 	wait_on_bit(&bh->b_state, BH_Lock, sync_buffer, TASK_UNINTERRUPTIBLE);
- }
- EXPORT_SYMBOL(__wait_on_buffer);
-_
+- -- 
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.15 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
 
-
-And while we're there...
-
-This might make reiserfs explode.
-
-
-
-From: Andrew Morton <akpm@linux-foundation.org>
-
-The first thing __wait_on_buffer()->wait_on_bit() does is to test that the
-bit was set, so the buffer_locked() test is now redundant.  And once we
-remove that, we can remove the check for zero ->b_count also.
-
-And now that wait_on_buffer() unconditionally calls __wait_on_buffer(), we
-can move the might_sleep() check into __wait_on_buffer() to save some text.
-
-The downside of all of this is that wait_on_buffer() against an unlocked
-buffer will now always perform a function call.  Is it a common case?
-
-We can remove __wait_on_buffer() altogether now.  For some strange reason
-reiserfs calls __wait_on_buffer() directly.  Maybe it's passing in
-zero-ref buffers.  If so, we'll get warnings now and shall need to look at
-that.
-
-Cc: Jens Axboe <jens.axboe@oracle.com>
-Cc: Nick Piggin <nickpiggin@yahoo.com.au>
-Cc: Richard Kennedy <richard@rsk.demon.co.uk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- fs/buffer.c                 |    2 ++
- include/linux/buffer_head.h |    4 +---
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff -puN include/linux/buffer_head.h~wait_on_buffer-remove-the-buffer_locked-test include/linux/buffer_head.h
---- a/include/linux/buffer_head.h~wait_on_buffer-remove-the-buffer_locked-test
-+++ a/include/linux/buffer_head.h
-@@ -312,9 +312,7 @@ map_bh(struct buffer_head *bh, struct su
-  */
- static inline void wait_on_buffer(struct buffer_head *bh)
- {
--	might_sleep();
--	if (buffer_locked(bh) || atomic_read(&bh->b_count) == 0)
--		__wait_on_buffer(bh);
-+	__wait_on_buffer(bh);
- }
- 
- static inline int trylock_buffer(struct buffer_head *bh)
-diff -puN fs/buffer.c~wait_on_buffer-remove-the-buffer_locked-test fs/buffer.c
---- a/fs/buffer.c~wait_on_buffer-remove-the-buffer_locked-test
-+++ a/fs/buffer.c
-@@ -90,6 +90,8 @@ EXPORT_SYMBOL(unlock_buffer);
-  */
- void __wait_on_buffer(struct buffer_head * bh)
- {
-+	might_sleep();
-+
- 	/*
- 	 * Calling wait_on_buffer() against a zero-ref buffer is a nasty bug
- 	 * because it will almost always "work".  However this buffer can be
-_
-
+iEYEARECAAYFAkvI4lIACgkQLPWxlyuTD7Ju9wCgphZEI8r9jB+75PIxE4l/S/H+
+jlEAnR+vo57PB2ZH+PhTSoxWnQ9V74M3
+=bQAA
+-----END PGP SIGNATURE-----
