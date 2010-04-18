@@ -1,45 +1,44 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH RFC]  buffer_head: remove redundant test from wait_on_buffer
-Date: Fri, 16 Apr 2010 18:18:58 -0400
-Message-ID: <4BC8E252.8030400@suse.com>
-References: <1271415499.2075.19.camel@localhost> <20100416145123.283f216c.akpm@linux-foundation.org>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 15805] New: reiserfs locking
+Date: Sun, 18 Apr 2010 07:11:12 GMT
+Message-ID: <bug-15805-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20100416145123.283f216c.akpm@linux-foundation.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Richard Kennedy <richard@rsk.demon.co.uk>, Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <jens.axboe@oracle.com>, lkml <linux-kernel@vger.kernel.org>, Nick Piggin <npiggin@suse.de>, reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+https://bugzilla.kernel.org/show_bug.cgi?id=15805
 
-On 04/16/2010 05:51 PM, Andrew Morton wrote:
-> And while we're there...
-> 
-> This might make reiserfs explode.
-> We can remove __wait_on_buffer() altogether now.  For some strange reason
-> reiserfs calls __wait_on_buffer() directly.  Maybe it's passing in
-> zero-ref buffers.  If so, we'll get warnings now and shall need to look at
-> that.
+           Summary: reiserfs locking
+           Product: File System
+           Version: 2.5
+          Platform: All
+        OS/Version: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: ReiserFS
+        AssignedTo: reiserfs-devel@vger.kernel.org
+        ReportedBy: maciej.rutecki@gmail.com
+                CC: rjw@sisk.pl, maciej.rutecki@gmail.com,
+                    a.beregalov@gmail.com
+        Regression: Yes
 
-I don't think that's the case. I think reiserfs just calls
-__wait_on_buffer just to skip the duplicate buffer_locked() test since
-every call is in an "if buffer_locked()" block. I don't think it's
-passing in zero-ref buffers anywhere, and I'd prefer it to explode if it is.
 
-- -Jeff
+Subject    : reiserfs locking
+Submitter  : Alexander Beregalov <a.beregalov@gmail.com>
+Date       : 2010-04-15 21:02
+Message-ID : t2ka4423d671004151402n7b2dc425mdc9c6bb9640d63fb@mail.gmail.com
+References : http://marc.info/?l=linux-kernel&m=127136535323933&w=2
 
-- -- 
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.15 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
+This entry is being used for tracking a regression from 2.6.32.  Please don't
+close it until the problem is fixed in the mainline.
 
-iEYEARECAAYFAkvI4lIACgkQLPWxlyuTD7Ju9wCgphZEI8r9jB+75PIxE4l/S/H+
-jlEAnR+vo57PB2ZH+PhTSoxWnQ9V74M3
-=bQAA
------END PGP SIGNATURE-----
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
