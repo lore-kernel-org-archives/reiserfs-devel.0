@@ -1,157 +1,30 @@
-From: melodramus@online.de
-Subject: Re: (nearly) full hd causes weird and corrupting behaviour of apps
- and tools
-Date: Mon, 19 Apr 2010 22:04:53 +0200
-Message-ID: <20100419220453.5af4ab06.melodramus@online.de>
-References: <20100419170223.1418c33d.melodramus@online.de>
-	<4BCC9D97.7090107@suse.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 15805] reiserfs locking
+Date: Tue, 20 Apr 2010 03:40:14 GMT
+Message-ID: <201004200340.o3K3eEYo019269@demeter.kernel.org>
+References: <bug-15805-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="Multipart=_Mon__19_Apr_2010_22_04_53_+0200_bYTod7izXAFWVI/j"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4BCC9D97.7090107@suse.com>
+In-Reply-To: <bug-15805-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-This is a multi-part message in MIME format.
-
---Multipart=_Mon__19_Apr_2010_22_04_53_+0200_bYTod7izXAFWVI/j
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-On Mon, 19 Apr 2010 14:14:47 -0400
-Jeff Mahoney <jeffm@suse.com> wrote:
-
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
-> 
-> 
-> Deleting the log file isn't enough. You need to restart syslog. The file
-> can't really be deleted until all open references of it are gone.
-> 
-> As for having space free but unable to use it, please attach the output
-> of debugreiserfs -o <dev>
-> 
-> I've seen it happen before where a file system becomes badly fragmented
-> enough that new objectids can't be represented in the objectid map at
-> the start of the file system.
-
-makes me wonder if apps can trust the posix interfaces in case a reiserfs is fragmented badly. will write() write to nil, and is fsync() reliable?
-
-> 
-> - -Jeff
-
-attached are the files before and after reiserfschk
+https://bugzilla.kernel.org/show_bug.cgi?id=15805
 
 
-MeloDramus <melodramus@online.de>
+Rafael J. Wysocki <rjw@sisk.pl> changed:
 
---Multipart=_Mon__19_Apr_2010_22_04_53_+0200_bYTod7izXAFWVI/j
-Content-Type: plain/text;
- name="text"
-Content-Disposition: attachment;
- filename="text"
-Content-Transfer-Encoding: base64
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+     Kernel Version|                            |2.6.34-rc3
 
-CkZpbGVzeXN0ZW0gc3RhdGU6IGNvbnNpc3RlbmN5IGlzIG5vdCBjaGVja2VkIGFmdGVyIGxhc3Qg
-bW91bnRpbmcKClJlaXNlcmZzIHN1cGVyIGJsb2NrIGluIGJsb2NrIDE2IG9uIDB4ODAyIG9mIGZv
-cm1hdCAzLjYgd2l0aCBzdGFuZGFyZCBqb3VybmFsCkNvdW50IG9mIGJsb2NrcyBvbiB0aGUgZGV2
-aWNlOiAxMjIyOTQ0Ck51bWJlciBvZiBiaXRtYXBzOiAzOApCbG9ja3NpemU6IDQwOTYKRnJlZSBi
-bG9ja3MgKGNvdW50IG9mIGJsb2NrcyAtIHVzZWQgW2pvdXJuYWwsIGJpdG1hcHMsIGRhdGEsIHJl
-c2VydmVkXSBibG9ja3MpOiAzMzk2MQpSb290IGJsb2NrOiAxMjEyNDg1CkZpbGVzeXN0ZW0gaXMg
-Tk9UIGNsZWFuClRyZWUgaGVpZ2h0OiA1Ckhhc2ggZnVuY3Rpb24gdXNlZCB0byBzb3J0IG5hbWVz
-OiAicjUiCk9iamVjdGlkIG1hcCBzaXplIDQyLCBtYXggOTcyCkpvdXJuYWwgcGFyYW1ldGVyczoK
-CURldmljZSBbMHgwXQoJTWFnaWMgWzB4NThiZjc4Y2FdCglTaXplIDgxOTMgYmxvY2tzIChpbmNs
-dWRpbmcgMSBmb3Igam91cm5hbCBoZWFkZXIpIChmaXJzdCBibG9jayAxOCkKCU1heCB0cmFuc2Fj
-dGlvbiBsZW5ndGggMTAyNCBibG9ja3MKCU1heCBiYXRjaCBzaXplIDkwMCBibG9ja3MKCU1heCBj
-b21taXQgYWdlIDMwCkJsb2NrcyByZXNlcnZlZCBieSBqb3VybmFsOiAwCkZzIHN0YXRlIGZpZWxk
-OiAweDA6CnNiX3ZlcnNpb246IDIKaW5vZGUgZ2VuZXJhdGlvbiBudW1iZXI6IDEwMjQ1OTM1ClVV
-SUQ6IDAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMApMQUJFTDogClNldCBmbGFn
-cyBpbiBTQjoKCUFUVFJJQlVURVMgQ0xFQU4KTW91bnQgY291bnQ6IDU1NgpNYXhpbXVtIG1vdW50
-IGNvdW50OiBEaXNhYmxlZC4gUnVuIGZzY2sucmVpc2VyZnMoOCkgb3IgdXNlIHR1bmVmcy5yZWlz
-ZXJmcyg4KSB0byBlbmFibGUuCkxhc3QgZnNjayBydW46IE5ldmVyIHdpdGggYSB2ZXJzaW9uIHRo
-YXQgc3VwcG9ydHMgdGhpcyBmZWF0dXJlLgpDaGVjayBpbnRlcnZhbCBpbiBkYXlzOiBEaXNhYmxl
-ZC4gUnVuIGZzY2sucmVpc2VyZnMoOCkgb3IgdXNlIHR1bmVmcy5yZWlzZXJmcyg4KSB0byBlbmFi
-bGUuCk1hcCBvZiBvYmplY3RpZHMgKHN1cGVyIGJsb2NrIHNpemUgMjA0KQpidXN5KDEtMTIwNjg5
-MykgZnJlZSgxMjA2ODk0LTEyMDY4OTQpIGJ1c3koMTIwNjg5NS0xMjA2OTAwKSBmcmVlKDEyMDY5
-MDEtMTIwNjkwMSkgYnVzeSgxMjA2OTAyLTEyMDY5NTMpIGZyZWUoMTIwNjk1NC0xMjA2OTU0KSBi
-dXN5KDEyMDY5NTUtMTIwNjk1OCkgZnJlZSgxMjA2OTU5LTEyMDY5NTkpIGJ1c3koMTIwNjk2MC0x
-MjA2OTYwKSBmcmVlKDEyMDY5NjEtMTIwNjk2MSkgYnVzeSgxMjA2OTYyLTEyMDY5ODApIGZyZWUo
-MTIwNjk4MS0xMjA2OTgxKSBidXN5KDEyMDY5ODItMTIwNjk5NykgZnJlZSgxMjA2OTk4LTEyMDY5
-OTgpIGJ1c3koMTIwNjk5OS0xMjA2OTk5KSBmcmVlKDEyMDcwMDAtMTIwNzAwMSkgYnVzeSgxMjA3
-MDAyLTEyMDcwMDIpIGZyZWUoMTIwNzAwMy0xMjA3MDA4KSBidXN5KDEyMDcwMDktMTIwNzAwOSkg
-ZnJlZSgxMjA3MDEwLTEyMDcwMTEpIGJ1c3koMTIwNzAxMi0xMjA3MDEzKSBmcmVlKDEyMDcwMTQt
-MTIwNzAxNCkgYnVzeSgxMjA3MDE1LTEyMDcwMTUpIGZyZWUoMTIwNzAxNi0xMjA3MDE3KSBidXN5
-KDEyMDcwMTgtMTIwNzAxOCkgZnJlZSgxMjA3MDE5LTEyMDcwMTkpIGJ1c3koMTIwNzAyMC0xMjA3
-MDIyKSBmcmVlKDEyMDcwMjMtMTIwNzAyNCkgYnVzeSgxMjA3MDI1LTEyMDcwMjYpIGZyZWUoMTIw
-NzAyNy0xMjA3MDI4KSBidXN5KDEyMDcwMjktMTIwNzAzMCkgZnJlZSgxMjA3MDMxLTEyMDcwNDEp
-IGJ1c3koMTIwNzA0Mi0xMjA3MDQyKSBmcmVlKDEyMDcwNDMtMTIwNzA0NCkgYnVzeSgxMjA3MDQ1
-LTEyMDcwNDUpIGZyZWUoMTIwNzA0Ni0xMjA3MTY3KSBidXN5KDEyMDcxNjgtMTIwNzE2OSkgZnJl
-ZSgxMjA3MTcwLTEyMDcxOTcpIGJ1c3koMTIwNzE5OC0xMjA3MTk4KSBmcmVlKDEyMDcxOTktMTIw
-NzIwMCkgYnVzeSgxMjA3MjAxLTEyMDcyMDUpIGZyZWUoMTIwNzIwNi00Mjk0OTY3Mjk1KSAKT2Jq
-ZWN0IGlkIGFycmF5IGhhcyBzaXplIDQyIChtYXggOTcyKToqMSAxMjA2ODk0ICoxMjA2ODk1IDEy
-MDY5MDEgKjEyMDY5MDIgMTIwNjk1NCAqMTIwNjk1NSAxMjA2OTU5ICoxMjA2OTYwIDEyMDY5NjEg
-KjEyMDY5NjIgMTIwNjk4MSAqMTIwNjk4MiAxMjA2OTk4ICoxMjA2OTk5IDEyMDcwMDAgKjEyMDcw
-MDIgMTIwNzAwMyAqMTIwNzAwOSAxMjA3MDEwICoxMjA3MDEyIDEyMDcwMTQgKjEyMDcwMTUgMTIw
-NzAxNiAqMTIwNzAxOCAxMjA3MDE5ICoxMjA3MDIwIDEyMDcwMjMgKjEyMDcwMjUgMTIwNzAyNyAq
-MTIwNzAyOSAxMjA3MDMxICoxMjA3MDQyIDEyMDcwNDMgKjEyMDcwNDUgMTIwNzA0NiAqMTIwNzE2
-OCAxMjA3MTcwICoxMjA3MTk4IDEyMDcxOTkgKjEyMDcyMDEgMTIwNzIwNiAK
 
---Multipart=_Mon__19_Apr_2010_22_04_53_+0200_bYTod7izXAFWVI/j
-Content-Type: plain/text;
- name="text2"
-Content-Disposition: attachment;
- filename="text2"
-Content-Transfer-Encoding: base64
 
-CkZpbGVzeXN0ZW0gc3RhdGU6IGNvbnNpc3RlbnQKClJlaXNlcmZzIHN1cGVyIGJsb2NrIGluIGJs
-b2NrIDE2IG9uIDB4ODAyIG9mIGZvcm1hdCAzLjYgd2l0aCBzdGFuZGFyZCBqb3VybmFsCkNvdW50
-IG9mIGJsb2NrcyBvbiB0aGUgZGV2aWNlOiAxMjIyOTQ0Ck51bWJlciBvZiBiaXRtYXBzOiAzOApC
-bG9ja3NpemU6IDQwOTYKRnJlZSBibG9ja3MgKGNvdW50IG9mIGJsb2NrcyAtIHVzZWQgW2pvdXJu
-YWwsIGJpdG1hcHMsIGRhdGEsIHJlc2VydmVkXSBibG9ja3MpOiAzMzk2MApSb290IGJsb2NrOiAx
-MjEyNDg1CkZpbGVzeXN0ZW0gaXMgY2xlYW4KVHJlZSBoZWlnaHQ6IDUKSGFzaCBmdW5jdGlvbiB1
-c2VkIHRvIHNvcnQgbmFtZXM6ICJyNSIKT2JqZWN0aWQgbWFwIHNpemUgNjIsIG1heCA5NzIKSm91
-cm5hbCBwYXJhbWV0ZXJzOgoJRGV2aWNlIFsweDBdCglNYWdpYyBbMHg1OGJmNzhjYV0KCVNpemUg
-ODE5MyBibG9ja3MgKGluY2x1ZGluZyAxIGZvciBqb3VybmFsIGhlYWRlcikgKGZpcnN0IGJsb2Nr
-IDE4KQoJTWF4IHRyYW5zYWN0aW9uIGxlbmd0aCAxMDI0IGJsb2NrcwoJTWF4IGJhdGNoIHNpemUg
-OTAwIGJsb2NrcwoJTWF4IGNvbW1pdCBhZ2UgMzAKQmxvY2tzIHJlc2VydmVkIGJ5IGpvdXJuYWw6
-IDAKRnMgc3RhdGUgZmllbGQ6IDB4MDoKc2JfdmVyc2lvbjogMgppbm9kZSBnZW5lcmF0aW9uIG51
-bWJlcjogMTAyNDU5NjcKVVVJRDogPG5vIGxpYnV1aWQgaW5zdGFsbGVkPgpMQUJFTDogClNldCBm
-bGFncyBpbiBTQjoKCUFUVFJJQlVURVMgQ0xFQU4KTW91bnQgY291bnQ6IDEKTWF4aW11bSBtb3Vu
-dCBjb3VudDogMzAKTGFzdCBmc2NrIHJ1bjogTW9uIEFwciAxOSAyMToyMjo0MCAyMDEwCkNoZWNr
-IGludGVydmFsIGluIGRheXM6IDE4MApNYXAgb2Ygb2JqZWN0aWRzIChzdXBlciBibG9jayBzaXpl
-IDIwNCkKYnVzeSgxLTM2MCkgZnJlZSgzNjEtMzYxKSBidXN5KDM2Mi00NjAyNikgZnJlZSg0NjAy
-Ny00NjAyNykgYnVzeSg0NjAyOC00NjA0MykgZnJlZSg0NjA0NC00NjA0NCkgYnVzeSg0NjA0NS00
-NjA0NSkgZnJlZSg0NjA0Ni00NjA0NikgYnVzeSg0NjA0Ny00NjA0NykgZnJlZSg0NjA0OC00NjA0
-OCkgYnVzeSg0NjA0OS00NjA3MSkgZnJlZSg0NjA3Mi00NjA3MikgYnVzeSg0NjA3My00NjA3NCkg
-ZnJlZSg0NjA3NS00NjA3NSkgYnVzeSg0NjA3Ni00NjA4NCkgZnJlZSg0NjA4NS00NjA4NSkgYnVz
-eSg0NjA4Ni00NjA5MSkgZnJlZSg0NjA5Mi00NjA5MikgYnVzeSg0NjA5My0xMDc4MzM1KSBmcmVl
-KDEwNzgzMzYtMTA3ODMzNikgYnVzeSgxMDc4MzM3LTEyMDY4OTMpIGZyZWUoMTIwNjg5NC0xMjA2
-ODk0KSBidXN5KDEyMDY4OTUtMTIwNjg5NSkgZnJlZSgxMjA2ODk2LTEyMDY4OTYpIGJ1c3koMTIw
-Njg5Ny0xMjA2OTUzKSBmcmVlKDEyMDY5NTQtMTIwNjk1NCkgYnVzeSgxMjA2OTU1LTEyMDY5NTgp
-IGZyZWUoMTIwNjk1OS0xMjA2OTU5KSBidXN5KDEyMDY5NjAtMTIwNjk2MCkgZnJlZSgxMjA2OTYx
-LTEyMDY5NjEpIGJ1c3koMTIwNjk2Mi0xMjA2OTgwKSBmcmVlKDEyMDY5ODEtMTIwNjk4MSkgYnVz
-eSgxMjA2OTgyLTEyMDY5OTcpIGZyZWUoMTIwNjk5OC0xMjA2OTk4KSBidXN5KDEyMDY5OTktMTIw
-Njk5OSkgZnJlZSgxMjA3MDAwLTEyMDcwMDEpIGJ1c3koMTIwNzAwMi0xMjA3MDAyKSBmcmVlKDEy
-MDcwMDMtMTIwNzAwOCkgYnVzeSgxMjA3MDA5LTEyMDcwMDkpIGZyZWUoMTIwNzAxMC0xMjA3MDEx
-KSBidXN5KDEyMDcwMTItMTIwNzAxMykgZnJlZSgxMjA3MDE0LTEyMDcwMTQpIGJ1c3koMTIwNzAx
-NS0xMjA3MDE1KSBmcmVlKDEyMDcwMTYtMTIwNzAxNykgYnVzeSgxMjA3MDE4LTEyMDcwMTgpIGZy
-ZWUoMTIwNzAxOS0xMjA3MDE5KSBidXN5KDEyMDcwMjAtMTIwNzAyMikgZnJlZSgxMjA3MDIzLTEy
-MDcwMjQpIGJ1c3koMTIwNzAyNS0xMjA3MDI2KSBmcmVlKDEyMDcwMjctMTIwNzAyOCkgYnVzeSgx
-MjA3MDI5LTEyMDcwMzApIGZyZWUoMTIwNzAzMS0xMjA3MDQxKSBidXN5KDEyMDcwNDItMTIwNzA0
-MikgZnJlZSgxMjA3MDQzLTEyMDcwNDQpIGJ1c3koMTIwNzA0NS0xMjA3MDQ1KSBmcmVlKDEyMDcw
-NDYtMTIwNzE2NykgYnVzeSgxMjA3MTY4LTEyMDcxNjkpIGZyZWUoMTIwNzE3MC0xMjA3MTk3KSBi
-dXN5KDEyMDcxOTgtMTIwNzE5OCkgZnJlZSgxMjA3MTk5LTEyMDcyMDApIGJ1c3koMTIwNzIwMS0x
-MjA3MjA1KSBmcmVlKDEyMDcyMDYtNDI5NDk2NzI5NSkgCk9iamVjdCBpZCBhcnJheSBoYXMgc2l6
-ZSA2MiAobWF4IDk3Mik6KjEgMzYxICozNjIgNDYwMjcgKjQ2MDI4IDQ2MDQ0ICo0NjA0NSA0NjA0
-NiAqNDYwNDcgNDYwNDggKjQ2MDQ5IDQ2MDcyICo0NjA3MyA0NjA3NSAqNDYwNzYgNDYwODUgKjQ2
-MDg2IDQ2MDkyICo0NjA5MyAxMDc4MzM2ICoxMDc4MzM3IDEyMDY4OTQgKjEyMDY4OTUgMTIwNjg5
-NiAqMTIwNjg5NyAxMjA2OTU0ICoxMjA2OTU1IDEyMDY5NTkgKjEyMDY5NjAgMTIwNjk2MSAqMTIw
-Njk2MiAxMjA2OTgxICoxMjA2OTgyIDEyMDY5OTggKjEyMDY5OTkgMTIwNzAwMCAqMTIwNzAwMiAx
-MjA3MDAzICoxMjA3MDA5IDEyMDcwMTAgKjEyMDcwMTIgMTIwNzAxNCAqMTIwNzAxNSAxMjA3MDE2
-ICoxMjA3MDE4IDEyMDcwMTkgKjEyMDcwMjAgMTIwNzAyMyAqMTIwNzAyNSAxMjA3MDI3ICoxMjA3
-MDI5IDEyMDcwMzEgKjEyMDcwNDIgMTIwNzA0MyAqMTIwNzA0NSAxMjA3MDQ2ICoxMjA3MTY4IDEy
-MDcxNzAgKjEyMDcxOTggMTIwNzE5OSAqMTIwNzIwMSAxMjA3MjA2IAo=
 
---Multipart=_Mon__19_Apr_2010_22_04_53_+0200_bYTod7izXAFWVI/j--
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
