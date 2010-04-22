@@ -1,50 +1,32 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: ReiserFS Crash
-Date: Wed, 21 Apr 2010 23:04:12 +0200
-Message-ID: <4BCF684C.2020609@gmail.com>
-References: <4BCF6253.4040301@futureware.at>
+From: melodramus@online.de
+Subject: Re: (nearly) full hd causes weird and corrupting behaviour of apps
+ and tools
+Date: Thu, 22 Apr 2010 02:05:23 +0200
+Message-ID: <20100422020523.d7516748.melodramus@online.de>
+References: <20100419170223.1418c33d.melodramus@online.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4BCF6253.4040301@futureware.at>
+In-Reply-To: <20100419170223.1418c33d.melodramus@online.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?ISO-8859-15?Q?Philipp_G=FChring?= <pg@futureware.at>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-Hello Philipp,
-
-There were a number of fixups in the xattrs path since 2.6.25..
-Could you consider upgrading your kernel?
-
-Edward.
+just wanted to add that i just detected a broken reiserfs on one of my partitions. this is the first time since i use reiserfs (about eight years now!) there's something really wrong with it.
 
 
-Philipp G=FChring wrote:
-> Hi,
->
-> I am currently analyzing a production machine that has (un)regular
-> troubles, and discovered a problem in ReiserFS, I think:
->
-> http://www2.futureware.at/~philipp/reiserfs-crash.txt
->
-> I guess that some more NULL checks might be helpful in and around
-> sprintf_le_key.
->
-> If you need any additional information from that server, please let m=
-e know.
-> (I guess that there is probably a problem in the filesystem on the di=
-sk,
-> but I think that kernel crash is superfluous anyway)
->
-> Best regards,
-> Philipp G=FChring
->
->
->  =20
+On Mon, 19 Apr 2010 17:02:23 +0200
+melodramus@online.de wrote:
 
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> am not shure if i'm right here. i'm still using reiserfs on my root partition and detected strange behaviour when the partition is believed to be 100% full by the system (namely df, though there may still be a hundred megs available.) because of the widespread disorientation of tools and apps i believe that the fs-driver is not telling the truth about the available physical space.
+> 
+> lots of apps get into trouble, loose their states or configure widgets wrong. for example, sylpheed can't check against certificate servers anymore, the firefox download dialog can't list new entries but downloads them in background while halting complete downloads on their last few seconds and refusing to restart or delete the entries. this could all be just the apps but even the system tools behave strange. i copied an old backup cd to a new backup hd, grabbing the iso and loop-mounting it on the hd for faster access. at some point, tools showed up wrong information. df even showed old information about previous mounts from where ever it got that back. i detected that the system log has grown to about hundred megs because of lots of usb events (for the backup hd.) after having deleted 
+ the logfile, df even showed less available memory than before (some kb.) mount refused to unmount partitions, which caused me to restart the system.
+> 
+> in the new session df showed about 143 MB of free space for the root partition. things seemed to work again but, though the iso loop-mounted fine, i wasn't able to read files from it anymore because of io-errors all through (the next iso worked fine.) seems that mount has even scratched this iso. this is why i believe that the current situation is really dangerous, though a full root partition is possibly not that common.
+> 
+> MeloDramus <melodramus@online.de>
+
+
+MeloDramus <melodramus@online.de>
