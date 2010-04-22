@@ -1,66 +1,79 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: (nearly) full hd causes weird and corrupting behaviour of apps
- and tools
-Date: Thu, 22 Apr 2010 15:10:21 -0400
-Message-ID: <4BD09F1D.5020700@suse.com>
-References: <20100419170223.1418c33d.melodramus@online.de>	<4BCC9D97.7090107@suse.com> <20100419220453.5af4ab06.melodramus@online.de>
+Subject: [PATCH RESUBMIT] reiserfs: Remove 2 TB file size limit
+Date: Thu, 22 Apr 2010 15:12:31 -0400
+Message-ID: <4BD09F9F.6010801@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20100419220453.5af4ab06.melodramus@online.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: melodramus@online.de
-Cc: reiserfs-devel@vger.kernel.org
+To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Cc: Edward Shishkin <edward.shishkin@gmail.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+ In its early life, reiserfs had an evolving s_max_bytes. It started out
+ at 4 GB, then was raised to MAX_LFS_FILESIZE, then dropped to 2 TiB when
+ it was observed that struct stat only had a 32-bit st_blocks field.
 
-On 04/19/2010 04:04 PM, melodramus@online.de wrote:
-> On Mon, 19 Apr 2010 14:14:47 -0400
-> Jeff Mahoney <jeffm@suse.com> wrote:
-> 
->> -----BEGIN PGP SIGNED MESSAGE-----
->> Hash: SHA1
->>
->>
->> Deleting the log file isn't enough. You need to restart syslog. The file
->> can't really be deleted until all open references of it are gone.
->>
->> As for having space free but unable to use it, please attach the output
->> of debugreiserfs -o <dev>
->>
->> I've seen it happen before where a file system becomes badly fragmented
->> enough that new objectids can't be represented in the objectid map at
->> the start of the file system.
-> 
-> makes me wonder if apps can trust the posix interfaces in case a reiserfs is fragmented badly. will write() write to nil, and is fsync() reliable?
+ Since then, both the kernel and glibc have evolved as well and now both
+ support 64-bit st_blocks. Applications that can't deal with these ranges
+ are assumed to be "legacy" or "broken." File systems now routinely
+ support file sizes much larger than can be represented by 2^32 * 512.
 
-It's not an issue of fragmentation in the normal sense - it's an issue
-of objectid fragmentation. Once an objectid is released, it can be
-reclaimed. Fragmentation in the tree isn't an issue - it's just the map
-that represents the allocations that can be an issue. There are just
-certain cases - and I've only seen this in the wild exactly once - where
-a heavy create-delete load in a pattern I haven't been able to reproduce
-will cause the map to need more space than allotted to represent it.
+ But we never revisited that limitation. ReiserFS has always been able to
+ support larger file sizes (up to 16 TiB, in fact), but the s_max_bytes
+ limitation has prevented that.
 
-Even if this were to occur, fsync() and write() are still reliable. It
-will just return -ENOSPC when there is clearly space available.
+ This patch adds a max_file_offset helper to set s_max_bytes to a more
+ appropriate value. I noticed that XFS adjusts the limit based on the
+ CPU but I'd prefer to err on the side of compatibility and place the
+ limit at the smaller of the 32-bit MAX_LFS_FILESIZE and the maximum
+ supported by the file system. At a 4k block size, this is conveniently
+ also the advertised maximum file size of reiserfs.
 
-> attached are the files before and after reiserfschk
+ Update: This version properly extends PAGE_SIZE_CACHE so the math works
+         on 32-bit systems.
 
-Ok, thanks. They don't exhibit the problem I was thinking of.
+ This bug is tracked at: https://bugzilla.novell.com/show_bug.cgi?id=592100
 
-- -Jeff
-- -- 
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ fs/reiserfs/super.c |   17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -1309,6 +1309,18 @@ out_err:
+ 	return err;
+ }
+ 
++static inline loff_t
++reiserfs_max_file_offset(struct super_block *sb)
++{
++	/* Limited by stat_data->sd_blocks, 2^32-1 blocks */
++	loff_t fs_max = ((u64)sb->s_blocksize << 32) - sb->s_blocksize;
++
++	/* Limited by 32-bit MAX_LFS_FILESIZE */
++	loff_t page_cache_max = (((u64)PAGE_CACHE_SIZE << 31)-1);
++
++	return min(fs_max, page_cache_max);
++}
++
+ static int read_super_block(struct super_block *s, int offset)
+ {
+ 	struct buffer_head *bh;
+@@ -1398,10 +1410,7 @@ static int read_super_block(struct super
+ 	s->dq_op = &reiserfs_quota_operations;
+ #endif
+ 
+-	/* new format is limited by the 32 bit wide i_blocks field, want to
+-	 ** be one full block below that.
+-	 */
+-	s->s_maxbytes = (512LL << 32) - s->s_blocksize;
++	s->s_maxbytes = reiserfs_max_file_offset(s);
+ 	return 0;
+ }
+ 
+-- 
 Jeff Mahoney
 SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.15 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
-
-iEYEARECAAYFAkvQnx0ACgkQLPWxlyuTD7JauwCgmgNAckDBOyWxKafX7QCh4275
-FXAAniASL6yiubjOywq/tAddLPn6Znsv
-=rpQ7
------END PGP SIGNATURE-----
