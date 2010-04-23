@@ -1,79 +1,60 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH RESUBMIT] reiserfs: Remove 2 TB file size limit
-Date: Thu, 22 Apr 2010 15:12:31 -0400
-Message-ID: <4BD09F9F.6010801@suse.com>
+From: Dushan Tcholich <dusanc@gmail.com>
+Subject: Long rm times of ccreg40 R4 files
+Date: Fri, 23 Apr 2010 10:37:17 +0200
+Message-ID: <z2la08621851004230137s75d5c7e4h89ee72477fca56ba@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:received:date:received:message-id
+         :subject:from:to:content-type;
+        bh=HdhINZkdv85fKDQw2sxwhCaej56t5rPoTBU1F0ap2Oc=;
+        b=viJ0cSonPqJp9kO0X/mtdRg3PD5Pzy3+UnnEIgjgeyuSaFmaAx3JtLHkIyTdjYSTOi
+         Ei+VUtnl2aXBO40wqYedxh75JxUAZ0N+Wf/InB4O44VIDvWjzDHN0TiHjDyMgZ6SmQas
+         kVTB/W2KJmA2kW1kb0r9V3URL2O0ImTIBgz9k=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
-Cc: Edward Shishkin <edward.shishkin@gmail.com>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
- In its early life, reiserfs had an evolving s_max_bytes. It started out
- at 4 GB, then was raised to MAX_LFS_FILESIZE, then dropped to 2 TiB when
- it was observed that struct stat only had a 32-bit st_blocks field.
+I was restructuring my partition layout on some disk where I had plain
+R4, and while doing it I deleted some large files.
+I was suprised how short delete times were.
+So on cc partition I created incompressable file ( as per Edwards
+instructions http://marc.info/?l=reiserfs-devel&m=121262617103900&w=2)
+and:
 
- Since then, both the kernel and glibc have evolved as well and now both
- support 64-bit st_blocks. Applications that can't deal with these ranges
- are assumed to be "legacy" or "broken." File systems now routinely
- support file sizes much larger than can be represented by 2^32 * 512.
+localhost ~ # ls -l /w*
+-rw-r--r-- 1 root root 2600005632 Apr 23 10:22 /windows.qcow2
+localhost ~ # time rm /windows.qcow2
 
- But we never revisited that limitation. ReiserFS has always been able to
- support larger file sizes (up to 16 TiB, in fact), but the s_max_bytes
- limitation has prevented that.
+real    0m0.537s
+user    0m0.000s
+sys     0m0.456s
 
- This patch adds a max_file_offset helper to set s_max_bytes to a more
- appropriate value. I noticed that XFS adjusts the limit based on the
- CPU but I'd prefer to err on the side of compatibility and place the
- limit at the smaller of the 32-bit MAX_LFS_FILESIZE and the maximum
- supported by the file system. At a 4k block size, this is conveniently
- also the advertised maximum file size of reiserfs.
+But when that file is managed with ccreg40 plugin on same partition:
+localhost ~ # ls -l /w*
+-r--r--r-- 1 root root 2600005632 Apr 23 10:29 /w.qcow2
+localhost ~ # time rm /w.qcow2
 
- Update: This version properly extends PAGE_SIZE_CACHE so the math works
-         on 32-bit systems.
+real    1m1.523s
+user    0m0.000s
+sys     0m17.685s
 
- This bug is tracked at: https://bugzilla.novell.com/show_bug.cgi?id=592100
+iotop: 2044 be/4 root       16.23 M/s   16.25 M/s  ?unavailable?  rm /w.qcow2
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- fs/reiserfs/super.c |   17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+If I can give any more data feel free to ask
 
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -1309,6 +1309,18 @@ out_err:
- 	return err;
- }
- 
-+static inline loff_t
-+reiserfs_max_file_offset(struct super_block *sb)
-+{
-+	/* Limited by stat_data->sd_blocks, 2^32-1 blocks */
-+	loff_t fs_max = ((u64)sb->s_blocksize << 32) - sb->s_blocksize;
-+
-+	/* Limited by 32-bit MAX_LFS_FILESIZE */
-+	loff_t page_cache_max = (((u64)PAGE_CACHE_SIZE << 31)-1);
-+
-+	return min(fs_max, page_cache_max);
-+}
-+
- static int read_super_block(struct super_block *s, int offset)
- {
- 	struct buffer_head *bh;
-@@ -1398,10 +1410,7 @@ static int read_super_block(struct super
- 	s->dq_op = &reiserfs_quota_operations;
- #endif
- 
--	/* new format is limited by the 32 bit wide i_blocks field, want to
--	 ** be one full block below that.
--	 */
--	s->s_maxbytes = (512LL << 32) - s->s_blocksize;
-+	s->s_maxbytes = reiserfs_max_file_offset(s);
- 	return 0;
- }
- 
--- 
-Jeff Mahoney
-SUSE Labs
+Have a nice day
+
+Dushan
+
+PS.
+localhost ~ # uname -a
+Linux localhost 2.6.31-hh #1 SMP Sat Feb 6 17:58:52 CET 2010 x86_64
+Intel(R) Core(TM)2 CPU 6400 @ 2.13GHz GenuineIntel GNU/Linux
+
+/dev/md2                /               reiser4         noatime         0 0
+
+Partition on Raid1 created with plain mkfs.reiser4 -o create=ccreg40
