@@ -1,51 +1,41 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH] reiserfsprogs: fix use after free with fsck_progress
-Date: Fri, 23 Apr 2010 09:47:05 -0400
-Message-ID: <4BD1A4D9.3030508@suse.com>
-References: <4BC789C2.4030207@suse.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+From: Changli Gao <xiaosuo@gmail.com>
+Subject: [PATCH] reiserfs: remove unused variable wait
+Date: Wed, 28 Apr 2010 15:10:57 +0800
+Message-ID: <1272438657-28086-1-git-send-email-xiaosuo@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4BC789C2.4030207@suse.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:from:to:cc:subject:date
+         :message-id:x-mailer;
+        bh=kI9AkVYUusMc9RmLDoRJTDOJm4SZgLie4HP2j2g+yXo=;
+        b=cfgARHlqvM/xRaixgnkTRPLvsPGJVU8bcnY070C1YZ9Nk1/MpId/B++rGi0PwGy4vb
+         RbbZg4LVExSTLJgq2U9WQVGvqOQFkrPPYg+IXDkyMvn+DSG54t3MTCfwkwkZvTpk8mA8
+         s0zZJ5lLcpLwQevln+wR8YikPfzil9BAegEt4=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward.shishkin@gmail.com>
+Content-Transfer-Encoding: 7bit
+To: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Alexander Beregalov <a.beregalov@gmail.com>, Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <jens.axboe@oracle.com>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Changli Gao <xiaosuo@gmail.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+remove unused variable wait
 
-On 04/15/2010 05:48 PM, Jeff Mahoney wrote:
->  fsck_progress uses fs to get the log file handle but fs is freed before
->  fsck_progress is caleld when it's about to print the "finished" message.
-> 
->  When glibc is run with:
->  MALLOC_CHECK_=3
->  MALLOC_PERTURB_=69
-> 
->  as is the default on newer versions of openSUSE, it poisons freed memory
->  to detect conditions like this. As a result, reiserfsck segfaults on these
->  systems.
-> 
->  This patch fixes fsck to close the file system after printing the completion
->  message.
-> 
->  Edward, I'm working on adding support to check extended attributes, so please
->  hold off on an update until I post those patches early next week.
+remove unused variable wait
 
-BTW, until this fix is released in an actual update, it can be worked
-around by just un-setting the two variables mentioned above.
-
-- -Jeff
-
-- -- 
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.15 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
-
-iEYEARECAAYFAkvRpNkACgkQLPWxlyuTD7IfJACgp/qHg+2Rb+Qo57NwdH4m84Nn
-z3IAniFX5QBBe3C/uGoN9B0IFSye5awG
-=7Num
------END PGP SIGNATURE-----
+Signed-off-by: Changli Gao <xiaosuo@gmail.com>
+----
+ fs/reiserfs/journal.c |    1 -
+ 1 file changed, 1 deletion(-)
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 19fbc81..1ec952b 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -983,7 +983,6 @@ static int flush_older_commits(struct super_block *s,
+ 
+ static int reiserfs_async_progress_wait(struct super_block *s)
+ {
+-	DEFINE_WAIT(wait);
+ 	struct reiserfs_journal *j = SB_JOURNAL(s);
+ 
+ 	if (atomic_read(&j->j_async_throttle)) {
