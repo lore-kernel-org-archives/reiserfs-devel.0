@@ -1,179 +1,275 @@
-From: Tim Shearouse <t.shearouse@gmail.com>
-Subject: Re: [PATCH RESUBMIT] reiserfs: Remove 2 TB file size limit
-Date: Fri, 21 May 2010 08:17:42 -0500
-Message-ID: <AANLkTinM2JzWu6mcY2zRl9WQXVc184X-VCCUWyn54QqZ@mail.gmail.com>
-References: <4BF43A65.405@suse.com>
-	 <AANLkTilTAapxpbA3ty5CuO0Nr0YKmxR_mFtRpyrqiCzF@mail.gmail.com>
-	 <4BF45F94.40500@gmail.com> <4BF5893C.3010802@suse.com>
-Reply-To: T.Shearouse@gmail.com
+From: Greg Thelen <gthelen@google.com>
+Subject: Re: [PATCH RFC]  buffer_head: remove redundant test from wait_on_buffer
+Date: Sat, 22 May 2010 23:05:03 -0700
+Message-ID: <xr93ljbbw3u8.fsf@ninji.mtv.corp.google.com>
+References: <1271415499.2075.19.camel@localhost>
+	<20100416145123.283f216c.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:received:received:reply-to
-         :in-reply-to:references:date:message-id:subject:from:to:cc
-         :content-type:content-transfer-encoding;
-        bh=8zOhb6xJk0IflQOnw0cgQLU/HcAsLows4plRYT0hiGE=;
-        b=IB+wHRL5M+PYrKImOiJ1tyHJtgXqb+r31yYlzJaaQFPUYrjeti6Qk9rvqE8NWgDLqQ
-         rUjQnDTSnSsN8JSyiaRS4h5640nSbJMtRxyznUQ/kPOUXoQfcjCmmOunz1ns/Ufkotnv
-         FG+9VaBW/iR9B+GbupQZz8amRezeKVOWePIPw=
-In-Reply-To: <4BF5893C.3010802@suse.com>
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=google.com; s=beta;
+	t=1274594711; bh=Vqe64syjZ6x0JiWV900usW1GSGQ=;
+	h=To:Cc:Subject:References:From:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type;
+	b=jm4WSJ2gooYSMB6a5Ap5xiKE7twlvivEelCoFYRzCuTPxKrCIEliRINQ3JmHBBWb8
+	 eSBsa0RSp42JdSxwvGNmA==
+In-Reply-To: <20100416145123.283f216c.akpm@linux-foundation.org> (Andrew Morton's message of "Fri\, 16 Apr 2010 14\:51\:23 -0700")
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Edward Shishkin <edward.shishkin@gmail.com>, Leonardo Chiquitto <leonardo.lists@gmail.com>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Richard Kennedy <richard@rsk.demon.co.uk>, Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <jens.axboe@oracle.com>, lkml <linux-kernel@vger.kernel.org>, Nick Piggin <npiggin@suse.de>, Jeff Mahoney <jeffm@suse.com>, reiserfs-devel@vger.kernel.org
 
-On Thu, May 20, 2010 at 2:10 PM, Jeff Mahoney <jeffm@suse.com> wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
->
-> On 05/19/2010 06:00 PM, Edward Shishkin wrote:
->> Leonardo Chiquitto wrote:
->>> On Wed, May 19, 2010 at 4:22 PM, Jeff Mahoney <jeffm@suse.com> wrot=
-e:
->>>
->>>> =A0In its early life, reiserfs had an evolving s_max_bytes. It sta=
-rted out
->>>> =A0at 4 GB, then was raised to MAX_LFS_FILESIZE, then dropped to 2=
- TiB
->>>> when
->>>> =A0it was observed that struct stat only had a 32-bit st_blocks fi=
-eld.
->>>>
->>>> =A0Since then, both the kernel and glibc have evolved as well and =
-now both
->>>> =A0support 64-bit st_blocks. Applications that can't deal with the=
-se
->>>> ranges
->>>> =A0are assumed to be "legacy" or "broken." File systems now routin=
-ely
->>>> =A0support file sizes much larger than can be represented by 2^32 =
-* 512.
->>>>
->>>> =A0But we never revisited that limitation. ReiserFS has always bee=
-n
->>>> able to
->>>> =A0support larger file sizes (up to 16 TiB, in fact), but the s_ma=
-x_bytes
->>>> =A0limitation has prevented that.
->>>>
->>>> =A0This patch adds a max_file_offset helper to set s_max_bytes to =
-a more
->>>> =A0appropriate value. I noticed that XFS adjusts the limit based o=
-n the
->>>> =A0CPU but I'd prefer to err on the side of compatibility and plac=
-e the
->>>> =A0limit at the smaller of the 32-bit MAX_LFS_FILESIZE and the max=
-imum
->>>> =A0supported by the file system. At a 4k block size, this is conve=
-niently
->>>> =A0also the advertised maximum file size of reiserfs.
->>>>
->>>> =A0Update: This version properly extends PAGE_SIZE_CACHE so the ma=
-th works
->>>> =A0 =A0 =A0 =A0 on 32-bit systems.
->>>>
->>>> =A0This bug is tracked at:
->>>> https://bugzilla.novell.com/show_bug.cgi?id=3D592100
->>>>
->>>> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
->>>> - ---
->>>> =A0fs/reiserfs/super.c | =A0 17 +++++++++++++----
->>>> =A01 file changed, 13 insertions(+), 4 deletions(-)
->>>>
->>>> - --- a/fs/reiserfs/super.c
->>>> +++ b/fs/reiserfs/super.c
->>>> @@ -1309,6 +1309,18 @@ out_err:
->>>> =A0 =A0 =A0 =A0return err;
->>>> =A0}
->>>> =A0+static inline loff_t
->>>> +reiserfs_max_file_offset(struct super_block *sb)
->>>> +{
->>>> + =A0 =A0 =A0 /* Limited by stat_data->sd_blocks, 2^32-1 blocks */
->>>> + =A0 =A0 =A0 loff_t fs_max =3D ((u64)sb->s_blocksize << 32) - sb-=
->s_blocksize;
->>>> +
->>>> + =A0 =A0 =A0 /* Limited by 32-bit MAX_LFS_FILESIZE */
->>>> + =A0 =A0 =A0 loff_t page_cache_max =3D (((u64)PAGE_CACHE_SIZE << =
-31)-1);
->>>> +
->>>> + =A0 =A0 =A0 return min(fs_max, page_cache_max);
->>>> +}
->>>> +
->>>> =A0static int read_super_block(struct super_block *s, int offset)
->>>> =A0{
->>>> =A0 =A0 =A0 =A0struct buffer_head *bh;
->>>> @@ -1398,10 +1410,7 @@ static int read_super_block(struct super
->>>> =A0 =A0 =A0 =A0s->dq_op =3D &reiserfs_quota_operations;
->>>> =A0#endif
->>>> =A0- =A0 =A0 =A0/* new format is limited by the 32 bit wide i_bloc=
-ks field,
->>>> want to
->>>> - - =A0 =A0 =A0** be one full block below that.
->>>> - - =A0 =A0 =A0*/
->>>> - - =A0 =A0 s->s_maxbytes =3D (512LL << 32) - s->s_blocksize;
->>>> + =A0 =A0 =A0 s->s_maxbytes =3D reiserfs_max_file_offset(s);
->>>> =A0 =A0 =A0 =A0return 0;
->>>> =A0}
->>>>
->>>
->>> Hello ReiserFS developers,
->>>
->>> Any chance to have this patch submitted to 2.6.35?
->>
->> I wouldn't rely on this. Reiserfsprogs also should be aware
->> of the new limits. It's all long..
->
-> I certainly hope not. Things would be broken already. The 2 TB limit =
-is
-> 2048 * 2^32.
->
-> - -Jeff
->
->>> =A0We're hitting the 2TB
->>> file limit here and this patch resolves the problem.
->>>
->>> Thanks,
->>> Leonardo
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe
->>> reiserfs-devel" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at =A0http://vger.kernel.org/majordomo-info.htm=
-l
->>>
->>>
->>
->
->
-> - --
-> Jeff Mahoney
-> SUSE Labs
-> -----BEGIN PGP SIGNATURE-----
-> Version: GnuPG v2.0.15 (GNU/Linux)
-> Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
->
-> iEYEARECAAYFAkv1iTwACgkQLPWxlyuTD7I/yQCcCrGCVlu15YW7tBPbXb08SR7U
-> xc0AmwT5nDgG9T9apDXyQtqlpkx5vwva
-> =3Dgb6N
-> -----END PGP SIGNATURE-----
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-de=
-vel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+Andrew Morton <akpm@linux-foundation.org> writes:
 
-I do not believe this patch will cause problems. As you mention,
-ReiserFS was intended to support a max 16TB filesize.
+> On Fri, 16 Apr 2010 11:58:19 +0100
+> Richard Kennedy <richard@rsk.demon.co.uk> wrote:
+>
+>> The comment suggests that when b_count equals zero it is calling
+>> __wait_no_buffer to trigger some debug, but as there is no debug in
+>> __wait_on_buffer the whole thing is redundant.
+>> 
+>> AFAICT from the git log this has been the case for at least 5 years, so
+>> it seems safe just to remove this.
+>> 
+>> Signed-off-by: Richard Kennedy <richard@rsk.demon.co.uk>
+>> ---
+>> 
+>> This patch against 2.6.34-rc4
+>> compiled & tested on x86_64
+>> 
+>> regards
+>> Richard
+>> 
+>> 
+>> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+>> index 16ed028..4c62dd4 100644
+>> --- a/include/linux/buffer_head.h
+>> +++ b/include/linux/buffer_head.h
+>> @@ -305,15 +305,10 @@ map_bh(struct buffer_head *bh, struct super_block *sb, sector_t block)
+>>  	bh->b_size = sb->s_blocksize;
+>>  }
+>>  
+>> -/*
+>> - * Calling wait_on_buffer() for a zero-ref buffer is illegal, so we call into
+>> - * __wait_on_buffer() just to trip a debug check.  Because debug code in inline
+>> - * functions is bloaty.
+>> - */
+>>  static inline void wait_on_buffer(struct buffer_head *bh)
+>>  {
+>>  	might_sleep();
+>> -	if (buffer_locked(bh) || atomic_read(&bh->b_count) == 0)
+>> +	if (buffer_locked(bh))
+>>  		__wait_on_buffer(bh);
+>>  }
+>
+> That debug check got inadvertently crippled during some wait_on_bit()
+> conversion.
+>
+> It's still a nasty bug to call wait_on_buffer() against a zero-ref
+> buffer so perhaps we should fix it up rather than removing its remains.
+>
+> diff -puN include/linux/buffer_head.h~buffer_head-remove-redundant-test-from-wait_on_buffer-fix include/linux/buffer_head.h
+> --- a/include/linux/buffer_head.h~buffer_head-remove-redundant-test-from-wait_on_buffer-fix
+> +++ a/include/linux/buffer_head.h
+> @@ -305,10 +305,15 @@ map_bh(struct buffer_head *bh, struct su
+>  	bh->b_size = sb->s_blocksize;
+>  }
+>  
+> +/*
+> + * Calling wait_on_buffer() for a zero-ref buffer is illegal, so we call into
+> + * __wait_on_buffer() just to trip a debug check.  Because debug code in inline
+> + * functions is bloaty.
+> + */
+>  static inline void wait_on_buffer(struct buffer_head *bh)
+>  {
+>  	might_sleep();
+> -	if (buffer_locked(bh))
+> +	if (buffer_locked(bh) || atomic_read(&bh->b_count) == 0)
+>  		__wait_on_buffer(bh);
+>  }
+>  
+> diff -puN fs/buffer.c~buffer_head-remove-redundant-test-from-wait_on_buffer-fix fs/buffer.c
+> --- a/fs/buffer.c~buffer_head-remove-redundant-test-from-wait_on_buffer-fix
+> +++ a/fs/buffer.c
+> @@ -90,6 +90,12 @@ EXPORT_SYMBOL(unlock_buffer);
+>   */
+>  void __wait_on_buffer(struct buffer_head * bh)
+>  {
+> +	/*
+> +	 * Calling wait_on_buffer() against a zero-ref buffer is a nasty bug
+> +	 * because it will almost always "work".  However this buffer can be
+> +	 * reclaimed at any time.  So check for it.
+> +	 */
+> +	VM_BUG_ON(atomic_read(&bh->b_count) == 0);
 
-Edward, it looks to me as though reiserfsprogs will be aware of the
-new limits, unless I am missing something (it does not have its own
-method for accessing the super block somewhere, correct?).
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+My system is failing this VM_BUG_ON() occasionally.  I think this is due to
+wait_on_buffer() calls with b_count=0 from locations within fs/buffer.c.  These
+occasional b_count=0 callers are caused by buf reads that complete quickly -
+after the I/O is issued but before it is waited upon.  Such fs/buffer.c callers
+need to either bypass this assertion or increment b_count.  I don't think they
+need to grab an b_count reference.  I suggest a bypass routine in the patch
+below.  Does this look good?
+
+>  	wait_on_bit(&bh->b_state, BH_Lock, sync_buffer, TASK_UNINTERRUPTIBLE);
+>  }
+>  EXPORT_SYMBOL(__wait_on_buffer);
+> _
+>
+>
+> And while we're there...
+>
+> This might make reiserfs explode.
+>
+>
+>
+> From: Andrew Morton <akpm@linux-foundation.org>
+>
+> The first thing __wait_on_buffer()->wait_on_bit() does is to test that the
+> bit was set, so the buffer_locked() test is now redundant.  And once we
+> remove that, we can remove the check for zero ->b_count also.
+>
+> And now that wait_on_buffer() unconditionally calls __wait_on_buffer(), we
+> can move the might_sleep() check into __wait_on_buffer() to save some text.
+>
+> The downside of all of this is that wait_on_buffer() against an unlocked
+> buffer will now always perform a function call.  Is it a common case?
+>
+> We can remove __wait_on_buffer() altogether now.  For some strange reason
+> reiserfs calls __wait_on_buffer() directly.  Maybe it's passing in
+> zero-ref buffers.  If so, we'll get warnings now and shall need to look at
+> that.
+>
+> Cc: Jens Axboe <jens.axboe@oracle.com>
+> Cc: Nick Piggin <nickpiggin@yahoo.com.au>
+> Cc: Richard Kennedy <richard@rsk.demon.co.uk>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>
+>  fs/buffer.c                 |    2 ++
+>  include/linux/buffer_head.h |    4 +---
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff -puN include/linux/buffer_head.h~wait_on_buffer-remove-the-buffer_locked-test include/linux/buffer_head.h
+> --- a/include/linux/buffer_head.h~wait_on_buffer-remove-the-buffer_locked-test
+> +++ a/include/linux/buffer_head.h
+> @@ -312,9 +312,7 @@ map_bh(struct buffer_head *bh, struct su
+>   */
+>  static inline void wait_on_buffer(struct buffer_head *bh)
+>  {
+> -	might_sleep();
+> -	if (buffer_locked(bh) || atomic_read(&bh->b_count) == 0)
+> -		__wait_on_buffer(bh);
+> +	__wait_on_buffer(bh);
+>  }
+>  
+>  static inline int trylock_buffer(struct buffer_head *bh)
+> diff -puN fs/buffer.c~wait_on_buffer-remove-the-buffer_locked-test fs/buffer.c
+> --- a/fs/buffer.c~wait_on_buffer-remove-the-buffer_locked-test
+> +++ a/fs/buffer.c
+> @@ -90,6 +90,8 @@ EXPORT_SYMBOL(unlock_buffer);
+>   */
+>  void __wait_on_buffer(struct buffer_head * bh)
+>  {
+> +	might_sleep();
+> +
+>  	/*
+>  	 * Calling wait_on_buffer() against a zero-ref buffer is a nasty bug
+>  	 * because it will almost always "work".  However this buffer can be
+> _
+
+From: Greg Thelen <gthelen@google.com>
+
+Introduce new routine for waiting on buffers with zero b_count.
+
+In limited cases it is expected that a buffer can have a zero b_count but
+still be protected from reclamation.  Waiting on such buffers with
+wait_on_buffer() risks failure of the b_count assertion.  To avoid failing
+the b_count assertion in the normal wait_on_buffer() path, this patch
+introduces a new routine, __wait_on_buffer_unsafe(), for the few cases
+that wait on a buffer which may have a zero b_count.  wait_on_buffer()
+indirectly asserts that b_count is non-zero.  This assertion is
+generally useful, but causes problems for a few cases in fs/buffer.c:
+* __block_prepare_write()
+* nobh_write_begin()
+* block_truncate_page()
+
+Without this patch I found that a virtual machine would occasionally
+fail the __wait_on_buffer() b_count assertion when called from
+__block_prepare_write().  Visual inspection suggests that the other two
+routines could also fail the same b_count assertion.  So all three
+routines now make use of the new __wait_on_buffer_unsafe() routine,
+which avoids asserting b_count.
+
+Signed-off-by: Greg Thelen <gthelen@google.com>
+---
+ fs/buffer.c |   21 +++++++++++++++------
+ 1 files changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 2500ada..c715da4 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -92,21 +92,30 @@ void unlock_buffer(struct buffer_head *bh)
+ EXPORT_SYMBOL(unlock_buffer);
+ 
+ /*
++ * Block until a buffer comes unlocked.  This routine trusts the caller to
++ * ensure that the buffer will not be reclaimed.  Holding a b_count reference is
++ * one way, page lock is another.
++ */
++static void __wait_on_buffer_unsafe(struct buffer_head *bh)
++{
++	might_sleep();
++	wait_on_bit(&bh->b_state, BH_Lock, sync_buffer, TASK_UNINTERRUPTIBLE);
++}
++
++/*
+  * Block until a buffer comes unlocked.  This doesn't stop it
+  * from becoming locked again - you have to lock it yourself
+  * if you want to preserve its state.
+  */
+ void __wait_on_buffer(struct buffer_head * bh)
+ {
+-	might_sleep();
+-
+ 	/*
+ 	 * Calling wait_on_buffer() against a zero-ref buffer is a nasty bug
+ 	 * because it will almost always "work".  However this buffer can be
+ 	 * reclaimed at any time.  So check for it.
+ 	 */
+ 	VM_BUG_ON(atomic_read(&bh->b_count) == 0);
+-	wait_on_bit(&bh->b_state, BH_Lock, sync_buffer, TASK_UNINTERRUPTIBLE);
++	__wait_on_buffer_unsafe(bh);
+ }
+ EXPORT_SYMBOL(__wait_on_buffer);
+ 
+@@ -1934,7 +1943,7 @@ static int __block_prepare_write(struct inode *inode, struct page *page,
+ 	 * If we issued read requests - let them complete.
+ 	 */
+ 	while(wait_bh > wait) {
+-		wait_on_buffer(*--wait_bh);
++		__wait_on_buffer_unsafe(*--wait_bh);
+ 		if (!buffer_uptodate(*wait_bh))
+ 			err = -EIO;
+ 	}
+@@ -2603,7 +2612,7 @@ int nobh_write_begin(struct file *file, struct address_space *mapping,
+ 		 * for the buffer_head refcounts.
+ 		 */
+ 		for (bh = head; bh; bh = bh->b_this_page) {
+-			wait_on_buffer(bh);
++			__wait_on_buffer_unsafe(bh);
+ 			if (!buffer_uptodate(bh))
+ 				ret = -EIO;
+ 		}
+@@ -2865,7 +2874,7 @@ int block_truncate_page(struct address_space *mapping,
+ 	if (!buffer_uptodate(bh) && !buffer_delay(bh) && !buffer_unwritten(bh)) {
+ 		err = -EIO;
+ 		ll_rw_block(READ, 1, &bh);
+-		wait_on_buffer(bh);
++		__wait_on_buffer_unsafe(bh);
+ 		/* Uhhuh. Read error. Complain and punt. */
+ 		if (!buffer_uptodate(bh))
+ 			goto unlock;
+-- 
+1.7.0.1
