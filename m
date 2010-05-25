@@ -1,275 +1,115 @@
-From: Greg Thelen <gthelen@google.com>
-Subject: Re: [PATCH RFC]  buffer_head: remove redundant test from wait_on_buffer
-Date: Sat, 22 May 2010 23:05:03 -0700
-Message-ID: <xr93ljbbw3u8.fsf@ninji.mtv.corp.google.com>
-References: <1271415499.2075.19.camel@localhost>
-	<20100416145123.283f216c.akpm@linux-foundation.org>
-Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=google.com; s=beta;
-	t=1274594711; bh=Vqe64syjZ6x0JiWV900usW1GSGQ=;
-	h=To:Cc:Subject:References:From:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type;
-	b=jm4WSJ2gooYSMB6a5Ap5xiKE7twlvivEelCoFYRzCuTPxKrCIEliRINQ3JmHBBWb8
-	 eSBsa0RSp42JdSxwvGNmA==
-In-Reply-To: <20100416145123.283f216c.akpm@linux-foundation.org> (Andrew Morton's message of "Fri\, 16 Apr 2010 14\:51\:23 -0700")
-Sender: reiserfs-devel-owner@vger.kernel.org
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: [PATCHv4 12/17] reiserfs: do not manipulate s_dirt directly
+Date: Tue, 25 May 2010 16:49:07 +0300
+Message-ID: <1274795352-3551-13-git-send-email-dedekind1@gmail.com>
+References: <1274795352-3551-1-git-send-email-dedekind1@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1274795352-3551-1-git-send-email-dedekind1@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Richard Kennedy <richard@rsk.demon.co.uk>, Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <jens.axboe@oracle.com>, lkml <linux-kernel@vger.kernel.org>, Nick Piggin <npiggin@suse.de>, Jeff Mahoney <jeffm@suse.com>, reiserfs-devel@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
 
-Andrew Morton <akpm@linux-foundation.org> writes:
+From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
 
-> On Fri, 16 Apr 2010 11:58:19 +0100
-> Richard Kennedy <richard@rsk.demon.co.uk> wrote:
->
->> The comment suggests that when b_count equals zero it is calling
->> __wait_no_buffer to trigger some debug, but as there is no debug in
->> __wait_on_buffer the whole thing is redundant.
->> 
->> AFAICT from the git log this has been the case for at least 5 years, so
->> it seems safe just to remove this.
->> 
->> Signed-off-by: Richard Kennedy <richard@rsk.demon.co.uk>
->> ---
->> 
->> This patch against 2.6.34-rc4
->> compiled & tested on x86_64
->> 
->> regards
->> Richard
->> 
->> 
->> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
->> index 16ed028..4c62dd4 100644
->> --- a/include/linux/buffer_head.h
->> +++ b/include/linux/buffer_head.h
->> @@ -305,15 +305,10 @@ map_bh(struct buffer_head *bh, struct super_block *sb, sector_t block)
->>  	bh->b_size = sb->s_blocksize;
->>  }
->>  
->> -/*
->> - * Calling wait_on_buffer() for a zero-ref buffer is illegal, so we call into
->> - * __wait_on_buffer() just to trip a debug check.  Because debug code in inline
->> - * functions is bloaty.
->> - */
->>  static inline void wait_on_buffer(struct buffer_head *bh)
->>  {
->>  	might_sleep();
->> -	if (buffer_locked(bh) || atomic_read(&bh->b_count) == 0)
->> +	if (buffer_locked(bh))
->>  		__wait_on_buffer(bh);
->>  }
->
-> That debug check got inadvertently crippled during some wait_on_bit()
-> conversion.
->
-> It's still a nasty bug to call wait_on_buffer() against a zero-ref
-> buffer so perhaps we should fix it up rather than removing its remains.
->
-> diff -puN include/linux/buffer_head.h~buffer_head-remove-redundant-test-from-wait_on_buffer-fix include/linux/buffer_head.h
-> --- a/include/linux/buffer_head.h~buffer_head-remove-redundant-test-from-wait_on_buffer-fix
-> +++ a/include/linux/buffer_head.h
-> @@ -305,10 +305,15 @@ map_bh(struct buffer_head *bh, struct su
->  	bh->b_size = sb->s_blocksize;
->  }
->  
-> +/*
-> + * Calling wait_on_buffer() for a zero-ref buffer is illegal, so we call into
-> + * __wait_on_buffer() just to trip a debug check.  Because debug code in inline
-> + * functions is bloaty.
-> + */
->  static inline void wait_on_buffer(struct buffer_head *bh)
->  {
->  	might_sleep();
-> -	if (buffer_locked(bh))
-> +	if (buffer_locked(bh) || atomic_read(&bh->b_count) == 0)
->  		__wait_on_buffer(bh);
->  }
->  
-> diff -puN fs/buffer.c~buffer_head-remove-redundant-test-from-wait_on_buffer-fix fs/buffer.c
-> --- a/fs/buffer.c~buffer_head-remove-redundant-test-from-wait_on_buffer-fix
-> +++ a/fs/buffer.c
-> @@ -90,6 +90,12 @@ EXPORT_SYMBOL(unlock_buffer);
->   */
->  void __wait_on_buffer(struct buffer_head * bh)
->  {
-> +	/*
-> +	 * Calling wait_on_buffer() against a zero-ref buffer is a nasty bug
-> +	 * because it will almost always "work".  However this buffer can be
-> +	 * reclaimed at any time.  So check for it.
-> +	 */
-> +	VM_BUG_ON(atomic_read(&bh->b_count) == 0);
+... use new VFS helpers instead.
 
-My system is failing this VM_BUG_ON() occasionally.  I think this is due to
-wait_on_buffer() calls with b_count=0 from locations within fs/buffer.c.  These
-occasional b_count=0 callers are caused by buf reads that complete quickly -
-after the I/O is issued but before it is waited upon.  Such fs/buffer.c callers
-need to either bypass this assertion or increment b_count.  I don't think they
-need to grab an b_count reference.  I suggest a bypass routine in the patch
-below.  Does this look good?
-
->  	wait_on_bit(&bh->b_state, BH_Lock, sync_buffer, TASK_UNINTERRUPTIBLE);
->  }
->  EXPORT_SYMBOL(__wait_on_buffer);
-> _
->
->
-> And while we're there...
->
-> This might make reiserfs explode.
->
->
->
-> From: Andrew Morton <akpm@linux-foundation.org>
->
-> The first thing __wait_on_buffer()->wait_on_bit() does is to test that the
-> bit was set, so the buffer_locked() test is now redundant.  And once we
-> remove that, we can remove the check for zero ->b_count also.
->
-> And now that wait_on_buffer() unconditionally calls __wait_on_buffer(), we
-> can move the might_sleep() check into __wait_on_buffer() to save some text.
->
-> The downside of all of this is that wait_on_buffer() against an unlocked
-> buffer will now always perform a function call.  Is it a common case?
->
-> We can remove __wait_on_buffer() altogether now.  For some strange reason
-> reiserfs calls __wait_on_buffer() directly.  Maybe it's passing in
-> zero-ref buffers.  If so, we'll get warnings now and shall need to look at
-> that.
->
-> Cc: Jens Axboe <jens.axboe@oracle.com>
-> Cc: Nick Piggin <nickpiggin@yahoo.com.au>
-> Cc: Richard Kennedy <richard@rsk.demon.co.uk>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
->
->  fs/buffer.c                 |    2 ++
->  include/linux/buffer_head.h |    4 +---
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff -puN include/linux/buffer_head.h~wait_on_buffer-remove-the-buffer_locked-test include/linux/buffer_head.h
-> --- a/include/linux/buffer_head.h~wait_on_buffer-remove-the-buffer_locked-test
-> +++ a/include/linux/buffer_head.h
-> @@ -312,9 +312,7 @@ map_bh(struct buffer_head *bh, struct su
->   */
->  static inline void wait_on_buffer(struct buffer_head *bh)
->  {
-> -	might_sleep();
-> -	if (buffer_locked(bh) || atomic_read(&bh->b_count) == 0)
-> -		__wait_on_buffer(bh);
-> +	__wait_on_buffer(bh);
->  }
->  
->  static inline int trylock_buffer(struct buffer_head *bh)
-> diff -puN fs/buffer.c~wait_on_buffer-remove-the-buffer_locked-test fs/buffer.c
-> --- a/fs/buffer.c~wait_on_buffer-remove-the-buffer_locked-test
-> +++ a/fs/buffer.c
-> @@ -90,6 +90,8 @@ EXPORT_SYMBOL(unlock_buffer);
->   */
->  void __wait_on_buffer(struct buffer_head * bh)
->  {
-> +	might_sleep();
-> +
->  	/*
->  	 * Calling wait_on_buffer() against a zero-ref buffer is a nasty bug
->  	 * because it will almost always "work".  However this buffer can be
-> _
-
-From: Greg Thelen <gthelen@google.com>
-
-Introduce new routine for waiting on buffers with zero b_count.
-
-In limited cases it is expected that a buffer can have a zero b_count but
-still be protected from reclamation.  Waiting on such buffers with
-wait_on_buffer() risks failure of the b_count assertion.  To avoid failing
-the b_count assertion in the normal wait_on_buffer() path, this patch
-introduces a new routine, __wait_on_buffer_unsafe(), for the few cases
-that wait on a buffer which may have a zero b_count.  wait_on_buffer()
-indirectly asserts that b_count is non-zero.  This assertion is
-generally useful, but causes problems for a few cases in fs/buffer.c:
-* __block_prepare_write()
-* nobh_write_begin()
-* block_truncate_page()
-
-Without this patch I found that a virtual machine would occasionally
-fail the __wait_on_buffer() b_count assertion when called from
-__block_prepare_write().  Visual inspection suggests that the other two
-routines could also fail the same b_count assertion.  So all three
-routines now make use of the new __wait_on_buffer_unsafe() routine,
-which avoids asserting b_count.
-
-Signed-off-by: Greg Thelen <gthelen@google.com>
+Signed-off-by: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Cc: reiserfs-devel@vger.kernel.org
 ---
- fs/buffer.c |   21 +++++++++++++++------
- 1 files changed, 15 insertions(+), 6 deletions(-)
+ fs/reiserfs/journal.c |    6 +++---
+ fs/reiserfs/resize.c  |    2 +-
+ fs/reiserfs/super.c   |   10 +++++-----
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 2500ada..c715da4 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -92,21 +92,30 @@ void unlock_buffer(struct buffer_head *bh)
- EXPORT_SYMBOL(unlock_buffer);
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 19fbc81..4016d0a 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -3337,7 +3337,7 @@ int journal_mark_dirty(struct reiserfs_transaction_handle *th,
+ 			       th->t_trans_id, journal->j_trans_id);
+ 	}
+ 
+-	sb->s_dirt = 1;
++	mark_sb_dirty(sb);
+ 
+ 	prepared = test_clear_buffer_journal_prepared(bh);
+ 	clear_buffer_journal_restore_dirty(bh);
+@@ -3632,7 +3632,7 @@ int reiserfs_flush_old_commits(struct super_block *sb)
+ 			do_journal_end(&th, sb, 1, COMMIT_NOW | WAIT);
+ 		}
+ 	}
+-	return sb->s_dirt;
++	return is_sb_dirty(sb);
+ }
  
  /*
-+ * Block until a buffer comes unlocked.  This routine trusts the caller to
-+ * ensure that the buffer will not be reclaimed.  Holding a b_count reference is
-+ * one way, page lock is another.
-+ */
-+static void __wait_on_buffer_unsafe(struct buffer_head *bh)
-+{
-+	might_sleep();
-+	wait_on_bit(&bh->b_state, BH_Lock, sync_buffer, TASK_UNINTERRUPTIBLE);
-+}
-+
-+/*
-  * Block until a buffer comes unlocked.  This doesn't stop it
-  * from becoming locked again - you have to lock it yourself
-  * if you want to preserve its state.
-  */
- void __wait_on_buffer(struct buffer_head * bh)
- {
--	might_sleep();
--
- 	/*
- 	 * Calling wait_on_buffer() against a zero-ref buffer is a nasty bug
- 	 * because it will almost always "work".  However this buffer can be
- 	 * reclaimed at any time.  So check for it.
+@@ -4062,7 +4062,7 @@ static int do_journal_end(struct reiserfs_transaction_handle *th,
+ 	 ** it tells us if we should continue with the journal_end, or just return
  	 */
- 	VM_BUG_ON(atomic_read(&bh->b_count) == 0);
--	wait_on_bit(&bh->b_state, BH_Lock, sync_buffer, TASK_UNINTERRUPTIBLE);
-+	__wait_on_buffer_unsafe(bh);
- }
- EXPORT_SYMBOL(__wait_on_buffer);
+ 	if (!check_journal_end(th, sb, nblocks, flags)) {
+-		sb->s_dirt = 1;
++		mark_sb_dirty(sb);
+ 		wake_queued_writers(sb);
+ 		reiserfs_async_progress_wait(sb);
+ 		goto out;
+diff --git a/fs/reiserfs/resize.c b/fs/reiserfs/resize.c
+index b3a94d2..588d55a 100644
+--- a/fs/reiserfs/resize.c
++++ b/fs/reiserfs/resize.c
+@@ -203,7 +203,7 @@ int reiserfs_resize(struct super_block *s, unsigned long block_count_new)
+ 					  (bmap_nr_new - bmap_nr)));
+ 	PUT_SB_BLOCK_COUNT(s, block_count_new);
+ 	PUT_SB_BMAP_NR(s, bmap_would_wrap(bmap_nr_new) ? : bmap_nr_new);
+-	s->s_dirt = 1;
++	mark_sb_dirty(s);
  
-@@ -1934,7 +1943,7 @@ static int __block_prepare_write(struct inode *inode, struct page *page,
- 	 * If we issued read requests - let them complete.
- 	 */
- 	while(wait_bh > wait) {
--		wait_on_buffer(*--wait_bh);
-+		__wait_on_buffer_unsafe(*--wait_bh);
- 		if (!buffer_uptodate(*wait_bh))
- 			err = -EIO;
- 	}
-@@ -2603,7 +2612,7 @@ int nobh_write_begin(struct file *file, struct address_space *mapping,
- 		 * for the buffer_head refcounts.
- 		 */
- 		for (bh = head; bh; bh = bh->b_this_page) {
--			wait_on_buffer(bh);
-+			__wait_on_buffer_unsafe(bh);
- 			if (!buffer_uptodate(bh))
- 				ret = -EIO;
+ 	journal_mark_dirty(&th, s, SB_BUFFER_WITH_SB(s));
+ 
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index 59125fb..93eb3fc 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -71,8 +71,8 @@ static int reiserfs_sync_fs(struct super_block *s, int wait)
+ 	if (!journal_begin(&th, s, 1))
+ 		if (!journal_end_sync(&th, s, 1))
+ 			reiserfs_flush_old_commits(s);
+-	s->s_dirt = 0;	/* Even if it's not true.
+-			 * We'll loop forever in sync_supers otherwise */
++	mark_sb_clean(s); /* Even if it's not true.
++			   * We'll loop forever in sync_supers otherwise */
+ 	reiserfs_write_unlock(s);
+ 	return 0;
+ }
+@@ -98,7 +98,7 @@ static int reiserfs_freeze(struct super_block *s)
+ 			journal_end_sync(&th, s, 1);
  		}
-@@ -2865,7 +2874,7 @@ int block_truncate_page(struct address_space *mapping,
- 	if (!buffer_uptodate(bh) && !buffer_delay(bh) && !buffer_unwritten(bh)) {
- 		err = -EIO;
- 		ll_rw_block(READ, 1, &bh);
--		wait_on_buffer(bh);
-+		__wait_on_buffer_unsafe(bh);
- 		/* Uhhuh. Read error. Complain and punt. */
- 		if (!buffer_uptodate(bh))
- 			goto unlock;
+ 	}
+-	s->s_dirt = 0;
++	mark_sb_clean(s);
+ 	reiserfs_write_unlock(s);
+ 	return 0;
+ }
+@@ -468,7 +468,7 @@ static void reiserfs_put_super(struct super_block *s)
+ 
+ 	reiserfs_write_lock(s);
+ 
+-	if (s->s_dirt)
++	if (is_sb_dirty(s))
+ 		reiserfs_write_super(s);
+ 
+ 	/* change file system state to current state if it was mounted with read-write permissions */
+@@ -1292,7 +1292,7 @@ static int reiserfs_remount(struct super_block *s, int *mount_flags, char *arg)
+ 	err = journal_end(&th, s, 10);
+ 	if (err)
+ 		goto out_err;
+-	s->s_dirt = 0;
++	mark_sb_clean(s);
+ 
+ 	if (!(*mount_flags & MS_RDONLY)) {
+ 		finish_unfinished(s);
 -- 
-1.7.0.1
+1.6.6.1
