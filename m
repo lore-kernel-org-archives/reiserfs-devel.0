@@ -1,111 +1,67 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Subject: [PATCHv4 01/17] VFS: introduce helpers for the s_dirty flag
-Date: Tue, 25 May 2010 16:48:56 +0300
-Message-ID: <1274795352-3551-2-git-send-email-dedekind1@gmail.com>
-References: <1274795352-3551-1-git-send-email-dedekind1@gmail.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <1274795352-3551-1-git-send-email-dedekind1@gmail.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
+From: Jan Kara <jack@suse.cz>
+Subject: [PATCH 1/2] reiserfs: Fix resuming of quotas on remount read-write
+Date: Tue, 25 May 2010 16:02:23 +0200
+Message-ID: <1274796144-4993-1-git-send-email-jack@suse.cz>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, linux-fsdevel@vger.kernel.org, Roman Zippel <zippel@linux-m68k.org>, "Tigran A. Aivazian" <tigran@aivazian.fsnet.co.uk>, Chris Mason <chris.mason@oracle.com>, Boaz Harrosh <bharrosh@panasas.com>, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, David Woodhouse <dwmw2@infradead.org>, reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>, Evgeniy Dushistov <dushistov@mail.ru>
+To: linux-fsdevel@vger.kernel.org
+Cc: Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org
 
-From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+When quota was suspended on remount-ro, finish_unfinished() will try to turn
+it on again (which fails) and also turns the quotas off on exit. Fix the
+function to check whether quotas are already on at function entry and do
+not turn them off in that case.
 
-This patch introduces 3 new VFS helpers: 'mark_sb_dirty()',
-'mark_sb_clean()', and 'is_sb_dirty()'. The helpers simply
-set 'sb->s_dirt' or test 'sb->s_dirt'. The plan is to make
-every FS use these helpers instead of manipulating the
-'sb->s_dirt' flag directly.
-
-Ultimately, this change is a preparation for the periodic
-superblock synchronization optimization which is about
-preventing the "sync_supers" kernel thread from waking up
-even if there is nothing to synchronize.
-
-This patch also makes VFS use the new helpers.
-
-Signed-off-by: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
-Cc: Roman Zippel <zippel@linux-m68k.org>
-Cc: Tigran A. Aivazian <tigran@aivazian.fsnet.co.uk>
-Cc: Chris Mason <chris.mason@oracle.com>
-Cc: Boaz Harrosh <bharrosh@panasas.com>
-Cc: linux-ext4@vger.kernel.org
-Cc: Theodore Ts'o <tytso@mit.edu>
-Cc: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: reiserfs-devel@vger.kernel.org
-Cc: Jan Kara <jack@suse.cz>
-Cc: Evgeniy Dushistov <dushistov@mail.ru>
+CC: reiserfs-devel@vger.kernel.org
+Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/super.c         |    4 ++--
- fs/sync.c          |    2 +-
- include/linux/fs.h |   17 +++++++++++++++++
- 3 files changed, 20 insertions(+), 3 deletions(-)
+ fs/reiserfs/super.c |   12 ++++++++++--
+ 1 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/fs/super.c b/fs/super.c
-index 69688b1..2b418fb 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -368,12 +368,12 @@ void sync_supers(void)
- 	list_for_each_entry_safe(sb, n, &super_blocks, s_list) {
- 		if (list_empty(&sb->s_instances))
- 			continue;
--		if (sb->s_op->write_super && sb->s_dirt) {
-+		if (sb->s_op->write_super && is_sb_dirty(sb)) {
- 			sb->s_count++;
- 			spin_unlock(&sb_lock);
+  I plan to send this fix to Linus soon. Review is welcome.
+
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index f0ab5c9..9822fa1 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -158,6 +158,7 @@ static int finish_unfinished(struct super_block *s)
+ #ifdef CONFIG_QUOTA
+ 	int i;
+ 	int ms_active_set;
++	int quota_enabled[MAXQUOTAS];
+ #endif
  
- 			down_read(&sb->s_umount);
--			if (sb->s_root && sb->s_dirt)
-+			if (sb->s_root && is_sb_dirty(sb))
- 				sb->s_op->write_super(sb);
- 			up_read(&sb->s_umount);
- 
-diff --git a/fs/sync.c b/fs/sync.c
-index e8cbd41..782e466 100644
---- a/fs/sync.c
-+++ b/fs/sync.c
-@@ -144,7 +144,7 @@ int file_fsync(struct file *filp, struct dentry *dentry, int datasync)
- 
- 	/* sync the superblock to buffers */
- 	sb = inode->i_sb;
--	if (sb->s_dirt && sb->s_op->write_super)
-+	if (is_sb_dirty(sb) && sb->s_op->write_super)
- 		sb->s_op->write_super(sb);
- 
- 	/* .. finally sync the buffers to disk */
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index b336cb9..21fe2b3 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1782,6 +1782,23 @@ extern int get_sb_pseudo(struct file_system_type *, char *,
- 	struct vfsmount *mnt);
- extern void simple_set_mnt(struct vfsmount *mnt, struct super_block *sb);
- 
-+/*
-+ * Note, VFS does not provide any serialization for the super block clean/dirty
-+ * state changes, file-systems should take care of this.
-+ */
-+static inline void mark_sb_dirty(struct super_block *sb)
-+{
-+	sb->s_dirt = 1;
-+}
-+static inline void mark_sb_clean(struct super_block *sb)
-+{
-+	sb->s_dirt = 0;
-+}
-+static inline int is_sb_dirty(struct super_block *sb)
-+{
-+	return sb->s_dirt;
-+}
+ 	/* compose key to look for "save" links */
+@@ -179,8 +180,15 @@ static int finish_unfinished(struct super_block *s)
+ 	}
+ 	/* Turn on quotas so that they are updated correctly */
+ 	for (i = 0; i < MAXQUOTAS; i++) {
++		quota_enabled[i] = 1;
+ 		if (REISERFS_SB(s)->s_qf_names[i]) {
+-			int ret = reiserfs_quota_on_mount(s, i);
++			int ret;
 +
- /* Alas, no aliases. Too much hassle with bringing module.h everywhere */
- #define fops_get(fops) \
- 	(((fops) && try_module_get((fops)->owner) ? (fops) : NULL))
++			if (sb_has_quota_active(s, i)) {
++				quota_enabled[i] = 0;
++				continue;
++			}
++			ret = reiserfs_quota_on_mount(s, i);
+ 			if (ret < 0)
+ 				reiserfs_warning(s, "reiserfs-2500",
+ 						 "cannot turn on journaled "
+@@ -304,7 +312,7 @@ static int finish_unfinished(struct super_block *s)
+ #ifdef CONFIG_QUOTA
+ 	/* Turn quotas off */
+ 	for (i = 0; i < MAXQUOTAS; i++) {
+-		if (sb_dqopt(s)->files[i])
++		if (sb_dqopt(s)->files[i] && quota_enabled[i])
+ 			dquot_quota_off(s, i);
+ 	}
+ 	if (ms_active_set)
 -- 
-1.6.6.1
+1.6.4.2
 
