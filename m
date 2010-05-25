@@ -1,115 +1,111 @@
 From: Artem Bityutskiy <dedekind1@gmail.com>
-Subject: [PATCHv4 12/17] reiserfs: do not manipulate s_dirt directly
-Date: Tue, 25 May 2010 16:49:07 +0300
-Message-ID: <1274795352-3551-13-git-send-email-dedekind1@gmail.com>
+Subject: [PATCHv4 01/17] VFS: introduce helpers for the s_dirty flag
+Date: Tue, 25 May 2010 16:48:56 +0300
+Message-ID: <1274795352-3551-2-git-send-email-dedekind1@gmail.com>
 References: <1274795352-3551-1-git-send-email-dedekind1@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 In-Reply-To: <1274795352-3551-1-git-send-email-dedekind1@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-fsdevel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, linux-fsdevel@vger.kernel.org, Roman Zippel <zippel@linux-m68k.org>, "Tigran A. Aivazian" <tigran@aivazian.fsnet.co.uk>, Chris Mason <chris.mason@oracle.com>, Boaz Harrosh <bharrosh@panasas.com>, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, David Woodhouse <dwmw2@infradead.org>, reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>, Evgeniy Dushistov <dushistov@mail.ru>
 
 From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
 
-... use new VFS helpers instead.
+This patch introduces 3 new VFS helpers: 'mark_sb_dirty()',
+'mark_sb_clean()', and 'is_sb_dirty()'. The helpers simply
+set 'sb->s_dirt' or test 'sb->s_dirt'. The plan is to make
+every FS use these helpers instead of manipulating the
+'sb->s_dirt' flag directly.
+
+Ultimately, this change is a preparation for the periodic
+superblock synchronization optimization which is about
+preventing the "sync_supers" kernel thread from waking up
+even if there is nothing to synchronize.
+
+This patch also makes VFS use the new helpers.
 
 Signed-off-by: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Cc: Roman Zippel <zippel@linux-m68k.org>
+Cc: Tigran A. Aivazian <tigran@aivazian.fsnet.co.uk>
+Cc: Chris Mason <chris.mason@oracle.com>
+Cc: Boaz Harrosh <bharrosh@panasas.com>
+Cc: linux-ext4@vger.kernel.org
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc: David Woodhouse <dwmw2@infradead.org>
 Cc: reiserfs-devel@vger.kernel.org
+Cc: Jan Kara <jack@suse.cz>
+Cc: Evgeniy Dushistov <dushistov@mail.ru>
 ---
- fs/reiserfs/journal.c |    6 +++---
- fs/reiserfs/resize.c  |    2 +-
- fs/reiserfs/super.c   |   10 +++++-----
- 3 files changed, 9 insertions(+), 9 deletions(-)
+ fs/super.c         |    4 ++--
+ fs/sync.c          |    2 +-
+ include/linux/fs.h |   17 +++++++++++++++++
+ 3 files changed, 20 insertions(+), 3 deletions(-)
 
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index 19fbc81..4016d0a 100644
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -3337,7 +3337,7 @@ int journal_mark_dirty(struct reiserfs_transaction_handle *th,
- 			       th->t_trans_id, journal->j_trans_id);
- 	}
+diff --git a/fs/super.c b/fs/super.c
+index 69688b1..2b418fb 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -368,12 +368,12 @@ void sync_supers(void)
+ 	list_for_each_entry_safe(sb, n, &super_blocks, s_list) {
+ 		if (list_empty(&sb->s_instances))
+ 			continue;
+-		if (sb->s_op->write_super && sb->s_dirt) {
++		if (sb->s_op->write_super && is_sb_dirty(sb)) {
+ 			sb->s_count++;
+ 			spin_unlock(&sb_lock);
  
--	sb->s_dirt = 1;
-+	mark_sb_dirty(sb);
+ 			down_read(&sb->s_umount);
+-			if (sb->s_root && sb->s_dirt)
++			if (sb->s_root && is_sb_dirty(sb))
+ 				sb->s_op->write_super(sb);
+ 			up_read(&sb->s_umount);
  
- 	prepared = test_clear_buffer_journal_prepared(bh);
- 	clear_buffer_journal_restore_dirty(bh);
-@@ -3632,7 +3632,7 @@ int reiserfs_flush_old_commits(struct super_block *sb)
- 			do_journal_end(&th, sb, 1, COMMIT_NOW | WAIT);
- 		}
- 	}
--	return sb->s_dirt;
-+	return is_sb_dirty(sb);
- }
+diff --git a/fs/sync.c b/fs/sync.c
+index e8cbd41..782e466 100644
+--- a/fs/sync.c
++++ b/fs/sync.c
+@@ -144,7 +144,7 @@ int file_fsync(struct file *filp, struct dentry *dentry, int datasync)
  
- /*
-@@ -4062,7 +4062,7 @@ static int do_journal_end(struct reiserfs_transaction_handle *th,
- 	 ** it tells us if we should continue with the journal_end, or just return
- 	 */
- 	if (!check_journal_end(th, sb, nblocks, flags)) {
--		sb->s_dirt = 1;
-+		mark_sb_dirty(sb);
- 		wake_queued_writers(sb);
- 		reiserfs_async_progress_wait(sb);
- 		goto out;
-diff --git a/fs/reiserfs/resize.c b/fs/reiserfs/resize.c
-index b3a94d2..588d55a 100644
---- a/fs/reiserfs/resize.c
-+++ b/fs/reiserfs/resize.c
-@@ -203,7 +203,7 @@ int reiserfs_resize(struct super_block *s, unsigned long block_count_new)
- 					  (bmap_nr_new - bmap_nr)));
- 	PUT_SB_BLOCK_COUNT(s, block_count_new);
- 	PUT_SB_BMAP_NR(s, bmap_would_wrap(bmap_nr_new) ? : bmap_nr_new);
--	s->s_dirt = 1;
-+	mark_sb_dirty(s);
+ 	/* sync the superblock to buffers */
+ 	sb = inode->i_sb;
+-	if (sb->s_dirt && sb->s_op->write_super)
++	if (is_sb_dirty(sb) && sb->s_op->write_super)
+ 		sb->s_op->write_super(sb);
  
- 	journal_mark_dirty(&th, s, SB_BUFFER_WITH_SB(s));
+ 	/* .. finally sync the buffers to disk */
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index b336cb9..21fe2b3 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1782,6 +1782,23 @@ extern int get_sb_pseudo(struct file_system_type *, char *,
+ 	struct vfsmount *mnt);
+ extern void simple_set_mnt(struct vfsmount *mnt, struct super_block *sb);
  
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 59125fb..93eb3fc 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -71,8 +71,8 @@ static int reiserfs_sync_fs(struct super_block *s, int wait)
- 	if (!journal_begin(&th, s, 1))
- 		if (!journal_end_sync(&th, s, 1))
- 			reiserfs_flush_old_commits(s);
--	s->s_dirt = 0;	/* Even if it's not true.
--			 * We'll loop forever in sync_supers otherwise */
-+	mark_sb_clean(s); /* Even if it's not true.
-+			   * We'll loop forever in sync_supers otherwise */
- 	reiserfs_write_unlock(s);
- 	return 0;
- }
-@@ -98,7 +98,7 @@ static int reiserfs_freeze(struct super_block *s)
- 			journal_end_sync(&th, s, 1);
- 		}
- 	}
--	s->s_dirt = 0;
-+	mark_sb_clean(s);
- 	reiserfs_write_unlock(s);
- 	return 0;
- }
-@@ -468,7 +468,7 @@ static void reiserfs_put_super(struct super_block *s)
- 
- 	reiserfs_write_lock(s);
- 
--	if (s->s_dirt)
-+	if (is_sb_dirty(s))
- 		reiserfs_write_super(s);
- 
- 	/* change file system state to current state if it was mounted with read-write permissions */
-@@ -1292,7 +1292,7 @@ static int reiserfs_remount(struct super_block *s, int *mount_flags, char *arg)
- 	err = journal_end(&th, s, 10);
- 	if (err)
- 		goto out_err;
--	s->s_dirt = 0;
-+	mark_sb_clean(s);
- 
- 	if (!(*mount_flags & MS_RDONLY)) {
- 		finish_unfinished(s);
++/*
++ * Note, VFS does not provide any serialization for the super block clean/dirty
++ * state changes, file-systems should take care of this.
++ */
++static inline void mark_sb_dirty(struct super_block *sb)
++{
++	sb->s_dirt = 1;
++}
++static inline void mark_sb_clean(struct super_block *sb)
++{
++	sb->s_dirt = 0;
++}
++static inline int is_sb_dirty(struct super_block *sb)
++{
++	return sb->s_dirt;
++}
++
+ /* Alas, no aliases. Too much hassle with bringing module.h everywhere */
+ #define fops_get(fops) \
+ 	(((fops) && try_module_get((fops)->owner) ? (fops) : NULL))
 -- 
 1.6.6.1
+
