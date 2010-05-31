@@ -1,83 +1,99 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Subject: Re: [PATCHv4 01/17] VFS: introduce helpers for the s_dirty flag
-Date: Sat, 29 May 2010 11:11:50 +0300
-Message-ID: <1275120710.2668.20.camel@localhost.localdomain>
-References: <1274795352-3551-1-git-send-email-dedekind1@gmail.com>
-	 <1274795352-3551-2-git-send-email-dedekind1@gmail.com>
-	 <20100528132318.0783675a.akpm@linux-foundation.org>
-	 <20100528211432.GM31073@ZenIV.linux.org.uk>
-	 <20100528141755.42958d81.akpm@linux-foundation.org>
-Reply-To: dedekind1@gmail.com
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: reiser4: mv command lost folder.
+Date: Mon, 31 May 2010 20:57:58 +0200
+Message-ID: <4C0406B6.9050601@gmail.com>
+References: <AANLkTilTr_Yt0OWx1ED8pt2pM0rZc4FCg9obrNKVX2w9@mail.gmail.com>	<4BFF90A9.2050209@gmail.com>	<AANLkTimGrw7rDQb8d21MfP1xZHRFki-QhjzoLFD4cUJB@mail.gmail.com> <AANLkTildYHfsdvVPxZmpgAUuyF4BEfp7GOYakjclVuAx@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-ext4-owner@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:subject:from:reply-to:to:cc
-         :in-reply-to:references:content-type:date:message-id:mime-version
-         :x-mailer:content-transfer-encoding;
-        bh=llXtc67d0bXGu4V0HThwKrqNYfllOugjiUXXYfg8J6A=;
-        b=FXz/NqnDoATbsCYy7vlNlege1j4v3qg2KJeaivdjj4PHtVwwVsEglFiG3x843YJZhM
-         1juGrBZCa+tWPui/xS3AUMpVFqTAqmcXgpYS3OX5Qyl0sPbYbn2s/wFj7i+wA8LeSJsc
-         /bvIwCKPnHJNBNIrJTuGHjOck3kBJald6oz4c=
-In-Reply-To: <20100528141755.42958d81.akpm@linux-foundation.org>
-Sender: linux-ext4-owner@vger.kernel.org
+        h=domainkey-signature:received:received:message-id:date:from
+         :user-agent:mime-version:to:cc:subject:references:in-reply-to
+         :content-type:content-transfer-encoding;
+        bh=prVAoCv36Ed2HL8OnnTqzitp6gJgsT7EARY14+l7TFw=;
+        b=wRhjY6Q48TpPY1r5MvCx2VV3j/K44A3/uHKeBFN5YckiTSLoolBhzOFHlHoUfrOtkU
+         qXF13hQNlmaNeGz3htFpd+A/q3NkyQ2TEA5Sq/61g/2Lhtihj63ih1EVfRGCzJJ36rhd
+         SJHqzsctfzqYqoowG1JFcD0I+MW2q9QSixfgw=
+In-Reply-To: <AANLkTildYHfsdvVPxZmpgAUuyF4BEfp7GOYakjclVuAx@mail.gmail.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, linux-fsdevel@vger.kernel.org, Roman Zippel <zippel@linux-m68k.org>, "Tigran A. Aivazian" <tigran@aivazian.fsnet.co.uk>, Chris Mason <chris.mason@oracle.com>, Boaz Harrosh <bharrosh@panasas.com>, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, David Woodhouse <dwmw2@infradead.org>, reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>, Evgeniy Dushistov <dushistov@mail.ru>
+Content-Type: text/plain; charset="us-ascii"
+To: Danila Beketov <danila.beketov@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-On Fri, 2010-05-28 at 14:17 -0700, Andrew Morton wrote:
-> On Fri, 28 May 2010 22:14:32 +0100
-> Al Viro <viro@ZenIV.linux.org.uk> wrote:
->=20
-> > On Fri, May 28, 2010 at 01:23:18PM -0700, Andrew Morton wrote:
-> >=20
-> > > A more conventional and superior naming scheme is
-> > > subsystemid_specific_function_identifier().  eg, bio_add_page() i=
-nstead
-> > > of add_page_to_bio().
-> > >=20
-> > > So these want to be sb_mark_dirty(), etc.
-> > >=20
-> > > Being very old code written by very yound people, the VFS kinda i=
-gnores
-> > > that convention, but it doesn't hurt to use it for new code.
-> > >=20
-> > > Feel free to ignore me if that's too much of a PITA ;)
-> >=20
-> > The real issue is that it's almost certainly an overdesign.  Let's
-> > get rid of the bogus uses first and figure out what's happening in
-> > what remains, OK?
->=20
-> That would be good.
+Danila Beketov wrote:
+>> Hello
+>>     
 
-Yes, I just mechanically introduced the wrappers to all FS-es. But as
-per Al's request, I am going to try looking at how FSwe use it and
-validate the usage. It'll take some time as this stuff is my background
-task. Will see.
+Hello.
+I have downloaded your metadata.
+Thanks.
 
-> > I have no problems with doing such wrappers, but if we touch every
-> > place using ->s_dirt anyway, let's at least take a good look at the=
-m.
->=20
-> When adding wrappers we should also rename ->s_dirt (say, to __s_dirt=
-)
-> to catch out any unconverted code.
+>>> Need help to return my lost folder, that has disappeared after mv
+>>> command execution by magic way.
+>>>       
 
-Right, I did this in the following patch:
-	[PATCHv4 16/17] VFS: rename s_dirt to s_dirty
+I see this directory, but can not extract it so far.. It's old name
+has been removed, but new one wasn't created for some reasons.
 
-I thought that adding a leading '_' is not very neat, so added 'y' at
-the end.
+Eventually I have found that all link/unlink stuff in reiser4 is racy:
+the process which creates a child takes an exclusive flag
+REISER4_IMMUTABLE so that other concurrent processes
+should wait on this flag. However, instead of waiting they return
+reiser4-specific error number (-E_REPEAT) to the VFS...
+Will be fixed.
 
---=20
-Best Regards,
-Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
-=D1=86=D0=BA=D0=B8=D0=B9)
+I'll take a look why fsck don't want to put your poor directory to
+lost+found. but it'll take some time (I have only weekends for
+reiser4).
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-ext4" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The oops below is specific to zen-kernels. Sometimes zen
+folks try to fix reiser4 without success, so before sending oopses
+to this mailing list please make sure that you use -mm kernels,
+or reiser4 stuff against vanilla kernels from kernel.org.
+
+Thank you.
+Edward.
+
+>
+> May 19 20:04:32 beda kernel: ------------[ cut here ]------------
+> May 19 20:04:32 beda kernel: kernel BUG at fs/reiser4/txnmgr.c:1116!
+> May 19 20:04:32 beda kernel: invalid opcode: 0000 [#1] PREEMPT
+> May 19 20:04:32 beda kernel: last sysfs file:
+> /sys/devices/pci0000:00/0000:00:1f.2/host3/target3:0:0/3:0:0:0/block/sdb/dev
+> May 19 20:04:32 beda kernel: Modules linked in: vboxnetadp vboxnetflt
+> vboxdrv ipv6 oss_usb oss_envy24ht osscore btusb bluetooth nvidia(P)
+> uvcvideo videodev v4l1_compat i2c_i801 parport_pc parport i2c_core
+> May 19 20:04:32 beda kernel:
+> May 19 20:04:32 beda kernel: Pid: 1453, comm: ent:sda8! Tainted: P
+>      (2.6.32-gentoo-r7 #1) MS-6728
+> May 19 20:04:32 beda kernel: EIP: 0060:[<c10d4625>] EFLAGS: 00010202 CPU: 0
+> May 19 20:04:32 beda kernel: EIP is at reiser4_txn_end+0x511/0x55f
+> May 19 20:04:32 beda kernel: EAX: 000073cd EBX: 00000000 ECX: 00000001
+> EDX: ed46a9a8
+> May 19 20:04:32 beda kernel: ESI: f6adfe48 EDI: f661d0ec EBP: f6adfe68
+> ESP: f6adfe10
+> May 19 20:04:32 beda kernel: DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 0068
+> May 19 20:04:32 beda kernel: Process ent:sda8! (pid: 1453, ti=f6ade000
+> task=f7083000 task.ti=f6ade000)
+> May 19 20:04:32 beda kernel: Stack:
+> May 19 20:04:32 beda kernel: f6adfe40 00000000 edce7e00 f6b3ec00
+> edce7ee8 edce7e74 ef133100 00000000
+> May 19 20:04:32 beda kernel: <0> f70832e8 f7083000 f6adff30 f6adff6c
+> ed46a900 f6adff6c 000000a4 00000000
+> May 19 20:04:32 beda kernel: <0> 00000000 00000000 00000000 f6adff30
+> ed46a900 f661d0dc f6adfe74 c10d467e
+> May 19 20:04:32 beda kernel: Call Trace:
+> May 19 20:04:32 beda kernel: [<c10d467e>] ? reiser4_txn_restart+0xb/0x1a
+> May 19 20:04:32 beda kernel: [<c10d49b3>] ? flush_some_atom+0x326/0x40d
+> May 19 20:04:32 beda kernel: [<c10e1a3c>] ? reiser4_writeout+0xe5/0x1af
+> May 19 20:04:32 beda kernel: [<c1099d8a>] ? writeback_inodes_wb+0x308/0x398
+> May 19 20:04:32 beda kernel: [<c10e2390>] ? entd+0x19a/0x36a
+> May 19 20:04:32 beda kernel: [<c10e21f6>] ? entd+0x0/0x36a
+> May 19 20:04:32 beda kernel: [<c1036fa3>] ? kthread+0x66/0x68
+> May 19 20:04:32 beda kernel: [<c1036f3d>] ? kthread+0x0/0x68
+> May 19 20:04:32 beda kernel: [<c10033e3>] ? kernel_thread_helper+0x7/0x14
+> May 19 20:04:32 beda kernel: Code: ff ff 83 68 14 01 f6 40 08 08 0f 84
+>   
+
