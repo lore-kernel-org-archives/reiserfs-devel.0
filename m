@@ -1,52 +1,46 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH RFC]  buffer_head: remove redundant test from
- wait_on_buffer
-Date: Mon, 7 Jun 2010 13:24:00 -0700
-Message-ID: <20100607132400.492613f1.akpm@linux-foundation.org>
-References: <1271415499.2075.19.camel@localhost>
-	<20100416145123.283f216c.akpm@linux-foundation.org>
-	<xr93ljbbw3u8.fsf@ninji.mtv.corp.google.com>
+From: tytso@mit.edu
+Subject: Re: [PATCHv4 01/17] VFS: introduce helpers for the s_dirty flag
+Date: Wed, 9 Jun 2010 11:44:49 -0400
+Message-ID: <20100609154448.GC6162@thunk.org>
+References: <1274795352-3551-1-git-send-email-dedekind1@gmail.com>
+ <1274795352-3551-2-git-send-email-dedekind1@gmail.com>
+ <20100528132318.0783675a.akpm@linux-foundation.org>
+ <20100528211432.GM31073@ZenIV.linux.org.uk>
+ <20100528141755.42958d81.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <xr93ljbbw3u8.fsf@ninji.mtv.corp.google.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20100528141755.42958d81.akpm@linux-foundation.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Greg Thelen <gthelen@google.com>
-Cc: Richard Kennedy <richard@rsk.demon.co.uk>, Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <jens.axboe@oracle.com>, lkml <linux-kernel@vger.kernel.org>, Nick Piggin <npiggin@suse.de>, Jeff Mahoney <jeffm@suse.com>, reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, Artem Bityutskiy <dedekind1@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, linux-fsdevel@vger.kernel.org, Roman Zippel <zippel@linux-m68k.org>, "Tigran A. Aivazian" <tigran@aivazian.fsnet.co.uk>, Chris Mason <chris.mason@oracle.com>, Boaz Harrosh <bharrosh@panasas.com>, linux-ext4@vger.kernel.org, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, David Woodhouse <dwmw2@infradead.org>, reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>, Evgeniy Dushistov <dushistov@mail.ru>
 
-On Sat, 22 May 2010 23:05:03 -0700
-Greg Thelen <gthelen@google.com> wrote:
-
-> > --- a/fs/buffer.c~buffer_head-remove-redundant-test-from-wait_on_buffer-fix
-> > +++ a/fs/buffer.c
-> > @@ -90,6 +90,12 @@ EXPORT_SYMBOL(unlock_buffer);
-> >   */
-> >  void __wait_on_buffer(struct buffer_head * bh)
-> >  {
-> > +	/*
-> > +	 * Calling wait_on_buffer() against a zero-ref buffer is a nasty bug
-> > +	 * because it will almost always "work".  However this buffer can be
-> > +	 * reclaimed at any time.  So check for it.
-> > +	 */
-> > +	VM_BUG_ON(atomic_read(&bh->b_count) == 0);
+On Fri, May 28, 2010 at 02:17:55PM -0700, Andrew Morton wrote:
+> > 
+> > The real issue is that it's almost certainly an overdesign.  Let's
+> > get rid of the bogus uses first and figure out what's happening in
+> > what remains, OK?
 > 
-> My system is failing this VM_BUG_ON() occasionally.  I think this is due to
-> wait_on_buffer() calls with b_count=0 from locations within fs/buffer.c.
+> That would be good.
 
-Thanks.
+Can we figure out what the new names will be for these accessor
+functions, and then pursuade Linus to be willing to add patch #1 in
+this series to add these accessor functions (without any users for
+these functions, that would wait until the next merge window) to
+2.6.35-rc3 or -rc4, please?
 
-Yup, the buffers are protected by lock_page().
+It will make life much easier for fs maintainers to merge the patches,
+especially if they've done some cleanup to reduce the bogus places
+where s_dirt was getting set in the first place.  That way I can apply
+my patch to reduce the use of s_dirt[1], then apply a patch I carry in
+my own tree to convert to the new accessor functions without worrying
+about patch conflicts.
 
-> These
-> occasional b_count=0 callers are caused by buf reads that complete quickly -
-> after the I/O is issued but before it is waited upon.  Such fs/buffer.c callers
-> need to either bypass this assertion or increment b_count.  I don't think they
-> need to grab an b_count reference.  I suggest a bypass routine in the patch
-> below.  Does this look good?
+[1] http://article.gmane.org/gmane.comp.file-systems.ext4/19499
 
-I think I'll just drop
-buffer_head-remove-redundant-test-from-wait_on_buffer-fix.patch and
-wait_on_buffer-remove-the-buffer_locked-test.patch.
+Thanks,
 
+						- Ted
