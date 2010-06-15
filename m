@@ -1,167 +1,83 @@
-From: Leonardo Chiquitto <leonardo.lists@gmail.com>
-Subject: Re: [PATCH RESUBMIT] reiserfs: Remove 2 TB file size limit
-Date: Tue, 15 Jun 2010 12:26:01 -0300
-Message-ID: <AANLkTimv88HX-cpGPoWvbhIkOK25YVhusstfLG7oaGBn@mail.gmail.com>
-References: <4BF43A65.405@suse.com>
-	<AANLkTilTAapxpbA3ty5CuO0Nr0YKmxR_mFtRpyrqiCzF@mail.gmail.com>
-	<4BF45F94.40500@gmail.com>
-	<4BF5893C.3010802@suse.com>
-	<AANLkTinM2JzWu6mcY2zRl9WQXVc184X-VCCUWyn54QqZ@mail.gmail.com>
+From: David Daney <ddaney-M3mlKVOIwJVv6pq1l3V1OdBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH 6/8]i2c:i2c_core Fix warning: variable 'dummy' set but
+  not used
+Date: Tue, 15 Jun 2010 09:20:39 -0700
+Message-ID: <4C17A857.8030306@caviumnetworks.com>
+References: <1276547208-26569-1-git-send-email-justinmattock@gmail.com>	<1276547208-26569-7-git-send-email-justinmattock@gmail.com>	<20100614225315.2bae9e37@hyperion.delvare>	<4C169F19.1040608@gmail.com> <20100615134039.6ccfc17a@hyperion.delvare>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:received:received:in-reply-to
-         :references:date:message-id:subject:from:to:cc:content-type
-         :content-transfer-encoding;
-        bh=0w/U//VYTpfI6lBC2ZxXrrgGd2/Khh/lX1UpySZWR3M=;
-        b=qJrjY0nDa+K4dJHdSFLDo2rwKQ2Zg9oX0UhZwtcDz/Uj23rsDI8lng+zOjNR+YnrEZ
-         uKy1HNDowH8SF0ylvPcH7GQaDJgR0OLObSnQW7CbzR1r5u2+2Iata8w63ZiOv8hsnoAk
-         gnanEWnnbn7Ig/ALC8x1UjSK6I5DBkFhOiucM=
-In-Reply-To: <AANLkTinM2JzWu6mcY2zRl9WQXVc184X-VCCUWyn54QqZ@mail.gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20100615134039.6ccfc17a-ig7AzVSIIG7kN2dkZ6Wm7A@public.gmane.org>
+Sender: linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: T.Shearouse@gmail.com
-Cc: Jeff Mahoney <jeffm@suse.com>, Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Cc: David Daney <david.s.daney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Justin P. Mattock" <justinmattock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-bluetooth-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, clemens-P6GI/4k7KOmELgA04lAiVw@public.gmane.org, debora-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux1394-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Fri, May 21, 2010 at 10:17 AM, Tim Shearouse <t.shearouse@gmail.com>=
- wrote:
-> On Thu, May 20, 2010 at 2:10 PM, Jeff Mahoney <jeffm@suse.com> wrote:
->> -----BEGIN PGP SIGNED MESSAGE-----
->> Hash: SHA1
->>
->> On 05/19/2010 06:00 PM, Edward Shishkin wrote:
->>> Leonardo Chiquitto wrote:
->>>> On Wed, May 19, 2010 at 4:22 PM, Jeff Mahoney <jeffm@suse.com> wro=
-te:
->>>>
->>>>> =A0In its early life, reiserfs had an evolving s_max_bytes. It st=
-arted out
->>>>> =A0at 4 GB, then was raised to MAX_LFS_FILESIZE, then dropped to =
-2 TiB
->>>>> when
->>>>> =A0it was observed that struct stat only had a 32-bit st_blocks f=
-ield.
->>>>>
->>>>> =A0Since then, both the kernel and glibc have evolved as well and=
- now both
->>>>> =A0support 64-bit st_blocks. Applications that can't deal with th=
-ese
->>>>> ranges
->>>>> =A0are assumed to be "legacy" or "broken." File systems now routi=
-nely
->>>>> =A0support file sizes much larger than can be represented by 2^32=
- * 512.
->>>>>
->>>>> =A0But we never revisited that limitation. ReiserFS has always be=
-en
->>>>> able to
->>>>> =A0support larger file sizes (up to 16 TiB, in fact), but the s_m=
-ax_bytes
->>>>> =A0limitation has prevented that.
->>>>>
->>>>> =A0This patch adds a max_file_offset helper to set s_max_bytes to=
- a more
->>>>> =A0appropriate value. I noticed that XFS adjusts the limit based =
-on the
->>>>> =A0CPU but I'd prefer to err on the side of compatibility and pla=
-ce the
->>>>> =A0limit at the smaller of the 32-bit MAX_LFS_FILESIZE and the ma=
-ximum
->>>>> =A0supported by the file system. At a 4k block size, this is conv=
-eniently
->>>>> =A0also the advertised maximum file size of reiserfs.
->>>>>
->>>>> =A0Update: This version properly extends PAGE_SIZE_CACHE so the m=
-ath works
->>>>> =A0 =A0 =A0 =A0 on 32-bit systems.
->>>>>
->>>>> =A0This bug is tracked at:
->>>>> https://bugzilla.novell.com/show_bug.cgi?id=3D592100
->>>>>
->>>>> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
->>>>> - ---
->>>>> =A0fs/reiserfs/super.c | =A0 17 +++++++++++++----
->>>>> =A01 file changed, 13 insertions(+), 4 deletions(-)
->>>>>
->>>>> - --- a/fs/reiserfs/super.c
->>>>> +++ b/fs/reiserfs/super.c
->>>>> @@ -1309,6 +1309,18 @@ out_err:
->>>>> =A0 =A0 =A0 =A0return err;
->>>>> =A0}
->>>>> =A0+static inline loff_t
->>>>> +reiserfs_max_file_offset(struct super_block *sb)
->>>>> +{
->>>>> + =A0 =A0 =A0 /* Limited by stat_data->sd_blocks, 2^32-1 blocks *=
-/
->>>>> + =A0 =A0 =A0 loff_t fs_max =3D ((u64)sb->s_blocksize << 32) - sb=
-->s_blocksize;
->>>>> +
->>>>> + =A0 =A0 =A0 /* Limited by 32-bit MAX_LFS_FILESIZE */
->>>>> + =A0 =A0 =A0 loff_t page_cache_max =3D (((u64)PAGE_CACHE_SIZE <<=
- 31)-1);
->>>>> +
->>>>> + =A0 =A0 =A0 return min(fs_max, page_cache_max);
->>>>> +}
->>>>> +
->>>>> =A0static int read_super_block(struct super_block *s, int offset)
->>>>> =A0{
->>>>> =A0 =A0 =A0 =A0struct buffer_head *bh;
->>>>> @@ -1398,10 +1410,7 @@ static int read_super_block(struct super
->>>>> =A0 =A0 =A0 =A0s->dq_op =3D &reiserfs_quota_operations;
->>>>> =A0#endif
->>>>> =A0- =A0 =A0 =A0/* new format is limited by the 32 bit wide i_blo=
-cks field,
->>>>> want to
->>>>> - - =A0 =A0 =A0** be one full block below that.
->>>>> - - =A0 =A0 =A0*/
->>>>> - - =A0 =A0 s->s_maxbytes =3D (512LL << 32) - s->s_blocksize;
->>>>> + =A0 =A0 =A0 s->s_maxbytes =3D reiserfs_max_file_offset(s);
->>>>> =A0 =A0 =A0 =A0return 0;
->>>>> =A0}
->>>>>
->>>>
->>>> Hello ReiserFS developers,
->>>>
->>>> Any chance to have this patch submitted to 2.6.35?
+On 06/15/2010 04:40 AM, Jean Delvare wrote:
+> Hi David,
+>
+> On Mon, 14 Jun 2010 14:28:57 -0700, David Daney wrote:
+>> On 06/14/2010 01:53 PM, Jean Delvare wrote:
+>>> Hi Justin,
 >>>
->>> I wouldn't rely on this. Reiserfsprogs also should be aware
->>> of the new limits. It's all long..
->>
->> I certainly hope not. Things would be broken already. The 2 TB limit=
- is
->> 2048 * 2^32.
->>
->> - -Jeff
->>
->>>> =A0We're hitting the 2TB
->>>> file limit here and this patch resolves the problem.
+>>> On Mon, 14 Jun 2010 13:26:46 -0700, Justin P. Mattock wrote:
+>>>> could be a right solution, could be wrong
+>>>> here is the warning:
+>>>>     CC      drivers/i2c/i2c-core.o
+>>>> drivers/i2c/i2c-core.c: In function 'i2c_register_adapter':
+>>>> drivers/i2c/i2c-core.c:757:15: warning: variable 'dummy' set but not used
 >>>>
->>>> Thanks,
->>>> Leonardo
->> - --
->> Jeff Mahoney
->> SUSE Labs
+>>>>    Signed-off-by: Justin P. Mattock<justinmattock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>>
+>>>> ---
+>>>>    drivers/i2c/i2c-core.c |    2 ++
+>>>>    1 files changed, 2 insertions(+), 0 deletions(-)
+>>>>
+>>>> diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+>>>> index 1cca263..79c6c26 100644
+>>>> --- a/drivers/i2c/i2c-core.c
+>>>> +++ b/drivers/i2c/i2c-core.c
+>>>> @@ -794,6 +794,8 @@ static int i2c_register_adapter(struct i2c_adapter *adap)
+>>>>    	mutex_lock(&core_lock);
+>>>>    	dummy = bus_for_each_drv(&i2c_bus_type, NULL, adap,
+>>>>    				 __process_new_adapter);
+>>>> +	if(!dummy)
+>>>> +		dummy = 0;
+>>>
+>>> One word: scripts/checkpatch.pl
+>>>
+>>> In other news, the above is just plain wrong. First we force people to
+>>> read the result of bus_for_each_drv() and then when they do and don't
+>>> need the value, gcc complains, so we add one more layer of useless
+>>> code, which developers and possibly tools will later wonder and
+>>> complain about? I can easily imagine that a static code analyzer would
+>>> spot the above code as being a potential bug.
+>>>
+>>> Let's stop this madness now please.
+>>>
+>>> Either __must_check goes away from bus_for_each_drv() and from every
+>>> other function which raises this problem, or we must disable that new
+>>> type of warning gcc 4.6.0 generates. Depends which warnings we value
+>>> more, as we can't sanely have both.
+>>>
+>>
+>> That is the crux of the whole thing.  Putting in crap to get rid of the
+>> __must_check warning someone obviously wanted to provoke is just plain
+>> wrong.
 >
-> I do not believe this patch will cause problems. As you mention,
-> ReiserFS was intended to support a max 16TB filesize.
+> __process_new_adapter() calls i2c_do_add_adapter() which always returns
+> 0. Why should I check the return value of bus_for_each_drv() when I
+> know it will always be 0 by construction?
 >
-> Edward, it looks to me as though reiserfsprogs will be aware of the
-> new limits, unless I am missing something (it does not have its own
-> method for accessing the super block somewhere, correct?).
+> Also note that the same function is also called through
+> bus_for_each_dev() somewhere else in i2c-core, and there is no warning
+> there because bus_for_each_dev() is not marked __must_check. How
+> consistent is this? If bus_for_each_dev() is OK without __must_check,
+> then I can't see why bus_for_each_drv() wouldn't be.
+>
 
-Hello,
+Well, I would advocate removing the __must_check then.
 
-I apologize for insisting here but it's really important for us to get
-this fixed upstream. Please, can someone submit it for 2.6.35 or,
-if the patch is not a good idea, give a little insight on what's wrong?
 
-Thanks,
-Leonardo
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+David Daney
