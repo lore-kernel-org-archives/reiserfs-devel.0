@@ -1,65 +1,50 @@
-From: "Justin P. Mattock" <justinmattock@gmail.com>
-Subject: [PATCH 1/8 v3]reiserfs:stree.c Fix variable set but not used.
-Date: Mon, 14 Jun 2010 16:56:17 -0700
-Message-ID: <1276559777-3017-1-git-send-email-justinmattock@gmail.com>
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+From: "Justin P. Mattock" <justinmattock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/8]reiserfs:stree.c Fix variable set but not used.
+Date: Mon, 14 Jun 2010 17:01:06 -0700
+Message-ID: <4C16C2C2.6000503@gmail.com>
+References: <1276547208-26569-1-git-send-email-justinmattock@gmail.com> <1276547208-26569-2-git-send-email-justinmattock@gmail.com> <4C1699AA.3000900@gmail.com> <4C169D71.90800@gmail.com> <4C16A372.6020604@gmail.com> <4C16B236.7080506@gmail.com> <tkrat.d7bea45e7dbad972@s5r6.in-berlin.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:from:to:cc:subject:date
-         :message-id:x-mailer;
-        bh=Oyld44lnGjMlgFMD2tfQdpiYFrR+APsXdiCEgOT5TUU=;
-        b=Q1IiFb4HJRCdPztzQHp07kHnoP5qy2nXT6dgBkao7hU8o4YUk6E/wHUa+7kPQYVgwM
-         UOgoBWQHoRm57zsfhIVZ/4meEcW4nZjKtTdJMjuHSSmaWb1B9bkvAvTJByFwBOkqLUuC
-         Z52cW6Uyc/5KoM6ZpYvxv0B20Mt0nHywHfvUc=
-Sender: reiserfs-devel-owner@vger.kernel.org
+        h=domainkey-signature:received:received:message-id:date:from
+         :user-agent:mime-version:to:cc:subject:references:in-reply-to
+         :content-type:content-transfer-encoding;
+        bh=c9+GB3osQhnqECMPXidpkKI4M9XYCUxOlEWIvrXtlVo=;
+        b=mxYAiKHdbrK3jUZN7mXKfgJLWLrdCtVAANczvXS0qhjiY7t4GA1RYQe339LGNeZzwq
+         pZQgdAZkXW+1tjq1W31nzRcaLVHMZ7IZwkQvFt6l69cjBZFBIFuEiVu4B6BjG9p4K19z
+         z8QMNNNyTCYjcvwhI4sWEhyB6+RDJUxIewGUk=
+In-Reply-To: <tkrat.d7bea45e7dbad972-MtYdepGKPcBMYopoZt5u/LNAH6kLmebB@public.gmane.org>
+Sender: linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
-Cc: edward.shishkin@gmail.com, linux-kernel@vger.kernel.org, "Justin P. Mattock" <justinmattock@gmail.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Stefan Richter <stefanr-MtYdepGKPcBMYopoZt5u/LNAH6kLmebB@public.gmane.org>
+Cc: Edward Shishkin <edward.shishkin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-bluetooth-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, clemens-P6GI/4k7KOmELgA04lAiVw@public.gmane.org, debora-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux1394-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Resend of this patch due to previous whitespace issues and a messup
-with v2.
-The below fixes this warning:
-fs/reiserfs/stree.c: In function 'search_by_key':
-fs/reiserfs/stree.c:602:6: warning: variable 'right_neighbor_of_leaf_node' set but not used
+On 06/14/2010 04:07 PM, Stefan Richter wrote:
+> On 14 Jun, Justin P. Mattock wrote:
+>> On 06/14/2010 02:47 PM, Edward Shishkin wrote:
+>>> Whitespaces should be removed.
+>>> I recommend quilt package for managing patches:
+>>> "quilt refresh --strip-trailing-whitespace" is your friend..
+>>
+>> o.k. I resent this.. fixed the whitespace(hopefully)
+>> and add your Acked to it.
+>> as for quilt I'll have to look into that..
+>> (using a lfs system, so if the sourcecode is easy
+>> to deal with(build), then it's a good but if it becomes
+>> a nightmare maybe not!!).
+>
+> Since you appear to generate the patches with git, you can use "git diff
+> --check [...]" for some basic whitespace checks (additions of trailing
+> space, additions of space before tab).  For more extensive checks, try
+> "git diff [...] | scripts/checkpatch.pl -".  Check this before you
+> commit.  If you committed already, "git commit --amend [-a] [...]" lets
+> you alter the very last commit of course.
 
- Signed-off-by: Justin P. Mattock <justinmattock@gmail.com>
- Acked-by: Edward Shishkin <edward.shishkin@gmail.com>
----
- fs/reiserfs/stree.c |    4 ----
- 1 files changed, 0 insertions(+), 4 deletions(-)
 
-diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index 313d39d..1d901c3 100644
---- a/fs/reiserfs/stree.c
-+++ b/fs/reiserfs/stree.c
-@@ -599,7 +599,6 @@ int search_by_key(struct super_block *sb, const struct cpu_key *key,	/* Key to s
- 	struct buffer_head *bh;
- 	struct path_element *last_element;
- 	int node_level, retval;
--	int right_neighbor_of_leaf_node;
- 	int fs_gen;
- 	struct buffer_head *reada_bh[SEARCH_BY_KEY_READA];
- 	b_blocknr_t reada_blocks[SEARCH_BY_KEY_READA];
-@@ -617,8 +616,6 @@ int search_by_key(struct super_block *sb, const struct cpu_key *key,	/* Key to s
- 
- 	pathrelse(search_path);
- 
--	right_neighbor_of_leaf_node = 0;
--
- 	/* With each iteration of this loop we search through the items in the
- 	   current node, and calculate the next current node(next path element)
- 	   for the next iteration of this loop.. */
-@@ -695,7 +692,6 @@ int search_by_key(struct super_block *sb, const struct cpu_key *key,	/* Key to s
- 			   starting from the root. */
- 			block_number = SB_ROOT_BLOCK(sb);
- 			expected_level = -1;
--			right_neighbor_of_leaf_node = 0;
- 
- 			/* repeat search from the root */
- 			continue;
--- 
-1.7.1.rc1.21.gf3bd6
+Thanks for the info on this, copied it
+down in my book of commands...
 
+Justin P. Mattock
