@@ -1,39 +1,27 @@
-From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 6/8]i2c:i2c_core Fix warning: variable 'dummy' set but 
-  not used
-Date: Wed, 16 Jun 2010 11:45:17 +0200
-Message-ID: <20100616114517.5ac49e26@hyperion.delvare>
-References: <1276547208-26569-1-git-send-email-justinmattock@gmail.com>
-	<1276547208-26569-7-git-send-email-justinmattock@gmail.com>
-	<20100614225315.2bae9e37@hyperion.delvare>
-	<4C169F19.1040608@gmail.com>
-	<20100615134039.6ccfc17a@hyperion.delvare>
-	<4C17A857.8030306@caviumnetworks.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Re: compiling r4 instructions for reiser-for-2.6.34
+Date: Fri, 18 Jun 2010 13:49:34 +0000
+Message-ID: <b4617193bf2d02dfee94cf1554aeae71@mail.velocitynet.com.au>
+References: <ba1c6ca5bcda61d76b6fdb86dd493281@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4C17A857.8030306-M3mlKVOIwJVv6pq1l3V1OdBPR1lH4CV8@public.gmane.org>
-Sender: linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <ba1c6ca5bcda61d76b6fdb86dd493281@mail.velocitynet.com.au>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: David Daney <ddaney-M3mlKVOIwJVv6pq1l3V1OdBPR1lH4CV8@public.gmane.org>
-Cc: David Daney <david.s.daney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Justin P. Mattock" <justinmattock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-bluetooth-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, clemens-P6GI/4k7KOmELgA04lAiVw@public.gmane.org, debora-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux1394-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: reiserfs-devel@vger.kernel.org
 
-On Tue, 15 Jun 2010 09:20:39 -0700, David Daney wrote:
-> On 06/15/2010 04:40 AM, Jean Delvare wrote:
-> > __process_new_adapter() calls i2c_do_add_adapter() which always returns
-> > 0. Why should I check the return value of bus_for_each_drv() when I
-> > know it will always be 0 by construction?
-> >
-> > Also note that the same function is also called through
-> > bus_for_each_dev() somewhere else in i2c-core, and there is no warning
-> > there because bus_for_each_dev() is not marked __must_check. How
-> > consistent is this? If bus_for_each_dev() is OK without __must_check,
-> > then I can't see why bus_for_each_drv() wouldn't be.
-> 
-> Well, I would advocate removing the __must_check then.
+Christian Stroetmann  wrote:
+> Do you know when the patch was uploaded? I was at two websites at
+kernel.org at the beginning of this month and haven't seen something. :-(
 
-I have just sent a patch to LKML doing exactly this.
+See
+http://www.kernel.org/pub/linux/kernel/people/edward/reiser4/reiser4-for-2.6/?C=M;O=D
 
--- 
-Jean Delvare
+reiser4-for-2.6.34.patch.sign            26-May-2010 22:29  248   
+reiser4-for-2.6.34.patch.gz.sign         26-May-2010 22:29  248   
+reiser4-for-2.6.34.patch.gz              26-May-2010 22:29  595K  
+reiser4-for-2.6.34.patch.bz2.sign        26-May-2010 22:29  248   
+reiser4-for-2.6.34.patch.bz2             26-May-2010 22:29  440K 
+
