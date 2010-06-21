@@ -1,42 +1,62 @@
-From: Christian Stroetmann <stroetmann@ontolab.com>
-Subject: Re: compiling r4 instructions for reiser-for-2.6.34
-Date: Fri, 18 Jun 2010 16:26:11 +0200
-Message-ID: <4C1B8203.4080508@ontolab.com>
-References: <ba1c6ca5bcda61d76b6fdb86dd493281@mail.velocitynet.com.au> <b4617193bf2d02dfee94cf1554aeae71@mail.velocitynet.com.au>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: [PATCH 8/8 v2]tuners:tuner-simple Fix warning: variable 'tun'
+ set but not used
+Date: Mon, 21 Jun 2010 09:34:36 -0300
+Message-ID: <20100621093436.376b819a@pedra>
+References: <1276580914-21883-1-git-send-email-justinmattock@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <b4617193bf2d02dfee94cf1554aeae71@mail.velocitynet.com.au>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1276580914-21883-1-git-send-email-justinmattock@gmail.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: "Justin P. Mattock" <justinmattock@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
 
-Glenn D wrote:
-> Christian Stroetmann  wrote:
->    
->> Do you know when the patch was uploaded? I was at two websites at
->>      
-> kernel.org at the beginning of this month and haven't seen something. :-(
->
-> See
-> http://www.kernel.org/pub/linux/kernel/people/edward/reiser4/reiser4-for-2.6/?C=M;O=D
->
-> reiser4-for-2.6.34.patch.sign            26-May-2010 22:29  248
-> reiser4-for-2.6.34.patch.gz.sign         26-May-2010 22:29  248
-> reiser4-for-2.6.34.patch.gz              26-May-2010 22:29  595K
-> reiser4-for-2.6.34.patch.bz2.sign        26-May-2010 22:29  248
-> reiser4-for-2.6.34.patch.bz2             26-May-2010 22:29  440K
->
->    
-I do know the date, but as I said I was at 2 websites and one of it was
-http://www.kernel.org/pub/linux/kernel/people/edward/reiser4/. ;-O
-And I'm sure that it was around the 31-May-2010 and 01-June-2010, 
-because at these days I have updated the webpage of our file system and 
-looked for new patches to update these in one step.
+Em Mon, 14 Jun 2010 22:48:34 -0700
+"Justin P. Mattock" <justinmattock@gmail.com> escreveu:
 
-And also, I asked this somehow silly question only, because it is the 
-second time in a row that I had this impression.
+> Resend due to a whitespace issue I created by mistake.
+> The below patch fixes a warning message create by gcc 4.6.0
 
-But thank you very much for your help.
-Christian *<:o)   O>-<   -(D)>-<
+It seems OK for me, but you shouldn't be sending it to be applied at reiserfs-devel ML.
+Instead, it should be sent to linux-media ML, and applied via my tree.
+
+>  
+>  CC [M]  drivers/media/common/tuners/tuner-simple.o
+> drivers/media/common/tuners/tuner-simple.c: In function 'simple_set_tv_freq':
+> drivers/media/common/tuners/tuner-simple.c:548:20: warning: variable 'tun' set but not used
+> 
+>  Signed-off-by: Justin P. Mattock <justinmattock@gmail.com>
+>  Reviewed-By: Mauro Carvalho Chehab <mchehab@redhat.com>
+> 
+> ---
+>  drivers/media/common/tuners/tuner-simple.c |    3 ---
+>  1 files changed, 0 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/common/tuners/tuner-simple.c b/drivers/media/common/tuners/tuner-simple.c
+> index 8abbcc5..84900fa 100644
+> --- a/drivers/media/common/tuners/tuner-simple.c
+> +++ b/drivers/media/common/tuners/tuner-simple.c
+> @@ -545,14 +545,11 @@ static int simple_set_tv_freq(struct dvb_frontend *fe,
+>  	struct tuner_simple_priv *priv = fe->tuner_priv;
+>  	u8 config, cb;
+>  	u16 div;
+> -	struct tunertype *tun;
+>  	u8 buffer[4];
+>  	int rc, IFPCoff, i;
+>  	enum param_type desired_type;
+>  	struct tuner_params *t_params;
+>  
+> -	tun = priv->tun;
+> -
+>  	/* IFPCoff = Video Intermediate Frequency - Vif:
+>  		940  =16*58.75  NTSC/J (Japan)
+>  		732  =16*45.75  M/N STD
+
+
+-- 
+
+Cheers,
+Mauro
