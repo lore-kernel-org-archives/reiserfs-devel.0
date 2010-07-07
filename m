@@ -1,43 +1,28 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: [patch 6/6] reiser4: enable
-Date: Wed, 07 Jul 2010 02:21:38 +0200
-Message-ID: <4C33C892.8030609@gmail.com>
+From: Jiri Olsa <jolsa@redhat.com>
+Subject: reiserfs: problem with xattrs
+Date: Wed, 7 Jul 2010 19:47:34 +0200
+Message-ID: <20100707174734.GA1814@jolsa.brq.redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------070802080205080604060408"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
-
-This is a multi-part message in MIME format.
---------------070802080205080604060408
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
+Cc: jeffm@suse.com
 
+hi,
 
+I hit a BUG in the reiserfs when halting my system,
+there was nothing in /var/log/messages after next startup
+but I took a photo of the screen, myabe it can help..
 
---------------070802080205080604060408
-Content-Type: text/plain;
- name="reiser4-enable.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="reiser4-enable.patch"
+http://people.redhat.com/jolsa/reiserfs.zip
 
-Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
----
- fs/reiser4/Kconfig |    1 -
- 1 file changed, 1 deletion(-)
+sry for the quality, it's a cell phone camera ;)
 
---- mmotm.orig/fs/reiser4/Kconfig
-+++ mmotm/fs/reiser4/Kconfig
-@@ -1,7 +1,6 @@
- config REISER4_FS
- 	tristate "Reiser4 (EXPERIMENTAL)"
- 	depends on EXPERIMENTAL
--	depends on BROKEN
- 	select ZLIB_INFLATE
- 	select ZLIB_DEFLATE
- 	select LZO_COMPRESS
+I'm using Fedora kernel 2.6.33.5-124.fc13.x86_64
 
---------------070802080205080604060408--
+wbr,
+jirka
