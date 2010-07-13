@@ -1,41 +1,52 @@
-From: Changli Gao <xiaosuo@gmail.com>
-Subject: [PATCH, resend] reiserfs: remove unused variable wait
-Date: Tue, 13 Jul 2010 15:26:30 +0800
-Message-ID: <1279005990-11185-1-git-send-email-xiaosuo@gmail.com>
+From: Davidlohr Bueso <dave.bueso@gmail.com>
+Subject: [PATCH RESEND reiserfs] trivial typo fix
+Date: Tue, 13 Jul 2010 05:50:12 -0400
+Message-ID: <1279014612.18280.1.camel@cowboy>
+Reply-To: dave.bueso@gmail.com
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:from:to:cc:subject:date
-         :message-id:x-mailer;
-        bh=kI9AkVYUusMc9RmLDoRJTDOJm4SZgLie4HP2j2g+yXo=;
-        b=U6xkMsOwO4oCK65FhJk01jD6YHwdeGkOV528L0npLSb6Ivo0oqt8vRxjMYt3rVatIm
-         OorFIDP3PVx8lDu5H9h38TFx7AwzMqYy4UbHoxOSvHMIudAQZ1a13p/UJte9igtCvyrW
-         QbHUHh8sE7G7BE96LgtVpyuQ4h1Yh43Ulvf4A=
+        h=domainkey-signature:received:received:subject:from:reply-to:to:cc
+         :content-type:date:message-id:mime-version:x-mailer
+         :content-transfer-encoding;
+        bh=VlkkAVAqx2cL3gCoLP68WBfvp34NrMaXNe5LWUsvld0=;
+        b=tLL6TaDa31cBDJ95E4RsDSDqZ5qpsQvvUERrKqO803HH3aBf/DihM3iINbrq6ahKV9
+         I7zfCnzpvtuiEJwROqQRl/npSWdoUlUtN1rE2m2YPI8ErUZFIcHytU+uJGaIZycj6sN8
+         Fpm16+tA2rY3yTHih6nIF5VO+BBultYOWjycM=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <jens.axboe@oracle.com>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Changli Gao <xiaosuo@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: reiserfs-devel@vger.kernel.org, trivial@vger.kernel.org
 
-remove unused variable wait
+Fix trivial typo in code comment (change adn for and), also change comment style for proper coding style.
 
-remove unused variable wait
+Thanks,
+Davidlohr
 
-Signed-off-by: Changli Gao <xiaosuo@gmail.com>
-----
- fs/reiserfs/journal.c |    1 -
- 1 file changed, 1 deletion(-)
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index 19fbc81..1ec952b 100644
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -983,7 +983,6 @@ static int flush_older_commits(struct super_block *s,
+Signed-off-by: Davidlohr Bueso <dave@gnu.org>
+---
+ include/linux/reiserfs_fs.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
+index 3b603f4..ba39416 100644
+--- a/include/linux/reiserfs_fs.h
++++ b/include/linux/reiserfs_fs.h
+@@ -360,7 +360,7 @@ int is_reiserfs_jr(struct reiserfs_super_block *rs);
+ /* the spot for the super in versions 3.5 - 3.5.10 (inclusive) */
+ #define REISERFS_OLD_DISK_OFFSET_IN_BYTES (8 * 1024)
  
- static int reiserfs_async_progress_wait(struct super_block *s)
- {
--	DEFINE_WAIT(wait);
- 	struct reiserfs_journal *j = SB_JOURNAL(s);
- 
- 	if (atomic_read(&j->j_async_throttle)) {
+-// reiserfs internal error code (used by search_by_key adn fix_nodes))
++/* reiserfs internal error code (used by search_by_key and fix_nodes)) */
+ #define CARRY_ON      0
+ #define REPEAT_SEARCH -1
+ #define IO_ERROR      -2
+-- 
+1.7.0.4
+
+
+
+
