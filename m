@@ -1,54 +1,77 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Re: Formal Reiser4 inclusion and todo =?UTF-8?Q?list=3F?=
-Date: Wed, 28 Jul 2010 15:21:37 +0000
-Message-ID: <0d42c3ebde41a3d0bcc01f9fccc07f1c@mail.velocitynet.com.au>
-References: <alpine.DEB.2.01.0904181302440.6162@bogon.housecafe.de> <49EB1E3F.1020905@gmail.com> <542E227E-E31D-496C-93FB-19393133297F@MailNewsRSS.com> <200904250153.33258.volkerarmin@googlemail.com> <2E9381E6-A09A-4330-9A61-C4B7D7CE0E71@MailNewsRSS.com> <49F2CF9A.1060202@inn.nl> <49F2D43F.90105@ontolab.com> <8c113a260904250416n28fbdacs682ef8e6859b7dbf@mail.gmail.com> <49F339A2.9080705@ontolab.com> <200904252027.n3PKReMx073755@mail.meer.net> <49F393A1.4030004@gmail.com>
+From: Christian Stroetmann <stroetmann@ontolinux.com>
+Subject: Re: Formal Reiser4 inclusion and todo list?
+Date: Wed, 28 Jul 2010 21:58:52 +0200
+Message-ID: <4C508BFC.3010008@ontolinux.com>
+References: <alpine.DEB.2.01.0904181302440.6162@bogon.housecafe.de> <49EB1E3F.1020905@gmail.com> <542E227E-E31D-496C-93FB-19393133297F@MailNewsRSS.com> <200904250153.33258.volkerarmin@googlemail.com> <2E9381E6-A09A-4330-9A61-C4B7D7CE0E71@MailNewsRSS.com> <49F2CF9A.1060202@inn.nl> <49F2D43F.90105@ontolab.com> <8c113a260904250416n28fbdacs682ef8e6859b7dbf@mail.gmail.com> <49F339A2.9080705@ontolab.com> <200904252027.n3PKReMx073755@mail.meer.net> <49F393A1.4030004@gmail.com> <0d42c3ebde41a3d0bcc01f9fccc07f1c@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <49F393A1.4030004@gmail.com>
+In-Reply-To: <0d42c3ebde41a3d0bcc01f9fccc07f1c@mail.velocitynet.com.au>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: doiggl@velocitynet.com.au, linux reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
+Aloha Glenn;
 
-> The following items are still unaddressed:
-> 
-> 1. running igrab() in the writepage() path is really going to hammer
->    inode_lock.  Something else will need to be done here.
-> 
-> 2. Running iput() in entd() is a bit surprising.  iirc there are various
+At the 28.07.2010 17:21, you (doiggl@velocitynet.com.au) wrote:
+>    
+>> The following items are still unaddressed:
+>>
+>> 1. running igrab() in the writepage() path is really going to hammer
+>>     inode_lock.  Something else will need to be done here.
+>>
+>> 2. Running iput() in entd() is a bit surprising.  iirc there are various
+>>      
+>    
+>> ways
+>>     in which this can recur into the filesystem, perform I/O, etc.  I
+>> guess it
+>>     works..
+>>     But again, it will hammer inode_lock.
+>>
+>> 3. the writeout logic in entd_flush() is interesting (as in "holy cow").
+>>     It's very central and really needs some good comments describing
+>>      
+> what's
+>    
+>>     going on in there - what problems are being solved, which decisions
+>>      
+> were
+>    
+>>     taken and why, etc.
+>>
+>> 4. reiser4_wait_page_writeback() needs commenting.
+>>
+>> 5. reading the comment in txnmgr.c regarding MAP_SHARED pages: a number
+>>      
+> of
+>    
+>>     things have changed since then.  We have page-becoming-writeable
+>>     notifications and probably soon we'll always take a pagefault when a
+>>     MAP_SHARED page transitions from pte-clean to pte-dirty (although I
+>> wouldn't
+>>     recommend that a filesystem rely upon the latter for a while yet).
+>>
+>> Feel free to address them.
+>>
+>> Thanks,
+>> Edward.
+>>      
+> Has the number of items reduced at all ?
+> just curious
+> Cheers Glenn
+>    
 
-> ways
->    in which this can recur into the filesystem, perform I/O, etc.  I 
-> guess it
->    works..
->    But again, it will hammer inode_lock.
-> 
-> 3. the writeout logic in entd_flush() is interesting (as in "holy cow").
->    It's very central and really needs some good comments describing
-what's
->    going on in there - what problems are being solved, which decisions
-were
->    taken and why, etc.
-> 
-> 4. reiser4_wait_page_writeback() needs commenting.
-> 
-> 5. reading the comment in txnmgr.c regarding MAP_SHARED pages: a number
-of
->    things have changed since then.  We have page-becoming-writeable
->    notifications and probably soon we'll always take a pagefault when a
->    MAP_SHARED page transitions from pte-clean to pte-dirty (although I 
-> wouldn't
->    recommend that a filesystem rely upon the latter for a while yet).
-> 
-> Feel free to address them.
-> 
-> Thanks,
-> Edward.
+I haven't looked at the code since several years. But as far as I have 
+followed the development, all of the patch sets since then (April 2009) 
+were only of cosmetical nature, or said with other words, to keep it 
+coping with changes at different positions, like eg. VFS.
+And in a handful of blogs I got no additional/other informations, 
+despite that the maintainer is working at a company in the field of 
+another file system since the end of last year, so that he has only few 
+time for Reiser FSs, and also that the opinions are that the project is 
+dead.
 
-Has the number of items reduced at all ?
-just curious
-Cheers Glenn 
-
+Cheerio
+Christian *<:o)   O>-<   -(D)>-<
