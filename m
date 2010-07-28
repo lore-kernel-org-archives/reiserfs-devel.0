@@ -1,45 +1,54 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [PATCH RESEND reiserfs] trivial typo fix
-Date: Tue, 13 Jul 2010 15:05:19 +0200
-Message-ID: <4C3C648F.5010200@gmail.com>
-References: <1279014612.18280.1.camel@cowboy>
+From: <doiggl@velocitynet.com.au>
+Subject: Re: Formal Reiser4 inclusion and todo =?UTF-8?Q?list=3F?=
+Date: Wed, 28 Jul 2010 15:21:37 +0000
+Message-ID: <0d42c3ebde41a3d0bcc01f9fccc07f1c@mail.velocitynet.com.au>
+References: <alpine.DEB.2.01.0904181302440.6162@bogon.housecafe.de> <49EB1E3F.1020905@gmail.com> <542E227E-E31D-496C-93FB-19393133297F@MailNewsRSS.com> <200904250153.33258.volkerarmin@googlemail.com> <2E9381E6-A09A-4330-9A61-C4B7D7CE0E71@MailNewsRSS.com> <49F2CF9A.1060202@inn.nl> <49F2D43F.90105@ontolab.com> <8c113a260904250416n28fbdacs682ef8e6859b7dbf@mail.gmail.com> <49F339A2.9080705@ontolab.com> <200904252027.n3PKReMx073755@mail.meer.net> <49F393A1.4030004@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1279014612.18280.1.camel@cowboy>
+In-Reply-To: <49F393A1.4030004@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: dave.bueso@gmail.com
-Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, trivial@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-Davidlohr Bueso wrote:
-> Fix trivial typo in code comment (change adn for and), also change comment style for proper coding style.
->
+
+> The following items are still unaddressed:
+> 
+> 1. running igrab() in the writepage() path is really going to hammer
+>    inode_lock.  Something else will need to be done here.
+> 
+> 2. Running iput() in entd() is a bit surprising.  iirc there are various
+
+> ways
+>    in which this can recur into the filesystem, perform I/O, etc.  I 
+> guess it
+>    works..
+>    But again, it will hammer inode_lock.
+> 
+> 3. the writeout logic in entd_flush() is interesting (as in "holy cow").
+>    It's very central and really needs some good comments describing
+what's
+>    going on in there - what problems are being solved, which decisions
+were
+>    taken and why, etc.
+> 
+> 4. reiser4_wait_page_writeback() needs commenting.
+> 
+> 5. reading the comment in txnmgr.c regarding MAP_SHARED pages: a number
+of
+>    things have changed since then.  We have page-becoming-writeable
+>    notifications and probably soon we'll always take a pagefault when a
+>    MAP_SHARED page transitions from pte-clean to pte-dirty (although I 
+> wouldn't
+>    recommend that a filesystem rely upon the latter for a while yet).
+> 
+> Feel free to address them.
+> 
 > Thanks,
-> Davidlohr
->
-> Signed-off-by: Davidlohr Bueso <dave@gnu.org>
->   
+> Edward.
 
-Acked-by: Edward Shishkin <edward.shishkin@gmail.com>
-
-> ---
->  include/linux/reiserfs_fs.h |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
-> index 3b603f4..ba39416 100644
-> --- a/include/linux/reiserfs_fs.h
-> +++ b/include/linux/reiserfs_fs.h
-> @@ -360,7 +360,7 @@ int is_reiserfs_jr(struct reiserfs_super_block *rs);
->  /* the spot for the super in versions 3.5 - 3.5.10 (inclusive) */
->  #define REISERFS_OLD_DISK_OFFSET_IN_BYTES (8 * 1024)
->  
-> -// reiserfs internal error code (used by search_by_key adn fix_nodes))
-> +/* reiserfs internal error code (used by search_by_key and fix_nodes)) */
->  #define CARRY_ON      0
->  #define REPEAT_SEARCH -1
->  #define IO_ERROR      -2
->   
+Has the number of items reduced at all ?
+just curious
+Cheers Glenn 
 
