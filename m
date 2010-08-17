@@ -1,21 +1,46 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [PATCH] fix reiserfs_evict_inode end_writeback second call
-Date: Wed, 11 Aug 2010 14:37:51 +0100
-Message-ID: <20100811133751.GG31363@ZenIV.linux.org.uk>
-References: <20100811110701.GA5362@swordfish.minsk.epam.com>
+From: David Rientjes <rientjes@google.com>
+Subject: [patch 6/6] reiserfs: remove dependency on __GFP_NOFAIL
+Date: Mon, 16 Aug 2010 19:58:07 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1008161957170.17924@chino.kir.corp.google.com>
+References: <alpine.DEB.2.00.1008161953430.17924@chino.kir.corp.google.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100811110701.GA5362@swordfish.minsk.epam.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=google.com; s=beta;
+	t=1282013892; bh=tqnbRQ37OtVqwDVOCVJx0O6RDjQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type;
+	b=A4N3ZULb4y7gKcVT2sPk4JG7ucflB5vLvTOmIEfJf2KL8N01C0AYH5niqV0PDyCot
+	 ZMXiWJOwzMyXUqPxMrWiQ==
+In-Reply-To: <alpine.DEB.2.00.1008161953430.17924@chino.kir.corp.google.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Frederic Weisbecker <fweisbec@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Aug 11, 2010 at 02:07:01PM +0300, Sergey Senozhatsky wrote:
-> reiserfs_evict_inode calls end_writeback two times hitting
-> kernel BUG at fs/inode.c:298 becase inode->i_state is I_CLEAR already.
+Removes the dependency on __GFP_NOFAIL by looping indefinitely in the
+caller.
 
-Applied, thanks.
+Signed-off-by: David Rientjes <rientjes@google.com>
+---
+ fs/reiserfs/journal.c |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -2593,8 +2593,11 @@ static int journal_read(struct super_block *sb)
+ static struct reiserfs_journal_list *alloc_journal_list(struct super_block *s)
+ {
+ 	struct reiserfs_journal_list *jl;
+-	jl = kzalloc(sizeof(struct reiserfs_journal_list),
+-		     GFP_NOFS | __GFP_NOFAIL);
++
++	do {
++		/* FIXME: this may potentially loop forever */
++		jl = kzalloc(sizeof(struct reiserfs_journal_list), GFP_NOFS);
++	} while (!jl);
+ 	INIT_LIST_HEAD(&jl->j_list);
+ 	INIT_LIST_HEAD(&jl->j_working_list);
+ 	INIT_LIST_HEAD(&jl->j_tail_bh_list);
