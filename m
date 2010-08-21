@@ -1,46 +1,82 @@
-From: David Rientjes <rientjes@google.com>
-Subject: [patch 6/6] reiserfs: remove dependency on __GFP_NOFAIL
-Date: Mon, 16 Aug 2010 19:58:07 -0700 (PDT)
-Message-ID: <alpine.DEB.2.00.1008161957170.17924@chino.kir.corp.google.com>
-References: <alpine.DEB.2.00.1008161953430.17924@chino.kir.corp.google.com>
+From: zic422@gmail.com
+Subject: [fsck.reiser4 --fix] segfaults and reports that it fixed problem (but
+ it doesn't)
+Date: Sat, 21 Aug 2010 13:58:25 +0300
+Message-ID: <AANLkTi=wQuQ4_ReRZXvzLx2BxhQRVryqQviFkqi+V5ye@mail.gmail.com>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=google.com; s=beta;
-	t=1282013892; bh=tqnbRQ37OtVqwDVOCVJx0O6RDjQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type;
-	b=A4N3ZULb4y7gKcVT2sPk4JG7ucflB5vLvTOmIEfJf2KL8N01C0AYH5niqV0PDyCot
-	 ZMXiWJOwzMyXUqPxMrWiQ==
-In-Reply-To: <alpine.DEB.2.00.1008161953430.17924@chino.kir.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary=001485f5480a6e032c048e534ba7
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:received:received:date:message-id
+         :subject:from:to:content-type;
+        bh=ry19vIy4zekr+KOvs+gv403UoDOx+DuDSwbCq32m22Q=;
+        b=E/peNShJuAO7edTNifiT8biTsrxT5w75c1POme/Op/52qkIRGWeQO2fcjAllfvPGxk
+         hR/TomY14pnaSmkYZjygKUnHn3wEbwBLUyxte8CUWFK+astdIAyzuTmff3Kl26vl8wvl
+         bN2Xp+ERe40OdkMq9B9nDsq4XgREmZguarpf4=
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Frederic Weisbecker <fweisbec@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-Removes the dependency on __GFP_NOFAIL by looping indefinitely in the
-caller.
+--001485f5480a6e032c048e534ba7
+Content-Type: text/plain; charset=UTF-8
 
-Signed-off-by: David Rientjes <rientjes@google.com>
----
- fs/reiserfs/journal.c |    7 +++++--
- 1 files changed, 5 insertions(+), 2 deletions(-)
+Check was perfomed from Debian Squeeze.
+Even if I explicitly write -o
+create=ccreg40,compress=lzo1,cluster=4K,compressMode=ultim the only
+difference is that there is no segfault.
 
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -2593,8 +2593,11 @@ static int journal_read(struct super_block *sb)
- static struct reiserfs_journal_list *alloc_journal_list(struct super_block *s)
- {
- 	struct reiserfs_journal_list *jl;
--	jl = kzalloc(sizeof(struct reiserfs_journal_list),
--		     GFP_NOFS | __GFP_NOFAIL);
-+
-+	do {
-+		/* FIXME: this may potentially loop forever */
-+		jl = kzalloc(sizeof(struct reiserfs_journal_list), GFP_NOFS);
-+	} while (!jl);
- 	INIT_LIST_HEAD(&jl->j_list);
- 	INIT_LIST_HEAD(&jl->j_working_list);
- 	INIT_LIST_HEAD(&jl->j_tail_bh_list);
+--001485f5480a6e032c048e534ba7
+Content-Type: text/plain; charset=US-ASCII; name="logs.txt"
+Content-Disposition: attachment; filename="logs.txt"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_gd4bq25q0
+
+dXNlckBkZWJpYW46fiQgc3UKUGFzc3dvcmQ6IApyb290QGRlYmlhbjovaG9tZS91c2VyIyBmc2Nr
+LnJlaXNlcjQgLS1maXggL2Rldi9zZGEyCioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioKVGhpcyBpcyBhbiBFWFBFUklNRU5U
+QUwgdmVyc2lvbiBvZiBmc2NrLnJlaXNlcjQuIFJlYWQgUkVBRE1FIGZpcnN0LgoqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+CgpGc2NraW5nIHRoZSAvZGV2L3NkYTIgYmxvY2sgZGV2aWNlLiAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIApXaWxsIGZpeCBtaW5vciBjb3JydXB0aW9ucyBvZiB0aGUgUmVpc2VyNCBT
+dXBlckJsb2NrLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIApXaWxsIGZpeCBtaW5vciBjb3JydXB0aW9ucyBvZiB0
+aGUgUmVpc2VyNCBGaWxlU3lzdGVtLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIApDb250aW51ZT8gICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAooWWVzL05v
+KTogWQoqKioqKiBmc2NrLnJlaXNlcjQgc3RhcnRlZCBhdCBTYXQgQXVnIDIxIDEyOjU0OjExIDIw
+MTAKUmVpc2VyNCBmcyB3YXMgZGV0ZWN0ZWQgb24gL2Rldi9zZGEyLiAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAKTWFzdGVyIHN1cGVyIGJsb2NrICgxNik6IAptYWdpYzoJCVJlSXNFcjQg
+CmJsa3NpemU6CTQwOTYgCmZvcm1hdDoJCTB4MCAoZm9ybWF0NDApIAp1dWlkOgkJOTcwZjllOGIt
+NWUzNC00MDUyLTk0NWMtYzI0NTIzNTY2OGY3IApsYWJlbDoJCTxub25lPiAKIApGb3JtYXQgc3Vw
+ZXIgYmxvY2sgKDE3KTogCnBsdWdpbjoJCWZvcm1hdDQwIApkZXNjcmlwdGlvbjoJRGlzay1mb3Jt
+YXQgcGx1Z2luLiAKdmVyc2lvbjoJMCAKbWFnaWM6CQlSZUlzRXI0MEZvUm1BdCAKbWtmcyBpZDoJ
+MHgxN2QyYTkxNiAKZmx1c2hlczoJMCAKYmxvY2tzOgkJMjYyMTQ0MCAKZnJlZSBibG9ja3M6CTE2
+OTYyMDMgCnJvb3QgYmxvY2s6CTIyODUwMjUgCnRhaWwgcG9saWN5OgkweDIgKHNtYXJ0KSAKbmV4
+dCBvaWQ6CTB4MzRiNTM5IApmaWxlIGNvdW50OgkzMTM1NDQgCnRyZWUgaGVpZ2h0Ogk1IAprZXkg
+cG9saWN5OglMQVJHRSAKIAogCkNIRUNLSU5HIFRIRSBTVE9SQUdFIFRSRUUgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgUmVhZCBub2RlcyA5MjUxMjQg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCglOb2RlcyBsZWZ0IGlu
+IHRoZSB0cmVlIDkyNTEyNCAKCQlMZWF2ZXMgb2YgdGhlbSA5MTM1ODYsIFR3aWdzIG9mIHRoZW0g
+MTEzMDIgCglUaW1lIGludGVydmFsOiBTYXQgQXVnIDIxIDEyOjU0OjEzIDIwMTAgLSBTYXQgQXVn
+IDIxIDEyOjU3OjE4IDIwMTAgCkNIRUNLSU5HIEVYVEVOVCBSRUdJT05TLiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgUmVhZCB0d2lncyAxMTMwMiAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCglUaW1lIGludGVydmFs
+OiBTYXQgQXVnIDIxIDEyOjU3OjE4IDIwMTAgLSBTYXQgQXVnIDIxIDEyOjU4OjI1IDIwMTAgCkNI
+RUNLSU5HIFRIRSBTRU1BTlRJQyBUUkVFICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgCkZTQ0s6IC9idWlsZC9idWlsZGQtcmVpc2VyNHByb2dzXzEuMC43LTYtaTM4Ni14
+M1ZjNEYvcmVpc2VyNHByb2dzLTEuMC43L3BsdWdpbi9vYmplY3QvY2NyZWc0MC9jY3JlZzQwX3Jl
+cGFpci5jOiA3NzogICAgICAgICAgCmNjcmVnNDBfY2hlY2tfaXRlbTogVGhlIGZpbGUgWzE4ZGFj
+OjJlNjI2MTczNjg1ZjY4OjQ5Y2EzXSAoY2NyZWc0MCksIG5vZGUgWzYyNDI4XSwgaXRlbSBbOV06
+IGl0ZW0gb2YgdGhlIHdyb25nIGNsdXN0ZXIgc2l6ZSAKKC0yMTQ3NDgzNjQ4KSBmb3VuZCwgU2hv
+dWxkIGJlICg0MDk2KS4gRml4ZWQuIApTZWdtZW50YXRpb24gZmF1bHQKcm9vdEBkZWJpYW46L2hv
+bWUvdXNlciMgCgo=
+--001485f5480a6e032c048e534ba7--
