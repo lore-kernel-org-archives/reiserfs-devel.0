@@ -1,56 +1,57 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: reiser4 mkfs, cryptcompress, tail packing, etc.
-Date: Tue, 24 Aug 2010 21:21:00 +0200
-Message-ID: <4C741B9C.5070302@gmail.com>
-References: <4C73EDEF.8020701@bobich.net> <4C7405CF.3040609@gmail.com>
+Date: Tue, 24 Aug 2010 21:39:18 +0200
+Message-ID: <4C741FE6.6080805@gmail.com>
+References: <4C73EDEF.8020701@bobich.net> <4C7405CF.3040609@gmail.com> <4C741A02.3090004@bobich.net>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4C7405CF.3040609@gmail.com>
+In-Reply-To: <4C741A02.3090004@bobich.net>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Gordan Bobic <gordan@bobich.net>
 Cc: reiserfs-devel@vger.kernel.org
 
-Edward Shishkin wrote:
-> Gordan Bobic wrote:
->> Hi,
+Gordan Bobic wrote:
+> On 08/24/2010 06:47 PM, Edward Shishkin wrote:
 >
-> Hello.
->
+>>> Also, is there a nolog option on reiser4 as there is on reiserfs?
 >>
->> It's been a while since I last tried reiser4, and having just looked 
->> at the wiki, I couldn't find any info at all on the cryptocompress 
->> plugin and tail packing options at mkfs time specifically relating to 
->> reiser4.
+>> no sorry, currently reiser4 transaction manager can not be switched off.
 >
-> mkfs.reiser4 -l:
->
-> compression modes (works "per file"):
->
-> "latt"              (id:0x1 type:0xd) ['Check on dynamic lattice' 
-> compression mode plugin.]
-> If logical cluster in incompressible, then switch compression off and 
-> check every
-> K-th cluster, where K dynamically increased to 32 on every non-success 
-> after
-> compression. If cluster is compressible, than K is set back to 1, etc..
->
-> "ultim"             (id:0x2 type:0xd) ['Check ultimately' compression 
-> mode plugin.]
-> Switch compression off forever after the first case of non-success.
->
-> "force"             (id:0x3 type:0xd) ['Compress evrything' 
-> compression mode plugin.]
-> Force to compress everything.
->
-> "conv"              (id:0x4 type:0xd) ['Convert to extent' compression 
-> mode plugin.]
-> If the first logical cluster of the file is incompressible, then 
-> switch compression off forever.
+> Is there a way to use an external journal and point it at a different 
+> device (e.g. ramdisk/tmpfs), and force fsck on unclean shutdown instead?
 
-Sorry, this is not everything. Here should also go "otherwise switch to 
-"latt" mode
-(see above)".
-So not everything is bad for media-files in this mode.
+Nop, transaction manager in reiser4 is not a pure journalling.
+This is a symbiosis of journalling and copy-on-write technologies,
+so journal relocation wouldn't be a correct option here.
+
+There is a possibility to add various transaction plugins to reiser4,
+including pure journalling (like in reiserfs) and pure COW (like in btrfs).
+However, it would be a serious work, which requires many human hours..
+
+>
+>
+>>> Another question (not sure if it is specifically related to reiser4 or
+>>> generic) is about compressed hard-linked DLLs and mmap. Specifically,
+>>> if a .so is hard-linked in two places, dynamically linking to each
+>>> instance causes both to be mmapped to the same memory since they'll
+>>> have the same inode, and that means the memory is only used once. How
+>>> does this work if the .so is compressed? Does it all still work the
+>>> same, with the decompressed file being in a single mmap for both
+>>> dynamically linked instances?
+>>
+>> Works as usual: when populating address space by readpage(s) data are
+>> read from disk and decompressed.
+>> If page gets dirty, then its data will be compressed in flush time and
+>> written to disk.
+>
+> What about the hard-link issue I mentioned? If two hard-links point to 
+> the same inode with a compressed shared library, will it work as 
+> expected and only map the file into shared memory once even if both 
+> .so files are dyna-linked by different running binaries?
+
+Will work as expected.
+
+Edward.
