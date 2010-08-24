@@ -1,309 +1,89 @@
-From: James <jtp@nc.rr.com>
-Subject: Re: failed reiserfs partition - help!
-Date: Tue, 24 Aug 2010 12:43:23 -0400
-Message-ID: <AANLkTimxfQzSr26ZNtuXJVpjvSU2EPBzOgsZPVD4LO_A@mail.gmail.com>
-References: <AANLkTikznBfLD366L00+bWu0JGfutxO8NyhDQR1n8Azy@mail.gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: reiser4 mkfs, cryptcompress, tail packing, etc.
+Date: Tue, 24 Aug 2010 19:47:59 +0200
+Message-ID: <4C7405CF.3040609@gmail.com>
+References: <4C73EDEF.8020701@bobich.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:mime-version:sender:received
-         :in-reply-to:references:from:date:x-google-sender-auth:message-id
-         :subject:to:content-type:content-transfer-encoding;
-        bh=cfuy61nGKLQlUuxNegtGuN7Uh5ibB5BrnD4Bn6sRICE=;
-        b=o6ywrvsXaVMMtr92ko6SxCILbLJ1xNh2A/DJSpf4wkaddR57zpWA4pWSVN5q0PZ91Q
-         HQEZ8coFJt1aji5CEY0pd5QonZBF1xYR0Glh3URVMIbIXYQEQjfOEZFjtaZXS2UmEab/
-         CBcLhN+ydoDG5jNN62Dz43yQKmL2HqqO/USVQ=
-In-Reply-To: <AANLkTikznBfLD366L00+bWu0JGfutxO8NyhDQR1n8Azy@mail.gmail.com>
+In-Reply-To: <4C73EDEF.8020701@bobich.net>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Gordan Bobic <gordan@bobich.net>
+Cc: reiserfs-devel@vger.kernel.org
 
-=46irst off, I would like to apologize if this is the incorrect place t=
-o
-post this question -- it seems Namesys is gone so I can't pay for
-support to have someone help me out with this issue.
+Gordan Bobic wrote:
+> Hi,
 
-My friend threw a theory out there -- maybe the beginning of the
-partition is incorrect on the drive? The drive originally had an NTFS
-partition. By blowing away the beginning of the drive and then
-rewriting the partition table, maybe the kernel was using the original
-"beginning" location of the NTFS partition which *may* be incorrect
-for the beginning of the reiserfs /dev/sdX1 partition. I did *NOT*
-reboot after making changes to the partition table (nor did I
-disconnect / reconnect the drive).
+Hello.
 
-Is this possible?
+>
+> It's been a while since I last tried reiser4, and having just looked 
+> at the wiki, I couldn't find any info at all on the cryptocompress 
+> plugin and tail packing options at mkfs time specifically relating to 
+> reiser4.
 
-I'm 99.99999% sure this drive is not defective. There has to be some
-way to mount this partition as it was cleanly unmounted and the data
-copied over with no issues when I was originally doing it.
+mkfs.reiser4 -l:
 
-Isn't there a way to search for a superblock on the drive and then use
-that when attempting to mount the partition?
+compression modes (works "per file"):
 
--james
+"latt"              (id:0x1 type:0xd) ['Check on dynamic lattice' 
+compression mode plugin.]
+If logical cluster in incompressible, then switch compression off and 
+check every
+K-th cluster, where K dynamically increased to 32 on every non-success after
+compression. If cluster is compressible, than K is set back to 1, etc..
 
-On Tue, Aug 24, 2010 at 12:37 PM, James <jtp@nc.rr.com> wrote:
-> All,
+"ultim"             (id:0x2 type:0xd) ['Check ultimately' compression 
+mode plugin.]
+Switch compression off forever after the first case of non-success.
+
+"force"             (id:0x3 type:0xd) ['Compress evrything' compression 
+mode plugin.]
+Force to compress everything.
+
+"conv"              (id:0x4 type:0xd) ['Convert to extent' compression 
+mode plugin.]
+If the first logical cluster of the file is incompressible, then switch 
+compression off forever.
+This is default mode, but it works not good on various media-files..
+
+> Also, is there a nolog option on reiser4 as there is on reiserfs?
+
+no sorry, currently reiser4 transaction manager can not be switched off.
+
 >
-> I'm in desperate need of some help recovering a reiserfs partition
-> that went awry for some unknown reason. A quick list of events:
->
-> - purchased brand new WD "My Passport" drive -- 320GB, 2.5GB
-> - cleared partition table with a "dd if=3D/dev/urandom of=3D/dev/sdX =
-bs=3D5M count=3D10"
-> - created one single large partition
-> - mkreiserfs /dev/sdX1
-> - copied data into the new hard drive
->
-> All seemed well. I mounted the partition, copied critical data into
-> the partition, then *cleanly* unmounted the partition after confirmin=
-g
-> that all the data was on the drive with no issues. Then "it the the
-> fan":
->
-> Upon attempting to remount the partition, the partition would not
-> mount. In fact, upon attempting to remount the partition, here's what
-> happens (according to /var/log/dmesg):
->
-> -->8--
->
-> [18723.893570] usb-storage: device found at 8
-> [18723.893572] usb-storage: waiting for device to settle before scann=
-ing
-> [18728.893199] usb-storage: device scan complete
-> [18728.895310] scsi 13:0:0:0: Direct-Access =A0 =A0 WD =A0 =A0 =A0 My=
- Passport
-> 071A 2011 PQ: 0 ANSI: 4
-> [18728.897305] scsi 13:0:0:1: Enclosure =A0 =A0 =A0 =A0 WD =A0 =A0 =A0=
- SES Device
-> 2011 PQ: 0 ANSI: 4
-> [18728.898987] sd 13:0:0:0: Attached scsi generic sg4 type 0
-> [18728.899119] ses 13:0:0:1: Attached Enclosure device
-> [18728.899222] ses 13:0:0:1: Attached scsi generic sg5 type 13
-> [18728.901909] sd 13:0:0:0: [sdf] 625086464 512-byte logical blocks:
-> (320 GB/298 GiB)
-> [18728.905166] sd 13:0:0:0: [sdf] Write Protect is off
-> [18728.905170] sd 13:0:0:0: [sdf] Mode Sense: 2b 00 10 08
-> [18728.905173] sd 13:0:0:0: [sdf] Assuming drive cache: write through
-> [18728.910673] sd 13:0:0:0: [sdf] Assuming drive cache: write through
-> [18728.910677] =A0sdf: sdf1
-> [18728.954536] sd 13:0:0:0: [sdf] Assuming drive cache: write through
-> [18728.954541] sd 13:0:0:0: [sdf] Attached SCSI disk
-> [18729.204285] REISERFS (device sdf1): found reiserfs format "3.6"
-> with standard journal
-> [18729.204305] REISERFS (device sdf1): using ordered data mode
-> [18729.233424] REISERFS (device sdf1): journal params: device sdf1,
-> size 8192, journal first block 18, max trans len 1024, max batch 900,
-> max commit age 30, max trans age 30
-> [18729.233645] REISERFS (device sdf1): checking transaction log (sdf1=
-)
-> [18730.204418] REISERFS warning: reiserfs-5090 is_tree_node: node
-> level 5687 does not match to the expected one 65534
-> [18730.204422] REISERFS error (device sdf1): vs-5150 search_by_key:
-> invalid format found in block 0. Fsck?
-> [18730.204426] REISERFS (device sdf1): Remounting filesystem read-onl=
-y
-> [18730.204430] REISERFS error (device sdf1): vs-13070
-> reiserfs_read_locked_inode: i/o failure occurred trying to find stat
-> data of [1 2 0x0 SD]
-> [18730.204436] REISERFS (device sdf1): Using r5 hash to sort names
-> root@gentoo:~# fdisk -l /dev/sdf
->
-> Disk /dev/sdf: 320.0 GB, 320044269568 bytes
-> 255 heads, 63 sectors/track, 38909 cylinders
-> Units =3D cylinders of 16065 * 512 =3D 8225280 bytes
-> Sector size (logical/physical): 512 bytes / 512 bytes
-> I/O size (minimum/optimal): 512 bytes / 512 bytes
-> Disk identifier: 0x2dbafd11
->
-> =A0Device Boot =A0 =A0 =A0Start =A0 =A0 =A0 =A0 End =A0 =A0 =A0Blocks=
- =A0 Id =A0System
-> /dev/sdf1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 1 =A0 =A0 =A0 38909 =A0 3125365=
-11 =A0 83 =A0Linux
->
-> --8<--
->
-> I know the data is in tact because (a) I have not written anything to
-> the disk, and (b) using tools like foremost / scalpel have
-> successfully "restored" much of the data on the drive. (unfortunately
-> foremost does not restore file names and it'll be incredibly difficul=
-t
-> for me to properly restore the previous data structure)
->
-> I've attempted to recover the drive using "reiserfsck
-> --scan-whole-partition --rebuild-tree /dev/sdf1", to no avail:
->
-> -->8--
->
-> root@gentoo:~# reiserfsck --scan-whole-partition --rebuild-tree /dev/=
-sdf1
-> reiserfsck 3.6.21 (2009 www.namesys.com)
->
-> *snip*
->
-> Will rebuild the filesystem (/dev/sdf1) tree
-> Will put log info to 'stdout'
->
-> Do you want to run this program?[N/Yes] (note need to type Yes if you=
- do):Yes
-> Replaying journal: No transactions found
-> ###########
-> reiserfsck --rebuild-tree started at Tue Aug 24 01:46:49 2010
-> ###########
->
-> Pass 0:
-> ####### Pass 0 #######
-> The whole partition (78134112 blocks) is to be scanned
-> Skipping 10595 blocks (super block, journal, bitmaps) 78123517 blocks
-> will be read
-> 0%....20%....40%... =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 left
-> 0, 8521 /seccsecccccseccccc
-> Could not find a hash in use. Using "r5"
-> =A0 =A0 =A0 "r5" hash is selected
-> Flushing..finished
-> =A0 =A0 =A0 Read blocks (but not data blocks) 78123517
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 Leaves among those 0
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 Objectids found 2
->
-> Pass 1 (will try to insert 0 leaves):
-> ####### Pass 1 #######
-> Looking for allocable blocks .. finished
->
-> Flushing..finished
-> =A0 =A0 =A0 0 leaves read
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 0 inserted
-> ####### Pass 2 #######
-> Flushing..finished
+> The reason I ask is because I am looking for a file system that 
+> improves on ext2 for very slow writing flash media (think cheap USB 
+> sticks, SD cards, etc.). So, ideally, I want to disable journalling 
+> and enable compression, to minimize the number of writing to the 
+> underlying media. In theory, compression with journalling switched off 
+> should give reiser4 an edge in this use-case, so I just wanted to 
+> check what the current state of the compression is (couldn't find any 
+> references to -o create=ccreg40 in the wiki), and that it works as one 
+> might expect (compressing before committing to disk).
+
+Works stable as expected (i.e. compression "on commits")
+
 >
 >
-> No reiserfs metadata found. =A0If you are sure that you had the reise=
-rfs
-> on this partition, =A0then the start =A0of the partition =A0might be =
-changed
-> or all data were wiped out. The start of the partition may get change=
-d
-> by a partitioner =A0if you have used one. =A0Then you probably rebuil=
-t the
-> superblock as there was no one. =A0Zero the block at 64K offset from =
-the
-> start of the partition (a new super block you have just built) and tr=
-y
-> to move the start of the partition a few cylinders aside =A0and check=
- if
-> debugreiserfs /dev/xxx detects a reiserfs super block. If it does thi=
-s
-> is likely to be the right super block version. If this makes you
-> nervous, try =A0www.namesys.com/support.html, =A0and for $25 the auth=
-or of
-> fsck, =A0or a colleague =A0if he is out, =A0will =A0step you through =
-it all.
+> Another question (not sure if it is specifically related to reiser4 or 
+> generic) is about compressed hard-linked DLLs and mmap. Specifically, 
+> if a .so is hard-linked in two places, dynamically linking to each 
+> instance causes both to be mmapped to the same memory since they'll 
+> have the same inode, and that means the memory is only used once. How 
+> does this work if the .so is compressed? Does it all still work the 
+> same, with the decompressed file being in a single mmap for both 
+> dynamically linked instances?
+
+Works as usual: when populating address space by readpage(s) data are 
+read from disk and decompressed.
+If  page gets dirty, then its data will be compressed in flush time and 
+written to disk.
+ 
 >
-> Aborted (core dumped)
->
-> --8<--
->
-> The issue seems to be the *superblock* is not correct. I confirmed
-> with a "reiserfsck --check /dev/sdf1"
->
-> -->8--
->
-> root@gentoo:~# reiserfsck --check /dev/sdf1
-> reiserfsck 3.6.21 (2009 www.namesys.com)
->
-> *snip*
->
-> Will read-only check consistency of the filesystem on /dev/sdf1
-> Will put log info to 'stdout'
->
-> Do you want to run this program?[N/Yes] (note need to type Yes if you=
- do):Yes
-> ###########
-> reiserfsck --check started at Tue Aug 24 04:48:00 2010
-> ###########
-> Replaying journal: No transactions found
-> Checking internal tree..
->
-> Bad root block 0. (--rebuild-tree did not complete)
->
-> Aborted (core dumped)
->
-> --8<--
->
-> I've also attempted to rebuild the superblock (which seems to be the
-> big problem here), but this didn't work either.
->
-> -->8--
->
-> root@gentoo:~# reiserfsck --rebuild-sb /dev/sdf1
-> reiserfsck 3.6.21 (2009 www.namesys.com)
->
-> *snip*
->
-> Will check superblock and rebuild it if needed
-> Will put log info to 'stdout'
->
-> Do you want to run this program?[N/Yes] (note need to type Yes if you=
- do):Yes
-> rebuild-sb: wrong tree height occured (65535), zeroed
-> Reiserfs super block in block 16 on 0x851 of format 3.6 with standard=
- journal
-> Count of blocks on the device: 78134112
-> Number of bitmaps: 2385
-> Blocksize: 4096
-> Free blocks (count of blocks - used [journal, bitmaps, data, reserved=
-]
-> blocks): 78134112
-> Root block: 0
-> Filesystem is NOT clean
-> Tree height: 0
-> Hash function used to sort names: "r5"
-> Objectid map size 2, max 972
-> Journal parameters:
-> =A0 =A0 =A0 Device [0x0]
-> =A0 =A0 =A0 Magic [0x0]
-> =A0 =A0 =A0 Size 8193 blocks (including 1 for journal header) (first =
-block 18)
-> =A0 =A0 =A0 Max transaction length 1024 blocks
-> =A0 =A0 =A0 Max batch size 900 blocks
-> =A0 =A0 =A0 Max commit age 30
-> Blocks reserved by journal: 0
-> Fs state field: 0xfa03:
-> =A0 =A0 =A0 FATAL corruptions exist.
-> =A0 =A0 =A0 =A0some corruptions exist.
-> sb_version: 2
-> inode generation number: 0
-> UUID: 1704f9d1-2de0-40f7-8f73-aa3cbd6b35ba
-> LABEL:
-> Set flags in SB:
-> Mount count: 0
-> Maximum mount count: Disabled. Run fsck.reiserfs(8) or use
-> tunefs.reiserfs(8) to enable.
-> Last fsck run: Never with a version that supports this feature. Check
-> interval in days: Disabled. Run fsck.reiserfs(8) or use
-> tunefs.reiserfs(8) to enable.
-> Is this ok ? (y/n)[n]: y
-> The fs may still be unconsistent. Run reiserfsck --check.
->
-> --8<--
->
-> I apologize of the long post; I'm in a pretty big pickle and am
-> desperate for some help. The data is on the drive -- what bothers me
-> is that this randomly happened. The portable drive was cleanly
-> unmounted so I can't really see what could have caused this issue.
->
-> Any thoughts, ideas, or beer to get over this issue would be greatly
-> appreciated.
->
-> Thanks!
-> -james
->
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Many thanks.
+
+You are welcome,
+Edward.
