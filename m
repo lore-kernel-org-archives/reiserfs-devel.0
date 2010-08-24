@@ -1,57 +1,40 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: reiser4 mkfs, cryptcompress, tail packing, etc.
-Date: Tue, 24 Aug 2010 21:39:18 +0200
-Message-ID: <4C741FE6.6080805@gmail.com>
-References: <4C73EDEF.8020701@bobich.net> <4C7405CF.3040609@gmail.com> <4C741A02.3090004@bobich.net>
+From: David Rientjes <rientjes@google.com>
+Subject: Re: [patch 1/5] mm: add nofail variants of kmalloc kcalloc and
+ kzalloc
+Date: Tue, 24 Aug 2010 13:08:28 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1008241307190.21242@chino.kir.corp.google.com>
+References: <alpine.DEB.2.00.1008240340010.18908@chino.kir.corp.google.com> <1282656558.2605.2742.camel@laptop>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4C741A02.3090004@bobich.net>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-ext4-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=google.com; s=beta;
+	t=1282680520; bh=tsYUwV9tTLoL2sh7KDCKhOLBbAM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type;
+	b=sH0OsnJCsj0JTW0NUqE+hEpbXy3kHwNJUsWJMLrcsrOJ8YK7OfxsoYwkNRRjZ5k3m
+	 8Xp7FTynH8IAo0er177UA==
+In-Reply-To: <1282656558.2605.2742.camel@laptop>
+Sender: linux-ext4-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Gordan Bobic <gordan@bobich.net>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.de>, Alasdair G Kergon <agk@redhat.com>, Chris Mason <chris.mason@oracle.com>, Steven Whitehouse <swhiteho@redhat.com>, Jens Axboe <jaxboe@fusionio.com>, Jan Kara <jack@suse.cz>, Frederic Weisbecker <fweisbec@gmail.com>, linux-raid@vger.kernel.org, linux-btrfs@vger.kernel.org, cluster-devel@redhat.com, linux-ext4@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Gordan Bobic wrote:
-> On 08/24/2010 06:47 PM, Edward Shishkin wrote:
->
->>> Also, is there a nolog option on reiser4 as there is on reiserfs?
->>
->> no sorry, currently reiser4 transaction manager can not be switched off.
->
-> Is there a way to use an external journal and point it at a different 
-> device (e.g. ramdisk/tmpfs), and force fsck on unclean shutdown instead?
+On Tue, 24 Aug 2010, Peter Zijlstra wrote:
 
-Nop, transaction manager in reiser4 is not a pure journalling.
-This is a symbiosis of journalling and copy-on-write technologies,
-so journal relocation wouldn't be a correct option here.
+> > These were added as helper functions for documentation and auditability.
+> > No future callers should be added.
+> 
+> git grep GFP_NOFAIL isn't auditable enough?
+> 
 
-There is a possibility to add various transaction plugins to reiser4,
-including pure journalling (like in reiserfs) and pure COW (like in btrfs).
-However, it would be a serious work, which requires many human hours..
+I'm trying to remove that bit, and __GFP_REPEAT, to simplify and remove 
+several branches from the page allocator.
 
->
->
->>> Another question (not sure if it is specifically related to reiser4 or
->>> generic) is about compressed hard-linked DLLs and mmap. Specifically,
->>> if a .so is hard-linked in two places, dynamically linking to each
->>> instance causes both to be mmapped to the same memory since they'll
->>> have the same inode, and that means the memory is only used once. How
->>> does this work if the .so is compressed? Does it all still work the
->>> same, with the decompressed file being in a single mmap for both
->>> dynamically linked instances?
->>
->> Works as usual: when populating address space by readpage(s) data are
->> read from disk and decompressed.
->> If page gets dirty, then its data will be compressed in flush time and
->> written to disk.
->
-> What about the hard-link issue I mentioned? If two hard-links point to 
-> the same inode with a compressed shared library, will it work as 
-> expected and only map the file into shared memory once even if both 
-> .so files are dyna-linked by different running binaries?
+> might as well declare these functions depricated if you really want to
+> do this.
+> 
+> FWIW I think mason said he'd fix btrfs to not suck like this 'soon'.
+> 
 
-Will work as expected.
-
-Edward.
+Great!
