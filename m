@@ -1,35 +1,47 @@
-From: Peter Zijlstra <peterz@infradead.org>
+From: David Rientjes <rientjes@google.com>
 Subject: Re: [patch 1/5] mm: add nofail variants of kmalloc kcalloc and
  kzalloc
-Date: Wed, 25 Aug 2010 16:13:20 +0200
-Message-ID: <1282745600.2605.3751.camel@laptop>
-References: <alpine.DEB.2.00.1008240340010.18908@chino.kir.corp.google.com>
-	 <1282656558.2605.2742.camel@laptop> <4C73CA24.3060707@fusionio.com>
-	 <alpine.DEB.2.00.1008241309170.21242@chino.kir.corp.google.com>
-	 <20100825112433.GB4453@thunk.org>
+Date: Wed, 25 Aug 2010 13:43:34 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1008251340420.16484@chino.kir.corp.google.com>
+References: <alpine.DEB.2.00.1008240340010.18908@chino.kir.corp.google.com> <1282656558.2605.2742.camel@laptop> <4C73CA24.3060707@fusionio.com> <alpine.DEB.2.00.1008241309170.21242@chino.kir.corp.google.com> <20100825112433.GB4453@thunk.org>
+ <1282736132.2605.3563.camel@laptop> <20100825115709.GD4453@thunk.org>  <1282740516.2605.3644.camel@laptop> <1282740778.2605.3652.camel@laptop> <E25A6DCB-3188-4CF9-9DC4-631192B2F0E2@mit.edu> <1282743090.2605.3696.camel@laptop>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8BIT
 Return-path: <linux-ext4-owner@vger.kernel.org>
-In-Reply-To: <20100825112433.GB4453@thunk.org>
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=google.com; s=beta;
+	t=1282769020; bh=Goi6ekRNH5NsSZxwstrOfuefZt4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type;
+	b=Zz05EOwwmnuyYl19rdcY3v3pTOAcgAExP/dmcZSR11l6WwC1uJ4SP9CGC/aUzmL+j
+	 3CSdv6jCCLG7TNjrZ5qIg==
+In-Reply-To: <1282743090.2605.3696.camel@laptop>
 Sender: linux-ext4-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Ted Ts'o <tytso@mit.edu>
-Cc: David Rientjes <rientjes@google.com>, Jens Axboe <jaxboe@fusionio.com>, Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.de>, Alasdair G Kergon <agk@redhat.com>, Chris Mason <chris.mason@oracle.com>, Steven Whitehouse <swhiteho@redhat.com>, Jan Kara <jack@suse.cz>, Frederic Weisbecker <fweisbec@gmail.com>, "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>, "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, "cluster-devel@redhat.com" <cluster-devel@redhat.com>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Theodore Tso <tytso@mit.edu>, Jens Axboe <jaxboe@fusionio.com>, Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.de>, Alasdair G Kergon <agk@redhat.com>, Chris Mason <chris.mason@oracle.com>, Steven Whitehouse <swhiteho@redhat.com>, Jan Kara <jack@suse.cz>, Frederic Weisbecker <fweisbec@gmail.com>, "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>, "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, "cluster-devel@redhat.com" <cluster-devel@redhat.com>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, 2010-08-25 at 07:24 -0400, Ted Ts'o wrote:
-> There are other places where we can fail safely (for example, in jbd's
-> start_this_handle, although that just pushes the layer up the stack,
-> and ultimately, to userspace where most userspace programs don't
-> really expect ENOMEM to get returned by a random disk write 
+On Wed, 25 Aug 2010, Peter Zijlstra wrote:
 
-While talking with Chris about this, if you can indeed push the error
-out that far you can basically ensure this particular fs-op does not
-complicate the journal commit and thereby limit the number of extra
-entries in your journal, and thus the amount of memory required.
+> I'm not sure, but I think the cgroup thing doesn't account kernel
+> allocations, in which case the above problem doesn't exist.
+> 
 
-So once stuff starts failing, push out ops back out of the filesystem
-code, force a journal commit, and then let these ops retry. There is no
-need to actually push the -ENOMEM all the way back to userspace.
+Right, the only cgroup that does is cpusets because it binds the memory 
+allocations to a set of nodes.
 
+> For the cpuset case we punch through the cpuset constraints for kernel
+> allocations (unless __GFP_HARDWALL).
+> 
 
+__GFP_HARDWALL doesn't mean that the allocation won't be constrained, this 
+is a common misconception.  __GFP_HARDWALL only prevents us from looking 
+at our cpuset.mem_exclusive flag and checking our nearest common ancestor 
+cpuset if we can block.
+
+The cpusets case is actually the easiest to fix: use GFP_ATOMIC.  
+GFP_ATOMIC allocations aren't bound by any cpuset and, in the general 
+case, can allocate below the min watermark because of 
+ALLOC_HARD | ALLOC_HARDER in the page allocator which creates the notion 
+of "memory reserves" available to these tasks.  Then, success really 
+depends on the setting of the watermarks instead.
