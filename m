@@ -1,78 +1,88 @@
-From: Jarrid Graham <jarrid.graham@gmail.com>
-Subject: Reiser4 encrypted speed
-Date: Tue, 24 Aug 2010 23:19:05 -0400
-Message-ID: <AANLkTik3-OkirtL_fzVXmoQmHYxCzE52tNWRX3iODqiq@mail.gmail.com>
+From: Ted Ts'o <tytso@mit.edu>
+Subject: Re: [patch 1/5] mm: add nofail variants of kmalloc kcalloc and
+ kzalloc
+Date: Wed, 25 Aug 2010 07:24:33 -0400
+Message-ID: <20100825112433.GB4453@thunk.org>
+References: <alpine.DEB.2.00.1008240340010.18908@chino.kir.corp.google.com>
+ <1282656558.2605.2742.camel@laptop>
+ <4C73CA24.3060707@fusionio.com>
+ <alpine.DEB.2.00.1008241309170.21242@chino.kir.corp.google.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:received:received:date:message-id
-         :subject:from:to:content-type;
-        bh=lXr/HRMFAAjtMgAo+W/2mCA45DIWDQjen53GW390V80=;
-        b=KCc2aWSmdcsb3CjQ8Li3DuyLteedoIHBLiFdfbp9vYao5Gq5VcmNQMNsHcOAtjGbbV
-         NG3wN6RAvoXdQp7KOOMo8Cx/bShUtrbbbJU/cqtDVqX8bzNBQmoxzgQp3d97WX/mASo2
-         qid2KqkhL8/l/9p89VplfK/gqu2YJVDE6WljA=
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.00.1008241309170.21242@chino.kir.corp.google.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: David Rientjes <rientjes@google.com>
+Cc: Jens Axboe <jaxboe@fusionio.com>, Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.de>, Alasdair G Kergon <agk@redhat.com>, Chris Mason <chris.mason@oracle.com>, Steven Whitehouse <swhiteho@redhat.com>, Jan Kara <jack@suse.cz>, Frederic Weisbecker <fweisbec@gmail.com>, "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>, "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, "cluster-devel@redhat.com" <cluster-devel@redhat.com>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi, first off I want to say I am not posting this to say one FS is
-better than the other, just something I ran into thought there may be
-an issue. First off I was setting up and rsync server to store medical
-databases. There fairly large and I use encrypted file
-containers(Truecrypt). I started off with an ext4 FS in the container
-and all was well but I wanted something with some compression so I
-tried the reiser4 FS and got really good compression. I set it up and
-thought all was good. The next day I noticed the rsync had not
-completed and was actually still running just really slow. So I
-stopped it and watched it run and noticed the CPU was maxed out so I
-thought well there is the problem just too much CPU time with
-encryption and compression. After a couple of days I just wanted to
-make a test. I did some test with ext4, reiser4, and btrfs with and
-without being encrypted, and did some simple time tests and found that
-the sum operation was much slower when it was in an encrypted
-container than when it was not. My test set up was two separate hard
-drives on an 8 CPU machine with 16GB of ram. I did just a simple copy
-and then sum of a 23GB file. The target drive was an 80GB drive and I
-just used one partition and formatted them.
+On Tue, Aug 24, 2010 at 01:11:26PM -0700, David Rientjes wrote:
+> On Tue, 24 Aug 2010, Jens Axboe wrote:
+> 
+> > Should be possible to warn at build time for anyone using __GFP_NOFAIL
+> > without wrapping it in a function.
+> > 
+> 
+> We could make this __deprecated functions as Peter suggested if you think 
+> build time warnings for existing users would be helpful.
 
-With the reiser4 fs I used the option -o create=ccreg40,compress=gzip1
+Let me take a few steps backwards and look at the problem from a
+somewhat higher level.
 
-with the btrfs I used the mount options -o compress (which did not
-compress the file at all) and -o compress-force
+Part of the problem is that we have a few places in the kernel where
+failure is really not an option --- or rather, if we're going to fail
+while we're in the middle of doing a commit, our choices really are
+(a) retry the loop in the jbd layer (which Andrew really doesn't
+like), (b) keep our own private cache of free memory so we don't fail
+and/or loop, (c) fail the file system and mark it read-only, or (d)
+panic.
 
-here is a table I made I hope it stays formatted
+There are other places where we can fail safely (for example, in jbd's
+start_this_handle, although that just pushes the layer up the stack,
+and ultimately, to userspace where most userspace programs don't
+really expect ENOMEM to get returned by a random disk write --- how
+much do _you_ trust a random GNOME or KDE developer to do correct
+error checking and do something sane at the application?)
 
-					                -o compress	-o compress-force
-	ext4		        reiser4.gzip	Btrfs 	
-cp	7m51.406s	9m25.903s	7m6.808s	        7m47.110s
-	0m1.103s	        0m0.098s	        0m0.724s	        0m0.797s
-	1m47.141s	0m35.391s	0m52.885s	0m54.499s
-				
-sum	5m50.562s	4m52.599s	5m22.873s	5m2.472s
-	1m3.782s	        1m13.078s	1m17.149s	1m26.324s
-	0m32.918s	2m48.619s	0m28.767s	1m5.546s
-				
-		Truecrypt
-		
-cp	7m41.669s	7m44.611s			         7m21.847s
-	0m0.573s	        0m0.067s			                 0m0.735s
-	0m47.210s	0m38.285s			         0m55.225s
-				
-sum	5m21.034s	41m38.636s			         8m13.561s
-	1m19.902s	1m10.509s			         1m18.920s
-	0m27.289s	2m21.986s			         1m9.792s
+So we can mark the retry loop helper function as deprecated, and that
+will make some of these cases go away, but ultimately if we're going
+to fail the memory allocation, something bad is going to happen, and
+the only question is whether we want to have something bad happen by
+looping in the memory allocator, or to force the file system to
+panic/oops the system, or have random application die and/or lose user
+data because they don't expect write() to return ENOMEM.
 
-I did not test the btrfs, mount -o compress in the encryption because
-it did not compress the file hardly at all 1.04:1 but the reiser4 did
-compress the best. I did expect some slow down and that is not problem
-for the trade off of compression but you can see it took nearly 10x
-longer with encryption. The reiser4 compressed the file 7.62:1 and
-btrfs was 7.21:1. This may be just the way it is but I didn't know if
-it was anything anyone would be interested in.
+So at some level it would be nice if we had a few different levels of
+"we *really* need this memory".  Level 0 might be, "if we can't get
+it, no biggie, we'll figure out some other way around it.  I doubt
+there is much at level 0, but in theory, we could have some good
+citizens that fall in that camp and who simply will bypass some
+optimization if they can't get the memory.  Level 1 might be, if you
+can't get the memory, we will propagate a failure up to userspace, but
+it's probably a relatively "safe" place to fail (i.e., when the user
+is opening a file).  Level 2 might be, "if you can't get the memory,
+we will propgate a failure up to userspace, but it's at a space where
+most applications are lazy f*ckers, and this may lead to serious
+application errors" (example: close(2), and this is a file system that
+only pushes the file to the server at close time, e.g. AFS).  Level 3
+might be, "if you can't get the memory, I'm going to fail the file
+system, or some other global subsystem, that will probably result in
+the system crashing or needing to be rebooted".
 
-Thanks
+We can ignore this problem and pretend it doesn't exist at the memory
+allocator level, but that means the callers are going to be doing
+their own thing to try to avoid having really bad things happening at
+really-low-memory occasions.  And this may mean looping, whether we
+mark the function as deprecated or not.
 
-Jarrid Graham
+This is becoming even more of an issue now given that with
+containerization, we have jokers who are forcing tasks to run in very
+small memory containers, which means that failures can happen far more
+frequently --- and in some cases, just because the process running the
+task happens to be in an extremely constrained memory cgroup, doesn't
+mean that failing the entire system is really such a great idea.  Or
+maybe that means memory cgroups are kinda busted.  :-)
+
+      	   	 		    	  	   - Ted
