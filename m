@@ -1,43 +1,30 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Re: failed reiserfs partition - help!
-Date: Wed, 25 Aug 2010 22:57:03 +1000
-Message-ID: <32a245fad07f283f908213fcfc1e8fd9@mail.velocitynet.com.au>
-References: <AANLkTikznBfLD366L00+bWu0JGfutxO8NyhDQR1n8Azy@mail.gmail.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Theodore Tso <tytso@MIT.EDU>
+Subject: Re: [patch 1/5] mm: add nofail variants of kmalloc kcalloc and kzalloc
+Date: Wed, 25 Aug 2010 09:20:37 -0400
+Message-ID: <E25A6DCB-3188-4CF9-9DC4-631192B2F0E2@mit.edu>
+References: <alpine.DEB.2.00.1008240340010.18908@chino.kir.corp.google.com> <1282656558.2605.2742.camel@laptop> <4C73CA24.3060707@fusionio.com> <alpine.DEB.2.00.1008241309170.21242@chino.kir.corp.google.com> <20100825112433.GB4453@thunk.org> <1282736132.2605.3563.camel@laptop> <20100825115709.GD4453@thunk.org>  <1282740516.2605.3644.camel@laptop> <1282740778.2605.3652.camel@laptop>
+Mime-Version: 1.0 (Apple Message framework v1081)
+Content-Transfer-Encoding: 8BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <AANLkTikznBfLD366L00+bWu0JGfutxO8NyhDQR1n8Azy@mail.gmail.com>
+In-Reply-To: <1282740778.2605.3652.camel@laptop>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: David Rientjes <rientjes@google.com>, Jens Axboe <jaxboe@fusionio.com>, Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.de>, Alasdair G Kergon <agk@redhat.com>, Chris Mason <chris.mason@oracle.com>, Steven Whitehouse <swhiteho@redhat.com>, Jan Kara <jack@suse.cz>, Frederic Weisbecker <fweisbec@gmail.com>, "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>, "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, "cluster-devel@redhat.com" <cluster-devel@redhat.com>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, 24 Aug 2010 12:37:42 -0400, James <jtp@nc.rr.com> wrote:
-> All,
+
+On Aug 25, 2010, at 8:52 AM, Peter Zijlstra wrote:
+> Also, there's a good reason for disliking (a), its a deadlock scenario,
+> suppose we need to write out data to get free pages, but the writing out
+> is blocked on requiring free pages.
 > 
-> I'm in desperate need of some help recovering a reiserfs partition
-> that went awry for some unknown reason. A quick list of events:
-> 
-In the past I used this toolset to find and recover lost  partitions
-It worked well  for me when I recovered a partition.
-Cheers Glenn
+> There's really nothing the page allocator can do to help you there, its
+> a situation you have to avoid getting into.
 
-http://www.cgsecurity.org/wiki/TestDisk
+Well, if all of these users start having their own private pools of emergency memory, I'm not sure that's such a great idea either.
 
-From the website:
-TestDisk is a powerful free data recovery software! It was primarily
-designed to help recover lost partitions and/or make non-booting disks
-bootable again when these symptoms are caused by faulty software, certain
-types of viruses or human error (such as accidentally deleting a Partition
-Table). Partition table recovery using TestDisk is really easy. 
-.
-.
-.
-TestDisk can find lost partitions for all of these file systems
-.
-.
-ReiserFS 3.5, 3.6 and 4 
-.
-.
+And in some cases, there *is* extra memory.  For example, if the reason why the page allocator failed is because there isn't enough memory in the current process's cgroup, maybe it's important enough that the kernel code might decide to say, "violate the cgroup constraints --- it's more important that we not bring down the entire system" than to honor whatever yahoo decided that a particular cgroup has been set down to something ridiculous like 512mb, when there's plenty of free physical memory --- but not in that cgroup.
 
+-- Ted
 
