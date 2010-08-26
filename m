@@ -1,47 +1,43 @@
-From: =?utf-8?B?Sm9uw6HFoSBWaWRyYQ==?= <vidra.jonas@seznam.cz>
-Subject: Re: strange problem with reiser4 with ccreg40 on amd64 2.6.35.2
- vanilla kernel + tuxonice + reiser4 on a mdadm imsm raid-0 partition
-Date: Thu, 26 Aug 2010 21:20:02 +0200
-Message-ID: <op.vh17zoyrhogzsi@g17b>
-References: <4C75BCBF.6010009@gmail.com> <op.vh1ct9tghogzsi@g17b>
- <4C76633D.9010106@gmail.com>
-Reply-To: "ReiserFS mailing list" <reiserfs-devel@vger.kernel.org>
+From: David Rientjes <rientjes@google.com>
+Subject: Re: [patch 1/5] mm: add nofail variants of kmalloc kcalloc and
+ kzalloc
+Date: Thu, 26 Aug 2010 15:31:22 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1008261528160.5445@chino.kir.corp.google.com>
+References: <alpine.DEB.2.00.1008240340010.18908@chino.kir.corp.google.com> <1282656558.2605.2742.camel@laptop> <4C73CA24.3060707@fusionio.com> <alpine.DEB.2.00.1008241309170.21242@chino.kir.corp.google.com> <20100825112433.GB4453@thunk.org>
+ <1282736132.2605.3563.camel@laptop> <20100825115709.GD4453@thunk.org> <1282740516.2605.3644.camel@laptop> <20100825132417.GQ31488@dastard> <1282743342.2605.3707.camel@laptop> <alpine.DEB.2.00.1008251347550.16484@chino.kir.corp.google.com>
+ <alpine.DEB.2.00.1008251604120.24931@router.home> <alpine.DEB.2.00.1008251418590.20253@chino.kir.corp.google.com> <alpine.DEB.2.00.1008251630270.25660@router.home> <alpine.DEB.2.00.1008251604540.31521@chino.kir.corp.google.com> <alpine.DEB.2.00.1008252028030.32421@router.home>
+ <alpine.DEB.2.00.1008252010260.10986@chino.kir.corp.google.com> <alpine.DEB.2.00.1008260914420.15852@router.home>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4C76633D.9010106@gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-ext4-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=google.com; s=beta;
+	t=1282861889; bh=c9BsX5XRuUVU07cxOLojeGJDhEo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type;
+	b=hVemfISFPQqEtGn4XRDIYRlLrJeEu9m7878MrcU4eLfZ92/NwMYxYFZx2etOUN3vs
+	 7KabEI8rnGzIlD+BXPnQQ==
+In-Reply-To: <alpine.DEB.2.00.1008260914420.15852@router.home>
+Sender: linux-ext4-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed	delsp=yes"
-To: "K. Posern" <quickhelp@gmail.com>
-Cc: ReiserFS mailing list <reiserfs-devel@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christoph Lameter <cl@linux.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Dave Chinner <david@fromorbit.com>, Ted Ts'o <tytso@mit.edu>, Jens Axboe <jaxboe@fusionio.com>, Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.de>, Alasdair G Kergon <agk@redhat.com>, Chris Mason <chris.mason@oracle.com>, Steven Whitehouse <swhiteho@redhat.com>, Jan Kara <jack@suse.cz>, Frederic Weisbecker <fweisbec@gmail.com>, "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>, "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, "cluster-devel@redhat.com" <cluster-devel@redhat.com>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Dne Thu, 26 Aug 2010 14:51:09 +0200 K. Posern <quickhelp@gmail.com> =20
-napsal(a):
+On Thu, 26 Aug 2010, Christoph Lameter wrote:
 
-> I have a emerge.log with the JAVA_PKG_DEBUG=3D1:
-> 	http://tormen.pastebin.com/AEkDdQ1n
-> emerge --info:
-> 	http://tormen.pastebin.com/EfZe3afK
+> > Because we can remove the flag, remove branches from the page allocator
+> > slowpath, and none of these allocations actually are dependent on
+> > __GFP_NOFAIL since they are all under PAGE_ALLOC_COSTLY_ORDER.
+> 
+> Then we can simply remove __GFP_NOFAIL? Functions are only needed for
+> higher order allocs that can fail?
+> 
 
-Could you, please, recompile both the kernel and reiser4progs
-(and possibly their dependencies :D) with -O2 instead of -O3
-in CFLAGS? It tends to break things in strange and nasty ways,
-why do you have it enabled globally like this? Are you sure
-it's actually needed?
-
-Also, CCache is not used anymore, remove it from FEATURES.
-If you actually _use_ CCache (i.e. you've installed it
-manually), unmerge it immediately. It's broken by design.
-
-Other stuff in your FEATURES looks fishy as well, but it
-shouldn't affect builds. I hope you know what you're doing.
-
-
---=20
-Jon=C3=A1=C5=A1 Vidra, vidra.jonas@seznam.cz
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yes, that's the intent.  We'd like to add the 
+WARN_ON_ONCE(get_order(size) >= PAGE_ALLOC_COSTLY_ORDER) warning, though, 
+so we're ensured that redefinition of that #define doesn't cause 
+allocations to fail to that don't have appropriate error handling or 
+future callers use higher order allocs.  The _nofail() functions help that 
+and do some due diligence in ensuring that we aren't changing gfp flags 
+based only on the current page allocator implementation which may later 
+change with very specialized corner cases.
