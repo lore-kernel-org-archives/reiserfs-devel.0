@@ -1,58 +1,73 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [patch 1/5] mm: add nofail variants of kmalloc kcalloc and
- kzalloc
-Date: Thu, 26 Aug 2010 10:29:21 +0200
-Message-ID: <1282811361.1975.273.camel@laptop>
-References: <1282740778.2605.3652.camel@laptop>
-	 <E25A6DCB-3188-4CF9-9DC4-631192B2F0E2@mit.edu>
-	 <1282743090.2605.3696.camel@laptop>
-	 <alpine.DEB.2.00.1008251340420.16484@chino.kir.corp.google.com>
-	 <1282769729.1975.96.camel@laptop>
-	 <alpine.DEB.2.00.1008251406260.20253@chino.kir.corp.google.com>
-	 <1282771677.1975.138.camel@laptop>
-	 <alpine.DEB.2.00.1008251606450.31521@chino.kir.corp.google.com>
-	 <20100826001901.GL4453@thunk.org>
-	 <alpine.DEB.2.00.1008251724360.25783@chino.kir.corp.google.com>
-	 <20100826014847.GQ4453@thunk.org>
-	 <alpine.DEB.2.00.1008251951230.7034@chino.kir.corp.google.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: strange problem with reiser4 with ccreg40 on amd64 2.6.35.2 vanilla
+ kernel + tuxonice + reiser4 on a mdadm imsm raid-0 partition
+Date: Thu, 26 Aug 2010 13:03:26 +0200
+Message-ID: <4C7649FE.80604@gmail.com>
+References: <4C75BCBF.6010009@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.00.1008251951230.7034@chino.kir.corp.google.com>
+In-Reply-To: <4C75BCBF.6010009@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: David Rientjes <rientjes@google.com>
-Cc: Ted Ts'o <tytso@mit.edu>, Jens Axboe <jaxboe@fusionio.com>, Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.de>, Alasdair G Kergon <agk@redhat.com>, Chris Mason <chris.mason@oracle.com>, Steven Whitehouse <swhiteho@redhat.com>, Jan Kara <jack@suse.cz>, Frederic Weisbecker <fweisbec@gmail.com>, "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>, "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, "cluster-devel@redhat.com" <cluster-devel@redhat.com>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: "K. Posern" <quickhelp@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-On Wed, 2010-08-25 at 20:09 -0700, David Rientjes wrote:
-> > Oh, we can determine an upper bound.  You might just not like it.
-> > Actually ext3/ext4 shouldn't be as bad as XFS, which Dave estimated to
-> > be around 400k for a transaction.  My guess is that the worst case for
-> > ext3/ext4 is probably around 256k or so; like XFS, most of the time,
-> > it would be a lot less.  (At least, if data != journalled; if we are
-> > doing data journalling and every single data block begins with
-> > 0xc03b3998U, we'll need to allocate a 4k page for every single data
-> > block written.)  We could dynamically calculate an upper bound if we
-> > had to.  Of course, if ext3/ext4 is attached to a network block
-> > device, then it could get a lot worse than 256k, of course.
-> > 
-> On my 8GB machine, /proc/zoneinfo says the min watermark for ZONE_NORMAL 
-> is 5086 pages, or ~20MB.  GFP_ATOMIC would allow access to ~12MB of that, 
-> so perhaps we should consider this is an acceptable abuse of GFP_ATOMIC as 
-> a fallback behavior when GFP_NOFS or GFP_NOIO fails? 
+K. Posern wrote:
+> Hi,
+>   
 
-Agreed with the fact that 400k isn't much to worry about.
+Hello.
 
-Not agreed with the GFP_ATOMIC stmt.
+> First off: I am using reiser4 since YEARS now without the slightest
+> problem and I *LOVE* it! Except for deletes of large files on my SSD
+> drive it is VERY FAST and stable!
+>
+> But now I think I might have found a bug:
+>
+> If I compile javahelp on the reiser4 partition (mounted without any
+> special options), I get:
+>
+> # du -h ./javahelp2-2.0.02_svn46/javahelp_nbproject/dist/lib/jsearch.jar
+> 120K	./javahelp2-2.0.02_svn46/javahelp_nbproject/dist/lib/jsearch.jar
+> # ls -la ./javahelp2-2.0.02_svn46/javahelp_nbproject/dist/lib/jsearch.jar
+> -rw-r--r-- 1 portage portage      0 Aug 25 16:35
+>   
 
-Direct reclaim already has PF_MEMALLOC, but then we also need a
-concurrency limit on that, otherwise you can still easily blow though
-your reserves by having 100 concurrency users of it, resulting in an
-upper bound of 40000k instead, which will be too much.
+Is it reproducible?
+Any suspicious kernel messages being?
+Also could you please fsck the partition (I wonder if there are any 
+orphan things)
 
-There were patches to limit the direct reclaim contexts, not sure they
-ever got anywhere..
+It might be because of this verrry ancient bug, which has been caught, 
+but not yet fixed:
+http://marc.info/?l=reiserfs-devel&m=127533196521722&w=2
 
-It is something to consider in the re-design of the whole
-direct-reclaim/writeback paths though..
+Thanks for report,
+Edward.
+
+> ./javahelp2-2.0.02_svn46/javahelp_nbproject/dist/lib/jsearch.jar
+>
+> I am not sure what the 0 usually refers to, but I think it should not be
+> 0, right?
+> Because if I do the same thing on a ramdisk or on an ext4 partition:
+>
+> # du -h ./javahelp2-2.0.02_svn46/javahelp_nbproject/dist/lib/jsearch.jar
+> 128K	./javahelp2-2.0.02_svn46/javahelp_nbproject/dist/lib/jsearch.jar
+> # ls -la ./javahelp2-2.0.02_svn46/javahelp_nbproject/dist/lib
+> -rw-r--r-- 1 portage portage 121831 Aug 25 16:54
+> ./javahelp2-2.0.02_svn46/javahelp_nbproject/dist/lib/jsearch.jar
+>
+> How can I further investigate?
+> And/Or
+> What other informations would you need to further track down the problem?
+>
+> Thanks for any advise!
+>
+> Best,
+>
+> Knuth
+>
+>   
+
