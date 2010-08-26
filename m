@@ -1,28 +1,26 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: [patch 1/5] mm: add nofail variants of kmalloc kcalloc and
- kzalloc
-Date: Thu, 26 Aug 2010 09:16:19 -0500 (CDT)
-Message-ID: <alpine.DEB.2.00.1008260914420.15852@router.home>
-References: <alpine.DEB.2.00.1008240340010.18908@chino.kir.corp.google.com> <1282656558.2605.2742.camel@laptop> <4C73CA24.3060707@fusionio.com> <alpine.DEB.2.00.1008241309170.21242@chino.kir.corp.google.com> <20100825112433.GB4453@thunk.org>
- <1282736132.2605.3563.camel@laptop> <20100825115709.GD4453@thunk.org> <1282740516.2605.3644.camel@laptop> <20100825132417.GQ31488@dastard> <1282743342.2605.3707.camel@laptop> <alpine.DEB.2.00.1008251347550.16484@chino.kir.corp.google.com>
- <alpine.DEB.2.00.1008251604120.24931@router.home> <alpine.DEB.2.00.1008251418590.20253@chino.kir.corp.google.com> <alpine.DEB.2.00.1008251630270.25660@router.home> <alpine.DEB.2.00.1008251604540.31521@chino.kir.corp.google.com> <alpine.DEB.2.00.1008252028030.32421@router.home>
- <alpine.DEB.2.00.1008252010260.10986@chino.kir.corp.google.com>
+From: <doiggl@velocitynet.com.au>
+Subject: What are your thoughts on having rpm based r4 kernels built
+Date: Fri, 27 Aug 2010 00:23:24 +1000
+Message-ID: <9c3a40f09ba867b5572154dd84796832@mail.velocitynet.com.au>
+References: <4C5FF915.1010801@gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.00.1008252010260.10986@chino.kir.corp.google.com>
+In-Reply-To: <4C5FF915.1010801@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Rientjes <rientjes@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Dave Chinner <david@fromorbit.com>, Ted Ts'o <tytso@mit.edu>, Jens Axboe <jaxboe@fusionio.com>, Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.de>, Alasdair G Kergon <agk@redhat.com>, Chris Mason <chris.mason@oracle.com>, Steven Whitehouse <swhiteho@redhat.com>, Jan Kara <jack@suse.cz>, Frederic Weisbecker <fweisbec@gmail.com>, "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>, "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, "cluster-devel@redhat.com" <cluster-devel@redhat.com>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
-On Wed, 25 Aug 2010, David Rientjes wrote:
+Hello,
+What are your thoughts on having the openSUSE Build Service [1] building a
+reiser4 enabled kernel ?
+Would people make use of the built kernels ? .
 
-> Because we can remove the flag, remove branches from the page allocator
-> slowpath, and none of these allocations actually are dependent on
-> __GFP_NOFAIL since they are all under PAGE_ALLOC_COSTLY_ORDER.
+As an experiment I tried to do a rpm build but am struggling with it to
+get a rpm built [2]
+Cheers Glenn
 
-Then we can simply remove __GFP_NOFAIL? Functions are only needed for
-higher order allocs that can fail?
-
+[1] https://build.opensuse.org/
+[2]
+https://build.opensuse.org/package/files?package=reiser4&project=home%3Adoiggl
