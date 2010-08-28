@@ -1,82 +1,70 @@
-From: <doiggl@velocitynet.com.au>
-Subject: compination script for Reiser4 on 2.6.35 and  reiser4progs listing
-Date: Sat, 28 Aug 2010 20:01:46 +1000
-Message-ID: <204bc31a9ea0f13da8f7a87f97ef4eb5@mail.velocitynet.com.au>
-References: <AANLkTikznBfLD366L00+bWu0JGfutxO8NyhDQR1n8Azy@mail.gmail.com> <32a245fad07f283f908213fcfc1e8fd9@mail.velocitynet.com.au>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: Problems with the 'flush-8:0' process in 2.6.35.3
+Date: Sat, 28 Aug 2010 12:15:49 +0200
+Message-ID: <4C78E1D5.80101@gmail.com>
+References: <4C789044.3020403@podzimek.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <32a245fad07f283f908213fcfc1e8fd9@mail.velocitynet.com.au>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:message-id:date:from
+         :user-agent:mime-version:to:cc:subject:references:in-reply-to
+         :content-type:content-transfer-encoding;
+        bh=oH0sR7eoX9mtYJY2DCLxzLWj8IlqXX3XtWzRdYZYHxk=;
+        b=KTFyV/Slv+F65debfSfBFSHR7i180SbmdOEnPOPt6mT0IPZ2xJtuwnO3NeUssxUDgT
+         H2Y+lEWUubEcf+pNTptNcNnlUYmiSy8IqRl6+YUpicniAFV0taf+AWNQS5SJL+RNsYrE
+         HE1pX247A1Ah6VrmGkPDpeUmtK9TJPZ5vkGnM=
+In-Reply-To: <4C789044.3020403@podzimek.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+To: Andrej Podzimek <andrej@podzimek.org>
+Cc: reiserfs-devel@vger.kernel.org
 
-1. Here is a script I put together to compile a reiser4 based kernel
-# source adapted from 
-http://linuxhelp.150m.com/installs/compile-kernel.htm
+Andrej Podzimek wrote:
+> Hello,
 
-#set kernel versions
-majorv="35"
-minorv=".3"
-version=$majorv$minorv
+Hello.
 
-#copy and unpack files and set linkages 
-cd /usr/src
-rm -rf linux-2.6.$version linux
-cp -v /media/disk/kernel/linux-2.6.$version.tar.bz2 .
-rm  linux-2.6.$version.tar
-bunzip2 -v linux-2.6.$version.tar.bz2
-tar -xvf linux-2.6.$version.tar
-ln -s linux-2.6.$version linux
+>
+> I use a 2.6.35.3 kernel and Reiser4 as the root file system. In a
+> couple of minutes after boot, a kernel process called 'flush-8:0'
+> takes up all the available CPU time. From that moment on, it is
+> impossible to sync filesystems (and suspend, hibernate or reboot).
+> (The 'sync' command halts indefinitely.) In some cases it is even
+> impossible to log in. Existing sessions seem to work fine, to an extent.
+>
+> I first thought this was related to the GTT chipset coherency patch.
+> (This patch fixes a one-year-old bug that caused all the Intel 855
+> class GPUs to be totally unusable.) However, removing the patch and
+> testing with only a vanilla kernel (and Reiser4, of course) showed
+> that 'flush-8:0' will eventually go mad, no matter if the GPU-related
+> patch is present or not.
+>
+> The machine is an Asus M2400N laptop with a 100GB Seagate Momentus.
+>
+> Is this a known issue?
 
-# copy in prepared reiser 4 enabled .config, apply reiser4 patch and
-compile reiser4 enabled kernel
-cp -v /boot/config-$(uname -r) /usr/src/linux/.config
-cd /usr/src/linux
-rm applyreiser4patch.$version.log
-patch -p1 < /media/disk/r4-info/patch/reiser4-for-2.6.$majorv.patch | tee
-applyreiser4patch.$version.log
-cp -v /media/disk/src/reiser4enabled.config.$majorv 
-/usr/src/linux/.config
-make rpm-pkg | tee reiser4enabledkernel-v$version.log
+Um, nop..
 
-#copy reiser4 built kernel rpms for use
-cat reiser4enabledkernel-v35.3.log  | grep -i "wrote:" | cut -d ":" -f2 |
-sed "s/^/cp -iv /g" |sed "s/.rpm/.rpm \/./g"
+> How could I track this down?
 
-2. Also here is a listing of reiser4progs I found 
+Could you try to catch sysrq-t output to take a look what the flush-8:0
+doing?
 
-http://download.opensuse.org/repositories/home:/lmich/openSUSE_11.1/i586/reiser4progs-1.0.7-1.1.i586.rpm
+> In fact I don't even know whether this is related to Reiser4 or not.
 
-http://download.opensuse.org/repositories/home:/lmich/openSUSE_11.1/i586/reiser4progs-devel-1.0.7-1.1.i586.rpm
+Which kernel version did you have before upgrade?
 
-http://download.opensuse.org/repositories/home:/lmich/openSUSE_11.1/src/reiser4progs-1.0.7-1.1.src.rpm
+Thanks,
+Edward.
 
-http://download.opensuse.org/repositories/home:/lmich/openSUSE_11.1/x86_64/reiser4progs-1.0.7-1.1.x86_64.rpm
+> It may be a bug in VFS. I don't use 'noflushd' or anything of that
+> kind. (Some people reported similar problems related to noflushd. So
+> this is not the case.) If this is unrelated to Reiser4, where should I
+> report it?
+>
+> Andrej
+>
 
-http://download.opensuse.org/repositories/home:/lmich/openSUSE_11.1/x86_64/reiser4progs-devel-1.0.7-1.1.x86_64.rpm
-
-http://download.opensuse.org/repositories/home:/lmich/openSUSE_Factory/i586/reiser4progs-1.0.7-1.21.i586.rpm
-
-http://download.opensuse.org/repositories/home:/lmich/openSUSE_Factory/i586/reiser4progs-devel-1.0.7-1.21.i586.rpm
-
-http://download.opensuse.org/repositories/home:/lmich/openSUSE_Factory/src/reiser4progs-1.0.7-1.21.src.rpm
-
-http://download.opensuse.org/repositories/home:/lmich/openSUSE_Factory/x86_64/reiser4progs-1.0.7-1.21.x86_64.rpm
-
-http://download.opensuse.org/repositories/home:/lmich/openSUSE_Factory/x86_64/reiser4progs-devel-1.0.7-1.21.x86_64.rpm
-
-http://download.opensuse.org/repositories/home:/lmich/SLE_10/i586/reiser4progs-1.0.7-1.1.i586.rpm
-
-http://download.opensuse.org/repositories/home:/lmich/SLE_10/i586/reiser4progs-devel-1.0.7-1.1.i586.rpm
-
-http://download.opensuse.org/repositories/home:/lmich/SLE_10/src/reiser4progs-1.0.7-1.1.src.rpm
-
-http://download.opensuse.org/repositories/home:/lmich/SLE_10/x86_64/reiser4progs-1.0.7-1.1.x86_64.rpm
-
-http://download.opensuse.org/repositories/home:/lmich/SLE_10/x86_64/reiser4progs-devel-1.0.7-1.1.x86_64.rpm
-
-
-
-Glenn
