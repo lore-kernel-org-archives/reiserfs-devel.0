@@ -1,68 +1,171 @@
-From: Nicolas Barbier <nicolas.barbier@gmail.com>
-Subject: Re: strange problem with reiser4 with ccreg40 on amd64 2.6.35.2
- vanilla kernel + tuxonice + reiser4 on a mdadm imsm raid-0 partition
-Date: Fri, 27 Aug 2010 09:30:15 +0200
-Message-ID: <AANLkTing7GwZbLgpgaffTLy10zYsTWU_6A4ovqU3D20k@mail.gmail.com>
-References: <4C75BCBF.6010009@gmail.com>
-	<op.vh1ct9tghogzsi@g17b>
-	<4C76633D.9010106@gmail.com>
-	<op.vh17zoyrhogzsi@g17b>
-	<4C76FCB4.9010404@gmail.com>
+From: Andrej Podzimek <andrej@podzimek.org>
+Subject: Problems with the 'flush-8:0' process in 2.6.35.3
+Date: Sat, 28 Aug 2010 06:27:48 +0200
+Message-ID: <4C789044.3020403@podzimek.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha1; boundary="=_charon-14527-1282969669-0001-2"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:received:received:in-reply-to
-         :references:date:message-id:subject:from:to:cc:content-type
-         :content-transfer-encoding;
-        bh=b3dn+jwCrv3g8sAiT/Y3CaJLFIMsTlvw2Lk6nudPx8Y=;
-        b=CjlSs+BoiFCWuKtLVJifwsQT48RwZ1HzZqMI6CiohZN02Cw1TGwITJjlUHThYJTffM
-         L9V7EiZ3iriBHhaBRSfUUJF9bvlEp4hw32kZV3LMI+mEYfHKy5przFX9/04YMH0cJ1vD
-         O6buERfYqk02FtQpkwx1cnX69fvR5bnSMtN/E=
-In-Reply-To: <4C76FCB4.9010404@gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=podzimek.org; h=message-id:date:from:mime-version:content-type:to:subject; s=charon; bh=Hdxf60X8xl3yv9hriM38Z86XIQYJ9n9rJAVnnwRmMhY=; b=Qfz2oTIf9k5IIZb6P8ETiZi5ZGQGERFpXKO3hxcRH2a4sCdnVyQY63wODdKfOhvPbe7k2SBy2GamaQ7l/RmooBl15oZk+K4fZpNwmFkJ0MVORn4juqMXRTtQxyD/ZcbjGxlOjzQvB04F/9OBt3G5P9ZIMENzSv/E4C7gxXGG6wgb4AXetvX+YA8CVd4cozXN+NZJXeUxKhSfie+uFs/cnHrXC6rwYd/ER7ji+4ZWjNMymE4gszo+d9DMsWyCzRJ5ywRw0zNsCs9kGDQmnQ3x4mKIbbfIXy6XA9bjT0gH5Lwf6AhW1WeHvHQQxaP5BcW6Jt1NCaNLEesyv2pJjnHGjQ==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: "K. Posern" <quickhelp@gmail.com>
-Cc: ReiserFS mailing list <reiserfs-devel@vger.kernel.org>
+To: reiserfs-devel@vger.kernel.org
 
-2010/8/27 K. Posern <quickhelp@gmail.com>:
+This is a MIME-formatted message.  If you see this text it means that your
+E-mail software does not support MIME-formatted messages.
 
-> On 26/08/10 15:20, Jon=C3=A1=C5=A1 Vidra wrote:
->
->> Could you, please, recompile both the kernel and reiser4progs
->> (and possibly their dependencies :D) with -O2 instead of -O3
->> in CFLAGS? It tends to break things in strange and nasty ways,
->> why do you have it enabled globally like this? Are you sure
->> it's actually needed?
->
-> I had read around and found comments that it can actually make things=
- faster
-> and so I decided to give it a try.
-> You said "break things in strange and nasty ways":
-> Does this mean it can compile well and then just not WORK right (like=
- for
-> example: mkfs.reiser4 doing the wrong things when formatting)??
-> I only heard that it can break the compilation, no? And for me everyt=
-hing
-> compiled fine.
+--=_charon-14527-1282969669-0001-2
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-It could trigger compiler bugs and trigger unintended behavior due to
-unsafe (but possibly intentional) constructs in the compiled source
-code. I don't know of any case where it could fail the build, although
-such cases may exist.
+Hello,
 
-=46or an example of how compiler optimizations can break the generated
-code (which is probably totally unrelated to your specific problem),
-see:
+I use a 2.6.35.3 kernel and Reiser4 as the root file system. In a couple =
+of minutes after boot, a kernel process called 'flush-8:0' takes up all t=
+he available CPU time. From that moment on, it is impossible to sync file=
+systems (and suspend, hibernate or reboot). (The 'sync' command halts ind=
+efinitely.) In some cases it is even impossible to log in. Existing sessi=
+ons seem to work fine, to an extent.
 
-<URL:http://en.wikipedia.org/wiki/Aliasing_(computing)#Conflicts_with_o=
-ptimization>
+I first thought this was related to the GTT chipset coherency patch. (Thi=
+s patch fixes a one-year-old bug that caused all the Intel 855 class GPUs=
+ to be totally unusable.) However, removing the patch and testing with on=
+ly a vanilla kernel (and Reiser4, of course) showed that 'flush-8:0' will=
+ eventually go mad, no matter if the GPU-related patch is present or not.=
 
-Nicolas
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+The machine is an Asus M2400N laptop with a 100GB Seagate Momentus.
+
+Is this a known issue? How could I track this down? In fact I don't even =
+know whether this is related to Reiser4 or not. It may be a bug in VFS. I=
+ don't use 'noflushd' or anything of that kind. (Some people reported sim=
+ilar problems related to noflushd. So this is not the case.) If this is u=
+nrelated to Reiser4, where should I report it?
+
+Andrej
+
+
+--=_charon-14527-1282969669-0001-2
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIUzjCC
+BakwggSRoAMCAQICATQwDQYJKoZIhvcNAQEFBQAwgYQxFDASBgNVBAMMC1BvZHppbWVrIENB
+MQswCQYDVQQGEwJDWjEOMAwGA1UEBwwFWmzDrW4xFTATBgNVBAoMDHBvZHppbWVrLm9yZzEV
+MBMGA1UECwwMcG9kemltZWsub3JnMSEwHwYJKoZIhvcNAQkBFhJhZG1pbkBwb2R6aW1lay5v
+cmcwHhcNMTAwMzMxMTkxMzQ0WhcNMTEwMzMxMTkxMzQ0WjCBiTELMAkGA1UEBhMCQ1oxDjAM
+BgNVBAcMBVpsw61uMRUwEwYDVQQKDAxwb2R6aW1lay5vcmcxFTATBgNVBAsMDHBvZHppbWVr
+Lm9yZzEYMBYGA1UEAwwPQW5kcmVqIFBvZHppbWVrMSIwIAYJKoZIhvcNAQkBFhNhbmRyZWpA
+cG9kemltZWsub3JnMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvLPy9s1OWxpb
+PkH+e8Akw/F5Qp+CTSGAq/XmZuURUOhUFmxPZVp1rV45esz6dsiXK0CXWoHVjeSlr0LRmWUH
+hGlsPa+qpvV/EWad3OF05Lz5T6fJQGkQIvh3xSQYi8/s3k9/4uKUHtU/Lm1KqdFjyAY1pZxv
+OP05b6qCfgkYcB2xk6FeZH38bbA/6h+nURiqotfkfB4a4N+roTxf9Bi0QsNZZ7W8FhKQBdEB
+6ID3IYwhQbJsTQR8yh561E4yYf+9J/BkL7AZpnkEKsNgZawtfWwya/r7dJPE9PCkB9jmrawN
+GiE8ta3/nrPuKgulImjjtzwWSrkFWWIhRuvA6kjJvDIDNX9mT7bdZP5FfOkprAaIuSJ93BsM
+OtQm3Qy6RF/+4EzLdEqcy79nzIY84kQGCdBnd45MUG61iMnyVX2WalG1fgZ9uoKsvYUVIkkj
+N+dwuKg3vR+o/JrBlYiAtBTpBsGiWB8YhHzCTTOkQA/m8dXl9JaV+bOSktwWibFMVrWxCxbW
+sAugsEONFoYlCOBGJrq3Gy2+QkDugQhGTJlIXEe5joJHELadahFp/cWf9A0yz0vujob9GLvf
+TZpmPcmuvK2HhHWfgzc1kyOOPNQoAUK+tG4yUG4/mYIhNkD4b49KGi7wfpYViWwNlQFKlPFV
+F+udgSfFgYZO365SOykEsMkCAwEAAaOCAR0wggEZMAkGA1UdEwQCMAAwHQYDVR0OBBYEFFEH
+1s0Xse0CZ217pElE8DdjZxYtMIG5BgNVHSMEgbEwga6AFE6juEwI0K5X6Rv/eMJTk7Q8cg65
+oYGKpIGHMIGEMRQwEgYDVQQDDAtQb2R6aW1layBDQTELMAkGA1UEBhMCQ1oxDjAMBgNVBAcM
+BVpsw61uMRUwEwYDVQQKDAxwb2R6aW1lay5vcmcxFTATBgNVBAsMDHBvZHppbWVrLm9yZzEh
+MB8GCSqGSIb3DQEJARYSYWRtaW5AcG9kemltZWsub3JnggkAkctHSQfLqowwMQYJYIZIAYb4
+QgEEBCQWImh0dHBzOi8vY2EucG9kemltZWsub3JnL2NhLWNybC5wZW0wDQYJKoZIhvcNAQEF
+BQADggEBAKUoyTBti808LZw5SH7hX6ewB9baj0GDjR6s0t4kSXiEf1nr+VBPfftM9RLS8vaj
+L3v9tZ7lKWgRoJDUhYR6CKrUw+t8MTAAI9wYHTgEq10yHdfIGcWdGn0mRgGljOp4YZACzX1y
+791HN+hBmjPKYjLc/2cmVdtOeHMAGn1cyeuyb8drYovtxu/P6MJaCE9533HRYfzOvd2u7D0B
+6oy9Nrn8t5IgRoGENk8wwRYa5jrukXIvTtQNK7In7SAb5DNSHp8kwzQmJtgFqvELVZ593phM
+yLiZuJg5AMU60tXtPIZBvjvkQdyspvp1n0ZLdKrAcZYo752DzOCT2U6KCclbSrcwggc3MIIG
+H6ADAgECAgIB6TANBgkqhkiG9w0BAQUFADCBjDELMAkGA1UEBhMCSUwxFjAUBgNVBAoTDVN0
+YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRpZmljYXRlIFNpZ25p
+bmcxODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNzIDIgUHJpbWFyeSBJbnRlcm1lZGlhdGUgQ2xp
+ZW50IENBMB4XDTA5MTAwMzAwMDAwMVoXDTEwMTAwMzA0MjI0OFowgaAxCzAJBgNVBAYTAkNa
+MRUwEwYDVQQIEwxabGluc2t5IEtyYWoxDTALBgNVBAcTBFpsaW4xLTArBgNVBAsTJFN0YXJ0
+Q29tIFZlcmlmaWVkIENlcnRpZmljYXRlIE1lbWJlcjEYMBYGA1UEAxMPQW5kcmVqIFBvZHpp
+bWVrMSIwIAYJKoZIhvcNAQkBFhNhbmRyZWpAcG9kemltZWsub3JnMIIBIjANBgkqhkiG9w0B
+AQEFAAOCAQ8AMIIBCgKCAQEAnnSDv+YxlFeoIfN2a+pRX/nxUKE9IgQGWZz7wDKddl6Vmyk3
+iZ9vcCdtKdVYBRyhMsqVYYjE2+oINr17NkXASeVa/KtobxfSs3i3doyeuz1c1ZXPHFzS1tcK
+nMiPE3hyG0QTM1yGePbGBEoLthV+HWzY71bf9H8Wpw2ctHf9K2loRf7gJCYl2QncQL9w1ao5
+Es3bXAl1ajKC+pw1+NI1Hj3wNBOy9mBIU6pUi3E7SrYZPvH/o7/hpj2eKZmERpPCi2DSzPMD
+J/QhA/Y01PkhflbvDPI8YgaeqiZ1f1ieh+SDIyd2hmJoc5ViTgCSRYiutVnXHL23l13EsMcT
+aCS3twIDAQABo4IDizCCA4cwCQYDVR0TBAIwADALBgNVHQ8EBAMCBLAwHQYDVR0lBBYwFAYI
+KwYBBQUHAwIGCCsGAQUFBwMEMB0GA1UdDgQWBBTVova7hG26c13INOIAMLSP57z7VjAeBgNV
+HREEFzAVgRNhbmRyZWpAcG9kemltZWsub3JnMIGoBgNVHSMEgaAwgZ2AFK5Vg2/sMcq59x36
+r2sx88gd46y7oYGBpH8wfTELMAkGA1UEBhMCSUwxFjAUBgNVBAoTDVN0YXJ0Q29tIEx0ZC4x
+KzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRpZmljYXRlIFNpZ25pbmcxKTAnBgNVBAMT
+IFN0YXJ0Q29tIENlcnRpZmljYXRpb24gQXV0aG9yaXR5ggEOMIIBRwYDVR0gBIIBPjCCATow
+ggE2BgsrBgEEAYG1NwECATCCASUwLgYIKwYBBQUHAgEWImh0dHA6Ly93d3cuc3RhcnRzc2wu
+Y29tL3BvbGljeS5wZGYwNAYIKwYBBQUHAgEWKGh0dHA6Ly93d3cuc3RhcnRzc2wuY29tL2lu
+dGVybWVkaWF0ZS5wZGYwgbwGCCsGAQUFBwICMIGvMBQWDVN0YXJ0Q29tIEx0ZC4wAwIBARqB
+lkxpbWl0ZWQgTGlhYmlsaXR5LCByZWFkIHRoZSBzZWN0aW9uICpMZWdhbCBMaW1pdGF0aW9u
+cyogb2YgdGhlIFN0YXJ0Q29tIENlcnRpZmljYXRpb24gQXV0aG9yaXR5IFBvbGljeSBhdmFp
+bGFibGUgYXQgaHR0cDovL3d3dy5zdGFydHNzbC5jb20vcG9saWN5LnBkZjBjBgNVHR8EXDBa
+MCugKaAnhiVodHRwOi8vd3d3LnN0YXJ0c3NsLmNvbS9jcnR1Mi1jcmwuY3JsMCugKaAnhiVo
+dHRwOi8vY3JsLnN0YXJ0c3NsLmNvbS9jcnR1Mi1jcmwuY3JsMIGOBggrBgEFBQcBAQSBgTB/
+MDkGCCsGAQUFBzABhi1odHRwOi8vb2NzcC5zdGFydHNzbC5jb20vc3ViL2NsYXNzMi9jbGll
+bnQvY2EwQgYIKwYBBQUHMAKGNmh0dHA6Ly93d3cuc3RhcnRzc2wuY29tL2NlcnRzL3N1Yi5j
+bGFzczIuY2xpZW50LmNhLmNydDAjBgNVHRIEHDAahhhodHRwOi8vd3d3LnN0YXJ0c3NsLmNv
+bS8wDQYJKoZIhvcNAQEFBQADggEBAGw7B4eCVeM6xMxsB0SECFw7iM41yw68amcVXMwQcrjL
+R6TGuYfD5MB4HFsnoI02EBq4mRJFbJfPDiMsy6nlwAaCoTztb3lt9dNmLdFAmRswAfYIWAkS
+qJVqGKXJV6ScI4FtjA0T/v4FXbK5vvZIID9DxibjPQ3MaNr5g5mDQfuVptqb7U/1CMX0sqiK
+9iDsIZZfAGToqiR6n4ZDg6vVdbln4iVM7d7JuiuiXpcBFJUvbFCRgzlj+hzuRTAZmFLJu1M8
+4wpo3bEauLXuA8YvmVsJxR+qxmODkrEhQkBlz6bxgyaxklyVsQMDSbjXGt5KHPsFwmrYGs7g
+Zf8YFVzvCBowggfiMIIFyqADAgECAgEOMA0GCSqGSIb3DQEBBQUAMH0xCzAJBgNVBAYTAklM
+MRYwFAYDVQQKEw1TdGFydENvbSBMdGQuMSswKQYDVQQLEyJTZWN1cmUgRGlnaXRhbCBDZXJ0
+aWZpY2F0ZSBTaWduaW5nMSkwJwYDVQQDEyBTdGFydENvbSBDZXJ0aWZpY2F0aW9uIEF1dGhv
+cml0eTAeFw0wNzEwMjQyMTAyNTRaFw0xMjEwMjIyMTAyNTRaMIGMMQswCQYDVQQGEwJJTDEW
+MBQGA1UEChMNU3RhcnRDb20gTHRkLjErMCkGA1UECxMiU2VjdXJlIERpZ2l0YWwgQ2VydGlm
+aWNhdGUgU2lnbmluZzE4MDYGA1UEAxMvU3RhcnRDb20gQ2xhc3MgMiBQcmltYXJ5IEludGVy
+bWVkaWF0ZSBDbGllbnQgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDLKIVF
+nAEs+xnyq6UzjCqgDcvQVe1dIoFnRsQPCFO+y92k8RK0Pn3MbQ2Gd+mehh9GBZ+36uUQA7Xj
+9AGM6wgPhEE34vKtfpAN5tJ8LcFxveDObCKrL7O5UT9WsnAZHv7OYPYSR68mdmnEnJ83M4wQ
+gKO19b+Rt8sPDAz9ptkQsntCn4GeJzg3q2SVc4QJTg/WHo7wF2ah5LMOeh8xJVSKGEmd6uPk
+Sbj113yKMm8vmNptRPmM1+YgmVwcdOYJOjCgFtb2sOP79jji8uhWR91xx7TpM1K3hv/wrBZw
+ffrmmEpUeuXHRs07JqCCvFh9coKF4UQZvfEg+x3/69xRCzb1AgMBAAGjggNbMIIDVzAMBgNV
+HRMEBTADAQH/MAsGA1UdDwQEAwIBpjAdBgNVHQ4EFgQUrlWDb+wxyrn3HfqvazHzyB3jrLsw
+gagGA1UdIwSBoDCBnYAUTgvvGqRAW6UXaYcwyjRoQ9BBrvKhgYGkfzB9MQswCQYDVQQGEwJJ
+TDEWMBQGA1UEChMNU3RhcnRDb20gTHRkLjErMCkGA1UECxMiU2VjdXJlIERpZ2l0YWwgQ2Vy
+dGlmaWNhdGUgU2lnbmluZzEpMCcGA1UEAxMgU3RhcnRDb20gQ2VydGlmaWNhdGlvbiBBdXRo
+b3JpdHmCAQEwCQYDVR0SBAIwADA9BggrBgEFBQcBAQQxMC8wLQYIKwYBBQUHMAKGIWh0dHA6
+Ly93d3cuc3RhcnRzc2wuY29tL3Nmc2NhLmNydDBgBgNVHR8EWTBXMCygKqAohiZodHRwOi8v
+Y2VydC5zdGFydGNvbS5vcmcvc2ZzY2EtY3JsLmNybDAnoCWgI4YhaHR0cDovL2NybC5zdGFy
+dHNzbC5jb20vc2ZzY2EuY3JsMIIBXQYDVR0gBIIBVDCCAVAwggFMBgsrBgEEAYG1NwEBBDCC
+ATswLwYIKwYBBQUHAgEWI2h0dHA6Ly9jZXJ0LnN0YXJ0Y29tLm9yZy9wb2xpY3kucGRmMDUG
+CCsGAQUFBwIBFilodHRwOi8vY2VydC5zdGFydGNvbS5vcmcvaW50ZXJtZWRpYXRlLnBkZjCB
+0AYIKwYBBQUHAgIwgcMwJxYgU3RhcnQgQ29tbWVyY2lhbCAoU3RhcnRDb20pIEx0ZC4wAwIB
+ARqBl0xpbWl0ZWQgTGlhYmlsaXR5LCByZWFkIHRoZSBzZWN0aW9uICpMZWdhbCBMaW1pdGF0
+aW9ucyogb2YgdGhlIFN0YXJ0Q29tIENlcnRpZmljYXRpb24gQXV0aG9yaXR5IFBvbGljeSBh
+dmFpbGFibGUgYXQgaHR0cDovL2NlcnQuc3RhcnRjb20ub3JnL3BvbGljeS5wZGYwEQYJYIZI
+AYb4QgEBBAQDAgAHMFAGCWCGSAGG+EIBDQRDFkFTdGFydENvbSBDbGFzcyAyIFByaW1hcnkg
+SW50ZXJtZWRpYXRlIEZyZWUgU1NMIEVtYWlsIENlcnRpZmljYXRlczANBgkqhkiG9w0BAQUF
+AAOCAgEAHvcQF/726YR5L5A3Ta7JV1nTu3w9yWqp00945pg7uea+1KVtR/7/yeNFAV7MPQyl
+PE8pROEcGU+RwwDFuNn9cePfAMzOBTpy/6VE076+gYkZa4n8uWaL5A2FVo8tRmEyfoT4gRL9
+B5h5w8Y4ZySCJBLyfp4jByyxHaTTIWZ8TIkxUQLSBeFnmHKYFwYwMbBA0Sgb8ONCvq9zeJcp
+MkkDadhJSCfB9c9gZocbaaVHVqTlSeENRr5/Y31dapzIRQg2Pl9V/A65Cq03KQxMXBpXn8Hk
+LO/g2FCt7KYkJCaTe6qT2JX8thmB3nb+5RmtWQIITCP+PPNkFQCts6ujOtJx6TlDLWA+tV7Q
+LN2Q+S98p/SwnXito+GW0N7kXcL8QDBVsF8lCvwCz+JQrvUIcW5xEzpAVk9xSbpePxVIMzNE
+UQhBobkFojhUqGt+VyU3GH/+BP2brzl4StOJ1KXuw2EzFs0ai9OMsqCUFRyhykm6MrbnsnSr
+qhWSnSQPYIu+zpzwWC/8sZFxoJCwvbbIu+6E+AIGa8tP+pYF+empPn/7pkIoTT4LSkkEIxGK
+vUvDJTh86VDNL8bIIQE2LHVDwcOq+mcQx416FAA9Nw1DBGyrFr6hQe5yTVXrJ4G7vJosNRGC
+wPnx302gonaFdwi++YyqjPyhPO6q4fRarYvWyqp5L6UxggO7MIIDtwIBATCBkzCBjDELMAkG
+A1UEBhMCSUwxFjAUBgNVBAoTDVN0YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdp
+dGFsIENlcnRpZmljYXRlIFNpZ25pbmcxODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNzIDIgUHJp
+bWFyeSBJbnRlcm1lZGlhdGUgQ2xpZW50IENBAgIB6TAJBgUrDgMCGgUAoIIB/DAYBgkqhkiG
+9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xMDA4MjgwNDI3NDhaMCMGCSqG
+SIb3DQEJBDEWBBQHhlrlR+04ucgkp0Atxgu44aP0bTBfBgkqhkiG9w0BCQ8xUjBQMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYF
+Kw4DAgcwDQYIKoZIhvcNAwICASgwgZsGCSsGAQQBgjcQBDGBjTCBijCBhDEUMBIGA1UEAwwL
+UG9kemltZWsgQ0ExCzAJBgNVBAYTAkNaMQ4wDAYDVQQHDAVabMOtbjEVMBMGA1UECgwMcG9k
+emltZWsub3JnMRUwEwYDVQQLDAxwb2R6aW1lay5vcmcxITAfBgkqhkiG9w0BCQEWEmFkbWlu
+QHBvZHppbWVrLm9yZwIBNDCBnQYLKoZIhvcNAQkQAgsxgY2ggYowgYQxFDASBgNVBAMMC1Bv
+ZHppbWVrIENBMQswCQYDVQQGEwJDWjEOMAwGA1UEBwwFWmzDrW4xFTATBgNVBAoMDHBvZHpp
+bWVrLm9yZzEVMBMGA1UECwwMcG9kemltZWsub3JnMSEwHwYJKoZIhvcNAQkBFhJhZG1pbkBw
+b2R6aW1lay5vcmcCATQwDQYJKoZIhvcNAQEBBQAEggEAXFaSQdFI50YqPsZ4lBJurTAAPcZU
+NCrb5sX2XephSysjNjXgWQOqVey8B8LemFLSSjWyWCnpzSmvHgaIur2wVUn9XYb2AeW7RLh+
+oFtFunLA3bSP1UzgjQ6AoyfbhC0lyjM2z4asqGDrjAe6wufVFiZuckRfdLmBbVIkFWlpYYXI
+94UxUvoI94WV45193JSQJRn6HngPiaLlYdmdhZnclSoOZ5/qxgt/iRGBmRjau4grxYNZ+O4/
+Up8CnlqnBfdoIA0ESRZ4plJAOyOEd+hqQcgzalkVOyCB922wGkFNxRj1UAlNzdLHXZpp2OBm
+2zku8TlJ9ncUyMyl5TzgSOXdiAAAAAAAAA==
+--=_charon-14527-1282969669-0001-2--
