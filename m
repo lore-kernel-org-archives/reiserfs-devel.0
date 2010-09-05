@@ -1,101 +1,78 @@
-From: Jarek Poplawski <jarkao2@gmail.com>
-Subject: [Bug] possible circular locking in reiserfs_unpack
-Date: Sun, 5 Sep 2010 13:31:21 +0200
-Message-ID: <20100905113121.GA1876@del.dom.local>
+From: David Rientjes <rientjes@google.com>
+Subject: Re: [patch v2 1/5] mm: add nofail variants of kmalloc kcalloc and
+ kzalloc
+Date: Sun, 5 Sep 2010 16:01:45 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1009051555560.5003@chino.kir.corp.google.com>
+References: <alpine.DEB.2.00.1008240340010.18908@chino.kir.corp.google.com> <alpine.DEB.2.00.1009011757360.24694@chino.kir.corp.google.com> <4C7F5951.6040809@gmail.com>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:date:from:to:cc:subject
-         :message-id:mime-version:content-type:content-disposition:user-agent;
-        bh=WG5I1nvYgQAFPpL1wzfIKX55CVEDpb/sYKpn+iaaZio=;
-        b=QwYkUkefdQbLIBq8pGjPwG/k+lpZI7TMRds7VWrFe7GQRLXhaybAvrdK6frwhFt6o6
-         Nj5mgtLzsM2BoxpJmXL0JDmxVK/npPTmdY2PwT7vwNpEVfqU0eaJmFMIphcRqD+bVZfF
-         BTstb+jFcXki+kAC8iRNcS8I3rfxbOmXB70YY=
-Content-Disposition: inline
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-ext4-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=google.com; s=beta;
+	t=1283727711; bh=Yw4QzqACyzXTx1VLlA83A93GS3s=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type;
+	b=NRXHVr8iGuzNvgz+KXDNGDblCq1+/qBPOGMbPte6ipZRBDgg+enfNRkN1lWMpJeA5
+	 JO9GN8E/OxspM4UkpiNZQ==
+In-Reply-To: <4C7F5951.6040809@gmail.com>
+Sender: linux-ext4-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: reiserfs-devel@vger.kernel.org
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.de>, Alasdair G Kergon <agk@redhat.com>, Chris Mason <chris.mason@oracle.com>, Steven Whitehouse <swhiteho@redhat.com>, Jens Axboe <jaxboe@fusionio.com>, Jan Kara <jack@suse.cz>, Frederic Weisbecker <fweisbec@gmail.com>, linux-raid@vger.kernel.org, linux-btrfs@vger.kernel.org, cluster-devel@redhat.com, linux-ext4@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
-I get this warning on every lilo write with 2.6.35.4 and a bit/git
-later too.
+On Thu, 2 Sep 2010, Jiri Slaby wrote:
 
-Jarek P.
+> > @@ -334,6 +334,57 @@ static inline void *kzalloc_node(size_t size, gfp_t flags, int node)
+> >  	return kmalloc_node(size, flags | __GFP_ZERO, node);
+> >  }
+> >  
+> > +/**
+> > + * kmalloc_nofail - infinitely loop until kmalloc() succeeds.
+> > + * @size: how many bytes of memory are required.
+> > + * @flags: the type of memory to allocate (see kmalloc).
+> > + *
+> > + * NOTE: no new callers of this function should be implemented!
+> > + * All memory allocations should be failable whenever possible.
+> > + */
+> > +static inline void *kmalloc_nofail(size_t size, gfp_t flags)
+> > +{
+> > +	void *ret;
+> > +
+> > +	for (;;) {
+> > +		ret = kmalloc(size, flags);
+> > +		if (ret)
+> > +			return ret;
+> > +		WARN_ON_ONCE(get_order(size) > PAGE_ALLOC_COSTLY_ORDER);
+> 
+> This doesn't work as you expect. kmalloc will warn every time it fails.
 
-[   92.766639] =======================================================
-[   92.767222] [ INFO: possible circular locking dependency detected ]
-[   92.767222] 2.6.35c #13
-[   92.767222] -------------------------------------------------------
-[   92.767222] lilo/1606 is trying to acquire lock:
-[   92.767222]  (&sb->s_type->i_mutex_key#8){+.+.+.}, at: [<d0329450>] reiserfs_unpack+0x60/0x110 [reiserfs]
-[   92.767222] 
-[   92.767222] but task is already holding lock:
-[   92.767222]  (&REISERFS_SB(s)->lock){+.+.+.}, at: [<d032a268>] reiserfs_write_lock+0x28/0x40 [reiserfs]
-[   92.767222] 
-[   92.767222] which lock already depends on the new lock.
-[   92.767222] 
-[   92.767222] 
-[   92.767222] the existing dependency chain (in reverse order) is:
-[   92.767222] 
-[   92.767222] -> #1 (&REISERFS_SB(s)->lock){+.+.+.}:
-[   92.767222]        [<c1056347>] lock_acquire+0x67/0x80
-[   92.767222]        [<c12f083d>] __mutex_lock_common+0x4d/0x410
-[   92.767222]        [<c12f0c58>] mutex_lock_nested+0x18/0x20
-[   92.767222]        [<d032a268>] reiserfs_write_lock+0x28/0x40 [reiserfs]
-[   92.767222]        [<d0329e9a>] reiserfs_lookup_privroot+0x2a/0x90 [reiserfs]
-[   92.767222]        [<d0316b81>] reiserfs_fill_super+0x941/0xe60 [reiserfs]
-[   92.767222]        [<c10b7d17>] get_sb_bdev+0x117/0x170
-[   92.767222]        [<d0313e21>] get_super_block+0x21/0x30 [reiserfs]
-[   92.767222]        [<c10b74ba>] vfs_kern_mount+0x6a/0x1b0
-[   92.767222]        [<c10b7659>] do_kern_mount+0x39/0xe0
-[   92.767222]        [<c10cebe0>] do_mount+0x340/0x790
-[   92.767222]        [<c10cf0b4>] sys_mount+0x84/0xb0
-[   92.767222]        [<c12f25cd>] syscall_call+0x7/0xb
-[   92.767222] 
-[   92.767222] -> #0 (&sb->s_type->i_mutex_key#8){+.+.+.}:
-[   92.767222]        [<c1056186>] __lock_acquire+0x1026/0x1180
-[   92.767222]        [<c1056347>] lock_acquire+0x67/0x80
-[   92.767222]        [<c12f083d>] __mutex_lock_common+0x4d/0x410
-[   92.767222]        [<c12f0c58>] mutex_lock_nested+0x18/0x20
-[   92.767222]        [<d0329450>] reiserfs_unpack+0x60/0x110 [reiserfs]
-[   92.767222]        [<d0329772>] reiserfs_ioctl+0x272/0x320 [reiserfs]
-[   92.767222]        [<c10c3228>] vfs_ioctl+0x28/0xa0
-[   92.767222]        [<c10c3c5d>] do_vfs_ioctl+0x32d/0x5c0
-[   92.767222]        [<c10c3f53>] sys_ioctl+0x63/0x70
-[   92.767222]        [<c12f25cd>] syscall_call+0x7/0xb
-[   92.767222] 
-[   92.767222] other info that might help us debug this:
-[   92.767222] 
-[   92.767222] 1 lock held by lilo/1606:
-[   92.767222]  #0:  (&REISERFS_SB(s)->lock){+.+.+.}, at: [<d032a268>] reiserfs_write_lock+0x28/0x40 [reiserfs]
-[   92.767222] 
-[   92.767222] stack backtrace:
-[   92.767222] Pid: 1606, comm: lilo Not tainted 2.6.35c #13
-[   92.767222] Call Trace:
-[   92.767222]  [<c12ef64a>] ? printk+0x18/0x1e
-[   92.767222]  [<c1054212>] print_circular_bug+0xd2/0xe0
-[   92.767222]  [<c1056186>] __lock_acquire+0x1026/0x1180
-[   92.767222]  [<c1089489>] ? __generic_file_aio_write+0x1c9/0x550
-[   92.767222]  [<c1056347>] lock_acquire+0x67/0x80
-[   92.767222]  [<d0329450>] ? reiserfs_unpack+0x60/0x110 [reiserfs]
-[   92.767222]  [<c12f083d>] __mutex_lock_common+0x4d/0x410
-[   92.767222]  [<d0329450>] ? reiserfs_unpack+0x60/0x110 [reiserfs]
-[   92.767222]  [<c12f0b08>] ? __mutex_lock_common+0x318/0x410
-[   92.767222]  [<d032a268>] ? reiserfs_write_lock+0x28/0x40 [reiserfs]
-[   92.767222]  [<c12f0c58>] mutex_lock_nested+0x18/0x20
-[   92.767222]  [<d0329450>] ? reiserfs_unpack+0x60/0x110 [reiserfs]
-[   92.767222]  [<d0329450>] reiserfs_unpack+0x60/0x110 [reiserfs]
-[   92.767222]  [<c12f0c58>] ? mutex_lock_nested+0x18/0x20
-[   92.767222]  [<d0329772>] reiserfs_ioctl+0x272/0x320 [reiserfs]
-[   92.767222]  [<d0329500>] ? reiserfs_ioctl+0x0/0x320 [reiserfs]
-[   92.767222]  [<c10c3228>] vfs_ioctl+0x28/0xa0
-[   92.767222]  [<c10c3c5d>] do_vfs_ioctl+0x32d/0x5c0
-[   92.767222]  [<c109a428>] ? might_fault+0x88/0x90
-[   92.767222]  [<c109a3e2>] ? might_fault+0x42/0x90
-[   92.767222]  [<c10b6638>] ? fget_light+0xf8/0x2f0
-[   92.767222]  [<c10c3f53>] sys_ioctl+0x63/0x70
-[   92.767222]  [<c12f25cd>] syscall_call+0x7/0xb
+It actually does work as I expect since the WARN_ON_ONCE() never even gets 
+triggered here for any of kmalloc_nofail()'s callers since they all have 
+sizes small enough that the conditional is never true.  The page allocator 
+implicitly loops forever if the order <= PAGE_ALLOC_COSTLY_ORDER, so this 
+warning is only emitted if the #define implementation of the page 
+allocator only changes.  That's intended, we want to know the consequences 
+of our change.
+
+> __GFP_NOFAIL used to disable the warning.
+
+No, it didn't, it was unnecessary for all of the kmalloc_nofail() callers 
+since they already implicitly loop.  No warning is emitted (these are all 
+GFP_NOFS or GFP_NOIO users, there are no order-4 or larger GFP_ATOMIC 
+allocators using this interface).
+
+> Actually what's wrong with
+> __GFP_NOFAIL? I cannot find a reason in the changelogs why the patches
+> are needed.
+> 
+
+Couple reasons:
+
+ - it's unnecessary in the page allocator, it can be implemented at a 
+   higher level, which allows us to remove these branches from the 
+   slowpath,
+
+ - it's mostly unnecessary since all users have orders that will 
+   implicitly loop forever anyway (although __GFP_NOFAIL does guarantee 
+   that it won't fail even if we change the looping behavior internally,
+   these warnings help to isolate cases where it's needed), and
