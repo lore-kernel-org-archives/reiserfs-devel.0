@@ -1,273 +1,432 @@
-From: Andrej Podzimek <andrej@podzimek.org>
-Subject: Re: Problems with the 'flush-8:0' process in 2.6.35.3
-Date: Wed, 15 Sep 2010 13:41:27 +0200
-Message-ID: <4C90B0E7.6020408@podzimek.org>
-References: <4C789044.3020403@podzimek.org> <4C78E1D5.80101@gmail.com> <4C7C4AFC.2040009@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha1; boundary="=_charon-7733-1284550888-0001-2"
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=podzimek.org; h=message-id:date:from:mime-version:content-type:to:cc:subject:references:in-reply-to; s=charon; bh=4z5VZ+FTIiZKJjHWnFhOwN0peMEd6vr14voYS/yauHI=; b=MWHWQKWQ0CgOpAesBlLkxiioZthX3lEOFsUDJoqH0eCI+1Zp1/ugECR1A98MVJddPylOmUvwBbj4RGoy9KO6+i4FMcPb5RAKTtprTxsGh5iT89xpfBXTjtpN3xNuKuJSM4wBi0vQok90v4SwnDpNYtiZ6SwJI3GhCqwmO9nWkt3vSOpkQxBnpdGXkEMpDsA3LD1fOphtOooTdwkPZkD8JbvRAjDb7orYOQkQRWtA8NMfCXfULv+chjJ3txNGtfGA0o9lt+Br2OmuCfIKkVDH5dOmWEEsgBzuF/LnQ+tBDyAth3uFhpfaLYe8GSiGVXNC39Mwct884q6HhYa+Pflxmg==
-In-Reply-To: <4C7C4AFC.2040009@gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+From: Jan Kara <jack@suse.cz>
+Subject: [PATCH] quota: Fix deadlock during path resolution
+Date: Wed, 15 Sep 2010 23:39:51 +0200
+Message-ID: <1284586791-8245-1-git-send-email-jack@suse.cz>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-ext4@vger.kernel.org, reiserfs-devel@vger.kernel.org, ocfs2-devel@oss.oracle.com, Jan Kara <jack@suse.cz>, Al Viro <viro@ZenIV.linux.org.uk>, Christoph Hellwig <hch@lst.de>, Ted Ts'o <tytso@mit.edu>, Joel Becker <joel.becker@oracle.com>
 
-This is a MIME-formatted message.  If you see this text it means that your
-E-mail software does not support MIME-formatted messages.
+As Al Viro pointed out path resolution during Q_QUOTAON calls to quotactl
+is prone to deadlocks. We hold s_umount semaphore for reading during the
+path resolution and resolution itself may need to acquire the semaphore
+for writing when e. g. autofs mountpoint is passed.
 
---=_charon-7733-1284550888-0001-2
-Content-Type: multipart/mixed;
- boundary="------------010804050205030501060002"
+Solve the problem by performing the resolution before we get hold of the
+superblock (and thus s_umount semaphore). The whole thing is complicated
+by the fact that some filesystems (OCFS2) ignore the path argument. So to
+distinguish between filesystem which want the path and which do not we
+introduce new .quota_on_meta callback which does not get the path. OCFS2
+then uses this callback instead of old .quota_on.
 
-This is a multi-part message in MIME format.
---------------010804050205030501060002
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+CC: Al Viro <viro@ZenIV.linux.org.uk>
+CC: Christoph Hellwig <hch@lst.de>
+CC: Ted Ts'o <tytso@mit.edu>
+CC: Joel Becker <joel.becker@oracle.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/ext3/super.c          |   25 +++++++------------------
+ fs/ext4/super.c          |   25 +++++++------------------
+ fs/ocfs2/super.c         |    5 ++---
+ fs/quota/dquot.c         |   18 ++----------------
+ fs/quota/quota.c         |   41 +++++++++++++++++++++++++++--------------
+ fs/reiserfs/super.c      |   17 ++++++-----------
+ include/linux/quota.h    |    5 ++++-
+ include/linux/quotaops.h |    4 +---
+ 8 files changed, 56 insertions(+), 84 deletions(-)
 
->>> I use a 2.6.35.3 kernel and Reiser4 as the root file system. In a
->>> couple of minutes after boot, a kernel process called 'flush-8:0'
->>> takes up all the available CPU time. From that moment on, it is
->>> impossible to sync filesystems (and suspend, hibernate or reboot).
->>> (The 'sync' command halts indefinitely.) In some cases it is even
->>> impossible to log in. Existing sessions seem to work fine, to an exte=
-nt.
->>>
->>> I first thought this was related to the GTT chipset coherency patch.
->>> (This patch fixes a one-year-old bug that caused all the Intel 855
->>> class GPUs to be totally unusable.) However, removing the patch and
->>> testing with only a vanilla kernel (and Reiser4, of course) showed
->>> that 'flush-8:0' will eventually go mad, no matter if the GPU-related=
+ The patch changes quota_on interface and thus all filesystems using it need
+to be modified. Since the patch is small, I'd prefer to keep all the fs
+changes in this single patch. FS maintainers, please review. Thanks.
 
->>> patch is present or not.
->>>
->>> The machine is an Asus M2400N laptop with a 100GB Seagate Momentus.
->>>
->>> Is this a known issue?
->>>
->>
->> Um, nop..
->>
->>
->>> How could I track this down?
->>>
->>
->> Could you try to catch sysrq-t output to take a look what the flush-8:=
-0
->> doing?
->>
->
-> Any progress here?
-> Also could you please check your partition with fsck?
+diff --git a/fs/ext3/super.c b/fs/ext3/super.c
+index 5dbf4db..15f63d3 100644
+--- a/fs/ext3/super.c
++++ b/fs/ext3/super.c
+@@ -736,7 +736,7 @@ static int ext3_release_dquot(struct dquot *dquot);
+ static int ext3_mark_dquot_dirty(struct dquot *dquot);
+ static int ext3_write_info(struct super_block *sb, int type);
+ static int ext3_quota_on(struct super_block *sb, int type, int format_id,
+-				char *path);
++			 struct path *path);
+ static int ext3_quota_on_mount(struct super_block *sb, int type);
+ static ssize_t ext3_quota_read(struct super_block *sb, int type, char *data,
+ 			       size_t len, loff_t off);
+@@ -2849,27 +2849,20 @@ static int ext3_quota_on_mount(struct super_block *sb, int type)
+  * Standard function to be called on quota_on
+  */
+ static int ext3_quota_on(struct super_block *sb, int type, int format_id,
+-			 char *name)
++			 struct path *path)
+ {
+ 	int err;
+-	struct path path;
+ 
+ 	if (!test_opt(sb, QUOTA))
+ 		return -EINVAL;
+ 
+-	err = kern_path(name, LOOKUP_FOLLOW, &path);
+-	if (err)
+-		return err;
+-
+ 	/* Quotafile not on the same filesystem? */
+-	if (path.mnt->mnt_sb != sb) {
+-		path_put(&path);
++	if (path->mnt->mnt_sb != sb)
+ 		return -EXDEV;
+-	}
+ 	/* Journaling quota? */
+ 	if (EXT3_SB(sb)->s_qf_names[type]) {
+ 		/* Quotafile not of fs root? */
+-		if (path.dentry->d_parent != sb->s_root)
++		if (path->dentry->d_parent != sb->s_root)
+ 			ext3_msg(sb, KERN_WARNING,
+ 				"warning: Quota file not on filesystem root. "
+ 				"Journaled quota will not work.");
+@@ -2879,7 +2872,7 @@ static int ext3_quota_on(struct super_block *sb, int type, int format_id,
+ 	 * When we journal data on quota file, we have to flush journal to see
+ 	 * all updates to the file when we bypass pagecache...
+ 	 */
+-	if (ext3_should_journal_data(path.dentry->d_inode)) {
++	if (ext3_should_journal_data(path->dentry->d_inode)) {
+ 		/*
+ 		 * We don't need to lock updates but journal_flush() could
+ 		 * otherwise be livelocked...
+@@ -2887,15 +2880,11 @@ static int ext3_quota_on(struct super_block *sb, int type, int format_id,
+ 		journal_lock_updates(EXT3_SB(sb)->s_journal);
+ 		err = journal_flush(EXT3_SB(sb)->s_journal);
+ 		journal_unlock_updates(EXT3_SB(sb)->s_journal);
+-		if (err) {
+-			path_put(&path);
++		if (err)
+ 			return err;
+-		}
+ 	}
+ 
+-	err = dquot_quota_on_path(sb, type, format_id, &path);
+-	path_put(&path);
+-	return err;
++	return dquot_quota_on(sb, type, format_id, path);
+ }
+ 
+ /* Read data from quotafile - avoid pagecache and such because we cannot afford
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 2614774..bcf86b3 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1123,7 +1123,7 @@ static int ext4_release_dquot(struct dquot *dquot);
+ static int ext4_mark_dquot_dirty(struct dquot *dquot);
+ static int ext4_write_info(struct super_block *sb, int type);
+ static int ext4_quota_on(struct super_block *sb, int type, int format_id,
+-				char *path);
++			 struct path *path);
+ static int ext4_quota_off(struct super_block *sb, int type);
+ static int ext4_quota_on_mount(struct super_block *sb, int type);
+ static ssize_t ext4_quota_read(struct super_block *sb, int type, char *data,
+@@ -4066,27 +4066,20 @@ static int ext4_quota_on_mount(struct super_block *sb, int type)
+  * Standard function to be called on quota_on
+  */
+ static int ext4_quota_on(struct super_block *sb, int type, int format_id,
+-			 char *name)
++			 struct path *path)
+ {
+ 	int err;
+-	struct path path;
+ 
+ 	if (!test_opt(sb, QUOTA))
+ 		return -EINVAL;
+ 
+-	err = kern_path(name, LOOKUP_FOLLOW, &path);
+-	if (err)
+-		return err;
+-
+ 	/* Quotafile not on the same filesystem? */
+-	if (path.mnt->mnt_sb != sb) {
+-		path_put(&path);
++	if (path->mnt->mnt_sb != sb)
+ 		return -EXDEV;
+-	}
+ 	/* Journaling quota? */
+ 	if (EXT4_SB(sb)->s_qf_names[type]) {
+ 		/* Quotafile not in fs root? */
+-		if (path.dentry->d_parent != sb->s_root)
++		if (path->dentry->d_parent != sb->s_root)
+ 			ext4_msg(sb, KERN_WARNING,
+ 				"Quota file not on filesystem root. "
+ 				"Journaled quota will not work");
+@@ -4097,7 +4090,7 @@ static int ext4_quota_on(struct super_block *sb, int type, int format_id,
+ 	 * all updates to the file when we bypass pagecache...
+ 	 */
+ 	if (EXT4_SB(sb)->s_journal &&
+-	    ext4_should_journal_data(path.dentry->d_inode)) {
++	    ext4_should_journal_data(path->dentry->d_inode)) {
+ 		/*
+ 		 * We don't need to lock updates but journal_flush() could
+ 		 * otherwise be livelocked...
+@@ -4105,15 +4098,11 @@ static int ext4_quota_on(struct super_block *sb, int type, int format_id,
+ 		jbd2_journal_lock_updates(EXT4_SB(sb)->s_journal);
+ 		err = jbd2_journal_flush(EXT4_SB(sb)->s_journal);
+ 		jbd2_journal_unlock_updates(EXT4_SB(sb)->s_journal);
+-		if (err) {
+-			path_put(&path);
++		if (err)
+ 			return err;
+-		}
+ 	}
+ 
+-	err = dquot_quota_on_path(sb, type, format_id, &path);
+-	path_put(&path);
+-	return err;
++	return dquot_quota_on(sb, type, format_id, path);
+ }
+ 
+ static int ext4_quota_off(struct super_block *sb, int type)
+diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
+index fa1be1b..26bd015 100644
+--- a/fs/ocfs2/super.c
++++ b/fs/ocfs2/super.c
+@@ -962,8 +962,7 @@ static void ocfs2_disable_quotas(struct ocfs2_super *osb)
+ }
+ 
+ /* Handle quota on quotactl */
+-static int ocfs2_quota_on(struct super_block *sb, int type, int format_id,
+-			  char *path)
++static int ocfs2_quota_on(struct super_block *sb, int type, int format_id)
+ {
+ 	unsigned int feature[MAXQUOTAS] = { OCFS2_FEATURE_RO_COMPAT_USRQUOTA,
+ 					     OCFS2_FEATURE_RO_COMPAT_GRPQUOTA};
+@@ -982,7 +981,7 @@ static int ocfs2_quota_off(struct super_block *sb, int type)
+ }
+ 
+ static const struct quotactl_ops ocfs2_quotactl_ops = {
+-	.quota_on	= ocfs2_quota_on,
++	.quota_on_meta	= ocfs2_quota_on,
+ 	.quota_off	= ocfs2_quota_off,
+ 	.quota_sync	= dquot_quota_sync,
+ 	.get_info	= dquot_get_dqinfo,
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index aad1316..317e0e1 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -2177,8 +2177,8 @@ int dquot_resume(struct super_block *sb, int type)
+ }
+ EXPORT_SYMBOL(dquot_resume);
+ 
+-int dquot_quota_on_path(struct super_block *sb, int type, int format_id,
+-		      struct path *path)
++int dquot_quota_on(struct super_block *sb, int type, int format_id,
++		   struct path *path)
+ {
+ 	int error = security_quota_on(path->dentry);
+ 	if (error)
+@@ -2194,20 +2194,6 @@ int dquot_quota_on_path(struct super_block *sb, int type, int format_id,
+ }
+ EXPORT_SYMBOL(dquot_quota_on_path);
+ 
+-int dquot_quota_on(struct super_block *sb, int type, int format_id, char *name)
+-{
+-	struct path path;
+-	int error;
+-
+-	error = kern_path(name, LOOKUP_FOLLOW, &path);
+-	if (!error) {
+-		error = dquot_quota_on_path(sb, type, format_id, &path);
+-		path_put(&path);
+-	}
+-	return error;
+-}
+-EXPORT_SYMBOL(dquot_quota_on);
+-
+ /*
+  * More powerful function for turning on quotas allowing setting
+  * of individual quota flags
+diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+index b299961..b34bdb2 100644
+--- a/fs/quota/quota.c
++++ b/fs/quota/quota.c
+@@ -64,18 +64,15 @@ static int quota_sync_all(int type)
+ }
+ 
+ static int quota_quotaon(struct super_block *sb, int type, int cmd, qid_t id,
+-		         void __user *addr)
++		         struct path *path)
+ {
+-	char *pathname;
+-	int ret = -ENOSYS;
+-
+-	pathname = getname(addr);
+-	if (IS_ERR(pathname))
+-		return PTR_ERR(pathname);
+-	if (sb->s_qcop->quota_on)
+-		ret = sb->s_qcop->quota_on(sb, type, id, pathname);
+-	putname(pathname);
+-	return ret;
++	if (!sb->s_qcop->quota_on && !sb->s_qcop->quota_on_meta)
++		return -ENOSYS;
++	if (sb->s_qcop->quota_on_meta)
++		return sb->s_qcop->quota_on_meta(sb, type, id);
++	if (IS_ERR(path))
++		return PTR_ERR(path);
++	return sb->s_qcop->quota_on(sb, type, id, path);
+ }
+ 
+ static int quota_getfmt(struct super_block *sb, int type, void __user *addr)
+@@ -241,7 +238,7 @@ static int quota_getxquota(struct super_block *sb, int type, qid_t id,
+ 
+ /* Copy parameters and call proper function */
+ static int do_quotactl(struct super_block *sb, int type, int cmd, qid_t id,
+-		       void __user *addr)
++		       void __user *addr, struct path *path)
+ {
+ 	int ret;
+ 
+@@ -256,7 +253,7 @@ static int do_quotactl(struct super_block *sb, int type, int cmd, qid_t id,
+ 
+ 	switch (cmd) {
+ 	case Q_QUOTAON:
+-		return quota_quotaon(sb, type, cmd, id, addr);
++		return quota_quotaon(sb, type, cmd, id, path);
+ 	case Q_QUOTAOFF:
+ 		if (!sb->s_qcop->quota_off)
+ 			return -ENOSYS;
+@@ -335,6 +332,7 @@ SYSCALL_DEFINE4(quotactl, unsigned int, cmd, const char __user *, special,
+ {
+ 	uint cmds, type;
+ 	struct super_block *sb = NULL;
++	struct path path, *pathp = NULL;
+ 	int ret;
+ 
+ 	cmds = cmd >> SUBCMDSHIFT;
+@@ -351,12 +349,27 @@ SYSCALL_DEFINE4(quotactl, unsigned int, cmd, const char __user *, special,
+ 		return -ENODEV;
+ 	}
+ 
++	/*
++	 * Path for quotaon has to be resolved before grabbing superblock
++	 * because that gets s_umount sem which is also possibly needed by path
++	 * resolution (think about autofs) and thus deadlocks could arise.
++	 */
++	if (cmds == Q_QUOTAON) {
++		ret = user_path_at(AT_FDCWD, addr, LOOKUP_FOLLOW, &path);
++		if (ret)
++			pathp = ERR_PTR(ret);
++		else
++			pathp = &path;
++	}
++
+ 	sb = quotactl_block(special);
+ 	if (IS_ERR(sb))
+ 		return PTR_ERR(sb);
+ 
+-	ret = do_quotactl(sb, type, cmds, id, addr);
++	ret = do_quotactl(sb, type, cmds, id, addr, pathp);
+ 
+ 	drop_super(sb);
++	if (pathp && !IS_ERR(pathp))
++		path_put(pathp);
+ 	return ret;
+ }
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index e15ff61..6e85cfd 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -626,7 +626,7 @@ static int reiserfs_acquire_dquot(struct dquot *);
+ static int reiserfs_release_dquot(struct dquot *);
+ static int reiserfs_mark_dquot_dirty(struct dquot *);
+ static int reiserfs_write_info(struct super_block *, int);
+-static int reiserfs_quota_on(struct super_block *, int, int, char *);
++static int reiserfs_quota_on(struct super_block *, int, int, struct path *);
+ 
+ static const struct dquot_operations reiserfs_quota_operations = {
+ 	.write_dquot = reiserfs_write_dquot,
+@@ -2042,25 +2042,21 @@ static int reiserfs_quota_on_mount(struct super_block *sb, int type)
+  * Standard function to be called on quota_on
+  */
+ static int reiserfs_quota_on(struct super_block *sb, int type, int format_id,
+-			     char *name)
++			     struct path *path)
+ {
+ 	int err;
+-	struct path path;
+ 	struct inode *inode;
+ 	struct reiserfs_transaction_handle th;
+ 
+ 	if (!(REISERFS_SB(sb)->s_mount_opt & (1 << REISERFS_QUOTA)))
+ 		return -EINVAL;
+ 
+-	err = kern_path(name, LOOKUP_FOLLOW, &path);
+-	if (err)
+-		return err;
+ 	/* Quotafile not on the same filesystem? */
+-	if (path.mnt->mnt_sb != sb) {
++	if (path->mnt->mnt_sb != sb) {
+ 		err = -EXDEV;
+ 		goto out;
+ 	}
+-	inode = path.dentry->d_inode;
++	inode = path->dentry->d_inode;
+ 	/* We must not pack tails for quota files on reiserfs for quota IO to work */
+ 	if (!(REISERFS_I(inode)->i_flags & i_nopack_mask)) {
+ 		err = reiserfs_unpack(inode, NULL);
+@@ -2076,7 +2072,7 @@ static int reiserfs_quota_on(struct super_block *sb, int type, int format_id,
+ 	/* Journaling quota? */
+ 	if (REISERFS_SB(sb)->s_qf_names[type]) {
+ 		/* Quotafile not of fs root? */
+-		if (path.dentry->d_parent != sb->s_root)
++		if (path->dentry->d_parent != sb->s_root)
+ 			reiserfs_warning(sb, "super-6521",
+ 				 "Quota file not on filesystem root. "
+ 				 "Journalled quota will not work.");
+@@ -2095,9 +2091,8 @@ static int reiserfs_quota_on(struct super_block *sb, int type, int format_id,
+ 		if (err)
+ 			goto out;
+ 	}
+-	err = dquot_quota_on_path(sb, type, format_id, &path);
++	err = dquot_quota_on(sb, type, format_id, path);
+ out:
+-	path_put(&path);
+ 	return err;
+ }
+ 
+diff --git a/include/linux/quota.h b/include/linux/quota.h
+index 94c1f03..9a85412 100644
+--- a/include/linux/quota.h
++++ b/include/linux/quota.h
+@@ -322,9 +322,12 @@ struct dquot_operations {
+ 	qsize_t *(*get_reserved_space) (struct inode *);
+ };
+ 
++struct path;
++
+ /* Operations handling requests from userspace */
+ struct quotactl_ops {
+-	int (*quota_on)(struct super_block *, int, int, char *);
++	int (*quota_on)(struct super_block *, int, int, struct path *);
++	int (*quota_on_meta)(struct super_block *, int, int);
+ 	int (*quota_off)(struct super_block *, int);
+ 	int (*quota_sync)(struct super_block *, int, int);
+ 	int (*get_info)(struct super_block *, int, struct if_dqinfo *);
+diff --git a/include/linux/quotaops.h b/include/linux/quotaops.h
+index d1a9193..9e09c9a 100644
+--- a/include/linux/quotaops.h
++++ b/include/linux/quotaops.h
+@@ -75,11 +75,9 @@ int dquot_mark_dquot_dirty(struct dquot *dquot);
+ 
+ int dquot_file_open(struct inode *inode, struct file *file);
+ 
+-int dquot_quota_on(struct super_block *sb, int type, int format_id,
+-	char *path);
+ int dquot_enable(struct inode *inode, int type, int format_id,
+ 	unsigned int flags);
+-int dquot_quota_on_path(struct super_block *sb, int type, int format_id,
++int dquot_quota_on(struct super_block *sb, int type, int format_id,
+  	struct path *path);
+ int dquot_quota_on_mount(struct super_block *sb, char *qf_name,
+  	int format_id, int type);
+-- 
+1.6.4.2
 
-Hello,
-
-sorry about the long delay. I had a very busy time.
-
-You asked about the kernel version I used before. It was 2.6.34.3. Reiser=
-4 seemed to work fine there. The problems started when I moved to 2.6.35.=
-3.
-
-As far as fsck is concerned, the partition seems to be OK (no error messa=
-ges), but the fsck.reiser4 program fails on all of my partitions when clo=
-sing the file system, saying that an internal error occurred. (I already =
-reported this once and you inspected my file system metadata, concluding =
-that this is a false alert and a bug in fsck.reiser4.)
-
-I catched a couple of stack traces with Magic-t during the time when the =
-flush-8:0 process was consuming all the CPU time. They are attached. A co=
-uple of observations:
-
-	* Once flush-8:0 gets crazy, it doesn't seem to stop. (It was still cons=
-uming all the CPU time after an hour...)
-	* Everything looks normal right after boot. The flush-8:0 will usually g=
-et out of control a couple of minutes after boot.
-	* There is a reliable trigger for this issue: sync. Once invoked, sync *=
-never* returns and causes flush-8:0 to get out of control.
-
-Andrej
-
---------------010804050205030501060002
-Content-Type: application/x-bzip;
- name="flushbacktrace.bz2"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="flushbacktrace.bz2"
-
-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
---------------010804050205030501060002--
-
---=_charon-7733-1284550888-0001-2
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIUzjCC
-BakwggSRoAMCAQICATQwDQYJKoZIhvcNAQEFBQAwgYQxFDASBgNVBAMMC1BvZHppbWVrIENB
-MQswCQYDVQQGEwJDWjEOMAwGA1UEBwwFWmzDrW4xFTATBgNVBAoMDHBvZHppbWVrLm9yZzEV
-MBMGA1UECwwMcG9kemltZWsub3JnMSEwHwYJKoZIhvcNAQkBFhJhZG1pbkBwb2R6aW1lay5v
-cmcwHhcNMTAwMzMxMTkxMzQ0WhcNMTEwMzMxMTkxMzQ0WjCBiTELMAkGA1UEBhMCQ1oxDjAM
-BgNVBAcMBVpsw61uMRUwEwYDVQQKDAxwb2R6aW1lay5vcmcxFTATBgNVBAsMDHBvZHppbWVr
-Lm9yZzEYMBYGA1UEAwwPQW5kcmVqIFBvZHppbWVrMSIwIAYJKoZIhvcNAQkBFhNhbmRyZWpA
-cG9kemltZWsub3JnMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvLPy9s1OWxpb
-PkH+e8Akw/F5Qp+CTSGAq/XmZuURUOhUFmxPZVp1rV45esz6dsiXK0CXWoHVjeSlr0LRmWUH
-hGlsPa+qpvV/EWad3OF05Lz5T6fJQGkQIvh3xSQYi8/s3k9/4uKUHtU/Lm1KqdFjyAY1pZxv
-OP05b6qCfgkYcB2xk6FeZH38bbA/6h+nURiqotfkfB4a4N+roTxf9Bi0QsNZZ7W8FhKQBdEB
-6ID3IYwhQbJsTQR8yh561E4yYf+9J/BkL7AZpnkEKsNgZawtfWwya/r7dJPE9PCkB9jmrawN
-GiE8ta3/nrPuKgulImjjtzwWSrkFWWIhRuvA6kjJvDIDNX9mT7bdZP5FfOkprAaIuSJ93BsM
-OtQm3Qy6RF/+4EzLdEqcy79nzIY84kQGCdBnd45MUG61iMnyVX2WalG1fgZ9uoKsvYUVIkkj
-N+dwuKg3vR+o/JrBlYiAtBTpBsGiWB8YhHzCTTOkQA/m8dXl9JaV+bOSktwWibFMVrWxCxbW
-sAugsEONFoYlCOBGJrq3Gy2+QkDugQhGTJlIXEe5joJHELadahFp/cWf9A0yz0vujob9GLvf
-TZpmPcmuvK2HhHWfgzc1kyOOPNQoAUK+tG4yUG4/mYIhNkD4b49KGi7wfpYViWwNlQFKlPFV
-F+udgSfFgYZO365SOykEsMkCAwEAAaOCAR0wggEZMAkGA1UdEwQCMAAwHQYDVR0OBBYEFFEH
-1s0Xse0CZ217pElE8DdjZxYtMIG5BgNVHSMEgbEwga6AFE6juEwI0K5X6Rv/eMJTk7Q8cg65
-oYGKpIGHMIGEMRQwEgYDVQQDDAtQb2R6aW1layBDQTELMAkGA1UEBhMCQ1oxDjAMBgNVBAcM
-BVpsw61uMRUwEwYDVQQKDAxwb2R6aW1lay5vcmcxFTATBgNVBAsMDHBvZHppbWVrLm9yZzEh
-MB8GCSqGSIb3DQEJARYSYWRtaW5AcG9kemltZWsub3JnggkAkctHSQfLqowwMQYJYIZIAYb4
-QgEEBCQWImh0dHBzOi8vY2EucG9kemltZWsub3JnL2NhLWNybC5wZW0wDQYJKoZIhvcNAQEF
-BQADggEBAKUoyTBti808LZw5SH7hX6ewB9baj0GDjR6s0t4kSXiEf1nr+VBPfftM9RLS8vaj
-L3v9tZ7lKWgRoJDUhYR6CKrUw+t8MTAAI9wYHTgEq10yHdfIGcWdGn0mRgGljOp4YZACzX1y
-791HN+hBmjPKYjLc/2cmVdtOeHMAGn1cyeuyb8drYovtxu/P6MJaCE9533HRYfzOvd2u7D0B
-6oy9Nrn8t5IgRoGENk8wwRYa5jrukXIvTtQNK7In7SAb5DNSHp8kwzQmJtgFqvELVZ593phM
-yLiZuJg5AMU60tXtPIZBvjvkQdyspvp1n0ZLdKrAcZYo752DzOCT2U6KCclbSrcwggc3MIIG
-H6ADAgECAgIB6TANBgkqhkiG9w0BAQUFADCBjDELMAkGA1UEBhMCSUwxFjAUBgNVBAoTDVN0
-YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRpZmljYXRlIFNpZ25p
-bmcxODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNzIDIgUHJpbWFyeSBJbnRlcm1lZGlhdGUgQ2xp
-ZW50IENBMB4XDTA5MTAwMzAwMDAwMVoXDTEwMTAwMzA0MjI0OFowgaAxCzAJBgNVBAYTAkNa
-MRUwEwYDVQQIEwxabGluc2t5IEtyYWoxDTALBgNVBAcTBFpsaW4xLTArBgNVBAsTJFN0YXJ0
-Q29tIFZlcmlmaWVkIENlcnRpZmljYXRlIE1lbWJlcjEYMBYGA1UEAxMPQW5kcmVqIFBvZHpp
-bWVrMSIwIAYJKoZIhvcNAQkBFhNhbmRyZWpAcG9kemltZWsub3JnMIIBIjANBgkqhkiG9w0B
-AQEFAAOCAQ8AMIIBCgKCAQEAnnSDv+YxlFeoIfN2a+pRX/nxUKE9IgQGWZz7wDKddl6Vmyk3
-iZ9vcCdtKdVYBRyhMsqVYYjE2+oINr17NkXASeVa/KtobxfSs3i3doyeuz1c1ZXPHFzS1tcK
-nMiPE3hyG0QTM1yGePbGBEoLthV+HWzY71bf9H8Wpw2ctHf9K2loRf7gJCYl2QncQL9w1ao5
-Es3bXAl1ajKC+pw1+NI1Hj3wNBOy9mBIU6pUi3E7SrYZPvH/o7/hpj2eKZmERpPCi2DSzPMD
-J/QhA/Y01PkhflbvDPI8YgaeqiZ1f1ieh+SDIyd2hmJoc5ViTgCSRYiutVnXHL23l13EsMcT
-aCS3twIDAQABo4IDizCCA4cwCQYDVR0TBAIwADALBgNVHQ8EBAMCBLAwHQYDVR0lBBYwFAYI
-KwYBBQUHAwIGCCsGAQUFBwMEMB0GA1UdDgQWBBTVova7hG26c13INOIAMLSP57z7VjAeBgNV
-HREEFzAVgRNhbmRyZWpAcG9kemltZWsub3JnMIGoBgNVHSMEgaAwgZ2AFK5Vg2/sMcq59x36
-r2sx88gd46y7oYGBpH8wfTELMAkGA1UEBhMCSUwxFjAUBgNVBAoTDVN0YXJ0Q29tIEx0ZC4x
-KzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRpZmljYXRlIFNpZ25pbmcxKTAnBgNVBAMT
-IFN0YXJ0Q29tIENlcnRpZmljYXRpb24gQXV0aG9yaXR5ggEOMIIBRwYDVR0gBIIBPjCCATow
-ggE2BgsrBgEEAYG1NwECATCCASUwLgYIKwYBBQUHAgEWImh0dHA6Ly93d3cuc3RhcnRzc2wu
-Y29tL3BvbGljeS5wZGYwNAYIKwYBBQUHAgEWKGh0dHA6Ly93d3cuc3RhcnRzc2wuY29tL2lu
-dGVybWVkaWF0ZS5wZGYwgbwGCCsGAQUFBwICMIGvMBQWDVN0YXJ0Q29tIEx0ZC4wAwIBARqB
-lkxpbWl0ZWQgTGlhYmlsaXR5LCByZWFkIHRoZSBzZWN0aW9uICpMZWdhbCBMaW1pdGF0aW9u
-cyogb2YgdGhlIFN0YXJ0Q29tIENlcnRpZmljYXRpb24gQXV0aG9yaXR5IFBvbGljeSBhdmFp
-bGFibGUgYXQgaHR0cDovL3d3dy5zdGFydHNzbC5jb20vcG9saWN5LnBkZjBjBgNVHR8EXDBa
-MCugKaAnhiVodHRwOi8vd3d3LnN0YXJ0c3NsLmNvbS9jcnR1Mi1jcmwuY3JsMCugKaAnhiVo
-dHRwOi8vY3JsLnN0YXJ0c3NsLmNvbS9jcnR1Mi1jcmwuY3JsMIGOBggrBgEFBQcBAQSBgTB/
-MDkGCCsGAQUFBzABhi1odHRwOi8vb2NzcC5zdGFydHNzbC5jb20vc3ViL2NsYXNzMi9jbGll
-bnQvY2EwQgYIKwYBBQUHMAKGNmh0dHA6Ly93d3cuc3RhcnRzc2wuY29tL2NlcnRzL3N1Yi5j
-bGFzczIuY2xpZW50LmNhLmNydDAjBgNVHRIEHDAahhhodHRwOi8vd3d3LnN0YXJ0c3NsLmNv
-bS8wDQYJKoZIhvcNAQEFBQADggEBAGw7B4eCVeM6xMxsB0SECFw7iM41yw68amcVXMwQcrjL
-R6TGuYfD5MB4HFsnoI02EBq4mRJFbJfPDiMsy6nlwAaCoTztb3lt9dNmLdFAmRswAfYIWAkS
-qJVqGKXJV6ScI4FtjA0T/v4FXbK5vvZIID9DxibjPQ3MaNr5g5mDQfuVptqb7U/1CMX0sqiK
-9iDsIZZfAGToqiR6n4ZDg6vVdbln4iVM7d7JuiuiXpcBFJUvbFCRgzlj+hzuRTAZmFLJu1M8
-4wpo3bEauLXuA8YvmVsJxR+qxmODkrEhQkBlz6bxgyaxklyVsQMDSbjXGt5KHPsFwmrYGs7g
-Zf8YFVzvCBowggfiMIIFyqADAgECAgEOMA0GCSqGSIb3DQEBBQUAMH0xCzAJBgNVBAYTAklM
-MRYwFAYDVQQKEw1TdGFydENvbSBMdGQuMSswKQYDVQQLEyJTZWN1cmUgRGlnaXRhbCBDZXJ0
-aWZpY2F0ZSBTaWduaW5nMSkwJwYDVQQDEyBTdGFydENvbSBDZXJ0aWZpY2F0aW9uIEF1dGhv
-cml0eTAeFw0wNzEwMjQyMTAyNTRaFw0xMjEwMjIyMTAyNTRaMIGMMQswCQYDVQQGEwJJTDEW
-MBQGA1UEChMNU3RhcnRDb20gTHRkLjErMCkGA1UECxMiU2VjdXJlIERpZ2l0YWwgQ2VydGlm
-aWNhdGUgU2lnbmluZzE4MDYGA1UEAxMvU3RhcnRDb20gQ2xhc3MgMiBQcmltYXJ5IEludGVy
-bWVkaWF0ZSBDbGllbnQgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDLKIVF
-nAEs+xnyq6UzjCqgDcvQVe1dIoFnRsQPCFO+y92k8RK0Pn3MbQ2Gd+mehh9GBZ+36uUQA7Xj
-9AGM6wgPhEE34vKtfpAN5tJ8LcFxveDObCKrL7O5UT9WsnAZHv7OYPYSR68mdmnEnJ83M4wQ
-gKO19b+Rt8sPDAz9ptkQsntCn4GeJzg3q2SVc4QJTg/WHo7wF2ah5LMOeh8xJVSKGEmd6uPk
-Sbj113yKMm8vmNptRPmM1+YgmVwcdOYJOjCgFtb2sOP79jji8uhWR91xx7TpM1K3hv/wrBZw
-ffrmmEpUeuXHRs07JqCCvFh9coKF4UQZvfEg+x3/69xRCzb1AgMBAAGjggNbMIIDVzAMBgNV
-HRMEBTADAQH/MAsGA1UdDwQEAwIBpjAdBgNVHQ4EFgQUrlWDb+wxyrn3HfqvazHzyB3jrLsw
-gagGA1UdIwSBoDCBnYAUTgvvGqRAW6UXaYcwyjRoQ9BBrvKhgYGkfzB9MQswCQYDVQQGEwJJ
-TDEWMBQGA1UEChMNU3RhcnRDb20gTHRkLjErMCkGA1UECxMiU2VjdXJlIERpZ2l0YWwgQ2Vy
-dGlmaWNhdGUgU2lnbmluZzEpMCcGA1UEAxMgU3RhcnRDb20gQ2VydGlmaWNhdGlvbiBBdXRo
-b3JpdHmCAQEwCQYDVR0SBAIwADA9BggrBgEFBQcBAQQxMC8wLQYIKwYBBQUHMAKGIWh0dHA6
-Ly93d3cuc3RhcnRzc2wuY29tL3Nmc2NhLmNydDBgBgNVHR8EWTBXMCygKqAohiZodHRwOi8v
-Y2VydC5zdGFydGNvbS5vcmcvc2ZzY2EtY3JsLmNybDAnoCWgI4YhaHR0cDovL2NybC5zdGFy
-dHNzbC5jb20vc2ZzY2EuY3JsMIIBXQYDVR0gBIIBVDCCAVAwggFMBgsrBgEEAYG1NwEBBDCC
-ATswLwYIKwYBBQUHAgEWI2h0dHA6Ly9jZXJ0LnN0YXJ0Y29tLm9yZy9wb2xpY3kucGRmMDUG
-CCsGAQUFBwIBFilodHRwOi8vY2VydC5zdGFydGNvbS5vcmcvaW50ZXJtZWRpYXRlLnBkZjCB
-0AYIKwYBBQUHAgIwgcMwJxYgU3RhcnQgQ29tbWVyY2lhbCAoU3RhcnRDb20pIEx0ZC4wAwIB
-ARqBl0xpbWl0ZWQgTGlhYmlsaXR5LCByZWFkIHRoZSBzZWN0aW9uICpMZWdhbCBMaW1pdGF0
-aW9ucyogb2YgdGhlIFN0YXJ0Q29tIENlcnRpZmljYXRpb24gQXV0aG9yaXR5IFBvbGljeSBh
-dmFpbGFibGUgYXQgaHR0cDovL2NlcnQuc3RhcnRjb20ub3JnL3BvbGljeS5wZGYwEQYJYIZI
-AYb4QgEBBAQDAgAHMFAGCWCGSAGG+EIBDQRDFkFTdGFydENvbSBDbGFzcyAyIFByaW1hcnkg
-SW50ZXJtZWRpYXRlIEZyZWUgU1NMIEVtYWlsIENlcnRpZmljYXRlczANBgkqhkiG9w0BAQUF
-AAOCAgEAHvcQF/726YR5L5A3Ta7JV1nTu3w9yWqp00945pg7uea+1KVtR/7/yeNFAV7MPQyl
-PE8pROEcGU+RwwDFuNn9cePfAMzOBTpy/6VE076+gYkZa4n8uWaL5A2FVo8tRmEyfoT4gRL9
-B5h5w8Y4ZySCJBLyfp4jByyxHaTTIWZ8TIkxUQLSBeFnmHKYFwYwMbBA0Sgb8ONCvq9zeJcp
-MkkDadhJSCfB9c9gZocbaaVHVqTlSeENRr5/Y31dapzIRQg2Pl9V/A65Cq03KQxMXBpXn8Hk
-LO/g2FCt7KYkJCaTe6qT2JX8thmB3nb+5RmtWQIITCP+PPNkFQCts6ujOtJx6TlDLWA+tV7Q
-LN2Q+S98p/SwnXito+GW0N7kXcL8QDBVsF8lCvwCz+JQrvUIcW5xEzpAVk9xSbpePxVIMzNE
-UQhBobkFojhUqGt+VyU3GH/+BP2brzl4StOJ1KXuw2EzFs0ai9OMsqCUFRyhykm6MrbnsnSr
-qhWSnSQPYIu+zpzwWC/8sZFxoJCwvbbIu+6E+AIGa8tP+pYF+empPn/7pkIoTT4LSkkEIxGK
-vUvDJTh86VDNL8bIIQE2LHVDwcOq+mcQx416FAA9Nw1DBGyrFr6hQe5yTVXrJ4G7vJosNRGC
-wPnx302gonaFdwi++YyqjPyhPO6q4fRarYvWyqp5L6UxggO7MIIDtwIBATCBkzCBjDELMAkG
-A1UEBhMCSUwxFjAUBgNVBAoTDVN0YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdp
-dGFsIENlcnRpZmljYXRlIFNpZ25pbmcxODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNzIDIgUHJp
-bWFyeSBJbnRlcm1lZGlhdGUgQ2xpZW50IENBAgIB6TAJBgUrDgMCGgUAoIIB/DAYBgkqhkiG
-9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xMDA5MTUxMTQxMjdaMCMGCSqG
-SIb3DQEJBDEWBBQaDgEyxT0J0BUTn2GH92ttsgpxWjBfBgkqhkiG9w0BCQ8xUjBQMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYF
-Kw4DAgcwDQYIKoZIhvcNAwICASgwgZsGCSsGAQQBgjcQBDGBjTCBijCBhDEUMBIGA1UEAwwL
-UG9kemltZWsgQ0ExCzAJBgNVBAYTAkNaMQ4wDAYDVQQHDAVabMOtbjEVMBMGA1UECgwMcG9k
-emltZWsub3JnMRUwEwYDVQQLDAxwb2R6aW1lay5vcmcxITAfBgkqhkiG9w0BCQEWEmFkbWlu
-QHBvZHppbWVrLm9yZwIBNDCBnQYLKoZIhvcNAQkQAgsxgY2ggYowgYQxFDASBgNVBAMMC1Bv
-ZHppbWVrIENBMQswCQYDVQQGEwJDWjEOMAwGA1UEBwwFWmzDrW4xFTATBgNVBAoMDHBvZHpp
-bWVrLm9yZzEVMBMGA1UECwwMcG9kemltZWsub3JnMSEwHwYJKoZIhvcNAQkBFhJhZG1pbkBw
-b2R6aW1lay5vcmcCATQwDQYJKoZIhvcNAQEBBQAEggEAfRoddfOimpXeDnEOT3VnE/WspMlE
-Gr4Cjx8I0NwPYyZI7bbimwQTXJkRCEfZqmFi0GRNlYSl5N5d7IQP4VpEHnRenaCY7XhmlC1f
-GDT11IvccweMGNK38Sz1UALAOfJbeNEf1fNTuhk6HqQ6KPcmCIt18gKEIx4aFGknoyio3Dxv
-36Wrw8hF0oxl5itsF/lghAuW5jMk9IWc4iCJ7/b1JaHNGOBpOkVzAwyDF20IoCY6BHTFq5hV
-NvRIbvxYQrpAwBUYS8v+1lmtk9JnTHK5vrOVQBP7R9JAyBfm90ry8ggLEGrhQoMN1r6S6oDr
-KSrI/VqnhRCn+nWVVpZORvSBFAAAAAAAAA==
---=_charon-7733-1284550888-0001-2--
