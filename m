@@ -1,54 +1,273 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: problem with GNOME 2.30
-Date: Sun, 12 Sep 2010 19:53:58 +0200
-Message-ID: <4C8D13B6.10807@gmail.com>
-References: <4BC15348.80205@gentoo.org> <alpine.DEB.2.01.1004121819080.29272@bogon.housecafe.de> <4C8D0E22.1010300@gentoo.org>
+From: Andrej Podzimek <andrej@podzimek.org>
+Subject: Re: Problems with the 'flush-8:0' process in 2.6.35.3
+Date: Wed, 15 Sep 2010 13:41:27 +0200
+Message-ID: <4C90B0E7.6020408@podzimek.org>
+References: <4C789044.3020403@podzimek.org> <4C78E1D5.80101@gmail.com> <4C7C4AFC.2040009@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha1; boundary="=_charon-7733-1284550888-0001-2"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from
-         :user-agent:mime-version:to:cc:subject:references:in-reply-to
-         :content-type:content-transfer-encoding;
-        bh=cJfhZcNIemYbBPGsXNk+oz1rrl2iJFJOgPM9NfCNS0o=;
-        b=WVNlHHSb3fpZ3cM32dU/8g0WId3mxd4yc94vU8rvMkHeagABx26ZQ+ZFx9rjqVO7ce
-         Idno22bWjER8Jyg3+6SWCol3bpcpDtOTvkP/tu5eTfGuYjf81/pXQQYoYOgIux0KEayB
-         z23z/GfY6RdSvX3ZMZNddUDyCWWr/ydQCJk8Y=
-In-Reply-To: <4C8D0E22.1010300@gentoo.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=podzimek.org; h=message-id:date:from:mime-version:content-type:to:cc:subject:references:in-reply-to; s=charon; bh=4z5VZ+FTIiZKJjHWnFhOwN0peMEd6vr14voYS/yauHI=; b=MWHWQKWQ0CgOpAesBlLkxiioZthX3lEOFsUDJoqH0eCI+1Zp1/ugECR1A98MVJddPylOmUvwBbj4RGoy9KO6+i4FMcPb5RAKTtprTxsGh5iT89xpfBXTjtpN3xNuKuJSM4wBi0vQok90v4SwnDpNYtiZ6SwJI3GhCqwmO9nWkt3vSOpkQxBnpdGXkEMpDsA3LD1fOphtOooTdwkPZkD8JbvRAjDb7orYOQkQRWtA8NMfCXfULv+chjJ3txNGtfGA0o9lt+Br2OmuCfIKkVDH5dOmWEEsgBzuF/LnQ+tBDyAth3uFhpfaLYe8GSiGVXNC39Mwct884q6HhYa+Pflxmg==
+In-Reply-To: <4C7C4AFC.2040009@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Serkan Kaba <serkan@gentoo.org>
-Cc: reiserfs-devel@vger.kernel.org, Christian Kujau <lists@nerdbynature.de>, tbzatek@redhat.com
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-You are deadly right.
+This is a MIME-formatted message.  If you see this text it means that your
+E-mail software does not support MIME-formatted messages.
 
-splice, pipe2, loop devices, etc users of write_begin(),
-->write_end() doesn't work properly since these new
-aops was introduced.
+--=_charon-7733-1284550888-0001-2
+Content-Type: multipart/mixed;
+ boundary="------------010804050205030501060002"
 
-Edward.
+This is a multi-part message in MIME format.
+--------------010804050205030501060002
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-P.S. If someone can not wait, then feel free to fix those
-aops, I'll try to help..
+>>> I use a 2.6.35.3 kernel and Reiser4 as the root file system. In a
+>>> couple of minutes after boot, a kernel process called 'flush-8:0'
+>>> takes up all the available CPU time. From that moment on, it is
+>>> impossible to sync filesystems (and suspend, hibernate or reboot).
+>>> (The 'sync' command halts indefinitely.) In some cases it is even
+>>> impossible to log in. Existing sessions seem to work fine, to an exte=
+nt.
+>>>
+>>> I first thought this was related to the GTT chipset coherency patch.
+>>> (This patch fixes a one-year-old bug that caused all the Intel 855
+>>> class GPUs to be totally unusable.) However, removing the patch and
+>>> testing with only a vanilla kernel (and Reiser4, of course) showed
+>>> that 'flush-8:0' will eventually go mad, no matter if the GPU-related=
 
-
-Serkan Kaba wrote:
-> On 13-04-2010 04:23, Christian Kujau wrote:
-> > So, I assume that other programs (Firefox? Openoffice? vi?) can still
-> > create files on this reiser4 partition. It'd be interesting how
-> Gnome is
-> > trying to create files. strace(1) comes to mind, I know it will be
-> messy
-> > to catch all the Gnome processes, but mabe you're lucky...
-> With the help of upstream, my little example program and and strace I
-> got some ideas on what might be the issue.
+>>> patch is present or not.
+>>>
+>>> The machine is an Asus M2400N laptop with a 100GB Seagate Momentus.
+>>>
+>>> Is this a known issue?
+>>>
+>>
+>> Um, nop..
+>>
+>>
+>>> How could I track this down?
+>>>
+>>
+>> Could you try to catch sysrq-t output to take a look what the flush-8:=
+0
+>> doing?
+>>
 >
-> Glib started to use *splice* for copying files (changelog and upstream
-> says, strace output proves)
->
-> I'm attaching the example program and strace outputs with glib 2.22
-> and 2.24
->
+> Any progress here?
+> Also could you please check your partition with fsck?
 
+Hello,
+
+sorry about the long delay. I had a very busy time.
+
+You asked about the kernel version I used before. It was 2.6.34.3. Reiser=
+4 seemed to work fine there. The problems started when I moved to 2.6.35.=
+3.
+
+As far as fsck is concerned, the partition seems to be OK (no error messa=
+ges), but the fsck.reiser4 program fails on all of my partitions when clo=
+sing the file system, saying that an internal error occurred. (I already =
+reported this once and you inspected my file system metadata, concluding =
+that this is a false alert and a bug in fsck.reiser4.)
+
+I catched a couple of stack traces with Magic-t during the time when the =
+flush-8:0 process was consuming all the CPU time. They are attached. A co=
+uple of observations:
+
+	* Once flush-8:0 gets crazy, it doesn't seem to stop. (It was still cons=
+uming all the CPU time after an hour...)
+	* Everything looks normal right after boot. The flush-8:0 will usually g=
+et out of control a couple of minutes after boot.
+	* There is a reliable trigger for this issue: sync. Once invoked, sync *=
+never* returns and causes flush-8:0 to get out of control.
+
+Andrej
+
+--------------010804050205030501060002
+Content-Type: application/x-bzip;
+ name="flushbacktrace.bz2"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="flushbacktrace.bz2"
+
+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
+--------------010804050205030501060002--
+
+--=_charon-7733-1284550888-0001-2
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIUzjCC
+BakwggSRoAMCAQICATQwDQYJKoZIhvcNAQEFBQAwgYQxFDASBgNVBAMMC1BvZHppbWVrIENB
+MQswCQYDVQQGEwJDWjEOMAwGA1UEBwwFWmzDrW4xFTATBgNVBAoMDHBvZHppbWVrLm9yZzEV
+MBMGA1UECwwMcG9kemltZWsub3JnMSEwHwYJKoZIhvcNAQkBFhJhZG1pbkBwb2R6aW1lay5v
+cmcwHhcNMTAwMzMxMTkxMzQ0WhcNMTEwMzMxMTkxMzQ0WjCBiTELMAkGA1UEBhMCQ1oxDjAM
+BgNVBAcMBVpsw61uMRUwEwYDVQQKDAxwb2R6aW1lay5vcmcxFTATBgNVBAsMDHBvZHppbWVr
+Lm9yZzEYMBYGA1UEAwwPQW5kcmVqIFBvZHppbWVrMSIwIAYJKoZIhvcNAQkBFhNhbmRyZWpA
+cG9kemltZWsub3JnMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvLPy9s1OWxpb
+PkH+e8Akw/F5Qp+CTSGAq/XmZuURUOhUFmxPZVp1rV45esz6dsiXK0CXWoHVjeSlr0LRmWUH
+hGlsPa+qpvV/EWad3OF05Lz5T6fJQGkQIvh3xSQYi8/s3k9/4uKUHtU/Lm1KqdFjyAY1pZxv
+OP05b6qCfgkYcB2xk6FeZH38bbA/6h+nURiqotfkfB4a4N+roTxf9Bi0QsNZZ7W8FhKQBdEB
+6ID3IYwhQbJsTQR8yh561E4yYf+9J/BkL7AZpnkEKsNgZawtfWwya/r7dJPE9PCkB9jmrawN
+GiE8ta3/nrPuKgulImjjtzwWSrkFWWIhRuvA6kjJvDIDNX9mT7bdZP5FfOkprAaIuSJ93BsM
+OtQm3Qy6RF/+4EzLdEqcy79nzIY84kQGCdBnd45MUG61iMnyVX2WalG1fgZ9uoKsvYUVIkkj
+N+dwuKg3vR+o/JrBlYiAtBTpBsGiWB8YhHzCTTOkQA/m8dXl9JaV+bOSktwWibFMVrWxCxbW
+sAugsEONFoYlCOBGJrq3Gy2+QkDugQhGTJlIXEe5joJHELadahFp/cWf9A0yz0vujob9GLvf
+TZpmPcmuvK2HhHWfgzc1kyOOPNQoAUK+tG4yUG4/mYIhNkD4b49KGi7wfpYViWwNlQFKlPFV
+F+udgSfFgYZO365SOykEsMkCAwEAAaOCAR0wggEZMAkGA1UdEwQCMAAwHQYDVR0OBBYEFFEH
+1s0Xse0CZ217pElE8DdjZxYtMIG5BgNVHSMEgbEwga6AFE6juEwI0K5X6Rv/eMJTk7Q8cg65
+oYGKpIGHMIGEMRQwEgYDVQQDDAtQb2R6aW1layBDQTELMAkGA1UEBhMCQ1oxDjAMBgNVBAcM
+BVpsw61uMRUwEwYDVQQKDAxwb2R6aW1lay5vcmcxFTATBgNVBAsMDHBvZHppbWVrLm9yZzEh
+MB8GCSqGSIb3DQEJARYSYWRtaW5AcG9kemltZWsub3JnggkAkctHSQfLqowwMQYJYIZIAYb4
+QgEEBCQWImh0dHBzOi8vY2EucG9kemltZWsub3JnL2NhLWNybC5wZW0wDQYJKoZIhvcNAQEF
+BQADggEBAKUoyTBti808LZw5SH7hX6ewB9baj0GDjR6s0t4kSXiEf1nr+VBPfftM9RLS8vaj
+L3v9tZ7lKWgRoJDUhYR6CKrUw+t8MTAAI9wYHTgEq10yHdfIGcWdGn0mRgGljOp4YZACzX1y
+791HN+hBmjPKYjLc/2cmVdtOeHMAGn1cyeuyb8drYovtxu/P6MJaCE9533HRYfzOvd2u7D0B
+6oy9Nrn8t5IgRoGENk8wwRYa5jrukXIvTtQNK7In7SAb5DNSHp8kwzQmJtgFqvELVZ593phM
+yLiZuJg5AMU60tXtPIZBvjvkQdyspvp1n0ZLdKrAcZYo752DzOCT2U6KCclbSrcwggc3MIIG
+H6ADAgECAgIB6TANBgkqhkiG9w0BAQUFADCBjDELMAkGA1UEBhMCSUwxFjAUBgNVBAoTDVN0
+YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRpZmljYXRlIFNpZ25p
+bmcxODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNzIDIgUHJpbWFyeSBJbnRlcm1lZGlhdGUgQ2xp
+ZW50IENBMB4XDTA5MTAwMzAwMDAwMVoXDTEwMTAwMzA0MjI0OFowgaAxCzAJBgNVBAYTAkNa
+MRUwEwYDVQQIEwxabGluc2t5IEtyYWoxDTALBgNVBAcTBFpsaW4xLTArBgNVBAsTJFN0YXJ0
+Q29tIFZlcmlmaWVkIENlcnRpZmljYXRlIE1lbWJlcjEYMBYGA1UEAxMPQW5kcmVqIFBvZHpp
+bWVrMSIwIAYJKoZIhvcNAQkBFhNhbmRyZWpAcG9kemltZWsub3JnMIIBIjANBgkqhkiG9w0B
+AQEFAAOCAQ8AMIIBCgKCAQEAnnSDv+YxlFeoIfN2a+pRX/nxUKE9IgQGWZz7wDKddl6Vmyk3
+iZ9vcCdtKdVYBRyhMsqVYYjE2+oINr17NkXASeVa/KtobxfSs3i3doyeuz1c1ZXPHFzS1tcK
+nMiPE3hyG0QTM1yGePbGBEoLthV+HWzY71bf9H8Wpw2ctHf9K2loRf7gJCYl2QncQL9w1ao5
+Es3bXAl1ajKC+pw1+NI1Hj3wNBOy9mBIU6pUi3E7SrYZPvH/o7/hpj2eKZmERpPCi2DSzPMD
+J/QhA/Y01PkhflbvDPI8YgaeqiZ1f1ieh+SDIyd2hmJoc5ViTgCSRYiutVnXHL23l13EsMcT
+aCS3twIDAQABo4IDizCCA4cwCQYDVR0TBAIwADALBgNVHQ8EBAMCBLAwHQYDVR0lBBYwFAYI
+KwYBBQUHAwIGCCsGAQUFBwMEMB0GA1UdDgQWBBTVova7hG26c13INOIAMLSP57z7VjAeBgNV
+HREEFzAVgRNhbmRyZWpAcG9kemltZWsub3JnMIGoBgNVHSMEgaAwgZ2AFK5Vg2/sMcq59x36
+r2sx88gd46y7oYGBpH8wfTELMAkGA1UEBhMCSUwxFjAUBgNVBAoTDVN0YXJ0Q29tIEx0ZC4x
+KzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRpZmljYXRlIFNpZ25pbmcxKTAnBgNVBAMT
+IFN0YXJ0Q29tIENlcnRpZmljYXRpb24gQXV0aG9yaXR5ggEOMIIBRwYDVR0gBIIBPjCCATow
+ggE2BgsrBgEEAYG1NwECATCCASUwLgYIKwYBBQUHAgEWImh0dHA6Ly93d3cuc3RhcnRzc2wu
+Y29tL3BvbGljeS5wZGYwNAYIKwYBBQUHAgEWKGh0dHA6Ly93d3cuc3RhcnRzc2wuY29tL2lu
+dGVybWVkaWF0ZS5wZGYwgbwGCCsGAQUFBwICMIGvMBQWDVN0YXJ0Q29tIEx0ZC4wAwIBARqB
+lkxpbWl0ZWQgTGlhYmlsaXR5LCByZWFkIHRoZSBzZWN0aW9uICpMZWdhbCBMaW1pdGF0aW9u
+cyogb2YgdGhlIFN0YXJ0Q29tIENlcnRpZmljYXRpb24gQXV0aG9yaXR5IFBvbGljeSBhdmFp
+bGFibGUgYXQgaHR0cDovL3d3dy5zdGFydHNzbC5jb20vcG9saWN5LnBkZjBjBgNVHR8EXDBa
+MCugKaAnhiVodHRwOi8vd3d3LnN0YXJ0c3NsLmNvbS9jcnR1Mi1jcmwuY3JsMCugKaAnhiVo
+dHRwOi8vY3JsLnN0YXJ0c3NsLmNvbS9jcnR1Mi1jcmwuY3JsMIGOBggrBgEFBQcBAQSBgTB/
+MDkGCCsGAQUFBzABhi1odHRwOi8vb2NzcC5zdGFydHNzbC5jb20vc3ViL2NsYXNzMi9jbGll
+bnQvY2EwQgYIKwYBBQUHMAKGNmh0dHA6Ly93d3cuc3RhcnRzc2wuY29tL2NlcnRzL3N1Yi5j
+bGFzczIuY2xpZW50LmNhLmNydDAjBgNVHRIEHDAahhhodHRwOi8vd3d3LnN0YXJ0c3NsLmNv
+bS8wDQYJKoZIhvcNAQEFBQADggEBAGw7B4eCVeM6xMxsB0SECFw7iM41yw68amcVXMwQcrjL
+R6TGuYfD5MB4HFsnoI02EBq4mRJFbJfPDiMsy6nlwAaCoTztb3lt9dNmLdFAmRswAfYIWAkS
+qJVqGKXJV6ScI4FtjA0T/v4FXbK5vvZIID9DxibjPQ3MaNr5g5mDQfuVptqb7U/1CMX0sqiK
+9iDsIZZfAGToqiR6n4ZDg6vVdbln4iVM7d7JuiuiXpcBFJUvbFCRgzlj+hzuRTAZmFLJu1M8
+4wpo3bEauLXuA8YvmVsJxR+qxmODkrEhQkBlz6bxgyaxklyVsQMDSbjXGt5KHPsFwmrYGs7g
+Zf8YFVzvCBowggfiMIIFyqADAgECAgEOMA0GCSqGSIb3DQEBBQUAMH0xCzAJBgNVBAYTAklM
+MRYwFAYDVQQKEw1TdGFydENvbSBMdGQuMSswKQYDVQQLEyJTZWN1cmUgRGlnaXRhbCBDZXJ0
+aWZpY2F0ZSBTaWduaW5nMSkwJwYDVQQDEyBTdGFydENvbSBDZXJ0aWZpY2F0aW9uIEF1dGhv
+cml0eTAeFw0wNzEwMjQyMTAyNTRaFw0xMjEwMjIyMTAyNTRaMIGMMQswCQYDVQQGEwJJTDEW
+MBQGA1UEChMNU3RhcnRDb20gTHRkLjErMCkGA1UECxMiU2VjdXJlIERpZ2l0YWwgQ2VydGlm
+aWNhdGUgU2lnbmluZzE4MDYGA1UEAxMvU3RhcnRDb20gQ2xhc3MgMiBQcmltYXJ5IEludGVy
+bWVkaWF0ZSBDbGllbnQgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDLKIVF
+nAEs+xnyq6UzjCqgDcvQVe1dIoFnRsQPCFO+y92k8RK0Pn3MbQ2Gd+mehh9GBZ+36uUQA7Xj
+9AGM6wgPhEE34vKtfpAN5tJ8LcFxveDObCKrL7O5UT9WsnAZHv7OYPYSR68mdmnEnJ83M4wQ
+gKO19b+Rt8sPDAz9ptkQsntCn4GeJzg3q2SVc4QJTg/WHo7wF2ah5LMOeh8xJVSKGEmd6uPk
+Sbj113yKMm8vmNptRPmM1+YgmVwcdOYJOjCgFtb2sOP79jji8uhWR91xx7TpM1K3hv/wrBZw
+ffrmmEpUeuXHRs07JqCCvFh9coKF4UQZvfEg+x3/69xRCzb1AgMBAAGjggNbMIIDVzAMBgNV
+HRMEBTADAQH/MAsGA1UdDwQEAwIBpjAdBgNVHQ4EFgQUrlWDb+wxyrn3HfqvazHzyB3jrLsw
+gagGA1UdIwSBoDCBnYAUTgvvGqRAW6UXaYcwyjRoQ9BBrvKhgYGkfzB9MQswCQYDVQQGEwJJ
+TDEWMBQGA1UEChMNU3RhcnRDb20gTHRkLjErMCkGA1UECxMiU2VjdXJlIERpZ2l0YWwgQ2Vy
+dGlmaWNhdGUgU2lnbmluZzEpMCcGA1UEAxMgU3RhcnRDb20gQ2VydGlmaWNhdGlvbiBBdXRo
+b3JpdHmCAQEwCQYDVR0SBAIwADA9BggrBgEFBQcBAQQxMC8wLQYIKwYBBQUHMAKGIWh0dHA6
+Ly93d3cuc3RhcnRzc2wuY29tL3Nmc2NhLmNydDBgBgNVHR8EWTBXMCygKqAohiZodHRwOi8v
+Y2VydC5zdGFydGNvbS5vcmcvc2ZzY2EtY3JsLmNybDAnoCWgI4YhaHR0cDovL2NybC5zdGFy
+dHNzbC5jb20vc2ZzY2EuY3JsMIIBXQYDVR0gBIIBVDCCAVAwggFMBgsrBgEEAYG1NwEBBDCC
+ATswLwYIKwYBBQUHAgEWI2h0dHA6Ly9jZXJ0LnN0YXJ0Y29tLm9yZy9wb2xpY3kucGRmMDUG
+CCsGAQUFBwIBFilodHRwOi8vY2VydC5zdGFydGNvbS5vcmcvaW50ZXJtZWRpYXRlLnBkZjCB
+0AYIKwYBBQUHAgIwgcMwJxYgU3RhcnQgQ29tbWVyY2lhbCAoU3RhcnRDb20pIEx0ZC4wAwIB
+ARqBl0xpbWl0ZWQgTGlhYmlsaXR5LCByZWFkIHRoZSBzZWN0aW9uICpMZWdhbCBMaW1pdGF0
+aW9ucyogb2YgdGhlIFN0YXJ0Q29tIENlcnRpZmljYXRpb24gQXV0aG9yaXR5IFBvbGljeSBh
+dmFpbGFibGUgYXQgaHR0cDovL2NlcnQuc3RhcnRjb20ub3JnL3BvbGljeS5wZGYwEQYJYIZI
+AYb4QgEBBAQDAgAHMFAGCWCGSAGG+EIBDQRDFkFTdGFydENvbSBDbGFzcyAyIFByaW1hcnkg
+SW50ZXJtZWRpYXRlIEZyZWUgU1NMIEVtYWlsIENlcnRpZmljYXRlczANBgkqhkiG9w0BAQUF
+AAOCAgEAHvcQF/726YR5L5A3Ta7JV1nTu3w9yWqp00945pg7uea+1KVtR/7/yeNFAV7MPQyl
+PE8pROEcGU+RwwDFuNn9cePfAMzOBTpy/6VE076+gYkZa4n8uWaL5A2FVo8tRmEyfoT4gRL9
+B5h5w8Y4ZySCJBLyfp4jByyxHaTTIWZ8TIkxUQLSBeFnmHKYFwYwMbBA0Sgb8ONCvq9zeJcp
+MkkDadhJSCfB9c9gZocbaaVHVqTlSeENRr5/Y31dapzIRQg2Pl9V/A65Cq03KQxMXBpXn8Hk
+LO/g2FCt7KYkJCaTe6qT2JX8thmB3nb+5RmtWQIITCP+PPNkFQCts6ujOtJx6TlDLWA+tV7Q
+LN2Q+S98p/SwnXito+GW0N7kXcL8QDBVsF8lCvwCz+JQrvUIcW5xEzpAVk9xSbpePxVIMzNE
+UQhBobkFojhUqGt+VyU3GH/+BP2brzl4StOJ1KXuw2EzFs0ai9OMsqCUFRyhykm6MrbnsnSr
+qhWSnSQPYIu+zpzwWC/8sZFxoJCwvbbIu+6E+AIGa8tP+pYF+empPn/7pkIoTT4LSkkEIxGK
+vUvDJTh86VDNL8bIIQE2LHVDwcOq+mcQx416FAA9Nw1DBGyrFr6hQe5yTVXrJ4G7vJosNRGC
+wPnx302gonaFdwi++YyqjPyhPO6q4fRarYvWyqp5L6UxggO7MIIDtwIBATCBkzCBjDELMAkG
+A1UEBhMCSUwxFjAUBgNVBAoTDVN0YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdp
+dGFsIENlcnRpZmljYXRlIFNpZ25pbmcxODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNzIDIgUHJp
+bWFyeSBJbnRlcm1lZGlhdGUgQ2xpZW50IENBAgIB6TAJBgUrDgMCGgUAoIIB/DAYBgkqhkiG
+9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xMDA5MTUxMTQxMjdaMCMGCSqG
+SIb3DQEJBDEWBBQaDgEyxT0J0BUTn2GH92ttsgpxWjBfBgkqhkiG9w0BCQ8xUjBQMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYF
+Kw4DAgcwDQYIKoZIhvcNAwICASgwgZsGCSsGAQQBgjcQBDGBjTCBijCBhDEUMBIGA1UEAwwL
+UG9kemltZWsgQ0ExCzAJBgNVBAYTAkNaMQ4wDAYDVQQHDAVabMOtbjEVMBMGA1UECgwMcG9k
+emltZWsub3JnMRUwEwYDVQQLDAxwb2R6aW1lay5vcmcxITAfBgkqhkiG9w0BCQEWEmFkbWlu
+QHBvZHppbWVrLm9yZwIBNDCBnQYLKoZIhvcNAQkQAgsxgY2ggYowgYQxFDASBgNVBAMMC1Bv
+ZHppbWVrIENBMQswCQYDVQQGEwJDWjEOMAwGA1UEBwwFWmzDrW4xFTATBgNVBAoMDHBvZHpp
+bWVrLm9yZzEVMBMGA1UECwwMcG9kemltZWsub3JnMSEwHwYJKoZIhvcNAQkBFhJhZG1pbkBw
+b2R6aW1lay5vcmcCATQwDQYJKoZIhvcNAQEBBQAEggEAfRoddfOimpXeDnEOT3VnE/WspMlE
+Gr4Cjx8I0NwPYyZI7bbimwQTXJkRCEfZqmFi0GRNlYSl5N5d7IQP4VpEHnRenaCY7XhmlC1f
+GDT11IvccweMGNK38Sz1UALAOfJbeNEf1fNTuhk6HqQ6KPcmCIt18gKEIx4aFGknoyio3Dxv
+36Wrw8hF0oxl5itsF/lghAuW5jMk9IWc4iCJ7/b1JaHNGOBpOkVzAwyDF20IoCY6BHTFq5hV
+NvRIbvxYQrpAwBUYS8v+1lmtk9JnTHK5vrOVQBP7R9JAyBfm90ry8ggLEGrhQoMN1r6S6oDr
+KSrI/VqnhRCn+nWVVpZORvSBFAAAAAAAAA==
+--=_charon-7733-1284550888-0001-2--
