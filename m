@@ -1,81 +1,121 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 00/12] more BKL removal after get_sb pushdown
-Date: Thu, 16 Sep 2010 19:46:13 +0200
-Message-ID: <1284659185-8942-1-git-send-email-arnd@arndb.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: Re: [Bug] possible circular locking in reiserfs_unpack
+Date: Wed, 22 Sep 2010 15:49:48 +0200
+Message-ID: <20100922134944.GA6549@nowhere>
+References: <20100905113121.GA1876@del.dom.local> <20100908153730.5ad13f71.akpm@linux-foundation.org> <20100909015346.GA5999@nowhere> <4C88F566.7080600@gmail.com>
+Mime-Version: 1.0
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:received:date:from:to:cc
+         :subject:message-id:references:mime-version:content-type
+         :content-disposition:in-reply-to:user-agent;
+        bh=4/0LewQiaEKY712JdK2HXZ/YnGNz1FhhzycXhQyS7JU=;
+        b=XUXp6RhvqglbrkgjAcgDFp1WLDMLtBx8TZN9oR6Fm3M/4ubnWmFeALQJ4iUQvEkNQL
+         i+U6lmD7Sjq0+Kp5WxgiRtNZvhXODeQPYQ+tDfkGVSnsdoL7FzR8+nIz+Nb6bFB/byjT
+         zaIp125fdJezXWNpO2N9iDAH/Wql13Yz1w5Wc=
+Content-Disposition: inline
+In-Reply-To: <4C88F566.7080600@gmail.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@suse.de>, Jan Blunck <jblunck@infradead.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, "H. Peter Anvin" <hpa@zytor.com>, reiserfs-devel@vger.kernel.org, netdev@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, linux-usb@vger.kernel.org, linux-afs@lists.infradead.org, David Howells <dhowells@redhat.com>, Dustin Kirkland <kirkland@canonical.com>, Tyler Hicks <tyhicks@linux.vnet.ibm.com>, ecryptfs-devel@lists.launchpad.net, David Woodhouse <dwmw2@infradead.org>, Phillip Lougher <phillip@lougher.demon.co.uk>, Mark Fasheh <mfasheh@suse.com>, Joel Becker <joel.becker@oracle.com>, linux-fsdevel@vger.kernel.org
+To: Jarek Poplawski <jarkao2@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>
 
-These patches have not been posted yet, I did some of them
-only when going through the list of remaining BKL users and
-found them to be simple to fix myself.
+On Thu, Sep 09, 2010 at 04:55:34PM +0200, Jarek Poplawski wrote:
+> Frederic Weisbecker wrote, On 12/23/-28158 08:59 PM:
+> 
+> > On Wed, Sep 08, 2010 at 03:37:30PM -0700, Andrew Morton wrote:
+> >> On Sun, 5 Sep 2010 13:31:21 +0200
+> >> Jarek Poplawski <jarkao2@gmail.com> wrote:
+> >>
+> >>> Hi,
+> >>> I get this warning on every lilo write with 2.6.35.4 and a bit/git
+> >>> later too.
+> >>>
+> >> Can you tell us the latest kernel version which did *not* have this
+> >> bug?  That way we can narrow the problem down a bit.
+> >>
+> >> Thanks.
+> > 
+> > 
+> > 
+> > Ah, when you see &REISERFS_SB(s)->lock in a bug report, don't hesitate to blame me :-)
+> > 
+> > This is a problem resulting from the bkl conversion to a mutex that introduced
+> > a lot of new locking dependencies. Most of them have been fixed, but for less
+> > tested paths like ioctl, we hear about it later.
+> > 
+> > Does the following patch fixes the issue?
+> > If so, I'll make a proper changelog and put the appropriate 2.6.33-35 stable
+> > tags for the backport.
+> > 
+> > Thnaks!
+> > 
+> > 
+> > diff --git a/fs/reiserfs/ioctl.c b/fs/reiserfs/ioctl.c
+> > index f53505d..679d502 100644
+> > --- a/fs/reiserfs/ioctl.c
+> > +++ b/fs/reiserfs/ioctl.c
+> > @@ -188,7 +188,7 @@ int reiserfs_unpack(struct inode *inode, struct file *filp)
+> >  	/* we need to make sure nobody is changing the file size beneath
+> >  	 ** us
+> >  	 */
+> > -	mutex_lock(&inode->i_mutex);
+> > +	reiserfs_mutex_lock_safe(&inode->i_mutex, inode->i_sb);
+> >  	reiserfs_write_lock(inode->i_sb);
+> >  
+> >  	write_from = inode->i_size & (blocksize - 1);
+> > 
+> 
+> 
+> So, there is still a warning but a bit different now.
+> 
+> Jarek P.
 
-Most of these patches only apply on top of the pushdown into
-the get_sb operation, which is now in linux-next, so I'm
-planning to keep them in the same series instead of
-going through maintainer trees.
 
-The full series can be found in
-git://git.kernel.org/pub/scm/linux/kernel/git/arnd/bkl.git vfs
+I can reproduce your first case, but not this one.
 
-Arnd Bergmann (12):
-  BKL: Remove BKL from usbfs
-  BKL: Remove BKL from fat
-  BKL: Remove BKL from isofs
-  BKL: Remove BKL from autofs4
-  BKL: Remove BKL from ReiserFS
-  BKL: Remove BKL from capifs
-  BKL: Remove BKL from USB gadgetfs
-  BKL: Remove BKL from afs
-  BKL: Remove BKL from ecryptfs
-  BKL: Remove BKL from jffs2
-  BKL: Remove BKL from squashfs
-  BKL: Remove BKL from OCFS2
+So, I hope you can give a try to the following fix,
 
- drivers/isdn/capi/capifs.c |    8 +-------
- drivers/usb/core/inode.c   |    6 ------
- drivers/usb/gadget/inode.c |   13 ++-----------
- fs/afs/super.c             |   10 ----------
- fs/autofs4/root.c          |   12 +++++++-----
- fs/ecryptfs/file.c         |    3 ---
- fs/ecryptfs/main.c         |    4 ----
- fs/fat/inode.c             |    5 -----
- fs/fat/namei_msdos.c       |    7 +++----
- fs/fat/namei_vfat.c        |    7 +++----
- fs/isofs/dir.c             |    6 +++---
- fs/isofs/inode.c           |   16 ++++++----------
- fs/isofs/namei.c           |    8 ++++----
- fs/isofs/rock.c            |    8 ++++----
- fs/jffs2/fs.c              |    4 ----
- fs/jffs2/super.c           |   12 +-----------
- fs/ocfs2/dlmfs/dlmfs.c     |    9 +--------
- fs/ocfs2/stack_user.c      |    3 ---
- fs/ocfs2/super.c           |   12 ------------
- fs/reiserfs/super.c        |    6 ------
- fs/squashfs/super.c        |   11 -----------
- 21 files changed, 35 insertions(+), 135 deletions(-)
+Thanks!
 
-Cc: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: Jan Blunck <jblunck@infradead.org>
-Cc: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc: Jan Blunck <jblunck@infradead.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: reiserfs-devel@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: David Brownell <dbrownell@users.sourceforge.net>
-Cc: linux-usb@vger.kernel.org
-Cc: linux-afs@lists.infradead.org
-Cc: David Howells <dhowells@redhat.com>
-Cc: Dustin Kirkland <kirkland@canonical.com>
-Cc: Tyler Hicks <tyhicks@linux.vnet.ibm.com>
-Cc: ecryptfs-devel@lists.launchpad.net
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Phillip Lougher <phillip@lougher.demon.co.uk>
-Cc: Mark Fasheh <mfasheh@suse.com>
-Cc: Joel Becker <joel.becker@oracle.com>
-Cc: linux-fsdevel@vger.kernel.org
+
+diff --git a/fs/reiserfs/ioctl.c b/fs/reiserfs/ioctl.c
+index f53505d..90a757b 100644
+--- a/fs/reiserfs/ioctl.c
++++ b/fs/reiserfs/ioctl.c
+@@ -170,7 +170,7 @@ int reiserfs_prepare_write(struct file *f, struct page *page,
+ int reiserfs_unpack(struct inode *inode, struct file *filp)
+ {
+ 	int retval = 0;
+-	int index;
++	int index, depth;
+ 	struct page *page;
+ 	struct address_space *mapping;
+ 	unsigned long write_from;
+@@ -185,11 +185,12 @@ int reiserfs_unpack(struct inode *inode, struct file *filp)
+ 		return 0;
+ 	}
+ 
++	depth = reiserfs_write_lock_once(inode->i_sb);
++
+ 	/* we need to make sure nobody is changing the file size beneath
+ 	 ** us
+ 	 */
+-	mutex_lock(&inode->i_mutex);
+-	reiserfs_write_lock(inode->i_sb);
++	reiserfs_mutex_lock_safe(&inode->i_mutex, inode->i_sb);
+ 
+ 	write_from = inode->i_size & (blocksize - 1);
+ 	/* if we are on a block boundary, we are already unpacked.  */
+@@ -224,6 +225,6 @@ int reiserfs_unpack(struct inode *inode, struct file *filp)
+ 
+       out:
+ 	mutex_unlock(&inode->i_mutex);
+-	reiserfs_write_unlock(inode->i_sb);
++	reiserfs_write_unlock_once(inode->i_sb, depth);
+ 	return retval;
+ }
+
