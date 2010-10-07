@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 15309] reiserfs issue with 2.6.32.8
-Date: Thu, 7 Oct 2010 19:35:28 GMT
-Message-ID: <201010071935.o97JZS88011850@demeter1.kernel.org>
+Date: Thu, 7 Oct 2010 19:36:02 GMT
+Message-ID: <201010071936.o97Ja2XV012211@demeter1.kernel.org>
 References: <bug-15309-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -19,9 +19,7 @@ Florian Mickler <florian@mickler.org> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-                 CC|                            |florian@mickler.org
-         Resolution|                            |UNREPRODUCIBLE
+             Status|RESOLVED                    |CLOSED
 
 
 
