@@ -1,35 +1,38 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Kernel Ooops when using kdesu
-Date: Sat, 09 Oct 2010 00:33:39 +0200
-Message-ID: <4CAF9C43.2050804@gmail.com>
-References: <20101008221833.202470@gmx.net>
+From: Luciano <luciano@joublanc.com>
+Subject: Re: Mainline inclusion
+Date: Sat, 9 Oct 2010 16:51:10 +0100
+Message-ID: <AANLkTik-TJ0pJi7Hd4KVyCruW4B=ZUo6aic1JnPgK=bm@mail.gmail.com>
+References: <AANLkTin+AoQ-0t+qiJDcyVLhzy5JsEPDWgkbkj-90dB9@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20101008221833.202470@gmx.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:mime-version:sender:received
+         :in-reply-to:references:from:date:x-google-sender-auth:message-id
+         :subject:to:content-type;
+        bh=Nb5n9B6H76D4Wb6ehISUArA9Ua19AScRRoac2u/Taf4=;
+        b=uUULXPDqz6OuSCb70NYE3JFueJNHhk2JDBraDubbbZwkqBk34lwfs1WakOZHw1UrzR
+         KfYWO/3bgdbm6lMNkgiZFsIvqZXB/pnws/qT3Vuwo7c5jC6Pfa27zGZ9VdQlDX4rk6IN
+         YYqNAJXpBS2kYRsc81ONURBuJ+JxK/mTcquWs=
+In-Reply-To: <AANLkTin+AoQ-0t+qiJDcyVLhzy5JsEPDWgkbkj-90dB9@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
-To: =?UTF-8?B?U3ZlbiBNw7xsbGVy?= <musv@gmx.de>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-Sven M=C3=BCller wrote:
->> Hello.
->> Could you please try the attached patch and report about results?
->>
->> Thanks,
->> Edward.
->>    =20
->
-> It's working like a charm. Thx a lot. Would be fine, if it's included=
- into the next kernel patch.
->  =20
+Hi Edward,
 
-Note, this is only partial fix up (for cryptcompress).
-The unix_file plugin is still buggy and should be fixed
-in the same manner (a bit later)...
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I've been following the R4 mainline inclusion saga for a while now.
+First, congratulations are in order for your developers' perseverance
+in maintaining and bug fixing this great fs! But I was wondering where
+you stand on mainline inclusion currently? I last read an interview on
+Phoronix in early 2009, where you said you were hoping to publish some
+plug-in design ideas at USENIX 2010, and then possibly going for
+mainline inclusion. However, I believe this didn't happen. What's the
+big picture at the moment? What can we look forward to in the next
+year?
+
+Keep up the great work!
+
+Luciano
