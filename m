@@ -1,38 +1,45 @@
-From: Luciano <luciano@joublanc.com>
-Subject: Re: Mainline inclusion
-Date: Sat, 9 Oct 2010 16:51:10 +0100
-Message-ID: <AANLkTik-TJ0pJi7Hd4KVyCruW4B=ZUo6aic1JnPgK=bm@mail.gmail.com>
-References: <AANLkTin+AoQ-0t+qiJDcyVLhzy5JsEPDWgkbkj-90dB9@mail.gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Here is a reiser4 build based rpm on 2.6.35 kernel.
+Date: Thu, 14 Oct 2010 02:38:37 +1100
+Message-ID: <c600cd2a89f1d777774ffbd8180f50f2@mail.velocitynet.com.au>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:mime-version:sender:received
-         :in-reply-to:references:from:date:x-google-sender-auth:message-id
-         :subject:to:content-type;
-        bh=Nb5n9B6H76D4Wb6ehISUArA9Ua19AScRRoac2u/Taf4=;
-        b=uUULXPDqz6OuSCb70NYE3JFueJNHhk2JDBraDubbbZwkqBk34lwfs1WakOZHw1UrzR
-         KfYWO/3bgdbm6lMNkgiZFsIvqZXB/pnws/qT3Vuwo7c5jC6Pfa27zGZ9VdQlDX4rk6IN
-         YYqNAJXpBS2kYRsc81ONURBuJ+JxK/mTcquWs=
-In-Reply-To: <AANLkTin+AoQ-0t+qiJDcyVLhzy5JsEPDWgkbkj-90dB9@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-Hi Edward,
+Hello.
+Here is a plain kernel based on 2.6.35 with the reiser4 patch built with
+the Opensuse build service [obs] system.
 
-I've been following the R4 mainline inclusion saga for a while now.
-First, congratulations are in order for your developers' perseverance
-in maintaining and bug fixing this great fs! But I was wondering where
-you stand on mainline inclusion currently? I last read an interview on
-Phoronix in early 2009, where you said you were hoping to publish some
-plug-in design ideas at USENIX 2010, and then possibly going for
-mainline inclusion. However, I believe this didn't happen. What's the
-big picture at the moment? What can we look forward to in the next
-year?
+This is my first try at building a patched kernel with reiser4 patch.
+Its been a interesting learning experience.
 
-Keep up the great work!
+The project is here
+ ->
+https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
 
-Luciano
+The built rpms are here
+ ->
+https://build.opensuse.org/package/binaries?package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.3
+
+The log of the build is here {x86_64} as an example. [Its a long build log
+]
+->
+https://build.opensuse.org/package/rawlog?arch=x86_64&package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.3
+
+The .spec used file is here
+ ->
+https://build.opensuse.org/package/view_file?file=kernel-reiser4.spec&package=kernel-reiser4&project=home%3Adoiggl&srcmd5=a94730f4e77f3822eb936de1a6138981
+
+Thanks to the opensuse-kernel list members for compilation advice.
+http://lists.opensuse.org/opensuse-kernel/
+
+It looks like obs built the rpms.
+So, could someone test the rpm's and verify reiser4 options are available
+please.
+Post the results to the list.
+
+Ta Glenn
