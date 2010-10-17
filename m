@@ -1,40 +1,56 @@
-From: Viji V Nair <viji@fedoraproject.org>
-Subject: Kernel packages with reiser4 support for Fedora 13 is now Available
-Date: Mon, 18 Oct 2010 01:11:21 +0530
-Message-ID: <AANLkTimCFn836HiUuLvj5NpaFuMSg9VZfhPR1Y38LCF3@mail.gmail.com>
-References: <AANLkTinstpomhf1bWwaTrSM7JJ6J78J6VwCNb5PpL0A6@mail.gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: Mainline inclusion
+Date: Sun, 17 Oct 2010 23:49:49 +0200
+Message-ID: <4CBB6F7D.4030000@gmail.com>
+References: <AANLkTin+AoQ-0t+qiJDcyVLhzy5JsEPDWgkbkj-90dB9@mail.gmail.com> <AANLkTik-TJ0pJi7Hd4KVyCruW4B=ZUo6aic1JnPgK=bm@mail.gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:received:sender:received
-         :in-reply-to:references:date:x-google-sender-auth:message-id:subject
-         :from:to:content-type;
-        bh=B+cIj10ZU1cQP1b5SN/wpgUAFsTteQhLgPuGOgmLhhA=;
-        b=DZexbWTFy+VePuQOooyaG8UGyQEKfcBkOWXVC5sWk50qA8Pdv2NRW5Sui2KJTlHeDE
-         RwyliOBOULIUvjVFyEPqcxk0i0SeV4gPTXqZ0CDbmV+Ewwc38FYT6FoFooQItIGVQKyX
-         mn/5aMKj5BI13nsB+Tnmov6x1ck7hm+13bUGE=
-In-Reply-To: <AANLkTinstpomhf1bWwaTrSM7JJ6J78J6VwCNb5PpL0A6@mail.gmail.com>
+        h=domainkey-signature:received:received:message-id:date:from
+         :user-agent:mime-version:to:cc:subject:references:in-reply-to
+         :content-type:content-transfer-encoding;
+        bh=waV7vDeTl7dzkQxOFQbme3IUdEeLv/SFdd2KKca5ydw=;
+        b=q+5Euy+fwfoC9BcbfSqvdt7Km10N4mtOYxyFdCr5NKTFVLddKjSieRgukI6ad44D1C
+         kZTX236TJbtdm64sqhGJwQ/9+sWwRuNN2Nx0lvOZfffDolDkTVtcbCtkjUHO0Ys7rVEe
+         3AxYTXsIvZsfOU01PES59BM1i2agdRdIuRGuk=
+In-Reply-To: <AANLkTik-TJ0pJi7Hd4KVyCruW4B=ZUo6aic1JnPgK=bm@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
+To: Luciano <luciano@joublanc.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-Hi,
+Luciano wrote:
+> Hi Edward,
+>   
 
-Uploaded kernel packages with reiser4 support for Fedora 13. Currently
-it is available only for 64 bit platforms, will upload for the
-remaining archs soon.
-I am also working on "kmod-reiser4", this will help us to manage the
-package more effectively and consistently.
+Hello.
 
-Please test the same and report. The reiser4progs and libaal packages
-are also available.
+> I've been following the R4 mainline inclusion saga for a while now.
+> First, congratulations are in order for your developers' perseverance
+> in maintaining and bug fixing this great fs! But I was wondering where
+> you stand on mainline inclusion currently? I last read an interview on
+> Phoronix in early 2009, where you said you were hoping to publish some
+> plug-in design ideas at USENIX 2010, and then possibly going for
+> mainline inclusion. However, I believe this didn't happen.
 
-Download the packages from:
+Sorry, postponed.
+Will try to be in time for the 2011 deadline (Jan, 12).
 
-http://viji.fedorapeople.org/reiser4/F13/x86_64/
+>  What's the
+> big picture at the moment?
 
-Thanks & Regards
-Viji Nair
+Once we adjust reiser4 to upcoming VFS scalability changes,
+all the to-do-for-inclusion issues will be resolved.
+
+>  What can we look forward to in the next
+> year?
+>   
+
+As usual, I can not promise anything.
+Will try to keep it in working state..
+
+Thanks,
+Edward.
