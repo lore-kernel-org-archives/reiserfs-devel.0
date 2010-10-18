@@ -1,67 +1,39 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: reiser4 and grub2
-Date: Mon, 18 Oct 2010 14:04:51 +0200
-Message-ID: <4CBC37E3.3050301@gmail.com>
-References: <712869e4bd3f8a89f431df5ffb8097b9@cs.karelia.ru>
+From: Viji V Nair <viji@fedoraproject.org>
+Subject: reiser4 compile issue
+Date: Mon, 18 Oct 2010 17:55:21 +0530
+Message-ID: <AANLkTimJiCRhvAYqK=sdonHSjf9exh_yqhJo+aLJkhvT@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <712869e4bd3f8a89f431df5ffb8097b9@cs.karelia.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:received:sender:received:date
+         :x-google-sender-auth:message-id:subject:from:to:content-type
+         :content-transfer-encoding;
+        bh=yDCT3WXDJBgDOSz0KJ180JDskqtqN3ZB9PJAei/wugk=;
+        b=ImsGfJ3MJf7cmKugbVzx6w/lPqFmrIZn0RyIuuaONnJlLhzBCTqcRgsaU/kQIBA4Qa
+         2hAvoSWO3rSL8j68qksSSLayns8mDdVkSJixSk+Xh2DYfDUOSh8RDChhVh2oIZlAI/ed
+         sZfke6syqslwHv0xU1vN/UXe7VCL+B7C9GPmg=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: sannikov <sannikov@cs.karelia.ru>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-sannikov wrote:
-> Good day.
->   
+Hi,
 
-Hello.
+I am getting the following warning when I compile resier4 for 2.6.34.
+The module is getting compiled anyway, can I ignore this?
 
-> I want to ask you about reiser4 and grub-2.
->
-> I am try to write to Yuriy Umanets but his mailboxes are inactive...
-> Some few days ago I findes his request about this.
-> (http://lists.gnu.org/archive/html/grub-devel/2008-02/msg00263.html)
->
-> If it is possible, can you describe current state of Raiser4 support in
-> Grub2.
->   
+make CONFIG_REISER4_FS=3Dm CONFIG_REISER4_DEBUG=3Dn M=3Dfs/reiser4
 
-Unsupported.
+fs/reiser4/plugin/node/node40.c: In function =91create_item_node40=92:
+fs/reiser4/plugin/node/node40.c:852: warning: ignoring return value of
+=91__copy_from_user=92, declared with attribute warn_unused_result
 
-> As I know this task yet  placed in Grub's TODO list.
-> I hope this idea yet alive.
->   
-
-I didn't look at grub2/fs interface yet, but believe that it
-is better then grub1's one.
-
-There is a patch for reiser4 support in grub1. I don't
-think it will be a big problem to adjust this one for grub2:
-the sources are quite understandable.
-
-The only thing I am unhappy with is that it can not boot
-reiser4 via module stage1_5 (it is too big and can not
-fit in 62 sectors), It means that user will need to re-install
-grub every time after defragmentation (currently
-unsupported, but upcoming). So it would be nice to resolve
-this problem in grub2 somehow.
-
-Btrfs stage1_5 module with multi-device support
-successfully fits in 62 sectors. Why reiser4 can not?
-I think we need to get rid of the mini-library with a lot
-of unneeded functions and put everything in one file
-(as other file systems do).
-
-Thanks,
-Edward.
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->   
-
+Thanks
+Viji
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
