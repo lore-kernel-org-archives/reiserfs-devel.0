@@ -1,152 +1,101 @@
-From: Viji V Nair <viji@fedoraproject.org>
-Subject: Re: reiser4 as a module
-Date: Fri, 22 Oct 2010 22:08:13 +0530
-Message-ID: <AANLkTinndP10_1-bvx4h5Wz5-3i8=M3FCep6kB-=bSi9@mail.gmail.com>
-References: <AANLkTi=o5bXDxY4XKSYzcX9fX4yHZRC68=oMk0sikViS@mail.gmail.com>
- <4CC18948.5020500@ontolinux.com> <AANLkTin5Rq_Spo-+oJWKvN9tSOUo=iD9CicRWxmWB-R6@mail.gmail.com>
- <4CC1B9AE.1030605@ontolinux.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 21092] New: Kernel 2.6.36 Bug during quotaon on reiserfs
+Date: Sun, 24 Oct 2010 16:57:10 GMT
+Message-ID: <bug-21092-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:mime-version:sender:received
-         :in-reply-to:references:from:date:x-google-sender-auth:message-id
-         :subject:to:cc:content-type:content-transfer-encoding;
-        bh=bT7X+MryQlw1hv5rbbsC9FiEpbCsGXxgATb3SRXi22k=;
-        b=mn4Gav1mlY/djafgQbrPEHiUvR85aRGUSfu1RpIZMw2nt2+Z5l9P27D5R4UbugVq+/
-         D9GykdESJm0zQNo1oL7Re0HVjQViAm5wzmfb9N6WwXhQw1eSwKCASMrLjTVpjbfoAELW
-         mqtqVCZrH8+hicUXFZCB33vrhVdiwak0IbJxo=
-In-Reply-To: <4CC1B9AE.1030605@ontolinux.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Christian Stroetmann <stroetmann@ontolinux.com>
-Cc: linux reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-Hi
+https://bugzilla.kernel.org/show_bug.cgi?id=21092
 
-On Fri, Oct 22, 2010 at 9:49 PM, Christian Stroetmann
-<stroetmann@ontolinux.com> wrote:
-> =A0Thanks for further informations.
->
-> On the 22.10.2010 17:46, Viji V Nair wrote:
->>
->> Hi
->>
->> On Fri, Oct 22, 2010 at 6:23 PM, Christian Stroetmann
->> <stroetmann@ontolinux.com> =A0wrote:
->>>
->>> =A0Hola;
->>>
->>> On the 22.10.2010 12:02, Viji V Nair wrote:
->>>>
->>>> Hi,
->>>>
->>>> I have been trying to build reiser4 as a module, but the module wh=
-ich
->>>> is getting compiled having the "symbol" issue.
->>>>
->>>> <snip>
->>>> reiser4: Unknown symbol lzo1x_1_compress
->>>> reiser4: Unknown symbol might_fault
->>>> reiser4: Unknown symbol mutex_lock_nested
->>>> reiser4: Unknown symbol zlib_deflate
->>>> reiser4: Unknown symbol writeback_inodes_wbc
->>>> </snip>
->>>
->>> You mentioned this problem in the thread [1] as well.
->>> Check your pathes.
->>
->> Nobody replied to that thread :). I am planning to push reiser4 in t=
-he
->> fedora official repository.
->> I have checked the paths, looks fine. Even I tried with some other
->> modules (cifs) and those are getting compiled and loads with out any
->> issue.
->
-> This is surprising. Maybe it is in the scripts of the compilation too=
-lchain
-> (configure, make, and so on).
->>>>
->>>> I could see from the reiser4 2.6.34 patch that it is adding
->>>> "EXPORT_SYMBOL" to few files in fs& =A0 =A0mm directories of the k=
-ernel
->>>> source tree. Can we have all these symbols defined in the core sou=
-rce
->>>> tree of resier4 also? Do we have a patch for this already?
->>>
->>> For what? See above.
->
-> I still believe that they belong to the files in the fs and mm direct=
-ories
-> of the kernel source tree.
->
-> Also somehow fuzzy, the fault messages you have sent are referencing
-> existing items that are contained in the unpatched/original libraries=
-=2E Are
-> the missing symbols related with the ones that are included in the R4=
- 2.6.34
-> patch?
->
-> So, maybe you should take a second and wait for the comments by the
-> maintainer about the "EXPORT_SYMBOL" point.
->>>
->>> Btw.: To be honest, I find it a little bit off-topic, because it's =
-about
->>> compiling a kernel module and not a R4 issue.
->>
->> This was working fine untill 2.6.10 patch. You can find the same iss=
-ue
->> in Open Suse/Ubuntu/Mandriva mailing lists.
->
-> Ah, okay. Good to know this.
->>
->> The missing symbols need to exported in the module level, I think. I=
-f
->> I compile the kernel completely everything works fine, but that is n=
-ot
->> I want. I dont want to disturb the stock kernel.
->
-> Okay.
-> I still guess the problem is in the scripts that compile the module, =
-if you
-> say that compiling kernel modules with other file systems and the com=
-plete
-> kernel with R4 support works correctly. Compare the scipts that are u=
-sed to
-> compile the complete kernel with R4 support with the scripts of the R=
-4
-> kernel module compilation. There must be the searched difference.
+           Summary: Kernel 2.6.36 Bug during quotaon on reiserfs
+           Product: File System
+           Version: 2.5
+    Kernel Version: 2.6.36
+          Platform: All
+        OS/Version: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: ReiserFS
+        AssignedTo: reiserfs-devel@vger.kernel.org
+        ReportedBy: markus.gapp@gmx.net
+        Regression: Yes
 
-You are right, I am digging into the fedora kernel source tree, some
-scripts are exporting all these symbols globally on a complete
-compilation of the kernel. Need to figure out which one, anyway, for
-resier4 we should have this symbol exported separately to avoid the
-dependency with the above scripts.
 
->>>>
->>>> Thanks
->>>> Viji
->>>
->>> [1] Compilation Issue - Reiser4
->>> http://www.spinics.net/lists/reiserfs-devel/msg02508.html
->>>
->>> Have fun
->>> Christian O>-< =A0 =A0 *<:o) =A0 _(D)>-<
->>>
->> Thank you so much for your support
->>
->> Viji
->
-> Good luck
-> Christian O>-< =A0 *<:o) =A0 _(D)>-<
->
+I get this bug during boot at enabling usrquta for a reiser(3)fs since 2.6.36.
+The kernel is a x86_64 smp. The reiserfs reisdes on a dm raid level 5. The same
+setup worked with kernel version 2.6.35.7, of course there was no other
+configuratrion change between 2.6.35.7 and 2.6.36.
 
-Thanks
-Viji
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+REISERFS warning (device dm-4): reiserfs-2500 finish_unfinished: cannot turn on
+journaled quota: error -3
+------------[ cut here ]------------
+kernel BUG at fs/reiserfs/lock.c:43!
+invalid opcode: 0000 [#1] SMP 
+last sysfs file: /sys/devices/virtual/vc/vcsa12/uevent
+CPU 5 
+Modules linked in: snd_seq_dummy snd_seq_oss snd_seq_midi_event snd_seq
+snd_seq_device snd_pcm_oss snd_mixer_oss quota_v2 quota_tree
+snd_hda_codec_atihdmi snd_hda_codec_realtek snd_hda_intel snd_hda_codec snd_pcm
+psmouse snd_timer evdev firewire_ohci snd pcspkr soundcore processor
+firewire_core thermal snd_page_alloc button crc_itu_t i5k_amb
+scsi_transport_iscsi tg3 libphy fuse nfs auth_rpcgss fscache lockd sunrpc
+dm_crypt dm_mirror dm_region_hash dm_log scsi_wait_scan uhci_hcd usb_storage
+ehci_hcd sr_mod cdrom sg
+
+Pid: 3916, comm: quotaon Not tainted 2.6.36_hope3-xw6600 #1 0A9Ch/HP xw6600
+Workstation
+RIP: 0010:[<ffffffff811581a3>]  [<ffffffff811581a3>]
+reiserfs_write_unlock+0x43/0x50
+RSP: 0018:ffff880127a5dd78  EFLAGS: 00010203
+RAX: ffff880129cef3e0 RBX: ffff8801298115d0 RCX: 000000000000006e
+RDX: ffff88012090c540 RSI: 0000000000000000 RDI: ffff88012a838000
+RBP: ffff880127a5dd78 R08: 000000000000000b R09: ffff8801298115d0
+R10: 00007f5abe320580 R11: 0000000000000246 R12: ffff880129811540
+R13: ffff880129811680 R14: ffff88012adc3400 R15: 0000000000001000
+FS:  00007f5abd54c700(0000) GS:ffff880001940000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5abd5924c5 CR3: 000000012a741000 CR4: 00000000000006e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Process quotaon (pid: 3916, threadinfo ffff880127a5c000, task ffff880129cef3e0)
+Stack:
+ ffff880127a5ddc8 ffffffff81155d6f ffff880127a5dda8 ffffffff810d505c
+<0> 0000000000000002 ffff880127a5de28 ffff88012adc3400 0000000000000000
+<0> 0000000000000002 ffff88012adc3400 ffff880127a5de68 ffffffff81141071
+Call Trace:
+ [<ffffffff81155d6f>] reiserfs_unpack+0x6f/0x160
+ [<ffffffff810d505c>] ? path_put+0x2c/0x40
+ [<ffffffff81141071>] reiserfs_quota_on+0x171/0x1d0
+ [<ffffffff810d8056>] ? do_path_lookup+0x36/0x60
+ [<ffffffff81237245>] ? strncpy_from_user+0x45/0x90
+ [<ffffffff81119ac5>] do_quotactl+0x4d5/0x520
+ [<ffffffff810d505c>] ? path_put+0x2c/0x40
+ [<ffffffff8142b181>] ? down_read+0x11/0x30
+ [<ffffffff81119bbe>] sys_quotactl+0xae/0x120                                   
+ [<ffffffff81002d2b>] system_call_fastpath+0x16/0x1b                            
+Code: 75 29 8b 47 50 ff c8 89 47 50 83 f8 ff 74 09 c9 c3 0f 1f 80 00 00 00 00
+48 c7 47 48 00 00 00 00 48 83 c7 28 e8 5f 26 2d 00 c9 c3 <0f> 0b eb fe 66 0f 1f
+84 00 00 00 00 00 55 83 fe ff 48 89 e5 74                                       
+RIP  [<ffffffff811581a3>] reiserfs_write_unlock+0x43/0x50                       
+ RSP <ffff880127a5dd78>                                                         
+---[ end trace 488c3fb0de5127fd ]---  
+
+
+Despite the bug the fs in question is accessible, quota of course dont'work.
+Any susequent try to enable quota result in a stalled quotaon command without
+any output on console or dmesg.
+
+
+Thank you, Markus
+
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
