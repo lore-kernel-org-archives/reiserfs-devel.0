@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 14656] Oops at __rmqueue+0x98 with 2.6.32-rc6
-Date: Tue, 26 Oct 2010 09:04:26 GMT
-Message-ID: <201010260904.o9Q94QcP016458@demeter1.kernel.org>
+Date: Tue, 26 Oct 2010 09:05:23 GMT
+Message-ID: <201010260905.o9Q95N0j016550@demeter1.kernel.org>
 References: <bug-14656-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -19,11 +19,17 @@ Florian Mickler <florian@mickler.org> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-                 CC|                            |florian@mickler.org,
-                   |                            |lucasvr@gobolinux.org
+             Status|NEW                         |NEEDINFO
 
 
 
+
+--- Comment #1 from Florian Mickler <florian@mickler.org>  2010-10-26 09:05:15 ---
+Hi Lucas, 
+do you still encounter this issue?
+
+Regards,
+Flo
 
 -- 
 Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
