@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 21092] Kernel 2.6.36 Bug during quotaon on reiserfs
-Date: Wed, 27 Oct 2010 21:58:43 GMT
-Message-ID: <201010272158.o9RLwhih026887@demeter2.kernel.org>
+Date: Wed, 27 Oct 2010 23:04:09 GMT
+Message-ID: <201010272304.o9RN4999002659@demeter1.kernel.org>
 References: <bug-21092-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -18,12 +18,12 @@ https://bugzilla.kernel.org/show_bug.cgi?id=21092
 
 
 
---- Comment #2 from Jan Kara <jack@suse.cz>  2010-10-27 21:58:36 ---
-Created an attachment (id=35292)
- --> (https://bugzilla.kernel.org/attachment.cgi?id=35292)
-Patch fixing locking in reiserfs_quota_on()
+--- Comment #3 from markus.gapp@gmx.net  2010-10-27 23:04:04 ---
+@Jan Kara:
 
-Could you please try whether this patch fixes the issue? Thanks.
+Your patch fixes the issue for me. Thank you very much!
+
+Markus
 
 -- 
 Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
