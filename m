@@ -1,7 +1,7 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: Bug with KDE 4.5 and reiser4 2.6.34
-Date: Sun, 31 Oct 2010 14:29:52 +0100
-Message-ID: <4CCD6F50.2070001@gmail.com>
+Date: Sun, 31 Oct 2010 14:41:51 +0100
+Message-ID: <4CCD721F.3010908@gmail.com>
 References: <201010310406.07767.volkerarmin@googlemail.com> <201010311243.28448.volkerarmin@googlemail.com> <4CCD5B1C.8070900@gmail.com> <201010311408.34589.volkerarmin@googlemail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -11,10 +11,10 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         h=domainkey-signature:received:received:message-id:date:from
          :user-agent:mime-version:to:cc:subject:references:in-reply-to
          :content-type:content-transfer-encoding;
-        bh=V1jqWpeKzGeQXxSqE39aFREgNukn3SCSA8p049VfQHU=;
-        b=hJnopMJwbGhOMBguPq6vnam5o2bAqyA/1XktC41DcdsIne84TfsMHymC3dHrK1s9/K
-         G2HJlbnaeclx9oXdhm3tJHyCw+13r0ORHKsIycF87jw8Kuig0ddZURX79d1jAG4ILQ6x
-         J7RQdmqgr3yFA90F1nHGOKbQSsUWKTZFAjhoE=
+        bh=6TWSIgcciFM4H9MqiGq4/XjzAWzWEt6nGevUDg6oCI4=;
+        b=JNag1dm0X2pJ0uNbBjE7U3y0qaBTg1pCBUCz1k+fxmRnINeKcIwAB27uu6L/jwyVco
+         ygj6bRAVBl3n6SOM/AavBlUWgKRXxCZhpMcrCRVuA1zEEgjwDJVeOyIpSDLq0DqTGRz/
+         iRTsv47NDK42BIXF8M7EgLzR/buFWCIxayI2o=
 In-Reply-To: <201010311408.34589.volkerarmin@googlemail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -94,4 +94,8 @@ Volker Armin Hemmann wrote:
 >
 >   
 
-That's all? Are you sure this output is complete?
+Ah,
+it was you, who didn't provide me access
+to investigate unexpected fsck aborts?...
+
+Edward.
