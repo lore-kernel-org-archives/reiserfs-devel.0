@@ -1,141 +1,175 @@
-From: Volker Armin Hemmann <volkerarmin@googlemail.com>
-Subject: Re: Bug with KDE 4.5 and reiser4 2.6.34
-Date: Sun, 31 Oct 2010 15:02:34 +0100
-Message-ID: <201010311502.34199.volkerarmin@googlemail.com>
-References: <201010310406.07767.volkerarmin@googlemail.com> <201010311408.34589.volkerarmin@googlemail.com> <4CCD721F.3010908@gmail.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: [PATCH RESUBMIT] reiserfs: Remove 2 TB file size limit
+Date: Mon, 01 Nov 2010 09:58:06 -0400
+Message-ID: <4CCEC76E.8000602@suse.com>
+References: <4BF43A65.405@suse.com>	<AANLkTilTAapxpbA3ty5CuO0Nr0YKmxR_mFtRpyrqiCzF@mail.gmail.com>	<4BF45F94.40500@gmail.com>	<4BF5893C.3010802@suse.com>	<AANLkTinM2JzWu6mcY2zRl9WQXVc184X-VCCUWyn54QqZ@mail.gmail.com> <AANLkTimv88HX-cpGPoWvbhIkOK25YVhusstfLG7oaGBn@mail.gmail.com> <4C17E9E0.6070105@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=gamma;
-        h=domainkey-signature:received:received:from:to:subject:date
-         :user-agent:references:in-reply-to:mime-version:content-type
-         :content-transfer-encoding:message-id;
-        bh=JwHQlSBO1BQjTXVUzsW5ccNMS9dh+nVdngXvJJ5aXrw=;
-        b=hL4l2+a+UmBNAkWD80e/qW5YO5G489Eyfvb4GVgIMJb4s+OB+I9jNy+jrK2kL2aEkQ
-         6Ce/vKOMlLzrt+SwJmxyRnPZ9EQd/5hdE5ty/oQhMK+Aa5w+7kuY7cLKRAQ3+6E3gVVA
-         h8m6vp6L+301Hm6wn5cq34O6TA47tqZReI9AU=
-In-Reply-To: <4CCD721F.3010908@gmail.com>
+In-Reply-To: <4C17E9E0.6070105@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: Text/Plain; charset="iso-8859-1"
-To: Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: Leonardo Chiquitto <leonardo.lists@gmail.com>, T.Shearouse@gmail.com, reiserfs-devel@vger.kernel.org
 
-On Sunday 31 October 2010, you wrote:
-> Volker Armin Hemmann wrote:
-> > On Sunday 31 October 2010, you wrote:
-> >> could you provide fsck output?
-> >=20
-> > sure, here it is:
-> >=20
-> > *******************************************************************
-> > This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
-> > *******************************************************************
-> >=20
-> > Fscking the /dev/sda1 block device.
-> > Will check the consistency of the Reiser4 SuperBlock.
-> > Will build the Reiser4 FileSystem.
-> > Continue?
-> > (Yes/No): Y
-> > ***** fsck.reiser4 started at Sun Oct 31 13:42:25 2010
-> > Reiser4 fs was detected on /dev/sda1.
-> > Master super block (16):
-> > magic:          ReIsEr4
-> > blksize:        4096
-> > format:         0x0 (format40)
-> > uuid:           9d3a5406-15b9-4a95-95e3-256d1571408d
-> > label:          <none>
-> >=20
-> > Format super block (17):
-> > plugin:         format40
-> > description:    Disk-format plugin.
-> > version:        0
-> > magic:          ReIsEr40FoRmAt
-> > mkfs id:        0x154b6487
-> > flushes:        0
-> > blocks:         15630416
-> > free blocks:    4275401
-> > root block:     7434018
-> > tail policy:    0x2 (smart)
-> > next oid:       0xd30db
-> > file count:     712485
-> > tree height:    5
-> > key policy:     LARGE
-> >=20
-> >=20
-> > CHECKING THE STORAGE TREE
-> >=20
-> >         Read nodes 3162120
-> >         Nodes left in the tree 3162120
-> >        =20
-> >                 Leaves of them 3125028, Twigs of them 36573
-> >        =20
-> >         Time interval: Sun Oct 31 13:42:25 2010 - Sun Oct 31 13:43:=
-39
-> >         2010
-> >=20
-> > CHECKING EXTENT REGIONS.
-> >=20
-> >         Read twigs 36573
-> >         Time interval: Sun Oct 31 13:43:39 2010 - Sun Oct 31 13:44:=
-01
-> >         2010
-> >=20
-> > LOOKING FOR UNCONNECTED NODES
-> >=20
-> >         Read nodes 0
-> >         Good nodes 0
-> >        =20
-> >                 Leaves of them 0, Twigs of them 0
-> >        =20
-> >         Time interval: Sun Oct 31 13:44:02 2010 - Sun Oct 31 13:44:=
-02
-> >         2010
-> >=20
-> > CHECKING EXTENT REGIONS.
-> >=20
-> >         Read twigs 0
-> >         Time interval: Sun Oct 31 13:44:02 2010 - Sun Oct 31 13:44:=
-02
-> >         2010
-> >=20
-> > INSERTING UNCONNECTED NODES
-> >=20
-> >         Twigs: read 0, inserted 0, by item 0, empty 0
-> >         Leaves: read 0, inserted 0, by item 0
-> >         Time interval: Sun Oct 31 13:44:02 2010 - Sun Oct 31 13:44:=
-02
-> >         2010
-> >=20
-> > CHECKING THE SEMANTIC TREE
-> >=20
-> >         Found 712485 objects.
-> >         Lost&found 8 objects.
-> >         Time interval: Sun Oct 31 13:44:02 2010 - Sun Oct 31 13:53:=
-58
-> >         2010
-> >=20
-> > CLEANING UP THE STORAGE TREE
->=20
-> Ah,
-> it was you, who didn't provide me access
-> to investigate unexpected fsck aborts?...
->=20
-> Edward.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-I put -L fsck.log which was empty and piped to stout.log which was the =
-stuff I=20
-sent you.
-I was the one who already had problems with fsck not fixing problems. T=
-he good=20
-news: this is a different partition, so if you need metadata I could se=
-nd it to=20
-you.
+On 06/15/2010 05:00 PM, Edward Shishkin wrote:
+> Leonardo Chiquitto wrote:
+>> On Fri, May 21, 2010 at 10:17 AM, Tim Shearouse
+>> <t.shearouse@gmail.com> wrote:
+>>  
+>>> On Thu, May 20, 2010 at 2:10 PM, Jeff Mahoney <jeffm@suse.com> wrote:
+>>>    
+>>>> -----BEGIN PGP SIGNED MESSAGE-----
+>>>> Hash: SHA1
+>>>>
+>>>> On 05/19/2010 06:00 PM, Edward Shishkin wrote:
+>>>>      
+>>>>> Leonardo Chiquitto wrote:
+>>>>>        
+>>>>>> On Wed, May 19, 2010 at 4:22 PM, Jeff Mahoney <jeffm@suse.com> wrote:
+>>>>>>
+>>>>>>          
+>>>>>>>  In its early life, reiserfs had an evolving s_max_bytes. It
+>>>>>>> started out
+>>>>>>>  at 4 GB, then was raised to MAX_LFS_FILESIZE, then dropped to 2 TiB
+>>>>>>> when
+>>>>>>>  it was observed that struct stat only had a 32-bit st_blocks field.
+>>>>>>>
+>>>>>>>  Since then, both the kernel and glibc have evolved as well and
+>>>>>>> now both
+>>>>>>>  support 64-bit st_blocks. Applications that can't deal with these
+>>>>>>> ranges
+>>>>>>>  are assumed to be "legacy" or "broken." File systems now routinely
+>>>>>>>  support file sizes much larger than can be represented by 2^32 *
+>>>>>>> 512.
+>>>>>>>
+>>>>>>>  But we never revisited that limitation. ReiserFS has always been
+>>>>>>> able to
+>>>>>>>  support larger file sizes (up to 16 TiB, in fact), but the
+>>>>>>> s_max_bytes
+>>>>>>>  limitation has prevented that.
+>>>>>>>
+>>>>>>>  This patch adds a max_file_offset helper to set s_max_bytes to a
+>>>>>>> more
+>>>>>>>  appropriate value. I noticed that XFS adjusts the limit based on
+>>>>>>> the
+>>>>>>>  CPU but I'd prefer to err on the side of compatibility and place
+>>>>>>> the
+>>>>>>>  limit at the smaller of the 32-bit MAX_LFS_FILESIZE and the maximum
+>>>>>>>  supported by the file system. At a 4k block size, this is
+>>>>>>> conveniently
+>>>>>>>  also the advertised maximum file size of reiserfs.
+>>>>>>>
+>>>>>>>  Update: This version properly extends PAGE_SIZE_CACHE so the
+>>>>>>> math works
+>>>>>>>         on 32-bit systems.
+>>>>>>>
+>>>>>>>  This bug is tracked at:
+>>>>>>> https://bugzilla.novell.com/show_bug.cgi?id=592100
+>>>>>>>
+>>>>>>> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+>>>>>>> - ---
+>>>>>>>  fs/reiserfs/super.c |   17 +++++++++++++----
+>>>>>>>  1 file changed, 13 insertions(+), 4 deletions(-)
+>>>>>>>
+>>>>>>> - --- a/fs/reiserfs/super.c
+>>>>>>> +++ b/fs/reiserfs/super.c
+>>>>>>> @@ -1309,6 +1309,18 @@ out_err:
+>>>>>>>        return err;
+>>>>>>>  }
+>>>>>>>  +static inline loff_t
+>>>>>>> +reiserfs_max_file_offset(struct super_block *sb)
+>>>>>>> +{
+>>>>>>> +       /* Limited by stat_data->sd_blocks, 2^32-1 blocks */
+>>>>>>> +       loff_t fs_max = ((u64)sb->s_blocksize << 32) -
+>>>>>>> sb->s_blocksize;
+>>>>>>> +
+>>>>>>> +       /* Limited by 32-bit MAX_LFS_FILESIZE */
+>>>>>>> +       loff_t page_cache_max = (((u64)PAGE_CACHE_SIZE << 31)-1);
+>>>>>>> +
+>>>>>>> +       return min(fs_max, page_cache_max);
+>>>>>>> +}
+>>>>>>> +
+>>>>>>>  static int read_super_block(struct super_block *s, int offset)
+>>>>>>>  {
+>>>>>>>        struct buffer_head *bh;
+>>>>>>> @@ -1398,10 +1410,7 @@ static int read_super_block(struct super
+>>>>>>>        s->dq_op = &reiserfs_quota_operations;
+>>>>>>>  #endif
+>>>>>>>  -      /* new format is limited by the 32 bit wide i_blocks field,
+>>>>>>> want to
+>>>>>>> - -      ** be one full block below that.
+>>>>>>> - -      */
+>>>>>>> - -     s->s_maxbytes = (512LL << 32) - s->s_blocksize;
+>>>>>>> +       s->s_maxbytes = reiserfs_max_file_offset(s);
+>>>>>>>        return 0;
+>>>>>>>  }
+>>>>>>>
+>>>>>>>             
+>>>>>> Hello ReiserFS developers,
+>>>>>>
+>>>>>> Any chance to have this patch submitted to 2.6.35?
+>>>>>>           
+>>>>> I wouldn't rely on this. Reiserfsprogs also should be aware
+>>>>> of the new limits. It's all long..
+>>>>>         
+>>>> I certainly hope not. Things would be broken already. The 2 TB limit is
+>>>> 2048 * 2^32.
+>>>>
+>>>> - -Jeff
+>>>>
+>>>>      
+>>>>>>  We're hitting the 2TB
+>>>>>> file limit here and this patch resolves the problem.
+>>>>>>
+>>>>>> Thanks,
+>>>>>> Leonardo
+>>>>>>           
+>>>> - -- 
+>>>> Jeff Mahoney
+>>>> SUSE Labs
+>>>>       
+>>> I do not believe this patch will cause problems. As you mention,
+>>> ReiserFS was intended to support a max 16TB filesize.
+>>>
+>>> Edward, it looks to me as though reiserfsprogs will be aware of the
+>>> new limits, unless I am missing something (it does not have its own
+>>> method for accessing the super block somewhere, correct?).
+>>>     
+>>
+>> Hello,
+>>
+>> I apologize for insisting here but it's really important for us to get
+>> this fixed upstream. Please, can someone submit it for 2.6.35
+> 
+> I guess nobody will accept this to 2.6.35..
+> We only can push it to -mm with the following proceeding
+> from the akpm's side..
+> 
+>>  or,
+>> if the patch is not a good idea, give a little insight on what's wrong?
+>>   
+> 
+> Jeff, did you have any chances to run and fsck this on 32 and 64-bit
+> machines?
 
-Gl=FCck Auf,
-Volker
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Revisiting this since we'd really like to include the patch in our
+products. I'm doing this testing today.
+
+- -Jeff
+
+- -- 
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.16 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
+
+iEYEARECAAYFAkzOx24ACgkQLPWxlyuTD7I7CQCghqjn8J9gV+D4qsAZUS9UJ1NT
+Rm0An2PWE1wVfrPpL1uUyF5E3Y7eWJaY
+=iDCV
+-----END PGP SIGNATURE-----
