@@ -1,105 +1,139 @@
-From: Neil Brown <neilb@suse.de>
-Subject: Re: [PATCHSET] block: clean up bdev claim/release handling
-Date: Tue, 2 Nov 2010 06:49:18 +1100
-Message-ID: <20101102064918.4c6037d2@nbeee.brown>
-References: <1288628129-12811-1-git-send-email-tj@kernel.org>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: Bug with KDE 4.5 and reiser4 2.6.34
+Date: Tue, 02 Nov 2010 11:09:08 +0100
+Message-ID: <4CCFE344.5050706@gmail.com>
+References: <201010310406.07767.volkerarmin@googlemail.com> <201010311408.34589.volkerarmin@googlemail.com> <4CCD721F.3010908@gmail.com> <201010311502.34199.volkerarmin@googlemail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1288628129-12811-1-git-send-email-tj@kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:message-id:date:from
+         :user-agent:mime-version:to:cc:subject:references:in-reply-to
+         :content-type:content-transfer-encoding;
+        bh=HAShT6XROeoxaPgIyGzrVN/ggema1ZR0SG/NnYmetxA=;
+        b=jpJmz5gR2gBdkUqKGtN2dkq/f5AlR/Quop1Cq5Sut+i7gT8ApK3N+yXIQLEmnLpgb+
+         lhVSXat1Fm1u11oYHmYJc5o5S5n8ao7HzI6bgtkq+o/LKFZmZWf0nh25bfQBdjpqq4z3
+         rwvaTaJOyWgMrG89mMAGz6+xml8Wkw1e3wC1A=
+In-Reply-To: <201010311502.34199.volkerarmin@googlemail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Tejun Heo <tj@kernel.org>
-Cc: axboe@kernel.dk, hch@infradead.org, linux-kernel@vger.kernel.org, petero2@telia.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jack@suse.cz, akpm@linux-foundation.org, adilger.kernel@dilger.ca, tytso@mit.edu, mfasheh@suse.com, joel.becker@oracle.com, aelder@sgi.com, dm-devel@redhat.com, drbd-dev@lists.linbit.com, leochen@broadcom.com, sbranden@broadcom.com, chris.mason@oracle.com, swhiteho@redhat.com, shaggy@linux.vnet.ibm.com, joern@logfs.org, konishi.ryusuke@lab.ntt.co.jp, reiserfs-devel@vger.kernel.org, viro@zeniv.linux.org.uk
+To: Volker Armin Hemmann <volkerarmin@googlemail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-On Mon,  1 Nov 2010 17:15:24 +0100
-Tejun Heo <tj@kernel.org> wrote:
+Volker Armin Hemmann wrote:
+> On Sunday 31 October 2010, you wrote:
+>   
+>> Volker Armin Hemmann wrote:
+>>     
+>>> On Sunday 31 October 2010, you wrote:
+>>>       
+>>>> could you provide fsck output?
+>>>>         
+>>> sure, here it is:
+>>>
+>>> *******************************************************************
+>>> This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+>>> *******************************************************************
+>>>
+>>> Fscking the /dev/sda1 block device.
+>>> Will check the consistency of the Reiser4 SuperBlock.
+>>> Will build the Reiser4 FileSystem.
+>>> Continue?
+>>> (Yes/No): Y
+>>> ***** fsck.reiser4 started at Sun Oct 31 13:42:25 2010
+>>> Reiser4 fs was detected on /dev/sda1.
+>>> Master super block (16):
+>>> magic:          ReIsEr4
+>>> blksize:        4096
+>>> format:         0x0 (format40)
+>>> uuid:           9d3a5406-15b9-4a95-95e3-256d1571408d
+>>> label:          <none>
+>>>
+>>> Format super block (17):
+>>> plugin:         format40
+>>> description:    Disk-format plugin.
+>>> version:        0
+>>> magic:          ReIsEr40FoRmAt
+>>> mkfs id:        0x154b6487
+>>> flushes:        0
+>>> blocks:         15630416
+>>> free blocks:    4275401
+>>> root block:     7434018
+>>> tail policy:    0x2 (smart)
+>>> next oid:       0xd30db
+>>> file count:     712485
+>>> tree height:    5
+>>> key policy:     LARGE
+>>>
+>>>
+>>> CHECKING THE STORAGE TREE
+>>>
+>>>         Read nodes 3162120
+>>>         Nodes left in the tree 3162120
+>>>         
+>>>                 Leaves of them 3125028, Twigs of them 36573
+>>>         
+>>>         Time interval: Sun Oct 31 13:42:25 2010 - Sun Oct 31 13:43:39
+>>>         2010
+>>>
+>>> CHECKING EXTENT REGIONS.
+>>>
+>>>         Read twigs 36573
+>>>         Time interval: Sun Oct 31 13:43:39 2010 - Sun Oct 31 13:44:01
+>>>         2010
+>>>
+>>> LOOKING FOR UNCONNECTED NODES
+>>>
+>>>         Read nodes 0
+>>>         Good nodes 0
+>>>         
+>>>                 Leaves of them 0, Twigs of them 0
+>>>         
+>>>         Time interval: Sun Oct 31 13:44:02 2010 - Sun Oct 31 13:44:02
+>>>         2010
+>>>
+>>> CHECKING EXTENT REGIONS.
+>>>
+>>>         Read twigs 0
+>>>         Time interval: Sun Oct 31 13:44:02 2010 - Sun Oct 31 13:44:02
+>>>         2010
+>>>
+>>> INSERTING UNCONNECTED NODES
+>>>
+>>>         Twigs: read 0, inserted 0, by item 0, empty 0
+>>>         Leaves: read 0, inserted 0, by item 0
+>>>         Time interval: Sun Oct 31 13:44:02 2010 - Sun Oct 31 13:44:02
+>>>         2010
+>>>
+>>> CHECKING THE SEMANTIC TREE
+>>>
+>>>         Found 712485 objects.
+>>>         Lost&found 8 objects.
+>>>         Time interval: Sun Oct 31 13:44:02 2010 - Sun Oct 31 13:53:58
+>>>         2010
+>>>
+>>> CLEANING UP THE STORAGE TREE
+>>>       
+>> Ah,
+>> it was you, who didn't provide me access
+>> to investigate unexpected fsck aborts?...
+>>
+>> Edward.
+>>     
+>
+> I put -L fsck.log which was empty and piped to stout.log which was the stuff I 
+> sent you.
+> I was the one who already had problems with fsck not fixing problems. The good 
+> news: this is a different partition, so if you need metadata I could send it to 
+> you.
+>
+>   
 
-> bdev exclusive access handling is somewhat clumsy.  The primary
-> interface is bd_claim() and bd_release() but there also are
-> open_bdev_exclusive(), close_bdev_exclusive() and bd_claim_by_disk()
-> and bd_release_from_disk().
-> 
-> Gaining exclusive access as a separate step from open itself also has
-> the inherent problem that the block layer doesn't know whether the
-> current open attempt is for an exclusive access or not.  The action of
-> open itself may affect the existing exclusive access but there's no
-> way to prevent it.
-> 
-> This patchset simplifies the claim/release handling by folding it into
-> blkdev_get/put() and making others simple wrappers around them.  This
-> simplifies code and removes strange corner cases like the
-> non-atomicity of exclusive open described above.
+Please, at first make sure that the problems are on /dev/sda1
+that you have fsck-ed: find the file name with "find -inum 11052573",
+then try to read this file to confirm it really issues the kernel warnings
+"orphan unprepped cluster".
 
-He Tejun,
- This looks like a really nice clean-up!  Thanks.
-Definitely
-  Acked-by: NeilBrown <neilb@suse.de>
-for the md parts.
-
-Thanks,
-NeilBrown
-
-
-> 
-> There are five patches in this series.
-> 
->  0001-mtd-fix-bdev-exclusive-open-bugs-in-block2mtd-add_de.patch
->  0002-btrfs-close_bdev_exclusive-should-use-the-same-flags.patch
->  0003-block-simplify-holder-symlink-handling.patch
->  0004-block-make-blkdev_get-put-handle-exclusive-access.patch
->  0005-block-reorganize-claim-release-implementation.patch
-> 
-> 0001-0002 are fixes regarding exclusive bdev opens.  0003 simplifies
-> holder/slave symlink handling.  0004 folds bdev claim/release into
-> blkdev_get/put().  0005 reorganizes implementation a bit.
-> 
-> Cleaning up claim/release handling enables implementation of in-kernel
-> disk event polling which be posted soon.  Although this patchset
-> touches various files including drivers and filesystems, the changes
-> there are mostly trivial and I think it would be best to route these
-> through the block tree.
-> 
-> This patchset is on top of 2.6.37-rc1 and available in the following
-> git tree.
-> 
->  git://git.kernel.org/pub/scm/linux/kernel/git/tj/misc.git
-> cleanup-bd_claim
-> 
-> This patchset reduces about 400 lines of code.
-> 
-> Thanks.
-> 
->  block/ioctl.c                   |    5 
->  drivers/block/drbd/drbd_int.h   |    2 
->  drivers/block/drbd/drbd_main.c  |    7 
->  drivers/block/drbd/drbd_nl.c    |  103 ++-----
->  drivers/block/pktcdvd.c         |   22 -
->  drivers/char/raw.c              |   14 
->  drivers/md/dm-table.c           |   20 -
->  drivers/md/md.c                 |   16 -
->  drivers/mtd/devices/block2mtd.c |   10 
->  drivers/s390/block/dasd_genhd.c |    2 
->  fs/block_dev.c                  |  576
-> +++++++++-------------------------------
-> fs/btrfs/volumes.c              |   14
-> fs/ext3/super.c                 |   12
-> fs/ext4/super.c                 |   12
-> fs/gfs2/ops_fstype.c            |    4
-> fs/jfs/jfs_logmgr.c             |   17 -
-> fs/logfs/dev_bdev.c             |    4
-> fs/nilfs2/super.c               |    4
-> fs/ocfs2/cluster/heartbeat.c    |    2
-> fs/partitions/check.c           |    2
-> fs/reiserfs/journal.c           |   17 -
-> fs/super.c                      |   14
-> fs/xfs/linux-2.6/xfs_super.c    |    2
-> include/linux/fs.h              |   22 -
-> kernel/power/swap.c             |    5
-> mm/swapfile.c                   |    7 26 files changed, 260
-> insertions(+), 655 deletions(-)
-> 
-> --
-> tejun
-
+Edward.
