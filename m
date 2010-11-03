@@ -1,40 +1,34 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Bug with KDE 4.5 and reiser4 2.6.34
-Date: Tue, 02 Nov 2010 20:47:39 +0100
-Message-ID: <4CD06ADB.9010307@gmail.com>
-References: <201010310406.07767.volkerarmin@googlemail.com> <201010311502.34199.volkerarmin@googlemail.com> <4CCFE344.5050706@gmail.com> <201011021915.43139.volkerarmin@googlemail.com>
+From: Philipp Reisner <philipp.reisner@linbit.com>
+Subject: Re: [Drbd-dev] [PATCHSET] block: clean up bdev claim/release handling
+Date: Wed, 3 Nov 2010 16:53:08 +0100
+Message-ID: <201011031653.09159.philipp.reisner@linbit.com>
+References: <1288628129-12811-1-git-send-email-tj@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <201011021915.43139.volkerarmin@googlemail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1288628129-12811-1-git-send-email-tj@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Volker Armin Hemmann <volkerarmin@googlemail.com>
-Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Type: Text/Plain; charset="us-ascii"
+To: drbd-dev@lists.linbit.com
+Cc: Tejun Heo <tj@kernel.org>, axboe@kernel.dk, hch@infradead.org, linux-kernel@vger.kernel.org, petero2@telia.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jack@suse.cz, akpm@linux-foundation.org, adilger.kernel@dilger.ca, tytso@mit.edu, mfasheh@suse.com, joel.becker@oracle.com, aelder@sgi.com, dm-devel@redhat.com, neilb@suse.de, leochen@broadcom.com, sbranden@broadcom.com, chris.mason@oracle.com, swhiteho@redhat.com, shaggy@linux.vnet.ibm.com, joern@logfs.org, konishi.ryusuke@lab.ntt.co.jp, reiserfs-devel@vger.kernel.org, viro@zeniv.linux.org.uk
 
-Volker Armin Hemmann wrote:
-> Hi,
->
-> On Tuesday 02 November 2010, Edward Shishkin wrote:
->   
->> find -inum 11052573
->>     
->
-> I moved all the pictures in home in their directory and one of the errors - 
-> 11052576 - is gone
->
-> 11052573 exists and when kde tries to generate the thumbnails, dmesg is again 
-> flooded. When I try to cat the file, I get an i/o error and dmesg is flooded even 
-> more.
-> About the fsck: when I do not pipe the output into stout.log, I can see the 
-> spinner/progress bar moving and the procent going up, so fsck is doing 
-> something. It just does not fix the problem. Is there some option to make fsck 
-> show what it is doing?
->   
+Am Montag, 1. November 2010, um 17:15:24 schrieb Tejun Heo:
+> bdev exclusive access handling is somewhat clumsy.  The primary
+> interface is bd_claim() and bd_release() but there also are
+> open_bdev_exclusive(), close_bdev_exclusive() and bd_claim_by_disk()
+> and bd_release_from_disk().
+[...]
+>  drivers/block/drbd/drbd_int.h   |    2
+>  drivers/block/drbd/drbd_main.c  |    7
+>  drivers/block/drbd/drbd_nl.c    |  103 ++-----
+[...]
 
-Ok, could you send me the packed metadata?
-Such packing will cut the orphan clusters though...
-Let's take a look why it doesn't print even consistency status.
+Hi Tejun,
 
-Edward.
+  Acked-by: Philipp Reisner <philipp.reisner@linbit.com>
+
+...for the DRBD part of the patch.
+
+Best,
+ Phil
