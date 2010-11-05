@@ -1,96 +1,57 @@
-From: Joe Perches <joe@perches.com>
-Subject: [PATCH 39/49] fs/reiserfs: Use vzalloc
-Date: Thu,  4 Nov 2010 20:08:03 -0700
-Message-ID: <3d1cffb03168ee990700bb6a2943d18f6600d8e6.1288925425.git.joe@perches.com>
-References: <alpine.DEB.2.00.1011031108260.11625@router.home>
+From: Giuseppe Argentieri <joe.silver@gmail.com>
+Subject: Fwd: Will there a reiser4 patch for the 2.6.36 series coming ?
+Date: Fri, 5 Nov 2010 19:14:56 +0100
+Message-ID: <AANLkTimMxHxbY_ZF-aLvuyHHiKU6WdcN-VA-p1Kw4m=P@mail.gmail.com>
+References: <dce612f0b856c0803330b3d4b314316a@mail.velocitynet.com.au>
+	<AANLkTi=wD3CYV97S=rYR1C-iOWGMsSTbwrVFN0642vQR@mail.gmail.com>
+	<AANLkTimkiEOqiLiaQz9Jr4ka9W8P+dFcW7QR=msGfQYW@mail.gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.00.1011031108260.11625@router.home>
-In-Reply-To: <cover.1288925424.git.joe@perches.com>
-References: <cover.1288925424.git.joe@perches.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:received:received:in-reply-to
+         :references:date:message-id:subject:from:to:content-type
+         :content-transfer-encoding;
+        bh=/lsjoaXlcG25t5l93Rem2pR6MhTsy1WMXFC8cesIdEA=;
+        b=BEIss06urSmg97qBfhkDCHiKVaZGY7WMfz9tnErlfBSDRSSR+dmVpDE11sZVspGUSa
+         QpbBgl2rFpBMY4PFud0lHsXJRl+iVEDytVM/K5ZJYRfTBhrDJhHIB9Ujj278mLEZ78G8
+         VBgAIDrMU/4MJ3vKnm/iluvDcRyTRKkSsPR8E=
+In-Reply-To: <AANLkTimkiEOqiLiaQz9Jr4ka9W8P+dFcW7QR=msGfQYW@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-devel@vger.kernel.org
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- fs/reiserfs/journal.c |    9 +++------
- fs/reiserfs/resize.c  |    4 +---
- 2 files changed, 4 insertions(+), 9 deletions(-)
+2010/10/27 <doiggl@velocitynet.com.au>
+>
+> Hello,
+> Will there a reiser4 patch for the 2.6.36 series coming ? [1]
 
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index 076c8b1..d8a2592 100644
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -292,14 +292,13 @@ int reiserfs_allocate_list_bitmaps(struct super_block *sb,
- 	for (i = 0; i < JOURNAL_NUM_BITMAPS; i++) {
- 		jb = jb_array + i;
- 		jb->journal_list = NULL;
--		jb->bitmaps = vmalloc(mem);
-+		jb->bitmaps = vzalloc(mem);
- 		if (!jb->bitmaps) {
- 			reiserfs_warning(sb, "clm-2000", "unable to "
- 					 "allocate bitmaps for journal lists");
- 			failed = 1;
- 			break;
- 		}
--		memset(jb->bitmaps, 0, mem);
- 	}
- 	if (failed) {
- 		free_list_bitmaps(sb, jb_array);
-@@ -354,11 +353,10 @@ static struct reiserfs_journal_cnode *allocate_cnodes(int num_cnodes)
- 	if (num_cnodes <= 0) {
- 		return NULL;
- 	}
--	head = vmalloc(num_cnodes * sizeof(struct reiserfs_journal_cnode));
-+	head = vzalloc(num_cnodes * sizeof(struct reiserfs_journal_cnode));
- 	if (!head) {
- 		return NULL;
- 	}
--	memset(head, 0, num_cnodes * sizeof(struct reiserfs_journal_cnode));
- 	head[0].prev = NULL;
- 	head[0].next = head + 1;
- 	for (i = 1; i < num_cnodes; i++) {
-@@ -2703,14 +2701,13 @@ int journal_init(struct super_block *sb, const char *j_dev_name,
- 	 * dependency inversion warnings.
- 	 */
- 	reiserfs_write_unlock(sb);
--	journal = SB_JOURNAL(sb) = vmalloc(sizeof(struct reiserfs_journal));
-+	journal = SB_JOURNAL(sb) = vzalloc(sizeof(struct reiserfs_journal));
- 	if (!journal) {
- 		reiserfs_warning(sb, "journal-1256",
- 				 "unable to get memory for journal structure");
- 		reiserfs_write_lock(sb);
- 		return 1;
- 	}
--	memset(journal, 0, sizeof(struct reiserfs_journal));
- 	INIT_LIST_HEAD(&journal->j_bitmap_nodes);
- 	INIT_LIST_HEAD(&journal->j_prealloc_list);
- 	INIT_LIST_HEAD(&journal->j_working_list);
-diff --git a/fs/reiserfs/resize.c b/fs/reiserfs/resize.c
-index b3a94d2..cfb5196 100644
---- a/fs/reiserfs/resize.c
-+++ b/fs/reiserfs/resize.c
-@@ -111,15 +111,13 @@ int reiserfs_resize(struct super_block *s, unsigned long block_count_new)
- 		/* allocate additional bitmap blocks, reallocate array of bitmap
- 		 * block pointers */
- 		bitmap =
--		    vmalloc(sizeof(struct reiserfs_bitmap_info) * bmap_nr_new);
-+		    vzalloc(sizeof(struct reiserfs_bitmap_info) * bmap_nr_new);
- 		if (!bitmap) {
- 			/* Journal bitmaps are still supersized, but the memory isn't
- 			 * leaked, so I guess it's ok */
- 			printk("reiserfs_resize: unable to allocate memory.\n");
- 			return -ENOMEM;
- 		}
--		memset(bitmap, 0,
--		       sizeof(struct reiserfs_bitmap_info) * bmap_nr_new);
- 		for (i = 0; i < bmap_nr; i++)
- 			bitmap[i] = old_bitmap[i];
- 
--- 
-1.7.3.1.g432b3.dirty
+I join this question
 
+:)
+
+
+
+--
+Giuseppe Argentieri (joe.silver@gmail.com)
+
+
+
+
+--
+Giuseppe Argentieri (joe.silver@gmail.com)
+
+=ABla vera difficolt=E0 sta nel fatto che la fisica =E8 un tipo di meta=
+fisica;
+la fisica descrive "la realt=E0". Ma noi non sappiamo cosa sia "la
+realt=E0", se non attraverso la descrizione fisica che ne diamo di essa=
+=BB
+
+lettera di Einstein a Schr=F6dinger (1935)
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
