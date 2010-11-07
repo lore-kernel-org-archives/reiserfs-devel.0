@@ -1,34 +1,40 @@
-From: Christian Stroetmann <stroetmann@ontolinux.com>
-Subject: Re: Fwd: Will there a reiser4 patch for the 2.6.36 series coming
- ?
-Date: Fri, 05 Nov 2010 19:42:00 +0100
-Message-ID: <4CD44FF8.2090304@ontolinux.com>
-References: <dce612f0b856c0803330b3d4b314316a@mail.velocitynet.com.au>	<AANLkTi=wD3CYV97S=rYR1C-iOWGMsSTbwrVFN0642vQR@mail.gmail.com>	<AANLkTimkiEOqiLiaQz9Jr4ka9W8P+dFcW7QR=msGfQYW@mail.gmail.com> <AANLkTimMxHxbY_ZF-aLvuyHHiKU6WdcN-VA-p1Kw4m=P@mail.gmail.com>
+From: Arkadiusz Miskiewicz <a.miskiewicz@gmail.com>
+Subject: git tree for reiser4 development
+Date: Sun, 7 Nov 2010 15:38:43 +0100
+Message-ID: <201011071538.44063.a.miskiewicz@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <AANLkTimMxHxbY_ZF-aLvuyHHiKU6WdcN-VA-p1Kw4m=P@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:from:to:subject:date
+         :user-agent:mime-version:message-id:content-type
+         :content-transfer-encoding;
+        bh=gDROPmItBXumhtY1r8r5jNUoWYJU/i0iboPOfVM+clE=;
+        b=O0Tu/M7NGInQLhIp8UDZhRwFQdiKE0d1oeKqWyRk3OMjw7eu3kv0yh7gFJgSajsh5N
+         pMdgTGsmB8Byn2hH29DJXY52XQitG1Zyh4Eo6MPCBDHh+KS6k5lWyQqux9WJt4/yurxC
+         na4UBmikL8NxniItB3qObr4w/qWbntimHj7Eo=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: linux reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Content-Type: Text/Plain; charset="utf-8"
+To: reiserfs-devel@vger.kernel.org
 
-  On the 05.11.2010 19:14, Giuseppe Argentieri wrote:
-> 2010/10/27<doiggl@velocitynet.com.au>
->> Hello,
->> Will there a reiser4 patch for the 2.6.36 series coming ? [1]
-> I join this question
->
-> :)
->
->
->
-> --
-> Giuseppe Argentieri (joe.silver@gmail.com)
->
-Me too
+Hi.
 
-:D
+How reiser4 is developed - is there a public git repo with development =
+tree=20
+and if so, where?
 
-The bar is opened
-Christian O>-<   *<:o)   _(D)>-<
+Thanks,
+--=20
+Arkadiusz Mi=C5=9Bkiewicz        PLD/Linux Team
+arekm / maven.pl            http://ftp.pld-linux.org/
+
+--=20
+Arkadiusz Mi=C5=9Bkiewicz        PLD/Linux Team
+arekm / maven.pl            http://ftp.pld-linux.org/
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
