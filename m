@@ -1,40 +1,35 @@
-From: Arkadiusz Miskiewicz <a.miskiewicz@gmail.com>
-Subject: git tree for reiser4 development
-Date: Sun, 7 Nov 2010 15:38:43 +0100
-Message-ID: <201011071538.44063.a.miskiewicz@gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: git tree for reiser4 development
+Date: Sun, 07 Nov 2010 15:55:58 +0100
+Message-ID: <4CD6BDFE.2070503@gmail.com>
+References: <201011071538.44063.a.miskiewicz@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:from:to:subject:date
-         :user-agent:mime-version:message-id:content-type
-         :content-transfer-encoding;
-        bh=gDROPmItBXumhtY1r8r5jNUoWYJU/i0iboPOfVM+clE=;
-        b=O0Tu/M7NGInQLhIp8UDZhRwFQdiKE0d1oeKqWyRk3OMjw7eu3kv0yh7gFJgSajsh5N
-         pMdgTGsmB8Byn2hH29DJXY52XQitG1Zyh4Eo6MPCBDHh+KS6k5lWyQqux9WJt4/yurxC
-         na4UBmikL8NxniItB3qObr4w/qWbntimHj7Eo=
+In-Reply-To: <201011071538.44063.a.miskiewicz@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: Text/Plain; charset="utf-8"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Arkadiusz Miskiewicz <a.miskiewicz@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-Hi.
+Arkadiusz Miskiewicz wrote:
+> Hi.
+>   
 
-How reiser4 is developed - is there a public git repo with development =
-tree=20
-and if so, where?
+Hello.
+
+> How reiser4 is developed 
+
+via sending patches to -mm
+
+> - is there a public git repo with development tree 
+> and if so, where?
+>   
+
+There is a Namesys corporative git repo, but currently it is
+unavailable for public. The last commit was at November 2006,
+or so. I might want to put it to kernel.org..
 
 Thanks,
---=20
-Arkadiusz Mi=C5=9Bkiewicz        PLD/Linux Team
-arekm / maven.pl            http://ftp.pld-linux.org/
-
---=20
-Arkadiusz Mi=C5=9Bkiewicz        PLD/Linux Team
-arekm / maven.pl            http://ftp.pld-linux.org/
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Edward.
