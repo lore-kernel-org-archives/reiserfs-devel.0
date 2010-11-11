@@ -1,85 +1,86 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [PATCH] reiserfs: Fix locking in reiserfs_quota_on()
-Date: Tue, 9 Nov 2010 16:40:48 +0100
-Message-ID: <20101109154044.GA5403@nowhere>
-References: <1288225703-8170-1-git-send-email-jack@suse.cz> <20101028013604.GB6233@nowhere> <20101109153740.GC4936@quack.suse.cz>
+From: Tejun Heo <tj@kernel.org>
+Subject: [PATCH 6/5] block: check bdev_read_only() from blkdev_get()
+Date: Thu, 11 Nov 2010 18:10:17 +0100
+Message-ID: <4CDC2379.3050505@kernel.org>
+References: <1288628129-12811-1-git-send-email-tj@kernel.org>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:received:date:from:to:cc
-         :subject:message-id:references:mime-version:content-type
-         :content-disposition:in-reply-to:user-agent;
-        bh=2hr6Vjw4gfdQ6hjee6SeninlmKBSnRb1FTBC5LVSr8Q=;
-        b=XO560O5o1IjjEvK31UDSpjFRy4eB9YNtWtmHJxlz5RGaBrhN6H3CG2R1KTR0ltmPNL
-         VngltgmnfmBOPIVkCoTk/c4l7q8nxhoX45IjkNDA1NuX90IiEKvtuSuyCKL7hbPJFkJ1
-         2iB6IFFXc1LeP2jTGkX1LPk4XIFIuhlF2ikuQ=
-Content-Disposition: inline
-In-Reply-To: <20101109153740.GC4936@quack.suse.cz>
+In-Reply-To: <1288628129-12811-1-git-send-email-tj@kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jan Kara <jack@suse.cz>
-Cc: reiserfs-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>
+To: axboe@kernel.dk, hch@infradead.org, linux-kernel@vger.kernel.org, petero2@telia.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jack@suse.cz, akpm@linux-foundation.org, adilge
 
-On Tue, Nov 09, 2010 at 04:37:40PM +0100, Jan Kara wrote:
-> On Thu 28-10-10 03:36:07, Frederic Weisbecker wrote:
-> > On Thu, Oct 28, 2010 at 02:28:23AM +0200, Jan Kara wrote:
-> > > reiserfs_quota_on() unpacks a tail of quota file in case it has one. But after
-> > > BKL conversion, reiserfs_unpack() expects to be called with write_lock held.
-> > > So acquire the lock before calling reiserfs_unpack() to avoid assertion
-> > > failures.
-> > > 
-> > > Reported-by: markus.gapp@gmx.net
-> > > Signed-off-by: Jan Kara <jack@suse.cz>
-> > > ---
-> > >  fs/reiserfs/super.c |    2 ++
-> > >  1 files changed, 2 insertions(+), 0 deletions(-)
-> > > 
-> > >  Frederic, would you merge this patch or should I merge it?
-> > > 
-> > > diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-> > > index 6e85cfd..73c000f 100644
-> > > --- a/fs/reiserfs/super.c
-> > > +++ b/fs/reiserfs/super.c
-> > > @@ -2059,7 +2059,9 @@ static int reiserfs_quota_on(struct super_block *sb, int type, int format_id,
-> > >  	inode = path->dentry->d_inode;
-> > >  	/* We must not pack tails for quota files on reiserfs for quota IO to work */
-> > >  	if (!(REISERFS_I(inode)->i_flags & i_nopack_mask)) {
-> > > +		reiserfs_write_lock(sb);
-> > >  		err = reiserfs_unpack(inode, NULL);
-> > > +		reiserfs_write_unlock(sb);
-> > >  		if (err) {
-> > >  			reiserfs_warning(sb, "super-6520",
-> > >  				"Unpacking tail of quota file failed"
-> > > -- 
-> > > 1.7.1
-> > > 
-> > 
-> > 
-> > 
-> > Yeah. This is due to a recent fix in reiserfs_unpack().
-> > And in this fix I assumed reiserfs_unpack() was always called under the
-> > reiserfs lock.
-> > I was wrong, I thought that reiserfs_quota_on() was ok because it can
-> > call joural_begin() which appears to have the same requirements.
-> > But no that's probably another bug, journal_begin() should also
-> > be called under the reiserfs lock.
-> > Anyway that must be another patch.
-> > 
-> > 
-> > For this specific problem, it might be slightly more proper to do the
-> > below. It lowers a bit the reiserfs lock coverage and also fixes
-> > a weird lock-unlock ordering in reiserfs_unpack() that was doing:
-> > 
-> > 	Lock A - Lock B - Unlock A - Unlock B
-> > 
-> > Hmm?
->   Looks OK to me. Do you plan to merge it?
+bdev read-only status can be queried using bdev_read_only() and may
+change while the device is being opened.  Enforce it by checking it
+from blkdev_get() after open succeeds.
 
+This makes bdev_read_only() check in open_bdev_exclusive() and
+fsg_lun_open() unnecessary.  Drop them.
 
-Yep, will be sent to Andrew soon.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: David Brownell <dbrownell@users.sourceforge.net>
+Cc: linux-usb@vger.kernel.org
+---
+ drivers/usb/gadget/storage_common.c |    7 ++-----
+ fs/block_dev.c                      |   11 ++++++-----
+ 2 files changed, 8 insertions(+), 10 deletions(-)
 
-Thanks!
+diff --git a/drivers/usb/gadget/storage_common.c b/drivers/usb/gadget/storage_common.c
+index 3b513ba..b015561 100644
+--- a/drivers/usb/gadget/storage_common.c
++++ b/drivers/usb/gadget/storage_common.c
+@@ -543,7 +543,7 @@ static int fsg_lun_open(struct fsg_lun *curlun, const char *filename)
+ 	ro = curlun->initially_ro;
+ 	if (!ro) {
+ 		filp = filp_open(filename, O_RDWR | O_LARGEFILE, 0);
+-		if (-EROFS == PTR_ERR(filp))
++		if (PTR_ERR(filp) == -EROFS || PTR_ERR(filp) == -EACCES)
+ 			ro = 1;
+ 	}
+ 	if (ro)
+@@ -558,10 +558,7 @@ static int fsg_lun_open(struct fsg_lun *curlun, const char *filename)
+
+ 	if (filp->f_path.dentry)
+ 		inode = filp->f_path.dentry->d_inode;
+-	if (inode && S_ISBLK(inode->i_mode)) {
+-		if (bdev_read_only(inode->i_bdev))
+-			ro = 1;
+-	} else if (!inode || !S_ISREG(inode->i_mode)) {
++	if (!inode || (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))) {
+ 		LINFO(curlun, "invalid file type: %s\n", filename);
+ 		goto out;
+ 	}
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 269bfbb..606a525 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -1149,6 +1149,12 @@ int blkdev_get(struct block_device *bdev, fmode_t mode, void *holder)
+
+ 	res = __blkdev_get(bdev, mode, 0);
+
++	/* __blkdev_get() may alter read only status, check it afterwards */
++	if (!res && (mode & FMODE_WRITE) && bdev_read_only(bdev)) {
++		__blkdev_put(bdev, mode, 0);
++		res = -EACCES;
++	}
++
+ 	if (whole) {
+ 		/* finish claiming */
+ 		spin_lock(&bdev_lock);
+@@ -1453,11 +1459,6 @@ struct block_device *open_bdev_exclusive(const char *path, fmode_t mode, void *h
+ 	if (error)
+ 		return ERR_PTR(error);
+
+-	if ((mode & FMODE_WRITE) && bdev_read_only(bdev)) {
+-		blkdev_put(bdev, mode);
+-		return ERR_PTR(-EACCES);
+-	}
+-
+ 	return bdev;
+ }
+
+-- 
+1.7.1
 
