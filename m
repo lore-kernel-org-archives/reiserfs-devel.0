@@ -1,72 +1,91 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Reiser4 for Linux-2.6.36
-Date: Mon, 22 Nov 2010 04:54:15 +0100
-Message-ID: <4CE9E967.4020605@gmail.com>
-References: <4CE87674.4090909@gmail.com> <4CE93CEB.8050504@ya.ru> <4CE9603B.7050103@gmail.com> <000001cb89be$cebdfc20$6c39f460$@com> <4CE9D9D3.2010901@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------060102010800010608050901"
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+From: Akinobu Mita <akinobu.mita@gmail.com>
+Subject: [PATCH v3 15/22] reiserfs: use little-endian bitops
+Date: Tue, 23 Nov 2010 22:38:17 +0900
+Message-ID: <1290519504-3958-16-git-send-email-akinobu.mita@gmail.com>
+References: <1290519504-3958-1-git-send-email-akinobu.mita@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from
-         :user-agent:mime-version:to:cc:subject:references:in-reply-to
-         :content-type;
-        bh=EYwD47x0GVRw1v2KQX0ciLqwyVKWFrBwT/TBy2dM8aA=;
-        b=oRP3tgEn0ECMTt7bgYcQu1/DuqpiapzkouvIcs3gk29CUybE/bG8DoB0uvoYRauQyD
-         fmh+1zdWSvxvtBDKxLIFfl4Uy5duwvql86XbkuahWCprbFZgxtROlabwovL0teHF/1O7
-         vEGLniUm4m/wHmqO0puZRSNg5kBKhsBrncu4g=
-In-Reply-To: <4CE9D9D3.2010901@gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+        h=domainkey-signature:received:received:from:to:cc:subject:date
+         :message-id:x-mailer:in-reply-to:references;
+        bh=2/GALOJ3SGzE8joBJofl/uq4rpDmntjxVIiKxzHcQic=;
+        b=T2YKwmWzaJHI3uDXbH09h9554xzcvxolff9vaqVMT6+ppKstSrB0tuAOMZbmYSGAoA
+         lAADto5w6GIEerGD6V9NbMXisUxw2G13YoCieUrmzpgu5qsfIVwrO5Aq+er23uHIzqyv
+         0g+eqmVVjW7j43dABPZO+Y0eHUlsAp3Wn7MhY=
+In-Reply-To: <1290519504-3958-1-git-send-email-akinobu.mita@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: =?UTF-8?B?0K7RgNC40Lkg0JfQsNC40LrQuNC9?= <yzaikin@gmail.com>
-Cc: dimas000@ya.ru, 'Reiserfs mailing list' <reiserfs-devel@vger.kernel.org>
-
-This is a multi-part message in MIME format.
---------------060102010800010608050901
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-
-Edward Shishkin wrote:
-> Юрий Заикин wrote:
->   
->> The bug with building OpenOffice is still there though now it doesn't produce a kernel panic. The build script just randomly fails with IO exceptions.
->>     
->
-> Is compression enabled (did you format
-> the partition with "create=ccreg40" option)?
->
-> Thanks for the report.
-
-Ah, I see..
-Could you please apply the attached patch?
-Does it fix your problem?
-
-Thanks,
-Edward.
-
-
-
---------------060102010800010608050901
-Content-Type: text/x-patch;
- name="reiser4-fix-write_begin.patch"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="reiser4-fix-write_begin.patch"
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: Akinobu Mita <akinobu.mita@gmail.com>, reiserfs-devel@vger.kernel.org
 
-diff -urN linux-2.6.36.orig/fs/reiser4/plugin/file/cryptcompress.c linux-2.6.36/fs/reiser4/plugin/file/cryptcompress.c
---- linux-2.6.36.orig/fs/reiser4/plugin/file/cryptcompress.c	2010-11-22 04:34:19.000000000 +0100
-+++ linux-2.6.36/fs/reiser4/plugin/file/cryptcompress.c	2010-11-22 04:39:34.000000000 +0100
-@@ -3785,10 +3785,6 @@
- 		ClearPageUptodate(page);
- 		goto err0;
- 	}
--	if (len != PAGE_CACHE_SIZE && !PageUptodate(page)) {
--		ret = RETERR(-EIO);
--		goto err0;
--	}
- 	/* Success. All resources (including checkin_mutex)
- 	   will be released in ->write_end() */
- 	*fsdata = (void *)buf;
+As a preparation for removing ext2 non-atomic bit operations from
+asm/bitops.h. This converts ext2 non-atomic bit operations to
+little-endian bit operations.
 
---------------060102010800010608050901--
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
+---
+No change from previous submission
+ include/linux/reiserfs_fs.h |   34 ++++++++++++++++++++--------------
+ 1 files changed, 20 insertions(+), 14 deletions(-)
+
+diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
+index c21072a..f50a5e3 100644
+--- a/include/linux/reiserfs_fs.h
++++ b/include/linux/reiserfs_fs.h
+@@ -1124,15 +1124,21 @@ struct reiserfs_de_head {
+ #   define aligned_address(addr)           ((void *)((long)(addr) & ~((1UL << ADDR_UNALIGNED_BITS) - 1)))
+ #   define unaligned_offset(addr)          (((int)((long)(addr) & ((1 << ADDR_UNALIGNED_BITS) - 1))) << 3)
+ 
+-#   define set_bit_unaligned(nr, addr)     ext2_set_bit((nr) + unaligned_offset(addr), aligned_address(addr))
+-#   define clear_bit_unaligned(nr, addr)   ext2_clear_bit((nr) + unaligned_offset(addr), aligned_address(addr))
+-#   define test_bit_unaligned(nr, addr)    ext2_test_bit((nr) + unaligned_offset(addr), aligned_address(addr))
++#   define set_bit_unaligned(nr, addr)	\
++	__test_and_set_le_bit((nr) + unaligned_offset(addr), aligned_address(addr))
++#   define clear_bit_unaligned(nr, addr)	\
++	__test_and_clear_le_bit((nr) + unaligned_offset(addr), aligned_address(addr))
++#   define test_bit_unaligned(nr, addr)	\
++	test_le_bit((nr) + unaligned_offset(addr), aligned_address(addr))
+ 
+ #else
+ 
+-#   define set_bit_unaligned(nr, addr)     ext2_set_bit(nr, addr)
+-#   define clear_bit_unaligned(nr, addr)   ext2_clear_bit(nr, addr)
+-#   define test_bit_unaligned(nr, addr)    ext2_test_bit(nr, addr)
++#   define set_bit_unaligned(nr, addr)	\
++	__test_and_set_le_bit(nr, (unsigned long *)(addr))
++#   define clear_bit_unaligned(nr, addr)	\
++	__test_and_clear_le_bit(nr, (unsigned long *)(addr))
++#   define test_bit_unaligned(nr, addr)	\
++	test_le_bit(nr, (unsigned long *)(addr))
+ 
+ #endif
+ 
+@@ -2329,14 +2335,14 @@ __u32 keyed_hash(const signed char *msg, int len);
+ __u32 yura_hash(const signed char *msg, int len);
+ __u32 r5_hash(const signed char *msg, int len);
+ 
+-/* the ext2 bit routines adjust for big or little endian as
+-** appropriate for the arch, so in our laziness we use them rather
+-** than using the bit routines they call more directly.  These
+-** routines must be used when changing on disk bitmaps.  */
+-#define reiserfs_test_and_set_le_bit   ext2_set_bit
+-#define reiserfs_test_and_clear_le_bit ext2_clear_bit
+-#define reiserfs_test_le_bit           ext2_test_bit
+-#define reiserfs_find_next_zero_le_bit ext2_find_next_zero_bit
++#define reiserfs_test_and_set_le_bit(nr, addr)	\
++	__test_and_set_le_bit((nr), (unsigned long *)(addr))
++#define reiserfs_test_and_clear_le_bit(nr, addr)	\
++	__test_and_clear_le_bit((nr), (unsigned long *)(addr))
++#define reiserfs_test_le_bit(nr, addr)	\
++	test_le_bit((nr), (unsigned long *)(addr))
++#define reiserfs_find_next_zero_le_bit(addr, size, off)	\
++	find_next_zero_le_bit((unsigned long *)(addr), (size), (off))
+ 
+ /* sometimes reiserfs_truncate may require to allocate few new blocks
+    to perform indirect2direct conversion. People probably used to
+-- 
+1.7.3.2
