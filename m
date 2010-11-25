@@ -1,60 +1,93 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Subject: [PATCH] exofs: simple fsync race fix
-Date: Thu, 25 Nov 2010 12:52:08 +0200
-Message-ID: <4CEE3FD8.6080202@panasas.com>
-References: <20101125074909.GA4160@amd> <4CEE2C2E.4010003@panasas.com> <20101125100603.GA3164@amd> <4CEE3F9F.9070108@panasas.com>
+From: Nick Piggin <npiggin@kernel.dk>
+Subject: Re: [RFC][PATCH] Possible data integrity problems in lots of
+ filesystems?
+Date: Thu, 25 Nov 2010 22:47:11 +1100
+Message-ID: <20101125114711.GA3622@amd>
+References: <20101125074909.GA4160@amd>
+ <4CEE2C2E.4010003@panasas.com>
+ <20101125100603.GA3164@amd>
+ <4CEE3F9F.9070108@panasas.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-ext4-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <4CEE3F9F.9070108@panasas.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-ext4-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Nick Piggin <npiggin@kernel.dk>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, Roman Zippel <zippel@linux-m68k.org>, "Tigran A. Aivazian" <tigran@aivazian.fsnet.co.uk>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Dave Kleikamp <shaggy@linux.vnet.ibm.com>, Bob Copeland <me@bobcopeland.com>, reiserfs-devel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Evgeniy Dushistov <dushistov@mail.ru>, Jan Kara <jack@suse.cz>
+Content-Transfer-Encoding: 7bit
+To: Boaz Harrosh <bharrosh@panasas.com>
+Cc: Nick Piggin <npiggin@kernel.dk>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, Roman Zippel <zippel@linux-m68k.org>, "Tigran A. Aivazian" <tigran@aivazian.fsnet.co.uk>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Dave Kleikamp <shaggy@linux.vnet.ibm.com>, Bob Copeland <me@bobcopeland.com>, reiserfs-devel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Evgeniy Dushistov <dushistov@mail.ru>, Jan Kara <jack@suse.cz>
 
-From: Nick Piggin <npiggin@kernel.dk>
+On Thu, Nov 25, 2010 at 12:51:11PM +0200, Boaz Harrosh wrote:
+> On 11/25/2010 12:06 PM, Nick Piggin wrote:
+> > On Thu, Nov 25, 2010 at 11:28:14AM +0200, Boaz Harrosh wrote:
+> 
+> >>> Index: linux-2.6/fs/exofs/file.c
+> >>> ===================================================================
+> >>> --- linux-2.6.orig/fs/exofs/file.c	2010-11-19 16:50:00.000000000 +1100
+> >>> +++ linux-2.6/fs/exofs/file.c	2010-11-19 16:50:07.000000000 +1100
+> >>> @@ -48,11 +48,6 @@ static int exofs_file_fsync(struct file
+> >>>  	struct inode *inode = filp->f_mapping->host;
+> >>>  	struct super_block *sb;
+> >>>  
+> >>> -	if (!(inode->i_state & I_DIRTY))
+> >>> -		return 0;
+> >>> -	if (datasync && !(inode->i_state & I_DIRTY_DATASYNC))
+> >>> -		return 0;
+> >>> -
+> >>>  	ret = sync_inode_metadata(inode, 1);
+> >>>  
+> >>>  	/* This is a good place to write the sb */
+> >>>
+> >>
+> >> Is that a good enough fix for the issue in your opinion?
+> >> Or is there more involved?
+> > 
+> > For the inode dirty bit race problem, yes it should fix it.
+> > sync_inode_metadata basically makes the same checks without
+> > races (in a subsequent patch I re-introduced the datasync
+> > optimisation).
+> > 
+> >  
+> 
+> > 
+> > Well in your fsync, you need to wait for inode writeback
+> > that might have been started by an asynchronous write_inode.
+> > 
+> 
+> All I'm calling is sync_inode_metadata(,1) which calls sync_inode()
+> which calls writeback_single_inode(sync_mode == WB_SYNC_ALL). It gets
+> a little complicated but from the looks of it, even though the
+> call to .write_inode() is not under any lock the state machine there
+> will do inode_wait_for_writeback() if there was one in motion
+> all ready. ?
+> 
+> And it looks like writeback_single_inode() does all the proper
+> checks in the correct order for these flags above.
+> 
+> So current code in exofs_file_fsync() looks scary to me. I would
+> like to push your above patch for this Kernel. (I'll repost it)
 
-It is incorrect to test inode dirty bits without participating in the inode
-writeback protocol. Inode writeback sets I_SYNC and clears I_DIRTY_?, then
-writes out the particular bits, then clears I_SYNC when it is done. BTW. it
-may not completely write all pages out, so I_DIRTY_PAGES would get set
-again.
+It does not get it right, because of the situation I described
+above. Background writeout can come in first, and clear the inode
+dirty bits, and call your ->write_inode for async writeout.
 
-This is a standard pattern used throughout the kernel's writeback caches
-(I_SYNC ~= I_WRITEBACK, if that makes it clearer).
+That means you skip doing the exofs_put_io_state(), and (I presume)
+this means you aren't waiting for write completion there.
 
-And so it is not possible to determine an inode's dirty status just by
-checking I_DIRTY bits. Especially not for the purpose of data integrity
-syncs.
+What then happens is that sync_inode_metadata() from your fsync
+does not call ->write_inode because the inode dirty bits are clear.
+It's basically a noop. So you need to either make your .write_inode
+always synchronous, or wait for it in your .fsync and .sync_fs.
 
-Missing the check for these bits means that fsync can complete while
-writeback to the inode is underway. Inode writeback functions get this
-right, so call into them rather than try to shortcut things by testing
-dirty state improperly.
 
-Signed-off-by: Nick Piggin <npiggin@kernel.dk>
-Signed-off-by: Boaz Harrosh <bharrosh@panasas.com>
----
- fs/exofs/file.c |    5 -----
- 1 files changed, 0 insertions(+), 5 deletions(-)
+> > Also, with your sync_inode_metadata call, you shouldn't need the
+> > sync_inode call by the looks.
+> >  
+> 
+> What? I missed you. You mean I don't need to sync_inode_metadata(,wait==1),
+> or what did you mean?
 
-diff --git a/fs/exofs/file.c b/fs/exofs/file.c
-index b905c79..4c0d6ba 100644
---- a/fs/exofs/file.c
-+++ b/fs/exofs/file.c
-@@ -48,11 +48,6 @@ static int exofs_file_fsync(struct file *filp, int datasync)
- 	struct inode *inode = filp->f_mapping->host;
- 	struct super_block *sb;
- 
--	if (!(inode->i_state & I_DIRTY))
--		return 0;
--	if (datasync && !(inode->i_state & I_DIRTY_DATASYNC))
--		return 0;
--
- 	ret = sync_inode_metadata(inode, 1);
- 
- 	/* This is a good place to write the sb */
--- 
-1.7.2.3
+Sorry, I was looking at the wrong code, ignore that.
 
+Nick
