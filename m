@@ -1,49 +1,175 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Subject: Re: [RFC][PATCH] Possible data integrity problems in lots of filesystems?
-Date: Thu, 25 Nov 2010 14:18:30 +0200
-Message-ID: <4CEE5416.4020904@panasas.com>
-References: <20101125074909.GA4160@amd> <4CEE2C2E.4010003@panasas.com> <20101125100603.GA3164@amd> <4CEE3F9F.9070108@panasas.com> <20101125114711.GA3622@amd>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: [PATCH] reiserfs: implement basic reiserfs 3.7
+Date: Sat, 27 Nov 2010 04:34:59 +0100
+Message-ID: <4CF07C63.40408@gmail.com>
+References: <4CE7F21B.4050605@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20101125114711.GA3622@amd>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:message-id:date:from
+         :user-agent:mime-version:to:cc:subject:references:in-reply-to
+         :content-type:content-transfer-encoding;
+        bh=GwFPrfq4RY/kndp80Gf6FVNIO6NW9SxRM+Bw8ZpgiCM=;
+        b=vIWpHvH50Px6MvlCRa5v4jbysrwfoQYfKb11pVS/I1GM7bd6rFFl0u/tjcEWk4sN5W
+         qkB394z5F12dqCPIv7RTQBvXqzLniC/0pU43YOWG4vu22cR1EAS1SG6ZtW+cKJbyHEHv
+         g5z+BLALhatpDhsIZkhE8CQLsA5W+9/KoCZRg=
+In-Reply-To: <4CE7F21B.4050605@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Nick Piggin <npiggin@kernel.dk>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, Roman Zippel <zippel@linux-m68k.org>, "Tigran A. Aivazian" <tigran@aivazian.fsnet.co.uk>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Dave Kleikamp <shaggy@linux.vnet.ibm.com>, Bob Copeland <me@bobcopeland.com>, reiserfs-devel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Evgeniy Dushistov <dushistov@mail.ru>, Jan Kara <jack@suse.cz>
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
-On 11/25/2010 01:47 PM, Nick Piggin wrote:
-> On Thu, Nov 25, 2010 at 12:51:11PM +0200, Boaz Harrosh wrote:
-> 
-> It does not get it right, because of the situation I described
-> above. Background writeout can come in first, and clear the inode
-> dirty bits, and call your ->write_inode for async writeout.
-> 
-> That means you skip doing the exofs_put_io_state(), and (I presume)
-> this means you aren't waiting for write completion there.
-> 
-> What then happens is that sync_inode_metadata() from your fsync
-> does not call ->write_inode because the inode dirty bits are clear.
-> It's basically a noop. So you need to either make your .write_inode
-> always synchronous, or wait for it in your .fsync and .sync_fs.
-> 
+Jeff Mahoney wrote:
+>  This patch contains the basic implementation for reiserfs 3.7.
+>
+>  Specifically, it extends reiserfs 3.6 to allow feature compatibility bits.
+>  Since it extends v3.6, it assumes allowing a nonstandard journal, so some
+>  paths have been adjusted to test for a nonstandard journal instead of
+>  just having the JR superblock magic.
+>
+>  I don't have any large plans to extend beyond some very basic features,
+>  although extended attributes would be much more efficiently implemented
+>  if they were first class items instead of hidden files.
+>
+>  The next patch in the series adds support to allow v2 stat data items
+>  to describe the number of blocks in fs-blocksize blocks instead of
+>  512 byte blocks.
+>
+> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+> ---
+>  fs/reiserfs/journal.c          |    2 
+>  fs/reiserfs/prints.c           |    6 +
+>  fs/reiserfs/procfs.c           |    4 -
+>  fs/reiserfs/super.c            |  140 ++++++++++++++++++++++++++++++++++++++++-
+>  include/linux/magic.h          |    1 
+>  include/linux/reiserfs_fs.h    |   11 ++-
+>  include/linux/reiserfs_fs_sb.h |   39 +++++++++++
+>  7 files changed, 196 insertions(+), 7 deletions(-)
+>
+> --- a/fs/reiserfs/journal.c
+> +++ b/fs/reiserfs/journal.c
+> @@ -2850,7 +2850,7 @@ int journal_init(struct super_block *sb,
+>  	jh = (struct reiserfs_journal_header *)(bhjh->b_data);
+>  
+>  	/* make sure that journal matches to the super block */
+> -	if (is_reiserfs_jr(rs)
+> +	if (has_nonstandard_journal(rs)
+>   
 
-Rrr I now see what you mean, that the previous call to
-writeback_single_inode(wait==0) came and go without actually
-finishing because exofs_write_inode(wait==0).
+Nup.
+Should be:
+if ((is_reiserfs_jr(rs) || is_reiserfs_3_7)
 
-So I wish there was an
-write_inode_async_done() that will actually do the final inode_sync_complete
-or something like that, right? (That I could call from exofs::updatei_done)
+>  	    && (le32_to_cpu(jh->jh_journal.jp_journal_magic) !=
+>  		sb_jp_journal_magic(rs))) {
+>  		reiserfs_warning(sb, "sh-460",
+> --- a/fs/reiserfs/prints.c
+> +++ b/fs/reiserfs/prints.c
+> @@ -532,6 +532,8 @@ static int print_super_block(struct buff
+>  	} else if (is_reiserfs_jr(rs)) {
+>  		version = ((sb_version(rs) == REISERFS_VERSION_2) ?
+>  			   "3.6" : "3.5");
+> +	} else if (is_reiserfs_3_7(rs)) {
+> +		version = "3.7";
+>  	} else {
+>  		return 1;
+>  	}
+> @@ -547,12 +549,12 @@ static int print_super_block(struct buff
+>  //    skipped = (bh->b_blocknr * bh->b_size) / sb_blocksize(rs);
+>  	skipped = bh->b_blocknr;
+>  	data_blocks = sb_block_count(rs) - skipped - 1 - sb_bmap_nr(rs) -
+> -	    (!is_reiserfs_jr(rs) ? sb_jp_journal_size(rs) +
+> +	    (!has_nonstandard_journal(rs) ? sb_jp_journal_size(rs) +
+>   
+ditto
 
-Sigh. I think I'll go with the always wait==1 at exofs_write_inode() for
-now. Just as your patch.
+>  	     1 : sb_reserved_for_journal(rs)) - sb_free_blocks(rs);
+>  	printk
+>  	    ("Busy blocks (skipped %d, bitmaps - %d, journal (or reserved) blocks - %d\n"
+>  	     "1 super block, %d data blocks\n", skipped, sb_bmap_nr(rs),
+> -	     (!is_reiserfs_jr(rs) ? (sb_jp_journal_size(rs) + 1) :
+> +	     (!has_nonstandard_journal(rs) ? (sb_jp_journal_size(rs) + 1) :
+>   
+ditto
+>  	      sb_reserved_for_journal(rs)), data_blocks);
+>  	printk("Root block %u\n", sb_root_block(rs));
+>  	printk("Journal block (first) %d\n", sb_jp_journal_1st_block(rs));
+> --- a/fs/reiserfs/procfs.c
+> +++ b/fs/reiserfs/procfs.c
+> @@ -28,7 +28,9 @@ static int show_version(struct seq_file
+>  {
+>  	char *format;
+>  
+> -	if (REISERFS_SB(sb)->s_properties & (1 << REISERFS_3_6)) {
+> +	if (REISERFS_SB(sb)->s_properties & (1 << REISERFS_3_7)) {
+> +		format = "3.7";
+> +	} else if (REISERFS_SB(sb)->s_properties & (1 << REISERFS_3_6)) {
+>  		format = "3.6";
+>  	} else if (REISERFS_SB(sb)->s_properties & (1 << REISERFS_3_5)) {
+>  		format = "3.5";
+> --- a/fs/reiserfs/super.c
+> +++ b/fs/reiserfs/super.c
+> @@ -35,6 +35,7 @@ struct file_system_type reiserfs_fs_type
+>  static const char reiserfs_3_5_magic_string[] = REISERFS_SUPER_MAGIC_STRING;
+>  static const char reiserfs_3_6_magic_string[] = REISER2FS_SUPER_MAGIC_STRING;
+>  static const char reiserfs_jr_magic_string[] = REISER2FS_JR_SUPER_MAGIC_STRING;
+> +static const char reiserfs_3_7_magic_string[] = REISERFS_37_SUPER_MAGIC_STRING;
+>  
+>  int is_reiserfs_3_5(struct reiserfs_super_block *rs)
+>  {
+> @@ -48,6 +49,12 @@ int is_reiserfs_3_6(struct reiserfs_supe
+>  			strlen(reiserfs_3_6_magic_string));
+>  }
+>  
+> +int is_reiserfs_3_7(struct reiserfs_super_block *rs)
+> +{
+> +	return !strncmp(rs->s_v1.s_magic, reiserfs_3_7_magic_string,
+> +			strlen(reiserfs_3_7_magic_string));
+> +}
+> +
+>  int is_reiserfs_jr(struct reiserfs_super_block *rs)
+>  {
+>  	return !strncmp(rs->s_v1.s_magic, reiserfs_jr_magic_string,
+> @@ -57,7 +64,13 @@ int is_reiserfs_jr(struct reiserfs_super
+>  static int is_any_reiserfs_magic_string(struct reiserfs_super_block *rs)
+>  {
+>  	return (is_reiserfs_3_5(rs) || is_reiserfs_3_6(rs) ||
+> -		is_reiserfs_jr(rs));
+> +		is_reiserfs_3_7(rs) || is_reiserfs_jr(rs));
+> +}
+> +
+> +int has_nonstandard_journal(struct reiserfs_super_block *rs)
+> +{
+> +	return is_reiserfs_jr(rs) ||
+> +	       (is_reiserfs_3_7(rs) && rs->s_v1.s_journal.jp_journal_dev);
+>  }
+>  
+>   
 
-If there is nothing better by the next Kernel I might consider my own
-wait_event() in exofs_file_fsync()
+Actually the function above is brain damaged.
+Journal is non-standard _iff_ it is "relocated" or has length (excluding
+journal
+header) different from 8192. So it can happen that a partition is "jr" (with
+REISER2FS_JR_SUPER_MAGIC_STRING), but has _standard_ journal.
 
-ACK-by: Boaz Harrosh <bharrosh@panasas.com>
 
-Thanks
-Boaz
+>  static int reiserfs_remount(struct super_block *s, int *flags, char *data);
+> @@ -1397,6 +1410,10 @@ static int read_super_block(struct super
+>  					 "non-standard magic", sb_version(rs));
+>  			return 1;
+>  		}
+> +	} else if (is_reiserfs_3_7(rs)) {
+> +		reiserfs_info(s, "found reiserfs format \"3.7\" "
+> +			      "with %sstandard journal\n",
+> +			      sb_jp_journal_dev(rs) ? "non-" : "");
+>  	} else
+>  		/* s_version of standard format may contain incorrect information,
+>  		   so we just look at the magic string */
+> @@ -1404,6 +1421,7 @@ static int read_super_block(struct super
+>  			      "found reiserfs format \"%s\" with standard journal\n",
+>  			      is_reiserfs_3_5(rs) ? "3.5" : "3.6");
+>  
+>   
