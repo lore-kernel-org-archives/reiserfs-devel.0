@@ -1,36 +1,56 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCHSET] block: clean up bdev claim/release handling
-Date: Sat, 27 Nov 2010 19:47:39 +0100
-Message-ID: <4CF1524B.8020207@kernel.dk>
-References: <1288628129-12811-1-git-send-email-tj@kernel.org> <4CDC2488.1030801@kernel.org> <4CF12B4B.2050909@kernel.org>
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: Re: [PATCH] reiserfs: implement basic reiserfs 3.7
+Date: Mon, 29 Nov 2010 15:10:39 -0500
+Message-ID: <4CF408BF.8080309@suse.com>
+References: <4CE7F21B.4050605@suse.com> <4CF07C63.40408@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4CF12B4B.2050909@kernel.org>
+In-Reply-To: <4CF07C63.40408@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Tejun Heo <tj@kernel.org>
-Cc: hch@infradead.org, linux-kernel@vger.kernel.org, petero2@telia.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jack@suse.cz, akpm@linux-foundation.org, adilger.kernel@dilger.ca, tytso@mit.edu, mfasheh@suse.com, joel.becker@oracle.com, aelder@sgi.com, dm-devel@redhat.com, drbd-dev@lists.linbit.com, neilb@suse.de, leochen@broadcom.com, sbranden@broadcom.com, chris.mason@oracle.com, swhiteho@redhat.com, shaggy@linux.vnet.ibm.com, joern@logfs.org, konishi.ryusuke@lab.ntt.co.jp, reiserfs-devel@vger.kernel.org, viro@zeniv.linux.org.uk
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
 
-On 2010-11-27 17:01, Tejun Heo wrote:
-> On 11/11/2010 06:14 PM, Tejun Heo wrote:
->> Hello,
->>
->> I just appended two patches to the series.  These two are the
->> blkdev_get_by_*() cleanup patches suggested in the fourth patch which
->> Christoph liked.
->>
->> I updated the git tree accordingly and added acked-by's.
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/tj/misc.git cleanup-bd_claim
->>
->> Jens, if you want the whole series resent, please let me know.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+On 11/26/2010 10:34 PM, Edward Shishkin wrote:
+> Jeff Mahoney wrote:
+>>  This patch contains the basic implementation for reiserfs 3.7.
+
+>> +int has_nonstandard_journal(struct reiserfs_super_block *rs)
+>> +{
+>> +	return is_reiserfs_jr(rs) ||
+>> +	       (is_reiserfs_3_7(rs) && rs->s_v1.s_journal.jp_journal_dev);
+>>  }
+>>  
+>>   
 > 
-> Ping.
+> Actually the function above is brain damaged.
+> Journal is non-standard _iff_ it is "relocated" or has length (excluding
+> journal
+> header) different from 8192. So it can happen that a partition is "jr" (with
+> REISER2FS_JR_SUPER_MAGIC_STRING), but has _standard_ journal.
 
-You don't have to resend it, I'll pull it in.
+Ok. I was under the impression that reiserfs_jr implied a nonstandard
+journal. I guess that's mistaken. It seems to me that the only thing
+wrong with the patch is the dev check and the name of the function.
+Perhaps it should be may_have_nonstandard_journal(). The idea wasn't to
+identify nonstandard journals but to extend the existing jr checks to
+include 3.7 checks as well.
 
--- 
-Jens Axboe
+- -Jeff
 
+- -- 
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.16 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
+
+iEYEARECAAYFAkz0CL8ACgkQLPWxlyuTD7KpOgCdGkzb5GvbXXPEck1qx5AN1Qcg
+xHgAn3KmHQGC/cxxoKrswuovhGR8Qq9f
+=ZQMq
+-----END PGP SIGNATURE-----
