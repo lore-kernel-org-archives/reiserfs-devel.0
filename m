@@ -1,59 +1,29 @@
-From: Simon <sur3@gmx.de>
-Subject: Re: Reiser4 for Linux-2.6.36
-Date: Tue, 30 Nov 2010 17:00:47 +0100
-Message-ID: <4CF51FAF.4040904@gmx.de>
-References: <4CE87674.4090909@gmail.com> <4CF4CD6E.4040305@gmx.de> <4CF4E224.2040203@gmail.com>
+From: Viji V Nair <viji@fedoraproject.org>
+Subject: Fedora 11/12/13/14 Reiser4 Kernel RPMS
+Date: Sun, 5 Dec 2010 00:12:51 +0530
+Message-ID: <AANLkTik2vjztgVMBivt1Yprsc_krLVA3ZxTzfjSuezor@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4CF4E224.2040203@gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:mime-version:sender:received:from:date
+         :x-google-sender-auth:message-id:subject:to:content-type;
+        bh=5qdzxL1KNBNxVxzvwijq2I+DvmZ7dX6gthXB3H9p2jU=;
+        b=XR4Xf+r+X2G+b6p5fVJNq3S+zpSsg2xNcEMNIZ1UqOgHPjzEd8qkks8L0mUkRX5iRl
+         mPWfwUgwd8GnWV3xE6PWO38EngOjzSupykjrPE87DnP5Gr5QDD0P6iTfOAWNljiiyUTN
+         V5TLSyUjpCJeF3LV0Q5uv0xs1iSjaMslH80aQ=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-> Are you sure that you have reiser4-for-2.6.36
-> stuff applied? The problem has gone for me...
+Hi,
 
-Yep, looked it up in my zsh-history, so i'm sure:
-% patch -p1 < ../reiser4-for-2.6.36.patch
+Please find the updated location of the Fedora 11/12/13/14 Reiser4 Kernel RPMS.
 
-> Could you send kernel messages?
+Packages are there up to Fedora 13, working for Fedora 14 also, will
+be available soon.
 
-I wish i could, but as it seemes the messages from the crash aint saved,
-probably because the kernel does crash completely and so not sync anymore.
-Anyway i found some messages hours before the crash, probably the bug
-depends on them or they have nothing to do with it, but they mention
-ext3 and sda7, this is funny, as ext3 is my root-partition on sda1, and
-sda7 is my home-partition with reiser4:
-
-Nov 29 20:49:40 localhost kernel: [61364.033613] Pid: 1856, comm:
-ent:sda7! Tainted: P            2.6.36-gentoo-r1 #1
-Nov 29 20:49:40 localhost kernel: [61364.033617] Call Trace:
-Nov 29 20:49:40 localhost kernel: [61364.033627]  [<ffffffff81167775>] ?
-ext3_write_inode+0x45/0x50
-Nov 29 20:49:40 localhost kernel: [61364.033633]  [<ffffffff810dfbf4>] ?
-writeback_single_inode+0x214/0x2a0
-Nov 29 20:49:40 localhost kernel: [61364.033637]  [<ffffffff810e0005>] ?
-generic_writeback_sb_inodes+0xe5/0x170
-Nov 29 20:49:40 localhost kernel: [61364.033640]  [<ffffffff810e09c0>] ?
-writeback_inodes_wb+0x140/0x190
-Nov 29 20:49:40 localhost kernel: [61364.033644]  [<ffffffff8113b432>] ?
-entd_flush+0xa2/0xe0
-Nov 29 20:49:40 localhost kernel: [61364.033647]  [<ffffffff8113b59d>] ?
-entd+0x12d/0x280
-Nov 29 20:49:40 localhost kernel: [61364.033652]  [<ffffffff810561d0>] ?
-autoremove_wake_function+0x0/0x30
-Nov 29 20:49:40 localhost kernel: [61364.033655]  [<ffffffff8113b470>] ?
-entd+0x0/0x280
-Nov 29 20:49:40 localhost kernel: [61364.033658]  [<ffffffff8113b470>] ?
-entd+0x0/0x280
-Nov 29 20:49:40 localhost kernel: [61364.033661]  [<ffffffff81055d56>] ?
-kthread+0x96/0xa0
-Nov 29 20:49:40 localhost kernel: [61364.033665]  [<ffffffff81003154>] ?
-kernel_thread_helper+0x4/0x10
-Nov 29 20:49:40 localhost kernel: [61364.033668]  [<ffffffff81055cc0>] ?
-kthread+0x0/0xa0
-Nov 29 20:49:40 localhost kernel: [61364.033671]  [<ffffffff81003150>] ?
-kernel_thread_helper+0x0/0x10
+Thanks & Regards
+Viji
