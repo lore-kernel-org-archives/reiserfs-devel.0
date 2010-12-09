@@ -1,58 +1,50 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH] reiserfs: implement basic reiserfs 3.7
-Date: Thu, 09 Dec 2010 10:57:35 -0500
-Message-ID: <4D00FC6F.20308@suse.com>
-References: <4CE7F21B.4050605@suse.com> <f6c1e36ad68ee3e4f57925e2f9969f40@mail.velocitynet.com.au>
+From: Serge Hallyn <serge.hallyn@canonical.com>
+Subject: Re: [PATCH] fs/vfs/security: pass last path component to LSM on
+ inode creation
+Date: Thu, 9 Dec 2010 10:05:49 -0600
+Message-ID: <20101209160549.GA2315@peq>
+References: <20101208194527.13537.77202.stgit@paris.rdu.redhat.com>
+ <19712.61515.201226.938553@quad.stoffel.home>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <f6c1e36ad68ee3e4f57925e2f9969f40@mail.velocitynet.com.au>
+Content-Disposition: inline
+In-Reply-To: <19712.61515.201226.938553@quad.stoffel.home>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: doiggl@velocitynet.com.au
-Cc: ReiserFS Mailing List <reiserfs-devel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: John Stoffel <john@stoffel.org>
+Cc: Eric Paris <eparis@redhat.com>, xfs-masters@oss.sgi.com, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, cluster-devel@redhat.com, linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, linux-mm@kvack.org, linux-security-module@vger.kernel.org, chris.mason@oracle.com, jack@suse.cz, akpm@linux-foundation.org, adilger.kernel@dilger.ca, tytso@mit.edu, swhiteho@redhat.com, dwmw2@infradead.org, shaggy@linux.vnet.ibm.com, mfasheh@suse.com, joel.becker@oracle.com, aelder@sgi.com, hughd@google.com, jmorris@namei.org, sds@tycho.nsa.gov, eparis@parisplace.org, hch@lst.de, dchinner@redhat.com, viro@zeniv.linux.org.uk, tao.ma@oracle.com, shemminger@vyatta.com, jeffm@suse.com, serue@us.ibm.com, paul.moore@hp.com, penguin-kernel@I-love.SAKURA.ne.jp, casey
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-On 12/08/2010 08:13 AM, doiggl@velocitynet.com.au wrote:
-> On Sat, 20 Nov 2010 11:06:51 -0500, Jeff Mahoney <jeffm@suse.com> wrote:
->> This patch contains the basic implementation for reiserfs 3.7.
->>
->>  Specifically, it extends reiserfs 3.6 to allow feature compatibility
-> bits.
->>  Since it extends v3.6, it assumes allowing a nonstandard journal, so
-> some
->>  paths have been adjusted to test for a nonstandard journal instead of
->>  just having the JR superblock magic.
->>
->>  I don't have any large plans to extend beyond some very basic features,
->>  although extended attributes would be much more efficiently implemented
->>  if they were first class items instead of hidden files.
->>
->>  The next patch in the series adds support to allow v2 stat data items
->>  to describe the number of blocks in fs-blocksize blocks instead of
->>  512 byte blocks.
->>
->> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+Quoting John Stoffel (john@stoffel.org):
+> >>>>> "Eric" == Eric Paris <eparis@redhat.com> writes:
 > 
-> Thanks for the information. Is the module available for testing?.
-> If so, where can I get the module from and can it be used  it with the
-> opensuse factory series?
+> Eric> SELinux would like to implement a new labeling behavior of newly
+> Eric> created inodes.  We currently label new inodes based on the
+> Eric> parent and the creating process.  This new behavior would also
+> Eric> take into account the name of the new object when deciding the
+> Eric> new label.  This is not the (supposed) full path, just the last
+> Eric> component of the path.
+> 
+> Eric> This is very useful because creating /etc/shadow is different
+> Eric> than creating /etc/passwd but the kernel hooks are unable to
+> Eric> differentiate these operations.  We currently require that
+> Eric> userspace realize it is doing some difficult operation like that
+> Eric> and than userspace jumps through SELinux hoops to get things set
+> Eric> up correctly.  This patch does not implement new behavior, that
+> Eric> is obviously contained in a seperate SELinux patch, but it does
+> Eric> pass the needed name down to the correct LSM hook.  If no such
+> Eric> name exists it is fine to pass NULL.
+> 
+> I've looked this patch over, and maybe I'm missing something, but how
+> does knowing the name of the file really tell you anything, esp when
+> you only get the filename, not the path?  What threat are you
+> addressing with this change?  
 
-No, outside of the posting on this list, I haven't published it yet.
+Like you, I keep thinking back to this patch and going back and forth.
+But to answer your question:  in some cases, the name of the file
+(plus the context of the directory in which it is created) can tell
+you what assumptions userspace will make about it.  And userspace most
+definately is a part of the TCB, i.e. /bin/passwd and /bin/login.
 
-- -Jeff
-
-- -- 
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.16 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
-
-iEYEARECAAYFAk0A/G8ACgkQLPWxlyuTD7LqywCfYKIL5U5pgak3WehG+1k0WI9y
-GMoAn1/3805vsF8fB6V5YMoPBbn6P7Zz
-=0FPw
------END PGP SIGNATURE-----
+-serge
