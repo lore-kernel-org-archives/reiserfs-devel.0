@@ -1,50 +1,96 @@
-From: Serge Hallyn <serge.hallyn@canonical.com>
+From: "John Stoffel" <john@stoffel.org>
 Subject: Re: [PATCH] fs/vfs/security: pass last path component to LSM on
  inode creation
-Date: Thu, 9 Dec 2010 10:05:49 -0600
-Message-ID: <20101209160549.GA2315@peq>
+Date: Thu, 9 Dec 2010 12:48:26 -0500
+Message-ID: <19713.5738.653711.301814@quad.stoffel.home>
 References: <20101208194527.13537.77202.stgit@paris.rdu.redhat.com>
- <19712.61515.201226.938553@quad.stoffel.home>
+	<19712.61515.201226.938553@quad.stoffel.home>
+	<1291909941.3072.70.camel@localhost.localdomain>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <19712.61515.201226.938553@quad.stoffel.home>
-Sender: reiserfs-devel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: John Stoffel <john@stoffel.org>
-Cc: Eric Paris <eparis@redhat.com>, xfs-masters@oss.sgi.com, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, cluster-devel@redhat.com, linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, linux-mm@kvack.org, linux-security-module@vger.kernel.org, chris.mason@oracle.com, jack@suse.cz, akpm@linux-foundation.org, adilger.kernel@dilger.ca, tytso@mit.edu, swhiteho@redhat.com, dwmw2@infradead.org, shaggy@linux.vnet.ibm.com, mfasheh@suse.com, joel.becker@oracle.com, aelder@sgi.com, hughd@google.com, jmorris@namei.org, sds@tycho.nsa.gov, eparis@parisplace.org, hch@lst.de, dchinner@redhat.com, viro@zeniv.linux.org.uk, tao.ma@oracle.com, shemminger@vyatta.com, jeffm@suse.com, serue@us.ibm.com, paul.moore@hp.com, penguin-kernel@I-love.SAKURA.ne.jp, casey
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <1291909941.3072.70.camel@localhost.localdomain>
+Sender: owner-linux-mm@kvack.org
+List-Id: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Eric Paris <eparis@redhat.com>
+Cc: John Stoffel <john@stoffel.org>, xfs-masters@oss.sgi.com, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, cluster-devel@redhat.com, linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, linux-mm@kvack.org, linux-security-module@vger.kernel.org, chris.mason@oracle.com, jack@suse.cz, akpm@linux-foundation.org, adilger.kernel@dilger.ca, tytso@mit.edu, swhiteho@redhat.com, dwmw2@infradead.org, shaggy@linux.vnet.ibm.com, mfasheh@suse.com, joel.becker@oracle.com, aelder@sgi.com, hughd@google.com, jmorris@namei.org, sds@tycho.nsa.gov, eparis@parisplace.org, hch@lst.de, dchinner@redhat.com, viro@zeniv.linux.org.uk, tao.ma@oracle.com, shemminger@vyatta.com, jeff
 
-Quoting John Stoffel (john@stoffel.org):
-> >>>>> "Eric" == Eric Paris <eparis@redhat.com> writes:
-> 
-> Eric> SELinux would like to implement a new labeling behavior of newly
-> Eric> created inodes.  We currently label new inodes based on the
-> Eric> parent and the creating process.  This new behavior would also
-> Eric> take into account the name of the new object when deciding the
-> Eric> new label.  This is not the (supposed) full path, just the last
-> Eric> component of the path.
-> 
-> Eric> This is very useful because creating /etc/shadow is different
-> Eric> than creating /etc/passwd but the kernel hooks are unable to
-> Eric> differentiate these operations.  We currently require that
-> Eric> userspace realize it is doing some difficult operation like that
-> Eric> and than userspace jumps through SELinux hoops to get things set
-> Eric> up correctly.  This patch does not implement new behavior, that
-> Eric> is obviously contained in a seperate SELinux patch, but it does
-> Eric> pass the needed name down to the correct LSM hook.  If no such
-> Eric> name exists it is fine to pass NULL.
-> 
-> I've looked this patch over, and maybe I'm missing something, but how
-> does knowing the name of the file really tell you anything, esp when
-> you only get the filename, not the path?  What threat are you
-> addressing with this change?  
+>>>>> "Eric" == Eric Paris <eparis@redhat.com> writes:
 
-Like you, I keep thinking back to this patch and going back and forth.
-But to answer your question:  in some cases, the name of the file
-(plus the context of the directory in which it is created) can tell
-you what assumptions userspace will make about it.  And userspace most
-definately is a part of the TCB, i.e. /bin/passwd and /bin/login.
+Eric> On Thu, 2010-12-09 at 10:05 -0500, John Stoffel wrote:
+>> >>>>> "Eric" == Eric Paris <eparis@redhat.com> writes:
 
--serge
+>> So what happens when I create a file /home/john/shadow, does selinux
+>> (or LSM in general) then run extra checks because the filename is
+>> 'shadow' in your model?  
+
+Eric> It's entirely a question of labeling and one that was discussed on the
+Eric> LSM list in some detail:
+
+Eric> http://marc.info/?t=129141308200002&r=1&w=2
+
+Thank you for pointing me at this discussion.  I'm working my way
+through it, but so far I'm not seeing any consensus that this is
+really the proper thing to do.  I personally feel this should be in
+userspace if at all possible.
+
+Eric> The basic synopsis is that when a new inode is created SELinux
+Eric> must apply some label.  It makes the decision for what label to
+Eric> apply based on 3 pieces of information.
+
+Eric> The label of the parent inode.
+Eric> The label of the process creating the new inode.
+Eric> The 'class' of the inode, S_ISREG, S_ISDIR, S_ISLNK, etc
+
+These seem to be ok, if you're using label based security.  But since
+I freely admit I'm not an expert or even a user, I'm just trying to
+understand and push back to make sure we do what's good.  And which
+doesn't impact non-SElinux users.  
+
+Eric> This patch adds a 4th piece of information, the name of the
+Eric> object being created.  An obvious situation where this will be
+Eric> useful is devtmpfs (although you'll find other examples in the
+Eric> above thread).  devtmpfs when it creates char/block devices is
+Eric> unable to distinguish between kmem and console and so they are
+Eric> created with a generic label.  hotplug/udev is then called which
+Eric> does some pathname like matching and relabels them to something
+Eric> more specific.  We've found that many people are able to race
+Eric> against this particular updating and get spurious denials in
+Eric> /dev.  With this patch devtmpfs will be able to get the labels
+Eric> correct to begin with.
+
+So your Label based access controls are *also* based on pathnames?
+Right?  
+
+Eric> I'm certainly willing to discuss the security implications of this
+Eric> patch, but that would probably be best done with a significantly
+Eric> shortened cc-list.  You'll see in the above mentioned thread that a
+Eric> number of 'security' people (even those who are staunchly anti-SELinux)
+Eric> recognize there is value in this and that it is certainly much better
+Eric> than we have today.
+
+>> I *think* the overhead shouldn't be there if SELINUX is disabled, but
+>> have you confirmed this?  How you run performance tests before/after
+>> this change when doing lots of creations of inodes to see what sort of
+>> performance changes might be there?
+
+Eric> I've actually recently done some perf testing on creating large
+Eric> numbers of inodes using bonnie++, since SELinux was a noticeable
+Eric> overhead in that operation.  Doing that same test with SELinux
+Eric> disabled (or enabled) I do not see a noticeable difference when
+Eric> this patch is applied or not.  It's just an extra argument to a
+Eric> function that goes unused.
+
+That answers alot of my concerns then.  Not having it impact users in
+a non-SELinux context is vitally important to me.
+
+Thanks,
+John
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Fight unfair telecom policy in Canada: sign http://dissolvethecrtc.ca/
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
