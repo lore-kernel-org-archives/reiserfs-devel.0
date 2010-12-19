@@ -1,38 +1,122 @@
-From: Serkan Kaba <serkan@gentoo.org>
-Subject: Re: Reiser4 for Linux-2.6.36
-Date: Sun, 19 Dec 2010 18:15:54 +0200
-Message-ID: <4D0E2FBA.3010409@gentoo.org>
-References: <4CE87674.4090909@gmail.com> <4D0DD3BA.9030909@gentoo.org> <4D0E2D61.8030808@gmail.com>
+From: =?UTF-8?B?0JDQvdC00YDQtdC5INCa0L7Qu9GH0LXQvdC60L4=?= 
+	<komexx@gmail.com>
+Subject: Reiser4 Oops
+Date: Sun, 19 Dec 2010 22:01:49 +0300
+Message-ID: <4D0E569D.4010503@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+ boundary="------------000706060607010403030807"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4D0E2D61.8030808@gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:received:received:message-id:date:from
+         :user-agent:mime-version:to:subject:content-type;
+        bh=KgMjmaz/+Sbtdu7N5J2zZ089wxpJfpvxeiWQ0PF9Ouk=;
+        b=Rorse+JOW6Evmrn7I0qp5kD47/P4KJImR64Ox9J2PX996UwMF0P8kuwKb4Xk2jKhxY
+         fas+0/h7i2hdW5S56TZ1LhV4NJkNf1OTrJ8m5XWW8fMRkFAOMpx1IBodUofXCJNAQeVP
+         HpUvpe5HT5zyHJ7KNbs4sjS/PTWQVfwebg4No=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+This is a multi-part message in MIME format.
+--------------000706060607010403030807
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 8bit
 
-On 19-12-2010 18:05, Edward Shishkin wrote:
-> Are there any kernel complaints?
-dmesg has no clue :(
-> Did you enable compression?
-No.
-> 
-> Thanks,
-> Edward.
-> 
-Thanks in advance.
-- -- 
-Sincerely,
-Serkan KABA
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.16 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+Wanted to try reiser4. I have compiled a kernel with reiser4, format the 
+partition and began to copy the folder /home.
+After a short time the screen goes black and there was one console with 
+the error output. After switching to other tty and back up continued. 
+dmesg output copied to the pastebin (http://pastebin.com/XyDKWJ8J).
+This was repeated several times and the computer hangs perfectly still.
+I have ubuntu 10.10 on a laptop Acer Aspire 7720z.
 
-iEYEARECAAYFAk0OL7oACgkQRh6X64ivZaLvogCeLehV0fcDJUAl8VIlyN/+6vQg
-zJoAoIRgnONO0MUR83zf/hDECgnPBaO+
-=UBP/
------END PGP SIGNATURE-----
+[Rus]
+Хотел попробовать reiser4. Я собрал ядро с поддержкой reiser4, 
+отформатировал раздел и начал копировать папку /home.
+Через небольшое время экран стал черным и осталась одна консоль с 
+выводом ошибок. После переключения на другие tty и обратно, копирование 
+продолжилось. Вывод dmesg скопировал на pastebin 
+(http://pastebin.com/XyDKWJ8J).
+Так повторилось несколько раз и компьютер намертво завис.
+У меня ubuntu 10.10 на ноутбуке Acer Aspire 7720z.
+
+--------------000706060607010403030807
+Content-Type: text/plain;
+ name="oops.txt"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="oops.txt"
+
+WyAgMTYwLjM0ODY2OF0gcmVpc2VyNDogc2RhNDogZm91bmQgZGlzayBmb3JtYXQgNC4wLjAu
+ClsgIDI0Ni43NzY2ODddIGxvOiBEaXNhYmxlZCBQcml2YWN5IEV4dGVuc2lvbnMKWyAgMjU5
+LjMwMTM1NF0gZXhlICgyNjYzKTogL3Byb2MvMjY2My9vb21fYWRqIGlzIGRlcHJlY2F0ZWQs
+IHBsZWFzZSB1c2UgL3Byb2MvMjY2My9vb21fc2NvcmVfYWRqIGluc3RlYWQuClsgIDI3OC4w
+NjA1MzddIEJVRzogdW5hYmxlIHRvIGhhbmRsZSBrZXJuZWwgcGFnaW5nIHJlcXVlc3QgYXQg
+NGIxYjVkMGIKWyAgMjc4LjA2MDYyMV0gSVA6IFs8YzAzMTg3Njc+XSBqYmQyX19qb3VybmFs
+X3N0YXJ0KzB4MzcvMHhlMApbICAyNzguMDYwNjgwXSAqcGRlID0gMDAwMDAwMDAgClsgIDI3
+OC4wNjA3MTRdIE9vcHM6IDAwMDAgWyMxXSBTTVAgClsgIDI3OC4wNjA3NTRdIGxhc3Qgc3lz
+ZnMgZmlsZTogL3N5cy9kZXZpY2VzL3N5c3RlbS9jcHUvY3B1MS9jcHVmcmVxL3NjYWxpbmdf
+Y3VyX2ZyZXEKWyAgMjc4LjA2MDgyMV0gTW9kdWxlcyBsaW5rZWQgaW46IGJpbmZtdF9taXNj
+IHBhcnBvcnRfcGMgcHBkZXYgc25kX2hkYV9jb2RlY19yZWFsdGVrIHNuZF9oZGFfaW50ZWwg
+c25kX2hkYV9jb2RlYyBzbmRfaHdkZXAgc25kX3BjbSBzbmRfc2VxX21pZGkgYXJjNCBzbmRf
+cmF3bWlkaSBhdGg1ayBtYWM4MDIxMSBpOTE1IGRybV9rbXNfaGVscGVyIGpveWRldiBzbmRf
+c2VxX21pZGlfZXZlbnQgYXRoIGNmZzgwMjExIGRybSBzbmRfc2VxIHI4NTIgc21fY29tbW9u
+IHNuZF90aW1lciBuYW5kIG5hbmRfaWRzIGkyY19hbGdvX2JpdCBuYW5kX2VjYyB2aWRlbyBt
+dGQgcHNtb3VzZSB1dmN2aWRlbyBpbnRlbF9hZ3AgYWdwZ2FydCB2aWRlb2RldiBscCBzbmRf
+c2VxX2RldmljZSB2NGwxX2NvbXBhdCBzZXJpb19yYXcgc2hwY2hwIG91dHB1dCBzbmQgc291
+bmRjb3JlIHNuZF9wYWdlX2FsbG9jIHBhcnBvcnQgdXNiaGlkIGhpZCBhaGNpIGZpcmV3aXJl
+X29oY2kgYnRyZnMgdGczIHNkaGNpX3BjaSBmaXJld2lyZV9jb3JlIHNkaGNpIGNyY19pdHVf
+dCBsZWRfY2xhc3MgbGliYWhjaSBjcmMzMmMgbGliY3JjMzJjClsgIDI3OC4wNjE0ODZdIApb
+ICAyNzguMDYxNTA4XSBQaWQ6IDI1MDUsIGNvbW06IGVudDpzZGE0ISBOb3QgdGFpbnRlZCAy
+LjYuMzYucmVpc2VyICMzIFBveWFuZyAgIC9Bc3BpcmUgNzcyMFogICAgClsgIDI3OC4wNjE1
+OTFdIEVJUDogMDA2MDpbPGMwMzE4NzY3Pl0gRUZMQUdTOiAwMDAxMDI4NiBDUFU6IDAKWyAg
+Mjc4LjA2MTY0NF0gRUlQIGlzIGF0IGpiZDJfX2pvdXJuYWxfc3RhcnQrMHgzNy8weGUwClsg
+IDI3OC4wNjE2ODddIEVBWDogNGIxYjVkMGIgRUJYOiBmMjViN2ViOCBFQ1g6IDAwMDAwMDUw
+IEVEWDogMDAwMDAwMDgKWyAgMjc4LjA2MTc0M10gRVNJOiBmNmEwODgwMCBFREk6IGY1Mzkw
+MDAwIEVCUDogZjI1YjdkNTQgRVNQOiBmMjViN2Q0MApbICAyNzguMDYxNzk3XSAgRFM6IDAw
+N2IgRVM6IDAwN2IgRlM6IDAwZDggR1M6IDAwZTAgU1M6IDAwNjgKWyAgMjc4LjA2MTg0Nl0g
+UHJvY2VzcyBlbnQ6c2RhNCEgKHBpZDogMjUwNSwgdGk9ZjI1YjYwMDAgdGFzaz1mNTM5MDAw
+MCB0YXNrLnRpPWYyNWI2MDAwKQpbICAyNzguMDYxOTE0XSBTdGFjazoKWyAgMjc4LjA2MTkz
+N10gIDAwMDAwMDAwIDAwMDAwMDA4IGY2OWZmZTAwIDAwMDAwMDAxIDAwMDAwMDAwIGYyNWI3
+ZDVjIGMwMzE4ODIyIGYyNWI3ZDk4ClsgIDI3OC4wNjIwMzNdIDwwPiBjMDJmNTg1OCAwMDAw
+MDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwOCBmMjViN2Q5MCBjMDJl
+MDk1NwpbICAyNzguMDYyMTM2XSA8MD4gMDAwMDAyMTggZjcyMjdkZGMgMDAwMDAwMDEgZjcy
+MjdkZGMgMDAwMDAwMDEgMDAwMDAwMDAgZjI1YjdlMzggYzAyZTQ3ZTMKWyAgMjc4LjA2MjI0
+M10gQ2FsbCBUcmFjZToKWyAgMjc4LjA2MjI3MV0gIFs8YzAzMTg4MjI+XSA/IGpiZDJfam91
+cm5hbF9zdGFydCsweDEyLzB4MjAKWyAgMjc4LjA2MjMyMl0gIFs8YzAyZjU4NTg+XSA/IGV4
+dDRfam91cm5hbF9zdGFydF9zYisweGM4LzB4MTAwClsgIDI3OC4wNjIzNzddICBbPGMwMmUw
+OTU3Pl0gPyBleHQ0X21ldGFfdHJhbnNfYmxvY2tzKzB4NjcvMHhjMApbICAyNzguMDYyNDMx
+XSAgWzxjMDJlNDdlMz5dID8gZXh0NF9kYV93cml0ZXBhZ2VzKzB4MjAzLzB4NTYwClsgIDI3
+OC4wNjI0ODRdICBbPGMwNjBmY2NkPl0gPyBfcmF3X3NwaW5fbG9jaysweGQvMHgxMApbICAy
+NzguMDYyNTMwXSAgWzxjMDI4MWNhMj5dID8gZmx1c2hfc29tZV9hdG9tKzB4MzEyLzB4NTQw
+ClsgIDI3OC4wNjI1NzhdICBbPGMwMmE0Y2RkPl0gPyB3cml0ZXBhZ2VzX2NyeXB0Y29tcHJl
+c3MrMHgxOWQvMHgyMjAKWyAgMjc4LjA2MjYzNl0gIFs8YzAyOTEzYTg+XSA/IHJlaXNlcjRf
+d3JpdGVvdXQrMHhhOC8weDFhMApbICAyNzguMDYyNjg0XSAgWzxjMDIyYzE4Nj5dID8gaXB1
+dCsweDM2LzB4MjcwClsgIDI3OC4wNjI3MjRdICBbPGMwMjM2N2U0Pl0gPyBnZW5lcmljX3dy
+aXRlYmFja19zYl9pbm9kZXMrMHhlNC8weDE1MApbICAyNzguMDYyNzgyXSAgWzxjMDFkZmFh
+Yz5dID8gZG9fd3JpdGVwYWdlcysweDFjLzB4NDAKWyAgMjc4LjA2MjgyNl0gIFs8YzAyMzYx
+MjU+XSA/IHdyaXRlYmFja19zaW5nbGVfaW5vZGUrMHg4NS8weDI1MApbICAyNzguMDYyODc3
+XSAgWzxjMDYwZmNjZD5dID8gX3Jhd19zcGluX2xvY2srMHhkLzB4MTAKWyAgMjc4LjA2Mjky
+MV0gIFs8YzAyOGRiNjQ+XSA/IHJlaXNlcjRfd3JpdGViYWNrX2lub2RlcysweGE0LzB4MTMw
+ClsgIDI3OC4wNjI5NzRdICBbPGMwMjM2N2IxPl0gPyBnZW5lcmljX3dyaXRlYmFja19zYl9p
+bm9kZXMrMHhiMS8weDE1MApbICAyNzguMDYzMDMxXSAgWzxjMDIzNmM2Yj5dID8gd3JpdGVi
+YWNrX2lub2Rlc193YisweDEwYi8weDE1MApbICAyNzguMDYzMDgyXSAgWzxjMDI5MWQwNj5d
+ID8gZW50ZF9mbHVzaCsweGE2LzB4ZTAKWyAgMjc4LjA2MzEyN10gIFs8YzAyOTFkNDA+XSA/
+IGVudGQrMHgwLzB4MjQwClsgIDI3OC4wNjMxNjZdICBbPGMwMjkxZTUxPl0gPyBlbnRkKzB4
+MTExLzB4MjQwClsgIDI3OC4wNjMyMDhdICBbPGMwMTY1ZmQwPl0gPyBhdXRvcmVtb3ZlX3dh
+a2VfZnVuY3Rpb24rMHgwLzB4NTAKWyAgMjc4LjA2NDAwOF0gIFs8YzAyOTFkNDA+XSA/IGVu
+dGQrMHgwLzB4MjQwClsgIDI3OC4wNjc0MTddICBbPGMwMTY1YmE0Pl0gPyBrdGhyZWFkKzB4
+NzQvMHg4MApbICAyNzguMDY3NDE3XSAgWzxjMDE2NWIzMD5dID8ga3RocmVhZCsweDAvMHg4
+MApbICAyNzguMDY3NDE3XSAgWzxjMDEwMzU3ZT5dID8ga2VybmVsX3RocmVhZF9oZWxwZXIr
+MHg2LzB4MTAKWyAgMjc4LjA2NzQxN10gQ29kZTogODkgN2QgZmMgMGYgMWYgNDQgMDAgMDAg
+YmIgZTIgZmYgZmYgZmYgNjQgOGIgM2QgYWMgYjQgOTAgYzAgODkgYzYgODUgZjYgODkgNTUg
+ZjAgOGIgODcgMTQgMDQgMDAgMDAgNzQgMTQgODUgYzAgODkgYzMgNzQgMjMgOGIgMDAgPDNi
+PiAzMCAwZiA4NSA5MyAwMCAwMCAwMCA4MyA0MyAwOCAwMSA4OSBkOCA4YiA3NSBmOCA4YiA1
+ZCBmNCA4YiAKWyAgMjc4LjA2NzQxN10gRUlQOiBbPGMwMzE4NzY3Pl0gamJkMl9fam91cm5h
+bF9zdGFydCsweDM3LzB4ZTAgU1M6RVNQIDAwNjg6ZjI1YjdkNDAKWyAgMjc4LjA2NzQxN10g
+Q1IyOiAwMDAwMDAwMDRiMWI1ZDBiClsgIDI3OC4xMTUzNjNdIC0tLVsgZW5kIHRyYWNlIGZj
+YTM4MjkxNDA4ZTM5NWYgXS0tLQpbICAzMjguOTAxMDM3XSBbZHJtOmRybV9tb2RlX2dldGZi
+XSAqRVJST1IqIGludmFsaWQgZnJhbWVidWZmZXIgaWQK
+--------------000706060607010403030807--
