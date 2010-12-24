@@ -1,45 +1,56 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Here is a reiser4 build based rpm on 2.6.36 kernel.
-Date: Fri, 24 Dec 2010 14:11:56 +1100
-Message-ID: <49969159b9b0736d86b61ac37bbeca76@mail.velocitynet.com.au>
+From: Jesper Juhl <jj@chaosbits.net>
+Subject: [PATCH] reiserfs: Make sure va_end() is always called after
+ va_start().
+Date: Fri, 24 Dec 2010 19:37:11 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1012241933390.28973@swampdragon.chaosbits.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-Hello.
-Here is a plain kernel based on 2.6.36 with the patches
-reiser4-for-2.6.36.patch and reiser4-fix-entd_flush.patch compiled in.
-The Opensuse build service [obs] system was used for the build.
+Greetings,
 
-Its been a interesting kernel building patching experience.
+A call to va_start() must always be followed by a call to va_end() in the 
+same function. In fs/reiserfs/prints.c::print_block() this is not always 
+the case. If 'bh' is NULL we'll return without calling va_end().
+One could add a call to va_end() before the 'return' statement, but it's 
+nicer to just move the call to va_start() after the test for 'bh' being 
+NULL.
 
-The project is here
+Signed-off-by: Jesper Juhl <jj@chaosbits.net>
+---
+ prints.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-->https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
+diff --git a/fs/reiserfs/prints.c b/fs/reiserfs/prints.c
+index adbc6f5..45de98b 100644
+--- a/fs/reiserfs/prints.c
++++ b/fs/reiserfs/prints.c
+@@ -586,13 +586,13 @@ void print_block(struct buffer_head *bh, ...)	//int print_mode, int first, int l
+ 	va_list args;
+ 	int mode, first, last;
+ 
+-	va_start(args, bh);
+-
+ 	if (!bh) {
+ 		printk("print_block: buffer is NULL\n");
+ 		return;
+ 	}
+ 
++	va_start(args, bh);
++
+ 	mode = va_arg(args, int);
+ 	first = va_arg(args, int);
+ 	last = va_arg(args, int);
 
-The built rpms are here
 
-->https://build.opensuse.org/package/binaries?package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.3
 
-The log of the build is here {x86_64} as an example. [Its a long build
-log]
-->
-https://build.opensuse.org/package/rawlog?arch=x86_64&package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.3
+-- 
+Jesper Juhl <jj@chaosbits.net>            http://www.chaosbits.net/
+Don't top-post http://www.catb.org/~esr/jargon/html/T/top-post.html
+Plain text mails only, please.
 
-The .spec used file is here
- ->
-https://build.opensuse.org/package/view_file?file=kernel-reiser4.spec&package=kernel-reiser4&project=home%3Adoiggl&srcmd5=a94730f4e77f3822eb936de1a6138981
-
-Thanks to the opensuse-kernel list members for compilation advice.
-http://lists.opensuse.org/opensuse-kernel/
-
-It looks like obs built the rpms.
-So, could someone test the rpm's and verify reiser4 options are available
-please.
-Post the results to the list.
-
-Ta Glenn
