@@ -1,7 +1,7 @@
-From: Sebastian Hyrwall <sh@keff.org>
+From: Jeff Mahoney <jeffm@suse.com>
 Subject: Re: Negative blocks in rebuild-tree
-Date: Sun, 09 Jan 2011 03:09:25 +0100
-Message-ID: <4D2918D5.2010503@keff.org>
+Date: Sun, 09 Jan 2011 16:40:29 -0500
+Message-ID: <4D2A2B4D.9010906@suse.com>
 References: <4D28674A.60603@keff.org> <4D290828.8050304@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -11,11 +11,12 @@ Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: Jeff Mahoney <jeffm@suse.com>, reiserfs-devel@vger.kernel.org
+Cc: Sebastian Hyrwall <sh@keff.org>, reiserfs-devel@vger.kernel.org
 
-Hi
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On 01/09/11 01:58, Edward Shishkin wrote:
+On 01/08/2011 07:58 PM, Edward Shishkin wrote:
 > On 01/08/2011 02:31 PM, Sebastian Hyrwall wrote:
 >> Hi
 > 
@@ -36,19 +37,20 @@ On 01/09/11 01:58, Edward Shishkin wrote:
 > 
 > So you do have a ~16T partition. Correct?
 > 
-
-Disk /dev/mapper/a1: 14680.2 GB, 14680197689344 bytes
-255 heads, 63 sectors/track, 1784765 cylinders
-Units = cylinders of 16065 * 512 = 8225280 bytes
-Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 524288 bytes / 6815744 bytes
-Alignment offset: 520192 bytes
-Disk identifier: 0x00000000
-
-
 > 
 >  -711052258 blocks
-> 
+
+This bit isn't bad typing - it's bad printf formatting. The actual bad
+typing is going to be harder to track down. A quick look showed me some
+signed block count variables in the debugreiserfs code but the fsck code
+may be better off. I'll dig into it.
+
+Since you're trying to reproduce, it would be great if you capture the
+core dump that should happen when you seg fault. Exact output would be
+useful as well.
+
+- -Jeff
+
 > 
 >> will be read
 >>
@@ -67,25 +69,6 @@ Disk identifier: 0x00000000
 > Thanks,
 > Edward.
 > 
-
-If you need any more info like debugreiserfs or something let me know.
-If not I will try to provide some more info as the fsck progresses,
-
-####### Pass 0 #######
-The whole partition (-710934672 blocks) is to be scanned
-Skipping 117586 blocks (super block, journal, bitmaps) -711052258 blocks
-will be read
-0%....                                              left 2936300517,
-16334 /sec
-
-
-First being able to create the filesystem but then finding out later I
-can't fsck it hurts :)
-
-I tried going through the code looking for the possibly use of the wrong
-data type but it's hard to debug when it takes ~3 days before hitting
-the bug.
-
 > 
 >>
 >> Sincerely,
@@ -97,5 +80,15 @@ the bug.
 >> More majordomo info at http://vger.kernel.org/majordomo-info.html
 > 
 
-Sincerely,
-Sebastian H
+
+- -- 
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.16 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
+
+iEYEARECAAYFAk0qK00ACgkQLPWxlyuTD7KovQCfQdu4rHi1aOgKXPxwAP0+qRZE
+aW8AnR/hJd25t/Clg7FOOcTe8Ri7KASD
+=oGFm
+-----END PGP SIGNATURE-----
