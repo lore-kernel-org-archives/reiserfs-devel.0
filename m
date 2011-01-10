@@ -1,94 +1,70 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: Negative blocks in rebuild-tree
-Date: Sun, 09 Jan 2011 16:40:29 -0500
-Message-ID: <4D2A2B4D.9010906@suse.com>
-References: <4D28674A.60603@keff.org> <4D290828.8050304@gmail.com>
+From: Simon <sur3@gmx.de>
+Subject: Re: Reiser4 for Linux-2.6.36
+Date: Mon, 10 Jan 2011 16:01:32 +0100
+Message-ID: <4D2B1F4C.7090706@gmx.de>
+References: <4CE87674.4090909@gmail.com> <4CF4CD6E.4040305@gmx.de> <4CF4E224.2040203@gmail.com> <4CF51FAF.4040904@gmx.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4D290828.8050304@gmail.com>
+In-Reply-To: <4CF51FAF.4040904@gmx.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: Sebastian Hyrwall <sh@keff.org>, reiserfs-devel@vger.kernel.org
+Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Ah, sorry,
+finally found the error, it isnt the reiser4, but a buggy network-driver.
+Anyway i got some broken files on reiser4
+http://paste.pocoo.org/show/318296/ - badblocks and memory seem to be
+ok, probably it was a result of the kernel-hang-ups?
 
-On 01/08/2011 07:58 PM, Edward Shishkin wrote:
-> On 01/08/2011 02:31 PM, Sebastian Hyrwall wrote:
->> Hi
-> 
-> Hello.
-> 
->>
->> I am getting a negative block-number with reiserfsck when doing
->> --rebuild-tree -S (or without -S). This causes a segmentation fault
->> later (pass 2) in the check because it tries to read a "non-existant
->> block". My rebuild takes 3 days and i didn't copy the stdout-info the
->> first time so I will post some more info as soon as it becomes available.
->>
->> Pass 0:
->> ####### Pass 0 #######
->> The whole partition (-710934672 blocks) is to be scanned
->> Skipping 117586 blocks (super block, journal, bitmaps)
-> 
-> 
-> So you do have a ~16T partition. Correct?
-> 
-> 
->  -711052258 blocks
+Greets
+Simon
 
-This bit isn't bad typing - it's bad printf formatting. The actual bad
-typing is going to be harder to track down. A quick look showed me some
-signed block count variables in the debugreiserfs code but the fsck code
-may be better off. I'll dig into it.
+Am 30.11.2010 17:00, schrieb Simon:
+>> Are you sure that you have reiser4-for-2.6.36
+>> stuff applied? The problem has gone for me...
+> 
+> Yep, looked it up in my zsh-history, so i'm sure:
+> % patch -p1 < ../reiser4-for-2.6.36.patch
+> 
+>> Could you send kernel messages?
+> 
+> I wish i could, but as it seemes the messages from the crash aint saved,
+> probably because the kernel does crash completely and so not sync anymore.
+> Anyway i found some messages hours before the crash, probably the bug
+> depends on them or they have nothing to do with it, but they mention
+> ext3 and sda7, this is funny, as ext3 is my root-partition on sda1, and
+> sda7 is my home-partition with reiser4:
+> 
+> Nov 29 20:49:40 localhost kernel: [61364.033613] Pid: 1856, comm:
+> ent:sda7! Tainted: P            2.6.36-gentoo-r1 #1
+> Nov 29 20:49:40 localhost kernel: [61364.033617] Call Trace:
+> Nov 29 20:49:40 localhost kernel: [61364.033627]  [<ffffffff81167775>] ?
+> ext3_write_inode+0x45/0x50
+> Nov 29 20:49:40 localhost kernel: [61364.033633]  [<ffffffff810dfbf4>] ?
+> writeback_single_inode+0x214/0x2a0
+> Nov 29 20:49:40 localhost kernel: [61364.033637]  [<ffffffff810e0005>] ?
+> generic_writeback_sb_inodes+0xe5/0x170
+> Nov 29 20:49:40 localhost kernel: [61364.033640]  [<ffffffff810e09c0>] ?
+> writeback_inodes_wb+0x140/0x190
+> Nov 29 20:49:40 localhost kernel: [61364.033644]  [<ffffffff8113b432>] ?
+> entd_flush+0xa2/0xe0
+> Nov 29 20:49:40 localhost kernel: [61364.033647]  [<ffffffff8113b59d>] ?
+> entd+0x12d/0x280
+> Nov 29 20:49:40 localhost kernel: [61364.033652]  [<ffffffff810561d0>] ?
+> autoremove_wake_function+0x0/0x30
+> Nov 29 20:49:40 localhost kernel: [61364.033655]  [<ffffffff8113b470>] ?
+> entd+0x0/0x280
+> Nov 29 20:49:40 localhost kernel: [61364.033658]  [<ffffffff8113b470>] ?
+> entd+0x0/0x280
+> Nov 29 20:49:40 localhost kernel: [61364.033661]  [<ffffffff81055d56>] ?
+> kthread+0x96/0xa0
+> Nov 29 20:49:40 localhost kernel: [61364.033665]  [<ffffffff81003154>] ?
+> kernel_thread_helper+0x4/0x10
+> Nov 29 20:49:40 localhost kernel: [61364.033668]  [<ffffffff81055cc0>] ?
+> kthread+0x0/0xa0
+> Nov 29 20:49:40 localhost kernel: [61364.033671]  [<ffffffff81003150>] ?
+> kernel_thread_helper+0x0/0x10
 
-Since you're trying to reproduce, it would be great if you capture the
-core dump that should happen when you seg fault. Exact output would be
-useful as well.
-
-- -Jeff
-
-> 
->> will be read
->>
->> Does anyone have any idea on how to fix this?
->>
->> On a 64-bit system.
-> 
-> 
-> It looks like you have encountered an overflow/truncation fsck bug
-> specific to giant volumes.
-> 
-> I would first ask Jeff: AFAIK he is planning to enable 16T files
-> in reiserfs.
-> Jeff, do you have any non-published fixups for such problems?
-> 
-> Thanks,
-> Edward.
-> 
-> 
->>
->> Sincerely,
->> Sebastian H
->> -- 
->> To unsubscribe from this list: send the line "unsubscribe
->> reiserfs-devel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at http://vger.kernel.org/majordomo-info.html
-> 
-
-
-- -- 
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.16 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
-
-iEYEARECAAYFAk0qK00ACgkQLPWxlyuTD7KovQCfQdu4rHi1aOgKXPxwAP0+qRZE
-aW8AnR/hJd25t/Clg7FOOcTe8Ri7KASD
-=oGFm
------END PGP SIGNATURE-----
