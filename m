@@ -1,61 +1,113 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Reiser4 and mount times
-Date: Tue, 11 Jan 2011 11:30:27 +0100
-Message-ID: <4D2C3143.7050008@gmail.com>
-References: <4D2BE02E.6040207@gentoo.org>
+From: sh@keff.org
+Subject: Re: Negative blocks in rebuild-tree
+Date: Tue, 11 Jan 2011 20:27:11 +0100
+Message-ID: <4D2CAF0F.5070806@keff.org>
+References: <4D28674A.60603@keff.org> <4D290828.8050304@gmail.com> <4D2A2B4D.9010906@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:received:received:message-id:date:from
-         :user-agent:mime-version:to:cc:subject:references:in-reply-to
-         :content-type:content-transfer-encoding;
-        bh=yns9f0ewW/De579hN3oHUU6SP0xK63bAuNA/9ULphb8=;
-        b=PivtHXuJvIoYoSqOjkrgnn7UN9snYRR3chVsfLYloCQ2Z4guUnTQEtO1AF30aNWInX
-         qZWZiydyRujzrmt2FzS8erZIlObrJvyk0N+G4ci8vFbiWwRqry+bzeSnmuWnUlDTQRFN
-         bI0FLFBopEeBSJceTIzeerf6di6SJZf/QDqUk=
-In-Reply-To: <4D2BE02E.6040207@gentoo.org>
+In-Reply-To: <4D2A2B4D.9010906@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Serkan Kaba <serkan@gentoo.org>
-Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
 
-On 01/11/2011 05:44 AM, Serkan Kaba wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
->
-> Compared to other fileystems (including reiserfs) mount times of reiser4
-> is *huge* and mounting takes most of my boot time.
->
-> Here's a simple time output of reiser4 and ext4 fs, nearly identical in
-> size.
->
-> # df- h
-> /dev/sdb2             428G  339G   89G  80% /film
-> /dev/sdb4             429G  262G  145G  65% /film2
->
-> # time mount /film
->
-> real	0m23.238s
-> user	0m0.000s
-> sys	0m0.096s
->
-> # time mount /film2
->
-> real	0m0.069s
-> user	0m0.000s
-> sys	0m0.012s
->
-> # mount
-> /dev/sdb2 on /film type reiser4 (rw,noatime)
-> /dev/sdb4 on /film2 type ext4 (rw,noatime)
->
-> Can I improve the situation with tweaks,
+Hi
+
+On 01/09/11 22:40, Jeff Mahoney wrote:
+> On 01/08/2011 07:58 PM, Edward Shishkin wrote:
+>> On 01/08/2011 02:31 PM, Sebastian Hyrwall wrote:
+>>> Hi
+> 
+>> Hello.
+> 
+>>>
+>>> I am getting a negative block-number with reiserfsck when doing
+>>> --rebuild-tree -S (or without -S). This causes a segmentation fault
+>>> later (pass 2) in the check because it tries to read a "non-existant
+>>> block". My rebuild takes 3 days and i didn't copy the stdout-info the
+>>> first time so I will post some more info as soon as it becomes available.
+>>>
+>>> Pass 0:
+>>> ####### Pass 0 #######
+>>> The whole partition (-710934672 blocks) is to be scanned
+>>> Skipping 117586 blocks (super block, journal, bitmaps)
+> 
+> 
+>> So you do have a ~16T partition. Correct?
+> 
+> 
+>>  -711052258 blocks
+> 
+> This bit isn't bad typing - it's bad printf formatting. The actual bad
+> typing is going to be harder to track down. A quick look showed me some
+> signed block count variables in the debugreiserfs code but the fsck code
+> may be better off. I'll dig into it.
+> 
+> Since you're trying to reproduce, it would be great if you capture the
+> core dump that should happen when you seg fault. Exact output would be
+> useful as well.
+> 
+> -Jeff
+> 
+Pass 1 (will try to insert 3472246 leaves):
+####### Pass 1 #######
+Looking for allocable blocks .. finished
+0%....20%^[[A....40%....60%..bc ..80%....100%
+left 0, 62 /sec
+Flushing..finished
+        3472246 leaves read
+                3457984 inserted
+                        - pointers in indirect items pointing to
+metadata 77 (zeroed)
+                14262 not inserted
+        non-unique pointers in indirect items (zeroed) 71213
+####### Pass 2 #######
+
+Pass 2:
+0%bread: Cannot read the block (18446744072169358012): (Invalid
+argument). /sec
+bread: Cannot read the block (18446744072169358012): (Invalid argument).
+
+gdb
+
+Program received signal SIGSEGV, Segmentation fault.
+0x000000000042008b in ?? ()
+
+---
+18446744072169358012 is pretty close to an unsigned int64.
+
+The coredmp is 1.7GB so I will upload that somewhere soon.. :)
 
 
-mount -o dont_load_bitmap
-
-Thanks,
-Edward.
+> 
+>>> will be read
+>>>
+>>> Does anyone have any idea on how to fix this?
+>>>
+>>> On a 64-bit system.
+> 
+> 
+>> It looks like you have encountered an overflow/truncation fsck bug
+>> specific to giant volumes.
+> 
+>> I would first ask Jeff: AFAIK he is planning to enable 16T files
+>> in reiserfs.
+>> Jeff, do you have any non-published fixups for such problems?
+> 
+>> Thanks,
+>> Edward.
+> 
+> 
+>>>
+>>> Sincerely,
+>>> Sebastian H
+>>> -- 
+>>> To unsubscribe from this list: send the line "unsubscribe
+>>> reiserfs-devel" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
