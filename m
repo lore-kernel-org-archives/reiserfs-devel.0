@@ -1,165 +1,58 @@
-From: Sebastian Hyrwall <sh@keff.org>
-Subject: Re: Negative blocks in rebuild-tree
-Date: Wed, 12 Jan 2011 10:37:34 +0100
-Message-ID: <4D2D765E.8040903@keff.org>
-References: <4D28674A.60603@keff.org> <4D290828.8050304@gmail.com> <4D2A2B4D.9010906@suse.com> <4D2CAF0F.5070806@keff.org> <4D2CAFEF.8060309@suse.com> <4D2CB299.60703@keff.org> <4D2CC5F9.4040208@suse.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] quota: Fix deadlock during path resolution
+Date: Wed, 12 Jan 2011 19:06:11 +0100
+Message-ID: <20110112180611.GA14260@quack.suse.cz>
+References: <1284586791-8245-1-git-send-email-jack@suse.cz>
+ <20100915225208.GA1490@lst.de>
+ <20100916095553.GA3359@quack.suse.cz>
+ <20110107215904.GQ21922@thunk.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4D2CC5F9.4040208@suse.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-ext4-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20110107215904.GQ21922@thunk.org>
+Sender: linux-ext4-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Ted Ts'o <tytso@mit.edu>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, reiserfs-devel@vger.kernel.org, ocfs2-devel@oss.oracle.com, Al Viro <viro@ZenIV.linux.org.uk>, Joel Becker <joel.becker@oracle.com>
 
-Hi
+On Fri 07-01-11 16:59:04, Ted Ts'o wrote:
+> On Thu, Sep 16, 2010 at 11:55:53AM +0200, Jan Kara wrote:
+> > On Thu 16-09-10 00:52:08, Christoph Hellwig wrote:
+> > > On Wed, Sep 15, 2010 at 11:39:51PM +0200, Jan Kara wrote:
+> > > > As Al Viro pointed out path resolution during Q_QUOTAON calls to quotactl
+> > > > is prone to deadlocks. We hold s_umount semaphore for reading during the
+> > > > path resolution and resolution itself may need to acquire the semaphore
+> > > > for writing when e. g. autofs mountpoint is passed.
+> > > > 
+> > > > Solve the problem by performing the resolution before we get hold of the
+> > > > superblock (and thus s_umount semaphore). The whole thing is complicated
+> > > > by the fact that some filesystems (OCFS2) ignore the path argument. So to
+> > > > distinguish between filesystem which want the path and which do not we
+> > > > introduce new .quota_on_meta callback which does not get the path. OCFS2
+> > > > then uses this callback instead of old .quota_on.
+> > > 
+> > > FYI I have a patch that switches ocfs to share the quota_on method with
+> > > XFS which behaves the same, and consolidate the quota_off method for all
+> > > filesystems.  I think that's better than adding yet another method.
+> > > 
+> > > I'll rebase it and send it out soon.
+> >   Ok, that would be nice. I'll wait with my fix then.
+> 
+> I was going through my ext4 patch backlog, and came across this patch
+> 
+> 	http://patchwork.ozlabs.org/patch/64910/
+> 
+> Did anything ever happen with Christoph's ocfs2 quota patch, which he
+> was going to rebase?  I took a quick gander in git and I didn't see
+> anything, but maybe I was looking in the wrong place.
+  As Christoph wrote, we agreed to push my fix in the end. I've sent it
+to Al twice but sifting through his tree now, he doesn't seem to have it
+in. So I'll push the change via my tree for rc1 (if I still manage to get
+it in) or rc2. Thanks for reminder.
 
-On 01/11/11 22:04, Jeff Mahoney wrote:
-> On 01/11/2011 02:42 PM, sh@keff.org wrote:
->> Hmm. I don't think this is the same error I got the first time. Then it
->> was something like '("pass_2: Reading of the block (%lu) failed on the
->> device 0x%x\n"' (pass2.c).
-> 
->> Then I didn't run the fsck with -S.
-> 
-> Can you try to reproduce with the attached patch? Most of it are
-> formatting changes so the negative blocks (printed) will go away but
-> there are two signedness fixes in there that should help.
-> 
-> -Jeff
-
-Thanks. Running.... see you in 4 days :)
-
-
-> 
-> 
->> On 01/11/11 20:30, Jeff Mahoney wrote:
->>> On 01/11/2011 02:27 PM, sh@keff.org wrote:
->>>> Hi
->>>
->>>> On 01/09/11 22:40, Jeff Mahoney wrote:
->>>>> On 01/08/2011 07:58 PM, Edward Shishkin wrote:
->>>>>> On 01/08/2011 02:31 PM, Sebastian Hyrwall wrote:
->>>>>>> Hi
->>>>>
->>>>>> Hello.
->>>>>
->>>>>>>
->>>>>>> I am getting a negative block-number with reiserfsck when doing
->>>>>>> --rebuild-tree -S (or without -S). This causes a segmentation fault
->>>>>>> later (pass 2) in the check because it tries to read a "non-existant
->>>>>>> block". My rebuild takes 3 days and i didn't copy the stdout-info the
->>>>>>> first time so I will post some more info as soon as it becomes available.
->>>>>>>
->>>>>>> Pass 0:
->>>>>>> ####### Pass 0 #######
->>>>>>> The whole partition (-710934672 blocks) is to be scanned
->>>>>>> Skipping 117586 blocks (super block, journal, bitmaps)
->>>>>
->>>>>
->>>>>> So you do have a ~16T partition. Correct?
->>>>>
->>>>>
->>>>>>  -711052258 blocks
->>>>>
->>>>> This bit isn't bad typing - it's bad printf formatting. The actual bad
->>>>> typing is going to be harder to track down. A quick look showed me some
->>>>> signed block count variables in the debugreiserfs code but the fsck code
->>>>> may be better off. I'll dig into it.
->>>>>
->>>>> Since you're trying to reproduce, it would be great if you capture the
->>>>> core dump that should happen when you seg fault. Exact output would be
->>>>> useful as well.
->>>>>
->>>>> -Jeff
->>>>>
->>>> Pass 1 (will try to insert 3472246 leaves):
->>>> ####### Pass 1 #######
->>>> Looking for allocable blocks .. finished
->>>> 0%....20%^[[A....40%....60%..bc ..80%....100%
->>>> left 0, 62 /sec
->>>> Flushing..finished
->>>>         3472246 leaves read
->>>>                 3457984 inserted
->>>>                         - pointers in indirect items pointing to
->>>> metadata 77 (zeroed)
->>>>                 14262 not inserted
->>>>         non-unique pointers in indirect items (zeroed) 71213
->>>> ####### Pass 2 #######
->>>
->>>> Pass 2:
->>>> 0%bread: Cannot read the block (18446744072169358012): (Invalid
->>>> argument). /sec
->>>> bread: Cannot read the block (18446744072169358012): (Invalid argument).
->>>
->>>> gdb
->>>
->>>> Program received signal SIGSEGV, Segmentation fault.
->>>> 0x000000000042008b in ?? ()
->>>
->>>> ---
->>>> 18446744072169358012 is pretty close to an unsigned int64.
->>>
->>> This looks like a signed int got sign extended to a long.
->>>
->>>> The coredmp is 1.7GB so I will upload that somewhere soon.. :)
->>>
->>> I don't need the whole core dump for now. Can you load up gdb and do:
->>>
->>> gdb reiserfsck core
->>>
->>> (gdb) bt -full
->>>
->>> .. and send the results?
->>>
->>> Thanks.
->>>
->>> -Jeff
->>>
->>>
->>>
->>>
->>>>>
->>>>>>> will be read
->>>>>>>
->>>>>>> Does anyone have any idea on how to fix this?
->>>>>>>
->>>>>>> On a 64-bit system.
->>>>>
->>>>>
->>>>>> It looks like you have encountered an overflow/truncation fsck bug
->>>>>> specific to giant volumes.
->>>>>
->>>>>> I would first ask Jeff: AFAIK he is planning to enable 16T files
->>>>>> in reiserfs.
->>>>>> Jeff, do you have any non-published fixups for such problems?
->>>>>
->>>>>> Thanks,
->>>>>> Edward.
->>>>>
->>>>>
->>>>>>>
->>>>>>> Sincerely,
->>>>>>> Sebastian H
->>>>>>> -- 
->>>>>>> To unsubscribe from this list: send the line "unsubscribe
->>>>>>> reiserfs-devel" in
->>>>>>> the body of a message to majordomo@vger.kernel.org
->>>>>>> More majordomo info at http://vger.kernel.org/majordomo-info.html
->>>>>
->>>>>
->>>>>
->>>
->>>
->> --
->> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
->> --
->> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
+								Honza
+-- 
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
