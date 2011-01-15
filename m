@@ -1,70 +1,41 @@
-From: Serkan Kaba <serkan@gentoo.org>
-Subject: Re: Reiser4 and mount times
-Date: Sat, 15 Jan 2011 07:58:07 +0200
-Message-ID: <4D31376F.1080903@gentoo.org>
-References: <4D2BE02E.6040207@gentoo.org> <4D2C3143.7050008@gmail.com> <4D2D28D1.5010306@gentoo.org> <4D2E12AD.6030508@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Subject: [patch] reiserfs: potential ERR_PTR dereference
+Date: Sat, 15 Jan 2011 16:46:05 +0300
+Message-ID: <20110115134605.GB2721@bicker>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4D2E12AD.6030508@gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:date:from:to:cc:subject:message-id
+         :mail-followup-to:mime-version:content-type:content-disposition
+         :user-agent;
+        bh=qy+TEdmQSBeOPkm3Qc5eWGoCgAvphMZlsNQhmBD7evA=;
+        b=tJkYVvkxTPb6AqIvGcy91Lb6dB7FVUrC3SNdnJUUvlqc7t87P27d95Gcva6uPH6qGN
+         kokBCcFJSWSY0HjwPIDoUn6WnjFbZLP8maa9mxyx0bE5dA4bFYwSH+gd9WeWQgN174xN
+         hc0h68zeg+Tyivmd5T2tjyoJ5k9kc0Q4I7vdg=
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+reiserfs_iget() returns an ERR_PTR on allocation failures.  All the
+other callers check for it so we should check here too.
 
-After switching to dont_load_bitmap I started having freezes when
-starting pidgin (not always). Here's what I could find from dmesg.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Process java (pid: 6853, threadinfo ffff88014862c000, task ffff88017fc8c090)
-Stack:
- ffff880100000020 ffffffff00000001 000000017ef577f0 0000000000008000
-<0> 0000000000000020 ffff880147249004 ffff88017ef577f0 ffff88014862dae8
-<0> 0000000000007fe0 ffff88014862da84 0000000000000001 ffff88014862dae0
-Call Trace:
- [<ffffffff81120153>] T.635+0x7b/0xc2
- [<ffffffff81120305>] reiser4_alloc_blocks_bitmap+0x16b/0x1ca
- [<ffffffff810ee15f>] ? item_utmost_child_real_block+0x46/0x4d
- [<ffffffff810ee47e>] ? coord_prev_unit+0x64/0xa9
- [<ffffffff810ef334>] reiser4_alloc_blocks+0x8f/0x22b
- [<ffffffff810f4305>] allocate_znode_update+0xfc/0x249
- [<ffffffff810e59d1>] ? jload_gfp+0x3e/0x1b9
- [<ffffffff810f4577>] allocate_znode+0x125/0x169
- [<ffffffff810f584a>] alloc_pos_and_ancestors+0xfb/0x137
- [<ffffffff810f6326>] flush_current_atom+0x66c/0x7ea
- [<ffffffff810f0186>] ? txnh_get_atom+0x2a/0xa3
- [<ffffffff810f1e62>] reiser4_txn_end+0x283/0x57b
- [<ffffffff810f216b>] reiser4_txn_restart+0x11/0x22
- [<ffffffff810f270d>] reiser4_txn_restart_current+0x19/0x1b
- [<ffffffff810f2976>] force_commit_atom+0x63/0x69
- [<ffffffff811044e7>] reiser4_sync_file_common+0x73/0x82
- [<ffffffff810b5599>] vfs_fsync_range+0x50/0x7b
- [<ffffffff810b561f>] vfs_fsync+0x17/0x19
- [<ffffffff810b564a>] do_fsync+0x29/0x3e
- [<ffffffff810b567c>] sys_fsync+0xb/0xf
- [<ffffffff81001eab>] system_call_fastpath+0x16/0x1b
-Code: 00 00 00 48 8b 80 70 02 00 00 48 8b 40 18 48 03 18 48 89 df e8 07
-f5 ff ff 89 45 c4 85 c0 0f 85 5c 01 00 00 48 8b 43 20 41 8b 17 <48> 8b
-40 40 31 c9 48 83 c0 04 48 89 45 c8 8b 43 30 39 d0 72 04
-RIP  [<ffffffff8111ff71>] T.637+0x5d/0x1c4
- RSP <ffff88014862d9f8>
-CR2: 0000000000000040
-- ---[ end trace d23b92e9c7b9d378 ]---
-
-- --
-Sincerely,
-Serkan KABA
-- -- 
-Sincerely,
-Serkan KABA
-Gentoo Developer
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.16 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
-
-iEYEARECAAYFAk0xN28ACgkQRh6X64ivZaI8xQCfZnjRWl2ythyBRGZbmbqF0URl
-Gp8Anje7TN9QVy2TAZ+jDYHQrIRy1QW6
-=OJ63
------END PGP SIGNATURE-----
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index 0aab04f..6949b98 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -237,7 +237,7 @@ static int finish_unfinished(struct super_block *s)
+ 		pathrelse(&path);
+ 
+ 		inode = reiserfs_iget(s, &obj_key);
+-		if (!inode) {
++		if (IS_ERR_OR_NULL(inode)) {
+ 			/* the unlink almost completed, it just did not manage to remove
+ 			   "save" link and release objectid */
+ 			reiserfs_warning(s, "vs-2180", "iget failed for %K",
