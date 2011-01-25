@@ -1,87 +1,56 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: How do I  list  Reiser4 statistics on number of files on r4 partition
- and disk space used
-Date: Wed, 19 Jan 2011 02:10:57 +0100
-Message-ID: <4D363A21.2080400@gmail.com>
-References: <5ee8be91243c959b67cf2073736efe35@mail.velocitynet.com.au> <4D36323D.1090206@gmail.com>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCHSET] workqueue: update workqueue users - replace
+ create_workqueue()
+Date: Tue, 25 Jan 2011 15:29:21 +0100
+Message-ID: <20110125142921.GB27510@htj.dyndns.org>
+References: <1294062595-30097-1-git-send-email-tj@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:message-id:date:from:user-agent:mime-version:to
-         :cc:subject:references:in-reply-to:content-type
-         :content-transfer-encoding;
-        bh=P30Pt7O+jitOeTXL9lYbY+8ub1UomNBTm6eB3JN5HzM=;
-        b=JisjrtIKDWtop21Tdio/rjwi2XfzpWNSLpfaLwahsYOnRmqedgxtVrB6TKm85OmymK
-         EfG9HPDcMmRcxbkivcVIw9ZZt+1+mOGhvRCRcTLxovPxc+QISYzvlqJswNywvwqTXoL7
-         aEZ9qAtvCL01c1goIDNBctcemcvOaKdn8QQSw=
-In-Reply-To: <4D36323D.1090206@gmail.com>
+        h=domainkey-signature:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-type:content-disposition
+         :in-reply-to:user-agent;
+        bh=/XU/9Cg5qPnmIXBnisD2NOuYAIERDALQMz8xzja5mmg=;
+        b=VgEbVa5A13FsTteabyerrS2C5HzFQIh3+k17jMymjpAJRexEJNa/TJD6KFyL/P3Hdb
+         jrrpv6sYp4o40F7ckZ0COl/XqSvSDAUQ5E//KIynN/BzApno09PZfIx1lcHkHnqVfnwp
+         9ByszniDKTNJH0QGDISBYoZ6UD2iX97cHIThE=
+Content-Disposition: inline
+In-Reply-To: <1294062595-30097-1-git-send-email-tj@kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: doiggl@velocitynet.com.au
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: lenb@kernel.org, linux-acpi@vger.kernel.org, davej@redhat.com, cpufreq@vger.kernel.org, Markus.Lidel@shadowconnect.com, tomas.winkler@intel.com, jayamohank@serverengines.com, andrew.vasquez@qlogic.com, James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org, tomof@acm.org, stf_xl@wp.pl, linux-usb@vger.kernel.org, tytso@mit.edu, mfasheh@suse.com, joel.becker@oracle.com, reiserfs-devel@vger.kernel.org, aelder@sgi.com, hch@infradead.org, ericvh@gmail.com, rminnich@sandia.gov, v9fs-developer@lists.sourceforge.net, lucho@ionkov.net, andy.grover@oracle.com
 
-On 01/19/2011 01:37 AM, Edward Shishkin wrote:
-> On 01/19/2011 12:32 AM, doiggl@velocitynet.com.au wrote:
->> Hello
->
-> Hi
->
->> How do I list Reiser4 Statistics on number of files on r4 partition and
->
-> ls mountpoint | wc -l
->
-> I don't know how to do it offline. Perhaps there are
-> proper tools (measurefs, or so) in reiser4progs.
->
->
->> disk space used and space saved with compression ?
->
-> sync(1) + df(1) will show occupied space.
->
-> Also you can use du(1) utility. However,
-> you must fsck your partition with --fix option before
-> using du (i_blocks and i_bytes are unsupported online
-> because of performance issues).
+Hello,
 
+There was no response for the following patches and I'm planning on
+routing them through workqueue#for-2.6.39.  If you have an objection
+or want to take the patch through a different tree, please let me
+know.
 
-So, du(1) is to monitor compressed size, ls(1) - non-compressed one.
-That said, you can calculate compression ratio for every reiser4 
-file(directory).
+ 0006-acpi-kacpi-_wq-don-t-need-WQ_MEM_RECLAIM.patch
+ 0007-cpufreq-use-system_wq-instead-of-dedicated-workqueue.patch
+ 0012-i2o-use-alloc_workqueue-instead-of-create_workqueue.patch
+ 0013-misc-iwmc3200top-use-system_wq-instead-of-dedicated-.patch
+ 0016-scsi-be2iscsi-qla2xxx-convert-to-alloc_workqueue.patch
+ 0018-scsi-scsi_tgt_lib-scsi_tgtd-isn-t-used-in-memory-rec.patch
+ 0019-usb-ueagle-atm-use-system_wq-instead-of-dedicated-wo.patch
+ 0025-ext4-convert-to-alloc_workqueue.patch
+ 0026-ocfs2-use-system_wq-instead-of-ocfs2_quota_wq.patch
+ 0027-reiserfs-make-commit_wq-use-the-default-concurrency-.patch
+ 0028-xfs-convert-to-alloc_workqueue.patch
+ 0029-net-9p-use-system_wq-instead-of-p9_mux_wq.patch
+ 0030-net-9p-replace-p9_poll_task-with-a-work.patch
+ 0031-rds-ib-use-system_wq-instead-of-rds_ib_fmr_wq.patch
 
+The whole series can be found at the following URL.
 
->
-> Edward.
->
->
->> I can list these items at this time [1]
->> Thanks Glenn
->>
->> [1]
->>
->> # fsck.reiser4 --print-profile /dev/sdb
->> Default profile:
->> create: "reg40" (id:0x0 type:0x0) [Regular file
->> plugin for creat(2)]
->> key: "key_large" (id:0x1 type:0xb) [Key plugin]
->> compress: "lzo1" (id:0x0 type:0xc) [Compression
->> plugin]
->> compressMode: "conv" (id:0x4 type:0xd) [Compression Mode
->> plugin]
->> cluster: "64K" (id:0x0 type:0x10) [Cluster plugin]
->> hash: "r5_hash" (id:0x1 type:0x3) [Directory entry
->> hash plugin]
->> fibration: "ext_1_fibre" (id:0x2 type:0x4) [Key fibration
->> plugin]
->> formatting: "smart" (id:0x2 type:0x5) [File body
->> formatting plugin]
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe
->> reiserfs-devel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at http://vger.kernel.org/majordomo-info.html
->
+ http://thread.gmane.org/gmane.linux.kernel/1082587
 
+Thank you.
+
+-- 
+tejun
