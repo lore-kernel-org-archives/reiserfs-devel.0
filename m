@@ -1,46 +1,89 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Two questions about reiser4
-Date: Wed, 26 Jan 2011 18:22:37 +0100
-Message-ID: <4D40585D.1020207@gmail.com>
-References: <AANLkTimzRZ2q01K0HkKGxjm0FZ_Fhiw+ozK6mJH9_DEO@mail.gmail.com>
+From: Kaelyn Uhrain <Kaelyn.Alexi+reiserfs@gmail.com>
+Subject: Quick & dirty r4 for 2.6.37
+Date: Wed, 26 Jan 2011 12:14:08 -0800
+Message-ID: <AANLkTi=Mi1QEC+Wjr5ka4uMZH72WytvsszC+yycRKaqq@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary=00221532c778bf015d049ac57949
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <AANLkTimzRZ2q01K0HkKGxjm0FZ_Fhiw+ozK6mJH9_DEO@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:sender:date:x-google-sender-auth
+         :message-id:subject:from:to:content-type;
+        bh=GQ645c0aF2LYUXn3gC348GNvRuQlbh41Nx4SheKePEU=;
+        b=aaQKVG6NBXh6gzQeIdb6AayLg7XX8KUyUV1O/rZXiB1u5DrezuKmXIGDRddKhVQgSF
+         h7LcNKwg4g89rz+WBhqpalyFyl8uZovq3re/ymVCrPgtBEd+YVDQ7+VDA0jQzroi3FNm
+         UwoGFzvRpsrOnqyuoGi/UELW+myOamCLZMh7s=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Kaelyn Uhrain <Kaelyn.Alexi+reiserfs@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-Kaelyn Uhrain wrote:
-> Hi,
->   
+--00221532c778bf015d049ac57949
+Content-Type: text/plain; charset=ISO-8859-1
 
-Hello.
+Here's a quick patch I just made for the resier4-for-2.6.36 patch to
+compile against the 2.6.37 sources.  To use, apply
+resier4-for-2.6.36.patch to the 2.6.37 kernel sources (ignoring the
+one rejected chunk which just adds a comment at the end of
+fs/fs-writeback.c) then apply this patch.  My patch is a revert of
+766f9164193f6dda1497bbf3861060198421fb92 along with three very small
+one-liner changes to fix compilation issues; I haven't had a chance to
+test it beyond building the kernel itself, and won't until after I'm
+off work tonight.  I also make no claims as to the correctness of my
+patch since it is my first venture into the reiser4 and linux fs code.
 
-> I have two questions concerning reiser4:
->
-> 1) Does it have TRIM support for SSDs,
+Cheers,
+Kaelyn
 
-Nup.
+--00221532c778bf015d049ac57949
+Content-Type: text/x-diff; charset=US-ASCII; name="reiser4-for-2.6.36-to-2.6.37.patch"
+Content-Disposition: attachment; 
+	filename="reiser4-for-2.6.36-to-2.6.37.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_gjeo9f7l0
 
->  and if not what would be
-> necessary to add support?
->   
-
-Someone's time and desire. I don't have first one.
-In the best case I can promise fallocate(2) support
-in the next 3 months.
-
-> 2) What is left to do for having reiser4 included in the mainline kernel?
->   
-
-To acquire support of some vendor.
-
-> Thank you in advance for your time, and kudos for continuing
-> development on a great filesystem.
->   
-
-Thanks,
-Edward.
+ZGlmZiAtLWdpdCBhL2ZzL2ZzLXdyaXRlYmFjay5jIGIvZnMvZnMtd3JpdGViYWNrLmMKaW5kZXgg
+ZWIyM2E5YS4uZDA0NmI5OSAxMDA2NDQKLS0tIGEvZnMvZnMtd3JpdGViYWNrLmMKKysrIGIvZnMv
+ZnMtd3JpdGViYWNrLmMKQEAgLTcxMiw3ICs3MTIsNyBAQCB2b2lkIHdyaXRlYmFja19za2lwX3Ni
+X2lub2RlcyhzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiLAogCiAJCWlmIChsaXN0X2VtcHR5KCZ3Yi0+
+Yl9pbykpCiAJCQlicmVhazsKLQkJaW5vZGUgPSBsaXN0X2VudHJ5KHdiLT5iX2lvLnByZXYsIHN0
+cnVjdCBpbm9kZSwgaV9saXN0KTsKKwkJaW5vZGUgPSB3Yl9pbm9kZSh3Yi0+Yl9pby5wcmV2KTsK
+IAkJaWYgKHNiICE9IGlub2RlLT5pX3NiKQogCQkJYnJlYWs7CiAJCXJlZGlydHlfdGFpbChpbm9k
+ZSk7CkBAIC04MzQsNyArODM0LDcgQEAgaW50IGJkaV93cml0ZWJhY2tfdGhyZWFkKHZvaWQgKmRh
+dGEpCiAJc3RydWN0IGJhY2tpbmdfZGV2X2luZm8gKmJkaSA9IHdiLT5iZGk7CiAJbG9uZyBwYWdl
+c193cml0dGVuOwogCi0JY3VycmVudC0+ZmxhZ3MgfD0gUEZfU1dBUFdSSVRFOworCWN1cnJlbnQt
+PmZsYWdzIHw9IFBGX0ZMVVNIRVIgfCBQRl9TV0FQV1JJVEU7CiAJc2V0X2ZyZWV6YWJsZSgpOwog
+CXdiLT5sYXN0X2FjdGl2ZSA9IGppZmZpZXM7CiAKZGlmZiAtLWdpdCBhL2ZzL3JlaXNlcjQvam5v
+ZGUuYyBiL2ZzL3JlaXNlcjQvam5vZGUuYwppbmRleCAzZWFiMTFhLi5lNWI1OTQzIDEwMDY0NAot
+LS0gYS9mcy9yZWlzZXI0L2pub2RlLmMKKysrIGIvZnMvcmVpc2VyNC9qbm9kZS5jCkBAIC0yNDcs
+OCArMjQ3LDYgQEAgdm9pZCBqbm9kZV9pbml0KGpub2RlICogbm9kZSwgcmVpc2VyNF90cmVlICog
+dHJlZSwgam5vZGVfdHlwZSB0eXBlKQogCiAJQVNTSUdOX05PREVfTElTVChub2RlLCBOT1RfQ0FQ
+VFVSRUQpOwogCi0JSU5JVF9SQ1VfSEVBRCgmbm9kZS0+cmN1KTsKLQogI2lmIFJFSVNFUjRfREVC
+VUcKIAl7CiAJCXJlaXNlcjRfc3VwZXJfaW5mb19kYXRhICpzYmluZm87CmRpZmYgLS1naXQgYS9m
+cy9yZWlzZXI0L3dhbmRlci5jIGIvZnMvcmVpc2VyNC93YW5kZXIuYwppbmRleCA4Zjc1MDk2Li4y
+NTM4YjY2IDEwMDY0NAotLS0gYS9mcy9yZWlzZXI0L3dhbmRlci5jCisrKyBiL2ZzL3JlaXNlcjQv
+d2FuZGVyLmMKQEAgLTcyMCw3ICs3MjAsNyBAQCBzdGF0aWMgaW50IHdyaXRlX2pub2Rlc190b19k
+aXNrX2V4dGVudCgKIAlmbHVzaF9xdWV1ZV90ICpmcSwgaW50IGZsYWdzKQogewogCXN0cnVjdCBz
+dXBlcl9ibG9jayAqc3VwZXIgPSByZWlzZXI0X2dldF9jdXJyZW50X3NiKCk7Ci0JaW50IHdyaXRl
+X29wID0gKCBmbGFncyAmIFdSSVRFT1VUX0JBUlJJRVIgKSA/IFdSSVRFX0JBUlJJRVIgOiBXUklU
+RTsKKwlpbnQgd3JpdGVfb3AgPSAoIGZsYWdzICYgV1JJVEVPVVRfQkFSUklFUiApID8gV1JJVEVf
+RkxVU0hfRlVBIDogV1JJVEU7CiAJaW50IG1heF9ibG9ja3M7CiAJam5vZGUgKmN1ciA9IGZpcnN0
+OwogCXJlaXNlcjRfYmxvY2tfbnIgYmxvY2s7CmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3Nj
+aGVkLmggYi9pbmNsdWRlL2xpbnV4L3NjaGVkLmgKaW5kZXggMjIzODc0NS4uNzY2N2JkZiAxMDA2
+NDQKLS0tIGEvaW5jbHVkZS9saW51eC9zY2hlZC5oCisrKyBiL2luY2x1ZGUvbGludXgvc2NoZWQu
+aApAQCAtMTcxMSw2ICsxNzExLDcgQEAgZXh0ZXJuIHZvaWQgdGhyZWFkX2dyb3VwX3RpbWVzKHN0
+cnVjdCB0YXNrX3N0cnVjdCAqcCwgY3B1dGltZV90ICp1dCwgY3B1dGltZV90ICoKICNkZWZpbmUg
+UEZfRFVNUENPUkUJMHgwMDAwMDIwMAkvKiBkdW1wZWQgY29yZSAqLwogI2RlZmluZSBQRl9TSUdO
+QUxFRAkweDAwMDAwNDAwCS8qIGtpbGxlZCBieSBhIHNpZ25hbCAqLwogI2RlZmluZSBQRl9NRU1B
+TExPQwkweDAwMDAwODAwCS8qIEFsbG9jYXRpbmcgbWVtb3J5ICovCisjZGVmaW5lIFBGX0ZMVVNI
+RVIJMHgwMDAwMTAwMAkvKiByZXNwb25zaWJsZSBmb3IgZGlzayB3cml0ZWJhY2sgKi8KICNkZWZp
+bmUgUEZfVVNFRF9NQVRICTB4MDAwMDIwMDAJLyogaWYgdW5zZXQgdGhlIGZwdSBtdXN0IGJlIGlu
+aXRpYWxpemVkIGJlZm9yZSB1c2UgKi8KICNkZWZpbmUgUEZfRlJFRVpJTkcJMHgwMDAwNDAwMAkv
+KiBmcmVlemUgaW4gcHJvZ3Jlc3MuIGRvIG5vdCBhY2NvdW50IHRvIGxvYWQgKi8KICNkZWZpbmUg
+UEZfTk9GUkVFWkUJMHgwMDAwODAwMAkvKiB0aGlzIHRocmVhZCBzaG91bGQgbm90IGJlIGZyb3pl
+biAqLwpkaWZmIC0tZ2l0IGEvbW0vYmFja2luZy1kZXYuYyBiL21tL2JhY2tpbmctZGV2LmMKaW5k
+ZXggMDI3MTAwZC4uOTU2ZGZlYyAxMDA2NDQKLS0tIGEvbW0vYmFja2luZy1kZXYuYworKysgYi9t
+bS9iYWNraW5nLWRldi5jCkBAIC0zNjIsNyArMzYyLDcgQEAgc3RhdGljIGludCBiZGlfZm9ya2Vy
+X3RocmVhZCh2b2lkICpwdHIpCiB7CiAJc3RydWN0IGJkaV93cml0ZWJhY2sgKm1lID0gcHRyOwog
+Ci0JY3VycmVudC0+ZmxhZ3MgfD0gUEZfU1dBUFdSSVRFOworCWN1cnJlbnQtPmZsYWdzIHw9IFBG
+X0ZMVVNIRVIgfCBQRl9TV0FQV1JJVEU7CiAJc2V0X2ZyZWV6YWJsZSgpOwogCiAJLyoK
+--00221532c778bf015d049ac57949--
