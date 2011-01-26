@@ -1,33 +1,33 @@
-From: Christian Stroetmann <stroetmann@ontolinux.com>
-Subject: Re: update contact location on reiser4  boot message
-Date: Wed, 26 Jan 2011 01:54:29 +0100
-Message-ID: <4D3F70C5.40501@ontolinux.com>
-References: <1b9eb531ce859482f910f381c63d7c1e@mail.velocitynet.com.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCHSET] workqueue: update workqueue users - replace
+ create_workqueue()
+Date: Wed, 26 Jan 2011 12:46:49 +0800
+Message-ID: <20110126044649.GA2991@kroah.com>
+References: <1294062595-30097-1-git-send-email-tj@kernel.org>
+ <20110125142921.GB27510@htj.dyndns.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1b9eb531ce859482f910f381c63d7c1e@mail.velocitynet.com.au>
+Content-Disposition: inline
+In-Reply-To: <20110125142921.GB27510@htj.dyndns.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: doiggl@velocitynet.com.au
-Cc: linux reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, davej@redhat.com, cpufreq@vger.kernel.org, Markus.Lidel@shadowconnect.com, tomas.winkler@intel.com, jayamohank@serverengines.com, andrew.vasquez@qlogic.com, James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org, tomof@acm.org, stf_xl@wp.pl, linux-usb@vger.kernel.org, tytso@mit.edu, mfasheh@suse.com, joel.becker@oracle.com, reiserfs-devel@vger.kernel.org, aelder@sgi.com, hch@infradead.org, ericvh@gmail.com, rminnich@sandia.gov, v9fs-developer@lists.sourceforge.net, lucho@ionkov.net, andy.grover@oracle.com
 
-On the 25.01.2011 23:44, Glenn <doiggl@velocitynet.com.au> wrote:
+On Tue, Jan 25, 2011 at 03:29:21PM +0100, Tejun Heo wrote:
 > Hello,
-> When a kernel with a reiser4 patch is loaded I get this message in this
-> dmesg output
->
-> Loading Reiser4. See www.namesys.com for a description of Reiser4.
->
-> Since  www.namesys.com is not reachable,  could that name be changed to a
-> reachable one like https://reiser4.wiki.kernel.org
-> Thanks Glenn
+> 
+> There was no response for the following patches and I'm planning on
+> routing them through workqueue#for-2.6.39.  If you have an objection
+> or want to take the patch through a different tree, please let me
+> know.
+> 
+>  0019-usb-ueagle-atm-use-system_wq-instead-of-dedicated-wo.patch
 
-Sorry, but: Bad idea. The wiki is full of illegally copied copyrighted 
-material owned by Hans Reiser. At least he had to make this legal, 
-though I haven't seen an official statement by him in this case.
+I've already taken this in my usb-next tree to go into .39.
 
+thanks,
 
-Have fun
-Christian O>-<   *<:o)   _(D)>-<
+greg k-h
