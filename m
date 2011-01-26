@@ -1,118 +1,45 @@
-From: Kaelyn Uhrain <Kaelyn.Alexi+reiserfs@gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: Quick & dirty r4 for 2.6.37
-Date: Wed, 26 Jan 2011 12:30:40 -0800
-Message-ID: <AANLkTi=trDJKzq5x4ic0qzkzCseDMgzci29NnTqDbzco@mail.gmail.com>
+Date: Wed, 26 Jan 2011 21:49:39 +0100
+Message-ID: <4D4088E3.8080800@gmail.com>
 References: <AANLkTi=Mi1QEC+Wjr5ka4uMZH72WytvsszC+yycRKaqq@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=00221534d343e40d1b049ac5b489
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:sender:in-reply-to:references:date
-         :x-google-sender-auth:message-id:subject:from:to:content-type;
-        bh=cqgfzzx2tljI1wXqjv7vcnvWu9xAnK3FzWPApXBuT6c=;
-        b=dlBYsFOES4WjSI43xMnelKRF0CF+CruNfHb2QcJrXJu7EPZVFvrEuIeLpQJP+N18de
-         qVZCH7VM+QXF6TIqvjbhiYGJuH3fpkz7RbbxIpW0RoT4YFkRKDNW9JUdTmYkmkAiGGeF
-         gTvrM+uOSuZVHCINc1EunkqRPqqfrLMwx+W1E=
 In-Reply-To: <AANLkTi=Mi1QEC+Wjr5ka4uMZH72WytvsszC+yycRKaqq@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Kaelyn Uhrain <Kaelyn.Alexi+reiserfs@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
---00221534d343e40d1b049ac5b489
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-Ack! Just realized I'd created the patch based on the
-reiser4-for-2.6.36.path.bz2 from November and not the latest r4 patch.
- Here is an amended version of my patch that removes the export of
-generic_writeback_sb_inodes and the definition & export of
-writeback_skip_sb_inodes from fs/fs-writeback.c as they're already in
-vanilla 2.6.37.
-
-On Wed, Jan 26, 2011 at 12:14 PM, Kaelyn Uhrain
-<Kaelyn.Alexi+reiserfs@gmail.com> wrote:
+Kaelyn Uhrain wrote:
 > Here's a quick patch I just made for the resier4-for-2.6.36 patch to
-> compile against the 2.6.37 sources. =A0To use, apply
+> compile against the 2.6.37 sources.  To use, apply
 > resier4-for-2.6.36.patch to the 2.6.37 kernel sources (ignoring the
 > one rejected chunk which just adds a comment at the end of
-> fs/fs-writeback.c) then apply this patch. =A0My patch is a revert of
+> fs/fs-writeback.c) then apply this patch.  My patch is a revert of
 > 766f9164193f6dda1497bbf3861060198421fb92 along with three very small
 > one-liner changes to fix compilation issues; I haven't had a chance to
 > test it beyond building the kernel itself, and won't until after I'm
-> off work tonight. =A0I also make no claims as to the correctness of my
+> off work tonight.  I also make no claims as to the correctness of my
 > patch since it is my first venture into the reiser4 and linux fs code.
 >
 > Cheers,
 > Kaelyn
->
+>   
 
---00221534d343e40d1b049ac5b489
-Content-Type: text/x-diff; charset=US-ASCII; name="reiser4-for-2.6.36-to-2.6.37.patch"
-Content-Disposition: attachment; 
-	filename="reiser4-for-2.6.36-to-2.6.37.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_gjeow4ej1
+Hello.
 
-ZGlmZiAtLWdpdCBhL2ZzL2ZzLXdyaXRlYmFjay5jIGIvZnMvZnMtd3JpdGViYWNrLmMKaW5kZXgg
-ZWIyM2E5YS4uZDA0NmI5OSAxMDA2NDQKLS0tIGEvZnMvZnMtd3JpdGViYWNrLmMKKysrIGIvZnMv
-ZnMtd3JpdGViYWNrLmMKQEAgLTcxMiw3ICs3MTIsNyBAQCB2b2lkIHdyaXRlYmFja19za2lwX3Ni
-X2lub2RlcyhzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiLAogCiAJCWlmIChsaXN0X2VtcHR5KCZ3Yi0+
-Yl9pbykpCiAJCQlicmVhazsKLQkJaW5vZGUgPSBsaXN0X2VudHJ5KHdiLT5iX2lvLnByZXYsIHN0
-cnVjdCBpbm9kZSwgaV9saXN0KTsKKwkJaW5vZGUgPSB3Yl9pbm9kZSh3Yi0+Yl9pby5wcmV2KTsK
-IAkJaWYgKHNiICE9IGlub2RlLT5pX3NiKQogCQkJYnJlYWs7CiAJCXJlZGlydHlfdGFpbChpbm9k
-ZSk7CkBAIC04MzQsNyArODM0LDcgQEAgaW50IGJkaV93cml0ZWJhY2tfdGhyZWFkKHZvaWQgKmRh
-dGEpCiAJc3RydWN0IGJhY2tpbmdfZGV2X2luZm8gKmJkaSA9IHdiLT5iZGk7CiAJbG9uZyBwYWdl
-c193cml0dGVuOwogCi0JY3VycmVudC0+ZmxhZ3MgfD0gUEZfU1dBUFdSSVRFOworCWN1cnJlbnQt
-PmZsYWdzIHw9IFBGX0ZMVVNIRVIgfCBQRl9TV0FQV1JJVEU7CiAJc2V0X2ZyZWV6YWJsZSgpOwog
-CXdiLT5sYXN0X2FjdGl2ZSA9IGppZmZpZXM7CiAKZGlmZiAtLWdpdCBhL2ZzL3JlaXNlcjQvam5v
-ZGUuYyBiL2ZzL3JlaXNlcjQvam5vZGUuYwppbmRleCAzZWFiMTFhLi5lNWI1OTQzIDEwMDY0NAot
-LS0gYS9mcy9yZWlzZXI0L2pub2RlLmMKKysrIGIvZnMvcmVpc2VyNC9qbm9kZS5jCkBAIC0yNDcs
-OCArMjQ3LDYgQEAgdm9pZCBqbm9kZV9pbml0KGpub2RlICogbm9kZSwgcmVpc2VyNF90cmVlICog
-dHJlZSwgam5vZGVfdHlwZSB0eXBlKQogCiAJQVNTSUdOX05PREVfTElTVChub2RlLCBOT1RfQ0FQ
-VFVSRUQpOwogCi0JSU5JVF9SQ1VfSEVBRCgmbm9kZS0+cmN1KTsKLQogI2lmIFJFSVNFUjRfREVC
-VUcKIAl7CiAJCXJlaXNlcjRfc3VwZXJfaW5mb19kYXRhICpzYmluZm87CmRpZmYgLS1naXQgYS9m
-cy9yZWlzZXI0L3dhbmRlci5jIGIvZnMvcmVpc2VyNC93YW5kZXIuYwppbmRleCA4Zjc1MDk2Li4y
-NTM4YjY2IDEwMDY0NAotLS0gYS9mcy9yZWlzZXI0L3dhbmRlci5jCisrKyBiL2ZzL3JlaXNlcjQv
-d2FuZGVyLmMKQEAgLTcyMCw3ICs3MjAsNyBAQCBzdGF0aWMgaW50IHdyaXRlX2pub2Rlc190b19k
-aXNrX2V4dGVudCgKIAlmbHVzaF9xdWV1ZV90ICpmcSwgaW50IGZsYWdzKQogewogCXN0cnVjdCBz
-dXBlcl9ibG9jayAqc3VwZXIgPSByZWlzZXI0X2dldF9jdXJyZW50X3NiKCk7Ci0JaW50IHdyaXRl
-X29wID0gKCBmbGFncyAmIFdSSVRFT1VUX0JBUlJJRVIgKSA/IFdSSVRFX0JBUlJJRVIgOiBXUklU
-RTsKKwlpbnQgd3JpdGVfb3AgPSAoIGZsYWdzICYgV1JJVEVPVVRfQkFSUklFUiApID8gV1JJVEVf
-RkxVU0hfRlVBIDogV1JJVEU7CiAJaW50IG1heF9ibG9ja3M7CiAJam5vZGUgKmN1ciA9IGZpcnN0
-OwogCXJlaXNlcjRfYmxvY2tfbnIgYmxvY2s7CmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3Nj
-aGVkLmggYi9pbmNsdWRlL2xpbnV4L3NjaGVkLmgKaW5kZXggMjIzODc0NS4uNzY2N2JkZiAxMDA2
-NDQKLS0tIGEvaW5jbHVkZS9saW51eC9zY2hlZC5oCisrKyBiL2luY2x1ZGUvbGludXgvc2NoZWQu
-aApAQCAtMTcxMSw2ICsxNzExLDcgQEAgZXh0ZXJuIHZvaWQgdGhyZWFkX2dyb3VwX3RpbWVzKHN0
-cnVjdCB0YXNrX3N0cnVjdCAqcCwgY3B1dGltZV90ICp1dCwgY3B1dGltZV90ICoKICNkZWZpbmUg
-UEZfRFVNUENPUkUJMHgwMDAwMDIwMAkvKiBkdW1wZWQgY29yZSAqLwogI2RlZmluZSBQRl9TSUdO
-QUxFRAkweDAwMDAwNDAwCS8qIGtpbGxlZCBieSBhIHNpZ25hbCAqLwogI2RlZmluZSBQRl9NRU1B
-TExPQwkweDAwMDAwODAwCS8qIEFsbG9jYXRpbmcgbWVtb3J5ICovCisjZGVmaW5lIFBGX0ZMVVNI
-RVIJMHgwMDAwMTAwMAkvKiByZXNwb25zaWJsZSBmb3IgZGlzayB3cml0ZWJhY2sgKi8KICNkZWZp
-bmUgUEZfVVNFRF9NQVRICTB4MDAwMDIwMDAJLyogaWYgdW5zZXQgdGhlIGZwdSBtdXN0IGJlIGlu
-aXRpYWxpemVkIGJlZm9yZSB1c2UgKi8KICNkZWZpbmUgUEZfRlJFRVpJTkcJMHgwMDAwNDAwMAkv
-KiBmcmVlemUgaW4gcHJvZ3Jlc3MuIGRvIG5vdCBhY2NvdW50IHRvIGxvYWQgKi8KICNkZWZpbmUg
-UEZfTk9GUkVFWkUJMHgwMDAwODAwMAkvKiB0aGlzIHRocmVhZCBzaG91bGQgbm90IGJlIGZyb3pl
-biAqLwpkaWZmIC0tZ2l0IGEvbW0vYmFja2luZy1kZXYuYyBiL21tL2JhY2tpbmctZGV2LmMKaW5k
-ZXggMDI3MTAwZC4uOTU2ZGZlYyAxMDA2NDQKLS0tIGEvbW0vYmFja2luZy1kZXYuYworKysgYi9t
-bS9iYWNraW5nLWRldi5jCkBAIC0zNjIsNyArMzYyLDcgQEAgc3RhdGljIGludCBiZGlfZm9ya2Vy
-X3RocmVhZCh2b2lkICpwdHIpCiB7CiAJc3RydWN0IGJkaV93cml0ZWJhY2sgKm1lID0gcHRyOwog
-Ci0JY3VycmVudC0+ZmxhZ3MgfD0gUEZfU1dBUFdSSVRFOworCWN1cnJlbnQtPmZsYWdzIHw9IFBG
-X0ZMVVNIRVIgfCBQRl9TV0FQV1JJVEU7CiAJc2V0X2ZyZWV6YWJsZSgpOwogCiAJLyoKZGlmZiAt
-LWdpdCBhL2ZzL2ZzLXdyaXRlYmFjay5jIGIvZnMvZnMtd3JpdGViYWNrLmMKaW5kZXggY2I0NGM1
-Yi4uYjg4NDgzZiAxMDA2NDQKLS0tIGEvZnMvZnMtd3JpdGViYWNrLmMKKysrIGIvZnMvZnMtd3Jp
-dGViYWNrLmMKQEAgLTgyNSwzMSArODI1LDYgQEAgbG9uZyB3Yl9kb193cml0ZWJhY2soc3RydWN0
-IGJkaV93cml0ZWJhY2sgKndiLCBpbnQgZm9yY2Vfd2FpdCkKIAogCXJldHVybiB3cm90ZTsKIH0K
-LUVYUE9SVF9TWU1CT0woZ2VuZXJpY193cml0ZWJhY2tfc2JfaW5vZGVzKTsKLQotLyoKLSAqIFRo
-aXMgZnVuY3Rpb24gaXMgZm9yIGZpbGUgc3lzdGVtcyB3aGljaCBoYXZlIHRoZWlyCi0gKiBvd24g
-bWVhbnMgb2YgcGVyaW9kaWNhbCB3cml0ZS1vdXQgb2Ygb2xkIGRhdGEuCi0gKiBOT1RFOiBpbm9k
-ZV9sb2NrIHNob3VsZCBiZSBob2xkLgotICoKLSAqIFNraXAgYSBwb3J0aW9uIG9mIGJfaW8gaW5v
-ZGVzIHdoaWNoIGJlbG9uZyB0byBAc2IKLSAqIGFuZCBnbyBzZXF1ZW50aWFsbHkgaW4gcmV2ZXJz
-ZSBvcmRlci4KLSAqLwotdm9pZCB3cml0ZWJhY2tfc2tpcF9zYl9pbm9kZXMoc3RydWN0IHN1cGVy
-X2Jsb2NrICpzYiwKLQkJCSAgICAgIHN0cnVjdCBiZGlfd3JpdGViYWNrICp3YikKLXsKLQl3aGls
-ZSAoMSkgewotCQlzdHJ1Y3QgaW5vZGUgKmlub2RlOwotCi0JCWlmIChsaXN0X2VtcHR5KCZ3Yi0+
-Yl9pbykpCi0JCQlicmVhazsKLQkJaW5vZGUgPSBsaXN0X2VudHJ5KHdiLT5iX2lvLnByZXYsIHN0
-cnVjdCBpbm9kZSwgaV9saXN0KTsKLQkJaWYgKHNiICE9IGlub2RlLT5pX3NiKQotCQkJYnJlYWs7
-Ci0JCXJlZGlydHlfdGFpbChpbm9kZSk7Ci0JfQotfQotRVhQT1JUX1NZTUJPTCh3cml0ZWJhY2tf
-c2tpcF9zYl9pbm9kZXMpOwogCiAKIC8qCg==
---00221534d343e40d1b049ac5b489--
+Correct, but not enough:
+return value BIO_EOPNOTSUPP has gone with WRITE_BARRIER,
+and vfs changes in default_llseek() now cause self-blocking in ->llseek()
+reiser4 file operation path.
+
+Actually, I have already prepared the patch for .37 at last weekends
+(still testing), will be available soon.
+
+Anyway thanks!
+Edward.
+ 
+
