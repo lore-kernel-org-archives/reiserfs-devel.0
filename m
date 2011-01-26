@@ -1,45 +1,58 @@
 From: Kaelyn Uhrain <Kaelyn.Alexi+reiserfs@gmail.com>
-Subject: Quick & dirty r4 for 2.6.37
-Date: Wed, 26 Jan 2011 12:14:08 -0800
-Message-ID: <AANLkTi=Mi1QEC+Wjr5ka4uMZH72WytvsszC+yycRKaqq@mail.gmail.com>
+Subject: Re: Quick & dirty r4 for 2.6.37
+Date: Wed, 26 Jan 2011 12:30:40 -0800
+Message-ID: <AANLkTi=trDJKzq5x4ic0qzkzCseDMgzci29NnTqDbzco@mail.gmail.com>
+References: <AANLkTi=Mi1QEC+Wjr5ka4uMZH72WytvsszC+yycRKaqq@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=00221532c778bf015d049ac57949
+Content-Type: multipart/mixed; boundary=00221534d343e40d1b049ac5b489
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:sender:date:x-google-sender-auth
-         :message-id:subject:from:to:content-type;
-        bh=GQ645c0aF2LYUXn3gC348GNvRuQlbh41Nx4SheKePEU=;
-        b=aaQKVG6NBXh6gzQeIdb6AayLg7XX8KUyUV1O/rZXiB1u5DrezuKmXIGDRddKhVQgSF
-         h7LcNKwg4g89rz+WBhqpalyFyl8uZovq3re/ymVCrPgtBEd+YVDQ7+VDA0jQzroi3FNm
-         UwoGFzvRpsrOnqyuoGi/UELW+myOamCLZMh7s=
+        h=domainkey-signature:mime-version:sender:in-reply-to:references:date
+         :x-google-sender-auth:message-id:subject:from:to:content-type;
+        bh=cqgfzzx2tljI1wXqjv7vcnvWu9xAnK3FzWPApXBuT6c=;
+        b=dlBYsFOES4WjSI43xMnelKRF0CF+CruNfHb2QcJrXJu7EPZVFvrEuIeLpQJP+N18de
+         qVZCH7VM+QXF6TIqvjbhiYGJuH3fpkz7RbbxIpW0RoT4YFkRKDNW9JUdTmYkmkAiGGeF
+         gTvrM+uOSuZVHCINc1EunkqRPqqfrLMwx+W1E=
+In-Reply-To: <AANLkTi=Mi1QEC+Wjr5ka4uMZH72WytvsszC+yycRKaqq@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-devel@vger.kernel.org
 
---00221532c778bf015d049ac57949
+--00221534d343e40d1b049ac5b489
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Here's a quick patch I just made for the resier4-for-2.6.36 patch to
-compile against the 2.6.37 sources.  To use, apply
-resier4-for-2.6.36.patch to the 2.6.37 kernel sources (ignoring the
-one rejected chunk which just adds a comment at the end of
-fs/fs-writeback.c) then apply this patch.  My patch is a revert of
-766f9164193f6dda1497bbf3861060198421fb92 along with three very small
-one-liner changes to fix compilation issues; I haven't had a chance to
-test it beyond building the kernel itself, and won't until after I'm
-off work tonight.  I also make no claims as to the correctness of my
-patch since it is my first venture into the reiser4 and linux fs code.
+Ack! Just realized I'd created the patch based on the
+reiser4-for-2.6.36.path.bz2 from November and not the latest r4 patch.
+ Here is an amended version of my patch that removes the export of
+generic_writeback_sb_inodes and the definition & export of
+writeback_skip_sb_inodes from fs/fs-writeback.c as they're already in
+vanilla 2.6.37.
 
-Cheers,
-Kaelyn
+On Wed, Jan 26, 2011 at 12:14 PM, Kaelyn Uhrain
+<Kaelyn.Alexi+reiserfs@gmail.com> wrote:
+> Here's a quick patch I just made for the resier4-for-2.6.36 patch to
+> compile against the 2.6.37 sources. =A0To use, apply
+> resier4-for-2.6.36.patch to the 2.6.37 kernel sources (ignoring the
+> one rejected chunk which just adds a comment at the end of
+> fs/fs-writeback.c) then apply this patch. =A0My patch is a revert of
+> 766f9164193f6dda1497bbf3861060198421fb92 along with three very small
+> one-liner changes to fix compilation issues; I haven't had a chance to
+> test it beyond building the kernel itself, and won't until after I'm
+> off work tonight. =A0I also make no claims as to the correctness of my
+> patch since it is my first venture into the reiser4 and linux fs code.
+>
+> Cheers,
+> Kaelyn
+>
 
---00221532c778bf015d049ac57949
+--00221534d343e40d1b049ac5b489
 Content-Type: text/x-diff; charset=US-ASCII; name="reiser4-for-2.6.36-to-2.6.37.patch"
 Content-Disposition: attachment; 
 	filename="reiser4-for-2.6.36-to-2.6.37.patch"
 Content-Transfer-Encoding: base64
-X-Attachment-Id: f_gjeo9f7l0
+X-Attachment-Id: f_gjeow4ej1
 
 ZGlmZiAtLWdpdCBhL2ZzL2ZzLXdyaXRlYmFjay5jIGIvZnMvZnMtd3JpdGViYWNrLmMKaW5kZXgg
 ZWIyM2E5YS4uZDA0NmI5OSAxMDA2NDQKLS0tIGEvZnMvZnMtd3JpdGViYWNrLmMKKysrIGIvZnMv
@@ -85,5 +98,21 @@ ZXggMDI3MTAwZC4uOTU2ZGZlYyAxMDA2NDQKLS0tIGEvbW0vYmFja2luZy1kZXYuYworKysgYi9t
 bS9iYWNraW5nLWRldi5jCkBAIC0zNjIsNyArMzYyLDcgQEAgc3RhdGljIGludCBiZGlfZm9ya2Vy
 X3RocmVhZCh2b2lkICpwdHIpCiB7CiAJc3RydWN0IGJkaV93cml0ZWJhY2sgKm1lID0gcHRyOwog
 Ci0JY3VycmVudC0+ZmxhZ3MgfD0gUEZfU1dBUFdSSVRFOworCWN1cnJlbnQtPmZsYWdzIHw9IFBG
-X0ZMVVNIRVIgfCBQRl9TV0FQV1JJVEU7CiAJc2V0X2ZyZWV6YWJsZSgpOwogCiAJLyoK
---00221532c778bf015d049ac57949--
+X0ZMVVNIRVIgfCBQRl9TV0FQV1JJVEU7CiAJc2V0X2ZyZWV6YWJsZSgpOwogCiAJLyoKZGlmZiAt
+LWdpdCBhL2ZzL2ZzLXdyaXRlYmFjay5jIGIvZnMvZnMtd3JpdGViYWNrLmMKaW5kZXggY2I0NGM1
+Yi4uYjg4NDgzZiAxMDA2NDQKLS0tIGEvZnMvZnMtd3JpdGViYWNrLmMKKysrIGIvZnMvZnMtd3Jp
+dGViYWNrLmMKQEAgLTgyNSwzMSArODI1LDYgQEAgbG9uZyB3Yl9kb193cml0ZWJhY2soc3RydWN0
+IGJkaV93cml0ZWJhY2sgKndiLCBpbnQgZm9yY2Vfd2FpdCkKIAogCXJldHVybiB3cm90ZTsKIH0K
+LUVYUE9SVF9TWU1CT0woZ2VuZXJpY193cml0ZWJhY2tfc2JfaW5vZGVzKTsKLQotLyoKLSAqIFRo
+aXMgZnVuY3Rpb24gaXMgZm9yIGZpbGUgc3lzdGVtcyB3aGljaCBoYXZlIHRoZWlyCi0gKiBvd24g
+bWVhbnMgb2YgcGVyaW9kaWNhbCB3cml0ZS1vdXQgb2Ygb2xkIGRhdGEuCi0gKiBOT1RFOiBpbm9k
+ZV9sb2NrIHNob3VsZCBiZSBob2xkLgotICoKLSAqIFNraXAgYSBwb3J0aW9uIG9mIGJfaW8gaW5v
+ZGVzIHdoaWNoIGJlbG9uZyB0byBAc2IKLSAqIGFuZCBnbyBzZXF1ZW50aWFsbHkgaW4gcmV2ZXJz
+ZSBvcmRlci4KLSAqLwotdm9pZCB3cml0ZWJhY2tfc2tpcF9zYl9pbm9kZXMoc3RydWN0IHN1cGVy
+X2Jsb2NrICpzYiwKLQkJCSAgICAgIHN0cnVjdCBiZGlfd3JpdGViYWNrICp3YikKLXsKLQl3aGls
+ZSAoMSkgewotCQlzdHJ1Y3QgaW5vZGUgKmlub2RlOwotCi0JCWlmIChsaXN0X2VtcHR5KCZ3Yi0+
+Yl9pbykpCi0JCQlicmVhazsKLQkJaW5vZGUgPSBsaXN0X2VudHJ5KHdiLT5iX2lvLnByZXYsIHN0
+cnVjdCBpbm9kZSwgaV9saXN0KTsKLQkJaWYgKHNiICE9IGlub2RlLT5pX3NiKQotCQkJYnJlYWs7
+Ci0JCXJlZGlydHlfdGFpbChpbm9kZSk7Ci0JfQotfQotRVhQT1JUX1NZTUJPTCh3cml0ZWJhY2tf
+c2tpcF9zYl9pbm9kZXMpOwogCiAKIC8qCg==
+--00221534d343e40d1b049ac5b489--
