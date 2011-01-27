@@ -1,60 +1,45 @@
-From: Kaelyn Uhrain <Kaelyn.Alexi+reiserfs@gmail.com>
-Subject: Re: Quick & dirty r4 for 2.6.37
-Date: Wed, 26 Jan 2011 13:00:18 -0800
-Message-ID: <AANLkTi=c=6YxT3QhzcZxhYwm46KfGWpCsxhyZQyBLJ=v@mail.gmail.com>
-References: <AANLkTi=Mi1QEC+Wjr5ka4uMZH72WytvsszC+yycRKaqq@mail.gmail.com>
-	<AANLkTi=trDJKzq5x4ic0qzkzCseDMgzci29NnTqDbzco@mail.gmail.com>
-	<4D408967.3060004@gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Here is a reiser4 build based rpm on 2.6.37 kernel.
+Date: Thu, 27 Jan 2011 22:57:46 +1100
+Message-ID: <d414f269b6694066f2b77f46746b9068@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:sender:in-reply-to:references:date
-         :x-google-sender-auth:message-id:subject:from:to:cc:content-type
-         :content-transfer-encoding;
-        bh=5V+pbd1EbH0YdaOg/6fJsuvPI5o9SJIJZ5I7AStROc4=;
-        b=d9zwtIkP6UrTnddhQKRpck0PN1C1FLd2Xi/JwGK4NKBdXkU5pYowTJi3FmU9mksB2I
-         72D8O2b7LwnkagUke5OL6akZeMU/xXCJ2qEcMKbcNe/k/hXkkY7Hnc8NqcbiANCudlan
-         ihIAguObraIEPyW4zQttyoa1c3e2AajnieQqo=
-In-Reply-To: <4D408967.3060004@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-Glad to hear you've prepared a proper .37 patch that will be available =
-soon! ^.^
+Hello.
+Here is a plain kernel based on 2.6.37 with the reiser4 patch built with
+the Opensuse build service [obs] system.
 
-On Wed, Jan 26, 2011 at 12:51 PM, Edward Shishkin
-<edward.shishkin@gmail.com> wrote:
-> Kaelyn Uhrain wrote:
->>
->> Ack! Just realized I'd created the patch based on the
->> reiser4-for-2.6.36.path.bz2 from November and not the latest r4 patc=
-h.
->> =A0Here is an amended version of my patch that removes the export of
->> generic_writeback_sb_inodes and the definition & export of
->> writeback_skip_sb_inodes from fs/fs-writeback.c as they're already i=
-n
->> vanilla 2.6.37.
->>
->
-> writeback_skip_sb_inodes() in vanilla? With whose blessing? :)
-> You are confused :)
+This is  a patched kernel with reiser4 patch.
+Its been a interesting learning experience.
 
-Yeah, I was confused about it.  My tree got a bit munged after I'd
-realized I'd been working with an old version of the .36 r4 patch and
-had tried to update my tree without doing the smart thing of backing
-out all changes and reapplying them.
+The project is here
+ ->
+https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
 
-Sorry for the confusion!
+The built rpms are here
 
-Cheers,
-Kaelyn
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+->https://build.opensuse.org/package/binaries?package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.3
+
+The log of the build is here {x86_64} as an example. [Its a long build
+log]
+
+->https://build.opensuse.org/package/rawlog?arch=x86_64&package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.3
+
+The .spec used file is here
+ ->
+https://build.opensuse.org/package/view_file?file=kernel-reiser4.spec&package=kernel-reiser4&project=home%3Adoiggl&srcmd5=a94730f4e77f3822eb936de1a6138981
+
+Thanks to the opensuse-kernel list members for compilation advice.
+http://lists.opensuse.org/opensuse-kernel/
+
+It looks like obs built the rpms.
+So  test the rpm's and post the results to the list.
+
+Ta Glenn
+
+
