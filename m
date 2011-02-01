@@ -1,45 +1,53 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Here is a reiser4 build based rpm on 2.6.37 kernel.
-Date: Thu, 27 Jan 2011 22:57:46 +1100
-Message-ID: <d414f269b6694066f2b77f46746b9068@mail.velocitynet.com.au>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 27972] New: Null pointer dereference at shutdown time
+Date: Tue, 1 Feb 2011 04:54:41 GMT
+Message-ID: <bug-27972-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-Hello.
-Here is a plain kernel based on 2.6.37 with the reiser4 patch built with
-the Opensuse build service [obs] system.
+https://bugzilla.kernel.org/show_bug.cgi?id=27972
 
-This is  a patched kernel with reiser4 patch.
-Its been a interesting learning experience.
-
-The project is here
- ->
-https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
-
-The built rpms are here
-
-->https://build.opensuse.org/package/binaries?package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.3
-
-The log of the build is here {x86_64} as an example. [Its a long build
-log]
-
-->https://build.opensuse.org/package/rawlog?arch=x86_64&package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.3
-
-The .spec used file is here
- ->
-https://build.opensuse.org/package/view_file?file=kernel-reiser4.spec&package=kernel-reiser4&project=home%3Adoiggl&srcmd5=a94730f4e77f3822eb936de1a6138981
-
-Thanks to the opensuse-kernel list members for compilation advice.
-http://lists.opensuse.org/opensuse-kernel/
-
-It looks like obs built the rpms.
-So  test the rpm's and post the results to the list.
-
-Ta Glenn
+           Summary: Null pointer dereference at shutdown time
+           Product: File System
+           Version: 2.5
+    Kernel Version: Linux pluto.afaics.de 2.6.37 #1 SMP PREEMPT Thu Jan 20
+                    20:29:44 CET 2011 x86_64 GNU/Linux
+          Platform: All
+        OS/Version: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: ReiserFS
+        AssignedTo: reiserfs-devel@vger.kernel.org
+        ReportedBy: harri@afaics.de
+        Regression: No
 
 
+Created an attachment (id=45722)
+ --> (https://bugzilla.kernel.org/attachment.cgi?id=45722)
+screen snapshot
+
+I got a kernel dump at umount time of a huge reiserfs partition. It said
+
+    Null pointer dereference at 0000000000000010
+    IP: [ffffffffa01dc818] open_xa_dir+0x2d/0x1b0 [reiserfs]
+    :
+
+The config file and a photo with a complete stack trace are attached.
+
+reiserfsck of this partition showed a lot of files to sync due to the missing
+umount, but no other problems.
+
+Kernel is 2.6.37 (amd64). Please mail if I can help to track this
+down.
+
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
