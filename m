@@ -1,40 +1,43 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Is there any reason reiser4 took this long on a large file delete process.
-Date: Sat, 05 Feb 2011 14:14:41 +1100
-Message-ID: <9af190a7cd5249f4cd484b1cfc20b89e@mail.velocitynet.com.au>
+From: =?utf-8?B?Sm9uw6HFoSBWaWRyYQ==?= <vidra.jonas@seznam.cz>
+Subject: Re: Is there any reason reiser4 took this long on a large file delete
+ process.
+Date: Sat, 05 Feb 2011 10:13:10 +0100
+Message-ID: <op.vqfaj8lghogzsi@g17b>
+References: <9af190a7cd5249f4cd484b1cfc20b89e@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <9af190a7cd5249f4cd484b1cfc20b89e@mail.velocitynet.com.au>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format="flowed	delsp=yes"
+To: doiggl@velocitynet.com.au
+Cc: ReiserFS mailing list <reiserfs-devel@vger.kernel.org>
 
-Hello,
-Is there any reason reiser4 took this long on a large file delete process
+On Sat, 05 Feb 2011 04:14:41 +0100 <doiggl@velocitynet.com.au> wrote:
 
-- File size 4,237,037,568 openSUSE-DVD-Build0957-i586.iso
+> Hello,
+> Is there any reason reiser4 took this long on a large file delete pro=
+cess
+>
+> - File size 4,237,037,568 openSUSE-DVD-Build0957-i586.iso
+>
+> # time rm /media/disk/iso/openSUSE-DVD-Build0957-i586.iso
+>
+> real    12m4.027s
+> user    0m0.000s
+> sys     1m10.132s
 
-# time rm /media/disk/iso/openSUSE-DVD-Build0957-i586.iso
+You use cryptcompress, right? A compressed file is AFAIK split into man=
+y
+small fragments, which means that lots of records in the tree have to b=
+e
+changed while deleting the file.
 
-real    12m4.027s
-user    0m0.000s
-sys     1m10.132s
-
-# df -h
-Filesystem            Size  Used Avail Use% Mounted on
-/dev/sdb              1.8T  1.1T  662G  63% /media/disk
-
-- The disk is in externally attached , uses usb
-- gkrellm showed disk was busy at ~6mb a sec during file deletion
-- The volume has a mix of 353,281 directories and files  in total
-
-I use reiser4 enabled kernel details at [2]
-
-[2]
-https://build.opensuse.org/package/binaries?package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.3
-https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
-
-
-Thanks Glenn
-
+--=20
+Jon=C3=A1=C5=A1 Vidra, vidra.jonas@seznam.cz
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
