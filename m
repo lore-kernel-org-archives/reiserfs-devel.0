@@ -1,63 +1,46 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Re: Mainline inclusion
-Date: Wed, 16 Feb 2011 22:34:44 +1100
-Message-ID: <6ff4389ad3a0026ec1b8d93ea781029f@mail.velocitynet.com.au>
-References: <AANLkTin+AoQ-0t+qiJDcyVLhzy5JsEPDWgkbkj-90dB9@mail.gmail.com> <AANLkTik-TJ0pJi7Hd4KVyCruW4B=ZUo6aic1JnPgK=bm@mail.gmail.com> <4CBB6F7D.4030000@gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: fsck.reiser4: segfault in aux_adler32 at aux.c:194
+Date: Mon, 07 Feb 2011 15:11:00 +0100
+Message-ID: <4D4FFD74.8060903@gmail.com>
+References: <AANLkTi=5pCaXg49iC+YZ0H_HHKHjxJD-uf0O9gyyYUHa@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4CBB6F7D.4030000@gmail.com>
+In-Reply-To: <AANLkTi=5pCaXg49iC+YZ0H_HHKHjxJD-uf0O9gyyYUHa@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"; format="flowed"
+To: =?UTF-8?B?TWFyY2luIEJhY3p5xYRza2k=?= <marbacz@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-On Sun, 17 Oct 2010 23:49:49 +0200, Edward Shishkin
-<edward.shishkin@gmail.com> wrote:
-> Luciano wrote:
->> Hi Edward,
->>   
-> 
-> Hello.
-> 
->> I've been following the R4 mainline inclusion saga for a while now.
->> First, congratulations are in order for your developers' perseverance
->> in maintaining and bug fixing this great fs! But I was wondering where
->> you stand on mainline inclusion currently? I last read an interview on
->> Phoronix in early 2009, where you said you were hoping to publish some
->> plug-in design ideas at USENIX 2010, and then possibly going for
->> mainline inclusion. However, I believe this didn't happen.
-> 
-> Sorry, postponed.
-> Will try to be in time for the 2011 deadline (Jan, 12).
-> 
->>  What's the
->> big picture at the moment?
-> 
-> Once we adjust reiser4 to upcoming VFS scalability changes,
-> all the to-do-for-inclusion issues will be resolved.
-> 
->>  What can we look forward to in the next
->> year?
->>   
-> 
-> As usual, I can not promise anything.
-> Will try to keep it in working state..
-> 
-> Thanks,
-> Edward.
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-reiserfs-devel"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Marcin Baczy=C5=84ski wrote:
+> Hi,
+> following the instructions at reiser4.wiki.kernel.org I'm reporting h=
+ere
+> sigsegv I get when fscking resiser4 fs.
+>
+> I'm using reiser4progs 1.0.7. Attached backtrace is from patched
+> version, with patch from [1] applied, but the same crash happens
+> with unpatched version.
+>  =20
 
+Could you please also try this one:
+http://marc.info/?l=3Dreiserfs-devel&m=3D127504471326353&w=3D2
 
-Hello,
-Any news on the item about the following:
-> Will try to be in time for the 2011 deadline (Jan, 12).
+> Let me know if you need more info.
+>  =20
 
-Are there any plans or timing for mainline  inclusion ?
-What items are left to do before  mainline  inclusion ?
-Cheers Glenn
+If it doesn't help, then provide all fsck output (not only stacktrace).
+
+Thanks,
+Edward.
+
+> [1] http://article.gmane.org/gmane.comp.file-systems.reiserfs.general=
+/23447
+>  =20
+
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
