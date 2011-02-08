@@ -1,85 +1,87 @@
-From: Dushan Tcholich <dusanc@gmail.com>
-Subject: Re: Reiser4: errors AFTER fsck
-Date: Tue, 8 Feb 2011 20:02:45 +0100
-Message-ID: <AANLkTikc_fDjU60AHK8m1ihH7Br7Q1z+xJi8qXhYCAQm@mail.gmail.com>
-References: <loom.20080405T115310-647@post.gmane.org>
-	<1207585006.31700.2.camel@localhost>
+From: =?UTF-8?Q?Marcin_Baczy=C5=84ski?= <marbacz@gmail.com>
+Subject: kernel BUG at fs/reiser4/block_alloc.c:151
+Date: Tue, 8 Feb 2011 23:13:45 +0100
+Message-ID: <AANLkTi=DKZfNUQDXWUNMZXBonYWTdgAr6cMtyGk12ebM@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/mixed; boundary=90e6ba5bbb8b723c5f049bcca97b
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:in-reply-to:references:date
-         :message-id:subject:from:to:cc:content-type
-         :content-transfer-encoding;
-        bh=BwPF9cNwdQEuulkuy0fZi4VetlYeK11JOrUi8a797qM=;
-        b=TcIfYOGULV3DZqHIreCw5RnjsbVTkuiMrmSgfJnvYY7ulNl1tptGyqPdRdtblXjgEc
-         3DT4aaF38B3zxUEw7AiHLKqJEKtOggxmiLhgydFpRIo/TXaGYIa3mn9Q1clCbAkaV7Kd
-         ZdcRhMcLBw8yBQ+f9fKTLcBntZ4R4PYXEXsCE=
-In-Reply-To: <1207585006.31700.2.camel@localhost>
+        h=domainkey-signature:mime-version:date:message-id:subject:from:to
+         :content-type;
+        bh=cu7h6GgXSQpIMxgsYbhUeBT4LM11rMIAQV9pAC3sldE=;
+        b=NbQCYvoaLXjnKrCyW0Oc6Kg/GnrwyXmr2v5QqZVYe+pnWDN1vUJNQHfxiPq0QaF4J6
+         A8EAVQEIhESeYq4UQNB7HMF2zCeOlu0nUACU92Bm3bygpHb2SA9zZwBw0cOLB4043VTn
+         0a4O8eMxQIBGJMMYroYZX5i3ofSG57qteh3Ek=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Zan Lynx <zlynx@acm.org>
-Cc: Mat <jackdachef@gmail.com>, reiserfs-devel <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward.shishkin@gmail.com>
+To: reiserfs-devel@vger.kernel.org
 
-I just had same trouble with 2.6.35
+--90e6ba5bbb8b723c5f049bcca97b
+Content-Type: text/plain; charset=UTF-8
 
-=46eb  8 15:13:38 krshina3 kernel: [1350289.587822]
-reiser4[find(14082)]: key_warning
-(fs/reiser4/plugin/file_plugin_common.c:511)[nikita-717]:
-=46eb  8 15:13:38 krshina3 kernel: [1350289.587824] WARNING: Error for
-inode 3293039 (-2)
-=46eb  8 15:13:38 krshina3 kernel: [1350289.587840]
-reiser4[find(14082)]: key_warning
-(fs/reiser4/plugin/file_plugin_common.c:511)[nikita-717]:
-=46eb  8 15:13:38 krshina3 kernel: [1350289.587841] WARNING: Error for
-inode 3293039 (-2)
-=46eb  8 15:13:38 krshina3 kernel: [1350289.587854]
-reiser4[find(14082)]: key_warning
-(fs/reiser4/plugin/file_plugin_common.c:511)[nikita-717]:
-=46eb  8 15:13:38 krshina3 kernel: [1350289.587856] WARNING: Error for
-inode 3293039 (-2)
+Hi,
+I'm attaching a trace of kernel BUG that Firefox hits. It's 100% reproducible,
+every time I start the browser it hits the bug within several seconds, then
+whole system hangs. However I've never triggered the problem with any other
+application.
+I've tested 2.6.37-gentoo-hardened + reiser4 patch, and 2.6.36-zen kernels
+and both are affected.
+I'm happy to test patches or provide more info if needed.
 
-On fsck.reiser4 --build-fs I got like ~700 files in lost+found with los=
-t names.
-=46S seems consistent now.
-I moved to 2.6.36
+Thanks,
+Marcin
 
-Have a nice day
+--90e6ba5bbb8b723c5f049bcca97b
+Content-Type: text/plain; charset=US-ASCII; name="trace.txt"
+Content-Disposition: attachment; filename="trace.txt"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_gjxcy0br0
 
-Dushan
-
-On Mon, Apr 7, 2008 at 6:16 PM, Zan Lynx <zlynx@acm.org> wrote:
-> On Sat, 2008-04-05 at 12:06 +0000, Mat wrote:
->> Volker,
->>
->> storing the portage-tree on a "critical" partition such as /var isn'=
-t probably a
->> good idea (yet),
->> reiser4 gets more stable on an almost daily / weekly basis now but I=
- still have
->> the feeling that it's somewhat fragile in terms of use as a / (root =
-/ system)
->> partition; data-partitions seem to be completely rock-solid & safe, =
-though :)
->
-> I have been using Reiser4 as / on my laptop for a couple of years now
-> and have not had any serious problems that caused data loss. =C2=A0I'=
-ve had a
-> few problems here and there but they have been solved fairly quickly.
-> I've had to run full tree rebuilds overnight several times but never
-> lost anything I've missed. :)
->
-> I do run nightly backups to an external disk, that's probably why I
-> never lost anything. =C2=A0Murphy is waiting for the external disk to=
- fail
-> before he screws me. :)
-> --
-> Zan Lynx <zlynx@acm.org>
->
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+LS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tCmtlcm5lbCBCVUcgYXQgZnMvcmVp
+c2VyNC9ibG9ja19hbGxvYy5jOjE1MSEKaW52YWxpZCBvcGNvZGU6IDAwMDAgWyMxXSBQUkVFTVBU
+IFNNUCAKbGFzdCBzeXNmcyBmaWxlOiAvc3lzL2RldmljZXMvcGNpMDAwMDowMC8wMDAwOjAwOjAy
+LjAvZHJtL2NhcmQwL2NhcmQwLVZHQS0xL3N0YXR1cwpDUFUgMiAKTW9kdWxlcyBsaW5rZWQgaW46
+IFtsYXN0IHVubG9hZGVkOiBtaWNyb2NvZGVdCgpQaWQ6IDI1NDUsIGNvbW06IGZpcmVmb3ggVGFp
+bnRlZDogRyAgICAgICAgVyAgIDIuNi4zNy1oYXJkZW5lZC1yMS1nZW50b28gIzQgMTQyMy9IUCBQ
+cm9Cb29rIDQzMjBzClJJUDogMDAxMDpbPGZmZmZmZmZmODExNDFhNGY+XSAgWzxmZmZmZmZmZjgx
+MTQxYTRmPl0gc3ViX2Zyb21fY3R4X2dyYWJiZWQuY2xvbmUuOCsweGYvMHgyMApSU1A6IDAwMTg6
+ZmZmZjg4MDE4NTc0YmExMCAgRUZMQUdTOiAwMDAxMDI5NwpSQVg6IDAwMDAwMDAwMDAwMDAwMDAg
+UkJYOiBmZmZmODgwMWJhZDE3MDAwIFJDWDogMDAwMDAwMDAwMDAwYzRjMwpSRFg6IDAwMDAwMDAw
+MDAxMDAxMGQgUlNJOiAwMDAwMDAwMDAwMDAwMDAxIFJESTogZmZmZjg4MDFiYWEzYjdiMApSQlA6
+IDAwMDAwMDAwMDAwMDAwMDEgUjA4OiAwMDAwMDAwMDAwMDAwMDAxIFIwOTogMDAwMDAwMDAwMDAw
+MDAwMApSMTA6IDAwMDAwMDAwZmZmZmZmMDIgUjExOiAwMDAwMDAwMGZmZmZmZjAyIFIxMjogZmZm
+Zjg4MDFiNzljNDhjMApSMTM6IDAwMDAwMDAwMDAwMDAwMDIgUjE0OiBmZmZmODgwMTg1NzRiYWE4
+IFIxNTogMDAwMDAwMDAwMDAwMDAwMQpGUzogIDAwMDAwMzY0OWUzYjQ3MDAoMDAwMCkgR1M6ZmZm
+Zjg4MDBiYWQwMDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwCkNTOiAgMDAxMCBEUzog
+MDAwMCBFUzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMKQ1IyOiAwMDAwMDM2NGMwMDY3MDAw
+IENSMzogMDAwMDAwMDAwMTUzMjAwMCBDUjQ6IDAwMDAwMDAwMDAwMDA2ZjAKRFIwOiAwMDAwMDAw
+MDAwMDAwMDAwIERSMTogMDAwMDAwMDAwMDAwMDAwMCBEUjI6IDAwMDAwMDAwMDAwMDAwMDAKRFIz
+OiAwMDAwMDAwMDAwMDAwMDAwIERSNjogMDAwMDAwMDBmZmZmMGZmMCBEUjc6IDAwMDAwMDAwMDAw
+MDA0MDAKUHJvY2VzcyBmaXJlZm94IChwaWQ6IDI1NDUsIHRocmVhZGluZm8gZmZmZjg4MDE4NTc0
+YTAwMCwgdGFzayBmZmZmODgwMTkyOGU0MmIwKQpTdGFjazoKIGZmZmZmZmZmODExNDI3ODIgZmZm
+Zjg4MDFhYmFmOTk4MCBmZmZmODgwMTg1NzRiYzk4IGZmZmY4ODAxYWJhZjk5ZDAKIGZmZmZmZmZm
+ODExNDRjNTQgZmZmZjg4MDFiOWMwYWE5MCBmZmZmODgwMWI3OWM0OGMwIGZmZmY4ODAxYWJhZjk5
+ODAKIGZmZmZmZmZmODExNDRkMzEgZmZmZjg4MDFiOWMwYWE4MCBmZmZmODgwMTg1NzRiYzk4IGZm
+ZmY4ODAxYTc4NDhhYzgKQ2FsbCBUcmFjZToKIFs8ZmZmZmZmZmY4MTE0Mjc4Mj5dID8gZ3JhYmJl
+ZDJmbHVzaF9yZXNlcnZlZF9ub2xvY2srMHg0Mi8weGEwCiBbPGZmZmZmZmZmODExNDRjNTQ+XSA/
+IGpub2RlX21ha2VfZGlydHlfbG9ja2VkKzB4ZTQvMHgxOTAKIFs8ZmZmZmZmZmY4MTE0NGQzMT5d
+ID8gem5vZGVfbWFrZV9kaXJ0eSsweDMxLzB4ZTAKIFs8ZmZmZmZmZmY4MTE2NmE2OT5dID8gZmlu
+ZF9kaXNrX2NsdXN0ZXIrMHgzNTkvMHgzOTAKIFs8ZmZmZmZmZmY4MTE3NTExYz5dID8gZG9fcmVh
+ZHBhZ2VfY3RhaWwrMHhkYy8weDU3MAogWzxmZmZmZmZmZjgxMTY2ZjdkPl0gPyBwcmVwYXJlX2xv
+Z2ljYWxfY2x1c3RlcisweDIzZC8weDc2MAogWzxmZmZmZmZmZjgxMTY0NDYyPl0gPyBzZXRfd2lu
+ZG93LmNsb25lLjYyKzB4NzIvMHhjMAogWzxmZmZmZmZmZjgxMTYyOWNjPl0gPyB3cml0ZV9kaXNw
+YXRjaF9ob29rKzB4MmMvMHgxMzAKIFs8ZmZmZmZmZmY4MTE2ODQ3Zj5dID8gZG9fd3JpdGVfY3J5
+cHRjb21wcmVzcysweDFjZi8weDZiMAogWzxmZmZmZmZmZjgxMTY4ZGI1Pl0gPyB3cml0ZV9jcnlw
+dGNvbXByZXNzKzB4YTUvMHhmMAogWzxmZmZmZmZmZjgxMTYyYmYyPl0gPyByZWlzZXI0X3dyaXRl
+X2NhcmVmdWwrMHhlMi8weDUwMAogWzxmZmZmZmZmZjgxMGQ0MGU0Pl0gPyB2ZnNfd3JpdGUrMHgx
+MDQvMHgxZTAKIFs8ZmZmZmZmZmY4MTBkNDQ3ZT5dID8gc3lzX3dyaXRlKzB4NGUvMHg5MAogWzxm
+ZmZmZmZmZjgxMDAyODZiPl0gPyBzeXN0ZW1fY2FsbF9mYXN0cGF0aCsweDE2LzB4MWIKQ29kZTog
+NzUgMTUgNDggMDkgZDAgNDggOGIgNmMgMjQgMTAgNDggODkgMDMgNDggOGIgNWMgMjQgMDggNDgg
+ODMgYzQgMTggYzMgMGYgMGIgMGYgMWYgMDAgNDggOGIgMDcgNDggMzkgZjAgNzIgMDcgNDggMjkg
+ZjAgNDggODkgMDcgYzMgPDBmPiAwYiA2NiA2NiA2NiA2NiA2NiA2NiAyZSAwZiAxZiA4NCAwMCAw
+MCAwMCAwMCAwMCA0OCA4MyBlYyAxOCAKUklQICBbPGZmZmZmZmZmODExNDFhNGY+XSBzdWJfZnJv
+bV9jdHhfZ3JhYmJlZC5jbG9uZS44KzB4Zi8weDIwCiBSU1AgPGZmZmY4ODAxODU3NGJhMTA+Ci0t
+LVsgZW5kIHRyYWNlIGVjNWMxNWU2YTk0YTI0NjggXS0tLQpub3RlOiBmaXJlZm94WzI1NDVdIGV4
+aXRlZCB3aXRoIHByZWVtcHRfY291bnQgMgo=
+--90e6ba5bbb8b723c5f049bcca97b--
