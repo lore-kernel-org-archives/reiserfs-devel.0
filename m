@@ -1,8 +1,8 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: kernel BUG at fs/reiser4/block_alloc.c:151
-Date: Wed, 09 Feb 2011 01:10:34 +0100
-Message-ID: <4D51DB7A.4000408@gmail.com>
-References: <AANLkTi=DKZfNUQDXWUNMZXBonYWTdgAr6cMtyGk12ebM@mail.gmail.com>	<4D51C558.8050001@gmail.com> <AANLkTinGQZdTSQHsgTbDYLn2etE6wGwr8UWSmSs=nCL1@mail.gmail.com>
+Date: Wed, 09 Feb 2011 01:20:02 +0100
+Message-ID: <4D51DDB2.20605@gmail.com>
+References: <AANLkTi=DKZfNUQDXWUNMZXBonYWTdgAr6cMtyGk12ebM@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -11,59 +11,43 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         h=domainkey-signature:message-id:date:from:user-agent:mime-version:to
          :cc:subject:references:in-reply-to:content-type
          :content-transfer-encoding;
-        bh=p8zo89b/IFofLzK9UPqDsjyqKwV0KJ87Pu7T+X1SmvU=;
-        b=epmxcS3B8QIlIukok8MUsqdkulDelgydY28jMyzyxO5lsXFCR+MW/916GUvz2lseKC
-         2oeGQ269Legu/rcUG7GWIATgJpYuxaRLKYazKxU7GLI80UlU4K7/Ou8sXaPa5qrnsHwC
-         gDIzM3ZDNBG5CvjhCBqsEeWoWACBxZpaFsFkY=
-In-Reply-To: <AANLkTinGQZdTSQHsgTbDYLn2etE6wGwr8UWSmSs=nCL1@mail.gmail.com>
+        bh=+NY8Wo2DFYpMnOQ0q+HNWe3FNCNXm5/JnrRnU26ePcQ=;
+        b=VNKZILkP4u9nwKhDyzS2019qXU9rzJAvOa5qrSgMbyF4TCXchVMYNpu8W/2kUV/KZq
+         wYW3XZOeoDoD4E3Muh4J3w0v6PE5l1bQUXYJ77U4adeFMLB9r2XILYcZZWbR3kDT9Ao7
+         VuCfYyZ3hvhXB06RO9A1b8RIeDMwNqfistjH8=
+In-Reply-To: <AANLkTi=DKZfNUQDXWUNMZXBonYWTdgAr6cMtyGk12ebM@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: text/plain; charset="windows-1252"; format="flowed"
 To: =?UTF-8?B?TWFyY2luIEJhY3p5xYRza2k=?= <marbacz@gmail.com>
 Cc: reiserfs-devel@vger.kernel.org
 
-On 02/09/2011 12:56 AM, Marcin Baczy=C5=84ski wrote:
-> W dniu 8 lutego 2011 23:36 u=C5=BCytkownik Edward Shishkin
-> <edward.shishkin@gmail.com>  napisa=C5=82:
->> Marcin Baczy=C5=84ski wrote:
->>>
->>> Hi,
->>>
->>
->> Hello.
->>
->>> I'm attaching a trace of kernel BUG that Firefox hits. It's 100%
->>> reproducible,
->>> every time I start the browser it hits the bug within several secon=
-ds,
->>> then
->>> whole system hangs. However I've never triggered the problem with a=
-ny
->>> other
->>> application.
->>> I've tested 2.6.37-gentoo-hardened + reiser4 patch,
->>
->> "2.6.37-gentoo-hardened" is based on what vanilla kernel (.36 or .37=
-)?
-> It's based on .37.
->
->>
+On 02/08/2011 11:13 PM, Marcin Baczy=C5=84ski wrote:
+> Hi,
+> I'm attaching a trace of kernel BUG that Firefox hits. It's 100% repr=
+oducible,
+> every time I start the browser it hits the bug within several seconds=
+, then
+> whole system hangs. However I've never triggered the problem with any=
+ other
+> application.
+> I've tested 2.6.37-gentoo-hardened + reiser4 patch, and 2.6.36-zen ke=
+rnels
+> and both are affected.
+> I'm happy to test patches or provide more info if needed.
 
-
-  [<ffffffff81142782>] ? grabbed2flush_reserved_nolock+0x42/0xa0
-  [<ffffffff81144c54>] ? jnode_make_dirty_locked+0xe4/0x190
-  [<ffffffff81144d31>] ? znode_make_dirty+0x31/0xe0
-  [<ffffffff81166a69>] ? find_disk_cluster+0x359/0x390
-  [<ffffffff8117511c>] ? do_readpage_ctail+0xdc/0x570
-  [<ffffffff81166f7d>] ? prepare_logical_cluster+0x23d/0x760
-
-A set of blocks reserved in prepare_logical_cluster() is exhausted
-at znode_make_dirty() for some reasons. No ideas except inserting
-debugging messages to figure out who is stealing the reservation.
-Will try to reproduce on weekends..
+You also can try to compile reiser4 with debugging info
+and then run firefox. If some assertion is failed before
+"kernel BUG at fs/reiser4/block_alloc.c:151", it would be
+useful information...
 
 Thanks,
 Edward.
+
+>
+> Thanks,
+> Marcin
+
 --
 To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
 l" in
