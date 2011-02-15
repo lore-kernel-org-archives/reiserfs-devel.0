@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 29162] Reiserfs hang with dataloss sometimes
-Date: Tue, 15 Feb 2011 09:38:27 GMT
-Message-ID: <201102150938.p1F9cR1i011835@demeter2.kernel.org>
+Date: Tue, 15 Feb 2011 09:39:15 GMT
+Message-ID: <201102150939.p1F9dFb8013282@demeter2.kernel.org>
 References: <bug-29162-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -18,8 +18,12 @@ https://bugzilla.kernel.org/show_bug.cgi?id=29162
 
 
 
---- Comment #1 from roucaries.bastien+kernel@gmail.com  2011-02-15 09:38:27 ---
-Add a new log with lockdep
+--- Comment #2 from roucaries.bastien+kernel@gmail.com  2011-02-15 09:39:14 ---
+Created an attachment (id=47832)
+ --> (https://bugzilla.kernel.org/attachment.cgi?id=47832)
+log with lockdep enable
+
+log with lockdep
 
 -- 
 Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
