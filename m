@@ -1,32 +1,63 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 29162] Reiserfs hang with dataloss sometimes
-Date: Tue, 15 Feb 2011 09:47:14 GMT
-Message-ID: <201102150947.p1F9lElJ022726@demeter2.kernel.org>
-References: <bug-29162-695@https.bugzilla.kernel.org/>
+From: <doiggl@velocitynet.com.au>
+Subject: Re: Mainline inclusion
+Date: Wed, 16 Feb 2011 22:34:44 +1100
+Message-ID: <6ff4389ad3a0026ec1b8d93ea781029f@mail.velocitynet.com.au>
+References: <AANLkTin+AoQ-0t+qiJDcyVLhzy5JsEPDWgkbkj-90dB9@mail.gmail.com> <AANLkTik-TJ0pJi7Hd4KVyCruW4B=ZUo6aic1JnPgK=bm@mail.gmail.com> <4CBB6F7D.4030000@gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-29162-695@https.bugzilla.kernel.org/>
+In-Reply-To: <4CBB6F7D.4030000@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=29162
+On Sun, 17 Oct 2010 23:49:49 +0200, Edward Shishkin
+<edward.shishkin@gmail.com> wrote:
+> Luciano wrote:
+>> Hi Edward,
+>>   
+> 
+> Hello.
+> 
+>> I've been following the R4 mainline inclusion saga for a while now.
+>> First, congratulations are in order for your developers' perseverance
+>> in maintaining and bug fixing this great fs! But I was wondering where
+>> you stand on mainline inclusion currently? I last read an interview on
+>> Phoronix in early 2009, where you said you were hoping to publish some
+>> plug-in design ideas at USENIX 2010, and then possibly going for
+>> mainline inclusion. However, I believe this didn't happen.
+> 
+> Sorry, postponed.
+> Will try to be in time for the 2011 deadline (Jan, 12).
+> 
+>>  What's the
+>> big picture at the moment?
+> 
+> Once we adjust reiser4 to upcoming VFS scalability changes,
+> all the to-do-for-inclusion issues will be resolved.
+> 
+>>  What can we look forward to in the next
+>> year?
+>>   
+> 
+> As usual, I can not promise anything.
+> Will try to keep it in working state..
+> 
+> Thanks,
+> Edward.
+> --
+> To unsubscribe from this list: send the line "unsubscribe
+reiserfs-devel"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
+Hello,
+Any news on the item about the following:
+> Will try to be in time for the 2011 deadline (Jan, 12).
 
-
-
---- Comment #6 from roucaries.bastien+kernel@gmail.com  2011-02-15 09:47:13 ---
-Very hard to reproduce. Take between 30 to 6 hours to get it.
-
-using git pull in parallel increase the chance to hit.
-
-I suffer dataloss at reboot and I rebuild twice my / partition using reiserfsck
-and restore using a backup once.
-
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+Are there any plans or timing for mainline  inclusion ?
+What items are left to do before  mainline  inclusion ?
+Cheers Glenn
