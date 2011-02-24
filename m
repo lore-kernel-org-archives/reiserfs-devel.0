@@ -1,64 +1,40 @@
-From: higuita <higuita@GMX.net>
-Subject: Re: reiserfsck (v3): out of disk space
-Date: Wed, 23 Feb 2011 23:31:43 +0000
-Message-ID: <20110223233143.453edb42@Couracado.homelinux.net>
-References: <20110222030056.3379d223@Couracado.homelinux.net>
-	<4D638E2F.9030305@gmail.com>
-	<20110222230803.6c1fccce@Couracado.homelinux.net>
-	<4D644E50.7020801@gmail.com>
+From: "Jaroslav Fojtik" <jafojtik@seznam.cz>
+Subject: Question about reiser performance - short system freezes
+Date: Thu, 24 Feb 2011 01:19:03 +0100
+Message-ID: <4D65A3F7.22052.1288FE@jafojtik.seznam.cz>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/a_p+9D.+TjBhpj_==mIV4oM"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4D644E50.7020801@gmail.com>
+Content-description: Mail message body
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward@redhat.com>, reiserfs-devel@vger.kernel.org
 
---Sig_/a_p+9D.+TjBhpj_==mIV4oM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Dear Edward Shishkin,
 
-Hi again!
+May be that my comment might be userfull for your reiser development:
 
-On Wed, 23 Feb 2011 01:01:20 +0100, Edward Shishkin
-<edward.shishkin@gmail.com> wrote:
-> Could you try the following troubleshooting?
-> http://www.mail-archive.com/reiserfs-list@namesys.com/msg21596.html
+I am facing following performance issue. The reiser works without data loss,
+but system sometimes hangs for 15s, mouse cursor is frozen and after this 
+period it continues to work without any problem. It is strange, because I have 6 cores 
+and all of them seems to be locked and waiting for something.
 
-	THANKS! it worked fine, i manage to recover the partition.
+Hanging occurs during intensive file search like find, or first phase
+of rsync.
 
-	As i already had expanded the partition the, the --rebuild-sb
-detected the new space and after the rebuild-tree i could finally access
-again to the partition... next step, update my backup and then clean old
-trash to free up some space!  :)
+It seems to me that both reiser3 and reiser4 suffer by this issue.
+I have found BKL inside reiser3, but reiser4 seems to be without BKL.
 
-	Thank you Edward, you saved my data and teach me about a new
-interesting reiserfsck option.
+It is also strange that OS resides on different partition that should not
+be affected by reiser locking.
 
-	Thank you all for reiserfs
-higuita
---=20
-Naturally the common people don't want war... but after all it is the
-leaders of a country who determine the policy, and it is always a=20
-simple matter to drag the people along, whether it is a democracy, or
-a fascist dictatorship, or a parliament, or a communist dictatorship.
-Voice or no voice, the people can always be brought to the bidding of
-the leaders. That is easy. All you have to do is tell them they are=20
-being attacked, and denounce the pacifists for lack of patriotism and
-exposing the country to danger.  It works the same in every country.
-           -- Hermann Goering, Nazi and war criminal, 1883-1946
+May be that it could be problem large say 600GB HDD partition. But these partitins
+are normal nowadays.
 
---Sig_/a_p+9D.+TjBhpj_==mIV4oM
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+Is there any idea how to overcome this issue?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+best regards
+   Jara
 
-iEYEARECAAYFAk1lmOAACgkQrv1jazsMcrPryQCeMlO2I5IuwUitF7yTLcDiOWCJ
-SEUAoKT6hhT4F/b6jWYw079n5MBN8Lco
-=8hfG
------END PGP SIGNATURE-----
 
---Sig_/a_p+9D.+TjBhpj_==mIV4oM--
