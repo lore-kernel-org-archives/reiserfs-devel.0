@@ -1,67 +1,40 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Re4: Question about reiser performance - short system freezes
-Date: Tue, 01 Mar 2011 22:24:23 +0100
-Message-ID: <4D6D6407.1050206@gmail.com>
-References: <4D65A3F7.22052.1288FE@jafojtik.seznam.cz>, <4D6D0CE7.22102.64597@jafojtik.seznam.cz>, <4D6D220D.2020309@gmail.com> <4D6D5E67.11412.144A223@jafojtik.seznam.cz> <4D6D63B7.6060100@gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Here is a reiser4 build based rpm on 2.6.37.x kernel.
+Date: Wed, 02 Mar 2011 18:59:05 +1100
+Message-ID: <a0f7c64dbceeef38e3409fdf4272d11c@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4D6D63B7.6060100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jaroslav Fojtik <jafojtik@seznam.cz>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-On 03/01/2011 10:23 PM, Edward Shishkin wrote:
-> On 03/01/2011 10:00 PM, Jaroslav Fojtik wrote:
->> Dear Edward Shishkin,
->>
->>>>> It might be a regression that have been fixed in the latest
->>>>> kernels. Consider upgrading to .37. If it doesn't disappear,
->>>>> then please send the SysRq-w output.
->>>>
->>>> sorry, I cannot test on 2.6.37.2 :(
->>>> reiser4 completely crashes kernel here.
->>>
->>>
->>> Please, make sure you build everything correctly.
->>> Also please avoid suffixed (37.x, etc) stuff: it
->>> can contain changes incompatible with reiser4.
->>
->> I have used "reiser4-for-2.6.37.patch" against
->> "linux-2.6.37.2". I do not know what do you mean with 37.x?
->
-> I have prepared this patch against linux-2.6.37
-> (not the same as linux-2.6.37
+Hello.
+Here is a plain kernel based on 2.6.37.x with the reiser4 patch built with
+the Opensuse build service [obs] system.
 
+The project is here
 
-Err.. not the same as linux-2.6.37.2
+->https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
 
+The built rpms are here
 
+->https://build.opensuse.org/package/binaries?package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.3
 
-). Does it also crash?
->
-> Thanks,
-> Edward.
->
->> You have asked me to upgrade ".37".
->>
->> Patch has been downloaded from here:
->> http://www.kernel.org/pub/linux/kernel/people/edward/reiser4/reiser4-for-2.6/
->>
->>
->> Everything worked fine until I started to copy files from one HDD
->> to second one. After 30min Linux crashed.
->>
->> regards
->> Jara
->>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe
->> reiserfs-devel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at http://vger.kernel.org/majordomo-info.html
->
+The log of the build is here {x86_64} as an example. [Its a long build
+log]
+->https://build.opensuse.org/package/rawlog?arch=x86_64&package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.3
+
+The .spec used file is here
+
+->https://build.opensuse.org/package/view_file?file=kernel-reiser4.spec&package=kernel-reiser4&project=home%3Adoiggl&srcmd5=a94730f4e77f3822eb936de1a6138981
+
+Thanks to the opensuse-kernel list members for compilation advice.
+http://lists.opensuse.org/opensuse-kernel/
+
+It looks like obs built the rpms.
+Post the results to the list.
+
+Ta Glenn
 
