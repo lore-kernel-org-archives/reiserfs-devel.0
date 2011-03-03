@@ -1,40 +1,38 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Here is a reiser4 build based rpm on 2.6.37.x kernel.
-Date: Wed, 02 Mar 2011 18:59:05 +1100
-Message-ID: <a0f7c64dbceeef38e3409fdf4272d11c@mail.velocitynet.com.au>
+From: "Jaroslav Fojtik" <jafojtik@seznam.cz>
+Subject: Re6: Question about reiser performance - short system freezes
+Date: Thu, 03 Mar 2011 22:26:16 +0100
+Message-ID: <4D700778.5161.11EDF7@jafojtik.seznam.cz>
+References: <4D65A3F7.22052.1288FE@jafojtik.seznam.cz>, <4D6D5E67.11412.144A223@jafojtik.seznam.cz>, <4D6D63B7.6060100@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-reply-to: <4D6D63B7.6060100@gmail.com>
+Content-description: Mail message body
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+To: Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
 
-Hello.
-Here is a plain kernel based on 2.6.37.x with the reiser4 patch built with
-the Opensuse build service [obs] system.
+Dear Edward Shishkin,
 
-The project is here
+> > I have used "reiser4-for-2.6.37.patch" against
+> > "linux-2.6.37.2". I do not know what do you mean with 37.x?
+> 
+> I have prepared this patch against linux-2.6.37
+> (not the same as linux-2.6.37). Does it also crash?
 
-->https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
+Sorry for my misunderstanding - I guessed that you number your
+patches.
 
-The built rpms are here
+I cannot reproduce both issues on my system with kernel 
+linux-2.6.37.
 
-->https://build.opensuse.org/package/binaries?package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.3
+	I did not observe short system freezes.
+	I did not observe kernel crash.
 
-The log of the build is here {x86_64} as an example. [Its a long build
-log]
-->https://build.opensuse.org/package/rawlog?arch=x86_64&package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.3
 
-The .spec used file is here
+Sorry for delay - I have to repair crashed partition before new test.
 
-->https://build.opensuse.org/package/view_file?file=kernel-reiser4.spec&package=kernel-reiser4&project=home%3Adoiggl&srcmd5=a94730f4e77f3822eb936de1a6138981
-
-Thanks to the opensuse-kernel list members for compilation advice.
-http://lists.opensuse.org/opensuse-kernel/
-
-It looks like obs built the rpms.
-Post the results to the list.
-
-Ta Glenn
+best regards
+  Jara
 
