@@ -1,36 +1,36 @@
-From: Serkan Kaba <serkan@gentoo.org>
-Subject: Re: Reiser4 and mount times
-Date: Fri, 04 Mar 2011 18:28:25 +0200
-Message-ID: <4D711329.9020400@gentoo.org>
-References: <4D2BE02E.6040207@gentoo.org> <4D2C3143.7050008@gmail.com> <4D2D28D1.5010306@gentoo.org> <4D2E12AD.6030508@gmail.com> <4D31376F.1080903@gentoo.org> <4D31B1BB.7000906@gmail.com> <4D33C712.9090206@gentoo.org> <4D710D1F.7020006@gentoo.org> <4D7110E6.5070606@gmail.com>
+From: Dushan Tcholich <dusanc@gmail.com>
+Subject: Reiser4 for 2.6.36 kernel panic
+Date: Fri, 4 Mar 2011 19:08:24 +0100
+Message-ID: <AANLkTimrF930Dh82UKoq=M0mDy7aVrvbXC=ZDoTZT_YC@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4D7110E6.5070606@gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:date:message-id:subject:from:to
+         :content-type;
+        bh=aWO8WKqmkV9f5MX4m1HJxFol8772kI72kLg2Q3/T9O8=;
+        b=FeDMpZivDkyvyFVHmsg+D/UEq5q8Kd2AH99dVRSzL4wf1q/MfpqKgawrWhIJPjOKG+
+         M2ZHwX/FIzqBgxIWsrH7nubReF66MwXRfy2h1Zm0Tbw/RS6u/MP1aH7zJ6ZuGj1sJCQv
+         T0wmFNSnYl/Hb/zr5aYqpLae8FtOjOhhAzbC0=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel <reiserfs-devel@vger.kernel.org>, Edward Shishkin <edward.shishkin@gmail.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+I captured kernel output with a mobile
+camera.http://img854.imageshack.us/i/04032011.jpg/
 
-On 04-03-2011 18:18, Edward Shishkin wrote:
->>
-> 
-> Is your "/" on reiser4 partition?
-> 
-> Edward.
-> 
-Yes, indeed.
-- -- 
-Sincerely,
-Serkan KABA
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.17 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+ Missing text says:
+"reiser4_handle_error (fs/reiser4/vfs_ops.c:240)[foobar-42]
 
-iEYEARECAAYFAk1xEykACgkQRh6X64ivZaL5XgCfey/iKv3WGZSwyD8nGZDiPswK
-ztMAnjToksr7XT8zg1I4eRXhUbK/bnXo
-=wkub
------END PGP SIGNATURE-----
+It happened day after I enabled KMS in kernel for ati card, didn't
+notice this problem earlier.
+
+It happened twice, once after ~12h uptime, next time after ~2h uptime.
+
+Nothing in /var/log/messages
+
+Have a nice day
+
+Dushan
