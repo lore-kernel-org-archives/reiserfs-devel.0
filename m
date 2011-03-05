@@ -1,89 +1,78 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Re2: linux-2.6.37 crash reproduced - here is a screenshot
-Date: Sat, 05 Mar 2011 23:44:27 +0100
-Message-ID: <4D72BCCB.9000206@gmail.com>
-References: <4D65A3F7.22052.1288FE@jafojtik.seznam.cz>, <4D7161F7.2754.6FF32@jafojtik.seznam.cz>, <4D716E9F.8090902@gmail.com> <4D7214C2.30303.1B55FC@jafojtik.seznam.cz>
+From: reiserfs-devel@vger.kernel.org
+Subject: Re: Reiser4 Oops on vanilla 2.6.37.2
+Date: Sat, 05 Mar 2011 23:08:58 +0000
+Message-ID: <4D72C28A.20705@vger.kernel.org>
+References: <deafa2accc4aa586b6b57e8d9a0fb086.squirrel@ssl.freestuffjunction.co.uk> <4D72BBD0.70907@gmail.com>
+Reply-To: reiserfs-devel@vger.kernel.org
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=domainkey-signature:message-id:date:from:user-agent:mime-version:to
-         :cc:subject:references:in-reply-to:content-type
-         :content-transfer-encoding;
-        bh=O8JpQu5zR3ppSnZCtDojdJvH/A6bLnuMZzswsEHCFl4=;
-        b=kpE+xXQ2IZe6vsnpr6iqnCaDbl1Xglu9xoElIPdakaK+eiIvecsIKVJXLD3jcuBzMY
-         X5PgVk+1rnoKaN3wrBA/X1/vsXMYoHJmhhmhjmispXrxW/CGvZfmqtxs6S6Vam1aJbVO
-         9Hzr48IZ/YmiNFPFIyExWaNuZjZjcmzGSISlw=
-In-Reply-To: <4D7214C2.30303.1B55FC@jafojtik.seznam.cz>
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+	d=freestuffjunction.co.uk; s=default; t=1299366540;
+	bh=DdO9IwI76tjBkYlsz4pdzi5dgRbhri/XbhfaKoWkKbs=;
+	h=Message-ID:Date:From:Reply-To:MIME-Version:To:Subject:References:
+	 In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	b=wmHkNHFWQNl1NJXAdovaiZBRWhReVpWPm1xdPLa9zueK0BAqA8gGlk1bokHIFCoJ7
+	 dEwwVx0uzBpvvYnDyH7W3UlQCOYz5zNSIOpGp0uxO1RTIrFpSRb2n2Gmqy/dUwU+VK
+	 Qqv26E1wgFQfhe2FCBfOhwbgsABgifqixI8BvlR0=
+In-Reply-To: <4D72BBD0.70907@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jaroslav Fojtik <jafojtik@seznam.cz>
-Cc: reiserfs-devel@vger.kernel.org
+To: Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
 
-On 03/05/2011 11:47 AM, Jaroslav Fojtik wrote:
-> Dear Edward Shishkin,
+On 05/03/11 22:40, Edward Shishkin wrote:
+> On 03/05/2011 03:29 PM, Eddie Chapman wrote:
+>> Hello,
 >
->> I don't see any reiser4 bits in the stacktrace.
-> It might be scrolled down.
->
-> I am sending two new hang reports.
+> Hello.
 
-I afraid that all useful information remained out of the screen ;(
-
-Edward.
+Thanks for the prompt reply :)
 
 >
->
->> Could you please try to reproduce it without
->> reiser4? Report about results.
-> I could try it, but reformating partition on test disk and fill it with
-> graphics magick mirror spends around 8 hours. Fortunatelly this process
-> is automatical and could run during night.
->
->
-> Linux-2.6.32 is very stable. I have never experimented with other releases.
->
-> regards
->    Jara
->
->
->
->
->> Thanks,
->> Edward
 >>
+>> Firstly many thanks for the brilliant work being put into reiser4.
 >>
->>>
->>> best regards
->>>      Jara
->>>
->>>
->>>> On 03/04/2011 12:24 AM, Jaroslav Fojtik wrote:
->>>>> Dear Edward Shishkin,
->>>>>
->>>>>> Great.
->>>>>
->>>>> Sorry, after several attempts I managed to crash Linux even with kernel
->>>>> linux-2.6.37. No trace in log, system completely frozen and beeper
->>>>> sounded.
->>>>>
->>>>> It takes several hours to transfer 400 Gigabyte test data and create
->>>>> full stress of filesystem.
->>>>>
->>>>> I have improved my stress test and managed to find something with mc
->>>>> paralelly with data copying.
->>>>
->>>>
->>>> Ok, I'll try to reproduce.
->>>> Is you "/" on reiser4 partition?
->>>>
->>>> Thanks,
->>>> Edward.
->>>
->>>
+>> Been using reiser4 for about 10 days or so on two software raid6 devices
+>> containing lots of imap mail directories. One partition has about 55GB
+>> mail in total, the other only about 4GB.
 >>
+>> So far so good with no major problems until this morning, when the Oops
+>> below (scroll down to bottom of mail) happened. The system continued
+>> functioning with no apparent data loss except load average rose to 24
+>> within about 30 secs of the Oops and continued to rise steadily until
+>> system became unresponsive after 3-4 hrs with load average at 1189.
+>>
+>> This is a Centos 5.5 64 bit box with vanilla kernel.org 2.6.37.2 and
+>> reiser4-for-2.6.37.patch
+>>
+>> I have both the raid md devices mounted as reiser4 with
+>> noatime,nodiratime
+>>
+>> I notice this Oops reported here and Edward's patch to address the
+>> problem:
+>> http://www.spinics.net/lists/reiserfs-devel/msg02648.html
+>>
+>> Searching through reiser4-for-2.6.37.patch it seems that patch is in
+>> there, but I still got the Oops.
 >
->
+> This is another problem.
 
+Aaah yes you're right, I just saw jbd2__journal_start and 
+ext4_journal_start_sb in both Oops but didn't look further.
+
+>
+>>
+>> Similarly to the previous case, this box is using ext4 for all the other
+>> filesystems.
+>>
+>> If another patch is not possible in the near future would downgrading the
+>> other filesystems to ext3 be a temporary workaround for this issue?
+>
+> I have attached a temporal workaround, it should help.
+> Note, that I didn't test this patch: I'll be able to do it
+> at the end of weekends.
+
+Many thanks, I will apply it tonight and report back.
+
+Eddie
