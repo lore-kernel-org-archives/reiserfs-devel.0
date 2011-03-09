@@ -1,19 +1,32 @@
-From: Serkan Kaba <serkan@gentoo.org>
+From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: File copy problems kde 4.5 to 4.6.1 with reiser4
-Date: Wed, 9 Mar 2011 12:32:46 +0200
-Message-ID: <AANLkTikRbBP=XeNtvMkN=jYDVcuTZdqAM5bM=5NeAn=q@mail.gmail.com>
+Date: Wed, 09 Mar 2011 12:46:47 +0100
+Message-ID: <4D7768A7.10107@gmail.com>
 References: <201103090918.47762.berny@dwami.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:message-id:date:from:user-agent:mime-version:to
+         :cc:subject:references:in-reply-to:content-type
+         :content-transfer-encoding;
+        bh=Hy2xXfaXN9r/10mx/uH4r3jq/H6FXYtpwQBMAeJZX1s=;
+        b=YpHdmpblnTJPOPdEON56+ypH0lqUsd4a6PaQAXZifN84Sffo5XzjASLNr+p2KwpvHu
+         kbA/UOZ+sumPQauVYjjD/ShBGfpUF6aAbdr1WeKpnK1ySQoFLkovnLRdozxYIHjvKP56
+         LJ5mmErSMHtHm9hbTrFzTo2elUe596/buODtQ=
 In-Reply-To: <201103090918.47762.berny@dwami.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+To: =?ISO-8859-1?Q?berny=AE?= <berny@dwami.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-2011/3/9 berny=AE <berny@dwami.com>:
+On 03/09/2011 10:18 AM, berny=AE wrote:
 > Hi Edward,
+
+Hello.
+
 > first thank you for your work.
 >
 > I'm using reiser4 for all my partitions on my working machine with ke=
@@ -30,7 +43,20 @@ the xfs, reiser3 ones.
 now ok, it is like on un
 > mounting the files get finalized and then on the next boot they are n=
 ormally accessible.
+
+
+Does sync(1) without umount make them accessible?
+
+
 > No errors are shown during copy and file system is clean.
+
+Are there any suspicious kernel messages when trying
+to access the "empty" files?
+
+Thanks,
+Edward.
+
+
 > I discovered that this is also signaled like a kde bug 251392 with st=
 atus unconfirmed.
 >
@@ -56,23 +82,8 @@ ied correctly so it seems only to
 > To unsubscribe from this list: send the line "unsubscribe reiserfs-de=
 vel" in
 > the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-I suspect that it's similar to what I experienced with gnome upgrade
-back in time. My problem was due to issues in splice code path which
-GNOME switch to for file copying along the way. I already reported
-this to GNOME [1] as well as this ML [2,3]. The issue appearing in
-only uncompressed partitions is interesting, Edward already asked me
-if mine was, which isn't. My current workaround is to use a patched
-version of glib (part of gnome libs) that avoids using splice for
-reiser4 targets. If you have a KDE bugzilla account, can you also
-provide them links for discussions in the list as well as the GNOME
-bug?
-
-1: https://bugzilla.gnome.org/show_bug.cgi?id=3D615346
-2: http://marc.info/?l=3Dreiserfs-devel&m=3D127096098705179&w=3D2
-3: http://marc.info/?l=3Dreiserfs-devel&m=3D129275181431455&w=3D2
 --
 To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
 l" in
