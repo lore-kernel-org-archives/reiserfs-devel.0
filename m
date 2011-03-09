@@ -1,81 +1,101 @@
 From: Berny <berny@dwami.com>
 Subject: Re: File copy problems kde 4.5 to 4.6.1 with reiser4
-Date: Wed, 09 Mar 2011 12:38:47 +0000
-Message-ID: <4D7774D7.3030908@dwami.com>
-References: <201103090918.47762.berny@dwami.com> <AANLkTikRbBP=XeNtvMkN=jYDVcuTZdqAM5bM=5NeAn=q@mail.gmail.com>
+Date: Wed, 09 Mar 2011 12:46:36 +0000
+Message-ID: <4D7776AC.2050906@dwami.com>
+References: <201103090918.47762.berny@dwami.com> <4D7768A7.10107@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <AANLkTikRbBP=XeNtvMkN=jYDVcuTZdqAM5bM=5NeAn=q@mail.gmail.com>
+In-Reply-To: <4D7768A7.10107@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
 To: reiserfs-devel@vger.kernel.org
 
-On 03/09/2011 10:32 AM, Serkan Kaba wrote:
-> 2011/3/9 berny=AE<berny@dwami.com>:
->> Hi Edward,
->> first thank you for your work.
->>
->> I'm using reiser4 for all my partitions on my working machine with k=
-ernel 2.6.37 with no problems
->> except one annoying one that is going on from months.
->> When I copy a file (whatever) from one directory to another with kon=
-queror, dolphin or krusader with
->> kde 4.6.1 the file get copied, it's size is correct but it is empty.
->>
->> This happen only in the partitions formatted with reiser4 and not on=
- the xfs, reiser3 ones.
->>
->>
->> Thank you,
->> warm regards,
->> Paolo
->> --
->> To unsubscribe from this list: send the line "unsubscribe reiserfs-d=
-evel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->
-> I suspect that it's similar to what I experienced with gnome upgrade
-> back in time. My problem was due to issues in splice code path which
-> GNOME switch to for file copying along the way. I already reported
-> this to GNOME [1] as well as this ML [2,3]. The issue appearing in
-> only uncompressed partitions is interesting, Edward already asked me
-> if mine was, which isn't. My current workaround is to use a patched
-> version of glib (part of gnome libs) that avoids using splice for
-> reiser4 targets. If you have a KDE bugzilla account, can you also
-> provide them links for discussions in the list as well as the GNOME
-> bug?
->
-> 1: https://bugzilla.gnome.org/show_bug.cgi?id=3D615346
-> 2: http://marc.info/?l=3Dreiserfs-devel&m=3D127096098705179&w=3D2
-> 3: http://marc.info/?l=3Dreiserfs-devel&m=3D129275181431455&w=3D2
-> --
+Hi Edward, thanks for answering.
 
-So it seems that also kde probably use this library to splice data from=
-=20
-a pipe, I saw that it seemed resolved in 2.6.36 but it is here again in=
-=20
-2.6.37.
-I read your links, very good information.
-I never know that kde was using this splice for copying things.
-Sorry but I'm not member of kde bugzilla, I was simply searching for=20
-information.
-The problem is that only reiser4 exhibit this problem on my system so I=
-=20
-guessed that was a problem of this file system, this is the reason=20
-because I didn't fill a bug on the other bugzilla.
+No sync doesn't make any difference, I need to unmount.
+I don't get any errors, for example if I copy a txt file and I open it=20
+with kwrite, it is simply empty but I get no error from application or=20
+os (like dmesg and alike) and ls or konqueror show me the correct size=20
+of the file, it is simply apparently empty.
+If I do file <name> I got empty file.
 
 Thanks,
 Paolo
 
 
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-de=
-vel" in
+
+
+On 03/09/2011 11:46 AM, Edward Shishkin wrote:
+> On 03/09/2011 10:18 AM, berny=AE wrote:
+>> Hi Edward,
+>
+> Hello.
+>
+>> first thank you for your work.
+>>
+>> I'm using reiser4 for all my partitions on my working machine with
+>> kernel 2.6.37 with no problems
+>> except one annoying one that is going on from months.
+>> When I copy a file (whatever) from one directory to another with
+>> konqueror, dolphin or krusader with
+>> kde 4.6.1 the file get copied, it's size is correct but it is empty.
+>>
+>> This happen only in the partitions formatted with reiser4 and not on
+>> the xfs, reiser3 ones.
+>>
+>> If I restart the pc, when I'm back all the files that were empty are
+>> now ok, it is like on un
+>> mounting the files get finalized and then on the next boot they are
+>> normally accessible.
+>
+>
+> Does sync(1) without umount make them accessible?
+>
+>
+>> No errors are shown during copy and file system is clean.
+>
+> Are there any suspicious kernel messages when trying
+> to access the "empty" files?
+>
+> Thanks,
+> Edward.
+>
+>
+>> I discovered that this is also signaled like a kde bug 251392 with
+>> status unconfirmed.
+>>
+>> If I copy from a terminal with cp, rsync, mc the file get copied
+>> correctly so it is only in the
+>> combination kde + reiser4 that I get problems.
+>> Don't know if it is a bug of reiser4 or of kde.
+>>
+>> My mount options are no_write_barrier,dont_load_bitmap, the rest is
+>> default, the volumes are normal,
+>> I mean not cryptocompress.
+>> An interesting thing, if I format the reiser4 with cryptocompress
+>> support (-o create=3Dccreg40,
+>> compress=3Dlzo1) this behavior don't happen, I mean the files are co=
+pied
+>> correctly so it seems only to
+>> affect normal uncompressed reiser4 volumes.
+>> Hope this can be of help to you.
+>>
+>> Thank you,
+>> warm regards,
+>> Paolo
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe
+>> reiserfs-devel" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe
+> reiserfs-devel" in
 > the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> More majordomo info at http://vger.kernel.org/majordomo-info.html
 
 --
 To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
