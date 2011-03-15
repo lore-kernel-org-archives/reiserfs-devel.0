@@ -1,40 +1,50 @@
-From: Eddie Chapman <eddie@ehuk.net>
-Subject: Re: Reiser4 Oops on vanilla 2.6.37.2
-Date: Tue, 15 Mar 2011 19:57:30 +0000
-Message-ID: <4D7FC4AA.3060703@ehuk.net>
-References: <deafa2accc4aa586b6b57e8d9a0fb086.squirrel@ssl.freestuffjunction.co.uk> <4D72BBD0.70907@gmail.com> <4D72C28A.20705@vger.kernel.org> <4D77F908.6080206@gmail.com>
-Reply-To: Eddie Chapman <eddie@ehuk.net>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 29162] Reiserfs hang with dataloss sometimes
+Date: Tue, 15 Mar 2011 22:03:15 GMT
+Message-ID: <201103152203.p2FM3F0q012227@demeter1.kernel.org>
+References: <bug-29162-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-	d=freestuffjunction.co.uk; s=default; t=1300219051;
-	bh=ZjpjzqTxXHXhILLaJ4F894Owxc6ibhS/CcUf6NhyYKk=;
-	h=Message-ID:Date:From:Reply-To:MIME-Version:To:Subject:References:
-	 In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	b=OrKqvcgBE1xQi/+wNnoNQkyGEGfBjZVykYKHDTQmegOdT1HVg1r/7fmueX2RqXzBa
-	 Ey2xUNNir/1vmMyalcNOJaLg8gcD38Dbta/ABPnf3Xc6O3hwOObNur1p1PCZ6xwIxm
-	 hunasB1euqYNiVX+axsA1zeMIo3IkeqEuyatp7v4=
-In-Reply-To: <4D77F908.6080206@gmail.com>
+In-Reply-To: <bug-29162-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-On 09/03/11 22:02, Edward Shishkin wrote:
->> Eddie
->
-> Sorry, I've encountered strange deadlocks with this patch.
-> Please, roll it back and use the attached one as the temporal
-> workaround.
->
-> Thanks,
-> Edward.
+https://bugzilla.kernel.org/show_bug.cgi?id=29162
 
-Hi Edward,
 
-Just a quick update to let you know the box is still up after 4 days 
-after rebooting with vanilla 2.6.37.3 and your latest patch applied.
+Jeff Mahoney <jeffm@suse.com> changed:
 
-regards,
-Eddie
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |fweisbec@gmail.com,
+                   |                            |jeffm@suse.com
+
+
+
+
+--- Comment #8 from Jeff Mahoney <jeffm@suse.com>  2011-03-15 22:03:12 ---
+Bastien, are you using ACLs or security xattrs (e.g. selinux) on your file
+system?
+
+If you're not, I'll have to keep looking, but it seems as though Frederic's BKL
+replacement patches got the nested behavior of the BKL right but not the
+drop-over-schedule part completely right.
+
+The BKL can do nesting but drops the lock entirely over schedule. The reiserfs
+write lock can do nesting but only drops one reference to the lock over
+schedule. So if the lock is nested and a schedule occurs, the lock isn't truly
+dropped.
+
+The most obvious case of nesting the write lock like this is when using
+extended attributes since it will nest journal transactions. There are others,
+though.
+
+I'll work up a patch to test this theory and post it shortly.
+
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
