@@ -1,119 +1,194 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: search_one_bitmap_forward oops
-Date: Thu, 24 Mar 2011 22:42:19 +0100
-Message-ID: <4D8BBABB.3060409@gmail.com>
-References: <4BFFA494.4060509@gmail.com> <4C7BD349.5070005@tls-tautenburg.de> <4C7BD64B.9070005@gmail.com> <4C7BF309.8070906@tls-tautenburg.de> <4C7C04FB.9070901@gmail.com> <4D7CAE07.2090907@tls-tautenburg.de> <4D7FECB3.4090804@gmail.com> <4D8A771B.7080903@tls-tautenburg.de> <4D8A7E79.90407@gmail.com> <4D8A838C.5040702@tls-tautenburg.de> <4D8A85D5.2010201@gmail.com> <4D8A8893.9000802@tls-tautenburg.de> <4D8A8C6D.7070906@gmail.com> <4D8B5646.8020609@tls-tautenburg.de>
+From: Dushan Tcholich <dusanc@gmail.com>
+Subject: Re: Reiser4 for 2.6.36 kernel panic
+Date: Thu, 24 Mar 2011 23:13:05 +0100
+Message-ID: <AANLkTimYL=czRRmTSUabohUKNgKzmciKAavfLKqj5aRP@mail.gmail.com>
+References: <AANLkTimrF930Dh82UKoq=M0mDy7aVrvbXC=ZDoTZT_YC@mail.gmail.com>
+	<4D713169.3060906@gmail.com>
+	<AANLkTimqtUR-Wfja8tpC4LATZYVpN5N01aPGLFqzOV8K@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------010007060707040307090706"
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4D8B5646.8020609@tls-tautenburg.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:in-reply-to:references:date
+         :message-id:subject:from:to:cc:content-type
+         :content-transfer-encoding;
+        bh=TGctlsFvj6+2qta0WsefRQsYRCt/kLgNB+cgyMZk8C0=;
+        b=KTBaZ8iP4d5yARLfyD2IB2UHXQMtheUDKd/dnH6Wp96bzN78ySSnx7CVnN2LxrBZCa
+         9PhI6sMrMdzrBQYuIhKbS56HKbhn4FPIG7x6FP6uD6p5MrVoGW5YbR1aW2gh7chxbQK7
+         5PTK1nGVqN3JvXG3AHwyWyYWtEsJFlRUecKLA=
+In-Reply-To: <AANLkTimqtUR-Wfja8tpC4LATZYVpN5N01aPGLFqzOV8K@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Bringfried Stecklum <stecklum@tls-tautenburg.de>, Serkan Kaba <serkan@gentoo.org>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------010007060707040307090706
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+After 17 days more with old config machine stays up, no problems.
 
-On 03/24/2011 03:33 PM, Bringfried Stecklum wrote:
-> Edward Shishkin wrote:
->> On 03/24/2011 12:56 AM, Bringfried Stecklum wrote:
->>> Edward Shishkin wrote:
->>>> On 03/24/2011 12:34 AM, Bringfried Stecklum wrote:
->>>>> Edward Shishkin wrote:
->>>>>> On 03/23/2011 11:41 PM, Bringfried Stecklum wrote:
->>>>>>> Dear Edward,
->>>>>>>
->>>>>>> thanks for the reply. Since I contacted you again concerning this
->>>>>>> bug,
->>>>>>> my system is going mad because of it. I didn't change anything
->>>>>>> concerning the kernel but even just after login and idling, the bug
->>>>>>> happens. I'd like to stay with Reiser4. But right now it is getting
->>>>>>> really difficult.
->>>>>>
->>>>>> Do you use the mount option "dont_load_bitmap"?
->>>>>
->>>>> Yes, I used it so far for faster booting but switched it off now.
->>>>
->>>>
->>>> Please, don't use this mount option for now: it doesn't
->>>> work properly. I'll try to reproduce and fix it at leisure.
->>>
->>> Looks like, up'n running now for half an hour. Normally, I prefer to
->>> hibernate between sessions and thus boot rarely, the longer boot time is
->>> no obstacle. Good luck with fixing the issue.
->>
->>
->> It looks like missing bitmap is not uploaded somewhere..
+Thanks
+
+Dushan
+
+On Mon, Mar 7, 2011 at 7:50 PM, Dushan Tcholich <dusanc@gmail.com> wrot=
+e:
+> I went back to older kernel config (which worked for me atleast for a
+> month uptime before) and after 2 days uptime nothing bad happened,
+> machine is fine and nothing in logs.
 >
-> But it used to work quite some time...
-
-It seems I have found the bug.
-
-The problem arises when we get to the /* race: ...*/ point (see
-the attached patch). This is not an error path, nevertheless we
-release all bitmaps and set zeroes to bnode fields. Welcome to
-the Oops...
-
-Everyone, who experienced problems with on-demand bitmap loading
-in reiser4 (the mount option "dont_load_bitmap"), please, try the 
-attached patch.
-
-Thanks,
-Edward.
-
---------------010007060707040307090706
-Content-Type: text/plain;
- name="reiser4-fix-on-demand-bitmap-load.patch"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="reiser4-fix-on-demand-bitmap-load.patch"
-
-SW5kZXg6IGxpbnV4LTIuNi4zOC9mcy9yZWlzZXI0L3BsdWdpbi9zcGFjZS9iaXRtYXAuYwo9
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09Ci0tLSBsaW51eC0yLjYuMzgub3JpZy9mcy9yZWlzZXI0L3BsdWdpbi9z
-cGFjZS9iaXRtYXAuYworKysgbGludXgtMi42LjM4L2ZzL3JlaXNlcjQvcGx1Z2luL3NwYWNl
-L2JpdG1hcC5jCkBAIC04MzAsNDUgKzgzMCw0MyBAQCBzdGF0aWMgaW50IGxvYWRfYW5kX2xv
-Y2tfYm5vZGUoc3RydWN0IGJpCiAJfQogCiAJcmV0ID0gcHJlcGFyZV9ibm9kZShibm9kZSwg
-JmNqbm9kZSwgJndqbm9kZSk7Ci0JaWYgKHJldCA9PSAwKSB7Ci0JCW11dGV4X2xvY2soJmJu
-b2RlLT5tdXRleCk7CisJaWYgKHJldCkKKwkJcmV0dXJuIHJldDsKIAotCQlpZiAoIWF0b21p
-Y19yZWFkKCZibm9kZS0+bG9hZGVkKSkgewotCQkJYXNzZXJ0KCJuaWtpdGEtMjgyMiIsIGNq
-bm9kZSAhPSBOVUxMKTsKLQkJCWFzc2VydCgibmlraXRhLTI4MjMiLCB3am5vZGUgIT0gTlVM
-TCk7Ci0JCQlhc3NlcnQoIm5pa2l0YS0yODI0Iiwgam5vZGVfaXNfbG9hZGVkKGNqbm9kZSkp
-OwotCQkJYXNzZXJ0KCJuaWtpdGEtMjgyNSIsIGpub2RlX2lzX2xvYWRlZCh3am5vZGUpKTsK
-LQotCQkJYm5vZGUtPndqbm9kZSA9IHdqbm9kZTsKLQkJCWJub2RlLT5jam5vZGUgPSBjam5v
-ZGU7Ci0KLQkJCXJldCA9IGNoZWNrX3N0cnVjdF9ibm9kZShibm9kZSwgY3VycmVudF9ibG9j
-a3NpemUpOwotCQkJaWYgKCFyZXQpIHsKLQkJCQljam5vZGUgPSB3am5vZGUgPSBOVUxMOwot
-CQkJCWF0b21pY19zZXQoJmJub2RlLT5sb2FkZWQsIDEpOwotCQkJCS8qIHdvcmtpbmcgYml0
-bWFwIGlzIGluaXRpYWxpemVkIGJ5IG9uLWRpc2sKLQkJCQkgKiBjb21taXQgYml0bWFwLiBU
-aGlzIHNob3VsZCBiZSBwZXJmb3JtZWQKLQkJCQkgKiB1bmRlciBtdXRleC4gKi8KLQkJCQlt
-ZW1jcHkoYm5vZGVfd29ya2luZ19kYXRhKGJub2RlKSwKLQkJCQkgICAgICAgYm5vZGVfY29t
-bWl0X2RhdGEoYm5vZGUpLAotCQkJCSAgICAgICBibWFwX3NpemUoY3VycmVudF9ibG9ja3Np
-emUpKTsKLQkJCX0gZWxzZQotCQkJCW11dGV4X3VubG9jaygmYm5vZGUtPm11dGV4KTsKLQkJ
-fSBlbHNlCi0JCQkvKiByYWNlOiBzb21lb25lIGFscmVhZHkgbG9hZGVkIGJpdG1hcCB3aGls
-ZSB3ZSB3ZXJlCi0JCQkgKiBidXN5IGluaXRpYWxpemluZyBkYXRhLiAqLwotCQkJY2hlY2tf
-Ym5vZGVfbG9hZGVkKGJub2RlKTsKLQl9Ci0KLQlpZiAod2pub2RlICE9IE5VTEwpIHsKLQkJ
-cmVsZWFzZSh3am5vZGUpOwotCQlibm9kZS0+d2pub2RlID0gTlVMTDsKLQl9Ci0JaWYgKGNq
-bm9kZSAhPSBOVUxMKSB7Ci0JCXJlbGVhc2UoY2pub2RlKTsKLQkJYm5vZGUtPmNqbm9kZSA9
-IE5VTEw7Ci0JfQorCW11dGV4X2xvY2soJmJub2RlLT5tdXRleCk7CiAKKwlpZiAoIWF0b21p
-Y19yZWFkKCZibm9kZS0+bG9hZGVkKSkgeworCQlhc3NlcnQoIm5pa2l0YS0yODIyIiwgY2pu
-b2RlICE9IE5VTEwpOworCQlhc3NlcnQoIm5pa2l0YS0yODIzIiwgd2pub2RlICE9IE5VTEwp
-OworCQlhc3NlcnQoIm5pa2l0YS0yODI0Iiwgam5vZGVfaXNfbG9hZGVkKGNqbm9kZSkpOwor
-CQlhc3NlcnQoIm5pa2l0YS0yODI1Iiwgam5vZGVfaXNfbG9hZGVkKHdqbm9kZSkpOworCisJ
-CWJub2RlLT53am5vZGUgPSB3am5vZGU7CisJCWJub2RlLT5jam5vZGUgPSBjam5vZGU7CisK
-KwkJcmV0ID0gY2hlY2tfc3RydWN0X2Jub2RlKGJub2RlLCBjdXJyZW50X2Jsb2Nrc2l6ZSk7
-CisJCWlmICh1bmxpa2VseShyZXQgIT0gMCkpCisJCQlnb3RvIGVycm9yOworCisJCWF0b21p
-Y19zZXQoJmJub2RlLT5sb2FkZWQsIDEpOworCQkvKiB3b3JraW5nIGJpdG1hcCBpcyBpbml0
-aWFsaXplZCBieSBvbi1kaXNrCisJCSAqIGNvbW1pdCBiaXRtYXAuIFRoaXMgc2hvdWxkIGJl
-IHBlcmZvcm1lZAorCQkgKiB1bmRlciBtdXRleC4gKi8KKwkJbWVtY3B5KGJub2RlX3dvcmtp
-bmdfZGF0YShibm9kZSksCisJCSAgICAgICBibm9kZV9jb21taXRfZGF0YShibm9kZSksCisJ
-CSAgICAgICBibWFwX3NpemUoY3VycmVudF9ibG9ja3NpemUpKTsKKwl9IGVsc2UKKwkJLyog
-cmFjZTogc29tZW9uZSBhbHJlYWR5IGxvYWRlZCBiaXRtYXAKKwkJICogd2hpbGUgd2Ugd2Vy
-ZSBidXN5IGluaXRpYWxpemluZyBkYXRhLiAqLworCQljaGVja19ibm9kZV9sb2FkZWQoYm5v
-ZGUpOworCXJldHVybiAwOworCisgZXJyb3I6CisJcmVsZWFzZSh3am5vZGUpOworCXJlbGVh
-c2UoY2pub2RlKTsKKwlibm9kZS0+d2pub2RlID0gTlVMTDsKKwlibm9kZS0+Y2pub2RlID0g
-TlVMTDsKKwltdXRleF91bmxvY2soJmJub2RlLT5tdXRleCk7CiAJcmV0dXJuIHJldDsKIH0K
-IAo=
---------------010007060707040307090706--
+> This is the diff of configs (good one > with problems):
+>
+> 4c4
+> < # Tue Feb =C2=A08 18:39:42 2011
+> ---
+>> # Thu Mar =C2=A03 17:35:09 2011
+> 352c352,353
+> < # CONFIG_PM_RUNTIME is not set
+> ---
+>> CONFIG_PM_RUNTIME=3Dy
+>> CONFIG_PM_OPS=3Dy
+> 434a436
+>> CONFIG_PCIE_PME=3Dy
+> 738c740
+> < # CONFIG_FIRMWARE_IN_KERNEL is not set
+> ---
+>> CONFIG_FIRMWARE_IN_KERNEL=3Dy
+> 1162a1165
+>> CONFIG_I2C_ALGOBIT=3Dy
+> 1339,1343c1342
+> < CONFIG_AGP=3Dy
+> < # CONFIG_AGP_AMD64 is not set
+> < # CONFIG_AGP_INTEL is not set
+> < # CONFIG_AGP_SIS is not set
+> < # CONFIG_AGP_VIA is not set
+> ---
+>> # CONFIG_AGP is not set
+> 1347c1346,1355
+> < # CONFIG_DRM is not set
+> ---
+>> CONFIG_DRM=3Dy
+>> CONFIG_DRM_KMS_HELPER=3Dy
+>> CONFIG_DRM_TTM=3Dy
+>> # CONFIG_DRM_TDFX is not set
+>> # CONFIG_DRM_R128 is not set
+>> CONFIG_DRM_RADEON=3Dy
+>> CONFIG_DRM_RADEON_KMS=3Dy
+>> # CONFIG_DRM_MGA is not set
+>> # CONFIG_DRM_VIA is not set
+>> # CONFIG_DRM_SAVAGE is not set
+> 1350c1358,1415
+> < # CONFIG_FB is not set
+> ---
+>> CONFIG_FB=3Dy
+>> # CONFIG_FIRMWARE_EDID is not set
+>> # CONFIG_FB_DDC is not set
+>> # CONFIG_FB_BOOT_VESA_SUPPORT is not set
+>> CONFIG_FB_CFB_FILLRECT=3Dy
+>> CONFIG_FB_CFB_COPYAREA=3Dy
+>> CONFIG_FB_CFB_IMAGEBLIT=3Dy
+>> # CONFIG_FB_CFB_REV_PIXELS_IN_BYTE is not set
+>> # CONFIG_FB_SYS_FILLRECT is not set
+>> # CONFIG_FB_SYS_COPYAREA is not set
+>> # CONFIG_FB_SYS_IMAGEBLIT is not set
+>> # CONFIG_FB_FOREIGN_ENDIAN is not set
+>> # CONFIG_FB_SYS_FOPS is not set
+>> # CONFIG_FB_SVGALIB is not set
+>> # CONFIG_FB_MACMODES is not set
+>> # CONFIG_FB_BACKLIGHT is not set
+>> # CONFIG_FB_MODE_HELPERS is not set
+>> # CONFIG_FB_TILEBLITTING is not set
+>>
+>> #
+>> # Frame buffer hardware drivers
+>> #
+>> # CONFIG_FB_CIRRUS is not set
+>> # CONFIG_FB_PM2 is not set
+>> # CONFIG_FB_CYBER2000 is not set
+>> # CONFIG_FB_ARC is not set
+>> # CONFIG_FB_ASILIANT is not set
+>> # CONFIG_FB_IMSTT is not set
+>> # CONFIG_FB_VGA16 is not set
+>> # CONFIG_FB_VESA is not set
+>> # CONFIG_FB_N411 is not set
+>> # CONFIG_FB_HGA is not set
+>> # CONFIG_FB_S1D13XXX is not set
+>> # CONFIG_FB_NVIDIA is not set
+>> # CONFIG_FB_RIVA is not set
+>> # CONFIG_FB_LE80578 is not set
+>> # CONFIG_FB_MATROX is not set
+>> # CONFIG_FB_RADEON is not set
+>> # CONFIG_FB_ATY128 is not set
+>> # CONFIG_FB_ATY is not set
+>> # CONFIG_FB_S3 is not set
+>> # CONFIG_FB_SAVAGE is not set
+>> # CONFIG_FB_SIS is not set
+>> # CONFIG_FB_VIA is not set
+>> # CONFIG_FB_NEOMAGIC is not set
+>> # CONFIG_FB_KYRO is not set
+>> # CONFIG_FB_3DFX is not set
+>> # CONFIG_FB_VOODOO1 is not set
+>> # CONFIG_FB_VT8623 is not set
+>> # CONFIG_FB_TRIDENT is not set
+>> # CONFIG_FB_ARK is not set
+>> # CONFIG_FB_PM3 is not set
+>> # CONFIG_FB_CARMINE is not set
+>> # CONFIG_FB_GEODE is not set
+>> # CONFIG_FB_VIRTUAL is not set
+>> # CONFIG_FB_METRONOME is not set
+>> # CONFIG_FB_MB862XX is not set
+>> # CONFIG_FB_BROADSHEET is not set
+> 1364a1430,1437
+>> CONFIG_FRAMEBUFFER_CONSOLE=3Dy
+>> # CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY is not set
+>> # CONFIG_FRAMEBUFFER_CONSOLE_ROTATION is not set
+>> # CONFIG_FB_CON_DECOR is not set
+>> # CONFIG_FONTS is not set
+>> CONFIG_FONT_8x8=3Dy
+>> CONFIG_FONT_8x16=3Dy
+>> # CONFIG_LOGO is not set
+> 1564a1638
+>> # CONFIG_USB_SUSPEND is not set
+>
+> I hope this helps
+>
+> Thanks
+> Dushan
+>
+> On Fri, Mar 4, 2011 at 7:37 PM, Edward Shishkin
+> <edward.shishkin@gmail.com> wrote:
+>> On 03/04/2011 07:08 PM, Dushan Tcholich wrote:
+>>>
+>>> I captured kernel output with a mobile
+>>> camera.http://img854.imageshack.us/i/04032011.jpg/
+>>>
+>>> =C2=A0Missing text says:
+>>> "reiser4_handle_error (fs/reiser4/vfs_ops.c:240)[foobar-42]
+>>>
+>>> It happened day after I enabled KMS in kernel for ati card, didn't
+>>> notice this problem earlier.
+>>>
+>>> It happened twice, once after ~12h uptime, next time after ~2h upti=
+me.
+>>
+>>
+>> Could you please check kernel messages more carefully:
+>> are there complaints (IO errors, etc) of any low-level
+>> subsystem?
+>>
+>> Thanks,
+>> Edward.
+>>
+>>>
+>>> Nothing in /var/log/messages
+>>>
+>>> Have a nice day
+>>>
+>>> Dushan
+>>
+>>
+>
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
