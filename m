@@ -1,296 +1,82 @@
-From: Dushan Tcholich <dusanc@gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: Reiser4 for 2.6.36 kernel panic
-Date: Fri, 25 Mar 2011 00:15:51 +0100
-Message-ID: <AANLkTikK8pS_bsxnwYrRd3NVXsR=uf5OWe_2h3+njOVU@mail.gmail.com>
-References: <AANLkTimrF930Dh82UKoq=M0mDy7aVrvbXC=ZDoTZT_YC@mail.gmail.com>
-	<4D713169.3060906@gmail.com>
-	<AANLkTimqtUR-Wfja8tpC4LATZYVpN5N01aPGLFqzOV8K@mail.gmail.com>
-	<AANLkTimYL=czRRmTSUabohUKNgKzmciKAavfLKqj5aRP@mail.gmail.com>
-	<4D8BC711.1020101@gmail.com>
-	<AANLkTikMKQdsrSB__KLGs5wS9+nO3rxOhrWc-x2je5o-@mail.gmail.com>
+Date: Fri, 25 Mar 2011 02:48:22 +0100
+Message-ID: <4D8BF466.7080600@gmail.com>
+References: <AANLkTimrF930Dh82UKoq=M0mDy7aVrvbXC=ZDoTZT_YC@mail.gmail.com>	<4D713169.3060906@gmail.com>	<AANLkTimqtUR-Wfja8tpC4LATZYVpN5N01aPGLFqzOV8K@mail.gmail.com>	<AANLkTimYL=czRRmTSUabohUKNgKzmciKAavfLKqj5aRP@mail.gmail.com>	<4D8BC711.1020101@gmail.com>	<AANLkTikMKQdsrSB__KLGs5wS9+nO3rxOhrWc-x2je5o-@mail.gmail.com> <AANLkTikK8pS_bsxnwYrRd3NVXsR=uf5OWe_2h3+njOVU@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:mime-version:in-reply-to:references:date
-         :message-id:subject:from:to:cc:content-type
+        h=domainkey-signature:message-id:date:from:user-agent:mime-version:to
+         :cc:subject:references:in-reply-to:content-type
          :content-transfer-encoding;
-        bh=emRmiKEz9raKJqiU6aksJtiriqCNv5bI9EvssAoyPaA=;
-        b=YDVSO7PoUVSsBlzOPx1AM2Z9SMk7VymH1J2XziAihMcNl3CPOnWekhwLiL3Oj2a/OR
-         losFWmic5Phqs3IaeOkbuyER0+6shgBjlaayzjcZMRu7XARvOGZOoGOVsBoY8ggyNnKF
-         p0E8viAUwb3j2Ks0zcL6PwcZ6h+SfdJzNlFnQ=
-In-Reply-To: <AANLkTikMKQdsrSB__KLGs5wS9+nO3rxOhrWc-x2je5o-@mail.gmail.com>
+        bh=gW1p1BjZyR78/sfdXqofFLzYJRQKyco90BpT9+nZIcc=;
+        b=EMyO+/tibe/kW/s74niFudEEJZr+Gnm5xYqO+4QPXhdeN7DiYCe0VgrYDnv9TjOa5k
+         0++0DwMPE+FDLq09xUpB9nt8hkqAZj42WejAuGxxmIDnDjS9V/G7mpFypEWFjZ9pd+H4
+         zaZUncarX3r0Vdczn4DvZfTXyt+GIWd14JvQI=
+In-Reply-To: <AANLkTikK8pS_bsxnwYrRd3NVXsR=uf5OWe_2h3+njOVU@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Edward Shishkin <edward.shishkin@gmail.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Dushan Tcholich <dusanc@gmail.com>
 Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-Btw. I found something suspicious in my /var/log/messages
-
-Mar 24 17:03:48 krshina3 kernel: [18656.820109] ata1: lost interrupt
-(Status 0x50)
-Mar 24 17:03:48 krshina3 kernel: [18656.820128] ata1.00: exception
-Emask 0x10 SAct 0x0 SErr 0x4050002 action 0xe frozen
-Mar 24 17:03:48 krshina3 kernel: [18656.820133] ata1.00: SError: {
-RecovComm PHYRdyChg CommWake DevExch }
-Mar 24 17:03:48 krshina3 kernel: [18656.820137] ata1.00: failed
-command: WRITE DMA
-Mar 24 17:03:48 krshina3 kernel: [18656.820145] ata1.00: cmd
-ca/00:10:18:0e:03/00:00:00:00:00/e1 tag 0 dma 8192 out
-Mar 24 17:03:48 krshina3 kernel: [18656.820146]          res
-40/00:00:00:4f:c2/00:00:00:00:00/00 Emask 0x14 (ATA bus error)
-Mar 24 17:03:48 krshina3 kernel: [18656.820150] ata1.00: status: { DRDY=
- }
-Mar 24 17:03:48 krshina3 kernel: [18656.820161] ata1.00: hard resetting=
- link
-Mar 24 17:03:48 krshina3 kernel: [18657.544072] ata1.01: hard resetting=
- link
-Mar 24 17:03:48 krshina3 kernel: [18658.020149] ata1.00: SATA link up
-3.0 Gbps (SStatus 123 SControl 300)
-Mar 24 17:03:50 krshina3 kernel: [18658.020161] ata1.01: SATA link
-down (SStatus 4 SControl 300)
-Mar 24 17:03:50 krshina3 kernel: [18658.036242] ata1.00: configured for=
- UDMA/133
-Mar 24 17:03:50 krshina3 kernel: [18658.036248] ata1.00: device
-reported invalid CHS sector 0
-Mar 24 17:03:50 krshina3 kernel: [18658.036257] ata1: EH complete
-
-But it doesn't make kernel panic, system continues to work 24/7.
-
-Thanks
-
-Dushan
-
-On Fri, Mar 25, 2011 at 12:12 AM, Dushan Tcholich <dusanc@gmail.com> wr=
-ote:
-> =C2=A0cat /etc/fstab | grep "#" -v
+On 03/25/2011 12:15 AM, Dushan Tcholich wrote:
+> Btw. I found something suspicious in my /var/log/messages
 >
+> Mar 24 17:03:48 krshina3 kernel: [18656.820109] ata1: lost interrupt
+> (Status 0x50)
+> Mar 24 17:03:48 krshina3 kernel: [18656.820128] ata1.00: exception
+> Emask 0x10 SAct 0x0 SErr 0x4050002 action 0xe frozen
+> Mar 24 17:03:48 krshina3 kernel: [18656.820133] ata1.00: SError: {
+> RecovComm PHYRdyChg CommWake DevExch }
+> Mar 24 17:03:48 krshina3 kernel: [18656.820137] ata1.00: failed
+> command: WRITE DMA
+> Mar 24 17:03:48 krshina3 kernel: [18656.820145] ata1.00: cmd
+> ca/00:10:18:0e:03/00:00:00:00:00/e1 tag 0 dma 8192 out
+> Mar 24 17:03:48 krshina3 kernel: [18656.820146]          res
+> 40/00:00:00:4f:c2/00:00:00:00:00/00 Emask 0x14 (ATA bus error)
+> Mar 24 17:03:48 krshina3 kernel: [18656.820150] ata1.00: status: { DRDY }
+> Mar 24 17:03:48 krshina3 kernel: [18656.820161] ata1.00: hard resetting link
+> Mar 24 17:03:48 krshina3 kernel: [18657.544072] ata1.01: hard resetting link
+> Mar 24 17:03:48 krshina3 kernel: [18658.020149] ata1.00: SATA link up
+> 3.0 Gbps (SStatus 123 SControl 300)
+> Mar 24 17:03:50 krshina3 kernel: [18658.020161] ata1.01: SATA link
+> down (SStatus 4 SControl 300)
+> Mar 24 17:03:50 krshina3 kernel: [18658.036242] ata1.00: configured for UDMA/133
+> Mar 24 17:03:50 krshina3 kernel: [18658.036248] ata1.00: device
+> reported invalid CHS sector 0
+> Mar 24 17:03:50 krshina3 kernel: [18658.036257] ata1: EH complete
 >
-> /dev/sda1 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /boot =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 ext2 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0noauto,noatime =C2=A01 2
-> /dev/md1 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0none =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0swap =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0sw =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A00 0
-> /dev/sda2 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 / =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 reiser4
-> noatime,onerror=3Dremount-ro =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A00 0
-> /dev/md126 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/mnt/media=
- =C2=A0 =C2=A0 =C2=A0reiser4
-> noatime,users,onerror=3Dremount-ro =C2=A0 =C2=A0 =C2=A0 =C2=A00 0
-> /dev/md127 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/usr/porta=
-ge =C2=A0 =C2=A0reiser4
-> noatime,onerror=3Dremount-ro =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A00 0
+> But it doesn't make kernel panic,
+
+
+It shouldn't panic with such mount options.
+At the "moment of truth" your system will become read-only..
+
+
+  system continues to work 24/7.
 >
-> shm =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 /dev/shm =C2=A0 =C2=A0 =C2=A0 =C2=A0tmpfs
-> nodev,nosuid,noexec =C2=A0 =C2=A00 0
+> Thanks
 >
-> This is fstab for last 2 weeks:D
+> Dushan
 >
-> On Thu, Mar 24, 2011 at 11:34 PM, Edward Shishkin
-> <edward.shishkin@gmail.com> wrote:
->> On 03/24/2011 11:13 PM, Dushan Tcholich wrote:
->>>
->>> After 17 days more with old config machine stays up, no problems.
->>>
->>
->> Make sure you have passed "onerror=3Dremount-ro", Ok?
+> On Fri, Mar 25, 2011 at 12:12 AM, Dushan Tcholich<dusanc@gmail.com>  wrote:
+>>   cat /etc/fstab | grep "#" -v
 >>
 >>
->>> Thanks
->>>
->>> Dushan
->>>
->>> On Mon, Mar 7, 2011 at 7:50 PM, Dushan Tcholich<dusanc@gmail.com> =C2=
-=A0wrote:
->>>>
->>>> I went back to older kernel config (which worked for me atleast fo=
-r a
->>>> month uptime before) and after 2 days uptime nothing bad happened,
->>>> machine is fine and nothing in logs.
->>>>
->>>> This is the diff of configs (good one> =C2=A0with problems):
->>>>
->>>> 4c4
->>>> < =C2=A0# Tue Feb =C2=A08 18:39:42 2011
->>>> ---
->>>>>
->>>>> # Thu Mar =C2=A03 17:35:09 2011
->>>>
->>>> 352c352,353
->>>> < =C2=A0# CONFIG_PM_RUNTIME is not set
->>>> ---
->>>>>
->>>>> CONFIG_PM_RUNTIME=3Dy
->>>>> CONFIG_PM_OPS=3Dy
->>>>
->>>> 434a436
->>>>>
->>>>> CONFIG_PCIE_PME=3Dy
->>>>
->>>> 738c740
->>>> < =C2=A0# CONFIG_FIRMWARE_IN_KERNEL is not set
->>>> ---
->>>>>
->>>>> CONFIG_FIRMWARE_IN_KERNEL=3Dy
->>>>
->>>> 1162a1165
->>>>>
->>>>> CONFIG_I2C_ALGOBIT=3Dy
->>>>
->>>> 1339,1343c1342
->>>> < =C2=A0CONFIG_AGP=3Dy
->>>> < =C2=A0# CONFIG_AGP_AMD64 is not set
->>>> < =C2=A0# CONFIG_AGP_INTEL is not set
->>>> < =C2=A0# CONFIG_AGP_SIS is not set
->>>> < =C2=A0# CONFIG_AGP_VIA is not set
->>>> ---
->>>>>
->>>>> # CONFIG_AGP is not set
->>>>
->>>> 1347c1346,1355
->>>> < =C2=A0# CONFIG_DRM is not set
->>>> ---
->>>>>
->>>>> CONFIG_DRM=3Dy
->>>>> CONFIG_DRM_KMS_HELPER=3Dy
->>>>> CONFIG_DRM_TTM=3Dy
->>>>> # CONFIG_DRM_TDFX is not set
->>>>> # CONFIG_DRM_R128 is not set
->>>>> CONFIG_DRM_RADEON=3Dy
->>>>> CONFIG_DRM_RADEON_KMS=3Dy
->>>>> # CONFIG_DRM_MGA is not set
->>>>> # CONFIG_DRM_VIA is not set
->>>>> # CONFIG_DRM_SAVAGE is not set
->>>>
->>>> 1350c1358,1415
->>>> < =C2=A0# CONFIG_FB is not set
->>>> ---
->>>>>
->>>>> CONFIG_FB=3Dy
->>>>> # CONFIG_FIRMWARE_EDID is not set
->>>>> # CONFIG_FB_DDC is not set
->>>>> # CONFIG_FB_BOOT_VESA_SUPPORT is not set
->>>>> CONFIG_FB_CFB_FILLRECT=3Dy
->>>>> CONFIG_FB_CFB_COPYAREA=3Dy
->>>>> CONFIG_FB_CFB_IMAGEBLIT=3Dy
->>>>> # CONFIG_FB_CFB_REV_PIXELS_IN_BYTE is not set
->>>>> # CONFIG_FB_SYS_FILLRECT is not set
->>>>> # CONFIG_FB_SYS_COPYAREA is not set
->>>>> # CONFIG_FB_SYS_IMAGEBLIT is not set
->>>>> # CONFIG_FB_FOREIGN_ENDIAN is not set
->>>>> # CONFIG_FB_SYS_FOPS is not set
->>>>> # CONFIG_FB_SVGALIB is not set
->>>>> # CONFIG_FB_MACMODES is not set
->>>>> # CONFIG_FB_BACKLIGHT is not set
->>>>> # CONFIG_FB_MODE_HELPERS is not set
->>>>> # CONFIG_FB_TILEBLITTING is not set
->>>>>
->>>>> #
->>>>> # Frame buffer hardware drivers
->>>>> #
->>>>> # CONFIG_FB_CIRRUS is not set
->>>>> # CONFIG_FB_PM2 is not set
->>>>> # CONFIG_FB_CYBER2000 is not set
->>>>> # CONFIG_FB_ARC is not set
->>>>> # CONFIG_FB_ASILIANT is not set
->>>>> # CONFIG_FB_IMSTT is not set
->>>>> # CONFIG_FB_VGA16 is not set
->>>>> # CONFIG_FB_VESA is not set
->>>>> # CONFIG_FB_N411 is not set
->>>>> # CONFIG_FB_HGA is not set
->>>>> # CONFIG_FB_S1D13XXX is not set
->>>>> # CONFIG_FB_NVIDIA is not set
->>>>> # CONFIG_FB_RIVA is not set
->>>>> # CONFIG_FB_LE80578 is not set
->>>>> # CONFIG_FB_MATROX is not set
->>>>> # CONFIG_FB_RADEON is not set
->>>>> # CONFIG_FB_ATY128 is not set
->>>>> # CONFIG_FB_ATY is not set
->>>>> # CONFIG_FB_S3 is not set
->>>>> # CONFIG_FB_SAVAGE is not set
->>>>> # CONFIG_FB_SIS is not set
->>>>> # CONFIG_FB_VIA is not set
->>>>> # CONFIG_FB_NEOMAGIC is not set
->>>>> # CONFIG_FB_KYRO is not set
->>>>> # CONFIG_FB_3DFX is not set
->>>>> # CONFIG_FB_VOODOO1 is not set
->>>>> # CONFIG_FB_VT8623 is not set
->>>>> # CONFIG_FB_TRIDENT is not set
->>>>> # CONFIG_FB_ARK is not set
->>>>> # CONFIG_FB_PM3 is not set
->>>>> # CONFIG_FB_CARMINE is not set
->>>>> # CONFIG_FB_GEODE is not set
->>>>> # CONFIG_FB_VIRTUAL is not set
->>>>> # CONFIG_FB_METRONOME is not set
->>>>> # CONFIG_FB_MB862XX is not set
->>>>> # CONFIG_FB_BROADSHEET is not set
->>>>
->>>> 1364a1430,1437
->>>>>
->>>>> CONFIG_FRAMEBUFFER_CONSOLE=3Dy
->>>>> # CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY is not set
->>>>> # CONFIG_FRAMEBUFFER_CONSOLE_ROTATION is not set
->>>>> # CONFIG_FB_CON_DECOR is not set
->>>>> # CONFIG_FONTS is not set
->>>>> CONFIG_FONT_8x8=3Dy
->>>>> CONFIG_FONT_8x16=3Dy
->>>>> # CONFIG_LOGO is not set
->>>>
->>>> 1564a1638
->>>>>
->>>>> # CONFIG_USB_SUSPEND is not set
->>>>
->>>> I hope this helps
->>>>
->>>> Thanks
->>>> Dushan
->>>>
->>>> On Fri, Mar 4, 2011 at 7:37 PM, Edward Shishkin
->>>> <edward.shishkin@gmail.com> =C2=A0wrote:
->>>>>
->>>>> On 03/04/2011 07:08 PM, Dushan Tcholich wrote:
->>>>>>
->>>>>> I captured kernel output with a mobile
->>>>>> camera.http://img854.imageshack.us/i/04032011.jpg/
->>>>>>
->>>>>> =C2=A0Missing text says:
->>>>>> "reiser4_handle_error (fs/reiser4/vfs_ops.c:240)[foobar-42]
->>>>>>
->>>>>> It happened day after I enabled KMS in kernel for ati card, didn=
-'t
->>>>>> notice this problem earlier.
->>>>>>
->>>>>> It happened twice, once after ~12h uptime, next time after ~2h u=
-ptime.
->>>>>
->>>>>
->>>>> Could you please check kernel messages more carefully:
->>>>> are there complaints (IO errors, etc) of any low-level
->>>>> subsystem?
->>>>>
->>>>> Thanks,
->>>>> Edward.
->>>>>
->>>>>>
->>>>>> Nothing in /var/log/messages
->>>>>>
->>>>>> Have a nice day
->>>>>>
->>>>>> Dushan
->>>>>
->>>>>
->>>>
+>> /dev/sda1               /boot           ext2            noauto,noatime  1 2
+>> /dev/md1                none            swap            sw              0 0
+>> /dev/sda2               /               reiser4
+>> noatime,onerror=remount-ro              0 0
+>> /dev/md126              /mnt/media      reiser4
+>> noatime,users,onerror=remount-ro        0 0
+>> /dev/md127              /usr/portage    reiser4
+>> noatime,onerror=remount-ro              0 0
 >>
+>> shm                     /dev/shm        tmpfs
+>> nodev,nosuid,noexec    0 0
 >>
->
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> This is fstab for last 2 weeks:D
+>>
