@@ -1,80 +1,91 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: <doiggl@velocitynet.com.au>
 Subject: Re: ls: reading directory .: Input/output error on reiser4 partition
-Date: Mon, 11 Apr 2011 15:57:23 +0200
-Message-ID: <4DA308C3.30304@gmail.com>
-References: <bbbd01a6540b1e8806d343871853ef25@mail.velocitynet.com.au>
+Date: Tue, 12 Apr 2011 01:32:21 +1000
+Message-ID: <e1e039f5a7cc6feeae0eb475c0c9204e@mail.velocitynet.com.au>
+References: <bbbd01a6540b1e8806d343871853ef25@mail.velocitynet.com.au> <4DA308C3.30304@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bbbd01a6540b1e8806d343871853ef25@mail.velocitynet.com.au>
+In-Reply-To: <4DA308C3.30304@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: doiggl@velocitynet.com.au
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward.shishkin@gmail.com>
 Cc: reiserfs-devel@vger.kernel.org
 
-On 04/11/2011 03:50 PM, doiggl@velocitynet.com.au wrote:
-> Hello
-> I get this error on a Reiser4 disk:
->
-> What are the commands to
-> - check disk structure
+On Mon, 11 Apr 2011 15:57:23 +0200, Edward Shishkin
+<edward.shishkin@gmail.com> wrote:
+> On 04/11/2011 03:50 PM, doiggl@velocitynet.com.au wrote:
+>> Hello
+>> I get this error on a Reiser4 disk:
+>>
+>> What are the commands to
+>> - check disk structure
+> 
+> 
+> make sure /dev/sdd is unmounted, or mounted read-only;
+> fsck.reiser4 /dev/sdd
+> 
+> 
+>> - list any errors
+>> - repair errors
+>>
+>> I am using Reiser4 vers 2.6.38
+>> Build log
+>>
+->https://build.opensuse.org/package/binaries?package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.4
+>>
 
+Hello
+Thanks for the info
+I did the following
+- installed reiser4progs
+- umount  /dev/sdd
 
-make sure /dev/sdd is unmounted, or mounted read-only;
-fsck.reiser4 /dev/sdd
+This next step will take a long time [in progress] Its at 0%
+-I'll reply later with full result, its checking 1.2 TB data and > 250,000
+files
 
+What I have so far.
+Glenn
 
-> - list any errors
-> - repair errors
->
-> I am using Reiser4 vers 2.6.38
-> Build log
-> ->https://build.opensuse.org/package/binaries?package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.4
->
-> Thanks Glenn
->
-> # ls
-> ls: reading directory .: Input/output error
->
-> 2. The disk was mounted with this command ok
-> # mount /dev/sdd /media/disk
->
-> 3. dmsg shows disk plugged in ok vis usb connection.
->
-> #dmesg
->
-> [  149.408064] usb 2-3: new high speed USB device using ehci_hcd and
-> address 4
-> [  149.543649] usb 2-3: New USB device found, idVendor=04fc,
-> idProduct=0c25
-> [  149.543662] usb 2-3: New USB device strings: Mfr=2, Product=3,
-> SerialNumber=1
-> [  149.543670] usb 2-3: Product: USB to Serial-ATA bridge
-> [  149.543677] usb 2-3: Manufacturer: Sunplus Technology Inc.
-> [  149.543683] usb 2-3: SerialNumber: ST32000542            5XW1ZMG4
-> [  149.548258] scsi8 : usb-storage 2-3:1.0
-> [  150.553859] scsi 8:0:0:0: Direct-Access     ST320005 42AS
->    PQ: 0 ANSI: 2
-> [  150.554568] sd 8:0:0:0: Attached scsi generic sg4 type 0
-> [  150.558628] sd 8:0:0:0: [sdd] 3907029168 512-byte logical blocks: (2.00
-> TB/1.81 TiB)
-> [  150.563677] sd 8:0:0:0: [sdd] Write Protect is off
-> [  150.563694] sd 8:0:0:0: [sdd] Mode Sense: 38 00 00 00
-> [  150.565315] sd 8:0:0:0: [sdd] Incomplete mode parameter data
-> [  150.565330] sd 8:0:0:0: [sdd] Assuming drive cache: write through
-> [  150.571680] sd 8:0:0:0: [sdd] Incomplete mode parameter data
-> [  150.571695] sd 8:0:0:0: [sdd] Assuming drive cache: write through
-> [  150.586796]  sdd: unknown partition table
-> [  150.593817] sd 8:0:0:0: [sdd] Incomplete mode parameter data
-> [  150.593828] sd 8:0:0:0: [sdd] Assuming drive cache: write through
-> [  150.593838] sd 8:0:0:0: [sdd] Attached SCSI disk
-> [  222.780803] Loading Reiser4. See www.namesys.com for a description of
-> Reiser4.
-> [  222.786169] reiser4: sdd: found disk format 4.0.0.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+# fsck.reiser4 /dev/sdd
+*******************************************************************
+This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
+*******************************************************************
+***** fsck.reiser4 started at Tue Apr 12 01:18:23 2011
+Reiser4 fs was detected on /dev/sdd.                                      
+                                                                          
 
+Master super block (16): 
+magic:          ReIsEr4 
+blksize:        4096 
+format:         0x0 (format40) 
+uuid:           3006ced1-7490-4ea8-a9b8-d82143c6bede 
+label:          <none> 
+ 
+Format super block (17): 
+plugin:         format40 
+description:    Disk-format plugin. 
+version:        0 
+magic:          ReIsEr40FoRmAt 
+mkfs id:        0x1ddaf754 
+flushes:        0 
+blocks:         488378640 
+free blocks:    184741937 
+root block:     240062537 
+tail policy:    0x2 (smart) 
+next oid:       0xe6e2d 
+file count:     254746 
+tree height:    6 
+key policy:     LARGE 
+ 
+ 
+CHECKING THE STORAGE TREE 0%
+FSCK: node.c: 108: repair_node_items_check: Node (7616539), items (6) and
+(7): Wrong order of keys.                                                  
+
+FSCK: filter.c: 407: repair_filter_update_traverse: Node (7616539): the
+node is broken. Pointed from the node (35239054), item (12), unit (0). The
+whole
+subtree is skipped.
