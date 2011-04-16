@@ -1,33 +1,22 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Documentation
-Date: Thu, 14 Apr 2011 15:54:37 +0200
-Message-ID: <4DA6FC9D.10202@gmail.com>
-References: <BANLkTikooceidSLuE=RtrMh+--uiJ_GsgQ@mail.gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Re: Re10: Question about reiser performance - linux-2.6.37 crash reproduced
+Date: Sat, 16 Apr 2011 21:17:00 +1000
+Message-ID: <1072b31aef447602caaca31aa61a1aa3@mail.velocitynet.com.au>
+References: <4D65A3F7.22052.1288FE@jafojtik.seznam.cz>, 
+ <4D702329.27637.A07FE@jafojtik.seznam.cz>, 
+ <4D702444.6000806@gmail.com> <4D702671.25218.16D74A@jafojtik.seznam.cz>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <BANLkTikooceidSLuE=RtrMh+--uiJ_GsgQ@mail.gmail.com>
+In-Reply-To: <4D702671.25218.16D74A@jafojtik.seznam.cz>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Eugene Shatsky <eugene.shatsky@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Jaroslav Fojtik <jafojtik@seznam.cz>
+Cc: Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
 
-On 04/14/2011 01:33 AM, Eugene Shatsky wrote:
-> Greetings! I wonder if any materials about Reiser4 that were mentioned
-> in several interviews, especially the one about the dancing tree, have
-> been released or, if not yet, what is their status?
+Hello,
 
-
-Hello.
-
-There is no any strict formal description of DT.
-I do have a draft of this, but don't have a time
-to prepare a reference paper.
-
-Some ideas can be found at Reiser's speaking at
-Google talks. If it is not enough for you, then
-ask your questions ;)
-
-Thanks,
-Edward.
+Here is a link to a  kernel-reiser4-2.6.38.2 if you want to try it.
+https://build.opensuse.org/package/binaries?package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.4
+Cheers Glenn
