@@ -1,33 +1,32 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Corruption with Gentoo's PORTAGE_TMPDIR
-Date: Tue, 03 May 2011 15:53:28 +0200
-Message-ID: <4DC008D8.7080509@gmail.com>
-References: <4DBD80CF.9070903@gmail.com>	<4DBDC6EE.1060402@gmail.com>	<4DBE4DB5.5050606@gmail.com> <BANLkTi=Pf45yL6dYoHxxgz-bH8hzBg8SGQ@mail.gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Here is a plain kernel based on 2.6.38.5 with the reiser4 patch enabled.
+Date: Wed, 04 May 2011 02:02:07 +1000
+Message-ID: <4e5b449eb105ab57221790d1f7aab442@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <BANLkTi=Pf45yL6dYoHxxgz-bH8hzBg8SGQ@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Serkan Kaba <serkan@gentoo.org>
-Cc: reiserfs-devel@vger.kernel.org, dE <de.techno@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
+Cc: Christian Kujau <lists@nerdbynature.de>
 
-On 05/02/2011 09:07 AM, Serkan Kaba wrote:
-> 2011/5/2 dE<de.techno@gmail.com>:
->> No, I don't have compression enabled. I formated the Gentoo partition using
->> fibration=lexic_fibre,formatting=extents, adding create=ccreg40 cleared the
->> issue.
-> So let's get the issue solved in uncompressed partitions as well.
+Hello.
+Here is a plain kernel based on 2.6.38.5 with the reiser4 patch built with
+the Opensuse build service [obs] system.
 
-Sure. As I have already told I have found some problems in
-(default) file plugin. I'll fix it up at my spare time.
+The project is here
 
-  By
-> the way, is there a way to compress a reiser4 partition without
-> reformatting it?
+->https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
 
-Alas. It was conceived as a repacker option, which is only in plans..
+The built rpms are here
 
-Thanks,
-Edward.
+->https://build.opensuse.org/package/binaries?package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.4
+
+The log of the build is here {x86_64} as an example. [Its a long buildlog]
+->htps://build.opensuse.org/package/rawlog?arch=x86_64&package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.4
+
+The .spec used file is here
+
+->https://build.opensuse.org/package/view_file?file=kernel-reiser4.spec&package=kernel-reiser4&project=home%3Adoiggl&srcmd5=c1f7ad8470fed45a842cabedd7589c2c
+
