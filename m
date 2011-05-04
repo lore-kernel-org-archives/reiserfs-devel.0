@@ -1,32 +1,66 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Here is a plain kernel based on 2.6.38.5 with the reiser4 patch enabled.
-Date: Wed, 04 May 2011 02:02:07 +1000
-Message-ID: <4e5b449eb105ab57221790d1f7aab442@mail.velocitynet.com.au>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 34362] New: Error-valued pointer dereferences
+Date: Wed, 4 May 2011 12:46:16 GMT
+Message-ID: <bug-34362-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
-Cc: Christian Kujau <lists@nerdbynature.de>
 
-Hello.
-Here is a plain kernel based on 2.6.38.5 with the reiser4 patch built with
-the Opensuse build service [obs] system.
+https://bugzilla.kernel.org/show_bug.cgi?id=34362
 
-The project is here
+           Summary: Error-valued pointer dereferences
+           Product: File System
+           Version: 2.5
+    Kernel Version: 2.6.38.3
+          Platform: All
+        OS/Version: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: ReiserFS
+        AssignedTo: reiserfs-devel@vger.kernel.org
+        ReportedBy: crubio@cs.wisc.edu
+        Regression: No
 
-->https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
 
-The built rpms are here
+Created an attachment (id=56552)
+ --> (https://bugzilla.kernel.org/attachment.cgi?id=56552)
+Sample traces describing error-valued pointer dereferences
 
-->https://build.opensuse.org/package/binaries?package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.4
+We have statically analyzed ReiserFS, VFS and the memory management module to
+find error-valued pointers that are dereferenced. We have found five potential
+error-valued pointer dereferences:
 
-The log of the build is here {x86_64} as an example. [Its a long buildlog]
-->htps://build.opensuse.org/package/rawlog?arch=x86_64&package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_11.4
+fs/inode.c:1436: Dereferencing variable iput#inode, which may contain one of
+the following error codes: ENOMEM* 
 
-The .spec used file is here
+fs/reiserfs/super.c:249: Dereferencing variable finish_unfinished#inode, which
+may contain one of the following error codes: ENOMEM* 
 
-->https://build.opensuse.org/package/view_file?file=kernel-reiser4.spec&package=kernel-reiser4&project=home%3Adoiggl&srcmd5=c1f7ad8470fed45a842cabedd7589c2c
+fs/reiserfs/super.c:259: Dereferencing variable finish_unfinished#inode, which
+may contain one of the following error codes: ENOMEM* 
 
+fs/reiserfs/super.c:279: Dereferencing variable finish_unfinished#inode, which
+may contain one of the following error codes: ENOMEM* 
+
+fs/super.c:205: Dereferencing variable deactivate_super#s, which may contain
+one of the following error codes: ENOMEM* 
+
+
+For each potential error-valued pointer dereference, our tool produces a
+complete sample trace and the corresponding slice. The complete sample trace
+illustrates how one error code may reach the program point at which the
+variable is dereferenced. The slice summarizes the complete sample trace by
+including only relevant program points at which the error code is transferred
+from variable to variable or returned by a function. Sample traces and slices
+are attached.
+
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
