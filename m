@@ -1,84 +1,39 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 34372] New: Error-valued pointer used in pointer arithmetic
-Date: Wed, 4 May 2011 12:55:48 GMT
-Message-ID: <bug-34372-695@https.bugzilla.kernel.org/>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: Re: [Ocfs2-devel] freeing memory allocated in
+ security_inode_init_security()
+Date: Wed, 04 May 2011 16:57:29 -0400
+Message-ID: <1304542649.3227.78.camel@localhost.localdomain>
+References: <1304536698.3227.36.camel@localhost.localdomain>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <1304536698.3227.36.camel@localhost.localdomain>
+Sender: linux-security-module-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
+Cc: linux-security-module <linux-security-module@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=34372
+On Wed, 2011-05-04 at 15:18 -0400, Mimi Zohar wrote:
+> Hi,
+> 
+> Although it isn't documented in security.c, the LSM
+> security_inode_init_security() hook allocates memory for xattr name and
+> value, expecting the caller to release the memory afterwards.
+> 
+> I'm making my way through the different filesystems adding a subsequent
+> call to evm_inode_post_init_security().  I see the call to
+> ocfs2_init_security_and_acl() calls ocfs2_init_security_get(), which in
+> turn calls security_inode_init_security(), but am having a hard time
+> finding where the name and value are subsequently freed.  Would
+> appreciate if someone could point it out.
+> 
+> thanks,
+> 
+> Mimi
 
-           Summary: Error-valued pointer used in pointer arithmetic
-           Product: File System
-           Version: 2.5
-    Kernel Version: 2.6.38.3
-          Platform: All
-        OS/Version: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: ReiserFS
-        AssignedTo: reiserfs-devel@vger.kernel.org
-        ReportedBy: crubio@cs.wisc.edu
-        Regression: No
+Although the reiserfs_security_init() comment explicitly states that the
+caller must call reiserfs_security_free(), I don't see it being done.
 
+Mimi
 
-We have statically analyzed ReiserFS, VFS and the memory management module to
-find error-valued pointers that are used in pointer arithmetic. We have found
-one instance: 
-
-include/linux/reiserfs_fs.h:390: Using variable REISERFS_I#__mptr in pointer
-arithmetic, which may contain one of the following error codes: ENOMEM*
-
-Here is a sample trace that illustrates how this might happen:
-
-Complete sample trace
-=====================
-include/linux/err.h:24: an unchecked error may be returned
-fs/reiserfs/inode.c:1515:"cabs2cil_" receives an error from function "ERR_PTR"
-fs/reiserfs/inode.c:1515:"tmp___11" receives an error from "cabs2cil_"
-fs/reiserfs/inode.c:1515:"tmp___11" may have an unchecked error
-fs/reiserfs/inode.c:1515:"tmp" receives an error from "tmp___11"
-fs/reiserfs/inode.c:1515:"tmp" may have an unchecked error
-fs/reiserfs/inode.c:1515:"tmp___7" receives an error from "tmp"
-fs/reiserfs/inode.c:1515:"tmp___7" may have an unchecked error
-fs/reiserfs/inode.c:1515: an unchecked error may be returned
-fs/reiserfs/super.c:239:"inode" receives an error from function "reiserfs_iget"
-fs/reiserfs/super.c:240:"inode" may have an unchecked error
-fs/reiserfs/super.c:249:"inode" may have an unchecked error
-fs/reiserfs/super.c:257:"inode" may have an unchecked error
-fs/reiserfs/super.c:259:"inode" may have an unchecked error
-fs/reiserfs/super.c:274:"inode" may have an unchecked error
-fs/reiserfs/super.c:287:"inode" may have an unchecked error
-fs/reiserfs/super.c:289:"inode" may have an unchecked error
-fs/reiserfs/super.c:290:"inode" may have an unchecked error
-fs/reiserfs/super.c:292:"inode" may have an unchecked error
-include/linux/reiserfs_fs.h:390:"__mptr" receives an error from "inode"
-include/linux/reiserfs_fs.h:390:"__mptr" may have an unchecked error
-include/linux/reiserfs_fs.h:390: Using variable REISERFS_I#__mptr in pointer
-arithmetic, which may contain one of the following error codes: ENOMEM* 
-
-Slice (summary of the above sample trace only including relevant program
-points)
-=====
-include/linux/err.h:24: an unchecked error may be returned
-fs/reiserfs/inode.c:1515:"cabs2cil_" receives an error from function "ERR_PTR"
-fs/reiserfs/inode.c:1515:"tmp___11" receives an error from "cabs2cil_"
-fs/reiserfs/inode.c:1515:"tmp" receives an error from "tmp___11"
-fs/reiserfs/inode.c:1515:"tmp___7" receives an error from "tmp"
-fs/reiserfs/inode.c:1515: an unchecked error may be returned
-fs/reiserfs/super.c:239:"inode" receives an error from function "reiserfs_iget"
-fs/reiserfs/super.c:292:"inode" may have an unchecked error
-include/linux/reiserfs_fs.h:390:"__mptr" receives an error from "inode"
-include/linux/reiserfs_fs.h:390: Using variable REISERFS_I#__mptr in pointer
-arithmetic, which may contain one of the following error codes: ENOMEM*
-
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
