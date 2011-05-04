@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 34362] New: Error-valued pointer dereferences
-Date: Wed, 4 May 2011 12:46:16 GMT
-Message-ID: <bug-34362-695@https.bugzilla.kernel.org/>
+Subject: [Bug 34372] New: Error-valued pointer used in pointer arithmetic
+Date: Wed, 4 May 2011 12:55:48 GMT
+Message-ID: <bug-34372-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
@@ -10,9 +10,9 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=34362
+https://bugzilla.kernel.org/show_bug.cgi?id=34372
 
-           Summary: Error-valued pointer dereferences
+           Summary: Error-valued pointer used in pointer arithmetic
            Product: File System
            Version: 2.5
     Kernel Version: 2.6.38.3
@@ -28,37 +28,55 @@ https://bugzilla.kernel.org/show_bug.cgi?id=34362
         Regression: No
 
 
-Created an attachment (id=56552)
- --> (https://bugzilla.kernel.org/attachment.cgi?id=56552)
-Sample traces describing error-valued pointer dereferences
-
 We have statically analyzed ReiserFS, VFS and the memory management module to
-find error-valued pointers that are dereferenced. We have found five potential
-error-valued pointer dereferences:
+find error-valued pointers that are used in pointer arithmetic. We have found
+one instance: 
 
-fs/inode.c:1436: Dereferencing variable iput#inode, which may contain one of
-the following error codes: ENOMEM* 
+include/linux/reiserfs_fs.h:390: Using variable REISERFS_I#__mptr in pointer
+arithmetic, which may contain one of the following error codes: ENOMEM*
 
-fs/reiserfs/super.c:249: Dereferencing variable finish_unfinished#inode, which
-may contain one of the following error codes: ENOMEM* 
+Here is a sample trace that illustrates how this might happen:
 
-fs/reiserfs/super.c:259: Dereferencing variable finish_unfinished#inode, which
-may contain one of the following error codes: ENOMEM* 
+Complete sample trace
+=====================
+include/linux/err.h:24: an unchecked error may be returned
+fs/reiserfs/inode.c:1515:"cabs2cil_" receives an error from function "ERR_PTR"
+fs/reiserfs/inode.c:1515:"tmp___11" receives an error from "cabs2cil_"
+fs/reiserfs/inode.c:1515:"tmp___11" may have an unchecked error
+fs/reiserfs/inode.c:1515:"tmp" receives an error from "tmp___11"
+fs/reiserfs/inode.c:1515:"tmp" may have an unchecked error
+fs/reiserfs/inode.c:1515:"tmp___7" receives an error from "tmp"
+fs/reiserfs/inode.c:1515:"tmp___7" may have an unchecked error
+fs/reiserfs/inode.c:1515: an unchecked error may be returned
+fs/reiserfs/super.c:239:"inode" receives an error from function "reiserfs_iget"
+fs/reiserfs/super.c:240:"inode" may have an unchecked error
+fs/reiserfs/super.c:249:"inode" may have an unchecked error
+fs/reiserfs/super.c:257:"inode" may have an unchecked error
+fs/reiserfs/super.c:259:"inode" may have an unchecked error
+fs/reiserfs/super.c:274:"inode" may have an unchecked error
+fs/reiserfs/super.c:287:"inode" may have an unchecked error
+fs/reiserfs/super.c:289:"inode" may have an unchecked error
+fs/reiserfs/super.c:290:"inode" may have an unchecked error
+fs/reiserfs/super.c:292:"inode" may have an unchecked error
+include/linux/reiserfs_fs.h:390:"__mptr" receives an error from "inode"
+include/linux/reiserfs_fs.h:390:"__mptr" may have an unchecked error
+include/linux/reiserfs_fs.h:390: Using variable REISERFS_I#__mptr in pointer
+arithmetic, which may contain one of the following error codes: ENOMEM* 
 
-fs/reiserfs/super.c:279: Dereferencing variable finish_unfinished#inode, which
-may contain one of the following error codes: ENOMEM* 
-
-fs/super.c:205: Dereferencing variable deactivate_super#s, which may contain
-one of the following error codes: ENOMEM* 
-
-
-For each potential error-valued pointer dereference, our tool produces a
-complete sample trace and the corresponding slice. The complete sample trace
-illustrates how one error code may reach the program point at which the
-variable is dereferenced. The slice summarizes the complete sample trace by
-including only relevant program points at which the error code is transferred
-from variable to variable or returned by a function. Sample traces and slices
-are attached.
+Slice (summary of the above sample trace only including relevant program
+points)
+=====
+include/linux/err.h:24: an unchecked error may be returned
+fs/reiserfs/inode.c:1515:"cabs2cil_" receives an error from function "ERR_PTR"
+fs/reiserfs/inode.c:1515:"tmp___11" receives an error from "cabs2cil_"
+fs/reiserfs/inode.c:1515:"tmp" receives an error from "tmp___11"
+fs/reiserfs/inode.c:1515:"tmp___7" receives an error from "tmp"
+fs/reiserfs/inode.c:1515: an unchecked error may be returned
+fs/reiserfs/super.c:239:"inode" receives an error from function "reiserfs_iget"
+fs/reiserfs/super.c:292:"inode" may have an unchecked error
+include/linux/reiserfs_fs.h:390:"__mptr" receives an error from "inode"
+include/linux/reiserfs_fs.h:390: Using variable REISERFS_I#__mptr in pointer
+arithmetic, which may contain one of the following error codes: ENOMEM*
 
 -- 
 Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
