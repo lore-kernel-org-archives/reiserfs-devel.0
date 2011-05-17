@@ -1,25 +1,34 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: reiser4+2.6.38.6 broken?
-Date: Mon, 16 May 2011 23:57:44 +0200
-Message-ID: <4DD19DD8.70003@gmail.com>
-References: <37304792.ap5uy0yJeJ@localhost> <4520233.UGogC23bit@localhost> <4DD198AC.4040901@gmail.com> <4354595.ZhRxURLDBF@localhost>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 29162] Reiserfs hang with dataloss sometimes
+Date: Tue, 17 May 2011 07:16:27 GMT
+Message-ID: <201105170716.p4H7GRS2008465@demeter1.kernel.org>
+References: <bug-29162-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4354595.ZhRxURLDBF@localhost>
+In-Reply-To: <bug-29162-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Volker Armin Hemmann <volkerarmin@googlemail.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-On 05/16/2011 11:47 PM, Volker Armin Hemmann wrote:
-> On Monday 16 May 2011 23:35:40 you wrote:
->
->> I'll report as soon as I find the problem.
->
-> thank you very much. Until them I won't die using 2.6.36 ;)
+https://bugzilla.kernel.org/show_bug.cgi?id=29162
 
-You will die in 2.6.36 with another workload.
 
-Edward.
+
+
+
+--- Comment #13 from Maximilian Decker <burbon04@gmx.de>  2011-05-17 07:16:24 ---
+well my openSuSE box running on 2.6.38.4 is up for 14 days now, usage is
+everything between idle and stressed under quite different workloads. 
+No crash so far. 
+
+Suspicion arises that somehow the problem is either gone or at least much more
+harder to reproduce on 2.6.38. It would be interesting why, though.
+
+@Bastien - did you ever get to test on 2.6.38 ?
+
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
