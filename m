@@ -1,53 +1,60 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 29162] Reiserfs hang with dataloss sometimes
-Date: Sun, 22 May 2011 11:06:25 GMT
-Message-ID: <201105221106.p4MB6P60027120@demeter1.kernel.org>
-References: <bug-29162-695@https.bugzilla.kernel.org/>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: reiser4 + loop + NFS = disaster.
+Date: Sun, 22 May 2011 13:07:11 +0200
+Message-ID: <4DD8EE5F.3000009@gmail.com>
+References: <4DD7E3C9.3030103@gmail.com> <4DD7E8D0.2090300@gmail.com> <4DD87F64.2040407@gmail.com> <4DD8EDD1.7040401@gmail.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-29162-695@https.bugzilla.kernel.org/>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:message-id:date:from:user-agent:mime-version:to
+         :cc:subject:references:in-reply-to:content-type
+         :content-transfer-encoding;
+        bh=PTDbMitmdKKQ8O7oRZdl/497S98zai3LkTqKV6Am7y8=;
+        b=yBN6rUUzNvFHDrPIQHdVpQuE2BUY6UIHpwurHNIRXcsheG3b7FYZ6ea0Sw33p1sUsC
+         TPPBafbEApH0JQbkxUJiv+3Le+rOpvV0fo2CyFJeIROgtB+C9GKabTwlrs6yEACqXdvx
+         8NCUk9f6Rk1UpjW4tO3JzgqBsFiq2WO6F7q8M=
+In-Reply-To: <4DD8EDD1.7040401@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: dE <de.techno@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=29162
+On 05/22/2011 01:04 PM, Edward Shishkin wrote:
+> On 05/22/2011 05:13 AM, dE wrote:
+>> On 05/21/11 22:01, Edward Shishkin wrote:
+>>> On 05/21/2011 06:09 PM, dE wrote:
+>>>> I've been trying to loop mount reiser4 which resides on a file on an
+>>>> exported NFS partition, it mounts fine but when copying a lot of small
+>>>> files inside a complex directory tree everything just hangs all of a
+>>>> sudden, in fact the whole share hangs. Any operation on the share
+>>>> (including bash completion) will hang bash (or in that case any
+>>>> application) completely.
+>>>>
+>>>> Doing the same will work with any other FS. Parameters for reiser4 -
+>>>
+>>> which kernel is on NFS server?
+>>>
+>>> Thanks,
+>>> Edward.
+>>>
+>> 2.6.32-debian.
+>
+> Could you please upgrade to the latest one (.38)?
+> I remember there were some problems with loop
+> devices over reiser4 files that have been fixed.
+>
+> Thanks,
+> Edward.
+>
+>
+> Client is 2.6.37-zen (Gentoo)
+>>>>
+>>>> create=ccreg40,compress=gzip1,compressMode=force,fibration=lexic_fibre,formatting=tails
+>>>>
+>
+> "formatting=tails" makes sense only for default file plugin (creg40)
 
-
-
-
-
---- Comment #18 from Maximilian Decker <burbon04@gmx.de>  2011-05-22 11:06:19 ---
-Bastien,
-
-could you please provide some additional information about your system ?
-Maybe it helps finding some appropriate setup for Frederic to reproduce.
-
-Here some specs about my openSuSE that crashed reiserfs twice
-(2.6.37.1 after about 6 hours, 2.6.38.4 after about 14 days, now back on
-2.6.34)
-
-CPU: Dual-Code AMD running at 800MHz - 3 GHz
-GPU: Radeon HD 4200 (shared mem)
-RAM: 7 GB
-Kernel: Desktop-Kernel (i.e. PREEMPT) 64bits
-
-reiserfs-Partitions:
- /dev/sda7 61GB, dm-crypted, 74% usage, mounted "rw,relatime" (home-partition)
- LVM2-pooled 160G volume (PV /dev/sdb1), ~90% usage, mounted "rw,noatime,acl"
-(data-partition)
-
-I tried to create some proof-of-concept setup with VMWare and direct mapped old
-(i.e. intentionally slow) USB-harddrive (2,5G), using 96MB RAM for the guest OS 
-(to force more hdd activity and less cache), using 8 parallel tests and 2 
-reiserfs partitions, running on 2.6.37.1 for 2 days without problems.
-
-Another test setup running on native Intel hardware with same kernel and 2
-reiserfs partitions on one fast local SATA drive also did not crash within 1,5
-days.
-
--- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+s/creg40/reg40/
