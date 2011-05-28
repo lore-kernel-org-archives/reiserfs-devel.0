@@ -1,133 +1,73 @@
 From: Joe Perches <joe@perches.com>
-Subject: [TRIVIAL PATCH next 13/15] fs: Convert vmalloc/memset to vzalloc
-Date: Sat, 28 May 2011 10:36:33 -0700
-Message-ID: <4561db676a209fff984a75ade2f552ddbfabb95b.1306603968.git.joe@perches.com>
-References: <cover.1306603968.git.joe@perches.com>
+Subject: [TRIVIAL PATCH next 00/15] treewide: Convert vmalloc/memset to vzalloc
+Date: Sat, 28 May 2011 10:36:20 -0700
+Message-ID: <cover.1306603968.git.joe__16144.8150444359$1306604455$gmane$org@perches.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <cover.1306603968.git.joe@perches.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, Jiri Kosina <trivial@kernel.org>
-Cc: Alex Elder <aelder@sgi.com>, xfs-masters@oss.sgi.com, codalist@coda.cs.cmu.edu, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, drbd-user@lists.linbit.com, dm-devel@redhat.com, linux-raid@vger.kernel.org, linux-mtd@lists.infradead.org, linux-scsi
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, xfs@oss.sgi.com
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- fs/coda/coda_linux.h    |    5 ++---
- fs/reiserfs/journal.c   |    9 +++------
- fs/reiserfs/resize.c    |    4 +---
- fs/xfs/linux-2.6/kmem.h |    7 +------
- 4 files changed, 7 insertions(+), 18 deletions(-)
+Resubmittal of patches from November 2010 and a few new ones.
 
-diff --git a/fs/coda/coda_linux.h b/fs/coda/coda_linux.h
-index 9b0c532..7807025 100644
---- a/fs/coda/coda_linux.h
-+++ b/fs/coda/coda_linux.h
-@@ -59,12 +59,11 @@ void coda_sysctl_clean(void);
- 
- #define CODA_ALLOC(ptr, cast, size) do { \
-     if (size < PAGE_SIZE) \
--        ptr = kmalloc((unsigned long) size, GFP_KERNEL); \
-+        ptr = kzalloc((unsigned long) size, GFP_KERNEL); \
-     else \
--        ptr = (cast)vmalloc((unsigned long) size); \
-+        ptr = (cast)vzalloc((unsigned long) size); \
-     if (!ptr) \
-         printk("kernel malloc returns 0 at %s:%d\n", __FILE__, __LINE__); \
--    else memset( ptr, 0, size ); \
- } while (0)
- 
- 
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index c5e82ec..40d8b0a 100644
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -291,14 +291,13 @@ int reiserfs_allocate_list_bitmaps(struct super_block *sb,
- 	for (i = 0; i < JOURNAL_NUM_BITMAPS; i++) {
- 		jb = jb_array + i;
- 		jb->journal_list = NULL;
--		jb->bitmaps = vmalloc(mem);
-+		jb->bitmaps = vzalloc(mem);
- 		if (!jb->bitmaps) {
- 			reiserfs_warning(sb, "clm-2000", "unable to "
- 					 "allocate bitmaps for journal lists");
- 			failed = 1;
- 			break;
- 		}
--		memset(jb->bitmaps, 0, mem);
- 	}
- 	if (failed) {
- 		free_list_bitmaps(sb, jb_array);
-@@ -353,11 +352,10 @@ static struct reiserfs_journal_cnode *allocate_cnodes(int num_cnodes)
- 	if (num_cnodes <= 0) {
- 		return NULL;
- 	}
--	head = vmalloc(num_cnodes * sizeof(struct reiserfs_journal_cnode));
-+	head = vzalloc(num_cnodes * sizeof(struct reiserfs_journal_cnode));
- 	if (!head) {
- 		return NULL;
- 	}
--	memset(head, 0, num_cnodes * sizeof(struct reiserfs_journal_cnode));
- 	head[0].prev = NULL;
- 	head[0].next = head + 1;
- 	for (i = 1; i < num_cnodes; i++) {
-@@ -2695,14 +2693,13 @@ int journal_init(struct super_block *sb, const char *j_dev_name,
- 	 * dependency inversion warnings.
- 	 */
- 	reiserfs_write_unlock(sb);
--	journal = SB_JOURNAL(sb) = vmalloc(sizeof(struct reiserfs_journal));
-+	journal = SB_JOURNAL(sb) = vzalloc(sizeof(struct reiserfs_journal));
- 	if (!journal) {
- 		reiserfs_warning(sb, "journal-1256",
- 				 "unable to get memory for journal structure");
- 		reiserfs_write_lock(sb);
- 		return 1;
- 	}
--	memset(journal, 0, sizeof(struct reiserfs_journal));
- 	INIT_LIST_HEAD(&journal->j_bitmap_nodes);
- 	INIT_LIST_HEAD(&journal->j_prealloc_list);
- 	INIT_LIST_HEAD(&journal->j_working_list);
-diff --git a/fs/reiserfs/resize.c b/fs/reiserfs/resize.c
-index b3a94d2..cfb5196 100644
---- a/fs/reiserfs/resize.c
-+++ b/fs/reiserfs/resize.c
-@@ -111,15 +111,13 @@ int reiserfs_resize(struct super_block *s, unsigned long block_count_new)
- 		/* allocate additional bitmap blocks, reallocate array of bitmap
- 		 * block pointers */
- 		bitmap =
--		    vmalloc(sizeof(struct reiserfs_bitmap_info) * bmap_nr_new);
-+		    vzalloc(sizeof(struct reiserfs_bitmap_info) * bmap_nr_new);
- 		if (!bitmap) {
- 			/* Journal bitmaps are still supersized, but the memory isn't
- 			 * leaked, so I guess it's ok */
- 			printk("reiserfs_resize: unable to allocate memory.\n");
- 			return -ENOMEM;
- 		}
--		memset(bitmap, 0,
--		       sizeof(struct reiserfs_bitmap_info) * bmap_nr_new);
- 		for (i = 0; i < bmap_nr; i++)
- 			bitmap[i] = old_bitmap[i];
- 
-diff --git a/fs/xfs/linux-2.6/kmem.h b/fs/xfs/linux-2.6/kmem.h
-index f7c8f7a..292eff1 100644
---- a/fs/xfs/linux-2.6/kmem.h
-+++ b/fs/xfs/linux-2.6/kmem.h
-@@ -61,12 +61,7 @@ extern void  kmem_free(const void *);
- 
- static inline void *kmem_zalloc_large(size_t size)
- {
--	void *ptr;
--
--	ptr = vmalloc(size);
--	if (ptr)
--		memset(ptr, 0, size);
--	return ptr;
-+	return vzalloc(size);
- }
- static inline void kmem_free_large(void *ptr)
- {
+Joe Perches (15):
+  s390: Convert vmalloc/memset to vzalloc
+  x86: Convert vmalloc/memset to vzalloc
+  atm: Convert vmalloc/memset to vzalloc
+  drbd: Convert vmalloc/memset to vzalloc
+  char: Convert vmalloc/memset to vzalloc
+  isdn: Convert vmalloc/memset to vzalloc
+  md: Convert vmalloc/memset to vzalloc
+  media: Convert vmalloc/memset to vzalloc
+  mtd: Convert vmalloc/memset to vzalloc
+  scsi: Convert vmalloc/memset to vzalloc
+  staging: Convert vmalloc/memset to vzalloc
+  video: Convert vmalloc/memset to vzalloc
+  fs: Convert vmalloc/memset to vzalloc
+  mm: Convert vmalloc/memset to vzalloc
+  net: Convert vmalloc/memset to vzalloc
+
+ arch/s390/hypfs/hypfs_diag.c           |    3 +--
+ arch/x86/mm/pageattr-test.c            |    3 +--
+ drivers/atm/idt77252.c                 |   11 ++++++-----
+ drivers/atm/lanai.c                    |    3 +--
+ drivers/block/drbd/drbd_bitmap.c       |    5 ++---
+ drivers/char/agp/backend.c             |    3 +--
+ drivers/char/raw.c                     |    3 +--
+ drivers/isdn/i4l/isdn_common.c         |    4 ++--
+ drivers/isdn/mISDN/dsp_core.c          |    3 +--
+ drivers/isdn/mISDN/l1oip_codec.c       |    6 ++----
+ drivers/md/dm-log.c                    |    3 +--
+ drivers/md/dm-snap-persistent.c        |    3 +--
+ drivers/md/dm-table.c                  |    4 +---
+ drivers/media/video/videobuf2-dma-sg.c |    8 ++------
+ drivers/mtd/mtdswap.c                  |    3 +--
+ drivers/s390/cio/blacklist.c           |    3 +--
+ drivers/scsi/bfa/bfad.c                |    3 +--
+ drivers/scsi/bfa/bfad_debugfs.c        |    8 ++------
+ drivers/scsi/cxgbi/libcxgbi.h          |    6 ++----
+ drivers/scsi/qla2xxx/qla_attr.c        |    6 ++----
+ drivers/scsi/qla2xxx/qla_bsg.c         |    3 +--
+ drivers/scsi/scsi_debug.c              |    7 ++-----
+ drivers/staging/rts_pstor/ms.c         |    3 +--
+ drivers/staging/rts_pstor/rtsx_chip.c  |    6 ++----
+ drivers/video/arcfb.c                  |    5 ++---
+ drivers/video/broadsheetfb.c           |    4 +---
+ drivers/video/hecubafb.c               |    5 ++---
+ drivers/video/metronomefb.c            |    4 +---
+ drivers/video/xen-fbfront.c            |    3 +--
+ fs/coda/coda_linux.h                   |    5 ++---
+ fs/reiserfs/journal.c                  |    9 +++------
+ fs/reiserfs/resize.c                   |    4 +---
+ fs/xfs/linux-2.6/kmem.h                |    7 +------
+ mm/page_cgroup.c                       |    3 +--
+ net/netfilter/x_tables.c               |    5 ++---
+ net/rds/ib_cm.c                        |    6 ++----
+ 36 files changed, 57 insertions(+), 113 deletions(-)
+
 -- 
 1.7.5.rc3.dirty
 
