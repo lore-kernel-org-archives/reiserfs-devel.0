@@ -1,92 +1,156 @@
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [PATCH] reiserfs: NULL pointer deference in open_xa_dir()
-Date: Mon, 30 May 2011 16:43:14 +0300
-Message-ID: <20110530134314.GA4574@swordfish.minsk.epam.com>
-Mime-Version: 1.0
+From: Akinobu Mita <akinobu.mita@gmail.com>
+Subject: [PATCH 1/3] reiserfs: use little-endian bitops directly
+Date: Mon, 30 May 2011 22:53:13 +0900
+Message-ID: <1306763595-13908-1-git-send-email-akinobu.mita@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=gamma;
-        h=domainkey-signature:date:from:to:cc:subject:message-id:mime-version
-         :content-type:content-disposition:user-agent;
-        bh=TNeIQEjMAjvFHuR0fAThw4i7NswaU8ZMo0G3ITe+SdM=;
-        b=u2xlNVErCH/URmRIAJ4BCY1jIJrosOH7SWFjDif67eztuNKKJbbaYIsrdLroI6j+Rf
-         xUKRYNfJuQihd8Cd5VeLERxewSGG7MeE0q0owMOva+3ca28smNQRFtOD04u7D3cyPQ8H
-         IKvgST/AEjUW65V0+RQ8o9q6f574AaM986lDM=
-Content-Disposition: inline
+        h=domainkey-signature:from:to:cc:subject:date:message-id:x-mailer;
+        bh=LX8AeHNXnIK2tXR/thuSQTZvTrycWKiEO9iXkRJiKyk=;
+        b=GZwZtHG7v6J1KoTLXDPjBNfTuL8e9C1Tan67mjw91A0fO7QdkqHKbmgstkiGo5+Zs2
+         KG43c620McxSWZXJhKT7nfYm03aVSFYMxWnuQYJ/zOwzt5PUudd1KGH6GfB5DH4K1naj
+         ElknoakW9SoQYeL6G1Gjfl2HhXWROFxb4sfSU=
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>, Sage Weil <sage@newdream.net>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Akinobu Mita <akinobu.mita@gmail.com>, reiserfs-devel@vger.kernel.org
 
-Commit
-> commit cc350c2764a657ee012efd5bd260a6cd5be2f877
-> reiserfs: remove unnecessary dentry_unhash from rmdir, dir rename
-> Reiserfs does not have problems with references to unlinked directories.
+s/reiserfs_test_and_set_le_bit/__test_and_set_bit_le/
+s/reiserfs_test_and_clear_le_bit/__test_and_clear_bit_le/
+s/reiserfs_test_le_bit/test_bit_le/
+s/reiserfs_find_next_zero_le_bit/find_next_zero_bit_le/
 
-removed dentry_unhash() from rmdir, dir rename functions. That 
-caused 
-NULL pointer dereference at open_xa_dir+0x3f/01b3
+This change reveals that there are some __test_and_{set,clear}_bit_le()
+calls which ignore the return value. These can be replaced with
+__{set,clear}_bit_le().
 
-Trace:
-?xattr_unlink()
-reiserfs_for_each_xattr()
-?mutex_lock_nested()
-?get_parent_ip()
-reiserfs_delete_xattrs()
-reiserfs_evict_inode()
-[..]
-
-Patch reverts cc350c2764a657ee012efd5bd260a6cd5be2f877. The difference
-is that reiserfs_rmdir() calls dentry_unhash() only for xattr dirs, since
-(as commit message states) references to unlinked non-xattrs directories 
-are handled by reiserfs.
-
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 ---
+ fs/reiserfs/bitmap.c        |   16 +++++++---------
+ fs/reiserfs/resize.c        |    6 +++---
+ include/linux/reiserfs_fs.h |    5 -----
+ 3 files changed, 10 insertions(+), 17 deletions(-)
 
- fs/reiserfs/namei.c |    7 +++++++
- fs/reiserfs/xattr.c |    1 +
- 2 files changed, 8 insertions(+), 0 deletions(-)
-
-diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-index 1186626..3d3cc6c 100644
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -831,6 +831,10 @@ static int reiserfs_rmdir(struct inode *dir, struct dentry *dentry)
- 	INITIALIZE_PATH(path);
- 	struct reiserfs_dir_entry de;
+diff --git a/fs/reiserfs/bitmap.c b/fs/reiserfs/bitmap.c
+index 483442e..f70dd69 100644
+--- a/fs/reiserfs/bitmap.c
++++ b/fs/reiserfs/bitmap.c
+@@ -170,8 +170,7 @@ static int scan_bitmap_block(struct reiserfs_transaction_handle *th,
+ 		}
  
-+	/* This is the xattr dir, handle specially. */
-+	if (S_ISDIR(dentry->d_inode->i_mode))
-+		dentry_unhash(dentry);
-+
- 	/* we will be doing 2 balancings and update 2 stat data, we change quotas
- 	 * of the owner of the directory and of the owner of the parent directory.
- 	 * The quota structure is possibly deleted only on last iput => outside
-@@ -1225,6 +1229,9 @@ static int reiserfs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	unsigned long savelink = 1;
- 	struct timespec ctime;
+ 		/* search for a first zero bit -- beginning of a window */
+-		*beg = reiserfs_find_next_zero_le_bit
+-		    ((unsigned long *)(bh->b_data), boundary, *beg);
++		*beg = find_next_zero_bit_le(bh->b_data, boundary, *beg);
  
-+	if (new_dentry->d_inode && S_ISDIR(new_dentry->d_inode->i_mode))
-+		dentry_unhash(new_dentry);
-+
- 	/* three balancings: (1) old name removal, (2) new name insertion
- 	   and (3) maybe "save" link insertion
- 	   stat data updates: (1) old directory,
-diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index e8a62f4..50f1abc 100644
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -98,6 +98,7 @@ static int xattr_rmdir(struct inode *dir, struct dentry *dentry)
+ 		if (*beg + min > boundary) {	/* search for a zero bit fails or the rest of bitmap block
+ 						 * cannot contain a zero window of minimum size */
+@@ -184,7 +183,7 @@ static int scan_bitmap_block(struct reiserfs_transaction_handle *th,
+ 		/* first zero bit found; we check next bits */
+ 		for (end = *beg + 1;; end++) {
+ 			if (end >= *beg + max || end >= boundary
+-			    || reiserfs_test_le_bit(end, bh->b_data)) {
++			    || test_bit_le(end, bh->b_data)) {
+ 				next = end;
+ 				break;
+ 			}
+@@ -202,8 +201,7 @@ static int scan_bitmap_block(struct reiserfs_transaction_handle *th,
+ 			/* try to set all blocks used checking are they still free */
+ 			for (i = *beg; i < end; i++) {
+ 				/* It seems that we should not check in journal again. */
+-				if (reiserfs_test_and_set_le_bit
+-				    (i, bh->b_data)) {
++				if (__test_and_set_bit_le(i, bh->b_data)) {
+ 					/* bit was set by another process
+ 					 * while we slept in prepare_for_journal() */
+ 					PROC_INFO_INC(s, scan_bitmap.stolen);
+@@ -214,7 +212,7 @@ static int scan_bitmap_block(struct reiserfs_transaction_handle *th,
+ 					}
+ 					/* otherwise we clear all bit were set ... */
+ 					while (--i >= *beg)
+-						reiserfs_test_and_clear_le_bit
++						__test_and_clear_bit_le
+ 						    (i, bh->b_data);
+ 					reiserfs_restore_prepared_buffer(s, bh);
+ 					*beg = org;
+@@ -411,7 +409,7 @@ static void _reiserfs_free_block(struct reiserfs_transaction_handle *th,
+ 	reiserfs_prepare_for_journal(s, bmbh, 1);
  
- 	reiserfs_mutex_lock_nested_safe(&dentry->d_inode->i_mutex,
- 					I_MUTEX_CHILD, dir->i_sb);
-+	dentry_unhash(dentry);
- 	error = dir->i_op->rmdir(dir, dentry);
- 	if (!error)
- 		dentry->d_inode->i_flags |= S_DEAD;
-
+ 	/* clear bit for the given block in bit map */
+-	if (!reiserfs_test_and_clear_le_bit(offset, bmbh->b_data)) {
++	if (!__test_and_clear_bit_le(offset, bmbh->b_data)) {
+ 		reiserfs_error(s, "vs-4080",
+ 			       "block %lu: bit already cleared", block);
+ 	}
+@@ -1215,7 +1213,7 @@ void reiserfs_cache_bitmap_metadata(struct super_block *sb,
+ 	unsigned long *cur = (unsigned long *)(bh->b_data + bh->b_size);
+ 
+ 	/* The first bit must ALWAYS be 1 */
+-	if (!reiserfs_test_le_bit(0, (unsigned long *)bh->b_data))
++	if (!test_bit_le(0, bh->b_data))
+ 		reiserfs_error(sb, "reiserfs-2025", "bitmap block %lu is "
+ 			       "corrupted: first bit must be 1", bh->b_blocknr);
+ 
+@@ -1229,7 +1227,7 @@ void reiserfs_cache_bitmap_metadata(struct super_block *sb,
+ 			info->free_count += BITS_PER_LONG;
+ 		else if (*cur != ~0L)	/* A mix, investigate */
+ 			for (i = BITS_PER_LONG - 1; i >= 0; i--)
+-				if (!reiserfs_test_le_bit(i, cur))
++				if (!test_bit_le(i, cur))
+ 					info->free_count++;
+ 	}
+ }
+diff --git a/fs/reiserfs/resize.c b/fs/reiserfs/resize.c
+index b3a94d2..1e6f4c2 100644
+--- a/fs/reiserfs/resize.c
++++ b/fs/reiserfs/resize.c
+@@ -136,7 +136,7 @@ int reiserfs_resize(struct super_block *s, unsigned long block_count_new)
+ 				return -EIO;
+ 			}
+ 			memset(bh->b_data, 0, sb_blocksize(sb));
+-			reiserfs_test_and_set_le_bit(0, bh->b_data);
++			__test_and_set_bit_le(0, bh->b_data);
+ 			reiserfs_cache_bitmap_metadata(s, bh, bitmap + i);
+ 
+ 			set_buffer_uptodate(bh);
+@@ -172,7 +172,7 @@ int reiserfs_resize(struct super_block *s, unsigned long block_count_new)
+ 
+ 	reiserfs_prepare_for_journal(s, bh, 1);
+ 	for (i = block_r; i < s->s_blocksize * 8; i++)
+-		reiserfs_test_and_clear_le_bit(i, bh->b_data);
++		__test_and_clear_bit_le(i, bh->b_data);
+ 	info->free_count += s->s_blocksize * 8 - block_r;
+ 
+ 	journal_mark_dirty(&th, s, bh);
+@@ -190,7 +190,7 @@ int reiserfs_resize(struct super_block *s, unsigned long block_count_new)
+ 
+ 	reiserfs_prepare_for_journal(s, bh, 1);
+ 	for (i = block_r_new; i < s->s_blocksize * 8; i++)
+-		reiserfs_test_and_set_le_bit(i, bh->b_data);
++		__test_and_set_bit_le(i, bh->b_data);
+ 	journal_mark_dirty(&th, s, bh);
+ 	brelse(bh);
+ 
+diff --git a/include/linux/reiserfs_fs.h b/include/linux/reiserfs_fs.h
+index eca75df..06b965d 100644
+--- a/include/linux/reiserfs_fs.h
++++ b/include/linux/reiserfs_fs.h
+@@ -2332,11 +2332,6 @@ __u32 keyed_hash(const signed char *msg, int len);
+ __u32 yura_hash(const signed char *msg, int len);
+ __u32 r5_hash(const signed char *msg, int len);
+ 
+-#define reiserfs_test_and_set_le_bit	__test_and_set_bit_le
+-#define reiserfs_test_and_clear_le_bit	__test_and_clear_bit_le
+-#define reiserfs_test_le_bit		test_bit_le
+-#define reiserfs_find_next_zero_le_bit	find_next_zero_bit_le
+-
+ /* sometimes reiserfs_truncate may require to allocate few new blocks
+    to perform indirect2direct conversion. People probably used to
+    think, that truncate should work without problems on a filesystem
+-- 
+1.7.4.4
 
