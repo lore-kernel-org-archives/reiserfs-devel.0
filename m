@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 29162] Reiserfs hang with dataloss sometimes
-Date: Sat, 11 Jun 2011 17:32:25 GMT
-Message-ID: <201106111732.p5BHWPhG011404@demeter2.kernel.org>
+Date: Mon, 13 Jun 2011 15:10:54 GMT
+Message-ID: <201106131510.p5DFAs1R017853@demeter1.kernel.org>
 References: <bug-29162-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -18,8 +18,9 @@ https://bugzilla.kernel.org/show_bug.cgi?id=29162
 
 
 
---- Comment #29 from roucaries.bastien+kernel@gmail.com  2011-06-11 17:32:20 ---
-Frederick could you give me some patch for testing ?
+--- Comment #30 from Jeff Mahoney <jeffm@suse.com>  2011-06-13 15:10:47 ---
+I've been running 4 concurrent git clone; rm -rf cycles on a reiserfs file
+system with a default ACL set and still can't get this to trigger.
 
 -- 
 Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
