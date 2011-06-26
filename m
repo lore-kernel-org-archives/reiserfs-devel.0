@@ -1,44 +1,57 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH] fixlet: Remove fs_excl from struct task.
-Date: Fri, 24 Jun 2011 18:02:41 -0400
-Message-ID: <20110624220240.GA6455@infradead.org>
-References: <1308949107-1962-1-git-send-email-teravest@google.com>
-Mime-Version: 1.0
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1308949107-1962-1-git-send-email-teravest@google.com>
-Sender: linux-kernel-owner@vger.kernel.org
+From: Akinobu Mita <akinobu.mita@gmail.com>
+Subject: [PATCH resend 0/6] use little-endian bitops properly
+Date: Sun, 26 Jun 2011 14:57:50 +0900
+Message-ID: <1309067876-3537-1-git-send-email-akinobu.mita@gmail.com>
+Return-path: <linux-ext4-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:from:to:cc:subject:date:message-id:x-mailer;
+        bh=xi0NgxOcN3lBW+Vfgc/mvrQ1wkyNbNOcuenmKmHsYx8=;
+        b=HAXEEqQhurYVD8OULRPtXfFXatVCnBRsm88XBZdvaQ+wnZbP/FvyD1E94Sx4pnKhjc
+         1w6NSC0hdxXwbEH/b5vNmFXfnWqQw7JN/S8hwT0vpRLBUohL0cSOBjrVohfa4Qa+6PMK
+         7/wqC+aJHsKNDh8/yXy4vCLrRhGSzzQD/1rYI=
+Sender: linux-ext4-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Justin TerAvest <teravest@google.com>
-Cc: jaxboe@fusionio.com, viro@zeniv.linux.org.uk, jeffm@suse.de, tytso@google.com, mingo@elte.hu, peterz@infradead.org, hch@infradead.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+Cc: Akinobu Mita <akinobu.mita@gmail.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com, NeilBrown <neilb@suse.de>, linux-raid@vger.kernel.org, reiserfs-devel@vger.kernel.org, Joel Becker <jlbec@evilplan.org>, Mark Fasheh <mfasheh@suse.com>, ocfs2-devel@oss.oracle.com
 
-On Fri, Jun 24, 2011 at 01:58:27PM -0700, Justin TerAvest wrote:
-> fs_excl is a poor man's priority inheritance for filesystems to hint to
-> the block layer that an operation is important. It was never clearly
-> specified, not widely adopted, and will not prevent starvation in many
-> cases (like across cgroups).
-> 
-> I talked to Ted Ts'o about this, and he said that it used to used more
-> frequently in the 2.4 and prior versions of Linux, back when we were
-> first converting from the Big Kernel Lock to having subsystem level
-> locks, and so it made sense to use fs_excl when a process owned the
-> global fs mutex and was waiting for an I/O to complete, but it's no
-> longer used much at all, and filesystems have better ways to mark an I/O
-> request as high priority.
+All patches in this patch set were sent before. Individual patches
+improve little-endian bitops usage in several places.
 
-That's not quite true, it was added in Linux 2.6.13 in commit
-22e2c507c301c3dbbcf91b4948b88f78842ee6c9:
+Akinobu Mita (6):
+  ext4: use proper little-endian bitops
+  dm: use use proper little-endian bitops
+  md: use proper little-endian bitops
+  reiserfs: use proper little-endian bitops
+  reiserfs: use hweight_long()
+  ocfs2: avoid unaligned access to dqc_bitmap
 
-	[PATCH] Update cfq io scheduler to time sliced design
+ drivers/md/bitmap.c         |    4 +-
+ drivers/md/dm-log.c         |    9 +++----
+ fs/ext4/ext4.h              |    7 +++--
+ fs/ext4/ialloc.c            |    4 +-
+ fs/ocfs2/ocfs2.h            |   47 +++++++++++++++++++++++++++++++++++++++++++
+ fs/ocfs2/quota_local.c      |   10 ++++----
+ fs/reiserfs/bitmap.c        |    8 +-----
+ fs/reiserfs/resize.c        |    6 ++--
+ include/linux/reiserfs_fs.h |    2 +
+ 9 files changed, 71 insertions(+), 26 deletions(-)
 
-The users back then where the same as today: a few reiserfs journal
-callsites and lock_super.  In addition to the lock_super uses in various
-fringe filesystems still left today it was also used around ->put_super
-(aka umount) and ->write_super, which at the point had already lost the
-grunt work of sync action to ->sync_fs.
+Cc: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: linux-ext4@vger.kernel.org
+Cc: Alasdair Kergon <agk@redhat.com>
+Cc: dm-devel@redhat.com
+Cc: NeilBrown <neilb@suse.de>
+Cc: linux-raid@vger.kernel.org
+Cc: reiserfs-devel@vger.kernel.org
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Mark Fasheh <mfasheh@suse.com>
+Cc: ocfs2-devel@oss.oracle.com
 
-That beeing said I never liked it and asked for a removal a while ago,
-but Jens still wanted to keep it.  As far as I'm concerned we should
-kill it gently, and if any regressions arise fix them with a bio flag.
+-- 
+1.7.4.4
+
