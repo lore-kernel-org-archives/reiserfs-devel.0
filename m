@@ -1,34 +1,55 @@
-From: =?ISO-8859-1?Q?Bo_Brant=E9n?= <bosse-Z3oqqNSG8ADLoDKTGw+V6w@public.gmane.org>
-Subject: Signed version of Windows driver now available
-Date: Sat, 2 Jul 2011 21:31:44 +0200 (CEST)
-Message-ID: <Pine.A41.4.64.1107022128190.1503320@stalin.acc.umu.se>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: fsck.reiser4 query
+Date: Sun, 03 Jul 2011 23:02:02 +0200
+Message-ID: <4E10D8CA.4090005@gmail.com>
+References: <99758203da18f9de8e42eadebeadc4a8@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <rfsd-reiserdriver-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/rfsd-reiserdriver>,
-	<mailto:rfsd-reiserdriver-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=rfsd-reiserdriver>
-List-Post: <mailto:rfsd-reiserdriver-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:rfsd-reiserdriver-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/rfsd-reiserdriver>,
-	<mailto:rfsd-reiserdriver-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: rfsd-reiserdriver-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: rfsd-reiserdriver-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-type:content-transfer-encoding;
+        bh=E0gfmva4d4qzGtG5nsMsMBFalvA66GZzmBf+afxPwsA=;
+        b=U6gIJzZ03iznL8tQq9YwxI4hW7mGhq/cLfuvi8RjFlOqiaQDs5oOI/0dpURmO8JKg/
+         goRQLM/AwRQKfAixMpJtBfS+oO54b0ohxMwNcdgEr8c8qtD5ENdeeVdaNLAzkn5kjdlc
+         5bPRHlv9WUhJ7r4Wu4BXFWjnLOcJNOiv5YvGA=
+In-Reply-To: <99758203da18f9de8e42eadebeadc4a8@mail.velocitynet.com.au>
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: doiggl@velocitynet.com.au
+Cc: reiserfs-devel@vger.kernel.org
+
+On 06/28/2011 04:31 AM, doiggl@velocitynet.com.au wrote:
+> Hello,
+> I have some questions.
+>
+> 1. Is there any possibility of speeding up the command proocess #
+> fsck.reiser4 --build-fs /dev/xxx
 
 
-The Windows IFS driver for ReiserFS v3 is now also available as a signed 
-version as a convenience to users of 64-bit Windows.
+Yes, such possibility does exist.
 
-http://www.acc.umu.se/~bosse/rfsd-0.25.5-signed.zip
+Fsck can work faster if you have many subvolumes
+per superblock (currently reiser4 supports only one
+subvolume per superblock).
 
-Bo Branten
+
+> Could the metadata be loaded into ram and processed their or is the
+> process entirly disk bound by I/O ?
 
 
-------------------------------------------------------------------------------
-All of the data generated in your IT infrastructure is seriously valuable.
-Why? It contains a definitive record of application performance, security 
-threats, fraudulent activity, and more. Splunk takes this data and makes 
-sense of it. IT sense. And common sense.
-http://p.sf.net/sfu/splunk-d2d-c2
+This is both, CPU and I/O bound.
+
+The first one can be improved if we make fsck process
+all subvolumes in parallel. The second one can be improved
+if we map subvolumes to different physical (scsi) drives.
+
+
+> 2. Also will there a reiser4-for-2.6.39.patch in the future ?
+
+I hope so..
+
+Thanks,
+Edward.
