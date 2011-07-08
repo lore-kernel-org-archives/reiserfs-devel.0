@@ -1,55 +1,34 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: fsck.reiser4 query
-Date: Sun, 03 Jul 2011 23:02:02 +0200
-Message-ID: <4E10D8CA.4090005@gmail.com>
-References: <99758203da18f9de8e42eadebeadc4a8@mail.velocitynet.com.au>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: [PATCH] fs/vfs/security: pass last path component to LSM on
+ inode creation
+Date: Fri, 8 Jul 2011 17:17:22 +0100
+Message-ID: <20110708161722.GG11013@ZenIV.linux.org.uk>
+References: <20101208194527.13537.77202.stgit@paris.rdu.redhat.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=E0gfmva4d4qzGtG5nsMsMBFalvA66GZzmBf+afxPwsA=;
-        b=U6gIJzZ03iznL8tQq9YwxI4hW7mGhq/cLfuvi8RjFlOqiaQDs5oOI/0dpURmO8JKg/
-         goRQLM/AwRQKfAixMpJtBfS+oO54b0ohxMwNcdgEr8c8qtD5ENdeeVdaNLAzkn5kjdlc
-         5bPRHlv9WUhJ7r4Wu4BXFWjnLOcJNOiv5YvGA=
-In-Reply-To: <99758203da18f9de8e42eadebeadc4a8@mail.velocitynet.com.au>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-security-module-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20101208194527.13537.77202.stgit@paris.rdu.redhat.com>
+Sender: linux-security-module-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: doiggl@velocitynet.com.au
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Eric Paris <eparis@redhat.com>
+Cc: xfs-masters@oss.sgi.com, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, cluster-devel@redhat.com, linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, linux-mm@kvack.org, linux-security-module@vger.kernel.org, jack@suse.cz, penguin-kernel@I-love.SAKURA.ne.jp, jeffm@suse.com, jmorris@namei.org, dhowells@redhat.com, adilger.kernel@dilger.ca, shaggy@linux.vnet.ibm.com, shemminger@vyatta.com, hch@lst.de, hughd@google.com, joel.becker@oracle.com, chris.mason@oracle.com, aelder@sgi.com, kees.cook@canonical.com, sds@tycho.nsa.gov, paul.moore@hp.com, mfasheh@suse.com, dchinner@redhat.com, eparis@parisplace.org, swhiteho@redhat.com, tao.ma@oracle.com, tytso@mit.edu, casey@schaufler-ca.com, serue@us.ibm.com, akpm@linux-foundation.org, dwmw2@infradea
 
-On 06/28/2011 04:31 AM, doiggl@velocitynet.com.au wrote:
-> Hello,
-> I have some questions.
->
-> 1. Is there any possibility of speeding up the command proocess #
-> fsck.reiser4 --build-fs /dev/xxx
+On Wed, Dec 08, 2010 at 02:45:27PM -0500, Eric Paris wrote:
+> SELinux would like to implement a new labeling behavior of newly created
+> inodes.  We currently label new inodes based on the parent and the creating
+> process.  This new behavior would also take into account the name of the
+> new object when deciding the new label.  This is not the (supposed) full path,
+> just the last component of the path.
+> 
+> This is very useful because creating /etc/shadow is different than creating
+> /etc/passwd but the kernel hooks are unable to differentiate these
+> operations.  We currently require that userspace realize it is doing some
+> difficult operation like that and than userspace jumps through SELinux hoops
+> to get things set up correctly.  This patch does not implement new
+> behavior, that is obviously contained in a seperate SELinux patch, but it
+> does pass the needed name down to the correct LSM hook.  If no such name
+> exists it is fine to pass NULL.
 
-
-Yes, such possibility does exist.
-
-Fsck can work faster if you have many subvolumes
-per superblock (currently reiser4 supports only one
-subvolume per superblock).
-
-
-> Could the metadata be loaded into ram and processed their or is the
-> process entirly disk bound by I/O ?
-
-
-This is both, CPU and I/O bound.
-
-The first one can be improved if we make fsck process
-all subvolumes in parallel. The second one can be improved
-if we map subvolumes to different physical (scsi) drives.
-
-
-> 2. Also will there a reiser4-for-2.6.39.patch in the future ?
-
-I hope so..
-
-Thanks,
-Edward.
+-ETOOFUCKINGUGLY...
