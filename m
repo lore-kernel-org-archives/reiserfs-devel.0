@@ -1,34 +1,20 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [PATCH] fs/vfs/security: pass last path component to LSM on
- inode creation
-Date: Fri, 8 Jul 2011 17:17:22 +0100
-Message-ID: <20110708161722.GG11013@ZenIV.linux.org.uk>
-References: <20101208194527.13537.77202.stgit@paris.rdu.redhat.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH 0/2] always default to issue cache flushes
+Date: Mon, 11 Jul 2011 14:25:33 -0400
+Message-ID: <20110711182532.GA12099@infradead.org>
 Mime-Version: 1.0
-Return-path: <linux-security-module-owner@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20101208194527.13537.77202.stgit@paris.rdu.redhat.com>
-Sender: linux-security-module-owner@vger.kernel.org
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Paris <eparis@redhat.com>
-Cc: xfs-masters@oss.sgi.com, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, cluster-devel@redhat.com, linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, linux-mm@kvack.org, linux-security-module@vger.kernel.org, jack@suse.cz, penguin-kernel@I-love.SAKURA.ne.jp, jeffm@suse.com, jmorris@namei.org, dhowells@redhat.com, adilger.kernel@dilger.ca, shaggy@linux.vnet.ibm.com, shemminger@vyatta.com, hch@lst.de, hughd@google.com, joel.becker@oracle.com, chris.mason@oracle.com, aelder@sgi.com, kees.cook@canonical.com, sds@tycho.nsa.gov, paul.moore@hp.com, mfasheh@suse.com, dchinner@redhat.com, eparis@parisplace.org, swhiteho@redhat.com, tao.ma@oracle.com, tytso@mit.edu, casey@schaufler-ca.com, serue@us.ibm.com, akpm@linux-foundation.org, dwmw2@infradea
+To: viro@zeniv.linux.org.uk
+Cc: jeffm@suse.com, chris.mason@oracle.com, jack@suse.cz, reiserfs-devel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 08, 2010 at 02:45:27PM -0500, Eric Paris wrote:
-> SELinux would like to implement a new labeling behavior of newly created
-> inodes.  We currently label new inodes based on the parent and the creating
-> process.  This new behavior would also take into account the name of the
-> new object when deciding the new label.  This is not the (supposed) full path,
-> just the last component of the path.
-> 
-> This is very useful because creating /etc/shadow is different than creating
-> /etc/passwd but the kernel hooks are unable to differentiate these
-> operations.  We currently require that userspace realize it is doing some
-> difficult operation like that and than userspace jumps through SELinux hoops
-> to get things set up correctly.  This patch does not implement new
-> behavior, that is obviously contained in a seperate SELinux patch, but it
-> does pass the needed name down to the correct LSM hook.  If no such name
-> exists it is fine to pass NULL.
-
--ETOOFUCKINGUGLY...
+It's bad enough that we still have filesystems who can't deal with
+the volatile write caches present on all modern consumer disks, but
+let's at least make use of this feature where present instead of
+playing fast and lose with users data.  Switch ext3 and reiserfs
+to the same default already applied in btrfs, ext4, gfs2, hfsplus,
+nilfs2 and XFS.
