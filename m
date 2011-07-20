@@ -1,32 +1,27 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH] reiserfs: make reiserfs default to barrier=flush
-Date: Sat, 16 Jul 2011 16:47:00 -0400
-Message-ID: <20110716204700.GB16882@infradead.org>
+From: <doiggl@velocitynet.com.au>
+Subject: reformatting disk into 4 * reiser4 partitions
+Date: Thu, 21 Jul 2011 04:05:38 +1000
+Message-ID: <7517c61bff9e4f9a22f8ca0569f66617@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-fsdevel-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: viro@zeniv.linux.org.uk
-Cc: jeffm@suse.com, chris.mason@oracle.com, jack@suse.cz, reiserfs-devel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-Change the default reiserfs mount option to barrier=flush.  Based on a patch
-from Jeff Mahoney in the SuSE tree.
+Hello,
+How do I reformat this disk into say 4 * reiser4 partitions of 500gb each.
+?
+I need command to do this please.
+The disk size is the following
+I will remove the current partition on the disk first, one large partion.
+Is 500gb a size that Reiser4 will handle ok ?
+Thanks Glenn
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-Index: linux-2.6/fs/reiserfs/super.c
-===================================================================
---- linux-2.6.orig/fs/reiserfs/super.c	2011-07-02 13:57:08.061117424 +0200
-+++ linux-2.6/fs/reiserfs/super.c	2011-07-02 13:59:26.197782375 +0200
-@@ -1643,6 +1643,7 @@ static int reiserfs_fill_super(struct su
- 	/* Set default values for options: non-aggressive tails, RO on errors */
- 	REISERFS_SB(s)->s_mount_opt |= (1 << REISERFS_SMALLTAIL);
- 	REISERFS_SB(s)->s_mount_opt |= (1 << REISERFS_ERROR_RO);
-+	REISERFS_SB(s)->s_mount_opt |= (1 << REISERFS_BARRIER_FLUSH);
- 	/* no preallocation minimum, be smart in
- 	   reiserfs_file_write instead */
- 	REISERFS_SB(s)->s_alloc_options.preallocmin = 0;
+Disk /dev/sdb: 2000.4 GB, 2000398934016 bytes
+255 heads, 63 sectors/track, 243201 cylinders, total 3907029168 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0x00000000
