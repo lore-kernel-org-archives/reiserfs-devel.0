@@ -1,49 +1,428 @@
-From: Thomas Meyer <thomas@m3y3r.de>
-Subject: [PATCH] reiserfs: use kstrdup()
-Date: Sat, 06 Aug 2011 17:39:08 +0200
-Message-ID: <1312645151.5589.137.camel@localhost.localdomain>
+From: Jeff Mahoney <jeffm@suse.de>
+Subject: Re: rebuild-tree fails on large volume
+Date: Mon, 08 Aug 2011 16:04:37 -0400
+Message-ID: <4E404155.7050706@suse.de>
+References: <4E3A7945.9090404@i4yoo.de> <alpine.DEB.2.01.1108052344150.9183@trent.utfs.org> <4E3CE7ED.2090909@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+ boundary="------------070903030500040106050901"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <4E3CE7ED.2090909@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Christian Kujau <lists@nerdbynature.de>
+Cc: Carsten Ralle <cr@i4yoo.de>, reiserfs-devel@vger.kernel.org
 
-From: Thomas Meyer <thomas@m3y3r.de>
+This is a multi-part message in MIME format.
+--------------070903030500040106050901
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
- Use kstrdup rather than duplicating its implementation
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
- The semantic patch that makes this output is available
- in scripts/coccinelle/api/kstrdup.cocci.
+On 08/06/2011 03:06 AM, Jeff Mahoney wrote:
+> On 08/06/2011 02:47 AM, Christian Kujau wrote:
+>> On Thu, 4 Aug 2011 at 12:49, Carsten Ralle wrote:
+>>> http://www.spinics.net/lists/reiserfs-devel/msg02679.html
+>>> 
+>>> I looked all over the place but couldn't find any infos about
+>>> the version to patch.
+>> 
+>> The patch applies cleanly to reiserfsprogs-3.6.21[0].
+>> 
+>> @Jeff: will the patch be applied to the next (?) reiserfsprogs
+>> release?
+>> 
+>> Thanks, Christian.
+>> 
+>> [0] https://www.kernel.org/pub/linux/utils/fs/reiserfs/
+> 
+> I don't actually maintain reiserfsprogs unless the openSUSE version
+> has now become the official one. I've been meaning to get back to you
+> about this but it's been a rough week.
+> 
+> -Jeff
+> 
 
- More information about semantic patching is available at
- http://coccinelle.lip6.fr/
+Attached is the patch I use for large file systems.
 
-Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
+- -Jeff
+
+- -- 
+Jeff Mahoney
+SUSE Labs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.17 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+
+iEYEARECAAYFAk5AQVUACgkQLPWxlyuTD7LROQCffS1LS1x8XM+IWBKl8aTrmW6N
+FAYAnRQraQEq2d+fHFo6yzHS5fxaQHFC
+=jXCA
+-----END PGP SIGNATURE-----
+
+--------------070903030500040106050901
+Content-Type: text/plain;
+ name="reiserfs-signedness-fixes"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="reiserfs-signedness-fixes"
+
+From: Jeff Mahoney <jeffm@suse.com>
+Subject: [PATCH] reiserfs: Fix signedness issues for large file systems
+References: bnc#701602
+
+
+Signed-by: Jeff Mahoney <jeffm@suse.com>
 ---
+ debugreiserfs/debugreiserfs.c |   22 +++++++++++-----------
+ debugreiserfs/pack.c          |   18 +++++++++---------
+ debugreiserfs/scan.c          |    2 +-
+ debugreiserfs/stat.c          |    2 +-
+ fsck/check_tree.c             |    6 +++---
+ fsck/pass0.c                  |   10 +++++-----
+ fsck/pass1.c                  |    4 ++--
+ include/reiserfs_fs.h         |    2 ++
+ lib/io.c                      |    2 +-
+ reiserfscore/journal.c        |    2 +-
+ reiserfscore/prints.c         |   14 +++++++-------
+ reiserfscore/reiserfslib.c    |    5 +++--
+ reiserfscore/stree.c          |    2 +-
+ 13 files changed, 47 insertions(+), 44 deletions(-)
 
-diff -u -p a/fs/reiserfs/super.c b/fs/reiserfs/super.c
---- a/fs/reiserfs/super.c 2011-07-26 00:46:10.533500551 +0200
-+++ b/fs/reiserfs/super.c 2011-08-01 20:57:26.561121140 +0200
-@@ -1021,8 +1021,7 @@ static int reiserfs_parse_options(struct
- 							 "on filesystem root.");
- 					return 0;
- 				}
--				qf_names[qtype] =
--				    kmalloc(strlen(arg) + 1, GFP_KERNEL);
-+				qf_names[qtype] = kstrdup(arg, GFP_KERNEL);
- 				if (!qf_names[qtype]) {
- 					reiserfs_warning(s, "reiserfs-2502",
- 							 "not enough memory "
-@@ -1030,7 +1029,6 @@ static int reiserfs_parse_options(struct
- 							 "quotafile name.");
- 					return 0;
- 				}
--				strcpy(qf_names[qtype], arg);
- 				*mount_options |= 1 << REISERFS_QUOTA;
- 			} else {
- 				if (qf_names[qtype] !=
+--- a/debugreiserfs/debugreiserfs.c
++++ b/debugreiserfs/debugreiserfs.c
+@@ -59,11 +59,11 @@ Options:\n\
+ 
+ #if 1
+ struct reiserfs_fsstat {
+-    int nr_internals;
+-    int nr_leaves;
+-    int nr_files;
+-    int nr_directories;
+-    int nr_unformatted;
++    unsigned int nr_internals;
++    unsigned int nr_leaves;
++    unsigned int nr_files;
++    unsigned int nr_directories;
++    unsigned int nr_unformatted;
+ } g_stat_info;
+ #endif
+ 
+@@ -465,14 +465,14 @@ static void init_bitmap (reiserfs_filsys
+     case ALL_BLOCKS:
+ 	    input_bitmap (fs) = reiserfs_create_bitmap (block_count);
+ 	    reiserfs_bitmap_fill (input_bitmap (fs));
+-	    reiserfs_warning (stderr, "Whole device (%d blocks) is to be scanned\n", 
++	    reiserfs_warning (stderr, "Whole device (%u blocks) is to be scanned\n",
+ 			      reiserfs_bitmap_ones (input_bitmap (fs)));	
+ 	    break;
+     case USED_BLOCKS:
+ 	    reiserfs_warning (stderr, "Loading on-disk bitmap .. ");
+ 	    input_bitmap (fs) = reiserfs_create_bitmap (block_count);
+ 	    reiserfs_bitmap_copy (input_bitmap (fs), fs->fs_bitmap2);
+-	    reiserfs_warning (stderr, "%d bits set - done\n",
++	    reiserfs_warning (stderr, "%lu bits set - done\n",
+ 			      reiserfs_bitmap_ones (input_bitmap (fs)));
+ 	    break;
+     case UNUSED_BLOCKS:
+@@ -480,7 +480,7 @@ static void init_bitmap (reiserfs_filsys
+ 	    input_bitmap (fs) = reiserfs_create_bitmap (block_count);
+ 	    reiserfs_bitmap_copy (input_bitmap (fs), fs->fs_bitmap2);
+ 	    reiserfs_bitmap_invert (input_bitmap (fs));
+-	    reiserfs_warning (stderr, "%d bits set - done\n",
++	    reiserfs_warning (stderr, "%lu bits set - done\n",
+ 			      reiserfs_bitmap_ones (input_bitmap (fs)));
+ 	    break;
+     case EXTERN_BITMAP:
+@@ -494,7 +494,7 @@ static void init_bitmap (reiserfs_filsys
+ 		    reiserfs_exit (1, "could not load fitmap from \"%s\"", 
+ 				   input_bitmap_file_name(fs));
+ 	    }
+-	    reiserfs_warning (stderr, "%d blocks marked in the given bitmap\n",
++	    reiserfs_warning (stderr, "%u blocks marked in the given bitmap\n",
+ 			      reiserfs_bitmap_ones (input_bitmap (fs)));
+ 	    fclose (fp);
+ 	    break;
+@@ -554,8 +554,8 @@ static void do_dump_tree (reiserfs_filsy
+ 	    }
+ 
+ 	    /* print the statistic */
+-	    printf ("\t%d internal + %d leaves + %d "
+-		    "unformatted nodes = %d blocks\n", 
++	    printf ("\t%u internal + %u leaves + %u "
++		    "unformatted nodes = %u blocks\n",
+ 		    g_stat_info.nr_internals,   g_stat_info.nr_leaves, 
+ 		    g_stat_info.nr_unformatted, g_stat_info.nr_internals + 
+ 		    g_stat_info.nr_leaves + g_stat_info.nr_unformatted);
+--- a/debugreiserfs/pack.c
++++ b/debugreiserfs/pack.c
+@@ -8,7 +8,7 @@
+ 
+ 
+ /* counters for each kind of blocks */
+-int packed,
++unsigned int packed,
+     packed_leaves,
+     full_blocks,
+     having_ih_array, /* blocks with broken block head */
+@@ -638,7 +638,7 @@ static void pack_frozen_data (reiserfs_f
+     }
+     reiserfs_warning (stderr, "ok\n");fflush (stderr);
+     reiserfs_warning (stderr, 
+-		      "Super block, bitmaps, journal - %d blocks - done, %d blocks left\n",
++		      "Super block, bitmaps, journal - %u blocks - done, %u blocks left\n",
+ 		      packed, reiserfs_bitmap_ones (what_to_pack));
+ }
+ 
+@@ -693,13 +693,13 @@ void pack_partition (reiserfs_filsys_t *
+     magic16 = END_MAGIC;
+     fwrite_le16 (&magic16);
+ 
+-    fprintf (stderr, "\nPacked %d blocks:\n"
+-	     "\tcompessed %d\n"
+-	     "\tfull blocks %d\n"
+-	     "\t\tleaves with broken block head %d\n"
+-	     "\t\tcorrupted leaves %d\n"
+-	     "\t\tinternals %d\n"
+-	     "\t\tdescriptors %d\n",
++    fprintf (stderr, "\nPacked %u blocks:\n"
++	     "\tcompessed %u\n"
++	     "\tfull blocks %u\n"
++	     "\t\tleaves with broken block head %u\n"
++	     "\t\tcorrupted leaves %u\n"
++	     "\t\tinternals %u\n"
++	     "\t\tdescriptors %u\n",
+ 	     packed,
+ 	     packed_leaves, full_blocks, having_ih_array,
+ 	     bad_leaves, internals, descs);
+--- a/debugreiserfs/scan.c
++++ b/debugreiserfs/scan.c
+@@ -1032,7 +1032,7 @@ void do_scan (reiserfs_filsys_t * fs)
+     /* step 2: */
+     done = 0;
+     total = reiserfs_bitmap_ones (input_bitmap (fs));
+-    printf ("%ld bits set in bitmap\n", total);
++    printf ("%lu bits set in bitmap\n", total);
+     for (i = 0; i < get_sb_block_count (fs->fs_ondisk_sb); i ++) {
+ 	int type;
+ 	
+--- a/debugreiserfs/stat.c
++++ b/debugreiserfs/stat.c
+@@ -245,7 +245,7 @@ void do_stat (reiserfs_filsys_t * fs)
+ 	reiserfs_exit (1, "could not open %s to save bitmap: %m\n",
+ 		       input_bitmap_file_name(fs));
+     }
+-    reiserfs_warning (stderr, "Updated bitmap contains %d blocks marked\n",
++    reiserfs_warning (stderr, "Updated bitmap contains %u blocks marked\n",
+ 		      reiserfs_bitmap_ones (input_bitmap (fs)));
+     
+     reiserfs_bitmap_save (fp, input_bitmap (fs));
+--- a/fsck/check_tree.c
++++ b/fsck/check_tree.c
+@@ -119,7 +119,7 @@ static int is_block_free (reiserfs_filsy
+ }
+ 
+ 
+-/*static int hits = 0;*/
++/*static unsigned int hits = 0;*/
+ 
+ /* we have seen this block in the tree, mark corresponding bit in the
+    control bitmap */
+@@ -156,7 +156,7 @@ static void init_control_bitmap (reiserf
+     for (i = 0; i <= fs->fs_super_bh->b_blocknr; i ++)
+     	we_met_it (i);
+ 
+-    /*printf ("SKIPPED: %d blocks marked used (%d)\n", hits, 
++    /*printf ("SKIPPED: %u blocks marked used (%d)\n", hits,
+               reiserfs_bitmap_zeros (control_bitmap));
+       hits = 0;*/
+ 
+@@ -172,7 +172,7 @@ static void init_control_bitmap (reiserf
+ 	    block ++;	
+     }
+     
+-    /*printf ("BITMAPS: %d blocks marked used (%d)\n", hits, 
++    /*printf ("BITMAPS: %u blocks marked used (%d)\n", hits,
+ 	      reiserfs_bitmap_zeros (control_bitmap));
+ 	      
+       hits = 0;*/
+--- a/fsck/pass0.c
++++ b/fsck/pass0.c
+@@ -1759,7 +1759,7 @@ static void init_source_bitmap (reiserfs
+     case ALL_BLOCKS:
+ 	fsck_source_bitmap (fs) = reiserfs_create_bitmap (block_count);
+ 	reiserfs_bitmap_fill (fsck_source_bitmap (fs));
+-	fsck_progress ("The whole partition (%d blocks) is to be scanned\n", 
++	fsck_progress ("The whole partition (%u blocks) is to be scanned\n",
+ 		       reiserfs_bitmap_ones (fsck_source_bitmap (fs)));	
+ 	break;
+ 
+@@ -1768,7 +1768,7 @@ static void init_source_bitmap (reiserfs
+ 	fsck_source_bitmap (fs) = reiserfs_create_bitmap (block_count);	
+ 	reiserfs_bitmap_copy (fsck_source_bitmap (fs), fs->fs_bitmap2);
+ 	
+-	fsck_progress ("ok, %d blocks marked used\n", 
++	fsck_progress ("ok, %u blocks marked used\n",
+ 		       reiserfs_bitmap_ones (fsck_source_bitmap (fs)));
+ 	break;
+ 
+@@ -1787,7 +1787,7 @@ static void init_source_bitmap (reiserfs
+ 			   fsck_data (fs)->rebuild.bitmap_file_name);
+ 	}
+ 
+-	fsck_progress ("%d blocks marked used in extern bitmap\n", 
++	fsck_progress ("%u blocks marked used in extern bitmap\n",
+ 		       reiserfs_bitmap_ones (fsck_source_bitmap (fs)));
+ 	fclose (fp);
+ 	break;
+@@ -1863,8 +1863,8 @@ static void init_source_bitmap (reiserfs
+ 
+     fsck_source_bitmap (fs)->bm_set_bits = reiserfs_bitmap_ones (fsck_source_bitmap (fs));
+ 
+-    fsck_progress ("Skipping %d blocks (super block, journal, "
+-		   "bitmaps) %d blocks will be read\n", tmp, fsck_source_bitmap (fs)->bm_set_bits);
++    fsck_progress ("Skipping %u blocks (super block, journal, "
++		   "bitmaps) %u blocks will be read\n", tmp, fsck_source_bitmap (fs)->bm_set_bits);
+ 		
+ }
+ 
+--- a/fsck/pass1.c
++++ b/fsck/pass1.c
+@@ -646,8 +646,8 @@ void load_pass_1_result (FILE * fp, reis
+     fetch_objectid_map (proper_id_map (fs), fs);
+     */
+ 
+-    fsck_progress ("Pass 1 result loaded. %d blocks used, %d allocable, "
+-		   "still to be inserted %d\n",
++    fsck_progress ("Pass 1 result loaded. %u blocks used, %u allocable, "
++		   "still to be inserted %u\n",
+ 		   reiserfs_bitmap_ones (fsck_new_bitmap (fs)),
+ 		   reiserfs_bitmap_zeros (fsck_allocable_bitmap (fs)),
+ 		   reiserfs_bitmap_zeros (fsck_uninsertables (fs)));
+--- a/include/reiserfs_fs.h
++++ b/include/reiserfs_fs.h
+@@ -32,6 +32,8 @@
+ #ifndef REISERFSPROGS_FS_H
+ #define REISERFSPRIGS_FS_H 
+ 
++typedef unsigned int blocknr_t;
++
+ #ifndef NO_EXTERN_INLINE
+ # define extern_inline extern inline
+ #else
+--- a/lib/io.c
++++ b/lib/io.c
+@@ -628,7 +628,7 @@ void close_rollback_file () {
+             return;
+         fwrite (&rollback_blocks_number, sizeof (rollback_blocksize), 1, s_rollback_file);
+         if (log_file != 0) 
+-            fprintf (log_file, "rollback: %d blocks backed up\n", rollback_blocks_number);
++            fprintf (log_file, "rollback: %u blocks backed up\n", rollback_blocks_number);
+     }
+         
+     fclose (s_rollback_file);
+--- a/reiserfscore/journal.c
++++ b/reiserfscore/journal.c
+@@ -577,7 +577,7 @@ int reiserfs_create_journal(
+ 	{
+ 	    /* host device does not contain enough blocks */
+ 	    reiserfs_warning (stderr, "reiserfs_create_journal: cannot create "
+-		"a journal of %lu blocks with %lu offset on %d blocks\n", 
++		"a journal of %lu blocks with %lu offset on %u blocks\n",
+ 		len, offset, get_sb_block_count(sb));
+ 		return 0;
+ 	}
+--- a/reiserfscore/prints.c
++++ b/reiserfscore/prints.c
+@@ -148,7 +148,7 @@ static int print_disk_child (FILE * stre
+     int len;
+ 
+     dc = *((const struct disk_child **)(args[0]));
+-    len = asprintf (&buffer, "[dc_number=%u, dc_size=%u]", get_dc_child_blocknr (dc),
++    len = asprintf (&buffer, "[dc_number=%lu, dc_size=%u]", get_dc_child_blocknr (dc),
+ 		    get_dc_child_size (dc));
+     FPRINTF;
+ }
+@@ -373,9 +373,9 @@ static void print_sequence (FILE * fp, _
+ 	return;
+ 
+     if (len == 1)
+-	reiserfs_warning (fp, " %d", le32_to_cpu (start));
++	reiserfs_warning (fp, " %u", le32_to_cpu (start));
+     else
+-	reiserfs_warning (fp, " %d(%d)", le32_to_cpu (start), len);
++	reiserfs_warning (fp, " %u(%d)", le32_to_cpu (start), len);
+ }
+ 
+ 
+@@ -491,7 +491,7 @@ static int print_internal (FILE * fp, st
+ 	to = last < B_NR_ITEMS (bh) ? last : B_NR_ITEMS (bh);
+     }
+ 
+-    reiserfs_warning (fp, "INTERNAL NODE (%ld) contains %b\n",  bh->b_blocknr, bh);
++    reiserfs_warning (fp, "INTERNAL NODE (%lu) contains %b\n",  bh->b_blocknr, bh);
+ 
+     dc = B_N_CHILD (bh, from);
+     reiserfs_warning (fp, "PTR %d: %y ", from, dc);
+@@ -527,7 +527,7 @@ static int print_leaf (FILE * fp, reiser
+ 
+     reiserfs_warning (fp,
+ 		      "\n===================================================================\n");
+-    reiserfs_warning (fp, "LEAF NODE (%ld) contains %b (real items %d)\n",
++    reiserfs_warning (fp, "LEAF NODE (%lu) contains %b (real items %d)\n",
+ 		      bh->b_blocknr, bh, real_nr);
+ 
+     if (!(print_mode & PRINT_TREE_DETAILS)) {
+@@ -761,7 +761,7 @@ void print_block (FILE * fp, reiserfs_fi
+         if (print_super_block (fp, fs, file_name, bh, 0))
+ 	    if (print_leaf (fp, fs, bh, mode, first, last))
+ 		if (print_internal (fp, bh, first, last))
+-		    reiserfs_warning (fp, "Block %ld contains unformatted data\n", bh->b_blocknr);
++		    reiserfs_warning (fp, "Block %lu contains unformatted data\n", bh->b_blocknr);
+ }
+ 
+ 
+@@ -797,7 +797,7 @@ void print_tb (int mode, int item_pos, i
+       tbSh = 0;
+       tbFh = 0;
+     }
+-    printf ("* %u * %3lu(%2lu) * %3lu(%2lu) * %3lu(%2lu) * %5ld * %5ld * %5ld * %5ld * %5ld *\n",
++    printf ("* %u * %3lu(%2lu) * %3lu(%2lu) * %3lu(%2lu) * %5lu * %5lu * %5lu * %5lu * %5lu *\n",
+ 	    h, 
+ 	    tbSh ? tbSh->b_blocknr : ~0ul,
+ 	    tbSh ? tbSh->b_count : ~0ul,
+--- a/reiserfscore/reiserfslib.c
++++ b/reiserfscore/reiserfslib.c
+@@ -59,7 +59,8 @@ reiserfs_filsys_t * reiserfs_open (char
+     reiserfs_filsys_t * fs;
+     struct buffer_head * bh;
+     struct reiserfs_super_block * sb;
+-    int fd, i;
++    int fd;
++    unsigned int i;
+ 
+     /* convert root dir key and parent root dir key to little endian format */
+     make_const_keys ();
+@@ -200,7 +201,7 @@ reiserfs_filsys_t * reiserfs_create (cha
+ 	block_size, block_count, 0)) 
+     {
+ 	reiserfs_warning (stderr, "reiserfs_create: can not create that small "
+-	    "(%d blocks) filesystem\n", block_count);
++	    "(%u blocks) filesystem\n", block_count);
+ 	return 0;
+     }
+ 
+--- a/reiserfscore/stree.c
++++ b/reiserfscore/stree.c
+@@ -313,7 +313,7 @@ int search_by_key (reiserfs_filsys_t * f
+ 		   int  n_stop_level)   /* How far down the tree to search.*/
+ {
+     struct reiserfs_super_block * sb;
+-    int n_block_number,
++    unsigned int n_block_number,
+ 	expected_level,
+ 	n_block_size    = fs->fs_blocksize;
+     struct buffer_head  *       p_s_bh;
 
-
-
+--------------070903030500040106050901--
