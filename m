@@ -1,60 +1,45 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: Carsten Ralle <cr@i4yoo.de>
 Subject: Re: rebuild-tree fails on large volume
-Date: Tue, 09 Aug 2011 01:08:29 +0200
-Message-ID: <4E406C6D.9010109@gmail.com>
-References: <4E3A7945.9090404@i4yoo.de> <alpine.DEB.2.01.1108052344150.9183@trent.utfs.org> <4E3CE7ED.2090909@suse.com> <4E404155.7050706@suse.de>
+Date: Tue, 09 Aug 2011 19:01:06 +0200
+Message-ID: <4E4167D2.2020206@i4yoo.de>
+References: <4E3A7945.9090404@i4yoo.de> <alpine.DEB.2.01.1108052344150.9183@trent.utfs.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=WoA1svv8TwRTj5qi5r8Yp+o6X+iW0qzfnmY/JMkThVQ=;
-        b=B1GVFDVFoXj8jxJX4Vhx9bdkzO6zDHNvKZWqAebFFMB+M+W8jottlzTcRgBvVi1K2h
-         sPp/r0lbIzZNG8R1lb1LZgBpx0JmE9v2uc/a0k6y5OsskZ9cg2YbCOxMQfemkc+ItC/Y
-         0Lv4cJLabCY0SAcrMN9G3dv5MqUDiD3FEa+W8=
-In-Reply-To: <4E404155.7050706@suse.de>
+In-Reply-To: <alpine.DEB.2.01.1108052344150.9183@trent.utfs.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Jeff Mahoney <jeffm@suse.de>
-Cc: Christian Kujau <lists@nerdbynature.de>, Carsten Ralle <cr@i4yoo.de>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+To: reiserfs-devel@vger.kernel.org
 
-On 08/08/2011 10:04 PM, Jeff Mahoney wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
->
-> On 08/06/2011 03:06 AM, Jeff Mahoney wrote:
->> On 08/06/2011 02:47 AM, Christian Kujau wrote:
->>> On Thu, 4 Aug 2011 at 12:49, Carsten Ralle wrote:
->>>> http://www.spinics.net/lists/reiserfs-devel/msg02679.html
->>>>
->>>> I looked all over the place but couldn't find any infos about
->>>> the version to patch.
->>>
->>> The patch applies cleanly to reiserfsprogs-3.6.21[0].
->>>
->>> @Jeff: will the patch be applied to the next (?) reiserfsprogs
->>> release?
->>>
->>> Thanks, Christian.
->>>
->>> [0] https://www.kernel.org/pub/linux/utils/fs/reiserfs/
->>
->> I don't actually maintain reiserfsprogs unless the openSUSE version
->> has now become the official one. I've been meaning to get back to you
->> about this but it's been a rough week.
->>
->> -Jeff
->>
->
-> Attached is the patch I use for large file systems.
+>> http://www.spinics.net/lists/reiserfs-devel/msg02679.html
+>> I looked all over the place but couldn't find any infos about the
+>> version to patch.
+> The patch applies cleanly to reiserfsprogs-3.6.21[0].
+> [0] https://www.kernel.org/pub/linux/utils/fs/reiserfs/
+many thanks to all of you: the rebuild-tree (3.6.21-0 + your patch)
+finished this morning and everything looks OK so far, but it'll take a
+while to check all of the data.
 
+Imho the patch should be included as soon as possible to the official
+OpenSuSE reiserfsprogs tree as there still are a lot of people running
+large volumes on ReiserFS v3.6.
 
-Great.
-It seems we'll release 3.6.22 near Christmas.
-I also have something to push to reiser4progs...
+Thanks again,
 
-Thanks,
-Edward.
+Carsten
+
+--=20
+--------------------------------------------------
+Yoo GmbH                       Tel.: 037328 809 40
+Zellwaldring 51                Fax : 037328 809 96
+D-09603 Grossvoigtsberg
+Germany                             www.yoogmbh.de
+Registereintrag: Amtsgericht Chemnitz, HRB 181 852
+Gesch=E4ftsf=FChrung: Carsten Ralle
+--------------------------------------------------
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
