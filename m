@@ -1,36 +1,21 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Any progress in fixing "block_alloc.c:151"?
-Date: Mon, 15 Aug 2011 18:39:53 +0400
-Message-ID: <4E492FB9.3040501@gmail.com>
+From: Carsten Ralle <cr@yoogmbh.de>
+Subject: Re: rebuild-tree fails on large volume
+Date: Mon, 15 Aug 2011 17:49:51 +0200
+Message-ID: <4E49401F.7010701@yoogmbh.de>
+References: <4E3A7945.9090404@i4yoo.de> <alpine.DEB.2.01.1108052344150.9183@trent.utfs.org> <4E4167D2.2020206@i4yoo.de> <4E41E35A.5010902@ontolinux.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=message-id:date:from:user-agent:mime-version:to:subject
-         :content-type:content-transfer-encoding;
-        bh=gRWFHHf3n+gkGvZadI/DmoGNUGErKq7+XGMoStcYicQ=;
-        b=tOyTPnjTvtew+p1rPi2Wfxo92Z98UBU+d+PORxILlMhTUaK+7EhnM8lcp6lFITLoSE
-         8Wp1dKzQmvNkK6VacvPGP7wYptoQhPeg0cgeOLSvD+mq1qJHeRgmkELFBxQunX8j7kf5
-         xE4yNCxzm6v7sXk1crlr8AoeOO351wn/c4ZeU=
+In-Reply-To: <4E41E35A.5010902@ontolinux.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Christian Stroetmann <stroetmann@ontolinux.com>
+Cc: reiserfs-devel@vger.kernel.org
 
-Hello,
+Am 10.08.2011 03:48, schrieb Christian Stroetmann:
 
-is there any progress in fixing "kernel BUG at 
-fs/reiser4/block_alloc.c:151" problem?
+> Besides this, stop advertising, please. Thanks.
+Which of my 3 messages on this thread did you consider 'advertising' ??
 
-I use reiser4 on my /home partition with cryptocompress regular file plugin.
-As of kernel 2.6.38, the bug still happens in data-intensive 
-applications (amarok, firefox, nepomuk, etc).
-The 'estimate_dirty_cluster' patch didn't work for me, only delaying the 
-appearance of problem.
-
-I guess it's somehow related to frequent fsync() calls in databases used 
-by these applications..
-
-Thanks in advance,
-Ivan Shapovalov.
+Carsten
