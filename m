@@ -1,53 +1,37 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Any progress in fixing "block_alloc.c:151"?
-Date: Mon, 15 Aug 2011 18:21:29 +0200
-Message-ID: <4E494789.7040001@gmail.com>
-References: <4E492FB9.3040501@gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: WARNING: Error for inode nnnnnn (-2) -what does it mean ?
+Date: Wed, 17 Aug 2011 08:21:22 +1000
+Message-ID: <143ea73024ec2e253506fcb31961220d@mail.velocitynet.com.au>
+References: <7517c61bff9e4f9a22f8ca0569f66617@mail.velocitynet.com.au> <caaba6f1759ccf61bba0be358d532fe6@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4E492FB9.3040501@gmail.com>
+In-Reply-To: <caaba6f1759ccf61bba0be358d532fe6@mail.velocitynet.com.au>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-On 08/15/2011 04:39 PM, Ivan Shapovalov wrote:
-> Hello,
+Hello,
+I am running a #tar -cvf command on part of a reiser4 directory tree which
+contains some files
 
-Hello.
+1. I  see this in #dmesg
+[14406.795709] reiser4[du(22426)]: key_warning
+(/usr/src/packages/BUILD/kernel-reiser4-2.6.38.8/linux-2.6.38.8/fs/reiser4/plugin/file_plugin_common.c:511)[nikita-717]:
+[14406.795715] WARNING: Error for inode 972957 (-2)
+[14406.795870] reiser4[du(22426)]: key_warning
+(/usr/src/packages/BUILD/kernel-reiser4-2.6.38.8/linux-2.6.38.8/fs/reiser4/plugin/file_plugin_common.c:511)[nikita-717]:
+[14406.795876] WARNING: Error for inode 972958 (-2)
+[14406.795930] reiser4[du(22426)]: key_warning
+(/usr/src/packages/BUILD/kernel-reiser4-2.6.38.8/linux-2.6.38.8/fs/reiser4/plugin/file_plugin_common.c:511)[nikita-717]:
+[14406.795934] WARNING: Error for inode 972959 (-2)
+[14406.795985] reiser4[du(22426)]: key_warning
+(/usr/src/packages/BUILD/kernel-reiser4-2.6.38.8/linux-2.6.38.8/fs/reiser4/plugin/file_plugin_common.c:511)[nikita-717]:
+[14406.795990] WARNING: Error for inode 972960 (-2)
 
->
-> is there any progress in fixing "kernel BUG at
-> fs/reiser4/block_alloc.c:151" problem?
->
-> I use reiser4 on my /home partition with cryptocompress regular file
-> plugin.
-> As of kernel 2.6.38, the bug still happens in data-intensive
-> applications (amarok, firefox, nepomuk, etc).
-> The 'estimate_dirty_cluster' patch didn't work for me, only delaying the
-> appearance of problem.
->
-> I guess it's somehow related to frequent fsync() calls in databases used
-> by these applications..
+what does mean ?
 
+Thanks Glenn
 
-I am trying to narrow down the problem. Debugging messages show problems
-in the code, which performs compression on commit. TBH this code is
-unclear and should be rewritten. Unfortunately I do have only weekends
-for this, so it all long..
-
-Thanks,
-Edward.
-
-
->
-> Thanks in advance,
-> Ivan Shapovalov.
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-> reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at http://vger.kernel.org/majordomo-info.html
 
