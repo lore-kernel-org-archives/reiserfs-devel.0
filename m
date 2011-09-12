@@ -1,39 +1,22 @@
-From: Simon <sur3@gmx.de>
-Subject: Re: Marketing and Public relation
-Date: Fri, 09 Sep 2011 10:18:34 +0200
-Message-ID: <4E69CBDA.1070801@gmx.de>
-References: <4E68B417.8020400@ontolinux.com>
+From: <doiggl@velocitynet.com.au>
+Subject: What is the most likely next reiser4 patch, will it be for 2.6.39x or 3.0.0x or something else ?
+Date: Mon, 12 Sep 2011 11:51:54 +1000
+Message-ID: <1626b065834d22009b37bd503f73385d@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <4E68B417.8020400@ontolinux.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Christian Stroetmann <stroetmann@ontolinux.com>
-Cc: linux reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-Hello CS,
-please stop spamming, and meditate a few days in silence,
-that was 9 mails in row of obvious questions,
-what you could have easily bundled.
-Nevertheless we apreciate your concern of bringing the project further, 
-anyway there's a lot of tention right now, so a few days of wise 
-quiteness would show to be sophisticated power. ;)
+Hello,
+I have a question for Edward Shishkin
+What is the most likely next reiser4 patch, will it be for 2.6.39x or
+3.0.0x or something else ?
 
-Thanks!
-Simon the Sorcerer
+The reason I ask is, so I can setup a compile environment setup using this
+type of envionment[1]
+[1]https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
 
-PS:
-Sorry for this eMail! :-/
-
-
-Am 08.09.2011 14:24, schrieb Christian Stroetmann:
-> Hello,
-> Can somebody please tell us who is responsible for the marketing of the
-> project and the public relations.
-> What is with the aquisation of sponsors? Every community and related
-> projects love to have some.
->
-> Thanks
-> C. Stroetmann
+Thanks Glenn
