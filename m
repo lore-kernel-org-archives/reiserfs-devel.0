@@ -1,158 +1,29 @@
-From: Jan Kara <jack@suse.cz>
-Subject: [PATCH 3/6] quota: Move quota syncing to ->sync_fs method
-Date: Fri,  7 Oct 2011 22:40:52 +0200
-Message-ID: <1318020055-4450-4-git-send-email-jack@suse.cz>
-References: <1318020055-4450-1-git-send-email-jack@suse.cz>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <1318020055-4450-1-git-send-email-jack@suse.cz>
-Sender: linux-fsdevel-owner@vger.kernel.org
+From: Matias Seco <matias.jose.seco@gmail.com>
+Subject: Information Request
+Date: Mon, 24 Oct 2011 14:10:58 +0200
+Message-ID: <CAMjNLwoY2nx=1FczwigL0WSubKattSq69sZQT2veRUERbnqT3A@mail.gmail.com>
+Mime-Version: 1.0
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=mime-version:date:message-id:subject:from:to:content-type;
+        bh=m9E0ltAQb5otuJjnsK+xNoqcn6b819s/TTFyKD1CdGo=;
+        b=FN0DekunjmNd2wJ+dIwUvKwJJGUcifMD/2DrrgbY3I8GZscDiR8/ngFpZJv0fvA8++
+         SqEB5A/yhoADZquV6NBYZ6/O2pT945N1gQO3xthrvZ+D/l/lgjoTFDa1myv6mysgCaq7
+         TBGPfwZss2F5cJaScgPUn5bA8gpduyGy11oeU=
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Curt Wohlgemuth <curtw@google.com>, linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>, Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>, Joel Becker <jlbec@evilplan.org>, reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-Since the moment writes to quota files are using block device page cache and
-space for quota structures is reserved at the moment they are first accessed we
-have no reason to sync quota before inode writeback. In fact this order is now
-only harmful since quota information can easily change during inode writeback
-(either because conversion of delayed-allocated extents or simply because of
-allocation of new blocks for simple filesystems not using page_mkwrite).
+Greetings,
+i found very interesting about testing this filesystem. Unfortunately
+i got late with my project, because i couldn't find useful resources
+from google for reiser4,
+mainly because the reiser4's kernel Wiki was down due to maintenaince.
+After time, i saw that the page still didn't return: this is why i
+would like to ask you, if you can point me resources, to understand
+how to configure the reiser4 on my HDD.
 
-So move syncing of quota information after writeback of inodes into ->sync_fs
-method. This way we do not have to use ->quota_sync callback which is primarily
-intended for use by quotactl syscall anyway and we get rid of calling
-->sync_fs() twice unnecessarily. We skip quota syncing for OCFS2 since it does
-proper quota journalling in all cases (unlike ext3, ext4, and reiserfs which
-also support legacy non-journalled quotas) and thus there are no dirty quota
-structures.
-
-CC: "Theodore Ts'o" <tytso@mit.edu>
-CC: Joel Becker <jlbec@evilplan.org>
-CC: reiserfs-devel@vger.kernel.org
-Acked-by: Steven Whitehouse <swhiteho@redhat.com>
-Acked-by: Dave Kleikamp <shaggy@kernel.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/ext2/super.c     |    6 ++++++
- fs/ext3/super.c     |    5 +++++
- fs/ext4/super.c     |    5 +++++
- fs/gfs2/super.c     |    2 ++
- fs/jfs/super.c      |    5 +++++
- fs/reiserfs/super.c |    5 +++++
- fs/sync.c           |    3 ---
- 7 files changed, 28 insertions(+), 3 deletions(-)
-
-diff --git a/fs/ext2/super.c b/fs/ext2/super.c
-index 1dd62ed..174782f 100644
---- a/fs/ext2/super.c
-+++ b/fs/ext2/super.c
-@@ -1180,6 +1180,12 @@ static int ext2_sync_fs(struct super_block *sb, int wait)
- 	struct ext2_sb_info *sbi = EXT2_SB(sb);
- 	struct ext2_super_block *es = EXT2_SB(sb)->s_es;
- 
-+	/*
-+	 * Write quota structures to quota file, sync_blockdev() will write
-+	 * them to disk later
-+	 */
-+	dquot_writeback_dquots(sb, -1);
-+
- 	spin_lock(&sbi->s_lock);
- 	if (es->s_state & cpu_to_le16(EXT2_VALID_FS)) {
- 		ext2_debug("setting valid to 0\n");
-diff --git a/fs/ext3/super.c b/fs/ext3/super.c
-index 7beb69a..5e1ca17 100644
---- a/fs/ext3/super.c
-+++ b/fs/ext3/super.c
-@@ -2522,6 +2522,11 @@ static int ext3_sync_fs(struct super_block *sb, int wait)
- 	tid_t target;
- 
- 	trace_ext3_sync_fs(sb, wait);
-+	/*
-+	 * Writeback quota in non-journalled quota case - journalled quota has
-+	 * no dirty dquots
-+	 */
-+	dquot_writeback_dquots(sb, -1);
- 	if (journal_start_commit(EXT3_SB(sb)->s_journal, &target)) {
- 		if (wait)
- 			log_wait_commit(EXT3_SB(sb)->s_journal, target);
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 44d0c8d..18dfff7 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4226,6 +4226,11 @@ static int ext4_sync_fs(struct super_block *sb, int wait)
- 
- 	trace_ext4_sync_fs(sb, wait);
- 	flush_workqueue(sbi->dio_unwritten_wq);
-+	/*
-+	 * Writeback quota in non-journalled quota case - journalled quota has
-+	 * no dirty dquots
-+	 */
-+	dquot_writeback_dquots(sb, -1);
- 	if (jbd2_journal_start_commit(sbi->s_journal, &target)) {
- 		if (wait)
- 			jbd2_log_wait_commit(sbi->s_journal, target);
-diff --git a/fs/gfs2/super.c b/fs/gfs2/super.c
-index 3870562..9f9a23d 100644
---- a/fs/gfs2/super.c
-+++ b/fs/gfs2/super.c
-@@ -926,6 +926,8 @@ restart:
- static int gfs2_sync_fs(struct super_block *sb, int wait)
- {
- 	struct gfs2_sbd *sdp = sb->s_fs_info;
-+
-+	gfs2_quota_sync(sb, -1);
- 	if (wait && sdp)
- 		gfs2_log_flush(sdp, NULL);
- 	return 0;
-diff --git a/fs/jfs/super.c b/fs/jfs/super.c
-index 06c8a67..a2c9cc1 100644
---- a/fs/jfs/super.c
-+++ b/fs/jfs/super.c
-@@ -603,6 +603,11 @@ static int jfs_sync_fs(struct super_block *sb, int wait)
- 
- 	/* log == NULL indicates read-only mount */
- 	if (log) {
-+		/*
-+		 * Write quota structures to quota file, sync_blockdev() will
-+		 * write them to disk later
-+		 */
-+		dquot_writeback_dquots(sb, -1);
- 		jfs_flush_journal(log, wait);
- 		jfs_syncpt(log, 0);
- 	}
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 14363b9..dd7aec5 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -66,6 +66,11 @@ static int reiserfs_sync_fs(struct super_block *s, int wait)
- {
- 	struct reiserfs_transaction_handle th;
- 
-+	/*
-+	 * Writeback quota in non-journalled quota case - journalled quota has
-+	 * no dirty dquots
-+	 */
-+	dquot_writeback_dquots(s, -1);
- 	reiserfs_write_lock(s);
- 	if (!journal_begin(&th, s, 1))
- 		if (!journal_end_sync(&th, s, 1))
-diff --git a/fs/sync.c b/fs/sync.c
-index 7fbf283..3367d04 100644
---- a/fs/sync.c
-+++ b/fs/sync.c
-@@ -30,9 +30,6 @@
-  */
- static int __sync_filesystem(struct super_block *sb, int wait)
- {
--	if (sb->s_qcop && sb->s_qcop->quota_sync)
--		sb->s_qcop->quota_sync(sb, -1);
--
- 	if (wait)
- 		sync_inodes_sb(sb);
- 	else
--- 
-1.7.1
-
+Salut, Matias
