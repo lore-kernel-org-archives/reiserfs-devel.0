@@ -1,51 +1,49 @@
-From: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [BUG] kernel 3.1.0 possible circular locking dependency detected
-Date: Mon, 07 Nov 2011 18:18:27 +0100
-Message-ID: <1320686307.17809.33.camel@twins>
-References: <4EAE5DE3.2020205@t-online.de>
-	 <CA+55aFzuWD1xRhQNLfe0ey_-1vACwY=ofD5PXSzL_5UeDRbk8g@mail.gmail.com>
+From: Piotr Sawuk <a9702387@unet.univie.ac.at>
+Subject: please help me make reiser4 work with grsecurity
+Date: Wed, 09 Nov 2011 15:53:53 +0100
+Message-ID: <4EBA9401.4000501@unet.univie.ac.at>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <CA+55aFzuWD1xRhQNLfe0ey_-1vACwY=ofD5PXSzL_5UeDRbk8g@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=unet.univie.ac.at; s=rev2;
+	h=Content-Transfer-Encoding:Content-Type:Subject:To:MIME-Version:From:Date:Message-ID; bh=Ct4ciK/jo3EjujQfTVapg4UFa82weqBNDScJsSDgi3w=;
+	b=MLC7qXu/4KeF0WvwzjK6dWcnrd8NMvMjq5ZaPXwk3NgTaBhqY2YcbRaSCVhkyFwFzFIuohfYpCMZjMA1u6puzfsta29ASjVCRcvp/Xo7WxLLsiXRHXiK5fYlb5FKRYPMugR/9661CobBLKGNLun4LCQ9fqqoRrrOY+vLs311Ins=;
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Knut Petersen <Knut_Petersen@t-online.de>, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, Greg KH <gregkh@suse.de>, Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>, Frederic Weisbecker <fweisbec@gmail.com>, Jeff Mahoney <jeffm@suse.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-devel@vger.kernel.org
 
-On Mon, 2011-10-31 at 08:08 -0700, Linus Torvalds wrote:
-> [ Added a few more people to the cc ]
-> 
-> On Mon, Oct 31, 2011 at 1:35 AM, Knut Petersen
-> <Knut_Petersen@t-online.de> wrote:
-> > After a " rm -r /verybigdir" (about 12G on a 25G reiserfs 3.6partition)
-> > I found the following report about a circular locking dependency in
-> > kernel 3.1.0
-> 
-> Heh. There is even a comment about the ordering violation:
-> 
-> /* We use I_MUTEX_CHILD here to silence lockdep. It's safe because xattr
->  * mutation ops aren't called during rename or splace, which are the
->  * only other users of I_MUTEX_CHILD. It violates the ordering, but that's
->  * better than allocating another subclass just for this code. */
-> 
-> and apparently the comment is wrong: we *do* end up looking up xattrs
-> during splice, due to the security_inode_need_killpriv() thing.
-> 
-> So I think this needs a suid (or sgid) file that has xattrs and is removed.
-> 
-> That said, I suspect this is a false positive, because the actual
-> unlink can never happen while somebody is splicing to/from the same
-> file at the same time (because then the iput wouldn't be the last one
-> for the inode, and the file removal would be delayed until the file
-> has been closed for the last time).
-> 
-> But the hacky use of "I_MUTEX_CHILD" is basically not the proper way
-> to silence the lockdep splat.
-> 
-> Anybody?
+of course reiser4 wont be able to provide the root fs. there simply is no
+xattr support in reiser4. however, reiser4 doesn't even compile with grsecurity.
 
-I_MUTEX_XATTR sounds like the right nesting for something called
-xattr_*() but then, what do I know about filesystems.. Jeff Mahoney
-wrote this, Jeff any clue?
+of course, as with most filesystems which aren't part of the kernel, I
+got a .rej while applying reiser4 patch on grsecurity-patched linux-2.6.32.46,
+but that was quickly resolved, so I thought. the problem was include/linux/fs.h,
+the "struct super_operations" which got modified immensely by grsecurity. so I
+add the 2 functions writeback_inodes and sync_inodes inserted there by reiser4.
+during compilation another problem got apparent: PF_FLUSHER isn't defined in
+include/linux/sched.h, just like in "newer" kernels.
+
+the problem I couldn't solve, as I hint above, has to do with super_operations.
+on my HLFS system I did do a 'make CC="gcc -fno-PIE -no-fatal-warnings"' and got
+
+init_super.c: in function 'reiser4_init_super_data':
+init_super.c:399:2: error: assignment of read-only member 'ops'
+init_super.c:400:2: error: assignment of read-only member 'ops'
+init_super.c:401:2: error: assignment of read-only member 'ops'
+
+and I have no idea how to solve this. I don't know c,
+I only know c++ and assembler, so I really am without
+a clue how const-assignment of objects gets handled in c.
+super_operations and others must get assigned to members of ops.
+but how? seems grsecurity changed the way how this is supposed to happen.
+please fetch linux-2.6.32.46 apply the stable patch on http://grsecurity.net
+and then reiser4 for 2.6.32, and explain how grsecurity affected reiser4.
+
+ext2 seems to initialize this struct into static variables, and compiles well.
+(is that even thread-save?) does it make sense to copy that behaviour?
+I fear I'd break something in reiser4 if I'd do away with ops...
+
+btw, as grsecurity made changes on fs-code maybe reiser4 should get changed too?
+
+P
