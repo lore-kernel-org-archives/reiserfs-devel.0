@@ -1,83 +1,40 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
+From: Pierre Ynard <linkfanel@yahoo.fr>
 Subject: Re: Oops on reiserfs corruption
-Date: Fri, 11 Nov 2011 11:26:40 +0100
-Message-ID: <4EBCF860.7070404@gmail.com>
-References: <20111110221346.GA20887@via.ecp.fr>
+Date: Fri, 11 Nov 2011 20:47:53 +0000 (GMT)
+Message-ID: <1321044473.3955.YahooMailNeo@web24103.mail.ird.yahoo.com>
+References: <20111110221346.GA20887@via.ecp.fr> <4EBCF860.7070404@gmail.com>
+Reply-To: Pierre Ynard <linkfanel@yahoo.fr>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20111110221346.GA20887@via.ecp.fr>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.fr; s=s1024; t=1321044474; bh=68fTYhFhmSkJ2+laJHewRG5Y7yTzwrCDDIkK4ulRIE0=; h=X-YMail-OSG:Received:X-Mailer:References:Message-ID:Date:From:Reply-To:Subject:To:Cc:In-Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding; b=L+AlLS49L4nQq62YyG9kd3b9mZF8Wr/v19SMrkOEuhETLqB90BjEiWDxd5NRWSBnwh4qWijEFuUSWwXnQyoZVA7KMNwgeCfOrwzVIiEYLrGDdxVU7BwAlcnk78IT+mWDnQT8CibcHFMgyMQnm/G/Sinl72SrXy20/Jc9VL46Ik8=
+In-Reply-To: <4EBCF860.7070404@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Pierre Ynard <linkfanel@yahoo.fr>
-Cc: reiserfs-devel@vger.kernel.org
-
-On 11/10/2011 11:13 PM, Pierre Ynard wrote:
-> Hello,
-
-Hello.
-
->
-> A reiserfs filesystem on my system got randomly corrupted, and then
-> would trigger a 100% reproducible oops:
+Content-Type: text/plain; charset="us-ascii"
+To: Edward Shishkin <edward.shishkin@gmail.com>
+Cc: "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>
 
 
-The whole sequence (making corruption - trigger an oops)
-is reproducible?
 
-If yes, please describe steps how to reproduce.
-If no, then please extract file system metadata,
-with debugreiserfs -p and let us to download this
-before fsck-ing, if possible.
+>>  A reiserfs filesystem on my system got randomly corrupted, and then
+>>  would trigger a 100% reproducible oops:
+> 
+> The whole sequence (making corruption - trigger an oops)
+> is reproducible?
 
-Thanks,
-Edward.
+No, just the oops on this particular corruption. On this system, from
+times to times I get a corruption, I don't know how, but usually it
+just appears as a phantom file that I can't do anything with, not an
+oops.
 
+> If yes, please describe steps how to reproduce.
+> If no, then please extract file system metadata,
+> with debugreiserfs -p and let us to download this
+> before fsck-ing, if possible.
 
->
->
-> [  178.016969] PAX: suspicious general protection fault: 0000 [#1]
-> [  178.017141] last sysfs file: /sys/module/x_tables/initstate
-> [  178.017234] Modules linked in: af_packet ts_bm xt_tcpudp xt_string tun dummy sit tunnel4 ipt_MASQUERADE iptable_nat nf_nat nf_conntrack_ipv4 nf_conntrack nf_defrag_ipv4 ip_tables x_tables dm_mod pata_ali 3c59x mii ipv6 unix
-> [  178.018237]
-> [  178.018312] Pid: 1816, comm: rm Not tainted 2.6.39.3-grsec #1
-> [  178.018481] EIP: 0060:[<000e29b2>] EFLAGS: 00010286 CPU: 0
-> [  178.018577] EAX: 00000000 EBX: c204fb4b ECX: 00000000 EDX: c03c3e00
-> [  178.018682] ESI: ffffffff EDI: c204f73e EBP: c03c3e00 ESP: c03c3d70
-> [  178.018784]  DS: 0068 ES: 0068 FS: 0000 GS: 007b SS: 0068
-> [  178.018885] Process rm (pid: 1816, ti=c7b585a8 task=c7b58380 task.ti=c7b585a8)
-> [  178.018996] Stack:
-> [  178.019063]  c03a3380 c204fb3e c03c3e28 c7b12200 c01ffab8 000e8fda 00000001 00000000
-> [  178.019452]  00000000 00000000 00000000 c76f3a48 00000001 c76f38c0 00000088 c76f3888
-> [  178.019840]  00000074 000f360b c7b12200 c8cd7000 000f0369 00000000 c7b12200 c1868d7b
-> [  178.020230] Call Trace:
-> [  178.020335]  [<000e8fda>] ? search_for_position_by_key+0x1a/0x2b0
-> [  178.020463]  [<000f360b>] ? reiserfs_write_lock+0x1b/0x30
-> [  178.020572]  [<000f0369>] ? do_journal_end.clone.38+0x209/0xc60
-> [  178.020703]  [<000e2c7c>] ? __reiserfs_error+0x1c/0xb0
-> [  178.020807]  [<000eac5e>] ? reiserfs_do_truncate+0x47e/0x580
-> [  178.020920]  [<000f31bf>] ? reiserfs_for_each_xattr+0x23f/0x3c0
-> [  178.021047]  [<00076dfe>] ? try_to_unmap_file+0xfe/0x470
-> [  178.021154]  [<00076dff>] ? try_to_unmap_file+0xff/0x470
-> [  178.021271]  [<006b113d>] ? 0x6b113c
-> [  178.021365]  [<000ead85>] ? reiserfs_delete_object+0x25/0x60
-> [  178.021478]  [<000d77fb>] ? reiserfs_evict_inode+0xab/0xe0
-> [  178.021584]  [<006b113d>] ? 0x6b113c
-> [  178.021688]  [<0009dde6>] ? evict+0x46/0x110
-> [  178.021784]  [<00094d38>] ? do_unlinkat+0xe8/0x1f0
-> [  178.021888]  [<00076dff>] ? try_to_unmap_file+0xff/0x470
-> [  178.021915]  [<00207c60>] ? syscall_call+0x7/0xb
-> [  178.021915] Code: ff 00 00 52 8b 48 08 51 8b 50 04 52 8b 00 50 68 28 52 86 c1 57 e8 2f 4f 04 00 83 c4 1c e9 e7 fd ff ff 8d 6e 04 8b 36 85 f6 74 75<8a>  46 10 ba 5b f6 86 c1 84 c0 74 1b 3c 03 74 79 ba 2c 88 86 c1
-> [  178.021915] EIP: [<000e29b2>] prepare_error_buf+0x3b2/0x4b0 SS:ESP 0068:c03c3d70
-> [  178.024828] ---[ end trace a7de6d386ed5b2d8 ]---
-> [  178.024925] ------------[ cut here ]------------
->
->
-> I tried and ran into it on both 3.0.8-grsec and 2.6.39.3-grsec kernels.
-> Sorry for the non-vanilla kernel, I just got rid of the problem with a
-> fsck as quickly as possible. I thought I'd report it anyway.
->
-> Regards,
->
+Maybe if it happens again.
+
+-- 
+Pierre Ynard
 
