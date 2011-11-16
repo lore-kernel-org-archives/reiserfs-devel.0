@@ -1,87 +1,65 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: kernel 3.1.1 / 3.1.0 reiserfs locking problems
-Date: Tue, 15 Nov 2011 19:15:57 +0100
-Message-ID: <20111115181553.GA3234@somewhere>
-References: <4EAE5DE3.2020205@t-online.de>
- <CA+55aFzuWD1xRhQNLfe0ey_-1vACwY=ofD5PXSzL_5UeDRbk8g@mail.gmail.com>
- <4EC27039.6010904@t-online.de>
+From: Davidlohr Bueso <dave@gnu.org>
+Subject: [PATCH] reiserfs: delete comments refering to the BKL
+Date: Wed, 16 Nov 2011 18:02:22 +0100
+Message-ID: <1321462942.11902.2.camel@offworld>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=gamma;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-type:content-disposition:in-reply-to:user-agent;
-        bh=MqJIq+6j3hM8k+krYhgOsC2or+FUxh3oOY/hb/lv9fk=;
-        b=VVAuYlJZ8BU9PaRhNtMZPTlVcbiCey16u0WxDaA7mPoqtL6LZDYgr1V14agq9KyLnD
-         T/L1dJZOZDg0Sn8tBVT4L2Rp7CUxnT65cZQZ1p1Vz0AEUMWEilaopF1LNxWdR3rxrSIE
-         /OApQhNLHk16cbu8y7rYONrOj8zpunh9CtfMM=
-Content-Disposition: inline
-In-Reply-To: <4EC27039.6010904@t-online.de>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Knut Petersen <Knut_Petersen@t-online.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, Greg KH <gregkh@suse.de>, Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Jeff Mahoney <jeffm@suse.com>
+To: akpm@linux-foundation.org
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Nov 15, 2011 at 02:59:21PM +0100, Knut Petersen wrote:
-> Am 31.10.2011 16:08, schrieb Linus Torvalds:
-> 
-> With kernel 3.1.1 there is another reiserfs related lock probleme:
-> 
-> Nov 15 11:37:27 golem kernel: [ 1986.896976]
-> Nov 15 11:37:27 golem kernel: [ 1986.896979] =================================
-> Nov 15 11:37:27 golem kernel: [ 1986.896990] [ INFO: inconsistent lock state ]
-> Nov 15 11:37:27 golem kernel: [ 1986.896997] 3.1.1-main #8
-> Nov 15 11:37:27 golem kernel: [ 1986.897001] ---------------------------------
-> Nov 15 11:37:27 golem kernel: [ 1986.897007] inconsistent {RECLAIM_FS-ON-W} -> {IN-RECLAIM_FS-W} usage.
-> Nov 15 11:37:27 golem kernel: [ 1986.897016] kswapd0/16 [HC0[0]:SC0[0]:HE1:SE1] takes:
-> Nov 15 11:37:27 golem kernel: [ 1986.897023]  (&REISERFS_SB(s)->lock){+.+.?.}, at: [<c01f8bd4>] reiserfs_write_lock+0x20/0x2a
-> Nov 15 11:37:27 golem kernel: [ 1986.897044] {RECLAIM_FS-ON-W} state was registered at:
-> Nov 15 11:37:27 golem kernel: [ 1986.897050]   [<c014a5b9>] mark_held_locks+0xae/0xd0
-> Nov 15 11:37:27 golem kernel: [ 1986.897060]   [<c014aab3>] lockdep_trace_alloc+0x7d/0x91
-> Nov 15 11:37:27 golem kernel: [ 1986.897068]   [<c0190ee0>] kmem_cache_alloc+0x1a/0x93
-> Nov 15 11:37:27 golem kernel: [ 1986.897078]   [<c01e7728>] reiserfs_alloc_inode+0x13/0x3d
-> Nov 15 11:37:27 golem kernel: [ 1986.897088]   [<c01a5b06>] alloc_inode+0x14/0x5f
-> Nov 15 11:37:27 golem kernel: [ 1986.897097]   [<c01a5cb9>] iget5_locked+0x62/0x13a
-> Nov 15 11:37:27 golem kernel: [ 1986.897106]   [<c01e99e0>] reiserfs_fill_super+0x410/0x8b9
-> Nov 15 11:37:27 golem kernel: [ 1986.897114]   [<c01953da>] mount_bdev+0x10b/0x159
-> Nov 15 11:37:27 golem kernel: [ 1986.897123]   [<c01e764d>] get_super_block+0x10/0x12
-> Nov 15 11:37:27 golem kernel: [ 1986.897131]   [<c0195b38>] mount_fs+0x59/0x12d
-> Nov 15 11:37:27 golem kernel: [ 1986.897138]   [<c01a80d1>] vfs_kern_mount+0x45/0x7a
-> Nov 15 11:37:27 golem kernel: [ 1986.897147]   [<c01a83e3>] do_kern_mount+0x2f/0xb0
-> Nov 15 11:37:27 golem kernel: [ 1986.897155]   [<c01a987a>] do_mount+0x5c2/0x612
-> Nov 15 11:37:27 golem kernel: [ 1986.897163]   [<c01a9a72>] sys_mount+0x61/0x8f
-> Nov 15 11:37:27 golem kernel: [ 1986.897170]   [<c044060c>] sysenter_do_call+0x12/0x32
+From: Davidlohr Bueso <dave@gnu.org>
 
-The most straightforward way to solve this is to unlock before getting the superblock
-inode:
+Signed-off-by: Davidlohr Bueso <dave@gnu.org>
+---
+ fs/reiserfs/journal.c |   11 ++++-------
+ 1 files changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 14363b9..463c203 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -1762,9 +1762,11 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index eb71106..cce8e87 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -2896,14 +2896,13 @@ int journal_transaction_should_end(struct reiserfs_transaction_handle *th,
+ 	    journal->j_cnode_free < (journal->j_trans_max * 3)) {
+ 		return 1;
  	}
- 	args.objectid = REISERFS_ROOT_OBJECTID;
- 	args.dirid = REISERFS_ROOT_PARENT_OBJECTID;
-+	reiserfs_write_unlock(s);
- 	root_inode =
- 	    iget5_locked(s, REISERFS_ROOT_OBJECTID, reiserfs_find_actor,
- 			 reiserfs_init_locked_inode, (void *)(&args));
-+	reiserfs_write_lock(s);
- 	if (!root_inode) {
- 		SWARN(silent, s, "jmacd-10", "get root inode failed");
- 		goto error;
+-	/* protected by the BKL here */
++
+ 	journal->j_len_alloc += new_alloc;
+ 	th->t_blocks_allocated += new_alloc ;
+ 	return 0;
+ }
+ 
+-/* this must be called inside a transaction, and requires the
+-** kernel_lock to be held
++/* this must be called inside a transaction
+ */
+ void reiserfs_block_writes(struct reiserfs_transaction_handle *th)
+ {
+@@ -2914,8 +2913,7 @@ void reiserfs_block_writes(struct reiserfs_transaction_handle *th)
+ 	return;
+ }
+ 
+-/* this must be called without a transaction started, and does not
+-** require BKL
++/* this must be called without a transaction started
+ */
+ void reiserfs_allow_writes(struct super_block *s)
+ {
+@@ -2924,8 +2922,7 @@ void reiserfs_allow_writes(struct super_block *s)
+ 	wake_up(&journal->j_join_wait);
+ }
+ 
+-/* this must be called without a transaction started, and does not
+-** require BKL
++/* this must be called without a transaction started
+ */
+ void reiserfs_wait_on_write_block(struct super_block *s)
+ {
+-- 
+1.7.7.2
 
-But may be there are other iget5_locked in the path that I missed.
 
-Note this should be a harmless warning because I guess the filesystem can't be
-used for memory reclaim before it is actually mounted. But still this is
-annoying and the above fix is one more hack to cope with the fact we need to
-hold the lock from the mount path early even if we don't need it. That's
-because many helpers used there assume the lock is always taken when they
-are called. This assumption come from the bkl times.
-
-So probably I should try to clean up this a bit to solve it in a less
-dirty way. I'll try to come with something soon.
