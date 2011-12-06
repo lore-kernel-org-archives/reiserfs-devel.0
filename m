@@ -1,59 +1,58 @@
-From: Cong Wang <amwang@redhat.com>
-Subject: [PATCH 45/62] reiserfs: remove the second argument of k[un]map_atomic()
-Date: Sun, 27 Nov 2011 13:27:25 +0800
-Message-ID: <1322371662-26166-46-git-send-email-amwang@redhat.com>
-References: <1322371662-26166-1-git-send-email-amwang@redhat.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1322371662-26166-1-git-send-email-amwang@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Eric Sandeen <sandeen@redhat.com>
+Subject: [PATCH 6/6] reiserfs: fix up error handling for insert_inode_locked4
+Date: Tue, 06 Dec 2011 17:12:29 -0600
+Message-ID: <4EDEA15D.7040604@redhat.com>
+References: <4EDE9D54.1030506@redhat.com>
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org, Cong Wang <amwang@redhat.com>, reiserfs-devel@vger.kernel.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <4EDE9D54.1030506@redhat.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Cc: reiserfs-devel@vger.kernel.org
 
+after 250df6ed274d767da844a5d9f05720b804240197
+(fs: protect inode->i_state with inode->i_lock), insert_inode_locked()
+no longer returns the inode with I_NEW set on failure.  However,
+the error handler still calls unlock_new_inode() on failure,
+which does a WARN_ON if I_NEW is not set, so any failure spews
+a lot of warnings.
 
-Signed-off-by: Cong Wang <amwang@redhat.com>
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 ---
- fs/reiserfs/stree.c           |    4 ++--
- fs/reiserfs/tail_conversion.c |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-index 313d39d..77df82f 100644
---- a/fs/reiserfs/stree.c
-+++ b/fs/reiserfs/stree.c
-@@ -1284,12 +1284,12 @@ int reiserfs_delete_item(struct reiserfs_transaction_handle *th,
- 		 ** -clm
- 		 */
+(I had a hard time unraveling the gotos, so punted with an "inode_locked"
+var... prettier replacements are fine with me!)
+
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index 950f13a..b0cab7c 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -1779,6 +1779,7 @@ int reiserfs_new_inode(struct reiserfs_transaction_handle *th,
+ 	struct cpu_key key;
+ 	struct item_head ih;
+ 	struct stat_data sd;
++	int inode_locked = 0;
+ 	int retval;
+ 	int err;
  
--		data = kmap_atomic(un_bh->b_page, KM_USER0);
-+		data = kmap_atomic(un_bh->b_page);
- 		off = ((le_ih_k_offset(&s_ih) - 1) & (PAGE_CACHE_SIZE - 1));
- 		memcpy(data + off,
- 		       B_I_PITEM(PATH_PLAST_BUFFER(path), &s_ih),
- 		       ret_value);
--		kunmap_atomic(data, KM_USER0);
-+		kunmap_atomic(data);
+@@ -1816,6 +1817,7 @@ int reiserfs_new_inode(struct reiserfs_transaction_handle *th,
+ 		err = -EINVAL;
+ 		goto out_bad_inode;
  	}
- 	/* Perform balancing after all resources have been collected at once. */
- 	do_balance(&s_del_balance, NULL, NULL, M_DELETE);
-diff --git a/fs/reiserfs/tail_conversion.c b/fs/reiserfs/tail_conversion.c
-index d7f6e51..8f546bd 100644
---- a/fs/reiserfs/tail_conversion.c
-+++ b/fs/reiserfs/tail_conversion.c
-@@ -128,9 +128,9 @@ int direct2indirect(struct reiserfs_transaction_handle *th, struct inode *inode,
- 	if (up_to_date_bh) {
- 		unsigned pgoff =
- 		    (tail_offset + total_tail - 1) & (PAGE_CACHE_SIZE - 1);
--		char *kaddr = kmap_atomic(up_to_date_bh->b_page, KM_USER0);
-+		char *kaddr = kmap_atomic(up_to_date_bh->b_page);
- 		memset(kaddr + pgoff, 0, blk_size - total_tail);
--		kunmap_atomic(kaddr, KM_USER0);
-+		kunmap_atomic(kaddr);
- 	}
- 
- 	REISERFS_I(inode)->i_first_direct_byte = U32_MAX;
--- 
-1.7.4.4
++	inode_locked = 1;
+ 	if (old_format_only(sb))
+ 		/* not a perfect generation count, as object ids can be reused, but
+ 		 ** this is as good as reiserfs can do right now.
+@@ -1989,7 +1991,8 @@ int reiserfs_new_inode(struct reiserfs_transaction_handle *th,
+       out_inserted_sd:
+ 	clear_nlink(inode);
+ 	th->t_trans_id = 0;	/* so the caller can't use this handle later */
+-	unlock_new_inode(inode); /* OK to do even if we hadn't locked it */
++	if (inode_locked)
++		unlock_new_inode(inode);
+ 	iput(inode);
+ 	return err;
+ }
