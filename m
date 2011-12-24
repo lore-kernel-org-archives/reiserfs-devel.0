@@ -1,80 +1,36 @@
-From: Jan Kara <jack@suse.cz>
-Subject: [PATCH] reiserfs: Force inode evictions before umount to avoid crash
-Date: Wed, 21 Dec 2011 21:21:22 +0100
-Message-ID: <1324498882-29263-1-git-send-email-jack@suse.cz>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: "Jorge Bastos" <mysql.jorge@decimal.pt>
+Subject: RE: Reiserfs.c bug in 3.2-rc5
+Date: Sat, 24 Dec 2011 11:55:43 -0000
+Message-ID: <!&!AAAAAAAAAAAYAAAAAAAAAKCACr8ZwetPrGXZsycJodKihAAAEAAAAGPJDX4w3wxIo8Onu2+q/xMBAAAAAA==@decimal.pt>
+References: <43556.213.228.140.150.1323560920.squirrel@webmail.decimal.pt> <20111213180707.GI11747@quack.suse.cz>
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: linux-fsdevel@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Jeff Mahoney <jeffm@suse.com>, reiserfs-devel@vger.kernel.org, stable@kernel.org, Jan Kara <jack@suse.cz>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20111213180707.GI11747@quack.suse.cz>
+Content-Language: pt
+Sender: linux-kernel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: 'Jan Kara' <jack@suse.cz>
+Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, haiyangz@microsoft.com, hjanssen@microsoft.com
 
-From: Jeff Mahoney <jeffm@suse.com>
+Howdy,
 
-This patch fixes a crash in reiserfs_delete_xattrs during umount.
+> >
+> > What can be done here?
+>   The assertion failing is:
+>         BUG_ON(nblocks > journal->j_trans_max);
+> in do_journal_begin_r(). That means that reiserfs_create() tried to
+> start a
+> transaction with more credits than allowed by the journal.
+> 
+>   When did you started to see this problem? Also do you use SELinux (or
+> generally security labels)?
+> 
 
-When shrink_dcache_for_umount clears the dcache from
-generic_shutdown_super, delayed evictions are forced to disk. If an
-evicted inode has extended attributes associated with it, it will
-need to walk the xattr tree to locate and remove them.
+No SELinux, the only change is from 3.1.1 to 3.2-rc5.
+Tried the new 3.2-rc7 and the problem persists.
 
-But since shrink_dcache_for_umount will BUG if it encounters active
-dentries, the xattr tree must be released before it's called or it will
-crash during every umount.
+Is there a way that the ReiserFS people can commit the fix?
 
-This patch forces the evictions to occur before generic_shutdown_super
-by calling shrink_dcache_sb first. The additional evictions caused
-by the removal of each associated xattr file and dir will be automatically
-handled as they're added to the LRU list.
-
-CC: reiserfs-devel@vger.kernel.org
-CC: stable@kernel.org
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/reiserfs/super.c |   24 ++++++++++++++----------
- 1 files changed, 14 insertions(+), 10 deletions(-)
-
- This patch is sitting in SUSE tree for quite a few months. I'll push it
-to Linus in the next merge window if noone objects.
-
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 6ecba5c..d1e5950 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -455,16 +455,20 @@ int remove_save_link(struct inode *inode, int truncate)
- static void reiserfs_kill_sb(struct super_block *s)
- {
- 	if (REISERFS_SB(s)) {
--		if (REISERFS_SB(s)->xattr_root) {
--			d_invalidate(REISERFS_SB(s)->xattr_root);
--			dput(REISERFS_SB(s)->xattr_root);
--			REISERFS_SB(s)->xattr_root = NULL;
--		}
--		if (REISERFS_SB(s)->priv_root) {
--			d_invalidate(REISERFS_SB(s)->priv_root);
--			dput(REISERFS_SB(s)->priv_root);
--			REISERFS_SB(s)->priv_root = NULL;
--		}
-+		/*
-+		 * Force any pending inode evictions to occur now. Any
-+		 * inodes to be removed that have extended attributes
-+		 * associated with them need to clean them up before
-+		 * we can release the extended attribute root dentries.
-+		 * shrink_dcache_for_umount will BUG if we don't release
-+		 * those before it's called so ->put_super is too late.
-+		 */
-+		shrink_dcache_sb(s);
-+
-+		dput(REISERFS_SB(s)->xattr_root);
-+		REISERFS_SB(s)->xattr_root = NULL;
-+		dput(REISERFS_SB(s)->priv_root);
-+		REISERFS_SB(s)->priv_root = NULL;
- 	}
- 
- 	kill_block_super(s);
--- 
-1.7.1
-
+Jorge,
