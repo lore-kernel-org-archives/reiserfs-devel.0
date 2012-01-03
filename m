@@ -1,39 +1,58 @@
 From: Jan Kara <jack@suse.cz>
-Subject: Re: linux-next: build failure after merge of the ext3 tree
-Date: Mon, 2 Jan 2012 23:40:12 +0100
-Message-ID: <20120102224012.GE3626@quack.suse.cz>
-References: <20111228112254.551c2ee5a1ac8509962d6611@canb.auug.org.au>
+Subject: Re: Reiserfs.c bug in 3.2-rc5
+Date: Tue, 3 Jan 2012 02:08:26 +0100
+Message-ID: <20120103010826.GF3626@quack.suse.cz>
+References: <43556.213.228.140.150.1323560920.squirrel@webmail.decimal.pt>
+ <20111213180707.GI11747@quack.suse.cz>
+ <!&!AAAAAAAAAAAYAAAAAAAAAKCACr8ZwetPrGXZsycJodKihAAAEAAAAGPJDX4w3wxIo8Onu2+q/xMBAAAAAA==@decimal.pt>
+ <20120102115222.GA3626@quack.suse.cz>
+ <005301ccc998$201c9da0$6055d8e0$@jorge@decimal.pt>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20111228112254.551c2ee5a1ac8509962d6611@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <005301ccc998$201c9da0$6055d8e0$@jorge@decimal.pt>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jan Kara <jack@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+To: Jorge Bastos <mysql.jorge@decimal.pt>
+Cc: 'Jan Kara' <jack@suse.cz>, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, haiyangz@microsoft.com, hjanssen@microsoft.com, Mimi Zohar <zohar@linux.vnet.ibm.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-  Hi,
+  Hello,
 
-On Wed 28-12-11 11:22:54, Stephen Rothwell wrote:
-> After merging the ext3 tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+On Mon 02-01-12 21:47:29, Jorge Bastos wrote:
+> > > No SELinux, the only change is from 3.1.1 to 3.2-rc5.
+> > > Tried the new 3.2-rc7 and the problem persists.
+> >   OK, so do I understand right that 3.1.1 is OK but 3.2-rc5/rc7 have
+> > the problem?
+> > 
+> > > Is there a way that the ReiserFS people can commit the fix?
+> >   Sure, we just have to find where the problem is. Can you please run
+> > with the attached debugging patch applied and send me kernel output
+> > when the system crashes? Thanks.
 > 
-> fs/reiserfs/super.c: In function 'reiserfs_show_options':
-> fs/reiserfs/super.c:652:20: error: 'struct reiserfs_sb_info' has no member named 's_qf_names'
-> fs/reiserfs/super.c:653:50: error: 'struct reiserfs_sb_info' has no member named 's_qf_names'
-> fs/reiserfs/super.c:656:20: error: 'struct reiserfs_sb_info' has no member named 's_qf_names'
-> fs/reiserfs/super.c:657:50: error: 'struct reiserfs_sb_info' has no member named 's_qf_names'
-> fs/reiserfs/super.c:660:20: error: 'struct reiserfs_sb_info' has no member named 's_jquota_fmt'
-> fs/reiserfs/super.c:661:21: error: 'struct reiserfs_sb_info' has no member named 's_jquota_fmt'
-> fs/reiserfs/super.c:663:26: error: 'struct reiserfs_sb_info' has no member named 's_jquota_fmt'
+> Yes, till 3.1.6 everything works, with 3.2-rc7 (or rc5) it doesn't.
 > 
-> Caused by commit 5fa84b871b97 ("reiserfs: Properly display mount options
-> in /proc/mounts").  Hint: CONFIG_QUOTA is not set in this build.
-  Ah, stupid me. Fixed now. Thanks for letting me know.
+> Here are the images with the output, I can't copy the text since this is a
+> VM.
+> 
+> http://neotrix.decimal.pt/bugs/reiserfs_1.jpg
+> http://neotrix.decimal.pt/bugs/reiserfs_2.jpg
+> http://neotrix.decimal.pt/bugs/reiserfs_3.jpg
+> http://neotrix.decimal.pt/bugs/reiserfs_4.jpg 
+> 
+> Does this help? If not let me know further instructions.
+  Yes, thanks! So we see that reiserfs_security_init() returned bogus
+number 790797. This is caused by security_old_inode_init_security() either
+returning some bogus number or setting sec->length to something bogus. In
+any case it's some security module problem so I'm adding Mimi Zohar who did
+the changes in this code recently to CC. I'm also adding Rafael since this
+is a regression.
 
-									Honza
+  Also I think he might use your kernel config so can you please send it?
+Thanks.
+
+								Honza
 -- 
 Jan Kara <jack@suse.cz>
 SUSE Labs, CR
