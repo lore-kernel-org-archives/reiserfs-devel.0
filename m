@@ -1,61 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the vfs tree
-Date: Thu, 5 Jan 2012 17:35:21 +1100
-Message-ID: <20120105173521.9adbe29e16ca0e7361f79c36@canb.auug.org.au>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: build warning after merge of the vfs tree
+Date: Thu, 5 Jan 2012 08:06:57 +0000
+Message-ID: <20120105080657.GH23916@ZenIV.linux.org.uk>
+References: <20120105173521.9adbe29e16ca0e7361f79c36@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__5_Jan_2012_17_35_21_+1100_ouhxGakfn4LtB2UQ"
-Return-path: <linux-next-owner@vger.kernel.org>
-Sender: linux-next-owner@vger.kernel.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20120105173521.9adbe29e16ca0e7361f79c36@canb.auug.org.au>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org
 
---Signature=_Thu__5_Jan_2012_17_35_21_+1100_ouhxGakfn4LtB2UQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jan 05, 2012 at 05:35:21PM +1100, Stephen Rothwell wrote:
+> Hi Al,
+> 
+> After merging the vfs tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+> 
+> fs/reiserfs/super.c:701:2: warning: initialization from incompatible pointer type [enabled by default]
+> fs/reiserfs/super.c:701:2: warning: (near initialization for 'reiserfs_sops.show_options') [enabled by default]
+> 
+> Caused by commit 2ddeb2a58b11 ("vfs: switch ->show_options() to struct
+> dentry *") interacting with commit f1823b7b87d1 ("reiserfs: Properly
+> display mount options in /proc/mounts") from the ext3.  This needs some
+> merge fix ... (and will probably currently cause crashes :-()
 
-Hi Al,
-
-After merging the vfs tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
-
-fs/reiserfs/super.c:701:2: warning: initialization from incompatible pointe=
-r type [enabled by default]
-fs/reiserfs/super.c:701:2: warning: (near initialization for 'reiserfs_sops=
-.show_options') [enabled by default]
-
-Caused by commit 2ddeb2a58b11 ("vfs: switch ->show_options() to struct
-dentry *") interacting with commit f1823b7b87d1 ("reiserfs: Properly
-display mount options in /proc/mounts") from the ext3.  This needs some
-merge fix ... (and will probably currently cause crashes :-()
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__5_Jan_2012_17_35_21_+1100_ouhxGakfn4LtB2UQ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPBUSpAAoJEECxmPOUX5FE9VIP/28QFn3dZieCy41w1MTbIMrg
-5EApTNp4snVMkalq2o0A5/HL7QwEAfKXwjygMLLM1xWPoEr2c2T/4rqfjnKHMdcs
-aGZoxYH+3Zk0dzoZn9qHRi6WQAaM8JKEocOYFSwxkmOBdKWUkm1Y22IFIhFYrw7o
-vPs1P0mvZyNarxcZNwNoxbVqsorw1J0MlQnLKfRYn+eX6hA136cDYHLPDLmtO+Lf
-vlYB95cMBOdpXtf4ZeYqkMfie5YJIBA3vxNYyDVYtxGkAItkF8PdyfhSWrTkXBrf
-/AJjI/anjNupo8UuvzmDyazbDPcWv3/uWyZSQW/ubZkTVXHtvG0GnagLHAKP3kOD
-+Q8fn8wEryVMHeCk/pGidkwojocuEmS1MdZDtNfkZlxWCmIrJg+RCPb0Fi9I8l3Z
-ns54G49Vz3sEWZeoGtdaypPb9UxLgdI+93KahPQsRVK6xbGQ8sODJlp0TcI0qxt6
-YySKvCRIS5PtINAFFO1GyZ14FbeOJs68X1X0Z2jqiBGDvjovVjCeC3EX0ffDccts
-rnfQF3ulOLHVM0ZPH+H2yTGOJpQEINdiHoxfk+5gUaHLb1l87D01+XBW0DPhl3Au
-UKMAnGRcGHQrn9nztKZEVcTUbzf+J8POA7/HrW3EETRiK6E6o4I+PfyvnVJHfeDE
-7ihwuHX6RNaxE18Aa5xz
-=Rsae
------END PGP SIGNATURE-----
-
---Signature=_Thu__5_Jan_2012_17_35_21_+1100_ouhxGakfn4LtB2UQ--
+Grrr...  Same as changes in the first commit, done to the function introduced
+by the second (i.e. replace mnt->mnt_sb with dentry->d_sb).  Incidentally,
+what are reiserfs patches doing in ext3 tree, of all places?
