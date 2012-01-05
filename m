@@ -1,39 +1,50 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
+From: Jan Kara <jack@suse.cz>
 Subject: Re: linux-next: build warning after merge of the vfs tree
-Date: Thu, 5 Jan 2012 08:19:21 +0000
-Message-ID: <20120105081921.GJ23916@ZenIV.linux.org.uk>
+Date: Thu, 5 Jan 2012 12:34:48 +0100
+Message-ID: <20120105113448.GA14947@quack.suse.cz>
 References: <20120105173521.9adbe29e16ca0e7361f79c36@canb.auug.org.au>
  <20120105080657.GH23916@ZenIV.linux.org.uk>
- <20120105191434.6a21befed93e6ec39a3da62d@canb.auug.org.au>
+ <20120105081418.GI23916@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20120105191434.6a21befed93e6ec39a3da62d@canb.auug.org.au>
-Sender: reiserfs-devel-owner@vger.kernel.org
+In-Reply-To: <20120105081418.GI23916@ZenIV.linux.org.uk>
+Sender: linux-next-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org
 
-On Thu, Jan 05, 2012 at 07:14:34PM +1100, Stephen Rothwell wrote:
+On Thu 05-01-12 08:14:18, Al Viro wrote:
+> On Thu, Jan 05, 2012 at 08:06:57AM +0000, Al Viro wrote:
+> > On Thu, Jan 05, 2012 at 05:35:21PM +1100, Stephen Rothwell wrote:
+> > > Hi Al,
+> > > 
+> > > After merging the vfs tree, today's linux-next build (powerpc
+> > > ppc64_defconfig) produced this warning:
+> > > 
+> > > fs/reiserfs/super.c:701:2: warning: initialization from incompatible pointer type [enabled by default]
+> > > fs/reiserfs/super.c:701:2: warning: (near initialization for 'reiserfs_sops.show_options') [enabled by default]
+> > > 
+> > > Caused by commit 2ddeb2a58b11 ("vfs: switch ->show_options() to struct
+> > > dentry *") interacting with commit f1823b7b87d1 ("reiserfs: Properly
+> > > display mount options in /proc/mounts") from the ext3.  This needs some
+> > > merge fix ... (and will probably currently cause crashes :-()
+> > 
+> > Grrr...  Same as changes in the first commit, done to the function introduced
 > > by the second (i.e. replace mnt->mnt_sb with dentry->d_sb).  Incidentally,
+> > what are reiserfs patches doing in ext3 tree, of all places?
 > 
-> OK, I may apply that fix tomorrow.
+> FWIW, an updated variant of Jan's patch would be this (on top of
+> vfs.git#for-next; I can pull his commit there in such form):
+  Thanks. I'm removing the old version of the patch from my tree so please
+carry the new version in your tree. I was just carrying the patch because
+of lack of reiserfs maintainer and because I originally wrote the patch to
+accommodate needs of quota tools...
 
-FWIW, incremental is simply
+								Honza
 
---- a/fs/reiserfs/super.c	2012-01-05 03:18:03.000000000 -0500
-+++ b/fs/reiserfs/super.c	2012-01-05 03:09:45.000000000 -0500
-@@ -598,9 +598,9 @@
- 	reiserfs_write_unlock_once(inode->i_sb, lock_depth);
- }
- 
--static int reiserfs_show_options(struct seq_file *seq, struct vfsmount *vfs)
-+static int reiserfs_show_options(struct seq_file *seq, struct dentry *root)
- {
--	struct super_block *s = vfs->mnt_sb;
-+	struct super_block *s = root->d_sb;
- 	struct reiserfs_journal *journal = SB_JOURNAL(s);
- 	long opts = REISERFS_SB(s)->s_mount_opt;
- 
+-- 
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
