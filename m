@@ -1,47 +1,61 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: Reiserfs.c bug in 3.2-rc5
-Date: Wed, 4 Jan 2012 18:15:33 +0100
-Message-ID: <20120104171533.GB28907@quack.suse.cz>
-References: <20111213180707.GI11747@quack.suse.cz>
- <!&!AAAAAAAAAAAYAAAAAAAAAKCACr8ZwetPrGXZsycJodKihAAAEAAAAGPJDX4w3wxIo8Onu2+q/xMBAAAAAA==@decimal.pt>
- <20120102115222.GA3626@quack.suse.cz>
- <20120103010826.GF3626@quack.suse.cz>
- <20120103123841.GA31457@quack.suse.cz>
- <1325604356.2095.23.camel@falcor>
- <CA+55aFzwq6XiAnX26uV+-mNsbGbnj0S=4nP5avPqKPw8OT+cmw@mail.gmail.com>
- <1325616312.2095.26.camel@falcor>
- <alpine.LRH.2.00.1201041046330.18098@tundra.namei.org>
- <CA+55aFxZ4_T8VRh6wAKC9-9PjsctrK1WnOmN-2EDNTeHA+OA4g@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the vfs tree
+Date: Thu, 5 Jan 2012 17:35:21 +1100
+Message-ID: <20120105173521.9adbe29e16ca0e7361f79c36@canb.auug.org.au>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+55aFxZ4_T8VRh6wAKC9-9PjsctrK1WnOmN-2EDNTeHA+OA4g@mail.gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__5_Jan_2012_17_35_21_+1100_ouhxGakfn4LtB2UQ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Sender: linux-next-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: James Morris <jmorris@namei.org>, Mimi Zohar <zohar@linux.vnet.ibm.com>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, haiyangz@microsoft.com, hjanssen@microsoft.com, "Rafael J. Wysocki" <rjw@sisk.pl>, Jorge Bastos <mysql.jorge@decimal.pt>, Mark Fasheh <mfasheh@suse.com>, Joel Becker <jlbec@evilplan.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org
 
-On Tue 03-01-12 16:18:01, Linus Torvalds wrote:
-> On Tue, Jan 3, 2012 at 3:47 PM, James Morris <jmorris@namei.org> wrote:
-> >>
-> >> Just clarifying not all of commit fb88c2b, but only the
-> >> security_old_inode_init_security() hunk.
-> >
-> > Agreed.
-> >
-> > And yep, it's ugly :-\
-> 
-> Ok, applied - along with another last-minute fix - and pushed out.
-> 
-> Can everybody please test and double-check that what I applied was
-> what everybody agrees is the RightThing(tm)? I really wanted to do 3.2
-> today, but both of those commits are of the "please double-check"
-> kind, so..
-  Thanks. The patch looks OK and current HEAD works for me.
+--Signature=_Thu__5_Jan_2012_17_35_21_+1100_ouhxGakfn4LtB2UQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-								Honza
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+Hi Al,
+
+After merging the vfs tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
+
+fs/reiserfs/super.c:701:2: warning: initialization from incompatible pointe=
+r type [enabled by default]
+fs/reiserfs/super.c:701:2: warning: (near initialization for 'reiserfs_sops=
+.show_options') [enabled by default]
+
+Caused by commit 2ddeb2a58b11 ("vfs: switch ->show_options() to struct
+dentry *") interacting with commit f1823b7b87d1 ("reiserfs: Properly
+display mount options in /proc/mounts") from the ext3.  This needs some
+merge fix ... (and will probably currently cause crashes :-()
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__5_Jan_2012_17_35_21_+1100_ouhxGakfn4LtB2UQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPBUSpAAoJEECxmPOUX5FE9VIP/28QFn3dZieCy41w1MTbIMrg
+5EApTNp4snVMkalq2o0A5/HL7QwEAfKXwjygMLLM1xWPoEr2c2T/4rqfjnKHMdcs
+aGZoxYH+3Zk0dzoZn9qHRi6WQAaM8JKEocOYFSwxkmOBdKWUkm1Y22IFIhFYrw7o
+vPs1P0mvZyNarxcZNwNoxbVqsorw1J0MlQnLKfRYn+eX6hA136cDYHLPDLmtO+Lf
+vlYB95cMBOdpXtf4ZeYqkMfie5YJIBA3vxNYyDVYtxGkAItkF8PdyfhSWrTkXBrf
+/AJjI/anjNupo8UuvzmDyazbDPcWv3/uWyZSQW/ubZkTVXHtvG0GnagLHAKP3kOD
++Q8fn8wEryVMHeCk/pGidkwojocuEmS1MdZDtNfkZlxWCmIrJg+RCPb0Fi9I8l3Z
+ns54G49Vz3sEWZeoGtdaypPb9UxLgdI+93KahPQsRVK6xbGQ8sODJlp0TcI0qxt6
+YySKvCRIS5PtINAFFO1GyZ14FbeOJs68X1X0Z2jqiBGDvjovVjCeC3EX0ffDccts
+rnfQF3ulOLHVM0ZPH+H2yTGOJpQEINdiHoxfk+5gUaHLb1l87D01+XBW0DPhl3Au
+UKMAnGRcGHQrn9nztKZEVcTUbzf+J8POA7/HrW3EETRiK6E6o4I+PfyvnVJHfeDE
+7ihwuHX6RNaxE18Aa5xz
+=Rsae
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__5_Jan_2012_17_35_21_+1100_ouhxGakfn4LtB2UQ--
