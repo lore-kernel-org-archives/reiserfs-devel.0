@@ -1,10 +1,10 @@
 From: Greg KH <gregkh@suse.de>
-Subject: [23/49] reiserfs: Fix quota mount option parsing
-Date: Tue, 10 Jan 2012 13:55:26 -0800
-Message-ID: <20120110215603.543174059@clark.kroah.org>
-References: <20120110215609.GA22505@kroah.com>
+Subject: [15/42] reiserfs: Fix quota mount option parsing
+Date: Tue, 10 Jan 2012 13:48:25 -0800
+Message-ID: <20120110215022.205027082@clark.kroah.org>
+References: <20120110215031.GA19398@kroah.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120110215609.GA22505@kroah.com>
+In-Reply-To: <20120110215031.GA19398@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -13,7 +13,7 @@ Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, alan@lxorguk.ukuu.org.uk, reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>
 
-3.2-stable review patch.  If anyone has any objections, please let me know.
+3.1-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
