@@ -1,47 +1,82 @@
 From: Greg KH <gregkh@suse.de>
-Subject: [07/20] reiserfs: Fix quota mount option parsing
-Date: Tue, 10 Jan 2012 12:06:58 -0800
-Message-ID: <20120110200850.368987282@clark.kroah.org>
-References: <20120110200902.GA5674@kroah.com>
+Subject: [16/42] reiserfs: Force inode evictions before umount to avoid crash
+Date: Tue, 10 Jan 2012 13:48:26 -0800
+Message-ID: <20120110215022.302273341@clark.kroah.org>
+References: <20120110215031.GA19398@kroah.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120110200902.GA5674@kroah.com>
+In-Reply-To: <20120110215031.GA19398@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, alan@lxorguk.ukuu.org.uk, reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, alan@lxorguk.ukuu.org.uk, reiserfs-devel@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>, Jan Kara <jack@suse.cz>
 
-2.6.32-longterm review patch.  If anyone has any objections, please let me know.
+3.1-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Jeff Mahoney <jeffm@suse.com>
 
-commit a06d789b424190e9f59da391681f908486db2554 upstream.
+commit a9e36da655e54545c3289b2a0700b5c443de0edd upstream.
 
-When jqfmt mount option is not specified on remount, we mistakenly clear
-s_jquota_fmt value stored in superblock. Fix the problem.
+This patch fixes a crash in reiserfs_delete_xattrs during umount.
+
+When shrink_dcache_for_umount clears the dcache from
+generic_shutdown_super, delayed evictions are forced to disk. If an
+evicted inode has extended attributes associated with it, it will
+need to walk the xattr tree to locate and remove them.
+
+But since shrink_dcache_for_umount will BUG if it encounters active
+dentries, the xattr tree must be released before it's called or it will
+crash during every umount.
+
+This patch forces the evictions to occur before generic_shutdown_super
+by calling shrink_dcache_sb first. The additional evictions caused
+by the removal of each associated xattr file and dir will be automatically
+handled as they're added to the LRU list.
 
 CC: reiserfs-devel@vger.kernel.org
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
 
 ---
- fs/reiserfs/super.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/reiserfs/super.c |   24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
 --- a/fs/reiserfs/super.c
 +++ b/fs/reiserfs/super.c
-@@ -1149,7 +1149,8 @@ static void handle_quota_files(struct su
- 			kfree(REISERFS_SB(s)->s_qf_names[i]);
- 		REISERFS_SB(s)->s_qf_names[i] = qf_names[i];
+@@ -453,16 +453,20 @@ int remove_save_link(struct inode *inode
+ static void reiserfs_kill_sb(struct super_block *s)
+ {
+ 	if (REISERFS_SB(s)) {
+-		if (REISERFS_SB(s)->xattr_root) {
+-			d_invalidate(REISERFS_SB(s)->xattr_root);
+-			dput(REISERFS_SB(s)->xattr_root);
+-			REISERFS_SB(s)->xattr_root = NULL;
+-		}
+-		if (REISERFS_SB(s)->priv_root) {
+-			d_invalidate(REISERFS_SB(s)->priv_root);
+-			dput(REISERFS_SB(s)->priv_root);
+-			REISERFS_SB(s)->priv_root = NULL;
+-		}
++		/*
++		 * Force any pending inode evictions to occur now. Any
++		 * inodes to be removed that have extended attributes
++		 * associated with them need to clean them up before
++		 * we can release the extended attribute root dentries.
++		 * shrink_dcache_for_umount will BUG if we don't release
++		 * those before it's called so ->put_super is too late.
++		 */
++		shrink_dcache_sb(s);
++
++		dput(REISERFS_SB(s)->xattr_root);
++		REISERFS_SB(s)->xattr_root = NULL;
++		dput(REISERFS_SB(s)->priv_root);
++		REISERFS_SB(s)->priv_root = NULL;
  	}
--	REISERFS_SB(s)->s_jquota_fmt = *qfmt;
-+	if (*qfmt)
-+		REISERFS_SB(s)->s_jquota_fmt = *qfmt;
- }
- #endif
  
+ 	kill_block_super(s);
 
