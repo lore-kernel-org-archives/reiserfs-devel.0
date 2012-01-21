@@ -1,47 +1,21 @@
-From: Greg KH <gregkh@suse.de>
-Subject: [14/40] reiserfs: Fix quota mount option parsing
-Date: Tue, 10 Jan 2012 13:45:27 -0800
-Message-ID: <20120110214619.418388994@clark.kroah.org>
-References: <20120110214630.GA14384@kroah.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120110214630.GA14384@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
+From: <doiggl@velocitynet.com.au>
+Subject: series of tests wich talked about "One Billion Files"
+Date: Sun, 22 Jan 2012 00:13:27 +1100
+Message-ID: <6e80504b8549271fa4ed473f9b145f0f@mail.velocitynet.com.au>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, alan@lxorguk.ukuu.org.uk, reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>
+To: reiserfs-devel@vger.kernel.org
 
-3.0-stable review patch.  If anyone has any objections, please let me know.
+Hello,
+I saw a series of tests wich talked about "One Billion Files". I wonder
+how Reiser 4 would go ?
+Some Links to the article follow[1].   -Glenn 
 
-------------------
-
-From: Jan Kara <jack@suse.cz>
-
-commit a06d789b424190e9f59da391681f908486db2554 upstream.
-
-When jqfmt mount option is not specified on remount, we mistakenly clear
-s_jquota_fmt value stored in superblock. Fix the problem.
-
-CC: reiserfs-devel@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
-
----
- fs/reiserfs/super.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -1164,7 +1164,8 @@ static void handle_quota_files(struct su
- 			kfree(REISERFS_SB(s)->s_qf_names[i]);
- 		REISERFS_SB(s)->s_qf_names[i] = qf_names[i];
- 	}
--	REISERFS_SB(s)->s_jquota_fmt = *qfmt;
-+	if (*qfmt)
-+		REISERFS_SB(s)->s_jquota_fmt = *qfmt;
- }
- #endif
- 
+[1] links
+http://www.linux-mag.com/id/7876/
+http://events.linuxfoundation.org/slides/2010/linuxcon2010_wheeler.pdf
 
