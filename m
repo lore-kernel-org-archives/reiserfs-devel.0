@@ -1,51 +1,46 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [PATCH] fs/reiserfs/journal.c: add missing brelse
-Date: Thu, 03 May 2012 16:45:20 +0200
-Message-ID: <4FA29A00.3040303@gmail.com>
-References: <1336054373-13293-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Sandro Souza <escovadordebits@gmail.com>
+Subject: Help please
+Date: Fri, 4 May 2012 15:57:20 -0300
+Message-ID: <CANish_k+TucLHQQCkx5kHaqN6e7kJOFqKG4fsey18BhWBs=BWA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1336054373-13293-1-git-send-email-Julia.Lawall@lip6.fr>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=mime-version:date:message-id:subject:from:to:content-type;
+        bh=WQxiCikjmu0eVIFbMF8Vsztd0UUCCJex5I9cM1yk7WI=;
+        b=kdNb8ObciOb+wVve+6Ihpw7B3jjGzaIrzw+2btuy8SJRkDIEPuq2QxdxwSTOcx0eVN
+         pELKDiSSuCDj8A/BHSKMH4fa/phQ6Kmu0kJAag1p0W/RiK4mU3bfIIWgC4LypFtBHoTx
+         os3u9ZQpW5nE9DnGq4dJqmD9wfCrT9NifPbytCCY+HLn+lzZ9vo+1AAqfFZx8tgjf1hm
+         qsxWBuaJwZFB31zo87yXuJM0adcg3lgPIz+FbTHgCgISqpp6ooO7KHufIOSm8FhpgitJ
+         W3D4pOAVHp6qzau2+4SB1USKyDZryli+mbLSiuD2kEF0BNGGY4251P/kfdKUpWBvC2Z1
+         M2Tg==
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: reiserfs-devel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
-On 05/03/2012 04:12 PM, Julia Lawall wrote:
-> From: Julia Lawall<Julia.Lawall@lip6.fr>
->
-> Brelse is called to put bhjh on every way out of the function except this one.
+Hello my friends.
 
-Yes, thanks.
-Acked-by: Edward Shishkin <edward.shishkin@gmail.com>
+I made some tests to get a custom debian distro with native reiser4
+support, but I haven't success yet. :(
 
->
-> Signed-off-by: Julia Lawall<Julia.Lawall@lip6.fr>
->
-> ---
->   fs/reiserfs/journal.c |    4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-> index b1a0857..1ef9cbc 100644
-> --- a/fs/reiserfs/journal.c
-> +++ b/fs/reiserfs/journal.c
-> @@ -2757,8 +2757,10 @@ int journal_init(struct super_block *sb, const char *j_dev_name,
->   	    le32_to_cpu(jh->jh_journal.jp_journal_max_commit_age);
->   	journal->j_max_trans_age = JOURNAL_MAX_TRANS_AGE;
->
-> -	if (check_advise_trans_params(sb, journal) != 0)
-> +	if (check_advise_trans_params(sb, journal) != 0) {
-> +		brelse(bhjh);
->   	        goto free_and_return;
-> +	}
->   	journal->j_default_max_commit_age = journal->j_max_commit_age;
->
->   	if (commit_max_age != 0) {
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I made 3 videos (by XVidCap without sound) with these tests.
+
+They're available in http://www.smartsolutionfactory.com.br/reiser4
+
+May you see them and tell me what steps I've missed?
+
+I was able to compile the kernel sources with the reiser4 patch
+(2.6.32 kernel), and I installed the generated packages
+(linux-headers-*** and linux-image-***).
+
+After reboot the VM, no problem. But after it, I've tried to copy a
+folder from a reiser3 partition to a reiser4 partition, and
+unfortunally it has failed. :(
+
+I need to know what I'm doing wrong.
+
+Any help is wellcome.
+
+Thanks in advance.
