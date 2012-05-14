@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 14876] umounting reiserFS after many days caused oops
-Date: Mon, 14 May 2012 15:41:25 +0000 (UTC)
-Message-ID: <20120514154125.A3E2111FCE3@bugzilla.kernel.org>
+Date: Mon, 14 May 2012 15:41:20 +0000 (UTC)
+Message-ID: <20120514154120.F3BA711FCE3@bugzilla.kernel.org>
 References: <bug-14876-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -19,7 +19,9 @@ Alan <alan@lxorguk.ukuu.org.uk> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-             Status|RESOLVED                    |CLOSED
+             Status|NEW                         |RESOLVED
+                 CC|                            |alan@lxorguk.ukuu.org.uk
+         Resolution|                            |UNREPRODUCIBLE
 
 
 
