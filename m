@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 14855] Reiserproblem
-Date: Mon, 14 May 2012 15:42:52 +0000 (UTC)
-Message-ID: <20120514154252.7A73611FCE3@bugzilla.kernel.org>
+Date: Mon, 14 May 2012 15:43:00 +0000 (UTC)
+Message-ID: <20120514154300.2368511FCE3@bugzilla.kernel.org>
 References: <bug-14855-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -19,9 +19,7 @@ Alan <alan@lxorguk.ukuu.org.uk> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-                 CC|                            |alan@lxorguk.ukuu.org.uk
-         Resolution|                            |OBSOLETE
+             Status|RESOLVED                    |CLOSED
 
 
 
