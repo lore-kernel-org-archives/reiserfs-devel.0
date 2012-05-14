@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 14826] jdm-20002 reiserfs_xattr_get: Invalid hash for xattr
-Date: Mon, 14 May 2012 15:46:53 +0000 (UTC)
-Message-ID: <20120514154653.A42FA11FCE4@bugzilla.kernel.org>
+Date: Mon, 14 May 2012 15:47:02 +0000 (UTC)
+Message-ID: <20120514154702.2F28711FCE1@bugzilla.kernel.org>
 References: <bug-14826-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -19,9 +19,7 @@ Alan <alan@lxorguk.ukuu.org.uk> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-                 CC|                            |alan@lxorguk.ukuu.org.uk
-         Resolution|                            |OBSOLETE
+             Status|RESOLVED                    |CLOSED
 
 
 
