@@ -1,7 +1,7 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: Testing a custom kernel (2.6.39) with native reiser4 support
-Date: Tue, 15 May 2012 13:14:23 +0200
-Message-ID: <4FB23A8F.20900@gmail.com>
+Date: Tue, 15 May 2012 13:49:21 +0200
+Message-ID: <4FB242C1.6090409@gmail.com>
 References: <CANish_kwKO1EUys-QS44oJeD1T7daFMn1QA0LdPC1ZVG6_RtOg@mail.gmail.com> <4FB22C03.1080509@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -45,13 +45,21 @@ On 05/15/2012 12:12 PM, Edward Shishkin wrote:
 >> grabbed2flush_reserved_nolock+0x33/0x7b
 >
 >
+> It seems we forget to reserve space somewhere in write_end_cryptcompress().
+>
 > Reiser4 uses technique of "soft ENOSPC": since it is impossible to
 > estimate precisely amount of disk space that will be spent by any
 > operation, every thread reserves needed amount of space with store,
 > so that surplus will be freed at commit time.
 >
 > It seems we forget to reserve space somewhere in
-> write_end_cryptcompress()
+> write_end_cryptcompress() for some needs, so that all reserved space
+> is exhausted and update_sd(), which wants 1 reserved block encounters
+> a zeroed counter of reserved blocks.
 
 
-^write_end^write_begin
+BTW we don't reserve space exactly for update_sd() (one block should be
+reserved). Anybody care to fix this?
+
+Thanks,
+Edward.
