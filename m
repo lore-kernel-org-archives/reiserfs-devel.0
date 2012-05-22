@@ -1,8 +1,8 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 11652] BUG: unable to handle kernel paging request in
  le_key_version
-Date: Tue, 22 May 2012 14:35:06 +0000 (UTC)
-Message-ID: <20120522143506.E41F411FD11@bugzilla.kernel.org>
+Date: Tue, 22 May 2012 14:35:13 +0000 (UTC)
+Message-ID: <20120522143513.0675011FD11@bugzilla.kernel.org>
 References: <bug-11652-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -20,10 +20,7 @@ Alan <alan@lxorguk.ukuu.org.uk> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-                 CC|                            |alan@lxorguk.ukuu.org.uk
-         Resolution|                            |OBSOLETE
-         Regression|---                         |No
+             Status|RESOLVED                    |CLOSED
 
 
 
