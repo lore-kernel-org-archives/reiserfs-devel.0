@@ -1,47 +1,35 @@
-From: =?iso-8859-1?Q?Llu=EDs?= Batlle i Rossell <viric@viric.name>
-Subject: Re: Two hangs on reiserfs, linux 3.3.6
-Date: Tue, 5 Jun 2012 21:50:34 +0200
-Message-ID: <20120605195034.GY1927@vicerveza.homeunix.net>
-References: <20120604222208.GP1927@vicerveza.homeunix.net>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 29162] Reiserfs hang with dataloss sometimes
+Date: Wed,  6 Jun 2012 08:32:59 +0000 (UTC)
+Message-ID: <20120606083259.9209D11FC43@bugzilla.kernel.org>
+References: <bug-29162-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120604222208.GP1927@vicerveza.homeunix.net>
+In-Reply-To: <bug-29162-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2012 at 12:22:08AM +0200, Llu=EDs Batlle i Rossell wrot=
-e:
-> Hello,
->=20
-> I use reiserfs since years and never saw it hang... but in this compu=
-ter, that
-> has two reiserfs on soft RAID1, I've seen two hangs this week.
->=20
-> Here are the sysrq 'w' I could get from dmesg from the two situations=
-, I hope
-> they can help finding out what can this be. All the system works (roo=
-tfs on
-> btrfs, two data reiserfs on softraid1), but attempts to use the reise=
-rfs trees
-> end up in hanged processes.
->=20
-> http://viric.name/tmp/hang/nispro-dmesg-hang-reiserfs.txt.gz
->=20
-> http://viric.name/tmp/hang/nispro-dmesg-hang-reiserfs2.txt.gz - this,=
- a few
-> minutes ago, includes all since boot.
+https://bugzilla.kernel.org/show_bug.cgi?id=29162
 
-Third hang, some minutes ago. Only two processes stuck.
-http://viric.name/tmp/hang/nispro-dmesg-hang-reiserfs3.txt
 
-I think I'm moving away from reiserfs.
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Stephan Diestelhorst <stephan.diestelhorst@gmail.com> changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |stephan.diestelhorst@gmail.
+                   |                            |com
+
+
+
+
+--- Comment #41 from Stephan Diestelhorst <stephan.diestelhorst@gmail.com>  2012-06-06 08:32:59 ---
+I do experience the same issue every now and then, with Ubuntu 3.0.0-20 kernel.
+ Will try to upgrade and see how it behaves.
+
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
