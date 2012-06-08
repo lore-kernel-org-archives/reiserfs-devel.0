@@ -1,33 +1,30 @@
 From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 29162] Reiserfs hang with dataloss sometimes
-Date: Wed,  6 Jun 2012 08:32:59 +0000 (UTC)
-Message-ID: <20120606083259.9209D11FC43@bugzilla.kernel.org>
-References: <bug-29162-695@https.bugzilla.kernel.org/>
+Subject: [Bug 13536] crash while copying atime with touch
+Date: Fri,  8 Jun 2012 11:57:25 +0000 (UTC)
+Message-ID: <20120608115725.3C2C81205D6@bugzilla.kernel.org>
+References: <bug-13536-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-29162-695@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-13536-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=29162
+https://bugzilla.kernel.org/show_bug.cgi?id=13536
 
 
-Stephan Diestelhorst <stephan.diestelhorst@gmail.com> changed:
+Alan <alan@lxorguk.ukuu.org.uk> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-                 CC|                            |stephan.diestelhorst@gmail.
-                   |                            |com
+             Status|NEW                         |RESOLVED
+                 CC|                            |alan@lxorguk.ukuu.org.uk
+         Resolution|                            |OBSOLETE
 
 
 
-
---- Comment #41 from Stephan Diestelhorst <stephan.diestelhorst@gmail.com>  2012-06-06 08:32:59 ---
-I do experience the same issue every now and then, with Ubuntu 3.0.0-20 kernel.
- Will try to upgrade and see how it behaves.
 
 -- 
 Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
