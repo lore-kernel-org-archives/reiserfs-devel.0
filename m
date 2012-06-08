@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 13536] crash while copying atime with touch
-Date: Fri,  8 Jun 2012 11:57:25 +0000 (UTC)
-Message-ID: <20120608115725.3C2C81205D6@bugzilla.kernel.org>
+Date: Fri,  8 Jun 2012 11:57:37 +0000 (UTC)
+Message-ID: <20120608115737.13B671205D6@bugzilla.kernel.org>
 References: <bug-13536-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -19,9 +19,7 @@ Alan <alan@lxorguk.ukuu.org.uk> changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-                 CC|                            |alan@lxorguk.ukuu.org.uk
-         Resolution|                            |OBSOLETE
+             Status|RESOLVED                    |CLOSED
 
 
 
