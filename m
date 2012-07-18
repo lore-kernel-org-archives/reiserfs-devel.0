@@ -1,44 +1,55 @@
-From: Knut Petersen <Knut_Petersen@t-online.de>
-Subject: [Bug 3.4.5] reiserfs: mutex_destroy called with locked mutex
-Date: Wed, 18 Jul 2012 07:26:53 +0200
-Message-ID: <5006491D.8070004@t-online.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [Bug 3.4.5] reiserfs: mutex_destroy called with locked mutex
+Date: Wed, 18 Jul 2012 09:26:57 -0700
+Message-ID: <CA+55aFzv5mntf6y9e_r5=v+beG19xBv67EpA=dP0-Zw1CQrGGg@mail.gmail.com>
+References: <5006491D.8070004@t-online.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=mime-version:sender:in-reply-to:references:from:date
+         :x-google-sender-auth:message-id:subject:to:cc:content-type;
+        bh=VLIlbPC/SGrJX+0Eba0/ac0Ea5h4AaZNC9eTtr2sNIQ=;
+        b=Fg5T9Jv7OTe73HEBeuqwOSgxG6oyH72sgEDw4tc9tNL3/Ua7KI1Gc4aplMzaCaXgjR
+         vQVAdnG3/w0WbFcRzBdvVpHqlW8eFsnkfM3wg0FpCzL202+9Mox2bHIdGKXIAZScj6S9
+         397KqErlSFw3BqqcDgZiM/RNk70zyN0sefgyBwmnP9woZSE/Z+S/XGNECEsX6ozl8e8J
+         WP8TVWkLRemz5BIvGjnJx7jbU7vhlRuLVdoK/xsu8h0mJfnOfSj4cQC6kVr+rGBnP8Rl
+         RCYppGCF4W7LPaOub9bvopY7XnA81hA0wllvhsAT90dsLtaT/xDb/MyYvh0SYyGQBjID
+         1taA==
+In-Reply-To: <5006491D.8070004@t-online.de>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: linux-kernel@vger.kernel.org
-Cc: reiserfs-devel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Knut Petersen <Knut_Petersen@t-online.de>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
 
-I hit the following problem during a heavy compile job on kernel 3.4.5:
+On Tue, Jul 17, 2012 at 10:26 PM, Knut Petersen
+<Knut_Petersen@t-online.de> wrote:
+> I hit the following problem during a heavy compile job on kernel 3.4.5:
 
-Jul 17 20:29:59 golem kernel: [27408.140718] ------------[ cut here ]------------
-Jul 17 20:29:59 golem kernel: [27408.140739] WARNING: at kernel/mutex-debug.c:106 mutex_destroy+0x35/0x3f()
-Jul 17 20:29:59 golem kernel: [27408.140748] Hardware name:
-Jul 17 20:29:59 golem kernel: [27408.140753] Modules linked in: ipt_MASQUERADE xt_pkttype xt_TCPMSS xt_tcpudp xt_LOG xt_limit iptable_nat nf_nat pppoe pppox af_packet ppp_generic s
-lhc ir_kbd_i2c snd_pcm_oss snd_mixer_oss snd_seq snd_seq_device ip6t_REJECT nf_conntrack_ipv6 nf_defrag_ipv6 ip6table_raw xt_NOTRACK ipt_REJECT iptable_raw iptable_filter ip6table_
-mangle nf_conntrack_netbios_ns nf_conntrack_broadcast nf_conntrack_ipv4 nf_defrag_ipv4 ip_tables xt_conntrack nf_conntrack ip6table_filter ip6_tables x_tables ipv6 isl6421 ir_lirc_
-codec cx24116 lirc_dev ir_mce_kbd_decoder ir_sanyo_decoder cx88_dvb ir_sony_decoder ir_jvc_decoder ir_rc6_decoder videobuf_dvb snd_hda_codec_realtek dvb_core ir_rc5_decoder ir_nec_
-decoder snd_hda_intel rc_hauppauge snd_hda_codec tuner snd_rme96 snd_hwdep snd_pcm cx8800 cx8802 cx88xx snd_timer snd rc_core tveeprom v4l2_common soundcore videodev btcx_risc vide
-obuf_dma_sg videobuf_core snd_page_alloc
-Jul 17 20:29:59 golem kernel: [27408.140933] Pid: 17424, comm: mkdir Not tainted 3.4.5-main #49
-Jul 17 20:29:59 golem kernel: [27408.140940] Call Trace:
-Jul 17 20:29:59 golem kernel: [27408.140950]  [<c01218bb>] ? console_unlock+0x1bc/0x1e2
-Jul 17 20:29:59 golem kernel: [27408.140960]  [<c0120dfc>] warn_slowpath_common+0x68/0x7d
-Jul 17 20:29:59 golem kernel: [27408.140969]  [<c01505a5>] ? mutex_destroy+0x35/0x3f
-Jul 17 20:29:59 golem kernel: [27408.140978]  [<c0120e25>] warn_slowpath_null+0x14/0x18
-Jul 17 20:29:59 golem kernel: [27408.140987]  [<c01505a5>] mutex_destroy+0x35/0x3f
-Jul 17 20:29:59 golem kernel: [27408.140998]  [<c01cad96>] lockdep_annotate_inode_mutex_key+0x3a/0x69
-Jul 17 20:29:59 golem kernel: [27408.141008]  [<c01cadd6>] unlock_new_inode+0x11/0x55
-Jul 17 20:29:59 golem kernel: [27408.141018]  [<c020914c>] reiserfs_mkdir+0x274/0x29b
-Jul 17 20:29:59 golem kernel: [27408.141030]  [<c01c153c>] vfs_mkdir+0x8f/0xdd
-Jul 17 20:29:59 golem kernel: [27408.141039]  [<c029a9a2>] ? apparmor_path_mkdir+0x1b/0x1d
-Jul 17 20:29:59 golem kernel: [27408.141049]  [<c01c388b>] sys_mkdirat+0x76/0xa9
-Jul 17 20:29:59 golem kernel: [27408.141058]  [<c01c38d5>] sys_mkdir+0x17/0x19
-Jul 17 20:29:59 golem kernel: [27408.141069]  [<c049f1dd>] syscall_call+0x7/0xb
-Jul 17 20:29:59 golem kernel: [27408.141077] ---[ end trace ea73962172137cb3 ]---
+I think it's triggered by the fact that reiserfs does
 
-cu,
-  Knut
+        d_instantiate(dentry, inode);
+        unlock_new_inode(inode);
 
+ie it does the "unlock_new_inode()" *after* it has already made the
+inode visible to others in the filesystem. So you can now have a
+concurrent lookup of that dentry that finds the (locked) inode before
+"unlock_new_inode()" has had the chance to set the lockdep class.
+Also, since it's been instantiated, the only *valid* inode pointer is
+in the dentry, so the code really really shouldn't use the "inode"
+pointer any more because the refcount has been transferred to the
+dentry. So maybe memory pressure could turn the dentry negative (and
+free the inode) while the unlock_new_inode() code runs.
+
+fs/ext[23]/namei.c has the same pattern, though, and I think it should
+be harmless (the inode is marked I_NEW and we get the i_lock for
+unlock_new_inode, so the freeing code should know to keep away from
+it). So I don't think the freeing code could trigger, but a concurrent
+lookup then trying to look up the new directory (and taking the new
+directory i_semaphore lock) could happen, afaik.
+
+So I think we should re-order the d_instantiate/unlock_new_inode calls. Al?
+
+                   Linus
