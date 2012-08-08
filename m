@@ -1,66 +1,34 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH] reiserfs: fix deadlocks with quotas
-Date: Thu, 02 Aug 2012 21:36:04 -0400
-Message-ID: <501B2B04.2050706@suse.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 45431] PROBLEM: problem with kswap/raiserfs
+Date: Wed,  8 Aug 2012 09:24:36 +0000 (UTC)
+Message-ID: <20120808092436.D64A611FB3D@bugzilla.kernel.org>
+References: <bug-45431-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <bug-45431-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Linux FS Maling List <linux-fsdevel@vger.kernel.org>
-Cc: Jan Kara <jack@suse.cz>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-The BKL push-down for reiserfs made lock recursion a special case that needs
-to be handled explicitly. One of the cases that was unhandled is dropping
-the quota during inode eviction. Both reiserfs_evict_inode and
-reiserfs_write_dquot take the write lock, but when the journal lock is
-taken it only drops one the references. The locking rules are that the journal
-lock be acquired before the write lock so leaving the reference open leads
-to a ABBA deadlock.
+https://bugzilla.kernel.org/show_bug.cgi?id=45431
 
-This patch pushes the unlock up before clear_inode and avoids the recursive
-locking.
 
-Another ABBA situation can occur when the write lock is dropped while reading
-the bitmap buffer while in the quota code. When the lock is reacquired, it
-will deadlock against dquot->dq_lock and dqopt->dqio_mutex in the dquot_acquire
-path. It's safe to retain the lock across the read and should be cached under
-write load.
+Alan <alan@lxorguk.ukuu.org.uk> changed:
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- fs/reiserfs/bitmap.c |    2 --
- fs/reiserfs/inode.c  |    2 +-
- 2 files changed, 1 insertion(+), 3 deletions(-)
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |alan@lxorguk.ukuu.org.uk
 
---- a/fs/reiserfs/bitmap.c
-+++ b/fs/reiserfs/bitmap.c
-@@ -1334,9 +1334,7 @@ struct buffer_head *reiserfs_read_bitmap
- 	else if (bitmap == 0)
- 		block = (REISERFS_DISK_OFFSET_IN_BYTES >> sb->s_blocksize_bits) + 1;
- 
--	reiserfs_write_unlock(sb);
- 	bh = sb_bread(sb, block);
--	reiserfs_write_lock(sb);
- 	if (bh == NULL)
- 		reiserfs_warning(sb, "sh-2029: %s: bitmap block (#%u) "
- 		                 "reading failed", __func__, block);
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -76,10 +76,10 @@ void reiserfs_evict_inode(struct inode *
- 		;
- 	}
-       out:
-+	reiserfs_write_unlock_once(inode->i_sb, depth);
- 	clear_inode(inode);	/* note this must go after the journal_end to prevent deadlock */
- 	dquot_drop(inode);
- 	inode->i_blocks = 0;
--	reiserfs_write_unlock_once(inode->i_sb, depth);
- 	return;
- 
- no_delete:
+
+
+
+--- Comment #2 from Alan <alan@lxorguk.ukuu.org.uk>  2012-08-08 09:24:36 ---
+Known bug: one way to avoid it should be to run reiserfs without any quotas
+enabled.
 
 -- 
-Jeff Mahoney
-SUSE Labs
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
