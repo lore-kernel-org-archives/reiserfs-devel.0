@@ -1,34 +1,65 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 45431] PROBLEM: problem with kswap/raiserfs
-Date: Wed,  8 Aug 2012 09:24:36 +0000 (UTC)
-Message-ID: <20120808092436.D64A611FB3D@bugzilla.kernel.org>
-References: <bug-45431-695@https.bugzilla.kernel.org/>
+From: Jeff Mahoney <jeffm@suse.de>
+Subject: [PATCH] reiserfs: fix deadlock with nfs racing on create/lookup
+Date: Thu, 09 Aug 2012 12:38:04 -0400
+Message-ID: <5023E76C.609@suse.de>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-45431-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
+To: Linux FS Maling List <linux-fsdevel@vger.kernel.org>
+Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=45431
+Reiserfs is currently able to be deadlocked by having two NFS clients
+where one has removed and recreated a file and another is accessing the
+file with an open file handle.
 
+If one client deletes and recreates a file with timing such that the
+recreated file obtains the same [dirid, objectid] pair as the original
+file while another client accesses the file via file handle, the create
+and lookup can race and deadlock if the lookup manages to create the
+in-memory inode first.
 
-Alan <alan@lxorguk.ukuu.org.uk> changed:
+The create thread, in insert_inode_locked4, will hold the write lock
+while waiting on the other inode to be unlocked. The lookup thread,
+anywhere in the iget path, will release and reacquire the write lock while
+it schedules. If it needs to reacquire the lock while the create thread
+has it, it will never be able to make forward progress because it needs
+to reacquire the lock before ultimately unlocking the inode.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |alan@lxorguk.ukuu.org.uk
+This patch drops the write lock across the insert_inode_locked4 call so
+that the ordering of inode_wait -> write lock is retained. Since this
+would have been the case before the BKL push-down, this is safe.
 
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
 
+ fs/reiserfs/inode.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-
---- Comment #2 from Alan <alan@lxorguk.ukuu.org.uk>  2012-08-08 09:24:36 ---
-Known bug: one way to avoid it should be to run reiserfs without any quotas
-enabled.
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -1806,11 +1806,16 @@ int reiserfs_new_inode(struct reiserfs_t
+ 				  TYPE_STAT_DATA, SD_SIZE, MAX_US_INT);
+ 	memcpy(INODE_PKEY(inode), &(ih.ih_key), KEY_SIZE);
+ 	args.dirid = le32_to_cpu(ih.ih_key.k_dir_id);
+-	if (insert_inode_locked4(inode, args.objectid,
+-			     reiserfs_find_actor, &args) < 0) {
++
++	reiserfs_write_unlock(inode->i_sb);
++	err = insert_inode_locked4(inode, args.objectid,
++			     reiserfs_find_actor, &args);
++	reiserfs_write_lock(inode->i_sb);
++	if (err) {
+ 		err = -EINVAL;
+ 		goto out_bad_inode;
+ 	}
++
+ 	if (old_format_only(sb))
+ 		/* not a perfect generation count, as object ids can be reused, but
+ 		 ** this is as good as reiserfs can do right now.
 
 -- 
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
-------- You are receiving this mail because: -------
-You are the assignee for the bug.
+Jeff Mahoney
+SUSE Labs
