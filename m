@@ -1,33 +1,51 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: A best approach to get a summary of r4-conflicting kernel changes from 2.6.39
-Date: Sat, 18 Aug 2012 00:53:35 +0400
-Message-ID: <5669697.fA5P36S773@intelfx-laptop>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH] fs: reiserfs/xattr.c: Make reiserfs_xattr_handlers static
+Date: Thu, 23 Aug 2012 20:08:55 +0530
+Message-ID: <CAK9yfHxctU7NqrW9HZh55=1ehxiWHDC243XrG0kT_UX05AdS9w@mail.gmail.com>
+References: <1343902157-2267-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=from:to:subject:date:message-id:user-agent:mime-version
-         :content-transfer-encoding:content-type;
-        bh=26WsZJCQYDntfS98hl/wSW0MgP/kpVpEhg+/Y6FG2No=;
-        b=VxdOwgGvaWvi6Hqvij0N6YprTZtWu8ydz7LGsG6AiinswSEOEMR+D93gmeKVLphmya
-         xjoitHKqQNTGzD+jKFkEEtG5kUJiAa/Td1zcoRyxv0ZiOUMgjaJA6msUQVXtMapl4Wrb
-         NUBSmhTag7+Jsu2pxx8O7ntHrBz2T1hmz9KalBSpyOIDZ49/eMgYcqpkfA3grhl5kDxc
-         rmafvvKgOVgQm7Ej6viOnybKsVuNtr9WjRMYprup7wB2SwH7nTyPv45UHvyqPdQgCOhI
-         aRoHBSLQSpxo/2HtTF5MAgDD4lLVex3IMpYv2LFV17n8b3I2kZT1AcN5WGvkVYfcf8NP
-         4y3g==
+In-Reply-To: <1343902157-2267-1-git-send-email-sachin.kamat@linaro.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org, jack@suse.cz
+Cc: viro@zeniv.linux.org.uk, sachin.kamat@linaro.org, patches@linaro.org
 
-Hello,
+Hi Jan,
 
-What is the best way to get some "summary" of changes that the kernel had 
-undergone from 2.6.39 (last reiser4-compatible) to current? I need not all 
-changes, but only those which make the current kernel reiser4-incompatible.
-In particular, will "git log" suffice - and if yes, to which files/directories 
-shall it be applied?
+Please pick this patch if it looks ok.
 
-Thanks in advance,
-Ivan Shapovalov
+On 2 August 2012 15:39, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Silences the following sparse warning:
+> fs/reiserfs/xattr.c:899:28: warning:
+> symbol 'reiserfs_xattr_handlers' was not declared. Should it be static?
+>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  fs/reiserfs/xattr.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
+> index d319963..c196369 100644
+> --- a/fs/reiserfs/xattr.c
+> +++ b/fs/reiserfs/xattr.c
+> @@ -896,7 +896,7 @@ static int create_privroot(struct dentry *dentry) { return 0; }
+>  #endif
+>
+>  /* Actual operations that are exported to VFS-land */
+> -const struct xattr_handler *reiserfs_xattr_handlers[] = {
+> +static const struct xattr_handler *reiserfs_xattr_handlers[] = {
+>  #ifdef CONFIG_REISERFS_FS_XATTR
+>         &reiserfs_xattr_user_handler,
+>         &reiserfs_xattr_trusted_handler,
+> --
+> 1.7.4.1
+>
+
+
+
+-- 
+With warm regards,
+Sachin
