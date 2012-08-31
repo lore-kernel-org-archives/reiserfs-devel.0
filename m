@@ -1,94 +1,101 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: reiser4 patch and formatting partitions
-Date: Fri, 31 Aug 2012 09:27:20 +0200
-Message-ID: <50406758.4000101@gmail.com>
-References: <ffc5fb825e3c08c0f37e9696d3025d65@mail.velocitynet.com.au> <5040588D.10501@gmail.com> <8a02fe7a19b065bf0a2b411df2db1e20@mail.velocitynet.com.au>
+From: Marco Stornelli <marco.stornelli@gmail.com>
+Subject: [PATCH 03/21] reiserfs: drop vmtruncate
+Date: Fri, 31 Aug 2012 15:52:21 +0200
+Message-ID: <5040C195.9050303@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=j9rWLukIX4522OXpkfMt05zN0isTc9CfEusJb171+Vw=;
-        b=TKBtSr7VYaYJtGjp/Zlw4JeDkbwpP97kRhL2pAte+8M2vTE2nm+0oz+/zkzCR6GO3R
-         2oHkXrPAJ/V60hEbfYBGnGtJsXEUfIEfqVunK+Jkxf/VSp85ucVt0J5muBVUPRGSXEIF
-         Iv5Sjl282Pt1qyt9+i9waclfc8Y3JzJdg8YGPAGs1zr8Rw2vV7/bHgQ92ls9jf5pxJnn
-         R1G1CAXjZOSO3SHsCgSKQ+psszy6FytmSgF0WmqgSwZfDKSwJcYZ8DXMZVAx8y/BZjWV
-         Ob9SNvQwhbMtbeGOkUo0uhagZAOmZFQJJQWw47b/S9ESexU9TcjFq6J8ipFwaPieE4T2
-         6TnA==
-In-Reply-To: <8a02fe7a19b065bf0a2b411df2db1e20@mail.velocitynet.com.au>
+         :content-type:content-transfer-encoding;
+        bh=3OPKZmR45CqdsLUZi6rZgMTUca66NsiaJGfzWcG0+pQ=;
+        b=NCc/LrQL1JCUh5j3nikpZC59BmYdfCNrF9qg5AljCSHTgf1KGujpsBOfJyR29DRRx0
+         5jK3fegCqg5ri90a9RqnaxY9hGtMAALWmrwwB9OyZ/3PfBicrBUfrlIKy1eg2+M0qlVG
+         36yaTNlKROx7xfE42EmPecY5UKy9fZnSYbLaZdBi6Vj8OIagk8kNM5zKuvdHQ0FydMoW
+         89SUS2qIp4Uz/uJJWr0d89DKj1RQ7lfaJ7AIBREz9G0Xhvd2PWSz20Up1/rtn4fDSHHY
+         AMmbFOWdPAXXvpss2/9aeYfdafFbC0D7oPZ0CvaD5qFfIru7GR5HMT9TULYawRI7XLK9
+         P4Ng==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="windows-1252"; format="flowed"
-To: doiggl@velocitynet.com.au
-Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Luca Tettamanti <kronos.it@gmail.com>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/31/2012 06:05 AM, doiggl@velocitynet.com.au wrote:
-> On Fri, 31 Aug 2012 08:24:13 +0200, Edward Shishkin
-> <edward.shishkin@gmail.com>  wrote:
->> On 08/31/2012 05:19 AM, doiggl@velocitynet.com.au wrote:
->>> Hello,
->>> Is the reiser4 patch with the [kernel 3.1 stuff by Marcin Baczy=C5=84=
-ski]
->>> available somewhere to try out.
->>> - Can the patch be accessed from [1] when it is released.
->>
->>
->> This is not yet reviewed/tested.
->>
->>
->>> - Should I use the format option -o "formatting=3Dextents" when cre=
-ating
-> a
->>> partition e.g
->>> mkfs.reiser4 -o create=3Dccreg40,formatting=3Dextents /dev/sdaX
->>
->>
->> No.
->> Cryptcompress file plugin doesn't use extents. It uses
->> tail packing technique, which uses the buggy balance primitive.
->>
->>
->>>
->>> Information from this thread [2]
->>>
->>> Thanks
->>> Glenn
->>>
->>> [1]
-> http://sourceforge.net/projects/reiser4/files/reiser4-for-linux-2.6/
->>> [2] http://www.spinics.net/lists/reiserfs-devel/msg03216.html
->>>
->
->
->
->>> - Should I use the format option -o "formatting=3Dextents" when cre=
-ating
-> a
->>> partition e.g
->>> mkfs.reiser4 -o create=3Dccreg40,formatting=3Dextents /dev/sdaX
->>
->> No.
->> Cryptcompress file plugin doesn't use extents. It uses
->> tail packing technique, which uses the buggy balance primitive.
->
-> Hello,
->
-> Question:
-> Have you got an example on how to format a reiser4 partition please, =
-what
-> would be safe to use ?
->
-> mkfs.reiser4 -o XXXXX /dev/sda
-> where XXXXX =3D ??? options
+Removed vmtruncate.
 
+Signed-off-by: Marco Stornelli <marco.stornelli@gmail.com>
+---
+ fs/reiserfs/file.c     |    3 +--
+ fs/reiserfs/inode.c    |   15 +++++++++++----
+ fs/reiserfs/reiserfs.h |    1 +
+ 3 files changed, 13 insertions(+), 6 deletions(-)
 
-mkfs.reiser4 -o formatting=3Dextents /dev/sdaX
-
-Edward.
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/reiserfs/file.c b/fs/reiserfs/file.c
+index 8375c92..50302d6 100644
+--- a/fs/reiserfs/file.c
++++ b/fs/reiserfs/file.c
+@@ -126,7 +126,7 @@ static int reiserfs_file_open(struct inode *inode, struct file *file)
+ 	return err;
+ }
+ 
+-static void reiserfs_vfs_truncate_file(struct inode *inode)
++void reiserfs_vfs_truncate_file(struct inode *inode)
+ {
+ 	mutex_lock(&(REISERFS_I(inode)->tailpack));
+ 	reiserfs_truncate_file(inode, 1);
+@@ -312,7 +312,6 @@ const struct file_operations reiserfs_file_operations = {
+ };
+ 
+ const struct inode_operations reiserfs_file_inode_operations = {
+-	.truncate = reiserfs_vfs_truncate_file,
+ 	.setattr = reiserfs_setattr,
+ 	.setxattr = reiserfs_setxattr,
+ 	.getxattr = reiserfs_getxattr,
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index 855da58..03430b6 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -3078,8 +3078,10 @@ static ssize_t reiserfs_direct_IO(int rw, struct kiocb *iocb,
+ 		loff_t isize = i_size_read(inode);
+ 		loff_t end = offset + iov_length(iov, nr_segs);
+ 
+-		if (end > isize)
+-			vmtruncate(inode, isize);
++		if ((end > isize) && inode_newsize_ok(inode, isize) == 0) {
++			truncate_setsize(inode, isize);
++			reiserfs_vfs_truncate_file(inode);
++		}
+ 	}
+ 
+ 	return ret;
+@@ -3192,8 +3194,13 @@ int reiserfs_setattr(struct dentry *dentry, struct iattr *attr)
+ 	 */
+ 	reiserfs_write_unlock_once(inode->i_sb, depth);
+ 	if ((attr->ia_valid & ATTR_SIZE) &&
+-	    attr->ia_size != i_size_read(inode))
+-		error = vmtruncate(inode, attr->ia_size);
++	    attr->ia_size != i_size_read(inode)) {
++		error = inode_newsize_ok(inode, attr->ia_size);
++		if (!error) {
++			truncate_setsize(inode, attr->ia_size);
++			reiserfs_vfs_truncate_file(inode);
++		}
++	}
+ 
+ 	if (!error) {
+ 		setattr_copy(inode, attr);
+diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+index 33215f5..157e474 100644
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -2455,6 +2455,7 @@ struct reiserfs_transaction_handle *reiserfs_persistent_transaction(struct
+ 								    *,
+ 								    int count);
+ int reiserfs_end_persistent_transaction(struct reiserfs_transaction_handle *);
++void reiserfs_vfs_truncate_file(struct inode *inode);
+ int reiserfs_commit_page(struct inode *inode, struct page *page,
+ 			 unsigned from, unsigned to);
+ void reiserfs_flush_old_commits(struct super_block *);
+-- 
+1.7.3.4
