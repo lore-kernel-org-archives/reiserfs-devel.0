@@ -1,252 +1,106 @@
-From: Namjae Jeon <linkinjeon@gmail.com>
-Subject: [PATCH] fs: encode_fh: return FILEID_INVALID if invalid fid_type
-Date: Fri, 31 Aug 2012 12:46:41 -0400
-Message-ID: <1346431601-3477-1-git-send-email-linkinjeon@gmail.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:x-mailer;
-        bh=ofAv+TFrU+CLMXta9m1GFXQK+FOhC9GCyeTfWU1iLrE=;
-        b=r8yFRuVXfnbgumVIoNatvE8DX+mp8APo0yiq9t8TgJ3FsTOHmIi64n9q1YB9v03Zih
-         ZG3dsU7Htcscjvg5IPp+CXTN/Ilfz569XsLLAWyimFK3ipsPr87Td4447TWYQeqieXyr
-         GOwkQ7S1Co4vIK9woDT3OUaJvMKJV52NGsIKGyS/vhlKWfzu8kln2rg4Gfz+A8B8MRt4
-         TiQ+ccq+IaBGDLFy54mQ+l/ZC4qaEEjQSm1K+fkmS1Y7E0wpH355AJqKRfofpDifN+E1
-         d+rbw+XmZsT+85srktrccOBX4faBcC2O+X3/HzzOasl5SBmNIHF1/BAw/U3ZvSWbhw1t
-         64xg==
-Sender: linux-fsdevel-owner@vger.kernel.org
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 03/21] reiserfs: drop vmtruncate
+Date: Mon, 3 Sep 2012 15:34:09 +0200
+Message-ID: <20120903133409.GH21109@quack.suse.cz>
+References: <5040C195.9050303@gmail.com>
+Mime-Version: 1.0
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5040C195.9050303@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bfields@fieldses.org, akpm@linux-foundation.org, viro@zeniv.linux.org.uk, chris.mason@fusionio.com, sage@inktank.com, miklos@szeredi.hu, swhiteho@redhat.com, konishi.ryusuke@lab.ntt.co.jp, mfasheh@suse.com, jlbec@ejvilplan.org, jack@suse.cz, bpm@sgi.com, elder@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org, linux-nilfs@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Namjae Jeon <linkinjeon@gmail.com>, Vivek Trivedi <vtrivedi018@gmail.com>
+To: Marco Stornelli <marco.stornelli@gmail.com>
+Cc: Linux FS Devel <linux-fsdevel@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, Luca Tettamanti <kronos.it@gmail.com>, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch is a follow up on below patch:
+On Fri 31-08-12 15:52:21, Marco Stornelli wrote:
+> Removed vmtruncate.
+  Looks good. You can add:
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-[PATCH] exportfs: add FILEID_INVALID to indicate invalid fid_type
-https://patchwork.kernel.org/patch/1385131/
+							Honza
 
-Signed-off-by: Namjae Jeon <linkinjeon@gmail.com>
-Signed-off-by: Vivek Trivedi <vtrivedi018@gmail.com>
----
- fs/btrfs/export.c   |    4 ++--
- fs/ceph/export.c    |    4 ++--
- fs/fuse/inode.c     |    2 +-
- fs/gfs2/export.c    |    4 ++--
- fs/isofs/export.c   |    4 ++--
- fs/nilfs2/namei.c   |    4 ++--
- fs/ocfs2/export.c   |    4 ++--
- fs/reiserfs/inode.c |    4 ++--
- fs/udf/namei.c      |    4 ++--
- fs/xfs/xfs_export.c |    4 ++--
- mm/cleancache.c     |    2 +-
- mm/shmem.c          |    2 +-
- 12 files changed, 21 insertions(+), 21 deletions(-)
-
-diff --git a/fs/btrfs/export.c b/fs/btrfs/export.c
-index 614f34a..81ee29e 100644
---- a/fs/btrfs/export.c
-+++ b/fs/btrfs/export.c
-@@ -22,10 +22,10 @@ static int btrfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
- 
- 	if (parent && (len < BTRFS_FID_SIZE_CONNECTABLE)) {
- 		*max_len = BTRFS_FID_SIZE_CONNECTABLE;
--		return 255;
-+		return FILEID_INVALID;
- 	} else if (len < BTRFS_FID_SIZE_NON_CONNECTABLE) {
- 		*max_len = BTRFS_FID_SIZE_NON_CONNECTABLE;
--		return 255;
-+		return FILEID_INVALID;
- 	}
- 
- 	len  = BTRFS_FID_SIZE_NON_CONNECTABLE;
-diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-index 8e1b60e..98bde89 100644
---- a/fs/ceph/export.c
-+++ b/fs/ceph/export.c
-@@ -79,7 +79,7 @@ static int ceph_encode_fh(struct inode *inode, u32 *rawfh, int *max_len,
- 		if (parent_inode) {
- 			/* nfsd wants connectable */
- 			*max_len = connected_handle_length;
--			type = 255;
-+			type = FILEID_INVALID;
- 		} else {
- 			dout("encode_fh %p\n", dentry);
- 			fh->ino = ceph_ino(inode);
-@@ -88,7 +88,7 @@ static int ceph_encode_fh(struct inode *inode, u32 *rawfh, int *max_len,
- 		}
- 	} else {
- 		*max_len = handle_length;
--		type = 255;
-+		type = FILEID_INVALID;
- 	}
- 	return type;
- }
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 2690a76..b787a6f 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -672,7 +672,7 @@ static int fuse_encode_fh(struct inode *inode, u32 *fh, int *max_len,
- 
- 	if (*max_len < len) {
- 		*max_len = len;
--		return  255;
-+		return  FILEID_INVALID;
- 	}
- 
- 	nodeid = get_fuse_inode(inode)->nodeid;
-diff --git a/fs/gfs2/export.c b/fs/gfs2/export.c
-index e8ed6d4..f7a8092 100644
---- a/fs/gfs2/export.c
-+++ b/fs/gfs2/export.c
-@@ -37,10 +37,10 @@ static int gfs2_encode_fh(struct inode *inode, __u32 *p, int *len,
- 
- 	if (parent && (*len < GFS2_LARGE_FH_SIZE)) {
- 		*len = GFS2_LARGE_FH_SIZE;
--		return 255;
-+		return FILEID_INVALID;
- 	} else if (*len < GFS2_SMALL_FH_SIZE) {
- 		*len = GFS2_SMALL_FH_SIZE;
--		return 255;
-+		return FILEID_INVALID;
- 	}
- 
- 	fh[0] = cpu_to_be32(ip->i_no_formal_ino >> 32);
-diff --git a/fs/isofs/export.c b/fs/isofs/export.c
-index 1d38044..5e693b3 100644
---- a/fs/isofs/export.c
-+++ b/fs/isofs/export.c
-@@ -125,10 +125,10 @@ isofs_export_encode_fh(struct inode *inode,
- 	 */
- 	if (parent && (len < 5)) {
- 		*max_len = 5;
--		return 255;
-+		return FILEID_INVALID;
- 	} else if (len < 3) {
- 		*max_len = 3;
--		return 255;
-+		return FILEID_INVALID;
- 	}
- 
- 	len = 3;
-diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
-index 1d0c0b8..9de78f0 100644
---- a/fs/nilfs2/namei.c
-+++ b/fs/nilfs2/namei.c
-@@ -517,11 +517,11 @@ static int nilfs_encode_fh(struct inode *inode, __u32 *fh, int *lenp,
- 
- 	if (parent && *lenp < NILFS_FID_SIZE_CONNECTABLE) {
- 		*lenp = NILFS_FID_SIZE_CONNECTABLE;
--		return 255;
-+		return FILEID_INVALID;
- 	}
- 	if (*lenp < NILFS_FID_SIZE_NON_CONNECTABLE) {
- 		*lenp = NILFS_FID_SIZE_NON_CONNECTABLE;
--		return 255;
-+		return FILEID_INVALID;
- 	}
- 
- 	fid->cno = root->cno;
-diff --git a/fs/ocfs2/export.c b/fs/ocfs2/export.c
-index 322216a..2965116 100644
---- a/fs/ocfs2/export.c
-+++ b/fs/ocfs2/export.c
-@@ -195,11 +195,11 @@ static int ocfs2_encode_fh(struct inode *inode, u32 *fh_in, int *max_len,
- 
- 	if (parent && (len < 6)) {
- 		*max_len = 6;
--		type = 255;
-+		type = FILEID_INVALID;
- 		goto bail;
- 	} else if (len < 3) {
- 		*max_len = 3;
--		type = 255;
-+		type = FILEID_INVALID;
- 		goto bail;
- 	}
- 
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index 855da58..1a212ed 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -1599,10 +1599,10 @@ int reiserfs_encode_fh(struct inode *inode, __u32 * data, int *lenp,
- 
- 	if (parent && (maxlen < 5)) {
- 		*lenp = 5;
--		return 255;
-+		return FILEID_INVALID;
- 	} else if (maxlen < 3) {
- 		*lenp = 3;
--		return 255;
-+		return FILEID_INVALID;
- 	}
- 
- 	data[0] = inode->i_ino;
-diff --git a/fs/udf/namei.c b/fs/udf/namei.c
-index 95fee27..102c072 100644
---- a/fs/udf/namei.c
-+++ b/fs/udf/namei.c
-@@ -1270,10 +1270,10 @@ static int udf_encode_fh(struct inode *inode, __u32 *fh, int *lenp,
- 
- 	if (parent && (len < 5)) {
- 		*lenp = 5;
--		return 255;
-+		return FILEID_INVALID;
- 	} else if (len < 3) {
- 		*lenp = 3;
--		return 255;
-+		return FILEID_INVALID;
- 	}
- 
- 	*lenp = 3;
-diff --git a/fs/xfs/xfs_export.c b/fs/xfs/xfs_export.c
-index 4267922..a5a4e52 100644
---- a/fs/xfs/xfs_export.c
-+++ b/fs/xfs/xfs_export.c
-@@ -47,7 +47,7 @@ static int xfs_fileid_length(int fileid_type)
- 	case FILEID_INO32_GEN_PARENT | XFS_FILEID_TYPE_64FLAG:
- 		return 6;
- 	}
--	return 255; /* invalid */
-+	return FILEID_INVALID; /* invalid */
- }
- 
- STATIC int
-@@ -89,7 +89,7 @@ xfs_fs_encode_fh(
- 	len = xfs_fileid_length(fileid_type);
- 	if (*max_len < len) {
- 		*max_len = len;
--		return 255;
-+		return FILEID_INVALID;
- 	}
- 	*max_len = len;
- 
-diff --git a/mm/cleancache.c b/mm/cleancache.c
-index 32e6f41..d76ba74 100644
---- a/mm/cleancache.c
-+++ b/mm/cleancache.c
-@@ -89,7 +89,7 @@ static int cleancache_get_key(struct inode *inode,
- 		fhfn = sb->s_export_op->encode_fh;
- 		if  (fhfn) {
- 			len = (*fhfn)(inode, &key->u.fh[0], &maxlen, NULL);
--			if (len <= 0 || len == 255)
-+			if (len <= FILEID_ROOT || len == FILEID_INVALID)
- 				return -1;
- 			if (maxlen > CLEANCACHE_KEY_MAX)
- 				return -1;
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 1d04904..5cbae30 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2386,7 +2386,7 @@ static int shmem_encode_fh(struct inode *inode, __u32 *fh, int *len,
- {
- 	if (*len < 3) {
- 		*len = 3;
--		return 255;
-+		return FILEID_INVALID;
- 	}
- 
- 	if (inode_unhashed(inode)) {
+> 
+> Signed-off-by: Marco Stornelli <marco.stornelli@gmail.com>
+> ---
+>  fs/reiserfs/file.c     |    3 +--
+>  fs/reiserfs/inode.c    |   15 +++++++++++----
+>  fs/reiserfs/reiserfs.h |    1 +
+>  3 files changed, 13 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/reiserfs/file.c b/fs/reiserfs/file.c
+> index 8375c92..50302d6 100644
+> --- a/fs/reiserfs/file.c
+> +++ b/fs/reiserfs/file.c
+> @@ -126,7 +126,7 @@ static int reiserfs_file_open(struct inode *inode, struct file *file)
+>  	return err;
+>  }
+>  
+> -static void reiserfs_vfs_truncate_file(struct inode *inode)
+> +void reiserfs_vfs_truncate_file(struct inode *inode)
+>  {
+>  	mutex_lock(&(REISERFS_I(inode)->tailpack));
+>  	reiserfs_truncate_file(inode, 1);
+> @@ -312,7 +312,6 @@ const struct file_operations reiserfs_file_operations = {
+>  };
+>  
+>  const struct inode_operations reiserfs_file_inode_operations = {
+> -	.truncate = reiserfs_vfs_truncate_file,
+>  	.setattr = reiserfs_setattr,
+>  	.setxattr = reiserfs_setxattr,
+>  	.getxattr = reiserfs_getxattr,
+> diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+> index 855da58..03430b6 100644
+> --- a/fs/reiserfs/inode.c
+> +++ b/fs/reiserfs/inode.c
+> @@ -3078,8 +3078,10 @@ static ssize_t reiserfs_direct_IO(int rw, struct kiocb *iocb,
+>  		loff_t isize = i_size_read(inode);
+>  		loff_t end = offset + iov_length(iov, nr_segs);
+>  
+> -		if (end > isize)
+> -			vmtruncate(inode, isize);
+> +		if ((end > isize) && inode_newsize_ok(inode, isize) == 0) {
+> +			truncate_setsize(inode, isize);
+> +			reiserfs_vfs_truncate_file(inode);
+> +		}
+>  	}
+>  
+>  	return ret;
+> @@ -3192,8 +3194,13 @@ int reiserfs_setattr(struct dentry *dentry, struct iattr *attr)
+>  	 */
+>  	reiserfs_write_unlock_once(inode->i_sb, depth);
+>  	if ((attr->ia_valid & ATTR_SIZE) &&
+> -	    attr->ia_size != i_size_read(inode))
+> -		error = vmtruncate(inode, attr->ia_size);
+> +	    attr->ia_size != i_size_read(inode)) {
+> +		error = inode_newsize_ok(inode, attr->ia_size);
+> +		if (!error) {
+> +			truncate_setsize(inode, attr->ia_size);
+> +			reiserfs_vfs_truncate_file(inode);
+> +		}
+> +	}
+>  
+>  	if (!error) {
+>  		setattr_copy(inode, attr);
+> diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+> index 33215f5..157e474 100644
+> --- a/fs/reiserfs/reiserfs.h
+> +++ b/fs/reiserfs/reiserfs.h
+> @@ -2455,6 +2455,7 @@ struct reiserfs_transaction_handle *reiserfs_persistent_transaction(struct
+>  								    *,
+>  								    int count);
+>  int reiserfs_end_persistent_transaction(struct reiserfs_transaction_handle *);
+> +void reiserfs_vfs_truncate_file(struct inode *inode);
+>  int reiserfs_commit_page(struct inode *inode, struct page *page,
+>  			 unsigned from, unsigned to);
+>  void reiserfs_flush_old_commits(struct super_block *);
+> -- 
+> 1.7.3.4
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-fsdevel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 -- 
-1.7.9.5
-
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
