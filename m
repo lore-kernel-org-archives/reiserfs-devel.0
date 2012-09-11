@@ -1,7 +1,7 @@
 From: <doiggl@velocitynet.com.au>
 Subject: Here is a plain kernel based on 3.5.3x with the reiser4 patch enabled.
-Date: Tue, 11 Sep 2012 15:53:46 +1000
-Message-ID: <0175aeae350431730f96633a199efd7a@mail.velocitynet.com.au>
+Date: Tue, 11 Sep 2012 21:12:39 +1000
+Message-ID: <c028bdca48574d32efa93850d06130a4@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -12,8 +12,9 @@ To: reiserfs-devel@vger.kernel.org
 
 Hello.
 Here is a plain kernel based on 3.5.3x with the reiser4 enabled, its built
-with the Open Build Service (OBS) system.
+with the open build service [obs] system.
 Report any problems to the list.
+
 Cheers Glenn
 
 The project is here:
@@ -30,3 +31,9 @@ The log of the build is here {x86_64} as an example. [Its a long buildlog]
 The .spec used file is here:
 
 ->https://build.opensuse.org/package/view_file?file=kernel-reiser4.spec&package=kernel-reiser4&project=home%3Adoiggl&srcmd5=c1f7ad8470fed45a842cabedd7589c2c
+
+The patch used was:
+http://sourceforge.net/projects/reiser4/files/reiser4-for-linux-3.x/reiser4-for-3.5.3.patch.gz/download
+
+You may want to update the news section in:
+https://reiser4.wiki.kernel.org/index.php/Main_Page
