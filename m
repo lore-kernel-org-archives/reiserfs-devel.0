@@ -1,35 +1,67 @@
-From: Christian Kujau <lists@nerdbynature.de>
-Subject: Re: Here is a plain kernel based on 3.5.3x with the reiser4 patch
- enabled.
-Date: Sun, 16 Sep 2012 01:13:36 -0700 (PDT)
-Message-ID: <alpine.DEB.2.01.1209160111330.25392@trent.utfs.org>
-References: <c028bdca48574d32efa93850d06130a4@mail.velocitynet.com.au>
+From: "dE ." <de.techno@gmail.com>
+Subject: Re: linux 3.4.2 fails to compile with patch
+Date: Mon, 17 Sep 2012 10:20:46 +0530
+Message-ID: <5056AC26.2080608@gmail.com>
+References: <5052B073.4080506@gmail.com> <1502246.NqeFiNrX3o@intelfx-laptop>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <c028bdca48574d32efa93850d06130a4@mail.velocitynet.com.au>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject:references
+         :in-reply-to:content-type:content-transfer-encoding;
+        bh=BUBg0aJdD13/H0A/EY7ExtthHCJ22ap+Jfb6FHeEtQ0=;
+        b=J6irE/ExzXZmWAP2sEe/3pJsqc0YP7eBdx5m+x/QogQkSF1NrMOYjUJm2RiGYv7lST
+         bj2yfzaWVKFUab0Ju/UMEuxr0VtqUdJdMPS3BwW2lrxZt/iByPNZ7aziuLBi0wJlaSrZ
+         06i8nQVEvF9db40HIm4JrwHh67m8BEWLb/INyI9sCCxKCfjR6SFctqWfCl7DqXyV5ce+
+         YAUtAelrqSY7oP2Z66k7nxXk5xH9bYEt0C8cXOcP26J42/ePmjtqTH7jbyjCFsSEMHjE
+         TSi77ebsou62QbxBsuhjYY2mbtR8790Hmuq8PEyodA2zW4ZF1+ZvNkZee9pTqz83xntf
+         v3ig==
+In-Reply-To: <1502246.NqeFiNrX3o@intelfx-laptop>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: doiggl@velocitynet.com.au
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-devel@vger.kernel.org
 
-On Tue, 11 Sep 2012 at 21:12, doiggl@velocitynet.com.au wrote:
-> Here is a plain kernel based on 3.5.3x with the reiser4 enabled, its built
-> with the open build service [obs] system.
+On 09/14/12 18:12, Ivan Shapovalov wrote:
+> On Friday 14 September 2012 09:50:03 dE . wrote:
+>> Hello again :)
+>>
+>> I downloaded the recent patches for 3.2 to 3.5 kernels, and applied it
+>> to my 3.4.2 kernel. It results in the following --
+>>
+>> CC      fs/fs-writeback.o
+>> fs/fs-writeback.c: In function 'generic_writeback_sb_inodes':
+>> fs/fs-writeback.c:560:6: error: request for member 'nr_to_write' in
+>> something not a structure or union
+>> fs/fs-writeback.c:561:6: error: request for member 'pages_skipped' in
+>> something not a structure or union
+>> fs/fs-writeback.c:563:3: warning: passing argument 3 of
+>> 'writeback_single_inode' from incompatible pointer type [enabled by default]
+>> fs/fs-writeback.c:344:1: note: expected 'struct writeback_control *' but
+>> argument is of type 'struct writeback_control **'
+>> fs/fs-writeback.c:565:38: error: request for member 'nr_to_write' in
+>> something not a structure or union
+>> fs/fs-writeback.c:566:29: error: request for member 'nr_to_write' in
+>> something not a structure or union
+>> fs/fs-writeback.c:569:10: error: request for member 'pages_skipped' in
+>> something not a structure or union
+>> make[1]: *** [fs/fs-writeback.o] Error 1
+>> make: *** [fs] Error 2
+> Hello,
+>
+> The vfs layer had undergone some changes between versions 3.4 and 3.5, so a
+> patch against 3.5 won't work when applied to 3.4 or earlier versions.
+> Instead, please, try the attached patch.
+>
+> Regards,
+> Ivan Shapovalov.
+>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Thanks!
+Thankyou! It works. This should be added to the SF project.
 
-> You may want to update the news section in:
-> https://reiser4.wiki.kernel.org/index.php/Main_Page
-
-I've update the wiki, there hasn't been an update for ages :-\ As always, 
-you (and all the others on this list) are invited to create yourself an 
-account and update the wiki with Reiser4 related stuff as you see fit.
-
-Thanks,
-Christian.
--- 
-BOFH excuse #200:
-
-The monitor needs another box of pixels.
+I'll test reiser4 with my root partition (without compression).
