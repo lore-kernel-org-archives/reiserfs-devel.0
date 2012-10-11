@@ -1,12 +1,12 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: Fwd: [PATCH] dont run ldconfig when installing with DESTDIR
-Date: Thu, 11 Oct 2012 11:55:11 -0400
-Message-ID: <5076EBDF.80901@suse.com>
-References: <1234203624-19238-1-git-send-email-vapier@gentoo.org> <507595FA.10406@gmail.com>
+Subject: Re: Fwd: [PATCH] reiserfsck: support `fsck -f -n`
+Date: Thu, 11 Oct 2012 11:55:39 -0400
+Message-ID: <5076EBFB.4000208@suse.com>
+References: <1232209168-25857-1-git-send-email-vapier@gentoo.org> <50759633.2060806@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <507595FA.10406@gmail.com>
+In-Reply-To: <50759633.2060806@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
@@ -16,30 +16,41 @@ Cc: reiserfs-devel@vger.kernel.org
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-On 10/10/12 11:36 AM, Edward Shishkin wrote:
+On 10/10/12 11:37 AM, Edward Shishkin wrote:
 > 
 > 
 > 
-> -------- Original Message -------- Subject: 	[PATCH] dont run
-> ldconfig when installing with DESTDIR Date: 	Mon, 9 Feb 2009
-> 13:20:24 -0500 From: 	Mike Frysinger <vapier@gentoo.org> To:
-> reiserfs-devel@vger.kernel.org
+> -------- Original Message -------- Subject: 	[PATCH] reiserfsck:
+> support `fsck -f -n` Date: 	Sat, 17 Jan 2009 11:19:28 -0500 From:
+> Mike Frysinger <vapier@gentoo.org> To:
+> reiserfs-devel@vger.kernel.org CC: 	Roy Marples <roy@marples.name>
 > 
 > 
 > 
-> Signed-off-by: Mike Frysinger <vapier@gentoo.org> --- run-ldconfig
-> |    5 +++++ 1 files changed, 5 insertions(+), 0 deletions(-)
+> From: Roy Marples <roy@marples.name>
 > 
-> diff --git a/run-ldconfig b/run-ldconfig index 227f126..e4b1b93
-> 100755 --- a/run-ldconfig +++ b/run-ldconfig @@ -1,5 +1,10 @@ 
-> #!/bin/bash
+> Every other fsck util out there supports non-interactive forcing
+> and this change brings reiserfsck into line.
 > 
-> +if [ -n "$DESTDIR" ] ; then +	echo "Skipping ldconfig due to
-> installing into temp root (DESTDIR)" +	exit 0 +fi + ldc=""; if [ -x
-> /sbin/ldconfig ]; then ldc="/sbin/ldconfig"; -- 1.6.1.2
+> Signed-off-by: Mike Frysinger <vapier@gentoo.org> --- fsck/main.c |
+> 5 +++-- 1 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fsck/main.c b/fsck/main.c index 06d7bd2..cfee979
+> 100644 --- a/fsck/main.c +++ b/fsck/main.c @@ -421,8 +421,9 @@ void
+> warn_what_will_be_done (char * file_name, struct fsck_data * data) 
+> (data->log == stdout) ? "stdout" : (data->log_file_name ?
+> data->log_file_name : "fsck.run"));
+> 
+> -    if (!(data->options & OPT_YES) && !user_confirmed (warn_to,
+> "\nDo you want to " -	"run this program?[N/Yes] (note need to type
+> Yes if you do):", "Yes\n")) +    if (!(data->options & OPT_YES) &&
+> !(data->options & OPT_SILENT) && +	!user_confirmed (warn_to, "\nDo
+> you want to run this program?[N/Yes] " +	"(note need to type Yes if
+> you do):", "Yes\n")) exit (EXIT_USER); }
+> 
 
-This one seems to be gentoo-specific, or at least against a file that
-doesn't exist in the actual reiserfsprogs tarball.
+This one needs a Signed-off-by from the original author. I've emailed
+him to request it.
 
 - -Jeff
 
@@ -52,17 +63,17 @@ Version: GnuPG/MacGPG2 v2.0.18 (Darwin)
 Comment: GPGTools - http://gpgtools.org
 Comment: Using GnuPG with Mozilla - http://www.enigmail.net/
 
-iQIcBAEBAgAGBQJQduvfAAoJEB57S2MheeWy0ZgP/2hj0hMROmK4sPMyy6IVhkFm
-cQFG17qsT+liC+rBAnJ3KgwK1yy59yWv+ldKvDvD5oCcpzTW5yap4U2uIw31XA96
-v3mcHPbCVRP3kFAVYN7/IOH+0rOUlm78aI9Nk9GwyblFFBg+8WOLHOwQPRgwNy4+
-1FDKNb/xB4dd/j5OQ5jIlQlMSorau6jftMrYdklInYesLd9CmND1h9BqrzCPDHb3
-H1zfQzDT6p4ZQZYMiVmbtkQhsEAMJuyAa3hY6isapIzCjDGNUHdqvXPYLWtNeaH5
-NC59Zd2BCQJhfpHCw/DZ+w6nCojeCmFjQ6SHF/bYVtnITleZ/ED48HRwQzu6xHKY
-vmzoMH6Yl6IRuqkbIAjapXR6D3lAS1a92uPNwBCTGcVElRwkRdYpnbyWN99xAZkF
-gOenVv1ZbPXbs9vHPiefoA3cvV3Dlo/OwuJTne5eJg9SrVB1amEtPQH0O1UbT8/8
-zH4j/V/WtR2x0iCUQthKJrPIyalNCaLbjeDM0TEutmTT3fjW9l+LZnGIKQ980hyM
-G1zUUmMt5/s+GP5o7t7kb+pZwBd76aut1ur67jEY6X1P/3WrlsmzMQpEbXwGe9k/
-0PHAk7btEsg8TnOE6rSjAL+MEV1RPZkcAvID3gQx0WLd+FQLUkPKASVN1kQ4EN3O
-cWOIqXEBn1bmBO7zcbmB
-=wZO/
+iQIcBAEBAgAGBQJQduv7AAoJEB57S2MheeWyyFUP/29aTygqB3d61LOTA5YxFTFf
+7AR9DJodJoUohHUKvUtQ5LDI+PZV92kBAV+H7trRnhiNE0tvveRd9jdBqStGhLoZ
+o88KFxbqCD2s9O0BDn0tfB+Jc1aNQxmoHa3wXehVAoncJrIMtc2NHDp8qac/3m5L
+5j5ATgCoTo7pNKG8UMaRRadiqL9qp7h9sS72yJmKMJQdNkhAsrpJnZWwMjI2sPOz
+TZRwWah0HW13l9hqtCKY5quMD2SXDuvu3yaavEpTAg2p1YNBuFTtOua2S/tyTos6
+kvzA0tI/h1VbVoL8jhBX4Dmhh37+/F3/TOrWB4tKRpS7AjyaMvaGeaYhk2EAlSzt
+ZY46Wy5PmVo9opkKwHk/QflTPpSjMNeaxEYskQYmuTmYH/rc1xlU/lVdAH/oCAIf
+WF7XSl48i9enI8k5kKB2/j3BWVvqU4APYY/w35O+yfQHLPuGfw2N6mPOATZhPU5U
+6o9JFi7ihwe7Px/msYdvF9dqT3V+ffgcU63wtSbQVdvkSpVoTIREWz2BknLW/Q5a
+9Qt27/5G2a0AMyUWro98CA1f+b3YfHAm/+Kn4Acqjqztj/k3S97n1vOBmNqT/cvX
+pE9WyTbYPl5DNlOB363V5/yCjpFhTt3CoqzJ6ar0jQcVeSzeoaYm/dwXwzZ5AUjZ
+WHnUHyMGgpM6XrPWhxps
+=HkXe
 -----END PGP SIGNATURE-----
