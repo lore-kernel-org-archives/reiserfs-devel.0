@@ -1,32 +1,27 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Reiser4 for 3.6 - releasing
-Date: Wed, 10 Oct 2012 20:05:09 +0400
-Message-ID: <2769396.9BXz8apEK6@intelfx-laptop>
+From: Christian Kujau <lists@nerdbynature.de>
+Subject: Re: Where is reiserfsprogs?
+Date: Wed, 10 Oct 2012 20:05:56 -0700 (PDT)
+Message-ID: <alpine.DEB.2.01.1210101952200.10880@trent.utfs.org>
+References: <alpine.DEB.2.01.1209241627360.10880@trent.utfs.org> <50610261.20307@suse.com> <alpine.DEB.2.01.1209242016500.10880@trent.utfs.org> <506125F1.4030500@suse.com> <50619895.7000003@gmail.com> <5075900B.9060402@suse.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:user-agent:mime-version
-         :content-transfer-encoding:content-type;
-        bh=pSaPAl06K5yH97dv7JPoDKpvZXYlXXozdf/yIVGXugU=;
-        b=q19fE+3RBaVlv/S11emuZbg+dsr9bNatOzqCKwW45fDiOYWSDF7dUesc5UkkahLCNN
-         8jlMAWQXNCieXJe6e3YRhJw8De7thwO5MPhZrkYYcXswX9k6QaSBxJGPX03gT9vIRR9u
-         rgonN+Uy88G5NkT+8JorAJg/CBD0Aa0nOox+JMCfMli1YiZ69QNZqzCrLRNVAApWIIed
-         DbEISCZZgmhvwB/Vu9lERQAFKVO1v5uDjrDkYTaotd+QXGVZRyAecmaKnBmH4KqVoWBC
-         +5t+wZSYefhl07A8nEDOJmAYi5qohu7Qeg+nAJQSW2kHDFWKsuizjvk8IfVKVLmgOUsH
-         3ycA==
+In-Reply-To: <5075900B.9060402@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: edward.shishkin@gmail.com
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
 
-Hi Edward,
+On Wed, 10 Oct 2012 at 11:11, Jeff Mahoney wrote:
+> Ok. I've published the versions of reiserfsprogs that SUSE has shipped
+> in products (so I know that they're valid). Our ftp.namesys.com
+> archive has long since been empty, so that's really the best I can do.
 
-What's the progress of releasing reiser4-for-3.6? I guess we shall do that in 
-reiser4's current state, if everything is ok with "porting" modifications...
-Users hate to wait. :)
+Thanks for doing that!
 
-Thanks,
-Ivan.
+Christian.
+-- 
+BOFH excuse #185:
+
+system consumed all the paper for paging
