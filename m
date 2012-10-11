@@ -1,12 +1,12 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: Fwd: [PATCH] install standard {fsck,mkfs}.reiserfs symlinks
-Date: Thu, 11 Oct 2012 11:54:22 -0400
-Message-ID: <5076EBAE.6090401@suse.com>
-References: <1232209178-25889-1-git-send-email-vapier@gentoo.org> <507595E5.8050409@gmail.com>
+Subject: Re: Fwd: [PATCH] configure: use AC_MSG_NOTICE rather than `echo`
+Date: Thu, 11 Oct 2012 11:54:35 -0400
+Message-ID: <5076EBBB.6090109@suse.com>
+References: <1232209551-5088-1-git-send-email-vapier@gentoo.org> <507595F2.6060009@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <507595E5.8050409@gmail.com>
+In-Reply-To: <507595F2.6060009@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
@@ -20,40 +20,23 @@ On 10/10/12 11:36 AM, Edward Shishkin wrote:
 > 
 > 
 > 
-> -------- Original Message -------- Subject: 	[PATCH] install
-> standard {fsck,mkfs}.reiserfs symlinks Date: 	Sat, 17 Jan 2009
-> 11:19:38 -0500 From: 	Mike Frysinger <vapier@gentoo.org> To:
+> -------- Original Message -------- Subject: 	[PATCH] configure: use
+> AC_MSG_NOTICE rather than `echo` Date: 	Sat, 17 Jan 2009 11:25:51
+> -0500 From: 	Mike Frysinger <vapier@gentoo.org> To:
 > reiserfs-devel@vger.kernel.org
 > 
 > 
 > 
-> Since utilities expect to be able to run `mkfs.$FS` and
-> `fsck.$FS`, reiserfs should install symlinks for these to the right
-> place.
+> Signed-off-by: Mike Frysinger <vapier@gentoo.org> --- configure.in
+> |    5 +++-- 1 files changed, 3 insertions(+), 2 deletions(-)
 > 
-> Signed-off-by: Mike Frysinger <vapier@gentoo.org> --- 
-> fsck/Makefile.am       |    2 ++ mkreiserfs/Makefile.am |    2 ++ 2
-> files changed, 4 insertions(+), 0 deletions(-)
+> diff --git a/configure.in b/configure.in index a3cc867..dd3e353
+> 100644 --- a/configure.in +++ b/configure.in @@ -193,5 +193,6 @@
+> AC_OUTPUT( debugreiserfs/Makefile tune/Makefile)
 > 
-> diff --git a/fsck/Makefile.am b/fsck/Makefile.am index
-> 7b1013c..f2f0d9a 100644 --- a/fsck/Makefile.am +++
-> b/fsck/Makefile.am @@ -9,3 +9,5 @@ EXTRA_DIST = $(man_MANS)
-> 
-> reiserfsck_LDADD = $(top_srcdir)/reiserfscore/libcore.a
-> $(top_srcdir)/lib/libmisc.a
-> 
-> +install-exec-hook: +	$(LN_S) reiserfsck
-> $(DESTDIR)$(sbindir)/fsck.reiserfs diff --git
-> a/mkreiserfs/Makefile.am b/mkreiserfs/Makefile.am index
-> 72cd707..aed0cfa 100644 --- a/mkreiserfs/Makefile.am +++
-> b/mkreiserfs/Makefile.am @@ -6,3 +6,5 @@ EXTRA_DIST = $(man_MANS)
-> 
-> LDADD = $(top_srcdir)/reiserfscore/libcore.a
-> $(top_srcdir)/lib/libmisc.a
-> 
-> +install-exec-hook: +	$(LN_S) mkreiserfs
-> $(DESTDIR)$(sbindir)/mkfs.reiserfs -- 1.6.1
-> 
+> -echo -echo Type \'make\' to compile reiserfsprogs 
+> +AC_MSG_NOTICE([ + +Type 'make' to compile reiserfsprogs]) -- 
+> 1.6.1
 
 Applied.
 
@@ -68,17 +51,17 @@ Version: GnuPG/MacGPG2 v2.0.18 (Darwin)
 Comment: GPGTools - http://gpgtools.org
 Comment: Using GnuPG with Mozilla - http://www.enigmail.net/
 
-iQIcBAEBAgAGBQJQduutAAoJEB57S2MheeWymYwQALofasyFtF5LnjwiaYf6sIMm
-psfcgi6MqWiItAlVMK5PucI0Dpear5E3vfvidQxckdWzeTt6FJcHy2yZlwKp0MsP
-iAhqvKt2mzABs77iqxAxazVxgrULfrwEPpyC1Tg7aCgp98AurqTwi8DsuR4C+a2B
-y6Os0jkeqOs7tb5kFQqSiuBpX1ixQrEKw1xaM8VnBxr5l1p2PcNkPK/ht0w31bUD
-y0fhZRdLsXkGurtJmEKY9aTcU6wxskelRn59hhdZvjxCWOvhoJJbWc+50/BYUGyO
-mByrXWL8EJev/2ngYLirpZfOSbp4IZj6gFu++54n4I5Jf7cvIA4LSA2XE28BLyCD
-mH/9Y/yKfPEyZ/b8zrGHz3Xdf/iNAFpq8wl7wo6ddht0wXPUiPxxKArQlBTXv+j3
-nQVrCsLeyg7rBVRAMiDdYHLh6LEaND4xg1par/rRYFIYOArBrUxWNDQ11klRmdpL
-HUPZ9qE/Zy4fLCcoPnWTp1zbjt8DDQvms0wI4v7TcNWMjvob4HdYGn40uGFtoefP
-VeqoTTS47Aw/cHmHo59hsA0Gtg5tXQX9T2W6HwOSmZCwh2hdQHuzLGzBCv3yBjR+
-dGCJvO6qDmzryLUQnyBUZL4W0Ym9BLCI4vcfHdp14LppgQrlpcP/Tydq0xANdGiV
-SRYezUGkDMYuxMsUyDOO
-=hrUR
+iQIcBAEBAgAGBQJQduu6AAoJEB57S2MheeWylXIP/j6F8q7/CBQhUEqAsyz8lz+7
+pa7rUHjAgJPPmBznWkcYtL4yykHhunz9l6wL0GZ+F2DOJksQrYGeuqwVGSF9qPQY
+5HwZSSdWwOHdeFb9D/FbpPDHIMqiG9Pv23sN1E/XvNwtxOrEr6U+c4AnGSfQTXsJ
++PHiniGcT9+3g2uJDq25Xm1RPuHtPNJcGuOsbEBQgloQBgrbL9VnMPWGuWs7vaAX
+4qCieI3pYCJcXxcll/gKYVxMnzIRz0szl12fHgZRvzUiOOC9DmZZlSV15ECn4xAS
+BqtYU4WIDJGjZBKezSnY8vnJbKIo2pZuVXkxYlaGGodX3mBrxUU6sgf8hNuqj8Gm
+kwu+wluE1mR+sKKkDwj7yQ4UC/tSp6ukXTUyRN0iNSLLQH+WB7qY+qvFsl/VjJ0p
+1yCrQOWF5Jt/pSOlZc05yMQr/KgoOu3Z73us18jO/slvLi8ukShN3G5NUvSb+kU0
+2R5xLPNU7u6eLxJ9C8x8NzUKxiG4FfwNiB3K+BcUlhuVo48Y4+ry4X/Lm0NDwyNe
+LbU4OZrmCUHjGYPHCpxkQgF0EEg60QU9V1JrN4tT0fksPBwEhgwI1hjO+hsSJMNC
+5BpQ6/bW1D/FDz26XHs9OPiezHdg399ovZ0ZF+qBnZrICwfUtzki52ZI7Joi8S8N
+b5Pj8Z9N0A3KXXNWBeMB
+=AsRb
 -----END PGP SIGNATURE-----
