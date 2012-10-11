@@ -1,64 +1,42 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH 03/10] reiserfsprogs: fix printf formatting warnings
-Date: Thu, 11 Oct 2012 13:16:59 -0400
-Message-ID: <20121011200115.AFB72200B1@oldboy.suse.de>
-Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Roy Marples <roy@marples.name>
+Subject: [PATCH 08/10] reiserfsck: support `fsck -f -n`
+Date: Thu, 11 Oct 2012 13:39:49 -0400
+Message-ID: <20121011200116.0913E200A4@oldboy.suse.de>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-This patch fixes:
-main.c:968:11: warning: format =E2=80=98%u=E2=80=99 expects argument of=
- type =E2=80=98unsigned int=E2=80=99, but argument 3 has type =E2=80=98=
-time_t=E2=80=99 [-Wformat]
-prints.c:152:7: warning: format =E2=80=98%lu=E2=80=99 expects argument =
-of type =E2=80=98long unsigned int=E2=80=99, but argument 3 has type =E2=
-=80=98__u32=E2=80=99 [-Wformat]
+Every other fsck util out there supports non-interactive forcing and this
+change brings reiserfsck into line.
 
+Signed-off-by: Roy Marples <roy@marples.name>
+Signed-off-by: Mike Frysinger <vapier@gentoo.org>
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 ---
- fsck/main.c           |    2 +-
- reiserfscore/prints.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fsck/main.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/fsck/main.c b/fsck/main.c
-index 911af8d..e4253af 100644
+index e4253af..31e97bf 100644
 --- a/fsck/main.c
 +++ b/fsck/main.c
-@@ -964,7 +964,7 @@ static int reiserfs_check_auto_state(reiserfs_filsy=
-s_t *fs)
- 	}
-=20
- 	if (interval !=3D UINT_MAX && now > lastcheck + interval) {
--		fprintf(stderr, "File system hasn't been checked in %u days. "
-+		fprintf(stderr, "File system hasn't been checked in %lu days. "
- 		        "Checking now.\n", (now - lastcheck) / (60*60*24));
- 		return 1;
- 	}
-diff --git a/reiserfscore/prints.c b/reiserfscore/prints.c
-index e68ef01..ffe86fc 100644
---- a/reiserfscore/prints.c
-+++ b/reiserfscore/prints.c
-@@ -148,7 +148,7 @@ static int print_disk_child (FILE * stream,
-     int len;
-=20
-     dc =3D *((const struct disk_child **)(args[0]));
--    len =3D asprintf (&buffer, "[dc_number=3D%lu, dc_size=3D%u]", get_=
-dc_child_blocknr (dc),
-+    len =3D asprintf (&buffer, "[dc_number=3D%u, dc_size=3D%u]", get_d=
-c_child_blocknr (dc),
- 		    get_dc_child_size (dc));
-     FPRINTF;
+@@ -421,8 +421,9 @@ void warn_what_will_be_done (char * file_name, struct fsck_data * data)
+ 	(data->log == stdout) ? "stdout" : 
+ 	(data->log_file_name ? data->log_file_name : "fsck.run"));
+     
+-    if (!(data->options & OPT_YES) && !user_confirmed (warn_to, "\nDo you want to "
+-	"run this program?[N/Yes] (note need to type Yes if you do):", "Yes\n"))
++    if (!(data->options & OPT_YES) && !(data->options & OPT_SILENT) &&
++	!user_confirmed (warn_to, "\nDo you want to run this program?[N/Yes] "
++	"(note need to type Yes if you do):", "Yes\n"))
+ 	exit (EXIT_USER);
  }
---=20
+ 
+-- 
 1.7.10.4
 
 
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
