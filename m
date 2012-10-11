@@ -1,56 +1,37 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: Fwd: [PATCH] reiserfsck: support `fsck -f -n`
-Date: Thu, 11 Oct 2012 11:55:39 -0400
-Message-ID: <5076EBFB.4000208@suse.com>
-References: <1232209168-25857-1-git-send-email-vapier@gentoo.org> <50759633.2060806@gmail.com>
+Subject: Re: Where is reiserfsprogs?
+Date: Thu, 11 Oct 2012 11:59:11 -0400
+Message-ID: <5076ECCF.7030000@suse.com>
+References: <alpine.DEB.2.01.1209241627360.10880@trent.utfs.org> <50610261.20307@suse.com> <alpine.DEB.2.01.1209242016500.10880@trent.utfs.org> <506125F1.4030500@suse.com> <50619895.7000003@gmail.com> <5075900B.9060402@suse.com> <alpine.DEB.2.01.1210101952200.10880@trent.utfs.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <50759633.2060806@gmail.com>
+In-Reply-To: <alpine.DEB.2.01.1210101952200.10880@trent.utfs.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+To: Christian Kujau <lists@nerdbynature.de>
+Cc: Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
 
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-On 10/10/12 11:37 AM, Edward Shishkin wrote:
+On 10/10/12 11:05 PM, Christian Kujau wrote:
+> On Wed, 10 Oct 2012 at 11:11, Jeff Mahoney wrote:
+>> Ok. I've published the versions of reiserfsprogs that SUSE has
+>> shipped in products (so I know that they're valid). Our
+>> ftp.namesys.com archive has long since been empty, so that's
+>> really the best I can do.
 > 
-> 
-> 
-> -------- Original Message -------- Subject: 	[PATCH] reiserfsck:
-> support `fsck -f -n` Date: 	Sat, 17 Jan 2009 11:19:28 -0500 From:
-> Mike Frysinger <vapier@gentoo.org> To:
-> reiserfs-devel@vger.kernel.org CC: 	Roy Marples <roy@marples.name>
-> 
-> 
-> 
-> From: Roy Marples <roy@marples.name>
-> 
-> Every other fsck util out there supports non-interactive forcing
-> and this change brings reiserfsck into line.
-> 
-> Signed-off-by: Mike Frysinger <vapier@gentoo.org> --- fsck/main.c |
-> 5 +++-- 1 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fsck/main.c b/fsck/main.c index 06d7bd2..cfee979
-> 100644 --- a/fsck/main.c +++ b/fsck/main.c @@ -421,8 +421,9 @@ void
-> warn_what_will_be_done (char * file_name, struct fsck_data * data) 
-> (data->log == stdout) ? "stdout" : (data->log_file_name ?
-> data->log_file_name : "fsck.run"));
-> 
-> -    if (!(data->options & OPT_YES) && !user_confirmed (warn_to,
-> "\nDo you want to " -	"run this program?[N/Yes] (note need to type
-> Yes if you do):", "Yes\n")) +    if (!(data->options & OPT_YES) &&
-> !(data->options & OPT_SILENT) && +	!user_confirmed (warn_to, "\nDo
-> you want to run this program?[N/Yes] " +	"(note need to type Yes if
-> you do):", "Yes\n")) exit (EXIT_USER); }
-> 
+> Thanks for doing that!
 
-This one needs a Signed-off-by from the original author. I've emailed
-him to request it.
+You bet.
+
+I've also created a git repo for reiserfsprogs:
+
+http://git.kernel.org/?p=linux/kernel/git/jeffm/reiserfsprogs.git;a=summary
+
+Once I've pulled in the outstanding patches, I'll publish a 3.6.22.
 
 - -Jeff
 
@@ -63,17 +44,17 @@ Version: GnuPG/MacGPG2 v2.0.18 (Darwin)
 Comment: GPGTools - http://gpgtools.org
 Comment: Using GnuPG with Mozilla - http://www.enigmail.net/
 
-iQIcBAEBAgAGBQJQduv7AAoJEB57S2MheeWyyFUP/29aTygqB3d61LOTA5YxFTFf
-7AR9DJodJoUohHUKvUtQ5LDI+PZV92kBAV+H7trRnhiNE0tvveRd9jdBqStGhLoZ
-o88KFxbqCD2s9O0BDn0tfB+Jc1aNQxmoHa3wXehVAoncJrIMtc2NHDp8qac/3m5L
-5j5ATgCoTo7pNKG8UMaRRadiqL9qp7h9sS72yJmKMJQdNkhAsrpJnZWwMjI2sPOz
-TZRwWah0HW13l9hqtCKY5quMD2SXDuvu3yaavEpTAg2p1YNBuFTtOua2S/tyTos6
-kvzA0tI/h1VbVoL8jhBX4Dmhh37+/F3/TOrWB4tKRpS7AjyaMvaGeaYhk2EAlSzt
-ZY46Wy5PmVo9opkKwHk/QflTPpSjMNeaxEYskQYmuTmYH/rc1xlU/lVdAH/oCAIf
-WF7XSl48i9enI8k5kKB2/j3BWVvqU4APYY/w35O+yfQHLPuGfw2N6mPOATZhPU5U
-6o9JFi7ihwe7Px/msYdvF9dqT3V+ffgcU63wtSbQVdvkSpVoTIREWz2BknLW/Q5a
-9Qt27/5G2a0AMyUWro98CA1f+b3YfHAm/+Kn4Acqjqztj/k3S97n1vOBmNqT/cvX
-pE9WyTbYPl5DNlOB363V5/yCjpFhTt3CoqzJ6ar0jQcVeSzeoaYm/dwXwzZ5AUjZ
-WHnUHyMGgpM6XrPWhxps
-=HkXe
+iQIcBAEBAgAGBQJQduzOAAoJEB57S2MheeWy7RkP/Rk7/cLDBM8l4oGcyAuldwUZ
+1zE0XKsCrVfmp9dozvQQGRow9quWR6T2bzlFowesgbfn1xAPWN9PXSEiI90MzlXU
+bzbyViabcUvK4o+cQwIf23y+D8xkuiu+CWkcNj1msiGbFwUziQa951anj5qlSI28
+M6qW1q162kEl7Jw+kNHk463R5dRwHRXYvdZS/4XtMPDUwf3Yhqyrt6iQ1xrG9F+a
+isc30zzt0blQ3Jy9BNHF2JVR4+s7kMUITCNMDn4k7nLGO503QHc9fxvO4ImLn5X8
+4xG9Mh7klqI6rNAQ8sBn9sYafed8Z7d1YVuRluG3Thh/sCmwKgHV/w5lfLhxkK+M
+kwl97cDiELscmXkrr+Khil7fgkzgQtiVswvwJ7WyWPdw8d79sOGVOfN1XNP5vO9M
+hvs4ErQdmva41fa2IAc+H4t/r7XT3qZeXXk7RELOdOERVbPCH0vC5wbg7V8urG/G
+lM3KIoSv0O19wY9driTUxTxxXeRu4CSQZF57QaBT8DQahTSA+tno16T0gfld99G6
+CreZ+7Q1wkvku/tu/+fmCKtORx+A/hmaKTy14Twg6FKqlKa04AlVeWNFPWiDjjdb
+19Xzi1bLc/e6aziNXHzioTjJ/zZyNIohS2p+UVfvHNoBlekmCmHP0PauuQzuSG4Z
+XX/7QnM6Si/vJKf2MHlV
+=0ShW
 -----END PGP SIGNATURE-----
