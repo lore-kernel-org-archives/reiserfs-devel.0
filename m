@@ -1,136 +1,61 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH 09/10] reiserfscore: add support for
- register_printf_specifier
-Date: Thu, 11 Oct 2012 14:29:47 -0400
-Message-ID: <20121011200116.115CD200AB@oldboy.suse.de>
+From: <doiggl@velocitynet.com.au>
+Subject: Re: Here is a plain kernel based on 3.5.3x with the reiser4 patch enabled.
+Date: Fri, 12 Oct 2012 17:13:43 +1100
+Message-ID: <e394bc8b39677b6d54ac58f3ca3f9031@mail.velocitynet.com.au>
+References: <c028bdca48574d32efa93850d06130a4@mail.velocitynet.com.au> <alpine.DEB.2.01.1209241425450.10880@trent.utfs.org> <38aa20a44f76db20b4697970932254a1@mail.velocitynet.com.au> <alpine.DEB.2.01.1210091549010.10880@trent.utfs.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <alpine.DEB.2.01.1210091549010.10880@trent.utfs.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 
-register_printf_modifier is causing build warnings complaining that
-it is deprecated. This patch adds support for register_printf_specifier
-and uses it if it's present. Otherwise, it will fall back to
-register_printf_modifier.
+On Tue, 9 Oct 2012 15:59:28 -0700 (PDT), lists@nerdbynature.de wrote:
+> On Sun, 7 Oct 2012 at 22:44, doiggl@velocitynet.com.au wrote:
+>>> I chose "2" - why do you need mkinitrd-2.7.1 for this? openSUSE 12.2
+>>> comes with mkinitrd-2.7.0 and installation & booting of the kernel
+went
+>>> fine
+>> 
+>> mkinitrd 2.7.1 available from:
+>>
+http://ftp5.gwdg.de/pub/opensuse/repositories/Kernel:/stable/standard/x86_64/mkinitrd-2.7.1-176.3.x86_64.rpm
+> 
+> Sure, I was just wondering why your package did _depend_ on 
+> mkinitrd-2.7.1, i.e. what features in mkinitrd are you relying on, that
+an 
+> older version of mkinitrd would not be sufficient?
+> 
+> Christian.
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- configure.in          |    9 +++++--
- reiserfscore/prints.c |   70 ++++++++++++++++---------------------------------
- 2 files changed, 30 insertions(+), 49 deletions(-)
+Hello,
+I suspect it comes from this section in the spec file,
+Cheers Glenn
 
-diff --git a/configure.in b/configure.in
-index dd3e353..5f172c2 100644
---- a/configure.in
-+++ b/configure.in
-@@ -104,8 +104,13 @@ AC_PROG_GCC_TRADITIONAL
- AC_FUNC_MEMCMP
- AC_FUNC_STRFTIME
- AC_FUNC_VPRINTF
--AC_CHECK_FUNCS(strerror strstr strtol register_printf_function statfs getmntent\
--	       hasmntopt memset time uname strptime ctime_r)
-+AC_CHECK_FUNCS(strerror strstr strtol statfs getmntent hasmntopt memset time \
-+	       uname strptime ctime_r register_printf_modifier \
-+	       register_printf_specifier)
-+
-+if test -z "${ac_cv_func_register_printf_function}" -a -z "${ac_cv_func_register_printf_specifier}"; then
-+	AC_MSG_ERROR(reiserfsprogs requires a method to add printf modifiers)
-+fi
- 
- 
- dnl Never enable this. It is for debugging only
-diff --git a/reiserfscore/prints.c b/reiserfscore/prints.c
-index 95e3014..89dc26c 100644
---- a/reiserfscore/prints.c
-+++ b/reiserfscore/prints.c
-@@ -16,46 +16,22 @@
- #  include <uuid/uuid.h>
- #endif
- 
--#define PA_KEY		(PA_LAST)
--#define PA_BUFFER_HEAD	(PA_LAST + 1)
--#define PA_ITEM_HEAD	(PA_LAST + 2)
--#define PA_DISK_CHILD	(PA_LAST + 3)
--
--
--static int _arginfo_b (const struct printf_info *info, size_t n, int *argtypes) {
--    if (n > 0)
--	argtypes[0] = PA_BUFFER_HEAD | PA_FLAG_PTR;
--    return 1;
--}
--
--static int _arginfo_K (const struct printf_info *info, size_t n, int *argtypes) {
--    if (n > 0)
--	argtypes[0] = PA_KEY | PA_FLAG_PTR;
--    return 1;
--}
--
--static int _arginfo_H (const struct printf_info *info, size_t n, int *argtypes) {
--    if (n > 0)
--	argtypes[0] = PA_ITEM_HEAD | PA_FLAG_PTR;
--    return 1;
--}
--
--static int _arginfo_y (const struct printf_info *info, size_t n, int *argtypes) {
--    if (n > 0)
--	argtypes[0] = PA_DISK_CHILD | PA_FLAG_PTR;
--    return 1;
--}
--
--static int _arginfo_M (const struct printf_info *info, size_t n, int *argtypes) {
--    if (n > 0)
--	argtypes[0] = PA_INT | PA_FLAG_SHORT | PA_FLAG_PTR;
--    return 1;
--}
--
--static int _arginfo_U (const struct printf_info *info, size_t n, int *argtypes) {
--    if (n > 0)
--	argtypes[0] = (PA_CHAR|PA_FLAG_PTR);
--    return 1;
-+#ifndef HAVE_REGISTER_PRINTF_SPECIFIER
-+#define register_printf_specifier(x, y, z) register_printf_function(x, y, z)
-+static int arginfo_ptr (const struct printf_info *info, size_t n,
-+			int *argtypes)
-+#else
-+static int arginfo_ptr (const struct printf_info *info, size_t n,
-+			int *argtypes, int *size)
-+#endif
-+{
-+	if (n > 0) {
-+		argtypes[0] = PA_FLAG_PTR;
-+#ifdef HAVE_REGISTER_PRINTF_SPECIFIER
-+		size[0] = sizeof (void *);
-+#endif
-+	}
-+	return 1;
- }
- 
- #define FPRINTF \
-@@ -224,13 +200,13 @@ void reiserfs_warning (FILE * fp, const char * fmt, ...)
-     if (!registered) {
- 	registered = 1;
- 	
--	register_printf_function ('K', print_short_key, _arginfo_K);
--	register_printf_function ('k', print_key, _arginfo_K);
--	register_printf_function ('H', print_item_head, _arginfo_H);
--	register_printf_function ('b', print_block_head, _arginfo_b);
--	register_printf_function ('y', print_disk_child, _arginfo_y);
--	register_printf_function ('M', print_sd_mode, _arginfo_M);
--	register_printf_function ('U', print_sd_uuid, _arginfo_U);
-+	register_printf_specifier ('K', print_short_key, arginfo_ptr);
-+	register_printf_specifier ('k', print_key, arginfo_ptr);
-+	register_printf_specifier ('H', print_item_head, arginfo_ptr);
-+	register_printf_specifier ('b', print_block_head, arginfo_ptr);
-+	register_printf_specifier ('y', print_disk_child, arginfo_ptr);
-+	register_printf_specifier ('M', print_sd_mode, arginfo_ptr);
-+	register_printf_specifier ('U', print_sd_uuid, arginfo_ptr);
-     }
- 
-     va_start (args, fmt);
--- 
-1.7.10.4
+source:https://build.opensuse.org/package/view_file?file=kernel-reiser4.spec&package=kernel-reiser4&project=home%3Adoiggl&srcmd5=c1f7ad8470fed45a842cabedd7589c2c
 
+BuildRequires:  coreutils module-init-tools sparse
+BuildRequires:  fdupes
+Provides:       multiversion(kernel)
+Provides:       %{name}_%_target_cpu = %version-%release
+Provides:       %name = %version-%source_rel
+%if %split_base
+Provides:       kernel-base = %version-%source_rel
+# Obsolete the -base subpackage from 11.1 and 11.2 development phase
+Obsoletes:      %name-base <= 2.6.31
+%endif
+Requires(pre):  coreutils awk
+# Need a module-init-tools with /usr/lib/module-init-tools/weak-modules2
+Requires(post): module-init-tools >= 3.4
+# This Requires is wrong, because the post/postun scripts have a
+# test -x update-bootloader, having perl-Bootloader is not a hard
+requirement.
+# But, there is no way to tell rpm or yast to schedule the installation
+# of perl-Bootloader before kernel-binary.rpm if both are in the list of
+# packages to install/update. Likewise, this is true for mkinitrd.
+# Need a perl-Bootloader with /usr/lib/bootloader/bootloader_entry
+Requires(post): perl-Bootloader >= 0.4.15
+Requires(post): mkinitrd >= 2.7.1
 
