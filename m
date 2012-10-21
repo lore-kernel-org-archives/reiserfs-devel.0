@@ -1,108 +1,116 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: [patch 3/4] reiser4: create and lookup do not take nameidata
-Date: Sun, 21 Oct 2012 19:59:23 +0200
-Message-ID: <508437FB.2020801@gmail.com>
+Subject: [patch 4/4] reiser4: capture superblock when syncing fs
+Date: Sun, 21 Oct 2012 19:59:38 +0200
+Message-ID: <5084380A.9070502@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- boundary="------------080403070702000800000701"
+ boundary="------------060506030603090803030005"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:subject
          :content-type;
-        bh=aqOf26SXuLeN1TgPNqOY1xRAOq64Wg8pq4IQFnbM2dE=;
-        b=06a44V345avooTbUbCz9NgsosFDLGLf+3lc44XSQGTkBTp9KRdbak+a1o9sanXGcrf
-         xGqmX6hlJ14IkmIyJJrhfC3slCo9NbdSpF3TJEuGIwLqvg8vGvoB4F3+nvfkT+x2oRd5
-         uVOcQ3dvaIfM/UDLmjaNn9rOXI00AP4SfNwF48GXR7W1T0rUgQZrJhpYr0w71L/097hT
-         F9of9u5r/z6VJXcNEOIdcQvpOSo9S5XZ84eKCfPlWJRzn/8OlMG3TaQ58AyEEA+PJXik
-         iOYYMLbMyd/3Ek4EYzZ9zGZ6LCeFYjVVYzCQMRPuNmjUYHLdOQuKXn1ugdxYGT3xqyyO
-         Qwtg==
+        bh=xxnk8yswEsDO/Iif0WnQDnHMe5ElRS1suWSKz2/qsps=;
+        b=rFZt7mIJSzWq+gFekg/ZdJg+x3Mhq00TLKMqD8ufbngI4R8G+2XRJHCXcPjJRwjis7
+         I00NaGzkN1iPuE2BIv3BWXhfxHy4PgD3saTN227vfql6yJUEbG6b651F9GgXNDNNHwjH
+         VWk5BQz2mid0Hd0jEgvBuEWkGwCUeKJqwsACnoVMtypMLDrdF1AdSVkVoGzWlhCC734o
+         Go3wCpTDXR9sXzLYtpcqVT77aXWvwRbvuXurXmnVNmonAWQ8kqOKxnHnLR6LiXK4ow2D
+         EpH8eDyd2lKpSI3fkdSA1PG9/F44rg9XwqMSiDSrUGuZdzi5vslJ4eSnJDbThHTjDMcu
+         dDTg==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 To: reiserfs-devel@vger.kernel.org
 
 This is a multi-part message in MIME format.
---------------080403070702000800000701
+--------------060506030603090803030005
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
---------------080403070702000800000701
+--------------060506030603090803030005
 Content-Type: text/x-patch;
- name="reiser4-adjust-create-and-lookup.patch"
+ name="reiser4-capture-superblock-when-syncing-fs.patch"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment;
- filename="reiser4-adjust-create-and-lookup.patch"
+ filename="reiser4-capture-superblock-when-syncing-fs.patch"
 
-From 33fca1ec4438abc5540185ade3599661048d3c91 Mon Sep 17 00:00:00 2001
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Date: Thu, 4 Oct 2012 13:49:06 +0400
-Subject: [PATCH] Adjust reiser4 for 3.6: ->create() and ->lookup() do not
-take nameidata.
+. Capture super block when syncing fs to synchronize
+  the superblock with the other stuff;
+. Make gcc happy.
 
+Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
 ---
- fs/reiser4/plugin/inode_ops.c | 8 ++++----
- fs/reiser4/plugin/object.h    | 4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ fs/reiser4/carry_ops.c |    4 ++--
+ fs/reiser4/super_ops.c |   13 ++++++++++++-
+ fs/reiser4/tree.h      |    2 +-
+ 3 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/fs/reiser4/plugin/inode_ops.c b/fs/reiser4/plugin/inode_ops.c
-index 1f4be3d..b784dc5 100644
---- a/fs/reiser4/plugin/inode_ops.c
-+++ b/fs/reiser4/plugin/inode_ops.c
-@@ -21,14 +21,14 @@ static int create_vfs_object(struct inode *parent, struct dentry *dentry,
-  * @parent: inode of parent directory
-  * @dentry: dentry of new object to create
-  * @mode: the permissions to use
-- * @nameidata:
-+ * @exclusive:
-  *
-  * This is common implementation of vfs's create method of struct
-  * inode_operations.
-  * Creates regular file using file plugin from parent directory plugin set.
-  */
- int reiser4_create_common(struct inode *parent, struct dentry *dentry,
--			  umode_t mode, struct nameidata *nameidata)
-+			  umode_t mode, bool exclusive)
+--- linux-3.6.2_.orig/fs/reiser4/super_ops.c
++++ linux-3.6.2_/fs/reiser4/super_ops.c
+@@ -397,6 +397,7 @@ static long reiser4_writeback_inodes(str
+ /* ->sync_fs() of super operations */
+ static int reiser4_sync_fs(struct super_block *super, int wait)
  {
- 	reiser4_object_create_data data;
- 	file_plugin *fplug;
-@@ -52,14 +52,14 @@ void check_light_weight(struct inode *inode, struct inode *parent);
-  * reiser4_lookup_common - lookup of inode operations
-  * @parent: inode of directory to lookup into
-  * @dentry: name to look for
-- * @nameidata:
-+ * @flags:
-  *
-  * This is common implementation of vfs's lookup method of struct
-  * inode_operations.
-  */
- struct dentry *reiser4_lookup_common(struct inode *parent,
- 				     struct dentry *dentry,
--				     struct nameidata *nameidata)
-+				     unsigned int flags)
- {
++	int ret;
  	reiser4_context *ctx;
- 	int result;
-diff --git a/fs/reiser4/plugin/object.h b/fs/reiser4/plugin/object.h
-index 260ba27..49f11ae 100644
---- a/fs/reiser4/plugin/object.h
-+++ b/fs/reiser4/plugin/object.h
-@@ -10,10 +10,10 @@
+ 	struct bdi_writeback *wb;
+ 	struct wb_writeback_work work = {
+@@ -417,13 +418,23 @@ static int reiser4_sync_fs(struct super_
+ 		warning("edward-1567", "failed to init context");
+ 		return PTR_ERR(ctx);
+ 	}
++	/*
++	 * Capture znode associated with super block
++	 */
++	ret = reiser4_capture_super_block(super);
++	if (ret != 0)
++		warning("vs-1701",
++			"reiser4_capture_super_block failed in write_super: %d",
++			ret);
++
+ 	wb = &reiser4_get_super_fake(super)->i_mapping->backing_dev_info->wb;
+ 	spin_lock(&wb->list_lock);
+ 	generic_writeback_sb_inodes(super, wb, &wbc, &work, true);
+ 	spin_unlock(&wb->list_lock);
+ 	wbc.nr_to_write = LONG_MAX;
+ 	/*
+-	 * flush goes here
++	 * (flush goes here)
++	 * commit all transactions
+ 	 */
+ 	reiser4_writeout(super, &wbc);
  
- /* common implementations of inode operations */
- int reiser4_create_common(struct inode *parent, struct dentry *dentry,
--			  umode_t mode, struct nameidata *);
-+			  umode_t mode, bool);
- struct dentry *reiser4_lookup_common(struct inode *parent,
- 				      struct dentry *dentry,
--				      struct nameidata *nameidata);
-+				      unsigned int);
- int reiser4_link_common(struct dentry *existing, struct inode *parent,
- 			struct dentry *newname);
- int reiser4_unlink_common(struct inode *parent, struct dentry *victim);
--- 
-1.7.12.2
+--- linux-3.6.2_.orig/fs/reiser4/carry_ops.c
++++ linux-3.6.2_/fs/reiser4/carry_ops.c
+@@ -1339,7 +1339,7 @@ static int carry_delete(carry_op * op /*
+ 	    node_num_items(parent) == 1)
+ 		result = reiser4_kill_tree_root(coord.node);
+ 
+-	return result < 0 ? : 0;
++	return result < 0 ? result : 0;
+ }
+ 
+ /* implements COP_CUT opration
+@@ -1369,7 +1369,7 @@ static int carry_cut(carry_op * op /* op
+ 		result = nplug->cut_and_kill(op->u.cut_or_kill.u.kill, &info);
+ 
+ 	doing->restartable = 0;
+-	return result < 0 ? : 0;
++	return result < 0 ? result : 0;
+ }
+ 
+ /* helper function for carry_paste(): returns true if @op can be continued as
+--- linux-3.6.2_.orig/fs/reiser4/tree.h
++++ linux-3.6.2_/fs/reiser4/tree.h
+@@ -405,7 +405,7 @@ typedef struct cbk_handle {
+ 	/* put here error message to be printed by caller */
+ 	const char *error;
+ 	/* result passed back to caller */
+-	lookup_result result;
++	int result;
+ 	/* lock handles for active and parent */
+ 	lock_handle *parent_lh;
+ 	lock_handle *active_lh;
 
-
---------------080403070702000800000701--
+--------------060506030603090803030005--
