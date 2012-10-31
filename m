@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: Your Kernel Bug Tracker bug list needs attention.
-Date: Tue, 30 Oct 2012 15:50:05 +0000 (UTC)
-Message-ID: <20121030155005.D583E11FF17@bugzilla.kernel.org>
+Date: Wed, 31 Oct 2012 15:50:05 +0000 (UTC)
+Message-ID: <20121031155005.5B42C11FB7E@bugzilla.kernel.org>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
