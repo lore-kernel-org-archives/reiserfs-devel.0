@@ -1,109 +1,101 @@
-From: Marco Stornelli <marco.stornelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 00/21 v4] drop vmtruncate
-Date: Sat, 03 Nov 2012 10:21:29 +0100
-Message-ID: <5094E219.5020009@gmail.com>
-References: <508295AF.60606@gmail.com>
+From: Marco Stornelli <marco.stornelli@gmail.com>
+Subject: [PATCH 03/21] reiserfs: drop vmtruncate
+Date: Sat, 03 Nov 2012 10:23:55 +0100
+Message-ID: <5094E2AB.9050807@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=DfXqSMgDEUrK09JzPWL1oEuQEcUK7JyR2Ou6t0TKMSM=;
-        b=rf2vuw10yhgHEhHbPbLpg+fjW+zLpoJPAUwFf9SD6nfpex5BaD0hgUQMq3Gw8zfPgJ
-         rMYTBBoX+pvNRFsc8I4zuo2yg9IyeT2h5tkW209GfAOPhoyaOVWixbmapRv05e1zQecT
-         5EHOJsOHDI+cjZ3ftKqjJdZKwOzLcC5q88v6aUpjRAT0a86q6rYlZ1XV4um3jgTxzmAA
-         ilOOSjl26ipsYaMMWaKapeh5qWAfDGnbuYGBDcLrlaPcXBfGO5+u6C2d2KXmELK4Gl2U
-         XUN3mA+BSIk/izlDgyYu66NBrp+zLeK9k8ioZWkRJlGO7HAn725zpLZjHjIOm43+zSiM
-         ERjg==
-In-Reply-To: <508295AF.60606-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+         :content-type:content-transfer-encoding;
+        bh=ys/k0WzB1JdJ6uC3quf//+R/E+jEvc8iernISEbkZf0=;
+        b=NGfv/PpM+ZUD0uIsBpGakg5YchQAx/uf91i3KBF8HgukAUvPUS3roaCwIKAI5ZQsbb
+         tElGtDnLoOTv/640PK6XQ3rHHUAczN78gDRt1045IXtoagH8OWcMS7vtrrNgDGs/dD6f
+         CEZlcKFr6VV2a3IJpEkdk4OjM9+Un9iMbJjggQk4EGoh4NZkFVRWw21cMH9HSjv+T5dW
+         n19sSWqAEGpE7vmXgfcG5COh/l/BtsUFSQ/GQ+Rc+U2BcrM9UJVCtc0+23NkTYjvt7D6
+         OhcQyoPt3o6f/E+vxKZtgl7a/hnPaKs74mg5bRQqR71Q9c8ENonK0W6K9N+LtqOQa9Ix
+         Ghng==
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Linux FS Devel <linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Al Viro <viro-3bDd1+5oDREiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Evgeniy Dushistov <dushistov-JGs/UdohzUI@public.gmane.org>, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bob Copeland <me-aXfl/3sk2vNUbtYUoyoikg@public.gmane.org>, ocfs2-devel-N0ozoZBvEnrZJqsBc5GL+g@public.gmane.org, "Tigran A. Aivazian" <tigran-ppwZ4lME3+KI6QP4U9MhSdBc4/FLrbF6@public.gmane.org>, Mikulas Patocka <mikulas-TTVWCEgN8Z9G4ohzP4jBZS1Fcj925eT/@public.gmane.org>, jfs-discussion-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, logfs-PCqxUs/MD9bYtjvyW6yDsg@public.gmane.org, Petr Vandrovec <petr-vPk2MGR0e28uaRcfnNAh7A@public.gmane.org>, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ntfs-dev-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+To: Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+Removed vmtruncate
 
-I send the fourth patch series to remove vmtruncate. Any 
-comments/feedback are welcome.
+Signed-off-by: Marco Stornelli <marco.stornelli@gmail.com>
+---
+ fs/reiserfs/file.c     |    3 +--
+ fs/reiserfs/inode.c    |   15 +++++++++++----
+ fs/reiserfs/reiserfs.h |    1 +
+ 3 files changed, 13 insertions(+), 6 deletions(-)
 
-Changes:
-v4: fix an error for ocfs2, silently ignore truncate for procfs as 
-suggested by Al
-v3: reworked after Al and Christoph comments
-v2: add documentation cleaning
-v1: first draft
-
-Marco Stornelli (21):
-   ufs: drop vmtruncate
-   sysv: drop vmtruncate
-   reiserfs: drop vmtruncate
-   procfs: drop vmtruncate
-   omfs: drop vmtruncate
-   ocfs2: drop vmtruncate
-   adfs: drop vmtruncate
-   affs: drop vmtruncate
-   bfs: drop vmtruncate
-   hfs: drop vmtruncate
-   hpfs: drop vmtruncate
-   jfs: drop vmtruncate
-   hfsplus: drop vmtruncate
-   logfs: drop vmtruncate
-   minix: drop vmtruncate
-   ncpfs: drop vmtruncate
-   nilfs2: drop vmtruncate
-   ntfs: drop vmtruncate
-   vfs: drop vmtruncate
-   mm: drop vmtruncate
-   documentation: drop vmtruncate
-
-  Documentation/filesystems/Locking |    6 ------
-  Documentation/filesystems/porting |    2 +-
-  Documentation/filesystems/vfs.txt |   11 -----------
-  fs/adfs/inode.c                   |   15 ++++++++++-----
-  fs/affs/file.c                    |   18 ++++++++++++------
-  fs/affs/inode.c                   |    5 ++++-
-  fs/bfs/file.c                     |   15 ++++++++++-----
-  fs/hfs/inode.c                    |   26 ++++++++++++++++++--------
-  fs/hfsplus/inode.c                |   27 ++++++++++++++++-----------
-  fs/hpfs/file.c                    |   18 ++++++++++++------
-  fs/hpfs/inode.c                   |    5 ++++-
-  fs/jfs/file.c                     |    6 ++++--
-  fs/jfs/inode.c                    |   20 ++++++++++++++------
-  fs/libfs.c                        |    2 --
-  fs/logfs/readwrite.c              |   10 ++++++++--
-  fs/minix/file.c                   |    6 ++++--
-  fs/minix/inode.c                  |   17 ++++++++++++-----
-  fs/ncpfs/inode.c                  |    4 +---
-  fs/nilfs2/file.c                  |    1 -
-  fs/nilfs2/inode.c                 |   24 +++++++++++++++---------
-  fs/nilfs2/nilfs.h                 |    1 +
-  fs/nilfs2/recovery.c              |    3 ++-
-  fs/ntfs/file.c                    |   16 +++++++++++++---
-  fs/ntfs/inode.c                   |    8 ++++++--
-  fs/ntfs/inode.h                   |    4 ++++
-  fs/ocfs2/file.c                   |   18 ------------------
-  fs/omfs/file.c                    |   22 +++++++++++++++-------
-  fs/proc/base.c                    |    7 -------
-  fs/proc/generic.c                 |    9 +--------
-  fs/proc/proc_sysctl.c             |    7 -------
-  fs/reiserfs/file.c                |    3 +--
-  fs/reiserfs/inode.c               |   15 +++++++++++----
-  fs/reiserfs/reiserfs.h            |    1 +
-  fs/sysv/file.c                    |    5 +++--
-  fs/sysv/itree.c                   |   17 ++++++++++++-----
-  fs/ufs/inode.c                    |   15 ++++++++++-----
-  include/linux/fs.h                |    1 -
-  include/linux/mm.h                |    1 -
-  mm/truncate.c                     |   23 -----------------------
-  39 files changed, 225 insertions(+), 189 deletions(-)
-
+diff --git a/fs/reiserfs/file.c b/fs/reiserfs/file.c
+index 8375c92..50302d6 100644
+--- a/fs/reiserfs/file.c
++++ b/fs/reiserfs/file.c
+@@ -126,7 +126,7 @@ static int reiserfs_file_open(struct inode *inode, struct file *file)
+ 	return err;
+ }
+ 
+-static void reiserfs_vfs_truncate_file(struct inode *inode)
++void reiserfs_vfs_truncate_file(struct inode *inode)
+ {
+ 	mutex_lock(&(REISERFS_I(inode)->tailpack));
+ 	reiserfs_truncate_file(inode, 1);
+@@ -312,7 +312,6 @@ const struct file_operations reiserfs_file_operations = {
+ };
+ 
+ const struct inode_operations reiserfs_file_inode_operations = {
+-	.truncate = reiserfs_vfs_truncate_file,
+ 	.setattr = reiserfs_setattr,
+ 	.setxattr = reiserfs_setxattr,
+ 	.getxattr = reiserfs_getxattr,
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index f27f01a..ffb3993 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -3082,8 +3082,10 @@ static ssize_t reiserfs_direct_IO(int rw, struct kiocb *iocb,
+ 		loff_t isize = i_size_read(inode);
+ 		loff_t end = offset + iov_length(iov, nr_segs);
+ 
+-		if (end > isize)
+-			vmtruncate(inode, isize);
++		if ((end > isize) && inode_newsize_ok(inode, isize) == 0) {
++			truncate_setsize(inode, isize);
++			reiserfs_vfs_truncate_file(inode);
++		}
+ 	}
+ 
+ 	return ret;
+@@ -3196,8 +3198,13 @@ int reiserfs_setattr(struct dentry *dentry, struct iattr *attr)
+ 	 */
+ 	reiserfs_write_unlock_once(inode->i_sb, depth);
+ 	if ((attr->ia_valid & ATTR_SIZE) &&
+-	    attr->ia_size != i_size_read(inode))
+-		error = vmtruncate(inode, attr->ia_size);
++	    attr->ia_size != i_size_read(inode)) {
++		error = inode_newsize_ok(inode, attr->ia_size);
++		if (!error) {
++			truncate_setsize(inode, attr->ia_size);
++			reiserfs_vfs_truncate_file(inode);
++		}
++	}
+ 
+ 	if (!error) {
+ 		setattr_copy(inode, attr);
+diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+index 33215f5..157e474 100644
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -2455,6 +2455,7 @@ struct reiserfs_transaction_handle *reiserfs_persistent_transaction(struct
+ 								    *,
+ 								    int count);
+ int reiserfs_end_persistent_transaction(struct reiserfs_transaction_handle *);
++void reiserfs_vfs_truncate_file(struct inode *inode);
+ int reiserfs_commit_page(struct inode *inode, struct page *page,
+ 			 unsigned from, unsigned to);
+ void reiserfs_flush_old_commits(struct super_block *);
 -- 
 1.7.3.4
----
---
-To unsubscribe from this list: send the line "unsubscribe linux-nilfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
