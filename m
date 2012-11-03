@@ -1,89 +1,109 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [FIXED?] reiser4: problem with key inconsistency
-Date: Wed, 31 Oct 2012 19:43:06 +0100
-Message-ID: <5091713A.4000000@gmail.com>
-References: <508DA9FE.5060005@gmail.com> <2414795.eiFhpRrsg9@intelfx-laptop>
+From: Marco Stornelli <marco.stornelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 00/21 v4] drop vmtruncate
+Date: Sat, 03 Nov 2012 10:21:29 +0100
+Message-ID: <5094E219.5020009@gmail.com>
+References: <508295AF.60606@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:cc:subject
          :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=Yqt3FapWco1DFccBwP5IvZaLc4TIIM0Tt83RpY5BtWI=;
-        b=hD1HuMx1ny4sq728keeV8GC0Tq8EXDMt7MHl91A1b3h5YO+sELmjKaQ4WvbA9OyOrk
-         G0dWOe9llS1BK/5grsqL6xmUhUkjCQIRDbbhrAMG4Lrct6SL/WZzN/1kDHo8wToIsMI8
-         GKJBTW86TXD+sjAb4H2/dupbUa4QMRImZOptEtLK2ZUcvrQddVTKk3ExCEMYhBzKYWuE
-         aMSG61ZUnMwK9z/4uSnlFz6tSIzsYmVXXY556G04lBKl1BgreyQvz9BsZH24Qgy7JgAD
-         EhSDlFKBVavrV8ixH9LjyAFa0bf8QHbvzMl2O0ydbIp0m1u7llK2xRmTwlvr6kEfouqs
-         7sPQ==
-In-Reply-To: <2414795.eiFhpRrsg9@intelfx-laptop>
-Sender: reiserfs-devel-owner@vger.kernel.org
+        bh=DfXqSMgDEUrK09JzPWL1oEuQEcUK7JyR2Ou6t0TKMSM=;
+        b=rf2vuw10yhgHEhHbPbLpg+fjW+zLpoJPAUwFf9SD6nfpex5BaD0hgUQMq3Gw8zfPgJ
+         rMYTBBoX+pvNRFsc8I4zuo2yg9IyeT2h5tkW209GfAOPhoyaOVWixbmapRv05e1zQecT
+         5EHOJsOHDI+cjZ3ftKqjJdZKwOzLcC5q88v6aUpjRAT0a86q6rYlZ1XV4um3jgTxzmAA
+         ilOOSjl26ipsYaMMWaKapeh5qWAfDGnbuYGBDcLrlaPcXBfGO5+u6C2d2KXmELK4Gl2U
+         XUN3mA+BSIk/izlDgyYu66NBrp+zLeK9k8ioZWkRJlGO7HAn725zpLZjHjIOm43+zSiM
+         ERjg==
+In-Reply-To: <508295AF.60606-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Linux FS Devel <linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Al Viro <viro-3bDd1+5oDREiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Evgeniy Dushistov <dushistov-JGs/UdohzUI@public.gmane.org>, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bob Copeland <me-aXfl/3sk2vNUbtYUoyoikg@public.gmane.org>, ocfs2-devel-N0ozoZBvEnrZJqsBc5GL+g@public.gmane.org, "Tigran A. Aivazian" <tigran-ppwZ4lME3+KI6QP4U9MhSdBc4/FLrbF6@public.gmane.org>, Mikulas Patocka <mikulas-TTVWCEgN8Z9G4ohzP4jBZS1Fcj925eT/@public.gmane.org>, jfs-discussion-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, logfs-PCqxUs/MD9bYtjvyW6yDsg@public.gmane.org, Petr Vandrovec <petr-vPk2MGR0e28uaRcfnNAh7A@public.gmane.org>, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ntfs-dev-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 10/31/2012 06:24 PM, Ivan Shapovalov wrote:
-> On 28 =D0=BE=D0=BA=D1=82=D1=8F=D0=B1=D1=80=D1=8F 2012 22:56:14 Edward=
- Shishkin wrote:
->> Hi all.
->> It seems I do have the long-awaited fix.
->>
->> The symptoms of the problem: kernel starts to issue complaints
->> about key inconsistency with the suggestions to check the partition
->> with fsck. Fsck sometimes finds corruptions, but sometimes reports
->> that file system is consistent.
->>
->> Please apply the attached patch to reiser4 stuff for 3.6.2, or
->> download reiser4-for-3.6.4 (which already contains this patch), and
->> let me know if the problem has not gone:
->> http://sourceforge.net/projects/reiser4/files/reiser4-for-linux-3.x/
->>
->> Please, don't rush to deploy production systems on reiser4: it can
->> take up to 80 hours to reproduce the problem with high workload.
->>
->> Thank you for your help.
->> Edward.
->
-> Alas, it hasn't gone... Or maybe it's a different problem, but today =
-(on a
-> debugless build) I've got a massive crash (mostly -2 and -5 errors fo=
-r
-> different VFS operations - e.g.
-> nikita-717/edward-1611/edward-430/nikita-2219/nikita-2221, many vs-35=
-33 and
-> edward-1460/edward-1608/edward-156 warnings).
+Hi all,
 
+I send the fourth patch series to remove vmtruncate. Any 
+comments/feedback are welcome.
 
-Hmm, strange..
-It has gone for me.. At least, my machine works already
-110 hours without complaints (before fixing I encountered
-this usually in 30-50 h). Well, I'll continue stressing.
+Changes:
+v4: fix an error for ocfs2, silently ignore truncate for procfs as 
+suggested by Al
+v3: reworked after Al and Christoph comments
+v2: add documentation cleaning
+v1: first draft
 
-Anybody else has the problems with the patched stuff?
+Marco Stornelli (21):
+   ufs: drop vmtruncate
+   sysv: drop vmtruncate
+   reiserfs: drop vmtruncate
+   procfs: drop vmtruncate
+   omfs: drop vmtruncate
+   ocfs2: drop vmtruncate
+   adfs: drop vmtruncate
+   affs: drop vmtruncate
+   bfs: drop vmtruncate
+   hfs: drop vmtruncate
+   hpfs: drop vmtruncate
+   jfs: drop vmtruncate
+   hfsplus: drop vmtruncate
+   logfs: drop vmtruncate
+   minix: drop vmtruncate
+   ncpfs: drop vmtruncate
+   nilfs2: drop vmtruncate
+   ntfs: drop vmtruncate
+   vfs: drop vmtruncate
+   mm: drop vmtruncate
+   documentation: drop vmtruncate
 
+  Documentation/filesystems/Locking |    6 ------
+  Documentation/filesystems/porting |    2 +-
+  Documentation/filesystems/vfs.txt |   11 -----------
+  fs/adfs/inode.c                   |   15 ++++++++++-----
+  fs/affs/file.c                    |   18 ++++++++++++------
+  fs/affs/inode.c                   |    5 ++++-
+  fs/bfs/file.c                     |   15 ++++++++++-----
+  fs/hfs/inode.c                    |   26 ++++++++++++++++++--------
+  fs/hfsplus/inode.c                |   27 ++++++++++++++++-----------
+  fs/hpfs/file.c                    |   18 ++++++++++++------
+  fs/hpfs/inode.c                   |    5 ++++-
+  fs/jfs/file.c                     |    6 ++++--
+  fs/jfs/inode.c                    |   20 ++++++++++++++------
+  fs/libfs.c                        |    2 --
+  fs/logfs/readwrite.c              |   10 ++++++++--
+  fs/minix/file.c                   |    6 ++++--
+  fs/minix/inode.c                  |   17 ++++++++++++-----
+  fs/ncpfs/inode.c                  |    4 +---
+  fs/nilfs2/file.c                  |    1 -
+  fs/nilfs2/inode.c                 |   24 +++++++++++++++---------
+  fs/nilfs2/nilfs.h                 |    1 +
+  fs/nilfs2/recovery.c              |    3 ++-
+  fs/ntfs/file.c                    |   16 +++++++++++++---
+  fs/ntfs/inode.c                   |    8 ++++++--
+  fs/ntfs/inode.h                   |    4 ++++
+  fs/ocfs2/file.c                   |   18 ------------------
+  fs/omfs/file.c                    |   22 +++++++++++++++-------
+  fs/proc/base.c                    |    7 -------
+  fs/proc/generic.c                 |    9 +--------
+  fs/proc/proc_sysctl.c             |    7 -------
+  fs/reiserfs/file.c                |    3 +--
+  fs/reiserfs/inode.c               |   15 +++++++++++----
+  fs/reiserfs/reiserfs.h            |    1 +
+  fs/sysv/file.c                    |    5 +++--
+  fs/sysv/itree.c                   |   17 ++++++++++++-----
+  fs/ufs/inode.c                    |   15 ++++++++++-----
+  include/linux/fs.h                |    1 -
+  include/linux/mm.h                |    1 -
+  mm/truncate.c                     |   23 -----------------------
+  39 files changed, 225 insertions(+), 189 deletions(-)
 
-> Fsck said SIGSEGV, so I had to restore from a daily backup. Don't kno=
-w if that
-> is related to allocator, but anyway.
->
-> And I don't have much time these days to set up VM with a clone of my=
- system
-> for kgdb, sorry... Though I hope I'll do that on next week (on vacati=
-ons).
->
-> BTW, changing RAM didn't help, and old RAM passes memtest - so here i=
-t's truly
-> a bug somewhere in allocator.
-
-
-May I ask you also to test your partition with badblock program?
-
-Thanks,
-Edward.
+-- 
+1.7.3.4
+---
 --
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
+To unsubscribe from this list: send the line "unsubscribe linux-nilfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
