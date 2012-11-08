@@ -1,118 +1,180 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: insserv on Debian triggers "kernel BUG at fs/reiser4/plugin/object.c:58"
-Date: Wed, 07 Nov 2012 21:50:07 +0100
-Message-ID: <509AC97F.9030301@gmail.com>
-References: <20121107194935.4e27acea@Ulf.tvoe.tv> <509AC8D2.9070500@gmail.com>
+From: dimas <dimas000@ya.ru>
+Subject: Re: insserv on Debian triggers "kernel BUG at
+ fs/reiser4/plugin/object.c:58"
+Date: Thu, 8 Nov 2012 18:44:11 +0400
+Message-ID: <20121108184411.450146fb@Ulf.tvoe.tv>
+References: <20121107194935.4e27acea@Ulf.tvoe.tv>
+	<509AC8D2.9070500@gmail.com>
+Reply-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------060709020803090705070506"
+Content-Type: multipart/mixed; boundary="MP_/bCqI5uq2xPvj+xcZTEUNVS_"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type;
-        bh=faSDDARG5hwLshdeJ+ln7pCKVAO3FNIDD0y5O5LweTw=;
-        b=vm9YYC3oQDa7fW2BfopskiHS0KwqVVb52591GqPzoubPyBoomqENE6PDvH96DzJ0Ar
-         LlykU76ogqjzD57UJLLvF1BxivYnwasvZTBbq9EYF8+8jvZ5wzSwllboXZK8I9xJDjnU
-         ErLL9jsRcOSwYCYGFyPlTwoYd5Wz7tFvmfW6XnNbGRcN0i4UeeEYx5YrMGE8OBsPttIE
-         zyrwUDoFQ4vnOpjrvJLUjxsb6EkM+Cyagpqhc/2pgrBwxblMPd7uTNZD+GHX2W1tQ5+1
-         hh2cmweDjLtFVmGNtvcWuAxjs72xtpuSU7+St1MWVsPXDmJ55YPsgKe5nWPuD8OLw33i
-         d6lA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1352385852;
+	bh=kZlbNyzUOtwxQXcDQmwfiKLohqqGKb2rng2jhs7oUfo=;
+	h=Date:From:To:Subject:Message-ID:In-Reply-To:References:Reply-To:
+	 X-Mailer:Mime-Version:Content-Type;
+	b=glics3JQDjcvhI+/hvmRN8rE6jLDKaxuzAoja3Bkof7oQ0S3e4XWtZPWn5NOyqwsf
+	 63MeK5XhGdMwLHUPg7FpsDMlifiH44LeN/XGQyItpel1MGvxPJ4gWZqzk6rfYFfxGR
+	 +ISubcoG0eaYJrmfUyTY/Bfpmr0gMuNyjX/HS6pk=
 In-Reply-To: <509AC8D2.9070500@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: dimas000@ya.ru
-Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>
+To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------060709020803090705070506
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+--MP_/bCqI5uq2xPvj+xcZTEUNVS_
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-On 11/07/2012 09:47 PM, Edward Shishkin wrote:
-> On 11/07/2012 04:49 PM, dimas wrote:
->> hello, Edward!
->
-> Hello.
->
->> as promised, i've made some tests with latest R4 stuff on Linux 3.6.7 
->> with bfq (otherwise 3.x kernels like to hangup on high i/o).
->> i'm running Debian testing i386 on my "home server" machine with R4 
->> on /. my params are "reg40,formatting=extents"
->> well, i've built my shiny new kernel and left it working. 3 days of 
->> normal usage passed without any single message from R4. and that 
->> looks nice.
->> but today i ran aptitude full-upgrade as some sort of stress-test. 
->> first thing i noticed is that upgrade runs very sloooow (because of 
->> "extents" ot what?). but there was no memory or cpu burn. ok. does 
->> not matter to much. but when dpkg started to configure packages, 
->> output was littered with warnings like that:
->>
->>> [269875.492865] ------------[ cut here ]------------
->>> [269875.492928] kernel BUG at fs/reiser4/plugin/object.c:58!
->>> [269875.492981] invalid opcode: 0000 [#43]
->>> [269875.493062] Pid: 5818, comm: insserv Tainted: G D      
->>> 3.6.7-309.12+pf+r4 #1 3Q IPP72-CPV/To be filled by O.E.M.
->>> [269875.493139] EIP: 0060:[<b10e3bb6>] EFLAGS: 00010282 CPU: 0
->>> [269875.493192] EAX: dd0b0600 EBX: 00000001 ECX: daa93f34 EDX: b693530c
->>> [269875.493246] ESI: b693530c EDI: b10e3bb6 EBP: 00000001 ESP: daa93f1c
->>> [269875.493300]  DS: 007b ES: 007b FS: 0000 GS: 00e0 SS: 0068
->>> [269875.493353] CR0: 80050033 CR2: a76fd9b0 CR3: 29698000 CR4: 000007c0
->>> [269875.493407] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
->>> [269875.493461] DR6: ffff0ff0 DR7: 00000400
->>> [269875.493512] Process insserv (pid: 5818, ti=daa92000 
->>> task=e3412900 task.ti=daa92000)
->>> [269875.493579] Stack:
->>> [269875.493623]  b1057d3d 00000001 dd0b0600 00000000 00000000 
->>> b6935310 e7ea1db4 e7ea1db4
->>> [269875.493896]  91827364 daa93f40 daa93f40 daa93f48 daa93f48 
->>> 00000000 00000000 0000d04a
->>> [269875.494168]  00000200 00000000 b1057f17 00000200 00000000 
->>> b693530c dd0b0600 00000000
->>> [269875.494441] Call Trace:
->>> [269875.494488]  [<b1057d3d>] ? 0xb1057d3d
->>> [269875.494539]  [<b1057f17>] ? 0xb1057f17
->>> [269875.494588]  [<b1053f98>] ? 0xb1053f98
->>> [269875.494637]  [<b128d897>] ? 0xb128d897
->>> [269875.494685] Code: 5f c3 90 90 90 31 c0 c3 b8 ea ff ff ff c3 85 
->>> c9 53 89 cb 74 0f 89 d1 89 da 5b 2d 9c 00 00 00 e9 ec fd ff ff b8 ea 
->>> ff ff ff 5b c3 <0f> 0b 56 89 d6 53 89 c3 e8 58 d3 ff ff f6 40 08 01 
->>> 74 33 89 d8
->>> [269875.494765] EIP: [<b10e3bb6>]  SS:ESP 0068:daa93f1c
->>> [269875.496554] ---[ end trace f4d149c808c3cc9c ]---
->
->
-> This indicates that reiser4 doesn't make a friendship with VFS in some 
-> bits.
-> By the way, what the "pf" stands for in 3.6.7-309.12+pf+r4? ;)
-> Could you please apply this temporary patch (it should prevent the oops),
-> and send me the output of "strace insserv -nv"?
+well, i bult new kenel from same sources and with same config with this "don't oops" patch.
+see attachment for strace output you've asked.
 
-oops, forgot the patch..
 
---------------060709020803090705070506
-Content-Type: text/x-patch;
- name="reiser4-dont-oops-on-bugop.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="reiser4-dont-oops-on-bugop.patch"
+2012-312 21:47 Edward Shishkin <edward.shishkin@gmail.com> wrote:
+> This indicates that reiser4 doesn't make a friendship with VFS in
+> some bits. By the way, what the "pf" stands for in
+> 3.6.7-309.12+pf+r4? ;) Could you please apply this temporary patch
+> (it should prevent the oops), and send me the output of "strace
+> insserv -nv"?
+> 
+> Thanks,
+> Edward.
+--MP_/bCqI5uq2xPvj+xcZTEUNVS_
+Content-Type: application/x-xz
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=strace-insserv.xz
 
----
- fs/reiser4/plugin/object.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+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
 
---- linux-3.6.2_.orig/fs/reiser4/plugin/object.c
-+++ linux-3.6.2_/fs/reiser4/plugin/object.c
-@@ -55,8 +55,8 @@
- 
- static int _bugop(void)
- {
--	BUG_ON(1);
--	return 0;
-+	//BUG_ON(1);
-+	return -EINVAL;
- }
- 
- #define bugop ((void *)_bugop)
-
---------------060709020803090705070506--
+--MP_/bCqI5uq2xPvj+xcZTEUNVS_--
