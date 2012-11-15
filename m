@@ -1,7 +1,7 @@
 From: "Michael W. Bombardieri" <mb@ii.net>
-Subject: [PATCH] use __progname in mkreiserfs.c
-Date: Thu, 15 Nov 2012 14:50:03 +0800
-Message-ID: <20121115065003.GA23984@bom.nom.co>
+Subject: [PATCH] use __progname in mkreiserfs.c (try again)
+Date: Thu, 15 Nov 2012 14:55:01 +0800
+Message-ID: <20121115065501.GA22342@bom.nom.co>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Content-Disposition: inline
@@ -12,17 +12,9 @@ Content-Transfer-Encoding: 7bit
 To: Jeff Mahoney <jeffm@suse.com>
 Cc: reiserfs-devel@vger.kernel.org
 
-Hi Jeff,
+Sorry for the re-post.
 
-I have a patch for mkreiserfs.c...
-
-* We don't need to derive program_name from argv;
-  __progname already exists for this purpose.
-
-Does this look ok? 
-
-- Michael
-
+I think I mangled the previous diff in vi...
 
 --- mkreiserfs.c	Thu Nov 15 14:34:11 2012
 +++ mkreiserfs_new.c	Thu Nov 15 14:40:07 2012
@@ -42,7 +34,7 @@ Does this look ok?
  
      if( buf ) {
 -	    fprintf( stderr, "%s: %s\n", program_name, buf );
-+	    fprintf( stderr, "%s: %s\n", ame, buf );
++	    fprintf( stderr, "%s: %s\n", __progname, buf );
  	    free( buf );
      }
  }
