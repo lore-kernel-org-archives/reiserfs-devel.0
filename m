@@ -1,28 +1,40 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Kernel config option which causes reiser4 to be instable
-Date: Tue, 11 Dec 2012 19:08:17 +0400
-Message-ID: <2612159.zxK0OqJdpP@intelfx-laptop>
-References: <CADW=+3n+rKECWNSmzcMeTQaPZrtA3Sr04=yO1cqsd0j09Y43Ww@mail.gmail.com> <CADW=+3m2s9Yyi7Da1nieTXjFx=KcfLch+mwoRTB50vGj+mZA=w@mail.gmail.com> <CADW=+3kz__Rd_29Sx8mdiA0b_S11pEsXLYG5AGzjAVBC4Hck8w@mail.gmail.com>
+Subject: Fwd: Kernel config option which causes reiser4 to be instable
+Date: Tue, 11 Dec 2012 19:15:41 +0400
+Message-ID: <2081336.xV2AR3Rhy2@intelfx-laptop>
 Mime-Version: 1.0
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
-         :references:mime-version:content-transfer-encoding:content-type;
-        bh=Lf+CRBRKA/xYfW/4X/h+/J70w/kxgFYO8z5fOViffIM=;
-        b=xUMFPsyk3PluuR/EHgE+sZZngImIyOcK/J7ED0WdCjL9lUS+S0ORmnmnJQPKC2MEsh
-         A6WA7BQxG2gH/yub8xKAKFd8gi21fm2LT3nt1xVtHfAPLmBufxAPVBxP4liKg6SPfOiC
-         IdQkBzWr4WqqaXKjNpgsKE7l3cCmFoE8jfERqoG16nDJKHreCj1UdPPDJVNAJ9Q6Jrmw
-         vYBh2JgrD2KkXTVh1idoQqUaLaAOZomdQCJE6mcJ/cBupRyKjMgvv6xFu8iiPpvZdGaC
-         LDu7AbPwOFSiYye7pOTvW3uZz0zNC6pfq8URM2CBh1eZelwORlwoYyIBWWX4xDhAEEuc
-         xcqA==
-In-Reply-To: <CADW=+3kz__Rd_29Sx8mdiA0b_S11pEsXLYG5AGzjAVBC4Hck8w@mail.gmail.com>
+        h=from:to:subject:date:message-id:user-agent:mime-version
+         :content-transfer-encoding:content-type;
+        bh=SRgXNUbIpK7tj2sFTFhSpoXifKdCzQoMSJSOMOdRRqg=;
+        b=gQRmJrKqdkFvdKtYdoVYrDc6eNmMJcMJQpCNHZ99QFazkOjH6Gzf2DONFH6qZB6hhT
+         oy0JxEDjKsjkzb91SYPK1aOIuoQBwpFyxpEULji/weC6en/MrN3OW8oKtiBywA8LSAgj
+         eSzlymd0i/eLBYeEwJ9cRkduwABedm3WeObK4tGNP8F5IYkHjorzXc27CyIJzsl247yz
+         6nJ2e8RbsPk2Pgu4pVkymS9/W9mNYlCsdnKUYB1r04qht75HBCTyW7x51XS9HO7vgPIN
+         PvGIZIwf/P0fBVnX9U6Kat0eYjs2QLI3ZfZghw9HjVigmsJ2Dt7tDv5aQh75uoJEpMHr
+         kT/A==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="utf-8"
+To: reiserfs-devel <reiserfs-devel@vger.kernel.org>, =?utf-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>, edward.shishkin@gmail.com
+
+Sorry, I've made the original message a reply (though it shall be in a =
+new=20
+thread).
+
+Here it is (resent):
+
+----------  Original message  ----------
+
+Subject: Kernel config option which causes reiser4 to be instable
+Date: 11 Dec 2012, 19:08:17
+=46rom: Ivan Shapovalov <intelfx100@gmail.com>
 To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
-Cc: =?utf-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>, edward.shishkin@gmail.com
+Cc: Du=C5=A1an =C4=8Coli=C4=87 <dusanc@gmail.com>, edward.shishkin@gmai=
+l.com
 
 Hello!
 
@@ -48,6 +60,7 @@ internals.
 
 Thanks,
 Ivan.
+-----------------------------------------
 --
 To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
 l" in
