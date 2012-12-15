@@ -1,107 +1,102 @@
 From: Marco Stornelli <marco.stornelli@gmail.com>
-Subject: [PATCH 00/21 v5] drop vmtruncate
-Date: Sat, 15 Dec 2012 11:43:25 +0100
-Message-ID: <50CC544D.8050505@gmail.com>
-References: <508295AF.60606@gmail.com> <5094E219.5020009@gmail.com>
+Subject: [PATCH 03/21] reiserfs: drop vmtruncate
+Date: Sat, 15 Dec 2012 11:47:31 +0100
+Message-ID: <50CC5543.9030206@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=tteNH7JpcaphDtt1esojQhwt3Zu0+sSeG2ng3q19S2A=;
-        b=PHrOZoK9adDyy1WZb/5uSX+s9nEvlRZ+o7oPCClcCLd5CM+6aDL/Qa4K1Xu0J9p+0n
-         a9ST+uEjwAy3Z+w1pWgN1EyLmCgiqGiKG4xqsyfUmUd7/xiORRsjOXegP5ZCD1nCaAgf
-         /4SbqQe9bu7lACChS1xzKUZWNNRkAgjdmVn5UOjLyvtvf2R5kTYCaugvz7OBAinczQLc
-         RVZzlS/AZIStagytOY6HA0VvUlfdHz/mW7okvS0UPhnVqRJQ55ZsOE5FhVZXt1ZzU0/+
-         kprWoLpvuJ9ohvgSHqBGgoEf15HexGJ0jQW+9RpDBCIrFnHuqDOj+Y2o7g8hg77hyneM
-         w2Aw==
-In-Reply-To: <5094E219.5020009@gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+         :content-type:content-transfer-encoding;
+        bh=8TDJvYXMm/CYKS0tEZXuwF2AgdewTb7hpc5/bcjJOX0=;
+        b=xZbhugESvyfD+KS4CvB1htVKRQUo35r2Ioum1a2CwbNg75K5Q/sI+e55ImLkyPh+W4
+         cXgDc9VMLbJiHN+76nDezwP37zPzIu5Y19gLnm/+rnnjeUN/FJkCmCXhhF7TtfaN7ZvZ
+         fjFql42cUswztq0N0lmm2CiWh+Q2bp9ZG6jHDSy0Yu2gTXNJbLZ3sNdRI+IveZ1sqBpv
+         ne5XZKtDE7cyN6LqvRxkQoH3cTe9m5xXAkr9Q43kN/Y2sT50SpO0Q1gWTBN0ehR7de1u
+         N4ypUI2YZP6sPbdMuT1sGT6i8icm5LoS2MbPSaACSKt7/vknhXdNNf96ZNTioSJrwqTo
+         wZlA==
+Sender: linux-fsdevel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, Linux Kernel <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@infradead.org>, Evgeniy Dushistov <dushistov@mail.ru>, reiserfs-devel@vger.kernel.org, Bob Copeland <me@bobcopeland.com>, ocfs2-devel@oss.oracle.com, "Tigran A. Aivazian" <tigran@aivazian.fsnet.co.uk>, Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, jfs-discussion@lists.sourceforge.net, logfs@logfs.org, Petr Vandrovec <petr@vandrovec.name>, linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-doc@vger.kernel.org
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
 
-Hi all,
+Removed vmtruncate
 
-I send again the vmtruncate patch series. No change from the latest version, only rebased on the latest
-Linus's tree. I hope we can merge it for 3.8.
+Signed-off-by: Marco Stornelli <marco.stornelli@gmail.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+---
+ fs/reiserfs/file.c     |    3 +--
+ fs/reiserfs/inode.c    |   15 +++++++++++----
+ fs/reiserfs/reiserfs.h |    1 +
+ 3 files changed, 13 insertions(+), 6 deletions(-)
 
-Marco
-
-Changes:
-v5: rebased after 3.7 release
-v4: fix an error for ocfs2, silently ignore truncate for procfs as suggested by Al
-v3: reworked after Al and Christoph comments
-v2: add documentation cleaning
-v1: first draft
-
-Marco Stornelli (21):
-  ufs: drop vmtruncate
-  sysv: drop vmtruncate
-  reiserfs: drop vmtruncate
-  procfs: drop vmtruncate
-  omfs: drop vmtruncate
-  ocfs2: drop vmtruncate
-  adfs: drop vmtruncate
-  affs: drop vmtruncate
-  bfs: drop vmtruncate
-  hfs: drop vmtruncate
-  hpfs: drop vmtruncate
-  jfs: drop vmtruncate
-  hfsplus: drop vmtruncate
-  logfs: drop vmtruncate
-  minix: drop vmtruncate
-  ncpfs: drop vmtruncate
-  nilfs2: drop vmtruncate
-  ntfs: drop vmtruncate
-  vfs: drop vmtruncate
-  mm: drop vmtruncate
-  documentation: drop vmtruncate
-
- Documentation/filesystems/Locking |    6 ------
- Documentation/filesystems/porting |    2 +-
- Documentation/filesystems/vfs.txt |   11 -----------
- fs/adfs/inode.c                   |   15 ++++++++++-----
- fs/affs/file.c                    |   18 ++++++++++++------
- fs/affs/inode.c                   |    5 ++++-
- fs/bfs/file.c                     |   15 ++++++++++-----
- fs/hfs/inode.c                    |   26 ++++++++++++++++++--------
- fs/hfsplus/inode.c                |   27 ++++++++++++++++-----------
- fs/hpfs/file.c                    |   18 ++++++++++++------
- fs/hpfs/inode.c                   |    5 ++++-
- fs/jfs/file.c                     |    6 ++++--
- fs/jfs/inode.c                    |   20 ++++++++++++++------
- fs/libfs.c                        |    2 --
- fs/logfs/readwrite.c              |   10 ++++++++--
- fs/minix/file.c                   |    6 ++++--
- fs/minix/inode.c                  |   17 ++++++++++++-----
- fs/ncpfs/inode.c                  |    4 +---
- fs/nilfs2/file.c                  |    1 -
- fs/nilfs2/inode.c                 |   24 +++++++++++++++---------
- fs/nilfs2/nilfs.h                 |    1 +
- fs/nilfs2/recovery.c              |    3 ++-
- fs/ntfs/file.c                    |   16 +++++++++++++---
- fs/ntfs/inode.c                   |    8 ++++++--
- fs/ntfs/inode.h                   |    4 ++++
- fs/ocfs2/file.c                   |   18 ------------------
- fs/omfs/file.c                    |   22 +++++++++++++++-------
- fs/proc/base.c                    |    7 -------
- fs/proc/generic.c                 |    9 +--------
- fs/proc/proc_sysctl.c             |    7 -------
- fs/reiserfs/file.c                |    3 +--
- fs/reiserfs/inode.c               |   15 +++++++++++----
- fs/reiserfs/reiserfs.h            |    1 +
- fs/sysv/file.c                    |    5 +++--
- fs/sysv/itree.c                   |   17 ++++++++++++-----
- fs/ufs/inode.c                    |   15 ++++++++++-----
- include/linux/fs.h                |    1 -
- include/linux/mm.h                |    1 -
- mm/truncate.c                     |   23 -----------------------
- 39 files changed, 225 insertions(+), 189 deletions(-)
-
+diff --git a/fs/reiserfs/file.c b/fs/reiserfs/file.c
+index 8375c92..50302d6 100644
+--- a/fs/reiserfs/file.c
++++ b/fs/reiserfs/file.c
+@@ -126,7 +126,7 @@ static int reiserfs_file_open(struct inode *inode, struct file *file)
+ 	return err;
+ }
+ 
+-static void reiserfs_vfs_truncate_file(struct inode *inode)
++void reiserfs_vfs_truncate_file(struct inode *inode)
+ {
+ 	mutex_lock(&(REISERFS_I(inode)->tailpack));
+ 	reiserfs_truncate_file(inode, 1);
+@@ -312,7 +312,6 @@ const struct file_operations reiserfs_file_operations = {
+ };
+ 
+ const struct inode_operations reiserfs_file_inode_operations = {
+-	.truncate = reiserfs_vfs_truncate_file,
+ 	.setattr = reiserfs_setattr,
+ 	.setxattr = reiserfs_setxattr,
+ 	.getxattr = reiserfs_getxattr,
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index d83736f..95d7680 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -3085,8 +3085,10 @@ static ssize_t reiserfs_direct_IO(int rw, struct kiocb *iocb,
+ 		loff_t isize = i_size_read(inode);
+ 		loff_t end = offset + iov_length(iov, nr_segs);
+ 
+-		if (end > isize)
+-			vmtruncate(inode, isize);
++		if ((end > isize) && inode_newsize_ok(inode, isize) == 0) {
++			truncate_setsize(inode, isize);
++			reiserfs_vfs_truncate_file(inode);
++		}
+ 	}
+ 
+ 	return ret;
+@@ -3200,8 +3202,13 @@ int reiserfs_setattr(struct dentry *dentry, struct iattr *attr)
+ 	 */
+ 	reiserfs_write_unlock_once(inode->i_sb, depth);
+ 	if ((attr->ia_valid & ATTR_SIZE) &&
+-	    attr->ia_size != i_size_read(inode))
+-		error = vmtruncate(inode, attr->ia_size);
++	    attr->ia_size != i_size_read(inode)) {
++		error = inode_newsize_ok(inode, attr->ia_size);
++		if (!error) {
++			truncate_setsize(inode, attr->ia_size);
++			reiserfs_vfs_truncate_file(inode);
++		}
++	}
+ 
+ 	if (!error) {
+ 		setattr_copy(inode, attr);
+diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+index 33215f5..157e474 100644
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -2455,6 +2455,7 @@ struct reiserfs_transaction_handle *reiserfs_persistent_transaction(struct
+ 								    *,
+ 								    int count);
+ int reiserfs_end_persistent_transaction(struct reiserfs_transaction_handle *);
++void reiserfs_vfs_truncate_file(struct inode *inode);
+ int reiserfs_commit_page(struct inode *inode, struct page *page,
+ 			 unsigned from, unsigned to);
+ void reiserfs_flush_old_commits(struct super_block *);
 -- 
 1.7.3.4
-
