@@ -1,153 +1,107 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: Kernel config option which causes reiser4 to be instable
-Date: Fri, 14 Dec 2012 22:20:49 +0400
-Message-ID: <8441852.S0Hz7rjb2F@intelfx-laptop>
-References: <CADW=+3n+rKECWNSmzcMeTQaPZrtA3Sr04=yO1cqsd0j09Y43Ww@mail.gmail.com> <1389717.RAQAZZVsPt@intelfx-laptop> <50CB088C.3090801@gmail.com>
+From: Marco Stornelli <marco.stornelli@gmail.com>
+Subject: [PATCH 00/21 v5] drop vmtruncate
+Date: Sat, 15 Dec 2012 11:43:25 +0100
+Message-ID: <50CC544D.8050505@gmail.com>
+References: <508295AF.60606@gmail.com> <5094E219.5020009@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
-         :references:mime-version:content-transfer-encoding:content-type;
-        bh=mIjrkodGVUpUXOmyXuabsMIqCNoJdGcdmnU3GLFluig=;
-        b=Svg5AMoeNz6dg/Aa4z/hGTMcYEzDnN+j6336L4qW+Jy2644XAgl3dPj2x/VLUoEfvq
-         1NVnyjax54d0U3uHN+KNdGO3NudaiJMvh3XGR140NvEyXxVo3pjKsBAgRZno7Jlxodgt
-         T8VM1ifxZlZ12stkH89GJfRyV+ReLtXmshiIztgUezKwTcpcomJggVDi19Uccswbtbwe
-         KAJgBg8mIGv96GDDpuKCYmYXhCZCV0efK6kl+bvTIeUDIHNTwOpntSJTwtrbE1Kkf/Wy
-         uFdr0Foi5iKjp4GXhExJHXXQAMJQm69WHVTODwtZghcsvU9I6cFH7tW3HGQKu9IPovlU
-         /RHQ==
-In-Reply-To: <50CB088C.3090801@gmail.com>
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-type:content-transfer-encoding;
+        bh=tteNH7JpcaphDtt1esojQhwt3Zu0+sSeG2ng3q19S2A=;
+        b=PHrOZoK9adDyy1WZb/5uSX+s9nEvlRZ+o7oPCClcCLd5CM+6aDL/Qa4K1Xu0J9p+0n
+         a9ST+uEjwAy3Z+w1pWgN1EyLmCgiqGiKG4xqsyfUmUd7/xiORRsjOXegP5ZCD1nCaAgf
+         /4SbqQe9bu7lACChS1xzKUZWNNRkAgjdmVn5UOjLyvtvf2R5kTYCaugvz7OBAinczQLc
+         RVZzlS/AZIStagytOY6HA0VvUlfdHz/mW7okvS0UPhnVqRJQ55ZsOE5FhVZXt1ZzU0/+
+         kprWoLpvuJ9ohvgSHqBGgoEf15HexGJ0jQW+9RpDBCIrFnHuqDOj+Y2o7g8hg77hyneM
+         w2Aw==
+In-Reply-To: <5094E219.5020009@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Edward Shishkin <edward.shishkin@gmail.com>
-Cc: =?utf-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, Linux Kernel <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@infradead.org>, Evgeniy Dushistov <dushistov@mail.ru>, reiserfs-devel@vger.kernel.org, Bob Copeland <me@bobcopeland.com>, ocfs2-devel@oss.oracle.com, "Tigran A. Aivazian" <tigran@aivazian.fsnet.co.uk>, Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, jfs-discussion@lists.sourceforge.net, logfs@logfs.org, Petr Vandrovec <petr@vandrovec.name>, linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-doc@vger.kernel.org
 
-On 14 December 2012 12:07:56 Edward Shishkin wrote:
-> On 12/14/2012 04:14 AM, Ivan Shapovalov wrote:
-> > On 13 December 2012 23:47:10 Edward Shishkin wrote:
-> >> On 12/11/2012 09:54 PM, Du=C5=A1an =C4=8Coli=C4=87 wrote:
-> >>> On Tue, Dec 11, 2012 at 7:33 PM, Edward Shishkin
-> >>>=20
-> >>> <edward.shishkin@gmail.com>   wrote:
-> >>>> On 12/11/2012 04:08 PM, Ivan Shapovalov wrote:
-> >>>>> Hello!
-> >>>>=20
-> >>>> Hello.
-> >>>>=20
-> >>>>> With help of Du=C5=A1an =C4=8Coli=C4=87<dusanc@gmail.com>   who=
- provided his kernel
-> >>>>> config
-> >>>>> diff I've found a kernel option which, when disabled, greatly r=
-educes
-> >>>>> (hopefully to zero, but need time to verify it) corruption rate=
- in
-> >>>>> reiser4.
-> >>>>>=20
-> >>>>> It's CONFIG_TRANSPARENT_HUGEPAGE (or something which is used by=
- it
-> >>>>> like
-> >>>>> CONFIG_COMPACTION or CONFIG_MIGRATION).
-> >>>>> For now I'm testing it with CONFIG_TRANSPARENT_HUGEPAGE disable=
-d
-> >>>>=20
-> >>>> How long?
-> >>>=20
-> >>> For me the difference in uptime is months without vs hours with i=
-t :D
-> >>> on 2.6.39.4
-> >>=20
-> >> Hm, indeed: my setup with enabled migration can not survive even o=
-ne
-> >> kernel compilation, while with disabled migration everything looks=
- ok..
-> >=20
-> > The overnight testing also showed no errors...
-> > So shall we release reiser4-for-3.7 and announce FIXED(?) once agai=
-n?
-> >=20
-> > :)
->=20
-> I worry that migration is mandatory option for hugepages.
-> Does fail_migrate_page() work with hugepages?
+Hi all,
 
-_Apparently_ yes. We have a counter named "compact_pagemigrate_failed" =
-in=20
-/proc/vmstat (documented in vm/transhuge.txt), which means that failing=
- a page=20
-migration is not a critical event. So hugepages and compaction will wor=
-k,=20
-albeit quite less effectively...
+I send again the vmtruncate patch series. No change from the latest version, only rebased on the latest
+Linus's tree. I hope we can merge it for 3.8.
 
-=2E..And I've immediately got a bunch of (presumably silly) questions w=
-hile=20
-trying to implement ->migratepage().
+Marco
 
-1) Why it is needed to writeback dirty pages before migrating them?
+Changes:
+v5: rebased after 3.7 release
+v4: fix an error for ocfs2, silently ignore truncate for procfs as suggested by Al
+v3: reworked after Al and Christoph comments
+v2: add documentation cleaning
+v1: first draft
 
-2) Looking at the default implementation (fallback_migrate_page()), wha=
-t is=20
-the meaning of migrating a released page? In other words, doesn't "rele=
-asing"=20
-page anyway mean "completely freeing" it, requiring the fs to read=20
-corresponding data again?
+Marco Stornelli (21):
+  ufs: drop vmtruncate
+  sysv: drop vmtruncate
+  reiserfs: drop vmtruncate
+  procfs: drop vmtruncate
+  omfs: drop vmtruncate
+  ocfs2: drop vmtruncate
+  adfs: drop vmtruncate
+  affs: drop vmtruncate
+  bfs: drop vmtruncate
+  hfs: drop vmtruncate
+  hpfs: drop vmtruncate
+  jfs: drop vmtruncate
+  hfsplus: drop vmtruncate
+  logfs: drop vmtruncate
+  minix: drop vmtruncate
+  ncpfs: drop vmtruncate
+  nilfs2: drop vmtruncate
+  ntfs: drop vmtruncate
+  vfs: drop vmtruncate
+  mm: drop vmtruncate
+  documentation: drop vmtruncate
 
-3) As far as I could understand, migrating page (from fs's point of vie=
-w) is=20
-just replacing all internal pointers to the "old" page with pointers to=
- the=20
-new one together with calling predefined functions migrate_page_move_ma=
-pping()=20
-and migrate_page_copy(). So here's a question - which structures of rei=
-ser4=20
-(beyond jnode->pg) keep pointers to pages and how to access them, given=
- a=20
-single page?
-I can remember cryptcompress's struct cluster_handle which stores an ar=
-ray of=20
-pages...
+ Documentation/filesystems/Locking |    6 ------
+ Documentation/filesystems/porting |    2 +-
+ Documentation/filesystems/vfs.txt |   11 -----------
+ fs/adfs/inode.c                   |   15 ++++++++++-----
+ fs/affs/file.c                    |   18 ++++++++++++------
+ fs/affs/inode.c                   |    5 ++++-
+ fs/bfs/file.c                     |   15 ++++++++++-----
+ fs/hfs/inode.c                    |   26 ++++++++++++++++++--------
+ fs/hfsplus/inode.c                |   27 ++++++++++++++++-----------
+ fs/hpfs/file.c                    |   18 ++++++++++++------
+ fs/hpfs/inode.c                   |    5 ++++-
+ fs/jfs/file.c                     |    6 ++++--
+ fs/jfs/inode.c                    |   20 ++++++++++++++------
+ fs/libfs.c                        |    2 --
+ fs/logfs/readwrite.c              |   10 ++++++++--
+ fs/minix/file.c                   |    6 ++++--
+ fs/minix/inode.c                  |   17 ++++++++++++-----
+ fs/ncpfs/inode.c                  |    4 +---
+ fs/nilfs2/file.c                  |    1 -
+ fs/nilfs2/inode.c                 |   24 +++++++++++++++---------
+ fs/nilfs2/nilfs.h                 |    1 +
+ fs/nilfs2/recovery.c              |    3 ++-
+ fs/ntfs/file.c                    |   16 +++++++++++++---
+ fs/ntfs/inode.c                   |    8 ++++++--
+ fs/ntfs/inode.h                   |    4 ++++
+ fs/ocfs2/file.c                   |   18 ------------------
+ fs/omfs/file.c                    |   22 +++++++++++++++-------
+ fs/proc/base.c                    |    7 -------
+ fs/proc/generic.c                 |    9 +--------
+ fs/proc/proc_sysctl.c             |    7 -------
+ fs/reiserfs/file.c                |    3 +--
+ fs/reiserfs/inode.c               |   15 +++++++++++----
+ fs/reiserfs/reiserfs.h            |    1 +
+ fs/sysv/file.c                    |    5 +++--
+ fs/sysv/itree.c                   |   17 ++++++++++++-----
+ fs/ufs/inode.c                    |   15 ++++++++++-----
+ include/linux/fs.h                |    1 -
+ include/linux/mm.h                |    1 -
+ mm/truncate.c                     |   23 -----------------------
+ 39 files changed, 225 insertions(+), 189 deletions(-)
 
-Thanks,
-Ivan.
+-- 
+1.7.3.4
 
->=20
-> Also before the release I'll try to take a look at this:
-> http://marc.info/?l=3Dreiserfs-devel&m=3D135402207623711&w=3D2
->=20
-> This failed path might indicate that we adjusted to fs-writeback
-> incorrectly.
->=20
-> Edward.
->=20
-> > Regards,
-> > Ivan.
-> >=20
-> >>>>>     on kernel
-> >>>>>=20
-> >>>>> 3.6.10, and everything seems to be OK so far (so the workaround=
- is
-> >>>>> version-
-> >>>>> agnostic).
-> >>>>>=20
-> >>>>> Edward, are there any guesses on what can make reiser4 choke on
-> >>>>> hugepages/compaction/migration?
-> >>>>=20
-> >>>> TBH, no ideas. They (hugepages) are _transparent_.
-> >>>> It means we shouldn't suffer in theory ;)
-> >>>>=20
-> >>>>>     I'm not even barely familiar with the kernel
-> >>>>>=20
-> >>>>> internals.
-> >>>>>=20
-> >>>>> Thanks,
-> >>>>> Ivan.
---=20
-=D0=A1 =D1=83=D0=B2=D0=B0=D0=B6=D0=B5=D0=BD=D0=B8=D0=B5=D0=BC,
-=D0=A8=D0=B0=D0=BF=D0=BE=D0=B2=D0=B0=D0=BB=D0=BE=D0=B2 =D0=98=D0=B2=D0=B0=
-=D0=BD.
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
