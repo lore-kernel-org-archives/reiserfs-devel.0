@@ -1,48 +1,124 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Further work on reiser4: discard support and performance issues
-Date: Mon, 07 Jan 2013 05:42:41 +0400
-Message-ID: <1856576.kOCPiaH0RB@intelfx-laptop>
+From: =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
+Subject: Re: [FIXED?] reiser4: problem with key inconsistency
+Date: Mon, 7 Jan 2013 12:05:31 +0100
+Message-ID: <CADW=+3=ZsVyNg_m3Rm186GDLB2m-31OwuOEggLVvqUZO4koBxg@mail.gmail.com>
+References: <508DA9FE.5060005@gmail.com>
+	<2414795.eiFhpRrsg9@intelfx-laptop>
+	<50954002.50105@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=x-received:from:to:cc:subject:date:message-id:user-agent
-         :mime-version:content-transfer-encoding:content-type;
-        bh=GPsIJg1BM4khHe4BN0j6P0lux0CRVijMJD3i6QEoQzQ=;
-        b=TvdkJc4ss70D7XTcXZ+YeTb5RrU8P0T2V/vOmMHJmNUJw+9BuUOYcjscZFKnVFhHRO
-         xIe4kh0EtaJ0C5NucCSxIDo5kLW9XD+o1yVjarIXfZpkwQV2uegV6i8GizKhAKco0EHT
-         7NLWZneC9RayvuekQbDhquQJpdKW2T9wUdVf8IMp2UICXbVrHxSepKo89Y13J4tlZsiW
-         Pv+l+Bk/vUefe+7cZudJg/D2OSTrurG9/Lp9D89XoNiz5zCDnjB/txuclPKNDsj8V+Ho
-         t2q+G0y+FRBBdzsbBt7m9PThXSCeRLB/1WsLA8WLeqS83o4ggvP2Xark15OP2jUrpXW+
-         4c6w==
+        h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+         :content-type:content-transfer-encoding;
+        bh=DT+k9pLlkzFcC4SoZL1MT1NVbE4+vCKrCGC97apUMA8=;
+        b=VVuA3Rn+8H+xSmxLfq0SXiYU2rONzjlCpsc/MEcDRbptmwLWyyw/rRIHWQshbF4b0H
+         L2HdaEasvQrkVlimhvIiEbd9wTUKbgZTt6yBSCSjDdbuSjVCoQqeZbecjdd+J068hwv6
+         p51w1x0W+7lnUXBVoqu/Z1xTufo9nPXxtLOSEuJr/IwDcmg3F2TrAEXhWhXcCB1N3pub
+         iX2rHS/OAdkB/UCfl7HqIsN/5JgS0w0Gu7i7Wm8ViQBP3EzEeXD53UsVWpnGtsTyxFK1
+         wKVoY/Q6xibzFDQjv8fFbYUp5Y+ERuo9HchQK5hPkdixt1hI5W00KDFfGr3jvU+skGvv
+         PkoA==
+In-Reply-To: <50954002.50105@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: edward.shishkin@gmail.com
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+To: reiserfs-devel@vger.kernel.org
 
-Hi again Edward,
+On Sat, Nov 3, 2012 at 5:02 PM, Edward Shishkin
+<edward.shishkin@gmail.com> wrote:
+> On 10/31/2012 06:24 PM, Ivan Shapovalov wrote:
+>>
+>> On 28 =D0=BE=D0=BA=D1=82=D1=8F=D0=B1=D1=80=D1=8F 2012 22:56:14 Edwar=
+d Shishkin wrote:
+>>>
+>>> Hi all.
+>>> It seems I do have the long-awaited fix.
+>>>
+>>> The symptoms of the problem: kernel starts to issue complaints
+>>> about key inconsistency with the suggestions to check the partition
+>>> with fsck. Fsck sometimes finds corruptions, but sometimes reports
+>>> that file system is consistent.
+>>>
+>>> Please apply the attached patch to reiser4 stuff for 3.6.2, or
+>>> download reiser4-for-3.6.4 (which already contains this patch), and
+>>> let me know if the problem has not gone:
+>>> http://sourceforge.net/projects/reiser4/files/reiser4-for-linux-3.x=
+/
+>>>
+>>> Please, don't rush to deploy production systems on reiser4: it can
+>>> take up to 80 hours to reproduce the problem with high workload.
+>>>
+>>> Thank you for your help.
+>>> Edward.
+>>
+>>
+>> Alas, it hasn't gone... Or maybe it's a different problem, but today=
+ (on a
+>> debugless build) I've got a massive crash (mostly -2 and -5 errors f=
+or
+>> different VFS operations - e.g.
+>> nikita-717/edward-1611/edward-430/nikita-2219/nikita-2221, many vs-3=
+533
+>> and
+>> edward-1460/edward-1608/edward-156 warnings).
+>> Fsck said SIGSEGV,
+>
+>
+>
+> There are pending patches for reiser4progs, please don't forget to ap=
+ply
+> them when checking your partitions:
+>
+> http://marc.info/?l=3Dreiserfs-devel&m=3D129703129519745&w=3D2
+> http://marc.info/?l=3Dreiserfs-devel&m=3D127504471326353&w=3D2
+>
 
-Here's what I want to try to do with reiser4 in meantime. I'd appreciate some 
-hints on that all...
+Is this bug fixed in 3.7?
 
-So, first thing I'd like to implement is TRIM/discard support, both online
-(via -o discard) and in a separate FITRIM ioctl().
-That's just because I've got an SSD two days ago and thus now have to use in 
-rootfs some discard-aware fs like ext4.
+What is blocking the release of reiser4progs-1.0.8  with those pending =
+patches?
 
-And then I want to do something with performance: sometimes during heavy I/O 
-to a slow /home storage (especially when it's multithreaded) many processes, 
-including the DE, just get stuck in "D" state and sit there for a minute or 
-two with load average of apx. 5.5 (on a hyperthreaded 2-core CPU).
+Are there some other open bugs?
 
-For the first, I can look into other filesystems' implementations, but I'll 
-probably be unsure at which layer to put the actual discard call (in order not 
-to break reiser4's transactional nature).
-And for the second, I just don't know why does that happen. Can it be due to 
-some r4-specific things/issues or that's just a horribly slow random access 
-speed of my hw?
+Thanks
+Du=C5=A1an
 
-Thanks,
-Ivan.
+PS. Sorry for sending this again, vger.kernel.org rejected my first mai=
+l.
+
+
+> Thanks,
+> Edward.
+>
+>
+>
+>  so I had to restore from a daily backup. Don't know if that
+>>
+>> is related to allocator, but anyway.
+>>
+>> And I don't have much time these days to set up VM with a clone of m=
+y
+>> system
+>> for kgdb, sorry... Though I hope I'll do that on next week (on vacat=
+ions).
+>>
+>> BTW, changing RAM didn't help, and old RAM passes memtest - so here =
+it's
+>> truly
+>> a bug somewhere in allocator.
+>>
+>> Regards,
+>> Ivan.
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe reiserfs-de=
+vel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
