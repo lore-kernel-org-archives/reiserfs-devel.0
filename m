@@ -1,7 +1,7 @@
 From: <doiggl@velocitynet.com.au>
-Subject: Here is a plain kernel based on 3.7.1.x with the reiser4 patch enabled.
-Date: Tue, 08 Jan 2013 16:48:23 +1100
-Message-ID: <29b6457453590207d27b36ac60993f90@mail.velocitynet.com.au>
+Subject: latest reiser4progs source code location
+Date: Wed, 09 Jan 2013 02:06:46 +1100
+Message-ID: <0c4415b47923894f40b06075f32b2cfb@mail.velocitynet.com.au>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -10,29 +10,30 @@ List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
-Hello.
-Here is a plain kernel based on 3.7.1.x with the reiser4 patch built with
-the Opensuse build service [obs] system.
+Hello,
+Question:
+Is this the latest reiser4progs source code [1]
 
-The project is here
+Does it have these patches applied to it  [2]?
+Thanks Glenn
 
-->https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
+[1]source code
+http://sourceforge.net/projects/reiser4/files/reiser4-utils/reiser4progs/
+reiser4progs-1.0.7.tar.gz 	2011-11-13 	845.4 kB
 
-The built rpms are here
+[2]
+reiser4progs: Limit printing of label to the maximum of 16 chars
+http://www.spinics.net/lists/reiserfs-devel/msg03366.html
 
-->https://build.opensuse.org/package/binaries?package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_12.2
+reiser4progs: Handle unprepped items by fsck
+http://www.spinics.net/lists/reiserfs-devel/msg02247.html
 
-The log of the build is here {x86_64} as an example. [Its a long buildlog]
-->https://build.opensuse.org/package/rawlog?arch=x86_64&package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_12.2
+reiser4progs: patch to let reiser4progs compile with gcc-4.4
+http://www.spinics.net/lists/reiserfs-devel/msg01327.html
+http://www.spinics.net/lists/reiserfs-devel/msg01328.html
 
-The .spec used file is here
+old empty location:
+http://www.kernel.org/pub/linux/utils/fs/reiser4/reiser4progs/
 
-->https://build.opensuse.org/package/view_file?file=kernel-reiser4.spec&package=kernel-reiser4&project=home%3Adoiggl&srcmd5=2c6d1fc65da407b68c93a5ebdd2fe670
-
-Thanks to the opensuse-kernel list members for compilation advice.
-http://lists.opensuse.org/opensuse-kernel/
-
-It looks like obs built the rpms.
-Post the results to the list.
-
-Cheers Glenn
+Referenced from
+http://www.spinics.net/lists/reiserfs-devel/msg01253.html
