@@ -1,135 +1,101 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Further work on reiser4: discard support and performance issues
-Date: Thu, 17 Jan 2013 17:39:02 +0100
-Message-ID: <50F82926.8020605@gmail.com>
-References: <1856576.kOCPiaH0RB@intelfx-laptop>
+Subject: Re: [FIXED?] reiser4: problem with key inconsistency
+Date: Thu, 17 Jan 2013 19:40:18 +0100
+Message-ID: <50F84592.8070702@gmail.com>
+References: <508DA9FE.5060005@gmail.com> <2414795.eiFhpRrsg9@intelfx-laptop> <50954002.50105@gmail.com> <CADW=+3=ZsVyNg_m3Rm186GDLB2m-31OwuOEggLVvqUZO4koBxg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=x-received:message-id:date:from:user-agent:mime-version:to:cc
          :subject:references:in-reply-to:content-type
          :content-transfer-encoding;
-        bh=xCPDp3WyhFyA52njRgh8qKlr7yTAtddjLyanQ+JHeYk=;
-        b=Ku0tecWCHU1Hb9Ggw5dw6f64q7bGNbQv1K2whjAwPWStO1zZnyPMvHuiavWW2XnnAi
-         AFurau2rWCVsnLsLGckFbg8TCwO5Gwf2FG+Qt3sXsKtKuPCEJnOfnJM3HH2rO/PYFqAC
-         HaMy2CZhBpTInJBiuYYyfHE5NBlyWbSWN6UlwIHNxkePPmZXHhXn8953FYQnaBmOVkkG
-         c+luojauy3I92ePDzZBQXb6Nd6l8D2vk+u+znKonQFjTOQWxeHBIQBJ6ml2zcUqq8hQZ
-         S9PdlZZmzRHC+yDeUebxZtKyYUH8w6nq1PM2ydZPjEr9nQ5LIYGwi4GaRk9W5wMEIMry
-         lHNg==
-In-Reply-To: <1856576.kOCPiaH0RB@intelfx-laptop>
+        bh=xW7wkeiGZ15bydUMPdRz6t2Ho8/lZMIfqlYHXv9BY5Q=;
+        b=X0dOQOSj3m7IDfg6Br1+E6izjf/PNkr2N64DrN9WytxrkTSnPf24V6DWdd5XSn6Xp5
+         rjHkShWCy8/GlP9aK8JYaqtIPoCmKmEaCBQIDokPLdGjsItM9J1hwrrD7DHp9wXoWtkA
+         ybsolL8snL1ATQ02jBKGPnVx74Wr6C3y0OKDkpI7htkkzG+nnFN/6IlXiVDGJ55E1NuJ
+         7avSZ78SVWWU6rquSrD5mIZPjo8NbRk7Iwuf1JDyKzA2xaiz8GS6GKns36/kzTm2FrUr
+         hJo5kqioEmkcnbPMZkyQPhxEu4kpfv4r57UaUX+80mxvg7GRmerRP1jxRQKioN/GtfaO
+         H5Sw==
+In-Reply-To: <CADW=+3=ZsVyNg_m3Rm186GDLB2m-31OwuOEggLVvqUZO4koBxg@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+To: =?UTF-8?B?RHXFoWFuIMSMb2xpxIc=?= <dusanc@gmail.com>
 Cc: reiserfs-devel@vger.kernel.org
 
-On 01/07/2013 02:42 AM, Ivan Shapovalov wrote:
-> Hi again Edward,
+On 01/07/2013 12:05 PM, Du=C5=A1an =C4=8Coli=C4=87 wrote:
+> On Sat, Nov 3, 2012 at 5:02 PM, Edward Shishkin
+> <edward.shishkin@gmail.com> wrote:
+>> On 10/31/2012 06:24 PM, Ivan Shapovalov wrote:
+>>> On 28 =D0=BE=D0=BA=D1=82=D1=8F=D0=B1=D1=80=D1=8F 2012 22:56:14 Edwa=
+rd Shishkin wrote:
+>>>> Hi all.
+>>>> It seems I do have the long-awaited fix.
+>>>>
+>>>> The symptoms of the problem: kernel starts to issue complaints
+>>>> about key inconsistency with the suggestions to check the partitio=
+n
+>>>> with fsck. Fsck sometimes finds corruptions, but sometimes reports
+>>>> that file system is consistent.
+>>>>
+>>>> Please apply the attached patch to reiser4 stuff for 3.6.2, or
+>>>> download reiser4-for-3.6.4 (which already contains this patch), an=
+d
+>>>> let me know if the problem has not gone:
+>>>> http://sourceforge.net/projects/reiser4/files/reiser4-for-linux-3.=
+x/
+>>>>
+>>>> Please, don't rush to deploy production systems on reiser4: it can
+>>>> take up to 80 hours to reproduce the problem with high workload.
+>>>>
+>>>> Thank you for your help.
+>>>> Edward.
+>>>
+>>> Alas, it hasn't gone... Or maybe it's a different problem, but toda=
+y (on a
+>>> debugless build) I've got a massive crash (mostly -2 and -5 errors =
+for
+>>> different VFS operations - e.g.
+>>> nikita-717/edward-1611/edward-430/nikita-2219/nikita-2221, many vs-=
+3533
+>>> and
+>>> edward-1460/edward-1608/edward-156 warnings).
+>>> Fsck said SIGSEGV,
+>>
+>>
+>> There are pending patches for reiser4progs, please don't forget to a=
+pply
+>> them when checking your partitions:
+>>
+>> http://marc.info/?l=3Dreiserfs-devel&m=3D129703129519745&w=3D2
+>> http://marc.info/?l=3Dreiserfs-devel&m=3D127504471326353&w=3D2
+>>
+> Is this bug fixed in 3.7?
 
-Hello.
+
+So, we have found 2 problems, which led to this kind of corruption
+(key inconsistency):
+
+1) nobody updated dkeys (fixed in 3.6):
+    http://marc.info/?l=3Dreiserfs-devel&m=3D135146138331012&w=3D2
+2) default ->migratepage() didn't work for reiser4 (isolated in 3.7).
+
 
 >
-> Here's what I want to try to do with reiser4 in meantime. I'd appreciate some
-> hints on that all...
+> What is blocking the release of reiser4progs-1.0.8  with those pendin=
+g patches?
 >
-> So, first thing I'd like to implement is TRIM/discard support, both online
-> (via -o discard) and in a separate FITRIM ioctl().
-> That's just because I've got an SSD two days ago and thus now have to use in
-> rootfs some discard-aware fs like ext4.
+> Are there some other open bugs?
 
 
-I think it would be nice for beginning. Moreover, reiser4 still doesn't
-have any setup optimal for SSD.
+Since we are not in mainline tree, we'll periodically encounter various
+oopses in new releases. However, I think it will be easy to fix.
 
-Unfortunately I don't have a ready proposal for TRIM/discard support in
-reiser4.
-
-I have ready proposals for the following features (they can be rather
-complicated for the beginners though):
-
-1) Repacker (On-line defragmentation);
-2) Support of different transaction models:
-     a. pure journalling;
-     b. pure COW (Copy-On-Write);
-     c. smart (the current "mixed" one);
-     d. no transaction support (for people with UPSs);
-3) Subvolumes (AKA "chunkfs");
-4) Snapshots.
-
->
-> And then I want to do something with performance: sometimes during heavy I/O
-> to a slow /home storage (especially when it's multithreaded) many processes,
-> including the DE, just get stuck in "D" state and sit there for a minute or
-> two with load average of apx. 5.5 (on a hyperthreaded 2-core CPU).
-
-
-and some process waits for fsync() completion?
-
-
->
-> For the first, I can look into other filesystems' implementations, but I'll
-> probably be unsure at which layer to put the actual discard call (in order not
-> to break reiser4's transactional nature).
-
-
-If you decide to proceed with TRIM/discard support, you will need to
-prepare the proposal by yourself. Let's start with some background,
-that is:
-. clarify underlying reasons (specific for SSD geometry?) of
-   TRIM/discard support: why do we need such support on the file
-   system layer;
-. review of existing hardware and software means for such support;
-. etc..
-
-And yes, it would be nice to review existing TRIM/discard support
-implementations in other file systems (say, ext4).
-
-Once we figure out, what bits of reiser4 you should understand
-perfectly to implement TRIM/discard support, I'll provide you with
-respective hints.
-
-
-> And for the second, I just don't know why does that happen. Can it be due to
-> some r4-specific things/issues or that's just a horribly slow random access
-> speed of my hw?
-
-Which hw? SSD?
-
-I also remember complaints that umount (i.e. the final sync takes 2-3,
-or even more minutes). It looks like in some cases reiser4 accumulates
-too much dirty stuff..
-
-It would be nice to periodically dump some info about atoms (current
-number of all atoms, size of each atom, etc) to see the full picture of
-their evolution during such freezing. I think, it makes sense to port
-the old reiser4 profiling stuff, and populate it with more info (if
-needed).
-
-Also there is an oldest issue:
-The following (old) benchmarks created with mongo(*) test suit show x2
-advantage of reiser4 against reiserfs(v3) on CREATE phase (let's
-consider only this phase for simplicity):
-
-http://web.archive.org/web/20061113154648/http://www.namesys.com/benchmarks.html
-
-I've made similar benchmarks with latest 2.6 kernels (sorry, lost the
-results) and found that the advantage has disappeared (real time in
-CREATE phase is the same as of reiserfs, or even worse). It shouldn't
-be so: it indicates that something wrong is going on.. I remember
-people complained on the performance drop in reiser4 long time ago, but
-didn't have a chance to investigate this.
-
-The straightforward way to narrow down the problem changeset is to
-bisect starting from 2.6.8-mm2, the archives can be found here:
-http://mirror.sit.wisc.edu/pub/linux/kernel/people/akpm/patches/2.6/
-http://ftp.icm.edu.pl/packages/linux-reiserfs/reiser4-for-2.6/
-http://mirror.sit.wisc.edu/pub/linux/kernel/people/edward/reiser4/reiser4-for-2.6/
-However, it can be rather painful and requires a separate machine.
-
-Thanks,
 Edward.
-
-(*) 
-http://sourceforge.net/projects/reiser4/files/reiser4-utils/bench-stress-tools/
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
