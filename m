@@ -1,70 +1,26 @@
-From: Lukas Czerner <lczerner@redhat.com>
-Subject: [PATCH v2 09/18] reiserfs: use ->invalidatepage() length argument
-Date: Tue,  5 Feb 2013 10:12:02 +0100
-Message-ID: <1360055531-26309-10-git-send-email-lczerner@redhat.com>
-References: <1360055531-26309-1-git-send-email-lczerner@redhat.com>
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <1360055531-26309-1-git-send-email-lczerner@redhat.com>
-Sender: owner-linux-mm@kvack.org
+From: <doiggl@velocitynet.com.au>
+Subject: reiserfs patches query
+Date: Wed, 06 Feb 2013 01:11:08 +1100
+Message-ID: <50383882ce8e0d317b4d36d4b2a07f65@mail.velocitynet.com.au>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>, reiserfs-devel@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-->invalidatepage() aop now accepts range to invalidate so we can make
-use of it in reiserfs_invalidatepage()
+Hello,
+Do the reiserfs patches {after being accepted} get sent/reported to [1] so
+the can be compiled against various distributions.
 
-Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-Cc: reiserfs-devel@vger.kernel.org
----
- fs/reiserfs/inode.c |    9 +++++++--
- 1 files changed, 7 insertions(+), 2 deletions(-)
+[1] openSUSE Build Service > Projects > filesystems > reiserfs 
+https://build.opensuse.org/package/show?package=reiserfs&project=filesystems
 
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index 5ca4fb4..cf949b9 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -2975,11 +2975,13 @@ static void reiserfs_invalidatepage(struct page *page, unsigned int offset,
- 	struct buffer_head *head, *bh, *next;
- 	struct inode *inode = page->mapping->host;
- 	unsigned int curr_off = 0;
-+	unsigned int stop = offset + length;
-+	int partial_page = (offset || length < PAGE_CACHE_SIZE);
- 	int ret = 1;
- 
- 	BUG_ON(!PageLocked(page));
- 
--	if (offset == 0)
-+	if (!partial_page)
- 		ClearPageChecked(page);
- 
- 	if (!page_has_buffers(page))
-@@ -2991,6 +2993,9 @@ static void reiserfs_invalidatepage(struct page *page, unsigned int offset,
- 		unsigned int next_off = curr_off + bh->b_size;
- 		next = bh->b_this_page;
- 
-+		if (next_off > stop)
-+			goto out;
-+
- 		/*
- 		 * is this block fully invalidated?
- 		 */
-@@ -3009,7 +3014,7 @@ static void reiserfs_invalidatepage(struct page *page, unsigned int offset,
- 	 * The get_block cached value has been unconditionally invalidated,
- 	 * so real IO is not possible anymore.
- 	 */
--	if (!offset && ret) {
-+	if (!partial_page && ret) {
- 		ret = try_to_release_page(page, 0);
- 		/* maybe should BUG_ON(!ret); - neilb */
- 	}
--- 
-1.7.7.6
+[2] Link to Report Bug on openSUSE Build Service
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+https://bugzilla.novell.com/enter_bug.cgi?classification=7340&product=openSUSE.org&component=3rd%20party%20software&assigned_to=jeffm@suse.com&short_desc=filesystems/reiserfs:%20Bug
+
+Just wondering if these reiserfs patches get appled upstream, after being
+accepted.
+-- Glenn
