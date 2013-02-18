@@ -1,34 +1,36 @@
-From: Jan Engelhardt <jengelh@inai.de>
-Subject: [PATCH] build: resolve compile error in reiser4progs
-Date: Sun, 17 Feb 2013 14:59:33 +0100 (CET)
-Message-ID: <alpine.LNX.2.01.1302171458580.24860@nerf07.vanv.qr>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 29162] Reiserfs hang with dataloss sometimes
+Date: Mon, 18 Feb 2013 19:45:25 +0000 (UTC)
+Message-ID: <20130218194525.E6B5311FF03@bugzilla.kernel.org>
+References: <bug-29162-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <bug-29162-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: TEXT/PLAIN; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="macroman"
 To: reiserfs-devel@vger.kernel.org
 
-[   13s] node40.c: In function 'node40_lookup':
-[   13s] node40.c:999:6: error: #elif with no expression
+https://bugzilla.kernel.org/show_bug.cgi?id=3D29162
 
-From: Jan Engelhardt <jengelh@inai.de>
-Date: 2013-02-17 09:10:08.840707256 +0100
----
- plugin/node/node40/node40.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: reiser4progs-1.0.7/plugin/node/node40/node40.c
-===================================================================
---- reiser4progs-1.0.7.orig/plugin/node/node40/node40.c
-+++ reiser4progs-1.0.7/plugin/node/node40/node40.c
-@@ -996,7 +996,7 @@ static lookup_t node40_lookup(reiser4_no
- 	func = cb_comp_key3;
- #elif defined(ENABLE_LARGE_KEYS)
- 	func = cb_comp_key4;
--#elif
-+#else
- 	func = NULL;
- #endif
- 	
+Ra=C3=BAl <rasasi78@gmail.com> changed:
+
+           What    |Removed                     |Added
+-----------------------------------------------------------------------=
+-----
+                 CC|                            |rasasi78@gmail.com
+
+
+
+
+--=20
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=3Demai=
+l
+------- You are receiving this mail because: -------
+You are the assignee for the bug.--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
