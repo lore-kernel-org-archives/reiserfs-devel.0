@@ -1,36 +1,17 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 29162] Reiserfs hang with dataloss sometimes
-Date: Mon, 18 Feb 2013 19:45:25 +0000 (UTC)
-Message-ID: <20130218194525.E6B5311FF03@bugzilla.kernel.org>
-References: <bug-29162-695@https.bugzilla.kernel.org/>
+From: <doiggl@velocitynet.com.au>
+Subject: Can a reiser4 patch be constructed for use with linux-3.8
+Date: Tue, 19 Feb 2013 16:45:31 +1100
+Message-ID: <160f6744e80fc526b4a99baadfbbcc47@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-29162-695@https.bugzilla.kernel.org/>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="macroman"
+Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=3D29162
+Hello
+Can a reiser4 patch be constructed for use with linux-3.8
+-- http://www.kernel.org/pub/linux/kernel/v3.0/linux-3.8.tar.bz2
 
-
-Ra=C3=BAl <rasasi78@gmail.com> changed:
-
-           What    |Removed                     |Added
------------------------------------------------------------------------=
------
-                 CC|                            |rasasi78@gmail.com
-
-
-
-
---=20
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=3Demai=
-l
-------- You are receiving this mail because: -------
-You are the assignee for the bug.--
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks Glenn
