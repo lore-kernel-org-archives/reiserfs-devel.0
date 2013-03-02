@@ -1,418 +1,454 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 29162] Reiserfs hang with dataloss sometimes
-Date: Sat,  2 Mar 2013 10:36:31 +0000 (UTC)
-Message-ID: <20130302103631.64E5611FCC0@bugzilla.kernel.org>
-References: <bug-29162-695@https.bugzilla.kernel.org/>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: Further work on reiser4: discard support and performance issues
+Date: Sat, 02 Mar 2013 17:55:48 +0100
+Message-ID: <51322F14.6000405@gmail.com>
+References: <1856576.kOCPiaH0RB@intelfx-laptop> <CAErSLm0PFf03S8_6tjT0GgFXw=EpWCf+6RBoxxFYoecQPYWoLA@mail.gmail.com> <51184DD5.7020409@gmail.com> <1435419.Em4W395xSI@intelfx-laptop>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-29162-695@https.bugzilla.kernel.org/>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=x-received:message-id:date:from:user-agent:mime-version:to:subject
+         :references:in-reply-to:content-type:content-transfer-encoding;
+        bh=BOIf4ohM2UxuaXK7SYQdWOMQ1mA8q8GIJoY0t6ltx2k=;
+        b=bbxDch6toieg7RdZ1Dek+GNdZNQTj9ZllPoBly+YYtGa6qMSvoiMrgJhu0vet+BH/s
+         aPhRhA9aL6EMjvWoFrkRO+RzfSqD5pCUCiWnulTY9vuiYtzu6bQVm0xBR63UuBdoaNre
+         nE7uHbvKp6GmHTGV84TkvNSHRleI52a9d4OpDcUZKQZpeU1pknQH/1wxVSVzBR88ewHD
+         EIsslghSRQ/St4g6CxqrpbMXlziBiKR8edoL5NOV3Fjtd30MCQr/F0bJgckOqXo6cEj+
+         8A/hvBSzHfTfbNVuYSmntYB0KXQ459c5jz0SxQDVWWAOzsU6gCknlzg3Vt+EmSAR6D+5
+         73rA==
+In-Reply-To: <1435419.Em4W395xSI@intelfx-laptop>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="macroman"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ivan Shapovalov <intelfx100@gmail.com>, ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=3D29162
+On 02/23/2013 01:21 PM, Ivan Shapovalov wrote:
+[...]
+>>> But here's what I currently think about discard implementation.
+>>> In filesystems like jfs, it is implemented pretty straightforward.
+>>> "Online" discard on block freeing is done through hooking into
+>>> function dbFree(), which marks the blocks as free in the _working_
+>>> allocation map. Batch discard via FITRIM ioctl is done through locking
+>>> the whole allocation group, allocating everything in it, trimming
+>>> these blocks and freeing them again.
+>>>
+>>> For reiser4, I think it will translate into something like this:
+>>> With "online" discard, it would be better to discard the blocks at
+>>> transaction commit time (the time when working bitmap is copied to the
+>>> persistent one... am I right?)
+>> I am sorry, but I still don't know the TRIM/discard background well
+>> enough to make any decisions. I understand that a file system should
+>> issue some commands to "help" the hardware? What those commands will
+>> result in?
+> ---- tl;dr area begin
+>
+> The TRIM is a command in the ATA protocol, operating on a sector range.
+> It tells the hardware (storage) that the given sector range is not used
+> anymore and hence data contained in it can be discarded/removed.
+> (Similar commands exist in several other protocols, like SCSI UNMAP and
+> SD ERASE, and the "discard" is an in-kernel abstraction to all such commands.)
+>
+> The reason why do we need such a command for SSDs is that in flash memory
+> an "overwrite data" operation is actually an "erase + write data" and is much
+> more costly than just a "write data onto free space". Flash memory
+> is organized into pages (usually 4K), which are further grouped into blocks
+> (512K); and while a write is done per-page, an erase is done per-block
+> (so a controller shall read the whole block into cache and then rewrite all
+> pages in it, except the one being updated).
+>
+> Modern controllers do internal block remapping to achieve some "wear leveling"
+> (i. e. spreading use across all blocks instead of continuously rewriting one
+> block which is updated by the user), but they obviously need a pool of free
+> blocks, and anyway - writes to the locations that the software would
+> consider empty still may trigger a read-erase-write cycle.
+>
+> So, the TRIM command notifies the controller that the block can be erased and
+> returned to the free pool. There is a restriction on sector ranges given to
+> the command: they should actually represent whole blocks
+> (otherwise they are ignored, AFAIK).
+
+Hello Ivan.
+
+Thanks for the background. This is exactly what did I want to see.
+
+> So, from the software's point of view, an SSD-aware operation looks like
+> 1) putting whatever is likely to be updated simultaneously into the same block
+> (TRIM unit);
+
+Not sure if I understand the (1). Could you please say more?
+
+> 2) delaying writeback in hope that more adjacent data will be written at once;
 
 
+Yes. In reiser4 we delay everything what is possible.
+And, I think, discard requests shouldn't be an exception..
 
 
+> 3) notify the storage when the blocks are logically freed by issuing a TRIM
+> command.
+>
+> (1) and (2) are largely my guesses (and anyway out of scope), while
+> (3) is a common practice and is implemented at storage driver, kernel and
+> filesystem layers.
+>
+> ---- tl;dr area end
+>
+> So, inside the filesystem we need to notify the kernel about  we need to
+> implement TRIM (more precisely, discard - as we're working with
+> in-kernel abstractions) support in the filesystem
+>
+> About the implementation:
+> There is an API call, blkdev_issue_discard() [1], which does all the
+> work and is supposed to be called from the filesystem. The discard properties
+> are stored in struct queue_limits.
+>
+> And for the filesystem itself, there are generally two modes to support discard
+> operations [2].
+> 1) "Realtime" or online discard - the filesystem discards blocks as they are
+> deallocated (files being deleted, tree nodes being cut, etc.).
 
---- Comment #44 from Ra=C3=BAl <rasasi78@gmail.com>  2013-03-02 10:36:3=
-0 ---
-Created an attachment (id=3D94271)
- --> (https://bugzilla.kernel.org/attachment.cgi?id=3D94271)
-dmesg for the oops
 
-Hi:
+There is another source of deallocated blocks in reiser4, that you
+should be aware of. This is the flush procedure. This procedure
+operates on a reiser4 atom and is called every time before its commit
+to complete all delayed actions:
 
- Unfortunately, I can't explain how to reliably reproduce this problem =
-but this
-time it happenned quite soon as I upgraded to 3.8.0, exactly debian pac=
-kage
-linux-image-3.8-trunk-amd64 (3.8-1~experimental.1) The only thing I had=
- to do
-was hibernate and after I resume the problem was already there.
+(1) allocate all extents of the atom (for files manages by
+       unix-file plugin);
+(2) compress data of the atom (for files managed by
+       cryptcompress file plugin);
+(3) balance tree in the atom's locality;
+(4) schedule commit policy for dirty blocks of the atom
+       (relocate, or overwrite).
 
-  All partitions, but /boot are crypted. My disk and partition layout i=
-s this:
-# pvs
-  PV                     VG      Fmt  Attr PSize   PFree
-  /dev/mapper/sda5_crypt portaka lvm2 a--  186,07g    0=20
+(3) - (4) are sources of deallocated blocks: (3) will release blocks
+freed after squeezing an atom. And (4) will be the most active issuer
+of discard requests: at this phase we determine the best allocation
+for the whole group of atom's dirty blocks in accordance with some
+heuristic. And it can happen that a lot of blocks will change their
+on-disk locations (they will be assigned to so-called atom's "relocate
+set"). Other dirty blocks (which won't change their on-disk locations)
+are assigned to atom's "overwrite set".
 
-# vgs
-  VG      #PV #LV #SN Attr   VSize   VFree
-  portaka   1   5   0 wz--n- 186,07g    0=20
+Committing an atom in reiser4 looks like this:
 
-# lvs
-  LV   VG      Attr     LSize   Pool Origin Data%  Move Log Copy%  Conv=
-ert
-  home portaka -wi-ao-- 170,45g                                        =
-  =20
-  root portaka -wi-ao--   1,73g                                        =
-  =20
-  swap portaka -wc-ao--   2,00g                                        =
-  =20
-  usr  portaka -wi-ao--   6,89g                                        =
-  =20
-  var  portaka -wi-ao--   5,00g=20
+(a) write atom's relocate set (simply write the blocks to their new
+      locations on disk);
+(b) write atom's overwrite set (via journal, aka "wandering logs"),
+      i.e. at first, write the dirty blocks to journal, then overwrite the
+      blocks at their old locations on disk;
+(c) update system records to indicate, that transaction is
+      completed.
 
-# cat /proc/mounts=20
-rootfs / rootfs rw 0 0
-sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
-proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
-udev /dev devtmpfs rw,relatime,size=3D10240k,nr_inodes=3D504930,mode=3D=
-755 0 0
-devpts /dev/pts devpts rw,nosuid,noexec,relatime,gid=3D5,mode=3D620,ptm=
-xmode=3D000 0
-0
-tmpfs /run tmpfs rw,nosuid,nodev,noexec,relatime,size=3D405388k,mode=3D=
-755 0 0
-/dev/mapper/portaka-root / reiserfs rw,noatime 0 0
-tmpfs /run/lock tmpfs rw,nosuid,nodev,noexec,relatime,size=3D5120k 0 0
-tmpfs /run/shm tmpfs rw,nosuid,nodev,noexec,relatime,size=3D810760k 0 0
-fusectl /sys/fs/fuse/connections fusectl rw,relatime 0 0
-tmpfs /tmp tmpfs rw,nosuid,nodev,noatime,size=3D2026936k 0 0
-/dev/sda1 /boot ext3 rw,noatime,errors=3Dcontinue,barrier=3D1,data=3Dor=
-dered 0 0
-/dev/mapper/portaka-home /home reiserfs rw,noatime 0 0
-/dev/mapper/portaka-usr /usr reiserfs rw,noatime 0 0
-/dev/mapper/portaka-var /var reiserfs rw,noatime 0 0
-rpc_pipefs /var/lib/nfs/rpc_pipefs rpc_pipefs rw,relatime 0 0
-binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc
-rw,nosuid,nodev,noexec,relatime 0 0
+I think that in "realtime" mode we should issue all discard requests
+of an atom at the point after (b) and before (c). Indeed, at this point
+all updated bitmaps are successfully committed, so in the worst case
+(power off when issuing a series of discard requests) we'll just loose
+only a part of discard requests (not fatal).
 
-  I knew I triggered the problem when I tried to issue a "sync" command=
-=2E But
-other options may be touching a file in a directory which is in the aff=
-ected
-filesystem. I could recover from this situation doing a sysrq-E, which
-terminates all processes.
 
-  I assume the best way to help is giving exact instructions to reprodu=
-ce the
-crash but till I could get that information let me know if I can be of =
-help
-some other way.
+> 2) "Batch" discard - the filesystem discards all free blocks upon a user's
+> request (when mounted).
+> In this "batch" case, the signaling is done through a FITRIM ioctl on any file.
+>
+> "Batch" mode:
+> Implementing it should be simple enough (if I'm making correct assumptions
+> about how does reiser4 work): we can just lock the bitmap and walk through it,
+> issuing a discard for each long enough free sequence.
 
-  This is an excerpt of the dmesg which I'm attaching:
-[ 8400.524149] INFO: task flush-254:2:2147 blocked for more than 120 se=
-conds.
-[ 8400.524156] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disab=
-les this
-message.
-[ 8400.524160] flush-254:2     D ffff88013fd13bc0     0  2147      2 0x=
-00000000
-[ 8400.524172]  ffff880137dcc760 0000000000000046 ffff880035bb4910
-ffff88009c0738a0
-[ 8400.524178]  0000000000013bc0 ffff8801384a3fd8 ffff8801384a3fd8
-ffff880137dcc760
-[ 8400.524183]  0000000000000000 ffff88013fd13bc0 ffff880137dcc760
-ffff8801384a3aa0
-[ 8400.524188] Call Trace:
-[ 8400.524200]  [<ffffffff810c21e9>] ? __lock_page+0x66/0x66
-[ 8400.524206]  [<ffffffff813811d0>] ? io_schedule+0x56/0x6d
-[ 8400.524210]  [<ffffffff810c21f0>] ? sleep_on_page+0x7/0xc
-[ 8400.524215]  [<ffffffff81380232>] ? __wait_on_bit_lock+0x3c/0x85
-[ 8400.524219]  [<ffffffff810c279a>] ? find_get_pages_tag+0xe7/0x121
-[ 8400.524223]  [<ffffffff810c21e4>] ? __lock_page+0x61/0x66
-[ 8400.524229]  [<ffffffff81057b85>] ? autoremove_wake_function+0x2a/0x=
-2a
-[ 8400.524234]  [<ffffffff810ca2be>] ? write_cache_pages+0x166/0x2e2
-[ 8400.524239]  [<ffffffff810c991b>] ? page_index+0x14/0x14
-[ 8400.524244]  [<ffffffff810ca472>] ? generic_writepages+0x38/0x54
-[ 8400.524250]  [<ffffffff81129c55>] ? __writeback_single_inode+0x3e/0x=
-115
-[ 8400.524255]  [<ffffffff8112a9ac>] ? writeback_sb_inodes+0x1dd/0x30c
-[ 8400.524260]  [<ffffffff8112ab44>] ? __writeback_inodes_wb+0x69/0xab
-[ 8400.524265]  [<ffffffff8112acbd>] ? wb_writeback+0x137/0x28c
-[ 8400.524269]  [<ffffffff810ca71e>] ? bdi_dirty_limit+0x27/0x84
-[ 8400.524273]  [<ffffffff8112b0f4>] ? wb_do_writeback+0x186/0x1bb
-[ 8400.524279]  [<ffffffff81049538>] ? del_timer_sync+0x27/0x44
-[ 8400.524283]  [<ffffffff8112b129>] ? wb_do_writeback+0x1bb/0x1bb
-[ 8400.524288]  [<ffffffff8112b1d1>] ? bdi_writeback_thread+0xa8/0x1db
-[ 8400.524293]  [<ffffffff8112b129>] ? wb_do_writeback+0x1bb/0x1bb
-[ 8400.524297]  [<ffffffff8112b129>] ? wb_do_writeback+0x1bb/0x1bb
-[ 8400.524301]  [<ffffffff81057280>] ? kthread+0x81/0x89
-[ 8400.524306]  [<ffffffff8105fbd0>] ? mmdrop+0xd/0x1c
-[ 8400.524310]  [<ffffffff81061447>] ? finish_task_switch+0x83/0xb3
-[ 8400.524315]  [<ffffffff810571ff>] ? __kthread_parkme+0x5c/0x5c
-[ 8400.524320]  [<ffffffff81386cbc>] ? ret_from_fork+0x7c/0xb0
-[ 8400.524324]  [<ffffffff810571ff>] ? __kthread_parkme+0x5c/0x5c
-[ 8400.524354] INFO: task klauncher:3794 blocked for more than 120 seco=
-nds.
-[ 8400.524357] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disab=
-les this
-message.
-[ 8400.524359] klauncher       D ffff880139fce7e0     0  3794   3791 0x=
-00000000
-[ 8400.524364]  ffff880139fce7e0 0000000000000082 0000000000000282
-ffff880124ff4080
-[ 8400.524369]  0000000000013bc0 ffff880139777fd8 ffff880139777fd8
-ffff880139fce7e0
-[ 8400.524373]  ffffffff81381a6d ffffc900108ae000 ffff880139fce7e0
-ffff880138793c00
-[ 8400.524378] Call Trace:
-[ 8400.524383]  [<ffffffff81381a6d>] ? _raw_spin_lock_irqsave+0x14/0x35
-[ 8400.524416]  [<ffffffffa0242d48>] ? queue_log_writer+0x7d/0xad [reis=
-erfs]
-[ 8400.524421]  [<ffffffff81064071>] ? try_to_wake_up+0x199/0x199
-[ 8400.524433]  [<ffffffffa02475e1>] ? do_journal_begin_r+0x177/0x23e
-[reiserfs]
-[ 8400.524438]  [<ffffffff81381a6d>] ? _raw_spin_lock_irqsave+0x14/0x35
-[ 8400.524443]  [<ffffffff811300b2>] ? create_page_buffers+0x42/0x51
-[ 8400.524455]  [<ffffffffa024775d>] ? journal_begin+0xb5/0xec [reiserf=
-s]
-[ 8400.524466]  [<ffffffffa0232883>] ? reiserfs_write_end+0x10a/0x22b
-[reiserfs]
-[ 8400.524477]  [<ffffffffa0231c5c>] ? reiserfs_write_begin+0xcf/0x176
-[reiserfs]
-[ 8400.524481]  [<ffffffff810c2dbf>] ? generic_file_buffered_write+0x17=
-e/0x235
-[ 8400.524488]  [<ffffffff810c38c2>] ? __generic_file_aio_write+0x1cc/0=
-x1fc
-[ 8400.524493]  [<ffffffff8110cc0c>] ? __sb_start_write+0xb6/0xe8
-[ 8400.524498]  [<ffffffff810613a6>] ? should_resched+0x5/0x23
-[ 8400.524502]  [<ffffffff810c395b>] ? generic_file_aio_write+0x69/0xc9
-[ 8400.524507]  [<ffffffff8110adcf>] ? do_sync_write+0x62/0x9b
-[ 8400.524512]  [<ffffffff8110b376>] ? vfs_write+0x96/0xf8
-[ 8400.524517]  [<ffffffff8110b59e>] ? sys_write+0x51/0x80
-[ 8400.524522]  [<ffffffff81386d69>] ? system_call_fastpath+0x16/0x1b
-[ 8400.524525] INFO: task kded4:3796 blocked for more than 120 seconds.
-[ 8400.524528] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disab=
-les this
-message.
-[ 8400.524530] kded4           D ffff88013fd13bc0     0  3796      1 0x=
-00000000
-[ 8400.524534]  ffff880137aea820 0000000000000082 0200000000020028
-ffff88013aeb4180
-[ 8400.524539]  0000000000013bc0 ffff880139c8bfd8 ffff880139c8bfd8
-ffff880137aea820
-[ 8400.524544]  00007fffcfc48d90 ffff8801392d4c60 ffff880137aea820
-ffff8801392d4c64
-[ 8400.524549] Call Trace:
-[ 8400.524554]  [<ffffffff813804f5>] ? __mutex_lock_common.isra.6+0x149=
-/0x165
-[ 8400.524559]  [<ffffffff81380320>] ? mutex_lock+0x1a/0x2d
-[ 8400.524563]  [<ffffffff810c3947>] ? generic_file_aio_write+0x55/0xc9
-[ 8400.524567]  [<ffffffff8110adcf>] ? do_sync_write+0x62/0x9b
-[ 8400.524572]  [<ffffffff8110b376>] ? vfs_write+0x96/0xf8
-[ 8400.524577]  [<ffffffff8110b59e>] ? sys_write+0x51/0x80
-[ 8400.524581]  [<ffffffff81386d69>] ? system_call_fastpath+0x16/0x1b
-[ 8400.524591] INFO: task plasma-desktop:4165 blocked for more than 120
-seconds.
-[ 8400.524594] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disab=
-les this
-message.
-[ 8400.524596] plasma-desktop  D ffff88013fc13bc0     0  4165      1 0x=
-00000000
-[ 8400.524600]  ffff880138782100 0000000000000086 0200000000020028
-ffffffff81614400
-[ 8400.524605]  0000000000013bc0 ffff880139d4dfd8 ffff880139d4dfd8
-ffff880138782100
-[ 8400.524610]  00000000fffffffd ffff8801392d4c60 ffff880138782100
-ffff8801392d4c64
-[ 8400.524615] Call Trace:
-[ 8400.524620]  [<ffffffff813804f5>] ? __mutex_lock_common.isra.6+0x149=
-/0x165
-[ 8400.524625]  [<ffffffff81380320>] ? mutex_lock+0x1a/0x2d
-[ 8400.524629]  [<ffffffff810c3947>] ? generic_file_aio_write+0x55/0xc9
-[ 8400.524633]  [<ffffffff8110adcf>] ? do_sync_write+0x62/0x9b
-[ 8400.524638]  [<ffffffff8110b376>] ? vfs_write+0x96/0xf8
-[ 8400.524642]  [<ffffffff8110b59e>] ? sys_write+0x51/0x80
-[ 8400.524647]  [<ffffffff81386d69>] ? system_call_fastpath+0x16/0x1b
-[ 8400.524659] INFO: task nepomukservices:4232 blocked for more than 12=
-0
-seconds.
-[ 8400.524661] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disab=
-les this
-message.
-[ 8400.524664] nepomukservices D ffff88013fd13bc0     0  4232   4227 0x=
-00000000
-[ 8400.524668]  ffff880108a92140 0000000000000082 ffff88013abcea00
-ffff88013aeb4180
-[ 8400.524673]  0000000000013bc0 ffff880104c37fd8 ffff880104c37fd8
-ffff880108a92140
-[ 8400.524677]  ffffffff81381a6d ffffc900108ae000 ffff880108a92140
-ffff880138793c00
-[ 8400.524682] Call Trace:
-[ 8400.524687]  [<ffffffff81381a6d>] ? _raw_spin_lock_irqsave+0x14/0x35
-[ 8400.524699]  [<ffffffffa0242d48>] ? queue_log_writer+0x7d/0xad [reis=
-erfs]
-[ 8400.524704]  [<ffffffff81064071>] ? try_to_wake_up+0x199/0x199
-[ 8400.524716]  [<ffffffffa02475e1>] ? do_journal_begin_r+0x177/0x23e
-[reiserfs]
-[ 8400.524728]  [<ffffffffa024775d>] ? journal_begin+0xb5/0xec [reiserf=
-s]
-[ 8400.524740]  [<ffffffffa02313a3>] ? reiserfs_evict_inode+0x9a/0x137
-[reiserfs]
-[ 8400.524747]  [<ffffffff8111d937>] ? evict+0xa3/0x153
-[ 8400.524752]  [<ffffffff8111aed7>] ? dentry_kill+0x10a/0x12b
-[ 8400.524756]  [<ffffffff8111b349>] ? dput+0xe6/0xf3
-[ 8400.524760]  [<ffffffff81112778>] ? path_put+0xd/0x16
-[ 8400.524765]  [<ffffffff811392e3>] ? fsnotify_put_event+0x23/0x53
-[ 8400.524770]  [<ffffffff8113b5fd>] ? inotify_read+0x209/0x290
-[ 8400.524775]  [<ffffffff81057b5b>] ? abort_exclusive_wait+0x79/0x79
-[ 8400.524779]  [<ffffffff8110b46b>] ? vfs_read+0x93/0xf5
-[ 8400.524784]  [<ffffffff81118a73>] ? set_restore_sigmask+0x2d/0x2d
-[ 8400.524788]  [<ffffffff8110b51e>] ? sys_read+0x51/0x80
-[ 8400.524793]  [<ffffffff81386d69>] ? system_call_fastpath+0x16/0x1b
-[ 8400.524800] INFO: task dolphin:4256 blocked for more than 120 second=
-s.
-[ 8400.524803] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disab=
-les this
-message.
-[ 8400.524805] dolphin         D ffff88013fd13bc0     0  4256   3791 0x=
-00000000
-[ 8400.524809]  ffff880124ff4080 0000000000000082 020000000002006c
-ffff88013aeb4180
-[ 8400.524814]  0000000000013bc0 ffff880104cddfd8 ffff880104cddfd8
-ffff880124ff4080
-[ 8400.524819]  0000000000000023 ffff8801392d4c60 ffff880124ff4080
-ffff8801392d4c64
-[ 8400.524823] Call Trace:
-[ 8400.524829]  [<ffffffff813804f5>] ? __mutex_lock_common.isra.6+0x149=
-/0x165
-[ 8400.524834]  [<ffffffff81380320>] ? mutex_lock+0x1a/0x2d
-[ 8400.524838]  [<ffffffff810c3947>] ? generic_file_aio_write+0x55/0xc9
-[ 8400.524842]  [<ffffffff8110adcf>] ? do_sync_write+0x62/0x9b
-[ 8400.524847]  [<ffffffff8110b376>] ? vfs_write+0x96/0xf8
-[ 8400.524851]  [<ffffffff8110b59e>] ? sys_write+0x51/0x80
-[ 8400.524856]  [<ffffffff81386d69>] ? system_call_fastpath+0x16/0x1b
-[ 8400.524870] INFO: task virtuoso-t:4572 blocked for more than 120 sec=
-onds.
-[ 8400.524873] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disab=
-les this
-message.
-[ 8400.524875] virtuoso-t      D ffff88013fd13bc0     0  4572   4232 0x=
-00000000
-[ 8400.524879]  ffff8800ae54d0c0 0000000000000086 0000000000000000
-ffff88013aeb4180
-[ 8400.524884]  0000000000013bc0 ffff8800ae6c5fd8 ffff8800ae6c5fd8
-ffff8800ae54d0c0
-[ 8400.524889]  ffffffff81381a6d ffffc900108ae000 ffff8800ae54d0c0
-ffff880138793c00
-[ 8400.524893] Call Trace:
-[ 8400.524898]  [<ffffffff81381a6d>] ? _raw_spin_lock_irqsave+0x14/0x35
-[ 8400.524910]  [<ffffffffa0242d48>] ? queue_log_writer+0x7d/0xad [reis=
-erfs]
-[ 8400.524915]  [<ffffffff81064071>] ? try_to_wake_up+0x199/0x199
-[ 8400.524927]  [<ffffffffa02475e1>] ? do_journal_begin_r+0x177/0x23e
-[reiserfs]
-[ 8400.524939]  [<ffffffffa024775d>] ? journal_begin+0xb5/0xec [reiserf=
-s]
-[ 8400.524949]  [<ffffffffa0230120>] ? reiserfs_create+0xcf/0x1eb [reis=
-erfs]
-[ 8400.524954]  [<ffffffff81114cf7>] ? vfs_create+0x62/0x8b
-[ 8400.524958]  [<ffffffff811129f3>] ? lookup_dcache+0x22/0x95
-[ 8400.524963]  [<ffffffff81115c39>] ? do_last+0x591/0xa0f
-[ 8400.524968]  [<ffffffff81116178>] ? path_openat+0xc1/0x33b
-[ 8400.524972]  [<ffffffff811166a9>] ? do_filp_open+0x2a/0x6e
-[ 8400.524977]  [<ffffffff8111fc35>] ? __alloc_fd+0xdc/0xed
-[ 8400.524981]  [<ffffffff8110aba4>] ? do_sys_open+0x5c/0xe0
-[ 8400.524986]  [<ffffffff81386d69>] ? system_call_fastpath+0x16/0x1b
-[ 8400.524994] INFO: task konqueror:14018 blocked for more than 120 sec=
-onds.
-[ 8400.524996] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disab=
-les this
-message.
-[ 8400.524999] konqueror       D ffff88013fd13bc0     0 14018   3791 0x=
-00000000
-[ 8400.525003]  ffff8801378aa180 0000000000000086 ffff8800aef4bc58
-ffff88013aeb4180
-[ 8400.525008]  0000000000013bc0 ffff8800aef4bfd8 ffff8800aef4bfd8
-ffff8801378aa180
-[ 8400.525012]  ffffffff81381a6d ffffc900108ae000 ffff8801378aa180
-ffff880138793c00
-[ 8400.525017] Call Trace:
-[ 8400.525022]  [<ffffffff81381a6d>] ? _raw_spin_lock_irqsave+0x14/0x35
-[ 8400.525034]  [<ffffffffa0242d48>] ? queue_log_writer+0x7d/0xad [reis=
-erfs]
-[ 8400.525039]  [<ffffffff81064071>] ? try_to_wake_up+0x199/0x199
-[ 8400.525051]  [<ffffffffa02475e1>] ? do_journal_begin_r+0x177/0x23e
-[reiserfs]
-[ 8400.525055]  [<ffffffff81113447>] ? lookup_fast+0x39/0x211
-[ 8400.525060]  [<ffffffff8114ed87>] ? dquot_active+0x28/0x50
-[ 8400.525072]  [<ffffffffa024775d>] ? journal_begin+0xb5/0xec [reiserf=
-s]
-[ 8400.525082]  [<ffffffffa022f26a>] ? reiserfs_unlink+0x7c/0x24c [reis=
-erfs]
-[ 8400.525087]  [<ffffffff811208b0>] ? mntget+0x17/0x1c
-[ 8400.525091]  [<ffffffff8111324e>] ? complete_walk+0x89/0xda
-[ 8400.525096]  [<ffffffff81114424>] ? path_lookupat+0x6a/0x2b1
-[ 8400.525100]  [<ffffffff810613a6>] ? should_resched+0x5/0x23
-[ 8400.525104]  [<ffffffff81114e81>] ? vfs_unlink+0x63/0xbc
-[ 8400.525109]  [<ffffffff81114fbc>] ? do_unlinkat+0xe2/0x18c
-[ 8400.525113]  [<ffffffff8110edd9>] ? sys_newstat+0x25/0x2d
-[ 8400.525118]  [<ffffffff81380ef1>] ? __schedule+0x4b2/0x4e0
-[ 8400.525123]  [<ffffffff81386d69>] ? system_call_fastpath+0x16/0x1b
-[ 8400.525131] INFO: task kworker/0:4:17879 blocked for more than 120 s=
-econds.
-[ 8400.525133] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disab=
-les this
-message.
-[ 8400.525135] kworker/0:4     D ffff88013fc13bc0     0 17879      2 0x=
-00000000
-[ 8400.525140]  ffff8800af5fb040 0000000000000046 ffff880139434584
-ffff88013692f0c0
-[ 8400.525145]  0000000000013bc0 ffff88009c389fd8 ffff88009c389fd8
-ffff8800af5fb040
-[ 8400.525149]  ffffffff81381a6d ffffc900108ae000 ffff8800af5fb040
-ffff880138793c00
-[ 8400.525154] Call Trace:
-[ 8400.525158]  [<ffffffff81381a6d>] ? _raw_spin_lock_irqsave+0x14/0x35
-[ 8400.525171]  [<ffffffffa0242d48>] ? queue_log_writer+0x7d/0xad [reis=
-erfs]
-[ 8400.525175]  [<ffffffff81064071>] ? try_to_wake_up+0x199/0x199
-[ 8400.525187]  [<ffffffffa0246a55>] ? do_journal_end.isra.23+0x1ba/0xb=
-cf
-[reiserfs]
-[ 8400.525199]  [<ffffffffa0238cd3>] ? reiserfs_sync_fs+0x40/0x5c [reis=
-erfs]
-[ 8400.525210]  [<ffffffffa0239de0>] ? flush_old_commits+0x1d/0x39 [rei=
-serfs]
-[ 8400.525216]  [<ffffffff810536ad>] ? process_one_work+0x16d/0x2c5
-[ 8400.525220]  [<ffffffff813819f8>] ? _raw_spin_lock_irq+0xb/0x15
-[ 8400.525232]  [<ffffffffa0239dc3>] ? reiserfs_freeze+0xc5/0xc5 [reise=
-rfs]
-[ 8400.525237]  [<ffffffff8105381d>] ? process_scheduled_works+0x18/0x2=
-5
-[ 8400.525241]  [<ffffffff81053ae2>] ? worker_thread+0x131/0x1b1
-[ 8400.525246]  [<ffffffff810539b1>] ? rescuer_thread+0x187/0x187
-[ 8400.525250]  [<ffffffff81057280>] ? kthread+0x81/0x89
-[ 8400.525255]  [<ffffffff810571ff>] ? __kthread_parkme+0x5c/0x5c
-[ 8400.525259]  [<ffffffff81386cbc>] ? ret_from_fork+0x7c/0xb0
-[ 8400.525264]  [<ffffffff810571ff>] ? __kthread_parkme+0x5c/0x5c
-[ 8400.525272] INFO: task kscreenlocker:19028 blocked for more than 120
-seconds.
-[ 8400.525274] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disab=
-les this
-message.
-[ 8400.525277] kscreenlocker   D ffff88013fd13bc0     0 19028   4230 0x=
-00000000
-[ 8400.525281]  ffff88013a3df8a0 0000000000000086 0200000000020028
-ffff88013aeb4180
-[ 8400.525286]  0000000000013bc0 ffff88012fc8dfd8 ffff88012fc8dfd8
-ffff88013a3df8a0
-[ 8400.525291]  0000000000000117 ffff8801392d4c60 ffff88013a3df8a0
-ffff8801392d4c64
-[ 8400.525295] Call Trace:
-[ 8400.525301]  [<ffffffff813804f5>] ? __mutex_lock_common.isra.6+0x149=
-/0x165
-[ 8400.525306]  [<ffffffff81380320>] ? mutex_lock+0x1a/0x2d
-[ 8400.525310]  [<ffffffff810c3947>] ? generic_file_aio_write+0x55/0xc9
-[ 8400.525315]  [<ffffffff8110adcf>] ? do_sync_write+0x62/0x9b
-[ 8400.525320]  [<ffffffff8110b376>] ? vfs_write+0x96/0xf8
-[ 8400.525324]  [<ffffffff810613a6>] ? should_resched+0x5/0x23
-[ 8400.525328]  [<ffffffff8110b59e>] ? sys_write+0x51/0x80
-[ 8400.525332]  [<ffffffff81386d69>] ? system_call_fastpath+0x16/0x1b
 
---=20
-Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=3Demai=
-l
-------- You are receiving this mail because: -------
-You are the assignee for the bug.--
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Mmm, I haven't found definition of "free block"..
+
+For example, we have deleted a file by unlink(2), and the transaction,
+which contains the updated bitmap is not yet committed. And here is
+an interesting question: at this moment blocks of that file are free, or
+busy? ;)
+
+> "Realtime" mode:
+> It will be more complex given that we have to do the actual work on
+> transaction commit.
+> You are right about the slowness of bitmap comparison (yes, 32K bitops... I
+> haven't thought about it); we'll need to store locations to discard in some
+> per-atom data structure.
+>
+> Let's define a "minimal discard range" to be a block range,
+> 1) whose begin is properly aligned,
+> 2) whose size is equal to discard granularity.
+> This can be checked using data from struct queue_limits (exact algorithm can
+> be derived from code of blkdev_issue_discard()).
+>
+> Actually, simply storing each deallocated interval in the atom and then
+> iterating through the list upon commit will be suboptimal.
+> Reasons:
+> - if a single deallocated range is smaller than the discard granularity, then
+> this particular range won't be discarded even if it is surrounded by enough
+> free blocks to make a minimal discard range;
+> - we won't be able to merge small adjacent ranges to form a range that's long
+> enough.
+>
+> Solution:
+> - record all deallocated ranges verbatim (in a list);
+
+> - on commit time, for each recorded range find minimal discard range(s) which
+> encompass the given range and check if all their blocks can be discarded
+> (i. e. are free);
+
+> - add each suitable minimal discard range to a locally-allocated tree (while
+> merging the added ranges);
+
+
+Why not to just maintain per-atom rb-trees? All deallocated ranges
+will be represented as records (extents) in those trees. It looks more
+simple, no?
+
+When truncate(2) deallocates a range of blocks, we find a position in
+such "discard tree", and try to merge this range with neighbouring
+extents. If they are not mergeable, then insert one more extent...
+
+I see the following (hope resolvable) problems here:
+
+1. Ranges of blocks freed by truncate(2) can be "spoiled" by
+relocate decisions performed in flush time (action (4) above).
+I mean the situation when the flush procedure borrows block
+numbers for the "best allocation" from... our discard extents.
+
+In other words, before issuing a discard request, we need to
+check our discard extents for possible "holes". Such check can
+be also implemented by the updated bitmap, which is contained
+in the same atom.
+
+2. Another problem is maintenance of the "discard trees" during
+atom's evolution. Sometimes atoms may merge. So their "discard
+trees" should be respectively merged. For the beginning we can
+merge trees for by simply allocating a new empty one and placing
+there all extents from the trees we want to merge (N+M operatioins).
+Later we can implement "rb-trees with fingers", invented for fast
+merge, which will take only log(min{N,M}) operations [1].
+
+3. And one more problem: it would be better to not allocate anything
+at flush and commit time: usually flush/commit is a reiser4 respond
+to memory pressure notifications of the operating system. Linux
+doesn't have any reservation mechanisms for subsystems, which
+need memory to free memory.
+
+At flush time we'll need memory to represent deallocated ranges as
+records in the "discard trees". I think it makes sense to preallocate
+special per-atom pools for those needs. I think 20-40K per atom should
+be enough.
+
+
+> - issue discard for all found ranges.
+>
+> Hope this won't be too slow. BTW, kernel sometimes seems to report wrong
+> granularity. In my case, granularity is reported as 512 bytes.
+
+So we can make a recap.
+
+Batched discard:
+
+Some clarifications are needed to understand if we can implement
+something useful here..
+
+Realtime discard:
+
+Now It is more or less clear, how to implement it in reiser4. You will
+want to make a friendship with reiser4 transaction manager. This is
+rather advanced and complicated thing (with this manager reiser4
+has much more capabilities, than any other file system). Start with
+understanding, that every cached block (page) of reiser4 partition is
+contained in some atom: this is captured by reiser4 transaction
+manager (try_capture() and friends). Note, that atom contains not
+only dirty blocks. Clean blocks also participate in relations created by
+transaction manager (see [2] for details). Once in a while (responding
+on memory pressure notification, or because the transaction is too
+large/old) atoms get committed: their subsets of dirty blocks are
+written to disk by steps (a, b, c) above.
+
+You will encounter specific problems, but experience shows all they
+are resolvable.
+
+Thanks,
+Edward.
+
+[1] http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.38.4454
+[2] http://lwn.net/2001/1108/a/reiser4-transaction.php3
+
+[...]
+>>    by performing a comparison between the
+>>
+>>> old (on-disk) and new bitmaps, remembering all changed chunks and
+>>> issuing discard for them.
+>> I afraid that comparison the bitmaps is something expensive: it means
+>> 4K*8 = 32K comparisons per bitmap block.. Maybe it makes sense to
+>> accumulate the "difference" in special per-atom data structures
+>> (say, rb-trees)?
+>>
+>>
+>>    Also, the discard granularity can be higher
+>>
+>>> than the bitmap granularity. E. g. if we have a bitmap pattern like
+>>> "0010" and it changes to "0000", it would be better to issue a discard
+>>> for 4 blocks instead of just one.
+>>>
+>>> And with FITRIM, we could just lock the bitmap and walk through it,
+>>> discarding all free chunks. Of course, it can only be done if locking
+>>> policy allows us to "just lock the bitmap"...
+>>>
+>>> BTW, I'm afraid I don't understand what "a proposal" means. Is it a
+>>> kind of some official document - and if yes, who needs it?
+>> Nothing official, this is a usual practice in groups that work
+>> remotely: someone send a kind of roadmap. In the simplest case it
+>> can be a set of links where one can read about TRIM/discard.
+>> Maybe "proposal" sounds too official? :)
+>>
+>>> For the other things: the freezing issue seems to be related to
+>>> fsync() indeed; the freeze rate decreased substantially when I stopped
+>>> using InnoDB as the MySQL backend. Some of them remained, seemingly
+>>> related to Dropbox (== concurrent reads and writes to the same file).
+>> This is a known problem, I'll try to find Reiser's suggestions how to
+>> resolve this..
+> Due to transactional fs's nature?
+>
+>>> And yes, I'll try to do the bisection as soon as enough free time
+>>> appears... Will a virtual machine be enough, or it is crucial that the
+>>> tests shall be performed on a real machine?
+>> It can be remote, but it should be a real machine. BTW, where are you
+>> territorially?
+> I'm in Moscow (RU). Actually, I can do that on my primary PC - if those old
+> kernels are able to boot a SandyBridge chipset.
+>
+> BTW, mirror at mirror.sit.wisc.edu is offline... I'll use mirror.linux.org.au -
+> and hope that patches will apply to any of the intermediate states.
+> What is the first known bad version?
+>
+> Ivan.
+>
+>> Edward.
+>>
+>>> Thanks,
+>>> Ivan.
+>>>
+>>> 2013/2/10 Edward Shishkin<edward.shishkin@gmail.com>:
+>>>> Hi Ivan,
+>>>>
+>>>> How our TRIM/dsicard is doing?
+>>>> Any questions, or everything is clear? :)
+>>>>
+>>>> Edward.
+>>>>
+>>>> On 01/17/2013 05:39 PM, Edward Shishkin wrote:
+>>>>> On 01/07/2013 02:42 AM, Ivan Shapovalov wrote:
+>>>>>> Hi again Edward,
+>>>>> Hello.
+>>>>>
+>>>>>> Here's what I want to try to do with reiser4 in meantime. I'd
+>>>>>> appreciate some
+>>>>>> hints on that all...
+>>>>>>
+>>>>>> So, first thing I'd like to implement is TRIM/discard support, both
+>>>>>> online
+>>>>>> (via -o discard) and in a separate FITRIM ioctl().
+>>>>>> That's just because I've got an SSD two days ago and thus now have to
+>>>>>> use in
+>>>>>> rootfs some discard-aware fs like ext4.
+>>>>> I think it would be nice for beginning. Moreover, reiser4 still doesn't
+>>>>> have any setup optimal for SSD.
+>>>>>
+>>>>> Unfortunately I don't have a ready proposal for TRIM/discard support in
+>>>>> reiser4.
+>>>>>
+>>>>> I have ready proposals for the following features (they can be rather
+>>>>> complicated for the beginners though):
+>>>>>
+>>>>> 1) Repacker (On-line defragmentation);
+>>>>> 2) Support of different transaction models:
+>>>>> a. pure journalling;
+>>>>> b. pure COW (Copy-On-Write);
+>>>>> c. smart (the current "mixed" one);
+>>>>> d. no transaction support (for people with UPSs);
+>>>>> 3) Subvolumes (AKA "chunkfs");
+>>>>> 4) Snapshots.
+>>>>>
+>>>>>> And then I want to do something with performance: sometimes during
+>>>>>> heavy I/O
+>>>>>> to a slow /home storage (especially when it's multithreaded) many
+>>>>>> processes,
+>>>>>> including the DE, just get stuck in "D" state and sit there for a
+>>>>>> minute or
+>>>>>> two with load average of apx. 5.5 (on a hyperthreaded 2-core CPU).
+>>>>> and some process waits for fsync() completion?
+>>>>>
+>>>>>> For the first, I can look into other filesystems' implementations, but
+>>>>>> I'll
+>>>>>> probably be unsure at which layer to put the actual discard call (in
+>>>>>> order not
+>>>>>> to break reiser4's transactional nature).
+>>>>> If you decide to proceed with TRIM/discard support, you will need to
+>>>>> prepare the proposal by yourself. Let's start with some background,
+>>>>> that is:
+>>>>> . clarify underlying reasons (specific for SSD geometry?) of
+>>>>> TRIM/discard support: why do we need such support on the file
+>>>>> system layer;
+>>>>> . review of existing hardware and software means for such support;
+>>>>> . etc..
+>>>>>
+>>>>> And yes, it would be nice to review existing TRIM/discard support
+>>>>> implementations in other file systems (say, ext4).
+>>>>>
+>>>>> Once we figure out, what bits of reiser4 you should understand
+>>>>> perfectly to implement TRIM/discard support, I'll provide you with
+>>>>> respective hints.
+>>>>>
+>>>>>> And for the second, I just don't know why does that happen. Can it be
+>>>>>> due to
+>>>>>> some r4-specific things/issues or that's just a horribly slow random
+>>>>>> access
+>>>>>> speed of my hw?
+>>>>> Which hw? SSD?
+>>>>>
+>>>>> I also remember complaints that umount (i.e. the final sync takes 2-3,
+>>>>> or even more minutes). It looks like in some cases reiser4 accumulates
+>>>>> too much dirty stuff..
+>>>>>
+>>>>> It would be nice to periodically dump some info about atoms (current
+>>>>> number of all atoms, size of each atom, etc) to see the full picture of
+>>>>> their evolution during such freezing. I think, it makes sense to port
+>>>>> the old reiser4 profiling stuff, and populate it with more info (if
+>>>>> needed).
+>>>>>
+>>>>> Also there is an oldest issue:
+>>>>> The following (old) benchmarks created with mongo(*) test suit show x2
+>>>>> advantage of reiser4 against reiserfs(v3) on CREATE phase (let's
+>>>>> consider only this phase for simplicity):
+>>>>>
+>>>>>
+>>>>> http://web.archive.org/web/20061113154648/http://www.namesys.com/benchma
+>>>>> rks.html
+>>>>>
+>>>>>
+>>>>> I've made similar benchmarks with latest 2.6 kernels (sorry, lost the
+>>>>> results) and found that the advantage has disappeared (real time in
+>>>>> CREATE phase is the same as of reiserfs, or even worse). It shouldn't
+>>>>> be so: it indicates that something wrong is going on.. I remember
+>>>>> people complained on the performance drop in reiser4 long time ago, but
+>>>>> didn't have a chance to investigate this.
+>>>>>
+>>>>> The straightforward way to narrow down the problem changeset is to
+>>>>> bisect starting from 2.6.8-mm2, the archives can be found here:
+>>>>> http://mirror.sit.wisc.edu/pub/linux/kernel/people/akpm/patches/2.6/
+>>>>> http://ftp.icm.edu.pl/packages/linux-reiserfs/reiser4-for-2.6/
+>>>>>
+>>>>> http://mirror.sit.wisc.edu/pub/linux/kernel/people/edward/reiser4/reiser
+>>>>> 4-for-2.6/
+>>>>>
+>>>>> However, it can be rather painful and requires a separate machine.
+>>>>>
+>>>>> Thanks,
+>>>>> Edward.
+>>>>>
+>>>>> (*)
+>>>>>
+>>>>> http://sourceforge.net/projects/reiser4/files/reiser4-utils/bench-stress
+>>>>> -tools/
+
