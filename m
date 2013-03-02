@@ -1,7 +1,7 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: Further work on reiser4: discard support and performance issues
-Date: Sat, 02 Mar 2013 21:32:45 +0100
-Message-ID: <513261ED.4000105@gmail.com>
+Date: Sat, 02 Mar 2013 23:46:56 +0100
+Message-ID: <51328160.2050503@gmail.com>
 References: <1856576.kOCPiaH0RB@intelfx-laptop> <CAErSLm0PFf03S8_6tjT0GgFXw=EpWCf+6RBoxxFYoecQPYWoLA@mail.gmail.com> <51184DD5.7020409@gmail.com> <1435419.Em4W395xSI@intelfx-laptop> <51322F14.6000405@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -10,13 +10,13 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=x-received:message-id:date:from:user-agent:mime-version:to:subject
          :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=BrbMQ/8R7fl4MexFwqU/SfgOo4GvaDjh3WCkW7yDFKE=;
-        b=ClvIps/Zz3s/vIc+n+QEH535H253qWmrxaa2B8BamBftoMxztsLaZFOB7liOyb9pQK
-         2jGt83dLKnKokpNWTXM6PesxmXHbuaPjUe3PR1j8PfmkjmLwwMGV2l772vsQJSMPJJcU
-         w4vZGCYe1IAPRrva+CsInguChIJ1FHZYOnUhSXVvG4SFjWoqqsxGx4F8gxjjs4WrUJf+
-         7I31WM9oTdMzIl6dWS57XhIUtrlDM874R0ErAqv6L/jl4QC0pMoPs0/7lBLx6bj9kKEM
-         bONWvssdAfZHxNmZ8xksMQw6YCm/RR7MdiEPm3tH4SOvWZoeJpaVMBCHwVMA/aDwHMPZ
-         sOKA==
+        bh=sFYC2EOtsNurcRPGxKwkMuG2PrwN0jANK021uZ4zF2I=;
+        b=BWEs2q+doTTt+20eW4iLfTMicBCSvINV1hKE3qd8ezQvQdJp7DVkVzjkOiyX20+Ahr
+         QK3Mcn8OeoTCKW+Mj7J7nKB7c+i0DpOiTzg5oxVwAscKxUboBRKS9pDLdAkm4Yxn0N4I
+         jP7lSpsKcf2+0uEHi8Gr6KjnvxAHDfTCNezovjT8KWHWOutN8m1O90KOwBkqvJKo1J2E
+         OD9ZxZtsORxNPJtw2+PTQ3LX+d8+V5YCBF0aottqWGUos8N3YIecFFibim842eZoxCJ+
+         tEfAZueGY8kbCj06w/tXZC+uZbwbI5xLQ3d5nVG2Ewz1M21m8fdiIxcpFrwWYt4eRjQ9
+         h8OQ==
 In-Reply-To: <51322F14.6000405@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -247,19 +247,24 @@ On 03/02/2013 05:55 PM, Edward Shishkin wrote:
 > check our discard extents for possible "holes". Such check can
 > be also implemented by the updated bitmap, which is contained
 > in the same atom.
+
+
+BTW, we can try to avoid such checks by changing current
+allocation policy (which has been designed specially for HDD
+and de-facto is not optimal for SSD). Say, don't look for free
+blocks in the regions maintained by bitmap blocks marked "for
+discard". In this case:
+1) we'll avoid ugly checks;
+2) our previous discard regions won't be spoiled.
+
+
+>
 >
 > 2. Another problem is maintenance of the "discard trees" during
 > atom's evolution. Sometimes atoms may merge. So their "discard
 > trees" should be respectively merged. For the beginning we can
 > merge trees for by simply allocating a new empty one and placing
 > there all extents from the trees we want to merge (N+M operatioins).
-
-
-A small improvement:
-We can just put all items from the smallest tree to the largest one.
-It means min{N,M} operations.
-
-
 > Later we can implement "rb-trees with fingers", invented for fast
 > merge, which will take only log(min{N,M}) operations [1].
 >
