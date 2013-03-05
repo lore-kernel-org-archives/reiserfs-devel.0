@@ -1,100 +1,107 @@
-From: NeilBrown <neilb@suse.de>
-Subject: Re: [RFA] reiserfs 3.6 on SSD software RAID1 with TRIM/DISCARD on
- SMP-system doable?
-Date: Mon, 4 Mar 2013 17:02:17 +1100
-Message-ID: <20130304170217.0f869fa5@notabene.brown>
-References: <30c9401395b356be4b2cdf42e1afa833@mail.ud03.udmedia.de>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: Further work on reiser4: discard support and performance issues
+Date: Tue, 05 Mar 2013 03:05:33 +0100
+Message-ID: <513552ED.104@gmail.com>
+References: <1856576.kOCPiaH0RB@intelfx-laptop> <CAErSLm0PFf03S8_6tjT0GgFXw=EpWCf+6RBoxxFYoecQPYWoLA@mail.gmail.com> <51184DD5.7020409@gmail.com> <1435419.Em4W395xSI@intelfx-laptop> <51322F14.6000405@gmail.com> <513261ED.4000105@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/EIO7.i.l6n0btJhYud.5OJH"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <30c9401395b356be4b2cdf42e1afa833@mail.ud03.udmedia.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=x-received:message-id:date:from:user-agent:mime-version:to:subject
+         :references:in-reply-to:content-type:content-transfer-encoding;
+        bh=qfxoAfKpjdGqy5ZAdlt6t8YbCSMbVpmLi+fdbTkn3xI=;
+        b=J98LaPD7zeg8Q4rWQb8UYnLXVlxq9BjUqkVU0gt/yV5FGOngYGININogYDyJ0Q2/xG
+         aPGFT+G436xSpNnaDNGd5CPYJ167LqP91eKUUldRW+PQrraU8KyfIC0fYlAysoLT43bc
+         XZCcy2zYoJaJOUAjsOGPRTgJz7QUdbXQE2d/8Eou5Pazm8HLMquEMU9IKP1Iu3YPyycw
+         MVLNwnhg8cUtM8ij32Eyxt2r/khKLwVyv5du25bK5rDzz3fcWBEgWC+7O09rNVW98aK/
+         lpHmUc2+art+uoRLtQAUwAY5nfdBaS9XLvIrGRMsVXv3eakYh3wcE5u2L2hcPWdzpfaZ
+         uNNQ==
+In-Reply-To: <513261ED.4000105@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Dieter =?ISO-8859-1?Q?N=FCtzel?= <dieter@nuetzel-hh.de>
-Cc: Edward Shishkin <edward.shishkin@gmail.com>, Jeff Mahoney <jeffm@suse.com>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ivan Shapovalov <intelfx100@gmail.com>, ReiserFS development mailing list <reiserfs-devel@vger.kernel.org>
 
---Sig_/EIO7.i.l6n0btJhYud.5OJH
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On 03/02/2013 09:32 PM, Edward Shishkin wrote:
+[...]
+>>
+>>> 2) "Batch" discard - the filesystem discards all free blocks upon a 
+>>> user's
+>>> request (when mounted).
+>>> In this "batch" case, the signaling is done through a FITRIM ioctl 
+>>> on any file.
+>>>
+>>> "Batch" mode:
+>>> Implementing it should be simple enough (if I'm making correct 
+>>> assumptions
+>>> about how does reiser4 work): we can just lock the bitmap and walk 
+>>> through it,
+>>> issuing a discard for each long enough free sequence.
+>>
+>>
+>> Mmm, I haven't found definition of "free block"..
+>>
+>> For example, we have deleted a file by unlink(2), and the transaction,
+>> which contains the updated bitmap is not yet committed. And here is
+>> an interesting question: at this moment blocks of that file are free, or
+>> busy? ;)
+[...]
+>> Batched discard:
+>>
+>> Some clarifications are needed to understand if we can implement
+>> something useful here..
 
-On Thu, 28 Feb 2013 04:29:18 +0100 Dieter N=C3=BCtzel <dieter@nuetzel-hh.de=
-> wrote:
 
-> Hello,
->=20
-> I'm on ReiserFS 3.6 since the beginning (under S.u.S.E. :-) even with=20
-> beta stuff.
-> Now it is time for SSDs.
-> I migrated one UP workstation (openSUSE 12.2 + stable + etc.) and have=20
-> to switch all other servers + workstations onto SSDs, too.
->=20
-> Please give me your advice if I better should switch to ext4 or=20
-> whatever.
-> All systems should run your great MD software RAID1 on SSD hopefully=20
-> with TRIM and/or DISCARD.
->=20
+BTW, the indeterminacy of the notions "free/busy block" disappears, if we
+translate everything to the language of transactions.
 
-Sorry, but I am not in a position to recommend one filesystem over another.
-You might get more opinions if you posted somewhere like
-linux-raid@vger.kernel.org .
+I think that in the batch mode we need to launch a process X, which does
+something like this:
 
-> Thanks,
->     Dieter
->=20
-> PS @Neil:
-> I get /dev/md0 (swap) and poorly /dev/md127 (root).
-> But YaST created this /etc/mdadm.conf on the first workstation:
->=20
-> DEVICE containers partitions
-> ARRAY /dev/md0 UUID=3Dbd5xxxxx
-> ARRAY /dev/md1 UUID=3De74xxxxx
->=20
-> Ahhh, now I see something (below).
-> Can we clean this?
+while (1) {
+         reiser4_init_context();  /* this opens a transaction */
+         for (i=0; i < BATCH_GRANULARITY; i++) {
+                 get next bitmap block;
+                 if (all bitmaps have been processed)
+                         break;
+                 /* at this  point we do have a pointer to the atom */
+                 scan the bitmap and insert all "free extents" to atom's 
+discard tree;
+                 capture the bitmap;
+                 make the bitmap dirty;
+         }
+         reiser4_exit_context(); /* this closes the transaction */
+         if (all bitmaps have been processed)
+                 break;
+}
 
-Sorry, but I don't really understand the question.
+In this case "batched" discard requests will be issued as "realtime"
+ones when committing transactions spawned by the process X.
 
->=20
-> Sonja /home/dieter# cat /proc/mdstat
-> Personalities : [raid1] [raid0] [raid10] [raid6] [raid5] [raid4]
-> md0 : active raid1 sdb1[0] sda1[1]
->        1051584 blocks super 1.0 [2/2] [UU]
->        bitmap: 0/1 pages [0KB], 65536KB chunk
->=20
-> md127 : active raid1 sdb2[0] sda2[2]
->        30209920 blocks super 1.0 [2/2] [UU]
->        bitmap: 1/1 pages [4KB], 65536KB chunk
->=20
-> unused devices: <none>
->=20
-> Should I generate partition tables on the devices or are the raw=20
-> devices enough?
+Problems:
 
-Either works fine.
+1. Excess IOs of (artificially dirtied) bitmap blocks. But IMHO this
+is a minor problem. We'll think how to avoid those IOs.
 
-NeilBrown
+2. Bitmap block can be already captured by another process Y
+(in other words, this bitmap block is contained in another atom).
 
---Sig_/EIO7.i.l6n0btJhYud.5OJH
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+One of the possible solutions is to close current transaction and
+jump to the existing one (spawned by the process Y). That atom
+may already contain a tree with "realtime discard extents". In this
+case we just need to complement them with _all_ free extents of
+the respective bitmap block (note, that the set of "realtime discard
+extents" is a subset of free extents that we need to discard in
+batch mode).
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+So, discard/TRIM support can be implemented in reiser4 as an
+upgrade of transaction manager and block allocator. This upgrade
+is backward and forward compatible.
 
-iQIVAwUBUTQ46Tnsnt1WYoG5AQLxPg//QDRqoemkGBwfHiHZTwhwN3N9ZXn4NhBc
-tQvQKmyVjT47p3fdPkCXxn5RRDNex+zIWyCMzy6Cg1KSV9cOfBva5+2o6LZcKo2J
-RKVcKW5oKeLXdbOFvm125+jOl9Li+K4kSF18fy8oLjV1t9clQGQ2NstXluqm8kSv
-4VKRHJt/eFN+IWYvDvnyJ8e+hGr33A+4BJ/fPzJF3C6pEjt4TuW4MgU0yG1851BC
-n1MKgnNT3APzF6DbPkmsU9tG1HwRam7rTJ4IIlmSZ+IIkrMqYEtz2xEn1dA26rMa
-ug4v0wPorhprB1uJKC8yNovHIvApJU78ZMbToViu7x8pXik0R4yX86cLFIfxZfZe
-eXHeEvk2HLuzyG7inqlmB4Iotmnad9/sIBUNzEtuYS0ig7lMXAPRbhMsQIHiBpSb
-OkAEfuKJn56Q47TS1loUQusw/v0O3swUiJD7mycZP5odGtEMm2bC4tSH+/dot7AP
-Htaer2VI+Yx0n0WwlAe50XTxGUGtt6mlsaVtAvOtYSbcecTkRk1gInE0GsfpVoDR
-kWLiKjX5BaT/KdNy6xPpJbiZ4f5OckeUy9SK3GFXBb+jZHzk8YPE/mOr+EWSz+Vx
-M49+Jiceke8on7zwKL2172DyOt9i9NqkC2n2pMygPLx9xQeDTRUZcgrvuR2jiqIe
-4pwHuarNgjY=
-=MgGR
------END PGP SIGNATURE-----
+The last thing is to make sure that fsck will be happy with the new
+allocation policy (i.e. it won't perform massive reallocations, which
+are useless for SSD). I am sure with 99.9%, that everything will be
+OK here.
 
---Sig_/EIO7.i.l6n0btJhYud.5OJH--
+Edward.
