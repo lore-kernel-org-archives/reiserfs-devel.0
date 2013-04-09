@@ -1,37 +1,70 @@
-From: Jan Kara <jack@suse.cz>
-Subject: [GIT PULL] Reiserfs fix for 3.9-rc6
-Date: Wed, 3 Apr 2013 17:43:38 +0200
-Message-ID: <20130403154338.GA17415@quack.suse.cz>
-Mime-Version: 1.0
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-fsdevel-owner@vger.kernel.org
+From: Lukas Czerner <lczerner@redhat.com>
+Subject: [PATCH v3 09/18] reiserfs: use ->invalidatepage() length argument
+Date: Tue,  9 Apr 2013 11:14:18 +0200
+Message-ID: <1365498867-27782-10-git-send-email-lczerner@redhat.com>
+References: <1365498867-27782-1-git-send-email-lczerner@redhat.com>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <1365498867-27782-1-git-send-email-lczerner@redhat.com>
+Sender: owner-linux-mm@kvack.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>, reiserfs-devel@vger.kernel.org
 
-  Hello Linus,
+->invalidatepage() aop now accepts range to invalidate so we can make
+use of it in reiserfs_invalidatepage()
 
-  could you please pull from
+Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+Cc: reiserfs-devel@vger.kernel.org
+---
+ fs/reiserfs/inode.c |    9 +++++++--
+ 1 files changed, 7 insertions(+), 2 deletions(-)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git for_linus
-
-to get a fix for reiserfs xattr bug exposed by changes to lookup_one_len().
-Top of the tree is 35e5cbc. The full shortlog is:
-
-Jan Kara (1):
-      reiserfs: Fix warning and inode leak when deleting inode with xattrs
-
-The diffstat is
-
- fs/reiserfs/xattr.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-							Thanks
-								Honza
-
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index 808e02e..e963164 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -2975,11 +2975,13 @@ static void reiserfs_invalidatepage(struct page *page, unsigned int offset,
+ 	struct buffer_head *head, *bh, *next;
+ 	struct inode *inode = page->mapping->host;
+ 	unsigned int curr_off = 0;
++	unsigned int stop = offset + length;
++	int partial_page = (offset || length < PAGE_CACHE_SIZE);
+ 	int ret = 1;
+ 
+ 	BUG_ON(!PageLocked(page));
+ 
+-	if (offset == 0)
++	if (!partial_page)
+ 		ClearPageChecked(page);
+ 
+ 	if (!page_has_buffers(page))
+@@ -2991,6 +2993,9 @@ static void reiserfs_invalidatepage(struct page *page, unsigned int offset,
+ 		unsigned int next_off = curr_off + bh->b_size;
+ 		next = bh->b_this_page;
+ 
++		if (next_off > stop)
++			goto out;
++
+ 		/*
+ 		 * is this block fully invalidated?
+ 		 */
+@@ -3009,7 +3014,7 @@ static void reiserfs_invalidatepage(struct page *page, unsigned int offset,
+ 	 * The get_block cached value has been unconditionally invalidated,
+ 	 * so real IO is not possible anymore.
+ 	 */
+-	if (!offset && ret) {
++	if (!partial_page && ret) {
+ 		ret = try_to_release_page(page, 0);
+ 		/* maybe should BUG_ON(!ret); - neilb */
+ 	}
 -- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+1.7.7.6
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
