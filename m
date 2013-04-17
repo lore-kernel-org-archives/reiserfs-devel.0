@@ -1,118 +1,30 @@
-From: David Howells <dhowells@redhat.com>
-Subject: [PATCH 15/28] reiserfs: Don't access the proc_dir_entry in r_open(),
- r_start() r_show() [RFC]
-Date: Tue, 16 Apr 2013 19:26:51 +0100
-Message-ID: <20130416182651.27773.77972.stgit@warthog.procyon.org.uk>
-References: <20130416182550.27773.89310.stgit@warthog.procyon.org.uk>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 29162] Reiserfs hang with dataloss sometimes
+Date: Wed, 17 Apr 2013 12:17:28 +0000 (UTC)
+Message-ID: <20130417121728.C654511FA14@bugzilla.kernel.org>
+References: <bug-29162-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130416182550.27773.89310.stgit@warthog.procyon.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <bug-29162-695@https.bugzilla.kernel.org/>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
 
-Don't access the proc_dir_entry in ReiserFS's r_open(), r_start() r_show()
-procfs interface functions.
+https://bugzilla.kernel.org/show_bug.cgi?id=29162
 
-ReiserFS stores the ->show() method pointer in PDE->data and the super_block
-pointer in PDE->parent->data.  This isn't changing.
 
-Currently, ReiserFS passes the PDE pointer into seq_file::private from
-r_open() so that r_start() and r_show() can then access it.  Instead, use
-seq_open_private() to allocate a two-pointer struct that's passed through
-seq_file::private and put the ->show() method and the sb pointers in there.
+Matwey V. Kornilov <matwey.kornilov@gmail.com> changed:
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: reiserfs-devel@vger.kernel.org
----
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |matwey.kornilov@gmail.com
 
- fs/reiserfs/procfs.c |   32 +++++++++++++++++++-------------
- 1 file changed, 19 insertions(+), 13 deletions(-)
 
-diff --git a/fs/reiserfs/procfs.c b/fs/reiserfs/procfs.c
-index 274adea..33532f7 100644
---- a/fs/reiserfs/procfs.c
-+++ b/fs/reiserfs/procfs.c
-@@ -394,20 +394,24 @@ static int set_sb(struct super_block *sb, void *data)
- 	return -ENOENT;
- }
- 
-+struct reiserfs_seq_private {
-+	struct super_block *sb;
-+	int (*show) (struct seq_file *, struct super_block *);
-+};
-+
- static void *r_start(struct seq_file *m, loff_t * pos)
- {
--	struct proc_dir_entry *de = m->private;
--	struct super_block *s = de->parent->data;
-+	struct reiserfs_seq_private *priv = m->private;
- 	loff_t l = *pos;
- 
- 	if (l)
- 		return NULL;
- 
--	if (IS_ERR(sget(&reiserfs_fs_type, test_sb, set_sb, 0, s)))
-+	if (IS_ERR(sget(&reiserfs_fs_type, test_sb, set_sb, 0, priv->sb)))
- 		return NULL;
- 
--	up_write(&s->s_umount);
--	return s;
-+	up_write(&priv->sb->s_umount);
-+	return priv->sb;
- }
- 
- static void *r_next(struct seq_file *m, void *v, loff_t * pos)
-@@ -426,9 +430,8 @@ static void r_stop(struct seq_file *m, void *v)
- 
- static int r_show(struct seq_file *m, void *v)
- {
--	struct proc_dir_entry *de = m->private;
--	int (*show) (struct seq_file *, struct super_block *) = de->data;
--	return show(m, v);
-+	struct reiserfs_seq_private *priv = m->private;
-+	return priv->show(m, v);
- }
- 
- static const struct seq_operations r_ops = {
-@@ -440,11 +443,15 @@ static const struct seq_operations r_ops = {
- 
- static int r_open(struct inode *inode, struct file *file)
- {
--	int ret = seq_open(file, &r_ops);
-+	struct reiserfs_seq_private *priv;
-+	int ret = seq_open_private(file, &r_ops,
-+				   sizeof(struct reiserfs_seq_private));
- 
- 	if (!ret) {
- 		struct seq_file *m = file->private_data;
--		m->private = PDE(inode);
-+		priv = m->private;
-+		priv->sb = proc_get_parent_data(inode);
-+		priv->show = PDE_DATA(inode);
- 	}
- 	return ret;
- }
-@@ -453,7 +460,7 @@ static const struct file_operations r_file_operations = {
- 	.open = r_open,
- 	.read = seq_read,
- 	.llseek = seq_lseek,
--	.release = seq_release,
-+	.release = seq_release_private,
- 	.owner = THIS_MODULE,
- };
- 
-@@ -479,9 +486,8 @@ int reiserfs_proc_info_init(struct super_block *sb)
- 		*s = '!';
- 
- 	spin_lock_init(&__PINFO(sb).lock);
--	REISERFS_SB(sb)->procdir = proc_mkdir(b, proc_info_root);
-+	REISERFS_SB(sb)->procdir = proc_mkdir_data(b, 0, proc_info_root, sb);
- 	if (REISERFS_SB(sb)->procdir) {
--		REISERFS_SB(sb)->procdir->data = sb;
- 		add_file(sb, "version", show_version);
- 		add_file(sb, "super", show_super);
- 		add_file(sb, "per-level", show_per_level);
+
+
+-- 
+Configure bugmail: https://bugzilla.kernel.org/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
