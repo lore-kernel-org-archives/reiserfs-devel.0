@@ -1,63 +1,38 @@
-From: Carlos Maiolino <cmaiolino@redhat.com>
-Subject: Re: [PATCH] reiserfs: Fix warning and inode leak when deleting inode
- with xattrs
-Date: Mon, 22 Apr 2013 11:04:22 -0300
-Message-ID: <20130422140422.GA519@andromeda.usersys.redhat.com>
-References: <1364573384-19459-1-git-send-email-jack@suse.cz>
+From: <doiggl@velocitynet.com.au>
+Subject: Here is a plain kernel based on 3.8.x with the reiser4 patch enabled.
+Date: Mon, 29 Apr 2013 18:55:42 +1000
+Message-ID: <fa0f7932aa46c2efdd0daa20950bac38@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1364573384-19459-1-git-send-email-jack@suse.cz>
-Sender: stable-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, reiserfs-devel@vger.kernel.org, Pawel Zawora <pzawora@gmail.com>, stable@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org
 
-Looks good to me
+Hello,
+Here is a plain kernel based on 3.8.x with the reiser4 patch built with
+the Opensuse build service [obs] system.
 
-Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
+The project is here
 
-On Fri, Mar 29, 2013 at 05:09:44PM +0100, Jan Kara wrote:
-> After commit 21d8a15a (lookup_one_len: don't accept . and ..) reiserfs
-> started failing to delete xattrs from inode. This was due to a buggy
-> test for '.' and '..' in fill_with_dentries() which resulted in passing
-> '.' and '..' entries to lookup_one_len() in some cases. That returned
-> error and so we failed to iterate over all xattrs of and inode.
-> 
-> Fix the test in fill_with_dentries() along the lines of the one in
-> lookup_one_len().
-> 
-> Reported-by: Pawel Zawora <pzawora@gmail.com>
-> CC: stable@vger.kernel.org
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
->  fs/reiserfs/xattr.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-> index c196369..4cce1d9 100644
-> --- a/fs/reiserfs/xattr.c
-> +++ b/fs/reiserfs/xattr.c
-> @@ -187,8 +187,8 @@ fill_with_dentries(void *buf, const char *name, int namelen, loff_t offset,
->  	if (dbuf->count == ARRAY_SIZE(dbuf->dentries))
->  		return -ENOSPC;
->  
-> -	if (name[0] == '.' && (name[1] == '\0' ||
-> -			       (name[1] == '.' && name[2] == '\0')))
-> +	if (name[0] == '.' && (namelen < 2 ||
-> +			       (namelen == 2 && name[1] == '.')))
->  		return 0;
->  
->  	dentry = lookup_one_len(name, dbuf->xadir, namelen);
-> -- 
-> 1.7.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fsdevel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+->https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
 
--- 
-Carlos
+The built rpms are here
+
+->https://build.opensuse.org/package/binaries?package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_12.3
+
+The log of the build is here {x86_64} as an example. [Its a long buildlog]
+->https://build.opensuse.org/package/rawlog?arch=x86_64&package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_12.3
+
+The .spec used file is here
+
+->https://build.opensuse.org/package/view_file?file=kernel-reiser4.spec&package=kernel-reiser4&project=home%3Adoiggl&srcmd5=2c6d1fc65da407b68c93a5ebdd2fe670
+
+Thanks to the opensuse-kernel list members for compilation advice.
+http://lists.opensuse.org/opensuse-kernel/
+
+It looks like obs built the rpms.
+Post the results to the list.
+
+Cheers Glenn
