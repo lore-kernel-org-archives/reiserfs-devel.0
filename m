@@ -1,38 +1,42 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Here is a plain kernel based on 3.8.x with the reiser4 patch enabled.
-Date: Mon, 29 Apr 2013 18:55:42 +1000
-Message-ID: <fa0f7932aa46c2efdd0daa20950bac38@mail.velocitynet.com.au>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: [patch 0/6] reiser4progs-1.0.8
+Date: Fri, 03 May 2013 22:38:40 +0200
+Message-ID: <51842050.9070904@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=x-received:message-id:date:from:user-agent:mime-version:to:subject
+         :content-type:content-transfer-encoding;
+        bh=UIR+A8tplcjsKZFWogJ0XiGc9XskLpZugXDVb87YXlk=;
+        b=YDWBYlOsI/RorXwdstDfdsX1yGNcyBfvEW1i4L4SGjSdoQism6OIoid5xeOl43Ve2t
+         Oz8kHqNhIzTepVLiiImxiICWDmcCzyd5/QvXLEUrilUGDbdG+El/kSlerEqx0ErqWhqh
+         b0GF0/DoZWEq0HhILw+6WJSKzZ/8tfwy4CUpuHU37atBzIfFwuvoIwga1HtjQY52nbaU
+         2KCR9aIcFrFCd/aD76zAgPcY+1+NEWs3/FeSDfjfW+3tiUvYqiGUcesjskulqscdEjcm
+         aA2PZLT4v3BvQDAP2IZ4F5CuQTFb/15y2r9v97jB3LsJNx+FLlmP456iygMPAKFAcHUA
+         YvxQ==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS Development mailing list <reiserfs-devel@vger.kernel.org>
 
-Hello,
-Here is a plain kernel based on 3.8.x with the reiser4 patch built with
-the Opensuse build service [obs] system.
+Changes since 1.0.7:
 
-The project is here
+. Fixups in fsck.reiser4: repair a special kind of corruptions
+   appeared due to software bugs in earlier kernels.
 
-->https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
+. mkfs.reiser4 now enables intelligent compression with lzo1
+   algorithm by default. If you want to create reiser4 without
+   compression, then override the default plugin set with the
+   "-o create=reg40" option.
 
-The built rpms are here
+   I remind that list of default plugins can be retrieved with
+   "mkfs.reiser4 -p".
 
-->https://build.opensuse.org/package/binaries?package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_12.3
 
-The log of the build is here {x86_64} as an example. [Its a long buildlog]
-->https://build.opensuse.org/package/rawlog?arch=x86_64&package=kernel-reiser4&project=home%3Adoiggl&repository=openSUSE_12.3
+Please, find here:
+https://sourceforge.net/projects/reiser4/files/reiser4-utils/reiser4progs/
 
-The .spec used file is here
-
-->https://build.opensuse.org/package/view_file?file=kernel-reiser4.spec&package=kernel-reiser4&project=home%3Adoiggl&srcmd5=2c6d1fc65da407b68c93a5ebdd2fe670
-
-Thanks to the opensuse-kernel list members for compilation advice.
-http://lists.opensuse.org/opensuse-kernel/
-
-It looks like obs built the rpms.
-Post the results to the list.
-
-Cheers Glenn
+Thanks,
+Edward.
