@@ -1,37 +1,72 @@
-From: Chris Mason <clmason@fusionio.com>
-Subject: Re: [BULK]  [PATCH] reiserfs: fix journal list handling
-Date: Mon, 6 May 2013 14:57:48 -0400
-Message-ID: <20130506185748.5844.59533@localhost.localdomain>
-References: <5187FB79.4000206@suse.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fusionio.com;
-	s=default; t=1367866670;
-	bh=OUlX+mtd9jOr863FL04yQ2Sn2UBbh5dbf7yxL+7l6Uk=;
-	h=From:To:References:In-Reply-To:Subject:Date;
-	b=MdRYWGvql1Yi7lDvS632j1ztMyY/0Y9Ixe4fcWkcYf+e3jPpcxrfYBTaY7CFY6To6
-	 Dg7z98kndylw4GsY5RObdxqKHSkMEDi912Ngp2ZjUdUp1NRKX+jBKh3cCAiJq7GeTx
-	 xACJPhwwd+9cB2Dsk3nbfacAgXZ88T7XPyw3ThcU=
-In-Reply-To: <5187FB79.4000206@suse.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+From: Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH 08/15] reiserfs: fix deadlock with nfs racing on create/lookup
+Date: Tue,  7 May 2013 16:18:16 +0200
+Message-ID: <1367936303-13386-8-git-send-email-jslaby@suse.cz>
+References: <1367936303-13386-1-git-send-email-jslaby@suse.cz>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1367936303-13386-1-git-send-email-jslaby@suse.cz>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Jeff Mahoney <jeffm@suse.com>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: jirislaby@gmail.com
+Cc: linux-kernel@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>, Jiri Slaby <jslaby@suse.cz>, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, reiserfs-devel@vger.kernel.org
 
-Quoting Jeff Mahoney (2013-05-06 14:50:33)
-> reiserfs has open coded linked lists to handle its cnode infrastructure.
-> 
-> While converting them to list_heads, I found that while the patch looked
-> perfectly straightforward based on what the code should have been doing,
-> it caused crashes nearly immediately. The issue can be reproduced
-> without the conversion by clearing the hprev/hnext pointers in
-> remove_journal_hash() when the cnode is removed from the hash list.
-> 
-> It turns out that the code has been working by happy accident for over
-> a decade
+From: Jeff Mahoney <jeffm@suse.com>
 
-Chris from 1999 is really sorry about that one.  The new code looks much
-less error prone.
+Reiserfs is currently able to be deadlocked by having two NFS clients
+where one has removed and recreated a file and another is accessing the
+file with an open file handle.
 
--chris
+If one client deletes and recreates a file with timing such that the
+recreated file obtains the same [dirid, objectid] pair as the original
+file while another client accesses the file via file handle, the create
+and lookup can race and deadlock if the lookup manages to create the
+in-memory inode first.
+
+The create thread, in insert_inode_locked4, will hold the write lock
+while waiting on the other inode to be unlocked. The lookup thread,
+anywhere in the iget path, will release and reacquire the write lock while
+it schedules. If it needs to reacquire the lock while the create thread
+has it, it will never be able to make forward progress because it needs
+to reacquire the lock before ultimately unlocking the inode.
+
+This patch drops the write lock across the insert_inode_locked4 call so
+that the ordering of inode_wait -> write lock is retained. Since this
+would have been the case before the BKL push-down, this is safe.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: reiserfs-devel@vger.kernel.org
+---
+ fs/reiserfs/inode.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index 77d6d47..f844533 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -1811,11 +1811,16 @@ int reiserfs_new_inode(struct reiserfs_transaction_handle *th,
+ 				  TYPE_STAT_DATA, SD_SIZE, MAX_US_INT);
+ 	memcpy(INODE_PKEY(inode), &(ih.ih_key), KEY_SIZE);
+ 	args.dirid = le32_to_cpu(ih.ih_key.k_dir_id);
+-	if (insert_inode_locked4(inode, args.objectid,
+-			     reiserfs_find_actor, &args) < 0) {
++
++	reiserfs_write_unlock(inode->i_sb);
++	err = insert_inode_locked4(inode, args.objectid,
++			     reiserfs_find_actor, &args);
++	reiserfs_write_lock(inode->i_sb);
++	if (err) {
+ 		err = -EINVAL;
+ 		goto out_bad_inode;
+ 	}
++
+ 	if (old_format_only(sb))
+ 		/* not a perfect generation count, as object ids can be reused, but
+ 		 ** this is as good as reiserfs can do right now.
+-- 
+1.8.2.1
