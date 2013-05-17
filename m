@@ -1,65 +1,51 @@
-From: Lukas Czerner <lczerner@redhat.com>
-Subject: [PATCH v4 09/20] reiserfs: use ->invalidatepage() length argument
-Date: Tue, 14 May 2013 18:37:23 +0200
-Message-ID: <1368549454-8930-10-git-send-email-lczerner@redhat.com>
-References: <1368549454-8930-1-git-send-email-lczerner@redhat.com>
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1368549454-8930-1-git-send-email-lczerner@redhat.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
+From: Christian Kujau <lists@nerdbynature.de>
+Subject: xattr performance
+Date: Fri, 17 May 2013 05:02:21 -0700 (PDT)
+Message-ID: <alpine.DEB.2.10.1305170444590.13746@trent.utfs.org>
+Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, akpm@linux-foundation.org, hughd@google.com, lczerner@redhat.com, reiserfs-devel@vger.kernel.org
+Return-path: <xfs-bounces@oss.sgi.com>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
+List-Archive: <http://oss.sgi.com/pipermail/xfs>
+List-Post: <mailto:xfs@oss.sgi.com>
+List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
+List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
+Errors-To: xfs-bounces@oss.sgi.com
+Sender: xfs-bounces@oss.sgi.com
+To: jfs-discussion@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com
 
-->invalidatepage() aop now accepts range to invalidate so we can make
-use of it in reiserfs_invalidatepage()
+Hi,
 
-Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-Cc: reiserfs-devel@vger.kernel.org
----
- fs/reiserfs/inode.c |    9 +++++++--
- 1 files changed, 7 insertions(+), 2 deletions(-)
+a while ago I was setting & reading extended attributes to ~25000 files 
+in a directory structure on an XFS filesystem. The files were usually a 
+few MB in size, but some where up to 2GB in size.
 
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index 808e02e..e963164 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -2975,11 +2975,13 @@ static void reiserfs_invalidatepage(struct page *page, unsigned int offset,
- 	struct buffer_head *head, *bh, *next;
- 	struct inode *inode = page->mapping->host;
- 	unsigned int curr_off = 0;
-+	unsigned int stop = offset + length;
-+	int partial_page = (offset || length < PAGE_CACHE_SIZE);
- 	int ret = 1;
- 
- 	BUG_ON(!PageLocked(page));
- 
--	if (offset == 0)
-+	if (!partial_page)
- 		ClearPageChecked(page);
- 
- 	if (!page_has_buffers(page))
-@@ -2991,6 +2993,9 @@ static void reiserfs_invalidatepage(struct page *page, unsigned int offset,
- 		unsigned int next_off = curr_off + bh->b_size;
- 		next = bh->b_this_page;
- 
-+		if (next_off > stop)
-+			goto out;
-+
- 		/*
- 		 * is this block fully invalidated?
- 		 */
-@@ -3009,7 +3014,7 @@ static void reiserfs_invalidatepage(struct page *page, unsigned int offset,
- 	 * The get_block cached value has been unconditionally invalidated,
- 	 * so real IO is not possible anymore.
- 	 */
--	if (!offset && ret) {
-+	if (!partial_page && ret) {
- 		ret = try_to_release_page(page, 0);
- 		/* maybe should BUG_ON(!ret); - neilb */
- 	}
+Anyway, I *felt* that setting or reading these xattrs was going very
+slowly. While the storage may be not the fastest, stat()'ing these
+files was fine, but getfattr/setfattr took very long.
+
+I got curious and while it turned out that the slowness was related to the 
+wrapper script I used to read/set those values, I created a little test 
+suite to 1) create a few thousand files and 2) do xattr operations on 
+them and see if xattr performance was filesystem specific:
+
+   http://nerdbynature.de/bits/xattr/
+
+Not very sophisticated, true. But it was interesting to see that 
+ext3/ext4/xfs behaved kinda well for all these tests; btrfs/jfs/reiserfs
+sometimes took way longer than the others.
+
+Christian.
 -- 
-1.7.7.6
+BOFH excuse #43:
 
+boss forgot system password
+
+_______________________________________________
+xfs mailing list
+xfs@oss.sgi.com
+http://oss.sgi.com/mailman/listinfo/xfs
