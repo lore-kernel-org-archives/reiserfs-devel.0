@@ -1,55 +1,43 @@
-From: Christian Kujau <lists@nerdbynature.de>
-Subject: Re: xattr performance
-Date: Fri, 17 May 2013 13:09:39 -0700 (PDT)
-Message-ID: <alpine.DEB.2.10.1305171300490.13746@trent.utfs.org>
-References: <alpine.DEB.2.10.1305170444590.13746@trent.utfs.org>
-	<20130517154436.GW29359@sgi.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Reiser4 for Linux-3.9
+Date: Sat, 25 May 2013 19:40:56 +0200
+Message-ID: <51A0F7A8.6030600@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <xfs-bounces@oss.sgi.com>
-In-Reply-To: <20130517154436.GW29359@sgi.com>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
-List-Archive: <http://oss.sgi.com/pipermail/xfs>
-List-Post: <mailto:xfs@oss.sgi.com>
-List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
-List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
-Errors-To: xfs-bounces@oss.sgi.com
-Sender: xfs-bounces@oss.sgi.com
-To: Ben Myers <bpm@sgi.com>
-Cc: jfs-discussion@lists.sourceforge.net, linux-ext4@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-btrfs@vger.kernel.org, xfs@oss.sgi.com
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject
+         :content-type:content-transfer-encoding;
+        bh=7xUfeLgtmY7bcqBbYOZ59DaODWoIQd4mE1gzZ8IzJ6A=;
+        b=M7G2nj2+RcIyJWdA+EXqVMTLUUPnAf4UqyIaDfpcrB2CfbdIuV0iu2potLEhoDqzRK
+         6lOGLYRHhVt/kSgrwRE/wazuwWZO9K7dIx6HYLELcysbqggMCOdSGQgmv2RbWXjRVBpq
+         V8FWssuNqu7HpoB7I/HMYNX+a6r/KYBCkTyCGV4AJHCMbuR9nMWpCumb7DgQqKSC9fT9
+         cVS5ZOthj8w0tn+cD5MysjdRWAfF995xr4z5u9MeBFNbpA2EG6RPfIWJ5ORkHUIJHxu7
+         ZHAThflBcTI7X0ERtHnCq3sbrEif9ztTuBFx16HimMukPRMRUXetjKcx010a9PbPhC2u
+         3C6A==
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: ReiserFS Development mailing list <reiserfs-devel@vger.kernel.org>
 
-On Fri, 17 May 2013 at 10:44, Ben Myers wrote:
-> The short version:
-> inode core (96 bytes) + literal area == inode size
+Changes since reiser4-for-3.7:
 
-Ah, yes indeed. I had another issue earlier on the same filesystem and 
-Christoph told me[0] that I may have run out of inode attributes. 
+Ivan Shapovalov
 
-xfs_info reports isize=256 for this filesystem and now that I'm using 
-xattr even more (I'm storing sha256 checksum plus the filename in each 
-file's xattr) this looks like it might exceed the literal area after all. 
+. port for linux-3.8;
+. port for linux-3.9:
+   . do not depend on EXPERIMENTAL;
+   . reposition PF_FLUSHER bit.
 
-> Anyway... If you're a heavy user of EAs you might benefit from using larger
-> inodes.  Just something to consider.  Cool tests!  ;)
+Edward Shishkin
 
-Yeah, next time I'll have to take this into consideration, but the fs was 
-created long ago and I didn't plan to use xattr. Now I do but mkfs is not 
-an option right now.
+. Fixed assertion (false positive) in balance_dirty_page_cluster();
+   don't throttle writes, if no pages were dirtied;
+. Remove bugop stubs in directory address space operations.
 
-Thanks for the insight,
-Christian.
+Please, find here:
+http://sourceforge.net/projects/reiser4/files/reiser4-for-linux-3.x/
 
-[0] http://oss.sgi.com/archives/xfs/2012-07/msg00116.html
--- 
-BOFH excuse #247:
-
-Due to Federal Budget problems we have been forced to cut back on the number of users able to access the system at one time. (namely none allowed....)
-
-_______________________________________________
-xfs mailing list
-xfs@oss.sgi.com
-http://oss.sgi.com/mailman/listinfo/xfs
+Thanks,
+Edward.
