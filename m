@@ -1,35 +1,34 @@
-From: Serge Hallyn <serge.hallyn@ubuntu.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
 Subject: Re: [PATCH] xattr: Constify ->name member of "struct xattr".
-Date: Mon, 10 Jun 2013 06:54:18 -0500
-Message-ID: <20130610115417.GB13953@tp>
-References: <201305292152.CCF10933.FQJHFLOtOFVMSO@I-love.SAKURA.ne.jp>
- <201306082154.BDJ95357.MFQFVOJLSOtHFO@I-love.SAKURA.ne.jp>
+Date: Mon, 10 Jun 2013 08:53:47 -0700
+Message-ID: <51B5F68B.6060008@schaufler-ca.com>
+References: <201305292152.CCF10933.FQJHFLOtOFVMSO@I-love.SAKURA.ne.jp> <201306082154.BDJ95357.MFQFVOJLSOtHFO@I-love.SAKURA.ne.jp>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-security-module-owner@vger.kernel.org>
 In-Reply-To: <201306082154.BDJ95357.MFQFVOJLSOtHFO@I-love.SAKURA.ne.jp>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Sender: linux-security-module-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, eparis@parisplace.org, casey@schaufler-ca.com, zohar@us.ibm.com, serge.hallyn@canonical.com, linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc: ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, eparis@parisplace.org, zohar@us.ibm.com, serge.hallyn@canonical.com, linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
 
-Quoting Tetsuo Handa (penguin-kernel@I-love.SAKURA.ne.jp):
+On 6/8/2013 5:54 AM, Tetsuo Handa wrote:
 > >From 96df8b4be7f8702913a0245b2312958e2eea6caf Mon Sep 17 00:00:00 2001
 > From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 > Date: Sat, 8 Jun 2013 21:46:58 +0900
 > Subject: [PATCH] xattr: Constify ->name member of "struct xattr".
-> 
+>
 > Since everybody sets kstrdup()ed constant string to "struct xattr"->name but
 > nobody modifies "struct xattr"->name , we can omit kstrdup() and its failure
 > checking by constifying ->name member of "struct xattr".
-> 
+>
 > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-It seems good to me.
+Unnecessary data duplication and memory allocation is bad.
+Thanks for catching this.
 
-Acked-by: Serge E. Hallyn <serge.hallyn@ubuntu.com>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
 > ---
 >  fs/ocfs2/xattr.h                    |    2 +-
@@ -42,7 +41,7 @@ Acked-by: Serge E. Hallyn <serge.hallyn@ubuntu.com>
 >  security/selinux/hooks.c            |   17 ++++++-----------
 >  security/smack/smack_lsm.c          |    9 +++------
 >  9 files changed, 21 insertions(+), 31 deletions(-)
-> 
+>
 > diff --git a/fs/ocfs2/xattr.h b/fs/ocfs2/xattr.h
 > index e5c7f15..19f134e 100644
 > --- a/fs/ocfs2/xattr.h
@@ -249,5 +248,4 @@ Acked-by: Serge E. Hallyn <serge.hallyn@ubuntu.com>
 >  
 >  	if (value) {
 >  		skp = smk_find_entry(csp);
-> -- 
-> 1.7.1
+
