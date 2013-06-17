@@ -1,80 +1,185 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: (reiserfs 3.6) sync command causes continuous writes
-Date: Thu, 13 Jun 2013 18:34:37 -0400
-Message-ID: <51BA48FD.5060303@suse.com>
-References: <loom.20130611T104322-574@post.gmane.org>
+Subject: [PATCH] reiserfs: remove flush_old_commits
+Date: Mon, 17 Jun 2013 14:57:02 -0400
+Message-ID: <51BF5BFE.5060702@suse.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
  protocol="application/pgp-signature";
- boundary="----enig2UIOHWQPWVWGXOMCVSKPF"
+ boundary="----enig2GACEWDOGWUOOOTKLEJLT"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <loom.20130611T104322-574@post.gmane.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: tomnm <tomm@lime-technology.com>
-Cc: reiserfs-devel@vger.kernel.org
+To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
-------enig2UIOHWQPWVWGXOMCVSKPF
+------enig2GACEWDOGWUOOOTKLEJLT
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-On 6/11/13 4:57 AM, tomnm wrote:
-> After typing the 'sync' command all reiserfs 3.6 mounted volumes will b=
-e
-> continuously written.  For example, suppose 'sdb1' contains a reiserfs
-> partition.
->=20
-> mount /dev/sdb1 /mnt/data
->=20
-> Now type:
-> cat /sys/block/sdb/stat
-> and note the number of I/O's to the partition.
-> wait a couple seconds, look at I/O statistics and see they don't change=
-=2E
->=20
-> Now type:
-> sync
->=20
-> Subsequently typing 'cat /sys/block/sdb/stat' every few seconds shows
-> increasing I/O.
->=20
-> This can be confirmed by trying to spin the drive down:
-> hdparm -y /dev/sdb
->=20
-> The device spins down but then immediately spins back up due to above I=
-/O
-> taking place.
->=20
-> If you umount the drive and mount again, the continuous I/O stops, only=
- to
-> resume again as soon as you type 'sync'.
->=20
-> This behavior started with 3.5 kernel.  All 3.4.x kernels are ok.  All =
-3.5.x
-> and newer kernels exhibit this behavior.
->=20
-> This does not seem to occur with ext3 or FAT.
+Commit 033369d1 (reiserfs: get rid of resierfs_sync_super) was introduced=
 
-This looks like it is a side effect of commit 033369d1 (reiserfs: get
-rid of resierfs_sync_super).
+to replace the old s->dirt method of superblock writeback. Reiserfs
+always journals the superblock on modification so we weren't really using=
 
-I haven't looked at it deeply enough to understand why it's getting
-kicked off by the sync.
+it anyway.
 
-I think the right answer is to remove the new code added by that commit.
-The superblock is always journaled when we modify it, so we don't need
-to do the periodic flushing.
+It also introduced a bug that causes reiserfs_sync_fs to be called in
+5 second intervals once sync is called, whether the file system needs it
+or not.
 
--Jeff
+Let's just rip it all out. reiserfs_sync_fs has done the right thing
+for ages.
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+---
+ fs/reiserfs/journal.c  |  4 ----
+ fs/reiserfs/reiserfs.h |  6 ------
+ fs/reiserfs/super.c    | 49 --------------------------------------------=
+-----
+ 3 files changed, 59 deletions(-)
+
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 742fdd4..3b6b108 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -1923,8 +1923,6 @@ static int do_journal_release(struct reiserfs_trans=
+action_handle *th,
+ 	 * the workqueue job (flush_async_commit) needs this lock
+ 	 */
+ 	reiserfs_write_unlock(sb);
+-
+-	cancel_delayed_work_sync(&REISERFS_SB(sb)->old_work);
+ 	flush_workqueue(commit_wq);
+=20
+ 	if (!reiserfs_mounted_fs_count) {
+@@ -3306,7 +3304,6 @@ int journal_mark_dirty(struct reiserfs_transaction_=
+handle *th,
+ 		journal->j_first =3D cn;
+ 		journal->j_last =3D cn;
+ 	}
+-	reiserfs_schedule_old_flush(sb);
+ 	return 0;
+ }
+=20
+@@ -3944,7 +3941,6 @@ static int do_journal_end(struct reiserfs_transacti=
+on_handle *th,
+ 	 ** it tells us if we should continue with the journal_end, or just ret=
+urn
+ 	 */
+ 	if (!check_journal_end(th, sb, nblocks, flags)) {
+-		reiserfs_schedule_old_flush(sb);
+ 		wake_queued_writers(sb);
+ 		reiserfs_async_progress_wait(sb);
+ 		goto out;
+diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+index 157e474..055f512 100644
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -480,11 +480,6 @@ struct reiserfs_sb_info {
+ 	struct dentry *priv_root;	/* root of /.reiserfs_priv */
+ 	struct dentry *xattr_root;	/* root of /.reiserfs_priv/xattrs */
+ 	int j_errno;
+-
+-	int work_queued;              /* non-zero delayed work is queued */
+-	struct delayed_work old_work; /* old transactions flush delayed work */=
+
+-	spinlock_t old_work_lock;     /* protects old_work and work_queued */
+-
+ #ifdef CONFIG_QUOTA
+ 	char *s_qf_names[MAXQUOTAS];
+ 	int s_jquota_fmt;
+@@ -2493,7 +2488,6 @@ void reiserfs_abort(struct super_block *sb, int err=
+no, const char *fmt, ...);
+ int reiserfs_allocate_list_bitmaps(struct super_block *s,
+ 				   struct reiserfs_list_bitmap *, unsigned int);
+=20
+-void reiserfs_schedule_old_flush(struct super_block *s);
+ void add_save_link(struct reiserfs_transaction_handle *th,
+ 		   struct inode *inode, int truncate);
+ int remove_save_link(struct inode *inode, int truncate);
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index f8a23c3..dc2cd06 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -81,54 +81,9 @@ static int reiserfs_sync_fs(struct super_block *s, int=
+ wait)
+ 	return 0;
+ }
+=20
+-static void flush_old_commits(struct work_struct *work)
+-{
+-	struct reiserfs_sb_info *sbi;
+-	struct super_block *s;
+-
+-	sbi =3D container_of(work, struct reiserfs_sb_info, old_work.work);
+-	s =3D sbi->s_journal->j_work_sb;
+-
+-	spin_lock(&sbi->old_work_lock);
+-	sbi->work_queued =3D 0;
+-	spin_unlock(&sbi->old_work_lock);
+-
+-	reiserfs_sync_fs(s, 1);
+-}
+-
+-void reiserfs_schedule_old_flush(struct super_block *s)
+-{
+-	struct reiserfs_sb_info *sbi =3D REISERFS_SB(s);
+-	unsigned long delay;
+-
+-	if (s->s_flags & MS_RDONLY)
+-		return;
+-
+-	spin_lock(&sbi->old_work_lock);
+-	if (!sbi->work_queued) {
+-		delay =3D msecs_to_jiffies(dirty_writeback_interval * 10);
+-		queue_delayed_work(system_long_wq, &sbi->old_work, delay);
+-		sbi->work_queued =3D 1;
+-	}
+-	spin_unlock(&sbi->old_work_lock);
+-}
+-
+-static void cancel_old_flush(struct super_block *s)
+-{
+-	struct reiserfs_sb_info *sbi =3D REISERFS_SB(s);
+-
+-	cancel_delayed_work_sync(&REISERFS_SB(s)->old_work);
+-	spin_lock(&sbi->old_work_lock);
+-	sbi->work_queued =3D 0;
+-	spin_unlock(&sbi->old_work_lock);
+-}
+-
+ static int reiserfs_freeze(struct super_block *s)
+ {
+ 	struct reiserfs_transaction_handle th;
+-
+-	cancel_old_flush(s);
+-
+ 	reiserfs_write_lock(s);
+ 	if (!(s->s_flags & MS_RDONLY)) {
+ 		int err =3D journal_begin(&th, s, 1);
+@@ -1796,8 +1751,6 @@ static int reiserfs_fill_super(struct super_block *=
+s, void *data, int silent)
+ 	/* setup default block allocator options */
+ 	reiserfs_init_alloc_options(s);
+=20
+-	spin_lock_init(&sbi->old_work_lock);
+-	INIT_DELAYED_WORK(&sbi->old_work, flush_old_commits);
+ 	mutex_init(&sbi->lock);
+ 	sbi->lock_depth =3D -1;
+=20
+@@ -2060,8 +2013,6 @@ error_unlocked:
+ 		reiserfs_write_unlock(s);
+ 	}
+=20
+-	cancel_delayed_work_sync(&REISERFS_SB(s)->old_work);
+-
+ 	reiserfs_free_bitmap_cache(s);
+ 	if (SB_BUFFER_WITH_SB(s))
+ 		brelse(SB_BUFFER_WITH_SB(s));
 
 
---=20
-Jeff Mahoney
-SUSE Labs
 
-
-------enig2UIOHWQPWVWGXOMCVSKPF
+------enig2GACEWDOGWUOOOTKLEJLT
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -82,19 +187,19 @@ Content-Disposition: attachment; filename="signature.asc"
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG/MacGPG2 v2.0.19 (Darwin)
 
-iQIcBAEBAgAGBQJRukkBAAoJEB57S2MheeWyr2YQAKAuj1tZGUby9ZzxD62WvkTW
-eVD8GGVdQLvRc47xSjw8l87tI7HURA11HpOZDFhzj6gEHURR4l7il+tEOW1P013P
-C0/FPuGP2smfphjfYkZIhaMXEULYK8QIN6cuBMdSWqcUn5sUUMlpFmHt8D7RbHaQ
-24AaryWgWdvbXMhPfPgdz4AIjHycuIxPQ/XlhL9MeKG4HswmlO0TU7Af419vnTab
-sGD7YpMAmCCG4gF6onTlQ7uXfURBuvYuuEc88p0+jdju2iZVBkINqrtrOLFBAzx7
-3DrV5YjQF4V2mnw1UDomIHdQ37qxkiMk4cVrBdmFcQKeh6WpO/c2ic44SVhcCBAF
-LTir8Udso2I1M/lgOsM5NpKQPxNfnbQVYzR6gE4+VDucN1QbGI0zLcLskysi/cu0
-Uw07hWgHQykwzOBxEYLOlqCp0l3a4gMkvOCJKjF5CWgi+ocnCrGQF6Cm5L7h3BGQ
-0DFD+0N+BhHQC0AwuPO8gqe9a6x3lzSZYIMF8hoABishR35rOURH8QafcN3Jgjll
-FYjZgS0tDslfSF4Z3oi03A5XHqDO+9M940qAmHYBFONBiCswveUJinO0VZ5aB6vI
-5Zlbr5e+rok/c3J4uZXW30xnWrDpybgy8gqz6GX5kecZyaYRZ3k6ceAxtCQguUu2
-gDaxg4TkC8A3wfkhUlRi
-=kS4v
+iQIcBAEBAgAGBQJRv1wBAAoJEB57S2MheeWykCgP/2u0YNKoFHPgihnFA4MC3i06
+AWRgcWFedvwKIrraHxSCJgt2US1EDjiPfz+pFf74zhSj8uHW8tWEVwtxdLGW52PS
+Gg++dx73K+mCd47NFT0fbYmmrcSGduhHsBWkH/+o15xXNcb5b6PBj+bd4uxhZHj/
+9idqQOAdE1GSwWg6D8FCn12CSPb1X4ba1PsebJ3SM+l5gZEM8J8YB7HKvi3Rugll
+KeEAnCEJ6TpCJUjiAB64VY4Osk+huYRWp/99fls0mdtgVDNtusEiCyDtThXTPVv/
+deJqySI4iy7jVDUrUZ5hxAV2i98nUiD3zVdXA4VORS5/emyOOKEbohqah3Dx60/3
+EoWsmfi94ZsR06u0iciIOhFW+14Jiieqj6EeSfGTlG4z3jThRhs0lAYUm7//6X7a
+idkqu/3RiP+ICaAHGuEyKcuF/Q4PTeckrx8nG4uqvhlURhP9vuqYxFSq8OIEPkqs
+mmp4fFutAIFekWH2rx6vyDj3ySLmfZ9Zzj/6CkZm5+tqfQxk2BurHjNxGS3XiCy9
+StTqhCIId11FV1U+/oB5i19qcvvLfG2jloeMjWOYlvUS1AHYGct6J1iffsozXh36
++x1MUqNeUDPPwphchpj5y3gkm9ht/yvmqPZ1Q1Pfdt1f5hzpqCXHwfXrUA/7qXQ5
+NcKl5EkXbt9ijade8XMl
+=a2Kw
 -----END PGP SIGNATURE-----
 
-------enig2UIOHWQPWVWGXOMCVSKPF--
+------enig2GACEWDOGWUOOOTKLEJLT--
