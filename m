@@ -1,205 +1,253 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH] reiserfs: remove flush_old_commits
-Date: Mon, 17 Jun 2013 14:57:02 -0400
-Message-ID: <51BF5BFE.5060702@suse.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: Re: [PATCH] xattr: Constify ->name member of "struct xattr".
+Date: Mon, 24 Jun 2013 22:05:46 +0900
+Message-ID: <201306242205.GAE95336.LSFMFOFOQJOHtV@I-love.SAKURA.ne.jp>
+References: <201305292152.CCF10933.FQJHFLOtOFVMSO@I-love.SAKURA.ne.jp>
+	<201306082154.BDJ95357.MFQFVOJLSOtHFO@I-love.SAKURA.ne.jp>
+	<20130609090721.GD5531@localhost>
+	<201306092109.GBB81777.JOHtFOMQVLSFOF@I-love.SAKURA.ne.jp>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="----enig2GACEWDOGWUOOOTKLEJLT"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <201306092109.GBB81777.JOHtFOMQVLSFOF@I-love.SAKURA.ne.jp>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: eparis@parisplace.org, zohar@us.ibm.com, reiserfs-devel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
-------enig2GACEWDOGWUOOOTKLEJLT
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Eric and Mimi, can this patch go to linux-next.git via linux-security.git ?
+----------
+From 3f4e9317d1c689a78ac1e94126c74826dbe9c9e3 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Mon, 24 Jun 2013 21:35:22 +0900
+Subject: [PATCH] xattr: Constify ->name member of "struct xattr".
 
-Commit 033369d1 (reiserfs: get rid of resierfs_sync_super) was introduced=
+Since everybody sets kstrdup()ed constant string to "struct xattr"->name but
+nobody modifies "struct xattr"->name , we can omit kstrdup() and its failure
+checking by constifying ->name member of "struct xattr".
 
-to replace the old s->dirt method of superblock writeback. Reiserfs
-always journals the superblock on modification so we weren't really using=
-
-it anyway.
-
-It also introduced a bug that causes reiserfs_sync_fs to be called in
-5 second intervals once sync is called, whether the file system needs it
-or not.
-
-Let's just rip it all out. reiserfs_sync_fs has done the right thing
-for ages.
-
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reviewed-by: Joel Becker <jlbec@evilplan.org> [ocfs2]
+Acked-by: Serge E. Hallyn <serge.hallyn@ubuntu.com>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- fs/reiserfs/journal.c  |  4 ----
- fs/reiserfs/reiserfs.h |  6 ------
- fs/reiserfs/super.c    | 49 --------------------------------------------=
------
- 3 files changed, 59 deletions(-)
+ fs/ocfs2/xattr.h                    |    2 +-
+ include/linux/security.h            |    8 ++++----
+ include/linux/xattr.h               |    2 +-
+ include/uapi/linux/reiserfs_xattr.h |    2 +-
+ security/capability.c               |    2 +-
+ security/integrity/evm/evm_main.c   |    2 +-
+ security/security.c                 |    8 +++-----
+ security/selinux/hooks.c            |   17 ++++++-----------
+ security/smack/smack_lsm.c          |    9 +++------
+ 9 files changed, 21 insertions(+), 31 deletions(-)
 
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index 742fdd4..3b6b108 100644
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -1923,8 +1923,6 @@ static int do_journal_release(struct reiserfs_trans=
-action_handle *th,
- 	 * the workqueue job (flush_async_commit) needs this lock
- 	 */
- 	reiserfs_write_unlock(sb);
--
--	cancel_delayed_work_sync(&REISERFS_SB(sb)->old_work);
- 	flush_workqueue(commit_wq);
-=20
- 	if (!reiserfs_mounted_fs_count) {
-@@ -3306,7 +3304,6 @@ int journal_mark_dirty(struct reiserfs_transaction_=
-handle *th,
- 		journal->j_first =3D cn;
- 		journal->j_last =3D cn;
- 	}
--	reiserfs_schedule_old_flush(sb);
- 	return 0;
- }
-=20
-@@ -3944,7 +3941,6 @@ static int do_journal_end(struct reiserfs_transacti=
-on_handle *th,
- 	 ** it tells us if we should continue with the journal_end, or just ret=
-urn
- 	 */
- 	if (!check_journal_end(th, sb, nblocks, flags)) {
--		reiserfs_schedule_old_flush(sb);
- 		wake_queued_writers(sb);
- 		reiserfs_async_progress_wait(sb);
- 		goto out;
-diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
-index 157e474..055f512 100644
---- a/fs/reiserfs/reiserfs.h
-+++ b/fs/reiserfs/reiserfs.h
-@@ -480,11 +480,6 @@ struct reiserfs_sb_info {
- 	struct dentry *priv_root;	/* root of /.reiserfs_priv */
- 	struct dentry *xattr_root;	/* root of /.reiserfs_priv/xattrs */
- 	int j_errno;
--
--	int work_queued;              /* non-zero delayed work is queued */
--	struct delayed_work old_work; /* old transactions flush delayed work */=
-
--	spinlock_t old_work_lock;     /* protects old_work and work_queued */
--
- #ifdef CONFIG_QUOTA
- 	char *s_qf_names[MAXQUOTAS];
- 	int s_jquota_fmt;
-@@ -2493,7 +2488,6 @@ void reiserfs_abort(struct super_block *sb, int err=
-no, const char *fmt, ...);
- int reiserfs_allocate_list_bitmaps(struct super_block *s,
- 				   struct reiserfs_list_bitmap *, unsigned int);
-=20
--void reiserfs_schedule_old_flush(struct super_block *s);
- void add_save_link(struct reiserfs_transaction_handle *th,
- 		   struct inode *inode, int truncate);
- int remove_save_link(struct inode *inode, int truncate);
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index f8a23c3..dc2cd06 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -81,54 +81,9 @@ static int reiserfs_sync_fs(struct super_block *s, int=
- wait)
- 	return 0;
- }
-=20
--static void flush_old_commits(struct work_struct *work)
--{
--	struct reiserfs_sb_info *sbi;
--	struct super_block *s;
--
--	sbi =3D container_of(work, struct reiserfs_sb_info, old_work.work);
--	s =3D sbi->s_journal->j_work_sb;
--
--	spin_lock(&sbi->old_work_lock);
--	sbi->work_queued =3D 0;
--	spin_unlock(&sbi->old_work_lock);
--
--	reiserfs_sync_fs(s, 1);
--}
--
--void reiserfs_schedule_old_flush(struct super_block *s)
--{
--	struct reiserfs_sb_info *sbi =3D REISERFS_SB(s);
--	unsigned long delay;
--
--	if (s->s_flags & MS_RDONLY)
--		return;
--
--	spin_lock(&sbi->old_work_lock);
--	if (!sbi->work_queued) {
--		delay =3D msecs_to_jiffies(dirty_writeback_interval * 10);
--		queue_delayed_work(system_long_wq, &sbi->old_work, delay);
--		sbi->work_queued =3D 1;
--	}
--	spin_unlock(&sbi->old_work_lock);
--}
--
--static void cancel_old_flush(struct super_block *s)
--{
--	struct reiserfs_sb_info *sbi =3D REISERFS_SB(s);
--
--	cancel_delayed_work_sync(&REISERFS_SB(s)->old_work);
--	spin_lock(&sbi->old_work_lock);
--	sbi->work_queued =3D 0;
--	spin_unlock(&sbi->old_work_lock);
--}
--
- static int reiserfs_freeze(struct super_block *s)
+diff --git a/fs/ocfs2/xattr.h b/fs/ocfs2/xattr.h
+index e5c7f15..19f134e 100644
+--- a/fs/ocfs2/xattr.h
++++ b/fs/ocfs2/xattr.h
+@@ -32,7 +32,7 @@ enum ocfs2_xattr_type {
+ 
+ struct ocfs2_security_xattr_info {
+ 	int enable;
+-	char *name;
++	const char *name;
+ 	void *value;
+ 	size_t value_len;
+ };
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 40560f4..2e64d73 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -1466,7 +1466,7 @@ struct security_operations {
+ 	int (*inode_alloc_security) (struct inode *inode);
+ 	void (*inode_free_security) (struct inode *inode);
+ 	int (*inode_init_security) (struct inode *inode, struct inode *dir,
+-				    const struct qstr *qstr, char **name,
++				    const struct qstr *qstr, const char **name,
+ 				    void **value, size_t *len);
+ 	int (*inode_create) (struct inode *dir,
+ 			     struct dentry *dentry, umode_t mode);
+@@ -1737,7 +1737,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 				 const struct qstr *qstr,
+ 				 initxattrs initxattrs, void *fs_data);
+ int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+-				     const struct qstr *qstr, char **name,
++				     const struct qstr *qstr, const char **name,
+ 				     void **value, size_t *len);
+ int security_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode);
+ int security_inode_link(struct dentry *old_dentry, struct inode *dir,
+@@ -2048,8 +2048,8 @@ static inline int security_inode_init_security(struct inode *inode,
+ static inline int security_old_inode_init_security(struct inode *inode,
+ 						   struct inode *dir,
+ 						   const struct qstr *qstr,
+-						   char **name, void **value,
+-						   size_t *len)
++						   const char **name,
++						   void **value, size_t *len)
  {
- 	struct reiserfs_transaction_handle th;
--
--	cancel_old_flush(s);
--
- 	reiserfs_write_lock(s);
- 	if (!(s->s_flags & MS_RDONLY)) {
- 		int err =3D journal_begin(&th, s, 1);
-@@ -1796,8 +1751,6 @@ static int reiserfs_fill_super(struct super_block *=
-s, void *data, int silent)
- 	/* setup default block allocator options */
- 	reiserfs_init_alloc_options(s);
-=20
--	spin_lock_init(&sbi->old_work_lock);
--	INIT_DELAYED_WORK(&sbi->old_work, flush_old_commits);
- 	mutex_init(&sbi->lock);
- 	sbi->lock_depth =3D -1;
-=20
-@@ -2060,8 +2013,6 @@ error_unlocked:
- 		reiserfs_write_unlock(s);
+ 	return -EOPNOTSUPP;
+ }
+diff --git a/include/linux/xattr.h b/include/linux/xattr.h
+index fdbafc6..91b0a68 100644
+--- a/include/linux/xattr.h
++++ b/include/linux/xattr.h
+@@ -31,7 +31,7 @@ struct xattr_handler {
+ };
+ 
+ struct xattr {
+-	char *name;
++	const char *name;
+ 	void *value;
+ 	size_t value_len;
+ };
+diff --git a/include/uapi/linux/reiserfs_xattr.h b/include/uapi/linux/reiserfs_xattr.h
+index d8ce17c..38fdd64 100644
+--- a/include/uapi/linux/reiserfs_xattr.h
++++ b/include/uapi/linux/reiserfs_xattr.h
+@@ -16,7 +16,7 @@ struct reiserfs_xattr_header {
+ };
+ 
+ struct reiserfs_security_handle {
+-	char *name;
++	const char *name;
+ 	void *value;
+ 	size_t length;
+ };
+diff --git a/security/capability.c b/security/capability.c
+index 1728d4e..b311ff0 100644
+--- a/security/capability.c
++++ b/security/capability.c
+@@ -119,7 +119,7 @@ static void cap_inode_free_security(struct inode *inode)
+ }
+ 
+ static int cap_inode_init_security(struct inode *inode, struct inode *dir,
+-				   const struct qstr *qstr, char **name,
++				   const struct qstr *qstr, const char **name,
+ 				   void **value, size_t *len)
+ {
+ 	return -EOPNOTSUPP;
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index df0fa45..af9b685 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -418,7 +418,7 @@ int evm_inode_init_security(struct inode *inode,
+ 
+ 	evm_xattr->value = xattr_data;
+ 	evm_xattr->value_len = sizeof(*xattr_data);
+-	evm_xattr->name = kstrdup(XATTR_EVM_SUFFIX, GFP_NOFS);
++	evm_xattr->name = XATTR_EVM_SUFFIX;
+ 	return 0;
+ out:
+ 	kfree(xattr_data);
+diff --git a/security/security.c b/security/security.c
+index a3dce87..8849691 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -335,10 +335,10 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 	if (unlikely(IS_PRIVATE(inode)))
+ 		return 0;
+ 
+-	memset(new_xattrs, 0, sizeof new_xattrs);
+ 	if (!initxattrs)
+ 		return security_ops->inode_init_security(inode, dir, qstr,
+ 							 NULL, NULL, NULL);
++	memset(new_xattrs, 0, sizeof(new_xattrs));
+ 	lsm_xattr = new_xattrs;
+ 	ret = security_ops->inode_init_security(inode, dir, qstr,
+ 						&lsm_xattr->name,
+@@ -353,16 +353,14 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 		goto out;
+ 	ret = initxattrs(inode, new_xattrs, fs_data);
+ out:
+-	for (xattr = new_xattrs; xattr->name != NULL; xattr++) {
+-		kfree(xattr->name);
++	for (xattr = new_xattrs; xattr->value != NULL; xattr++)
+ 		kfree(xattr->value);
+-	}
+ 	return (ret == -EOPNOTSUPP) ? 0 : ret;
+ }
+ EXPORT_SYMBOL(security_inode_init_security);
+ 
+ int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+-				     const struct qstr *qstr, char **name,
++				     const struct qstr *qstr, const char **name,
+ 				     void **value, size_t *len)
+ {
+ 	if (unlikely(IS_PRIVATE(inode)))
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 5c6f2cd..16b8e51 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2516,7 +2516,8 @@ static void selinux_inode_free_security(struct inode *inode)
+ }
+ 
+ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+-				       const struct qstr *qstr, char **name,
++				       const struct qstr *qstr,
++				       const char **name,
+ 				       void **value, size_t *len)
+ {
+ 	const struct task_security_struct *tsec = current_security();
+@@ -2524,7 +2525,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+ 	struct superblock_security_struct *sbsec;
+ 	u32 sid, newsid, clen;
+ 	int rc;
+-	char *namep = NULL, *context;
++	char *context;
+ 
+ 	dsec = dir->i_security;
+ 	sbsec = dir->i_sb->s_security;
+@@ -2560,19 +2561,13 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+ 	if (!ss_initialized || !(sbsec->flags & SE_SBLABELSUPP))
+ 		return -EOPNOTSUPP;
+ 
+-	if (name) {
+-		namep = kstrdup(XATTR_SELINUX_SUFFIX, GFP_NOFS);
+-		if (!namep)
+-			return -ENOMEM;
+-		*name = namep;
+-	}
++	if (name)
++		*name = XATTR_SELINUX_SUFFIX;
+ 
+ 	if (value && len) {
+ 		rc = security_sid_to_context_force(newsid, &context, &clen);
+-		if (rc) {
+-			kfree(namep);
++		if (rc)
+ 			return rc;
+-		}
+ 		*value = context;
+ 		*len = clen;
  	}
-=20
--	cancel_delayed_work_sync(&REISERFS_SB(s)->old_work);
--
- 	reiserfs_free_bitmap_cache(s);
- 	if (SB_BUFFER_WITH_SB(s))
- 		brelse(SB_BUFFER_WITH_SB(s));
-
-
-
-------enig2GACEWDOGWUOOOTKLEJLT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG/MacGPG2 v2.0.19 (Darwin)
-
-iQIcBAEBAgAGBQJRv1wBAAoJEB57S2MheeWykCgP/2u0YNKoFHPgihnFA4MC3i06
-AWRgcWFedvwKIrraHxSCJgt2US1EDjiPfz+pFf74zhSj8uHW8tWEVwtxdLGW52PS
-Gg++dx73K+mCd47NFT0fbYmmrcSGduhHsBWkH/+o15xXNcb5b6PBj+bd4uxhZHj/
-9idqQOAdE1GSwWg6D8FCn12CSPb1X4ba1PsebJ3SM+l5gZEM8J8YB7HKvi3Rugll
-KeEAnCEJ6TpCJUjiAB64VY4Osk+huYRWp/99fls0mdtgVDNtusEiCyDtThXTPVv/
-deJqySI4iy7jVDUrUZ5hxAV2i98nUiD3zVdXA4VORS5/emyOOKEbohqah3Dx60/3
-EoWsmfi94ZsR06u0iciIOhFW+14Jiieqj6EeSfGTlG4z3jThRhs0lAYUm7//6X7a
-idkqu/3RiP+ICaAHGuEyKcuF/Q4PTeckrx8nG4uqvhlURhP9vuqYxFSq8OIEPkqs
-mmp4fFutAIFekWH2rx6vyDj3ySLmfZ9Zzj/6CkZm5+tqfQxk2BurHjNxGS3XiCy9
-StTqhCIId11FV1U+/oB5i19qcvvLfG2jloeMjWOYlvUS1AHYGct6J1iffsozXh36
-+x1MUqNeUDPPwphchpj5y3gkm9ht/yvmqPZ1Q1Pfdt1f5hzpqCXHwfXrUA/7qXQ5
-NcKl5EkXbt9ijade8XMl
-=a2Kw
------END PGP SIGNATURE-----
-
-------enig2GACEWDOGWUOOOTKLEJLT--
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 6a08330..2dfccb7 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -582,7 +582,7 @@ static void smack_inode_free_security(struct inode *inode)
+  * Returns 0 if it all works out, -ENOMEM if there's no memory
+  */
+ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+-				     const struct qstr *qstr, char **name,
++				     const struct qstr *qstr, const char **name,
+ 				     void **value, size_t *len)
+ {
+ 	struct inode_smack *issp = inode->i_security;
+@@ -591,11 +591,8 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+ 	char *dsp = smk_of_inode(dir);
+ 	int may;
+ 
+-	if (name) {
+-		*name = kstrdup(XATTR_SMACK_SUFFIX, GFP_NOFS);
+-		if (*name == NULL)
+-			return -ENOMEM;
+-	}
++	if (name)
++		*name = XATTR_SMACK_SUFFIX;
+ 
+ 	if (value) {
+ 		rcu_read_lock();
+-- 
+1.7.1
