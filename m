@@ -1,79 +1,66 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [ANNOUNCE] reiserfsprogs 3.6.23 released
-Date: Mon, 01 Jul 2013 15:32:24 -0400
-Message-ID: <51D1D948.3070401@suse.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: [patch] reiser4: fix up cluster nodes accounting
+Date: Tue, 16 Jul 2013 19:01:26 +0200
+Message-ID: <51E57C66.6070506@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="----enig2WVMDXOLPSKOSFDHPUSAI"
+Content-Type: multipart/mixed;
+ boundary="------------030607060306020506070007"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject
+         :content-type;
+        bh=uW4TIk1JOgAFnrie7hWRMB9HrW88MGZl6xyp/KNJgLE=;
+        b=o9SC22sbvjYJibjjoBcoiOFip2gwi4o/wLUCEusTaRDaSMD72BAvBq7yqtMrOWgumu
+         01HiOdatEtggpcEENsX19TVK/RsR3m0BeELcuCcInByxUwQFv4kVDkRj5P1k7tkjLETm
+         lLBsBh2/WPGB7vQ1EDJI8Mc+0kO7BMR1Y7QtAgG8pFCHbTmYeIM2mPxtZDJ3TNtcH/TI
+         pnnoyol3cSeGvqISqsUaT6qSja2hgBtf1vcCJ7snrVu8/BweHEY75pT3XIJ4rFd+ydpl
+         y+UmBFgZL8vA5ao9oVUclkdTkresuXAQmSv5D1tlgh1+ZGpbus8E/bLyFOdI/ifRm1RI
+         fc5A==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
+To: ReiserFS Development mailing list <reiserfs-devel@vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
-------enig2WVMDXOLPSKOSFDHPUSAI
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-Hi all -
-
-I'm happy to announce that reiserfsprogs 3.6.23 has been released.
-
-This release was mostly to push out the accumulated fixes and to move
-past the problem with the 3.6.22 release not providing the correct
-version number.
-
-The changelog is fairly small:
-        clean up build environment
-        clean up io-failure-emulation logic a bit
-        mkreiserfs: stop printing credits
-        reiserfscore: add support for register_printf_specifier
-        reiserfsck: support `fsck -f -n`
-        reiserfscore: fix uninitialized variable warning in print_indirec=
-t_item
-        reiserfsprogs: fix -Wpointer-sign warnings for blocksize and posi=
-tion
-        debugreiserfs: fix dereferencing type-punned pointer warning
-        reiserfsprogs: fix unsigned char with strlen/strcmp/strncpy warni=
-ngs
-        reiserfsprogs: fix printf formatting warnings
-        reiserfsprogs: fix set-but-not-used gcc warnings
-        reiserfsprogs: remove autoconf-generated files
-
-It can be downloaded from any kernel.org mirror:
-ftp://ftp.kernel.org/pub/linux/kernel/people/jeffm/reiserfsprogs/v3.6.23/=
+This is a multi-part message in MIME format.
+--------------030607060306020506070007
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
--Jeff
+--------------030607060306020506070007
+Content-Type: text/x-patch;
+ name="reiser4-fix-cluster-nodes-accounting.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="reiser4-fix-cluster-nodes-accounting.patch"
 
---=20
-Jeff Mahoney
-SUSE Labs
+Problem:
+Rare-occured oops when using transparent compression:
+kernel BUG at fs/reiser4/block_alloc.c:151
 
+The bug:
+Incorrect accounting of nodes, occupied by cluster (ctail items group):
+node, which contains the first item in the cluster wasn't take into account.
 
-------enig2WVMDXOLPSKOSFDHPUSAI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+Fixup:
+Increnent the counter of nodes, when the first item is found.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG/MacGPG2 v2.0.19 (Darwin)
+Signed-off-by: Edward Shishkin <edward.shishkin@gmail.com>
+---
+ fs/reiser4/plugin/file/cryptcompress.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-iQIcBAEBAgAGBQJR0dlLAAoJEB57S2MheeWyGi8P/04OCAh++7xkLDfQHDGP5HIB
-d8WMNyTUolePO+oWZ7HIH5KKqSGNrWz3m792Rkch4qBbS/OhStzEgtWQZqW5R/Of
-Hhs7NQfDlaPFK+AyUCiAfUl6eGJIc78lNQ7E+SWXhHOlfqXSo4o1bdxjN/JhvZkk
-hsXfj3qndrDD0y+mSCXretu0sXHisLlYnYg7iE1nkb6RBTydchgy4GbYj4JynWhJ
-QBP8F9bV3OlpBJNJLOPClaf10Rc0MaLKx2mi4z5C3bZKCszz0p7wmDg86FodpElj
-ZLAGFKESAhWc70fbUcDSVOt+I31XT9WkJV4jj0E01fyM/89RurisP+WmcuzD1Bqm
-zoF1OHe/nRjtw3JLSJYCZs/LhPo67HbPhWU4oTZqA/S4zs8NWlYiCKwKbrkqeKkT
-FprneOYoTylaFnvLOvd/hAsKQ5cHnAPwVIkvRyFhGVG8R6mwj5s1POJ9X+87x8+j
-5mRMQn0dRqSc+gmH169E2fxS5wXq+1tCIhBBa6cnbq5pfY2H8O5X4lAal1Mzixum
-Yu9KCjcFNypoAM/57eAvL9TY7ku/wgJt3+8W059yQrbNTA24X9jiIIr0t3EYXh3t
-SWkNqfugQTrS4uNMKjUFje9fE4WHN0qqOBR7UbXJ3FdDUp1XpDndU1EB2zzNLCfj
-AR8I1FKbwFDwGz8kC/gw
-=IsVS
------END PGP SIGNATURE-----
+--- linux-3.9.2.orig/fs/reiser4/plugin/file/cryptcompress.c
++++ linux-3.9.2/fs/reiser4/plugin/file/cryptcompress.c
+@@ -816,6 +816,8 @@ static int find_cluster_item(hint_t * hi
+ 		/*
+ 		 * item has been found in the current node
+ 		 */
++		dclust_inc_extension_ncount(hint);
++
+ 		return CBK_COORD_FOUND;
+ 	}
+  not_found:
 
-------enig2WVMDXOLPSKOSFDHPUSAI--
+--------------030607060306020506070007--
