@@ -1,202 +1,246 @@
 From: Chen Gang <gang.chen@asianux.com>
-Subject: Re: [PATCH] reiserfs: check/extend buffer length for printing functions
-Date: Fri, 19 Jul 2013 12:07:02 +0800
-Message-ID: <51E8BB66.6020002@asianux.com>
-References: <51E65A68.8070009@asianux.com> <51E76ED7.303@asianux.com> <51E7994D.1060300@asianux.com> <20130718074316.GY4165@ZenIV.linux.org.uk> <51E79F24.2050504@asianux.com> <51E7A4C1.4020309@asianux.com>
+Subject: [PATCH v2] reiserfs: check/extend buffer length for printing functions
+Date: Fri, 19 Jul 2013 12:19:07 +0800
+Message-ID: <51E8BE3B.8080600@asianux.com>
+References: <51E65A68.8070009@asianux.com> <51E76ED7.303@asianux.com> <51E7994D.1060300@asianux.com> <20130718074316.GY4165@ZenIV.linux.org.uk> <51E79F24.2050504@asianux.com> <51E7A4C1.4020309@asianux.com> <51E8BB66.6020002@asianux.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <51E7A4C1.4020309@asianux.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <51E8BB66.6020002@asianux.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 To: Al Viro <viro@ZenIV.linux.org.uk>
 Cc: George Spelvin <linux@horizon.com>, reiserfs-devel@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On 07/18/2013 04:18 PM, Chen Gang wrote:
-> On 07/18/2013 03:54 PM, Chen Gang wrote:
->> On 07/18/2013 03:43 PM, Al Viro wrote:
->>> On Thu, Jul 18, 2013 at 03:29:17PM +0800, Chen Gang wrote:
->>>>> On 07/18/2013 12:28 PM, Chen Gang wrote:
->>>>>>>  
->>>>>>>>>  	strcpy(fmt1, fmt);
->>>>>>>>> @@ -199,46 +214,51 @@ static void prepare_error_buf(const char *fmt, va_list args)
->>>>>>>>>  	while ((k = is_there_reiserfs_struct(fmt1, &what)) != NULL) {
->>>>>>>>>  		*k = 0;
->>>>>>>>>  
->>>>>>>>> -		p += vsprintf(p, fmt1, args);
->>>>>>>>> +		p += vsnprintf(p, left, fmt1, args);
->>>>>
->>>>> At least, need use vscnprintf() instead of vsnprintf(), since we need
->>>>> the real written length return.
->>> 		n = vsnprintf(p, left, ....);
->>> 		left -= n;
->>> 		if (left <= 0) /* overflow */
->>> 			break;	/* or whatever's suitable here */
->>> 		p += n;
->>>
->>>
->>
->> Yeah, it is really a better fix. :-)
->>
->>
->> And now I am just testing, and find another issue about it, I am just
->> analyzing it it.
-> 
-> 
-> even only change vsprintf() to vsnprintf(), it will report '<7' !!
-> 
+If format string and/or error string are larger than 1024, it will
+cause memory overflow.
 
-I finish analyzing it, it is not an issue.
+So need check the format string buffer length before process it.
 
-'<7>' or '<5>' ... is the level, '<7>' is 'KERN_DEBUG', '<5>' is
-'KERN_NOTICE' ...
+Also need use (v)snprintf() instread of (v)sprintf() for error buffer
+to be sure of maximize length limitation.
 
-For system log, the kernel always print level before time stamp, but
-when we type command 'dmesg', it will skip them at the head of a line
-(also skip the empty line).
+Normally, the error buffer length need be much larger than format
+buffer length, so extend the error buffer length to 4096.
 
-It is implemented in "kernel/printk.c", below.
-
- 887 static size_t print_prefix(const struct log *msg, bool syslog, char *buf)
- 888 {
- 889         size_t len = 0;
- 890         unsigned int prefix = (msg->facility << 3) | msg->level;
- 891 
- 892         if (syslog) {
- 893                 if (buf) {
- 894                         len += sprintf(buf, "<%u>", prefix);
- 895                 } else {
- 896                         len += 3;
- 897                         if (prefix > 999)
- 898                                 len += 3;
- 899                         else if (prefix > 99)
- 900                                 len += 2;
- 901                         else if (prefix > 9)
- 902                                 len++;
- 903                 }
- 904         }
- 905 
- 906         len += print_time(msg->ts_nsec, buf ? buf + len : NULL);
- 907         return len;
- 908 }
- 909 
+When adding new code, also need let them within 80 column.
 
 
-When a string truncated by force (may without '\n'). It may print level
-and time stamp not at the head of the line, which can not be skipped by
-dmesg.
+Signed-off-by: Chen Gang <gang.chen@asianux.com>
+---
+ fs/reiserfs/prints.c |   93 +++++++++++++++++++++++++++++++-------------------
+ 1 files changed, 58 insertions(+), 35 deletions(-)
 
-That is the reason why we can not see it.
-
-
-We can try to modify the print_prefix() in "kernel/printk.c" to test
-the result which I provide above.
-
-  e.g. append addition information after the time stamp to be sure that this function is really affect to all lines which command 'dmesg' displays.
-  e.g. use "\n<%u>" instead of "<%u>" and dummy 'syslog', to know dmesg will skip the level at the head of the line, and also skip the empty line.
-
-
-And next, I will send patch v2 for this patch.
-
-Welcome any additional suggestions, checking, or completions.
-
-:-)
-
-Thanks.
-
-> ----------------------------diff begin---------------------------------
-> 
-> diff --git a/fs/reiserfs/prints.c b/fs/reiserfs/prints.c
-> index c0b1112..9dd79be 100644
-> --- a/fs/reiserfs/prints.c
-> +++ b/fs/reiserfs/prints.c
-> @@ -238,7 +238,8 @@ static void prepare_error_buf(const char *fmt, va_list args)
->  		p += strlen(p);
->  		fmt1 = k + 2;
->  	}
-> -	vsprintf(p, fmt1, args);
-> +
-> +	vsnprintf(p, 13, fmt1, args);
->  	spin_unlock(&error_lock);
->  
->  }
-> 
-> ----------------------------diff end-----------------------------------
-> 
-> This patch seems related with this new issue.  So After I finish
-> analyzing it (get root cause), then send the patch v2 for this patch.
-> 
-> 
-> Thanks.
-> 
->>
->> For next-20130717, let reiserfs build-in, when "mount /dev/sda11
->> /mnt/sda11" (assume sda11 is reiserfs filesystem).
->>
->> I modify the code like this (just only use vsnprintf instead of vsprintf):
->>
->> --------------------------diff begin------------------------------
->>
->> diff --git a/fs/reiserfs/prints.c b/fs/reiserfs/prints.c
->> index c0b1112..3a38a62 100644
->> --- a/fs/reiserfs/prints.c
->> +++ b/fs/reiserfs/prints.c
->> @@ -10,7 +10,7 @@
->>  
->>  #include <stdarg.h>
->>  
->> -static char error_buf[1024];
->> +static char error_buf[13];
->>  static char fmt_buf[1024];
->>  static char off_buf[80];
->>  
->> @@ -195,7 +195,7 @@ static void prepare_error_buf(const char *fmt, va_list args)
->>  	spin_lock(&error_lock);
->>  
->>  	strcpy(fmt1, fmt);
->> -
->> +#if 0
->>  	while ((k = is_there_reiserfs_struct(fmt1, &what)) != NULL) {
->>  		*k = 0;
->>  
->> @@ -238,7 +238,8 @@ static void prepare_error_buf(const char *fmt, va_list args)
->>  		p += strlen(p);
->>  		fmt1 = k + 2;
->>  	}
->> -	vsprintf(p, fmt1, args);
->> +#endif
->> +	vsnprintf(p, 13, fmt1, args);
->>  	spin_unlock(&error_lock);
->>  
->>  }
->>
->> --------------------------diff end--------------------------------
->>
->>
->> The output has '<7>':
->>
->> [root@dhcp122 ~]# dmesg
->> [   38.797073] REISERFS (device sda11): found reiser
->> [   38.797089] REISERFS warning (device sda11):  reiserfs_fill_super: CONFIG_REISE
->> [   38.797095] REISERFS warning (device sda11):  reiserfs_fill_super: - it is slow
->> [   38.797098] REISERFS (device sda11): using orderereiserfs: using flush barriers
->> [   38.800507] REISERFS (device sda11): journal para
->> [   38.801158] REISERFS (device sda11): checking tra<7>[   38.801165] REISERFS debug (device sda11): journal-1153
->> [   38.801405] REISERFS debug (device sda11): journal-1206
->> [   38.801410] REISERFS debug (device sda11): journal-1299
->> [   38.817621] REISERFS (device sda11): Using r5 has
->> [   38.817906] SELinux: initialized (dev sda11, type reiserfs), uses genfs_contexts
->>
->>
->>
->> Welcome any suggestions or completions.
->>
->> Thanks.
->>
-> 
-> 
-
-
+diff --git a/fs/reiserfs/prints.c b/fs/reiserfs/prints.c
+index c0b1112..8c76d3a 100644
+--- a/fs/reiserfs/prints.c
++++ b/fs/reiserfs/prints.c
+@@ -10,8 +10,13 @@
+ 
+ #include <stdarg.h>
+ 
+-static char error_buf[1024];
+-static char fmt_buf[1024];
++#define REISERFS_MAX_FMT_BUF		1024
++#define REISERFS_MAX_ERROR_BUF		4096
++#define REISERFS_ERR_BUF_LEFT(pos, base)	\
++				(REISERFS_MAX_ERROR_BUF - ((pos) - (base)))
++
++static char error_buf[REISERFS_MAX_FMT_BUF];
++static char fmt_buf[REISERFS_MAX_ERROR_BUF];
+ static char off_buf[80];
+ 
+ static char *reiserfs_cpu_offset(struct cpu_key *key)
+@@ -76,72 +81,74 @@ static char *le_type(struct reiserfs_key *key)
+ }
+ 
+ /* %k */
+-static void sprintf_le_key(char *buf, struct reiserfs_key *key)
++static void sprintf_le_key(char *buf, int left, struct reiserfs_key *key)
+ {
+ 	if (key)
+-		sprintf(buf, "[%d %d %s %s]", le32_to_cpu(key->k_dir_id),
++		snprintf(buf, left, "[%d %d %s %s]", le32_to_cpu(key->k_dir_id),
+ 			le32_to_cpu(key->k_objectid), le_offset(key),
+ 			le_type(key));
+ 	else
+-		sprintf(buf, "[NULL]");
++		snprintf(buf, left, "[NULL]");
+ }
+ 
+ /* %K */
+-static void sprintf_cpu_key(char *buf, struct cpu_key *key)
++static void sprintf_cpu_key(char *buf, int left, struct cpu_key *key)
+ {
+ 	if (key)
+-		sprintf(buf, "[%d %d %s %s]", key->on_disk_key.k_dir_id,
++		snprintf(buf, left, "[%d %d %s %s]", key->on_disk_key.k_dir_id,
+ 			key->on_disk_key.k_objectid, reiserfs_cpu_offset(key),
+ 			cpu_type(key));
+ 	else
+-		sprintf(buf, "[NULL]");
++		snprintf(buf, left, "[NULL]");
+ }
+ 
+-static void sprintf_de_head(char *buf, struct reiserfs_de_head *deh)
++static void sprintf_de_head(char *buf, int left, struct reiserfs_de_head *deh)
+ {
+ 	if (deh)
+-		sprintf(buf,
++		snprintf(buf, left,
+ 			"[offset=%d dir_id=%d objectid=%d location=%d state=%04x]",
+ 			deh_offset(deh), deh_dir_id(deh), deh_objectid(deh),
+ 			deh_location(deh), deh_state(deh));
+ 	else
+-		sprintf(buf, "[NULL]");
++		snprintf(buf, left, "[NULL]");
+ 
+ }
+ 
+-static void sprintf_item_head(char *buf, struct item_head *ih)
++static void sprintf_item_head(char *buf, int left, struct item_head *ih)
+ {
+ 	if (ih) {
+-		strcpy(buf,
++		snprintf(buf, left, "%s",
+ 		       (ih_version(ih) == KEY_FORMAT_3_6) ? "*3.6* " : "*3.5*");
+-		sprintf_le_key(buf + strlen(buf), &(ih->ih_key));
+-		sprintf(buf + strlen(buf), ", item_len %d, item_location %d, "
+-			"free_space(entry_count) %d",
++		sprintf_le_key(buf + strlen(buf), left - strlen(buf),
++			       &(ih->ih_key));
++		snprintf(buf + strlen(buf), left - strlen(buf),
++			 ", item_len %d, item_location %d, free_space(entry_count) %d",
+ 			ih_item_len(ih), ih_location(ih), ih_free_space(ih));
+ 	} else
+-		sprintf(buf, "[NULL]");
++		snprintf(buf, left, "[NULL]");
+ }
+ 
+-static void sprintf_direntry(char *buf, struct reiserfs_dir_entry *de)
++static void sprintf_direntry(char *buf, int left, struct reiserfs_dir_entry *de)
+ {
+ 	char name[20];
+ 
+ 	memcpy(name, de->de_name, de->de_namelen > 19 ? 19 : de->de_namelen);
+ 	name[de->de_namelen > 19 ? 19 : de->de_namelen] = 0;
+-	sprintf(buf, "\"%s\"==>[%d %d]", name, de->de_dir_id, de->de_objectid);
++	snprintf(buf, left, "\"%s\"==>[%d %d]",
++		 name, de->de_dir_id, de->de_objectid);
+ }
+ 
+-static void sprintf_block_head(char *buf, struct buffer_head *bh)
++static void sprintf_block_head(char *buf, int left, struct buffer_head *bh)
+ {
+-	sprintf(buf, "level=%d, nr_items=%d, free_space=%d rdkey ",
++	snprintf(buf, left, "level=%d, nr_items=%d, free_space=%d rdkey ",
+ 		B_LEVEL(bh), B_NR_ITEMS(bh), B_FREE_SPACE(bh));
+ }
+ 
+-static void sprintf_buffer_head(char *buf, struct buffer_head *bh)
++static void sprintf_buffer_head(char *buf, int left, struct buffer_head *bh)
+ {
+ 	char b[BDEVNAME_SIZE];
+ 
+-	sprintf(buf,
++	snprintf(buf, left,
+ 		"dev %s, size %zd, blocknr %llu, count %d, state 0x%lx, page %p, (%s, %s, %s)",
+ 		bdevname(bh->b_bdev, b), bh->b_size,
+ 		(unsigned long long)bh->b_blocknr, atomic_read(&(bh->b_count)),
+@@ -151,9 +158,9 @@ static void sprintf_buffer_head(char *buf, struct buffer_head *bh)
+ 		buffer_locked(bh) ? "LOCKED" : "UNLOCKED");
+ }
+ 
+-static void sprintf_disk_child(char *buf, struct disk_child *dc)
++static void sprintf_disk_child(char *buf, int left, struct disk_child *dc)
+ {
+-	sprintf(buf, "[dc_number=%d, dc_size=%u]", dc_block_number(dc),
++	snprintf(buf, left, "[dc_number=%d, dc_size=%u]", dc_block_number(dc),
+ 		dc_size(dc));
+ }
+ 
+@@ -190,8 +197,16 @@ static void prepare_error_buf(const char *fmt, va_list args)
+ 	char *fmt1 = fmt_buf;
+ 	char *k;
+ 	char *p = error_buf;
++	int left = REISERFS_ERR_BUF_LEFT(p, error_buf);
+ 	int what;
+ 
++	if (strlen(fmt) >= REISERFS_MAX_FMT_BUF) {
++		printk(KERN_CRIT
++			"REISERFS error (format buffer too long, more than %d): %s\n",
++			REISERFS_MAX_FMT_BUF, fmt);
++		return;
++	}
++
+ 	spin_lock(&error_lock);
+ 
+ 	strcpy(fmt1, fmt);
+@@ -199,46 +214,54 @@ static void prepare_error_buf(const char *fmt, va_list args)
+ 	while ((k = is_there_reiserfs_struct(fmt1, &what)) != NULL) {
+ 		*k = 0;
+ 
+-		p += vsprintf(p, fmt1, args);
++		p += vsnprintf(p, left, fmt1, args);
++		left = REISERFS_ERR_BUF_LEFT(p, error_buf);
++		if (unlikely(left <= 0))
++			goto tail;
+ 
+ 		switch (what) {
+ 		case 'k':
+-			sprintf_le_key(p, va_arg(args, struct reiserfs_key *));
++			sprintf_le_key(p, left,
++				       va_arg(args, struct reiserfs_key *));
+ 			break;
+ 		case 'K':
+-			sprintf_cpu_key(p, va_arg(args, struct cpu_key *));
++			sprintf_cpu_key(p, left,
++					va_arg(args, struct cpu_key *));
+ 			break;
+ 		case 'h':
+-			sprintf_item_head(p, va_arg(args, struct item_head *));
++			sprintf_item_head(p, left,
++					  va_arg(args, struct item_head *));
+ 			break;
+ 		case 't':
+-			sprintf_direntry(p,
++			sprintf_direntry(p, left,
+ 					 va_arg(args,
+ 						struct reiserfs_dir_entry *));
+ 			break;
+ 		case 'y':
+-			sprintf_disk_child(p,
++			sprintf_disk_child(p, left,
+ 					   va_arg(args, struct disk_child *));
+ 			break;
+ 		case 'z':
+-			sprintf_block_head(p,
++			sprintf_block_head(p, left,
+ 					   va_arg(args, struct buffer_head *));
+ 			break;
+ 		case 'b':
+-			sprintf_buffer_head(p,
++			sprintf_buffer_head(p, left,
+ 					    va_arg(args, struct buffer_head *));
+ 			break;
+ 		case 'a':
+-			sprintf_de_head(p,
++			sprintf_de_head(p, left,
+ 					va_arg(args,
+ 					       struct reiserfs_de_head *));
+ 			break;
+ 		}
+ 
+ 		p += strlen(p);
++		left = REISERFS_ERR_BUF_LEFT(p, error_buf);
+ 		fmt1 = k + 2;
+ 	}
+-	vsprintf(p, fmt1, args);
++	vsnprintf(p, left, fmt1, args);
++tail:
+ 	spin_unlock(&error_lock);
+ 
+ }
 -- 
-Chen Gang
+1.7.7.6
