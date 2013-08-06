@@ -1,560 +1,149 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH 0a/3] reiserfs: locking, push write lock out of xattr code
-Date: Mon, 05 Aug 2013 20:15:37 -0400
-Message-ID: <52004029.7070105@suse.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [patch 1/2] reiserfs: locking, handle nested locks properly
+Date: Tue, 6 Aug 2013 22:46:08 +0200
+Message-ID: <20130806204608.GB11383@quack.suse.cz>
+References: <20130806001216.080404663@suse.com>
+ <20130806001314.727159902@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130806001314.727159902@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>, Jan Kara <jack@suse.com>
+Content-Transfer-Encoding: 7bit
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: reiserfs-devel@vger.kernel.org, jack@suse.com
 
-The reiserfs xattr code doesn't need the write lock and sleeps all over
-the place. We can simplify the locking by releasing it and reacquiring
-after the xattr call.
+On Mon 05-08-13 20:12:17, Jeff Mahoney wrote:
+> The reiserfs write lock replaced the BKL and uses similar semantics.
+> 
+> Frederic's locking code makes a distinction between when the lock is nested
+> and when it's being acquired/released, but I don't think that's the right
+> distinction to make.
+> 
+> The right distinction is between the lock being released at end-of-use and
+> the lock being released for a schedule. The unlock should return the depth
+> and the lock should restore it, rather than the other way around as it is now.
+> 
+> This patch implements that and adds a number of places where the lock
+> should be dropped.
+...
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- fs/reiserfs/inode.c     |   38 ++++++++++++++++++++------------------
- fs/reiserfs/super.c     |   48 +++++++++++++++++++++++-------------------------
- fs/reiserfs/xattr.c     |   46 +++++++++++++++++-----------------------------
- fs/reiserfs/xattr_acl.c |   16 ++++++++++------
- 4 files changed, 70 insertions(+), 78 deletions(-)
+> --- a/fs/reiserfs/reiserfs.h	2013-08-05 20:08:59.258412220 -0400
+> +++ b/fs/reiserfs/reiserfs.h	2013-08-05 20:09:52.537601042 -0400
+> @@ -630,8 +630,8 @@ static inline int __reiserfs_is_journal_
+>   */
+>  void reiserfs_write_lock(struct super_block *s);
+>  void reiserfs_write_unlock(struct super_block *s);
+> -int reiserfs_write_lock_once(struct super_block *s);
+> -void reiserfs_write_unlock_once(struct super_block *s, int lock_depth);
+> +int __must_check reiserfs_write_unlock_nested(struct super_block *s);
+> +void reiserfs_write_lock_nested(struct super_block *s, int depth);
+>  
+>  #ifdef CONFIG_REISERFS_CHECK
+>  void reiserfs_lock_check_recursive(struct super_block *s);
+> @@ -666,45 +666,54 @@ static inline void reiserfs_lock_check_r
+>   * - The journal lock
+>   * - The inode mutex
+>   */
+> -static inline void reiserfs_mutex_lock_safe(struct mutex *m,
+> -			       struct super_block *s)
+> +
+> +#define reiserfs_safe(sb, action)			\
+> +do {							\
+> +	struct super_block *__sb = (sb);		\
+> +	int __depth;					\
+> +	__depth = reiserfs_write_unlock_nested(__sb);	\
+> +	(action);					\
+> +	reiserfs_write_lock_nested(__sb, __depth);	\
+> +} while(0)
+> +
+> +#define reiserfs_mutex_lock_safe(mtx, s) reiserfs_safe(s, mutex_lock(mtx))
+> +#define reiserfs_mutex_lock_nested_safe(mtx, subclass, s) \
+> +	reiserfs_safe(s, mutex_lock_nested(mtx, subclass))
+> +#define reiserfs_down_read_safe(sem, s) reiserfs_safe(s, down_read(sem))
+> +
+> +/*
+> + * When we schedule, we usually want to also release the write lock,
+> + * according to the previous bkl based locking scheme of reiserfs.
+> + */
+> +static inline void reiserfs_cond_resched(struct super_block *s)
+>  {
+> -	reiserfs_lock_check_recursive(s);
+> -	reiserfs_write_unlock(s);
+> -	mutex_lock(m);
+> -	reiserfs_write_lock(s);
+> +	if (need_resched())
+> +		reiserfs_safe(s, schedule());
+>  }
+>  
+> -static inline void
+> -reiserfs_mutex_lock_nested_safe(struct mutex *m, unsigned int subclass,
+> -			       struct super_block *s)
+> +static inline struct buffer_head *
+> +reiserfs_safe_sb_bread(struct super_block *s, sector_t block)
+>  {
+> -	reiserfs_lock_check_recursive(s);
+> -	reiserfs_write_unlock(s);
+> -	mutex_lock_nested(m, subclass);
+> -	reiserfs_write_lock(s);
+> +	int depth;
+> +	struct buffer_head *bh;
+> +
+> +	depth = reiserfs_write_unlock_nested(s);
+> +	bh = sb_bread(s, block);
+> +	reiserfs_write_lock_nested(s, depth);
+> +
+> +	return bh;
+>  }
+>
+> +void reiserfs_safe_lock_buffer(struct buffer_head *bh);
+> +
+>  static inline void
+> -reiserfs_down_read_safe(struct rw_semaphore *sem, struct super_block *s)
+> +reiserfs_safe_wait_on_buffer(struct buffer_head *bh, struct super_block *s)
+>  {
+> -	reiserfs_lock_check_recursive(s);
+> -	reiserfs_write_unlock(s);
+> -	down_read(sem);
+> -	reiserfs_write_lock(s);
+> -}
+> +	int depth;
+>  
+> -/*
+> - * When we schedule, we usually want to also release the write lock,
+> - * according to the previous bkl based locking scheme of reiserfs.
+> - */
+> -static inline void reiserfs_cond_resched(struct super_block *s)
+> -{
+> -	if (need_resched()) {
+> -		reiserfs_write_unlock(s);
+> -		schedule();
+> -		reiserfs_write_lock(s);
+> -	}
+> +	depth = reiserfs_write_unlock_nested(s);
+> +	__wait_on_buffer(bh);
+> +	reiserfs_write_lock_nested(s, depth);
+>  }
+>  
+>  struct fid;
+> @@ -2463,6 +2472,15 @@ int reiserfs_commit_for_inode(struct ino
+>  int reiserfs_inode_needs_commit(struct inode *);
+>  void reiserfs_update_inode_transaction(struct inode *);
+>  void reiserfs_wait_on_write_block(struct super_block *s);
+> +static inline void reiserfs_safe_wait_on_write_block(struct super_block *s)
+> +{
+> +	int depth;
+> +
+> +	depth = reiserfs_write_unlock_nested(s);
+> +	reiserfs_wait_on_write_block(s);
+> +	reiserfs_write_lock_nested(s, depth);
+> +}
+> +
+  I didn't find where the above 'safe' functions are called...
 
---- a/fs/reiserfs/inode.c	2013-08-05 20:06:22.064806699 -0400
-+++ b/fs/reiserfs/inode.c	2013-08-05 20:08:30.782845847 -0400
-@@ -30,7 +30,6 @@ void reiserfs_evict_inode(struct inode *
- 	    JOURNAL_PER_BALANCE_CNT * 2 +
- 	    2 * REISERFS_QUOTA_INIT_BLOCKS(inode->i_sb);
- 	struct reiserfs_transaction_handle th;
--	int depth;
- 	int err;
- 
- 	if (!inode->i_nlink && !is_bad_inode(inode))
-@@ -40,12 +39,14 @@ void reiserfs_evict_inode(struct inode *
- 	if (inode->i_nlink)
- 		goto no_delete;
- 
--	depth = reiserfs_write_lock_once(inode->i_sb);
--
- 	/* The = 0 happens when we abort creating a new inode for some reason like lack of space.. */
- 	if (!(inode->i_state & I_NEW) && INODE_PKEY(inode)->k_objectid != 0) {	/* also handles bad_inode case */
-+		int depth;
-+
- 		reiserfs_delete_xattrs(inode);
- 
-+		depth = reiserfs_write_lock_once(inode->i_sb);
-+
- 		if (journal_begin(&th, inode->i_sb, jbegin_count))
- 			goto out;
- 		reiserfs_update_inode_transaction(inode);
-@@ -72,12 +73,12 @@ void reiserfs_evict_inode(struct inode *
- 		/* all items of file are deleted, so we can remove "save" link */
- 		remove_save_link(inode, 0 /* not truncate */ );	/* we can't do anything
- 								 * about an error here */
-+out:
-+		reiserfs_write_unlock_once(inode->i_sb, depth);
- 	} else {
- 		/* no object items are in the tree */
- 		;
- 	}
--      out:
--	reiserfs_write_unlock_once(inode->i_sb, depth);
- 	clear_inode(inode);	/* note this must go after the journal_end to prevent deadlock */
- 	dquot_drop(inode);
- 	inode->i_blocks = 0;
-@@ -1941,7 +1942,9 @@ int reiserfs_new_inode(struct reiserfs_t
- 	}
- 
- 	if (reiserfs_posixacl(inode->i_sb)) {
-+		reiserfs_write_unlock(inode->i_sb);
- 		retval = reiserfs_inherit_default_acl(th, dir, dentry, inode);
-+		reiserfs_write_lock(inode->i_sb);
- 		if (retval) {
- 			err = retval;
- 			reiserfs_check_path(&path_to_key);
-@@ -1956,7 +1959,9 @@ int reiserfs_new_inode(struct reiserfs_t
- 		inode->i_flags |= S_PRIVATE;
- 
- 	if (security->name) {
-+		reiserfs_write_unlock(inode->i_sb);
- 		retval = reiserfs_security_write(th, inode, security);
-+		reiserfs_write_lock(inode->i_sb);
- 		if (retval) {
- 			err = retval;
- 			reiserfs_check_path(&path_to_key);
-@@ -3129,6 +3134,7 @@ int reiserfs_setattr(struct dentry *dent
- 		 */
- 		if (get_inode_item_key_version(inode) == KEY_FORMAT_3_5 &&
- 		    attr->ia_size > MAX_NON_LFS) {
-+			reiserfs_write_unlock_once(inode->i_sb, depth);
- 			error = -EFBIG;
- 			goto out;
- 		}
-@@ -3150,8 +3156,10 @@ int reiserfs_setattr(struct dentry *dent
- 				if (err)
- 					error = err;
- 			}
--			if (error)
-+			if (error) {
-+				reiserfs_write_unlock_once(inode->i_sb, depth);
- 				goto out;
-+			}
- 			/*
- 			 * file size is changed, ctime and mtime are
- 			 * to be updated
-@@ -3159,6 +3167,7 @@ int reiserfs_setattr(struct dentry *dent
- 			attr->ia_valid |= (ATTR_MTIME | ATTR_CTIME);
- 		}
- 	}
-+	reiserfs_write_unlock_once(inode->i_sb, depth);
- 
- 	if ((((attr->ia_valid & ATTR_UID) && (from_kuid(&init_user_ns, attr->ia_uid) & ~0xffff)) ||
- 	     ((attr->ia_valid & ATTR_GID) && (from_kgid(&init_user_ns, attr->ia_gid) & ~0xffff))) &&
-@@ -3183,14 +3192,16 @@ int reiserfs_setattr(struct dentry *dent
- 			return error;
- 
- 		/* (user+group)*(old+new) structure - we count quota info and , inode write (sb, inode) */
-+		depth = reiserfs_write_lock_once(inode->i_sb);
- 		error = journal_begin(&th, inode->i_sb, jbegin_count);
-+		reiserfs_write_unlock_once(inode->i_sb, depth);
- 		if (error)
- 			goto out;
--		reiserfs_write_unlock_once(inode->i_sb, depth);
- 		error = dquot_transfer(inode, attr);
- 		depth = reiserfs_write_lock_once(inode->i_sb);
- 		if (error) {
- 			journal_end(&th, inode->i_sb, jbegin_count);
-+			reiserfs_write_unlock_once(inode->i_sb, depth);
- 			goto out;
- 		}
- 
-@@ -3202,17 +3213,11 @@ int reiserfs_setattr(struct dentry *dent
- 			inode->i_gid = attr->ia_gid;
- 		mark_inode_dirty(inode);
- 		error = journal_end(&th, inode->i_sb, jbegin_count);
-+		reiserfs_write_unlock_once(inode->i_sb, depth);
- 		if (error)
- 			goto out;
- 	}
- 
--	/*
--	 * Relax the lock here, as it might truncate the
--	 * inode pages and wait for inode pages locks.
--	 * To release such page lock, the owner needs the
--	 * reiserfs lock
--	 */
--	reiserfs_write_unlock_once(inode->i_sb, depth);
- 	if ((attr->ia_valid & ATTR_SIZE) &&
- 	    attr->ia_size != i_size_read(inode)) {
- 		error = inode_newsize_ok(inode, attr->ia_size);
-@@ -3226,16 +3231,13 @@ int reiserfs_setattr(struct dentry *dent
- 		setattr_copy(inode, attr);
- 		mark_inode_dirty(inode);
- 	}
--	depth = reiserfs_write_lock_once(inode->i_sb);
- 
- 	if (!error && reiserfs_posixacl(inode->i_sb)) {
- 		if (attr->ia_valid & ATTR_MODE)
- 			error = reiserfs_acl_chmod(inode);
- 	}
- 
--      out:
--	reiserfs_write_unlock_once(inode->i_sb, depth);
--
-+out:
- 	return error;
- }
- 
---- a/fs/reiserfs/super.c	2013-08-05 20:06:22.144805480 -0400
-+++ b/fs/reiserfs/super.c	2013-08-05 20:08:21.810982482 -0400
-@@ -1335,7 +1335,7 @@ static int reiserfs_remount(struct super
- 				kfree(qf_names[i]);
- #endif
- 		err = -EINVAL;
--		goto out_unlock;
-+		goto out_err_unlock;
- 	}
- #ifdef CONFIG_QUOTA
- 	handle_quota_files(s, qf_names, &qfmt);
-@@ -1379,35 +1379,32 @@ static int reiserfs_remount(struct super
- 	if (blocks) {
- 		err = reiserfs_resize(s, blocks);
- 		if (err != 0)
--			goto out_unlock;
-+			goto out_err_unlock;
- 	}
- 
- 	if (*mount_flags & MS_RDONLY) {
-+		reiserfs_write_unlock(s);
- 		reiserfs_xattr_init(s, *mount_flags);
- 		/* remount read-only */
- 		if (s->s_flags & MS_RDONLY)
- 			/* it is read-only already */
--			goto out_ok;
-+			goto out_ok_unlocked;
- 
--		/*
--		 * Drop write lock. Quota will retake it when needed and lock
--		 * ordering requires calling dquot_suspend() without it.
--		 */
--		reiserfs_write_unlock(s);
- 		err = dquot_suspend(s, -1);
- 		if (err < 0)
- 			goto out_err;
--		reiserfs_write_lock(s);
- 
- 		/* try to remount file system with read-only permissions */
- 		if (sb_umount_state(rs) == REISERFS_VALID_FS
- 		    || REISERFS_SB(s)->s_mount_state != REISERFS_VALID_FS) {
--			goto out_ok;
-+			goto out_ok_unlocked;
- 		}
- 
-+		reiserfs_write_lock(s);
-+
- 		err = journal_begin(&th, s, 10);
- 		if (err)
--			goto out_unlock;
-+			goto out_err_unlock;
- 
- 		/* Mounting a rw partition read-only. */
- 		reiserfs_prepare_for_journal(s, SB_BUFFER_WITH_SB(s), 1);
-@@ -1416,13 +1413,14 @@ static int reiserfs_remount(struct super
- 	} else {
- 		/* remount read-write */
- 		if (!(s->s_flags & MS_RDONLY)) {
-+			reiserfs_write_unlock(s);
- 			reiserfs_xattr_init(s, *mount_flags);
--			goto out_ok;	/* We are read-write already */
-+			goto out_ok_unlocked;	/* We are read-write already */
- 		}
- 
- 		if (reiserfs_is_journal_aborted(journal)) {
- 			err = journal->j_errno;
--			goto out_unlock;
-+			goto out_err_unlock;
- 		}
- 
- 		handle_data_mode(s, mount_options);
-@@ -1431,7 +1429,7 @@ static int reiserfs_remount(struct super
- 		s->s_flags &= ~MS_RDONLY;	/* now it is safe to call journal_begin */
- 		err = journal_begin(&th, s, 10);
- 		if (err)
--			goto out_unlock;
-+			goto out_err_unlock;
- 
- 		/* Mount a partition which is read-only, read-write */
- 		reiserfs_prepare_for_journal(s, SB_BUFFER_WITH_SB(s), 1);
-@@ -1448,26 +1446,22 @@ static int reiserfs_remount(struct super
- 	SB_JOURNAL(s)->j_must_wait = 1;
- 	err = journal_end(&th, s, 10);
- 	if (err)
--		goto out_unlock;
-+		goto out_err_unlock;
- 
-+	reiserfs_write_unlock(s);
- 	if (!(*mount_flags & MS_RDONLY)) {
--		/*
--		 * Drop write lock. Quota will retake it when needed and lock
--		 * ordering requires calling dquot_resume() without it.
--		 */
--		reiserfs_write_unlock(s);
- 		dquot_resume(s, -1);
- 		reiserfs_write_lock(s);
- 		finish_unfinished(s);
-+		reiserfs_write_unlock(s);
- 		reiserfs_xattr_init(s, *mount_flags);
- 	}
- 
--out_ok:
-+out_ok_unlocked:
- 	replace_mount_options(s, new_opts);
--	reiserfs_write_unlock(s);
- 	return 0;
- 
--out_unlock:
-+out_err_unlock:
- 	reiserfs_write_unlock(s);
- out_err:
- 	kfree(new_opts);
-@@ -2014,12 +2008,14 @@ static int reiserfs_fill_super(struct su
- 			goto error;
- 		}
- 
-+		reiserfs_write_unlock(s);
- 		if ((errval = reiserfs_lookup_privroot(s)) ||
- 		    (errval = reiserfs_xattr_init(s, s->s_flags))) {
- 			dput(s->s_root);
- 			s->s_root = NULL;
--			goto error;
-+			goto error_unlocked;
- 		}
-+		reiserfs_write_lock(s);
- 
- 		/* look for files which were to be removed in previous session */
- 		finish_unfinished(s);
-@@ -2028,12 +2024,14 @@ static int reiserfs_fill_super(struct su
- 			reiserfs_info(s, "using 3.5.x disk format\n");
- 		}
- 
-+		reiserfs_write_unlock(s);
- 		if ((errval = reiserfs_lookup_privroot(s)) ||
- 		    (errval = reiserfs_xattr_init(s, s->s_flags))) {
- 			dput(s->s_root);
- 			s->s_root = NULL;
--			goto error;
-+			goto error_unlocked;
- 		}
-+		reiserfs_write_lock(s);
- 	}
- 	// mark hash in super block: it could be unset. overwrite should be ok
- 	set_sb_hash_function_code(rs, function2code(sbi->s_hash_function));
---- a/fs/reiserfs/xattr.c	2013-08-05 20:06:22.148805419 -0400
-+++ b/fs/reiserfs/xattr.c	2013-08-05 20:07:34.731699563 -0400
-@@ -81,8 +81,7 @@ static int xattr_unlink(struct inode *di
- 	int error;
- 	BUG_ON(!mutex_is_locked(&dir->i_mutex));
- 
--	reiserfs_mutex_lock_nested_safe(&dentry->d_inode->i_mutex,
--					I_MUTEX_CHILD, dir->i_sb);
-+	mutex_lock_nested(&dentry->d_inode->i_mutex, I_MUTEX_CHILD);
- 	error = dir->i_op->unlink(dir, dentry);
- 	mutex_unlock(&dentry->d_inode->i_mutex);
- 
-@@ -96,8 +95,7 @@ static int xattr_rmdir(struct inode *dir
- 	int error;
- 	BUG_ON(!mutex_is_locked(&dir->i_mutex));
- 
--	reiserfs_mutex_lock_nested_safe(&dentry->d_inode->i_mutex,
--					I_MUTEX_CHILD, dir->i_sb);
-+	mutex_lock_nested(&dentry->d_inode->i_mutex, I_MUTEX_CHILD);
- 	error = dir->i_op->rmdir(dir, dentry);
- 	if (!error)
- 		dentry->d_inode->i_flags |= S_DEAD;
-@@ -232,22 +230,17 @@ static int reiserfs_for_each_xattr(struc
- 	if (IS_PRIVATE(inode) || get_inode_sd_version(inode) == STAT_DATA_V1)
- 		return 0;
- 
--	reiserfs_write_unlock(inode->i_sb);
- 	dir = open_xa_dir(inode, XATTR_REPLACE);
- 	if (IS_ERR(dir)) {
- 		err = PTR_ERR(dir);
--		reiserfs_write_lock(inode->i_sb);
- 		goto out;
- 	} else if (!dir->d_inode) {
- 		err = 0;
--		reiserfs_write_lock(inode->i_sb);
- 		goto out_dir;
- 	}
- 
- 	mutex_lock_nested(&dir->d_inode->i_mutex, I_MUTEX_XATTR);
- 
--	reiserfs_write_lock(inode->i_sb);
--
- 	buf.xadir = dir;
- 	while (1) {
- 		err = reiserfs_readdir_inode(dir->d_inode, &buf.ctx);
-@@ -281,14 +274,17 @@ static int reiserfs_for_each_xattr(struc
- 		int blocks = JOURNAL_PER_BALANCE_CNT * 2 + 2 +
- 			     4 * REISERFS_QUOTA_TRANS_BLOCKS(inode->i_sb);
- 		struct reiserfs_transaction_handle th;
-+		reiserfs_write_lock(inode->i_sb);
- 		err = journal_begin(&th, inode->i_sb, blocks);
-+		reiserfs_write_unlock(inode->i_sb);
- 		if (!err) {
- 			int jerror;
--			reiserfs_mutex_lock_nested_safe(
--					  &dir->d_parent->d_inode->i_mutex,
--					  I_MUTEX_XATTR, inode->i_sb);
-+			mutex_lock_nested(&dir->d_parent->d_inode->i_mutex,
-+					  I_MUTEX_XATTR);
- 			err = action(dir, data);
-+			reiserfs_write_lock(inode->i_sb);
- 			jerror = journal_end(&th, inode->i_sb, blocks);
-+			reiserfs_write_unlock(inode->i_sb);
- 			mutex_unlock(&dir->d_parent->d_inode->i_mutex);
- 			err = jerror ?: err;
- 		}
-@@ -455,9 +451,7 @@ static int lookup_and_delete_xattr(struc
- 	}
- 
- 	if (dentry->d_inode) {
--		reiserfs_write_lock(inode->i_sb);
- 		err = xattr_unlink(xadir->d_inode, dentry);
--		reiserfs_write_unlock(inode->i_sb);
- 		update_ctime(inode);
- 	}
- 
-@@ -491,24 +485,17 @@ reiserfs_xattr_set_handle(struct reiserf
- 	if (get_inode_sd_version(inode) == STAT_DATA_V1)
- 		return -EOPNOTSUPP;
- 
--	reiserfs_write_unlock(inode->i_sb);
--
- 	if (!buffer) {
- 		err = lookup_and_delete_xattr(inode, name);
--		reiserfs_write_lock(inode->i_sb);
- 		return err;
- 	}
- 
- 	dentry = xattr_lookup(inode, name, flags);
--	if (IS_ERR(dentry)) {
--		reiserfs_write_lock(inode->i_sb);
-+	if (IS_ERR(dentry))
- 		return PTR_ERR(dentry);
--	}
- 
- 	down_write(&REISERFS_I(inode)->i_xattr_sem);
- 
--	reiserfs_write_lock(inode->i_sb);
--
- 	xahash = xattr_hash(buffer, buffer_size);
- 	while (buffer_pos < buffer_size || buffer_pos == 0) {
- 		size_t chunk;
-@@ -538,6 +525,7 @@ reiserfs_xattr_set_handle(struct reiserf
- 			rxh->h_hash = cpu_to_le32(xahash);
- 		}
- 
-+		reiserfs_write_lock(inode->i_sb);
- 		err = __reiserfs_write_begin(page, page_offset, chunk + skip);
- 		if (!err) {
- 			if (buffer)
-@@ -546,6 +534,7 @@ reiserfs_xattr_set_handle(struct reiserf
- 						    page_offset + chunk +
- 						    skip);
- 		}
-+		reiserfs_write_unlock(inode->i_sb);
- 		unlock_page(page);
- 		reiserfs_put_page(page);
- 		buffer_pos += chunk;
-@@ -563,10 +552,8 @@ reiserfs_xattr_set_handle(struct reiserf
- 			.ia_valid = ATTR_SIZE | ATTR_CTIME,
- 		};
- 
--		reiserfs_write_unlock(inode->i_sb);
- 		mutex_lock_nested(&dentry->d_inode->i_mutex, I_MUTEX_XATTR);
- 		inode_dio_wait(dentry->d_inode);
--		reiserfs_write_lock(inode->i_sb);
- 
- 		err = reiserfs_setattr(dentry, &newattrs);
- 		mutex_unlock(&dentry->d_inode->i_mutex);
-@@ -592,18 +579,19 @@ int reiserfs_xattr_set(struct inode *ino
- 
- 	reiserfs_write_lock(inode->i_sb);
- 	error = journal_begin(&th, inode->i_sb, jbegin_count);
-+	reiserfs_write_unlock(inode->i_sb);
- 	if (error) {
--		reiserfs_write_unlock(inode->i_sb);
- 		return error;
- 	}
- 
- 	error = reiserfs_xattr_set_handle(&th, inode, name,
- 					  buffer, buffer_size, flags);
- 
-+	reiserfs_write_lock(inode->i_sb);
- 	error2 = journal_end(&th, inode->i_sb, jbegin_count);
-+	reiserfs_write_unlock(inode->i_sb);
- 	if (error == 0)
- 		error = error2;
--	reiserfs_write_unlock(inode->i_sb);
- 
- 	return error;
- }
-@@ -968,7 +956,7 @@ int reiserfs_lookup_privroot(struct supe
- 	int err = 0;
- 
- 	/* If we don't have the privroot located yet - go find it */
--	reiserfs_mutex_lock_safe(&s->s_root->d_inode->i_mutex, s);
-+	mutex_lock(&s->s_root->d_inode->i_mutex);
- 	dentry = lookup_one_len(PRIVROOT_NAME, s->s_root,
- 				strlen(PRIVROOT_NAME));
- 	if (!IS_ERR(dentry)) {
-@@ -996,14 +984,14 @@ int reiserfs_xattr_init(struct super_blo
- 		goto error;
- 
- 	if (!privroot->d_inode && !(mount_flags & MS_RDONLY)) {
--		reiserfs_mutex_lock_safe(&s->s_root->d_inode->i_mutex, s);
-+		mutex_lock(&s->s_root->d_inode->i_mutex);
- 		err = create_privroot(REISERFS_SB(s)->priv_root);
- 		mutex_unlock(&s->s_root->d_inode->i_mutex);
- 	}
- 
- 	if (privroot->d_inode) {
- 		s->s_xattr = reiserfs_xattr_handlers;
--		reiserfs_mutex_lock_safe(&privroot->d_inode->i_mutex, s);
-+		mutex_lock(&privroot->d_inode->i_mutex);
- 		if (!REISERFS_SB(s)->xattr_root) {
- 			struct dentry *dentry;
- 			dentry = lookup_one_len(XAROOT_NAME, privroot,
---- a/fs/reiserfs/xattr_acl.c	2013-08-05 20:06:22.152805358 -0400
-+++ b/fs/reiserfs/xattr_acl.c	2013-08-05 20:07:34.743699381 -0400
-@@ -49,13 +49,15 @@ posix_acl_set(struct dentry *dentry, con
- 
- 	reiserfs_write_lock(inode->i_sb);
- 	error = journal_begin(&th, inode->i_sb, jcreate_blocks);
-+	reiserfs_write_unlock(inode->i_sb);
- 	if (error == 0) {
- 		error = reiserfs_set_acl(&th, inode, type, acl);
-+		reiserfs_write_lock(inode->i_sb);
- 		error2 = journal_end(&th, inode->i_sb, jcreate_blocks);
-+		reiserfs_write_unlock(inode->i_sb);
- 		if (error2)
- 			error = error2;
- 	}
--	reiserfs_write_unlock(inode->i_sb);
- 
-       release_and_out:
- 	posix_acl_release(acl);
-@@ -435,12 +437,14 @@ int reiserfs_cache_default_acl(struct in
- 	return nblocks;
- }
- 
-+/*
-+ * Called under i_mutex
-+ */
- int reiserfs_acl_chmod(struct inode *inode)
- {
- 	struct reiserfs_transaction_handle th;
- 	struct posix_acl *acl;
- 	size_t size;
--	int depth;
- 	int error;
- 
- 	if (IS_PRIVATE(inode))
-@@ -454,9 +458,7 @@ int reiserfs_acl_chmod(struct inode *ino
- 		return 0;
- 	}
- 
--	reiserfs_write_unlock(inode->i_sb);
- 	acl = reiserfs_get_acl(inode, ACL_TYPE_ACCESS);
--	reiserfs_write_lock(inode->i_sb);
- 	if (!acl)
- 		return 0;
- 	if (IS_ERR(acl))
-@@ -466,16 +468,18 @@ int reiserfs_acl_chmod(struct inode *ino
- 		return error;
- 
- 	size = reiserfs_xattr_nblocks(inode, reiserfs_acl_size(acl->a_count));
--	depth = reiserfs_write_lock_once(inode->i_sb);
-+	reiserfs_write_lock(inode->i_sb);
- 	error = journal_begin(&th, inode->i_sb, size * 2);
-+	reiserfs_write_unlock(inode->i_sb);
- 	if (!error) {
- 		int error2;
- 		error = reiserfs_set_acl(&th, inode, ACL_TYPE_ACCESS, acl);
-+		reiserfs_write_lock(inode->i_sb);
- 		error2 = journal_end(&th, inode->i_sb, size * 2);
-+		reiserfs_write_unlock(inode->i_sb);
- 		if (error2)
- 			error = error2;
- 	}
--	reiserfs_write_unlock_once(inode->i_sb, depth);
- 	posix_acl_release(acl);
- 	return error;
- }
-
+								Honza
 -- 
-Jeff Mahoney
-SUSE Labs
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
