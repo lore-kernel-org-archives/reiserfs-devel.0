@@ -1,10 +1,10 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [patch 2/2] reiserfs: locking, release lock around quota operations
-Date: Mon, 05 Aug 2013 20:12:18 -0400
-Message-ID: <20130806001314.912310878@suse.com>
+Subject: [patch 1/2] reiserfs: locking, handle nested locks properly
+Date: Mon, 05 Aug 2013 20:12:17 -0400
+Message-ID: <20130806001314.727159902@suse.com>
 References: <20130806001216.080404663@suse.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs-locking-release-lock-around-quota-operations
+Content-Disposition: inline; filename=reiserfs-locking-handle-nested-locks-properly
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
@@ -13,650 +13,1315 @@ Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
 Cc: jack@suse.com
 
-Previous commits released the write lock across quota operations but
-missed several places.  In particular, the free operations can also
-call into the file system code and take the write lock, causing
-deadlocks.
+The reiserfs write lock replaced the BKL and uses similar semantics.
 
-This patch introduces some more helpers and uses them for quota call
-sites.  Without this patch applied, reiserfs + quotas runs into deadlocks
-under anything more than trivial load.
+Frederic's locking code makes a distinction between when the lock is nested
+and when it's being acquired/released, but I don't think that's the right
+distinction to make.
 
-With this patch applied, reiserfs survives a 50-thread stress test with
-quotas enabled and a default ACL set. Without it, it deadlocks fairly
-quickly under the same load.
+The right distinction is between the lock being released at end-of-use and
+the lock being released for a schedule. The unlock should return the depth
+and the lock should restore it, rather than the other way around as it is now.
+
+This patch implements that and adds a number of places where the lock
+should be dropped.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 ---
 
- fs/reiserfs/bitmap.c   |   26 +++++++++++++++++++-------
- fs/reiserfs/inode.c    |   28 ++++++++++++++++++++--------
- fs/reiserfs/lock.c     |    7 +++++++
- fs/reiserfs/namei.c    |   24 ++++++++++++++----------
- fs/reiserfs/reiserfs.h |   44 ++++++++++----------------------------------
- fs/reiserfs/stree.c    |   28 +++++++++++++++++++++++-----
- fs/reiserfs/super.c    |   42 ++++++++++++++++++++++++++----------------
- 7 files changed, 119 insertions(+), 80 deletions(-)
+ fs/reiserfs/bitmap.c   |    5 +-
+ fs/reiserfs/dir.c      |    7 +--
+ fs/reiserfs/fix_node.c |   26 ++++++------
+ fs/reiserfs/inode.c    |   77 ++++++++++++++++--------------------
+ fs/reiserfs/ioctl.c    |    7 +--
+ fs/reiserfs/journal.c  |  104 ++++++++++++++++++++++++++-----------------------
+ fs/reiserfs/lock.c     |   66 +++++++++++++++++++++----------
+ fs/reiserfs/namei.c    |   24 +++--------
+ fs/reiserfs/prints.c   |    5 +-
+ fs/reiserfs/reiserfs.h |   82 +++++++++++++++++++++++---------------
+ fs/reiserfs/resize.c   |   10 +++-
+ fs/reiserfs/stree.c    |   24 +++++++----
+ fs/reiserfs/super.c    |    5 --
+ 13 files changed, 248 insertions(+), 194 deletions(-)
 
---- a/fs/reiserfs/bitmap.c	2013-08-05 17:49:57.394468449 -0400
-+++ b/fs/reiserfs/bitmap.c	2013-08-05 17:49:58.426452696 -0400
-@@ -423,8 +423,11 @@ static void _reiserfs_free_block(struct
- 	set_sb_free_blocks(rs, sb_free_blocks(rs) + 1);
- 
- 	journal_mark_dirty(th, s, sbh);
--	if (for_unformatted)
-+	if (for_unformatted) {
-+		int depth = reiserfs_write_unlock_nested(s);
- 		dquot_free_block_nodirty(inode, 1);
-+		reiserfs_write_lock_nested(s, depth);
-+	}
- }
- 
- void reiserfs_free_block(struct reiserfs_transaction_handle *th,
-@@ -1128,6 +1131,7 @@ static inline int blocknrs_and_prealloc_
- 	b_blocknr_t finish = SB_BLOCK_COUNT(s) - 1;
- 	int passno = 0;
- 	int nr_allocated = 0;
+--- a/fs/reiserfs/bitmap.c	2013-08-05 20:08:59.254412281 -0400
++++ b/fs/reiserfs/bitmap.c	2013-08-05 20:09:52.425602747 -0400
+@@ -1340,10 +1340,11 @@ struct buffer_head *reiserfs_read_bitmap
+ 		                 "reading failed", __func__, block);
+ 	else {
+ 		if (buffer_locked(bh)) {
++			int depth;
+ 			PROC_INFO_INC(sb, scan_bitmap.wait);
+-			reiserfs_write_unlock(sb);
++			depth = reiserfs_write_unlock_nested(sb);
+ 			__wait_on_buffer(bh);
+-			reiserfs_write_lock(sb);
++			reiserfs_write_lock_nested(sb, depth);
+ 		}
+ 		BUG_ON(!buffer_uptodate(bh));
+ 		BUG_ON(atomic_read(&bh->b_count) == 0);
+--- a/fs/reiserfs/dir.c	2013-08-05 20:08:59.254412281 -0400
++++ b/fs/reiserfs/dir.c	2013-08-05 20:09:52.441602504 -0400
+@@ -71,6 +71,7 @@ int reiserfs_readdir_inode(struct inode
+ 	char small_buf[32];	/* avoid kmalloc if we can */
+ 	struct reiserfs_dir_entry de;
+ 	int ret = 0;
 +	int depth;
  
- 	determine_prealloc_size(hint);
- 	if (!hint->formatted_node) {
-@@ -1137,10 +1141,13 @@ static inline int blocknrs_and_prealloc_
- 			       "reiserquota: allocating %d blocks id=%u",
- 			       amount_needed, hint->inode->i_uid);
- #endif
-+		depth = reiserfs_write_unlock_nested(s);
- 		quota_ret =
- 		    dquot_alloc_block_nodirty(hint->inode, amount_needed);
--		if (quota_ret)	/* Quota exceeded? */
-+		if (quota_ret) {	/* Quota exceeded? */
-+			reiserfs_write_lock_nested(s, depth);
- 			return QUOTA_EXCEEDED;
-+		}
- 		if (hint->preallocate && hint->prealloc_size) {
- #ifdef REISERQUOTA_DEBUG
- 			reiserfs_debug(s, REISERFS_DEBUG_CODE,
-@@ -1153,6 +1160,7 @@ static inline int blocknrs_and_prealloc_
- 				hint->preallocate = hint->prealloc_size = 0;
+ 	reiserfs_write_lock(inode->i_sb);
+ 
+@@ -181,17 +182,17 @@ int reiserfs_readdir_inode(struct inode
+ 				 * Since filldir might sleep, we can release
+ 				 * the write lock here for other waiters
+ 				 */
+-				reiserfs_write_unlock(inode->i_sb);
++				depth = reiserfs_write_unlock_nested(inode->i_sb);
+ 				if (!dir_emit
+ 				    (ctx, local_buf, d_reclen, d_ino,
+ 				     DT_UNKNOWN)) {
+-					reiserfs_write_lock(inode->i_sb);
++					reiserfs_write_lock_nested(inode->i_sb, depth);
+ 					if (local_buf != small_buf) {
+ 						kfree(local_buf);
+ 					}
+ 					goto end;
+ 				}
+-				reiserfs_write_lock(inode->i_sb);
++				reiserfs_write_lock_nested(inode->i_sb, depth);
+ 				if (local_buf != small_buf) {
+ 					kfree(local_buf);
+ 				}
+--- a/fs/reiserfs/fix_node.c	2013-08-05 20:08:59.254412281 -0400
++++ b/fs/reiserfs/fix_node.c	2013-08-05 20:09:52.453602321 -0400
+@@ -1022,9 +1022,9 @@ static int get_far_parent(struct tree_ba
+ 	if (buffer_locked(*pcom_father)) {
+ 
+ 		/* Release the write lock while the buffer is busy */
+-		reiserfs_write_unlock(tb->tb_sb);
++		int depth = reiserfs_write_unlock_nested(tb->tb_sb);
+ 		__wait_on_buffer(*pcom_father);
+-		reiserfs_write_lock(tb->tb_sb);
++		reiserfs_write_lock_nested(tb->tb_sb, depth);
+ 		if (FILESYSTEM_CHANGED_TB(tb)) {
+ 			brelse(*pcom_father);
+ 			return REPEAT_SEARCH;
+@@ -1929,9 +1929,9 @@ static int get_direct_parent(struct tree
+ 		return REPEAT_SEARCH;
+ 
+ 	if (buffer_locked(bh)) {
+-		reiserfs_write_unlock(tb->tb_sb);
++		int depth = reiserfs_write_unlock_nested(tb->tb_sb);
+ 		__wait_on_buffer(bh);
+-		reiserfs_write_lock(tb->tb_sb);
++		reiserfs_write_lock_nested(tb->tb_sb, depth);
+ 		if (FILESYSTEM_CHANGED_TB(tb))
+ 			return REPEAT_SEARCH;
+ 	}
+@@ -1952,6 +1952,7 @@ static int get_neighbors(struct tree_bal
+ 	unsigned long son_number;
+ 	struct super_block *sb = tb->tb_sb;
+ 	struct buffer_head *bh;
++	int depth;
+ 
+ 	PROC_INFO_INC(sb, get_neighbors[h]);
+ 
+@@ -1969,9 +1970,9 @@ static int get_neighbors(struct tree_bal
+ 		     tb->FL[h]) ? tb->lkey[h] : B_NR_ITEMS(tb->
+ 								       FL[h]);
+ 		son_number = B_N_CHILD_NUM(tb->FL[h], child_position);
+-		reiserfs_write_unlock(sb);
++		depth = reiserfs_write_unlock_nested(tb->tb_sb);
+ 		bh = sb_bread(sb, son_number);
+-		reiserfs_write_lock(sb);
++		reiserfs_write_lock_nested(tb->tb_sb, depth);
+ 		if (!bh)
+ 			return IO_ERROR;
+ 		if (FILESYSTEM_CHANGED_TB(tb)) {
+@@ -2009,9 +2010,9 @@ static int get_neighbors(struct tree_bal
+ 		child_position =
+ 		    (bh == tb->FR[h]) ? tb->rkey[h] + 1 : 0;
+ 		son_number = B_N_CHILD_NUM(tb->FR[h], child_position);
+-		reiserfs_write_unlock(sb);
++		depth = reiserfs_write_unlock_nested(tb->tb_sb);
+ 		bh = sb_bread(sb, son_number);
+-		reiserfs_write_lock(sb);
++		reiserfs_write_lock_nested(tb->tb_sb, depth);
+ 		if (!bh)
+ 			return IO_ERROR;
+ 		if (FILESYSTEM_CHANGED_TB(tb)) {
+@@ -2272,6 +2273,7 @@ static int wait_tb_buffers_until_unlocke
  		}
- 		/* for unformatted nodes, force large allocations */
-+		reiserfs_write_lock_nested(s, depth);
- 	}
  
- 	do {
-@@ -1181,9 +1189,12 @@ static inline int blocknrs_and_prealloc_
- 					       hint->inode->i_uid);
- #endif
- 				/* Free not allocated blocks */
--				dquot_free_block_nodirty(hint->inode,
-+				depth = reiserfs_write_unlock_nested(s);
-+				dquot_free_block_nodirty(
-+					hint->inode,
- 					amount_needed + hint->prealloc_size -
- 					nr_allocated);
-+				reiserfs_write_lock_nested(s, depth);
+ 		if (locked) {
++			int depth;
+ #ifdef CONFIG_REISERFS_CHECK
+ 			repeat_counter++;
+ 			if ((repeat_counter % 10000) == 0) {
+@@ -2286,9 +2288,9 @@ static int wait_tb_buffers_until_unlocke
+ 				    REPEAT_SEARCH : CARRY_ON;
  			}
- 			while (nr_allocated--)
- 				reiserfs_free_block(hint->th, hint->inode,
-@@ -1214,10 +1225,11 @@ static inline int blocknrs_and_prealloc_
- 			       REISERFS_I(hint->inode)->i_prealloc_count,
- 			       hint->inode->i_uid);
  #endif
--		dquot_free_block_nodirty(hint->inode, amount_needed +
--					 hint->prealloc_size - nr_allocated -
--					 REISERFS_I(hint->inode)->
--					 i_prealloc_count);
-+		depth = reiserfs_write_unlock_nested(s);
-+		dquot_free_block_nodirty(hint->inode,
-+			amount_needed + hint->prealloc_size - nr_allocated -
-+			REISERFS_I(hint->inode)->i_prealloc_count);
-+		reiserfs_write_lock_nested(s, depth);
+-			reiserfs_write_unlock(tb->tb_sb);
++			depth = reiserfs_write_unlock_nested(tb->tb_sb);
+ 			__wait_on_buffer(locked);
+-			reiserfs_write_lock(tb->tb_sb);
++			reiserfs_write_lock_nested(tb->tb_sb, depth);
+ 			if (FILESYSTEM_CHANGED_TB(tb))
+ 				return REPEAT_SEARCH;
+ 		}
+@@ -2359,9 +2361,9 @@ int fix_nodes(int op_mode, struct tree_b
+ 
+ 	/* if it possible in indirect_to_direct conversion */
+ 	if (buffer_locked(tbS0)) {
+-		reiserfs_write_unlock(tb->tb_sb);
++		int depth = reiserfs_write_unlock_nested(tb->tb_sb);
+ 		__wait_on_buffer(tbS0);
+-		reiserfs_write_lock(tb->tb_sb);
++		reiserfs_write_lock_nested(tb->tb_sb, depth);
+ 		if (FILESYSTEM_CHANGED_TB(tb))
+ 			return REPEAT_SEARCH;
  	}
+--- a/fs/reiserfs/inode.c	2013-08-05 20:09:31.709918121 -0400
++++ b/fs/reiserfs/inode.c	2013-08-05 20:09:52.469602078 -0400
+@@ -41,11 +41,10 @@ void reiserfs_evict_inode(struct inode *
  
- 	return CARRY_ON;
---- a/fs/reiserfs/inode.c	2013-08-05 17:49:57.442467716 -0400
-+++ b/fs/reiserfs/inode.c	2013-08-05 17:49:58.446452390 -0400
-@@ -25,6 +25,7 @@ int reiserfs_commit_write(struct file *f
+ 	/* The = 0 happens when we abort creating a new inode for some reason like lack of space.. */
+ 	if (!(inode->i_state & I_NEW) && INODE_PKEY(inode)->k_objectid != 0) {	/* also handles bad_inode case */
+-		int depth;
  
- void reiserfs_evict_inode(struct inode *inode)
- {
-+	struct super_block *sb = inode->i_sb;
- 	/* We need blocks for transaction + (user+group) quota update (possibly delete) */
- 	int jbegin_count =
- 	    JOURNAL_PER_BALANCE_CNT * 2 +
-@@ -57,8 +58,11 @@ void reiserfs_evict_inode(struct inode *
- 		/* Do quota update inside a transaction for journaled quotas. We must do that
- 		 * after delete_object so that quota updates go into the same transaction as
- 		 * stat data deletion */
--		if (!err) 
-+		if (!err) {
-+			int depth = reiserfs_write_unlock_nested(sb);
- 			dquot_free_inode(inode);
-+			reiserfs_write_lock_nested(sb, depth);
-+		}
+ 		reiserfs_delete_xattrs(inode);
  
- 		if (journal_end(&th, inode->i_sb, jbegin_count))
+-		depth = reiserfs_write_lock_once(inode->i_sb);
++		reiserfs_write_lock(inode->i_sb);
+ 
+ 		if (journal_begin(&th, inode->i_sb, jbegin_count))
  			goto out;
-@@ -1523,7 +1527,10 @@ struct inode *reiserfs_iget(struct super
+@@ -74,7 +73,7 @@ void reiserfs_evict_inode(struct inode *
+ 		remove_save_link(inode, 0 /* not truncate */ );	/* we can't do anything
+ 								 * about an error here */
+ out:
+-		reiserfs_write_unlock_once(inode->i_sb, depth);
++		reiserfs_write_unlock(inode->i_sb);
+ 	} else {
+ 		/* no object items are in the tree */
+ 		;
+@@ -611,7 +610,6 @@ int reiserfs_get_block(struct inode *ino
+ 	__le32 *item;
+ 	int done;
+ 	int fs_gen;
+-	int lock_depth;
+ 	struct reiserfs_transaction_handle *th = NULL;
+ 	/* space reserved in transaction batch:
+ 	   . 3 balancings in direct->indirect conversion
+@@ -627,11 +625,11 @@ int reiserfs_get_block(struct inode *ino
+ 	loff_t new_offset =
+ 	    (((loff_t) block) << inode->i_sb->s_blocksize_bits) + 1;
  
- 	if (comp_short_keys(INODE_PKEY(inode), key) || is_bad_inode(inode)) {
- 		/* either due to i/o error or a stale NFS handle */
-+		int depth;
-+		depth = reiserfs_write_unlock_nested(s);
- 		iput(inode);
-+		reiserfs_write_lock_nested(s, depth);
- 		inode = NULL;
- 	}
- 	return inode;
-@@ -1540,12 +1547,12 @@ static struct dentry *reiserfs_get_dentr
- 	key.on_disk_key.k_dir_id = dir_id;
- 	reiserfs_write_lock(sb);
- 	inode = reiserfs_iget(sb, &key);
-+	reiserfs_write_unlock(sb);
- 	if (inode && !IS_ERR(inode) && generation != 0 &&
- 	    generation != inode->i_generation) {
- 		iput(inode);
- 		inode = NULL;
- 	}
--	reiserfs_write_unlock(sb);
+-	lock_depth = reiserfs_write_lock_once(inode->i_sb);
++	reiserfs_write_lock(inode->i_sb);
+ 	version = get_inode_item_key_version(inode);
  
- 	return d_obtain_alias(inode);
+ 	if (!file_capable(inode, block)) {
+-		reiserfs_write_unlock_once(inode->i_sb, lock_depth);
++		reiserfs_write_unlock(inode->i_sb);
+ 		return -EFBIG;
+ 	}
+ 
+@@ -643,7 +641,7 @@ int reiserfs_get_block(struct inode *ino
+ 		/* find number of block-th logical block of the file */
+ 		ret = _get_block_create_0(inode, block, bh_result,
+ 					  create | GET_BLOCK_READ_DIRECT);
+-		reiserfs_write_unlock_once(inode->i_sb, lock_depth);
++		reiserfs_write_unlock(inode->i_sb);
+ 		return ret;
+ 	}
+ 	/*
+@@ -761,7 +759,7 @@ int reiserfs_get_block(struct inode *ino
+ 		if (!dangle && th)
+ 			retval = reiserfs_end_persistent_transaction(th);
+ 
+-		reiserfs_write_unlock_once(inode->i_sb, lock_depth);
++		reiserfs_write_unlock(inode->i_sb);
+ 
+ 		/* the item was found, so new blocks were not added to the file
+ 		 ** there is no need to make sure the inode is updated with this
+@@ -1012,11 +1010,7 @@ int reiserfs_get_block(struct inode *ino
+ 		 * long time.  reschedule if needed and also release the write
+ 		 * lock for others.
+ 		 */
+-		if (need_resched()) {
+-			reiserfs_write_unlock_once(inode->i_sb, lock_depth);
+-			schedule();
+-			lock_depth = reiserfs_write_lock_once(inode->i_sb);
+-		}
++		reiserfs_cond_resched(inode->i_sb);
+ 
+ 		retval = search_for_position_by_key(inode->i_sb, &key, &path);
+ 		if (retval == IO_ERROR) {
+@@ -1051,7 +1045,7 @@ int reiserfs_get_block(struct inode *ino
+ 			retval = err;
+ 	}
+ 
+-	reiserfs_write_unlock_once(inode->i_sb, lock_depth);
++	reiserfs_write_unlock(inode->i_sb);
+ 	reiserfs_check_path(&path);
+ 	return retval;
  }
-@@ -1778,11 +1785,13 @@ int reiserfs_new_inode(struct reiserfs_t
- 	int err;
- 	int depth;
+@@ -1510,14 +1504,15 @@ struct inode *reiserfs_iget(struct super
+ {
+ 	struct inode *inode;
+ 	struct reiserfs_iget_args args;
++	int depth;
  
-+	reiserfs_check_lock_nested(dir->i_sb, __func__);
-+
+ 	args.objectid = key->on_disk_key.k_objectid;
+ 	args.dirid = key->on_disk_key.k_dir_id;
+-	reiserfs_write_unlock(s);
++	depth = reiserfs_write_unlock_nested(s);
+ 	inode = iget5_locked(s, key->on_disk_key.k_objectid,
+ 			     reiserfs_find_actor, reiserfs_init_locked_inode,
+ 			     (void *)(&args));
+-	reiserfs_write_lock(s);
++	reiserfs_write_lock_nested(s, depth);
+ 	if (!inode)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -1781,6 +1776,7 @@ int reiserfs_new_inode(struct reiserfs_t
+ 	struct stat_data sd;
+ 	int retval;
+ 	int err;
++	int depth;
+ 
  	BUG_ON(!th->t_trans_id);
  
--	reiserfs_write_unlock(inode->i_sb);
-+	depth = reiserfs_write_unlock_nested(dir->i_sb);
- 	err = dquot_alloc_inode(inode);
--	reiserfs_write_lock(inode->i_sb);
-+	reiserfs_write_lock_nested(dir->i_sb, depth);
- 	if (err)
- 		goto out_end_trans;
- 	if (!dir->i_nlink) {
-@@ -1809,10 +1818,10 @@ int reiserfs_new_inode(struct reiserfs_t
+@@ -1813,10 +1809,10 @@ int reiserfs_new_inode(struct reiserfs_t
  	memcpy(INODE_PKEY(inode), &(ih.ih_key), KEY_SIZE);
  	args.dirid = le32_to_cpu(ih.ih_key.k_dir_id);
  
--	depth = reiserfs_write_unlock_nested(inode->i_sb);
-+	reiserfs_write_unlock(inode->i_sb);
+-	reiserfs_write_unlock(inode->i_sb);
++	depth = reiserfs_write_unlock_nested(inode->i_sb);
  	err = insert_inode_locked4(inode, args.objectid,
  			     reiserfs_find_actor, &args);
--	reiserfs_write_lock_nested(inode->i_sb, depth);
-+	reiserfs_write_lock(inode->i_sb);
+-	reiserfs_write_lock(inode->i_sb);
++	reiserfs_write_lock_nested(inode->i_sb, depth);
  	if (err) {
  		err = -EINVAL;
  		goto out_bad_inode;
-@@ -1983,14 +1992,16 @@ int reiserfs_new_inode(struct reiserfs_t
- 	INODE_PKEY(inode)->k_objectid = 0;
+@@ -2108,9 +2104,8 @@ int reiserfs_truncate_file(struct inode
+ 	int error;
+ 	struct buffer_head *bh = NULL;
+ 	int err2;
+-	int lock_depth;
  
- 	/* Quota change must be inside a transaction for journaling */
-+	depth = reiserfs_write_unlock_nested(inode->i_sb);
- 	dquot_free_inode(inode);
-+	reiserfs_write_lock_nested(inode->i_sb, depth);
+-	lock_depth = reiserfs_write_lock_once(inode->i_sb);
++	reiserfs_write_lock(inode->i_sb);
  
-       out_end_trans:
- 	journal_end(th, th->t_super, th->t_blocks_allocated);
+ 	if (inode->i_size > 0) {
+ 		error = grab_tail_page(inode, &page, &bh);
+@@ -2179,7 +2174,7 @@ int reiserfs_truncate_file(struct inode
+ 		page_cache_release(page);
+ 	}
+ 
+-	reiserfs_write_unlock_once(inode->i_sb, lock_depth);
++	reiserfs_write_unlock(inode->i_sb);
+ 
+ 	return 0;
+       out:
+@@ -2188,7 +2183,7 @@ int reiserfs_truncate_file(struct inode
+ 		page_cache_release(page);
+ 	}
+ 
+-	reiserfs_write_unlock_once(inode->i_sb, lock_depth);
++	reiserfs_write_unlock(inode->i_sb);
+ 
+ 	return error;
+ }
+@@ -2653,10 +2648,11 @@ int __reiserfs_write_begin(struct page *
+ 	struct inode *inode = page->mapping->host;
+ 	int ret;
+ 	int old_ref = 0;
++	int depth;
+ 
 -	reiserfs_write_unlock(inode->i_sb);
- 	/* Drop can be outside and it needs more credits so it's better to have it outside */
 +	depth = reiserfs_write_unlock_nested(inode->i_sb);
- 	dquot_drop(inode);
+ 	reiserfs_wait_on_write_block(inode->i_sb);
 -	reiserfs_write_lock(inode->i_sb);
 +	reiserfs_write_lock_nested(inode->i_sb, depth);
- 	inode->i_flags |= S_NOQUOTA;
- 	make_bad_inode(inode);
  
-@@ -1998,6 +2009,7 @@ int reiserfs_new_inode(struct reiserfs_t
- 	clear_nlink(inode);
- 	th->t_trans_id = 0;	/* so the caller can't use this handle later */
- 	unlock_new_inode(inode); /* OK to do even if we hadn't locked it */
+ 	fix_tail_page_for_writing(page);
+ 	if (reiserfs_transaction_running(inode->i_sb)) {
+@@ -2713,7 +2709,6 @@ static int reiserfs_write_end(struct fil
+ 	int update_sd = 0;
+ 	struct reiserfs_transaction_handle *th;
+ 	unsigned start;
+-	int lock_depth = 0;
+ 	bool locked = false;
+ 
+ 	if ((unsigned long)fsdata & AOP_FLAG_CONT_EXPAND)
+@@ -2742,7 +2737,7 @@ static int reiserfs_write_end(struct fil
+ 	 */
+ 	if (pos + copied > inode->i_size) {
+ 		struct reiserfs_transaction_handle myth;
+-		lock_depth = reiserfs_write_lock_once(inode->i_sb);
++		reiserfs_write_lock(inode->i_sb);
+ 		locked = true;
+ 		/* If the file have grown beyond the border where it
+ 		   can have a tail, unmark it as needing a tail
+@@ -2773,7 +2768,7 @@ static int reiserfs_write_end(struct fil
+ 	}
+ 	if (th) {
+ 		if (!locked) {
+-			lock_depth = reiserfs_write_lock_once(inode->i_sb);
++			reiserfs_write_lock(inode->i_sb);
+ 			locked = true;
+ 		}
+ 		if (!update_sd)
+@@ -2785,7 +2780,7 @@ static int reiserfs_write_end(struct fil
+ 
+       out:
+ 	if (locked)
+-		reiserfs_write_unlock_once(inode->i_sb, lock_depth);
++		reiserfs_write_unlock(inode->i_sb);
+ 	unlock_page(page);
+ 	page_cache_release(page);
+ 
+@@ -2795,7 +2790,7 @@ static int reiserfs_write_end(struct fil
+ 	return ret == 0 ? copied : ret;
+ 
+       journal_error:
+-	reiserfs_write_unlock_once(inode->i_sb, lock_depth);
 +	reiserfs_write_unlock(inode->i_sb);
- 	iput(inode);
- 	return err;
- }
---- a/fs/reiserfs/lock.c	2013-08-05 17:49:57.482467105 -0400
-+++ b/fs/reiserfs/lock.c	2013-08-05 17:49:58.458452207 -0400
-@@ -111,6 +111,13 @@ void reiserfs_check_lock_depth(struct su
- 	WARN_ON(sb_i->lock_depth < 0);
- }
+ 	locked = false;
+ 	if (th) {
+ 		if (!update_sd)
+@@ -2813,10 +2808,11 @@ int reiserfs_commit_write(struct file *f
+ 	int ret = 0;
+ 	int update_sd = 0;
+ 	struct reiserfs_transaction_handle *th = NULL;
++	int depth;
  
-+void reiserfs_check_lock_nested(struct super_block *sb, const char *caller)
-+{
-+	struct reiserfs_sb_info *sb_i = REISERFS_SB(sb);
-+
-+	WARN_ON(sb_i->lock_depth > 0);
-+}
-+
- #ifdef CONFIG_REISERFS_CHECK
- void reiserfs_lock_check_recursive(struct super_block *sb)
+-	reiserfs_write_unlock(inode->i_sb);
++	depth = reiserfs_write_unlock_nested(inode->i_sb);
+ 	reiserfs_wait_on_write_block(inode->i_sb);
+-	reiserfs_write_lock(inode->i_sb);
++	reiserfs_write_lock_nested(inode->i_sb, depth);
+ 
+ 	if (reiserfs_transaction_running(inode->i_sb)) {
+ 		th = current->journal_info;
+@@ -3115,7 +3111,6 @@ int reiserfs_setattr(struct dentry *dent
  {
---- a/fs/reiserfs/namei.c	2013-08-05 17:49:57.498466861 -0400
-+++ b/fs/reiserfs/namei.c	2013-08-05 17:49:58.470452024 -0400
-@@ -604,8 +604,9 @@ static int reiserfs_create(struct inode
- 	retval =
- 	    reiserfs_new_inode(&th, dir, mode, NULL, 0 /*i_size */ , dentry,
- 			       inode, &security);
-+	/* inode is dropped and write lock is released */
- 	if (retval)
--		goto out_failed;
-+		return retval;
+ 	struct inode *inode = dentry->d_inode;
+ 	unsigned int ia_valid;
+-	int depth;
+ 	int error;
  
- 	inode->i_op = &reiserfs_file_inode_operations;
- 	inode->i_fop = &reiserfs_file_operations;
-@@ -678,9 +679,9 @@ static int reiserfs_mknod(struct inode *
- 	retval =
- 	    reiserfs_new_inode(&th, dir, mode, NULL, 0 /*i_size */ , dentry,
- 			       inode, &security);
--	if (retval) {
--		goto out_failed;
+ 	error = inode_change_ok(inode, attr);
+@@ -3127,14 +3122,14 @@ int reiserfs_setattr(struct dentry *dent
+ 
+ 	if (is_quota_modification(inode, attr))
+ 		dquot_initialize(inode);
+-	depth = reiserfs_write_lock_once(inode->i_sb);
++	reiserfs_write_lock(inode->i_sb);
+ 	if (attr->ia_valid & ATTR_SIZE) {
+ 		/* version 2 items will be caught by the s_maxbytes check
+ 		 ** done for us in vmtruncate
+ 		 */
+ 		if (get_inode_item_key_version(inode) == KEY_FORMAT_3_5 &&
+ 		    attr->ia_size > MAX_NON_LFS) {
+-			reiserfs_write_unlock_once(inode->i_sb, depth);
++			reiserfs_write_unlock(inode->i_sb);
+ 			error = -EFBIG;
+ 			goto out;
+ 		}
+@@ -3157,7 +3152,7 @@ int reiserfs_setattr(struct dentry *dent
+ 					error = err;
+ 			}
+ 			if (error) {
+-				reiserfs_write_unlock_once(inode->i_sb, depth);
++				reiserfs_write_unlock(inode->i_sb);
+ 				goto out;
+ 			}
+ 			/*
+@@ -3167,7 +3162,7 @@ int reiserfs_setattr(struct dentry *dent
+ 			attr->ia_valid |= (ATTR_MTIME | ATTR_CTIME);
+ 		}
+ 	}
+-	reiserfs_write_unlock_once(inode->i_sb, depth);
++	reiserfs_write_unlock(inode->i_sb);
+ 
+ 	if ((((attr->ia_valid & ATTR_UID) && (from_kuid(&init_user_ns, attr->ia_uid) & ~0xffff)) ||
+ 	     ((attr->ia_valid & ATTR_GID) && (from_kgid(&init_user_ns, attr->ia_gid) & ~0xffff))) &&
+@@ -3192,16 +3187,16 @@ int reiserfs_setattr(struct dentry *dent
+ 			return error;
+ 
+ 		/* (user+group)*(old+new) structure - we count quota info and , inode write (sb, inode) */
+-		depth = reiserfs_write_lock_once(inode->i_sb);
++		reiserfs_write_lock(inode->i_sb);
+ 		error = journal_begin(&th, inode->i_sb, jbegin_count);
+-		reiserfs_write_unlock_once(inode->i_sb, depth);
++		reiserfs_write_unlock(inode->i_sb);
+ 		if (error)
+ 			goto out;
+ 		error = dquot_transfer(inode, attr);
+-		depth = reiserfs_write_lock_once(inode->i_sb);
++		reiserfs_write_lock(inode->i_sb);
+ 		if (error) {
+ 			journal_end(&th, inode->i_sb, jbegin_count);
+-			reiserfs_write_unlock_once(inode->i_sb, depth);
++			reiserfs_write_unlock(inode->i_sb);
+ 			goto out;
+ 		}
+ 
+@@ -3213,7 +3208,7 @@ int reiserfs_setattr(struct dentry *dent
+ 			inode->i_gid = attr->ia_gid;
+ 		mark_inode_dirty(inode);
+ 		error = journal_end(&th, inode->i_sb, jbegin_count);
+-		reiserfs_write_unlock_once(inode->i_sb, depth);
++		reiserfs_write_unlock(inode->i_sb);
+ 		if (error)
+ 			goto out;
+ 	}
+--- a/fs/reiserfs/ioctl.c	2013-08-05 20:08:59.254412281 -0400
++++ b/fs/reiserfs/ioctl.c	2013-08-05 20:09:52.481601895 -0400
+@@ -167,7 +167,6 @@ int reiserfs_commit_write(struct file *f
+ int reiserfs_unpack(struct inode *inode, struct file *filp)
+ {
+ 	int retval = 0;
+-	int depth;
+ 	int index;
+ 	struct page *page;
+ 	struct address_space *mapping;
+@@ -183,11 +182,11 @@ int reiserfs_unpack(struct inode *inode,
+ 		return 0;
+ 	}
+ 
+-	depth = reiserfs_write_lock_once(inode->i_sb);
+-
+ 	/* we need to make sure nobody is changing the file size beneath us */
+ 	reiserfs_mutex_lock_safe(&inode->i_mutex, inode->i_sb);
+ 
++	reiserfs_write_lock(inode->i_sb);
++
+ 	write_from = inode->i_size & (blocksize - 1);
+ 	/* if we are on a block boundary, we are already unpacked.  */
+ 	if (write_from == 0) {
+@@ -221,6 +220,6 @@ int reiserfs_unpack(struct inode *inode,
+ 
+       out:
+ 	mutex_unlock(&inode->i_mutex);
+-	reiserfs_write_unlock_once(inode->i_sb, depth);
++	reiserfs_write_unlock(inode->i_sb);
+ 	return retval;
+ }
+--- a/fs/reiserfs/journal.c	2013-08-05 20:08:59.254412281 -0400
++++ b/fs/reiserfs/journal.c	2013-08-05 20:09:52.493601712 -0400
+@@ -947,9 +947,11 @@ static int reiserfs_async_progress_wait(
+ 	struct reiserfs_journal *j = SB_JOURNAL(s);
+ 
+ 	if (atomic_read(&j->j_async_throttle)) {
+-		reiserfs_write_unlock(s);
++		int depth;
++
++		depth = reiserfs_write_unlock_nested(s);
+ 		congestion_wait(BLK_RW_ASYNC, HZ / 10);
+-		reiserfs_write_lock(s);
++		reiserfs_write_lock_nested(s, depth);
+ 	}
+ 
+ 	return 0;
+@@ -972,6 +974,7 @@ static int flush_commit_list(struct supe
+ 	struct reiserfs_journal *journal = SB_JOURNAL(s);
+ 	int retval = 0;
+ 	int write_len;
++	int depth;
+ 
+ 	reiserfs_check_lock_depth(s, "flush_commit_list");
+ 
+@@ -1018,12 +1021,12 @@ static int flush_commit_list(struct supe
+ 		 * We might sleep in numerous places inside
+ 		 * write_ordered_buffers. Relax the write lock.
+ 		 */
+-		reiserfs_write_unlock(s);
++		depth = reiserfs_write_unlock_nested(s);
+ 		ret = write_ordered_buffers(&journal->j_dirty_buffers_lock,
+ 					    journal, jl, &jl->j_bh_list);
+ 		if (ret < 0 && retval == 0)
+ 			retval = ret;
+-		reiserfs_write_lock(s);
++		reiserfs_write_lock_nested(s, depth);
+ 	}
+ 	BUG_ON(!list_empty(&jl->j_bh_list));
+ 	/*
+@@ -1043,9 +1046,9 @@ static int flush_commit_list(struct supe
+ 		tbh = journal_find_get_block(s, bn);
+ 		if (tbh) {
+ 			if (buffer_dirty(tbh)) {
+-		            reiserfs_write_unlock(s);
++		            depth = reiserfs_write_unlock_nested(s);
+ 			    ll_rw_block(WRITE, 1, &tbh);
+-			    reiserfs_write_lock(s);
++			    reiserfs_write_lock_nested(s, depth);
+ 			}
+ 			put_bh(tbh) ;
+ 		}
+@@ -1057,17 +1060,17 @@ static int flush_commit_list(struct supe
+ 		    (jl->j_start + i) % SB_ONDISK_JOURNAL_SIZE(s);
+ 		tbh = journal_find_get_block(s, bn);
+ 
+-		reiserfs_write_unlock(s);
+-		wait_on_buffer(tbh);
+-		reiserfs_write_lock(s);
++		depth = reiserfs_write_unlock_nested(s);
++		__wait_on_buffer(tbh);
++		reiserfs_write_lock_nested(s, depth);
+ 		// since we're using ll_rw_blk above, it might have skipped over
+ 		// a locked buffer.  Double check here
+ 		//
+ 		/* redundant, sync_dirty_buffer() checks */
+ 		if (buffer_dirty(tbh)) {
+-			reiserfs_write_unlock(s);
++			depth = reiserfs_write_unlock_nested(s);
+ 			sync_dirty_buffer(tbh);
+-			reiserfs_write_lock(s);
++			reiserfs_write_lock_nested(s, depth);
+ 		}
+ 		if (unlikely(!buffer_uptodate(tbh))) {
+ #ifdef CONFIG_REISERFS_CHECK
+@@ -1091,12 +1094,12 @@ static int flush_commit_list(struct supe
+ 		if (buffer_dirty(jl->j_commit_bh))
+ 			BUG();
+ 		mark_buffer_dirty(jl->j_commit_bh) ;
+-		reiserfs_write_unlock(s);
++		depth = reiserfs_write_unlock_nested(s);
+ 		if (reiserfs_barrier_flush(s))
+ 			__sync_dirty_buffer(jl->j_commit_bh, WRITE_FLUSH_FUA);
+ 		else
+ 			sync_dirty_buffer(jl->j_commit_bh);
+-		reiserfs_write_lock(s);
++		reiserfs_write_lock_nested(s, depth);
+ 	}
+ 
+ 	/* If there was a write error in the journal - we can't commit this
+@@ -1228,15 +1231,16 @@ static int _update_journal_header_block(
+ {
+ 	struct reiserfs_journal_header *jh;
+ 	struct reiserfs_journal *journal = SB_JOURNAL(sb);
++	int depth;
+ 
+ 	if (reiserfs_is_journal_aborted(journal))
+ 		return -EIO;
+ 
+ 	if (trans_id >= journal->j_last_flush_trans_id) {
+ 		if (buffer_locked((journal->j_header_bh))) {
+-			reiserfs_write_unlock(sb);
+-			wait_on_buffer((journal->j_header_bh));
+-			reiserfs_write_lock(sb);
++			depth = reiserfs_write_unlock_nested(sb);
++			__wait_on_buffer(journal->j_header_bh);
++			reiserfs_write_lock_nested(sb, depth);
+ 			if (unlikely(!buffer_uptodate(journal->j_header_bh))) {
+ #ifdef CONFIG_REISERFS_CHECK
+ 				reiserfs_warning(sb, "journal-699",
+@@ -1254,14 +1258,14 @@ static int _update_journal_header_block(
+ 		jh->j_mount_id = cpu_to_le32(journal->j_mount_id);
+ 
+ 		set_buffer_dirty(journal->j_header_bh);
+-		reiserfs_write_unlock(sb);
++		depth = reiserfs_write_unlock_nested(sb);
+ 
+ 		if (reiserfs_barrier_flush(sb))
+ 			__sync_dirty_buffer(journal->j_header_bh, WRITE_FLUSH_FUA);
+ 		else
+ 			sync_dirty_buffer(journal->j_header_bh);
+ 
+-		reiserfs_write_lock(sb);
++		reiserfs_write_lock_nested(sb, depth);
+ 		if (!buffer_uptodate(journal->j_header_bh)) {
+ 			reiserfs_warning(sb, "journal-837",
+ 					 "IO error during journal replay");
+@@ -1341,6 +1345,7 @@ static int flush_journal_list(struct sup
+ 	unsigned long j_len_saved = jl->j_len;
+ 	struct reiserfs_journal *journal = SB_JOURNAL(s);
+ 	int err = 0;
++	int depth;
+ 
+ 	BUG_ON(j_len_saved <= 0);
+ 
+@@ -1495,9 +1500,9 @@ static int flush_journal_list(struct sup
+ 						       "cn->bh is NULL");
+ 				}
+ 
+-				reiserfs_write_unlock(s);
+-				wait_on_buffer(cn->bh);
+-				reiserfs_write_lock(s);
++				depth = reiserfs_write_unlock_nested(s);
++				__wait_on_buffer(cn->bh);
++				reiserfs_write_lock_nested(s, depth);
+ 
+ 				if (!cn->bh) {
+ 					reiserfs_panic(s, "journal-1012",
+@@ -1974,6 +1979,7 @@ static int journal_compare_desc_commit(s
+ /* returns 0 if it did not find a description block
+ ** returns -1 if it found a corrupt commit block
+ ** returns 1 if both desc and commit were valid
++** NOTE: only called during fs mount
+ */
+ static int journal_transaction_is_valid(struct super_block *sb,
+ 					struct buffer_head *d_bh,
+@@ -2073,8 +2079,9 @@ static void brelse_array(struct buffer_h
+ 
+ /*
+ ** given the start, and values for the oldest acceptable transactions,
+-** this either reads in a replays a transaction, or returns because the transaction
+-** is invalid, or too old.
++** this either reads in a replays a transaction, or returns because the
++** transaction is invalid, or too old.
++** NOTE: only called during fs mount
+ */
+ static int journal_read_transaction(struct super_block *sb,
+ 				    unsigned long cur_dblock,
+@@ -2208,10 +2215,7 @@ static int journal_read_transaction(stru
+ 	ll_rw_block(READ, get_desc_trans_len(desc), log_blocks);
+ 	for (i = 0; i < get_desc_trans_len(desc); i++) {
+ 
+-		reiserfs_write_unlock(sb);
+ 		wait_on_buffer(log_blocks[i]);
+-		reiserfs_write_lock(sb);
+-
+ 		if (!buffer_uptodate(log_blocks[i])) {
+ 			reiserfs_warning(sb, "journal-1212",
+ 					 "REPLAY FAILURE fsck required! "
+@@ -2318,12 +2322,13 @@ static struct buffer_head *reiserfs_brea
+ 
+ /*
+ ** read and replay the log
+-** on a clean unmount, the journal header's next unflushed pointer will be to an invalid
+-** transaction.  This tests that before finding all the transactions in the log, which makes normal mount times fast.
+-**
+-** After a crash, this starts with the next unflushed transaction, and replays until it finds one too old, or invalid.
+-**
++** on a clean unmount, the journal header's next unflushed pointer will
++** be to an invalid transaction.  This tests that before finding all the
++** transactions in the log, which makes normal mount times fast.
++** After a crash, this starts with the next unflushed transaction, and
++** replays until it finds one too old, or invalid.
+ ** On exit, it sets things up so the first transaction will work correctly.
++** NOTE: only called during fs mount
+ */
+ static int journal_read(struct super_block *sb)
+ {
+@@ -2501,14 +2506,18 @@ static int journal_read(struct super_blo
+ 			      "replayed %d transactions in %lu seconds\n",
+ 			      replay_count, get_seconds() - start);
+ 	}
++	/* needed to satisfy the locking in _update_journal_header_block */
++	reiserfs_write_lock(sb);
+ 	if (!bdev_read_only(sb->s_bdev) &&
+ 	    _update_journal_header_block(sb, journal->j_start,
+ 					 journal->j_last_flush_trans_id)) {
++		reiserfs_write_unlock(sb);
+ 		/* replay failed, caller must call free_journal_ram and abort
+ 		 ** the mount
+ 		 */
+ 		return -1;
+ 	}
++	reiserfs_write_unlock(sb);
+ 	return 0;
+ }
+ 
+@@ -2828,13 +2837,7 @@ int journal_init(struct super_block *sb,
+ 		goto free_and_return;
+ 	}
+ 
+-	/*
+-	 * Journal_read needs to be inspected in order to push down
+-	 * the lock further inside (or even remove it).
+-	 */
+-	reiserfs_write_lock(sb);
+ 	ret = journal_read(sb);
+-	reiserfs_write_unlock(sb);
+ 	if (ret < 0) {
+ 		reiserfs_warning(sb, "reiserfs-2006",
+ 				 "Replay Failure, unable to mount");
+@@ -2923,9 +2926,9 @@ static void queue_log_writer(struct supe
+ 	add_wait_queue(&journal->j_join_wait, &wait);
+ 	set_current_state(TASK_UNINTERRUPTIBLE);
+ 	if (test_bit(J_WRITERS_QUEUED, &journal->j_state)) {
+-		reiserfs_write_unlock(s);
++		int depth = reiserfs_write_unlock_nested(s);
+ 		schedule();
+-		reiserfs_write_lock(s);
++		reiserfs_write_lock_nested(s, depth);
+ 	}
+ 	__set_current_state(TASK_RUNNING);
+ 	remove_wait_queue(&journal->j_join_wait, &wait);
+@@ -2943,9 +2946,12 @@ static void let_transaction_grow(struct
+ 	struct reiserfs_journal *journal = SB_JOURNAL(sb);
+ 	unsigned long bcount = journal->j_bcount;
+ 	while (1) {
+-		reiserfs_write_unlock(sb);
++		int depth;
++
++		depth = reiserfs_write_unlock_nested(sb);
+ 		schedule_timeout_uninterruptible(1);
+-		reiserfs_write_lock(sb);
++		reiserfs_write_lock_nested(sb, depth);
++
+ 		journal->j_current_jl->j_state |= LIST_COMMIT_PENDING;
+ 		while ((atomic_read(&journal->j_wcount) > 0 ||
+ 			atomic_read(&journal->j_jlock)) &&
+@@ -2976,6 +2982,7 @@ static int do_journal_begin_r(struct rei
+ 	struct reiserfs_transaction_handle myth;
+ 	int sched_count = 0;
+ 	int retval;
++	int depth;
+ 
+ 	reiserfs_check_lock_depth(sb, "journal_begin");
+ 	BUG_ON(nblocks > journal->j_trans_max);
+@@ -2996,9 +3003,9 @@ static int do_journal_begin_r(struct rei
+ 
+ 	if (test_bit(J_WRITERS_BLOCKED, &journal->j_state)) {
+ 		unlock_journal(sb);
+-		reiserfs_write_unlock(sb);
++		depth = reiserfs_write_unlock_nested(sb);
+ 		reiserfs_wait_on_write_block(sb);
+-		reiserfs_write_lock(sb);
++		reiserfs_write_lock_nested(sb, depth);
+ 		PROC_INFO_INC(sb, journal.journal_relock_writers);
+ 		goto relock;
+ 	}
+@@ -3821,6 +3828,7 @@ void reiserfs_restore_prepared_buffer(st
+ 	if (test_clear_buffer_journal_restore_dirty(bh) &&
+ 	    buffer_journal_dirty(bh)) {
+ 		struct reiserfs_journal_cnode *cn;
++		reiserfs_write_lock(sb);
+ 		cn = get_journal_hash_dev(sb,
+ 					  journal->j_list_hash_table,
+ 					  bh->b_blocknr);
+@@ -3828,6 +3836,7 @@ void reiserfs_restore_prepared_buffer(st
+ 			set_buffer_journal_test(bh);
+ 			mark_buffer_dirty(bh);
+ 		}
++		reiserfs_write_unlock(sb);
+ 	}
+ 	clear_buffer_journal_prepared(bh);
+ }
+@@ -3911,6 +3920,7 @@ static int do_journal_end(struct reiserf
+ 	unsigned long jindex;
+ 	unsigned int commit_trans_id;
+ 	int trans_half;
++	int depth;
+ 
+ 	BUG_ON(th->t_refcount > 1);
+ 	BUG_ON(!th->t_trans_id);
+@@ -4116,9 +4126,7 @@ static int do_journal_end(struct reiserf
+ 		next = cn->next;
+ 		free_cnode(sb, cn);
+ 		cn = next;
+-		reiserfs_write_unlock(sb);
+-		cond_resched();
+-		reiserfs_write_lock(sb);
++		reiserfs_cond_resched(sb);
+ 	}
+ 
+ 	/* we are done  with both the c_bh and d_bh, but
+@@ -4165,10 +4173,10 @@ static int do_journal_end(struct reiserf
+ 	 * is lost.
+ 	 */
+ 	if (!list_empty(&jl->j_tail_bh_list)) {
+-		reiserfs_write_unlock(sb);
++		depth = reiserfs_write_unlock_nested(sb);
+ 		write_ordered_buffers(&journal->j_dirty_buffers_lock,
+ 				      journal, jl, &jl->j_tail_bh_list);
+-		reiserfs_write_lock(sb);
++		reiserfs_write_lock_nested(sb, depth);
+ 	}
+ 	BUG_ON(!list_empty(&jl->j_tail_bh_list));
+ 	mutex_unlock(&jl->j_commit_mutex);
+--- a/fs/reiserfs/lock.c	2013-08-05 20:08:59.254412281 -0400
++++ b/fs/reiserfs/lock.c	2013-08-05 20:09:52.505601529 -0400
+@@ -29,6 +29,9 @@ void reiserfs_write_lock(struct super_bl
+ 
+ 	/* No need to protect it, only the current task touches it */
+ 	sb_i->lock_depth++;
++#ifdef DEBUG
++	inc_preempt_count();
++#endif
+ }
+ 
+ void reiserfs_write_unlock(struct super_block *s)
+@@ -42,36 +45,59 @@ void reiserfs_write_unlock(struct super_
+ 	 */
+ 	BUG_ON(sb_i->lock_owner != current);
+ 
++#ifdef DEBUG
++	dec_preempt_count();
++#endif
+ 	if (--sb_i->lock_depth == -1) {
+ 		sb_i->lock_owner = NULL;
+ 		mutex_unlock(&sb_i->lock);
+ 	}
+ }
+ 
+-/*
+- * If we already own the lock, just exit and don't increase the depth.
+- * Useful when we don't want to lock more than once.
+- *
+- * We always return the lock_depth we had before calling
+- * this function.
+- */
+-int reiserfs_write_lock_once(struct super_block *s)
++int __must_check reiserfs_write_unlock_nested(struct super_block *s)
+ {
+ 	struct reiserfs_sb_info *sb_i = REISERFS_SB(s);
++	int depth;
++#ifdef DEBUG
++	int i;
++#endif
++
++	/* this can happen when the lock isn't always held */
++	if (sb_i->lock_owner != current)
++		return -1;
++
++	depth = sb_i->lock_depth;
++#ifdef DEBUG
++	for (i = 0; i <= depth; i++)
++		dec_preempt_count();
++#endif
++
++	sb_i->lock_depth = -1;
++	sb_i->lock_owner = NULL;
++	mutex_unlock(&sb_i->lock);
+ 
+-	if (sb_i->lock_owner != current) {
+-		mutex_lock(&sb_i->lock);
+-		sb_i->lock_owner = current;
+-		return sb_i->lock_depth++;
 -	}
-+	/* inode is dropped and write lock is released */
-+	if (retval)
-+		return retval;
+-
+-	return sb_i->lock_depth;
++	return depth;
+ }
  
- 	inode->i_op = &reiserfs_special_inode_operations;
- 	init_special_inode(inode, inode->i_mode, rdev);
-@@ -763,9 +764,10 @@ static int reiserfs_mkdir(struct inode *
- 					old_format_only(dir->i_sb) ?
- 					EMPTY_DIR_SIZE_V1 : EMPTY_DIR_SIZE,
- 					dentry, inode, &security);
-+	/* inode is dropped and write lock is released */
+-void reiserfs_write_unlock_once(struct super_block *s, int lock_depth)
++void reiserfs_write_lock_nested(struct super_block *s, int depth)
+ {
+-	if (lock_depth == -1)
+-		reiserfs_write_unlock(s);
++	struct reiserfs_sb_info *sb_i = REISERFS_SB(s);
++#ifdef DEBUG
++	int i;
++#endif
++
++	/* this can happen when the lock isn't always held */
++	if (depth == -1)
++		return;
++
++	mutex_lock(&sb_i->lock);
++	sb_i->lock_owner = current;
++	sb_i->lock_depth = depth;
++
++#ifdef DEBUG
++	for (i = 0; i <= depth; i++)
++		inc_preempt_count();
++#endif
+ }
+ 
+ /*
+@@ -82,9 +108,7 @@ void reiserfs_check_lock_depth(struct su
+ {
+ 	struct reiserfs_sb_info *sb_i = REISERFS_SB(sb);
+ 
+-	if (sb_i->lock_depth < 0)
+-		reiserfs_panic(sb, "%s called without kernel lock held %d",
+-			       caller);
++	WARN_ON(sb_i->lock_depth < 0);
+ }
+ 
+ #ifdef CONFIG_REISERFS_CHECK
+--- a/fs/reiserfs/namei.c	2013-08-05 20:08:59.254412281 -0400
++++ b/fs/reiserfs/namei.c	2013-08-05 20:09:52.513601408 -0400
+@@ -325,7 +325,6 @@ static struct dentry *reiserfs_lookup(st
+ 				      unsigned int flags)
+ {
+ 	int retval;
+-	int lock_depth;
+ 	struct inode *inode = NULL;
+ 	struct reiserfs_dir_entry de;
+ 	INITIALIZE_PATH(path_to_entry);
+@@ -333,12 +332,7 @@ static struct dentry *reiserfs_lookup(st
+ 	if (REISERFS_MAX_NAME(dir->i_sb->s_blocksize) < dentry->d_name.len)
+ 		return ERR_PTR(-ENAMETOOLONG);
+ 
+-	/*
+-	 * Might be called with or without the write lock, must be careful
+-	 * to not recursively hold it in case we want to release the lock
+-	 * before rescheduling.
+-	 */
+-	lock_depth = reiserfs_write_lock_once(dir->i_sb);
++	reiserfs_write_lock(dir->i_sb);
+ 
+ 	de.de_gen_number_bit_string = NULL;
+ 	retval =
+@@ -349,7 +343,7 @@ static struct dentry *reiserfs_lookup(st
+ 		inode = reiserfs_iget(dir->i_sb,
+ 				      (struct cpu_key *)&(de.de_dir_id));
+ 		if (!inode || IS_ERR(inode)) {
+-			reiserfs_write_unlock_once(dir->i_sb, lock_depth);
++			reiserfs_write_unlock(dir->i_sb);
+ 			return ERR_PTR(-EACCES);
+ 		}
+ 
+@@ -358,7 +352,7 @@ static struct dentry *reiserfs_lookup(st
+ 		if (IS_PRIVATE(dir))
+ 			inode->i_flags |= S_PRIVATE;
+ 	}
+-	reiserfs_write_unlock_once(dir->i_sb, lock_depth);
++	reiserfs_write_unlock(dir->i_sb);
+ 	if (retval == IO_ERROR) {
+ 		return ERR_PTR(-EIO);
+ 	}
+@@ -727,7 +721,6 @@ static int reiserfs_mkdir(struct inode *
+ 	struct inode *inode;
+ 	struct reiserfs_transaction_handle th;
+ 	struct reiserfs_security_handle security;
+-	int lock_depth;
+ 	/* We need blocks for transaction + (user+group)*(quotas for new inode + update of quota for directory owner) */
+ 	int jbegin_count =
+ 	    JOURNAL_PER_BALANCE_CNT * 3 +
+@@ -753,7 +746,7 @@ static int reiserfs_mkdir(struct inode *
+ 		return retval;
+ 	}
+ 	jbegin_count += retval;
+-	lock_depth = reiserfs_write_lock_once(dir->i_sb);
++	reiserfs_write_lock(dir->i_sb);
+ 
+ 	retval = journal_begin(&th, dir->i_sb, jbegin_count);
  	if (retval) {
- 		DEC_DIR_INODE_NLINK(dir)
--		goto out_failed;
-+		return retval;
- 	}
+@@ -804,7 +797,7 @@ static int reiserfs_mkdir(struct inode *
+ 	d_instantiate(dentry, inode);
+ 	retval = journal_end(&th, dir->i_sb, jbegin_count);
+ out_failed:
+-	reiserfs_write_unlock_once(dir->i_sb, lock_depth);
++	reiserfs_write_unlock(dir->i_sb);
+ 	return retval;
+ }
  
- 	reiserfs_update_inode_transaction(inode);
-@@ -787,8 +789,9 @@ static int reiserfs_mkdir(struct inode *
- 		if (err)
- 			retval = err;
- 		unlock_new_inode(inode);
-+		reiserfs_write_unlock(dir->i_sb);
- 		iput(inode);
--		goto out_failed;
-+		return retval;
- 	}
- 	// the above add_entry did not update dir's stat data
- 	reiserfs_update_sd(&th, dir);
-@@ -1060,9 +1063,9 @@ static int reiserfs_symlink(struct inode
- 	    reiserfs_new_inode(&th, parent_dir, mode, name, strlen(symname),
- 			       dentry, inode, &security);
- 	kfree(name);
--	if (retval) {		/* reiserfs_new_inode iputs for us */
--		goto out_failed;
--	}
-+	/* inode is dropped and write lock is released */
-+	if (retval)
-+		return retval;
+@@ -920,7 +913,6 @@ static int reiserfs_unlink(struct inode
+ 	struct reiserfs_transaction_handle th;
+ 	int jbegin_count;
+ 	unsigned long savelink;
+-	int depth;
  
- 	reiserfs_update_inode_transaction(inode);
- 	reiserfs_update_inode_transaction(parent_dir);
-@@ -1084,8 +1087,9 @@ static int reiserfs_symlink(struct inode
- 		if (err)
- 			retval = err;
- 		unlock_new_inode(inode);
-+		reiserfs_write_unlock(parent_dir->i_sb);
- 		iput(inode);
--		goto out_failed;
-+		return retval;
- 	}
+ 	dquot_initialize(dir);
  
- 	unlock_new_inode(inode);
---- a/fs/reiserfs/reiserfs.h	2013-08-05 17:49:57.562465884 -0400
-+++ b/fs/reiserfs/reiserfs.h	2013-08-05 17:49:58.506451475 -0400
-@@ -13,6 +13,7 @@
- #include <linux/bitops.h>
- #include <linux/proc_fs.h>
- #include <linux/buffer_head.h>
-+#include <linux/quotaops.h>
+@@ -934,7 +926,7 @@ static int reiserfs_unlink(struct inode
+ 	    JOURNAL_PER_BALANCE_CNT * 2 + 2 +
+ 	    4 * REISERFS_QUOTA_TRANS_BLOCKS(dir->i_sb);
  
- /* the 32 bit compat definitions with int argument */
- #define REISERFS_IOC32_UNPACK		_IOW(0xCD, 1, int)
-@@ -632,6 +633,7 @@ void reiserfs_write_lock(struct super_bl
+-	depth = reiserfs_write_lock_once(dir->i_sb);
++	reiserfs_write_lock(dir->i_sb);
+ 	retval = journal_begin(&th, dir->i_sb, jbegin_count);
+ 	if (retval)
+ 		goto out_unlink;
+@@ -995,7 +987,7 @@ static int reiserfs_unlink(struct inode
+ 
+ 	retval = journal_end(&th, dir->i_sb, jbegin_count);
+ 	reiserfs_check_path(&path);
+-	reiserfs_write_unlock_once(dir->i_sb, depth);
++	reiserfs_write_unlock(dir->i_sb);
+ 	return retval;
+ 
+       end_unlink:
+@@ -1005,7 +997,7 @@ static int reiserfs_unlink(struct inode
+ 	if (err)
+ 		retval = err;
+       out_unlink:
+-	reiserfs_write_unlock_once(dir->i_sb, depth);
++	reiserfs_write_unlock(dir->i_sb);
+ 	return retval;
+ }
+ 
+--- a/fs/reiserfs/prints.c	2013-08-05 20:08:59.258412220 -0400
++++ b/fs/reiserfs/prints.c	2013-08-05 20:09:52.525601225 -0400
+@@ -358,12 +358,13 @@ void __reiserfs_panic(struct super_block
+ 	dump_stack();
+ #endif
+ 	if (sb)
+-		panic(KERN_WARNING "REISERFS panic (device %s): %s%s%s: %s\n",
++		printk(KERN_WARNING "REISERFS panic (device %s): %s%s%s: %s\n",
+ 		      sb->s_id, id ? id : "", id ? " " : "",
+ 		      function, error_buf);
+ 	else
+-		panic(KERN_WARNING "REISERFS panic: %s%s%s: %s\n",
++		printk(KERN_WARNING "REISERFS panic: %s%s%s: %s\n",
+ 		      id ? id : "", id ? " " : "", function, error_buf);
++	BUG();
+ }
+ 
+ void __reiserfs_error(struct super_block *sb, const char *id,
+--- a/fs/reiserfs/reiserfs.h	2013-08-05 20:08:59.258412220 -0400
++++ b/fs/reiserfs/reiserfs.h	2013-08-05 20:09:52.537601042 -0400
+@@ -630,8 +630,8 @@ static inline int __reiserfs_is_journal_
+  */
+ void reiserfs_write_lock(struct super_block *s);
  void reiserfs_write_unlock(struct super_block *s);
- int __must_check reiserfs_write_unlock_nested(struct super_block *s);
- void reiserfs_write_lock_nested(struct super_block *s, int depth);
-+void reiserfs_check_lock_nested(struct super_block *s, const char *caller);
+-int reiserfs_write_lock_once(struct super_block *s);
+-void reiserfs_write_unlock_once(struct super_block *s, int lock_depth);
++int __must_check reiserfs_write_unlock_nested(struct super_block *s);
++void reiserfs_write_lock_nested(struct super_block *s, int depth);
  
  #ifdef CONFIG_REISERFS_CHECK
  void reiserfs_lock_check_recursive(struct super_block *s);
-@@ -667,52 +669,26 @@ static inline void reiserfs_lock_check_r
+@@ -666,45 +666,54 @@ static inline void reiserfs_lock_check_r
+  * - The journal lock
   * - The inode mutex
   */
- 
--#define reiserfs_safe(sb, action)			\
--do {							\
--	struct super_block *__sb = (sb);		\
--	int __depth;					\
--	__depth = reiserfs_write_unlock_nested(__sb);	\
--	(action);					\
--	reiserfs_write_lock_nested(__sb, __depth);	\
--} while(0)
--
--#define reiserfs_mutex_lock_safe(mtx, s) reiserfs_safe(s, mutex_lock(mtx))
--#define reiserfs_mutex_lock_nested_safe(mtx, subclass, s) \
--	reiserfs_safe(s, mutex_lock_nested(mtx, subclass))
--#define reiserfs_down_read_safe(sem, s) reiserfs_safe(s, down_read(sem))
--
- /*
-  * When we schedule, we usually want to also release the write lock,
-  * according to the previous bkl based locking scheme of reiserfs.
-  */
- static inline void reiserfs_cond_resched(struct super_block *s)
+-static inline void reiserfs_mutex_lock_safe(struct mutex *m,
+-			       struct super_block *s)
++
++#define reiserfs_safe(sb, action)			\
++do {							\
++	struct super_block *__sb = (sb);		\
++	int __depth;					\
++	__depth = reiserfs_write_unlock_nested(__sb);	\
++	(action);					\
++	reiserfs_write_lock_nested(__sb, __depth);	\
++} while(0)
++
++#define reiserfs_mutex_lock_safe(mtx, s) reiserfs_safe(s, mutex_lock(mtx))
++#define reiserfs_mutex_lock_nested_safe(mtx, subclass, s) \
++	reiserfs_safe(s, mutex_lock_nested(mtx, subclass))
++#define reiserfs_down_read_safe(sem, s) reiserfs_safe(s, down_read(sem))
++
++/*
++ * When we schedule, we usually want to also release the write lock,
++ * according to the previous bkl based locking scheme of reiserfs.
++ */
++static inline void reiserfs_cond_resched(struct super_block *s)
  {
--	if (need_resched())
--		reiserfs_safe(s, schedule());
--}
--
--static inline struct buffer_head *
--reiserfs_safe_sb_bread(struct super_block *s, sector_t block)
--{
--	int depth;
--	struct buffer_head *bh;
--
--	depth = reiserfs_write_unlock_nested(s);
--	bh = sb_bread(s, block);
--	reiserfs_write_lock_nested(s, depth);
--
--	return bh;
-+	if (need_resched()) {
-+		int depth = reiserfs_write_unlock_nested(s);
-+		schedule();
-+		reiserfs_write_lock_nested(s, depth);
-+	}
+-	reiserfs_lock_check_recursive(s);
+-	reiserfs_write_unlock(s);
+-	mutex_lock(m);
+-	reiserfs_write_lock(s);
++	if (need_resched())
++		reiserfs_safe(s, schedule());
  }
  
--void reiserfs_safe_lock_buffer(struct buffer_head *bh);
--
 -static inline void
--reiserfs_safe_wait_on_buffer(struct buffer_head *bh, struct super_block *s)
-+static inline void reiserfs_mutex_lock_safe(struct mutex *m,
-+                              struct super_block *s)
+-reiserfs_mutex_lock_nested_safe(struct mutex *m, unsigned int subclass,
+-			       struct super_block *s)
++static inline struct buffer_head *
++reiserfs_safe_sb_bread(struct super_block *s, sector_t block)
  {
- 	int depth;
- 
- 	depth = reiserfs_write_unlock_nested(s);
--	__wait_on_buffer(bh);
-+	mutex_lock(m);
- 	reiserfs_write_lock_nested(s, depth);
+-	reiserfs_lock_check_recursive(s);
+-	reiserfs_write_unlock(s);
+-	mutex_lock_nested(m, subclass);
+-	reiserfs_write_lock(s);
++	int depth;
++	struct buffer_head *bh;
++
++	depth = reiserfs_write_unlock_nested(s);
++	bh = sb_bread(s, block);
++	reiserfs_write_lock_nested(s, depth);
++
++	return bh;
  }
  
---- a/fs/reiserfs/stree.c	2013-08-05 17:49:57.534466311 -0400
-+++ b/fs/reiserfs/stree.c	2013-08-05 17:49:58.482451841 -0400
-@@ -1198,6 +1198,7 @@ int reiserfs_delete_item(struct reiserfs
- 	struct item_head *q_ih;
- 	int quota_cut_bytes;
- 	int ret_value, del_size, removed;
-+	int depth;
- 
- #ifdef CONFIG_REISERFS_CHECK
- 	char mode;
-@@ -1307,7 +1308,9 @@ int reiserfs_delete_item(struct reiserfs
- 		       "reiserquota delete_item(): freeing %u, id=%u type=%c",
- 		       quota_cut_bytes, inode->i_uid, head2type(&s_ih));
- #endif
-+	depth = reiserfs_write_unlock_nested(sb);
- 	dquot_free_space_nodirty(inode, quota_cut_bytes);
-+	reiserfs_write_lock_nested(sb, depth);
- 
- 	/* Return deleted body length */
- 	return ret_value;
-@@ -1340,6 +1343,7 @@ void reiserfs_delete_solid_item(struct r
- 	struct cpu_key cpu_key;
- 	int retval;
- 	int quota_cut_bytes = 0;
-+	struct super_block *sb = th->t_super;
- 
- 	BUG_ON(!th->t_trans_id);
- 
-@@ -1385,14 +1389,17 @@ void reiserfs_delete_solid_item(struct r
- 		if (retval == CARRY_ON) {
- 			do_balance(&tb, NULL, NULL, M_DELETE);
- 			if (inode) {	/* Should we count quota for item? (we don't count quotas for save-links) */
-+				int depth;
- #ifdef REISERQUOTA_DEBUG
- 				reiserfs_debug(th->t_super, REISERFS_DEBUG_CODE,
- 					       "reiserquota delete_solid_item(): freeing %u id=%u type=%c",
- 					       quota_cut_bytes, inode->i_uid,
- 					       key2type(key));
- #endif
-+				depth = reiserfs_write_unlock_nested(sb);
- 				dquot_free_space_nodirty(inode,
- 							 quota_cut_bytes);
-+				reiserfs_write_lock_nested(sb, depth);
- 			}
- 			break;
- 		}
-@@ -1569,6 +1576,7 @@ int reiserfs_cut_from_item(struct reiser
- 	int retval2 = -1;
- 	int quota_cut_bytes;
- 	loff_t tail_pos = 0;
-+	int depth;
- 
- 	BUG_ON(!th->t_trans_id);
- 
-@@ -1741,7 +1749,9 @@ int reiserfs_cut_from_item(struct reiser
- 		       "reiserquota cut_from_item(): freeing %u id=%u type=%c",
- 		       quota_cut_bytes, inode->i_uid, '?');
- #endif
-+	depth = reiserfs_write_unlock_nested(sb);
- 	dquot_free_space_nodirty(inode, quota_cut_bytes);
-+	reiserfs_write_lock_nested(sb, depth);
- 	return ret_value;
- }
- 
-@@ -1964,6 +1974,7 @@ int reiserfs_paste_into_item(struct reis
- 	struct tree_balance s_paste_balance;
- 	int retval;
- 	int fs_gen;
-+	int depth;
- 
- 	BUG_ON(!th->t_trans_id);
- 
-@@ -1976,9 +1987,9 @@ int reiserfs_paste_into_item(struct reis
- 		       key2type(&(key->on_disk_key)));
- #endif
- 
--	reiserfs_write_unlock(inode->i_sb);
-+	depth = reiserfs_write_unlock_nested(inode->i_sb);
- 	retval = dquot_alloc_space_nodirty(inode, pasted_size);
--	reiserfs_write_lock(inode->i_sb);
-+	reiserfs_write_lock_nested(inode->i_sb, depth);
- 	if (retval) {
- 		pathrelse(search_path);
- 		return retval;
-@@ -2035,7 +2046,9 @@ int reiserfs_paste_into_item(struct reis
- 		       pasted_size, inode->i_uid,
- 		       key2type(&(key->on_disk_key)));
- #endif
-+	depth = reiserfs_write_unlock_nested(inode->i_sb);
- 	dquot_free_space_nodirty(inode, pasted_size);
-+	reiserfs_write_lock_nested(inode->i_sb, depth);
- 	return retval;
- }
- 
-@@ -2050,10 +2063,12 @@ int reiserfs_insert_item(struct reiserfs
- 			 struct item_head *ih, struct inode *inode,
- 			 const char *body)
++void reiserfs_safe_lock_buffer(struct buffer_head *bh);
++
+ static inline void
+-reiserfs_down_read_safe(struct rw_semaphore *sem, struct super_block *s)
++reiserfs_safe_wait_on_buffer(struct buffer_head *bh, struct super_block *s)
  {
-+	struct super_block *sb = th->t_super;
- 	struct tree_balance s_ins_balance;
- 	int retval;
- 	int fs_gen = 0;
- 	int quota_bytes = 0;
+-	reiserfs_lock_check_recursive(s);
+-	reiserfs_write_unlock(s);
+-	down_read(sem);
+-	reiserfs_write_lock(s);
+-}
 +	int depth;
  
- 	BUG_ON(!th->t_trans_id);
- 
-@@ -2071,11 +2086,11 @@ int reiserfs_insert_item(struct reiserfs
- 			       "reiserquota insert_item(): allocating %u id=%u type=%c",
- 			       quota_bytes, inode->i_uid, head2type(ih));
- #endif
--		reiserfs_write_unlock(inode->i_sb);
- 		/* We can't dirty inode here. It would be immediately written but
- 		 * appropriate stat item isn't inserted yet... */
-+		depth = reiserfs_write_unlock_nested(sb);
- 		retval = dquot_alloc_space_nodirty(inode, quota_bytes);
--		reiserfs_write_lock(inode->i_sb);
-+		reiserfs_write_lock_nested(sb, depth);
- 		if (retval) {
- 			pathrelse(path);
- 			return retval;
-@@ -2126,7 +2141,10 @@ int reiserfs_insert_item(struct reiserfs
- 		       "reiserquota insert_item(): freeing %u id=%u type=%c",
- 		       quota_bytes, inode->i_uid, head2type(ih));
- #endif
--	if (inode)
-+	if (inode) {
-+		depth = reiserfs_write_unlock_nested(sb);
- 		dquot_free_space_nodirty(inode, quota_bytes);
-+		reiserfs_write_lock_nested(sb, depth);
-+	}
- 	return retval;
- }
---- a/fs/reiserfs/super.c	2013-08-05 17:49:57.546466129 -0400
-+++ b/fs/reiserfs/super.c	2013-08-05 17:49:58.494451658 -0400
-@@ -198,6 +198,7 @@ static int finish_unfinished(struct supe
- 	int done;
- 	struct inode *inode;
- 	int truncate;
-+	int depth;
- #ifdef CONFIG_QUOTA
- 	int i;
- 	int ms_active_set;
-@@ -298,9 +299,9 @@ static int finish_unfinished(struct supe
- 			retval = remove_save_link_only(s, &save_link_key, 0);
- 			continue;
- 		}
+-/*
+- * When we schedule, we usually want to also release the write lock,
+- * according to the previous bkl based locking scheme of reiserfs.
+- */
+-static inline void reiserfs_cond_resched(struct super_block *s)
+-{
+-	if (need_resched()) {
 -		reiserfs_write_unlock(s);
-+		depth = reiserfs_write_unlock_nested(inode->i_sb);
- 		dquot_initialize(inode);
+-		schedule();
 -		reiserfs_write_lock(s);
-+		reiserfs_write_lock_nested(inode->i_sb, depth);
- 
- 		if (truncate && S_ISDIR(inode->i_mode)) {
- 			/* We got a truncate request for a dir which is impossible.
-@@ -356,10 +357,12 @@ static int finish_unfinished(struct supe
- 
- #ifdef CONFIG_QUOTA
- 	/* Turn quotas off */
-+	reiserfs_write_unlock(s);
- 	for (i = 0; i < MAXQUOTAS; i++) {
- 		if (sb_dqopt(s)->files[i] && quota_enabled[i])
- 			dquot_quota_off(s, i);
- 	}
-+	reiserfs_write_lock(s);
- 	if (ms_active_set)
- 		/* Restore the flag back */
- 		s->s_flags &= ~MS_ACTIVE;
-@@ -2097,7 +2100,7 @@ static int reiserfs_statfs(struct dentry
- static int reiserfs_write_dquot(struct dquot *dquot)
- {
- 	struct reiserfs_transaction_handle th;
--	int ret, err;
-+	int ret, err, depth;
- 
- 	reiserfs_write_lock(dquot->dq_sb);
- 	ret =
-@@ -2105,9 +2108,9 @@ static int reiserfs_write_dquot(struct d
- 			  REISERFS_QUOTA_TRANS_BLOCKS(dquot->dq_sb));
- 	if (ret)
- 		goto out;
--	reiserfs_write_unlock(dquot->dq_sb);
-+	depth = reiserfs_write_unlock_nested(dquot->dq_sb);
- 	ret = dquot_commit(dquot);
--	reiserfs_write_lock(dquot->dq_sb);
-+	reiserfs_write_lock_nested(dquot->dq_sb, depth);
- 	err =
- 	    journal_end(&th, dquot->dq_sb,
- 			REISERFS_QUOTA_TRANS_BLOCKS(dquot->dq_sb));
-@@ -2121,7 +2124,7 @@ out:
- static int reiserfs_acquire_dquot(struct dquot *dquot)
- {
- 	struct reiserfs_transaction_handle th;
--	int ret, err;
-+	int ret, err, depth;
- 
- 	reiserfs_write_lock(dquot->dq_sb);
- 	ret =
-@@ -2129,9 +2132,9 @@ static int reiserfs_acquire_dquot(struct
- 			  REISERFS_QUOTA_INIT_BLOCKS(dquot->dq_sb));
- 	if (ret)
- 		goto out;
--	reiserfs_write_unlock(dquot->dq_sb);
-+	depth = reiserfs_write_unlock_nested(dquot->dq_sb);
- 	ret = dquot_acquire(dquot);
--	reiserfs_write_lock(dquot->dq_sb);
-+	reiserfs_write_lock_nested(dquot->dq_sb, depth);
- 	err =
- 	    journal_end(&th, dquot->dq_sb,
- 			REISERFS_QUOTA_INIT_BLOCKS(dquot->dq_sb));
-@@ -2145,20 +2148,21 @@ out:
- static int reiserfs_release_dquot(struct dquot *dquot)
- {
- 	struct reiserfs_transaction_handle th;
--	int ret, err;
-+	int ret, err, depth;
- 
- 	reiserfs_write_lock(dquot->dq_sb);
- 	ret =
- 	    journal_begin(&th, dquot->dq_sb,
- 			  REISERFS_QUOTA_DEL_BLOCKS(dquot->dq_sb));
--	reiserfs_write_unlock(dquot->dq_sb);
-+	depth = reiserfs_write_unlock_nested(dquot->dq_sb);
- 	if (ret) {
- 		/* Release dquot anyway to avoid endless cycle in dqput() */
- 		dquot_release(dquot);
-+		reiserfs_write_lock_nested(dquot->dq_sb, depth);
- 		goto out;
- 	}
- 	ret = dquot_release(dquot);
--	reiserfs_write_lock(dquot->dq_sb);
-+	reiserfs_write_lock_nested(dquot->dq_sb, depth);
- 	err =
- 	    journal_end(&th, dquot->dq_sb,
- 			REISERFS_QUOTA_DEL_BLOCKS(dquot->dq_sb));
-@@ -2183,16 +2187,16 @@ static int reiserfs_mark_dquot_dirty(str
- static int reiserfs_write_info(struct super_block *sb, int type)
- {
- 	struct reiserfs_transaction_handle th;
--	int ret, err;
-+	int ret, err, depth;
- 
- 	/* Data block + inode block */
- 	reiserfs_write_lock(sb);
- 	ret = journal_begin(&th, sb, 2);
- 	if (ret)
- 		goto out;
--	reiserfs_write_unlock(sb);
-+	depth = reiserfs_write_unlock_nested(sb);
- 	ret = dquot_commit_info(sb, type);
--	reiserfs_write_lock(sb);
-+	reiserfs_write_lock_nested(sb, depth);
- 	err = journal_end(&th, sb, 2);
- 	if (!ret && err)
- 		ret = err;
-@@ -2206,8 +2210,14 @@ out:
-  */
- static int reiserfs_quota_on_mount(struct super_block *sb, int type)
- {
--	return dquot_quota_on_mount(sb, REISERFS_SB(sb)->s_qf_names[type],
--					REISERFS_SB(sb)->s_jquota_fmt, type);
-+	int ret, depth;
-+
-+	depth = reiserfs_write_unlock_nested(sb);
-+	ret = dquot_quota_on_mount(sb, REISERFS_SB(sb)->s_qf_names[type],
-+				   REISERFS_SB(sb)->s_jquota_fmt, type);
-+	reiserfs_write_lock_nested(sb, depth);
-+
-+	return ret;
+-	}
++	depth = reiserfs_write_unlock_nested(s);
++	__wait_on_buffer(bh);
++	reiserfs_write_lock_nested(s, depth);
  }
  
- /*
+ struct fid;
+@@ -2463,6 +2472,15 @@ int reiserfs_commit_for_inode(struct ino
+ int reiserfs_inode_needs_commit(struct inode *);
+ void reiserfs_update_inode_transaction(struct inode *);
+ void reiserfs_wait_on_write_block(struct super_block *s);
++static inline void reiserfs_safe_wait_on_write_block(struct super_block *s)
++{
++	int depth;
++
++	depth = reiserfs_write_unlock_nested(s);
++	reiserfs_wait_on_write_block(s);
++	reiserfs_write_lock_nested(s, depth);
++}
++
+ void reiserfs_block_writes(struct reiserfs_transaction_handle *th);
+ void reiserfs_allow_writes(struct super_block *s);
+ void reiserfs_check_lock_depth(struct super_block *s, char *caller);
+--- a/fs/reiserfs/resize.c	2013-08-05 20:08:59.258412220 -0400
++++ b/fs/reiserfs/resize.c	2013-08-05 20:09:52.549600860 -0400
+@@ -34,6 +34,7 @@ int reiserfs_resize(struct super_block *
+ 	unsigned long int block_count, free_blocks;
+ 	int i;
+ 	int copy_size;
++	int depth;
+ 
+ 	sb = SB_DISK_SUPER_BLOCK(s);
+ 
+@@ -43,7 +44,9 @@ int reiserfs_resize(struct super_block *
+ 	}
+ 
+ 	/* check the device size */
++	depth = reiserfs_write_unlock_nested(s);
+ 	bh = sb_bread(s, block_count_new - 1);
++	reiserfs_write_lock_nested(s, depth);
+ 	if (!bh) {
+ 		printk("reiserfs_resize: can\'t read last block\n");
+ 		return -EINVAL;
+@@ -125,9 +128,12 @@ int reiserfs_resize(struct super_block *
+ 		 * transaction begins, and the new bitmaps don't matter if the
+ 		 * transaction fails. */
+ 		for (i = bmap_nr; i < bmap_nr_new; i++) {
++			int depth;
+ 			/* don't use read_bitmap_block since it will cache
+ 			 * the uninitialized bitmap */
++			depth = reiserfs_write_unlock_nested(s);
+ 			bh = sb_bread(s, i * s->s_blocksize * 8);
++			reiserfs_write_lock_nested(s, depth);
+ 			if (!bh) {
+ 				vfree(bitmap);
+ 				return -EIO;
+@@ -138,9 +144,9 @@ int reiserfs_resize(struct super_block *
+ 
+ 			set_buffer_uptodate(bh);
+ 			mark_buffer_dirty(bh);
+-			reiserfs_write_unlock(s);
++			depth = reiserfs_write_unlock_nested(s);
+ 			sync_dirty_buffer(bh);
+-			reiserfs_write_lock(s);
++			reiserfs_write_lock_nested(s, depth);
+ 			// update bitmap_info stuff
+ 			bitmap[i].free_count = sb_blocksize(sb) * 8 - 1;
+ 			brelse(bh);
+--- a/fs/reiserfs/stree.c	2013-08-05 20:08:59.258412220 -0400
++++ b/fs/reiserfs/stree.c	2013-08-05 20:09:52.561600677 -0400
+@@ -550,7 +550,8 @@ static bool search_by_key_reada(struct s
+ 		 */
+ 		if (!buffer_uptodate(bh[j])) {
+ 			if (!unlocked) {
+-				reiserfs_write_unlock(s);
++				int depth = -1; /* avoiding __must_check */
++				depth = reiserfs_write_unlock_nested(s);
+ 				unlocked = true;
+ 			}
+ 			ll_rw_block(READA, 1, bh + j);
+@@ -625,7 +626,7 @@ int search_by_key(struct super_block *sb
+ 	block_number = SB_ROOT_BLOCK(sb);
+ 	expected_level = -1;
+ 	while (1) {
+-
++		int depth;
+ #ifdef CONFIG_REISERFS_CHECK
+ 		if (!(++repeat_counter % 50000))
+ 			reiserfs_warning(sb, "PAP-5100",
+@@ -646,25 +647,29 @@ int search_by_key(struct super_block *sb
+ 		if ((bh = last_element->pe_buffer =
+ 		     sb_getblk(sb, block_number))) {
+ 			bool unlocked = false;
+-
++			depth = REISERFS_SB(sb)->lock_depth;
+ 			if (!buffer_uptodate(bh) && reada_count > 1)
+ 				/* may unlock the write lock */
+ 				unlocked = search_by_key_reada(sb, reada_bh,
+ 						    reada_blocks, reada_count);
++
+ 			/*
+ 			 * If we haven't already unlocked the write lock,
+ 			 * then we need to do that here before reading
+ 			 * the current block
+ 			 */
+ 			if (!buffer_uptodate(bh) && !unlocked) {
+-				reiserfs_write_unlock(sb);
++				depth = reiserfs_write_unlock_nested(sb);
++				unlocked = true;
++			} else if (!unlocked) { /* debug */
++				depth = reiserfs_write_unlock_nested(sb);
+ 				unlocked = true;
+ 			}
+ 			ll_rw_block(READ, 1, &bh);
+ 			wait_on_buffer(bh);
+ 
+ 			if (unlocked)
+-				reiserfs_write_lock(sb);
++				reiserfs_write_lock_nested(sb, depth);
+ 			if (!buffer_uptodate(bh))
+ 				goto io_error;
+ 		} else {
+@@ -991,6 +996,7 @@ static char prepare_for_delete_or_cut(st
+ 	struct super_block *sb = inode->i_sb;
+ 	struct item_head *p_le_ih = PATH_PITEM_HEAD(path);
+ 	struct buffer_head *bh = PATH_PLAST_BUFFER(path);
++	int depth;
+ 
+ 	BUG_ON(!th->t_trans_id);
+ 
+@@ -1059,9 +1065,11 @@ static char prepare_for_delete_or_cut(st
+ 			reiserfs_free_block(th, inode, block, 1);
+ 		    }
+ 
+-		    reiserfs_write_unlock(sb);
+-		    cond_resched();
+-		    reiserfs_write_lock(sb);
++		    if (need_resched()) {
++			    depth = reiserfs_write_unlock_nested(sb);
++			    cond_resched();
++			    reiserfs_write_lock_nested(sb, depth);
++		    }
+ 
+ 		    if (item_moved (&s_ih, path))  {
+ 			need_re_search = 1;
+--- a/fs/reiserfs/super.c	2013-08-05 20:09:31.729917816 -0400
++++ b/fs/reiserfs/super.c	2013-08-05 20:09:52.573600494 -0400
+@@ -624,7 +624,6 @@ static void reiserfs_dirty_inode(struct
+ 	struct reiserfs_transaction_handle th;
+ 
+ 	int err = 0;
+-	int lock_depth;
+ 
+ 	if (inode->i_sb->s_flags & MS_RDONLY) {
+ 		reiserfs_warning(inode->i_sb, "clm-6006",
+@@ -632,7 +631,7 @@ static void reiserfs_dirty_inode(struct
+ 				 inode->i_ino);
+ 		return;
+ 	}
+-	lock_depth = reiserfs_write_lock_once(inode->i_sb);
++	reiserfs_write_lock(inode->i_sb);
+ 
+ 	/* this is really only used for atime updates, so they don't have
+ 	 ** to be included in O_SYNC or fsync
+@@ -645,7 +644,7 @@ static void reiserfs_dirty_inode(struct
+ 	journal_end(&th, inode->i_sb, 1);
+ 
+ out:
+-	reiserfs_write_unlock_once(inode->i_sb, lock_depth);
++	reiserfs_write_unlock(inode->i_sb);
+ }
+ 
+ static int reiserfs_show_options(struct seq_file *seq, struct dentry *root)
 
 
