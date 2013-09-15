@@ -1,8 +1,8 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Reiser4 for 3.11
-Date: Sun, 15 Sep 2013 21:37:31 +0200
-Message-ID: <52360C7B.6080908@gmail.com>
-References: <3473565.3piOE8Lf58@intelfx-laptop> <522DA671.9040006@gmail.com>
+Subject: Re: Reiser4 3.11x Testing
+Date: Sun, 15 Sep 2013 21:38:32 +0200
+Message-ID: <52360CB8.1040403@gmail.com>
+References: <CABYXC3ZjpxAEfyHhfGJ6PRyg2_XoAvS9Ui7h=NBsqVFm1CtbFw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -10,63 +10,81 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:cc:subject
          :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=8oZtri53jkrJmZuJoIivKr2kThNnlFnJPqEqsrQ6jsg=;
-        b=q3i8FmZ++jTaxklWecwkyNScVgcrVPeHKnEDJBEniLkqHVMLlBBCAZfpAnrYcVqvYj
-         Dc2I4WzPqQIPDY5Yfy12lrA9qN0HEwiEHWZawMapPfkMRYQXMMoYQO+D+id5NXmb5bjs
-         EjUESQI+Y7jhobU1h0ZscqYBtGUQWrpdP0EtCLUAcmPdG6JJq2rcUuZGC1CPHReZklHQ
-         4fZh419TDFoavwcbWo3S7S2biP0L1odJ21DuCXjikaMScAZY4tf11r380N9v6dIfGkPl
-         LAg2WuYS0JNNIr1DMcE0vMGQQhxRKYiXaEJiLHpG9LXafefGXCyQ14xr19dVpC7J8CgT
-         PcpQ==
-In-Reply-To: <522DA671.9040006@gmail.com>
+        bh=88K2n8zqFdJoU1RMB8/9YPxpUxWTGFXq1TYFFqDiCJ8=;
+        b=k4rJDbalSyXHt+lYxc0macuGwca8RGp3U33/kvON48kDECLqQVQoDT3T8k6PVVwzvX
+         fHAGu4voziOxbT2aTBO/FnNmy3xWPrcepA+tJg6a2qgVO2G7PQ28087s4NsBf/o6QffA
+         Hm1RFXZ4W9KI3DdHmzsO86qPhCjYdofYaCerESrW0j/w3HhhIiGlV0/KnC8UPvQkx9Q5
+         p6Xky1nAaaTOATsXIOJCJTg+kd5YxfxFbR/ZxLH4P0mj4fxjs7PaVTlkBHVvt25k7ZoN
+         skLdfu5lTRwoG7gjOhNrR+/ODkhvvxfhfwfnRIzs1HDlRSUPC3YcIFsv6X9K6XURpvEp
+         bS4w==
+In-Reply-To: <CABYXC3ZjpxAEfyHhfGJ6PRyg2_XoAvS9Ui7h=NBsqVFm1CtbFw@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>
+To: Christopher Gentile <cnjgentile@gmail.com>
 Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-On 09/09/2013 12:44 PM, Edward Shishkin wrote:
-> On 09/06/2013 07:36 AM, Ivan Shapovalov wrote:
->> Hi Edward!
->>
->> I'm sorry for the silence... The summer, as it usually happens, 
->> turned out to
->> be not-easier-than-studying-days (personal life and all), so 
->> unfortunately
->> there is not much progress with TRIM implementation for reiser4. 
->> There is some
->> code, but it's stability is zero.
->>
->> Anyway, here is my usual attempt to port reiser4 to next kernel. 3.11 
->> got a
->> significant API change (readdir() of file_operations changed to 
->> iterate()),
->> and I'm unsure if I done that correctly. But it works, unlike TRIM. :)
->
->
-> Cool. Thanks!!!
->
->
->>
->> (FYI, iterate() differs from readdir() mostly in that it works with a 
->> copy of
->> f_pos instead of with f->f_pos directly.)
->
->
-> AFAIK they fixed races in readdir() and friends.
-> I'll take a look at this more carefully...
+Thanks for the report!
 
-
-Vfs people have introduced a new field (.for_sync) of  struct 
-wb_writeback_work,
-it should be initialized as 1 in reiser4_sync_fs().
-
-The next comment is that all PF_FOO flags should be "independent". In 
-particular,
-"compound" values like 0x80000002 are unacceptable for PF_FLUSHER (is it 
-clear,
-why so?). I would recommend 0x00000001, or 0x00000002.
-
-In other bits the patch looks OK.
-
-Thanks!
 Edward.
+
+
+On 09/15/2013 03:53 AM, Christopher Gentile wrote:
+> Hello all,
+>
+> Thank you for having me.
+>
+> I received kindly from Ivan a copy of his Reiser4 enablement kernel
+> patch for 3.11.x kernels.  I am in testing as we speak on my rootfs
+> after backing up data and wanted to introduce myself.
+>
+> I am not a developer, just a heavy Linux enthusiast/amateur kernel
+> hacker. I loved Reiser4 on 3.10.xx and earlier kernels and have been
+> awaiting the functionality in the 3.11 series.
+>
+> I am here to be useful, post results, ask some questions, and do
+> testing for you.
+>
+> I have a beefy system so I can test most scenarios in an x86_64 environment.
+>
+> 3 SSD arrays and on large 10TB SATA3 array on a Corei7 3930K hexacore
+> with 32GB of DDR3 quad-channel RAM.
+>
+> Because of these specs I can test essentially whatever you like,
+> however not being a developer I don't know how except for the fact
+> that:
+>
+> -I use Gentoo linux
+> -Gentoo (if you're not familiar) is a rolling source-based distro,
+> tons of small files, all compiled.  Lots of compression/decompression
+> going on access to small files, as wel as my own personal large files.
+>
+> If you need benchmarks done, need any commands executed looking for a
+> rest result please just ask, it's the least I could do.
+>
+> Currently I am running Reiser4 on root on sSD raid0, re-compiling my
+> entire world file (compiling 1500+ packages from extracted from
+> .xz,.gz,bz2 source tarballs). I am 500 packages into the compile
+> without a hitch thus far, using kernel stable 3.11.1 from kernel.org ,
+> patched with the BFS 442 CPU scheduler, the kernel-gcc4.8 patch to
+> enable "-march=native" kernel compilation, and the UKSM patch for
+> online memory deduplication.
+>
+> If anybody needs testing on non-patched kernels, or with a specific
+> patch/kernel, please let me know. Storage is not an issue and
+> compilation is fast and thus not an issue.  All I ask is please let me
+> know when the new patches come up for Reiser4.
+>
+> The Reiser4 patch was supposed to be included in the mailing list
+> thread as per Ivan's earlier message however there was an issue where
+> it didn't attach.  Per Ivan's request I have refrained from posting it
+> as an attachment until Edward has a chance to review it.
+>
+> Best Regards,
+>
+> Chris Gentile
+> --
+> To unsubscribe from this list: send the line "unsubscribe reiserfs-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
