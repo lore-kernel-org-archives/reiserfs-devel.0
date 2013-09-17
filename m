@@ -1,62 +1,46 @@
-From: Mathieu Belanger <m@thieu.so>
+From: Chris Gentile <cnjgentile@gmail.com>
 Subject: Re: Reiser4 GIT and Kernel 3.11 patchs
-Date: Tue, 17 Sep 2013 21:15:10 +0000
-Message-ID: <20130917211510.Horde.Zc6miMwWvs-M3goxK91zdw1@mail.thieu.so>
-References: <20130917181531.Horde.9SQoJsAfOsciOtEfGaP2jA1@mail.thieu.so>
- <5238B2FF.5060900@gmail.com>
- <CAL2jS+kR_NmF-vc2UqnJyCodh2_F3LdciAtsTXgcp=4QKCXauQ@mail.gmail.com>
- <5238BD79.6030005@gmail.com>
- <CAL2jS+nhaFh-axsDiLj4puDnJMmLrcj1m1qbovVhewDroc+uqQ@mail.gmail.com>
+Date: Tue, 17 Sep 2013 21:22:46 +0000
+Message-ID: <5238C826.9030202@gmail.com>
+References: <20130917181531.Horde.9SQoJsAfOsciOtEfGaP2jA1@mail.thieu.so> <5238B2FF.5060900@gmail.com> <CAL2jS+kR_NmF-vc2UqnJyCodh2_F3LdciAtsTXgcp=4QKCXauQ@mail.gmail.com> <5238BD79.6030005@gmail.com> <CAL2jS+nhaFh-axsDiLj4puDnJMmLrcj1m1qbovVhewDroc+uqQ@mail.gmail.com> <20130917211510.Horde.Zc6miMwWvs-M3goxK91zdw1@mail.thieu.so>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=_v8NU95Z1J9cn1s_RyFWoZw3";
- protocol="application/pgp-signature"; micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <CAL2jS+nhaFh-axsDiLj4puDnJMmLrcj1m1qbovVhewDroc+uqQ@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-type:content-transfer-encoding;
+        bh=FquDv9opIlE/i2UeH1Luog1KXV1ZKQShAPYo3j4kntA=;
+        b=nSMHz9Ql9seEynCGOovsmgtSDmOcZ3yrgP8nSmWcsHu0W3Bvt6PX+2Pg/Uza5QrjFC
+         e36rwM5VjvEH4igHug2ps7igwLIRPkV64V8IjlA1eTO7ihUgIEKd0PSIZmOj+dtZrwYW
+         pdO8URb8aWXJsHa5vYaoP7hVVj7cPfLY/PSryZMK+I0fKPRpHSiUVY+JMgSlhiuk7dap
+         mb4Z8AqODnj95WPCsqfrNy/tUfXmCUQl+k/dZXXKBhT0JQuau6Xo8bF4O6L5Pxbzyrpu
+         ClqwcA7olKOUYdDUWLBHGoCXZDpmXXLlXrthoZnvr37Df5rr9pHwEKkjpXHzws36fEic
+         +BuA==
+In-Reply-To: <20130917211510.Horde.Zc6miMwWvs-M3goxK91zdw1@mail.thieu.so>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Evgeniy <iron.udjin@gmail.com>
-Cc: Chris Gentile <cnjgentile@gmail.com>, Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: Mathieu Belanger <m@thieu.so>
+Cc: Evgeniy <iron.udjin@gmail.com>, Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
 
-This message is in MIME format and has been PGP signed.
+Matt,  thanks a bunch I will try in the short.
 
---=_v8NU95Z1J9cn1s_RyFWoZw3
-Content-Type: text/plain; charset=; format=flowed; DelSp=Yes
-Content-Disposition: inline
+Best,
+Chris
 
-Uploading to my GIT
 
-I have cloned the kernel and added a branch reiser4-for-3.11-rc4..  
-Should pop there once it's uploaded  (will take a while as it's fresh  
-and the kernel git origin is big and uploading at +-100KiB/s.
+On 09/17/2013 09:15 PM, Mathieu Belanger wrote:
+> Uploading to my GIT
+>
+> I have cloned the kernel and added a branch reiser4-for-3.11-rc4..
+> Should pop there once it's uploaded  (will take a while as it's fresh
+> and the kernel git origin is big and uploading at +-100KiB/s.
+>
+> https://github.com/DestroyFX/reiser4/branches
+>
+> I fixed the .for_sync stupidity I have done initially... might work ok
+> and DON'T try on anything that have stuff that you want to keep ;)
+>
+> PS : I did not reboot/test after re-adding .for_sync.
 
-https://github.com/DestroyFX/reiser4/branches
-
-I fixed the .for_sync stupidity I have done initially... might work ok  
-and DON'T try on anything that have stuff that you want to keep ;)
-
-PS : I did not reboot/test after re-adding .for_sync.
-
---=_v8NU95Z1J9cn1s_RyFWoZw3
-Content-Type: application/pgp-signature
-Content-Description: PGP Digital Signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAABAgAGBQJSOMZeAAoJEG24p/Ii9MVYf9IP/1SfGIIL3AuiE6LseDWmHtje
-P0Kcwh+E8Z//2VmshoqdHRRzSKkbig2o5dvdrHfr1lP2816v87B2viqbfzp4x+Q3
-uUZfpAOC+blh67tF12vB74FTnr7nx2BKRY74n5TdjGBBoIPy//KjiwDDG4khDyp/
-84TK29qE+KMg36g0kUDv6P3VK4LDn0ebL1NRJibjS5PLvtt+GjauliVZExxWq4ta
-uppHj93er5ysMf0O8bOtCVIoa/JILlgTNYfHFnYGS+2sTduy8FC6EsffZjn9UjoF
-gAsAzp+UZYcEGGm31yLzxo10nRhDWApUofSiWRKXYVexExwLbSOm5sTZ1tzAO7D0
-NWNw0s0u66pxt2RNX8UFR/lKNCqOJZ4mAWwuxwps16WH0pQkSYbEfp/swTelELiM
-S8vrKRqlA4PEnjvaqCh8Mry2JDhYiOADkTaPGKdLfayyk7fLVovwHnxk0MiP+wau
-pnh7DCJtbn2u8FzDUZy72NzlWR3gtTUWnLlfqAkOBnWvgy7PE9K+nWiuZF3NOO5+
-ahRNlrYYjZ4zUFuA2Dq5QDUFk8jcZRVeAEFaN09/RBIcXEztjfufWsy/6dNle1UB
-EvD/EpfJRb7YyBILuEdGluRe72m8Tw3kMnI+TA3p/ciWl96dI6LJ+GctlFZWl5Kg
-B+F4yUP3hMk906q8NmM+
-=QSEs
------END PGP SIGNATURE-----
-
---=_v8NU95Z1J9cn1s_RyFWoZw3--
