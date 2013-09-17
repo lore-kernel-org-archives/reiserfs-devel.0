@@ -1,46 +1,42 @@
-From: Chris Gentile <cnjgentile@gmail.com>
+From: Evgeniy <iron.udjin@gmail.com>
 Subject: Re: Reiser4 GIT and Kernel 3.11 patchs
-Date: Tue, 17 Sep 2013 21:22:46 +0000
-Message-ID: <5238C826.9030202@gmail.com>
-References: <20130917181531.Horde.9SQoJsAfOsciOtEfGaP2jA1@mail.thieu.so> <5238B2FF.5060900@gmail.com> <CAL2jS+kR_NmF-vc2UqnJyCodh2_F3LdciAtsTXgcp=4QKCXauQ@mail.gmail.com> <5238BD79.6030005@gmail.com> <CAL2jS+nhaFh-axsDiLj4puDnJMmLrcj1m1qbovVhewDroc+uqQ@mail.gmail.com> <20130917211510.Horde.Zc6miMwWvs-M3goxK91zdw1@mail.thieu.so>
+Date: Wed, 18 Sep 2013 00:22:50 +0300
+Message-ID: <CAL2jS+k1d55AT+os41gAgWya6zRRW0wckL+5k0=-EL2FatMEEA@mail.gmail.com>
+References: <20130917181531.Horde.9SQoJsAfOsciOtEfGaP2jA1@mail.thieu.so>
+ <5238B2FF.5060900@gmail.com> <CAL2jS+kR_NmF-vc2UqnJyCodh2_F3LdciAtsTXgcp=4QKCXauQ@mail.gmail.com>
+ <5238BD79.6030005@gmail.com> <CAL2jS+nhaFh-axsDiLj4puDnJMmLrcj1m1qbovVhewDroc+uqQ@mail.gmail.com>
+ <5238C666.6080703@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=FquDv9opIlE/i2UeH1Luog1KXV1ZKQShAPYo3j4kntA=;
-        b=nSMHz9Ql9seEynCGOovsmgtSDmOcZ3yrgP8nSmWcsHu0W3Bvt6PX+2Pg/Uza5QrjFC
-         e36rwM5VjvEH4igHug2ps7igwLIRPkV64V8IjlA1eTO7ihUgIEKd0PSIZmOj+dtZrwYW
-         pdO8URb8aWXJsHa5vYaoP7hVVj7cPfLY/PSryZMK+I0fKPRpHSiUVY+JMgSlhiuk7dap
-         mb4Z8AqODnj95WPCsqfrNy/tUfXmCUQl+k/dZXXKBhT0JQuau6Xo8bF4O6L5Pxbzyrpu
-         ClqwcA7olKOUYdDUWLBHGoCXZDpmXXLlXrthoZnvr37Df5rr9pHwEKkjpXHzws36fEic
-         +BuA==
-In-Reply-To: <20130917211510.Horde.Zc6miMwWvs-M3goxK91zdw1@mail.thieu.so>
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-type;
+        bh=2XPwkMqlA7SVGA/h52wnV40/pIzEtWJeB+YpRdL/ZgE=;
+        b=mYFucAXSzFSCXvHFPL+3KqoGwmPn541krAU8QJzW2xfDv8dsEkXW9oTWTVhZuywuHl
+         uC37vXJ9Q5q/PPPkZQrGJ4+yTL24oN7dqhdVRBhm4mFD93R79Gm9405l7hwQNj9rtW9m
+         tMa64yhjv23CrnOrjHNEuxx/wIHt7BvXUE3xeB9dZMjhVoz7lvai/TwP9V2037bx0jQb
+         nGzYfe4XonEKLYEMykkb85VO3f6NJx1gGh1Kb2SA0Oa1+TvKX3qhHvPRt94oxO0Y/MXq
+         GD5sgLuTQBKlVKc5K5RYkpbHQV989gxGqSs3B8nYvTwgxmbUMBuiIWxD/CBZ7wRzH/1A
+         UwhQ==
+In-Reply-To: <5238C666.6080703@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: Mathieu Belanger <m@thieu.so>
-Cc: Evgeniy <iron.udjin@gmail.com>, Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Chris Gentile <cnjgentile@gmail.com>
+Cc: Edward Shishkin <edward.shishkin@gmail.com>, Mathieu Belanger <m@thieu.so>, reiserfs-devel@vger.kernel.org
 
-Matt,  thanks a bunch I will try in the short.
+On 18 September 2013 00:15, Chris Gentile <cnjgentile@gmail.com> wrote:
+> unny you should mention those specific patches, I use the 3.11 kernels with
+> exactly all the same patches with the exception of the BLD patch because I
+> don't know how it could work in conjunction with the CK1 BFS scheduler?
 
-Best,
-Chris
+Actually I don't use BFS scheduller because it's buggy. Usually I
+apply CK patch and switch off BFS in kernel configuration settings. As
+far as I remember, BLD works fine with BFS.
 
+> Or are you using different schedulers on different servers depending on workload type?
+Yes, exactly.
 
-On 09/17/2013 09:15 PM, Mathieu Belanger wrote:
-> Uploading to my GIT
->
-> I have cloned the kernel and added a branch reiser4-for-3.11-rc4..
-> Should pop there once it's uploaded  (will take a while as it's fresh
-> and the kernel git origin is big and uploading at +-100KiB/s.
->
-> https://github.com/DestroyFX/reiser4/branches
->
-> I fixed the .for_sync stupidity I have done initially... might work ok
-> and DON'T try on anything that have stuff that you want to keep ;)
->
-> PS : I did not reboot/test after re-adding .for_sync.
-
+Thanks for patch.
