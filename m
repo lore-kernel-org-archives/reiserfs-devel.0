@@ -1,7 +1,7 @@
 From: Mathieu Belanger <m@thieu.so>
 Subject: Re: Reiser4 GIT and Kernel 3.11 patchs
-Date: Wed, 18 Sep 2013 16:09:19 +0000
-Message-ID: <20130918160919.Horde.HvCMYcUZQA7KSHMKlRg1Rg6@mail.thieu.so>
+Date: Wed, 18 Sep 2013 16:20:42 +0000
+Message-ID: <20130918162042.Horde.AXUFNWM0wdbX3pg4in5a_g4@mail.thieu.so>
 References: <20130917181531.Horde.9SQoJsAfOsciOtEfGaP2jA1@mail.thieu.so>
  <5238B2FF.5060900@gmail.com>
  <CAL2jS+kR_NmF-vc2UqnJyCodh2_F3LdciAtsTXgcp=4QKCXauQ@mail.gmail.com>
@@ -19,9 +19,10 @@ References: <20130917181531.Horde.9SQoJsAfOsciOtEfGaP2jA1@mail.thieu.so>
  <5239AB0F.6070600@gmail.com>
  <CAL2jS+ns8GAU=wsLXksHJTtABgHWs+a7rJrQN9bsGvy7egmvAA@mail.gmail.com>
  <CAL2jS+khnOhFvDv3DtoSjE13WAZ4uRau_NnrQ2Khf_iK-Fyemg@mail.gmail.com>
+ <20130918160919.Horde.HvCMYcUZQA7KSHMKlRg1Rg6@mail.thieu.so>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <CAL2jS+khnOhFvDv3DtoSjE13WAZ4uRau_NnrQ2Khf_iK-Fyemg@mail.gmail.com>
+In-Reply-To: <20130918160919.Horde.HvCMYcUZQA7KSHMKlRg1Rg6@mail.thieu.so>
 Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -30,9 +31,5 @@ Content-Transfer-Encoding: 7bit
 To: Evgeniy <iron.udjin@gmail.com>
 Cc: Chris Gentile <cnjgentile@gmail.com>, Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
 
+In the 3.12, look like the shrinker interface changed, hence the new error.
 
-I was not able to apply them if it's what you mean ?
-
-It compile but I did not test it, if the "don't work" mean that the  
-kernel fail in a sort of way let my know and I will revert back on the  
-git.
