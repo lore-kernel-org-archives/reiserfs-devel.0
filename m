@@ -1,7 +1,7 @@
 From: Mathieu Belanger <m@thieu.so>
 Subject: Re: Reiser4 GIT and Kernel 3.11 patchs
-Date: Wed, 18 Sep 2013 18:20:45 +0000
-Message-ID: <20130918182045.Horde.PFWkPvTh_G6yzfZwqSkTIQ8@mail.thieu.so>
+Date: Wed, 18 Sep 2013 18:36:48 +0000
+Message-ID: <20130918183648.Horde.X7v3uQ00l0BLxlv1HolK3g8@mail.thieu.so>
 References: <20130917181531.Horde.9SQoJsAfOsciOtEfGaP2jA1@mail.thieu.so>
  <5238B2FF.5060900@gmail.com>
  <CAL2jS+kR_NmF-vc2UqnJyCodh2_F3LdciAtsTXgcp=4QKCXauQ@mail.gmail.com>
@@ -23,9 +23,10 @@ References: <20130917181531.Horde.9SQoJsAfOsciOtEfGaP2jA1@mail.thieu.so>
  <CAL2jS+neTxbxD5pddwC7FfEwZFNQYdS_caCZY_qgqxqWjQysww@mail.gmail.com>
  <20130918163939.Horde.TaamgVT0paLHGh-r_Nd_Gw9@mail.thieu.so>
  <CAL2jS+=46FB7D80QSKk=8KRqKMe=haAxkL-h7TuTBwjU5yNaJQ@mail.gmail.com>
+ <20130918182045.Horde.PFWkPvTh_G6yzfZwqSkTIQ8@mail.thieu.so>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <CAL2jS+=46FB7D80QSKk=8KRqKMe=haAxkL-h7TuTBwjU5yNaJQ@mail.gmail.com>
+In-Reply-To: <20130918182045.Horde.PFWkPvTh_G6yzfZwqSkTIQ8@mail.thieu.so>
 Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -34,6 +35,25 @@ Content-Transfer-Encoding: 7bit
 To: Evgeniy <iron.udjin@gmail.com>
 Cc: Chris Gentile <cnjgentile@gmail.com>, Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
 
+Still failing.. Will check later
 
-Fixed the d_lock code for 3.12-rc1... 3.11 will follow very soon. Will  
-need test.
+   LD      init/built-in.o
+fs/built-in.o: In function `spin_lock':
+/usr/src/reiser4/include/linux/spinlock.h:293: undefined reference to  
+`d_lockref'
+fs/built-in.o: In function `__ticket_spin_unlock':
+/usr/src/reiser4/arch/x86/include/asm/spinlock.h:81: undefined  
+reference to `d_lockref'
+fs/built-in.o: In function `spin_lock':
+/usr/src/reiser4/include/linux/spinlock.h:293: undefined reference to  
+`d_lockref'
+fs/built-in.o: In function `__ticket_spin_unlock':
+/usr/src/reiser4/arch/x86/include/asm/spinlock.h:81: undefined  
+reference to `d_lockref'
+fs/built-in.o: In function `spin_lock':
+/usr/src/reiser4/include/linux/spinlock.h:293: undefined reference to  
+`d_lockref'
+fs/built-in.o:/usr/src/reiser4/arch/x86/include/asm/spinlock.h:81:  
+more undefined references to `d_lockref' follow
+make: *** [vmlinux] Error 1
+
