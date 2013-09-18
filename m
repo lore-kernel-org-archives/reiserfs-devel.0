@@ -1,7 +1,7 @@
 From: Chris Gentile <cnjgentile@gmail.com>
 Subject: Re: Reiser4 GIT and Kernel 3.11 patchs
-Date: Wed, 18 Sep 2013 13:27:53 +0000
-Message-ID: <5239AA59.2030508@gmail.com>
+Date: Wed, 18 Sep 2013 13:30:55 +0000
+Message-ID: <5239AB0F.6070600@gmail.com>
 References: <20130917181531.Horde.9SQoJsAfOsciOtEfGaP2jA1@mail.thieu.so> <5238B2FF.5060900@gmail.com> <CAL2jS+kR_NmF-vc2UqnJyCodh2_F3LdciAtsTXgcp=4QKCXauQ@mail.gmail.com> <5238BD79.6030005@gmail.com> <CAL2jS+nhaFh-axsDiLj4puDnJMmLrcj1m1qbovVhewDroc+uqQ@mail.gmail.com> <20130917211510.Horde.Zc6miMwWvs-M3goxK91zdw1@mail.thieu.so> <5238D17D.1080806@gmail.com> <20130918034441.Horde.FO9Ni879mCm-vV7kvTW6yg1@mail.thieu.so> <523944D2.40409@gmail.com> <20130918062035.Horde.3REQSHqc8XUbgvTNKMOnnw1@mail.thieu.so> <52394C69.8060702@gmail.com> <20130918065443.Horde.-Gtb6JT-2v7Q9BY_bLJ8wg9@mail.thieu.so> <52394F6B.5000902@gmail.com> <CAL2jS+mJrpsgB5JoZcqBF30jfPiGPn4d8+VpoDr8tyQ1wo=THw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -10,13 +10,13 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:cc:subject
          :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=dT0HPMq+cHfHB8JigkbpfC01QyD57wr3VAndqtPqFC4=;
-        b=QgUFy3wWhNkwWAQVDzL6/MUuK5Yl7zPE5Fyn8PUDf7oS/fullBsKRra0qtzgR+C7SM
-         sIi+cPO0l503ghaYV/H+WlMWWjLb4GLI4QoOuj52EL0q+H3VBkbuP27WzIT1w1v/OtWX
-         Y+7czyzqGlMQsXlDfq1nA3cnXugcWynGdMix1F//bwydOhQirLWzXlGbzIzJd0FXxTHl
-         7G7Nv570/KXM/4mnc22iv5GPCCRTrfrS6GBnLcQDgUTGGh4Ul6QlVlxWL1hLFj9vPu4r
-         wymQ0JXOpu1SBIz7SGf4WsDPYNUgapvS7JMpOUl9mY+bYAhkGYC80cM8RY4lExGKRWQb
-         TWzQ==
+        bh=+ywREWNbVwm4LsU9rbYahJTmhU+sKICNT3gL+PUsxH4=;
+        b=awYmf0vgCzZdBiGd/YPAkNcVCw4SXWWf4GliqJX7e5jjFliizbcl9VlPTAiyoByK9Z
+         iSNAplr+KXDztZ8xwg8iNkSZpRHHMepFjj2Gsc9wTiQaYdEb+d2BoKXyRPrq9PJUaUEe
+         9JU67ni/CLiAuT7S9YULROc9mdMeeO2jKyRo8hx85dfkzkn/tfuMT+TUYhHrlmWyXZBO
+         uzJxq+QhwICPdUmgmlWhE/MZuHx6XUYTPI9KQ5aEtnwKXA4dGN0HnlZXPVPgoP/1kl6t
+         vGRwBz775x+v0NNl5E/hPBtUNDRf1ud+H9BrPLvilLDeq2l+JsuH4cOvzpeW+GcSbcCC
+         Pvog==
 In-Reply-To: <CAL2jS+mJrpsgB5JoZcqBF30jfPiGPn4d8+VpoDr8tyQ1wo=THw@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -24,19 +24,20 @@ Content-Type: text/plain; charset="us-ascii"
 To: Evgeniy <iron.udjin@gmail.com>
 Cc: Mathieu Belanger <m@thieu.so>, Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
 
-Evigny,
+By the way I'm sure you've all heard of Google PerfTools.
 
-Nice work.
-It's always compiled for me however on 3.11.1 and I just 10 mins ago
-patched to 3.11.1-rc1 and it compiled there too and I'm emerging
-packages on Gentoo as we speak.
+There is a component in it called TcMalloc -- libtcmalloc.so.
 
-fyi 3.11.1 seems like a really good release if anyone's interested.  I
-am interested in getting it working on 3.12.x which Mathieu is working
-on I believe.
+If you put LD_PRELOAD="/usr/lib64/libtcmalloc.so /usr/lib64/libdl.so" in
+your .bashrc or whatever startup files it seems to make all operations,
+including file input/output faster.  SImilar to the Hoard memory
+allocator, but I think I trust Google development more. 
 
-Best,
+Point being, works with Reiser 4 and adds no complexity or problems to
+the mix.
+
 Chris
+
 
 
 On 09/18/13 13:20, Evgeniy wrote:
