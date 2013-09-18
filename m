@@ -1,7 +1,7 @@
 From: Mathieu Belanger <m@thieu.so>
 Subject: Re: Reiser4 GIT and Kernel 3.11 patchs
-Date: Wed, 18 Sep 2013 18:36:48 +0000
-Message-ID: <20130918183648.Horde.X7v3uQ00l0BLxlv1HolK3g8@mail.thieu.so>
+Date: Wed, 18 Sep 2013 23:24:03 +0000
+Message-ID: <20130918232403.Horde.bNNl42nj7ZN7__sS0HomGg7@mail.thieu.so>
 References: <20130917181531.Horde.9SQoJsAfOsciOtEfGaP2jA1@mail.thieu.so>
  <5238B2FF.5060900@gmail.com>
  <CAL2jS+kR_NmF-vc2UqnJyCodh2_F3LdciAtsTXgcp=4QKCXauQ@mail.gmail.com>
@@ -23,10 +23,9 @@ References: <20130917181531.Horde.9SQoJsAfOsciOtEfGaP2jA1@mail.thieu.so>
  <CAL2jS+neTxbxD5pddwC7FfEwZFNQYdS_caCZY_qgqxqWjQysww@mail.gmail.com>
  <20130918163939.Horde.TaamgVT0paLHGh-r_Nd_Gw9@mail.thieu.so>
  <CAL2jS+=46FB7D80QSKk=8KRqKMe=haAxkL-h7TuTBwjU5yNaJQ@mail.gmail.com>
- <20130918182045.Horde.PFWkPvTh_G6yzfZwqSkTIQ8@mail.thieu.so>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20130918182045.Horde.PFWkPvTh_G6yzfZwqSkTIQ8@mail.thieu.so>
+In-Reply-To: <CAL2jS+=46FB7D80QSKk=8KRqKMe=haAxkL-h7TuTBwjU5yNaJQ@mail.gmail.com>
 Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -35,25 +34,19 @@ Content-Transfer-Encoding: 7bit
 To: Evgeniy <iron.udjin@gmail.com>
 Cc: Chris Gentile <cnjgentile@gmail.com>, Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
 
-Still failing.. Will check later
 
-   LD      init/built-in.o
-fs/built-in.o: In function `spin_lock':
-/usr/src/reiser4/include/linux/spinlock.h:293: undefined reference to  
-`d_lockref'
-fs/built-in.o: In function `__ticket_spin_unlock':
-/usr/src/reiser4/arch/x86/include/asm/spinlock.h:81: undefined  
-reference to `d_lockref'
-fs/built-in.o: In function `spin_lock':
-/usr/src/reiser4/include/linux/spinlock.h:293: undefined reference to  
-`d_lockref'
-fs/built-in.o: In function `__ticket_spin_unlock':
-/usr/src/reiser4/arch/x86/include/asm/spinlock.h:81: undefined  
-reference to `d_lockref'
-fs/built-in.o: In function `spin_lock':
-/usr/src/reiser4/include/linux/spinlock.h:293: undefined reference to  
-`d_lockref'
-fs/built-in.o:/usr/src/reiser4/arch/x86/include/asm/spinlock.h:81:  
-more undefined references to `d_lockref' follow
-make: *** [vmlinux] Error 1
+The crash I/you got is related to readdir.
 
+in 3.11, .readdir don't exist anymore and got replaced with .iterate.  
+but as Edward said, the way to use it changed too and I don't know how  
+to fix it... yet.
+
+I just renamed .readdir to .iterate in my old patchs and that's not correct.
+
+For the patch you done this morning, it was ok and not related to the  
+crash but it should not be named lockref/d_lockref as we still use  
+spinlock_t and not the new struct lockref (who contain lock and  
+count). It failed initially because d_lock got defined as  
+d_lockref.lock.
+
+We can't use it (or try) until that's patched.
