@@ -1,7 +1,7 @@
 From: Christopher Gentile <cnjgentile@gmail.com>
 Subject: Re: Reiser4 GIT and Kernel 3.11 patchs
-Date: Thu, 19 Sep 2013 16:08:26 +0000
-Message-ID: <CABYXC3a-idxzAt5xQmpbrCzmpwy=HkaKVOACb=__isMr3kTdnA@mail.gmail.com>
+Date: Thu, 19 Sep 2013 16:21:04 +0000
+Message-ID: <CABYXC3ahREZe3ZxhphULa-W_+w1Ww5dXGvEU9DOBWWpL-Nqt0g@mail.gmail.com>
 References: <20130919151403.Horde.VoBIXKovROrctv021aPeYw7@mail.thieu.so> <20130919155519.Horde.ECPL8bqkTU-l0OG4BvsgnA1@mail.thieu.so>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -9,13 +9,13 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc:content-type;
-        bh=LES9zSHihPPWb4QCTiEFujr9H7h6DBi34zdNRFqBmPs=;
-        b=LBqOGvW7+xNFOO5B+xxhut9YygASTnCm/Dj6+JZ3G0cDL6m9zkidpTJkoOS+bzKAGY
-         oYlPgoIlExphVh5gluBAc6v1owhr8HZ4bRna7m5nzRhCVrizDl0q06yjFhpfqw2KPv4r
-         Amih41vGGuBlHC/fnVorVqcxxl/kBm28RdlQ8DrVnmRSpT5xHJXB0WPMbtAEvK4N+FEF
-         hAjcKdDXoLPMPCZSLodMRLBfgmGc3mr6F4ePapbBf4bPgHEONS6n0WXhOaBUjs8fWpQ9
-         bKEszPOqcZGH+IkNqAv907jhXfMOLn5dMr+M8wnIqYK3+WdeYOQLzcQa14coSWNLtPZw
-         rgMw==
+        bh=Nes7CYgjh4NxJ6FtMhUf0TwttOCzKIHaiwKJ6+iG8Vc=;
+        b=hhr70J4Mh+laeJ3yAFcXbOERlWhE92U89yjCcR0D/53728BqBWZdCIHggX3kmPV0uR
+         9FSg0nu7caMOo/Nzs6hQ8xPcY1gTdkMuTXqVPJLcwPJcF+9jDjgt7yS6H4QkkVla0/SY
+         0lYDXEa0yrXnGvQiSs6D38oTkP0Pq3Afn9ynkWBUTiEhGuFOWgaMWTfkVsw1hoiPG6ZK
+         PciM2JyHZLrOReEulIAMG3qVDMG5aQDcX6Ia0ss5YL91/KHqQacuGlJEaqP+Zx08u9Ts
+         06/V7VDYBKaxkAq+s54RIqDGZzp93wK66csgTgiA7IUBFlUqdDjvjpoXcmyA+P1wMZDu
+         tNHg==
 In-Reply-To: <20130919155519.Horde.ECPL8bqkTU-l0OG4BvsgnA1@mail.thieu.so>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -24,7 +24,17 @@ Content-Transfer-Encoding: 7bit
 To: Mathieu Belanger <m@thieu.so>
 Cc: Edward Shishkin <edward.shishkin@gmail.com>, Du?an ?oli? <dusanc@gmail.com>, Evgeniy <iron.udjin@gmail.com>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-Ok let's try it out!
+BINGO!
+Compiles just fine..
+Vanilla (i redownloaded your whole tree just to make sure).
+Going to apply my standard patches now minus the CK1 BFS (doesn't work
+on 3.12 yet) and see what happens but I expect no issues will let you
+know when I'm booted into 3.12 on my rootfs :)
+
+Thanks for doing that!
+You guys are making tons of great headway congrats!
+
+Chris
 
 
 On Thu, Sep 19, 2013 at 3:55 PM, Mathieu Belanger <m@thieu.so> wrote:
