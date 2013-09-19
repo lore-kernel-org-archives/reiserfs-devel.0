@@ -1,7 +1,7 @@
 From: Mathieu Belanger <m@thieu.so>
 Subject: Re: Reiser4 GIT and Kernel 3.11 patchs
-Date: Thu, 19 Sep 2013 01:25:22 +0000
-Message-ID: <20130919012522.Horde.SdpNwqxAO_FZ7iRKEdPc8g5@mail.thieu.so>
+Date: Thu, 19 Sep 2013 05:45:28 +0000
+Message-ID: <20130919054528.Horde.bmycD1ZWneqw9p_4lgZGxw1@mail.thieu.so>
 References: <20130917181531.Horde.9SQoJsAfOsciOtEfGaP2jA1@mail.thieu.so>
  <5238B2FF.5060900@gmail.com>
  <CAL2jS+kR_NmF-vc2UqnJyCodh2_F3LdciAtsTXgcp=4QKCXauQ@mail.gmail.com>
@@ -24,22 +24,35 @@ References: <20130917181531.Horde.9SQoJsAfOsciOtEfGaP2jA1@mail.thieu.so>
  <20130918163939.Horde.TaamgVT0paLHGh-r_Nd_Gw9@mail.thieu.so>
  <CAL2jS+=46FB7D80QSKk=8KRqKMe=haAxkL-h7TuTBwjU5yNaJQ@mail.gmail.com>
  <20130918232403.Horde.bNNl42nj7ZN7__sS0HomGg7@mail.thieu.so>
+ <20130919012522.Horde.SdpNwqxAO_FZ7iRKEdPc8g5@mail.thieu.so>
+ <CADW=+3=znbq=KDqCmzQ_eq=V_9i4VpHj_uOcB3joJbZUZPNtdA@mail.gmail.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20130918232403.Horde.bNNl42nj7ZN7__sS0HomGg7@mail.thieu.so>
+In-Reply-To: <CADW=+3=znbq=KDqCmzQ_eq=V_9i4VpHj_uOcB3joJbZUZPNtdA@mail.gmail.com>
 Content-Disposition: inline
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset=; format=flowed; DelSp=Yes; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Evgeniy <iron.udjin@gmail.com>
-Cc: Chris Gentile <cnjgentile@gmail.com>, Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel@vger.kernel.org
+To: Du?an ?oli? <dusanc@gmail.com>
+Cc: Evgeniy <iron.udjin@gmail.com>, Chris Gentile <cnjgentile@gmail.com>, Edward Shishkin <edward.shishkin@gmail.com>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
 
-Kernel 3.11 in my git now working for those really want to use it  
-before released with proper fix.
+Hi,
 
-I have simply ... put readdir back in the kernel so it support  
-.readdir and .iterate
+You have three possibility.
 
-So my port still use readdir, not perfect but it's working.
+1 - > Wait until the next week end or so for the official release
+2 - > Search the web to find the version that will be released next  
+week (I found it, you can find it.)
+3 - > I have made one too without using the other I found on the  
+internet, it's less clean but it's available on my git right now if  
+you really want it now. Note that I don't think anyone else tested it  
+at it's current working state but i'm currently using it emerging  
+stuff on Gentoo without issue.
+
+For #3
+git clone https://github.com/DestroyFX/reiser4 (wait +-800mb)
+cd reiser4
+git checkout reiser4-for-3.11
+git diff v3.11 reiser4-for-3.11 > /tmp/reiser4-for-3.11.patch
