@@ -1,7 +1,8 @@
 From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH 1/2] reiserfs: remove useless flush_old_journal_lists
-Date: Mon, 23 Sep 2013 16:50:28 -0400
-Message-ID: <5240A994.1070104@suse.com>
+Subject: [PATCH 2/2] reiserfs: fix race with flush_used_journal_lists and
+ flush_journal_list
+Date: Mon, 23 Sep 2013 16:50:42 -0400
+Message-ID: <5240A9A2.3040707@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -11,112 +12,70 @@ Content-Type: text/plain; charset="us-ascii"
 To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 Cc: Jan Kara <jack@suse.cz>
 
-Commit a3172027 introduced test_transaction as a requirement for
-flushing old lists -- but it can never return 1 unless the transaction
-has already been flushed.
+There are two locks involved in managing the journal lists. The general
+reiserfs_write_lock and the journal->j_flush_mutex.
 
-As a result, we have a routine that iterates the j_realblocks list but
-doesn't actually do anything. Since it's been this way since 2006 and 
-the latency numbers were what Chris expected, let's just rip it out.
+While flush_journal_list is sleeping to acquire the j_flush_mutex or to
+submit a block for write, it will drop the write lock. This allows
+another thread to acquire the write lock and ultimately call
+flush_used_journal_lists to traverse the list of journal lists and
+select one for flushing. It can select the journal_list that has just
+had flush_journal_list called on it in the original thread and call it
+again with the same journal_list.
+
+The second thread then drops the write lock to acquire j_flush_mutex and
+the first thread reacquires it and continues execution and eventually
+clears and frees the journal list before dropping j_flush_mutex and
+returning.
+
+The second thread acquires j_flush_mutex and ends up operating on a
+journal_list that has already been released. If the memory hasn't
+been reused, we'll soon after hit a BUG_ON because the transaction id
+has already been cleared. If it's been reused, we'll crash in other
+fun ways.
+
+Since flush_journal_list will synchronize on j_flush_mutex, we can fix
+the race by taking a proper reference in flush_used_journal_lists
+and checking to see if it's still valid after the mutex is taken. It's
+safe to iterate the list of journal lists and pick a list with
+just the write lock as long as a reference is taken on the journal list
+before we drop the lock. We already have code to handle whether a
+transaction has been flushed already so we can use that to handle the
+race and get rid of the trans_id BUG_ON.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 ---
- fs/reiserfs/journal.c |   62 --------------------------------------------------
- 1 file changed, 62 deletions(-)
+ fs/reiserfs/journal.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
 --- a/fs/reiserfs/journal.c
 +++ b/fs/reiserfs/journal.c
-@@ -1173,21 +1173,6 @@ static struct reiserfs_journal_list *fin
- 	return NULL;
- }
- 
--static int newer_jl_done(struct reiserfs_journal_cnode *cn)
--{
--	struct super_block *sb = cn->sb;
--	b_blocknr_t blocknr = cn->blocknr;
--
--	cn = cn->hprev;
--	while (cn) {
--		if (cn->sb == sb && cn->blocknr == blocknr && cn->jlist &&
--		    atomic_read(&cn->jlist->j_commit_left) != 0)
--				    return 0;
--		cn = cn->hprev;
--	}
--	return 1;
--}
--
- static void remove_journal_hash(struct super_block *,
- 				struct reiserfs_journal_cnode **,
- 				struct reiserfs_journal_list *, unsigned long,
-@@ -1606,31 +1591,6 @@ static int flush_journal_list(struct sup
- 	return err;
- }
- 
--static int test_transaction(struct super_block *s,
--                            struct reiserfs_journal_list *jl)
--{
--	struct reiserfs_journal_cnode *cn;
--
--	if (jl->j_len == 0 || atomic_read(&jl->j_nonzerolen) == 0)
--		return 1;
--
--	cn = jl->j_realblock;
--	while (cn) {
--		/* if the blocknr == 0, this has been cleared from the hash,
--		 ** skip it
--		 */
--		if (cn->blocknr == 0) {
--			goto next;
--		}
--		if (cn->bh && !newer_jl_done(cn))
--			return 0;
--	      next:
--		cn = cn->next;
--		cond_resched();
--	}
--	return 0;
--}
--
- static int write_one_transaction(struct super_block *s,
- 				 struct reiserfs_journal_list *jl,
- 				 struct buffer_chunk *chunk)
-@@ -3897,27 +3857,6 @@ int reiserfs_prepare_for_journal(struct
- 	return 1;
- }
- 
--static void flush_old_journal_lists(struct super_block *s)
--{
--	struct reiserfs_journal *journal = SB_JOURNAL(s);
--	struct reiserfs_journal_list *jl;
--	struct list_head *entry;
--	time_t now = get_seconds();
--
--	while (!list_empty(&journal->j_journal_list)) {
--		entry = journal->j_journal_list.next;
--		jl = JOURNAL_LIST_ENTRY(entry);
--		/* this check should always be run, to send old lists to disk */
--		if (jl->j_timestamp < (now - (JOURNAL_MAX_TRANS_AGE * 4)) &&
--		    atomic_read(&jl->j_commit_left) == 0 &&
--		    test_transaction(s, jl)) {
--			flush_used_journal_lists(s, jl);
--		} else {
--			break;
--		}
--	}
--}
--
- /*
- ** long and ugly.  If flush, will not return until all commit
- ** blocks and all real buffers in the trans are on disk.
-@@ -4262,7 +4201,6 @@ static int do_journal_end(struct reiserf
- 			}
- 		}
+@@ -1363,7 +1363,6 @@ static int flush_journal_list(struct sup
+ 		reiserfs_warning(s, "clm-2048", "called with wcount %d",
+ 				 atomic_read(&journal->j_wcount));
  	}
--	flush_old_journal_lists(sb);
+-	BUG_ON(jl->j_trans_id == 0);
  
- 	journal->j_current_jl->j_list_bitmap =
- 	    get_list_bitmap(sb, journal->j_current_jl);
-
+ 	/* if flushall == 0, the lock is already held */
+ 	if (flushall) {
+@@ -1818,6 +1817,8 @@ static int flush_used_journal_lists(stru
+ 			break;
+ 		tjl = JOURNAL_LIST_ENTRY(tjl->j_list.next);
+ 	}
++	get_journal_list(jl);
++	get_journal_list(flush_jl);
+ 	/* try to find a group of blocks we can flush across all the
+ 	 ** transactions, but only bother if we've actually spanned
+ 	 ** across multiple lists
+@@ -1826,6 +1827,8 @@ static int flush_used_journal_lists(stru
+ 		ret = kupdate_transactions(s, jl, &tjl, &trans_id, len, i);
+ 	}
+ 	flush_journal_list(s, flush_jl, 1);
++	put_journal_list(s, flush_jl);
++	put_journal_list(s, jl);
+ 	return 0;
+ }
+ 
 
 -- 
 Jeff Mahoney
