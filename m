@@ -1,82 +1,61 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH 2/2] reiserfs: fix race with flush_used_journal_lists and
- flush_journal_list
-Date: Mon, 23 Sep 2013 16:50:42 -0400
-Message-ID: <5240A9A2.3040707@suse.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: Reiser4 GIT and Kernel 3.11 patchs
+Date: Mon, 23 Sep 2013 23:21:48 +0200
+Message-ID: <5240B0EC.30203@gmail.com>
+References: <20130919151403.Horde.VoBIXKovROrctv021aPeYw7@mail.thieu.so> <5240900B.90800@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-type:content-transfer-encoding;
+        bh=Q3AMrjkrXTm5YY3Z89MpE/01dQziU5FOQMM8RS7SX3E=;
+        b=ywpsl3Z9HxqcYKZud5mTwC0ziz+KLeJb/0zUyj4TdWFR5l6jQ6rpA4mRKvwufTeROd
+         E35B7eb5LD4LVpTO4GOcqCpIPhTAahsYg1OPSuTKI8pP6B2xssCXbuzGpfSl1BwInmv/
+         /BnmhDeaggycRm8TIo9xZY9CN5HIddRGkhuGfmY9GRECTx0SguRxMz/RF1Vp0v5HJubd
+         ovzcoNZM3t++3NwoRLrreh+SvOWwDOuTlwVrOmqYsYYzTAsLEDS9GEpkhF8nW0amXu/S
+         kTaIMOnZpB6U142fnz1+kUtrCfvj3max3cw7NDHkm3sqW8C7XZwjhHU9X5LqSnFZU4ls
+         xdnQ==
+In-Reply-To: <5240900B.90800@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
-Cc: Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+To: m@thieu.so
+Cc: Chris Gentile <cnjgentile@gmail.com>, Evgeniy <iron.udjin@gmail.com>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-There are two locks involved in managing the journal lists. The general
-reiserfs_write_lock and the journal->j_flush_mutex.
+With this patch I do have the following:
 
-While flush_journal_list is sleeping to acquire the j_flush_mutex or to
-submit a block for write, it will drop the write lock. This allows
-another thread to acquire the write lock and ultimately call
-flush_used_journal_lists to traverse the list of journal lists and
-select one for flushing. It can select the journal_list that has just
-had flush_journal_list called on it in the original thread and call it
-again with the same journal_list.
+[root@pepelac ~]# rm -rf /mnt/*
+rm: cannot remove =E2=80=98/mnt/stress/10=E2=80=99: Directory not empty
+rm: cannot remove =E2=80=98/mnt/stress/2=E2=80=99: Directory not empty
+rm: cannot remove =E2=80=98/mnt/stress/4=E2=80=99: Directory not empty
 
-The second thread then drops the write lock to acquire j_flush_mutex and
-the first thread reacquires it and continues execution and eventually
-clears and frees the journal list before dropping j_flush_mutex and
-returning.
+However, this is because of races: when there is no any
+contention, the directories can be successfully removed.
+Not sure, if such behavior is POSIX compliant though...
 
-The second thread acquires j_flush_mutex and ends up operating on a
-journal_list that has already been released. If the memory hasn't
-been reused, we'll soon after hit a BUG_ON because the transaction id
-has already been cleared. If it's been reused, we'll crash in other
-fun ways.
+Edward.
 
-Since flush_journal_list will synchronize on j_flush_mutex, we can fix
-the race by taking a proper reference in flush_used_journal_lists
-and checking to see if it's still valid after the mutex is taken. It's
-safe to iterate the list of journal lists and pick a list with
-just the write lock as long as a reference is taken on the journal list
-before we drop the lock. We already have code to handle whether a
-transaction has been flushed already so we can use that to handle the
-race and get rid of the trans_id BUG_ON.
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- fs/reiserfs/journal.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+On 09/23/2013 09:01 PM, Edward Shishkin wrote:
+> On 09/19/2013 05:14 PM, m@thieu.so wrote:
+> [...]
+>>
+>> For the undeletable directory bug, i was able to reproduce it with=20
+>> 3.10 simply by copying portage on a r4 partition, do ctrl-c during=20
+>> copy and rm -rf it right after.
+>
+>
+> Unfortunately, I can not reproduce this.
+> Could you please try the attached patch? Does it help?
+> Better, on not important data...
+>
+> Thanks,
+> Edward.
 
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -1363,7 +1363,6 @@ static int flush_journal_list(struct sup
- 		reiserfs_warning(s, "clm-2048", "called with wcount %d",
- 				 atomic_read(&journal->j_wcount));
- 	}
--	BUG_ON(jl->j_trans_id == 0);
- 
- 	/* if flushall == 0, the lock is already held */
- 	if (flushall) {
-@@ -1818,6 +1817,8 @@ static int flush_used_journal_lists(stru
- 			break;
- 		tjl = JOURNAL_LIST_ENTRY(tjl->j_list.next);
- 	}
-+	get_journal_list(jl);
-+	get_journal_list(flush_jl);
- 	/* try to find a group of blocks we can flush across all the
- 	 ** transactions, but only bother if we've actually spanned
- 	 ** across multiple lists
-@@ -1826,6 +1827,8 @@ static int flush_used_journal_lists(stru
- 		ret = kupdate_transactions(s, jl, &tjl, &trans_id, len, i);
- 	}
- 	flush_journal_list(s, flush_jl, 1);
-+	put_journal_list(s, flush_jl);
-+	put_journal_list(s, jl);
- 	return 0;
- }
- 
-
--- 
-Jeff Mahoney
-SUSE Labs
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
