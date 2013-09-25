@@ -1,7 +1,7 @@
 From: Chris Gentile <cnjgentile@gmail.com>
 Subject: Re: Snappy compression algorithm for Reiser4.
-Date: Wed, 25 Sep 2013 17:10:26 -0400
-Message-ID: <52435142.3060907@gmail.com>
+Date: Wed, 25 Sep 2013 17:12:26 -0400
+Message-ID: <524351BA.5040508@gmail.com>
 References: <CAL2jS+=3q7Nvw89g=17Hj8uP-Cj_OtZ7R=QZRBDBz0Dknhhuug@mail.gmail.com> <523E30C5.2090705@gmail.com> <52433EEA.20309@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: QUOTED-PRINTABLE
@@ -11,12 +11,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         h=message-id:date:from:user-agent:mime-version:to:cc:subject
          :references:in-reply-to:content-type:content-transfer-encoding;
         bh=69+iAoxIYCC4XreTAEqYmvkIezySNphV7lknBhd0sVI=;
-        b=r2cZobssdvBQAUZ8yd+hEpVKmiSLIgUHgAHzP2SOC7BsrKhCW95CjUtKtTo88vFrAp
-         /oOJFIyLbxLGHt3pnpHW/kHtYR7e9u9ar4LeEjpK+ryCzHgJsCow5I1iToCceubpqqHC
-         3T/5TI1YuiGn/0jglVb3SXFIN1lVa7ZEcDsAxULlERa3+nX9VTqkn9XdaDQkvYs+ipLp
-         DEXGmltupfZI6XAiLEGQKex8sipr6Ag6PoaFMU7/vH24KcuP4TdHWW45nLdSyTtdhRwf
-         2QUrIGlBcM/hjTjlo61+ZJjJ4QYvAo9njvSaYUIdd3Myb+nmuG1ojMiZI6Evq7ATlTPt
-         EHTg==
+        b=wHJTZH4OqqhfmSIeGyFTs1shRbc9n0rvXx90TOSvmqAjuBjbAWc6GgfrO4BLAEk23q
+         zauJDpJG7ItdDIpzwD09zqtrKRP3ag1jMRg4V1aGsZMhnLBOqF5zTYAmTC1QzO13UB6c
+         ZN6YnerySRV79oBsWeri7jaolfOoikqNXDpBq2TKdatvwaPXEu4+ZnwskyI8tgQKr3CO
+         LmR82D3h80B5TsxnH9EVde0oruuayPZtKIxTdLCd1Pb8G3IQsaGF2cglbxkEo2vpopn8
+         8yyAj+RPYgFxICHmxCnuYg64qmS6aLAN5oYWoC+mEAi8CF/C90VMe66jN/K+C43E5ZZn
+         L/UQ==
 In-Reply-To: <52433EEA.20309@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
