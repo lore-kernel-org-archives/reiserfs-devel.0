@@ -1,92 +1,19 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 2/2] reiserfs: fix race with flush_used_journal_lists and
- flush_journal_list
-Date: Tue, 24 Sep 2013 11:11:43 +0200
-Message-ID: <20130924091143.GC1821@quack.suse.cz>
-References: <5240A9A2.3040707@suse.com>
+From: Mathieu Belanger <m@thieu.so>
+Subject: Re: Reiser4 GIT and Kernel 3.11 patchs
+Date: Wed, 25 Sep 2013 00:31:01 +0000
+Message-ID: <20130925003101.Horde.LeGCF4lD1Sg2dzqXeu9cdw1@mail.thieu.so>
+References: <20130919151403.Horde.VoBIXKovROrctv021aPeYw7@mail.thieu.so>
+ <5240900B.90800@gmail.com> <524156A3.7030103@gmail.com>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+In-Reply-To: <524156A3.7030103@gmail.com>
 Content-Disposition: inline
-In-Reply-To: <5240A9A2.3040707@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=; format=flowed; DelSp=Yes; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>, Jan Kara <jack@suse.cz>
+To: Chris Gentile <cnjgentile@gmail.com>
+Cc: Edward Shishkin <edward.shishkin@gmail.com>, Evgeniy <iron.udjin@gmail.com>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-On Mon 23-09-13 16:50:42, Jeff Mahoney wrote:
-> There are two locks involved in managing the journal lists. The general
-> reiserfs_write_lock and the journal->j_flush_mutex.
-> 
-> While flush_journal_list is sleeping to acquire the j_flush_mutex or to
-> submit a block for write, it will drop the write lock. This allows
-> another thread to acquire the write lock and ultimately call
-> flush_used_journal_lists to traverse the list of journal lists and
-> select one for flushing. It can select the journal_list that has just
-> had flush_journal_list called on it in the original thread and call it
-> again with the same journal_list.
-> 
-> The second thread then drops the write lock to acquire j_flush_mutex and
-> the first thread reacquires it and continues execution and eventually
-> clears and frees the journal list before dropping j_flush_mutex and
-> returning.
-> 
-> The second thread acquires j_flush_mutex and ends up operating on a
-> journal_list that has already been released. If the memory hasn't
-> been reused, we'll soon after hit a BUG_ON because the transaction id
-> has already been cleared. If it's been reused, we'll crash in other
-> fun ways.
-> 
-> Since flush_journal_list will synchronize on j_flush_mutex, we can fix
-> the race by taking a proper reference in flush_used_journal_lists
-> and checking to see if it's still valid after the mutex is taken. It's
-> safe to iterate the list of journal lists and pick a list with
-> just the write lock as long as a reference is taken on the journal list
-> before we drop the lock. We already have code to handle whether a
-> transaction has been flushed already so we can use that to handle the
-> race and get rid of the trans_id BUG_ON.
-  Thanks. I've merged the patch into my tree.
+I just uploaded the kernel 3.12-rc2 in my git will all the patchs.
 
-								Honza
-> 
-> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-> ---
->  fs/reiserfs/journal.c |   13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> --- a/fs/reiserfs/journal.c
-> +++ b/fs/reiserfs/journal.c
-> @@ -1363,7 +1363,6 @@ static int flush_journal_list(struct sup
->  		reiserfs_warning(s, "clm-2048", "called with wcount %d",
->  				 atomic_read(&journal->j_wcount));
->  	}
-> -	BUG_ON(jl->j_trans_id == 0);
->  
->  	/* if flushall == 0, the lock is already held */
->  	if (flushall) {
-> @@ -1818,6 +1817,8 @@ static int flush_used_journal_lists(stru
->  			break;
->  		tjl = JOURNAL_LIST_ENTRY(tjl->j_list.next);
->  	}
-> +	get_journal_list(jl);
-> +	get_journal_list(flush_jl);
->  	/* try to find a group of blocks we can flush across all the
->  	 ** transactions, but only bother if we've actually spanned
->  	 ** across multiple lists
-> @@ -1826,6 +1827,8 @@ static int flush_used_journal_lists(stru
->  		ret = kupdate_transactions(s, jl, &tjl, &trans_id, len, i);
->  	}
->  	flush_journal_list(s, flush_jl, 1);
-> +	put_journal_list(s, flush_jl);
-> +	put_journal_list(s, jl);
->  	return 0;
->  }
->  
-> 
-> -- 
-> Jeff Mahoney
-> SUSE Labs
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
