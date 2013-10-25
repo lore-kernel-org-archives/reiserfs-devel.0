@@ -1,48 +1,73 @@
-From: Michael Opdenacker <michael.opdenacker@free-electrons.com>
-Subject: Re: [PATCH] reiserfs: remove duplicate define
-Date: Thu, 24 Oct 2013 07:28:28 +0200
-Message-ID: <5268AFFC.8020106@free-electrons.com>
-References: <1382342097-2991-1-git-send-email-michael.opdenacker@free-electrons.com> <20131023095040.GD1275@quack.suse.cz>
+From: Gun Li <gun.li@ruckuswireless.com>
+Subject: deleting operation of reiserfs leads to usb stick hangs
+Date: Fri, 25 Oct 2013 02:46:41 +0000
+Message-ID: <c8e8dbdb629447e8b15348ed2fb5c101@BY2PR08MB029.namprd08.prod.outlook.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20131023095040.GD1275@quack.suse.cz>
+Content-Language: en-US
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Jan Kara <jack@suse.cz>
-Cc: viro@zeniv.linux.org.uk, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, jeffm@suse.com, marco.stornelli@gmail.com
+Content-Type: text/plain; charset="windows-1254"
+To: "jeffm@suse.com" <jeffm@suse.com>
+Cc: "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>
 
-Hi Jan,
-
-Thank you for your review!
-
-On 10/23/2013 11:50 AM, Jan Kara wrote:
-> On Mon 21-10-13 09:54:57, Michael Opdenacker wrote:
->> This patch removes a duplicate define in fs/reiserfs/reiserfs.h
->   Hum, so the duplicate define certainly isn't nice but it's really a
-> result of a namespace collision between return codes of two different (sets
-> of) functions. So deleting the duplicate isn't really solving the problem,
-> just hiding it. So I'd prefer more one of the following two solutions:
-> 1) Just ignore the problem. Reiserfs is mostly dead and this isn't likely to
-> cause any subtle issues.
-> 2) Prefix the return codes somehow so that those two error namespaces don't
-> clash. As a bonus you can convert defines to enums but I'm not sure that's
-> worth the bother (prefixing is a simple search & replace so that should be
-> trivial, well except for the CARRY_ON case).
-I like your second solution, adding a prefix to avoid collisions between
-two error namespaces, all the more as this looks like a good solution
-for similar issues that I found.
-
-Thanks again,
-
-Cheers,
-
-Michael.
-
--- 
-Michael Opdenacker, CEO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-+33 484 258 098
-
+SGkgSmVmZiwNCg0K44CARXhjdXNlIG1lIHRvIGRpc3R1cmIgeW91LiAoc29ycnkgZm9yIHJlc2Vu
+ZGluZyBkdWUgdG8gcHJpb3Igb25lIGlzIGh0bWwgZm9ybWF0IGFuZCBpcyByZWplY3RlZC4pDQrj
+gIBPbmUgaXNzdWUgaXMgZW5jb3VudGVyZWQgYnkgb3VyIGRldmljZToNCuOAgMKgwqDCoCBBZnRl
+ciBkZWxldGluZyBsb3RzIG9mIGZpbGVzL2RpcmVjdG9yaWVzIGluIHJlaXNlcmZzIHBhcnRpdGlv
+biBvZiBhIHVzYiBzdGljayB0aGVuIGhvdCByZWJvb3QsIHNvbWV0aW1lcyB0aGUgZGV2aWNlIGNh
+buKAmXQgbW91bnQgdGhlIHVzYiBzdGljayBzdWNjZXNzZnVsbHkuDQrjgIANCuOAgFRoZSBzeW1w
+dG9tOg0K44CAwqDCoMKgIFdoZW4gdGhlIGlzc3VlIG9jY3VycywgZGV2aWNlIGNhbuKAmXQgcmVj
+ZWl2ZSBhbnkgcmVzcG9uc2UgZnJvbSB0aGUgREFUQSBJTiBlbmRwb2ludCBvZiB0aGUgdXNiIHN0
+aWNrLCBoZW5jZSBhbGwgU0NTSSBjb21tYW5kcyBmYWlsIGFuZCB0aGUgdXNiIHN0aWNrIGNhbuKA
+mXQgYmUgbW91bnRlZC4NCuOAgMKgwqDCoCBQb3dlciBjeWNsZSBvciB1bnBsdWctdGhlbi1wbHVn
+LWluIHRoZSB1c2Igc3RpY2sgY2FuIHJlY292ZXIgaXQuDQrjgIDCoMKgwqAgQnV0IHRoZSBpc3N1
+ZSBvY2N1cnMgb25seSB3aGVuIG91ciBkZXZpY2UgdXNlcyBMaW51eCAyLjYuMzIsIHRoZXJlIGlz
+IG5vIHN1Y2ggaXNzdWUgd2hlbiBpdCB1c2VzIDIuNi4xNSAod2UgdXBncmFkZSB0aGUgZGV2aWNl
+IHRvIExpbnV4IDIuNi4zMiBmcm9tIDIuNi4xNSByZWNlbnRseSkuDQrjgIANCuOAgFRoZSBjYXVz
+ZSBpcyBuYXJyb3dlZCBkb3duIGJ5IHRlc3RzOg0K44CAwqDCoMKgIFRoZXJlIGFyZSAyIHBhcnRp
+dGlvbnMgaW4gdGhlIHVzYiBzdGljaywgb25lIGlzIHJlaXNlcmZzLCB0aGUgb3RoZXIgaXMgZXh0
+Mi4NCuOAgMKgwqDCoCBEb2luZyBsb3RzIG9mIG9wZXJhdGlvbiAoZGVsZXRpbmcsIGNvcHlpbmcp
+IGluIHJlaXNlcmZzIHRoZW4gaG90IHJlYm9vdCBzb21ldGltZXMgbGVhZCB0byB0aGUgaXNzdWUs
+IGJ1dCBkb2luZyB0aGUgc2FtZSBvcGVyYXRpb24gb24gZXh0MiB3b27igJl0Ow0K44CAwqDCoMKg
+IERvaW5nIGxvdHMgb2YgZGVsZXRpbmcgZmlsZS9kaXJlY3RvcmllcyBvcGVyYXRpb24gaW4gcmVp
+c2VyZnMgdGhlbiBob3QgcmVib290IHNvbWV0aW1lcyBsZWFkIHRvIHRoZSBpc3N1ZSwgYnV0IGRv
+aW5nIGNvcHlpbmcgb3BlcmF0aW9uIHdvbuKAmXQuDQrjgIDCoMKgwqAgUmVmb3JtYXR0aW5nIHRo
+ZSByZWlzZXJmcyBwYXJ0aXRpb24gdW5kZXIgMi42LjMyIHRoZW4gZG9pbmcgdGVzdGluZyBhZ2Fp
+biwgdGhlcmUgaXMgdGhlIHNhbWUgaXNzdWUsIHNvIHRoaXMgaXMgbm90IGNhdXNlZCBieSB0aGUg
+cG9zc2libGUgaW5jb21wYXRpYmxlIGZvcm1hdCBiZXR3ZWVuIDIuNi4xNSBhbmQgMi42LjMyLg0K
+44CADQrjgIBTb21lIGVmZm9ydHMgdG8gZml4IGl0Og0K44CAwqDCoMKgIE1lcmdpbmcgcmVsYXRl
+ZCBjaGFuZ2VzIGluIGxhdGVzdCAyLjYuMzIuNjEgd29u4oCZdCBmaXggdGhlIGlzc3VlLg0K44CA
+wqDCoMKgIENvbXBhcmluZyBjb2RlcyBpbiByZWlzZXJmc1xuYW1laS5jIGJldHdlZW4gMi42LjE1
+IGFuZCAyLjYuMzIsIGl0IHNlZW1zIG9ubHkgc29tZSBsaXR0bGUgdHVuaW5nIGlzIGRpZCB0byBi
+ZSBjb21wYXRpYmxlIHdpdGgga2VybmVsIEFQSSBjaGFuZ2VzLg0K44CADQrjgIBSZWxhdGVkIGtl
+cm5lbCBjb25maWd1cmF0aW9uOg0K44CAMi42LjMyOg0K44CAIyBGaWxlIHN5c3RlbXMNCuOAgCMN
+CuOAgENPTkZJR19FWFQyX0ZTPXkNCuOAgCMgQ09ORklHX0VYVDJfRlNfWEFUVFIgaXMgbm90IHNl
+dA0K44CAIyBDT05GSUdfRVhUMl9GU19YSVAgaXMgbm90IHNldA0K44CAIyBDT05GSUdfRVhUM19G
+UyBpcyBub3Qgc2V0DQrjgIAjIENPTkZJR19FWFQ0X0ZTIGlzIG5vdCBzZXQNCuOAgENPTkZJR19S
+RUlTRVJGU19GUz15DQrjgIAjIENPTkZJR19SRUlTRVJGU19DSEVDSyBpcyBub3Qgc2V0DQrjgIBD
+T05GSUdfUkVJU0VSRlNfUFJPQ19JTkZPPXkNCuOAgCMgQ09ORklHX1JFSVNFUkZTX0ZTX1hBVFRS
+IGlzIG5vdCBzZXQNCuOAgCMgQ09ORklHX0pGU19GUyBpcyBub3Qgc2V0DQrjgIAjIENPTkZJR19G
+U19QT1NJWF9BQ0wgaXMgbm90IHNldA0K44CAIyBDT05GSUdfWEZTX0ZTIGlzIG5vdCBzZXQNCuOA
+gCMgQ09ORklHX09DRlMyX0ZTIGlzIG5vdCBzZXQNCuOAgCMgQ09ORklHX0JUUkZTX0ZTIGlzIG5v
+dCBzZXQNCuOAgCMgQ09ORklHX05JTEZTMl9GUyBpcyBub3Qgc2V0DQrjgIBDT05GSUdfRklMRV9M
+T0NLSU5HPXkNCuOAgCMgQ09ORklHX0RFTEFZX0FTWU5DX1JFQURBSEVBRCBpcyBub3Qgc2V0DQrj
+gIAjIENPTkZJR19TRU5EX1BBR0VTIGlzIG5vdCBzZXQNCuOAgENPTkZJR19GU05PVElGWT15DQrj
+gIBDT05GSUdfRE5PVElGWT15DQrjgIAjIENPTkZJR19JTk9USUZZIGlzIG5vdCBzZXQNCuOAgCMg
+Q09ORklHX0lOT1RJRllfVVNFUiBpcyBub3Qgc2V0DQrjgIAjIENPTkZJR19RVU9UQSBpcyBub3Qg
+c2V0DQrjgIAjIENPTkZJR19BVVRPRlNfRlMgaXMgbm90IHNldA0K44CAIyBDT05GSUdfQVVUT0ZT
+NF9GUyBpcyBub3Qgc2V0DQrjgIAjIENPTkZJR19GVVNFX0ZTIGlzIG5vdCBzZXQNCsKgwqAgDQrj
+gIAyLjYuMTU6DQrjgIAjIEZpbGUgc3lzdGVtcw0K44CAIw0K44CAQ09ORklHX0VYVDJfRlM9eQ0K
+44CAIyBDT05GSUdfRVhUMl9GU19YQVRUUiBpcyBub3Qgc2V0DQrjgIAjIENPTkZJR19FWFQyX0ZT
+X1hJUCBpcyBub3Qgc2V0DQrjgIAjIENPTkZJR19FWFQzX0ZTIGlzIG5vdCBzZXQNCuOAgCMgQ09O
+RklHX0pCRCBpcyBub3Qgc2V0DQrjgIBDT05GSUdfUkVJU0VSRlNfRlM9eQ0K44CAIyBDT05GSUdf
+UkVJU0VSRlNfQ0hFQ0sgaXMgbm90IHNldA0K44CAQ09ORklHX1JFSVNFUkZTX1BST0NfSU5GTz15
+DQrjgIAjIENPTkZJR19SRUlTRVJGU19GU19YQVRUUiBpcyBub3Qgc2V0DQrjgIAjIENPTkZJR19K
+RlNfRlMgaXMgbm90IHNldA0K44CAIyBDT05GSUdfRlNfUE9TSVhfQUNMIGlzIG5vdCBzZXQNCuOA
+gCMgQ09ORklHX1hGU19GUyBpcyBub3Qgc2V0DQrjgIAjIENPTkZJR19NSU5JWF9GUyBpcyBub3Qg
+c2V0DQrjgIAjIENPTkZJR19ST01GU19GUyBpcyBub3Qgc2V0DQrjgIAjIENPTkZJR19JTk9USUZZ
+IGlzIG5vdCBzZXQNCuOAgCMgQ09ORklHX1FVT1RBIGlzIG5vdCBzZXQNCuOAgENPTkZJR19ETk9U
+SUZZPXkNCuOAgCMgQ09ORklHX0FVVE9GU19GUyBpcyBub3Qgc2V0DQrjgIAjIENPTkZJR19BVVRP
+RlM0X0ZTIGlzIG5vdCBzZXQNCuOAgCMgQ09ORklHX0ZVU0VfRlMgaXMgbm90IHNldA0KDQrCoMKg
+wqAgDQrCoMKgwqDCoEFwcHJlY2lhdGUgYW55IGhlbHAuDQoNClRoYW5rcywNCkd1bg0K
