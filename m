@@ -1,58 +1,56 @@
-From: Nicolas Barbier <nicolas.barbier@gmail.com>
+From: dimas <dimas000@ya.ru>
 Subject: Re: reiser4 kernel compilation problem.
-Date: Mon, 25 Nov 2013 10:53:57 +0100
-Message-ID: <CAP-rdTbuuxe1urCCt0+3AtA+3qLfjMj3GKseLCvZ3KZb4FCjOA@mail.gmail.com>
+Date: Mon, 25 Nov 2013 13:56:35 +0400
+Message-ID: <20131125135635.36d29c28@Ulf.tvoe.tv>
 References: <35ffb317ffa4ed9987117759f51ebd1f@mail.velocitynet.com.au>
 	<20131123161309.1b321a45@Ulf.tvoe.tv>
 	<3ff712c55494331e10c9f7fc0b7b8d25@mail.velocitynet.com.au>
+Reply-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>, dimas000@ya.ru
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=mime-version:in-reply-to:references:date:message-id:subject:from:to
-         :cc:content-type:content-transfer-encoding;
-        bh=VIkmdgVbncKtC1dA8V9Y88PcixUPDvWtQCNPikpeG/M=;
-        b=XmLRtuDM/9yqAPFPq55AhaHzxy3UFxb1PMH8Mq4G6Yp/Ym5HmhW6f17hBWdTVwUCXH
-         A0Ivpq2zFpKldrEDsNZMzc37ty7ZfIHt6CBnw98+hYRuS/fYa4gAEB+cUoOLxxEPzlwd
-         DJQ1BMuNNLrqfZ4UScJJwOz7dsQLjOeJABAcYfmIXprW4+DQLL4RHUNoedf47oD3F1Aa
-         L94HWILPHQVUEfzNbCZhIf53FsXXzarosqpkQezJQgHdIrCeP/aLRURkZSXVG8zDAVgM
-         bbf77HPZcT+3EL4T/CH6sD6BtxVOg+GPkakfSLbgpf1RAJI8PfssgF1rObjPmrhpb7bx
-         ZhrQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ya.ru; s=mail; t=1385373396;
+	bh=bCNY2BFviU6qLdgMy0uURwo73E3w8fK9TjSKwhbUMwM=;
+	h=Date:From:To:Subject:Message-ID:In-Reply-To:References:Reply-To:
+	 X-Mailer:Mime-Version:Content-Type:Content-Transfer-Encoding;
+	b=tTHSbxS4o25iaR/7yQS1eegvz/P+g2SX2OdMrxMBza9MxpEEeiQ6E9GBg7lCXJ0jk
+	 rmT0+smXtuDBLyA+rNLm43ms8+Be5LlfgAg2IL18YMyMNai77+CJZsvF+obX9yLoTn
+	 pnZ2g3iyT9Hy/adRybxl1B6wfI7m41gNcKNLjyVQ=
 In-Reply-To: <3ff712c55494331e10c9f7fc0b7b8d25@mail.velocitynet.com.au>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: doiggl@velocitynet.com.au
-Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-2013/11/23  <doiggl@velocitynet.com.au>:
-
+> Hello,
 > Here are the details:
->
+> 
 > # insmod
 > Usage: insmod filename [args]
-
-You didn=E2=80=99t specify a module to load. The usage help message of =
-just
-=E2=80=9Cinsmod=E2=80=9D is absolutely irrelevant. First use =E2=80=9Cl=
-smod=E2=80=9D (this one doesn=E2=80=99t
-need arguments :-)) to check whether the module is loaded. If not, use
-=E2=80=9Cinsmod <modulename>=E2=80=9D to load it.
+no-no-no, insmod is used to load module. you must give it a module name to load.
+also there is lsmod, which shows currently loaded modules. read man insmod, man
+lsmod for details.
+so, aftre your mount attempt (not before it, because modules usually load only
+when requested) check if reiser4 module did loaded:
+lsmod | grep "reiser4"
+if it occasionaly shows nothing, try loading it manually, using "insmod
+reiser4" or better
+modprobe -v reiser4
+if this will fail too, there should be a problem with the module itself.
+i'm using no modules, building only what i need, and building it static (=Y).
+static built reiser4 works perfectly wirh 3.11 for me, so i don't know, what's
+that. check dmesg after attempt to load, maybe there is something.
 
 > # ll /proc/filesystems
 > -r--r--r-- 1 root root 0 Nov 25 12:18 /proc/filesystems
+try "cat /proc/filesystems")) it shows list of fs types, which kernel currently
+support
 
-Please look *into* this file, i.e., use =E2=80=9Ccat=E2=80=9D, not =E2=80=
-=9Cll=E2=80=9D.
-
-Nicolas
-
---=20
-A. Because it breaks the logical sequence of discussion.
-Q. Why is top posting bad?
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Back to the Question:
+> What reiser4 kernel build paramerers I need in the kernel build so I can
+> use this partition ?
+> I have set:
+> CONFIG_REISER4_DEBUG=n
+> CONFIG_REISER4_FS=m
+if you are not using cryptocompress plugin (your fsck lock says, you are not).
+i believe, this is enough.
