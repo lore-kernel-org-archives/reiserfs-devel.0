@@ -1,42 +1,41 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH 14/18] xfs: use generic posix ACL infrastructure
-Date: Tue, 3 Dec 2013 10:34:44 +1100
-Message-ID: <20131202233444.GH10988@dastard>
-References: <20131201115903.910559036@bombadil.infradead.org>
-	<20131201120656.194735588@bombadil.infradead.org>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: Linux 3.12.x
+Date: Tue, 03 Dec 2013 00:55:48 +0100
+Message-ID: <529D1E04.2010505@gmail.com>
+References: <529CC2E8.4030905@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <xfs-bounces@oss.sgi.com>
-Content-Disposition: inline
-In-Reply-To: <20131201120656.194735588@bombadil.infradead.org>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
-List-Archive: <http://oss.sgi.com/pipermail/xfs>
-List-Post: <mailto:xfs@oss.sgi.com>
-List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
-List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
-Errors-To: xfs-bounces@oss.sgi.com
-Sender: xfs-bounces@oss.sgi.com
-To: Christoph Hellwig <hch@infradead.org>
-Cc: jfs-discussion@lists.sourceforge.net, linux-ext4@vger.kernel.org, Mark Fasheh <mfasheh@suse.com>, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com, linux-mtd@lists.infradead.org, viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, xfs@oss.sgi.com, linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org, Joel Becker <jlbec@evilplan.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject:references
+         :in-reply-to:content-type:content-transfer-encoding;
+        bh=qE/To2JXM+zaD0hZfZxqiBFPWb1bhG7UsMXWQdClx+g=;
+        b=Kcn1fUyEMBm5uTHRNEOdNYL0bO3u3e/D7/KOQbiNVs+V+x7bFEdcmwOG08RLONdHdi
+         sGeeOYNtQ5zncdyNkWYrGID90L65yDm5BhOD6FT25aXDM44MBkRvnRRu9PGv/a9obVsW
+         KetsGSVjeQiNJ5rxqW2dINVFhcIutx9dWWl/MySXOX8empOnC/CEPGygodM6PkqcEwpi
+         0NYMJiLZVxAEOyIqsG6rSq07atiL0upc3AdDl8W5jXejRX7vw8uk40x7CiKu0dCaqmAp
+         KlleDQVIofp7WdsOIEVMQuGMoux8dtTlg3K+BhcQeZNnPTiZZm0mJaAmv4hvOqoKTYrW
+         xMMQ==
+In-Reply-To: <529CC2E8.4030905@gmail.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+To: Chris Gentile <cnjgentile@gmail.com>, reiserfs-devel@vger.kernel.org
 
-On Sun, Dec 01, 2013 at 03:59:17AM -0800, Christoph Hellwig wrote:
-> Also create inodes with the proper mode instead of fixing it up later.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+02.12.2013 18:27, Chris Gentile =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> Hello all,
+>
+> Any working patches for 3.12.x non-RC that will work and compile with
+> the RT patch set  by chance?
 
-Nice cleanup work, Christoph.
+I haven't look at this yet. May be next weekends...
+Not sure about RT, but AFAIK Mathieu Belanger has prepared a port for u=
+s.
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-
--- 
-Dave Chinner
-david@fromorbit.com
-
-_______________________________________________
-xfs mailing list
-xfs@oss.sgi.com
-http://oss.sgi.com/mailman/listinfo/xfs
+Edward.
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
