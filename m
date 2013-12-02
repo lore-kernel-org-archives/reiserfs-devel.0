@@ -1,19 +1,15 @@
-From: Vyacheslav Dubeyko <slava@dubeyko.com>
-Subject: Re: [PATCH 10/18] hfsplus: use generic posix ACL infrastructure
-Date: Sun, 1 Dec 2013 17:36:51 +0300
-Message-ID: <3F8D73A0-9449-42FB-8CFA-D1E4C86FF0B2@dubeyko.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 02/18] fs: add get_acl helper
+Date: Mon, 2 Dec 2013 21:14:34 +0100
+Message-ID: <20131202201434.GB12253@quack.suse.cz>
 References: <20131201115903.910559036@bombadil.infradead.org>
-	<20131201120655.410590428@bombadil.infradead.org>
-Mime-Version: 1.0 (Apple Message framework v1085)
+	<20131201120653.841554822@bombadil.infradead.org>
+Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <xfs-bounces@oss.sgi.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=dubeyko.com;
-	s=default; 
-	h=To:References:Message-Id:Content-Transfer-Encoding:Cc:Date:In-Reply-To:From:Content-Type:Mime-Version:Subject;
-	bh=MpRxkmXsepWvRADYL8kM+X7RTBGRO0SonETcKpOE38w=; 
-	b=T8nzO2O6p5m850TLOVgJDDSq1PmglLkRO6GNOPNv9rRqesyzz/gFvkTB/EEu5FtvTDFbpnk4ndIBEg5Gv2p9R+bPQYvbr4vM3XXv/sgzilwAc35ZgDa9xypFuvkqwuzw;
-In-Reply-To: <20131201120655.410590428@bombadil.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20131201120653.841554822@bombadil.infradead.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
 	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
@@ -27,29 +23,110 @@ Sender: xfs-bounces@oss.sgi.com
 To: Christoph Hellwig <hch@infradead.org>
 Cc: xfs@oss.sgi.com, Mark Fasheh <mfasheh@suse.com>, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com, linux-mtd@lists.infradead.org, viro@zeniv.linux.org.uk, jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org, Joel Becker <jlbec@evilplan.org>
 
-
-On Dec 1, 2013, at 2:59 PM, Christoph Hellwig wrote:
-
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
-> fs/hfsplus/acl.h       |    9 +--
-> fs/hfsplus/dir.c       |    1 +
-> fs/hfsplus/inode.c     |    3 +-
-> fs/hfsplus/posix_acl.c |  161 +++++-------------------------------------------
-> fs/hfsplus/xattr.c     |    5 +-
-> fs/hfsplus/xattr.h     |    2 -
-> 6 files changed, 24 insertions(+), 157 deletions(-)
+On Sun 01-12-13 03:59:05, Christoph Hellwig wrote:
+> Factor out the code to get an ACL either from the inode or disk from
+> check_acl, so that it can be used elsewhere later on.
 > 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+  Looks good. You can add:
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Reviewed-by: Vyacheslav Dubeyko <slava@dubeyko.com>
+								Honza
 
-The patch looks correct. I think only that it makes sense to add debug messages
-in hfsplus_get_posix_acl() and hfsplus_set_posix_acl(). Previously, debug
-messages were in hfsplus_xattr_get_posix_acl() and hfsplus_xattr_set_posix_acl()
-but the patch removes these methods.
-
-Thanks,
-Vyacheslav Dubeyko.
+> ---
+>  fs/namei.c                |   24 +++---------------------
+>  fs/posix_acl.c            |   23 +++++++++++++++++++++++
+>  include/linux/posix_acl.h |    2 ++
+>  3 files changed, 28 insertions(+), 21 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index c53d3a9..8acd1e8 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -235,27 +235,9 @@ static int check_acl(struct inode *inode, int mask)
+>  	        return posix_acl_permission(inode, acl, mask & ~MAY_NOT_BLOCK);
+>  	}
+>  
+> -	acl = get_cached_acl(inode, ACL_TYPE_ACCESS);
+> -
+> -	/*
+> -	 * A filesystem can force a ACL callback by just never filling the
+> -	 * ACL cache. But normally you'd fill the cache either at inode
+> -	 * instantiation time, or on the first ->get_acl call.
+> -	 *
+> -	 * If the filesystem doesn't have a get_acl() function at all, we'll
+> -	 * just create the negative cache entry.
+> -	 */
+> -	if (acl == ACL_NOT_CACHED) {
+> -	        if (inode->i_op->get_acl) {
+> -			acl = inode->i_op->get_acl(inode, ACL_TYPE_ACCESS);
+> -			if (IS_ERR(acl))
+> -				return PTR_ERR(acl);
+> -		} else {
+> -		        set_cached_acl(inode, ACL_TYPE_ACCESS, NULL);
+> -		        return -EAGAIN;
+> -		}
+> -	}
+> -
+> +	acl = get_acl(inode, ACL_TYPE_ACCESS);
+> +	if (IS_ERR(acl))
+> +		return PTR_ERR(acl);
+>  	if (acl) {
+>  	        int error = posix_acl_permission(inode, acl, mask);
+>  	        posix_acl_release(acl);
+> diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+> index 8bd2135..9dd03e0 100644
+> --- a/fs/posix_acl.c
+> +++ b/fs/posix_acl.c
+> @@ -418,3 +418,26 @@ posix_acl_chmod(struct posix_acl **acl, gfp_t gfp, umode_t mode)
+>  	return err;
+>  }
+>  EXPORT_SYMBOL(posix_acl_chmod);
+> +
+> +struct posix_acl *get_acl(struct inode *inode, int type)
+> +{
+> +	struct posix_acl *acl;
+> +
+> +	acl = get_cached_acl(inode, type);
+> +	if (acl != ACL_NOT_CACHED)
+> +		return acl;
+> +
+> +	/*
+> +	 * A filesystem can force a ACL callback by just never filling the
+> +	 * ACL cache. But normally you'd fill the cache either at inode
+> +	 * instantiation time, or on the first ->get_acl call.
+> +	 *
+> +	 * If the filesystem doesn't have a get_acl() function at all, we'll
+> +	 * just create the negative cache entry.
+> +	 */
+> +        if (!inode->i_op->get_acl) {
+> +	        set_cached_acl(inode, type, NULL);
+> +	        return ERR_PTR(-EAGAIN);
+> +	}
+> +	return inode->i_op->get_acl(inode, type);
+> +}
+> diff --git a/include/linux/posix_acl.h b/include/linux/posix_acl.h
+> index 7931efe..a8d9918 100644
+> --- a/include/linux/posix_acl.h
+> +++ b/include/linux/posix_acl.h
+> @@ -175,4 +175,6 @@ static inline void cache_no_acl(struct inode *inode)
+>  #endif
+>  }
+>  
+> +struct posix_acl *get_acl(struct inode *inode, int type);
+> +
+>  #endif  /* __LINUX_POSIX_ACL_H */
+> -- 
+> 1.7.10.4
+> 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-ext4" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
 
 _______________________________________________
 xfs mailing list
