@@ -1,41 +1,47 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Linux 3.12.x
-Date: Tue, 03 Dec 2013 00:55:48 +0100
-Message-ID: <529D1E04.2010505@gmail.com>
-References: <529CC2E8.4030905@gmail.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 12/18] ocfs2: use generic posix ACL infrastructure
+Date: Tue, 3 Dec 2013 02:48:54 -0800
+Message-ID: <20131203104854.GA3223@infradead.org>
+References: <20131201115903.910559036@bombadil.infradead.org>
+ <20131201120655.852590677@bombadil.infradead.org>
+ <20131202230007.GK12253@quack.suse.cz>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:subject:references
-         :in-reply-to:content-type:content-transfer-encoding;
-        bh=qE/To2JXM+zaD0hZfZxqiBFPWb1bhG7UsMXWQdClx+g=;
-        b=Kcn1fUyEMBm5uTHRNEOdNYL0bO3u3e/D7/KOQbiNVs+V+x7bFEdcmwOG08RLONdHdi
-         sGeeOYNtQ5zncdyNkWYrGID90L65yDm5BhOD6FT25aXDM44MBkRvnRRu9PGv/a9obVsW
-         KetsGSVjeQiNJ5rxqW2dINVFhcIutx9dWWl/MySXOX8empOnC/CEPGygodM6PkqcEwpi
-         0NYMJiLZVxAEOyIqsG6rSq07atiL0upc3AdDl8W5jXejRX7vw8uk40x7CiKu0dCaqmAp
-         KlleDQVIofp7WdsOIEVMQuGMoux8dtTlg3K+BhcQeZNnPTiZZm0mJaAmv4hvOqoKTYrW
-         xMMQ==
-In-Reply-To: <529CC2E8.4030905@gmail.com>
-Sender: reiserfs-devel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: Chris Gentile <cnjgentile@gmail.com>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20131202230007.GK12253@quack.suse.cz>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: Jan Kara <jack@suse.cz>
+Cc: cluster-devel@redhat.com, xfs@oss.sgi.com, Mark Fasheh <mfasheh@suse.com>, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>, linux-mtd@lists.infradead.org, viro@zeniv.linux.org.uk, jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org, Joel Becker <jlbec@evilplan.org>
 
-02.12.2013 18:27, Chris Gentile =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> Hello all,
->
-> Any working patches for 3.12.x non-RC that will work and compile with
-> the RT patch set  by chance?
+On Tue, Dec 03, 2013 at 12:00:07AM +0100, Jan Kara wrote:
+>   Hum, this changes the cluster locking. Previously ocfs2_acl_get() used
+> from ocfs2_acl_chmod() grabbed cluster wide inode lock. Now getting of ACL
+> isn't protected by the inode lock. That being said the cluster locking
+> around setattr looks fishy anyway - if two processes on different
+> nodes are changing attributes of the same file, changing ACLs post fact
+> after dropping inode lock could cause interesting effects. Also I'm
+> wondering how inode_change_ok() can ever be safe without holding inode
+> lock... Until we grab that other node is free to change e.g. owner of the
+> inode thus leading even to security implications. But maybe I'm missing
+> something. Mark, Joel?
 
-I haven't look at this yet. May be next weekends...
-Not sure about RT, but AFAIK Mathieu Belanger has prepared a port for u=
-s.
+Hmm, indeed.  How does ocfs2_iop_get_acl get away without that lock?
 
-Edward.
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Btw, ocfs2 changes will need careful testing as I couldn't find any easy
+way to run xfstests on ocfs2 out of the box.
+
+
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
