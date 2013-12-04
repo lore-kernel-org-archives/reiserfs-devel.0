@@ -1,47 +1,91 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 12/18] ocfs2: use generic posix ACL infrastructure
-Date: Tue, 3 Dec 2013 02:48:54 -0800
-Message-ID: <20131203104854.GA3223@infradead.org>
-References: <20131201115903.910559036@bombadil.infradead.org>
- <20131201120655.852590677@bombadil.infradead.org>
- <20131202230007.GK12253@quack.suse.cz>
+From: Shaun Robinson <srobinson2@taz.dstl.gov.uk>
+Subject: Reiserfs bug
+Date: Wed, 04 Dec 2013 07:07:48 +0000
+Message-ID: <20131204070748.16375r99zeod4cg0@webmail.dstl.gov.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20131202230007.GK12253@quack.suse.cz>
-List-Id: <reiserfs-devel.vger.kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
-List-Post: <mailto:linux-mtd@lists.infradead.org>
-List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
-Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
-To: Jan Kara <jack@suse.cz>
-Cc: cluster-devel@redhat.com, xfs@oss.sgi.com, Mark Fasheh <mfasheh@suse.com>, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>, linux-mtd@lists.infradead.org, viro@zeniv.linux.org.uk, jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org, Joel Becker <jlbec@evilplan.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; delsp="Yes"; format="flowed"
+To: reiserfs-devel@vger.kernel.org
 
-On Tue, Dec 03, 2013 at 12:00:07AM +0100, Jan Kara wrote:
->   Hum, this changes the cluster locking. Previously ocfs2_acl_get() used
-> from ocfs2_acl_chmod() grabbed cluster wide inode lock. Now getting of ACL
-> isn't protected by the inode lock. That being said the cluster locking
-> around setattr looks fishy anyway - if two processes on different
-> nodes are changing attributes of the same file, changing ACLs post fact
-> after dropping inode lock could cause interesting effects. Also I'm
-> wondering how inode_change_ok() can ever be safe without holding inode
-> lock... Until we grab that other node is free to change e.g. owner of the
-> inode thus leading even to security implications. But maybe I'm missing
-> something. Mark, Joel?
+Hi,
 
-Hmm, indeed.  How does ocfs2_iop_get_acl get away without that lock?
+I am running Gentoo Linux with a 3.12.1 kernel and I receive the below  
+kernel bug:
 
-Btw, ocfs2 changes will need careful testing as I couldn't find any easy
-way to run xfstests on ocfs2 out of the box.
+[19765.370219] ------------[ cut here ]------------
+[19765.370358] kernel BUG at fs/reiserfs/stree.c:1477!
+[19765.370479] invalid opcode: 0000 [#1] SMP
+[19765.370611] Modules linked in: tcm_loop iscsi_target_mod  
+target_core_pscsi target_core_file target_core_iblock target_core_mod  
+netconsole xt_physdev iptable_filter tun configfs nfsd exportfs  
+bonding cdc_acm [last unloaded: target_core_mod]
+[19765.371359] CPU: 0 PID: 5917 Comm: kworker/0:0 Not tainted 3.12.1 #1
+[19765.371479] Hardware name: Dell Inc. PowerEdge R820/04K5X5, BIOS  
+1.5.0 03/08/2013
+[19765.371715] Workqueue: events delayed_fput
+[19765.371833] task: ffff8806b0049f00 ti: ffff8806b062a000 task.ti:  
+ffff8806b062a000
+[19765.372051] RIP: e030:[<ffffffff811efb74>]  [<ffffffff811efb74>]  
+reiserfs_cut_from_item+0x684/0x700
+[19765.372280] RSP: e02b:ffff8806b062b808  EFLAGS: 00010206
+[19765.372397] RAX: ffff880f91660800 RBX: ffff8806b062bc18 RCX:  
+ffff8806b062bca0
+[19765.372519] RDX: 0000000004995c44 RSI: ffff8806b127c750 RDI:  
+ffff880f91660800
+[19765.372639] RBP: ffff8806b062bb68 R08: 0000000000000000 R09:  
+ffff8806b062bb2c
+[19765.372816] R10: ffff8806b062bb98 R11: ffff8806ae384000 R12:  
+ffff8806b062bb98
+[19765.372937] R13: 0000000000001000 R14: ffff8806ad89cf58 R15:  
+00000000000001fa
+[19765.373063] FS:  00007ffdfef2f700(0000) GS:ffff880fa2200000(0000)  
+knlGS:0000000000000000
+[19765.373279] CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
+[19765.373395] CR2: 00007fea4c470000 CR3: 00000000cc4f9000 CR4:  
+0000000000042660
+[19765.373519] Stack:
+[19765.373627]  00000000000001fa ffff8806b062b828 000000000000e02b  
+000000004c5b03dc
+[19765.373866]  ffffea00147d6b00 0000000000000000 00000000b062b858  
+ffffffffffffffff
+[19765.374106]  ffff880f91660800 ffff8806b062bca0 ffff8806b062b8b8  
+0000000000000000
+[19765.374345] Call Trace:
+[19765.374459]  [<ffffffff811efded>] reiserfs_do_truncate+0x1fd/0x4f0
+[19765.374582]  [<ffffffff811daa3f>] reiserfs_truncate_file+0x19f/0x390
+[19765.374703]  [<ffffffff811dedca>] reiserfs_file_release+0x24a/0x310
+[19765.374823]  [<ffffffff8115dde9>] __fput+0xa9/0x230
+[19765.374938]  [<ffffffff8115df9b>] delayed_fput+0x2b/0x40
+[19765.375056]  [<ffffffff810735bb>] process_one_work+0x18b/0x4d0
+[19765.375230]  [<ffffffff8107481b>] worker_thread+0x11b/0x3e0
+[19765.375348]  [<ffffffff81074700>] ? manage_workers.isra.21+0x320/0x320
+[19765.375553]  [<ffffffff8107b6db>] kthread+0xbb/0xc0
+[19765.375670]  [<ffffffff81010000>] ? perf_trace_xen_mmu_pte_clear+0x40/0xf0
+[19765.375787]  [<ffffffff8107b620>] ? flush_kthread_worker+0xa0/0xa0
+[19765.375908]  [<ffffffff8174db4c>] ret_from_fork+0x7c/0xb0
+[19765.376022]  [<ffffffff8107b620>] ? flush_kthread_worker+0xa0/0xa0
+[19765.376135] Code: ff ff ff 48 8b bd e0 fc ff ff 48 c7 c1 da c3 94  
+81 31 c0 48 c7 c2 a0 ee 77 81 48 c7 c6 e8 c3 94 81 e8 31 83 ff ff e9  
+f3 fe ff ff <0f> 0b 0f 0b 0f 0b 49 63 04 24 be 03 00 00 00 48 c1 e0 04  
+49 01
+[19765.376924] RIP  [<ffffffff811efb74>] reiserfs_cut_from_item+0x684/0x700
+[19765.377052]  RSP <ffff8806b062b808>
+[19765.378930] ---[ end trace 868700fb5cf58b2d ]---
 
+This also occured using the Gentoo kernel version 3.7.10-gentoo-r1 kernel.
 
-______________________________________________________
-Linux MTD discussion mailing list
-http://lists.infradead.org/mailman/listinfo/linux-mtd/
+This error only happens under heavy server load (both IO and CPU). The  
+server is running xen version 4.2 and this is the dom0 kernel which  
+crashes. The hardware is a Dell PowerEdge R820.
+
+I've run a reiserfsck on the filesystem and it doesn't find anything  
+wring with it.
+
+Does anyone have any ideas as to what would cause this?
+
+Thanks
+Shaun
