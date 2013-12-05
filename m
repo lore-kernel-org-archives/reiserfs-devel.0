@@ -1,15 +1,13 @@
-From: Steven Whitehouse <swhiteho@redhat.com>
-Subject: Re: [Cluster-devel] [PATCH 16/18] gfs2: use generic posix ACL
-	infrastructure
-Date: Wed, 04 Dec 2013 12:12:37 +0000
-Message-ID: <1386159157.2711.11.camel@menhir>
+From: Andreas Gruenbacher <andreas.gruenbacher@linbit.com>
+Subject: Re: [PATCH 00/18] Consolidate Posix ACL implementation
+Date: Thu, 5 Dec 2013 18:57:14 +0100 (CET)
+Message-ID: <279325185.39210.1386266234086.JavaMail.zimbra@linbit.com>
 References: <20131201115903.910559036@bombadil.infradead.org>
-	<20131201120656.539995924@bombadil.infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <xfs-bounces@oss.sgi.com>
-In-Reply-To: <20131201120656.539995924@bombadil.infradead.org>
+In-Reply-To: <20131201115903.910559036@bombadil.infradead.org>
 List-Id: <reiserfs-devel.vger.kernel.org>
 List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
 	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
@@ -21,112 +19,24 @@ List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
 Errors-To: xfs-bounces@oss.sgi.com
 Sender: xfs-bounces@oss.sgi.com
 To: Christoph Hellwig <hch@infradead.org>
-Cc: jfs-discussion@lists.sourceforge.net, linux-ext4@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com, linux-mtd@lists.infradead.org, viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, xfs@oss.sgi.com, linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org
+Cc: xfs@oss.sgi.com, Mark Fasheh <mfasheh@suse.com>, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com, linux-mtd@lists.infradead.org, viro@zeniv.linux.org.uk, jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org, Joel Becker <jlbec@evilplan.org>
 
-Hi,
+Christoph,
 
-On Sun, 2013-12-01 at 03:59 -0800, Christoph Hellwig wrote:
-> plain text document attachment
-> (0016-gfs2-use-generic-posix-ACL-infrastructure.patch)
-> This contains some major refactoring for the create path so that
-> inodes are created with the right mode to start with instead of
-> fixing it up later.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/gfs2/acl.c   |  229 +++++++------------------------------------------------
->  fs/gfs2/acl.h   |    4 +-
->  fs/gfs2/inode.c |   33 ++++++--
->  fs/gfs2/xattr.c |    4 +-
->  4 files changed, 61 insertions(+), 209 deletions(-)
-> 
-Looks very good. I'd really like to be able to do something similar with
-the security xattrs, in terms of the refactoring that at inode creation
-to give the xattrs ahead of the inode allocation itself. That way it
-should be possible to allocate the xattr blocks at the same time as the
-inode, rather than as an after thought.
+nice work, and a pretty diffstat.
 
-Some more comments below....
+I see that get_acl and set_acl are being defined in some but not all symlink inode operations (for example, btrfs them while ext4 does not), and that posix_acl_xattr_set() doesn't check if set_acl is defined.  Symlinks cannot have ACLs, so set_acl should either never be defined for symlinks (and a NULL check is then needed in posix_acl_xattr_set()), or it is defined in all inode operations, and S_ISNLNK() check is needed in posix_acl_xattr_set().  That latter check should probably be added in any case to be on the safe side.
 
-> diff --git a/fs/gfs2/acl.c b/fs/gfs2/acl.c
-> index e82e4ac..e6c7a2c 100644
-> --- a/fs/gfs2/acl.c
-> +++ b/fs/gfs2/acl.c
-[snip]
-> -
-> -static int gfs2_xattr_system_set(struct dentry *dentry, const char *name,
-> -				 const void *value, size_t size, int flags,
-> -				 int xtype)
-> -{
-> -	struct inode *inode = dentry->d_inode;
-> -	struct gfs2_sbd *sdp = GFS2_SB(inode);
-> -	struct posix_acl *acl = NULL;
-> -	int error = 0, type;
-> -
-> -	if (!sdp->sd_args.ar_posix_acl)
-> -		return -EOPNOTSUPP;
-> -
-> -	type = gfs2_acl_type(name);
-> -	if (type < 0)
-> -		return type;
-> -	if (flags & XATTR_CREATE)
-> -		return -EINVAL;
-> -	if (type == ACL_TYPE_DEFAULT && !S_ISDIR(inode->i_mode))
-> -		return value ? -EACCES : 0;
-> -	if (!uid_eq(current_fsuid(), inode->i_uid) && !capable(CAP_FOWNER))
-> -		return -EPERM;
-> -	if (S_ISLNK(inode->i_mode))
-> -		return -EOPNOTSUPP;
-> -
-> -	if (!value)
-> -		goto set_acl;
->  
-> -	acl = posix_acl_from_xattr(&init_user_ns, value, size);
-> -	if (!acl) {
-> -		/*
-> -		 * acl_set_file(3) may request that we set default ACLs with
-> -		 * zero length -- defend (gracefully) against that here.
-> -		 */
-> -		goto out;
-> -	}
-> -	if (IS_ERR(acl)) {
-> -		error = PTR_ERR(acl);
-> -		goto out;
-> -	}
-> -
-> -	error = posix_acl_valid(acl);
-> -	if (error)
-> -		goto out_release;
-> -
-> -	error = -EINVAL;
->  	if (acl->a_count > GFS2_ACL_MAX_ENTRIES)
-> -		goto out_release;
-> +		return -EINVAL;
->  
->  	if (type == ACL_TYPE_ACCESS) {
->  		umode_t mode = inode->i_mode;
-> +
->  		error = posix_acl_equiv_mode(acl, &mode);
-> +		if (error < 0)
->  
-Andy Price has pointed out a missing "return error;" here
+  Test case:
 
-> -		if (error <= 0) {
-> -			posix_acl_release(acl);
-> +		if (error == 0)
->  			acl = NULL;
->  
-> -			if (error < 0)
-> -				return error;
-> -		}
-> -
+  setfattr -h -n system.posix_acl_access \
+           -v 0sAgAAAAEABgD/////AgAGABMEAAAEAAYA/////xAABgD/////IAAEAP////8= \
+           symlink
 
-Also, there seems to be a white space error in the xfs patch around line
-170 in fs/xfs/xfs_iops.c where there is an added "if (default_acl)" with
-a space before the tab,
+Patch 6 also declares posix_acl_prepare() but this function is never introduced; this must be a leftover from a previous version.
 
-Steve.
-
+Thanks,
+Andreas
 
 _______________________________________________
 xfs mailing list
