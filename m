@@ -1,40 +1,29 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [Cluster-devel] [PATCH 16/18] gfs2: use generic posix ACL
- infrastructure
-Date: Fri, 6 Dec 2013 11:47:20 -0800
-Message-ID: <20131206194720.GB32122@infradead.org>
-References: <20131201115903.910559036@bombadil.infradead.org>
- <20131201120656.539995924@bombadil.infradead.org>
- <1386159157.2711.11.camel@menhir>
+From: Mathieu Belanger <m@thieu.so>
+Subject: reiser4 for 3.12
+Date: Sat, 07 Dec 2013 16:59:03 +0000
+Message-ID: <20131207165903.Horde.CKIrJx0drBGwOg6KTccWIQ1@mail.thieu.so>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1386159157.2711.11.camel@menhir>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; format="flowed"; delsp="Yes"
 Content-Transfer-Encoding: 7bit
-To: Steven Whitehouse <swhiteho@redhat.com>
-Cc: Christoph Hellwig <hch@infradead.org>, viro@zeniv.linux.org.uk, xfs@oss.sgi.com, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com, linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org
+To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-On Wed, Dec 04, 2013 at 12:12:37PM +0000, Steven Whitehouse wrote:
-> >  		error = posix_acl_equiv_mode(acl, &mode);
-> > +		if (error < 0)
-> >  
-> Andy Price has pointed out a missing "return error;" here
-> 
-> > -		if (error <= 0) {
-> > -			posix_acl_release(acl);
-> > +		if (error == 0)
-> >  			acl = NULL;
-> >  
-> > -			if (error < 0)
-> > -				return error;
-> > -		}
-> > -
-> 
-> Also, there seems to be a white space error in the xfs patch around line
-> 170 in fs/xfs/xfs_iops.c where there is an added "if (default_acl)" with
-> a space before the tab,
+I have updated my git tree for kernel 3.12.
 
-I'll take care of these for the next version.
+No change for reiser4 since 3.12-rc2.
+
+Change since 3.11 :
+  - Shrinker API change
+  - Patch from Edward for enerasable directory (I think)
+
+Note, I did not test it with 3.12 final yet. I still have a busy day  
+so have fun!
+
+Shrinker API change can be viewed here :  
+https://github.com/DestroyFX/reiser4/commits/reiser4-for-3.12-rc2
+Current kernel 3.12 git  :  
+https://github.com/DestroyFX/reiser4/commits/reiser4-for-3.12
+Patch Here : http://mirror.nxtoo.org/reiser4-for-3.12.patch.bz2
