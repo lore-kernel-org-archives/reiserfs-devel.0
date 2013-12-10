@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 12335] crafted reiserfs filesystem image local DoS (reboot)
-Date: Tue, 10 Dec 2013 16:23:16 +0000
-Message-ID: <bug-12335-695-MMyuHooEOb@https.bugzilla.kernel.org/>
+Date: Tue, 10 Dec 2013 18:25:58 +0000
+Message-ID: <bug-12335-695-GhYPBOe62n@https.bugzilla.kernel.org/>
 References: <bug-12335-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -14,14 +14,10 @@ To: reiserfs-devel@vger.kernel.org
 
 https://bugzilla.kernel.org/show_bug.cgi?id=12335
 
-Alan <alan@lxorguk.ukuu.org.uk> changed:
-
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-                 CC|                            |alan@lxorguk.ukuu.org.uk
-         Resolution|---                         |OBSOLETE
-         Regression|---                         |No
+--- Comment #3 from Roland Kletzing <devzero@web.de> ---
+i would not consider this being resolved_obsolet either, as this filesystem
+image also crashes an opensuse 12.2 inside a virtual box virtual machine - and
+the virtual box hypervisor is also being crashed.
 
 -- 
 You are receiving this mail because:
