@@ -1,106 +1,43 @@
-From: Fabian Frederick <fabf@skynet.be>
-Subject: [PATCH 1/1] reiserfs:Adding tmpfile support
-Date: Wed, 11 Dec 2013 22:31:55 +0100
-Message-ID: <20131211223155.e50a8b820090bb5a6aca7673@skynet.be>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+From: Ivan Shapovalov <intelfx100@gmail.com>
+Subject: [PATCH] reiser4: add module alias for 'reiser4' filesystem
+Date: Thu, 12 Dec 2013 09:58:18 +0400
+Message-ID: <1386827898-29764-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=from:to:cc:subject:date:message-id;
+        bh=Wi5yoHJJe9zGtgxSavYYh0Qgn3n60sXbhXOEBX+4mt4=;
+        b=bDVvfu880vHlQUps9I1ZQ6V5EXPU9VWEY9qhsigUsCzOWbYsVtN5yxI5SKSzqqFmwV
+         pKjfZNtySUAdOnrHaWXfMFxmngOcsY6DeS7RBvGiI60v+y1lAaP+W7s2fTVA9kfSsZEp
+         YFDAXM9CMN8hlBIsaysxJfYd4oZaCQffutXp98B6++yljZwgJpNsMAUMEEbtGZvMZQ1P
+         E5vxlboq0PuELcQgYwAZ771691emoT2trxS4+dCuHU06rJgVgP5uJdbfn300k9ztH2xn
+         tns8vGhsLt9N93Eh+iBtQOo68QuSH9db763HEgqbaDfVXcx/QPQDizeFWVt6+ZRKfZbp
+         z3Ug==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: linux-kernel@vger.kernel.org
-Cc: reiserfs-devel@vger.kernel.org, viro@zeniv.linux.org.uk, akpm@linux-foundation.org
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
+Cc: Ivan Shapovalov <intelfx100@gmail.com>
 
-This patch is largely based on reiserfs_create function.
--Removing dquot_initialize (cf ext2/tmpfile)
--Removing add_entry code.
--Adding d_tmpfile generic call.
-
-It was not extensively tested; other solutions would be to work with
-invisible entries or merge creation - tmpfile process.
-
-Signed-off-by: Fabian Frederick <fabf@skynet.be>
 ---
- fs/reiserfs/namei.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ fs/reiser4/super_ops.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-index dc5236f..125060b 100644
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -637,6 +637,65 @@ static int reiserfs_create(struct inode *dir, struct dentry *dentry, umode_t mod
- 	return retval;
- }
+diff --git a/fs/reiser4/super_ops.c b/fs/reiser4/super_ops.c
+index ad13cc5..da89851 100644
+--- a/fs/reiser4/super_ops.c
++++ b/fs/reiser4/super_ops.c
+@@ -764,6 +764,8 @@ static void __exit done_reiser4(void)
+ module_init(init_reiser4);
+ module_exit(done_reiser4);
  
++MODULE_ALIAS_FS("reiser4");
 +
-+/* tmpfile function based on reiserfs_create without filename entry
-+*/
-+
-+static int reiserfs_tmpfile(struct inode *dir, struct dentry *dentry,
-+	umode_t mode)
-+{
-+	int retval;
-+	struct inode *inode;
-+	int jbegin_count =
-+	    JOURNAL_PER_BALANCE_CNT * 2 +
-+	    2 * (REISERFS_QUOTA_INIT_BLOCKS(dir->i_sb) +
-+		 REISERFS_QUOTA_TRANS_BLOCKS(dir->i_sb));
-+	struct reiserfs_transaction_handle th;
-+	struct reiserfs_security_handle security;
-+
-+	inode = new_inode(dir->i_sb);
-+	if (!inode)
-+		return -ENOMEM;
-+
-+	new_inode_init(inode, dir, mode);
-+
-+	jbegin_count += reiserfs_cache_default_acl(dir);
-+	retval = reiserfs_security_init(dir, inode, &dentry->d_name, &security);
-+	if (retval < 0) {
-+		drop_new_inode(inode);
-+		return retval;
-+	}
-+	jbegin_count += retval;
-+	reiserfs_write_lock(dir->i_sb);
-+
-+	retval = journal_begin(&th, dir->i_sb, jbegin_count);
-+	if (retval) {
-+		drop_new_inode(inode);
-+		goto out_failed;
-+	}
-+
-+	retval =
-+	    reiserfs_new_inode(&th, dir, mode, NULL, 0 /*i_size */ , dentry,
-+			       inode, &security);
-+	if (retval)
-+		goto out_failed;
-+
-+	inode->i_op = &reiserfs_file_inode_operations;
-+	inode->i_fop = &reiserfs_file_operations;
-+	inode->i_mapping->a_ops = &reiserfs_address_space_operations;
-+
-+	reiserfs_update_inode_transaction(inode);
-+	reiserfs_update_inode_transaction(dir);
-+
-+	unlock_new_inode(inode);
-+	d_tmpfile(dentry, inode);
-+	retval = journal_end(&th, dir->i_sb, jbegin_count);
-+
-+      out_failed:
-+	reiserfs_write_unlock(dir->i_sb);
-+	return retval;
-+}
-+
- static int reiserfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode,
- 			  dev_t rdev)
- {
-@@ -1522,6 +1581,7 @@ const struct inode_operations reiserfs_dir_inode_operations = {
- 	.removexattr = reiserfs_removexattr,
- 	.permission = reiserfs_permission,
- 	.get_acl = reiserfs_get_acl,
-+	.tmpfile = reiserfs_tmpfile,
- };
+ MODULE_DESCRIPTION("Reiser4 filesystem");
+ MODULE_AUTHOR("Hans Reiser <Reiser@Namesys.COM>");
  
- /*
 -- 
-1.8.1.4
+1.8.5.1
+
