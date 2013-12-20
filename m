@@ -1,36 +1,50 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 29162] Reiserfs hang with dataloss sometimes
-Date: Wed, 18 Dec 2013 21:08:57 +0000
-Message-ID: <bug-29162-695-N6uNUI2zn8@https.bugzilla.kernel.org/>
-References: <bug-29162-695@https.bugzilla.kernel.org/>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <bug-29162-695@https.bugzilla.kernel.org/>
-Sender: reiserfs-devel-owner@vger.kernel.org
+From: Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH 0/0] Consolidate Posix ACL implementation V3
+Date: Fri, 20 Dec 2013 05:11:12 -0800
+Message-ID: <20131220131112.955655330@bombadil.infradead.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Subject: [PATCH 0/0] 
+Sender: linux-fsdevel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: viro@zeniv.linux.org.uk
+Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Mark Fasheh <mfasheh@suse.com>, Joel Becker <jlbec@evilplan.org>, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, jfs-discussion@lists.sourceforge.net, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, Andreas Gruenbacher <andreas.gruenbacher@linbit.com>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=29162
+This series consolidates the various cut'n'pasted Posix ACL implementations
+into a single common one based on the ->get_acl method Linus added a while
+ago and a new ->set_acl counterpart.
 
---- Comment #54 from David Kowis <dkowis+kbt@shlrm.org> ---
-(In reply to David Kowis from comment #53)
-> I'm uncertain if the problem I'm encountering is the same problem or not,
-> but it appears extremely similar. Forgive me if I'm not contributing
-> properly.
+This remove ~1800 lines of code and provides a single place to implement
+various nasty little gems of the semantics.
 
-Forgive me, I'm not using any quotas at least I don't have quotas enabled for
-mounting:
+Unfortunately the 9p code is still left out - it implements the ACLs
+in two very weird ways, one using the common code but on the client only,
+and one pasing things straight through to the server.  We could easily
+convert it to the new code on the write side if ->set_acl took a dentry,
+but there's no cance to do that on the ->get_acl side.  Ideas how to
+handle it welcome.
 
-$ mount
-/dev/xvda1 on / type reiserfs (rw,relatime)
+After that we'd be ready to never go into the fs for the ACL attributes
+and branch straight to the ACL code below the syscall, repairing the
+old API braindamage of overloading ACLs onto the xattrs.
 
-$ dmesg | grep quota
-[    0.378754] VFS: Disk quotas dquot_6.5.2
 
-That does show up, but I believe that's simply because it's builtin.
+Changes from V2:
+ - remove redundant S_ISLNK checks
+ - fix the get_acl return value
+ - remove spurious symlink get_acl instance in gfs2
+ - fix default ACL inheritance on NFS
+ - use get_acl and set_acl from the NFS server
+ - remove some incorrectly copy&pasted code in hfsplus
 
--- 
-You are receiving this mail because:
-You are the assignee for the bug.
+Changes from V1:
+ - check for symlinks in the ACL code and remove checks in the lower
+   level functions.
+ - remove get_acl instances for symlinks in a few filesystems
+ - pass a umode_t mode argument to posix_acl_chmod to accomodate f2fs
+ - various cosemtic bits from the reviews.
+
+Note that I still haven't heard from ocfs2 folks, so the patch is left
+unchanged.
