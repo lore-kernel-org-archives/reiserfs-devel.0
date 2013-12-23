@@ -1,85 +1,38 @@
-From: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH 21/21] hfsplus: remove can_set_xattr
-Date: Sun, 22 Dec 2013 11:28:18 -0800
-Message-ID: <20131222192818.GA32565@infradead.org>
-References: <20131220131635.650823732@bombadil.infradead.org>
- <20131220132524.900291394@bombadil.infradead.org>
- <636E01BC-12FD-452B-8B1C-320B6EADAEFD@dubeyko.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Here is a plain kernel based on 3.12.x with the reiser4 patch enabled.
+Date: Mon, 23 Dec 2013 12:24:25 +1100
+Message-ID: <eb3b289adc8ecbaed9abf6bd6c736a59@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <636E01BC-12FD-452B-8B1C-320B6EADAEFD-yeENwD64cLxBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Transfer-Encoding: 8bit
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vyacheslav Dubeyko <slava-yeENwD64cLxBDgjK7y7TUQ@public.gmane.org>
-Cc: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Fasheh <mfasheh-IBi9RG/b67k@public.gmane.org>, Joel Becker <jlbec-aKy9MeLSZ9dg9hUCZPvPmw@public.gmane.org>, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, xfs-VZNHf3L845pBDgjK7y7TUQ@public.gmane.org, jfs-discussion-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, cluster-devel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andreas Gruenbacher <andreas.gruenbacher-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
+To: reiserfs-devel@vger.kernel.org
 
-On Sat, Dec 21, 2013 at 08:07:51PM +0300, Vyacheslav Dubeyko wrote:
-> > -static int can_set_xattr(struct inode *inode, const char *name,
-> > -				const void *value, size_t value_len)
-> 
-> This function works for all handlers. So, I don't think that it makes sense
-> to delete it.
+Hello,
+Here is a plain kernel based on 3.12.x with the reiser4 patch built with
+the Opensuse build service [obs] system.
 
-It "works" in a minimal sense that it won't crash or actively cause
-harm.  But it also is useless except for the check that we can abuse
-the osx namespace to set an attribute in another namespace, which we
-still do in the proper way after my patch.
+The project is here
 
-> > -	if (!strncmp(name, XATTR_MAC_OSX_PREFIX, XATTR_MAC_OSX_PREFIX_LEN)) {
-> > -		/*
-> > -		 * This makes sure that we aren't trying to set an
-> > -		 * attribute in a different namespace by prefixing it
-> > -		 * with "osx."
-> > -		 */
-> > -		if (is_known_namespace(name + XATTR_MAC_OSX_PREFIX_LEN))
-> > -			return -EOPNOTSUPP;
-> 
-> I think that this check is important. It forbids such combinations as "osx.system.*" or
-> "osx.trusted.*", for example. Because "osx.*" is virtual namespace for xattrs that
-> it can be under Mac OS X. If you want to set xattr from "system.*" namespace, for example,
-> then you need to use another handler. And such namespace should be without
-> addition of "osx." prefix.
+->https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
 
-Right, and we keep exactly the check, just in a different place.
+The built rpms are here
 
-> The __hfsplus_setxattr() is common method for all handlers. So, removing
-> this call means that we don't check validity of namespace. I don't think
-> that such modification is a right way.
+->https://build.opensuse.org/package/binaries/home:doiggl/kernel-reiser4?repository=openSUSE_12.3
 
-The generic code already checks for the validity of the namespace for
-you. xattr_resolve_name in fs/xattr.c makes sure only attributes for a
-namespace that the filesystem registered can be set or modified.
+The log of the build is here {x86_64} as an example. [Its a long buildlog]
+->https://build.opensuse.org/package/live_build_log/home:doiggl/kernel-reiser4/openSUSE_12.3/x86_64
 
-> > @@ -841,10 +761,6 @@ int hfsplus_removexattr(struct dentry *dentry, const char *name)
-> > 	if (!HFSPLUS_SB(inode->i_sb)->attr_tree)
-> > 		return -EOPNOTSUPP;
-> > 
-> > -	err = can_set_xattr(inode, name, NULL, 0);
-> 
-> Ditto. Moreover, it is used namely hfsplus_removexattr() and not
-> __hfsplus_setxattr() for removing xattrs in hfsplus driver. So, removing
-> this check is not good way.
+The .spec used file is here
 
-Oh, I just noticed that hfsplus does not use the xattr handlers for
-removing, while it does for getting and setting xattrs.  That's a really
-bad a confusing design, and we'll indeed need to fix that as well.
+->https://build.opensuse.org/package/view_file/home:doiggl/kernel-reiser4?expand=1&file=kernel-reiser4.spec
 
-> > 	if (len > HFSPLUS_ATTR_MAX_STRLEN)
-> > 		return -EOPNOTSUPP;
-> > 
-> > +	if (is_known_namespace(name))
-> > +		return -EOPNOTSUPP;
-> 
-> If common check in __hfsplus_setxattr() will be on the same place then
-> this addition doesn't make sense.
+Thanks to the opensuse-kernel list members for compilation advice.
+http://lists.opensuse.org/opensuse-kernel/
 
-Having both does indeed not make sense, but this is the better place to
-have it.
+It looks like obs built the rpms.
+Post the results to the list.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Cheers Glenn
