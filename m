@@ -1,38 +1,108 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Here is a plain kernel based on 3.12.x with the reiser4 patch enabled.
-Date: Mon, 23 Dec 2013 12:24:25 +1100
-Message-ID: <eb3b289adc8ecbaed9abf6bd6c736a59@mail.velocitynet.com.au>
+From: Vyacheslav Dubeyko <slava@dubeyko.com>
+Subject: Re: [PATCH 21/21] hfsplus: remove can_set_xattr
+Date: Mon, 23 Dec 2013 10:40:09 +0400
+Message-ID: <1387780809.3991.21.camel@slavad-ubuntu>
+References: <20131220131635.650823732@bombadil.infradead.org>
+	<20131220132524.900291394@bombadil.infradead.org>
+	<636E01BC-12FD-452B-8B1C-320B6EADAEFD@dubeyko.com>
+	<20131222192818.GA32565@infradead.org>
+Reply-To: slava@dubeyko.com
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Sender: reiserfs-devel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <xfs-bounces@oss.sgi.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=dubeyko.com;
+	s=default; 
+	h=Mime-Version:Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:Reply-To:From:Subject:Message-ID;
+	bh=4dRKaw6ZbnRiYfZIczZ8XkgdgT87p+h0wR7O0tDqteE=; 
+	b=YA/fUiBvhgKwb4IY/tMhk/9Qok6RJjyZtkMBwNHRCqD5r+74rHwPs2oMOB0/3ywepNscU3zGjZaQkk17hei7jNgAuKQjBzTzzWh32grspBjrOlr3UmG2L2jbIRtSwnlX;
+In-Reply-To: <20131222192818.GA32565@infradead.org>
+List-Id: <reiserfs-devel.vger.kernel.org>
+List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
+List-Archive: <http://oss.sgi.com/pipermail/xfs>
+List-Post: <mailto:xfs@oss.sgi.com>
+List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
+List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
+Errors-To: xfs-bounces@oss.sgi.com
+Sender: xfs-bounces@oss.sgi.com
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Andreas Gruenbacher <andreas.gruenbacher@linbit.com>, xfs@oss.sgi.com, Mark Fasheh <mfasheh@suse.com>, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com, linux-mtd@lists.infradead.org, viro@zeniv.linux.org.uk, jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org, Joel Becker <jlbec@evilplan.org>
 
-Hello,
-Here is a plain kernel based on 3.12.x with the reiser4 patch built with
-the Opensuse build service [obs] system.
+On Sun, 2013-12-22 at 11:28 -0800, Christoph Hellwig wrote:
 
-The project is here
+> 
+> > > -	if (!strncmp(name, XATTR_MAC_OSX_PREFIX, XATTR_MAC_OSX_PREFIX_LEN)) {
+> > > -		/*
+> > > -		 * This makes sure that we aren't trying to set an
+> > > -		 * attribute in a different namespace by prefixing it
+> > > -		 * with "osx."
+> > > -		 */
+> > > -		if (is_known_namespace(name + XATTR_MAC_OSX_PREFIX_LEN))
+> > > -			return -EOPNOTSUPP;
+> > 
+> > I think that this check is important. It forbids such combinations as "osx.system.*" or
+> > "osx.trusted.*", for example. Because "osx.*" is virtual namespace for xattrs that
+> > it can be under Mac OS X. If you want to set xattr from "system.*" namespace, for example,
+> > then you need to use another handler. And such namespace should be without
+> > addition of "osx." prefix.
+> 
+> Right, and we keep exactly the check, just in a different place.
+> 
 
-->https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
+Maybe I missed something, but I can see that this check is removed only.
+Could you point out the code in your patch that it checks and forbids
+such combination as "osx.security.*", "osx.trusted.*" and so on?
 
-The built rpms are here
+I can see that is_known_namespace() is called for
+hfsplus_xattr_osx_handler only. But this method doesn't contain
+above-mentioned check. Moreover, hfsplus_xattr_user_handler,
+hfsplus_xattr_trusted_handler, hfsplus_xattr_security_handler will be
+without is_know_namespace() check. What about it?
 
-->https://build.opensuse.org/package/binaries/home:doiggl/kernel-reiser4?repository=openSUSE_12.3
+> > The __hfsplus_setxattr() is common method for all handlers. So, removing
+> > this call means that we don't check validity of namespace. I don't think
+> > that such modification is a right way.
+> 
+> The generic code already checks for the validity of the namespace for
+> you. xattr_resolve_name in fs/xattr.c makes sure only attributes for a
+> namespace that the filesystem registered can be set or modified.
+> 
 
-The log of the build is here {x86_64} as an example. [Its a long buildlog]
-->https://build.opensuse.org/package/live_build_log/home:doiggl/kernel-reiser4/openSUSE_12.3/x86_64
+But generic code doesn't check such names combination that it is treated
+as wrong for concrete file systems. For example, "osx.security.*" is
+wrong for the case of HFS+. Because it will works
+hfsplus_xattr_osx_handler instead of hfsplus_xattr_security_handler.
 
-The .spec used file is here
+> > > @@ -841,10 +761,6 @@ int hfsplus_removexattr(struct dentry *dentry, const char *name)
+> > > 	if (!HFSPLUS_SB(inode->i_sb)->attr_tree)
+> > > 		return -EOPNOTSUPP;
+> > > 
+> > > -	err = can_set_xattr(inode, name, NULL, 0);
+> > 
+> > Ditto. Moreover, it is used namely hfsplus_removexattr() and not
+> > __hfsplus_setxattr() for removing xattrs in hfsplus driver. So, removing
+> > this check is not good way.
+> 
+> Oh, I just noticed that hfsplus does not use the xattr handlers for
+> removing, while it does for getting and setting xattrs.  That's a really
+> bad a confusing design, and we'll indeed need to fix that as well.
+> 
 
-->https://build.opensuse.org/package/view_file/home:doiggl/kernel-reiser4?expand=1&file=kernel-reiser4.spec
+Why bad design? Do you mean that using .removexattr callback is bad
+idea?
 
-Thanks to the opensuse-kernel list members for compilation advice.
-http://lists.opensuse.org/opensuse-kernel/
+So, if it needs to use xattr handler only for removing then it needs to
+make some refactoring of using __hfsplus_setxattr() and
+hfsplus_removexattr() or merging these two functions into one. And I
+think that merging is better idea.
 
-It looks like obs built the rpms.
-Post the results to the list.
+Thanks,
+Vyacheslav Dubeyko.
 
-Cheers Glenn
+
+_______________________________________________
+xfs mailing list
+xfs@oss.sgi.com
+http://oss.sgi.com/mailman/listinfo/xfs
