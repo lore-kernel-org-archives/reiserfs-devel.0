@@ -1,19 +1,39 @@
-From: Mathieu Belanger <m@thieu.so>
-Subject: Re: Merry Christmas and happy reiser4-for-3.13-rc5 testing!
-Date: Thu, 26 Dec 2013 07:16:20 +0000
-Message-ID: <20131226071620.Horde.OYNdJwIIKrRWNWUT3qFwPw2@mail.thieu.so>
-References: <20131225053808.Horde.JC_4ggCEiNr0rzYa86ePaw8@mail.thieu.so>
+From: Alex Elder <alex.elder@linaro.org>
+Subject: [PATCH 0/3] kernel.h: centrally define U32_MAX, etc.
+Date: Thu, 26 Dec 2013 09:11:28 -0600
+Message-ID: <52BC4720.1070904@linaro.org>
 Mime-Version: 1.0
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20131225053808.Horde.JC_4ggCEiNr0rzYa86ePaw8@mail.thieu.so>
-Content-Disposition: inline
-Sender: reiserfs-devel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset=; format=flowed; DelSp=Yes; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Sage Weil <sage@inktank.com>, David Miller <davem@davemloft.net>, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, Al Viro <viro@ZenIV.linux.org.uk>, jeffm@suse.com, Steven Rostedt <rostedt@goodmis.org>, Andrew Morton <akpm@linux-foundation.org>, mst@redhat.com, Ingo Molnar <mingo@kernel.org>
+Cc: reiserfs-devel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ceph-devel <ceph-devel@vger.kernel.org>, netdev@vger.kernel.org
 
-My computer crashed so I took the occasion to test the new kernel. So  
-far so good, no new issue, doing lot of file copy now.
+Although types u32, s32, u16, s16 and so on are fundamental kernel
+types, there is no central symbolic definition of their maximum and
+minimum values.  In the past I've added and used such definitions
+where I've needed them but they really belong in "kernel.h".
 
-I let you know if something get wrong.
+This series does this, in three steps.  The first makes existing
+definitions be done conditionally; the second defines them in
+"kernel.h"; and the third gets rid of the conditional definitions.
+
+(These three can obviously be squashed into a single commit.)
+
+    					-Alex
+
+Alex Elder (3):
+  conditionally define U32_MAX
+  kernel.h: define u8, s8, u32, etc. limits
+  remove extra definitions of U32_MAX
+
+ fs/reiserfs/reiserfs.h      |    2 --
+ include/linux/ceph/decode.h |   17 -----------------
+ include/linux/kernel.h      |   13 +++++++++++++
+ net/ipv4/tcp_illinois.c     |    1 -
+ 4 files changed, 13 insertions(+), 20 deletions(-)
+
+-- 
+1.7.9.5
