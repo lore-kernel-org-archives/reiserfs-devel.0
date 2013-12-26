@@ -1,39 +1,62 @@
-From: Alex Elder <alex.elder@linaro.org>
-Subject: [PATCH 0/3] kernel.h: centrally define U32_MAX, etc.
-Date: Thu, 26 Dec 2013 09:11:28 -0600
-Message-ID: <52BC4720.1070904@linaro.org>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: Merry Christmas and happy reiser4-for-3.13-rc5 testing!
+Date: Thu, 26 Dec 2013 18:46:48 +0100
+Message-ID: <52BC6B88.2040603@gmail.com>
+References: <20131225053808.Horde.JC_4ggCEiNr0rzYa86ePaw8@mail.thieu.so>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject:references
+         :in-reply-to:content-type:content-transfer-encoding;
+        bh=ukgzPHFQGbTU48oysoOP57L4fs6NsKvZ0VuW3KGu4Mg=;
+        b=d7h02+MZG2VyTH9wBZvOHiDHcTyB8XSl7G7SCXlA9LOCHXcvMYoGkIj6BwUB5mU5Qv
+         JeeHv1LYo63BPIe2vn+gaHzSGqkOMrpxcUQsleTamUy9kRkn4Raw/Ysby/Q+5m/Zrlol
+         hj5CM7V/LayF74SmxXjrNDPpWs/nYhLuk/i/5ewEchmynqvJD3ZpwvCY6dSv4iWXeBY6
+         +vEcUE/9tCRQHI4G4MhQzFsOkUR1V6J8oBVHiVG45mYS/7FzVWYxag91PDARJrNtkBKI
+         1IOzc5i7GIJLWLN6fm1BSY48HC7GpmzMA5Tuf8fax/c4d6CsFn2F6aJJUW1tGeGhFd3B
+         OnpA==
+In-Reply-To: <20131225053808.Horde.JC_4ggCEiNr0rzYa86ePaw8@mail.thieu.so>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Sage Weil <sage@inktank.com>, David Miller <davem@davemloft.net>, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, Al Viro <viro@ZenIV.linux.org.uk>, jeffm@suse.com, Steven Rostedt <rostedt@goodmis.org>, Andrew Morton <akpm@linux-foundation.org>, mst@redhat.com, Ingo Molnar <mingo@kernel.org>
-Cc: reiserfs-devel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ceph-devel <ceph-devel@vger.kernel.org>, netdev@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+To: Mathieu Belanger <m@thieu.so>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
 
-Although types u32, s32, u16, s16 and so on are fundamental kernel
-types, there is no central symbolic definition of their maximum and
-minimum values.  In the past I've added and used such definitions
-where I've needed them but they really belong in "kernel.h".
+Good news!
 
-This series does this, in three steps.  The first makes existing
-definitions be done conditionally; the second defines them in
-"kernel.h"; and the third gets rid of the conditional definitions.
+Thank you,
+Edward.
 
-(These three can obviously be squashed into a single commit.)
+25.12.2013 06:38, Mathieu Belanger =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>
+> Hi!
+>
+> I just updated the reiser4 patch for the kernel 3.13-rc5 available on=
+=20
+> my git : https://github.com/DestroyFX/reiser4 or directly there :=20
+> http://mirror.nxtoo.org/reiser4-for-3.13.patch.gz
+>
+> What changed is the wb_writeback_work struct in fs/fs-writeback.c so =
+I=20
+> changed it with the new var "unsigned int older_than_this_is_set:1;"=20
+> from the 3.13 and the order of the variables changed too... The rest=20
+> passed fine.
+>
+> It compile!
+> I did not test it (it's actually my only PC with Reiser4 partitions=20
+> and I can't really reboot a new kernel for now (mining coins with=20
+> these 6 Radeon 7970)
+>
+> Happy testing and Merry Christmas!
+> --=20
+> To unsubscribe from this list: send the line "unsubscribe=20
+> reiserfs-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-    					-Alex
-
-Alex Elder (3):
-  conditionally define U32_MAX
-  kernel.h: define u8, s8, u32, etc. limits
-  remove extra definitions of U32_MAX
-
- fs/reiserfs/reiserfs.h      |    2 --
- include/linux/ceph/decode.h |   17 -----------------
- include/linux/kernel.h      |   13 +++++++++++++
- net/ipv4/tcp_illinois.c     |    1 -
- 4 files changed, 13 insertions(+), 20 deletions(-)
-
--- 
-1.7.9.5
+--
+To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
+l" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
