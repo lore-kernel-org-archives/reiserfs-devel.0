@@ -1,62 +1,76 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: Merry Christmas and happy reiser4-for-3.13-rc5 testing!
-Date: Thu, 26 Dec 2013 18:46:48 +0100
-Message-ID: <52BC6B88.2040603@gmail.com>
-References: <20131225053808.Horde.JC_4ggCEiNr0rzYa86ePaw8@mail.thieu.so>
+From: <doiggl@velocitynet.com.au>
+Subject: is [reiser4] volume repairable ?
+Date: Fri, 27 Dec 2013 21:36:20 +1100
+Message-ID: <d3794137e75f100cec88bf899e6b70c9@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:subject:references
-         :in-reply-to:content-type:content-transfer-encoding;
-        bh=ukgzPHFQGbTU48oysoOP57L4fs6NsKvZ0VuW3KGu4Mg=;
-        b=d7h02+MZG2VyTH9wBZvOHiDHcTyB8XSl7G7SCXlA9LOCHXcvMYoGkIj6BwUB5mU5Qv
-         JeeHv1LYo63BPIe2vn+gaHzSGqkOMrpxcUQsleTamUy9kRkn4Raw/Ysby/Q+5m/Zrlol
-         hj5CM7V/LayF74SmxXjrNDPpWs/nYhLuk/i/5ewEchmynqvJD3ZpwvCY6dSv4iWXeBY6
-         +vEcUE/9tCRQHI4G4MhQzFsOkUR1V6J8oBVHiVG45mYS/7FzVWYxag91PDARJrNtkBKI
-         1IOzc5i7GIJLWLN6fm1BSY48HC7GpmzMA5Tuf8fax/c4d6CsFn2F6aJJUW1tGeGhFd3B
-         OnpA==
-In-Reply-To: <20131225053808.Horde.JC_4ggCEiNr0rzYa86ePaw8@mail.thieu.so>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-To: Mathieu Belanger <m@thieu.so>, reiserfs-devel <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-Good news!
+Hello,
+Is any of this repairable ?
+If possible, is it repairable enough to allow a copy of some files to
+another disk ?
+What tools/live-cd [reiser4] could be used for this ?
+What repair steps could be used ?
+Thanks Glenn
 
-Thank you,
-Edward.
+# md /media/disk/
+# mount /dev/sdb /media/disk/
+mount: mount(2) failed: No such file or directory
 
-25.12.2013 06:38, Mathieu Belanger =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->
-> Hi!
->
-> I just updated the reiser4 patch for the kernel 3.13-rc5 available on=
-=20
-> my git : https://github.com/DestroyFX/reiser4 or directly there :=20
-> http://mirror.nxtoo.org/reiser4-for-3.13.patch.gz
->
-> What changed is the wb_writeback_work struct in fs/fs-writeback.c so =
-I=20
-> changed it with the new var "unsigned int older_than_this_is_set:1;"=20
-> from the 3.13 and the order of the variables changed too... The rest=20
-> passed fine.
->
-> It compile!
-> I did not test it (it's actually my only PC with Reiser4 partitions=20
-> and I can't really reboot a new kernel for now (mining coins with=20
-> these 6 Radeon 7970)
->
-> Happy testing and Merry Christmas!
-> --=20
-> To unsubscribe from this list: send the line "unsubscribe=20
-> reiserfs-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+# uname -a
+Linux test.site 3.12.5-3.ga012288-vanilla #1 SMP Thu Dec 19 14:49:57 UTC
+2013 (3848a14) x86_64 x86_64 x86_64 GNU/Linux
 
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+dmesg shows:
+.
+.
+[28915.817039] usb 1-1: new high-speed USB device number 3 using ehci-pci
+[28915.953409] usb 1-1: New USB device found, idVendor=04fc,
+idProduct=0c25
+[28915.953422] usb 1-1: New USB device strings: Mfr=2, Product=3,
+SerialNumber=1
+[28915.953429] usb 1-1: Product: USB to Serial-ATA bridge
+[28915.953435] usb 1-1: Manufacturer: Sunplus Technology Inc.
+[28915.953439] usb 1-1: SerialNumber: ST32000542            5XW1ZMG4
+[28915.973442] usb-storage 1-1:1.0: USB Mass Storage device detected
+[28915.973832] scsi4 : usb-storage 1-1:1.0
+[28915.974012] usbcore: registered new interface driver usb-storage
+[28916.978453] scsi 4:0:0:0: Direct-Access     ST320005 42AS              
+  PQ: 0 ANSI: 2
+[28916.978949] sd 4:0:0:0: Attached scsi generic sg2 type 0
+[28916.980430] sd 4:0:0:0: [sdb] 3907029168 512-byte logical blocks: (2.00
+TB/1.81 TiB)
+[28916.983915] sd 4:0:0:0: [sdb] Write Protect is off
+[28916.983930] sd 4:0:0:0: [sdb] Mode Sense: 38 00 00 00
+[28916.986551] sd 4:0:0:0: [sdb] No Caching mode page found
+[28916.986565] sd 4:0:0:0: [sdb] Assuming drive cache: write through
+[28916.993862] sd 4:0:0:0: [sdb] No Caching mode page found
+[28916.993871] sd 4:0:0:0: [sdb] Assuming drive cache: write through
+[28917.047109]  sdb: unknown partition table
+[28917.059240] sd 4:0:0:0: [sdb] No Caching mode page found
+[28917.059255] sd 4:0:0:0: [sdb] Assuming drive cache: write through
+[28917.059265] sd 4:0:0:0: [sdb] Attached SCSI disk
+[29034.779002] Loading Reiser4. See www.namesys.com for a description of
+Reiser4.
+[29034.783157] reiser4: sdb: found disk format 4.0.0.
+[29145.449717] reiser4[mount(13366)]: traverse_tree
+(/home/abuild/rpmbuild/BUILD/kernel-reiser4-3.12.5/linux-3.12/fs/reiser4/search.c:725)[nikita-373]:
+WARNING: not found on internal node: level: 6, lock_level: 1, stop_level:
+1 lock_mode: read, bias: exact
+[29145.449736] reiser4[mount(13366)]: key_warning
+(/home/abuild/rpmbuild/BUILD/kernel-reiser4-3.12.5/linux-3.12/fs/reiser4/plugin/file_plugin_common.c:512)[nikita-717]:
+WARNING: Error for inode 42 (-2)
+[29197.448118] reiser4: sdb: found disk format 4.0.0.
+[29307.883113] reiser4[mount(13434)]: traverse_tree
+(/home/abuild/rpmbuild/BUILD/kernel-reiser4-3.12.5/linux-3.12/fs/reiser4/search.c:725)[nikita-373]:
+WARNING: not found on internal node: level: 6, lock_level: 1, stop_level:
+1 lock_mode: read, bias: exact
+[29307.883132] reiser4[mount(13434)]: key_warning
+(/home/abuild/rpmbuild/BUILD/kernel-reiser4-3.12.5/linux-3.12/fs/reiser4/plugin/file_plugin_common.c:512)[nikita-717]:
+WARNING: Error for inode 42 (-2)
+
