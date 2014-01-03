@@ -1,73 +1,104 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Jeff Mahoney <jeffm@suse.com>
 Subject: Re: [BUG 3.13.0-rc6] reiserfs possible circular locking dependency
-Date: Fri, 3 Jan 2014 11:46:29 -0800
-Message-ID: <CA+55aFxVs_aGnMdcTck3C7AayFrjX=GrFSwmJwiC9q3-3wySgw@mail.gmail.com>
-References: <52C70C75.4050502@t-online.de>
+Date: Fri, 03 Jan 2014 17:04:32 -0500
+Message-ID: <52C733F0.7070103@suse.com>
+References: <52C70C75.4050502@t-online.de> <CA+55aFxVs_aGnMdcTck3C7AayFrjX=GrFSwmJwiC9q3-3wySgw@mail.gmail.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="eeUIH98CBb73u1uh7q12sCTL8gKPH2csf"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=mime-version:sender:in-reply-to:references:date:message-id:subject
-         :from:to:cc:content-type;
-        bh=/67PxmLUZqzHUoBmtwSG/eBila1xyES/bv8wpr7eE38=;
-        b=pMInRSrfpg8yQ6HMhcgoP+6WUeT4VPkRFbkxDfZ56pMFIyCjY925FdV3bZwwxdn/La
-         441hQGBo9/wB0oyZozgNw0yiJ1m45ijKaIBZ2VnRRRCNqFelKHldL7JZ3o1KbASQH1Ry
-         fuUtLJfYKxJ0VLX/EvtNbOwISWLtmTkcsH/KlLW76H5h9+HfnmF3a6dftjwUn3MqG//X
-         T/GlF4Sck9+hwJ3ZtqFesDrrDrF2+aoSTOOH1x1Fl7UQhczREYmnAxGhsUH3JESwBX8/
-         2XAjrwCeDETsiRVZ2r5645iXzYbSCVFjV0HAXhtYDeAXTRSUL3Nqo+wOQunTEnsdvUAP
-         WqrQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:sender:in-reply-to:references:date:message-id:subject
-         :from:to:cc:content-type;
-        bh=/67PxmLUZqzHUoBmtwSG/eBila1xyES/bv8wpr7eE38=;
-        b=Yy5UztS30OpHO1c6SkBKiBRg3+R8MjS7NMviE3+NP/YWYC9edcuBhEabMC5XxuRkvs
-         BeGNKbNhQ4x+zGoVUVlt9C9XSJ1qX7HK01wZGpLfl2W2V6YJG/lcv89EAc6YmPxcoWHy
-         unK0WUnnN1B/KxVrplC3/7Fq0ZB3XhcvJLSLs=
-In-Reply-To: <52C70C75.4050502@t-online.de>
+In-Reply-To: <CA+55aFxVs_aGnMdcTck3C7AayFrjX=GrFSwmJwiC9q3-3wySgw@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Knut Petersen <Knut_Petersen@t-online.de>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Jeff Mahoney <jeffm@suse.com>, reiserfs-devel@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>, Knut Petersen <Knut_Petersen@t-online.de>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, reiserfs-devel@vger.kernel.org
 
-On Fri, Jan 3, 2014 at 11:16 AM, Knut Petersen
-<Knut_Petersen@t-online.de> wrote:
-> Rebooting after a power failure on an openSuSE 13.1 system
-> with kernel 3.13.0-rc6 triggered the attached lockdep warning.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--eeUIH98CBb73u1uh7q12sCTL8gKPH2csf
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hmm. It seems to be that the *normal* sequence should be:
+On 1/3/14, 2:46 PM, Linus Torvalds wrote:
+> On Fri, Jan 3, 2014 at 11:16 AM, Knut Petersen
+> <Knut_Petersen@t-online.de> wrote:
+>> Rebooting after a power failure on an openSuSE 13.1 system
+>> with kernel 3.13.0-rc6 triggered the attached lockdep warning.
+>=20
+> Hmm. It seems to be that the *normal* sequence should be:
+>=20
+>  - get i_mutex, call lookup, which gets sbi->lock (reiserfs_write_lock)=
 
- - get i_mutex, call lookup, which gets sbi->lock (reiserfs_write_lock)
+>=20
+> but in the mounting path, we have special circumstances.
+>=20
+> That finish_unfinished() function does
+>=20
+>  - reiserfs_write_lock_nested() .
+>  - remove_save_link
+>  - iput(inode) with the write lock held
+>=20
+> and that can apparently end up taking i_mutex in open_xa_dir (and then
+> recursively the write lock, but that's an explicitly recursive lock,
+> so that part should be ok).
+>=20
+> Now, I don't think this can *really* deadlock with the normal order of
+> operations, because during mounting there is no other process that can
+> take those in the reverse order (since the filesystem isn't live), but
+> I do wonder if we should just release the reiserfs write lock over the
+> iputs. We release it in other parts anyway (like for the quota off)
+>=20
+> Jeff, you already touched this exact case in commit d2d0395fd177
+> ("reiserfs: locking, release lock around quota operations") except
+> that was for those quota operation cases.
+>=20
+> Even if it's not a real problem, making lockdep happy sounds like a
+> good idea. Of course, the trouble is that this code path almost never
+> gets exercised (which is why this hasn't been noticed earlier), so
+> testing...
+>=20
+> Jeff? Comments?
 
-but in the mounting path, we have special circumstances.
+If someone ever invents a time machine, I'd go back to 2004 and tell
+myself to fight harder to make a reiserfs v3.7 with real extended
+attribute items. This code will haunt me to my death.
 
-That finish_unfinished() function does
+Anyway, yeah. The right thing here is to drop the lock for the iput.
+More than that would be ok too. finish_unfinished happens when the file
+system goes read-write and that includes the remount path. There can be
+other users of the file system but it would be a recursive acquire so we
+wouldn't actually deadlock there.
 
- - reiserfs_write_lock_nested() .
- - remove_save_link
- - iput(inode) with the write lock held
+I'll work something up over the weekend or on Monday.
 
-and that can apparently end up taking i_mutex in open_xa_dir (and then
-recursively the write lock, but that's an explicitly recursive lock,
-so that part should be ok).
+-Jeff
 
-Now, I don't think this can *really* deadlock with the normal order of
-operations, because during mounting there is no other process that can
-take those in the reverse order (since the filesystem isn't live), but
-I do wonder if we should just release the reiserfs write lock over the
-iputs. We release it in other parts anyway (like for the quota off)
+--=20
+Jeff Mahoney
+SUSE Labs
 
-Jeff, you already touched this exact case in commit d2d0395fd177
-("reiserfs: locking, release lock around quota operations") except
-that was for those quota operation cases.
 
-Even if it's not a real problem, making lockdep happy sounds like a
-good idea. Of course, the trouble is that this code path almost never
-gets exercised (which is why this hasn't been noticed earlier), so
-testing...
+--eeUIH98CBb73u1uh7q12sCTL8gKPH2csf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-Jeff? Comments?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG/MacGPG2 v2.0.22 (Darwin)
 
-             Linus
+iQIcBAEBAgAGBQJSxzPzAAoJEB57S2MheeWy6jMP/3R+pkIQjf7nVkbuKPVpu68q
+KQGjNHmgdvfMJRfNKgRV9k5RSVcVGPfPB5UiY/3Q7ipPSDJV9dH4+TgaQF7SQq2K
+Pq51aCRgYh24ur8qZQDOD0O9c2PbVAzL2DEzZZKE1vqYE+Paj5QRgeOBo3Lqa1x5
+M/bJB9RCAecd7MQ0jUKt0UKKz4TNnBqbOi3i16zswLQNanBZ3xXbIo8q9fZy9a69
+bpdcEQiivdtEPVV0yqsZPNIRqk7jPPVgWVAZ4CpssHGX6Mu8cwAdqITFiJqL7RrW
+RB/uN4ANI9pEyAqw4MXnaA6RqrAdvUDx6+A4lVm+0pBkJJv78DNVklhBhgdzkSFm
+leczIHl6JEt/lhs06larPKHViQ77k5fjQQ1n1FPqirckGZOCGQeIT/5Llq8kuVMN
+R7nQ5CQHjq/kXPDJzhH2KlnwZOpSSiNQA1Q/6vkLho6VVk38ZoQ1ebkiaimVnay2
+IDIv9hSZnOSt+dWLddaAeoATyX0WVuKFf2IzKAL76DUhK7A8gqij9kcy6N+pHJYu
+OOadigIib0p4CVGWKHXPDQJIAK/3EsFfKI8Uq3pLX8yfAUYY2HrXt4Uj71gy8ILR
+X5AL2e40/lsIte/7qVguQeB/7NRhrVFOzLQnbZ78Ac1GmsL+Pd0rTicl3xcXrPxR
+VnyK61Y2arfR/ljymBq8
+=KIP8
+-----END PGP SIGNATURE-----
+
+--eeUIH98CBb73u1uh7q12sCTL8gKPH2csf--
