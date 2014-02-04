@@ -1,7 +1,7 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 29162] Reiserfs hang with dataloss sometimes
-Date: Tue, 04 Feb 2014 20:21:50 +0000
-Message-ID: <bug-29162-695-Sd6IhnrZbF@https.bugzilla.kernel.org/>
+Date: Tue, 04 Feb 2014 20:22:42 +0000
+Message-ID: <bug-29162-695-QztjZTVGOQ@https.bugzilla.kernel.org/>
 References: <bug-29162-695@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -14,10 +14,10 @@ To: reiserfs-devel@vger.kernel.org
 
 https://bugzilla.kernel.org/show_bug.cgi?id=29162
 
---- Comment #64 from D.K. <dkozlowski@sevone.com> ---
-Created attachment 124491
-  --> https://bugzilla.kernel.org/attachment.cgi?id=124491&action=edit
-Output of LOCKDEP on a locked system
+--- Comment #65 from D.K. <dkozlowski@sevone.com> ---
+Created attachment 124511
+  --> https://bugzilla.kernel.org/attachment.cgi?id=124511&action=edit
+All Blocked processes when system locked up
 
 -- 
 You are receiving this mail because:
