@@ -1,77 +1,56 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [PATCH 20/21] fs: Move prototype declaration to header file reiserfs.h
- from super.c
-Date: Sun, 09 Feb 2014 13:08:50 -0500
-Message-ID: <52F7C432.8080905@suse.com>
-References: <b572932c3e016c55e596686283036316a1aacd2f.1391949868.git.rashika.kheria@gmail.com> <764a2eddc09cb8670d757cd4170d44d41b3971e0.1391949868.git.rashika.kheria@gmail.com>
+From: Wang Sheng-Hui <shhuiw@gmail.com>
+Subject: [PATCH] reiser4: fix comment typo in znode.c
+Date: Fri, 14 Feb 2014 14:47:10 +0800
+Message-ID: <52FDBBEE.90409@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <764a2eddc09cb8670d757cd4170d44d41b3971e0.1391949868.git.rashika.kheria@gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject
+         :content-type:content-transfer-encoding;
+        bh=n5Dd0jF+QLnvNt8Zu9mO0hzN4t3ynpgmzX9L7xeqg2g=;
+        b=a+MXS697H2dQ8vRW5TZpMzavi5uT0xCscfjduuiVeX3V0GFvUXyAoOMgTz5x88u532
+         hkjLr8leD2oQNUrYoKwDqan4HccNzUY1mazk4h5+YNVMVlsT+67zIGNKIaJy4YOScTH0
+         F8FDkmVGMAm/Vry8H4PUcqWF/v5iOfYvPECUOXx7yc7B/zf9XQMvPhQ4r0dxeJZnBzta
+         v4lS6aVE0JrYQQXm+yFymsfroGyxE5KW2AAy0+hqbatiWANwN9I47Kg12xCjgFd/6gBq
+         HRzvecfNgFOOKrbT9g6uRhF5efVMvh4qMs2RwqcEvCgHKCAnHVAqNKNE06LebBMXOMN/
+         ucaw==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-To: Rashika Kheria <rashika.kheria@gmail.com>, linux-kernel@vger.kernel.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, Alex Elder <alex.elder@linaro.org>, "David S. Miller" <davem@davemloft.net>, "Eric W. Biederman" <ebiederm@xmission.com>, Ionut-Gabriel Radu <ihonius@gmail.com>, reiserfs-devel@vger.kernel.org, josh@joshtriplett.org
-
-On 02/09/2014 08:29 AM, Rashika Kheria wrote:
-> Move prototype declaration to header file reiserfs/reiserfs.h from
-> reiserfs/super.c because they are used by more than one file.
->=20
-> This eliminates the following warning in reiserfs/bitmap.c:
-> fs/reiserfs/bitmap.c:647:6: warning: no previous prototype for =E2=80=
-=98show_alloc_options=E2=80=99 [-Wmissing-prototypes]
->=20
-> Signed-off-by: Rashika Kheria <rashika.kheria@gmail.com>
-> Reviewed-by: Josh Triplett <josh@joshtriplett.org>
-
-Acked-by: Jeff Mahoney <jeffm@suse.com>
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
 
-> ---
->  fs/reiserfs/reiserfs.h |    1 +
->  fs/reiserfs/super.c    |    1 -
->  2 files changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
-> index 8d06adf..83d4eac 100644
-> --- a/fs/reiserfs/reiserfs.h
-> +++ b/fs/reiserfs/reiserfs.h
-> @@ -2831,6 +2831,7 @@ void reiserfs_init_alloc_options(struct super_b=
-lock *s);
->   */
->  __le32 reiserfs_choose_packing(struct inode *dir);
-> =20
-> +void show_alloc_options(struct seq_file *seq, struct super_block *s)=
-;
->  int reiserfs_init_bitmap_cache(struct super_block *sb);
->  void reiserfs_free_bitmap_cache(struct super_block *sb);
->  void reiserfs_cache_bitmap_metadata(struct super_block *sb, struct b=
-uffer_head *bh, struct reiserfs_bitmap_info *info);
-> diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-> index 2c80335..16d5335 100644
-> --- a/fs/reiserfs/super.c
-> +++ b/fs/reiserfs/super.c
-> @@ -62,7 +62,6 @@ static int is_any_reiserfs_magic_string(struct reis=
-erfs_super_block *rs)
-> =20
->  static int reiserfs_remount(struct super_block *s, int *flags, char =
-*data);
->  static int reiserfs_statfs(struct dentry *dentry, struct kstatfs *bu=
-f);
-> -void show_alloc_options(struct seq_file *seq, struct super_block *s)=
-;
-> =20
->  static int reiserfs_sync_fs(struct super_block *s, int wait)
->  {
->=20
+The comment is mis-placed. Fix the typo.
 
+Signed-off-by: Wang Sheng-Hui <shhuiw@gmail.com>
+---
+ fs/reiser4/znode.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---=20
-Jeff Mahoney
-SUSE Labs
---
-To unsubscribe from this list: send the line "unsubscribe reiserfs-deve=
-l" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/reiser4/znode.c b/fs/reiser4/znode.c
+index 4ff9714..22499a6 100644
+--- a/fs/reiser4/znode.c
++++ b/fs/reiser4/znode.c
+@@ -661,7 +661,7 @@ unsigned znode_free_space(znode * node /* znode to query */ )
+        return node_plugin_by_node(node)->free_space(node);
+ }
+
+-/* left delimiting key of znode */
++/* right delimiting key of znode */
+ reiser4_key *znode_get_rd_key(znode * node /* znode to query */ )
+ {
+        assert("nikita-958", node != NULL);
+@@ -671,7 +671,7 @@ reiser4_key *znode_get_rd_key(znode * node /* znode to query */ )
+        return &node->rd_key;
+ }
+
+-/* right delimiting key of znode */
++/* left delimiting key of znode */
+ reiser4_key *znode_get_ld_key(znode * node /* znode to query */ )
+ {
+        assert("nikita-974", node != NULL);
+-- 
+1.8.3.2
+
