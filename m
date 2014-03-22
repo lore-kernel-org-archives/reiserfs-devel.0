@@ -1,53 +1,44 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: tytso@mit.edu
 Subject: Re: [RFC 1/1] fs/reiserfs/journal.c: Remove obsolete  __GFP_NOFAIL
-Date: Sat, 22 Mar 2014 10:15:12 -0700
-Message-ID: <20140322101512.eaeb542b.akpm@linux-foundation.org>
+Date: Sat, 22 Mar 2014 13:26:06 -0400
+Message-ID: <20140322172606.GB23583@thunk.org>
 References: <20140321171830.ef47fdea1a3a2f2921c8fe86@skynet.be>
-	<20140321130055.c0ea32946f3543cd7f6bedd6@linux-foundation.org>
-	<20140322170322.GA23583@thunk.org>
+ <20140321130055.c0ea32946f3543cd7f6bedd6@linux-foundation.org>
+ <20140322170322.GA23583@thunk.org>
+ <20140322101512.eaeb542b.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20140322170322.GA23583@thunk.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=thunk.org; s=mail;
+	t=1395509166; bh=5yFoOADAVny40T79l83oouv9t6NXWOiWpKI+8maVrkg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jFGdj+dPkuGGADXfDBFifriNvpG2AM9/BPdIuip+YZIF0CkVs7ybSaaSpD2SELrvZ
+	 9A/cnYWE55d/vft1l+rjZDshG6CdudHneJv/fraDk/VUgqhqm46qTQa5wFFZd6LThY
+	 77f1PgmuAYRwR7bLo3WXv/KE4ZGvadMLC6uCEtX8=
+Content-Disposition: inline
+In-Reply-To: <20140322101512.eaeb542b.akpm@linux-foundation.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: tytso@mit.edu
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Fabian Frederick <fabf@skynet.be>, linux-kernel <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org
 
-On Sat, 22 Mar 2014 13:03:22 -0400 tytso@mit.edu wrote:
-
-> On Fri, Mar 21, 2014 at 01:00:55PM -0700, Andrew Morton wrote:
-> > 
-> > The whole point of __GFP_NOFAIL is to centralise this
-> > wait-for-memory-for-ever operation.  So it is implemented in a common
-> > (core) place and so that we can easily locate these problematic
-> > callers.
-> > 
-> > is exactly wrong.  Yes, we'd like __GFP_NOFAIL to go away, but it
-> > cannot go away until buggy callsites such as this one are *fixed*. 
-> > Removing the __GFP_NOFAIL usage simply hides the buggy code from casual
-> > searchers.
+On Sat, Mar 22, 2014 at 10:15:12AM -0700, Andrew Morton wrote:
+> > I'll note that since 2011, there has been precious little movement on
+> > removing the final few callers of GFP_NOFAIL, and we still have a bit
+> > under two dozen of them, including a new one in fs/buffer.c that was
+> > added in 2013.
 > 
-> The change to jbd2 was made in July 2010, back when the "we must
-> exterminate GFP_NOFAIL at all costs" brigade was in high gear, and the
-> folks claiming that GFP_FAIL *would* go away, come hell or high water,
-> was a bit more emphatic.
+> Well.  Converting an existing retry-for-ever caller to GFP_NOFAIL is
+> good.  Adding new retry-for-ever code is not good.
 
-Whoever was saying that had the wrong end of the stick.  It's all very
-odd.
+Actually, it wasn't converting an existing loop; it was adding a new
+GFP_NOFAIL to fix a reclaim livelock (commit 84235de394d9775bf).
 
-> I'll note that since 2011, there has been precious little movement on
-> removing the final few callers of GFP_NOFAIL, and we still have a bit
-> under two dozen of them, including a new one in fs/buffer.c that was
-> added in 2013.
+I agree that in ideal world, we'd get rid of all of these.  But
+sometimes, the cure can be worse than the disesae, and so the whole
+"all callers of GFP_NOFAIL are MUST FIX BUGGGY and the maintainers
+should be shamed into fixing it" attitude is one that I find a bit odd
+myself.
 
-Well.  Converting an existing retry-for-ever caller to GFP_NOFAIL is
-good.  Adding new retry-for-ever code is not good.
-
-> In any case, __GFP_NOFAIL is in the code comments, so a casual
-> searcher would find it pretty quickly with a "git grep".
-
-There's that.  But retry-for-ever is a common operation which the core
-allocator can implement and maintain better than remote callsites.
-
+	      	    	    	     	     - Ted
