@@ -1,57 +1,49 @@
-From: Sasha Levin <sasha.levin@oracle.com>
-Subject: reiserfs: kernel BUG at fs/reiserfs/journal.c:1095!
-Date: Fri, 21 Mar 2014 20:41:03 -0400
-Message-ID: <532CDC1F.1030103@oracle.com>
+From: tytso@mit.edu
+Subject: Re: [RFC 1/1] fs/reiserfs/journal.c: Remove obsolete  __GFP_NOFAIL
+Date: Sat, 22 Mar 2014 13:03:22 -0400
+Message-ID: <20140322170322.GA23583@thunk.org>
+References: <20140321171830.ef47fdea1a3a2f2921c8fe86@skynet.be>
+ <20140321130055.c0ea32946f3543cd7f6bedd6@linux-foundation.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=thunk.org; s=mail;
+	t=1395507802; bh=ot4TYI51sMSlYIS/8ftW7i/yumkZAEQmu3d9o5TYfKk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BrJ+zsRfPXtm+TVV4o5bIQlyFVFjgDZUuYx+B5bRkHMt90RYAbojtxO+35gAowenF
+	 RLEpPtr2NLVWv2HN4aVGQhG7RSfGktFvs/WVOioiuNaryVYUE8fNj5ROJmRZ/a5LGR
+	 gYIui3uemXVba5369mqwt4sijI+TlXg9pikB0BnQ=
+Content-Disposition: inline
+In-Reply-To: <20140321130055.c0ea32946f3543cd7f6bedd6@linux-foundation.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: reiserfs-devel@vger.kernel.org
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Fabian Frederick <fabf@skynet.be>, linux-kernel <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org
 
-Hi all,
+On Fri, Mar 21, 2014 at 01:00:55PM -0700, Andrew Morton wrote:
+> 
+> The whole point of __GFP_NOFAIL is to centralise this
+> wait-for-memory-for-ever operation.  So it is implemented in a common
+> (core) place and so that we can easily locate these problematic
+> callers.
+> 
+> is exactly wrong.  Yes, we'd like __GFP_NOFAIL to go away, but it
+> cannot go away until buggy callsites such as this one are *fixed*. 
+> Removing the __GFP_NOFAIL usage simply hides the buggy code from casual
+> searchers.
 
-While fuzzing with trinity inside a KVM tools guest running the latest -next
-kernel, I've stumbled on the following:
+The change to jbd2 was made in July 2010, back when the "we must
+exterminate GFP_NOFAIL at all costs" brigade was in high gear, and the
+folks claiming that GFP_FAIL *would* go away, come hell or high water,
+was a bit more emphatic.
 
-[  825.014684] kernel BUG at fs/reiserfs/journal.c:1095!
-[  825.014783] invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
-[  825.014783] Dumping ftrace buffer:
-[  825.014783]    (ftrace buffer empty)
-[  825.014783] Modules linked in:
-[  825.014783] CPU: 1 PID: 22304 Comm: trinity-c57 Tainted: G        W     3.14.0-rc7-next-20140321-sasha-00018-g0516fe6-dirty #265
-[  825.014783] task: ffff8802ec7bb000 ti: ffff8802e3bb8000 task.ti: ffff8802e3bb8000
-[  825.014783] RIP:  flush_commit_list (fs/reiserfs/journal.c:1095)
-[  825.014783] RSP: 0018:ffff8802e3bb9d68  EFLAGS: 00010202
-[  825.014783] RAX: 0000000000000023 RBX: ffff88003da2b3d8 RCX: 0000000000000006
-[  825.014783] RDX: ffffc9000b5d0000 RSI: ffffffff813f413f RDI: ffff88007e12cd80
-[  825.014783] RBP: ffff8802e3bb9dd8 R08: 0000000000000000 R09: 0000000000000000
-[  825.014783] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000002
-[  825.014783] R13: ffff8807a4c537e4 R14: 0000000000000000 R15: ffff8807a4c537c8
-[  825.014783] FS:  00007f60da8fe700(0000) GS:ffff88007ec00000(0000) knlGS:0000000000000000
-[  825.014783] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
-[  825.014783] CR2: 00007f6557d11489 CR3: 00000002dde16000 CR4: 00000000000006a0
-[  825.014783] Stack:
-[  825.014783]  ffff8802e3bb9d78 ffffc9000b5d01d8 ffff880200000000 ffff8807a4c537f0
-[  825.014783]  000000010b5d01d8 ffffc9000b5d0000 ffff8802e3bb9dd8 ffff88007e12dcb0
-[  825.014783]  ffffc9000b5d0000 ffffc9000b5d0000 ffff880078886c48 ffffc9000b5d02f8
-[  825.014783] Call Trace:
-[  825.014783]  do_journal_end.isra.16 (fs/reiserfs/journal.c:4194)
-[  825.014783]  ? SyS_tee (fs/sync.c:77)
-[  825.014783]  journal_end_sync (fs/reiserfs/journal.c:3429)
-[  825.014783]  reiserfs_sync_fs (fs/reiserfs/super.c:77)
-[  825.014783]  ? SyS_tee (fs/sync.c:77)
-[  825.014783]  ? iterate_supers (fs/super.c:510)
-[  825.014783]  sync_fs_one_sb (fs/sync.c:80)
-[  825.014783]  iterate_supers (fs/super.c:512)
-[  825.014783]  sys_sync (fs/sync.c:109)
-[  825.014783]  tracesys (arch/x86/kernel/entry_64.S:749)
-[  825.014783] Code: 82 1f ff ff ff 41 8b 47 1c 83 f8 01 74 06 0f 0b 0f 1f 40 00 45 85 f6 75 5e 48 8b 55 b8 48 8b 42 28 a8 08 0f 84 db 02 00 00 eb 4c <0f> 0b 0f 1f 80 00 00 00 00 e8 1b 78 f5 ff 48 89 df e8 03 7e 00
-[  825.014783] RIP  flush_commit_list (fs/reiserfs/journal.c:1095)
-[  825.014783]  RSP <ffff8802e3bb9d68>
+I'll note that since 2011, there has been precious little movement on
+removing the final few callers of GFP_NOFAIL, and we still have a bit
+under two dozen of them, including a new one in fs/buffer.c that was
+added in 2013.
 
+In any case, __GFP_NOFAIL is in the code comments, so a casual
+searcher would find it pretty quickly with a "git grep".
 
-Thanks,
-Sasha
+	       	       	      	      	   - Ted
