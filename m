@@ -1,67 +1,57 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC 1/1] fs/reiserfs/journal.c: Remove obsolete  __GFP_NOFAIL
-Date: Fri, 21 Mar 2014 13:00:55 -0700
-Message-ID: <20140321130055.c0ea32946f3543cd7f6bedd6@linux-foundation.org>
-References: <20140321171830.ef47fdea1a3a2f2921c8fe86@skynet.be>
+From: Sasha Levin <sasha.levin@oracle.com>
+Subject: reiserfs: kernel BUG at fs/reiserfs/journal.c:1095!
+Date: Fri, 21 Mar 2014 20:41:03 -0400
+Message-ID: <532CDC1F.1030103@oracle.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20140321171830.ef47fdea1a3a2f2921c8fe86@skynet.be>
-Sender: reiserfs-devel-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Fabian Frederick <fabf@skynet.be>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: reiserfs-devel@vger.kernel.org
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, 21 Mar 2014 17:18:30 +0100 Fabian Frederick <fabf@skynet.be> wrote:
+Hi all,
 
-> Loop around congestion_wait on allocation failure/alloc_journal_list
-> like already fixed in other FS.
-> 
-> ...
->
-> --- a/fs/reiserfs/journal.c
-> +++ b/fs/reiserfs/journal.c
-> @@ -2487,8 +2487,13 @@ static int journal_read(struct super_block *sb)
->  static struct reiserfs_journal_list *alloc_journal_list(struct super_block *s)
->  {
->  	struct reiserfs_journal_list *jl;
-> -	jl = kzalloc(sizeof(struct reiserfs_journal_list),
-> -		     GFP_NOFS | __GFP_NOFAIL);
-> +
-> +	do {
-> +		jl = kzalloc(sizeof(struct reiserfs_journal_list), GFP_NOFS);
-> +		if (unlikely(!jl))
-> +			congestion_wait(BLK_RW_ASYNC, HZ/50);
-> +	} while (!jl)
-> +
+While fuzzing with trinity inside a KVM tools guest running the latest -next
+kernel, I've stumbled on the following:
 
-Dammit, who has been running around converting __GFP_NOFAIL into
-open-coded congestion_wait() loops?
+[  825.014684] kernel BUG at fs/reiserfs/journal.c:1095!
+[  825.014783] invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
+[  825.014783] Dumping ftrace buffer:
+[  825.014783]    (ftrace buffer empty)
+[  825.014783] Modules linked in:
+[  825.014783] CPU: 1 PID: 22304 Comm: trinity-c57 Tainted: G        W     3.14.0-rc7-next-20140321-sasha-00018-g0516fe6-dirty #265
+[  825.014783] task: ffff8802ec7bb000 ti: ffff8802e3bb8000 task.ti: ffff8802e3bb8000
+[  825.014783] RIP:  flush_commit_list (fs/reiserfs/journal.c:1095)
+[  825.014783] RSP: 0018:ffff8802e3bb9d68  EFLAGS: 00010202
+[  825.014783] RAX: 0000000000000023 RBX: ffff88003da2b3d8 RCX: 0000000000000006
+[  825.014783] RDX: ffffc9000b5d0000 RSI: ffffffff813f413f RDI: ffff88007e12cd80
+[  825.014783] RBP: ffff8802e3bb9dd8 R08: 0000000000000000 R09: 0000000000000000
+[  825.014783] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000002
+[  825.014783] R13: ffff8807a4c537e4 R14: 0000000000000000 R15: ffff8807a4c537c8
+[  825.014783] FS:  00007f60da8fe700(0000) GS:ffff88007ec00000(0000) knlGS:0000000000000000
+[  825.014783] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+[  825.014783] CR2: 00007f6557d11489 CR3: 00000002dde16000 CR4: 00000000000006a0
+[  825.014783] Stack:
+[  825.014783]  ffff8802e3bb9d78 ffffc9000b5d01d8 ffff880200000000 ffff8807a4c537f0
+[  825.014783]  000000010b5d01d8 ffffc9000b5d0000 ffff8802e3bb9dd8 ffff88007e12dcb0
+[  825.014783]  ffffc9000b5d0000 ffffc9000b5d0000 ffff880078886c48 ffffc9000b5d02f8
+[  825.014783] Call Trace:
+[  825.014783]  do_journal_end.isra.16 (fs/reiserfs/journal.c:4194)
+[  825.014783]  ? SyS_tee (fs/sync.c:77)
+[  825.014783]  journal_end_sync (fs/reiserfs/journal.c:3429)
+[  825.014783]  reiserfs_sync_fs (fs/reiserfs/super.c:77)
+[  825.014783]  ? SyS_tee (fs/sync.c:77)
+[  825.014783]  ? iterate_supers (fs/super.c:510)
+[  825.014783]  sync_fs_one_sb (fs/sync.c:80)
+[  825.014783]  iterate_supers (fs/super.c:512)
+[  825.014783]  sys_sync (fs/sync.c:109)
+[  825.014783]  tracesys (arch/x86/kernel/entry_64.S:749)
+[  825.014783] Code: 82 1f ff ff ff 41 8b 47 1c 83 f8 01 74 06 0f 0b 0f 1f 40 00 45 85 f6 75 5e 48 8b 55 b8 48 8b 42 28 a8 08 0f 84 db 02 00 00 eb 4c <0f> 0b 0f 1f 80 00 00 00 00 e8 1b 78 f5 ff 48 89 df e8 03 7e 00
+[  825.014783] RIP  flush_commit_list (fs/reiserfs/journal.c:1095)
+[  825.014783]  RSP <ffff8802e3bb9d68>
 
-The whole point of __GFP_NOFAIL is to centralise this
-wait-for-memory-for-ever operation.  So it is implemented in a common
-(core) place and so that we can easily locate these problematic
-callers.
 
-This comment in ext4:
-
-			/*
-			 * If __GFP_FS is not present, then we may be
-			 * being called from inside the fs writeback
-			 * layer, so we MUST NOT fail.  Since
-			 * __GFP_NOFAIL is going away, we will arrange
-			 * to retry the allocation ourselves.
-			 */
-
-is exactly wrong.  Yes, we'd like __GFP_NOFAIL to go away, but it
-cannot go away until buggy callsites such as this one are *fixed*. 
-Removing the __GFP_NOFAIL usage simply hides the buggy code from casual
-searchers.
-
-argh.
-
-What we should do is to fix all these call sites so they can handle
-memory exhaustion.  That's hard so in the interim they should be using
-__GFP_NOFAIL.
-
+Thanks,
+Sasha
