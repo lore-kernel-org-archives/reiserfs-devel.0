@@ -1,57 +1,32 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC 1/1] fs/reiserfs/journal.c: Remove obsolete  __GFP_NOFAIL
-Date: Tue, 25 Mar 2014 23:32:09 -0700
-Message-ID: <20140325233209.31756c92.akpm@linux-foundation.org>
-References: <20140321171830.ef47fdea1a3a2f2921c8fe86@skynet.be>
-	<20140321130055.c0ea32946f3543cd7f6bedd6@linux-foundation.org>
-	<20140322170322.GA23583@thunk.org>
-	<20140322101512.eaeb542b.akpm@linux-foundation.org>
-	<20140322172606.GB23583@thunk.org>
-	<20140322173207.GC23583@thunk.org>
-	<20140322105524.7baec73a.akpm@linux-foundation.org>
-	<20140322192423.GA10176@redhat.com>
-	<alpine.DEB.2.02.1403251800320.21733@chino.kir.corp.google.com>
-	<20140326061904.GA4907@thunk.org>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: ACL support.
+Date: Wed, 26 Mar 2014 11:34:40 +0100
+Message-ID: <5332AD40.1020308@gmail.com>
+References: <5332645E.4070600@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <20140326061904.GA4907@thunk.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject:references
+         :in-reply-to:content-type:content-transfer-encoding;
+        bh=HLda8ix6WHhAB/pv+e3EOlJ8jiA4z7IfbNj3q8n4x+U=;
+        b=NXykL2Q1TEilfQqylI2b9s2BLeCpGEwA21icBPgfeC1oYB9BPEEapChT7dJgB1Zw2a
+         CQQhnKAoOc3S+TBSU5VvQ2QAYJPm25sykATDVp3dRd/6APGBeywl6mJEu1uM/RSEPuMZ
+         i5Sh5932Fjrr7AcbKjIT3T6Dfbxjjj+jNIDRuVP8O9tX9xO57tVpO/v84KdB8cgywl7F
+         zf6Ko3ADMVUfqExn5GTCj8W9OgaWl6kKLx/wPYa2IaYvkJmZ3bdqklnZWA57youJLRYK
+         XGnIjye/GsGRI98c8kt9VdOZERCutPR8aSSFniXe09FJbXAmqdi1GWuukXNQEu0qfoM6
+         C20Q==
+In-Reply-To: <5332645E.4070600@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: tytso@mit.edu
-Cc: David Rientjes <rientjes@google.com>, Dave Jones <davej@redhat.com>, Fabian Frederick <fabf@skynet.be>, linux-kernel <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org, Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: dE <de.techno@gmail.com>, reiserfs-devel@vger.kernel.org
 
-On Wed, 26 Mar 2014 02:19:04 -0400 tytso@mit.edu wrote:
+On 03/26/2014 06:23 AM, dE wrote:
+> Does reiser4 support ACL?
 
-> On Tue, Mar 25, 2014 at 06:06:17PM -0700, David Rientjes wrote:
-> > 
-> > The point is not to add new callers and new code should handle NULL 
-> > correctly, not that we should run around changing current users to just do 
-> > infinite retries.  Checkpatch should have nothing to do with that.
-> 
-> My problem with this doctrinaire "there should never be any new users"
-> is that sometiems there *are* worse things than infinite retries.  If
-> the alternative is bringing the entire system down, or livelocking the
-> entire system, or corrupting user data, __GFP_NOFAIL *is* the more
-> appropriate option.
+Nope for historical reasons.
+I'll provide hints how to implement this, if someone wants..
 
-Well, there are always alternatives.  For example ext3 could
-preallocate a single transaction_t and a single IO page and fall back
-to synchronous page-at-a-time journal writes.  But I can totally see
-that such things are unattractive: heaps of new code which is never
-tested in real life.  The page allocator works so damn well that it
-doesn't make sense to implement it.
-
-> If you try to tell those of us outside of the mm layer, "thou shalt
-> never use __GFP_NOFAIL in new code", and we have some new code where
-> the alternative is worse, we can either open-code the loop, or have
-> some mm hackers and/or checkpatch whine at us.
-> 
-> Andrew has declared that he'd prefer that we not open code the retry
-> loop; if you want to disagree with Andrew, feel free to pursuade him
-> otherwise.  If you want to tell me that I should accept user data
-> corruption, I'm going to ignore you (and/or checkpatch).
-
-Please use NOFAIL ;) The core page allocator will always be able to
-implement this better than callers.
+Edward.
