@@ -1,58 +1,63 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [PATCH] reiserfs: fix race in readdir
-Date: Wed, 02 Apr 2014 11:57:54 -0400
-Message-ID: <533C3382.3000808@suse.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2] reiserfs: fix race in readdir
+Date: Thu, 3 Apr 2014 00:19:02 +0200
+Message-ID: <20140402221902.GA20894@quack.suse.cz>
+References: <533C599A.9010503@suse.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <533C599A.9010503@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-To: reiserfs-devel <reiserfs-devel@vger.kernel.org>
-Cc: Jan Kara <jack@suse.cz>
+Content-Transfer-Encoding: 7bit
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: reiserfs-devel <reiserfs-devel@vger.kernel.org>, Jan Kara <jack@suse.cz>
 
-jdm-20004 reiserfs_delete_xattrs: Couldn't delete all xattrs (-2)
+On Wed 02-04-14 14:40:26, Jeff Mahoney wrote:
+> jdm-20004 reiserfs_delete_xattrs: Couldn't delete all xattrs (-2)
+> 
+> The -ENOENT is due to readdir calling dir_emit on the same entry twice.
+> 
+> If the dir_emit callback sleeps and the tree is changed underneath us,
+> we won't be able to trust deh_offset(deh) anymore. We need to save
+> next_pos before we might sleep so we can find the next entry.
+> 
+> Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+  Thanks for a quick fix. I've merged the patch to my tree.
 
-The -ENOENT is due to readdir calling dir_emit on the same entry twice.
+								Honza
 
-If the dir_emit callback sleeps and the tree is changed underneath us,
-we won't be able to trust deh_offset(deh) anymore. We need to save
-next_pos before we might sleep so we can find the next entry.
-
-This can also affect non-xattr users of readdir, though the race is tighter.
-
-Cc: <stable@vger.kernel.org> 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- fs/reiserfs/dir.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
---- a/fs/reiserfs/dir.c
-+++ b/fs/reiserfs/dir.c
-@@ -179,6 +179,13 @@ int reiserfs_readdir_inode(struct inode
- 				memcpy(local_buf, d_name, d_reclen);
- 
- 				/*
-+				 * deh_offset(deh) will be invalid if dir_emit
-+				 * sleeps. We need to know the offset after
-+				 * this one to continue.
-+				 */
-+				next_pos = deh_offset(deh) + 1;
-+
-+				/*
- 				 * Since filldir might sleep, we can release
- 				 * the write lock here for other waiters
- 				 */
-@@ -196,8 +203,6 @@ int reiserfs_readdir_inode(struct inode
- 				if (local_buf != small_buf) {
- 					kfree(local_buf);
- 				}
--				// next entry should be looked for with such offset
--				next_pos = deh_offset(deh) + 1;
- 
- 				if (item_moved(&tmp_ih, &path_to_entry)) {
- 					set_cpu_key_k_offset(&pos_key,
-
+> ---
+>  fs/reiserfs/dir.c |    6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> --- a/fs/reiserfs/dir.c
+> +++ b/fs/reiserfs/dir.c
+> @@ -125,6 +125,7 @@ int reiserfs_readdir_inode(struct inode
+>  				int d_reclen;
+>  				char *d_name;
+>  				ino_t d_ino;
+> +				loff_t cur_pos = deh_offset(deh);
+>  
+>  				if (!de_visible(deh))
+>  					/* it is hidden entry */
+> @@ -196,8 +197,9 @@ int reiserfs_readdir_inode(struct inode
+>  				if (local_buf != small_buf) {
+>  					kfree(local_buf);
+>  				}
+> -				// next entry should be looked for with such offset
+> -				next_pos = deh_offset(deh) + 1;
+> +
+> +				/* deh_offset(deh) may be invalid now. */
+> +				next_pos = cur_pos + 1;
+>  
+>  				if (item_moved(&tmp_ih, &path_to_entry)) {
+>  					set_cpu_key_k_offset(&pos_key,
+> 
+> -- 
+> Jeff Mahoney
+> SUSE Labs
 -- 
-Jeff Mahoney
-SUSE Labs
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
