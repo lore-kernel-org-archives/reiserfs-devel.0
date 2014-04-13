@@ -1,67 +1,118 @@
-From: Sasha Levin <sasha.levin@oracle.com>
-Subject: reiserfs: REISERFS panic (device loop0): journal-003 check_journal_end:
- j_start (3452) is too high
-Date: Sun, 06 Apr 2014 10:28:13 -0400
-Message-ID: <5341647D.8010103@oracle.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: ACL support.
+Date: Mon, 14 Apr 2014 00:22:59 +0200
+Message-ID: <534B0E43.60406@gmail.com>
+References: <5332645E.4070600@gmail.com>	<5332AD40.1020308@gmail.com> <CAJZSrNLHanHHgAV-E=1bpnbq4FvqYETQkOQhdsrEwLza+Yd90w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=message-id:date:from:user-agent:mime-version:to:subject:references
+         :in-reply-to:content-type:content-transfer-encoding;
+        bh=3muFJ+AC4s84hOuFSKbUJxu3454brFeSfmBwQ23RJFY=;
+        b=DWrC1nS+EG18XPZnXl6jSOJCjSP8VuuIS7aGV93TMzWEJi7I3gVI8QlANopOz0DKTF
+         0Bftf6KgBT4WNETsXdg4cmnpZZh6BEMMR3vfm6p7myI8pr87qX2FuTtlOQb8/X75bQ3r
+         jECbmFTvlugfCfnE/f1ekLFEYnp+HQ98p64YsXhbQ3NmCYEmYvliYdBT0Vagb++te3uV
+         Mv0CJE5hKQYSA5Mr7xCcSAK/anHlBeA4Guz/+PDcj4KM1HaMmS6y/7GvjIa3Pib6WSpt
+         sj40sKkqQSjyXSMDgOGVGG+gDMHjvFYNB3duYXLFMYDWY3L4Ihqfef9O5EXOOZNZTUWe
+         suZA==
+In-Reply-To: <CAJZSrNLHanHHgAV-E=1bpnbq4FvqYETQkOQhdsrEwLza+Yd90w@mail.gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: reiserfs-devel@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Dave Jones <davej@redhat.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Daniel Horne <daniel.horne@gmail.com>, ReiserFS Development List <reiserfs-devel@vger.kernel.org>
 
-Hi all,
+On 04/08/2014 08:28 PM, Daniel Horne wrote:
+> On 26 March 2014 10:34, Edward Shishkin <edward.shishkin@gmail.com
+> <mailto:edward.shishkin@gmail.com>> wrote:
+>
+>     On 03/26/2014 06:23 AM, dE wrote:
+>
+>         Does reiser4 support ACL?
+>
+>
+>     Nope for historical reasons.
+>     I'll provide hints how to implement this, if someone wants..
+>
+>
+> I occasionally have a look at making an XATTR implementation before
+> getting sidetracked.
+>
+> There's a couple of points I'm not quite decided on:
+>
+> Whether to make a generic xattr stat_data plugin and use it to store all
+> different types of attribute, or make different plugins for ACL, SElinux
+> contexts, and user xattrs.
+>
+> You've previously stated that stat_data plugins are limited to 4k. This
+> should be fine for selinux contexts and all but pathologically long
+> access control lists, I'm not sure about the use of user xattrs. Would
+> making separate stat_data plugins give separate 4k limits to each type
+> of attribute, or is that all-inclusive?
+>
 
-While fuzzing with trinity inside a KVM tools guest running the latest -next
-kernel, I've stumbled on the following:
 
-[ 3680.222129] REISERFS panic (device loop0): journal-003 check_journal_end: j_start (3452) is too high
-[ 3680.223125] ------------[ cut here ]------------
-[ 3680.223571] kernel BUG at fs/reiserfs/prints.c:367!
-[ 3680.224317] invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
-[ 3680.225190] Dumping ftrace buffer:
-[ 3680.225529] ---------------------------------
-[ 3680.226017]  kswapd1-4007    1...1 35142723758us : mm_vmscan_kswapd_sleep: nid=1
-[ 3680.227189] ---------------------------------
-[ 3680.227948] Modules linked in:
-[ 3680.228460] CPU: 6 PID: 21513 Comm: kworker/6:1 Not tainted 3.14.0-next-20140403-sasha-00022-g10224c0 #377
-[ 3680.229927] Workqueue: events_long flush_old_commits
-[ 3680.230154] task: ffff880172d58000 ti: ffff880182ae6000 task.ti: ffff880182ae6000
-[ 3680.230154] RIP: __reiserfs_panic (fs/reiserfs/prints.c:367)
-[ 3680.230154] RSP: 0018:ffff880182ae7b68  EFLAGS: 00010292
-[ 3680.230154] RAX: 0000000000000058 RBX: ffffffff967775a3 RCX: 0000000000000006
-[ 3680.230154] RDX: 00000000000070e0 RSI: ffffffff9681c2bc RDI: 0000000000000282
-[ 3680.230154] RBP: ffff880182ae7bd8 R08: 0000000000000000 R09: 0000000000000000
-[ 3680.230154] R10: 0000000000000001 R11: 68676968206f6f74 R12: ffff88009496c520
-[ 3680.230154] R13: ffffffff956731f0 R14: ffffc90007d84000 R15: ffff88009496c520
-[ 3680.230154] FS:  0000000000000000(0000) GS:ffff88018b000000(0000) knlGS:0000000000000000
-[ 3680.230154] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
-[ 3680.230154] CR2: 00000000021b1258 CR3: 0000000016e2c000 CR4: 00000000000006a0
-[ 3680.230154] Stack:
-[ 3680.230154]  ffff880182ae7b78 ffffffff00000028 ffff880182ae7be8 ffff880182ae7b88
-[ 3680.230154]  0000000000000000 ffff8800940f1290 0000000000000000 0000000000000000
-[ 3680.230154]  0000000000000d7c 0000000000016485 ffff880182ae7bd8 ffffc90007d84000
-[ 3680.230154] Call Trace:
-[ 3680.230154] do_journal_end.isra.16 (fs/reiserfs/journal.c:947 fs/reiserfs/journal.c:3901)
-[ 3680.230154] ? _raw_spin_unlock (arch/x86/include/asm/preempt.h:98 include/linux/spinlock_api_smp.h:152 kernel/locking/spinlock.c:183)
-[ 3680.230154] ? reiserfs_schedule_old_flush (fs/reiserfs/super.c:113)
-[ 3680.230154] journal_end_sync (fs/reiserfs/journal.c:3429)
-[ 3680.230154] reiserfs_sync_fs (fs/reiserfs/super.c:77)
-[ 3680.230154] flush_old_commits (fs/reiserfs/super.c:96)
-[ 3680.230154] process_one_work (kernel/workqueue.c:2221 include/linux/jump_label.h:105 include/trace/events/workqueue.h:111 kernel/workqueue.c:2226)
-[ 3680.230154] ? process_one_work (include/linux/workqueue.h:186 kernel/workqueue.c:611 kernel/workqueue.c:638 kernel/workqueue.c:2214)
-[ 3680.252625] worker_thread (kernel/workqueue.c:2348)
-[ 3680.252625] ? rescuer_thread (kernel/workqueue.c:2297)
-[ 3680.252625] kthread (kernel/kthread.c:219)
-[ 3680.252625] ? kthread_create_on_node (kernel/kthread.c:185)
-[ 3680.252625] ret_from_fork (arch/x86/kernel/entry_64.S:555)
-[ 3680.252625] ? kthread_create_on_node (kernel/kthread.c:185)
-[ 3680.252625] Code: 9f d2 7f 96 75 0a 48 c7 c2 da e8 8d 96 48 89 d3 49 c7 c0 80 4e 51 99 4c 89 e9 48 89 de 48 c7 c7 5c 6b 77 96 31 c0 e8 09 af 0d 03 <0f> 0b 0f 1f 84 00 00 00 00 00 66 66 66 66 90 55 48 89 e5 48 83
-[ 3680.252625] RIP __reiserfs_panic (fs/reiserfs/prints.c:367)
-[ 3680.252625]  RSP <ffff880182ae7b68>
+Actually stat-data is an on-disk container of inode fields. That said, I 
+would prefer to store xattrs in special items, which are different from 
+stat-data (one such item per a pair (xattr_name, xattr_value)).
 
+
+> There's also the matter of choosing an on-disk format. A simple list
+> format, perhaps? Lookup would be O(n), but given the small amount of
+> data we're expecting to store there, that may be OK.
+
+I suggest that we use the following format for the xattr items.
+
+The key of the item associated with the pair (xattr_name, xattr_value) 
+is [base_key, offset], where base_key is calculated by build_xattr_key()
+(not yet implemented). This function does mostly the same as 
+build_sd_key(). The difference is that build_xattr_key() installs
+a special reserved (and currently not used) minor locality 
+KEY_ATTR_NAME_MINOR (see key.h for the definition).
+
+64-bit key offset is composed of 32-bit major_offset and 32-bit minor 
+offset. Major offset is a 32-hash of the xattr_name. Minor offset is the 
+number of the collision in the chronology ordering.
+
+Format of the item body is the following:
+. size-of-xattr_name (16 bit)
+. xattr_name;
+. xattr_value
+
+So getxattr(2) is resolved to the following actions:
+
+. build base_key for the xattr_name;
+. set major offset as hash(xattr_name);
+. linear search for precise xattr_name among all items with the same 
+[key_base, major_offset].
+. return respective xattr_value (or NOT_FOUND).
+
+setxattr(2) is resolved to the following actions:
+
+. compose the item body in accordance with the format above;
+. build base_key for xattr_name;
+. set the major offset, i.e. hash(xattr_name);
+. search for the xattr_name among all items with the same [base_key, 
+major_offset];
+. update the item body, or (depending on the flags) return EEXIST, if 
+the item with xattr_name was found;
+. set the respective minor_offset by the search results, if the item 
+with xattr_name was not found;
+. insert the new item with the [base_key, offset] to the current 
+position in the tree.
+
+For simplicity and performance reasons let's assume that xattr items are 
+solid. That said, any xattr item contains exactly one unit. In 
+particular, it means that sizeof(xattr_name + xattr_value) can not 
+exceed 4096 - (sizeof(node_header) + sizeof(item_header)). Let's 
+implement xattrs support with such restrictions for now. Also, don't 
+update minor offsets of colliding items when removing xattr: I don't 
+think that we'll exceed the limit for the number of collisions (2^32)
+in the foreseeable future.
+
+Makes sense?
+Let me know if any problems..
 
 Thanks,
-Sasha
+Edward.
