@@ -1,143 +1,23 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: [patch 23/29] reiserfs: balance_leaf refactor, format balance_leaf_insert_left
-Date: Wed, 23 Apr 2014 10:00:56 -0400
-Message-ID: <20140423151148.479703164@suse.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Re: [patch 00/29] reiserfs cleanup patchset
+Date: Sat, 26 Apr 2014 13:46:00 +1000
+Message-ID: <a97220c3691f4bfc6e57283827b68524@mail.velocitynet.com.au>
 References: <20140423140033.704113918@suse.com>
 Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=reiserfs/reiserfs-balance_leaf-refactor-format-balance_leaf_insert_left
+In-Reply-To: <20140423140033.704113918@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Dave Jones <davej@redhat.com>
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Jan Kara <jack@suse.cz>, Dave Jones <davej@redhat.com>
 
-Reformat balance_leaf_insert_left to adhere to CodingStyle.
+Hello Jeff,
+Could you update the source in obs as well.
+openSUSE Build Service > Projects > filesystems > reiserfs 
+https://build.opensuse.org/package/show/filesystems/reiserfs
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
----
- fs/reiserfs/do_balan.c |  107 ++++++++++++++++++++++++++-----------------------
- 1 file changed, 57 insertions(+), 50 deletions(-)
+logged https://bugzilla.novell.com/show_bug.cgi?id=875332
 
---- a/fs/reiserfs/do_balan.c
-+++ b/fs/reiserfs/do_balan.c
-@@ -293,59 +293,66 @@ static int balance_leaf_when_delete(stru
- static void balance_leaf_insert_left(struct tree_balance *tb,
- 				     struct item_head *ih, const char *body)
- {
--	int ret_val;
-+	int ret;
- 	struct buffer_info bi;
- 	int n = B_NR_ITEMS(tb->L[0]);
- 
--				if (tb->item_pos == tb->lnum[0] - 1 && tb->lbytes != -1) {
--					/* part of new item falls into L[0] */
--					int new_item_len;
--					int version;
--
--					ret_val = leaf_shift_left(tb, tb->lnum[0] - 1, -1);
--
--					/* Calculate item length to insert to S[0] */
--					new_item_len = ih_item_len(ih) - tb->lbytes;
--					/* Calculate and check item length to insert to L[0] */
--					put_ih_item_len(ih, ih_item_len(ih) - new_item_len);
--
--					RFALSE(ih_item_len(ih) <= 0,
--					       "PAP-12080: there is nothing to insert into L[0]: ih_item_len=%d",
--					       ih_item_len(ih));
--
--					/* Insert new item into L[0] */
--					buffer_info_init_left(tb, &bi);
--					leaf_insert_into_buf(&bi,
--							n + tb->item_pos - ret_val, ih, body,
--							tb->zeroes_num > ih_item_len(ih) ? ih_item_len(ih) : tb->zeroes_num);
--
--					version = ih_version(ih);
--
--					/* Calculate key component, item length and body to insert into S[0] */
--					set_le_ih_k_offset(ih, le_ih_k_offset(ih) +
--							(tb->lbytes << (is_indirect_le_ih(ih) ? tb->tb_sb->s_blocksize_bits - UNFM_P_SHIFT : 0)));
--
--					put_ih_item_len(ih, new_item_len);
--					if (tb->lbytes > tb->zeroes_num) {
--						body += (tb->lbytes - tb->zeroes_num);
--						tb->zeroes_num = 0;
--					} else
--						tb->zeroes_num -= tb->lbytes;
--
--					RFALSE(ih_item_len(ih) <= 0,
--					       "PAP-12085: there is nothing to insert into S[0]: ih_item_len=%d",
--					       ih_item_len(ih));
--				} else {
--					/* new item in whole falls into L[0] */
--					/* Shift lnum[0]-1 items to L[0] */
--					ret_val = leaf_shift_left(tb, tb->lnum[0] - 1, tb->lbytes);
--					/* Insert new item into L[0] */
--					buffer_info_init_left(tb, &bi);
--					leaf_insert_into_buf(&bi, n + tb->item_pos - ret_val, ih, body, tb->zeroes_num);
--					tb->insert_size[0] = 0;
--					tb->zeroes_num = 0;
--				}
--
-+	if (tb->item_pos == tb->lnum[0] - 1 && tb->lbytes != -1) {
-+		/* part of new item falls into L[0] */
-+		int new_item_len, shift;
-+		int version;
-+
-+		ret = leaf_shift_left(tb, tb->lnum[0] - 1, -1);
-+
-+		/* Calculate item length to insert to S[0] */
-+		new_item_len = ih_item_len(ih) - tb->lbytes;
-+
-+		/* Calculate and check item length to insert to L[0] */
-+		put_ih_item_len(ih, ih_item_len(ih) - new_item_len);
-+
-+		RFALSE(ih_item_len(ih) <= 0,
-+		       "PAP-12080: there is nothing to insert into L[0]: "
-+		       "ih_item_len=%d", ih_item_len(ih));
-+
-+		/* Insert new item into L[0] */
-+		buffer_info_init_left(tb, &bi);
-+		leaf_insert_into_buf(&bi, n + tb->item_pos - ret, ih, body,
-+			     min_t(int, tb->zeroes_num, ih_item_len(ih)));
-+
-+		version = ih_version(ih);
-+
-+		/*
-+		 * Calculate key component, item length and body to
-+		 * insert into S[0]
-+		 */
-+		shift = 0;
-+		if (is_indirect_le_ih(ih))
-+			shift = tb->tb_sb->s_blocksize_bits - UNFM_P_SHIFT;
-+
-+		add_le_ih_k_offset(ih, tb->lbytes << shift);
-+
-+		put_ih_item_len(ih, new_item_len);
-+		if (tb->lbytes > tb->zeroes_num) {
-+			body += (tb->lbytes - tb->zeroes_num);
-+			tb->zeroes_num = 0;
-+		} else
-+			tb->zeroes_num -= tb->lbytes;
-+
-+		RFALSE(ih_item_len(ih) <= 0,
-+		       "PAP-12085: there is nothing to insert into S[0]: "
-+		       "ih_item_len=%d", ih_item_len(ih));
-+	} else {
-+		/* new item in whole falls into L[0] */
-+		/* Shift lnum[0]-1 items to L[0] */
-+		ret = leaf_shift_left(tb, tb->lnum[0] - 1, tb->lbytes);
-+
-+		/* Insert new item into L[0] */
-+		buffer_info_init_left(tb, &bi);
-+		leaf_insert_into_buf(&bi, n + tb->item_pos - ret, ih, body,
-+				     tb->zeroes_num);
-+		tb->insert_size[0] = 0;
-+		tb->zeroes_num = 0;
-+	}
- }
- 
- static void balance_leaf_paste_left(struct tree_balance *tb,
-
-
+Thanks Glenn
