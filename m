@@ -1,85 +1,133 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
+From: Edward Shishkin <edward.shishkin@gmail.com>
 Subject: Re: reiser4: discard support
-Date: Fri, 02 May 2014 15:06:47 +0400
-Message-ID: <1946519.CBPeGJLD6P@intelfx-laptop>
-References: <1496741.djsd6PJ1Ae@intelfx-laptop> <2570366.EA3nxE0EOq@intelfx-laptop> <CAJZSrNK4=o9vocDfSM=4W5ZgtqZ6RVpmU66sGCu6HFsdN47OHw@mail.gmail.com>
+Date: Fri, 02 May 2014 13:48:28 +0200
+Message-ID: <5363860C.7060708@gmail.com>
+References: <1496741.djsd6PJ1Ae@intelfx-laptop> <1B07908E-B768-407D-ADFA-B3C539FABB49@gmail.com> <53613807.7090605@gmail.com> <2570366.EA3nxE0EOq@intelfx-laptop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart4761953.yxGdPmKY5U"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
-         :references:mime-version:content-type;
-        bh=2BT/oOGIILU8YbNtaMteBo5IDYxMXLQ+7bkjZoQNNf4=;
-        b=t5r5+jCLIal4wXsYOjs1ZcVE28g/PCa/C8+YyvkTb0S9Ci2JOxUmgmK+Ra1tJVpJNa
-         RneQq1/1hA/1sbKFZYq+lmWbbLdwsWTcyne2VVguQ8SZVgWLxGvWajukjSJumVOhU/J0
-         CAbPjrjvjKfX9l3u3ikWNvIO8LF0fmpcXGjz2swOInzh4Dd1mQGU2oo4a1kTZf6EiGfc
-         O5hrZxpxBEo51Ii6bIVGZ8BFnLc6e4fPuiBbTjI2tfLiW3LSj+JhnWPvaP6jmAEbsNtc
-         75Cvy8/wdHIcFG8BaGKZy8T9gZFs7H/28BWVv1dMHRPqccZmBdu5alQzta7EB2FeJpRS
-         3/FA==
-In-Reply-To: <CAJZSrNK4=o9vocDfSM=4W5ZgtqZ6RVpmU66sGCu6HFsdN47OHw@mail.gmail.com>
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-type:content-transfer-encoding;
+        bh=yX7VTpArROjsn0d9X3MpLH5Ualqtg7ynPwH7WQiFW+M=;
+        b=0fW5xhDbVOOJ+smiRvUZ4OOy4zKdtOZiuTnvR8MJGohiDCAgKt+VRGFws+Y7O4JpTD
+         39f1XqPNKCLEJ9MUJI4hvFy/Pd/bHC8yTMlOgV1N0mOCkvNmvwrqYd9mq7Z3WmvLcMdT
+         eefyCfEmDjlNAmHQRlGo/wHQ0PokErP6hkPb6dyuWGbXk9UGn3nzCkYdQ3tzbRExxOpS
+         MBD2yjdUJ4MYP8vnqesRp4tItgMc1aT/G3gAs0pgIucHF5FkmCC7jdOQKJcDxcDCpHKW
+         MFQ94lrMM2B4CYiYWk2y8USJH66a/e0aymqHSHelVrV/MZXcm1acyABrjOwLUFp6LwcC
+         2osg==
+In-Reply-To: <2570366.EA3nxE0EOq@intelfx-laptop>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: Daniel Horne <daniel.horne@gmail.com>
-Cc: Edward Shishkin <edward.shishkin@gmail.com>, Reiserfs mailing list <reiserfs-devel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ivan Shapovalov <intelfx100@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org
 
+On 05/02/2014 01:51 AM, Ivan Shapovalov wrote:
+> On Wednesday 30 April 2014 at 19:51:03, Edward Shishkin wrote:	
+>> On 04/30/2014 05:04 PM, Ivan Shapovalov wrote:
+>> [...]
+>>
+>>>> There is a ready implementation of rb-trees in the kernel (see
+>>>> ./lib/rbtree.c,
+>>>> ./lib/rbtree_test.c). Could you please take a look at this?
+>>> I've checked it already. Well, in case of trees:
+>>> - combined extent insertion+adjacent extent merge complexity is
+>>> O(n*log(n))
+>> Actually, this is:
+>>
+>> 1) Add n extents one-by-one to empty tree:
+>> log(1) + log(2) + ... + log(n-1)
+>>
+>> 2) Merge 2 trees of n extents:
+>> log(n) + log(n+1) + ... + log(2n-1)
+>>
+>> Total: log(1*2*...*2n-1) = log((2n-1)!)
+>>
+>> in accordance with Stirling's formula:
+>>
+>> log((2n)!) = log(((2n)^(1/2))*(2n/e)^n) =
+>> = (1/2)*log(2n) + n*log(2n/e) < n + n*log(n)
+> Hm.
+>
+> Consider we fill two data structures with N extents each, then merge these two
+> data structures and prepare the resulting one for traversal (for lists it will
+> be sorting, for trees that's no-op).
+>
+> For trees:
+> 1) Adding
+> 2*log((n-1)!)
 
---nextPart4761953.yxGdPmKY5U
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="us-ascii"
+Why "2*" ?
+I suppose they are filled in parallel...
+Total complexity (when everything is serialized) is not interesting ;)
 
-On Friday 02 May 2014 at 02:28:24, Daniel Horne wrote:=09
-> When you say
->=20
-> > For lists:
-> > 1) Adding
-> > 2N
-> >=20
-> > 2) Merging
-> > constant
-> >=20
-> > 3) Sorting
-> > 2N*log(2N)
-> >=20
-> > Total:
-> > 2N+2N*log(2N)
->=20
-> For the sorting pass, are you assuming use of quicksort? That would r=
-equire
-> constant-time random access characteristics to achieve that efficienc=
-y (in
-> other words, transfer it to an array prior to sorting). Otherwise, yo=
-u'd
-> have to add in a multiple of N for a linear scan on each item, making=
- it
-> O(2N^2) by my reckoning.
->=20
->=20
-> (ps, apologies for possible duplicate post - hit reply to Ivan instea=
-d of
-> the list )
->=20
-> --
-> DH
+>
+> 2) Merging
+> log((2n-1)!/(n-1)!)
+>
+> 3) Sorting
+> none
+>
+> Total:
+> log((2n-1)!) + log((n-1)!)
+>
+> For lists:
+> 1) Adding
+> 2N
+>
+> 2) Merging
+> constant
+>
+> 3) Sorting
+> 2N*log(2N)
+>
+> Total:
+> 2N+2N*log(2N)
+>
+> Quick testing in WolframAlpha shows that, if these estimations are correct,
+> lists tend to have lesser complexity starting with approx. N=160.
+>
+>> Since atoms can be merged in parallel, we have that
+>> trees work better than lists. Also tree of extents has
+>> better memory consumption because of merging extents.
+>>
+>>>   against O(n+n*log(n)) in lists;
+>>>
+>>> - joining two trees is not less than O(log(n)) against O(1) in lists.
+>>>
+>>> So I can't see any benefit in using trees, and join performance is a
+>>> downside of these. Am I missing something?
+>> [...]
+>>
+>>> Why after reiser4_invalidate_list()? I thought that it should be
+>>> called between reiser4_write_logs(), but before reiser4_invalidate_list().
+>> OK, insert before. I think, it doesn't matter, since we don't look
+>> at this list when issuing discard requests, no? :)
+> I just don't understand what implications does that function have. It seems to
+> mess with jnodes, and I can imagine that this leads to races with somebody
+> modifying the bitmaps while issue_discard_requests() tries to read them to
+> check discard extents...
 
-I'm assuming usage of the in-kernel list_sort(), which uses merge sort =
-and=20
-claims to have a complexity of O(n*log(n)).
+"somebody modifying the bitmaps" will wait for commit_mutex.
+Have you found where the bitmaps are modified? This is 
+pre_commit_hook_bitmap().
 
-=2D-=20
-Ivan Shapovalov / intelfx /
---nextPart4761953.yxGdPmKY5U
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+>   Again, for me, internals of reiser4 still mostly look
+> like heavy wizardry. :)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+This is because the technical level of reiser4 is very high.
+Many very strong scientists contributed to reiser4.
 
-iF4EABEIAAYFAlNjfEwACgkQxUKljSIMAnBnEwD9Hful9N/ALXBmuxOZAsA/EmWh
-T4Gk3NdQiSKWbBcgk8cA/jaCRA8R+aJRTG5H4SVksntJ+IIgRIYJ85xyxs+AfQ6f
-=SvMV
------END PGP SIGNATURE-----
+I also don't understand in details how some reiser4 subsystems work.
+Once I need details, I open the respective code and read it with the
+comments.
+The most important thing is general understanding of how it works.
+Nobody is able to grok this only by reading reiser4 code before
+sleeping. You need to implement at least one feature by your hands.
+Yes, it is not easy, and not for everyone. Like every high-level research
+in the science...
 
---nextPart4761953.yxGdPmKY5U--
+Edward.
 
