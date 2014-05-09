@@ -1,56 +1,58 @@
-From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: [RFC] [PATCH 0/2] libaal: add device "discard" operation.
-Date: Fri, 09 May 2014 00:03:08 +0200
-Message-ID: <536BFF1C.5040103@gmail.com>
-References: <1399576404-5527-1-git-send-email-intelfx100@gmail.com>
+From: <doiggl@velocitynet.com.au>
+Subject: Here is a plain kernel based on 3.14.x with the reiser4 patch enabled.
+Date: Fri, 09 May 2014 12:43:53 +1000
+Message-ID: <e38b27fde6e08d696c81e148358867c7@mail.velocitynet.com.au>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-type:content-transfer-encoding;
-        bh=fBGTjkL5mIzi980qbYz8Ak6xFjiloPxCWb9BdFkpUR8=;
-        b=xxk3/YIjVNuJskAfkDucJOIOUiBuhLso7d8tGmFrfW81+RegLXoBrvWofD7rCFauf4
-         HGVbzn1lML0VhDm+u1eaOhwbjVUx3n9K/cG0uWwNU9eBrsTyuLZ9LRXxbTdzVpDayaN3
-         0Zur55UAkGOOZi9LRhvFE7kt9nWF5YK7aZJ1yr7TyUivdFG7ileQ9qiBnBDjJI1jnINx
-         o+85IW7lmZs/VCZgVOCxBV5YPfqmnMlvcTvISiLEjonbaZ5UxRV47UA3C4Of1gYL2NL8
-         0ej3K4jQmHYzdj8Rc7M6NukmwHK2NZaOU86XHHj0cqc7btS4/By6lXAawG/o6RZmltRe
-         TLSg==
-In-Reply-To: <1399576404-5527-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
-To: Ivan Shapovalov <intelfx100@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+To: reiserfs-devel@vger.kernel.org
 
-Great, thank you!
+Hello,
+Here is a plain kernel based on 3.14.x with the reiser4 patch built with
+the Opensuse build service [obs] system.
 
-To our shame, reiser4 neither preallocates, nor punches holes.
-TBH, too lazy ;) I prefer to concentrate on features, which are
-either unique, or perform better in reiser4 (like discard)...
+The project is here
 
-Thanks,
-Edward.
+->https://build.opensuse.org/package/show?package=kernel-reiser4&project=home%3Adoiggl
 
+The built rpms are here
 
-On 05/08/2014 09:13 PM, Ivan Shapovalov wrote:
-> This implements device discard functionality in libaal to be used
-> by mkfs and friends.
->
-> Note that the build system is _not_ regenerated, so the direct result of
-> applying these patches won't build.
->
-> Ivan Shapovalov (2):
->    configure.in: check for fallocate() and related headers.
->    Add aal_device_discard() function and implement it for file-based
->      device.
->
->   configure.in         |  4 +--
->   include/aal/device.h |  4 +++
->   include/aal/types.h  |  3 +++
->   src/device.c         | 15 +++++++++++
->   src/file.c           | 74 ++++++++++++++++++++++++++++++++++++++++++++++++++++
->   5 files changed, 98 insertions(+), 2 deletions(-)
->
+->
+https://build.opensuse.org/package/binaries/home:doiggl/kernel-reiser4?repository=openSUSE_Factory
 
+Architecture: i586
+
+    kernel-reiser4-3.14.0-4.1.i686.rpm
+    kernel-reiser4-3.14.0-4.1.nosrc.rpm
+    kernel-reiser4-debuginfo-3.14.0-4.1.i686.rpm
+    kernel-reiser4-debugsource-3.14.0-4.1.i686.rpm
+    kernel-reiser4-devel-3.14.0-4.1.i686.rpm
+    kernel-reiser4-devel-debuginfo-3.14.0-4.1.i686.rpm
+
+Architecture: x86_64
+
+    kernel-reiser4-3.14.0-4.1.nosrc.rpm
+    kernel-reiser4-3.14.0-4.1.x86_64.rpm
+    kernel-reiser4-debuginfo-3.14.0-4.1.x86_64.rpm
+    kernel-reiser4-debugsource-3.14.0-4.1.x86_64.rpm
+    kernel-reiser4-devel-3.14.0-4.1.x86_64.rpm
+    kernel-reiser4-devel-debuginfo-3.14.0-4.1.x86_64.rpm
+
+The log of the build is here {x86_64} as an example. [Its a long buildlog]
+https://build.opensuse.org/package/live_build_log/home:doiggl/kernel-reiser4/openSUSE_Factory/x86_64
+
+The .spec used file is here
+
+->
+https://build.opensuse.org/package/view_file/home:doiggl/kernel-reiser4?expand=1&file=kernel-reiser4.spec
+
+Thanks to the opensuse-kernel list members for compilation advice.
+http://lists.opensuse.org/opensuse-kernel/
+
+It looks like obs built the rpms.
+Post the results to the list.
+
+Cheers Glenn
