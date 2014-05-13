@@ -1,94 +1,52 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: How do you apply these patches  to kernel source code
-Date: Mon, 12 May 2014 16:00:06 +0400
-Message-ID: <2349093.Mttj53d3Ki@intelfx-laptop>
-References: <1f2566482eb2fb37209738f0d84467b1@mail.velocitynet.com.au>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [patch 00/29] reiserfs cleanup patchset
+Date: Tue, 13 May 2014 16:13:33 +0200
+Message-ID: <20140513141333.GF22070@quack.suse.cz>
+References: <20140423140033.704113918@suse.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2727742.tJyfIlR2gm"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
-         :references:mime-version:content-type;
-        bh=r82K2T3D38y1WKgDseLrr1235Pf1HexWy16WcOv9XgA=;
-        b=N/lRE4UQveVBM6dEeeZglH27s2XrSVjJe0Awer74wdC3FtbA5oxxJmgds+8yuq7NrG
-         cjlrrktfFSAEcOpVfuas8TV9g5xUx876Fgd3zYJc/8GU96YAvg1XKR4onTioCv9U9NAN
-         4PQQXgUHfGv7gEFZy+tsr9otjGpeK1JMD9hRTsloIJDnUg2chGPqU/nhWQqNq0TMgguq
-         bjTmuKyTC23wvaDz/EZ7up70msVeHHM+fy0kZCY08SrM9xpQaLJ/hwwZZEOky3Tdr3Ee
-         qEMu5fqBmn9eJA1kuvynU0F9Ixp2gYCVV4yfoKtFxS5dxRym5WJSb6ifkhZ0ZX7S+Jhp
-         8LeQ==
-In-Reply-To: <1f2566482eb2fb37209738f0d84467b1@mail.velocitynet.com.au>
+Content-Disposition: inline
+In-Reply-To: <20140423140033.704113918@suse.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: doiggl@velocitynet.com.au
-Cc: reiserfs-devel@vger.kernel.org
-
-
---nextPart2727742.tJyfIlR2gm
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>, Jan Kara <jack@suse.cz>, Dave Jones <davej@redhat.com>
 
-On Monday 12 May 2014 at 20:52:27, doiggl@velocitynet.com.au wrote:=09
-> Hello,
-> How do you apply these patches [1] to kernel source code ?.
-> So far I have applied this patch [2] to the kernel source code.
->=20
-> Do I save each as a txt .patch file and apply with command
-> # patch < patch.file
->=20
-> I using linux-3.14.tar.xz
-> --Thanks Glenn
->=20
->=20
-> [1]
-> [PATCHv3 1/5] reiser4: discard support: make space_allocator's
-> check_blocks()
-> .
-> .
-> [PATCHv3 5/5] reiser4: discard support: downgrade all reiser4_log() t=
-o
-> reiser4_debug().
->=20
-> http://www.spinics.net/lists/reiserfs-devel/msg03886.html
->=20
-> [2]
-> reiser4-for-3.14.1.patch
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe reiserfs-de=
-vel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Wed 23-04-14 10:00:33, Jeff Mahoney wrote:
+> Hi all -
+> 
+> I've had this patchset kicking around for a while. After a
+> conversation this past week about code that was horrible to read
+> (using reiserfs's balance_leaf as the primary example) and seeing
+> that Dave Jones had scratched a bit of an itch, I decided it was time
+> to resync and push it out so I don't have to update it forever.
+> 
+> BTW, as I'm basically the only person with substantial patches against
+> reiserfs, I'm 100% ok with disrupting context to this extent. :)
+> 
+> This set consists of 29 patches in a few areas.
+> 
+> 1 - Convert the commit workqueue to a per-fs workqueue
+> 2 - Clean up ugly accessor macros to use more readable names
+> 3 - Clean up comments to use the normal kernel style
+> 4 - Remove the unused nblocks argument from journal_end
+> 5 - Remove superblock argument from journal_end (it's in the trans handle)
+> 6 - Remove superblock argument from journal_mark_dirty (see #5)
+> 7 - Remove blocks argument from journal_join (it's always 1)
+> 8 - Remove leading whitespace from labels
+> 9 - Remove unnecessary parents
+> 10 - Clean up dirent creation
+> 11 - Clean up hash detection
+> 12-29 - Clean up balance_leaf - This 2500-line function goes through
+>         6 easily distinguishable stages, each with several sub-parts. The
+> 	patch set splits up the stages and then reformats them to keep
+> 	the split as obvious as possible. The final result is a whole
+> 	lot easier to follow and easier on the eyes.
+  OK, I have merged all the patches into my tree.
 
-These git-formatted patches (1) are saved to text files "as is" (as in=20=
-
-mailbox) and then applied using
-`patch -p1 -i $patch`
-or
-`patch -p1 < $patch`
-on top of a source tree with reiser4 (2) itself already applied.
-
-Actually, if you have a git tree, you can also do
-`cat $all_patches | git am`
-on top of that tree. This will keep commit metadata, applying each patc=
-h as a=20
-separate commit.
-
-Thanks,
-=2D-=20
-Ivan Shapovalov / intelfx /
---nextPart2727742.tJyfIlR2gm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iF4EABEIAAYFAlNwt8sACgkQxUKljSIMAnCYAgEA1dCKgx8IpQxhVlBIjM3f4sxK
-7ZBKh2Mb51xaIuFM08QA/AhgLHrpX0qEPo3YiQ5No1WNZUwJnKcs+jmtQh7WstQf
-=spgi
------END PGP SIGNATURE-----
-
---nextPart2727742.tJyfIlR2gm--
-
+								Honza
+-- 
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
