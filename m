@@ -1,62 +1,42 @@
-From: Jan Kara <jack@suse.cz>
+From: Richard Weinberger <richard.weinberger@gmail.com>
 Subject: Re: [PATCH V2] fs/reiserfs/stree.c: remove obsolete __constant
-Date: Thu, 15 May 2014 00:01:44 +0200
-Message-ID: <20140514220143.GA20841@quack.suse.cz>
+Date: Thu, 15 May 2014 00:08:34 +0200
+Message-ID: <CAFLxGvzp_8Qgg0wN2v0SncAB+eDEn4s-p86ZW9+DzosBKb53yw@mail.gmail.com>
 References: <20140503223324.4357f591dc8994b74f456440@skynet.be>
+	<20140514220143.GA20841@quack.suse.cz>
 Mime-Version: 1.0
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140503223324.4357f591dc8994b74f456440@skynet.be>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+         :cc:content-type;
+        bh=ehcERONonhNKd5zWyYVoVGIhq8lgyN3DAPGvsxRBDHk=;
+        b=OmAiyGEl0iGgm50ATbU6aTDfJOsOMygLdSPvU7k76/g593APAhzxSorehD8jug62/i
+         YOinA6EcC5uxbcYFNpeUA4NAxVmi9XjHZjhT9fyfzlVKodHdXbmI2pDSA5UCV1PML84f
+         7O6r8qKLC8SICM/ZTb1NSQOYTCPlmM3FIJBiipGOUGP3UxS5EIBkAz4vCUWZmhJ+PajE
+         wK4f8mVwBZvLkx1SnzekRIMF0I2uYwTK7gFHslEg9qGuHIaxJ7bNvB+INOX5KtOpHdlW
+         38Y0BcsNfxb45H08O8D4lG6aVwmXh0uIaWp/M4sWXEHghHDiTg+ufCVbyMQjvuAw6Yd9
+         6JMA==
+In-Reply-To: <20140514220143.GA20841@quack.suse.cz>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fabian Frederick <fabf@skynet.be>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org, akpm <akpm@linux-foundation.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Fabian Frederick <fabf@skynet.be>, linux-kernel <linux-kernel@vger.kernel.org>, reiserfs-devel@vger.kernel.org, akpm <akpm@linux-foundation.org>
 
-On Sat 03-05-14 22:33:24, Fabian Frederick wrote:
-> __constant_cpu_to_le32 converted to cpu_to_le32
-> 
-> Cc: reiserfs-devel@vger.kernel.org
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Fabian Frederick <fabf@skynet.be>
-  Just for my education, where have you learned that __constant_...
-functions are obsolete?
+On Thu, May 15, 2014 at 12:01 AM, Jan Kara <jack@suse.cz> wrote:
+> On Sat 03-05-14 22:33:24, Fabian Frederick wrote:
+>> __constant_cpu_to_le32 converted to cpu_to_le32
+>>
+>> Cc: reiserfs-devel@vger.kernel.org
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Signed-off-by: Fabian Frederick <fabf@skynet.be>
+>   Just for my education, where have you learned that __constant_...
+> functions are obsolete?
 
-								Honza
-> ---
-> V2: Cc email fixed
-> 
->  fs/reiserfs/stree.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
-> index b14706a..615cd9a 100644
-> --- a/fs/reiserfs/stree.c
-> +++ b/fs/reiserfs/stree.c
-> @@ -228,10 +228,10 @@ const struct reiserfs_key MIN_KEY = { 0, 0, {{0, 0},} };
->  
->  /* Maximal possible key. It is never in the tree. */
->  static const struct reiserfs_key MAX_KEY = {
-> -	__constant_cpu_to_le32(0xffffffff),
-> -	__constant_cpu_to_le32(0xffffffff),
-> -	{{__constant_cpu_to_le32(0xffffffff),
-> -	  __constant_cpu_to_le32(0xffffffff)},}
-> +	cpu_to_le32(0xffffffff),
-> +	cpu_to_le32(0xffffffff),
-> +	{{cpu_to_le32(0xffffffff),
-> +	  cpu_to_le32(0xffffffff)},}
->  };
->  
->  /* Get delimiting key of the buffer by looking for it in the buffers in the path, starting from the bottom
-> -- 
-> 1.8.4.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+IIRC checkpatch.pl barks if you use __constant_... outside of include/uapi/
+
 -- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+Thanks,
+//richard
