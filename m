@@ -1,7 +1,7 @@
 From: Jeff Mahoney <jeffm@suse.com>
 Subject: [PATCH] reiserfs: call truncate_setsize under tailpack mutex
-Date: Wed, 21 May 2014 13:26:49 -0400
-Message-ID: <537CE1D9.4050709@suse.com>
+Date: Wed, 21 May 2014 13:28:07 -0400
+Message-ID: <537CE227.4040803@suse.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -24,6 +24,7 @@ The solution is to pull the lock into reiserfs_setattr to encompass the
 truncate_setsize call as well.
 
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+Cc: <stable@vger.kernel.org>
 ---
  fs/reiserfs/inode.c |    8 +++++++-
  1 file changed, 7 insertions(+), 1 deletion(-)
@@ -45,7 +46,6 @@ Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 +			mutex_unlock(&REISERFS_I(inode)->tailpack);
  		}
  	}
- 
 
 -- 
 Jeff Mahoney
