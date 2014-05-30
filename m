@@ -1,132 +1,259 @@
-From: Jeff Mahoney <jeffm@suse.com>
-Subject: Re: [patch 00/29] reiserfs cleanup patchset
-Date: Tue, 27 May 2014 08:36:33 -0400
-Message-ID: <538486D1.60900@suse.com>
-References: <20140423140033.704113918@suse.com> <c71b9e18a0a450c18283867ed8d2663e@mail.velocitynet.com.au>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <c71b9e18a0a450c18283867ed8d2663e@mail.velocitynet.com.au>
-Sender: reiserfs-devel-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [RFC 00/32] making inode time stamps y2038 ready
+Date: Fri, 30 May 2014 22:01:24 +0200
+Message-ID: <1401480116-1973111-1-git-send-email-arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: doiggl@velocitynet.com.au
-Cc: ReiserFS Development List <reiserfs-devel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: linux-arch@vger.kernel.org, joseph@codesourcery.com, john.stultz@linaro.org, hch@infradead.org, tglx@linutronix.de, geert@linux-m68k.org, lftan@altera.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, coda@cs.cmu.edu, codalist@coda.cs.cmu.edu, fuse-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-scsi@vger.kernel.org, logfs@logfs.org, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, samba-technical@lists.samba.org, xfs@oss.sgi.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Based on the recent discussion about 64-bit time_t for new
+architectures, and for solving the year 2038 problem in general,
+I decided to try out what it would take to solve part of the
+kernel side of things.
 
-On 5/27/14, 5:23 AM, doiggl@velocitynet.com.au wrote:
-> On Wed, 23 Apr 2014 10:00:33 -0400, Jeff Mahoney <jeffm@suse.com> 
-> wrote:
->> Hi all -
->> 
->> I've had this patchset kicking around for a while. After a 
->> conversation this past week about code that was horrible to read
->>  (using reiserfs's balance_leaf as the primary example) and 
->> seeing that Dave Jones had scratched a bit of an itch, I decided 
->> it was time to resync and push it out so I don't have to update 
->> it forever.
->> 
->> BTW, as I'm basically the only person with substantial patches 
->> against reiserfs, I'm 100% ok with disrupting context to this 
->> extent. :)
->> 
->> This set consists of 29 patches in a few areas.
->> 
->> 1 - Convert the commit workqueue to a per-fs workqueue 2 - Clean 
->> up ugly accessor macros to use more readable names 3 - Clean up 
->> comments to use the normal kernel style 4 - Remove the unused 
->> nblocks argument from journal_end 5 - Remove superblock argument 
->> from journal_end (it's in the trans
-> handle)
->> 6 - Remove superblock argument from journal_mark_dirty (see #5)
->> 7 - Remove blocks argument from journal_join (it's always 1) 8 - 
->> Remove leading whitespace from labels 9 - Remove unnecessary 
->> parents 10 - Clean up dirent creation 11 - Clean up hash 
->> detection 12-29 - Clean up balance_leaf - This 2500-line
->> function goes through 6 easily distinguishable stages, each with
->> several sub-parts.
-> The
->> patch set splits up the stages and then reformats them to keep 
->> the split as obvious as possible. The final result is a whole
->> lot easier to follow and easier on the eyes.
->> 
->> -Jeff
->> 
-> Hello Jeff, I do not see a patch 03/29 in the list. Is this
-> correct ?
+This is a proof-of-concept work to get us to the point where
+two system calls (utimes and stat) provide a working interface
+to user space to pass 64-bit inode time stamps in and out of
+the kernel all the way to the file systems.
 
-The list seems to have filtered it. I've reposted it, cc'ing you.
+I picked this because it is a fairly isolated problem, as the
+inode time stamps are rarely assigned to any other time values.
+As a byproduct of this work, I documented for each of the file
+systems we support how long the on-disk format can work[1].
 
-- -Jeff
+Obviously we also need to convert all the other syscalls and
+have a proper libc implementation using those for this to
+be really useful, but it's a start and it can be tested
+independently (I didn't so far, want to wait for initial
+feedback).
 
-> --Glenn
-> 
-> I see: [patch 01/29] reiserfs: use per-fs commit workqueues, Jeff 
-> Mahoney [patch 02/29] reiserfs: cleanup, rename key and item 
-> accessors to more friendly names, Jeff Mahoney [patch 04/29] 
-> reiserfs: cleanup, remove nblocks argument from journal_end, Jeff 
-> Mahoney [patch 05/29] reiserfs: cleanup, remove sb argument from 
-> journal_end, Jeff Mahoney [patch 06/29] reiserfs: cleanup, remove 
-> sb argument from journal_mark_dirty, Jeff Mahoney [patch 07/29] 
-> reiserfs: cleanup, remove blocks arg from journal_join, Jeff 
-> Mahoney [patch 08/29] reiserfs: cleanup, remove leading whitespace 
-> from labels, Jeff Mahoney [patch 09/29] reiserfs: cleanup, remove 
-> unnecessary parens, Jeff Mahoney [patch 10/29] reiserfs: cleanup, 
-> remove unnecessary parens in dirent creation, Jeff Mahoney [patch 
-> 11/29] reiserfs: cleanup, make hash detection saner, Jeff Mahoney 
-> [patch 12/29] reiserfs: balance_leaf refactor, reformat 
-> balance_leaf comments, Jeff Mahoney [patch 13/29] reiserfs: 
-> balance_leaf refactor, move state variables into tree_balance,
-> Jeff Mahoney [patch 14/29] reiserfs: balance_leaf refactor, pull
-> out balance_leaf_insert_left, Jeff Mahoney [patch 15/29] reiserfs: 
-> balance_leaf refactor, pull out balance_leaf_paste_left, Jeff 
-> Mahoney [patch 16/29] reiserfs: balance_leaf refactor, pull out 
-> balance_leaf_insert_right, Jeff Mahoney [patch 17/29] reiserfs: 
-> balance_leaf refactor, pull out balance_leaf_paste_right, Jeff 
-> Mahoney [patch 18/29] reiserfs: balance_leaf refactor, pull out 
-> balance_leaf_new_nodes_insert, Jeff Mahoney [patch 19/29]
-> reiserfs: balance_leaf refactor, pull out
-> balance_leaf_new_nodes_paste, Jeff Mahoney [patch 20/29] reiserfs:
-> balance_leaf refactor pull out balance_leaf_finish_node_insert,
-> Jeff Mahoney [patch 21/29] reiserfs: balance_leaf refactor, pull
-> out balance_leaf_finish_node_paste, Jeff Mahoney [patch 22/29] 
-> reiserfs: balance_leaf refactor, pull out balance_leaf{left,
-> right, new_nodes, finish_node}, Jeff Mahoney [patch 23/29]
-> reiserfs: balance_leaf refactor, format balance_leaf_insert_left,
-> Jeff Mahoney [patch 24/29] reiserfs: balance_leaf refactor, format
->  balance_leaf_paste_left, Jeff Mahoney [patch 25/29] reiserfs: 
-> balance_leaf refactor, format balance_leaf_insert_right, Jeff 
-> Mahoney [patch 26/29] reiserfs: balance_leaf refactor, format 
-> balance_leaf_paste_right, Jeff Mahoney [patch 27/29] reiserfs: 
-> balance_leaf refactor, format balance_leaf_new_nodes_paste, Jeff 
-> Mahoney [patch 28/29] reiserfs: balance_leaf refactor, format 
-> balance_leaf_finish_node, Jeff Mahoney [patch 29/29] reiserfs: 
-> balance_leaf refactor, split up balance_leaf_when_delete, Jeff 
-> Mahoney
-> 
-> #Reference: http://www.spinics.net/lists/reiserfs-devel/
-> 
+All the interesting stuff is in the first five patches here,
+the rest is the straightforward conversion of all file systems
+that use 'timespec' values internally.
 
+There are of course a number of open questions:
 
-- -- 
-Jeff Mahoney
-SUSE Labs
------BEGIN PGP SIGNATURE-----
-Version: GnuPG/MacGPG2 v2.0.22 (Darwin)
+a) is this the right approach in general? The previous discussion
+   pointed this way, but there may be other opinions.
+b) what type should we use internally to represent inode time
+   stamps? The code contains three different versions that would
+   all work, we just have to pick a good tradeoff between
+   efficiency and the range of times we want to cover.
+c) Should we continue this way for all 32-bit platforms for
+   consistency, including future ones, or should we go to
+   different 64-bit types right away? My feeling is that the
+   second approach would complicate this work.
 
-iQIcBAEBAgAGBQJThIbRAAoJEB57S2MheeWyggUQAMb23ZQtmegX1CGO5USs/jL2
-ZEHQkwDBURnY3gMVLQwMTAb93pODFvBCMnI0qcLANCUEn0qzb32plN+psSjv1VFG
-+H6Yn/b/LSr8gqEm67DVfIZXn//seV5BIPwZvbescUzXtfdKY3TaOXytNXgk6weD
-w4qqwGMNGUShRTmWC/uxYk755JFYU9HG4xSRWNdDmT5kl+E5+5FGNLRCzcpkYO8M
-Sryi6/FP+jX3GfeQaXwySy/ALki7uQRbhUEHFhWIkNis5LI41QfE2zknNvoljGZd
-egoNlGdbqvbqisVQiNpqYIgerTKPFkngrg59HORZUyl9wv4YJriDYtNYZtcGfrSR
-Hc/lHES7ndF9VDF5iUeGc5AkHaT2NCBB8rkuzvpJdI9ZARBvSgoWjqemfn7QLbT9
-CYRcrVbJhYKYL24WXueOSasRRIVWNcrilpz5gTBQHWyZcpkb4nxL5ECuL1UIl9Wq
-2fSQYs7ItQZYERCXP9GLbS2iGpCgflQeYJIxtx+lEIVKzFSmD9G9F9y7AW8QiL/u
-qgB+mkZMrKBm2uIq17zxhC/PzL6oHVWGLebATnPQ33OK0dk9aEKNliwiK/v05SIV
-zac31E/Er7X9huqhyVW9gyfCDIPUA/VcqTeTKL4tXJKbyooI8Yx3ePrZ3CXV+S7j
-LVEKJb6wfE/R6G8EoqTK
-=o6Qb
------END PGP SIGNATURE-----
+	Arnd
+
+[1] http://kernelnewbies.org/y2038
+
+Arnd Bergmann (32):
+  fs: introduce new 'struct inode_time'
+  uapi: add struct __kernel_timespec{32,64}
+  fs: introduce sys_utimens64at
+  fs: introduce sys_newfstat64/sys_newfstatat64
+  arch: hook up new stat and utimes syscalls
+  isofs: fix timestamps beyond 2027
+  fs/nfs: convert to struct inode_time
+  fs/ceph: convert to 'struct inode_time'
+  fs/pstore: convert to struct inode_time
+  fs/coda: convert to struct inode_time
+  xfs: convert to struct inode_time
+  btrfs: convert to struct inode_time
+  ext3: convert to struct inode_time
+  ext4: convert to struct inode_time
+  cifs: convert to struct inode_time
+  ntfs: convert to struct inode_time
+  ubifs: convert to struct inode_time
+  ocfs2: convert to struct inode_time
+  fs/fat: convert to struct inode_time
+  afs: convert to struct inode_time
+  udf: convert to struct inode_time
+  fs: convert simple fs to inode_time
+  logfs: convert to struct inode_time
+  hfs, hfsplus: convert to struct inode_time
+  gfs2: convert to struct inode_time
+  reiserfs: convert to struct inode_time
+  jffs2: convert to struct inode_time
+  adfs: convert to struct inode_time
+  f2fs: convert to struct inode_time
+  fuse: convert to struct inode_time
+  scsi: fnic: use current_kernel_time() for timestamp
+  fs: use new inode_time definition unconditionally
+
+ arch/alpha/kernel/osf_sys.c        |  2 +-
+ arch/arm/include/asm/unistd.h      |  2 +-
+ arch/arm/include/uapi/asm/stat.h   | 25 +++++++++++++++++
+ arch/arm/include/uapi/asm/unistd.h |  3 +++
+ arch/arm/kernel/calls.S            |  3 +++
+ arch/arm64/include/asm/unistd32.h  |  5 +++-
+ arch/x86/include/uapi/asm/stat.h   | 28 +++++++++++++++++++
+ arch/x86/syscalls/syscall_32.tbl   |  3 +++
+ drivers/block/rbd.c                |  2 +-
+ drivers/firmware/efi/efi-pstore.c  | 28 +++++++++----------
+ drivers/scsi/fnic/fnic_trace.c     |  2 +-
+ drivers/tty/tty_io.c               |  2 +-
+ drivers/usb/gadget/f_fs.c          |  2 +-
+ fs/adfs/inode.c                    |  4 +--
+ fs/afs/afs.h                       |  6 ++---
+ fs/afs/fsclient.c                  |  2 +-
+ fs/attr.c                          |  8 +++---
+ fs/btrfs/file.c                    |  6 ++---
+ fs/btrfs/inode.c                   |  4 +--
+ fs/btrfs/ioctl.c                   |  4 +--
+ fs/btrfs/root-tree.c               |  2 +-
+ fs/btrfs/transaction.c             |  2 +-
+ fs/ceph/cache.c                    |  2 +-
+ fs/ceph/caps.c                     |  6 ++---
+ fs/ceph/file.c                     |  4 +--
+ fs/ceph/inode.c                    | 20 +++++++-------
+ fs/ceph/super.h                    |  8 +++---
+ fs/cifs/cache.c                    |  6 ++---
+ fs/cifs/cifsglob.h                 |  6 ++---
+ fs/cifs/cifsproto.h                |  6 ++---
+ fs/cifs/cifssmb.c                  |  5 ++--
+ fs/cifs/inode.c                    |  2 +-
+ fs/cifs/netmisc.c                  | 15 ++++++-----
+ fs/coda/coda_linux.c               | 18 ++++++++-----
+ fs/compat.c                        | 19 ++-----------
+ fs/configfs/inode.c                |  6 ++---
+ fs/cramfs/inode.c                  |  2 +-
+ fs/ext3/inode.c                    |  4 +--
+ fs/ext4/ext4.h                     | 10 +++----
+ fs/ext4/extents.c                  |  2 +-
+ fs/f2fs/file.c                     |  6 ++---
+ fs/fat/dir.c                       |  2 +-
+ fs/fat/fat.h                       |  6 ++---
+ fs/fat/misc.c                      |  4 +--
+ fs/fat/namei_msdos.c               |  8 +++---
+ fs/fat/namei_vfat.c                | 10 +++----
+ fs/fuse/inode.c                    |  6 ++---
+ fs/gfs2/dir.c                      |  6 ++---
+ fs/gfs2/glops.c                    |  4 +--
+ fs/hfs/hfs_fs.h                    |  2 +-
+ fs/hfsplus/hfsplus_fs.h            |  2 +-
+ fs/inode.c                         | 18 ++++++-------
+ fs/isofs/util.c                    |  2 +-
+ fs/jffs2/os-linux.h                |  2 +-
+ fs/locks.c                         |  4 +--
+ fs/logfs/readwrite.c               | 18 ++++++-------
+ fs/nfs/callback.h                  |  4 +--
+ fs/nfs/callback_xdr.c              |  6 ++---
+ fs/nfs/file.c                      |  2 +-
+ fs/nfs/fscache-index.c             |  8 +++---
+ fs/nfs/inode.c                     | 10 +++----
+ fs/nfs/internal.h                  |  4 +--
+ fs/nfs/netns.h                     |  2 +-
+ fs/nfs/nfs2xdr.c                   |  8 +++---
+ fs/nfs/nfs3xdr.c                   | 10 +++----
+ fs/nfs/nfs4xdr.c                   | 20 +++++++-------
+ fs/nfsd/nfs3xdr.c                  |  6 ++---
+ fs/nfsd/nfsfh.h                    |  4 +--
+ fs/nfsd/nfsxdr.c                   |  2 +-
+ fs/ntfs/inode.c                    | 12 ++++-----
+ fs/ntfs/time.h                     |  8 +++---
+ fs/ocfs2/dlmglue.c                 | 16 +++++------
+ fs/ocfs2/file.c                    |  6 ++---
+ fs/ocfs2/ocfs2.h                   |  2 +-
+ fs/pstore/inode.c                  |  2 +-
+ fs/pstore/internal.h               |  2 +-
+ fs/pstore/platform.c               |  2 +-
+ fs/pstore/ram.c                    | 18 +++++++------
+ fs/reiserfs/namei.c                |  2 +-
+ fs/reiserfs/xattr.c                |  4 +--
+ fs/stat.c                          | 55 ++++++++++++++++++++++++++++++++++++++
+ fs/ubifs/dir.c                     |  2 +-
+ fs/ubifs/file.c                    | 16 +++++------
+ fs/ubifs/misc.h                    |  2 +-
+ fs/udf/udf_i.h                     |  2 +-
+ fs/udf/udf_sb.h                    |  2 +-
+ fs/udf/udfdecl.h                   |  7 ++---
+ fs/udf/udftime.c                   |  7 ++---
+ fs/utimes.c                        | 47 +++++++++++++++++++++++++++-----
+ fs/xfs/time.h                      |  4 +--
+ fs/xfs/xfs_inode.c                 |  2 +-
+ fs/xfs/xfs_iops.c                  |  2 +-
+ fs/xfs/xfs_trans_inode.c           |  6 ++---
+ include/linux/ceph/decode.h        |  8 +++---
+ include/linux/ceph/osd_client.h    |  4 +--
+ include/linux/compat.h             |  2 +-
+ include/linux/fs.h                 | 32 +++++++++++-----------
+ include/linux/nfs_fs_sb.h          |  2 +-
+ include/linux/nfs_xdr.h            | 14 +++++-----
+ include/linux/pstore.h             |  4 +--
+ include/linux/stat.h               |  6 ++---
+ include/linux/syscalls.h           |  9 ++++++-
+ include/linux/time.h               | 44 +++++++++++++++++++++++++++---
+ include/uapi/asm-generic/stat.h    | 29 ++++++++++++++++++--
+ include/uapi/asm-generic/unistd.h  |  8 +++++-
+ include/uapi/linux/coda.h          |  1 +
+ include/uapi/linux/time.h          | 40 ++++++++++++++++++++++++++-
+ init/initramfs.c                   |  2 +-
+ kernel/audit.c                     |  2 +-
+ kernel/auditsc.c                   |  2 +-
+ kernel/time.c                      | 44 +++++++++++++++++++++++++-----
+ kernel/time/timekeeping.c          | 16 +++++++++++
+ net/ceph/auth_x.c                  |  2 +-
+ net/ceph/osd_client.c              |  4 +--
+ 114 files changed, 642 insertions(+), 333 deletions(-)
+
+-- 
+1.8.3.2
+
+Bcc: "J. Bruce Fields" <bfields@fieldses.org>
+Bcc: "Theodore Ts'o" <tytso@mit.edu>
+Bcc: Adrian Hunter <adrian.hunter@intel.com>
+Bcc: Andreas Dilger <adilger.kernel@dilger.ca>
+Bcc: Andrew Morton <akpm@linux-foundation.org>
+Bcc: Anton Altaparmakov <anton@tuxera.com>
+Bcc: Anton Vorontsov <anton@enomsg.org>
+Bcc: Artem Bityutskiy <dedekind1@gmail.com>
+Bcc: Brian Uchino <buchino@cisco.com>
+Bcc: Chris Mason <clm@fb.com>
+Bcc: Colin Cross <ccross@android.com>
+Bcc: Dave Chinner <david@fromorbit.com>
+Bcc: David Howells <dhowells@redhat.com>
+Bcc: David Woodhouse <dwmw2@infradead.org>
+Bcc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Bcc: Hiral Patel <hiralpat@cisco.com>
+Bcc: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Bcc: Jan Harkes <jaharkes@cs.cmu.edu>
+Bcc: Jan Kara <jack@suse.cz>
+Bcc: Joel Becker <jlbec@evilplan.org>
+Bcc: Joern Engel <joern@logfs.org>
+Bcc: Josef Bacik <jbacik@fb.com>
+Bcc: Kees Cook <keescook@chromium.org>
+Bcc: Mark Fasheh <mfasheh@suse.com>
+Bcc: Miklos Szeredi <miklos@szeredi.hu>
+Bcc: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Bcc: Prasad Joshi <prasadjoshi.linux@gmail.com>
+Bcc: Sage Weil <sage@inktank.com>
+Bcc: Steve French <sfrench@samba.org>
+Bcc: Steven Whitehouse <swhiteho@redhat.com>
+Bcc: Suma Ramars <sramars@cisco.com>
+Bcc: Tony Luck <tony.luck@intel.com>
+Cc: ceph-devel@vger.kernel.org
+Cc: cluster-devel@redhat.com
+Cc: coda@cs.cmu.edu
+Cc: codalist@coda.cs.cmu.edu
+Cc: fuse-devel@lists.sourceforge.net
+Cc: linux-afs@lists.infradead.org
+Cc: linux-btrfs@vger.kernel.org
+Cc: linux-cifs@vger.kernel.org
+Cc: linux-ext4@vger.kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-mtd@lists.infradead.org
+Cc: linux-nfs@vger.kernel.org
+Cc: linux-ntfs-dev@lists.sourceforge.net
+Cc: linux-scsi@vger.kernel.org
+Cc: logfs@logfs.org
+Cc: ocfs2-devel@oss.oracle.com
+Cc: reiserfs-devel@vger.kernel.org
+Cc: samba-technical@lists.samba.org
+Cc: xfs@oss.sgi.com
