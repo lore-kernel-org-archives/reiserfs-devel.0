@@ -1,60 +1,66 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [RFC 26/32] reiserfs: convert to struct inode_time
-Date: Fri, 30 May 2014 22:01:50 +0200
-Message-ID: <1401480116-1973111-27-git-send-email-arnd@arndb.de>
+From: Vyacheslav Dubeyko <slava@dubeyko.com>
+Subject: Re: [RFC 00/32] making inode time stamps y2038 ready
+Date: Sat, 31 May 2014 18:30:49 +0400
+Message-ID: <1401546649.2413.6.camel@slavad-CELSIUS-H720>
 References: <1401480116-1973111-1-git-send-email-arnd@arndb.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1401480116-1973111-1-git-send-email-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-arch@vger.kernel.org, joseph@codesourcery.com, john.stultz@linaro.org, hch@infradead.org, tglx@linutronix.de, geert@linux-m68k.org, lftan@altera.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, reiserfs-devel@vger.kernel.org
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=dubeyko.com; s=default;
+	h=Mime-Version:Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID; bh=U4Xyxqa6Up+Iv/bczJF34aayahIWapvXEPI5KlMkuvI=;
+	b=dSwImVZubbYG7jXRwTVYaLYLuB/YNEMT8Gjz3Naj7wIDsfQmLT7G68QxJJ7FrfT/zyI4UvZRg47ZghfHIAdKt57b49O0yK8szoJxqNm8t/hTEI42tAHG0GudfbAptrHL;
+In-Reply-To: <1401480116-1973111-1-git-send-email-arnd@arndb.de>
+Sender: linux-btrfs-owner@vger.kernel.org
+List-ID: <reiserfs-devel.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, joseph@codesourcery.com, john.stultz@linaro.org, hch@infradead.org, tglx@linutronix.de, geert@linux-m68k.org, lftan@altera.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, coda@cs.cmu.edu, codalist@coda.cs.cmu.edu, fuse-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-scsi@vger.kernel.org, logfs@logfs.org, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, samba-technical@lists.samba.org, xfs@oss.sgi.com
 
-reiserfs uses unsigned 32-bit seconds for inode timestamps, which will work
-for the next 92 years, but the VFS uses struct timespec for timestamps,
-which is only good until 2038 on 32-bit CPUs.
+Hi Arnd,
 
-This gets us one small step closer to lifting the VFS limit by using
-struct inode_time in reiserfs.
+On Fri, 2014-05-30 at 22:01 +0200, Arnd Bergmann wrote:
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: reiserfs-devel@vger.kernel.org
----
- fs/reiserfs/namei.c | 2 +-
- fs/reiserfs/xattr.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+[snip]
+> 
+> Arnd Bergmann (32):
+>   fs: introduce new 'struct inode_time'
+>   uapi: add struct __kernel_timespec{32,64}
+>   fs: introduce sys_utimens64at
+>   fs: introduce sys_newfstat64/sys_newfstatat64
+>   arch: hook up new stat and utimes syscalls
+>   isofs: fix timestamps beyond 2027
+>   fs/nfs: convert to struct inode_time
+>   fs/ceph: convert to 'struct inode_time'
+>   fs/pstore: convert to struct inode_time
+>   fs/coda: convert to struct inode_time
+>   xfs: convert to struct inode_time
+>   btrfs: convert to struct inode_time
+>   ext3: convert to struct inode_time
+>   ext4: convert to struct inode_time
+>   cifs: convert to struct inode_time
+>   ntfs: convert to struct inode_time
+>   ubifs: convert to struct inode_time
+>   ocfs2: convert to struct inode_time
+>   fs/fat: convert to struct inode_time
+>   afs: convert to struct inode_time
+>   udf: convert to struct inode_time
+>   fs: convert simple fs to inode_time
+>   logfs: convert to struct inode_time
+>   hfs, hfsplus: convert to struct inode_time
+>   gfs2: convert to struct inode_time
+>   reiserfs: convert to struct inode_time
+>   jffs2: convert to struct inode_time
+>   adfs: convert to struct inode_time
+>   f2fs: convert to struct inode_time
+>   fuse: convert to struct inode_time
+>   scsi: fnic: use current_kernel_time() for timestamp
+>   fs: use new inode_time definition unconditionally
+> 
 
-diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-index e825f8b..4b81c84 100644
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -1215,7 +1215,7 @@ static int reiserfs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	int jbegin_count;
- 	umode_t old_inode_mode;
- 	unsigned long savelink = 1;
--	struct timespec ctime;
-+	struct inode_time ctime;
- 
- 	/* three balancings: (1) old name removal, (2) new name insertion
- 	   and (3) maybe "save" link insertion
-diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index 5cdfbd6..13367ca 100644
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -426,9 +426,9 @@ int reiserfs_commit_write(struct file *f, struct page *page,
- 
- static void update_ctime(struct inode *inode)
- {
--	struct timespec now = current_fs_time(inode->i_sb);
-+	struct inode_time now = current_fs_time(inode->i_sb);
- 	if (inode_unhashed(inode) || !inode->i_nlink ||
--	    timespec_equal(&inode->i_ctime, &now))
-+	    inode_time_equal(&inode->i_ctime, &now))
- 		return;
- 
- 	inode->i_ctime = CURRENT_TIME_SEC;
--- 
-1.8.3.2
+By the way, what about NILFS2? Is NILFS2 ready for suggested approach
+without any changes?
+
+Thanks,
+Vyacheslav Dubeyko.
+
+
