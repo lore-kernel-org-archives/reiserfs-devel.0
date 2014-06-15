@@ -1,129 +1,139 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: reiser4: discard implementation, pass 2: allocation issues
-Date: Sat, 14 Jun 2014 00:28:12 +0400
-Message-ID: <3401431.jj87z7i0xD@intelfx-laptop>
+From: Edward Shishkin <edward.shishkin@gmail.com>
+Subject: Re: reiser4: discard implementation, pass 2: allocation issues
+Date: Sun, 15 Jun 2014 19:36:05 +0200
+Message-ID: <539DD985.4010304@gmail.com>
+References: <3401431.jj87z7i0xD@intelfx-laptop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3067729.45Vmdvt2Qy"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:user-agent:mime-version
-         :content-type;
-        bh=RDUfA/kljin4cc865QVVOJah6bF4mgOwfIjN4XdTtHg=;
-        b=I1dI1pcUKtB5P/ClXqiGiqT7FKcsLFzANhWczqr5+FGlyKGowkdEWH9kkUNoeS1jaW
-         tPUSKt3NSfJu4LbAwMwcY44G7FA/NjRiYKbNA2980Tv74EsJDHxicK5/qOvfGC/4vlwe
-         1tcntsy/wZKjjHEo3bfrZbhaRFyY0Rey6TlJ89w4EelyTevdg+8XNWtX7HwEJMn8aPqd
-         QHd95rRfN+q7typQcL1fZKwgjYFx3bwZl2E/t2DzHVhsIplcV+RQG5NwkKmqXWyXyPxr
-         WeQeTsbiIWM7MwMbLyDWaNwGtmoCvgyVlQSbnmlXUnd7debvfVy0fzyltJjoqMfofNvO
-         m4Xw==
+        h=message-id:date:from:user-agent:mime-version:to:subject:references
+         :in-reply-to:content-type:content-transfer-encoding;
+        bh=Q4KR0/v6pFupTPoQkWyXgll2cii5HgGVnxyNY0Ea594=;
+        b=0koa2G4q57YY289REKxRC5w/GcIfwPnnZtoGrNwX1zQvWVgi2IwQjOWRNjhxh8cJ8m
+         kMrGb8oss8D2QrOty0dm7qoyH4aiz57LjyJLYfROYDOXZhJLXR4gSlqnOMKi4KX5HreE
+         MzRQiRRN1fbOdTHwcCZLA4rSIIw+19JpLXNKWPDaQ0Eiq0+S2oTra0i9YDQCraRe43R3
+         lY8nORzq2qBS4CNoXp01Yb43zFwoCA+v/U6lI3nQLaM5ypLAzNmzhecCRHIUXJuU/YEF
+         m5DVOJtGvy0P4S8qAOA34i5cwm59Lnwv6Om2fDNRZ7TUnx9B2YUCK6uKhELBgK1OQp1/
+         lDWA==
+In-Reply-To: <3401431.jj87z7i0xD@intelfx-laptop>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
-Cc: Edward Shishkin <edward.shishkin@gmail.com>
+Content-Type: text/plain; charset="us-ascii"; format="flowed"
+To: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel@vger.kernel.org
+
+On 06/13/2014 10:28 PM, Ivan Shapovalov wrote:
+> Here is my "analysis" of what happens in reiser4 during a transaction's
+> lifetime wrt. block allocation and deallocation.
+>
+>
+> THE EFFECTS (SEMANTICS) OF RELATED FUNCTIONS
+> reiser4_alloc_blocks_bitmap(): allocates in WORKING BITMAP
+
+Yes.
+
+> reiser4_dealloc_blocks_bitmap(!BA_DEFER): deallocates from WORKING BITMAP
+> reiser4_dealloc_blocks_bitmap(BA_DEFER): stores to ->delete_set
+
+This is correct for the middle-level allocator (without suffix "bitmap").
+The low-level one frees blocks only in WORKING BITMAP.
+
+>
+> reiser4_pre_commit_hook_bitmap(): allocates all relocated nodes in COMMIT BITMAP
+
+"Relocated" is bad term here: nodes with new data also get the flag
+JNODE_RELOC. So, I would rather say, that it applies freshly allocated
+nodes of the atom to COMMIT BITMAP.
 
 
---nextPart3067729.45Vmdvt2Qy
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="us-ascii"
+>                                    deallocates ->delete_set from COMMIT BITMAP
 
-Here is my "analysis" of what happens in reiser4 during a transaction's=
+applies the atom's delete_set to COMMIT BITMAP
 
-lifetime wrt. block allocation and deallocation.
+>
+> reiser4_post_commit_hook(): deallocates ->delete_set using !BA_DEFER
+>                                                     (i. e. from WORKING BITMAP)
 
+applies the atom's delete_set to WORKING BITMAP.
 
-THE EFFECTS (SEMANTICS) OF RELATED FUNCTIONS
-reiser4_alloc_blocks_bitmap(): allocates in WORKING BITMAP
-reiser4_dealloc_blocks_bitmap(!BA_DEFER): deallocates from WORKING BITM=
-AP
-reiser4_dealloc_blocks_bitmap(BA_DEFER): stores to ->delete_set
+I would also mention a function of the middle-level block allocator
+reiser4_alloc_blocks(): allocates blocks in WORKING  BITMAP.
 
-reiser4_pre_commit_hook_bitmap(): allocates all relocated nodes in COMM=
-IT BITMAP
-                                  deallocates ->delete_set from COMMIT =
-BITMAP
-
-reiser4_post_commit_hook(): deallocates ->delete_set using !BA_DEFER
-                                                   (i. e. from WORKING =
-BITMAP)
+Note that the middle-level block allocator (block_alloc.c) actually 
+manipulates
+with abstract space maps. Currently in reiser4 they are represented only by
+bitmaps (plugin/space/bitmap.c). We can also implement another 
+representation -
+extent tree (like in XFS). I don't see any needs for now, though.
 
 
-TIMELINE OF ALLOCATIONS FOR "USUAL" NODES, AND TIMELINE OF TRANSACTION =
-COMMIT
-=2D nodes are allocated using reiser4_alloc_blocks() and setting JNODE_RE=
-LOC,
-  so WORKING BITMAP ensures that two nodes cannot get the same block;
-=2D nodes are deallocated using reiser4_dealloc_blocks(BA_DEFER),
-  so their deallocation is not immediately reflected in WORKING BITMAP;=
-
-(the relocate set is written here)
-=2D reiser4_pre_commit_hook_bitmap() uses 1) JNODE_RELOC flag and 2) ->de=
-lete_set
-  to convey effective bitmap changes into COMMIT BITMAP;
-(the journal and overwrite set are written here)
-=2D reiser4_post_commit_hook() uses ->delete_set to convey deallocations
-  from step 2 to WORKING BITMAP.
-(the discard happens here)
-
-
-TIMELINE OF ALLOCATIONS FOR WANDERED JOURNAL BLOCKS
-=2D at commit time, blocks are allocated using reiser4_alloc_blocks(), so=
- they
-  are allocated in WORKING BITMAP and do not interfere with any "usual"=
- blocks;
-=2D after writing wandered blocks, they are deallocated using
-  reiser4_dealloc_blocks(!BA_DEFER), i. e. from the WORKING BITMAP.
+>
+>
+> TIMELINE OF ALLOCATIONS FOR "USUAL" NODES, AND TIMELINE OF TRANSACTION COMMIT
+> - nodes are allocated using reiser4_alloc_blocks() and setting JNODE_RELOC,
+>    so WORKING BITMAP ensures that two nodes cannot get the same block;
+> - nodes are deallocated using reiser4_dealloc_blocks(BA_DEFER),
+>    so their deallocation is not immediately reflected in WORKING BITMAP;
+> (the relocate set is written here)
+> - reiser4_pre_commit_hook_bitmap() uses 1) JNODE_RELOC flag and 2) ->delete_set
+>    to convey effective bitmap changes into COMMIT BITMAP;
+> (the journal and overwrite set are written here)
+> - reiser4_post_commit_hook() uses ->delete_set to convey deallocations
+>    from step 2 to WORKING BITMAP.
+> (the discard happens here)
+>
+>
+> TIMELINE OF ALLOCATIONS FOR WANDERED JOURNAL BLOCKS
+> - at commit time, blocks are allocated using reiser4_alloc_blocks(), so they
+>    are allocated in WORKING BITMAP and do not interfere with any "usual" blocks;
+> - after writing wandered blocks, they are deallocated using
+>    reiser4_dealloc_blocks(!BA_DEFER), i. e. from the WORKING BITMAP.
 
 
-CONCLUSION
-At possible transaction replay time, journal blocks are not allocated i=
-n any
-of the bitmaps. However, because the journal is read and replayed befor=
-e a
-transaction has a chance to commit, this fact does not matter.
-What matters is that wandered journal blocks never hit COMMIT BITMAP.
+So, the system of working and commit bitmaps plus the delete set seems
+to be redundant? I think this is because of performance reasons: block
+allocation is critical thing...
 
-So, if I've got all this correct (which I highly doubt), the disk space=
- leak
-(as you pointed it out) does not exist.
 
-What exists is a rather different problem with my idea of "log every
-deallocated block". Current implementation logs every block regardless =
-of
-BA_DEFER flag presence or absence, so non-wandered blocks are logged tw=
-ice.
+>
+>
+> CONCLUSION
+> At possible transaction replay time, journal blocks are not allocated in any
+> of the bitmaps. However, because the journal is read and replayed before a
+> transaction has a chance to commit, this fact does not matter.
+> What matters is that wandered journal blocks never hit COMMIT BITMAP.
+>
+> So, if I've got all this correct (which I highly doubt), the disk space leak
+> (as you pointed it out) does not exist.
 
-We could just use ->delete_set, but we would lose wandered blocks then.=
+It seems, you are right..
 
-Or we could only log !BA_DEFER requests, which would do the right thing=
+>
+> What exists is a rather different problem with my idea of "log every
+> deallocated block". Current implementation logs every block regardless of
+> BA_DEFER flag presence or absence, so non-wandered blocks are logged twice.
+>
+> We could just use ->delete_set, but we would lose wandered blocks then.
+> Or we could only log !BA_DEFER requests, which would do the right thing
+> (wandered blocks + deallocations from reiser4_post_commit_hook()), but
+> the reasoning behind this decision would not be obvious for a casual
+> code reader.
 
-(wandered blocks + deallocations from reiser4_post_commit_hook()), but
-the reasoning behind this decision would not be obvious for a casual
-code reader.
-Or we could log only wandered blocks (in addition to ->delete_set)
-at discard time, but this is messy and requires us to merge the discard=
- log
-with ->delete_set at discard time.
-Or we could log wandered blocks straight into ->delete_set and do somet=
-hing in
-reiser4_post_commit_hook() to separate these entries, but this is super=
- messy.
+I think that a good comment will save the situation..
 
-I'm preferring the second way... Edward, please proof-read all this.
+> Or we could log only wandered blocks (in addition to ->delete_set)
+> at discard time, but this is messy and requires us to merge the discard log
+> with ->delete_set at discard time.
 
-=2D-=20
-Ivan Shapovalov / intelfx /
---nextPart3067729.45Vmdvt2Qy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+what is the difference with the previous "we could.."?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+> Or we could log wandered blocks straight into ->delete_set and do something in
+> reiser4_post_commit_hook() to separate these entries, but this is super messy.
+>
+> I'm preferring the second way... Edward, please proof-read all this.
 
-iF4EABEIAAYFAlObXuAACgkQxUKljSIMAnC2PwD/UVHO4cyvDib/GGw0nFzatke6
-iPLy09AklF3D7DVTePIA/j+DQp4QweKA6oXRE1ed4d08qPfM1JUd+NE1MMqjd4rP
-=kDjk
------END PGP SIGNATURE-----
+BTW, what about your current implementation? Does it work for you?
 
---nextPart3067729.45Vmdvt2Qy--
-
+Thanks,
+Edward.
