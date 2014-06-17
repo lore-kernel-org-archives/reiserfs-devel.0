@@ -1,88 +1,75 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: reiser4: discard implementation, pass 2: allocation issues
-Date: Wed, 18 Jun 2014 00:47:45 +0400
-Message-ID: <1517464.b3HDrHDRa3@intelfx-laptop>
-References: <3401431.jj87z7i0xD@intelfx-laptop> <53A018A1.5030403@gmail.com> <1775901.eB9J0phJSL@intelfx-laptop>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3240232.yzpVVUh1Ws"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Subject: [PATCH] reiser4: fix reiser4_post_{commit,write_back}_hook() and their invocations.
+Date: Wed, 18 Jun 2014 02:43:16 +0400
+Message-ID: <1403044996-17273-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
-         :references:mime-version:content-type;
-        bh=oqZRD2iD1brJc7BV0xQfkxbz4nnUjM4rmhbhV97w7TE=;
-        b=uoUhyhm9ePjsAdcivVR/xHXRTo8DNDNsmZdf5KPFbhD1Ggl7DorYM6e84FAJe/YWIn
-         kP/ZZ8IHQvM2PISOGNzqp+Y4MwA607CT8FU/dBgYjRJ41N4CTr7+281AbfxGRb7SvKGB
-         rAHbQPpHR8JVymCJOXVRReYd6FG++SifEx9ABMA7qALAn+wFKoeP8/zHB6hyBATA5sUb
-         vOlfIBpLGWTFIIOV/+0+otAbCqSwg7wFrAaoSOznKuN2ihRzEsU+hK9Vyz3Qy3ibXA+S
-         aCZmajDlaSFt+QO3Jw1mEldIbabohKXdzUbavVHyVqVcMEvCuczVQXLnPSQHTpRQaKzy
-         XWug==
-In-Reply-To: <1775901.eB9J0phJSL@intelfx-laptop>
+        h=from:to:cc:subject:date:message-id;
+        bh=BO019Co6YOiTK1K4H6kgWoFT6FlWAGzdywYsH7fdBjg=;
+        b=YeFgjGfdmgDrGq9uPu5RltHJ6tKu8cA5fWLuUtScYz2vZg9zBihEEc2Z0UNTguULPI
+         DgI4zybgnvcaYCfX7iQQqzvIgl0U7lyt/CvjwJT7Ns4WXrf/qws0ZdDay3md1TDdTzVZ
+         1HVS6g0JgqI0OvhGv+VVCeqO47Cm5dkdd4oxn+VlbCoyYU8uiVqq2gLt0ff/Mxr+BRyc
+         endoU/xEb+GmiQmjko1fPci9mWaWwAUhSKxywG8+eLL/3NQe/YE7C124D5dGaWnXlzwX
+         A0WZOK9VSdGq72M+knx8L9Hx7Ujxy3lApBMDz+YW2pCbxeDJGuU8xYqTGtKWj87fyggq
+         GhGQ==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
-Cc: Edward Shishkin <edward.shishkin@gmail.com>
-
-
---nextPart3240232.yzpVVUh1Ws
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
+Cc: Ivan Shapovalov <intelfx100@gmail.com>
 
-On Tuesday 17 June 2014 at 22:31:36, Ivan Shapovalov wrote:=09
-> On Tuesday 17 June 2014 at 12:29:53, Edward Shishkin wrote:=09
-> >=20
-> > [...]
-> >=20
-> > Yup.
-> > So, if discard is on, we work with 2 lists (delete_set,=20
-> > delete_set_for_wander).
-> > If discard is off, we work with one blocknr set..
->=20
-> Good. So I'll do roughly following for v5:
-> - rename discard_set_* to block_list_* and split off these definition=
-s
-> - write a family of reiser4_atom_dset_*() (log_deferred, log_immediat=
-e,
->   apply_deferred, merge, init, destroy) which will encapsulate discar=
-d/nodiscard
->   check and operate on correct lists (blocknr_set vs block_list)
-> - call reiser4_atom_dset_{init,destroy,merge}() from respective funct=
-ions
-> - call reiser4_atom_dset_log_{deferred,immediate}() from reiser4_deal=
-loc_blocks()
-> - call reiser4_atom_dset_apply_deferred() from reiser4_post_commit_ho=
-ok()
-> - directly manipulate the block lists from discard_atom(), checking t=
-hat we
->   indeed have discard enabled
->=20
-> Is this OK?
+- let all hooks be called from one place (reiser4_write_logs())
+- don't call reiser4_post_write_back_hook() twice
+- fix reiser4_post_write_back_hook(): call the correct method of space allocator
+---
+ fs/reiser4/block_alloc.c | 2 +-
+ fs/reiser4/wander.c      | 3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-BTW, with txn_atoms there is a locking idiom involving E_REPEAT loops.
-
-Is it fine to implement a
-current_atom_dset_log_...(...) // E_REPEAT loop inside
-instead of
-atom_dset_log_...(txn_atom* atom, ...) // may return E_REPEAT
-?
-
-I mean, per coding style.
-
-Thanks,
-=2D-=20
-Ivan Shapovalov / intelfx /
---nextPart3240232.yzpVVUh1Ws
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iF4EABEIAAYFAlOgqXUACgkQxUKljSIMAnC+FwEAvOqoXXH0hKlw2K57AZX/4fGV
-fGAz4L10v11o3aSu32QA/R51k7iltwgVEphdqq5DHIr2wonvTsmBIkkyy1hDPrzk
-=N2hD
------END PGP SIGNATURE-----
-
---nextPart3240232.yzpVVUh1Ws--
+diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
+index 81ed96f..3a4b667 100644
+--- a/fs/reiser4/block_alloc.c
++++ b/fs/reiser4/block_alloc.c
+@@ -1150,7 +1150,7 @@ void reiser4_post_write_back_hook(void)
+ {
+ 	assert("zam-504", get_current_super_private() != NULL);
+ 
+-	sa_post_commit_hook();
++	sa_post_write_back_hook();
+ }
+ 
+ /*
+diff --git a/fs/reiser4/wander.c b/fs/reiser4/wander.c
+index 0b518c3..4e29de8 100644
+--- a/fs/reiser4/wander.c
++++ b/fs/reiser4/wander.c
+@@ -1140,7 +1140,6 @@ static int write_tx_back(struct commit_handle * ch)
+ 	int ret;
+ 	int barrier;
+ 
+-	reiser4_post_commit_hook();
+ 	fq = get_fq_for_current_atom();
+ 	if (IS_ERR(fq))
+ 		return  PTR_ERR(fq);
+@@ -1165,7 +1164,6 @@ static int write_tx_back(struct commit_handle * ch)
+ 		if (ret)
+ 			return ret;
+ 	}
+-	reiser4_post_write_back_hook();
+ 	return 0;
+ }
+ 
+@@ -1251,6 +1249,7 @@ int reiser4_write_logs(long *nr_submitted)
+ 	spin_lock_atom(atom);
+ 	reiser4_atom_set_stage(atom, ASTAGE_POST_COMMIT);
+ 	spin_unlock_atom(atom);
++	reiser4_post_commit_hook();
+ 
+ 	ret = write_tx_back(&ch);
+ 	reiser4_post_write_back_hook();
+-- 
+2.0.0
 
