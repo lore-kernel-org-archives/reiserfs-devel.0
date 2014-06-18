@@ -1,8 +1,9 @@
 From: Edward Shishkin <edward.shishkin@gmail.com>
-Subject: Re: reiser4: discard implementation, pass 2: allocation issues
-Date: Wed, 18 Jun 2014 03:41:04 +0200
-Message-ID: <53A0EE30.3090303@gmail.com>
-References: <3401431.jj87z7i0xD@intelfx-laptop> <53A018A1.5030403@gmail.com> <1775901.eB9J0phJSL@intelfx-laptop> <1517464.b3HDrHDRa3@intelfx-laptop>
+Subject: Re: [PATCH] reiser4: fix reiser4_post_{commit,write_back}_hook()
+ and their invocations.
+Date: Wed, 18 Jun 2014 03:41:58 +0200
+Message-ID: <53A0EE66.7040600@gmail.com>
+References: <1403044996-17273-1-git-send-email-intelfx100@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
@@ -10,50 +11,70 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=message-id:date:from:user-agent:mime-version:to:subject:references
          :in-reply-to:content-type:content-transfer-encoding;
-        bh=fZ/RTXeQh7lII7iarGNhQE2X6IZX5xiWto772fkxgy0=;
-        b=sRL067hQ3VVyykfqrnftYD+FfZ6b6ikz0OmNXU30BeB+UYhl012VboJno9bmcVjCDf
-         QMbinmXC1x9Pbeh7U5GVRRZyg7phzrXhFxc3Cs11z5zhtugI5eYC8PILzX3pEixbu+DG
-         DUykwioOCGbTORTYefd43T9lPxvO/bzcr6qwNjiNqkAIRutyk5OsWyavgST0m4qoX2Wb
-         Jb6v1g35DnqKHSRYV55XFcFbT4xa1I69nhXzIGi8CLCq0uu0PseH6nbS0vG9w3hfnr2J
-         Cq1Wv9bejVNUf327y5Qiv2D8sHgZeb8OsemSa2HlYjMpLGY+AzEzlwU2Rmu3am6yq2T/
-         yHSA==
-In-Reply-To: <1517464.b3HDrHDRa3@intelfx-laptop>
+        bh=cWIeLmLs/BbMikTit64Mh3mMIWm/cyMWdusaaDjpbBw=;
+        b=ll9bPeRTrYg6tatIiccUW8D0QeE3Ag9XlAh9tiudH6B2PAyde4sFM7kQDVL+aZwknG
+         VzkFRtArM2gkoN6jwDwUbaK+4Kr3Z73vh++i9e3kyo0J1thx9ht/s93iAHlGiLqJZAnV
+         DopMz534M9QKVgukY6mu6aIboSKxWOqQRULK64MP/6TR6fnkAbQP+3hGMJKBV92MqfIQ
+         2ZSU6hoZsnBcKQxv0Hap+NTk6o41RMw6XHp3eDtBXwYc9mJZnZSrDkr2mlKC0JuzULnV
+         Z9Fx5DTbJE+A8PyCVVhUHZD37v8iWHj0RSArOFegJVc9aCzFdLRm8x4hjFj/Mg2SiJDP
+         /LKA==
+In-Reply-To: <1403044996-17273-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"; format="flowed"
 To: Ivan Shapovalov <intelfx100@gmail.com>, reiserfs-devel@vger.kernel.org
 
 
-On 06/17/2014 10:47 PM, Ivan Shapovalov wrote:
-> On Tuesday 17 June 2014 at 22:31:36, Ivan Shapovalov wrote:	
->> On Tuesday 17 June 2014 at 12:29:53, Edward Shishkin wrote:	
->>> [...]
->>>
->>> Yup.
->>> So, if discard is on, we work with 2 lists (delete_set,
->>> delete_set_for_wander).
->>> If discard is off, we work with one blocknr set..
->> Good. So I'll do roughly following for v5:
->> - rename discard_set_* to block_list_* and split off these definitions
->> - write a family of reiser4_atom_dset_*() (log_deferred, log_immediate,
->>    apply_deferred, merge, init, destroy) which will encapsulate discard/nodiscard
->>    check and operate on correct lists (blocknr_set vs block_list)
->> - call reiser4_atom_dset_{init,destroy,merge}() from respective functions
->> - call reiser4_atom_dset_log_{deferred,immediate}() from reiser4_dealloc_blocks()
->> - call reiser4_atom_dset_apply_deferred() from reiser4_post_commit_hook()
->> - directly manipulate the block lists from discard_atom(), checking that we
->>    indeed have discard enabled
->>
->> Is this OK?
-> BTW, with txn_atoms there is a locking idiom involving E_REPEAT loops.
+OK.
+
+On 06/18/2014 12:43 AM, Ivan Shapovalov wrote:
+> - let all hooks be called from one place (reiser4_write_logs())
+> - don't call reiser4_post_write_back_hook() twice
+> - fix reiser4_post_write_back_hook(): call the correct method of space allocator
+> ---
+>   fs/reiser4/block_alloc.c | 2 +-
+>   fs/reiser4/wander.c      | 3 +--
+>   2 files changed, 2 insertions(+), 3 deletions(-)
 >
-> Is it fine to implement a
-> current_atom_dset_log_...(...) // E_REPEAT loop inside
-> instead of
-> atom_dset_log_...(txn_atom* atom, ...)
+> diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
+> index 81ed96f..3a4b667 100644
+> --- a/fs/reiser4/block_alloc.c
+> +++ b/fs/reiser4/block_alloc.c
+> @@ -1150,7 +1150,7 @@ void reiser4_post_write_back_hook(void)
+>   {
+>   	assert("zam-504", get_current_super_private() != NULL);
+>   
+> -	sa_post_commit_hook();
+> +	sa_post_write_back_hook();
+>   }
+>   
+>   /*
+> diff --git a/fs/reiser4/wander.c b/fs/reiser4/wander.c
+> index 0b518c3..4e29de8 100644
+> --- a/fs/reiser4/wander.c
+> +++ b/fs/reiser4/wander.c
+> @@ -1140,7 +1140,6 @@ static int write_tx_back(struct commit_handle * ch)
+>   	int ret;
+>   	int barrier;
+>   
+> -	reiser4_post_commit_hook();
+>   	fq = get_fq_for_current_atom();
+>   	if (IS_ERR(fq))
+>   		return  PTR_ERR(fq);
+> @@ -1165,7 +1164,6 @@ static int write_tx_back(struct commit_handle * ch)
+>   		if (ret)
+>   			return ret;
+>   	}
+> -	reiser4_post_write_back_hook();
+>   	return 0;
+>   }
+>   
+> @@ -1251,6 +1249,7 @@ int reiser4_write_logs(long *nr_submitted)
+>   	spin_lock_atom(atom);
+>   	reiser4_atom_set_stage(atom, ASTAGE_POST_COMMIT);
+>   	spin_unlock_atom(atom);
+> +	reiser4_post_commit_hook();
+>   
+>   	ret = write_tx_back(&ch);
+>   	reiser4_post_write_back_hook();
 
-IMHO it is not needed.
-
-atom = get_current_atom_locked();
-atom_dset_{defer, immed}_add_extent(atom, ...); // <-- the loop is here
-spin_unlock_atom(atom);
