@@ -1,133 +1,71 @@
-From: <doiggl@velocitynet.com.au>
-Subject: Re: reiser4progs: possible off-by-one in librepair/twig_scan.c?
-Date: Fri, 20 Jun 2014 17:23:01 +1000
-Message-ID: <8f586f2cdc821d8a85a5e908536aa823@mail.velocitynet.com.au>
-References: <1559792.K1g2CRjlCX@intelfx-laptop> <53A37C52.5050006@gmail.com> <1475191.W2aZRKbs49@intelfx-laptop>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Ivan Shapovalov <intelfx100@gmail.com>
+Subject: [RFC] [PATCHv5 0/4] reiser4: discard support: initial implementation, refactored.
+Date: Sat, 21 Jun 2014 00:39:54 +0400
+Message-ID: <1403296798-11742-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-In-Reply-To: <1475191.W2aZRKbs49@intelfx-laptop>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=from:to:cc:subject:date:message-id;
+        bh=NW8urGEwQaIeWbJ6y77VrBK7+knu4ICYD/fM7PGJo0E=;
+        b=YmRWPDKeeUFHDsVACmVSHZbAI3uUIKGVNNoQcdufd8ug6otv8hlHPs6D8Boa9EIxNv
+         kXvw//9By6UT0GWqcdcG2mESeOg6qFqVIsn3u5QDi9bIoJgFK/eRtK86Nqxem/9HnLQz
+         LYn5vTAOY7RqVKYq7JjQkE65u4+6K05ZUyncPGVxMXlzVKSk+Uhch0ayd0/VJwdALmRx
+         UxNw+s0YZVIp2bFhbyZQCBJnaiIQgWJgL7fA0/5oKA3FbigDNIShD5UXS7VoXKp/pcix
+         2QDkm+/lM2alfo6fufnedkHxcsYSZCpfz2mKORQKAI0pgtvvJYtbRJuZdPrQUs6K5Pja
+         kjoA==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-To: Ivan Shapovalov <intelfx100@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org, Edward Shishkin <edward.shishkin@gmail.com>
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
+Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
 
-On Fri, 20 Jun 2014 06:36:56 +0400, Ivan Shapovalov <intelfx100@gmail.com>
-wrote:
-> On Friday 20 June 2014 at 02:12:02, Edward Shishkin wrote:	
->> 
->> On 06/20/2014 01:18 AM, Ivan Shapovalov wrote:
->> > I've got a strange fsck complaint while testing the rewritten
-discard.
->> > The fsck log is here (not line-wrapped):
->> >
->> > ====LOG====
->> >
->> > $ fsck.reiser4 /dev/disk/by-label/linux-build
->> > *******************************************************************
->> > This is an EXPERIMENTAL version of fsck.reiser4. Read README first.
->> > *******************************************************************
->> >
->> > Fscking the /dev/disk/by-label/linux-build block device.
->> > Will check the consistency of the Reiser4 SuperBlock.
->> > Will check the consistency of the Reiser4 FileSystem.
->> > Continue?
->> > (Yes/No): y
->> > ***** fsck.reiser4 started at Fri Jun 20 02:49:22 2014
->> > Reiser4 fs was detected on /dev/disk/by-label/linux-build.
->> > Master super block (16):
->> > magic:          ReIsEr4
->> > blksize:        4096
->> > format:         0x0 (format40)
->> > uuid:           73831051-68e1-4848-b9ea-83f9703558b6
->> > label:          linux-build
->> >   
->> > Format super block (17):
->> > plugin:         format40
->> > description:    Disk-format plugin.
->> > version:        0
->> > magic:          ReIsEr40FoRmAt
->> > mkfs id:        0x143b8ccd
->> > flushes:        0
->> > blocks:         2621440
->> > free blocks:    542951
->> > root block:     69897
->> > tail policy:    0x2 (smart)
->> > next oid:       0x21c6d1
->> > file count:     182200
->> > tree height:    4
->> > key policy:     LARGE
->> >   
->> >   
->> > CHECKING THE STORAGE TREE
->> >          Read nodes 239320
->> >          Nodes left in the tree 239320
->> >                  Leaves of them 236133, Twigs of them 3136
->> >          Time interval: Fri Jun 20 02:49:22 2014 - Fri Jun 20
-02:49:29
->> >          2014
->> > CHECKING EXTENT REGIONS.
->> > FSCK: extent40_repair.c: 96: extent40_check_layout: Node (2618486),
->> > item (9), unit (10), [20d7ef:4(FB):766d6c696e757a:20da66:0]: points
-out
->> > of the fs, region [2621239..2621439].
->> >          Read twigs 3136
->> >          Invaid extent pointers 1
->> >          Time interval: Fri Jun 20 02:49:29 2014 - Fri Jun 20
-02:49:29
->> >          2014
->> > CHECKING THE SEMANTIC TREE
->> >          Found 189973 objects (some could be encountered more then
->> >          once).
->> >          Time interval: Fri Jun 20 02:49:29 2014 - Fri Jun 20
-02:49:33
->> >          2014
->> > FSCK: repair.c: 550: repair_sem_fini: On-disk used block bitmap and
->> > really used block bitmap differ.
->> > ***** fsck.reiser4 finished at Fri Jun 20 02:49:33 2014
->> > Closing fs...done
->> >
->> > 1 fatal corruptions were detected in FileSystem. Run with --build-fs
->> > option to fix them.
->> >
->> > ====END LOG====
->> >
->> > This seems invalid to me: why a [2621239; 2621439] region would be
->> > invalid
->> > in a filesystem with 2621440 blocks?
->> > Also, the file in question is intact and does not appear to be
->> > corrupted,
->> > because this is my current vmlinuz. :)
->> >
->> > The following patch against reiser4progs shows precise location of
->> > this check.
->> >
->> > diff --git a/librepair/twig_scan.c b/librepair/twig_scan.c
->> > index 39b747c..ca8607a 100644
->> > --- a/librepair/twig_scan.c
->> > +++ b/librepair/twig_scan.c
->> > @@ -19,7 +19,7 @@ static errno_t cb_item_region_check(blk_t start,
->> > uint64_t count, void *data) {
->> >   	/* This must be fixed at the first pass. */
->> >   	if (start >= ts->bm_met->total ||
->> >   	    count > ts->bm_met->total ||
->> > -	    start >= ts->bm_met->total - count)
->> > +	    start > ts->bm_met->total - count)
->> >   	{
->> >   		ts->stat.bad_unfm_ptrs++;
->> >   		return RE_FATAL;
->> 
->> Sometimes our fsck is overly suspicious ;)
->> Does this fix help, BTW?
->> Thanks!
-> 
-> Yes, it does -- after applying the same filesystem is reported as OK.
+v1: - initial implementation (patches 1, 2)
 
-Hello,
-Is this going to get the patch as well ?
-http://downloads.sourceforge.net/project/reiser4/reiser4-utils/reiser4progs/reiser4progs-1.0.8.tar.gz
---Glenn
+v2: - cleanup, fixes discovered in debug mode
+    - saner logging
+    - assertions
+    - enablement of discard through mount option
 
-Sourced from:
-https://reiser4.wiki.kernel.org/index.php/Reiser4progs
+v3: - fixed the extent merge loop in discard_atom()
+
+v4: - squashed fix-ups into the main patch (with exception of reiser4_debug())
+    - fixed bug in usage of division ops discovered while building on ARM
+
+v5: - squashed mount option into the main patch
+    - refactor based on discussion (see commit msg)
+      - splitted off blocknr_list code
+      - replaced ->discard_set with ->delete_set and ->aux_delete_set
+
+Ivan Shapovalov (4):
+  reiser4: make space_allocator's check_blocks() reusable.
+  reiser4: add an implementation of "block lists", splitted off the discard code.
+  reiser4: add reiser4_debug(): a conditional equivalent of reiser4_log().
+  reiser4: discard support: initial implementation using linked lists.
+
+ fs/reiser4/Makefile                       |   2 +
+ fs/reiser4/block_alloc.c                  |  49 ++---
+ fs/reiser4/block_alloc.h                  |  14 +-
+ fs/reiser4/blocknrlist.c                  | 315 ++++++++++++++++++++++++++++++
+ fs/reiser4/debug.h                        |   4 +
+ fs/reiser4/dformat.h                      |   2 +
+ fs/reiser4/discard.c                      | 247 +++++++++++++++++++++++
+ fs/reiser4/discard.h                      |  31 +++
+ fs/reiser4/forward.h                      |   1 +
+ fs/reiser4/init_super.c                   |   2 +
+ fs/reiser4/plugin/space/bitmap.c          |  84 +++++---
+ fs/reiser4/plugin/space/bitmap.h          |   2 +-
+ fs/reiser4/plugin/space/space_allocator.h |   4 +-
+ fs/reiser4/super.h                        |   4 +-
+ fs/reiser4/txnmgr.c                       | 125 +++++++++++-
+ fs/reiser4/txnmgr.h                       |  63 +++++-
+ fs/reiser4/znode.c                        |   9 +-
+ 17 files changed, 884 insertions(+), 74 deletions(-)
+ create mode 100644 fs/reiser4/blocknrlist.c
+ create mode 100644 fs/reiser4/discard.c
+ create mode 100644 fs/reiser4/discard.h
+
+-- 
+2.0.0
+
