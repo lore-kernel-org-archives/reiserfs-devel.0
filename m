@@ -1,263 +1,104 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [RFC] [PATCHv5 1/4] reiser4: make space_allocator's check_blocks() reusable.
-Date: Sat, 21 Jun 2014 00:39:55 +0400
-Message-ID: <1403296798-11742-2-git-send-email-intelfx100@gmail.com>
+Subject: Re: [RFC] [PATCHv5 0/4] reiser4: discard support: initial implementation, refactored.
+Date: Sat, 21 Jun 2014 02:35:43 +0400
+Message-ID: <3309631.pk4ACE3OmJ@intelfx-laptop>
 References: <1403296798-11742-1-git-send-email-intelfx100@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="nextPart1717001.ctLg5L4gbu"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QpQYjtDQ0VpGCXk8ATdXZjBtJso5IFMAQijVsepIdbM=;
-        b=gW2i41WH7AFP8B+sEmmw1GgmdGc9/UybylhSNEpJhyJqNuyliDaoaKY3jaNj5aQdSc
-         FC+P6lY2aiUf62pQw2Cw514tW0JN204IqlhRqipI/jbG/OGBDtc8nXRU/BBAEKqaTK3d
-         /yd8SKx42FbmxYinimGqpQVJ11eIi6Sm9k4uwKRzk1crJ2n2viuWZMNSMR5YJGV15+WU
-         +TmCYtyeA06SE6nYTKawDFcJUMVeZgsFcaqzor1iy4vjsUBXAEK3mY8zCP5Z0Lzsomgb
-         ytqg1FtxG+jPh9IxeL2jHd3FIUdAPuZkXlbZK+LEP8yi/0p2Qh3Dh/YJkM4+PCCHCrDS
-         Hlug==
+        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
+         :references:mime-version:content-type;
+        bh=zdEcMZTmc8X7z7xZSzkzf9RiiXq3aH4pOlZOXIGvDsk=;
+        b=WCMEE0p5uGxCwDyh+Vm2csnculnXtrS5Y6+WHr8Ou7lrrWCX+Q4I3kPC5zGHwg/Dpd
+         10EvbzyFKeELsd/QjZDx/20+C+X9a9vQvujcQuj189xwGGkEJR9GHCX206ZOkO18fjsw
+         2lcgW5Th6n8sKuWg9Xbg2LW3Jrh2BOPonli0msWEk0Ctd5hMPa0MBfzha0z7XxOyDN3v
+         PiurLquid1FOiAQuMhwy3DeEzHwbQ20tozwypzUdXWHoROobTJrnfaZFy7q5gw3mCk6Q
+         ZYkG12kLyavB/++dOkzkAe0kJ0Y1yopLOUoC0F1wuSE9WZf/eeDieK2wMr3uKEo3GiTF
+         LQbg==
 In-Reply-To: <1403296798-11742-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: reiserfs-devel@vger.kernel.org
-Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
+Cc: edward.shishkin@gmail.com
 
-Make check_blocks() return a boolean value (whether did the extent's
-state match our expectations) instead of asserting success and crashing
-system otherwise.
-Also make it possible to check extents spanning multiple bitmap blocks.
 
-The only user of reiser4_check_block() in its previous form has been updated
-to assert on true return value.
+--nextPart1717001.ctLg5L4gbu
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 
-Thus check_blocks() can now be reused by various parts of reiser4, e. g.
-by the discard subsystem which will be added in next commits.
+On Saturday 21 June 2014 at 00:39:54, Ivan Shapovalov wrote:=09
+> v1: - initial implementation (patches 1, 2)
+>=20
+> v2: - cleanup, fixes discovered in debug mode
+>     - saner logging
+>     - assertions
+>     - enablement of discard through mount option
+>=20
+> v3: - fixed the extent merge loop in discard_atom()
+>=20
+> v4: - squashed fix-ups into the main patch (with exception of reiser4=
+_debug())
+>     - fixed bug in usage of division ops discovered while building on=
+ ARM
+>=20
+> v5: - squashed mount option into the main patch
+>     - refactor based on discussion (see commit msg)
+>       - splitted off blocknr_list code
+>       - replaced ->discard_set with ->delete_set and ->aux_delete_set=
 
-Signed-off-by: Ivan Shapovalov <intelfx100@gmail.com>
----
- fs/reiser4/block_alloc.c                  | 16 +------
- fs/reiser4/block_alloc.h                  | 14 +++---
- fs/reiser4/plugin/space/bitmap.c          | 77 ++++++++++++++++++++-----------
- fs/reiser4/plugin/space/bitmap.h          |  2 +-
- fs/reiser4/plugin/space/space_allocator.h |  4 +-
- fs/reiser4/znode.c                        |  9 ++--
- 6 files changed, 68 insertions(+), 54 deletions(-)
+>=20
+> Ivan Shapovalov (4):
+>   reiser4: make space_allocator's check_blocks() reusable.
+>   reiser4: add an implementation of "block lists", splitted off the d=
+iscard code.
+>   reiser4: add reiser4_debug(): a conditional equivalent of reiser4_l=
+og().
+>   reiser4: discard support: initial implementation using linked lists=
+.
+>=20
+>  fs/reiser4/Makefile                       |   2 +
+>  fs/reiser4/block_alloc.c                  |  49 ++---
+>  fs/reiser4/block_alloc.h                  |  14 +-
+>  fs/reiser4/blocknrlist.c                  | 315 ++++++++++++++++++++=
+++++++++++
+>  fs/reiser4/debug.h                        |   4 +
+>  fs/reiser4/dformat.h                      |   2 +
+>  fs/reiser4/discard.c                      | 247 ++++++++++++++++++++=
++++
+>  fs/reiser4/discard.h                      |  31 +++
+>  fs/reiser4/forward.h                      |   1 +
+>  fs/reiser4/init_super.c                   |   2 +
+>  fs/reiser4/plugin/space/bitmap.c          |  84 +++++---
+>  fs/reiser4/plugin/space/bitmap.h          |   2 +-
+>  fs/reiser4/plugin/space/space_allocator.h |   4 +-
+>  fs/reiser4/super.h                        |   4 +-
+>  fs/reiser4/txnmgr.c                       | 125 +++++++++++-
+>  fs/reiser4/txnmgr.h                       |  63 +++++-
+>  fs/reiser4/znode.c                        |   9 +-
+>  17 files changed, 884 insertions(+), 74 deletions(-)
+>  create mode 100644 fs/reiser4/blocknrlist.c
+>  create mode 100644 fs/reiser4/discard.c
+>  create mode 100644 fs/reiser4/discard.h
 
-diff --git a/fs/reiser4/block_alloc.c b/fs/reiser4/block_alloc.c
-index 81ed96f..57b0836 100644
---- a/fs/reiser4/block_alloc.c
-+++ b/fs/reiser4/block_alloc.c
-@@ -962,26 +962,14 @@ static void used2free(reiser4_super_info_data * sbinfo, __u64 count)
- 	spin_unlock_reiser4_super(sbinfo);
- }
- 
--#if REISER4_DEBUG
--
- /* check "allocated" state of given block range */
--static void
-+int
- reiser4_check_blocks(const reiser4_block_nr * start,
- 		     const reiser4_block_nr * len, int desired)
- {
--	sa_check_blocks(start, len, desired);
-+	return sa_check_blocks(start, len, desired);
- }
- 
--/* check "allocated" state of given block */
--void reiser4_check_block(const reiser4_block_nr * block, int desired)
--{
--	const reiser4_block_nr one = 1;
--
--	reiser4_check_blocks(block, &one, desired);
--}
--
--#endif
--
- /* Blocks deallocation function may do an actual deallocation through space
-    plugin allocation or store deleted block numbers in atom's delete_set data
-    structure depend on @defer parameter. */
-diff --git a/fs/reiser4/block_alloc.h b/fs/reiser4/block_alloc.h
-index 689efc1..a4e98af 100644
---- a/fs/reiser4/block_alloc.h
-+++ b/fs/reiser4/block_alloc.h
-@@ -150,15 +150,15 @@ extern void cluster_reserved2free(int count);
- 
- extern int reiser4_check_block_counters(const struct super_block *);
- 
--#if REISER4_DEBUG
- 
--extern void reiser4_check_block(const reiser4_block_nr *, int);
-+extern int reiser4_check_blocks(const reiser4_block_nr *start,
-+                                const reiser4_block_nr *len, int desired);
- 
--#else
--
--#  define reiser4_check_block(beg, val)        noop
--
--#endif
-+static inline int reiser4_check_block(const reiser4_block_nr *start,
-+                                      int desired)
-+{
-+	return reiser4_check_blocks(start, NULL, desired);
-+}
- 
- extern int reiser4_pre_commit_hook(void);
- extern void reiser4_post_commit_hook(void);
-diff --git a/fs/reiser4/plugin/space/bitmap.c b/fs/reiser4/plugin/space/bitmap.c
-index 1d0fabf..5bfa71b 100644
---- a/fs/reiser4/plugin/space/bitmap.c
-+++ b/fs/reiser4/plugin/space/bitmap.c
-@@ -1222,29 +1222,13 @@ void reiser4_dealloc_blocks_bitmap(reiser4_space_allocator * allocator,
- 	release_and_unlock_bnode(bnode);
- }
- 
--/* plugin->u.space_allocator.check_blocks(). */
--void reiser4_check_blocks_bitmap(const reiser4_block_nr * start,
--				 const reiser4_block_nr * len, int desired)
-+static int check_blocks_one_bitmap(bmap_nr_t bmap, bmap_off_t start_offset,
-+                                    bmap_off_t end_offset, int desired)
- {
--#if REISER4_DEBUG
- 	struct super_block *super = reiser4_get_current_sb();
--
--	bmap_nr_t bmap;
--	bmap_off_t start_offset;
--	bmap_off_t end_offset;
--
--	struct bitmap_node *bnode;
-+	struct bitmap_node *bnode = get_bnode(super, bmap);
- 	int ret;
- 
--	assert("zam-622", len != NULL);
--	check_block_range(start, len);
--	parse_blocknr(start, &bmap, &start_offset);
--
--	end_offset = start_offset + *len;
--	assert("nikita-2214", end_offset <= bmap_bit_count(super->s_blocksize));
--
--	bnode = get_bnode(super, bmap);
--
- 	assert("nikita-2215", bnode != NULL);
- 
- 	ret = load_and_lock_bnode(bnode);
-@@ -1253,19 +1237,60 @@ void reiser4_check_blocks_bitmap(const reiser4_block_nr * start,
- 	assert("nikita-2216", jnode_is_loaded(bnode->wjnode));
- 
- 	if (desired) {
--		assert("zam-623",
--		       reiser4_find_next_zero_bit(bnode_working_data(bnode),
-+		ret = reiser4_find_next_zero_bit(bnode_working_data(bnode),
- 						  end_offset, start_offset)
--		       >= end_offset);
-+		      >= end_offset;
- 	} else {
--		assert("zam-624",
--		       reiser4_find_next_set_bit(bnode_working_data(bnode),
-+		ret = reiser4_find_next_set_bit(bnode_working_data(bnode),
- 						 end_offset, start_offset)
--		       >= end_offset);
-+		      >= end_offset;
- 	}
- 
- 	release_and_unlock_bnode(bnode);
--#endif
-+
-+	return ret;
-+}
-+
-+/* plugin->u.space_allocator.check_blocks(). */
-+int reiser4_check_blocks_bitmap(const reiser4_block_nr * start,
-+				 const reiser4_block_nr * len, int desired)
-+{
-+	struct super_block *super = reiser4_get_current_sb();
-+
-+	reiser4_block_nr end;
-+	bmap_nr_t bmap, end_bmap;
-+	bmap_off_t offset;
-+	bmap_off_t end_offset;
-+	const bmap_off_t max_offset = bmap_bit_count(super->s_blocksize);
-+
-+	if (len != NULL) {
-+		check_block_range(start, len);
-+		end = *start + *len - 1;
-+	} else {
-+		/* end is used as temporary len here */
-+		check_block_range(start, &(end = 1));
-+		end = *start;
-+	}
-+
-+	parse_blocknr(start, &bmap, &offset);
-+
-+	if (end == *start) {
-+		end_bmap = bmap;
-+		end_offset = offset;
-+	} else {
-+		parse_blocknr(&end, &end_bmap, &end_offset);
-+	}
-+	++end_offset;
-+
-+	assert("intelfx-4", end_bmap >= bmap);
-+	assert("intelfx-5", ergo(end_bmap == bmap, end_offset > offset));
-+
-+	for (; bmap < end_bmap; bmap++, offset = 0) {
-+		if (!check_blocks_one_bitmap(bmap, offset, max_offset, desired)) {
-+			return 0;
-+		}
-+	}
-+	return check_blocks_one_bitmap(bmap, offset, end_offset, desired);
- }
- 
- /* conditional insertion of @node into atom's overwrite set  if it was not there */
-diff --git a/fs/reiser4/plugin/space/bitmap.h b/fs/reiser4/plugin/space/bitmap.h
-index be867f1..4590498 100644
---- a/fs/reiser4/plugin/space/bitmap.h
-+++ b/fs/reiser4/plugin/space/bitmap.h
-@@ -19,7 +19,7 @@ extern int reiser4_alloc_blocks_bitmap(reiser4_space_allocator *,
- 				       reiser4_blocknr_hint *, int needed,
- 				       reiser4_block_nr * start,
- 				       reiser4_block_nr * len);
--extern void reiser4_check_blocks_bitmap(const reiser4_block_nr *,
-+extern int reiser4_check_blocks_bitmap(const reiser4_block_nr *,
- 					const reiser4_block_nr *, int);
- extern void reiser4_dealloc_blocks_bitmap(reiser4_space_allocator *,
- 					  reiser4_block_nr,
-diff --git a/fs/reiser4/plugin/space/space_allocator.h b/fs/reiser4/plugin/space/space_allocator.h
-index 5bfa9a3..71bfd11 100644
---- a/fs/reiser4/plugin/space/space_allocator.h
-+++ b/fs/reiser4/plugin/space/space_allocator.h
-@@ -29,9 +29,9 @@ static inline void sa_dealloc_blocks (reiser4_space_allocator * al, reiser4_bloc
- 	reiser4_dealloc_blocks_##allocator (al, start, len);								\
- }															\
- 															\
--static inline void sa_check_blocks (const reiser4_block_nr * start, const reiser4_block_nr * end, int desired) 		\
-+static inline int sa_check_blocks (const reiser4_block_nr * start, const reiser4_block_nr * end, int desired) 		\
- {															\
--	reiser4_check_blocks_##allocator (start, end, desired);							        \
-+	return reiser4_check_blocks_##allocator (start, end, desired);							        \
- }															\
- 															\
- static inline void sa_pre_commit_hook (void)										\
-diff --git a/fs/reiser4/znode.c b/fs/reiser4/znode.c
-index 4ff9714..08eab3d 100644
---- a/fs/reiser4/znode.c
-+++ b/fs/reiser4/znode.c
-@@ -534,10 +534,11 @@ znode *zget(reiser4_tree * tree,
- 
- 		write_unlock_tree(tree);
- 	}
--#if REISER4_DEBUG
--	if (!reiser4_blocknr_is_fake(blocknr) && *blocknr != 0)
--		reiser4_check_block(blocknr, 1);
--#endif
-+
-+	assert("intelfx-6",
-+	       ergo(!reiser4_blocknr_is_fake(blocknr) && *blocknr != 0,
-+	            reiser4_check_block(blocknr, 1)));
-+
- 	/* Check for invalid tree level, return -EIO */
- 	if (unlikely(znode_get_level(result) != level)) {
- 		warning("jmacd-504",
--- 
-2.0.0
+Also I would like if this code could be given a review. :)
+
+Thanks,
+=2D-=20
+Ivan Shapovalov / intelfx /
+--nextPart1717001.ctLg5L4gbu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iF4EABEIAAYFAlOkt0MACgkQxUKljSIMAnAYlAEAujM1no6n354HP3Usa5MtxVae
+6p4EN3aB4zv0XaX6P6QA/3HH5CLDLQqa9Wx1+nU6z2dEZSSN7lF3syig+k+jmIXK
+=mySt
+-----END PGP SIGNATURE-----
+
+--nextPart1717001.ctLg5L4gbu--
 
