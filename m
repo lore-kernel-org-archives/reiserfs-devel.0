@@ -1,132 +1,80 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: Re: [RFC] [PATCHv5 0/4] reiser4: discard support: initial implementation, refactored.
-Date: Sun, 22 Jun 2014 04:17:51 +0400
-Message-ID: <1505369.IvJt0fPL9H@intelfx-laptop>
-References: <1403296798-11742-1-git-send-email-intelfx100@gmail.com> <53A56A72.3050608@gmail.com> <3952503.LqrIi5tPUc@intelfx-laptop>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart1453144.SnY7CK01NA"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Subject: [PATCHv6 0/5] reiser4: discard support: initial implementation.
+Date: Sun, 22 Jun 2014 14:48:41 +0400
+Message-ID: <1403434126-6390-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
-         :references:mime-version:content-type;
-        bh=4QzrdO2DFhtwgVpY8APH8aae545VgVwuTQQ4d3R0w2g=;
-        b=KyfXQpAghoZwogyBhgXKM9DI7ancFXNoQhXwbDQ6QNRgmD/0ksccNaJIvey88MlInz
-         Mx9q/PwSVAxkCj38Z0AZlMgJDVWNurSohpihR8HSFhEC5s+tDC+LWMLYAKYHX16j0FdE
-         G94dkAPP6cJfrQOJqJjdvXxAu8nx6lWvHGYGPovu7+ebeKZMFaQXjLleopgfGVS3LgvT
-         ok9ySfZzNQNthXtgtyqZ94uqUjeWjfPEwLq+I/9wuBUM7uzij91FCnqblD5zj2IEH9Za
-         8QwFwJiQ+pSXhf9hgQ2+4vPp/RJVXMjXJeTzjnDItunV8v1DxYysyhjmmyXIs7kQbhSq
-         GghQ==
-In-Reply-To: <3952503.LqrIi5tPUc@intelfx-laptop>
+        h=from:to:cc:subject:date:message-id;
+        bh=58AQdo5oCDNxBpWqSSSzg+41MSSjUFww2a94rwlAkAU=;
+        b=jm4CgYkCO7WS9SALO4cQG+6M5FJIMsfOfyY0KAjX1E9IQJXiyYkKLpBqgbUQpuVuS8
+         BvZtMUk1C09pqArlG2RJlqNIXl56gAlmL7JKMGIHaOUBCr165DJpf/pq5TEY+Ur1Dh4e
+         sQoguTXW0SPByIBaipeLU4LVIIy+0cmkwNMJcgilsMi8wcI1Elb+jwNewqV6bLgMCVWQ
+         k1GSH8pedaw+boLlXvMNJjC06sNz8nKZqhxIADT610IwM7NNUT81BjpLKYkyfNuaP0N4
+         77UNmFU5hCa3vvH4w4kOXMnl3MSp4VOOACx+uuLf+GUL5bpIBwx+/2wRM9GyobzOnU16
+         dOfw==
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
-To: reiserfs-devel@vger.kernel.org
-Cc: Edward Shishkin <edward.shishkin@gmail.com>
-
-
---nextPart1453144.SnY7CK01NA
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: reiserfs-devel@vger.kernel.org
+Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
 
-On Sunday 22 June 2014 at 00:15:49, Ivan Shapovalov wrote:=09
-> On Saturday 21 June 2014 at 13:20:18, Edward Shishkin wrote:=09
-> > On 06/21/2014 12:35 AM, Ivan Shapovalov wrote:
-> > > [...]
-> > > Also I would like if this code could be given a review. :)
-> >=20
-> > Great! Looks nice for me, thanks!
-> > There are 2 issues, though...
-> >=20
-> > 1) kmalloc/kfree a huge number of 32-byte chunks (blocknr_list entr=
-ies) is
-> > suboptimal. There is a special low-level memory allocator for such =
-purposes.
-> > Take a look how we initialize so-called "slab cache" for jnodes=20
-> > (_jnode_slab),
-> > atoms (_atom_slab), etc, and allocate memory for them (kmem_cache_a=
-lloc()).
-> >=20
-> > 2) A lot of blocknr_list entries are allocated at flush time, when =
-the=20
-> > high-level
-> > allocator (txmod.c) makes "relocation decisions" (especially when t=
-xmod=3Dwa).
-> > The problem is that the flush (with the following commit) usually i=
-s the=20
-> > file system
-> > response to memory pressure notifications, when additional memory a=
-llocation
-> > is not desirable.
-> >=20
-> > I think that with the fixed (1) we'll include the discard support (=
-if=20
-> > everything will
-> > be OK in the next 1-2 weeks).
-> >=20
-> > As to (2): that is a common problem of all Linux subsystems which w=
-ant=20
-> > memory
-> > to free memory. It is unresolvable, however, we can improve the=20
-> > situation. It
-> > would be nice to implement a per-atom pool of memory (as a list of=20=
+v1: - initial implementation (patches 1, 2)
 
-> > kmalloc-ed
-> > buffers with "cursors") with an optional possibility to pre-allocat=
-e 1-2=20
-> > such buffers
-> > at atom initialization time. But this is for the future...
-> >=20
-> > I don't see other urgent improvements. Yes, overall scalability of=20=
+v2: - cleanup, fixes discovered in debug mode
+    - saner logging
+    - assertions
+    - enablement of discard through mount option
 
-> > rb-trees is better,
-> > as we found, however, merging rb-trees is more expensive, plus atom=
-'s fusion
-> > is not a background process, so it can lead to performance drop. Th=
-ere are
-> > rb-trees with fingers, however I haven't seen their implementation =
-on C=20
-> > language
-> > (it can be not so simple).
-> >=20
-> > Thanks!
-> > Edward.
-> >=20
->=20
-> Thanks for the review!
->=20
-> (1) surely seems trivial. Do we need something similar for blocknr_se=
-t as well?
+v3: - fixed the extent merge loop in discard_atom()
 
-...I suppose yes, because there is at least one blocknr_set_entry per e=
-ach txn_atom,
-while the latter is already allocated with slab allocator).
+v4: - squashed fix-ups into the main patch (with exception of reiser4_debug())
+    - fixed bug in usage of division ops discovered while building on ARM
 
-=2D-=20
-Ivan Shapovalov / intelfx /
+v5: - squashed mount option into the main patch
+    - refactor based on discussion (see commit msg)
+      - splitted off blocknr_list code
+      - replaced ->discard_set with ->delete_set and ->aux_delete_set
 
->=20
-> For (2) I don't quite understand you. How such a pool should be organ=
-ized?
->=20
-> Do you mean `blocknr_list_entry **pool` of size N * sizeof(void*) fil=
-led with
-> kmem_cache_alloc()'d pointers, or just `blocknr_list_entry *pool` of =
-size
-> N * sizeof(blocknr_list_entry)?
->=20
-> 
---nextPart1453144.SnY7CK01NA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+v6: - actualized in-code comments
+    - removed uber-verbose debug statements
+    - fixed code-to-patch mapping
+    - moved blocknrlist and blocknrset to kmem_cache instead of kmalloc/kfree
+      (in a separate commit for ease of reviewing)
+    - dropped the RFC label
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Ivan Shapovalov (5):
+  reiser4: make space_allocator's check_blocks() reusable.
+  reiser4: add an implementation of "block lists", splitted off the discard code.
+  reiser4: discard support: initial implementation using linked lists.
+  reiser4: blocknr_list: use kmem_cache instead of kmalloc for allocating entries.
+  reiser4: blocknr_set: use kmem_cache instead of kmalloc for allocating entries.
 
-iF4EABEIAAYFAlOmILUACgkQxUKljSIMAnCFqwD/VAhx7MrGAmIXRD11lHuSSqe9
-n7AWVIk2vBpXezxdKWoA/04/STmQ5VrqlEKV3Seqx30yIGdJGGFDC05o5MQ3slkn
-=AGgs
------END PGP SIGNATURE-----
+ fs/reiser4/Makefile                       |   2 +
+ fs/reiser4/block_alloc.c                  |  48 +++--
+ fs/reiser4/block_alloc.h                  |  14 +-
+ fs/reiser4/blocknrlist.c                  | 336 ++++++++++++++++++++++++++++++
+ fs/reiser4/blocknrset.c                   |  34 ++-
+ fs/reiser4/dformat.h                      |   2 +
+ fs/reiser4/discard.c                      | 216 +++++++++++++++++++
+ fs/reiser4/discard.h                      |  31 +++
+ fs/reiser4/forward.h                      |   1 +
+ fs/reiser4/init_super.c                   |   2 +
+ fs/reiser4/plugin/space/bitmap.c          |  84 +++++---
+ fs/reiser4/plugin/space/bitmap.h          |   2 +-
+ fs/reiser4/plugin/space/space_allocator.h |   4 +-
+ fs/reiser4/super.h                        |   4 +-
+ fs/reiser4/super_ops.c                    |  14 ++
+ fs/reiser4/txnmgr.c                       | 125 ++++++++++-
+ fs/reiser4/txnmgr.h                       |  67 +++++-
+ fs/reiser4/znode.c                        |   9 +-
+ 18 files changed, 918 insertions(+), 77 deletions(-)
+ create mode 100644 fs/reiser4/blocknrlist.c
+ create mode 100644 fs/reiser4/discard.c
+ create mode 100644 fs/reiser4/discard.h
 
---nextPart1453144.SnY7CK01NA--
+-- 
+2.0.0
 
