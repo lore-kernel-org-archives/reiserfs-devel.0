@@ -1,19 +1,19 @@
 From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [PATCHv6 5/5] reiser4: blocknr_set: use kmem_cache instead of kmalloc for allocating entries.
-Date: Sun, 22 Jun 2014 14:48:46 +0400
-Message-ID: <1403434126-6390-6-git-send-email-intelfx100@gmail.com>
+Subject: [PATCHv6 4/5] reiser4: blocknr_list: use kmem_cache instead of kmalloc for allocating entries.
+Date: Sun, 22 Jun 2014 14:48:45 +0400
+Message-ID: <1403434126-6390-5-git-send-email-intelfx100@gmail.com>
 References: <1403434126-6390-1-git-send-email-intelfx100@gmail.com>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20120113;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0yDZFJtxvfDNTfsgjgr7pjs8cU7CptxL+/KgeSya1qM=;
-        b=Mjg8TSEGg5VSIptt8minCvbFgMNKCrwOW042Z8zyK+LUsr3wpNSH0C956zs8798avn
-         3hAqs8+f7HYToUbTELThZuwL1m6hjvKUNYiUGm9wdZV5yU23EAdLoXzPGVs2xaj+Qgru
-         ZvZqtPbKrQ4JwIgwj9UEb9bbhmCSkYo4T/ICiNUa658pi9SaWzYI3wX5nZP8tHtKG092
-         ZRLqU7F86iKAfjDNVjM14jGcDZgY0D2mArH6d9RfW0nsif3/Fa1ADaRGHQjlN5qkfhsU
-         s3o1ciANmlz/BzbCu0qgO9OHC69kuuBfsi88Pa/hWyj0IP+xPh6EiN1Hnx3JnwdTOXK1
-         KbUA==
+        bh=ippkFxwbGhnLgBEgwCKu7ITz7DvVoP0lbMHj1uFvvXE=;
+        b=XLqaaQmsOODcpWsU9q2UAs9+0cLbBWA1LwKvw9mJhrmOzZ6hG7CgK+e09Z0Bg4kQJV
+         nN0YRps6LIlrAn3NVQ6XGN6p9DdGggn085LR1nSWfSwA4JrsU49MqkS31RySGQupGZxH
+         yLYj81DTI/iL1FGbEd6w9qkFUucklBdV9UmEilB0/skD6GkcVL4UX6v6FpIbucIHqN9O
+         rpdIkHZ3aYlrkuoEUsTvEvLGvVAmvOhBc9Rn3ccUmyBLK8AZMSDip6dB4QYccLY8MBDy
+         jcW2E+rLrHAcSz1z0/yQ90skFGrFkgb8aWKVY3i49c6E9L5XrdaHDrvb5Y7f54mlekWG
+         arUA==
 In-Reply-To: <1403434126-6390-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -24,129 +24,121 @@ To: reiserfs-devel@vger.kernel.org
 Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
 
 ---
- fs/reiser4/blocknrset.c | 34 +++++++++++++++++++++++++++++++---
- fs/reiser4/super_ops.c  |  7 +++++++
- fs/reiser4/txnmgr.h     |  2 ++
- 3 files changed, 40 insertions(+), 3 deletions(-)
+ fs/reiser4/blocknrlist.c | 31 ++++++++++++++++++++++++++++---
+ fs/reiser4/super_ops.c   |  7 +++++++
+ fs/reiser4/txnmgr.h      |  2 ++
+ 3 files changed, 37 insertions(+), 3 deletions(-)
 
-diff --git a/fs/reiser4/blocknrset.c b/fs/reiser4/blocknrset.c
-index bf57c17..2f18cbc 100644
---- a/fs/reiser4/blocknrset.c
-+++ b/fs/reiser4/blocknrset.c
-@@ -8,6 +8,7 @@ reiser4/README */
+diff --git a/fs/reiser4/blocknrlist.c b/fs/reiser4/blocknrlist.c
+index 2868771..39a4a9b 100644
+--- a/fs/reiser4/blocknrlist.c
++++ b/fs/reiser4/blocknrlist.c
+@@ -9,10 +9,13 @@
  #include "dformat.h"
  #include "txnmgr.h"
  #include "context.h"
 +#include "super.h"
  
  #include <linux/slab.h>
+ #include <linux/list_sort.h>
  
-@@ -42,6 +43,8 @@ reiser4/README */
- 	sizeof(struct list_head)) /		\
- 	sizeof(reiser4_block_nr))
- 
-+static struct kmem_cache *blocknr_set_slab = NULL;
++static struct kmem_cache *blocknr_list_slab = NULL;
 +
- /* An entry of the blocknr_set */
- struct blocknr_set_entry {
- 	unsigned nr_singles;
-@@ -82,8 +85,8 @@ static blocknr_set_entry *bse_alloc(void)
+ /**
+  * Represents an extent range [@start; @end).
+  */
+@@ -36,8 +39,8 @@ static blocknr_list_entry *blocknr_list_entry_alloc(void)
  {
- 	blocknr_set_entry *e;
+ 	blocknr_list_entry *entry;
  
--	if ((e = (blocknr_set_entry *) kmalloc(sizeof(blocknr_set_entry),
--					   reiser4_ctx_gfp_mask_get())) == NULL)
-+	if ((e = (blocknr_set_entry *) kmem_cache_alloc(blocknr_set_slab,
-+							reiser4_ctx_gfp_mask_get())) == NULL)
+-	entry = (blocknr_list_entry *)kmalloc(sizeof(blocknr_list_entry),
+-	                                      reiser4_ctx_gfp_mask_get());
++	entry = (blocknr_list_entry *)kmem_cache_alloc(blocknr_list_slab,
++	                                               reiser4_ctx_gfp_mask_get());
+ 	if (entry == NULL) {
  		return NULL;
- 
- 	bse_init(e);
-@@ -95,7 +98,7 @@ static blocknr_set_entry *bse_alloc(void)
- /* Audited by: green(2002.06.11) */
- static void bse_free(blocknr_set_entry * bse)
+ 	}
+@@ -51,7 +54,7 @@ static void blocknr_list_entry_free(blocknr_list_entry *entry)
  {
--	kfree(bse);
-+	kmem_cache_free(blocknr_set_slab, bse);
+ 	assert("intelfx-12", entry != NULL);
+ 
+-	kfree(entry);
++	kmem_cache_free(blocknr_list_slab, entry);
  }
  
- /* Add a block number to a blocknr_set_entry */
-@@ -225,6 +228,31 @@ blocknr_set_add_pair(txn_atom * atom,
- 	return blocknr_set_add(atom, bset, new_bsep, a, b);
+ /**
+@@ -142,6 +145,28 @@ static int blocknr_list_entry_compare(void* priv UNUSED_ARG,
+ 	return 0;
  }
  
-+/* Initialize slab cache of blocknr_set_entry objects. */
-+int blocknr_set_init_static(void)
++int blocknr_list_init_static(void)
 +{
-+	assert("intelfx-55", blocknr_set_slab == NULL);
++	assert("intelfx-54", blocknr_list_slab == NULL);
 +
-+	blocknr_set_slab = kmem_cache_create("blocknr_set_entry",
-+					     sizeof(blocknr_set_entry),
-+					     0,
-+					     SLAB_HWCACHE_ALIGN |
-+					     SLAB_RECLAIM_ACCOUNT,
-+					     NULL);
-+
-+	if (blocknr_set_slab == NULL) {
++	blocknr_list_slab = kmem_cache_create("blocknr_list_entry",
++	                                      sizeof(blocknr_list_entry),
++	                                      0,
++	                                      SLAB_HWCACHE_ALIGN |
++	                                      SLAB_RECLAIM_ACCOUNT,
++	                                      NULL);
++	if (blocknr_list_slab == NULL) {
 +		return RETERR(-ENOMEM);
 +	}
 +
 +	return 0;
 +}
 +
-+/* Destroy slab cache of blocknr_set_entry objects. */
-+void blocknr_set_done_static(void)
++void blocknr_list_done_static(void)
 +{
-+	destroy_reiser4_cache(&blocknr_set_slab);
++	destroy_reiser4_cache(&blocknr_list_slab);
 +}
 +
- /* Initialize a blocknr_set. */
- void blocknr_set_init(struct list_head *bset)
+ void blocknr_list_init(struct list_head* blist)
  {
+ 	assert("intelfx-24", blist != NULL);
 diff --git a/fs/reiser4/super_ops.c b/fs/reiser4/super_ops.c
-index a63ceb5..bcd7fd6 100644
+index 81773b3..a63ceb5 100644
 --- a/fs/reiser4/super_ops.c
 +++ b/fs/reiser4/super_ops.c
-@@ -678,6 +678,10 @@ static int __init init_reiser4(void)
+@@ -678,11 +678,17 @@ static int __init init_reiser4(void)
  	if ((result = reiser4_init_d_cursor()) != 0)
  		goto failed_init_d_cursor;
  
-+	/* initialize cache of blocknr set entries */
-+	if ((result = blocknr_set_init_static()) != 0)
-+		goto failed_init_blocknr_set;
++	/* initialize cache of blocknr list entries */
++	if ((result = blocknr_list_init_static()) != 0)
++		goto failed_init_blocknr_list;
 +
- 	/* initialize cache of blocknr list entries */
- 	if ((result = blocknr_list_init_static()) != 0)
- 		goto failed_init_blocknr_list;
-@@ -689,6 +693,8 @@ static int __init init_reiser4(void)
+ 	if ((result = register_filesystem(&reiser4_fs_type)) == 0) {
+ 		reiser4_debugfs_root = debugfs_create_dir("reiser4", NULL);
+ 		return 0;
+ 	}
  
- 	blocknr_list_done_static();
-  failed_init_blocknr_list:
-+	blocknr_set_done_static();
-+ failed_init_blocknr_set:
++	blocknr_list_done_static();
++ failed_init_blocknr_list:
  	reiser4_done_d_cursor();
   failed_init_d_cursor:
  	reiser4_done_file_fsdata();
-@@ -725,6 +731,7 @@ static void __exit done_reiser4(void)
+@@ -718,6 +724,7 @@ static void __exit done_reiser4(void)
+ 	debugfs_remove(reiser4_debugfs_root);
  	result = unregister_filesystem(&reiser4_fs_type);
  	BUG_ON(result != 0);
- 	blocknr_list_done_static();
-+	blocknr_set_done_static();
++	blocknr_list_done_static();
  	reiser4_done_d_cursor();
  	reiser4_done_file_fsdata();
  	reiser4_done_dentry_fsdata();
 diff --git a/fs/reiser4/txnmgr.h b/fs/reiser4/txnmgr.h
-index be5d552..02757a9 100644
+index 02fc938..be5d552 100644
 --- a/fs/reiser4/txnmgr.h
 +++ b/fs/reiser4/txnmgr.h
-@@ -482,6 +482,8 @@ int capture_bulk(jnode **, int count);
+@@ -503,6 +503,8 @@ extern int blocknr_set_iterator(txn_atom * atom, struct list_head * bset,
+ 				int delete);
  
- /* See the comment on the function blocknrset.c:blocknr_set_add for the
-    calling convention of these three routines. */
-+extern int blocknr_set_init_static(void);
-+extern void blocknr_set_done_static(void);
- extern void blocknr_set_init(struct list_head * bset);
- extern void blocknr_set_destroy(struct list_head * bset);
- extern void blocknr_set_merge(struct list_head * from, struct list_head * into);
+ /* This is the block list interface (see blocknrlist.c) */
++extern int blocknr_list_init_static(void);
++extern void blocknr_list_done_static(void);
+ extern void blocknr_list_init(struct list_head *blist);
+ extern void blocknr_list_destroy(struct list_head *blist);
+ extern void blocknr_list_merge(struct list_head *from, struct list_head *to);
 -- 
 2.0.0
 
