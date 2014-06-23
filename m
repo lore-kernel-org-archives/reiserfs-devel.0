@@ -1,7 +1,7 @@
 From: Fabian Frederick <fabf@skynet.be>
-Subject: [PATCH 1/1] FS/REISERFS: use linux/uaccess.h
-Date: Mon, 23 Jun 2014 18:27:16 +0200
-Message-ID: <1403540836-10316-1-git-send-email-fabf@skynet.be>
+Subject: [PATCH 1/1] fs/reiserfs/xattr.c: fix blank line missing after declarations
+Date: Mon, 23 Jun 2014 18:29:01 +0200
+Message-ID: <1403540941-10389-1-git-send-email-fabf@skynet.be>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
@@ -11,212 +11,176 @@ Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org
 Cc: Fabian Frederick <fabf@skynet.be>, reiserfs-devel@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>, Andrew Morton <akpm@linux-foundation.org>
 
-Fix checkpatch warning
-WARNING: Use #include <linux/uaccess.h> instead of <asm/uaccess.h>
+Fix checkpatch warning:
+
+"WARNING: Missing a blank line after declarations"
 
 Cc: reiserfs-devel@vger.kernel.org
 Cc: Jeff Mahoney <jeffm@suse.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Fabian Frederick <fabf@skynet.be>
 ---
- fs/reiserfs/dir.c            | 2 +-
- fs/reiserfs/do_balan.c       | 2 +-
- fs/reiserfs/file.c           | 2 +-
- fs/reiserfs/ibalance.c       | 2 +-
- fs/reiserfs/inode.c          | 2 +-
- fs/reiserfs/ioctl.c          | 2 +-
- fs/reiserfs/lbalance.c       | 2 +-
- fs/reiserfs/procfs.c         | 2 +-
- fs/reiserfs/super.c          | 2 +-
- fs/reiserfs/xattr.c          | 2 +-
- fs/reiserfs/xattr_acl.c      | 2 +-
- fs/reiserfs/xattr_security.c | 2 +-
- fs/reiserfs/xattr_trusted.c  | 2 +-
- fs/reiserfs/xattr_user.c     | 2 +-
- 14 files changed, 14 insertions(+), 14 deletions(-)
+ fs/reiserfs/xattr.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/fs/reiserfs/dir.c b/fs/reiserfs/dir.c
-index d9f5a60..0a7dc94 100644
---- a/fs/reiserfs/dir.c
-+++ b/fs/reiserfs/dir.c
-@@ -9,7 +9,7 @@
- #include <linux/stat.h>
- #include <linux/buffer_head.h>
- #include <linux/slab.h>
--#include <asm/uaccess.h>
-+#include <linux/uaccess.h>
- 
- extern const struct reiserfs_key MIN_KEY;
- 
-diff --git a/fs/reiserfs/do_balan.c b/fs/reiserfs/do_balan.c
-index 54fdf19..5739cb9 100644
---- a/fs/reiserfs/do_balan.c
-+++ b/fs/reiserfs/do_balan.c
-@@ -10,7 +10,7 @@
-  * and using buffers obtained after all above.
-  */
- 
--#include <asm/uaccess.h>
-+#include <linux/uaccess.h>
- #include <linux/time.h>
- #include "reiserfs.h"
- #include <linux/buffer_head.h>
-diff --git a/fs/reiserfs/file.c b/fs/reiserfs/file.c
-index db9e80b..751dd3f 100644
---- a/fs/reiserfs/file.c
-+++ b/fs/reiserfs/file.c
-@@ -6,7 +6,7 @@
- #include "reiserfs.h"
- #include "acl.h"
- #include "xattr.h"
--#include <asm/uaccess.h>
-+#include <linux/uaccess.h>
- #include <linux/pagemap.h>
- #include <linux/swap.h>
- #include <linux/writeback.h>
-diff --git a/fs/reiserfs/ibalance.c b/fs/reiserfs/ibalance.c
-index 73231b1..b751eea 100644
---- a/fs/reiserfs/ibalance.c
-+++ b/fs/reiserfs/ibalance.c
-@@ -2,7 +2,7 @@
-  * Copyright 2000 by Hans Reiser, licensing governed by reiserfs/README
-  */
- 
--#include <asm/uaccess.h>
-+#include <linux/uaccess.h>
- #include <linux/string.h>
- #include <linux/time.h>
- #include "reiserfs.h"
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index 63b2b0e..a7eec98 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -11,7 +11,7 @@
- #include <linux/pagemap.h>
- #include <linux/highmem.h>
- #include <linux/slab.h>
--#include <asm/uaccess.h>
-+#include <linux/uaccess.h>
- #include <asm/unaligned.h>
- #include <linux/buffer_head.h>
- #include <linux/mpage.h>
-diff --git a/fs/reiserfs/ioctl.c b/fs/reiserfs/ioctl.c
-index 501ed68..6ec8a30 100644
---- a/fs/reiserfs/ioctl.c
-+++ b/fs/reiserfs/ioctl.c
-@@ -7,7 +7,7 @@
- #include <linux/mount.h>
- #include "reiserfs.h"
- #include <linux/time.h>
--#include <asm/uaccess.h>
-+#include <linux/uaccess.h>
- #include <linux/pagemap.h>
- #include <linux/compat.h>
- 
-diff --git a/fs/reiserfs/lbalance.c b/fs/reiserfs/lbalance.c
-index d6744c8..814dda3 100644
---- a/fs/reiserfs/lbalance.c
-+++ b/fs/reiserfs/lbalance.c
-@@ -2,7 +2,7 @@
-  * Copyright 2000 by Hans Reiser, licensing governed by reiserfs/README
-  */
- 
--#include <asm/uaccess.h>
-+#include <linux/uaccess.h>
- #include <linux/string.h>
- #include <linux/time.h>
- #include "reiserfs.h"
-diff --git a/fs/reiserfs/procfs.c b/fs/reiserfs/procfs.c
-index 02b0b7d..621b9f3 100644
---- a/fs/reiserfs/procfs.c
-+++ b/fs/reiserfs/procfs.c
-@@ -11,7 +11,7 @@
- #include <linux/module.h>
- #include <linux/time.h>
- #include <linux/seq_file.h>
--#include <asm/uaccess.h>
-+#include <linux/uaccess.h>
- #include "reiserfs.h"
- #include <linux/init.h>
- #include <linux/proc_fs.h>
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index a392cef..e986ae8 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -15,7 +15,7 @@
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
- #include <linux/time.h>
--#include <asm/uaccess.h>
-+#include <linux/uaccess.h>
- #include "reiserfs.h"
- #include "acl.h"
- #include "xattr.h"
 diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index ca416d0..40c13dd 100644
+index ca416d0..fdffe1f 100644
 --- a/fs/reiserfs/xattr.c
 +++ b/fs/reiserfs/xattr.c
-@@ -45,7 +45,7 @@
- #include <linux/xattr.h>
- #include "xattr.h"
- #include "acl.h"
--#include <asm/uaccess.h>
-+#include <linux/uaccess.h>
- #include <net/checksum.h>
- #include <linux/stat.h>
- #include <linux/quotaops.h>
-diff --git a/fs/reiserfs/xattr_acl.c b/fs/reiserfs/xattr_acl.c
-index 44503e2..4b34b9d 100644
---- a/fs/reiserfs/xattr_acl.c
-+++ b/fs/reiserfs/xattr_acl.c
-@@ -9,7 +9,7 @@
- #include <linux/posix_acl_xattr.h>
- #include "xattr.h"
- #include "acl.h"
--#include <asm/uaccess.h>
-+#include <linux/uaccess.h>
+@@ -84,6 +84,7 @@ static int xattr_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ static int xattr_unlink(struct inode *dir, struct dentry *dentry)
+ {
+ 	int error;
++
+ 	BUG_ON(!mutex_is_locked(&dir->i_mutex));
  
- static int __reiserfs_set_acl(struct reiserfs_transaction_handle *th,
- 			    struct inode *inode, int type,
-diff --git a/fs/reiserfs/xattr_security.c b/fs/reiserfs/xattr_security.c
-index 800a3ce..e7f8939 100644
---- a/fs/reiserfs/xattr_security.c
-+++ b/fs/reiserfs/xattr_security.c
-@@ -6,7 +6,7 @@
- #include <linux/slab.h>
- #include "xattr.h"
- #include <linux/security.h>
--#include <asm/uaccess.h>
-+#include <linux/uaccess.h>
+ 	mutex_lock_nested(&dentry->d_inode->i_mutex, I_MUTEX_CHILD);
+@@ -98,6 +99,7 @@ static int xattr_unlink(struct inode *dir, struct dentry *dentry)
+ static int xattr_rmdir(struct inode *dir, struct dentry *dentry)
+ {
+ 	int error;
++
+ 	BUG_ON(!mutex_is_locked(&dir->i_mutex));
  
- static int
- security_get(struct dentry *dentry, const char *name, void *buffer, size_t size,
-diff --git a/fs/reiserfs/xattr_trusted.c b/fs/reiserfs/xattr_trusted.c
-index a003571..5eeb0c4 100644
---- a/fs/reiserfs/xattr_trusted.c
-+++ b/fs/reiserfs/xattr_trusted.c
-@@ -5,7 +5,7 @@
- #include <linux/pagemap.h>
- #include <linux/xattr.h>
- #include "xattr.h"
--#include <asm/uaccess.h>
-+#include <linux/uaccess.h>
+ 	mutex_lock_nested(&dentry->d_inode->i_mutex, I_MUTEX_CHILD);
+@@ -117,6 +119,7 @@ static struct dentry *open_xa_root(struct super_block *sb, int flags)
+ {
+ 	struct dentry *privroot = REISERFS_SB(sb)->priv_root;
+ 	struct dentry *xaroot;
++
+ 	if (!privroot->d_inode)
+ 		return ERR_PTR(-ENODATA);
  
- static int
- trusted_get(struct dentry *dentry, const char *name, void *buffer, size_t size,
-diff --git a/fs/reiserfs/xattr_user.c b/fs/reiserfs/xattr_user.c
-index 8667491..e50eab0 100644
---- a/fs/reiserfs/xattr_user.c
-+++ b/fs/reiserfs/xattr_user.c
-@@ -4,7 +4,7 @@
- #include <linux/pagemap.h>
- #include <linux/xattr.h>
- #include "xattr.h"
--#include <asm/uaccess.h>
-+#include <linux/uaccess.h>
+@@ -127,6 +130,7 @@ static struct dentry *open_xa_root(struct super_block *sb, int flags)
+ 		xaroot = ERR_PTR(-ENODATA);
+ 	else if (!xaroot->d_inode) {
+ 		int err = -ENODATA;
++
+ 		if (xattr_may_create(flags))
+ 			err = xattr_mkdir(privroot->d_inode, xaroot, 0700);
+ 		if (err) {
+@@ -157,6 +161,7 @@ static struct dentry *open_xa_dir(const struct inode *inode, int flags)
+ 	xadir = lookup_one_len(namebuf, xaroot, strlen(namebuf));
+ 	if (!IS_ERR(xadir) && !xadir->d_inode) {
+ 		int err = -ENODATA;
++
+ 		if (xattr_may_create(flags))
+ 			err = xattr_mkdir(xaroot->d_inode, xadir, 0700);
+ 		if (err) {
+@@ -188,6 +193,7 @@ fill_with_dentries(void *buf, const char *name, int namelen, loff_t offset,
+ {
+ 	struct reiserfs_dentry_buf *dbuf = buf;
+ 	struct dentry *dentry;
++
+ 	WARN_ON_ONCE(!mutex_is_locked(&dbuf->xadir->d_inode->i_mutex));
  
- static int
- user_get(struct dentry *dentry, const char *name, void *buffer, size_t size,
+ 	if (dbuf->count == ARRAY_SIZE(dbuf->dentries))
+@@ -218,6 +224,7 @@ static void
+ cleanup_dentry_buf(struct reiserfs_dentry_buf *buf)
+ {
+ 	int i;
++
+ 	for (i = 0; i < buf->count; i++)
+ 		if (buf->dentries[i])
+ 			dput(buf->dentries[i]);
+@@ -283,11 +290,13 @@ static int reiserfs_for_each_xattr(struct inode *inode,
+ 		int blocks = JOURNAL_PER_BALANCE_CNT * 2 + 2 +
+ 			     4 * REISERFS_QUOTA_TRANS_BLOCKS(inode->i_sb);
+ 		struct reiserfs_transaction_handle th;
++
+ 		reiserfs_write_lock(inode->i_sb);
+ 		err = journal_begin(&th, inode->i_sb, blocks);
+ 		reiserfs_write_unlock(inode->i_sb);
+ 		if (!err) {
+ 			int jerror;
++
+ 			mutex_lock_nested(&dir->d_parent->d_inode->i_mutex,
+ 					  I_MUTEX_XATTR);
+ 			err = action(dir, data);
+@@ -340,6 +349,7 @@ static int chown_one_xattr(struct dentry *dentry, void *data)
+ int reiserfs_delete_xattrs(struct inode *inode)
+ {
+ 	int err = reiserfs_for_each_xattr(inode, delete_one_xattr, NULL);
++
+ 	if (err)
+ 		reiserfs_warning(inode->i_sb, "jdm-20004",
+ 				 "Couldn't delete all xattrs (%d)\n", err);
+@@ -350,6 +360,7 @@ int reiserfs_delete_xattrs(struct inode *inode)
+ int reiserfs_chown_xattrs(struct inode *inode, struct iattr *attrs)
+ {
+ 	int err = reiserfs_for_each_xattr(inode, chown_one_xattr, attrs);
++
+ 	if (err)
+ 		reiserfs_warning(inode->i_sb, "jdm-20007",
+ 				 "Couldn't chown all xattrs (%d)\n", err);
+@@ -439,6 +450,7 @@ int reiserfs_commit_write(struct file *f, struct page *page,
+ static void update_ctime(struct inode *inode)
+ {
+ 	struct timespec now = current_fs_time(inode->i_sb);
++
+ 	if (inode_unhashed(inode) || !inode->i_nlink ||
+ 	    timespec_equal(&inode->i_ctime, &now))
+ 		return;
+@@ -514,6 +526,7 @@ reiserfs_xattr_set_handle(struct reiserfs_transaction_handle *th,
+ 		size_t chunk;
+ 		size_t skip = 0;
+ 		size_t page_offset = (file_pos & (PAGE_CACHE_SIZE - 1));
++
+ 		if (buffer_size - buffer_pos > PAGE_CACHE_SIZE)
+ 			chunk = PAGE_CACHE_SIZE;
+ 		else
+@@ -530,6 +543,7 @@ reiserfs_xattr_set_handle(struct reiserfs_transaction_handle *th,
+ 
+ 		if (file_pos == 0) {
+ 			struct reiserfs_xattr_header *rxh;
++
+ 			skip = file_pos = sizeof(struct reiserfs_xattr_header);
+ 			if (chunk + skip > PAGE_CACHE_SIZE)
+ 				chunk = PAGE_CACHE_SIZE - skip;
+@@ -659,6 +673,7 @@ reiserfs_xattr_get(struct inode *inode, const char *name, void *buffer,
+ 		size_t chunk;
+ 		char *data;
+ 		size_t skip = 0;
++
+ 		if (isize - file_pos > PAGE_CACHE_SIZE)
+ 			chunk = PAGE_CACHE_SIZE;
+ 		else
+@@ -792,6 +807,7 @@ reiserfs_setxattr(struct dentry *dentry, const char *name, const void *value,
+ int reiserfs_removexattr(struct dentry *dentry, const char *name)
+ {
+ 	const struct xattr_handler *handler;
++
+ 	handler = find_xattr_handler_prefix(dentry->d_sb->s_xattr, name);
+ 
+ 	if (!handler || get_inode_sd_version(dentry->d_inode) == STAT_DATA_V1)
+@@ -813,9 +829,11 @@ static int listxattr_filler(void *buf, const char *name, int namelen,
+ {
+ 	struct listxattr_buf *b = (struct listxattr_buf *)buf;
+ 	size_t size;
++
+ 	if (name[0] != '.' ||
+ 	    (namelen != 1 && (name[1] != '.' || namelen != 2))) {
+ 		const struct xattr_handler *handler;
++
+ 		handler = find_xattr_handler_prefix(b->dentry->d_sb->s_xattr,
+ 						    name);
+ 		if (!handler)	/* Unsupported xattr name */
+@@ -885,6 +903,7 @@ static int create_privroot(struct dentry *dentry)
+ {
+ 	int err;
+ 	struct inode *inode = dentry->d_parent->d_inode;
++
+ 	WARN_ON_ONCE(!mutex_is_locked(&inode->i_mutex));
+ 
+ 	err = xattr_mkdir(inode, dentry, 0700);
+@@ -1015,6 +1034,7 @@ int reiserfs_xattr_init(struct super_block *s, int mount_flags)
+ 		mutex_lock(&privroot->d_inode->i_mutex);
+ 		if (!REISERFS_SB(s)->xattr_root) {
+ 			struct dentry *dentry;
++
+ 			dentry = lookup_one_len(XAROOT_NAME, privroot,
+ 						strlen(XAROOT_NAME));
+ 			if (!IS_ERR(dentry))
 -- 
 1.8.4.5
 
