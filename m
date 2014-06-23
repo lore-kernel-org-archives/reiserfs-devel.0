@@ -1,144 +1,120 @@
-From: Ivan Shapovalov <intelfx100@gmail.com>
-Subject: [PATCHv6 4/5] reiser4: blocknr_list: use kmem_cache instead of kmalloc for allocating entries.
-Date: Sun, 22 Jun 2014 14:48:45 +0400
-Message-ID: <1403434126-6390-5-git-send-email-intelfx100@gmail.com>
-References: <1403434126-6390-1-git-send-email-intelfx100@gmail.com>
+From: Fabian Frederick <fabf@skynet.be>
+Subject: [PATCH 1/1] FS/REISERFS: replace not-standard %Lu/%Ld
+Date: Mon, 23 Jun 2014 18:24:08 +0200
+Message-ID: <1403540648-10182-1-git-send-email-fabf@skynet.be>
 Return-path: <reiserfs-devel-owner@vger.kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20120113;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ippkFxwbGhnLgBEgwCKu7ITz7DvVoP0lbMHj1uFvvXE=;
-        b=XLqaaQmsOODcpWsU9q2UAs9+0cLbBWA1LwKvw9mJhrmOzZ6hG7CgK+e09Z0Bg4kQJV
-         nN0YRps6LIlrAn3NVQ6XGN6p9DdGggn085LR1nSWfSwA4JrsU49MqkS31RySGQupGZxH
-         yLYj81DTI/iL1FGbEd6w9qkFUucklBdV9UmEilB0/skD6GkcVL4UX6v6FpIbucIHqN9O
-         rpdIkHZ3aYlrkuoEUsTvEvLGvVAmvOhBc9Rn3ccUmyBLK8AZMSDip6dB4QYccLY8MBDy
-         jcW2E+rLrHAcSz1z0/yQ90skFGrFkgb8aWKVY3i49c6E9L5XrdaHDrvb5Y7f54mlekWG
-         arUA==
-In-Reply-To: <1403434126-6390-1-git-send-email-intelfx100@gmail.com>
 Sender: reiserfs-devel-owner@vger.kernel.org
 List-ID: <reiserfs-devel.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
-Cc: edward.shishkin@gmail.com, Ivan Shapovalov <intelfx100@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Fabian Frederick <fabf@skynet.be>, reiserfs-devel@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>, Andrew Morton <akpm@linux-foundation.org>
 
+Fixes checkpatch warnings:
+
+"WARNING: %Ld/%Lu are not-standard C, use %lld/%llu"
+
+Cc: reiserfs-devel@vger.kernel.org
+Cc: Jeff Mahoney <jeffm@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Fabian Frederick <fabf@skynet.be>
 ---
- fs/reiser4/blocknrlist.c | 31 ++++++++++++++++++++++++++++---
- fs/reiser4/super_ops.c   |  7 +++++++
- fs/reiser4/txnmgr.h      |  2 ++
- 3 files changed, 37 insertions(+), 3 deletions(-)
+ fs/reiserfs/item_ops.c | 4 ++--
+ fs/reiserfs/prints.c   | 4 ++--
+ fs/reiserfs/stree.c    | 2 +-
+ fs/reiserfs/super.c    | 7 +++----
+ 4 files changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/fs/reiser4/blocknrlist.c b/fs/reiser4/blocknrlist.c
-index 2868771..39a4a9b 100644
---- a/fs/reiser4/blocknrlist.c
-+++ b/fs/reiser4/blocknrlist.c
-@@ -9,10 +9,13 @@
- #include "dformat.h"
- #include "txnmgr.h"
- #include "context.h"
-+#include "super.h"
+diff --git a/fs/reiserfs/item_ops.c b/fs/reiserfs/item_ops.c
+index cfaee91..aca73dd 100644
+--- a/fs/reiserfs/item_ops.c
++++ b/fs/reiserfs/item_ops.c
+@@ -54,7 +54,7 @@ static void sd_print_item(struct item_head *ih, char *item)
+ 	} else {
+ 		struct stat_data *sd = (struct stat_data *)item;
  
- #include <linux/slab.h>
- #include <linux/list_sort.h>
- 
-+static struct kmem_cache *blocknr_list_slab = NULL;
-+
- /**
-  * Represents an extent range [@start; @end).
-  */
-@@ -36,8 +39,8 @@ static blocknr_list_entry *blocknr_list_entry_alloc(void)
- {
- 	blocknr_list_entry *entry;
- 
--	entry = (blocknr_list_entry *)kmalloc(sizeof(blocknr_list_entry),
--	                                      reiser4_ctx_gfp_mask_get());
-+	entry = (blocknr_list_entry *)kmem_cache_alloc(blocknr_list_slab,
-+	                                               reiser4_ctx_gfp_mask_get());
- 	if (entry == NULL) {
- 		return NULL;
+-		printk("\t0%-6o | %6Lu | %2u | %d | %s\n", sd_v2_mode(sd),
++		printk("\t0%-6o | %6llu | %2u | %d | %s\n", sd_v2_mode(sd),
+ 		       (unsigned long long)sd_v2_size(sd), sd_v2_nlink(sd),
+ 		       sd_v2_rdev(sd), print_time(sd_v2_mtime(sd)));
  	}
-@@ -51,7 +54,7 @@ static void blocknr_list_entry_free(blocknr_list_entry *entry)
+@@ -408,7 +408,7 @@ static void direntry_print_item(struct item_head *ih, char *item)
+ 			namebuf[namelen + 2] = 0;
+ 		}
+ 
+-		printk("%d:  %-15s%-15d%-15d%-15Ld%-15Ld(%s)\n",
++		printk("%d:  %-15s%-15d%-15d%-15lld%-15lld(%s)\n",
+ 		       i, namebuf,
+ 		       deh_dir_id(deh), deh_objectid(deh),
+ 		       GET_HASH_VALUE(deh_offset(deh)),
+diff --git a/fs/reiserfs/prints.c b/fs/reiserfs/prints.c
+index c9b47e9..ae1dc84 100644
+--- a/fs/reiserfs/prints.c
++++ b/fs/reiserfs/prints.c
+@@ -17,7 +17,7 @@ static char off_buf[80];
+ static char *reiserfs_cpu_offset(struct cpu_key *key)
  {
- 	assert("intelfx-12", entry != NULL);
+ 	if (cpu_key_k_type(key) == TYPE_DIRENTRY)
+-		sprintf(off_buf, "%Lu(%Lu)",
++		sprintf(off_buf, "%llu(%llu)",
+ 			(unsigned long long)
+ 			GET_HASH_VALUE(cpu_key_k_offset(key)),
+ 			(unsigned long long)
+@@ -34,7 +34,7 @@ static char *le_offset(struct reiserfs_key *key)
  
--	kfree(entry);
-+	kmem_cache_free(blocknr_list_slab, entry);
- }
+ 	version = le_key_version(key);
+ 	if (le_key_k_type(version, key) == TYPE_DIRENTRY)
+-		sprintf(off_buf, "%Lu(%Lu)",
++		sprintf(off_buf, "%llu(%llu)",
+ 			(unsigned long long)
+ 			GET_HASH_VALUE(le_key_k_offset(version, key)),
+ 			(unsigned long long)
+diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
+index dd44468..24cbe01 100644
+--- a/fs/reiserfs/stree.c
++++ b/fs/reiserfs/stree.c
+@@ -2006,7 +2006,7 @@ int reiserfs_do_truncate(struct reiserfs_transaction_handle *th,
+ 					    &s_search_path) == POSITION_FOUND);
  
- /**
-@@ -142,6 +145,28 @@ static int blocknr_list_entry_compare(void* priv UNUSED_ARG,
- 	return 0;
- }
+ 	RFALSE(file_size > ROUND_UP(new_file_size),
+-	       "PAP-5680: truncate did not finish: new_file_size %Ld, current %Ld, oid %d",
++	       "PAP-5680: truncate did not finish: new_file_size %lld, current %lld, oid %d",
+ 	       new_file_size, file_size, s_item_key.on_disk_key.k_objectid);
  
-+int blocknr_list_init_static(void)
-+{
-+	assert("intelfx-54", blocknr_list_slab == NULL);
-+
-+	blocknr_list_slab = kmem_cache_create("blocknr_list_entry",
-+	                                      sizeof(blocknr_list_entry),
-+	                                      0,
-+	                                      SLAB_HWCACHE_ALIGN |
-+	                                      SLAB_RECLAIM_ACCOUNT,
-+	                                      NULL);
-+	if (blocknr_list_slab == NULL) {
-+		return RETERR(-ENOMEM);
-+	}
-+
-+	return 0;
-+}
-+
-+void blocknr_list_done_static(void)
-+{
-+	destroy_reiser4_cache(&blocknr_list_slab);
-+}
-+
- void blocknr_list_init(struct list_head* blist)
- {
- 	assert("intelfx-24", blist != NULL);
-diff --git a/fs/reiser4/super_ops.c b/fs/reiser4/super_ops.c
-index 81773b3..a63ceb5 100644
---- a/fs/reiser4/super_ops.c
-+++ b/fs/reiser4/super_ops.c
-@@ -678,11 +678,17 @@ static int __init init_reiser4(void)
- 	if ((result = reiser4_init_d_cursor()) != 0)
- 		goto failed_init_d_cursor;
+ update_and_out:
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index a392cef..debdb8e 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -331,7 +331,7 @@ static int finish_unfinished(struct super_block *s)
+ 			 * not completed truncate found. New size was
+ 			 * committed together with "save" link
+ 			 */
+-			reiserfs_info(s, "Truncating %k to %Ld ..",
++			reiserfs_info(s, "Truncating %k to %lld ..",
+ 				      INODE_PKEY(inode), inode->i_size);
  
-+	/* initialize cache of blocknr list entries */
-+	if ((result = blocknr_list_init_static()) != 0)
-+		goto failed_init_blocknr_list;
-+
- 	if ((result = register_filesystem(&reiser4_fs_type)) == 0) {
- 		reiser4_debugfs_root = debugfs_create_dir("reiser4", NULL);
- 		return 0;
+ 			/* don't update modification time */
+@@ -1577,7 +1577,7 @@ static int read_super_block(struct super_block *s, int offset)
+ 	rs = (struct reiserfs_super_block *)bh->b_data;
+ 	if (sb_blocksize(rs) != s->s_blocksize) {
+ 		reiserfs_warning(s, "sh-2011", "can't find a reiserfs "
+-				 "filesystem on (dev %s, block %Lu, size %lu)",
++				 "filesystem on (dev %s, block %llu, size %lu)",
+ 				 s->s_id,
+ 				 (unsigned long long)bh->b_blocknr,
+ 				 s->s_blocksize);
+@@ -2441,8 +2441,7 @@ static ssize_t reiserfs_quota_write(struct super_block *sb, int type,
+ 	struct buffer_head tmp_bh, *bh;
+ 
+ 	if (!current->journal_info) {
+-		printk(KERN_WARNING "reiserfs: Quota write (off=%Lu, len=%Lu)"
+-			" cancelled because transaction is not started.\n",
++		printk(KERN_WARNING "reiserfs: Quota write (off=%llu, len=%llu) cancelled because transaction is not started.\n",
+ 			(unsigned long long)off, (unsigned long long)len);
+ 		return -EIO;
  	}
- 
-+	blocknr_list_done_static();
-+ failed_init_blocknr_list:
- 	reiser4_done_d_cursor();
-  failed_init_d_cursor:
- 	reiser4_done_file_fsdata();
-@@ -718,6 +724,7 @@ static void __exit done_reiser4(void)
- 	debugfs_remove(reiser4_debugfs_root);
- 	result = unregister_filesystem(&reiser4_fs_type);
- 	BUG_ON(result != 0);
-+	blocknr_list_done_static();
- 	reiser4_done_d_cursor();
- 	reiser4_done_file_fsdata();
- 	reiser4_done_dentry_fsdata();
-diff --git a/fs/reiser4/txnmgr.h b/fs/reiser4/txnmgr.h
-index 02fc938..be5d552 100644
---- a/fs/reiser4/txnmgr.h
-+++ b/fs/reiser4/txnmgr.h
-@@ -503,6 +503,8 @@ extern int blocknr_set_iterator(txn_atom * atom, struct list_head * bset,
- 				int delete);
- 
- /* This is the block list interface (see blocknrlist.c) */
-+extern int blocknr_list_init_static(void);
-+extern void blocknr_list_done_static(void);
- extern void blocknr_list_init(struct list_head *blist);
- extern void blocknr_list_destroy(struct list_head *blist);
- extern void blocknr_list_merge(struct list_head *from, struct list_head *to);
 -- 
-2.0.0
+1.8.4.5
 
